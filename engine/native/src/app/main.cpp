@@ -1,0 +1,840 @@
+// native_app — the live windowed FTD native application (M-UI-1..M-UI-3 fused).
+//
+// A real Win32 window whose swapchain is owned by D3D12Presenter. Two threads,
+// the same split the native_desktop reference (native_desktop/src/main.cpp) uses:
+//   • sim thread   — owns NativeEngineSession, ticks it, drains the CommandQueue
+//                    at the tick boundary, publishes UiSnapshot + a NativeFrame.
+//   • GUI thread   — owns RmlUi (RmlD3D12Renderer + Rml::Context) and the
+//                    presenter. Each frame it acquires the published snapshot,
+//                    pushes it into the RmlUi data model, lays out (Context::
+//                    Update), then calls presenter.render(...). The RmlUi shell
+//                    is drawn INSIDE the presenter's OverlayRecorder seam so the
+//                    CSS chrome composites over the live 3D scene in one frame.
+//
+// The shell's transparent `#viewport` element marks the 3D hole: the presenter's
+// scene_rect is set to that element's laid-out rectangle each frame, so the
+// interop-free CPU-gathered lattice/particle/flux scene renders exactly there
+// while RmlUi draws the toolbar / Setup panel / Physics-terms panel / status bar
+// around it.
+//
+// Unlike the native_desktop reference this app does NOT wire the CUDA<->D3D12
+// zero-copy interop path: particles are gathered to the host by
+// session.capture() every tick and drawn through the presenter's CPU sprite
+// path (interop_particle_count = 0). That keeps the app self-contained and
+// backend-agnostic; the device-resident path is a later optimization (see the
+// report).
+//
+// --capture-frames N: boot, run the sim while rendering, request a composited
+// back-buffer readback, save it as a PNG, and exit 0 — the headless proof that
+// chrome + live scene + real data all land in one frame.
+
+#ifndef UNICODE
+#define UNICODE
+#endif
+#ifndef _UNICODE
+#define _UNICODE
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+// NOTE: deliberately NOT <windowsx.h> — its message-cracker macros
+// (GetNextSibling / GetFirstChild / GetLastChild / …) collide with RmlUi's
+// Rml::Element methods of the same name and break <RmlUi/Core.h>. The only
+// windowsx.h helpers this file needs are the signed LPARAM coordinate
+// extractors, defined locally below.
+#include <shellapi.h>
+#include <wincodec.h>
+#include <wrl/client.h>
+
+#ifndef _WIN64
+#error "native_app is a Win64 (x86-64) target"
+#endif
+
+#include "native/cli_options.h"
+#include "native/command_queue.h"
+#include "native/d3d12_presenter.h"
+#include "native/dpi_support.h"
+#include "native/engine_session.h"
+#include "native/native_frame.h"
+#include "native/scene_rect.h"
+#include "native/ui_command.h"
+#include "native/ui_snapshot.h"
+
+#include "ftd/term_toggles.h"
+
+#include "ui/rml_d3d12_renderer.h"
+
+#include <RmlUi/Core.h>
+
+#include <algorithm>
+#include <atomic>
+#include <chrono>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
+#include <fcntl.h>
+#include <io.h>
+#include <iostream>
+#include <memory>
+#include <mutex>
+#include <string>
+#include <thread>
+#include <vector>
+
+using Microsoft::WRL::ComPtr;
+using ftd::native::ui::RmlD3D12Renderer;
+using ftd::native::ui::RmlD3D12System;
+
+namespace {
+
+// Signed LPARAM coordinate extractors (would come from <windowsx.h>, which we
+// cannot include — see the include block above).
+inline int lparam_x(LPARAM lp) { return static_cast<int>(static_cast<short>(LOWORD(lp))); }
+inline int lparam_y(LPARAM lp) { return static_cast<int>(static_cast<short>(HIWORD(lp))); }
+
+// ── The physics-terms panel: which toggles it shows, top to bottom. Names are
+//    the canonical TermToggles field names (term_toggles.h) so a click maps to
+//    a SetToggle command 1:1 and the on-state reads straight from the snapshot.
+constexpr const char* kPanelToggles[] = {
+    "wave_propagation", "coupling",       "damping",         "genesis",
+    "gauss_projection", "forces",         "movement",        "poisson_coulomb",
+    "selective_damping","gravity",        "lorentz_force",   "dual_substrate",
+    "color_forces",     "strong_force",   "weak_transmutation",
+    "de_broglie_clock",
+};
+
+// One tick in physical seconds (electron-primary gauge: t_phys = t_P/√3, see
+// CLAUDE.md). Used only to render a human-facing "physical time" in the status
+// bar; nothing physical depends on it.
+constexpr double kTPhysSeconds = 3.11e-44;
+
+// ── RmlUi data-model mirror of UiSnapshot (the bound C++ side of the shell) ──
+struct ToggleRow {
+    Rml::String name;
+    bool on = false;
+};
+
+struct ShellData {
+    int tick = 0;
+    int particle_count = 0;
+    Rml::String physical_time = "0 s";
+    Rml::String total_energy = "0.0";
+    Rml::String scenario;
+    Rml::String backend = "CPU";
+    Rml::String lattice = "0";
+    int fps = 0;
+    bool running = false;
+    Rml::Vector<ToggleRow> toggles;
+};
+
+bool toggle_on(const ftd::TermToggles& tt, const char* name) {
+    const ftd::ToggleSpec* spec = ftd::term_toggles_detail::find_spec(name);
+    return spec ? (tt.*(spec->field)) : false;
+}
+
+// ── Everything the Win32 wnd_proc + RmlUi event callbacks need to reach. Set
+//    once on the GUI thread during setup and read only on the GUI thread
+//    (wnd_proc runs during DispatchMessageW on this same thread), so no locking.
+struct AppContext {
+    HWND hwnd = nullptr;
+    Rml::Context* context = nullptr;
+    ftd::native::D3D12Presenter* presenter = nullptr;
+    ftd::native::Camera* camera = nullptr;
+    ftd::native::CommandQueue* commands = nullptr;
+    ShellData* data = nullptr;
+    std::atomic<bool>* paused = nullptr;
+    std::atomic<bool>* quit = nullptr;
+    std::string scenario_id;
+
+    // The laid-out #viewport hole in client pixels (updated each frame after
+    // Context::Update). Pointer arbitration + the presenter scene_rect use it.
+    ftd::native::SceneRect viewport_rect{};
+    bool dragging = false;
+    POINT last{};
+};
+
+// ── Command helpers (run on the GUI thread; drained by the sim thread) ──
+void push(AppContext* app, ftd::native::UiCommand cmd) {
+    if (app && app->commands) app->commands->push(std::move(cmd));
+}
+
+void request_play(AppContext* app) {
+    push(app, ftd::native::Run{});
+    if (app->paused) app->paused->store(false);
+}
+void request_pause(AppContext* app) {
+    push(app, ftd::native::Pause{});
+    if (app->paused) app->paused->store(true);
+}
+void request_play_toggle(AppContext* app) {
+    if (app->paused && app->paused->load()) request_play(app);
+    else request_pause(app);
+}
+void request_step(AppContext* app) {
+    push(app, ftd::native::Pause{});
+    push(app, ftd::native::Step{1});
+    if (app->paused) app->paused->store(true);
+}
+void request_reset(AppContext* app) {
+    if (!app->scenario_id.empty()) push(app, ftd::native::LoadScenario{app->scenario_id});
+}
+void request_toggle(AppContext* app, const std::string& name) {
+    bool cur = false;
+    if (app->data) {
+        for (const ToggleRow& r : app->data->toggles) {
+            if (r.name == name) { cur = r.on; break; }
+        }
+    }
+    push(app, ftd::native::SetToggle{name, !cur});
+}
+
+// ── Win32 → RmlUi input plumbing ──
+int rml_key_modifiers() {
+    int m = 0;
+    if (GetKeyState(VK_CONTROL) & 0x8000) m |= Rml::Input::KM_CTRL;
+    if (GetKeyState(VK_SHIFT) & 0x8000) m |= Rml::Input::KM_SHIFT;
+    if (GetKeyState(VK_MENU) & 0x8000) m |= Rml::Input::KM_ALT;
+    return m;
+}
+
+// True when the given client point is inside the laid-out #viewport hole, i.e.
+// the pointer is over the 3D scene and should drive the camera rather than the
+// (transparent) RML element that marks the hole.
+bool over_viewport(const AppContext* app, int x, int y) {
+    return ftd::native::scene_contains_client(app->viewport_rect, x, y);
+}
+
+AppContext* app_from_hwnd(HWND hwnd) {
+    return reinterpret_cast<AppContext*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA));
+}
+
+LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
+    AppContext* app = app_from_hwnd(hwnd);
+    Rml::Context* ctx = app ? app->context : nullptr;
+    switch (msg) {
+        case WM_DESTROY:
+            PostQuitMessage(0);
+            return 0;
+        case WM_DPICHANGED:
+            ftd::native::apply_dpi_suggested_rect(hwnd, lparam);
+            return 0;
+        case WM_MOUSEMOVE: {
+            const int x = lparam_x(lparam), y = lparam_y(lparam);
+            if (ctx) ctx->ProcessMouseMove(x, y, rml_key_modifiers());
+            if (app->dragging) {
+                app->camera->yaw += (x - app->last.x) * 0.01f;
+                app->camera->pitch += (y - app->last.y) * 0.01f;
+                app->camera->pitch = std::max(-1.4f, std::min(1.4f, app->camera->pitch));
+                app->last = {x, y};
+            }
+            return 0;
+        }
+        case WM_LBUTTONDOWN: {
+            const int x = lparam_x(lparam), y = lparam_y(lparam);
+            if (ctx) ctx->ProcessMouseButtonDown(0, rml_key_modifiers());
+            if (over_viewport(app, x, y)) {
+                app->dragging = true;
+                app->last = {x, y};
+                SetCapture(hwnd);
+            }
+            return 0;
+        }
+        case WM_LBUTTONUP:
+            if (ctx) ctx->ProcessMouseButtonUp(0, rml_key_modifiers());
+            app->dragging = false;
+            if (GetCapture() == hwnd) ReleaseCapture();
+            return 0;
+        case WM_RBUTTONDOWN:
+            if (ctx) ctx->ProcessMouseButtonDown(1, rml_key_modifiers());
+            return 0;
+        case WM_RBUTTONUP:
+            if (ctx) ctx->ProcessMouseButtonUp(1, rml_key_modifiers());
+            return 0;
+        case WM_CAPTURECHANGED:
+        case WM_KILLFOCUS:
+            if (app) app->dragging = false;
+            return DefWindowProcW(hwnd, msg, wparam, lparam);
+        case WM_MOUSEWHEEL: {
+            POINT pt{lparam_x(lparam), lparam_y(lparam)};
+            ScreenToClient(hwnd, &pt);
+            const int delta = GET_WHEEL_DELTA_WPARAM(wparam);
+            if (over_viewport(app, pt.x, pt.y)) {
+                app->camera->distance *= (delta > 0) ? 0.9f : 1.1f;
+                app->camera->distance = std::max(4.0f, std::min(512.0f, app->camera->distance));
+            } else if (ctx) {
+                ctx->ProcessMouseWheel(Rml::Vector2f(0.0f, delta > 0 ? -1.0f : 1.0f),
+                                       rml_key_modifiers());
+            }
+            return 0;
+        }
+        default:
+            return DefWindowProcW(hwnd, msg, wparam, lparam);
+    }
+}
+
+// ── OverlayRecorder: draw the RmlUi shell into the presenter's command list ──
+// Called from inside D3D12Presenter::render(), after the 3D scene is recorded
+// and with the full-window RTV bound. begin_frame rebinds the UI heap / PSO /
+// ortho / full viewport+scissor, Context::Render() emits geometry through the
+// RenderInterface into `list`, end_frame() stops routing.
+class RmlOverlay : public ftd::native::OverlayRecorder {
+public:
+    RmlOverlay(RmlD3D12Renderer* renderer, Rml::Context** context)
+        : renderer_(renderer), context_(context) {}
+    void record(ID3D12GraphicsCommandList* list,
+                const ftd::native::RenderTargetInfo& rt) override {
+        if (!renderer_ || !*context_) return;
+        renderer_->begin_frame(list, rt.width, rt.height);
+        (*context_)->Render();
+        renderer_->end_frame();
+    }
+
+private:
+    RmlD3D12Renderer* renderer_;
+    Rml::Context** context_;
+};
+
+// ── PNG writer (WIC, RGBA8 rows) — mirrors test_ui_rml_smoke.cpp's save_png ──
+std::wstring widen(const std::string& s) {
+    if (s.empty()) return std::wstring();
+    int n = MultiByteToWideChar(CP_UTF8, 0, s.c_str(), static_cast<int>(s.size()), nullptr, 0);
+    std::wstring w(static_cast<size_t>(n), L'\0');
+    MultiByteToWideChar(CP_UTF8, 0, s.c_str(), static_cast<int>(s.size()), w.data(), n);
+    return w;
+}
+
+bool save_png(const std::wstring& path, const std::uint8_t* rgba, UINT w, UINT h,
+              UINT row_pitch) {
+    ComPtr<IWICImagingFactory> factory;
+    if (FAILED(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER,
+                                IID_PPV_ARGS(&factory))))
+        return false;
+    ComPtr<IWICStream> stream;
+    if (FAILED(factory->CreateStream(&stream))) return false;
+    if (FAILED(stream->InitializeFromFilename(path.c_str(), GENERIC_WRITE))) return false;
+    ComPtr<IWICBitmapEncoder> encoder;
+    if (FAILED(factory->CreateEncoder(GUID_ContainerFormatPng, nullptr, &encoder))) return false;
+    if (FAILED(encoder->Initialize(stream.Get(), WICBitmapEncoderNoCache))) return false;
+    ComPtr<IWICBitmapFrameEncode> frame;
+    ComPtr<IPropertyBag2> props;
+    if (FAILED(encoder->CreateNewFrame(&frame, &props))) return false;
+    if (FAILED(frame->Initialize(props.Get()))) return false;
+    if (FAILED(frame->SetSize(w, h))) return false;
+    WICPixelFormatGUID fmt = GUID_WICPixelFormat32bppBGRA;
+    if (FAILED(frame->SetPixelFormat(&fmt))) return false;
+    ComPtr<IWICBitmap> source;
+    if (FAILED(factory->CreateBitmapFromMemory(w, h, GUID_WICPixelFormat32bppRGBA, row_pitch,
+                                               row_pitch * h, const_cast<BYTE*>(rgba), &source)))
+        return false;
+    if (FAILED(frame->WriteSource(source.Get(), nullptr))) return false;
+    if (FAILED(frame->Commit())) return false;
+    if (FAILED(encoder->Commit())) return false;
+    return true;
+}
+
+// Bind stdout/stderr to the launching console so --capture-frames logging is
+// visible for a WIN32-subsystem exe (copied from the native_desktop reference).
+bool bind_crt_to_std_handle(DWORD std_id, int crt_fd) {
+    HANDLE handle = GetStdHandle(std_id);
+    if (handle == nullptr || handle == INVALID_HANDLE_VALUE) return false;
+    const DWORD type = GetFileType(handle);
+    if (type != FILE_TYPE_DISK && type != FILE_TYPE_PIPE && type != FILE_TYPE_CHAR) return false;
+    const int fd = _open_osfhandle(reinterpret_cast<intptr_t>(handle), _O_TEXT);
+    if (fd < 0) return false;
+    _dup2(fd, crt_fd);
+    return true;
+}
+void attach_parent_console_if_any() {
+    const bool out_bound = bind_crt_to_std_handle(STD_OUTPUT_HANDLE, 1);
+    bind_crt_to_std_handle(STD_ERROR_HANDLE, 2);
+    if (out_bound) { std::cout.clear(); std::cerr.clear(); return; }
+    if (!AttachConsole(ATTACH_PARENT_PROCESS)) return;
+    FILE* s = nullptr;
+    freopen_s(&s, "CONOUT$", "w", stdout);
+    s = nullptr;
+    freopen_s(&s, "CONOUT$", "w", stderr);
+    std::cout.clear();
+    std::cerr.clear();
+}
+
+std::string wide_to_utf8(const wchar_t* wide) {
+    if (!wide || wide[0] == L'\0') return {};
+    const int bytes = WideCharToMultiByte(CP_UTF8, 0, wide, -1, nullptr, 0, nullptr, nullptr);
+    if (bytes <= 1) return {};
+    std::string out(static_cast<size_t>(bytes - 1), '\0');
+    WideCharToMultiByte(CP_UTF8, 0, wide, -1, out.data(), bytes, nullptr, nullptr);
+    return out;
+}
+std::vector<std::string> utf8_args() {
+    int argc = 0;
+    LPWSTR* wargv = CommandLineToArgvW(GetCommandLineW(), &argc);
+    std::vector<std::string> args;
+    if (!wargv) return {"native_app"};
+    for (int i = 0; i < argc; ++i) args.push_back(wide_to_utf8(wargv[i]));
+    LocalFree(wargv);
+    if (args.empty()) args.emplace_back("native_app");
+    return args;
+}
+
+std::string upper(std::string s) {
+    for (char& c : s) c = static_cast<char>(::toupper(static_cast<unsigned char>(c)));
+    return s;
+}
+std::string fmt(const char* f, double v) {
+    char buf[64];
+    std::snprintf(buf, sizeof(buf), f, v);
+    return buf;
+}
+
+void apply_camera_for_lattice(ftd::native::Camera& cam, int lattice) {
+    const float c = static_cast<float>(lattice) * 0.5f;
+    cam.target_x = cam.target_y = cam.target_z = c;
+    cam.distance = static_cast<float>(lattice) * 1.8f;
+}
+
+struct AppOptions {
+    int capture_frames = -1;   // -1 = interactive; >=0 = capture then exit
+    bool start_paused = false; // default: live on launch
+};
+
+AppOptions parse_app_options(const std::vector<std::string>& args) {
+    AppOptions o;
+    for (size_t i = 1; i < args.size(); ++i) {
+        if (args[i] == "--capture-frames" && i + 1 < args.size()) {
+            o.capture_frames = std::max(1, std::atoi(args[++i].c_str()));
+        } else if (args[i] == "--paused") {
+            o.start_paused = true;
+        } else if (args[i] == "--run") {
+            o.start_paused = false;
+        }
+    }
+    return o;
+}
+
+int run_app(const std::vector<std::string>& args) {
+    // ── CLI ──────────────────────────────────────────────────────────────────
+    std::vector<const char*> argv;
+    for (const std::string& a : args) argv.push_back(a.c_str());
+    const auto parsed = ftd::native::parse_native_cli(static_cast<int>(argv.size()), argv.data());
+    const AppOptions app_opts = parse_app_options(args);
+    const bool capture_mode = app_opts.capture_frames >= 0;
+
+    if (!ftd::native::enable_per_monitor_v2_dpi())
+        throw std::runtime_error("Per-monitor-V2 DPI awareness unavailable");
+
+    ftd::native::NativeEngineOptions engine_opts = parsed.options;
+    std::cout << "native_app: L=" << engine_opts.lattice_size
+              << " scenario=" << engine_opts.scenario
+              << (engine_opts.force_cpu ? " cpu" : " gpu-default")
+              << (capture_mode ? " [capture]" : "") << "\n" << std::flush;
+
+    // ── Engine session ────────────────────────────────────────────────────────
+    ftd::native::NativeEngineSession session(engine_opts);
+    std::cout << "backend=" << session.backend_name() << " status=" << session.status()
+              << "\n" << std::flush;
+
+    ftd::native::CommandQueue commands;
+    std::atomic<bool> running{true};
+    std::atomic<bool> paused{app_opts.start_paused};
+    std::atomic<bool> quit_flag{false};
+    std::atomic<int> tick_hz{capture_mode ? 240 : 60};
+
+    ftd::native::Camera camera;
+    ftd::native::NativeViewOptions view_opts;
+    apply_camera_for_lattice(camera, session.lattice_size());
+
+    // Prime the loop control + publish one snapshot before the sim thread starts.
+    {
+        session.set_loop_control({app_opts.start_paused, !app_opts.start_paused, 0});
+        ftd::native::CommandQueue stamp;
+        session.process_ui_boundary(stamp);
+    }
+    ftd::native::NativeFrame latest = session.capture();
+
+    // ── Window ─────────────────────────────────────────────────────────────────
+    WNDCLASSW wc{};
+    wc.lpfnWndProc = wnd_proc;
+    wc.hInstance = GetModuleHandleW(nullptr);
+    wc.lpszClassName = L"FtdNativeApp";
+    wc.hCursor = LoadCursorW(nullptr, IDC_ARROW);
+    wc.hbrBackground = reinterpret_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
+    RegisterClassW(&wc);
+
+    const DWORD style = WS_OVERLAPPEDWINDOW | WS_VISIBLE;
+    HWND hwnd = CreateWindowExW(0, wc.lpszClassName, L"FTD Native", style, CW_USEDEFAULT,
+                                CW_USEDEFAULT, 1600, 900, nullptr, nullptr, wc.hInstance, nullptr);
+    if (!hwnd) throw std::runtime_error("CreateWindowExW failed");
+
+    RECT client{};
+    GetClientRect(hwnd, &client);
+    std::uint32_t win_w = static_cast<std::uint32_t>(std::max<LONG>(1, client.right));
+    std::uint32_t win_h = static_cast<std::uint32_t>(std::max<LONG>(1, client.bottom));
+
+    // ── Presenter (owns the swapchain on this HWND) ─────────────────────────────
+    ftd::native::D3D12Presenter presenter;
+    presenter.initialize(hwnd, win_w, win_h);
+
+    // ── RmlUi renderer + context (declared AFTER presenter so it destructs
+    //    FIRST — its D3D12 resources must be released while the device lives) ──
+    RmlD3D12System rml_system;
+    RmlD3D12Renderer rml_renderer;
+    ftd::native::PresenterUiContext ui_ctx = presenter.ui_backend_context();
+    if (!ui_ctx.device || !ui_ctx.queue)
+        throw std::runtime_error("presenter did not expose a UI device/queue");
+    rml_renderer.initialize(ui_ctx.device, ui_ctx.queue, widen(FTD_RMLUI_HLSL_PATH).c_str());
+
+    Rml::SetSystemInterface(&rml_system);
+    Rml::SetRenderInterface(&rml_renderer);
+    if (!Rml::Initialise()) throw std::runtime_error("Rml::Initialise failed");
+
+    // The shell RCSS styles some elements "Inter" and some "JetBrains Mono".
+    // Load the vendored Inter face under both families (a JetBrains Mono face is
+    // not vendored yet — same shim the smoke test uses).
+    if (!Rml::LoadFontFace(FTD_RML_FONT_PATH))
+        throw std::runtime_error("LoadFontFace(Inter-Regular.ttf) failed");
+    {
+        static std::vector<Rml::byte> mono;
+        std::FILE* f = nullptr;
+        if (_wfopen_s(&f, widen(FTD_RML_FONT_PATH).c_str(), L"rb") == 0 && f) {
+            std::fseek(f, 0, SEEK_END);
+            long n = std::ftell(f);
+            std::fseek(f, 0, SEEK_SET);
+            if (n > 0) {
+                mono.resize(static_cast<size_t>(n));
+                mono.resize(std::fread(mono.data(), 1, mono.size(), f));
+            }
+            std::fclose(f);
+        }
+        if (!mono.empty())
+            Rml::LoadFontFace(Rml::Span<const Rml::byte>(mono.data(), mono.size()),
+                              "JetBrains Mono", Rml::Style::FontStyle::Normal,
+                              Rml::Style::FontWeight::Auto, false);
+    }
+
+    const UINT dpi0 = GetDpiForWindow(hwnd);
+    float dpi_scale = dpi0 > 0 ? static_cast<float>(dpi0) / 96.0f : 1.0f;
+    Rml::Context* context =
+        Rml::CreateContext("main", Rml::Vector2i(static_cast<int>(win_w), static_cast<int>(win_h)));
+    if (!context) throw std::runtime_error("Rml::CreateContext failed");
+    context->SetDensityIndependentPixelRatio(dpi_scale);
+
+    // ── Data model (must exist before LoadDocument so data-model binds) ─────────
+    ShellData data;
+    data.scenario = engine_opts.scenario;
+    data.toggles.reserve(std::size(kPanelToggles));
+    for (const char* n : kPanelToggles) data.toggles.push_back(ToggleRow{n, false});
+
+    AppContext app;
+    app.hwnd = hwnd;
+    app.context = nullptr;  // published after LoadDocument
+    app.presenter = &presenter;
+    app.camera = &camera;
+    app.commands = &commands;
+    app.data = &data;
+    app.paused = &paused;
+    app.quit = &quit_flag;
+    app.scenario_id = engine_opts.scenario;
+
+    Rml::DataModelConstructor ctor = context->CreateDataModel("shell");
+    if (!ctor) throw std::runtime_error("CreateDataModel(shell) failed");
+    if (auto row = ctor.RegisterStruct<ToggleRow>()) {
+        row.RegisterMember("name", &ToggleRow::name);
+        row.RegisterMember("on", &ToggleRow::on);
+    }
+    ctor.RegisterArray<Rml::Vector<ToggleRow>>();
+    ctor.Bind("tick", &data.tick);
+    ctor.Bind("particle_count", &data.particle_count);
+    ctor.Bind("physical_time", &data.physical_time);
+    ctor.Bind("total_energy", &data.total_energy);
+    ctor.Bind("scenario", &data.scenario);
+    ctor.Bind("backend", &data.backend);
+    ctor.Bind("lattice", &data.lattice);
+    ctor.Bind("fps", &data.fps);
+    ctor.Bind("running", &data.running);
+    ctor.Bind("toggles", &data.toggles);
+    ctor.BindEventCallback("run", [&app](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) {
+        request_play_toggle(&app);
+    });
+    ctor.BindEventCallback("pause", [&app](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) {
+        request_pause(&app);
+    });
+    ctor.BindEventCallback("step", [&app](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) {
+        request_step(&app);
+    });
+    ctor.BindEventCallback("reset", [&app](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) {
+        request_reset(&app);
+    });
+    ctor.BindEventCallback("toggle", [&app](Rml::DataModelHandle, Rml::Event&,
+                                            const Rml::VariantList& v) {
+        if (!v.empty()) request_toggle(&app, v[0].Get<Rml::String>());
+    });
+    Rml::DataModelHandle model = ctor.GetModelHandle();
+
+    Rml::ElementDocument* doc = context->LoadDocument(FTD_RML_SHELL_PATH);
+    if (!doc) throw std::runtime_error("LoadDocument(shell.rml) failed");
+    doc->Show();
+
+    // Publish the RmlUi context + overlay into the presenter's frame path.
+    app.context = context;
+    SetWindowLongPtrW(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&app));
+    RmlOverlay overlay(&rml_renderer, &context);
+    presenter.set_overlay_recorder(&overlay);
+
+    int camera_lattice = session.lattice_size();
+
+    // ── Sim thread ──────────────────────────────────────────────────────────────
+    std::mutex frame_mu;
+    std::thread sim([&] {
+        while (running.load()) {
+            const auto start = std::chrono::steady_clock::now();
+            try {
+                const auto loop = session.loop_control();
+                const bool need_work = loop.pending_steps > 0 || !loop.pause;
+                if (need_work) {
+                    const auto r = session.tick_once();
+                    if (loop.pending_steps > 0) session.consume_pending_step();
+                    if (!r.ok) throw std::runtime_error(r.message);
+                }
+                session.process_ui_boundary(commands);
+                paused.store(session.loop_control().pause);
+                if (need_work || session.applied_reload() || session.applied_host_write()) {
+                    ftd::native::NativeFrame next = session.capture();
+                    std::lock_guard<std::mutex> lock(frame_mu);
+                    latest = std::move(next);
+                }
+            } catch (const std::exception& ex) {
+                std::lock_guard<std::mutex> lock(frame_mu);
+                latest.status = ex.what();
+            }
+            const int hz = std::max(1, tick_hz.load());
+            const auto budget = std::chrono::milliseconds(1000 / hz);
+            const auto elapsed = std::chrono::steady_clock::now() - start;
+            if (elapsed < budget) std::this_thread::sleep_for(budget - elapsed);
+        }
+    });
+
+    // ── GUI loop ──────────────────────────────────────────────────────────────
+    LARGE_INTEGER qpc_freq{}, qpc_last{};
+    QueryPerformanceFrequency(&qpc_freq);
+    QueryPerformanceCounter(&qpc_last);
+    double fps_accum = 0.0;
+    int fps_frames = 0;
+    int smoothed_fps = 0;
+
+    ftd::native::CaptureToken capture_token{};
+    bool capture_requested = false;
+    bool capture_saved = false;
+    int frame_no = 0;
+    const std::string png_out = FTD_APP_PNG_OUT;
+
+    const auto loop_start = std::chrono::steady_clock::now();
+    bool quit = false;
+    MSG msg{};
+    while (!quit) {
+        if (capture_mode) {
+            if (frame_no % 30 == 0)
+                std::cerr << "[frame " << frame_no << "] tick=" << data.tick
+                          << " particles=" << data.particle_count << "\n" << std::flush;
+            if (std::chrono::steady_clock::now() - loop_start > std::chrono::seconds(40)) {
+                std::cerr << "capture: deadline exceeded at frame " << frame_no << "\n" << std::flush;
+                break;
+            }
+        }
+        while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE)) {
+            if (msg.message == WM_QUIT) quit = true;
+            if (msg.message == WM_KEYDOWN) {
+                if (msg.wParam == VK_ESCAPE) quit = true;
+                else if (msg.wParam == VK_SPACE) request_play_toggle(&app);
+                else if (msg.wParam == 'R') request_reset(&app);
+                else if (msg.wParam == 'S') request_step(&app);
+            }
+            TranslateMessage(&msg);
+            DispatchMessageW(&msg);
+        }
+        if (quit || quit_flag.load()) break;
+
+        // Frame-polled resize (keeps swapchain resizes off the wnd_proc reentrancy
+        // path). GetClientRect is physical pixels on a per-monitor-V2 window.
+        GetClientRect(hwnd, &client);
+        const std::uint32_t cw = static_cast<std::uint32_t>(std::max<LONG>(1, client.right));
+        const std::uint32_t ch = static_cast<std::uint32_t>(std::max<LONG>(1, client.bottom));
+        if (cw != presenter.width() || ch != presenter.height()) {
+            presenter.wait_idle();
+            presenter.resize(cw, ch);
+            context->SetDimensions(Rml::Vector2i(static_cast<int>(cw), static_cast<int>(ch)));
+        }
+        const UINT dpi = GetDpiForWindow(hwnd);
+        const float scale = dpi > 0 ? static_cast<float>(dpi) / 96.0f : 1.0f;
+        if (scale != dpi_scale) {
+            dpi_scale = scale;
+            context->SetDensityIndependentPixelRatio(dpi_scale);
+        }
+
+        // Acquire published state.
+        ftd::native::NativeFrame frame;
+        {
+            std::lock_guard<std::mutex> lock(frame_mu);
+            frame = latest;
+        }
+        std::shared_ptr<const ftd::native::UiSnapshot> snap = session.snapshot_publisher().acquire();
+
+        if (frame.lattice_size > 0 && frame.lattice_size != camera_lattice) {
+            apply_camera_for_lattice(camera, frame.lattice_size);
+            camera_lattice = frame.lattice_size;
+        }
+
+        // fps (smoothed over ~0.4 s).
+        LARGE_INTEGER qpc_now{};
+        QueryPerformanceCounter(&qpc_now);
+        double dt = qpc_freq.QuadPart
+                        ? double(qpc_now.QuadPart - qpc_last.QuadPart) / double(qpc_freq.QuadPart)
+                        : 1.0 / 60.0;
+        qpc_last = qpc_now;
+        if (dt <= 0.0 || dt > 0.5) dt = 1.0 / 60.0;
+        fps_accum += dt;
+        ++fps_frames;
+        if (fps_accum >= 0.4) {
+            smoothed_fps = static_cast<int>(fps_frames / fps_accum + 0.5);
+            fps_accum = 0.0;
+            fps_frames = 0;
+        }
+
+        // ── Push snapshot → data model (dirty only what changed) ──
+        auto set_int = [&](const char* name, int& dst, int val) {
+            if (dst != val) { dst = val; model.DirtyVariable(name); }
+        };
+        auto set_bool = [&](const char* name, bool& dst, bool val) {
+            if (dst != val) { dst = val; model.DirtyVariable(name); }
+        };
+        auto set_str = [&](const char* name, Rml::String& dst, const std::string& val) {
+            if (dst != val) { dst = val; model.DirtyVariable(name); }
+        };
+
+        set_int("tick", data.tick, frame.tick);
+        set_int("particle_count", data.particle_count,
+                static_cast<int>(frame.total_manifested));
+        set_bool("running", data.running, !paused.load());
+        set_int("fps", data.fps, smoothed_fps);
+        set_str("scenario", data.scenario, frame.scenario.empty() ? app.scenario_id
+                                                                   : frame.scenario);
+        set_str("backend", data.backend, upper(frame.backend.empty() ? session.backend_name()
+                                                                      : frame.backend));
+        set_str("lattice", data.lattice, std::to_string(frame.lattice_size));
+        set_str("physical_time", data.physical_time,
+                fmt("%.2e s", static_cast<double>(frame.tick) * kTPhysSeconds));
+        if (snap) {
+            set_str("total_energy", data.total_energy, fmt("%.1f", snap->energy_ledger.E_curr));
+            bool toggles_changed = false;
+            for (ToggleRow& r : data.toggles) {
+                const bool on = toggle_on(snap->term_toggles, r.name.c_str());
+                if (r.on != on) { r.on = on; toggles_changed = true; }
+            }
+            if (toggles_changed) model.DirtyVariable("toggles");
+        }
+
+        // Lay out, then map the #viewport hole rect for the scene + input.
+        context->Update();
+        if (Rml::Element* vp = doc->GetElementById("viewport")) {
+            const Rml::Vector2f off = vp->GetAbsoluteOffset(Rml::BoxArea::Border);
+            const int w = static_cast<int>(vp->GetOffsetWidth());
+            const int h = static_cast<int>(vp->GetOffsetHeight());
+            if (w > 0 && h > 0) {
+                app.viewport_rect = {static_cast<int>(off.x), static_cast<int>(off.y),
+                                     static_cast<std::uint32_t>(w),
+                                     static_cast<std::uint32_t>(h)};
+                presenter.set_scene_rect(app.viewport_rect);
+            }
+        }
+
+        // ── Capture mode: after warmup, request + poll a composited readback ──
+        if (capture_mode && !capture_saved) {
+            if (!capture_requested && frame_no >= app_opts.capture_frames) {
+                capture_token = presenter.request_capture(ftd::native::CaptureRegion::FullWindow);
+                capture_requested = true;
+            }
+            if (capture_requested) {
+                ftd::native::CaptureResult res = presenter.poll_capture(capture_token);
+                if (res.status == ftd::native::CaptureStatus::Ready) {
+                    const bool ok = save_png(widen(png_out), res.bytes.data(), res.width,
+                                             res.height, res.row_pitch);
+                    std::cout << "capture: " << (ok ? "wrote " : "FAILED ") << png_out
+                              << " (" << res.width << "x" << res.height
+                              << ", tick=" << data.tick << ", particles=" << data.particle_count
+                              << ", energy=" << data.total_energy.c_str() << ")\n";
+                    // The readback already completed (poll returned Ready) and the
+                    // PNG is committed to disk, so no GPU work references anything
+                    // now. Hard-terminate: see wWinMain for why the normal
+                    // process-exit path (ExitProcess / CRT static dtors) deadlocks
+                    // on the loader lock here; TerminateProcess sidesteps it and a
+                    // headless capture whose job is done owes nothing further.
+                    std::cout.flush();
+                    std::cerr.flush();
+                    running.store(false);
+                    TerminateProcess(GetCurrentProcess(), ok ? 0u : 2u);
+                } else if (res.status == ftd::native::CaptureStatus::Failed) {
+                    std::cerr << "capture: failed: " << res.error << "\n" << std::flush;
+                    capture_saved = true;
+                    quit = true;
+                }
+            }
+        }
+
+        try {
+            presenter.render(frame, camera, view_opts, /*interop_particle_count=*/0);
+        } catch (const std::exception& ex) {
+            std::cerr << "render threw at frame " << frame_no << ": " << ex.what() << "\n"
+                      << std::flush;
+            running.store(false);
+            sim.join();
+            throw;
+        }
+        ++frame_no;
+
+        // Interactive: yield a little so the sim thread gets CPU; capture mode
+        // spins to reach the readback fast.
+        if (!capture_mode) std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+
+    // ── Teardown ────────────────────────────────────────────────────────────────
+    running.store(false);
+    sim.join();
+    presenter.set_overlay_recorder(nullptr);
+    app.context = nullptr;
+    context = nullptr;  // stop the overlay from re-entering RmlUi during shutdown
+    presenter.wait_idle();
+    Rml::Shutdown();  // renderer (declared after presenter) still alive here
+
+    return (capture_mode && !capture_saved) ? 2 : 0;
+}
+
+}  // namespace
+
+int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
+    attach_parent_console_if_any();
+    HRESULT co = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+    int rc = 1;
+    try {
+        rc = run_app(utf8_args());
+    } catch (const std::exception& ex) {
+        std::cerr << "native_app: " << ex.what() << "\n";
+        MessageBoxA(nullptr, ex.what(), "FTD Native App", MB_ICONERROR);
+        rc = 1;
+    }
+    if (SUCCEEDED(co)) CoUninitialize();
+    // All meaningful teardown has run above (GPU idle, RmlUi shut down, the
+    // D3D12 device + swapchain released as run_app's locals unwound). The
+    // remaining CRT static-destructor / DLL_PROCESS_DETACH phase deadlocks on the
+    // loader lock: the MSVC OpenMP worker pool (the engine ran omp parallel
+    // regions on the sim thread) plus driver teardown threads leave a thread
+    // parked in a state that ExitProcess/CRT-exit blocks on. TerminateProcess
+    // does not take the loader lock or run DllMain, so it exits cleanly and
+    // promptly now that our own cleanup is complete.
+    std::cout.flush();
+    std::cerr.flush();
+    TerminateProcess(GetCurrentProcess(), static_cast<UINT>(rc));
+    return rc;  // not reached
+}

@@ -15,7 +15,14 @@ body {
     font-family: Inter;
     font-size: 14dp;
     color: #dfe6f0;
-    background-color: #0d1420;
+    /* Transparent, NOT #0d1420: the live D3D12 lattice/particle/flux scene is
+       drawn by the presenter UNDERNEATH this RmlUi pass, and shows through the
+       transparent #viewport hole. An opaque body background would paint over
+       the whole window and occlude the scene. Panels/toolbar/status carry their
+       own opaque backgrounds, so only the hole reveals the scene. (The headless
+       smoke test clears its RT to #0d1420, so the hole region reads the same
+       colour there as before — its pixel-coverage assertions are unaffected.) */
+    background-color: transparent;
     display: flex;
     flex-direction: column;
 }

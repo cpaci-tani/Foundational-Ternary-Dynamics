@@ -212,4 +212,33 @@ if(WIN32)
     if(MSVC)
         target_compile_definitions(native_test_ui_rml_smoke PRIVATE _CRT_SECURE_NO_WARNINGS)
     endif()
+
+    # ── native_app: the live windowed application ───────────────────────────────
+    # A real Win32 window rendering the RmlUi shell (shell.rml + ftd.rcss) OVER
+    # the live D3D12 lattice/particle/flux scene, driven by NativeEngineSession on
+    # a sim thread (M-UI-1..M-UI-3 fused; native/docs/SPEC_NATIVE_UI_RMLUI.md §3).
+    # Compiles the presenter TU directly (as the device tests + native_desktop do
+    # — there is no standalone presenter library). Links the RmlUi renderer
+    # (native_ui_rml → native_rmlui → native_freetype), the session/transport
+    # spine, the CLI, and DPI awareness. windowscodecs = WIC (the --capture-frames
+    # PNG writer); shell32 = CommandLineToArgvW.
+    add_executable(native_app WIN32 src/app/main.cpp src/d3d12_presenter.cpp)
+    target_include_directories(native_app PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/src)
+    target_link_libraries(native_app PRIVATE
+        native_session
+        native_windowing
+        native_cli
+        native_ui_rml
+        native_rmlui
+        d3d12 dxgi d3dcompiler windowscodecs shell32)
+    target_compile_definitions(native_app PRIVATE
+        FTD_RML_SHELL_PATH="${CMAKE_CURRENT_SOURCE_DIR}/ui/rml/shell.rml"
+        FTD_RML_FONT_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/Inter-Regular.ttf"
+        FTD_RMLUI_HLSL_PATH="${CMAKE_CURRENT_SOURCE_DIR}/shaders/rmlui.hlsl"
+        FTD_APP_PNG_OUT="C:/Users/cpaci/AppData/Local/Temp/claude/C--Users-cpaci-Desktop-ftd-engine/3ccfaca6-eaf5-4dbc-bd71-f3eded0ce5c6/scratchpad/live_app.png")
+    if(MSVC)
+        target_compile_definitions(native_app PRIVATE _CRT_SECURE_NO_WARNINGS)
+    endif()
 endif()
