@@ -68,6 +68,7 @@
 #include "native/model/commands.h"
 #include "native/model/snapshot.h"
 #include "native/native_frame.h"
+#include "native/scale0_overlays.h"
 #include "native/scene_rect.h"
 
 #include "ftd/term_toggles.h"
@@ -128,42 +129,26 @@ constexpr const char* kPanelToggles[] = {
 // bar; nothing physical depends on it.
 constexpr double kTPhysSeconds = 3.11e-44;
 
-// ── The FIELDS overlay menu (Scale-0 only). One row per selectable field, plus
-//    the "None" state. `name` is the stable id used by the panel AND the
-//    --field CLI flag; `label` is the human label; `enabled` false means None
-//    (no overlay). `kind` selects which VisualFieldKind capture() samples — its
-//    3-vs-1 component count decides vector-arrows vs scalar-points at render.
-struct FieldEntry {
-    const char* name;
-    const char* label;
-    bool enabled;
-    ftd::VisualFieldKind kind;
-};
-constexpr FieldEntry kFieldMenu[] = {
-    {"none",           "None",           false, ftd::VisualFieldKind::FluxVector},
-    {"flux",           "Flux J (vec)",   true,  ftd::VisualFieldKind::FluxVector},
-    {"electric",       "Electric (vec)", true,  ftd::VisualFieldKind::Electric},
-    {"magnetic",       "Magnetic (vec)", true,  ftd::VisualFieldKind::Magnetic},
-    {"poynting",       "Poynting (vec)", true,  ftd::VisualFieldKind::Poynting},
-    {"curl",           "Curl J (vec)",   true,  ftd::VisualFieldKind::Curl},
-    {"em",             "EM force (vec)", true,  ftd::VisualFieldKind::EmForce},
-    {"gravity",        "Gravity (vec)",  true,  ftd::VisualFieldKind::GravityForce},
-    {"strong",         "Strong (vec)",   true,  ftd::VisualFieldKind::StrongForce},
-    {"divergence",     "Divergence",     true,  ftd::VisualFieldKind::Divergence},
-    {"vorticity",      "Vorticity",      true,  ftd::VisualFieldKind::Vorticity},
-    {"helicity",       "Helicity",       true,  ftd::VisualFieldKind::Helicity},
-    {"coherence",      "Coherence",      true,  ftd::VisualFieldKind::Coherence},
-    {"fisher",         "Fisher",         true,  ftd::VisualFieldKind::Fisher},
-    {"latency",        "Latency |J|2",   true,  ftd::VisualFieldKind::Latency},
-    {"kretschmann",    "Kretschmann",    true,  ftd::VisualFieldKind::Kretschmann},
-    {"state",          "State",          true,  ftd::VisualFieldKind::State},
-    {"gauss",          "Gauss resid.",   true,  ftd::VisualFieldKind::GaussResidual},
-    {"poissonLatency", "Poisson L",      true,  ftd::VisualFieldKind::PoissonLatency},
-};
-const FieldEntry* find_field_entry(const std::string& name) {
-    for (const FieldEntry& e : kFieldMenu)
-        if (name == e.name) return &e;
-    return nullptr;
+// ── The FIELDS overlay panel (Scale-0 only) mirrors the web's 7-column,
+//    multi-select overlay menu. Every selectable overlay is a row in the shared
+//    registry (native/scale0_overlays.h): the panel groups those rows by column
+//    and the --overlays CLI resolves them by their stable `name`. Adding an
+//    overlay in a later tranche is a single registry row — no wiring here moves.
+
+// Split a comma-separated "--overlays a,b,c" value into trimmed tokens.
+std::vector<std::string> split_csv(const std::string& s) {
+    std::vector<std::string> out;
+    std::string cur;
+    for (char c : s) {
+        if (c == ',') {
+            if (!cur.empty()) out.push_back(cur);
+            cur.clear();
+        } else if (c != ' ') {
+            cur.push_back(c);
+        }
+    }
+    if (!cur.empty()) out.push_back(cur);
+    return out;
 }
 
 // ── RmlUi data-model mirror of UiSnapshot (the bound C++ side of the shell) ──
@@ -172,10 +157,19 @@ struct ToggleRow {
     bool on = false;
 };
 
-// One FIELDS-menu row bound into the shell (Scale-0 panel).
-struct FieldOptionRow {
-    Rml::String name;
-    Rml::String label;
+// One overlay toggle row bound into the shell (Scale-0 panel). `on` lights the
+// LED when the overlay is in the active set (multi-select).
+struct OverlayRow {
+    Rml::String name;   // stable overlay id (registry name)
+    Rml::String label;  // human label
+    bool on = false;
+};
+// One overlay-menu column (Volume / Fields / Forces / …). `expanded` gates the
+// collapsible list; `items` are the overlays grouped into this column.
+struct OverlayColumnRow {
+    Rml::String title;
+    bool expanded = true;
+    Rml::Vector<OverlayRow> items;
 };
 
 // One key/value line in the click-to-inspect readout (bound into the shell).
@@ -198,10 +192,10 @@ struct ShellData {
     int fps = 0;
     bool running = false;
     Rml::Vector<ToggleRow> toggles;
-    // FIELDS overlay selector (Scale-0 panel). `active_field` is the selected
-    // row's stable id ("none" by default); `fields` is the static menu.
-    Rml::String active_field = "none";
-    Rml::Vector<FieldOptionRow> fields;
+    // FIELDS overlay panel (Scale-0). The 7-column, multi-select overlay menu
+    // (mirrors the web). Built from the shared registry, grouped by column;
+    // empty columns are omitted. Each row's `on` reflects the active set.
+    Rml::Vector<OverlayColumnRow> overlay_columns;
     // Click-to-inspect readout. `insp_active` gates the panel section (data-if);
     // `insp_title` names the picked entity; `insp_lines` are its live fields.
     bool insp_active = false;
@@ -212,6 +206,37 @@ struct ShellData {
 bool toggle_on(const ftd::TermToggles& tt, const char* name) {
     const ftd::ToggleSpec* spec = ftd::term_toggles_detail::find_spec(name);
     return spec ? (tt.*(spec->field)) : false;
+}
+
+// Build the Scale-0 overlay panel model: walk the 7 columns in menu order and
+// collect each column's registry rows. Columns with no rows (the tranches that
+// have not landed their overlays yet, e.g. Quantum / Stress-Energy) are omitted
+// entirely, so the panel grows a column automatically when a registry row for
+// it appears.
+Rml::Vector<OverlayColumnRow> build_overlay_columns() {
+    Rml::Vector<OverlayColumnRow> cols;
+    for (std::uint32_t c = 0; c < static_cast<std::uint32_t>(ftd::native::OverlayColumn::Count);
+         ++c) {
+        const auto column = static_cast<ftd::native::OverlayColumn>(c);
+        OverlayColumnRow row;
+        row.title = ftd::native::overlay_column_title(column);
+        row.expanded = true;
+        for (const ftd::native::OverlayDescriptor& d : ftd::native::kOverlayRegistry) {
+            if (d.column != column) continue;
+            row.items.push_back(OverlayRow{d.name, d.label, false});
+        }
+        if (!row.items.empty()) cols.push_back(std::move(row));
+    }
+    return cols;
+}
+
+// Find an overlay row (by stable name) across all columns; nullptr on miss.
+OverlayRow* find_overlay_row(ShellData* data, const Rml::String& name) {
+    if (!data) return nullptr;
+    for (OverlayColumnRow& col : data->overlay_columns)
+        for (OverlayRow& r : col.items)
+            if (r.name == name) return &r;
+    return nullptr;
 }
 
 // ── Everything the Win32 wnd_proc + RmlUi event callbacks need to reach. Set
@@ -672,8 +697,10 @@ struct AppOptions {
     int capture_frames = -1;   // -1 = interactive; >=0 = capture then exit
     bool start_paused = false; // default: live on launch
     int scale = 0;             // initial ScaleHost scale level (0 lattice, 1 particles)
-    std::string field;         // initial FIELDS overlay id (empty = None; Scale-0 only)
+    std::string field;         // legacy single overlay id (alias for --overlays; Scale-0)
+    std::string overlays;      // comma-separated overlay ids to activate (Scale-0)
     std::string png_out;       // capture PNG path override (empty = compiled default)
+    bool prime_tick = true;    // run ONE tick at load so paused overlays have data
     // Simulated click-to-inspect for headless captures (interactive picking
     // can't run under --capture-frames). --inspect-voxel i,j,k selects a Scale-0
     // voxel; --inspect-particle N selects a Scale-1 particle. Fed into the same
@@ -697,6 +724,12 @@ AppOptions parse_app_options(const std::vector<std::string>& args) {
             o.scale = std::max(0, std::atoi(args[++i].c_str()));
         } else if (args[i] == "--field" && i + 1 < args.size()) {
             o.field = args[++i];
+        } else if (args[i] == "--overlays" && i + 1 < args.size()) {
+            o.overlays = args[++i];
+        } else if (args[i] == "--no-prime-tick") {
+            o.prime_tick = false;
+        } else if (args[i] == "--prime-tick") {
+            o.prime_tick = true;
         } else if (args[i] == "--png-out" && i + 1 < args.size()) {
             o.png_out = args[++i];
         } else if (args[i] == "--inspect-voxel" && i + 1 < args.size()) {
@@ -754,22 +787,49 @@ int run_app(const std::vector<std::string>& args) {
     ftd::native::NativeViewOptions view_opts;
     apply_camera_for_lattice(camera, host.lattice_size());
 
+    // Resolve the initial active-overlay set (Scale-0 only) from --overlays
+    // (comma-separated) and the legacy --field alias. Unknown names warn + skip.
+    // The resolved names drive BOTH the first-boundary stamp (so frame 0 already
+    // composites them) AND the panel's initial lit LEDs.
+    std::vector<std::string> initial_overlays;
+    if (app_opts.scale == 0) {
+        auto add_overlay = [&](const std::string& name) {
+            if (const auto* d = ftd::native::overlay_by_name(name)) {
+                if (std::find(initial_overlays.begin(), initial_overlays.end(), name)
+                    == initial_overlays.end())
+                    initial_overlays.push_back(d->name);
+            } else {
+                std::cerr << "native_app: unknown overlay '" << name << "' (ignored)\n"
+                          << std::flush;
+            }
+        };
+        for (const std::string& n : split_csv(app_opts.overlays)) add_overlay(n);
+        if (!app_opts.field.empty()) add_overlay(app_opts.field);
+    }
+
     // Prime the loop control + publish one snapshot before the sim thread starts.
-    // A --field request (Scale-0 only) is stamped into this first boundary so the
-    // very first captured frame already renders the chosen overlay.
+    // The initial overlays (Scale-0) are stamped into this first boundary so the
+    // very first captured frame already composites them.
     {
         host.set_loop_control({app_opts.start_paused, !app_opts.start_paused, 0});
         ftd::native::CommandBus stamp;
-        if (app_opts.scale == 0 && !app_opts.field.empty()) {
-            if (const FieldEntry* e = find_field_entry(app_opts.field)) {
-                stamp.push(ftd::native::scale0_command(
-                    ftd::native::SetFieldOverlay{e->enabled, e->kind}));
-            } else {
-                std::cerr << "native_app: unknown --field '" << app_opts.field
-                          << "' (ignored)\n" << std::flush;
+        for (const std::string& name : initial_overlays) {
+            if (const auto* d = ftd::native::overlay_by_name(name)) {
+                stamp.push(ftd::native::scale0_command(ftd::native::SetOverlay{
+                    static_cast<std::uint32_t>(d->id), true}));
             }
         }
         host.process_ui_boundary(stamp);
+    }
+    // Prime-tick-on-load (default ON): run exactly ONE tick before the sim thread
+    // starts so overlays have field data to render even while the app is paused
+    // (mirrors the web `primeTickOnLoad`). tick_once() advances one tick
+    // regardless of the pause state set above; the sim thread then honors pause.
+    if (app_opts.prime_tick) {
+        const auto primed = host.tick_once();
+        if (!primed.ok)
+            std::cerr << "native_app: prime tick failed: " << primed.message << "\n"
+                      << std::flush;
     }
     ftd::native::NativeFrame latest = host.capture();
 
@@ -846,13 +906,12 @@ int run_app(const std::vector<std::string>& args) {
     data.active_scale = initial_scale;
     data.toggles.reserve(std::size(kPanelToggles));
     for (const char* n : kPanelToggles) data.toggles.push_back(ToggleRow{n, false});
-    // FIELDS overlay menu + initial selection (mirrors the --field stamp above so
-    // the panel highlight matches the geometry from frame 0).
-    data.fields.reserve(std::size(kFieldMenu));
-    for (const FieldEntry& e : kFieldMenu)
-        data.fields.push_back(FieldOptionRow{e.name, e.label});
-    if (!app_opts.field.empty() && find_field_entry(app_opts.field))
-        data.active_field = app_opts.field.c_str();
+    // FIELDS overlay panel (7 columns, multi-select) + initial lit LEDs (mirrors
+    // the overlay stamp above so the panel matches the geometry from frame 0).
+    data.overlay_columns = build_overlay_columns();
+    for (const std::string& name : initial_overlays)
+        if (OverlayRow* r = find_overlay_row(&data, Rml::String(name.c_str())))
+            r->on = true;
 
     // ── Telemetry ring buffer + the <ftd-chart> instancer ──────────────────────
     // The app owns the series (GUI thread), pushing one total-energy scalar per
@@ -904,11 +963,18 @@ int run_app(const std::vector<std::string>& args) {
         row.RegisterMember("on", &ToggleRow::on);
     }
     ctor.RegisterArray<Rml::Vector<ToggleRow>>();
-    if (auto frow = ctor.RegisterStruct<FieldOptionRow>()) {
-        frow.RegisterMember("name", &FieldOptionRow::name);
-        frow.RegisterMember("label", &FieldOptionRow::label);
+    if (auto orow = ctor.RegisterStruct<OverlayRow>()) {
+        orow.RegisterMember("name", &OverlayRow::name);
+        orow.RegisterMember("label", &OverlayRow::label);
+        orow.RegisterMember("on", &OverlayRow::on);
     }
-    ctor.RegisterArray<Rml::Vector<FieldOptionRow>>();
+    ctor.RegisterArray<Rml::Vector<OverlayRow>>();
+    if (auto ocol = ctor.RegisterStruct<OverlayColumnRow>()) {
+        ocol.RegisterMember("title", &OverlayColumnRow::title);
+        ocol.RegisterMember("expanded", &OverlayColumnRow::expanded);
+        ocol.RegisterMember("items", &OverlayColumnRow::items);
+    }
+    ctor.RegisterArray<Rml::Vector<OverlayColumnRow>>();
     if (auto irow = ctor.RegisterStruct<InspLine>()) {
         irow.RegisterMember("k", &InspLine::k);
         irow.RegisterMember("v", &InspLine::v);
@@ -927,8 +993,7 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("fps", &data.fps);
     ctor.Bind("running", &data.running);
     ctor.Bind("toggles", &data.toggles);
-    ctor.Bind("active_field", &data.active_field);
-    ctor.Bind("fields", &data.fields);
+    ctor.Bind("overlay_columns", &data.overlay_columns);
     ctor.Bind("insp_active", &data.insp_active);
     ctor.Bind("insp_title", &data.insp_title);
     ctor.Bind("insp_lines", &data.insp_lines);
@@ -956,20 +1021,33 @@ int run_app(const std::vector<std::string>& args) {
                                                      const Rml::VariantList&) {
         request_switch_scale(&app, 1);
     });
-    // FIELDS selector: push the SetFieldOverlay Scale-0 command and move the
-    // panel highlight. The model handle passed to the callback dirties the bound
-    // active_field (no snapshot round-trip carries this back).
-    ctor.BindEventCallback("set_field", [&app](Rml::DataModelHandle h, Rml::Event&,
-                                               const Rml::VariantList& v) {
+    // Overlay toggle: flip one overlay's membership in the active set. Pushes a
+    // SetOverlay Scale-0 command (multi-select — the adapter composites all
+    // active overlays) and lights/clears the row's LED. The bound `on` state is
+    // owned here (no snapshot round-trip carries it back), so dirty the array.
+    ctor.BindEventCallback("set_overlay", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                 const Rml::VariantList& v) {
         if (v.empty() || !app.data) return;
         const Rml::String name = v[0].Get<Rml::String>();
-        const FieldEntry* e = find_field_entry(name.c_str());
-        if (!e) return;
-        push_scale0(&app, ftd::native::SetFieldOverlay{e->enabled, e->kind});
-        if (app.data->active_field != name) {
-            app.data->active_field = name;
-            h.DirtyVariable("active_field");
+        const ftd::native::OverlayDescriptor* d =
+            ftd::native::overlay_by_name(name.c_str());
+        OverlayRow* row = find_overlay_row(app.data, name);
+        if (!d || !row) return;
+        row->on = !row->on;
+        push_scale0(&app, ftd::native::SetOverlay{static_cast<std::uint32_t>(d->id),
+                                                  row->on});
+        h.DirtyVariable("overlay_columns");
+    });
+    // Collapse/expand one overlay column (its header is the affordance). Pure
+    // view-state; flips `expanded` and re-lays the column list via data-if.
+    ctor.BindEventCallback("toggle_overlay_col", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                        const Rml::VariantList& v) {
+        if (v.empty() || !app.data) return;
+        const Rml::String title = v[0].Get<Rml::String>();
+        for (OverlayColumnRow& col : app.data->overlay_columns) {
+            if (col.title == title) { col.expanded = !col.expanded; break; }
         }
+        h.DirtyVariable("overlay_columns");
     });
     // Inspector close affordance (the × in the readout header): drop the current
     // selection so the GUI loop stops re-issuing the inspect command and hides

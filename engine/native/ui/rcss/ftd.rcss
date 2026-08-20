@@ -139,25 +139,54 @@ body {
 .tog.on { color: #e0e7f1; border-color: #2f6db0; background-color: #16233a; }
 .tog.on .led { background-color: #6aa8e0; border-color: #6aa8e0; }
 
-/* ── field overlay selector ───────────────────────────────────────────── */
+/* ── field overlay panel (7 columns, multi-select) ────────────────────── */
 .fields-title { margin-top: 14dp; }
-.fields { display: flex; flex-direction: column; }
-.fopt {
+.overlay-cols { display: flex; flex-direction: column; }
+.ov-col { display: flex; flex-direction: column; margin-bottom: 8dp; }
+/* Collapsible column header (click to expand/collapse the group). */
+.ov-col-head {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 3dp 4dp;
+    margin-bottom: 4dp;
+    cursor: pointer;
+}
+.ov-col-head:hover .ov-col-title { color: #dfe6f0; }
+.ov-caret { color: #67788f; font-size: 9dp; margin-right: 6dp; }
+.ov-col-title {
+    font-family: JetBrains Mono;
+    font-size: 10dp;
+    color: #67788f;
+    text-transform: uppercase;
+    letter-spacing: 1dp;
+}
+.ov-list { display: flex; flex-direction: column; }
+/* One overlay toggle: LED + label, lit when the overlay is in the active set
+   (same affordance as the physics-term toggles). */
+.ov {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     padding: 4dp 8dp;
     margin-bottom: 3dp;
     border: 1dp #223047;
-    border-radius: 4dp;
+    border-radius: 12dp;
     color: #9fb0c6;
     font-family: JetBrains Mono;
     font-size: 11dp;
     cursor: pointer;
 }
-.fopt:hover { border-color: #3a7ec4; color: #dfe6f0; }
-.fopt.sel {
-    color: #ffffff;
-    border-color: #2f6db0;
-    background-color: #16233a;
+.ov:hover { border-color: #3a7ec4; color: #dfe6f0; }
+.ov .led {
+    width: 8dp; height: 8dp;
+    border-radius: 4dp;
+    background-color: #1a2739;
+    border: 1dp #3a4c66;
+    margin-right: 8dp;
 }
+.ov.on { color: #e0e7f1; border-color: #2f6db0; background-color: #16233a; }
+.ov.on .led { background-color: #6aa8e0; border-color: #6aa8e0; }
 
 /* ── scale-aware right panel ───────────────────────────────────────────── */
 /* Each per-scale block stacks its title + content; only one is present at a

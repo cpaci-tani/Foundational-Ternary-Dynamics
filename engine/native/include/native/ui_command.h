@@ -79,16 +79,16 @@ struct RequestField {
     ftd::VisualFieldKind kind = ftd::VisualFieldKind::FluxVector;
     int stride = 1;
 };
-// Selects the active field OVERLAY rendered in the 3D scene (distinct from
-// RequestField, which samples a field into the snapshot for panels). `enabled`
-// false is the "None" state (no overlay; the ambient flux cloud stays). The
-// Scale-0 adapter stores this and, at capture(), turns the chosen field into
-// scene geometry: 3-vector fields -> magnitude-coloured line segments, scalar
-// fields -> magnitude-coloured points. Adapter view-state only; it never
+// Toggles ONE overlay (by its stable OverlayId, see scale0_overlays.h) in the
+// Scale-0 adapter's active-overlay SET. `on` adds it, false removes it. The
+// adapter composites every active overlay into the scene each capture(); when
+// the set is empty the ambient flux cloud shows. This replaces the old
+// single-select SetFieldOverlay — the native side now mirrors the web, which
+// composites all active overlays at once. Adapter view-state only; it never
 // touches the RenderBridge, so apply() handles it without a bridge mutation.
-struct SetFieldOverlay {
-    bool enabled = false;
-    ftd::VisualFieldKind kind = ftd::VisualFieldKind::FluxVector;
+struct SetOverlay {
+    std::uint32_t overlay_id = 0;  // OverlayId
+    bool on = false;
 };
 struct RequestContinuity {};
 struct RequestChargeSum {};
@@ -129,7 +129,7 @@ using UiCommand = std::variant<
     SetToggle, SetToggleProfile, SetDouble, SetEnum, SetUInt, SetBoolConfig,
     SetBoundary, SetDt, SetSorIterations, LoadScenario, SetLatticeSize,
     ApplyReboot, ResetToDefaults, InspectVoxel, InspectForce, RequestField,
-    SetFieldOverlay, RequestContinuity, RequestChargeSum, SetTelemetryDemand,
+    SetOverlay, RequestContinuity, RequestChargeSum, SetTelemetryDemand,
     Pause, Step, Run, InjectWavepacket, InjectFluxAdd, CreateEntangledPair,
     ClearField, SeedRandomFlux>;
 

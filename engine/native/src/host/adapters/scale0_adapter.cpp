@@ -8,7 +8,9 @@
 
 #include "native/host/adapters/scale0_adapter.h"
 #include "native/host/adapters/scale1_adapter.h"
+#include "native/scale0_overlays.h"
 
+#include "ftd/constants.h"       // DELTA_SQUARED (DUAL_DELTA), canonical chain
 #include "ftd/render_bridge.h"
 #include "ftd/scenario_meta.h"
 #include "ftd/scenarios.h"
@@ -94,7 +96,9 @@ void append_flux(RenderBridge& rb, NativeFrame& frame) {
     }
 }
 
-// Cool→hot magnitude ramp (blue → green → red) for the field overlays.
+// ── Colour ramps (one per OverlayRamp) ────────────────────────────────────
+
+// Cool→hot magnitude ramp (blue → green → red) for force arrows.
 void ramp_cool_hot(float t, float& r, float& g, float& b) {
     t = std::clamp(t, 0.0f, 1.0f);
     r = std::clamp(1.5f * t - 0.2f, 0.0f, 1.0f);
@@ -102,9 +106,8 @@ void ramp_cool_hot(float t, float& r, float& g, float& b) {
     b = std::clamp(1.2f - 1.8f * t, 0.0f, 1.0f);
 }
 
-// Sign-aware diverging ramp for scalar fields: v<0 → cool (blue), v≥0 → warm
-// (red); |t| in [0,1] sets intensity. Reads well for signed scalars (divergence,
-// Gauss residual, helicity) and degrades gracefully for strictly-positive ones.
+// Sign-aware diverging ramp: v<0 → cool (blue), v≥0 → warm (red); t in [0,1]
+// sets intensity. For signed scalars (divergence, Gauss residual).
 void ramp_diverging(float v, float t, float& r, float& g, float& b) {
     t = std::clamp(t, 0.0f, 1.0f);
     if (v >= 0.0f) {
@@ -121,38 +124,111 @@ void ramp_diverging(float v, float t, float& r, float& g, float& b) {
     b = std::clamp(b, 0.0f, 1.0f);
 }
 
-// Vector field overlay → line segments (pos → pos + dir*scale) with magnitude
-// colouring, autoscaled so the longest vector spans ~0.9 of a sample cell. The
-// same bounded stride append_flux uses keeps the segment count modest.
-void append_field_vectors(RenderBridge& rb, NativeFrame& frame, VisualFieldKind kind) {
+// State field: s=+1 saturated red, s=-1 saturated blue (void already dropped by
+// the threshold). Intensity is fixed (the state is ternary, not a magnitude).
+void ramp_state(float v, float& r, float& g, float& b) {
+    if (v >= 0.0f) { r = 0.97f; g = 0.44f; b = 0.44f; }
+    else           { r = 0.36f; g = 0.55f; b = 0.98f; }
+}
+
+// Latency L: blue (low) → red (high).
+void ramp_latency(float t, float& r, float& g, float& b) {
+    t = std::clamp(t, 0.0f, 1.0f);
+    r = 0.20f + 0.80f * t;
+    g = std::clamp(0.35f - std::abs(2.0f * t - 1.0f) * 0.25f, 0.0f, 1.0f);
+    b = 0.95f - 0.80f * t;
+}
+
+// Horizon shell (L≥threshold): dim ember red so the shell reads as a dark rim.
+void ramp_horizon(float t, float& r, float& g, float& b) {
+    t = std::clamp(t, 0.0f, 1.0f);
+    r = 0.35f + 0.45f * t;
+    g = 0.06f + 0.05f * t;
+    b = 0.05f;
+}
+
+// Poynting energy-flux arrows: yellow → orange with magnitude.
+void ramp_poynting(float t, float& r, float& g, float& b) {
+    t = std::clamp(t, 0.0f, 1.0f);
+    r = 1.0f;
+    g = std::clamp(0.90f - 0.55f * t, 0.0f, 1.0f);
+    b = 0.10f;
+}
+
+// Weak (∇×J pseudovector) arrows: violet.
+void ramp_weak(float t, float& r, float& g, float& b) {
+    t = std::clamp(t, 0.0f, 1.0f);
+    r = 0.55f + 0.35f * t;
+    g = 0.20f + 0.10f * t;
+    b = 0.85f;
+}
+
+void overlay_point_color(OverlayRamp ramp, float v, float t, float& r, float& g, float& b) {
+    switch (ramp) {
+        case OverlayRamp::StateSign: ramp_state(v, r, g, b); break;
+        case OverlayRamp::Latency:   ramp_latency(t, r, g, b); break;
+        case OverlayRamp::Horizon:   ramp_horizon(t, r, g, b); break;
+        case OverlayRamp::Diverging:
+        default:                     ramp_diverging(v, t, r, g, b); break;
+    }
+}
+
+void overlay_arrow_color(OverlayRamp ramp, float t, float& r, float& g, float& b) {
+    switch (ramp) {
+        case OverlayRamp::Poynting: ramp_poynting(t, r, g, b); break;
+        case OverlayRamp::Weak:     ramp_weak(t, r, g, b); break;
+        case OverlayRamp::CoolHot:
+        default:                    ramp_cool_hot(t, r, g, b); break;
+    }
+}
+
+// True while `t`/`v` clear the descriptor's keep test: an absolute lower bound
+// on the raw value (select_min ≥ 0, used by the Horizon shell) OR a relative
+// magnitude-fraction threshold.
+bool overlay_keep(const OverlayDescriptor& d, float v, float t) {
+    if (d.select_min >= 0.0f) return v >= d.select_min;
+    return t >= d.threshold;
+}
+
+// Vector-field overlay → line-segment arrows (dim base → bright tip), autoscaled
+// so the longest vector spans ~0.9 of a sample cell. Appends into the shared
+// frame.field_lines group; multiple active vector overlays coexist.
+void append_overlay_arrows(RenderBridge& rb, NativeFrame& frame,
+                           const OverlayDescriptor& d, VisualFieldKind kind) {
     const int L = rb.lattice().size();
-    const int stride = std::max(1, (L + 31) / 32);
+    const int stride = d.force_stride1 ? 1 : std::max(1, (L + 31) / 32);
     VisualFieldSample sample;
     rb.copy_visual_field_sample(kind, stride, sample);
     if (sample.components != 3u || sample.count() == 0) return;
+
+    // Canonical parity-odd scaling for ∇×J (never hardcoded; DELTA_SQUARED from
+    // the ontic chain via constants.h). Uniform, so it cancels under the
+    // per-overlay autoscale, but the geometry is built from the canonical value.
+    const float vmul =
+        d.scale_by_dual_delta ? static_cast<float>(std::sqrt(ftd::DELTA_SQUARED)) : 1.0f;
 
     const std::size_t n = sample.count();
     std::vector<float> mag(n, 0.0f);
     float max_mag = 1.0e-6f;
     for (std::size_t i = 0; i < n; ++i) {
-        const float dx = sample.data[i * 3u];
-        const float dy = sample.data[i * 3u + 1u];
-        const float dz = sample.data[i * 3u + 2u];
+        const float dx = sample.data[i * 3u] * vmul;
+        const float dy = sample.data[i * 3u + 1u] * vmul;
+        const float dz = sample.data[i * 3u + 2u] * vmul;
         mag[i] = std::sqrt(dx * dx + dy * dy + dz * dz);
         max_mag = std::max(max_mag, mag[i]);
     }
     const float target = 0.9f * static_cast<float>(std::max(1, sample.effective_stride));
-    const float vscale = target / max_mag;
+    const float vscale = (target / max_mag) * vmul;
 
     frame.field_lines.reserve(frame.field_lines.size() + n);
     for (std::size_t i = 0; i < n; ++i) {
         const float t = mag[i] / max_mag;
-        if (t < 0.04f) continue;
+        if (!overlay_keep(d, mag[i], t)) continue;
         const float bx = sample.positions[i * 3u];
         const float by = sample.positions[i * 3u + 1u];
         const float bz = sample.positions[i * 3u + 2u];
         float r, g, b;
-        ramp_cool_hot(t, r, g, b);
+        overlay_arrow_color(d.ramp, t, r, g, b);
         NativeLine line;
         line.x0 = bx;
         line.y0 = by;
@@ -170,11 +246,13 @@ void append_field_vectors(RenderBridge& rb, NativeFrame& frame, VisualFieldKind 
     }
 }
 
-// Scalar field overlay → magnitude-coloured points through the existing sprite
-// path (reusing frame.flux). Replaces the ambient flux cloud while active.
-void append_field_scalars(RenderBridge& rb, NativeFrame& frame, VisualFieldKind kind) {
+// Scalar-field overlay → magnitude/sign-coloured points through the sprite path.
+// Appends into the shared frame.flux group; multiple active point overlays (and
+// the sprite Flux-Volume cloud) coexist.
+void append_overlay_points(RenderBridge& rb, NativeFrame& frame,
+                           const OverlayDescriptor& d, VisualFieldKind kind) {
     const int L = rb.lattice().size();
-    const int stride = std::max(1, (L + 31) / 32);
+    const int stride = d.force_stride1 ? 1 : std::max(1, (L + 31) / 32);
     VisualFieldSample sample;
     rb.copy_visual_field_sample(kind, stride, sample);
     if (sample.components != 1u || sample.count() == 0) return;
@@ -188,12 +266,12 @@ void append_field_scalars(RenderBridge& rb, NativeFrame& frame, VisualFieldKind 
     for (std::size_t i = 0; i < n; ++i) {
         const float v = sample.data[i];
         const float t = std::abs(v) / max_mag;
-        if (t < 0.04f) continue;
+        if (!overlay_keep(d, v, t)) continue;
         NativeParticle p;
         p.x = sample.positions[i * 3u];
         p.y = sample.positions[i * 3u + 1u];
         p.z = sample.positions[i * 3u + 2u];
-        ramp_diverging(v, t, p.r, p.g, p.b);
+        overlay_point_color(d.ramp, v, t, p.r, p.g, p.b);
         p.size = 0.20f + 0.55f * t;
         frame.flux.push_back(p);
     }
@@ -327,12 +405,11 @@ ApplyResult Scale0Adapter::apply(const ScalePayload& payload, ParameterJournal& 
     if (const SetBoundary* sb = std::get_if<SetBoundary>(s0)) {
         flux_boundary_ = static_cast<int>(sb->mode);
     }
-    // SetFieldOverlay is adapter view-state only (which field capture() renders);
-    // it never mutates the RenderBridge, so store it here and short-circuit —
-    // apply_mutation_on_bridge has no case for it and would be a no-op anyway.
-    if (const SetFieldOverlay* fo = std::get_if<SetFieldOverlay>(s0)) {
-        overlay_enabled_ = fo->enabled;
-        overlay_kind_ = fo->kind;
+    // SetOverlay is adapter view-state only (which overlays capture() renders);
+    // it never mutates the RenderBridge, so update the active set here and
+    // short-circuit — apply_mutation_on_bridge has no case for it.
+    if (const SetOverlay* so = std::get_if<SetOverlay>(s0)) {
+        set_overlay(static_cast<OverlayId>(so->overlay_id), so->on);
         ApplyResult ok;
         ok.ok = true;
         return ok;
@@ -426,14 +503,30 @@ NativeFrame Scale0Adapter::capture() {
         p.size = 0.55f;
         frame.particles.push_back(p);
     }
-    // Field overlay dispatch. OFF (default): the ambient flux cloud, unchanged.
-    // A 3-vector field → line-segment arrows; a scalar field → coloured points.
-    if (!overlay_enabled_) {
+    // Overlay compositing. Empty set (default): the ambient flux cloud, as
+    // before. Otherwise composite EVERY active overlay into this frame — each
+    // sampled once (O(active overlays)) — appending arrows into field_lines and
+    // points into flux. Groups coexist; the ambient cloud shows only when empty
+    // (mirrors the web `anyFieldActive` gate).
+    if (active_overlays_.empty()) {
         append_flux(*bridge_, frame);
-    } else if (ftd::visual_field_components(overlay_kind_) == 3u) {
-        append_field_vectors(*bridge_, frame, overlay_kind_);
     } else {
-        append_field_scalars(*bridge_, frame, overlay_kind_);
+        for (const OverlayId id : active_overlays_) {
+            const OverlayDescriptor* d = overlay_by_id(static_cast<std::uint32_t>(id));
+            if (!d) continue;
+            const VisualFieldKind kind = resolve_overlay_kind(*d);
+            switch (d->render) {
+                case OverlayRender::Sprite:
+                    append_flux(*bridge_, frame);  // Flux Volume == ambient cloud
+                    break;
+                case OverlayRender::Arrows:
+                    append_overlay_arrows(*bridge_, frame, *d, kind);
+                    break;
+                case OverlayRender::Points:
+                    append_overlay_points(*bridge_, frame, *d, kind);
+                    break;
+            }
+        }
     }
 
     frame.scenario = scenario_;
@@ -442,6 +535,29 @@ NativeFrame Scale0Adapter::capture() {
     frame.flux_boundary = flux_boundary_;
     last_total_manifested_ = frame.total_manifested;
     return frame;
+}
+
+void Scale0Adapter::set_overlay(OverlayId id, bool on) {
+    const auto it = std::find(active_overlays_.begin(), active_overlays_.end(), id);
+    if (on) {
+        if (it == active_overlays_.end()) active_overlays_.push_back(id);
+    } else if (it != active_overlays_.end()) {
+        active_overlays_.erase(it);
+    }
+}
+
+bool Scale0Adapter::overlay_active(OverlayId id) const {
+    return std::find(active_overlays_.begin(), active_overlays_.end(), id)
+           != active_overlays_.end();
+}
+
+ftd::VisualFieldKind Scale0Adapter::resolve_overlay_kind(const OverlayDescriptor& d) const {
+    // Only the |J|²-proxy Latency slot (kind 8) is overridden; every other kind
+    // passes through. The single native mass-gravity scenario is the seed that
+    // drives a real Poisson latency field (mirrors SCALE0_MASS_GRAVITY_SCENARIOS).
+    if (d.kind == VisualFieldKind::Latency && scenario_ == "s0-seed-massive-body")
+        return VisualFieldKind::PoissonLatency;
+    return d.kind;
 }
 
 const char* Scale0Adapter::backend_name() const {
