@@ -1,0 +1,124 @@
+/* FTD native shell — RCSS (RmlUi 6.x). First-pass theme + layout for M-UI-1.
+   Conservative RCSS: flexbox, solid colours, borders, fonts, :hover. No var()/
+   calc()/grid (RCSS does not support them). Refine against the vendored RmlUi
+   samples once native_rmlui builds. Colours echo the web dashboard (Abyss). */
+
+/* ── base ─────────────────────────────────────────────────────────────── */
+body {
+    font-family: Inter;
+    font-size: 14dp;
+    color: #dfe6f0;
+    background-color: #0d1420;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── toolbar ──────────────────────────────────────────────────────────── */
+#toolbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 42dp;
+    padding: 0dp 14dp;
+    background-color: #131c2b;
+    border-bottom: 1dp #2b3a50;
+}
+.brand { font-family: JetBrains Mono; font-weight: bold; font-size: 15dp; }
+.brand .ver { color: #6aa8e0; font-weight: normal; font-size: 11dp; margin-left: 6dp; }
+.tb-group { display: flex; flex-direction: row; align-items: center; margin-left: 22dp; }
+.tb-group .lbl { color: #67788f; font-size: 11dp; margin-right: 8dp; }
+.spacer { flex: 1; }
+
+/* ── the middle row: setup | viewport hole | physics ──────────────────── */
+#body-row { display: flex; flex-direction: row; flex: 1; }
+
+.panel {
+    width: 240dp;
+    padding: 14dp;
+    background-color: #131c2b;
+    display: flex;
+    flex-direction: column;
+}
+#setup { border-right: 1dp #2b3a50; }
+#physics { border-left: 1dp #2b3a50; }
+.panel-title {
+    font-family: JetBrains Mono;
+    font-size: 10dp;
+    color: #67788f;
+    text-transform: uppercase;
+    letter-spacing: 1dp;
+    margin-bottom: 12dp;
+}
+
+/* transparent hole — the D3D12 3D scene shows through here */
+#viewport { flex: 1; background-color: transparent; }
+
+/* ── controls ─────────────────────────────────────────────────────────── */
+.field { display: flex; flex-direction: column; margin-bottom: 12dp; }
+.field .fl { font-size: 10dp; color: #67788f; text-transform: uppercase; margin-bottom: 5dp; }
+.select {
+    padding: 7dp 11dp;
+    background-color: #0f1826;
+    border: 1dp #3a4c66;
+    border-radius: 4dp;
+    color: #dfe6f0;
+    font-size: 12dp;
+}
+
+.playbar { display: flex; flex-direction: row; margin-top: 6dp; }
+.btn {
+    padding: 6dp 12dp;
+    margin-right: 6dp;
+    background-color: #182234;
+    border: 1dp #3a4c66;
+    border-radius: 4dp;
+    color: #dfe6f0;
+    font-size: 12dp;
+}
+.btn:hover { background-color: #21304a; }
+.btn.primary { background-color: #2f6db0; border-color: #2f6db0; color: #ffffff; }
+.btn.primary:hover { background-color: #3a7ec4; }
+.icon { padding: 6dp 9dp; background-color: transparent; border: 0dp; color: #9fb0c6; font-size: 15dp; }
+
+/* ── physics-term toggles ─────────────────────────────────────────────── */
+.toggles { display: flex; flex-direction: column; }
+.tog {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 4dp 8dp;
+    margin-bottom: 4dp;
+    border: 1dp #223047;
+    border-radius: 12dp;
+    color: #9fb0c6;
+    font-family: JetBrains Mono;
+    font-size: 11dp;
+}
+.tog .led {
+    width: 8dp; height: 8dp;
+    border-radius: 4dp;
+    background-color: #1a2739;
+    border: 1dp #3a4c66;
+    margin-right: 8dp;
+}
+.tog.on { color: #e0e7f1; border-color: #2f6db0; background-color: #16233a; }
+.tog.on .led { background-color: #6aa8e0; border-color: #6aa8e0; }
+
+/* ── status bar ───────────────────────────────────────────────────────── */
+#status {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 26dp;
+    padding: 0dp 14dp;
+    background-color: #131c2b;
+    border-top: 1dp #2b3a50;
+    font-family: JetBrains Mono;
+    font-size: 11dp;
+    color: #9fb0c6;
+}
+#status span { margin-right: 16dp; }
+#status b { color: #e0e7f1; }
+#status .accent { color: #6aa8e0; }
+#status .dot { width: 8dp; height: 8dp; border-radius: 4dp; background-color: #67788f; margin-right: 8dp; }
+#status .dot.running { background-color: #4ecb8a; }

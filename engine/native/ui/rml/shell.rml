@@ -1,0 +1,69 @@
+<rml>
+<head>
+    <link type="text/rcss" href="../rcss/ftd.rcss"/>
+    <title>FTD Native</title>
+</head>
+<body>
+    <!-- Toolbar -->
+    <div id="toolbar">
+        <span class="brand">FTD Engine <span class="ver">native</span></span>
+        <div class="tb-group">
+            <span class="lbl">Engine</span>
+            <span class="select">Scale 0 (Lattice)</span>
+        </div>
+        <div class="spacer"></div>
+        <button class="icon">&#9881;</button>
+    </div>
+
+    <!-- Setup | viewport hole | Physics -->
+    <div id="body-row">
+        <div id="setup" class="panel">
+            <div class="panel-title">Setup</div>
+            <div class="field"><span class="fl">Scenario</span><span class="select">s0-seed-hydrogen</span></div>
+            <div class="field"><span class="fl">Lattice</span><span class="select">33</span></div>
+            <div class="playbar">
+                <button class="btn primary" data-event-click="run">&#9654; Run</button>
+                <button class="btn" data-event-click="step">Step</button>
+                <button class="btn" data-event-click="reset">Reset</button>
+            </div>
+        </div>
+
+        <!-- transparent: the D3D12 lattice/particle/flux scene renders here -->
+        <div id="viewport"></div>
+
+        <div id="physics" class="panel">
+            <div class="panel-title">Physics terms</div>
+            <div class="toggles">
+                <div class="tog on"><span class="led"></span>wave_propagation</div>
+                <div class="tog on"><span class="led"></span>coupling</div>
+                <div class="tog on"><span class="led"></span>damping</div>
+                <div class="tog on"><span class="led"></span>genesis</div>
+                <div class="tog on"><span class="led"></span>gauss_projection</div>
+                <div class="tog on"><span class="led"></span>forces</div>
+                <div class="tog on"><span class="led"></span>movement</div>
+                <div class="tog on"><span class="led"></span>poisson_coulomb</div>
+                <div class="tog on"><span class="led"></span>selective_damping</div>
+                <div class="tog"><span class="led"></span>gravity</div>
+                <div class="tog"><span class="led"></span>lorentz_force</div>
+                <div class="tog"><span class="led"></span>dual_substrate</div>
+                <div class="tog"><span class="led"></span>color_forces</div>
+                <div class="tog"><span class="led"></span>strong_force</div>
+                <div class="tog"><span class="led"></span>weak_transmutation</div>
+                <div class="tog"><span class="led"></span>confinement</div>
+                <div class="tog"><span class="led"></span>de_broglie_clock</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status bar (bound to UiSnapshot in M-UI-3) -->
+    <div id="status">
+        <span class="dot running"></span><b>Running</b>
+        <span>T: <b>128</b></span>
+        <span>Particles: <b>412</b></span>
+        <span>Energy: <b>18363.4</b></span>
+        <div class="spacer"></div>
+        <span>58 fps</span>
+        <span class="accent">CUDA</span>
+    </div>
+</body>
+</rml>
