@@ -29,12 +29,15 @@
 #include <vector>
 
 #include <RmlUi/Core.h>
+#include <RmlUi/Core/Factory.h>
 
 #include "ui/rml_d3d12_renderer.h"
+#include "ui/ftd_chart_element.h"
 
 using Microsoft::WRL::ComPtr;
 using ftd::native::ui::RmlD3D12Renderer;
 using ftd::native::ui::RmlD3D12System;
+using ftd::native::ui::FtdChartInstancer;
 
 namespace {
 
@@ -249,6 +252,14 @@ int run() {
         die("Rml::Initialise");
         return 2;
     }
+
+    // Register the <ftd-chart> instancer with a null series: the shell now
+    // contains an <ftd-chart>, and this both proves the custom element instances
+    // + renders headlessly and keeps the tag from falling back to a plain element.
+    // A null series draws only the chart baseline (no trace), which is harmless.
+    // Declared here so it outlives every Rml::Shutdown() path below.
+    ftd::native::ui::FtdChartInstancer chart_instancer(nullptr);
+    Rml::Factory::RegisterElementInstancer("ftd-chart", &chart_instancer);
 
     if (!Rml::LoadFontFace(font_path)) {
         die("LoadFontFace (Inter-Regular.ttf)");

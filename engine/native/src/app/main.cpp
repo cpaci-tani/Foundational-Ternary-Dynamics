@@ -74,8 +74,10 @@
 #include "ftd/visual_snapshot.h"   // ftd::kMaxVisualParticleCapture (interop buffer sizing)
 
 #include "ui/rml_d3d12_renderer.h"
+#include "ui/ftd_chart_element.h"
 
 #include <RmlUi/Core.h>
+#include <RmlUi/Core/Factory.h>
 
 #include <algorithm>
 #include <atomic>
@@ -131,6 +133,8 @@ struct ShellData {
     int particle_count = 0;
     Rml::String physical_time = "0 s";
     Rml::String total_energy = "0.0";
+    Rml::String s1_ke = "0.0";   // Scale-1 kinetic energy (particle readout)
+    Rml::String s1_pe = "0.0";   // Scale-1 potential energy (particle readout)
     Rml::String scenario;
     Rml::String backend = "CPU";
     Rml::String lattice = "0";
@@ -569,6 +573,17 @@ int run_app(const std::vector<std::string>& args) {
     data.toggles.reserve(std::size(kPanelToggles));
     for (const char* n : kPanelToggles) data.toggles.push_back(ToggleRow{n, false});
 
+    // ── Telemetry ring buffer + the <ftd-chart> instancer ──────────────────────
+    // The app owns the series (GUI thread), pushing one total-energy scalar per
+    // published snapshot below; the custom element reads it read-only. Declared
+    // here so both outlive Rml::Shutdown() (which releases the instanced elements
+    // back through the instancer). Registered after Rml::Initialise(), before
+    // LoadDocument parses <ftd-chart>. The engine telemetry scheduler is inert
+    // (demand mask 0), so this app-side buffer is the only source.
+    ftd::native::ui::ChartSeries energy_series(240);
+    ftd::native::ui::FtdChartInstancer chart_instancer(&energy_series);
+    Rml::Factory::RegisterElementInstancer("ftd-chart", &chart_instancer);
+
     AppContext app;
     app.hwnd = hwnd;
     app.context = nullptr;  // published after LoadDocument
@@ -592,6 +607,8 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("particle_count", &data.particle_count);
     ctor.Bind("physical_time", &data.physical_time);
     ctor.Bind("total_energy", &data.total_energy);
+    ctor.Bind("s1_ke", &data.s1_ke);
+    ctor.Bind("s1_pe", &data.s1_pe);
     ctor.Bind("scenario", &data.scenario);
     ctor.Bind("backend", &data.backend);
     ctor.Bind("lattice", &data.lattice);
@@ -784,6 +801,13 @@ int run_app(const std::vector<std::string>& args) {
     int frame_no = 0;
     const std::string png_out = FTD_APP_PNG_OUT;
 
+    // Telemetry ring-buffer feed bookkeeping (GUI thread). chart_series_scale
+    // tracks the scale the buffer currently holds (reset the trace on a switch);
+    // last_pushed_seq dedups pushes to one scalar per published snapshot.
+    int chart_series_scale = initial_scale;
+    std::uint64_t last_pushed_seq = 0;
+    bool pushed_any = false;
+
     // The interop StructuredBuffer SRV (heap slot 0) only needs binding ONCE for
     // the lifetime of the never-recreated shared buffer. This catch-up covers both
     // the startup-active case and a later inactive→active reload transition; a
@@ -906,9 +930,14 @@ int run_app(const std::vector<std::string>& args) {
                 fmt("%.2e s", static_cast<double>(frame.tick) * kTPhysSeconds));
         // Energy + toggles come from whichever ScaleSnapshot alternative is live.
         // Scale 0 carries the full energy ledger + term-toggle state; Scale 1
-        // carries a small particle-diagnostics payload and has no toggle panel yet
-        // (the panel simply stops updating — the last Scale-0 state stays shown).
+        // carries a small particle-diagnostics payload feeding the readout panel.
+        // Every deref is guarded so the wrong variant is never read after a switch.
+        // `chart_energy` is the scalar the telemetry ring buffer plots this frame.
+        double chart_energy = 0.0;
+        bool chart_energy_valid = false;
         if (const ftd::native::Scale0Snapshot* s0 = snap ? snap->scale0() : nullptr) {
+            chart_energy = s0->energy_ledger.E_curr;
+            chart_energy_valid = true;
             set_str("total_energy", data.total_energy, fmt("%.1f", s0->energy_ledger.E_curr));
             bool toggles_changed = false;
             for (ToggleRow& r : data.toggles) {
@@ -917,7 +946,29 @@ int run_app(const std::vector<std::string>& args) {
             }
             if (toggles_changed) model.DirtyVariable("toggles");
         } else if (const ftd::native::Scale1Snapshot* s1 = snap ? snap->scale1() : nullptr) {
+            chart_energy = s1->total_energy;
+            chart_energy_valid = true;
             set_str("total_energy", data.total_energy, fmt("%.3f", s1->total_energy));
+            set_str("s1_ke", data.s1_ke, fmt("%.3f", s1->total_ke));
+            set_str("s1_pe", data.s1_pe, fmt("%.3f", s1->total_pe));
+        }
+
+        // ── Feed the telemetry ring buffer (snapshot-only, GUI thread) ──
+        // Reset on a scale switch so Scale-0 energy is never plotted next to
+        // Scale-1 energy; push exactly one scalar per NEW published snapshot
+        // (dedup by seq — the GUI loop runs faster than the sim tick).
+        if (snap) {
+            if (snap->active_scale != chart_series_scale) {
+                energy_series.clear();
+                chart_series_scale = snap->active_scale;
+                last_pushed_seq = 0;
+                pushed_any = false;
+            }
+            if (chart_energy_valid && (!pushed_any || snap->seq != last_pushed_seq)) {
+                energy_series.push(static_cast<float>(chart_energy));
+                last_pushed_seq = snap->seq;
+                pushed_any = true;
+            }
         }
 
         // Lay out, then map the #viewport hole rect for the scene + input.

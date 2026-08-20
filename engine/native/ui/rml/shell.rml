@@ -36,12 +36,38 @@
         <!-- transparent: the D3D12 lattice/particle/flux scene renders here -->
         <div id="viewport"></div>
 
+        <!-- Right panel is scale-aware: two sibling blocks, one shown per active
+             scale via data-if, so RCSS/data-binding drives the switch (no per-frame
+             imperative rebuild). Scale 0 → the term-toggle list; Scale 1 → a
+             compact particle readout. Both scales share the telemetry chart. -->
         <div id="physics" class="panel">
-            <div class="panel-title">Physics terms</div>
-            <div class="toggles">
-                <div class="tog" data-for="t : toggles" data-class-on="t.on" data-event-click="toggle(t.name)">
-                    <span class="led"></span><span class="lbl">{{t.name}}</span>
+            <!-- Scale 0 (Lattice): the physics term-toggles -->
+            <div class="scale-block" data-if="active_scale == 0">
+                <div class="panel-title">Physics terms</div>
+                <div class="toggles">
+                    <div class="tog" data-for="t : toggles" data-class-on="t.on" data-event-click="toggle(t.name)">
+                        <span class="led"></span><span class="lbl">{{t.name}}</span>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Scale 1 (Particles): a compact ParticleEngine readout -->
+            <div class="scale-block" data-if="active_scale == 1">
+                <div class="panel-title">Particles</div>
+                <div class="readout">
+                    <div class="ro"><span class="ro-k">Count</span><span class="ro-v">{{particle_count}}</span></div>
+                    <div class="ro"><span class="ro-k">Energy</span><span class="ro-v">{{total_energy}}</span></div>
+                    <div class="ro"><span class="ro-k">Kinetic</span><span class="ro-v">{{s1_ke}}</span></div>
+                    <div class="ro"><span class="ro-k">Potential</span><span class="ro-v">{{s1_pe}}</span></div>
+                    <div class="ro"><span class="ro-k">Scenario</span><span class="ro-v mono">{{scenario}}</span></div>
+                </div>
+            </div>
+
+            <!-- Telemetry: live total-energy trace (app-side ring buffer → the
+                 custom <ftd-chart> element, drawn through the D3D12 UI pipeline). -->
+            <div class="telemetry">
+                <div class="panel-title">Telemetry — total energy</div>
+                <ftd-chart id="energy-chart"/>
             </div>
         </div>
     </div>

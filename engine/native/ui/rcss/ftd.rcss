@@ -133,6 +133,43 @@ body {
 .tog.on { color: #e0e7f1; border-color: #2f6db0; background-color: #16233a; }
 .tog.on .led { background-color: #6aa8e0; border-color: #6aa8e0; }
 
+/* ── scale-aware right panel ───────────────────────────────────────────── */
+/* Each per-scale block stacks its title + content; only one is present at a
+   time (the other is removed by data-if), so this drives the panel layout. */
+.scale-block { display: flex; flex-direction: column; }
+
+/* Scale-1 particle readout: key/value rows. */
+.readout { display: flex; flex-direction: column; }
+.ro {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6dp 8dp;
+    margin-bottom: 4dp;
+    border: 1dp #223047;
+    border-radius: 6dp;
+    background-color: #0f1826;
+}
+.ro-k { color: #67788f; font-size: 11dp; text-transform: uppercase; letter-spacing: 1dp; }
+.ro-v { color: #e0e7f1; font-family: JetBrains Mono; font-size: 12dp; }
+.ro-v.mono { font-size: 10dp; color: #9fb0c6; }
+
+/* ── telemetry chart ───────────────────────────────────────────────────── */
+/* Sits below the per-scale content; margin-top pushes it toward the panel
+   bottom. The <ftd-chart> element draws its series in its own `color`; the
+   frame/background here is RCSS chrome (SPEC §5). */
+.telemetry { display: flex; flex-direction: column; margin-top: 16dp; }
+ftd-chart {
+    display: block;
+    height: 120dp;
+    padding: 6dp;
+    background-color: #0c1420;
+    border: 1dp #2b3a50;
+    border-radius: 4dp;
+    color: #6aa8e0;   /* the series stroke colour (read by the element) */
+}
+
 /* ── status bar ───────────────────────────────────────────────────────── */
 #status {
     display: flex;

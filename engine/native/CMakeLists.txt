@@ -205,7 +205,13 @@ if(WIN32)
     # SRVs, scissor, one UI PSO (ortho VS + textured x vertex-colour PS from
     # shaders/rmlui.hlsl, compiled at runtime via d3dcompiler). Links native_rmlui
     # (which brings native_freetype). windowscodecs is WIC (LoadTexture decode).
-    add_library(native_ui_rml STATIC src/ui/rml_d3d12_renderer.cpp)
+    # ftd_chart_element.cpp: the first instrument widget — a custom <ftd-chart>
+    # RmlUi element that plots a scalar ring buffer through the same D3D12
+    # RenderInterface (native/docs/SPEC_NATIVE_UI_RMLUI.md §5). Lives in the RmlUi
+    # UI lib so both native_app and the headless smoke test link it.
+    add_library(native_ui_rml STATIC
+        src/ui/rml_d3d12_renderer.cpp
+        src/ui/ftd_chart_element.cpp)
     target_include_directories(native_ui_rml PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
     target_link_libraries(native_ui_rml
         PUBLIC  native_rmlui
