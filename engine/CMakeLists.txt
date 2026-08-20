@@ -1798,6 +1798,14 @@ if(FTD_ENABLE_CUDA)
                  CTEST_NAME gpu_compact_diagnostics TIMEOUT 300
                  LABELS unit diagnostics interactive)
 
+    # FTD-engine energy-ledger gap regression: the interactive GPU path must
+    # source energy_ledger().E_curr from the compact device audit (not the
+    # deferred host shadow), non-zero and matching the CPU reference.
+    ftd_add_test(test_gpu_energy_ledger_parity
+                 tests/test_gpu_energy_ledger_parity.cpp GPU_HEAVY
+                 CTEST_NAME gpu_energy_ledger_parity TIMEOUT 300
+                 LABELS unit diagnostics interactive energy ledger)
+
     ftd_add_test(test_gpu_visual_field_sample
                  tests/test_gpu_visual_field_sample.cpp GPU_HEAVY
                  CTEST_NAME gpu_visual_field_sample TIMEOUT 300
