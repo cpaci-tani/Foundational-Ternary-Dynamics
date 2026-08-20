@@ -37,7 +37,7 @@ export const FREE_WAVE_DISABLED_TERMS = Object.freeze([
     'langevin', 'symplectic_leapfrog', 'verlet_wave_integrator',
     'lorentz_period2_floquet', 'lorentz_bcc_time_floquet', 'su2_gauge',
     'su3_gauge', 'symmetric_movement_order', 'absorbing_boundary',
-    'reflective_boundary', 'field_energy_gravity', 'cluster_inertia',
+    'reflective_boundary', 'field_energy_gravity', 'cluster_inertia', 'geometric_gravity',
     'de_broglie_clock', 'db_clock_coulomb', 'knot_tracking', 'confinement',
     'strict_validation', 'ew_background_sweep',
 ]);

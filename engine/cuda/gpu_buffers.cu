@@ -246,6 +246,8 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMalloc(&d_pair_candidate_indices, N * sizeof(int32_t)));
     CUDA_CHECK(cudaMalloc(&d_pair_candidate_count, sizeof(int32_t)));
     CUDA_CHECK(cudaMalloc(&d_movement_moved, N * sizeof(uint8_t)));
+    CUDA_CHECK(cudaMalloc(&d_movement_order, N * sizeof(int32_t)));
+    CUDA_CHECK(cudaMalloc(&d_movement_rank, N * sizeof(int32_t)));
     // Stable compaction is shared by genesis identity ranking and pair
     // candidates.  The visual particle capture also uses its persistent byte
     // flags/int32 prefix arrays after a tick; everything is serialized on the
@@ -664,6 +666,14 @@ void GpuBuffers::free() {
         cudaFree(d_movement_moved);
         d_movement_moved = nullptr;
     }
+    if (d_movement_order) {
+        cudaFree(d_movement_order);
+        d_movement_order = nullptr;
+    }
+    if (d_movement_rank) {
+        cudaFree(d_movement_rank);
+        d_movement_rank = nullptr;
+    }
     if (d_pair_select_temp) {
         cudaFree(d_pair_select_temp);
         d_pair_select_temp = nullptr;
@@ -674,6 +684,24 @@ void GpuBuffers::free() {
     if (d_ledger_current_x)  { cudaFree(d_ledger_current_x); d_ledger_current_x = nullptr; }
     if (d_ledger_current_y)  { cudaFree(d_ledger_current_y); d_ledger_current_y = nullptr; }
     if (d_ledger_current_z)  { cudaFree(d_ledger_current_z); d_ledger_current_z = nullptr; }
+    auto free_d = [](auto*& p) {
+        if (p) { cudaFree(p); p = nullptr; }
+    };
+    free_d(d_matched_ex); free_d(d_matched_ey); free_d(d_matched_ez);
+    free_d(d_matched_bx); free_d(d_matched_by); free_d(d_matched_bz);
+    free_d(d_matched_cx); free_d(d_matched_cy); free_d(d_matched_cz);
+    if (d_matched_valid) { cudaFree(d_matched_valid); d_matched_valid = nullptr; }
+    free_d(d_strong_t00); free_d(d_strong_sxx); free_d(d_strong_syy);
+    free_d(d_strong_szz); free_d(d_strong_sxy); free_d(d_strong_sxz);
+    free_d(d_strong_syz);
+    if (d_strong_idx) { cudaFree(d_strong_idx); d_strong_idx = nullptr; }
+    if (d_strong_id) { cudaFree(d_strong_id); d_strong_id = nullptr; }
+    if (d_strong_begin_id) { cudaFree(d_strong_begin_id); d_strong_begin_id = nullptr; }
+    if (d_strong_color) { cudaFree(d_strong_color); d_strong_color = nullptr; }
+    free_d(d_strong_px); free_d(d_strong_py); free_d(d_strong_pz);
+    free_d(d_strong_mx); free_d(d_strong_my); free_d(d_strong_mz);
+    if (d_strong_count) { cudaFree(d_strong_count); d_strong_count = nullptr; }
+    if (d_strong_step) { cudaFree(d_strong_step); d_strong_step = nullptr; }
     N = 0;
     L = 0;
 }
@@ -1399,6 +1427,53 @@ void GpuBuffers::precompute_green_function() {
     kernel_precompute_green<<<grid, block, 0, stream>>>(d_green, L);
     CUDA_CHECK(cudaGetLastError());
     CUDA_CHECK(cudaDeviceSynchronize());
+}
+
+void GpuBuffers::ensure_matched_gauss() {
+    if (d_matched_ex) return;
+    const std::size_t bytes = static_cast<std::size_t>(N) * sizeof(double);
+    CUDA_CHECK(cudaMalloc(&d_matched_ex, bytes));
+    CUDA_CHECK(cudaMalloc(&d_matched_ey, bytes));
+    CUDA_CHECK(cudaMalloc(&d_matched_ez, bytes));
+    CUDA_CHECK(cudaMalloc(&d_matched_bx, bytes));
+    CUDA_CHECK(cudaMalloc(&d_matched_by, bytes));
+    CUDA_CHECK(cudaMalloc(&d_matched_bz, bytes));
+    CUDA_CHECK(cudaMalloc(&d_matched_cx, bytes));
+    CUDA_CHECK(cudaMalloc(&d_matched_cy, bytes));
+    CUDA_CHECK(cudaMalloc(&d_matched_cz, bytes));
+    CUDA_CHECK(cudaMalloc(&d_matched_valid, sizeof(int)));
+    CUDA_CHECK(cudaMemset(d_matched_ex, 0, bytes));
+    CUDA_CHECK(cudaMemset(d_matched_ey, 0, bytes));
+    CUDA_CHECK(cudaMemset(d_matched_ez, 0, bytes));
+    CUDA_CHECK(cudaMemset(d_matched_bx, 0, bytes));
+    CUDA_CHECK(cudaMemset(d_matched_by, 0, bytes));
+    CUDA_CHECK(cudaMemset(d_matched_bz, 0, bytes));
+}
+
+void GpuBuffers::ensure_strong_stress() {
+    if (d_strong_t00) return;
+    const std::size_t bytes = static_cast<std::size_t>(N) * sizeof(double);
+    const std::size_t pbytes =
+        static_cast<std::size_t>(MAX_PARTICLES) * sizeof(double);
+    CUDA_CHECK(cudaMalloc(&d_strong_t00, bytes));
+    CUDA_CHECK(cudaMalloc(&d_strong_sxx, bytes));
+    CUDA_CHECK(cudaMalloc(&d_strong_syy, bytes));
+    CUDA_CHECK(cudaMalloc(&d_strong_szz, bytes));
+    CUDA_CHECK(cudaMalloc(&d_strong_sxy, bytes));
+    CUDA_CHECK(cudaMalloc(&d_strong_sxz, bytes));
+    CUDA_CHECK(cudaMalloc(&d_strong_syz, bytes));
+    CUDA_CHECK(cudaMalloc(&d_strong_idx, MAX_PARTICLES * sizeof(int)));
+    CUDA_CHECK(cudaMalloc(&d_strong_id, MAX_PARTICLES * sizeof(int)));
+    CUDA_CHECK(cudaMalloc(&d_strong_begin_id, MAX_PARTICLES * sizeof(int)));
+    CUDA_CHECK(cudaMalloc(&d_strong_color, MAX_PARTICLES * sizeof(int8_t)));
+    CUDA_CHECK(cudaMalloc(&d_strong_px, pbytes));
+    CUDA_CHECK(cudaMalloc(&d_strong_py, pbytes));
+    CUDA_CHECK(cudaMalloc(&d_strong_pz, pbytes));
+    CUDA_CHECK(cudaMalloc(&d_strong_mx, pbytes));
+    CUDA_CHECK(cudaMalloc(&d_strong_my, pbytes));
+    CUDA_CHECK(cudaMalloc(&d_strong_mz, pbytes));
+    CUDA_CHECK(cudaMalloc(&d_strong_count, sizeof(int)));
+    CUDA_CHECK(cudaMalloc(&d_strong_step, sizeof(StrongStepDevice)));
 }
 
 }  // namespace gpu

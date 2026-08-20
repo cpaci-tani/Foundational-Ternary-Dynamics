@@ -17,6 +17,8 @@
 // call site; safe to include from any .cu translation unit.
 
 #include "ftd/constants.h"
+#include "ftd/lorentz_period2.h"
+#include "ftd/lorentz_bcc_time.h"
 #include "../cuda/cuda_index.cuh"   // ::ftd::wrap, ::ftd::idx3d (X-major)
 #include <cstdint>
 #include <cmath>
@@ -73,6 +75,22 @@ void scale_field_pair(double& fx, double& fy, double& fz,
                       double k) {
     fx *= k; fy *= k; fz *= k;
     wx *= k; wy *= k; wz *= k;
+}
+
+// FTD-0408 / FTD-0411: period-two free-wave kick, read from the live device
+// tick so graph replay does not bake even-tick kappa. BCC-time wins if both
+// flags are somehow set (same ternary as CPU phase_read).
+__device__ __forceinline__
+double wave_kick_cw2(int tick, bool period2, bool bcc_time) {
+    if (bcc_time)
+        return ((tick & 1) == 0)
+            ? ::ftd::LORENTZ_BCC_TIME_KAPPA_EVEN
+            : ::ftd::LORENTZ_BCC_TIME_KAPPA_ODD;
+    if (period2)
+        return ((tick & 1) == 0)
+            ? ::ftd::LORENTZ_PERIOD2_KAPPA_EVEN
+            : ::ftd::LORENTZ_PERIOD2_KAPPA_ODD;
+    return C_WAVE * C_WAVE;
 }
 
 } // namespace kernels

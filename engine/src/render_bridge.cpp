@@ -44,6 +44,7 @@
 #include <iostream>
 #include <limits>
 #include <stdexcept>
+#include <thread>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -60,6 +61,25 @@
 #endif
 
 namespace ftd {
+
+void RenderBridge::bind_sim_thread() {
+#ifndef NDEBUG
+    sim_thread_ = std::this_thread::get_id();
+    sim_thread_bound_ = true;
+#else
+    (void)sim_thread_;
+    (void)sim_thread_bound_;
+#endif
+}
+
+void RenderBridge::assert_sim_thread() const {
+#ifndef NDEBUG
+    if (!sim_thread_bound_) return;
+    if (std::this_thread::get_id() != sim_thread_) {
+        throw std::logic_error("FTD_UI_DEBUG_THREAD_GUARD");
+    }
+#endif
+}
 
 // F-13 (2026-04-27): VoxelRng salt domains and voxel_uniform() — the
 // per-voxel deterministic uniform sampler used by genesis/evaporation —
@@ -187,18 +207,22 @@ void RenderBridge::sync_matched_gauss_to_voxels() {
 eft::MatchedMinimumEnergyResult
 RenderBridge::initialize_matched_gauss_dynamics(double tolerance,
                                                  int max_iterations) {
-    if (backend_ && backend_->kind() == Backend::Kind::Gpu) {
+#ifdef FTD_ENABLE_CUDA
+    if (backend_ && backend_->kind() == Backend::Kind::Gpu && gpu_) {
         backend_->sync_to_host();
-        force_cpu();
-        if (backend_->kind() == Backend::Kind::Gpu) {
-            std::cerr << "[FTD-0428] initialization rejected: CPU fallback is disabled\n";
-            return {};
-        }
     }
+#endif
     sync_ternary_from_voxels_if_needed();
     const auto result = matched_gauss_dynamics_->initialize_minimum_energy(
         matched_state_snapshot(), tolerance, max_iterations);
-    if (result.valid) sync_matched_gauss_to_voxels();
+    if (result.valid) {
+        sync_matched_gauss_to_voxels();
+#ifdef FTD_ENABLE_CUDA
+        if (backend_ && backend_->kind() == Backend::Kind::Gpu && gpu_) {
+            gpu_->upload_matched_gauss(*matched_gauss_dynamics_);
+        }
+#endif
+    }
     return result;
 }
 
@@ -214,7 +238,14 @@ bool RenderBridge::inject_matched_transverse_edge_potential(
     int x, int y, int z, int axis, double amplitude) {
     const bool applied = matched_gauss_dynamics_->inject_transverse_edge_potential(
         x, y, z, axis, amplitude);
-    if (applied) sync_matched_gauss_to_voxels();
+    if (applied) {
+        sync_matched_gauss_to_voxels();
+#ifdef FTD_ENABLE_CUDA
+        if (backend_ && backend_->kind() == Backend::Kind::Gpu && gpu_) {
+            gpu_->upload_matched_gauss(*matched_gauss_dynamics_);
+        }
+#endif
+    }
     return applied;
 }
 
@@ -337,6 +368,7 @@ bool RenderBridge::is_manifested(int idx) const {
 }
 
 long long RenderBridge::charge_sum() const {
+    assert_sim_thread();
     sync_ternary_from_voxels_if_needed();
     return engine_state_.ternary.charge_sum();
 }
@@ -464,6 +496,7 @@ double RenderBridge::density_at(int idx) const {
 }
 
 GravityMetricAgg RenderBridge::gravity_metric_agg() const {
+    assert_sim_thread();
     GravityMetricAgg a;
     if (backend_) {
         backend_->flush_host_mutations();
@@ -723,7 +756,7 @@ void RenderBridge::solve_latency_poisson() {
 // From density gradient (gravitational attraction to flux concentrations):
 //   F_grav = G_N · ∇ρ
 //
-// NO pairwise forces. NO Yukawa. NO exchange. NO QCD running.
+// Pairwise colour / Yukawa / exchange sit in the same loop (default OFF).
 // ============================================================================
 
 void RenderBridge::phase_forces() {
@@ -775,6 +808,7 @@ void RenderBridge::phase_movement() {
 // ============================================================================
 
 void RenderBridge::tick() {
+  assert_sim_thread();
   causal_projection_events_this_tick_ = 0;
   // FTD-HISTORY-BEGIN: observation-only native event journal.
   if (history_event_journal_->enabled()) history_event_journal_->clear();
@@ -829,60 +863,7 @@ void RenderBridge::tick() {
 #endif
   }
 
-  // FTD-0428 is deliberately CPU-scoped. Preserve the last device state
-  // before replacing the backend so initialization/current extraction always
-  // sees the actual production snapshot.
-  if (toggles.matched_gauss_dynamics && backend_
-      && backend_->kind() == Backend::Kind::Gpu) {
-    backend_->sync_to_host();
-    std::cerr << "[FTD-0428] matched_gauss_dynamics is CPU-scoped; forcing CPU backend\n";
-    force_cpu();
-    if (backend_->kind() == Backend::Kind::Gpu) {
-#ifdef __EMSCRIPTEN__
-      std::cerr << "[FTD-0428] FATAL: CPU fallback is disabled\n";
-      std::abort();
-#else
-      throw std::logic_error(
-          "[FTD-0428] matched_gauss_dynamics cannot run on the GPU backend");
-#endif
-    }
-  }
-
   sync_ternary_from_voxels_if_needed();
-
-  // CPU-scoped extensions must never fall through the ordinary CUDA ladder.
-  // Preserve the current device snapshot before a legitimate fallback, and
-  // fail explicitly when FTD_FORCE_GPU disables that fallback.  Previously
-  // only matched_gauss_dynamics performed the post-force check; the remaining
-  // terms could be acknowledged and then silently skipped by GpuEngine.
-  const auto require_cpu_backend = [&](bool enabled,
-                                       const char* ticket,
-                                       const char* term) {
-    if (!enabled || !backend_ || backend_->kind() != Backend::Kind::Gpu) return;
-    backend_->sync_to_host();
-    std::cerr << '[' << ticket << "] " << term
-              << " is CPU-scoped; forcing CPU backend\n";
-    force_cpu();
-    if (backend_ && backend_->kind() == Backend::Kind::Gpu) {
-#ifdef __EMSCRIPTEN__
-      std::cerr << '[' << ticket << "] FATAL: CPU fallback is disabled\n";
-      std::abort();
-#else
-      throw std::logic_error(std::string("[") + ticket + "] " + term
-          + " cannot run on the GPU backend");
-#endif
-    }
-  };
-  require_cpu_backend(toggles.strong_stress_energy,
-                      "FTD-0406", "strong_stress_energy");
-  require_cpu_backend(toggles.verlet_wave_integrator,
-                      "FTD-0337", "verlet_wave_integrator");
-  require_cpu_backend(toggles.lorentz_period2_floquet,
-                      "FTD-0408", "lorentz_period2_floquet");
-  require_cpu_backend(toggles.lorentz_bcc_time_floquet,
-                      "FTD-0411", "lorentz_bcc_time_floquet");
-  require_cpu_backend(toggles.symmetric_movement_order,
-                      "MOVEMENT-ORDER", "symmetric_movement_order");
 
   // ARCH-2-D: GPU dispatch via Backend. CpuBackend::tick() falls through to
   // the CPU phase ladder below; GpuBackend::tick() owns the full flush →
@@ -1023,8 +1004,12 @@ void RenderBridge::tick() {
   if (toggles.latency_field)
     solve_latency_poisson();
 
-  // Rule 4: Field-mediated forces
-  if (toggles.forces)
+  // Rule 4: Field-mediated forces. EM/gravity/Lorentz stay inside
+  // phase_forces_main_loop gated on toggles.forces; colour / Yukawa /
+  // exchange run when their own toggles are on so a Yukawa-only tick
+  // does not accidentally apply legacy EM.
+  if (toggles.forces || toggles.color_forces || toggles.strong_force
+      || toggles.exchange_force || toggles.cluster_inertia)
     phase_forces();
 
   // FTD-0428: snapshot the exact ternary source immediately before the only
@@ -1101,8 +1086,7 @@ void RenderBridge::tick() {
     weak_transmutation_cpu();
 
   // Rule 7: Triad binding detection (3 same-sign particles → locked).
-  // F2 (callstack audit 2026-04-17): matching GPU path. No-op on CPU
-  // until the triad-detection kernel is ported.
+  // After movement + weak, matching GpuEngine::record_tick_body().
   if (toggles.triad_binding)
     triad_binding_cpu();
 
@@ -1157,6 +1141,7 @@ void RenderBridge::triad_binding_cpu()      { ::ftd::triad_binding_cpu(*this);  
 void RenderBridge::update_energy_ledger() { ::ftd::update_energy_ledger_cpu(*this); }
 
 eft::DualCellContinuity RenderBridge::continuity_step() const {
+  assert_sim_thread();
   // Revision 3.1 (was ARCH-2-K's ifdef): Backend virtual dispatch. The
   // GpuBackend override fills `out` from the device; CPU backends return
   // false and the host default is used. Semantics-preserving under
@@ -1188,6 +1173,7 @@ void RenderBridge::run(int num_ticks) {
 // (R4, 2026-04-18). The methods below are thin wrappers.
 // ============================================================================
 Diagnostics RenderBridge::diagnostics() const {
+  assert_sim_thread();
   Diagnostics d;
   if (backend_) {
     backend_->flush_host_mutations();
@@ -1197,6 +1183,7 @@ Diagnostics RenderBridge::diagnostics() const {
 }
 
 EnergyAudit RenderBridge::energy_audit() const {
+  assert_sim_thread();
   EnergyAudit a;
   if (backend_) {
     backend_->flush_host_mutations();
@@ -1212,6 +1199,7 @@ EnergyAudit RenderBridge::energy_audit() const {
 
 bool RenderBridge::begin_telemetry_snapshot(
     const TelemetrySnapshotRequest& request) {
+  assert_sim_thread();
   return backend_ && backend_->begin_telemetry_snapshot(request);
 }
 
@@ -1224,12 +1212,14 @@ bool RenderBridge::poll_telemetry_snapshot(TelemetrySnapshot& out) {
 }
 
 bool RenderBridge::copy_compact_lagrangian(LagrangianDiag& out) const {
+  assert_sim_thread();
   if (!backend_) return false;
   backend_->flush_host_mutations();
   return backend_->copy_compact_lagrangian(out);
 }
 
 VoxelInspection RenderBridge::inspect_voxel(int x, int y, int z) const {
+  assert_sim_thread();
   VoxelInspection out;
   const int idx = lattice_.index(x, y, z);
   if (backend_) {
@@ -1248,6 +1238,7 @@ VoxelInspection RenderBridge::inspect_voxel(int x, int y, int z) const {
 }
 
 ForceDiag RenderBridge::inspect_force(int x, int y, int z) const {
+  assert_sim_thread();
   ForceDiag out;
   const int idx = lattice_.index(x, y, z);
   if (backend_) {

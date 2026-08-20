@@ -22,6 +22,7 @@
 #include <atomic>
 #include <string>
 #include <cstdint>
+#include <thread>
 #include "ftd/injector.h"
 #include "ftd/backend.h"
 #include "ftd/bridge_rng.h"
@@ -135,6 +136,7 @@ public:
     Lattice& lattice() { return lattice_; }
     const Lattice& lattice() const { return lattice_; }
     std::vector<Voxel>& voxels() {
+        assert_sim_thread();
         if (backend_) {
             backend_->sync_to_host();
             backend_->mark_host_dirty();  // non-const overload — caller may mutate
@@ -144,6 +146,7 @@ public:
         return voxels_;
     }
     const std::vector<Voxel>& voxels() const {
+        assert_sim_thread();
         if (backend_) backend_->sync_to_host();
         return voxels_;
     }
@@ -441,7 +444,15 @@ public:
     // Tests assert on `bridge.energy_ledger().residual` — expected
     // = −DAMPING when damping ON, 0 otherwise — and refuse regressions.
     // See EnergyLedger docstring above for the conservation formulae.
-    const EnergyLedger& energy_ledger() const { return energy_ledger_; }
+    const EnergyLedger& energy_ledger() const {
+        assert_sim_thread();
+        return energy_ledger_;
+    }
+
+    // Debug-only owner-thread pin for native-UI observers (SPEC_UI_V2 §11).
+    // Release (NDEBUG) bodies are no-ops, so goldens stay bit-identical.
+    void bind_sim_thread();
+    void assert_sim_thread() const;
     void update_energy_ledger();
 
     // Native EFT continuity ledger for the most recent GPU tick.
@@ -699,6 +710,8 @@ private:
 
     mutable bool ternary_dirty_from_voxels_ = false;
     mutable bool fields_dirty_from_voxels_ = false;
+    std::thread::id sim_thread_{};
+    bool sim_thread_bound_ = false;
     void sync_ternary_from_voxels() const;
     void sync_ternary_from_voxels_if_needed() const;
     void sync_fields_from_voxels() const;

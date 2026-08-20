@@ -155,6 +155,11 @@ class MatchedGaussDynamics {
     Vec3 centered_electric_at(int x, int y, int z) const;
     double modified_energy(double wave_speed, double dt = 1.0) const;
 
+    /// Replace the live face/edge state after a device advance (GPU mirror).
+    void adopt_state(MatchedFaceFlux electric,
+                     MatchedEdgeField magnetic,
+                     const MatchedWaveStep& step);
+
   private:
     MatchedFaceFlux electric_;
     MatchedEdgeField magnetic_half_;

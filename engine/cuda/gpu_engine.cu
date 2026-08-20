@@ -32,16 +32,19 @@
 namespace ftd { namespace gpu { namespace kernels {
     void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
                             uint8_t bcc_stencil_mode,
-                            bool do_db_clock, bool do_db_clock_coulomb, double omega0);
+                            bool do_db_clock, bool do_db_clock_coulomb, double omega0,
+                            bool period2_floquet, bool bcc_time_floquet);
     void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                             bool larmor_radiation, double damping_factor,
-                            bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
+                            bool do_genesis, bool do_evaporation, double dt,
+                            bool symplectic_leapfrog, bool verlet_wave_integrator,
                             bool do_langevin, double langevin_gamma, double langevin_T,
-                             uint8_t langevin_site_filter,
-                             double kinetic_drain,
-                             double genesis_threshold,
-                             double manifest_scale,
-                             unsigned long long rng_seed);
+                            uint8_t langevin_site_filter,
+                            double kinetic_drain,
+                            double genesis_threshold,
+                            double manifest_scale,
+                            unsigned long long rng_seed);
+    void launch_verlet_second_half_kick(GpuBuffers& bufs, double dt, bool dual);
     void launch_gauss_project(GpuBuffers& bufs,
                               double charge_coupling,
                               bool exact_dual_gauss,
@@ -53,24 +56,30 @@ namespace ftd { namespace gpu { namespace kernels {
                               cufftHandle plan_fwd_f, cufftHandle plan_inv_f);
     void launch_solve_latency(GpuBuffers& bufs,
                               bool include_field_energy,
+                              const double* strong_t00,
                               cufftHandle plan_fwd, cufftHandle plan_inv,
                               cufftHandle plan_fwd_f, cufftHandle plan_inv_f);
     void launch_phase_forces(GpuBuffers& bufs, bool poisson_coulomb,
                              bool emergent_forces,
-                             bool gravity, bool lorentz_force, double dt);
+                             bool gravity, bool geometric_gravity,
+                             bool lorentz_force, double dt);
     void launch_integrate_forces(GpuBuffers& bufs, double dt);
+    void launch_cluster_inertia(GpuBuffers& bufs, double dt);
     void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary,
-                               bool dual_substrate);
+                               bool dual_substrate, bool symmetric_movement_order,
+                               unsigned long long langevin_seed);
     void launch_ew_background_sweep(GpuBuffers& bufs, bool dual_substrate);
     void launch_absorbing_boundary(GpuBuffers& bufs);
     void launch_reflective_flux_boundary(GpuBuffers& bufs);
     void launch_dispersal_flux_boundary(GpuBuffers& bufs);
     // Dual-substrate launchers
     void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
-                                bool do_db_clock, bool do_db_clock_coulomb, double omega0);
+                                bool do_db_clock, bool do_db_clock_coulomb, double omega0,
+                                bool period2_floquet, bool bcc_time_floquet);
     void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                                   bool larmor_radiation, double damping_factor,
-                                  bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
+                                  bool do_genesis, bool do_evaporation, double dt,
+                                  bool symplectic_leapfrog, bool verlet_wave_integrator,
                                   unsigned long long rng_seed);
     void launch_gauss_sync_dual(GpuBuffers& bufs);
 
@@ -81,7 +90,12 @@ namespace ftd { namespace gpu { namespace kernels {
                                 unsigned long long rng_seed);
     void launch_advance_device_tick(GpuBuffers& bufs);
     void launch_build_particle_list(GpuBuffers& bufs);
-    void launch_color_force(GpuBuffers& bufs, double dt);
+    void launch_color_force(GpuBuffers& bufs, double dt, bool linear_confinement,
+                            bool continuous_remainder);
+    void launch_begin_strong_energy(GpuBuffers& bufs, bool movement, bool config_valid);
+    void launch_complete_strong_energy(GpuBuffers& bufs);
+    void launch_strong_t00(GpuBuffers& bufs);
+    void launch_matched_gauss_advance(GpuBuffers& bufs, double wave_speed, double dt);
     void launch_yukawa_force(GpuBuffers& bufs, double dt);
     void launch_exchange_force(GpuBuffers& bufs, double dt);
     void launch_triad_detection(GpuBuffers& bufs);
@@ -734,15 +748,16 @@ bool GpuEngine::interop_signal_fence(std::uint64_t value) {
 }
 
 void GpuEngine::set_dt(double dt) {
-    // Mirror RenderBridge::set_dt: dt<1 is honored ONLY with symplectic_leapfrog,
-    // which permits a CFL-stable sub-step (the plain leapfrog hardcodes dt=1 and
-    // is unstable for dt>1·CFL). Pre-2026-06-20 this unconditionally clamped to
-    // 1.0, so the GPU silently ran dt=1 even when the symplectic integrator and a
-    // dt<1 were requested (e.g. campaign_atomic_spectroscopy at ω₀=1.5, dt=0.5) —
-    // exciting the unstable high-k mode and diverging. Now the GPU honors the same
-    // dt<1 the CPU does. toggles are synced before each tick (GpuBackend::tick),
-    // and GpuBackend::set_dt syncs them before forwarding, so this read is fresh.
-    dt_ = (toggles.symplectic_leapfrog || dt >= 1.0) ? dt : 1.0;
+    // Mirror RenderBridge::set_dt: dt<1 is honored with symplectic_leapfrog
+    // or verlet_wave_integrator. The plain leapfrog hardcodes dt=1.
+    // FTD-0408/0411 exact monodromies lock the unit tick.
+    if (toggles.lorentz_period2_floquet || toggles.lorentz_bcc_time_floquet) {
+        dt_ = 1.0;
+    } else {
+        dt_ = (toggles.symplectic_leapfrog
+               || toggles.verlet_wave_integrator
+               || dt >= 1.0) ? dt : 1.0;
+    }
 }
 
 void GpuEngine::set_rng_seed(unsigned int seed) {
@@ -838,8 +853,18 @@ void GpuEngine::record_tick_body() {
     // NEVER begin before every phase_read thread has retired. No explicit
     // sync primitive is needed or wanted here; do NOT move these onto
     // different streams without re-introducing the barrier explicitly.
-    gpu_phase_read();
-    gpu_phase_write();
+    if (!toggles.matched_gauss_dynamics) {
+        gpu_phase_read();
+        gpu_phase_write();
+    }
+
+    // E1 / FTD-0337: KDK second half-kick at the post-drift field, before
+    // pair production and Gauss — same operator split as RenderBridge::tick.
+    if (toggles.verlet_wave_integrator) {
+        gpu_phase_read();
+        kernels::launch_verlet_second_half_kick(
+            bufs_, dt_, toggles.dual_substrate);
+    }
 
     // Phase 2b: Pair production (correlated ±1 pairs from high-flux void)
     if (toggles.pair_production) {
@@ -858,12 +883,31 @@ void GpuEngine::record_tick_body() {
     // Phase 3b: Latency Poisson (gravitational potential → voxel.latency)
     // Wave 5 (2026-04-14): GPU now implements solve_latency_poisson().
     // Tests that enable toggles.latency_field no longer need force_cpu().
+    if (toggles.strong_stress_energy) {
+        gpu_build_particle_list();
+        const bool projection_ok =
+            toggles.color_forces && toggles.forces && toggles.movement
+            && !toggles.damping && !toggles.genesis && !toggles.evaporation
+            && !toggles.pair_production && !toggles.poisson_coulomb
+            && !toggles.emergent_forces && !toggles.gravity
+            && !toggles.latency_field && !toggles.lorentz_force
+            && !toggles.strong_force && !toggles.exchange_force
+            && !toggles.weak_transmutation && !toggles.triad_binding
+            && !toggles.absorbing_boundary && !toggles.reflective_boundary;
+        kernels::launch_begin_strong_energy(
+            bufs_, toggles.movement, projection_ok);
+    }
+
     if (toggles.latency_field) {
+        if (toggles.strong_stress_energy) {
+            kernels::launch_strong_t00(bufs_);
+        }
         gpu_solve_latency_poisson();
     }
 
     const bool any_force = toggles.forces || toggles.color_forces
-                        || toggles.strong_force || toggles.exchange_force;
+                        || toggles.strong_force || toggles.exchange_force
+                        || toggles.cluster_inertia;
     if (any_force) bufs_.reset_force_diag();
 
     // Phase 4: Force accumulation (Coulomb Poisson + EM/gravity/Lorentz)
@@ -873,7 +917,7 @@ void GpuEngine::record_tick_body() {
 
     // Phase 4b: Pairwise forces (color, Yukawa, exchange) — requires particle list
     bool need_plist = toggles.color_forces || toggles.strong_force
-                   || toggles.exchange_force || toggles.triad_binding;
+                   || toggles.exchange_force;
     if (need_plist) {
         gpu_build_particle_list();
         gpu_particle_forces();
@@ -882,14 +926,27 @@ void GpuEngine::record_tick_body() {
     // FTD-0402: every active force channel feeds one momentum update.
     if (any_force) kernels::launch_integrate_forces(bufs_, dt_);
 
-    // Phase 4c: Triad binding detection
-    if (toggles.triad_binding) {
-        gpu_triad_detection();
+    // Rigid-body cluster inertia: after integrate, before movement — CPU Rule 4.
+    if (toggles.cluster_inertia) {
+        kernels::launch_cluster_inertia(bufs_, dt_);
     }
 
     // Phase 5: Movement
     if (toggles.movement) {
         gpu_phase_movement();
+    }
+
+    if (toggles.matched_gauss_dynamics) {
+        kernels::launch_matched_gauss_advance(bufs_, C_SPEED, dt_);
+    }
+
+    if (toggles.strong_stress_energy && toggles.movement) {
+        gpu_build_particle_list();
+        kernels::launch_complete_strong_energy(bufs_);
+    }
+    if (toggles.strong_stress_energy) {
+        if (!toggles.movement) gpu_build_particle_list();
+        kernels::launch_strong_t00(bufs_);
     }
 
     // CPU parity: field boundaries run after the final ordinary flux writer
@@ -907,6 +964,13 @@ void GpuEngine::record_tick_body() {
     // Phase 6: Weak transmutation (stress-threshold polarity flip)
     if (toggles.weak_transmutation) {
         gpu_weak_transmutation();
+    }
+
+    // Phase 7: Triad binding — after movement + weak, matching CPU Rule 7.
+    // Rebuild the particle list on post-movement sites.
+    if (toggles.triad_binding) {
+        gpu_build_particle_list();
+        gpu_triad_detection();
     }
 
     // Phase 7b (revision 0.9 option a): non-Abelian gauge-link relaxation —
@@ -979,6 +1043,9 @@ std::uint64_t GpuEngine::graph_key() const {
     mix_bool(toggles.evaporation);
     mix_bool(toggles.langevin);
     mix_bool(toggles.symplectic_leapfrog);
+    mix_bool(toggles.verlet_wave_integrator);
+    mix_bool(toggles.lorentz_period2_floquet);
+    mix_bool(toggles.lorentz_bcc_time_floquet);
     mix_bool(toggles.pair_production);
     mix_bool(toggles.gauss_projection);
     mix_bool(toggles.dual_substrate);
@@ -993,7 +1060,12 @@ std::uint64_t GpuEngine::graph_key() const {
     mix_bool(toggles.strong_force);
     mix_bool(toggles.exchange_force);
     mix_bool(toggles.triad_binding);
+    mix_bool(toggles.cluster_inertia);
     mix_bool(toggles.movement);
+    mix_bool(toggles.symmetric_movement_order);
+    mix_bool(toggles.confinement);
+    mix_bool(toggles.strong_stress_energy);
+    mix_bool(toggles.matched_gauss_dynamics);
     mix_bool(toggles.reflective_boundary);
     mix_bool(toggles.absorbing_boundary);
     mix_int(static_cast<int>(toggles.flux_boundary));
@@ -1065,6 +1137,10 @@ void GpuEngine::destroy_graph_cache() {
 
 void GpuEngine::tick() {
     continuity_ledger_valid_ = true;
+    if (toggles.matched_gauss_dynamics && !matched_gauss_ready_) {
+        throw std::logic_error(
+            "[FTD-0428] matched_gauss_dynamics requires explicit initialization");
+    }
 
     if (!graph_capture_enabled || !graph_eligible()) {
         record_tick_body();
@@ -1143,6 +1219,16 @@ void GpuEngine::tick() {
     tick_++;
     host_dirty_ = true;
     mark_device_state_changed();
+    if (toggles.matched_gauss_dynamics) {
+        int valid = 0;
+        CUDA_CHECK(cudaMemcpy(&valid, bufs_.d_matched_valid, sizeof(int),
+                              cudaMemcpyDeviceToHost));
+        matched_gauss_last_valid_ = valid != 0;
+        if (!matched_gauss_last_valid_) {
+            throw std::logic_error(
+                "[FTD-0428] movement history is not conservative and routable");
+        }
+    }
 }
 
 void GpuEngine::run(int num_ticks) {
@@ -1176,7 +1262,9 @@ void GpuEngine::gpu_phase_read() {
                                         toggles.coupling,
                                         toggles.de_broglie_clock,
                                         toggles.db_clock_coulomb,
-                                        toggles.omega0);
+                                        toggles.omega0,
+                                        toggles.lorentz_period2_floquet,
+                                        toggles.lorentz_bcc_time_floquet);
     } else {
         kernels::launch_phase_read(bufs_,
                                    toggles.wave_propagation,
@@ -1184,7 +1272,9 @@ void GpuEngine::gpu_phase_read() {
                                    static_cast<uint8_t>(toggles.bcc_stencil),
                                    toggles.de_broglie_clock,
                                    toggles.db_clock_coulomb,
-                                   toggles.omega0);
+                                   toggles.omega0,
+                                   toggles.lorentz_period2_floquet,
+                                   toggles.lorentz_bcc_time_floquet);
     }
 }
 
@@ -1215,6 +1305,7 @@ void GpuEngine::gpu_phase_write() {
                                          toggles.evaporation,
                                          dt_,
                                          toggles.symplectic_leapfrog,
+                                         toggles.verlet_wave_integrator,
                                          rng_seed);
     } else {
         kernels::launch_phase_write(bufs_,
@@ -1226,6 +1317,7 @@ void GpuEngine::gpu_phase_write() {
                                     toggles.evaporation,
                                     dt_,
                                     toggles.symplectic_leapfrog,
+                                    toggles.verlet_wave_integrator,
                                     toggles.langevin,
                                     toggles.langevin_gamma,
                                     toggles.langevin_T,
@@ -1277,6 +1369,7 @@ void GpuEngine::gpu_solve_coulomb() {
 void GpuEngine::gpu_solve_latency_poisson() {
     kernels::launch_solve_latency(bufs_,
                                   toggles.field_energy_gravity,
+                                  toggles.strong_stress_energy ? bufs_.d_strong_t00 : nullptr,
                                   fft_plan_forward_,
                                   fft_plan_inverse_,
                                   fft_plan_forward_f_,
@@ -1296,13 +1389,16 @@ void GpuEngine::gpu_phase_forces() {
                                  toggles.poisson_coulomb,
                                  toggles.emergent_forces,
                                  toggles.gravity,
+                                 toggles.geometric_gravity,
                                  toggles.lorentz_force,
                                  dt_);
 }
 
 void GpuEngine::gpu_phase_movement() {
     kernels::launch_phase_movement(bufs_, dt_, toggles.reflective_boundary,
-                                   toggles.dual_substrate);
+                                   toggles.dual_substrate,
+                                   toggles.symmetric_movement_order,
+                                   static_cast<unsigned long long>(toggles.langevin_seed));
 }
 
 // ---------- Extended Physics Sub-Phases ----------
@@ -1328,7 +1424,8 @@ void GpuEngine::gpu_build_particle_list() {
 
 void GpuEngine::gpu_particle_forces() {
     if (toggles.color_forces) {
-        kernels::launch_color_force(bufs_, dt_);
+        kernels::launch_color_force(bufs_, dt_, toggles.confinement,
+                                    toggles.strong_stress_energy);
     }
     if (toggles.strong_force) {
         kernels::launch_yukawa_force(bufs_, dt_);
@@ -1965,6 +2062,88 @@ void GpuEngine::free_gauge_links() {
         if (d_su3_scr_[d]) { cudaFree(d_su3_scr_[d]); d_su3_scr_[d] = nullptr; }
     }
     gauge_links_device_ = false;
+}
+
+void GpuEngine::upload_matched_gauss(const eft::MatchedGaussDynamics& src) {
+    if (!src.initialized() || src.size() != size_) {
+        throw std::logic_error(
+            "[FTD-0428] matched Gauss upload requires an initialized field of matching size");
+    }
+    bufs_.ensure_matched_gauss();
+    const std::size_t bytes = static_cast<std::size_t>(N_) * sizeof(double);
+    CUDA_CHECK(cudaMemcpy(bufs_.d_matched_ex, src.electric().x.data(), bytes, cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(bufs_.d_matched_ey, src.electric().y.data(), bytes, cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(bufs_.d_matched_ez, src.electric().z.data(), bytes, cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(bufs_.d_matched_bx, src.magnetic_half().x.data(), bytes, cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(bufs_.d_matched_by, src.magnetic_half().y.data(), bytes, cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(bufs_.d_matched_bz, src.magnetic_half().z.data(), bytes, cudaMemcpyHostToDevice));
+    matched_gauss_ready_ = true;
+    matched_gauss_last_valid_ = true;
+    host_dirty_ = true;
+    mark_device_state_changed();
+}
+
+void GpuEngine::download_matched_gauss(eft::MatchedGaussDynamics& dst) {
+    bufs_.ensure_matched_gauss();
+    eft::MatchedFaceFlux electric(size_);
+    eft::MatchedEdgeField magnetic(size_);
+    const std::size_t bytes = static_cast<std::size_t>(N_) * sizeof(double);
+    CUDA_CHECK(cudaMemcpy(electric.x.data(), bufs_.d_matched_ex, bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(electric.y.data(), bufs_.d_matched_ey, bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(electric.z.data(), bufs_.d_matched_ez, bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(magnetic.x.data(), bufs_.d_matched_bx, bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(magnetic.y.data(), bufs_.d_matched_by, bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(magnetic.z.data(), bufs_.d_matched_bz, bytes, cudaMemcpyDeviceToHost));
+    eft::MatchedWaveStep step;
+    step.valid = matched_gauss_last_valid_;
+    dst.adopt_state(std::move(electric), std::move(magnetic), step);
+}
+
+void GpuEngine::download_strong_stress(std::vector<StrongStressCell>& out) {
+    bufs_.ensure_strong_stress();
+    out.assign(static_cast<std::size_t>(N_), {});
+    std::vector<double> t00(static_cast<std::size_t>(N_));
+    std::vector<double> xx(static_cast<std::size_t>(N_));
+    std::vector<double> yy(static_cast<std::size_t>(N_));
+    std::vector<double> zz(static_cast<std::size_t>(N_));
+    std::vector<double> xy(static_cast<std::size_t>(N_));
+    std::vector<double> xz(static_cast<std::size_t>(N_));
+    std::vector<double> yz(static_cast<std::size_t>(N_));
+    const std::size_t bytes = static_cast<std::size_t>(N_) * sizeof(double);
+    CUDA_CHECK(cudaMemcpy(t00.data(), bufs_.d_strong_t00, bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(xx.data(), bufs_.d_strong_sxx, bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(yy.data(), bufs_.d_strong_syy, bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(zz.data(), bufs_.d_strong_szz, bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(xy.data(), bufs_.d_strong_sxy, bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(xz.data(), bufs_.d_strong_sxz, bytes, cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(yz.data(), bufs_.d_strong_syz, bytes, cudaMemcpyDeviceToHost));
+    for (int i = 0; i < N_; ++i) {
+        auto& cell = out[static_cast<std::size_t>(i)];
+        cell.energy_density = t00[static_cast<std::size_t>(i)];
+        cell.stress_xx = xx[static_cast<std::size_t>(i)];
+        cell.stress_yy = yy[static_cast<std::size_t>(i)];
+        cell.stress_zz = zz[static_cast<std::size_t>(i)];
+        cell.stress_xy = xy[static_cast<std::size_t>(i)];
+        cell.stress_xz = xz[static_cast<std::size_t>(i)];
+        cell.stress_yz = yz[static_cast<std::size_t>(i)];
+    }
+}
+
+void GpuEngine::download_strong_step_diagnostics(StrongEnergyStepDiagnostics& out) {
+    bufs_.ensure_strong_stress();
+    GpuBuffers::StrongStepDevice step{};
+    CUDA_CHECK(cudaMemcpy(&step, bufs_.d_strong_step, sizeof(step),
+                          cudaMemcpyDeviceToHost));
+    out.h_before = step.h_before;
+    out.h_after = step.h_after;
+    out.residual = step.residual;
+    out.lambda = step.lambda;
+    out.momentum_before = {step.mx_before, step.my_before, step.mz_before};
+    out.momentum_after = {step.mx_after, step.my_after, step.mz_after};
+    out.projection_events = step.projection_events;
+    out.projection_failures = step.projection_failures;
+    out.topology_failures = step.topology_failures;
+    out.projected_particles = step.projected_particles;
 }
 
 }  // namespace gpu

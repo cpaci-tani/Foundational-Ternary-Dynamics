@@ -2,7 +2,8 @@
  * @file kernels_forces.cu
  * @brief GPU kernels for Phase 4 (Forces) and Phase 5 (Movement).
  *
- * [EXTENDED] Forces: Coulomb (from Poisson potential), gravity (density gradient),
+ * [EXTENDED] Forces: Coulomb (from Poisson potential), gravity (density
+ * gradient, or FTD-1016 geometric F = M C² ℒ ∇ℒ when geometric_gravity),
  * Lorentz (v × B where B = curl(J)). 
  * Movement: remainder accumulation, speed clamping, collision detection.
  */
@@ -11,6 +12,7 @@
 #include "ftd/constants.h"
 #include "ftd/constants_shared.h"
 #include "ftd/causal_kinematics.h"
+#include "ftd/movement_order.h"
 #include "../cuda/cuda_index.cuh"   // ftd::wrap, ftd::idx3d, ftd::decode_xyz, ftd::periodic_delta
 #include <cuda_runtime.h>
 #include <cub/device/device_select.cuh>
@@ -139,6 +141,7 @@ __global__ void phase_forces_kernel(
     bool poisson_coulomb,
     bool emergent_forces,
     bool gravity,
+    bool geometric_gravity,
     bool lorentz_force,
     double dt,
     int L
@@ -220,24 +223,32 @@ __global__ void phase_forces_kernel(
         fx += f_em_x; fy += f_em_y; fz += f_em_z;
     }
 
-    // --- Gravity: F = G_N * gradient(density) using tier-2 stencil ---
+    // --- Gravity: density gradient, or FTD-1016 geometric F = M C² ℒ ∇ℒ ---
     if (gravity) {
-        // Tier-2 gradient: use r=2 neighbors to avoid self-field contamination
         int x2p = idx3d_d(x+2,y,z,L), x2m = idx3d_d(x-2,y,z,L);
         int y2p = idx3d_d(x,y+2,z,L), y2m = idx3d_d(x,y-2,z,L);
         int z2p = idx3d_d(x,y,z+2,L), z2m = idx3d_d(x,y,z-2,L);
 
-        auto density = [&](int j) -> double {
-            return sqrt(flux_x[j]*flux_x[j] + flux_y[j]*flux_y[j] + flux_z[j]*flux_z[j]);
-        };
-
-        double gx = GRAD_TIER2_SCALE * (density(x2p) - density(x2m));
-        double gy = GRAD_TIER2_SCALE * (density(y2p) - density(y2m));
-        double gz = GRAD_TIER2_SCALE * (density(z2p) - density(z2m));
-
-        f_grav_x = G_N * gx;
-        f_grav_y = G_N * gy;
-        f_grav_z = G_N * gz;
+        if (geometric_gravity) {
+            double gx = GRAD_TIER2_SCALE * (latency[x2p] - latency[x2m]);
+            double gy = GRAD_TIER2_SCALE * (latency[y2p] - latency[y2m]);
+            double gz = GRAD_TIER2_SCALE * (latency[z2p] - latency[z2m]);
+            const double Lloc = latency[i];
+            const double pre = M_INERTIAL * C_SPEED * C_SPEED * Lloc;
+            f_grav_x = pre * gx;
+            f_grav_y = pre * gy;
+            f_grav_z = pre * gz;
+        } else {
+            auto density = [&](int j) -> double {
+                return sqrt(flux_x[j]*flux_x[j] + flux_y[j]*flux_y[j] + flux_z[j]*flux_z[j]);
+            };
+            double gx = GRAD_TIER2_SCALE * (density(x2p) - density(x2m));
+            double gy = GRAD_TIER2_SCALE * (density(y2p) - density(y2m));
+            double gz = GRAD_TIER2_SCALE * (density(z2p) - density(z2m));
+            f_grav_x = G_N * gx;
+            f_grav_y = G_N * gy;
+            f_grav_z = G_N * gz;
+        }
         fx += f_grav_x; fy += f_grav_y; fz += f_grav_z;
     }
 
@@ -357,21 +368,17 @@ __global__ void integrate_forces_kernel(
 
 // ---------- Movement transaction ----------
 //
-// CPU movement is a greedy ascending X-major transaction: every committed
-// source mutates state that later sources must observe.  A thread-per-site
-// CUDA kernel cannot preserve that order -- target CAS only serializes one
-// byte, while metadata, flux transport, annihilation scatter, and the source
-// clear remain mutually racy.  It also lets a newly arrived particle execute
-// again when its target thread has not yet run.
-//
-// The common case is sub-cell drift with no integer hop. A parallel prepass
-// classifies original candidates and crossing sites, resets moved[], and
-// reduces one crossing byte per contiguous 256-site block. A compact second
-// kernel applies all non-crossing drift in parallel. The final one-thread
-// kernel scans only flagged blocks and commits crossing sources in ascending
-// index order. Keeping the large collision body out of the parallel kernel is
-// important: otherwise NVCC provisions its local state for every lane. This
-// removes unconditional CUB work while retaining the exact greedy CPU order.
+// CPU movement is a greedy live-state transaction: default order is
+// ascending X-major with a moved[] arrival guard; symmetric_movement_order
+// shuffles that traversal with VoxelRng::MovementShuffle. A thread-per-site
+// CUDA kernel cannot preserve that order. The common case is sub-cell drift
+// with no integer hop. A parallel prepass classifies original candidates and
+// crossing sites, resets moved[], and reduces one crossing byte per
+// contiguous 256-site block. A compact second kernel applies all
+// non-crossing drift in parallel. The final one-thread kernel scans flagged
+// blocks (or the shuffled permutation) and commits crossing sources in the
+// CPU order. Keeping the large collision body out of the parallel kernel is
+// important: otherwise NVCC provisions its local state for every lane.
 
 constexpr uint8_t MOVEMENT_CANDIDATE = 0x1;
 constexpr uint8_t MOVEMENT_CROSSING  = 0x2;
@@ -388,7 +395,8 @@ struct PreparedMovement {
 __device__ __forceinline__ PreparedMovement prepare_movement(
     double vx, double vy, double vz,
     double rx, double ry, double rz,
-    double latency, double dt) {
+    double latency, double dt,
+    int site, bool symmetric, std::uint64_t seed, const int* tick_ptr) {
     PreparedMovement p{vx, vy, vz, rx, ry, rz, 0, 0, 0, false};
     const double speed2 = vx*vx + vy*vy + vz*vz;
     const double projection =
@@ -409,12 +417,9 @@ __device__ __forceinline__ PreparedMovement prepare_movement(
     p.rx += p.vx * dt;
     p.ry += p.vy * dt;
     p.rz += p.vz * dt;
-    if (p.rx >= 1.0) { p.dx = 1; p.rx -= 1.0; }
-    else if (p.rx <= -1.0) { p.dx = -1; p.rx += 1.0; }
-    if (p.ry >= 1.0) { p.dy = 1; p.ry -= 1.0; }
-    else if (p.ry <= -1.0) { p.dy = -1; p.ry += 1.0; }
-    if (p.rz >= 1.0) { p.dz = 1; p.rz -= 1.0; }
-    else if (p.rz <= -1.0) { p.dz = -1; p.rz += 1.0; }
+    const int tick = (symmetric && tick_ptr) ? *tick_ptr : 0;
+    ::ftd::extract_remainder_hops(p.rx, p.ry, p.rz, p.dx, p.dy, p.dz,
+                                  symmetric, seed, site, tick);
     return p;
 }
 
@@ -432,7 +437,10 @@ __global__ void movement_prepass_kernel(
     uint8_t* __restrict__ moved,
     uint8_t* __restrict__ block_has_crossing,
     double dt,
-    int N
+    int N,
+    bool symmetric,
+    unsigned long long seed,
+    const int* __restrict__ tick_ptr
 ) {
     __shared__ unsigned int has_crossing;
     if (threadIdx.x == 0) has_crossing = 0;
@@ -446,7 +454,8 @@ __global__ void movement_prepass_kernel(
             flags = MOVEMENT_CANDIDATE;
             const PreparedMovement p = prepare_movement(
                 vel_x[i], vel_y[i], vel_z[i],
-                rem_x[i], rem_y[i], rem_z[i], latency[i], dt);
+                rem_x[i], rem_y[i], rem_z[i], latency[i], dt,
+                i, symmetric, seed, tick_ptr);
             if (p.projected) flags |= MOVEMENT_PROJECTED;
             if (p.dx != 0 || p.dy != 0 || p.dz != 0) {
                 flags |= MOVEMENT_CROSSING;
@@ -473,7 +482,10 @@ __global__ void apply_non_crossing_movement_kernel(
     const uint8_t* __restrict__ site_flags,
     unsigned long long* __restrict__ causal_projection_events,
     double dt,
-    int N
+    int N,
+    bool symmetric,
+    unsigned long long seed,
+    const int* __restrict__ tick_ptr
 ) {
     const int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= N) return;
@@ -482,7 +494,8 @@ __global__ void apply_non_crossing_movement_kernel(
         || (flags & MOVEMENT_CROSSING) != 0) return;
     const PreparedMovement p = prepare_movement(
         vel_x[i], vel_y[i], vel_z[i],
-        rem_x[i], rem_y[i], rem_z[i], latency[i], dt);
+        rem_x[i], rem_y[i], rem_z[i], latency[i], dt,
+        i, symmetric, seed, tick_ptr);
     vel_x[i] = p.vx; vel_y[i] = p.vy; vel_z[i] = p.vz;
     rem_x[i] = p.rx; rem_y[i] = p.ry; rem_z[i] = p.rz;
     if (p.projected) atomicAdd(causal_projection_events, 1ULL);
@@ -525,21 +538,25 @@ __global__ void phase_movement_commit_crossings_kernel(
     int L,
     int N,
     int movement_blocks,
-    bool reflective_boundary
+    bool reflective_boundary,
+    bool symmetric,
+    unsigned long long seed,
+    const int* __restrict__ tick_ptr,
+    const int* __restrict__ order,
+    const int* __restrict__ rank
 ) {
     if (blockIdx.x != 0 || threadIdx.x != 0) return;
 
-    for (int movement_block = 0;
-         movement_block < movement_blocks; ++movement_block) {
-        if (!block_has_crossing[movement_block]) continue;
-        const int begin = movement_block * MOVEMENT_BLOCK_SIZE;
-        const int block_end = begin + MOVEMENT_BLOCK_SIZE;
-        const int end = block_end < N ? block_end : N;
-        for (int i = begin; i < end; ++i) {
-        if ((site_flags[i] & MOVEMENT_CROSSING) == 0) continue;
+    auto later_than = [&](int target, int src) -> bool {
+        if (rank) return rank[target] > rank[src];
+        return target > src;
+    };
+
+    auto commit_site = [&](int i) {
+        if ((site_flags[i] & MOVEMENT_CROSSING) == 0) return;
         // Re-read live state. Earlier commits may have moved into, moved out
         // of, or annihilated this original candidate site.
-        if (state[i] == 0 || locked[i] || moved[i]) continue;
+        if (state[i] == 0 || locked[i] || moved[i]) return;
         const int q = static_cast<int>(state[i]);
 
         int x, y, z;
@@ -548,13 +565,14 @@ __global__ void phase_movement_commit_crossings_kernel(
         // Last-resort repair + exact one-axis-per-tick remainder extraction.
         const PreparedMovement p = prepare_movement(
             vel_x[i], vel_y[i], vel_z[i],
-            rem_x[i], rem_y[i], rem_z[i], latency[i], dt);
+            rem_x[i], rem_y[i], rem_z[i], latency[i], dt,
+            i, symmetric, seed, tick_ptr);
         vel_x[i] = p.vx; vel_y[i] = p.vy; vel_z[i] = p.vz;
         rem_x[i] = p.rx; rem_y[i] = p.ry; rem_z[i] = p.rz;
         if (p.projected) ++(*causal_projection_events);
         const int dx = p.dx, dy = p.dy, dz = p.dz;
 
-        if (dx == 0 && dy == 0 && dz == 0) continue;
+        if (dx == 0 && dy == 0 && dz == 0) return;
 
         const int nx = x + dx;
         const int ny = y + dy;
@@ -567,7 +585,7 @@ __global__ void phase_movement_commit_crossings_kernel(
                 if (dy != 0) vel_y[i] = -vel_y[i];
                 if (dz != 0) vel_z[i] = -vel_z[i];
                 rem_x[i] = 0.0; rem_y[i] = 0.0; rem_z[i] = 0.0;
-                continue;
+                return;
             }
 
             // Open particle boundary: exhaust into the void. accel_mag is
@@ -584,7 +602,7 @@ __global__ void phase_movement_commit_crossings_kernel(
                 fL_x[i] = 0.0; fL_y[i] = 0.0; fL_z[i] = 0.0;
                 fR_x[i] = 0.0; fR_y[i] = 0.0; fR_z[i] = 0.0;
             }
-            continue;
+            return;
         }
 
         const int target = nx * L * L + ny * L + nz;
@@ -664,7 +682,7 @@ __global__ void phase_movement_commit_crossings_kernel(
             // removes its tentative projection telemetry. moved[target]
             // distinguishes a later arrival from that original candidate.
             const uint8_t target_flags = site_flags[target];
-            if (target > i && !moved[target]
+            if (later_than(target, i) && !moved[target]
                 && (target_flags & MOVEMENT_CANDIDATE) != 0
                 && (target_flags & MOVEMENT_CROSSING) == 0
                 && (target_flags & MOVEMENT_PROJECTED) != 0) {
@@ -770,7 +788,20 @@ __global__ void phase_movement_commit_crossings_kernel(
                 }
             }
         }
+    };
+
+    if (symmetric && order) {
+        for (int k = 0; k < N; ++k) commit_site(order[k]);
+        return;
     }
+
+    for (int movement_block = 0;
+         movement_block < movement_blocks; ++movement_block) {
+        if (!block_has_crossing[movement_block]) continue;
+        const int begin = movement_block * MOVEMENT_BLOCK_SIZE;
+        const int block_end = begin + MOVEMENT_BLOCK_SIZE;
+        const int end = block_end < N ? block_end : N;
+        for (int i = begin; i < end; ++i) commit_site(i);
     }
 }
 
@@ -898,7 +929,8 @@ double alpha_s_lattice_d(double r_voxels) {
 // Thread per particle i, iterates over all other particles j.
 // Same-color pairs: REPULSIVE (cf=+0.5); diff-color: ATTRACTIVE (cf=-1.0).
 // Matches CPU convention in render_bridge.cpp phase_forces().
-// Three regimes: r<3 (Coulomb), 3<=r<8 (transition), r>=8 (Harmonic confinement: F∝r, V∝r²).
+// Three regimes: r<3 (Coulomb), 3<=r<8 (transition), r>=8 (harmonic F∝r
+// unless TermToggles::confinement selects constant SIGMA_STRING).
 
 __global__ void color_force_kernel(
     const int* __restrict__ plist_idx,
@@ -906,6 +938,9 @@ __global__ void color_force_kernel(
     const int  max_particles,
     const int8_t* __restrict__ state,
     const int8_t* __restrict__ color_arr,
+    const double* __restrict__ remainder_x,
+    const double* __restrict__ remainder_y,
+    const double* __restrict__ remainder_z,
     const double* __restrict__ flux_x,
     const double* __restrict__ flux_y,
     const double* __restrict__ flux_z,
@@ -913,7 +948,9 @@ __global__ void color_force_kernel(
     double* __restrict__ fd_strong_x,
     double* __restrict__ fd_strong_y,
     double* __restrict__ fd_strong_z,
-    int L
+    int L,
+    bool linear_confinement,
+    bool continuous_remainder
 ) {
     const int raw = *num_particles_ptr;
     const int num_particles = raw < max_particles ? raw : max_particles;
@@ -943,10 +980,28 @@ __global__ void color_force_kernel(
         int jx, jy, jz;
         decode_xyz_d(j, L, jx, jy, jz);
 
-        int dx, dy, dz;
-        periodic_delta_d(ix, iy, iz, jx, jy, jz, L, dx, dy, dz);
-        double r2 = (double)(dx*dx + dy*dy + dz*dz);
-        double r = sqrt(r2);
+        double ddx, ddy, ddz, r;
+        if (continuous_remainder) {
+            const double half = static_cast<double>(L / 2);
+            const double Ld = static_cast<double>(L);
+            const double pix = static_cast<double>(ix) + remainder_x[i];
+            const double piy = static_cast<double>(iy) + remainder_y[i];
+            const double piz = static_cast<double>(iz) + remainder_z[i];
+            ddx = ::ftd::lattice_periodic_delta_real(
+                static_cast<double>(jx) + remainder_x[j] - pix, half, Ld);
+            ddy = ::ftd::lattice_periodic_delta_real(
+                static_cast<double>(jy) + remainder_y[j] - piy, half, Ld);
+            ddz = ::ftd::lattice_periodic_delta_real(
+                static_cast<double>(jz) + remainder_z[j] - piz, half, Ld);
+            r = sqrt(ddx * ddx + ddy * ddy + ddz * ddz);
+        } else {
+            int dx, dy, dz;
+            periodic_delta_d(ix, iy, iz, jx, jy, jz, L, dx, dy, dz);
+            ddx = static_cast<double>(dx);
+            ddy = static_cast<double>(dy);
+            ddz = static_cast<double>(dz);
+            r = sqrt(ddx * ddx + ddy * ddy + ddz * ddz);
+        }
         if (r < 1.0) r = 1.0;
 
         // Color factor: same color → repulsive (+0.5), diff color → attractive (-1.0)
@@ -958,23 +1013,19 @@ __global__ void color_force_kernel(
 
         double as = alpha_s_lattice_d(r);
 
-        // Three-regime force profile (magnitude; sign from cf)
-        // Regime boundaries from constants_shared.h (shared single source of truth).
-        double f_mag;
-        if (r < COLOR_COULOMB_RADIUS) {
-            f_mag = as * cf / r2;                            // Coulomb
-        } else if (r < COLOR_TRANSITION_RADIUS) {
-            f_mag = as * cf / (COLOR_TRANSITION_DENOM * r); // Transition
-        } else {
-            f_mag = as * cf * r / COLOR_LINEAR_DENOM;       // Harmonic confinement (F∝r, V∝r²)
-        }
+        // Three-regime force profile (magnitude; sign from cf).
+        // r>=8 is harmonic unless toggles.confinement selects SIGMA_STRING.
+        // FTD-0406 remainder colour uses the potential-gradient profile.
+        const double f_mag = continuous_remainder
+            ? cf * ::ftd::strong_radial_profile_from_as(r, as)
+            : ::ftd::color_regime_force_mag(r, as, cf, linear_confinement);
 
         // Direction: cf>0 pushes AWAY (repulsive), cf<0 pulls TOWARD (attractive)
         // Negate to match CPU: f_color -= F_mag * d/r
         double inv_r = 1.0 / r;
-        fx -= f_mag * dx * inv_r;
-        fy -= f_mag * dy * inv_r;
-        fz -= f_mag * dz * inv_r;
+        fx -= f_mag * ddx * inv_r;
+        fy -= f_mag * ddy * inv_r;
+        fz -= f_mag * ddz * inv_r;
     }
 
     // Mirror per-particle color force into force_diag (parity with CPU
@@ -1013,10 +1064,6 @@ __global__ void yukawa_force_kernel(
 
     double fx = 0.0, fy = 0.0, fz = 0.0;
 
-    // Use canonical ontic constants (via --expt-relaxed-constexpr)
-    const double AS = ftd::ALPHA_S;     // = 1.0 (Planck-scale strong coupling)
-    const double MY = ftd::M_YUKAWA;   // = 1.0 (inverse meson mass in lattice units)
-
     for (int pj = 0; pj < num_particles; ++pj) {
         if (pj == pi) continue;
         int j = plist_idx[pj];
@@ -1027,10 +1074,8 @@ __global__ void yukawa_force_kernel(
         periodic_delta_d(ix, iy, iz, jx, jy, jz, L, dx, dy, dz);
         double r2 = (double)(dx*dx + dy*dy + dz*dz);
         double r = sqrt(r2);
+        double f_mag = ::ftd::yukawa_pair_force_mag(r);
         if (r < 1.0) r = 1.0;
-
-        // Yukawa force: attractive, short range
-        double f_mag = AS * exp(-MY * r) / r2 * (1.0 + MY * r);
 
         // Attractive: toward j
         double inv_r = 1.0 / r;
@@ -1074,10 +1119,6 @@ __global__ void exchange_force_kernel(
 
     double fx = 0.0, fy = 0.0, fz = 0.0;
 
-    const double AE = ftd::ALPHA_EXCHANGE;  // α² (from ontic chain)
-    const double R_EX = ftd::EXCHANGE_RANGE;         // Exchange range (voxels)
-    const double R_EX2 = ftd::EXCHANGE_RANGE_SQ;     // R_EX²
-
     for (int pj = 0; pj < num_particles; ++pj) {
         if (pj == pi) continue;
         int j = plist_idx[pj];
@@ -1089,10 +1130,8 @@ __global__ void exchange_force_kernel(
         periodic_delta_d(ix, iy, iz, jx, jy, jz, L, dx, dy, dz);
         double r2 = (double)(dx*dx + dy*dy + dz*dz);
         double r = sqrt(r2);
+        double f_mag = ::ftd::exchange_pair_force_mag(r, r2);
         if (r < 1.0) r = 1.0;
-
-        // Repulsive short-range: away from j
-        double f_mag = AE * exp(-r2 / R_EX2) / (r * r);
 
         double inv_r = 1.0 / r;
         fx -= f_mag * dx * inv_r;
@@ -1190,7 +1229,8 @@ __global__ void triad_detection_kernel(
 
 void launch_phase_forces(GpuBuffers& bufs, bool poisson_coulomb,
                          bool emergent_forces,
-                         bool gravity, bool lorentz_force, double dt) {
+                         bool gravity, bool geometric_gravity,
+                         bool lorentz_force, double dt) {
     const cudaStream_t stream = bufs.stream;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy than 512
@@ -1205,7 +1245,8 @@ void launch_phase_forces(GpuBuffers& bufs, bool poisson_coulomb,
         bufs.d_fd_coulomb_x,  bufs.d_fd_coulomb_y,  bufs.d_fd_coulomb_z,
         bufs.d_fd_gravity_x,  bufs.d_fd_gravity_y,  bufs.d_fd_gravity_z,
         bufs.d_fd_magnetic_x, bufs.d_fd_magnetic_y, bufs.d_fd_magnetic_z,
-        poisson_coulomb, emergent_forces, gravity, lorentz_force, dt, L
+        poisson_coulomb, emergent_forces, gravity, geometric_gravity,
+        lorentz_force, dt, L
     );
     CUDA_CHECK(cudaGetLastError());
 }
@@ -1226,8 +1267,168 @@ void launch_integrate_forces(GpuBuffers& bufs, double dt) {
     CUDA_CHECK(cudaGetLastError());
 }
 
+// Serial 1-thread flood-fill matching CPU phase_forces_integrate_clusters:
+// 26-Moore order from lattice.h, LIFO stack, F_cluster includes exchange.
+__device__ __forceinline__
+void cluster_neighbors_26(int idx, int L, int out[26]) {
+    int x, y, z;
+    decode_xyz_d(idx, L, x, y, z);
+    const int xm = (x == 0) ? L - 1 : x - 1;
+    const int xp = (x == L - 1) ? 0 : x + 1;
+    const int ym = (y == 0) ? L - 1 : y - 1;
+    const int yp = (y == L - 1) ? 0 : y + 1;
+    const int zm = (z == 0) ? L - 1 : z - 1;
+    const int zp = (z == L - 1) ? 0 : z + 1;
+    const int L2 = L * L;
+    out[0]  = xm * L2 + ym * L + zm; out[1]  = xm * L2 + ym * L + z;  out[2]  = xm * L2 + ym * L + zp;
+    out[3]  = xm * L2 + y  * L + zm; out[4]  = xm * L2 + y  * L + z;  out[5]  = xm * L2 + y  * L + zp;
+    out[6]  = xm * L2 + yp * L + zm; out[7]  = xm * L2 + yp * L + z;  out[8]  = xm * L2 + yp * L + zp;
+    out[9]  = x  * L2 + ym * L + zm; out[10] = x  * L2 + ym * L + z;  out[11] = x  * L2 + ym * L + zp;
+    out[12] = x  * L2 + y  * L + zm;                                   out[13] = x  * L2 + y  * L + zp;
+    out[14] = x  * L2 + yp * L + zm; out[15] = x  * L2 + yp * L + z;  out[16] = x  * L2 + yp * L + zp;
+    out[17] = xp * L2 + ym * L + zm; out[18] = xp * L2 + ym * L + z;  out[19] = xp * L2 + ym * L + zp;
+    out[20] = xp * L2 + y  * L + zm; out[21] = xp * L2 + y  * L + z;  out[22] = xp * L2 + y  * L + zp;
+    out[23] = xp * L2 + yp * L + zm; out[24] = xp * L2 + yp * L + z;  out[25] = xp * L2 + yp * L + zp;
+}
+
+__global__ void cluster_inertia_kernel(
+    const int8_t* __restrict__ state,
+    const uint8_t* __restrict__ locked,
+    const double* __restrict__ latency,
+    double* __restrict__ vel_x,
+    double* __restrict__ vel_y,
+    double* __restrict__ vel_z,
+    const double* __restrict__ fd_coulomb_x,
+    const double* __restrict__ fd_coulomb_y,
+    const double* __restrict__ fd_coulomb_z,
+    const double* __restrict__ fd_gravity_x,
+    const double* __restrict__ fd_gravity_y,
+    const double* __restrict__ fd_gravity_z,
+    const double* __restrict__ fd_magnetic_x,
+    const double* __restrict__ fd_magnetic_y,
+    const double* __restrict__ fd_magnetic_z,
+    const double* __restrict__ fd_strong_x,
+    const double* __restrict__ fd_strong_y,
+    const double* __restrict__ fd_strong_z,
+    const double* __restrict__ fd_exchange_x,
+    const double* __restrict__ fd_exchange_y,
+    const double* __restrict__ fd_exchange_z,
+    uint8_t* __restrict__ visited,
+    int* __restrict__ stack,
+    int* __restrict__ members,
+    double dt,
+    int N,
+    int L
+) {
+    if (blockIdx.x != 0 || threadIdx.x != 0) return;
+
+    int nb[26];
+    for (int seed = 0; seed < N; ++seed) {
+        if (visited[seed]) continue;
+        visited[seed] = 1;
+        if (state[seed] == 0 || !locked[seed]) continue;
+        const int sign = (state[seed] > 0) ? 1 : -1;
+
+        int n_members = 0;
+        int sp = 0;
+        stack[sp++] = seed;
+        int count = 0;
+        double Fx = 0, Fy = 0, Fz = 0;
+        double vx_sum = 0, vy_sum = 0, vz_sum = 0;
+        double sum_lat = 0.0;
+        while (sp > 0) {
+            const int cur = stack[--sp];
+            members[n_members++] = cur;
+            ++count;
+            Fx += fd_coulomb_x[cur] + fd_gravity_x[cur] + fd_strong_x[cur]
+                + fd_magnetic_x[cur] + fd_exchange_x[cur];
+            Fy += fd_coulomb_y[cur] + fd_gravity_y[cur] + fd_strong_y[cur]
+                + fd_magnetic_y[cur] + fd_exchange_y[cur];
+            Fz += fd_coulomb_z[cur] + fd_gravity_z[cur] + fd_strong_z[cur]
+                + fd_magnetic_z[cur] + fd_exchange_z[cur];
+            vx_sum += vel_x[cur];
+            vy_sum += vel_y[cur];
+            vz_sum += vel_z[cur];
+            sum_lat += latency[cur];
+            cluster_neighbors_26(cur, L, nb);
+            for (int k = 0; k < 26; ++k) {
+                const int j = nb[k];
+                if (visited[j]) continue;
+                if (state[j] == 0 || !locked[j]) continue;
+                if (((state[j] > 0) ? 1 : -1) != sign) continue;
+                visited[j] = 1;
+                stack[sp++] = j;
+            }
+        }
+        if (count == 0) continue;
+
+        const double m = static_cast<double>(count) * M_INERTIAL;
+        const double inv_n = 1.0 / static_cast<double>(count);
+        double Vcx = vx_sum * inv_n;
+        double Vcy = vy_sum * inv_n;
+        double Vcz = vz_sum * inv_n;
+        const double lat = sum_lat * inv_n;
+        const double gamma_in = ::ftd::momentum_input_gamma(
+            lat, Vcx * Vcx + Vcy * Vcy + Vcz * Vcz);
+        const double qx = Vcx * gamma_in + (Fx / m) * dt;
+        const double qy = Vcy * gamma_in + (Fy / m) * dt;
+        const double qz = Vcz * gamma_in + (Fz / m) * dt;
+        const double scale = ::ftd::specific_momentum_velocity_scale(
+            lat, qx * qx + qy * qy + qz * qz);
+        if (scale > 0.0) {
+            Vcx = qx * scale;
+            Vcy = qy * scale;
+            Vcz = qz * scale;
+        } else {
+            Vcx = Vcy = Vcz = 0.0;
+        }
+        for (int mi = 0; mi < n_members; ++mi) {
+            const int idx = members[mi];
+            vel_x[idx] = Vcx;
+            vel_y[idx] = Vcy;
+            vel_z[idx] = Vcz;
+        }
+    }
+}
+
+void launch_cluster_inertia(GpuBuffers& bufs, double dt) {
+    const cudaStream_t stream = bufs.stream;
+    CUDA_CHECK(cudaMemsetAsync(bufs.d_pair_candidate_flags, 0, bufs.N, stream));
+    cluster_inertia_kernel<<<1, 1, 0, stream>>>(
+        bufs.d_state, bufs.d_locked, bufs.d_latency,
+        bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
+        bufs.d_fd_coulomb_x, bufs.d_fd_coulomb_y, bufs.d_fd_coulomb_z,
+        bufs.d_fd_gravity_x, bufs.d_fd_gravity_y, bufs.d_fd_gravity_z,
+        bufs.d_fd_magnetic_x, bufs.d_fd_magnetic_y, bufs.d_fd_magnetic_z,
+        bufs.d_fd_strong_x, bufs.d_fd_strong_y, bufs.d_fd_strong_z,
+        bufs.d_fd_exchange_x, bufs.d_fd_exchange_y, bufs.d_fd_exchange_z,
+        bufs.d_pair_candidate_flags, bufs.d_movement_order, bufs.d_movement_rank,
+        dt, bufs.N, bufs.L);
+    CUDA_CHECK(cudaGetLastError());
+}
+
+__global__ void movement_shuffle_order_kernel(
+    int* __restrict__ order,
+    int* __restrict__ rank,
+    int N,
+    unsigned long long seed,
+    const int* __restrict__ tick_ptr
+) {
+    if (blockIdx.x != 0 || threadIdx.x != 0) return;
+    const int tick = tick_ptr ? *tick_ptr : 0;
+    for (int i = 0; i < N; ++i) order[i] = i;
+    for (int i = N - 1; i > 0; --i) {
+        const int j = ::ftd::movement_shuffle_j(seed, i, tick);
+        const int tmp = order[i];
+        order[i] = order[j];
+        order[j] = tmp;
+    }
+    for (int k = 0; k < N; ++k) rank[order[k]] = k;
+}
+
 void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary,
-                           bool dual_substrate) {
+                           bool dual_substrate, bool symmetric_movement_order,
+                           unsigned long long langevin_seed) {
     const cudaStream_t stream = bufs.stream;
     const int L = bufs.L;
     constexpr int block = MOVEMENT_BLOCK_SIZE;
@@ -1247,15 +1448,23 @@ void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary
         bufs.d_latency,
         bufs.d_pair_candidate_flags, bufs.d_movement_moved,
         movement_block_flags,
-        dt, bufs.N);
+        dt, bufs.N, symmetric_movement_order, langevin_seed, bufs.d_tick);
     CUDA_CHECK(cudaGetLastError());
 
     apply_non_crossing_movement_kernel<<<grid, block, 0, stream>>>(
         bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
         bufs.d_remainder_x, bufs.d_remainder_y, bufs.d_remainder_z,
         bufs.d_latency, bufs.d_pair_candidate_flags,
-        bufs.d_causal_projection_events, dt, bufs.N);
+        bufs.d_causal_projection_events, dt, bufs.N,
+        symmetric_movement_order, langevin_seed, bufs.d_tick);
     CUDA_CHECK(cudaGetLastError());
+
+    if (symmetric_movement_order) {
+        movement_shuffle_order_kernel<<<1, 1, 0, stream>>>(
+            bufs.d_movement_order, bufs.d_movement_rank, bufs.N,
+            langevin_seed, bufs.d_tick);
+        CUDA_CHECK(cudaGetLastError());
+    }
 
     phase_movement_commit_crossings_kernel<<<1, 1, 0, stream>>>(
         bufs.d_state,
@@ -1275,7 +1484,10 @@ void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary
         bufs.d_pair_candidate_flags,
         movement_block_flags,
         bufs.d_movement_moved,
-        dt, L, bufs.N, grid, reflective_boundary
+        dt, L, bufs.N, grid, reflective_boundary,
+        symmetric_movement_order, langevin_seed, bufs.d_tick,
+        symmetric_movement_order ? bufs.d_movement_order : nullptr,
+        symmetric_movement_order ? bufs.d_movement_rank : nullptr
     );
     CUDA_CHECK(cudaGetLastError());
 }
@@ -1343,16 +1555,467 @@ void launch_build_particle_list(GpuBuffers& bufs) {
 // itself against the device counter, clamped to MAX_PARTICLES so no thread
 // can read past the d_plist_idx allocation.
 
-void launch_color_force(GpuBuffers& bufs, double dt) {
+// ---------- FTD-0406 remainder colour Hamiltonian (1-thread, pair-order) ----------
+
+__device__ double strong_integrate_fixed_d(double a, double b) {
+    if (!(b > a)) return 0.0;
+    const double nodes[8] = {
+        0.095012509837637440185319335424958,
+        0.281603550779258913230460501460496,
+        0.458016777657227386342419442983577,
+        0.617876244402643748446671764048791,
+        0.755404408355003033895101194847442,
+        0.865631202387831743880467897712393,
+        0.944575023073232576077988415534608,
+        0.989400934991649932596154173450333
+    };
+    const double weights[8] = {
+        0.189450610455068496285396723208283,
+        0.182603415044923588866763667969220,
+        0.169156519395002538189312079030359,
+        0.149595988816576732081501730547479,
+        0.124628971255533872052476282192017,
+        0.095158511682492784809925107602246,
+        0.062253523938647892862843836994378,
+        0.027152459411754094851780572456018
+    };
+    const double mid = 0.5 * (a + b);
+    const double half = 0.5 * (b - a);
+    double sum = 0.0;
+    for (int k = 0; k < 8; ++k) {
+        const double dx = half * nodes[k];
+        const double lo = mid - dx;
+        const double hi = mid + dx;
+        sum += weights[k] * (::ftd::strong_radial_profile_from_as(lo, alpha_s_lattice_d(lo))
+                           + ::ftd::strong_radial_profile_from_as(hi, alpha_s_lattice_d(hi)));
+    }
+    return half * sum;
+}
+
+__device__ double strong_integral_from_one_d(double r) {
+    if (!(r > 1.0)) return 0.0;
+    const double r3 = fmin(r, COLOR_COULOMB_RADIUS);
+    double value = strong_integrate_fixed_d(1.0, r3);
+    if (r <= COLOR_COULOMB_RADIUS) return value;
+    const double r8 = fmin(r, COLOR_TRANSITION_RADIUS);
+    value += strong_integrate_fixed_d(COLOR_COULOMB_RADIUS, r8);
+    if (r <= COLOR_TRANSITION_RADIUS) return value;
+    value += (r * r - COLOR_TRANSITION_RADIUS * COLOR_TRANSITION_RADIUS)
+           / (2.0 * COLOR_LINEAR_DENOM);
+    return value;
+}
+
+__device__ double strong_pair_potential_d(double r, int8_t ca, int8_t cb) {
+    if (ca == 0 || cb == 0) return 0.0;
+    if (r < 1.0) r = 1.0;
+    const double cf = (ca == cb) ? 0.5 : -1.0;
+    return -cf * strong_integral_from_one_d(r);
+}
+
+__device__ double wrap_real_d(double x, double L) {
+    x = fmod(x, L);
+    if (x < 0.0) x += L;
+    if (x >= L) x -= L;
+    return x;
+}
+
+__device__ int strong_gather_d(
+    const int* plist, int num_particles,
+    const int8_t* state, const int8_t* color,
+    const int32_t* particle_id,
+    const double* rem_x, const double* rem_y, const double* rem_z,
+    const double* vel_x, const double* vel_y, const double* vel_z,
+    int* out_idx, int* out_id, int8_t* out_color,
+    double* px, double* py, double* pz,
+    double* mx, double* my, double* mz,
+    int L, int max_particles) {
+    int n = 0;
+    const int np = num_particles < max_particles ? num_particles : max_particles;
+    for (int pi = 0; pi < np; ++pi) {
+        const int i = plist[pi];
+        if (state[i] == 0 || color[i] == 0) continue;
+        if (n >= max_particles) break;
+        int ix, iy, iz;
+        decode_xyz_d(i, L, ix, iy, iz);
+        const double vx = vel_x[i], vy = vel_y[i], vz = vel_z[i];
+        const double gamma = ::ftd::flat_gamma(vx * vx + vy * vy + vz * vz);
+        out_idx[n] = i;
+        out_id[n] = particle_id[i];
+        out_color[n] = color[i];
+        px[n] = static_cast<double>(ix) + rem_x[i];
+        py[n] = static_cast<double>(iy) + rem_y[i];
+        pz[n] = static_cast<double>(iz) + rem_z[i];
+        mx[n] = vx * (gamma * M_INERTIAL);
+        my[n] = vy * (gamma * M_INERTIAL);
+        mz[n] = vz * (gamma * M_INERTIAL);
+        ++n;
+    }
+    return n;
+}
+
+__device__ double strong_potential_sum_d(
+    int n, const double* px, const double* py, const double* pz,
+    const int8_t* color, int L) {
+    const double half = static_cast<double>(L / 2);
+    const double Ld = static_cast<double>(L);
+    double out = 0.0;
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            const double dx = ::ftd::lattice_periodic_delta_real(px[j] - px[i], half, Ld);
+            const double dy = ::ftd::lattice_periodic_delta_real(py[j] - py[i], half, Ld);
+            const double dz = ::ftd::lattice_periodic_delta_real(pz[j] - pz[i], half, Ld);
+            const double r = fmax(1.0, sqrt(dx * dx + dy * dy + dz * dz));
+            out += strong_pair_potential_d(r, color[i], color[j]);
+        }
+    }
+    return out;
+}
+
+__device__ double strong_kinetic_sum_d(int n, const double* mx, const double* my, const double* mz) {
+    const double c2 = C_SPEED * C_SPEED;
+    double out = 0.0;
+    for (int i = 0; i < n; ++i) {
+        const double p2 = mx[i] * mx[i] + my[i] * my[i] + mz[i] * mz[i];
+        out += sqrt(E_REST * E_REST + c2 * p2) - E_REST;
+    }
+    return out;
+}
+
+__global__ void begin_strong_energy_kernel(
+    const int* plist, const int* num_particles_ptr, int max_particles,
+    const int8_t* state, const int8_t* color, const int32_t* particle_id,
+    const double* rem_x, const double* rem_y, const double* rem_z,
+    const double* vel_x, const double* vel_y, const double* vel_z,
+    int* out_idx, int* out_id, int* begin_id, int8_t* out_color,
+    double* px, double* py, double* pz,
+    double* mx, double* my, double* mz,
+    int* count, GpuBuffers::StrongStepDevice* step,
+    int L, bool movement, bool config_valid) {
+    if (blockIdx.x != 0 || threadIdx.x != 0) return;
+    step->h_before = 0.0;
+    step->h_after = 0.0;
+    step->residual = 0.0;
+    step->lambda = 1.0;
+    step->mx_before = step->my_before = step->mz_before = 0.0;
+    step->mx_after = step->my_after = step->mz_after = 0.0;
+    step->projection_events = 0;
+    step->projection_failures = 0;
+    step->topology_failures = 0;
+    step->projected_particles = 0;
+    step->active = 0;
+    *count = 0;
+    if (!movement) return;
+    if (!config_valid) {
+        step->projection_failures = 1;
+        return;
+    }
+    const int n = strong_gather_d(
+        plist, *num_particles_ptr, state, color, particle_id,
+        rem_x, rem_y, rem_z, vel_x, vel_y, vel_z,
+        out_idx, out_id, out_color, px, py, pz, mx, my, mz,
+        L, max_particles);
+    *count = n;
+    if (n < 2) return;
+    for (int i = 0; i < n; ++i) begin_id[i] = out_id[i];
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            if (out_id[i] == out_id[j]) {
+                step->topology_failures = 1;
+                return;
+            }
+        }
+    }
+    const double K = strong_kinetic_sum_d(n, mx, my, mz);
+    const double U = strong_potential_sum_d(n, px, py, pz, out_color, L);
+    double px_sum = 0.0, py_sum = 0.0, pz_sum = 0.0;
+    for (int i = 0; i < n; ++i) {
+        px_sum += mx[i]; py_sum += my[i]; pz_sum += mz[i];
+    }
+    step->h_before = K + U;
+    step->mx_before = px_sum;
+    step->my_before = py_sum;
+    step->mz_before = pz_sum;
+    const bool finite = (step->h_before == step->h_before)
+                     && (step->h_before < 1.0e300)
+                     && (step->h_before > -1.0e300);
+    step->active = finite ? 1 : 0;
+    if (!finite) step->projection_failures = 1;
+}
+
+__device__ double strong_kinetic_at_lambda_d(
+    int n, double lambda,
+    double meanx, double meany, double meanz,
+    const double* mx, const double* my, const double* mz) {
+    const double c2 = C_SPEED * C_SPEED;
+    double out = 0.0;
+    for (int i = 0; i < n; ++i) {
+        const double pxp = meanx + (mx[i] - meanx) * lambda;
+        const double pyp = meany + (my[i] - meany) * lambda;
+        const double pzp = meanz + (mz[i] - meanz) * lambda;
+        const double p2 = pxp * pxp + pyp * pyp + pzp * pzp;
+        out += sqrt(E_REST * E_REST + c2 * p2) - E_REST;
+    }
+    return out;
+}
+
+__global__ void complete_strong_energy_kernel(
+    const int* plist, const int* num_particles_ptr, int max_particles,
+    const int8_t* state, const int8_t* color, const int32_t* particle_id,
+    const double* rem_x, const double* rem_y, const double* rem_z,
+    double* vel_x, double* vel_y, double* vel_z,
+    int* out_idx, int* out_id, int8_t* out_color,
+    double* px, double* py, double* pz,
+    double* mx, double* my, double* mz,
+    const int* begin_ids, const int* begin_count,
+    GpuBuffers::StrongStepDevice* step,
+    int L) {
+    if (blockIdx.x != 0 || threadIdx.x != 0) return;
+    if (!step->active) return;
+    const int n = strong_gather_d(
+        plist, *num_particles_ptr, state, color, particle_id,
+        rem_x, rem_y, rem_z, vel_x, vel_y, vel_z,
+        out_idx, out_id, out_color, px, py, pz, mx, my, mz,
+        L, max_particles);
+    if (n != *begin_count) {
+        step->topology_failures += 1;
+        step->active = 0;
+        return;
+    }
+    for (int i = 0; i < n; ++i) {
+        bool found = false;
+        for (int j = 0; j < n; ++j) {
+            if (out_id[i] == begin_ids[j]) { found = true; break; }
+        }
+        if (!found) {
+            step->topology_failures += 1;
+            step->active = 0;
+            return;
+        }
+    }
+    const double U_after = strong_potential_sum_d(n, px, py, pz, out_color, L);
+    const double target_K = step->h_before - U_after;
+    double tx = 0.0, ty = 0.0, tz = 0.0;
+    for (int i = 0; i < n; ++i) { tx += mx[i]; ty += my[i]; tz += mz[i]; }
+    const double inv_n = 1.0 / static_cast<double>(n);
+    const double meanx = tx * inv_n, meany = ty * inv_n, meanz = tz * inv_n;
+    const double min_K = strong_kinetic_at_lambda_d(n, 0.0, meanx, meany, meanz, mx, my, mz);
+    const double tolerance = 1e-13 * fmax(1.0, fabs(target_K));
+    if (!(target_K == target_K) || target_K < min_K - tolerance) {
+        step->projection_failures += 1;
+        step->active = 0;
+        return;
+    }
+    double lambda = 0.0;
+    if (target_K > min_K + tolerance) {
+        double lo = 0.0, hi = 1.0;
+        int expansions = 0;
+        while (strong_kinetic_at_lambda_d(n, hi, meanx, meany, meanz, mx, my, mz) < target_K
+               && expansions < 64) {
+            hi *= 2.0;
+            ++expansions;
+        }
+        if (!(hi == hi)
+            || strong_kinetic_at_lambda_d(n, hi, meanx, meany, meanz, mx, my, mz) < target_K) {
+            step->projection_failures += 1;
+            step->active = 0;
+            return;
+        }
+        for (int iter = 0; iter < 96; ++iter) {
+            const double mid = 0.5 * (lo + hi);
+            if (strong_kinetic_at_lambda_d(n, mid, meanx, meany, meanz, mx, my, mz) < target_K)
+                lo = mid;
+            else hi = mid;
+        }
+        lambda = 0.5 * (lo + hi);
+    }
+    const double c2 = C_SPEED * C_SPEED;
+    for (int i = 0; i < n; ++i) {
+        const double pxp = meanx + (mx[i] - meanx) * lambda;
+        const double pyp = meany + (my[i] - meany) * lambda;
+        const double pzp = meanz + (mz[i] - meanz) * lambda;
+        const double energy = sqrt(E_REST * E_REST + c2 * (pxp * pxp + pyp * pyp + pzp * pzp));
+        const int idx = out_idx[i];
+        if (energy > 0.0) {
+            vel_x[idx] = pxp * (c2 / energy);
+            vel_y[idx] = pyp * (c2 / energy);
+            vel_z[idx] = pzp * (c2 / energy);
+        } else {
+            vel_x[idx] = vel_y[idx] = vel_z[idx] = 0.0;
+        }
+        mx[i] = pxp; my[i] = pyp; mz[i] = pzp;
+    }
+    const double K_after = strong_kinetic_sum_d(n, mx, my, mz);
+    step->h_after = K_after + U_after;
+    step->residual = step->h_after - step->h_before;
+    step->lambda = lambda;
+    double ax = 0.0, ay = 0.0, az = 0.0;
+    for (int i = 0; i < n; ++i) { ax += mx[i]; ay += my[i]; az += mz[i]; }
+    step->mx_after = ax; step->my_after = ay; step->mz_after = az;
+    step->projected_particles = n;
+    step->projection_events += 1;
+    if (!(step->residual == step->residual) || fabs(step->residual) > 1e-12)
+        step->projection_failures += 1;
+    step->active = 0;
+}
+
+__device__ void strong_deposit_sample_d(
+    double px, double py, double pz,
+    double energy, double sxx, double syy, double szz,
+    double sxy, double sxz, double syz,
+    double* t00, double* xx, double* yy, double* zz,
+    double* xy, double* xz, double* yz,
+    int L) {
+    const double Ld = static_cast<double>(L);
+    px = wrap_real_d(px, Ld);
+    py = wrap_real_d(py, Ld);
+    pz = wrap_real_d(pz, Ld);
+    const int x0 = static_cast<int>(floor(px));
+    const int y0 = static_cast<int>(floor(py));
+    const int z0 = static_cast<int>(floor(pz));
+    const double fx = px - static_cast<double>(x0);
+    const double fy = py - static_cast<double>(y0);
+    const double fz = pz - static_cast<double>(z0);
+    double wsum = 0.0;
+    double w[8];
+    int cells[8];
+    int cursor = 0;
+    for (int ox = 0; ox <= 1; ++ox) {
+        const double wx = ox ? fx : 1.0 - fx;
+        for (int oy = 0; oy <= 1; ++oy) {
+            const double wy = oy ? fy : 1.0 - fy;
+            for (int oz = 0; oz <= 1; ++oz) {
+                const double wz = oz ? fz : 1.0 - fz;
+                w[cursor] = wx * wy * wz;
+                cells[cursor] = idx3d_d(x0 + ox, y0 + oy, z0 + oz, L);
+                wsum += w[cursor];
+                ++cursor;
+            }
+        }
+    }
+    if (!(wsum > 0.0)) return;
+    for (int k = 0; k < 8; ++k) {
+        const double wt = w[k] / wsum;
+        const int i = cells[k];
+        t00[i] += energy * wt;
+        xx[i] += sxx * wt;
+        yy[i] += syy * wt;
+        zz[i] += szz * wt;
+        xy[i] += sxy * wt;
+        xz[i] += sxz * wt;
+        yz[i] += syz * wt;
+    }
+}
+
+__global__ void compute_strong_t00_kernel(
+    const int* plist, const int* num_particles_ptr, int max_particles,
+    const int8_t* state, const int8_t* color, const int32_t* particle_id,
+    const double* rem_x, const double* rem_y, const double* rem_z,
+    const double* vel_x, const double* vel_y, const double* vel_z,
+    int* tmp_idx, int* tmp_id, int8_t* tmp_color,
+    double* px, double* py, double* pz,
+    double* mx, double* my, double* mz,
+    double* t00, double* sxx, double* syy, double* szz,
+    double* sxy, double* sxz, double* syz,
+    int L, int N) {
+    if (blockIdx.x != 0 || threadIdx.x != 0) return;
+    for (int i = 0; i < N; ++i) {
+        t00[i] = sxx[i] = syy[i] = szz[i] = sxy[i] = sxz[i] = syz[i] = 0.0;
+    }
+    const int n = strong_gather_d(
+        plist, *num_particles_ptr, state, color, particle_id,
+        rem_x, rem_y, rem_z, vel_x, vel_y, vel_z,
+        tmp_idx, tmp_id, tmp_color, px, py, pz, mx, my, mz,
+        L, max_particles);
+    const double half = static_cast<double>(L / 2);
+    const double Ld = static_cast<double>(L);
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            const double dx = ::ftd::lattice_periodic_delta_real(px[j] - px[i], half, Ld);
+            const double dy = ::ftd::lattice_periodic_delta_real(py[j] - py[i], half, Ld);
+            const double dz = ::ftd::lattice_periodic_delta_real(pz[j] - pz[i], half, Ld);
+            const double raw_r = sqrt(dx * dx + dy * dy + dz * dz);
+            const double r = fmax(1.0, raw_r);
+            const double cf = (tmp_color[i] == tmp_color[j]) ? 0.5 : -1.0;
+            const double U = strong_pair_potential_d(r, tmp_color[i], tmp_color[j]);
+            const double as = alpha_s_lattice_d(r);
+            const double fmag = ::ftd::strong_radial_profile_from_as(r, as);
+            const double fx = r > 0.0 ? dx * (-cf * fmag / r) : 0.0;
+            const double fy = r > 0.0 ? dy * (-cf * fmag / r) : 0.0;
+            const double fz = r > 0.0 ? dz * (-cf * fmag / r) : 0.0;
+            const double psxx = -dx * fx, psyy = -dy * fy, pszz = -dz * fz;
+            const double psxy = -dx * fy, psxz = -dx * fz, psyz = -dy * fz;
+            const int samples = static_cast<int>(ceil(r));
+            const int ns = samples > 1 ? samples : 1;
+            for (int s = 0; s < ns; ++s) {
+                const double t = (static_cast<double>(s) + 0.5) / static_cast<double>(ns);
+                strong_deposit_sample_d(
+                    px[i] + dx * t, py[i] + dy * t, pz[i] + dz * t,
+                    U / ns, psxx / ns, psyy / ns, pszz / ns,
+                    psxy / ns, psxz / ns, psyz / ns,
+                    t00, sxx, syy, szz, sxy, sxz, syz, L);
+            }
+        }
+    }
+}
+
+void launch_color_force(GpuBuffers& bufs, double dt, bool linear_confinement,
+                        bool continuous_remainder) {
     (void)dt;
     const cudaStream_t stream = bufs.stream;
     color_force_kernel<<<PARTICLE_FORCE_GRID, PARTICLE_FORCE_BLOCK, 0, stream>>>(
         bufs.d_plist_idx, bufs.d_num_particles, GpuBuffers::MAX_PARTICLES,
         bufs.d_state, bufs.d_color,
+        bufs.d_remainder_x, bufs.d_remainder_y, bufs.d_remainder_z,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         bufs.d_fd_strong_x, bufs.d_fd_strong_y, bufs.d_fd_strong_z,
-        bufs.L
+        bufs.L, linear_confinement, continuous_remainder
     );
+    CUDA_CHECK(cudaGetLastError());
+}
+
+void launch_begin_strong_energy(GpuBuffers& bufs, bool movement, bool config_valid) {
+    bufs.ensure_strong_stress();
+    begin_strong_energy_kernel<<<1, 1, 0, bufs.stream>>>(
+        bufs.d_plist_idx, bufs.d_num_particles, GpuBuffers::MAX_PARTICLES,
+        bufs.d_state, bufs.d_color, bufs.d_particle_id,
+        bufs.d_remainder_x, bufs.d_remainder_y, bufs.d_remainder_z,
+        bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
+        bufs.d_strong_idx, bufs.d_strong_id, bufs.d_strong_begin_id, bufs.d_strong_color,
+        bufs.d_strong_px, bufs.d_strong_py, bufs.d_strong_pz,
+        bufs.d_strong_mx, bufs.d_strong_my, bufs.d_strong_mz,
+        bufs.d_strong_count, bufs.d_strong_step,
+        bufs.L, movement, config_valid);
+    CUDA_CHECK(cudaGetLastError());
+}
+
+void launch_complete_strong_energy(GpuBuffers& bufs) {
+    bufs.ensure_strong_stress();
+    complete_strong_energy_kernel<<<1, 1, 0, bufs.stream>>>(
+        bufs.d_plist_idx, bufs.d_num_particles, GpuBuffers::MAX_PARTICLES,
+        bufs.d_state, bufs.d_color, bufs.d_particle_id,
+        bufs.d_remainder_x, bufs.d_remainder_y, bufs.d_remainder_z,
+        bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
+        bufs.d_strong_idx, bufs.d_strong_id, bufs.d_strong_color,
+        bufs.d_strong_px, bufs.d_strong_py, bufs.d_strong_pz,
+        bufs.d_strong_mx, bufs.d_strong_my, bufs.d_strong_mz,
+        bufs.d_strong_begin_id, bufs.d_strong_count,
+        bufs.d_strong_step, bufs.L);
+    CUDA_CHECK(cudaGetLastError());
+}
+
+void launch_strong_t00(GpuBuffers& bufs) {
+    bufs.ensure_strong_stress();
+    compute_strong_t00_kernel<<<1, 1, 0, bufs.stream>>>(
+        bufs.d_plist_idx, bufs.d_num_particles, GpuBuffers::MAX_PARTICLES,
+        bufs.d_state, bufs.d_color, bufs.d_particle_id,
+        bufs.d_remainder_x, bufs.d_remainder_y, bufs.d_remainder_z,
+        bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
+        bufs.d_strong_idx, bufs.d_strong_id, bufs.d_strong_color,
+        bufs.d_strong_px, bufs.d_strong_py, bufs.d_strong_pz,
+        bufs.d_strong_mx, bufs.d_strong_my, bufs.d_strong_mz,
+        bufs.d_strong_t00, bufs.d_strong_sxx, bufs.d_strong_syy, bufs.d_strong_szz,
+        bufs.d_strong_sxy, bufs.d_strong_sxz, bufs.d_strong_syz,
+        bufs.L, bufs.N);
     CUDA_CHECK(cudaGetLastError());
 }
 

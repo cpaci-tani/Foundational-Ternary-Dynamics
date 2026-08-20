@@ -106,7 +106,7 @@ static std::vector<int> build_locked_cube(RenderBridge& rb, int edge, int origin
 static void configure_clean(RenderBridge& rb) {
     rb.toggles.disable_all();          // clears bulk toggles (cluster_inertia is
                                        // non-bulk, so set it explicitly below)
-    rb.toggles.forces          = true; // cluster_inertia requires forces
+    rb.toggles.forces          = true; // injected-force falsifier uses f_coulomb
     rb.toggles.cluster_inertia = true;
     rb.toggles.gravity         = false; // no real gravity (we inject force directly)
     rb.toggles.latency_field   = false; // ⇒ every member latency stays 0

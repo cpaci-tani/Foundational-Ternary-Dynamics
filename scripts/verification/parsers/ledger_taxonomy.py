@@ -333,6 +333,16 @@ EXCEPTIONS = {
     "FTD-1010": "lorentz-causal",              # v2.1 deviation model; surrogate line closed 19/20
     "FTD-1011": "lorentz-causal",              # hiding order (ka)^2 via isotropic curvature; 4/4
     "FTD-1012": "lorentz-causal",              # bath-frame break chain; matter braked, radiation blind
+    "FTD-1013": "gravity-cosmology",            # universal free-fall Q0; test-body action in external L
+    "FTD-1014": "gravity-cosmology",            # UFF engine alignment; live F/M vs Q0 g_ext, CLOSED-NEGATIVE
+    "FTD-1015": "gravity-cosmology",            # GW area-holonomy Q0; kinematic residual not exactly two TT
+    "FTD-1016": "gravity-cosmology",            # geometric free-fall integrator; default-off F=M C^2 L grad L
+    "FTD-1017": "gravity-cosmology",            # sourced geometric free-fall; Poisson L then FTD-1016 operator
+    "FTD-1018": "gravity-cosmology",            # CUDA port of geometric_gravity; CPU/GPU F and v parity
+    "FTD-1019": "gravity-cosmology",            # one frozen Poisson well: FC-2 rest clocks + FTD-1016 falling
+    "FTD-1020": "gravity-cosmology",            # frozen vacuum well vs live flux characteristics; class 0
+    "FTD-1021": "gravity-cosmology",            # live Poisson occupancy; operator reads live L; freeze not test-body at 1/125
+    "FTD-1022": "gravity-cosmology",            # 3^3 slow-envelope live Newton; freeze still not test-body at 27/125
 }
 
 

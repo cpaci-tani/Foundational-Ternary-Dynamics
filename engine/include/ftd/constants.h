@@ -286,6 +286,27 @@ inline double alpha_s_lattice(double r_voxels) {
 // Motivated by lattice QCD: sigma ~ alpha_s * K_B^2
 inline constexpr double SIGMA_STRING = ALPHA_S * K_B * K_B;
 
+#ifdef __CUDACC__
+#define FTD_COLOR_HD __host__ __device__ __forceinline__
+#else
+#define FTD_COLOR_HD inline
+#endif
+
+// Scale-0 colour pairwise magnitude. Default r>=8 is harmonic (F∝r).
+// TermToggles::confinement switches that shell to ParticleEngine's
+// constant string F = SIGMA_STRING * cf. [SELECTION], not FTD-0025.
+FTD_COLOR_HD double color_regime_force_mag(double r, double as, double cf,
+                                           bool linear_confinement) {
+    if (r < COLOR_COULOMB_RADIUS)
+        return as * cf / (r * r);
+    if (r < COLOR_TRANSITION_RADIUS)
+        return as * cf / (COLOR_TRANSITION_DENOM * r);
+    if (linear_confinement)
+        return SIGMA_STRING * cf;
+    return as * cf * r / COLOR_LINEAR_DENOM;
+}
+
+
 // Asymptotic freedom crossover radius [IMPOSED]
 // Below this radius, coulombic 1/r^2 term dominates (asymptotic freedom).
 // Above this radius, linear confinement dominates.
@@ -337,6 +358,52 @@ inline constexpr double TRIAD_RATIO_THRESHOLD = 0.8; // min(r)/max(r) threshold
 // Same-spin repulsion falls off as exp(-r²/EXCHANGE_RANGE²).
 inline constexpr double EXCHANGE_RANGE = 3.0; // voxels
 inline constexpr double EXCHANGE_RANGE_SQ = EXCHANGE_RANGE * EXCHANGE_RANGE;
+
+FTD_COLOR_HD double ftd_exp(double x) {
+#ifdef __CUDACC__
+    return exp(x);
+#else
+    return std::exp(x);
+#endif
+}
+
+// Shortest-path delta on a periodic N^3 lattice. Returns d in (-N/2, N/2].
+FTD_COLOR_HD int lattice_periodic_delta(int a, int b, int N) {
+    int d = a - b;
+    if (d >  N / 2) d -= N;
+    if (d < -N / 2) d += N;
+    return d;
+}
+
+// Continuous remainder wrap matching CPU phase_forces (half = integer L/2).
+FTD_COLOR_HD double lattice_periodic_delta_real(double delta, double half, double L) {
+    if (delta > half) delta -= L;
+    if (delta < -half) delta += L;
+    return delta;
+}
+
+// Magnitude of the FTD-0406 remainder colour law (no colour factor).
+FTD_COLOR_HD double strong_radial_profile_from_as(double r, double as) {
+    if (r < 1.0) r = 1.0;
+    if (r < COLOR_COULOMB_RADIUS) return as / (r * r);
+    if (r < COLOR_TRANSITION_RADIUS) return as / (COLOR_TRANSITION_DENOM * r);
+    return as * r / COLOR_LINEAR_DENOM;
+}
+
+// GPU yukawa_force_kernel / CPU phase_forces: attractive, all manifested pairs.
+// r is clamped for the 1/r² and exponential; callers still clamp the unit
+// vector's r separately so a coincident pair does not divide by zero.
+FTD_COLOR_HD double yukawa_pair_force_mag(double r) {
+    if (r < 1.0) r = 1.0;
+    return ALPHA_S * ftd_exp(-M_YUKAWA * r) / (r * r) * (1.0 + M_YUKAWA * r);
+}
+
+// GPU exchange_force_kernel / CPU phase_forces: same-spin repulsion.
+// Exponential uses the unclamped r² (GPU historical); 1/r² uses clamped r.
+FTD_COLOR_HD double exchange_pair_force_mag(double r, double r2) {
+    if (r < 1.0) r = 1.0;
+    return ALPHA_EXCHANGE * ftd_exp(-r2 / EXCHANGE_RANGE_SQ) / (r * r);
+}
 
 // ============================================================================
 // Engine tuning constants (extracted from render_bridge.cpp)

@@ -16,6 +16,8 @@
 #include "ftd/telemetry_snapshot.h"
 #include "ftd/visual_snapshot.h"
 #include "ftd/eft/dual_cell_continuity.h"
+#include "ftd/eft/matched_gauss_transport.h"
+#include "ftd/strong_stress_energy.h"
 #include <vector>
 #include <atomic>
 #include <cstddef>
@@ -112,6 +114,12 @@ public:
 
     // --- Bulk upload from host (for test setup with custom initial conditions) ---
     void upload_from_host(const std::vector<Voxel>& voxels);
+
+    void upload_matched_gauss(const eft::MatchedGaussDynamics& src);
+    void download_matched_gauss(eft::MatchedGaussDynamics& dst);
+    bool matched_gauss_last_step_valid() const { return matched_gauss_last_valid_; }
+    void download_strong_stress(std::vector<StrongStressCell>& out);
+    void download_strong_step_diagnostics(StrongEnergyStepDiagnostics& out);
 
     // --- Accessors ---
     const GpuBuffers& bufs() const { return bufs_; }
@@ -454,6 +462,8 @@ private:
     std::vector<double> host_phi_latency_;  // Wave 5: GPU latency Poisson shadow
     ForceDiagHost host_force_diag_;          // Per-site force component mirror
     bool host_dirty_ = true;  // true = device has newer data than host
+    bool matched_gauss_ready_ = false;
+    bool matched_gauss_last_valid_ = false;
 
     // Non-Abelian gauge link device buffers (revision 0.9 option a) — live +
     // Jacobi scratch per direction; lazily allocated by upload_gauge_links(),

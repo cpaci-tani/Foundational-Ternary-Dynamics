@@ -39,7 +39,7 @@ export const SCALE0_ENGINE_TOGGLE_NAMES = Object.freeze([
     'symplectic_leapfrog', 'verlet_wave_integrator', 'lorentz_period2_floquet',
     'lorentz_bcc_time_floquet', 'su2_gauge', 'su3_gauge',
     'symmetric_movement_order', 'absorbing_boundary', 'reflective_boundary',
-    'field_energy_gravity', 'cluster_inertia', 'de_broglie_clock',
+    'field_energy_gravity', 'cluster_inertia', 'geometric_gravity', 'de_broglie_clock',
     'db_clock_coulomb', 'confinement', 'knot_tracking', 'strict_validation',
     'ew_background_sweep',
 ]);

@@ -353,6 +353,8 @@ struct GpuBuffers {
     int32_t*  d_pair_candidate_indices = nullptr;  // [N]
     int32_t*  d_pair_candidate_count   = nullptr;  // one scalar
     uint8_t*  d_movement_moved         = nullptr;  // [N], per-tick CPU-equivalent arrival guard
+    int32_t*  d_movement_order         = nullptr;  // [N], shuffle permutation; cluster_inertia DFS stack
+    int32_t*  d_movement_rank          = nullptr;  // [N], inverse permutation; cluster_inertia members
     void*     d_pair_select_temp       = nullptr;
     std::size_t pair_select_temp_bytes = 0;
 
@@ -365,9 +367,61 @@ struct GpuBuffers {
     double*   d_ledger_current_y  = nullptr;
     double*   d_ledger_current_z  = nullptr;
 
+    // FTD-0428 oriented-face Maxwell/Gauss (lazy; NativeCuda isolated sector).
+    double* d_matched_ex = nullptr;
+    double* d_matched_ey = nullptr;
+    double* d_matched_ez = nullptr;
+    double* d_matched_bx = nullptr;
+    double* d_matched_by = nullptr;
+    double* d_matched_bz = nullptr;
+    double* d_matched_cx = nullptr;
+    double* d_matched_cy = nullptr;
+    double* d_matched_cz = nullptr;
+    int*    d_matched_valid = nullptr;
+
+    // FTD-0406 string T00/stress + projection scratch (lazy).
+    double* d_strong_t00 = nullptr;
+    double* d_strong_sxx = nullptr;
+    double* d_strong_syy = nullptr;
+    double* d_strong_szz = nullptr;
+    double* d_strong_sxy = nullptr;
+    double* d_strong_sxz = nullptr;
+    double* d_strong_syz = nullptr;
+    int*    d_strong_idx = nullptr;
+    int*    d_strong_id = nullptr;
+    int*    d_strong_begin_id = nullptr;
+    int8_t* d_strong_color = nullptr;
+    double* d_strong_px = nullptr;
+    double* d_strong_py = nullptr;
+    double* d_strong_pz = nullptr;
+    double* d_strong_mx = nullptr;
+    double* d_strong_my = nullptr;
+    double* d_strong_mz = nullptr;
+    int*    d_strong_count = nullptr;
+    struct StrongStepDevice {
+        double h_before = 0.0;
+        double h_after = 0.0;
+        double residual = 0.0;
+        double lambda = 1.0;
+        double mx_before = 0.0;
+        double my_before = 0.0;
+        double mz_before = 0.0;
+        double mx_after = 0.0;
+        double my_after = 0.0;
+        double mz_after = 0.0;
+        int projection_events = 0;
+        int projection_failures = 0;
+        int topology_failures = 0;
+        int projected_particles = 0;
+        int active = 0;
+    };
+    StrongStepDevice* d_strong_step = nullptr;
+
     // Lifecycle
     void allocate(int lattice_size);
     void free();
+    void ensure_matched_gauss();
+    void ensure_strong_stress();
 
     // AoS ↔ SoA transfers
     void upload(const std::vector<Voxel>& host_voxels,
