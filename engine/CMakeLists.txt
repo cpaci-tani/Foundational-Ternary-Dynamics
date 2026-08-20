@@ -467,6 +467,14 @@ if(NOT EMSCRIPTEN)
     if(FTD_BUILD_NATIVE_DESKTOP)
         add_subdirectory(native_desktop)
     endif()
+    # Clean-slate native rebuild (engine/native), R0 salvage transplant. Builds
+    # alongside native_desktop under distinct native_* target names until the old
+    # tree is retired. See native_desktop/docs/PLAN_NATIVE_REBUILD.md.
+    option(FTD_BUILD_NATIVE
+           "Build the clean-slate native rebuild engine/native (does not affect web/WASM)" ON)
+    if(FTD_BUILD_NATIVE)
+        add_subdirectory(native)
+    endif()
 endif()
 
 # ============================================================================
@@ -553,6 +561,99 @@ if(TARGET ftd_native_session)
     target_link_libraries(test_ui_journal_replay PRIVATE ftd_native_session)
     target_include_directories(test_ui_journal_replay PRIVATE
         ${CMAKE_SOURCE_DIR}/native_desktop/include)
+
+    ftd_add_test(test_native_desktop_cli
+                 native_desktop/tests/test_native_desktop_cli.cpp
+                 NO_CORE
+                 LABELS native_desktop ui merge_gate)
+    target_link_libraries(test_native_desktop_cli PRIVATE ftd_native_cli)
+    target_include_directories(test_native_desktop_cli PRIVATE
+        ${CMAKE_SOURCE_DIR}/native_desktop/include)
+
+    ftd_add_test(test_ui_imgui_headless
+                 native_desktop/tests/test_ui_imgui_headless.cpp
+                 NO_CORE
+                 TIMEOUT 10
+                 LABELS native_desktop ui merge_gate)
+    target_link_libraries(test_ui_imgui_headless PRIVATE ftd_imgui)
+    if(OpenMP_CXX_FOUND)
+        target_link_libraries(test_ui_imgui_headless PRIVATE OpenMP::OpenMP_CXX)
+    endif()
+    target_include_directories(test_ui_imgui_headless PRIVATE
+        ${CMAKE_SOURCE_DIR}/native_desktop/include)
+
+    ftd_add_test(test_ui_scene_rect
+                 native_desktop/tests/test_ui_scene_rect.cpp
+                 NO_CORE
+                 LABELS native_desktop ui merge_gate)
+    target_include_directories(test_ui_scene_rect PRIVATE
+        ${CMAKE_SOURCE_DIR}/native_desktop/include)
+
+    ftd_add_test(test_ui_theme_parse
+                 native_desktop/tests/test_ui_theme_parse.cpp
+                 TIMEOUT 10
+                 LABELS native_desktop ui merge_gate)
+    target_link_libraries(test_ui_theme_parse PRIVATE ftd_native_ui)
+    target_include_directories(test_ui_theme_parse PRIVATE
+        ${CMAKE_SOURCE_DIR}/native_desktop/include
+        ${CMAKE_SOURCE_DIR}/native_desktop/src)
+
+    ftd_add_test(test_ui_workspace
+                 native_desktop/tests/test_ui_workspace.cpp
+                 LABELS native_desktop ui merge_gate)
+    target_link_libraries(test_ui_workspace PRIVATE ftd_native_ui)
+    target_include_directories(test_ui_workspace PRIVATE
+        ${CMAKE_SOURCE_DIR}/native_desktop/include
+        ${CMAKE_SOURCE_DIR}/native_desktop/src)
+
+    ftd_add_test(test_ui_window_name
+                 native_desktop/tests/test_ui_window_name.cpp
+                 LABELS native_desktop ui merge_gate)
+    target_link_libraries(test_ui_window_name PRIVATE ftd_native_ui)
+    target_include_directories(test_ui_window_name PRIVATE
+        ${CMAKE_SOURCE_DIR}/native_desktop/include
+        ${CMAKE_SOURCE_DIR}/native_desktop/src)
+
+    ftd_add_test(test_ui_shell_draw
+                 native_desktop/tests/test_ui_shell_draw.cpp
+                 TIMEOUT 10
+                 LABELS native_desktop ui merge_gate)
+    target_link_libraries(test_ui_shell_draw PRIVATE ftd_native_ui)
+    if(OpenMP_CXX_FOUND)
+        target_link_libraries(test_ui_shell_draw PRIVATE OpenMP::OpenMP_CXX)
+    endif()
+    target_include_directories(test_ui_shell_draw PRIVATE
+        ${CMAKE_SOURCE_DIR}/native_desktop/include
+        ${CMAKE_SOURCE_DIR}/native_desktop/src)
+
+    ftd_add_test(test_ui_command_palette
+                 native_desktop/tests/test_ui_command_palette.cpp
+                 LABELS native_desktop ui merge_gate)
+    target_link_libraries(test_ui_command_palette PRIVATE ftd_native_ui)
+    target_include_directories(test_ui_command_palette PRIVATE
+        ${CMAKE_SOURCE_DIR}/native_desktop/include
+        ${CMAKE_SOURCE_DIR}/native_desktop/src)
+
+    ftd_add_test(test_ui_boot_snapshot
+                 native_desktop/tests/test_ui_boot_snapshot.cpp
+                 LABELS native_desktop ui merge_gate)
+    target_link_libraries(test_ui_boot_snapshot PRIVATE ftd_native_session)
+    target_include_directories(test_ui_boot_snapshot PRIVATE
+        ${CMAKE_SOURCE_DIR}/native_desktop/include)
+
+    ftd_add_test(test_ui_harness_commands
+                 native_desktop/tests/test_ui_harness_commands.cpp
+                 LABELS native_desktop ui merge_gate)
+    target_link_libraries(test_ui_harness_commands PRIVATE ftd_native_session)
+    target_include_directories(test_ui_harness_commands PRIVATE
+        ${CMAKE_SOURCE_DIR}/native_desktop/include)
+
+    ftd_add_test(test_ui_load_scenario
+                 native_desktop/tests/test_ui_load_scenario.cpp
+                 LABELS native_desktop ui merge_gate)
+    target_link_libraries(test_ui_load_scenario PRIVATE ftd_native_session)
+    target_include_directories(test_ui_load_scenario PRIVATE
+        ${CMAKE_SOURCE_DIR}/native_desktop/include)
 endif()
 
 ftd_add_test(test_ui_observer_neutrality_cpu
@@ -636,6 +737,24 @@ if(TARGET test_d3d12_debug_observability)
              COMMAND test_d3d12_debug_observability)
     set_tests_properties(d3d12_debug_observability PROPERTIES
         LABELS "unit;native_desktop;interactive")
+endif()
+
+if(TARGET test_d3d12_overlay_once)
+    add_test(NAME d3d12_overlay_once COMMAND test_d3d12_overlay_once)
+    set_tests_properties(d3d12_overlay_once PROPERTIES
+        LABELS "unit;native_desktop;ui;interactive")
+endif()
+
+if(TARGET test_d3d12_capture_lifecycle)
+    add_test(NAME d3d12_capture_lifecycle COMMAND test_d3d12_capture_lifecycle)
+    set_tests_properties(d3d12_capture_lifecycle PROPERTIES
+        LABELS "unit;native_desktop;ui;interactive")
+endif()
+
+if(TARGET test_ui_imgui_d3d12)
+    add_test(NAME ui_imgui_d3d12 COMMAND test_ui_imgui_d3d12)
+    set_tests_properties(ui_imgui_d3d12 PROPERTIES
+        LABELS "unit;native_desktop;ui;interactive")
 endif()
 
 if(TARGET test_native_desktop_dpi_awareness)
@@ -1096,6 +1215,8 @@ target_link_libraries(test_scenario_velocity_wiring ftd_core)
 
 ftd_add_test(test_scenario_behavior tests/test_scenario_behavior.cpp
              CTEST_NAME scenario_behavior TIMEOUT 180)
+ftd_add_test(test_scenario_meta tests/test_scenario_meta.cpp
+             CTEST_NAME scenario_meta)
 
 ftd_add_test(test_boundary_scenario_physics tests/test_boundary_scenario_physics.cpp
              CTEST_NAME boundary_scenario_physics TIMEOUT 180)
