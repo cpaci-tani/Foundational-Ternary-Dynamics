@@ -1,5 +1,7 @@
 # SPEC — Native Rebuild, R0 + R1 (salvage tree + scale-generic spine)
 
+> ⚠ **UI layer superseded (2026-08-20, decision M7 in `PLAN_NATIVE_REBUILD.md`):** the UI is now a **custom Direct3D 12 + Direct2D/DirectWrite** layer, not Dear ImGui. Superseded here: the salvage map's ImGui copy (§2.1), the `native_imgui` / `native_imgui_dx12` / `native_ui` CMake targets (§3), and the ImGui `Panel`-vtable references (§4.5). **Still valid and unaffected** — the scale-generic core in §4 (`ScaleHost` / `ScaleAdapter` / `DrawList` / `ScaleCommand` / `UiSnapshot`), which is UI-framework-agnostic. As executed, R0 carries the ImGui-free spine only (presenter + interop + transport + session); a custom-UI R-spec follows.
+
 **Status:** `[SPEC — DRAFT, executable]` · **Created:** 2026-08-20 · **Parent:** [`PLAN_NATIVE_REBUILD.md`](PLAN_NATIVE_REBUILD.md) (architecture + phases; decisions M1–M6). This document makes R0 and R1 buildable: the new-directory layout, the file-by-file salvage map, the CMake target plan, and the **complete day-one interface definitions** (decision A — all types defined up front).
 
 **One open item before the salvage copy lands:** the new directory name (D-E). This spec assumes **`engine/native/`**; every path below rewrites trivially if the owner picks another. Nothing is created until that name is confirmed.
