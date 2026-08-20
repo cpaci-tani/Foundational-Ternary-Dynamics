@@ -3,7 +3,11 @@
     <link type="text/rcss" href="../rcss/ftd.rcss"/>
     <title>FTD Native</title>
 </head>
-<body>
+<!-- data-model="shell": bound live to UiSnapshot by native_app (M-UI-3). The
+     headless smoke test loads this document with no data model registered; RmlUi
+     logs a warning and leaves the bindings unresolved, but all chrome/layout
+     still renders, so the smoke test's pixel-coverage assertions still hold. -->
+<body data-model="shell">
     <!-- Toolbar -->
     <div id="toolbar">
         <span class="brand">FTD Engine <span class="ver">native</span></span>
@@ -19,12 +23,12 @@
     <div id="body-row">
         <div id="setup" class="panel">
             <div class="panel-title">Setup</div>
-            <div class="field"><span class="fl">Scenario</span><span class="select">s0-seed-hydrogen</span></div>
-            <div class="field"><span class="fl">Lattice</span><span class="select">33</span></div>
+            <div class="field"><span class="fl">Scenario</span><span class="select">{{scenario}}</span></div>
+            <div class="field"><span class="fl">Lattice</span><span class="select">{{lattice}}</span></div>
             <div class="playbar">
-                <button class="btn primary" data-event-click="run">&#9654; Run</button>
-                <button class="btn" data-event-click="step">Step</button>
-                <button class="btn" data-event-click="reset">Reset</button>
+                <button class="btn primary" data-event-click="run()">{{ running ? '&#10073;&#10073; Pause' : '&#9654; Run' }}</button>
+                <button class="btn" data-event-click="step()">Step</button>
+                <button class="btn" data-event-click="reset()">Reset</button>
             </div>
         </div>
 
@@ -34,36 +38,23 @@
         <div id="physics" class="panel">
             <div class="panel-title">Physics terms</div>
             <div class="toggles">
-                <div class="tog on"><span class="led"></span><span class="lbl">wave_propagation</span></div>
-                <div class="tog on"><span class="led"></span><span class="lbl">coupling</span></div>
-                <div class="tog on"><span class="led"></span><span class="lbl">damping</span></div>
-                <div class="tog on"><span class="led"></span><span class="lbl">genesis</span></div>
-                <div class="tog on"><span class="led"></span><span class="lbl">gauss_projection</span></div>
-                <div class="tog on"><span class="led"></span><span class="lbl">forces</span></div>
-                <div class="tog on"><span class="led"></span><span class="lbl">movement</span></div>
-                <div class="tog on"><span class="led"></span><span class="lbl">poisson_coulomb</span></div>
-                <div class="tog on"><span class="led"></span><span class="lbl">selective_damping</span></div>
-                <div class="tog"><span class="led"></span><span class="lbl">gravity</span></div>
-                <div class="tog"><span class="led"></span><span class="lbl">lorentz_force</span></div>
-                <div class="tog"><span class="led"></span><span class="lbl">dual_substrate</span></div>
-                <div class="tog"><span class="led"></span><span class="lbl">color_forces</span></div>
-                <div class="tog"><span class="led"></span><span class="lbl">strong_force</span></div>
-                <div class="tog"><span class="led"></span><span class="lbl">weak_transmutation</span></div>
-                <div class="tog"><span class="led"></span><span class="lbl">confinement</span></div>
-                <div class="tog"><span class="led"></span><span class="lbl">de_broglie_clock</span></div>
+                <div class="tog" data-for="t : toggles" data-class-on="t.on" data-event-click="toggle(t.name)">
+                    <span class="led"></span><span class="lbl">{{t.name}}</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Status bar (bound to UiSnapshot in M-UI-3) -->
+    <!-- Status bar (bound to UiSnapshot) -->
     <div id="status">
-        <span class="dot running"></span><b>Running</b>
-        <span>T: <b>128</b></span>
-        <span>Particles: <b>412</b></span>
-        <span>Energy: <b>18363.4</b></span>
+        <span class="dot" data-class-running="running"></span><b>{{ running ? 'Running' : 'Paused' }}</b>
+        <span>T: <b>{{tick}}</b></span>
+        <span>Particles: <b>{{particle_count}}</b></span>
+        <span>Energy: <b>{{total_energy}}</b></span>
+        <span>{{physical_time}}</span>
         <div class="spacer"></div>
-        <span>58 fps</span>
-        <span class="accent">CUDA</span>
+        <span>{{fps}} fps</span>
+        <span class="accent">{{backend}}</span>
     </div>
 </body>
 </rml>
