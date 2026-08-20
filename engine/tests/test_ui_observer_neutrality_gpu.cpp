@@ -47,13 +47,19 @@ void observe(ftd::RenderBridge& rb) {
 int main() {
     ftd::test::init("test_ui_observer_neutrality_gpu");
 
-    ftd::test::section("N1-gpu: interactive baseline skips EnergyLedger");
+    ftd::test::section("N1-gpu: interactive GPU path computes EnergyLedger from device audit");
     ftd::RenderBridge ledger(9);
     if (!require_gpu(ledger)) return ftd::test::finalize();
     seed(ledger);
     for (int tick = 0; tick < 200; ++tick) ledger.tick();
-    ftd::test::check("interactive GPU ledger remains uncomputed in Phase 0A",
-                     ledger.energy_ledger().updates == 0);
+    // The interactive GPU path used to skip the EnergyLedger (the 469 B/site
+    // host mirror is deferred), leaving E_curr = 0 — the native app's flat energy
+    // readout/chart. It now sources the ledger from the compact device audit each
+    // tick (a few scalars D2H, not the full mirror), so after 200 ticks the ledger
+    // has been committed once per tick. N2/N6 below prove this observation stays
+    // physics-neutral (state + RNG hashes unchanged).
+    ftd::test::check("interactive GPU ledger is computed each tick from the device audit",
+                     ledger.energy_ledger().updates == 200);
 
     ftd::test::section("N2-gpu: compact observers preserve trajectory");
     ftd::RenderBridge bare(9);
