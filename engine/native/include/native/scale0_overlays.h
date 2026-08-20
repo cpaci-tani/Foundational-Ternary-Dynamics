@@ -44,9 +44,10 @@ enum class OverlayColumn : std::uint32_t {
 // How an overlay's samples become scene geometry through the presenter's two
 // existing primitives (sprite point cloud + line list).
 enum class OverlayRender : std::uint32_t {
-    Sprite,  // ambient |J| flux cloud (FluxVector magnitude) → sprite points
-    Points,  // scalar field → magnitude/sign-coloured sprite points
-    Arrows,  // 3-vector field → line-segment arrows (dim base → bright tip)
+    Sprite,      // ambient |J| flux cloud (FluxVector magnitude) → sprite points
+    Points,      // scalar field → magnitude/sign-coloured sprite points
+    Arrows,      // 3-vector field → line-segment arrows (dim base → bright tip)
+    Streamline,  // 3-vector field → RK4-traced field lines (LINE PSO polylines)
 };
 
 // Colour ramp applied to the per-sample magnitude/sign.
@@ -59,6 +60,12 @@ enum class OverlayRamp : std::uint32_t {
     CoolHot,     // magnitude cool→hot (force arrows)
     Poynting,    // yellow → orange (energy-flux arrows)
     Weak,        // violet (parity-odd ∇×J pseudovector arrows)
+    // Streamline ramps: applied per-vertex inside the RK4 integrator (streamlines
+    // .cpp), keyed off the overlay, not consulted by the point/arrow colour
+    // switches. Named here so each streamline descriptor documents its own look.
+    FluxLine,    // Flux Lines: flux colormap by LOCAL |J| (dark-blue→cyan→red)
+    CyanFade,    // E Field: cyan (0.30,0.82,0.88) faded along the line
+    GreenFade,   // B Field: green (0.40,0.73,0.42) faded along the line
 };
 
 // Stable overlay identifiers. The numeric value is the wire id carried by the
@@ -76,6 +83,10 @@ enum class OverlayId : std::uint32_t {
     Latency,
     GaussResidual,
     Horizon,
+    // ── Tranche 4: the 3 STREAMLINE overlays (RK4 field-line integration) ──
+    FluxLines,
+    EField,
+    BField,
     // Future tranches append here (EXTEND / NEW overlays) — do not reorder.
 };
 
@@ -102,11 +113,17 @@ inline constexpr OverlayDescriptor kOverlayRegistry[] = {
     // ── Volume ──
     {OverlayId::FluxVolume,   "fluxVolume", "Flux Volume", OverlayColumn::Volume,
      OverlayRender::Sprite, ftd::VisualFieldKind::FluxVector,   OverlayRamp::FluxCloud, 0.04f, -1.0f, false, false},
+    {OverlayId::FluxLines,    "fluxLines",  "Flux Lines",  OverlayColumn::Volume,
+     OverlayRender::Streamline, ftd::VisualFieldKind::FluxVector, OverlayRamp::FluxLine, 0.0f, -1.0f, false, true},
     {OverlayId::Divergence,   "divJ",       "\xE2\x88\x87\xC2\xB7J", OverlayColumn::Volume,
      OverlayRender::Points, ftd::VisualFieldKind::Divergence,   OverlayRamp::Diverging, 0.01f, -1.0f, false, false},
     {OverlayId::State,        "state",      "State s",     OverlayColumn::Volume,
      OverlayRender::Points, ftd::VisualFieldKind::State,        OverlayRamp::StateSign, 0.50f, -1.0f, false, true},
     // ── Fields ──
+    {OverlayId::EField,       "eField",     "E Field",     OverlayColumn::Fields,
+     OverlayRender::Streamline, ftd::VisualFieldKind::Electric, OverlayRamp::CyanFade,  0.0f, -1.0f, false, true},
+    {OverlayId::BField,       "bField",     "B Field",     OverlayColumn::Fields,
+     OverlayRender::Streamline, ftd::VisualFieldKind::Magnetic, OverlayRamp::GreenFade, 0.0f, -1.0f, false, true},
     {OverlayId::Poynting,     "poynting",   "Poynting S",  OverlayColumn::Fields,
      OverlayRender::Arrows, ftd::VisualFieldKind::Poynting,     OverlayRamp::Poynting,  0.05f, -1.0f, false, false},
     // ── Forces ──

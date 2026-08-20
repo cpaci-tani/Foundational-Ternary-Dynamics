@@ -8,6 +8,7 @@
 
 #include "native/host/adapters/scale0_adapter.h"
 #include "native/host/adapters/scale1_adapter.h"
+#include "native/host/adapters/streamlines.h"
 #include "native/scale0_overlays.h"
 
 #include "ftd/constants.h"       // DELTA_SQUARED (DUAL_DELTA), canonical chain
@@ -22,6 +23,7 @@
 #endif
 
 #include <algorithm>
+#include <array>
 #include <chrono>
 #include <cmath>
 #include <cstdlib>
@@ -277,6 +279,40 @@ void append_overlay_points(RenderBridge& rb, NativeFrame& frame,
     }
 }
 
+// Map a streamline overlay's field kind → the integrator's overlay profile
+// (seed strategy + colour ramp). Only the three streamline kinds reach here.
+streamlines::Overlay streamline_overlay_for(VisualFieldKind kind) {
+    switch (kind) {
+        case VisualFieldKind::Electric: return streamlines::Overlay::Electric;
+        case VisualFieldKind::Magnetic: return streamlines::Overlay::Magnetic;
+        case VisualFieldKind::FluxVector:
+        default:                        return streamlines::Overlay::Flux;
+    }
+}
+
+// Streamline overlay → RK4-traced field lines appended into the shared
+// frame.field_lines group. Samples the field DENSELY (stride 1) so the
+// integrator can trace through a voxel-indexed lookup, and seeds E/B from the
+// frame's already-gathered particle centres. Multiple streamline overlays (and
+// the arrow/point overlays) coexist in field_lines.
+void append_overlay_streamlines(RenderBridge& rb, NativeFrame& frame,
+                                const OverlayDescriptor& d, VisualFieldKind kind) {
+    VisualFieldSample sample;
+    rb.copy_visual_field_sample(kind, /*stride=*/1, sample);
+    if (sample.components != 3u || sample.count() == 0) return;
+
+    // Particle-anchored E/B seeds read the frame's manifested particle centres
+    // (voxel-centre coords, already built into frame.particles this capture).
+    std::vector<std::array<float, 3>> particles;
+    particles.reserve(frame.particles.size());
+    for (const NativeParticle& p : frame.particles)
+        particles.push_back(std::array<float, 3>{p.x, p.y, p.z});
+
+    streamlines::append(sample, particles, rb.lattice().size(),
+                        streamline_overlay_for(kind), frame.field_lines);
+    (void)d;
+}
+
 // Convert a Scale-0 payload alternative into the flat UiCommand the existing
 // applier/observer free functions consume. Every Scale0Cmd alternative is also a
 // UiCommand alternative, so this is a straight widening.
@@ -524,6 +560,9 @@ NativeFrame Scale0Adapter::capture() {
                     break;
                 case OverlayRender::Points:
                     append_overlay_points(*bridge_, frame, *d, kind);
+                    break;
+                case OverlayRender::Streamline:
+                    append_overlay_streamlines(*bridge_, frame, *d, kind);
                     break;
             }
         }
