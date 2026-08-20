@@ -191,6 +191,7 @@ void configure_strong(ftd::RenderBridge& rb) {
     rb.toggles.forces = false;
     rb.toggles.movement = false;
     rb.toggles.strong_force = true;
+    rb.toggles.color_forces = true;
     rb.toggles.confinement = true;
 }
 

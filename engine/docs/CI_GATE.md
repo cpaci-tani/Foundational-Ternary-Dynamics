@@ -25,11 +25,23 @@ Runs in well under 2 minutes. Composition (labeled in `engine/CMakeLists.txt`,
 | `tick_phase_order` | Tick phase ordering constraints (PO-2/PO-3) |
 | `engine_lifecycle` | RAII/clear() lifecycle contract |
 | `determinism` | Byte-identical reproducibility across runs/thread counts |
+| `gpu_term_contract` | Scale-0 CUDA completeness oracle — every `TOGGLE_SPECS` row classified by live implementation vs declared backend mask |
+| `ui_observer_neutrality_cpu` | UI-demand neutrality: per-tick ledger freshness, CPU observer trajectory/RNG neutrality, and single-slot telemetry semantics |
+| `ui_command_queue` | FIFO command queue: W4 four-command physics-parameter order plus last-write-at-last-position coalescing |
+| `ui_snapshot_publisher` | Immutable snapshot publisher: retained checksum integrity under concurrent publish/acquire |
+| `ui_command_boundary` | N4: real queue drain equals a direct between-tick toggle; Step does not tick inside the drain |
+| `ui_journal_replay` | Journal replay reproduces TermToggles and the six knobs; `applied` is the post-clamp engine value |
 
 ## What the fast gate does NOT cover
 
 - **GPU parity** — run `ctest -L gpu` on the WSL2 build (`engine/build_wsl`).
   Windows-native CUDA is compile-check only (see CLAUDE.md).
+- **`ui_observer_neutrality_gpu` / `ui_fixed_flush_order_gpu` (N5)** — interactive CUDA characterization. Run on WSL2 / RTX 5090, never on Windows-native CUDA for multi-tick suites.
+- **D3D12 debug-observability and DPI hidden-window tests** — owner-rig
+  `interactive` Windows device tests (`d3d12_debug_observability`,
+  `native_desktop_dpi_awareness`). Hosted CI excludes `interactive` and
+  compensates the two previously unit-covered D3D checks
+  (`d3d12_adapter_selection`, `d3d12_shared_buffer`).
 - **Campaign/benchmark tests** — long-running; part of the full suite only.
 - **Web** — Playwright suite in `engine/web` (incl. `scenario-parity.spec.js`)
   when web/bridge/binding files change.
@@ -39,7 +51,7 @@ Runs in well under 2 minutes. Composition (labeled in `engine/CMakeLists.txt`,
 ## The full gate (pre-merge / release)
 
 ```
-cd engine/build && ctest -j 32 -C Release        # 211/211 (+ later additions)
+cd engine/build && ctest -j 32 -C Release --output-on-failure
 ```
 
 Known pre-existing failure: `test_helium_scale1` (FTD-0270 boundary

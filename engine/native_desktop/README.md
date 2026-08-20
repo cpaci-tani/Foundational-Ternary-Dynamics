@@ -7,8 +7,12 @@ This is a **separate** Windows application from:
 
 It does not modify those trees. Physics runs in-process through
 `RenderBridge`. Particles and flux are drawn with D3D12 shaders in the
-same process. CUDA–D3D12 buffer interop is the next slice; v1 still uses the
-existing bounded visual-snapshot gather.
+same process. CUDA–D3D12 shared-buffer/fence interop is implemented; the app
+falls back to the bounded visual-snapshot gather when interop is unavailable.
+
+The current shell is the raw Win32 v1 interface documented below. The approved
+Dear ImGui/ImPlot replacement and its incremental 0A→0B→1 implementation
+boundary are specified in [`docs/SPEC_UI_V2.md`](docs/SPEC_UI_V2.md).
 
 ## Build
 

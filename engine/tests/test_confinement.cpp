@@ -64,7 +64,6 @@ int main() {
             RenderBridge bridge(L);
             bridge.toggles.disable_all();
             bridge.toggles.forces = true;
-            bridge.toggles.strong_force = true;  // Enables confinement
             bridge.toggles.color_forces = true;
 
             int cx = L/2, cy = L/2, cz = L/2;
@@ -145,7 +144,6 @@ int main() {
         RenderBridge bridge(L);
         bridge.toggles.disable_all();
         bridge.toggles.forces = true;
-        bridge.toggles.strong_force = true;
         bridge.toggles.color_forces = true;
 
         int cx = L/2, cy = L/2, cz = L/2;
@@ -209,7 +207,6 @@ int main() {
         RenderBridge bridge(L);
         bridge.toggles.disable_all();
         bridge.toggles.forces = true;
-        bridge.toggles.strong_force = true;
         bridge.toggles.color_forces = true;
 
         int sep = 10;
@@ -239,6 +236,42 @@ int main() {
         check("CONF-4b: Force is positive", F_measured > 0.0);
         check("CONF-4c: Force is bounded by sigma",
               F_measured <= F_expected_discrete * 1.5);
+    }
+
+    // ================================================================
+    // CONF-5: Scale-0 linear string when `confinement` is on
+    // ================================================================
+    std::cout << "\n--- CONF-5: confinement toggle selects SIGMA_STRING at r>=8 ---\n";
+    {
+        auto measure = [](int separation, bool linear) -> double {
+            const int L = 32;
+            RenderBridge bridge(L);
+            bridge.force_cpu();
+            bridge.toggles.disable_all();
+            bridge.toggles.forces = true;
+            bridge.toggles.color_forces = true;
+            bridge.toggles.confinement = linear;
+            int cx = L/2, cy = L/2, cz = L/2;
+            bridge.inject_particle(cx - separation/2, cy, cz, +1,
+                                   {K_B, 0.0, 0.0}, +1, 1);
+            bridge.inject_particle(cx + separation/2, cy, cz, +1,
+                                   {0.0, K_B, 0.0}, +1, 2);
+            bridge.tick();
+            return bridge.force_diag_at(cx - separation/2, cy, cz).f_strong.mag();
+        };
+
+        const double F10 = measure(10, true);
+        const double F12 = measure(12, true);
+        const double F10_harm = measure(10, false);
+        std::cout << "  |F|(r=10, confinement)= " << F10 << "\n";
+        std::cout << "  |F|(r=12, confinement)= " << F12 << "\n";
+        std::cout << "  |F|(r=10, harmonic)=    " << F10_harm << "\n";
+        check_close("CONF-5a: r=10 linear |F| = SIGMA_STRING",
+                    F10, SIGMA_STRING, 1e-12);
+        check_close("CONF-5b: r=12 linear |F| = SIGMA_STRING",
+                    F12, SIGMA_STRING, 1e-12);
+        check("CONF-5c: harmonic default differs from the linear string",
+              std::abs(F10 - F10_harm) > 1e-6);
     }
 
     std::cout << "\n================================================================\n";

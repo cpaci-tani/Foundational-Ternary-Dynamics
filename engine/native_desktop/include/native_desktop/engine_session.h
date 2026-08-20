@@ -1,5 +1,14 @@
 #pragma once
 
+#include "native_desktop/native_frame.h"
+#include "native_desktop/command_applier.h"
+#include "native_desktop/command_queue.h"
+#include "native_desktop/parameter_journal.h"
+#include "native_desktop/snapshot_publisher.h"
+#include "native_desktop/ui_result.h"
+
+#include "ftd/native_telemetry_scheduler.h"
+
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -15,28 +24,6 @@ class GpuEngine;
 }
 
 namespace ftd::native_desktop {
-
-struct NativeParticle {
-    float x = 0.0f;
-    float y = 0.0f;
-    float z = 0.0f;
-    float r = 1.0f;
-    float g = 1.0f;
-    float b = 1.0f;
-    float size = 0.45f;
-};
-
-struct NativeFrame {
-    int tick = 0;
-    int lattice_size = 0;
-    int flux_boundary = 2;
-    std::uint32_t total_manifested = 0;
-    std::string scenario;
-    std::string backend;
-    std::string status;
-    std::vector<NativeParticle> particles;
-    std::vector<NativeParticle> flux;
-};
 
 struct NativeEngineOptions {
     int lattice_size = 32;
@@ -55,6 +42,17 @@ public:
     NativeEngineSession& operator=(const NativeEngineSession&) = delete;
 
     void tick();
+    TickResult tick_once();
+    TickResult process_ui_boundary(CommandQueue& queue);
+    void consume_pending_step();
+    LoopControl loop_control() const { return ui_.loop; }
+    void set_loop_control(LoopControl loop) { ui_.loop = loop; }
+    void stage_lattice_size(int n) { staged_lattice_size_ = n; }
+    int staged_lattice_size() const { return staged_lattice_size_; }
+    void set_last_reload(ReloadResult result) { ui_.last_reload = std::move(result); }
+    ReloadResult last_reload_result() const { return ui_.last_reload; }
+    SnapshotPublisher& snapshot_publisher() { return publisher_; }
+    ParameterJournal& parameter_journal() { return journal_; }
     NativeFrame capture();
     NativeFrame capture_particles() { return capture(); }
 
@@ -139,6 +137,9 @@ public:
 #ifdef FTD_ENABLE_CUDA
     ftd::gpu::GpuEngine* debug_gpu_engine();
 #endif
+    // TEST-ONLY. Production code uses tick()/capture()/process_ui_boundary().
+    RenderBridge& debug_bridge() { return *bridge_; }
+    const RenderBridge& debug_bridge() const { return *bridge_; }
 
 private:
     void boot();
@@ -149,6 +150,11 @@ private:
     std::unique_ptr<RenderBridge> bridge_;
     std::string status_;
     bool interop_enabled_ = false;
+    int staged_lattice_size_ = 0;
+    SnapshotPublisher publisher_;
+    ParameterJournal journal_;
+    ftd::NativeTelemetryScheduler scheduler_;
+    UiBoundaryState ui_;
 };
 
 // Outcome of one reimport_interop_after_reload() call -- see that function's

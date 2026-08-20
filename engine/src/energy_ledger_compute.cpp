@@ -46,6 +46,7 @@ void update_energy_ledger_cpu(RenderBridge& rb) {
   const double g = DAMPING;
   const double quadratic_damping_rate = -2.0 * g + g * g;
   auto& L = rb.energy_ledger_;
+  ++L.updates;
 
   if (L.tick_prev < 0) {
     L.tick_prev  = rb.tick_;

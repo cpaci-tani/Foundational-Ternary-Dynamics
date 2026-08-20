@@ -144,6 +144,7 @@ std::uint32_t visual_field_components(VisualFieldKind kind) {
 
 void RenderBridge::copy_visual_field_sample(VisualFieldKind kind, int stride,
                                             VisualFieldSample& out) {
+    assert_sim_thread();
     if (backend_) {
         backend_->flush_host_mutations();
         if (backend_->copy_visual_field_sample(kind, stride, out)) return;

@@ -13,11 +13,13 @@
  */
 
 // Color force regime boundaries (must match GPU kernels_forces.cu).
-// Three-regime profile: Coulomb (r<3) → transition (3-8) → Harmonic confinement (F∝r, V∝r²) (r>=8).
+// Default three-regime profile: Coulomb (r<3) → transition (3-8) →
+// harmonic (F∝r, V∝r²) at r>=8. TermToggles::confinement replaces the
+// r>=8 shell with constant F = SIGMA_STRING·cf (linear V∝r).
 inline constexpr double COLOR_COULOMB_RADIUS    = 3.0;  // r < 3:       F = α_s·cf / r²
 inline constexpr double COLOR_TRANSITION_RADIUS = 8.0;  // 3 <= r < 8:  F = α_s·cf / (denom·r)
 inline constexpr double COLOR_TRANSITION_DENOM  = 3.0;  // denominator in transition formula
-inline constexpr double COLOR_LINEAR_DENOM      = 64.0; // r >= 8:      F = α_s·cf·r / denom  (Harmonic confinement: F∝r, V∝r²)
+inline constexpr double COLOR_LINEAR_DENOM      = 64.0; // r >= 8 default: F = α_s·cf·r / denom
 
 // ----------------------------------------------------------------------------
 // Watson-integral gauge factors for the new substrate kernels in
