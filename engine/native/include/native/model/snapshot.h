@@ -32,6 +32,16 @@ struct Scale1Snapshot {
     double       total_ke = 0.0;
     double       total_pe = 0.0;
     std::string  status;
+
+    // Click-to-inspect readout (InspectParticle1). insp_present=false means
+    // nothing is currently picked; the adapter's observe() fills these from the
+    // selected particle each boundary the selection is re-issued (live data).
+    bool         insp_present = false;
+    int          insp_index = -1;
+    int          insp_charge = 0;
+    bool         insp_locked = false;
+    double       insp_pos[3] = {0.0, 0.0, 0.0};
+    double       insp_vel[3] = {0.0, 0.0, 0.0};
 };
 
 // Scale2Snapshot, Scale5Snapshot, … arrive as further alternatives below.

@@ -83,8 +83,10 @@
 #include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <cmath>
 #include <cstdint>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <fcntl.h>
 #include <io.h>
@@ -105,6 +107,10 @@ namespace {
 // cannot include — see the include block above).
 inline int lparam_x(LPARAM lp) { return static_cast<int>(static_cast<short>(LOWORD(lp))); }
 inline int lparam_y(LPARAM lp) { return static_cast<int>(static_cast<short>(HIWORD(lp))); }
+
+// Max pointer travel (client px) between button-down and button-up that still
+// counts as a CLICK (→ scene pick) rather than a DRAG (→ camera orbit).
+constexpr int kClickSlop = 4;
 
 // ── The physics-terms panel: which toggles it shows, top to bottom. Names are
 //    the canonical TermToggles field names (term_toggles.h) so a click maps to
@@ -172,6 +178,12 @@ struct FieldOptionRow {
     Rml::String label;
 };
 
+// One key/value line in the click-to-inspect readout (bound into the shell).
+struct InspLine {
+    Rml::String k;
+    Rml::String v;
+};
+
 struct ShellData {
     int tick = 0;
     int active_scale = 0;   // drives the toolbar scale-switcher highlight
@@ -190,6 +202,11 @@ struct ShellData {
     // row's stable id ("none" by default); `fields` is the static menu.
     Rml::String active_field = "none";
     Rml::Vector<FieldOptionRow> fields;
+    // Click-to-inspect readout. `insp_active` gates the panel section (data-if);
+    // `insp_title` names the picked entity; `insp_lines` are its live fields.
+    bool insp_active = false;
+    Rml::String insp_title;
+    Rml::Vector<InspLine> insp_lines;
 };
 
 bool toggle_on(const ftd::TermToggles& tt, const char* name) {
@@ -216,6 +233,34 @@ struct AppContext {
     ftd::native::SceneRect viewport_rect{};
     bool dragging = false;
     POINT last{};
+
+    // ── Click-vs-drag discrimination (GUI thread; wnd_proc only) ──
+    // A press inside the viewport that releases with < kClickSlop travel is a
+    // CLICK (→ pick); anything with more travel is an orbit DRAG (camera moved,
+    // no pick). press_pt is the button-down point; drag_moved latches once the
+    // pointer leaves the slop box.
+    POINT press_pt{};
+    bool press_in_viewport = false;
+    bool drag_moved = false;
+
+    // Pick request handed from wnd_proc to the GUI loop (same thread; the loop
+    // owns the frame + camera + viewport rect needed to unproject the ray).
+    bool pick_pending = false;
+    int pick_x = 0, pick_y = 0;
+
+    // ── Selected inspection target (GUI thread) ──
+    // Re-issued as an InspectVoxel / InspectParticle1 each new snapshot so the
+    // readout stays live. 0 = nothing picked, 1 = Scale-0 voxel, 2 = Scale-1
+    // particle.
+    int inspect_kind = 0;
+    int inspect_vx = 0, inspect_vy = 0, inspect_vz = 0;  // Scale-0 voxel cell
+    int inspect_pidx = -1;                               // Scale-1 particle index
+    // True once at least one inspection payload has been received for the
+    // current target. The published snapshot only carries the inspection on the
+    // boundaries that drained a re-issue, so between those the readout keeps its
+    // last (live) values rather than blanking to "reading…". Reset on a new
+    // pick / scale switch / clear.
+    bool insp_has_data = false;
 };
 
 // ── Command helpers (run on the GUI thread; drained by the sim thread) ──
@@ -228,6 +273,10 @@ void push_core(AppContext* app, ftd::native::CoreCommand cmd) {
 void push_scale0(AppContext* app, ftd::native::Scale0Cmd cmd) {
     if (app && app->commands)
         app->commands->push(ftd::native::scale0_command(std::move(cmd)));
+}
+void push_scale1(AppContext* app, ftd::native::Scale1Cmd cmd) {
+    if (app && app->commands)
+        app->commands->push(ftd::native::scale1_command(std::move(cmd)));
 }
 
 void request_play(AppContext* app) {
@@ -307,6 +356,11 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
                 app->camera->pitch += (y - app->last.y) * 0.01f;
                 app->camera->pitch = std::max(-1.4f, std::min(1.4f, app->camera->pitch));
                 app->last = {x, y};
+                // Once the pointer leaves the slop box this press is an orbit
+                // drag, not a click — suppress the pick on release.
+                if (std::abs(x - app->press_pt.x) > kClickSlop
+                    || std::abs(y - app->press_pt.y) > kClickSlop)
+                    app->drag_moved = true;
             }
             return 0;
         }
@@ -316,15 +370,32 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
             if (over_viewport(app, x, y)) {
                 app->dragging = true;
                 app->last = {x, y};
+                app->press_pt = {x, y};
+                app->press_in_viewport = true;
+                app->drag_moved = false;
                 SetCapture(hwnd);
+            } else {
+                app->press_in_viewport = false;
             }
             return 0;
         }
-        case WM_LBUTTONUP:
+        case WM_LBUTTONUP: {
+            const int x = lparam_x(lparam), y = lparam_y(lparam);
             if (ctx) ctx->ProcessMouseButtonUp(0, rml_key_modifiers());
             app->dragging = false;
             if (GetCapture() == hwnd) ReleaseCapture();
+            // A press+release inside the viewport with negligible travel is a
+            // CLICK → request a scene pick. The GUI loop (which owns the frame,
+            // camera, and viewport rect) unprojects + picks; wnd_proc only flags
+            // it. A drag (camera already orbited) is ignored here.
+            if (app->press_in_viewport && !app->drag_moved && over_viewport(app, x, y)) {
+                app->pick_pending = true;
+                app->pick_x = x;
+                app->pick_y = y;
+            }
+            app->press_in_viewport = false;
             return 0;
+        }
         case WM_RBUTTONDOWN:
             if (ctx) ctx->ProcessMouseButtonDown(1, rml_key_modifiers());
             return 0;
@@ -466,11 +537,135 @@ std::string fmt(const char* f, double v) {
     std::snprintf(buf, sizeof(buf), f, v);
     return buf;
 }
+std::string fmt3(const char* f, double a, double b, double c) {
+    char buf[96];
+    std::snprintf(buf, sizeof(buf), f, a, b, c);
+    return buf;
+}
 
 void apply_camera_for_lattice(ftd::native::Camera& cam, int lattice) {
     const float c = static_cast<float>(lattice) * 0.5f;
     cam.target_x = cam.target_y = cam.target_z = c;
     cam.distance = static_cast<float>(lattice) * 1.8f;
+}
+
+// ── Click-to-inspect: unproject a scene click to a world ray, then pick ──────
+struct PickRay {
+    float ox = 0.0f, oy = 0.0f, oz = 0.0f;   // origin (camera eye)
+    float dx = 0.0f, dy = 1.0f, dz = 0.0f;   // unit direction (into the scene)
+};
+
+// Build a world-space ray from a click at (client_x, client_y) inside `rect`,
+// using the SAME orbit-camera math D3D12Presenter::render() uses (look_at + DX
+// perspective, row-vector convention). No 4×4 inverse: the eye + view basis are
+// reconstructed directly and the view-space ray direction (nx·tan·aspect,
+// ny·tan, 1) is rotated into world by that basis. Ray = origin + t·dir, t ≥ 0.
+PickRay make_pick_ray(const ftd::native::Camera& cam, const ftd::native::SceneRect& rect,
+                      int client_x, int client_y) {
+    const float w = rect.width > 0 ? static_cast<float>(rect.width) : 1.0f;
+    const float h = rect.height > 0 ? static_cast<float>(rect.height) : 1.0f;
+    const float ndc_x = 2.0f * (static_cast<float>(client_x - rect.x)) / w - 1.0f;
+    const float ndc_y = 1.0f - 2.0f * (static_cast<float>(client_y - rect.y)) / h;
+    const float aspect = w / h;
+    const float tan_half = std::tan(cam.fov_y * 0.5f);
+
+    // eye + forward — identical to the presenter's eye_{x,y,z} + look_at forward.
+    const float cp = std::cos(cam.pitch);
+    const float ex = cam.target_x + cam.distance * cp * std::sin(cam.yaw);
+    const float ey = cam.target_y + cam.distance * std::sin(cam.pitch);
+    const float ez = cam.target_z + cam.distance * cp * std::cos(cam.yaw);
+    float fx = cam.target_x - ex, fy = cam.target_y - ey, fz = cam.target_z - ez;
+    float fl = std::sqrt(fx * fx + fy * fy + fz * fz);
+    if (fl < 1e-6f) fl = 1.0f;
+    fx /= fl; fy /= fl; fz /= fl;
+    // right = normalize(cross(forward, up)) with up = (0,1,0) → (-fz, 0, fx).
+    float sx = -fz, sy = 0.0f, sz = fx;
+    float sl = std::sqrt(sx * sx + sy * sy + sz * sz);
+    if (sl < 1e-6f) sl = 1.0f;
+    sx /= sl; sy /= sl; sz /= sl;
+    // up2 = cross(right, forward).
+    const float ux = sy * fz - sz * fy;
+    const float uy = sz * fx - sx * fz;
+    const float uz = sx * fy - sy * fx;
+
+    const float vx = ndc_x * tan_half * aspect;
+    const float vy = ndc_y * tan_half;
+    float dx = vx * sx + vy * ux + fx;
+    float dy = vx * sy + vy * uy + fy;
+    float dz = vx * sz + vy * uz + fz;
+    float dl = std::sqrt(dx * dx + dy * dy + dz * dz);
+    if (dl < 1e-6f) dl = 1.0f;
+    return PickRay{ex, ey, ez, dx / dl, dy / dl, dz / dl};
+}
+
+// Perpendicular distance from world point P to the ray; t_out = distance along
+// the (unit) direction (in front of the camera when > 0).
+float ray_perp(const PickRay& r, float px, float py, float pz, float& t_out) {
+    const float wx = px - r.ox, wy = py - r.oy, wz = pz - r.oz;
+    const float t = wx * r.dx + wy * r.dy + wz * r.dz;
+    t_out = t;
+    const float cx = wx - t * r.dx, cy = wy - t * r.dy, cz = wz - t * r.dz;
+    return std::sqrt(cx * cx + cy * cy + cz * cz);
+}
+
+// A sample is "hit" when it is in front of the camera and within a narrow
+// angular cone (0.05·t ≈ 2.9°), with a 1.2-unit floor so nearby samples stay
+// easy to click. The cone (rather than a fixed world radius) keeps distant
+// samples clickable under perspective.
+inline bool ray_hits(float perp, float t) {
+    return t > 0.0f && perp < std::max(1.2f, 0.05f * t);
+}
+
+// Scale 0: nearest rendered sample to the ray → its lattice cell. Manifested
+// particles are preferred; the ambient flux cloud is the fallback so a click on
+// a field-only region still resolves a cell. Returns false (→ clear the
+// inspector) when nothing is near the ray — a click on empty space.
+bool pick_scale0(const ftd::native::NativeFrame& frame, const PickRay& ray, int L,
+                 int& vx, int& vy, int& vz) {
+    auto scan = [&](const std::vector<ftd::native::NativeParticle>& pts, float& best_perp,
+                    float& bx, float& by, float& bz) {
+        bool any = false;
+        for (const ftd::native::NativeParticle& p : pts) {
+            float t = 0.0f;
+            const float perp = ray_perp(ray, p.x, p.y, p.z, t);
+            if (ray_hits(perp, t) && perp < best_perp) {
+                best_perp = perp; bx = p.x; by = p.y; bz = p.z; any = true;
+            }
+        }
+        return any;
+    };
+    float bp = 1e30f, bx = 0.0f, by = 0.0f, bz = 0.0f;
+    bool hit = scan(frame.particles, bp, bx, by, bz);
+    if (!hit) hit = scan(frame.flux, bp, bx, by, bz);
+    if (!hit) return false;
+    const int hi = std::max(0, L - 1);
+    vx = std::min(hi, std::max(0, static_cast<int>(std::floor(bx))));
+    vy = std::min(hi, std::max(0, static_cast<int>(std::floor(by))));
+    vz = std::min(hi, std::max(0, static_cast<int>(std::floor(bz))));
+    return true;
+}
+
+// Scale 1: nearest particle to the ray → its index. frame.particles is 1:1 with
+// the engine's particle list (Scale1Adapter::capture() preserves order), so the
+// index feeds InspectParticle1 directly. Returns false (→ clear) on a miss.
+bool pick_scale1(const ftd::native::NativeFrame& frame, const PickRay& ray, int& pidx) {
+    float bp = 1e30f;
+    int best = -1;
+    for (std::size_t i = 0; i < frame.particles.size(); ++i) {
+        const ftd::native::NativeParticle& p = frame.particles[i];
+        float t = 0.0f;
+        const float perp = ray_perp(ray, p.x, p.y, p.z, t);
+        if (ray_hits(perp, t) && perp < bp) { bp = perp; best = static_cast<int>(i); }
+    }
+    if (best < 0) return false;
+    pidx = best;
+    return true;
+}
+
+// Parse "i,j,k" (the --inspect-voxel argument) into three ints. Returns false on
+// a malformed value (the flag is then ignored with a warning).
+bool parse_ijk(const std::string& s, int& i, int& j, int& k) {
+    return std::sscanf(s.c_str(), "%d,%d,%d", &i, &j, &k) == 3;
 }
 
 struct AppOptions {
@@ -479,6 +674,14 @@ struct AppOptions {
     int scale = 0;             // initial ScaleHost scale level (0 lattice, 1 particles)
     std::string field;         // initial FIELDS overlay id (empty = None; Scale-0 only)
     std::string png_out;       // capture PNG path override (empty = compiled default)
+    // Simulated click-to-inspect for headless captures (interactive picking
+    // can't run under --capture-frames). --inspect-voxel i,j,k selects a Scale-0
+    // voxel; --inspect-particle N selects a Scale-1 particle. Fed into the same
+    // live re-inspection path a real click uses, so the captured frame shows the
+    // populated inspector.
+    std::string inspect_voxel;         // "i,j,k" (empty = none; Scale-0 only)
+    int inspect_particle = -1;         // particle index (< 0 = none; Scale-1 only)
+    bool have_inspect_particle = false;
 };
 
 AppOptions parse_app_options(const std::vector<std::string>& args) {
@@ -496,6 +699,11 @@ AppOptions parse_app_options(const std::vector<std::string>& args) {
             o.field = args[++i];
         } else if (args[i] == "--png-out" && i + 1 < args.size()) {
             o.png_out = args[++i];
+        } else if (args[i] == "--inspect-voxel" && i + 1 < args.size()) {
+            o.inspect_voxel = args[++i];
+        } else if (args[i] == "--inspect-particle" && i + 1 < args.size()) {
+            o.inspect_particle = std::atoi(args[++i].c_str());
+            o.have_inspect_particle = true;
         }
     }
     return o;
@@ -668,6 +876,27 @@ int run_app(const std::vector<std::string>& args) {
     app.quit = &quit_flag;
     app.scenario_id = initial_scenario;
 
+    // Simulated initial pick (headless captures — interactive picking cannot run
+    // under --capture-frames). Honored only when it matches the initial scale
+    // (voxel ↔ Scale 0, particle ↔ Scale 1). This seeds the SAME selection state
+    // a real click sets, so the GUI loop's live re-inspection populates the
+    // inspector before the capture fires.
+    if (initial_scale == 0 && !app_opts.inspect_voxel.empty()) {
+        int ix = 0, iy = 0, iz = 0;
+        if (parse_ijk(app_opts.inspect_voxel, ix, iy, iz)) {
+            app.inspect_kind = 1;
+            app.inspect_vx = ix;
+            app.inspect_vy = iy;
+            app.inspect_vz = iz;
+        } else {
+            std::cerr << "native_app: bad --inspect-voxel '" << app_opts.inspect_voxel
+                      << "' (want i,j,k; ignored)\n" << std::flush;
+        }
+    } else if (initial_scale == 1 && app_opts.have_inspect_particle) {
+        app.inspect_kind = 2;
+        app.inspect_pidx = app_opts.inspect_particle;
+    }
+
     Rml::DataModelConstructor ctor = context->CreateDataModel("shell");
     if (!ctor) throw std::runtime_error("CreateDataModel(shell) failed");
     if (auto row = ctor.RegisterStruct<ToggleRow>()) {
@@ -680,6 +909,11 @@ int run_app(const std::vector<std::string>& args) {
         frow.RegisterMember("label", &FieldOptionRow::label);
     }
     ctor.RegisterArray<Rml::Vector<FieldOptionRow>>();
+    if (auto irow = ctor.RegisterStruct<InspLine>()) {
+        irow.RegisterMember("k", &InspLine::k);
+        irow.RegisterMember("v", &InspLine::v);
+    }
+    ctor.RegisterArray<Rml::Vector<InspLine>>();
     ctor.Bind("tick", &data.tick);
     ctor.Bind("active_scale", &data.active_scale);
     ctor.Bind("particle_count", &data.particle_count);
@@ -695,6 +929,9 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("toggles", &data.toggles);
     ctor.Bind("active_field", &data.active_field);
     ctor.Bind("fields", &data.fields);
+    ctor.Bind("insp_active", &data.insp_active);
+    ctor.Bind("insp_title", &data.insp_title);
+    ctor.Bind("insp_lines", &data.insp_lines);
     ctor.BindEventCallback("run", [&app](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) {
         request_play_toggle(&app);
     });
@@ -732,6 +969,21 @@ int run_app(const std::vector<std::string>& args) {
         if (app.data->active_field != name) {
             app.data->active_field = name;
             h.DirtyVariable("active_field");
+        }
+    });
+    // Inspector close affordance (the × in the readout header): drop the current
+    // selection so the GUI loop stops re-issuing the inspect command and hides
+    // the section next frame. Clear the bound fields here too for immediacy.
+    ctor.BindEventCallback("clear_inspect", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                   const Rml::VariantList&) {
+        app.inspect_kind = 0;
+        app.inspect_pidx = -1;
+        app.insp_has_data = false;
+        if (app.data && app.data->insp_active) {
+            app.data->insp_active = false;
+            app.data->insp_lines.clear();
+            h.DirtyVariable("insp_active");
+            h.DirtyVariable("insp_lines");
         }
     });
     Rml::DataModelHandle model = ctor.GetModelHandle();
@@ -906,6 +1158,12 @@ int run_app(const std::vector<std::string>& args) {
     std::uint64_t last_pushed_seq = 0;
     bool pushed_any = false;
 
+    // Click-to-inspect bookkeeping (GUI thread). last_inspect_seq dedups the
+    // per-boundary re-issue to one inspect command per new snapshot;
+    // last_inspect_scale drops the selection on a scale switch.
+    std::uint64_t last_inspect_seq = 0;
+    int last_inspect_scale = initial_scale;
+
     // The interop StructuredBuffer SRV (heap slot 0) only needs binding ONCE for
     // the lifetime of the never-recreated shared buffer. This catch-up covers both
     // the startup-active case and a later inactive→active reload transition; a
@@ -1069,6 +1327,137 @@ int run_app(const std::vector<std::string>& args) {
             }
         }
 
+        // ── Click-to-inspect (GUI thread) ────────────────────────────────────
+        // (a) resolve a pending scene click into a selection (unproject + pick),
+        // (b) re-issue the inspect command once per new boundary so the readout
+        // stays LIVE, (c) mirror the published inspection into the data model.
+        // Runs before Context::Update() so the readout dirties lay out this frame;
+        // the pick reuses the previous frame's viewport_rect (stable frame-to-
+        // frame, and always valid once the shell has laid out at least once).
+        const int cur_scale = snap ? snap->active_scale : data.active_scale;
+        bool scroll_physics_bottom = capture_mode;
+        if (cur_scale != last_inspect_scale) {
+            // Scale switch: the old target index is meaningless on the new scale.
+            app.inspect_kind = 0;
+            app.inspect_pidx = -1;
+            app.insp_has_data = false;
+            last_inspect_scale = cur_scale;
+            last_inspect_seq = 0;
+        }
+        if (app.pick_pending) {
+            app.pick_pending = false;
+            const PickRay ray =
+                make_pick_ray(camera, app.viewport_rect, app.pick_x, app.pick_y);
+            if (cur_scale == 0) {
+                const int L = frame.lattice_size > 0 ? frame.lattice_size : camera_lattice;
+                int vx = 0, vy = 0, vz = 0;
+                if (pick_scale0(frame, ray, L, vx, vy, vz)) {
+                    app.inspect_kind = 1;
+                    app.inspect_vx = vx;
+                    app.inspect_vy = vy;
+                    app.inspect_vz = vz;
+                    app.insp_has_data = false;      // fresh target — reset the latch
+                    scroll_physics_bottom = true;   // reveal the readout on a hit
+                } else {
+                    app.inspect_kind = 0;           // empty space → clear
+                }
+            } else if (cur_scale == 1) {
+                int pidx = -1;
+                if (pick_scale1(frame, ray, pidx)) {
+                    app.inspect_kind = 2;
+                    app.inspect_pidx = pidx;
+                    app.insp_has_data = false;
+                    scroll_physics_bottom = true;
+                } else {
+                    app.inspect_kind = 0;
+                }
+            }
+            last_inspect_seq = 0;   // force an immediate re-issue for the new target
+        }
+        // Re-issue the inspect command once per NEW published snapshot so the
+        // adapter refreshes the inspection payload every boundary (live data).
+        if (snap && app.inspect_kind != 0 && snap->seq != last_inspect_seq) {
+            if (app.inspect_kind == 1) {
+                push_scale0(&app, ftd::native::InspectVoxel{app.inspect_vx, app.inspect_vy,
+                                                            app.inspect_vz});
+            } else if (app.inspect_kind == 2) {
+                push_scale1(&app, ftd::native::InspectParticle1{app.inspect_pidx});
+            }
+            last_inspect_seq = snap->seq;
+        }
+        // Mirror the published inspection into the bound readout fields.
+        if (app.inspect_kind == 0) {
+            if (data.insp_active) {
+                data.insp_active = false;
+                data.insp_lines.clear();
+                model.DirtyVariable("insp_active");
+                model.DirtyVariable("insp_lines");
+            }
+        } else {
+            Rml::String title;
+            Rml::Vector<InspLine> lines;
+            bool have_now = false;   // this snapshot carries fresh inspection data
+            if (app.inspect_kind == 1) {
+                title = fmt3("Voxel (%.0f, %.0f, %.0f)",
+                             static_cast<double>(app.inspect_vx),
+                             static_cast<double>(app.inspect_vy),
+                             static_cast<double>(app.inspect_vz));
+                const ftd::native::Scale0Snapshot* s0 = snap ? snap->scale0() : nullptr;
+                if (s0 && s0->voxel_present) {
+                    const ftd::VoxelInspection& vi = s0->voxel;
+                    const ftd::Vec3& J = vi.voxel.flux;
+                    const double jmag = std::sqrt(J.x * J.x + J.y * J.y + J.z * J.z);
+                    const double cmag = std::sqrt(vi.curl.x * vi.curl.x + vi.curl.y * vi.curl.y
+                                                  + vi.curl.z * vi.curl.z);
+                    lines.push_back(InspLine{"State", std::to_string(static_cast<int>(vi.voxel.state))});
+                    lines.push_back(InspLine{"Flux J", fmt3("%.3f, %.3f, %.3f", J.x, J.y, J.z)});
+                    lines.push_back(InspLine{"|J|", fmt("%.4f", jmag)});
+                    lines.push_back(InspLine{"Div J", fmt("%.4f", vi.divergence)});
+                    lines.push_back(InspLine{"|Curl|", fmt("%.4f", cmag)});
+                    have_now = true;
+                }
+            } else if (app.inspect_kind == 2) {
+                title = "Particle #" + std::to_string(app.inspect_pidx);
+                const ftd::native::Scale1Snapshot* s1 = snap ? snap->scale1() : nullptr;
+                if (s1 && s1->insp_present) {
+                    const double vmag = std::sqrt(s1->insp_vel[0] * s1->insp_vel[0]
+                                                  + s1->insp_vel[1] * s1->insp_vel[1]
+                                                  + s1->insp_vel[2] * s1->insp_vel[2]);
+                    const std::string chg = (s1->insp_charge >= 0 ? "+" : "")
+                                            + std::to_string(s1->insp_charge);
+                    lines.push_back(InspLine{"Charge", chg});
+                    lines.push_back(InspLine{"Pos", fmt3("%.2f, %.2f, %.2f", s1->insp_pos[0],
+                                                         s1->insp_pos[1], s1->insp_pos[2])});
+                    lines.push_back(InspLine{"Vel", fmt3("%.3f, %.3f, %.3f", s1->insp_vel[0],
+                                                         s1->insp_vel[1], s1->insp_vel[2])});
+                    lines.push_back(InspLine{"|v|", fmt("%.4f", vmag)});
+                    lines.push_back(InspLine{"Locked", s1->insp_locked ? "yes" : "no"});
+                    have_now = true;
+                }
+            }
+            if (data.insp_title != title) {
+                data.insp_title = title;
+                model.DirtyVariable("insp_title");
+            }
+            // Refresh the lines only on a snapshot that actually carries the
+            // inspection (they change every boundary — live data). Between the
+            // sparse re-issues keep the last values; show "reading..." only until
+            // the very first payload for this target arrives.
+            if (have_now) {
+                data.insp_lines = std::move(lines);
+                model.DirtyVariable("insp_lines");
+                app.insp_has_data = true;
+            } else if (!app.insp_has_data) {
+                data.insp_lines.clear();
+                data.insp_lines.push_back(InspLine{"", "reading..."});
+                model.DirtyVariable("insp_lines");
+            }
+            if (!data.insp_active) {
+                data.insp_active = true;
+                model.DirtyVariable("insp_active");
+            }
+        }
+
         // Lay out, then map the #viewport hole rect for the scene + input.
         context->Update();
         if (Rml::Element* vp = doc->GetElementById("viewport")) {
@@ -1081,6 +1470,18 @@ int run_app(const std::vector<std::string>& args) {
                                      static_cast<std::uint32_t>(h)};
                 presenter.set_scene_rect(app.viewport_rect);
             }
+        }
+
+        // The right panel now overflows the body-row height (PHYSICS TERMS +
+        // FIELDS + telemetry chart + inspector). Interactively it scrolls by
+        // wheel; in a headless capture (no wheel) and on a fresh pick, scroll it
+        // to the bottom so the inspector + chart are in view. Post-Update so
+        // GetScrollHeight is valid; SetScrollTop dirties the child offsets, which
+        // render() recomputes, so the same frame shows the scroll. No-op when the
+        // panel fits.
+        if (scroll_physics_bottom) {
+            if (Rml::Element* phys = doc->GetElementById("physics"))
+                phys->SetScrollTop(phys->GetScrollHeight());
         }
 
         // ── Capture mode: after warmup, request + poll a composited readback ──

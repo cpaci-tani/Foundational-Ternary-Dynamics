@@ -11,10 +11,12 @@
 #include "ftd/particle_engine.h"
 #include "ftd/scenario_meta.h"
 
+#include <cstddef>
 #include <string>
 #include <type_traits>
 #include <utility>
 #include <variant>
+#include <vector>
 
 namespace ftd::native {
 namespace {
@@ -88,8 +90,9 @@ void Scale1Adapter::tick() { engine_->tick(); }
 
 int Scale1Adapter::current_tick() const { return engine_->current_tick(); }
 
-bool Scale1Adapter::is_observation(const ScalePayload& /*payload*/) const {
-    return false;  // no read-only Scale-1 observables yet
+bool Scale1Adapter::is_observation(const ScalePayload& payload) const {
+    const Scale1Cmd* s1 = std::get_if<Scale1Cmd>(&payload);
+    return s1 && std::holds_alternative<InspectParticle1>(*s1);
 }
 
 bool Scale1Adapter::is_host_write(const ScalePayload& /*payload*/) const {
@@ -123,7 +126,32 @@ ApplyResult Scale1Adapter::apply(const ScalePayload& payload, ParameterJournal& 
 
 void Scale1Adapter::begin_boundary() { snapshot_ = Scale1Snapshot{}; }
 
-bool Scale1Adapter::observe(const ScalePayload& /*payload*/) { return false; }
+bool Scale1Adapter::observe(const ScalePayload& payload) {
+    const Scale1Cmd* s1 = std::get_if<Scale1Cmd>(&payload);
+    if (!s1) return false;
+    const InspectParticle1* ip = std::get_if<InspectParticle1>(s1);
+    if (!ip) return false;
+    // observe() runs before build_snapshot() (see ScaleHost::process_ui_boundary),
+    // and build_snapshot() only touches the energy/status fields, so the
+    // inspection payload written here survives into the published snapshot.
+    const std::vector<ftd::Particle>& ps = engine_->particles();
+    if (ip->index < 0 || ip->index >= static_cast<int>(ps.size())) {
+        snapshot_.insp_present = false;   // out-of-range ⇒ a valid "cleared" read
+        return true;
+    }
+    const ftd::Particle& p = ps[static_cast<std::size_t>(ip->index)];
+    snapshot_.insp_present = true;
+    snapshot_.insp_index = ip->index;
+    snapshot_.insp_charge = p.charge;
+    snapshot_.insp_locked = p.locked;
+    snapshot_.insp_pos[0] = p.position.x;
+    snapshot_.insp_pos[1] = p.position.y;
+    snapshot_.insp_pos[2] = p.position.z;
+    snapshot_.insp_vel[0] = p.velocity.x;
+    snapshot_.insp_vel[1] = p.velocity.y;
+    snapshot_.insp_vel[2] = p.velocity.z;
+    return true;
+}
 
 void Scale1Adapter::build_snapshot(const DataNeeds& /*needs*/) {
     const ftd::ParticleDiagnostics d = engine_->diagnostics();
