@@ -48,7 +48,13 @@ using Scale0Cmd = std::variant<
 // later steps — this is exactly enough to seed/run and to exercise apply().
 struct Seed1        { std::string scenario; };
 struct AddParticle1 { int charge = 1; float x = 0.0f; float y = 0.0f; float z = 0.0f; };
-using Scale1Cmd = std::variant<Seed1, AddParticle1>;
+// Read-only Scale-1 observation (the click-to-inspect analog for a scale with no
+// voxel field): select the particle at `index` in the engine's particle list and
+// publish its charge / position / velocity into the Scale1Snapshot inspection
+// payload. index < 0 clears the selection. Routed as an observation (never a
+// mutation), so it flows through the adapter's observe() path, not apply().
+struct InspectParticle1 { int index = -1; };
+using Scale1Cmd = std::variant<Seed1, AddParticle1, InspectParticle1>;
 
 // std::monostate is the "this is a core command" sentinel. Scale2Cmd, Scale5Cmd,
 // … slot in here as they arrive — one added alternative each, no schema change.

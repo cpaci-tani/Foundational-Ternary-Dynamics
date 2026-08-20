@@ -69,7 +69,13 @@ body {
     flex-direction: column;
 }
 #setup { border-right: 1dp #2b3a50; }
-#physics { border-left: 1dp #2b3a50; }
+/* The right panel stacks PHYSICS TERMS + FIELDS + telemetry chart + the
+   click-to-inspect readout, which together overflow the body-row height. It is
+   a flex item stretched to that (definite) row height, so overflow-y:auto turns
+   the surplus into a scroll region reachable by wheel (interactive) or
+   Element::SetScrollTop (capture) instead of spilling below the window. The
+   fixed 240dp width and the sibling #viewport hole are unchanged. */
+#physics { border-left: 1dp #2b3a50; overflow-y: auto; }
 .panel-title {
     font-family: JetBrains Mono;
     font-size: 10dp;
@@ -155,8 +161,11 @@ body {
 
 /* ── scale-aware right panel ───────────────────────────────────────────── */
 /* Each per-scale block stacks its title + content; only one is present at a
-   time (the other is removed by data-if), so this drives the panel layout. */
-.scale-block { display: flex; flex-direction: column; }
+   time (the other is removed by data-if), so this drives the panel layout.
+   flex:0 0 auto keeps each section at its natural height so the surplus
+   overflows #physics (and scrolls) instead of the flex column shrinking the
+   sections to fit and clipping their content. */
+.scale-block { display: flex; flex-direction: column; flex: 0 0 auto; }
 
 /* Scale-1 particle readout: key/value rows. */
 .readout { display: flex; flex-direction: column; }
@@ -179,7 +188,7 @@ body {
 /* Sits below the per-scale content; margin-top pushes it toward the panel
    bottom. The <ftd-chart> element draws its series in its own `color`; the
    frame/background here is RCSS chrome (SPEC §5). */
-.telemetry { display: flex; flex-direction: column; margin-top: 16dp; }
+.telemetry { display: flex; flex-direction: column; flex: 0 0 auto; margin-top: 16dp; }
 ftd-chart {
     display: block;
     height: 120dp;
@@ -189,6 +198,68 @@ ftd-chart {
     border-radius: 4dp;
     color: #6aa8e0;   /* the series stroke colour (read by the element) */
 }
+
+/* ── click-to-inspect readout ──────────────────────────────────────────── */
+/* Shown (data-if insp_active) when an entity is picked in the 3D scene. Lives
+   in the scrollable right panel below the telemetry chart; a picked voxel
+   (Scale 0) or particle (Scale 1) streams its live fields here. */
+.inspector { display: flex; flex-direction: column; flex: 0 0 auto; margin-top: 16dp; }
+.insp-head {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8dp;
+}
+.insp-title {
+    font-family: JetBrains Mono;
+    font-size: 10dp;
+    color: #6aa8e0;
+    text-transform: uppercase;
+    letter-spacing: 1dp;
+}
+.insp-close {
+    padding: 1dp 7dp;
+    color: #9fb0c6;
+    border: 1dp #3a4c66;
+    border-radius: 4dp;
+    font-size: 12dp;
+    cursor: pointer;
+}
+.insp-close:hover { color: #ffffff; border-color: #3a7ec4; background-color: #21304a; }
+.insp-lines { display: flex; flex-direction: column; }
+.insp-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4dp 8dp;
+    margin-bottom: 3dp;
+    border: 1dp #223047;
+    border-radius: 6dp;
+    background-color: #0f1826;
+}
+.insp-k { color: #67788f; font-size: 10dp; text-transform: uppercase; letter-spacing: 1dp; }
+.insp-v { color: #e0e7f1; font-family: JetBrains Mono; font-size: 11dp; }
+
+/* ── vertical scrollbar (the overflowing right panel) ──────────────────── */
+/* Without explicit sizing RmlUi renders a zero-width (invisible) scrollbar;
+   this gives the auto-overflow region a visible thin thumb. Wheel + SetScrollTop
+   work regardless — this is chrome only. */
+scrollbarvertical {
+    width: 9dp;
+    background-color: #0c1420;
+}
+scrollbarvertical sliderbar {
+    background-color: #2b3a50;
+    border-radius: 4dp;
+    margin-left: 2dp;
+    margin-right: 1dp;
+    min-height: 28dp;
+}
+scrollbarvertical sliderbar:hover { background-color: #3a4c66; }
+scrollbarvertical sliderarrowdec,
+scrollbarvertical sliderarrowinc { height: 0dp; }
 
 /* ── status bar ───────────────────────────────────────────────────────── */
 #status {

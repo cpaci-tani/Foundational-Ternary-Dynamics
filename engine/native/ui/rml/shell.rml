@@ -78,6 +78,23 @@
                 <div class="panel-title">Telemetry — total energy</div>
                 <ftd-chart id="energy-chart"/>
             </div>
+
+            <!-- Click-to-inspect: appears when an entity is picked in the 3D
+                 scene (data-if insp_active). insp_title names the target; each
+                 insp_lines row is a live key/value read from the picked voxel
+                 (Scale 0) or particle (Scale 1). The × clears the selection;
+                 clicking empty space in the viewport clears it too. -->
+            <div class="inspector" data-if="insp_active">
+                <div class="insp-head">
+                    <span class="insp-title">{{insp_title}}</span>
+                    <span class="insp-close" data-event-click="clear_inspect()">&#10005;</span>
+                </div>
+                <div class="insp-lines">
+                    <div class="insp-row" data-for="ln : insp_lines">
+                        <span class="insp-k">{{ln.k}}</span><span class="insp-v">{{ln.v}}</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
