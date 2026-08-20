@@ -1,4 +1,5 @@
 #include "native_desktop/engine_session.h"
+#include "native_desktop/command_applier.h"
 
 #include "ftd/render_bridge.h"
 #include "ftd/scenarios.h"
@@ -79,6 +80,10 @@ void append_flux(RenderBridge& rb, NativeFrame& frame) {
 
 NativeEngineSession::NativeEngineSession(NativeEngineOptions options)
     : options_(std::move(options)) {
+    staged_lattice_size_ = options_.lattice_size;
+    ui_.publisher = &publisher_;
+    ui_.journal = &journal_;
+    ui_.scheduler = &scheduler_;
     boot();
 }
 
@@ -103,6 +108,7 @@ void NativeEngineSession::boot() {
     // being invoked) against an engine that was never re-imported and can
     // never succeed.
     interop_enabled_ = false;
+    staged_lattice_size_ = options_.lattice_size;
 
     bridge_.reset();
     bridge_ = std::make_unique<RenderBridge>(options_.lattice_size);
@@ -161,7 +167,38 @@ void NativeEngineSession::fill_frame_meta(NativeFrame& frame) const {
 
 NativeEngineSession::~NativeEngineSession() = default;
 
-void NativeEngineSession::tick() { bridge_->tick(); }
+void NativeEngineSession::tick() {
+    bridge_->bind_sim_thread();
+    bridge_->tick();
+}
+
+TickResult NativeEngineSession::tick_once() {
+    TickResult result;
+    try {
+        tick();
+        ui_.did_tick = true;
+        ui_.last_tick = result;
+    } catch (const std::exception& ex) {
+        result.ok = false;
+        result.message = ex.what();
+        ui_.last_tick = result;
+        ui_.did_tick = false;
+    }
+    return result;
+}
+
+void NativeEngineSession::consume_pending_step() {
+    if (ui_.loop.pending_steps > 0) --ui_.loop.pending_steps;
+}
+
+TickResult NativeEngineSession::process_ui_boundary(CommandQueue& queue) {
+    ui_.publisher = &publisher_;
+    ui_.journal = &journal_;
+    ui_.scheduler = &scheduler_;
+    ftd::native_desktop::process_ui_boundary(*bridge_, this, queue, ui_);
+    ui_.did_tick = false;
+    return ui_.last_tick;
+}
 
 NativeFrame NativeEngineSession::capture() {
     VisualSnapshotRequest request;

@@ -14,7 +14,10 @@
 #include "ftd/scenarios.h"
 #include "ftd/visual_snapshot.h"
 #include "native_desktop/d3d12_presenter.h"
+#include "native_desktop/dpi_support.h"
 #include "native_desktop/engine_session.h"
+#include "native_desktop/command_queue.h"
+#include "native_desktop/ui_command.h"
 
 #include <algorithm>
 #include <atomic>
@@ -87,6 +90,7 @@ struct AppState {
     ftd::native_desktop::NativeEngineOptions live_opts;
     std::vector<std::string> scenario_ids;
     PendingWork* pending = nullptr;
+    ftd::native_desktop::CommandQueue* commands = nullptr;
     std::atomic<bool>* paused = nullptr;
     std::atomic<int>* tick_hz = nullptr;
     std::atomic<bool>* reloading = nullptr;
@@ -240,6 +244,32 @@ void layout_shell(AppState* app, int width, int height) {
     const int view_w = std::max(64, width - kPanelWidth);
     const int view_h = std::max(64, height);
     MoveWindow(app->view, view_x, 0, view_w, view_h, TRUE);
+}
+
+void push_loop_command(AppState* app, ftd::native_desktop::UiCommand command) {
+    if (!app || !app->commands) return;
+    app->commands->push(std::move(command));
+}
+
+void set_playing_caption(AppState* app);
+
+void request_play_toggle(AppState* app) {
+    if (!app || !app->paused) return;
+    if (app->paused->load()) {
+        push_loop_command(app, ftd::native_desktop::Run{});
+        app->paused->store(false);
+    } else {
+        push_loop_command(app, ftd::native_desktop::Pause{});
+        app->paused->store(true);
+    }
+    set_playing_caption(app);
+}
+
+void request_step(AppState* app) {
+    push_loop_command(app, ftd::native_desktop::Pause{});
+    push_loop_command(app, ftd::native_desktop::Step{1});
+    if (app->paused) app->paused->store(true);
+    set_playing_caption(app);
 }
 
 void set_playing_caption(AppState* app) {
@@ -399,16 +429,10 @@ void handle_command(AppState* app, WPARAM wparam) {
             }
             break;
         case IDC_PLAY:
-            if (app->paused) app->paused->store(!app->paused->load());
-            set_playing_caption(app);
+            request_play_toggle(app);
             break;
         case IDC_STEP:
-            if (app->paused) app->paused->store(true);
-            set_playing_caption(app);
-            if (app->pending) {
-                std::lock_guard<std::mutex> lock(app->pending->mu);
-                ++app->pending->steps;
-            }
+            request_step(app);
             break;
         case IDC_RESET:
             request_reload(app);
@@ -438,6 +462,9 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
     switch (msg) {
         case WM_DESTROY:
             PostQuitMessage(0);
+            return 0;
+        case WM_DPICHANGED:
+            ftd::native_desktop::apply_dpi_suggested_rect(hwnd, lparam);
             return 0;
         case WM_SIZE:
             if (app) {
@@ -641,6 +668,10 @@ ftd::native_desktop::NativeEngineOptions parse_options(int argc, char** argv) {
 
 int main(int argc, char** argv) {
     try {
+        if (!ftd::native_desktop::enable_per_monitor_v2_dpi()) {
+            throw std::runtime_error("Per-monitor-V2 DPI awareness unavailable");
+        }
+
         INITCOMMONCONTROLSEX icc{};
         icc.dwSize = sizeof(icc);
         icc.dwICC = ICC_STANDARD_CLASSES | ICC_BAR_CLASSES;
@@ -659,6 +690,7 @@ int main(int argc, char** argv) {
                   << std::flush;
 
         PendingWork pending;
+        ftd::native_desktop::CommandQueue ui_commands;
         std::atomic<bool> running{true};
         std::atomic<bool> paused{false};
         std::atomic<int> tick_hz{20};
@@ -667,6 +699,7 @@ int main(int argc, char** argv) {
         AppState app;
         app.live_opts = session.options();
         app.pending = &pending;
+        app.commands = &ui_commands;
         app.paused = &paused;
         app.tick_hz = &tick_hz;
         app.reloading = &reloading;
@@ -842,7 +875,6 @@ int main(int argc, char** argv) {
                 ftd::native_desktop::NativeEngineOptions reload_opts;
                 bool do_reload = false;
                 int boundary = -1;
-                int steps = 0;
                 {
                     std::lock_guard<std::mutex> lock(pending.mu);
                     if (pending.reload) {
@@ -854,14 +886,13 @@ int main(int argc, char** argv) {
                         boundary = *pending.boundary;
                         pending.boundary.reset();
                     }
-                    steps = pending.steps;
-                    pending.steps = 0;
                 }
 
                 const auto start = std::chrono::steady_clock::now();
                 try {
+                    const auto loop = session.loop_control();
                     const bool need_work =
-                    do_reload || boundary >= 0 || steps > 0 || !paused.load();
+                    do_reload || boundary >= 0 || loop.pending_steps > 0 || !loop.pause;
                     if (need_work) {
                         if (do_reload) {
                             const bool was_active = interop_active.load();
@@ -933,11 +964,18 @@ int main(int argc, char** argv) {
                         } else if (boundary >= 0) {
                             session.set_flux_boundary(boundary);
                         }
-                        if (steps > 0) {
-                            for (int i = 0; i < steps; ++i) session.tick();
-                        } else if (!paused.load() && !do_reload) {
-                            session.tick();
+                        if (session.loop_control().pending_steps > 0) {
+                            const auto tick_result = session.tick_once();
+                            session.consume_pending_step();
+                            if (!tick_result.ok) throw std::runtime_error(tick_result.message);
+                        } else if (!session.loop_control().pause && !do_reload) {
+                            const auto tick_result = session.tick_once();
+                            if (!tick_result.ok) throw std::runtime_error(tick_result.message);
                         }
+                    }
+                    session.process_ui_boundary(ui_commands);
+                    paused.store(session.loop_control().pause);
+                    if (need_work) {
                         // Poll and request interop work exclusively on this
                         // thread. `session`/`bridge_` must never be touched from
                         // the GUI/message-loop thread: boot() above can reset
@@ -1055,15 +1093,11 @@ int main(int argc, char** argv) {
                     const bool typing = is_edit_focus();
                     if (msg.wParam == VK_ESCAPE) quit = true;
                     if (!typing && msg.wParam == VK_SPACE) {
-                        paused.store(!paused.load());
-                        set_playing_caption(&app);
+                        request_play_toggle(&app);
                     }
                     if (!typing && msg.wParam == 'R') request_reload(&app);
                     if (!typing && msg.wParam == 'S') {
-                        paused.store(true);
-                        set_playing_caption(&app);
-                        std::lock_guard<std::mutex> lock(pending.mu);
-                        ++pending.steps;
+                        request_step(&app);
                     }
                 }
                 TranslateMessage(&msg);

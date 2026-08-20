@@ -92,11 +92,11 @@ ftd::native_desktop::NativeFrame make_frame(int tick, int lattice_size,
 // Queries the D3D12 debug-layer's stored validation messages after a
 // render() loop and reports (via ftd::test::check) whether any ERROR- or
 // CORRUPTION-severity message was recorded. ID3D12InfoQueue is only
-// obtainable when the debug layer was actually enabled -- D3D12Presenter::
-// initialize() does this unconditionally in a _DEBUG build (see
-// d3d12_presenter.cpp), so this check is meaningful there and silently
-// unavailable otherwise (Release build, or a debug layer that failed to
-// install -- e.g. the "Graphics Tools" optional Windows feature missing).
+// obtainable when the debug layer was actually enabled. Shipping
+// initialize() defaults enable_debug_layer=false; this test therefore
+// skips the validation-layer message check in Release unless a caller
+// opted in. Dedicated coverage for Release-capable debug-layer enablement
+// lives in test_d3d12_debug_observability.cpp.
 void check_no_validation_errors(ftd::native_desktop::D3D12Presenter& presenter) {
     IUnknown* device_unknown = static_cast<IUnknown*>(presenter.debug_device());
     ComPtr<ID3D12InfoQueue> info_queue;

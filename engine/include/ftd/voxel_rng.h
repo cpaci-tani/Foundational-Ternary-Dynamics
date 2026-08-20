@@ -45,6 +45,7 @@ enum class VoxelRng : std::uint64_t {
     WeakTransmutation = 7,
     PairProduction = 8,
     MovementOrder = 9,
+    MovementShuffle = 10,  // Fisher-Yates site order for symmetric_movement_order
 };
 
 // SplitMix64-based per-voxel uniform on [0, 1).

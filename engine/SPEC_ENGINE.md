@@ -431,7 +431,7 @@ RenderBridge::tick()
 | `pair_production_cpu` | `pair_production` | Creates neighboring correlated `-1/+1` pairs from high-flux voids, consumes local wave/flux energy, assigns shared pair IDs, and conserves charge locally. |
 | `gauss_project` | `gauss_projection`, `exact_dual_gauss` | Builds `source = div(J) - coulomb_charge_coupling * state`, solves a warm-started SOR Poisson problem, then subtracts `grad(phi)` from flux. Ordinary mode skips manifested sites during correction; exact dual mode synchronizes the split L/R fields. |
 | `solve_latency_poisson` | `latency_field`, `field_energy_gravity` | Builds a mass/field-energy source, solves a latency potential, and stores bounded `latency` values for time dilation and bandwidth accounting. |
-| `phase_forces` | `forces`, `poisson_coulomb`, `emergent_forces`, `gravity`, `lorentz_force`, `color_forces`, `cluster_inertia` | CPU path: iterates manifested sites. Default EM mode solves the Coulomb potential and applies `-ALPHA * state * grad(phi_C)`; emergent-force mode uses direct flux gradients instead. Adds gravity, Lorentz, and color forces, writes `ForceDiag`, and integrates velocity using the `gamma_FTD` bandwidth budget; the cluster pass then integrates locked groups. `strong_force` and `exchange_force` have CUDA kernels but no CPU implementation, so those toggles are CPU no-ops as recorded by `TOGGLE_SPECS[]`. |
+| `phase_forces` | `forces`, `poisson_coulomb`, `emergent_forces`, `gravity`, `lorentz_force`, `color_forces`, `strong_force`, `exchange_force`, `cluster_inertia` | Iterates manifested sites. EM/gravity/Lorentz stay gated on `forces`. Colour, Yukawa (`strong_force`), and exchange share host/device helpers with the CUDA kernels. Writes `ForceDiag` and integrates velocity with the `gamma_FTD` bandwidth budget; `cluster_inertia` then integrates locked Moore clusters, including exchange in `F_cluster`. |
 | `phase_movement` | `movement`, `symmetric_movement_order`, `reflective_boundary` | Sequential guarded mutation. Accumulates sub-lattice remainders, moves into void targets, bounces same-sign collisions, annihilates opposite signs, carries self-field to moved particles, and bursts field energy on annihilation. An attempted lattice-face crossing mirror-bounces the crossed velocity components and clears the remainder when `reflective_boundary` is on; when it is off, the particle and its local fields/labels are cleared so they exhaust into the void rather than wrapping periodically. |
 | matched-Gauss current/advance | `matched_gauss_dynamics` | Snapshots ternary state before movement, extracts the conservative routed current from the post-movement difference, advances the oriented face/edge state, and synchronizes it back to voxels. |
 | `apply_absorbing_boundary` | `absorbing_boundary` | Applies an imposed D-deep quadratic damping sponge after movement. It is not a derived reflection-free radiation condition. |
@@ -454,20 +454,24 @@ order:
 
 ```
 launch_ew_background_sweep() [ew_background_sweep; before phase_read]
-gpu_phase_read()
-gpu_phase_write()
+gpu_phase_read()/write()     [skipped by matched_gauss_dynamics]
+gpu_phase_read() + launch_verlet_second_half_kick()  [verlet_wave_integrator]
 gpu_pair_production()        [pair_production]
 gpu_gauss_project()          [gauss_projection]
 launch_gauss_sync_dual()     [gauss_projection && dual_substrate]
-gpu_solve_latency_poisson()  [latency_field]
+launch_begin_strong_energy() [strong_stress_energy]
+gpu_solve_latency_poisson()  [latency_field; T00/c² when strong_stress_energy]
 gpu_phase_forces()           [forces]
-gpu_build_particle_list()    [color/strong/exchange/triad]
-gpu_particle_forces()        [color/strong/exchange]
+gpu_build_particle_list()    [color/strong/exchange]
+gpu_particle_forces()        [color/strong/exchange; remainder colour if FTD-0406]
 launch_integrate_forces()    [any force channel]
-gpu_triad_detection()        [triad_binding]
+launch_cluster_inertia()     [cluster_inertia; after integrate, before movement]
 gpu_phase_movement()         [movement; reflective particle-face behavior]
+launch_matched_gauss_advance() [matched_gauss_dynamics]
+launch_complete_strong_energy() / launch_strong_t00()  [strong_stress_energy]
 absorbing/flux boundaries    [absorbing_boundary / flux_boundary]
 gpu_weak_transmutation()     [weak_transmutation]
+gpu_build_particle_list() + gpu_triad_detection()  [triad_binding; after movement+weak]
 gpu_gauge_relax()            [su2_gauge / su3_gauge; primed links only]
 accumulate_proper_time()     [latency_field || de_broglie_clock; phase optional]
 advance device tick
@@ -479,15 +483,16 @@ CUDA kernels and run after movement. Gauge relaxation runs only after
 directly without that priming skips the phase. Proper time and optional
 de Broglie phase advance on-device exactly once per tick.
 
-This is not blanket CPU/GPU feature parity. `matched_gauss_dynamics`,
-`strong_stress_energy`, `verlet_wave_integrator`, and the two Floquet
-prototypes, plus `symmetric_movement_order`, are CPU-scoped and force a
-synchronized CPU fallback (or fail if fallback is disabled). `cluster_inertia`
-and `knot_tracking` use host post-processing after a full device-to-host
-mirror; interactive CUDA rejects that host-scoped path above L=64. These are
-term-availability and discrete-outcome differences. The §14
-discrete-outcome/missing-term table records the live CUDA contract and the
-remaining movement-conflict divergence.
+This is not blanket CPU/GPU feature parity. Pairwise force channels
+(`color_forces`, `strong_force`, `exchange_force`, `confinement`),
+`cluster_inertia`, `triad_binding`, `strong_stress_energy`,
+`matched_gauss_dynamics`, `verlet_wave_integrator`, the two Floquet
+prototypes, and `symmetric_movement_order` are native CUDA.
+`knot_tracking` still uses host post-processing after a full
+device-to-host mirror; interactive CUDA rejects that host-scoped path
+above L=64. These are term-availability and discrete-outcome differences.
+The §14 discrete-outcome/missing-term table records the live CUDA contract
+and the remaining movement-conflict divergence.
 
 Separately, for supported Poisson paths, the CPU uses warm-started SOR while
 CUDA uses spectral/FFT solvers. Their convergence and floating-point behavior
@@ -717,7 +722,7 @@ helper methods (`validate`, `enable_all`, `disable_all`,
 | Forces and motion | `forces`, `gravity`, `poisson_coulomb`, `emergent_forces`, `lorentz_force`, `movement` | Field-mediated force modes and kinematic update |
 | Field extensions | `dual_substrate`, `exact_dual_gauss`, `matched_gauss_dynamics`, `latency_field`, `field_energy_gravity`, `de_broglie_clock`, `db_clock_coulomb`, `symplectic_leapfrog`, `verlet_wave_integrator`, `lorentz_period2_floquet`, `lorentz_bcc_time_floquet`, `ew_background_sweep` | Split/matched field evolution, latency/clock sectors, alternate wave integration, and background drive |
 | Damping/noise/boundary | `selective_damping`, `larmor_radiation`, `langevin`, `absorbing_boundary`, `reflective_boundary`, `symmetric_movement_order` | Damping modes, stochastic thermostat, field/particle boundary controls, traversal artifact control |
-| Particle-sector extensions | `color_forces`, `strong_stress_energy`, `weak_transmutation`, `strong_force`, `triad_binding`, `pair_production`, `exchange_force`, `cluster_inertia`, `confinement` | Color/strong/exchange explorations, weak flips, pair production, bound clusters, confinement intent flag |
+| Particle-sector extensions | `color_forces`, `strong_stress_energy`, `weak_transmutation`, `strong_force`, `triad_binding`, `pair_production`, `exchange_force`, `cluster_inertia`, `confinement` | Color/strong/exchange explorations, weak flips, pair production, bound clusters, optional linear colour string |
 | Gauge/validation/telemetry | `su2_gauge`, `su3_gauge`, `knot_tracking`, `strict_validation` | Per-tick SU(2)/SU(3) link staple relaxation (tick Rule 7b), observation-only knot telemetry, and strict validation behavior |
 
 **Non-Abelian gauge sector (revision 0.9 option a — wired 2026-07-02).**
@@ -2060,7 +2065,7 @@ Files: `atomic_closure_context.h`, `atom_engine.h`, `atom_engine.cpp`, `src/atom
 
 `coarsen_to_atoms()` / `refine_to_particles()` for Scale 1 <-> 2.
 
-Files: `scale.h` (68L), `scale_bridge.cpp` (202L).
+Files: `scale.h`, `scale_bridge.cpp`.
 
 ---
 
@@ -2251,7 +2256,7 @@ Hamiltonian-consistent energy-flow diagnostic is S = c²(E x B).
 
 16. **Explicit cubic cell measure** (FTD-0404): `VOXEL_EDGE_LENGTH=1`, `VOXEL_FACE_AREA=1`, and `VOXEL_VOLUME=1` are named in a CUDA-safe interface. CPU/GPU volume-density diagnostics integrate with `V_cell`; EnergyAudit also exposes the pre-integration field/wave density sums. Local latency gravity continues to read density, while point-particle and constraint channels are unscaled. The unit measure is numerically neutral; no force or update rule changes.
 
-17. **Colour-energy contract is selected only on a default-off CPU v1 domain** (FTD-0405/0406): FTD-0405 remains the scoped no-go for the unmodified CPU/GPU direct-force tick and for any claim that its additive zero/localization were already derived. After explicit owner authorization, `strong_stress_energy` adopts `U_ij(r)=-c_f∫_1^r g(s)ds`, retains the existing force/movement position proposal, and deterministically projects only relative physical momenta so `K+U` and total momentum close on an unchanged coloured-particle topology. The same U enters EnergyAudit/EnergyLedger, midpoint-CIC string T00 plus Irving–Kirkwood central stress, and the CPU latency source as gravitational mass density `T00/C_SPEED²`. The toggle defaults off and explicitly falls back from CUDA to CPU. Collision/state-transition, moving-latency, mixed-force and native GPU contracts remain open. The selected zero, localization and projection are not substrate theorems and derive no mass scale.
+17. **Colour-energy contract is selected only on a default-off isolated v1 domain** (FTD-0405/0406): FTD-0405 remains the scoped no-go for the unmodified CPU/GPU direct-force tick and for any claim that its additive zero/localization were already derived. After explicit owner authorization, `strong_stress_energy` adopts `U_ij(r)=-c_f∫_1^r g(s)ds`, retains the existing force/movement position proposal, and deterministically projects only relative physical momenta so `K+U` and total momentum close on an unchanged coloured-particle topology. The same U enters EnergyAudit/EnergyLedger, midpoint-CIC string T00 plus Irving–Kirkwood central stress, and the latency source as gravitational mass density `T00/C_SPEED²`. The toggle defaults off. Native CUDA matches the CPU isolated colour sector (`gpu_strong_stress_parity`). Collision/state-transition, moving-latency, and mixed-force contracts remain open. The selected zero, localization and projection are not substrate theorems and derive no mass scale.
 
 ---
 
@@ -2266,18 +2271,18 @@ Hamiltonian-consistent energy-flow diagnostic is S = c²(E x B).
 | `energy_audit()` | Returns `EnergyAudit`: volume-integrated field/wave channels, their local-density sums plus `cell_volume`, exact normalized particle KE, particle rest/total energy, vector particle momentum, `dynamic_energy`, explicitly incomplete accounted `total_energy`, and Gauss violation |
 | `energy_ledger()` | Returns `const EnergyLedger&` — per-tick conservation drift (auto-populated on CPU path). Tests assert `abs(.residual) < tol` to refuse energy-drift regressions. GPU: call `update_energy_ledger()` manually after a device→host sync. |
 | `update_energy_ledger()` | Populate the ledger (called automatically by `tick()` on CPU path) |
-| `inject_particle(x,y,z, state)` | Inject single particle at lattice site |
+| `inject_particle(x,y,z, state, flux_val)` | Inject single particle at lattice site (`flux_val` required; optional trailing `spin`, `color`) |
 | `inject_wavepacket(x,y,z, state, sigma, amplitude)` | Inject Gaussian wavepacket |
 | `inject_flux(x,y,z, fx,fy,fz)` | Raw flux injection (overwrites site) |
 | `inject_flux_add(x,y,z, flux_val)` | Additive flux injection — accumulates instead of overwriting. Required by ported JS scenarios that sum overlapping Gaussians. |
 | `inject_wave_vel_add(x,y,z, wv_val)` | Additive wave-velocity injection — same additive semantics, for wave-equation initial conditions. |
-| `create_entangled_pair(x,y,z, dx,dy,dz)` | Pair production with shared event-pair tracking; the legacy API name is not proof of quantum entanglement |
+| `create_entangled_pair(x,y,z, flux_val)` | Pair production with shared event-pair tracking; the legacy API name is not proof of quantum entanglement |
 
 ### Diagnostics
 
 | Method | Returns |
 |--------|---------|
-| `force_diag(idx)` | `ForceDiag` -- per-particle force breakdown |
+| `force_diag_at(idx)` | `ForceDiag` -- per-particle force breakdown (`force_diag()` returns the whole vector) |
 | `em_field_at(idx)` | `EMFieldDiag {E, B}` |
 | `poynting_vector(idx)` | `Vec3` (S = c²(E x B)) |
 | `aggregate_profile(center, threshold)` | `AggregateProfile` (CoM, energy, r_eff, radial profile) |
@@ -2345,8 +2350,9 @@ sync_to_host()                        2. phase_write
 
 Replaces CPU's iterative SOR with spectral method via cuFFT:
 - **Not exact — a structural floor, not a precision limit.** The GPU Green's
-  function is the 18-point Laplacian symbol (`gpu_buffers.cu:800-812`) while the
-  correction applied is a 6-point central difference (`kernels_poisson.cu:296-298`)
+  function is the 18-point Laplacian symbol (`kernel_precompute_green` in
+  `gpu_buffers.cu`) while the correction applied is a 6-point central difference
+  (`gauss_correction_kernel` in `kernels_poisson.cu`)
   and the residual is measured with the matching 6-point divergence. Over the
   L=24 Brillouin zone the surviving per-mode factor |1 - S_DG/S_18| has median
   ~0.62 (min 0.006, p90 0.84, max 1.0): the projection leaves most of each mode's
@@ -2369,18 +2375,20 @@ Several former CUDA gaps are now closed in live source:
 | `exact_dual_gauss` | `gauss_correction_kernel` corrects manifested sites when enabled | The remaining Gauss limitation is the documented stencil-mismatch floor |
 | `absorbing_boundary`, `flux_boundary` | Native post-movement absorbing and reflective/dispersal kernels | No longer degrade silently to periodic |
 | `ew_background_sweep` | Native pre-read drive | Deliberately graph-ineligible |
-| `symmetric_movement_order` | Synchronized CPU fallback | Never acknowledged as native CUDA execution |
+| `verlet_wave_integrator` | Native KDK: half-kick + drift in `phase_write`, post-drift `phase_read`, second half-kick | Honors `dt<1`; default OFF; golden-neutral |
+| `lorentz_period2_floquet`, `lorentz_bcc_time_floquet` | Native period-two wave kick from live `d_tick` | Unit tick; default OFF; golden-neutral |
+| `symmetric_movement_order` | Native serial commit walks a SplitMix64 Fisher-Yates permutation from live `d_tick` | Default OFF; golden-neutral; same RNG as CPU |
+| `confinement` | Native colour-force r≥8 shell: `F = SIGMA_STRING · cf` when on | Requires `color_forces`. [SELECTION], not FTD-0025. Default OFF; `color_forces` alone stays harmonic |
+| `strong_force`, `exchange_force` | Native Yukawa / same-spin exchange; CPU uses the same helpers | Default OFF; golden-neutral |
+| `cluster_inertia` | Native serial 26-Moore flood-fill after integrate, before movement | Needs a force channel (EM, colour, Yukawa, or exchange). `F_cluster` includes exchange. Default OFF; golden-neutral |
+| `strong_stress_energy` | Native remainder colour, 1-thread Hamiltonian projection, CIC T00; latency RHS uses T00/c² | Isolated colour sector; default OFF; FTD-0406 |
+| `matched_gauss_dynamics` | Native Faraday/Ampere + ledger current; skips the legacy wave writer; host CG init once | Isolated conservative-movement sector; default OFF; FTD-0428 |
+| `triad_binding` | Native detection after movement + weak, on a rebuilt particle list | Matches CPU Rule 7 order |
 
-One discrete-outcome divergence remains:
+Default-order particle movement (P11) is a serial CUDA commit with a `moved[]` arrival guard, matching CPU lowest-index-wins. `symmetric_movement_order` shuffles that traversal on both backends.
 
-| Term / rule | CPU | CUDA | Consequence |
-|---|---|---|---|
-| **Particle movement conflict rule (P11)** | deterministic: lowest traversal index wins a contended void site, re-entry blocked (`phase_movement.cpp:106,121,209`) | contended sites awarded by `atomicCAS` **arrival order**; no device visited mask (`grep -c moved engine/cuda/kernels_forces.cu` → 0) | **different physics**, by that file's own header definition. Not yet fixed: implementing a device visited mask + deterministic priority is an architecture change, so it is DECLARED here rather than silently carried. `test_gpu_golden.cpp`'s 10-run bit-stability capture argues against gross run-to-run instability in the tested scenario, but does not establish CPU/GPU agreement on contended sites. |
-
-The toggle bitmask is **not** the drift: `term_toggles.h:32-35` declares it
-informational, and `strong_force` is `ANY` with no CPU implementation at all, so
-`ANY` has never meant "implemented on both backends" here. The codebase already
-has `cpu_runtime_warnings()` for the mirror-image case; there is no GPU twin.
+The toggle bitmask is **not** the drift: `term_toggles.h` declares it
+informational. Live implementation class lives in `gpu_term_contract.h`.
 
 **Numerical parity note:** CPU and CUDA use different Poisson solvers (SOR
 versus FFT), but neither production Gauss projection is exact: both combine an

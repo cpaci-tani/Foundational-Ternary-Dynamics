@@ -40,8 +40,8 @@
 #include "ftd/constants.h"
 #include "ftd/causal_kinematics.h"
 #include "ftd/voxel_rng.h"
+#include "ftd/movement_order.h"
 #include <algorithm>
-#include <random>
 #include <vector>
 #include <numeric>
 
@@ -111,10 +111,12 @@ void phase_movement_main_loop(RenderBridge& rb) {
     }
     auto& indices = rb.movement_indices_;
     std::iota(indices.begin(), indices.end(), 0);
-    std::uint64_t seed = (static_cast<std::uint64_t>(rb.toggles.langevin_seed) << 32) ^ static_cast<std::uint64_t>(rb.tick_);
-    unsigned int seed_32 = static_cast<unsigned int>(seed ^ (seed >> 32));
-    std::mt19937 rng(seed_32);
-    std::shuffle(indices.begin(), indices.end(), rng);
+    const std::uint64_t seed =
+        static_cast<std::uint64_t>(rb.toggles.langevin_seed);
+    for (int n = N - 1; n > 0; --n) {
+      const int j = movement_shuffle_j(seed, n, rb.tick_);
+      std::swap(indices[n], indices[j]);
+    }
 
     for (int i : indices) {
       auto &v = rb.voxels_[i];
@@ -126,35 +128,8 @@ void phase_movement_main_loop(RenderBridge& rb) {
 
       auto c = rb.lattice_.coord(i);
       int dx = 0, dy = 0, dz = 0;
-
-      int axes[3] = {0, 1, 2};
-      double r = voxel_uniform(rb.toggles.langevin_seed, i, rb.tick_, static_cast<std::uint64_t>(VoxelRng::MovementOrder));
-      int perm = static_cast<int>(r * 6.0);
-      if (perm < 0) perm = 0;
-      else if (perm > 5) perm = 5;
-
-      switch (perm) {
-        case 0: axes[0] = 0; axes[1] = 1; axes[2] = 2; break; // xyz
-        case 1: axes[0] = 0; axes[1] = 2; axes[2] = 1; break; // xzy
-        case 2: axes[0] = 1; axes[1] = 0; axes[2] = 2; break; // yxz
-        case 3: axes[0] = 1; axes[1] = 2; axes[2] = 0; break; // yzx
-        case 4: axes[0] = 2; axes[1] = 0; axes[2] = 1; break; // zxy
-        case 5: axes[0] = 2; axes[1] = 1; axes[2] = 0; break; // zyx
-      }
-
-      for (int axis_idx = 0; axis_idx < 3; ++axis_idx) {
-        int axis = axes[axis_idx];
-        if (axis == 0) {
-          if (v.remainder.x >= 1.0) { dx = 1; v.remainder.x -= 1.0; }
-          else if (v.remainder.x <= -1.0) { dx = -1; v.remainder.x += 1.0; }
-        } else if (axis == 1) {
-          if (v.remainder.y >= 1.0) { dy = 1; v.remainder.y -= 1.0; }
-          else if (v.remainder.y <= -1.0) { dy = -1; v.remainder.y += 1.0; }
-        } else {
-          if (v.remainder.z >= 1.0) { dz = 1; v.remainder.z -= 1.0; }
-          else if (v.remainder.z <= -1.0) { dz = -1; v.remainder.z += 1.0; }
-        }
-      }
+      extract_remainder_hops(v.remainder.x, v.remainder.y, v.remainder.z,
+                             dx, dy, dz, true, seed, i, rb.tick_);
 
       if (dx == 0 && dy == 0 && dz == 0) continue;
 

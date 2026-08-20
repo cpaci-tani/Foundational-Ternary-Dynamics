@@ -36,9 +36,13 @@ jobs:
         working-directory: engine/build
         run: ctest -L merge_gate -j 4 -C Release --output-on-failure
 
-      - name: unit label (excl. known pre-existing helium_scale1)
+      - name: unit label (non-interactive; excl. known helium_scale1)
         working-directory: engine/build
-        run: ctest -L unit -E "^helium_scale1$" -j 4 -C Release --timeout 600 --output-on-failure
+        run: ctest -L unit -LE interactive -E "^helium_scale1$" -j 4 -C Release --timeout 600 --output-on-failure
+
+      - name: compensated D3D checks previously covered by unit
+        working-directory: engine/build
+        run: ctest -R "^(d3d12_adapter_selection|d3d12_shared_buffer)$" -C Release --output-on-failure
 
   test:
     runs-on: ubuntu-latest

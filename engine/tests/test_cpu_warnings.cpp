@@ -1,29 +1,16 @@
 /**
  * @file test_cpu_warnings.cpp
- * @brief Verify CPU-build runtime warnings fire for GPU-only toggles.
+ * @brief CPU Yukawa / exchange are live pairwise channels, not GPU-only no-ops.
  *
- * The engine has toggles whose implementation lives only on the GPU path
- * (strong_force, exchange_force per cpu_runtime_warnings()). On a CPU build
- * these toggles are silent no-ops. The audit (test-orchestrator, 2026-04-25)
- * flagged that no test verifies the warning fires AND that the observable is
- * actually invariant when the GPU-only toggle is set on CPU.
- *
- * This test:
- *   W1. Captures stderr around RenderBridge::tick() with strong_force=true
- *       on CPU; asserts a non-empty warning string is emitted.
- *   W2. Asserts that voxel state with vs without strong_force on CPU is
- *       identical (toggle is genuinely a no-op, no silent partial-effect).
- *   W3. Same for exchange_force.
- *
- * On a GPU-enabled build, the test still constructs RenderBridge with
- * force_cpu() so the warning path is exercised consistently.
+ * Historically these toggles were CUDA-only and this file pinned the
+ * advertised no-op + stderr warning. Both channels now share
+ * yukawa_pair_force_mag / exchange_pair_force_mag with the GPU kernels.
  */
 
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
-#include <sstream>
 #include <iostream>
+#include <string>
 #include <vector>
 
 #ifdef _OPENMP
@@ -32,6 +19,7 @@
 
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
+#include "ftd/term_toggles.h"
 
 namespace {
 
@@ -40,44 +28,22 @@ bool voxels_byte_equal(const std::vector<ftd::Voxel>& a, const std::vector<ftd::
     return std::memcmp(a.data(), b.data(), a.size() * sizeof(ftd::Voxel)) == 0;
 }
 
-// Run a brief simulation with the given toggle set, capture stderr.
-struct Run {
-    std::vector<ftd::Voxel> voxels;
-    std::string stderr_text;
-};
-
-Run run_capture(int L, bool strong, bool exchange) {
-    Run r;
-    // Redirect stderr to a stringstream
-    std::stringstream sink;
-    std::streambuf* old_cerr = std::cerr.rdbuf(sink.rdbuf());
-
-    {
-        ftd::RenderBridge rb(L);
-        rb.toggles.disable_all();
-        rb.toggles.wave_propagation = true;
-        rb.toggles.gauss_projection = true;
-        rb.toggles.poisson_coulomb  = true;
-        rb.toggles.forces           = true;
-        rb.toggles.movement         = true;
-        rb.toggles.strong_force     = strong;
-        rb.toggles.exchange_force   = exchange;
-        rb.force_cpu();
-        rb.seed_rng(0x12345678u);
-        // Stamp a charged pair so forces have something to act on
-        rb.inject_particle(L/2 - 2, L/2, L/2, +1, ftd::Vec3{0,0,0}, 0, 1);
-        rb.inject_particle(L/2 + 2, L/2, L/2, -1, ftd::Vec3{0,0,0}, 0, 2);
-        rb.run(2);
-        r.voxels = rb.voxels();
-    }
-
-    std::cerr.rdbuf(old_cerr);
-    r.stderr_text = sink.str();
-    return r;
-}
-
-bool contains(const std::string& haystack, const char* needle) {
-    return haystack.find(needle) != std::string::npos;
+std::vector<ftd::Voxel> run_pair(int L, bool strong, bool exchange, int8_t spin) {
+    ftd::RenderBridge rb(L);
+    rb.toggles.disable_all();
+    rb.toggles.wave_propagation = true;
+    rb.toggles.gauss_projection = true;
+    rb.toggles.poisson_coulomb  = true;
+    rb.toggles.forces           = true;
+    rb.toggles.movement         = true;
+    rb.toggles.strong_force     = strong;
+    rb.toggles.exchange_force   = exchange;
+    rb.force_cpu();
+    rb.seed_rng(0x12345678u);
+    rb.inject_particle(L/2 - 2, L/2, L/2, +1, ftd::Vec3{0,0,0}, spin, 1);
+    rb.inject_particle(L/2 + 2, L/2, L/2, -1, ftd::Vec3{0,0,0}, spin, 2);
+    rb.run(2);
+    return rb.voxels();
 }
 
 } // namespace
@@ -85,10 +51,8 @@ bool contains(const std::string& haystack, const char* needle) {
 int main() {
     std::setvbuf(stdout, nullptr, _IONBF, 0);
     std::printf("================================================================\n");
-    std::printf("  CPU-Only Runtime Warnings (GPU-only toggles)\n");
+    std::printf("  CPU pairwise force channels (Yukawa / exchange)\n");
     std::printf("================================================================\n");
-    std::printf("  Asserts: strong_force / exchange_force toggles emit a stderr\n");
-    std::printf("           warning AND are genuine no-ops on CPU builds.\n\n");
 
 #ifdef _OPENMP
     omp_set_num_threads(1);
@@ -97,61 +61,50 @@ int main() {
     const int L = 8;
     int failures = 0;
 
-    // Baseline: neither GPU-only toggle set
-    Run baseline   = run_capture(L, /*strong=*/false, /*exchange=*/false);
-    Run with_strong   = run_capture(L, /*strong=*/true,  /*exchange=*/false);
-    Run with_exchange = run_capture(L, /*strong=*/false, /*exchange=*/true);
-    Run with_both     = run_capture(L, /*strong=*/true,  /*exchange=*/true);
-
-    std::printf("  W1 strong_force=true on CPU build:\n");
-    std::printf("    stderr length: %zu chars\n", with_strong.stderr_text.size());
-    if (!contains(with_strong.stderr_text, "strong_force")) {
-        std::printf("    FAIL: expected 'strong_force' warning in stderr, not found.\n");
+    ftd::TermToggles strong_on;
+    strong_on.disable_all();
+    strong_on.strong_force = true;
+    if (!strong_on.cpu_runtime_warnings().empty()) {
+        std::printf("  FAIL: strong_force still carries a gpu_only_warning\n");
         ++failures;
     } else {
-        std::printf("    PASS: warning fired with 'strong_force' substring\n");
-    }
-    if (!voxels_byte_equal(baseline.voxels, with_strong.voxels)) {
-        std::printf("    FAIL: strong_force=true changed voxel state on CPU "
-                    "(should be a no-op).\n");
-        ++failures;
-    } else {
-        std::printf("    PASS: voxel state byte-identical to baseline (no-op confirmed)\n");
+        std::printf("  PASS: strong_force has no GPU-only warning\n");
     }
 
-    std::printf("\n  W2 exchange_force=true on CPU build:\n");
-    std::printf("    stderr length: %zu chars\n", with_exchange.stderr_text.size());
-    // exchange_force requires poisson_coulomb=true (validated). We've enabled it.
-    if (!contains(with_exchange.stderr_text, "exchange_force")) {
-        std::printf("    FAIL: expected 'exchange_force' warning in stderr.\n");
+    ftd::TermToggles exchange_on;
+    exchange_on.disable_all();
+    exchange_on.poisson_coulomb = true;
+    exchange_on.exchange_force = true;
+    if (!exchange_on.cpu_runtime_warnings().empty()) {
+        std::printf("  FAIL: exchange_force still carries a gpu_only_warning\n");
         ++failures;
     } else {
-        std::printf("    PASS: warning fired with 'exchange_force' substring\n");
-    }
-    if (!voxels_byte_equal(baseline.voxels, with_exchange.voxels)) {
-        std::printf("    FAIL: exchange_force=true changed voxel state on CPU.\n");
-        ++failures;
-    } else {
-        std::printf("    PASS: voxel state byte-identical to baseline\n");
+        std::printf("  PASS: exchange_force has no GPU-only warning\n");
     }
 
-    std::printf("\n  W3 both GPU-only toggles set:\n");
-    std::printf("    stderr length: %zu chars\n", with_both.stderr_text.size());
-    const bool both_warned = contains(with_both.stderr_text, "strong_force")
-                          && contains(with_both.stderr_text, "exchange_force");
-    if (!both_warned) {
-        std::printf("    FAIL: expected both warnings in stderr.\n");
+    auto baseline = run_pair(L, false, false, 0);
+    auto with_strong = run_pair(L, true, false, 0);
+    if (voxels_byte_equal(baseline, with_strong)) {
+        std::printf("  FAIL: strong_force=true did not change CPU voxel state\n");
         ++failures;
     } else {
-        std::printf("    PASS: both warnings present\n");
+        std::printf("  PASS: Yukawa changes CPU state vs baseline\n");
+    }
+
+    auto base_spin = run_pair(L, false, false, +1);
+    auto with_exchange = run_pair(L, false, true, +1);
+    if (voxels_byte_equal(base_spin, with_exchange)) {
+        std::printf("  FAIL: exchange_force=true did not change CPU voxel state\n");
+        ++failures;
+    } else {
+        std::printf("  PASS: exchange changes CPU state vs same-spin baseline\n");
     }
 
     std::printf("\n================================================================\n");
     if (failures == 0) {
-        std::printf("  RESULT: CPU-only warning contract intact (PASS)\n");
+        std::printf("  RESULT: CPU Yukawa/exchange are live (PASS)\n");
     } else {
-        std::printf("  RESULT: %d failure(s) — GPU-only toggles silently misbehave on CPU\n",
-                    failures);
+        std::printf("  RESULT: %d failure(s)\n", failures);
     }
     std::printf("================================================================\n");
     return failures == 0 ? 0 : 1;

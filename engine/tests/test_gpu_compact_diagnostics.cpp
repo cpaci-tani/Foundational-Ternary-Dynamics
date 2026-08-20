@@ -493,15 +493,14 @@ int main() {
         gated_gpu.toggles.knot_tracking = false;
         gated_gpu.toggles.forces = true;
         gated_gpu.toggles.cluster_inertia = true;
-        bool cluster_rejected = false;
+        bool cluster_ok = true;
         try { gated_gpu.tick(); }
-        catch (const std::logic_error& e) {
-            cluster_rejected = std::string(e.what()).find("cluster_inertia")
-                             != std::string::npos;
+        catch (const std::logic_error&) {
+            cluster_ok = false;
         }
-        check("large interactive cluster inertia is rejected explicitly",
-              cluster_rejected);
-        check("host-only capability rejection precedes full mirror",
+        check("large interactive cluster inertia is native CUDA",
+              cluster_ok);
+        check("cluster inertia does not force a full voxel mirror",
               ftd::gpu::g_gpu_full_voxel_download_calls == 0
               && ftd::gpu::g_gpu_full_voxel_download_bytes == 0);
     }

@@ -525,7 +525,70 @@ if(TARGET ftd_native_session)
     target_link_libraries(test_interop_reload_orchestration PRIVATE ftd_native_session)
     target_include_directories(test_interop_reload_orchestration PRIVATE
         ${CMAKE_SOURCE_DIR}/native_desktop/include)
+
+    ftd_add_test(test_ui_command_queue
+                 native_desktop/tests/test_ui_command_queue.cpp
+                 LABELS native_desktop ui merge_gate)
+    target_link_libraries(test_ui_command_queue PRIVATE ftd_native_ui_model)
+    target_include_directories(test_ui_command_queue PRIVATE
+        ${CMAKE_SOURCE_DIR}/native_desktop/include)
+
+    ftd_add_test(test_ui_snapshot_publisher
+                 native_desktop/tests/test_ui_snapshot_publisher.cpp
+                 LABELS native_desktop ui merge_gate)
+    target_link_libraries(test_ui_snapshot_publisher PRIVATE ftd_native_ui_model)
+    target_include_directories(test_ui_snapshot_publisher PRIVATE
+        ${CMAKE_SOURCE_DIR}/native_desktop/include)
+
+    ftd_add_test(test_ui_command_boundary
+                 tests/test_ui_command_boundary.cpp
+                 LABELS native_desktop ui merge_gate)
+    target_link_libraries(test_ui_command_boundary PRIVATE ftd_native_session)
+    target_include_directories(test_ui_command_boundary PRIVATE
+        ${CMAKE_SOURCE_DIR}/native_desktop/include)
+
+    ftd_add_test(test_ui_journal_replay
+                 tests/test_ui_journal_replay.cpp
+                 LABELS native_desktop ui merge_gate)
+    target_link_libraries(test_ui_journal_replay PRIVATE ftd_native_session)
+    target_include_directories(test_ui_journal_replay PRIVATE
+        ${CMAKE_SOURCE_DIR}/native_desktop/include)
 endif()
+
+ftd_add_test(test_ui_observer_neutrality_cpu
+             tests/test_ui_observer_neutrality_cpu.cpp
+             LABELS native_desktop ui merge_gate)
+
+ftd_add_test(test_ui_thread_guard
+             tests/test_ui_thread_guard.cpp
+             LABELS native_desktop ui)
+
+if(FTD_ENABLE_CUDA)
+    ftd_add_test(test_ui_observer_neutrality_gpu
+                 tests/test_ui_observer_neutrality_gpu.cpp
+                 GPU_HEAVY
+                 LABELS native_desktop ui interactive)
+    ftd_add_test(test_ui_fixed_flush_order_gpu
+                 tests/test_ui_fixed_flush_order_gpu.cpp
+                 GPU_HEAVY
+                 LABELS native_desktop ui interactive)
+    if(TARGET ftd_native_session)
+        target_link_libraries(test_ui_fixed_flush_order_gpu PRIVATE ftd_native_session)
+        target_include_directories(test_ui_fixed_flush_order_gpu PRIVATE
+            ${CMAKE_SOURCE_DIR}/native_desktop/include)
+    endif()
+endif()
+
+add_test(
+    NAME ui_test_inventory
+    COMMAND ${CMAKE_COMMAND}
+        -DCTEST_COMMAND=${CMAKE_CTEST_COMMAND}
+        -DBUILD_DIR=${CMAKE_BINARY_DIR}
+        -DCONFIG=$<CONFIG>
+        -P ${CMAKE_SOURCE_DIR}/cmake/FtdUiTestInventory.cmake
+)
+set_tests_properties(ui_test_inventory PROPERTIES
+    LABELS "unit;native_desktop")
 
 # CTest registration for test_d3d12_adapter_selection (the executable target
 # itself is defined in native_desktop/CMakeLists.txt, built above via
@@ -565,6 +628,20 @@ endif()
 if(TARGET test_d3d12_render_frame_fencing)
     add_test(NAME d3d12_render_frame_fencing COMMAND test_d3d12_render_frame_fencing)
     set_tests_properties(d3d12_render_frame_fencing PROPERTIES
+        LABELS "unit;native_desktop;interactive")
+endif()
+
+if(TARGET test_d3d12_debug_observability)
+    add_test(NAME d3d12_debug_observability
+             COMMAND test_d3d12_debug_observability)
+    set_tests_properties(d3d12_debug_observability PROPERTIES
+        LABELS "unit;native_desktop;interactive")
+endif()
+
+if(TARGET test_native_desktop_dpi_awareness)
+    add_test(NAME native_desktop_dpi_awareness
+             COMMAND test_native_desktop_dpi_awareness)
+    set_tests_properties(native_desktop_dpi_awareness PROPERTIES
         LABELS "unit;native_desktop;interactive")
 endif()
 
@@ -1537,10 +1614,45 @@ if(FTD_ENABLE_CUDA)
                    tests/test_gpu_native_extension_parity.cpp)
     target_link_libraries(test_gpu_native_extension_parity ftd_core ftd_cuda)
 
+    ftd_add_test(test_gpu_verlet_parity
+                 tests/test_gpu_verlet_parity.cpp GPU_HEAVY
+                 CTEST_NAME gpu_verlet_parity TIMEOUT 300
+                 LABELS unit parity wave)
+
+    ftd_add_test(test_gpu_floquet_parity
+                 tests/test_gpu_floquet_parity.cpp GPU_HEAVY
+                 CTEST_NAME gpu_floquet_parity TIMEOUT 300
+                 LABELS unit parity wave)
+
+    ftd_add_test(test_gpu_symmetric_movement_parity
+                 tests/test_gpu_symmetric_movement_parity.cpp GPU_HEAVY
+                 CTEST_NAME gpu_symmetric_movement_parity TIMEOUT 300
+                 LABELS unit parity movement)
+
+    ftd_add_test(test_gpu_confinement_parity
+                 tests/test_gpu_confinement_parity.cpp GPU_HEAVY
+                 CTEST_NAME gpu_confinement_parity TIMEOUT 300
+                 LABELS unit parity color)
+
+    ftd_add_test(test_gpu_force_stack_parity
+                 tests/test_gpu_force_stack_parity.cpp GPU_HEAVY
+                 CTEST_NAME gpu_force_stack_parity TIMEOUT 300
+                 LABELS unit parity forces)
+
     ftd_add_test(test_gpu_geometric_gravity_parity
                  tests/test_gpu_geometric_gravity_parity.cpp GPU_HEAVY
                  CTEST_NAME gpu_geometric_gravity_parity TIMEOUT 300
                  LABELS unit parity gravity)
+
+    ftd_add_test(test_gpu_strong_stress_parity
+                 tests/test_gpu_strong_stress_parity.cpp GPU_HEAVY
+                 CTEST_NAME gpu_strong_stress_parity TIMEOUT 300
+                 LABELS unit parity color)
+
+    ftd_add_test(test_gpu_matched_gauss_parity
+                 tests/test_gpu_matched_gauss_parity.cpp GPU_HEAVY
+                 CTEST_NAME gpu_matched_gauss_parity TIMEOUT 300
+                 LABELS unit parity gauss)
 
     ftd_add_test(test_gpu_movement_transaction
                  tests/test_gpu_movement_transaction.cpp GPU_HEAVY
@@ -3204,6 +3316,13 @@ ftd_add_test(test_toggle_matrix
              CTEST_NAME toggle_matrix TIMEOUT 120
              LABELS unit fast)
 
+# Scale-0 CUDA completeness oracle: every TOGGLE_SPECS row classified by
+# live implementation vs declared ToggleBackend mask. Fast, CPU-only.
+ftd_add_test(test_gpu_term_contract
+             tests/test_gpu_term_contract.cpp
+             CTEST_NAME gpu_term_contract TIMEOUT 30
+             LABELS unit fast)
+
 # TEST-008: Langevin equipartition + GPU/CPU statistical parity. Scans
 # (gamma, T) pairs on both backends; asserts <|wave_vel|^2> = 3T within 10%
 # AND CPU/GPU mean energies agree within 10% (stochastic — strict bit-parity
@@ -4346,7 +4465,7 @@ target_link_libraries(campaign_scale_context_confine PRIVATE ftd_core)
 # campaign/benchmark tests. Labels are additive metadata only — test set,
 # commands, and timeouts are unchanged.
 foreach(_t render_bridge_golden render_bridge_golden_default knot_tracking_golden tick_phase_order
-            engine_lifecycle determinism)
+            engine_lifecycle determinism gpu_term_contract)
     if(TEST ${_t})
         set_property(TEST ${_t} APPEND PROPERTY LABELS "merge_gate")
     endif()

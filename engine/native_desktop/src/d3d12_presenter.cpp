@@ -3,6 +3,7 @@
 #include "ftd/interop_particle_record.h"
 
 #include <d3d12.h>
+#include <d3d12sdklayers.h>
 #include <d3dcompiler.h>
 #include <dxgi1_6.h>
 #include <wrl/client.h>
@@ -313,6 +314,7 @@ struct D3D12Presenter::Impl {
     UINT rtv_size = 0;
     std::size_t vb_capacity[kFrameCount] = {};
     void* cb_mapped[kFrameCount] = {};
+    ComPtr<ID3D12InfoQueue> info_queue;
 };
 
 D3D12Presenter::D3D12Presenter() : impl_(std::make_unique<Impl>()) {}
@@ -343,15 +345,16 @@ bool D3D12Presenter::select_hardware_adapter(LUID* out_luid, bool* out_is_hardwa
 }
 
 void D3D12Presenter::initialize(HWND hwnd, std::uint32_t width,
-                                std::uint32_t height) {
+                                std::uint32_t height,
+                                const D3D12PresenterOptions& options) {
     UINT factory_flags = 0;
-#if defined(_DEBUG)
-    ComPtr<ID3D12Debug> debug;
-    if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debug)))) {
+    if (options.enable_debug_layer) {
+        ComPtr<ID3D12Debug> debug;
+        throw_if_failed(D3D12GetDebugInterface(IID_PPV_ARGS(&debug)),
+                        "D3D12GetDebugInterface");
         debug->EnableDebugLayer();
         factory_flags |= DXGI_CREATE_FACTORY_DEBUG;
     }
-#endif
     throw_if_failed(CreateDXGIFactory2(factory_flags, IID_PPV_ARGS(&impl_->factory)),
                     "CreateDXGIFactory2");
     ComPtr<IDXGIAdapter1> adapter =
@@ -360,6 +363,11 @@ void D3D12Presenter::initialize(HWND hwnd, std::uint32_t width,
                                       IID_PPV_ARGS(&impl_->device)),
                     "D3D12CreateDevice");
     has_adapter_luid_ = static_cast<bool>(adapter);
+    if (options.enable_debug_layer) {
+        throw_if_failed(impl_->device.As(&impl_->info_queue),
+                        "Query ID3D12InfoQueue");
+        impl_->info_queue->ClearStoredMessages();
+    }
 
     D3D12_COMMAND_QUEUE_DESC q{};
     q.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
@@ -743,6 +751,26 @@ void D3D12Presenter::wait_shared_fence(std::uint64_t value) {
 
 void* D3D12Presenter::debug_device() const {
     return impl_->device.Get();
+}
+
+std::vector<std::string> D3D12Presenter::debug_messages() const {
+    std::vector<std::string> out;
+    if (!impl_->info_queue) return out;
+    const UINT64 count =
+        impl_->info_queue->GetNumStoredMessagesAllowedByRetrievalFilter();
+    for (UINT64 i = 0; i < count; ++i) {
+        SIZE_T bytes = 0;
+        if (FAILED(impl_->info_queue->GetMessage(i, nullptr, &bytes))) continue;
+        std::vector<std::uint8_t> storage(bytes);
+        auto* message = reinterpret_cast<D3D12_MESSAGE*>(storage.data());
+        if (FAILED(impl_->info_queue->GetMessage(i, message, &bytes))) continue;
+        if (message->Severity == D3D12_MESSAGE_SEVERITY_CORRUPTION
+            || message->Severity == D3D12_MESSAGE_SEVERITY_ERROR
+            || message->Severity == D3D12_MESSAGE_SEVERITY_WARNING) {
+            out.emplace_back(message->pDescription ? message->pDescription : "");
+        }
+    }
+    return out;
 }
 
 void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,

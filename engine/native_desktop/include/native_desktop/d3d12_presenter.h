@@ -9,6 +9,8 @@
 
 #include <cstdint>
 #include <memory>
+#include <string>
+#include <vector>
 
 namespace ftd::native_desktop {
 
@@ -28,6 +30,10 @@ struct NativeViewOptions {
     bool lattice_box = true;
 };
 
+struct D3D12PresenterOptions {
+    bool enable_debug_layer = false;
+};
+
 class D3D12Presenter {
 public:
     D3D12Presenter();
@@ -36,7 +42,9 @@ public:
     D3D12Presenter(const D3D12Presenter&) = delete;
     D3D12Presenter& operator=(const D3D12Presenter&) = delete;
 
-    void initialize(HWND hwnd, std::uint32_t width, std::uint32_t height);
+    void initialize(HWND hwnd, std::uint32_t width, std::uint32_t height,
+                    const D3D12PresenterOptions& options = {});
+    std::vector<std::string> debug_messages() const;
     void resize(std::uint32_t width, std::uint32_t height);
     void render(const NativeFrame& frame, const Camera& camera,
                 const NativeViewOptions& opts = {},

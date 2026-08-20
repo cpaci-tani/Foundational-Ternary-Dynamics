@@ -336,7 +336,7 @@ description}`). Beyond the core physics toggles (`wave_propagation`,
 - `cluster_inertia` - `[IMPOSED]` rigid-body cluster a_COM = F_cluster/(N*M_REST); requires `forces` (non-bulk)
 - `de_broglie_clock` - `[IMPOSED]` KG mass term -omega0^2*J at manifested voxels (CPU-only backend; FTD-0271)
 - `db_clock_coulomb` - `[IMPOSED diagnostic]` live Coulomb clock; requires `wave_propagation,de_broglie_clock,poisson_coulomb`, conflicts `forces` (CPU-only; FTD-0281)
-- `confinement` - intent flag (no C++ branch yet)
+- `confinement` - [SELECTION] linear colour string F=SIGMA_STRING·cf at r>=8; requires `color_forces`; default OFF
 - `knot_tracking` - `[OBSERVATION-ONLY]` per-knot telemetry at end of tick (golden-neutral)
 - `strict_validation` - throw on `validate()` failure vs. stderr warn
 - `ew_background_sweep` - sinusoidal +x flux drive before phase_read (EW hysteresis)

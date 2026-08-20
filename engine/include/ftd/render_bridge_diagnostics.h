@@ -153,6 +153,7 @@ struct EnergyAudit {
  * on drift_per_tick and refuse to land regressions.
  */
 struct EnergyLedger {
+    std::uint64_t updates = 0;       // number of completed ledger updates
     int    tick_prev = -1;           // tick number of the previous snapshot
     double E_prev    = 0.0;          // total energy at previous tick
     double E_curr    = 0.0;          // total energy at current tick

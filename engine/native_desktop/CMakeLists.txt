@@ -1,17 +1,37 @@
+add_library(ftd_native_ui_model STATIC
+    src/command_queue.cpp
+    src/snapshot_publisher.cpp
+)
+target_include_directories(ftd_native_ui_model
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+target_link_libraries(ftd_native_ui_model PUBLIC ftd_core)
+
 add_library(ftd_native_session STATIC
     src/engine_session.cpp
+    src/command_applier.cpp
+    src/parameter_journal.cpp
+    src/ui_snapshot_builder.cpp
 )
 target_include_directories(ftd_native_session
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
-target_link_libraries(ftd_native_session PUBLIC ftd_core)
+target_link_libraries(ftd_native_session PUBLIC ftd_core ftd_native_ui_model)
 
 if(FTD_ENABLE_CUDA)
     target_link_libraries(ftd_native_session PUBLIC ftd_cuda)
 endif()
 
 if(WIN32)
+    add_library(ftd_native_windowing STATIC
+        src/dpi_support.cpp
+    )
+    target_include_directories(ftd_native_windowing PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+    )
+
     add_executable(ftd_native_desktop
         src/main.cpp
         src/d3d12_presenter.cpp
@@ -21,6 +41,7 @@ if(WIN32)
     )
     target_link_libraries(ftd_native_desktop PRIVATE
         ftd_native_session
+        ftd_native_windowing
         d3d12
         dxgi
         d3dcompiler
@@ -106,6 +127,37 @@ if(WIN32)
         d3d12
         dxgi
         d3dcompiler
+    )
+
+    # Phase 0A: Release-capable D3D12 debug-layer switch plus inspectable
+    # ID3D12InfoQueue. Same HWND+presenter compilation pattern as the other
+    # device tests; CTest registration is in the parent CMakeLists.txt.
+    add_executable(test_d3d12_debug_observability
+        tests/test_d3d12_debug_observability.cpp
+        src/d3d12_presenter.cpp
+        ${CMAKE_SOURCE_DIR}/tests/support/test_telemetry.cpp
+    )
+    target_include_directories(test_d3d12_debug_observability PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+    )
+    target_link_libraries(test_d3d12_debug_observability PRIVATE
+        ftd_native_session
+        ftd_core
+        d3d12
+        dxgi
+        d3dcompiler
+    )
+
+    add_executable(test_native_desktop_dpi_awareness
+        tests/test_native_desktop_dpi_awareness.cpp
+        ${CMAKE_SOURCE_DIR}/tests/support/test_telemetry.cpp
+    )
+    target_include_directories(test_native_desktop_dpi_awareness PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+    )
+    target_link_libraries(test_native_desktop_dpi_awareness PRIVATE
+        ftd_native_windowing
+        ftd_core
     )
 
     if(FTD_ENABLE_CUDA)

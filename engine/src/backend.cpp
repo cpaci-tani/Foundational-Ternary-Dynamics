@@ -228,22 +228,18 @@ void GpuBackend::tick() {
     // update — those are backend-agnostic.
     if (!engine_) return;
 
-    // knot_tracking and cluster_inertia still require the canonical host AoS
-    // on every tick.  At large interactive lattice sizes that transfer is
-    // hundreds of MiB (plus a cluster upload) and presents as an application
-    // freeze. Reject the unsupported combination before mutating device state;
-    // the native command loop can surface the exception and remain responsive.
-    // de_broglie_clock is deliberately absent: tau + phase are device-resident.
+    // knot_tracking still requires the canonical host AoS on every tick.
+    // At large interactive lattice sizes that transfer is hundreds of MiB
+    // and presents as an application freeze. Reject it before mutating
+    // device state. cluster_inertia is a native 1-thread CUDA flood-fill.
     constexpr int MAX_INTERACTIVE_HOST_POSTPROCESS_L = 64;
     if (bridge_.interactive_gpu_mode_
         && bridge_.lattice_.size() > MAX_INTERACTIVE_HOST_POSTPROCESS_L
-        && (bridge_.toggles.cluster_inertia || bridge_.toggles.knot_tracking)) {
-        const char* extension = bridge_.toggles.cluster_inertia
-            ? "cluster_inertia" : "knot_tracking";
+        && bridge_.toggles.knot_tracking) {
         throw std::logic_error(
-            std::string("[GpuBackend] ") + extension
-            + " is host-scoped above L=64 in interactive CUDA mode; "
-              "reduce the lattice to L<=64 or disable the extension");
+            "[GpuBackend] knot_tracking is host-scoped above L=64 in "
+            "interactive CUDA mode; reduce the lattice to L<=64 or disable "
+            "the extension");
     }
 
     // Sync toggle state to the GPU engine each tick.
@@ -273,6 +269,12 @@ void GpuBackend::tick() {
     // synchronization boundary must still reconcile that high-water mark.
     identity_counters_dirty_ = true;
     engine_->tick();
+    if (bridge_.toggles.matched_gauss_dynamics) {
+        engine_->download_matched_gauss(*bridge_.matched_gauss_dynamics_);
+    }
+    if (bridge_.toggles.strong_stress_energy) {
+        engine_->download_strong_step_diagnostics(bridge_.strong_energy_step_diag_);
+    }
     bridge_.gpu_dirty_ = true;
     bridge_.physical_time_ += bridge_.dt_;
     ++bridge_.tick_;
@@ -287,9 +289,7 @@ void GpuBackend::tick() {
     bridge_.causal_projection_events_this_tick_ = bridge_.toggles.movement
         ? static_cast<long long>(completed_causal_events) : 0;
 
-    const bool requires_host_postprocess =
-        bridge_.toggles.cluster_inertia ||
-        bridge_.toggles.knot_tracking;
+    const bool requires_host_postprocess = bridge_.toggles.knot_tracking;
     if (bridge_.interactive_gpu_mode_ && !requires_host_postprocess) {
         // The native renderer uses compact state/flux readbacks. Keep the
         // canonical AoS shadow dirty until host-only diagnostics request it,
@@ -300,40 +300,6 @@ void GpuBackend::tick() {
     // Download device buffers so host-only extension passes and
     // update_energy_ledger() see fresh state.
     sync_to_host();
-    // ── Unified-mass Phase 2: rigid-body cluster inertia (GPU mirror) ───────
-    // The cluster pass has NO GPU kernel; it is a HOST-SIDE reduction by design.
-    // A device-side segmented/atomic reduction would sum F_cluster and Σvelocity
-    // in nondeterministic float order and break the bit-exact golden / gpu_parity
-    // gates. Instead we reuse the CPU free function verbatim on the synced host
-    // RenderBridge, so the GPU result is bit-exact-by-construction identical to
-    // the CPU path (same host arithmetic, same traversal order).
-    //
-    // PLACEMENT / PARITY: the CPU path runs this between phase_forces and
-    // phase_movement (render_bridge.cpp:469). Here it runs AFTER the whole GPU
-    // tick (post-movement, post-download). That is observably IDENTICAL because
-    // the pass only writes `velocity` on LOCKED voxels, and movement — on BOTH
-    // backends — skips locked voxels entirely (CPU phase_movement_main_loop:63
-    // `if (v.state==0 || v.locked ...) continue;`; GPU phase_movement_kernel:421
-    // `if (state[i]==0 || locked[i]) return;`). So the locked-velocity write is
-    // never consumed by movement; computing it before vs. after movement yields
-    // the same final state. Running post-sync also lets us reuse the per-tick
-    // download (state/velocity/locked/latency + force_diag scatter) that
-    // sync_to_host() already performed for the energy ledger.
-    //
-    // sync_to_host() above has populated bridge_.voxels_ (state, velocity,
-    // locked, latency) and bridge_.force_diag_ (f_coulomb/f_gravity/f_strong/
-    // f_magnetic) — exactly the inputs phase_forces_integrate_clusters reads,
-    // and bridge_.lattice_ is backend-independent. Default-OFF: when the toggle
-    // is clear this whole block is skipped, so GPU runs are unchanged.
-    if (bridge_.toggles.cluster_inertia) {
-        // Reuse the CPU integrator verbatim — do NOT reimplement the flood-fill.
-        phase_forces_integrate_clusters(bridge_);
-        // Upload the rewritten host velocity back to the device so subsequent
-        // ticks / diagnostics see the cluster's COM velocity. push_to_device()
-        // re-uploads the full host voxel array (only locked velocities changed),
-        // keeping device == host; gpu_dirty_ stays false (state is consistent).
-        push_to_device();
-    }
 }
 
 void GpuBackend::set_dt(double dt) {
