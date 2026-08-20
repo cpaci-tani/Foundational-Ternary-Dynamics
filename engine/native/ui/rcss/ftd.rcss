@@ -5,6 +5,13 @@
 
 /* ── base ─────────────────────────────────────────────────────────────── */
 body {
+    /* Fill the context so the column-flex children can distribute height —
+       without a definite body size, `flex: 1` on #body-row cannot expand and
+       the status bar rides up under the toolbar. */
+    position: absolute;
+    left: 0dp; top: 0dp;
+    width: 100%;
+    height: 100%;
     font-family: Inter;
     font-size: 14dp;
     color: #dfe6f0;
@@ -30,9 +37,10 @@ body {
 .spacer { flex: 1; }
 
 /* ── the middle row: setup | viewport hole | physics ──────────────────── */
-#body-row { display: flex; flex-direction: row; flex: 1; }
+#body-row { display: flex; flex-direction: row; flex: 1 1 0; align-items: stretch; }
 
 .panel {
+    flex: 0 0 240dp;   /* fixed-width side panels; the viewport takes the rest */
     width: 240dp;
     padding: 14dp;
     background-color: #131c2b;
@@ -51,7 +59,7 @@ body {
 }
 
 /* transparent hole — the D3D12 3D scene shows through here */
-#viewport { flex: 1; background-color: transparent; }
+#viewport { flex: 1 1 0; background-color: transparent; }
 
 /* ── controls ─────────────────────────────────────────────────────────── */
 .field { display: flex; flex-direction: column; margin-bottom: 12dp; }
