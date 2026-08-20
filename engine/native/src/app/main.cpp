@@ -2,8 +2,9 @@
 //
 // A real Win32 window whose swapchain is owned by D3D12Presenter. Two threads,
 // the same split the native_desktop reference (native_desktop/src/main.cpp) uses:
-//   • sim thread   — owns NativeEngineSession, ticks it, drains the CommandQueue
-//                    at the tick boundary, publishes UiSnapshot + a NativeFrame.
+//   • sim thread   — owns a ScaleHost (Scale 0 behind the ScaleHost/ScaleAdapter
+//                    seam), ticks it, drains the CommandBus at the tick boundary,
+//                    publishes a HostSnapshot + a NativeFrame.
 //   • GUI thread   — owns RmlUi (RmlD3D12Renderer + Rml::Context) and the
 //                    presenter. Each frame it acquires the published snapshot,
 //                    pushes it into the RmlUi data model, lays out (Context::
@@ -19,7 +20,7 @@
 //
 // Unlike the native_desktop reference this app does NOT wire the CUDA<->D3D12
 // zero-copy interop path: particles are gathered to the host by
-// session.capture() every tick and drawn through the presenter's CPU sprite
+// host.capture() every tick and drawn through the presenter's CPU sprite
 // path (interop_particle_count = 0). That keeps the app self-contained and
 // backend-agnostic; the device-resident path is a later optimization (see the
 // report).
@@ -55,14 +56,14 @@
 #endif
 
 #include "native/cli_options.h"
-#include "native/command_queue.h"
 #include "native/d3d12_presenter.h"
 #include "native/dpi_support.h"
-#include "native/engine_session.h"
+#include "native/host/command_bus.h"
+#include "native/host/scale_host.h"
+#include "native/model/commands.h"
+#include "native/model/snapshot.h"
 #include "native/native_frame.h"
 #include "native/scene_rect.h"
-#include "native/ui_command.h"
-#include "native/ui_snapshot.h"
 
 #include "ftd/term_toggles.h"
 
@@ -144,7 +145,7 @@ struct AppContext {
     Rml::Context* context = nullptr;
     ftd::native::D3D12Presenter* presenter = nullptr;
     ftd::native::Camera* camera = nullptr;
-    ftd::native::CommandQueue* commands = nullptr;
+    ftd::native::CommandBus* commands = nullptr;
     ShellData* data = nullptr;
     std::atomic<bool>* paused = nullptr;
     std::atomic<bool>* quit = nullptr;
@@ -158,16 +159,23 @@ struct AppContext {
 };
 
 // ── Command helpers (run on the GUI thread; drained by the sim thread) ──
-void push(AppContext* app, ftd::native::UiCommand cmd) {
-    if (app && app->commands) app->commands->push(std::move(cmd));
+// The bus carries scale-generic ScaleCommands: loop control / reload are core
+// commands the host handles; toggles are a Scale-0 payload the adapter handles.
+void push_core(AppContext* app, ftd::native::CoreCommand cmd) {
+    if (app && app->commands)
+        app->commands->push(ftd::native::core_command(std::move(cmd)));
+}
+void push_scale0(AppContext* app, ftd::native::Scale0Cmd cmd) {
+    if (app && app->commands)
+        app->commands->push(ftd::native::scale0_command(std::move(cmd)));
 }
 
 void request_play(AppContext* app) {
-    push(app, ftd::native::Run{});
+    push_core(app, ftd::native::Run{});
     if (app->paused) app->paused->store(false);
 }
 void request_pause(AppContext* app) {
-    push(app, ftd::native::Pause{});
+    push_core(app, ftd::native::Pause{});
     if (app->paused) app->paused->store(true);
 }
 void request_play_toggle(AppContext* app) {
@@ -175,12 +183,13 @@ void request_play_toggle(AppContext* app) {
     else request_pause(app);
 }
 void request_step(AppContext* app) {
-    push(app, ftd::native::Pause{});
-    push(app, ftd::native::Step{1});
+    push_core(app, ftd::native::Pause{});
+    push_core(app, ftd::native::Step{1});
     if (app->paused) app->paused->store(true);
 }
 void request_reset(AppContext* app) {
-    if (!app->scenario_id.empty()) push(app, ftd::native::LoadScenario{app->scenario_id});
+    if (!app->scenario_id.empty())
+        push_core(app, ftd::native::LoadScenario{app->scenario_id});
 }
 void request_toggle(AppContext* app, const std::string& name) {
     bool cur = false;
@@ -189,7 +198,7 @@ void request_toggle(AppContext* app, const std::string& name) {
             if (r.name == name) { cur = r.on; break; }
         }
     }
-    push(app, ftd::native::SetToggle{name, !cur});
+    push_scale0(app, ftd::native::SetToggle{name, !cur});
 }
 
 // ── Win32 → RmlUi input plumbing ──
@@ -432,12 +441,18 @@ int run_app(const std::vector<std::string>& args) {
               << (engine_opts.force_cpu ? " cpu" : " gpu-default")
               << (capture_mode ? " [capture]" : "") << "\n" << std::flush;
 
-    // ── Engine session ────────────────────────────────────────────────────────
-    ftd::native::NativeEngineSession session(engine_opts);
-    std::cout << "backend=" << session.backend_name() << " status=" << session.status()
+    // ── Scale host (Scale 0 behind the ScaleHost/ScaleAdapter seam) ─────────────
+    ftd::native::HostOptions host_opts;
+    host_opts.scale_level = 0;
+    host_opts.scenario = engine_opts.scenario;
+    host_opts.run.lattice_size = engine_opts.lattice_size;
+    host_opts.run.force_cpu = engine_opts.force_cpu;
+    host_opts.run.flux_boundary = engine_opts.flux_boundary;
+    ftd::native::ScaleHost host(std::move(host_opts));
+    std::cout << "backend=" << host.backend_name() << " status=" << host.status()
               << "\n" << std::flush;
 
-    ftd::native::CommandQueue commands;
+    ftd::native::CommandBus commands;
     std::atomic<bool> running{true};
     std::atomic<bool> paused{app_opts.start_paused};
     std::atomic<bool> quit_flag{false};
@@ -445,15 +460,15 @@ int run_app(const std::vector<std::string>& args) {
 
     ftd::native::Camera camera;
     ftd::native::NativeViewOptions view_opts;
-    apply_camera_for_lattice(camera, session.lattice_size());
+    apply_camera_for_lattice(camera, host.lattice_size());
 
     // Prime the loop control + publish one snapshot before the sim thread starts.
     {
-        session.set_loop_control({app_opts.start_paused, !app_opts.start_paused, 0});
-        ftd::native::CommandQueue stamp;
-        session.process_ui_boundary(stamp);
+        host.set_loop_control({app_opts.start_paused, !app_opts.start_paused, 0});
+        ftd::native::CommandBus stamp;
+        host.process_ui_boundary(stamp);
     }
-    ftd::native::NativeFrame latest = session.capture();
+    ftd::native::NativeFrame latest = host.capture();
 
     // ── Window ─────────────────────────────────────────────────────────────────
     WNDCLASSW wc{};
@@ -584,7 +599,7 @@ int run_app(const std::vector<std::string>& args) {
     RmlOverlay overlay(&rml_renderer, &context);
     presenter.set_overlay_recorder(&overlay);
 
-    int camera_lattice = session.lattice_size();
+    int camera_lattice = host.lattice_size();
 
     // ── Sim thread ──────────────────────────────────────────────────────────────
     std::mutex frame_mu;
@@ -592,17 +607,17 @@ int run_app(const std::vector<std::string>& args) {
         while (running.load()) {
             const auto start = std::chrono::steady_clock::now();
             try {
-                const auto loop = session.loop_control();
+                const auto loop = host.loop_control();
                 const bool need_work = loop.pending_steps > 0 || !loop.pause;
                 if (need_work) {
-                    const auto r = session.tick_once();
-                    if (loop.pending_steps > 0) session.consume_pending_step();
+                    const auto r = host.tick_once();
+                    if (loop.pending_steps > 0) host.consume_pending_step();
                     if (!r.ok) throw std::runtime_error(r.message);
                 }
-                session.process_ui_boundary(commands);
-                paused.store(session.loop_control().pause);
-                if (need_work || session.applied_reload() || session.applied_host_write()) {
-                    ftd::native::NativeFrame next = session.capture();
+                host.process_ui_boundary(commands);
+                paused.store(host.loop_control().pause);
+                if (need_work || host.applied_reload() || host.applied_host_write()) {
+                    ftd::native::NativeFrame next = host.capture();
                     std::lock_guard<std::mutex> lock(frame_mu);
                     latest = std::move(next);
                 }
@@ -680,7 +695,7 @@ int run_app(const std::vector<std::string>& args) {
             std::lock_guard<std::mutex> lock(frame_mu);
             frame = latest;
         }
-        std::shared_ptr<const ftd::native::UiSnapshot> snap = session.snapshot_publisher().acquire();
+        std::shared_ptr<const ftd::native::HostSnapshot> snap = host.publisher().acquire();
 
         if (frame.lattice_size > 0 && frame.lattice_size != camera_lattice) {
             apply_camera_for_lattice(camera, frame.lattice_size);
@@ -721,16 +736,16 @@ int run_app(const std::vector<std::string>& args) {
         set_int("fps", data.fps, smoothed_fps);
         set_str("scenario", data.scenario, frame.scenario.empty() ? app.scenario_id
                                                                    : frame.scenario);
-        set_str("backend", data.backend, upper(frame.backend.empty() ? session.backend_name()
+        set_str("backend", data.backend, upper(frame.backend.empty() ? host.backend_name()
                                                                       : frame.backend));
         set_str("lattice", data.lattice, std::to_string(frame.lattice_size));
         set_str("physical_time", data.physical_time,
                 fmt("%.2e s", static_cast<double>(frame.tick) * kTPhysSeconds));
-        if (snap) {
-            set_str("total_energy", data.total_energy, fmt("%.1f", snap->energy_ledger.E_curr));
+        if (const ftd::native::Scale0Snapshot* s0 = snap ? snap->scale0() : nullptr) {
+            set_str("total_energy", data.total_energy, fmt("%.1f", s0->energy_ledger.E_curr));
             bool toggles_changed = false;
             for (ToggleRow& r : data.toggles) {
-                const bool on = toggle_on(snap->term_toggles, r.name.c_str());
+                const bool on = toggle_on(s0->term_toggles, r.name.c_str());
                 if (r.on != on) { r.on = on; toggles_changed = true; }
             }
             if (toggles_changed) model.DirtyVariable("toggles");
@@ -751,6 +766,15 @@ int run_app(const std::vector<std::string>& args) {
         }
 
         // ── Capture mode: after warmup, request + poll a composited readback ──
+        // A capture is ARMED by exactly one render() after request_capture (that
+        // frame records the copy into the readback buffer and signals the capture
+        // fence). D3D12Presenter::render() re-arms the still-pending capture on
+        // EVERY subsequent call — bumping the target fence value one ahead of what
+        // the GPU has completed — so if we kept rendering while polling, poll would
+        // never converge. Once armed, stop rendering and just poll until the fence
+        // completes. (Pre-existing presenter behavior; the app owns the arm-once
+        // discipline.)
+        const bool capture_armed = capture_mode && capture_requested;
         if (capture_mode && !capture_saved) {
             if (!capture_requested && frame_no >= app_opts.capture_frames) {
                 capture_token = presenter.request_capture(ftd::native::CaptureRegion::FullWindow);
@@ -783,14 +807,19 @@ int run_app(const std::vector<std::string>& args) {
             }
         }
 
-        try {
-            presenter.render(frame, camera, view_opts, /*interop_particle_count=*/0);
-        } catch (const std::exception& ex) {
-            std::cerr << "render threw at frame " << frame_no << ": " << ex.what() << "\n"
-                      << std::flush;
-            running.store(false);
-            sim.join();
-            throw;
+        // Skip render only AFTER the capture is armed (armed on a prior frame),
+        // so the presenter does not re-arm the pending readback. The arming frame
+        // itself (capture_armed still false here) renders normally.
+        if (!capture_armed) {
+            try {
+                presenter.render(frame, camera, view_opts, /*interop_particle_count=*/0);
+            } catch (const std::exception& ex) {
+                std::cerr << "render threw at frame " << frame_no << ": " << ex.what() << "\n"
+                          << std::flush;
+                running.store(false);
+                sim.join();
+                throw;
+            }
         }
         ++frame_no;
 

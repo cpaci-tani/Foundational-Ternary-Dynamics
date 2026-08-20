@@ -36,6 +36,22 @@ if(FTD_ENABLE_CUDA)
     target_link_libraries(native_session PUBLIC ftd_cuda)
 endif()
 
+# ── native_host: scale-generic seam (ScaleHost + ScaleAdapter + Scale-0 adapter) ──
+# The scale-agnostic session host + the concrete Scale-0 adapter that re-homes
+# the RenderBridge session logic behind it (SPEC_NATIVE_REBUILD_R0R1 §4).
+# ScaleHost owns a ScaleAdapter, never a concrete engine; the Scale-0 adapter
+# reuses native_session's proven apply/observe/build free functions so behavior
+# is identical. Boundary: no concrete scale type appears in scale_host.{h,cpp}.
+add_library(native_host STATIC
+    src/host/scale_host.cpp
+    src/host/adapters/scale0_adapter.cpp
+)
+target_include_directories(native_host PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(native_host PUBLIC ftd_core native_model native_session)
+if(FTD_ENABLE_CUDA)
+    target_link_libraries(native_host PUBLIC ftd_cuda)
+endif()
+
 if(WIN32)
     if(NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
         message(FATAL_ERROR
@@ -227,6 +243,7 @@ if(WIN32)
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_SOURCE_DIR}/src)
     target_link_libraries(native_app PRIVATE
+        native_host
         native_session
         native_windowing
         native_cli
