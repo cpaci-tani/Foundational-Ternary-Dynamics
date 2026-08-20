@@ -1,0 +1,29 @@
+upstream: https://github.com/freetype/freetype
+tag:      VER-2-13-3
+commit:   42608f77f20749dd6ddc9e0536788eaad70ea4b5
+tag-obj:  534ad3456055ee1f65ecde3bcf22a656a31514d1 (annotated tag object)
+version:  FreeType 2.13.3
+licence:  FreeType License (FTL) or GPLv2 — dual-licensed; see LICENSE.TXT,
+          docs/FTL.TXT, docs/GPLv2.TXT.
+
+Vendored for the clean-slate native UI (engine/native): RmlUi's default font
+engine needs FreeType. Built as the static library `native_freetype` by a
+hand-authored target in engine/native/CMakeLists.txt (NOT via FreeType's own
+CMake — see VENDOR.md).
+
+All external dependencies are OFF (equivalent to FreeType's
+FT_DISABLE_ZLIB / FT_DISABLE_BZIP2 / FT_DISABLE_PNG / FT_DISABLE_HARFBUZZ /
+FT_DISABLE_BROTLI). The shipped include/freetype/config/ftoption.h leaves
+FT_CONFIG_OPTION_SYSTEM_ZLIB / USE_BZIP2 / USE_PNG / USE_HARFBUZZ / USE_BROTLI
+commented out, so the vendored source has zero transitive dependencies. gzip
+(.gz) support uses FreeType's *bundled* zlib in src/gzip/ (FT_CONFIG_OPTION_USE_ZLIB
+on, SYSTEM_ZLIB off) — self-contained, no external zlib.
+
+Do not edit files in this tree. Hashes: MANIFEST.sha256 (enforced by
+engine/cmake/FtdSourceLint.cmake).
+
+Upgrade:
+  git clone --depth 1 --branch VER-<X-Y-Z> https://github.com/freetype/freetype.git
+  Copy include/, src/ (minus src/tools/), builds/, CMakeLists.txt, modules.cfg,
+  LICENSE.TXT, docs/FTL.TXT, docs/GPLv2.TXT. Normalise EOLs to LF.
+  Rebuild MANIFEST.sha256.
