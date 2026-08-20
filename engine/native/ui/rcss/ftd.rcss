@@ -43,6 +43,20 @@ body {
 .tb-group .lbl { color: #67788f; font-size: 11dp; margin-right: 8dp; }
 .spacer { flex: 1; }
 
+/* toolbar scale-switcher: two clickable options, active one highlighted */
+.tb-group .opt {
+    margin-right: 6dp;
+    padding: 5dp 10dp;
+    color: #9fb0c6;
+    cursor: pointer;
+}
+.tb-group .opt:hover { border-color: #3a7ec4; color: #dfe6f0; }
+.tb-group .opt.sel {
+    border-color: #2f6db0;
+    color: #ffffff;
+    background-color: #16233a;
+}
+
 /* ── the middle row: setup | viewport hole | physics ──────────────────── */
 #body-row { display: flex; flex-direction: row; flex: 1 1 0; align-items: stretch; }
 

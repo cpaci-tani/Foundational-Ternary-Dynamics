@@ -21,8 +21,21 @@ namespace ftd::native {
 
 // The Scale-0 observation payload is exactly today's snapshot content.
 using Scale0Snapshot = UiSnapshot;
-// Scale1Snapshot, Scale2Snapshot, … arrive as further alternatives below.
-using ScaleSnapshot = std::variant<std::monostate, Scale0Snapshot>;
+
+// The Scale-1 (ParticleEngine) observation payload. Scale 1 needs no telemetry
+// scheduler: the adapter fills this directly from ParticleEngine::diagnostics()
+// each boundary. Deliberately small — it carries only what the status bar and a
+// future Scale-1 panel read.
+struct Scale1Snapshot {
+    int          particle_count = 0;
+    double       total_energy = 0.0;
+    double       total_ke = 0.0;
+    double       total_pe = 0.0;
+    std::string  status;
+};
+
+// Scale2Snapshot, Scale5Snapshot, … arrive as further alternatives below.
+using ScaleSnapshot = std::variant<std::monostate, Scale0Snapshot, Scale1Snapshot>;
 
 struct HostSnapshot {
     // ── scale-common core ──
@@ -45,6 +58,12 @@ struct HostSnapshot {
     }
     Scale0Snapshot* scale0() {
         return std::get_if<Scale0Snapshot>(&scale);
+    }
+    const Scale1Snapshot* scale1() const {
+        return std::get_if<Scale1Snapshot>(&scale);
+    }
+    Scale1Snapshot* scale1() {
+        return std::get_if<Scale1Snapshot>(&scale);
     }
 };
 

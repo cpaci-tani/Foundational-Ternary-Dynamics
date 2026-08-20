@@ -39,9 +39,19 @@ using Scale0Cmd = std::variant<
     InjectWavepacket, InjectFluxAdd, CreateEntangledPair, ClearField, SeedRandomFlux,
     InspectVoxel, InspectForce, RequestField, RequestContinuity, RequestChargeSum>;
 
-// std::monostate is the "this is a core command" sentinel. Scale1Cmd, Scale2Cmd,
+// ── Scale 1 (ParticleEngine) payload ─────────────────────────────────────────
+// Minimal-but-real vocabulary that proves the seam carries a second,
+// structurally different scale's commands (R1 validation): (re)seed a named
+// particle scenario, or drop one charged particle at a position. The full
+// Scale-1 vocabulary (per-force toggles, decay/scattering observables) lands in
+// later steps — this is exactly enough to seed/run and to exercise apply().
+struct Seed1        { std::string scenario; };
+struct AddParticle1 { int charge = 1; float x = 0.0f; float y = 0.0f; float z = 0.0f; };
+using Scale1Cmd = std::variant<Seed1, AddParticle1>;
+
+// std::monostate is the "this is a core command" sentinel. Scale2Cmd, Scale5Cmd,
 // … slot in here as they arrive — one added alternative each, no schema change.
-using ScalePayload = std::variant<std::monostate, Scale0Cmd>;
+using ScalePayload = std::variant<std::monostate, Scale0Cmd, Scale1Cmd>;
 
 struct ScaleCommand {
     CoreCommand  core{Pause{}};
@@ -56,6 +66,9 @@ inline ScaleCommand core_command(CoreCommand c) {
     return ScaleCommand{std::move(c), std::monostate{}};
 }
 inline ScaleCommand scale0_command(Scale0Cmd c) {
+    return ScaleCommand{Pause{}, ScalePayload{std::move(c)}};
+}
+inline ScaleCommand scale1_command(Scale1Cmd c) {
     return ScaleCommand{Pause{}, ScalePayload{std::move(c)}};
 }
 
