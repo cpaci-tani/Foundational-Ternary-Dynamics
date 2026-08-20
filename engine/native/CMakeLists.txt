@@ -180,4 +180,36 @@ if(WIN32)
             target_link_libraries(native_${t} PRIVATE native_session ftd_cuda d3d12 dxgi d3dcompiler)
         endforeach()
     endif()
+
+    # ── native_ui_rml: RmlUi (RML/RCSS) rendered through our own D3D12 ──────────
+    # M-UI-1 (native/docs/SPEC_NATIVE_UI_RMLUI.md). RmlD3D12Renderer implements
+    # Rml::RenderInterface + a small Rml::SystemInterface on the engine's D3D12
+    # device: compiled geometry -> immutable VB/IB, font-atlas/image textures ->
+    # SRVs, scissor, one UI PSO (ortho VS + textured x vertex-colour PS from
+    # shaders/rmlui.hlsl, compiled at runtime via d3dcompiler). Links native_rmlui
+    # (which brings native_freetype). windowscodecs is WIC (LoadTexture decode).
+    add_library(native_ui_rml STATIC src/ui/rml_d3d12_renderer.cpp)
+    target_include_directories(native_ui_rml PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+    target_link_libraries(native_ui_rml
+        PUBLIC  native_rmlui
+        PRIVATE d3d12 dxgi d3dcompiler windowscodecs)
+    if(MSVC)
+        target_compile_definitions(native_ui_rml PRIVATE _CRT_SECURE_NO_WARNINGS)
+    endif()
+
+    # ── native_test_ui_rml_smoke: headless RML render -> PNG ────────────────────
+    # Renders shell.rml + ftd.rcss into an offscreen 1280x800 RGBA8 target, reads
+    # it back, asserts a meaningful fraction of pixels differ from the shell bg,
+    # and writes a PNG. Asset + output paths are baked in as compile definitions.
+    add_executable(native_test_ui_rml_smoke tests/test_ui_rml_smoke.cpp)
+    target_link_libraries(native_test_ui_rml_smoke
+        PRIVATE native_ui_rml native_rmlui d3d12 dxgi d3dcompiler windowscodecs)
+    target_compile_definitions(native_test_ui_rml_smoke PRIVATE
+        FTD_RML_SHELL_PATH="${CMAKE_CURRENT_SOURCE_DIR}/ui/rml/shell.rml"
+        FTD_RML_FONT_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/Inter-Regular.ttf"
+        FTD_RMLUI_HLSL_PATH="${CMAKE_CURRENT_SOURCE_DIR}/shaders/rmlui.hlsl"
+        FTD_RML_PNG_OUT="C:/Users/cpaci/AppData/Local/Temp/claude/C--Users-cpaci-Desktop-ftd-engine/3ccfaca6-eaf5-4dbc-bd71-f3eded0ce5c6/scratchpad/rml_smoke.png")
+    if(MSVC)
+        target_compile_definitions(native_test_ui_rml_smoke PRIVATE _CRT_SECURE_NO_WARNINGS)
+    endif()
 endif()
