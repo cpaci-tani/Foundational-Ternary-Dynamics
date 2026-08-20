@@ -734,6 +734,49 @@ ftd_add_test(test_spacetime_forcing_demo tests/test_spacetime_forcing_demo.cpp
 ftd_add_test(test_cluster_inertia tests/test_cluster_inertia.cpp
              CTEST_NAME cluster_inertia TIMEOUT 120 LABELS unit mass)
 
+# FTD-1014: dual-path UFF engine alignment (CPU observer). Protocol gates are
+# CTest assertions; Path F vs Q0 g_ext classifies FOUND/CLOSED-NEGATIVE in
+# stdout and does not fail CTest. No golden-tick contact.
+ftd_add_test(test_universal_freefall_engine_align tests/test_universal_freefall_engine_align.cpp
+             CTEST_NAME universal_freefall_engine_align TIMEOUT 120 LABELS unit gravity)
+
+# FTD-1016: default-off geometric free-fall integrator. Protocol gates and A1
+# are CTest assertions. Toggle OFF residue (P6) re-asserts FTD-1014. No golden
+# tick contact.
+ftd_add_test(test_geometric_freefall_integrator tests/test_geometric_freefall_integrator.cpp
+             CTEST_NAME geometric_freefall_integrator TIMEOUT 120 LABELS unit gravity)
+
+# FTD-1017: sourced-then-frozen well. Poisson writes L from a heavy source;
+# geometric_gravity falls a light probe. Protocol gates and A1 are CTest
+# assertions. No golden-tick contact.
+ftd_add_test(test_sourced_geometric_freefall tests/test_sourced_geometric_freefall.cpp
+             CTEST_NAME sourced_geometric_freefall TIMEOUT 120 LABELS unit gravity)
+
+# FTD-1019: one sourced-then-frozen Poisson well drives FC-2 rest clocks and
+# FTD-1016 falling. Protocol gates and A1/A2 are CTest assertions. No golden
+# tick contact.
+ftd_add_test(test_one_well_redshift_falling tests/test_one_well_redshift_falling.cpp
+             CTEST_NAME one_well_redshift_falling TIMEOUT 120 LABELS unit gravity)
+
+# FTD-1020: frozen vacuum Poisson well vs live flux characteristics.
+# Three-way class 0 / 1911-half / GR-full. No refractive-index operator.
+# No golden-tick contact.
+ftd_add_test(test_frozen_well_characteristic_deflection
+             tests/test_frozen_well_characteristic_deflection.cpp
+             CTEST_NAME frozen_well_characteristic_deflection TIMEOUT 120
+             LABELS unit gravity)
+
+# FTD-1021: re-solve latency Poisson with the light probe present.
+# Freeze vs live vs self-force. No golden-tick contact.
+ftd_add_test(test_live_sourced_newton tests/test_live_sourced_newton.cpp
+             CTEST_NAME live_sourced_newton TIMEOUT 120 LABELS unit gravity)
+
+# FTD-1022: 3^3 locked probe, freeze vs live Poisson. Asks whether the
+# FTD-1021 one-voxel self-depth jump recedes for a slow envelope.
+# No golden-tick contact.
+ftd_add_test(test_slow_envelope_live_newton tests/test_slow_envelope_live_newton.cpp
+             CTEST_NAME slow_envelope_live_newton TIMEOUT 120 LABELS unit gravity)
+
 # FTD-0271 (2026-06-11): de Broglie internal clock. The de_broglie_clock toggle
 # adds the Klein-Gordon mass term -omega0^2*J at manifested voxels (phase_read).
 # Phase A: a static cluster's flux oscillates at omega0 (k=0 rest mode).
@@ -1493,6 +1536,11 @@ if(FTD_ENABLE_CUDA)
     add_executable(test_gpu_native_extension_parity
                    tests/test_gpu_native_extension_parity.cpp)
     target_link_libraries(test_gpu_native_extension_parity ftd_core ftd_cuda)
+
+    ftd_add_test(test_gpu_geometric_gravity_parity
+                 tests/test_gpu_geometric_gravity_parity.cpp GPU_HEAVY
+                 CTEST_NAME gpu_geometric_gravity_parity TIMEOUT 300
+                 LABELS unit parity gravity)
 
     ftd_add_test(test_gpu_movement_transaction
                  tests/test_gpu_movement_transaction.cpp GPU_HEAVY

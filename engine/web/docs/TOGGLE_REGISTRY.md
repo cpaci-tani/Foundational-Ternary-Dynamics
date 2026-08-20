@@ -108,7 +108,7 @@ These are render-independent: they switch which physics terms the engine integra
 | `t-selective` | `selective_damping` | on | `selective_damping` |
 | `t-larmor` | `larmor_radiation` | **off** | `larmor_radiation` |
 | `t-dual` | `dual_substrate` | **off** | `dual_substrate` |
-| `t-confinement` | `confinement` | **off** | `confinement` (intent flag) |
+| `t-confinement` | `confinement` | **off** | `confinement` (linear colour string; requires `color_forces`) |
 | `t-color-forces` | `color_forces` | **off** | `color_forces` |
 | `t-strong-force` | `strong_force` | **off** | `strong_force` (GPU-only) |
 | `t-exchange` | `exchange_force` | **off** | `exchange_force` (GPU-only) |

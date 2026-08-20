@@ -600,4 +600,13 @@ double MatchedGaussDynamics::modified_energy(double wave_speed, double dt) const
            0.5 * wave_speed * dt * static_cast<double>(cross);
 }
 
+void MatchedGaussDynamics::adopt_state(MatchedFaceFlux electric,
+                                       MatchedEdgeField magnetic,
+                                       const MatchedWaveStep& step) {
+    electric_ = std::move(electric);
+    magnetic_half_ = std::move(magnetic);
+    last_step_ = step;
+    initialized_ = electric_.L > 0 && electric_.L == magnetic_half_.L;
+}
+
 }  // namespace ftd::eft

@@ -286,8 +286,9 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     'quantum-casimir': isolatedScale0Profile('wave_propagation'),
     'quantum-zeno': isolatedScale0Profile('genesis'),
 
-    // Gauge geometry. The implemented CPU binding path is color_forces;
-    // confinement is an intent-only flag and strong_force is a CPU no-op.
+    // Gauge geometry. Color binding is color_forces; confinement selects
+    // the linear SIGMA_STRING shell (requires color_forces). strong_force
+    // is a CPU no-op (GPU Yukawa).
     's0-seed-dynamical-flux-dressing': isolatedScale0Profile('wave_propagation', 'coupling'),
     's0-seed-moving-source-reciprocity': isolatedScale0Profile(
         'wave_propagation', 'coupling', 'forces', 'movement'),

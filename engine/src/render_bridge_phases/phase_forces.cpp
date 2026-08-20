@@ -42,8 +42,9 @@
 namespace ftd {
 
 void phase_forces_solve_potentials(RenderBridge& rb) {
-  // Solve Coulomb potential (warm-started SOR)
-  // Skip when emergent_forces is ON — force comes from flux field directly
+  // Coulomb Poisson is an EM channel. Yukawa/exchange/color-only ticks must
+  // not solve φ_C (GPU gpu_phase_forces is similarly gated on toggles.forces).
+  if (!rb.toggles.forces) return;
   if (rb.toggles.poisson_coulomb && !rb.toggles.emergent_forces)
     rb.solve_coulomb_poisson();
 }
@@ -85,6 +86,9 @@ void phase_forces_main_loop(RenderBridge& rb) {
     //      In mode 3, alpha = G_C² emerges: one G_C from this probe coupling,
     //      one G_C already embedded in the flux amplitude from the wave equation.
     Vec3 f_em;
+    Vec3 f_grav;
+    Vec3 f_lorentz;
+    if (rb.toggles.forces) {
     if (rb.toggles.emergent_forces) {
       // EFT emergent force: read force FROM the flux field established by
       // wave equation + Gauss constraint. No Poisson solver needed.
@@ -119,17 +123,29 @@ void phase_forces_main_loop(RenderBridge& rb) {
     // The self-field wake at r=1 creates an asymmetric density gradient
     // that causes spurious self-acceleration. At r=2 the self-field
     // influence is negligible and only external gradients contribute.
-    Vec3 f_grav;
     if (rb.toggles.gravity) {
       auto c = rb.lattice_.coord(i);
-      double dx = rb.voxels_[rb.lattice_.index(c.x+2, c.y, c.z)].density()
-                - rb.voxels_[rb.lattice_.index(c.x-2, c.y, c.z)].density();
-      double dy = rb.voxels_[rb.lattice_.index(c.x, c.y+2, c.z)].density()
-                - rb.voxels_[rb.lattice_.index(c.x, c.y-2, c.z)].density();
-      double dz = rb.voxels_[rb.lattice_.index(c.x, c.y, c.z+2)].density()
-                - rb.voxels_[rb.lattice_.index(c.x, c.y, c.z-2)].density();
-      Vec3 grad_rho = {dx * GRAD_TIER2_SCALE, dy * GRAD_TIER2_SCALE, dz * GRAD_TIER2_SCALE};
-      f_grav = grad_rho * G_N;
+      if (rb.toggles.geometric_gravity) {
+        // FTD-1016: Q0 weak EOM F = M_INERTIAL C² ℒ ∇ℒ. Same tier-2
+        // stencil as the density path. Default-off; golden-neutral.
+        double dx = rb.voxels_[rb.lattice_.index(c.x+2, c.y, c.z)].latency
+                  - rb.voxels_[rb.lattice_.index(c.x-2, c.y, c.z)].latency;
+        double dy = rb.voxels_[rb.lattice_.index(c.x, c.y+2, c.z)].latency
+                  - rb.voxels_[rb.lattice_.index(c.x, c.y-2, c.z)].latency;
+        double dz = rb.voxels_[rb.lattice_.index(c.x, c.y, c.z+2)].latency
+                  - rb.voxels_[rb.lattice_.index(c.x, c.y, c.z-2)].latency;
+        Vec3 grad_L = {dx * GRAD_TIER2_SCALE, dy * GRAD_TIER2_SCALE, dz * GRAD_TIER2_SCALE};
+        f_grav = grad_L * (M_INERTIAL * C_SPEED * C_SPEED * v.latency);
+      } else {
+        double dx = rb.voxels_[rb.lattice_.index(c.x+2, c.y, c.z)].density()
+                  - rb.voxels_[rb.lattice_.index(c.x-2, c.y, c.z)].density();
+        double dy = rb.voxels_[rb.lattice_.index(c.x, c.y+2, c.z)].density()
+                  - rb.voxels_[rb.lattice_.index(c.x, c.y-2, c.z)].density();
+        double dz = rb.voxels_[rb.lattice_.index(c.x, c.y, c.z+2)].density()
+                  - rb.voxels_[rb.lattice_.index(c.x, c.y, c.z-2)].density();
+        Vec3 grad_rho = {dx * GRAD_TIER2_SCALE, dy * GRAD_TIER2_SCALE, dz * GRAD_TIER2_SCALE};
+        f_grav = grad_rho * G_N;
+      }
     }
 
     // Selected Lorentz-shaped matter force: F = α·s·(v × B), B=curl(J).
@@ -138,11 +154,11 @@ void phase_forces_main_loop(RenderBridge& rb) {
     // FTD-0574 proves this is NOT the common-action partner of phase_read's
     // +g_c*curl(s*v) field source: that source requires +g_c<curl J,s*v> and
     // its reciprocal path variation contains induction and curl-curl terms.
-    Vec3 f_lorentz;
     if (rb.toggles.lorentz_force && v.speed() > EPSILON_MAG) {
       Vec3 B = rb.curl_flux(i);
       f_lorentz = Vec3::cross(v.velocity, B) * (ALPHA * v.state);
     }
+    } // rb.toggles.forces — EM / gravity / Lorentz only
 
     // ── Color force: pairwise SU(3)-inspired interaction ─────────────
     // F_color(i←j) = α_s(r) · color_factor(c_i, c_j) · r̂ / r²
@@ -176,16 +192,13 @@ void phase_forces_main_loop(RenderBridge& rb) {
         // Three-regime force profile (matches GPU kernels_forces.cu):
         //   r < COLOR_COULOMB_RADIUS:    Coulomb (asymptotic freedom)
         //   transition:                  Flux tube stretching
-        //   r >= COLOR_TRANSITION_RADIUS: Harmonic confinement (F ∝ r, V ∝ r²)
+        //   r >= COLOR_TRANSITION_RADIUS: harmonic F∝r, or linear SIGMA_STRING
+        //                                 when toggles.confinement is on.
         double F_mag;
         if (continuous) {
           F_mag = cf * strong_radial_profile(r);
-        } else if (r < COLOR_COULOMB_RADIUS) {
-          F_mag = as * cf / r2;
-        } else if (r < COLOR_TRANSITION_RADIUS) {
-          F_mag = as * cf / (COLOR_TRANSITION_DENOM * r);
         } else {
-          F_mag = as * cf * r / COLOR_LINEAR_DENOM;
+          F_mag = color_regime_force_mag(r, as, cf, rb.toggles.confinement);
         }
 
         // ddx points from probe to source; negate for repulsive force direction
@@ -197,6 +210,53 @@ void phase_forces_main_loop(RenderBridge& rb) {
       }
     }
 
+    // Yukawa (strong_force) and exchange: same formulas as kernels_forces.cu.
+    // Independent of toggles.forces so a Yukawa-only tick does not run EM.
+    Vec3 f_yukawa;
+    if (rb.toggles.strong_force) {
+      auto ci = rb.lattice_.coord(i);
+      for (int aj : active) {
+        const int j = aj;
+        if (j == i) continue;
+        const auto& w = rb.voxels_[j];
+        if (w.state == 0) continue;
+        auto cj = rb.lattice_.coord(j);
+        const double ddx = static_cast<double>(lattice_periodic_delta(cj.x, ci.x, L));
+        const double ddy = static_cast<double>(lattice_periodic_delta(cj.y, ci.y, L));
+        const double ddz = static_cast<double>(lattice_periodic_delta(cj.z, ci.z, L));
+        const double r2 = ddx * ddx + ddy * ddy + ddz * ddz;
+        double r = std::sqrt(r2);
+        const double F_mag = yukawa_pair_force_mag(r);
+        if (r < 1.0) r = 1.0;
+        // Attractive: toward j, matching yukawa_force_kernel (+= dx * f_mag / r).
+        f_yukawa.x += F_mag * ddx / r;
+        f_yukawa.y += F_mag * ddy / r;
+        f_yukawa.z += F_mag * ddz / r;
+      }
+    }
+    Vec3 f_exchange;
+    if (rb.toggles.exchange_force && v.spin != 0) {
+      auto ci = rb.lattice_.coord(i);
+      for (int aj : active) {
+        const int j = aj;
+        if (j == i) continue;
+        const auto& w = rb.voxels_[j];
+        if (w.state == 0 || w.spin != v.spin) continue;
+        auto cj = rb.lattice_.coord(j);
+        const double ddx = static_cast<double>(lattice_periodic_delta(cj.x, ci.x, L));
+        const double ddy = static_cast<double>(lattice_periodic_delta(cj.y, ci.y, L));
+        const double ddz = static_cast<double>(lattice_periodic_delta(cj.z, ci.z, L));
+        const double r2 = ddx * ddx + ddy * ddy + ddz * ddz;
+        double r = std::sqrt(r2);
+        const double F_mag = exchange_pair_force_mag(r, r2);
+        if (r < 1.0) r = 1.0;
+        // Repulsive: away from j, matching exchange_force_kernel.
+        f_exchange.x -= F_mag * ddx / r;
+        f_exchange.y -= F_mag * ddy / r;
+        f_exchange.z -= F_mag * ddz / r;
+      }
+    }
+
     // BH-F3 (2026-05-05): canonical accel_mag is the RAW force magnitude from
     // EM + gravity + Lorentz only — Larmor radiation (the only consumer) is an
     // electromagnetic phenomenon, so colour shouldn't contribute, and we want
@@ -204,14 +264,15 @@ void phase_forces_main_loop(RenderBridge& rb) {
     // bandwidth edge). GPU phase_forces_kernel writes the same quantity on the
     // same code path, so accel_mag is bit-exact CPU↔GPU at unit mass.
     Vec3 f_em_grav_lorentz = f_em + f_grav + f_lorentz;
-    Vec3 f_total = f_em_grav_lorentz + f_color;
+    Vec3 f_strong = f_color + f_yukawa;
+    Vec3 f_total = f_em_grav_lorentz + f_strong + f_exchange;
 
     // Store for diagnostics
     rb.force_diag_[i].f_coulomb = f_em;
     rb.force_diag_[i].f_gravity = f_grav;
-    rb.force_diag_[i].f_strong = f_color;
+    rb.force_diag_[i].f_strong = f_strong;
     rb.force_diag_[i].f_magnetic = f_lorentz;
-    rb.force_diag_[i].f_exchange = {};
+    rb.force_diag_[i].f_exchange = f_exchange;
 
     // Record acceleration magnitude (EM + grav + Lorentz; colour excluded; see BH-F3)
     v.accel_mag = f_em_grav_lorentz.mag();
@@ -269,8 +330,8 @@ void phase_forces_main_loop(RenderBridge& rb) {
 // The per-voxel loop already skips locked voxels (the `if (!v.locked)` guard
 // above), so this pass is purely ADDITIVE: with cluster_inertia OFF it never
 // runs and the golden hash is byte-identical. F_cluster is reconstructed
-// EXACTLY from force_diag_ (= f_coulomb + f_gravity + f_strong + f_magnetic =
-// f_em + f_grav + f_lorentz + f_color, written for every voxel above).
+// EXACTLY from force_diag_ (= f_coulomb + f_gravity + f_strong + f_magnetic
+// + f_exchange, written for every voxel above).
 //
 // Phase 2 is the INERTIAL (velocity) response only — locked members stay frozen
 // in POSITION (phase_movement still skips them); turning V_COM into an actual
@@ -316,7 +377,8 @@ void phase_forces_integrate_clusters(RenderBridge& rb) {
       members.push_back(cur);
       ++N;
       const auto& fd = rb.force_diag_[cur];
-      F_cluster = F_cluster + fd.f_coulomb + fd.f_gravity + fd.f_strong + fd.f_magnetic;
+      F_cluster = F_cluster + fd.f_coulomb + fd.f_gravity + fd.f_strong
+                + fd.f_magnetic + fd.f_exchange;
       sum_vel   = sum_vel + cv.velocity;
       sum_lat  += cv.latency;
       for (int nb : rb.lattice_.neighbors_26(cur)) {

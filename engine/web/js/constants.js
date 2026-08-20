@@ -407,10 +407,10 @@ export const COULOMB_K_HEP   = ALPHA;
 // promoted here so any tuning change propagates to every callsite at
 // once. The 3-regime model (Coulomb / transition / harmonic confinement)
 // matches the C++ engine in render_bridge.cpp::phase_forces.
-// NOTE: the large-r regime is HARMONIC (F∝r ⇒ V∝r²), NOT QCD linear
-// confinement (F=const ⇒ V∝r). This is the Scale-0 voxel color force; the
-// Scale-1 particle engine uses a genuine linear SIGMA_STRING tension. See
-// CHECKLIST_ENGINE.md audit m4/m5 (2026-06-17).
+// NOTE: the default large-r regime is HARMONIC (F∝r ⇒ V∝r²), NOT QCD
+// linear confinement (F=const ⇒ V∝r). TermToggles.confinement switches
+// that shell to SIGMA_STRING * cf. This is the Scale-0 voxel color force;
+// the Scale-1 particle engine uses linear SIGMA_STRING by default.
 export const STRONG_ALPHA_S         = 1.0;       // base color coupling (≠ ALPHA_S_MZ; this is the lattice-unit scale)
 export const STRONG_RUN_COEFF       = 0.1;       // running-coupling log coefficient
 export const STRONG_R_COULOMB       = 3.0;       // r < this → Coulomb regime (1/r²)

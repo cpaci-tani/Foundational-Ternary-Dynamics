@@ -1,6 +1,6 @@
 # LEDGER index — categorised claim map
 
-**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (931 claim rows). **Do not edit by hand** — regenerate instead.
+**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (941 claim rows). **Do not edit by hand** — regenerate instead.
 
 This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the single source of truth for claim status; where this index and the ledger disagree, **the ledger wins**.
 
@@ -22,7 +22,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | [SM constants — mass & flavour](#sm-constants-mass-flavour) | 33 | m_e, m_p/m_e, Higgs mass, mixing angles, PMNS/CKM, Yukawa prefactors, the cluster-size-mass identification and its N(A) law. |
 | [Alpha readout programme (MC-T4.3)](#alpha-readout-programme-mc-t4-3) | 33 | The alpha-readout contract, the ARC-A/B/C campaigns, observable selection, FC-W and the carrier-narrowing theorem, engine alpha probes. |
 | [QCD, colour & electroweak](#qcd-colour-electroweak) | 15 | Confinement, colour charge and singlets, SU(3)/Z3 structure, hadrodynamics, electroweak rank, generations, no-4th-generation. |
-| [Gravity & cosmology](#gravity-cosmology) | 21 | Newton's law from the substrate, graviton/spin-2 provenance, Kerr-Newman, strong-field signatures, Lambda, dark matter. |
+| [Gravity & cosmology](#gravity-cosmology) | 31 | Newton's law from the substrate, graviton/spin-2 provenance, Kerr-Newman, strong-field signatures, Lambda, dark matter. |
 | [Engine infrastructure & RG](#engine-infrastructure-rg) | 39 | Langevin/thermostat, operator-mixing matrices, RG flow and blocking, the bridge-contract gates, Ward identities, GPU/CUDA ports and parity. |
 | [Engine emergence campaigns](#engine-emergence-campaigns) | 37 | Fermion-emergence phases, genesis/evaporation and thermal phase maps, atomic and bound-state spectra, wave sectors and dispersion. |
 | [Lorentz recovery & causal structure](#lorentz-recovery-causal-structure) | 37 | The discrete flux pole, anisotropy exponents, the common cone, CFL and causal normalisation, preferred-frame operators, anisotropic-QED RG. |
@@ -415,7 +415,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *Newton's law from the substrate, graviton/spin-2 provenance, Kerr-Newman, strong-field signatures, Lambda, dark matter.*
 
-**21 claims.**
+**31 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -440,6 +440,16 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0334` | RECONCILIATION, PARAMETRIC, OPEN, BOUNDARY, CONJECTURE, SELECTION, SMC, FOUNDATIONAL_OBSTRUCTION | Deferred-layer cosmology cleanup — propagate FTD-0331/0332 into the papers/web/intuition/index layer | L478 |
 | `FTD-0338` | RECONCILIATION, OPEN, BOUNDARY, CLOSED_NEGATIVE, DERIVED, PARAMETRIC, SELECTION, SMC, FOUNDATIONAL_OBSTRUCTION | Manuscript cosmology propagation — completes the FTD-0334 deferral | L483 |
 | `FTD-0364` | SYNTHESIS, BOUNDARY, OPEN, DERIVED, SELECTION, SMC, FOUNDATIONAL_OBSTRUCTION | Λ source-gap L-scan feasibility — the engine route to closing FTD-0331's source gap is boundary-limited; `campaign_vacuum_energy.cpp` superseded | L509 |
+| `FTD-1013` | THEOREM, SELECTION, IMPOSED | Does a degree-1 test-voxel action in external \(\mathcal{L}\) exist (and unique in a locked class) such that UFF is its EOM given FC-2, reducing to… | L1151 |
+| `FTD-1014` | CLOSED_NEGATIVE, IMPOSED | On a locked external-well fixture, extra forces off, several test-body sizes \(N\), does the live `phase_forces` gravity update reproduce Q0’s weak… | L1152 |
+| `FTD-1015` | CLOSED_NEGATIVE | Linearize spatial clock-transport \(\Omega\) with the SCOPE’s kinematic constraints and no action: is the residual little-group content exactly two… | L1153 |
+| `FTD-1016` | MEASURED, SELECTION, IMPOSED | On the FTD-1014 prescribed-well fixture, extra forces off, several test-body sizes \(N\), does a default-off production operator \(F=M_{\rm INERTIAL}… | L1154 |
+| `FTD-1017` | MEASURED | After a CPU tick that runs `latency_field` Poisson on a heavy locked source alone, does one subsequent `phase_forces` with `geometric_gravity` on a… | L1155 |
+| `FTD-1018` | MEASURED, SELECTION | On the FTD-1016 prescribed-well fixture, extra forces off, one unlocked rest voxel, does native CUDA `phase_forces` with `geometric_gravity`… | L1156 |
+| `FTD-1019` | MEASURED | After a CPU tick that runs `latency_field` Poisson on a heavy locked source alone, freeze \(\mathcal{L}\): do rest clocks at a near and far site… | L1157 |
+| `FTD-1020` | MEASURED | After a CPU tick that runs `latency_field` Poisson on a heavy locked source alone, freeze \(\mathcal{L}\), clear all matter, and launch a… | L1158 |
+| `FTD-1021` | MEASURED | After FTD-1017 Step S, if Poisson is re-solved with the light probe present, does FTD-1016 still match \(g=C^2\mathcal{L}\nabla\mathcal{L}\) of the… | L1159 |
+| `FTD-1022` | MEASURED | On the FTD-1017 sourced well, with a locked 3³ probe (COM at the FTD-1021 site), does freeze≈live return, and does FTD-1016 match the member-mean Q0… | L1160 |
 
 ---
 
@@ -1244,11 +1254,11 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 
 | Tag | Rows |
 |---|---:|
-| THEOREM | 432 |
-| CLOSED_NEGATIVE | 242 |
+| THEOREM | 433 |
+| CLOSED_NEGATIVE | 244 |
 | OPEN | 242 |
-| MEASURED | 178 |
-| SELECTION | 107 |
+| MEASURED | 185 |
+| SELECTION | 110 |
 | DERIVED | 102 |
 | SMC | 84 |
 | SYNTHESIS | 68 |
@@ -1257,8 +1267,8 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 | FOUNDATIONAL_OBSTRUCTION | 43 |
 | CORRECTION | 41 |
 | BOUNDARY | 36 |
+| IMPOSED | 33 |
 | CONJECTURE | 31 |
-| IMPOSED | 30 |
 | EXECUTION_INVALID | 30 |
 | SELECTED_DYNAMICS | 29 |
 | AXIOM | 28 |

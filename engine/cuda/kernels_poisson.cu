@@ -273,6 +273,7 @@ __global__ void compute_latency_rhs(
     double* __restrict__ rhs,
     double four_pi_G,
     bool include_field_energy,
+    const double* __restrict__ strong_t00,
     int N
 ) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -289,6 +290,7 @@ __global__ void compute_latency_rhs(
                            + wave_z[i] * wave_z[i];
         rho += ::ftd::local_field_wave_energy_density(flux2, wave2);
     }
+    if (strong_t00) rho += strong_t00[i] / (C_SPEED * C_SPEED);
     rhs[i] = four_pi_G * rho;
 }
 
@@ -492,6 +494,7 @@ void launch_solve_coulomb(GpuBuffers& bufs,
 
 void launch_solve_latency(GpuBuffers& bufs,
                           bool include_field_energy,
+                          const double* strong_t00,
                           cufftHandle plan_fwd, cufftHandle plan_inv,
                           cufftHandle plan_fwd_f, cufftHandle plan_inv_f) {
     const cudaStream_t stream = bufs.stream;
@@ -509,7 +512,7 @@ void launch_solve_latency(GpuBuffers& bufs,
         bufs.d_state,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
-        bufs.d_phi_latency, FOUR_PI_G, include_field_energy, N
+        bufs.d_phi_latency, FOUR_PI_G, include_field_energy, strong_t00, N
     );
     CUDA_CHECK(cudaGetLastError());
 

@@ -33,6 +33,7 @@
 #include <vector>
 #include <utility>
 #include <string>
+#include <string_view>
 
 #include "ftd/render_bridge.h"
 #include "ftd/scenarios.h"
@@ -113,7 +114,7 @@ int audit_interactive_gpu_contract() {
         }
     }
 
-    for (const auto* name : {"cluster_inertia", "knot_tracking", "confinement"}) {
+    for (const auto* name : {"knot_tracking"}) {
         const auto* spec = ftd::term_toggles_detail::find_spec(name);
         ftd::TermToggles staged;
         staged.disable_all();
@@ -123,15 +124,27 @@ int audit_interactive_gpu_contract() {
             std::printf("  FAIL  full-GPU interactive validator accepted %s\n", name);
             ++failures;
         }
-        // Campaign-grade CUDA retains the deliberate hybrid implementation
-        // for cluster/knot; confinement is an intent-only exception.
-        if (std::string_view(name) != "confinement") {
-            error.clear();
-            if (!staged.validate_backend(ftd::ToggleBackend::GPU, false, &error)) {
-                std::printf("  FAIL  hybrid GPU campaign validator rejected %s: %s",
-                            name, error.c_str());
-                ++failures;
-            }
+        error.clear();
+        if (!staged.validate_backend(ftd::ToggleBackend::GPU, false, &error)) {
+            std::printf("  FAIL  hybrid GPU campaign validator rejected %s: %s",
+                        name, error.c_str());
+            ++failures;
+        }
+    }
+
+    for (const auto* name : {"cluster_inertia", "confinement"}) {
+        const auto* spec = ftd::term_toggles_detail::find_spec(name);
+        ftd::TermToggles staged;
+        staged.disable_all();
+        staged.*(spec->field) = true;
+        if (std::string_view(name) == "cluster_inertia")
+            staged.color_forces = true;
+        if (std::string_view(name) == "confinement") staged.color_forces = true;
+        error.clear();
+        if (!staged.validate_backend(ftd::ToggleBackend::GPU, true, &error)) {
+            std::printf("  FAIL  full-GPU interactive validator rejected %s: %s",
+                        name, error.c_str());
+            ++failures;
         }
     }
 

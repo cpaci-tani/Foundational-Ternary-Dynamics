@@ -93,7 +93,9 @@ __global__ void phase_read_dual_kernel(
     // FTD-0271/0281 de Broglie clock (GPU port, 2026-06-20). Mirrors the CPU
     // dual branch in engine/src/render_bridge_phases/phase_read.cpp:133-140.
     bool do_db_clock, bool do_db_clock_coulomb, double omega0,
-    const double* __restrict__ phi_coulomb
+    const double* __restrict__ phi_coulomb,
+    bool period2_floquet, bool bcc_time_floquet,
+    const int* __restrict__ tick_ptr
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -117,7 +119,8 @@ __global__ void phase_read_dual_kernel(
         int yz_mp = idx3d(x,y-1,z+1,L), yz_mm = idx3d(x,y-1,z-1,L);
 
         constexpr double WF = LAPLACIAN_FACE_WEIGHT, WE = LAPLACIAN_EDGE_WEIGHT;
-        constexpr double cw2 = C_WAVE * C_WAVE;
+        const int tick = *tick_ptr;
+        const double cw2 = wave_kick_cw2(tick, period2_floquet, bcc_time_floquet);
 
         // Macro for 18-point Laplacian on a single component array
         #define LAP18(arr, idx_center) \
@@ -330,6 +333,7 @@ __global__ void phase_write_dual_kernel(
     bool do_damping, bool selective_damping, bool do_larmor, double damp,
     double dt,
     bool symplectic_leapfrog,
+    bool verlet_wave,
     int L
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
@@ -338,8 +342,15 @@ __global__ void phase_write_dual_kernel(
     if (x >= L || y >= L || z >= L) return;
     int i = x * L * L + y * L + z;  // X-major (matches CPU)
 
-    // Independent leapfrog on L
-    if (symplectic_leapfrog) {
+    // Independent leapfrog on L / R
+    if (verlet_wave) {
+        const double half_dt = 0.5 * dt;
+        wvL_x[i] += djL_x[i] * half_dt;  wvL_y[i] += djL_y[i] * half_dt;  wvL_z[i] += djL_z[i] * half_dt;
+        fL_x[i] += wvL_x[i] * dt;        fL_y[i] += wvL_y[i] * dt;        fL_z[i] += wvL_z[i] * dt;
+
+        wvR_x[i] += djR_x[i] * half_dt;  wvR_y[i] += djR_y[i] * half_dt;  wvR_z[i] += djR_z[i] * half_dt;
+        fR_x[i] += wvR_x[i] * dt;        fR_y[i] += wvR_y[i] * dt;        fR_z[i] += wvR_z[i] * dt;
+    } else if (symplectic_leapfrog) {
         wvL_x[i] += djL_x[i] * dt;  wvL_y[i] += djL_y[i] * dt;  wvL_z[i] += djL_z[i] * dt;
         fL_x[i] += wvL_x[i] * dt;   fL_y[i] += wvL_y[i] * dt;   fL_z[i] += wvL_z[i] * dt;
 
@@ -466,7 +477,8 @@ __global__ void genesis_dual_kernel(
 // ---------- Dual-Substrate Launchers ----------
 
 void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
-                            bool do_db_clock, bool do_db_clock_coulomb, double omega0) {
+                            bool do_db_clock, bool do_db_clock_coulomb, double omega0,
+                            bool period2_floquet, bool bcc_time_floquet) {
     const cudaStream_t stream = bufs.stream;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
@@ -480,14 +492,16 @@ void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupli
         bufs.d_delta_j_L_x, bufs.d_delta_j_L_y, bufs.d_delta_j_L_z,
         bufs.d_delta_j_R_x, bufs.d_delta_j_R_y, bufs.d_delta_j_R_z,
         L, do_wave, do_coupling,
-        do_db_clock, do_db_clock_coulomb, omega0, bufs.d_phi_coulomb
+        do_db_clock, do_db_clock_coulomb, omega0, bufs.d_phi_coulomb,
+        period2_floquet, bcc_time_floquet, bufs.d_tick
     );
     CUDA_CHECK(cudaGetLastError());
 }
 
 void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                               bool larmor_radiation, double damping_factor,
-                              bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
+                              bool do_genesis, bool do_evaporation, double dt,
+                              bool symplectic_leapfrog, bool verlet_wave_integrator,
                               unsigned long long rng_seed) {
     const cudaStream_t stream = bufs.stream;
     int L = bufs.L;
@@ -519,7 +533,7 @@ void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_d
         bufs.d_near_particle, bufs.d_near_accel,
         do_damping, selective_damping, larmor_radiation,
         damping_factor,
-        dt, symplectic_leapfrog,
+        dt, symplectic_leapfrog, verlet_wave_integrator,
         L
     );
     CUDA_CHECK(cudaGetLastError());

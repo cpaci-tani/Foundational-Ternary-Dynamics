@@ -70,7 +70,10 @@ __global__ void phase_read_kernel(
     bool do_db_clock,
     bool do_db_clock_coulomb,
     double omega0,
-    const double* __restrict__ phi_coulomb   // pre-solved Coulomb potential (db_clock_coulomb)
+    const double* __restrict__ phi_coulomb,   // pre-solved Coulomb potential (db_clock_coulomb)
+    bool period2_floquet,
+    bool bcc_time_floquet,
+    const int* __restrict__ tick_ptr
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -163,7 +166,8 @@ __global__ void phase_read_kernel(
                      + flux_z[c_mpp]+flux_z[c_mpm]+flux_z[c_mmp]+flux_z[c_mmm]) - flux_z[i];
         }
 
-        constexpr double cw2 = C_WAVE * C_WAVE;
+        const int tick = *tick_ptr;
+        const double cw2 = wave_kick_cw2(tick, period2_floquet, bcc_time_floquet);
         dx += cw2 * lap_x;
         dy += cw2 * lap_y;
         dz += cw2 * lap_z;
@@ -317,6 +321,7 @@ __global__ void phase_write_kernel(
     double damp,
     double dt,
     bool symplectic_leapfrog,
+    bool verlet_wave,
     // Langevin thermostat (FTD-0051).
     bool do_langevin,
     double langevin_gamma,
@@ -336,8 +341,17 @@ __global__ void phase_write_kernel(
 
     int i = x * L * L + y * L + z;  // X-major (matches CPU)
 
-    // Leapfrog: wave_vel += delta_j; flux += wave_vel
-    if (symplectic_leapfrog) {
+    // Leapfrog: default unit-step, symplectic (full dt), or Verlet KDK part 1.
+    if (verlet_wave) {
+        const double half_dt = 0.5 * dt;
+        wv_x[i] += djx[i] * half_dt;
+        wv_y[i] += djy[i] * half_dt;
+        wv_z[i] += djz[i] * half_dt;
+
+        flux_x[i] += wv_x[i] * dt;
+        flux_y[i] += wv_y[i] * dt;
+        flux_z[i] += wv_z[i] * dt;
+    } else if (symplectic_leapfrog) {
         wv_x[i] += djx[i] * dt;
         wv_y[i] += djy[i] * dt;
         wv_z[i] += djz[i] * dt;
@@ -594,7 +608,8 @@ __global__ void evaporation_kernel(
 
 void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
                         uint8_t bcc_stencil_mode,
-                        bool do_db_clock, bool do_db_clock_coulomb, double omega0) {
+                        bool do_db_clock, bool do_db_clock_coulomb, double omega0,
+                        bool period2_floquet, bool bcc_time_floquet) {
     const cudaStream_t stream = bufs.stream;
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
@@ -606,14 +621,16 @@ void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
         bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
         bufs.d_delta_j_x, bufs.d_delta_j_y, bufs.d_delta_j_z,
         L, do_wave, do_coupling, bcc_stencil_mode,
-        do_db_clock, do_db_clock_coulomb, omega0, bufs.d_phi_coulomb
+        do_db_clock, do_db_clock_coulomb, omega0, bufs.d_phi_coulomb,
+        period2_floquet, bcc_time_floquet, bufs.d_tick
     );
     CUDA_CHECK(cudaGetLastError());
 }
 
 void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                         bool larmor_radiation, double damping_factor,
-                        bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
+                        bool do_genesis, bool do_evaporation, double dt,
+                        bool symplectic_leapfrog, bool verlet_wave_integrator,
                         bool do_langevin, double langevin_gamma, double langevin_T,
                         uint8_t langevin_site_filter,
                         double kinetic_drain,
@@ -644,7 +661,7 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
         bufs.d_near_particle, bufs.d_near_accel,
         do_damping, selective_damping, larmor_radiation,
         damping_factor,
-        dt, symplectic_leapfrog,
+        dt, symplectic_leapfrog, verlet_wave_integrator,
         do_langevin, langevin_gamma, langevin_T,
         langevin_site_filter,
         L,
@@ -657,6 +674,74 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
         do_genesis, do_evaporation,
         kinetic_drain, genesis_threshold, manifest_scale,
         rng_seed);
+    CUDA_CHECK(cudaGetLastError());
+}
+
+__global__ void verlet_second_half_kick_kernel(
+    double* __restrict__ wv_x,
+    double* __restrict__ wv_y,
+    double* __restrict__ wv_z,
+    const double* __restrict__ djx,
+    const double* __restrict__ djy,
+    const double* __restrict__ djz,
+    double half_dt,
+    int L
+) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int z = blockIdx.z * blockDim.z + threadIdx.z;
+    if (x >= L || y >= L || z >= L) return;
+    int i = x * L * L + y * L + z;
+    wv_x[i] += djx[i] * half_dt;
+    wv_y[i] += djy[i] * half_dt;
+    wv_z[i] += djz[i] * half_dt;
+}
+
+__global__ void verlet_second_half_kick_dual_kernel(
+    double* __restrict__ wvL_x, double* __restrict__ wvL_y, double* __restrict__ wvL_z,
+    double* __restrict__ wvR_x, double* __restrict__ wvR_y, double* __restrict__ wvR_z,
+    const double* __restrict__ djL_x, const double* __restrict__ djL_y, const double* __restrict__ djL_z,
+    const double* __restrict__ djR_x, const double* __restrict__ djR_y, const double* __restrict__ djR_z,
+    double* __restrict__ wv_x, double* __restrict__ wv_y, double* __restrict__ wv_z,
+    double half_dt,
+    int L
+) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int z = blockIdx.z * blockDim.z + threadIdx.z;
+    if (x >= L || y >= L || z >= L) return;
+    int i = x * L * L + y * L + z;
+    wvL_x[i] += djL_x[i] * half_dt;
+    wvL_y[i] += djL_y[i] * half_dt;
+    wvL_z[i] += djL_z[i] * half_dt;
+    wvR_x[i] += djR_x[i] * half_dt;
+    wvR_y[i] += djR_y[i] * half_dt;
+    wvR_z[i] += djR_z[i] * half_dt;
+    wv_x[i] = wvL_x[i] + wvR_x[i];
+    wv_y[i] = wvL_y[i] + wvR_y[i];
+    wv_z[i] = wvL_z[i] + wvR_z[i];
+}
+
+void launch_verlet_second_half_kick(GpuBuffers& bufs, double dt, bool dual) {
+    const cudaStream_t stream = bufs.stream;
+    const int L = bufs.L;
+    const double half_dt = 0.5 * dt;
+    dim3 block(4, 8, 8);
+    dim3 grid((L + 3) / 4, (L + 7) / 8, (L + 7) / 8);
+    if (dual) {
+        verlet_second_half_kick_dual_kernel<<<grid, block, 0, stream>>>(
+            bufs.d_wave_vel_L_x, bufs.d_wave_vel_L_y, bufs.d_wave_vel_L_z,
+            bufs.d_wave_vel_R_x, bufs.d_wave_vel_R_y, bufs.d_wave_vel_R_z,
+            bufs.d_delta_j_L_x, bufs.d_delta_j_L_y, bufs.d_delta_j_L_z,
+            bufs.d_delta_j_R_x, bufs.d_delta_j_R_y, bufs.d_delta_j_R_z,
+            bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
+            half_dt, L);
+    } else {
+        verlet_second_half_kick_kernel<<<grid, block, 0, stream>>>(
+            bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
+            bufs.d_delta_j_x, bufs.d_delta_j_y, bufs.d_delta_j_z,
+            half_dt, L);
+    }
     CUDA_CHECK(cudaGetLastError());
 }
 
