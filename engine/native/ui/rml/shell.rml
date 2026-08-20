@@ -34,23 +34,23 @@
         <div id="physics" class="panel">
             <div class="panel-title">Physics terms</div>
             <div class="toggles">
-                <div class="tog on"><span class="led"></span>wave_propagation</div>
-                <div class="tog on"><span class="led"></span>coupling</div>
-                <div class="tog on"><span class="led"></span>damping</div>
-                <div class="tog on"><span class="led"></span>genesis</div>
-                <div class="tog on"><span class="led"></span>gauss_projection</div>
-                <div class="tog on"><span class="led"></span>forces</div>
-                <div class="tog on"><span class="led"></span>movement</div>
-                <div class="tog on"><span class="led"></span>poisson_coulomb</div>
-                <div class="tog on"><span class="led"></span>selective_damping</div>
-                <div class="tog"><span class="led"></span>gravity</div>
-                <div class="tog"><span class="led"></span>lorentz_force</div>
-                <div class="tog"><span class="led"></span>dual_substrate</div>
-                <div class="tog"><span class="led"></span>color_forces</div>
-                <div class="tog"><span class="led"></span>strong_force</div>
-                <div class="tog"><span class="led"></span>weak_transmutation</div>
-                <div class="tog"><span class="led"></span>confinement</div>
-                <div class="tog"><span class="led"></span>de_broglie_clock</div>
+                <div class="tog on"><span class="led"></span><span class="lbl">wave_propagation</span></div>
+                <div class="tog on"><span class="led"></span><span class="lbl">coupling</span></div>
+                <div class="tog on"><span class="led"></span><span class="lbl">damping</span></div>
+                <div class="tog on"><span class="led"></span><span class="lbl">genesis</span></div>
+                <div class="tog on"><span class="led"></span><span class="lbl">gauss_projection</span></div>
+                <div class="tog on"><span class="led"></span><span class="lbl">forces</span></div>
+                <div class="tog on"><span class="led"></span><span class="lbl">movement</span></div>
+                <div class="tog on"><span class="led"></span><span class="lbl">poisson_coulomb</span></div>
+                <div class="tog on"><span class="led"></span><span class="lbl">selective_damping</span></div>
+                <div class="tog"><span class="led"></span><span class="lbl">gravity</span></div>
+                <div class="tog"><span class="led"></span><span class="lbl">lorentz_force</span></div>
+                <div class="tog"><span class="led"></span><span class="lbl">dual_substrate</span></div>
+                <div class="tog"><span class="led"></span><span class="lbl">color_forces</span></div>
+                <div class="tog"><span class="led"></span><span class="lbl">strong_force</span></div>
+                <div class="tog"><span class="led"></span><span class="lbl">weak_transmutation</span></div>
+                <div class="tog"><span class="led"></span><span class="lbl">confinement</span></div>
+                <div class="tog"><span class="led"></span><span class="lbl">de_broglie_clock</span></div>
             </div>
         </div>
     </div>
