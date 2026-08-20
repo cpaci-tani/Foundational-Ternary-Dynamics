@@ -433,10 +433,14 @@ int main() {
               && ftd::gpu::g_gpu_full_voxel_download_bytes == 0);
         const auto center_after = latency_gpu.inspect_voxel(c, c, c);
         check("latency tick accumulates tau on device", center_after.voxel.tau > 0.0);
+        // Compact budget = the interactive tick's energy-ledger source (one
+        // 24-double energy_audit reduction, sourcing energy_ledger().E_curr on
+        // the deferred-mirror path) + the 23-double inspect_voxel readback. No
+        // full mirror on either — that guard (== 0) is what matters here.
         check("latency inspection remains compact",
               ftd::gpu::g_gpu_full_voxel_download_calls == 0
               && ftd::gpu::g_gpu_compact_diagnostic_download_bytes
-                   == static_cast<std::size_t>(23) * sizeof(double));
+                   == static_cast<std::size_t>(24 + 23) * sizeof(double));
     }
 
     // The de-Broglie clock's tau/phase pair must remain device-resident too.
@@ -464,10 +468,13 @@ int main() {
               1.0, 1e-13, 1e-13);
         close("de-Broglie phase advances on device", center_after.voxel.phase,
               0.41, 1e-13, 1e-13);
+        // Compact budget = the interactive tick's energy-ledger source (one
+        // 24-double energy_audit reduction) + the 23-double inspect_voxel
+        // readback. Still zero full mirrors — the load-bearing guard.
         check("de-Broglie inspection remains compact",
               ftd::gpu::g_gpu_full_voxel_download_calls == 0
               && ftd::gpu::g_gpu_compact_diagnostic_download_bytes
-                   == static_cast<std::size_t>(23) * sizeof(double));
+                   == static_cast<std::size_t>(24 + 23) * sizeof(double));
     }
 
     // Host-only per-tick extensions are rejected explicitly once an

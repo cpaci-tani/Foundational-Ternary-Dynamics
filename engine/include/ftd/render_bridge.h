@@ -91,6 +91,7 @@ class RenderBridge {
     friend void pair_production_cpu(RenderBridge&);
     friend void triad_binding_cpu(RenderBridge&);
     friend void update_energy_ledger_cpu(RenderBridge&);
+    friend void commit_energy_ledger(RenderBridge&, double);
     // Phase 4a (2026-04-27): phase_write decomposition. See
     // engine/src/render_bridge_phases/phase_write.cpp.
     friend void compute_near_particle_mask(RenderBridge&);
@@ -454,6 +455,10 @@ public:
     void bind_sim_thread();
     void assert_sim_thread() const;
     void update_energy_ledger();
+    // Interactive-GPU energy ledger: sources E_total from the compact device
+    // audit reduction rather than the deferred host AoS shadow. tick() calls
+    // this on the interactive GPU path so energy_ledger().E_curr stays live.
+    void update_energy_ledger_from_audit();
 
     // Native EFT continuity ledger for the most recent GPU tick.
     // Contains rho_before, rho_after, oriented face currents, and local

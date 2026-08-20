@@ -878,9 +878,15 @@ void RenderBridge::tick() {
     // Do not materialize and re-upload the full lattice here.
 #ifdef FTD_ENABLE_CUDA
     if (interactive_gpu_mode_ && gpu_dirty_) {
-      // The interactive server does not expose EnergyLedger directly. Defer
-      // this host-only bookkeeping with the AoS mirror; explicit diagnostics
-      // and audits still synchronize through their normal accessors.
+      // The host AoS shadow (voxels_) is deliberately stale on the interactive
+      // GPU path — the 469 B/site device->host mirror is deferred every tick.
+      // Summing that stale shadow via update_energy_ledger_cpu would report
+      // E_curr = 0, which is exactly what the native app's energy readout and
+      // telemetry chart showed. Instead source the ledger from the compact
+      // device-side energy_audit() reduction (a few scalars D2H, NOT the full
+      // field transfer). CPU and non-interactive GPU keep the host-shadow
+      // formula below (byte-identical to prior behavior).
+      update_energy_ledger_from_audit();
       return;
     }
 #endif
@@ -1139,6 +1145,9 @@ void RenderBridge::triad_binding_cpu()      { ::ftd::triad_binding_cpu(*this);  
 
 // Energy-ledger body extracted to energy_ledger_compute.cpp (R3, 2026-04-18).
 void RenderBridge::update_energy_ledger() { ::ftd::update_energy_ledger_cpu(*this); }
+void RenderBridge::update_energy_ledger_from_audit() {
+  ::ftd::update_energy_ledger_from_audit(*this);
+}
 
 eft::DualCellContinuity RenderBridge::continuity_step() const {
   assert_sim_thread();
