@@ -50,12 +50,23 @@
                     </div>
                 </div>
 
-                <!-- Field overlay selector: draws the chosen lattice field in the
-                     3D scene (vectors as arrows, scalars as coloured points). -->
-                <div class="panel-title fields-title">Fields</div>
-                <div class="fields">
-                    <div class="fopt" data-for="f : fields" data-class-sel="f.name == active_field" data-event-click="set_field(f.name)">
-                        {{f.label}}
+                <!-- Field overlays: the web's 7-column, multi-select menu.
+                     Each column is a collapsible group (click the header); each
+                     row lights an LED when its overlay is in the active,
+                     composited set. Built from the shared overlay registry, so
+                     later tranches add rows without touching this markup. -->
+                <div class="panel-title fields-title">Field overlays</div>
+                <div class="overlay-cols">
+                    <div class="ov-col" data-for="col : overlay_columns">
+                        <div class="ov-col-head" data-event-click="toggle_overlay_col(col.title)">
+                            <span class="ov-caret">{{ col.expanded ? '&#9662;' : '&#9656;' }}</span>
+                            <span class="ov-col-title">{{col.title}}</span>
+                        </div>
+                        <div class="ov-list" data-if="col.expanded">
+                            <div class="ov" data-for="o : col.items" data-class-on="o.on" data-event-click="set_overlay(o.name)">
+                                <span class="led"></span><span class="lbl">{{o.label}}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -37,7 +37,7 @@ using Scale0Cmd = std::variant<
     SetToggle, SetToggleProfile, SetDouble, SetEnum, SetUInt, SetBoolConfig,
     SetBoundary, SetDt, SetSorIterations, ResetToDefaults,
     InjectWavepacket, InjectFluxAdd, CreateEntangledPair, ClearField, SeedRandomFlux,
-    InspectVoxel, InspectForce, RequestField, SetFieldOverlay, RequestContinuity,
+    InspectVoxel, InspectForce, RequestField, SetOverlay, RequestContinuity,
     RequestChargeSum>;
 
 // ── Scale 1 (ParticleEngine) payload ─────────────────────────────────────────

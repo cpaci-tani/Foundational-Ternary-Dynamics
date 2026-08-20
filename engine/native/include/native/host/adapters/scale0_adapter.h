@@ -16,6 +16,7 @@
 #include "native/host/scale_adapter.h"
 #include "native/model/snapshot.h"        // Scale0Snapshot
 #include "native/parameter_journal.h"
+#include "native/scale0_overlays.h"        // OverlayId + the overlay registry
 #include "native/ui_snapshot_builder.h"
 
 #include "ftd/native_telemetry_scheduler.h"  // value member (pulls render_bridge.h)
@@ -24,6 +25,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace ftd {
 class RenderBridge;
@@ -90,11 +92,20 @@ private:
     bool                          interop_enabled_ = false;
     std::uint32_t                 last_total_manifested_ = 0;
 
-    // Active field overlay (SetFieldOverlay). Default OFF → capture() emits the
-    // ambient flux cloud (unchanged base view). When enabled, capture() samples
-    // `overlay_kind_` and emits vector-field line segments or scalar-field points.
-    bool                          overlay_enabled_ = false;
-    ftd::VisualFieldKind          overlay_kind_ = ftd::VisualFieldKind::FluxVector;
+    // Active overlay SET (SetOverlay toggles membership). Empty → capture()
+    // emits the ambient flux cloud (unchanged base view). Otherwise capture()
+    // composites EVERY active overlay into the frame (multiple arrow/point
+    // groups coexist). Kept as a small ordered vector: membership is O(active),
+    // dedup on insert, and the append order is deterministic. Mirrors the web
+    // `anyFieldActive` gate on the ambient cloud.
+    std::vector<OverlayId>        active_overlays_;
+
+    void set_overlay(OverlayId id, bool on);
+    bool overlay_active(OverlayId id) const;
+    // Latency overlays (Latency L, Horizon) sample the real Poisson latency
+    // (kind 17) instead of the normalized-|J|² proxy (kind 8) in native
+    // mass-gravity scenarios, mirroring the web scale0FieldKindOverrides.
+    ftd::VisualFieldKind resolve_overlay_kind(const OverlayDescriptor& d) const;
 };
 
 }  // namespace ftd::native
