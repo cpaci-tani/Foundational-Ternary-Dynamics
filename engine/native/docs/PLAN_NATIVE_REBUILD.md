@@ -1,6 +1,6 @@
 # PLAN — Native Desktop Rebuild
 
-**Status:** `[PLAN — DRAFT for owner review]` · **Created:** 2026-08-20 · **Scope:** a clean-slate native Windows application (in-process C++/CUDA physics, D3D12 rendering, Dear ImGui UI) architected for all seven FTD scales from day one, reusing the C++ physics engine and deliberately salvaging the proven pieces of the current `native_desktop` shell.
+**Status:** `[PLAN — DRAFT for owner review]` · **Created:** 2026-08-20 · **Scope:** a clean-slate native Windows application (in-process C++/CUDA physics, D3D12 rendering, custom Direct2D/DirectWrite UI) architected for all seven FTD scales from day one, reusing the C++ physics engine and deliberately salvaging the proven pieces of the current `native_desktop` shell.
 
 **Supersedes** the incremental approach of [`PLAN_ENGINE_PORT.md`](PLAN_ENGINE_PORT.md) (which extended the Scale-0 shell in place). The audit in that document's Part 1 still stands and is the evidence base for the salvage manifest below.
 
@@ -20,12 +20,13 @@ Settled with the owner on 2026-08-20. Do not relitigate; raise a new decision in
 | **M4** | **Priorities, in order: (1) all scales from day one, (2) maximum performance, (3) clean, maintainable architecture.** | The scale-generic core is validated against ≥2 structurally-different scales before it is trusted (§5 R1). Performance drives the render and interop design (§4.4). |
 | **M5** | **Build in a NEW directory as a genuine clean slate** (decision C, 2026-08-20). Copy in only the proven pieces (§2.1); leave the current `native_desktop` untouched as the salvage source so nothing stale bleeds into the rebuild. | R0 is a clean-tree carve, not an in-place refactor. New tree proposed at `engine/native/` (§5 R0 / the R0-R1 spec). |
 | **M6** | **The full visual surface is in scope** (decision D, 2026-08-20): every scale renderer, **all field/phenomena overlays** (including the pedagogical JS-proxy overlays, ported with honest legends), and **all backgrounds**. **Only the Knowledge base / FAQ content system is deferred.** | Parity is broad, not a triage. The renderer (§4.4) is the long pole and its scope now includes the 5 background shader passes and the full overlay set; KB/FAQ is the one explicit v1 cut. |
+| **M7** | **The UI is a custom Direct3D 12 + Direct2D/DirectWrite layer — NO Dear ImGui** (decision 2026-08-20). Drawn in the engine's own D3D12 device: one command list, no compositing boundary with the CUDA-interop 3D scene. | The salvaged ImGui shell / panels / theme / palette are **not** reused — they are rebuilt on the custom UI (§2 revised); the docking and widget set are ours to build (what ImGui gave for free). The presenter's opaque `OverlayRecorder` seam stays; its ImGui implementation is replaced by a D2D/D3D12 one. Adds a **UI-framework workstream** (§5). `SPEC_UI_V2` drops to a *requirements* reference (which panels, what IA), no longer the implementation spec. Dear ImGui / ImPlot are removed from `engine/native`; the vendored copies stay only for `native_desktop` until it is retired. |
 
 ---
 
 ## 1. What the rebuild is, in one paragraph
 
-One native Windows application that holds a **`ScaleEngine`** at a time behind a uniform **scale adapter**, ticks it on native CUDA, captures a **scale-generic draw list** the D3D12 renderer consumes through a small fixed set of pipelines, drives it through a **scale-generic command/snapshot spine** salvaged from the current shell, and instruments it with **one panel model** on the salvaged ImGui dockspace. The physics engine (`ftd_core`) and the derisked native primitives (the D3D12 presenter + CUDA↔D3D12 interop, the transport, the shell, the test/lint harness) are reused; the Scale-0-shaped session, command vocabulary, snapshot, panels, and render-data model are redesigned to be scale-generic from the first line.
+One native Windows application that holds a **`ScaleEngine`** at a time behind a uniform **scale adapter**, ticks it on native CUDA, captures a **scale-generic draw list** the D3D12 renderer consumes through a small fixed set of pipelines, drives it through a **scale-generic command/snapshot spine**, and instruments it with **one panel model** in a **custom Direct3D 12 + Direct2D/DirectWrite UI** (no Dear ImGui — M7). The physics engine (`ftd_core`) and the derisked native primitives (the D3D12 presenter + CUDA↔D3D12 interop, the transport, the session, the test/lint harness) are reused; the UI shell, panels, theme, and palette are built fresh on the custom D3D12/D2D layer, and the Scale-0-shaped session, command vocabulary, snapshot, and render-data model are redesigned to be scale-generic from the first line.
 
 ---
 
@@ -35,9 +36,9 @@ One native Windows application that holds a **`ScaleEngine`** at a time behind a
 
 - **The D3D12 presenter and its interop path** — `src/d3d12_presenter.cpp` (1,250 L): CUDA↔D3D12 shared buffer + fence interop, the ImGui-free overlay-record and capture seams, SRV heap management, the frame-in-flight fencing. Generalize only its *input* (see §4.4); the machinery stays.
 - **The transport primitives** — `CommandQueue` (FIFO + coalesce), `SnapshotPublisher` (mutex `shared_ptr<const>` publication), `ParameterJournal` (append/export/replay). Scale-agnostic already; keep the mechanism, redesign the payloads they carry.
-- **The ImGui shell** — dockspace + viewport-central-node + docks, menu/status bar, `Theme`/`apply_theme` + 4 built-ins, `Workspace` persistence + DockBuilder recipe + migration/corrupt-recovery, `PanelRegistry`/`Panel`/`DockSlot`/`PanelContext`, the command palette. None carries Scale-0 assumptions.
-- **The vendoring** — ImGui 1.92.9b-docking + ImPlot + embedded Inter font + `ftd_imconfig.h` assert dispatch + the hash-manifest lint.
-- **DPI** — per-monitor-V2 awareness + `WM_DPICHANGED` + font-atlas rebuild.
+- **The presenter's `OverlayRecorder` seam** — the opaque, ImGui-free hook the UI draws through (`SPEC_UI_V2` §3.5). The seam stays; its ImGui implementation is dropped and replaced by a Direct2D/DirectWrite recorder (M7).
+- **DPI** — per-monitor-V2 awareness + `WM_DPICHANGED` (the ImGui font-atlas rebuild is replaced by DirectWrite font handling).
+- ⚠ **NOT kept (M7):** the ImGui shell / dockspace / theme / workspace / command palette, and the vendored ImGui + ImPlot. These were the whole reason the audit rated the "shell" reusable; with ImGui out, the shell is a rebuild (§2.2). The `PanelRegistry`/`Panel`/`DockSlot`/`PanelContext` *concepts* carry over as a native design, not as ImGui code.
 - **The test/lint harness** — the four source lints (UI-model include allowlist, boundary, panels, theme-token), `ui_test_inventory` floor, the golden/merge gate, the neutrality-gate *pattern* (N1–N6), and the L0/L1/L2 test tiers. This is the quality machine; it carries over and expands.
 - **The threading model** — sim thread owns the engine(s) exclusively; GUI thread only reads the published snapshot and calls the presenter. This is correct and stays (§4.5).
 
@@ -47,7 +48,7 @@ One native Windows application that holds a **`ScaleEngine`** at a time behind a
 - **`UiCommand` / `UiSnapshot`** (Scale-0 vocabulary + embedded `TermToggles`/`EnergyLedger`/`VoxelInspection`) → a scale-common core + scale-namespaced payloads (§4.2).
 - **`command_applier` / `ui_snapshot_builder`** → adapter-dispatched.
 - **`NativeFrame`** (`{x,y,z,r,g,b,size}` colored points only) → a scale-generic **`DrawList`** of typed primitives (§4.3).
-- **The panels** — all rebuilt on the one panel model, keyed to scales (§4.6).
+- **The entire UI layer** (M7) — the shell (dockspace / menu / status bar), theme, workspace persistence, command palette, and all panels — rebuilt on the **custom D3D12 + Direct2D/DirectWrite** framework (§4.6). We build the docking + widget set ourselves; the IA and panel catalogue come from `SPEC_UI_V2` as requirements, not as ImGui code.
 
 ### 2.3 Add (new `ftd_core` code, WASM-safe per M3)
 
@@ -67,7 +68,7 @@ The live **W9 defect** (`boot()` conflates the two `dispatch_scenario()==false` 
 
 ```
 ┌─ Layer 4 · UI ─────────────────────────────────────────────────────────┐
-│ ImGui dockspace (salvaged) · one Panel model · panels keyed by scale     │
+│ custom D3D12 + Direct2D/DirectWrite UI · one Panel model · per-scale panels│
 │ command palette · theme · workspaces · status/menu                       │
 └───────────▲ reads UiSnapshot ─────────────── pushes ScaleCommand ▼───────┘
 ┌─ Layer 3 · Render ─────────────────────────────────────────────────────┐
@@ -154,7 +155,7 @@ Priority M4(2) drives this. The web/Three.js fills vertex buffers on the CPU eve
 
 ### 4.5 Threading and the accuracy contract (carried over)
 
-Unchanged from the audited-good model: the **sim thread** owns the engine and runs `tick → drain commands at the boundary → fixed-point flush → observe → build snapshot → publish`; the **GUI thread** only `acquire()`s the immutable snapshot and drives ImGui + the presenter. The golden gate, the tick-boundary command application (C3), the RNG-stream discipline (C4), and the demand-gating safety (§2.2 of SPEC_UI_V2) are contracts on Layer 1–2 and hold by construction. Every scale adapter runs under the same rule.
+Unchanged from the audited-good model: the **sim thread** owns the engine and runs `tick → drain commands at the boundary → fixed-point flush → observe → build snapshot → publish`; the **GUI thread** only `acquire()`s the immutable snapshot and drives the custom D3D12/D2D UI + the presenter. The golden gate, the tick-boundary command application (C3), the RNG-stream discipline (C4), and the demand-gating safety (§2.2 of SPEC_UI_V2) are contracts on Layer 1–2 and hold by construction. Every scale adapter runs under the same rule.
 
 ### 4.6 One panel model, scale-keyed
 
@@ -173,7 +174,7 @@ Stand up the **new clean directory** (M5, proposed `engine/native/`) and **copy 
 Design and build Layer 1–2: `ScaleHost`, `ScaleAdapter`, the scale-common command/snapshot core, and the `DrawList` seam + the minimal renderer core (point + line pipelines). **Validate the abstraction against two structurally-different scales at a minimal level** — Scale 0 (voxel field, `RenderBridge`) *and* Scale 1 (particle N-body, `ParticleEngine`) — each: tick, capture→draw, run config + one readout panel, scale switch between them. This is the M4(1) discipline: if the seam is Scale-0-shaped, Scale 1 exposes it here, cheaply. **Exit:** two scales hosted on the new spine; scale switch works; Scale-0 golden green; no scale-specific type in `ScaleHost`.
 
 ### R2 — The instrument layer `[L]`
-Build the one panel model and the full scientific surface, first on Scale 0 (the 44-toggle table + 10 config fields, the 18 field kinds with honest legends + the P1/P5 renderer clauses, the five ImPlot chart panels on `History`, voxel-pick Inspector), generalizing each widget as the second scale needs it. GPU-native field rendering (§4.4) lands here. **Exit:** Scale 0 at SPEC_UI_V2 scientific parity, on the scale-generic model; `ui_toggle_widget_state_oracle` + the P-clause tests green.
+Build the one panel model and the full scientific surface, first on Scale 0 (the 44-toggle table + 10 config fields, the 18 field kinds with honest legends + the P1/P5 renderer clauses, the five chart panels on `History` (drawn with Direct2D), voxel-pick Inspector), generalizing each widget as the second scale needs it. GPU-native field rendering (§4.4) lands here. **Exit:** Scale 0 at SPEC_UI_V2 scientific parity, on the scale-generic model; `ui_toggle_widget_state_oracle` + the P-clause tests green.
 
 ### R3 — Scale build-out `[XL]`
 One adapter + renderer module + panel set per remaining scale, each following the R1 design:
