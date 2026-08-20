@@ -1,0 +1,30 @@
+upstream: https://github.com/mikke89/RmlUi
+tag:      6.2
+commit:   2230d1a6e8e0848ed87a5761e2a5160b2a175ba4
+version:  RmlUi 6.2
+licence:  MIT (full text in LICENSE.txt)
+
+Vendored for the clean-slate native UI (engine/native): RML/RCSS (a CSS-like UI)
+rendered later through our own D3D12 RenderInterface. Built as the static library
+`native_rmlui` by a hand-authored target in engine/native/CMakeLists.txt.
+
+Only the renderer-agnostic Core is vendored (Include/ + Source/Core/, incl. the
+default FreeType font engine under Source/Core/FontEngineDefault/). Excluded:
+Backends/ (we write our own D3D12 backend), Samples/, Tests/, Utilities/,
+Dependencies/, and the Lua / Lottie / SVG / Debugger plugins (sources and their
+public headers).
+
+Required build config (see VENDOR.md):
+  RMLUI_STATIC_LIB           (PUBLIC)  — empties RMLUICORE_API (no dllexport/import)
+  RMLUI_FONT_ENGINE_FREETYPE (PRIVATE) — compile + wire the default FreeType font engine
+  RMLUI_VERSION="6.2"        (PRIVATE) — else Core reports version "custom"
+  C++17 (upstream minimum is C++14; the engine is C++17)
+
+Do not edit files in this tree. Hashes: MANIFEST.sha256 (enforced by
+engine/cmake/FtdSourceLint.cmake).
+
+Upgrade:
+  git clone --depth 1 --branch <VER> https://github.com/mikke89/RmlUi.git
+  Copy Include/ (minus RmlUi/{Debugger,Lua,Lottie,SVG}) and Source/Core/ (minus
+  its CMakeLists.txt files) and LICENSE.txt. Normalise EOLs to LF.
+  Rebuild MANIFEST.sha256.

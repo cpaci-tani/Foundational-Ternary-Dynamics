@@ -1,0 +1,8 @@
+# Vendored third-party source (see VENDOR.md). Every file in this tree is text
+# and is pinned to LF so the committed bytes match MANIFEST.sha256 on every
+# platform and every checkout. The repo-root .gitattributes does not pin .inl
+# files (RmlUi ships many, e.g. Colour.inl / Element.inl), which would otherwise
+# pick up CRLF under core.autocrlf=true and break the hash manifest
+# (FtdSourceLint.cmake hashes the on-disk bytes). There are no binary files in
+# this subset.
+* text eol=lf

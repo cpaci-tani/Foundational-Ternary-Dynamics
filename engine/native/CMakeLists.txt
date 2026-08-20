@@ -42,6 +42,99 @@ if(WIN32)
             "native D3D12/CUDA interop is Win64-only (got pointer size ${CMAKE_SIZEOF_VOID_P})")
     endif()
 
+    # ── Vendored UI toolkit: FreeType + RmlUi (RML/RCSS) ──────────────────────
+    # Hand-authored static libs over engine/thirdparty/{freetype,rmlui}, mirroring
+    # the vendored-ftd_imgui pattern in native_desktop/CMakeLists.txt. Distinct
+    # native_* names let this tree coexist with native_desktop. No RmlUi backend
+    # is built here — the UI is rendered later through our own D3D12
+    # Rml::RenderInterface, so RmlUi Core (renderer-agnostic) is all we need.
+    # See engine/thirdparty/{freetype,rmlui}/VENDOR.md.
+
+    # native_freetype — FreeType 2.13.3 with ALL external deps OFF. The shipped
+    # ftoption.h leaves SYSTEM_ZLIB / USE_BZIP2 / USE_PNG / USE_HARFBUZZ /
+    # USE_BROTLI commented out, so this build has zero transitive dependencies
+    # (gzip uses FreeType's bundled zlib in src/gzip/). Sources are FreeType's
+    # canonical BASE_SRCS amalgamation + the Win32 system/debug backends. The
+    # amalgamation .c files #include sibling module sources, so the whole
+    # vendored src/ tree must be present even though only these are named.
+    #
+    # The engine project() declares only CXX/CUDA; FreeType is C, so enable it
+    # here (idempotent, MSVC cl serves both C and CXX).
+    enable_language(C)
+    set(FT_DIR "${CMAKE_SOURCE_DIR}/thirdparty/freetype")
+    add_library(native_freetype STATIC
+        ${FT_DIR}/src/autofit/autofit.c
+        ${FT_DIR}/src/base/ftbase.c
+        ${FT_DIR}/src/base/ftbbox.c
+        ${FT_DIR}/src/base/ftbdf.c
+        ${FT_DIR}/src/base/ftbitmap.c
+        ${FT_DIR}/src/base/ftcid.c
+        ${FT_DIR}/src/base/ftfstype.c
+        ${FT_DIR}/src/base/ftgasp.c
+        ${FT_DIR}/src/base/ftglyph.c
+        ${FT_DIR}/src/base/ftgxval.c
+        ${FT_DIR}/src/base/ftinit.c
+        ${FT_DIR}/src/base/ftmm.c
+        ${FT_DIR}/src/base/ftotval.c
+        ${FT_DIR}/src/base/ftpatent.c
+        ${FT_DIR}/src/base/ftpfr.c
+        ${FT_DIR}/src/base/ftstroke.c
+        ${FT_DIR}/src/base/ftsynth.c
+        ${FT_DIR}/src/base/fttype1.c
+        ${FT_DIR}/src/base/ftwinfnt.c
+        ${FT_DIR}/src/bdf/bdf.c
+        ${FT_DIR}/src/bzip2/ftbzip2.c
+        ${FT_DIR}/src/cache/ftcache.c
+        ${FT_DIR}/src/cff/cff.c
+        ${FT_DIR}/src/cid/type1cid.c
+        ${FT_DIR}/src/gzip/ftgzip.c
+        ${FT_DIR}/src/lzw/ftlzw.c
+        ${FT_DIR}/src/pcf/pcf.c
+        ${FT_DIR}/src/pfr/pfr.c
+        ${FT_DIR}/src/psaux/psaux.c
+        ${FT_DIR}/src/pshinter/pshinter.c
+        ${FT_DIR}/src/psnames/psnames.c
+        ${FT_DIR}/src/raster/raster.c
+        ${FT_DIR}/src/sdf/sdf.c
+        ${FT_DIR}/src/sfnt/sfnt.c
+        ${FT_DIR}/src/smooth/smooth.c
+        ${FT_DIR}/src/svg/svg.c
+        ${FT_DIR}/src/truetype/truetype.c
+        ${FT_DIR}/src/type1/type1.c
+        ${FT_DIR}/src/type42/type42.c
+        ${FT_DIR}/src/winfonts/winfnt.c
+        ${FT_DIR}/builds/windows/ftsystem.c
+        ${FT_DIR}/builds/windows/ftdebug.c
+    )
+    target_include_directories(native_freetype PUBLIC ${FT_DIR}/include)
+    target_compile_definitions(native_freetype PRIVATE FT2_BUILD_LIBRARY)
+    if(MSVC)
+        target_compile_definitions(native_freetype PRIVATE _CRT_SECURE_NO_WARNINGS)
+        target_compile_options(native_freetype PRIVATE /W3)
+    endif()
+
+    # native_rmlui — RmlUi 6.2 Core (renderer-agnostic). Default FreeType font
+    # engine on; static-lib export macro on; no backend / plugins / PCH.
+    set(RMLUI_DIR "${CMAKE_SOURCE_DIR}/thirdparty/rmlui")
+    file(GLOB RMLUI_CORE_SRCS CONFIGURE_DEPENDS
+        ${RMLUI_DIR}/Source/Core/*.cpp
+        ${RMLUI_DIR}/Source/Core/Elements/*.cpp
+        ${RMLUI_DIR}/Source/Core/Layout/*.cpp
+        ${RMLUI_DIR}/Source/Core/FontEngineDefault/*.cpp
+    )
+    add_library(native_rmlui STATIC ${RMLUI_CORE_SRCS})
+    target_include_directories(native_rmlui PUBLIC ${RMLUI_DIR}/Include)
+    target_compile_definitions(native_rmlui
+        PUBLIC  RMLUI_STATIC_LIB
+        PRIVATE RMLUI_FONT_ENGINE_FREETYPE RMLUI_VERSION="6.2"
+    )
+    target_compile_features(native_rmlui PUBLIC cxx_std_17)
+    target_link_libraries(native_rmlui PRIVATE native_freetype)
+    if(MSVC)
+        target_compile_definitions(native_rmlui PRIVATE _CRT_SECURE_NO_WARNINGS)
+        target_compile_options(native_rmlui PRIVATE /W3)
+    endif()
+
     # ── native_windowing: DPI ──
     add_library(native_windowing STATIC src/dpi_support.cpp)
     target_include_directories(native_windowing PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
