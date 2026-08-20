@@ -94,6 +94,111 @@ void append_flux(RenderBridge& rb, NativeFrame& frame) {
     }
 }
 
+// Cool→hot magnitude ramp (blue → green → red) for the field overlays.
+void ramp_cool_hot(float t, float& r, float& g, float& b) {
+    t = std::clamp(t, 0.0f, 1.0f);
+    r = std::clamp(1.5f * t - 0.2f, 0.0f, 1.0f);
+    g = std::clamp(1.0f - std::abs(2.0f * t - 1.0f) * 0.9f, 0.0f, 1.0f);
+    b = std::clamp(1.2f - 1.8f * t, 0.0f, 1.0f);
+}
+
+// Sign-aware diverging ramp for scalar fields: v<0 → cool (blue), v≥0 → warm
+// (red); |t| in [0,1] sets intensity. Reads well for signed scalars (divergence,
+// Gauss residual, helicity) and degrades gracefully for strictly-positive ones.
+void ramp_diverging(float v, float t, float& r, float& g, float& b) {
+    t = std::clamp(t, 0.0f, 1.0f);
+    if (v >= 0.0f) {
+        r = 0.35f + 0.65f * t;
+        g = 0.35f - 0.15f * t;
+        b = 0.30f - 0.25f * t;
+    } else {
+        r = 0.30f - 0.25f * t;
+        g = 0.45f + 0.20f * t;
+        b = 0.55f + 0.45f * t;
+    }
+    r = std::clamp(r, 0.0f, 1.0f);
+    g = std::clamp(g, 0.0f, 1.0f);
+    b = std::clamp(b, 0.0f, 1.0f);
+}
+
+// Vector field overlay → line segments (pos → pos + dir*scale) with magnitude
+// colouring, autoscaled so the longest vector spans ~0.9 of a sample cell. The
+// same bounded stride append_flux uses keeps the segment count modest.
+void append_field_vectors(RenderBridge& rb, NativeFrame& frame, VisualFieldKind kind) {
+    const int L = rb.lattice().size();
+    const int stride = std::max(1, (L + 31) / 32);
+    VisualFieldSample sample;
+    rb.copy_visual_field_sample(kind, stride, sample);
+    if (sample.components != 3u || sample.count() == 0) return;
+
+    const std::size_t n = sample.count();
+    std::vector<float> mag(n, 0.0f);
+    float max_mag = 1.0e-6f;
+    for (std::size_t i = 0; i < n; ++i) {
+        const float dx = sample.data[i * 3u];
+        const float dy = sample.data[i * 3u + 1u];
+        const float dz = sample.data[i * 3u + 2u];
+        mag[i] = std::sqrt(dx * dx + dy * dy + dz * dz);
+        max_mag = std::max(max_mag, mag[i]);
+    }
+    const float target = 0.9f * static_cast<float>(std::max(1, sample.effective_stride));
+    const float vscale = target / max_mag;
+
+    frame.field_lines.reserve(frame.field_lines.size() + n);
+    for (std::size_t i = 0; i < n; ++i) {
+        const float t = mag[i] / max_mag;
+        if (t < 0.04f) continue;
+        const float bx = sample.positions[i * 3u];
+        const float by = sample.positions[i * 3u + 1u];
+        const float bz = sample.positions[i * 3u + 2u];
+        float r, g, b;
+        ramp_cool_hot(t, r, g, b);
+        NativeLine line;
+        line.x0 = bx;
+        line.y0 = by;
+        line.z0 = bz;
+        line.r0 = r * 0.35f;  // dim base
+        line.g0 = g * 0.35f;
+        line.b0 = b * 0.35f;
+        line.x1 = bx + sample.data[i * 3u] * vscale;
+        line.y1 = by + sample.data[i * 3u + 1u] * vscale;
+        line.z1 = bz + sample.data[i * 3u + 2u] * vscale;
+        line.r1 = r;  // bright tip
+        line.g1 = g;
+        line.b1 = b;
+        frame.field_lines.push_back(line);
+    }
+}
+
+// Scalar field overlay → magnitude-coloured points through the existing sprite
+// path (reusing frame.flux). Replaces the ambient flux cloud while active.
+void append_field_scalars(RenderBridge& rb, NativeFrame& frame, VisualFieldKind kind) {
+    const int L = rb.lattice().size();
+    const int stride = std::max(1, (L + 31) / 32);
+    VisualFieldSample sample;
+    rb.copy_visual_field_sample(kind, stride, sample);
+    if (sample.components != 1u || sample.count() == 0) return;
+
+    const std::size_t n = sample.count();
+    float max_mag = 1.0e-6f;
+    for (std::size_t i = 0; i < n; ++i)
+        max_mag = std::max(max_mag, std::abs(sample.data[i]));
+
+    frame.flux.reserve(frame.flux.size() + n);
+    for (std::size_t i = 0; i < n; ++i) {
+        const float v = sample.data[i];
+        const float t = std::abs(v) / max_mag;
+        if (t < 0.04f) continue;
+        NativeParticle p;
+        p.x = sample.positions[i * 3u];
+        p.y = sample.positions[i * 3u + 1u];
+        p.z = sample.positions[i * 3u + 2u];
+        ramp_diverging(v, t, p.r, p.g, p.b);
+        p.size = 0.20f + 0.55f * t;
+        frame.flux.push_back(p);
+    }
+}
+
 // Convert a Scale-0 payload alternative into the flat UiCommand the existing
 // applier/observer free functions consume. Every Scale0Cmd alternative is also a
 // UiCommand alternative, so this is a straight widening.
@@ -222,6 +327,16 @@ ApplyResult Scale0Adapter::apply(const ScalePayload& payload, ParameterJournal& 
     if (const SetBoundary* sb = std::get_if<SetBoundary>(s0)) {
         flux_boundary_ = static_cast<int>(sb->mode);
     }
+    // SetFieldOverlay is adapter view-state only (which field capture() renders);
+    // it never mutates the RenderBridge, so store it here and short-circuit —
+    // apply_mutation_on_bridge has no case for it and would be a no-op anyway.
+    if (const SetFieldOverlay* fo = std::get_if<SetFieldOverlay>(s0)) {
+        overlay_enabled_ = fo->enabled;
+        overlay_kind_ = fo->kind;
+        ApplyResult ok;
+        ok.ok = true;
+        return ok;
+    }
     QueuedCommand item;
     item.command = to_ui_command(*s0);
     // session == nullptr: the reload-shaped alternatives (LoadScenario /
@@ -311,7 +426,15 @@ NativeFrame Scale0Adapter::capture() {
         p.size = 0.55f;
         frame.particles.push_back(p);
     }
-    append_flux(*bridge_, frame);
+    // Field overlay dispatch. OFF (default): the ambient flux cloud, unchanged.
+    // A 3-vector field → line-segment arrows; a scalar field → coloured points.
+    if (!overlay_enabled_) {
+        append_flux(*bridge_, frame);
+    } else if (ftd::visual_field_components(overlay_kind_) == 3u) {
+        append_field_vectors(*bridge_, frame, overlay_kind_);
+    } else {
+        append_field_scalars(*bridge_, frame, overlay_kind_);
+    }
 
     frame.scenario = scenario_;
     frame.backend = backend_name();

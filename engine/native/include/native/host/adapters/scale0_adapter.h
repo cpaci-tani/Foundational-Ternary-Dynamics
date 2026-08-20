@@ -19,6 +19,7 @@
 #include "native/ui_snapshot_builder.h"
 
 #include "ftd/native_telemetry_scheduler.h"  // value member (pulls render_bridge.h)
+#include "ftd/visual_field_sample.h"          // VisualFieldKind (overlay member)
 
 #include <cstdint>
 #include <memory>
@@ -88,6 +89,12 @@ private:
     Scale0Snapshot                boundary_snapshot_;  // accumulator for the boundary
     bool                          interop_enabled_ = false;
     std::uint32_t                 last_total_manifested_ = 0;
+
+    // Active field overlay (SetFieldOverlay). Default OFF → capture() emits the
+    // ambient flux cloud (unchanged base view). When enabled, capture() samples
+    // `overlay_kind_` and emits vector-field line segments or scalar-field points.
+    bool                          overlay_enabled_ = false;
+    ftd::VisualFieldKind          overlay_kind_ = ftd::VisualFieldKind::FluxVector;
 };
 
 }  // namespace ftd::native

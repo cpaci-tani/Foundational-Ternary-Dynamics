@@ -1007,14 +1007,25 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
         {4, 5}, {5, 6}, {6, 7}, {7, 4},
         {0, 4}, {1, 5}, {2, 6}, {3, 7},
     };
-    LineVertex lines[24];
+    // Line vertices for the LINE PSO: the 24 wireframe-box verts first (always
+    // present so their draw offset is a fixed 0), then the field-overlay vector
+    // segments (2 verts each) if any. Both share the LineVertex layout + LINELIST
+    // topology and are drawn through impl_->pso_lines.
+    std::vector<LineVertex> line_verts;
+    line_verts.reserve(24 + frame.field_lines.size() * 2);
     for (int e = 0; e < 12; ++e) {
         for (int k = 0; k < 2; ++k) {
             const int ci = edges[e][k];
-            LineVertex v{corners[ci][0], corners[ci][1], corners[ci][2], cr, cg, cb};
-            lines[e * 2 + k] = v;
+            line_verts.push_back(
+                LineVertex{corners[ci][0], corners[ci][1], corners[ci][2], cr, cg, cb});
         }
     }
+    const UINT box_line_verts = static_cast<UINT>(line_verts.size());  // == 24
+    for (const auto& fl : frame.field_lines) {
+        line_verts.push_back(LineVertex{fl.x0, fl.y0, fl.z0, fl.r0, fl.g0, fl.b0});
+        line_verts.push_back(LineVertex{fl.x1, fl.y1, fl.z1, fl.r1, fl.g1, fl.b1});
+    }
+    const UINT field_line_verts = static_cast<UINT>(line_verts.size()) - box_line_verts;
 
     std::vector<GpuVertex> verts;
     verts.reserve((frame.flux.size() + frame.particles.size()) * 6);
@@ -1027,7 +1038,7 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
     if (opts.particles && interop_particle_count == 0) append_sprites(frame.particles, verts);
 
     const std::size_t sprite_bytes = verts.size() * sizeof(GpuVertex);
-    const std::size_t line_bytes = sizeof(lines);
+    const std::size_t line_bytes = line_verts.size() * sizeof(LineVertex);
     const std::size_t bytes = sprite_bytes + line_bytes;
     if (bytes > impl_->vb_capacity[impl_->frame]) {
         impl_->vb[impl_->frame].Reset();
@@ -1052,7 +1063,9 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
         void* mapped = nullptr;
         throw_if_failed(impl_->vb[impl_->frame]->Map(0, nullptr, &mapped), "Map vb");
         auto* bytes_out = static_cast<std::uint8_t*>(mapped);
-        std::memcpy(bytes_out, lines, line_bytes);
+        if (line_bytes != 0) {
+            std::memcpy(bytes_out, line_verts.data(), line_bytes);
+        }
         if (sprite_bytes != 0) {
             std::memcpy(bytes_out + line_bytes, verts.data(), sprite_bytes);
         }
@@ -1094,14 +1107,23 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
     impl_->list->SetGraphicsRootConstantBufferView(
         0, impl_->cb[impl_->frame]->GetGPUVirtualAddress());
 
-    if (opts.lattice_box && impl_->vb[impl_->frame]) {
+    // Box wireframe (conditional) + field-overlay vectors (whenever present) —
+    // both through the LINE PSO the list was reset with. The box verts occupy
+    // buffer offset 0; the field verts follow at StartVertexLocation == 24.
+    if (impl_->vb[impl_->frame] && line_bytes != 0
+        && ((opts.lattice_box && box_line_verts != 0) || field_line_verts != 0)) {
         D3D12_VERTEX_BUFFER_VIEW line_view{};
         line_view.BufferLocation = impl_->vb[impl_->frame]->GetGPUVirtualAddress();
         line_view.SizeInBytes = static_cast<UINT>(line_bytes);
         line_view.StrideInBytes = sizeof(LineVertex);
         impl_->list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
         impl_->list->IASetVertexBuffers(0, 1, &line_view);
-        impl_->list->DrawInstanced(24, 1, 0, 0);
+        if (opts.lattice_box && box_line_verts != 0) {
+            impl_->list->DrawInstanced(box_line_verts, 1, 0, 0);
+        }
+        if (field_line_verts != 0) {
+            impl_->list->DrawInstanced(field_line_verts, 1, box_line_verts, 0);
+        }
     }
 
     if (sprite_bytes != 0) {
