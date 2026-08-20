@@ -48,6 +48,17 @@ enum class OverlayRender : std::uint32_t {
     Points,      // scalar field → magnitude/sign-coloured sprite points
     Arrows,      // 3-vector field → line-segment arrows (dim base → bright tip)
     Streamline,  // 3-vector field → RK4-traced field lines (LINE PSO polylines)
+    // ── Tranche 2 (EXTEND): reuse the SAME two primitives (sprite points +
+    //    line list), no new PSO. The formula/band each needs is named by the
+    //    descriptor's `derive` selector where several overlays share a path.
+    DerivedPoints,  // per-voxel DERIVED scalar → sprite points (|ψ|² · ℒ · Entropy · Chirality)
+    DualPoints,     // amplitude split J_L=J(1+δ)/2, J_R=J(1−δ)/2 → two coloured point sets
+    DenseBand,      // dense stride-1 |J| magnitude, band-select → sprite points (DM Halo · Genesis)
+    FluxSlice,      // |J| sprite points on the 3 lattice mid-planes (xy@z=L/2, xz@y=L/2, yz@x=L/2)
+    PhaseNeedles,   // per-voxel short oriented needle along Ĵ → line list (cyclic-HSL by arg)
+    DampingBoxes,   // 12 wireframe-box edges (3-voxel cube) around each particle → line list
+    PairLinks,      // qualifying particle-pair link segments (1<r<√120) → line list
+    Recolor,        // recolour existing particle sprites in place (emits no new geometry)
 };
 
 // Colour ramp applied to the per-sample magnitude/sign.
@@ -60,12 +71,31 @@ enum class OverlayRamp : std::uint32_t {
     CoolHot,     // magnitude cool→hot (force arrows)
     Poynting,    // yellow → orange (energy-flux arrows)
     Weak,        // violet (parity-odd ∇×J pseudovector arrows)
+    // Tranche-2 point ramps (derived-scalar sprite points).
+    Viridis,     // |ψ|²: approximate viridis (purple → teal → yellow), t∈[0,1]
+    RdBu,        // ℒ Lagrangian: signed diverging red(+) / blue(−), t∈[-1,1]
+    Grayscale,   // Entropy s: straight grayscale, t∈[0,1]
+    Chirality,   // Chirality: signed red (L-dominant) / blue (R-dominant)
+    CyclicHSL,   // Phase φ needles: full hue cycle by arg (S=1, L=0.5)
     // Streamline ramps: applied per-vertex inside the RK4 integrator (streamlines
     // .cpp), keyed off the overlay, not consulted by the point/arrow colour
     // switches. Named here so each streamline descriptor documents its own look.
     FluxLine,    // Flux Lines: flux colormap by LOCAL |J| (dark-blue→cyan→red)
     CyanFade,    // E Field: cyan (0.30,0.82,0.88) faded along the line
     GreenFade,   // B Field: green (0.40,0.73,0.42) faded along the line
+};
+
+// Which derivation/band a DerivedPoints / DenseBand overlay runs. `None` for
+// every other render mode (and value-initialised for the Tranche-1/4 rows that
+// predate this field). The formula for each is documented at its adapter helper.
+enum class OverlayDerive : std::uint32_t {
+    None = 0,
+    PsiSquared,   // |J|² (max-normalised)
+    Lagrangian,   // ½|E|² − ½(∇·J)² (signed)
+    Entropy,      // 4p(1−p), p=|J|/|J|max
+    Chirality,    // |J|·δ (δ = DUAL_DELTA, canonical)
+    DmHalo,       // dense |J| band 0.003 < |J| < K_GENESIS
+    Genesis,      // dense |J| shell |J| ≈ K_GENESIS ± K_GENESIS·0.15
 };
 
 // Stable overlay identifiers. The numeric value is the wire id carried by the
@@ -87,6 +117,19 @@ enum class OverlayId : std::uint32_t {
     FluxLines,
     EField,
     BField,
+    // ── Tranche 2: the EXTEND overlays that reuse sprite points + line list ──
+    PsiSquared,      // Quantum  — |ψ|² viridis point cloud
+    Phase,           // Quantum  — φ oriented needles
+    Lagrangian,      // Quantum  — ℒ signed diverging points
+    Entropy,         // Quantum  — s grayscale jitter points
+    FluxSliceMid,    // Volume   — |J| points on the 3 lattice mid-planes
+    Chirality,       // Phenomena — |J|·δ signed points
+    DualFlux,        // Phenomena — J_L / J_R two-set points
+    DarkMatterHalo,  // Phenomena — sub-threshold |J| band cloud
+    Genesis,         // Phenomena — genesis-frontier |J| shell band
+    ColorCharge,     // Phenomena — recolour particles by genesis colour axis
+    Damping,         // Phenomena — wireframe boxes around particles
+    Confinement,     // Phenomena — particle-pair link segments
     // Future tranches append here (EXTEND / NEW overlays) — do not reorder.
 };
 
@@ -105,6 +148,9 @@ struct OverlayDescriptor {
     float                select_min;
     bool                 scale_by_dual_delta;  // ∇×J "weak": ×DUAL_DELTA (canonical)
     bool                 force_stride1;         // State / Gauss sample every voxel
+    // Which formula/band a DerivedPoints / DenseBand overlay runs; None (the
+    // value-initialised default) for every other render mode.
+    OverlayDerive        derive = OverlayDerive::None;
 };
 
 // The registry, in menu/column order. Defined once here (header-inline) so both
@@ -143,6 +189,47 @@ inline constexpr OverlayDescriptor kOverlayRegistry[] = {
     // ── Phenomena ──
     {OverlayId::Horizon,      "horizon",    "Horizon",     OverlayColumn::Phenomena,
      OverlayRender::Points, ftd::VisualFieldKind::Latency,      OverlayRamp::Horizon,   0.02f, 0.95f, false, false},
+
+    // ── Tranche 2 (EXTEND) — sprite points + line list, no new PSO ──
+    // Quantum: derived scalars → sprite points.
+    {OverlayId::PsiSquared,   "psiSquared", "|\xCF\x88|\xC2\xB2", OverlayColumn::Quantum,
+     OverlayRender::DerivedPoints, ftd::VisualFieldKind::FluxVector, OverlayRamp::Viridis,
+     0.02f, -1.0f, false, false, OverlayDerive::PsiSquared},
+    {OverlayId::Phase,        "phase",      "Phase \xCF\x86",    OverlayColumn::Quantum,
+     OverlayRender::PhaseNeedles,  ftd::VisualFieldKind::FluxVector, OverlayRamp::CyclicHSL,
+     0.02f, -1.0f, false, false, OverlayDerive::None},
+    {OverlayId::Lagrangian,   "lagrangian", "\xE2\x84\x92",      OverlayColumn::Quantum,
+     OverlayRender::DerivedPoints, ftd::VisualFieldKind::Electric,   OverlayRamp::RdBu,
+     0.10f, -1.0f, false, false, OverlayDerive::Lagrangian},
+    {OverlayId::Entropy,      "entropy",    "Entropy s",   OverlayColumn::Quantum,
+     OverlayRender::DerivedPoints, ftd::VisualFieldKind::FluxVector, OverlayRamp::Grayscale,
+     0.04f, -1.0f, false, false, OverlayDerive::Entropy},
+    // Volume: |J| on the 3 mid-planes (shared threshold with Flux Volume).
+    {OverlayId::FluxSliceMid, "fluxSlice",  "Flux Slice",  OverlayColumn::Volume,
+     OverlayRender::FluxSlice,     ftd::VisualFieldKind::FluxVector, OverlayRamp::FluxCloud,
+     0.04f, -1.0f, false, true,  OverlayDerive::None},
+    // Phenomena: derived scalars / dense bands / particle-geometry.
+    {OverlayId::Chirality,    "chirality",  "Chirality",   OverlayColumn::Phenomena,
+     OverlayRender::DerivedPoints, ftd::VisualFieldKind::FluxVector, OverlayRamp::Chirality,
+     0.02f, -1.0f, false, false, OverlayDerive::Chirality},
+    {OverlayId::DualFlux,     "dualFlux",   "Dual J",      OverlayColumn::Phenomena,
+     OverlayRender::DualPoints,    ftd::VisualFieldKind::FluxVector, OverlayRamp::FluxCloud,
+     0.02f, -1.0f, false, false, OverlayDerive::None},
+    {OverlayId::DarkMatterHalo,"dmHalo",    "DM Halo",     OverlayColumn::Phenomena,
+     OverlayRender::DenseBand,     ftd::VisualFieldKind::FluxVector, OverlayRamp::FluxCloud,
+     0.0f, -1.0f, false, true,  OverlayDerive::DmHalo},
+    {OverlayId::Genesis,      "genesis",    "Genesis",     OverlayColumn::Phenomena,
+     OverlayRender::DenseBand,     ftd::VisualFieldKind::FluxVector, OverlayRamp::FluxCloud,
+     0.0f, -1.0f, false, true,  OverlayDerive::Genesis},
+    {OverlayId::ColorCharge,  "colorCharge","Color charge",OverlayColumn::Phenomena,
+     OverlayRender::Recolor,       ftd::VisualFieldKind::FluxVector, OverlayRamp::FluxCloud,
+     0.0f, -1.0f, false, false, OverlayDerive::None},
+    {OverlayId::Damping,      "damping",    "Damping",     OverlayColumn::Phenomena,
+     OverlayRender::DampingBoxes,  ftd::VisualFieldKind::FluxVector, OverlayRamp::FluxCloud,
+     0.0f, -1.0f, false, false, OverlayDerive::None},
+    {OverlayId::Confinement,  "confinement","Confinement", OverlayColumn::Phenomena,
+     OverlayRender::PairLinks,     ftd::VisualFieldKind::FluxVector, OverlayRamp::FluxCloud,
+     0.0f, -1.0f, false, false, OverlayDerive::None},
 };
 
 inline constexpr std::size_t kOverlayCount =
