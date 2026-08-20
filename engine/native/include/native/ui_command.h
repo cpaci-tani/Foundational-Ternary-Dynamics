@@ -79,6 +79,17 @@ struct RequestField {
     ftd::VisualFieldKind kind = ftd::VisualFieldKind::FluxVector;
     int stride = 1;
 };
+// Selects the active field OVERLAY rendered in the 3D scene (distinct from
+// RequestField, which samples a field into the snapshot for panels). `enabled`
+// false is the "None" state (no overlay; the ambient flux cloud stays). The
+// Scale-0 adapter stores this and, at capture(), turns the chosen field into
+// scene geometry: 3-vector fields -> magnitude-coloured line segments, scalar
+// fields -> magnitude-coloured points. Adapter view-state only; it never
+// touches the RenderBridge, so apply() handles it without a bridge mutation.
+struct SetFieldOverlay {
+    bool enabled = false;
+    ftd::VisualFieldKind kind = ftd::VisualFieldKind::FluxVector;
+};
 struct RequestContinuity {};
 struct RequestChargeSum {};
 struct SetTelemetryDemand {
@@ -118,9 +129,9 @@ using UiCommand = std::variant<
     SetToggle, SetToggleProfile, SetDouble, SetEnum, SetUInt, SetBoolConfig,
     SetBoundary, SetDt, SetSorIterations, LoadScenario, SetLatticeSize,
     ApplyReboot, ResetToDefaults, InspectVoxel, InspectForce, RequestField,
-    RequestContinuity, RequestChargeSum, SetTelemetryDemand, Pause, Step, Run,
-    InjectWavepacket, InjectFluxAdd, CreateEntangledPair, ClearField,
-    SeedRandomFlux>;
+    SetFieldOverlay, RequestContinuity, RequestChargeSum, SetTelemetryDemand,
+    Pause, Step, Run, InjectWavepacket, InjectFluxAdd, CreateEntangledPair,
+    ClearField, SeedRandomFlux>;
 
 inline bool is_observation_command(const UiCommand& command) {
     return std::holds_alternative<InspectVoxel>(command)

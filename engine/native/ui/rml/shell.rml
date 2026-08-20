@@ -41,12 +41,21 @@
              imperative rebuild). Scale 0 → the term-toggle list; Scale 1 → a
              compact particle readout. Both scales share the telemetry chart. -->
         <div id="physics" class="panel">
-            <!-- Scale 0 (Lattice): the physics term-toggles -->
+            <!-- Scale 0 (Lattice): the physics term-toggles + field overlays -->
             <div class="scale-block" data-if="active_scale == 0">
                 <div class="panel-title">Physics terms</div>
                 <div class="toggles">
                     <div class="tog" data-for="t : toggles" data-class-on="t.on" data-event-click="toggle(t.name)">
                         <span class="led"></span><span class="lbl">{{t.name}}</span>
+                    </div>
+                </div>
+
+                <!-- Field overlay selector: draws the chosen lattice field in the
+                     3D scene (vectors as arrows, scalars as coloured points). -->
+                <div class="panel-title fields-title">Fields</div>
+                <div class="fields">
+                    <div class="fopt" data-for="f : fields" data-class-sel="f.name == active_field" data-event-click="set_field(f.name)">
+                        {{f.label}}
                     </div>
                 </div>
             </div>

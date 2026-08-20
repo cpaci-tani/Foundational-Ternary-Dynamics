@@ -133,6 +133,26 @@ body {
 .tog.on { color: #e0e7f1; border-color: #2f6db0; background-color: #16233a; }
 .tog.on .led { background-color: #6aa8e0; border-color: #6aa8e0; }
 
+/* ── field overlay selector ───────────────────────────────────────────── */
+.fields-title { margin-top: 14dp; }
+.fields { display: flex; flex-direction: column; }
+.fopt {
+    padding: 4dp 8dp;
+    margin-bottom: 3dp;
+    border: 1dp #223047;
+    border-radius: 4dp;
+    color: #9fb0c6;
+    font-family: JetBrains Mono;
+    font-size: 11dp;
+    cursor: pointer;
+}
+.fopt:hover { border-color: #3a7ec4; color: #dfe6f0; }
+.fopt.sel {
+    color: #ffffff;
+    border-color: #2f6db0;
+    background-color: #16233a;
+}
+
 /* ── scale-aware right panel ───────────────────────────────────────────── */
 /* Each per-scale block stacks its title + content; only one is present at a
    time (the other is removed by data-if), so this drives the panel layout. */

@@ -71,6 +71,7 @@
 #include "native/scene_rect.h"
 
 #include "ftd/term_toggles.h"
+#include "ftd/visual_field_sample.h"   // ftd::VisualFieldKind (FIELDS overlay menu)
 #include "ftd/visual_snapshot.h"   // ftd::kMaxVisualParticleCapture (interop buffer sizing)
 
 #include "ui/rml_d3d12_renderer.h"
@@ -121,10 +122,54 @@ constexpr const char* kPanelToggles[] = {
 // bar; nothing physical depends on it.
 constexpr double kTPhysSeconds = 3.11e-44;
 
+// ── The FIELDS overlay menu (Scale-0 only). One row per selectable field, plus
+//    the "None" state. `name` is the stable id used by the panel AND the
+//    --field CLI flag; `label` is the human label; `enabled` false means None
+//    (no overlay). `kind` selects which VisualFieldKind capture() samples — its
+//    3-vs-1 component count decides vector-arrows vs scalar-points at render.
+struct FieldEntry {
+    const char* name;
+    const char* label;
+    bool enabled;
+    ftd::VisualFieldKind kind;
+};
+constexpr FieldEntry kFieldMenu[] = {
+    {"none",           "None",           false, ftd::VisualFieldKind::FluxVector},
+    {"flux",           "Flux J (vec)",   true,  ftd::VisualFieldKind::FluxVector},
+    {"electric",       "Electric (vec)", true,  ftd::VisualFieldKind::Electric},
+    {"magnetic",       "Magnetic (vec)", true,  ftd::VisualFieldKind::Magnetic},
+    {"poynting",       "Poynting (vec)", true,  ftd::VisualFieldKind::Poynting},
+    {"curl",           "Curl J (vec)",   true,  ftd::VisualFieldKind::Curl},
+    {"em",             "EM force (vec)", true,  ftd::VisualFieldKind::EmForce},
+    {"gravity",        "Gravity (vec)",  true,  ftd::VisualFieldKind::GravityForce},
+    {"strong",         "Strong (vec)",   true,  ftd::VisualFieldKind::StrongForce},
+    {"divergence",     "Divergence",     true,  ftd::VisualFieldKind::Divergence},
+    {"vorticity",      "Vorticity",      true,  ftd::VisualFieldKind::Vorticity},
+    {"helicity",       "Helicity",       true,  ftd::VisualFieldKind::Helicity},
+    {"coherence",      "Coherence",      true,  ftd::VisualFieldKind::Coherence},
+    {"fisher",         "Fisher",         true,  ftd::VisualFieldKind::Fisher},
+    {"latency",        "Latency |J|2",   true,  ftd::VisualFieldKind::Latency},
+    {"kretschmann",    "Kretschmann",    true,  ftd::VisualFieldKind::Kretschmann},
+    {"state",          "State",          true,  ftd::VisualFieldKind::State},
+    {"gauss",          "Gauss resid.",   true,  ftd::VisualFieldKind::GaussResidual},
+    {"poissonLatency", "Poisson L",      true,  ftd::VisualFieldKind::PoissonLatency},
+};
+const FieldEntry* find_field_entry(const std::string& name) {
+    for (const FieldEntry& e : kFieldMenu)
+        if (name == e.name) return &e;
+    return nullptr;
+}
+
 // ── RmlUi data-model mirror of UiSnapshot (the bound C++ side of the shell) ──
 struct ToggleRow {
     Rml::String name;
     bool on = false;
+};
+
+// One FIELDS-menu row bound into the shell (Scale-0 panel).
+struct FieldOptionRow {
+    Rml::String name;
+    Rml::String label;
 };
 
 struct ShellData {
@@ -141,6 +186,10 @@ struct ShellData {
     int fps = 0;
     bool running = false;
     Rml::Vector<ToggleRow> toggles;
+    // FIELDS overlay selector (Scale-0 panel). `active_field` is the selected
+    // row's stable id ("none" by default); `fields` is the static menu.
+    Rml::String active_field = "none";
+    Rml::Vector<FieldOptionRow> fields;
 };
 
 bool toggle_on(const ftd::TermToggles& tt, const char* name) {
@@ -428,6 +477,8 @@ struct AppOptions {
     int capture_frames = -1;   // -1 = interactive; >=0 = capture then exit
     bool start_paused = false; // default: live on launch
     int scale = 0;             // initial ScaleHost scale level (0 lattice, 1 particles)
+    std::string field;         // initial FIELDS overlay id (empty = None; Scale-0 only)
+    std::string png_out;       // capture PNG path override (empty = compiled default)
 };
 
 AppOptions parse_app_options(const std::vector<std::string>& args) {
@@ -441,6 +492,10 @@ AppOptions parse_app_options(const std::vector<std::string>& args) {
             o.start_paused = false;
         } else if (args[i] == "--scale" && i + 1 < args.size()) {
             o.scale = std::max(0, std::atoi(args[++i].c_str()));
+        } else if (args[i] == "--field" && i + 1 < args.size()) {
+            o.field = args[++i];
+        } else if (args[i] == "--png-out" && i + 1 < args.size()) {
+            o.png_out = args[++i];
         }
     }
     return o;
@@ -492,9 +547,20 @@ int run_app(const std::vector<std::string>& args) {
     apply_camera_for_lattice(camera, host.lattice_size());
 
     // Prime the loop control + publish one snapshot before the sim thread starts.
+    // A --field request (Scale-0 only) is stamped into this first boundary so the
+    // very first captured frame already renders the chosen overlay.
     {
         host.set_loop_control({app_opts.start_paused, !app_opts.start_paused, 0});
         ftd::native::CommandBus stamp;
+        if (app_opts.scale == 0 && !app_opts.field.empty()) {
+            if (const FieldEntry* e = find_field_entry(app_opts.field)) {
+                stamp.push(ftd::native::scale0_command(
+                    ftd::native::SetFieldOverlay{e->enabled, e->kind}));
+            } else {
+                std::cerr << "native_app: unknown --field '" << app_opts.field
+                          << "' (ignored)\n" << std::flush;
+            }
+        }
         host.process_ui_boundary(stamp);
     }
     ftd::native::NativeFrame latest = host.capture();
@@ -572,6 +638,13 @@ int run_app(const std::vector<std::string>& args) {
     data.active_scale = initial_scale;
     data.toggles.reserve(std::size(kPanelToggles));
     for (const char* n : kPanelToggles) data.toggles.push_back(ToggleRow{n, false});
+    // FIELDS overlay menu + initial selection (mirrors the --field stamp above so
+    // the panel highlight matches the geometry from frame 0).
+    data.fields.reserve(std::size(kFieldMenu));
+    for (const FieldEntry& e : kFieldMenu)
+        data.fields.push_back(FieldOptionRow{e.name, e.label});
+    if (!app_opts.field.empty() && find_field_entry(app_opts.field))
+        data.active_field = app_opts.field.c_str();
 
     // ── Telemetry ring buffer + the <ftd-chart> instancer ──────────────────────
     // The app owns the series (GUI thread), pushing one total-energy scalar per
@@ -602,6 +675,11 @@ int run_app(const std::vector<std::string>& args) {
         row.RegisterMember("on", &ToggleRow::on);
     }
     ctor.RegisterArray<Rml::Vector<ToggleRow>>();
+    if (auto frow = ctor.RegisterStruct<FieldOptionRow>()) {
+        frow.RegisterMember("name", &FieldOptionRow::name);
+        frow.RegisterMember("label", &FieldOptionRow::label);
+    }
+    ctor.RegisterArray<Rml::Vector<FieldOptionRow>>();
     ctor.Bind("tick", &data.tick);
     ctor.Bind("active_scale", &data.active_scale);
     ctor.Bind("particle_count", &data.particle_count);
@@ -615,6 +693,8 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("fps", &data.fps);
     ctor.Bind("running", &data.running);
     ctor.Bind("toggles", &data.toggles);
+    ctor.Bind("active_field", &data.active_field);
+    ctor.Bind("fields", &data.fields);
     ctor.BindEventCallback("run", [&app](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) {
         request_play_toggle(&app);
     });
@@ -638,6 +718,21 @@ int run_app(const std::vector<std::string>& args) {
     ctor.BindEventCallback("scale_particles", [&app](Rml::DataModelHandle, Rml::Event&,
                                                      const Rml::VariantList&) {
         request_switch_scale(&app, 1);
+    });
+    // FIELDS selector: push the SetFieldOverlay Scale-0 command and move the
+    // panel highlight. The model handle passed to the callback dirties the bound
+    // active_field (no snapshot round-trip carries this back).
+    ctor.BindEventCallback("set_field", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                               const Rml::VariantList& v) {
+        if (v.empty() || !app.data) return;
+        const Rml::String name = v[0].Get<Rml::String>();
+        const FieldEntry* e = find_field_entry(name.c_str());
+        if (!e) return;
+        push_scale0(&app, ftd::native::SetFieldOverlay{e->enabled, e->kind});
+        if (app.data->active_field != name) {
+            app.data->active_field = name;
+            h.DirtyVariable("active_field");
+        }
     });
     Rml::DataModelHandle model = ctor.GetModelHandle();
 
@@ -799,7 +894,10 @@ int run_app(const std::vector<std::string>& args) {
     bool capture_saved = false;
     bool capture_ok = false;
     int frame_no = 0;
-    const std::string png_out = FTD_APP_PNG_OUT;
+    // Capture output path: --png-out overrides the compiled default so a single
+    // build can emit distinct captures (e.g. fields_vec.png vs fields_scalar.png).
+    const std::string png_out =
+        app_opts.png_out.empty() ? std::string(FTD_APP_PNG_OUT) : app_opts.png_out;
 
     // Telemetry ring-buffer feed bookkeeping (GUI thread). chart_series_scale
     // tracks the scale the buffer currently holds (reset the trace on a switch);
