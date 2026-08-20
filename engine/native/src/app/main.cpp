@@ -121,6 +121,7 @@ struct ToggleRow {
 
 struct ShellData {
     int tick = 0;
+    int active_scale = 0;   // drives the toolbar scale-switcher highlight
     int particle_count = 0;
     Rml::String physical_time = "0 s";
     Rml::String total_energy = "0.0";
@@ -190,6 +191,14 @@ void request_step(AppContext* app) {
 void request_reset(AppContext* app) {
     if (!app->scenario_id.empty())
         push_core(app, ftd::native::LoadScenario{app->scenario_id});
+}
+// Push a core SwitchScale: the host tears down the active adapter, rebuilds via
+// make_scale_adapter(level), and reboots into the given per-scale seed id. The
+// app tracks the active scenario so Reset targets the newly active scale.
+void request_switch_scale(AppContext* app, int level) {
+    const char* scenario = (level == 1) ? "s1-hydrogen-cloud" : "s0-seed-hydrogen";
+    push_core(app, ftd::native::SwitchScale{level, scenario});
+    app->scenario_id = scenario;
 }
 void request_toggle(AppContext* app, const std::string& name) {
     bool cur = false;
@@ -408,6 +417,7 @@ void apply_camera_for_lattice(ftd::native::Camera& cam, int lattice) {
 struct AppOptions {
     int capture_frames = -1;   // -1 = interactive; >=0 = capture then exit
     bool start_paused = false; // default: live on launch
+    int scale = 0;             // initial ScaleHost scale level (0 lattice, 1 particles)
 };
 
 AppOptions parse_app_options(const std::vector<std::string>& args) {
@@ -419,6 +429,8 @@ AppOptions parse_app_options(const std::vector<std::string>& args) {
             o.start_paused = true;
         } else if (args[i] == "--run") {
             o.start_paused = false;
+        } else if (args[i] == "--scale" && i + 1 < args.size()) {
+            o.scale = std::max(0, std::atoi(args[++i].c_str()));
         }
     }
     return o;
@@ -441,13 +453,20 @@ int run_app(const std::vector<std::string>& args) {
               << (engine_opts.force_cpu ? " cpu" : " gpu-default")
               << (capture_mode ? " [capture]" : "") << "\n" << std::flush;
 
-    // ── Scale host (Scale 0 behind the ScaleHost/ScaleAdapter seam) ─────────────
+    // ── Scale host (Scale 0/1 behind the ScaleHost/ScaleAdapter seam) ───────────
     ftd::native::HostOptions host_opts;
-    host_opts.scale_level = 0;
+    host_opts.scale_level = app_opts.scale;
     host_opts.scenario = engine_opts.scenario;
+    // Scale 1 has its own seed vocabulary; the Scale-0 default scenario would boot
+    // the ParticleEngine into its fallback cloud anyway, but naming a Scale-1 id
+    // keeps the status/scenario readout honest.
+    if (app_opts.scale == 1 && host_opts.scenario.rfind("s1-", 0) != 0)
+        host_opts.scenario = "s1-hydrogen-cloud";
     host_opts.run.lattice_size = engine_opts.lattice_size;
     host_opts.run.force_cpu = engine_opts.force_cpu;
     host_opts.run.flux_boundary = engine_opts.flux_boundary;
+    const std::string initial_scenario = host_opts.scenario;
+    const int initial_scale = host_opts.scale_level;
     ftd::native::ScaleHost host(std::move(host_opts));
     std::cout << "backend=" << host.backend_name() << " status=" << host.status()
               << "\n" << std::flush;
@@ -539,7 +558,8 @@ int run_app(const std::vector<std::string>& args) {
 
     // ── Data model (must exist before LoadDocument so data-model binds) ─────────
     ShellData data;
-    data.scenario = engine_opts.scenario;
+    data.scenario = initial_scenario;
+    data.active_scale = initial_scale;
     data.toggles.reserve(std::size(kPanelToggles));
     for (const char* n : kPanelToggles) data.toggles.push_back(ToggleRow{n, false});
 
@@ -552,7 +572,7 @@ int run_app(const std::vector<std::string>& args) {
     app.data = &data;
     app.paused = &paused;
     app.quit = &quit_flag;
-    app.scenario_id = engine_opts.scenario;
+    app.scenario_id = initial_scenario;
 
     Rml::DataModelConstructor ctor = context->CreateDataModel("shell");
     if (!ctor) throw std::runtime_error("CreateDataModel(shell) failed");
@@ -562,6 +582,7 @@ int run_app(const std::vector<std::string>& args) {
     }
     ctor.RegisterArray<Rml::Vector<ToggleRow>>();
     ctor.Bind("tick", &data.tick);
+    ctor.Bind("active_scale", &data.active_scale);
     ctor.Bind("particle_count", &data.particle_count);
     ctor.Bind("physical_time", &data.physical_time);
     ctor.Bind("total_energy", &data.total_energy);
@@ -586,6 +607,14 @@ int run_app(const std::vector<std::string>& args) {
     ctor.BindEventCallback("toggle", [&app](Rml::DataModelHandle, Rml::Event&,
                                             const Rml::VariantList& v) {
         if (!v.empty()) request_toggle(&app, v[0].Get<Rml::String>());
+    });
+    ctor.BindEventCallback("scale_lattice", [&app](Rml::DataModelHandle, Rml::Event&,
+                                                   const Rml::VariantList&) {
+        request_switch_scale(&app, 0);
+    });
+    ctor.BindEventCallback("scale_particles", [&app](Rml::DataModelHandle, Rml::Event&,
+                                                     const Rml::VariantList&) {
+        request_switch_scale(&app, 1);
     });
     Rml::DataModelHandle model = ctor.GetModelHandle();
 
@@ -730,6 +759,7 @@ int run_app(const std::vector<std::string>& args) {
         };
 
         set_int("tick", data.tick, frame.tick);
+        if (snap) set_int("active_scale", data.active_scale, snap->active_scale);
         set_int("particle_count", data.particle_count,
                 static_cast<int>(frame.total_manifested));
         set_bool("running", data.running, !paused.load());
@@ -741,6 +771,10 @@ int run_app(const std::vector<std::string>& args) {
         set_str("lattice", data.lattice, std::to_string(frame.lattice_size));
         set_str("physical_time", data.physical_time,
                 fmt("%.2e s", static_cast<double>(frame.tick) * kTPhysSeconds));
+        // Energy + toggles come from whichever ScaleSnapshot alternative is live.
+        // Scale 0 carries the full energy ledger + term-toggle state; Scale 1
+        // carries a small particle-diagnostics payload and has no toggle panel yet
+        // (the panel simply stops updating — the last Scale-0 state stays shown).
         if (const ftd::native::Scale0Snapshot* s0 = snap ? snap->scale0() : nullptr) {
             set_str("total_energy", data.total_energy, fmt("%.1f", s0->energy_ledger.E_curr));
             bool toggles_changed = false;
@@ -749,6 +783,8 @@ int run_app(const std::vector<std::string>& args) {
                 if (r.on != on) { r.on = on; toggles_changed = true; }
             }
             if (toggles_changed) model.DirtyVariable("toggles");
+        } else if (const ftd::native::Scale1Snapshot* s1 = snap ? snap->scale1() : nullptr) {
+            set_str("total_energy", data.total_energy, fmt("%.3f", s1->total_energy));
         }
 
         // Lay out, then map the #viewport hole rect for the scene + input.

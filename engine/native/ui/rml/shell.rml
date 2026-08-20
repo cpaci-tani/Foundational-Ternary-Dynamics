@@ -13,7 +13,8 @@
         <span class="brand">FTD Engine <span class="ver">native</span></span>
         <div class="tb-group">
             <span class="lbl">Engine</span>
-            <span class="select">Scale 0 (Lattice)</span>
+            <span class="select opt" data-class-sel="active_scale == 0" data-event-click="scale_lattice()">Scale 0 (Lattice)</span>
+            <span class="select opt" data-class-sel="active_scale == 1" data-event-click="scale_particles()">Scale 1 (Particles)</span>
         </div>
         <div class="spacer"></div>
         <button class="icon">&#9881;</button>

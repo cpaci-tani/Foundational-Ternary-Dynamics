@@ -7,6 +7,7 @@
 // behavior CHANGE is the W9 fix in boot() (see below).
 
 #include "native/host/adapters/scale0_adapter.h"
+#include "native/host/adapters/scale1_adapter.h"
 
 #include "ftd/render_bridge.h"
 #include "ftd/scenario_meta.h"
@@ -369,10 +370,13 @@ std::unique_ptr<ScaleAdapter> make_scale_adapter(int scale_level) {
     switch (scale_level) {
         case 0:
             return std::make_unique<Scale0Adapter>();
+        case 1:
+            // R1 validation: ParticleEngine (a real ScaleEngine) behind the seam.
+            return std::make_unique<Scale1Adapter>();
         default:
-            // Scale 1+ adapters land in later steps (ParticleEngine, AtomEngine,
-            // CosmicEngine — all `: ScaleEngine`). Until then, fall back to
-            // Scale 0 so the host always has a live adapter.
+            // Scale 2/5 adapters land in later steps (AtomEngine, CosmicEngine —
+            // all `: ScaleEngine`). Until then, fall back to Scale 0 so the host
+            // always has a live adapter.
             return std::make_unique<Scale0Adapter>();
     }
 }

@@ -45,6 +45,7 @@ endif()
 add_library(native_host STATIC
     src/host/scale_host.cpp
     src/host/adapters/scale0_adapter.cpp
+    src/host/adapters/scale1_adapter.cpp
 )
 target_include_directories(native_host PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(native_host PUBLIC ftd_core native_model native_session)
