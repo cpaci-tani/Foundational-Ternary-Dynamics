@@ -26,9 +26,11 @@
 #include <array>
 #include <chrono>
 #include <cmath>
+#include <cstdint>
 #include <cstdlib>
 #include <stdexcept>
 #include <thread>
+#include <unordered_map>
 #include <utility>
 #include <variant>
 #include <vector>
@@ -65,6 +67,14 @@ bool wait_visual_snapshot(RenderBridge& rb, VisualSnapshot& out) {
     return false;
 }
 
+// Ambient flux-cloud colour (cool blue brightening with |J|), factored out of
+// append_flux so the Flux-Slice mid-plane points share the exact same look.
+void flux_cloud_color(float t, float& r, float& g, float& b) {
+    r = 0.12f + 0.25f * t;
+    g = 0.40f + 0.45f * t;
+    b = 0.85f + 0.15f * t;
+}
+
 void append_flux(RenderBridge& rb, NativeFrame& frame) {
     const int L = rb.lattice().size();
     const int stride = std::max(1, (L + 31) / 32);
@@ -90,9 +100,7 @@ void append_flux(RenderBridge& rb, NativeFrame& frame) {
         p.x = sample.positions[i * 3u];
         p.y = sample.positions[i * 3u + 1u];
         p.z = sample.positions[i * 3u + 2u];
-        p.r = 0.12f + 0.25f * t;
-        p.g = 0.40f + 0.45f * t;
-        p.b = 0.85f + 0.15f * t;
+        flux_cloud_color(t, p.r, p.g, p.b);
         p.size = 0.18f + 0.55f * t;
         frame.flux.push_back(p);
     }
@@ -163,6 +171,67 @@ void ramp_weak(float t, float& r, float& g, float& b) {
     r = 0.55f + 0.35f * t;
     g = 0.20f + 0.10f * t;
     b = 0.85f;
+}
+
+// ── Tranche-2 ramps (ported from engine/web/js/viewport/color-ramps.js) ─────
+
+// Approximate viridis (purple → teal → yellow), t∈[0,1]. |ψ|².
+void ramp_viridis(float t, float& r, float& g, float& b) {
+    t = std::clamp(t, 0.0f, 1.0f);
+    if (t < 0.5f) {
+        const float u = t * 2.0f;
+        r = 0.267f * (1.0f - u) + 0.130f * u;
+        g = 0.004f * (1.0f - u) + 0.566f * u;
+        b = 0.329f * (1.0f - u) + 0.551f * u;
+    } else {
+        const float u = (t - 0.5f) * 2.0f;
+        r = 0.130f * (1.0f - u) + 0.993f * u;
+        g = 0.566f * (1.0f - u) + 0.906f * u;
+        b = 0.551f * (1.0f - u) + 0.144f * u;
+    }
+}
+
+// Diverging red(+)/blue(−), signed v∈[-1,1]. ℒ Lagrangian density.
+void ramp_rdbu(float v, float& r, float& g, float& b) {
+    v = std::clamp(v, -1.0f, 1.0f);
+    if (v >= 0.0f) {
+        const float u = v;
+        r = 0.969f * (1.0f - u) + 0.698f * u;
+        g = 0.969f * (1.0f - u) + 0.094f * u;
+        b = 0.969f * (1.0f - u) + 0.169f * u;
+    } else {
+        const float u = -v;
+        r = 0.969f * (1.0f - u) + 0.129f * u;
+        g = 0.969f * (1.0f - u) + 0.400f * u;
+        b = 0.969f * (1.0f - u) + 0.675f * u;
+    }
+}
+
+// Straight grayscale, t∈[0,1]. Entropy s.
+void ramp_grayscale(float t, float& r, float& g, float& b) {
+    t = std::clamp(t, 0.0f, 1.0f);
+    r = t; g = t; b = t;
+}
+
+// Chirality: signed red (v≥0, L-dominant) / blue (v<0, R-dominant); t=|v|/max.
+void ramp_chirality(float v, float t, float& r, float& g, float& b) {
+    t = std::clamp(t, 0.0f, 1.0f);
+    if (v >= 0.0f) { r = 0.90f * t; g = 0.25f * t; b = 0.15f * t; }
+    else           { r = 0.15f * t; g = 0.35f * t; b = 0.90f * t; }
+}
+
+// Cyclic HSL over hue∈[0,1) at S=1, L=0.5 (port of rampCyclicHSL). Phase φ.
+void ramp_cyclic_hsl(float hue01, float& r, float& g, float& b) {
+    hue01 -= std::floor(hue01);              // wrap to [0,1)
+    const float h6 = hue01 * 6.0f;
+    const float c = 1.0f;
+    const float x = c * (1.0f - std::abs(std::fmod(h6, 2.0f) - 1.0f));
+    if (h6 < 1.0f)      { r = c; g = x; b = 0.0f; }
+    else if (h6 < 2.0f) { r = x; g = c; b = 0.0f; }
+    else if (h6 < 3.0f) { r = 0.0f; g = c; b = x; }
+    else if (h6 < 4.0f) { r = 0.0f; g = x; b = c; }
+    else if (h6 < 5.0f) { r = x; g = 0.0f; b = c; }
+    else                { r = c; g = 0.0f; b = x; }
 }
 
 void overlay_point_color(OverlayRamp ramp, float v, float t, float& r, float& g, float& b) {
@@ -276,6 +345,381 @@ void append_overlay_points(RenderBridge& rb, NativeFrame& frame,
         overlay_point_color(d.ramp, v, t, p.r, p.g, p.b);
         p.size = 0.20f + 0.55f * t;
         frame.flux.push_back(p);
+    }
+}
+
+// ── Tranche-2 EXTEND helpers ───────────────────────────────────────────────
+// All emit through the SAME two primitives (frame.flux sprite points and
+// frame.field_lines line segments) — no new PSO. Ported from the web renderers
+// (field-quantum-renderer.js, field-topology-renderer.js, overlay-frames.js).
+
+// Bounded visualization stride for the derived point overlays — the ambient
+// cloud's stride, so a derived overlay has the same point density as |J|.
+int overlay_stride(int L) { return std::max(1, (L + 31) / 32); }
+
+// Derived-scalar overlays → sprite points. Which scalar is set by d.derive:
+//   PsiSquared: |J|² (viridis, max-normalised, threshold 0.02);
+//   Lagrangian: ½|E|² − ½(∇·J)² (signed RdBu, threshold 0.10) — E and ∇·J are
+//               sampled independently and PAIRED BY VOXEL POSITION (the two
+//               samplers compact away sub-floor voxels, so raw index does not
+//               address the same voxel — port of computeLagrangianDensityFrame);
+//   Entropy:    4p(1−p), p=|J|/|J|max (grayscale + per-point jitter, thr 0.04);
+//   Chirality:  |J|·δ, δ = √DELTA_SQUARED = DUAL_DELTA canonical (signed
+//               red/blue, threshold 0.02).
+void append_overlay_derived_points(RenderBridge& rb, NativeFrame& frame,
+                                   const OverlayDescriptor& d) {
+    const int L = rb.lattice().size();
+    const int stride = overlay_stride(L);
+
+    if (d.derive == OverlayDerive::Lagrangian) {
+        VisualFieldSample eF, dF;
+        rb.copy_visual_field_sample(VisualFieldKind::Electric, stride, eF);
+        rb.copy_visual_field_sample(VisualFieldKind::Divergence, stride, dF);
+        if (eF.components != 3u || eF.count() == 0) return;
+        auto vox_key = [L](float px, float py, float pz) -> std::int64_t {
+            const std::int64_t ix = static_cast<std::int64_t>(std::floor(px));
+            const std::int64_t iy = static_cast<std::int64_t>(std::floor(py));
+            const std::int64_t iz = static_cast<std::int64_t>(std::floor(pz));
+            return (ix * L + iy) * L + iz;
+        };
+        std::unordered_map<std::int64_t, float> div_at;
+        if (dF.components == 1u) {
+            div_at.reserve(dF.count());
+            for (std::size_t i = 0; i < dF.count(); ++i)
+                div_at[vox_key(dF.positions[i * 3u], dF.positions[i * 3u + 1u],
+                               dF.positions[i * 3u + 2u])] = dF.data[i];
+        }
+        const std::size_t n = eF.count();
+        std::vector<float> lval(n, 0.0f);
+        float max_abs = 1.0e-9f;
+        for (std::size_t i = 0; i < n; ++i) {
+            const float ex = eF.data[i * 3u], ey = eF.data[i * 3u + 1u], ez = eF.data[i * 3u + 2u];
+            const float kinetic = 0.5f * (ex * ex + ey * ey + ez * ez);
+            float grad = 0.0f;
+            const auto it = div_at.find(vox_key(eF.positions[i * 3u], eF.positions[i * 3u + 1u],
+                                                eF.positions[i * 3u + 2u]));
+            if (it != div_at.end()) grad = 0.5f * it->second * it->second;
+            lval[i] = kinetic - grad;
+            max_abs = std::max(max_abs, std::abs(lval[i]));
+        }
+        frame.flux.reserve(frame.flux.size() + n);
+        for (std::size_t i = 0; i < n; ++i) {
+            const float t = lval[i] / max_abs;  // signed [-1,1]
+            if (std::abs(t) < d.threshold) continue;
+            NativeParticle p;
+            p.x = eF.positions[i * 3u];
+            p.y = eF.positions[i * 3u + 1u];
+            p.z = eF.positions[i * 3u + 2u];
+            ramp_rdbu(t, p.r, p.g, p.b);
+            p.size = 0.20f + 0.55f * std::abs(t);
+            frame.flux.push_back(p);
+        }
+        return;
+    }
+
+    // PsiSquared / Entropy / Chirality all derive from |J| alone.
+    VisualFieldSample s;
+    rb.copy_visual_field_sample(VisualFieldKind::FluxVector, stride, s);
+    if (s.components != 3u || s.count() == 0) return;
+    const std::size_t n = s.count();
+    std::vector<float> mag(n, 0.0f);
+    float max_mag = 1.0e-9f;
+    for (std::size_t i = 0; i < n; ++i) {
+        const float x = s.data[i * 3u], y = s.data[i * 3u + 1u], z = s.data[i * 3u + 2u];
+        mag[i] = std::sqrt(x * x + y * y + z * z);
+        max_mag = std::max(max_mag, mag[i]);
+    }
+    // Canonical DUAL_DELTA from the ontic chain (never hardcoded).
+    const float delta = static_cast<float>(std::sqrt(ftd::DELTA_SQUARED));
+    frame.flux.reserve(frame.flux.size() + n);
+    for (std::size_t i = 0; i < n; ++i) {
+        NativeParticle p;
+        p.x = s.positions[i * 3u];
+        p.y = s.positions[i * 3u + 1u];
+        p.z = s.positions[i * 3u + 2u];
+        if (d.derive == OverlayDerive::PsiSquared) {
+            const float t = (mag[i] * mag[i]) / (max_mag * max_mag);
+            if (t < d.threshold) continue;
+            ramp_viridis(t, p.r, p.g, p.b);
+            p.size = 0.20f + 0.55f * t;
+        } else if (d.derive == OverlayDerive::Entropy) {
+            const float pfrac = mag[i] / max_mag;
+            const float sval = 4.0f * pfrac * (1.0f - pfrac);  // 0→1→0 impurity
+            if (sval < d.threshold) continue;                  // absolute (s∈[0,1])
+            // Deterministic per-index sparkle jitter (port of the web offset;
+            // fixed seed so captures are reproducible).
+            const std::uint32_t seed = static_cast<std::uint32_t>(i) * 9301u + 1u;
+            const float r1 = static_cast<float>((seed * 49297u) % 233280u) / 233280.0f - 0.5f;
+            const float r2 = static_cast<float>((seed * 2147u) % 233280u) / 233280.0f - 0.5f;
+            const float r3 = static_cast<float>((seed * 8191u) % 233280u) / 233280.0f - 0.5f;
+            const float off = sval * 0.8f;
+            p.x += r1 * off; p.y += r2 * off; p.z += r3 * off;
+            ramp_grayscale(sval, p.r, p.g, p.b);
+            p.size = 0.20f + 0.55f * sval;
+        } else {  // Chirality: |J|·δ (non-negative under the scalar proxy → warm)
+            const float t = mag[i] / max_mag;  // = (|J|·δ)/(|J|max·δ)
+            if (t < d.threshold) continue;
+            ramp_chirality(mag[i] * delta, t, p.r, p.g, p.b);
+            p.size = 0.20f + 0.55f * t;
+        }
+        frame.flux.push_back(p);
+    }
+}
+
+// Dual J: amplitude split J_L=J(1+δ)/2 (warm) + J_R=J(1−δ)/2 (cool) from
+// FluxVector, δ = √DELTA_SQUARED (canonical). Two coloured point sets, both
+// normalised by the shared max amplitude, threshold 2% of that max. Under the
+// scalar (1±δ)/2 proxy J_L and J_R are collinear with J, so this is an
+// amplitude-asymmetry demonstration, not a true chirality projection.
+void append_dual_flux(RenderBridge& rb, NativeFrame& frame, const OverlayDescriptor& d) {
+    const int L = rb.lattice().size();
+    const int stride = overlay_stride(L);
+    VisualFieldSample s;
+    rb.copy_visual_field_sample(VisualFieldKind::FluxVector, stride, s);
+    if (s.components != 3u || s.count() == 0) return;
+    const float delta = static_cast<float>(std::sqrt(ftd::DELTA_SQUARED));
+    const float lf = (1.0f + delta) * 0.5f;
+    const float rf = std::abs((1.0f - delta) * 0.5f);
+    const std::size_t n = s.count();
+    std::vector<float> mag_l(n), mag_r(n);
+    float max_val = 1.0e-20f;
+    for (std::size_t i = 0; i < n; ++i) {
+        const float x = s.data[i * 3u], y = s.data[i * 3u + 1u], z = s.data[i * 3u + 2u];
+        const float m = std::sqrt(x * x + y * y + z * z);
+        mag_l[i] = m * lf;
+        mag_r[i] = m * rf;
+        max_val = std::max(max_val, std::max(mag_l[i], mag_r[i]));
+    }
+    const float thr = max_val * d.threshold;
+    frame.flux.reserve(frame.flux.size() + 2u * n);
+    for (std::size_t i = 0; i < n; ++i) {  // L (warm)
+        if (mag_l[i] < thr) continue;
+        const float t = mag_l[i] / max_val;
+        NativeParticle p;
+        p.x = s.positions[i * 3u]; p.y = s.positions[i * 3u + 1u]; p.z = s.positions[i * 3u + 2u];
+        p.r = 0.90f * t; p.g = 0.40f * t; p.b = 0.15f * t;
+        p.size = 0.20f + 0.55f * t;
+        frame.flux.push_back(p);
+    }
+    for (std::size_t i = 0; i < n; ++i) {  // R (cool)
+        if (mag_r[i] < thr) continue;
+        const float t = mag_r[i] / max_val;
+        NativeParticle p;
+        p.x = s.positions[i * 3u]; p.y = s.positions[i * 3u + 1u]; p.z = s.positions[i * 3u + 2u];
+        p.r = 0.30f * t; p.g = 0.20f * t; p.b = 0.90f * t;
+        p.size = 0.20f + 0.55f * t;
+        frame.flux.push_back(p);
+    }
+}
+
+// Dense |J| band overlays → sprite points. Samples FluxVector at stride 1 (the
+// compacted, near-zero-free per-voxel magnitude buffer — reused for both bands)
+// and keeps voxels inside the overlay's absolute |J| band:
+//   DmHalo:  0.003 < |J| < K_GENESIS   (sub-threshold flux envelope);
+//   Genesis: |J| ≈ K_GENESIS ± K_GENESIS·0.15  (genesis-frontier shell).
+// K_GENESIS from the ontic chain (never hardcoded).
+void append_dense_band_points(RenderBridge& rb, NativeFrame& frame, const OverlayDescriptor& d) {
+    VisualFieldSample s;
+    rb.copy_visual_field_sample(VisualFieldKind::FluxVector, /*stride=*/1, s);
+    if (s.components != 3u || s.count() == 0) return;
+    const float k_gen = static_cast<float>(ftd::K_GENESIS);
+    const float band = k_gen * 0.15f;
+    const std::size_t n = s.count();
+    constexpr std::size_t kMaxBandPoints = 20000;
+    std::size_t emitted = 0;
+    frame.flux.reserve(frame.flux.size() + std::min(n, kMaxBandPoints));
+    for (std::size_t i = 0; i < n && emitted < kMaxBandPoints; ++i) {
+        const float x = s.data[i * 3u], y = s.data[i * 3u + 1u], z = s.data[i * 3u + 2u];
+        const float m = std::sqrt(x * x + y * y + z * z);
+        NativeParticle p;
+        bool keep = false;
+        float t = 0.0f;
+        if (d.derive == OverlayDerive::DmHalo) {
+            if (m > 0.003f && m < k_gen) {
+                keep = true; t = m / k_gen;
+                p.r = 0.30f + 0.40f * t; p.g = 0.10f + 0.15f * t; p.b = 0.50f + 0.40f * t;
+            }
+        } else {  // Genesis shell
+            const float dist = std::abs(m - k_gen);
+            if (dist < band && m > 0.01f) {
+                keep = true; t = 1.0f - dist / band;
+                p.r = 0.15f + 0.15f * t; p.g = 0.70f + 0.30f * t; p.b = 0.20f + 0.15f * t;
+            }
+        }
+        if (!keep) continue;
+        p.x = s.positions[i * 3u]; p.y = s.positions[i * 3u + 1u]; p.z = s.positions[i * 3u + 2u];
+        p.size = 0.25f + 0.60f * t;
+        frame.flux.push_back(p);
+        ++emitted;
+    }
+}
+
+// Flux Slice: |J| sprite points on the three lattice mid-planes (xy@z=L/2,
+// xz@y=L/2, yz@x=L/2). Samples FluxVector at stride 1 so the exact mid-plane
+// indices are represented, keeps voxels on any mid-plane, and colours them with
+// the shared flux-cloud ramp at the shared Flux-Volume threshold.
+void append_flux_slice(RenderBridge& rb, NativeFrame& frame, const OverlayDescriptor& d) {
+    const int L = rb.lattice().size();
+    VisualFieldSample s;
+    rb.copy_visual_field_sample(VisualFieldKind::FluxVector, /*stride=*/1, s);
+    if (s.components != 3u || s.count() == 0) return;
+    const int mid = L / 2;
+    const std::size_t n = s.count();
+    std::vector<float> mag(n);
+    float max_mag = 1.0e-6f;
+    for (std::size_t i = 0; i < n; ++i) {
+        const float x = s.data[i * 3u], y = s.data[i * 3u + 1u], z = s.data[i * 3u + 2u];
+        mag[i] = std::sqrt(x * x + y * y + z * z);
+        max_mag = std::max(max_mag, mag[i]);
+    }
+    frame.flux.reserve(frame.flux.size() + n);
+    for (std::size_t i = 0; i < n; ++i) {
+        const int ix = static_cast<int>(std::floor(s.positions[i * 3u]));
+        const int iy = static_cast<int>(std::floor(s.positions[i * 3u + 1u]));
+        const int iz = static_cast<int>(std::floor(s.positions[i * 3u + 2u]));
+        if (ix != mid && iy != mid && iz != mid) continue;
+        const float t = mag[i] / max_mag;
+        if (t < d.threshold) continue;
+        NativeParticle p;
+        p.x = s.positions[i * 3u]; p.y = s.positions[i * 3u + 1u]; p.z = s.positions[i * 3u + 2u];
+        flux_cloud_color(t, p.r, p.g, p.b);
+        p.size = 0.18f + 0.55f * t;
+        frame.flux.push_back(p);
+    }
+}
+
+// Phase φ: one short oriented needle per voxel, along Ĵ (length ≈ 1.2),
+// cyclic-HSL coloured by the flux azimuth arg = atan2(Jy, Jx).
+//
+// ⚠ [PROXY LIMITATION] The FTD phase is arg(J_L + i·J_R). Under the scalar
+// (1±δ)/2 dual proxy J_L and J_R are COLLINEAR with J, so that phase is
+// spatially CONSTANT and carries no per-voxel structure — it is meaningful only
+// with a true (pseudovector) dual split (PLAN §4; the web computePhaseFrame
+// returns 0 without dual). We therefore colour by the geometric flux azimuth —
+// the only per-voxel angle the proxy exposes — so the overlay is faithful to
+// the "oriented needle, cyclic-HSL by arg" spec while not pretending to show
+// the (unavailable) true chiral phase.
+void append_phase_needles(RenderBridge& rb, NativeFrame& frame, const OverlayDescriptor& d) {
+    const int L = rb.lattice().size();
+    const int stride = overlay_stride(L);
+    VisualFieldSample s;
+    rb.copy_visual_field_sample(VisualFieldKind::FluxVector, stride, s);
+    if (s.components != 3u || s.count() == 0) return;
+    const std::size_t n = s.count();
+    std::vector<float> mag(n);
+    float max_mag = 1.0e-9f;
+    for (std::size_t i = 0; i < n; ++i) {
+        const float x = s.data[i * 3u], y = s.data[i * 3u + 1u], z = s.data[i * 3u + 2u];
+        mag[i] = std::sqrt(x * x + y * y + z * z);
+        max_mag = std::max(max_mag, mag[i]);
+    }
+    constexpr float kHalfLen = 0.6f;  // total needle length ≈ 1.2 voxels
+    constexpr float kPi = 3.14159265358979323846f;
+    frame.field_lines.reserve(frame.field_lines.size() + n);
+    for (std::size_t i = 0; i < n; ++i) {
+        const float t = mag[i] / max_mag;
+        if (t < d.threshold) continue;
+        const float jx = s.data[i * 3u], jy = s.data[i * 3u + 1u], jz = s.data[i * 3u + 2u];
+        const float inv = 1.0f / mag[i];
+        const float hx = jx * inv, hy = jy * inv, hz = jz * inv;
+        float r, g, b;
+        ramp_cyclic_hsl((std::atan2(jy, jx) + kPi) / (2.0f * kPi), r, g, b);
+        const float bx = s.positions[i * 3u], by = s.positions[i * 3u + 1u], bz = s.positions[i * 3u + 2u];
+        NativeLine line;
+        line.x0 = bx - hx * kHalfLen; line.y0 = by - hy * kHalfLen; line.z0 = bz - hz * kHalfLen;
+        line.x1 = bx + hx * kHalfLen; line.y1 = by + hy * kHalfLen; line.z1 = bz + hz * kHalfLen;
+        line.r0 = r; line.g0 = g; line.b0 = b;
+        line.r1 = r; line.g1 = g; line.b1 = b;
+        frame.field_lines.push_back(line);
+    }
+}
+
+// Damping zones: 12 wireframe-box edges (a 3-voxel cube, half-extent 1.5)
+// around each manifested particle, red, capped at ~1200 segments.
+void append_damping_boxes(NativeFrame& frame) {
+    static const int edges[12][6] = {
+        {0, 0, 0, 1, 0, 0}, {0, 1, 0, 1, 1, 0}, {0, 0, 1, 1, 0, 1}, {0, 1, 1, 1, 1, 1},
+        {0, 0, 0, 0, 1, 0}, {1, 0, 0, 1, 1, 0}, {0, 0, 1, 0, 1, 1}, {1, 0, 1, 1, 1, 1},
+        {0, 0, 0, 0, 0, 1}, {1, 0, 0, 1, 0, 1}, {0, 1, 0, 0, 1, 1}, {1, 1, 0, 1, 1, 1},
+    };
+    constexpr std::size_t kMaxSegments = 1200;
+    std::size_t seg = 0;
+    for (const NativeParticle& part : frame.particles) {
+        if (seg + 12u > kMaxSegments) break;
+        const float cx = part.x, cy = part.y, cz = part.z;  // voxel-centre already
+        for (const auto& e : edges) {
+            NativeLine line;
+            line.x0 = cx - 1.5f + e[0] * 3.0f;
+            line.y0 = cy - 1.5f + e[1] * 3.0f;
+            line.z0 = cz - 1.5f + e[2] * 3.0f;
+            line.x1 = cx - 1.5f + e[3] * 3.0f;
+            line.y1 = cy - 1.5f + e[4] * 3.0f;
+            line.z1 = cz - 1.5f + e[5] * 3.0f;
+            line.r0 = 0.80f; line.g0 = 0.20f; line.b0 = 0.20f;
+            line.r1 = 0.80f; line.g1 = 0.20f; line.b1 = 0.20f;
+            frame.field_lines.push_back(line);
+            ++seg;
+        }
+    }
+}
+
+// Confinement strings: a link segment between each particle pair with
+// 1 < r < √120 (r² ∈ (1, CONFINEMENT_PAIR_DIST2)), coloured by separation
+// direction (port of updateConfinementStrings). Pair scan is spatial-hashed
+// (cell = √threshold) so each particle only tests its 27-cell neighbourhood.
+void append_confinement_links(NativeFrame& frame) {
+    const std::size_t count = frame.particles.size();
+    if (count < 2) return;
+    constexpr float kDist2 = 120.0f;  // CONFINEMENT_PAIR_DIST2 (web constant)
+    constexpr std::size_t kMaxSegments = 1500;
+    const float cell = std::sqrt(kDist2);
+    // Cell coords are non-negative and bounded (L ≤ 256 ⇒ coord < 24 < 1024),
+    // so pack them collision-free into one key (exact, no hash aliasing).
+    auto cell_key = [](int cx, int cy, int cz) -> std::int64_t {
+        return (static_cast<std::int64_t>(cx) * 1024 + cy) * 1024 + cz;
+    };
+    std::unordered_map<std::int64_t, std::vector<int>> buckets;
+    buckets.reserve(count);
+    for (int p = 0; p < static_cast<int>(count); ++p) {
+        const NativeParticle& pt = frame.particles[static_cast<std::size_t>(p)];
+        buckets[cell_key(static_cast<int>(std::floor(pt.x / cell)),
+                         static_cast<int>(std::floor(pt.y / cell)),
+                         static_cast<int>(std::floor(pt.z / cell)))].push_back(p);
+    }
+    std::size_t seg = 0;
+    for (int i = 0; i < static_cast<int>(count) && seg < kMaxSegments; ++i) {
+        const NativeParticle& pi = frame.particles[static_cast<std::size_t>(i)];
+        const float xi = pi.x, yi = pi.y, zi = pi.z;
+        const int cix = static_cast<int>(std::floor(xi / cell));
+        const int ciy = static_cast<int>(std::floor(yi / cell));
+        const int ciz = static_cast<int>(std::floor(zi / cell));
+        for (int ax = -1; ax <= 1 && seg < kMaxSegments; ++ax)
+        for (int ay = -1; ay <= 1 && seg < kMaxSegments; ++ay)
+        for (int az = -1; az <= 1 && seg < kMaxSegments; ++az) {
+            const auto it = buckets.find(cell_key(cix + ax, ciy + ay, ciz + az));
+            if (it == buckets.end()) continue;
+            for (int j : it->second) {
+                if (j <= i) continue;  // each unordered pair emitted once
+                const NativeParticle& pj = frame.particles[static_cast<std::size_t>(j)];
+                const float dx = pj.x - xi, dy = pj.y - yi, dz = pj.z - zi;
+                const float r2 = dx * dx + dy * dy + dz * dz;
+                if (r2 <= 1.0f || r2 >= kDist2) continue;
+                if (seg >= kMaxSegments) break;
+                const float t = r2 / kDist2;
+                const float alpha = 1.0f - t * 0.4f;
+                const float inv_r = 1.0f / std::sqrt(r2);
+                const float cr = std::abs(dx) * inv_r * alpha + 0.2f;
+                const float cg = std::abs(dy) * inv_r * alpha + 0.2f;
+                const float cb = std::abs(dz) * inv_r * alpha + 0.2f;
+                NativeLine line;
+                line.x0 = xi; line.y0 = yi; line.z0 = zi;
+                line.x1 = pj.x; line.y1 = pj.y; line.z1 = pj.z;
+                line.r0 = cr; line.g0 = cg; line.b0 = cb;
+                line.r1 = cr; line.g1 = cg; line.b1 = cb;
+                frame.field_lines.push_back(line);
+                ++seg;
+            }
+        }
     }
 }
 
@@ -519,6 +963,13 @@ NativeFrame Scale0Adapter::capture() {
     frame.total_manifested = snapshot.particles.total_manifested;
     frame.particles.reserve(snapshot.particles.records.size());
 
+    // Color-charge overlay recolours the particle sprites in place by the
+    // genesis-assigned colour axis carried per particle (VisualParticleRecord::
+    // color ∈ {0 colorless, 1 red, 2 green, 3 blue} — argmax|J_axis| at genesis).
+    // No engine change and no extra snapshot field: the colour is already in the
+    // record. It does NOT suppress the ambient flux cloud (web special-cases
+    // showColorCharge outside anyFieldActive — see the compositing gate below).
+    const bool color_charge = overlay_active(OverlayId::ColorCharge);
     const Lattice& lattice = bridge_->lattice();
     for (const VisualParticleRecord& rec : snapshot.particles.records) {
         if (rec.index < 0) continue;
@@ -536,35 +987,72 @@ NativeFrame Scale0Adapter::capture() {
             p.g = 0.44f;
             p.b = 0.44f;
         }
+        if (color_charge && rec.color != 0) {
+            switch (rec.color) {
+                case 1: p.r = 0.90f; p.g = 0.30f; p.b = 0.30f; break;  // red
+                case 2: p.r = 0.30f; p.g = 0.85f; p.b = 0.35f; break;  // green
+                case 3: p.r = 0.35f; p.g = 0.45f; p.b = 0.95f; break;  // blue
+                default: break;                                        // colorless: keep sign
+            }
+        }
         p.size = 0.55f;
         frame.particles.push_back(p);
     }
-    // Overlay compositing. Empty set (default): the ambient flux cloud, as
-    // before. Otherwise composite EVERY active overlay into this frame — each
-    // sampled once (O(active overlays)) — appending arrows into field_lines and
-    // points into flux. Groups coexist; the ambient cloud shows only when empty
-    // (mirrors the web `anyFieldActive` gate).
-    if (active_overlays_.empty()) {
+    // Overlay compositing. The ambient flux cloud shows when no GEOMETRY-emitting
+    // overlay is active — i.e. the active set is empty OR holds only the Recolor
+    // overlay (Color charge), which recolours particles without adding geometry
+    // (mirrors the web `anyFieldActive` gate, where showColorCharge is special-
+    // cased outside it). Otherwise composite EVERY active overlay into this frame
+    // — each sampled once (O(active overlays)) — appending arrows/lines into
+    // field_lines and points into flux. Groups coexist.
+    bool any_geometry = false;
+    for (const OverlayId id : active_overlays_) {
+        const OverlayDescriptor* d = overlay_by_id(static_cast<std::uint32_t>(id));
+        if (d && d->render != OverlayRender::Recolor) { any_geometry = true; break; }
+    }
+    if (!any_geometry) {
         append_flux(*bridge_, frame);
-    } else {
-        for (const OverlayId id : active_overlays_) {
-            const OverlayDescriptor* d = overlay_by_id(static_cast<std::uint32_t>(id));
-            if (!d) continue;
-            const VisualFieldKind kind = resolve_overlay_kind(*d);
-            switch (d->render) {
-                case OverlayRender::Sprite:
-                    append_flux(*bridge_, frame);  // Flux Volume == ambient cloud
-                    break;
-                case OverlayRender::Arrows:
-                    append_overlay_arrows(*bridge_, frame, *d, kind);
-                    break;
-                case OverlayRender::Points:
-                    append_overlay_points(*bridge_, frame, *d, kind);
-                    break;
-                case OverlayRender::Streamline:
-                    append_overlay_streamlines(*bridge_, frame, *d, kind);
-                    break;
-            }
+    }
+    for (const OverlayId id : active_overlays_) {
+        const OverlayDescriptor* d = overlay_by_id(static_cast<std::uint32_t>(id));
+        if (!d) continue;
+        const VisualFieldKind kind = resolve_overlay_kind(*d);
+        switch (d->render) {
+            case OverlayRender::Sprite:
+                append_flux(*bridge_, frame);  // Flux Volume == ambient cloud
+                break;
+            case OverlayRender::Arrows:
+                append_overlay_arrows(*bridge_, frame, *d, kind);
+                break;
+            case OverlayRender::Points:
+                append_overlay_points(*bridge_, frame, *d, kind);
+                break;
+            case OverlayRender::Streamline:
+                append_overlay_streamlines(*bridge_, frame, *d, kind);
+                break;
+            case OverlayRender::DerivedPoints:
+                append_overlay_derived_points(*bridge_, frame, *d);
+                break;
+            case OverlayRender::DualPoints:
+                append_dual_flux(*bridge_, frame, *d);
+                break;
+            case OverlayRender::DenseBand:
+                append_dense_band_points(*bridge_, frame, *d);
+                break;
+            case OverlayRender::FluxSlice:
+                append_flux_slice(*bridge_, frame, *d);
+                break;
+            case OverlayRender::PhaseNeedles:
+                append_phase_needles(*bridge_, frame, *d);
+                break;
+            case OverlayRender::DampingBoxes:
+                append_damping_boxes(frame);
+                break;
+            case OverlayRender::PairLinks:
+                append_confinement_links(frame);
+                break;
+            case OverlayRender::Recolor:
+                break;  // handled in the particle loop above
         }
     }
 
