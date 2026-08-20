@@ -18,12 +18,17 @@
 // while RmlUi draws the toolbar / Setup panel / Physics-terms panel / status bar
 // around it.
 //
-// Unlike the native_desktop reference this app does NOT wire the CUDA<->D3D12
-// zero-copy interop path: particles are gathered to the host by
-// host.capture() every tick and drawn through the presenter's CPU sprite
-// path (interop_particle_count = 0). That keeps the app self-contained and
-// backend-agnostic; the device-resident path is a later optimization (see the
-// report).
+// On the GPU backend at Scale 0 this app wires the CUDA<->D3D12 zero-copy
+// interop path (mirroring the native_desktop reference): the presenter exposes
+// a shared particle buffer + a shared cross-API fence, CUDA imports both, and
+// the interop gather writes device-resident particles straight into that
+// buffer. The sim thread requests a gather + advances the shared fence each
+// round; the GUI thread waits on that fence and draws the device-resident
+// particles (presenter.render(..., interop_particle_count > 0)). The CPU sprite
+// path (interop_particle_count = 0) remains the fallback for the CPU backend,
+// for Scale 1 (ParticleEngine has no device buffer), and for any frame whose
+// gather has not yet landed — host.capture() still supplies frame.particles +
+// flux + metadata every round, so a fallback frame is never blank.
 //
 // --capture-frames N: boot, run the sim while rendering, request a composited
 // back-buffer readback, save it as a PNG, and exit 0 — the headless proof that
@@ -66,6 +71,7 @@
 #include "native/scene_rect.h"
 
 #include "ftd/term_toggles.h"
+#include "ftd/visual_snapshot.h"   // ftd::kMaxVisualParticleCapture (interop buffer sizing)
 
 #include "ui/rml_d3d12_renderer.h"
 
@@ -628,11 +634,65 @@ int run_app(const std::vector<std::string>& args) {
     RmlOverlay overlay(&rml_renderer, &context);
     presenter.set_overlay_recorder(&overlay);
 
+    // ── CUDA↔D3D12 zero-copy interop (Scale-0 GPU particle path) ────────────────
+    // The presenter owns a D3D12_HEAP_FLAG_SHARED particle buffer + a
+    // D3D12_FENCE_FLAG_SHARED cross-API fence; CUDA imports both and the interop
+    // gather writes device-resident particles straight into that buffer. Lifecycle
+    // mirrors the native_desktop reference: create + import once and keep the NT
+    // handles open for the whole process, so every post-reload re-import targets
+    // the SAME D3D12 resources (the presenter and its shared resources are never
+    // recreated by a reload — only the CUDA GpuEngine is). Interop is Scale-0-only:
+    // Scale 1's ParticleEngine has no device buffer and its adapter's interop
+    // methods are no-ops, so try_enable_interop() there returns false and the CPU
+    // sprite path is used.
+    //
+    // Handles are created whenever the backend is GPU (regardless of the INITIAL
+    // scale) so that a later switch INTO Scale 0 can re-import them; the CUDA
+    // import (try_enable_interop) only actually succeeds while Scale 0 is active.
+    std::atomic<bool> interop_active{false};
+    HANDLE interop_buf_handle = nullptr;
+    HANDLE interop_fence_handle = nullptr;
+    std::uint64_t interop_buffer_bytes = 0;
+    if (!engine_opts.force_cpu) {
+        interop_buf_handle =
+            presenter.create_shared_particle_buffer(ftd::kMaxVisualParticleCapture);
+        interop_fence_handle =
+            interop_buf_handle ? presenter.create_shared_fence() : nullptr;
+        if (interop_buf_handle && interop_fence_handle) {
+            interop_buffer_bytes = presenter.shared_particle_buffer_bytes();
+            interop_active.store(host.try_enable_interop(
+                interop_buf_handle, interop_buffer_bytes, interop_fence_handle));
+        }
+        std::cout << "interop: "
+                  << (interop_active.load()
+                          ? "enabled (Scale-0 device-resident particles)"
+                          : "unavailable, using CPU particle path")
+                  << "\n" << std::flush;
+    }
+
     int camera_lattice = host.lattice_size();
 
     // ── Sim thread ──────────────────────────────────────────────────────────────
     std::mutex frame_mu;
+    // Interop poll result produced EXCLUSIVELY on the sim thread (the only thread
+    // allowed to touch host/bridge/GpuEngine — a reload can tear the GpuEngine down
+    // mid-flight with no locking) and consumed on the GUI thread under frame_mu,
+    // paired with `latest`. -1 = "no gather ready this round" / interop inactive.
+    int latest_interop_count = -1;
+    std::uint64_t latest_interop_fence = 0;
     std::thread sim([&] {
+        // Sim-thread-local fence bookkeeping. interop_fence_counter is the strictly
+        // increasing value each gather is signaled under; it is NEVER reset across
+        // reloads, because the D3D12-side shared fence object survives every reload
+        // (only the CUDA GpuEngine is rebuilt) and keeps its completed value — a
+        // reset would make the first post-reload gather signal an already-passed
+        // value, which cudaSignalExternalSemaphoresAsync rejects and a D3D12
+        // queue->Wait would treat as already-satisfied (defeating the sync).
+        // pending_interop_fence remembers which value the most recently REQUESTED
+        // gather used, so a polled count is always paired with the exact fence value
+        // that produced it.
+        std::uint64_t interop_fence_counter = 0;
+        std::uint64_t pending_interop_fence = 0;
         while (running.load()) {
             const auto start = std::chrono::steady_clock::now();
             try {
@@ -645,10 +705,58 @@ int run_app(const std::vector<std::string>& args) {
                 }
                 host.process_ui_boundary(commands);
                 paused.store(host.loop_control().pause);
+
+                // A reload / scale-switch rebuilt the active engine. Re-establish
+                // interop iff Scale 0 is active and the shared handles exist. Two
+                // paths converge here: a same-scale Scale-0 reload clears the
+                // adapter's interop (fresh GpuEngine) and ScaleHost reports
+                // ReloadStatus::InteropReimportRequired; a switch BACK to Scale 0
+                // reports Success on a fresh adapter (was_interop == false). Both
+                // need the identical re-import, and a switch to Scale 1 (no device
+                // buffer) simply leaves interop off. import_d3d12_* are documented
+                // safe to call more than once, so re-importing the same handles into
+                // the fresh GpuEngine is within contract.
+                if (host.applied_reload()) {
+                    bool now_active = false;
+                    if (interop_buf_handle && interop_fence_handle
+                        && host.active_scale() == 0) {
+                        now_active = host.try_enable_interop(
+                            interop_buf_handle, interop_buffer_bytes,
+                            interop_fence_handle);
+                    }
+                    interop_active.store(now_active);
+                }
+
                 if (need_work || host.applied_reload() || host.applied_host_write()) {
+                    // Poll the PREVIOUS gather's count and request the NEXT gather —
+                    // only ever on this thread. A thrown GPU error also lands in the
+                    // catch below rather than unwinding past the still-joinable sim
+                    // thread.
+                    int polled_interop_count = -1;
+                    std::uint64_t polled_interop_fence = 0;
+                    if (interop_active.load()) {
+                        polled_interop_count = host.poll_interop_particle_count();
+                        polled_interop_fence = pending_interop_fence;
+                        const std::uint64_t fv = ++interop_fence_counter;
+                        if (host.request_interop_gather(fv)) {
+                            pending_interop_fence = fv;
+                        } else {
+                            // The cross-API fence signal failed: the GUI thread's
+                            // wait_shared_fence() would otherwise block forever on a
+                            // value never signaled. Drop to the CPU particle path
+                            // for the rest of the session (host.capture() below
+                            // still supplies frame.particles).
+                            interop_active.store(false);
+                            std::cerr << "interop: gather/fence-signal failed "
+                                         "mid-session, falling back to the CPU "
+                                         "particle path\n" << std::flush;
+                        }
+                    }
                     ftd::native::NativeFrame next = host.capture();
                     std::lock_guard<std::mutex> lock(frame_mu);
                     latest = std::move(next);
+                    latest_interop_count = polled_interop_count;
+                    latest_interop_fence = polled_interop_fence;
                 }
             } catch (const std::exception& ex) {
                 std::lock_guard<std::mutex> lock(frame_mu);
@@ -672,8 +780,16 @@ int run_app(const std::vector<std::string>& args) {
     ftd::native::CaptureToken capture_token{};
     bool capture_requested = false;
     bool capture_saved = false;
+    bool capture_ok = false;
     int frame_no = 0;
     const std::string png_out = FTD_APP_PNG_OUT;
+
+    // The interop StructuredBuffer SRV (heap slot 0) only needs binding ONCE for
+    // the lifetime of the never-recreated shared buffer. This catch-up covers both
+    // the startup-active case and a later inactive→active reload transition; a
+    // D3D12 presenter call must stay on this (GUI) thread, so it lives here rather
+    // than in the sim-thread reload block above.
+    bool interop_srv_bound = false;
 
     const auto loop_start = std::chrono::steady_clock::now();
     bool quit = false;
@@ -718,11 +834,28 @@ int run_app(const std::vector<std::string>& args) {
             context->SetDensityIndependentPixelRatio(dpi_scale);
         }
 
-        // Acquire published state.
+        // Acquire published state. The interop count/fence come straight out of
+        // the same frame_mu-protected snapshot as `frame` — populated by the sim
+        // thread, so the fence value is exactly the one request_interop_gather()
+        // used for the gather this count was polled from.
         ftd::native::NativeFrame frame;
+        int this_frame_interop_count = -1;
+        std::uint64_t this_frame_fence_value = 0;
         {
             std::lock_guard<std::mutex> lock(frame_mu);
             frame = latest;
+            this_frame_interop_count = latest_interop_count;
+            this_frame_fence_value = latest_interop_fence;
+        }
+        const std::uint32_t draw_interop_count =
+            this_frame_interop_count > 0
+                ? static_cast<std::uint32_t>(this_frame_interop_count)
+                : 0u;
+        if (capture_mode && frame_no % 30 == 0) {
+            std::cerr << "[frame " << frame_no << "] interop="
+                      << (interop_active.load() ? "on" : "off")
+                      << " interop_count=" << this_frame_interop_count
+                      << " draw_count=" << draw_interop_count << "\n" << std::flush;
         }
         std::shared_ptr<const ftd::native::HostSnapshot> snap = host.publisher().acquire();
 
@@ -812,7 +945,15 @@ int run_app(const std::vector<std::string>& args) {
         // discipline.)
         const bool capture_armed = capture_mode && capture_requested;
         if (capture_mode && !capture_saved) {
-            if (!capture_requested && frame_no >= app_opts.capture_frames) {
+            // When interop is active, hold off arming until a device-resident
+            // gather has actually landed (draw_interop_count > 0), so the captured
+            // frame renders the interop particles rather than the CPU fallback that
+            // shows before the first gather completes. The 40 s deadline above is
+            // the safety net if a scenario never manifests any particles.
+            const bool interop_ready_or_na =
+                !interop_active.load() || draw_interop_count > 0;
+            if (!capture_requested && frame_no >= app_opts.capture_frames
+                && interop_ready_or_na) {
                 capture_token = presenter.request_capture(ftd::native::CaptureRegion::FullWindow);
                 capture_requested = true;
             }
@@ -824,17 +965,21 @@ int run_app(const std::vector<std::string>& args) {
                     std::cout << "capture: " << (ok ? "wrote " : "FAILED ") << png_out
                               << " (" << res.width << "x" << res.height
                               << ", tick=" << data.tick << ", particles=" << data.particle_count
+                              << ", interop=" << (interop_active.load() ? "on" : "off")
+                              << ", interop_count=" << this_frame_interop_count
                               << ", energy=" << data.total_energy.c_str() << ")\n";
                     // The readback already completed (poll returned Ready) and the
-                    // PNG is committed to disk, so no GPU work references anything
-                    // now. Hard-terminate: see wWinMain for why the normal
-                    // process-exit path (ExitProcess / CRT static dtors) deadlocks
-                    // on the loader lock here; TerminateProcess sidesteps it and a
-                    // headless capture whose job is done owes nothing further.
+                    // PNG is committed to disk. Clean-exit attempt: mark the capture
+                    // done and fall through to the normal run_app teardown (sim join,
+                    // GPU idle, RmlUi shutdown, D3D12 release) + a normal return,
+                    // rather than hard-terminating here.
                     std::cout.flush();
                     std::cerr.flush();
+                    capture_ok = ok;
+                    capture_saved = true;
                     running.store(false);
-                    TerminateProcess(GetCurrentProcess(), ok ? 0u : 2u);
+                    quit = true;
+                    break;
                 } else if (res.status == ftd::native::CaptureStatus::Failed) {
                     std::cerr << "capture: failed: " << res.error << "\n" << std::flush;
                     capture_saved = true;
@@ -848,7 +993,17 @@ int run_app(const std::vector<std::string>& args) {
         // itself (capture_armed still false here) renders normally.
         if (!capture_armed) {
             try {
-                presenter.render(frame, camera, view_opts, /*interop_particle_count=*/0);
+                // Bind the interop SRV once (idempotent, GUI-thread-only D3D12
+                // call), then make the render queue wait until CUDA has signaled
+                // the shared fence for the gather whose count we are about to draw.
+                if (interop_active.load() && !interop_srv_bound) {
+                    presenter.bind_interop_particle_srv();
+                    interop_srv_bound = true;
+                }
+                if (draw_interop_count != 0) {
+                    presenter.wait_shared_fence(this_frame_fence_value);
+                }
+                presenter.render(frame, camera, view_opts, draw_interop_count);
             } catch (const std::exception& ex) {
                 std::cerr << "render threw at frame " << frame_no << ": " << ex.what() << "\n"
                           << std::flush;
@@ -871,9 +1026,18 @@ int run_app(const std::vector<std::string>& args) {
     app.context = nullptr;
     context = nullptr;  // stop the overlay from re-entering RmlUi during shutdown
     presenter.wait_idle();
+    // The sim thread (the only thread that re-imports these after startup) is
+    // joined and the GPU is idle, so nothing on either API still references the
+    // shared buffer/fence. CUDA imported (did not take ownership of) these NT
+    // handles, so closing them here frees the handle without touching the
+    // still-live CUDA external objects. (In --capture-frames mode the process is
+    // hard-terminated before reaching here; the OS reclaims the handles.)
+    if (interop_fence_handle) CloseHandle(interop_fence_handle);
+    if (interop_buf_handle) CloseHandle(interop_buf_handle);
     Rml::Shutdown();  // renderer (declared after presenter) still alive here
 
-    return (capture_mode && !capture_saved) ? 2 : 0;
+    if (capture_mode) return (capture_saved && capture_ok) ? 0 : 2;
+    return 0;
 }
 
 }  // namespace
@@ -890,16 +1054,10 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
         rc = 1;
     }
     if (SUCCEEDED(co)) CoUninitialize();
-    // All meaningful teardown has run above (GPU idle, RmlUi shut down, the
-    // D3D12 device + swapchain released as run_app's locals unwound). The
-    // remaining CRT static-destructor / DLL_PROCESS_DETACH phase deadlocks on the
-    // loader lock: the MSVC OpenMP worker pool (the engine ran omp parallel
-    // regions on the sim thread) plus driver teardown threads leave a thread
-    // parked in a state that ExitProcess/CRT-exit blocks on. TerminateProcess
-    // does not take the loader lock or run DllMain, so it exits cleanly and
-    // promptly now that our own cleanup is complete.
+    // Clean-exit attempt (see run_app teardown): all meaningful teardown has run
+    // above (GPU idle, RmlUi shut down, the D3D12 device + swapchain released as
+    // run_app's locals unwound). Return normally and let the CRT exit path run.
     std::cout.flush();
     std::cerr.flush();
-    TerminateProcess(GetCurrentProcess(), static_cast<UINT>(rc));
-    return rc;  // not reached
+    return rc;
 }
