@@ -59,6 +59,11 @@ enum class OverlayRender : std::uint32_t {
     DampingBoxes,   // 12 wireframe-box edges (3-voxel cube) around each particle → line list
     PairLinks,      // qualifying particle-pair link segments (1<r<√120) → line list
     Recolor,        // recolour existing particle sprites in place (emits no new geometry)
+    // ── Tranche 5 (NEW): rubber-sheet surfaces (triangle-mesh vertex-colour PSO)
+    //    — the app's first non-billboard surface. A deformed ~40×40 grid whose
+    //    Y is displaced by a per-voxel scalar (scattered → box-blurred → sampled)
+    //    and whose vertices are ramp-coloured. Emits into NativeFrame.field_sheets.
+    Sheet,          // deformable rubber sheet (Φ · EM energy · Charge ρ · Vorticity · P_E · P_B)
 };
 
 // Colour ramp applied to the per-sample magnitude/sign.
@@ -83,6 +88,15 @@ enum class OverlayRamp : std::uint32_t {
     FluxLine,    // Flux Lines: flux colormap by LOCAL |J| (dark-blue→cyan→red)
     CyanFade,    // E Field: cyan (0.30,0.82,0.88) faded along the line
     GreenFade,   // B Field: green (0.40,0.73,0.42) faded along the line
+    // Tranche-5 rubber-sheet ramps (per-vertex surface colour; ports of the
+    // engine/web/js/viewport/color-ramps.js sheet ramps). Signed sheets pass the
+    // signed height t∈[-1,1] (grav-well uses |t|); unsigned pass t∈[0,1].
+    GravWell,    // Φ potential: peak yellow → deep blue well (coloured by |t|)
+    EmEnergy,    // EM energy u: teal → warm orange, t∈[0,1]
+    Charge,      // Charge ρ: diverging blue(sink) ↔ red(source), t∈[-1,1]
+    Vorticity,   // Vorticity ω: magma near-black → violet → gold, t∈[0,1]
+    EPressure,   // P_E: pale yellow → saturated red, t∈[0,1]
+    BPressure,   // P_B: pale cyan → deep teal, t∈[0,1]
 };
 
 // Which derivation/band a DerivedPoints / DenseBand overlay runs. `None` for
@@ -96,6 +110,14 @@ enum class OverlayDerive : std::uint32_t {
     Chirality,    // |J|·δ (δ = DUAL_DELTA, canonical)
     DmHalo,       // dense |J| band 0.003 < |J| < K_GENESIS
     Genesis,      // dense |J| shell |J| ≈ K_GENESIS ± K_GENESIS·0.15
+    // ── Tranche 5: rubber-sheet scalars. Each names the field(s) it derives its
+    //    per-voxel height from; the builder pairs multi-field cases by voxel.
+    SheetGravPotential,  // −|J|² from FluxVector (signed, wells dip)
+    SheetEmEnergy,       // ½|E|² + (c²/2)|B|² from Electric+Magnetic (unsigned)
+    SheetCharge,         // ∇·J from Divergence (signed, red hills / blue wells)
+    SheetVorticity,      // |∇×J| from the Vorticity scalar field (unsigned)
+    SheetEPressure,      // ½|E|² from Electric (unsigned)
+    SheetBPressure,      // (c²/2)|B|² from Magnetic (unsigned)
 };
 
 // Stable overlay identifiers. The numeric value is the wire id carried by the
@@ -130,6 +152,13 @@ enum class OverlayId : std::uint32_t {
     ColorCharge,     // Phenomena — recolour particles by genesis colour axis
     Damping,         // Phenomena — wireframe boxes around particles
     Confinement,     // Phenomena — particle-pair link segments
+    // ── Tranche 5: the 6 rubber-sheet overlays (triangle-mesh vertex-colour) ──
+    GravPotential,   // Topology     — Φ = −|J|² rubber sheet (wells dip)
+    EmEnergy,        // Topology     — u = ½|E|²+(c²/2)|B|² rubber sheet
+    ChargeDensity,   // Topology     — ρ = ∇·J signed rubber sheet
+    Vorticity,       // Topology     — ω = |∇×J| rubber sheet (thin band)
+    EPressure,       // Stress-Energy — P_E = ½|E|² rubber sheet
+    BPressure,       // Stress-Energy — P_B = (c²/2)|B|² rubber sheet
     // Future tranches append here (EXTEND / NEW overlays) — do not reorder.
 };
 
@@ -148,9 +177,16 @@ struct OverlayDescriptor {
     float                select_min;
     bool                 scale_by_dual_delta;  // ∇×J "weak": ×DUAL_DELTA (canonical)
     bool                 force_stride1;         // State / Gauss sample every voxel
-    // Which formula/band a DerivedPoints / DenseBand overlay runs; None (the
-    // value-initialised default) for every other render mode.
+    // Which formula/band a DerivedPoints / DenseBand / Sheet overlay runs; None
+    // (the value-initialised default) for every other render mode.
     OverlayDerive        derive = OverlayDerive::None;
+    // Rubber-sheet (OverlayRender::Sheet) placement, mirroring the web
+    // TOPOLOGY_CONFIGS: `y_frac` is the sheet's rest-plane height as a fraction
+    // of the lattice box (world y = y_frac·N); `depth_frac` is the Y-deform
+    // amplitude as a fraction of N (world Δy = t · depth_frac·N). 0 for every
+    // non-sheet row (the value-initialised default).
+    float                y_frac = 0.0f;
+    float                depth_frac = 0.0f;
 };
 
 // The registry, in menu/column order. Defined once here (header-inline) so both
@@ -230,6 +266,29 @@ inline constexpr OverlayDescriptor kOverlayRegistry[] = {
     {OverlayId::Confinement,  "confinement","Confinement", OverlayColumn::Phenomena,
      OverlayRender::PairLinks,     ftd::VisualFieldKind::FluxVector, OverlayRamp::FluxCloud,
      0.0f, -1.0f, false, false, OverlayDerive::None},
+
+    // ── Tranche 5 (NEW) — rubber-sheet surfaces (triangle-mesh vertex-colour) ──
+    // Topology sheets. Each deforms a ~40×40 grid at world y = y_frac·N by its
+    // (signed) blurred scalar × depth_frac·N, coloured by the per-sheet ramp.
+    {OverlayId::GravPotential, "gravPotential", "\xCE\xA6 potential", OverlayColumn::Topology,
+     OverlayRender::Sheet, ftd::VisualFieldKind::FluxVector, OverlayRamp::GravWell,
+     0.0f, -1.0f, false, false, OverlayDerive::SheetGravPotential, 0.25f, 0.25f},
+    {OverlayId::EmEnergy,      "emEnergy",      "EM energy u",   OverlayColumn::Topology,
+     OverlayRender::Sheet, ftd::VisualFieldKind::Electric,   OverlayRamp::EmEnergy,
+     0.0f, -1.0f, false, false, OverlayDerive::SheetEmEnergy, 0.05f, 0.08f},
+    {OverlayId::ChargeDensity, "chargeDensity", "Charge \xCF\x81",  OverlayColumn::Topology,
+     OverlayRender::Sheet, ftd::VisualFieldKind::Divergence, OverlayRamp::Charge,
+     0.0f, -1.0f, false, false, OverlayDerive::SheetCharge, 0.87f, 0.08f},
+    {OverlayId::Vorticity,     "vorticity",     "Vorticity \xCF\x89", OverlayColumn::Topology,
+     OverlayRender::Sheet, ftd::VisualFieldKind::Vorticity,  OverlayRamp::Vorticity,
+     0.0f, -1.0f, false, false, OverlayDerive::SheetVorticity, 0.97f, 0.03f},
+    // Stress-Energy sheets (this column appears in the panel automatically).
+    {OverlayId::EPressure,     "ePressure",     "P_E (electric)", OverlayColumn::StressEnergy,
+     OverlayRender::Sheet, ftd::VisualFieldKind::Electric,   OverlayRamp::EPressure,
+     0.0f, -1.0f, false, false, OverlayDerive::SheetEPressure, 0.35f, 0.08f},
+    {OverlayId::BPressure,     "bPressure",     "P_B (magnetic)", OverlayColumn::StressEnergy,
+     OverlayRender::Sheet, ftd::VisualFieldKind::Magnetic,   OverlayRamp::BPressure,
+     0.0f, -1.0f, false, false, OverlayDerive::SheetBPressure, 0.45f, 0.08f},
 };
 
 inline constexpr std::size_t kOverlayCount =

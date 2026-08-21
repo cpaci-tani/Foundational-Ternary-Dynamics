@@ -28,6 +28,25 @@ struct NativeLine {
     float r1 = 1.0f, g1 = 1.0f, b1 = 1.0f;
 };
 
+// One vertex of a rubber-sheet (topology / stress-energy) surface: a world
+// position plus a per-vertex RGBA colour (alpha carries the translucent-sheet
+// opacity). Drawn through the presenter's triangle-mesh vertex-colour PSO
+// (double-sided, alpha-blended, depth-tested) — the app's first non-billboard
+// surface. See engine/web/js/viewport/topology-sheet-renderer.js.
+struct NativeSheetVertex {
+    float x = 0.0f, y = 0.0f, z = 0.0f;
+    float r = 1.0f, g = 1.0f, b = 1.0f, a = 1.0f;
+};
+
+// One rubber-sheet surface: an indexed triangle mesh (a deformed ~40×40 grid).
+// `indices` are three-per-triangle into `vertices`. Built CPU-side by the
+// Scale-0 adapter's heightfield pipeline (scatter → box-blur → deform) and
+// uploaded whole to the presenter's sheet vertex/index buffers each frame.
+struct NativeSheet {
+    std::vector<NativeSheetVertex> vertices;
+    std::vector<std::uint32_t>     indices;
+};
+
 struct NativeFrame {
     int tick = 0;
     int lattice_size = 0;
@@ -43,6 +62,10 @@ struct NativeFrame {
     std::vector<NativeParticle> flux;
     // Vector field overlay geometry (empty unless a 3-vector overlay is active).
     std::vector<NativeLine> field_lines;
+    // Rubber-sheet surface geometry (empty unless a Sheet overlay — Φ potential,
+    // EM energy, Charge ρ, Vorticity ω, P_E, P_B — is active). Each entry is one
+    // deformed grid drawn through the presenter's sheet mesh PSO (+ wireframe).
+    std::vector<NativeSheet> field_sheets;
 };
 
 }  // namespace ftd::native

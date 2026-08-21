@@ -234,6 +234,98 @@ void ramp_cyclic_hsl(float hue01, float& r, float& g, float& b) {
     else                { r = c; g = 0.0f; b = x; }
 }
 
+// ── Tranche-5 rubber-sheet ramps (ports of the sheet ramps in
+//    engine/web/js/viewport/color-ramps.js). Signed ramps take t∈[-1,1];
+//    unsigned take t∈[0,1]. GravWell is coloured by |t| (the caller passes it). ─
+
+// Φ potential: peak yellow (t→0) → deep blue well (t→1). t is |height| here.
+void ramp_grav_well(float t, float& r, float& g, float& b) {
+    t = std::clamp(t, 0.0f, 1.0f);
+    if (t > 0.5f) {
+        const float u = (t - 0.5f) * 2.0f;
+        r = 0.0f;
+        g = 0.4f * (1.0f - u);
+        b = 0.8f * (1.0f - u) + 0.2f * u;
+    } else {
+        const float u = t * 2.0f;
+        r = 1.0f * (1.0f - u);
+        g = 1.0f * (1.0f - u) + 0.4f * u;
+        b = 0.8f * u;
+    }
+}
+
+// EM energy u: teal → warm orange, t∈[0,1].
+void ramp_em_energy(float t, float& r, float& g, float& b) {
+    t = std::clamp(t, 0.0f, 1.0f);
+    r = 0.05f * (1.0f - t) + 0.98f * t;
+    g = 0.55f * (1.0f - t) + 0.62f * t;
+    b = 0.55f * (1.0f - t) + 0.14f * t;
+}
+
+// Charge ρ = ∇·J: diverging blue(sink) ↔ red(source), t∈[-1,1].
+void ramp_charge(float t, float& r, float& g, float& b) {
+    t = std::clamp(t, -1.0f, 1.0f);
+    if (t >= 0.0f) {
+        const float u = t;
+        r = 0.95f * (1.0f - u) + 0.90f * u;
+        g = 0.95f * (1.0f - u) + 0.10f * u;
+        b = 0.95f * (1.0f - u) + 0.20f * u;
+    } else {
+        const float u = -t;
+        r = 0.95f * (1.0f - u) + 0.13f * u;
+        g = 0.95f * (1.0f - u) + 0.35f * u;
+        b = 0.95f * (1.0f - u) + 0.85f * u;
+    }
+}
+
+// Vorticity ω: magma near-black → violet → gold, t∈[0,1].
+void ramp_vorticity(float t, float& r, float& g, float& b) {
+    t = std::clamp(t, 0.0f, 1.0f);
+    if (t < 0.5f) {
+        const float u = t * 2.0f;
+        r = 0.02f * (1.0f - u) + 0.48f * u;
+        g = 0.02f * (1.0f - u) + 0.05f * u;
+        b = 0.08f * (1.0f - u) + 0.53f * u;
+    } else {
+        const float u = (t - 0.5f) * 2.0f;
+        r = 0.48f * (1.0f - u) + 1.00f * u;
+        g = 0.05f * (1.0f - u) + 0.85f * u;
+        b = 0.53f * (1.0f - u) + 0.20f * u;
+    }
+}
+
+// P_E = ½|E|²: pale yellow → saturated red, t∈[0,1].
+void ramp_e_pressure(float t, float& r, float& g, float& b) {
+    t = std::clamp(t, 0.0f, 1.0f);
+    r = 0.95f;
+    g = 0.95f * (1.0f - t) + 0.25f * t;
+    b = 0.65f * (1.0f - t) + 0.15f * t;
+}
+
+// P_B = (c²/2)|B|²: pale cyan → deep teal, t∈[0,1].
+void ramp_b_pressure(float t, float& r, float& g, float& b) {
+    t = std::clamp(t, 0.0f, 1.0f);
+    r = 0.75f * (1.0f - t);
+    g = 0.95f * (1.0f - t) + 0.55f * t;
+    b = 0.95f * (1.0f - t) + 0.70f * t;
+}
+
+// Sheet per-vertex colour: dispatch on the sheet ramp. `t_signed` is the
+// signed normalised height (∈[-1,1] for signed sheets, ∈[0,1] otherwise); the
+// grav-well ramp keys off |t| (mirrors the web `rampGravWell(|t|)`), the
+// signed charge ramp keeps the sign, and the unsigned ramps clamp to [0,1].
+void sheet_vertex_color(OverlayRamp ramp, float t_signed, float& r, float& g, float& b) {
+    switch (ramp) {
+        case OverlayRamp::GravWell:  ramp_grav_well(std::abs(t_signed), r, g, b); break;
+        case OverlayRamp::EmEnergy:  ramp_em_energy(t_signed, r, g, b); break;
+        case OverlayRamp::Charge:    ramp_charge(t_signed, r, g, b); break;
+        case OverlayRamp::Vorticity: ramp_vorticity(t_signed, r, g, b); break;
+        case OverlayRamp::EPressure: ramp_e_pressure(t_signed, r, g, b); break;
+        case OverlayRamp::BPressure: ramp_b_pressure(t_signed, r, g, b); break;
+        default:                     r = g = b = 0.7f; break;
+    }
+}
+
 void overlay_point_color(OverlayRamp ramp, float v, float t, float& r, float& g, float& b) {
     switch (ramp) {
         case OverlayRamp::StateSign: ramp_state(v, r, g, b); break;
@@ -757,6 +849,266 @@ void append_overlay_streamlines(RenderBridge& rb, NativeFrame& frame,
     (void)d;
 }
 
+// ── Tranche-5 rubber-sheet builder ──────────────────────────────────────────
+//
+// One shared CPU pipeline for all six sheet overlays (Φ potential · EM energy ·
+// Charge ρ · Vorticity ω · P_E · P_B). Ports the web _scatterHeights pipeline
+// (topology-sheet-renderer.js): derive the per-voxel scalar → bilinear-splat it
+// onto a small 2D grid over the XZ plane → 2-pass separable box-blur → build a
+// ~40×40 PlaneGeometry at the overlay's y_frac height → deform Y by the (signed)
+// blurred scalar × depth_frac·N → colour each vertex by the overlay's ramp.
+// Emits one NativeSheet into frame.field_sheets (drawn by the presenter's sheet
+// PSO + wireframe). O(count + gridN² + verts) — cheap even with several sheets.
+
+// The per-voxel scalar the sheet's height is built from: sample positions
+// (xyz voxel centres), values (one per position), the height normalizer (t =
+// value/normalizer), and whether the value is signed (deform + colour keep the
+// sign) or non-negative (clamped to [0,1]).
+struct SheetScalar {
+    std::vector<float> positions;
+    std::vector<float> values;
+    float              normalizer = 1.0f;
+    bool               is_signed = false;
+    bool               ok = false;
+};
+
+// Derive the sheet's per-voxel scalar for one overlay's OverlayDerive selector.
+SheetScalar derive_sheet_scalar(RenderBridge& rb, const OverlayDescriptor& d) {
+    SheetScalar out;
+    const int L = rb.lattice().size();
+    const int stride = std::max(1, (L + 31) / 32);
+    // c = C_SPEED from the ontic constant chain (never hardcoded); the magnetic
+    // channel carries c² (matches diagnostics_compute.cpp's Hamiltonian units).
+    const float c2 = static_cast<float>(ftd::C_SPEED * ftd::C_SPEED);
+
+    // EM energy density u = ½|E|² + (c²/2)|B|². E and B are compacted
+    // INDEPENDENTLY by the sampler (each drops sub-floor voxels), so pair them
+    // by voxel position — not raw index — over the union of both fields' sites.
+    if (d.derive == OverlayDerive::SheetEmEnergy) {
+        VisualFieldSample eF, bF;
+        rb.copy_visual_field_sample(VisualFieldKind::Electric, stride, eF);
+        rb.copy_visual_field_sample(VisualFieldKind::Magnetic, stride, bF);
+        const bool haveE = eF.components == 3u && eF.count() > 0;
+        const bool haveB = bF.components == 3u && bF.count() > 0;
+        if (!haveE && !haveB) return out;
+        auto vox_key = [L](float px, float py, float pz) -> std::int64_t {
+            const std::int64_t ix = static_cast<std::int64_t>(std::floor(px));
+            const std::int64_t iy = static_cast<std::int64_t>(std::floor(py));
+            const std::int64_t iz = static_cast<std::int64_t>(std::floor(pz));
+            return (ix * L + iy) * L + iz;
+        };
+        std::unordered_map<std::int64_t, float> b2_at;
+        if (haveB) {
+            b2_at.reserve(bF.count());
+            for (std::size_t i = 0; i < bF.count(); ++i) {
+                const float x = bF.data[i * 3u], y = bF.data[i * 3u + 1u], z = bF.data[i * 3u + 2u];
+                b2_at[vox_key(bF.positions[i * 3u], bF.positions[i * 3u + 1u],
+                              bF.positions[i * 3u + 2u])] = x * x + y * y + z * z;
+            }
+        }
+        float max_u = 1.0e-9f;
+        std::unordered_map<std::int64_t, bool> seen;
+        auto emit = [&](const VisualFieldSample& f, bool is_e) {
+            for (std::size_t i = 0; i < f.count(); ++i) {
+                const std::int64_t key = vox_key(f.positions[i * 3u], f.positions[i * 3u + 1u],
+                                                 f.positions[i * 3u + 2u]);
+                if (seen.count(key)) continue;
+                seen[key] = true;
+                float e2 = 0.0f, b2 = 0.0f;
+                if (is_e) {
+                    const float x = f.data[i * 3u], y = f.data[i * 3u + 1u], z = f.data[i * 3u + 2u];
+                    e2 = x * x + y * y + z * z;
+                    const auto it = b2_at.find(key);
+                    if (it != b2_at.end()) b2 = it->second;
+                } else {
+                    const float x = f.data[i * 3u], y = f.data[i * 3u + 1u], z = f.data[i * 3u + 2u];
+                    b2 = x * x + y * y + z * z;  // E-only voxels already emitted
+                }
+                const float u = 0.5f * e2 + 0.5f * c2 * b2;
+                out.positions.push_back(f.positions[i * 3u]);
+                out.positions.push_back(f.positions[i * 3u + 1u]);
+                out.positions.push_back(f.positions[i * 3u + 2u]);
+                out.values.push_back(u);
+                max_u = std::max(max_u, u);
+            }
+        };
+        if (haveE) emit(eF, true);
+        if (haveB) emit(bF, false);
+        out.normalizer = max_u;
+        out.is_signed = false;
+        out.ok = !out.values.empty();
+        return out;
+    }
+
+    // Charge ρ = ∇·J (signed) and Vorticity |∇×J| (unsigned) are 1-component
+    // scalar fields sampled directly.
+    if (d.derive == OverlayDerive::SheetCharge || d.derive == OverlayDerive::SheetVorticity) {
+        VisualFieldSample s;
+        rb.copy_visual_field_sample(d.kind, stride, s);
+        if (s.components != 1u || s.count() == 0) return out;
+        const bool sgn = (d.derive == OverlayDerive::SheetCharge);
+        float max_abs = 1.0e-9f;
+        out.positions = s.positions;
+        out.values.resize(s.count());
+        for (std::size_t i = 0; i < s.count(); ++i) {
+            out.values[i] = s.data[i];
+            max_abs = std::max(max_abs, std::abs(s.data[i]));
+        }
+        out.normalizer = max_abs;
+        out.is_signed = sgn;
+        out.ok = true;
+        return out;
+    }
+
+    // The remaining sheets derive from a single 3-vector field:
+    //   SheetGravPotential: −|J|² from FluxVector (signed, wells dip);
+    //   SheetEPressure:     ½|E|²  from Electric  (unsigned);
+    //   SheetBPressure:     (c²/2)|B|² from Magnetic (unsigned).
+    VisualFieldSample s;
+    rb.copy_visual_field_sample(d.kind, stride, s);
+    if (s.components != 3u || s.count() == 0) return out;
+    const std::size_t n = s.count();
+    out.positions = s.positions;
+    out.values.resize(n);
+    float max_abs = 1.0e-9f;
+    for (std::size_t i = 0; i < n; ++i) {
+        const float x = s.data[i * 3u], y = s.data[i * 3u + 1u], z = s.data[i * 3u + 2u];
+        const float m2 = x * x + y * y + z * z;
+        float v = 0.0f;
+        switch (d.derive) {
+            case OverlayDerive::SheetGravPotential: v = -m2; break;          // signed
+            case OverlayDerive::SheetEPressure:     v = 0.5f * m2; break;     // ½|E|²
+            case OverlayDerive::SheetBPressure:     v = 0.5f * c2 * m2; break; // (c²/2)|B|²
+            default:                                v = m2; break;
+        }
+        out.values[i] = v;
+        max_abs = std::max(max_abs, std::abs(v));
+    }
+    out.normalizer = max_abs;
+    out.is_signed = (d.derive == OverlayDerive::SheetGravPotential);
+    out.ok = true;
+    return out;
+}
+
+// Build one rubber sheet for overlay `d` and append it to frame.field_sheets.
+void build_sheet(RenderBridge& rb, NativeFrame& frame, const OverlayDescriptor& d) {
+    const SheetScalar sc = derive_sheet_scalar(rb, d);
+    if (!sc.ok) return;
+    const int N = rb.lattice().size();
+    if (N < 2) return;
+    const float denom = std::max(sc.normalizer, 1.0e-9f);
+    const float inv_denom = 1.0f / denom;
+
+    // 1. Scatter samples onto a small 2D grid over the XZ plane (bilinear splat),
+    //    then normalise by the accumulated weight (unsampled cells stay 0 and are
+    //    filled by the blur). gridN ~ 1 voxel/cell (web _scatterHeights).
+    const int gridN = std::max(16, std::min(N, 48));
+    const int G2 = gridN * gridN;
+    std::vector<float> grid(static_cast<std::size_t>(G2), 0.0f);
+    std::vector<float> weight(static_cast<std::size_t>(G2), 0.0f);
+    std::vector<float> tmp(static_cast<std::size_t>(G2), 0.0f);
+    const float scale = static_cast<float>(gridN - 1) / static_cast<float>(N);
+    const std::size_t count = sc.values.size();
+    for (std::size_t i = 0; i < count; ++i) {
+        const float sx = sc.positions[i * 3u] * scale;
+        const float sz = sc.positions[i * 3u + 2u] * scale;
+        if (sx < 0.0f || sx >= gridN - 1 || sz < 0.0f || sz >= gridN - 1) continue;
+        const int xi = static_cast<int>(sx), zi = static_cast<int>(sz);
+        const float xf = sx - xi, zf = sz - zi;
+        const float v = sc.values[i];
+        const float w00 = (1 - xf) * (1 - zf), w01 = xf * (1 - zf);
+        const float w10 = (1 - xf) * zf, w11 = xf * zf;
+        const int row0 = zi * gridN + xi;
+        const int row1 = row0 + gridN;
+        grid[row0]     += v * w00; weight[row0]     += w00;
+        grid[row0 + 1] += v * w01; weight[row0 + 1] += w01;
+        grid[row1]     += v * w10; weight[row1]     += w10;
+        grid[row1 + 1] += v * w11; weight[row1 + 1] += w11;
+    }
+    for (int i = 0; i < G2; ++i)
+        if (weight[i] > 1.0e-9f) grid[i] /= weight[i];
+
+    // 2. Separable 3-tap box-blur, 2 passes (interior-only; edges pin boundaries).
+    for (int p = 0; p < 2; ++p) {
+        for (int z = 0; z < gridN; ++z) {
+            const int rowBase = z * gridN;
+            tmp[rowBase] = grid[rowBase];
+            tmp[rowBase + gridN - 1] = grid[rowBase + gridN - 1];
+            for (int x = 1; x < gridN - 1; ++x)
+                tmp[rowBase + x] = (grid[rowBase + x - 1] + grid[rowBase + x]
+                                    + grid[rowBase + x + 1]) * (1.0f / 3.0f);
+        }
+        for (int x = 0; x < gridN; ++x) {
+            grid[x] = tmp[x];
+            grid[(gridN - 1) * gridN + x] = tmp[(gridN - 1) * gridN + x];
+        }
+        for (int z = 1; z < gridN - 1; ++z) {
+            const int rowPrev = (z - 1) * gridN, rowCurr = z * gridN, rowNext = (z + 1) * gridN;
+            for (int x = 0; x < gridN; ++x)
+                grid[rowCurr + x] = (tmp[rowPrev + x] + tmp[rowCurr + x]
+                                     + tmp[rowNext + x]) * (1.0f / 3.0f);
+        }
+    }
+
+    // 3. Build the PlaneGeometry (segments+1)² grid at y_frac·N, spanning N·0.95
+    //    centred at (N/2, ·, N/2). Deform Y by t·DEPTH, colour by the ramp.
+    const int segments = std::max(24, std::min(N, 40));
+    const int side = segments + 1;
+    const float span = static_cast<float>(N) * 0.95f;
+    const float half_span = span * 0.5f;
+    const float centre = static_cast<float>(N) * 0.5f;
+    const float y_world = static_cast<float>(N) * d.y_frac;
+    const float depth = static_cast<float>(N) * d.depth_frac;
+    const float grid_max = static_cast<float>(gridN - 1);
+    // Constant translucent-sheet opacity (matches the web solid sheet's 0.45–0.55).
+    constexpr float kSheetAlpha = 0.55f;
+
+    NativeSheet sheet;
+    sheet.vertices.reserve(static_cast<std::size_t>(side) * side);
+    for (int j = 0; j < side; ++j) {
+        const float fz = static_cast<float>(j) / static_cast<float>(segments);   // 0..1
+        const float world_z = centre - half_span + fz * span;
+        for (int i = 0; i < side; ++i) {
+            const float fx = static_cast<float>(i) / static_cast<float>(segments);
+            const float world_x = centre - half_span + fx * span;
+            // Bilinear lookup into the blurred grid at this vertex's world XZ.
+            float gx = world_x * scale, gz = world_z * scale;
+            gx = std::clamp(gx, 0.0f, grid_max);
+            gz = std::clamp(gz, 0.0f, grid_max);
+            const int xi = static_cast<int>(gx), zi = static_cast<int>(gz);
+            const float xf = gx - xi, zf = gz - zi;
+            const int xi1 = xi < gridN - 1 ? xi + 1 : xi;
+            const int zi1 = zi < gridN - 1 ? zi + 1 : zi;
+            const float v00 = grid[zi * gridN + xi],  v01 = grid[zi * gridN + xi1];
+            const float v10 = grid[zi1 * gridN + xi], v11 = grid[zi1 * gridN + xi1];
+            const float blended = (1 - xf) * (1 - zf) * v00 + xf * (1 - zf) * v01
+                                + (1 - xf) * zf * v10 + xf * zf * v11;
+            float t = blended * inv_denom;
+            t = sc.is_signed ? std::clamp(t, -1.0f, 1.0f) : std::clamp(t, 0.0f, 1.0f);
+            NativeSheetVertex vtx;
+            vtx.x = world_x;
+            vtx.y = y_world + t * depth;
+            vtx.z = world_z;
+            sheet_vertex_color(d.ramp, t, vtx.r, vtx.g, vtx.b);
+            vtx.a = kSheetAlpha;
+            sheet.vertices.push_back(vtx);
+        }
+    }
+    // Two triangles per quad, CCW; the PSO culls nothing so winding is cosmetic.
+    sheet.indices.reserve(static_cast<std::size_t>(segments) * segments * 6u);
+    for (int j = 0; j < segments; ++j) {
+        for (int i = 0; i < segments; ++i) {
+            const std::uint32_t a = static_cast<std::uint32_t>(j * side + i);
+            const std::uint32_t b = a + 1u;
+            const std::uint32_t c = a + static_cast<std::uint32_t>(side);
+            const std::uint32_t dd = c + 1u;
+            sheet.indices.push_back(a); sheet.indices.push_back(c); sheet.indices.push_back(b);
+            sheet.indices.push_back(b); sheet.indices.push_back(c); sheet.indices.push_back(dd);
+        }
+    }
+    frame.field_sheets.push_back(std::move(sheet));
+}
+
 // Convert a Scale-0 payload alternative into the flat UiCommand the existing
 // applier/observer free functions consume. Every Scale0Cmd alternative is also a
 // UiCommand alternative, so this is a straight widening.
@@ -1050,6 +1402,9 @@ NativeFrame Scale0Adapter::capture() {
                 break;
             case OverlayRender::PairLinks:
                 append_confinement_links(frame);
+                break;
+            case OverlayRender::Sheet:
+                build_sheet(*bridge_, frame, *d);
                 break;
             case OverlayRender::Recolor:
                 break;  // handled in the particle loop above
