@@ -1,7 +1,7 @@
 #pragma once
 //
 // host/adapters/streamlines.h — CPU RK4 field-line integrator for the Scale-0
-// STREAMLINE overlays (Flux Lines · E Field · B Field), ported from the web
+// STREAMLINE overlays (Flux Lines · Radiative E · B Field), ported from the web
 // dashboard's engine/web/js/fieldlines.js `computeStreamlines` + the four seed
 // generators (generateImportanceSeeds / generateEFieldSeeds / generateBFieldSeeds
 // / generateBImportanceSeeds) and the per-overlay colour ramps in
@@ -32,7 +32,7 @@ namespace ftd::native::streamlines {
 // Which streamline overlay's seeding + colour profile to run.
 enum class Overlay {
     Flux,      // Flux Lines: importance seeds ∝|J|^1.5; flux colormap by local |J|
-    Electric,  // E Field: particle-anchored (6/particle, offset 2) + importance
+    Electric,  // Radiative E (−∂J/∂t): particle-anchored (6/particle, offset 2) + importance
                //          fallback; cyan fade by arc-length
     Magnetic,  // B Field: perpendicular ring seeds (8/particle, radius 4) +
                //          perpendicular-importance fallback; maxSteps×1.5 to close
