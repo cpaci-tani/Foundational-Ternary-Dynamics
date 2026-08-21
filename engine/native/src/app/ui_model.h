@@ -238,6 +238,18 @@ struct ShellData {
     Rml::String time_gamma = "—";     // γ max
     Rml::String time_f = "—";         // lapse f_min = 1 − L_max²
     Rml::String time_prov = "—";      // freshness: sampled tick of the gravity group
+    // ── Thermodynamics instrument (Scale-0 analysis panel) ────────────────────
+    // The lattice's thermal state: the Langevin bath setpoint T (langevin_T), the
+    // equipartition kinetic temperature T_kin = ⟨½|wave_vel|²⟩/(3/2) = E_wave /
+    // (1.5·L³) with k_B ≡ 1, total wave energy, entropy, and manifested count.
+    // Demands the AUDIT group (for E_wave) while open; entropy/count are cadence-1.
+    bool thermo_open = false;
+    Rml::String therm_bath = "—";     // Langevin bath temperature (langevin_T)
+    Rml::String therm_kin = "—";      // kinetic temperature T_kin (equipartition)
+    Rml::String therm_wave = "—";     // total wave energy Σ ½|wave_vel|²
+    Rml::String therm_entropy = "—";  // total entropy
+    Rml::String therm_manif = "—";    // manifested (condensed) site count
+    Rml::String therm_prov = "—";     // freshness: sampled tick of the audit group
 };
 
 // ── Toggle-panel builders (build + live-sync the toggle model). ──────────────

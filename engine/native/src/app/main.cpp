@@ -616,6 +616,13 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("time_gamma", &data.time_gamma);
     ctor.Bind("time_f", &data.time_f);
     ctor.Bind("time_prov", &data.time_prov);
+    ctor.Bind("thermo_open", &data.thermo_open);
+    ctor.Bind("therm_bath", &data.therm_bath);
+    ctor.Bind("therm_kin", &data.therm_kin);
+    ctor.Bind("therm_wave", &data.therm_wave);
+    ctor.Bind("therm_entropy", &data.therm_entropy);
+    ctor.Bind("therm_manif", &data.therm_manif);
+    ctor.Bind("therm_prov", &data.therm_prov);
     ctor.BindEventCallback("run", [&app](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) {
         request_play_toggle(&app);
     });
@@ -723,6 +730,14 @@ int run_app(const std::vector<std::string>& args) {
         app.data->time_open = !app.data->time_open;
         request_telemetry_demand(&app);
         h.DirtyVariable("time_open");
+    });
+    // Thermodynamics instrument section — demands the AUDIT group (E_wave) while open.
+    ctor.BindEventCallback("toggle_thermo", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                   const Rml::VariantList&) {
+        if (!app.data) return;
+        app.data->thermo_open = !app.data->thermo_open;
+        request_telemetry_demand(&app);
+        h.DirtyVariable("thermo_open");
     });
     ctor.BindEventCallback("scale_lattice", [&app](Rml::DataModelHandle, Rml::Event&,
                                                    const Rml::VariantList&) {
@@ -995,6 +1010,7 @@ int run_app(const std::vector<std::string>& args) {
     if (app_opts.open_overlays) data.ov_open = true;
     if (app_opts.open_gravity) data.grav_open = true;
     if (app_opts.open_time) data.time_open = true;
+    if (app_opts.open_thermo) data.thermo_open = true;
     request_telemetry_demand(&app);
 
     Rml::ElementDocument* doc = context->LoadDocument(FTD_RML_SHELL_PATH);
@@ -1565,6 +1581,25 @@ int run_app(const std::vector<std::string>& args) {
                 set_str("time_f", data.time_f, fmt("%.4f", gm.f_min));
                 set_str("time_prov", data.time_prov,
                         "t=" + std::to_string(s0->telemetry.gravity_meta.tick));
+            }
+            // ── Thermodynamics instrument (bath + equipartition kinetic temp) ──
+            if (data.thermo_open && push_status) {
+                const ftd::EnergyAudit& au = s0->telemetry.audit;
+                const ftd::Diagnostics& dg = s0->telemetry.diagnostics;
+                const double L = static_cast<double>(frame.lattice_size > 0
+                                                         ? frame.lattice_size : 1);
+                const double N = L * L * L;   // lattice DOF normalization (3N vel comps)
+                const double t_kin = N > 0.0 ? au.wave_energy / (1.5 * N) : 0.0;
+                set_str("therm_bath", data.therm_bath,
+                        fmt("%.3f", s0->term_toggles.langevin_T));
+                set_str("therm_kin", data.therm_kin, fmt("%.3e", t_kin));
+                set_str("therm_wave", data.therm_wave, fmt("%.2f", au.wave_energy));
+                set_str("therm_entropy", data.therm_entropy,
+                        fmt("%.3f", dg.total_entropy));
+                set_str("therm_manif", data.therm_manif,
+                        std::to_string(dg.manifested_count));
+                set_str("therm_prov", data.therm_prov,
+                        "t=" + std::to_string(s0->telemetry.audit_meta.tick));
             }
         } else if (const ftd::native::Scale1Snapshot* s1 = snap ? snap->scale1() : nullptr) {
             chart_energy = s1->total_energy;
