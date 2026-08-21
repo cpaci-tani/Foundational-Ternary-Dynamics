@@ -35,6 +35,10 @@ struct AppOptions {
     std::string inspect_voxel;         // "i,j,k" (empty = none; Scale-0 only)
     int inspect_particle = -1;         // particle index (< 0 = none; Scale-1 only)
     bool have_inspect_particle = false;
+    // After --inspect-voxel selects a cell, --walk-neigh dx,dy,dz steps the
+    // inspection cursor by that Moore offset (the same path a neighbour-cell click
+    // drives), so a headless capture can show the walked target. Scale-0 only.
+    std::string walk_neigh;            // "dx,dy,dz" (empty = none)
     // Simulated Setup-picker selection for headless captures (interactive
     // clicking can't run under --capture-frames). --pick-scenario <id> boots the
     // default scenario, then drives the SAME select_scenario → LoadScenario path

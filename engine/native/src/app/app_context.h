@@ -79,6 +79,9 @@ struct AppContext {
     // last (live) values rather than blanking to "reading…". Reset on a new
     // pick / scale switch / clear.
     bool insp_has_data = false;
+    // Set by the walk_neigh callback when a 26-neighbour cell is clicked: the loop
+    // resets the inspect re-issue seqs so the readout retargets immediately.
+    bool inspect_retarget = false;
 
     // ── Rubber-sheet height control (GUI thread) ──
     // Data-model handle stored so the wnd_proc scroll-wheel path can dirty the
@@ -138,5 +141,11 @@ void request_lattice_reboot(AppContext* app, int new_l);
 void request_config_nudge(AppContext* app, const std::string& key, const std::string& dir);
 void nudge_sheet_height(AppContext* app, OverlayRow* row, float delta);
 void nudge_last_sheet(AppContext* app, float delta);
+
+// Move the click-to-inspect cursor by a Moore offset (dx,dy,dz), clamped to the
+// live lattice, and flag a retarget so the loop re-issues the inspection
+// immediately. No-op unless a Scale-0 voxel is currently inspected (kind == 1).
+// Shared by the neighbour-cell click callback and the headless --walk-neigh flag.
+void walk_inspection(AppContext* app, int dx, int dy, int dz);
 
 }  // namespace ftd::native::app

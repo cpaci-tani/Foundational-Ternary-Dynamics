@@ -114,6 +114,7 @@ struct InspNeighCell {
     Rml::String dir;
     Rml::String val;
     int state = 0;
+    int dx = 0, dy = 0, dz = 0;  // Moore offset — click-to-walk the inspection cursor here
 };
 
 // One Scale-0 scenario row in the Setup picker. current highlights the loaded

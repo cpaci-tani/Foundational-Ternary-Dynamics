@@ -44,6 +44,8 @@ AppOptions parse_app_options(const std::vector<std::string>& args) {
             o.have_inspect_particle = true;
         } else if (args[i] == "--pick-scenario" && i + 1 < args.size()) {
             o.pick_scenario = args[++i];
+        } else if (args[i] == "--walk-neigh" && i + 1 < args.size()) {
+            o.walk_neigh = args[++i];
         } else if (args[i] == "--open-physics") {
             o.open_physics = true;
         } else if (args[i] == "--open-config") {

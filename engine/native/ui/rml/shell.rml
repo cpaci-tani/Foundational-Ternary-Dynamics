@@ -164,19 +164,19 @@
                     <div class="insp-neigh-body" data-if="insp_neigh_open">
                         <div class="insp-neigh-grp">Faces (6)</div>
                         <div class="insp-neigh-grid">
-                            <div class="ncell" data-for="c : insp_faces" data-class-npos="c.state == 1" data-class-nneg="c.state == -1">
+                            <div class="ncell" data-for="c : insp_faces" data-class-npos="c.state == 1" data-class-nneg="c.state == -1" data-event-click="walk_neigh(c.dx, c.dy, c.dz)">
                                 <span class="ncell-dir">{{c.dir}}</span><span class="ncell-v">{{c.val}}</span>
                             </div>
                         </div>
                         <div class="insp-neigh-grp">Edges (12)</div>
                         <div class="insp-neigh-grid">
-                            <div class="ncell" data-for="c : insp_edges" data-class-npos="c.state == 1" data-class-nneg="c.state == -1">
+                            <div class="ncell" data-for="c : insp_edges" data-class-npos="c.state == 1" data-class-nneg="c.state == -1" data-event-click="walk_neigh(c.dx, c.dy, c.dz)">
                                 <span class="ncell-dir">{{c.dir}}</span><span class="ncell-v">{{c.val}}</span>
                             </div>
                         </div>
                         <div class="insp-neigh-grp">Corners (8)</div>
                         <div class="insp-neigh-grid">
-                            <div class="ncell" data-for="c : insp_corners" data-class-npos="c.state == 1" data-class-nneg="c.state == -1">
+                            <div class="ncell" data-for="c : insp_corners" data-class-npos="c.state == 1" data-class-nneg="c.state == -1" data-event-click="walk_neigh(c.dx, c.dy, c.dz)">
                                 <span class="ncell-dir">{{c.dir}}</span><span class="ncell-v">{{c.val}}</span>
                             </div>
                         </div>

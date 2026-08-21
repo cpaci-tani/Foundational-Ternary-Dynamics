@@ -420,6 +420,16 @@ int run_app(const std::vector<std::string>& args) {
         app.inspect_kind = 2;
         app.inspect_pidx = app_opts.inspect_particle;
     }
+    // Simulated neighbour-walk (headless proof of the click-to-walk feature): step
+    // the just-selected inspection cursor by the given Moore offset.
+    if (app.inspect_kind == 1 && !app_opts.walk_neigh.empty()) {
+        int wx = 0, wy = 0, wz = 0;
+        if (parse_ijk(app_opts.walk_neigh, wx, wy, wz))
+            walk_inspection(&app, wx, wy, wz);
+        else
+            std::cerr << "native_app: bad --walk-neigh '" << app_opts.walk_neigh
+                      << "' (want dx,dy,dz; ignored)\n" << std::flush;
+    }
 
     // Simulated Setup-picker selection (headless captures — interactive clicking
     // cannot run under --capture-frames). --pick-scenario <id> drives the SAME
@@ -523,6 +533,9 @@ int run_app(const std::vector<std::string>& args) {
         ncell.RegisterMember("dir", &InspNeighCell::dir);
         ncell.RegisterMember("val", &InspNeighCell::val);
         ncell.RegisterMember("state", &InspNeighCell::state);
+        ncell.RegisterMember("dx", &InspNeighCell::dx);
+        ncell.RegisterMember("dy", &InspNeighCell::dy);
+        ncell.RegisterMember("dz", &InspNeighCell::dz);
     }
     ctor.RegisterArray<Rml::Vector<InspNeighCell>>();
     if (auto srow = ctor.RegisterStruct<ScenarioRow>()) {
@@ -844,6 +857,20 @@ int run_app(const std::vector<std::string>& args) {
             h.DirtyVariable("insp_corners");
         }
         h.DirtyVariable("insp_neigh_open");
+    });
+    // Neighbour walk: click a 26-neighbour cell to move the inspection cursor to
+    // that voxel — the current inspected cell + the clicked cell's Moore offset
+    // (v = dx, dy, dz). Clamped to the lattice; the loop's inspect_retarget path
+    // then re-issues InspectVoxel/Force/Neighbors for the new target so the readout
+    // + grid refresh immediately. Scale-0 voxel inspections only (kind == 1).
+    ctor.BindEventCallback("walk_neigh", [&app](Rml::DataModelHandle, Rml::Event&,
+                                                const Rml::VariantList& v) {
+        if (v.size() < 3) return;
+        int dx = 0, dy = 0, dz = 0;
+        v[0].GetInto(dx);
+        v[1].GetInto(dy);
+        v[2].GetInto(dz);
+        walk_inspection(&app, dx, dy, dz);
     });
     Rml::DataModelHandle model = ctor.GetModelHandle();
     // Publish the handle to the app so wnd_proc's scroll-wheel height nudge can
@@ -1575,6 +1602,13 @@ int run_app(const std::vector<std::string>& args) {
             last_inspect_seq = 0;   // force an immediate re-issue for the new target
             last_neigh_seq = 0;
         }
+        // A neighbour-cell walk retargeted the inspection: force an immediate
+        // re-issue for the new voxel (the callback already moved inspect_v{x,y,z}).
+        if (app.inspect_retarget) {
+            app.inspect_retarget = false;
+            last_inspect_seq = 0;
+            last_neigh_seq = 0;
+        }
         // Re-issue the inspect command once per NEW published snapshot so the
         // adapter refreshes the inspection payload every boundary (live data).
         if (snap && app.inspect_kind != 0 && snap->seq != last_inspect_seq) {
@@ -1791,7 +1825,8 @@ int run_app(const std::vector<std::string>& args) {
                         std::string val = std::string(glyph) + "  "
                             + (voidcell ? std::string("\xE2\x80\x94")  // em dash
                                         : fmt("%.3f", nc.flux_mag));
-                        InspNeighCell cell{dir, val, static_cast<int>(nc.state)};
+                        InspNeighCell cell{dir, val, static_cast<int>(nc.state),
+                                           nc.dx, nc.dy, nc.dz};
                         if (nc.shell == 1) faces.push_back(std::move(cell));
                         else if (nc.shell == 2) edges.push_back(std::move(cell));
                         else corners.push_back(std::move(cell));

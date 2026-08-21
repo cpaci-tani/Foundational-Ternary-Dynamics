@@ -622,7 +622,9 @@ ftd-chart {
     border: 1dp #223047;
     border-radius: 5dp;
     background-color: #0f1826;
+    cursor: pointer;   /* click a cell to walk the inspection cursor there */
 }
+.ncell:hover { border-color: #3a7ec4; background-color: #16233a; }
 .ncell-dir {
     color: #8595ab;
     font-family: JetBrains Mono;
