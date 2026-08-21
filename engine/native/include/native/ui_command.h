@@ -101,6 +101,15 @@ struct SetSheetHeight {
     std::uint32_t overlay_id = 0;  // OverlayId
     float height = 0.0f;
 };
+// Sets the GLOBAL force render-style (Arrows / Heatmap / Flow / Glyphs) applied
+// to all four Force-column overlays (EM / Gravity / Strong / ∇×J), mirroring the
+// web force-style selector. Adapter view-state only (same pattern as SetOverlay
+// / SetSheetHeight); it never mutates the RenderBridge, so apply() handles it
+// without a bridge mutation, and it flags a frame refresh so the style change is
+// visible live even while paused. `style` is a ForceStyle (scale0_overlays.h).
+struct SetForceStyle {
+    std::uint32_t style = 0;  // ForceStyle
+};
 struct RequestContinuity {};
 struct RequestChargeSum {};
 struct SetTelemetryDemand {
@@ -140,7 +149,7 @@ using UiCommand = std::variant<
     SetToggle, SetToggleProfile, SetDouble, SetEnum, SetUInt, SetBoolConfig,
     SetBoundary, SetDt, SetSorIterations, LoadScenario, SetLatticeSize,
     ApplyReboot, ResetToDefaults, InspectVoxel, InspectForce, RequestField,
-    SetOverlay, SetSheetHeight, RequestContinuity, RequestChargeSum,
+    SetOverlay, SetSheetHeight, SetForceStyle, RequestContinuity, RequestChargeSum,
     SetTelemetryDemand,
     Pause, Step, Run, InjectWavepacket, InjectFluxAdd, CreateEntangledPair,
     ClearField, SeedRandomFlux>;

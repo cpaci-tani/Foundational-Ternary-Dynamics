@@ -300,6 +300,80 @@ float4 ps_wire(VSOut input) : SV_Target {
 }
 )";
 
+// Force-Heatmap shader: the sprite VS (camera-facing quad, from CPU-expanded
+// GpuVertex) paired with a gaussian-falloff PS. Additive glow: the PS returns a
+// pre-multiplied colour weighted by exp(-r²·16) (port of updateForceHeatmap's
+// heatFrag), and the heat PSO uses pure additive blending (SrcBlend ONE / DstBlend
+// ONE) so overlapping blobs sum into a soft density field.
+constexpr char kHeatShader[] = R"(
+#pragma pack_matrix(row_major)
+cbuffer Camera : register(b0) {
+    float4x4 viewProj;
+};
+struct VSIn {
+    float3 position : POSITION;
+    float3 color : COLOR;
+    float2 uv : TEXCOORD;
+};
+struct VSOut {
+    float4 position : SV_Position;
+    float3 color : COLOR;
+    float2 uv : TEXCOORD;
+};
+VSOut vs_main(VSIn input) {
+    VSOut o;
+    o.position = mul(float4(input.position, 1.0), viewProj);
+    o.color = input.color;
+    o.uv = input.uv;
+    return o;
+}
+float4 ps_main(VSOut input) : SV_Target {
+    float2 d = input.uv * 2.0 - 1.0;
+    float r2 = dot(d, d);
+    if (r2 > 1.0) discard;
+    float gauss = exp(-r2 * 16.0);
+    const float opacity = 0.85;
+    return float4(input.color * gauss * opacity, 1.0);  // additive (pre-multiplied)
+}
+)";
+
+// Force-Glyph shader: world-space cone triangles (CPU-tessellated into GpuVertex,
+// positions already in world space, uv unused). Flat-shaded — the PS reconstructs
+// each facet's normal from screen-space derivatives of the interpolated world
+// position (cross(ddx, ddy)) and applies simple hemispheric + head-lamp lighting,
+// so the cones read as solid 3-D arrowheads without per-vertex normals. Opaque,
+// depth test + write.
+constexpr char kGlyphShader[] = R"(
+#pragma pack_matrix(row_major)
+cbuffer Camera : register(b0) {
+    float4x4 viewProj;
+};
+struct VSIn {
+    float3 position : POSITION;
+    float3 color : COLOR;
+    float2 uv : TEXCOORD;
+};
+struct VSOut {
+    float4 position : SV_Position;
+    float3 color : COLOR;
+    float3 world : TEXCOORD0;
+};
+VSOut vs_main(VSIn input) {
+    VSOut o;
+    o.position = mul(float4(input.position, 1.0), viewProj);
+    o.color = input.color;
+    o.world = input.position;
+    return o;
+}
+float4 ps_main(VSOut input) : SV_Target {
+    float3 n = normalize(cross(ddx(input.world), ddy(input.world)));
+    float3 lightDir = normalize(float3(0.4, 0.8, 0.35));
+    float diff = abs(dot(n, lightDir));            // two-sided (cones are open-ish)
+    float shade = 0.42 + 0.58 * diff;
+    return float4(input.color * shade, 1.0);
+}
+)";
+
 }  // namespace
 
 struct D3D12Presenter::Impl {
@@ -321,6 +395,13 @@ struct D3D12Presenter::Impl {
     // variant (FillMode WIREFRAME on the same mesh) for the mesh+wire look.
     ComPtr<ID3D12PipelineState> pso_sheet;
     ComPtr<ID3D12PipelineState> pso_sheet_wire;
+    // Force render-style PSOs (share the sprite GpuVertex layout + camera CBV):
+    // pso_heat = additive gaussian-falloff glow sprites (Force Heatmap style);
+    // pso_glyph = opaque flat-shaded world-space cone triangles (Force Glyphs
+    // style, the new instanced-cone triangle pipeline). Both are drawn as
+    // sub-ranges of the same per-frame sprite vertex buffer.
+    ComPtr<ID3D12PipelineState> pso_heat;
+    ComPtr<ID3D12PipelineState> pso_glyph;
     ComPtr<ID3D12DescriptorHeap> dsv_heap;
     ComPtr<ID3D12Resource> depth;
     // Task 11 correction: cb/vb must be genuinely per-frame-slot resources
@@ -620,6 +701,50 @@ void D3D12Presenter::initialize(HWND hwnd, std::uint32_t width,
     throw_if_failed(
         impl_->device->CreateGraphicsPipelineState(&swpso, IID_PPV_ARGS(&impl_->pso_sheet_wire)),
         "CreateGraphicsPipelineState sheet wire");
+
+    // ── Force render-style PSOs (Heatmap glow + Glyph cones) ────────────────────
+    // Both reuse the sprite GpuVertex input layout (POSITION/COLOR/TEXCOORD) and
+    // the camera CBV, and draw as sub-ranges of the same per-frame sprite buffer.
+    ComPtr<ID3DBlob> hvs, hps, herr;
+    throw_if_failed(D3DCompile(kHeatShader, sizeof(kHeatShader) - 1, "heat", nullptr,
+                               nullptr, "vs_main", "vs_5_1", 0, 0, &hvs, &herr),
+                    "D3DCompile heat vs");
+    throw_if_failed(D3DCompile(kHeatShader, sizeof(kHeatShader) - 1, "heat", nullptr,
+                               nullptr, "ps_main", "ps_5_1", 0, 0, &hps, &herr),
+                    "D3DCompile heat ps");
+    D3D12_GRAPHICS_PIPELINE_STATE_DESC hpso = pso;  // sprite layout/RT/DSV
+    hpso.VS = {hvs->GetBufferPointer(), hvs->GetBufferSize()};
+    hpso.PS = {hps->GetBufferPointer(), hps->GetBufferSize()};
+    hpso.BlendState.RenderTarget[0].BlendEnable = TRUE;   // pure additive glow
+    hpso.BlendState.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
+    hpso.BlendState.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+    hpso.BlendState.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+    hpso.BlendState.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+    hpso.BlendState.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;
+    hpso.BlendState.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+    hpso.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;  // glow must not occlude
+    throw_if_failed(
+        impl_->device->CreateGraphicsPipelineState(&hpso, IID_PPV_ARGS(&impl_->pso_heat)),
+        "CreateGraphicsPipelineState heat");
+
+    ComPtr<ID3DBlob> gvs, gps, gerr;
+    throw_if_failed(D3DCompile(kGlyphShader, sizeof(kGlyphShader) - 1, "glyph", nullptr,
+                               nullptr, "vs_main", "vs_5_1", 0, 0, &gvs, &gerr),
+                    "D3DCompile glyph vs");
+    throw_if_failed(D3DCompile(kGlyphShader, sizeof(kGlyphShader) - 1, "glyph", nullptr,
+                               nullptr, "ps_main", "ps_5_1", 0, 0, &gps, &gerr),
+                    "D3DCompile glyph ps");
+    D3D12_GRAPHICS_PIPELINE_STATE_DESC gpso = pso;  // sprite layout/RT/DSV
+    gpso.VS = {gvs->GetBufferPointer(), gvs->GetBufferSize()};
+    gpso.PS = {gps->GetBufferPointer(), gps->GetBufferSize()};
+    gpso.BlendState.RenderTarget[0].BlendEnable = FALSE;  // opaque cones
+    gpso.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;  // draw both facets
+    gpso.DepthStencilState.DepthEnable = TRUE;
+    gpso.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+    gpso.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+    throw_if_failed(
+        impl_->device->CreateGraphicsPipelineState(&gpso, IID_PPV_ARGS(&impl_->pso_glyph)),
+        "CreateGraphicsPipelineState glyph");
 
     D3D12_DESCRIPTOR_HEAP_DESC srv_heap_desc{};
     srv_heap_desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
@@ -1102,7 +1227,7 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
     // segments (2 verts each) if any. Both share the LineVertex layout + LINELIST
     // topology and are drawn through impl_->pso_lines.
     std::vector<LineVertex> line_verts;
-    line_verts.reserve(24 + frame.field_lines.size() * 2);
+    line_verts.reserve(24 + (frame.field_lines.size() + frame.field_lines_top.size()) * 2);
     for (int e = 0; e < 12; ++e) {
         for (int k = 0; k < 2; ++k) {
             const int ci = edges[e][k];
@@ -1116,9 +1241,76 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
         line_verts.push_back(LineVertex{fl.x1, fl.y1, fl.z1, fl.r1, fl.g1, fl.b1});
     }
     const UINT field_line_verts = static_cast<UINT>(line_verts.size()) - box_line_verts;
+    // On-top overlay lines (Force-Flow): appended after the normal field lines so
+    // they can be drawn in a later pass (after the opaque particles).
+    const UINT top_line_start = static_cast<UINT>(line_verts.size());
+    for (const auto& fl : frame.field_lines_top) {
+        line_verts.push_back(LineVertex{fl.x0, fl.y0, fl.z0, fl.r0, fl.g0, fl.b0});
+        line_verts.push_back(LineVertex{fl.x1, fl.y1, fl.z1, fl.r1, fl.g1, fl.b1});
+    }
+    const UINT top_line_verts = static_cast<UINT>(line_verts.size()) - top_line_start;
+
+    // Tessellate one Force-Glyph cone (world-space, oriented to its direction)
+    // into `dst` as GpuVertex triangles: a 6-segment base ring + apex (side
+    // fan) + base fan. Flat-shaded by the glyph PSO (facet normal from screen
+    // derivatives), so per-vertex colour is the glyph colour and uv is unused.
+    auto append_glyphs = [&](const std::vector<NativeGlyph>& src,
+                             std::vector<GpuVertex>& dst) {
+        constexpr int kSeg = 6;
+        constexpr float kTwoPi = 6.28318530718f;
+        for (const NativeGlyph& gph : src) {
+            float dx = gph.dx, dy = gph.dy, dz = gph.dz;
+            const float dm = std::sqrt(dx * dx + dy * dy + dz * dz);
+            if (dm < 1e-8f) continue;
+            dx /= dm; dy /= dm; dz /= dm;
+            // Orthonormal basis (dir, u, v).
+            float ux, uy, uz;
+            if (std::fabs(dx) < 0.9f) { ux = 1.0f; uy = 0.0f; uz = 0.0f; }
+            else { ux = 0.0f; uy = 1.0f; uz = 0.0f; }
+            const float dot = ux * dx + uy * dy + uz * dz;
+            ux -= dot * dx; uy -= dot * dy; uz -= dot * dz;
+            const float ul = std::sqrt(ux * ux + uy * uy + uz * uz);
+            ux /= ul; uy /= ul; uz /= ul;
+            const float vx = dy * uz - dz * uy;
+            const float vy = dz * ux - dx * uz;
+            const float vz = dx * uy - dy * ux;
+            const float len = gph.scale;
+            const float rad = 0.30f * len;
+            // Root the cone at the charge, apex pointing along the force — so it
+            // sticks out past the (opaque) particle it sits on rather than being
+            // buried inside it.
+            const float bx = gph.x;                     // base centre = charge site
+            const float by = gph.y;
+            const float bz = gph.z;
+            const float ax = gph.x + dx * len;          // apex
+            const float ay = gph.y + dy * len;
+            const float az = gph.z + dz * len;
+            auto vtx = [&](float px, float py, float pz) {
+                GpuVertex v;
+                v.x = px; v.y = py; v.z = pz;
+                v.r = gph.r; v.g = gph.g; v.b = gph.b;
+                v.u = 0.0f; v.v = 0.0f;
+                dst.push_back(v);
+            };
+            float rx[kSeg], ry[kSeg], rz[kSeg];
+            for (int k = 0; k < kSeg; ++k) {
+                const float th = kTwoPi * static_cast<float>(k) / static_cast<float>(kSeg);
+                const float c = std::cos(th), s = std::sin(th);
+                rx[k] = bx + rad * (c * ux + s * vx);
+                ry[k] = by + rad * (c * uy + s * vy);
+                rz[k] = bz + rad * (c * uz + s * vz);
+            }
+            for (int k = 0; k < kSeg; ++k) {
+                const int n = (k + 1) % kSeg;
+                vtx(ax, ay, az); vtx(rx[k], ry[k], rz[k]); vtx(rx[n], ry[n], rz[n]);  // side
+                vtx(bx, by, bz); vtx(rx[n], ry[n], rz[n]); vtx(rx[k], ry[k], rz[k]);  // base
+            }
+        }
+    };
 
     std::vector<GpuVertex> verts;
-    verts.reserve((frame.flux.size() + frame.particles.size()) * 6);
+    verts.reserve((frame.flux.size() + frame.particles.size() + frame.flux_heat.size()) * 6
+                  + frame.field_glyphs.size() * 36);
     if (opts.flux) append_sprites(frame.flux, verts);
     const UINT flux_verts = static_cast<UINT>(verts.size());
     // When interop_particle_count > 0, particles are drawn from the imported
@@ -1126,6 +1318,18 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
     // vertex buffer -- do not double-draw. frame.particles stays populated
     // either way (the CPU backend has no interop path and always needs it).
     if (opts.particles && interop_particle_count == 0) append_sprites(frame.particles, verts);
+    const UINT particle_end = static_cast<UINT>(verts.size());
+    // Force-Heatmap glow sprites (additive gaussian PSO) and Force-Glyph cones
+    // (opaque flat-shaded PSO) — separate ranges of the same sprite buffer, only
+    // populated when a Force overlay is in that style. Drawn unconditionally when
+    // present (a force overlay's visibility, like its arrows, is not gated on the
+    // ambient-flux view toggle).
+    append_sprites(frame.flux_heat, verts);
+    const UINT heat_end = static_cast<UINT>(verts.size());
+    append_glyphs(frame.field_glyphs, verts);
+    const UINT glyph_end = static_cast<UINT>(verts.size());
+    const UINT heat_verts = heat_end - particle_end;
+    const UINT glyph_verts = glyph_end - heat_end;
 
     const std::size_t sprite_bytes = verts.size() * sizeof(GpuVertex);
     const std::size_t line_bytes = line_verts.size() * sizeof(LineVertex);
@@ -1266,7 +1470,6 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
     }
 
     if (sprite_bytes != 0) {
-        impl_->list->SetPipelineState(impl_->pso.Get());
         D3D12_VERTEX_BUFFER_VIEW sprite_view{};
         sprite_view.BufferLocation =
             impl_->vb[impl_->frame]->GetGPUVirtualAddress() + line_bytes;
@@ -1274,10 +1477,12 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
         sprite_view.StrideInBytes = sizeof(GpuVertex);
         impl_->list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         impl_->list->IASetVertexBuffers(0, 1, &sprite_view);
+        // Alpha-blended sprites (flux cloud + particle billboards) through pso.
+        impl_->list->SetPipelineState(impl_->pso.Get());
         if (flux_verts != 0) {
             impl_->list->DrawInstanced(flux_verts, 1, 0, 0);
         }
-        const UINT particle_verts = static_cast<UINT>(verts.size()) - flux_verts;
+        const UINT particle_verts = particle_end - flux_verts;
         if (particle_verts != 0) {
             impl_->list->DrawInstanced(particle_verts, 1, flux_verts, 0);
         }
@@ -1291,6 +1496,50 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
             1, impl_->srv_heap->GetGPUDescriptorHandleForHeapStart());
         impl_->list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         impl_->list->DrawInstanced(6, interop_particle_count, 0, 0);
+    }
+
+    // Force-Glyph cones drawn AFTER the particles (the force field lives at the
+    // charge sites, so the cones — rooted there, pointing outward — must sit on
+    // top of the opaque particles to be seen). Opaque, depth test + write. Re-bind
+    // the sprite buffer (the interop pass rebinds topology / drops the VB).
+    if (glyph_verts != 0 && sprite_bytes != 0 && impl_->pso_glyph) {
+        D3D12_VERTEX_BUFFER_VIEW gview{};
+        gview.BufferLocation = impl_->vb[impl_->frame]->GetGPUVirtualAddress() + line_bytes;
+        gview.SizeInBytes = static_cast<UINT>(sprite_bytes);
+        gview.StrideInBytes = sizeof(GpuVertex);
+        impl_->list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        impl_->list->IASetVertexBuffers(0, 1, &gview);
+        impl_->list->SetPipelineState(impl_->pso_glyph.Get());
+        impl_->list->DrawInstanced(glyph_verts, 1, heat_end, 0);
+    }
+
+    // On-top overlay lines (Force-Flow dashed streamlines) drawn after the
+    // particles for the same reason. Re-bind the LINE buffer + LINELIST topology.
+    if (top_line_verts != 0 && line_bytes != 0 && impl_->vb[impl_->frame]) {
+        D3D12_VERTEX_BUFFER_VIEW tview{};
+        tview.BufferLocation = impl_->vb[impl_->frame]->GetGPUVirtualAddress();
+        tview.SizeInBytes = static_cast<UINT>(line_bytes);
+        tview.StrideInBytes = sizeof(LineVertex);
+        impl_->list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+        impl_->list->IASetVertexBuffers(0, 1, &tview);
+        impl_->list->SetPipelineState(impl_->pso_lines.Get());
+        impl_->list->DrawInstanced(top_line_verts, 1, top_line_start, 0);
+    }
+
+    // Force-Heatmap glow drawn LAST (after the opaque particles, interop or CPU):
+    // the force field is populated only at charge sites, so the additive,
+    // depth-test-no-write glow must sit ON TOP of the particles to read as a
+    // heatmap rather than being occluded by them. Re-bind the sprite buffer since
+    // the interop pass rebinds topology / drops the vertex buffer.
+    if (heat_verts != 0 && sprite_bytes != 0 && impl_->pso_heat) {
+        D3D12_VERTEX_BUFFER_VIEW hview{};
+        hview.BufferLocation = impl_->vb[impl_->frame]->GetGPUVirtualAddress() + line_bytes;
+        hview.SizeInBytes = static_cast<UINT>(sprite_bytes);
+        hview.StrideInBytes = sizeof(GpuVertex);
+        impl_->list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        impl_->list->IASetVertexBuffers(0, 1, &hview);
+        impl_->list->SetPipelineState(impl_->pso_heat.Get());
+        impl_->list->DrawInstanced(heat_verts, 1, particle_end, 0);
     }
 
     // Rubber-sheet surfaces (Tranche 5): drawn last among the 3D geometry so the

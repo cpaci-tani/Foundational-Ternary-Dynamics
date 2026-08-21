@@ -180,6 +180,16 @@
                         </div>
                     </div>
                 </div>
+                <!-- Force render-style selector: ONE global setting applied to
+                     all four Force overlays (EM / Gravity / Strong / curl J),
+                     mirroring the web selector. The active style is lit. -->
+                <div class="force-style-row">
+                    <span class="fs-label">Force style</span>
+                    <span class="fs-btn" data-class-on="force_style == 0" data-event-click="set_force_style(0)">Arrows</span>
+                    <span class="fs-btn" data-class-on="force_style == 1" data-event-click="set_force_style(1)">Heatmap</span>
+                    <span class="fs-btn" data-class-on="force_style == 2" data-event-click="set_force_style(2)">Flow</span>
+                    <span class="fs-btn" data-class-on="force_style == 3" data-event-click="set_force_style(3)">Glyphs</span>
+                </div>
             </div>
 
             <!-- Scale 1 (Particles): a compact ParticleEngine readout -->

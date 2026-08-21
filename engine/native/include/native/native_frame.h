@@ -38,6 +38,18 @@ struct NativeSheetVertex {
     float r = 1.0f, g = 1.0f, b = 1.0f, a = 1.0f;
 };
 
+// One force-Glyph instance: an oriented cone at `x,y,z` (voxel centre) pointing
+// along the unit direction `dx,dy,dz` (the force direction), sized by `scale`
+// and coloured `r,g,b`. The presenter tessellates each instance into a small
+// world-space cone (base circle + apex) and shades it, drawn through the new
+// glyph triangle PSO (per the web updateForceGlyphs InstancedMesh of cones).
+struct NativeGlyph {
+    float x = 0.0f, y = 0.0f, z = 0.0f;      // cone centre (world / voxel centre)
+    float dx = 0.0f, dy = 1.0f, dz = 0.0f;   // unit direction (force direction)
+    float scale = 1.0f;                       // cone size
+    float r = 1.0f, g = 1.0f, b = 1.0f;       // colour
+};
+
 // One rubber-sheet surface: an indexed triangle mesh (a deformed ~40×40 grid).
 // `indices` are three-per-triangle into `vertices`. Built CPU-side by the
 // Scale-0 adapter's heightfield pipeline (slice → scatter → box-blur → deform)
@@ -69,8 +81,20 @@ struct NativeFrame {
     // default, or a scalar field overlay's magnitude-coloured points when one
     // is active.
     std::vector<NativeParticle> flux;
+    // Force-Heatmap sprite points (empty unless a Force overlay is showing in the
+    // Heatmap style). Drawn through the presenter's additive gaussian-falloff
+    // sprite PSO (a separate group from `flux`, which is alpha-blended).
+    std::vector<NativeParticle> flux_heat;
+    // Force-Glyph cone instances (empty unless a Force overlay is showing in the
+    // Glyphs style). Each is tessellated + shaded by the presenter's glyph PSO.
+    std::vector<NativeGlyph> field_glyphs;
     // Vector field overlay geometry (empty unless a 3-vector overlay is active).
     std::vector<NativeLine> field_lines;
+    // "On-top" overlay lines drawn AFTER the opaque particles (Force-Flow dashed
+    // streamlines): the force field lives at the charge sites, so its streamlines
+    // would be occluded by the particles if drawn in the normal (pre-particle)
+    // line pass. Empty unless a Force overlay is in the Flow style.
+    std::vector<NativeLine> field_lines_top;
     // Rubber-sheet surface geometry (empty unless a Sheet overlay — Φ potential,
     // EM energy, Charge ρ, Vorticity ω, P_E, P_B — is active). Each entry is one
     // deformed grid drawn through the presenter's sheet mesh PSO (+ wireframe).

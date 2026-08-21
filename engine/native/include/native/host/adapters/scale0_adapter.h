@@ -118,6 +118,11 @@ private:
     // `anyFieldActive` gate on the ambient cloud.
     std::vector<OverlayId>        active_overlays_;
 
+    // Global force render-style (Arrows / Heatmap / Flow / Glyphs), applied to
+    // all four Force-column overlays at capture() time (SetForceStyle updates it;
+    // view-state only, no bridge mutation). Mirrors the web force-style selector.
+    ForceStyle                    force_style_ = ForceStyle::Arrows;
+
     // Per-active-sheet slice height (fraction of the lattice box). Keyed by the
     // numeric OverlayId. Seeded to the registry y_frac when a Sheet overlay is
     // toggled on; erased on toggle-off. SetSheetHeight updates it. build_sheet
@@ -127,6 +132,8 @@ private:
 
     void set_overlay(OverlayId id, bool on);
     bool overlay_active(OverlayId id) const;
+    // View-state force render-style (no bridge mutation); clamped to the enum.
+    void set_force_style(ForceStyle style) { force_style_ = style; }
     // View-state height control (clamped to [0, 0.999]); no bridge mutation.
     void  set_sheet_height(OverlayId id, float height);
     // Current slice height for a sheet overlay — the stored value, or the

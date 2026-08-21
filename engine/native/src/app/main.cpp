@@ -357,6 +357,9 @@ struct ShellData {
     // (mirrors the web). Built from the shared registry, grouped by column;
     // empty columns are omitted. Each row's `on` reflects the active set.
     Rml::Vector<OverlayColumnRow> overlay_columns;
+    // Global force render-style (0 Arrows / 1 Heatmap / 2 Flow / 3 Glyphs),
+    // applied to all four Force overlays — the selector under the Forces column.
+    int force_style = 0;
     // Setup scenario picker (Scale-0). The ~130 native-catalog scenarios grouped
     // into the 5 honest classes, searchable + collapsible. A pick issues the
     // LoadScenario core command (the Reset path) — a live scenario reboot.
@@ -1372,6 +1375,10 @@ struct AppOptions {
     bool   set_sor = false;     int    sor_value = 0;          // --set-sor N
     bool   set_boundary = false; int   boundary_value = 0;     // --set-boundary N (0/1/2)
     int    set_lattice = 0;     // --set-lattice N (>0 ⇒ reboot at N; [4,256])
+    // Global force render-style for the four Force overlays (Scale-0):
+    // --force-style <arrows|heatmap|flow|glyphs>. Stamped at boot so a headless
+    // capture of a Force overlay shows that style. Empty = Arrows (default).
+    std::string force_style;
 };
 
 AppOptions parse_app_options(const std::vector<std::string>& args) {
@@ -1441,9 +1448,19 @@ AppOptions parse_app_options(const std::vector<std::string>& args) {
             o.boundary_value = std::atoi(args[++i].c_str());
         } else if (args[i] == "--set-lattice" && i + 1 < args.size()) {
             o.set_lattice = std::atoi(args[++i].c_str());
+        } else if (args[i] == "--force-style" && i + 1 < args.size()) {
+            o.force_style = args[++i];
         }
     }
     return o;
+}
+
+// Map a --force-style token → ForceStyle (Arrows on an empty/unknown token).
+ftd::native::ForceStyle parse_force_style(const std::string& s) {
+    if (s == "heatmap") return ftd::native::ForceStyle::Heatmap;
+    if (s == "flow")    return ftd::native::ForceStyle::Flow;
+    if (s == "glyphs")  return ftd::native::ForceStyle::Glyphs;
+    return ftd::native::ForceStyle::Arrows;  // "arrows" / empty / unknown
 }
 
 int run_app(const std::vector<std::string>& args) {
@@ -1535,6 +1552,12 @@ int run_app(const std::vector<std::string>& args) {
                     std::cerr << "native_app: --sheet-height '" << nm
                               << "' is not a rubber-sheet overlay (ignored)\n" << std::flush;
                 }
+            }
+            // Global force render-style (--force-style), stamped so the first
+            // captured frame renders the Force overlays in that style.
+            if (!app_opts.force_style.empty()) {
+                stamp.push(ftd::native::scale0_command(ftd::native::SetForceStyle{
+                    static_cast<std::uint32_t>(parse_force_style(app_opts.force_style))}));
             }
         }
         host.process_ui_boundary(stamp);
@@ -1634,6 +1657,9 @@ int run_app(const std::vector<std::string>& args) {
     for (const std::string& name : initial_overlays)
         if (OverlayRow* r = find_overlay_row(&data, Rml::String(name.c_str())))
             r->on = true;
+    // Reflect the initial --force-style in the selector (mirrors the SetForceStyle
+    // stamped above) so the lit button matches the geometry from frame 0.
+    data.force_style = static_cast<int>(parse_force_style(app_opts.force_style));
     // Setup scenario picker: starts COLLAPSED (data.scn_open == false), so the
     // bound scenario_groups array is left EMPTY on boot — the ~130 scenario <div>s
     // are instantiated lazily the first time the user opens the picker (see the
@@ -1847,6 +1873,7 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("has_validation", &data.has_validation);
     ctor.Bind("validation_msg", &data.validation_msg);
     ctor.Bind("overlay_columns", &data.overlay_columns);
+    ctor.Bind("force_style", &data.force_style);
     ctor.Bind("scn_open", &data.scn_open);
     ctor.Bind("scenario_groups", &data.scenario_groups);
     ctor.Bind("insp_active", &data.insp_active);
@@ -1979,6 +2006,20 @@ int run_app(const std::vector<std::string>& args) {
             app.has_last_sheet = true;
         }
         h.DirtyVariable("overlay_columns");
+    });
+    // Force render-style selector (Forces column): v[0] = 0..3 (Arrows / Heatmap
+    // / Flow / Glyphs). Updates the bound `force_style` (lighting the active
+    // button) and pushes SetForceStyle so all four Force overlays re-render in the
+    // chosen style — live even while paused (SetForceStyle is a frame-refresh write).
+    ctor.BindEventCallback("set_force_style", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                     const Rml::VariantList& v) {
+        if (v.empty() || !app.data) return;
+        int style = 0;
+        v[0].GetInto(style);
+        if (style < 0 || style >= static_cast<int>(ftd::native::ForceStyle::Count)) style = 0;
+        app.data->force_style = style;
+        push_scale0(&app, ftd::native::SetForceStyle{static_cast<std::uint32_t>(style)});
+        h.DirtyVariable("force_style");
     });
     // Rubber-sheet height nudge: the panel's −/＋ affordance for one active sheet.
     // v[0] = overlay name, v[1] = "-" or "+". Steps the slice height by ±0.05 via

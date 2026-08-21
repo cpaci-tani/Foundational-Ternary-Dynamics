@@ -850,6 +850,203 @@ void append_overlay_streamlines(RenderBridge& rb, NativeFrame& frame,
     (void)d;
 }
 
+// ── Force render-styles (Heatmap / Flow / Glyphs) ──────────────────────────────
+// The four Force overlays (EM · Gravity · Strong · ∇×J) share ONE global render
+// style (Scale0Adapter::force_style_). Arrows is append_overlay_arrows above;
+// the three helpers below implement Heatmap, Glyphs, and (via the streamlines
+// module) Flow. Each reads the same 3-vector force field and the per-force
+// palette (force_palette_for). Ports of engine/web/js/viewport/
+// field-force-renderer.js (updateForceHeatmap / updateForceGlyphs /
+// updateForceStreamlines).
+
+// The stride the force overlays sample at (matches append_overlay_arrows).
+int force_stride(int L) { return std::max(1, (L + 31) / 32); }
+
+// Heatmap: gaussian additive sprite points, size ∝ log(|force|), per-force
+// palette, kept above 2% of the frame max. The gaussian falloff + additive
+// blend live in the presenter's heat PSO — this only places the coloured,
+// magnitude-sized points into frame.flux_heat.
+void append_force_heatmap(RenderBridge& rb, NativeFrame& frame,
+                          const OverlayDescriptor& d, VisualFieldKind kind) {
+    const int L = rb.lattice().size();
+    VisualFieldSample sample;
+    rb.copy_visual_field_sample(kind, force_stride(L), sample);
+    if (sample.components != 3u || sample.count() == 0) return;
+    const std::size_t n = sample.count();
+    std::vector<float> mag(n, 0.0f);
+    float max_mag = 1.0e-15f;
+    for (std::size_t i = 0; i < n; ++i) {
+        const float x = sample.data[i * 3u], y = sample.data[i * 3u + 1u], z = sample.data[i * 3u + 2u];
+        mag[i] = std::sqrt(x * x + y * y + z * z);
+        max_mag = std::max(max_mag, mag[i]);
+    }
+    const ForcePalette pal = force_palette_for(d.id);
+    const float threshold = max_mag * 0.02f;
+    frame.flux_heat.reserve(frame.flux_heat.size() + n);
+    for (std::size_t i = 0; i < n; ++i) {
+        if (mag[i] < threshold) continue;
+        const float t = mag[i] / max_mag;
+        NativeParticle p;
+        p.x = sample.positions[i * 3u];
+        p.y = sample.positions[i * 3u + 1u];
+        p.z = sample.positions[i * 3u + 2u];
+        force_palette_lerp(pal, t, p.r, p.g, p.b);
+        // Log-scaled world-space glow radius (the gaussian falloff is in the PSO).
+        // Generous so the additive glow bleeds around the charge sites the force
+        // field lives on (the web heatmap uses 15–25 px sprites for the same reason).
+        const float lg = std::log10(1.0f + t * 9.0f);  // 0→1
+        p.size = 1.4f + 3.6f * lg;
+        frame.flux_heat.push_back(p);
+    }
+}
+
+// Glyphs: instanced oriented cones along the force direction, magnitude-scaled,
+// per-force palette, kept above 3% of the frame max. Emits NativeGlyph instances
+// (the presenter tessellates + shades each cone). Capped, striding the qualifying
+// set down to the cap so the whole field is represented.
+void append_force_glyphs(RenderBridge& rb, NativeFrame& frame,
+                         const OverlayDescriptor& d, VisualFieldKind kind) {
+    const int L = rb.lattice().size();
+    VisualFieldSample sample;
+    rb.copy_visual_field_sample(kind, force_stride(L), sample);
+    if (sample.components != 3u || sample.count() == 0) return;
+    const std::size_t n = sample.count();
+    std::vector<float> mag(n, 0.0f);
+    float max_mag = 1.0e-15f;
+    for (std::size_t i = 0; i < n; ++i) {
+        const float x = sample.data[i * 3u], y = sample.data[i * 3u + 1u], z = sample.data[i * 3u + 2u];
+        mag[i] = std::sqrt(x * x + y * y + z * z);
+        max_mag = std::max(max_mag, mag[i]);
+    }
+    const ForcePalette pal = force_palette_for(d.id);
+    const float threshold = max_mag * 0.03f;
+    // Cone length is proportional to a sample cell so glyphs read at any lattice
+    // size (like the arrow autoscale); radius follows the cone's ConeGeometry ratio.
+    const float unit = static_cast<float>(std::max(1, sample.effective_stride));
+    constexpr std::size_t kMaxGlyphs = 4000;
+    std::size_t qualifying = 0;
+    for (std::size_t i = 0; i < n; ++i) if (mag[i] >= threshold) ++qualifying;
+    const std::size_t stride = qualifying > kMaxGlyphs ? (qualifying + kMaxGlyphs - 1) / kMaxGlyphs : 1;
+    frame.field_glyphs.reserve(frame.field_glyphs.size() + std::min(qualifying, kMaxGlyphs));
+    std::size_t seen = 0;
+    for (std::size_t i = 0; i < n && frame.field_glyphs.size() < kMaxGlyphs; ++i) {
+        if (mag[i] < threshold) continue;
+        if ((seen++ % stride) != 0) continue;
+        const float t = mag[i] / max_mag;
+        const float lg = std::log10(1.0f + t * 9.0f);  // 0→1
+        NativeGlyph gph;
+        gph.x = sample.positions[i * 3u];
+        gph.y = sample.positions[i * 3u + 1u];
+        gph.z = sample.positions[i * 3u + 2u];
+        const float inv = 1.0f / mag[i];
+        gph.dx = sample.data[i * 3u] * inv;
+        gph.dy = sample.data[i * 3u + 1u] * inv;
+        gph.dz = sample.data[i * 3u + 2u] * inv;
+        // Cone length. Generous + rooted at the charge pointing outward (presenter),
+        // so the cone sticks out past the particle it sits on and reads clearly.
+        gph.scale = (1.6f + 2.6f * lg) * unit;   // presenter: radius = 0.3·length
+        force_palette_lerp(pal, t, gph.r, gph.g, gph.b);
+        frame.field_glyphs.push_back(gph);
+    }
+}
+
+// Flow: dashed animated streamlines seeded ∝|force|. Delegates the RK4 tracing +
+// dashing to the streamlines module (which reuses the field-line integrator);
+// the dash phase advances with the sim tick so the dashes march during playback.
+void append_force_flow(RenderBridge& rb, NativeFrame& frame,
+                       const OverlayDescriptor& d, VisualFieldKind kind) {
+    VisualFieldSample sample;
+    rb.copy_visual_field_sample(kind, /*stride=*/1, sample);
+    if (sample.components != 3u || sample.count() == 0) return;
+    const ForcePalette pal = force_palette_for(d.id);
+    const float phase = static_cast<float>(rb.current_tick()) * 0.20f;
+    // On-top group: the force field only exists at charge sites, so the flow
+    // streamlines must draw over the (opaque) particles to be seen.
+    streamlines::append_force_flow(sample, rb.lattice().size(), phase,
+                                   pal.low, pal.mid, pal.high, frame.field_lines_top);
+}
+
+// Dispatch one Force-column overlay through the current global force style.
+void append_force_overlay(RenderBridge& rb, NativeFrame& frame,
+                          const OverlayDescriptor& d, VisualFieldKind kind,
+                          ForceStyle style) {
+    switch (style) {
+        case ForceStyle::Heatmap: append_force_heatmap(rb, frame, d, kind); break;
+        case ForceStyle::Flow:    append_force_flow(rb, frame, d, kind); break;
+        case ForceStyle::Glyphs:  append_force_glyphs(rb, frame, d, kind); break;
+        case ForceStyle::Arrows:
+        default:                  append_overlay_arrows(rb, frame, d, kind); break;
+    }
+}
+
+// ── Knot Zones (the 33rd overlay) ──────────────────────────────────────────────
+// Deterministic knot id → hue in [0,1) (port of knotHue, field-line-knots.js):
+// B-family hues are a half-turn from E so the two orthogonal families read
+// distinctly. Fed to ramp_cyclic_hsl for the per-knot box colour.
+float knot_hue(int id, bool is_b) {
+    std::uint32_t h = static_cast<std::uint32_t>(id) * 374761393u + 668265263u;
+    h = (h ^ (h >> 13)) * 1274126177u;
+    float hue = static_cast<float>(h >> 8) / static_cast<float>(0x1000000);
+    if (is_b) hue = std::fmod(hue + 0.5f, 1.0f);
+    return hue;
+}
+
+// Emit the 12 wireframe-box edges (centre ± half-extents), one colour, into
+// frame.field_lines.
+void emit_wire_box(NativeFrame& frame, float cx, float cy, float cz,
+                   float hx, float hy, float hz, float r, float g, float b) {
+    static const int edges[12][6] = {
+        {0, 0, 0, 1, 0, 0}, {0, 1, 0, 1, 1, 0}, {0, 0, 1, 1, 0, 1}, {0, 1, 1, 1, 1, 1},
+        {0, 0, 0, 0, 1, 0}, {1, 0, 0, 1, 1, 0}, {0, 0, 1, 0, 1, 1}, {1, 0, 1, 1, 1, 1},
+        {0, 0, 0, 0, 0, 1}, {1, 0, 0, 1, 0, 1}, {0, 1, 0, 0, 1, 1}, {1, 1, 0, 1, 1, 1},
+    };
+    for (const auto& e : edges) {
+        NativeLine line;
+        line.x0 = cx - hx + e[0] * 2.0f * hx;
+        line.y0 = cy - hy + e[1] * 2.0f * hy;
+        line.z0 = cz - hz + e[2] * 2.0f * hz;
+        line.x1 = cx - hx + e[3] * 2.0f * hx;
+        line.y1 = cy - hy + e[4] * 2.0f * hy;
+        line.z1 = cz - hz + e[5] * 2.0f * hz;
+        line.r0 = r; line.g0 = g; line.b0 = b;
+        line.r1 = r; line.g1 = g; line.b1 = b;
+        frame.field_lines.push_back(line);
+    }
+}
+
+// Knot Zones overlay: trace E and B streamlines internally (the same seeding the
+// E-Field / B-Field overlays use), cluster each family into knot boxes via the
+// streamlines module's detector, and emit per-knot-hued wireframe boxes (E and B
+// families with distinct hues). Reuses the RK4 integrator; the traced lines are
+// consumed for clustering and NOT drawn here (the E/B overlays draw them if
+// separately active).
+void append_knot_zones(RenderBridge& rb, NativeFrame& frame) {
+    const int L = rb.lattice().size();
+    std::vector<std::array<float, 3>> particles;
+    particles.reserve(frame.particles.size());
+    for (const NativeParticle& p : frame.particles)
+        particles.push_back(std::array<float, 3>{p.x, p.y, p.z});
+
+    constexpr int kMaxKnotsPerFamily = 24;
+    auto do_family = [&](VisualFieldKind kind, streamlines::Overlay ov, bool is_b) {
+        VisualFieldSample s;
+        rb.copy_visual_field_sample(kind, /*stride=*/1, s);
+        if (s.components != 3u || s.count() == 0) return;
+        std::vector<NativeLine> lines;
+        streamlines::append(s, particles, L, ov, lines);
+        if (lines.empty()) return;
+        const std::vector<streamlines::KnotBox> knots =
+            streamlines::detect_knots(lines, L, /*sensitivity=*/0.5f, kMaxKnotsPerFamily);
+        for (const streamlines::KnotBox& kb : knots) {
+            float r, g, b;
+            ramp_cyclic_hsl(knot_hue(kb.index, is_b), r, g, b);
+            emit_wire_box(frame, kb.cx, kb.cy, kb.cz, kb.hx, kb.hy, kb.hz, r, g, b);
+        }
+    };
+    do_family(VisualFieldKind::Electric, streamlines::Overlay::Electric, /*is_b=*/false);
+    do_family(VisualFieldKind::Magnetic, streamlines::Overlay::Magnetic, /*is_b=*/true);
+}
+
 // ── Tranche-5 rubber-sheet builder ──────────────────────────────────────────
 //
 // One shared CPU pipeline for all six sheet overlays (Φ potential · EM energy ·
@@ -1259,7 +1456,8 @@ bool Scale0Adapter::is_host_write(const ScalePayload& payload) const {
     // host write). They never mutate the RenderBridge (apply() short-circuits
     // SetOverlay/SetSheetHeight), so this only drives the re-capture gate.
     if (std::holds_alternative<SetOverlay>(*s0)
-        || std::holds_alternative<SetSheetHeight>(*s0))
+        || std::holds_alternative<SetSheetHeight>(*s0)
+        || std::holds_alternative<SetForceStyle>(*s0))
         return true;
     return is_harness_command(to_ui_command(*s0));
 }
@@ -1293,6 +1491,18 @@ ApplyResult Scale0Adapter::apply(const ScalePayload& payload, ParameterJournal& 
     // height and short-circuit.
     if (const SetSheetHeight* sh = std::get_if<SetSheetHeight>(s0)) {
         set_sheet_height(static_cast<OverlayId>(sh->overlay_id), sh->height);
+        ApplyResult ok;
+        ok.ok = true;
+        return ok;
+    }
+    // SetForceStyle is adapter view-state only (which style capture() renders the
+    // four Force overlays in); it never mutates the RenderBridge, so update the
+    // style and short-circuit.
+    if (const SetForceStyle* sf = std::get_if<SetForceStyle>(s0)) {
+        const std::uint32_t v = sf->style;
+        set_force_style(v < static_cast<std::uint32_t>(ForceStyle::Count)
+                            ? static_cast<ForceStyle>(v)
+                            : ForceStyle::Arrows);
         ApplyResult ok;
         ok.ok = true;
         return ok;
@@ -1482,6 +1692,13 @@ NativeFrame Scale0Adapter::capture() {
         const OverlayDescriptor* d = overlay_by_id(static_cast<std::uint32_t>(id));
         if (!d) continue;
         const VisualFieldKind kind = resolve_overlay_kind(*d);
+        // The four Force-column overlays render in the current GLOBAL force style
+        // (Arrows / Heatmap / Flow / Glyphs) rather than their descriptor's fixed
+        // Arrows render — one selector drives all four, mirroring the web.
+        if (d->column == OverlayColumn::Forces) {
+            append_force_overlay(*bridge_, frame, *d, kind, force_style_);
+            continue;
+        }
         switch (d->render) {
             case OverlayRender::Sprite:
                 append_flux(*bridge_, frame);  // Flux Volume == ambient cloud
@@ -1518,6 +1735,9 @@ NativeFrame Scale0Adapter::capture() {
                 break;
             case OverlayRender::Sheet:
                 build_sheet(*bridge_, frame, *d, sheet_height_frac(id, *d));
+                break;
+            case OverlayRender::KnotZones:
+                append_knot_zones(*bridge_, frame);
                 break;
             case OverlayRender::Recolor:
                 break;  // handled in the particle loop above

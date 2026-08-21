@@ -54,4 +54,35 @@ void append(const ftd::VisualFieldSample& field,
             int L, Overlay overlay,
             std::vector<NativeLine>& out_lines);
 
+// Force-Flow render-style: importance-seeded (∝|force|^1.5) RK4 streamlines,
+// traced at ~40% of the field-line length and rendered DASHED (dash 1.5 / gap
+// 0.8 voxels) with a `phase` offset so the dashes animate as the sim advances
+// (port of updateForceStreamlines + LineDashedMaterial). Each retained segment
+// is coloured by the local |force| through the 3-stop force palette
+// (`low/mid/high`). Appends into `out_lines` (the shared LINE PSO group).
+void append_force_flow(const ftd::VisualFieldSample& field, int L, float phase,
+                       const float low[3], const float mid[3], const float high[3],
+                       std::vector<NativeLine>& out_lines);
+
+// One detected knot zone: a density-clustered bunch of field-line segments,
+// reported as an axis-aligned box (centroid ± half-extents) for the wireframe
+// overlay. `index` is the knot's ordinal within its family (E or B) — the input
+// to the per-knot hue.
+struct KnotBox {
+    float cx = 0.0f, cy = 0.0f, cz = 0.0f;   // density-weighted centroid
+    float hx = 1.0f, hy = 1.0f, hz = 1.0f;   // half-extents (≥ 1 voxel)
+    int   index = 0;                          // ordinal within the family
+};
+
+// Detect field-line Knot Zones over a set of already-traced streamline segments
+// (port of the DEFAULT gate in engine/web/js/scales/scale0/runtime/
+// field-line-knots.js: bin segment midpoints into a coarse cell grid, threshold
+// on adaptive local density, 26-neighbour flood-fill the hot cells into knots,
+// then report each knot's centroid + bounding-box extents). `sensitivity`∈[0,1]
+// scales the adaptive density threshold (higher → more knots). At most
+// `max_knots` (largest first). The web's optional crossing gate is OFF by
+// default (requireCrossings=false), so density + flood-fill matches it exactly.
+std::vector<KnotBox> detect_knots(const std::vector<NativeLine>& segments, int L,
+                                  float sensitivity = 0.5f, int max_knots = 32);
+
 }  // namespace ftd::native::streamlines

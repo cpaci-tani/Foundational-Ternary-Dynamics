@@ -64,7 +64,36 @@ enum class OverlayRender : std::uint32_t {
     //    Y is displaced by a per-voxel scalar (scattered → box-blurred → sampled)
     //    and whose vertices are ramp-coloured. Emits into NativeFrame.field_sheets.
     Sheet,          // deformable rubber sheet (Φ · EM energy · Charge ρ · Vorticity · P_E · P_B)
+    // ── Knot Zones (the 33rd overlay) ──
+    //    Traces E and B streamlines internally, clusters where field lines bunch
+    //    (density grid → 26-neighbour flood fill, the web field-line-knots.js
+    //    default gate), and emits one wireframe box per knot (E-family and
+    //    B-family, per-knot hue) through the LINE PSO. Depends on the streamline
+    //    integrator. Emits into NativeFrame.field_lines like the other line overlays.
+    KnotZones,
 };
+
+// Force render-style — a SINGLE global setting that applies to all four Force
+// overlays (EM · Gravity · Strong · ∇×J), mirroring the web force-style
+// selector. Only the Forces-column overlays honour it; every other overlay is
+// unaffected. Arrows is the default (== the descriptor's OverlayRender::Arrows).
+enum class ForceStyle : std::uint32_t {
+    Arrows = 0,  // base→tip line-segment arrows (the existing force path)
+    Heatmap,     // gaussian additive sprite points, size ∝ log(|force|), per-force palette
+    Flow,        // animated dashed RK4 streamlines seeded ∝ |force|
+    Glyphs,      // instanced oriented cones (per-force palette, magnitude-scaled)
+    Count,
+};
+
+inline const char* force_style_name(ForceStyle s) {
+    switch (s) {
+        case ForceStyle::Arrows:  return "Arrows";
+        case ForceStyle::Heatmap: return "Heatmap";
+        case ForceStyle::Flow:    return "Flow";
+        case ForceStyle::Glyphs:  return "Glyphs";
+        default:                  return "";
+    }
+}
 
 // Colour ramp applied to the per-sample magnitude/sign.
 enum class OverlayRamp : std::uint32_t {
@@ -159,8 +188,47 @@ enum class OverlayId : std::uint32_t {
     Vorticity,       // Topology     — ω = |∇×J| rubber sheet (thin band)
     EPressure,       // Stress-Energy — P_E = ½|E|² rubber sheet
     BPressure,       // Stress-Energy — P_B = (c²/2)|B|² rubber sheet
+    // ── The 33rd overlay: field-line Knot Zones (Phenomena column) ──
+    KnotZones,       // Phenomena     — wireframe boxes around E/B streamline knots
     // Future tranches append here (EXTEND / NEW overlays) — do not reorder.
 };
+
+// The 3-stop force palette (low/mid/high RGB) for one Force overlay — ports of
+// the web FORCE_PALETTES (color-ramps.js), keyed by OverlayId. Used by the
+// Heatmap/Flow/Glyphs styles (Arrows uses its own cool→hot ramp). EM=cyan,
+// Gravity=amber, Strong=red, ∇×J("weak")=violet.
+struct ForcePalette { float low[3], mid[3], high[3]; };
+
+inline ForcePalette force_palette_for(OverlayId id) {
+    switch (id) {
+        case OverlayId::GravityForce:
+            return {{0.4f, 0.2f, 0.0f}, {1.0f, 0.67f, 0.0f}, {1.0f, 1.0f, 0.6f}};
+        case OverlayId::StrongForce:
+            return {{0.4f, 0.0f, 0.05f}, {1.0f, 0.09f, 0.27f}, {1.0f, 0.7f, 0.7f}};
+        case OverlayId::WeakCurl:
+            return {{0.2f, 0.0f, 0.4f}, {0.67f, 0.0f, 1.0f}, {0.9f, 0.6f, 1.0f}};
+        case OverlayId::EmForce:
+        default:
+            return {{0.0f, 0.2f, 0.4f}, {0.0f, 0.9f, 1.0f}, {0.7f, 1.0f, 1.0f}};
+    }
+}
+
+// low/mid/high palette interpolator (port of lerpPalette, color-ramps.js): the
+// first half blends low→mid, the second half mid→high.
+inline void force_palette_lerp(const ForcePalette& p, float t, float& r, float& g, float& b) {
+    t = t < 0.0f ? 0.0f : (t > 1.0f ? 1.0f : t);
+    if (t < 0.5f) {
+        const float u = t * 2.0f;
+        r = p.low[0] + (p.mid[0] - p.low[0]) * u;
+        g = p.low[1] + (p.mid[1] - p.low[1]) * u;
+        b = p.low[2] + (p.mid[2] - p.low[2]) * u;
+    } else {
+        const float u = (t - 0.5f) * 2.0f;
+        r = p.mid[0] + (p.high[0] - p.mid[0]) * u;
+        g = p.mid[1] + (p.high[1] - p.mid[1]) * u;
+        b = p.mid[2] + (p.high[2] - p.mid[2]) * u;
+    }
+}
 
 struct OverlayDescriptor {
     OverlayId            id;
@@ -197,7 +265,11 @@ inline constexpr OverlayDescriptor kOverlayRegistry[] = {
      OverlayRender::Sprite, ftd::VisualFieldKind::FluxVector,   OverlayRamp::FluxCloud, 0.04f, -1.0f, false, false},
     {OverlayId::FluxLines,    "fluxLines",  "Flux Lines",  OverlayColumn::Volume,
      OverlayRender::Streamline, ftd::VisualFieldKind::FluxVector, OverlayRamp::FluxLine, 0.0f, -1.0f, false, true},
-    {OverlayId::Divergence,   "divJ",       "\xE2\x88\x87\xC2\xB7J", OverlayColumn::Volume,
+    // Label ASCII-ized ("div J", not "∇·J"): the vendored Inter shell
+    // font lacks U+2207 NABLA, so the glyph rendered as an empty box. No symbol
+    // fallback face is vendored in the repo (do-not-download policy), so the
+    // three ∇/ℒ overlay labels spell the operator in ASCII instead.
+    {OverlayId::Divergence,   "divJ",       "div J", OverlayColumn::Volume,
      OverlayRender::Points, ftd::VisualFieldKind::Divergence,   OverlayRamp::Diverging, 0.01f, -1.0f, false, false},
     {OverlayId::State,        "state",      "State s",     OverlayColumn::Volume,
      OverlayRender::Points, ftd::VisualFieldKind::State,        OverlayRamp::StateSign, 0.50f, -1.0f, false, true},
@@ -215,7 +287,7 @@ inline constexpr OverlayDescriptor kOverlayRegistry[] = {
      OverlayRender::Arrows, ftd::VisualFieldKind::GravityForce, OverlayRamp::CoolHot,   0.04f, -1.0f, false, false},
     {OverlayId::StrongForce,  "strongForce","Strong",      OverlayColumn::Forces,
      OverlayRender::Arrows, ftd::VisualFieldKind::StrongForce,  OverlayRamp::CoolHot,   0.04f, -1.0f, false, false},
-    {OverlayId::WeakCurl,     "weakCurl",   "\xE2\x88\x87\xC3\x97J", OverlayColumn::Forces,
+    {OverlayId::WeakCurl,     "weakCurl",   "curl J", OverlayColumn::Forces,  // ASCII for ∇×J (Inter lacks ∇)
      OverlayRender::Arrows, ftd::VisualFieldKind::Curl,         OverlayRamp::Weak,      0.08f, -1.0f, true,  false},
     // ── Topology ──
     {OverlayId::Latency,      "latency",    "Latency L",   OverlayColumn::Topology,
@@ -234,7 +306,7 @@ inline constexpr OverlayDescriptor kOverlayRegistry[] = {
     {OverlayId::Phase,        "phase",      "Phase \xCF\x86",    OverlayColumn::Quantum,
      OverlayRender::PhaseNeedles,  ftd::VisualFieldKind::FluxVector, OverlayRamp::CyclicHSL,
      0.02f, -1.0f, false, false, OverlayDerive::None},
-    {OverlayId::Lagrangian,   "lagrangian", "\xE2\x84\x92",      OverlayColumn::Quantum,
+    {OverlayId::Lagrangian,   "lagrangian", "L(x)",      OverlayColumn::Quantum,  // ASCII for ℒ (Inter lacks U+2112)
      OverlayRender::DerivedPoints, ftd::VisualFieldKind::Electric,   OverlayRamp::RdBu,
      0.10f, -1.0f, false, false, OverlayDerive::Lagrangian},
     {OverlayId::Entropy,      "entropy",    "Entropy s",   OverlayColumn::Quantum,
@@ -289,6 +361,14 @@ inline constexpr OverlayDescriptor kOverlayRegistry[] = {
     {OverlayId::BPressure,     "bPressure",     "P_B (magnetic)", OverlayColumn::StressEnergy,
      OverlayRender::Sheet, ftd::VisualFieldKind::Magnetic,   OverlayRamp::BPressure,
      0.0f, -1.0f, false, false, OverlayDerive::SheetBPressure, 0.45f, 0.08f},
+
+    // ── Knot Zones (the 33rd overlay) — Phenomena ──────────────────────────────
+    // The adapter's KnotZones handler traces E and B streamlines internally and
+    // clusters them into wireframe boxes; the descriptor's `kind` is nominal
+    // (Magnetic) and unused — the handler samples both Electric and Magnetic.
+    {OverlayId::KnotZones,     "knotZones",     "Knot Zones",     OverlayColumn::Phenomena,
+     OverlayRender::KnotZones, ftd::VisualFieldKind::Magnetic,  OverlayRamp::FluxCloud,
+     0.0f, -1.0f, false, false, OverlayDerive::None},
 };
 
 inline constexpr std::size_t kOverlayCount =

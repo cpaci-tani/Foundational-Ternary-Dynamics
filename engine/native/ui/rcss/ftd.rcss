@@ -438,6 +438,40 @@ body {
     text-align: center;
 }
 
+/* Force render-style selector (one global setting for the four Force overlays). */
+.force-style-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 4dp;
+    margin-bottom: 6dp;
+}
+.fs-label {
+    color: #67788f;
+    font-family: JetBrains Mono;
+    font-size: 10dp;
+    margin-right: 8dp;
+}
+.fs-btn {
+    display: inline-block;
+    padding: 2dp 8dp;
+    margin-right: 5dp;
+    border: 1dp #223047;
+    border-radius: 9dp;
+    color: #9fb0c6;
+    background-color: #12203a;
+    font-family: JetBrains Mono;
+    font-size: 10dp;
+    cursor: pointer;
+}
+.fs-btn:hover { color: #e6edf6; border-color: #3a7ec4; background-color: #18305a; }
+.fs-btn.on {
+    color: #e0e7f1;
+    border-color: #2f6db0;
+    background-color: #16233a;
+}
+
 /* ── scale-aware right panel ───────────────────────────────────────────── */
 /* Each per-scale block stacks its title + content; only one is present at a
    time (the other is removed by data-if), so this drives the panel layout.

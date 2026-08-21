@@ -16,6 +16,7 @@
 #include <array>
 #include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <random>
 #include <vector>
 
@@ -439,6 +440,208 @@ void append(const ftd::VisualFieldSample& field,
             out_lines.push_back(seg);
         }
     }
+}
+
+// ── Force-Flow: dashed, animated streamlines (updateForceStreamlines port) ─────
+void append_force_flow(const ftd::VisualFieldSample& field, int L, float phase,
+                       const float low[3], const float mid[3], const float high[3],
+                       std::vector<NativeLine>& out_lines) {
+    if (field.components != 3u || field.count() == 0 || L <= 0) return;
+
+    float max_flux = 0.0f;
+    for (std::size_t i = 0; i < field.count(); ++i) {
+        const float x = field.data[i * 3u];
+        const float y = field.data[i * 3u + 1u];
+        const float z = field.data[i * 3u + 2u];
+        max_flux = std::max(max_flux, std::sqrt(x * x + y * y + z * z));
+    }
+    if (max_flux < 1e-20f) return;
+
+    DenseField grid;
+    grid.build(field, L);
+
+    Rng rng;
+    std::vector<Vertex> seeds = importance_seeds(field, kMaxSeeds, 0.5f, rng);
+    if (seeds.empty()) return;
+
+    // 40% of the field-line step budget (the web traces force flow shorter).
+    const int max_steps = std::max(8, static_cast<int>(kMaxSteps * 0.4f));
+    std::vector<Polyline> lines;
+    trace_all(grid, seeds, max_steps, lines);
+    if (lines.empty()) return;
+
+    // 3-stop palette colour of local |field| (port of lerpPalette).
+    auto palette = [&](float t, float& r, float& g, float& b) {
+        t = t < 0.0f ? 0.0f : (t > 1.0f ? 1.0f : t);
+        if (t < 0.5f) {
+            const float u = t * 2.0f;
+            r = low[0] + (mid[0] - low[0]) * u;
+            g = low[1] + (mid[1] - low[1]) * u;
+            b = low[2] + (mid[2] - low[2]) * u;
+        } else {
+            const float u = (t - 0.5f) * 2.0f;
+            r = mid[0] + (high[0] - mid[0]) * u;
+            g = mid[1] + (high[1] - mid[1]) * u;
+            b = mid[2] + (high[2] - mid[2]) * u;
+        }
+    };
+
+    // Dash pattern (voxels): the LINELIST has no dash shader, so the dashes are
+    // emitted CPU-side — a segment is drawn only when its arc-length midpoint
+    // falls in the "on" part of the (dash+gap) period, offset by `phase` so the
+    // pattern marches along the line as `phase` advances with the sim tick.
+    constexpr float kDash = 1.5f, kGap = 0.8f;
+    const float period = kDash + kGap;
+
+    for (const Polyline& line : lines) {
+        const int n_pts = static_cast<int>(line.size());
+        float arclen = 0.0f;
+        for (int j = 0; j + 1 < n_pts; ++j) {
+            const Vertex& a = line[static_cast<std::size_t>(j)];
+            const Vertex& b = line[static_cast<std::size_t>(j + 1)];
+            const float dx = b.x - a.x, dy = b.y - a.y, dz = b.z - a.z;
+            const float seg_len = std::sqrt(dx * dx + dy * dy + dz * dz);
+            const float mid_s = arclen + 0.5f * seg_len;
+            arclen += seg_len;
+            float ph = std::fmod(mid_s + phase, period);
+            if (ph < 0.0f) ph += period;
+            if (ph >= kDash) continue;  // in the gap → this dash is "off"
+
+            float fx0, fy0, fz0, fx1, fy1, fz1;
+            grid.lookup(a.x, a.y, a.z, fx0, fy0, fz0);
+            grid.lookup(b.x, b.y, b.z, fx1, fy1, fz1);
+            const float t0 = std::sqrt(fx0 * fx0 + fy0 * fy0 + fz0 * fz0) / max_flux;
+            const float t1 = std::sqrt(fx1 * fx1 + fy1 * fy1 + fz1 * fz1) / max_flux;
+            NativeLine seg;
+            seg.x0 = a.x; seg.y0 = a.y; seg.z0 = a.z;
+            seg.x1 = b.x; seg.y1 = b.y; seg.z1 = b.z;
+            palette(t0, seg.r0, seg.g0, seg.b0);
+            palette(t1, seg.r1, seg.g1, seg.b1);
+            out_lines.push_back(seg);
+        }
+    }
+}
+
+// ── Knot Zones: cluster field-line segments into wireframe boxes ───────────────
+std::vector<KnotBox> detect_knots(const std::vector<NativeLine>& segments, int L,
+                                  float sensitivity, int max_knots) {
+    std::vector<KnotBox> out;
+    if (segments.empty() || L <= 0) return out;
+
+    // Coarse cell grid over the box. cs=2 like the web, but grown so G stays
+    // bounded (≤ 64) for large lattices — G³ arrays are allocated below.
+    const int cs = std::max(2, (L + 63) / 64);
+    const int G = std::max(1, (L + cs - 1) / cs);
+    const std::size_t total = static_cast<std::size_t>(G) * G * G;
+    std::vector<float> density(total, 0.0f);
+
+    auto cell_of = [&](float x, float y, float z) -> std::size_t {
+        int cx = static_cast<int>(x) / cs, cy = static_cast<int>(y) / cs,
+            cz = static_cast<int>(z) / cs;
+        cx = cx < 0 ? 0 : (cx >= G ? G - 1 : cx);
+        cy = cy < 0 ? 0 : (cy >= G ? G - 1 : cy);
+        cz = cz < 0 ? 0 : (cz >= G ? G - 1 : cz);
+        return (static_cast<std::size_t>(cz) * G + cy) * G + cx;
+    };
+
+    // Pass 1: segment midpoints → density.
+    for (const NativeLine& s : segments) {
+        const float mx = (s.x0 + s.x1) * 0.5f;
+        const float my = (s.y0 + s.y1) * 0.5f;
+        const float mz = (s.z0 + s.z1) * 0.5f;
+        density[cell_of(mx, my, mz)] += 1.0f;
+    }
+
+    // Adaptive density threshold (sensitivity-scaled), exactly the web formula.
+    double sum = 0.0;
+    std::size_t nz = 0;
+    for (std::size_t c = 0; c < total; ++c)
+        if (density[c] > 0.0f) { sum += density[c]; ++nz; }
+    if (nz == 0) return out;
+    const float mean = static_cast<float>(sum / static_cast<double>(nz));
+    const float sens = sensitivity < 0.0f ? 0.0f : (sensitivity > 1.0f ? 1.0f : sensitivity);
+    const float mult = 3.0f - 2.6f * sens;
+    const float d_thr = std::max(3.0f, std::ceil(mult * mean));
+
+    // Hot cells (density ≥ threshold). The web's crossing gate is OFF by default.
+    std::vector<std::uint8_t> hot(total, 0);
+    for (std::size_t c = 0; c < total; ++c)
+        if (density[c] >= d_thr) hot[c] = 1;
+
+    // 26-neighbour flood fill over hot cells → connected components.
+    std::vector<std::uint8_t> seen(total, 0);
+    std::vector<int> stack;
+    stack.reserve(total);
+    struct Comp { std::vector<std::size_t> cells; };
+    std::vector<Comp> comps;
+    for (std::size_t c0 = 0; c0 < total; ++c0) {
+        if (!hot[c0] || seen[c0]) continue;
+        Comp comp;
+        stack.clear();
+        stack.push_back(static_cast<int>(c0));
+        seen[c0] = 1;
+        while (!stack.empty()) {
+            const int cur = stack.back();
+            stack.pop_back();
+            comp.cells.push_back(static_cast<std::size_t>(cur));
+            const int gx = cur % G, gy = (cur / G) % G, gz = cur / (G * G);
+            for (int dz = -1; dz <= 1; ++dz) {
+                const int nz2 = gz + dz;
+                if (nz2 < 0 || nz2 >= G) continue;
+                for (int dy = -1; dy <= 1; ++dy) {
+                    const int ny = gy + dy;
+                    if (ny < 0 || ny >= G) continue;
+                    for (int dx = -1; dx <= 1; ++dx) {
+                        if (dx == 0 && dy == 0 && dz == 0) continue;
+                        const int nx = gx + dx;
+                        if (nx < 0 || nx >= G) continue;
+                        const std::size_t ni =
+                            (static_cast<std::size_t>(nz2) * G + ny) * G + nx;
+                        if (hot[ni] && !seen[ni]) {
+                            seen[ni] = 1;
+                            stack.push_back(static_cast<int>(ni));
+                        }
+                    }
+                }
+            }
+        }
+        if (comp.cells.size() >= 2) comps.push_back(std::move(comp));  // minCellsPerKnot
+    }
+    if (comps.empty()) return out;
+
+    // Largest knots first, capped.
+    std::sort(comps.begin(), comps.end(),
+              [](const Comp& a, const Comp& b) { return a.cells.size() > b.cells.size(); });
+    const int K = std::min(static_cast<int>(comps.size()), std::max(0, max_knots));
+    const float half = cs * 0.5f;
+    out.reserve(static_cast<std::size_t>(K));
+    for (int k = 0; k < K; ++k) {
+        const Comp& comp = comps[static_cast<std::size_t>(k)];
+        float wsum = 0.0f, cxA = 0.0f, cyA = 0.0f, czA = 0.0f;
+        float minx = 1e30f, miny = 1e30f, minz = 1e30f;
+        float maxx = -1e30f, maxy = -1e30f, maxz = -1e30f;
+        for (std::size_t ci : comp.cells) {
+            const int gx = static_cast<int>(ci % G);
+            const int gy = static_cast<int>((ci / G) % G);
+            const int gz = static_cast<int>(ci / (static_cast<std::size_t>(G) * G));
+            const float wcx = (gx + 0.5f) * cs, wcy = (gy + 0.5f) * cs, wcz = (gz + 0.5f) * cs;
+            const float w = density[ci];
+            wsum += w; cxA += wcx * w; cyA += wcy * w; czA += wcz * w;
+            minx = std::min(minx, wcx); maxx = std::max(maxx, wcx);
+            miny = std::min(miny, wcy); maxy = std::max(maxy, wcy);
+            minz = std::min(minz, wcz); maxz = std::max(maxz, wcz);
+        }
+        KnotBox box;
+        box.cx = wsum > 0.0f ? cxA / wsum : 0.0f;
+        box.cy = wsum > 0.0f ? cyA / wsum : 0.0f;
+        box.cz = wsum > 0.0f ? czA / wsum : 0.0f;
+        box.hx = std::max(1.0f, (maxx - minx) * 0.5f + half);
+        box.hy = std::max(1.0f, (maxy - miny) * 0.5f + half);
+        box.hz = std::max(1.0f, (maxz - minz) * 0.5f + half);
+        box.index = k;
+        out.push_back(box);
+    }
+    return out;
 }
 
 }  // namespace ftd::native::streamlines
