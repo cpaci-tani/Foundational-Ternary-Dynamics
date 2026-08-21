@@ -92,7 +92,7 @@ void request_telemetry_demand(AppContext* app) {
     if (app && app->data) {
         if (app->data->tel_open)
             needs.telemetry_groups |= ftd::TELEMETRY_AUDIT | ftd::TELEMETRY_LAGRANGIAN;
-        if (app->data->grav_open)
+        if (app->data->grav_open || app->data->time_open)
             needs.telemetry_groups |= ftd::TELEMETRY_GRAVITY;
     }
     push_core(app, ftd::native::SetTelemetryDemand{needs});

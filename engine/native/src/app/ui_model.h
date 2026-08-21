@@ -227,6 +227,17 @@ struct ShellData {
     Rml::String grav_prov = "—";      // freshness: sampled tick of the gravity group
     Rml::String grav_status = "";     // "term off" / "on, no field yet" note
     bool grav_inactive = false;       // gate the status note (requested && !active, or off)
+    // ── Time instrument (causal-clock, Scale-0 analysis panel) ────────────────
+    // The clock-perspective on the SAME latency field: the causal clock runs at
+    // dτ/dt = √(1−L²) (the clock hypothesis), so the deepest well's clock rate is
+    // √f_min and its accumulated dilation is (1−√f_min)·100 %. Demands the gravity
+    // group (shares GravityMetricAgg with the Gravity panel).
+    bool time_open = false;
+    Rml::String time_dtau = "—";      // clock rate dτ/dt = √f_min  (slowest clock)
+    Rml::String time_dilation = "—";  // (1 − √f_min)·100 %  (time dilation)
+    Rml::String time_gamma = "—";     // γ max
+    Rml::String time_f = "—";         // lapse f_min = 1 − L_max²
+    Rml::String time_prov = "—";      // freshness: sampled tick of the gravity group
 };
 
 // ── Toggle-panel builders (build + live-sync the toggle model). ──────────────

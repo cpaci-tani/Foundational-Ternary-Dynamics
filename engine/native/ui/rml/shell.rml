@@ -163,6 +163,30 @@
                 </div>
             </div>
 
+            <!-- Time instrument (Scale-0): the causal-clock view of the same
+                 latency field. The clock hypothesis d&#964;/dt = &#8730;(1&#8722;L&#178;) sets each
+                 site's proper-time rate; the deepest well runs slowest. This is
+                 FTD's time-dilation claim, framed as a clock. -->
+            <div class="time-sec" data-if="active_scale == 0">
+                <div class="section-head" data-event-click="toggle_time()">
+                    <span class="section-caret">{{ time_open ? '&#9662;' : '&#9656;' }}</span>
+                    <span class="section-title">Time</span>
+                    <span class="section-badge">causal clock</span>
+                </div>
+                <div class="tel-body" data-if="time_open">
+                    <div class="tel-ctitle">
+                        <span class="tel-name">Causal clock d&#964;/dt = &#8730;(1&#8722;L&#178;)</span>
+                        <span class="tel-prov">{{time_prov}}</span>
+                    </div>
+                    <div class="tel-legend">
+                        <div class="tel-row"><span class="tel-lbl">Clock rate d&#964;/dt</span><span class="tel-val">{{time_dtau}}</span></div>
+                        <div class="tel-row"><span class="tel-lbl">Time dilation</span><span class="tel-val">{{time_dilation}}</span></div>
+                        <div class="tel-row"><span class="tel-lbl">&#947; max</span><span class="tel-val">{{time_gamma}}</span></div>
+                        <div class="tel-row"><span class="tel-lbl">Lapse f = 1&#8722;L&#178;</span><span class="tel-val">{{time_f}}</span></div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Click-to-inspect: appears when an entity is picked in the 3D
                  scene (data-if insp_active). insp_title names the target; each
                  insp_lines row is a live key/value read from the picked voxel
