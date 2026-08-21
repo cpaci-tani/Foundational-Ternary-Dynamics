@@ -10,6 +10,7 @@
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
+#include <cstring>
 #include <string>
 #include <string_view>
 
@@ -275,6 +276,29 @@ OverlayRow* find_overlay_row(ShellData* data, const Rml::String& name) {
     return nullptr;
 }
 
+namespace {
+// The leading "[TAG]" of an epistemic_status string ("[EMERGENT] ..." -> "EMERGENT").
+// Empty when there is no leading bracket.
+Rml::String leading_tag(const char* status) {
+    if (!status || status[0] != '[') return {};
+    const char* end = std::strchr(status, ']');
+    if (!end || end <= status + 1) return {};
+    return Rml::String(status + 1, static_cast<std::size_t>(end - status - 1));
+}
+// Colour class for a status tag: 1 derived/emergent, 2 imposed/selection,
+// 3 conjecture/open, 4 negative, 0 neutral. "NEGATIVE" wins (CLOSED/QUALIFIED
+// NEGATIVE are negatives regardless of any other word present).
+int classify_tag(const Rml::String& t) {
+    if (t.empty()) return 0;
+    auto has = [&](const char* s) { return t.find(s) != Rml::String::npos; };
+    if (has("NEGATIVE")) return 4;
+    if (has("THEOREM") || has("DERIVED") || has("EMERGENT")) return 1;
+    if (has("IMPOSED") || has("SELECTION") || has("AXIOM") || has("PARAMETRIC")) return 2;
+    if (has("CONJECTURE") || has("OPEN") || has("QUALIFIED")) return 3;
+    return 0;
+}
+}  // namespace
+
 // Rebuild the Setup picker view from the native scenario catalog, honoring the
 // live search filter and the per-group expanded set (DOM-shrink: only an open or
 // filter-matched group instantiates its item rows).
@@ -310,6 +334,8 @@ void rebuild_scenario_view(ShellData* data, const std::string& current,
                 r.title = m.title;
                 r.current = (current == m.id);
                 r.visible = true;
+                r.tag = leading_tag(m.epistemic_status);
+                r.tag_cls = classify_tag(r.tag);
                 g.items.push_back(std::move(r));
             }
         }

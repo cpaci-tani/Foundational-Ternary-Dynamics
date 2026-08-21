@@ -126,6 +126,12 @@ struct ScenarioRow {
     bool current = false;
     bool visible = true;
     Rml::String search;
+    // Epistemic-status badge: the leading "[TAG]" of the catalog row's
+    // epistemic_status (e.g. "EMERGENT", "IMPOSED", "QUALIFIED NEGATIVE"), plus a
+    // colour class (0 neutral / 1 derived-emergent / 2 imposed-selection /
+    // 3 conjecture-open / 4 negative). Surfaces the scientific status in the picker.
+    Rml::String tag;
+    int tag_cls = 0;
 };
 // One category group in the picker: the 5 honest scenario classes, collapsible.
 // has_visible = any item passes the filter (gates the header); show_items =
