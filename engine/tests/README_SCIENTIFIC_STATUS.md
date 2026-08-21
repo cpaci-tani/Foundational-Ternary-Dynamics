@@ -107,8 +107,8 @@ Engine output is quantitatively compared to theoretical predictions via 20 bench
 | Charge conservation | A+ | EXACT |
 | Hydrogen E_n/E_1 = 1/n^2 | A+ | < 0.001% all 4 levels |
 | Color force signs (SU(3)) | A+ | Same repels, diff attracts: CORRECT |
-| Higgs threshold (genesis) | A+ | 0 below K_GENESIS, 891 above: EXACT phase transition |
-| Bell CHSH inequality | A+ | S = 2.000 exactly |
+| Genesis threshold [MEASURED] | A+† | 0 below K_GENESIS, 891 above. **†RE-LABELED 2026-08-21:** a MEASURED engine self-consistency check that the coded threshold (flux magnitude > K_GENESIS, `phase_write.cpp:359`) fires — **NOT** a Higgs mechanism: no doublet, no VEV, no gauge-boson mass, no quartic self-coupling. Consistent with "No Higgs mechanism" in the Disabled/Missing Physics list above. "EXACT" = the engine confirming its own coded threshold, not a phase transition; the grade is a regression grade, not a physics grade. |
+| Bell CHSH inequality (classical bound) | N/A | S = 2.000 exactly. **RE-GRADED 2026-07-01:** this IS the classical local-hidden-variable bound, not a quantum result — a genuinely quantum substrate would EXCEED 2 toward Tsirelson's 2.83. It confirms the substrate is local/classical (the OPPOSITE of a QM confirmation) and is measured by a standalone LHV toy that never touches the lattice engine. Consistent with the Bell caveats in "What These Tests DO NOT Verify" above. |
 | Born rule on lattice | A- | Manifest sites 10x higher density |
 | Larmor radiation | A | Accelerated charges lose MORE energy |
 | Weak parity violation | B+ | 1025 pos vs 550 neg (asymmetry) |

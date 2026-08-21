@@ -9,11 +9,12 @@
 
 ### Engine-Theory Bridge Status (April 13, 2026)
 20 quantitative benchmarks + 4 new physics domains:
-- **A+**: Charge conservation, Hydrogen 1/n^2, Color force signs, Higgs threshold, Bell S=2, Gravitational superposition (0.08%)
+- **A+**: Charge conservation, Hydrogen 1/n^2, Color force signs, Gravitational superposition (0.08%)
 - **A/A-**: Gauss constraint, Larmor radiation, Born lattice bias, Alpha extraction, Confinement, Flux tube detection
-- **B+**: Coulomb convergence, Weak parity, Spin-orbit, Relativistic, Goldstone speed, Linear E(r) gluon scaling
+- **B+**: Coulomb convergence, Weak parity, Spin-orbit, Relativistic, Linear E(r) gluon scaling
 - **B-/C**: Energy conservation (5.6%), Wave speed (60% dispersion), Entropy area-law hint
 - **D**: Latency/GR (phi negative -> latency=0, design fix needed)
+- **N/A — re-graded off physics** (engine-theory-bridge scorecard corrections, same class): **Bell S=2** [2026-07-01: the classical local-hidden-variable bound, not a QM result — a quantum substrate would exceed 2 toward Tsirelson's 2.83; confirms locality, and is measured by a standalone toy that never touches the engine]; **Higgs threshold** + **Goldstone speed** [2026-08-21: B15 is a MEASURED check that the coded genesis threshold (flux magnitude > K_GENESIS) fires — no Higgs content (no doublet/VEV/gauge-boson mass/quartic self-coupling); B15b "Goldstone speed" is a scan-saturated wavefront bound (7/30 = 0.233) that cannot distinguish from C_WAVE ~= 0.577 and is not a Goldstone mode]
 - EFT: `ALPHA_EFT = G_C * G_C` is the runtime force-coupling convention; it is not a derivation of the physical fine-structure constant. `emergent_forces` toggle working
 - Budget equation: x/K + G*/x = 1 verified to 0.2% on lattice
 
