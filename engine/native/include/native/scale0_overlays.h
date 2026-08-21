@@ -104,7 +104,7 @@ enum class OverlayRamp : std::uint32_t {
     Horizon,     // dim ember red (dark, threshold-selected shell)
     CoolHot,     // magnitude cool→hot (force arrows)
     Poynting,    // yellow → orange (energy-flux arrows)
-    Weak,        // violet (parity-odd ∇×J pseudovector arrows)
+    Weak,        // violet (parity-even, axial ∇×J pseudovector arrows)
     // Tranche-2 point ramps (derived-scalar sprite points).
     Viridis,     // |ψ|²: approximate viridis (purple → teal → yellow), t∈[0,1]
     RdBu,        // ℒ Lagrangian: signed diverging red(+) / blue(−), t∈[-1,1]
@@ -115,7 +115,7 @@ enum class OverlayRamp : std::uint32_t {
     // .cpp), keyed off the overlay, not consulted by the point/arrow colour
     // switches. Named here so each streamline descriptor documents its own look.
     FluxLine,    // Flux Lines: flux colormap by LOCAL |J| (dark-blue→cyan→red)
-    CyanFade,    // E Field: cyan (0.30,0.82,0.88) faded along the line
+    CyanFade,    // Radiative E (−∂J/∂t): cyan (0.30,0.82,0.88) faded along the line
     GreenFade,   // B Field: green (0.40,0.73,0.42) faded along the line
     // Tranche-5 rubber-sheet ramps (per-vertex surface colour; ports of the
     // engine/web/js/viewport/color-ramps.js sheet ramps). Signed sheets pass the
@@ -274,7 +274,7 @@ inline constexpr OverlayDescriptor kOverlayRegistry[] = {
     {OverlayId::State,        "state",      "State s",     OverlayColumn::Volume,
      OverlayRender::Points, ftd::VisualFieldKind::State,        OverlayRamp::StateSign, 0.50f, -1.0f, false, true},
     // ── Fields ──
-    {OverlayId::EField,       "eField",     "E Field",     OverlayColumn::Fields,
+    {OverlayId::EField,       "eField",     "Radiative E", OverlayColumn::Fields,
      OverlayRender::Streamline, ftd::VisualFieldKind::Electric, OverlayRamp::CyanFade,  0.0f, -1.0f, false, true},
     {OverlayId::BField,       "bField",     "B Field",     OverlayColumn::Fields,
      OverlayRender::Streamline, ftd::VisualFieldKind::Magnetic, OverlayRamp::GreenFade, 0.0f, -1.0f, false, true},
