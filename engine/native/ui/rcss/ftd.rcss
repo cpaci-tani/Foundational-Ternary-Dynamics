@@ -61,21 +61,32 @@ body {
 #body-row { display: flex; flex-direction: row; flex: 1 1 0; align-items: stretch; }
 
 .panel {
-    flex: 0 0 240dp;   /* fixed-width side panels; the viewport takes the rest */
-    width: 240dp;
     padding: 14dp;
     background-color: #131c2b;
     display: flex;
     flex-direction: column;
 }
-#setup { border-right: 1dp #2b3a50; }
-/* The right panel stacks PHYSICS TERMS + FIELDS + telemetry chart + the
-   click-to-inspect readout, which together overflow the body-row height. It is
-   a flex item stretched to that (definite) row height, so overflow-y:auto turns
-   the surplus into a scroll region reachable by wheel (interactive) or
-   Element::SetScrollTop (capture) instead of spilling below the window. The
-   fixed 240dp width and the sibling #viewport hole are unchanged. */
-#physics { border-left: 1dp #2b3a50; overflow-y: auto; }
+/* LEFT panel — "Information & Scenario". A touch wider than the right: it now
+   carries the telemetry charts + click-to-inspect readout (moved from the right),
+   so the legends and wide force/vector rows get room. Its own bounded scroll
+   region (overflow-y:auto) so the panel stays usable with the inspector open. */
+#setup {
+    flex: 0 0 280dp;
+    width: 280dp;
+    border-right: 1dp #2b3a50;
+    overflow-y: auto;
+}
+/* RIGHT panel — "Properties & Overlays". Stacks PHYSICS TERMS + CONFIG & LATTICE
+   + FIELD overlays, which together overflow the body-row height. It is a flex
+   item stretched to that (definite) row height, so overflow-y:auto turns the
+   surplus into a scroll region reachable by wheel (interactive) or
+   Element::SetScrollTop (capture) instead of spilling below the window. */
+#physics {
+    flex: 0 0 248dp;
+    width: 248dp;
+    border-left: 1dp #2b3a50;
+    overflow-y: auto;
+}
 .panel-title {
     font-family: JetBrains Mono;
     font-size: 10dp;
@@ -101,15 +112,18 @@ body {
 }
 .select.mono { font-family: JetBrains Mono; font-size: 11dp; color: #9fb0c6; }
 
-/* ── Setup scenario picker (Scale-0) ───────────────────────────────────── */
-/* A searchable, category-grouped list of the ~130 native-catalog scenarios.
-   The list is its own bounded scroll region so the Setup panel stays usable
-   even with all groups expanded. */
-.scn-picker { display: flex; flex-direction: column; flex: 0 1 auto; min-height: 0dp; margin-bottom: 12dp; }
-.scn-picker .field { margin-bottom: 8dp; }
-/* Collapsible picker header ("Scenarios ▾ <current>") — the always-present row
-   that toggles the (DOM-heavy) list open/closed. */
-.scn-picker-head {
+/* ── unified collapsible section header (.section-head) ─────────────────────
+   ONE shared dropdown component for EVERY collapsible section in the shell.
+   The top-level sections (Scenarios / Physics terms / Config & lattice /
+   Telemetry) use plain `.section-head`; the nested sub-groups (scenario
+   categories, toggle categories, the 7 field-overlay columns, the 26-neighbour
+   grid) add `.sub` for a de-emphasised, borderless variant so the section →
+   sub-group hierarchy still reads. Structure is ALWAYS the same — a caret
+   affordance (▸ collapsed / ▾ open, glyph swapped in the RML), a title, and an
+   optional right-aligned count/badge — so every dropdown reads identically.
+   The collapse LOGIC stays in the data bindings (toggle_* / data-if); this is
+   chrome only. Collapsed-by-default sections keep the live DOM small (fps). */
+.section-head {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -120,9 +134,63 @@ body {
     border-radius: 4dp;
     cursor: pointer;
 }
-.scn-picker-head:hover { border-color: #3a7ec4; }
-.scn-picker-head .fl { margin-bottom: 0dp; margin-right: 8dp; }
-.scn-picker-head .scn-cur { flex: 1 1 auto; }
+.section-head:hover { border-color: #3a7ec4; }
+.section-caret {
+    color: #67788f;
+    font-size: 9dp;
+    margin-right: 8dp;
+}
+.section-title {
+    flex: 1 1 auto;
+    font-family: JetBrains Mono;
+    font-size: 10dp;
+    color: #9fb0c6;
+    text-transform: uppercase;
+    letter-spacing: 1dp;
+}
+.section-head:hover .section-title { color: #dfe6f0; }
+.section-badge {
+    font-family: JetBrains Mono;
+    font-size: 9dp;
+    color: #4a5a72;
+}
+/* Nested sub-group header: same caret/title/badge structure, de-emphasised
+   (no filled box, smaller title) so the two-tier hierarchy still reads. */
+.section-head.sub {
+    padding: 3dp 4dp;
+    margin-bottom: 4dp;
+    background-color: transparent;
+    border: 0dp transparent;
+    border-radius: 0dp;
+}
+.section-head.sub .section-title { font-size: 9dp; color: #67788f; }
+.section-head.sub:hover .section-title { color: #dfe6f0; }
+
+/* Live validation banner (TermToggles::validate() + CPU gpu-only warnings). */
+.vbanner {
+    padding: 6dp 9dp;
+    margin-bottom: 10dp;
+    background-color: #2a1a12;
+    border: 1dp #c9743a;
+    border-radius: 4dp;
+    color: #f0b48a;
+    font-family: JetBrains Mono;
+    font-size: 10dp;
+}
+
+/* ── Setup scenario picker (Scale-0) ───────────────────────────────────── */
+/* A searchable, category-grouped list of the ~130 native-catalog scenarios.
+   The list is its own bounded scroll region so the panel stays usable even
+   with all groups expanded. The header + group headers reuse .section-head. */
+.scn-picker { display: flex; flex-direction: column; flex: 0 1 auto; min-height: 0dp; margin-bottom: 12dp; }
+/* Current-scenario pill in the Scenarios header (the badge slot). Slimmed so it
+   sits cleanly inside the compact .section-head row; sizes to content, right. */
+.scn-cur {
+    flex: 0 1 auto;
+    padding: 2dp 8dp;
+    font-size: 10dp;
+    margin-left: 8dp;
+}
 .scn-open { display: flex; flex-direction: column; flex: 0 1 auto; min-height: 0dp; }
 .scn-search {
     padding: 6dp 9dp;
@@ -145,25 +213,6 @@ body {
     border-radius: 4dp;
 }
 .scn-group { display: flex; flex-direction: column; margin-bottom: 4dp; }
-.scn-group-head {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 3dp 4dp;
-    margin-bottom: 3dp;
-    cursor: pointer;
-}
-.scn-group-head:hover .scn-group-title { color: #dfe6f0; }
-.scn-caret { color: #67788f; font-size: 9dp; margin-right: 6dp; }
-.scn-group-title {
-    flex: 1 1 auto;
-    font-family: JetBrains Mono;
-    font-size: 9dp;
-    color: #67788f;
-    text-transform: uppercase;
-    letter-spacing: 1dp;
-}
-.scn-count { font-family: JetBrains Mono; font-size: 9dp; color: #4a5a72; }
 .scn-items { display: flex; flex-direction: column; }
 .scn-row { display: flex; flex-direction: column; }
 .scn-item {
@@ -241,65 +290,10 @@ body {
     margin-top: 1dp;
 }
 
-/* ── collapsible control sections (Physics terms / Config & lattice) ───── */
-/* The section headers that gate the (DOM-heavy) toggle list + config knobs.
-   Collapsed by default so the live DOM stays small (fps). */
-.ctl-head {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 6dp 8dp;
-    margin-bottom: 8dp;
-    background-color: #0f1826;
-    border: 1dp #3a4c66;
-    border-radius: 4dp;
-    cursor: pointer;
-}
-.ctl-head:hover { border-color: #3a7ec4; }
-.ctl-caret { color: #67788f; font-size: 9dp; margin-right: 8dp; }
-.ctl-htitle {
-    flex: 1 1 auto;
-    font-family: JetBrains Mono;
-    font-size: 10dp;
-    color: #9fb0c6;
-    text-transform: uppercase;
-    letter-spacing: 1dp;
-}
-.ctl-hnote { font-family: JetBrains Mono; font-size: 9dp; color: #4a5a72; }
-
-/* Live validation banner (TermToggles::validate() + CPU gpu-only warnings). */
-.vbanner {
-    padding: 6dp 9dp;
-    margin-bottom: 10dp;
-    background-color: #2a1a12;
-    border: 1dp #c9743a;
-    border-radius: 4dp;
-    color: #f0b48a;
-    font-family: JetBrains Mono;
-    font-size: 10dp;
-}
-
-/* Toggle category groups (Core dynamics / Forces & gravity / …). */
+/* Toggle category groups (Core dynamics / Forces & gravity / …). The group
+   header reuses .section-head.sub; only the containers are styled here. */
 .tog-groups { display: flex; flex-direction: column; margin-bottom: 8dp; }
 .tog-group { display: flex; flex-direction: column; margin-bottom: 4dp; }
-.tog-group-head {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 3dp 4dp;
-    margin-bottom: 4dp;
-    cursor: pointer;
-}
-.tog-group-head:hover .tog-group-title { color: #dfe6f0; }
-.tog-group-title {
-    flex: 1 1 auto;
-    font-family: JetBrains Mono;
-    font-size: 9dp;
-    color: #67788f;
-    text-transform: uppercase;
-    letter-spacing: 1dp;
-}
-.tog-group-count { font-family: JetBrains Mono; font-size: 9dp; color: #4a5a72; }
 .tog-items { display: flex; flex-direction: column; }
 
 /* ── config knobs (dt / SOR / boundary / Langevin / … + lattice + reset) ── */
@@ -361,27 +355,8 @@ body {
 .fields-title { margin-top: 14dp; }
 .overlay-cols { display: flex; flex-direction: column; }
 .ov-col { display: flex; flex-direction: column; margin-bottom: 8dp; }
-/* Collapsible column header (click to expand/collapse the group). */
-.ov-col-head {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 3dp 4dp;
-    margin-bottom: 4dp;
-    cursor: pointer;
-}
-.ov-col-head:hover .ov-col-title { color: #dfe6f0; }
-.ov-caret { color: #67788f; font-size: 9dp; margin-right: 6dp; }
-.ov-col-title {
-    font-family: JetBrains Mono;
-    font-size: 10dp;
-    color: #67788f;
-    text-transform: uppercase;
-    letter-spacing: 1dp;
-}
+/* The column header reuses .section-head.sub (caret + title + count badge). */
 .ov-list { display: flex; flex-direction: column; }
-/* One overlay toggle: LED + label, lit when the overlay is in the active set
-   (same affordance as the physics-term toggles). */
 /* One overlay entry: the toggle row plus (for active rubber sheets) a slice-
    height nudge, stacked. The .ov-item owns the inter-row spacing. */
 .ov-item { display: flex; flex-direction: column; margin-bottom: 3dp; }
@@ -438,7 +413,9 @@ body {
     text-align: center;
 }
 
-/* Force render-style selector (one global setting for the four Force overlays). */
+/* Force render-style selector (one global setting for the four Force overlays).
+   The "Force style" label matches the .section-title typography so this control
+   row reads as part of the same visual system as the collapsible headers. */
 .force-style-row {
     display: flex;
     flex-direction: row;
@@ -451,6 +428,8 @@ body {
     color: #67788f;
     font-family: JetBrains Mono;
     font-size: 10dp;
+    text-transform: uppercase;
+    letter-spacing: 1dp;
     margin-right: 8dp;
 }
 .fs-btn {
@@ -498,12 +477,13 @@ body {
 .ro-v.mono { font-size: 10dp; color: #9fb0c6; }
 
 /* ── telemetry hub (diagnostics · audit · lagrangian) ──────────────────── */
-/* Sits below the per-scale content. Collapsible: the header reuses the shared
-   .ctl-head chrome; the charts + legends live in .tel-body behind data-if so a
-   closed section costs ~0 DOM (fps). Each <ftd-chart> draws its coloured series
-   through the D3D12 line path; the RCSS frame/background here is chrome (SPEC
-   §5). The trace colours are set per-series in C++ (the ChartRegistry) and
-   mirrored by the legend-chip classes .s0..s4 below, so legend and trace agree. */
+/* Lives in the LEFT "Information & Scenario" panel below the play controls.
+   Collapsible: the header reuses the shared .section-head chrome; the charts +
+   legends live in .tel-body behind data-if so a closed section costs ~0 DOM
+   (fps). Each <ftd-chart> draws its coloured series through the D3D12 line path;
+   the RCSS frame/background here is chrome (SPEC §5). The trace colours are set
+   per-series in C++ (the ChartRegistry) and mirrored by the legend-chip classes
+   .s0..s4 below, so legend and trace agree. */
 .telemetry { display: flex; flex-direction: column; flex: 0 0 auto; margin-top: 16dp; }
 .tel-body { display: flex; flex-direction: column; }
 ftd-chart {
@@ -560,8 +540,8 @@ ftd-chart {
 
 /* ── click-to-inspect readout ──────────────────────────────────────────── */
 /* Shown (data-if insp_active) when an entity is picked in the 3D scene. Lives
-   in the scrollable right panel below the telemetry chart; a picked voxel
-   (Scale 0) or particle (Scale 1) streams its live fields here. */
+   in the LEFT "Information & Scenario" panel below the telemetry charts; a
+   picked voxel (Scale 0) or particle (Scale 1) streams its live fields here. */
 .inspector { display: flex; flex-direction: column; flex: 0 0 auto; margin-top: 16dp; }
 .insp-head {
     display: flex;
@@ -616,21 +596,8 @@ ftd-chart {
 .insp-row.hdr .insp-v { display: none; }
 
 /* ── 26-Moore-neighbour grid (collapsible sub-section of the inspector) ──── */
+/* The header reuses .section-head.sub (caret + title). */
 .insp-neigh { display: flex; flex-direction: column; flex: 0 0 auto; margin-top: 10dp; }
-.insp-neigh-head {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 4dp 2dp;
-    color: #6aa8e0;
-    font-family: JetBrains Mono;
-    font-size: 10dp;
-    text-transform: uppercase;
-    letter-spacing: 1dp;
-    cursor: pointer;
-}
-.insp-neigh-head:hover { color: #9fd0ff; }
-.insp-neigh-caret { margin-right: 6dp; font-size: 9dp; }
 .insp-neigh-body { display: flex; flex-direction: column; }
 .insp-neigh-grp {
     color: #67788f;
@@ -672,10 +639,11 @@ ftd-chart {
 .ncell.nneg { border-color: #7a3340; background-color: #241014; }
 .ncell.nneg .ncell-v { color: #e8899a; }
 
-/* ── vertical scrollbar (the overflowing right panel) ──────────────────── */
+/* ── vertical scrollbar (the overflowing side panels) ──────────────────── */
 /* Without explicit sizing RmlUi renders a zero-width (invisible) scrollbar;
-   this gives the auto-overflow region a visible thin thumb. Wheel + SetScrollTop
-   work regardless — this is chrome only. */
+   this gives every auto-overflow region (both side panels + the scenario list)
+   a visible thin thumb. Wheel + SetScrollTop work regardless — this is chrome
+   only. */
 scrollbarvertical {
     width: 9dp;
     background-color: #0c1420;
