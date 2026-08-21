@@ -1,6 +1,7 @@
 #pragma once
 
 #include "native/native_frame.h"
+#include "native/spectrum.h"
 #include "native/ui_demand.h"
 #include "native/ui_result.h"
 
@@ -84,6 +85,8 @@ struct UiSnapshot {
     ftd::TermToggles term_toggles;
     BridgeKnobs knobs;
     EnvInfo env;
+    SpectrumResult spectrum;         // flux E(k) (filled when demand.spectrum)
+    bool spectrum_present = false;
     DataNeeds demand;
     std::uint64_t last_applied_seq = 0;
     std::uint64_t seq = 0;

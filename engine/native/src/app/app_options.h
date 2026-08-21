@@ -67,6 +67,7 @@ struct AppOptions {
     bool open_gravity = false;   // pre-open the Gravity instrument section
     bool open_time = false;      // pre-open the Time (causal-clock) instrument
     bool open_thermo = false;    // pre-open the Thermodynamics instrument
+    bool open_spectrum = false;  // pre-open the Spectrum (E(k)) instrument
     // Simulated control edits (interactive input can't run under --capture-frames).
     // These drive the SAME commands the −/＋ nudges and toggle clicks push, so the
     // captured snapshot reflects them: prove control works headlessly.

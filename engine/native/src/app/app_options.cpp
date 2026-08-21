@@ -69,6 +69,8 @@ AppOptions parse_app_options(const std::vector<std::string>& args) {
             o.open_time = true;
         } else if (args[i] == "--open-thermo") {
             o.open_thermo = true;
+        } else if (args[i] == "--open-spectrum") {
+            o.open_spectrum = true;
         } else if (args[i] == "--toggle-on" && i + 1 < args.size()) {
             o.toggles_on.push_back(args[++i]);
         } else if (args[i] == "--toggle-off" && i + 1 < args.size()) {

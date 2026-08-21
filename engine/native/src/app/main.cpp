@@ -353,6 +353,7 @@ int run_app(const std::vector<std::string>& args) {
     ChartSeries diag_energy(240), diag_manif(240), diag_entropy(240), diag_charge(240);
     ChartSeries aud_energy(240), aud_drift(240), aud_gauss(240);
     ChartSeries lag_lag(240), lag_ham(240);
+    ChartSeries spec_ek(32);   // Spectrum panel: the log E(k) curve (not a time series)
     ftd::native::ui::ChartRegistry chart_registry;
     {
         using C = Rml::Colourb;
@@ -368,6 +369,7 @@ int run_app(const std::vector<std::string>& args) {
             {&aud_energy, kBlue}, {&aud_drift, kAmber}, {&aud_gauss, kRed}};
         chart_registry.binding("chart-lagr").series = {
             {&lag_lag, kBlue}, {&lag_ham, kViolet}};
+        chart_registry.binding("chart-spectrum").series = {{&spec_ek, kBlue}};
     }
     ftd::native::ui::FtdChartInstancer chart_instancer(&chart_registry);
     Rml::Factory::RegisterElementInstancer("ftd-chart", &chart_instancer);
@@ -623,6 +625,12 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("therm_entropy", &data.therm_entropy);
     ctor.Bind("therm_manif", &data.therm_manif);
     ctor.Bind("therm_prov", &data.therm_prov);
+    ctor.Bind("spectrum_open", &data.spectrum_open);
+    ctor.Bind("spec_peak_k", &data.spec_peak_k);
+    ctor.Bind("spec_power", &data.spec_power);
+    ctor.Bind("spec_slope", &data.spec_slope);
+    ctor.Bind("spec_grid", &data.spec_grid);
+    ctor.Bind("spec_prov", &data.spec_prov);
     ctor.BindEventCallback("run", [&app](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) {
         request_play_toggle(&app);
     });
@@ -738,6 +746,14 @@ int run_app(const std::vector<std::string>& args) {
         app.data->thermo_open = !app.data->thermo_open;
         request_telemetry_demand(&app);
         h.DirtyVariable("thermo_open");
+    });
+    // Spectrum instrument section — while open, demands the adapter-side flux FFT.
+    ctor.BindEventCallback("toggle_spectrum", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                     const Rml::VariantList&) {
+        if (!app.data) return;
+        app.data->spectrum_open = !app.data->spectrum_open;
+        request_telemetry_demand(&app);
+        h.DirtyVariable("spectrum_open");
     });
     ctor.BindEventCallback("scale_lattice", [&app](Rml::DataModelHandle, Rml::Event&,
                                                    const Rml::VariantList&) {
@@ -1011,6 +1027,7 @@ int run_app(const std::vector<std::string>& args) {
     if (app_opts.open_gravity) data.grav_open = true;
     if (app_opts.open_time) data.time_open = true;
     if (app_opts.open_thermo) data.thermo_open = true;
+    if (app_opts.open_spectrum) data.spectrum_open = true;
     request_telemetry_demand(&app);
 
     Rml::ElementDocument* doc = context->LoadDocument(FTD_RML_SHELL_PATH);
@@ -1600,6 +1617,22 @@ int run_app(const std::vector<std::string>& args) {
                         std::to_string(dg.manifested_count));
                 set_str("therm_prov", data.therm_prov,
                         "t=" + std::to_string(s0->telemetry.audit_meta.tick));
+            }
+            // ── Spectrum instrument (flux E(k) from the adapter-side 3D FFT) ──
+            if (data.spectrum_open && push_status && s0->spectrum_present) {
+                const auto& sp = s0->spectrum;   // ftd::native::SpectrumResult
+                set_str("spec_peak_k", data.spec_peak_k, fmt("%.2f", sp.peak_k));
+                set_str("spec_power", data.spec_power, fmt("%.3e", sp.total_power));
+                set_str("spec_slope", data.spec_slope, fmt("%+.2f", sp.slope));
+                set_str("spec_grid", data.spec_grid, std::to_string(sp.grid));
+                set_str("spec_prov", data.spec_prov,
+                        "M=" + std::to_string(sp.grid) + " · " +
+                            std::to_string(static_cast<int>(sp.ek.size())) + " bins");
+                // Fill the E(k) chart with log10 E(k) (log-y in the linear chart);
+                // it is a static curve, so clear + refill rather than scroll.
+                spec_ek.clear();
+                for (float e : sp.ek)
+                    spec_ek.push(std::log10(std::max(e, 1.0e-6f)));
             }
         } else if (const ftd::native::Scale1Snapshot* s1 = snap ? snap->scale1() : nullptr) {
             chart_energy = s1->total_energy;

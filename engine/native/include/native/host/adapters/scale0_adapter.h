@@ -100,6 +100,11 @@ private:
     Scale0Snapshot                boundary_snapshot_;  // accumulator for the boundary
     bool                          interop_enabled_ = false;
     std::uint32_t                 last_total_manifested_ = 0;
+    // Flux E(k) cache (Spectrum panel): the 3D FFT is heavy, so it is recomputed
+    // only every kSpectrumStride boundaries while demanded, and re-served from the
+    // cache in between (spectrum_cache_.ok gates spectrum_present).
+    SpectrumResult                spectrum_cache_;
+    int                           spectrum_counter_ = 0;
 
     // Env-gated telemetry-scheduler diagnostics (FTD_TELEMETRY_DEBUG). Off by
     // default (zero overhead); when set, build_snapshot() prints the scheduler's

@@ -47,6 +47,7 @@ add_library(native_host STATIC
     src/host/adapters/scale0_adapter.cpp
     src/host/adapters/scale1_adapter.cpp
     src/host/adapters/streamlines.cpp
+    src/spectrum.cpp
 )
 target_include_directories(native_host PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(native_host PUBLIC ftd_core native_model native_session)
@@ -198,6 +199,11 @@ if(WIN32)
     if(MSVC)
         target_compile_definitions(native_test_scenario_catalog PRIVATE _CRT_SECURE_NO_WARNINGS)
     endif()
+
+    # native/spectrum.h unit check (Parseval + a known-frequency peak). Pure math,
+    # no ftd_core/RmlUi deps; built + run standalone.
+    add_executable(native_test_spectrum tests/test_spectrum.cpp src/spectrum.cpp)
+    target_include_directories(native_test_spectrum PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
     # CUDA<->D3D12 interop device tests.
     if(FTD_ENABLE_CUDA)

@@ -10,6 +10,7 @@
 #include "native/host/adapters/scale1_adapter.h"
 #include "native/host/adapters/streamlines.h"
 #include "native/scale0_overlays.h"
+#include "native/spectrum.h"          // compute_flux_spectrum (Spectrum panel)
 
 #include "ftd/constants.h"       // DELTA_SQUARED (DUAL_DELTA), canonical chain
 #include "ftd/render_bridge.h"
@@ -1610,6 +1611,34 @@ void Scale0Adapter::build_snapshot(const DataNeeds& needs) {
     boundary_snapshot_.frame.tick = bridge_->current_tick();
     boundary_snapshot_.frame.lattice_size = bridge_->lattice().size();
     boundary_snapshot_.frame.total_manifested = last_total_manifested_;
+
+    // ── Flux spectrum E(k) (Spectrum panel; throttled + cached) ──────────────
+    // The 3D FFT is heavy, so recompute only every kSpectrumStride boundaries while
+    // demanded and re-serve from the cache in between. The radial |k| binning is
+    // permutation-invariant, so reshaping the voxel array by any consistent raster
+    // gives the correct radial spectrum regardless of the engine's index order.
+    if (needs.spectrum) {
+        constexpr int kSpectrumStride = 8;
+        if (spectrum_counter_++ % kSpectrumStride == 0 || !spectrum_cache_.ok) {
+            const int L = bridge_->lattice().size();
+            const std::vector<ftd::Voxel>& vox = bridge_->voxels();
+            const std::size_t need = static_cast<std::size_t>(L) * L * L;
+            if (L >= 2 && vox.size() >= need) {
+                std::vector<float> jx(need), jy(need), jz(need);
+                for (std::size_t i = 0; i < need; ++i) {
+                    jx[i] = static_cast<float>(vox[i].flux.x);
+                    jy[i] = static_cast<float>(vox[i].flux.y);
+                    jz[i] = static_cast<float>(vox[i].flux.z);
+                }
+                spectrum_cache_ = compute_flux_spectrum(jx, jy, jz, L, 32);
+            }
+        }
+        boundary_snapshot_.spectrum = spectrum_cache_;
+        boundary_snapshot_.spectrum_present = spectrum_cache_.ok;
+    } else {
+        spectrum_counter_ = 0;
+        spectrum_cache_ = SpectrumResult{};
+    }
 }
 
 ScaleSnapshot Scale0Adapter::take_scale_snapshot() {
