@@ -79,6 +79,9 @@
 #include "ui/rml_d3d12_renderer.h"
 #include "ui/ftd_chart_element.h"
 
+#include "app/app_options.h"   // AppOptions / parse_app_options / parse_force_style
+#include "app/app_util.h"      // split_csv / to_lower / upper / fmt / fmt3
+
 #include <RmlUi/Core.h>
 #include <RmlUi/Core/Factory.h>
 
@@ -103,6 +106,11 @@
 using Microsoft::WRL::ComPtr;
 using ftd::native::ui::RmlD3D12Renderer;
 using ftd::native::ui::RmlD3D12System;
+
+// The app's helpers are being split out of this file (behavior-neutral) into
+// namespace ftd::native::app under src/app/. This directive lets the remaining
+// run_app / wWinMain code below reference them unqualified, as before the split.
+using namespace ftd::native::app;
 
 namespace {
 
@@ -228,20 +236,6 @@ constexpr double kTPhysSeconds = 3.11e-44;
 //    overlay in a later tranche is a single registry row — no wiring here moves.
 
 // Split a comma-separated "--overlays a,b,c" value into trimmed tokens.
-std::vector<std::string> split_csv(const std::string& s) {
-    std::vector<std::string> out;
-    std::string cur;
-    for (char c : s) {
-        if (c == ',') {
-            if (!cur.empty()) out.push_back(cur);
-            cur.clear();
-        } else if (c != ' ') {
-            cur.push_back(c);
-        }
-    }
-    if (!cur.empty()) out.push_back(cur);
-    return out;
-}
 
 // ── RmlUi data-model mirror of UiSnapshot (the bound C++ side of the shell) ──
 // One physics toggle row (bound into the shell). `name`/`desc`/`req` come from
@@ -630,10 +624,6 @@ OverlayRow* find_overlay_row(ShellData* data, const Rml::String& name) {
 
 // ASCII-lowercase a string (search haystack / filter normalization). Multibyte
 // UTF-8 bytes pass through unchanged; the picker filter matches on ASCII.
-std::string to_lower(std::string s) {
-    for (char& c : s) c = static_cast<char>(::tolower(static_cast<unsigned char>(c)));
-    return s;
-}
 
 // The 5 honest Scale-0 scenario classes, in catalog order — the group headers of
 // the Setup picker. Every native-catalog row's `category` is one of these.
@@ -1211,20 +1201,7 @@ std::vector<std::string> utf8_args() {
     return args;
 }
 
-std::string upper(std::string s) {
-    for (char& c : s) c = static_cast<char>(::toupper(static_cast<unsigned char>(c)));
-    return s;
-}
-std::string fmt(const char* f, double v) {
-    char buf[64];
-    std::snprintf(buf, sizeof(buf), f, v);
-    return buf;
-}
-std::string fmt3(const char* f, double a, double b, double c) {
-    char buf[96];
-    std::snprintf(buf, sizeof(buf), f, a, b, c);
-    return buf;
-}
+// upper / fmt / fmt3 / split_csv / to_lower live in app/app_util.{h,cpp}.
 
 void apply_camera_for_lattice(ftd::native::Camera& cam, int lattice) {
     const float c = static_cast<float>(lattice) * 0.5f;
@@ -1351,169 +1328,8 @@ bool parse_ijk(const std::string& s, int& i, int& j, int& k) {
     return std::sscanf(s.c_str(), "%d,%d,%d", &i, &j, &k) == 3;
 }
 
-struct AppOptions {
-    int capture_frames = -1;   // -1 = interactive; >=0 = capture then exit
-    bool start_paused = false; // default: live on launch
-    int scale = 0;             // initial ScaleHost scale level (0 lattice, 1 particles)
-    std::string field;         // legacy single overlay id (alias for --overlays; Scale-0)
-    std::string overlays;      // comma-separated overlay ids to activate (Scale-0)
-    // Initial rubber-sheet slice heights: repeatable --sheet-height <name>,<frac>
-    // (e.g. --sheet-height gravPotential,0.8). Stamped into the first boundary
-    // after --overlays, so the very first captured frame slices at that height.
-    std::vector<std::pair<std::string, float>> sheet_heights;
-    std::string png_out;       // capture PNG path override (empty = compiled default)
-    bool prime_tick = true;    // run ONE tick at load so paused overlays have data
-    // Simulated click-to-inspect for headless captures (interactive picking
-    // can't run under --capture-frames). --inspect-voxel i,j,k selects a Scale-0
-    // voxel; --inspect-particle N selects a Scale-1 particle. Fed into the same
-    // live re-inspection path a real click uses, so the captured frame shows the
-    // populated inspector.
-    std::string inspect_voxel;         // "i,j,k" (empty = none; Scale-0 only)
-    int inspect_particle = -1;         // particle index (< 0 = none; Scale-1 only)
-    bool have_inspect_particle = false;
-    // Simulated Setup-picker selection for headless captures (interactive
-    // clicking can't run under --capture-frames). --pick-scenario <id> boots the
-    // default scenario, then drives the SAME select_scenario → LoadScenario path
-    // a real picker click uses, so the captured frame shows a scenario reloaded
-    // via the picker. Scale-0 only.
-    std::string pick_scenario;
-
-    // ── Physics-control surface (headless proof of the new panel) ──
-    // --open-physics / --open-config pre-open the (default-collapsed) sections so
-    // a capture shows the full control surface. --open-physics leaves the toggle
-    // categories COLLAPSED (4 headers whose counts sum to 44 — all grouped &
-    // reachable); --expand-all-tog expands every category (all 44 rows), and
-    // --expand-tog-group NAME expands one. --no-scroll disables the capture-mode
-    // scroll-to-bottom so the shot shows the TOP of the panel.
-    bool open_physics = false;
-    bool open_config = false;
-    bool open_overlays = false;
-    bool expand_all_tog = false;
-    std::vector<std::string> expand_tog_groups;
-    bool no_scroll = false;
-    // --open-telemetry pre-opens the (default-collapsed) telemetry section so a
-    // capture shows the populated diagnostics + conservation charts. It also flips
-    // the demand mask to include the audit/lagrangian groups (diagnostics is on
-    // regardless); collapsed by default so idle fps is unaffected.
-    bool open_telemetry = false;
-    // Simulated control edits (interactive input can't run under --capture-frames).
-    // These drive the SAME commands the −/＋ nudges and toggle clicks push, so the
-    // captured snapshot reflects them: prove control works headlessly.
-    std::vector<std::string> toggles_on;   // --toggle-on NAME  (repeatable)
-    std::vector<std::string> toggles_off;  // --toggle-off NAME (repeatable)
-    bool   set_dt = false;      double dt_value = 1.0;         // --set-dt V
-    bool   set_sor = false;     int    sor_value = 0;          // --set-sor N
-    bool   set_boundary = false; int   boundary_value = 0;     // --set-boundary N (0/1/2)
-    int    set_lattice = 0;     // --set-lattice N (>0 ⇒ reboot at N; [4,256])
-    // Global force render-style for the four Force overlays (Scale-0):
-    // --force-style <arrows|heatmap|flow|glyphs>. Stamped at boot so a headless
-    // capture of a Force overlay shows that style. Empty = Arrows (default).
-    std::string force_style;
-    // ── UI-profiling spike (--profile-ui N): run N frames timing RmlUi Update()
-    //    (reflow) and presenter.render() (geometry), bucketed by whether the ~8/s
-    //    status push dirtied a bound field that frame, then print a report and exit.
-    //    --scn-open opens the picker; --scn-expand-cat K expands category K (1-based)
-    //    so the profiler sees a large list. --profile-freeze-status forces the status
-    //    push OFF — the control that isolates single-document reflow coupling from
-    //    the mere presence of the DOM.
-    int  profile_ui_frames = 0;
-    bool scn_open = false;
-    int  scn_expand_cat = 0;   // 1-based index into kScenarioCategories; 0 = none
-    bool profile_freeze_status = false;
-};
-
-AppOptions parse_app_options(const std::vector<std::string>& args) {
-    AppOptions o;
-    for (size_t i = 1; i < args.size(); ++i) {
-        if (args[i] == "--capture-frames" && i + 1 < args.size()) {
-            o.capture_frames = std::max(1, std::atoi(args[++i].c_str()));
-        } else if (args[i] == "--paused") {
-            o.start_paused = true;
-        } else if (args[i] == "--run") {
-            o.start_paused = false;
-        } else if (args[i] == "--scale" && i + 1 < args.size()) {
-            o.scale = std::max(0, std::atoi(args[++i].c_str()));
-        } else if (args[i] == "--field" && i + 1 < args.size()) {
-            o.field = args[++i];
-        } else if (args[i] == "--overlays" && i + 1 < args.size()) {
-            o.overlays = args[++i];
-        } else if (args[i] == "--sheet-height" && i + 1 < args.size()) {
-            // "<name>,<frac>" — the comma splits the overlay name from the height.
-            const std::string spec = args[++i];
-            const auto comma = spec.find(',');
-            if (comma != std::string::npos && comma > 0) {
-                const std::string nm = spec.substr(0, comma);
-                const float frac = static_cast<float>(std::atof(spec.c_str() + comma + 1));
-                o.sheet_heights.emplace_back(nm, frac);
-            }
-        } else if (args[i] == "--no-prime-tick") {
-            o.prime_tick = false;
-        } else if (args[i] == "--prime-tick") {
-            o.prime_tick = true;
-        } else if (args[i] == "--png-out" && i + 1 < args.size()) {
-            o.png_out = args[++i];
-        } else if (args[i] == "--inspect-voxel" && i + 1 < args.size()) {
-            o.inspect_voxel = args[++i];
-        } else if (args[i] == "--inspect-particle" && i + 1 < args.size()) {
-            o.inspect_particle = std::atoi(args[++i].c_str());
-            o.have_inspect_particle = true;
-        } else if (args[i] == "--pick-scenario" && i + 1 < args.size()) {
-            o.pick_scenario = args[++i];
-        } else if (args[i] == "--open-physics") {
-            o.open_physics = true;
-        } else if (args[i] == "--open-config") {
-            o.open_config = true;
-        } else if (args[i] == "--open-overlays") {
-            o.open_overlays = true;
-        } else if (args[i] == "--open-controls") {   // both sections
-            o.open_physics = true;
-            o.open_config = true;
-        } else if (args[i] == "--expand-all-tog") {
-            o.expand_all_tog = true;
-        } else if (args[i] == "--expand-tog-group" && i + 1 < args.size()) {
-            o.expand_tog_groups.push_back(args[++i]);
-        } else if (args[i] == "--no-scroll") {
-            o.no_scroll = true;
-        } else if (args[i] == "--open-telemetry") {
-            o.open_telemetry = true;
-        } else if (args[i] == "--toggle-on" && i + 1 < args.size()) {
-            o.toggles_on.push_back(args[++i]);
-        } else if (args[i] == "--toggle-off" && i + 1 < args.size()) {
-            o.toggles_off.push_back(args[++i]);
-        } else if (args[i] == "--set-dt" && i + 1 < args.size()) {
-            o.set_dt = true;
-            o.dt_value = std::atof(args[++i].c_str());
-        } else if (args[i] == "--set-sor" && i + 1 < args.size()) {
-            o.set_sor = true;
-            o.sor_value = std::atoi(args[++i].c_str());
-        } else if (args[i] == "--set-boundary" && i + 1 < args.size()) {
-            o.set_boundary = true;
-            o.boundary_value = std::atoi(args[++i].c_str());
-        } else if (args[i] == "--set-lattice" && i + 1 < args.size()) {
-            o.set_lattice = std::atoi(args[++i].c_str());
-        } else if (args[i] == "--force-style" && i + 1 < args.size()) {
-            o.force_style = args[++i];
-        } else if (args[i] == "--profile-ui" && i + 1 < args.size()) {
-            o.profile_ui_frames = std::max(1, std::atoi(args[++i].c_str()));
-        } else if (args[i] == "--scn-open") {
-            o.scn_open = true;
-        } else if (args[i] == "--scn-expand-cat" && i + 1 < args.size()) {
-            o.scn_expand_cat = std::atoi(args[++i].c_str());
-            o.scn_open = true;
-        } else if (args[i] == "--profile-freeze-status") {
-            o.profile_freeze_status = true;
-        }
-    }
-    return o;
-}
-
-// Map a --force-style token → ForceStyle (Arrows on an empty/unknown token).
-ftd::native::ForceStyle parse_force_style(const std::string& s) {
-    if (s == "heatmap") return ftd::native::ForceStyle::Heatmap;
-    if (s == "flow")    return ftd::native::ForceStyle::Flow;
-    if (s == "glyphs")  return ftd::native::ForceStyle::Glyphs;
-    return ftd::native::ForceStyle::Arrows;  // "arrows" / empty / unknown
-}
+// AppOptions / parse_app_options / parse_force_style live in
+// app/app_options.{h,cpp} (included above).
 
 int run_app(const std::vector<std::string>& args) {
     // ── CLI ──────────────────────────────────────────────────────────────────
