@@ -287,10 +287,12 @@ struct OverlayRow {
     Rml::String hstr;       // formatted height ("0.42") for display
 };
 // One overlay-menu column (Volume / Fields / Forces / …). `expanded` gates the
-// collapsible list; `items` are the overlays grouped into this column.
+// collapsible list; `items` are the overlays grouped into this column; `count`
+// is the item tally shown in the unified section header's right-aligned badge.
 struct OverlayColumnRow {
     Rml::String title;
     bool expanded = true;
+    Rml::String count;
     Rml::Vector<OverlayRow> items;
 };
 
@@ -610,6 +612,7 @@ Rml::Vector<OverlayColumnRow> build_overlay_columns() {
             r.hstr = sheet_hstr(d.y_frac);
             row.items.push_back(std::move(r));
         }
+        row.count = std::to_string(row.items.size());  // section-head badge tally
         if (!row.items.empty()) cols.push_back(std::move(row));
     }
     return cols;
@@ -1855,6 +1858,7 @@ int run_app(const std::vector<std::string>& args) {
     if (auto ocol = ctor.RegisterStruct<OverlayColumnRow>()) {
         ocol.RegisterMember("title", &OverlayColumnRow::title);
         ocol.RegisterMember("expanded", &OverlayColumnRow::expanded);
+        ocol.RegisterMember("count", &OverlayColumnRow::count);
         ocol.RegisterMember("items", &OverlayColumnRow::items);
     }
     ctor.RegisterArray<Rml::Vector<OverlayColumnRow>>();
@@ -2769,6 +2773,13 @@ int run_app(const std::vector<std::string>& args) {
         // the pick reuses the previous frame's viewport_rect (stable frame-to-
         // frame, and always valid once the shell has laid out at least once).
         const int cur_scale = snap ? snap->active_scale : data.active_scale;
+        // Capture-mode auto-scroll (no wheel available headlessly): reveal the
+        // click-to-inspect readout + telemetry — now in the LEFT #setup panel —
+        // and the overlays/config at the bottom of the RIGHT #physics panel, so a
+        // composited shot shows the moved content. A live pick sets only
+        // scroll_setup_bottom (reveal the inspector) so it does not yank the
+        // properties panel out from under the user.
+        bool scroll_setup_bottom = capture_mode && !app_opts.no_scroll;
         bool scroll_physics_bottom = capture_mode && !app_opts.no_scroll;
         if (cur_scale != last_inspect_scale) {
             // Scale switch: the old target index is meaningless on the new scale.
@@ -2792,7 +2803,7 @@ int run_app(const std::vector<std::string>& args) {
                     app.inspect_vy = vy;
                     app.inspect_vz = vz;
                     app.insp_has_data = false;      // fresh target — reset the latch
-                    scroll_physics_bottom = true;   // reveal the readout on a hit
+                    scroll_setup_bottom = true;     // reveal the readout (left panel)
                 } else {
                     app.inspect_kind = 0;           // empty space → clear
                 }
@@ -2802,7 +2813,7 @@ int run_app(const std::vector<std::string>& args) {
                     app.inspect_kind = 2;
                     app.inspect_pidx = pidx;
                     app.insp_has_data = false;
-                    scroll_physics_bottom = true;
+                    scroll_setup_bottom = true;   // reveal the readout (left panel)
                 } else {
                     app.inspect_kind = 0;
                 }
@@ -3069,13 +3080,19 @@ int run_app(const std::vector<std::string>& args) {
             }
         }
 
-        // The right panel now overflows the body-row height (PHYSICS TERMS +
-        // FIELDS + telemetry chart + inspector). Interactively it scrolls by
-        // wheel; in a headless capture (no wheel) and on a fresh pick, scroll it
-        // to the bottom so the inspector + chart are in view. Post-Update so
-        // GetScrollHeight is valid; SetScrollTop dirties the child offsets, which
-        // render() recomputes, so the same frame shows the scroll. No-op when the
-        // panel fits.
+        // Both side panels can overflow the body-row height: the LEFT #setup
+        // panel stacks the scenario picker + play controls + telemetry charts +
+        // inspector; the RIGHT #physics panel stacks PHYSICS TERMS + CONFIG +
+        // FIELD overlays. Interactively they scroll by wheel; in a headless
+        // capture (no wheel) and on a fresh pick, scroll the relevant panel to the
+        // bottom so the inspector (left) / overlays (right) come into view.
+        // Post-Update so GetScrollHeight is valid; SetScrollTop dirties the child
+        // offsets, which render() recomputes, so the same frame shows the scroll.
+        // No-op when the panel fits.
+        if (scroll_setup_bottom) {
+            if (Rml::Element* setup = doc->GetElementById("setup"))
+                setup->SetScrollTop(setup->GetScrollHeight());
+        }
         if (scroll_physics_bottom) {
             if (Rml::Element* phys = doc->GetElementById("physics"))
                 phys->SetScrollTop(phys->GetScrollHeight());

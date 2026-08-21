@@ -20,10 +20,14 @@
         <button class="icon">&#9881;</button>
     </div>
 
-    <!-- Setup | viewport hole | Physics -->
+    <!-- Information & Scenario | viewport hole | Properties & Overlays -->
     <div id="body-row">
+        <!-- LEFT panel: "Information & Scenario" — the scenario picker + play
+             controls, plus the telemetry charts + click-to-inspect readout that
+             used to live on the right. Independently scrollable (overflow-y:auto);
+             the heavy sections stay collapsed by default so idle fps is unaffected. -->
         <div id="setup" class="panel">
-            <div class="panel-title">Setup</div>
+            <div class="panel-title">Information &amp; Scenario</div>
 
             <!-- Scale-0 interactive scenario picker. A searchable, collapsible,
                  category-grouped list of the ~130 native-catalog Scale-0
@@ -40,19 +44,19 @@
                  nested data-for instantiates ~0 scenario <div>s — the reason the
                  closed picker costs nothing per frame. -->
             <div class="scn-picker" data-if="active_scale == 0">
-                <div class="scn-picker-head" data-event-click="toggle_scn_picker()">
-                    <span class="scn-caret">{{ scn_open ? '&#9662;' : '&#9656;' }}</span>
-                    <span class="fl">Scenarios</span>
+                <div class="section-head" data-event-click="toggle_scn_picker()">
+                    <span class="section-caret">{{ scn_open ? '&#9662;' : '&#9656;' }}</span>
+                    <span class="section-title">Scenarios</span>
                     <span class="select mono scn-cur">{{scenario}}</span>
                 </div>
                 <div class="scn-open" data-if="scn_open">
                     <input type="text" class="scn-search" placeholder="Search scenarios…" data-event-change="filter_scenarios"/>
                     <div class="scn-list">
                         <div class="scn-group" data-for="g : scenario_groups">
-                            <div class="scn-group-head" data-if="g.has_visible" data-event-click="toggle_scenario_group(g.title)">
-                                <span class="scn-caret">{{ g.expanded ? '&#9662;' : '&#9656;' }}</span>
-                                <span class="scn-group-title">{{g.title}}</span>
-                                <span class="scn-count">{{g.count}}</span>
+                            <div class="section-head sub" data-if="g.has_visible" data-event-click="toggle_scenario_group(g.title)">
+                                <span class="section-caret">{{ g.expanded ? '&#9662;' : '&#9656;' }}</span>
+                                <span class="section-title">{{g.title}}</span>
+                                <span class="section-badge">{{g.count}}</span>
                             </div>
                             <div class="scn-items" data-if="g.show_items">
                                 <div class="scn-row" data-for="s : g.items">
@@ -68,24 +72,133 @@
             <!-- Scale-1: display-only scenario readout (no Scale-0 catalog here). -->
             <div class="field" data-if="active_scale == 1"><span class="fl">Scenario</span><span class="select mono">{{scenario}}</span></div>
 
-            <div class="field"><span class="fl">Lattice</span><span class="select">{{lattice}}</span></div>
+            <!-- The editable lattice-size knob lives in the RIGHT panel's Config &
+                 lattice section (the one knob that reboots the engine); no static
+                 lattice display is duplicated here. -->
             <div class="playbar">
                 <button class="btn primary" data-event-click="run()">{{ running ? '&#10073;&#10073; Pause' : '&#9654; Run' }}</button>
                 <button class="btn" data-event-click="step()">Step</button>
                 <button class="btn" data-event-click="reset()">Reset</button>
+            </div>
+
+            <!-- Telemetry: the Scale-0 engine telemetry hub (diagnostics · audit ·
+                 lagrangian scheduler groups). Collapsible + COLLAPSED by default —
+                 the charts + legend rows live behind data-if="tel_open", so a closed
+                 section holds ~0 chart DOM and demands only the cheap DIAGNOSTICS
+                 group (opening it adds the AUDIT + LAGRANGIAN groups). Each
+                 <ftd-chart> draws app-side ring buffers (one coloured polyline per
+                 named series, each autoscaled independently) through the D3D12 line
+                 path; the legends carry the per-series colour + throttled current
+                 value, and a per-group "t=" freshness tick. Scale-0 only (the
+                 groups read the voxel field); Scale 1 uses its own readout in the
+                 right panel. -->
+            <div class="telemetry" data-if="active_scale == 0">
+                <div class="section-head" data-event-click="toggle_telemetry()">
+                    <span class="section-caret">{{ tel_open ? '&#9662;' : '&#9656;' }}</span>
+                    <span class="section-title">Telemetry</span>
+                    <span class="section-badge">diagnostics · audit</span>
+                </div>
+                <div class="tel-body" data-if="tel_open">
+                    <!-- Diagnostics: what the field is doing (always demanded). -->
+                    <div class="tel-ctitle">
+                        <span class="tel-name">Diagnostics</span>
+                        <span class="tel-prov">{{tel_diag_prov}}</span>
+                    </div>
+                    <ftd-chart id="chart-diag"/>
+                    <div class="tel-legend">
+                        <div class="tel-row"><span class="tel-chip s0"></span><span class="tel-lbl">Energy</span><span class="tel-val">{{tel_d_energy}}</span></div>
+                        <div class="tel-row"><span class="tel-chip s1"></span><span class="tel-lbl">Manifested</span><span class="tel-val">{{tel_d_manif}}</span></div>
+                        <div class="tel-row"><span class="tel-chip s2"></span><span class="tel-lbl">Entropy</span><span class="tel-val">{{tel_d_entropy}}</span></div>
+                        <div class="tel-row"><span class="tel-chip s3"></span><span class="tel-lbl">Net charge</span><span class="tel-val">{{tel_d_charge}}</span></div>
+                    </div>
+                    <!-- Conservation: is energy conserved (audit group). -->
+                    <div class="tel-ctitle">
+                        <span class="tel-name">Conservation</span>
+                        <span class="tel-prov">{{tel_audit_prov}}</span>
+                    </div>
+                    <ftd-chart id="chart-audit"/>
+                    <div class="tel-legend">
+                        <div class="tel-row"><span class="tel-chip s0"></span><span class="tel-lbl">Accounted E</span><span class="tel-val">{{tel_a_energy}}</span></div>
+                        <div class="tel-row"><span class="tel-chip s2"></span><span class="tel-lbl">Drift dE/dt</span><span class="tel-val">{{tel_a_drift}}</span></div>
+                        <div class="tel-row"><span class="tel-chip s3"></span><span class="tel-lbl">Gauss resid</span><span class="tel-val">{{tel_a_gauss}}</span></div>
+                    </div>
+                    <!-- Lagrangian: the action terms (lagrangian group). -->
+                    <div class="tel-ctitle">
+                        <span class="tel-name">Lagrangian</span>
+                    </div>
+                    <ftd-chart id="chart-lagr"/>
+                    <div class="tel-legend">
+                        <div class="tel-row"><span class="tel-chip s0"></span><span class="tel-lbl">&#8466; total</span><span class="tel-val">{{tel_l_lag}}</span></div>
+                        <div class="tel-row"><span class="tel-chip s4"></span><span class="tel-lbl">&#8459; total</span><span class="tel-val">{{tel_l_ham}}</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Click-to-inspect: appears when an entity is picked in the 3D
+                 scene (data-if insp_active). insp_title names the target; each
+                 insp_lines row is a live key/value read from the picked voxel
+                 (Scale 0) or particle (Scale 1). The × clears the selection;
+                 clicking empty space in the viewport clears it too. Works on both
+                 scales, so it lives in this Information panel (a voxel pick shows
+                 the 26-Moore-neighbour sub-section; a particle pick hides it). -->
+            <div class="inspector" data-if="insp_active">
+                <div class="insp-head">
+                    <span class="insp-title">{{insp_title}}</span>
+                    <span class="insp-close" data-event-click="clear_inspect()">&#10005;</span>
+                </div>
+                <div class="insp-lines">
+                    <div class="insp-row" data-for="ln : insp_lines" data-class-hdr="ln.header">
+                        <span class="insp-k">{{ln.k}}</span><span class="insp-v">{{ln.v}}</span>
+                    </div>
+                </div>
+                <!-- 26-Moore-neighbour grid (Scale-0 voxel picks only; hidden for
+                     Scale-1 particles). Collapsible: while closed the cell vectors
+                     are empty (0 DOM) and native_app stops issuing the 26-read
+                     gather. Each cell is coloured by neighbour state (+ green /
+                     − red / void dim); a genuinely void site reads "0  —". -->
+                <div class="insp-neigh" data-if="insp_neigh_show">
+                    <div class="section-head sub" data-event-click="toggle_insp_neigh()">
+                        <span class="section-caret">{{ insp_neigh_open ? '&#9662;' : '&#9656;' }}</span>
+                        <span class="section-title">26-neighbour Moore shell</span>
+                    </div>
+                    <div class="insp-neigh-body" data-if="insp_neigh_open">
+                        <div class="insp-neigh-grp">Faces (6)</div>
+                        <div class="insp-neigh-grid">
+                            <div class="ncell" data-for="c : insp_faces" data-class-npos="c.state == 1" data-class-nneg="c.state == -1">
+                                <span class="ncell-dir">{{c.dir}}</span><span class="ncell-v">{{c.val}}</span>
+                            </div>
+                        </div>
+                        <div class="insp-neigh-grp">Edges (12)</div>
+                        <div class="insp-neigh-grid">
+                            <div class="ncell" data-for="c : insp_edges" data-class-npos="c.state == 1" data-class-nneg="c.state == -1">
+                                <span class="ncell-dir">{{c.dir}}</span><span class="ncell-v">{{c.val}}</span>
+                            </div>
+                        </div>
+                        <div class="insp-neigh-grp">Corners (8)</div>
+                        <div class="insp-neigh-grid">
+                            <div class="ncell" data-for="c : insp_corners" data-class-npos="c.state == 1" data-class-nneg="c.state == -1">
+                                <span class="ncell-dir">{{c.dir}}</span><span class="ncell-v">{{c.val}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- transparent: the D3D12 lattice/particle/flux scene renders here -->
         <div id="viewport"></div>
 
-        <!-- Right panel is scale-aware: two sibling blocks, one shown per active
-             scale via data-if, so RCSS/data-binding drives the switch (no per-frame
-             imperative rebuild). Scale 0 → the term-toggle list; Scale 1 → a
-             compact particle readout. Both scales share the telemetry chart. -->
+        <!-- RIGHT panel: "Properties & Overlays". Scale-aware — two sibling blocks,
+             one shown per active scale via data-if, so RCSS/data-binding drives the
+             switch (no per-frame imperative rebuild). Scale 0 → the physics term-
+             toggles + config knobs + field overlays; Scale 1 → a compact particle
+             readout. Independently scrollable (overflow-y:auto); heavy sections stay
+             collapsed by default so idle fps is unaffected. -->
         <div id="physics" class="panel">
             <!-- Scale 0 (Lattice): the physics term-toggles + config + overlays -->
             <div class="scale-block" data-if="active_scale == 0">
+                <div class="panel-title">Properties &amp; Overlays</div>
+
                 <!-- Live validation banner: TermToggles::validate() (+ CPU
                      gpu-only warnings) surfaced from the authoritative engine
                      state, so an invalid toggle combo is shown, not silently
@@ -99,17 +212,17 @@
                      live LED, its description (subtitle), and its discoverable
                      requires/conflicts/gpu-only metadata; an amber ring marks a
                      toggle whose current combo violates a rule (gated). -->
-                <div class="ctl-head" data-event-click="toggle_physics()">
-                    <span class="ctl-caret">{{ phys_open ? '&#9662;' : '&#9656;' }}</span>
-                    <span class="ctl-htitle">Physics terms</span>
-                    <span class="ctl-hnote">44 toggles</span>
+                <div class="section-head" data-event-click="toggle_physics()">
+                    <span class="section-caret">{{ phys_open ? '&#9662;' : '&#9656;' }}</span>
+                    <span class="section-title">Physics terms</span>
+                    <span class="section-badge">44 toggles</span>
                 </div>
                 <div class="tog-groups" data-if="phys_open">
                     <div class="tog-group" data-for="g : toggle_groups">
-                        <div class="tog-group-head" data-event-click="toggle_tog_group(g.title)">
-                            <span class="ctl-caret">{{ g.expanded ? '&#9662;' : '&#9656;' }}</span>
-                            <span class="tog-group-title">{{g.title}}</span>
-                            <span class="tog-group-count">{{g.count}}</span>
+                        <div class="section-head sub" data-event-click="toggle_tog_group(g.title)">
+                            <span class="section-caret">{{ g.expanded ? '&#9662;' : '&#9656;' }}</span>
+                            <span class="section-title">{{g.title}}</span>
+                            <span class="section-badge">{{g.count}}</span>
                         </div>
                         <div class="tog-items" data-if="g.expanded">
                             <div class="tog" data-for="t : g.items" data-class-on="t.on" data-class-gated="t.gated" data-event-click="toggle(t.name)">
@@ -130,10 +243,10 @@
                      engine), and reset-to-defaults. Each knob is a −/＋ nudge
                      (RmlUi has no range input; same affordance as the sheet
                      height). COLLAPSED by default. -->
-                <div class="ctl-head" data-event-click="toggle_config()">
-                    <span class="ctl-caret">{{ cfg_open ? '&#9662;' : '&#9656;' }}</span>
-                    <span class="ctl-htitle">Config &amp; lattice</span>
-                    <span class="ctl-hnote">knobs</span>
+                <div class="section-head" data-event-click="toggle_config()">
+                    <span class="section-caret">{{ cfg_open ? '&#9662;' : '&#9656;' }}</span>
+                    <span class="section-title">Config &amp; lattice</span>
+                    <span class="section-badge">knobs</span>
                 </div>
                 <div class="cfg-rows" data-if="cfg_open">
                     <div class="cfg-knob" data-for="c : config_rows">
@@ -156,9 +269,10 @@
                 <div class="panel-title fields-title">Field overlays</div>
                 <div class="overlay-cols">
                     <div class="ov-col" data-for="col : overlay_columns">
-                        <div class="ov-col-head" data-event-click="toggle_overlay_col(col.title)">
-                            <span class="ov-caret">{{ col.expanded ? '&#9662;' : '&#9656;' }}</span>
-                            <span class="ov-col-title">{{col.title}}</span>
+                        <div class="section-head sub" data-event-click="toggle_overlay_col(col.title)">
+                            <span class="section-caret">{{ col.expanded ? '&#9662;' : '&#9656;' }}</span>
+                            <span class="section-title">{{col.title}}</span>
+                            <span class="section-badge">{{col.count}}</span>
                         </div>
                         <div class="ov-list" data-if="col.expanded">
                             <div class="ov-item" data-for="o : col.items">
@@ -201,106 +315,6 @@
                     <div class="ro"><span class="ro-k">Kinetic</span><span class="ro-v">{{s1_ke}}</span></div>
                     <div class="ro"><span class="ro-k">Potential</span><span class="ro-v">{{s1_pe}}</span></div>
                     <div class="ro"><span class="ro-k">Scenario</span><span class="ro-v mono">{{scenario}}</span></div>
-                </div>
-            </div>
-
-            <!-- Telemetry: the Scale-0 engine telemetry hub (diagnostics · audit ·
-                 lagrangian scheduler groups). Collapsible + COLLAPSED by default —
-                 the charts + legend rows live behind data-if="tel_open", so a closed
-                 section holds ~0 chart DOM and demands only the cheap DIAGNOSTICS
-                 group (opening it adds the AUDIT + LAGRANGIAN groups). Each
-                 <ftd-chart> draws app-side ring buffers (one coloured polyline per
-                 named series, each autoscaled independently) through the D3D12 line
-                 path; the legends carry the per-series colour + throttled current
-                 value, and a per-group "t=" freshness tick. Scale-0 only (the
-                 groups read the voxel field); Scale 1 uses its own readout above. -->
-            <div class="telemetry" data-if="active_scale == 0">
-                <div class="ctl-head" data-event-click="toggle_telemetry()">
-                    <span class="ctl-caret">{{ tel_open ? '&#9662;' : '&#9656;' }}</span>
-                    <span class="ctl-htitle">Telemetry</span>
-                    <span class="ctl-hnote">diagnostics · audit</span>
-                </div>
-                <div class="tel-body" data-if="tel_open">
-                    <!-- Diagnostics: what the field is doing (always demanded). -->
-                    <div class="tel-ctitle">
-                        <span class="tel-name">Diagnostics</span>
-                        <span class="tel-prov">{{tel_diag_prov}}</span>
-                    </div>
-                    <ftd-chart id="chart-diag"/>
-                    <div class="tel-legend">
-                        <div class="tel-row"><span class="tel-chip s0"></span><span class="tel-lbl">Energy</span><span class="tel-val">{{tel_d_energy}}</span></div>
-                        <div class="tel-row"><span class="tel-chip s1"></span><span class="tel-lbl">Manifested</span><span class="tel-val">{{tel_d_manif}}</span></div>
-                        <div class="tel-row"><span class="tel-chip s2"></span><span class="tel-lbl">Entropy</span><span class="tel-val">{{tel_d_entropy}}</span></div>
-                        <div class="tel-row"><span class="tel-chip s3"></span><span class="tel-lbl">Net charge</span><span class="tel-val">{{tel_d_charge}}</span></div>
-                    </div>
-                    <!-- Conservation: is energy conserved (audit group). -->
-                    <div class="tel-ctitle">
-                        <span class="tel-name">Conservation</span>
-                        <span class="tel-prov">{{tel_audit_prov}}</span>
-                    </div>
-                    <ftd-chart id="chart-audit"/>
-                    <div class="tel-legend">
-                        <div class="tel-row"><span class="tel-chip s0"></span><span class="tel-lbl">Accounted E</span><span class="tel-val">{{tel_a_energy}}</span></div>
-                        <div class="tel-row"><span class="tel-chip s2"></span><span class="tel-lbl">Drift dE/dt</span><span class="tel-val">{{tel_a_drift}}</span></div>
-                        <div class="tel-row"><span class="tel-chip s3"></span><span class="tel-lbl">Gauss resid</span><span class="tel-val">{{tel_a_gauss}}</span></div>
-                    </div>
-                    <!-- Lagrangian: the action terms (lagrangian group). -->
-                    <div class="tel-ctitle">
-                        <span class="tel-name">Lagrangian</span>
-                    </div>
-                    <ftd-chart id="chart-lagr"/>
-                    <div class="tel-legend">
-                        <div class="tel-row"><span class="tel-chip s0"></span><span class="tel-lbl">&#8466; total</span><span class="tel-val">{{tel_l_lag}}</span></div>
-                        <div class="tel-row"><span class="tel-chip s4"></span><span class="tel-lbl">&#8459; total</span><span class="tel-val">{{tel_l_ham}}</span></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Click-to-inspect: appears when an entity is picked in the 3D
-                 scene (data-if insp_active). insp_title names the target; each
-                 insp_lines row is a live key/value read from the picked voxel
-                 (Scale 0) or particle (Scale 1). The × clears the selection;
-                 clicking empty space in the viewport clears it too. -->
-            <div class="inspector" data-if="insp_active">
-                <div class="insp-head">
-                    <span class="insp-title">{{insp_title}}</span>
-                    <span class="insp-close" data-event-click="clear_inspect()">&#10005;</span>
-                </div>
-                <div class="insp-lines">
-                    <div class="insp-row" data-for="ln : insp_lines" data-class-hdr="ln.header">
-                        <span class="insp-k">{{ln.k}}</span><span class="insp-v">{{ln.v}}</span>
-                    </div>
-                </div>
-                <!-- 26-Moore-neighbour grid (Scale-0 voxel picks only; hidden for
-                     Scale-1 particles). Collapsible: while closed the cell vectors
-                     are empty (0 DOM) and native_app stops issuing the 26-read
-                     gather. Each cell is coloured by neighbour state (+ green /
-                     − red / void dim); a genuinely void site reads "0  —". -->
-                <div class="insp-neigh" data-if="insp_neigh_show">
-                    <div class="insp-neigh-head" data-event-click="toggle_insp_neigh()">
-                        <span class="insp-neigh-caret">{{ insp_neigh_open ? '&#9662;' : '&#9656;' }}</span>
-                        <span>26-neighbour Moore shell</span>
-                    </div>
-                    <div class="insp-neigh-body" data-if="insp_neigh_open">
-                        <div class="insp-neigh-grp">Faces (6)</div>
-                        <div class="insp-neigh-grid">
-                            <div class="ncell" data-for="c : insp_faces" data-class-npos="c.state == 1" data-class-nneg="c.state == -1">
-                                <span class="ncell-dir">{{c.dir}}</span><span class="ncell-v">{{c.val}}</span>
-                            </div>
-                        </div>
-                        <div class="insp-neigh-grp">Edges (12)</div>
-                        <div class="insp-neigh-grid">
-                            <div class="ncell" data-for="c : insp_edges" data-class-npos="c.state == 1" data-class-nneg="c.state == -1">
-                                <span class="ncell-dir">{{c.dir}}</span><span class="ncell-v">{{c.val}}</span>
-                            </div>
-                        </div>
-                        <div class="insp-neigh-grp">Corners (8)</div>
-                        <div class="insp-neigh-grid">
-                            <div class="ncell" data-for="c : insp_corners" data-class-npos="c.state == 1" data-class-nneg="c.state == -1">
-                                <span class="ncell-dir">{{c.dir}}</span><span class="ncell-v">{{c.val}}</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
