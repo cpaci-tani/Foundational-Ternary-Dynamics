@@ -787,6 +787,10 @@ std::string json_energy_audit_value(const ftd::EnergyAudit& ea) {
     std::ostringstream ss;
     ss << std::setprecision(10);
     ss << "{";
+    // NAMING (see diagnostics_compute.cpp): fieldEnergy is flux POTENTIAL energy
+    // ½Σ|J|² (NOT E-field energy); EFieldEnergy below is byte-identical to
+    // waveEnergy by construction (E = -wave_vel), and BFieldEnergy carries the
+    // (c²/2) weight. Do not read "fieldEnergy vs BFieldEnergy" as "|E|² vs |B|²".
     ss << "\"fieldEnergy\":"        << ea.field_energy;
     ss << ",\"waveEnergy\":"        << ea.wave_energy;
     ss << ",\"particleKE\":"        << ea.particle_ke;

@@ -109,6 +109,12 @@ EnergyAudit compute_energy_audit(const RenderBridge& rb) {
     // making MockBridge report half the WasmBridge value for the SAME
     // scenario — the Energy Budget chart and Lagrangian readout silently
     // jumped 2× when the user switched bridges.
+    //
+    // NAMING (2026-08-21, boson-sector red-team): field_energy is the flux /
+    // vector-potential POTENTIAL energy ½Σ|J|², NOT the electric-field energy.
+    // (A≡J here, so the actual E-field energy is the separate E_field_energy
+    // channel below.) wave_energy is the ½Σ|wave_vel|² channel. Do NOT read
+    // "field_energy vs B_field_energy" as "|E|² vs |B|²".
     const double field_density = quadratic_field_energy_density(v.flux.mag2());
     const double wave_density = quadratic_field_energy_density(v.wave_vel.mag2());
     a.field_energy_density_sum += field_density;
@@ -130,6 +136,10 @@ EnergyAudit compute_energy_audit(const RenderBridge& rb) {
     // two bars in the same unit. Diagnostic-only: nothing in the tick cycle
     // reads these fields.
     constexpr double C2 = C_SPEED * C_SPEED;
+    // E = -wave_vel (assigned above), so E.mag2() == wave_vel.mag2() and
+    // E_field_energy is BYTE-IDENTICAL to wave_energy by construction. It is a
+    // separate channel only so the dashboard can pair it with B_field_energy;
+    // it is not an independent measurement of a distinct energy reservoir.
     a.E_field_energy += integrate_voxel_density(
         quadratic_field_energy_density(E.mag2()));
     a.B_field_energy += integrate_voxel_density(

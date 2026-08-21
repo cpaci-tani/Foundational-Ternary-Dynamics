@@ -291,19 +291,21 @@ export function buildForceOverlayData(state, fieldCapability, sampled, latticeSi
         if (strongData.count > 0) items.push({ type: 'strong', data: strongData });
     }
     if (state.fieldFlags.showForceWeak && sampled.curlJ?.count > 0) {
-        // Weak force direction = ∇×J (pseudovector). The weak interaction
-        // is parity-violating, so its natural vector proxy is parity-odd.
-        // Using the flux vector J directly (the old implementation) made
-        // every arrow point in the flux direction — for any polarised
-        // scenario that meant uniform unidirectional arrows (e.g. a flux
-        // pulse with J = (Gaussian, 0, 0) produced every weak arrow along
-        // +X), physically misleading.
+        // Weak-force proxy = ∇×J, the curl of the (polar) flux vector J. The
+        // curl of a polar vector is an axial (pseudo)vector, i.e. parity-EVEN
+        // — NOT parity-odd. (An earlier comment justified this proxy by "weak is
+        // parity-violating, so its proxy should be parity-odd"; that rationale is
+        // backwards and has been removed. This overlay is a [PROXY —
+        // VISUALIZATION ONLY] view of J's rotational structure, not a parity-odd
+        // stand-in for the SM weak force.)
         //
-        // The curl is zero for irrotational (purely compressive) flow and
-        // non-zero wherever J has rotational structure — exactly where
-        // chirality asymmetry lives. Magnitude is still scaled by
-        // DUAL_DELTA so the overlay reads as "weak" (small relative to
-        // EM/strong) in comparison rendering.
+        // Why the curl instead of J directly: J itself points uniformly along
+        // the flux direction, so for any polarised scenario (e.g. a flux pulse
+        // with J = (Gaussian, 0, 0)) every arrow pointed along +X — physically
+        // uninformative. The curl is zero for irrotational (purely compressive)
+        // flow and non-zero wherever J has rotational structure. Magnitude is
+        // still scaled by DUAL_DELTA so the overlay reads as "weak" (small
+        // relative to EM/strong) in comparison rendering.
         const curl = sampled.curlJ;
         const scalarFactor = DUAL_DELTA;
         if (!state.weakValues || state.weakValues.length < curl.count) {

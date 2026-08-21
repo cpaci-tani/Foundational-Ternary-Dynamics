@@ -531,6 +531,11 @@ export class WasmBridge {
         if (typeof this._module.getEnergyAuditView === 'function') {
             const arr = this._module.getEnergyAuditView(this._bridge);
             audit = {
+                // NAMING (see engine/src/diagnostics_compute.cpp): fieldEnergy is
+                // flux POTENTIAL energy ½Σ|J|² (NOT E-field energy). EFieldEnergy is
+                // byte-identical to waveEnergy by construction (E = -wave_vel);
+                // BFieldEnergy carries the (c²/2) weight. Don't read fieldEnergy vs
+                // BFieldEnergy as |E|² vs |B|².
                 fieldEnergy: arr[0],
                 waveEnergy: arr[1],
                 particleKE: arr[2],

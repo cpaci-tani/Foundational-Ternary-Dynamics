@@ -265,7 +265,7 @@ function buildPanel() {
       <div class="kp-feed" id="kp-feed"></div>
       <div class="kp-note">
         <b>Electric</b> and <b>magnetic</b> knots are the two <b>orthogonal</b> field-line families (E ⊥ B) of the same
-        EM field — enable both the <b>E Field</b> + <b>B Field</b> overlays to see them together.
+        EM field — enable both the <b>Radiative E</b> + <b>B Field</b> overlays to see them together.
         <b style="color:var(--accent-amber,#f6c453)">energy / flux / charge</b> = each knot's share of the
         scenario's actual field over its region — <b>genuine measurements</b>
         (flux exact from the dense |J| volume; energy ½(E²+B²) &amp; charge ∇·J sub-sampled).
@@ -354,7 +354,7 @@ export function mountKnotsPanel(host) {
         if (!trackingOn) {
             list.innerHTML = '<div class="kp-empty">tracking off — enable "Track field-line knots" to detect knots</div>';
         } else {
-            list.innerHTML = '<div class="kp-empty">0 knots — enable the <b>E Field</b> + <b>B Field</b> overlays and run; '
+            list.innerHTML = '<div class="kp-empty">0 knots — enable the <b>Radiative E</b> + <b>B Field</b> overlays and run; '
                 + 'knots form where field-lines bunch &amp; cross (no particles needed)</div>';
         }
     }
@@ -391,7 +391,7 @@ export function mountKnotsPanel(host) {
         const anyC = (eC.count && eC.totals.energy > 0) || (bC.count && bC.totals.energy > 0);
         el('kp-contrib-sum').innerHTML = anyC
             ? `These knots hold <b>${pct(eC.captured.energyFrac)}</b> of the field energy (electric) and <b>${pct(bC.captured.energyFrac)}</b> (magnetic)`
-            : '<span style="opacity:.7">turn on the <b>E Field</b> + <b>B Field</b> overlays and run to measure each knot\'s share</span>';
+            : '<span style="opacity:.7">turn on the <b>Radiative E</b> + <b>B Field</b> overlays and run to measure each knot\'s share</span>';
 
         // ── Scenario EM energy: total + electric/magnetic breakdown over time ──
         // From the engine's energy audit; EM field energy U = ½(E²+B²).

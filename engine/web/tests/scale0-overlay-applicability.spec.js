@@ -169,7 +169,11 @@ test('scenario switch suspends an incompatible overlay and restores its preferen
         eRuntimeEnabled: false,
         stateApplicable: true,
     });
-    expect(stateOnly.activeStrip).not.toContain('E Field');
+    // Overlay label renamed "E Field" → "Radiative E (−∂J/∂t)" (radiative-only clarity, 2026-08-21).
+    // The active-strip chip is the button's textContent (panel-shell.js makeChip), so key the
+    // absence check on the current label — otherwise it would pass trivially and stop catching a
+    // wrongly-active E-field overlay.
+    expect(stateOnly.activeStrip).not.toContain('Radiative E');
 
     await selectScale0Scenario(page, 'flux-pulse');
     await waitForOverlayScenario(page, 'flux-pulse');
