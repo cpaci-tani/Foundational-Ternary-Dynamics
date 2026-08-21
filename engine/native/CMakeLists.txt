@@ -262,7 +262,11 @@ if(WIN32)
     # (native_ui_rml → native_rmlui → native_freetype), the session/transport
     # spine, the CLI, and DPI awareness. windowscodecs = WIC (the --capture-frames
     # PNG writer); shell32 = CommandLineToArgvW.
-    add_executable(native_app WIN32 src/app/main.cpp src/d3d12_presenter.cpp)
+    add_executable(native_app WIN32
+        src/app/main.cpp
+        src/app/app_options.cpp
+        src/app/app_util.cpp
+        src/d3d12_presenter.cpp)
     target_include_directories(native_app PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_SOURCE_DIR}/src)
