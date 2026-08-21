@@ -27,6 +27,7 @@
 #include <chrono>
 #include <cmath>
 #include <cstdint>
+#include <cstdio>
 #include <cstdlib>
 #include <stdexcept>
 #include <thread>
@@ -1148,7 +1149,8 @@ UiCommand to_ui_command(const Scale0Cmd& cmd) {
 
 }  // namespace
 
-Scale0Adapter::Scale0Adapter() = default;
+Scale0Adapter::Scale0Adapter()
+    : telemetry_debug_(std::getenv("FTD_TELEMETRY_DEBUG") != nullptr) {}
 Scale0Adapter::~Scale0Adapter() = default;
 
 void Scale0Adapter::apply_boundary() {
@@ -1219,11 +1221,12 @@ void Scale0Adapter::boot(const ScenarioMeta& meta, const RunConfig& cfg,
     }
     apply_boundary();
 
-    // NOTE: the legacy NativeEngineSession never called
-    // scheduler_.on_source_replaced() across a reload, and with the native
-    // telemetry demand mask held at 0 the scheduler is inert (latest() returns an
-    // empty snapshot). Matching that exactly keeps behavior identical; wiring
-    // on_source_replaced() belongs with the first non-zero telemetry demand.
+    // The native telemetry scheduler is now LIVE (see apply_telemetry_demand /
+    // build_snapshot): a reload builds a fresh RenderBridge, so retire the cache
+    // tied to the destroyed lattice, re-apply the lattice-size QoS policy, and
+    // re-arm the producer for the current demand. Without this a reload would keep
+    // serving the previous scenario's telemetry (or never resume sampling).
+    scheduler_.on_source_replaced(*bridge_);
 
     out.scenario = scenario_;
     out.status_line = status_;
@@ -1321,13 +1324,75 @@ bool Scale0Adapter::observe(const ScalePayload& payload) {
 }
 
 void Scale0Adapter::on_tick_complete() {
-    scheduler_.on_tick_complete(*bridge_);
-    (void)scheduler_.pump(*bridge_);
+    // A native GPU telemetry-event failure is defined by the scheduler to poison
+    // the observation stream (it suspends + throws). Contain it here so one bad
+    // reduction never unwinds the sim thread and freezes playback/interop: the
+    // scheduler self-suspends and the charts fall back to the always-live energy
+    // ledger. A live playback loop should not die over a telemetry hiccup.
+    try {
+        scheduler_.on_tick_complete(*bridge_);
+        (void)scheduler_.pump(*bridge_);
+    } catch (const std::exception&) {
+        // scheduler_ is now suspended; subsequent pumps return immediately.
+    }
+}
+
+void Scale0Adapter::apply_telemetry_demand(const DataNeeds& needs) {
+    const std::uint32_t want = needs.telemetry_groups & ftd::TELEMETRY_ALL;
+    if (want == scheduler_.demand().enabled_mask) return;  // no change → don't re-arm
+    ftd::NativeTelemetryScheduler::Demand demand = scheduler_.demand();
+    demand.enabled_mask = want;  // keep the per-group cadences; only the mask moves
+    scheduler_.set_demand(demand);
 }
 
 void Scale0Adapter::build_snapshot(const DataNeeds& needs) {
     obs_state_.demand = needs;
+    // Turn the app's telemetry-group demand into scheduler work. This runs every
+    // boundary (even PAUSED, where no tick fires but the panel still wants a
+    // current-state observation), which is why the demand is re-applied and the
+    // producer drained here rather than only in on_tick_complete().
+    apply_telemetry_demand(needs);
+    // Drain the producer to a settled state for THIS boundary. The scheduler
+    // accepts an async backend completion only while the epoch that began it is
+    // still current, and the epoch is fixed within a boundary. On the CPU backend
+    // begin/poll answer synchronously, so one pump promotes. On the interactive-GPU
+    // backend the device reduction completes a few microseconds later — a tick
+    // after it was begun, once epoch has advanced, so a single pump would forever
+    // discard the completion as stale (empty charts). A brief bounded spin here
+    // lets the device event finish and promote at the epoch that began it, turning
+    // the async reduction effectively-synchronous for this settled boundary. The
+    // deadline bounds a genuinely stuck device (the scheduler's own multi-second
+    // failure deadline still governs true faults); the try/catch contains a poison
+    // so a telemetry fault never freezes the sim.
+    try {
+        const auto deadline =
+            std::chrono::steady_clock::now() + std::chrono::milliseconds(4);
+        do {
+            (void)scheduler_.pump(*bridge_);
+        } while (scheduler_.observation_in_flight()
+                 && std::chrono::steady_clock::now() < deadline);
+    } catch (const std::exception&) {
+        // scheduler_ is now suspended; charts fall back to the live energy ledger.
+    }
     const ftd::NativeTelemetryScheduler::CachedView cached = scheduler_.latest();
+    if (telemetry_debug_) {
+        if (scheduler_.suspended() && !telemetry_debug_suspended_seen_) {
+            std::fprintf(stderr, "[tel] SUSPENDED: %s\n",
+                         scheduler_.suspension_reason().c_str());
+            telemetry_debug_suspended_seen_ = true;
+        }
+        if (++telemetry_debug_count_ % 30 == 0) {
+            std::fprintf(stderr,
+                         "[tel] demand=%u avail=%u fresh=%u susp=%d diag_tick=%d "
+                         "manif=%d audit_tick=%d auditE=%.3f\n",
+                         scheduler_.demand().enabled_mask, cached.available_mask,
+                         cached.fresh_mask, static_cast<int>(scheduler_.suspended()),
+                         cached.snapshot.diagnostics_meta.tick,
+                         cached.snapshot.diagnostics.manifested_count,
+                         cached.snapshot.audit_meta.tick,
+                         cached.snapshot.audit.total_energy);
+        }
+    }
     ftd::native::build_snapshot(*bridge_, &cached, needs, boundary_snapshot_);
     boundary_snapshot_.frame.scenario = scenario_;
     boundary_snapshot_.frame.backend = backend_name();

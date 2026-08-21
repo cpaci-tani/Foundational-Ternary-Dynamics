@@ -30,14 +30,61 @@ void add_quad(Rml::Mesh& mesh, Rml::Vector2f a, Rml::Vector2f b, Rml::Vector2f c
     mesh.indices.push_back(base + 3);
 }
 
+// One series as a thin polyline, autoscaled to its OWN min/max over the plot box.
+// Vertical-thickness band per segment (fine for mostly-horizontal telemetry — a
+// v1 line, not a mitred one). Mixed-unit channels stay legible because each is
+// normalised independently.
+void add_series_stroke(Rml::Mesh& mesh, const ChartSeries& s, float x0, float y0,
+                       float w, float h, Rml::ColourbPremultiplied stroke) {
+    const std::size_t n = s.size();
+    if (n < 2) return;
+
+    float lo = 0.0f, hi = 0.0f;
+    s.range(lo, hi);
+    // Autoscale with a 6% margin so the trace never glues to the top/bottom; a
+    // flat series (hi == lo) centres on the mid-line.
+    float span = hi - lo;
+    if (span < 1e-9f) {
+        const float pad = (std::fabs(hi) > 1e-6f) ? std::fabs(hi) * 0.5f : 1.0f;
+        lo -= pad;
+        hi += pad;
+        span = hi - lo;
+    } else {
+        const float margin = span * 0.06f;
+        lo -= margin;
+        hi += margin;
+        span = hi - lo;
+    }
+
+    const float inv_span = 1.0f / span;
+    const float dx = w / static_cast<float>(n - 1);
+    const float stroke_half = 1.0f;  // ~2px line
+
+    auto sample_xy = [&](std::size_t i) -> Rml::Vector2f {
+        const float v = s.at(i);
+        const float x = x0 + dx * static_cast<float>(i);
+        const float t = (v - lo) * inv_span;  // 0..1 (lo..hi)
+        const float y = y0 + (1.0f - std::clamp(t, 0.0f, 1.0f)) * h;
+        return Rml::Vector2f(x, y);
+    };
+
+    Rml::Vector2f prev = sample_xy(0);
+    for (std::size_t i = 1; i < n; ++i) {
+        const Rml::Vector2f cur = sample_xy(i);
+        add_quad(mesh, {prev.x, prev.y - stroke_half}, {cur.x, cur.y - stroke_half},
+                 {cur.x, cur.y + stroke_half}, {prev.x, prev.y + stroke_half}, stroke);
+        prev = cur;
+    }
+}
+
 }  // namespace
 
-FtdChartElement::FtdChartElement(const Rml::String& tag, const ChartSeries* series)
-    : Rml::Element(tag), series_(series) {}
+FtdChartElement::FtdChartElement(const Rml::String& tag, const ChartRegistry* registry)
+    : Rml::Element(tag), registry_(registry) {}
 
-void FtdChartElement::set_series(const ChartSeries* series) {
-    if (series_ == series) return;
-    series_ = series;
+void FtdChartElement::set_registry(const ChartRegistry* registry) {
+    if (registry_ == registry) return;
+    registry_ = registry;
     built_ = false;  // force a rebuild next render
 }
 
@@ -53,11 +100,21 @@ void FtdChartElement::OnRender() {
     const Rml::Vector2f size = box.GetFillSize();
     if (size.x < 2.0f || size.y < 2.0f) return;
 
-    const std::uint64_t gen = series_ ? series_->generation() : 0;
-    if (!built_ || gen != built_generation_ || size.x != built_w_ || size.y != built_h_) {
-        rebuild_geometry(origin, size);
+    const ChartBinding* binding = registry_ ? registry_->find(GetId()) : nullptr;
+
+    // Combined signature over every series' generation: rebuild only when a series
+    // actually advanced (or the box resized).
+    std::uint64_t sig = 0;
+    if (binding) {
+        for (const ChartSeriesRef& ref : binding->series) {
+            if (ref.series) sig = sig * 1000003ull + ref.series->generation() + 1u;
+        }
+    }
+
+    if (!built_ || sig != built_signature_ || size.x != built_w_ || size.y != built_h_) {
+        rebuild_geometry(origin, size, binding);
         built_ = true;
-        built_generation_ = gen;
+        built_signature_ = sig;
         built_w_ = size.x;
         built_h_ = size.y;
     }
@@ -66,7 +123,8 @@ void FtdChartElement::OnRender() {
         geometry_.Render(GetAbsoluteOffset(Rml::BoxArea::Border));
 }
 
-void FtdChartElement::rebuild_geometry(Rml::Vector2f origin, Rml::Vector2f size) {
+void FtdChartElement::rebuild_geometry(Rml::Vector2f origin, Rml::Vector2f size,
+                                       const ChartBinding* binding) {
     // Reuse the backing mesh storage across rebuilds.
     Rml::Mesh mesh = geometry_.Release(Rml::Geometry::ReleaseMode::ClearMesh);
     mesh.vertices.clear();
@@ -74,9 +132,6 @@ void FtdChartElement::rebuild_geometry(Rml::Vector2f origin, Rml::Vector2f size)
 
     const Rml::ComputedValues& computed = GetComputedValues();
     const float opacity = computed.opacity();
-    const Rml::Colourb series_col = computed.color();
-    const Rml::ColourbPremultiplied stroke = series_col.ToPremultiplied(opacity);
-    const Rml::ColourbPremultiplied fill = series_col.ToPremultiplied(0.28f * opacity);
     const Rml::ColourbPremultiplied baseline =
         Rml::Colourb(120, 140, 170, 255).ToPremultiplied(0.55f * opacity);
 
@@ -91,48 +146,11 @@ void FtdChartElement::rebuild_geometry(Rml::Vector2f origin, Rml::Vector2f size)
     add_quad(mesh, {x0, y_bottom - 1.0f}, {x0 + w, y_bottom - 1.0f},
              {x0 + w, y_bottom}, {x0, y_bottom}, baseline);
 
-    const std::size_t n = series_ ? series_->size() : 0;
-    if (n >= 2) {
-        float lo = 0.0f, hi = 0.0f;
-        series_->range(lo, hi);
-        // Autoscale with a 6% margin so the trace never glues to the top/bottom;
-        // a flat series (hi == lo) centres on the mid-line.
-        float span = hi - lo;
-        if (span < 1e-9f) {
-            const float pad = (std::fabs(hi) > 1e-6f) ? std::fabs(hi) * 0.5f : 1.0f;
-            lo -= pad;
-            hi += pad;
-            span = hi - lo;
-        } else {
-            const float margin = span * 0.06f;
-            lo -= margin;
-            hi += margin;
-            span = hi - lo;
-        }
-
-        const float inv_span = 1.0f / span;
-        const float dx = w / static_cast<float>(n - 1);
-        const float stroke_half = 1.0f;  // ~2px line
-
-        auto sample_xy = [&](std::size_t i) -> Rml::Vector2f {
-            const float v = series_->at(i);
-            const float x = x0 + dx * static_cast<float>(i);
-            const float t = (v - lo) * inv_span;                 // 0..1 (lo..hi)
-            const float y = y0 + (1.0f - std::clamp(t, 0.0f, 1.0f)) * h;
-            return Rml::Vector2f(x, y);
-        };
-
-        // Filled area under the trace + a crisp top stroke, segment by segment.
-        Rml::Vector2f prev = sample_xy(0);
-        for (std::size_t i = 1; i < n; ++i) {
-            const Rml::Vector2f cur = sample_xy(i);
-            // Area: trapezoid from the two trace points down to the baseline.
-            add_quad(mesh, prev, cur, {cur.x, y_bottom}, {prev.x, y_bottom}, fill);
-            // Stroke: a thin band centred on the segment (vertical thickness — fine
-            // for a mostly-horizontal telemetry trace; a v1 line, not a mitred one).
-            add_quad(mesh, {prev.x, prev.y - stroke_half}, {cur.x, cur.y - stroke_half},
-                     {cur.x, cur.y + stroke_half}, {prev.x, prev.y + stroke_half}, stroke);
-            prev = cur;
+    if (binding) {
+        for (const ChartSeriesRef& ref : binding->series) {
+            if (!ref.series) continue;
+            const Rml::ColourbPremultiplied stroke = ref.color.ToPremultiplied(opacity);
+            add_series_stroke(mesh, *ref.series, x0, y0, w, h, stroke);
         }
     }
 
@@ -147,7 +165,7 @@ void FtdChartElement::rebuild_geometry(Rml::Vector2f origin, Rml::Vector2f size)
 Rml::ElementPtr FtdChartInstancer::InstanceElement(Rml::Element* /*parent*/,
                                                    const Rml::String& tag,
                                                    const Rml::XMLAttributes& /*attributes*/) {
-    return Rml::ElementPtr(new FtdChartElement(tag, series_));
+    return Rml::ElementPtr(new FtdChartElement(tag, registry_));
 }
 
 void FtdChartInstancer::ReleaseElement(Rml::Element* element) { delete element; }

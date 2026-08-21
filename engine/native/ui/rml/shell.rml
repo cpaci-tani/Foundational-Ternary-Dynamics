@@ -194,11 +194,56 @@
                 </div>
             </div>
 
-            <!-- Telemetry: live total-energy trace (app-side ring buffer → the
-                 custom <ftd-chart> element, drawn through the D3D12 UI pipeline). -->
-            <div class="telemetry">
-                <div class="panel-title">Telemetry — total energy</div>
-                <ftd-chart id="energy-chart"/>
+            <!-- Telemetry: the Scale-0 engine telemetry hub (diagnostics · audit ·
+                 lagrangian scheduler groups). Collapsible + COLLAPSED by default —
+                 the charts + legend rows live behind data-if="tel_open", so a closed
+                 section holds ~0 chart DOM and demands only the cheap DIAGNOSTICS
+                 group (opening it adds the AUDIT + LAGRANGIAN groups). Each
+                 <ftd-chart> draws app-side ring buffers (one coloured polyline per
+                 named series, each autoscaled independently) through the D3D12 line
+                 path; the legends carry the per-series colour + throttled current
+                 value, and a per-group "t=" freshness tick. Scale-0 only (the
+                 groups read the voxel field); Scale 1 uses its own readout above. -->
+            <div class="telemetry" data-if="active_scale == 0">
+                <div class="ctl-head" data-event-click="toggle_telemetry()">
+                    <span class="ctl-caret">{{ tel_open ? '&#9662;' : '&#9656;' }}</span>
+                    <span class="ctl-htitle">Telemetry</span>
+                    <span class="ctl-hnote">diagnostics · audit</span>
+                </div>
+                <div class="tel-body" data-if="tel_open">
+                    <!-- Diagnostics: what the field is doing (always demanded). -->
+                    <div class="tel-ctitle">
+                        <span class="tel-name">Diagnostics</span>
+                        <span class="tel-prov">{{tel_diag_prov}}</span>
+                    </div>
+                    <ftd-chart id="chart-diag"/>
+                    <div class="tel-legend">
+                        <div class="tel-row"><span class="tel-chip s0"></span><span class="tel-lbl">Energy</span><span class="tel-val">{{tel_d_energy}}</span></div>
+                        <div class="tel-row"><span class="tel-chip s1"></span><span class="tel-lbl">Manifested</span><span class="tel-val">{{tel_d_manif}}</span></div>
+                        <div class="tel-row"><span class="tel-chip s2"></span><span class="tel-lbl">Entropy</span><span class="tel-val">{{tel_d_entropy}}</span></div>
+                        <div class="tel-row"><span class="tel-chip s3"></span><span class="tel-lbl">Net charge</span><span class="tel-val">{{tel_d_charge}}</span></div>
+                    </div>
+                    <!-- Conservation: is energy conserved (audit group). -->
+                    <div class="tel-ctitle">
+                        <span class="tel-name">Conservation</span>
+                        <span class="tel-prov">{{tel_audit_prov}}</span>
+                    </div>
+                    <ftd-chart id="chart-audit"/>
+                    <div class="tel-legend">
+                        <div class="tel-row"><span class="tel-chip s0"></span><span class="tel-lbl">Accounted E</span><span class="tel-val">{{tel_a_energy}}</span></div>
+                        <div class="tel-row"><span class="tel-chip s2"></span><span class="tel-lbl">Drift dE/dt</span><span class="tel-val">{{tel_a_drift}}</span></div>
+                        <div class="tel-row"><span class="tel-chip s3"></span><span class="tel-lbl">Gauss resid</span><span class="tel-val">{{tel_a_gauss}}</span></div>
+                    </div>
+                    <!-- Lagrangian: the action terms (lagrangian group). -->
+                    <div class="tel-ctitle">
+                        <span class="tel-name">Lagrangian</span>
+                    </div>
+                    <ftd-chart id="chart-lagr"/>
+                    <div class="tel-legend">
+                        <div class="tel-row"><span class="tel-chip s0"></span><span class="tel-lbl">&#8466; total</span><span class="tel-val">{{tel_l_lag}}</span></div>
+                        <div class="tel-row"><span class="tel-chip s4"></span><span class="tel-lbl">&#8459; total</span><span class="tel-val">{{tel_l_ham}}</span></div>
+                    </div>
+                </div>
             </div>
 
             <!-- Click-to-inspect: appears when an entity is picked in the 3D
