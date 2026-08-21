@@ -136,7 +136,7 @@ void request_reset(AppContext* app);
 void request_switch_scale(AppContext* app, int level);
 void request_toggle(AppContext* app, const std::string& name);
 void request_reset_toggles(AppContext* app);
-void request_telemetry_demand(AppContext* app, bool panel_open);
+void request_telemetry_demand(AppContext* app);  // OR of all open analysis sections
 void request_lattice_reboot(AppContext* app, int new_l);
 void request_config_nudge(AppContext* app, const std::string& key, const std::string& dir);
 void nudge_sheet_height(AppContext* app, OverlayRow* row, float delta);

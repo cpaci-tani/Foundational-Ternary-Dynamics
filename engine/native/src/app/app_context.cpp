@@ -84,11 +84,17 @@ void request_reset_toggles(AppContext* app) {
 // onto the NativeTelemetryScheduler in build_snapshot(), so the scheduler starts
 // producing real diagnostics/audit/lagrangian CachedView data (it is otherwise
 // inert with a zero mask). Harmless on Scale 1 (its adapter ignores the mask).
-void request_telemetry_demand(AppContext* app, bool panel_open) {
+void request_telemetry_demand(AppContext* app) {
+    // OR together the demand of every open analysis section (DIAGNOSTICS is always
+    // on — cheap cadence-1). Reads the live section-open flags off the shell data.
     ftd::native::DataNeeds needs;
     needs.telemetry_groups = ftd::TELEMETRY_DIAGNOSTICS;
-    if (panel_open)
-        needs.telemetry_groups |= ftd::TELEMETRY_AUDIT | ftd::TELEMETRY_LAGRANGIAN;
+    if (app && app->data) {
+        if (app->data->tel_open)
+            needs.telemetry_groups |= ftd::TELEMETRY_AUDIT | ftd::TELEMETRY_LAGRANGIAN;
+        if (app->data->grav_open)
+            needs.telemetry_groups |= ftd::TELEMETRY_GRAVITY;
+    }
     push_core(app, ftd::native::SetTelemetryDemand{needs});
 }
 

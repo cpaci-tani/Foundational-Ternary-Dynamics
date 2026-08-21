@@ -135,6 +135,34 @@
                 </div>
             </div>
 
+            <!-- Gravity instrument (Scale-0): the REAL Poisson latency field
+                 aggregate (voxel.latency), not the |J|² proxy. Collapsible;
+                 opening it demands the GRAVITY scheduler group. The substrate's
+                 emergent-gravity chain: potential L → lapse f = 1−L² → γ → time
+                 dilation. -->
+            <div class="gravity-sec" data-if="active_scale == 0">
+                <div class="section-head" data-event-click="toggle_gravity()">
+                    <span class="section-caret">{{ grav_open ? '&#9662;' : '&#9656;' }}</span>
+                    <span class="section-title">Gravity</span>
+                    <span class="section-badge">latency · dilation</span>
+                </div>
+                <div class="tel-body" data-if="grav_open">
+                    <div class="tel-ctitle">
+                        <span class="tel-name">Latency field (real Poisson L)</span>
+                        <span class="tel-prov">{{grav_prov}}</span>
+                    </div>
+                    <div class="tel-legend">
+                        <div class="tel-row"><span class="tel-lbl">L max (potential)</span><span class="tel-val">{{grav_l_max}}</span></div>
+                        <div class="tel-row"><span class="tel-lbl">L mean</span><span class="tel-val">{{grav_l_mean}}</span></div>
+                        <div class="tel-row"><span class="tel-lbl">Lapse f = 1&#8722;L&#178;</span><span class="tel-val">{{grav_f_min}}</span></div>
+                        <div class="tel-row"><span class="tel-lbl">&#947; max</span><span class="tel-val">{{grav_gamma}}</span></div>
+                        <div class="tel-row"><span class="tel-lbl">Time dilation</span><span class="tel-val">{{grav_dilation}}</span></div>
+                        <div class="tel-row"><span class="tel-lbl">Active voxels</span><span class="tel-val">{{grav_voxels}}</span></div>
+                    </div>
+                    <div class="grav-note" data-if="grav_inactive">{{grav_status}}</div>
+                </div>
+            </div>
+
             <!-- Click-to-inspect: appears when an entity is picked in the 3D
                  scene (data-if insp_active). insp_title names the target; each
                  insp_lines row is a live key/value read from the picked voxel

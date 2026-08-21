@@ -600,6 +600,16 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("tel_audit_prov", &data.tel_audit_prov);
     ctor.Bind("tel_l_lag", &data.tel_l_lag);
     ctor.Bind("tel_l_ham", &data.tel_l_ham);
+    ctor.Bind("grav_open", &data.grav_open);
+    ctor.Bind("grav_l_max", &data.grav_l_max);
+    ctor.Bind("grav_l_mean", &data.grav_l_mean);
+    ctor.Bind("grav_f_min", &data.grav_f_min);
+    ctor.Bind("grav_gamma", &data.grav_gamma);
+    ctor.Bind("grav_dilation", &data.grav_dilation);
+    ctor.Bind("grav_voxels", &data.grav_voxels);
+    ctor.Bind("grav_prov", &data.grav_prov);
+    ctor.Bind("grav_status", &data.grav_status);
+    ctor.Bind("grav_inactive", &data.grav_inactive);
     ctor.BindEventCallback("run", [&app](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) {
         request_play_toggle(&app);
     });
@@ -687,8 +697,18 @@ int run_app(const std::vector<std::string>& args) {
                                                       const Rml::VariantList&) {
         if (!app.data) return;
         app.data->tel_open = !app.data->tel_open;
-        request_telemetry_demand(&app, app.data->tel_open);
+        request_telemetry_demand(&app);
         h.DirtyVariable("tel_open");
+    });
+    // Gravity instrument section — expand/collapse. Opening it adds the GRAVITY
+    // scheduler group to the demand mask (so the engine starts reducing the real
+    // latency field); closing it drops the group again (fps).
+    ctor.BindEventCallback("toggle_gravity", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                    const Rml::VariantList&) {
+        if (!app.data) return;
+        app.data->grav_open = !app.data->grav_open;
+        request_telemetry_demand(&app);
+        h.DirtyVariable("grav_open");
     });
     ctor.BindEventCallback("scale_lattice", [&app](Rml::DataModelHandle, Rml::Event&,
                                                    const Rml::VariantList&) {
@@ -959,7 +979,8 @@ int run_app(const std::vector<std::string>& args) {
     // to Scale 0 already has a live demand on the host.
     if (app_opts.open_telemetry) data.tel_open = true;
     if (app_opts.open_overlays) data.ov_open = true;
-    request_telemetry_demand(&app, data.tel_open);
+    if (app_opts.open_gravity) data.grav_open = true;
+    request_telemetry_demand(&app);
 
     Rml::ElementDocument* doc = context->LoadDocument(FTD_RML_SHELL_PATH);
     if (!doc) throw std::runtime_error("LoadDocument(shell.rml) failed");
@@ -1492,6 +1513,31 @@ int run_app(const std::vector<std::string>& args) {
                         fmt("%.2f", lg.total_lagrangian));
                 set_str("tel_l_ham", data.tel_l_ham,
                         fmt("%.2f", lg.total_hamiltonian));
+            }
+            // ── Gravity instrument (real Poisson latency field) ──────────────
+            if (data.grav_open && push_status) {
+                const auto& gm = s0->telemetry.gravity;   // ftd::GravityMetricAgg
+                set_str("grav_l_max", data.grav_l_max, fmt("%.4f", gm.latency_max));
+                set_str("grav_l_mean", data.grav_l_mean, fmt("%.4f", gm.latency_mean));
+                set_str("grav_f_min", data.grav_f_min, fmt("%.4f", gm.f_min));
+                set_str("grav_gamma", data.grav_gamma, fmt("%.4f", gm.gamma_max));
+                set_str("grav_dilation", data.grav_dilation,
+                        fmt("%.3f %%", gm.dilation_max_pct));
+                set_str("grav_voxels", data.grav_voxels, std::to_string(gm.voxel_count));
+                set_str("grav_prov", data.grav_prov,
+                        "t=" + std::to_string(s0->telemetry.gravity_meta.tick));
+                // Distinguish "gravity terms off" from "on but the field is trivial".
+                std::string gstat;
+                if (!gm.requested)
+                    gstat = "gravity terms off — enable Gravity / field-energy-gravity";
+                else if (!gm.active)
+                    gstat = "terms on, latency field still trivial";
+                const bool ginact = !gstat.empty();
+                if (data.grav_inactive != ginact) {
+                    data.grav_inactive = ginact;
+                    model.DirtyVariable("grav_inactive");
+                }
+                set_str("grav_status", data.grav_status, gstat);
             }
         } else if (const ftd::native::Scale1Snapshot* s1 = snap ? snap->scale1() : nullptr) {
             chart_energy = s1->total_energy;
