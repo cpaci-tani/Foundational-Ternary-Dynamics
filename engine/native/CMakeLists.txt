@@ -183,6 +183,22 @@ if(WIN32)
     target_include_directories(native_test_dpi_awareness PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
     target_link_libraries(native_test_dpi_awareness PRIVATE native_windowing ftd_core)
 
+    # native_test_scenario_catalog — set-equality guard for the native-owned
+    # Scale-0 scenario catalog (native/scenario_catalog.h) against the canonical
+    # engine registry ftd::scale0_scenario_ids(). Keeps the self-contained native
+    # copy from silently drifting from the engine's real scenario set. Pure logic
+    # (no D3D12): links ftd_core for the registry + the test_telemetry harness TU.
+    # CTest registration for the engine/native tree lives in the parent
+    # engine/CMakeLists.txt (a subdirectory added before enable_testing() gets no
+    # CTestTestfile), so this target is built and run as a standalone .exe.
+    add_executable(native_test_scenario_catalog
+        tests/test_scenario_catalog.cpp ${NATIVE_TT})
+    target_include_directories(native_test_scenario_catalog PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    target_link_libraries(native_test_scenario_catalog PRIVATE ftd_core)
+    if(MSVC)
+        target_compile_definitions(native_test_scenario_catalog PRIVATE _CRT_SECURE_NO_WARNINGS)
+    endif()
+
     # CUDA<->D3D12 interop device tests.
     if(FTD_ENABLE_CUDA)
         foreach(t IN ITEMS

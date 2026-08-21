@@ -8,7 +8,10 @@
 
 #include "native/host/scale_host.h"
 
-#include "ftd/scenario_meta.h"
+#include "native/scenario_catalog.h"  // ftd::native::ScenarioMeta + find_scenario_meta
+                                       // (self-contained native catalog; the engine's
+                                       // ftd/scenario_meta.h is an untracked concurrent-
+                                       // session file this rebuild must not depend on).
 
 #include "native/ui_journal.h"
 
@@ -43,13 +46,13 @@ void ScaleHost::reload_to(const std::string& scenario_id, const RunConfig& cfg,
     // Resolve a ScenarioMeta by id. Unknown ids are given a minimal synthesized
     // descriptor whose id points at the caller's still-live string, so the
     // adapter's W9 unknown-id path can fire without fabricating metadata.
-    const ftd::ScenarioMeta* found = ftd::find_scenario_meta(scenario_id);
-    ftd::ScenarioMeta synth{};
+    const ScenarioMeta* found = find_scenario_meta(scenario_id);
+    ScenarioMeta synth{};
     if (!found) {
         synth.id = scenario_id.c_str();
         synth.scale = active_scale_;
     }
-    const ftd::ScenarioMeta& meta = found ? *found : synth;
+    const ScenarioMeta& meta = found ? *found : synth;
 
     const bool was_interop = adapter_->interop_enabled();
     BootReport report;

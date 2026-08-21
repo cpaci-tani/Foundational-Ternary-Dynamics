@@ -27,10 +27,16 @@
 
 namespace ftd {
 class ScaleEngine;
-struct ScenarioMeta;
 }
 
 namespace ftd::native {
+
+// Native-owned Scale-0 scenario descriptor (native/scenario_catalog.h). The
+// engine's ftd::ScenarioMeta lives in an UNTRACKED concurrent-session header
+// (engine/include/ftd/scenario_meta.h); the native tree keeps its own copy
+// under ftd::native so this rebuild is self-contained. Forward-declared here
+// because the seam only names it by const-reference.
+struct ScenarioMeta;
 
 class ParameterJournal;
 
@@ -61,7 +67,7 @@ public:
     // (Re)build the scale's engine for this scenario + config. Implements the W9
     // distinction internally and reports it via `out` (unknown id vs
     // validation-reject → known-good re-boot).
-    virtual void boot(const ftd::ScenarioMeta& meta, const RunConfig& cfg,
+    virtual void boot(const ScenarioMeta& meta, const RunConfig& cfg,
                       BootReport& out) = 0;
 
     // ── sim thread ──

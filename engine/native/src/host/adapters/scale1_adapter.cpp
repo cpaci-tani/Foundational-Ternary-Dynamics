@@ -9,7 +9,7 @@
 #include "native/host/adapters/scale1_adapter.h"
 
 #include "ftd/particle_engine.h"
-#include "ftd/scenario_meta.h"
+#include "native/scenario_catalog.h"  // ftd::native::ScenarioMeta (self-contained; not the untracked ftd/scenario_meta.h)
 
 #include <cstddef>
 #include <string>
@@ -63,7 +63,7 @@ void Scale1Adapter::seed_scenario(const std::string& id) {
     engine_->add_particle(-1, Vec3{c, c, c - R}, Vec3{-0.05, 0.0, 0.0});
 }
 
-void Scale1Adapter::boot(const ftd::ScenarioMeta& meta, const RunConfig& cfg,
+void Scale1Adapter::boot(const ScenarioMeta& meta, const RunConfig& cfg,
                          BootReport& out) {
     (void)cfg;  // Scale 1 has no lattice_size / flux_boundary knobs to honor.
     std::string id = meta.id ? meta.id : "";

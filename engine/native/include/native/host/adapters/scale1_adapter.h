@@ -40,7 +40,7 @@ public:
     // Defined out-of-line (needs the complete type for the base-class upcast).
     ftd::ScaleEngine* engine() override;
 
-    void boot(const ftd::ScenarioMeta& meta, const RunConfig& cfg,
+    void boot(const ScenarioMeta& meta, const RunConfig& cfg,
               BootReport& out) override;
 
     void bind_sim_thread() override {}   // ParticleEngine has no sim-thread affinity
