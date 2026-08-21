@@ -6,7 +6,7 @@ This is the running parity checklist: every capability the web dashboard (`engin
 
 **Legend:** ✅ done · ◐ partial · ▢ not started · ⭐ native-only (beyond web)
 
-**Where we stand:** the **Scale-0 substrate surface is functionally COMPLETE and at/beyond web parity** — real in-process engine (CPU + CUDA interop), all 33 field overlays incl. the 4 force render-styles + movable rubber sheets (⭐ beyond web), the full 44-toggle + config-knob control panel with live validation, the diagnostics/conservation/lagrangian telemetry charts, the **full click-to-inspect with a walkable 26-neighbour cursor**, the scenario picker over a native 130-row catalog, and 60–140 fps. **Remaining on Scale 0:** only optional render polish — OIT (◐, acceptable) and JetBrains Mono (▢, needs a TTF) — plus surfacing epistemic tags in the picker (◐). **The bigger frontier is the other scales (1 GPU, 2/3, 4, 5, 6)** — deferred while Scale 0 is perfected.
+**Where we stand:** the **Scale-0 substrate surface is COMPLETE and at/beyond web parity** — real in-process engine (CPU + CUDA interop), all 33 field overlays incl. the 4 force render-styles + movable rubber sheets (⭐ beyond web) with back-to-front-sorted translucency, the full 44-toggle + config-knob control panel with live validation, the diagnostics/conservation/lagrangian telemetry charts, the **full click-to-inspect with a walkable 26-neighbour cursor**, the scenario picker over a native 130-row catalog with **colour-coded epistemic-tag badges**, and 60–140 fps. **Remaining on Scale 0:** only JetBrains Mono (▢, needs a TTF drop-in) — everything else is done. **The frontier is now the other scales (1 GPU, 2/3, 4, 5, 6)** and the specialized analysis panels.
 
 ---
 
@@ -37,7 +37,7 @@ This is the running parity checklist: every capability the web dashboard (`engin
 | Force render-styles: Arrows / Heatmap / Glyphs / Flow | ✅ | global selector; Glyphs = new instanced-cone PSO, Heatmap = gaussian sprite PSO, Flow = dashed streamlines |
 | **Movable rubber sheets** (slice at adjustable height) | ⭐ | web sheets are fixed |
 | `ℒ`/`∇` label glyphs | ✅ | Inter lacks them + no fallback face → ASCII-ized (div J / curl J / L(x)) |
-| OIT / P1 translucency | ◐ | depth-test/no-write + draw-order; no true OIT (acceptable) |
+| OIT / P1 translucency | ✅ | volume/heatmap are additive (order-independent); the alpha-blended sheets are depth-sorted back-to-front (`45ceb070`) — plane-sort, no WBOIT needed |
 
 ---
 
@@ -129,7 +129,7 @@ This is the running parity checklist: every capability the web dashboard (`engin
 | GPU-native renderer data (CUDA↔D3D12 interop) | ✅ |
 | One force implementation (real engine fields, not divergent WASM samplers) | ✅ |
 | Clean process exit (no `TerminateProcess`) | ✅ |
-| Epistemic tags visible | ◐ (catalog carries them; not yet surfaced in the picker UI) |
+| Epistemic tags visible | ✅ (colour-coded `[TAG]` badge on each scenario-picker row from `ScenarioMeta.epistemic_status`, `237bdde8`) |
 
 ---
 
@@ -137,7 +137,8 @@ This is the running parity checklist: every capability the web dashboard (`engin
 
 - **2026-08-20/21 — Scale-0 push (owner focus: "perfect Scale 0 first"):** overlays → **33/33** (force styles + Knot Zones + font) ✅ · **full physics control** (44 toggles + config knobs + validation) ✅ · **telemetry charts** (diagnostics/conservation/lagrangian, scheduler activated + GPU epoch fix) ✅ · fps fix (5→125) ✅ · scenario picker + catalog + 130-scenario audit ✅.
 - **2026-08-21 — inspector done + infra:** **inspector COMPLETE** — full 20+ scalar readout + forces (`97184a15`) and the **walkable 26-neighbour cursor** (`94cca1e5`) ✅ · **RmlUi reflow fps fix** — status bar moved to its own document, 5.7→62.7 fps with the 92-row picker open (`d7abf3c5`) + `--profile-ui` harness ✅ · FIELD OVERLAYS collapsible + panel-role swap ✅ · **main.cpp modularized 3,425→~1,950 lines** into 7 focused `src/app/` TUs (behavior-neutral) ✅.
-- **Remaining on Scale 0:** only optional render polish — OIT (cleaner translucency; current draw-order is acceptable) and JetBrains Mono (needs a TTF) — plus surfacing epistemic tags in the picker.
+- **2026-08-21 — Scale-0 polish closed out:** OIT — the alpha-blended sheets are depth-sorted back-to-front (`45ceb070`; volume/heatmap were already additive) ✅ · **epistemic-tag badges** on every picker row (`237bdde8`) ✅.
+- **Remaining on Scale 0:** only JetBrains Mono (needs a TTF drop-in `engine/native/assets/`). Scale 0 is otherwise done.
 - **Deferred (post-Scale-0):** the other scales (§A), the specialized analysis panels (§G), CI hardening (§H).
 
 ## Recommended order (Scale-0 first, per owner focus)
@@ -145,5 +146,5 @@ This is the running parity checklist: every capability the web dashboard (`engin
 1. ~~Finish the Scale-0 overlays~~ ✅ done
 2. ~~Full physics control~~ ✅ done · ~~Telemetry charts~~ ✅ done
 3. ~~Inspector completeness~~ ✅ done — full readout + forces + walkable 26-neighbour cursor
-4. **Scale-0 render polish** — OIT for cleaner translucency; JetBrains Mono (needs a TTF) ← only Scale-0 items left (both optional)
-5. *(Scale 0 now functionally complete)* Scale 1 on CUDA → Scale 5 Cosmic + Scale 2/3 Atom → Scale 4/6 → the specialized panels → CI hardening
+4. ~~Scale-0 render polish~~ ✅ OIT (sheet depth-sort) + epistemic-tag badges done · JetBrains Mono still needs a TTF drop-in
+5. *(Scale 0 COMPLETE)* ← next: Scale 1 on CUDA → Scale 5 Cosmic + Scale 2/3 Atom → Scale 4/6 → the specialized panels → CI hardening
