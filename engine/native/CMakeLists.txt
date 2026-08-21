@@ -5,8 +5,9 @@
 # therefore carries only the ImGui-free salvage spine: the D3D12 presenter +
 # CUDA<->D3D12 interop, the transport (command queue / snapshot publisher /
 # journal), and the engine session. The shell/panels/theme are rebuilt on the
-# custom UI in a later phase. Distinct native_* target names let this tree
-# coexist with native_desktop until that tree is retired.
+# custom UI in a later phase. The native_* target-name prefix namespaces this
+# tree's libraries (the native_desktop prototype it once coexisted with was
+# retired 2026-08-21).
 #
 # See native/docs/PLAN_NATIVE_REBUILD.md + SPEC_NATIVE_REBUILD_R0R1.md.
 
@@ -62,9 +63,9 @@ if(WIN32)
     endif()
 
     # ── Vendored UI toolkit: FreeType + RmlUi (RML/RCSS) ──────────────────────
-    # Hand-authored static libs over engine/thirdparty/{freetype,rmlui}, mirroring
-    # the vendored-ftd_imgui pattern in native_desktop/CMakeLists.txt. Distinct
-    # native_* names let this tree coexist with native_desktop. No RmlUi backend
+    # Hand-authored static libs over engine/thirdparty/{freetype,rmlui}, following
+    # the same vendored-static-lib pattern the retired native_desktop prototype
+    # used for ImGui. Distinct native_* target names namespace them. No RmlUi backend
     # is built here — the UI is rendered later through our own D3D12
     # Rml::RenderInterface, so RmlUi Core (renderer-agnostic) is all we need.
     # See engine/thirdparty/{freetype,rmlui}/VENDOR.md.
@@ -180,7 +181,7 @@ if(WIN32)
 
     # DPI awareness (windowing only).
     add_executable(native_test_dpi_awareness
-        tests/test_native_desktop_dpi_awareness.cpp ${NATIVE_TT})
+        tests/test_dpi_awareness.cpp ${NATIVE_TT})
     target_include_directories(native_test_dpi_awareness PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
     target_link_libraries(native_test_dpi_awareness PRIVATE native_windowing ftd_core)
 
@@ -263,7 +264,7 @@ if(WIN32)
     # A real Win32 window rendering the RmlUi shell (shell.rml + ftd.rcss) OVER
     # the live D3D12 lattice/particle/flux scene, driven by NativeEngineSession on
     # a sim thread (M-UI-1..M-UI-3 fused; native/docs/SPEC_NATIVE_UI_RMLUI.md §3).
-    # Compiles the presenter TU directly (as the device tests + native_desktop do
+    # Compiles the presenter TU directly (as the device tests do
     # — there is no standalone presenter library). Links the RmlUi renderer
     # (native_ui_rml → native_rmlui → native_freetype), the session/transport
     # spine, the CLI, and DPI awareness. windowscodecs = WIC (the --capture-frames
