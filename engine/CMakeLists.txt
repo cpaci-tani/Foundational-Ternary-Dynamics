@@ -459,19 +459,13 @@ if(WIN32)
 endif()
 endif()
 
-# In-process Win32/D3D12 desktop. Isolated from engine/web and the WPF/WebView2
-# shell. Session library is cross-platform; the D3D12 executable is Windows-only.
+# In-process Win32/D3D12 desktop app (engine/native): RmlUi UI composited over
+# the live D3D12 lattice/particle scene. Isolated from engine/web. Windows-only.
+# The prior ImGui prototype (native_desktop) was retired 2026-08-21; engine/native
+# is now the sole native app. See native/docs/PLAN_NATIVE_REBUILD.md.
 if(NOT EMSCRIPTEN)
-    option(FTD_BUILD_NATIVE_DESKTOP
-           "Build the in-process native desktop (does not affect web/WASM)" ON)
-    if(FTD_BUILD_NATIVE_DESKTOP)
-        add_subdirectory(native_desktop)
-    endif()
-    # Clean-slate native rebuild (engine/native), R0 salvage transplant. Builds
-    # alongside native_desktop under distinct native_* target names until the old
-    # tree is retired. See native_desktop/docs/PLAN_NATIVE_REBUILD.md.
     option(FTD_BUILD_NATIVE
-           "Build the clean-slate native rebuild engine/native (does not affect web/WASM)" ON)
+           "Build the native desktop app engine/native (does not affect web/WASM)" ON)
     if(FTD_BUILD_NATIVE)
         add_subdirectory(native)
     endif()
@@ -509,320 +503,26 @@ target_include_directories(ftd_test_support PUBLIC
 # bridge_fixtures.cpp uses RenderBridge; ftd_core supplies it.
 target_link_libraries(ftd_test_support PUBLIC ftd_core)
 
-if(TARGET ftd_native_session)
-    ftd_add_test(test_native_desktop_session
-                 native_desktop/tests/test_engine_session.cpp
-                 LABELS unit native_desktop)
-    target_link_libraries(test_native_desktop_session PRIVATE ftd_native_session)
-    target_include_directories(test_native_desktop_session PRIVATE
-        ${CMAKE_SOURCE_DIR}/native_desktop/include)
-
-    # Interop Task 12 spec-compliance follow-up: reimport_interop_after_reload()
-    # (engine_session.h) is the exact free function main.cpp's do_reload branch
-    # calls to re-establish D3D12/CUDA interop after every reload -- see that
-    # function's doc comment and this test's own header comment for why,
-    # unlike every other interop-labeled test in native_desktop/tests/, it
-    # needs neither FTD_ENABLE_CUDA nor a live D3D12 adapter/display and so
-    # always runs (a CPU-backend NativeEngineSession is enough: on that
-    # backend try_enable_interop() returns false before touching either
-    # handle argument, so this test can drive the full guard/logging control-
-    # flow deterministically with fake handles).
-    ftd_add_test(test_interop_reload_orchestration
-                 native_desktop/tests/test_interop_reload_orchestration.cpp
-                 LABELS unit native_desktop interop)
-    target_link_libraries(test_interop_reload_orchestration PRIVATE ftd_native_session)
-    target_include_directories(test_interop_reload_orchestration PRIVATE
-        ${CMAKE_SOURCE_DIR}/native_desktop/include)
-
-    ftd_add_test(test_ui_command_queue
-                 native_desktop/tests/test_ui_command_queue.cpp
-                 LABELS native_desktop ui merge_gate)
-    target_link_libraries(test_ui_command_queue PRIVATE ftd_native_ui_model)
-    target_include_directories(test_ui_command_queue PRIVATE
-        ${CMAKE_SOURCE_DIR}/native_desktop/include)
-
-    ftd_add_test(test_ui_snapshot_publisher
-                 native_desktop/tests/test_ui_snapshot_publisher.cpp
-                 LABELS native_desktop ui merge_gate)
-    target_link_libraries(test_ui_snapshot_publisher PRIVATE ftd_native_ui_model)
-    target_include_directories(test_ui_snapshot_publisher PRIVATE
-        ${CMAKE_SOURCE_DIR}/native_desktop/include)
-
-    ftd_add_test(test_ui_command_boundary
-                 tests/test_ui_command_boundary.cpp
-                 LABELS native_desktop ui merge_gate)
-    target_link_libraries(test_ui_command_boundary PRIVATE ftd_native_session)
-    target_include_directories(test_ui_command_boundary PRIVATE
-        ${CMAKE_SOURCE_DIR}/native_desktop/include)
-
-    ftd_add_test(test_ui_journal_replay
-                 tests/test_ui_journal_replay.cpp
-                 LABELS native_desktop ui merge_gate)
-    target_link_libraries(test_ui_journal_replay PRIVATE ftd_native_session)
-    target_include_directories(test_ui_journal_replay PRIVATE
-        ${CMAKE_SOURCE_DIR}/native_desktop/include)
-
-    ftd_add_test(test_native_desktop_cli
-                 native_desktop/tests/test_native_desktop_cli.cpp
-                 NO_CORE
-                 LABELS native_desktop ui merge_gate)
-    target_link_libraries(test_native_desktop_cli PRIVATE ftd_native_cli)
-    target_include_directories(test_native_desktop_cli PRIVATE
-        ${CMAKE_SOURCE_DIR}/native_desktop/include)
-
-    ftd_add_test(test_ui_imgui_headless
-                 native_desktop/tests/test_ui_imgui_headless.cpp
-                 NO_CORE
-                 TIMEOUT 10
-                 LABELS native_desktop ui merge_gate)
-    target_link_libraries(test_ui_imgui_headless PRIVATE ftd_imgui)
-    if(OpenMP_CXX_FOUND)
-        target_link_libraries(test_ui_imgui_headless PRIVATE OpenMP::OpenMP_CXX)
-    endif()
-    target_include_directories(test_ui_imgui_headless PRIVATE
-        ${CMAKE_SOURCE_DIR}/native_desktop/include)
-
-    ftd_add_test(test_ui_scene_rect
-                 native_desktop/tests/test_ui_scene_rect.cpp
-                 NO_CORE
-                 LABELS native_desktop ui merge_gate)
-    target_include_directories(test_ui_scene_rect PRIVATE
-        ${CMAKE_SOURCE_DIR}/native_desktop/include)
-
-    ftd_add_test(test_ui_theme_parse
-                 native_desktop/tests/test_ui_theme_parse.cpp
-                 TIMEOUT 10
-                 LABELS native_desktop ui merge_gate)
-    target_link_libraries(test_ui_theme_parse PRIVATE ftd_native_ui)
-    target_include_directories(test_ui_theme_parse PRIVATE
-        ${CMAKE_SOURCE_DIR}/native_desktop/include
-        ${CMAKE_SOURCE_DIR}/native_desktop/src)
-
-    ftd_add_test(test_ui_workspace
-                 native_desktop/tests/test_ui_workspace.cpp
-                 LABELS native_desktop ui merge_gate)
-    target_link_libraries(test_ui_workspace PRIVATE ftd_native_ui)
-    target_include_directories(test_ui_workspace PRIVATE
-        ${CMAKE_SOURCE_DIR}/native_desktop/include
-        ${CMAKE_SOURCE_DIR}/native_desktop/src)
-
-    ftd_add_test(test_ui_window_name
-                 native_desktop/tests/test_ui_window_name.cpp
-                 LABELS native_desktop ui merge_gate)
-    target_link_libraries(test_ui_window_name PRIVATE ftd_native_ui)
-    target_include_directories(test_ui_window_name PRIVATE
-        ${CMAKE_SOURCE_DIR}/native_desktop/include
-        ${CMAKE_SOURCE_DIR}/native_desktop/src)
-
-    ftd_add_test(test_ui_shell_draw
-                 native_desktop/tests/test_ui_shell_draw.cpp
-                 TIMEOUT 10
-                 LABELS native_desktop ui merge_gate)
-    target_link_libraries(test_ui_shell_draw PRIVATE ftd_native_ui)
-    if(OpenMP_CXX_FOUND)
-        target_link_libraries(test_ui_shell_draw PRIVATE OpenMP::OpenMP_CXX)
-    endif()
-    target_include_directories(test_ui_shell_draw PRIVATE
-        ${CMAKE_SOURCE_DIR}/native_desktop/include
-        ${CMAKE_SOURCE_DIR}/native_desktop/src)
-
-    ftd_add_test(test_ui_command_palette
-                 native_desktop/tests/test_ui_command_palette.cpp
-                 LABELS native_desktop ui merge_gate)
-    target_link_libraries(test_ui_command_palette PRIVATE ftd_native_ui)
-    target_include_directories(test_ui_command_palette PRIVATE
-        ${CMAKE_SOURCE_DIR}/native_desktop/include
-        ${CMAKE_SOURCE_DIR}/native_desktop/src)
-
-    ftd_add_test(test_ui_boot_snapshot
-                 native_desktop/tests/test_ui_boot_snapshot.cpp
-                 LABELS native_desktop ui merge_gate)
-    target_link_libraries(test_ui_boot_snapshot PRIVATE ftd_native_session)
-    target_include_directories(test_ui_boot_snapshot PRIVATE
-        ${CMAKE_SOURCE_DIR}/native_desktop/include)
-
-    ftd_add_test(test_ui_harness_commands
-                 native_desktop/tests/test_ui_harness_commands.cpp
-                 LABELS native_desktop ui merge_gate)
-    target_link_libraries(test_ui_harness_commands PRIVATE ftd_native_session)
-    target_include_directories(test_ui_harness_commands PRIVATE
-        ${CMAKE_SOURCE_DIR}/native_desktop/include)
-
-    ftd_add_test(test_ui_load_scenario
-                 native_desktop/tests/test_ui_load_scenario.cpp
-                 LABELS native_desktop ui merge_gate)
-    target_link_libraries(test_ui_load_scenario PRIVATE ftd_native_session)
-    target_include_directories(test_ui_load_scenario PRIVATE
-        ${CMAKE_SOURCE_DIR}/native_desktop/include)
-endif()
-
+# UI observer-neutrality + thread-guard coverage of ftd_core's RenderBridge:
+# a const observer reading the bridge must never perturb the sim (golden hash,
+# ledger, and toggle profile stay bit-identical), and a const observer called
+# off the sim thread must be rejected by the debug thread guard. These exercise
+# the engine itself, not any particular UI front-end.
 ftd_add_test(test_ui_observer_neutrality_cpu
              tests/test_ui_observer_neutrality_cpu.cpp
-             LABELS native_desktop ui merge_gate)
+             LABELS ui merge_gate)
 
 ftd_add_test(test_ui_thread_guard
              tests/test_ui_thread_guard.cpp
-             LABELS native_desktop ui)
+             LABELS ui)
 
 if(FTD_ENABLE_CUDA)
     ftd_add_test(test_ui_observer_neutrality_gpu
                  tests/test_ui_observer_neutrality_gpu.cpp
                  GPU_HEAVY
-                 LABELS native_desktop ui interactive)
-    ftd_add_test(test_ui_fixed_flush_order_gpu
-                 tests/test_ui_fixed_flush_order_gpu.cpp
-                 GPU_HEAVY
-                 LABELS native_desktop ui interactive)
-    if(TARGET ftd_native_session)
-        target_link_libraries(test_ui_fixed_flush_order_gpu PRIVATE ftd_native_session)
-        target_include_directories(test_ui_fixed_flush_order_gpu PRIVATE
-            ${CMAKE_SOURCE_DIR}/native_desktop/include)
-    endif()
+                 LABELS ui interactive)
 endif()
 
-add_test(
-    NAME ui_test_inventory
-    COMMAND ${CMAKE_COMMAND}
-        -DCTEST_COMMAND=${CMAKE_CTEST_COMMAND}
-        -DBUILD_DIR=${CMAKE_BINARY_DIR}
-        -DCONFIG=$<CONFIG>
-        -P ${CMAKE_SOURCE_DIR}/cmake/FtdUiTestInventory.cmake
-)
-set_tests_properties(ui_test_inventory PROPERTIES
-    LABELS "unit;native_desktop")
-
-# CTest registration for test_d3d12_adapter_selection (the executable target
-# itself is defined in native_desktop/CMakeLists.txt, built above via
-# add_subdirectory(native_desktop)). Registration happens here, not in
-# native_desktop/CMakeLists.txt, because add_subdirectory(native_desktop) is
-# called before enable_testing() runs later in this file; a subdirectory
-# processed before enable_testing() never gets a CTestTestfile.cmake
-# generated for it, so add_test() calls placed there are silently dropped by
-# CTest. The target is already fully defined by this point, so referencing
-# it here by name is a normal (not forward) reference.
-if(TARGET test_d3d12_adapter_selection)
-    add_test(NAME d3d12_adapter_selection COMMAND test_d3d12_adapter_selection)
-    set_tests_properties(d3d12_adapter_selection PROPERTIES
-        LABELS "unit;native_desktop;interactive")
-endif()
-
-# CTest registration for test_d3d12_shared_buffer — same ordering rationale
-# as test_d3d12_adapter_selection above (executable defined in
-# native_desktop/CMakeLists.txt). "interactive" because it calls
-# D3D12Presenter::initialize(), which creates a real device + swapchain
-# against a hidden window and so needs a live desktop session, same as the
-# adapter-selection test above.
-if(TARGET test_d3d12_shared_buffer)
-    add_test(NAME d3d12_shared_buffer COMMAND test_d3d12_shared_buffer)
-    set_tests_properties(d3d12_shared_buffer PROPERTIES
-        LABELS "unit;native_desktop;interactive")
-endif()
-
-# CTest registration for test_d3d12_render_frame_fencing — same ordering
-# rationale as test_d3d12_adapter_selection above (executable defined in
-# native_desktop/CMakeLists.txt). "interactive" for the same reason as
-# test_d3d12_shared_buffer above (initialize() needs a live desktop
-# session). Regression coverage for D3D12Presenter::render()'s frame-in-
-# flight fencing + per-slot vb/cb double buffering — see
-# test_d3d12_render_frame_fencing.cpp's file-level comment for what it
-# protects and why it previously had zero automated coverage.
-if(TARGET test_d3d12_render_frame_fencing)
-    add_test(NAME d3d12_render_frame_fencing COMMAND test_d3d12_render_frame_fencing)
-    set_tests_properties(d3d12_render_frame_fencing PROPERTIES
-        LABELS "unit;native_desktop;interactive")
-endif()
-
-if(TARGET test_d3d12_debug_observability)
-    add_test(NAME d3d12_debug_observability
-             COMMAND test_d3d12_debug_observability)
-    set_tests_properties(d3d12_debug_observability PROPERTIES
-        LABELS "unit;native_desktop;interactive")
-endif()
-
-if(TARGET test_d3d12_overlay_once)
-    add_test(NAME d3d12_overlay_once COMMAND test_d3d12_overlay_once)
-    set_tests_properties(d3d12_overlay_once PROPERTIES
-        LABELS "unit;native_desktop;ui;interactive")
-endif()
-
-if(TARGET test_d3d12_capture_lifecycle)
-    add_test(NAME d3d12_capture_lifecycle COMMAND test_d3d12_capture_lifecycle)
-    set_tests_properties(d3d12_capture_lifecycle PROPERTIES
-        LABELS "unit;native_desktop;ui;interactive")
-endif()
-
-if(TARGET test_ui_imgui_d3d12)
-    add_test(NAME ui_imgui_d3d12 COMMAND test_ui_imgui_d3d12)
-    set_tests_properties(ui_imgui_d3d12 PROPERTIES
-        LABELS "unit;native_desktop;ui;interactive")
-endif()
-
-if(TARGET test_native_desktop_dpi_awareness)
-    add_test(NAME native_desktop_dpi_awareness
-             COMMAND test_native_desktop_dpi_awareness)
-    set_tests_properties(native_desktop_dpi_awareness PROPERTIES
-        LABELS "unit;native_desktop;interactive")
-endif()
-
-# CTest registration for test_cuda_d3d12_adapter_match — same ordering
-# rationale as test_d3d12_adapter_selection above (executable defined in
-# native_desktop/CMakeLists.txt, only present when FTD_ENABLE_CUDA is ON).
-if(TARGET test_cuda_d3d12_adapter_match)
-    add_test(NAME cuda_d3d12_adapter_match COMMAND test_cuda_d3d12_adapter_match)
-    set_tests_properties(cuda_d3d12_adapter_match PROPERTIES
-        LABELS "unit;native_desktop;gpu;interactive")
-endif()
-
-# CTest registration for test_cuda_import_shared_buffer — same ordering
-# rationale as test_d3d12_adapter_selection above (executable defined in
-# native_desktop/CMakeLists.txt, only present when FTD_ENABLE_CUDA is ON).
-if(TARGET test_cuda_import_shared_buffer)
-    add_test(NAME cuda_import_shared_buffer COMMAND test_cuda_import_shared_buffer)
-    set_tests_properties(cuda_import_shared_buffer PROPERTIES
-        LABELS "unit;native_desktop;gpu;interactive")
-endif()
-
-# CTest registration for test_interop_gather — same ordering rationale as
-# test_d3d12_adapter_selection above (executable defined in
-# native_desktop/CMakeLists.txt, only present when FTD_ENABLE_CUDA is ON).
-if(TARGET test_interop_gather)
-    add_test(NAME interop_gather COMMAND test_interop_gather)
-    set_tests_properties(interop_gather PROPERTIES
-        LABELS "unit;native_desktop;gpu;interactive")
-endif()
-
-# CTest registration for test_interop_fence_roundtrip — same ordering
-# rationale as test_d3d12_adapter_selection above (executable defined in
-# native_desktop/CMakeLists.txt, only present when FTD_ENABLE_CUDA is ON).
-# TIMEOUT 30: per the test's own comment, a broken D3D12 Wait() call hangs
-# (the GPU queue parks forever waiting on a fence value that never arrives)
-# rather than failing outright, so this needs a hard ceiling instead of
-# running forever.
-if(TARGET test_interop_fence_roundtrip)
-    add_test(NAME interop_fence_roundtrip COMMAND test_interop_fence_roundtrip)
-    set_tests_properties(interop_fence_roundtrip PROPERTIES
-        LABELS "unit;native_desktop;gpu;interactive"
-        TIMEOUT 30)
-endif()
-
-# CTest registration for test_interop_reload_reset — same ordering rationale
-# as test_d3d12_adapter_selection above (executable defined in
-# native_desktop/CMakeLists.txt, only present when FTD_ENABLE_CUDA is ON).
-if(TARGET test_interop_reload_reset)
-    add_test(NAME interop_reload_reset COMMAND test_interop_reload_reset)
-    set_tests_properties(interop_reload_reset PROPERTIES
-        LABELS "unit;native_desktop;gpu;interactive")
-endif()
-
-# CTest registration for test_interop_visual_parity (Interop Task 10) — same
-# ordering rationale as test_d3d12_adapter_selection above (executable
-# defined in native_desktop/CMakeLists.txt, only present when
-# FTD_ENABLE_CUDA is ON).
-if(TARGET test_interop_visual_parity)
-    add_test(NAME interop_visual_parity COMMAND test_interop_visual_parity)
-    set_tests_properties(interop_visual_parity PROPERTIES
-        LABELS "unit;native_desktop;gpu;interactive")
-endif()
 
 # Auto-link ftd_test_support into every test executable defined below in this
 # directory. Each test_*.cpp includes <ftd/test_telemetry.h>; the impl now
