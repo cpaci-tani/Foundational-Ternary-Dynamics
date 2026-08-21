@@ -65,7 +65,7 @@ Web renderer modules referenced (all under `engine/web/js/`):
 
 | Overlay | Physics | Web render technique | Data source | Key params | Web Three.js impl | Native status | D3D12 technique |
 |---|---|---|---|---|---|---|---|
-| **E Field** | inductive E = −∂J/∂t (streamlines) | **Traced RK4 streamlines**, cyan fade | `getScale0FieldSamples({kind:'e'})` → `VisualFieldKind::Electric` (0) + particle frame for seeds | particle-anchored seeds (6/particle, offset 2) when particles exist, else importance seeds; bidirectional | `computeStreamlines` → shared streamline mesh; `field-em-renderer.js` `updateEFieldLines` (cyan, alpha fade, optional per-knot hue) | **NEW** | **needs RK4 integrator** + particle-anchored + importance seed generators |
+| **Radiative E** | inductive E = −∂J/∂t (streamlines) | **Traced RK4 streamlines**, cyan fade | `getScale0FieldSamples({kind:'e'})` → `VisualFieldKind::Electric` (0) + particle frame for seeds | particle-anchored seeds (6/particle, offset 2) when particles exist, else importance seeds; bidirectional | `computeStreamlines` → shared streamline mesh; `field-em-renderer.js` `updateEFieldLines` (cyan, alpha fade, optional per-knot hue) | **NEW** | **needs RK4 integrator** + particle-anchored + importance seed generators |
 | **B Field** | magnetic B = ∇×J (closed-loop streamlines) | **Traced RK4 streamlines**, green fade | `getScale0FieldSamples({kind:'b'})` → `VisualFieldKind::Magnetic` (1) + particle frame | ring seeds (8/particle, radius 4, perpendicular to flux) or perpendicular importance seeds; `maxSteps×1.5` to close loops | same mesh factory; `updateBFieldLines` (green) | **NEW** | RK4 integrator + B-specific loop seeding (Gram-Schmidt perpendicular rings) |
 | **Poynting S** | energy flux S = E×B | **Vector arrows** (yellow→orange), additive | `getScale0FieldSamples({kind:'poynting'})` → `VisualFieldKind::Poynting` (2) | threshold `5%`, `log` length scale, 32768-arrow cap | `LineSegments` arrow pairs; `field-em-renderer.js` `updatePoyntingVectors` | **COVERED** | `append_field_vectors(Poynting)` |
 
@@ -76,7 +76,7 @@ Web renderer modules referenced (all under `engine/web/js/`):
 | **EM** | electrostatic Coulomb force [PARAMETRIC] | arrows / gaussian heatmap / animated flow / instanced cones | `getScale0ForceField('em', stride)` → `VisualFieldKind::EmForce` (14) | force-stride finer at small L; per-style params below | `field-force-renderer.js` `updateForceVolume` + style renderers | **COVERED** (arrows) | `append_field_vectors(EmForce)` for arrows |
 | **Gravity** | density-gradient attraction G_N·∇\|J\| [SELECTION] | same 4 styles | `getScale0ForceField('gravity')` → `VisualFieldKind::GravityForce` (15) | as above | `updateGravityField` | **COVERED** (arrows) | `append_field_vectors(GravityForce)` |
 | **Strong** | pairwise flux-tube force [SELECTION] | same 4 styles | `getScale0ForceField('strong')` → `VisualFieldKind::StrongForce` (16) | as above | `updateStrongForceField` | **COVERED** (arrows) | `append_field_vectors(StrongForce)` |
-| **∇×J pseudovector** ("weak") | curl ∇×J parity-odd pseudovector [PROXY], scaled by `DUAL_DELTA` | arrows (soft sprites) / heatmap / flow / glyphs | `getScale0FieldSamples({kind:'curlJ'})` → `VisualFieldKind::Curl` (11), ×`DUAL_DELTA≈0.957` | threshold `8%`, weak palette | `field-force-renderer.js` `updateWeakField` (soft additive sprites) | **COVERED** (arrows/points) | `append_field_vectors(Curl)` (or scalar points of \|∇×J\|) |
+| **∇×J pseudovector** ("weak") | curl ∇×J parity-even (axial) pseudovector [PROXY], scaled by `DUAL_DELTA` | arrows (soft sprites) / heatmap / flow / glyphs | `getScale0FieldSamples({kind:'curlJ'})` → `VisualFieldKind::Curl` (11), ×`DUAL_DELTA≈0.957` | threshold `8%`, weak palette | `field-force-renderer.js` `updateWeakField` (soft additive sprites) | **COVERED** (arrows/points) | `append_field_vectors(Curl)` (or scalar points of \|∇×J\|) |
 | **— Force style: Arrows** | (render style) | base→tip line pairs, `log` length | (as force above) | 32768 cap | `_writeArrowFieldIntoMesh` | **COVERED** | line PSO (== native arrow path) |
 | **— Force style: Heatmap** | (render style) | gaussian additive **sprite points**, size ∝ log(mag) | (as force) | `exp(-r²·16)` frag, per-force palette | custom `ShaderMaterial` in `updateForceHeatmap` | **EXTEND** | reuse `pso` sprites + a gaussian-falloff fragment (new frag or shader param) |
 | **— Force style: Flow** | (render style) | **animated dashed streamlines** | (as force) | flow seeds ∝\|force\|, 40% length, dash-offset animation | `computeStreamlines` + `LineDashedMaterial`; `updateForceStreamlines` | **NEW** | RK4 integrator + dashed-line rendering + per-frame dash animation |
@@ -181,7 +181,7 @@ Deliverable: **~13 more overlays live**, still zero new PSOs (Color charge and t
 The heaviest shared subsystem. Once the integrator exists, four overlays light up.
 
 - Port `computeStreamlines` (RK4 over a nearest-sample spatial index, bidirectional) + the seed generators (`generateEFieldSeeds`, `generateBFieldSeeds`, `generateImportanceSeeds`, `generateBImportanceSeeds`) from `fieldlines.js`. **CPU port is the low-risk path**; a compute-shader version is a later optimization.
-- Overlays: **Flux Lines, E Field, B Field, Force Flow** (Flow adds dashed-line animation).
+- Overlays: **Flux Lines, Radiative E, B Field, Force Flow** (Flow adds dashed-line animation).
 - Renders through the existing `pso_lines` (LINELIST) — no new PSO, but a **larger dynamic line vertex buffer** and per-vertex color.
 - **Unblocks Knot zones** (the knot detector consumes the streamline output).
 
@@ -212,7 +212,7 @@ The menu is built dynamically at Scale-0 boot by `scales/scale0/ui/overlays/temp
 Categories and exact labels (mirror these 7 columns in the native panel):
 
 - **Volume** — Flux Volume (+Organic, +Glow) · Flux Slice (+xy, +xz, +yz) · Flux Lines · ∇·J · State s
-- **Fields** — E Field · B Field · Poynting S
+- **Fields** — Radiative E · B Field · Poynting S
 - **Forces** — *(style row: Arrows / Heatmap / Flow / Glyphs)* · EM · Gravity · Strong · ∇×J pseudovector
 - **Quantum** — |ψ|² · Phase φ · ℒ(x) · Entropy s
 - **Topology** — Φ potential · EM energy u · Charge ρ · Vorticity ω · Latency L · Gauss resid.
