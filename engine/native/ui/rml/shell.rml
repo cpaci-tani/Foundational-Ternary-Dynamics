@@ -326,16 +326,12 @@
         </div>
     </div>
 
-    <!-- Status bar (bound to UiSnapshot) -->
-    <div id="status">
-        <span class="dot" data-class-running="running"></span><b>{{ running ? 'Running' : 'Paused' }}</b>
-        <span>T: <b>{{tick}}</b></span>
-        <span>Particles: <b>{{particle_count}}</b></span>
-        <span>Energy: <b>{{total_energy}}</b></span>
-        <span>{{physical_time}}</span>
-        <div class="spacer"></div>
-        <span>{{fps}} fps</span>
-        <span class="accent">{{backend}}</span>
-    </div>
+    <!-- Status bar lives in a SEPARATE document (statusbar.rml, data-model=
+         "status") loaded as a second document, so its ~8/s readout updates reflow
+         only that strip and never the 92-row scenario picker in this document.
+         This spacer reserves the same-height bottom strip the status overlay sits
+         on, so shell layout is identical to when the bar lived here. It carries no
+         binding, so it never dirties → never reflows this document. -->
+    <div id="status-spacer"></div>
 </body>
 </rml>

@@ -2244,6 +2244,25 @@ int run_app(const std::vector<std::string>& args) {
     app.model = model;
     app.model_ready = true;
 
+    // ── Status-bar data model (fps fix) ────────────────────────────────────────
+    // The status readouts move to a SEPARATE document (statusbar.rml) with their
+    // own data model, so their ~8/s dirties reflow only that 27dp strip — never
+    // this document's 92-row scenario picker (measured: a status tick reflowed the
+    // whole shell at 107ms layout + 62ms geometry → 5.7 fps with the picker open).
+    // Bound to the SAME ShellData fields; the per-frame loop dirties this handle
+    // for status-only vars, and both handles for the two vars a shell element also
+    // binds (the Scale-1 readout) — but only while Scale 1 is active.
+    Rml::DataModelConstructor sctor = context->CreateDataModel("status");
+    if (!sctor) throw std::runtime_error("CreateDataModel(status) failed");
+    sctor.Bind("running", &data.running);
+    sctor.Bind("tick", &data.tick);
+    sctor.Bind("particle_count", &data.particle_count);
+    sctor.Bind("total_energy", &data.total_energy);
+    sctor.Bind("physical_time", &data.physical_time);
+    sctor.Bind("fps", &data.fps);
+    sctor.Bind("backend", &data.backend);
+    Rml::DataModelHandle status_model = sctor.GetModelHandle();
+
     // ── CLI-driven physics-control state (headless proof of the panel) ──────────
     // Seed the live caches from the host's boot snapshot so the pre-opened panel
     // shows real engine values from frame 0 (the per-frame sync keeps them live).
@@ -2309,6 +2328,22 @@ int run_app(const std::vector<std::string>& args) {
     Rml::ElementDocument* doc = context->LoadDocument(FTD_RML_SHELL_PATH);
     if (!doc) throw std::runtime_error("LoadDocument(shell.rml) failed");
     doc->Show();
+
+    // Load the status bar as a SECOND document, overlaying the shell's
+    // #status-spacer. Its path sits beside shell.rml (same ui/rml dir), so it is
+    // derived from FTD_RML_SHELL_PATH rather than needing its own CMake define. A
+    // load failure is non-fatal — the app still runs, just without the status bar.
+    {
+        std::string sp = FTD_RML_SHELL_PATH;
+        const auto pos = sp.rfind("shell.rml");
+        if (pos != std::string::npos) sp.replace(pos, sizeof("shell.rml") - 1, "statusbar.rml");
+        if (Rml::ElementDocument* sdoc = context->LoadDocument(sp)) {
+            sdoc->Show();
+        } else {
+            std::cerr << "native_app: LoadDocument(statusbar.rml) failed at '" << sp
+                      << "' - status bar disabled\n" << std::flush;
+        }
+    }
 
     // Publish the RmlUi context + overlay into the presenter's frame path.
     app.context = context;
@@ -2644,6 +2679,37 @@ int run_app(const std::vector<std::string>& args) {
         auto set_str = [&](const char* name, Rml::String& dst, const std::string& val) {
             if (dst != val) { dst = val; model.DirtyVariable(name); }
         };
+        // Status-bar dirties target the SEPARATE status document's model, so they
+        // reflow only that 27dp strip and never this document's 92-row picker.
+        // sset_* = status-only vars. bset_* = a var a shell element ALSO binds (the
+        // Scale-1 readout): dirty the shell handle too, but only while that binding
+        // is live (Scale 1 active) — so a Scale-0 status tick never touches the
+        // picker. `running` is shared with the always-present toolbar, so it dirties
+        // both unconditionally (it flips rarely — not a per-frame reflow driver).
+        auto sset_int = [&](const char* name, int& dst, int val) {
+            if (dst != val) { dst = val; status_model.DirtyVariable(name); }
+        };
+        auto sset_str = [&](const char* name, Rml::String& dst, const std::string& val) {
+            if (dst != val) { dst = val; status_model.DirtyVariable(name); }
+        };
+        auto bset_int = [&](const char* name, int& dst, int val, bool also_shell) {
+            if (dst != val) {
+                dst = val; status_model.DirtyVariable(name);
+                if (also_shell) model.DirtyVariable(name);
+            }
+        };
+        auto bset_str = [&](const char* name, Rml::String& dst, const std::string& val,
+                            bool also_shell) {
+            if (dst != val) {
+                dst = val; status_model.DirtyVariable(name);
+                if (also_shell) model.DirtyVariable(name);
+            }
+        };
+        auto bset_bool = [&](const char* name, bool& dst, bool val) {
+            if (dst != val) {
+                dst = val; status_model.DirtyVariable(name); model.DirtyVariable(name);
+            }
+        };
 
         // Throttle gate for the cosmetic status readouts (see kStatusPushInterval).
         const auto now_status = std::chrono::steady_clock::now();
@@ -2655,13 +2721,13 @@ int run_app(const std::vector<std::string>& args) {
         if (app_opts.profile_freeze_status) push_status = false;
         if (push_status) { last_status_push = now_status; status_first = false; }
 
-        if (push_status) set_int("tick", data.tick, frame.tick);
+        if (push_status) sset_int("tick", data.tick, frame.tick);
         if (snap) set_int("active_scale", data.active_scale, snap->active_scale);
         if (push_status)
-            set_int("particle_count", data.particle_count,
-                    static_cast<int>(frame.total_manifested));
-        set_bool("running", data.running, !paused.load());
-        if (push_status) set_int("fps", data.fps, smoothed_fps);
+            bset_int("particle_count", data.particle_count,
+                     static_cast<int>(frame.total_manifested), data.active_scale == 1);
+        bset_bool("running", data.running, !paused.load());
+        if (push_status) sset_int("fps", data.fps, smoothed_fps);
         set_str("scenario", data.scenario, frame.scenario.empty() ? app.scenario_id
                                                                    : frame.scenario);
         // Keep the picker's current-row highlight on the actually-loaded scenario
@@ -2676,12 +2742,12 @@ int run_app(const std::vector<std::string>& args) {
                     model.DirtyVariable("scenario_groups");
             }
         }
-        set_str("backend", data.backend, upper(frame.backend.empty() ? host.backend_name()
-                                                                      : frame.backend));
+        sset_str("backend", data.backend, upper(frame.backend.empty() ? host.backend_name()
+                                                                       : frame.backend));
         set_str("lattice", data.lattice, std::to_string(frame.lattice_size));
         if (push_status)
-            set_str("physical_time", data.physical_time,
-                    fmt("%.2e s", static_cast<double>(frame.tick) * kTPhysSeconds));
+            sset_str("physical_time", data.physical_time,
+                     fmt("%.2e s", static_cast<double>(frame.tick) * kTPhysSeconds));
         // Reflect the adapter's authoritative sheet slice heights (frame-carried)
         // in the panel rows, so a CLI --sheet-height or an adapter clamp shows up
         // live. Only dirties when a value actually changed (steady state = free).
@@ -2711,8 +2777,8 @@ int run_app(const std::vector<std::string>& args) {
             chart_energy = s0->energy_ledger.E_curr;
             chart_energy_valid = true;
             if (push_status)
-                set_str("total_energy", data.total_energy,
-                        fmt("%.1f", s0->energy_ledger.E_curr));
+                bset_str("total_energy", data.total_energy,
+                         fmt("%.1f", s0->energy_ledger.E_curr), data.active_scale == 1);
 
             // ── Physics-control live sync (authoritative engine truth) ──
             // Mirror the full TermToggles + published knobs into the app caches
@@ -2795,7 +2861,10 @@ int run_app(const std::vector<std::string>& args) {
             chart_energy = s1->total_energy;
             chart_energy_valid = true;
             if (push_status) {
-                set_str("total_energy", data.total_energy, fmt("%.3f", s1->total_energy));
+                // Scale-1 branch (active_scale == 1): total_energy shows in both the
+                // status strip and the Scale-1 readout; s1_ke/s1_pe are shell-only.
+                bset_str("total_energy", data.total_energy, fmt("%.3f", s1->total_energy),
+                         true);
                 set_str("s1_ke", data.s1_ke, fmt("%.3f", s1->total_ke));
                 set_str("s1_pe", data.s1_pe, fmt("%.3f", s1->total_pe));
             }
