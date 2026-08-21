@@ -600,6 +600,77 @@ ftd-chart {
 }
 .insp-k { color: #67788f; font-size: 10dp; text-transform: uppercase; letter-spacing: 1dp; }
 .insp-v { color: #e0e7f1; font-family: JetBrains Mono; font-size: 11dp; }
+/* Group-divider row (InspLine::header): a full-width section label, no chrome,
+   so the long full-voxel readout reads in labelled blocks. */
+.insp-row.hdr {
+    border: 0dp transparent;
+    background-color: transparent;
+    padding: 6dp 2dp 2dp 2dp;
+    margin-bottom: 0dp;
+}
+.insp-row.hdr .insp-k {
+    color: #6aa8e0;
+    font-size: 9dp;
+    letter-spacing: 1dp;
+}
+.insp-row.hdr .insp-v { display: none; }
+
+/* ── 26-Moore-neighbour grid (collapsible sub-section of the inspector) ──── */
+.insp-neigh { display: flex; flex-direction: column; flex: 0 0 auto; margin-top: 10dp; }
+.insp-neigh-head {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 4dp 2dp;
+    color: #6aa8e0;
+    font-family: JetBrains Mono;
+    font-size: 10dp;
+    text-transform: uppercase;
+    letter-spacing: 1dp;
+    cursor: pointer;
+}
+.insp-neigh-head:hover { color: #9fd0ff; }
+.insp-neigh-caret { margin-right: 6dp; font-size: 9dp; }
+.insp-neigh-body { display: flex; flex-direction: column; }
+.insp-neigh-grp {
+    color: #67788f;
+    font-size: 9dp;
+    text-transform: uppercase;
+    letter-spacing: 1dp;
+    margin: 6dp 0dp 3dp 0dp;
+}
+.insp-neigh-grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+/* One neighbour cell: dir label over a state-glyph + |flux| value. Coloured by
+   neighbour state — void (default) dim, + green, − red. */
+.ncell {
+    display: flex;
+    flex-direction: column;
+    width: 58dp;
+    margin: 0dp 3dp 3dp 0dp;
+    padding: 3dp 4dp;
+    border: 1dp #223047;
+    border-radius: 5dp;
+    background-color: #0f1826;
+}
+.ncell-dir {
+    color: #8595ab;
+    font-family: JetBrains Mono;
+    font-size: 9dp;
+    letter-spacing: 1dp;
+}
+.ncell-v {
+    color: #5c6a7e;
+    font-family: JetBrains Mono;
+    font-size: 10dp;
+}
+.ncell.npos { border-color: #2f6b3d; background-color: #10241a; }
+.ncell.npos .ncell-v { color: #79d295; }
+.ncell.nneg { border-color: #7a3340; background-color: #241014; }
+.ncell.nneg .ncell-v { color: #e8899a; }
 
 /* ── vertical scrollbar (the overflowing right panel) ──────────────────── */
 /* Without explicit sizing RmlUi renders a zero-width (invisible) scrollbar;

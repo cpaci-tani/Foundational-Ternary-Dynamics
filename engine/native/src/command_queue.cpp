@@ -39,6 +39,7 @@ std::vector<QueuedCommand> CommandQueue::drain() {
     coalesce_keep_last<SetTelemetryDemand>(items);
     coalesce_keep_last<InspectVoxel>(items);
     coalesce_keep_last<InspectForce>(items);
+    coalesce_keep_last<InspectNeighbors>(items);
     return items;
 }
 

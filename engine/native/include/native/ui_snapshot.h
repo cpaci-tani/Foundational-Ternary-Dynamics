@@ -30,6 +30,23 @@ struct UiForceDiag {
     Vec3 f_exchange;
 };
 
+// One Moore-neighbour readout cell (26 sites around a picked voxel). Filled
+// synchronously by observe_on_bridge() when an InspectNeighbors observation is
+// served — native reads are synchronous, so all 26 are gathered in one boundary
+// (no async budget). `shell` = |dx|+|dy|+|dz| ∈ {1,2,3} classes the site as a
+// face / edge / corner neighbour; dx/dy/dz ∈ {-1,0,+1}. `present` records that
+// the read succeeded (always true on the periodic lattice); a genuinely void
+// site is state==0 with flux_mag≈0 — the UI shows it blank, never fabricated.
+struct NeighborCell {
+    int     dx = 0, dy = 0, dz = 0;
+    int     shell = 0;
+    int8_t  state = 0;
+    double  flux_mag = 0.0;
+    bool    locked = false;
+    int32_t particle_id = -1;
+    bool    present = false;
+};
+
 struct ContinuitySnapshot {
     ObservationStatus status = ObservationStatus::Rejected;
     int L = 0;
@@ -57,8 +74,10 @@ struct UiSnapshot {
     ftd::EnergyLedger energy_ledger;
     ftd::VoxelInspection voxel;
     UiForceDiag force;
+    NeighborCell neighbors[26];
     bool voxel_present = false;
     bool force_present = false;
+    bool neighbors_present = false;
     ContinuitySnapshot continuity;
     ChargeSumResult charge_sum;
     ftd::VisualFieldSample field_sample;

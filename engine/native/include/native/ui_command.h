@@ -75,6 +75,16 @@ struct InspectForce {
     int y = 0;
     int z = 0;
 };
+// Read-only 26-Moore-neighbour gather around a picked voxel. observe_on_bridge()
+// reads inspect_voxel() at each of the 26 sites (all synchronous, one boundary)
+// and fills UiSnapshot::neighbors. Kept a SEPARATE observation from InspectVoxel
+// so the (26-read) gather is only issued when the neighbour sub-section is open —
+// a closed grid costs nothing, matching the collapse-by-default fps discipline.
+struct InspectNeighbors {
+    int x = 0;
+    int y = 0;
+    int z = 0;
+};
 struct RequestField {
     ftd::VisualFieldKind kind = ftd::VisualFieldKind::FluxVector;
     int stride = 1;
@@ -148,15 +158,16 @@ struct SeedRandomFlux {};
 using UiCommand = std::variant<
     SetToggle, SetToggleProfile, SetDouble, SetEnum, SetUInt, SetBoolConfig,
     SetBoundary, SetDt, SetSorIterations, LoadScenario, SetLatticeSize,
-    ApplyReboot, ResetToDefaults, InspectVoxel, InspectForce, RequestField,
-    SetOverlay, SetSheetHeight, SetForceStyle, RequestContinuity, RequestChargeSum,
-    SetTelemetryDemand,
+    ApplyReboot, ResetToDefaults, InspectVoxel, InspectForce, InspectNeighbors,
+    RequestField, SetOverlay, SetSheetHeight, SetForceStyle, RequestContinuity,
+    RequestChargeSum, SetTelemetryDemand,
     Pause, Step, Run, InjectWavepacket, InjectFluxAdd, CreateEntangledPair,
     ClearField, SeedRandomFlux>;
 
 inline bool is_observation_command(const UiCommand& command) {
     return std::holds_alternative<InspectVoxel>(command)
         || std::holds_alternative<InspectForce>(command)
+        || std::holds_alternative<InspectNeighbors>(command)
         || std::holds_alternative<RequestField>(command)
         || std::holds_alternative<RequestContinuity>(command)
         || std::holds_alternative<RequestChargeSum>(command)
@@ -181,7 +192,8 @@ inline bool is_coalescible_command(const UiCommand& command) {
     return std::holds_alternative<RequestField>(command)
         || std::holds_alternative<SetTelemetryDemand>(command)
         || std::holds_alternative<InspectVoxel>(command)
-        || std::holds_alternative<InspectForce>(command);
+        || std::holds_alternative<InspectForce>(command)
+        || std::holds_alternative<InspectNeighbors>(command);
 }
 
 }  // namespace ftd::native
