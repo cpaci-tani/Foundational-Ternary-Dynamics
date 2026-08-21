@@ -98,7 +98,7 @@ export const sections = [
             { id: 'e-field',  label: 'E-Field |E|\u00B2/2', unit: 'E*',
               compute: (hub) => hub.s0.audit?.EFieldEnergy ?? hub.s0.audit?.eFieldEnergy,
               trend: 'aud.eFieldEnergy' },
-            { id: 'b-field',  label: 'B-Field |B|\u00B2/2', unit: 'E*',
+            { id: 'b-field',  label: 'B-Field (c\u00B2/2)|B|\u00B2', unit: 'E*',
               compute: (hub) => hub.s0.audit?.BFieldEnergy ?? hub.s0.audit?.bFieldEnergy,
               trend: 'aud.bFieldEnergy' },
             { id: 'poynting', label: 'Poynting |S|',        unit: '|S|',

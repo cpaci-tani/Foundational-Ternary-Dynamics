@@ -96,11 +96,11 @@ export function getScale0OverlayTemplate() {
             title="Turn off every overlay in this column">&#10005;</button>
       </div>
       <button class="view-toggle field-toggle" id="toggle-e-field"
-          title="[SELECTION] Inductive electric field E = -∂J/∂t, drawn as streamlines. This is the temporal-gauge part ONLY — the engine's separately Poisson-solved Coulomb potential φ_C, which actually drives electrostatic force, is not included here, so a settled static charge renders almost nothing.">
-        <span class="field-swatch field-swatch-e-field"></span>E Field
+          title="[SELECTION] Radiative (inductive) electric field ONLY: E = -∂J/∂t (A≡J), drawn as streamlines. This is the temporal-gauge part only — the longitudinal Coulomb near-field -∇φ_C, which actually drives electrostatic force, is NOT included here, so a settled static charge renders almost nothing. The Coulomb field is available separately via the EM force overlay (Forces column — getEMForceField, real α/4π coupling).">
+        <span class="field-swatch field-swatch-e-field"></span>Radiative E (&minus;&part;J/&part;t)
       </button>
       <button class="view-toggle field-toggle" id="toggle-b-field"
-          title="[SELECTION] Magnetic field streamlines (B = ∇×J). Same curl operator as the &nabla;&times;J pseudovector in the Forces column, which is explicitly disclaimed there as a [PROXY] parity-odd pseudovector, not the SM weak force — this overlay's Maxwell identification carries the same honesty.">
+          title="[SELECTION] Magnetic field streamlines (B = ∇×J). Same curl operator as the &nabla;&times;J pseudovector in the Forces column, which is explicitly disclaimed there as a [PROXY] parity-even (axial) pseudovector, not the SM weak force — this overlay's Maxwell identification carries the same honesty.">
         <span class="field-swatch field-swatch-b-field"></span>B Field
       </button>
       <button class="view-toggle field-toggle" id="toggle-poynting"
@@ -136,7 +136,7 @@ export function getScale0OverlayTemplate() {
         <span class="field-swatch field-swatch-strong"></span>Strong
       </button>
       <button class="view-toggle field-toggle" id="toggle-force-weak"
-          title="[PROXY — VISUALIZATION ONLY] The curl ∇×J (a parity-even pseudovector) rendered as arrows, scaled by DUAL_DELTA ≈ 0.957. This is a vector-calculus view of J, NOT the SM weak force — FTD's weak interaction is state transmutation (weak_transmutation toggle). Companion to Vorticity |∇×J| (Topology). Lives in this column only to share the force-style selector. (audit P1-17, 2026-05-27)">
+          title="[PROXY — VISUALIZATION ONLY] The curl ∇×J (a parity-even (axial) pseudovector) rendered as arrows, scaled by DUAL_DELTA ≈ 0.957. This is a vector-calculus view of J, NOT the SM weak force — FTD's weak interaction is state transmutation (weak_transmutation toggle). Companion to Vorticity |∇×J| (Topology). Lives in this column only to share the force-style selector. (audit P1-17, 2026-05-27)">
         <span class="field-swatch field-swatch-weak"></span>&nabla;&times;J pseudovector
       </button>
     </div>

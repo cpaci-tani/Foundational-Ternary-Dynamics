@@ -176,7 +176,7 @@ Rendered by `engine/web/js/ui/panels/diagnostics-panel/descriptors/scale0.js`.
 | Metric | ID | Unit | Hub source | Trend buffer | Format |
 |---|---|---|---|---|---|
 | E-Field \|E\|²/2 | `e-field` | E* | `s0.audit.EFieldEnergy` (fallback `eFieldEnergy`) | `aud.eFieldEnergy` | computed |
-| B-Field \|B\|²/2 | `b-field` | E* | `s0.audit.BFieldEnergy` (fallback `bFieldEnergy`) | `aud.bFieldEnergy` | computed |
+| B-Field (c²/2)\|B\|² | `b-field` | E* | `s0.audit.BFieldEnergy` (fallback `bFieldEnergy`) | `aud.bFieldEnergy` | computed |
 | Poynting \|S\| | `poynting` | \|S\| | `\|s0.audit.totalPoynting\|` | `aud.poyntingMag` | computed |
 | Angular Mom | `ang-mom` | ℏ | `s0.diag.angMomX/Y/Z` | — | vector |
 

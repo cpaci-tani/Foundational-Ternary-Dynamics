@@ -234,6 +234,20 @@ inline constexpr double C_SPEED = 0.57735026918962576451;  // = C_WAVE = 1/sqrt(
 // scripts/proofs/proof_lorentz_recovery_hard.py.
 inline constexpr double C_WAVE = 0.57735026918962576451;  // 1/sqrt(3) [SELECTED]
 
+// Enforce the implementation contract stated in the C_SPEED comment above: the
+// Poynting/energy path uses C_SPEED while the flux wave equation uses C_WAVE,
+// and nothing else pins them equal. Assert the numerical unification at compile
+// time so the two named speeds cannot silently diverge. (Compile-time guard
+// only — introduces no runtime value and no golden-hash dependence; both
+// remain 1/sqrt(3). See FTD-0407.)
+//
+// Written with ordered comparisons rather than `==` so the guard stays clean
+// even under -Wfloat-equal: for the identical finite literals above,
+// !(a < b) && !(b < a) is exactly a == b.
+static_assert(!(C_SPEED < C_WAVE) && !(C_WAVE < C_SPEED),
+              "C_SPEED (energy/Poynting path) and C_WAVE (flux wave equation) "
+              "must remain numerically unified at 1/sqrt(3).");
+
 // Damping rate: γ = α [IMPOSED — identification γ = α is a parameter choice (ASSUMP.6)]
 //
 // The dissipation rate is set equal to the fine structure constant.
