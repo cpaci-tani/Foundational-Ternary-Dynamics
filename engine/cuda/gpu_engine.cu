@@ -212,7 +212,7 @@ __global__ void visual_particle_gather_kernel(
 }
 
 // Mirrors NativeEngineSession::capture()'s per-particle color assignment
-// (engine/native_desktop/src/engine_session.cpp) and Lattice::coord()'s
+// (engine/native/src/engine_session.cpp) and Lattice::coord()'s
 // (engine/include/ftd/lattice.h) world-position decode exactly, so
 // interop-rendered and CPU-rendered particles are visually identical -- this
 // is the fact Task 11's validation test checks. Lattice::index(x,y,z) packs
@@ -552,7 +552,7 @@ bool GpuEngine::device_luid(char out_luid[8]) const {
     // Checked as a heuristic signal that the LUID is unpopulated (non-WDDM).
     // CUDA's own docs only say this field's value is undefined on
     // TCC/non-Windows platforms, not that it's guaranteed zero there — this
-    // project's native_desktop target is WIN32-only with WDDM-mode consumer
+    // project's native app (engine/native) is WIN32-only with WDDM-mode consumer
     // GPUs, where zero is the observed no-LUID signal in practice.
     if (!prop.luidDeviceNodeMask) return false;
     std::memcpy(out_luid, prop.luid, sizeof(prop.luid));
@@ -570,7 +570,7 @@ bool GpuEngine::device_luid(char out_luid[8]) const {
 //
 // It still soft-fails (bool, no throw) rather than going through CUDA_CHECK,
 // matching this codebase's established pattern for one-time D3D12/CUDA setup
-// calls the native_desktop app probes rather than hard-crashes on (see
+// calls the native app's probes rather than hard-crashes on (see
 // D3D12Presenter::create_shared_particle_buffer(), which returns nullptr on
 // failure for the same reason: a missing/mismatched adapter or an
 // interop-hostile driver is a real, recoverable-by-the-caller outcome, not a
@@ -1163,7 +1163,7 @@ void GpuEngine::tick() {
             // is what makes the capturing tick a normal tick. No scratch
             // buffers and no state rollback are involved. Thread-local capture
             // mode is deliberate but currently defensive rather than load-
-            // bearing: today's only caller (engine/native_desktop/src/main.cpp)
+            // bearing: today's only caller (engine/native/src/app/main.cpp)
             // runs tick() and capture()/snapshot polling strictly sequentially
             // on one thread, so nothing actually issues legacy-stream work
             // concurrently with a capture in progress. ThreadLocal is chosen

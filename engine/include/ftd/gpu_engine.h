@@ -152,7 +152,7 @@ public:
     //      only say luid/luidDeviceNodeMask's value is "undefined on TCC and
     //      non-Windows platforms" — not that it is guaranteed zero there.
     //      Zero is the no-LUID signal observed in practice on this project's
-    //      WIN32-only, WDDM-mode-consumer-GPU native_desktop target, not a
+    //      WIN32-only, WDDM-mode-consumer-GPU native app, not a
     //      documented CUDA invalidity guarantee.
     bool device_luid(char out_luid[8]) const;
 
@@ -207,7 +207,7 @@ public:
     // external semaphore. Same handle-lifetime contract as
     // import_d3d12_particle_buffer(): this function does not take ownership
     // of the handle and does not require the caller to close it at any
-    // particular time -- native_desktop's main.cpp deliberately keeps
+    // particular time -- the native app's main.cpp deliberately keeps
     // interop_fence_handle open for the whole process lifetime (Interop
     // Task 12, commit 93d03a3c) to support re-import across reloads,
     // closing it only once near process exit.
@@ -324,7 +324,7 @@ public:
     // same key. Replay must be BIT-IDENTICAL to direct launch — that is what
     // test_gpu_graph_capture asserts. Toggle changes are rare, deliberate
     // user actions, so recapture is off the hot path. Default ON: this is the
-    // canonical interactive path for ftd_native_desktop. Set false to force
+    // canonical interactive path for the native app. Set false to force
     // direct kernel launches (the graph parity test does exactly that on one
     // of its two engines).
     bool graph_capture_enabled = true;
