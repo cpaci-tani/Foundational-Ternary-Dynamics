@@ -82,6 +82,14 @@ public:
 private:
     void apply_boundary();
 
+    // Map the app's DataNeeds telemetry-group mask → the NativeTelemetryScheduler
+    // Demand and hand it to the scheduler (only when the mask actually changed, so
+    // steady state never re-arms the producer). This is the wire that makes the
+    // otherwise-inert scheduler compute diagnostics/audit/lagrangian groups: with
+    // a zero mask latest() returns empty; with a non-zero mask pump() produces real
+    // CachedView data that build_snapshot() copies into the Scale0Snapshot.
+    void apply_telemetry_demand(const DataNeeds& needs);
+
     RunConfig                     cfg_;
     std::string                   scenario_;
     std::string                   status_;
@@ -92,6 +100,15 @@ private:
     Scale0Snapshot                boundary_snapshot_;  // accumulator for the boundary
     bool                          interop_enabled_ = false;
     std::uint32_t                 last_total_manifested_ = 0;
+
+    // Env-gated telemetry-scheduler diagnostics (FTD_TELEMETRY_DEBUG). Off by
+    // default (zero overhead); when set, build_snapshot() prints the scheduler's
+    // demand/availability/freshness and any suspension, so a future GPU-telemetry
+    // regression (async completion arriving stale, a device event fault) is one
+    // env var away from a live trace.
+    bool                          telemetry_debug_ = false;
+    bool                          telemetry_debug_suspended_seen_ = false;
+    int                           telemetry_debug_count_ = 0;
 
     // Active overlay SET (SetOverlay toggles membership). Empty → capture()
     // emits the ambient flux cloud (unchanged base view). Otherwise capture()

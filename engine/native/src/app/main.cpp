@@ -372,6 +372,28 @@ struct ShellData {
     bool insp_active = false;
     Rml::String insp_title;
     Rml::Vector<InspLine> insp_lines;
+    // ── Telemetry section (Scale-0 engine telemetry hub) ──────────────────────
+    // Collapsible + COLLAPSED by default (fps: the chart elements + legend rows
+    // live behind data-if="tel_open", so a closed section costs ~0 GUI work and
+    // the audit/lagrangian scheduler groups aren't demanded). The <ftd-chart>
+    // traces come from app-side ring buffers (registry-bound, drawn through the
+    // D3D12 line path); these strings are the throttled current-value + freshness
+    // legend read from the published Scale0Snapshot telemetry channels.
+    bool tel_open = false;
+    // Diagnostics group (always demanded; cheap cadence-1).
+    Rml::String tel_d_energy = "—";   // accounted total energy (E_curr)
+    Rml::String tel_d_manif = "—";    // manifested particle count
+    Rml::String tel_d_entropy = "—";  // total entropy
+    Rml::String tel_d_charge = "—";   // net charge (positive − negative)
+    Rml::String tel_diag_prov = "—";  // freshness: sampled tick of the diag group
+    // Audit / conservation group (demanded only while the section is open).
+    Rml::String tel_a_energy = "—";   // accounted total energy (audit reduction)
+    Rml::String tel_a_drift = "—";    // energy drift dE/dt (the conservation view)
+    Rml::String tel_a_gauss = "—";    // Gauss-law residual Σ|div J − s|²
+    Rml::String tel_audit_prov = "—"; // freshness: sampled tick of the audit group
+    // Lagrangian group (demanded only while the section is open).
+    Rml::String tel_l_lag = "—";      // total Lagrangian ℒ
+    Rml::String tel_l_ham = "—";      // total Hamiltonian ℋ
 };
 
 // ── Physics-control helpers (build + live-sync the toggle/config model) ──────
@@ -813,6 +835,22 @@ void request_toggle(AppContext* app, const std::string& name) {
 // the ResetToDefaults Scale-0 command; the snapshot reflects it next boundary.
 void request_reset_toggles(AppContext* app) {
     push_scale0(app, ftd::native::ResetToDefaults{});
+}
+
+// Publish the desired telemetry-group demand to the host (a core SetTelemetryDemand
+// command). The DIAGNOSTICS group is always requested — it is the cheap cadence-1
+// reduction that keeps the base charts populated even while the panel is closed —
+// and the heavier AUDIT + LAGRANGIAN groups are requested only while the telemetry
+// section is open. The host stores this on demand_ and the Scale-0 adapter maps it
+// onto the NativeTelemetryScheduler in build_snapshot(), so the scheduler starts
+// producing real diagnostics/audit/lagrangian CachedView data (it is otherwise
+// inert with a zero mask). Harmless on Scale 1 (its adapter ignores the mask).
+void request_telemetry_demand(AppContext* app, bool panel_open) {
+    ftd::native::DataNeeds needs;
+    needs.telemetry_groups = ftd::TELEMETRY_DIAGNOSTICS;
+    if (panel_open)
+        needs.telemetry_groups |= ftd::TELEMETRY_AUDIT | ftd::TELEMETRY_LAGRANGIAN;
+    push_core(app, ftd::native::SetTelemetryDemand{needs});
 }
 
 // Reboot the current scenario at a new lattice L (the one knob that reboots the
@@ -1320,6 +1358,11 @@ struct AppOptions {
     bool expand_all_tog = false;
     std::vector<std::string> expand_tog_groups;
     bool no_scroll = false;
+    // --open-telemetry pre-opens the (default-collapsed) telemetry section so a
+    // capture shows the populated diagnostics + conservation charts. It also flips
+    // the demand mask to include the audit/lagrangian groups (diagnostics is on
+    // regardless); collapsed by default so idle fps is unaffected.
+    bool open_telemetry = false;
     // Simulated control edits (interactive input can't run under --capture-frames).
     // These drive the SAME commands the −/＋ nudges and toggle clicks push, so the
     // captured snapshot reflects them: prove control works headlessly.
@@ -1381,6 +1424,8 @@ AppOptions parse_app_options(const std::vector<std::string>& args) {
             o.expand_tog_groups.push_back(args[++i]);
         } else if (args[i] == "--no-scroll") {
             o.no_scroll = true;
+        } else if (args[i] == "--open-telemetry") {
+            o.open_telemetry = true;
         } else if (args[i] == "--toggle-on" && i + 1 < args.size()) {
             o.toggles_on.push_back(args[++i]);
         } else if (args[i] == "--toggle-off" && i + 1 < args.size()) {
@@ -1603,15 +1648,43 @@ int run_app(const std::vector<std::string>& args) {
         }
     }
 
-    // ── Telemetry ring buffer + the <ftd-chart> instancer ──────────────────────
-    // The app owns the series (GUI thread), pushing one total-energy scalar per
-    // published snapshot below; the custom element reads it read-only. Declared
-    // here so both outlive Rml::Shutdown() (which releases the instanced elements
-    // back through the instancer). Registered after Rml::Initialise(), before
-    // LoadDocument parses <ftd-chart>. The engine telemetry scheduler is inert
-    // (demand mask 0), so this app-side buffer is the only source.
-    ftd::native::ui::ChartSeries energy_series(240);
-    ftd::native::ui::FtdChartInstancer chart_instancer(&energy_series);
+    // ── Telemetry ring buffers + the <ftd-chart> registry/instancer ────────────
+    // The app owns every series (GUI thread), pushing one scalar per published
+    // snapshot below; the custom elements read them read-only. Declared here so
+    // all outlive Rml::Shutdown() (which releases the instanced elements back
+    // through the instancer). The registry maps each chart's `id` → its coloured
+    // series set; the trace colours mirror the RCSS legend-chip classes (.s0..s4)
+    // so the legend and the traces agree. Registered after Rml::Initialise(),
+    // before LoadDocument parses <ftd-chart>.
+    //
+    // Sources (all from the published Scale0Snapshot):
+    //   chart-diag  ← telemetry.diagnostics (scheduler DIAGNOSTICS group) + the
+    //                 always-live energy_ledger; the base "what is the field doing"
+    //                 view (energy · manifested · entropy · net charge).
+    //   chart-audit ← telemetry.audit (scheduler AUDIT group) + energy_ledger.dE_dt;
+    //                 the "is energy conserved" view (accounted E · drift · Gauss).
+    //   chart-lagr  ← telemetry.lagrangian (scheduler LAGRANGIAN group); ℒ and ℋ.
+    using ftd::native::ui::ChartSeries;
+    ChartSeries diag_energy(240), diag_manif(240), diag_entropy(240), diag_charge(240);
+    ChartSeries aud_energy(240), aud_drift(240), aud_gauss(240);
+    ChartSeries lag_lag(240), lag_ham(240);
+    ftd::native::ui::ChartRegistry chart_registry;
+    {
+        using C = Rml::Colourb;
+        const C kBlue(106, 168, 224);    // .s0
+        const C kGreen(78, 203, 138);    // .s1
+        const C kAmber(224, 166, 58);    // .s2
+        const C kRed(224, 106, 106);     // .s3
+        const C kViolet(169, 138, 224);  // .s4
+        chart_registry.binding("chart-diag").series = {
+            {&diag_energy, kBlue}, {&diag_manif, kGreen},
+            {&diag_entropy, kAmber}, {&diag_charge, kRed}};
+        chart_registry.binding("chart-audit").series = {
+            {&aud_energy, kBlue}, {&aud_drift, kAmber}, {&aud_gauss, kRed}};
+        chart_registry.binding("chart-lagr").series = {
+            {&lag_lag, kBlue}, {&lag_ham, kViolet}};
+    }
+    ftd::native::ui::FtdChartInstancer chart_instancer(&chart_registry);
     Rml::Factory::RegisterElementInstancer("ftd-chart", &chart_instancer);
 
     AppContext app;
@@ -1779,6 +1852,19 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("insp_active", &data.insp_active);
     ctor.Bind("insp_title", &data.insp_title);
     ctor.Bind("insp_lines", &data.insp_lines);
+    // Telemetry section (collapsible; charts + legend live behind tel_open).
+    ctor.Bind("tel_open", &data.tel_open);
+    ctor.Bind("tel_d_energy", &data.tel_d_energy);
+    ctor.Bind("tel_d_manif", &data.tel_d_manif);
+    ctor.Bind("tel_d_entropy", &data.tel_d_entropy);
+    ctor.Bind("tel_d_charge", &data.tel_d_charge);
+    ctor.Bind("tel_diag_prov", &data.tel_diag_prov);
+    ctor.Bind("tel_a_energy", &data.tel_a_energy);
+    ctor.Bind("tel_a_drift", &data.tel_a_drift);
+    ctor.Bind("tel_a_gauss", &data.tel_a_gauss);
+    ctor.Bind("tel_audit_prov", &data.tel_audit_prov);
+    ctor.Bind("tel_l_lag", &data.tel_l_lag);
+    ctor.Bind("tel_l_ham", &data.tel_l_ham);
     ctor.BindEventCallback("run", [&app](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) {
         request_play_toggle(&app);
     });
@@ -1848,6 +1934,18 @@ int run_app(const std::vector<std::string>& args) {
     ctor.BindEventCallback("reset_toggles", [&app](Rml::DataModelHandle, Rml::Event&,
                                                    const Rml::VariantList&) {
         request_reset_toggles(&app);
+    });
+    // Telemetry section — expand/collapse the charts. Opening it flips the demand
+    // mask to add the heavier AUDIT + LAGRANGIAN scheduler groups (diagnostics is
+    // demanded regardless); closing it drops back to diagnostics-only so idle fps
+    // stays high. The charts/legend are gated by data-if="tel_open", so a closed
+    // section holds ~0 chart DOM (the physics/scenario-picker DOM-shrink pattern).
+    ctor.BindEventCallback("toggle_telemetry", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                      const Rml::VariantList&) {
+        if (!app.data) return;
+        app.data->tel_open = !app.data->tel_open;
+        request_telemetry_demand(&app, app.data->tel_open);
+        h.DirtyVariable("tel_open");
     });
     ctor.BindEventCallback("scale_lattice", [&app](Rml::DataModelHandle, Rml::Event&,
                                                    const Rml::VariantList&) {
@@ -2037,6 +2135,14 @@ int run_app(const std::vector<std::string>& args) {
         }
         if (app_opts.set_lattice > 0) request_lattice_reboot(&app, app_opts.set_lattice);
     }
+
+    // Telemetry: pre-open the section for a headless capture if requested, then
+    // publish the initial demand. DIAGNOSTICS is demanded regardless of the section
+    // state (cheap cadence-1 base charts); AUDIT + LAGRANGIAN follow when the
+    // section is open. Issued unconditionally (any start scale) so a later switch
+    // to Scale 0 already has a live demand on the host.
+    if (app_opts.open_telemetry) data.tel_open = true;
+    request_telemetry_demand(&app, data.tel_open);
 
     Rml::ElementDocument* doc = context->LoadDocument(FTD_RML_SHELL_PATH);
     if (!doc) throw std::runtime_error("LoadDocument(shell.rml) failed");
@@ -2454,6 +2560,43 @@ int run_app(const std::vector<std::string>& args) {
                 model.DirtyVariable("has_validation");
             }
             set_str("validation_msg", data.validation_msg, vfirst);
+
+            // ── Telemetry legend / current-value + freshness (Scale-0) ──
+            // Throttled with the cosmetic status readouts and only while the
+            // section is open (the values live behind data-if="tel_open", and a
+            // dirtied bound field forces a document reflow — the same fps guard the
+            // status bar uses). The values come from the published Scale0Snapshot
+            // telemetry channels the scheduler now fills; the "t=" provenance is the
+            // per-group sampled tick, so a slow audit group reads its own freshness
+            // rather than the fast diagnostics tick.
+            if (data.tel_open && push_status) {
+                const ftd::TelemetrySnapshot& tm = s0->telemetry;
+                const ftd::Diagnostics& dg = tm.diagnostics;
+                const ftd::EnergyAudit& au = tm.audit;
+                const ftd::TelemetryLagrangian& lg = tm.lagrangian;
+                set_str("tel_d_energy", data.tel_d_energy,
+                        fmt("%.2f", s0->energy_ledger.E_curr));
+                set_str("tel_d_manif", data.tel_d_manif,
+                        std::to_string(dg.manifested_count));
+                set_str("tel_d_entropy", data.tel_d_entropy,
+                        fmt("%.3f", dg.total_entropy));
+                set_str("tel_d_charge", data.tel_d_charge,
+                        std::to_string(dg.positive_count - dg.negative_count));
+                set_str("tel_diag_prov", data.tel_diag_prov,
+                        "t=" + std::to_string(tm.diagnostics_meta.tick));
+                set_str("tel_a_energy", data.tel_a_energy,
+                        fmt("%.2f", au.total_energy));
+                set_str("tel_a_drift", data.tel_a_drift,
+                        fmt("%+.4f", s0->energy_ledger.dE_dt));
+                set_str("tel_a_gauss", data.tel_a_gauss,
+                        fmt("%.2e", au.gauss_violation));
+                set_str("tel_audit_prov", data.tel_audit_prov,
+                        "t=" + std::to_string(tm.audit_meta.tick));
+                set_str("tel_l_lag", data.tel_l_lag,
+                        fmt("%.2f", lg.total_lagrangian));
+                set_str("tel_l_ham", data.tel_l_ham,
+                        fmt("%.2f", lg.total_hamiltonian));
+            }
         } else if (const ftd::native::Scale1Snapshot* s1 = snap ? snap->scale1() : nullptr) {
             chart_energy = s1->total_energy;
             chart_energy_valid = true;
@@ -2464,19 +2607,43 @@ int run_app(const std::vector<std::string>& args) {
             }
         }
 
-        // ── Feed the telemetry ring buffer (snapshot-only, GUI thread) ──
-        // Reset on a scale switch so Scale-0 energy is never plotted next to
-        // Scale-1 energy; push exactly one scalar per NEW published snapshot
-        // (dedup by seq — the GUI loop runs faster than the sim tick).
+        // ── Feed the telemetry ring buffers (snapshot-only, GUI thread) ──
+        // Reset every series on a scale switch so Scale-0 telemetry is never
+        // plotted next to Scale-1 telemetry; push exactly one scalar per NEW
+        // published snapshot (dedup by seq — the GUI loop runs faster than the sim
+        // tick). The DIAGNOSTICS channels are fed on every Scale-0 boundary so the
+        // base charts are already populated when the section is opened; the heavier
+        // AUDIT + LAGRANGIAN channels are fed only while the section is open (their
+        // scheduler groups are only demanded then).
         if (snap) {
             if (snap->active_scale != chart_series_scale) {
-                energy_series.clear();
+                diag_energy.clear(); diag_manif.clear(); diag_entropy.clear();
+                diag_charge.clear();
+                aud_energy.clear(); aud_drift.clear(); aud_gauss.clear();
+                lag_lag.clear(); lag_ham.clear();
                 chart_series_scale = snap->active_scale;
                 last_pushed_seq = 0;
                 pushed_any = false;
             }
             if (chart_energy_valid && (!pushed_any || snap->seq != last_pushed_seq)) {
-                energy_series.push(static_cast<float>(chart_energy));
+                // Energy trace is dual-scale (Scale-0 accounted E / Scale-1 total).
+                diag_energy.push(static_cast<float>(chart_energy));
+                if (const ftd::native::Scale0Snapshot* s0 = snap->scale0()) {
+                    const ftd::Diagnostics& dg = s0->telemetry.diagnostics;
+                    diag_manif.push(static_cast<float>(dg.manifested_count));
+                    diag_entropy.push(static_cast<float>(dg.total_entropy));
+                    diag_charge.push(
+                        static_cast<float>(dg.positive_count - dg.negative_count));
+                    if (data.tel_open) {
+                        const ftd::EnergyAudit& au = s0->telemetry.audit;
+                        aud_energy.push(static_cast<float>(au.total_energy));
+                        aud_drift.push(static_cast<float>(s0->energy_ledger.dE_dt));
+                        aud_gauss.push(static_cast<float>(au.gauss_violation));
+                        const ftd::TelemetryLagrangian& lg = s0->telemetry.lagrangian;
+                        lag_lag.push(static_cast<float>(lg.total_lagrangian));
+                        lag_ham.push(static_cast<float>(lg.total_hamiltonian));
+                    }
+                }
                 last_pushed_seq = snap->seq;
                 pushed_any = true;
             }

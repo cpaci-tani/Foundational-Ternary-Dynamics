@@ -463,19 +463,65 @@ body {
 .ro-v { color: #e0e7f1; font-family: JetBrains Mono; font-size: 12dp; }
 .ro-v.mono { font-size: 10dp; color: #9fb0c6; }
 
-/* ── telemetry chart ───────────────────────────────────────────────────── */
-/* Sits below the per-scale content; margin-top pushes it toward the panel
-   bottom. The <ftd-chart> element draws its series in its own `color`; the
-   frame/background here is RCSS chrome (SPEC §5). */
+/* ── telemetry hub (diagnostics · audit · lagrangian) ──────────────────── */
+/* Sits below the per-scale content. Collapsible: the header reuses the shared
+   .ctl-head chrome; the charts + legends live in .tel-body behind data-if so a
+   closed section costs ~0 DOM (fps). Each <ftd-chart> draws its coloured series
+   through the D3D12 line path; the RCSS frame/background here is chrome (SPEC
+   §5). The trace colours are set per-series in C++ (the ChartRegistry) and
+   mirrored by the legend-chip classes .s0..s4 below, so legend and trace agree. */
 .telemetry { display: flex; flex-direction: column; flex: 0 0 auto; margin-top: 16dp; }
+.tel-body { display: flex; flex-direction: column; }
 ftd-chart {
     display: block;
-    height: 120dp;
+    height: 94dp;
     padding: 6dp;
+    margin-bottom: 6dp;
     background-color: #0c1420;
     border: 1dp #2b3a50;
     border-radius: 4dp;
-    color: #6aa8e0;   /* the series stroke colour (read by the element) */
+    color: #6aa8e0;   /* baseline/opacity reference (per-series colours come from C++) */
+}
+/* Per-chart title row: the group name + a "t=" freshness tick for that group. */
+.tel-ctitle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5dp;
+}
+.tel-name {
+    font-family: JetBrains Mono;
+    font-size: 10dp;
+    color: #9fb0c6;
+    text-transform: uppercase;
+    letter-spacing: 1dp;
+}
+.tel-prov { font-family: JetBrains Mono; font-size: 9dp; color: #4a5a72; }
+/* Legend: one row per series — colour chip + label + current value. */
+.tel-legend { display: flex; flex-direction: column; margin-bottom: 10dp; }
+.tel-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 2dp 4dp;
+}
+.tel-chip {
+    width: 9dp; height: 9dp;
+    border-radius: 3dp;
+    margin-right: 8dp;
+    background-color: #6aa8e0;
+}
+.tel-chip.s0 { background-color: #6aa8e0; }  /* blue   */
+.tel-chip.s1 { background-color: #4ecb8a; }  /* green  */
+.tel-chip.s2 { background-color: #e0a63a; }  /* amber  */
+.tel-chip.s3 { background-color: #e06a6a; }  /* red    */
+.tel-chip.s4 { background-color: #a98ae0; }  /* violet */
+.tel-lbl { flex: 1 1 auto; font-family: Inter; font-size: 10dp; color: #8aa0bd; }
+.tel-val {
+    font-family: JetBrains Mono;
+    font-size: 10dp;
+    color: #e0e7f1;
 }
 
 /* ── click-to-inspect readout ──────────────────────────────────────────── */
