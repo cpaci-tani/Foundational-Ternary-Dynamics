@@ -1373,11 +1373,39 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
     // (solid + wireframe) through impl_->pso_sheet / pso_sheet_wire.
     std::vector<NativeSheetVertex> sheet_verts;
     std::vector<std::uint32_t> sheet_indices;
-    for (const NativeSheet& s : frame.field_sheets) {
-        if (s.vertices.empty() || s.indices.empty()) continue;
-        const std::uint32_t base = static_cast<std::uint32_t>(sheet_verts.size());
-        sheet_verts.insert(sheet_verts.end(), s.vertices.begin(), s.vertices.end());
-        for (std::uint32_t idx : s.indices) sheet_indices.push_back(base + idx);
+    // Order-independent-ish translucency for the sheets: the volume/heatmap passes
+    // are additive (already order-independent), but the sheets are alpha-blended
+    // (SRC_ALPHA/INV_SRC_ALPHA, depth-test no-write), so overlapping sheets composite
+    // correctly only when drawn back-to-front. They batch into one draw, so we
+    // concatenate them farthest-first: sort by centroid distance to the camera eye,
+    // then build the buffer in that order. ≤6 sheets (non-intersecting height-field
+    // planes), so the per-sheet centroid pass is negligible and a plane-sort is the
+    // right-sized fix (no weighted-blended-OIT machinery needed).
+    {
+        const std::size_t ns = frame.field_sheets.size();
+        std::vector<std::size_t> order;
+        std::vector<float> dist2(ns, 0.0f);
+        order.reserve(ns);
+        for (std::size_t i = 0; i < ns; ++i) {
+            const NativeSheet& s = frame.field_sheets[i];
+            if (s.vertices.empty() || s.indices.empty()) continue;
+            double cx = 0.0, cyc = 0.0, cz = 0.0;
+            for (const NativeSheetVertex& v : s.vertices) { cx += v.x; cyc += v.y; cz += v.z; }
+            const double inv = 1.0 / static_cast<double>(s.vertices.size());
+            const float dx = static_cast<float>(cx * inv) - eye_x;
+            const float dy = static_cast<float>(cyc * inv) - eye_y;
+            const float dz = static_cast<float>(cz * inv) - eye_z;
+            dist2[i] = dx * dx + dy * dy + dz * dz;
+            order.push_back(i);
+        }
+        std::sort(order.begin(), order.end(),
+                  [&](std::size_t a, std::size_t b) { return dist2[a] > dist2[b]; });
+        for (std::size_t i : order) {
+            const NativeSheet& s = frame.field_sheets[i];
+            const std::uint32_t base = static_cast<std::uint32_t>(sheet_verts.size());
+            sheet_verts.insert(sheet_verts.end(), s.vertices.begin(), s.vertices.end());
+            for (std::uint32_t idx : s.indices) sheet_indices.push_back(base + idx);
+        }
     }
     const UINT sheet_index_count = static_cast<UINT>(sheet_indices.size());
     const std::size_t sheet_vb_bytes = sheet_verts.size() * sizeof(NativeSheetVertex);
