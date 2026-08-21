@@ -361,6 +361,7 @@ struct ShellData {
     //    scenario picker uses.
     bool phys_open = false;
     bool cfg_open = false;
+    bool ov_open = false;
     Rml::Vector<ToggleGroupRow> toggle_groups;   // the 44 toggles, categorized
     Rml::Vector<ConfigRow> config_rows;          // dt / SOR / boundary / … + reset
     // Live validation banner: TermToggles::validate() (+ CPU runtime warnings)
@@ -1386,6 +1387,7 @@ struct AppOptions {
     // scroll-to-bottom so the shot shows the TOP of the panel.
     bool open_physics = false;
     bool open_config = false;
+    bool open_overlays = false;
     bool expand_all_tog = false;
     std::vector<std::string> expand_tog_groups;
     bool no_scroll = false;
@@ -1450,6 +1452,8 @@ AppOptions parse_app_options(const std::vector<std::string>& args) {
             o.open_physics = true;
         } else if (args[i] == "--open-config") {
             o.open_config = true;
+        } else if (args[i] == "--open-overlays") {
+            o.open_overlays = true;
         } else if (args[i] == "--open-controls") {   // both sections
             o.open_physics = true;
             o.open_config = true;
@@ -1904,6 +1908,7 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("running", &data.running);
     ctor.Bind("phys_open", &data.phys_open);
     ctor.Bind("cfg_open", &data.cfg_open);
+    ctor.Bind("ov_open", &data.ov_open);
     ctor.Bind("toggle_groups", &data.toggle_groups);
     ctor.Bind("config_rows", &data.config_rows);
     ctor.Bind("has_validation", &data.has_validation);
@@ -1989,6 +1994,14 @@ int run_app(const std::vector<std::string>& args) {
             app.data->config_rows.clear();
         h.DirtyVariable("cfg_open");
         h.DirtyVariable("config_rows");
+    });
+    // Field-overlays section collapse (matches Physics terms / Config): gates the
+    // 7 overlay columns + the force-style row behind ov_open. Collapsed by default.
+    ctor.BindEventCallback("toggle_overlays", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                     const Rml::VariantList&) {
+        if (!app.data) return;
+        app.data->ov_open = !app.data->ov_open;
+        h.DirtyVariable("ov_open");
     });
     // Config knob nudge: v[0] = knob key, v[1] = "-"/"+". Steps/cycles the value
     // (reading current from the live mirror) and pushes the matching command.
@@ -2250,6 +2263,7 @@ int run_app(const std::vector<std::string>& args) {
     // section is open. Issued unconditionally (any start scale) so a later switch
     // to Scale 0 already has a live demand on the host.
     if (app_opts.open_telemetry) data.tel_open = true;
+    if (app_opts.open_overlays) data.ov_open = true;
     request_telemetry_demand(&app, data.tel_open);
 
     Rml::ElementDocument* doc = context->LoadDocument(FTD_RML_SHELL_PATH);

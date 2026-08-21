@@ -266,7 +266,12 @@
                      row lights an LED when its overlay is in the active,
                      composited set. Built from the shared overlay registry, so
                      later tranches add rows without touching this markup. -->
-                <div class="panel-title fields-title">Field overlays</div>
+                <div class="section-head" data-event-click="toggle_overlays()">
+                    <span class="section-caret">{{ ov_open ? '&#9662;' : '&#9656;' }}</span>
+                    <span class="section-title">Field overlays</span>
+                    <span class="section-badge">overlays</span>
+                </div>
+                <div class="overlay-body" data-if="ov_open">
                 <div class="overlay-cols">
                     <div class="ov-col" data-for="col : overlay_columns">
                         <div class="section-head sub" data-event-click="toggle_overlay_col(col.title)">
@@ -303,6 +308,7 @@
                     <span class="fs-btn" data-class-on="force_style == 1" data-event-click="set_force_style(1)">Heatmap</span>
                     <span class="fs-btn" data-class-on="force_style == 2" data-event-click="set_force_style(2)">Flow</span>
                     <span class="fs-btn" data-class-on="force_style == 3" data-event-click="set_force_style(3)">Glyphs</span>
+                </div>
                 </div>
             </div>
 
