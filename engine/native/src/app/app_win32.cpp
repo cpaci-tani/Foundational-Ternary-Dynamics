@@ -53,7 +53,7 @@ bool save_png(const std::wstring& path, const std::uint8_t* rgba, UINT w, UINT h
 }
 
 // Bind stdout/stderr to the launching console so --capture-frames logging is
-// visible for a WIN32-subsystem exe (copied from the native_desktop reference).
+// visible for a WIN32-subsystem exe (copied from the retired native_desktop prototype).
 bool bind_crt_to_std_handle(DWORD std_id, int crt_fd) {
     HANDLE handle = GetStdHandle(std_id);
     if (handle == nullptr || handle == INVALID_HANDLE_VALUE) return false;

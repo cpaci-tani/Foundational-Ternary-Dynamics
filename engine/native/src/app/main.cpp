@@ -1,7 +1,7 @@
 // native_app — the live windowed FTD native application (M-UI-1..M-UI-3 fused).
 //
 // A real Win32 window whose swapchain is owned by D3D12Presenter. Two threads,
-// the same split the native_desktop reference (native_desktop/src/main.cpp) uses:
+// the same split the retired native_desktop prototype used (see git history):
 //   • sim thread   — owns a ScaleHost (Scale 0 behind the ScaleHost/ScaleAdapter
 //                    seam), ticks it, drains the CommandBus at the tick boundary,
 //                    publishes a HostSnapshot + a NativeFrame.
@@ -19,7 +19,7 @@
 // around it.
 //
 // On the GPU backend at Scale 0 this app wires the CUDA<->D3D12 zero-copy
-// interop path (mirroring the native_desktop reference): the presenter exposes
+// interop path (mirroring the retired native_desktop prototype): the presenter exposes
 // a shared particle buffer + a shared cross-API fence, CUDA imports both, and
 // the interop gather writes device-resident particles straight into that
 // buffer. The sim thread requests a gather + advances the shared fence each
@@ -1060,7 +1060,7 @@ int run_app(const std::vector<std::string>& args) {
     // The presenter owns a D3D12_HEAP_FLAG_SHARED particle buffer + a
     // D3D12_FENCE_FLAG_SHARED cross-API fence; CUDA imports both and the interop
     // gather writes device-resident particles straight into that buffer. Lifecycle
-    // mirrors the native_desktop reference: create + import once and keep the NT
+    // mirrors the retired native_desktop prototype: create + import once and keep the NT
     // handles open for the whole process, so every post-reload re-import targets
     // the SAME D3D12 resources (the presenter and its shared resources are never
     // recreated by a reload — only the CUDA GpuEngine is). Interop is Scale-0-only:
