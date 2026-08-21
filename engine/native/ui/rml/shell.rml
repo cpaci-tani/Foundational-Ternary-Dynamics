@@ -267,8 +267,39 @@
                     <span class="insp-close" data-event-click="clear_inspect()">&#10005;</span>
                 </div>
                 <div class="insp-lines">
-                    <div class="insp-row" data-for="ln : insp_lines">
+                    <div class="insp-row" data-for="ln : insp_lines" data-class-hdr="ln.header">
                         <span class="insp-k">{{ln.k}}</span><span class="insp-v">{{ln.v}}</span>
+                    </div>
+                </div>
+                <!-- 26-Moore-neighbour grid (Scale-0 voxel picks only; hidden for
+                     Scale-1 particles). Collapsible: while closed the cell vectors
+                     are empty (0 DOM) and native_app stops issuing the 26-read
+                     gather. Each cell is coloured by neighbour state (+ green /
+                     − red / void dim); a genuinely void site reads "0  —". -->
+                <div class="insp-neigh" data-if="insp_neigh_show">
+                    <div class="insp-neigh-head" data-event-click="toggle_insp_neigh()">
+                        <span class="insp-neigh-caret">{{ insp_neigh_open ? '&#9662;' : '&#9656;' }}</span>
+                        <span>26-neighbour Moore shell</span>
+                    </div>
+                    <div class="insp-neigh-body" data-if="insp_neigh_open">
+                        <div class="insp-neigh-grp">Faces (6)</div>
+                        <div class="insp-neigh-grid">
+                            <div class="ncell" data-for="c : insp_faces" data-class-npos="c.state == 1" data-class-nneg="c.state == -1">
+                                <span class="ncell-dir">{{c.dir}}</span><span class="ncell-v">{{c.val}}</span>
+                            </div>
+                        </div>
+                        <div class="insp-neigh-grp">Edges (12)</div>
+                        <div class="insp-neigh-grid">
+                            <div class="ncell" data-for="c : insp_edges" data-class-npos="c.state == 1" data-class-nneg="c.state == -1">
+                                <span class="ncell-dir">{{c.dir}}</span><span class="ncell-v">{{c.val}}</span>
+                            </div>
+                        </div>
+                        <div class="insp-neigh-grp">Corners (8)</div>
+                        <div class="insp-neigh-grid">
+                            <div class="ncell" data-for="c : insp_corners" data-class-npos="c.state == 1" data-class-nneg="c.state == -1">
+                                <span class="ncell-dir">{{c.dir}}</span><span class="ncell-v">{{c.val}}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

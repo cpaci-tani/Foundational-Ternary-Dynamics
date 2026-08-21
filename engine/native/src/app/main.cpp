@@ -295,9 +295,22 @@ struct OverlayColumnRow {
 };
 
 // One key/value line in the click-to-inspect readout (bound into the shell).
+// `header` marks a group divider (the value is empty; the key is a section
+// title rendered full-width) so the long full-voxel readout stays grouped.
 struct InspLine {
     Rml::String k;
     Rml::String v;
+    bool header = false;
+};
+
+// One Moore-neighbour cell in the 26-neighbour grid (bound into the shell).
+// `dir` labels the offset (e.g. "+X", "-Y+Z", "+X+Y+Z"); `val` carries the
+// state glyph + |flux| readout (or "·  —" when the site is void); `state`
+// (-1/0/+1) drives the colour class in RCSS.
+struct InspNeighCell {
+    Rml::String dir;
+    Rml::String val;
+    int state = 0;
 };
 
 // One Scale-0 scenario row in the Setup picker (bound into the shell). `current`
@@ -375,6 +388,18 @@ struct ShellData {
     bool insp_active = false;
     Rml::String insp_title;
     Rml::Vector<InspLine> insp_lines;
+    // 26-Moore-neighbour sub-section (Scale-0 voxel picks only). `insp_neigh_show`
+    // gates the whole sub-section (false for Scale-1 particle picks, which have no
+    // lattice neighbourhood). `insp_neigh_open` is the collapse state: while closed
+    // the three cell vectors are left EMPTY (0 DOM) AND the app stops issuing the
+    // 26-read InspectNeighbors gather — the same collapse-saves-work discipline the
+    // other panels use. Open by default so a pick shows the full neighbourhood; the
+    // grid only exists while a voxel is picked, so idle DOM/fps is untouched.
+    bool insp_neigh_show = false;
+    bool insp_neigh_open = true;
+    Rml::Vector<InspNeighCell> insp_faces;    // 6 face neighbours (shell 1)
+    Rml::Vector<InspNeighCell> insp_edges;    // 12 edge neighbours (shell 2)
+    Rml::Vector<InspNeighCell> insp_corners;  // 8 corner neighbours (shell 3)
     // ── Telemetry section (Scale-0 engine telemetry hub) ──────────────────────
     // Collapsible + COLLAPSED by default (fps: the chart elements + legend rows
     // live behind data-if="tel_open", so a closed section costs ~0 GUI work and
@@ -1836,8 +1861,15 @@ int run_app(const std::vector<std::string>& args) {
     if (auto irow = ctor.RegisterStruct<InspLine>()) {
         irow.RegisterMember("k", &InspLine::k);
         irow.RegisterMember("v", &InspLine::v);
+        irow.RegisterMember("header", &InspLine::header);
     }
     ctor.RegisterArray<Rml::Vector<InspLine>>();
+    if (auto ncell = ctor.RegisterStruct<InspNeighCell>()) {
+        ncell.RegisterMember("dir", &InspNeighCell::dir);
+        ncell.RegisterMember("val", &InspNeighCell::val);
+        ncell.RegisterMember("state", &InspNeighCell::state);
+    }
+    ctor.RegisterArray<Rml::Vector<InspNeighCell>>();
     if (auto srow = ctor.RegisterStruct<ScenarioRow>()) {
         srow.RegisterMember("id", &ScenarioRow::id);
         srow.RegisterMember("title", &ScenarioRow::title);
@@ -1879,6 +1911,11 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("insp_active", &data.insp_active);
     ctor.Bind("insp_title", &data.insp_title);
     ctor.Bind("insp_lines", &data.insp_lines);
+    ctor.Bind("insp_neigh_show", &data.insp_neigh_show);
+    ctor.Bind("insp_neigh_open", &data.insp_neigh_open);
+    ctor.Bind("insp_faces", &data.insp_faces);
+    ctor.Bind("insp_edges", &data.insp_edges);
+    ctor.Bind("insp_corners", &data.insp_corners);
     // Telemetry section (collapsible; charts + legend live behind tel_open).
     ctor.Bind("tel_open", &data.tel_open);
     ctor.Bind("tel_d_energy", &data.tel_d_energy);
@@ -2114,9 +2151,35 @@ int run_app(const std::vector<std::string>& args) {
         if (app.data && app.data->insp_active) {
             app.data->insp_active = false;
             app.data->insp_lines.clear();
+            app.data->insp_neigh_show = false;
+            app.data->insp_faces.clear();
+            app.data->insp_edges.clear();
+            app.data->insp_corners.clear();
             h.DirtyVariable("insp_active");
             h.DirtyVariable("insp_lines");
+            h.DirtyVariable("insp_neigh_show");
+            h.DirtyVariable("insp_faces");
+            h.DirtyVariable("insp_edges");
+            h.DirtyVariable("insp_corners");
         }
+    });
+    // Collapse/expand the 26-neighbour grid. Closing DROPS the three cell vectors
+    // (0 DOM) and — because the app only issues InspectNeighbors while the grid is
+    // open — also stops the 26-read gather; opening lets the next boundary refill
+    // both. Same collapse-saves-work discipline as the physics/telemetry panels.
+    ctor.BindEventCallback("toggle_insp_neigh", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                       const Rml::VariantList&) {
+        if (!app.data) return;
+        app.data->insp_neigh_open = !app.data->insp_neigh_open;
+        if (!app.data->insp_neigh_open) {
+            app.data->insp_faces.clear();
+            app.data->insp_edges.clear();
+            app.data->insp_corners.clear();
+            h.DirtyVariable("insp_faces");
+            h.DirtyVariable("insp_edges");
+            h.DirtyVariable("insp_corners");
+        }
+        h.DirtyVariable("insp_neigh_open");
     });
     Rml::DataModelHandle model = ctor.GetModelHandle();
     // Publish the handle to the app so wnd_proc's scroll-wheel height nudge can
@@ -2373,6 +2436,14 @@ int run_app(const std::vector<std::string>& args) {
     // last_inspect_scale drops the selection on a scale switch.
     std::uint64_t last_inspect_seq = 0;
     int last_inspect_scale = initial_scale;
+    // The 26-neighbour gather is heavier (26 synchronous reads) than the single
+    // voxel/force reads, and its data does not need full-rate refresh. Re-issue it
+    // at a throttled cadence (~1 in NEIGH_STRIDE boundaries) while the voxel/force
+    // readout stays live every boundary; the latch keeps the grid populated in
+    // between. last_neigh_seq is reset to 0 on a new pick to force an immediate
+    // first fill.
+    std::uint64_t last_neigh_seq = 0;
+    constexpr std::uint64_t NEIGH_STRIDE = 6;
 
     // The interop StructuredBuffer SRV (heap slot 0) only needs binding ONCE for
     // the lifetime of the never-recreated shared buffer. This catch-up covers both
@@ -2706,6 +2777,7 @@ int run_app(const std::vector<std::string>& args) {
             app.insp_has_data = false;
             last_inspect_scale = cur_scale;
             last_inspect_seq = 0;
+            last_neigh_seq = 0;
         }
         if (app.pick_pending) {
             app.pick_pending = false;
@@ -2736,13 +2808,26 @@ int run_app(const std::vector<std::string>& args) {
                 }
             }
             last_inspect_seq = 0;   // force an immediate re-issue for the new target
+            last_neigh_seq = 0;
         }
         // Re-issue the inspect command once per NEW published snapshot so the
         // adapter refreshes the inspection payload every boundary (live data).
         if (snap && app.inspect_kind != 0 && snap->seq != last_inspect_seq) {
             if (app.inspect_kind == 1) {
+                // Voxel + force readouts stay live at full rate (one cheap read each).
                 push_scale0(&app, ftd::native::InspectVoxel{app.inspect_vx, app.inspect_vy,
                                                             app.inspect_vz});
+                push_scale0(&app, ftd::native::InspectForce{app.inspect_vx, app.inspect_vy,
+                                                            app.inspect_vz});
+                // The 26-neighbour gather (26 reads) is heavier and only issued
+                // while the grid is open, at a throttled cadence — the latch keeps
+                // the cells populated between refreshes.
+                if (data.insp_neigh_open
+                    && snap->seq - last_neigh_seq >= NEIGH_STRIDE) {
+                    push_scale0(&app, ftd::native::InspectNeighbors{
+                                          app.inspect_vx, app.inspect_vy, app.inspect_vz});
+                    last_neigh_seq = snap->seq;
+                }
             } else if (app.inspect_kind == 2) {
                 push_scale1(&app, ftd::native::InspectParticle1{app.inspect_pidx});
             }
@@ -2753,8 +2838,16 @@ int run_app(const std::vector<std::string>& args) {
             if (data.insp_active) {
                 data.insp_active = false;
                 data.insp_lines.clear();
+                data.insp_neigh_show = false;
+                data.insp_faces.clear();
+                data.insp_edges.clear();
+                data.insp_corners.clear();
                 model.DirtyVariable("insp_active");
                 model.DirtyVariable("insp_lines");
+                model.DirtyVariable("insp_neigh_show");
+                model.DirtyVariable("insp_faces");
+                model.DirtyVariable("insp_edges");
+                model.DirtyVariable("insp_corners");
             }
         } else {
             Rml::String title;
@@ -2768,15 +2861,100 @@ int run_app(const std::vector<std::string>& args) {
                 const ftd::native::Scale0Snapshot* s0 = snap ? snap->scale0() : nullptr;
                 if (s0 && s0->voxel_present) {
                     const ftd::VoxelInspection& vi = s0->voxel;
-                    const ftd::Vec3& J = vi.voxel.flux;
-                    const double jmag = std::sqrt(J.x * J.x + J.y * J.y + J.z * J.z);
-                    const double cmag = std::sqrt(vi.curl.x * vi.curl.x + vi.curl.y * vi.curl.y
-                                                  + vi.curl.z * vi.curl.z);
-                    lines.push_back(InspLine{"State", std::to_string(static_cast<int>(vi.voxel.state))});
-                    lines.push_back(InspLine{"Flux J", fmt3("%.3f, %.3f, %.3f", J.x, J.y, J.z)});
-                    lines.push_back(InspLine{"|J|", fmt("%.4f", jmag)});
-                    lines.push_back(InspLine{"Div J", fmt("%.4f", vi.divergence)});
-                    lines.push_back(InspLine{"|Curl|", fmt("%.4f", cmag)});
+                    const ftd::Voxel& vx = vi.voxel;
+                    const ftd::Vec3& J = vx.flux;
+                    const double cmag = vi.curl.mag();
+                    // ── formatting helpers ──
+                    auto vec3s = [](const ftd::Vec3& a) {
+                        return fmt3("%.3f, %.3f, %.3f", a.x, a.y, a.z);
+                    };
+                    auto hdr = [&lines](const char* t) {
+                        lines.push_back(InspLine{t, "", true});
+                    };
+                    auto row = [&lines](const char* k, std::string v) {
+                        lines.push_back(InspLine{k, std::move(v), false});
+                    };
+                    auto spin_lbl = [](std::int8_t s) -> std::string {
+                        return s > 0 ? "up (+1)" : s < 0 ? "down (-1)" : "none (0)";
+                    };
+                    auto color_lbl = [](std::int8_t c) -> std::string {
+                        switch (c) {
+                            case 1: return "red (1)";
+                            case 2: return "green (2)";
+                            case 3: return "blue (3)";
+                            default: return "colorless (0)";
+                        }
+                    };
+                    auto flavor_lbl = [](std::int8_t f) -> std::string {
+                        switch (f) {
+                            case 1: return "e (1)";
+                            case 2: return "mu (2)";
+                            case 3: return "tau (3)";
+                            default: return "none (0)";
+                        }
+                    };
+                    // ── core (the original 5 rows, kept at the top) ──
+                    row("State", std::to_string(static_cast<int>(vx.state)));
+                    row("Flux J", vec3s(J));
+                    row("|J|", fmt("%.4f", J.mag()));
+                    row("Div J", fmt("%.4f", vi.divergence));
+                    row("|Curl|", fmt("%.4f", cmag));
+                    // ── field / kinematics ──
+                    hdr("Field / kinematics");
+                    row("Wave vel", vec3s(vx.wave_vel));
+                    row("Velocity", vec3s(vx.velocity));
+                    row("|v|", fmt("%.4f", vx.speed()));
+                    row("Remainder", vec3s(vx.remainder));
+                    // ── EM decomposition (E = -dJ/dt, B = curl J) ──
+                    hdr("EM (E=-dJ/dt, B=curl J)");
+                    row("E", vec3s(vi.em.E));
+                    row("|E|", fmt("%.4f", vi.em.E_mag));
+                    row("B", vec3s(vi.em.B));
+                    row("|B|", fmt("%.4f", vi.em.B_mag));
+                    row("Curl J", vec3s(vi.curl));
+                    // ── gravity / clock ──
+                    hdr("Gravity / clock");
+                    row("Latency L", fmt("%.4f", vx.latency));
+                    row("Tau", fmt("%.4f", vx.tau));
+                    row("Phase (de Broglie)", fmt("%.4f", vx.phase));
+                    row("Accel |a|", fmt("%.4f", vx.accel_mag));
+                    // ── quantum numbers / identity ──
+                    hdr("Quantum numbers / identity");
+                    row("Spin", spin_lbl(vx.spin));
+                    row("Color", color_lbl(vx.color));
+                    row("Flavor", flavor_lbl(vx.flavor));
+                    row("Particle id", std::to_string(vx.particle_id));
+                    row("Pair id", std::to_string(vx.pair_id));
+                    row("Locked", vx.locked ? "yes" : "no");
+                    // ── dual substrate (J = J_L + J_R) ──
+                    hdr("Dual substrate (J = J_L + J_R)");
+                    row("Flux L", vec3s(vx.flux_L));
+                    row("Flux R", vec3s(vx.flux_R));
+                    row("Wave L", vec3s(vx.wave_vel_L));
+                    row("Wave R", vec3s(vx.wave_vel_R));
+                    row("Chirality", fmt("%.4f", vx.chirality_density()));
+                    // ── strong / weak substrate ──
+                    hdr("Strong / weak substrate");
+                    row("Flux strong", vec3s(vx.flux_strong));
+                    row("Wave strong", vec3s(vx.wave_vel_strong));
+                    row("Flux weak", vec3s(vx.flux_weak));
+                    row("Wave weak", vec3s(vx.wave_vel_weak));
+                    // ── force channels (from InspectForce) ──
+                    if (s0->force_present) {
+                        auto force_row = [&lines](const char* name, const ftd::Vec3& f) {
+                            lines.push_back(InspLine{
+                                name,
+                                fmt("%.4f", f.mag())
+                                    + fmt3("  (%.3f, %.3f, %.3f)", f.x, f.y, f.z),
+                                false});
+                        };
+                        hdr("Forces (|F| + direction)");
+                        force_row("Coulomb", s0->force.f_coulomb);
+                        force_row("Strong", s0->force.f_strong);
+                        force_row("Magnetic", s0->force.f_magnetic);
+                        force_row("Gravity", s0->force.f_gravity);
+                        force_row("Exchange", s0->force.f_exchange);
+                    }
                     have_now = true;
                 }
             } else if (app.inspect_kind == 2) {
@@ -2818,6 +2996,62 @@ int run_app(const std::vector<std::string>& args) {
             if (!data.insp_active) {
                 data.insp_active = true;
                 model.DirtyVariable("insp_active");
+            }
+            // ── 26-Moore-neighbour grid ──────────────────────────────────────
+            // Only a Scale-0 voxel has a lattice neighbourhood; a Scale-1 particle
+            // hides the whole sub-section. When the grid is open and this snapshot
+            // carries a fresh gather (they land ~1/NEIGH_STRIDE boundaries), bucket
+            // the 26 cells by shell (face/edge/corner) into the bound vectors; the
+            // latch keeps the last cells between throttled refreshes.
+            if (app.inspect_kind == 1) {
+                if (!data.insp_neigh_show) {
+                    data.insp_neigh_show = true;
+                    model.DirtyVariable("insp_neigh_show");
+                }
+                const ftd::native::Scale0Snapshot* s0n = snap ? snap->scale0() : nullptr;
+                if (data.insp_neigh_open && s0n && s0n->neighbors_present) {
+                    Rml::Vector<InspNeighCell> faces, edges, corners;
+                    for (const ftd::native::NeighborCell& nc : s0n->neighbors) {
+                        if (!nc.present) continue;
+                        std::string dir;
+                        auto ax = [&dir](int d, char a) {
+                            if (d > 0) { dir += '+'; dir += a; }
+                            else if (d < 0) { dir += '-'; dir += a; }
+                        };
+                        ax(nc.dx, 'X');
+                        ax(nc.dy, 'Y');
+                        ax(nc.dz, 'Z');
+                        const bool voidcell = nc.state == 0 && nc.flux_mag < 1e-6;
+                        const char* glyph = nc.state > 0 ? "+" : nc.state < 0 ? "-" : "0";
+                        std::string val = std::string(glyph) + "  "
+                            + (voidcell ? std::string("\xE2\x80\x94")  // em dash
+                                        : fmt("%.3f", nc.flux_mag));
+                        InspNeighCell cell{dir, val, static_cast<int>(nc.state)};
+                        if (nc.shell == 1) faces.push_back(std::move(cell));
+                        else if (nc.shell == 2) edges.push_back(std::move(cell));
+                        else corners.push_back(std::move(cell));
+                    }
+                    data.insp_faces = std::move(faces);
+                    data.insp_edges = std::move(edges);
+                    data.insp_corners = std::move(corners);
+                    model.DirtyVariable("insp_faces");
+                    model.DirtyVariable("insp_edges");
+                    model.DirtyVariable("insp_corners");
+                }
+            } else {
+                if (data.insp_neigh_show) {
+                    data.insp_neigh_show = false;
+                    model.DirtyVariable("insp_neigh_show");
+                }
+                if (!data.insp_faces.empty() || !data.insp_edges.empty()
+                    || !data.insp_corners.empty()) {
+                    data.insp_faces.clear();
+                    data.insp_edges.clear();
+                    data.insp_corners.clear();
+                    model.DirtyVariable("insp_faces");
+                    model.DirtyVariable("insp_edges");
+                    model.DirtyVariable("insp_corners");
+                }
             }
         }
 

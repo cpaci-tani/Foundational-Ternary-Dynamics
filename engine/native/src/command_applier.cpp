@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <cstdlib>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
@@ -435,6 +436,40 @@ ObservationResult observe_on_bridge(ftd::RenderBridge& bridge, const UiCommand& 
                 snapshot.force.f_gravity = force.f_gravity;
                 snapshot.force.f_exchange = force.f_exchange;
                 snapshot.force_present = true;
+            } else if constexpr (std::is_same_v<T, InspectNeighbors>) {
+                if (clamp_index(bridge, cmd.x, cmd.y, cmd.z) < 0) {
+                    result.status = ObservationStatus::Rejected;
+                    result.message = "voxel out of range";
+                    return;
+                }
+                // Native reads are synchronous: gather all 26 Moore neighbours in
+                // this one boundary. Periodic wrap keeps every offset in range, so
+                // every cell is a real read (present=true); a genuinely void site
+                // surfaces as state==0 / flux_mag≈0 and the UI blanks it. Nothing
+                // here mutates the bridge — it is pure read-only view-state.
+                const int n = bridge.lattice().size();
+                int slot = 0;
+                for (int dz = -1; dz <= 1; ++dz) {
+                    for (int dy = -1; dy <= 1; ++dy) {
+                        for (int dx = -1; dx <= 1; ++dx) {
+                            if (dx == 0 && dy == 0 && dz == 0) continue;
+                            NeighborCell& c = snapshot.neighbors[slot++];
+                            c.dx = dx;
+                            c.dy = dy;
+                            c.dz = dz;
+                            c.shell = std::abs(dx) + std::abs(dy) + std::abs(dz);
+                            const ftd::VoxelInspection vi = bridge.inspect_voxel(
+                                wrap_coord(cmd.x + dx, n), wrap_coord(cmd.y + dy, n),
+                                wrap_coord(cmd.z + dz, n));
+                            c.state = vi.voxel.state;
+                            c.flux_mag = vi.voxel.flux.mag();
+                            c.locked = vi.voxel.locked;
+                            c.particle_id = vi.voxel.particle_id;
+                            c.present = true;
+                        }
+                    }
+                }
+                snapshot.neighbors_present = true;
             } else if constexpr (std::is_same_v<T, RequestField>) {
                 bridge.copy_visual_field_sample(cmd.kind, cmd.stride, snapshot.field_sample);
             } else if constexpr (std::is_same_v<T, RequestChargeSum>) {
