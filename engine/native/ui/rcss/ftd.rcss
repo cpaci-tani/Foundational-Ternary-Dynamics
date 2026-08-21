@@ -220,6 +220,142 @@ body {
 }
 .tog.on { color: #e0e7f1; border-color: #2f6db0; background-color: #16233a; }
 .tog.on .led { background-color: #6aa8e0; border-color: #6aa8e0; }
+/* Gated: this ENABLED toggle's current combo violates a requires/conflicts rule
+   (the engine's validate() would flag it). Amber ring, so an invalid state is
+   visible per-row (the banner names the first offending rule). */
+.tog.gated { border-color: #c99a3a; background-color: #2a2312; }
+.tog.gated .led { background-color: #e0a63a; border-color: #e0a63a; }
+/* Toggle row body: label + description subtitle + requires/conflicts metadata,
+   stacked to the right of the LED. */
+.tog-body { display: flex; flex-direction: column; flex: 1 1 auto; }
+.tog-desc {
+    color: #6b7d94;
+    font-family: Inter;
+    font-size: 9dp;
+    margin-top: 1dp;
+}
+.tog-req {
+    color: #c99a3a;
+    font-family: JetBrains Mono;
+    font-size: 8dp;
+    margin-top: 1dp;
+}
+
+/* ── collapsible control sections (Physics terms / Config & lattice) ───── */
+/* The section headers that gate the (DOM-heavy) toggle list + config knobs.
+   Collapsed by default so the live DOM stays small (fps). */
+.ctl-head {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 6dp 8dp;
+    margin-bottom: 8dp;
+    background-color: #0f1826;
+    border: 1dp #3a4c66;
+    border-radius: 4dp;
+    cursor: pointer;
+}
+.ctl-head:hover { border-color: #3a7ec4; }
+.ctl-caret { color: #67788f; font-size: 9dp; margin-right: 8dp; }
+.ctl-htitle {
+    flex: 1 1 auto;
+    font-family: JetBrains Mono;
+    font-size: 10dp;
+    color: #9fb0c6;
+    text-transform: uppercase;
+    letter-spacing: 1dp;
+}
+.ctl-hnote { font-family: JetBrains Mono; font-size: 9dp; color: #4a5a72; }
+
+/* Live validation banner (TermToggles::validate() + CPU gpu-only warnings). */
+.vbanner {
+    padding: 6dp 9dp;
+    margin-bottom: 10dp;
+    background-color: #2a1a12;
+    border: 1dp #c9743a;
+    border-radius: 4dp;
+    color: #f0b48a;
+    font-family: JetBrains Mono;
+    font-size: 10dp;
+}
+
+/* Toggle category groups (Core dynamics / Forces & gravity / …). */
+.tog-groups { display: flex; flex-direction: column; margin-bottom: 8dp; }
+.tog-group { display: flex; flex-direction: column; margin-bottom: 4dp; }
+.tog-group-head {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 3dp 4dp;
+    margin-bottom: 4dp;
+    cursor: pointer;
+}
+.tog-group-head:hover .tog-group-title { color: #dfe6f0; }
+.tog-group-title {
+    flex: 1 1 auto;
+    font-family: JetBrains Mono;
+    font-size: 9dp;
+    color: #67788f;
+    text-transform: uppercase;
+    letter-spacing: 1dp;
+}
+.tog-group-count { font-family: JetBrains Mono; font-size: 9dp; color: #4a5a72; }
+.tog-items { display: flex; flex-direction: column; }
+
+/* ── config knobs (dt / SOR / boundary / Langevin / … + lattice + reset) ── */
+.cfg-rows { display: flex; flex-direction: column; margin-bottom: 8dp; }
+.cfg-knob {
+    display: flex;
+    flex-direction: column;
+    padding: 4dp 8dp;
+    margin-bottom: 4dp;
+    border: 1dp #223047;
+    border-radius: 8dp;
+    background-color: #0f1826;
+}
+.cfg-line { display: flex; flex-direction: row; align-items: center; }
+.cfg-label {
+    flex: 1 1 auto;
+    font-family: JetBrains Mono;
+    font-size: 10dp;
+    color: #9fb0c6;
+}
+.cfg-nudge {
+    display: inline-block;
+    width: 18dp;
+    text-align: center;
+    padding: 1dp 0dp;
+    border: 1dp #2f6db0;
+    border-radius: 9dp;
+    color: #9fb0c6;
+    background-color: #12203a;
+    font-family: JetBrains Mono;
+    font-size: 12dp;
+    cursor: pointer;
+}
+.cfg-nudge:hover { color: #e6edf6; border-color: #6aa8e0; background-color: #18305a; }
+.cfg-val {
+    color: #e0e7f1;
+    font-family: JetBrains Mono;
+    font-size: 11dp;
+    margin: 0dp 6dp;
+    width: 62dp;
+    text-align: center;
+}
+.cfg-hint { color: #4a5a72; font-family: Inter; font-size: 8dp; margin-top: 2dp; }
+.cfg-reset {
+    padding: 6dp 10dp;
+    margin-top: 4dp;
+    text-align: center;
+    background-color: #182234;
+    border: 1dp #3a4c66;
+    border-radius: 4dp;
+    color: #dfe6f0;
+    font-family: JetBrains Mono;
+    font-size: 11dp;
+    cursor: pointer;
+}
+.cfg-reset:hover { background-color: #21304a; border-color: #3a7ec4; }
 
 /* ── field overlay panel (7 columns, multi-select) ────────────────────── */
 .fields-title { margin-top: 14dp; }
