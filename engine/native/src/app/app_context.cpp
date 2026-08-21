@@ -96,6 +96,8 @@ void request_telemetry_demand(AppContext* app) {
             needs.telemetry_groups |= ftd::TELEMETRY_AUDIT;   // E_wave for T_kin
         if (app->data->grav_open || app->data->time_open)
             needs.telemetry_groups |= ftd::TELEMETRY_GRAVITY;
+        if (app->data->spectrum_open)
+            needs.spectrum = true;   // adapter computes the flux E(k) this boundary
     }
     push_core(app, ftd::native::SetTelemetryDemand{needs});
 }

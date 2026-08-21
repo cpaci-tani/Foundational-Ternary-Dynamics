@@ -250,6 +250,16 @@ struct ShellData {
     Rml::String therm_entropy = "—";  // total entropy
     Rml::String therm_manif = "—";    // manifested (condensed) site count
     Rml::String therm_prov = "—";     // freshness: sampled tick of the audit group
+    // ── Spectrum instrument (lattice spectroscopy, Scale-0 analysis panel) ────
+    // The spatial energy spectrum E(k) of the flux field, computed by an adapter-
+    // side 3D FFT (native/spectrum.h; demand.spectrum). The <ftd-chart> plots the
+    // log E(k) curve from an app ring buffer; these readouts are the scalars.
+    bool spectrum_open = false;
+    Rml::String spec_peak_k = "—";    // |k| of the dominant (max-E) mode
+    Rml::String spec_power = "—";     // total power Σ|J|² (Parseval)
+    Rml::String spec_slope = "—";     // log-log spectral index
+    Rml::String spec_grid = "—";      // FFT grid M = nextPow2(L)
+    Rml::String spec_prov = "—";      // freshness note
 };
 
 // ── Toggle-panel builders (build + live-sync the toggle model). ──────────────

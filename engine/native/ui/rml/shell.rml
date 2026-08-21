@@ -211,6 +211,31 @@
                 </div>
             </div>
 
+            <!-- Spectrum instrument (Scale-0): lattice spectroscopy — the spatial
+                 energy spectrum E(k) of the flux field via an adapter-side 3D FFT.
+                 The chart is log E(k) vs radial |k|; the readouts are the dominant
+                 mode, total power (Parseval), and the log-log spectral index. -->
+            <div class="spectrum-sec" data-if="active_scale == 0">
+                <div class="section-head" data-event-click="toggle_spectrum()">
+                    <span class="section-caret">{{ spectrum_open ? '&#9662;' : '&#9656;' }}</span>
+                    <span class="section-title">Spectrum</span>
+                    <span class="section-badge">E(k) · FFT</span>
+                </div>
+                <div class="tel-body" data-if="spectrum_open">
+                    <div class="tel-ctitle">
+                        <span class="tel-name">Flux spectrum log E(k)</span>
+                        <span class="tel-prov">{{spec_prov}}</span>
+                    </div>
+                    <ftd-chart id="chart-spectrum"/>
+                    <div class="tel-legend">
+                        <div class="tel-row"><span class="tel-lbl">Peak |k|</span><span class="tel-val">{{spec_peak_k}}</span></div>
+                        <div class="tel-row"><span class="tel-lbl">Total power &#931;|J|&#178;</span><span class="tel-val">{{spec_power}}</span></div>
+                        <div class="tel-row"><span class="tel-lbl">Spectral index</span><span class="tel-val">{{spec_slope}}</span></div>
+                        <div class="tel-row"><span class="tel-lbl">FFT grid M</span><span class="tel-val">{{spec_grid}}</span></div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Click-to-inspect: appears when an entity is picked in the 3D
                  scene (data-if insp_active). insp_title names the target; each
                  insp_lines row is a live key/value read from the picked voxel
