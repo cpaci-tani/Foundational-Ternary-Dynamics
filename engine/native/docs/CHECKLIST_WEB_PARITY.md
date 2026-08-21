@@ -6,7 +6,7 @@ This is the running parity checklist: every capability the web dashboard (`engin
 
 **Legend:** ✅ done · ◐ partial · ▢ not started · ⭐ native-only (beyond web)
 
-**Where we stand:** the **Scale-0 substrate surface is essentially complete and at/beyond web parity** — real in-process engine (CPU + CUDA interop), all 33 field overlays incl. the 4 force render-styles + movable rubber sheets (⭐ beyond web), the full 44-toggle + config-knob control panel with live validation, the diagnostics/conservation/lagrangian telemetry charts, click-to-inspect, the scenario picker over a native 130-row catalog, and 100+ fps. **Remaining on Scale 0:** inspector completeness + render polish. **The bigger frontier is the other scales (1 GPU, 2/3, 4, 5, 6)** — deferred while Scale 0 is perfected.
+**Where we stand:** the **Scale-0 substrate surface is functionally COMPLETE and at/beyond web parity** — real in-process engine (CPU + CUDA interop), all 33 field overlays incl. the 4 force render-styles + movable rubber sheets (⭐ beyond web), the full 44-toggle + config-knob control panel with live validation, the diagnostics/conservation/lagrangian telemetry charts, the **full click-to-inspect with a walkable 26-neighbour cursor**, the scenario picker over a native 130-row catalog, and 60–140 fps. **Remaining on Scale 0:** only optional render polish — OIT (◐, acceptable) and JetBrains Mono (▢, needs a TTF) — plus surfacing epistemic tags in the picker (◐). **The bigger frontier is the other scales (1 GPU, 2/3, 4, 5, 6)** — deferred while Scale 0 is perfected.
 
 ---
 
@@ -55,13 +55,14 @@ This is the running parity checklist: every capability the web dashboard (`engin
 
 ---
 
-## D. Inspector
+## D. Inspector — ✅
 
 | Item | Status | Note |
 |---|---|---|
 | Click-to-inspect (viewport pick → panel) | ✅ | ray-pick; Scale-0 voxel State/Flux/\|J\|/Div/Curl, Scale-1 particle charge/pos/vel |
 | "Pending, never fabricated void" honesty | ✅ (n/a async) | native reads synchronous |
-| Full 20+ scalar voxel readout + 26-neighbour cursor | ◐ | **next Scale-0 item** — core fields shown; full set + neighbour walk pending |
+| Full 20+ scalar voxel readout (flux L/R, wave L/R, chirality, strong/weak substrate, 5 forces) | ✅ | `97184a15` |
+| 26-Moore-neighbour shell — display + **click-to-walk cursor** | ✅ | 6+12+8 cells (state glyph + \|flux\|); click a cell to retarget the inspection by its Moore offset (`94cca1e5`, verified walk == direct-inspect of the summed voxel); `--walk-neigh` headless hook |
 
 ---
 
@@ -135,13 +136,14 @@ This is the running parity checklist: every capability the web dashboard (`engin
 ## Progress log
 
 - **2026-08-20/21 — Scale-0 push (owner focus: "perfect Scale 0 first"):** overlays → **33/33** (force styles + Knot Zones + font) ✅ · **full physics control** (44 toggles + config knobs + validation) ✅ · **telemetry charts** (diagnostics/conservation/lagrangian, scheduler activated + GPU epoch fix) ✅ · fps fix (5→125) ✅ · scenario picker + catalog + 130-scenario audit ✅.
-- **Remaining on Scale 0:** inspector completeness (full voxel readout + 26-neighbour walk) → render polish (OIT, JetBrains Mono).
+- **2026-08-21 — inspector done + infra:** **inspector COMPLETE** — full 20+ scalar readout + forces (`97184a15`) and the **walkable 26-neighbour cursor** (`94cca1e5`) ✅ · **RmlUi reflow fps fix** — status bar moved to its own document, 5.7→62.7 fps with the 92-row picker open (`d7abf3c5`) + `--profile-ui` harness ✅ · FIELD OVERLAYS collapsible + panel-role swap ✅ · **main.cpp modularized 3,425→~1,950 lines** into 7 focused `src/app/` TUs (behavior-neutral) ✅.
+- **Remaining on Scale 0:** only optional render polish — OIT (cleaner translucency; current draw-order is acceptable) and JetBrains Mono (needs a TTF) — plus surfacing epistemic tags in the picker.
 - **Deferred (post-Scale-0):** the other scales (§A), the specialized analysis panels (§G), CI hardening (§H).
 
 ## Recommended order (Scale-0 first, per owner focus)
 
 1. ~~Finish the Scale-0 overlays~~ ✅ done
 2. ~~Full physics control~~ ✅ done · ~~Telemetry charts~~ ✅ done
-3. **Inspector completeness** — full 20+ voxel-field readout + the 26-Moore-neighbour cursor ← next
-4. **Scale-0 render polish** — OIT for cleaner translucency; JetBrains Mono
-5. *(post-Scale-0)* Scale 1 on CUDA → Scale 5 Cosmic + Scale 2/3 Atom → Scale 4/6 → the specialized panels → CI hardening
+3. ~~Inspector completeness~~ ✅ done — full readout + forces + walkable 26-neighbour cursor
+4. **Scale-0 render polish** — OIT for cleaner translucency; JetBrains Mono (needs a TTF) ← only Scale-0 items left (both optional)
+5. *(Scale 0 now functionally complete)* Scale 1 on CUDA → Scale 5 Cosmic + Scale 2/3 Atom → Scale 4/6 → the specialized panels → CI hardening
