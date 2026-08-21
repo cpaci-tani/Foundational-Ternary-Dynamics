@@ -1409,6 +1409,17 @@ struct AppOptions {
     // --force-style <arrows|heatmap|flow|glyphs>. Stamped at boot so a headless
     // capture of a Force overlay shows that style. Empty = Arrows (default).
     std::string force_style;
+    // ── UI-profiling spike (--profile-ui N): run N frames timing RmlUi Update()
+    //    (reflow) and presenter.render() (geometry), bucketed by whether the ~8/s
+    //    status push dirtied a bound field that frame, then print a report and exit.
+    //    --scn-open opens the picker; --scn-expand-cat K expands category K (1-based)
+    //    so the profiler sees a large list. --profile-freeze-status forces the status
+    //    push OFF — the control that isolates single-document reflow coupling from
+    //    the mere presence of the DOM.
+    int  profile_ui_frames = 0;
+    bool scn_open = false;
+    int  scn_expand_cat = 0;   // 1-based index into kScenarioCategories; 0 = none
+    bool profile_freeze_status = false;
 };
 
 AppOptions parse_app_options(const std::vector<std::string>& args) {
@@ -1482,6 +1493,15 @@ AppOptions parse_app_options(const std::vector<std::string>& args) {
             o.set_lattice = std::atoi(args[++i].c_str());
         } else if (args[i] == "--force-style" && i + 1 < args.size()) {
             o.force_style = args[++i];
+        } else if (args[i] == "--profile-ui" && i + 1 < args.size()) {
+            o.profile_ui_frames = std::max(1, std::atoi(args[++i].c_str()));
+        } else if (args[i] == "--scn-open") {
+            o.scn_open = true;
+        } else if (args[i] == "--scn-expand-cat" && i + 1 < args.size()) {
+            o.scn_expand_cat = std::atoi(args[++i].c_str());
+            o.scn_open = true;
+        } else if (args[i] == "--profile-freeze-status") {
+            o.profile_freeze_status = true;
         }
     }
     return o;
@@ -1823,6 +1843,26 @@ int run_app(const std::vector<std::string>& args) {
             std::cerr << "native_app: --pick-scenario '" << pick
                       << "' not in catalog; ignored\n" << std::flush;
         }
+    }
+
+    // UI-profiling spike: open the picker and expand a full category (no filter),
+    // so the profiler measures the reflow cost of a LARGE list. Deliberately
+    // distinct from --pick-scenario (which seeds a filter to SHRINK the list).
+    if (app_opts.scn_open || app_opts.scn_expand_cat > 0) {
+        data.scn_open = true;
+        app.scenario_filter.clear();
+        const int ncat =
+            static_cast<int>(sizeof(kScenarioCategories) / sizeof(kScenarioCategories[0]));
+        if (app_opts.scn_expand_cat >= 1 && app_opts.scn_expand_cat <= ncat) {
+            app.scn_expanded_groups.assign(
+                1, kScenarioCategories[app_opts.scn_expand_cat - 1]);
+        }
+        rebuild_scenario_view(&data, app.scenario_id, app.scenario_filter,
+                              app.scn_expanded_groups);
+        std::cout << "native_app: profile picker open, expand_cat="
+                  << app_opts.scn_expand_cat << " ("
+                  << data.scenario_groups.size() << " groups)\n"
+                  << std::flush;
     }
 
     Rml::DataModelConstructor ctor = context->CreateDataModel("shell");
@@ -2485,6 +2525,26 @@ int run_app(const std::vector<std::string>& args) {
     auto last_status_push = std::chrono::steady_clock::now();
     bool status_first = true;
 
+    // ── UI-profiling accumulators (--profile-ui) ──────────────────────────────
+    // Per-frame Update()/render() wall-times, split by whether the status push
+    // dirtied a bound field that frame. With a static scenario + telemetry closed,
+    // the status push is the ONLY thing that dirties, so "status-push" vs "quiet"
+    // frames isolate reflow-on-dirty from the steady-state (nothing-dirty) cost.
+    std::vector<double> prof_upd_push, prof_upd_quiet, prof_rnd_push, prof_rnd_quiet;
+    auto prof_stats = [](std::vector<double> v) {
+        struct S { std::size_t n; double mean, p50, p95, mx; };
+        if (v.empty()) return S{0, 0.0, 0.0, 0.0, 0.0};
+        std::sort(v.begin(), v.end());
+        double sum = 0.0;
+        for (double x : v) sum += x;
+        auto pct = [&](double p) {
+            return v[std::min(v.size() - 1,
+                              static_cast<std::size_t>(p * (v.size() - 1) + 0.5))];
+        };
+        return S{v.size(), sum / static_cast<double>(v.size()), pct(0.5), pct(0.95),
+                 v.back()};
+    };
+
     const auto loop_start = std::chrono::steady_clock::now();
     bool quit = false;
     MSG msg{};
@@ -2587,8 +2647,12 @@ int run_app(const std::vector<std::string>& args) {
 
         // Throttle gate for the cosmetic status readouts (see kStatusPushInterval).
         const auto now_status = std::chrono::steady_clock::now();
-        const bool push_status =
+        bool push_status =
             status_first || (now_status - last_status_push) >= kStatusPushInterval;
+        // Profiling control: force the ~8/s status push OFF so a large expanded list
+        // stays STATIC (no DirtyVariable). If fps then recovers, the cost was
+        // reflow-on-status-dirty (single-document coupling), not the DOM's presence.
+        if (app_opts.profile_freeze_status) push_status = false;
         if (push_status) { last_status_push = now_status; status_first = false; }
 
         if (push_status) set_int("tick", data.tick, frame.tick);
@@ -3081,7 +3145,12 @@ int run_app(const std::vector<std::string>& args) {
         }
 
         // Lay out, then map the #viewport hole rect for the scene + input.
+        const auto t_upd0 = std::chrono::steady_clock::now();
         context->Update();
+        const double upd_ms = std::chrono::duration<double, std::milli>(
+                                  std::chrono::steady_clock::now() - t_upd0)
+                                  .count();
+        double render_ms = 0.0;   // set inside the render block below (profiling)
         if (Rml::Element* vp = doc->GetElementById("viewport")) {
             const Rml::Vector2f off = vp->GetAbsoluteOffset(Rml::BoxArea::Border);
             const int w = static_cast<int>(vp->GetOffsetWidth());
@@ -3194,7 +3263,11 @@ int run_app(const std::vector<std::string>& args) {
                 if (draw_interop_count != 0) {
                     presenter.wait_shared_fence(this_frame_fence_value);
                 }
+                const auto t_rnd0 = std::chrono::steady_clock::now();
                 presenter.render(frame, camera, view_opts, draw_interop_count);
+                render_ms = std::chrono::duration<double, std::milli>(
+                                std::chrono::steady_clock::now() - t_rnd0)
+                                .count();
             } catch (const std::exception& ex) {
                 std::cerr << "render threw at frame " << frame_no << ": " << ex.what() << "\n"
                           << std::flush;
@@ -3203,7 +3276,36 @@ int run_app(const std::vector<std::string>& args) {
                 throw;
             }
         }
+        if (app_opts.profile_ui_frames > 0) {
+            (push_status ? prof_upd_push : prof_upd_quiet).push_back(upd_ms);
+            (push_status ? prof_rnd_push : prof_rnd_quiet).push_back(render_ms);
+        }
         ++frame_no;
+        if (app_opts.profile_ui_frames > 0 && frame_no >= app_opts.profile_ui_frames) {
+            const double wall = std::chrono::duration<double>(
+                                    std::chrono::steady_clock::now() - loop_start)
+                                    .count();
+            auto line = [](const char* label, auto s) {
+                char buf[160];
+                std::snprintf(buf, sizeof(buf),
+                              "  %s  n=%llu mean=%.3f p50=%.3f p95=%.3f max=%.3f ms\n",
+                              label, static_cast<unsigned long long>(s.n), s.mean,
+                              s.p50, s.p95, s.mx);
+                std::cout << buf;
+            };
+            std::cout << "\n=== UI PROFILE  frames=" << frame_no
+                      << "  wall=" << fmt("%.1f", wall) << "s"
+                      << "  fps_avg=" << fmt("%.1f", frame_no / (wall > 0 ? wall : 1))
+                      << (app_opts.profile_freeze_status ? "  [status FROZEN]" : "")
+                      << "  scn_open=" << (data.scn_open ? 1 : 0)
+                      << "  expand_cat=" << app_opts.scn_expand_cat << " ===\n";
+            line("Update() push ", prof_stats(prof_upd_push));
+            line("Update() quiet", prof_stats(prof_upd_quiet));
+            line("render() push ", prof_stats(prof_rnd_push));
+            line("render() quiet", prof_stats(prof_rnd_quiet));
+            std::cout.flush();
+            quit = true;
+        }
 
         // Interactive: yield a little so the sim thread gets CPU; capture mode
         // spins to reach the readback fast.
