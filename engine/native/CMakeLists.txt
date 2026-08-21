@@ -267,6 +267,7 @@ if(WIN32)
         src/app/app_options.cpp
         src/app/app_util.cpp
         src/app/ui_model.cpp
+        src/app/app_context.cpp
         src/d3d12_presenter.cpp)
     target_include_directories(native_app PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include
