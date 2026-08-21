@@ -212,6 +212,21 @@ struct ShellData {
     // Lagrangian group (demanded only while the section is open).
     Rml::String tel_l_lag = "—";      // total Lagrangian
     Rml::String tel_l_ham = "—";      // total Hamiltonian
+    // ── Gravity instrument (Scale-0 analysis panel) ───────────────────────────
+    // A collapsible instrument reading the engine's GravityMetricAgg (the REAL
+    // C++ latency field from the Poisson solver — voxel.latency, not the |J|² web
+    // proxy): potential L, lapse f = 1−L², γ, time dilation, and the active-voxel
+    // count. Demands the TELEMETRY_GRAVITY scheduler group only while open (fps).
+    bool grav_open = false;
+    Rml::String grav_l_max = "—";     // max voxel.latency (gravity potential L)
+    Rml::String grav_l_mean = "—";    // mean L over voxels with L>0
+    Rml::String grav_f_min = "—";     // min lapse f = 1 − L_max²  (deepest dilation)
+    Rml::String grav_gamma = "—";     // max gamma_ftd()
+    Rml::String grav_dilation = "—";  // (1 − √f_min)·100 %  (time dilation)
+    Rml::String grav_voxels = "—";    // voxels with latency > 0
+    Rml::String grav_prov = "—";      // freshness: sampled tick of the gravity group
+    Rml::String grav_status = "";     // "term off" / "on, no field yet" note
+    bool grav_inactive = false;       // gate the status note (requested && !active, or off)
 };
 
 // ── Toggle-panel builders (build + live-sync the toggle model). ──────────────

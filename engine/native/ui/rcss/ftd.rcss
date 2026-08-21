@@ -555,6 +555,17 @@ ftd-chart {
     font-size: 10dp;
     color: #e0e7f1;
 }
+/* Gravity-instrument status note (amber): gravity terms off, or on-but-trivial. */
+.grav-note {
+    margin-top: 6dp;
+    padding: 5dp 8dp;
+    border-radius: 4dp;
+    background-color: #241f12;
+    border: 1dp #6e5a2a;
+    color: #d9b25a;
+    font-family: Inter;
+    font-size: 9dp;
+}
 
 /* ── click-to-inspect readout ──────────────────────────────────────────── */
 /* Shown (data-if insp_active) when an entity is picked in the 3D scene. Lives
