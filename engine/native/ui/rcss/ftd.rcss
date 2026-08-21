@@ -107,6 +107,23 @@ body {
    even with all groups expanded. */
 .scn-picker { display: flex; flex-direction: column; flex: 0 1 auto; min-height: 0dp; margin-bottom: 12dp; }
 .scn-picker .field { margin-bottom: 8dp; }
+/* Collapsible picker header ("Scenarios ▾ <current>") — the always-present row
+   that toggles the (DOM-heavy) list open/closed. */
+.scn-picker-head {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 6dp 8dp;
+    margin-bottom: 8dp;
+    background-color: #0f1826;
+    border: 1dp #3a4c66;
+    border-radius: 4dp;
+    cursor: pointer;
+}
+.scn-picker-head:hover { border-color: #3a7ec4; }
+.scn-picker-head .fl { margin-bottom: 0dp; margin-right: 8dp; }
+.scn-picker-head .scn-cur { flex: 1 1 auto; }
+.scn-open { display: flex; flex-direction: column; flex: 0 1 auto; min-height: 0dp; }
 .scn-search {
     padding: 6dp 9dp;
     margin-bottom: 8dp;

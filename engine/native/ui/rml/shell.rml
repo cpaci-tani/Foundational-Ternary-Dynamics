@@ -33,20 +33,32 @@
                  live-reboot path Reset uses — so the engine reloads into it and
                  the overlays/scene refresh. Scale 1 has its own seed vocabulary,
                  so the picker is Scale-0 only (Scale 1 shows a plain readout). -->
+            <!-- COLLAPSED by default: only the header row is in the DOM. Clicking
+                 it flips `scn_open`, which (a) reveals the search + list via the
+                 data-if below and (b) makes native_app rebuild `scenario_groups`
+                 from the catalog. While closed, `scenario_groups` is empty, so the
+                 nested data-for instantiates ~0 scenario <div>s — the reason the
+                 closed picker costs nothing per frame. -->
             <div class="scn-picker" data-if="active_scale == 0">
-                <div class="field"><span class="fl">Scenario</span><span class="select mono">{{scenario}}</span></div>
-                <input type="text" class="scn-search" placeholder="Search scenarios…" data-event-change="filter_scenarios"/>
-                <div class="scn-list">
-                    <div class="scn-group" data-for="g : scenario_groups">
-                        <div class="scn-group-head" data-if="g.has_visible" data-event-click="toggle_scenario_group(g.title)">
-                            <span class="scn-caret">{{ g.expanded ? '&#9662;' : '&#9656;' }}</span>
-                            <span class="scn-group-title">{{g.title}}</span>
-                            <span class="scn-count">{{g.count}}</span>
-                        </div>
-                        <div class="scn-items" data-if="g.show_items">
-                            <div class="scn-row" data-for="s : g.items">
-                                <div class="scn-item" data-if="s.visible" data-class-cur="s.current" data-event-click="select_scenario(s.id)">
-                                    <span class="scn-title">{{s.title}}</span>
+                <div class="scn-picker-head" data-event-click="toggle_scn_picker()">
+                    <span class="scn-caret">{{ scn_open ? '&#9662;' : '&#9656;' }}</span>
+                    <span class="fl">Scenarios</span>
+                    <span class="select mono scn-cur">{{scenario}}</span>
+                </div>
+                <div class="scn-open" data-if="scn_open">
+                    <input type="text" class="scn-search" placeholder="Search scenarios…" data-event-change="filter_scenarios"/>
+                    <div class="scn-list">
+                        <div class="scn-group" data-for="g : scenario_groups">
+                            <div class="scn-group-head" data-if="g.has_visible" data-event-click="toggle_scenario_group(g.title)">
+                                <span class="scn-caret">{{ g.expanded ? '&#9662;' : '&#9656;' }}</span>
+                                <span class="scn-group-title">{{g.title}}</span>
+                                <span class="scn-count">{{g.count}}</span>
+                            </div>
+                            <div class="scn-items" data-if="g.show_items">
+                                <div class="scn-row" data-for="s : g.items">
+                                    <div class="scn-item" data-if="s.visible" data-class-cur="s.current" data-event-click="select_scenario(s.id)">
+                                        <span class="scn-title">{{s.title}}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>

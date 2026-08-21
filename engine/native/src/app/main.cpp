@@ -230,6 +230,12 @@ struct ShellData {
     // Setup scenario picker (Scale-0). The ~130 native-catalog scenarios grouped
     // into the 5 honest classes, searchable + collapsible. A pick issues the
     // LoadScenario core command (the Reset path) — a live scenario reboot.
+    // `scn_open` gates the whole list: COLLAPSED by default (the "Scenarios ▾"
+    // header expands it). While collapsed, `scenario_groups` is left EMPTY so the
+    // data-for instantiates ~0 scenario <div>s — the ~130-item DOM (which forced a
+    // full-document RmlUi relayout + geometry regen every frame) simply does not
+    // exist until the user opens the picker.
+    bool scn_open = false;
     Rml::Vector<ScenarioGroupRow> scenario_groups;
     // Click-to-inspect readout. `insp_active` gates the panel section (data-if);
     // `insp_title` names the picked entity; `insp_lines` are its live fields.
@@ -305,54 +311,59 @@ constexpr const char* kScenarioCategories[] = {
     "5. Macroscopic Physics & Measurement",
 };
 
-// Build the Setup scenario picker model from the native scenario catalog
-// (native/scenario_catalog.h): the ~130 Scale-0 scenarios bucketed into the 5
-// classes, preserving catalog order within each class. `current` highlights the
-// row whose id matches the loaded scenario. Groups start expanded; the search
-// filter starts empty (everything visible).
-Rml::Vector<ScenarioGroupRow> build_scenario_groups(const std::string& current) {
-    Rml::Vector<ScenarioGroupRow> groups;
+// Rebuild the Setup picker view (data->scenario_groups) from the native scenario
+// catalog (native/scenario_catalog.h), honoring the live search filter and the
+// per-group expanded set. This is the DOM-shrink half of the framerate fix: only
+// a group that is EXPANDED (or force-opened by an active filter) instantiates its
+// matching item rows, and a filter keeps only matching rows — so the live
+// scenario DOM stays small in every browsing state (0 rows when the picker is
+// closed, a handful when one group is open or a filter is active, instead of all
+// ~130 <div>s at once). Every rebuild is a user-action event (open / filter /
+// group toggle), never per-frame. `current` highlights the loaded scenario;
+// `expanded` holds the titles of the groups the user has opened.
+void rebuild_scenario_view(ShellData* data, const std::string& current,
+                           const std::string& raw_filter,
+                           const std::vector<std::string>& expanded) {
+    if (!data) return;
+    data->scenario_groups.clear();
+    const std::string f = to_lower(raw_filter);
+    const bool filtering = !f.empty();
     for (const char* cat : kScenarioCategories) {
+        // A filter force-opens every matching group; otherwise honor the user's
+        // per-group expanded state. Closed groups instantiate zero item rows.
+        const bool is_open =
+            filtering
+            || std::find(expanded.begin(), expanded.end(), std::string(cat))
+                   != expanded.end();
         ScenarioGroupRow g;
         g.title = cat;
-        g.expanded = true;
+        bool any_in_cat = false;
+        int matches = 0;
         for (const ftd::native::ScenarioMeta& m : ftd::native::SCENARIO_META) {
             if (std::string_view(m.category) != cat) continue;
-            ScenarioRow r;
-            r.id = m.id;
-            r.title = m.title;
-            r.current = (current == m.id);
-            r.visible = true;
-            r.search = to_lower(std::string(m.title) + " " + m.id + " "
-                                + (m.tags ? m.tags : ""));
-            g.items.push_back(std::move(r));
+            any_in_cat = true;
+            const bool hit =
+                !filtering
+                || to_lower(std::string(m.title) + " " + m.id + " "
+                            + (m.tags ? m.tags : ""))
+                           .find(f) != std::string::npos;
+            if (!hit) continue;
+            ++matches;
+            if (is_open) {  // only an open group builds its (matching) rows
+                ScenarioRow r;
+                r.id = m.id;
+                r.title = m.title;
+                r.current = (current == m.id);
+                r.visible = true;
+                g.items.push_back(std::move(r));
+            }
         }
-        if (g.items.empty()) continue;  // omit empty classes
-        g.has_visible = true;
-        g.show_items = g.expanded;
-        g.count = std::to_string(g.items.size());
-        groups.push_back(std::move(g));
-    }
-    return groups;
-}
-
-// Re-derive the per-row `visible` / per-group `has_visible` / `show_items` /
-// `count` fields for a search string. Empty filter ⇒ everything visible and the
-// group list honors each header's expanded state; a non-empty filter matches the
-// lowercased title/id/tags haystack and force-opens matching groups.
-void apply_scenario_filter(ShellData* data, const std::string& raw) {
-    if (!data) return;
-    const std::string f = to_lower(raw);
-    const bool filtering = !f.empty();
-    for (ScenarioGroupRow& g : data->scenario_groups) {
-        int vis = 0;
-        for (ScenarioRow& s : g.items) {
-            s.visible = !filtering || (s.search.find(f) != Rml::String::npos);
-            if (s.visible) ++vis;
-        }
-        g.has_visible = (vis > 0);
-        g.show_items = g.has_visible && (filtering || g.expanded);
-        g.count = std::to_string(vis);
+        if (!any_in_cat) continue;  // omit empty classes
+        g.expanded = is_open;
+        g.has_visible = (matches > 0);
+        g.show_items = g.has_visible && is_open;
+        g.count = std::to_string(matches);
+        data->scenario_groups.push_back(std::move(g));
     }
 }
 
@@ -432,6 +443,11 @@ struct AppContext {
     // so a group collapse/expand re-derives visibility consistently with the
     // active filter.
     std::string scenario_filter;
+    // Titles of the picker groups the user has expanded. Drives which groups
+    // instantiate their item rows in rebuild_scenario_view (closed groups build
+    // zero rows). Empty ⇒ every group collapsed (the default when the picker
+    // opens), so an open-but-unbrowsed picker is just the 5 category headers.
+    std::vector<std::string> scn_expanded_groups;
 };
 
 // ── Command helpers (run on the GUI thread; drained by the sim thread) ──
@@ -1134,9 +1150,10 @@ int run_app(const std::vector<std::string>& args) {
     for (const std::string& name : initial_overlays)
         if (OverlayRow* r = find_overlay_row(&data, Rml::String(name.c_str())))
             r->on = true;
-    // Setup scenario picker: the native-catalog scenarios grouped into the 5
-    // classes, with the loaded scenario highlighted (Scale-0 panel).
-    data.scenario_groups = build_scenario_groups(initial_scenario);
+    // Setup scenario picker: starts COLLAPSED (data.scn_open == false), so the
+    // bound scenario_groups array is left EMPTY on boot — the ~130 scenario <div>s
+    // are instantiated lazily the first time the user opens the picker (see the
+    // toggle_scn_picker callback). This keeps the boot/normal-use DOM tiny.
     // Reflect any --sheet-height overrides in the panel rows (mirrors the
     // SetSheetHeight commands stamped above) so the shown value starts correct.
     for (const auto& [nm, frac] : app_opts.sheet_heights) {
@@ -1209,6 +1226,16 @@ int run_app(const std::vector<std::string>& args) {
     if (initial_scale == 0 && !app_opts.pick_scenario.empty()) {
         const std::string& pick = app_opts.pick_scenario;
         if (ftd::native::find_scenario_meta(pick)) {
+            // Open the picker for the headless capture and demonstrate the intended
+            // fast-browse path: type-to-filter narrows the list to the matches (a
+            // small DOM), then select loads. Seeding the filter with the target id
+            // force-opens its group with only the matching row(s), so the captured
+            // frame shows a searched list with the target highlighted — the exact
+            // select_scenario → LoadScenario path a real picker click drives.
+            data.scn_open = true;
+            app.scenario_filter = pick;
+            rebuild_scenario_view(&data, pick, app.scenario_filter,
+                                  app.scn_expanded_groups);
             app.scenario_id = pick;
             set_current_scenario(&data, pick);
             data.scenario = pick;
@@ -1277,6 +1304,7 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("running", &data.running);
     ctor.Bind("toggles", &data.toggles);
     ctor.Bind("overlay_columns", &data.overlay_columns);
+    ctor.Bind("scn_open", &data.scn_open);
     ctor.Bind("scenario_groups", &data.scenario_groups);
     ctor.Bind("insp_active", &data.insp_active);
     ctor.Bind("insp_title", &data.insp_title);
@@ -1353,6 +1381,25 @@ int run_app(const std::vector<std::string>& args) {
         }
         h.DirtyVariable("overlay_columns");
     });
+    // Setup scenario picker — expand/collapse the whole list ("Scenarios ▾"
+    // header). Collapsing DROPS every row (scenario_groups.clear()) so the DOM
+    // holds ~0 scenario <div>s; expanding rebuilds the list from the catalog and
+    // re-applies the active search filter + current-row highlight. This is the
+    // DOM-shrink half of the framerate fix: the ~130-item list only exists while
+    // the picker is open.
+    ctor.BindEventCallback("toggle_scn_picker", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                       const Rml::VariantList&) {
+        if (!app.data) return;
+        app.data->scn_open = !app.data->scn_open;
+        if (app.data->scn_open) {
+            rebuild_scenario_view(app.data, app.scenario_id, app.scenario_filter,
+                                  app.scn_expanded_groups);
+        } else {
+            app.data->scenario_groups.clear();  // collapse → 0 scenario rows in the DOM
+        }
+        h.DirtyVariable("scn_open");
+        h.DirtyVariable("scenario_groups");
+    });
     // Setup scenario picker — select one scenario. Issues the LoadScenario core
     // command (the exact path Reset uses) so the host reboots the engine into it
     // (a LIVE switch; overlays/scene refresh on the reload). Optimistically moves
@@ -1369,24 +1416,28 @@ int run_app(const std::vector<std::string>& args) {
         h.DirtyVariable("scenario_groups");
     });
     // Collapse/expand one scenario category group (its header is the affordance).
-    // Pure view-state; re-derives show_items against the active filter.
+    // Flips the group's membership in the expanded set and rebuilds the view, so
+    // an expanded group instantiates its rows and a collapsed group drops them.
     ctor.BindEventCallback("toggle_scenario_group", [&app](Rml::DataModelHandle h, Rml::Event&,
                                                            const Rml::VariantList& v) {
         if (v.empty() || !app.data) return;
-        const Rml::String title = v[0].Get<Rml::String>();
-        for (ScenarioGroupRow& g : app.data->scenario_groups) {
-            if (g.title == title) { g.expanded = !g.expanded; break; }
-        }
-        apply_scenario_filter(app.data, app.scenario_filter);
+        const std::string title(v[0].Get<Rml::String>().c_str());
+        auto& ex = app.scn_expanded_groups;
+        auto it = std::find(ex.begin(), ex.end(), title);
+        if (it == ex.end()) ex.push_back(title);
+        else ex.erase(it);
+        rebuild_scenario_view(app.data, app.scenario_id, app.scenario_filter, ex);
         h.DirtyVariable("scenario_groups");
     });
     // Live search over the picker: the change event carries the input's new text.
-    // Narrow the list by title/id/tag substring and re-open matching groups.
+    // Rebuilds the view keeping only matching rows (matching groups force-open),
+    // so typing SHRINKS the live DOM to the matches rather than hiding 130 rows.
     ctor.BindEventCallback("filter_scenarios", [&app](Rml::DataModelHandle h, Rml::Event& ev,
                                                       const Rml::VariantList&) {
         if (!app.data) return;
         app.scenario_filter = std::string(ev.GetParameter<Rml::String>("value", "").c_str());
-        apply_scenario_filter(app.data, app.scenario_filter);
+        rebuild_scenario_view(app.data, app.scenario_id, app.scenario_filter,
+                              app.scn_expanded_groups);
         h.DirtyVariable("scenario_groups");
     });
     // Inspector close affordance (the × in the readout header): drop the current
@@ -1606,6 +1657,21 @@ int run_app(const std::vector<std::string>& args) {
     // than in the sim-thread reload block above.
     bool interop_srv_bound = false;
 
+    // ── Cosmetic status-bar throttle (GUI thread) ───────────────────────────
+    // The continuously-changing status readouts (tick, particle count, fps,
+    // physical time, total/S1 energy) are pushed into the data model on a ~120 ms
+    // cadence rather than every frame. Each such push DirtyVariable()s a bound
+    // field, and a single dirty status field forces RmlUi to re-lay-out the whole
+    // document and regenerate geometry on the next Context::Update()/Render();
+    // at 60..145 fps that full reflow ran up to ~145×/s. Throttling caps the
+    // status-driven reflow near ~8/s. Everything that changes on USER ACTION or
+    // structure (scenario, toggles, overlays, inspector, sheet heights,
+    // active_scale, running) stays IMMEDIATE below — those writes are all
+    // change-guarded, so a steady state costs nothing.
+    constexpr auto kStatusPushInterval = std::chrono::milliseconds(120);
+    auto last_status_push = std::chrono::steady_clock::now();
+    bool status_first = true;
+
     const auto loop_start = std::chrono::steady_clock::now();
     bool quit = false;
     MSG msg{};
@@ -1706,12 +1772,19 @@ int run_app(const std::vector<std::string>& args) {
             if (dst != val) { dst = val; model.DirtyVariable(name); }
         };
 
-        set_int("tick", data.tick, frame.tick);
+        // Throttle gate for the cosmetic status readouts (see kStatusPushInterval).
+        const auto now_status = std::chrono::steady_clock::now();
+        const bool push_status =
+            status_first || (now_status - last_status_push) >= kStatusPushInterval;
+        if (push_status) { last_status_push = now_status; status_first = false; }
+
+        if (push_status) set_int("tick", data.tick, frame.tick);
         if (snap) set_int("active_scale", data.active_scale, snap->active_scale);
-        set_int("particle_count", data.particle_count,
-                static_cast<int>(frame.total_manifested));
+        if (push_status)
+            set_int("particle_count", data.particle_count,
+                    static_cast<int>(frame.total_manifested));
         set_bool("running", data.running, !paused.load());
-        set_int("fps", data.fps, smoothed_fps);
+        if (push_status) set_int("fps", data.fps, smoothed_fps);
         set_str("scenario", data.scenario, frame.scenario.empty() ? app.scenario_id
                                                                    : frame.scenario);
         // Keep the picker's current-row highlight on the actually-loaded scenario
@@ -1729,8 +1802,9 @@ int run_app(const std::vector<std::string>& args) {
         set_str("backend", data.backend, upper(frame.backend.empty() ? host.backend_name()
                                                                       : frame.backend));
         set_str("lattice", data.lattice, std::to_string(frame.lattice_size));
-        set_str("physical_time", data.physical_time,
-                fmt("%.2e s", static_cast<double>(frame.tick) * kTPhysSeconds));
+        if (push_status)
+            set_str("physical_time", data.physical_time,
+                    fmt("%.2e s", static_cast<double>(frame.tick) * kTPhysSeconds));
         // Reflect the adapter's authoritative sheet slice heights (frame-carried)
         // in the panel rows, so a CLI --sheet-height or an adapter clamp shows up
         // live. Only dirties when a value actually changed (steady state = free).
@@ -1759,7 +1833,9 @@ int run_app(const std::vector<std::string>& args) {
         if (const ftd::native::Scale0Snapshot* s0 = snap ? snap->scale0() : nullptr) {
             chart_energy = s0->energy_ledger.E_curr;
             chart_energy_valid = true;
-            set_str("total_energy", data.total_energy, fmt("%.1f", s0->energy_ledger.E_curr));
+            if (push_status)
+                set_str("total_energy", data.total_energy,
+                        fmt("%.1f", s0->energy_ledger.E_curr));
             bool toggles_changed = false;
             for (ToggleRow& r : data.toggles) {
                 const bool on = toggle_on(s0->term_toggles, r.name.c_str());
@@ -1769,9 +1845,11 @@ int run_app(const std::vector<std::string>& args) {
         } else if (const ftd::native::Scale1Snapshot* s1 = snap ? snap->scale1() : nullptr) {
             chart_energy = s1->total_energy;
             chart_energy_valid = true;
-            set_str("total_energy", data.total_energy, fmt("%.3f", s1->total_energy));
-            set_str("s1_ke", data.s1_ke, fmt("%.3f", s1->total_ke));
-            set_str("s1_pe", data.s1_pe, fmt("%.3f", s1->total_pe));
+            if (push_status) {
+                set_str("total_energy", data.total_energy, fmt("%.3f", s1->total_energy));
+                set_str("s1_ke", data.s1_ke, fmt("%.3f", s1->total_ke));
+                set_str("s1_pe", data.s1_pe, fmt("%.3f", s1->total_pe));
+            }
         }
 
         // ── Feed the telemetry ring buffer (snapshot-only, GUI thread) ──
