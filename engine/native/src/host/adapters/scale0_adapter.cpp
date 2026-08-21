@@ -366,7 +366,7 @@ void append_overlay_arrows(RenderBridge& rb, NativeFrame& frame,
     rb.copy_visual_field_sample(kind, stride, sample);
     if (sample.components != 3u || sample.count() == 0) return;
 
-    // Canonical parity-odd scaling for ∇×J (never hardcoded; DELTA_SQUARED from
+    // Canonical parity-even (axial) scaling for ∇×J (never hardcoded; DELTA_SQUARED from
     // the ontic chain via constants.h). Uniform, so it cancels under the
     // per-overlay autoscale, but the geometry is built from the canonical value.
     const float vmul =
