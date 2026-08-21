@@ -610,6 +610,12 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("grav_prov", &data.grav_prov);
     ctor.Bind("grav_status", &data.grav_status);
     ctor.Bind("grav_inactive", &data.grav_inactive);
+    ctor.Bind("time_open", &data.time_open);
+    ctor.Bind("time_dtau", &data.time_dtau);
+    ctor.Bind("time_dilation", &data.time_dilation);
+    ctor.Bind("time_gamma", &data.time_gamma);
+    ctor.Bind("time_f", &data.time_f);
+    ctor.Bind("time_prov", &data.time_prov);
     ctor.BindEventCallback("run", [&app](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) {
         request_play_toggle(&app);
     });
@@ -709,6 +715,14 @@ int run_app(const std::vector<std::string>& args) {
         app.data->grav_open = !app.data->grav_open;
         request_telemetry_demand(&app);
         h.DirtyVariable("grav_open");
+    });
+    // Time instrument section — the causal-clock view of the same gravity group.
+    ctor.BindEventCallback("toggle_time", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                 const Rml::VariantList&) {
+        if (!app.data) return;
+        app.data->time_open = !app.data->time_open;
+        request_telemetry_demand(&app);
+        h.DirtyVariable("time_open");
     });
     ctor.BindEventCallback("scale_lattice", [&app](Rml::DataModelHandle, Rml::Event&,
                                                    const Rml::VariantList&) {
@@ -980,6 +994,7 @@ int run_app(const std::vector<std::string>& args) {
     if (app_opts.open_telemetry) data.tel_open = true;
     if (app_opts.open_overlays) data.ov_open = true;
     if (app_opts.open_gravity) data.grav_open = true;
+    if (app_opts.open_time) data.time_open = true;
     request_telemetry_demand(&app);
 
     Rml::ElementDocument* doc = context->LoadDocument(FTD_RML_SHELL_PATH);
@@ -1538,6 +1553,18 @@ int run_app(const std::vector<std::string>& args) {
                     model.DirtyVariable("grav_inactive");
                 }
                 set_str("grav_status", data.grav_status, gstat);
+            }
+            // ── Time instrument (causal clock: dτ/dt = √(1−L²), clock hypothesis) ──
+            if (data.time_open && push_status) {
+                const auto& gm = s0->telemetry.gravity;
+                const double dtau = std::sqrt(std::max(0.0, gm.f_min));  // clock rate √f
+                set_str("time_dtau", data.time_dtau, fmt("%.4f", dtau));
+                set_str("time_dilation", data.time_dilation,
+                        fmt("%.3f %%", gm.dilation_max_pct));
+                set_str("time_gamma", data.time_gamma, fmt("%.4f", gm.gamma_max));
+                set_str("time_f", data.time_f, fmt("%.4f", gm.f_min));
+                set_str("time_prov", data.time_prov,
+                        "t=" + std::to_string(s0->telemetry.gravity_meta.tick));
             }
         } else if (const ftd::native::Scale1Snapshot* s1 = snap ? snap->scale1() : nullptr) {
             chart_energy = s1->total_energy;
