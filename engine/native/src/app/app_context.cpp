@@ -199,6 +199,20 @@ void nudge_last_sheet(AppContext* app, float delta) {
     nudge_sheet_height(app, row, delta);
 }
 
-// ── Win32 → RmlUi input plumbing ──
+// Move the inspection cursor by a Moore offset, clamped to the live lattice, and
+// flag a retarget (the loop re-issues InspectVoxel/Force/Neighbors for the new
+// voxel). No-op unless a Scale-0 voxel is inspected.
+void walk_inspection(AppContext* app, int dx, int dy, int dz) {
+    if (!app || app->inspect_kind != 1) return;
+    const int L = (app->have_live && app->live_knobs.lattice_size > 0)
+                      ? static_cast<int>(app->live_knobs.lattice_size)
+                      : std::max(1, app->run_config.lattice_size);
+    const int hi = std::max(0, L - 1);
+    app->inspect_vx = std::min(hi, std::max(0, app->inspect_vx + dx));
+    app->inspect_vy = std::min(hi, std::max(0, app->inspect_vy + dy));
+    app->inspect_vz = std::min(hi, std::max(0, app->inspect_vz + dz));
+    app->insp_has_data = false;    // fresh target — reset the readout latch
+    app->inspect_retarget = true;  // loop resets the re-issue seqs (immediate refresh)
+}
 
 }  // namespace ftd::native::app
