@@ -265,6 +265,41 @@ float4 ps_main(VSOut input) : SV_Target {
 }
 )";
 
+// Rubber-sheet surface shader (Tranche 5): a triangle mesh with a per-vertex
+// RGBA colour, transformed by the same view/proj the rest of the scene uses.
+// The app's first non-billboard surface — drawn double-sided (cull NONE),
+// alpha-blended, and depth-tested (no depth write) so the translucent sheets
+// sit correctly among the particles and lines. `ps_main` shades the solid
+// surface; `ps_wire` shades the wireframe pass (a brighter, lower-alpha scaffold
+// that follows the ramp), drawn over the solid surface for the web mesh+wire look.
+constexpr char kSheetShader[] = R"(
+#pragma pack_matrix(row_major)
+cbuffer Camera : register(b0) {
+    float4x4 viewProj;
+};
+struct VSIn {
+    float3 position : POSITION;
+    float4 color : COLOR;
+};
+struct VSOut {
+    float4 position : SV_Position;
+    float4 color : COLOR;
+};
+VSOut vs_main(VSIn input) {
+    VSOut o;
+    o.position = mul(float4(input.position, 1.0), viewProj);
+    o.color = input.color;
+    return o;
+}
+float4 ps_main(VSOut input) : SV_Target {
+    return input.color;
+}
+float4 ps_wire(VSOut input) : SV_Target {
+    float3 c = saturate(input.color.rgb * 1.3 + 0.12);
+    return float4(c, 0.22);
+}
+)";
+
 }  // namespace
 
 struct D3D12Presenter::Impl {
@@ -281,6 +316,11 @@ struct D3D12Presenter::Impl {
     ComPtr<ID3D12PipelineState> pso_lines;
     ComPtr<ID3D12DescriptorHeap> srv_heap;
     ComPtr<ID3D12PipelineState> pso_interop;
+    // Tranche-5 rubber-sheet PSOs: a triangle-mesh vertex-colour surface
+    // (double-sided, alpha-blended, depth-tested no-write) plus a wireframe
+    // variant (FillMode WIREFRAME on the same mesh) for the mesh+wire look.
+    ComPtr<ID3D12PipelineState> pso_sheet;
+    ComPtr<ID3D12PipelineState> pso_sheet_wire;
     ComPtr<ID3D12DescriptorHeap> dsv_heap;
     ComPtr<ID3D12Resource> depth;
     // Task 11 correction: cb/vb must be genuinely per-frame-slot resources
@@ -292,6 +332,13 @@ struct D3D12Presenter::Impl {
     // render() call -- i.e. it would not actually protect a shared resource.
     ComPtr<ID3D12Resource> cb[kFrameCount];
     ComPtr<ID3D12Resource> vb[kFrameCount];
+    // Per-frame-slot rubber-sheet vertex + index buffers (same double-buffering
+    // discipline as vb[]/cb[]): grown on demand, Map()-written each render() for
+    // impl_->frame, protected by that slot's frame_fence_values wait.
+    ComPtr<ID3D12Resource> sheet_vb[kFrameCount];
+    ComPtr<ID3D12Resource> sheet_ib[kFrameCount];
+    std::size_t sheet_vb_capacity[kFrameCount] = {};
+    std::size_t sheet_ib_capacity[kFrameCount] = {};
     ComPtr<ID3D12Resource> shared_particle_buffer;
     ComPtr<ID3D12Fence> fence;
     // Distinct from `fence` above (the presenter's own present-sync fence,
@@ -530,6 +577,49 @@ void D3D12Presenter::initialize(HWND hwnd, std::uint32_t width,
     throw_if_failed(impl_->device->CreateGraphicsPipelineState(
                         &ipso, IID_PPV_ARGS(&impl_->pso_interop)),
                     "CreateGraphicsPipelineState interop");
+
+    // ── Rubber-sheet surface PSOs (Tranche 5) ──────────────────────────────────
+    // A triangle-mesh vertex-colour surface: reuse the sprite PSO's alpha-blend +
+    // RT/DSV formats, but draw double-sided (CullMode NONE, already set), keep
+    // depth TEST but disable depth WRITE (translucent surfaces must not occlude
+    // later transparent draws), and take a {POSITION rgb, COLOR rgba} input
+    // layout. The wireframe variant is the same PSO with FillMode WIREFRAME and
+    // the ps_wire pixel shader.
+    ComPtr<ID3DBlob> svs, sps, swps, serr2;
+    throw_if_failed(D3DCompile(kSheetShader, sizeof(kSheetShader) - 1, "sheet", nullptr,
+                               nullptr, "vs_main", "vs_5_1", 0, 0, &svs, &serr2),
+                    "D3DCompile sheet vs");
+    throw_if_failed(D3DCompile(kSheetShader, sizeof(kSheetShader) - 1, "sheet", nullptr,
+                               nullptr, "ps_main", "ps_5_1", 0, 0, &sps, &serr2),
+                    "D3DCompile sheet ps");
+    throw_if_failed(D3DCompile(kSheetShader, sizeof(kSheetShader) - 1, "sheet", nullptr,
+                               nullptr, "ps_wire", "ps_5_1", 0, 0, &swps, &serr2),
+                    "D3DCompile sheet ps_wire");
+    D3D12_INPUT_ELEMENT_DESC sheet_layout[] = {
+        {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,
+         D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+        {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12,
+         D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+    };
+    D3D12_GRAPHICS_PIPELINE_STATE_DESC spso = pso;  // reuse blend/RT/DSV formats
+    spso.VS = {svs->GetBufferPointer(), svs->GetBufferSize()};
+    spso.PS = {sps->GetBufferPointer(), sps->GetBufferSize()};
+    spso.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+    spso.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;  // double-sided
+    spso.DepthStencilState.DepthEnable = TRUE;
+    spso.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;  // test, no write
+    spso.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+    spso.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+    spso.InputLayout = {sheet_layout, 2};
+    throw_if_failed(
+        impl_->device->CreateGraphicsPipelineState(&spso, IID_PPV_ARGS(&impl_->pso_sheet)),
+        "CreateGraphicsPipelineState sheet");
+    D3D12_GRAPHICS_PIPELINE_STATE_DESC swpso = spso;
+    swpso.PS = {swps->GetBufferPointer(), swps->GetBufferSize()};
+    swpso.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+    throw_if_failed(
+        impl_->device->CreateGraphicsPipelineState(&swpso, IID_PPV_ARGS(&impl_->pso_sheet_wire)),
+        "CreateGraphicsPipelineState sheet wire");
 
     D3D12_DESCRIPTOR_HEAP_DESC srv_heap_desc{};
     srv_heap_desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
@@ -1072,6 +1162,55 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
         impl_->vb[impl_->frame]->Unmap(0, nullptr);
     }
 
+    // ── Rubber-sheet mesh upload (Tranche 5) ────────────────────────────────────
+    // Concatenate every active sheet's vertices into one buffer and its indices
+    // into one index buffer (each sheet's indices rebased by the running vertex
+    // count), so all sheets draw in a single DrawIndexedInstanced per pass
+    // (solid + wireframe) through impl_->pso_sheet / pso_sheet_wire.
+    std::vector<NativeSheetVertex> sheet_verts;
+    std::vector<std::uint32_t> sheet_indices;
+    for (const NativeSheet& s : frame.field_sheets) {
+        if (s.vertices.empty() || s.indices.empty()) continue;
+        const std::uint32_t base = static_cast<std::uint32_t>(sheet_verts.size());
+        sheet_verts.insert(sheet_verts.end(), s.vertices.begin(), s.vertices.end());
+        for (std::uint32_t idx : s.indices) sheet_indices.push_back(base + idx);
+    }
+    const UINT sheet_index_count = static_cast<UINT>(sheet_indices.size());
+    const std::size_t sheet_vb_bytes = sheet_verts.size() * sizeof(NativeSheetVertex);
+    const std::size_t sheet_ib_bytes = sheet_indices.size() * sizeof(std::uint32_t);
+    if (sheet_index_count != 0) {
+        auto ensure_upload = [&](ComPtr<ID3D12Resource>& res, std::size_t& cap,
+                                 std::size_t need, const void* src, const char* what) {
+            if (need > cap) {
+                res.Reset();
+                D3D12_HEAP_PROPERTIES up{};
+                up.Type = D3D12_HEAP_TYPE_UPLOAD;
+                D3D12_RESOURCE_DESC desc{};
+                desc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+                desc.Width = need < 256 ? 256 : need;
+                desc.Height = 1;
+                desc.DepthOrArraySize = 1;
+                desc.MipLevels = 1;
+                desc.SampleDesc.Count = 1;
+                desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+                throw_if_failed(impl_->device->CreateCommittedResource(
+                                    &up, D3D12_HEAP_FLAG_NONE, &desc,
+                                    D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
+                                    IID_PPV_ARGS(&res)),
+                                what);
+                cap = static_cast<std::size_t>(desc.Width);
+            }
+            void* mapped = nullptr;
+            throw_if_failed(res->Map(0, nullptr, &mapped), "Map sheet buffer");
+            std::memcpy(mapped, src, need);
+            res->Unmap(0, nullptr);
+        };
+        ensure_upload(impl_->sheet_vb[impl_->frame], impl_->sheet_vb_capacity[impl_->frame],
+                      sheet_vb_bytes, sheet_verts.data(), "CreateCommittedResource sheet vb");
+        ensure_upload(impl_->sheet_ib[impl_->frame], impl_->sheet_ib_capacity[impl_->frame],
+                      sheet_ib_bytes, sheet_indices.data(), "CreateCommittedResource sheet ib");
+    }
+
     throw_if_failed(impl_->allocators[impl_->frame]->Reset(), "allocator Reset");
     throw_if_failed(
         impl_->list->Reset(impl_->allocators[impl_->frame].Get(), impl_->pso_lines.Get()),
@@ -1152,6 +1291,29 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
             1, impl_->srv_heap->GetGPUDescriptorHandleForHeapStart());
         impl_->list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         impl_->list->DrawInstanced(6, interop_particle_count, 0, 0);
+    }
+
+    // Rubber-sheet surfaces (Tranche 5): drawn last among the 3D geometry so the
+    // translucent, depth-tested-but-not-depth-writing sheets blend over the
+    // particles/lines behind them. Solid pass first, then the wireframe overlay
+    // over the same indexed mesh. Root sig + camera CBV are already bound above.
+    if (sheet_index_count != 0 && impl_->sheet_vb[impl_->frame] && impl_->sheet_ib[impl_->frame]
+        && impl_->pso_sheet && impl_->pso_sheet_wire) {
+        D3D12_VERTEX_BUFFER_VIEW sheet_view{};
+        sheet_view.BufferLocation = impl_->sheet_vb[impl_->frame]->GetGPUVirtualAddress();
+        sheet_view.SizeInBytes = static_cast<UINT>(sheet_vb_bytes);
+        sheet_view.StrideInBytes = sizeof(NativeSheetVertex);
+        D3D12_INDEX_BUFFER_VIEW sheet_ibv{};
+        sheet_ibv.BufferLocation = impl_->sheet_ib[impl_->frame]->GetGPUVirtualAddress();
+        sheet_ibv.SizeInBytes = static_cast<UINT>(sheet_ib_bytes);
+        sheet_ibv.Format = DXGI_FORMAT_R32_UINT;
+        impl_->list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        impl_->list->IASetVertexBuffers(0, 1, &sheet_view);
+        impl_->list->IASetIndexBuffer(&sheet_ibv);
+        impl_->list->SetPipelineState(impl_->pso_sheet.Get());
+        impl_->list->DrawIndexedInstanced(sheet_index_count, 1, 0, 0, 0);
+        impl_->list->SetPipelineState(impl_->pso_sheet_wire.Get());
+        impl_->list->DrawIndexedInstanced(sheet_index_count, 1, 0, 0, 0);
     }
 
     if (overlay_recorder_) {
