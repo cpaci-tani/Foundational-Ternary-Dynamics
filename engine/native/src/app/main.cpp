@@ -69,6 +69,7 @@
 #include "native/model/snapshot.h"
 #include "native/native_frame.h"
 #include "native/scale0_overlays.h"
+#include "native/scenario_catalog.h"  // ftd::native scenario catalog (Setup picker)
 #include "native/scene_rect.h"
 
 #include "ftd/term_toggles.h"
@@ -95,6 +96,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <string_view>
 #include <thread>
 #include <vector>
 
@@ -183,6 +185,30 @@ struct InspLine {
     Rml::String v;
 };
 
+// One Scale-0 scenario row in the Setup picker (bound into the shell). `current`
+// highlights the loaded scenario; `visible` gates the row under the live search
+// filter. `search` is the lowercased "title id tags" haystack — used by the
+// C++ filter, not bound into RML.
+struct ScenarioRow {
+    Rml::String id;
+    Rml::String title;
+    bool current = false;
+    bool visible = true;
+    Rml::String search;
+};
+// One category group in the picker: the 5 honest scenario classes, collapsible.
+// `has_visible` = any item passes the filter (gates the header); `show_items` =
+// header expanded OR a filter is active (gates the item list). `count` is the
+// visible-item tally shown in the header.
+struct ScenarioGroupRow {
+    Rml::String title;
+    bool expanded = true;
+    bool has_visible = true;
+    bool show_items = true;
+    Rml::String count;
+    Rml::Vector<ScenarioRow> items;
+};
+
 struct ShellData {
     int tick = 0;
     int active_scale = 0;   // drives the toolbar scale-switcher highlight
@@ -201,6 +227,10 @@ struct ShellData {
     // (mirrors the web). Built from the shared registry, grouped by column;
     // empty columns are omitted. Each row's `on` reflects the active set.
     Rml::Vector<OverlayColumnRow> overlay_columns;
+    // Setup scenario picker (Scale-0). The ~130 native-catalog scenarios grouped
+    // into the 5 honest classes, searchable + collapsible. A pick issues the
+    // LoadScenario core command (the Reset path) — a live scenario reboot.
+    Rml::Vector<ScenarioGroupRow> scenario_groups;
     // Click-to-inspect readout. `insp_active` gates the panel section (data-if);
     // `insp_title` names the picked entity; `insp_lines` are its live fields.
     bool insp_active = false;
@@ -256,6 +286,87 @@ OverlayRow* find_overlay_row(ShellData* data, const Rml::String& name) {
         for (OverlayRow& r : col.items)
             if (r.name == name) return &r;
     return nullptr;
+}
+
+// ASCII-lowercase a string (search haystack / filter normalization). Multibyte
+// UTF-8 bytes pass through unchanged; the picker filter matches on ASCII.
+std::string to_lower(std::string s) {
+    for (char& c : s) c = static_cast<char>(::tolower(static_cast<unsigned char>(c)));
+    return s;
+}
+
+// The 5 honest Scale-0 scenario classes, in catalog order — the group headers of
+// the Setup picker. Every native-catalog row's `category` is one of these.
+constexpr const char* kScenarioCategories[] = {
+    "1. Validated Native Dynamics",
+    "2. Validated State Dynamics",
+    "3. Qualified Selected Extensions",
+    "4. Validated Initial Data",
+    "5. Macroscopic Physics & Measurement",
+};
+
+// Build the Setup scenario picker model from the native scenario catalog
+// (native/scenario_catalog.h): the ~130 Scale-0 scenarios bucketed into the 5
+// classes, preserving catalog order within each class. `current` highlights the
+// row whose id matches the loaded scenario. Groups start expanded; the search
+// filter starts empty (everything visible).
+Rml::Vector<ScenarioGroupRow> build_scenario_groups(const std::string& current) {
+    Rml::Vector<ScenarioGroupRow> groups;
+    for (const char* cat : kScenarioCategories) {
+        ScenarioGroupRow g;
+        g.title = cat;
+        g.expanded = true;
+        for (const ftd::native::ScenarioMeta& m : ftd::native::SCENARIO_META) {
+            if (std::string_view(m.category) != cat) continue;
+            ScenarioRow r;
+            r.id = m.id;
+            r.title = m.title;
+            r.current = (current == m.id);
+            r.visible = true;
+            r.search = to_lower(std::string(m.title) + " " + m.id + " "
+                                + (m.tags ? m.tags : ""));
+            g.items.push_back(std::move(r));
+        }
+        if (g.items.empty()) continue;  // omit empty classes
+        g.has_visible = true;
+        g.show_items = g.expanded;
+        g.count = std::to_string(g.items.size());
+        groups.push_back(std::move(g));
+    }
+    return groups;
+}
+
+// Re-derive the per-row `visible` / per-group `has_visible` / `show_items` /
+// `count` fields for a search string. Empty filter ⇒ everything visible and the
+// group list honors each header's expanded state; a non-empty filter matches the
+// lowercased title/id/tags haystack and force-opens matching groups.
+void apply_scenario_filter(ShellData* data, const std::string& raw) {
+    if (!data) return;
+    const std::string f = to_lower(raw);
+    const bool filtering = !f.empty();
+    for (ScenarioGroupRow& g : data->scenario_groups) {
+        int vis = 0;
+        for (ScenarioRow& s : g.items) {
+            s.visible = !filtering || (s.search.find(f) != Rml::String::npos);
+            if (s.visible) ++vis;
+        }
+        g.has_visible = (vis > 0);
+        g.show_items = g.has_visible && (filtering || g.expanded);
+        g.count = std::to_string(vis);
+    }
+}
+
+// Set the picker's current-row highlight to the loaded scenario id. Returns true
+// iff a `current` flag actually changed (so the caller can dirty the binding).
+bool set_current_scenario(ShellData* data, const std::string& id) {
+    if (!data) return false;
+    bool changed = false;
+    for (ScenarioGroupRow& g : data->scenario_groups)
+        for (ScenarioRow& s : g.items) {
+            const bool cur = (s.id == id);
+            if (s.current != cur) { s.current = cur; changed = true; }
+        }
+    return changed;
 }
 
 // ── Everything the Win32 wnd_proc + RmlUi event callbacks need to reach. Set
@@ -315,6 +426,12 @@ struct AppContext {
     bool model_ready = false;
     std::uint32_t last_sheet_id = 0;
     bool has_last_sheet = false;
+
+    // ── Setup scenario picker (GUI thread) ──
+    // The live search string (last value typed into the picker filter box). Kept
+    // so a group collapse/expand re-derives visibility consistently with the
+    // active filter.
+    std::string scenario_filter;
 };
 
 // ── Command helpers (run on the GUI thread; drained by the sim thread) ──
@@ -783,6 +900,12 @@ struct AppOptions {
     std::string inspect_voxel;         // "i,j,k" (empty = none; Scale-0 only)
     int inspect_particle = -1;         // particle index (< 0 = none; Scale-1 only)
     bool have_inspect_particle = false;
+    // Simulated Setup-picker selection for headless captures (interactive
+    // clicking can't run under --capture-frames). --pick-scenario <id> boots the
+    // default scenario, then drives the SAME select_scenario → LoadScenario path
+    // a real picker click uses, so the captured frame shows a scenario reloaded
+    // via the picker. Scale-0 only.
+    std::string pick_scenario;
 };
 
 AppOptions parse_app_options(const std::vector<std::string>& args) {
@@ -820,6 +943,8 @@ AppOptions parse_app_options(const std::vector<std::string>& args) {
         } else if (args[i] == "--inspect-particle" && i + 1 < args.size()) {
             o.inspect_particle = std::atoi(args[++i].c_str());
             o.have_inspect_particle = true;
+        } else if (args[i] == "--pick-scenario" && i + 1 < args.size()) {
+            o.pick_scenario = args[++i];
         }
     }
     return o;
@@ -1009,6 +1134,9 @@ int run_app(const std::vector<std::string>& args) {
     for (const std::string& name : initial_overlays)
         if (OverlayRow* r = find_overlay_row(&data, Rml::String(name.c_str())))
             r->on = true;
+    // Setup scenario picker: the native-catalog scenarios grouped into the 5
+    // classes, with the loaded scenario highlighted (Scale-0 panel).
+    data.scenario_groups = build_scenario_groups(initial_scenario);
     // Reflect any --sheet-height overrides in the panel rows (mirrors the
     // SetSheetHeight commands stamped above) so the shown value starts correct.
     for (const auto& [nm, frac] : app_opts.sheet_heights) {
@@ -1072,6 +1200,27 @@ int run_app(const std::vector<std::string>& args) {
         app.inspect_pidx = app_opts.inspect_particle;
     }
 
+    // Simulated Setup-picker selection (headless captures — interactive clicking
+    // cannot run under --capture-frames). --pick-scenario <id> drives the SAME
+    // select_scenario → LoadScenario path a real click uses: it records the id as
+    // the Reset target, moves the highlight, and enqueues the reload the sim
+    // thread applies at its next boundary, so the captured frame shows a scenario
+    // loaded via the picker. Scale-0 only (the catalog is Scale-0 scenarios).
+    if (initial_scale == 0 && !app_opts.pick_scenario.empty()) {
+        const std::string& pick = app_opts.pick_scenario;
+        if (ftd::native::find_scenario_meta(pick)) {
+            app.scenario_id = pick;
+            set_current_scenario(&data, pick);
+            data.scenario = pick;
+            push_core(&app, ftd::native::LoadScenario{pick});
+            std::cout << "native_app: picker select_scenario -> " << pick << "\n"
+                      << std::flush;
+        } else {
+            std::cerr << "native_app: --pick-scenario '" << pick
+                      << "' not in catalog; ignored\n" << std::flush;
+        }
+    }
+
     Rml::DataModelConstructor ctor = context->CreateDataModel("shell");
     if (!ctor) throw std::runtime_error("CreateDataModel(shell) failed");
     if (auto row = ctor.RegisterStruct<ToggleRow>()) {
@@ -1098,6 +1247,22 @@ int run_app(const std::vector<std::string>& args) {
         irow.RegisterMember("v", &InspLine::v);
     }
     ctor.RegisterArray<Rml::Vector<InspLine>>();
+    if (auto srow = ctor.RegisterStruct<ScenarioRow>()) {
+        srow.RegisterMember("id", &ScenarioRow::id);
+        srow.RegisterMember("title", &ScenarioRow::title);
+        srow.RegisterMember("current", &ScenarioRow::current);
+        srow.RegisterMember("visible", &ScenarioRow::visible);
+    }
+    ctor.RegisterArray<Rml::Vector<ScenarioRow>>();
+    if (auto sgrp = ctor.RegisterStruct<ScenarioGroupRow>()) {
+        sgrp.RegisterMember("title", &ScenarioGroupRow::title);
+        sgrp.RegisterMember("expanded", &ScenarioGroupRow::expanded);
+        sgrp.RegisterMember("has_visible", &ScenarioGroupRow::has_visible);
+        sgrp.RegisterMember("show_items", &ScenarioGroupRow::show_items);
+        sgrp.RegisterMember("count", &ScenarioGroupRow::count);
+        sgrp.RegisterMember("items", &ScenarioGroupRow::items);
+    }
+    ctor.RegisterArray<Rml::Vector<ScenarioGroupRow>>();
     ctor.Bind("tick", &data.tick);
     ctor.Bind("active_scale", &data.active_scale);
     ctor.Bind("particle_count", &data.particle_count);
@@ -1112,6 +1277,7 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("running", &data.running);
     ctor.Bind("toggles", &data.toggles);
     ctor.Bind("overlay_columns", &data.overlay_columns);
+    ctor.Bind("scenario_groups", &data.scenario_groups);
     ctor.Bind("insp_active", &data.insp_active);
     ctor.Bind("insp_title", &data.insp_title);
     ctor.Bind("insp_lines", &data.insp_lines);
@@ -1186,6 +1352,42 @@ int run_app(const std::vector<std::string>& args) {
             if (col.title == title) { col.expanded = !col.expanded; break; }
         }
         h.DirtyVariable("overlay_columns");
+    });
+    // Setup scenario picker — select one scenario. Issues the LoadScenario core
+    // command (the exact path Reset uses) so the host reboots the engine into it
+    // (a LIVE switch; overlays/scene refresh on the reload). Optimistically moves
+    // the current-row highlight and records the id as the new Reset target; the
+    // per-frame sync confirms it against the effective (possibly W9-corrected)
+    // scenario the host actually loaded.
+    ctor.BindEventCallback("select_scenario", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                     const Rml::VariantList& v) {
+        if (v.empty() || !app.data) return;
+        const std::string id = std::string(v[0].Get<Rml::String>().c_str());
+        set_current_scenario(app.data, id);
+        app.scenario_id = id;
+        push_core(&app, ftd::native::LoadScenario{id});
+        h.DirtyVariable("scenario_groups");
+    });
+    // Collapse/expand one scenario category group (its header is the affordance).
+    // Pure view-state; re-derives show_items against the active filter.
+    ctor.BindEventCallback("toggle_scenario_group", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                           const Rml::VariantList& v) {
+        if (v.empty() || !app.data) return;
+        const Rml::String title = v[0].Get<Rml::String>();
+        for (ScenarioGroupRow& g : app.data->scenario_groups) {
+            if (g.title == title) { g.expanded = !g.expanded; break; }
+        }
+        apply_scenario_filter(app.data, app.scenario_filter);
+        h.DirtyVariable("scenario_groups");
+    });
+    // Live search over the picker: the change event carries the input's new text.
+    // Narrow the list by title/id/tag substring and re-open matching groups.
+    ctor.BindEventCallback("filter_scenarios", [&app](Rml::DataModelHandle h, Rml::Event& ev,
+                                                      const Rml::VariantList&) {
+        if (!app.data) return;
+        app.scenario_filter = std::string(ev.GetParameter<Rml::String>("value", "").c_str());
+        apply_scenario_filter(app.data, app.scenario_filter);
+        h.DirtyVariable("scenario_groups");
     });
     // Inspector close affordance (the × in the readout header): drop the current
     // selection so the GUI loop stops re-issuing the inspect command and hides
@@ -1385,6 +1587,12 @@ int run_app(const std::vector<std::string>& args) {
     std::uint64_t last_pushed_seq = 0;
     bool pushed_any = false;
 
+    // Setup-picker highlight sync (GUI thread). Tracks the last scenario the
+    // picker was highlighted for so the current-row highlight follows the
+    // effective (host-authoritative) scenario after a Reset, initial boot, live
+    // pick, or a W9 validation-reject that changed the loaded id.
+    std::string synced_scenario = initial_scenario;
+
     // Click-to-inspect bookkeeping (GUI thread). last_inspect_seq dedups the
     // per-boundary re-issue to one inspect command per new snapshot;
     // last_inspect_scale drops the selection on a scale switch.
@@ -1506,6 +1714,18 @@ int run_app(const std::vector<std::string>& args) {
         set_int("fps", data.fps, smoothed_fps);
         set_str("scenario", data.scenario, frame.scenario.empty() ? app.scenario_id
                                                                    : frame.scenario);
+        // Keep the picker's current-row highlight on the actually-loaded scenario
+        // (Reset / initial boot / live pick / W9-corrected id). Idempotent; dirties
+        // only when a highlight flag actually flips.
+        {
+            const std::string eff =
+                frame.scenario.empty() ? app.scenario_id : frame.scenario;
+            if (eff != synced_scenario) {
+                synced_scenario = eff;
+                if (set_current_scenario(&data, eff))
+                    model.DirtyVariable("scenario_groups");
+            }
+        }
         set_str("backend", data.backend, upper(frame.backend.empty() ? host.backend_name()
                                                                       : frame.backend));
         set_str("lattice", data.lattice, std::to_string(frame.lattice_size));

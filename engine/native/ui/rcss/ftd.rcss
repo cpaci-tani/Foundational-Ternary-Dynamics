@@ -99,6 +99,71 @@ body {
     color: #dfe6f0;
     font-size: 12dp;
 }
+.select.mono { font-family: JetBrains Mono; font-size: 11dp; color: #9fb0c6; }
+
+/* ── Setup scenario picker (Scale-0) ───────────────────────────────────── */
+/* A searchable, category-grouped list of the ~130 native-catalog scenarios.
+   The list is its own bounded scroll region so the Setup panel stays usable
+   even with all groups expanded. */
+.scn-picker { display: flex; flex-direction: column; flex: 0 1 auto; min-height: 0dp; margin-bottom: 12dp; }
+.scn-picker .field { margin-bottom: 8dp; }
+.scn-search {
+    padding: 6dp 9dp;
+    margin-bottom: 8dp;
+    background-color: #0f1826;
+    border: 1dp #3a4c66;
+    border-radius: 4dp;
+    color: #dfe6f0;
+    font-size: 12dp;
+}
+.scn-search:focus { border-color: #3a7ec4; }
+.scn-list {
+    display: flex;
+    flex-direction: column;
+    max-height: 380dp;
+    overflow-y: auto;
+    padding: 5dp;
+    background-color: #0f1826;
+    border: 1dp #223047;
+    border-radius: 4dp;
+}
+.scn-group { display: flex; flex-direction: column; margin-bottom: 4dp; }
+.scn-group-head {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 3dp 4dp;
+    margin-bottom: 3dp;
+    cursor: pointer;
+}
+.scn-group-head:hover .scn-group-title { color: #dfe6f0; }
+.scn-caret { color: #67788f; font-size: 9dp; margin-right: 6dp; }
+.scn-group-title {
+    flex: 1 1 auto;
+    font-family: JetBrains Mono;
+    font-size: 9dp;
+    color: #67788f;
+    text-transform: uppercase;
+    letter-spacing: 1dp;
+}
+.scn-count { font-family: JetBrains Mono; font-size: 9dp; color: #4a5a72; }
+.scn-items { display: flex; flex-direction: column; }
+.scn-row { display: flex; flex-direction: column; }
+.scn-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 4dp 8dp;
+    margin-bottom: 2dp;
+    border: 1dp #223047;
+    border-radius: 8dp;
+    color: #9fb0c6;
+    font-size: 11dp;
+    cursor: pointer;
+}
+.scn-item:hover { border-color: #3a7ec4; color: #dfe6f0; background-color: #16233a; }
+.scn-item.cur { border-color: #2f6db0; color: #ffffff; background-color: #16233a; }
+.scn-title { font-size: 11dp; }
 
 .playbar { display: flex; flex-direction: row; margin-top: 6dp; }
 .btn {

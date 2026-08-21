@@ -24,7 +24,38 @@
     <div id="body-row">
         <div id="setup" class="panel">
             <div class="panel-title">Setup</div>
-            <div class="field"><span class="fl">Scenario</span><span class="select">{{scenario}}</span></div>
+
+            <!-- Scale-0 interactive scenario picker. A searchable, collapsible,
+                 category-grouped list of the ~130 native-catalog Scale-0
+                 scenarios (the 5 honest classes as groups). Typing in the search
+                 box narrows by title/id/tag; the loaded scenario is highlighted.
+                 Selecting a row issues the LoadScenario core command — the exact
+                 live-reboot path Reset uses — so the engine reloads into it and
+                 the overlays/scene refresh. Scale 1 has its own seed vocabulary,
+                 so the picker is Scale-0 only (Scale 1 shows a plain readout). -->
+            <div class="scn-picker" data-if="active_scale == 0">
+                <div class="field"><span class="fl">Scenario</span><span class="select mono">{{scenario}}</span></div>
+                <input type="text" class="scn-search" placeholder="Search scenarios…" data-event-change="filter_scenarios"/>
+                <div class="scn-list">
+                    <div class="scn-group" data-for="g : scenario_groups">
+                        <div class="scn-group-head" data-if="g.has_visible" data-event-click="toggle_scenario_group(g.title)">
+                            <span class="scn-caret">{{ g.expanded ? '&#9662;' : '&#9656;' }}</span>
+                            <span class="scn-group-title">{{g.title}}</span>
+                            <span class="scn-count">{{g.count}}</span>
+                        </div>
+                        <div class="scn-items" data-if="g.show_items">
+                            <div class="scn-row" data-for="s : g.items">
+                                <div class="scn-item" data-if="s.visible" data-class-cur="s.current" data-event-click="select_scenario(s.id)">
+                                    <span class="scn-title">{{s.title}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Scale-1: display-only scenario readout (no Scale-0 catalog here). -->
+            <div class="field" data-if="active_scale == 1"><span class="fl">Scenario</span><span class="select mono">{{scenario}}</span></div>
+
             <div class="field"><span class="fl">Lattice</span><span class="select">{{lattice}}</span></div>
             <div class="playbar">
                 <button class="btn primary" data-event-click="run()">{{ running ? '&#10073;&#10073; Pause' : '&#9654; Run' }}</button>

@@ -47,7 +47,7 @@ public:
     // RenderBridge does not derive from ScaleEngine — see scale_adapter.h.
     ftd::ScaleEngine* engine() override { return nullptr; }
 
-    void boot(const ftd::ScenarioMeta& meta, const RunConfig& cfg,
+    void boot(const ScenarioMeta& meta, const RunConfig& cfg,
               BootReport& out) override;
 
     void bind_sim_thread() override;

@@ -13,7 +13,7 @@
 
 #include "ftd/constants.h"       // DELTA_SQUARED (DUAL_DELTA), canonical chain
 #include "ftd/render_bridge.h"
-#include "ftd/scenario_meta.h"
+#include "native/scenario_catalog.h"  // ftd::native::ScenarioMeta (self-contained; not the untracked ftd/scenario_meta.h)
 #include "ftd/scenarios.h"
 #include "ftd/term_toggles.h"
 #include "ftd/visual_field_sample.h"
@@ -1158,7 +1158,7 @@ void Scale0Adapter::apply_boundary() {
     bridge_->toggles.flux_boundary = static_cast<ftd::FluxBoundaryMode>(mode);
 }
 
-void Scale0Adapter::boot(const ftd::ScenarioMeta& meta, const RunConfig& cfg,
+void Scale0Adapter::boot(const ScenarioMeta& meta, const RunConfig& cfg,
                          BootReport& out) {
     cfg_ = cfg;
     const std::string id = meta.id ? meta.id : "";
