@@ -99,7 +99,7 @@ This is the running parity checklist: every capability the web dashboard (`engin
 | Shell (toolbar / viewport hole / setup / physics+overlays+telemetry / status) | ✅ | RmlUi + RCSS over the live D3D12 scene |
 | Scale-aware panels | ✅ | data-if per active scale |
 | Scrollable + collapsible panel sections | ✅ | collapse-by-default keeps fps ~100+ |
-| **The 13 specialized Scale-0 analysis panels** | ▢ | **NOT ported — a real remaining Scale-0 item, not just "post-Scale-0"**. From `PANEL_REGISTRY` (`scales:['0']`): flux-slice, wave-lab, p1-observables, spectrum, dispersion, knots, gravity, time, thermo, scale-context; + ad-hoc symmetry, genesis-burst, conservation-micropanel. ~4,100 LOC panel logic + ~860 LOC analysis math (FFT E(k), lattice topology, gravity, causal-clock γ). Data-readiness varies: gravity/time have the native `TELEMETRY_GRAVITY` group; spectrum/dispersion/knots need their analysis ported to C++ |
+| The 13 specialized Scale-0 analysis panels | ◐ **1/13** | **gravity ✅** (`756f05ac`, collapsible instrument on the engine's `GravityMetricAgg` — real Poisson latency L → lapse f → γ → time dilation; established the reusable pattern). Remaining: flux-slice, wave-lab, p1-observables, **spectrum**, **dispersion**, knots, time, thermo, scale-context, symmetry, genesis, conservation. Data-readiness varies: time/thermo/conservation are telemetry/diagnostics-ready; **spectrum/dispersion/knots need an FFT/field-spectrum subsystem** (no engine E(k)/ω(k) telemetry, no L³ field grid in the native frame) |
 | Docking (drag / resize / float) | ▢ | fixed flex layout |
 | Settings (theme / density / persisted prefs) | ▢ | single dark theme |
 | Knowledge base / FAQ / keyboard-help / tooltips | ▢ | deferred by owner |
