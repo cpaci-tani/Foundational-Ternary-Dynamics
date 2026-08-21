@@ -84,13 +84,68 @@
              imperative rebuild). Scale 0 → the term-toggle list; Scale 1 → a
              compact particle readout. Both scales share the telemetry chart. -->
         <div id="physics" class="panel">
-            <!-- Scale 0 (Lattice): the physics term-toggles + field overlays -->
+            <!-- Scale 0 (Lattice): the physics term-toggles + config + overlays -->
             <div class="scale-block" data-if="active_scale == 0">
-                <div class="panel-title">Physics terms</div>
-                <div class="toggles">
-                    <div class="tog" data-for="t : toggles" data-class-on="t.on" data-event-click="toggle(t.name)">
-                        <span class="led"></span><span class="lbl">{{t.name}}</span>
+                <!-- Live validation banner: TermToggles::validate() (+ CPU
+                     gpu-only warnings) surfaced from the authoritative engine
+                     state, so an invalid toggle combo is shown, not silently
+                     stderr-warned. Hidden when the combo is valid. -->
+                <div class="vbanner" data-if="has_validation">{{validation_msg}}</div>
+
+                <!-- Physics terms — ALL 44 TOGGLE_SPECS toggles, categorized and
+                     COLLAPSED by default (fps: the toggle DOM is empty until the
+                     section, then a category, is opened — the scenario-picker
+                     DOM-shrink discipline). Each row shows the toggle name, its
+                     live LED, its description (subtitle), and its discoverable
+                     requires/conflicts/gpu-only metadata; an amber ring marks a
+                     toggle whose current combo violates a rule (gated). -->
+                <div class="ctl-head" data-event-click="toggle_physics()">
+                    <span class="ctl-caret">{{ phys_open ? '&#9662;' : '&#9656;' }}</span>
+                    <span class="ctl-htitle">Physics terms</span>
+                    <span class="ctl-hnote">44 toggles</span>
+                </div>
+                <div class="tog-groups" data-if="phys_open">
+                    <div class="tog-group" data-for="g : toggle_groups">
+                        <div class="tog-group-head" data-event-click="toggle_tog_group(g.title)">
+                            <span class="ctl-caret">{{ g.expanded ? '&#9662;' : '&#9656;' }}</span>
+                            <span class="tog-group-title">{{g.title}}</span>
+                            <span class="tog-group-count">{{g.count}}</span>
+                        </div>
+                        <div class="tog-items" data-if="g.expanded">
+                            <div class="tog" data-for="t : g.items" data-class-on="t.on" data-class-gated="t.gated" data-event-click="toggle(t.name)">
+                                <span class="led"></span>
+                                <span class="tog-body">
+                                    <span class="lbl">{{t.name}}</span>
+                                    <span class="tog-desc">{{t.desc}}</span>
+                                    <span class="tog-req" data-if="t.has_req">{{t.req}}</span>
+                                </span>
+                            </div>
+                        </div>
                     </div>
+                </div>
+
+                <!-- Config & lattice — the non-bool config knobs (dt · SOR ·
+                     boundary · Langevin · stencil · Coulomb · omega0 · drain),
+                     the lattice-size control (the one knob that reboots the
+                     engine), and reset-to-defaults. Each knob is a −/＋ nudge
+                     (RmlUi has no range input; same affordance as the sheet
+                     height). COLLAPSED by default. -->
+                <div class="ctl-head" data-event-click="toggle_config()">
+                    <span class="ctl-caret">{{ cfg_open ? '&#9662;' : '&#9656;' }}</span>
+                    <span class="ctl-htitle">Config &amp; lattice</span>
+                    <span class="ctl-hnote">knobs</span>
+                </div>
+                <div class="cfg-rows" data-if="cfg_open">
+                    <div class="cfg-knob" data-for="c : config_rows">
+                        <div class="cfg-line">
+                            <span class="cfg-label">{{c.label}}</span>
+                            <span class="cfg-nudge" data-event-click="config_nudge(c.key, '-')">&#8722;</span>
+                            <span class="cfg-val">{{c.vstr}}</span>
+                            <span class="cfg-nudge" data-event-click="config_nudge(c.key, '+')">&#43;</span>
+                        </div>
+                        <span class="cfg-hint">{{c.hint}}</span>
+                    </div>
+                    <div class="cfg-reset" data-event-click="reset_toggles()">Reset toggles to defaults</div>
                 </div>
 
                 <!-- Field overlays: the web's 7-column, multi-select menu.

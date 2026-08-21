@@ -115,16 +115,106 @@ inline int lparam_y(LPARAM lp) { return static_cast<int>(static_cast<short>(HIWO
 // counts as a CLICK (→ scene pick) rather than a DRAG (→ camera orbit).
 constexpr int kClickSlop = 4;
 
-// ── The physics-terms panel: which toggles it shows, top to bottom. Names are
-//    the canonical TermToggles field names (term_toggles.h) so a click maps to
-//    a SetToggle command 1:1 and the on-state reads straight from the snapshot.
-constexpr const char* kPanelToggles[] = {
-    "wave_propagation", "coupling",       "damping",         "genesis",
-    "gauss_projection", "forces",         "movement",        "poisson_coulomb",
-    "selective_damping","gravity",        "lorentz_force",   "dual_substrate",
-    "color_forces",     "strong_force",   "weak_transmutation",
-    "de_broglie_clock",
+// ── The physics-control panel is data-driven from ftd::TOGGLE_SPECS[] (all 44
+//    toggles) plus the non-bool config knobs on TermToggles / the bridge. To
+//    keep the live DOM small (fps), the whole panel is collapsible: the toggle
+//    list is split into a few named categories (each independently collapsible,
+//    building its rows only when open — the scenario-picker pattern), and the
+//    config knobs live behind their own collapse. Nothing here is a
+//    hand-maintained subset: every TOGGLE_SPECS row is placed into a category, so
+//    adding a toggle to the table makes it appear automatically.
+
+// The toggle categories, in panel order. Every TOGGLE_SPECS row maps to exactly
+// one via toggle_category(); an unrecognized name falls into the last bucket, so
+// a newly-added toggle can never vanish from the panel.
+constexpr const char* kToggleCategories[] = {
+    "Core dynamics",
+    "Forces & gravity",
+    "Nuclear / gauge",
+    "Thermal / quantum / diag",
 };
+
+// Assign a toggle (by canonical TOGGLE_SPECS name) to a category index. Pure
+// presentation; the set of toggles shown is still exactly TOGGLE_SPECS.
+int toggle_category(std::string_view n) {
+    // Forces & gravity.
+    if (n == "forces" || n == "gravity" || n == "poisson_coulomb" || n == "lorentz_force"
+        || n == "emergent_forces" || n == "exchange_force" || n == "latency_field"
+        || n == "field_energy_gravity" || n == "cluster_inertia" || n == "geometric_gravity"
+        || n == "absorbing_boundary" || n == "reflective_boundary")
+        return 1;
+    // Nuclear / gauge.
+    if (n == "color_forces" || n == "strong_stress_energy" || n == "weak_transmutation"
+        || n == "strong_force" || n == "triad_binding" || n == "confinement"
+        || n == "su2_gauge" || n == "su3_gauge" || n == "pair_production")
+        return 2;
+    // Thermal / quantum / diagnostics.
+    if (n == "larmor_radiation" || n == "langevin" || n == "de_broglie_clock"
+        || n == "db_clock_coulomb" || n == "knot_tracking" || n == "strict_validation")
+        return 3;
+    // Everything else: core dynamics + integrators + gauss variants + EW sweep.
+    return 0;
+}
+
+// Non-bool config knobs, exposed as −/＋ nudge controls (RmlUi has no range
+// input; this mirrors the rubber-sheet height affordance). `kind` selects the
+// command + value semantics; the enum kinds cycle through their labels.
+enum class CfgKind { Double, Int, Boundary, Bcc, SiteFilter, UInt, Lattice };
+struct ConfigSpec {
+    const char* key;    // stable id (matches config_nudge dispatch)
+    const char* label;  // human label
+    CfgKind     kind;
+    double      lo, hi, step;
+    const char* hint;   // units / note (static subtitle)
+};
+constexpr ConfigSpec kConfigSpecs[] = {
+    {"lattice",          "Lattice L",        CfgKind::Lattice,    4.0, 256.0, 8.0,  "reboots the scenario"},
+    {"dt",               "dt (time step)",   CfgKind::Double,     1.0, 20.0,  0.5,  "≥1 unless symplectic"},
+    {"sor",              "SOR iterations",   CfgKind::Int,        1.0, 60.0,  1.0,  "Poisson solver depth"},
+    {"boundary",         "Flux boundary",    CfgKind::Boundary,   0.0, 2.0,   1.0,  "field wrap law"},
+    {"langevin_T",       "Langevin T",       CfgKind::Double,     0.0, 5.0,   0.1,  "thermostat temperature"},
+    {"langevin_gamma",   "Langevin gamma",   CfgKind::Double,     0.0, 1.0,   0.01, "OU friction"},
+    {"langevin_seed",    "Langevin seed",    CfgKind::UInt,       0.0, 1.0e6, 1.0,  "RNG reproducibility"},
+    {"langevin_site",    "Langevin sites",   CfgKind::SiteFilter, 0.0, 3.0,   1.0,  "parity filter"},
+    {"bcc_stencil",      "BCC stencil",      CfgKind::Bcc,        0.0, 3.0,   1.0,  "sublattice Laplacian"},
+    {"coulomb_coupling", "Coulomb coupling", CfgKind::Double,     0.0, 5.0,   0.1,  "Gauss source scale"},
+    {"coulomb_source",   "Coulomb source Z", CfgKind::Double,     1.0, 4.0,   1.0,  "nuclear charge Z"},
+    {"omega0",           "omega0 (clock)",   CfgKind::Double,     0.0, 2.0,   0.1,  "de Broglie frequency"},
+    {"kinetic_drain",    "Kinetic drain",    CfgKind::Double,     0.0, 1.0,   0.05, "genesis kinetic drain"},
+};
+const ConfigSpec* find_config_spec(std::string_view key) {
+    for (const auto& s : kConfigSpecs)
+        if (key == s.key) return &s;
+    return nullptr;
+}
+Rml::String boundary_label(int v) {
+    switch (v) { case 0: return "Periodic"; case 1: return "Reflective"; default: return "Dispersal"; }
+}
+Rml::String bcc_label(int v) {
+    switch (v) { case 1: return "SC"; case 2: return "FCC"; case 3: return "BCC"; default: return "FULL"; }
+}
+Rml::String site_label(int v) {
+    switch (v) { case 0: return "SC"; case 1: return "BCC"; case 2: return "FCC"; default: return "ALL"; }
+}
+Rml::String config_value_str(const ConfigSpec& s, double v) {
+    switch (s.kind) {
+        case CfgKind::Boundary:   return boundary_label(static_cast<int>(std::lround(v)));
+        case CfgKind::Bcc:        return bcc_label(static_cast<int>(std::lround(v)));
+        case CfgKind::SiteFilter: return site_label(static_cast<int>(std::lround(v)));
+        case CfgKind::Int:
+        case CfgKind::UInt:
+        case CfgKind::Lattice: {
+            char b[32];
+            std::snprintf(b, sizeof(b), "%d", static_cast<int>(std::lround(v)));
+            return Rml::String(b);
+        }
+        default: {
+            char b[32];
+            std::snprintf(b, sizeof(b), "%.2f", v);
+            return Rml::String(b);
+        }
+    }
+}
 
 // One tick in physical seconds (electron-primary gauge: t_phys = t_P/√3, see
 // CLAUDE.md). Used only to render a human-facing "physical time" in the status
@@ -154,9 +244,34 @@ std::vector<std::string> split_csv(const std::string& s) {
 }
 
 // ── RmlUi data-model mirror of UiSnapshot (the bound C++ side of the shell) ──
-struct ToggleRow {
+// One physics toggle row (bound into the shell). `name`/`desc`/`req` come from
+// the TOGGLE_SPECS row (static); `on`/`gated` are the live engine truth. `req`
+// is the discoverable requires/conflicts/gpu-only metadata; `gated` lights amber
+// when the current combo already violates a rule involving this enabled toggle.
+struct FullToggleRow {
     Rml::String name;
+    Rml::String desc;
+    Rml::String req;
     bool on = false;
+    bool gated = false;
+    bool has_req = false;
+};
+// One collapsible toggle category. Items are built only while `expanded` (the
+// scenario-picker DOM-shrink pattern), so a closed category costs ~0 DOM.
+struct ToggleGroupRow {
+    Rml::String title;
+    bool expanded = false;
+    Rml::String count;
+    Rml::Vector<FullToggleRow> items;
+};
+// One config-knob row: label + current value + −/＋ nudge. `key` maps to the
+// ConfigSpec / command dispatch. (The reset-to-defaults button is a static RML
+// element, not a data row.)
+struct ConfigRow {
+    Rml::String key;
+    Rml::String label;
+    Rml::String vstr;
+    Rml::String hint;
 };
 
 // One overlay toggle row bound into the shell (Scale-0 panel). `on` lights the
@@ -222,7 +337,22 @@ struct ShellData {
     Rml::String lattice = "0";
     int fps = 0;
     bool running = false;
-    Rml::Vector<ToggleRow> toggles;
+    // ── Physics control surface (Scale-0). Data-driven from ftd::TOGGLE_SPECS[]
+    //    (all 44 toggles) + the config knobs, both collapsed by default so the
+    //    steady-state DOM stays tiny (fps). `phys_open` gates the toggle
+    //    categories; `cfg_open` gates the config knobs. While a section (or a
+    //    category) is closed its bound array is left EMPTY, so the nested
+    //    data-for instantiates ~0 rows — the same DOM-shrink discipline the
+    //    scenario picker uses.
+    bool phys_open = false;
+    bool cfg_open = false;
+    Rml::Vector<ToggleGroupRow> toggle_groups;   // the 44 toggles, categorized
+    Rml::Vector<ConfigRow> config_rows;          // dt / SOR / boundary / … + reset
+    // Live validation banner: TermToggles::validate() (+ CPU runtime warnings)
+    // surfaced from the authoritative engine state. `has_validation` gates the
+    // banner; `validation_msg` is the first offending rule.
+    bool has_validation = false;
+    Rml::String validation_msg;
     // FIELDS overlay panel (Scale-0). The 7-column, multi-select overlay menu
     // (mirrors the web). Built from the shared registry, grouped by column;
     // empty columns are omitted. Each row's `on` reflects the active set.
@@ -244,9 +374,159 @@ struct ShellData {
     Rml::Vector<InspLine> insp_lines;
 };
 
-bool toggle_on(const ftd::TermToggles& tt, const char* name) {
-    const ftd::ToggleSpec* spec = ftd::term_toggles_detail::find_spec(name);
-    return spec ? (tt.*(spec->field)) : false;
+// ── Physics-control helpers (build + live-sync the toggle/config model) ──────
+
+// The static requires/conflicts/gpu-only metadata for one TOGGLE_SPECS row,
+// formatted as the discoverable subtitle shown under the toggle label. Built
+// once (per row); does not depend on live state.
+Rml::String toggle_req_text(const ftd::ToggleSpec& spec) {
+    std::string out;
+    if (spec.requires_ && *spec.requires_) {
+        out += "needs ";
+        out += spec.requires_;
+    }
+    if (spec.conflicts && *spec.conflicts) {
+        if (!out.empty()) out += " · ";
+        out += "conflicts ";
+        out += spec.conflicts;
+    }
+    if (spec.gpu_only_warning && *spec.gpu_only_warning) {
+        if (!out.empty()) out += " · ";
+        out += "GPU-only";
+    }
+    return Rml::String(out);
+}
+
+// Live "gated" flag for an ENABLED toggle: true when the current combo already
+// violates a requires/conflicts rule involving it (a required dep is off, or a
+// conflicting toggle is on). Surfaces validation per-row without blocking the
+// click (the engine's own validate() is authoritative; strict_validation off ⇒
+// stderr-warn). Reads the live TermToggles the snapshot published.
+bool toggle_gated(const ftd::ToggleSpec& spec, const ftd::TermToggles& tt) {
+    if (!(tt.*(spec.field))) return false;  // only an enabled toggle can be gated
+    bool gated = false;
+    ftd::term_toggles_detail::for_each_csv(spec.requires_, [&](std::string_view dep) {
+        const ftd::ToggleSpec* ds = ftd::term_toggles_detail::find_spec(dep);
+        if (ds && !(tt.*(ds->field))) gated = true;
+    });
+    if (spec.conflicts && *spec.conflicts) {
+        const ftd::ToggleSpec* cs = ftd::term_toggles_detail::find_spec(spec.conflicts);
+        if (cs && (tt.*(cs->field))) gated = true;
+    }
+    return gated;
+}
+
+// Fill a FullToggleRow's live fields (on/gated) from the engine truth. Returns
+// true if anything changed (so the caller can dirty the binding).
+bool refresh_toggle_row(FullToggleRow& r, const ftd::TermToggles& tt) {
+    const ftd::ToggleSpec* spec = ftd::term_toggles_detail::find_spec(r.name.c_str());
+    if (!spec) return false;
+    bool changed = false;
+    const bool on = tt.*(spec->field);
+    if (r.on != on) { r.on = on; changed = true; }
+    const bool gated = toggle_gated(*spec, tt);
+    if (r.gated != gated) { r.gated = gated; changed = true; }
+    return changed;
+}
+
+// Build one category's item rows from TOGGLE_SPECS (only the toggles that map to
+// this category), seeded from the live engine truth `tt`.
+void build_toggle_group_items(ToggleGroupRow& g, int cat, const ftd::TermToggles& tt) {
+    g.items.clear();
+    for (const ftd::ToggleSpec& spec : ftd::TOGGLE_SPECS) {
+        if (toggle_category(spec.name) != cat) continue;
+        FullToggleRow r;
+        r.name = spec.name;
+        r.desc = spec.description ? Rml::String(spec.description) : Rml::String();
+        r.req = toggle_req_text(spec);
+        r.has_req = !r.req.empty();
+        r.on = tt.*(spec.field);
+        r.gated = toggle_gated(spec, tt);
+        g.items.push_back(std::move(r));
+    }
+}
+
+// Count how many TOGGLE_SPECS rows fall into a category (for the header tally).
+int toggle_group_count(int cat) {
+    int n = 0;
+    for (const ftd::ToggleSpec& spec : ftd::TOGGLE_SPECS)
+        if (toggle_category(spec.name) == cat) ++n;
+    return n;
+}
+
+// Rebuild the toggle-category headers. Items are built only for categories whose
+// title is in `expanded` (the DOM-shrink pattern); a closed category holds 0
+// item rows. Called on a STRUCTURAL change (panel open, category expand/collapse)
+// — never per frame; the live on/gated values update in place via
+// refresh_toggle_row below.
+void rebuild_toggle_groups(ShellData* data, const ftd::TermToggles& tt,
+                           const std::vector<std::string>& expanded) {
+    if (!data) return;
+    data->toggle_groups.clear();
+    if (!data->phys_open) return;  // closed section ⇒ no headers, no rows
+    for (int cat = 0; cat < static_cast<int>(std::size(kToggleCategories)); ++cat) {
+        ToggleGroupRow g;
+        g.title = kToggleCategories[cat];
+        g.expanded = std::find(expanded.begin(), expanded.end(),
+                               std::string(kToggleCategories[cat])) != expanded.end();
+        g.count = std::to_string(toggle_group_count(cat));
+        if (g.expanded) build_toggle_group_items(g, cat, tt);
+        data->toggle_groups.push_back(std::move(g));
+    }
+}
+
+// The live numeric value of one config knob, read from the authoritative engine
+// truth (TermToggles + the published bridge knobs). Enum kinds return the raw
+// integer mode. Lattice/dt/SOR come from the knobs; the rest from TermToggles.
+double config_current(const ConfigSpec& s, const ftd::TermToggles& tt,
+                      const ftd::native::BridgeKnobs& knobs) {
+    const std::string_view k(s.key);
+    if (k == "lattice") return static_cast<double>(knobs.lattice_size);
+    if (k == "dt") return knobs.dt;
+    if (k == "sor") return static_cast<double>(knobs.sor_iterations);
+    if (k == "boundary") return static_cast<double>(static_cast<int>(tt.flux_boundary));
+    if (k == "langevin_T") return tt.langevin_T;
+    if (k == "langevin_gamma") return tt.langevin_gamma;
+    if (k == "langevin_seed") return static_cast<double>(tt.langevin_seed);
+    if (k == "langevin_site") return static_cast<double>(static_cast<int>(tt.langevin_site_filter));
+    if (k == "bcc_stencil") return static_cast<double>(static_cast<int>(tt.bcc_stencil));
+    if (k == "coulomb_coupling") return tt.coulomb_charge_coupling;
+    if (k == "coulomb_source") return tt.coulomb_source_scale;
+    if (k == "omega0") return tt.omega0;
+    if (k == "kinetic_drain") return tt.kinetic_drain;
+    return 0.0;
+}
+
+// Build the config-knob rows (one per ConfigSpec) + a trailing reset button row,
+// seeded from the live engine truth. Called when the config section opens.
+void build_config_rows(ShellData* data, const ftd::TermToggles& tt,
+                       const ftd::native::BridgeKnobs& knobs) {
+    if (!data) return;
+    data->config_rows.clear();
+    if (!data->cfg_open) return;
+    for (const ConfigSpec& s : kConfigSpecs) {
+        ConfigRow r;
+        r.key = s.key;
+        r.label = s.label;
+        r.hint = s.hint;
+        r.vstr = config_value_str(s, config_current(s, tt, knobs));
+        data->config_rows.push_back(std::move(r));
+    }
+}
+
+// Refresh the built config rows' displayed values from the live engine truth.
+// Returns true if any value string changed (so the caller can dirty).
+bool refresh_config_rows(ShellData* data, const ftd::TermToggles& tt,
+                         const ftd::native::BridgeKnobs& knobs) {
+    if (!data) return false;
+    bool changed = false;
+    for (ConfigRow& r : data->config_rows) {
+        const ConfigSpec* s = find_config_spec(r.key.c_str());
+        if (!s) continue;
+        Rml::String v = config_value_str(*s, config_current(*s, tt, knobs));
+        if (r.vstr != v) { r.vstr = v; changed = true; }
+    }
+    return changed;
 }
 
 // Format a sheet height fraction for the panel (2 decimals, e.g. "0.42").
@@ -448,6 +728,24 @@ struct AppContext {
     // zero rows). Empty ⇒ every group collapsed (the default when the picker
     // opens), so an open-but-unbrowsed picker is just the 5 category headers.
     std::vector<std::string> scn_expanded_groups;
+
+    // ── Physics-control surface (GUI thread) ──
+    // Authoritative live engine state, mirrored from the Scale-0 snapshot each
+    // boundary. Every control callback reads its "current" value from these
+    // caches (never from the — possibly unbuilt — view rows), so command dispatch
+    // is decoupled from the lazy DOM. `have_live` is false until the first
+    // Scale-0 snapshot lands.
+    ftd::TermToggles live_toggles;
+    ftd::native::BridgeKnobs live_knobs;
+    bool have_live = false;
+    bool backend_cpu = false;  // drives the CPU-only gpu-warning surfacing
+    // Titles of the toggle categories the user has expanded (scenario-picker
+    // pattern: only an expanded category builds its item rows).
+    std::vector<std::string> tog_expanded_groups;
+    // The run config used to reboot the engine at a new lattice L (the one
+    // knob that reboots). Seeded from the CLI at boot and updated when the
+    // lattice / boundary knobs change, so a reboot re-applies the live choices.
+    ftd::native::RunConfig run_config;
 };
 
 // ── Command helpers (run on the GUI thread; drained by the sim thread) ──
@@ -496,13 +794,100 @@ void request_switch_scale(AppContext* app, int level) {
     app->scenario_id = scenario;
 }
 void request_toggle(AppContext* app, const std::string& name) {
-    bool cur = false;
+    // Read the CURRENT value from the authoritative live engine mirror, not the
+    // (possibly unbuilt) view rows — flip it and push a SetToggle Scale-0 command.
+    const ftd::ToggleSpec* spec = ftd::term_toggles_detail::find_spec(name);
+    const bool cur = spec ? (app->live_toggles.*(spec->field)) : false;
+    // Optimistically flip the matching built row for immediate LED feedback (the
+    // snapshot confirms it next boundary).
     if (app->data) {
-        for (const ToggleRow& r : app->data->toggles) {
-            if (r.name == name) { cur = r.on; break; }
-        }
+        for (ToggleGroupRow& g : app->data->toggle_groups)
+            for (FullToggleRow& r : g.items)
+                if (r.name == name) { r.on = !cur; break; }
+        if (app->model_ready) app->model.DirtyVariable("toggle_groups");
     }
     push_scale0(app, ftd::native::SetToggle{name, !cur});
+}
+
+// Reset all term toggles to their canonical defaults (ftd::TermToggles{}). Issues
+// the ResetToDefaults Scale-0 command; the snapshot reflects it next boundary.
+void request_reset_toggles(AppContext* app) {
+    push_scale0(app, ftd::native::ResetToDefaults{});
+}
+
+// Reboot the current scenario at a new lattice L (the one knob that reboots the
+// engine). Clamps L to [4,256], stamps it into the app's live RunConfig, and
+// pushes the core SetRunConfig command — the host reloads the active scenario on
+// the fresh lattice (interop re-establishes via the applied_reload() path).
+void request_lattice_reboot(AppContext* app, int new_l) {
+    new_l = std::max(4, std::min(256, new_l));
+    if (new_l == app->run_config.lattice_size) return;
+    app->run_config.lattice_size = new_l;
+    push_core(app, ftd::native::SetRunConfig{app->run_config});
+}
+
+// Dispatch a config-knob nudge (`dir` = "+" / "-"). Reads the CURRENT value from
+// the live engine mirror, steps/cycles by the ConfigSpec, and pushes the matching
+// Scale-0 (or core, for lattice) command. Optimistic view update is unnecessary —
+// the next snapshot refreshes the displayed value (change-guarded).
+void request_config_nudge(AppContext* app, const std::string& key, const std::string& dir) {
+    const ConfigSpec* s = find_config_spec(key);
+    if (!s) return;
+    const double cur = config_current(*s, app->live_toggles, app->live_knobs);
+    const double sign = (dir == "+") ? 1.0 : -1.0;
+
+    // Enum knobs cycle through [lo,hi] (wrapping); numeric knobs step + clamp.
+    const bool is_enum = (s->kind == CfgKind::Boundary || s->kind == CfgKind::Bcc
+                          || s->kind == CfgKind::SiteFilter);
+    double next;
+    if (is_enum) {
+        const int lo = static_cast<int>(std::lround(s->lo));
+        const int hi = static_cast<int>(std::lround(s->hi));
+        const int span = hi - lo + 1;
+        int v = static_cast<int>(std::lround(cur)) + (dir == "+" ? 1 : -1);
+        v = lo + ((v - lo) % span + span) % span;  // wrap into [lo,hi]
+        next = static_cast<double>(v);
+    } else {
+        next = std::clamp(cur + sign * s->step, s->lo, s->hi);
+    }
+
+    switch (s->kind) {
+        case CfgKind::Lattice:
+            request_lattice_reboot(app, static_cast<int>(std::lround(next)));
+            break;
+        case CfgKind::Double: {
+            ftd::native::DoubleKey dk = ftd::native::DoubleKey::langevin_T;
+            if (key == "langevin_T") dk = ftd::native::DoubleKey::langevin_T;
+            else if (key == "langevin_gamma") dk = ftd::native::DoubleKey::langevin_gamma;
+            else if (key == "coulomb_coupling") dk = ftd::native::DoubleKey::coulomb_charge_coupling;
+            else if (key == "coulomb_source") dk = ftd::native::DoubleKey::coulomb_source_scale;
+            else if (key == "omega0") dk = ftd::native::DoubleKey::omega0;
+            else if (key == "kinetic_drain") dk = ftd::native::DoubleKey::kinetic_drain;
+            if (key == "dt") push_scale0(app, ftd::native::SetDt{next});
+            else push_scale0(app, ftd::native::SetDouble{dk, next});
+            break;
+        }
+        case CfgKind::Int:  // only SOR uses Int
+            push_scale0(app, ftd::native::SetSorIterations{static_cast<int>(std::lround(next))});
+            break;
+        case CfgKind::UInt:  // only langevin_seed
+            push_scale0(app, ftd::native::SetUInt{ftd::native::UIntKey::langevin_seed,
+                                                  static_cast<unsigned>(std::lround(next))});
+            break;
+        case CfgKind::Boundary:
+            app->run_config.flux_boundary = static_cast<int>(std::lround(next));
+            push_scale0(app, ftd::native::SetBoundary{
+                static_cast<ftd::FluxBoundaryMode>(static_cast<int>(std::lround(next)))});
+            break;
+        case CfgKind::Bcc:
+            push_scale0(app, ftd::native::SetEnum{ftd::native::EnumKey::bcc_stencil,
+                                                  static_cast<int>(std::lround(next))});
+            break;
+        case CfgKind::SiteFilter:
+            push_scale0(app, ftd::native::SetEnum{ftd::native::EnumKey::langevin_site_filter,
+                                                  static_cast<int>(std::lround(next))});
+            break;
+    }
 }
 
 // Nudge one active rubber-sheet's slice height by `delta` (fraction of the box):
@@ -922,6 +1307,28 @@ struct AppOptions {
     // a real picker click uses, so the captured frame shows a scenario reloaded
     // via the picker. Scale-0 only.
     std::string pick_scenario;
+
+    // ── Physics-control surface (headless proof of the new panel) ──
+    // --open-physics / --open-config pre-open the (default-collapsed) sections so
+    // a capture shows the full control surface. --open-physics leaves the toggle
+    // categories COLLAPSED (4 headers whose counts sum to 44 — all grouped &
+    // reachable); --expand-all-tog expands every category (all 44 rows), and
+    // --expand-tog-group NAME expands one. --no-scroll disables the capture-mode
+    // scroll-to-bottom so the shot shows the TOP of the panel.
+    bool open_physics = false;
+    bool open_config = false;
+    bool expand_all_tog = false;
+    std::vector<std::string> expand_tog_groups;
+    bool no_scroll = false;
+    // Simulated control edits (interactive input can't run under --capture-frames).
+    // These drive the SAME commands the −/＋ nudges and toggle clicks push, so the
+    // captured snapshot reflects them: prove control works headlessly.
+    std::vector<std::string> toggles_on;   // --toggle-on NAME  (repeatable)
+    std::vector<std::string> toggles_off;  // --toggle-off NAME (repeatable)
+    bool   set_dt = false;      double dt_value = 1.0;         // --set-dt V
+    bool   set_sor = false;     int    sor_value = 0;          // --set-sor N
+    bool   set_boundary = false; int   boundary_value = 0;     // --set-boundary N (0/1/2)
+    int    set_lattice = 0;     // --set-lattice N (>0 ⇒ reboot at N; [4,256])
 };
 
 AppOptions parse_app_options(const std::vector<std::string>& args) {
@@ -961,6 +1368,34 @@ AppOptions parse_app_options(const std::vector<std::string>& args) {
             o.have_inspect_particle = true;
         } else if (args[i] == "--pick-scenario" && i + 1 < args.size()) {
             o.pick_scenario = args[++i];
+        } else if (args[i] == "--open-physics") {
+            o.open_physics = true;
+        } else if (args[i] == "--open-config") {
+            o.open_config = true;
+        } else if (args[i] == "--open-controls") {   // both sections
+            o.open_physics = true;
+            o.open_config = true;
+        } else if (args[i] == "--expand-all-tog") {
+            o.expand_all_tog = true;
+        } else if (args[i] == "--expand-tog-group" && i + 1 < args.size()) {
+            o.expand_tog_groups.push_back(args[++i]);
+        } else if (args[i] == "--no-scroll") {
+            o.no_scroll = true;
+        } else if (args[i] == "--toggle-on" && i + 1 < args.size()) {
+            o.toggles_on.push_back(args[++i]);
+        } else if (args[i] == "--toggle-off" && i + 1 < args.size()) {
+            o.toggles_off.push_back(args[++i]);
+        } else if (args[i] == "--set-dt" && i + 1 < args.size()) {
+            o.set_dt = true;
+            o.dt_value = std::atof(args[++i].c_str());
+        } else if (args[i] == "--set-sor" && i + 1 < args.size()) {
+            o.set_sor = true;
+            o.sor_value = std::atoi(args[++i].c_str());
+        } else if (args[i] == "--set-boundary" && i + 1 < args.size()) {
+            o.set_boundary = true;
+            o.boundary_value = std::atoi(args[++i].c_str());
+        } else if (args[i] == "--set-lattice" && i + 1 < args.size()) {
+            o.set_lattice = std::atoi(args[++i].c_str());
         }
     }
     return o;
@@ -1142,8 +1577,12 @@ int run_app(const std::vector<std::string>& args) {
     ShellData data;
     data.scenario = initial_scenario;
     data.active_scale = initial_scale;
-    data.toggles.reserve(std::size(kPanelToggles));
-    for (const char* n : kPanelToggles) data.toggles.push_back(ToggleRow{n, false});
+    // Physics control surface: COLLAPSED on boot (data.phys_open / data.cfg_open
+    // both false), so the bound toggle_groups / config_rows arrays start EMPTY —
+    // the 44 toggle rows + config knobs are instantiated lazily the first time the
+    // user opens a section (see the toggle_physics / toggle_config callbacks),
+    // keeping the boot/normal-use DOM tiny. The --open-physics / --open-config CLI
+    // flags pre-open them for headless captures (handled after `app` is built).
     // FIELDS overlay panel (7 columns, multi-select) + initial lit LEDs (mirrors
     // the overlay stamp above so the panel matches the geometry from frame 0).
     data.overlay_columns = build_overlay_columns();
@@ -1185,6 +1624,13 @@ int run_app(const std::vector<std::string>& args) {
     app.paused = &paused;
     app.quit = &quit_flag;
     app.scenario_id = initial_scenario;
+    // Seed the lattice-reboot run config from the launch options, so a lattice
+    // nudge re-applies the same backend/boundary the app booted with (the reboot
+    // reloads the CURRENT scenario at the new L).
+    app.run_config.lattice_size = host.lattice_size();
+    app.run_config.force_cpu = engine_opts.force_cpu;
+    app.run_config.flux_boundary = engine_opts.flux_boundary;
+    app.backend_cpu = engine_opts.force_cpu;
 
     // Seed the scroll-wheel height target to the last active sheet (if any), so
     // Shift+wheel over the scene is tactile from frame 0 in headless captures.
@@ -1250,11 +1696,30 @@ int run_app(const std::vector<std::string>& args) {
 
     Rml::DataModelConstructor ctor = context->CreateDataModel("shell");
     if (!ctor) throw std::runtime_error("CreateDataModel(shell) failed");
-    if (auto row = ctor.RegisterStruct<ToggleRow>()) {
-        row.RegisterMember("name", &ToggleRow::name);
-        row.RegisterMember("on", &ToggleRow::on);
+    // Physics control surface: the 44-toggle rows (categorized) + config knobs.
+    if (auto trow = ctor.RegisterStruct<FullToggleRow>()) {
+        trow.RegisterMember("name", &FullToggleRow::name);
+        trow.RegisterMember("desc", &FullToggleRow::desc);
+        trow.RegisterMember("req", &FullToggleRow::req);
+        trow.RegisterMember("on", &FullToggleRow::on);
+        trow.RegisterMember("gated", &FullToggleRow::gated);
+        trow.RegisterMember("has_req", &FullToggleRow::has_req);
     }
-    ctor.RegisterArray<Rml::Vector<ToggleRow>>();
+    ctor.RegisterArray<Rml::Vector<FullToggleRow>>();
+    if (auto tgrp = ctor.RegisterStruct<ToggleGroupRow>()) {
+        tgrp.RegisterMember("title", &ToggleGroupRow::title);
+        tgrp.RegisterMember("expanded", &ToggleGroupRow::expanded);
+        tgrp.RegisterMember("count", &ToggleGroupRow::count);
+        tgrp.RegisterMember("items", &ToggleGroupRow::items);
+    }
+    ctor.RegisterArray<Rml::Vector<ToggleGroupRow>>();
+    if (auto crow = ctor.RegisterStruct<ConfigRow>()) {
+        crow.RegisterMember("key", &ConfigRow::key);
+        crow.RegisterMember("label", &ConfigRow::label);
+        crow.RegisterMember("vstr", &ConfigRow::vstr);
+        crow.RegisterMember("hint", &ConfigRow::hint);
+    }
+    ctor.RegisterArray<Rml::Vector<ConfigRow>>();
     if (auto orow = ctor.RegisterStruct<OverlayRow>()) {
         orow.RegisterMember("name", &OverlayRow::name);
         orow.RegisterMember("label", &OverlayRow::label);
@@ -1302,7 +1767,12 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("lattice", &data.lattice);
     ctor.Bind("fps", &data.fps);
     ctor.Bind("running", &data.running);
-    ctor.Bind("toggles", &data.toggles);
+    ctor.Bind("phys_open", &data.phys_open);
+    ctor.Bind("cfg_open", &data.cfg_open);
+    ctor.Bind("toggle_groups", &data.toggle_groups);
+    ctor.Bind("config_rows", &data.config_rows);
+    ctor.Bind("has_validation", &data.has_validation);
+    ctor.Bind("validation_msg", &data.validation_msg);
     ctor.Bind("overlay_columns", &data.overlay_columns);
     ctor.Bind("scn_open", &data.scn_open);
     ctor.Bind("scenario_groups", &data.scenario_groups);
@@ -1324,6 +1794,60 @@ int run_app(const std::vector<std::string>& args) {
     ctor.BindEventCallback("toggle", [&app](Rml::DataModelHandle, Rml::Event&,
                                             const Rml::VariantList& v) {
         if (!v.empty()) request_toggle(&app, v[0].Get<Rml::String>());
+    });
+    // Physics-terms section — expand/collapse the whole toggle-category list. On
+    // open, build the category headers (items are built per-category on demand);
+    // on close, drop every row so the DOM holds ~0 toggle <div>s (the picker's
+    // DOM-shrink discipline). This is the fps guard for the 44-toggle panel.
+    ctor.BindEventCallback("toggle_physics", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                    const Rml::VariantList&) {
+        if (!app.data) return;
+        app.data->phys_open = !app.data->phys_open;
+        if (app.data->phys_open)
+            rebuild_toggle_groups(app.data, app.live_toggles, app.tog_expanded_groups);
+        else
+            app.data->toggle_groups.clear();
+        h.DirtyVariable("phys_open");
+        h.DirtyVariable("toggle_groups");
+    });
+    // Expand/collapse one toggle CATEGORY (its header is the affordance). Only an
+    // expanded category builds its item rows, so the live DOM stays small.
+    ctor.BindEventCallback("toggle_tog_group", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                      const Rml::VariantList& v) {
+        if (v.empty() || !app.data) return;
+        const std::string title(v[0].Get<Rml::String>().c_str());
+        auto& ex = app.tog_expanded_groups;
+        auto it = std::find(ex.begin(), ex.end(), title);
+        if (it == ex.end()) ex.push_back(title);
+        else ex.erase(it);
+        rebuild_toggle_groups(app.data, app.live_toggles, ex);
+        h.DirtyVariable("toggle_groups");
+    });
+    // Config section — expand/collapse the config knobs + lattice + reset. On
+    // open, build the knob rows from the live engine truth; on close, drop them.
+    ctor.BindEventCallback("toggle_config", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                   const Rml::VariantList&) {
+        if (!app.data) return;
+        app.data->cfg_open = !app.data->cfg_open;
+        if (app.data->cfg_open)
+            build_config_rows(app.data, app.live_toggles, app.live_knobs);
+        else
+            app.data->config_rows.clear();
+        h.DirtyVariable("cfg_open");
+        h.DirtyVariable("config_rows");
+    });
+    // Config knob nudge: v[0] = knob key, v[1] = "-"/"+". Steps/cycles the value
+    // (reading current from the live mirror) and pushes the matching command.
+    ctor.BindEventCallback("config_nudge", [&app](Rml::DataModelHandle, Rml::Event&,
+                                                  const Rml::VariantList& v) {
+        if (v.size() < 2) return;
+        request_config_nudge(&app, std::string(v[0].Get<Rml::String>().c_str()),
+                             std::string(v[1].Get<Rml::String>().c_str()));
+    });
+    // Reset every term toggle to its canonical default (ResetToDefaults).
+    ctor.BindEventCallback("reset_toggles", [&app](Rml::DataModelHandle, Rml::Event&,
+                                                   const Rml::VariantList&) {
+        request_reset_toggles(&app);
     });
     ctor.BindEventCallback("scale_lattice", [&app](Rml::DataModelHandle, Rml::Event&,
                                                    const Rml::VariantList&) {
@@ -1460,6 +1984,59 @@ int run_app(const std::vector<std::string>& args) {
     // dirty the overlay panel (the RML event callbacks get their own handle).
     app.model = model;
     app.model_ready = true;
+
+    // ── CLI-driven physics-control state (headless proof of the panel) ──────────
+    // Seed the live caches from the host's boot snapshot so the pre-opened panel
+    // shows real engine values from frame 0 (the per-frame sync keeps them live).
+    if (app_opts.scale == 0) {
+        if (auto boot = host.publisher().acquire()) {
+            if (const ftd::native::Scale0Snapshot* s0 = boot->scale0()) {
+                app.live_toggles = s0->term_toggles;
+                app.live_knobs = s0->knobs;
+                app.have_live = true;
+                app.backend_cpu = (s0->env.backend == ftd::native::BackendKindUi::Cpu);
+            }
+        }
+        // --open-physics: open the section (categories collapsed by default — 4
+        // headers whose counts sum to 44). --expand-all-tog / --expand-tog-group
+        // expand the requested categories so their toggle rows show.
+        if (app_opts.open_physics) {
+            data.phys_open = true;
+            app.tog_expanded_groups.clear();
+            if (app_opts.expand_all_tog) {
+                for (const char* c : kToggleCategories)
+                    app.tog_expanded_groups.emplace_back(c);
+            } else {
+                for (const std::string& g : app_opts.expand_tog_groups)
+                    app.tog_expanded_groups.push_back(g);
+            }
+            rebuild_toggle_groups(&data, app.live_toggles, app.tog_expanded_groups);
+        }
+        if (app_opts.open_config) {
+            data.cfg_open = true;
+            build_config_rows(&data, app.live_toggles, app.live_knobs);
+        }
+        // Simulated control edits — the SAME commands the toggle clicks / config
+        // nudges push, so the captured snapshot reflects them (control works).
+        for (const std::string& n : app_opts.toggles_on) {
+            if (ftd::term_toggles_detail::find_spec(n))
+                push_scale0(&app, ftd::native::SetToggle{n, true});
+            else std::cerr << "native_app: unknown toggle '" << n << "' (ignored)\n" << std::flush;
+        }
+        for (const std::string& n : app_opts.toggles_off) {
+            if (ftd::term_toggles_detail::find_spec(n))
+                push_scale0(&app, ftd::native::SetToggle{n, false});
+            else std::cerr << "native_app: unknown toggle '" << n << "' (ignored)\n" << std::flush;
+        }
+        if (app_opts.set_dt) push_scale0(&app, ftd::native::SetDt{app_opts.dt_value});
+        if (app_opts.set_sor) push_scale0(&app, ftd::native::SetSorIterations{app_opts.sor_value});
+        if (app_opts.set_boundary) {
+            const int b = std::clamp(app_opts.boundary_value, 0, 2);
+            app.run_config.flux_boundary = b;
+            push_scale0(&app, ftd::native::SetBoundary{static_cast<ftd::FluxBoundaryMode>(b)});
+        }
+        if (app_opts.set_lattice > 0) request_lattice_reboot(&app, app_opts.set_lattice);
+    }
 
     Rml::ElementDocument* doc = context->LoadDocument(FTD_RML_SHELL_PATH);
     if (!doc) throw std::runtime_error("LoadDocument(shell.rml) failed");
@@ -1836,12 +2413,47 @@ int run_app(const std::vector<std::string>& args) {
             if (push_status)
                 set_str("total_energy", data.total_energy,
                         fmt("%.1f", s0->energy_ledger.E_curr));
+
+            // ── Physics-control live sync (authoritative engine truth) ──
+            // Mirror the full TermToggles + published knobs into the app caches
+            // (every control callback reads its "current" value from these), then
+            // refresh whatever view rows are currently built. All writes are
+            // change-guarded, so a steady state costs nothing and never dirties
+            // the (reflow-heavy) bindings.
+            app.live_toggles = s0->term_toggles;
+            app.live_knobs = s0->knobs;
+            app.have_live = true;
+            app.backend_cpu = (s0->env.backend == ftd::native::BackendKindUi::Cpu);
+
             bool toggles_changed = false;
-            for (ToggleRow& r : data.toggles) {
-                const bool on = toggle_on(s0->term_toggles, r.name.c_str());
-                if (r.on != on) { r.on = on; toggles_changed = true; }
+            for (ToggleGroupRow& g : data.toggle_groups)
+                for (FullToggleRow& r : g.items)
+                    if (refresh_toggle_row(r, s0->term_toggles)) toggles_changed = true;
+            if (toggles_changed) model.DirtyVariable("toggle_groups");
+
+            if (refresh_config_rows(&data, s0->term_toggles, s0->knobs))
+                model.DirtyVariable("config_rows");
+
+            // Live validation banner: the engine's own validate() (+ CPU runtime
+            // warnings), so an invalid combo the user builds is surfaced rather
+            // than silently stderr-warned. Change-guarded (rarely non-empty).
+            std::string verr;
+            s0->term_toggles.validate(&verr);
+            if (app.backend_cpu) {
+                const std::string warn = s0->term_toggles.cpu_runtime_warnings();
+                if (!warn.empty()) {
+                    if (!verr.empty()) verr += "\n";
+                    verr += warn;
+                }
             }
-            if (toggles_changed) model.DirtyVariable("toggles");
+            // Surface just the first line (the banner is one row).
+            std::string vfirst = verr.substr(0, verr.find('\n'));
+            const bool has_v = !vfirst.empty();
+            if (data.has_validation != has_v) {
+                data.has_validation = has_v;
+                model.DirtyVariable("has_validation");
+            }
+            set_str("validation_msg", data.validation_msg, vfirst);
         } else if (const ftd::native::Scale1Snapshot* s1 = snap ? snap->scale1() : nullptr) {
             chart_energy = s1->total_energy;
             chart_energy_valid = true;
@@ -1878,7 +2490,7 @@ int run_app(const std::vector<std::string>& args) {
         // the pick reuses the previous frame's viewport_rect (stable frame-to-
         // frame, and always valid once the shell has laid out at least once).
         const int cur_scale = snap ? snap->active_scale : data.active_scale;
-        bool scroll_physics_bottom = capture_mode;
+        bool scroll_physics_bottom = capture_mode && !app_opts.no_scroll;
         if (cur_scale != last_inspect_scale) {
             // Scale switch: the old target index is meaningless on the new scale.
             app.inspect_kind = 0;
@@ -2071,6 +2683,8 @@ int run_app(const std::vector<std::string>& args) {
                               << ", tick=" << data.tick << ", particles=" << data.particle_count
                               << ", interop=" << (interop_active.load() ? "on" : "off")
                               << ", interop_count=" << this_frame_interop_count
+                              << ", fps=" << smoothed_fps
+                              << ", lattice=" << frame.lattice_size
                               << ", energy=" << data.total_energy.c_str() << ")\n";
                     // The readback already completed (poll returned Ready) and the
                     // PNG is committed to disk. Clean-exit attempt: mark the capture
