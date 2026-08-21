@@ -187,6 +187,30 @@
                 </div>
             </div>
 
+            <!-- Thermodynamics instrument (Scale-0): the lattice's thermal state.
+                 Bath setpoint T (langevin_T) + equipartition kinetic temperature
+                 T_kin = E_wave/(1.5·L&#179;) + wave energy + entropy + manifested count. -->
+            <div class="thermo-sec" data-if="active_scale == 0">
+                <div class="section-head" data-event-click="toggle_thermo()">
+                    <span class="section-caret">{{ thermo_open ? '&#9662;' : '&#9656;' }}</span>
+                    <span class="section-title">Thermo</span>
+                    <span class="section-badge">bath · T_kin</span>
+                </div>
+                <div class="tel-body" data-if="thermo_open">
+                    <div class="tel-ctitle">
+                        <span class="tel-name">Thermodynamic state (k_B &#8801; 1)</span>
+                        <span class="tel-prov">{{therm_prov}}</span>
+                    </div>
+                    <div class="tel-legend">
+                        <div class="tel-row"><span class="tel-lbl">T bath (langevin)</span><span class="tel-val">{{therm_bath}}</span></div>
+                        <div class="tel-row"><span class="tel-lbl">T_kin (equipartition)</span><span class="tel-val">{{therm_kin}}</span></div>
+                        <div class="tel-row"><span class="tel-lbl">Wave energy</span><span class="tel-val">{{therm_wave}}</span></div>
+                        <div class="tel-row"><span class="tel-lbl">Entropy</span><span class="tel-val">{{therm_entropy}}</span></div>
+                        <div class="tel-row"><span class="tel-lbl">Manifested sites</span><span class="tel-val">{{therm_manif}}</span></div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Click-to-inspect: appears when an entity is picked in the 3D
                  scene (data-if insp_active). insp_title names the target; each
                  insp_lines row is a live key/value read from the picked voxel
