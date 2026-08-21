@@ -1,0 +1,338 @@
+// app/ui_model.cpp — builders for the RmlUi data model (see app/ui_model.h).
+
+#include "app/ui_model.h"
+
+#include "app/app_util.h"             // to_lower (scenario filter)
+#include "native/scale0_overlays.h"   // overlay registry (build_overlay_columns)
+#include "native/scenario_catalog.h"  // SCENARIO_META (rebuild_scenario_view)
+
+#include <algorithm>
+#include <cmath>
+#include <cstdint>
+#include <cstdio>
+#include <string>
+#include <string_view>
+
+namespace ftd::native::app {
+
+// Assign a toggle (by canonical TOGGLE_SPECS name) to a category index. Pure
+// presentation; the set of toggles shown is still exactly TOGGLE_SPECS.
+int toggle_category(std::string_view n) {
+    // Forces & gravity.
+    if (n == "forces" || n == "gravity" || n == "poisson_coulomb" || n == "lorentz_force"
+        || n == "emergent_forces" || n == "exchange_force" || n == "latency_field"
+        || n == "field_energy_gravity" || n == "cluster_inertia" || n == "geometric_gravity"
+        || n == "absorbing_boundary" || n == "reflective_boundary")
+        return 1;
+    // Nuclear / gauge.
+    if (n == "color_forces" || n == "strong_stress_energy" || n == "weak_transmutation"
+        || n == "strong_force" || n == "triad_binding" || n == "confinement"
+        || n == "su2_gauge" || n == "su3_gauge" || n == "pair_production")
+        return 2;
+    // Thermal / quantum / diagnostics.
+    if (n == "larmor_radiation" || n == "langevin" || n == "de_broglie_clock"
+        || n == "db_clock_coulomb" || n == "knot_tracking" || n == "strict_validation")
+        return 3;
+    // Everything else: core dynamics + integrators + gauss variants + EW sweep.
+    return 0;
+}
+
+namespace {
+constexpr ConfigSpec kConfigSpecs[] = {
+    {"lattice",          "Lattice L",        CfgKind::Lattice,    4.0, 256.0, 8.0,  "reboots the scenario"},
+    {"dt",               "dt (time step)",   CfgKind::Double,     1.0, 20.0,  0.5,  "≥1 unless symplectic"},
+    {"sor",              "SOR iterations",   CfgKind::Int,        1.0, 60.0,  1.0,  "Poisson solver depth"},
+    {"boundary",         "Flux boundary",    CfgKind::Boundary,   0.0, 2.0,   1.0,  "field wrap law"},
+    {"langevin_T",       "Langevin T",       CfgKind::Double,     0.0, 5.0,   0.1,  "thermostat temperature"},
+    {"langevin_gamma",   "Langevin gamma",   CfgKind::Double,     0.0, 1.0,   0.01, "OU friction"},
+    {"langevin_seed",    "Langevin seed",    CfgKind::UInt,       0.0, 1.0e6, 1.0,  "RNG reproducibility"},
+    {"langevin_site",    "Langevin sites",   CfgKind::SiteFilter, 0.0, 3.0,   1.0,  "parity filter"},
+    {"bcc_stencil",      "BCC stencil",      CfgKind::Bcc,        0.0, 3.0,   1.0,  "sublattice Laplacian"},
+    {"coulomb_coupling", "Coulomb coupling", CfgKind::Double,     0.0, 5.0,   0.1,  "Gauss source scale"},
+    {"coulomb_source",   "Coulomb source Z", CfgKind::Double,     1.0, 4.0,   1.0,  "nuclear charge Z"},
+    {"omega0",           "omega0 (clock)",   CfgKind::Double,     0.0, 2.0,   0.1,  "de Broglie frequency"},
+    {"kinetic_drain",    "Kinetic drain",    CfgKind::Double,     0.0, 1.0,   0.05, "genesis kinetic drain"},
+};
+}  // namespace
+
+const ConfigSpec* find_config_spec(std::string_view key) {
+    for (const auto& s : kConfigSpecs)
+        if (key == s.key) return &s;
+    return nullptr;
+}
+Rml::String boundary_label(int v) {
+    switch (v) { case 0: return "Periodic"; case 1: return "Reflective"; default: return "Dispersal"; }
+}
+Rml::String bcc_label(int v) {
+    switch (v) { case 1: return "SC"; case 2: return "FCC"; case 3: return "BCC"; default: return "FULL"; }
+}
+Rml::String site_label(int v) {
+    switch (v) { case 0: return "SC"; case 1: return "BCC"; case 2: return "FCC"; default: return "ALL"; }
+}
+Rml::String config_value_str(const ConfigSpec& s, double v) {
+    switch (s.kind) {
+        case CfgKind::Boundary:   return boundary_label(static_cast<int>(std::lround(v)));
+        case CfgKind::Bcc:        return bcc_label(static_cast<int>(std::lround(v)));
+        case CfgKind::SiteFilter: return site_label(static_cast<int>(std::lround(v)));
+        case CfgKind::Int:
+        case CfgKind::UInt:
+        case CfgKind::Lattice: {
+            char b[32];
+            std::snprintf(b, sizeof(b), "%d", static_cast<int>(std::lround(v)));
+            return Rml::String(b);
+        }
+        default: {
+            char b[32];
+            std::snprintf(b, sizeof(b), "%.2f", v);
+            return Rml::String(b);
+        }
+    }
+}
+
+// The static requires/conflicts/gpu-only metadata for one TOGGLE_SPECS row,
+// formatted as the discoverable subtitle shown under the toggle label.
+Rml::String toggle_req_text(const ftd::ToggleSpec& spec) {
+    std::string out;
+    if (spec.requires_ && *spec.requires_) {
+        out += "needs ";
+        out += spec.requires_;
+    }
+    if (spec.conflicts && *spec.conflicts) {
+        if (!out.empty()) out += " · ";
+        out += "conflicts ";
+        out += spec.conflicts;
+    }
+    if (spec.gpu_only_warning && *spec.gpu_only_warning) {
+        if (!out.empty()) out += " · ";
+        out += "GPU-only";
+    }
+    return Rml::String(out);
+}
+
+// Live "gated" flag for an ENABLED toggle: true when the current combo already
+// violates a requires/conflicts rule involving it.
+bool toggle_gated(const ftd::ToggleSpec& spec, const ftd::TermToggles& tt) {
+    if (!(tt.*(spec.field))) return false;  // only an enabled toggle can be gated
+    bool gated = false;
+    ftd::term_toggles_detail::for_each_csv(spec.requires_, [&](std::string_view dep) {
+        const ftd::ToggleSpec* ds = ftd::term_toggles_detail::find_spec(dep);
+        if (ds && !(tt.*(ds->field))) gated = true;
+    });
+    if (spec.conflicts && *spec.conflicts) {
+        const ftd::ToggleSpec* cs = ftd::term_toggles_detail::find_spec(spec.conflicts);
+        if (cs && (tt.*(cs->field))) gated = true;
+    }
+    return gated;
+}
+
+// Fill a FullToggleRow's live fields (on/gated) from the engine truth. Returns
+// true if anything changed (so the caller can dirty the binding).
+bool refresh_toggle_row(FullToggleRow& r, const ftd::TermToggles& tt) {
+    const ftd::ToggleSpec* spec = ftd::term_toggles_detail::find_spec(r.name.c_str());
+    if (!spec) return false;
+    bool changed = false;
+    const bool on = tt.*(spec->field);
+    if (r.on != on) { r.on = on; changed = true; }
+    const bool gated = toggle_gated(*spec, tt);
+    if (r.gated != gated) { r.gated = gated; changed = true; }
+    return changed;
+}
+
+// Build one category's item rows from TOGGLE_SPECS (only the toggles that map to
+// this category), seeded from the live engine truth `tt`.
+void build_toggle_group_items(ToggleGroupRow& g, int cat, const ftd::TermToggles& tt) {
+    g.items.clear();
+    for (const ftd::ToggleSpec& spec : ftd::TOGGLE_SPECS) {
+        if (toggle_category(spec.name) != cat) continue;
+        FullToggleRow r;
+        r.name = spec.name;
+        r.desc = spec.description ? Rml::String(spec.description) : Rml::String();
+        r.req = toggle_req_text(spec);
+        r.has_req = !r.req.empty();
+        r.on = tt.*(spec.field);
+        r.gated = toggle_gated(spec, tt);
+        g.items.push_back(std::move(r));
+    }
+}
+
+// Count how many TOGGLE_SPECS rows fall into a category (for the header tally).
+int toggle_group_count(int cat) {
+    int n = 0;
+    for (const ftd::ToggleSpec& spec : ftd::TOGGLE_SPECS)
+        if (toggle_category(spec.name) == cat) ++n;
+    return n;
+}
+
+// Rebuild the toggle-category headers. Items are built only for expanded
+// categories (DOM-shrink). Called on a STRUCTURAL change, never per frame.
+void rebuild_toggle_groups(ShellData* data, const ftd::TermToggles& tt,
+                           const std::vector<std::string>& expanded) {
+    if (!data) return;
+    data->toggle_groups.clear();
+    if (!data->phys_open) return;  // closed section => no headers, no rows
+    for (int cat = 0; cat < static_cast<int>(std::size(kToggleCategories)); ++cat) {
+        ToggleGroupRow g;
+        g.title = kToggleCategories[cat];
+        g.expanded = std::find(expanded.begin(), expanded.end(),
+                               std::string(kToggleCategories[cat])) != expanded.end();
+        g.count = std::to_string(toggle_group_count(cat));
+        if (g.expanded) build_toggle_group_items(g, cat, tt);
+        data->toggle_groups.push_back(std::move(g));
+    }
+}
+
+// The live numeric value of one config knob, read from the authoritative engine
+// truth (TermToggles + the published bridge knobs).
+double config_current(const ConfigSpec& s, const ftd::TermToggles& tt,
+                      const ftd::native::BridgeKnobs& knobs) {
+    const std::string_view k(s.key);
+    if (k == "lattice") return static_cast<double>(knobs.lattice_size);
+    if (k == "dt") return knobs.dt;
+    if (k == "sor") return static_cast<double>(knobs.sor_iterations);
+    if (k == "boundary") return static_cast<double>(static_cast<int>(tt.flux_boundary));
+    if (k == "langevin_T") return tt.langevin_T;
+    if (k == "langevin_gamma") return tt.langevin_gamma;
+    if (k == "langevin_seed") return static_cast<double>(tt.langevin_seed);
+    if (k == "langevin_site") return static_cast<double>(static_cast<int>(tt.langevin_site_filter));
+    if (k == "bcc_stencil") return static_cast<double>(static_cast<int>(tt.bcc_stencil));
+    if (k == "coulomb_coupling") return tt.coulomb_charge_coupling;
+    if (k == "coulomb_source") return tt.coulomb_source_scale;
+    if (k == "omega0") return tt.omega0;
+    if (k == "kinetic_drain") return tt.kinetic_drain;
+    return 0.0;
+}
+
+// Build the config-knob rows (one per ConfigSpec), seeded from live engine truth.
+void build_config_rows(ShellData* data, const ftd::TermToggles& tt,
+                       const ftd::native::BridgeKnobs& knobs) {
+    if (!data) return;
+    data->config_rows.clear();
+    if (!data->cfg_open) return;
+    for (const ConfigSpec& s : kConfigSpecs) {
+        ConfigRow r;
+        r.key = s.key;
+        r.label = s.label;
+        r.hint = s.hint;
+        r.vstr = config_value_str(s, config_current(s, tt, knobs));
+        data->config_rows.push_back(std::move(r));
+    }
+}
+
+// Refresh the built config rows' displayed values from the live engine truth.
+bool refresh_config_rows(ShellData* data, const ftd::TermToggles& tt,
+                         const ftd::native::BridgeKnobs& knobs) {
+    if (!data) return false;
+    bool changed = false;
+    for (ConfigRow& r : data->config_rows) {
+        const ConfigSpec* s = find_config_spec(r.key.c_str());
+        if (!s) continue;
+        Rml::String v = config_value_str(*s, config_current(*s, tt, knobs));
+        if (r.vstr != v) { r.vstr = v; changed = true; }
+    }
+    return changed;
+}
+
+// Format a sheet height fraction for the panel (2 decimals, e.g. "0.42").
+Rml::String sheet_hstr(float h) {
+    char buf[16];
+    std::snprintf(buf, sizeof(buf), "%.2f", h);
+    return Rml::String(buf);
+}
+
+// Build the Scale-0 overlay panel model: walk the 7 columns in menu order and
+// collect each column's registry rows. Empty columns are omitted.
+Rml::Vector<OverlayColumnRow> build_overlay_columns() {
+    Rml::Vector<OverlayColumnRow> cols;
+    for (std::uint32_t c = 0; c < static_cast<std::uint32_t>(ftd::native::OverlayColumn::Count);
+         ++c) {
+        const auto column = static_cast<ftd::native::OverlayColumn>(c);
+        OverlayColumnRow row;
+        row.title = ftd::native::overlay_column_title(column);
+        row.expanded = true;
+        for (const ftd::native::OverlayDescriptor& d : ftd::native::kOverlayRegistry) {
+            if (d.column != column) continue;
+            OverlayRow r;
+            r.name = d.name;
+            r.label = d.label;
+            r.on = false;
+            r.is_sheet = (d.render == ftd::native::OverlayRender::Sheet);
+            r.height = d.y_frac;                 // seeded to the registry default
+            r.hstr = sheet_hstr(d.y_frac);
+            row.items.push_back(std::move(r));
+        }
+        row.count = std::to_string(row.items.size());  // section-head badge tally
+        if (!row.items.empty()) cols.push_back(std::move(row));
+    }
+    return cols;
+}
+
+// Find an overlay row (by stable name) across all columns; nullptr on miss.
+OverlayRow* find_overlay_row(ShellData* data, const Rml::String& name) {
+    if (!data) return nullptr;
+    for (OverlayColumnRow& col : data->overlay_columns)
+        for (OverlayRow& r : col.items)
+            if (r.name == name) return &r;
+    return nullptr;
+}
+
+// Rebuild the Setup picker view from the native scenario catalog, honoring the
+// live search filter and the per-group expanded set (DOM-shrink: only an open or
+// filter-matched group instantiates its item rows).
+void rebuild_scenario_view(ShellData* data, const std::string& current,
+                           const std::string& raw_filter,
+                           const std::vector<std::string>& expanded) {
+    if (!data) return;
+    data->scenario_groups.clear();
+    const std::string f = to_lower(raw_filter);
+    const bool filtering = !f.empty();
+    for (const char* cat : kScenarioCategories) {
+        const bool is_open =
+            filtering
+            || std::find(expanded.begin(), expanded.end(), std::string(cat))
+                   != expanded.end();
+        ScenarioGroupRow g;
+        g.title = cat;
+        bool any_in_cat = false;
+        int matches = 0;
+        for (const ftd::native::ScenarioMeta& m : ftd::native::SCENARIO_META) {
+            if (std::string_view(m.category) != cat) continue;
+            any_in_cat = true;
+            const bool hit =
+                !filtering
+                || to_lower(std::string(m.title) + " " + m.id + " "
+                            + (m.tags ? m.tags : ""))
+                           .find(f) != std::string::npos;
+            if (!hit) continue;
+            ++matches;
+            if (is_open) {  // only an open group builds its (matching) rows
+                ScenarioRow r;
+                r.id = m.id;
+                r.title = m.title;
+                r.current = (current == m.id);
+                r.visible = true;
+                g.items.push_back(std::move(r));
+            }
+        }
+        if (!any_in_cat) continue;  // omit empty classes
+        g.expanded = is_open;
+        g.has_visible = (matches > 0);
+        g.show_items = g.has_visible && is_open;
+        g.count = std::to_string(matches);
+        data->scenario_groups.push_back(std::move(g));
+    }
+}
+
+// Set the picker's current-row highlight to the loaded scenario id. Returns true
+// iff a `current` flag actually changed (so the caller can dirty the binding).
+bool set_current_scenario(ShellData* data, const std::string& id) {
+    if (!data) return false;
+    bool changed = false;
+    for (ScenarioGroupRow& g : data->scenario_groups)
+        for (ScenarioRow& s : g.items) {
+            const bool cur = (s.id == id);
+            if (s.current != cur) { s.current = cur; changed = true; }
+        }
+    return changed;
+}
+
+}  // namespace ftd::native::app
