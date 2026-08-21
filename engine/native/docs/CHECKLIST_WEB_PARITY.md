@@ -6,7 +6,7 @@ This is the running parity checklist: every capability the web dashboard (`engin
 
 **Legend:** ✅ done · ◐ partial · ▢ not started · ⭐ native-only (beyond web)
 
-**Where we stand:** the **Scale-0 substrate surface is COMPLETE and at/beyond web parity** — real in-process engine (CPU + CUDA interop), all 33 field overlays incl. the 4 force render-styles + movable rubber sheets (⭐ beyond web) with back-to-front-sorted translucency, the full 44-toggle + config-knob control panel with live validation, the diagnostics/conservation/lagrangian telemetry charts, the **full click-to-inspect with a walkable 26-neighbour cursor**, the scenario picker over a native 130-row catalog with **colour-coded epistemic-tag badges**, and 60–140 fps. **Remaining on Scale 0:** only JetBrains Mono (▢, needs a TTF drop-in) — everything else is done. **The frontier is now the other scales (1 GPU, 2/3, 4, 5, 6)** and the specialized analysis panels.
+**Where we stand:** the **Scale-0 SUBSTRATE surface is complete and at/beyond web parity** (the 13 specialized ANALYSIS panels are a separate, still-open Scale-0 item — see §G) — real in-process engine (CPU + CUDA interop), all 33 field overlays incl. the 4 force render-styles + movable rubber sheets (⭐ beyond web) with back-to-front-sorted translucency, the full 44-toggle + config-knob control panel with live validation, the diagnostics/conservation/lagrangian telemetry charts, the **full click-to-inspect with a walkable 26-neighbour cursor**, the scenario picker over a native 130-row catalog with **colour-coded epistemic-tag badges**, and 60–140 fps. **Remaining on Scale 0:** the **13 specialized analysis panels** (§G — flux-slice, wave-lab, spectrum, dispersion, knots, gravity, time, thermo, p1-observables, scale-context, symmetry, genesis, conservation) are **NOT ported** and are a genuine Scale-0 gap (~4,100 LOC panel logic + ~860 LOC analysis math), plus JetBrains Mono (needs a TTF). The core *substrate* surface is done; the *analysis* surface is not.
 
 ---
 
@@ -99,7 +99,7 @@ This is the running parity checklist: every capability the web dashboard (`engin
 | Shell (toolbar / viewport hole / setup / physics+overlays+telemetry / status) | ✅ | RmlUi + RCSS over the live D3D12 scene |
 | Scale-aware panels | ✅ | data-if per active scale |
 | Scrollable + collapsible panel sections | ✅ | collapse-by-default keeps fps ~100+ |
-| The ~18 specialized web panels (wave-lab, spectrum, gravity, time, thermo, dispersion, scale-context, symmetry, genesis, …) | ▢ | core surfaces done; specialized analysis panels not ported |
+| **The 13 specialized Scale-0 analysis panels** | ▢ | **NOT ported — a real remaining Scale-0 item, not just "post-Scale-0"**. From `PANEL_REGISTRY` (`scales:['0']`): flux-slice, wave-lab, p1-observables, spectrum, dispersion, knots, gravity, time, thermo, scale-context; + ad-hoc symmetry, genesis-burst, conservation-micropanel. ~4,100 LOC panel logic + ~860 LOC analysis math (FFT E(k), lattice topology, gravity, causal-clock γ). Data-readiness varies: gravity/time have the native `TELEMETRY_GRAVITY` group; spectrum/dispersion/knots need their analysis ported to C++ |
 | Docking (drag / resize / float) | ▢ | fixed flex layout |
 | Settings (theme / density / persisted prefs) | ▢ | single dark theme |
 | Knowledge base / FAQ / keyboard-help / tooltips | ▢ | deferred by owner |
@@ -147,4 +147,5 @@ This is the running parity checklist: every capability the web dashboard (`engin
 2. ~~Full physics control~~ ✅ done · ~~Telemetry charts~~ ✅ done
 3. ~~Inspector completeness~~ ✅ done — full readout + forces + walkable 26-neighbour cursor
 4. ~~Scale-0 render polish~~ ✅ OIT (sheet depth-sort) + epistemic-tag badges done · JetBrains Mono still needs a TTF drop-in
-5. *(Scale 0 COMPLETE)* ← next: Scale 1 on CUDA → Scale 5 Cosmic + Scale 2/3 Atom → Scale 4/6 → the specialized panels → CI hardening
+5. **The 13 specialized Scale-0 analysis panels** (§G) — the remaining Scale-0 surface: flux-slice, wave-lab, spectrum, dispersion, knots, gravity, time, thermo, p1-observables, scale-context, symmetry, genesis, conservation ← next
+6. *(then post-Scale-0)* Scale 1 on CUDA → Scale 5 Cosmic + Scale 2/3 Atom → Scale 4/6 → CI hardening
