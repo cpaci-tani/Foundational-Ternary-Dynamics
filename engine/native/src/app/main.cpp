@@ -543,6 +543,8 @@ int run_app(const std::vector<std::string>& args) {
         srow.RegisterMember("title", &ScenarioRow::title);
         srow.RegisterMember("current", &ScenarioRow::current);
         srow.RegisterMember("visible", &ScenarioRow::visible);
+        srow.RegisterMember("tag", &ScenarioRow::tag);
+        srow.RegisterMember("tag_cls", &ScenarioRow::tag_cls);
     }
     ctor.RegisterArray<Rml::Vector<ScenarioRow>>();
     if (auto sgrp = ctor.RegisterStruct<ScenarioGroupRow>()) {

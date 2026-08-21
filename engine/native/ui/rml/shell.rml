@@ -62,6 +62,7 @@
                                 <div class="scn-row" data-for="s : g.items">
                                     <div class="scn-item" data-if="s.visible" data-class-cur="s.current" data-event-click="select_scenario(s.id)">
                                         <span class="scn-title">{{s.title}}</span>
+                                        <span class="scn-tag" data-if="s.tag != ''" data-class-tpos="s.tag_cls == 1" data-class-timp="s.tag_cls == 2" data-class-tcon="s.tag_cls == 3" data-class-tneg="s.tag_cls == 4">{{s.tag}}</span>
                                     </div>
                                 </div>
                             </div>

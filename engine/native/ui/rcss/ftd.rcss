@@ -229,7 +229,25 @@ body {
 }
 .scn-item:hover { border-color: #3a7ec4; color: #dfe6f0; background-color: #16233a; }
 .scn-item.cur { border-color: #2f6db0; color: #ffffff; background-color: #16233a; }
-.scn-title { font-size: 11dp; }
+.scn-title { font-size: 11dp; flex: 1 1 auto; }
+/* Epistemic-status badge on each picker row — the catalog row's leading [TAG],
+   colour-coded by class (derived/emergent, imposed/selection, conjecture/open,
+   negative). Surfaces the scientific status of each scenario in the picker. */
+.scn-tag {
+    flex: 0 0 auto;
+    margin-left: 8dp;
+    padding: 1dp 5dp;
+    border-radius: 3dp;
+    font-family: JetBrains Mono;
+    font-size: 8dp;
+    color: #8595ab;
+    background-color: #172234;
+    border: 1dp #2b3a50;
+}
+.scn-tag.tpos { color: #79d295; border-color: #2f6b3d; background-color: #10241a; }
+.scn-tag.timp { color: #d9b25a; border-color: #6e5a2a; background-color: #241f12; }
+.scn-tag.tcon { color: #8fa6c4; border-color: #3a4c66; background-color: #141f30; }
+.scn-tag.tneg { color: #e8899a; border-color: #7a3340; background-color: #241014; }
 
 .playbar { display: flex; flex-direction: row; margin-top: 6dp; }
 .btn {
