@@ -677,3 +677,29 @@ scrollbarvertical sliderarrowinc { height: 0dp; }
 #status .accent { color: #6aa8e0; }
 #status .dot { width: 8dp; height: 8dp; border-radius: 4dp; background-color: #67788f; margin-right: 8dp; }
 #status .dot.running { background-color: #4ecb8a; }
+
+/* The status bar lives in its own document (statusbar.rml) so its ~8/s updates
+   reflow only that strip, not the shell's 92-row picker. This reserves the same
+   27dp bottom strip in shell.rml (matching #status height + border-top) and
+   carries the same background/divider so the strip looks identical with or
+   without the overlay (the headless smoke test loads shell.rml alone). */
+#status-spacer {
+    height: 27dp;
+    background-color: #131c2b;
+    border-top: 1dp #2b3a50;
+}
+/* statusbar.rml's document body: absolutely pinned over the shell's bottom strip.
+   Scoped by class so it never touches shell.rml's own <body>. */
+.statusbar-body {
+    position: absolute;
+    /* Override the global `body { top: 0dp }` — ElementDocument::UpdatePosition
+       anchors to `bottom` only when `top` is auto, else it pins to the top edge
+       (over the toolbar). Resetting top here lets bottom:0 anchor to the bottom. */
+    top: auto;
+    left: 0dp;
+    right: 0dp;
+    bottom: 0dp;
+    height: 27dp;
+    margin: 0dp;
+    padding: 0dp;
+}

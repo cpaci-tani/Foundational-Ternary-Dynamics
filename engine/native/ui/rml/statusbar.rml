@@ -1,0 +1,29 @@
+<rml>
+<head>
+    <link type="text/rcss" href="../rcss/ftd.rcss"/>
+    <title>FTD Status</title>
+</head>
+<!-- data-model="status": a SEPARATE document + data model from shell.rml, loaded
+     as a second document in the same context. This is the fps fix: the status
+     readouts (tick / particles / energy / physical time / fps) change ~8×/s, and
+     RmlUi re-lays-out a whole document on ANY bound-variable dirty. Kept inside
+     shell.rml, each status tick reflowed the entire shell — including the 92-row
+     scenario picker (measured: 107ms layout + 62ms geometry per tick → 5.7 fps
+     with the picker open). Context::Update lays out each document independently
+     (ElementDocument::UpdateLayout early-outs unless THAT document's layout_dirty
+     is set), so isolating the status bar here means a status tick reflows only
+     this ~27dp strip and never touches the picker. The strip overlays the shell's
+     #status-spacer (same height), so shell layout is unchanged. -->
+<body data-model="status" class="statusbar-body">
+    <div id="status">
+        <span class="dot" data-class-running="running"></span><b>{{ running ? 'Running' : 'Paused' }}</b>
+        <span>T: <b>{{tick}}</b></span>
+        <span>Particles: <b>{{particle_count}}</b></span>
+        <span>Energy: <b>{{total_energy}}</b></span>
+        <span>{{physical_time}}</span>
+        <div class="spacer"></div>
+        <span>{{fps}} fps</span>
+        <span class="accent">{{backend}}</span>
+    </div>
+</body>
+</rml>
