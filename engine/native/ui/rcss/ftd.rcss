@@ -164,12 +164,14 @@ body {
 .ov-list { display: flex; flex-direction: column; }
 /* One overlay toggle: LED + label, lit when the overlay is in the active set
    (same affordance as the physics-term toggles). */
+/* One overlay entry: the toggle row plus (for active rubber sheets) a slice-
+   height nudge, stacked. The .ov-item owns the inter-row spacing. */
+.ov-item { display: flex; flex-direction: column; margin-bottom: 3dp; }
 .ov {
     display: flex;
     flex-direction: row;
     align-items: center;
     padding: 4dp 8dp;
-    margin-bottom: 3dp;
     border: 1dp #223047;
     border-radius: 12dp;
     color: #9fb0c6;
@@ -187,6 +189,36 @@ body {
 }
 .ov.on { color: #e0e7f1; border-color: #2f6db0; background-color: #16233a; }
 .ov.on .led { background-color: #6aa8e0; border-color: #6aa8e0; }
+
+/* Rubber-sheet slice-height control (shown only under an ACTIVE sheet row). */
+.ov-height {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 2dp 8dp 1dp 26dp;   /* indented under the row's label */
+}
+.ov-nudge {
+    display: inline-block;
+    width: 18dp;
+    text-align: center;
+    padding: 1dp 0dp;
+    border: 1dp #2f6db0;
+    border-radius: 9dp;
+    color: #9fb0c6;
+    background-color: #12203a;
+    font-family: JetBrains Mono;
+    font-size: 12dp;
+    cursor: pointer;
+}
+.ov-nudge:hover { color: #e6edf6; border-color: #6aa8e0; background-color: #18305a; }
+.ov-hval {
+    color: #8aa0bd;
+    font-family: JetBrains Mono;
+    font-size: 10dp;
+    margin: 0dp 8dp;
+    width: 44dp;
+    text-align: center;
+}
 
 /* ── scale-aware right panel ───────────────────────────────────────────── */
 /* Each per-scale block stacks its title + content; only one is present at a

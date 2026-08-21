@@ -63,8 +63,21 @@
                             <span class="ov-col-title">{{col.title}}</span>
                         </div>
                         <div class="ov-list" data-if="col.expanded">
-                            <div class="ov" data-for="o : col.items" data-class-on="o.on" data-event-click="set_overlay(o.name)">
-                                <span class="led"></span><span class="lbl">{{o.label}}</span>
+                            <div class="ov-item" data-for="o : col.items">
+                                <div class="ov" data-class-on="o.on" data-event-click="set_overlay(o.name)">
+                                    <span class="led"></span><span class="lbl">{{o.label}}</span>
+                                </div>
+                                <!-- Rubber-sheet height control: only for an ACTIVE sheet.
+                                     Nested data-if (is_sheet, then on) avoids a compound
+                                     expression. The −/＋ live in a sibling of .ov, so their
+                                     clicks do NOT bubble into set_overlay (no toggle-off). -->
+                                <div class="ov-height-wrap" data-if="o.is_sheet">
+                                    <div class="ov-height" data-if="o.on">
+                                        <span class="ov-nudge" data-event-click="sheet_height_nudge(o.name, '-')">&#8722;</span>
+                                        <span class="ov-hval">y {{o.hstr}}</span>
+                                        <span class="ov-nudge" data-event-click="sheet_height_nudge(o.name, '+')">&#43;</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -158,11 +158,16 @@ struct ToggleRow {
 };
 
 // One overlay toggle row bound into the shell (Scale-0 panel). `on` lights the
-// LED when the overlay is in the active set (multi-select).
+// LED when the overlay is in the active set (multi-select). Rubber-sheet rows
+// (`is_sheet`) also carry a slice height: when active they expose a −/＋ height
+// nudge in the panel and `hstr` shows the value (e.g. "y 0.42").
 struct OverlayRow {
     Rml::String name;   // stable overlay id (registry name)
     Rml::String label;  // human label
     bool on = false;
+    bool is_sheet = false;  // true for rubber-sheet overlays (height-adjustable)
+    float height = 0.0f;    // current slice height (fraction of the lattice box)
+    Rml::String hstr;       // formatted height ("0.42") for display
 };
 // One overlay-menu column (Volume / Fields / Forces / …). `expanded` gates the
 // collapsible list; `items` are the overlays grouped into this column.
@@ -208,6 +213,13 @@ bool toggle_on(const ftd::TermToggles& tt, const char* name) {
     return spec ? (tt.*(spec->field)) : false;
 }
 
+// Format a sheet height fraction for the panel (2 decimals, e.g. "0.42").
+Rml::String sheet_hstr(float h) {
+    char buf[16];
+    std::snprintf(buf, sizeof(buf), "%.2f", h);
+    return Rml::String(buf);
+}
+
 // Build the Scale-0 overlay panel model: walk the 7 columns in menu order and
 // collect each column's registry rows. Columns with no rows (the tranches that
 // have not landed their overlays yet, e.g. Quantum / Stress-Energy) are omitted
@@ -223,7 +235,14 @@ Rml::Vector<OverlayColumnRow> build_overlay_columns() {
         row.expanded = true;
         for (const ftd::native::OverlayDescriptor& d : ftd::native::kOverlayRegistry) {
             if (d.column != column) continue;
-            row.items.push_back(OverlayRow{d.name, d.label, false});
+            OverlayRow r;
+            r.name = d.name;
+            r.label = d.label;
+            r.on = false;
+            r.is_sheet = (d.render == ftd::native::OverlayRender::Sheet);
+            r.height = d.y_frac;                 // seeded to the registry default
+            r.hstr = sheet_hstr(d.y_frac);
+            row.items.push_back(std::move(r));
         }
         if (!row.items.empty()) cols.push_back(std::move(row));
     }
@@ -286,6 +305,16 @@ struct AppContext {
     // last (live) values rather than blanking to "reading…". Reset on a new
     // pick / scale switch / clear.
     bool insp_has_data = false;
+
+    // ── Rubber-sheet height control (GUI thread) ──
+    // Data-model handle stored so the wnd_proc scroll-wheel path can dirty the
+    // overlay panel after a height nudge (the RML event callbacks get their own
+    // handle). last_sheet_id is the most-recently toggled-on / nudged sheet — the
+    // target the viewport scroll-wheel (Shift+wheel) moves.
+    Rml::DataModelHandle model{};
+    bool model_ready = false;
+    std::uint32_t last_sheet_id = 0;
+    bool has_last_sheet = false;
 };
 
 // ── Command helpers (run on the GUI thread; drained by the sim thread) ──
@@ -341,6 +370,38 @@ void request_toggle(AppContext* app, const std::string& name) {
         }
     }
     push_scale0(app, ftd::native::SetToggle{name, !cur});
+}
+
+// Nudge one active rubber-sheet's slice height by `delta` (fraction of the box):
+// clamp, optimistically update the panel row for immediate feedback, push the
+// SetSheetHeight Scale-0 command (adapter re-slices + repositions on the next
+// capture — live even while paused, since SetSheetHeight is a frame-refresh
+// write), and mark this the last-touched sheet (the scroll-wheel target). Shared
+// by the panel −/＋ callback and the viewport scroll-wheel path.
+void nudge_sheet_height(AppContext* app, OverlayRow* row, float delta) {
+    if (!app || !row || !row->is_sheet) return;
+    const ftd::native::OverlayDescriptor* d = ftd::native::overlay_by_name(row->name.c_str());
+    if (!d) return;
+    const float h = std::clamp(row->height + delta, 0.0f, 0.999f);
+    row->height = h;
+    row->hstr = sheet_hstr(h);
+    push_scale0(app, ftd::native::SetSheetHeight{static_cast<std::uint32_t>(d->id), h});
+    app->last_sheet_id = static_cast<std::uint32_t>(d->id);
+    app->has_last_sheet = true;
+    if (app->model_ready) app->model.DirtyVariable("overlay_columns");
+}
+
+// Nudge whichever sheet the scroll-wheel currently targets (the most-recently
+// toggled-on / adjusted sheet, if it is still active). No-op when no sheet is
+// the target. Called from wnd_proc (GUI thread) for Shift+wheel over the scene.
+void nudge_last_sheet(AppContext* app, float delta) {
+    if (!app || !app->has_last_sheet || !app->data) return;
+    const ftd::native::OverlayDescriptor* d =
+        ftd::native::overlay_by_id(app->last_sheet_id);
+    if (!d) return;
+    OverlayRow* row = find_overlay_row(app->data, Rml::String(d->name));
+    if (!row || !row->on || !row->is_sheet) return;  // target no longer an active sheet
+    nudge_sheet_height(app, row, delta);
 }
 
 // ── Win32 → RmlUi input plumbing ──
@@ -435,9 +496,18 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
             POINT pt{lparam_x(lparam), lparam_y(lparam)};
             ScreenToClient(hwnd, &pt);
             const int delta = GET_WHEEL_DELTA_WPARAM(wparam);
+            const bool shift = (GET_KEYSTATE_WPARAM(wparam) & MK_SHIFT) != 0;
             if (over_viewport(app, pt.x, pt.y)) {
-                app->camera->distance *= (delta > 0) ? 0.9f : 1.1f;
-                app->camera->distance = std::max(4.0f, std::min(512.0f, app->camera->distance));
+                if (shift) {
+                    // Shift+wheel over the scene sweeps the most-recently active
+                    // sheet up/down through the lattice (tactile height control).
+                    // Plain wheel keeps the camera zoom below — so this does NOT
+                    // break the existing orbit-camera controls.
+                    nudge_last_sheet(app, delta > 0 ? 0.03f : -0.03f);
+                } else {
+                    app->camera->distance *= (delta > 0) ? 0.9f : 1.1f;
+                    app->camera->distance = std::max(4.0f, std::min(512.0f, app->camera->distance));
+                }
             } else if (ctx) {
                 ctx->ProcessMouseWheel(Rml::Vector2f(0.0f, delta > 0 ? -1.0f : 1.0f),
                                        rml_key_modifiers());
@@ -699,6 +769,10 @@ struct AppOptions {
     int scale = 0;             // initial ScaleHost scale level (0 lattice, 1 particles)
     std::string field;         // legacy single overlay id (alias for --overlays; Scale-0)
     std::string overlays;      // comma-separated overlay ids to activate (Scale-0)
+    // Initial rubber-sheet slice heights: repeatable --sheet-height <name>,<frac>
+    // (e.g. --sheet-height gravPotential,0.8). Stamped into the first boundary
+    // after --overlays, so the very first captured frame slices at that height.
+    std::vector<std::pair<std::string, float>> sheet_heights;
     std::string png_out;       // capture PNG path override (empty = compiled default)
     bool prime_tick = true;    // run ONE tick at load so paused overlays have data
     // Simulated click-to-inspect for headless captures (interactive picking
@@ -726,6 +800,15 @@ AppOptions parse_app_options(const std::vector<std::string>& args) {
             o.field = args[++i];
         } else if (args[i] == "--overlays" && i + 1 < args.size()) {
             o.overlays = args[++i];
+        } else if (args[i] == "--sheet-height" && i + 1 < args.size()) {
+            // "<name>,<frac>" — the comma splits the overlay name from the height.
+            const std::string spec = args[++i];
+            const auto comma = spec.find(',');
+            if (comma != std::string::npos && comma > 0) {
+                const std::string nm = spec.substr(0, comma);
+                const float frac = static_cast<float>(std::atof(spec.c_str() + comma + 1));
+                o.sheet_heights.emplace_back(nm, frac);
+            }
         } else if (args[i] == "--no-prime-tick") {
             o.prime_tick = false;
         } else if (args[i] == "--prime-tick") {
@@ -817,6 +900,20 @@ int run_app(const std::vector<std::string>& args) {
             if (const auto* d = ftd::native::overlay_by_name(name)) {
                 stamp.push(ftd::native::scale0_command(ftd::native::SetOverlay{
                     static_cast<std::uint32_t>(d->id), true}));
+            }
+        }
+        // Initial sheet slice heights (--sheet-height), stamped AFTER SetOverlay
+        // so they override the y_frac seed the toggle-on installs.
+        if (app_opts.scale == 0) {
+            for (const auto& [nm, frac] : app_opts.sheet_heights) {
+                const auto* d = ftd::native::overlay_by_name(nm);
+                if (d && d->render == ftd::native::OverlayRender::Sheet) {
+                    stamp.push(ftd::native::scale0_command(ftd::native::SetSheetHeight{
+                        static_cast<std::uint32_t>(d->id), frac}));
+                } else {
+                    std::cerr << "native_app: --sheet-height '" << nm
+                              << "' is not a rubber-sheet overlay (ignored)\n" << std::flush;
+                }
             }
         }
         host.process_ui_boundary(stamp);
@@ -912,6 +1009,15 @@ int run_app(const std::vector<std::string>& args) {
     for (const std::string& name : initial_overlays)
         if (OverlayRow* r = find_overlay_row(&data, Rml::String(name.c_str())))
             r->on = true;
+    // Reflect any --sheet-height overrides in the panel rows (mirrors the
+    // SetSheetHeight commands stamped above) so the shown value starts correct.
+    for (const auto& [nm, frac] : app_opts.sheet_heights) {
+        if (OverlayRow* r = find_overlay_row(&data, Rml::String(nm.c_str()))) {
+            const float h = std::clamp(frac, 0.0f, 0.999f);
+            r->height = h;
+            r->hstr = sheet_hstr(h);
+        }
+    }
 
     // ── Telemetry ring buffer + the <ftd-chart> instancer ──────────────────────
     // The app owns the series (GUI thread), pushing one total-energy scalar per
@@ -934,6 +1040,16 @@ int run_app(const std::vector<std::string>& args) {
     app.paused = &paused;
     app.quit = &quit_flag;
     app.scenario_id = initial_scenario;
+
+    // Seed the scroll-wheel height target to the last active sheet (if any), so
+    // Shift+wheel over the scene is tactile from frame 0 in headless captures.
+    for (const std::string& name : initial_overlays) {
+        const auto* d = ftd::native::overlay_by_name(name);
+        if (d && d->render == ftd::native::OverlayRender::Sheet) {
+            app.last_sheet_id = static_cast<std::uint32_t>(d->id);
+            app.has_last_sheet = true;
+        }
+    }
 
     // Simulated initial pick (headless captures — interactive picking cannot run
     // under --capture-frames). Honored only when it matches the initial scale
@@ -967,6 +1083,8 @@ int run_app(const std::vector<std::string>& args) {
         orow.RegisterMember("name", &OverlayRow::name);
         orow.RegisterMember("label", &OverlayRow::label);
         orow.RegisterMember("on", &OverlayRow::on);
+        orow.RegisterMember("is_sheet", &OverlayRow::is_sheet);
+        orow.RegisterMember("hstr", &OverlayRow::hstr);
     }
     ctor.RegisterArray<Rml::Vector<OverlayRow>>();
     if (auto ocol = ctor.RegisterStruct<OverlayColumnRow>()) {
@@ -1036,7 +1154,27 @@ int run_app(const std::vector<std::string>& args) {
         row->on = !row->on;
         push_scale0(&app, ftd::native::SetOverlay{static_cast<std::uint32_t>(d->id),
                                                   row->on});
+        // Toggling a sheet ON makes it the scroll-wheel target and resets its
+        // shown height to the registry default (matching the adapter's seed).
+        if (row->is_sheet && row->on) {
+            row->height = d->y_frac;
+            row->hstr = sheet_hstr(d->y_frac);
+            app.last_sheet_id = static_cast<std::uint32_t>(d->id);
+            app.has_last_sheet = true;
+        }
         h.DirtyVariable("overlay_columns");
+    });
+    // Rubber-sheet height nudge: the panel's −/＋ affordance for one active sheet.
+    // v[0] = overlay name, v[1] = "-" or "+". Steps the slice height by ±0.05 via
+    // the shared nudge helper (clamps, updates the row, pushes SetSheetHeight).
+    ctor.BindEventCallback("sheet_height_nudge", [&app](Rml::DataModelHandle, Rml::Event&,
+                                                        const Rml::VariantList& v) {
+        if (v.size() < 2 || !app.data) return;
+        const Rml::String name = v[0].Get<Rml::String>();
+        const Rml::String dir = v[1].Get<Rml::String>();
+        OverlayRow* row = find_overlay_row(app.data, name);
+        if (!row) return;
+        nudge_sheet_height(&app, row, dir == "+" ? 0.05f : -0.05f);
     });
     // Collapse/expand one overlay column (its header is the affordance). Pure
     // view-state; flips `expanded` and re-lays the column list via data-if.
@@ -1065,6 +1203,10 @@ int run_app(const std::vector<std::string>& args) {
         }
     });
     Rml::DataModelHandle model = ctor.GetModelHandle();
+    // Publish the handle to the app so wnd_proc's scroll-wheel height nudge can
+    // dirty the overlay panel (the RML event callbacks get their own handle).
+    app.model = model;
+    app.model_ready = true;
 
     Rml::ElementDocument* doc = context->LoadDocument(FTD_RML_SHELL_PATH);
     if (!doc) throw std::runtime_error("LoadDocument(shell.rml) failed");
@@ -1223,6 +1365,13 @@ int run_app(const std::vector<std::string>& args) {
     bool capture_requested = false;
     bool capture_saved = false;
     bool capture_ok = false;
+    // True once a device-resident interop gather has EVER landed this session.
+    // Gates the 0-particle-field arm-gate fallback below: if interop is enabled
+    // but no gather ever lands (a pure-field scenario — where the rubber sheets
+    // shine), arm the capture a short grace past the warmup instead of hanging to
+    // the 40 s deadline. Once a gather DOES land, this stays true and the arm
+    // reverts to the exact prior behavior (wait for draw_interop_count > 0).
+    bool interop_gathered_once = false;
     int frame_no = 0;
     // Capture output path: --png-out overrides the compiled default so a single
     // build can emit distinct captures (e.g. fields_vec.png vs fields_scalar.png).
@@ -1362,6 +1511,24 @@ int run_app(const std::vector<std::string>& args) {
         set_str("lattice", data.lattice, std::to_string(frame.lattice_size));
         set_str("physical_time", data.physical_time,
                 fmt("%.2e s", static_cast<double>(frame.tick) * kTPhysSeconds));
+        // Reflect the adapter's authoritative sheet slice heights (frame-carried)
+        // in the panel rows, so a CLI --sheet-height or an adapter clamp shows up
+        // live. Only dirties when a value actually changed (steady state = free).
+        {
+            bool sheets_changed = false;
+            for (const ftd::native::NativeSheetHeight& sh : frame.sheet_heights) {
+                const auto* d = ftd::native::overlay_by_id(sh.overlay_id);
+                if (!d) continue;
+                OverlayRow* r = find_overlay_row(&data, Rml::String(d->name));
+                if (!r) continue;
+                if (std::abs(r->height - sh.height) > 1.0e-4f) {
+                    r->height = sh.height;
+                    r->hstr = sheet_hstr(sh.height);
+                    sheets_changed = true;
+                }
+            }
+            if (sheets_changed) model.DirtyVariable("overlay_columns");
+        }
         // Energy + toggles come from whichever ScaleSnapshot alternative is live.
         // Scale 0 carries the full energy ledger + term-toggle state; Scale 1
         // carries a small particle-diagnostics payload feeding the readout panel.
@@ -1576,10 +1743,21 @@ int run_app(const std::vector<std::string>& args) {
             // When interop is active, hold off arming until a device-resident
             // gather has actually landed (draw_interop_count > 0), so the captured
             // frame renders the interop particles rather than the CPU fallback that
-            // shows before the first gather completes. The 40 s deadline above is
-            // the safety net if a scenario never manifests any particles.
+            // shows before the first gather completes.
+            if (draw_interop_count > 0) interop_gathered_once = true;
+            // Arm-gate fallback (pure-field scenarios): if interop is enabled but
+            // NO gather has ever landed a short grace past the warmup, arm anyway
+            // (the CPU particle path — empty here — still supplies the frame), so a
+            // 0-particle field capture writes a PNG instead of hitting the 40 s
+            // deadline. Disabled the instant a gather lands (interop_gathered_once),
+            // so behavior is unchanged whenever particles DO gather.
+            constexpr int kInteropGraceFrames = 60;
+            const bool interop_zero_particle_grace =
+                interop_active.load() && !interop_gathered_once
+                && frame_no >= app_opts.capture_frames + kInteropGraceFrames;
             const bool interop_ready_or_na =
-                !interop_active.load() || draw_interop_count > 0;
+                !interop_active.load() || draw_interop_count > 0
+                || interop_zero_particle_grace;
             if (!capture_requested && frame_no >= app_opts.capture_frames
                 && interop_ready_or_na) {
                 capture_token = presenter.request_capture(ftd::native::CaptureRegion::FullWindow);

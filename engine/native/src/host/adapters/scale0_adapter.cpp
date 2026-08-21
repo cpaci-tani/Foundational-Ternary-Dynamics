@@ -870,6 +870,9 @@ struct SheetScalar {
     float              normalizer = 1.0f;
     bool               is_signed = false;
     bool               ok = false;
+    // The field sample's effective Y spacing — sets the slice-slab half-width so
+    // the two sampled Y-layers bracketing the slice plane interpolate linearly.
+    int                effective_stride = 1;
 };
 
 // Derive the sheet's per-voxel scalar for one overlay's OverlayDerive selector.
@@ -936,6 +939,8 @@ SheetScalar derive_sheet_scalar(RenderBridge& rb, const OverlayDescriptor& d) {
         if (haveB) emit(bF, false);
         out.normalizer = max_u;
         out.is_signed = false;
+        out.effective_stride = std::max(haveE ? eF.effective_stride : 1,
+                                        haveB ? bF.effective_stride : 1);
         out.ok = !out.values.empty();
         return out;
     }
@@ -956,6 +961,7 @@ SheetScalar derive_sheet_scalar(RenderBridge& rb, const OverlayDescriptor& d) {
         }
         out.normalizer = max_abs;
         out.is_signed = sgn;
+        out.effective_stride = s.effective_stride;
         out.ok = true;
         return out;
     }
@@ -986,12 +992,21 @@ SheetScalar derive_sheet_scalar(RenderBridge& rb, const OverlayDescriptor& d) {
     }
     out.normalizer = max_abs;
     out.is_signed = (d.derive == OverlayDerive::SheetGravPotential);
+    out.effective_stride = s.effective_stride;
     out.ok = true;
     return out;
 }
 
-// Build one rubber sheet for overlay `d` and append it to frame.field_sheets.
-void build_sheet(RenderBridge& rb, NativeFrame& frame, const OverlayDescriptor& d) {
+// Build one rubber sheet for overlay `d`, sliced at `height` (fraction of the
+// lattice box), and append it to frame.field_sheets. The sheet is a 2-D slice
+// of the field on the horizontal y = height·L plane: the base plane sits at that
+// height AND the per-(x,z) scalar comes from that y-level (linearly interpolated
+// in y across the sampled layers), so sweeping `height` re-slices the field AND
+// repositions the surface. `normalizer` is the GLOBAL (all-y) field max, so a
+// quiet slice reads flat and a high-energy slice deforms strongly — that is how
+// the surface reveals the energy at successive levels.
+void build_sheet(RenderBridge& rb, NativeFrame& frame, const OverlayDescriptor& d,
+                 float height) {
     const SheetScalar sc = derive_sheet_scalar(rb, d);
     if (!sc.ok) return;
     const int N = rb.lattice().size();
@@ -999,9 +1014,18 @@ void build_sheet(RenderBridge& rb, NativeFrame& frame, const OverlayDescriptor& 
     const float denom = std::max(sc.normalizer, 1.0e-9f);
     const float inv_denom = 1.0f / denom;
 
-    // 1. Scatter samples onto a small 2D grid over the XZ plane (bilinear splat),
-    //    then normalise by the accumulated weight (unsampled cells stay 0 and are
-    //    filled by the blur). gridN ~ 1 voxel/cell (web _scatterHeights).
+    // The slice plane in world-y, and the y-slab half-width. Samples within
+    // ±slab_half of the plane contribute, weighted linearly by y-proximity — a
+    // triangular kernel of half-width = the sample's y spacing, so the two
+    // sampled y-layers bracketing the plane interpolate linearly (trilinear-in-y
+    // at the plane; bilinear-in-(x,z) from the splat below).
+    const float h = std::clamp(height, 0.0f, 0.999f);
+    const float target_y = static_cast<float>(N) * h;
+    const float slab_half = std::max(1.0f, static_cast<float>(sc.effective_stride));
+
+    // 1. Slice + scatter: bilinear-splat only the near-plane samples onto a small
+    //    2D (x,z) grid, y-weighted, then normalise by the accumulated weight
+    //    (unsampled cells stay 0 and are filled by the blur). gridN ~ 1 voxel/cell.
     const int gridN = std::max(16, std::min(N, 48));
     const int G2 = gridN * gridN;
     std::vector<float> grid(static_cast<std::size_t>(G2), 0.0f);
@@ -1010,14 +1034,18 @@ void build_sheet(RenderBridge& rb, NativeFrame& frame, const OverlayDescriptor& 
     const float scale = static_cast<float>(gridN - 1) / static_cast<float>(N);
     const std::size_t count = sc.values.size();
     for (std::size_t i = 0; i < count; ++i) {
+        const float py = sc.positions[i * 3u + 1u];
+        const float wy = std::abs(py - target_y);
+        if (wy >= slab_half) continue;            // not on this y-slice
+        const float yw = 1.0f - wy / slab_half;   // linear y kernel (peak on the plane)
         const float sx = sc.positions[i * 3u] * scale;
         const float sz = sc.positions[i * 3u + 2u] * scale;
         if (sx < 0.0f || sx >= gridN - 1 || sz < 0.0f || sz >= gridN - 1) continue;
         const int xi = static_cast<int>(sx), zi = static_cast<int>(sz);
         const float xf = sx - xi, zf = sz - zi;
         const float v = sc.values[i];
-        const float w00 = (1 - xf) * (1 - zf), w01 = xf * (1 - zf);
-        const float w10 = (1 - xf) * zf, w11 = xf * zf;
+        const float w00 = (1 - xf) * (1 - zf) * yw, w01 = xf * (1 - zf) * yw;
+        const float w10 = (1 - xf) * zf * yw, w11 = xf * zf * yw;
         const int row0 = zi * gridN + xi;
         const int row1 = row0 + gridN;
         grid[row0]     += v * w00; weight[row0]     += w00;
@@ -1050,14 +1078,16 @@ void build_sheet(RenderBridge& rb, NativeFrame& frame, const OverlayDescriptor& 
         }
     }
 
-    // 3. Build the PlaneGeometry (segments+1)² grid at y_frac·N, spanning N·0.95
-    //    centred at (N/2, ·, N/2). Deform Y by t·DEPTH, colour by the ramp.
+    // 3. Build the PlaneGeometry (segments+1)² grid at the SLICE height target_y,
+    //    spanning N·0.95 centred at (N/2, ·, N/2). Deform Y by t·DEPTH, colour by
+    //    the ramp. The base plane rides at target_y, so moving the height both
+    //    re-slices (step 1) and repositions the surface.
     const int segments = std::max(24, std::min(N, 40));
     const int side = segments + 1;
     const float span = static_cast<float>(N) * 0.95f;
     const float half_span = span * 0.5f;
     const float centre = static_cast<float>(N) * 0.5f;
-    const float y_world = static_cast<float>(N) * d.y_frac;
+    const float y_world = target_y;
     const float depth = static_cast<float>(N) * d.depth_frac;
     const float grid_max = static_cast<float>(gridN - 1);
     // Constant translucent-sheet opacity (matches the web solid sheet's 0.45–0.55).
@@ -1219,6 +1249,15 @@ bool Scale0Adapter::is_observation(const ScalePayload& payload) const {
 bool Scale0Adapter::is_host_write(const ScalePayload& payload) const {
     const Scale0Cmd* s0 = std::get_if<Scale0Cmd>(&payload);
     if (!s0) return false;
+    // Harness injections AND the view-state overlay/sheet-height commands all
+    // change what the next frame should draw, so all three flag "refresh the
+    // frame" — this is what makes toggling an overlay or sweeping a sheet's
+    // height update live even while the sim is PAUSED (the host re-captures on a
+    // host write). They never mutate the RenderBridge (apply() short-circuits
+    // SetOverlay/SetSheetHeight), so this only drives the re-capture gate.
+    if (std::holds_alternative<SetOverlay>(*s0)
+        || std::holds_alternative<SetSheetHeight>(*s0))
+        return true;
     return is_harness_command(to_ui_command(*s0));
 }
 
@@ -1242,6 +1281,15 @@ ApplyResult Scale0Adapter::apply(const ScalePayload& payload, ParameterJournal& 
     // short-circuit — apply_mutation_on_bridge has no case for it.
     if (const SetOverlay* so = std::get_if<SetOverlay>(s0)) {
         set_overlay(static_cast<OverlayId>(so->overlay_id), so->on);
+        ApplyResult ok;
+        ok.ok = true;
+        return ok;
+    }
+    // SetSheetHeight is adapter view-state only (the slice height of one active
+    // sheet); like SetOverlay it never mutates the RenderBridge, so update the
+    // height and short-circuit.
+    if (const SetSheetHeight* sh = std::get_if<SetSheetHeight>(s0)) {
+        set_sheet_height(static_cast<OverlayId>(sh->overlay_id), sh->height);
         ApplyResult ok;
         ok.ok = true;
         return ok;
@@ -1404,11 +1452,20 @@ NativeFrame Scale0Adapter::capture() {
                 append_confinement_links(frame);
                 break;
             case OverlayRender::Sheet:
-                build_sheet(*bridge_, frame, *d);
+                build_sheet(*bridge_, frame, *d, sheet_height_frac(id, *d));
                 break;
             case OverlayRender::Recolor:
                 break;  // handled in the particle loop above
         }
+    }
+
+    // Expose each active sheet's current slice height so the panel reflects a
+    // CLI-set / runtime-adjusted height (adapter-authoritative).
+    for (const OverlayId id : active_overlays_) {
+        const OverlayDescriptor* d = overlay_by_id(static_cast<std::uint32_t>(id));
+        if (!d || d->render != OverlayRender::Sheet) continue;
+        frame.sheet_heights.push_back(
+            NativeSheetHeight{static_cast<std::uint32_t>(id), sheet_height_frac(id, *d)});
     }
 
     frame.scenario = scenario_;
@@ -1423,9 +1480,25 @@ void Scale0Adapter::set_overlay(OverlayId id, bool on) {
     const auto it = std::find(active_overlays_.begin(), active_overlays_.end(), id);
     if (on) {
         if (it == active_overlays_.end()) active_overlays_.push_back(id);
+        // Seed a Sheet overlay's slice height to its registry y_frac default on
+        // first activation (emplace never overwrites a value a prior
+        // SetSheetHeight already set — e.g. a CLI --sheet-height stamped first).
+        const OverlayDescriptor* d = overlay_by_id(static_cast<std::uint32_t>(id));
+        if (d && d->render == OverlayRender::Sheet)
+            sheet_height_.emplace(static_cast<std::uint32_t>(id), d->y_frac);
     } else if (it != active_overlays_.end()) {
         active_overlays_.erase(it);
+        sheet_height_.erase(static_cast<std::uint32_t>(id));  // forget on toggle-off
     }
+}
+
+void Scale0Adapter::set_sheet_height(OverlayId id, float height) {
+    sheet_height_[static_cast<std::uint32_t>(id)] = std::clamp(height, 0.0f, 0.999f);
+}
+
+float Scale0Adapter::sheet_height_frac(OverlayId id, const OverlayDescriptor& d) const {
+    const auto it = sheet_height_.find(static_cast<std::uint32_t>(id));
+    return it != sheet_height_.end() ? it->second : d.y_frac;
 }
 
 bool Scale0Adapter::overlay_active(OverlayId id) const {
