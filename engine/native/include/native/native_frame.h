@@ -40,11 +40,20 @@ struct NativeSheetVertex {
 
 // One rubber-sheet surface: an indexed triangle mesh (a deformed ~40×40 grid).
 // `indices` are three-per-triangle into `vertices`. Built CPU-side by the
-// Scale-0 adapter's heightfield pipeline (scatter → box-blur → deform) and
-// uploaded whole to the presenter's sheet vertex/index buffers each frame.
+// Scale-0 adapter's heightfield pipeline (slice → scatter → box-blur → deform)
+// and uploaded whole to the presenter's sheet vertex/index buffers each frame.
 struct NativeSheet {
     std::vector<NativeSheetVertex> vertices;
     std::vector<std::uint32_t>     indices;
+};
+
+// The adapter's authoritative current slice height (fraction of the lattice box)
+// for one active sheet overlay. Exposed each capture so the panel can reflect a
+// height set by the CLI / adjusted at runtime, and so a headless verify can read
+// it back.
+struct NativeSheetHeight {
+    std::uint32_t overlay_id = 0;  // OverlayId
+    float         height = 0.0f;
 };
 
 struct NativeFrame {
@@ -66,6 +75,9 @@ struct NativeFrame {
     // EM energy, Charge ρ, Vorticity ω, P_E, P_B — is active). Each entry is one
     // deformed grid drawn through the presenter's sheet mesh PSO (+ wireframe).
     std::vector<NativeSheet> field_sheets;
+    // Current slice height per active sheet overlay (adapter-authoritative), so
+    // the panel reflects CLI / runtime height changes. Empty when no sheet active.
+    std::vector<NativeSheetHeight> sheet_heights;
 };
 
 }  // namespace ftd::native

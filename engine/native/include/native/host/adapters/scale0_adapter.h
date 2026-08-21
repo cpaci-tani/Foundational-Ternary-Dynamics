@@ -25,6 +25,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace ftd {
@@ -100,8 +101,20 @@ private:
     // `anyFieldActive` gate on the ambient cloud.
     std::vector<OverlayId>        active_overlays_;
 
+    // Per-active-sheet slice height (fraction of the lattice box). Keyed by the
+    // numeric OverlayId. Seeded to the registry y_frac when a Sheet overlay is
+    // toggled on; erased on toggle-off. SetSheetHeight updates it. build_sheet
+    // slices the field on the y = height·L plane and sits the surface there, so
+    // sweeping the height reads the energy at successive levels.
+    std::unordered_map<std::uint32_t, float> sheet_height_;
+
     void set_overlay(OverlayId id, bool on);
     bool overlay_active(OverlayId id) const;
+    // View-state height control (clamped to [0, 0.999]); no bridge mutation.
+    void  set_sheet_height(OverlayId id, float height);
+    // Current slice height for a sheet overlay — the stored value, or the
+    // descriptor's y_frac default if none is stored yet.
+    float sheet_height_frac(OverlayId id, const OverlayDescriptor& d) const;
     // Latency overlays (Latency L, Horizon) sample the real Poisson latency
     // (kind 17) instead of the normalized-|J|² proxy (kind 8) in native
     // mass-gravity scenarios, mirroring the web scale0FieldKindOverrides.

@@ -90,6 +90,17 @@ struct SetOverlay {
     std::uint32_t overlay_id = 0;  // OverlayId
     bool on = false;
 };
+// Sets the horizontal slice height of ONE active rubber-sheet overlay (by its
+// stable OverlayId). `height` ∈ [0,1] is the fraction of the lattice box: the
+// sheet's base plane sits at world y = height·L AND the field is re-sampled on
+// that y-plane, so moving height sweeps the sheet through the stack and reads
+// the energy at successive levels. Adapter view-state only (same pattern as
+// SetOverlay); it never mutates the RenderBridge, so apply() handles it without
+// a bridge mutation. Clamped to [0, 0.999] by the adapter.
+struct SetSheetHeight {
+    std::uint32_t overlay_id = 0;  // OverlayId
+    float height = 0.0f;
+};
 struct RequestContinuity {};
 struct RequestChargeSum {};
 struct SetTelemetryDemand {
@@ -129,7 +140,8 @@ using UiCommand = std::variant<
     SetToggle, SetToggleProfile, SetDouble, SetEnum, SetUInt, SetBoolConfig,
     SetBoundary, SetDt, SetSorIterations, LoadScenario, SetLatticeSize,
     ApplyReboot, ResetToDefaults, InspectVoxel, InspectForce, RequestField,
-    SetOverlay, RequestContinuity, RequestChargeSum, SetTelemetryDemand,
+    SetOverlay, SetSheetHeight, RequestContinuity, RequestChargeSum,
+    SetTelemetryDemand,
     Pause, Step, Run, InjectWavepacket, InjectFluxAdd, CreateEntangledPair,
     ClearField, SeedRandomFlux>;
 
