@@ -42,8 +42,8 @@ def generate_report():
         ("B12", "Exchange force (Pauli)",            "C-", "No repulsion at r=5 (force too weak)"),
         ("B13", "Larmor radiation (P ~ a^2)",        "A",  "Accelerated charge loses MORE energy"),
         ("B14", "Weak transmutation (parity)",       "B+", "1025 pos vs 550 neg (parity violation!)"),
-        ("B15", "Higgs threshold (genesis)",         "A+", "0 below K_GENESIS, 891 above: EXACT"),
-        ("B15b","Goldstone mode speed",              "B",  "0.233 (matches wave speed in dual mode)"),
+        ("B15", "Genesis threshold [MEASURED]",       "A+", "0 below K_GENESIS, 891 above [RE-LABELED 2026-08-21: MEASURED engine self-consistency that the coded threshold |J|>K_GENESIS fires (phase_write.cpp:359, condition |J|^2 > K_GENESIS^2). NOT a Higgs mechanism -- no doublet, no VEV, no gauge-boson mass, no lambda|Phi|^4. One below-threshold run (peak 0.5x K_GENESIS) + one above (peak 3x K_GENESIS); 'EXACT' means the engine confirms its own coded threshold (tautological self-consistency), not a physical phase transition. Renamed off 'Higgs' for the same reason B16 was re-graded off QM. Grade is a REGRESSION grade (threshold fires as coded), not a physics grade.]"),
+        ("B15b","Dual-substrate front (scan-limited)","N/A","front >= 7 voxels in 30 ticks [RE-GRADED 2026-08-21: scan-saturated, not a measured speed. The probe scans dx = 1 .. L/4-1 over 30 ticks, capping the measurable speed at (L/4-1)/30 = 7/30 = 0.233 at L=32 -- the reported 0.233 IS this scan ceiling. It cannot distinguish from C_WAVE = 1/sqrt(3) ~= 0.577 (gauge_couplings.h:235); at face value 0.233 is ~60% below C_WAVE, so the old 'matches wave speed' was backwards. Dropped the 'Goldstone' framing: a massless mode of a natively-massless free wave equation is built in, not a Goldstone boson of a spontaneously broken continuous symmetry.]"),
         ("B16", "Bell CHSH inequality (classical bound)", "N/A", "S = 2.000 exactly [RE-GRADED 2026-07-01: this IS the classical local-hidden-variable bound, not a quantum result -- a genuinely quantum substrate would EXCEED 2 toward Tsirelson's 2.83. This benchmark confirms the substrate is local/classical, the OPPOSITE of a QM confirmation. Previously graded A+ and cited as QM-domain evidence below; that was backwards. Measured by a standalone LHV toy (engine/tests/benchmark_engine_theory.cpp benchmark_bell(), lines ~891-942) that does not exercise the lattice engine at all."),
         ("B17", "Born rule on LATTICE",              "A-", "Manifest sites 10x higher density"),
         ("B18", "Spin-orbit fine structure",         "B+", "Splitting = 2.7e-12 DETECTED"),
@@ -68,7 +68,7 @@ def generate_report():
         ("Quantum Mechanics (Born, Bell, wave)",  "A-", "B17: Born lattice bias 10x confirmed [CORRECTED 2026-07-01: B16's Bell S=2.000 REMOVED from QM-domain evidence -- it is the classical bound, confirming locality, not quantumness; see B16 scorecard row]"),
         ("Strong Force / QCD (color, confine)",   "B",  "B9: Color signs CORRECT, B10: confinement needs larger lattice"),
         ("Weak Force (transmutation, parity)",    "B+", "B14: Parity violation 1025/550, chirality flip works"),
-        ("Higgs Mechanism (threshold, Goldstone)", "A",  "B15: Genesis threshold EXACT, Goldstone mode propagates"),
+        ("Higgs Mechanism (threshold, Goldstone)", "N/A", "[CORRECTED 2026-08-21: neither constituent demonstrates Higgs physics -- domain grade withdrawn, same class as the B16 Bell re-grade. B15 is a MEASURED regression that the coded threshold |J|>K_GENESIS fires (no doublet/VEV/gauge-boson mass/lambda|Phi|^4); B15b is a scan-saturated wavefront bound (7/30=0.233) that cannot distinguish from C_WAVE and is not a Goldstone mode.]"),
         ("General Relativity (latency, gravity)",  "D",  "B11: Zero signal. Latency Poisson solver needs investigation"),
         ("Fine Structure (spin-orbit, Larmor)",   "B+", "B13: Larmor A, B18: splitting detected"),
         ("Relativistic Effects",                   "C-", "B19: No slowing at tested velocity"),
@@ -106,7 +106,9 @@ def generate_report():
     # What's now proven
     lines.append("  NEWLY VALIDATED PHYSICS (this session):")
     lines.append("    [x] Color forces: same-color repels, different attracts (SU(3) sign)")
-    lines.append("    [x] Higgs threshold: genesis at K_GENESIS is exact phase transition")
+    lines.append("    [~] Genesis threshold: engine confirms its own coded threshold |J|>K_GENESIS fires")
+    lines.append("        (MEASURED self-consistency, corrected 2026-08-21 -- NOT a Higgs phase transition:")
+    lines.append("        no doublet/VEV/gauge-boson mass/lambda|Phi|^4; same class as the B16 re-grade)")
     lines.append("    [x] Bell inequality: S = 2.000 -- confirms LOCALITY/CLASSICALITY of the substrate,")
     lines.append("        NOT a quantum-mechanics confirmation (corrected 2026-07-01; a quantum system")
     lines.append("        would exceed 2 toward Tsirelson's bound 2*sqrt(2)=2.83)")
@@ -145,7 +147,7 @@ def generate_plots():
     # Scorecard grades as bar chart
     grades_map = {'A+': 10, 'A': 9, 'A-': 8, 'B+': 7, 'B': 6, 'B-': 5, 'C+': 4, 'C': 3, 'C-': 2, 'D': 1, 'F': 0}
     labels = ['B1\nCoulomb', 'B2\nalpha', 'B4\nGauss', 'B6\nCharge', 'B7\nH spec',
-              'B9\nColor', 'B13\nLarmor', 'B14\nWeak', 'B15\nHiggs', 'B16\nBell',
+              'B9\nColor', 'B13\nLarmor', 'B14\nWeak', 'B15\nGenesis', 'B16\nBell',
               'B17\nBorn', 'B18\nSO']
     # B16 (index 9, Bell) is N/A as a QM grade -- S=2.000 is the CLASSICAL
     # local-hidden-variable bound, measured by a standalone toy that never
@@ -182,12 +184,16 @@ def generate_plots():
     ax.legend(fontsize=9)
     ax.grid(True, alpha=0.3)
 
-    # Higgs threshold
+    # Genesis threshold (coded |J|>K_GENESIS). CORRECTED 2026-08-21: this is a
+    # MEASURED engine self-consistency check that the coded threshold fires, NOT
+    # a Higgs phase transition -- no doublet/VEV/gauge-boson mass/lambda|Phi|^4.
+    # Title and annotation de-claimed to match the B15 scorecard row (:45).
     ax = axes[0, 2]
     ax.bar(['Below\nK_GENESIS', 'Above\nK_GENESIS'], [0, 891], color=['#d62728', '#2ca02c'], edgecolor='black')
     ax.set_ylabel('Particles Created')
-    ax.set_title('B15: Higgs Genesis Threshold', fontweight='bold')
-    ax.annotate('EXACT\nphase\ntransition', xy=(0.5, 445), fontsize=11, ha='center', fontweight='bold', color='darkgreen')
+    ax.set_title('B15: Genesis Threshold (coded |J|>K_GENESIS)', fontweight='bold')
+    ax.annotate('coded threshold\nfires (MEASURED)\nno Higgs content', xy=(0.5, 445),
+                fontsize=9, ha='center', fontweight='bold', color='#333333')
 
     # Hydrogen spectrum
     ax = axes[1, 0]

@@ -815,10 +815,31 @@ void benchmark_weak(int L, int ticks) {
 }
 
 // ================================================================
-// B15: Higgs mechanism — manifestation threshold + Goldstone (Scale 0)
+// B15: genesis threshold (Scale 0) -- MEASURED engine-consistency check
+//
+// CORRECTED 2026-08-21 (boson-sector red-team): this is NOT a Higgs
+// mechanism. It is a [MEASURED] regression that the coded genesis
+// threshold fires: phase_write.cpp:359 manifests a void voxel when
+// |J|^2 > K_GENESIS^2 (i.e. |J| > K_GENESIS). B15 injects ONE below-
+// threshold blob (peak 0.5*K_GENESIS) and ONE above (peak 3*K_GENESIS)
+// and confirms 0 vs ~891 manifestations. There is ZERO Higgs content:
+// no doublet, no VEV, no gauge-boson mass, no lambda|Phi|^4. "EXACT"
+// means the engine confirms its own coded threshold (tautological self-
+// consistency), NOT a physical phase transition. Renamed away from
+// "Higgs mechanism" for the same reason B16 was re-graded off QM.
+//
+// The B15b block below (dual-substrate wavefront) is scan-limited: it
+// probes dx = 1 .. L/4-1 over 30 ticks, capping the measurable speed at
+// (L/4-1)/30 = 7/30 = 0.233 at L=32. That ceiling cannot distinguish
+// from C_WAVE = 1/sqrt(3) ~= 0.577; at face value 0.233 is ~60% below
+// C_WAVE, so the old "matches wave speed" was backwards. A massless
+// mode of a natively-massless free wave equation is built in, not a
+// Goldstone boson of a spontaneously broken continuous symmetry.
+// See scripts/benchmarks/analyze_convergence.py B15/B15b for the
+// corrected scorecard framing.
 // ================================================================
 void benchmark_higgs(int L, int ticks) {
-    std::cerr << "  Higgs mechanism: L=" << L << "\n";
+    std::cerr << "  Genesis threshold [MEASURED, not Higgs]: L=" << L << "\n";
     const int mid = L / 2;
 
     // Test: genesis threshold = K_GENESIS = 3*K_B
@@ -866,7 +887,9 @@ void benchmark_higgs(int L, int ticks) {
               << "  Above: " << above_manifested << " particles"
               << "  Threshold works: " << (threshold_works ? "YES" : "NO") << "\n";
 
-    // Goldstone mode: dual substrate wave speed
+    // Dual-substrate wavefront speed -- scan-limited probe (see B15 header).
+    // NOT a Goldstone mode: the scan (dx < L/4 over 30 ticks) saturates at
+    // (L/4-1)/30 and cannot resolve the true C_WAVE = 1/sqrt(3).
     {
         ftd::RenderBridge rb(L);
         rb.toggles.genesis = false;
