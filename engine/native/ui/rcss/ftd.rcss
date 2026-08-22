@@ -36,6 +36,11 @@ body {
     padding: 0dp 14dp;
     background-color: #131c2b;
     border-bottom: 1dp #2b3a50;
+    /* position:relative + z-index lifts the toolbar (and its absolutely-
+       positioned dropdown menus) above #body-row, which is a later DOM sibling
+       and would otherwise paint over the open menu. */
+    position: relative;
+    z-index: 20;
 }
 .brand { font-family: JetBrains Mono; font-weight: bold; font-size: 15dp; }
 .brand .ver { color: #6aa8e0; font-weight: normal; font-size: 11dp; margin-left: 6dp; }
@@ -56,6 +61,55 @@ body {
     color: #ffffff;
     background-color: #16233a;
 }
+
+/* ── toolbar nav dropdowns (scale + scenario) ──────────────────────────────
+   A click-to-open label chip; its menu is absolutely positioned just below the
+   label and overlays #body-row (see the #toolbar z-index note above). */
+.nav-dd { display: flex; flex-direction: row; align-items: center; margin-left: 18dp; position: relative; }
+.nav-dd-label {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 5dp 10dp;
+    border: 1dp #2b3a50;
+    border-radius: 5dp;
+    background-color: #0f1826;
+    color: #cdd8e8;
+    font-size: 12dp;
+    cursor: pointer;
+}
+.nav-dd-label:hover { border-color: #3a7ec4; color: #ffffff; }
+.nav-dd-cur { color: #cdd8e8; }
+.nav-dd-cur.mono { font-family: JetBrains Mono; font-size: 11dp; color: #9fb0c6; }
+.dd-caret { color: #67788f; font-size: 9dp; margin-left: 9dp; }
+.nav-dd-menu {
+    position: absolute;
+    left: 0dp;
+    top: 34dp;
+    display: flex;
+    flex-direction: column;
+    min-width: 200dp;
+    padding: 5dp;
+    background-color: #101a29;
+    border: 1dp #2f4363;
+    border-radius: 6dp;
+    box-shadow: 0dp 6dp 18dp #05080e;
+    z-index: 30;
+}
+.nav-dd-item {
+    padding: 6dp 10dp;
+    margin-bottom: 2dp;
+    border: 1dp #223047;
+    border-radius: 5dp;
+    color: #9fb0c6;
+    font-size: 12dp;
+    cursor: pointer;
+}
+.nav-dd-item:hover { border-color: #3a7ec4; color: #dfe6f0; background-color: #16233a; }
+.nav-dd-item.cur { border-color: #2f6db0; color: #ffffff; background-color: #16233a; }
+/* The scenario menu embeds the searchable/grouped picker; give it a wider,
+   bounded body so the ~130-row list scrolls inside the popup. */
+.scn-dd-menu { min-width: 320dp; }
 
 /* ── the middle row: setup | viewport hole | physics ──────────────────── */
 #body-row { display: flex; flex-direction: row; flex: 1 1 0; align-items: stretch; }
