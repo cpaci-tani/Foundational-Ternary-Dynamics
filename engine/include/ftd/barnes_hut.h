@@ -141,7 +141,10 @@ private:
             for (int c = 0; c < 8; ++c) {
                 BarnesHutNode child;
                 child.is_leaf = true;
-                node.child_bbox(c, child.bbox_min, child.bbox_max);
+                // nodes.push_back below reallocates the vector, so the `node`
+                // reference (taken above) dangles from the 2nd iteration on.
+                // Re-index by the stable int node_idx.
+                nodes[node_idx].child_bbox(c, child.bbox_min, child.bbox_max);
                 nodes.push_back(child);
             }
             BarnesHutNode& n = nodes[node_idx]; // refetch
@@ -150,9 +153,15 @@ private:
                 n.children[c] = base + c;
             }
 
+            // The recursive insert below can nodes.push_back() and REALLOCATE
+            // the vector, which invalidates any held BarnesHutNode& — so `n`
+            // would dangle on the next iteration (an intermittent use-after-free
+            // that segfaults ~70% of the time on deep/colinear trees). node_idx
+            // is an int and is realloc-stable, so re-index nodes[node_idx] each
+            // iteration rather than reusing the reference.
             for (int e : existing) {
-                int oct_existing = n.octant(get_pos(bodies[e]));
-                insert_into_tree(e, n.children[oct_existing], bodies, get_pos, get_mass, get_charge);
+                int oct_existing = nodes[node_idx].octant(get_pos(bodies[e]));
+                insert_into_tree(e, nodes[node_idx].children[oct_existing], bodies, get_pos, get_mass, get_charge);
             }
         }
 
