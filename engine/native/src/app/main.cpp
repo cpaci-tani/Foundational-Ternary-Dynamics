@@ -388,6 +388,12 @@ int run_app(const std::vector<std::string>& args) {
     slice_registry.binding("slice-yz").grid = &slice_yz;
     slice_registry.binding("slice-xz").grid = &slice_xz;
     slice_registry.binding("slice-xy").grid = &slice_xy;
+    // Gravity/Time/Thermo each embed one XY heatmap of their own field (the grid
+    // carries latency or |J| per the active panel's demand); distinct ids so no
+    // duplicate-id concern, same underlying grid.
+    slice_registry.binding("grav-slice").grid = &slice_xy;
+    slice_registry.binding("time-slice").grid = &slice_xy;
+    slice_registry.binding("therm-slice").grid = &slice_xy;
     ftd::native::ui::FtdSliceInstancer slice_instancer(&slice_registry);
     Rml::Factory::RegisterElementInstancer("ftd-slice", &slice_instancer);
 

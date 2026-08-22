@@ -100,8 +100,12 @@ void request_telemetry_demand(AppContext* app) {
             needs.telemetry_groups |= ftd::TELEMETRY_GRAVITY;
         if (app->data->spectrum_open)
             needs.spectrum = true;   // adapter computes the flux E(k) this boundary
-        if (app->data->active_panel == 8)
-            needs.slice = true;      // adapter computes the 3 field slices (Flux-slice)
+        // Field slices: Flux-slice (8) shows |J|; Gravity (3) / Time (4) show the
+        // latency field; Thermo (5) shows |J|. Same slice subsystem, field-selected.
+        const int ap = app->data->active_panel;
+        if (ap == 8)                  { needs.slice = true; needs.slice_field = 0; }
+        else if (ap == 3 || ap == 4)  { needs.slice = true; needs.slice_field = 1; }
+        else if (ap == 5)             { needs.slice = true; needs.slice_field = 0; }
     }
     push_core(app, ftd::native::SetTelemetryDemand{needs});
 }

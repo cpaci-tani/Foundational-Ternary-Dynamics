@@ -1656,9 +1656,11 @@ void Scale0Adapter::build_snapshot(const DataNeeds& needs) {
                 constexpr int kMaxW = 64;
                 const int step = std::max(1, (L + kMaxW - 1) / kMaxW);
                 const int W = (L + step - 1) / step;
-                auto jmag = [&](int x, int y, int z) -> float {
-                    return static_cast<float>(
-                        vox[static_cast<std::size_t>(lat.index(x, y, z))].flux.mag());
+                const int field = needs.slice_field;   // 0 |J| · 1 latency
+                auto cell = [&](int x, int y, int z) -> float {
+                    const std::size_t idx = static_cast<std::size_t>(lat.index(x, y, z));
+                    if (field == 1) return static_cast<float>(vox[idx].latency);
+                    return static_cast<float>(vox[idx].flux.mag());
                 };
                 auto fill = [&](FieldSliceResult& s, int plane) {
                     s.w = W; s.h = W;
@@ -1668,9 +1670,9 @@ void Scale0Adapter::build_snapshot(const DataNeeds& needs) {
                         const int b = std::min(j * step, L - 1);
                         for (int i = 0; i < W; ++i) {
                             const int a = std::min(i * step, L - 1);
-                            const float v = (plane == SLICE_YZ) ? jmag(c, a, b)
-                                          : (plane == SLICE_XZ) ? jmag(a, c, b)
-                                                                : jmag(a, b, c);
+                            const float v = (plane == SLICE_YZ) ? cell(c, a, b)
+                                          : (plane == SLICE_XZ) ? cell(a, c, b)
+                                                                : cell(a, b, c);
                             s.data[static_cast<std::size_t>(j) * W + i] = v;
                             if (v < mn) mn = v;
                             if (v > mx) mx = v;
