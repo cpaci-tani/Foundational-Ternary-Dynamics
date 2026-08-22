@@ -280,8 +280,26 @@ inline void configure_prepared_coulomb_candidate_terms(RenderBridge& rb) {
     auto& t = rb.toggles;
     for (const auto& spec : TOGGLE_SPECS) t.*(spec.field) = false;
     t.flux_boundary = FluxBoundaryMode::Periodic;
+    // Substrate-mediated Coulomb (not the instantaneous Poisson shortcut): the
+    // flux field J is the physical carrier of the interaction, so it must be the
+    // field that both follows the charges AND moves them — otherwise a moving
+    // charge drags a field that is frozen (visibly detached, non-physical).
+    //   wave_propagation : J is dynamical (evolves each tick).
+    //   coupling         : a charge sources J (-g_c·∇s), so J is emitted at the
+    //                      charge's CURRENT position every tick.
+    //   gauss_projection : enforces div(J) = s (FTD's Gauss law), re-solving each
+    //                      tick, so J's monopole structure tracks the charges as
+    //                      they move — the field follows its source.
+    //   forces (poisson_coulomb OFF): the Coulomb force is taken from the flux
+    //                      gradient, so the field you SEE is the field that acts.
+    //   damping          : dissipates the radiated wake so it fades instead of
+    //                      accumulating (a moving charge radiates; the field
+    //                      trails then decays, as a retarded field should).
+    t.wave_propagation = true;
+    t.coupling = true;
+    t.gauss_projection = true;
+    t.damping = true;
     t.forces = true;
-    t.poisson_coulomb = true;
     t.movement = true;
     t.dual_substrate = false;
 }
