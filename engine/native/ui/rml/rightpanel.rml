@@ -16,6 +16,16 @@
 
         <div class="vbanner" data-if="has_validation">{{validation_msg}}</div>
 
+        <!-- Interior-occlusion cull ("video-game hack"): hide particles buried
+             deeper than N layers inside a dense clump. 0 = show all. -->
+        <div class="force-style-row">
+            <span class="fs-label">Hide interior</span>
+            <span class="cfg-nudge" data-event-click="set_cull_layers(-1)">&#8722;</span>
+            <span class="cfg-val" data-if="cull_layers == 0">Off</span>
+            <span class="cfg-val" data-if="cull_layers != 0">{{cull_layers}} deep</span>
+            <span class="cfg-nudge" data-event-click="set_cull_layers(1)">&#43;</span>
+        </div>
+
         <div class="section-head" data-event-click="toggle_physics()">
             <span class="section-caret">{{ phys_open ? '&#9662;' : '&#9656;' }}</span>
             <span class="section-title">Physics terms</span>

@@ -120,6 +120,13 @@ struct SetSheetHeight {
 struct SetForceStyle {
     std::uint32_t style = 0;  // ForceStyle
 };
+// Interior-occlusion cull depth ("video-game hack"): 0 = show all; N>0 hides
+// manifested sites buried deeper than N layers inside the clump from the visual
+// gather. Adapter view-state only (same pattern as SetForceStyle) — no bridge
+// mutation, flags a frame refresh so it takes effect live even while paused.
+struct SetInteriorCull {
+    std::uint32_t layers = 0;
+};
 struct RequestContinuity {};
 struct RequestChargeSum {};
 struct SetTelemetryDemand {
@@ -159,8 +166,8 @@ using UiCommand = std::variant<
     SetToggle, SetToggleProfile, SetDouble, SetEnum, SetUInt, SetBoolConfig,
     SetBoundary, SetDt, SetSorIterations, LoadScenario, SetLatticeSize,
     ApplyReboot, ResetToDefaults, InspectVoxel, InspectForce, InspectNeighbors,
-    RequestField, SetOverlay, SetSheetHeight, SetForceStyle, RequestContinuity,
-    RequestChargeSum, SetTelemetryDemand,
+    RequestField, SetOverlay, SetSheetHeight, SetForceStyle, SetInteriorCull,
+    RequestContinuity, RequestChargeSum, SetTelemetryDemand,
     Pause, Step, Run, InjectWavepacket, InjectFluxAdd, CreateEntangledPair,
     ClearField, SeedRandomFlux>;
 

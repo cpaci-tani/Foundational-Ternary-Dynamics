@@ -79,6 +79,40 @@ VisualSnapshotRequest stamp_visual_request(const VisualSnapshotRequest& requeste
     return request;
 }
 
+// Interior-occlusion test for the visual cull (VisualSnapshotRequest::
+// interior_cull_layers). A manifested site is "buried" when, along all 6 axis
+// directions, the next `layers` voxels are all manifested and in-bounds; such a
+// site is fully occluded by the shell around it and is dropped from the visual
+// gather. `layers <= 0` short-circuits to false (cull disabled → nothing buried,
+// so the gather is bit-identical to before). Lattice index packing matches
+// Lattice::index (x*L^2 + y*L + z), so coord decode is z=idx%L, y=(idx/L)%L,
+// x=idx/L^2 — identical to the GPU interop_particle_gather_kernel.
+template <typename VoxelVec>
+bool visual_site_buried(const VoxelVec& voxels, int L, std::size_t idx, int layers) {
+    if (layers <= 0 || L <= 0) return false;
+    const std::size_t LL = static_cast<std::size_t>(L) * static_cast<std::size_t>(L);
+    const int cz = static_cast<int>(idx % static_cast<std::size_t>(L));
+    const int cy = static_cast<int>((idx / static_cast<std::size_t>(L))
+                                    % static_cast<std::size_t>(L));
+    const int cx = static_cast<int>(idx / LL);
+    static const int D[6][3] = {{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}};
+    for (int d = 0; d < 6; ++d) {
+        for (int s = 1; s <= layers; ++s) {
+            const int nx = cx + D[d][0] * s;
+            const int ny = cy + D[d][1] * s;
+            const int nz = cz + D[d][2] * s;
+            if (nx < 0 || nx >= L || ny < 0 || ny >= L || nz < 0 || nz >= L)
+                return false;  // reached the lattice edge → surface, keep
+            const std::size_t nidx =
+                (static_cast<std::size_t>(nx) * static_cast<std::size_t>(L)
+                 + static_cast<std::size_t>(ny)) * static_cast<std::size_t>(L)
+                + static_cast<std::size_t>(nz);
+            if (voxels[nidx].state == 0) return false;  // reached a void → keep
+        }
+    }
+    return true;  // solid along all 6 axes for `layers` steps → buried, cull
+}
+
 void capture_cpu_particles(const RenderBridge& bridge,
                            const VisualSnapshotRequest& request,
                            VisualSnapshot& out) {
@@ -95,27 +129,34 @@ void capture_cpu_particles(const RenderBridge& bridge,
     out.meta.lattice_size = request.lattice_size;
 
     const auto& voxels = static_cast<const RenderBridge&>(bridge).voxels();
-    std::uint64_t manifested = 0;
-    for (const auto& voxel : voxels) {
-        if (voxel.state != 0) ++manifested;
+    const int L = request.lattice_size;
+    const int cull = static_cast<int>(request.interior_cull_layers);
+    // `visible` is the gather pool: manifested sites that survive the interior
+    // cull. With cull==0 it equals the true manifested count (unchanged path).
+    std::uint64_t visible = 0;
+    for (std::size_t index = 0; index < voxels.size(); ++index) {
+        if (voxels[index].state == 0) continue;
+        if (visual_site_buried(voxels, L, index, cull)) continue;
+        ++visible;
     }
-    out.particles.total_manifested = static_cast<std::uint32_t>(manifested);
+    out.particles.total_manifested = static_cast<std::uint32_t>(visible);
     const std::uint64_t selected = (std::min)(
-        manifested, static_cast<std::uint64_t>(request.max_particles));
+        visible, static_cast<std::uint64_t>(request.max_particles));
     out.particles.records.reserve(static_cast<std::size_t>(selected));
 
     // This is intentionally the same Bresenham-style accumulator used by
-    // ws_server's legacy pack_particle_data(): traverse manifested sites in
+    // ws_server's legacy pack_particle_data(): traverse the visible sites in
     // ascending lattice index and select an evenly-spaced deterministic subset
-    // when the protocol cap is lower than the manifested population.
+    // when the protocol cap is lower than the visible population.
     std::uint64_t accumulator = 0;
     for (std::size_t index = 0; index < voxels.size(); ++index) {
         const Voxel& voxel = voxels[index];
         if (voxel.state == 0) continue;
-        if (manifested > selected) {
+        if (visual_site_buried(voxels, L, index, cull)) continue;
+        if (visible > selected) {
             accumulator += selected;
-            if (accumulator < manifested) continue;
-            accumulator -= manifested;
+            if (accumulator < visible) continue;
+            accumulator -= visible;
         }
         VisualParticleRecord record;
         record.index = static_cast<std::int32_t>(index);

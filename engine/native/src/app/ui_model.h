@@ -211,6 +211,9 @@ struct ShellData {
     Rml::Vector<OverlayColumnRow> overlay_columns;
     // Global force render-style (0 Arrows / 1 Heatmap / 2 Flow / 3 Glyphs).
     int force_style = 0;
+    // Interior-occlusion cull depth ("video-game hack"): 0 = show all particles;
+    // N>0 hides sites buried deeper than N layers inside the clump. View-state only.
+    int cull_layers = 0;
     // Setup scenario picker (Scale-0): the ~130 native-catalog scenarios grouped
     // into the 5 honest classes, searchable + collapsible. scn_open gates the list
     // (COLLAPSED by default); while collapsed scenario_groups is left EMPTY.

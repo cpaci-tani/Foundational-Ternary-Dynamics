@@ -39,6 +39,15 @@ struct VisualSnapshotRequest {
     double physical_time = 0.0;
     double dt = 1.0;
     int lattice_size = 0;
+    // Interior occlusion cull ("video-game hack"): drop manifested sites buried
+    // deeper than this many layers inside the clump from the VISUAL gather — a
+    // site is culled when, along all 6 axis directions, the next N voxels are all
+    // manifested (no void or lattice edge within N steps), so only a shell ~N
+    // layers thick is captured. 0 = disabled (every manifested site is eligible,
+    // bit-identical to the pre-cull behaviour — this is the default for all
+    // non-native callers). Purely visual: physics, telemetry diagnostics, and the
+    // true manifested count are unaffected.
+    std::uint16_t interior_cull_layers = 0;
 };
 
 /// Immutable source provenance captured when begin_visual_snapshot() is

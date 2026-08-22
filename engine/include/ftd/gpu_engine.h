@@ -252,8 +252,12 @@ public:
     // bufs_.interop_fence is null). Callers with no imported fence (e.g.
     // tests that only exercise the gather path) may pass any value; it is
     // unused in that case.
+    // `cull_layers` (default 0 = disabled) drops manifested sites buried deeper
+    // than that many layers inside the clump from the gathered records — a purely
+    // visual interior-occlusion cull (see VisualSnapshotRequest::interior_cull_layers).
     bool interop_gather_particles(std::uint32_t max_particles,
-                                  std::uint64_t fence_value);
+                                  std::uint64_t fence_value,
+                                  std::uint16_t cull_layers = 0);
     // True once the CPU-visible event recorded by interop_gather_particles()
     // has retired -- i.e. the header's captured_count is safe to read on the
     // CPU. This does NOT by itself prove the buffer is safe for D3D12 to
