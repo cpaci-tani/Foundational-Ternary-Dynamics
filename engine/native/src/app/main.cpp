@@ -558,6 +558,23 @@ int run_app(const std::vector<std::string>& args) {
         sgrp.RegisterMember("items", &ScenarioGroupRow::items);
     }
     ctor.RegisterArray<Rml::Vector<ScenarioGroupRow>>();
+    if (auto irow = ctor.RegisterStruct<InstrumentRow>()) {
+        irow.RegisterMember("label", &InstrumentRow::label);
+        irow.RegisterMember("value", &InstrumentRow::value);
+        irow.RegisterMember("unit", &InstrumentRow::unit);
+        irow.RegisterMember("vmin", &InstrumentRow::vmin);
+        irow.RegisterMember("vmax", &InstrumentRow::vmax);
+        irow.RegisterMember("vavg", &InstrumentRow::vavg);
+        irow.RegisterMember("variant", &InstrumentRow::variant);
+        irow.RegisterMember("has_stat", &InstrumentRow::has_stat);
+    }
+    ctor.RegisterArray<Rml::Vector<InstrumentRow>>();
+    if (auto isec = ctor.RegisterStruct<InstrumentSection>()) {
+        isec.RegisterMember("title", &InstrumentSection::title);
+        isec.RegisterMember("expanded", &InstrumentSection::expanded);
+        isec.RegisterMember("rows", &InstrumentSection::rows);
+    }
+    ctor.RegisterArray<Rml::Vector<InstrumentSection>>();
     ctor.Bind("tick", &data.tick);
     ctor.Bind("active_scale", &data.active_scale);
     ctor.Bind("particle_count", &data.particle_count);
@@ -631,6 +648,19 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("spec_slope", &data.spec_slope);
     ctor.Bind("spec_grid", &data.spec_grid);
     ctor.Bind("spec_prov", &data.spec_prov);
+    // Panel rail + epistemic box + resizable side-panel widths.
+    ctor.Bind("active_panel", &data.active_panel);
+    ctor.Bind("diag_active", &data.diag_active);
+    ctor.Bind("epi_tag", &data.epi_tag);
+    ctor.Bind("epi_cls", &data.epi_cls);
+    ctor.Bind("epi_body", &data.epi_body);
+    ctor.Bind("epi_title", &data.epi_title);
+    ctor.Bind("setup_width", &data.setup_width);
+    ctor.Bind("physics_width", &data.physics_width);
+    // Diagnostics panel: the Min/Max/Avg metric tables + per-group freshness.
+    ctor.Bind("diag_sections", &data.diag_sections);
+    ctor.Bind("diag_fresh_diag", &data.diag_fresh_diag);
+    ctor.Bind("diag_fresh_audit", &data.diag_fresh_audit);
     ctor.BindEventCallback("run", [&app](Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&) {
         request_play_toggle(&app);
     });
@@ -762,6 +792,73 @@ int run_app(const std::vector<std::string>& args) {
     ctor.BindEventCallback("scale_particles", [&app](Rml::DataModelHandle, Rml::Event&,
                                                      const Rml::VariantList&) {
         request_switch_scale(&app, 1);
+    });
+    // Panel rail: select_panel(N) makes panel N the active LEFT panel and DERIVES
+    // the telemetry-demand *_open gates from N (so request_telemetry_demand + the
+    // per-frame sync blocks fire only for the visible panel). DOM-shrink: only the
+    // active panel instantiates its rows. 0 Scenario·1 Diagnostics·2 Telemetry·
+    // 3 Gravity·4 Time·5 Thermo·6 Spectrum.
+    ctor.BindEventCallback("select_panel", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                  const Rml::VariantList& v) {
+        if (!app.data) return;
+        int n = app.data->active_panel;
+        if (!v.empty()) v[0].GetInto(n);
+        app.data->active_panel  = n;
+        app.data->diag_active   = (n == 1);
+        app.data->tel_open      = (n == 2);
+        app.data->grav_open     = (n == 3);
+        app.data->time_open     = (n == 4);
+        app.data->thermo_open   = (n == 5);
+        app.data->spectrum_open = (n == 6);
+        request_telemetry_demand(&app);
+        // DOM-shrink: only the active panel instantiates its rows.
+        if (n == 0) {
+            app.data->scn_open = true;
+            rebuild_scenario_view(app.data, app.scenario_id, app.scenario_filter,
+                                  app.scn_expanded_groups);
+        } else {
+            app.data->scenario_groups.clear();
+        }
+        if (n == 1) build_instrument_sections(app.data);
+        else        app.data->diag_sections.clear();
+        h.DirtyVariable("active_panel");
+        h.DirtyVariable("diag_active");
+        h.DirtyVariable("tel_open");
+        h.DirtyVariable("grav_open");
+        h.DirtyVariable("time_open");
+        h.DirtyVariable("thermo_open");
+        h.DirtyVariable("spectrum_open");
+        h.DirtyVariable("scenario_groups");
+        h.DirtyVariable("diag_sections");
+    });
+    // Draggable panel splitters: convert the drag's absolute mouse-x into a panel
+    // width (dp), clamp, and write the bound width so #setup / #physics resize
+    // live. #viewport is flex:1, so the 3D scene follows automatically; the scene
+    // rect is recomputed from #viewport's laid-out rectangle each frame.
+    ctor.BindEventCallback("resize_left", [&app, dpi_scale](Rml::DataModelHandle h,
+                                                            Rml::Event& ev,
+                                                            const Rml::VariantList&) {
+        if (!app.data) return;
+        const float mx = ev.GetParameter<float>("mouse_x", -1.0f);
+        if (mx < 0.0f) return;
+        // #setup starts after the 44dp rail: width_dp = mouse_x/dpi − rail.
+        float w = mx / dpi_scale - 44.0f;
+        w = std::max(300.0f, std::min(760.0f, w));
+        app.data->setup_width = std::to_string(static_cast<int>(w)) + "dp";
+        h.DirtyVariable("setup_width");
+    });
+    ctor.BindEventCallback("resize_right", [&app, dpi_scale, context](Rml::DataModelHandle h,
+                                                                      Rml::Event& ev,
+                                                                      const Rml::VariantList&) {
+        if (!app.data) return;
+        const float mx = ev.GetParameter<float>("mouse_x", -1.0f);
+        if (mx < 0.0f) return;
+        // #physics is right-anchored: width_dp = (window_w − mouse_x)/dpi.
+        const float win_w = static_cast<float>(context->GetDimensions().x);
+        float w = (win_w - mx) / dpi_scale;
+        w = std::max(200.0f, std::min(520.0f, w));
+        app.data->physics_width = std::to_string(static_cast<int>(w)) + "dp";
+        h.DirtyVariable("physics_width");
     });
     // Overlay toggle: flip one overlay's membership in the active set. Pushes a
     // SetOverlay Scale-0 command (multi-select — the adapter composites all
@@ -1022,12 +1119,30 @@ int run_app(const std::vector<std::string>& args) {
     // state (cheap cadence-1 base charts); AUDIT + LAGRANGIAN follow when the
     // section is open. Issued unconditionally (any start scale) so a later switch
     // to Scale 0 already has a live demand on the host.
-    if (app_opts.open_telemetry) data.tel_open = true;
     if (app_opts.open_overlays) data.ov_open = true;
-    if (app_opts.open_gravity) data.grav_open = true;
-    if (app_opts.open_time) data.time_open = true;
-    if (app_opts.open_thermo) data.thermo_open = true;
-    if (app_opts.open_spectrum) data.spectrum_open = true;
+    // Rail: derive the active panel from --panel (or the legacy --open-* flags),
+    // then derive the *_open demand gates from it (they double as the panel-active
+    // markers the sync blocks read). Build the active panel's DOM-shrink vector +
+    // the epistemic box before LoadDocument so the first captured frame is populated.
+    if (app_opts.open_telemetry) data.active_panel = 2;
+    if (app_opts.open_gravity)   data.active_panel = 3;
+    if (app_opts.open_time)      data.active_panel = 4;
+    if (app_opts.open_thermo)    data.active_panel = 5;
+    if (app_opts.open_spectrum)  data.active_panel = 6;
+    if (app_opts.panel >= 0)     data.active_panel = app_opts.panel;
+    data.diag_active   = (data.active_panel == 1);
+    data.tel_open      = (data.active_panel == 2);
+    data.grav_open     = (data.active_panel == 3);
+    data.time_open     = (data.active_panel == 4);
+    data.thermo_open   = (data.active_panel == 5);
+    data.spectrum_open = (data.active_panel == 6);
+    if (data.active_panel == 0) {
+        data.scn_open = true;
+        rebuild_scenario_view(&data, app.scenario_id, app.scenario_filter,
+                              app.scn_expanded_groups);
+    }
+    if (data.active_panel == 1) build_instrument_sections(&data);
+    fill_epistemic(&data, app.scenario_id);
     request_telemetry_demand(&app);
 
     Rml::ElementDocument* doc = context->LoadDocument(FTD_RML_SHELL_PATH);
@@ -1445,6 +1560,19 @@ int run_app(const std::vector<std::string>& args) {
                 synced_scenario = eff;
                 if (set_current_scenario(&data, eff))
                     model.DirtyVariable("scenario_groups");
+                // Epistemic-status box tracks the active scenario.
+                if (fill_epistemic(&data, eff)) {
+                    model.DirtyVariable("epi_tag");
+                    model.DirtyVariable("epi_cls");
+                    model.DirtyVariable("epi_body");
+                    model.DirtyVariable("epi_title");
+                }
+                // A new scenario restarts the run — clear the Diagnostics stats so
+                // Min/Max/Avg reflect only the current scenario (the group-tick
+                // regression detector below is the backstop for same-id reloads).
+                reset_diag_stats(app.diag_stats);
+                app.diag_last_diag_tick = -1;
+                app.diag_last_audit_tick = -1;
             }
         }
         sset_str("backend", data.backend, upper(frame.backend.empty() ? host.backend_name()
@@ -1634,6 +1762,26 @@ int run_app(const std::vector<std::string>& args) {
                 for (float e : sp.ek)
                     spec_ek.push(std::log10(std::max(e, 1.0e-6f)));
             }
+            // ── Diagnostics panel (Min/Max/Avg tables + per-group freshness) ──
+            // Values + stats refresh from the live snapshot + the accumulators
+            // (fed unconditionally in the ring-buffer block below). Freshness age
+            // is app-stamped (the snapshot carries no wall-clock time).
+            if (data.diag_active && push_status) {
+                const auto& tm = s0->telemetry;
+                DiagInputs din{tm.diagnostics, tm.audit, s0->energy_ledger};
+                if (refresh_instrument_sections(&data, din, app.diag_stats))
+                    model.DirtyVariable("diag_sections");
+                const long long age_d = std::chrono::duration_cast<std::chrono::milliseconds>(
+                    now_status - app.diag_stamp).count();
+                const long long age_a = std::chrono::duration_cast<std::chrono::milliseconds>(
+                    now_status - app.audit_stamp).count();
+                set_str("diag_fresh_diag", data.diag_fresh_diag,
+                        "state t" + std::to_string(tm.diagnostics_meta.tick) + " · "
+                            + std::to_string(age_d) + " ms");
+                set_str("diag_fresh_audit", data.diag_fresh_audit,
+                        "audit t" + std::to_string(tm.audit_meta.tick) + " · "
+                            + std::to_string(age_a) + " ms");
+            }
         } else if (const ftd::native::Scale1Snapshot* s1 = snap ? snap->scale1() : nullptr) {
             chart_energy = s1->total_energy;
             chart_energy_valid = true;
@@ -1682,6 +1830,33 @@ int run_app(const std::vector<std::string>& args) {
                         const ftd::TelemetryLagrangian& lg = s0->telemetry.lagrangian;
                         lag_lag.push(static_cast<float>(lg.total_lagrangian));
                         lag_ham.push(static_cast<float>(lg.total_hamiltonian));
+                    }
+                    // Diagnostics running stats: push a metric only when its
+                    // telemetry group tick advances (dedup); runs even while the
+                    // Diagnostics panel is closed so Min/Max/Avg span the whole run.
+                    // Reset on lattice reboot or a group-tick regression (same-id
+                    // re-seed / Reset); scenario + scale switches reset via their
+                    // own hooks.
+                    {
+                        const auto& tm = s0->telemetry;
+                        const int dtick = tm.diagnostics_meta.tick;
+                        const int atick = tm.audit_meta.tick;
+                        if (dtick < app.diag_last_diag_tick ||
+                            atick < app.diag_last_audit_tick ||
+                            frame.lattice_size != app.diag_synced_lattice) {
+                            reset_diag_stats(app.diag_stats);
+                            app.diag_last_diag_tick = -1;
+                            app.diag_last_audit_tick = -1;
+                            app.diag_synced_lattice = frame.lattice_size;
+                        }
+                        const bool diag_adv = (dtick != app.diag_last_diag_tick);
+                        const bool audit_adv = (atick != app.diag_last_audit_tick);
+                        if (diag_adv || audit_adv) {
+                            DiagInputs din{tm.diagnostics, tm.audit, s0->energy_ledger};
+                            accumulate_diag_stats(app.diag_stats, din, diag_adv, audit_adv);
+                            if (diag_adv) { app.diag_last_diag_tick = dtick; app.diag_stamp = now_status; }
+                            if (audit_adv) { app.diag_last_audit_tick = atick; app.audit_stamp = now_status; }
+                        }
                     }
                 }
                 last_pushed_seq = snap->seq;

@@ -70,19 +70,110 @@ body {
    carries the telemetry charts + click-to-inspect readout (moved from the right),
    so the legends and wide force/vector rows get room. Its own bounded scroll
    region (overflow-y:auto) so the panel stays usable with the inspector open. */
+/* LEFT instrument-panel host. flex-basis:auto so the bound width (data-style-
+   width="setup_width", default 380dp) drives its size and #resizer-left can grow
+   it live. */
 #setup {
-    flex: 0 0 280dp;
-    width: 280dp;
+    flex: 0 0 auto;
+    width: 380dp;
     border-right: 1dp #2b3a50;
     overflow-y: auto;
 }
+/* Panel rail — one clickable text button per LEFT instrument panel. Thin fixed
+   column before #setup; the .sel button marks the active panel. */
+#rail {
+    flex: 0 0 44dp;
+    width: 44dp;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 8dp 0dp;
+    background-color: #0f1826;
+    border-right: 1dp #2b3a50;
+}
+.rail-btn {
+    padding: 8dp 2dp;
+    margin-bottom: 2dp;
+    text-align: center;
+    font-family: JetBrains Mono;
+    font-size: 9dp;
+    letter-spacing: 1dp;
+    color: #67788f;
+    cursor: pointer;
+    border-left: 2dp transparent;
+}
+.rail-btn:hover { color: #dfe6f0; background-color: #16233a; }
+.rail-btn.sel { color: #ffffff; background-color: #16233a; border-left: 2dp #2f6db0; }
+/* Draggable panel splitter (drag:drag emits the drag events the resize_left/
+   resize_right callbacks read). Thin vertical bar between a panel and the hole. */
+.resizer {
+    flex: 0 0 5dp;
+    width: 5dp;
+    background-color: #1b2740;
+    cursor: col-resize;
+    drag: drag;
+}
+.resizer:hover { background-color: #3a7ec4; }
+/* One rail-switched panel body. */
+.panel-block { display: flex; flex-direction: column; }
+/* Epistemic-status box — pinned above the panels; the active scenario's tag +
+   qualification clause. Reuses the .scn-tag colour classes for the badge. */
+.epi-box {
+    padding: 8dp 9dp;
+    margin-bottom: 12dp;
+    border: 1dp #2b3a50;
+    border-radius: 4dp;
+    background-color: #141f30;
+    display: flex;
+    flex-direction: column;
+}
+.epi-head { display: flex; flex-direction: row; align-items: center; margin-bottom: 5dp; }
+.epi-title {
+    flex: 1 1 auto;
+    margin-left: 8dp;
+    font-family: JetBrains Mono;
+    font-size: 10dp;
+    color: #9fb0c6;
+}
+.epi-body { font-family: Inter; font-size: 10dp; color: #8aa0bd; }
+
+/* Diagnostics panel — 6-column Min/Max/Avg tables. RCSS has no table/grid, so
+   each row is a flex row with fixed-width value/unit/stat columns and a growing
+   metric column. Sized for the default 380dp panel; drag-resize for wider. */
+.diag-fresh { display: flex; flex-direction: row; margin-bottom: 10dp; }
+.diag-fresh-item { flex: 1 1 auto; font-family: JetBrains Mono; font-size: 9dp; color: #67788f; }
+.diag-sec { display: flex; flex-direction: column; margin-bottom: 12dp; }
+.diag-sectitle {
+    font-family: JetBrains Mono;
+    font-size: 9dp;
+    color: #9fb0c6;
+    text-transform: uppercase;
+    letter-spacing: 1dp;
+    margin-bottom: 4dp;
+    padding-bottom: 3dp;
+    border-bottom: 1dp #223047;
+}
+.diag-head, .diag-row { display: flex; flex-direction: row; align-items: center; padding: 2dp 2dp; }
+.diag-metric { flex: 1 1 auto; min-width: 0dp; font-family: Inter; font-size: 10dp; color: #cdd7e5; }
+.diag-value { flex: 0 0 74dp; font-family: JetBrains Mono; font-size: 10dp; color: #e0e7f1; text-align: right; }
+.diag-unit { flex: 0 0 30dp; font-family: JetBrains Mono; font-size: 9dp; color: #67788f; text-align: center; }
+.diag-stat { flex: 0 0 50dp; font-family: JetBrains Mono; font-size: 9dp; color: #8595ab; text-align: right; }
+.diag-head .diag-metric, .diag-head .diag-value, .diag-head .diag-unit, .diag-head .diag-stat {
+    color: #4a5a72;
+    font-family: JetBrains Mono;
+    font-size: 8dp;
+    text-transform: uppercase;
+    letter-spacing: 1dp;
+}
+.diag-row.pos .diag-value { color: #79d295; }
+.diag-row.neg .diag-value { color: #e8899a; }
 /* RIGHT panel — "Properties & Overlays". Stacks PHYSICS TERMS + CONFIG & LATTICE
    + FIELD overlays, which together overflow the body-row height. It is a flex
    item stretched to that (definite) row height, so overflow-y:auto turns the
    surplus into a scroll region reachable by wheel (interactive) or
    Element::SetScrollTop (capture) instead of spilling below the window. */
 #physics {
-    flex: 0 0 248dp;
+    flex: 0 0 auto;
     width: 248dp;
     border-left: 1dp #2b3a50;
     overflow-y: auto;

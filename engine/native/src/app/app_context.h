@@ -26,6 +26,7 @@
 #include <RmlUi/Core.h>              // Rml::Context, Rml::DataModelHandle
 
 #include <atomic>
+#include <chrono>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -121,6 +122,21 @@ struct AppContext {
     // knob that reboots). Seeded from the CLI at boot and updated when the
     // lattice / boundary knobs change, so a reboot re-applies the live choices.
     ftd::native::RunConfig run_config;
+
+    // ── Diagnostics-panel running stats (GUI thread) ──
+    // One cumulative-since-reset Min/Max/Avg accumulator per kDiagMetrics[] row
+    // (sized lazily to diag_metric_count()). Advanced only when the metric's
+    // telemetry group tick changes — so a repeated cached snapshot never over-
+    // counts — and reset on scenario / scale / lattice change or a group-tick
+    // regression. Accumulates every boundary (even while the panel is closed) so
+    // Min/Max/Avg reflect the whole run. The steady_clock stamps drive the
+    // "state t… · N ms" freshness age (the snapshot carries no wall-clock time).
+    std::vector<RunningStat> diag_stats;
+    int diag_last_diag_tick = -1;
+    int diag_last_audit_tick = -1;
+    int diag_synced_lattice = -1;
+    std::chrono::steady_clock::time_point diag_stamp{};
+    std::chrono::steady_clock::time_point audit_stamp{};
 };
 
 

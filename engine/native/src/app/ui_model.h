@@ -7,10 +7,13 @@
 // app/ui_model.cpp.
 //
 #include "ftd/term_toggles.h"     // ftd::TermToggles, ftd::ToggleSpec (builder sigs)
+#include "ftd/render_bridge_diagnostics.h"  // ftd::Diagnostics/EnergyAudit/EnergyLedger (DiagInputs)
 #include "native/ui_snapshot.h"   // ftd::native::BridgeKnobs (config builder sigs)
 
 #include <RmlUi/Core.h>           // Rml::String, Rml::Vector
 
+#include <cmath>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -145,6 +148,27 @@ struct ScenarioGroupRow {
     Rml::Vector<ScenarioRow> items;
 };
 
+// One Diagnostics-panel metric row: Metric | Value | Unit | Min | Max | Avg.
+// value is the live formatted reading; vmin/vmax/vavg come from the per-metric
+// RunningStat (rendered "—" when has_stat is false — pair/triple/vector rows —
+// or the accumulator is still empty). variant tints the value (1 green / 2 red).
+struct InstrumentRow {
+    Rml::String label;
+    Rml::String value = "—";
+    Rml::String unit;
+    Rml::String vmin = "—";
+    Rml::String vmax = "—";
+    Rml::String vavg = "—";
+    int variant = 0;
+    bool has_stat = true;
+};
+// One collapsible Diagnostics section (Particle State / Energy Budget / ...).
+struct InstrumentSection {
+    Rml::String title;
+    bool expanded = true;
+    Rml::Vector<InstrumentRow> rows;
+};
+
 struct ShellData {
     int tick = 0;
     int active_scale = 0;   // drives the toolbar scale-switcher highlight
@@ -260,6 +284,39 @@ struct ShellData {
     Rml::String spec_slope = "—";     // log-log spectral index
     Rml::String spec_grid = "—";      // FFT grid M = nextPow2(L)
     Rml::String spec_prov = "—";      // freshness note
+    // ── Panel rail (the left instrument-panel switcher) ───────────────────────
+    // active_panel selects which LEFT panel is shown; every panel block is
+    // data-if="active_panel==N" (0 Scenario · 1 Diagnostics · 2 Telemetry ·
+    // 3 Gravity · 4 Time · 5 Thermo · 6 Spectrum). select_panel(N) sets it and
+    // DERIVES the *_open gates above, so request_telemetry_demand + all the
+    // per-frame sync blocks keep working unchanged. diag_active mirrors
+    // (active_panel==1) for the demand + Diagnostics refresh guard.
+    int active_panel = 1;      // default to Diagnostics (the rich metric dashboard)
+    bool diag_active = true;
+    // ── Diagnostics panel (active_panel==1): the rich Min/Max/Avg metric tables.
+    // Built only while diag_active (DOM-shrink); the ~28-row nested data-for
+    // dirties only on a real value change. The per-group freshness "state t… · N
+    // ms" is kept in the two flat strings (NOT in the array) so the ~8/s age tick
+    // never reflows the table.
+    Rml::Vector<InstrumentSection> diag_sections;
+    Rml::String diag_fresh_diag = "—";
+    Rml::String diag_fresh_audit = "—";
+    // ── Epistemic-status box (per active scenario, pinned above the panels) ────
+    // Split of the active scenario's ScenarioMeta.epistemic_status: the leading
+    // "[TAG]" (epi_tag, brackets kept), a colour class (epi_cls: 1 emergent /
+    // 2 imposed / 3 open / 4 negative, reusing the .scn-tag palette), the
+    // qualification clause after the ']' (epi_body), and the scenario title.
+    // epi_tag == "" hides the box (Scale-1 / unknown scenario).
+    Rml::String epi_tag;
+    int epi_cls = 0;
+    Rml::String epi_body;
+    Rml::String epi_title;
+    // ── Resizable side-panel widths ───────────────────────────────────────────
+    // Bound to #setup / #physics via data-style-width; updated by the .resizer
+    // drag callbacks (resize_left / resize_right). Strings so RCSS reads them as
+    // lengths (e.g. "380dp").
+    Rml::String setup_width = "380dp";
+    Rml::String physics_width = "248dp";
 };
 
 // ── Toggle-panel builders (build + live-sync the toggle model). ──────────────
@@ -297,5 +354,57 @@ void rebuild_scenario_view(ShellData* data, const std::string& current,
                            const std::string& raw_filter,
                            const std::vector<std::string>& expanded);
 bool set_current_scenario(ShellData* data, const std::string& id);
+
+// ── Epistemic-status box ─────────────────────────────────────────────────────
+// Fill data->epi_tag / epi_cls / epi_body / epi_title from the catalog metadata
+// of scenario `id` (looked up via find_scenario_meta). Clears them (hiding the
+// box) when the id has no Scale-0 catalog entry. Returns true if any field
+// changed. Reuses the picker's tag parsing (leading_tag / classify_tag).
+bool fill_epistemic(ShellData* data, const std::string& id);
+
+// ── Diagnostics-panel instrument tables + per-metric running stats. ──────────
+// A cumulative-since-reset Min/Max/Avg accumulator for one metric. Advanced only
+// when the metric's telemetry group tick changes (so a repeated cached snapshot
+// doesn't over-count), reset on scenario/scale/lattice change or tick regression
+// — mirroring the web diagnostics table's RunningStats.
+struct RunningStat {
+    double mn = std::numeric_limits<double>::infinity();
+    double mx = -std::numeric_limits<double>::infinity();
+    double sum = 0.0;
+    long long count = 0;
+    void push(double v) {
+        if (!std::isfinite(v)) return;
+        if (v < mn) mn = v;
+        if (v > mx) mx = v;
+        sum += v; ++count;
+    }
+    double avg() const { return count ? sum / static_cast<double>(count) : 0.0; }
+};
+
+// The live engine reductions a Diagnostics row extractor reads (from the
+// Scale-0 snapshot: telemetry.diagnostics / telemetry.audit / energy_ledger).
+struct DiagInputs {
+    const ftd::Diagnostics& dg;
+    const ftd::EnergyAudit& au;
+    const ftd::EnergyLedger& led;
+};
+
+// Number of descriptor rows (kDiagMetrics). The stats vector is sized to this.
+std::size_t diag_metric_count();
+// Build the Diagnostics section+row skeletons (labels/units/structure) once when
+// the panel becomes active; leaves diag_sections EMPTY when !diag_active.
+void build_instrument_sections(ShellData* data);
+// Accumulate the running stats for one boundary. diag_adv / audit_adv say whether
+// each group's tick advanced this boundary; a metric is pushed only when its own
+// group advanced. Resizes `stats` to diag_metric_count() on first use.
+void accumulate_diag_stats(std::vector<RunningStat>& stats, const DiagInputs& in,
+                           bool diag_adv, bool audit_adv);
+// Clear every accumulator (used at scenario/scale/lattice reset).
+void reset_diag_stats(std::vector<RunningStat>& stats);
+// Refresh the live Value + Min/Max/Avg strings of the built rows from the snapshot
+// + stats (change-guarded). Returns true if any string changed (caller dirties
+// "diag_sections" once). No-op when diag_sections is empty.
+bool refresh_instrument_sections(ShellData* data, const DiagInputs& in,
+                                 const std::vector<RunningStat>& stats);
 
 }  // namespace ftd::native::app

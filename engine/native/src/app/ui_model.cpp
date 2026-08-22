@@ -361,4 +361,216 @@ bool set_current_scenario(ShellData* data, const std::string& id) {
     return changed;
 }
 
+// Fill the epistemic-status box from scenario `id`'s catalog metadata. Splits
+// epistemic_status into the leading [TAG] (bare, matching the picker badge), its
+// colour class, and the qualification clause after the ']'. Clears every field
+// (hiding the box) when the id has no Scale-0 catalog entry (Scale-1 / unknown).
+bool fill_epistemic(ShellData* data, const std::string& id) {
+    if (!data) return false;
+    Rml::String tag, body, title;
+    int cls = 0;
+    if (const ftd::native::ScenarioMeta* m = ftd::native::find_scenario_meta(id)) {
+        tag = leading_tag(m->epistemic_status);
+        cls = classify_tag(tag);
+        title = m->title ? m->title : "";
+        if (m->epistemic_status) {
+            const char* end = std::strchr(m->epistemic_status, ']');
+            const char* rest = end ? end + 1 : m->epistemic_status;
+            while (*rest == ' ') ++rest;   // trim the space after ']'
+            body = rest;
+        }
+    }
+    bool changed = false;
+    if (data->epi_tag != tag)     { data->epi_tag = std::move(tag);     changed = true; }
+    if (data->epi_cls != cls)     { data->epi_cls = cls;                changed = true; }
+    if (data->epi_body != body)   { data->epi_body = std::move(body);   changed = true; }
+    if (data->epi_title != title) { data->epi_title = std::move(title); changed = true; }
+    return changed;
+}
+
+// ═══ Diagnostics-panel instrument tables ══════════════════════════════════════
+namespace {
+enum class DiagGroup { Diagnostics, Audit };
+enum class DiagFmt { Scalar, Int, Pair, Triple, Vector };
+// One metric descriptor. a/b/c are captureless extractors (decay to function
+// pointers). group selects which telemetry-group tick gates its stat sampling.
+struct DiagMetric {
+    int section;
+    const char* label;
+    const char* unit;
+    DiagGroup group;
+    DiagFmt fmt;
+    int variant;
+    bool has_stat;   // false for pair/triple/vector rows (no Min/Max/Avg)
+    double (*a)(const DiagInputs&);
+    double (*b)(const DiagInputs&);
+    double (*c)(const DiagInputs&);
+};
+constexpr const char* kDiagSectionTitles[] = {
+    "Particle State", "Energy Budget", "Electromagnetic", "Constraints", "Dual Substrate",
+};
+// ORDERED BY SECTION so a single running index aligns build order with refresh
+// order (the parallel-index invariant refresh_instrument_sections relies on).
+const DiagMetric kDiagMetrics[] = {
+    // ── 0. Particle State (group Diagnostics) ──
+    {0, "Manifested",   "ct", DiagGroup::Diagnostics, DiagFmt::Int, 0, true,
+        [](const DiagInputs& in){ return (double)in.dg.manifested_count; }, nullptr, nullptr},
+    {0, "Positive",     "ct", DiagGroup::Diagnostics, DiagFmt::Int, 1, true,
+        [](const DiagInputs& in){ return (double)in.dg.positive_count; }, nullptr, nullptr},
+    {0, "Negative",     "ct", DiagGroup::Diagnostics, DiagFmt::Int, 2, true,
+        [](const DiagInputs& in){ return (double)in.dg.negative_count; }, nullptr, nullptr},
+    {0, "Charge (net)", "ct", DiagGroup::Diagnostics, DiagFmt::Int, 0, true,
+        [](const DiagInputs& in){ return (double)(in.dg.positive_count - in.dg.negative_count); }, nullptr, nullptr},
+    {0, "Spin Up/Down", "ct", DiagGroup::Diagnostics, DiagFmt::Pair, 0, false,
+        [](const DiagInputs& in){ return (double)in.dg.spin_up_count; },
+        [](const DiagInputs& in){ return (double)in.dg.spin_down_count; }, nullptr},
+    {0, "Color R/G/B",  "ct", DiagGroup::Diagnostics, DiagFmt::Triple, 0, false,
+        [](const DiagInputs& in){ return (double)in.dg.color_count[1]; },
+        [](const DiagInputs& in){ return (double)in.dg.color_count[2]; },
+        [](const DiagInputs& in){ return (double)in.dg.color_count[3]; }},
+    {0, "Colorless",    "ct", DiagGroup::Diagnostics, DiagFmt::Int, 0, true,
+        [](const DiagInputs& in){ return (double)in.dg.color_count[0]; }, nullptr, nullptr},
+    // ── 1. Energy Budget ──
+    {1, "Dynamic Energy",   "E*", DiagGroup::Audit,       DiagFmt::Scalar, 0, true,
+        [](const DiagInputs& in){ return in.au.dynamic_energy; }, nullptr, nullptr},
+    {1, "Accounted Energy", "E*", DiagGroup::Audit,       DiagFmt::Scalar, 0, true,
+        [](const DiagInputs& in){ return in.au.total_energy; }, nullptr, nullptr},
+    {1, "Particle Rest E",  "E*", DiagGroup::Audit,       DiagFmt::Scalar, 0, true,
+        [](const DiagInputs& in){ return in.au.particle_rest_energy; }, nullptr, nullptr},
+    {1, "Energy Drift",     "%",  DiagGroup::Diagnostics, DiagFmt::Scalar, 0, true,
+        [](const DiagInputs& in){ return in.led.drift_frac * 100.0; }, nullptr, nullptr},
+    {1, "Field |J|²",  "E*", DiagGroup::Audit,       DiagFmt::Scalar, 0, true,
+        [](const DiagInputs& in){ return in.au.field_energy; }, nullptr, nullptr},
+    {1, "Wave |w|²",   "E*", DiagGroup::Audit,       DiagFmt::Scalar, 0, true,
+        [](const DiagInputs& in){ return in.au.wave_energy; }, nullptr, nullptr},
+    {1, "Particle KE",      "E*", DiagGroup::Audit,       DiagFmt::Scalar, 0, true,
+        [](const DiagInputs& in){ return in.au.particle_ke; }, nullptr, nullptr},
+    {1, "Coulomb PE",       "E*", DiagGroup::Audit,       DiagFmt::Scalar, 0, true,
+        [](const DiagInputs& in){ return in.au.coulomb_pe; }, nullptr, nullptr},
+    {1, "Total Flux",       "|J|",DiagGroup::Diagnostics, DiagFmt::Scalar, 0, true,
+        [](const DiagInputs& in){ return in.dg.total_flux; }, nullptr, nullptr},
+    {1, "Entropy",          "nat",DiagGroup::Diagnostics, DiagFmt::Scalar, 0, true,
+        [](const DiagInputs& in){ return in.dg.total_entropy; }, nullptr, nullptr},
+    // ── 2. Electromagnetic ──
+    {2, "E-Field ½|E|²", "E*", DiagGroup::Audit,       DiagFmt::Scalar, 0, true,
+        [](const DiagInputs& in){ return in.au.E_field_energy; }, nullptr, nullptr},
+    {2, "B-Field",          "E*", DiagGroup::Audit,       DiagFmt::Scalar, 0, true,
+        [](const DiagInputs& in){ return in.au.B_field_energy; }, nullptr, nullptr},
+    {2, "Poynting |S|",     "S",  DiagGroup::Audit,       DiagFmt::Scalar, 0, true,
+        [](const DiagInputs& in){ const auto& p = in.au.total_poynting;
+            return std::sqrt(p.x*p.x + p.y*p.y + p.z*p.z); }, nullptr, nullptr},
+    {2, "Angular Mom",      "L",  DiagGroup::Diagnostics, DiagFmt::Vector, 0, false,
+        [](const DiagInputs& in){ return (double)in.dg.total_angular_momentum.x; },
+        [](const DiagInputs& in){ return (double)in.dg.total_angular_momentum.y; },
+        [](const DiagInputs& in){ return (double)in.dg.total_angular_momentum.z; }},
+    // ── 3. Constraints (group Audit) ──
+    {3, "Gauss Σ(divJ−s)²", "", DiagGroup::Audit, DiagFmt::Scalar, 0, true,
+        [](const DiagInputs& in){ return in.au.gauss_violation; }, nullptr, nullptr},
+    {3, "Max Gauss err",    "",   DiagGroup::Audit, DiagFmt::Scalar, 0, true,
+        [](const DiagInputs& in){ return in.au.max_gauss_error; }, nullptr, nullptr},
+    {3, "Self-field inj",   "E*", DiagGroup::Audit, DiagFmt::Scalar, 0, true,
+        [](const DiagInputs& in){ return in.au.self_field_injection; }, nullptr, nullptr},
+    // ── 4. Dual Substrate (group Audit) ──
+    {4, "E_L",       "E*", DiagGroup::Audit, DiagFmt::Scalar, 0, true,
+        [](const DiagInputs& in){ return in.au.E_L_total; }, nullptr, nullptr},
+    {4, "E_R",       "E*", DiagGroup::Audit, DiagFmt::Scalar, 0, true,
+        [](const DiagInputs& in){ return in.au.E_R_total; }, nullptr, nullptr},
+    {4, "Chirality", "χ", DiagGroup::Audit, DiagFmt::Scalar, 0, true,
+        [](const DiagInputs& in){ return in.au.chirality_total; }, nullptr, nullptr},
+    {4, "Wave L/R",  "E*", DiagGroup::Audit, DiagFmt::Pair, 0, false,
+        [](const DiagInputs& in){ return in.au.wv_L_total; },
+        [](const DiagInputs& in){ return in.au.wv_R_total; }, nullptr},
+};
+constexpr std::size_t kN = sizeof(kDiagMetrics) / sizeof(kDiagMetrics[0]);
+
+// Value formatter (mirrors the web formatters.js): ints exact; 0 → "0"; |v|≥1e4
+// or <1e-3 → "%.2e"; else "%.6g".
+Rml::String diag_fmt(double v, DiagFmt fmt) {
+    if (fmt == DiagFmt::Int) return std::to_string(static_cast<long long>(std::llround(v)));
+    if (v == 0.0) return "0";
+    char buf[40];
+    const double a = std::fabs(v);
+    if (a >= 1e4 || a < 1e-3) std::snprintf(buf, sizeof(buf), "%.2e", v);
+    else                      std::snprintf(buf, sizeof(buf), "%.6g", v);
+    return Rml::String(buf);
+}
+Rml::String format_metric(const DiagMetric& m, const DiagInputs& in) {
+    switch (m.fmt) {
+        case DiagFmt::Int:    return diag_fmt(m.a(in), DiagFmt::Int);
+        case DiagFmt::Scalar: return diag_fmt(m.a(in), DiagFmt::Scalar);
+        case DiagFmt::Pair:   return diag_fmt(m.a(in), DiagFmt::Int) + " / " + diag_fmt(m.b(in), DiagFmt::Int);
+        case DiagFmt::Triple: return diag_fmt(m.a(in), DiagFmt::Int) + " / " + diag_fmt(m.b(in), DiagFmt::Int)
+                                     + " / " + diag_fmt(m.c(in), DiagFmt::Int);
+        case DiagFmt::Vector: return diag_fmt(m.a(in), DiagFmt::Scalar) + ", " + diag_fmt(m.b(in), DiagFmt::Scalar)
+                                     + ", " + diag_fmt(m.c(in), DiagFmt::Scalar);
+    }
+    return "0";
+}
+}  // namespace
+
+std::size_t diag_metric_count() { return kN; }
+
+void build_instrument_sections(ShellData* data) {
+    if (!data) return;
+    data->diag_sections.clear();
+    if (!data->diag_active) return;   // DOM-shrink: no rows unless the panel is active
+    const int nsec = static_cast<int>(sizeof(kDiagSectionTitles) / sizeof(kDiagSectionTitles[0]));
+    for (int s = 0; s < nsec; ++s) {
+        InstrumentSection sec;
+        sec.title = kDiagSectionTitles[s];
+        sec.expanded = true;
+        for (const DiagMetric& m : kDiagMetrics) {
+            if (m.section != s) continue;
+            InstrumentRow row;
+            row.label = m.label;
+            row.unit = (m.unit && m.unit[0]) ? Rml::String(m.unit) : Rml::String("—");
+            row.variant = m.variant;
+            row.has_stat = m.has_stat;
+            if (!m.has_stat) { row.vmin = "—"; row.vmax = "—"; row.vavg = "—"; }
+            sec.rows.push_back(std::move(row));
+        }
+        data->diag_sections.push_back(std::move(sec));
+    }
+}
+
+void reset_diag_stats(std::vector<RunningStat>& stats) {
+    for (RunningStat& s : stats) s = RunningStat{};
+}
+
+void accumulate_diag_stats(std::vector<RunningStat>& stats, const DiagInputs& in,
+                           bool diag_adv, bool audit_adv) {
+    if (stats.size() != kN) stats.assign(kN, RunningStat{});
+    for (std::size_t i = 0; i < kN; ++i) {
+        const DiagMetric& m = kDiagMetrics[i];
+        if (!m.has_stat) continue;
+        const bool adv = (m.group == DiagGroup::Audit) ? audit_adv : diag_adv;
+        if (adv) stats[i].push(m.a(in));
+    }
+}
+
+bool refresh_instrument_sections(ShellData* data, const DiagInputs& in,
+                                 const std::vector<RunningStat>& stats) {
+    if (!data || data->diag_sections.empty()) return false;
+    bool changed = false;
+    std::size_t idx = 0;   // parallel to kDiagMetrics (section-ordered — see build)
+    for (InstrumentSection& sec : data->diag_sections) {
+        for (InstrumentRow& row : sec.rows) {
+            if (idx >= kN) break;
+            const DiagMetric& m = kDiagMetrics[idx];
+            Rml::String val = format_metric(m, in);
+            if (row.value != val) { row.value = std::move(val); changed = true; }
+            if (m.has_stat && idx < stats.size() && stats[idx].count > 0) {
+                Rml::String mn = diag_fmt(stats[idx].mn, DiagFmt::Scalar);
+                Rml::String mx = diag_fmt(stats[idx].mx, DiagFmt::Scalar);
+                Rml::String av = diag_fmt(stats[idx].avg(), DiagFmt::Scalar);
+                if (row.vmin != mn) { row.vmin = std::move(mn); changed = true; }
+                if (row.vmax != mx) { row.vmax = std::move(mx); changed = true; }
+                if (row.vavg != av) { row.vavg = std::move(av); changed = true; }
+            }
+            ++idx;
+        }
+    }
+    return changed;
+}
+
 }  // namespace ftd::native::app
