@@ -648,6 +648,8 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("overlay_columns", &data.overlay_columns);
     ctor.Bind("force_style", &data.force_style);
     ctor.Bind("cull_layers", &data.cull_layers);
+    ctor.Bind("boundary_shape", &data.boundary_shape);
+    ctor.Bind("boundary_name", &data.boundary_name);
     ctor.Bind("scn_open", &data.scn_open);
     ctor.Bind("scenario_groups", &data.scenario_groups);
     ctor.Bind("scale_dd_open", &data.scale_dd_open);
@@ -1011,6 +1013,25 @@ int run_app(const std::vector<std::string>& args) {
         app.data->cull_layers = next;
         push_scale0(&app, ftd::native::SetInteriorCull{static_cast<std::uint32_t>(next)});
         h.DirtyVariable("cull_layers");
+    });
+    // Environment: cycle the domain-boundary wireframe by the delta arg (−1/＋1),
+    // wrapping over the 8 shapes. Pushes the view-state SetBoundaryShape so the
+    // adapter emits that wireframe next capture (live).
+    ctor.BindEventCallback("set_boundary_shape", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                        const Rml::VariantList& v) {
+        if (v.empty() || !app.data) return;
+        static const char* kNames[] = {"Cube",     "Sphere",   "Dodecahedron", "Icosahedron",
+                                       "Octahedron", "Cylinder", "Torus",        "None"};
+        constexpr int kCount = 8;
+        int delta = 0;
+        v[0].GetInto(delta);
+        int next = ((app.data->boundary_shape + delta) % kCount + kCount) % kCount;
+        if (next == app.data->boundary_shape) return;
+        app.data->boundary_shape = next;
+        app.data->boundary_name = kNames[next];
+        push_scale0(&app, ftd::native::SetBoundaryShape{static_cast<std::uint32_t>(next)});
+        h.DirtyVariable("boundary_shape");
+        h.DirtyVariable("boundary_name");
     });
     // Rubber-sheet height nudge: the panel's −/＋ affordance for one active sheet.
     // v[0] = overlay name, v[1] = "-" or "+". Steps the slice height by ±0.05 via

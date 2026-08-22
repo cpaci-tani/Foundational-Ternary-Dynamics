@@ -214,6 +214,10 @@ struct ShellData {
     // Interior-occlusion cull depth ("video-game hack"): 0 = show all particles;
     // N>0 hides sites buried deeper than N layers inside the clump. View-state only.
     int cull_layers = 0;
+    // Domain-boundary wireframe shape (BoundaryShape int, 0 = cube) + its display
+    // name. View-state only; drives the Environment "Boundary" stepper.
+    int boundary_shape = 0;
+    Rml::String boundary_name = "Cube";
     // Setup scenario picker (Scale-0): the ~130 native-catalog scenarios grouped
     // into the 5 honest classes, searchable + collapsible. scn_open gates the list
     // (COLLAPSED by default); while collapsed scenario_groups is left EMPTY.

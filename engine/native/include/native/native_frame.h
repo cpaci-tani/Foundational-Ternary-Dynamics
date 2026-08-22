@@ -77,6 +77,11 @@ struct NativeFrame {
     std::string backend;
     std::string status;
     std::vector<NativeParticle> particles;
+    // The domain-boundary wireframe (default cube, or sphere/platonic/cylinder/
+    // torus/none — see native/boundary_shapes.h). Host-generated each capture and
+    // drawn FIRST through the LINE PSO (gated by the lattice_box view option),
+    // replacing the presenter's legacy built-in cube. Empty = no boundary drawn.
+    std::vector<NativeLine> boundary_lines;
     // Point cloud drawn through the sprite path: the ambient flux cloud by
     // default, or a scalar field overlay's magnitude-coloured points when one
     // is active.
