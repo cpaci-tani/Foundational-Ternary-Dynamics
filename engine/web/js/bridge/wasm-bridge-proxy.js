@@ -44,13 +44,31 @@ export const SCALE0_ENGINE_TOGGLE_NAMES = Object.freeze([
     'ew_background_sweep',
 ]);
 
-// Worker thread-pool size. Default 1 (Phase 1: serial off-thread — guaranteed
-// safe). Set window.__ftdWasmWorkerPool = N to enable the in-worker threading
-// (Phase 2; the worker spawns N-1 nested pthread workers on demand).
-const DEFAULT_WORKER_POOL = 1;
+// Worker thread-pool size — Phase 2 (in-worker threading via ftd::parallel_for's
+// pthread pool), now ENABLED. Two things unblock it together:
+//   1. The threaded WASM is linked -sPTHREAD_POOL_SIZE=8 (PRE-SPAWN at module
+//      init, while the main thread is still free), so the pool's first
+//      parallel_for grabs READY workers instead of the old on-demand path that
+//      deadlocked (create-then-immediately-join with no free event loop).
+//   2. wasm-bridge.worker.js carries the em-pthread re-entry guard the pre-spawn
+//      needs — without it a spawned pthread bootstrap's top-level self.onmessage
+//      clobbered Emscripten's handler and the thread never started ("16
+//      pre-spawned workers hung", the reason Phase 1 shipped pool=1).
+// The pool is determinism-safe: partition-independent loops, Poisson kept
+// sequential, guarded criticals => bit-identical to serial (parallel.h + the
+// native omp1==pool gate). Default scales with the host cores, capped at the
+// pre-spawned pool size; the hot passes are memory-bandwidth-bound and stop
+// scaling past ~8, and the cap leaves cores for the render/main thread. Override
+// with window.__ftdWasmWorkerPool (clamped to [1, cap] — exceeding the
+// pre-spawned pool would fall back to on-demand spawn and deadlock).
+const WORKER_POOL_CAP = 8;   // MUST equal -sPTHREAD_POOL_SIZE in engine/wasm/CMakeLists.txt
+const DEFAULT_WORKER_POOL = (typeof navigator !== 'undefined'
+    && Number.isFinite(navigator.hardwareConcurrency))
+    ? Math.max(1, Math.min(WORKER_POOL_CAP, (navigator.hardwareConcurrency | 0) - 1))
+    : 1;
 function workerPoolSize() {
     if (typeof window !== 'undefined' && typeof window.__ftdWasmWorkerPool === 'number') {
-        return Math.max(1, window.__ftdWasmWorkerPool | 0);
+        return Math.max(1, Math.min(WORKER_POOL_CAP, window.__ftdWasmWorkerPool | 0));
     }
     return DEFAULT_WORKER_POOL;
 }

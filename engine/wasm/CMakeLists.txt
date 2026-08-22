@@ -136,12 +136,28 @@ if(EMSCRIPTEN)
     if(FTD_WASM_THREADS)
         target_link_options(ftd_wasm PRIVATE
             -pthread
-            # POOL_SIZE=0 => NO pthread pre-spawn at module init. This is what
-            # lets the module load inside a Web Worker without the nested-worker
-            # spawn stall (16 pre-spawned nested workers hung). The ftd::pool
-            # (parallel.h) creates threads on demand via pthread_create; at
-            # pool=1 it creates none (pure serial, off-thread — Phase 1).
-            -sPTHREAD_POOL_SIZE=0
+            # PRE-SPAWN the pthread pool at module init (Phase 2). The ftd::pool
+            # (parallel.h) uses std::threads == pthreads; with POOL_SIZE=0 they
+            # were created on-demand at the first parallel_for and the pool's
+            # join then blocked on workers that could not finish their async load
+            # (the calling thread — now blocked — owns the event loop that would
+            # service them): a hard deadlock on the first threaded tick. That is
+            # why Phase 1 shipped pool=1 (no threads). Pre-spawning creates the
+            # workers at module init, while the main thread is still free, so the
+            # first parallel_for grabs READY workers and never blocks.
+            #
+            # An earlier pre-spawn attempt "hung (16 nested workers)" for a
+            # DIFFERENT reason: each em-pthread is spawned as
+            # `new Worker(wasm-bridge.worker.js, {name:'em-pthread-N'})`, which
+            # re-ran that file top-to-bottom; its unconditional top-level
+            # `self.onmessage =` clobbered Emscripten's pthread message handler,
+            # so the worker never received its wasm module and init hung. That is
+            # now fixed by the em-pthread re-entry guard at the top of
+            # wasm-bridge.worker.js (skips the dashboard's onmessage when running
+            # as a pthread bootstrap), so pre-spawn is safe. 8 covers the pool
+            # cap: ftd::pool tops at min(hardware_concurrency, 8) threads, i.e.
+            # <=7 spawned workers (the master runs a chunk itself).
+            -sPTHREAD_POOL_SIZE=8
             -sPTHREAD_POOL_SIZE_STRICT=0
             -sENVIRONMENT=node,web,worker
             # Pre-size a large heap so the common L range never triggers growth

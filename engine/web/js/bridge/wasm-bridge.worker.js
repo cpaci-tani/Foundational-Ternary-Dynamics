@@ -35,6 +35,25 @@ try {
     // The proxy tears this worker down immediately on the init-error message.
 }
 
+// ── Emscripten pthread re-entry guard ──────────────────────────────────────
+// The threaded engine pre-spawns its pthread pool (-sPTHREAD_POOL_SIZE) at
+// module init. Emscripten spawns each pthread as
+// `new Worker(<this file>, { name: 'em-pthread-N' })` — this file IS the pthread
+// bootstrap (its URL is the module's _scriptName) — so a pthread worker re-runs
+// THIS file top to bottom. The `importScripts(ftd_core_mt.js)` above then loads
+// the glue, whose OWN trailing bootstrap (`isPthread && createFTDModuleMT()`)
+// detects the em-pthread name and auto-instantiates the pthread runtime,
+// installing the glue's self.onmessage (message queue → handleMessage) to
+// receive the compiled wasm module + shared memory and start the thread. So we
+// must NOT call the factory again here (a second createFTDModuleMT() double-
+// inits the pthread and throws "err is not a function"), and — critically — the
+// dashboard worker's own `self.onmessage = ...` near the bottom of this file
+// must NOT run, or it clobbers the glue's handler and the thread never starts.
+// This flag gates that assignment (see `if (!IS_EM_PTHREAD)` below); every other
+// top-level const/function declaration here is inert in a pthread worker.
+const IS_EM_PTHREAD = typeof globalThis.name === 'string'
+    && globalThis.name.startsWith('em-pthread');
+
 const CTRL = { FRAME: 0, N: 1, TICK: 2, RUNNING: 3, PCOUNT: 4, TICKS_PER_FRAME: 5, LEN: 8 };
 const TARGET_DT = 1000 / 60;
 
@@ -90,7 +109,18 @@ function copyKnotEvents(r) {
 }
 
 function initModule(cb) {
-  createFTDModuleMT({ locateFile: (p) => FTD_WASM_BASE_URL + p }).then((m) => {
+  createFTDModuleMT({
+    locateFile: (p) => FTD_WASM_BASE_URL + p,
+    // Spawn the pthread-pool workers from the glue itself. Its trailing
+    // `isPthread && createFTDModuleMT()` bootstrap auto-instantiates a pthread
+    // worker cleanly. Without this, Emscripten falls back to _scriptName == THIS
+    // file, so every pool worker re-enters the whole dashboard worker and must be
+    // caught by the em-pthread guard above — workable but fragile. Pointing the
+    // pool at the glue is the standard Emscripten path and is what the pool
+    // pre-spawn (PTHREAD_POOL_SIZE) was validated against. (The guard above stays
+    // as defense in case this ever regresses.)
+    mainScriptUrlOrBlob: FTD_WASM_BASE_URL + 'ftd_core_mt.js',
+  }).then((m) => {
     mod = m;
     // Must set the pool BEFORE the first parallel_for (first tick) constructs it.
     if (typeof mod.ftdSetPoolThreads === 'function') mod.ftdSetPoolThreads(poolThreads);
@@ -141,6 +171,15 @@ let engineTogglesDirty = true;
 let wantAudit = true;
 let wantLag = true;
 
+// Energy-audit cadence cache — see postFrame(). getEnergyAudit is a full O(N^3)
+// pass whose result the frame's energy decomposition is derived from, so it
+// cannot be skipped outright (a skip reverts diag.totalEnergy to the vacuum
+// baseline). Instead it runs every `auditEvery` frames and the last result is
+// reused in between. Reset on every rebuild (buildBridge) so a new scenario /
+// lattice never reuses a stale-N audit.
+let lastAudit = null;
+let auditFrameCounter = 0;
+
 function readEngineToggles() {
   if (!mod || !bridge || typeof mod.getToggle !== 'function') return null;
   const out = {};
@@ -186,6 +225,7 @@ function buildBridge(n, scen) {
   }
   enforceToggleInvariants();
   engineTogglesDirty = true;   // the C++ body just replaced the whole profile
+  lastAudit = null; auditFrameCounter = 0;   // force a fresh audit for the new N/profile
   scenarioId = scen;
   // Flux-volume cache pointer is stable for a fixed N; publish the heap + offset.
   const vol = mod.getFluxVolume(bridge);
@@ -205,20 +245,37 @@ function postFrame() {
   const tick = bridge.currentTick ? bridge.currentTick() : 0;
   let diag = null, parts = null, audit = null, lag = null;
   try { diag = mod.getDiagnostics(bridge); } catch (e) { /* ignore */ }
-  // getEnergyAudit is NOT demand-gateable and must run every frame.
+  // getEnergyAudit is a full O(N^3) pass and, alongside the tick itself, the
+  // dominant per-frame cost on large lattices. It is NOT merely a panel feed:
+  // the block below rewrites diag.totalEnergy / fieldEnergy / waveEnergy /
+  // particleKE / dynamicEnergy / restEnergy / accountedEnergy from it, so it
+  // cannot simply be skipped -- a skip leaves diag.totalEnergy at the raw
+  // K_B*N^3 vacuum baseline (~18363.8 at L=33) that swamps the scenario energy
+  // (the 2026-06-05 health audit A.2 defect; a naive gate broke four specs on
+  // 2026-07-26, including "all vacuum scenarios report moving physical energy,
+  // not the fixed vacuum baseline").
   //
-  // It is not merely a panel feed: the block immediately below rewrites
-  // diag.totalEnergy / fieldEnergy / waveEnergy / particleKE / dynamicEnergy /
-  // restEnergy / accountedEnergy from it. Skipping it leaves diag.totalEnergy
-  // as the raw K_B*N^3 vacuum baseline (~18363.8 at L=33) that swamps the
-  // scenario energy -- the defect recorded in the 2026-06-05 health audit A.2.
-  // Gating it here was tried on 2026-07-26 and broke four specs, including
-  // "all vacuum scenarios report moving physical energy, not the fixed vacuum
-  // baseline". Consequently scale0-telemetry-gating's "audit freezes when no
-  // consumer is visible" cannot hold on the worker path as long as the energy
-  // decomposition is derived from the audit -- that is a contract question for
-  // the owner, not something to force here.
-  try { audit = mod.getEnergyAudit(bridge); } catch (e) { /* ignore */ }
+  // So instead of skipping, run it at a reduced cadence for large N and REUSE
+  // the last result on the in-between frames. diag.totalEnergy then holds the
+  // last dynamic energy -- still moving physical energy, refreshed every few
+  // frames -- and never reverts to the baseline. Small N (<=48, where the
+  // energy specs run) stays every-frame, so their behavior is bit-unchanged.
+  const auditEvery = N > 96 ? 8 : (N > 48 ? 4 : 1);
+  if (auditFrameCounter <= 0 || !lastAudit) {
+    try {
+      const a = mod.getEnergyAudit(bridge);
+      if (a && Number.isFinite(a.dynamicEnergy)) {
+        lastAudit = {
+          dynamicEnergy: a.dynamicEnergy, totalEnergy: a.totalEnergy,
+          particleRestEnergy: a.particleRestEnergy, fieldEnergy: a.fieldEnergy,
+          waveEnergy: a.waveEnergy, particleKE: a.particleKE,
+        };
+      }
+    } catch (e) { /* ignore */ }
+    auditFrameCounter = auditEvery;
+  }
+  auditFrameCounter--;
+  audit = lastAudit;
   // The Lagrangian genuinely has no consumer beyond its panels, so it IS gated.
   if (wantLag) { try { lag = mod.getLagrangian(bridge); } catch (e) { /* ignore */ } }
 
@@ -311,7 +368,7 @@ function loop() {
   timer = setTimeout(loop, Math.max(0, TARGET_DT - elapsed));
 }
 
-self.onmessage = (e) => {
+if (!IS_EM_PTHREAD) self.onmessage = (e) => {
   const msg = e.data;
   try {
     switch (msg.type) {

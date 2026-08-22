@@ -23,8 +23,26 @@
 #include <atomic>
 #include <limits>
 #include <stdexcept>
+#if !(defined(__cpp_exceptions) || defined(__EXCEPTIONS))
+#include <cstdio>
+#include <cstdlib>
+#endif
 
 namespace ftd {
+
+// Report a catastrophic id-counter overflow. The particle/pair id namespaces
+// are 31-bit; exhausting them cannot occur in any real run. Native builds
+// (exceptions enabled) throw std::overflow_error exactly as before. The WASM
+// core is compiled -fno-exceptions, where a bare `throw` does not compile, so
+// there it prints a diagnostic and aborts. Native behavior is unchanged.
+[[noreturn]] inline void fatal_identity_overflow(const char* what) {
+#if defined(__cpp_exceptions) || defined(__EXCEPTIONS)
+    throw std::overflow_error(what);
+#else
+    std::fprintf(stderr, "FTD fatal: %s\n", what);
+    std::abort();
+#endif
+}
 
 class Injector {
 public:
@@ -37,7 +55,7 @@ public:
         int current = next_particle_id_.load(std::memory_order_relaxed);
         for (;;) {
             if (current >= std::numeric_limits<int>::max()) {
-                throw std::overflow_error("particle identity namespace exhausted");
+                fatal_identity_overflow("particle identity namespace exhausted");
             }
             if (next_particle_id_.compare_exchange_weak(
                     current, current + 1,
@@ -52,7 +70,7 @@ public:
     // plain int to avoid pretending it's safe under parallelism.
     int next_pair_id() {
         if (next_pair_id_ >= std::numeric_limits<int>::max()) {
-            throw std::overflow_error("pair identity namespace exhausted");
+            fatal_identity_overflow("pair identity namespace exhausted");
         }
         return next_pair_id_++;
     }
