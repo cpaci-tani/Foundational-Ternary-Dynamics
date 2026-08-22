@@ -28,8 +28,15 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
     if (name.compare(0, 10, "s0-vacuum-") != 0) return false;
 
     const int N = rb.lattice().size();   // ← rb.lattice().size() confirmed from s0_seed.cpp line 73
-    const double midF = (N - 1) / 2.0;
-    const int mc = RND(midF);
+    const int mc = RND((N - 1) / 2.0);   // nearest voxel to the geometric centre
+    // Centre the seeded field/packet templates on the MARKER voxel (mc), not the
+    // raw geometric centre (N-1)/2. On an EVEN lattice those differ by half a
+    // voxel: the marker sprite renders at the voxel centre (mc + 0.5) while a
+    // field centred on (N-1)/2 converges at the box centre, so the −1/+1 marker
+    // appeared offset from the flux burst it should sit inside. Pinning midF to
+    // mc makes the radial field emanate exactly from the marker. (Odd lattices,
+    // incl. the golden L=17, already have mc == (N-1)/2, so they are unchanged.)
+    const double midF = mc;
 
     apply_vacuum_environment(rb);
 
