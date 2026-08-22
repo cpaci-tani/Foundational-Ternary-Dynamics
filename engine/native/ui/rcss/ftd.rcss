@@ -927,3 +927,91 @@ scrollbarvertical sliderarrowinc { height: 0dp; }
        reorder and keeps it above the shell frame. */
     z-index: 20;
 }
+
+/* ── layered document bodies (toolbar / left / right panels) ────────────────
+   Each panel is its own RmlUi document (same shared `shell` model) so its
+   reflow is isolated from the others. Every body is absolutely pinned to the
+   shell's reserved spacer and carries an explicit z-index so viewport clicks
+   never pull the shell frame in front of it (same mechanism as .statusbar-body).
+   The frame document (shell.rml) keeps z-index auto so it sits at the bottom and
+   receives viewport clicks. */
+.toolbar-body {
+    position: absolute;
+    top: 0dp;
+    left: 0dp;
+    right: 0dp;
+    height: 42dp;
+    margin: 0dp;
+    padding: 0dp;
+    /* Visible so the dropdown menus (absolute, extend below the 42dp bar) render. */
+    overflow: visible;
+    /* Top layer: above the panels (20) so the dropdown popups overlay them. */
+    z-index: 30;
+    background-color: transparent;
+}
+/* Reserves the 42dp the toolbar document overlays; carries the toolbar's own
+   fill + divider so the shell renders identically with or without the overlay
+   (the headless smoke test can load shell.rml alone). */
+#toolbar-spacer {
+    height: 42dp;
+    background-color: #131c2b;
+    border-bottom: 1dp #2b3a50;
+}
+/* RIGHT panel document: pinned over #physics-spacer between toolbar and status.
+   Carries the #physics + .panel visual (its own bounded scroll region). Width
+   tracks physics_width via data-style-width on the body. */
+.rightpanel-body {
+    position: absolute;
+    /* Full-window-height right column. `left:auto` overrides the global
+       body{left:0} so right:0 anchors us to the RIGHT edge (else the panel pins
+       left). height:100% spans the window; the toolbar (z30) and status (z20,
+       loaded later) paint over our top 42dp / bottom 27dp, and the padding keeps
+       content inside that visible band — no calc() needed, fully responsive. */
+    top: 0dp;
+    left: auto;
+    right: 0dp;
+    height: 100%;
+    width: 248dp;
+    margin: 0dp;
+    z-index: 20;
+    padding: 42dp 14dp 27dp 14dp;
+    background-color: #131c2b;
+    border-left: 1dp #2b3a50;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+/* Reserves the right panel's flex slot in the frame (mirrors #physics width +
+   fill/divider) so the viewport hole stays sized and the shell reads correctly
+   without the overlay. */
+#physics-spacer {
+    flex: 0 0 auto;
+    width: 248dp;
+    background-color: #131c2b;
+    border-left: 1dp #2b3a50;
+}
+/* LEFT panel document: pinned over #setup-spacer, anchored just right of the
+   44dp rail. Same full-height + padding pattern as .rightpanel-body. Width tracks
+   setup_width (bound) so #resizer-left keeps the overlay aligned. */
+.leftpanel-body {
+    position: absolute;
+    top: 0dp;
+    left: 44dp;
+    height: 100%;
+    width: 380dp;
+    margin: 0dp;
+    z-index: 20;
+    padding: 42dp 14dp 27dp 14dp;
+    background-color: #131c2b;
+    border-right: 1dp #2b3a50;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+#setup-spacer {
+    flex: 0 0 auto;
+    width: 380dp;
+    background-color: #131c2b;
+    border-right: 1dp #2b3a50;
+}
+.panel-spacer { flex: 0 0 auto; }

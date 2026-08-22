@@ -1,0 +1,63 @@
+<rml>
+<head>
+    <link type="text/rcss" href="../rcss/ftd.rcss"/>
+    <title>FTD Toolbar</title>
+</head>
+<!-- data-model="shell": the SAME shared model as shell.rml (RmlUi resolves the
+     model by name on the context, so multiple documents attach their views to
+     one model — Element.cpp:2145). Split into its own document so the toolbar's
+     scenario-picker popup (~130 rows) lays out INDEPENDENTLY of the instrument
+     panels: a panel dirty never reflows this document, and this document's
+     dropdown state never reflows the panels. Positioned as the TOP layer
+     (.toolbar-body z-index 30) so the dropdown menus overlay the panels. -->
+<body data-model="shell" class="toolbar-body">
+    <!-- Toolbar: brand + scale dropdown + scenario dropdown -->
+    <div id="toolbar">
+        <span class="brand">FTD Engine <span class="ver">native</span></span>
+
+        <!-- Scale dropdown -->
+        <div class="nav-dd">
+            <span class="nav-dd-label" data-event-click="toggle_scale_dd()">
+                <span class="nav-dd-cur">{{ active_scale == 0 ? 'Scale 0 (Lattice)' : 'Scale 1 (Particles)' }}</span>
+                <span class="dd-caret">{{ scale_dd_open ? '&#9652;' : '&#9662;' }}</span>
+            </span>
+            <div class="nav-dd-menu" data-if="scale_dd_open">
+                <div class="nav-dd-item" data-class-cur="active_scale == 0" data-event-click="pick_scale(0)">Scale 0 (Lattice)</div>
+                <div class="nav-dd-item" data-class-cur="active_scale == 1" data-event-click="pick_scale(1)">Scale 1 (Particles)</div>
+            </div>
+        </div>
+
+        <!-- Scenario dropdown (Scale-0): the searchable/grouped picker as a nav-bar
+             popup. Built only while open (scenario_groups empty when closed). -->
+        <div class="nav-dd" data-if="active_scale == 0">
+            <span class="nav-dd-label" data-event-click="toggle_scn_dd()">
+                <span class="nav-dd-cur mono">{{scenario}}</span>
+                <span class="dd-caret">{{ scn_dd_open ? '&#9652;' : '&#9662;' }}</span>
+            </span>
+            <div class="nav-dd-menu scn-dd-menu" data-if="scn_dd_open">
+                <input type="text" class="scn-search" placeholder="Search scenarios…" data-event-change="filter_scenarios"/>
+                <div class="scn-list">
+                    <div class="scn-group" data-for="g : scenario_groups">
+                        <div class="section-head sub" data-if="g.has_visible" data-event-click="toggle_scenario_group(g.title)">
+                            <span class="section-caret">{{ g.expanded ? '&#9662;' : '&#9656;' }}</span>
+                            <span class="section-title">{{g.title}}</span>
+                            <span class="section-badge">{{g.count}}</span>
+                        </div>
+                        <div class="scn-items" data-if="g.show_items">
+                            <div class="scn-row" data-for="s : g.items">
+                                <div class="scn-item" data-if="s.visible" data-class-cur="s.current" data-event-click="select_scenario(s.id)">
+                                    <span class="scn-title">{{s.title}}</span>
+                                    <span class="scn-tag" data-if="s.tag != ''" data-class-tpos="s.tag_cls == 1" data-class-timp="s.tag_cls == 2" data-class-tcon="s.tag_cls == 3" data-class-tneg="s.tag_cls == 4">{{s.tag}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="spacer"></div>
+        <button class="icon">&#9881;</button>
+    </div>
+</body>
+</rml>

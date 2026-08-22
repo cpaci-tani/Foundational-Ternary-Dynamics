@@ -306,6 +306,22 @@ int run() {
         return 2;
     }
     doc->Show();
+    // The UI is split across layered documents (the frame shell.rml + toolbar /
+    // left / right panels + status bar, all sharing the `shell` model). Load the
+    // siblings too so the smoke test renders the real composite, not just the
+    // frame chrome. No data model is registered here, so RmlUi logs a warning and
+    // leaves bindings unresolved — chrome/layout still render. Missing files are
+    // non-fatal (the frame alone still satisfies the coverage assertion).
+    {
+        const auto pos = shell_path.rfind("shell.rml");
+        for (const char* fname : {"toolbar.rml", "leftpanel.rml", "rightpanel.rml",
+                                  "statusbar.rml"}) {
+            std::string sp = shell_path;
+            if (pos != std::string::npos)
+                sp.replace(pos, sizeof("shell.rml") - 1, fname);
+            if (Rml::ElementDocument* d = context->LoadDocument(sp)) d->Show();
+        }
+    }
     context->Update();
 
     // ── Record + render one frame ────────────────────────────────────────────
