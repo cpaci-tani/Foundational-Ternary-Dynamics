@@ -98,8 +98,10 @@ void request_telemetry_demand(AppContext* app) {
             needs.telemetry_groups |= ftd::TELEMETRY_AUDIT;   // E_wave for T_kin
         if (app->data->grav_open || app->data->time_open)
             needs.telemetry_groups |= ftd::TELEMETRY_GRAVITY;
-        if (app->data->spectrum_open)
+        if (app->data->spectrum_open) {
             needs.spectrum = true;   // adapter computes the flux E(k) this boundary
+            needs.telemetry_groups |= ftd::TELEMETRY_AUDIT;   // Spectrum+ topology
+        }
         // Field slices: Flux-slice (8) shows |J|; Gravity (3) / Time (4) show the
         // latency field; Thermo (5) shows |J|. Same slice subsystem, field-selected.
         const int ap = app->data->active_panel;
