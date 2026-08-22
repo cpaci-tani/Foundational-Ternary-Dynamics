@@ -110,6 +110,9 @@ private:
     // gates slices_present).
     FieldSliceResult              slice_cache_[SLICE_PLANES];
     int                           slice_counter_ = 0;
+    // Knots panel: whether WE transiently enabled toggles.knot_tracking (so we
+    // undo exactly our own enable when the panel is left — never the user's).
+    bool                          knot_auto_enabled_ = false;
 
     // Env-gated telemetry-scheduler diagnostics (FTD_TELEMETRY_DEBUG). Off by
     // default (zero overhead); when set, build_snapshot() prints the scheduler's

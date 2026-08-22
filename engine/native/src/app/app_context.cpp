@@ -108,6 +108,7 @@ void request_telemetry_demand(AppContext* app) {
         if (ap == 8)                  { needs.slice = true; needs.slice_field = 0; }
         else if (ap == 3 || ap == 4)  { needs.slice = true; needs.slice_field = 1; }
         else if (ap == 5)             { needs.slice = true; needs.slice_field = 0; }
+        if (ap == 10) needs.knots = true;   // Knots panel: read the knot tracker
     }
     push_core(app, ftd::native::SetTelemetryDemand{needs});
 }

@@ -357,6 +357,7 @@ int run_app(const std::vector<std::string>& args) {
     ChartSeries spec_ek(32);   // Spectrum panel: the log E(k) curve (not a time series)
     ChartSeries chart_flux(240), chart_pos(240), chart_neg(240);  // Charts panel extras
     ChartSeries disp_omega(64), disp_vg(64);  // Dispersion panel: analytic ω(k) + group v
+    ChartSeries knot_alive_series(240);       // Knots panel: alive-knot count over time
     ftd::native::ui::ChartRegistry chart_registry;
     {
         using C = Rml::Colourb;
@@ -380,6 +381,7 @@ int run_app(const std::vector<std::string>& args) {
         chart_registry.binding("chart-c-charge").series = {{&diag_charge, kRed}};
         chart_registry.binding("chart-c-entropy").series = {{&diag_entropy, kAmber}};
         chart_registry.binding("chart-disp").series = {{&disp_omega, kBlue}, {&disp_vg, kAmber}};
+        chart_registry.binding("chart-knots").series = {{&knot_alive_series, kGreen}};
     }
     // Dispersion panel: the analytic lattice dispersion ω(k)=2c·|sin(k/2)| and its
     // group velocity dω/dk = c·cos(k/2) over k ∈ [0, π]. Static (analytic) curves,
@@ -612,6 +614,16 @@ int run_app(const std::vector<std::string>& args) {
         isec.RegisterMember("rows", &InstrumentSection::rows);
     }
     ctor.RegisterArray<Rml::Vector<InstrumentSection>>();
+    if (auto krow = ctor.RegisterStruct<KnotUiRow>()) {
+        krow.RegisterMember("id", &KnotUiRow::id);
+        krow.RegisterMember("sign", &KnotUiRow::sign);
+        krow.RegisterMember("age", &KnotUiRow::age);
+        krow.RegisterMember("size", &KnotUiRow::size);
+        krow.RegisterMember("flux", &KnotUiRow::flux);
+        krow.RegisterMember("org", &KnotUiRow::org);
+        krow.RegisterMember("sign_cls", &KnotUiRow::sign_cls);
+    }
+    ctor.RegisterArray<Rml::Vector<KnotUiRow>>();
     ctor.Bind("tick", &data.tick);
     ctor.Bind("active_scale", &data.active_scale);
     ctor.Bind("particle_count", &data.particle_count);
@@ -689,6 +701,12 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("spec_chi", &data.spec_chi);
     ctor.Bind("spec_efield", &data.spec_efield);
     ctor.Bind("spec_bfield", &data.spec_bfield);
+    ctor.Bind("knot_rows", &data.knot_rows);
+    ctor.Bind("knot_alive", &data.knot_alive);
+    ctor.Bind("knot_charge", &data.knot_charge);
+    ctor.Bind("knot_lifecycle", &data.knot_lifecycle);
+    ctor.Bind("knot_note", &data.knot_note);
+    ctor.Bind("knot_has_note", &data.knot_has_note);
     // Panel rail + epistemic box + resizable side-panel widths.
     ctor.Bind("active_panel", &data.active_panel);
     ctor.Bind("diag_active", &data.diag_active);
@@ -862,6 +880,7 @@ int run_app(const std::vector<std::string>& args) {
         }
         if (n == 1) build_instrument_sections(app.data);
         else        app.data->diag_sections.clear();
+        if (n != 10) app.data->knot_rows.clear();
         h.DirtyVariable("active_panel");
         h.DirtyVariable("diag_active");
         h.DirtyVariable("tel_open");
@@ -871,6 +890,7 @@ int run_app(const std::vector<std::string>& args) {
         h.DirtyVariable("spectrum_open");
         h.DirtyVariable("scenario_groups");
         h.DirtyVariable("diag_sections");
+        h.DirtyVariable("knot_rows");
     });
     // Draggable panel splitters: convert the drag's absolute mouse-x into a panel
     // width (dp), clamp, and write the bound width so #setup / #physics resize
@@ -1843,6 +1863,49 @@ int run_app(const std::vector<std::string>& args) {
                              sl[ftd::native::SLICE_XY].data.data(),
                              sl[ftd::native::SLICE_XY].mn, sl[ftd::native::SLICE_XY].mx);
             }
+            // ── Knots panel: aggregate counts + top-knot table (engine tracker) ──
+            if (data.active_panel == 10 && push_status) {
+                const ftd::native::KnotSnapshot& ks = s0->knots;
+                if (!s0->knots_present || ks.blocked) {
+                    set_bool("knot_has_note", data.knot_has_note, true);
+                    set_str("knot_note", data.knot_note,
+                            "Knots unavailable on the GPU backend at L > 64 (W6) — "
+                            "switch to CPU or use L <= 64.");
+                    set_str("knot_alive", data.knot_alive, "—");
+                    set_str("knot_charge", data.knot_charge, "—");
+                    set_str("knot_lifecycle", data.knot_lifecycle, "—");
+                    if (!data.knot_rows.empty()) {
+                        data.knot_rows.clear();
+                        model.DirtyVariable("knot_rows");
+                    }
+                } else {
+                    const bool empty = (ks.alive == 0);
+                    set_bool("knot_has_note", data.knot_has_note, empty);
+                    if (empty)
+                        set_str("knot_note", data.knot_note,
+                                "knot_tracking on — no manifested sign-component knots yet.");
+                    set_str("knot_alive", data.knot_alive, std::to_string(ks.alive));
+                    set_str("knot_charge", data.knot_charge,
+                            (ks.net_charge >= 0 ? "+" : "") + std::to_string(ks.net_charge));
+                    set_str("knot_lifecycle", data.knot_lifecycle,
+                            std::to_string(ks.births) + " born · " + std::to_string(ks.deaths)
+                                + " died · " + std::to_string(ks.fissions) + " split · "
+                                + std::to_string(ks.fusions) + " merged");
+                    data.knot_rows.clear();
+                    for (const ftd::native::KnotRowUi& r : ks.knots) {
+                        KnotUiRow u;
+                        u.id = std::to_string(r.id);
+                        u.sign = (r.sign > 0) ? "+" : (r.sign < 0 ? "-" : "0");
+                        u.sign_cls = (r.sign > 0) ? 1 : (r.sign < 0 ? 2 : 0);
+                        u.age = std::to_string(r.age);
+                        u.size = std::to_string(r.size);
+                        u.flux = fmt("%.3g", static_cast<double>(r.flux));
+                        u.org = fmt("%.3g", static_cast<double>(r.org));
+                        data.knot_rows.push_back(std::move(u));
+                    }
+                    model.DirtyVariable("knot_rows");
+                }
+            }
         } else if (const ftd::native::Scale1Snapshot* s1 = snap ? snap->scale1() : nullptr) {
             chart_energy = s1->total_energy;
             chart_energy_valid = true;
@@ -1871,6 +1934,7 @@ int run_app(const std::vector<std::string>& args) {
                 aud_energy.clear(); aud_drift.clear(); aud_gauss.clear();
                 lag_lag.clear(); lag_ham.clear();
                 chart_flux.clear(); chart_pos.clear(); chart_neg.clear();
+                knot_alive_series.clear();
                 chart_series_scale = snap->active_scale;
                 last_pushed_seq = 0;
                 pushed_any = false;
@@ -1887,6 +1951,8 @@ int run_app(const std::vector<std::string>& args) {
                     chart_flux.push(static_cast<float>(dg.total_flux));
                     chart_pos.push(static_cast<float>(dg.positive_count));
                     chart_neg.push(static_cast<float>(dg.negative_count));
+                    if (data.active_panel == 10 && s0->knots_present && !s0->knots.blocked)
+                        knot_alive_series.push(static_cast<float>(s0->knots.alive));
                     if (data.tel_open) {
                         const ftd::EnergyAudit& au = s0->telemetry.audit;
                         aud_energy.push(static_cast<float>(au.total_energy));
