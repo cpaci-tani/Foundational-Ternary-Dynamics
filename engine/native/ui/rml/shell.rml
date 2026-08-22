@@ -170,6 +170,8 @@
                         <div class="tel-row"><span class="tel-lbl">Active voxels</span><span class="tel-val">{{grav_voxels}}</span></div>
                     </div>
                     <div class="grav-note" data-if="grav_inactive">{{grav_status}}</div>
+                    <div class="chart-tt">Latency field L &#183; XY plane</div>
+                    <ftd-slice id="grav-slice"/>
                 </div>
             </div>
 
@@ -187,6 +189,8 @@
                         <div class="tel-row"><span class="tel-lbl">&#947; max</span><span class="tel-val">{{time_gamma}}</span></div>
                         <div class="tel-row"><span class="tel-lbl">Lapse f = 1&#8722;L&#178;</span><span class="tel-val">{{time_f}}</span></div>
                     </div>
+                    <div class="chart-tt">Latency field L &#183; XY plane</div>
+                    <ftd-slice id="time-slice"/>
                 </div>
             </div>
 
@@ -205,6 +209,8 @@
                         <div class="tel-row"><span class="tel-lbl">Entropy</span><span class="tel-val">{{therm_entropy}}</span></div>
                         <div class="tel-row"><span class="tel-lbl">Manifested sites</span><span class="tel-val">{{therm_manif}}</span></div>
                     </div>
+                    <div class="chart-tt">Flux |J| &#183; XY plane</div>
+                    <ftd-slice id="therm-slice"/>
                 </div>
             </div>
 
