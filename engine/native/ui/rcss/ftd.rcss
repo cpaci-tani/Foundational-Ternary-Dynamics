@@ -64,52 +64,67 @@ body {
 
 /* ── toolbar nav dropdowns (scale + scenario) ──────────────────────────────
    A click-to-open label chip; its menu is absolutely positioned just below the
-   label and overlays #body-row (see the #toolbar z-index note above). */
-.nav-dd { display: flex; flex-direction: row; align-items: center; margin-left: 18dp; position: relative; }
+   label and overlays #body-row (see the #toolbar z-index note above).
+   ⚠ NO box-shadow / opacity / filter on these — the native D3D12 RmlUi renderer
+   has no layer/RenderToTexture path, so any layer-compositing property paints an
+   uncleared opaque-WHITE box. Depth is faked with a solid fill + a lift border. */
+.nav-dd { display: flex; flex-direction: row; align-items: center; margin-left: 14dp; position: relative; }
 .nav-dd-label {
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 5dp 10dp;
+    height: 26dp;
+    padding: 0dp 11dp;
     border: 1dp #2b3a50;
-    border-radius: 5dp;
-    background-color: #0f1826;
+    border-radius: 6dp;
+    background-color: #16233a;
     color: #cdd8e8;
     font-size: 12dp;
     cursor: pointer;
 }
-.nav-dd-label:hover { border-color: #3a7ec4; color: #ffffff; }
+.nav-dd-label:hover { border-color: #3a7ec4; background-color: #1b2c48; color: #ffffff; }
 .nav-dd-cur { color: #cdd8e8; }
-.nav-dd-cur.mono { font-family: JetBrains Mono; font-size: 11dp; color: #9fb0c6; }
-.dd-caret { color: #67788f; font-size: 9dp; margin-left: 9dp; }
+.nav-dd-cur.mono { font-family: JetBrains Mono; font-size: 11dp; color: #b7c4d8; }
+.dd-caret { color: #6f83a0; font-size: 8dp; margin-left: 10dp; }
+.nav-dd-label:hover .dd-caret { color: #a9bcd8; }
 .nav-dd-menu {
     position: absolute;
     left: 0dp;
-    top: 34dp;
+    top: 32dp;
     display: flex;
     flex-direction: column;
-    min-width: 200dp;
-    padding: 5dp;
-    background-color: #101a29;
-    border: 1dp #2f4363;
-    border-radius: 6dp;
-    box-shadow: 0dp 6dp 18dp #05080e;
+    min-width: 208dp;
+    padding: 6dp;
+    background-color: #0e1726;
+    border: 1dp #33496b;
+    border-radius: 8dp;
     z-index: 30;
 }
 .nav-dd-item {
-    padding: 6dp 10dp;
-    margin-bottom: 2dp;
-    border: 1dp #223047;
-    border-radius: 5dp;
-    color: #9fb0c6;
+    display: flex;
+    align-items: center;
+    height: 30dp;
+    padding: 0dp 11dp;
+    margin-bottom: 3dp;
+    border: 1dp transparent;
+    border-radius: 6dp;
+    color: #aebbcf;
     font-size: 12dp;
     cursor: pointer;
 }
-.nav-dd-item:hover { border-color: #3a7ec4; color: #dfe6f0; background-color: #16233a; }
-.nav-dd-item.cur { border-color: #2f6db0; color: #ffffff; background-color: #16233a; }
-/* The scenario menu embeds the searchable/grouped picker; give it a wider,
-   bounded body so the ~130-row list scrolls inside the popup. */
-.scn-dd-menu { min-width: 320dp; }
+.nav-dd-item:hover { border-color: #3a7ec4; color: #ffffff; background-color: #18263d; }
+.nav-dd-item.cur { border-color: #2f6db0; color: #ffffff; background-color: #1a2a44; }
+/* The scenario menu embeds the searchable/grouped picker; widen it and let the
+   embedded .scn-list scroll. The list drops its own box chrome so it reads as
+   one clean popup body rather than a bordered box-in-a-box. */
+.scn-dd-menu { min-width: 340dp; }
+.scn-dd-menu .scn-search { margin-bottom: 6dp; }
+.scn-dd-menu .scn-list {
+    max-height: 460dp;
+    padding: 0dp;
+    background-color: transparent;
+    border: 0dp transparent;
+}
 
 /* ── the middle row: setup | viewport hole | physics ──────────────────── */
 #body-row { display: flex; flex-direction: row; flex: 1 1 0; align-items: stretch; }
