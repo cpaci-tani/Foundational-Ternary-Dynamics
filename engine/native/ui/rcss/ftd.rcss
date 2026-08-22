@@ -919,4 +919,11 @@ scrollbarvertical sliderarrowinc { height: 0dp; }
     height: 27dp;
     margin: 0dp;
     padding: 0dp;
+    /* Explicit z-index pins this document's stacking order. RmlUi pulls a clicked
+       document to the front ONLY when its z-index is `auto` (Context.cpp:1233) — so
+       without this, clicking the viewport pulls the auto-z-index shell in front of
+       the status strip and its opaque #status-spacer paints over us ("status bar
+       disappears"). An explicit z-index makes this document immune to that focus
+       reorder and keeps it above the shell frame. */
+    z-index: 20;
 }
