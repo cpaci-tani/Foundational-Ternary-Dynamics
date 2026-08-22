@@ -1298,7 +1298,8 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
     };
 
     std::vector<GpuVertex> verts;
-    verts.reserve((frame.flux.size() + frame.particles.size() + frame.flux_heat.size()) * 6
+    verts.reserve((frame.flux.size() + frame.particles.size() + frame.flux_heat.size()
+                   + frame.background_points.size()) * 6
                   + frame.field_glyphs.size() * 36);
     if (opts.flux) append_sprites(frame.flux, verts);
     const UINT flux_verts = static_cast<UINT>(verts.size());
@@ -1319,6 +1320,11 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
     const UINT glyph_end = static_cast<UINT>(verts.size());
     const UINT heat_verts = heat_end - particle_end;
     const UINT glyph_verts = glyph_end - heat_end;
+    // Environment background points — appended last but DRAWN FIRST (behind the
+    // scene) through the additive depth-off heat PSO. Their range starts at
+    // glyph_end in the shared sprite buffer.
+    append_sprites(frame.background_points, verts);
+    const UINT bg_verts = static_cast<UINT>(verts.size()) - glyph_end;
 
     const std::size_t sprite_bytes = verts.size() * sizeof(GpuVertex);
     const std::size_t line_bytes = line_verts.size() * sizeof(LineVertex);
@@ -1467,15 +1473,32 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
     impl_->list->SetGraphicsRootConstantBufferView(
         0, impl_->cb[impl_->frame]->GetGPUVirtualAddress());
 
+    // Environment background — drawn FIRST (behind everything) through the additive,
+    // depth-write-off heat PSO so a large procedural point cloud sits behind the
+    // lattice without occluding it. Reuses the sprite buffer (range starts at
+    // glyph_end == particle/heat/glyph end).
+    if (bg_verts != 0 && sprite_bytes != 0 && impl_->pso_heat) {
+        D3D12_VERTEX_BUFFER_VIEW bgv{};
+        bgv.BufferLocation = impl_->vb[impl_->frame]->GetGPUVirtualAddress() + line_bytes;
+        bgv.SizeInBytes = static_cast<UINT>(sprite_bytes);
+        bgv.StrideInBytes = sizeof(GpuVertex);
+        impl_->list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        impl_->list->IASetVertexBuffers(0, 1, &bgv);
+        impl_->list->SetPipelineState(impl_->pso_heat.Get());
+        impl_->list->DrawInstanced(bg_verts, 1, glyph_end, 0);
+    }
+
     // Boundary wireframe (conditional) + field-overlay vectors (whenever present)
-    // — both through the LINE PSO the list was reset with. The boundary verts
-    // occupy buffer offset 0; the field verts follow at box_line_verts.
+    // — both through the LINE PSO. The boundary verts occupy buffer offset 0; the
+    // field verts follow at box_line_verts. SetPipelineState explicitly since the
+    // background pass above may have changed it off pso_lines.
     if (impl_->vb[impl_->frame] && line_bytes != 0
         && ((opts.lattice_box && box_line_verts != 0) || field_line_verts != 0)) {
         D3D12_VERTEX_BUFFER_VIEW line_view{};
         line_view.BufferLocation = impl_->vb[impl_->frame]->GetGPUVirtualAddress();
         line_view.SizeInBytes = static_cast<UINT>(line_bytes);
         line_view.StrideInBytes = sizeof(LineVertex);
+        impl_->list->SetPipelineState(impl_->pso_lines.Get());
         impl_->list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
         impl_->list->IASetVertexBuffers(0, 1, &line_view);
         if (opts.lattice_box && box_line_verts != 0) {

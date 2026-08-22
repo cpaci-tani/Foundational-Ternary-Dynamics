@@ -82,6 +82,10 @@ struct NativeFrame {
     // drawn FIRST through the LINE PSO (gated by the lattice_box view option),
     // replacing the presenter's legacy built-in cube. Empty = no boundary drawn.
     std::vector<NativeLine> boundary_lines;
+    // Environment background: a large procedural point cloud (stars/nebula/foam/
+    // storm — see native/backgrounds.h) drawn BEHIND the scene through the additive
+    // depth-write-off heat sprite PSO, before the boundary. Empty = plain clear.
+    std::vector<NativeParticle> background_points;
     // Point cloud drawn through the sprite path: the ambient flux cloud by
     // default, or a scalar field overlay's magnitude-coloured points when one
     // is active.

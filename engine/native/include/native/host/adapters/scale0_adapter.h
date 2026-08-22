@@ -22,6 +22,7 @@
 #include "ftd/native_telemetry_scheduler.h"  // value member (pulls render_bridge.h)
 #include "ftd/visual_field_sample.h"          // VisualFieldKind (overlay member)
 
+#include <chrono>
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -148,6 +149,12 @@ private:
     // --boundary CLI flag / FTD_BOUNDARY env; settable live via SetBoundaryShape.
     int                           boundary_shape_ = 0;
 
+    // Environment background theme (BackgroundTheme int; 0 = none). View-state
+    // only — emitted into frame.background_points each capture(), animated by the
+    // wall-clock elapsed since bg_epoch_. Seeded from FTD_BACKGROUND env.
+    int                           background_theme_ = 0;
+    std::chrono::steady_clock::time_point bg_epoch_ = std::chrono::steady_clock::now();
+
     // Per-active-sheet slice height (fraction of the lattice box). Keyed by the
     // numeric OverlayId. Seeded to the registry y_frac when a Sheet overlay is
     // toggled on; erased on toggle-off. SetSheetHeight updates it. build_sheet
@@ -165,6 +172,9 @@ private:
     // Domain-boundary wireframe shape (BoundaryShape int); view-state only.
     void set_boundary_shape(int shape) { boundary_shape_ = shape; }
     int boundary_shape() const { return boundary_shape_; }
+    // Environment background theme (BackgroundTheme int); view-state only.
+    void set_background_theme(int theme) { background_theme_ = theme; }
+    int background_theme() const { return background_theme_; }
     // View-state height control (clamped to [0, 0.999]); no bridge mutation.
     void  set_sheet_height(OverlayId id, float height);
     // Current slice height for a sheet overlay — the stored value, or the
