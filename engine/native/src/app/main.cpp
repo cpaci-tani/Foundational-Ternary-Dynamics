@@ -1248,21 +1248,29 @@ int run_app(const std::vector<std::string>& args) {
     if (!doc) throw std::runtime_error("LoadDocument(shell.rml) failed");
     doc->Show();
 
-    // Load the status bar as a SECOND document, overlaying the shell's
-    // #status-spacer. Its path sits beside shell.rml (same ui/rml dir), so it is
-    // derived from FTD_RML_SHELL_PATH rather than needing its own CMake define. A
-    // load failure is non-fatal — the app still runs, just without the status bar.
-    {
+    // Load the layered overlay documents (toolbar + instrument panels + status
+    // bar) as siblings of shell.rml. Each shares the SAME `shell` data model —
+    // RmlUi resolves the model by name on the context (Element.cpp:2145), so
+    // every document's data views attach to the one model and a bound-variable
+    // dirty reflows only the document(s) that reference it. The split therefore
+    // isolates layout without any model/callback duplication. Paths derive from
+    // FTD_RML_SHELL_PATH (same ui/rml dir). A load failure is non-fatal.
+    auto load_sibling = [&](const char* fname) -> Rml::ElementDocument* {
         std::string sp = FTD_RML_SHELL_PATH;
         const auto pos = sp.rfind("shell.rml");
-        if (pos != std::string::npos) sp.replace(pos, sizeof("shell.rml") - 1, "statusbar.rml");
-        if (Rml::ElementDocument* sdoc = context->LoadDocument(sp)) {
-            sdoc->Show();
-        } else {
-            std::cerr << "native_app: LoadDocument(statusbar.rml) failed at '" << sp
-                      << "' - status bar disabled\n" << std::flush;
-        }
-    }
+        if (pos != std::string::npos) sp.replace(pos, sizeof("shell.rml") - 1, fname);
+        Rml::ElementDocument* d = context->LoadDocument(sp);
+        if (d)
+            d->Show();
+        else
+            std::cerr << "native_app: LoadDocument(" << fname << ") failed at '" << sp
+                      << "'\n" << std::flush;
+        return d;
+    };
+    load_sibling("toolbar.rml");
+    load_sibling("leftpanel.rml");
+    load_sibling("rightpanel.rml");
+    load_sibling("statusbar.rml");
 
     // Publish the RmlUi context + overlay into the presenter's frame path.
     app.context = context;
@@ -1639,15 +1647,15 @@ int run_app(const std::vector<std::string>& args) {
         // reflow-on-status-dirty (single-document coupling), not the DOM's presence.
         if (app_opts.profile_freeze_status) push_status = false;
         if (push_status) { last_status_push = now_status; status_first = false; }
-        // Freeze the SHELL-document instrument dirties while the scenario dropdown
-        // is open. RmlUi re-lays-out the WHOLE shell on any bound-variable change,
-        // and the open picker adds ~130 rows to that layout — so a per-frame
-        // diag/energy dirty reflows all of them (measured 9.75 ms vs 0.088 ms quiet,
-        // fps 54 vs 130). The instrument readouts hold still for the moment the menu
-        // is open (a transient modal the user is focused on); the status bar is a
-        // SEPARATE document, so tick/fps/energy keep ticking. The scale dropdown is
-        // only 2 rows, so it is not frozen.
-        const bool push_shell = push_status && !data.scn_dd_open;
+        // push_shell gated the per-frame instrument dirties. It once froze them
+        // while the scenario dropdown was open, because the picker's ~130 rows
+        // shared the shell document and every diag/energy dirty reflowed all of
+        // them. The dropdown now lives in its OWN document (toolbar.rml) and the
+        // instrument panels in theirs (leftpanel.rml), so opening the menu no
+        // longer reflows the panels — the freeze is obsolete and the panels stay
+        // live while you pick. Kept as an alias so the per-block gating below reads
+        // uniformly and a future freeze can re-hook here.
+        const bool push_shell = push_status;
 
         if (push_status) sset_int("tick", data.tick, frame.tick);
         if (snap) set_int("active_scale", data.active_scale, snap->active_scale);
