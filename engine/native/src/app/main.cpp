@@ -508,6 +508,8 @@ int run_app(const std::vector<std::string>& args) {
     // distinct from --pick-scenario (which seeds a filter to SHRINK the list).
     if (app_opts.scn_open || app_opts.scn_expand_cat > 0) {
         data.scn_open = true;
+        data.scn_dd_open = true;   // open the nav-bar scenario dropdown (the picker
+                                   // now lives there; scn_open is legacy/no-op markup)
         app.scenario_filter.clear();
         const int ncat =
             static_cast<int>(sizeof(kScenarioCategories) / sizeof(kScenarioCategories[0]));
@@ -647,6 +649,8 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("force_style", &data.force_style);
     ctor.Bind("scn_open", &data.scn_open);
     ctor.Bind("scenario_groups", &data.scenario_groups);
+    ctor.Bind("scale_dd_open", &data.scale_dd_open);
+    ctor.Bind("scn_dd_open", &data.scn_dd_open);
     ctor.Bind("insp_active", &data.insp_active);
     ctor.Bind("insp_title", &data.insp_title);
     ctor.Bind("insp_lines", &data.insp_lines);
@@ -852,6 +856,36 @@ int run_app(const std::vector<std::string>& args) {
                                                      const Rml::VariantList&) {
         request_switch_scale(&app, 1);
     });
+    // Toolbar scale dropdown — toggle the menu; pick a scale (closes the menu).
+    ctor.BindEventCallback("toggle_scale_dd", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                     const Rml::VariantList&) {
+        if (!app.data) return;
+        app.data->scale_dd_open = !app.data->scale_dd_open;
+        h.DirtyVariable("scale_dd_open");
+    });
+    ctor.BindEventCallback("pick_scale", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                const Rml::VariantList& v) {
+        if (!app.data) return;
+        int n = app.data->active_scale;
+        if (!v.empty()) v[0].GetInto(n);
+        app.data->scale_dd_open = false;
+        h.DirtyVariable("scale_dd_open");
+        request_switch_scale(&app, n);
+    });
+    // Toolbar scenario dropdown — toggle the menu (build/clear the ~130 picker rows
+    // so a closed menu holds none), reusing the searchable/grouped picker view.
+    ctor.BindEventCallback("toggle_scn_dd", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                   const Rml::VariantList&) {
+        if (!app.data) return;
+        app.data->scn_dd_open = !app.data->scn_dd_open;
+        if (app.data->scn_dd_open)
+            rebuild_scenario_view(app.data, app.scenario_id, app.scenario_filter,
+                                  app.scn_expanded_groups);
+        else
+            app.data->scenario_groups.clear();
+        h.DirtyVariable("scn_dd_open");
+        h.DirtyVariable("scenario_groups");
+    });
     // Panel rail: select_panel(N) makes panel N the active LEFT panel and DERIVES
     // the telemetry-demand *_open gates from N (so request_telemetry_demand + the
     // per-frame sync blocks fire only for the visible panel). DOM-shrink: only the
@@ -1015,6 +1049,10 @@ int run_app(const std::vector<std::string>& args) {
         set_current_scenario(app.data, id);
         app.scenario_id = id;
         push_core(&app, ftd::native::LoadScenario{id});
+        // Close the nav-bar scenario dropdown after a pick + drop its rows.
+        app.data->scn_dd_open = false;
+        app.data->scenario_groups.clear();
+        h.DirtyVariable("scn_dd_open");
         h.DirtyVariable("scenario_groups");
     });
     // Collapse/expand one scenario category group (its header is the affordance).

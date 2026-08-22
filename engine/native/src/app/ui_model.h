@@ -216,6 +216,11 @@ struct ShellData {
     // (COLLAPSED by default); while collapsed scenario_groups is left EMPTY.
     bool scn_open = false;
     Rml::Vector<ScenarioGroupRow> scenario_groups;
+    // Toolbar (nav-bar) dropdowns: scale switcher + scenario selector. Each gates
+    // its own popup menu (data-if); a closed scenario menu leaves scenario_groups
+    // EMPTY so the ~130 rows never sit in the idle DOM.
+    bool scale_dd_open = false;
+    bool scn_dd_open = false;
     // Click-to-inspect readout. insp_active gates the panel section; insp_title
     // names the picked entity; insp_lines are its live fields.
     bool insp_active = false;

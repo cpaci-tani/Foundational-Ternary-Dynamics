@@ -8,14 +8,51 @@
      logs a warning and leaves the bindings unresolved, but all chrome/layout
      still renders, so the smoke test's pixel-coverage assertions still hold. -->
 <body data-model="shell">
-    <!-- Toolbar -->
+    <!-- Toolbar: brand + scale dropdown + scenario dropdown -->
     <div id="toolbar">
         <span class="brand">FTD Engine <span class="ver">native</span></span>
-        <div class="tb-group">
-            <span class="lbl">Engine</span>
-            <span class="select opt" data-class-sel="active_scale == 0" data-event-click="scale_lattice()">Scale 0 (Lattice)</span>
-            <span class="select opt" data-class-sel="active_scale == 1" data-event-click="scale_particles()">Scale 1 (Particles)</span>
+
+        <!-- Scale dropdown -->
+        <div class="nav-dd">
+            <span class="nav-dd-label" data-event-click="toggle_scale_dd()">
+                <span class="nav-dd-cur">{{ active_scale == 0 ? 'Scale 0 (Lattice)' : 'Scale 1 (Particles)' }}</span>
+                <span class="dd-caret">{{ scale_dd_open ? '&#9652;' : '&#9662;' }}</span>
+            </span>
+            <div class="nav-dd-menu" data-if="scale_dd_open">
+                <div class="nav-dd-item" data-class-cur="active_scale == 0" data-event-click="pick_scale(0)">Scale 0 (Lattice)</div>
+                <div class="nav-dd-item" data-class-cur="active_scale == 1" data-event-click="pick_scale(1)">Scale 1 (Particles)</div>
+            </div>
         </div>
+
+        <!-- Scenario dropdown (Scale-0): the searchable/grouped picker as a nav-bar
+             popup. Built only while open (scenario_groups empty when closed). -->
+        <div class="nav-dd" data-if="active_scale == 0">
+            <span class="nav-dd-label" data-event-click="toggle_scn_dd()">
+                <span class="nav-dd-cur mono">{{scenario}}</span>
+                <span class="dd-caret">{{ scn_dd_open ? '&#9652;' : '&#9662;' }}</span>
+            </span>
+            <div class="nav-dd-menu scn-dd-menu" data-if="scn_dd_open">
+                <input type="text" class="scn-search" placeholder="Search scenarios…" data-event-change="filter_scenarios"/>
+                <div class="scn-list">
+                    <div class="scn-group" data-for="g : scenario_groups">
+                        <div class="section-head sub" data-if="g.has_visible" data-event-click="toggle_scenario_group(g.title)">
+                            <span class="section-caret">{{ g.expanded ? '&#9662;' : '&#9656;' }}</span>
+                            <span class="section-title">{{g.title}}</span>
+                            <span class="section-badge">{{g.count}}</span>
+                        </div>
+                        <div class="scn-items" data-if="g.show_items">
+                            <div class="scn-row" data-for="s : g.items">
+                                <div class="scn-item" data-if="s.visible" data-class-cur="s.current" data-event-click="select_scenario(s.id)">
+                                    <span class="scn-title">{{s.title}}</span>
+                                    <span class="scn-tag" data-if="s.tag != ''" data-class-tpos="s.tag_cls == 1" data-class-timp="s.tag_cls == 2" data-class-tcon="s.tag_cls == 3" data-class-tneg="s.tag_cls == 4">{{s.tag}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="spacer"></div>
         <button class="icon">&#9881;</button>
     </div>
@@ -26,7 +63,6 @@
              the single source of truth; select_panel(N) sets it + derives the
              telemetry-demand *_open gates. Text labels (Inter has no icon glyphs). -->
         <div id="rail">
-            <span class="rail-btn" data-class-sel="active_panel == 0" data-event-click="select_panel(0)">SCN</span>
             <span class="rail-btn" data-class-sel="active_panel == 1" data-event-click="select_panel(1)">DIAG</span>
             <span class="rail-btn" data-class-sel="active_panel == 2" data-event-click="select_panel(2)">TEL</span>
             <span class="rail-btn" data-class-sel="active_panel == 3" data-event-click="select_panel(3)">GRAV</span>
@@ -61,34 +97,6 @@
                     <span class="epi-title">{{epi_title}}</span>
                 </div>
                 <div class="epi-body">{{epi_body}}</div>
-            </div>
-
-            <!-- ═══ PANEL 0 — Scenario ═══ -->
-            <div class="panel-block" data-if="active_panel == 0">
-                <div class="panel-title">Scenario</div>
-                <!-- Scale-0 interactive scenario picker (searchable, category-grouped). -->
-                <div class="scn-picker" data-if="active_scale == 0">
-                    <input type="text" class="scn-search" placeholder="Search scenarios…" data-event-change="filter_scenarios"/>
-                    <div class="scn-list">
-                        <div class="scn-group" data-for="g : scenario_groups">
-                            <div class="section-head sub" data-if="g.has_visible" data-event-click="toggle_scenario_group(g.title)">
-                                <span class="section-caret">{{ g.expanded ? '&#9662;' : '&#9656;' }}</span>
-                                <span class="section-title">{{g.title}}</span>
-                                <span class="section-badge">{{g.count}}</span>
-                            </div>
-                            <div class="scn-items" data-if="g.show_items">
-                                <div class="scn-row" data-for="s : g.items">
-                                    <div class="scn-item" data-if="s.visible" data-class-cur="s.current" data-event-click="select_scenario(s.id)">
-                                        <span class="scn-title">{{s.title}}</span>
-                                        <span class="scn-tag" data-if="s.tag != ''" data-class-tpos="s.tag_cls == 1" data-class-timp="s.tag_cls == 2" data-class-tcon="s.tag_cls == 3" data-class-tneg="s.tag_cls == 4">{{s.tag}}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Scale-1: display-only scenario readout. -->
-                <div class="field" data-if="active_scale == 1"><span class="fl">Scenario</span><span class="select mono">{{scenario}}</span></div>
             </div>
 
             <!-- ═══ PANEL 1 — Diagnostics (Min/Max/Avg metric tables) ═══ -->
