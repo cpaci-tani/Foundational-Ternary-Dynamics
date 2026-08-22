@@ -20,36 +20,50 @@
         <button class="icon">&#9881;</button>
     </div>
 
-    <!-- Information & Scenario | viewport hole | Properties & Overlays -->
+    <!-- rail | left instrument panel | resizer | viewport hole | resizer | right panel -->
     <div id="body-row">
-        <!-- LEFT panel: "Information & Scenario" — the scenario picker + play
-             controls, plus the telemetry charts + click-to-inspect readout that
-             used to live on the right. Independently scrollable (overflow-y:auto);
-             the heavy sections stay collapsed by default so idle fps is unaffected. -->
-        <div id="setup" class="panel">
-            <div class="panel-title">Information &amp; Scenario</div>
+        <!-- PANEL RAIL: switches the LEFT instrument/analysis panel. active_panel is
+             the single source of truth; select_panel(N) sets it + derives the
+             telemetry-demand *_open gates. Text labels (Inter has no icon glyphs). -->
+        <div id="rail">
+            <span class="rail-btn" data-class-sel="active_panel == 0" data-event-click="select_panel(0)">SCN</span>
+            <span class="rail-btn" data-class-sel="active_panel == 1" data-event-click="select_panel(1)">DIAG</span>
+            <span class="rail-btn" data-class-sel="active_panel == 2" data-event-click="select_panel(2)">TEL</span>
+            <span class="rail-btn" data-class-sel="active_panel == 3" data-event-click="select_panel(3)">GRAV</span>
+            <span class="rail-btn" data-class-sel="active_panel == 4" data-event-click="select_panel(4)">TIME</span>
+            <span class="rail-btn" data-class-sel="active_panel == 5" data-event-click="select_panel(5)">TH</span>
+            <span class="rail-btn" data-class-sel="active_panel == 6" data-event-click="select_panel(6)">FFT</span>
+        </div>
 
-            <!-- Scale-0 interactive scenario picker. A searchable, collapsible,
-                 category-grouped list of the ~130 native-catalog Scale-0
-                 scenarios (the 5 honest classes as groups). Typing in the search
-                 box narrows by title/id/tag; the loaded scenario is highlighted.
-                 Selecting a row issues the LoadScenario core command — the exact
-                 live-reboot path Reset uses — so the engine reloads into it and
-                 the overlays/scene refresh. Scale 1 has its own seed vocabulary,
-                 so the picker is Scale-0 only (Scale 1 shows a plain readout). -->
-            <!-- COLLAPSED by default: only the header row is in the DOM. Clicking
-                 it flips `scn_open`, which (a) reveals the search + list via the
-                 data-if below and (b) makes native_app rebuild `scenario_groups`
-                 from the catalog. While closed, `scenario_groups` is empty, so the
-                 nested data-for instantiates ~0 scenario <div>s — the reason the
-                 closed picker costs nothing per frame. -->
-            <div class="scn-picker" data-if="active_scale == 0">
-                <div class="section-head" data-event-click="toggle_scn_picker()">
-                    <span class="section-caret">{{ scn_open ? '&#9662;' : '&#9656;' }}</span>
-                    <span class="section-title">Scenarios</span>
-                    <span class="select mono scn-cur">{{scenario}}</span>
+        <!-- LEFT panel: the rail-switched instrument host. Resizable via
+             #resizer-left (width bound to setup_width). The playbar + epistemic box
+             are PINNED (outside every panel data-if) so they're reachable from any
+             panel; each panel block is data-if="active_panel==N". Independently
+             scrollable; only the ACTIVE panel instantiates its DOM (fps). -->
+        <div id="setup" class="panel" data-style-width="setup_width">
+            <!-- PINNED: play controls -->
+            <div class="playbar">
+                <button class="btn primary" data-event-click="run()">{{ running ? '&#10073;&#10073; Pause' : '&#9654; Run' }}</button>
+                <button class="btn" data-event-click="step()">Step</button>
+                <button class="btn" data-event-click="reset()">Reset</button>
+            </div>
+
+            <!-- PINNED: Epistemic-status box — the active scenario's
+                 ScenarioMeta.epistemic_status (tag + qualification clause). Hidden
+                 when empty (Scale-1 / unknown scenario). -->
+            <div class="epi-box" data-if="epi_tag != ''">
+                <div class="epi-head">
+                    <span class="scn-tag" data-class-tpos="epi_cls == 1" data-class-timp="epi_cls == 2" data-class-tcon="epi_cls == 3" data-class-tneg="epi_cls == 4">{{epi_tag}}</span>
+                    <span class="epi-title">{{epi_title}}</span>
                 </div>
-                <div class="scn-open" data-if="scn_open">
+                <div class="epi-body">{{epi_body}}</div>
+            </div>
+
+            <!-- ═══ PANEL 0 — Scenario ═══ -->
+            <div class="panel-block" data-if="active_panel == 0">
+                <div class="panel-title">Scenario</div>
+                <!-- Scale-0 interactive scenario picker (searchable, category-grouped). -->
+                <div class="scn-picker" data-if="active_scale == 0">
                     <input type="text" class="scn-search" placeholder="Search scenarios…" data-event-change="filter_scenarios"/>
                     <div class="scn-list">
                         <div class="scn-group" data-for="g : scenario_groups">
@@ -69,38 +83,42 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- Scale-1: display-only scenario readout (no Scale-0 catalog here). -->
-            <div class="field" data-if="active_scale == 1"><span class="fl">Scenario</span><span class="select mono">{{scenario}}</span></div>
-
-            <!-- The editable lattice-size knob lives in the RIGHT panel's Config &
-                 lattice section (the one knob that reboots the engine); no static
-                 lattice display is duplicated here. -->
-            <div class="playbar">
-                <button class="btn primary" data-event-click="run()">{{ running ? '&#10073;&#10073; Pause' : '&#9654; Run' }}</button>
-                <button class="btn" data-event-click="step()">Step</button>
-                <button class="btn" data-event-click="reset()">Reset</button>
+                <!-- Scale-1: display-only scenario readout. -->
+                <div class="field" data-if="active_scale == 1"><span class="fl">Scenario</span><span class="select mono">{{scenario}}</span></div>
             </div>
 
-            <!-- Telemetry: the Scale-0 engine telemetry hub (diagnostics · audit ·
-                 lagrangian scheduler groups). Collapsible + COLLAPSED by default —
-                 the charts + legend rows live behind data-if="tel_open", so a closed
-                 section holds ~0 chart DOM and demands only the cheap DIAGNOSTICS
-                 group (opening it adds the AUDIT + LAGRANGIAN groups). Each
-                 <ftd-chart> draws app-side ring buffers (one coloured polyline per
-                 named series, each autoscaled independently) through the D3D12 line
-                 path; the legends carry the per-series colour + throttled current
-                 value, and a per-group "t=" freshness tick. Scale-0 only (the
-                 groups read the voxel field); Scale 1 uses its own readout in the
-                 right panel. -->
-            <div class="telemetry" data-if="active_scale == 0">
-                <div class="section-head" data-event-click="toggle_telemetry()">
-                    <span class="section-caret">{{ tel_open ? '&#9662;' : '&#9656;' }}</span>
-                    <span class="section-title">Telemetry</span>
-                    <span class="section-badge">diagnostics · audit</span>
+            <!-- ═══ PANEL 1 — Diagnostics (Min/Max/Avg metric tables) ═══ -->
+            <div class="panel-block" data-if="active_scale == 0 && active_panel == 1">
+                <div class="panel-title">Diagnostics</div>
+                <div class="diag-fresh">
+                    <span class="diag-fresh-item">{{diag_fresh_diag}}</span>
+                    <span class="diag-fresh-item">{{diag_fresh_audit}}</span>
                 </div>
-                <div class="tel-body" data-if="tel_open">
-                    <!-- Diagnostics: what the field is doing (always demanded). -->
+                <div class="diag-sec" data-for="sec : diag_sections">
+                    <div class="diag-sectitle">{{sec.title}}</div>
+                    <div class="diag-head">
+                        <span class="diag-metric">Metric</span>
+                        <span class="diag-value">Value</span>
+                        <span class="diag-unit">Unit</span>
+                        <span class="diag-stat">Min</span>
+                        <span class="diag-stat">Max</span>
+                        <span class="diag-stat">Avg</span>
+                    </div>
+                    <div class="diag-row" data-for="r : sec.rows" data-class-pos="r.variant == 1" data-class-neg="r.variant == 2">
+                        <span class="diag-metric">{{r.label}}</span>
+                        <span class="diag-value">{{r.value}}</span>
+                        <span class="diag-unit">{{r.unit}}</span>
+                        <span class="diag-stat">{{r.vmin}}</span>
+                        <span class="diag-stat">{{r.vmax}}</span>
+                        <span class="diag-stat">{{r.vavg}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ PANEL 2 — Telemetry (diagnostics · audit · lagrangian) ═══ -->
+            <div class="panel-block" data-if="active_scale == 0 && active_panel == 2">
+                <div class="panel-title">Telemetry</div>
+                <div class="tel-body">
                     <div class="tel-ctitle">
                         <span class="tel-name">Diagnostics</span>
                         <span class="tel-prov">{{tel_diag_prov}}</span>
@@ -112,7 +130,6 @@
                         <div class="tel-row"><span class="tel-chip s2"></span><span class="tel-lbl">Entropy</span><span class="tel-val">{{tel_d_entropy}}</span></div>
                         <div class="tel-row"><span class="tel-chip s3"></span><span class="tel-lbl">Net charge</span><span class="tel-val">{{tel_d_charge}}</span></div>
                     </div>
-                    <!-- Conservation: is energy conserved (audit group). -->
                     <div class="tel-ctitle">
                         <span class="tel-name">Conservation</span>
                         <span class="tel-prov">{{tel_audit_prov}}</span>
@@ -123,7 +140,6 @@
                         <div class="tel-row"><span class="tel-chip s2"></span><span class="tel-lbl">Drift dE/dt</span><span class="tel-val">{{tel_a_drift}}</span></div>
                         <div class="tel-row"><span class="tel-chip s3"></span><span class="tel-lbl">Gauss resid</span><span class="tel-val">{{tel_a_gauss}}</span></div>
                     </div>
-                    <!-- Lagrangian: the action terms (lagrangian group). -->
                     <div class="tel-ctitle">
                         <span class="tel-name">Lagrangian</span>
                     </div>
@@ -135,18 +151,10 @@
                 </div>
             </div>
 
-            <!-- Gravity instrument (Scale-0): the REAL Poisson latency field
-                 aggregate (voxel.latency), not the |J|² proxy. Collapsible;
-                 opening it demands the GRAVITY scheduler group. The substrate's
-                 emergent-gravity chain: potential L → lapse f = 1−L² → γ → time
-                 dilation. -->
-            <div class="gravity-sec" data-if="active_scale == 0">
-                <div class="section-head" data-event-click="toggle_gravity()">
-                    <span class="section-caret">{{ grav_open ? '&#9662;' : '&#9656;' }}</span>
-                    <span class="section-title">Gravity</span>
-                    <span class="section-badge">latency · dilation</span>
-                </div>
-                <div class="tel-body" data-if="grav_open">
+            <!-- ═══ PANEL 3 — Gravity ═══ -->
+            <div class="panel-block" data-if="active_scale == 0 && active_panel == 3">
+                <div class="panel-title">Gravity</div>
+                <div class="tel-body">
                     <div class="tel-ctitle">
                         <span class="tel-name">Latency field (real Poisson L)</span>
                         <span class="tel-prov">{{grav_prov}}</span>
@@ -163,17 +171,10 @@
                 </div>
             </div>
 
-            <!-- Time instrument (Scale-0): the causal-clock view of the same
-                 latency field. The clock hypothesis d&#964;/dt = &#8730;(1&#8722;L&#178;) sets each
-                 site's proper-time rate; the deepest well runs slowest. This is
-                 FTD's time-dilation claim, framed as a clock. -->
-            <div class="time-sec" data-if="active_scale == 0">
-                <div class="section-head" data-event-click="toggle_time()">
-                    <span class="section-caret">{{ time_open ? '&#9662;' : '&#9656;' }}</span>
-                    <span class="section-title">Time</span>
-                    <span class="section-badge">causal clock</span>
-                </div>
-                <div class="tel-body" data-if="time_open">
+            <!-- ═══ PANEL 4 — Time ═══ -->
+            <div class="panel-block" data-if="active_scale == 0 && active_panel == 4">
+                <div class="panel-title">Time</div>
+                <div class="tel-body">
                     <div class="tel-ctitle">
                         <span class="tel-name">Causal clock d&#964;/dt = &#8730;(1&#8722;L&#178;)</span>
                         <span class="tel-prov">{{time_prov}}</span>
@@ -187,16 +188,10 @@
                 </div>
             </div>
 
-            <!-- Thermodynamics instrument (Scale-0): the lattice's thermal state.
-                 Bath setpoint T (langevin_T) + equipartition kinetic temperature
-                 T_kin = E_wave/(1.5·L&#179;) + wave energy + entropy + manifested count. -->
-            <div class="thermo-sec" data-if="active_scale == 0">
-                <div class="section-head" data-event-click="toggle_thermo()">
-                    <span class="section-caret">{{ thermo_open ? '&#9662;' : '&#9656;' }}</span>
-                    <span class="section-title">Thermo</span>
-                    <span class="section-badge">bath · T_kin</span>
-                </div>
-                <div class="tel-body" data-if="thermo_open">
+            <!-- ═══ PANEL 5 — Thermo ═══ -->
+            <div class="panel-block" data-if="active_scale == 0 && active_panel == 5">
+                <div class="panel-title">Thermo</div>
+                <div class="tel-body">
                     <div class="tel-ctitle">
                         <span class="tel-name">Thermodynamic state (k_B &#8801; 1)</span>
                         <span class="tel-prov">{{therm_prov}}</span>
@@ -211,17 +206,10 @@
                 </div>
             </div>
 
-            <!-- Spectrum instrument (Scale-0): lattice spectroscopy — the spatial
-                 energy spectrum E(k) of the flux field via an adapter-side 3D FFT.
-                 The chart is log E(k) vs radial |k|; the readouts are the dominant
-                 mode, total power (Parseval), and the log-log spectral index. -->
-            <div class="spectrum-sec" data-if="active_scale == 0">
-                <div class="section-head" data-event-click="toggle_spectrum()">
-                    <span class="section-caret">{{ spectrum_open ? '&#9662;' : '&#9656;' }}</span>
-                    <span class="section-title">Spectrum</span>
-                    <span class="section-badge">E(k) · FFT</span>
-                </div>
-                <div class="tel-body" data-if="spectrum_open">
+            <!-- ═══ PANEL 6 — Spectrum ═══ -->
+            <div class="panel-block" data-if="active_scale == 0 && active_panel == 6">
+                <div class="panel-title">Spectrum</div>
+                <div class="tel-body">
                     <div class="tel-ctitle">
                         <span class="tel-name">Flux spectrum log E(k)</span>
                         <span class="tel-prov">{{spec_prov}}</span>
@@ -236,13 +224,7 @@
                 </div>
             </div>
 
-            <!-- Click-to-inspect: appears when an entity is picked in the 3D
-                 scene (data-if insp_active). insp_title names the target; each
-                 insp_lines row is a live key/value read from the picked voxel
-                 (Scale 0) or particle (Scale 1). The × clears the selection;
-                 clicking empty space in the viewport clears it too. Works on both
-                 scales, so it lives in this Information panel (a voxel pick shows
-                 the 26-Moore-neighbour sub-section; a particle pick hides it). -->
+            <!-- PINNED: click-to-inspect (below the active panel; both scales). -->
             <div class="inspector" data-if="insp_active">
                 <div class="insp-head">
                     <span class="insp-title">{{insp_title}}</span>
@@ -253,11 +235,6 @@
                         <span class="insp-k">{{ln.k}}</span><span class="insp-v">{{ln.v}}</span>
                     </div>
                 </div>
-                <!-- 26-Moore-neighbour grid (Scale-0 voxel picks only; hidden for
-                     Scale-1 particles). Collapsible: while closed the cell vectors
-                     are empty (0 DOM) and native_app stops issuing the 26-read
-                     gather. Each cell is coloured by neighbour state (+ green /
-                     − red / void dim); a genuinely void site reads "0  —". -->
                 <div class="insp-neigh" data-if="insp_neigh_show">
                     <div class="section-head sub" data-event-click="toggle_insp_neigh()">
                         <span class="section-caret">{{ insp_neigh_open ? '&#9662;' : '&#9656;' }}</span>
@@ -287,33 +264,24 @@
             </div>
         </div>
 
+        <!-- draggable splitter: resize the LEFT panel -->
+        <div id="resizer-left" class="resizer" data-event-drag="resize_left"></div>
+
         <!-- transparent: the D3D12 lattice/particle/flux scene renders here -->
         <div id="viewport"></div>
 
-        <!-- RIGHT panel: "Properties & Overlays". Scale-aware — two sibling blocks,
-             one shown per active scale via data-if, so RCSS/data-binding drives the
-             switch (no per-frame imperative rebuild). Scale 0 → the physics term-
-             toggles + config knobs + field overlays; Scale 1 → a compact particle
-             readout. Independently scrollable (overflow-y:auto); heavy sections stay
-             collapsed by default so idle fps is unaffected. -->
-        <div id="physics" class="panel">
+        <!-- draggable splitter: resize the RIGHT panel -->
+        <div id="resizer-right" class="resizer" data-event-drag="resize_right"></div>
+
+        <!-- RIGHT panel: "Properties & Overlays". Scale-aware; always visible
+             (persistent controls); resizable via #resizer-right (physics_width). -->
+        <div id="physics" class="panel" data-style-width="physics_width">
             <!-- Scale 0 (Lattice): the physics term-toggles + config + overlays -->
             <div class="scale-block" data-if="active_scale == 0">
                 <div class="panel-title">Properties &amp; Overlays</div>
 
-                <!-- Live validation banner: TermToggles::validate() (+ CPU
-                     gpu-only warnings) surfaced from the authoritative engine
-                     state, so an invalid toggle combo is shown, not silently
-                     stderr-warned. Hidden when the combo is valid. -->
                 <div class="vbanner" data-if="has_validation">{{validation_msg}}</div>
 
-                <!-- Physics terms — ALL 44 TOGGLE_SPECS toggles, categorized and
-                     COLLAPSED by default (fps: the toggle DOM is empty until the
-                     section, then a category, is opened — the scenario-picker
-                     DOM-shrink discipline). Each row shows the toggle name, its
-                     live LED, its description (subtitle), and its discoverable
-                     requires/conflicts/gpu-only metadata; an amber ring marks a
-                     toggle whose current combo violates a rule (gated). -->
                 <div class="section-head" data-event-click="toggle_physics()">
                     <span class="section-caret">{{ phys_open ? '&#9662;' : '&#9656;' }}</span>
                     <span class="section-title">Physics terms</span>
@@ -339,12 +307,6 @@
                     </div>
                 </div>
 
-                <!-- Config & lattice — the non-bool config knobs (dt · SOR ·
-                     boundary · Langevin · stencil · Coulomb · omega0 · drain),
-                     the lattice-size control (the one knob that reboots the
-                     engine), and reset-to-defaults. Each knob is a −/＋ nudge
-                     (RmlUi has no range input; same affordance as the sheet
-                     height). COLLAPSED by default. -->
                 <div class="section-head" data-event-click="toggle_config()">
                     <span class="section-caret">{{ cfg_open ? '&#9662;' : '&#9656;' }}</span>
                     <span class="section-title">Config &amp; lattice</span>
@@ -363,11 +325,6 @@
                     <div class="cfg-reset" data-event-click="reset_toggles()">Reset toggles to defaults</div>
                 </div>
 
-                <!-- Field overlays: the web's 7-column, multi-select menu.
-                     Each column is a collapsible group (click the header); each
-                     row lights an LED when its overlay is in the active,
-                     composited set. Built from the shared overlay registry, so
-                     later tranches add rows without touching this markup. -->
                 <div class="section-head" data-event-click="toggle_overlays()">
                     <span class="section-caret">{{ ov_open ? '&#9662;' : '&#9656;' }}</span>
                     <span class="section-title">Field overlays</span>
@@ -386,10 +343,6 @@
                                 <div class="ov" data-class-on="o.on" data-event-click="set_overlay(o.name)">
                                     <span class="led"></span><span class="lbl">{{o.label}}</span>
                                 </div>
-                                <!-- Rubber-sheet height control: only for an ACTIVE sheet.
-                                     Nested data-if (is_sheet, then on) avoids a compound
-                                     expression. The −/＋ live in a sibling of .ov, so their
-                                     clicks do NOT bubble into set_overlay (no toggle-off). -->
                                 <div class="ov-height-wrap" data-if="o.is_sheet">
                                     <div class="ov-height" data-if="o.on">
                                         <span class="ov-nudge" data-event-click="sheet_height_nudge(o.name, '-')">&#8722;</span>
@@ -401,9 +354,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- Force render-style selector: ONE global setting applied to
-                     all four Force overlays (EM / Gravity / Strong / curl J),
-                     mirroring the web selector. The active style is lit. -->
                 <div class="force-style-row">
                     <span class="fs-label">Force style</span>
                     <span class="fs-btn" data-class-on="force_style == 0" data-event-click="set_force_style(0)">Arrows</span>
@@ -429,11 +379,7 @@
     </div>
 
     <!-- Status bar lives in a SEPARATE document (statusbar.rml, data-model=
-         "status") loaded as a second document, so its ~8/s readout updates reflow
-         only that strip and never the 92-row scenario picker in this document.
-         This spacer reserves the same-height bottom strip the status overlay sits
-         on, so shell layout is identical to when the bar lived here. It carries no
-         binding, so it never dirties → never reflows this document. -->
+         "status"); this spacer reserves its 27dp bottom strip. -->
     <div id="status-spacer"></div>
 </body>
 </rml>

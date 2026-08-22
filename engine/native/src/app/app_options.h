@@ -68,6 +68,10 @@ struct AppOptions {
     bool open_time = false;      // pre-open the Time (causal-clock) instrument
     bool open_thermo = false;    // pre-open the Thermodynamics instrument
     bool open_spectrum = false;  // pre-open the Spectrum (E(k)) instrument
+    // --panel N selects the active rail panel for a headless capture (0 Scenario ·
+    // 1 Diagnostics · 2 Telemetry · 3 Gravity · 4 Time · 5 Thermo · 6 Spectrum).
+    // < 0 = leave the default (the --open-* flags above still map to their panels).
+    int panel = -1;
     // Simulated control edits (interactive input can't run under --capture-frames).
     // These drive the SAME commands the −/＋ nudges and toggle clicks push, so the
     // captured snapshot reflects them: prove control works headlessly.

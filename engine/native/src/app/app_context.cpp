@@ -90,6 +90,8 @@ void request_telemetry_demand(AppContext* app) {
     ftd::native::DataNeeds needs;
     needs.telemetry_groups = ftd::TELEMETRY_DIAGNOSTICS;
     if (app && app->data) {
+        if (app->data->diag_active)
+            needs.telemetry_groups |= ftd::TELEMETRY_AUDIT;   // Energy-Budget rows
         if (app->data->tel_open)
             needs.telemetry_groups |= ftd::TELEMETRY_AUDIT | ftd::TELEMETRY_LAGRANGIAN;
         if (app->data->thermo_open)
