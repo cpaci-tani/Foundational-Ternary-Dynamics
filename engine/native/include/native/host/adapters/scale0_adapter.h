@@ -105,6 +105,11 @@ private:
     // cache in between (spectrum_cache_.ok gates spectrum_present).
     SpectrumResult                spectrum_cache_;
     int                           spectrum_counter_ = 0;
+    // Field-slice cache (Flux-slice panel): three orthogonal centre slices of |J|,
+    // recomputed every kSliceStride boundaries while demanded (slice_cache_[0].ok
+    // gates slices_present).
+    FieldSliceResult              slice_cache_[SLICE_PLANES];
+    int                           slice_counter_ = 0;
 
     // Env-gated telemetry-scheduler diagnostics (FTD_TELEMETRY_DEBUG). Off by
     // default (zero overhead); when set, build_snapshot() prints the scheduler's

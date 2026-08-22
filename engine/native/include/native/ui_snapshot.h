@@ -1,5 +1,6 @@
 #pragma once
 
+#include "native/field_slice.h"
 #include "native/native_frame.h"
 #include "native/spectrum.h"
 #include "native/ui_demand.h"
@@ -87,6 +88,8 @@ struct UiSnapshot {
     EnvInfo env;
     SpectrumResult spectrum;         // flux E(k) (filled when demand.spectrum)
     bool spectrum_present = false;
+    FieldSliceResult slices[SLICE_PLANES];  // yz/xz/xy centre slices (demand.slice)
+    bool slices_present = false;
     DataNeeds demand;
     std::uint64_t last_applied_seq = 0;
     std::uint64_t seq = 0;
