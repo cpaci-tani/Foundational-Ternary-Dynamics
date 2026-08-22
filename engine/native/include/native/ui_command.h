@@ -127,6 +127,11 @@ struct SetForceStyle {
 struct SetInteriorCull {
     std::uint32_t layers = 0;
 };
+// Domain-boundary wireframe shape (BoundaryShape int). Adapter view-state only
+// (same pattern as SetForceStyle) — no bridge mutation, flags a frame refresh.
+struct SetBoundaryShape {
+    std::uint32_t shape = 0;
+};
 struct RequestContinuity {};
 struct RequestChargeSum {};
 struct SetTelemetryDemand {
@@ -167,7 +172,7 @@ using UiCommand = std::variant<
     SetBoundary, SetDt, SetSorIterations, LoadScenario, SetLatticeSize,
     ApplyReboot, ResetToDefaults, InspectVoxel, InspectForce, InspectNeighbors,
     RequestField, SetOverlay, SetSheetHeight, SetForceStyle, SetInteriorCull,
-    RequestContinuity, RequestChargeSum, SetTelemetryDemand,
+    SetBoundaryShape, RequestContinuity, RequestChargeSum, SetTelemetryDemand,
     Pause, Step, Run, InjectWavepacket, InjectFluxAdd, CreateEntangledPair,
     ClearField, SeedRandomFlux>;
 

@@ -48,6 +48,7 @@ add_library(native_host STATIC
     src/host/adapters/scale0_adapter.cpp
     src/host/adapters/scale1_adapter.cpp
     src/host/adapters/streamlines.cpp
+    src/host/boundary_shapes.cpp
     src/spectrum.cpp
 )
 target_include_directories(native_host PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

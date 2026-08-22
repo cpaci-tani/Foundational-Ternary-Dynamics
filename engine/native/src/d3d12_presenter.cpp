@@ -1211,31 +1211,20 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
     struct LineVertex {
         float x, y, z, r, g, b;
     };
-    const float L = static_cast<float>(std::max(1, frame.lattice_size));
-    const float cr = 0.35f, cg = 0.42f, cb = 0.52f;
-    const float corners[8][3] = {
-        {0, 0, 0}, {L, 0, 0}, {L, L, 0}, {0, L, 0},
-        {0, 0, L}, {L, 0, L}, {L, L, L}, {0, L, L},
-    };
-    const int edges[12][2] = {
-        {0, 1}, {1, 2}, {2, 3}, {3, 0},
-        {4, 5}, {5, 6}, {6, 7}, {7, 4},
-        {0, 4}, {1, 5}, {2, 6}, {3, 7},
-    };
-    // Line vertices for the LINE PSO: the 24 wireframe-box verts first (always
-    // present so their draw offset is a fixed 0), then the field-overlay vector
-    // segments (2 verts each) if any. Both share the LineVertex layout + LINELIST
-    // topology and are drawn through impl_->pso_lines.
+    // Line vertices for the LINE PSO: the boundary wireframe first (its verts at
+    // a fixed offset 0, gated by opts.lattice_box), then the field-overlay vector
+    // segments (2 verts each). The boundary is host-generated in
+    // frame.boundary_lines (cube by default, or sphere/platonic/cylinder/torus/
+    // none — build_boundary_lines), replacing the presenter's legacy in-line cube.
+    // All share the LineVertex layout + LINELIST topology through impl_->pso_lines.
     std::vector<LineVertex> line_verts;
-    line_verts.reserve(24 + (frame.field_lines.size() + frame.field_lines_top.size()) * 2);
-    for (int e = 0; e < 12; ++e) {
-        for (int k = 0; k < 2; ++k) {
-            const int ci = edges[e][k];
-            line_verts.push_back(
-                LineVertex{corners[ci][0], corners[ci][1], corners[ci][2], cr, cg, cb});
-        }
+    line_verts.reserve((frame.boundary_lines.size() + frame.field_lines.size()
+                        + frame.field_lines_top.size()) * 2);
+    for (const auto& bl : frame.boundary_lines) {
+        line_verts.push_back(LineVertex{bl.x0, bl.y0, bl.z0, bl.r0, bl.g0, bl.b0});
+        line_verts.push_back(LineVertex{bl.x1, bl.y1, bl.z1, bl.r1, bl.g1, bl.b1});
     }
-    const UINT box_line_verts = static_cast<UINT>(line_verts.size());  // == 24
+    const UINT box_line_verts = static_cast<UINT>(line_verts.size());
     for (const auto& fl : frame.field_lines) {
         line_verts.push_back(LineVertex{fl.x0, fl.y0, fl.z0, fl.r0, fl.g0, fl.b0});
         line_verts.push_back(LineVertex{fl.x1, fl.y1, fl.z1, fl.r1, fl.g1, fl.b1});
@@ -1478,9 +1467,9 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
     impl_->list->SetGraphicsRootConstantBufferView(
         0, impl_->cb[impl_->frame]->GetGPUVirtualAddress());
 
-    // Box wireframe (conditional) + field-overlay vectors (whenever present) —
-    // both through the LINE PSO the list was reset with. The box verts occupy
-    // buffer offset 0; the field verts follow at StartVertexLocation == 24.
+    // Boundary wireframe (conditional) + field-overlay vectors (whenever present)
+    // — both through the LINE PSO the list was reset with. The boundary verts
+    // occupy buffer offset 0; the field verts follow at box_line_verts.
     if (impl_->vb[impl_->frame] && line_bytes != 0
         && ((opts.lattice_box && box_line_verts != 0) || field_line_verts != 0)) {
         D3D12_VERTEX_BUFFER_VIEW line_view{};

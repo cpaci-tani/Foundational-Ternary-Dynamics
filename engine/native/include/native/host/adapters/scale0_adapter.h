@@ -143,6 +143,11 @@ private:
     // once from the FTD_CULL_LAYERS env var (0 if unset) and settable live.
     std::uint16_t                 interior_cull_layers_ = 0;
 
+    // Domain-boundary wireframe shape (BoundaryShape int; 0 = cube). View-state
+    // only — emitted into frame.boundary_lines each capture(). Seeded from the
+    // --boundary CLI flag / FTD_BOUNDARY env; settable live via SetBoundaryShape.
+    int                           boundary_shape_ = 0;
+
     // Per-active-sheet slice height (fraction of the lattice box). Keyed by the
     // numeric OverlayId. Seeded to the registry y_frac when a Sheet overlay is
     // toggled on; erased on toggle-off. SetSheetHeight updates it. build_sheet
@@ -157,6 +162,9 @@ private:
     // Interior-occlusion cull depth (0 = off); view-state only, no bridge mutation.
     void set_interior_cull_layers(std::uint16_t n) { interior_cull_layers_ = n; }
     std::uint16_t interior_cull_layers() const { return interior_cull_layers_; }
+    // Domain-boundary wireframe shape (BoundaryShape int); view-state only.
+    void set_boundary_shape(int shape) { boundary_shape_ = shape; }
+    int boundary_shape() const { return boundary_shape_; }
     // View-state height control (clamped to [0, 0.999]); no bridge mutation.
     void  set_sheet_height(OverlayId id, float height);
     // Current slice height for a sheet overlay — the stored value, or the

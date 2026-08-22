@@ -9,6 +9,7 @@
 #include "native/host/adapters/scale0_adapter.h"
 #include "native/host/adapters/scale1_adapter.h"
 #include "native/host/adapters/streamlines.h"
+#include "native/boundary_shapes.h"     // build_boundary_lines + shape names
 #include "native/scale0_overlays.h"
 #include "native/spectrum.h"          // compute_flux_spectrum (Spectrum panel)
 
@@ -1357,6 +1358,12 @@ Scale0Adapter::Scale0Adapter()
         const long v = std::strtol(e, nullptr, 10);
         if (v > 0) interior_cull_layers_ = static_cast<std::uint16_t>(v < 64 ? v : 64);
     }
+    // Optional env seed for the boundary shape: FTD_BOUNDARY=<name> (cube/sphere/
+    // dodecahedron/icosahedron/octahedron/cylinder/torus/none). The UI overrides live.
+    if (const char* e = std::getenv("FTD_BOUNDARY")) {
+        const int s = boundary_shape_from_name(e);
+        if (s >= 0) boundary_shape_ = s;
+    }
 }
 Scale0Adapter::~Scale0Adapter() = default;
 
@@ -1468,7 +1475,8 @@ bool Scale0Adapter::is_host_write(const ScalePayload& payload) const {
     if (std::holds_alternative<SetOverlay>(*s0)
         || std::holds_alternative<SetSheetHeight>(*s0)
         || std::holds_alternative<SetForceStyle>(*s0)
-        || std::holds_alternative<SetInteriorCull>(*s0))
+        || std::holds_alternative<SetInteriorCull>(*s0)
+        || std::holds_alternative<SetBoundaryShape>(*s0))
         return true;
     return is_harness_command(to_ui_command(*s0));
 }
@@ -1514,6 +1522,15 @@ ApplyResult Scale0Adapter::apply(const ScalePayload& payload, ParameterJournal& 
     if (const SetInteriorCull* sc = std::get_if<SetInteriorCull>(s0)) {
         set_interior_cull_layers(static_cast<std::uint16_t>(
             sc->layers < 64u ? sc->layers : 64u));
+        ApplyResult ok;
+        ok.ok = true;
+        return ok;
+    }
+    // SetBoundaryShape is adapter view-state only (which boundary wireframe
+    // capture() emits into frame.boundary_lines); no bridge mutation.
+    if (const SetBoundaryShape* sbs = std::get_if<SetBoundaryShape>(s0)) {
+        const int n = static_cast<int>(sbs->shape);
+        set_boundary_shape(n < static_cast<int>(BoundaryShape::Count) ? n : 0);
         ApplyResult ok;
         ok.ok = true;
         return ok;
@@ -1787,6 +1804,10 @@ NativeFrame Scale0Adapter::capture() {
     frame.tick = snapshot.meta.tick != 0 ? snapshot.meta.tick : bridge_->current_tick();
     frame.lattice_size =
         snapshot.meta.lattice_size != 0 ? snapshot.meta.lattice_size : bridge_->lattice().size();
+    // Domain-boundary wireframe (default cube, or the selected shape). Host-
+    // generated here and drawn first through the LINE PSO, replacing the legacy
+    // in-presenter cube. Sized to the current lattice.
+    build_boundary_lines(boundary_shape_, frame.lattice_size, frame.boundary_lines);
     frame.total_manifested = snapshot.particles.total_manifested;
     frame.particles.reserve(snapshot.particles.records.size());
 

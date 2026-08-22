@@ -30,7 +30,11 @@ enum class PassId : std::uint8_t {
     BhDisk, BhJet, PlanetTerrain, StarSurface,
     BgStarfield, BgNebula, BgFoam, BgFluxStorm, BgBeyond
 };
-enum class BoundaryShape : std::uint8_t { Cube, Sphere, None };
+// Domain-boundary wireframe shapes (native parity with the web boundary-select;
+// see native/boundary_shapes.h for the geometry). Order matches the web selector.
+enum class BoundaryShape : std::uint8_t {
+    Cube, Sphere, Dodecahedron, Icosahedron, Octahedron, Cylinder, Torus, None, Count
+};
 
 struct PointCloud {                 // particles · flux voxels · bodies · atoms · field samples
     std::vector<float> pos;         // count*3
