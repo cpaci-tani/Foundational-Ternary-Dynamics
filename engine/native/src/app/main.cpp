@@ -354,6 +354,7 @@ int run_app(const std::vector<std::string>& args) {
     ChartSeries aud_energy(240), aud_drift(240), aud_gauss(240);
     ChartSeries lag_lag(240), lag_ham(240);
     ChartSeries spec_ek(32);   // Spectrum panel: the log E(k) curve (not a time series)
+    ChartSeries chart_flux(240), chart_pos(240), chart_neg(240);  // Charts panel extras
     ftd::native::ui::ChartRegistry chart_registry;
     {
         using C = Rml::Colourb;
@@ -370,6 +371,12 @@ int run_app(const std::vector<std::string>& args) {
         chart_registry.binding("chart-lagr").series = {
             {&lag_lag, kBlue}, {&lag_ham, kViolet}};
         chart_registry.binding("chart-spectrum").series = {{&spec_ek, kBlue}};
+        // Charts panel (per-channel time series from the always-on diagnostics).
+        chart_registry.binding("chart-c-flux").series = {{&chart_flux, kBlue}, {&diag_energy, kGreen}};
+        chart_registry.binding("chart-c-parts").series = {
+            {&diag_manif, kGreen}, {&chart_pos, kBlue}, {&chart_neg, kRed}};
+        chart_registry.binding("chart-c-charge").series = {{&diag_charge, kRed}};
+        chart_registry.binding("chart-c-entropy").series = {{&diag_entropy, kAmber}};
     }
     ftd::native::ui::FtdChartInstancer chart_instancer(&chart_registry);
     Rml::Factory::RegisterElementInstancer("ftd-chart", &chart_instancer);
@@ -1809,6 +1816,7 @@ int run_app(const std::vector<std::string>& args) {
                 diag_charge.clear();
                 aud_energy.clear(); aud_drift.clear(); aud_gauss.clear();
                 lag_lag.clear(); lag_ham.clear();
+                chart_flux.clear(); chart_pos.clear(); chart_neg.clear();
                 chart_series_scale = snap->active_scale;
                 last_pushed_seq = 0;
                 pushed_any = false;
@@ -1822,6 +1830,9 @@ int run_app(const std::vector<std::string>& args) {
                     diag_entropy.push(static_cast<float>(dg.total_entropy));
                     diag_charge.push(
                         static_cast<float>(dg.positive_count - dg.negative_count));
+                    chart_flux.push(static_cast<float>(dg.total_flux));
+                    chart_pos.push(static_cast<float>(dg.positive_count));
+                    chart_neg.push(static_cast<float>(dg.negative_count));
                     if (data.tel_open) {
                         const ftd::EnergyAudit& au = s0->telemetry.audit;
                         aud_energy.push(static_cast<float>(au.total_energy));

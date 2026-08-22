@@ -167,6 +167,17 @@ body {
 }
 .diag-row.pos .diag-value { color: #79d295; }
 .diag-row.neg .diag-value { color: #e8899a; }
+
+/* Charts panel — per-channel time-series tiles (each an <ftd-chart>). */
+.chart-tile { display: flex; flex-direction: column; margin-bottom: 14dp; }
+.chart-tt {
+    font-family: JetBrains Mono;
+    font-size: 9dp;
+    color: #9fb0c6;
+    text-transform: uppercase;
+    letter-spacing: 1dp;
+    margin-bottom: 4dp;
+}
 /* RIGHT panel — "Properties & Overlays". Stacks PHYSICS TERMS + CONFIG & LATTICE
    + FIELD overlays, which together overflow the body-row height. It is a flex
    item stretched to that (definite) row height, so overflow-y:auto turns the
