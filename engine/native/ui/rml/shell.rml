@@ -33,6 +33,7 @@
             <span class="rail-btn" data-class-sel="active_panel == 4" data-event-click="select_panel(4)">TIME</span>
             <span class="rail-btn" data-class-sel="active_panel == 5" data-event-click="select_panel(5)">TH</span>
             <span class="rail-btn" data-class-sel="active_panel == 6" data-event-click="select_panel(6)">FFT</span>
+            <span class="rail-btn" data-class-sel="active_panel == 7" data-event-click="select_panel(7)">CHRT</span>
         </div>
 
         <!-- LEFT panel: the rail-switched instrument host. Resizable via
@@ -221,6 +222,27 @@
                         <div class="tel-row"><span class="tel-lbl">Spectral index</span><span class="tel-val">{{spec_slope}}</span></div>
                         <div class="tel-row"><span class="tel-lbl">FFT grid M</span><span class="tel-val">{{spec_grid}}</span></div>
                     </div>
+                </div>
+            </div>
+
+            <!-- ═══ PANEL 7 — Charts (per-channel time series) ═══ -->
+            <div class="panel-block" data-if="active_scale == 0 && active_panel == 7">
+                <div class="panel-title">Charts</div>
+                <div class="chart-tile">
+                    <div class="chart-tt">Flux &amp; Energy</div>
+                    <ftd-chart id="chart-c-flux"/>
+                </div>
+                <div class="chart-tile">
+                    <div class="chart-tt">Particles &#183; manifested / + / &#8722;</div>
+                    <ftd-chart id="chart-c-parts"/>
+                </div>
+                <div class="chart-tile">
+                    <div class="chart-tt">Net charge</div>
+                    <ftd-chart id="chart-c-charge"/>
+                </div>
+                <div class="chart-tile">
+                    <div class="chart-tt">Entropy</div>
+                    <ftd-chart id="chart-c-entropy"/>
                 </div>
             </div>
 
