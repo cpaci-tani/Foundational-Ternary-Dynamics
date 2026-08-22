@@ -92,8 +92,9 @@ void build_stars(Emitter& e, double br, double sz, double t, int count, std::uin
 }  // namespace
 
 void build_background(int theme, double time_sec, int lattice_size,
-                      std::vector<NativeParticle>& points) {
+                      std::vector<NativeParticle>& points, std::vector<NativeLine>& lines) {
     points.clear();
+    lines.clear();
     const double N = std::max(1, lattice_size);
     const double c = N * 0.5;
     const double br = N * 10.0;        // background radius (camera at ~N*1.8 sits inside)
@@ -175,7 +176,48 @@ void build_background(int theme, double time_sec, int lattice_size,
             break;
         }
 
-        case BackgroundTheme::Beyond:   // line grid — added in a later phase
+        case BackgroundTheme::Beyond: {
+            // Fading 3D grid ("a lattice with no defined boundary") + sparse
+            // flickering void points. Grid extent/step scale with the lattice.
+            const double GE = N * 5.0, GS = N * 0.7;
+            const double fadeStart = N * 1.0, fadeEnd = GE;
+            constexpr int steps = 4;
+            auto alpha = [&](double x, double y, double z) {
+                const double d = std::sqrt(x * x + y * y + z * z);
+                return std::max(0.0, 1.0 - (d - fadeStart) / (fadeEnd - fadeStart));
+            };
+            for (int axis = 0; axis < 3; ++axis) {
+                const int da = (axis + 1) % 3, db = (axis + 2) % 3;
+                for (double a = -GE; a <= GE + 1e-6; a += GS)
+                for (double b = -GE; b <= GE + 1e-6; b += GS) {
+                    for (int s = 0; s < steps; ++s) {
+                        const double t0 = -GE + (2 * GE * s / steps);
+                        const double t1 = -GE + (2 * GE * (s + 1) / steps);
+                        double p0[3] = {0, 0, 0}, p1[3] = {0, 0, 0};
+                        p0[da] = a; p0[db] = b; p0[axis] = t0;
+                        p1[da] = a; p1[db] = b; p1[axis] = t1;
+                        const double a0 = alpha(p0[0], p0[1], p0[2]);
+                        const double a1 = alpha(p1[0], p1[1], p1[2]);
+                        if (a0 < 0.02 && a1 < 0.02) continue;
+                        NativeLine l;
+                        l.x0 = float(c + p0[0]); l.y0 = float(c + p0[1]); l.z0 = float(c + p0[2]);
+                        l.x1 = float(c + p1[0]); l.y1 = float(c + p1[1]); l.z1 = float(c + p1[2]);
+                        l.r0 = float(0.15 * a0); l.g0 = float(0.30 * a0); l.b0 = float(0.50 * a0);
+                        l.r1 = float(0.15 * a1); l.g1 = float(0.30 * a1); l.b1 = float(0.50 * a1);
+                        lines.push_back(l);
+                    }
+                }
+            }
+            for (int i = 0; i < 1200; ++i) {       // flickering void points
+                Rng r(static_cast<std::uint32_t>(i) * 7919u + 60u);
+                const V3 off = rand_sphere(r, br * 0.6);
+                const Rgb col = hsl(0.58, 0.3, 0.1 + 0.1 * r.f());
+                e.pt(off, col, float(sz * (0.3 + 0.6 * r.f())),
+                     twinkle(r.f() * 6.283f, t, 4.0, 0.3f));
+            }
+            break;
+        }
+
         case BackgroundTheme::None:
         default:
             break;

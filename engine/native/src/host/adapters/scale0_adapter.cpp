@@ -1830,7 +1830,8 @@ NativeFrame Scale0Adapter::capture() {
     if (background_theme_ != 0) {
         const double t = std::chrono::duration<double>(
                              std::chrono::steady_clock::now() - bg_epoch_).count();
-        build_background(background_theme_, t, frame.lattice_size, frame.background_points);
+        build_background(background_theme_, t, frame.lattice_size,
+                         frame.background_points, frame.background_lines);
     }
     frame.total_manifested = snapshot.particles.total_manifested;
     frame.particles.reserve(snapshot.particles.records.size());
