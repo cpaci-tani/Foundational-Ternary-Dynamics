@@ -1639,6 +1639,15 @@ int run_app(const std::vector<std::string>& args) {
         // reflow-on-status-dirty (single-document coupling), not the DOM's presence.
         if (app_opts.profile_freeze_status) push_status = false;
         if (push_status) { last_status_push = now_status; status_first = false; }
+        // Freeze the SHELL-document instrument dirties while the scenario dropdown
+        // is open. RmlUi re-lays-out the WHOLE shell on any bound-variable change,
+        // and the open picker adds ~130 rows to that layout — so a per-frame
+        // diag/energy dirty reflows all of them (measured 9.75 ms vs 0.088 ms quiet,
+        // fps 54 vs 130). The instrument readouts hold still for the moment the menu
+        // is open (a transient modal the user is focused on); the status bar is a
+        // SEPARATE document, so tick/fps/energy keep ticking. The scale dropdown is
+        // only 2 rows, so it is not frozen.
+        const bool push_shell = push_status && !data.scn_dd_open;
 
         if (push_status) sset_int("tick", data.tick, frame.tick);
         if (snap) set_int("active_scale", data.active_scale, snap->active_scale);
@@ -1708,7 +1717,7 @@ int run_app(const std::vector<std::string>& args) {
         if (const ftd::native::Scale0Snapshot* s0 = snap ? snap->scale0() : nullptr) {
             chart_energy = s0->energy_ledger.E_curr;
             chart_energy_valid = true;
-            if (push_status)
+            if (push_shell)
                 bset_str("total_energy", data.total_energy,
                          fmt("%.1f", s0->energy_ledger.E_curr), data.active_scale == 1);
 
@@ -1761,7 +1770,7 @@ int run_app(const std::vector<std::string>& args) {
             // telemetry channels the scheduler now fills; the "t=" provenance is the
             // per-group sampled tick, so a slow audit group reads its own freshness
             // rather than the fast diagnostics tick.
-            if (data.tel_open && push_status) {
+            if (data.tel_open && push_shell) {
                 const ftd::TelemetrySnapshot& tm = s0->telemetry;
                 const ftd::Diagnostics& dg = tm.diagnostics;
                 const ftd::EnergyAudit& au = tm.audit;
@@ -1790,7 +1799,7 @@ int run_app(const std::vector<std::string>& args) {
                         fmt("%.2f", lg.total_hamiltonian));
             }
             // ── Gravity instrument (real Poisson latency field) ──────────────
-            if (data.grav_open && push_status) {
+            if (data.grav_open && push_shell) {
                 const auto& gm = s0->telemetry.gravity;   // ftd::GravityMetricAgg
                 set_str("grav_l_max", data.grav_l_max, fmt("%.4f", gm.latency_max));
                 set_str("grav_l_mean", data.grav_l_mean, fmt("%.4f", gm.latency_mean));
@@ -1815,7 +1824,7 @@ int run_app(const std::vector<std::string>& args) {
                 set_str("grav_status", data.grav_status, gstat);
             }
             // ── Time instrument (causal clock: dτ/dt = √(1−L²), clock hypothesis) ──
-            if (data.time_open && push_status) {
+            if (data.time_open && push_shell) {
                 const auto& gm = s0->telemetry.gravity;
                 const double dtau = std::sqrt(std::max(0.0, gm.f_min));  // clock rate √f
                 set_str("time_dtau", data.time_dtau, fmt("%.4f", dtau));
@@ -1827,7 +1836,7 @@ int run_app(const std::vector<std::string>& args) {
                         "t=" + std::to_string(s0->telemetry.gravity_meta.tick));
             }
             // ── Thermodynamics instrument (bath + equipartition kinetic temp) ──
-            if (data.thermo_open && push_status) {
+            if (data.thermo_open && push_shell) {
                 const ftd::EnergyAudit& au = s0->telemetry.audit;
                 const ftd::Diagnostics& dg = s0->telemetry.diagnostics;
                 const double L = static_cast<double>(frame.lattice_size > 0
@@ -1846,7 +1855,7 @@ int run_app(const std::vector<std::string>& args) {
                         "t=" + std::to_string(s0->telemetry.audit_meta.tick));
             }
             // ── Spectrum instrument (flux E(k) from the adapter-side 3D FFT) ──
-            if (data.spectrum_open && push_status && s0->spectrum_present) {
+            if (data.spectrum_open && push_shell && s0->spectrum_present) {
                 const auto& sp = s0->spectrum;   // ftd::native::SpectrumResult
                 set_str("spec_peak_k", data.spec_peak_k, fmt("%.2f", sp.peak_k));
                 set_str("spec_power", data.spec_power, fmt("%.3e", sp.total_power));
@@ -1871,7 +1880,7 @@ int run_app(const std::vector<std::string>& args) {
             // Values + stats refresh from the live snapshot + the accumulators
             // (fed unconditionally in the ring-buffer block below). Freshness age
             // is app-stamped (the snapshot carries no wall-clock time).
-            if (data.diag_active && push_status) {
+            if (data.diag_active && push_shell) {
                 const auto& tm = s0->telemetry;
                 DiagInputs din{tm.diagnostics, tm.audit, s0->energy_ledger};
                 if (refresh_instrument_sections(&data, din, app.diag_stats))
@@ -1889,7 +1898,7 @@ int run_app(const std::vector<std::string>& args) {
             }
             // ── Flux-slice panel: push the adapter-computed centre slices into the
             // app-owned SliceGrids (throttled to the status cadence). ──────────
-            if (s0->slices_present && push_status) {
+            if (s0->slices_present && push_shell) {
                 const auto& sl = s0->slices;
                 slice_yz.set(sl[ftd::native::SLICE_YZ].w, sl[ftd::native::SLICE_YZ].h,
                              sl[ftd::native::SLICE_YZ].data.data(),
@@ -1902,7 +1911,7 @@ int run_app(const std::vector<std::string>& args) {
                              sl[ftd::native::SLICE_XY].mn, sl[ftd::native::SLICE_XY].mx);
             }
             // ── Knots panel: aggregate counts + top-knot table (engine tracker) ──
-            if (data.active_panel == 10 && push_status) {
+            if (data.active_panel == 10 && push_shell) {
                 const ftd::native::KnotSnapshot& ks = s0->knots;
                 if (!s0->knots_present || ks.blocked) {
                     set_bool("knot_has_note", data.knot_has_note, true);
@@ -1947,7 +1956,7 @@ int run_app(const std::vector<std::string>& args) {
         } else if (const ftd::native::Scale1Snapshot* s1 = snap ? snap->scale1() : nullptr) {
             chart_energy = s1->total_energy;
             chart_energy_valid = true;
-            if (push_status) {
+            if (push_shell) {
                 // Scale-1 branch (active_scale == 1): total_energy shows in both the
                 // status strip and the Scale-1 readout; s1_ke/s1_pe are shell-only.
                 bset_str("total_energy", data.total_energy, fmt("%.3f", s1->total_energy),
