@@ -218,6 +218,10 @@ struct ShellData {
     // name. View-state only; drives the Environment "Boundary" stepper.
     int boundary_shape = 0;
     Rml::String boundary_name = "Cube";
+    // Environment background theme (BackgroundTheme int, 0 = none) + display name.
+    // View-state only; drives the Environment "Background" stepper.
+    int background_theme = 0;
+    Rml::String background_name = "None";
     // Setup scenario picker (Scale-0): the ~130 native-catalog scenarios grouped
     // into the 5 honest classes, searchable + collapsible. scn_open gates the list
     // (COLLAPSED by default); while collapsed scenario_groups is left EMPTY.

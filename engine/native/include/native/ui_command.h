@@ -132,6 +132,10 @@ struct SetInteriorCull {
 struct SetBoundaryShape {
     std::uint32_t shape = 0;
 };
+// Environment background theme (BackgroundTheme int). Adapter view-state only.
+struct SetBackground {
+    std::uint32_t theme = 0;
+};
 struct RequestContinuity {};
 struct RequestChargeSum {};
 struct SetTelemetryDemand {
@@ -172,7 +176,8 @@ using UiCommand = std::variant<
     SetBoundary, SetDt, SetSorIterations, LoadScenario, SetLatticeSize,
     ApplyReboot, ResetToDefaults, InspectVoxel, InspectForce, InspectNeighbors,
     RequestField, SetOverlay, SetSheetHeight, SetForceStyle, SetInteriorCull,
-    SetBoundaryShape, RequestContinuity, RequestChargeSum, SetTelemetryDemand,
+    SetBoundaryShape, SetBackground, RequestContinuity, RequestChargeSum,
+    SetTelemetryDemand,
     Pause, Step, Run, InjectWavepacket, InjectFluxAdd, CreateEntangledPair,
     ClearField, SeedRandomFlux>;
 

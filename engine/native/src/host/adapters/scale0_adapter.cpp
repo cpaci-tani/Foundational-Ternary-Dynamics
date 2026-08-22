@@ -10,6 +10,7 @@
 #include "native/host/adapters/scale1_adapter.h"
 #include "native/host/adapters/streamlines.h"
 #include "native/boundary_shapes.h"     // build_boundary_lines + shape names
+#include "native/backgrounds.h"         // build_background + theme names
 #include "native/scale0_overlays.h"
 #include "native/spectrum.h"          // compute_flux_spectrum (Spectrum panel)
 
@@ -1364,6 +1365,12 @@ Scale0Adapter::Scale0Adapter()
         const int s = boundary_shape_from_name(e);
         if (s >= 0) boundary_shape_ = s;
     }
+    // Optional env seed for the background theme: FTD_BACKGROUND=<name> (none/
+    // stars/nebula/foam/beyond/storm). The UI overrides live.
+    if (const char* e = std::getenv("FTD_BACKGROUND")) {
+        const int b = background_theme_from_name(e);
+        if (b >= 0) background_theme_ = b;
+    }
 }
 Scale0Adapter::~Scale0Adapter() = default;
 
@@ -1476,7 +1483,8 @@ bool Scale0Adapter::is_host_write(const ScalePayload& payload) const {
         || std::holds_alternative<SetSheetHeight>(*s0)
         || std::holds_alternative<SetForceStyle>(*s0)
         || std::holds_alternative<SetInteriorCull>(*s0)
-        || std::holds_alternative<SetBoundaryShape>(*s0))
+        || std::holds_alternative<SetBoundaryShape>(*s0)
+        || std::holds_alternative<SetBackground>(*s0))
         return true;
     return is_harness_command(to_ui_command(*s0));
 }
@@ -1531,6 +1539,15 @@ ApplyResult Scale0Adapter::apply(const ScalePayload& payload, ParameterJournal& 
     if (const SetBoundaryShape* sbs = std::get_if<SetBoundaryShape>(s0)) {
         const int n = static_cast<int>(sbs->shape);
         set_boundary_shape(n < static_cast<int>(BoundaryShape::Count) ? n : 0);
+        ApplyResult ok;
+        ok.ok = true;
+        return ok;
+    }
+    // SetBackground is adapter view-state only (the environment background cloud
+    // emitted into frame.background_points); no bridge mutation.
+    if (const SetBackground* sbg = std::get_if<SetBackground>(s0)) {
+        const int n = static_cast<int>(sbg->theme);
+        set_background_theme(n < static_cast<int>(BackgroundTheme::Count) ? n : 0);
         ApplyResult ok;
         ok.ok = true;
         return ok;
@@ -1808,6 +1825,13 @@ NativeFrame Scale0Adapter::capture() {
     // generated here and drawn first through the LINE PSO, replacing the legacy
     // in-presenter cube. Sized to the current lattice.
     build_boundary_lines(boundary_shape_, frame.lattice_size, frame.boundary_lines);
+    // Environment background (None by default; stars/nebula/foam/storm otherwise),
+    // animated by wall-clock elapsed. Drawn behind the scene by the presenter.
+    if (background_theme_ != 0) {
+        const double t = std::chrono::duration<double>(
+                             std::chrono::steady_clock::now() - bg_epoch_).count();
+        build_background(background_theme_, t, frame.lattice_size, frame.background_points);
+    }
     frame.total_manifested = snapshot.particles.total_manifested;
     frame.particles.reserve(snapshot.particles.records.size());
 

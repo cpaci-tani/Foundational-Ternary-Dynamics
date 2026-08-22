@@ -35,6 +35,15 @@
             <span class="cfg-nudge" data-event-click="set_boundary_shape(1)">&#43;</span>
         </div>
 
+        <!-- Environment: procedural background (none/stars/nebula/foam/storm)
+             drawn behind the lattice. Cycled by the −/＋ stepper. -->
+        <div class="force-style-row">
+            <span class="fs-label">Background</span>
+            <span class="cfg-nudge" data-event-click="set_background(-1)">&#8722;</span>
+            <span class="cfg-val">{{background_name}}</span>
+            <span class="cfg-nudge" data-event-click="set_background(1)">&#43;</span>
+        </div>
+
         <div class="section-head" data-event-click="toggle_physics()">
             <span class="section-caret">{{ phys_open ? '&#9662;' : '&#9656;' }}</span>
             <span class="section-title">Physics terms</span>
