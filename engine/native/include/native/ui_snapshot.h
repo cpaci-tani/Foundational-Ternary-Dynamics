@@ -1,6 +1,7 @@
 #pragma once
 
 #include "native/field_slice.h"
+#include "native/knot_snapshot.h"
 #include "native/native_frame.h"
 #include "native/spectrum.h"
 #include "native/ui_demand.h"
@@ -90,6 +91,8 @@ struct UiSnapshot {
     bool spectrum_present = false;
     FieldSliceResult slices[SLICE_PLANES];  // yz/xz/xy centre slices (demand.slice)
     bool slices_present = false;
+    KnotSnapshot knots;              // engine knot-tracker telemetry (demand.knots)
+    bool knots_present = false;
     DataNeeds demand;
     std::uint64_t last_applied_seq = 0;
     std::uint64_t seq = 0;

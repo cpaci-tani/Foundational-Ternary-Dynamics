@@ -36,6 +36,7 @@
             <span class="rail-btn" data-class-sel="active_panel == 7" data-event-click="select_panel(7)">CHRT</span>
             <span class="rail-btn" data-class-sel="active_panel == 8" data-event-click="select_panel(8)">FLUX</span>
             <span class="rail-btn" data-class-sel="active_panel == 9" data-event-click="select_panel(9)">DISP</span>
+            <span class="rail-btn" data-class-sel="active_panel == 10" data-event-click="select_panel(10)">KNOT</span>
         </div>
 
         <!-- LEFT panel: the rail-switched instrument host. Resizable via
@@ -295,6 +296,43 @@
                         <div class="tel-row"><span class="tel-lbl">Max &#969; at k=&#960;</span><span class="tel-val">1.1547 (2c)</span></div>
                     </div>
                     <div class="epi-body">Optical-only branch: &#969; &#8594; 0 as k &#8594; 0 with no acoustic (linear) mode &#8212; a discrete-lattice signature. Analytic, not engine-sampled.</div>
+                </div>
+            </div>
+
+            <!-- ═══ PANEL 10 — Knots (engine KnotTracker) ═══ -->
+            <div class="panel-block" data-if="active_scale == 0 && active_panel == 10">
+                <div class="panel-title">Knots</div>
+                <div class="tel-body">
+                    <div class="tel-legend">
+                        <div class="tel-row"><span class="tel-lbl">Alive knots</span><span class="tel-val">{{knot_alive}}</span></div>
+                        <div class="tel-row"><span class="tel-lbl">Net charge &#931; sign</span><span class="tel-val">{{knot_charge}}</span></div>
+                    </div>
+                    <div class="tel-ctitle"><span class="tel-name">Alive count over time</span></div>
+                    <ftd-chart id="chart-knots"/>
+                    <div class="tel-legend">
+                        <div class="tel-row"><span class="tel-lbl">Lifecycle</span><span class="tel-val">{{knot_lifecycle}}</span></div>
+                    </div>
+                    <div class="grav-note" data-if="knot_has_note">{{knot_note}}</div>
+                    <div class="diag-sec">
+                        <div class="diag-sectitle">Top knots (by size)</div>
+                        <div class="diag-head">
+                            <span class="diag-metric">ID</span>
+                            <span class="knot-c">&#177;</span>
+                            <span class="diag-stat">Age</span>
+                            <span class="diag-stat">Size</span>
+                            <span class="diag-stat">Flux</span>
+                            <span class="diag-stat">Org</span>
+                        </div>
+                        <div class="diag-row" data-for="k : knot_rows" data-class-pos="k.sign_cls == 1" data-class-neg="k.sign_cls == 2">
+                            <span class="diag-metric">#{{k.id}}</span>
+                            <span class="knot-c">{{k.sign}}</span>
+                            <span class="diag-stat">{{k.age}}</span>
+                            <span class="diag-stat">{{k.size}}</span>
+                            <span class="diag-stat">{{k.flux}}</span>
+                            <span class="diag-stat">{{k.org}}</span>
+                        </div>
+                    </div>
+                    <div class="epi-body">Engine KnotTracker: connected components of same-sign manifested voxels (s=&#177;1), tracked with persistent ids &#8212; distinct from the web panel's field-line-tangle definition.</div>
                 </div>
             </div>
 

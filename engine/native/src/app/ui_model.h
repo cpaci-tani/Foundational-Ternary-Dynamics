@@ -169,6 +169,18 @@ struct InstrumentSection {
     Rml::Vector<InstrumentRow> rows;
 };
 
+// One alive knot row in the Knots panel table (from the engine KnotTracker).
+// sign_cls tints the sign chip: 1 positive (green), 2 negative (red).
+struct KnotUiRow {
+    Rml::String id;
+    Rml::String sign;
+    Rml::String age;
+    Rml::String size;
+    Rml::String flux;
+    Rml::String org;
+    int sign_cls = 0;
+};
+
 struct ShellData {
     int tick = 0;
     int active_scale = 0;   // drives the toolbar scale-switcher highlight
@@ -289,6 +301,15 @@ struct ShellData {
     Rml::String spec_chi = "—";       // chirality Σχ
     Rml::String spec_efield = "—";    // E-field energy
     Rml::String spec_bfield = "—";    // B-field energy
+    // ── Knots panel (active_panel==10): engine KnotTracker telemetry ──────────
+    // Aggregate counts + the top alive knots (by size). knot_note carries the
+    // "enable/unavailable" status (empty when live). Built only while active.
+    Rml::Vector<KnotUiRow> knot_rows;
+    Rml::String knot_alive = "—";       // alive count
+    Rml::String knot_charge = "—";      // net charge Σ sign
+    Rml::String knot_lifecycle = "—";   // "B born · D died · F split · G merged"
+    Rml::String knot_note = "";         // status note (blocked / waiting); "" = live
+    bool knot_has_note = false;
     // ── Panel rail (the left instrument-panel switcher) ───────────────────────
     // active_panel selects which LEFT panel is shown; every panel block is
     // data-if="active_panel==N" (0 Scenario · 1 Diagnostics · 2 Telemetry ·

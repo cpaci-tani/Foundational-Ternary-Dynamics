@@ -13,6 +13,7 @@
 #include "native/spectrum.h"          // compute_flux_spectrum (Spectrum panel)
 
 #include "ftd/constants.h"       // DELTA_SQUARED (DUAL_DELTA), canonical chain
+#include "ftd/knot_telemetry.h"  // KnotTracker/KnotRow/KnotAggregate (Knots panel)
 #include "ftd/render_bridge.h"
 #include "native/scenario_catalog.h"  // ftd::native::ScenarioMeta (self-contained; not the untracked ftd/scenario_meta.h)
 #include "ftd/scenarios.h"
@@ -1691,6 +1692,56 @@ void Scale0Adapter::build_snapshot(const DataNeeds& needs) {
     } else {
         slice_counter_ = 0;
         for (int p = 0; p < SLICE_PLANES; ++p) slice_cache_[p] = FieldSliceResult{};
+    }
+
+    // ── Knot-tracker telemetry (Knots panel) ─────────────────────────────────
+    // Snapshot the engine's C++ KnotTracker: aggregate lifecycle counts + the top
+    // knots by size. The tracker only records while toggles.knot_tracking is ON, so
+    // the panel transiently enables it — but ONLY when safe: on the GPU backend at
+    // L>64 it throws (W6), so there we leave it off and flag `blocked`. The enable
+    // is undone when the panel is left, so it can never be left on to crash a later
+    // lattice resize.
+    if (needs.knots) {
+        const bool safe = (bridge_->backend().kind() == ftd::Backend::Kind::Cpu)
+                       || (bridge_->lattice().size() <= 64);
+        if (safe && !bridge_->toggles.knot_tracking) {
+            bridge_->toggles.knot_tracking = true;
+            knot_auto_enabled_ = true;
+        }
+        KnotSnapshot ks;
+        ks.blocked = !safe;
+        if (safe) {
+            const ftd::KnotTracker& kt = bridge_->knot_tracker();
+            const ftd::KnotAggregate agg = kt.aggregate();
+            ks.alive = agg.alive;
+            ks.net_charge = agg.net_charge;
+            ks.births = agg.births;
+            ks.deaths = agg.deaths;
+            ks.fissions = agg.fissions;
+            ks.fusions = agg.fusions;
+            std::vector<ftd::KnotRow> alive = kt.alive_knots();
+            std::sort(alive.begin(), alive.end(),
+                      [](const ftd::KnotRow& a, const ftd::KnotRow& b) { return a.size > b.size; });
+            constexpr std::size_t kMaxKnots = 14;
+            const std::size_t n = std::min(alive.size(), kMaxKnots);
+            ks.knots.reserve(n);
+            for (std::size_t i = 0; i < n; ++i) {
+                const ftd::KnotRow& r = alive[i];
+                ks.knots.push_back(KnotRowUi{r.id, r.sign, r.age, r.size,
+                                             static_cast<float>(r.flux_mag),
+                                             static_cast<float>(r.org)});
+            }
+            ks.ok = true;
+        }
+        boundary_snapshot_.knots = std::move(ks);
+        boundary_snapshot_.knots_present = true;
+    } else {
+        if (knot_auto_enabled_) {   // undo our transient enable on leaving the panel
+            bridge_->toggles.knot_tracking = false;
+            knot_auto_enabled_ = false;
+        }
+        boundary_snapshot_.knots = KnotSnapshot{};
+        boundary_snapshot_.knots_present = false;
     }
 }
 
