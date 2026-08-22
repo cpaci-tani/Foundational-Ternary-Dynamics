@@ -35,6 +35,7 @@
             <span class="rail-btn" data-class-sel="active_panel == 6" data-event-click="select_panel(6)">FFT</span>
             <span class="rail-btn" data-class-sel="active_panel == 7" data-event-click="select_panel(7)">CHRT</span>
             <span class="rail-btn" data-class-sel="active_panel == 8" data-event-click="select_panel(8)">FLUX</span>
+            <span class="rail-btn" data-class-sel="active_panel == 9" data-event-click="select_panel(9)">DISP</span>
         </div>
 
         <!-- LEFT panel: the rail-switched instrument host. Resizable via
@@ -267,6 +268,26 @@
                 <div class="slice-tile">
                     <div class="chart-tt">XY plane &#183; z = L/2</div>
                     <ftd-slice id="slice-xy"/>
+                </div>
+            </div>
+
+            <!-- ═══ PANEL 9 — Dispersion ω(k) (analytic) ═══ -->
+            <div class="panel-block" data-if="active_scale == 0 && active_panel == 9">
+                <div class="panel-title">Dispersion &#969;(k)</div>
+                <div class="tel-body">
+                    <div class="tel-ctitle">
+                        <span class="tel-name">Lattice dispersion &#969; = 2c&#183;|sin(k/2)|</span>
+                    </div>
+                    <ftd-chart id="chart-disp"/>
+                    <div class="tel-legend">
+                        <div class="tel-row"><span class="tel-chip s0"></span><span class="tel-lbl">&#969;(k)</span><span class="tel-val">0 &#8230; 2c</span></div>
+                        <div class="tel-row"><span class="tel-chip s2"></span><span class="tel-lbl">group v = d&#969;/dk</span><span class="tel-val">c &#8230; 0</span></div>
+                    </div>
+                    <div class="tel-legend">
+                        <div class="tel-row"><span class="tel-lbl">Wave speed c</span><span class="tel-val">0.5774 (1/&#8730;3)</span></div>
+                        <div class="tel-row"><span class="tel-lbl">Max &#969; at k=&#960;</span><span class="tel-val">1.1547 (2c)</span></div>
+                    </div>
+                    <div class="epi-body">Optical-only branch: &#969; &#8594; 0 as k &#8594; 0 with no acoustic (linear) mode &#8212; a discrete-lattice signature. Analytic, not engine-sampled.</div>
                 </div>
             </div>
 

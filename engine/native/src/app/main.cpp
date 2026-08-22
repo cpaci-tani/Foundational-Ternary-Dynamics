@@ -356,6 +356,7 @@ int run_app(const std::vector<std::string>& args) {
     ChartSeries lag_lag(240), lag_ham(240);
     ChartSeries spec_ek(32);   // Spectrum panel: the log E(k) curve (not a time series)
     ChartSeries chart_flux(240), chart_pos(240), chart_neg(240);  // Charts panel extras
+    ChartSeries disp_omega(64), disp_vg(64);  // Dispersion panel: analytic ω(k) + group v
     ftd::native::ui::ChartRegistry chart_registry;
     {
         using C = Rml::Colourb;
@@ -378,6 +379,19 @@ int run_app(const std::vector<std::string>& args) {
             {&diag_manif, kGreen}, {&chart_pos, kBlue}, {&chart_neg, kRed}};
         chart_registry.binding("chart-c-charge").series = {{&diag_charge, kRed}};
         chart_registry.binding("chart-c-entropy").series = {{&diag_entropy, kAmber}};
+        chart_registry.binding("chart-disp").series = {{&disp_omega, kBlue}, {&disp_vg, kAmber}};
+    }
+    // Dispersion panel: the analytic lattice dispersion ω(k)=2c·|sin(k/2)| and its
+    // group velocity dω/dk = c·cos(k/2) over k ∈ [0, π]. Static (analytic) curves,
+    // filled once — no engine sampling.
+    {
+        const float c = 1.0f / 1.7320508f;  // C_SPEED = 1/√3
+        constexpr int N = 64;
+        for (int i = 0; i < N; ++i) {
+            const float k = 3.14159265f * static_cast<float>(i) / static_cast<float>(N - 1);
+            disp_omega.push(2.0f * c * std::fabs(std::sin(0.5f * k)));
+            disp_vg.push(c * std::cos(0.5f * k));
+        }
     }
     ftd::native::ui::FtdChartInstancer chart_instancer(&chart_registry);
     Rml::Factory::RegisterElementInstancer("ftd-chart", &chart_instancer);
