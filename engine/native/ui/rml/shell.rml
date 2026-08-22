@@ -230,6 +230,13 @@
                         <div class="tel-row"><span class="tel-lbl">Spectral index</span><span class="tel-val">{{spec_slope}}</span></div>
                         <div class="tel-row"><span class="tel-lbl">FFT grid M</span><span class="tel-val">{{spec_grid}}</span></div>
                     </div>
+                    <div class="tel-ctitle"><span class="tel-name">Field topology (audit)</span></div>
+                    <div class="tel-legend">
+                        <div class="tel-row"><span class="tel-lbl">Gauss residual &#931;(divJ&#8722;s)&#178;</span><span class="tel-val">{{spec_gauss}}</span></div>
+                        <div class="tel-row"><span class="tel-lbl">Chirality &#931;&#967;</span><span class="tel-val">{{spec_chi}}</span></div>
+                        <div class="tel-row"><span class="tel-lbl">E-field energy</span><span class="tel-val">{{spec_efield}}</span></div>
+                        <div class="tel-row"><span class="tel-lbl">B-field energy</span><span class="tel-val">{{spec_bfield}}</span></div>
+                    </div>
                 </div>
             </div>
 

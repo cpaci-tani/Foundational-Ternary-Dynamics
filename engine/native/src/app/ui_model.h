@@ -284,6 +284,11 @@ struct ShellData {
     Rml::String spec_slope = "—";     // log-log spectral index
     Rml::String spec_grid = "—";      // FFT grid M = nextPow2(L)
     Rml::String spec_prov = "—";      // freshness note
+    // Spectrum+ field-topology readouts (demand the AUDIT group while open).
+    Rml::String spec_gauss = "—";     // Gauss residual Σ(divJ−s)²
+    Rml::String spec_chi = "—";       // chirality Σχ
+    Rml::String spec_efield = "—";    // E-field energy
+    Rml::String spec_bfield = "—";    // B-field energy
     // ── Panel rail (the left instrument-panel switcher) ───────────────────────
     // active_panel selects which LEFT panel is shown; every panel block is
     // data-if="active_panel==N" (0 Scenario · 1 Diagnostics · 2 Telemetry ·

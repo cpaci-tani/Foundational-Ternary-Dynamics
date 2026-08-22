@@ -685,6 +685,10 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("spec_slope", &data.spec_slope);
     ctor.Bind("spec_grid", &data.spec_grid);
     ctor.Bind("spec_prov", &data.spec_prov);
+    ctor.Bind("spec_gauss", &data.spec_gauss);
+    ctor.Bind("spec_chi", &data.spec_chi);
+    ctor.Bind("spec_efield", &data.spec_efield);
+    ctor.Bind("spec_bfield", &data.spec_bfield);
     // Panel rail + epistemic box + resizable side-panel widths.
     ctor.Bind("active_panel", &data.active_panel);
     ctor.Bind("diag_active", &data.diag_active);
@@ -1793,6 +1797,12 @@ int run_app(const std::vector<std::string>& args) {
                 set_str("spec_prov", data.spec_prov,
                         "M=" + std::to_string(sp.grid) + " · " +
                             std::to_string(static_cast<int>(sp.ek.size())) + " bins");
+                // Spectrum+ field-topology metrics (audit group, demanded while open).
+                const ftd::EnergyAudit& sau = s0->telemetry.audit;
+                set_str("spec_gauss", data.spec_gauss, fmt("%.3e", sau.gauss_violation));
+                set_str("spec_chi", data.spec_chi, fmt("%.3e", sau.chirality_total));
+                set_str("spec_efield", data.spec_efield, fmt("%.3e", sau.E_field_energy));
+                set_str("spec_bfield", data.spec_bfield, fmt("%.3e", sau.B_field_energy));
                 // Fill the E(k) chart with log10 E(k) (log-y in the linear chart);
                 // it is a static curve, so clear + refill rather than scroll.
                 spec_ek.clear();
