@@ -1219,7 +1219,7 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
     // All share the LineVertex layout + LINELIST topology through impl_->pso_lines.
     std::vector<LineVertex> line_verts;
     line_verts.reserve((frame.boundary_lines.size() + frame.field_lines.size()
-                        + frame.field_lines_top.size()) * 2);
+                        + frame.field_lines_top.size() + frame.background_lines.size()) * 2);
     for (const auto& bl : frame.boundary_lines) {
         line_verts.push_back(LineVertex{bl.x0, bl.y0, bl.z0, bl.r0, bl.g0, bl.b0});
         line_verts.push_back(LineVertex{bl.x1, bl.y1, bl.z1, bl.r1, bl.g1, bl.b1});
@@ -1238,6 +1238,14 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
         line_verts.push_back(LineVertex{fl.x1, fl.y1, fl.z1, fl.r1, fl.g1, fl.b1});
     }
     const UINT top_line_verts = static_cast<UINT>(line_verts.size()) - top_line_start;
+    // Environment background lines (Beyond grid) — appended last, DRAWN FIRST
+    // (behind the scene) through the LINE PSO. Range starts after the top lines.
+    const UINT bg_line_start = static_cast<UINT>(line_verts.size());
+    for (const auto& bl : frame.background_lines) {
+        line_verts.push_back(LineVertex{bl.x0, bl.y0, bl.z0, bl.r0, bl.g0, bl.b0});
+        line_verts.push_back(LineVertex{bl.x1, bl.y1, bl.z1, bl.r1, bl.g1, bl.b1});
+    }
+    const UINT bg_line_verts = static_cast<UINT>(line_verts.size()) - bg_line_start;
 
     // Tessellate one Force-Glyph cone (world-space, oriented to its direction)
     // into `dst` as GpuVertex triangles: a 6-segment base ring + apex (side
@@ -1472,6 +1480,20 @@ void D3D12Presenter::render(const NativeFrame& frame, const Camera& camera,
     impl_->list->SetGraphicsRootSignature(impl_->root.Get());
     impl_->list->SetGraphicsRootConstantBufferView(
         0, impl_->cb[impl_->frame]->GetGPUVirtualAddress());
+
+    // Environment background grid (Beyond theme) — drawn FIRST through the LINE
+    // PSO so the fading lattice sits behind the scene (the nearer scene occludes
+    // it via depth). Range starts at bg_line_start in the shared line buffer.
+    if (bg_line_verts != 0 && line_bytes != 0 && impl_->vb[impl_->frame]) {
+        D3D12_VERTEX_BUFFER_VIEW blv{};
+        blv.BufferLocation = impl_->vb[impl_->frame]->GetGPUVirtualAddress();
+        blv.SizeInBytes = static_cast<UINT>(line_bytes);
+        blv.StrideInBytes = sizeof(LineVertex);
+        impl_->list->SetPipelineState(impl_->pso_lines.Get());
+        impl_->list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+        impl_->list->IASetVertexBuffers(0, 1, &blv);
+        impl_->list->DrawInstanced(bg_line_verts, 1, bg_line_start, 0);
+    }
 
     // Environment background — drawn FIRST (behind everything) through the additive,
     // depth-write-off heat PSO so a large procedural point cloud sits behind the

@@ -26,12 +26,13 @@ enum class BackgroundTheme : int {
     Count  = 6,
 };
 
-// Fill `points` (cleared first) with the procedural background for `theme`, sized
-// to a lattice of `lattice_size` voxels and animated by `time_sec` (twinkle for
-// stars/foam, swirl for storm, drift for nebula). None / out-of-range / Beyond
-// yield no points.
+// Fill `points` + `lines` (both cleared first) with the procedural background for
+// `theme`, sized to a lattice of `lattice_size` voxels and animated by `time_sec`
+// (twinkle for stars/foam, swirl for storm, drift for nebula). Most themes emit
+// only points; Beyond emits a fading grid into `lines` plus flickering void
+// points. None / out-of-range yield nothing.
 void build_background(int theme, double time_sec, int lattice_size,
-                      std::vector<NativeParticle>& points);
+                      std::vector<NativeParticle>& points, std::vector<NativeLine>& lines);
 
 const char* background_theme_name(int theme);
 int background_theme_from_name(const char* name);

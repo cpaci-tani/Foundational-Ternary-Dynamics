@@ -86,6 +86,9 @@ struct NativeFrame {
     // storm — see native/backgrounds.h) drawn BEHIND the scene through the additive
     // depth-write-off heat sprite PSO, before the boundary. Empty = plain clear.
     std::vector<NativeParticle> background_points;
+    // Environment background line geometry (the Beyond theme's fading grid). Drawn
+    // FIRST through the LINE PSO (behind the scene). Empty for other themes.
+    std::vector<NativeLine> background_lines;
     // Point cloud drawn through the sprite path: the ambient flux cloud by
     // default, or a scalar field overlay's magnitude-coloured points when one
     // is active.
