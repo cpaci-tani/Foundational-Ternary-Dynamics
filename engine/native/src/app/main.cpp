@@ -647,6 +647,7 @@ int run_app(const std::vector<std::string>& args) {
     ctor.Bind("validation_msg", &data.validation_msg);
     ctor.Bind("overlay_columns", &data.overlay_columns);
     ctor.Bind("force_style", &data.force_style);
+    ctor.Bind("cull_layers", &data.cull_layers);
     ctor.Bind("scn_open", &data.scn_open);
     ctor.Bind("scenario_groups", &data.scenario_groups);
     ctor.Bind("scale_dd_open", &data.scale_dd_open);
@@ -993,6 +994,23 @@ int run_app(const std::vector<std::string>& args) {
         app.data->force_style = style;
         push_scale0(&app, ftd::native::SetForceStyle{static_cast<std::uint32_t>(style)});
         h.DirtyVariable("force_style");
+    });
+    // Interior-occlusion cull ("video-game hack"): step the shell depth by the
+    // delta arg (−1/＋1), clamped to [0, 20]; 0 = show every particle. Pushes the
+    // view-state SetInteriorCull so the adapter culls buried sites from the next
+    // visual gather (live, even while paused).
+    ctor.BindEventCallback("set_cull_layers", [&app](Rml::DataModelHandle h, Rml::Event&,
+                                                     const Rml::VariantList& v) {
+        if (v.empty() || !app.data) return;
+        int delta = 0;
+        v[0].GetInto(delta);
+        int next = app.data->cull_layers + delta;
+        if (next < 0) next = 0;
+        if (next > 20) next = 20;
+        if (next == app.data->cull_layers) return;
+        app.data->cull_layers = next;
+        push_scale0(&app, ftd::native::SetInteriorCull{static_cast<std::uint32_t>(next)});
+        h.DirtyVariable("cull_layers");
     });
     // Rubber-sheet height nudge: the panel's −/＋ affordance for one active sheet.
     // v[0] = overlay name, v[1] = "-" or "+". Steps the slice height by ±0.05 via

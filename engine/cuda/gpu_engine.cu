@@ -155,10 +155,43 @@ struct ParticleFlagToInt {
     }
 };
 
+// Interior-occlusion test for the visual cull (VisualSnapshotRequest::
+// interior_cull_layers). A manifested site is "buried" when, along all 6 axis
+// directions, the next `layers` voxels are all manifested and in-bounds; such a
+// site is fully occluded by the shell around it and is dropped from the gather.
+// `layers <= 0` short-circuits to false, so the cull is a no-op (flags reduce to
+// state != 0, bit-identical to before). Index packing matches Lattice::index /
+// interop_particle_gather_kernel: z=idx%L, y=(idx/L)%L, x=idx/L^2.
+__device__ __forceinline__ bool visual_site_buried_d(
+    const std::int8_t* __restrict__ state, int L, int index, int layers) {
+    if (layers <= 0) return false;
+    const int cz = index % L;
+    const int cy = (index / L) % L;
+    const int cx = index / (L * L);
+    for (int d = 0; d < 6; ++d) {
+        const int axis = d >> 1;                 // 0=x, 1=y, 2=z
+        const int sgn = (d & 1) ? -1 : 1;
+        for (int s = 1; s <= layers; ++s) {
+            int nx = cx, ny = cy, nz = cz;
+            if (axis == 0) nx += sgn * s;
+            else if (axis == 1) ny += sgn * s;
+            else nz += sgn * s;
+            if (nx < 0 || nx >= L || ny < 0 || ny >= L || nz < 0 || nz >= L)
+                return false;  // lattice edge → surface, keep
+            if (state[(nx * L + ny) * L + nz] == 0) return false;  // void → keep
+        }
+    }
+    return true;  // solid along all 6 axes for `layers` steps → buried
+}
+
 __global__ void visual_particle_flags_kernel(const std::int8_t* state,
-                                             std::uint8_t* flags, int N) {
+                                             std::uint8_t* flags, int N,
+                                             int L, int cull_layers) {
     const int index = blockIdx.x * blockDim.x + threadIdx.x;
-    if (index < N) flags[index] = state[index] != 0 ? 1u : 0u;
+    if (index >= N) return;
+    flags[index] = (state[index] != 0
+                    && !visual_site_buried_d(state, L, index, cull_layers))
+                       ? 1u : 0u;
 }
 
 __global__ void visual_particle_header_kernel(
@@ -173,14 +206,17 @@ __global__ void visual_particle_header_kernel(
 }
 
 __global__ void visual_particle_gather_kernel(
-    const std::int8_t* state, const std::int8_t* spin,
+    const std::int8_t* state, const std::uint8_t* flags, const std::int8_t* spin,
     const std::int8_t* color, const double* remainder_x,
     const double* remainder_y, const double* remainder_z,
     const std::int32_t* prefix, int N,
     const VisualParticleStagingHeader* header,
     VisualParticleRecord* records) {
     const int index = blockIdx.x * blockDim.x + threadIdx.x;
-    if (index >= N || state[index] == 0) return;
+    // Gate on `flags` (manifested AND not culled), not raw state: the prefix scan
+    // and header count are over the flagged pool, so a buried voxel must skip here
+    // too or its slot math would be wrong. flags==0 ⊇ state==0.
+    if (index >= N || flags[index] == 0) return;
 
     const std::uint32_t manifested = header->total_manifested;
     const std::uint32_t selected = header->captured_count;
@@ -221,6 +257,7 @@ __global__ void visual_particle_gather_kernel(
 // not the fastest, so it is deliberately decoded last below.
 __global__ void interop_particle_gather_kernel(
     const std::int8_t* __restrict__ state,
+    const std::uint8_t* __restrict__ flags,
     const double* __restrict__ remainder_x,
     const double* __restrict__ remainder_y,
     const double* __restrict__ remainder_z,
@@ -232,11 +269,13 @@ __global__ void interop_particle_gather_kernel(
 
     if (index == 0) {
         // Same bounded cap as the existing header kernel writes for the
-        // shared path -- captured_count there is already min(manifested, cap).
+        // shared path -- captured_count there is already min(visible, cap).
+        // This write precedes the flags gate so it still runs when flags[0]==0.
         interop_header->captured_count = header->captured_count;
     }
 
-    if (index >= N || state[index] == 0) return;
+    // Gate on `flags` (manifested AND not culled) — see visual_particle_gather_kernel.
+    if (index >= N || flags[index] == 0) return;
     const std::uint32_t manifested = header->total_manifested;
     const std::uint32_t selected = header->captured_count;
     if (manifested == 0 || selected == 0) return;
@@ -273,6 +312,8 @@ __global__ void interop_particle_gather_kernel(
 
 void launch_visual_particle_capture(GpuBuffers& bufs,
                                     std::uint32_t requested_cap,
+                                    int lattice_size,
+                                    std::uint16_t cull_layers,
                                     cudaEvent_t ready_event) {
     const std::uint32_t cap = requested_cap == 0
         ? kMaxVisualParticleCapture
@@ -280,7 +321,8 @@ void launch_visual_particle_capture(GpuBuffers& bufs,
     constexpr int threads = 256;
     const int blocks = (bufs.N + threads - 1) / threads;
     visual_particle_flags_kernel<<<blocks, threads>>>(
-        bufs.d_state, bufs.d_pair_candidate_flags, bufs.N);
+        bufs.d_state, bufs.d_pair_candidate_flags, bufs.N,
+        lattice_size, static_cast<int>(cull_layers));
     CUDA_CHECK(cudaGetLastError());
 
     // `d_pair_candidate_flags` and `d_pair_candidate_indices` are persistent
@@ -297,7 +339,7 @@ void launch_visual_particle_capture(GpuBuffers& bufs,
         cap, bufs.d_visual_particle_header);
     CUDA_CHECK(cudaGetLastError());
     visual_particle_gather_kernel<<<blocks, threads>>>(
-        bufs.d_state, bufs.d_spin, bufs.d_color,
+        bufs.d_state, bufs.d_pair_candidate_flags, bufs.d_spin, bufs.d_color,
         bufs.d_remainder_x, bufs.d_remainder_y, bufs.d_remainder_z,
         bufs.d_pair_candidate_indices, bufs.N,
         bufs.d_visual_particle_header, bufs.d_visual_particle_records);
@@ -323,7 +365,8 @@ void launch_visual_particle_capture(GpuBuffers& bufs,
 }
 
 void launch_interop_particle_gather(GpuBuffers& bufs, int lattice_size,
-                                    std::uint32_t requested_cap) {
+                                    std::uint32_t requested_cap,
+                                    std::uint16_t cull_layers) {
     // The write cap must never exceed the ACTUAL element capacity of the
     // imported D3D12 buffer -- kMaxVisualParticleCapture alone bounds the
     // unrelated CPU-decode staging array (d_visual_particle_records), not
@@ -385,7 +428,8 @@ void launch_interop_particle_gather(GpuBuffers& bufs, int lattice_size,
     // side of that must give the two launchers independent scratch or an
     // explicit ordering primitive.
     visual_particle_flags_kernel<<<blocks, threads, 0, bufs.stream>>>(
-        bufs.d_state, bufs.d_pair_candidate_flags, bufs.N);
+        bufs.d_state, bufs.d_pair_candidate_flags, bufs.N,
+        lattice_size, static_cast<int>(cull_layers));
     CUDA_CHECK(cudaGetLastError());
 
     const auto flags = thrust::make_transform_iterator(
@@ -400,7 +444,8 @@ void launch_interop_particle_gather(GpuBuffers& bufs, int lattice_size,
     CUDA_CHECK(cudaGetLastError());
 
     interop_particle_gather_kernel<<<blocks, threads, 0, bufs.stream>>>(
-        bufs.d_state, bufs.d_remainder_x, bufs.d_remainder_y, bufs.d_remainder_z,
+        bufs.d_state, bufs.d_pair_candidate_flags,
+        bufs.d_remainder_x, bufs.d_remainder_y, bufs.d_remainder_z,
         bufs.d_pair_candidate_indices, bufs.N, lattice_size,
         bufs.d_visual_particle_header,
         static_cast<InteropParticleRecord*>(bufs.d_interop_particle_buffer),
@@ -1606,7 +1651,8 @@ bool GpuEngine::begin_visual_snapshot(
     // All work is appended to the default stream after preceding simulation
     // work.  No host synchronization occurs here; source provenance is
     // captured now and decoded only after the visual event completes.
-    launch_visual_particle_capture(bufs_, request.max_particles,
+    launch_visual_particle_capture(bufs_, request.max_particles, size_,
+                                   request.interior_cull_layers,
                                    bufs_.visual_snapshot_ready);
     visual_snapshot_request_ = request;
     visual_snapshot_state_version_ = state_version_;
@@ -1671,9 +1717,10 @@ bool GpuEngine::poll_visual_snapshot(VisualSnapshot& out) {
 // with (and graph-captured alongside) the rest of the tick if a future task
 // folds it into Component A's capture.
 bool GpuEngine::interop_gather_particles(std::uint32_t max_particles,
-                                         std::uint64_t fence_value) {
+                                         std::uint64_t fence_value,
+                                         std::uint16_t cull_layers) {
     if (!bufs_.d_interop_particle_buffer) return false;
-    launch_interop_particle_gather(bufs_, size_, max_particles);
+    launch_interop_particle_gather(bufs_, size_, max_particles, cull_layers);
     // Marks that at least one gather has actually been launched against the
     // CURRENTLY-imported buffer, so interop_gather_ready() below can tell
     // "the event has never been recorded" apart from "the event retired".

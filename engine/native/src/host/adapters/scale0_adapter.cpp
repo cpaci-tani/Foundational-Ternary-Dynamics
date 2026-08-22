@@ -1349,7 +1349,15 @@ UiCommand to_ui_command(const Scale0Cmd& cmd) {
 }  // namespace
 
 Scale0Adapter::Scale0Adapter()
-    : telemetry_debug_(std::getenv("FTD_TELEMETRY_DEBUG") != nullptr) {}
+    : telemetry_debug_(std::getenv("FTD_TELEMETRY_DEBUG") != nullptr) {
+    // Optional env seed for the interior-occlusion cull ("video-game hack"):
+    // FTD_CULL_LAYERS=N hides particles buried deeper than N layers in the clump.
+    // The UI setter overrides it live; clamped to a sane range.
+    if (const char* e = std::getenv("FTD_CULL_LAYERS")) {
+        const long v = std::strtol(e, nullptr, 10);
+        if (v > 0) interior_cull_layers_ = static_cast<std::uint16_t>(v < 64 ? v : 64);
+    }
+}
 Scale0Adapter::~Scale0Adapter() = default;
 
 void Scale0Adapter::apply_boundary() {
@@ -1459,7 +1467,8 @@ bool Scale0Adapter::is_host_write(const ScalePayload& payload) const {
     // SetOverlay/SetSheetHeight), so this only drives the re-capture gate.
     if (std::holds_alternative<SetOverlay>(*s0)
         || std::holds_alternative<SetSheetHeight>(*s0)
-        || std::holds_alternative<SetForceStyle>(*s0))
+        || std::holds_alternative<SetForceStyle>(*s0)
+        || std::holds_alternative<SetInteriorCull>(*s0))
         return true;
     return is_harness_command(to_ui_command(*s0));
 }
@@ -1500,6 +1509,15 @@ ApplyResult Scale0Adapter::apply(const ScalePayload& payload, ParameterJournal& 
     // SetForceStyle is adapter view-state only (which style capture() renders the
     // four Force overlays in); it never mutates the RenderBridge, so update the
     // style and short-circuit.
+    // SetInteriorCull is adapter view-state only (the interior-occlusion cull
+    // depth applied to the visual gather); no bridge mutation, so short-circuit.
+    if (const SetInteriorCull* sc = std::get_if<SetInteriorCull>(s0)) {
+        set_interior_cull_layers(static_cast<std::uint16_t>(
+            sc->layers < 64u ? sc->layers : 64u));
+        ApplyResult ok;
+        ok.ok = true;
+        return ok;
+    }
     if (const SetForceStyle* sf = std::get_if<SetForceStyle>(s0)) {
         const std::uint32_t v = sf->style;
         set_force_style(v < static_cast<std::uint32_t>(ForceStyle::Count)
@@ -1755,6 +1773,7 @@ NativeFrame Scale0Adapter::capture() {
     VisualSnapshotRequest request;
     request.kind = VisualCaptureKind::Particles;
     request.max_particles = kMaxVisualParticleCapture;
+    request.interior_cull_layers = interior_cull_layers_;  // interior-occlusion hack
     if (!bridge_->begin_visual_snapshot(request)) {
         throw std::runtime_error("visual snapshot could not begin");
     }
@@ -1959,7 +1978,8 @@ bool Scale0Adapter::request_interop_gather(std::uint64_t fence_value) {
     if (!interop_enabled_) return false;
     ftd::gpu::GpuEngine* engine = bridge_->gpu_engine_ptr();
     if (!engine) return false;
-    return engine->interop_gather_particles(kMaxVisualParticleCapture, fence_value);
+    return engine->interop_gather_particles(kMaxVisualParticleCapture, fence_value,
+                                            interior_cull_layers_);
 #else
     (void)fence_value;
     return false;

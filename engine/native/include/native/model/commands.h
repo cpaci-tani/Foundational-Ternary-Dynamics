@@ -38,7 +38,8 @@ using Scale0Cmd = std::variant<
     SetBoundary, SetDt, SetSorIterations, ResetToDefaults,
     InjectWavepacket, InjectFluxAdd, CreateEntangledPair, ClearField, SeedRandomFlux,
     InspectVoxel, InspectForce, InspectNeighbors, RequestField, SetOverlay,
-    SetSheetHeight, SetForceStyle, RequestContinuity, RequestChargeSum>;
+    SetSheetHeight, SetForceStyle, SetInteriorCull, RequestContinuity,
+    RequestChargeSum>;
 
 // ── Scale 1 (ParticleEngine) payload ─────────────────────────────────────────
 // Minimal-but-real vocabulary that proves the seam carries a second,

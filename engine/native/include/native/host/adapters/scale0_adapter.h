@@ -136,6 +136,13 @@ private:
     // view-state only, no bridge mutation). Mirrors the web force-style selector.
     ForceStyle                    force_style_ = ForceStyle::Arrows;
 
+    // Interior-occlusion cull depth ("video-game hack"): 0 = show every particle;
+    // N>0 hides manifested sites buried deeper than N layers inside the clump from
+    // the visual gather (both the staging capture request and the interop gather).
+    // Purely visual; physics and the true manifested count are untouched. Seeded
+    // once from the FTD_CULL_LAYERS env var (0 if unset) and settable live.
+    std::uint16_t                 interior_cull_layers_ = 0;
+
     // Per-active-sheet slice height (fraction of the lattice box). Keyed by the
     // numeric OverlayId. Seeded to the registry y_frac when a Sheet overlay is
     // toggled on; erased on toggle-off. SetSheetHeight updates it. build_sheet
@@ -147,6 +154,9 @@ private:
     bool overlay_active(OverlayId id) const;
     // View-state force render-style (no bridge mutation); clamped to the enum.
     void set_force_style(ForceStyle style) { force_style_ = style; }
+    // Interior-occlusion cull depth (0 = off); view-state only, no bridge mutation.
+    void set_interior_cull_layers(std::uint16_t n) { interior_cull_layers_ = n; }
+    std::uint16_t interior_cull_layers() const { return interior_cull_layers_; }
     // View-state height control (clamped to [0, 0.999]); no bridge mutation.
     void  set_sheet_height(OverlayId id, float height);
     // Current slice height for a sheet overlay — the stored value, or the
