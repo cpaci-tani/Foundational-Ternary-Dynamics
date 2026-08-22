@@ -100,6 +100,8 @@ void request_telemetry_demand(AppContext* app) {
             needs.telemetry_groups |= ftd::TELEMETRY_GRAVITY;
         if (app->data->spectrum_open)
             needs.spectrum = true;   // adapter computes the flux E(k) this boundary
+        if (app->data->active_panel == 8)
+            needs.slice = true;      // adapter computes the 3 field slices (Flux-slice)
     }
     push_core(app, ftd::native::SetTelemetryDemand{needs});
 }

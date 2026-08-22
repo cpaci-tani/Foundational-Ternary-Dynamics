@@ -235,7 +235,8 @@ if(WIN32)
     # UI lib so both native_app and the headless smoke test link it.
     add_library(native_ui_rml STATIC
         src/ui/rml_d3d12_renderer.cpp
-        src/ui/ftd_chart_element.cpp)
+        src/ui/ftd_chart_element.cpp
+        src/ui/ftd_slice_element.cpp)
     target_include_directories(native_ui_rml PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
     target_link_libraries(native_ui_rml
         PUBLIC  native_rmlui

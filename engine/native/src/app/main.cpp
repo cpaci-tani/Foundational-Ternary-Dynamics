@@ -78,6 +78,7 @@
 
 #include "ui/rml_d3d12_renderer.h"
 #include "ui/ftd_chart_element.h"
+#include "ui/ftd_slice_element.h"
 
 #include "app/app_options.h"   // AppOptions / parse_app_options / parse_force_style
 #include "app/app_util.h"      // split_csv / to_lower / upper / fmt / fmt3
@@ -380,6 +381,15 @@ int run_app(const std::vector<std::string>& args) {
     }
     ftd::native::ui::FtdChartInstancer chart_instancer(&chart_registry);
     Rml::Factory::RegisterElementInstancer("ftd-chart", &chart_instancer);
+    // <ftd-slice> heatmap tiles (Flux-slice panel): three app-owned grids filled
+    // from the adapter-computed centre slices, keyed by element id.
+    ftd::native::ui::SliceGrid slice_yz, slice_xz, slice_xy;
+    ftd::native::ui::SliceRegistry slice_registry;
+    slice_registry.binding("slice-yz").grid = &slice_yz;
+    slice_registry.binding("slice-xz").grid = &slice_xz;
+    slice_registry.binding("slice-xy").grid = &slice_xy;
+    ftd::native::ui::FtdSliceInstancer slice_instancer(&slice_registry);
+    Rml::Factory::RegisterElementInstancer("ftd-slice", &slice_instancer);
 
     AppContext app;
     app.hwnd = hwnd;
@@ -1788,6 +1798,20 @@ int run_app(const std::vector<std::string>& args) {
                 set_str("diag_fresh_audit", data.diag_fresh_audit,
                         "audit t" + std::to_string(tm.audit_meta.tick) + " · "
                             + std::to_string(age_a) + " ms");
+            }
+            // ── Flux-slice panel: push the adapter-computed centre slices into the
+            // app-owned SliceGrids (throttled to the status cadence). ──────────
+            if (s0->slices_present && push_status) {
+                const auto& sl = s0->slices;
+                slice_yz.set(sl[ftd::native::SLICE_YZ].w, sl[ftd::native::SLICE_YZ].h,
+                             sl[ftd::native::SLICE_YZ].data.data(),
+                             sl[ftd::native::SLICE_YZ].mn, sl[ftd::native::SLICE_YZ].mx);
+                slice_xz.set(sl[ftd::native::SLICE_XZ].w, sl[ftd::native::SLICE_XZ].h,
+                             sl[ftd::native::SLICE_XZ].data.data(),
+                             sl[ftd::native::SLICE_XZ].mn, sl[ftd::native::SLICE_XZ].mx);
+                slice_xy.set(sl[ftd::native::SLICE_XY].w, sl[ftd::native::SLICE_XY].h,
+                             sl[ftd::native::SLICE_XY].data.data(),
+                             sl[ftd::native::SLICE_XY].mn, sl[ftd::native::SLICE_XY].mx);
             }
         } else if (const ftd::native::Scale1Snapshot* s1 = snap ? snap->scale1() : nullptr) {
             chart_energy = s1->total_energy;

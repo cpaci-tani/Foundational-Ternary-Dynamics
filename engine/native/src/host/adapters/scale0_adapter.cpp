@@ -1639,6 +1639,57 @@ void Scale0Adapter::build_snapshot(const DataNeeds& needs) {
         spectrum_counter_ = 0;
         spectrum_cache_ = SpectrumResult{};
     }
+
+    // ── Field slices (Flux-slice panel; throttled + cached) ──────────────────
+    // Three orthogonal centre-plane slices of |J|, sampled from the dense voxel
+    // grid and downsampled to at most 64×64 so the per-boundary copy stays small
+    // at large L. Recompute every kSliceStride boundaries while demanded.
+    if (needs.slice) {
+        constexpr int kSliceStride = 4;
+        if (slice_counter_++ % kSliceStride == 0 || !slice_cache_[0].ok) {
+            const int L = bridge_->lattice().size();
+            const std::vector<ftd::Voxel>& vox = bridge_->voxels();
+            const std::size_t need = static_cast<std::size_t>(L) * L * L;
+            if (L >= 2 && vox.size() >= need) {
+                const ftd::Lattice& lat = bridge_->lattice();
+                const int c = L / 2;
+                constexpr int kMaxW = 64;
+                const int step = std::max(1, (L + kMaxW - 1) / kMaxW);
+                const int W = (L + step - 1) / step;
+                auto jmag = [&](int x, int y, int z) -> float {
+                    return static_cast<float>(
+                        vox[static_cast<std::size_t>(lat.index(x, y, z))].flux.mag());
+                };
+                auto fill = [&](FieldSliceResult& s, int plane) {
+                    s.w = W; s.h = W;
+                    s.data.assign(static_cast<std::size_t>(W) * W, 0.0f);
+                    float mn = 1e30f, mx = -1e30f;
+                    for (int j = 0; j < W; ++j) {
+                        const int b = std::min(j * step, L - 1);
+                        for (int i = 0; i < W; ++i) {
+                            const int a = std::min(i * step, L - 1);
+                            const float v = (plane == SLICE_YZ) ? jmag(c, a, b)
+                                          : (plane == SLICE_XZ) ? jmag(a, c, b)
+                                                                : jmag(a, b, c);
+                            s.data[static_cast<std::size_t>(j) * W + i] = v;
+                            if (v < mn) mn = v;
+                            if (v > mx) mx = v;
+                        }
+                    }
+                    s.mn = mn; s.mx = mx; s.ok = true;
+                };
+                fill(slice_cache_[SLICE_YZ], SLICE_YZ);
+                fill(slice_cache_[SLICE_XZ], SLICE_XZ);
+                fill(slice_cache_[SLICE_XY], SLICE_XY);
+            }
+        }
+        for (int p = 0; p < SLICE_PLANES; ++p)
+            boundary_snapshot_.slices[p] = slice_cache_[p];
+        boundary_snapshot_.slices_present = slice_cache_[0].ok;
+    } else {
+        slice_counter_ = 0;
+        for (int p = 0; p < SLICE_PLANES; ++p) slice_cache_[p] = FieldSliceResult{};
+    }
 }
 
 ScaleSnapshot Scale0Adapter::take_scale_snapshot() {

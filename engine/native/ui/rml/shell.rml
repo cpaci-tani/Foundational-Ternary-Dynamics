@@ -34,6 +34,7 @@
             <span class="rail-btn" data-class-sel="active_panel == 5" data-event-click="select_panel(5)">TH</span>
             <span class="rail-btn" data-class-sel="active_panel == 6" data-event-click="select_panel(6)">FFT</span>
             <span class="rail-btn" data-class-sel="active_panel == 7" data-event-click="select_panel(7)">CHRT</span>
+            <span class="rail-btn" data-class-sel="active_panel == 8" data-event-click="select_panel(8)">FLUX</span>
         </div>
 
         <!-- LEFT panel: the rail-switched instrument host. Resizable via
@@ -243,6 +244,23 @@
                 <div class="chart-tile">
                     <div class="chart-tt">Entropy</div>
                     <ftd-chart id="chart-c-entropy"/>
+                </div>
+            </div>
+
+            <!-- ═══ PANEL 8 — Flux slices (2D |J| heatmaps) ═══ -->
+            <div class="panel-block" data-if="active_scale == 0 && active_panel == 8">
+                <div class="panel-title">Flux slices &#183; |J|</div>
+                <div class="slice-tile">
+                    <div class="chart-tt">YZ plane &#183; x = L/2</div>
+                    <ftd-slice id="slice-yz"/>
+                </div>
+                <div class="slice-tile">
+                    <div class="chart-tt">XZ plane &#183; y = L/2</div>
+                    <ftd-slice id="slice-xz"/>
+                </div>
+                <div class="slice-tile">
+                    <div class="chart-tt">XY plane &#183; z = L/2</div>
+                    <ftd-slice id="slice-xy"/>
                 </div>
             </div>
 

@@ -168,6 +168,16 @@ body {
 .diag-row.pos .diag-value { color: #79d295; }
 .diag-row.neg .diag-value { color: #e8899a; }
 
+/* Flux-slice panel — 2D field heatmap tiles (each an <ftd-slice>). */
+.slice-tile { display: flex; flex-direction: column; margin-bottom: 14dp; }
+ftd-slice {
+    display: block;
+    height: 160dp;
+    background-color: #0c1420;
+    border: 1dp #2b3a50;
+    border-radius: 4dp;
+}
+
 /* Charts panel — per-channel time-series tiles (each an <ftd-chart>). */
 .chart-tile { display: flex; flex-direction: column; margin-bottom: 14dp; }
 .chart-tt {
