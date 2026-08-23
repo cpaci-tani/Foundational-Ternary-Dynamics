@@ -155,13 +155,26 @@ void RenderBridge::copy_visual_field_sample(VisualFieldKind kind, int stride,
     const int n = lattice_.size();
     const bool interior = is_interior_kind(kind);
     out.effective_stride = bounded_visual_stride(n, stride, interior);
-    out.origin = interior ? 1 : 0;
     if (interior && n < 3) return;
 
-    const int start = out.origin;
-    const int end = interior ? n - 1 : n;
-    const int axis_count = (std::max(0, end - start) + out.effective_stride - 1)
-                         / out.effective_stride;
+    // Anchor the sample grid on the geometric center voxel. Every lattice size
+    // is odd, so (n-1)/2 is a true center on each axis. Left-anchoring at 0/1
+    // made INTERIOR kinds (curl, vorticity, helicity, …) sample {1,3,…,n-2} —
+    // an EVEN count that skips the (even) center voxel, so the pattern had no
+    // sample on the axis and read as offset toward high indices, and
+    // resolveSamplePlane rounded the shown mid-plane up to n/2+1. Centering the
+    // grid guarantees the center voxel is sampled and the grid stays symmetric
+    // about it for every size and stride. Non-interior kinds already anchor at
+    // 0 (which lands on the center voxel for these odd sizes), so they are
+    // unchanged.
+    const int estride = out.effective_stride;
+    const int center  = (n - 1) / 2;
+    const int lo      = interior ? 1 : 0;
+    const int hi      = interior ? n - 2 : n - 1;
+    const int start   = center - ((center - lo) / estride) * estride;  // >= lo, includes center
+    out.origin = start;
+    const int end = hi + 1;  // loop runs z < end, i.e. z <= hi
+    const int axis_count = (std::max(0, end - start) + estride - 1) / estride;
     const std::size_t max_points = static_cast<std::size_t>(axis_count)
                                  * axis_count * axis_count;
     out.positions.reserve(max_points * 3u);

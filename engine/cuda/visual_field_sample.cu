@@ -397,13 +397,20 @@ void GpuEngine::copy_visual_field_sample(VisualFieldKind kind, int requested_str
     out.components = components_for_kind(kind);
     const bool interior = interior_kind(kind);
     out.effective_stride = bounded_stride(size_, requested_stride, interior);
-    out.origin = interior ? 1 : 0;
     if (interior && size_ < 3) return;
 
-    const int start = out.origin;
-    const int end = interior ? size_ - 1 : size_;
-    const int axis_count = (std::max(0, end - start) + out.effective_stride - 1)
-                         / out.effective_stride;
+    // Center-anchor the sample grid on the geometric center voxel (size_ is odd
+    // ⇒ (size_-1)/2 is a true center). Mirrors visual_field_sample.cpp: left-
+    // anchoring skipped the center voxel for interior kinds, which read as an
+    // off-center pattern. Non-interior kinds already anchor on the center.
+    const int estride = out.effective_stride;
+    const int center  = (size_ - 1) / 2;
+    const int lo      = interior ? 1 : 0;
+    const int hi      = interior ? size_ - 2 : size_ - 1;
+    const int start   = center - ((center - lo) / estride) * estride;
+    out.origin = start;
+    const int end = hi + 1;
+    const int axis_count = (std::max(0, end - start) + estride - 1) / estride;
     const int candidate_count = axis_count * axis_count * axis_count;
     if (candidate_count == 0) return;
     const VisualDeviceView view = make_visual_view(bufs_);

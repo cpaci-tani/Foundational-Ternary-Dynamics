@@ -173,7 +173,10 @@ int main() {
 
         ftd::VisualFieldSample vorticity;
         rb.copy_visual_field_sample(ftd::VisualFieldKind::Vorticity, 2, vorticity);
-        check("interior sample origin echoed", vorticity.origin == 1);
+        // Interior grid is now center-anchored on the geometric center voxel
+        // (was left-anchored at origin=1). For N=10, stride 2: center=(10-1)/2=4,
+        // start = 4 - ((4-1)/2)*2 = 2, so the grid {2,4,6,8} includes the center.
+        check("interior sample origin center-anchored", vorticity.origin == 2);
         check("interior effective stride echoed", vorticity.effective_stride == 2);
     }
 

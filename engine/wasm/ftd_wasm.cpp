@@ -1183,6 +1183,18 @@ val get_strong_force_field(ftd::RenderBridge& rb, int stride) {
 // reason the JS versions do — curl/gradient across the wrap seam manufactures
 // spurious wall spikes. Positions are voxel centres (x + 0.5f), matching every
 // other sampler + the particle-render convention.
+//
+// The interior loops below CENTER-ANCHOR the sample grid on the geometric
+// center voxel (lattice sizes are always odd). A plain start=1 with stride>1
+// samples the ODD voxels {1,3,…,N-2}, which SKIPS the (even) center voxel —
+// leaving no sample on the axis, so the field reads as shifted toward high
+// indices. Anchoring on the center guarantees a sample at (N-1)/2 and a grid
+// symmetric about it for any stride.
+static inline int centered_interior_start(int N, int stride) {
+    if (stride < 1) stride = 1;
+    const int center = (N - 1) / 2;
+    return center - ((center - 1) / stride) * stride;  // >= 1, lands on the center
+}
 
 // Vorticity |ω|(x) = |∇×J| — flux-field swirl magnitude.
 val get_vorticity_sampled(ftd::RenderBridge& rb, int stride) {
@@ -1195,9 +1207,9 @@ val get_vorticity_sampled(ftd::RenderBridge& rb, int stride) {
     const int maxPts = S * S * S;
     if (static_cast<int>(pos_cache.size()) < maxPts * 3) { pos_cache.resize(maxPts * 3); val_cache.resize(maxPts); }
     int count = 0;
-    for (int z = 1; z < N - 1; z += stride)
-        for (int y = 1; y < N - 1; y += stride)
-            for (int x = 1; x < N - 1; x += stride) {
+    for (int z = centered_interior_start(N, stride); z < N - 1; z += stride)
+        for (int y = centered_interior_start(N, stride); y < N - 1; y += stride)
+            for (int x = centered_interior_start(N, stride); x < N - 1; x += stride) {
                 const auto c = ::ftd::curl_flux_op(fields, lat, lat.index(x, y, z));
                 const double m = c.mag();
                 if (m < 1e-15) continue;
@@ -1223,9 +1235,9 @@ val get_helicity_sampled(ftd::RenderBridge& rb, int stride) {
     const int maxPts = S * S * S;
     if (static_cast<int>(pos_cache.size()) < maxPts * 3) { pos_cache.resize(maxPts * 3); val_cache.resize(maxPts); }
     int count = 0;
-    for (int z = 1; z < N - 1; z += stride)
-        for (int y = 1; y < N - 1; y += stride)
-            for (int x = 1; x < N - 1; x += stride) {
+    for (int z = centered_interior_start(N, stride); z < N - 1; z += stride)
+        for (int y = centered_interior_start(N, stride); y < N - 1; y += stride)
+            for (int x = centered_interior_start(N, stride); x < N - 1; x += stride) {
                 const int idx = lat.index(x, y, z);
                 const auto c = ::ftd::curl_flux_op(fields, lat, idx);
                 const double h = fields.flux_x[idx] * c.x +
@@ -1254,9 +1266,9 @@ val get_curlj_sampled(ftd::RenderBridge& rb, int stride) {
     const int maxPts = S * S * S;
     if (static_cast<int>(pos_cache.size()) < maxPts * 3) { pos_cache.resize(maxPts * 3); vec_cache.resize(maxPts * 3); }
     int count = 0;
-    for (int z = 1; z < N - 1; z += stride)
-        for (int y = 1; y < N - 1; y += stride)
-            for (int x = 1; x < N - 1; x += stride) {
+    for (int z = centered_interior_start(N, stride); z < N - 1; z += stride)
+        for (int y = centered_interior_start(N, stride); y < N - 1; y += stride)
+            for (int x = centered_interior_start(N, stride); x < N - 1; x += stride) {
                 const auto c = ::ftd::curl_flux_op(fields, lat, lat.index(x, y, z));
                 if (c.mag() < 1e-15) continue;
                 const int o3 = count * 3;
@@ -1282,9 +1294,9 @@ val get_coherence_sampled(ftd::RenderBridge& rb, int stride) {
     const int maxPts = S * S * S;
     if (static_cast<int>(pos_cache.size()) < maxPts * 3) { pos_cache.resize(maxPts * 3); val_cache.resize(maxPts); }
     int count = 0;
-    for (int z = 1; z < N - 1; z += stride)
-        for (int y = 1; y < N - 1; y += stride)
-            for (int x = 1; x < N - 1; x += stride) {
+    for (int z = centered_interior_start(N, stride); z < N - 1; z += stride)
+        for (int y = centered_interior_start(N, stride); y < N - 1; y += stride)
+            for (int x = centered_interior_start(N, stride); x < N - 1; x += stride) {
                 const int idx = lat.index(x, y, z);
                 const auto c = ::ftd::curl_flux_op(fields, lat, idx);
                 const double jm = fields.density_at(static_cast<std::size_t>(idx));
@@ -1322,9 +1334,9 @@ val get_fisher_sampled(ftd::RenderBridge& rb, int stride) {
         return x * x + y * y + z * z;
     };
     int count = 0;
-    for (int z = 1; z < N - 1; z += stride)
-        for (int y = 1; y < N - 1; y += stride)
-            for (int x = 1; x < N - 1; x += stride) {
+    for (int z = centered_interior_start(N, stride); z < N - 1; z += stride)
+        for (int y = centered_interior_start(N, stride); y < N - 1; y += stride)
+            for (int x = centered_interior_start(N, stride); x < N - 1; x += stride) {
                 const double rho = rhoAt(x, y, z);
                 if (rho < 1e-8) continue;
                 const double dxr = (rhoAt(x + 1, y, z) - rhoAt(x - 1, y, z)) * 0.5;
@@ -1417,9 +1429,9 @@ val get_kretschmann_sampled(ftd::RenderBridge& rb, int stride) {
     }
     const double INV3 = 1.0 / 3.0, INV6 = 1.0 / 6.0;
     int count = 0;
-    for (int z = 1; z < N - 1; z += stride)
-        for (int y = 1; y < N - 1; y += stride)
-            for (int x = 1; x < N - 1; x += stride) {
+    for (int z = centered_interior_start(N, stride); z < N - 1; z += stride)
+        for (int y = centered_interior_start(N, stride); y < N - 1; y += stride)
+            for (int x = centered_interior_start(N, stride); x < N - 1; x += stride) {
                 const double self = Lgrid[lat.index(x, y, z)];
                 const double faceSum = Lgrid[lat.index(x + 1, y, z)] + Lgrid[lat.index(x - 1, y, z)]
                     + Lgrid[lat.index(x, y + 1, z)] + Lgrid[lat.index(x, y - 1, z)]
