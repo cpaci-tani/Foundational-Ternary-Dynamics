@@ -240,6 +240,20 @@ export class ViewportFieldRenderer {
             this._horizonField = null;
         }
 
+        // State-field point cloud ({points, geo}) — was leaking on scale switch.
+        if (this._stateField) {
+            disposeMesh(this._stateField.points);
+            this._stateField = null;
+        }
+
+        // Scalar point clouds (latency, gaussResidual): { key: {points, geo} }.
+        if (this._scalarClouds) {
+            for (const sc of Object.values(this._scalarClouds)) {
+                if (sc) disposeMesh(sc.points);
+            }
+            this._scalarClouds = null;
+        }
+
         // Quantum scaffolding texture (instance-owned, not the static
         // _softSpriteTexture used by weak-field).
         if (this._softDiscTex) {

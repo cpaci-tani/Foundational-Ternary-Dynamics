@@ -45,7 +45,11 @@ export function updateDecayingMax(state, key, instantMax, decay = 0.985) {
 }
 
 export function ensureTier1Buffers(state, N) {
-    if (!state.t1 || state.t1.size !== N) {
+    // Grow-only: co-active Tier-1 overlays pass DIFFERENT N (E/B/J have
+    // independent per-field magnitude floors), so an exact-match guard thrashed
+    // ~8 reallocations 2–3× per overlay sweep. `size` is a capacity; each caller
+    // writes only its own `count` prefix, so a larger buffer is safe to reuse.
+    if (!state.t1 || state.t1.size < N) {
         state.t1 = {
             size: N,
             psi2:     new Float32Array(N),

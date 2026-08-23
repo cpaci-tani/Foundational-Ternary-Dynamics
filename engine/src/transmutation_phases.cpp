@@ -18,7 +18,14 @@ namespace ftd {
 
 void weak_transmutation_cpu(RenderBridge& rb) {
   auto& voxels = rb.voxels_;
-  const auto& active = rb.ordered_active_indices();
+  // Snapshot the active-index list. set_state() below can, on a 0↔±1 transition,
+  // push_back / swap-remove the very vectors ordered_active_indices() returns —
+  // the exact use-after-realloc pattern fixed in barnes_hut.h. Today this only
+  // ever sign-flips (±1→∓1), which leaves those vectors untouched, so a live
+  // reference is safe *now*; iterating a copy keeps it safe under any future edit
+  // (matches triad_binding_cpu).
+  const auto& active_ref = rb.ordered_active_indices();
+  const std::vector<int> active(active_ref.begin(), active_ref.end());
   const std::uint64_t gseed = static_cast<std::uint64_t>(rb.toggles.langevin_seed);
   for (int i : active) {
     auto& v = voxels[i];

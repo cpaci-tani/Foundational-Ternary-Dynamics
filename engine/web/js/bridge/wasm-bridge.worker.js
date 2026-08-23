@@ -386,10 +386,15 @@ if (!IS_EM_PTHREAD) self.onmessage = (e) => {
         break;
       case 'command': {
         if (!mod || !bridge) break;
+        // A command (inject/step/toggle/clear) can change the field or energy;
+        // drop the cadence-cached energy audit so the postFrame below recomputes
+        // it — otherwise energy panels stay stale after an inject while paused at
+        // large N (matches WasmBridge, which invalidates on every injection).
+        lastAudit = null; auditFrameCounter = 0;
         const { method, args = [] } = msg;
         if (method === 'tickScale0') { bridge.tick(); postFrame(); break; }
-        if (typeof mod[method] === 'function') { try { mod[method](bridge, ...args); } catch (e) { /* ignore */ } }
-        else if (typeof bridge[method] === 'function') { try { bridge[method](...args); } catch (e) { /* ignore */ } }
+        if (typeof mod[method] === 'function') { try { mod[method](bridge, ...args); } catch (e) { console.error('[WasmWorker] command ' + method + ' failed:', e); } }
+        else if (typeof bridge[method] === 'function') { try { bridge[method](...args); } catch (e) { console.error('[WasmWorker] command ' + method + ' failed:', e); } }
         engineTogglesDirty = true;   // a setToggle may have landed
         postFrame();          // reflect the effect immediately (even while paused)
         break;
@@ -400,10 +405,11 @@ if (!IS_EM_PTHREAD) self.onmessage = (e) => {
         // Processes all commands in one synchronous pass, then calls postFrame()
         // once at the end — avoids spamming the main thread with a frame per voxel.
         if (!mod || !bridge) break;
+        lastAudit = null; auditFrameCounter = 0;   // batch can inject/change field — force a fresh audit
         for (const { method, args = [] } of (msg.commands || [])) {
           if (method === 'tickScale0') { bridge.tick(); continue; }
-          if (typeof mod[method] === 'function') { try { mod[method](bridge, ...args); } catch (e) { /* ignore */ } }
-          else if (typeof bridge[method] === 'function') { try { bridge[method](...args); } catch (e) { /* ignore */ } }
+          if (typeof mod[method] === 'function') { try { mod[method](bridge, ...args); } catch (e) { console.error('[WasmWorker] batch ' + method + ' failed:', e); } }
+          else if (typeof bridge[method] === 'function') { try { bridge[method](...args); } catch (e) { console.error('[WasmWorker] batch ' + method + ' failed:', e); } }
         }
         engineTogglesDirty = true;   // a setToggle may have landed
         postFrame();

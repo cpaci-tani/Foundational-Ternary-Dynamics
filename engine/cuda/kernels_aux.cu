@@ -8,7 +8,7 @@
  *   - ew_background_sweep_kernel   (pre-read uniform field drive)
  *   - absorbing_boundary_kernel    (post-movement quadratic sponge)
  *   - flux_boundary_kernel         (post-movement reflective/dispersal shell)
- *   - weak_transmutation_kernel  (field-stress-driven polarity flip)
+ *   - weak_transmutation_decide/apply_kernel (field-stress-driven polarity flip)
  *   - pair_production_kernel     (correlated +/- pair from high flux density)
  * plus their host-side launchers (launch_weak_transmutation,
  * launch_pair_production).
@@ -302,8 +302,23 @@ void launch_gather_probe_flux(const double* d_flux_x, const double* d_flux_y,
 // particle sites (δ = DELTA_APPROX ≈ 0.957), so stress(J_L) stays near
 // stress(J_obs) for the dominant chirality.
 
-__global__ void weak_transmutation_kernel(
-    int8_t* __restrict__ state,
+// Split into two kernels (decide → apply) to eliminate a read-after-write race
+// the single in-place kernel had: in dual mode fL_x served as BOTH the const
+// read alias (neighbor stencil) AND the swap target (fL_x_mut === d_flux_L_x at
+// the launch site), so a neighbor thread's read of fL[i] raced this cell's
+// swap-write of fL[i]. That made dual-substrate weak firing nondeterministic
+// run-to-run. The decide kernel is pure read + writes only a per-site flip flag;
+// the apply kernel writes only cell-local state/flux/wave_vel. Semantics are now
+// snapshot (every site decides against the phase-entry flux) rather than the CPU
+// reference's sequential-in-place order — the two were never bit-parity anyway
+// (GPU thread order ≠ CPU active order), and GPC-17 validates weak transmutation
+// at a 10% energy band, not to the bit.
+
+// Decide phase: read-only over flux; sets flip_flags[i]=1 for a site that will
+// transmute this tick. Assumes flip_flags is pre-zeroed (memset in the launcher),
+// so early-returns leave the flag at 0.
+__global__ void weak_transmutation_decide_kernel(
+    const int8_t* __restrict__ state,
     const double* __restrict__ flux_x,
     const double* __restrict__ flux_y,
     const double* __restrict__ flux_z,
@@ -311,19 +326,7 @@ __global__ void weak_transmutation_kernel(
     const double* __restrict__ fL_x,
     const double* __restrict__ fL_y,
     const double* __restrict__ fL_z,
-    double* __restrict__ fL_x_mut,   // mutable L substrate (for swap)
-    double* __restrict__ fL_y_mut,
-    double* __restrict__ fL_z_mut,
-    double* __restrict__ fR_x_mut,   // mutable R substrate (for swap)
-    double* __restrict__ fR_y_mut,
-    double* __restrict__ fR_z_mut,
-    double* __restrict__ wvL_x_mut,
-    double* __restrict__ wvL_y_mut,
-    double* __restrict__ wvL_z_mut,
-    double* __restrict__ wvR_x_mut,
-    double* __restrict__ wvR_y_mut,
-    double* __restrict__ wvR_z_mut,
-    int* __restrict__ ledger_reaction,
+    uint8_t* __restrict__ flip_flags,
     int L,
     unsigned long long rng_seed,
     const int* __restrict__ tick_ptr
@@ -335,7 +338,7 @@ __global__ void weak_transmutation_kernel(
     if (x >= L || y >= L || z >= L) return;
 
     int i = x * L * L + y * L + z;  // X-major (matches CPU)
-    if (state[i] == 0) return;  // Only manifested particles transmute
+    if (state[i] == 0) return;  // Only manifested particles transmute (flag stays 0)
 
     // Neighbor indices
     int xp = idx3d(x+1,y,z,L), xm = idx3d(x-1,y,z,L);
@@ -371,13 +374,44 @@ __global__ void weak_transmutation_kernel(
     double stress = div_mag + curl_mag + grad_mag;
 
     constexpr double weak_threshold = K_GENESIS;  // = N_c·K_MANIFEST
-    if (stress <= weak_threshold) return;
+    if (stress <= weak_threshold) return;  // flag stays 0
 
     // Probabilistic flip: p = 1 - exp(-(stress - threshold) / K_MANIFEST)
     double p = 1.0 - exp(-(stress - weak_threshold) / K_MANIFEST);
     double r = ::ftd::voxel_uniform(rng_seed, i, tick,
                 static_cast<unsigned long long>(::ftd::VoxelRng::WeakTransmutation));
-    if (r >= p) return;
+    if (r < p) flip_flags[i] = 1;  // FIRE (RNG salt identical to the CPU path)
+}
+
+// Apply phase: each flagged site flips its own polarity and (dual mode) swaps its
+// own L/R flux + wave_vel. Every write is cell-local (index i only) and the only
+// read is flip_flags[i], so there is no cross-thread race — deterministic.
+__global__ void weak_transmutation_apply_kernel(
+    int8_t* __restrict__ state,
+    const uint8_t* __restrict__ flip_flags,
+    bool dual_substrate,
+    double* __restrict__ fL_x_mut,   // mutable L substrate (for swap)
+    double* __restrict__ fL_y_mut,
+    double* __restrict__ fL_z_mut,
+    double* __restrict__ fR_x_mut,   // mutable R substrate (for swap)
+    double* __restrict__ fR_y_mut,
+    double* __restrict__ fR_z_mut,
+    double* __restrict__ wvL_x_mut,
+    double* __restrict__ wvL_y_mut,
+    double* __restrict__ wvL_z_mut,
+    double* __restrict__ wvR_x_mut,
+    double* __restrict__ wvR_y_mut,
+    double* __restrict__ wvR_z_mut,
+    int* __restrict__ ledger_reaction,
+    int L
+) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    int z = blockIdx.z * blockDim.z + threadIdx.z;
+    if (x >= L || y >= L || z >= L) return;
+
+    int i = x * L * L + y * L + z;  // X-major (matches CPU)
+    if (!flip_flags[i]) return;
 
     // Flip polarity
     const int8_t old_state = state[i];
@@ -939,18 +973,39 @@ void launch_weak_transmutation(GpuBuffers& bufs, bool dual_substrate, unsigned l
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
 
-    weak_transmutation_kernel<<<grid, block, 0, stream>>>(
+    // Flip-flag scratch (uint8[N]): reuse the movement arrival-guard buffer.
+    // Movement (gpu_phase_movement, tick step ~7) is sequenced before weak
+    // transmutation (tick step ~9) on this stream and consumes d_movement_moved
+    // entirely within launch_phase_movement, so it is free here — the same
+    // cross-phase scratch reuse the movement/pair compaction already relies on.
+    // Zeroed first; weak_transmutation_decide_kernel only ever writes 1 (fire),
+    // so its early-returns leave 0. Same-stream ordering (incl. under graph
+    // capture) keeps memset → decide → apply correctly sequenced.
+    uint8_t* flip_flags = bufs.d_movement_moved;
+    CUDA_CHECK(cudaMemsetAsync(flip_flags, 0,
+                               static_cast<size_t>(bufs.N) * sizeof(uint8_t), stream));
+
+    weak_transmutation_decide_kernel<<<grid, block, 0, stream>>>(
         bufs.d_state,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         dual_substrate,
         bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
+        flip_flags,
+        L,
+        rng_seed, tick
+    );
+    CUDA_CHECK(cudaGetLastError());
+
+    weak_transmutation_apply_kernel<<<grid, block, 0, stream>>>(
+        bufs.d_state,
+        flip_flags,
+        dual_substrate,
         bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
         bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
         bufs.d_wave_vel_L_x, bufs.d_wave_vel_L_y, bufs.d_wave_vel_L_z,
         bufs.d_wave_vel_R_x, bufs.d_wave_vel_R_y, bufs.d_wave_vel_R_z,
         bufs.d_ledger_reaction,
-        L,
-        rng_seed, tick
+        L
     );
     CUDA_CHECK(cudaGetLastError());
 }

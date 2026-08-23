@@ -159,13 +159,13 @@ struct AtomForceDiag {
 // ============================================================================
 
 struct AtomicProperties {
-    double mass;          // total mass in MeV
-    double radius;        // effective radius (FTD Bohr-scaled)
-    double vdw_epsilon;   // LJ well depth (from α² perturbation theory)
-    double vdw_sigma;     // LJ zero-crossing distance
-    int max_bonds;        // maximum covalent bonds (valence)
-    int valence_e;        // valence electrons (for VSEPR lone-pair counting)
-    double electronegativity; // Pauling chi value
+    double mass = 0.0;          // total mass in MeV
+    double radius = 0.0;        // effective radius (FTD Bohr-scaled)
+    double vdw_epsilon = 0.0;   // LJ well depth (from α² perturbation theory)
+    double vdw_sigma = 0.0;     // LJ zero-crossing distance
+    int max_bonds = 0;          // maximum covalent bonds (valence)
+    int valence_e = 0;          // valence electrons (for VSEPR lone-pair counting)
+    double electronegativity = 0.0; // Pauling chi value
 
     // [IMPOSED] Closure Context properties
     double alpha_pol = 0.0;
@@ -270,8 +270,8 @@ inline AtomicProperties compute_atomic_properties(int Z, int N = 0) {
 
 struct Bond {
     int partner_id = -1;   // ID of bonded partner atom
-    double r_eq;           // equilibrium bond length
-    double k_bond;         // spring constant = ALPHA * K_B / r_eq²
+    double r_eq = 0.0;     // equilibrium bond length
+    double k_bond = 0.0;   // spring constant = ALPHA * K_B / r_eq²
     int order = 1;         // 1=single, 2=double, 3=triple
 };
 

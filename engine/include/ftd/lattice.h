@@ -13,6 +13,8 @@
 
 #include <array>
 #include <cstdint>
+#include <cassert>
+#include <climits>
 
 namespace ftd {
 
@@ -27,7 +29,13 @@ struct Coord {
 class Lattice {
 public:
     explicit Lattice(int size)
-        : size_(size), total_(static_cast<int64_t>(size) * size * size) {}
+        : size_(size), total_(static_cast<int64_t>(size) * size * size) {
+        // index() computes wrap(x)*size_*size_ + ... in int32; at L≳1290,
+        // size_³ overflows INT_MAX → the flat index wraps negative → OOB. This
+        // is well above the enforced L≤256 cap, so it is a latent-ceiling guard.
+        assert(total_ <= static_cast<int64_t>(INT_MAX) &&
+               "Lattice L too large: int32 flat index would overflow (raise index() to int64_t first)");
+    }
 
     int size() const { return size_; }
     int64_t total_sites() const { return total_; }

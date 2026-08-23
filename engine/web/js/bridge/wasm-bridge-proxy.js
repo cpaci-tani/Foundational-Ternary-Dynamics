@@ -413,7 +413,17 @@ export class WasmBridgeProxy {
     // rather than by shrinking the contract.
     getForceFieldSampled(stride = 2) { return samplerOr(this, 'em', stride, EMPTY_VEC()); }
     getGravityFieldSampled(stride = 2) { return samplerOr(this, 'gravity', stride, EMPTY_VEC()); }
-    getFluxVolume() { return (this._ready && this._fluxView) ? this._fluxView : new Float64Array(0); }
+    getFluxVolume() {
+        if (!this._ready || !this._fluxView) return new Float64Array(0);
+        // Same transient-window / heap-growth guard getFluxSlice uses: a view
+        // detached by a worker heap grow (.length === 0) or left over from a
+        // different-lattice RenderBridge fails the length check → return empty,
+        // honoring the "empty until ready" contract instead of handing back a
+        // stale or wrong-sized zero-copy view.
+        const N = this.latticeSize | 0;
+        if (!(N > 0) || this._fluxView.length !== N * N * N) return new Float64Array(0);
+        return this._fluxView;
+    }
     /**
      * Slice the already-resident flux volume (this._fluxView, a zero-copy
      * view over the worker's shared WASM heap — see getFluxVolume) into a

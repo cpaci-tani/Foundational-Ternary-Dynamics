@@ -179,6 +179,28 @@ export function bindScale0UI(ctx, api) {
         });
     }
 
+    // Rubber-sheet slice-height sliders (Topology / Stress-Energy overlays):
+    // each slides its sheet up/down and re-samples the field at that y-plane
+    // (viewport.setTopologySheetHeight → TopologySheetRenderer.setHeight).
+    const SHEET_HEIGHT_SLIDERS = [
+        ['sheet-height-grav-potential', 'gravPotential'],
+        ['sheet-height-em-energy',      'emEnergy'],
+        ['sheet-height-charge-density', 'chargeDensity'],
+        ['sheet-height-vorticity',      'vorticity'],
+        ['sheet-height-e-pressure',     'ePressure'],
+        ['sheet-height-b-pressure',     'bPressure'],
+    ];
+    for (const [sliderId, key] of SHEET_HEIGHT_SLIDERS) {
+        const slider = getEl(sliderId);
+        if (!slider) continue;
+        const valEl = getEl(sliderId + '-val');
+        slider.addEventListener('input', () => {
+            const v = parseFloat(slider.value);
+            if (valEl) valEl.textContent = v.toFixed(2);
+            api.viewportAdapter(ctx).setTopologySheetHeight(key, v);
+        });
+    }
+
     // Per-column × clear buttons — turn off every toggle in one column.
     for (const clearBtn of document.querySelectorAll('.s0-overlay-col-clear')) {
         const colName = clearBtn.getAttribute('data-clear-col');

@@ -169,6 +169,7 @@ export function bindUI(ctx) {
     // window; one markFieldDirty() forces the overlay to repaint as soon as real
     // sampler data arrives, without bypassing the per-frame throttle afterwards.
     ctx.onBridgePostFrame = (hadNewSamplers, forceUpload = false) => {
+        if (ctx.engineMode && ctx.engineMode !== 'lattice') return;   // late native frame after a scale switch
         // Native FTS1 samples arrive independently of the lattice/particle
         // frame. The sweep that requested them has already consumed EMPTY (or
         // the previous epoch), so every new sampler delivery must schedule a
@@ -194,6 +195,7 @@ export function bindUI(ctx) {
     // overlay scheduling, telemetry, and lattice uploads describe completed
     // physics rather than attempted rAF calls.
     ctx.onBridgeSimulationComplete = ({ ticks = 1 } = {}) => {
+        if (ctx.engineMode && ctx.engineMode !== 'lattice') return;   // late native ack after a scale switch
         const completed = Math.max(1, Math.trunc(Number(ticks) || 1));
         state.fieldDataVersion = (state.fieldDataVersion || 0) + completed;
         setLatticeNeedsUpload();
@@ -205,6 +207,7 @@ export function bindUI(ctx) {
     // resubmitting the same rejected CUDA tick every animation frame. A true
     // no-response watchdog additionally retires/reconnects the socket below.
     ctx.onBridgeSimulationError = () => {
+        if (ctx.engineMode && ctx.engineMode !== 'lattice') return;   // a Scale-0 sim error must not pause another active scale
         ctx.pauseSimulation?.();
     };
 
@@ -213,6 +216,7 @@ export function bindUI(ctx) {
     // rollback snapshot) so dependency/conflict rejection cannot leave the
     // checkbox card or boundary selector claiming physics the engine refused.
     ctx.onBridgeProfileUpdate = ({ fluxBoundaryMode } = {}) => {
+        if (ctx.engineMode && ctx.engineMode !== 'lattice') return;   // late native profile ack after a scale switch
         const scenarioId = state.currentScenarioId || 'flux-pulse';
         // Native scenario/profile acknowledgements carry the authoritative
         // constant values. Refresh the disabled K_B/G_N/damping controls from
@@ -311,6 +315,10 @@ class Scale0LifecycleController extends BaseLifecycleController {
     destroy(ctx) {
         super.destroy(ctx);
         try { exitScale0(); } catch (e) { /* ignore */ }
+        // exitScale0/clearFluxMock null only the state.* copies; the ctx.* copies
+        // otherwise keep a disposed WasmBridgeProxy (with useFluxMock=true) — a
+        // footgun for any non-lattice reader of ctx.useFluxMock && ctx.fluxMock.
+        if (ctx) { ctx.fluxMock = null; ctx.useFluxMock = false; }
         // Hide the prime-tick toggle when leaving Scale 0 (the play bar persists).
         try { ensurePrimeTickButton(false); } catch (e) { /* ignore */ }
         // Dispose the Scale-0 overlay panels on engineMode switch

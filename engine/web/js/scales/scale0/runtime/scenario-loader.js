@@ -869,6 +869,11 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
     const scenarioId = state.currentScenarioId || readInputValue('scenario-select', 'flux-pulse');
     const bridge = ctx.bridge;
     const previousSize = bridge?.latticeSize || 33;
+    // Snapshot the load generation + engine mode. The native/worker resize below
+    // awaits a round-trip (seconds on ws_server); if the user changes scenario or
+    // switches scale meanwhile, the post-await load MUST NOT clobber it.
+    const resizeGen = ctx._loadGeneration || 0;
+    const wasEngineMode = ctx.engineMode;
     const nativeCombinedResize = !!bridge?.isNativeGPU
         && typeof bridge.resizeScenario === 'function';
     // The resize guard estimates the WASM heap cost: ≈1300 bytes/voxel
@@ -919,6 +924,13 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
             return;
         }
     }
+    // If an async resize round-trip above was overtaken by a scenario change or
+    // a scale switch (see snapshot at entry), bail — otherwise we reload the
+    // stale scenario or run a Scale-0 load while another scale is active.
+    if (ctx.engineMode !== wasEngineMode || (ctx._loadGeneration || 0) !== resizeGen) {
+        return;
+    }
+
     // Point the app-level bridge at the new N so the canonical load path
     // constructs the worker / reset() at this size. Do NOT fork a second
     // install path here — the old resize body skipped onInitFailure,

@@ -640,3 +640,40 @@ html[data-panel-mount="right"] .viewport-overlay-panel,
 html[data-panel-mount="right"] #viewport-overlay:not(.s0-overlay-panel) {
     justify-content: flex-start;
 }
+
+/* ── Rubber-sheet slice-height sliders ───────────────────────────────────── */
+/* Compact row under each rubber-sheet toggle (Topology / Stress-Energy): a "y"
+   cap, a range slider that slides the sheet's slice plane up/down through the
+   lattice, and the current height fraction. Reuses .pe-slider theming. */
+.s0-sheet-height-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-xs, 4px);
+    margin-top: var(--sp-xs, 4px);
+    padding: 0 2px;
+}
+.s0-sheet-height-cap {
+    flex: 0 0 auto;
+    font-size: var(--fs-xs, 11px);
+    color: var(--text-secondary);
+    opacity: 0.85;
+    cursor: help;
+}
+.s0-sheet-height-row .s0-sheet-height-slider {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+}
+.s0-sheet-height-val {
+    flex: 0 0 auto;
+    min-width: 2.4em;
+    text-align: right;
+    font-size: var(--fs-xs, 11px);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-secondary);
+}
+/* When the parent sheet toggle is inapplicable, dim its height row too. */
+.s0-overlay-group:has(.view-toggle.is-inapplicable) .s0-sheet-height-row {
+    opacity: 0.4;
+    pointer-events: none;
+}

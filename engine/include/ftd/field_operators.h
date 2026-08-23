@@ -37,6 +37,13 @@ inline Vec3 laplacian_field(const std::vector<Voxel>& voxels, const Lattice& lat
 
 inline Vec3 laplacian_flux_op(const std::vector<Voxel>& voxels, const Lattice& lattice, int idx) {
   Vec3 lap = laplacian_field<&Voxel::flux>(voxels, lattice, idx);
+  // NOTE: this and the isnan asserts below are Debug-only INVARIANT checks —
+  // they compile out under NDEBUG (Release/WASM) and are deliberately NOT
+  // promoted to runtime guards, which would add an isnan branch to the tick's
+  // hottest per-voxel loops for a case that cannot occur in a stable (CFL-bound)
+  // run. At Release, a divergence from an unstable-but-valid toggle combo
+  // surfaces as a non-finite energy in the getEnergyAudit readout (displayed),
+  // not silently — that panel is the Release-time instability signal.
   assert(!std::isnan(lap.x) && !std::isnan(lap.y) && !std::isnan(lap.z));
   return lap;
 }

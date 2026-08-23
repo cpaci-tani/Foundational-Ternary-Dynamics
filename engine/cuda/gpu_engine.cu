@@ -825,6 +825,21 @@ void GpuEngine::spectro_set_probes(const std::vector<int>& probe_indices) {
     spectro_free();
     n_probe_ = static_cast<int>(probe_indices.size());
     if (n_probe_ <= 0) return;
+    // Validate probe indices host-side before upload: gather_probe_flux_kernel
+    // dereferences flux_x[probe_idx[p]] with no device-side bounds check, so an
+    // out-of-range index would be an OOB device read (silent garbage or fault).
+    // Indices are built valid by the campaign's x,y,z scan, so this only fires on
+    // a caller bug — reject the whole set rather than corrupt the fixed-order
+    // correlation with a silent partial gather.
+    for (int idx : probe_indices) {
+        if (idx < 0 || idx >= N_) {
+            std::fprintf(stderr,
+                "[GpuEngine::spectro_set_probes] probe index %d out of range [0,%d) — rejecting probe set\n",
+                idx, N_);
+            n_probe_ = 0;
+            return;
+        }
+    }
     // Ensure the device flux is current (the campaign injects via the host shadow,
     // then ticks once before snapshotting J(0); upload_from_host already ran on the
     // first tick — but if J(0) is captured before any tick, push host state here).
@@ -1098,6 +1113,7 @@ std::uint64_t GpuEngine::graph_key() const {
     mix_bool(toggles.field_energy_gravity);
     mix_bool(toggles.forces);
     mix_bool(toggles.gravity);
+    mix_bool(toggles.geometric_gravity);
     mix_bool(toggles.lorentz_force);
     mix_bool(toggles.poisson_coulomb);
     mix_bool(toggles.emergent_forces);

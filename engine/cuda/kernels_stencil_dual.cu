@@ -190,7 +190,18 @@ __global__ void phase_read_dual_kernel(
 }
 
 // ---------- Strong Field (Stella Octangula) Kernel ----------
-// Propagates strong flux along the 8 vertex neighbors
+// Propagates strong flux along the 8 vertex neighbors.
+//
+// KNOWN IN-PLACE STENCIL RACE (deferred, not a correctness fix): the Laplacian
+// reads fs_[v1..v8] + fs_[i] (below) while the leapfrog writes fs_[i] in place,
+// so a vertex-neighbor thread's read of fs_[i] races this cell's write —
+// Gauss-Seidel-vs-Jacobi nondeterminism run-to-run. This path is GPU-only (no
+// CPU reference to diverge from) and toggle-gated OFF in the shipping/golden
+// profile; GPC-22 already validates it only to ~1e-5 relative, not to the bit,
+// and the shipping golden avoids it entirely. The correct fix is Jacobi
+// double-buffering (read fs_in, write fs_out, swap) — deferred because it needs
+// a second fs triple (~400 MB at L=256, so an owner memory decision) and WSL2
+// GPU behavioral validation. Documented here so it is not mistaken for clean.
 __global__ void strong_field_stencil_kernel(
     double* __restrict__ fs_x, double* __restrict__ fs_y, double* __restrict__ fs_z,
     double* __restrict__ wvs_x, double* __restrict__ wvs_y, double* __restrict__ wvs_z,
@@ -256,7 +267,10 @@ __global__ void strong_field_stencil_kernel(
 }
 
 // ---------- Weak Field (Cuboctahedron) Kernel ----------
-// Propagates weak flux along the 12 edge neighbors
+// Propagates weak flux along the 12 edge neighbors.
+// Shares the same known in-place stencil race documented on
+// strong_field_stencil_kernel above (edge neighbors here instead of vertex);
+// same deferred Jacobi double-buffer fix, same GPU-only / non-golden framing.
 __global__ void weak_field_stencil_kernel(
     double* __restrict__ fw_x, double* __restrict__ fw_y, double* __restrict__ fw_z,
     double* __restrict__ wvw_x, double* __restrict__ wvw_y, double* __restrict__ wvw_z,

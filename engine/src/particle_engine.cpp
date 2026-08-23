@@ -512,11 +512,18 @@ void ParticleEngine::check_annihilation() {
         }
     }
 
-    // Remove annihilated particles (reverse order to preserve indices)
+    // Remove annihilated particles (reverse order to preserve indices).
+    // force_diag_ is a parallel array (one entry per particle); erase it in
+    // lockstep so it doesn't outlive particles_ and describe the wrong particle
+    // (or read OOB in a consumer that zips the two) until the next
+    // compute_all_forces() rebuild. Guarded in case it hasn't been sized yet.
     for (int i = static_cast<int>(particles_.size()) - 1; i >= 0; --i) {
         if (remove[i]) {
             particles_.erase(particles_.begin() + i);
             forces_.erase(forces_.begin() + i);
+            if (i < static_cast<int>(force_diag_.size())) {
+                force_diag_.erase(force_diag_.begin() + i);
+            }
         }
     }
 }

@@ -141,9 +141,22 @@ public:
             std::array<uint32_t, 8> new_children = internal_pool_[old_node];
             new_children[indices[d]] = child_val;
 
-            // Simple deduplication strategy (in full production, use hash map pool)
-            uint32_t new_internal_idx = internal_pool_.size();
-            internal_pool_.push_back(new_children);
+            // Deduplicate identical internal nodes through internal_cache_ (the
+            // structural-sharing pool this map was declared for but never wired):
+            // reuse an existing index instead of appending a duplicate. Previously
+            // set_voxel push_back'd unconditionally, so the pool grew without
+            // bound across writes (a uint32 index could eventually overflow). The
+            // copy-on-write above (new_children is a by-value copy) means a shared
+            // node is never mutated in place, so sharing is safe.
+            uint32_t new_internal_idx;
+            auto cached = internal_cache_.find(new_children);
+            if (cached != internal_cache_.end()) {
+                new_internal_idx = cached->second;
+            } else {
+                new_internal_idx = static_cast<uint32_t>(internal_pool_.size());
+                internal_pool_.push_back(new_children);
+                internal_cache_.emplace(new_children, new_internal_idx);
+            }
             child_val = new_internal_idx;
         }
         

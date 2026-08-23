@@ -173,22 +173,54 @@ export function getScale0OverlayTemplate() {
         <button class="s0-overlay-col-clear u-no-baseline" data-clear-col="topology" type="button"
             title="Turn off every topology overlay (rubber sheets have non-trivial perf cost — useful for a quick reset)">&#10005;</button>
       </div>
+      <div class="s0-overlay-group">
       <button class="view-toggle field-toggle" id="toggle-grav-potential"
-          title="[PROXY] Gravitational potential stand-in — inverted flux density −|J|², box-blurred at render time. No bridge solves a real Φ. A true Φ would obey ∇²Φ=4πGρ and carry a long 1/r tail; this one is purely local, so wells do not add up at a distance. Height is the y-column average at each (x,z), not Φ at a point.">
+          title="[PROXY] Gravitational potential stand-in — inverted flux density −|J|², box-blurred at render time. No bridge solves a real Φ. A true Φ would obey ∇²Φ=4πGρ and carry a long 1/r tail; this one is purely local, so wells do not add up at a distance. The y slider slides the sheet up/down and samples Φ in a thin slab at that height (was a y-column average).">
         <span class="field-swatch field-swatch-grav-potential"></span>&Phi; potential
       </button>
+      <div class="s0-sheet-height-row" data-sheet-height="gravPotential">
+        <span class="s0-sheet-height-cap" title="Slice height — slide to read the field at different levels (y)">y</span>
+        <input type="range" class="pe-slider s0-sheet-height-slider" id="sheet-height-grav-potential"
+            min="0" max="0.999" step="0.01" value="0.50" aria-label="Φ potential slice height" />
+        <span class="pe-ctrl-value s0-sheet-height-val" id="sheet-height-grav-potential-val">0.50</span>
+      </div>
+      </div>
+      <div class="s0-overlay-group">
       <button class="view-toggle field-toggle" id="toggle-em-energy"
-          title="EM energy density u(x) = ½|E|² + (c²/2)|B|² (C_SPEED weights the magnetic channel — see diagnostics_compute.cpp). E and B are read at their true shared positions (the engine compacts each field's sparse samples independently, so raw loop index does not pair them); peaks where EM fields concentrate, flat in vacuum. Height is peak-hold normalized (see decaying-max).">
+          title="EM energy density u(x) = ½|E|² + (c²/2)|B|² (C_SPEED weights the magnetic channel — see diagnostics_compute.cpp). E and B are read at their true shared positions (the engine compacts each field's sparse samples independently, so raw loop index does not pair them); peaks where EM fields concentrate, flat in vacuum. The y slider slides the sheet up/down and samples u in a thin slab at that height. Deform height is peak-hold normalized (see decaying-max).">
         <span class="field-swatch field-swatch-em-energy"></span>EM energy u
       </button>
+      <div class="s0-sheet-height-row" data-sheet-height="emEnergy">
+        <span class="s0-sheet-height-cap" title="Slice height — slide to read the field at different levels (y)">y</span>
+        <input type="range" class="pe-slider s0-sheet-height-slider" id="sheet-height-em-energy"
+            min="0" max="0.999" step="0.01" value="0.56" aria-label="EM energy slice height" />
+        <span class="pe-ctrl-value s0-sheet-height-val" id="sheet-height-em-energy-val">0.56</span>
+      </div>
+      </div>
+      <div class="s0-overlay-group">
       <button class="view-toggle field-toggle" id="toggle-charge-density"
-          title="[SELECTION] Charge density ρ(x) = ∇·J. The engine's Gauss projection targets ∇·J≈s each tick, so this reads as sources (red hills) and sinks (blue wells) BY CONSTRUCTION — a selected polarity-to-charge map, not a derivation of charge conservation (see LEDGER FTD-0421/FTD-0426). Same ∇·J buffer as the Volume column's ∇·J overlay, rendered here as a signed rubber sheet instead of points.">
+          title="[SELECTION] Charge density ρ(x) = ∇·J. The engine's Gauss projection targets ∇·J≈s each tick, so this reads as sources (red hills) and sinks (blue wells) BY CONSTRUCTION — a selected polarity-to-charge map, not a derivation of charge conservation (see LEDGER FTD-0421/FTD-0426). Same ∇·J buffer as the Volume column's ∇·J overlay, rendered here as a signed rubber sheet. The y slider slides the sheet up/down and samples ρ in a thin slab at that height.">
         <span class="field-swatch field-swatch-charge"></span>Charge &rho;
       </button>
+      <div class="s0-sheet-height-row" data-sheet-height="chargeDensity">
+        <span class="s0-sheet-height-cap" title="Slice height — slide to read the field at different levels (y)">y</span>
+        <input type="range" class="pe-slider s0-sheet-height-slider" id="sheet-height-charge-density"
+            min="0" max="0.999" step="0.01" value="0.62" aria-label="Charge density slice height" />
+        <span class="pe-ctrl-value s0-sheet-height-val" id="sheet-height-charge-density-val">0.62</span>
+      </div>
+      </div>
+      <div class="s0-overlay-group">
       <button class="view-toggle field-toggle" id="toggle-vorticity"
-          title="Vorticity |ω|(x)=|∇×J| — the swirl magnitude of the flux field. Rises on vortex rings and any circulating flux structure; a purely radial or uniform flow has zero curl and produces no sheet at all. Height is peak-hold normalized (see decaying-max), so read relative structure, not an absolute scale.">
+          title="Vorticity |ω|(x)=|∇×J| — the swirl magnitude of the flux field. Rises on vortex rings and any circulating flux structure; a purely radial or uniform flow has zero curl and produces no sheet at all. The y slider slides the sheet up/down and samples |ω| in a thin slab at that height. Deform height is peak-hold normalized (see decaying-max), so read relative structure, not an absolute scale.">
         <span class="field-swatch field-swatch-vorticity"></span>Vorticity &omega;
       </button>
+      <div class="s0-sheet-height-row" data-sheet-height="vorticity">
+        <span class="s0-sheet-height-cap" title="Slice height — slide to read the field at different levels (y)">y</span>
+        <input type="range" class="pe-slider s0-sheet-height-slider" id="sheet-height-vorticity"
+            min="0" max="0.999" step="0.01" value="0.68" aria-label="Vorticity slice height" />
+        <span class="pe-ctrl-value s0-sheet-height-val" id="sheet-height-vorticity-val">0.68</span>
+      </div>
+      </div>
       <button class="view-toggle field-toggle" id="toggle-latency"
           title="[PROXY] Normalized flux density L(x)=√(|J|²/|J|²_max); |J|²_max is the engine's own current-tick global peak, so L arrives already saturated toward its local max whenever any flux exists anywhere. This overlay peak-holds that ratio's own maximum with slow decay instead of an instantaneous per-frame max, so a scene that goes fully quiet fades instead of snapping back to a saturated core — though a field that stays peaked while decaying in absolute terms can still under-report the decline, since the ratio itself is re-normalized upstream every tick. This is a stand-in, NOT the engine's real latency field — that comes from a default-off Poisson solve and actually sets the proper-time budget.">
         <span class="field-swatch field-swatch-latency"></span>Latency L
@@ -206,14 +238,30 @@ export function getScale0OverlayTemplate() {
         <button class="s0-overlay-col-clear u-no-baseline" data-clear-col="stress-energy" type="button"
             title="Turn off every stress-energy overlay">&#10005;</button>
       </div>
+      <div class="s0-overlay-group">
       <button class="view-toggle field-toggle" id="toggle-e-pressure"
-          title="Electric-channel energy density P_E(x) = ½|E|², E=−∂J/∂t. This is the substrate's wave-KINETIC channel — it peaks on fast-changing flux and falls to ~0 in a settled configuration, even where charge sits. The Poisson-solved electrostatic potential φ_C is a separate field this overlay does not read.">
+          title="Electric-channel energy density P_E(x) = ½|E|², E=−∂J/∂t. This is the substrate's wave-KINETIC channel — it peaks on fast-changing flux and falls to ~0 in a settled configuration, even where charge sits. The Poisson-solved electrostatic potential φ_C is a separate field this overlay does not read. The y slider slides the sheet up/down and samples P_E in a thin slab at that height.">
         <span class="field-swatch field-swatch-e-pressure"></span>P<sub>E</sub> (electric)
       </button>
+      <div class="s0-sheet-height-row" data-sheet-height="ePressure">
+        <span class="s0-sheet-height-cap" title="Slice height — slide to read the field at different levels (y)">y</span>
+        <input type="range" class="pe-slider s0-sheet-height-slider" id="sheet-height-e-pressure"
+            min="0" max="0.999" step="0.01" value="0.44" aria-label="Electric pressure slice height" />
+        <span class="pe-ctrl-value s0-sheet-height-val" id="sheet-height-e-pressure-val">0.44</span>
+      </div>
+      </div>
+      <div class="s0-overlay-group">
       <button class="view-toggle field-toggle" id="toggle-b-pressure"
-          title="Magnetic-channel energy density P_B(x) = (c²/2)|B|², c=C_SPEED, B=∇×J — this c² factor matches the engine's own Hamiltonian convention (without it P_B was 3x too large and not magnitude-comparable with P_E). Rises where the flux field has spatial curl (shear or twist).">
+          title="Magnetic-channel energy density P_B(x) = (c²/2)|B|², c=C_SPEED, B=∇×J — this c² factor matches the engine's own Hamiltonian convention (without it P_B was 3x too large and not magnitude-comparable with P_E). Rises where the flux field has spatial curl (shear or twist). The y slider slides the sheet up/down and samples P_B in a thin slab at that height.">
         <span class="field-swatch field-swatch-b-pressure"></span>P<sub>B</sub> (magnetic)
       </button>
+      <div class="s0-sheet-height-row" data-sheet-height="bPressure">
+        <span class="s0-sheet-height-cap" title="Slice height — slide to read the field at different levels (y)">y</span>
+        <input type="range" class="pe-slider s0-sheet-height-slider" id="sheet-height-b-pressure"
+            min="0" max="0.999" step="0.01" value="0.38" aria-label="Magnetic pressure slice height" />
+        <span class="pe-ctrl-value s0-sheet-height-val" id="sheet-height-b-pressure-val">0.38</span>
+      </div>
+      </div>
     </div>
 
     <div class="s0-overlay-col" data-col="phenomena">

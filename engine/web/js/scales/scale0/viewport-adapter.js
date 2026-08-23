@@ -53,6 +53,10 @@ export function createScale0ViewportAdapter(viewport) {
         setBoundaryShape(shape) {
             viewport?.setBoundaryShape?.(shape);
         },
+        // Slide a rubber-sheet overlay's slice plane (frac 0..0.999 of the box).
+        setTopologySheetHeight(key, frac) {
+            viewport?.setTopologySheetHeight?.(key, frac);
+        },
         setOverlayVisible(name, on) {
             if (!viewport) return;
             if (NON_FORCE_OVERLAYS[name] && typeof viewport[NON_FORCE_OVERLAYS[name]] === 'function') {

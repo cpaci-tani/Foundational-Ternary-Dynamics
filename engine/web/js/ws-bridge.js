@@ -239,6 +239,9 @@ export class WebSocketBridge {
         this._forceAtRequestEpoch = new Map();
         this._forceAtRequestsInFlight = new Set();
         this._pointQueryRequestsInFlight = 0;
+        // Teardown latch + tracked reconnect timer (see dispose()).
+        this._disposed = false;
+        this._reconnectTimer = null;
     }
 
     async connect() {
@@ -430,23 +433,63 @@ export class WebSocketBridge {
      * engine may be restarted. A UI indicator should show "disconnected" state.
      */
     _scheduleReconnect() {
-        if (this._reconnecting || this._restartRequired) return;
+        if (this._reconnecting || this._restartRequired || this._disposed) return;
         this._reconnecting = true;
         const maxDelay = 30000;
         let delay = 1000;
         const attempt = () => {
+            // Re-check every stage: dispose() or a restart-required fence set
+            // AFTER the chain started must stop it (otherwise it loops forever
+            // issuing no-op connect()s, and a disposed bridge never quiesces).
+            if (this._disposed || this._restartRequired) { this._reconnecting = false; return; }
             debugLog(`[ws-bridge] Reconnecting in ${delay / 1000}s...`);
-            setTimeout(() => {
+            this._reconnectTimer = setTimeout(() => {
+                this._reconnectTimer = null;
+                if (this._disposed || this._restartRequired) { this._reconnecting = false; return; }
                 this.connect().then(() => {
                     this._reconnecting = false;
                     debugLog('[ws-bridge] Reconnected');
                 }).catch(() => {
+                    if (this._disposed || this._restartRequired) { this._reconnecting = false; return; }
                     delay = Math.min(delay * 2, maxDelay);
                     attempt();
                 });
             }, delay);
         };
         attempt();
+    }
+
+    /**
+     * Tear down the bridge: stop reconnecting, clear every timer, reject in-flight
+     * commands, close the socket, and free the lazily-loaded in-page fallback
+     * WASM module. Idempotent. Call this when the app replaces ctx.bridge (backend
+     * switch / re-init) so the old bridge does not keep a reconnect loop + a loaded
+     * WASM heap alive for the tab lifetime.
+     */
+    dispose() {
+        if (this._disposed) return;
+        this._disposed = true;
+        this._reconnecting = false;
+        for (const t of ['_reconnectTimer', '_simulationWatchdog', '_telemetryDemandExpiryTimer',
+                         '_visualDeferredRetryTimer', '_scenarioDispatchTimer', '_liveProfileDispatchTimer']) {
+            if (this[t]) { clearTimeout(this[t]); this[t] = null; }
+        }
+        // Reject in-flight command promises so awaiters don't hang forever.
+        for (const p of this._pendingQueue.splice(0)) {
+            if (p.timeoutId) clearTimeout(p.timeoutId);
+            try { p.reject?.(new Error('WebSocketBridge disposed')); } catch (_) { /* ignore */ }
+        }
+        const socket = this._ws;
+        this._ws = null;
+        this._connected = false;
+        if (socket) {
+            try { socket.onopen = socket.onmessage = socket.onerror = socket.onclose = null; socket.close(); }
+            catch (_) { /* ignore */ }
+        }
+        if (this._fallback && typeof this._fallback.dispose === 'function') {
+            try { this._fallback.dispose(); } catch (_) { /* ignore */ }
+        }
+        this._fallback = null;
     }
 
     // ── Command helpers ──────────────────────────────────────────────
@@ -2203,12 +2246,19 @@ export class WebSocketBridge {
         return particleDataToList(this.getParticleData());
     }
 
-    // WARNING: Only one async particle request can be in flight at a time.
-    // Calling getParticleDataAsync() again before the previous resolves will
-    // orphan the old promise (it will never resolve). This is acceptable for
-    // the render loop (one request per frame), but callers must not queue these.
+    // Only one async particle request can be in flight at a time (single
+    // _binaryResolve slot). Intended for the render loop: one request per frame.
+    // If a caller does call again before the previous resolves, the previous
+    // promise is settled here with the last known particle data rather than
+    // orphaned into a silent forever-pending await — the new promise then takes
+    // the slot and resolves on the in-flight reply.
     async getParticleDataAsync() {
         return new Promise((resolve) => {
+            if (this._binaryResolve) {
+                const prevResolve = this._binaryResolve;
+                this._binaryResolve = null;
+                prevResolve(this._particleData);
+            }
             this._binaryResolve = resolve;
             if (!this._connected) {
                 resolve(this._particleData);

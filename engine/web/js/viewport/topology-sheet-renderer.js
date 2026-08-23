@@ -65,6 +65,20 @@ const TOPOLOGY_CONFIGS = Object.freeze({
     vorticity:     { yFrac: 0.97, depthFrac: 0.03, signed: false, ramp: rampVorticity },
 });
 
+// Default slice height (fraction of the box) for each slideable rubber sheet —
+// where it floats + samples until the user moves its height slider. A compact
+// band around the mid-plane (not the box edges) so a freshly-toggled sheet reads
+// a meaningful slice, while still separating the sheets when several are on.
+// Mirror these on the slider `value=` attrs in scale0/ui/overlays/template.js.
+const DEFAULT_SHEET_HEIGHTS = Object.freeze({
+    gravPotential: 0.50,
+    chargeDensity: 0.62,
+    emEnergy:      0.56,
+    vorticity:     0.68,
+    ePressure:     0.44,
+    bPressure:     0.38,
+});
+
 export class TopologySheetRenderer {
     constructor({ scene, getLatticeSize, getHalfN, onVisibilityChange = null }) {
         this.scene = scene;
@@ -79,12 +93,67 @@ export class TopologySheetRenderer {
         this._gravPotVisible = false;
         this._gravPotData = null;
 
-        // Topology sheets { key: { solid, wire, size } }
+        // Topology sheets { key: { solid, wire, size, lastData } }
         this._topoSheets = {};
+
+        // Per-sheet slice HEIGHT (fraction of N, 0..0.999). The sheet floats at
+        // y = frac·N AND the field is re-sampled in a thin y-slab at that plane,
+        // so sliding the value sweeps the slice through the volume (mirrors the
+        // native SetSheetHeight mechanism). Undefined ⇒ the config default.
+        this._sheetHeights = {};
 
         // Scratch buffers reused across _scatterHeights calls.
         this._scatterBufs = null;
         this._rampScratch = null;
+    }
+
+    // Default slice height (fraction of N) for a sheet — where it floats + slices
+    // before the user moves the slider. A compact band around the mid-plane so a
+    // freshly-toggled sheet shows a meaningful slice (the old TOPOLOGY_CONFIGS
+    // yFracs sat at the box edges — correct for the whole-column average, but an
+    // empty slice), while still separating the sheets when several are on.
+    // Keep these in sync with the `value=` attrs on the sliders in
+    // scale0/ui/overlays/template.js.
+    _defaultHeightFrac(key) {
+        return DEFAULT_SHEET_HEIGHTS[key] ?? 0.5;
+    }
+
+    _heightFrac(key) {
+        const h = this._sheetHeights[key];
+        return (typeof h === 'number') ? h : this._defaultHeightFrac(key);
+    }
+
+    // y-slab half-width for the slice, in voxels. Matches the overlay sample
+    // stride (max(2, min(8, round(N/16)))) so the slab captures the nearest
+    // sampled y-level(s) — the field is only sampled every `stride` voxels in y.
+    _slabHalf(N) {
+        return Math.max(2, Math.min(8, Math.round(N / 16)));
+    }
+
+    /**
+     * Set the slice height of a sheet and immediately re-slice + reposition it.
+     * @param {string} key — a TOPOLOGY_CONFIGS key or 'gravPotential'
+     * @param {number} frac — height as a fraction of the lattice box, 0..0.999
+     */
+    setHeight(key, frac) {
+        const f = Math.max(0, Math.min(0.999, Number(frac) || 0));
+        this._sheetHeights[key] = f;
+        if (key === 'gravPotential') {
+            const N = this._getLatticeSize();
+            if (this._gravSurface) {
+                this._gravSurface.position.y = f * N;
+                this._gravSurfaceWire.position.y = f * N + 0.02;
+            }
+            if (this._gravPotData) this.updateGravPotential(this._gravPotData);
+            return;
+        }
+        const s = this._topoSheets[key];
+        if (s) {
+            const N = this._getLatticeSize();
+            s.solid.position.y = f * N;
+            s.wire.position.y = f * N + 0.02;
+            if (s.lastData) this.update(key, s.lastData);
+        }
     }
 
     onLatticeSizeChanged(size, halfN) {
@@ -117,15 +186,16 @@ export class TopologySheetRenderer {
             vertexColors: true, transparent: true, opacity: 0.35,
             wireframe: true, depthWrite: false,
         });
+        const gy = N * this._heightFrac('gravPotential');
         this._gravSurface = new THREE.Mesh(geo, mat);
-        this._gravSurface.position.set(N / 2, N / 2, N / 2);
+        this._gravSurface.position.set(N / 2, gy, N / 2);
         this._gravSurface.visible = false;
         this._gravSurface.renderOrder = 3;
         // Deformable Y-vertices; keep frustum culling off so the camera can
         // dip inside a deep well without the mesh disappearing.
         this._gravSurface.frustumCulled = false;
         this._gravSurfaceWire = new THREE.Mesh(geo, wireMat);
-        this._gravSurfaceWire.position.set(N / 2, N / 2 + 0.02, N / 2);
+        this._gravSurfaceWire.position.set(N / 2, gy + 0.02, N / 2);
         this._gravSurfaceWire.visible = false;
         this._gravSurfaceWire.renderOrder = 3;
         this._gravSurfaceWire.frustumCulled = false;
@@ -168,10 +238,14 @@ export class TopologySheetRenderer {
         const N = this._getLatticeSize();
         const halfN = this._getHalfN();
         const DEPTH = N * 0.25;
+        const sliceY = this._heightFrac('gravPotential') * N;
+        this._gravSurface.position.y = sliceY;
+        this._gravSurfaceWire.position.y = sliceY + 0.02;
 
-        const heights = this._scatterHeights(pos, halfN, N, data);
+        const heights = this._scatterHeights(pos, halfN, N, data, sliceY);
 
-        const rgb = new Float32Array(3);
+        if (!this._rampScratch) this._rampScratch = new Float32Array(3);
+        const rgb = this._rampScratch;
         for (let v = 0; v < verts; v++) {
             // Φ is negative for wells; scale to DEPTH so negative t dips
             // below the reference plane (local-y = 0, world y = halfN).
@@ -212,7 +286,7 @@ export class TopologySheetRenderer {
             color: 0xffffff, transparent: true, opacity: 0.16,
             wireframe: true, depthWrite: false,
         });
-        const yWorld = N * cfg.yFrac;
+        const yWorld = N * this._heightFrac(key);
         const solid = new THREE.Mesh(geo, mat);
         solid.position.set(N / 2, yWorld, N / 2);
         solid.visible = false;
@@ -234,6 +308,7 @@ export class TopologySheetRenderer {
         const N = this._getLatticeSize();
         if (s.size === N) return;
         const vis = s.solid.visible;
+        const lastData = s.lastData;   // carry across the rebuild so setHeight() can still re-slice
         // Pre-2026-04-26 this disposed only geometries — `_buildSheet` allocates
         // both new geometries AND new materials, so the old materials leaked
         // 2 per sheet × 10 sheets every lattice resize. Dispose materials too
@@ -246,8 +321,12 @@ export class TopologySheetRenderer {
         this.scene.remove(s.wire);
         delete this._topoSheets[key];
         this._buildSheet(key);
-        this._topoSheets[key].solid.visible = vis;
-        this._topoSheets[key].wire.visible  = vis;
+        const ns = this._topoSheets[key];
+        ns.solid.visible = vis;
+        ns.wire.visible  = vis;
+        // Re-slice at the new size from the retained data (so a height slider
+        // dragged after a paused resize still updates instead of showing flat).
+        if (lastData) this.update(key, lastData);
     }
 
     /**
@@ -272,6 +351,7 @@ export class TopologySheetRenderer {
         if (!this._topoSheets[key]) this._buildSheet(key);
         this._rebuildSheetIfResized(key);
         const s = this._topoSheets[key];
+        s.lastData = data;   // kept so setHeight() can re-slice without new engine data
         if (!s.solid.visible) return;
         const cfg = TOPOLOGY_CONFIGS[key];
         const geo = s.solid.geometry;
@@ -281,8 +361,12 @@ export class TopologySheetRenderer {
         const N = this._getLatticeSize();
         const halfN = this._getHalfN();
         const DEPTH = N * cfg.depthFrac;
+        const sliceY = this._heightFrac(key) * N;
+        // Park the plane at its slice height (a resize rebuild can reset position).
+        s.solid.position.y = sliceY;
+        s.wire.position.y = sliceY + 0.02;
 
-        const heights = this._scatterHeights(pos, halfN, N, data);
+        const heights = this._scatterHeights(pos, halfN, N, data, sliceY);
 
         // Reuse scratch RGB triple across all sheets × all frames.
         if (!this._rampScratch) this._rampScratch = new Float32Array(3);
@@ -309,7 +393,7 @@ export class TopologySheetRenderer {
         // Deform the coarse wireframe to match — same sampler.
         if (s.wire && s.wire.geometry) {
             const wirePos = s.wire.geometry.attributes.position;
-            const wireHeights = this._scatterHeights(wirePos, halfN, N, data);
+            const wireHeights = this._scatterHeights(wirePos, halfN, N, data, sliceY);
             for (let v = 0; v < wirePos.count; v++) {
                 const t = wireHeights[v];
                 const tc = cfg.signed
@@ -331,7 +415,7 @@ export class TopologySheetRenderer {
     // O(verts × 4), no transcendentals. At L=64 this drops ~100M exp() calls/sec
     // down to ~10M simple FMAs — well under 1 ms per sheet even with 4 sheets on.
 
-    _scatterHeights(geoPos, halfN, N, data) {
+    _scatterHeights(geoPos, halfN, N, data, sliceY = null) {
         const verts = geoPos.count;
         const { positions, values, count, normalizer } = data;
         const denom = Math.max(normalizer || 0, 1e-9);
@@ -348,22 +432,43 @@ export class TopologySheetRenderer {
             };
         }
         const { grid, weight, tmp } = this._scatterBufs;
+        const b = this._scatterBufs;
+        const scale = (gridN - 1) / N;
+
+        // Build-cache: skip the O(count) rasterize + O(gridN²) blur when the grid
+        // was JUST built for the identical (data, sliceY, N) — i.e. the solid then
+        // wire mesh of one sheet in a single update() pass. `data` is a fresh
+        // object each frame, so this reuse never spans frames or sheets, only the
+        // solid→wire call pair (which previously rebuilt the grid twice).
+        const gridReady = (b._bd === data && b._bs === sliceY && b._bn === N);
+        if (!gridReady) {
         grid.fill(0);
         weight.fill(0);
 
-        // 1. Rasterize samples → grid via bilinear splat (O(count)).
-        const scale = (gridN - 1) / N;
+        // 1. Rasterize samples → grid via bilinear splat (O(count)). When a
+        //    sliceY (world-y) is given, gate each sample to a thin y-slab around
+        //    that plane and weight it by a triangular y-kernel — so the grid
+        //    holds the field AT that height, not the whole-column average. This
+        //    is what makes the sheet a slideable slice (mirrors the native
+        //    build_sheet slab filter). sliceY == null keeps the legacy projection.
+        const slabHalf = (sliceY != null) ? this._slabHalf(N) : 0;
         for (let i = 0; i < count; i++) {
+            let yw = 1;
+            if (sliceY != null) {
+                const dy = Math.abs(positions[i * 3 + 1] - sliceY);
+                if (dy >= slabHalf) continue;
+                yw = 1 - dy / slabHalf;   // triangular kernel, peak on the plane
+            }
             const sx = positions[i * 3]     * scale;
             const sz = positions[i * 3 + 2] * scale;
             if (sx < 0 || sx >= gridN - 1 || sz < 0 || sz >= gridN - 1) continue;
             const xi = sx | 0, zi = sz | 0;
             const xf = sx - xi, zf = sz - zi;
             const v = values[i];
-            const w00 = (1 - xf) * (1 - zf);
-            const w01 = xf * (1 - zf);
-            const w10 = (1 - xf) * zf;
-            const w11 = xf * zf;
+            const w00 = (1 - xf) * (1 - zf) * yw;
+            const w01 = xf * (1 - zf) * yw;
+            const w10 = (1 - xf) * zf * yw;
+            const w11 = xf * zf * yw;
             const row0 = zi * gridN + xi;
             const row1 = row0 + gridN;
             grid[row0]     += v * w00;  weight[row0]     += w00;
@@ -410,6 +515,8 @@ export class TopologySheetRenderer {
                 }
             }
         }
+        b._bd = data; b._bs = sliceY; b._bn = N;   // grid now valid for this (data, sliceY, N)
+        }  // end build-cache guard
 
         // 4. Per-vertex bilinear lookup into the blurred grid. Grow-only
         //    heights scratch avoids per-call allocation (~2 MB/s at 20Hz

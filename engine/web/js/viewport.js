@@ -821,6 +821,10 @@ export class Viewport {
     updateChargeDensityField(data) { this._topoRenderer?.update('chargeDensity', data); }
     toggleVorticityField(on) { this._topoRenderer?.toggle('vorticity', on); }
     updateVorticityField(data) { this._topoRenderer?.update('vorticity', data); }
+    // Slide a rubber-sheet overlay's slice plane up/down (frac 0..0.999 of the
+    // box): the sheet floats at y=frac·N and re-samples the field at that height.
+    // key ∈ {gravPotential, emEnergy, ePressure, bPressure, chargeDensity, vorticity}.
+    setTopologySheetHeight(key, frac) { this._topoRenderer?.setHeight(key, frac); }
 
     // -- |psi|^2 breathing animation -- delegated; orchestrator forwards animation clock --
     _animateQuantumField() {
