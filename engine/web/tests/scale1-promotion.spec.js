@@ -4,7 +4,11 @@
 import { test, expect } from '@playwright/test';
 import { gotoAndReady, attachConsoleWatcher, realErrors } from './_helpers.js';
 
-test.describe('Scale 0 → Scale 1 promotion', () => {
+// Skipped: the "⤴ Scale up" toolbar button was removed from the Scale-0 UI
+// (scale0/ui/toolbar/template.js + component.js). The promotion pipeline
+// (scale1/promotion.js, scaleUpToParticles) is still present, so this suite is
+// skipped rather than deleted — re-enable it if the button is restored.
+test.describe.skip('Scale 0 → Scale 1 promotion', () => {
     test.beforeEach(async ({ page }) => {
         page.setDefaultTimeout(30_000);
     });

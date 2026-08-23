@@ -4,17 +4,166 @@ export { SCALE0_SCENARIO_VALIDATION } from './scenario-validation.js';
 
 
 
+// Plain-language display names, keyed by scenario id. The dropdown shows these
+// so the list reads in everyday English; the original precise title is kept as
+// `sourceTitle` and surfaced in the scenario description panel (see
+// updateScenarioMetadata in ui/bindings.js), so no physics precision is lost.
+// Ids absent here fall back to their technical title (harmless). The `id` (the
+// wiring key checked by the JS↔C++ parity guard) is never touched.
+const LAYMAN_NAMES = {
+    'empty': 'Empty Space',
+    's0-seed-dynamical-flux-dressing': 'A Charge Builds Its Own Field',
+    's0-seed-moving-source-reciprocity': 'A Nudged Charge Responds',
+    'flux-pulse': 'A Wave Pulse Crossing the Box',
+    'flux-dipole': 'Two Mirror-Image Wave Pulses',
+    'flux-standing': 'A Standing Wave',
+    'flux-nested-standing': 'Crossed Standing Waves',
+    'flux-soliton': 'A Strong, Self-Holding Pulse',
+    'flux-interference': 'A Rippling Interference Pattern',
+    'flux-vortex': 'A Spinning Ring of Field',
+    'flux-dual-substrate': 'A Mirror-Polarized Wave Pair',
+    'flux-cascade': 'Matter Sparks from an Intense Field',
+    'flux-random-genesis': 'Matter Sparks from Random Patches',
+    'flux-genesis-between-gates': 'Matter Blinks On for One Instant',
+    's0-seed-ew-phase-transition': 'A Steady Push on the Field',
+    'flux-pair-production': 'A Particle-Antiparticle Pair Appears',
+    'flux-annihilation': 'Opposite Particles Collide',
+    'flux-vacuum-foam': 'A Ball of Random Waves',
+    'flux-meson': 'Two Opposite Particles Pass By',
+    'flux-string-breaking': 'Opposite Charges Fly Apart',
+    'flux-baryon': 'Three Charges Spread Outward',
+    'flux-cyclotron': 'A Charge Curves in a Magnetic Field',
+    'flux-screening': 'A Shell of Alternating Charge',
+    'flux-thermalization': 'Random Waves Spreading Out',
+    'flux-triad': 'Three Inward Streams of Field',
+    'flux-zero-point': 'A Restless Sea of Waves',
+    'light-rainbow': 'Three Colors of Light',
+    'light-dipole': 'Light Radiating Both Ways',
+    'light-two-slit': 'Two Light Sources Overlapping',
+    'light-photon-race': 'Do Bright and Dim Light Travel Alike?',
+    'quantum-born-rule': 'A Burst of New Matter',
+    'quantum-double-slit': 'A Two-Source Wave Pattern',
+    'quantum-eraser': 'Checkerboard-Driven Waves',
+    'quantum-tunnel': 'Waves Pushing Against a Barrier',
+    'quantum-well': 'Waves Between Two Walls',
+    'quantum-entangle': 'A Tagged Particle Pair',
+    'quantum-aharonov-bohm': 'Waves Passing Around a Tube',
+    'quantum-casimir': 'Waves Between Two Plates',
+    'quantum-zeno': 'A Burst of Matter, Watched',
+    's0-seed-up-quark': 'Up Quark',
+    's0-seed-down-quark': 'Down Quark',
+    's0-seed-strange-quark': 'Strange Quark',
+    's0-seed-charm-quark': 'Charm Quark',
+    's0-seed-bottom-quark': 'Bottom Quark',
+    's0-seed-top-quark': 'Top Quark',
+    's0-seed-anti-up-quark': 'Anti-Up Quark',
+    's0-seed-anti-down-quark': 'Anti-Down Quark',
+    's0-seed-anti-strange-quark': 'Anti-Strange Quark',
+    's0-seed-anti-charm-quark': 'Anti-Charm Quark',
+    's0-seed-anti-bottom-quark': 'Anti-Bottom Quark',
+    's0-seed-anti-top-quark': 'Anti-Top Quark',
+    's0-seed-higgs-field': 'The Higgs Field',
+    's0-seed-gluon': 'A Gluon',
+    's0-seed-beta-decay': 'Beta Decay',
+    's0-seed-ee-annihilation': 'An Electron Meets a Positron',
+    's0-seed-quark-gluon-plasma': 'Hot Quark Soup',
+    's0-seed-hydrogen': 'A Hydrogen Atom',
+    's0-seed-helium': 'A Helium Atom',
+    's0-seed-h2-bond-formation': 'Two Atoms Trying to Bond',
+    's0-seed-spark-of-life': 'A Spark of Life',
+    's0-seed-wilson-loop': 'A Square Loop of Field',
+    's0-seed-flux-tube': 'A Tube of Field',
+    's0-seed-monopole': 'A Single Magnetic Pole',
+    's0-seed-instanton': 'A Localized Field Knot',
+    's0-seed-schwarzschild': 'A Black Hole Field',
+    's0-seed-gravitational-lensing': 'Gravity Bending Light',
+    's0-seed-gravitational-wave': 'A Gravitational Wave',
+    's0-seed-massive-body': 'A Heavy Mass Bending Space',
+    's0-seed-time-gravity-well': 'A Gravity Well',
+    's0-seed-time-twin-clocks': 'Twin Clocks',
+    's0-seed-time-horizon': 'An Event Horizon',
+    's0-seed-sloop': 'A Twelve-Point Ring',
+    's0-seed-observer-cell': 'An Alternating Shell Cell',
+    's0-field-plane-wave': 'A Traveling Wave',
+    's0-field-standing-wave': 'A Standing Wave (Field)',
+    's0-field-uniform-e': 'A Uniform Electric Field',
+    's0-field-uniform-b': 'A Uniform Magnetic Field',
+    's0-field-photon-pulse': 'A Pulse of Light',
+    's0-field-rf-lattice-wave': 'A Radio-Wave Mode',
+    's0-field-light-lattice-wave': 'A Light-Wave Mode',
+    's0-field-sound-lattice-wave': 'A Sound-Wave Mode',
+    's0-field-sound-collision': 'Two Sound Pulses Overlapping',
+    's0-field-thomson-scattering': 'Light Scattering off a Charge',
+    's0-field-thomson-unlocked-recoil': 'A Charge Recoiling from Light',
+    's0-field-spacetime-forcing-boundary': 'How Far a Nudge Reaches',
+    's0-field-electric-dipole': 'An Electric Dipole',
+    's0-field-magnetic-dipole': 'A Magnetic Dipole',
+    's0-field-vortex-line': 'A Vortex Line',
+    's0-seed-octahedron': 'An Octahedron Shell',
+    's0-seed-cuboctahedron': 'A Cuboctahedron Shell',
+    's0-seed-stella-octangula': 'A Star-Tetrahedron Shell',
+    's0-seed-moore-cell': 'The 27-Cell Neighborhood',
+    's0-seed-moore-decomposition': 'The Neighborhood, Layer by Layer',
+    's0-seed-emergent-ic1': 'Matter from a Single-Axis Burst',
+    's0-seed-emergent-ic3-collision': 'Two Bursts Colliding',
+    's0-seed-emergent-ic4-subthreshold': 'A Quiet, Below-Threshold Bath',
+    's0-seed-emergent-ic2-thermal-runaway': 'A Hot, Empty Bath',
+    's0-seed-emergent-ic1-diagonal': 'Matter from a Diagonal Burst',
+    's0-seed-emergent-ic1-isotropic': 'Matter from an All-Directions Burst',
+    's0-seed-emergent-ic1-viz': 'A Single-Axis Burst, Fading',
+    's0-seed-emergent-ic1-diagonal-viz': 'A Diagonal Burst, Fading',
+    's0-seed-emergent-ic1-isotropic-viz': 'An All-Directions Burst, Fading',
+    's0-seed-cluster-law': 'Make Matter: Dial the Intensity',
+    's0-seed-cluster-law-subknee': 'Matter Burst — Gentle',
+    's0-seed-cluster-law-knee': 'Matter Burst — Medium',
+    's0-seed-cluster-law-superknee': 'Matter Burst — Strong',
+    's0-vacuum-electron': 'An Electron',
+    's0-vacuum-muon': 'A Muon',
+    's0-vacuum-tau': 'A Tau',
+    's0-vacuum-positron': 'A Positron',
+    's0-vacuum-antimuon': 'An Antimuon',
+    's0-vacuum-antitau': 'An Antitau',
+    's0-vacuum-electron-neutrino': 'An Electron Neutrino',
+    's0-vacuum-muon-neutrino': 'A Muon Neutrino',
+    's0-vacuum-tau-neutrino': 'A Tau Neutrino',
+    's0-vacuum-electron-antineutrino': 'An Electron Antineutrino',
+    's0-vacuum-muon-antineutrino': 'A Muon Antineutrino',
+    's0-vacuum-tau-antineutrino': 'A Tau Antineutrino',
+    's0-vacuum-photon': 'A Photon',
+    's0-vacuum-w-boson': 'A W+ Boson',
+    's0-vacuum-w-minus-boson': 'A W- Boson',
+    's0-vacuum-z-boson': 'A Z Boson',
+    's0-vacuum-higgs': 'A Higgs Boson',
+    's0-vacuum-proton': 'A Proton',
+    's0-vacuum-neutron': 'A Neutron',
+    's0-vacuum-pion-charged': 'A Charged Pion',
+    's0-vacuum-pion-neutral': 'A Neutral Pion',
+    's0-vacuum-kaon-charged': 'A Charged Kaon',
+    's0-seed-de-broglie-clock': 'The Clock Inside a Particle',
+    's0-seed-thermal-ignition': 'A Warm, Below-Threshold Bath',
+};
+
 function makeScenario(category, id, title, tags = [], epistemicStatus = '[OPEN]') {
     const validation = SCALE0_SCENARIO_VALIDATION[id] || null;
     const admitted = validation?.level === 'behavioral';
     const qualification = admitted
         ? validation.qualification
         : 'RESEARCH SETUP — mechanically smoke-tested only; advertised behavior and physical identity are unvalidated';
+    const laymanTitle = LAYMAN_NAMES[id] || null;
+    const displayBase = laymanTitle || title;  // plain name if we have one, else the technical title
+    // Honest visibility marker. The old verbose titles carried "… Identity
+    // Rejected / Gate Failed" inline; a plain name like "An Electron" would drop
+    // that and read as a confirmed result. So when a scenario's labeled physical
+    // identity was tested and rejected ([CLOSED NEGATIVE]), keep a short "(model)"
+    // tag on the plain name. Full status (technical name + epistemic tag +
+    // validation notes) lives in the description panel.
+    const identityRejected = /\[CLOSED NEGATIVE\]/.test(epistemicStatus);
     return {
         id,
         scale: 'lattice',
-        sourceTitle: title,
-        title: admitted ? title : `${title} — Research Setup (Behavior Unvalidated)`,
+        sourceTitle: title,          // original technical name — preserved, shown in the description
+        laymanTitle,                 // plain-language name (null if this id wasn't renamed)
+        title: identityRejected ? `${displayBase} (model)` : displayBase,
         category,
         tags,
         defaultParams: {},
@@ -430,7 +579,7 @@ export const SCALE0_SCENARIO_CATALOG = [
      * Expected behavior: Central dense core of locked mass that sources gravity via the Poisson equation.
      * Discrepancy: None.
      */
-    makeScenario('4. Macroscopic Physics & Measurement', 's0-seed-massive-body', 'Locked Mass — Native Latency-Poisson Probe', ['seed', 'gravity'], '[EMERGENT] under [IMPOSED] gravity charge and Poisson latency law'),
+    makeScenario('5. Macroscopic Physics & Measurement', 's0-seed-massive-body', 'Locked Mass — Native Latency-Poisson Probe', ['seed', 'gravity'], '[EMERGENT] under [IMPOSED] gravity charge and Poisson latency law'),
     /*
      * Scenario: s0-seed-time-gravity-well (Plain-wave legacy alias)
      * Physical purpose: Exposes that the legacy entry duplicates the wave control.

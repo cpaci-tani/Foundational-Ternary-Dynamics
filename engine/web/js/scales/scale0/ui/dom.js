@@ -111,7 +111,9 @@ export function renderScenarioDescription(_scenarioId, descriptionText) {
     if (descriptionText) {
         text.textContent = descriptionText;
         wrap.style.display = '';
-        wrap.open = true;
+        // Collapsed by default — the "Epistemic status" panel is shown but closed;
+        // the user expands it on demand (it is advisory detail, not primary UI).
+        wrap.open = false;
     } else {
         text.textContent = '';
         wrap.style.display = 'none';

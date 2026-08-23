@@ -7,7 +7,6 @@ export function getScale0ScenarioToolbarTemplate() {
                 <summary>Epistemic status</summary>
                 <pre id="lat-scenario-desc-text" class="lat-scenario-desc-text"></pre>
             </details>
-            <button class="tb-btn" id="btn-scale-up" title="Promote the live lattice's manifested clusters to Scale-1 continuous particles (one particle per cluster, mass = N·K_B, charge = sign·N) and switch to Scale 1">&#10548; Scale up</button>
         </div>
     `;
 }

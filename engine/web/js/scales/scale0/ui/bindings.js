@@ -29,6 +29,12 @@ export function updateScenarioMetadata(scenarioId, { profileModified = false } =
             '',
         );
     }
+    // Surface the original precise name for renamed scenarios — the dropdown
+    // now shows a plain-language title, so the technical name lives here.
+    if (scenario?.laymanTitle && scenario.sourceTitle
+        && scenario.sourceTitle !== scenario.laymanTitle) {
+        sections.push(`Technical name: ${scenario.sourceTitle}`, '');
+    }
     if (scenario?.validation) {
         sections.push(
             'AUTOMATED BEHAVIORAL VALIDATION',

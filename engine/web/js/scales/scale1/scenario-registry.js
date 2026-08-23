@@ -90,7 +90,7 @@ function resolvePromotion() {
 export const SCALE1_SCENARIOS = [
     {
         id: 's1-promoted-lattice',
-        label: 'Promoted Lattice Clusters (⤴ Scale up)',
+        label: 'Lattice Clusters as Particles',
         group: 'Lattice',
         description:
             'One continuous particle per lattice cluster captured by "⤴ Scale up" '
@@ -114,7 +114,7 @@ export const SCALE1_SCENARIOS = [
     },
     {
         id: 's1-voxel-debug',
-        label: 'Promoted Clusters + Source Voxels',
+        label: 'Clusters with Their Source Voxels',
         group: 'Lattice',
         description:
             'The same promoted clusters with the per-voxel coarse-graining '
@@ -137,7 +137,7 @@ export const SCALE1_SCENARIOS = [
     },
     {
         id: 's1-coulomb-orbit',
-        label: 'Coulomb Orbit (1/r² window demo)',
+        label: 'An Electron-Style Orbit',
         group: 'Dynamics',
         description:
             'A light −1 body orbiting a heavy +1 anchor at r = 12, inside the '
@@ -155,7 +155,7 @@ export const SCALE1_SCENARIOS = [
     },
     {
         id: 's1-cluster-pair',
-        label: 'Cluster Pair (±N·K_B binary)',
+        label: 'A Pair of Orbiting Charges',
         group: 'Dynamics',
         description:
             'Two synthetic promoted-style clusters (N = 20): charges ±20, '
@@ -176,7 +176,7 @@ export const SCALE1_SCENARIOS = [
     },
     {
         id: 's1-three-body',
-        label: 'Three-Body (chaotic)',
+        label: 'Three-Body Chaos',
         group: 'Dynamics',
         description:
             'Two heavy +1 bodies (1836·K_B) and one light −1 body (K_B), all '
@@ -196,7 +196,7 @@ export const SCALE1_SCENARIOS = [
     },
     {
         id: 's1-empty-zoo',
-        label: 'Empty (Zoo sandbox)',
+        label: 'Empty Sandbox',
         group: 'Sandbox',
         description:
             'Empty scene. Inject catalog particles from the Particle Zoo — '
