@@ -1,3 +1,3 @@
-sha=8e2008eaadd4c957d64bd7912fcfea5ee6efcfe0-dirty
-built=Sun 08/23/2026 11:55:16.08
+sha=952af90ec5966429331a6f69a91187d215eceb0f-dirty
+built=Sun 08/23/2026 15:10:00.42
 variants=wasm32,wasm64,wasm32-threads

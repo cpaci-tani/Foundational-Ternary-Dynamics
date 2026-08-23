@@ -23,13 +23,16 @@
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
 #include <algorithm>
+#include <array>
 #include <cmath>
+#include <optional>
 #include <string>   // get_engine_version (revision 6.1)
 #include "ftd/render_bridge.h"
 #include "ftd/field_operators.h"
 #include "ftd/lagrangian.h"
 #include "ftd/constants.h"
 #include "ftd/knot_telemetry.h"  // full KnotTracker definition (PIMPL fwd-decl in render_bridge.h)
+#include "ftd/visual_sample_grid.h"  // shared center-anchored sample grid (CPU/GPU/WASM)
 #include "bindings_internal.h"
 
 using namespace emscripten;
@@ -484,47 +487,99 @@ val get_flux_volume(ftd::RenderBridge& rb) {
     return val(typed_memory_view(total, cache.data()));
 }
 
-// ── Bulk Sampled Vector Field Exports ────────────────────────────────
-// Each returns { positions: Float32Array(N×3), vectors: Float32Array(N×3), count: int }
-// stride controls spatial sampling density (stride=2 → every other voxel).
+// ── Bulk Sampled Field Exports ───────────────────────────────────────
+// Vector samplers return { positions:Float32Array(3·count), vectors:Float32Array(3·count), count }.
+// Scalar samplers return { positions:Float32Array(3·count), values:Float32Array(count),   count }.
+// Both marshal zero-copy via typed_memory_view over reused static caches — the
+// JS side must consume each result synchronously before the next call (the
+// animate loop does; see the get_flux_volume note above).
+//
+// Every sampler walks the SAME center-anchored grid as the CPU and GPU backends
+// (ftd/visual_sample_grid.h), so which voxels are sampled is identical across
+// all three — this is where the center-anchoring bug used to fork three ways.
+// `interior` kinds (the curl-stencil fields) skip the periodic-boundary voxels
+// whose stencils would wrap the seam and manufacture spurious wall spikes.
+//
+// Per-voxel work is supplied as a lambda `sample(x, y, z, idx)` returning an
+// engaged optional to EMIT that point or std::nullopt to SKIP it (the field's
+// own magnitude/threshold test). Positions are voxel centres (x + 0.5f),
+// matching the particle-render convention. Each distinct lambda type gives the
+// driver its own static caches, so samplers never alias one another's buffers.
 
-val get_e_field_sampled(ftd::RenderBridge& rb, int stride) {
-    // PERF: zero-copy via typed_memory_view.
+// Driver for the 3-component (vector) overlays; lambda → optional<array<double,3>>.
+template <class Sample>
+val sample_vector_overlay(ftd::RenderBridge& rb, int stride, bool interior, Sample sample) {
     static std::vector<float> pos_cache, vec_cache;
     const int N = rb.lattice().size();
-    if (stride < 1) stride = 1;
-    const int S = (N + stride - 1) / stride;
-    const int maxPts = S * S * S;
-
-    if (static_cast<int>(pos_cache.size()) < maxPts * 3) {
-        pos_cache.resize(maxPts * 3);
-        vec_cache.resize(maxPts * 3);
-    }
+    const ftd::VisualSampleGrid grid = ftd::visual_sample_grid(N, stride, interior);
+    const std::size_t max_pts =
+        static_cast<std::size_t>(grid.count) * grid.count * grid.count;
+    if (pos_cache.size() < max_pts * 3) { pos_cache.resize(max_pts * 3); vec_cache.resize(max_pts * 3); }
 
     int count = 0;
-    for (int z = 0; z < N; z += stride) {
-        for (int y = 0; y < N; y += stride) {
-            for (int x = 0; x < N; x += stride) {
-                int idx = rb.lattice().index(x, y, z);
-                auto em = rb.em_field_at(idx);
-                if (em.E_mag < 1e-15) continue;
+    for (int z = grid.origin; z < grid.end(); z += grid.stride)
+        for (int y = grid.origin; y < grid.end(); y += grid.stride)
+            for (int x = grid.origin; x < grid.end(); x += grid.stride) {
+                const int idx = rb.lattice().index(x, y, z);
+                const std::optional<std::array<double, 3>> v = sample(x, y, z, idx);
+                if (!v) continue;
                 const int o3 = count * 3;
                 pos_cache[o3]     = static_cast<float>(x) + 0.5f;
                 pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f;
                 pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
-                vec_cache[o3]     = static_cast<float>(em.E.x);
-                vec_cache[o3 + 1] = static_cast<float>(em.E.y);
-                vec_cache[o3 + 2] = static_cast<float>(em.E.z);
-                count++;
+                vec_cache[o3]     = static_cast<float>((*v)[0]);
+                vec_cache[o3 + 1] = static_cast<float>((*v)[1]);
+                vec_cache[o3 + 2] = static_cast<float>((*v)[2]);
+                ++count;
             }
-        }
-    }
 
     val result = val::object();
     result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
     result.set("vectors",   val(typed_memory_view(count * 3, vec_cache.data())));
     result.set("count", count);
     return result;
+}
+
+// Driver for the 1-component (scalar) overlays; lambda → optional<double>.
+template <class Sample>
+val sample_scalar_overlay(ftd::RenderBridge& rb, int stride, bool interior, Sample sample) {
+    static std::vector<float> pos_cache, val_cache;
+    const int N = rb.lattice().size();
+    const ftd::VisualSampleGrid grid = ftd::visual_sample_grid(N, stride, interior);
+    const std::size_t max_pts =
+        static_cast<std::size_t>(grid.count) * grid.count * grid.count;
+    if (pos_cache.size() < max_pts * 3) { pos_cache.resize(max_pts * 3); val_cache.resize(max_pts); }
+
+    int count = 0;
+    for (int z = grid.origin; z < grid.end(); z += grid.stride)
+        for (int y = grid.origin; y < grid.end(); y += grid.stride)
+            for (int x = grid.origin; x < grid.end(); x += grid.stride) {
+                const int idx = rb.lattice().index(x, y, z);
+                const std::optional<double> s = sample(x, y, z, idx);
+                if (!s) continue;
+                const int o3 = count * 3;
+                pos_cache[o3]     = static_cast<float>(x) + 0.5f;
+                pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f;
+                pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
+                val_cache[count]  = static_cast<float>(*s);
+                ++count;
+            }
+
+    val result = val::object();
+    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
+    result.set("values",    val(typed_memory_view(count,     val_cache.data())));
+    result.set("count", count);
+    return result;
+}
+
+// E-field vectors at every voxel whose |E| clears the noise floor.
+val get_e_field_sampled(ftd::RenderBridge& rb, int stride) {
+    return sample_vector_overlay(rb, stride, /*interior=*/false,
+        [&](int, int, int, int idx) -> std::optional<std::array<double, 3>> {
+            const auto em = rb.em_field_at(idx);
+            if (em.E_mag < 1e-15) return std::nullopt;
+            return std::array<double, 3>{em.E.x, em.E.y, em.E.z};
+        });
 }
 
 // ── sample_v_at_ray ────────────────────────────────────────────────
@@ -607,196 +662,59 @@ val sample_v_at_ray(
     return result;
 }
 
+// B-field vectors at every voxel whose |B| clears the noise floor.
 val get_b_field_sampled(ftd::RenderBridge& rb, int stride) {
-    static std::vector<float> pos_cache, vec_cache;
-    const int N = rb.lattice().size();
-    if (stride < 1) stride = 1;
-    const int S = (N + stride - 1) / stride;
-    const int maxPts = S * S * S;
-
-    if (static_cast<int>(pos_cache.size()) < maxPts * 3) {
-        pos_cache.resize(maxPts * 3);
-        vec_cache.resize(maxPts * 3);
-    }
-
-    int count = 0;
-    for (int z = 0; z < N; z += stride) {
-        for (int y = 0; y < N; y += stride) {
-            for (int x = 0; x < N; x += stride) {
-                int idx = rb.lattice().index(x, y, z);
-                auto em = rb.em_field_at(idx);
-                if (em.B_mag < 1e-15) continue;
-                const int o3 = count * 3;
-                pos_cache[o3]     = static_cast<float>(x) + 0.5f;
-                pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f;
-                pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
-                vec_cache[o3]     = static_cast<float>(em.B.x);
-                vec_cache[o3 + 1] = static_cast<float>(em.B.y);
-                vec_cache[o3 + 2] = static_cast<float>(em.B.z);
-                count++;
-            }
-        }
-    }
-
-    val result = val::object();
-    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
-    result.set("vectors",   val(typed_memory_view(count * 3, vec_cache.data())));
-    result.set("count", count);
-    return result;
+    return sample_vector_overlay(rb, stride, /*interior=*/false,
+        [&](int, int, int, int idx) -> std::optional<std::array<double, 3>> {
+            const auto em = rb.em_field_at(idx);
+            if (em.B_mag < 1e-15) return std::nullopt;
+            return std::array<double, 3>{em.B.x, em.B.y, em.B.z};
+        });
 }
 
+// Poynting vectors S = E×H — the EM energy-flux direction at each voxel.
 val get_poynting_sampled(ftd::RenderBridge& rb, int stride) {
-    static std::vector<float> pos_cache, vec_cache;
-    const int N = rb.lattice().size();
-    if (stride < 1) stride = 1;
-    const int S = (N + stride - 1) / stride;
-    const int maxPts = S * S * S;
-
-    if (static_cast<int>(pos_cache.size()) < maxPts * 3) {
-        pos_cache.resize(maxPts * 3);
-        vec_cache.resize(maxPts * 3);
-    }
-
-    int count = 0;
-    for (int z = 0; z < N; z += stride) {
-        for (int y = 0; y < N; y += stride) {
-            for (int x = 0; x < N; x += stride) {
-                int idx = rb.lattice().index(x, y, z);
-                auto S_vec = rb.poynting_vector(idx);
-                if (S_vec.mag() < 1e-15) continue;
-                const int o3 = count * 3;
-                pos_cache[o3]     = static_cast<float>(x) + 0.5f;
-                pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f;
-                pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
-                vec_cache[o3]     = static_cast<float>(S_vec.x);
-                vec_cache[o3 + 1] = static_cast<float>(S_vec.y);
-                vec_cache[o3 + 2] = static_cast<float>(S_vec.z);
-                count++;
-            }
-        }
-    }
-
-    val result = val::object();
-    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
-    result.set("vectors",   val(typed_memory_view(count * 3, vec_cache.data())));
-    result.set("count", count);
-    return result;
+    return sample_vector_overlay(rb, stride, /*interior=*/false,
+        [&](int, int, int, int idx) -> std::optional<std::array<double, 3>> {
+            const auto s = rb.poynting_vector(idx);
+            if (s.mag() < 1e-15) return std::nullopt;
+            return std::array<double, 3>{s.x, s.y, s.z};
+        });
 }
 
+// Flux divergence ∇·J (scalar) — sampled on the full grid, not interior-only
+// (see is_interior_field_kind: Divergence is deliberately full-grid).
 val get_divj_sampled(ftd::RenderBridge& rb, int stride) {
-    static std::vector<float> pos_cache, val_cache;
-    const int N = rb.lattice().size();
     const auto& lat = rb.lattice();
     const auto& fields = rb.fields();
-    if (stride < 1) stride = 1;
-    const int S = (N + stride - 1) / stride;
-    const int maxPts = S * S * S;
-
-    if (static_cast<int>(pos_cache.size()) < maxPts * 3) {
-        pos_cache.resize(maxPts * 3);
-        val_cache.resize(maxPts);
-    }
-
-    int count = 0;
-    for (int z = 0; z < N; z += stride) {
-        for (int y = 0; y < N; y += stride) {
-            for (int x = 0; x < N; x += stride) {
-                int idx = lat.index(x, y, z);
-                double div = ::ftd::divergence_flux_op(fields, lat, idx);
-                if (std::abs(div) < 1e-15) continue;
-                const int o3 = count * 3;
-                pos_cache[o3]     = static_cast<float>(x) + 0.5f;
-                pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f;
-                pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
-                val_cache[count]  = static_cast<float>(div);
-                count++;
-            }
-        }
-    }
-
-    val result = val::object();
-    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
-    result.set("values",    val(typed_memory_view(count,     val_cache.data())));
-    result.set("count", count);
-    return result;
+    return sample_scalar_overlay(rb, stride, /*interior=*/false,
+        [&](int, int, int, int idx) -> std::optional<double> {
+            const double div = ::ftd::divergence_flux_op(fields, lat, idx);
+            if (std::abs(div) < 1e-15) return std::nullopt;
+            return div;
+        });
 }
 
+// Raw flux vectors J at every voxel carrying density.
 val get_flux_vector_sampled(ftd::RenderBridge& rb, int stride) {
-    static std::vector<float> pos_cache, vec_cache;
-    const int N = rb.lattice().size();
-    if (stride < 1) stride = 1;
-    const int S = (N + stride - 1) / stride;
-    const int maxPts = S * S * S;
     const auto& fields = rb.fields();
-
-    if (static_cast<int>(pos_cache.size()) < maxPts * 3) {
-        pos_cache.resize(maxPts * 3);
-        vec_cache.resize(maxPts * 3);
-    }
-
-    int count = 0;
-    for (int z = 0; z < N; z += stride) {
-        for (int y = 0; y < N; y += stride) {
-            for (int x = 0; x < N; x += stride) {
-                int idx = rb.lattice().index(x, y, z);
-                if (fields.density_at(static_cast<std::size_t>(idx)) < 1e-15) continue;
-                const int o3 = count * 3;
-                pos_cache[o3]     = static_cast<float>(x) + 0.5f;
-                pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f;
-                pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
-                vec_cache[o3]     = static_cast<float>(fields.flux_x[idx]);
-                vec_cache[o3 + 1] = static_cast<float>(fields.flux_y[idx]);
-                vec_cache[o3 + 2] = static_cast<float>(fields.flux_z[idx]);
-                count++;
-            }
-        }
-    }
-
-    val result = val::object();
-    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
-    result.set("vectors",   val(typed_memory_view(count * 3, vec_cache.data())));
-    result.set("count", count);
-    return result;
+    return sample_vector_overlay(rb, stride, /*interior=*/false,
+        [&](int, int, int, int idx) -> std::optional<std::array<double, 3>> {
+            if (fields.density_at(static_cast<std::size_t>(idx)) < 1e-15) return std::nullopt;
+            return std::array<double, 3>{fields.flux_x[idx], fields.flux_y[idx], fields.flux_z[idx]};
+        });
 }
 
+// Combined force vectors (Coulomb + gravity + magnetic) from the engine's own
+// per-voxel force diagnostic.
 val get_force_field_sampled(ftd::RenderBridge& rb, int stride) {
-    static std::vector<float> pos_cache, vec_cache;
-    const int N = rb.lattice().size();
-    if (stride < 1) stride = 1;
-    const int S = (N + stride - 1) / stride;
-    const int maxPts = S * S * S;
-
-    if (static_cast<int>(pos_cache.size()) < maxPts * 3) {
-        pos_cache.resize(maxPts * 3);
-        vec_cache.resize(maxPts * 3);
-    }
-
-    int count = 0;
-    for (int z = 0; z < N; z += stride) {
-        for (int y = 0; y < N; y += stride) {
-            for (int x = 0; x < N; x += stride) {
-                // Compute idx once instead of letting force_diag_at(x,y,z) re-resolve
-                int idx = rb.lattice().index(x, y, z);
-                const auto& fd = rb.force_diag_at(idx);
-                auto f = fd.f_coulomb + fd.f_gravity + fd.f_magnetic;
-                if (f.mag() < 1e-15) continue;
-                const int o3 = count * 3;
-                pos_cache[o3]     = static_cast<float>(x) + 0.5f;
-                pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f;
-                pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
-                vec_cache[o3]     = static_cast<float>(f.x);
-                vec_cache[o3 + 1] = static_cast<float>(f.y);
-                vec_cache[o3 + 2] = static_cast<float>(f.z);
-                count++;
-            }
-        }
-    }
-
-    val result = val::object();
-    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
-    result.set("vectors",   val(typed_memory_view(count * 3, vec_cache.data())));
-    result.set("count", count);
-    return result;
+    return sample_vector_overlay(rb, stride, /*interior=*/false,
+        [&](int, int, int, int idx) -> std::optional<std::array<double, 3>> {
+            const auto& fd = rb.force_diag_at(idx);
+            const auto f = fd.f_coulomb + fd.f_gravity + fd.f_magnetic;
+            if (f.mag() < 1e-15) return std::nullopt;
+            return std::array<double, 3>{f.x, f.y, f.z};
+        });
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -819,50 +737,20 @@ val get_force_field_sampled(ftd::RenderBridge& rb, int stride) {
 // §Gravity). Periodic-wrap at the boundaries matches the engine's own
 // `lattice().index()` convention.
 val get_gravity_field_sampled(ftd::RenderBridge& rb, int stride) {
-    static std::vector<float> pos_cache, vec_cache;
-    const int N = rb.lattice().size();
-    if (stride < 1) stride = 1;
-    const int S = (N + stride - 1) / stride;
-    const int maxPts = S * S * S;
-
-    if (static_cast<int>(pos_cache.size()) < maxPts * 3) {
-        pos_cache.resize(maxPts * 3);
-        vec_cache.resize(maxPts * 3);
-    }
-
     const auto& lat = rb.lattice();
     const auto& fields = rb.fields();
     auto density = [&](int x, int y, int z) -> double {
         return fields.density_at(static_cast<std::size_t>(lat.index(x, y, z)));
     };
-
-    int count = 0;
-    for (int z = 0; z < N; z += stride) {
-        for (int y = 0; y < N; y += stride) {
-            for (int x = 0; x < N; x += stride) {
-                // Central difference of |J| — periodic wrap via lattice().index().
-                const double gradX = (density(x + 1, y, z) - density(x - 1, y, z)) * 0.5;
-                const double gradY = (density(x, y + 1, z) - density(x, y - 1, z)) * 0.5;
-                const double gradZ = (density(x, y, z + 1) - density(x, y, z - 1)) * 0.5;
-                const double mag = std::sqrt(gradX * gradX + gradY * gradY + gradZ * gradZ);
-                if (mag < 1e-10) continue;
-                const int o3 = count * 3;
-                pos_cache[o3]     = static_cast<float>(x) + 0.5f;
-                pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f;
-                pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
-                vec_cache[o3]     = static_cast<float>(ftd::G_N * gradX);
-                vec_cache[o3 + 1] = static_cast<float>(ftd::G_N * gradY);
-                vec_cache[o3 + 2] = static_cast<float>(ftd::G_N * gradZ);
-                count++;
-            }
-        }
-    }
-
-    val result = val::object();
-    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
-    result.set("vectors",   val(typed_memory_view(count * 3, vec_cache.data())));
-    result.set("count", count);
-    return result;
+    return sample_vector_overlay(rb, stride, /*interior=*/false,
+        [&](int x, int y, int z, int) -> std::optional<std::array<double, 3>> {
+            // Central difference of |J| — periodic wrap via lattice().index().
+            const double gx = (density(x + 1, y, z) - density(x - 1, y, z)) * 0.5;
+            const double gy = (density(x, y + 1, z) - density(x, y - 1, z)) * 0.5;
+            const double gz = (density(x, y, z + 1) - density(x, y, z - 1)) * 0.5;
+            if (std::sqrt(gx * gx + gy * gy + gz * gz) < 1e-10) return std::nullopt;
+            return std::array<double, 3>{ftd::G_N * gx, ftd::G_N * gy, ftd::G_N * gz};
+        });
 }
 
 // EM force-field sampler: Coulomb force on a unit test charge at each
@@ -876,11 +764,13 @@ val get_gravity_field_sampled(ftd::RenderBridge& rb, int stride) {
 val get_em_force_field(ftd::RenderBridge& rb, int stride) {
     static std::vector<float> pos_cache, vec_cache;
     const int N = rb.lattice().size();
-    if (stride < 1) stride = 1;
-    const int S = (N + stride - 1) / stride;
-    const int maxPts = S * S * S;
+    // Same center-anchored grid as every other overlay (visual_sample_grid.h),
+    // so the N-body force field lines up voxel-for-voxel with the field samplers.
+    const ftd::VisualSampleGrid grid = ftd::visual_sample_grid(N, stride, /*interior=*/false);
+    const std::size_t maxPts =
+        static_cast<std::size_t>(grid.count) * grid.count * grid.count;
 
-    if (static_cast<int>(pos_cache.size()) < maxPts * 3) {
+    if (pos_cache.size() < maxPts * 3) {
         pos_cache.resize(maxPts * 3);
         vec_cache.resize(maxPts * 3);
     }
@@ -931,9 +821,9 @@ val get_em_force_field(ftd::RenderBridge& rb, int stride) {
     const double soft = 1.0;  // softening² — matches MockBridge
 
     int count = 0;
-    for (int z = 0; z < N; z += stride) {
-        for (int y = 0; y < N; y += stride) {
-            for (int x = 0; x < N; x += stride) {
+    for (int z = grid.origin; z < grid.end(); z += grid.stride) {
+        for (int y = grid.origin; y < grid.end(); y += grid.stride) {
+            for (int x = grid.origin; x < grid.end(); x += grid.stride) {
                 double fx = 0.0, fy = 0.0, fz = 0.0;
                 for (const auto& p : particles) {
                     double dx = p.x - x, dy = p.y - y, dz = p.z - z;
@@ -998,9 +888,10 @@ val get_em_force_field(ftd::RenderBridge& rb, int stride) {
 val get_strong_force_field(ftd::RenderBridge& rb, int stride) {
     static std::vector<float> pos_cache, vec_cache;
     const int N = rb.lattice().size();
-    if (stride < 1) stride = 1;
-    const int S = (N + stride - 1) / stride;
-    const int maxPts = S * S * S;
+    // Same center-anchored grid as every other overlay (visual_sample_grid.h).
+    const ftd::VisualSampleGrid grid = ftd::visual_sample_grid(N, stride, /*interior=*/false);
+    const int maxPts =
+        static_cast<int>(static_cast<std::size_t>(grid.count) * grid.count * grid.count);
 
     if (static_cast<int>(pos_cache.size()) < maxPts * 3) {
         pos_cache.resize(maxPts * 3);
@@ -1084,9 +975,9 @@ val get_strong_force_field(ftd::RenderBridge& rb, int stride) {
     }
 
     int count = 0;
-    for (int z = 0; z < N && count < maxPts; z += stride) {
-        for (int y = 0; y < N && count < maxPts; y += stride) {
-            for (int x = 0; x < N && count < maxPts; x += stride) {
+    for (int z = grid.origin; z < grid.end() && count < maxPts; z += grid.stride) {
+        for (int y = grid.origin; y < grid.end() && count < maxPts; y += grid.stride) {
+            for (int x = grid.origin; x < grid.end() && count < maxPts; x += grid.stride) {
                 double fx = 0.0, fy = 0.0, fz = 0.0;
 
                 // 1. Flux-tube contribution: force along each tube, pointing INWARD
@@ -1175,343 +1066,175 @@ val get_strong_force_field(ftd::RenderBridge& rb, int stride) {
 // (empty / light-* / quantum-* and the native-GPU/WebSocket path) render the
 // same topology overlays the MockBridge-owned flux-* / s0-* scenarios already
 // do. Before this, these eight were never bound, so getVorticitySampled /
-// getHelicitySampled / getCurlJSampled / getCoherenceSampled / getFisherSampled
-// / getLatencySampled / getKretschmannSampled / getStateFieldSampled all fell
-// back to empty on the WasmBridge (see docs/AUDIT_S0_OVERLAY_GROUNDING.md).
-//
-// Neighbour-stencil samplers skip the periodic boundary (1..N-1) for the same
-// reason the JS versions do — curl/gradient across the wrap seam manufactures
-// spurious wall spikes. Positions are voxel centres (x + 0.5f), matching every
-// other sampler + the particle-render convention.
-//
-// The interior loops below CENTER-ANCHOR the sample grid on the geometric
-// center voxel (lattice sizes are always odd). A plain start=1 with stride>1
-// samples the ODD voxels {1,3,…,N-2}, which SKIPS the (even) center voxel —
-// leaving no sample on the axis, so the field reads as shifted toward high
-// indices. Anchoring on the center guarantees a sample at (N-1)/2 and a grid
-// symmetric about it for any stride.
-static inline int centered_interior_start(int N, int stride) {
-    if (stride < 1) stride = 1;
-    const int center = (N - 1) / 2;
-    return center - ((center - 1) / stride) * stride;  // >= 1, lands on the center
-}
+// Curl-stencil scalar/vector overlays. These are `interior` kinds: the shared
+// grid (visual_sample_grid.h) skips the periodic-boundary voxels whose curl
+// stencils would wrap the seam and manufacture spurious wall spikes, and
+// center-anchors the grid so the geometric center voxel is always sampled.
+// (Before this was factored out, getHelicity/CurlJ/Coherence/Fisher/Latency/
+// Kretschmann/StateField all fell back to empty on the WasmBridge — see
+// docs/AUDIT_S0_OVERLAY_GROUNDING.md.)
 
 // Vorticity |ω|(x) = |∇×J| — flux-field swirl magnitude.
 val get_vorticity_sampled(ftd::RenderBridge& rb, int stride) {
-    static std::vector<float> pos_cache, val_cache;
-    const int N = rb.lattice().size();
     const auto& lat = rb.lattice();
     const auto& fields = rb.fields();
-    if (stride < 1) stride = 1;
-    const int S = (N + stride - 1) / stride;
-    const int maxPts = S * S * S;
-    if (static_cast<int>(pos_cache.size()) < maxPts * 3) { pos_cache.resize(maxPts * 3); val_cache.resize(maxPts); }
-    int count = 0;
-    for (int z = centered_interior_start(N, stride); z < N - 1; z += stride)
-        for (int y = centered_interior_start(N, stride); y < N - 1; y += stride)
-            for (int x = centered_interior_start(N, stride); x < N - 1; x += stride) {
-                const auto c = ::ftd::curl_flux_op(fields, lat, lat.index(x, y, z));
-                const double m = c.mag();
-                if (m < 1e-15) continue;
-                const int o3 = count * 3;
-                pos_cache[o3] = static_cast<float>(x) + 0.5f; pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f; pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
-                val_cache[count++] = static_cast<float>(m);
-            }
-    val result = val::object();
-    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
-    result.set("values",    val(typed_memory_view(count,     val_cache.data())));
-    result.set("count", count);
-    return result;
+    return sample_scalar_overlay(rb, stride, /*interior=*/true,
+        [&](int, int, int, int idx) -> std::optional<double> {
+            const double m = ::ftd::curl_flux_op(fields, lat, idx).mag();
+            if (m < 1e-15) return std::nullopt;
+            return m;
+        });
 }
 
 // Helicity density h(x) = J·(∇×J) — signed field-line linking number density.
 val get_helicity_sampled(ftd::RenderBridge& rb, int stride) {
-    static std::vector<float> pos_cache, val_cache;
-    const int N = rb.lattice().size();
     const auto& lat = rb.lattice();
     const auto& fields = rb.fields();
-    if (stride < 1) stride = 1;
-    const int S = (N + stride - 1) / stride;
-    const int maxPts = S * S * S;
-    if (static_cast<int>(pos_cache.size()) < maxPts * 3) { pos_cache.resize(maxPts * 3); val_cache.resize(maxPts); }
-    int count = 0;
-    for (int z = centered_interior_start(N, stride); z < N - 1; z += stride)
-        for (int y = centered_interior_start(N, stride); y < N - 1; y += stride)
-            for (int x = centered_interior_start(N, stride); x < N - 1; x += stride) {
-                const int idx = lat.index(x, y, z);
-                const auto c = ::ftd::curl_flux_op(fields, lat, idx);
-                const double h = fields.flux_x[idx] * c.x +
-                                 fields.flux_y[idx] * c.y +
-                                 fields.flux_z[idx] * c.z;
-                if (std::abs(h) < 1e-15) continue;
-                const int o3 = count * 3;
-                pos_cache[o3] = static_cast<float>(x) + 0.5f; pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f; pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
-                val_cache[count++] = static_cast<float>(h);
-            }
-    val result = val::object();
-    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
-    result.set("values",    val(typed_memory_view(count,     val_cache.data())));
-    result.set("count", count);
-    return result;
+    return sample_scalar_overlay(rb, stride, /*interior=*/true,
+        [&](int, int, int, int idx) -> std::optional<double> {
+            const auto c = ::ftd::curl_flux_op(fields, lat, idx);
+            const double h = fields.flux_x[idx] * c.x +
+                             fields.flux_y[idx] * c.y +
+                             fields.flux_z[idx] * c.z;
+            if (std::abs(h) < 1e-15) return std::nullopt;
+            return h;
+        });
 }
 
 // ∇×J pseudovector field (curl of J) — rendered as arrows by the "weak" slot.
 val get_curlj_sampled(ftd::RenderBridge& rb, int stride) {
-    static std::vector<float> pos_cache, vec_cache;
-    const int N = rb.lattice().size();
     const auto& lat = rb.lattice();
     const auto& fields = rb.fields();
-    if (stride < 1) stride = 1;
-    const int S = (N + stride - 1) / stride;
-    const int maxPts = S * S * S;
-    if (static_cast<int>(pos_cache.size()) < maxPts * 3) { pos_cache.resize(maxPts * 3); vec_cache.resize(maxPts * 3); }
-    int count = 0;
-    for (int z = centered_interior_start(N, stride); z < N - 1; z += stride)
-        for (int y = centered_interior_start(N, stride); y < N - 1; y += stride)
-            for (int x = centered_interior_start(N, stride); x < N - 1; x += stride) {
-                const auto c = ::ftd::curl_flux_op(fields, lat, lat.index(x, y, z));
-                if (c.mag() < 1e-15) continue;
-                const int o3 = count * 3;
-                pos_cache[o3] = static_cast<float>(x) + 0.5f; pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f; pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
-                vec_cache[o3] = static_cast<float>(c.x); vec_cache[o3 + 1] = static_cast<float>(c.y); vec_cache[o3 + 2] = static_cast<float>(c.z);
-                count++;
-            }
-    val result = val::object();
-    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
-    result.set("vectors",   val(typed_memory_view(count * 3, vec_cache.data())));
-    result.set("count", count);
-    return result;
+    return sample_vector_overlay(rb, stride, /*interior=*/true,
+        [&](int, int, int, int idx) -> std::optional<std::array<double, 3>> {
+            const auto c = ::ftd::curl_flux_op(fields, lat, idx);
+            if (c.mag() < 1e-15) return std::nullopt;
+            return std::array<double, 3>{c.x, c.y, c.z};
+        });
 }
 
 // Dual-substrate coherence C(x) = (J·∇×J)/(|J|·|∇×J|) — signed, in [-1, 1].
 val get_coherence_sampled(ftd::RenderBridge& rb, int stride) {
-    static std::vector<float> pos_cache, val_cache;
-    const int N = rb.lattice().size();
     const auto& lat = rb.lattice();
     const auto& fields = rb.fields();
-    if (stride < 1) stride = 1;
-    const int S = (N + stride - 1) / stride;
-    const int maxPts = S * S * S;
-    if (static_cast<int>(pos_cache.size()) < maxPts * 3) { pos_cache.resize(maxPts * 3); val_cache.resize(maxPts); }
-    int count = 0;
-    for (int z = centered_interior_start(N, stride); z < N - 1; z += stride)
-        for (int y = centered_interior_start(N, stride); y < N - 1; y += stride)
-            for (int x = centered_interior_start(N, stride); x < N - 1; x += stride) {
-                const int idx = lat.index(x, y, z);
-                const auto c = ::ftd::curl_flux_op(fields, lat, idx);
-                const double jm = fields.density_at(static_cast<std::size_t>(idx));
-                const double cm = c.mag();
-                if (jm < 1e-10 || cm < 1e-10) continue;
-                const double C = (fields.flux_x[idx] * c.x +
-                                  fields.flux_y[idx] * c.y +
-                                  fields.flux_z[idx] * c.z) / (jm * cm);
-                const int o3 = count * 3;
-                pos_cache[o3] = static_cast<float>(x) + 0.5f; pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f; pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
-                val_cache[count++] = static_cast<float>(C);
-            }
-    val result = val::object();
-    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
-    result.set("values",    val(typed_memory_view(count,     val_cache.data())));
-    result.set("count", count);
-    return result;
+    return sample_scalar_overlay(rb, stride, /*interior=*/true,
+        [&](int, int, int, int idx) -> std::optional<double> {
+            const auto c = ::ftd::curl_flux_op(fields, lat, idx);
+            const double jm = fields.density_at(static_cast<std::size_t>(idx));
+            const double cm = c.mag();
+            if (jm < 1e-10 || cm < 1e-10) return std::nullopt;
+            return (fields.flux_x[idx] * c.x +
+                    fields.flux_y[idx] * c.y +
+                    fields.flux_z[idx] * c.z) / (jm * cm);
+        });
 }
 
 // Fisher information F(x) = |∇ρ|²/ρ with ρ = |J|² — brightens density edges.
 val get_fisher_sampled(ftd::RenderBridge& rb, int stride) {
-    static std::vector<float> pos_cache, val_cache;
-    const int N = rb.lattice().size();
-    if (stride < 1) stride = 1;
-    const int S = (N + stride - 1) / stride;
-    const int maxPts = S * S * S;
-    if (static_cast<int>(pos_cache.size()) < maxPts * 3) { pos_cache.resize(maxPts * 3); val_cache.resize(maxPts); }
     const auto& lat = rb.lattice();
     const auto& fields = rb.fields();
-    auto rhoAt = [&](int xi, int yi, int zi) {
+    auto rho_at = [&](int xi, int yi, int zi) {
         const int idx = lat.index(xi, yi, zi);
-        const double x = fields.flux_x[idx];
-        const double y = fields.flux_y[idx];
-        const double z = fields.flux_z[idx];
+        const double x = fields.flux_x[idx], y = fields.flux_y[idx], z = fields.flux_z[idx];
         return x * x + y * y + z * z;
     };
-    int count = 0;
-    for (int z = centered_interior_start(N, stride); z < N - 1; z += stride)
-        for (int y = centered_interior_start(N, stride); y < N - 1; y += stride)
-            for (int x = centered_interior_start(N, stride); x < N - 1; x += stride) {
-                const double rho = rhoAt(x, y, z);
-                if (rho < 1e-8) continue;
-                const double dxr = (rhoAt(x + 1, y, z) - rhoAt(x - 1, y, z)) * 0.5;
-                const double dyr = (rhoAt(x, y + 1, z) - rhoAt(x, y - 1, z)) * 0.5;
-                const double dzr = (rhoAt(x, y, z + 1) - rhoAt(x, y, z - 1)) * 0.5;
-                const double F = (dxr * dxr + dyr * dyr + dzr * dzr) / rho;
-                if (F < 1e-12) continue;
-                const int o3 = count * 3;
-                pos_cache[o3] = static_cast<float>(x) + 0.5f; pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f; pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
-                val_cache[count++] = static_cast<float>(F);
-            }
-    val result = val::object();
-    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
-    result.set("values",    val(typed_memory_view(count,     val_cache.data())));
-    result.set("count", count);
-    return result;
+    return sample_scalar_overlay(rb, stride, /*interior=*/true,
+        [&](int x, int y, int z, int) -> std::optional<double> {
+            const double rho = rho_at(x, y, z);
+            if (rho < 1e-8) return std::nullopt;
+            const double dxr = (rho_at(x + 1, y, z) - rho_at(x - 1, y, z)) * 0.5;
+            const double dyr = (rho_at(x, y + 1, z) - rho_at(x, y - 1, z)) * 0.5;
+            const double dzr = (rho_at(x, y, z + 1) - rho_at(x, y, z - 1)) * 0.5;
+            const double F = (dxr * dxr + dyr * dyr + dzr * dzr) / rho;
+            if (F < 1e-12) return std::nullopt;
+            return F;
+        });
 }
 
 // Per-voxel latency proxy L(x) = √(|J|²/|J|²_max), clamped to the horizon
 // (0.998). Event-horizon overlay thresholds this at L ≥ 0.95.
 val get_latency_sampled(ftd::RenderBridge& rb, int stride) {
-    static std::vector<float> pos_cache, val_cache;
-    const int N = rb.lattice().size();
-    if (stride < 1) stride = 1;
-    const int S = (N + stride - 1) / stride;
-    const int maxPts = S * S * S;
-    if (static_cast<int>(pos_cache.size()) < maxPts * 3) { pos_cache.resize(maxPts * 3); val_cache.resize(maxPts); }
-    const auto& lat = rb.lattice();
     const auto& fields = rb.fields();
-    const int NNN = N * N * N;
-    double maxRho = 0.0;
-    for (int i = 0; i < NNN; ++i) {
-        const double r = fields.flux_x[i] * fields.flux_x[i] +
-                         fields.flux_y[i] * fields.flux_y[i] +
-                         fields.flux_z[i] * fields.flux_z[i];
-        if (r > maxRho) maxRho = r;
-    }
-    if (maxRho < 1e-30) { val result = val::object(); result.set("positions", val(typed_memory_view(0, pos_cache.data()))); result.set("values", val(typed_memory_view(0, val_cache.data()))); result.set("count", 0); return result; }
-    const double inv = 1.0 / maxRho;
-    int count = 0;
-    for (int z = 0; z < N; z += stride)
-        for (int y = 0; y < N; y += stride)
-            for (int x = 0; x < N; x += stride) {
-                const int idx = lat.index(x, y, z);
-                const double rho = fields.flux_x[idx] * fields.flux_x[idx] +
-                                   fields.flux_y[idx] * fields.flux_y[idx] +
-                                   fields.flux_z[idx] * fields.flux_z[idx];
-                const double rn = std::min(rho * inv, 0.998);
-                const double L = std::sqrt(rn);
-                if (L < 1e-6) continue;
-                const int o3 = count * 3;
-                pos_cache[o3] = static_cast<float>(x) + 0.5f; pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f; pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
-                val_cache[count++] = static_cast<float>(L);
-            }
-    val result = val::object();
-    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
-    result.set("values",    val(typed_memory_view(count,     val_cache.data())));
-    result.set("count", count);
-    return result;
+    const int NNN = rb.lattice().size() * rb.lattice().size() * rb.lattice().size();
+    auto rho_at = [&](int i) {
+        return fields.flux_x[i] * fields.flux_x[i] +
+               fields.flux_y[i] * fields.flux_y[i] +
+               fields.flux_z[i] * fields.flux_z[i];
+    };
+    double max_rho = 0.0;
+    for (int i = 0; i < NNN; ++i) max_rho = std::max(max_rho, rho_at(i));
+    // Degenerate (empty) field ⇒ inv = 0 ⇒ every L = 0 falls below the floor ⇒
+    // the driver returns an empty result. No special-case branch needed.
+    const double inv = (max_rho < 1e-30) ? 0.0 : 1.0 / max_rho;
+    return sample_scalar_overlay(rb, stride, /*interior=*/false,
+        [&](int, int, int, int idx) -> std::optional<double> {
+            const double L = std::sqrt(std::min(rho_at(idx) * inv, 0.998));
+            if (L < 1e-6) return std::nullopt;
+            return L;
+        });
 }
 
 // Kretschmann-like curvature proxy K(x) = (∇²L)² with the 18-point Moore
 // Laplacian (face 1/3, edge 1/6) applied to the latency proxy L.
 val get_kretschmann_sampled(ftd::RenderBridge& rb, int stride) {
-    static std::vector<float> pos_cache, val_cache, Lgrid;
-    const int N = rb.lattice().size();
-    if (stride < 1) stride = 1;
-    const int S = (N + stride - 1) / stride;
-    const int maxPts = S * S * S;
-    if (static_cast<int>(pos_cache.size()) < maxPts * 3) { pos_cache.resize(maxPts * 3); val_cache.resize(maxPts); }
+    static std::vector<float> Lgrid;
     const auto& lat = rb.lattice();
     const auto& fields = rb.fields();
-    const int NNN = N * N * N;
+    const int NNN = lat.size() * lat.size() * lat.size();
     if (static_cast<int>(Lgrid.size()) < NNN) Lgrid.resize(NNN);
-    double maxRho = 0.0;
-    for (int i = 0; i < NNN; ++i) {
-        const double r = fields.flux_x[i] * fields.flux_x[i] +
-                         fields.flux_y[i] * fields.flux_y[i] +
-                         fields.flux_z[i] * fields.flux_z[i];
-        if (r > maxRho) maxRho = r;
-    }
-    if (maxRho < 1e-30) { val result = val::object(); result.set("positions", val(typed_memory_view(0, pos_cache.data()))); result.set("values", val(typed_memory_view(0, val_cache.data()))); result.set("count", 0); return result; }
-    const double inv = 1.0 / maxRho;
-    for (int i = 0; i < NNN; ++i) {
-        const double rho = fields.flux_x[i] * fields.flux_x[i] +
-                           fields.flux_y[i] * fields.flux_y[i] +
-                           fields.flux_z[i] * fields.flux_z[i];
-        const double rn = std::min(rho * inv, 0.998);
-        Lgrid[i] = static_cast<float>(std::sqrt(rn));
-    }
-    const double INV3 = 1.0 / 3.0, INV6 = 1.0 / 6.0;
-    int count = 0;
-    for (int z = centered_interior_start(N, stride); z < N - 1; z += stride)
-        for (int y = centered_interior_start(N, stride); y < N - 1; y += stride)
-            for (int x = centered_interior_start(N, stride); x < N - 1; x += stride) {
-                const double self = Lgrid[lat.index(x, y, z)];
-                const double faceSum = Lgrid[lat.index(x + 1, y, z)] + Lgrid[lat.index(x - 1, y, z)]
-                    + Lgrid[lat.index(x, y + 1, z)] + Lgrid[lat.index(x, y - 1, z)]
-                    + Lgrid[lat.index(x, y, z + 1)] + Lgrid[lat.index(x, y, z - 1)];
-                const double edgeSum = Lgrid[lat.index(x + 1, y + 1, z)] + Lgrid[lat.index(x + 1, y - 1, z)]
-                    + Lgrid[lat.index(x - 1, y + 1, z)] + Lgrid[lat.index(x - 1, y - 1, z)]
-                    + Lgrid[lat.index(x + 1, y, z + 1)] + Lgrid[lat.index(x + 1, y, z - 1)]
-                    + Lgrid[lat.index(x - 1, y, z + 1)] + Lgrid[lat.index(x - 1, y, z - 1)]
-                    + Lgrid[lat.index(x, y + 1, z + 1)] + Lgrid[lat.index(x, y + 1, z - 1)]
-                    + Lgrid[lat.index(x, y - 1, z + 1)] + Lgrid[lat.index(x, y - 1, z - 1)];
-                const double lap = INV3 * faceSum + INV6 * edgeSum - 4.0 * self;
-                const double K = lap * lap;
-                if (K < 1e-18) continue;
-                const int o3 = count * 3;
-                pos_cache[o3] = static_cast<float>(x) + 0.5f; pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f; pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
-                val_cache[count++] = static_cast<float>(K);
-            }
-    val result = val::object();
-    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
-    result.set("values",    val(typed_memory_view(count,     val_cache.data())));
-    result.set("count", count);
-    return result;
+    auto rho_at = [&](int i) {
+        return fields.flux_x[i] * fields.flux_x[i] +
+               fields.flux_y[i] * fields.flux_y[i] +
+               fields.flux_z[i] * fields.flux_z[i];
+    };
+    double max_rho = 0.0;
+    for (int i = 0; i < NNN; ++i) max_rho = std::max(max_rho, rho_at(i));
+    const double inv = (max_rho < 1e-30) ? 0.0 : 1.0 / max_rho;  // empty field ⇒ all L = 0
+    for (int i = 0; i < NNN; ++i) Lgrid[i] = static_cast<float>(std::sqrt(std::min(rho_at(i) * inv, 0.998)));
+
+    constexpr double INV3 = 1.0 / 3.0, INV6 = 1.0 / 6.0;
+    return sample_scalar_overlay(rb, stride, /*interior=*/true,
+        [&](int x, int y, int z, int) -> std::optional<double> {
+            const double self = Lgrid[lat.index(x, y, z)];
+            const double faceSum = Lgrid[lat.index(x + 1, y, z)] + Lgrid[lat.index(x - 1, y, z)]
+                + Lgrid[lat.index(x, y + 1, z)] + Lgrid[lat.index(x, y - 1, z)]
+                + Lgrid[lat.index(x, y, z + 1)] + Lgrid[lat.index(x, y, z - 1)];
+            const double edgeSum = Lgrid[lat.index(x + 1, y + 1, z)] + Lgrid[lat.index(x + 1, y - 1, z)]
+                + Lgrid[lat.index(x - 1, y + 1, z)] + Lgrid[lat.index(x - 1, y - 1, z)]
+                + Lgrid[lat.index(x + 1, y, z + 1)] + Lgrid[lat.index(x + 1, y, z - 1)]
+                + Lgrid[lat.index(x - 1, y, z + 1)] + Lgrid[lat.index(x - 1, y, z - 1)]
+                + Lgrid[lat.index(x, y + 1, z + 1)] + Lgrid[lat.index(x, y + 1, z - 1)]
+                + Lgrid[lat.index(x, y - 1, z + 1)] + Lgrid[lat.index(x, y - 1, z - 1)];
+            const double lap = INV3 * faceSum + INV6 * edgeSum - 4.0 * self;
+            const double K = lap * lap;
+            if (K < 1e-18) return std::nullopt;
+            return K;
+        });
 }
 
 // Ternary state field s(x) ∈ {-1,0,+1} — the manifestation layer. Emits only
 // non-void voxels (s ≠ 0); the void (s = 0) is the implicit background.
 val get_state_field_sampled(ftd::RenderBridge& rb, int stride) {
-    static std::vector<float> pos_cache, val_cache;
-    const int N = rb.lattice().size();
-    if (stride < 1) stride = 1;
-    const int S = (N + stride - 1) / stride;
-    const int maxPts = S * S * S;
-    if (static_cast<int>(pos_cache.size()) < maxPts * 3) { pos_cache.resize(maxPts * 3); val_cache.resize(maxPts); }
-    const auto& lat = rb.lattice();
     const auto& ternary = rb.ternary_field();
-    int count = 0;
-    for (int z = 0; z < N; z += stride)
-        for (int y = 0; y < N; y += stride)
-            for (int x = 0; x < N; x += stride) {
-                const int s = ternary.state_at(lat.index(x, y, z));
-                if (s == 0) continue;
-                const int o3 = count * 3;
-                pos_cache[o3] = static_cast<float>(x) + 0.5f; pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f; pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
-                val_cache[count++] = static_cast<float>(s);
-            }
-    val result = val::object();
-    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
-    result.set("values",    val(typed_memory_view(count,     val_cache.data())));
-    result.set("count", count);
-    return result;
+    return sample_scalar_overlay(rb, stride, /*interior=*/false,
+        [&](int, int, int, int idx) -> std::optional<double> {
+            const int s = ternary.state_at(idx);
+            if (s == 0) return std::nullopt;
+            return static_cast<double>(s);
+        });
 }
 
 // Gauss-constraint residual r(x) = ∇·J − s_charge. FTD-native charge is the
 // ternary state, so a clean substrate has r ≈ 0; non-zero r maps the
 // non-variational Gauss-projection conservation leak (SPEC_ENGINE.md).
 val get_gauss_residual_sampled(ftd::RenderBridge& rb, int stride) {
-    static std::vector<float> pos_cache, val_cache;
-    const int N = rb.lattice().size();
-    if (stride < 1) stride = 1;
-    const int S = (N + stride - 1) / stride;
-    const int maxPts = S * S * S;
-    if (static_cast<int>(pos_cache.size()) < maxPts * 3) { pos_cache.resize(maxPts * 3); val_cache.resize(maxPts); }
-    const auto& lat = rb.lattice();
     const auto& ternary = rb.ternary_field();
-    int count = 0;
-    for (int z = 0; z < N; z += stride)
-        for (int y = 0; y < N; y += stride)
-            for (int x = 0; x < N; x += stride) {
-                const int idx = lat.index(x, y, z);
-                const double r = rb.divergence_flux(idx) - static_cast<double>(ternary.state_at(idx));
-                if (std::abs(r) < 1e-6) continue;
-                const int o3 = count * 3;
-                pos_cache[o3] = static_cast<float>(x) + 0.5f; pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f; pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
-                val_cache[count++] = static_cast<float>(r);
-            }
-    val result = val::object();
-    result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
-    result.set("values",    val(typed_memory_view(count,     val_cache.data())));
-    result.set("count", count);
-    return result;
+    return sample_scalar_overlay(rb, stride, /*interior=*/false,
+        [&](int, int, int, int idx) -> std::optional<double> {
+            const double r = rb.divergence_flux(idx) - static_cast<double>(ternary.state_at(idx));
+            if (std::abs(r) < 1e-6) return std::nullopt;
+            return r;
+        });
 }
 
 // ── Lattice info ────────────────────────────────────────────────────

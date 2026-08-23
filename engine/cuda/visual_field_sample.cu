@@ -1,6 +1,7 @@
 #include "ftd/gpu_engine.h"
 #include "ftd/constants.h"
 #include "ftd/visual_field_sample.h"
+#include "ftd/visual_sample_grid.h"
 
 #include "cuda_error.cuh"
 
@@ -16,8 +17,6 @@
 namespace ftd {
 namespace gpu {
 namespace {
-
-constexpr std::size_t kMaxDenseVisualSamples = 262144u;
 
 // Trivially-copyable kernel view. GpuBuffers owns resources and deliberately
 // deletes its copy constructor, so it cannot itself be a CUDA kernel argument.
@@ -83,47 +82,6 @@ public:
 private:
     T* ptr_ = nullptr;
 };
-
-bool interior_kind(VisualFieldKind kind) {
-    switch (kind) {
-        case VisualFieldKind::Vorticity:
-        case VisualFieldKind::Helicity:
-        case VisualFieldKind::Kretschmann:
-        case VisualFieldKind::Fisher:
-        case VisualFieldKind::Coherence:
-        case VisualFieldKind::Curl:
-            return true;
-        default:
-            return false;
-    }
-}
-
-std::uint32_t components_for_kind(VisualFieldKind kind) {
-    switch (kind) {
-        case VisualFieldKind::Electric:
-        case VisualFieldKind::Magnetic:
-        case VisualFieldKind::Poynting:
-        case VisualFieldKind::FluxVector:
-        case VisualFieldKind::Curl:
-        case VisualFieldKind::EmForce:
-        case VisualFieldKind::GravityForce:
-        case VisualFieldKind::StrongForce:
-            return 3u;
-        default:
-            return 1u;
-    }
-}
-
-int bounded_stride(int lattice_size, int requested, bool interior) {
-    int stride = std::max(1, requested);
-    const int extent = std::max(0, lattice_size - (interior ? 2 : 0));
-    auto count = [extent](int s) -> std::size_t {
-        const std::size_t n = static_cast<std::size_t>((extent + s - 1) / s);
-        return n * n * n;
-    };
-    while (count(stride) > kMaxDenseVisualSamples) ++stride;
-    return stride;
-}
 
 __device__ __forceinline__ int wrap_coord(int value, int L) {
     if (value < 0) return value + L;
@@ -394,25 +352,19 @@ __global__ void visual_particle_attributes_kernel(
 void GpuEngine::copy_visual_field_sample(VisualFieldKind kind, int requested_stride,
                                          VisualFieldSample& out) const {
     out = {};
-    out.components = components_for_kind(kind);
-    const bool interior = interior_kind(kind);
-    out.effective_stride = bounded_stride(size_, requested_stride, interior);
-    if (interior && size_ < 3) return;
+    out.components = is_vector_field_kind(kind) ? 3u : 1u;
 
-    // Center-anchor the sample grid on the geometric center voxel (size_ is odd
-    // ⇒ (size_-1)/2 is a true center). Mirrors visual_field_sample.cpp: left-
-    // anchoring skipped the center voxel for interior kinds, which read as an
-    // off-center pattern. Non-interior kinds already anchor on the center.
-    const int estride = out.effective_stride;
-    const int center  = (size_ - 1) / 2;
-    const int lo      = interior ? 1 : 0;
-    const int hi      = interior ? size_ - 2 : size_ - 1;
-    const int start   = center - ((center - lo) / estride) * estride;
-    out.origin = start;
-    const int end = hi + 1;
-    const int axis_count = (std::max(0, end - start) + estride - 1) / estride;
+    // Center-anchored sample grid, shared with the CPU + WASM samplers so all
+    // three agree on which voxels are sampled (see visual_sample_grid.h).
+    const VisualSampleGrid grid =
+        visual_sample_grid(size_, requested_stride, is_interior_field_kind(kind));
+    out.effective_stride = grid.stride;
+    out.origin = grid.origin;
+    if (grid.count == 0) return;  // lattice too small (e.g. interior kind on size_ < 3)
+
+    const int start = grid.origin;
+    const int axis_count = grid.count;
     const int candidate_count = axis_count * axis_count * axis_count;
-    if (candidate_count == 0) return;
     const VisualDeviceView view = make_visual_view(bufs_);
 
     double max_rho = 1.0;

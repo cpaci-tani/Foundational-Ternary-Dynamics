@@ -48,4 +48,40 @@ bool parse_visual_field_kind(std::string_view name, VisualFieldKind& out);
 const char* visual_field_kind_name(VisualFieldKind kind);
 std::uint32_t visual_field_components(VisualFieldKind kind);
 
+// True for the 3-component (vector) fields; the rest are scalar.
+inline bool is_vector_field_kind(VisualFieldKind kind) {
+    switch (kind) {
+        case VisualFieldKind::Electric:
+        case VisualFieldKind::Magnetic:
+        case VisualFieldKind::Poynting:
+        case VisualFieldKind::FluxVector:
+        case VisualFieldKind::Curl:
+        case VisualFieldKind::EmForce:
+        case VisualFieldKind::GravityForce:
+        case VisualFieldKind::StrongForce:
+            return true;
+        default:
+            return false;
+    }
+}
+
+// True for the neighbour-stencil fields (curl/divergence-based) that must skip
+// the periodic boundary voxels — their stencils would wrap across the seam and
+// manufacture spurious edge spikes. Consumed by visual_sample_grid()'s `interior`
+// argument. NOTE: Divergence is deliberately NOT interior here (it is sampled on
+// the full grid); only the curl-derived scalars are.
+inline bool is_interior_field_kind(VisualFieldKind kind) {
+    switch (kind) {
+        case VisualFieldKind::Vorticity:
+        case VisualFieldKind::Helicity:
+        case VisualFieldKind::Kretschmann:
+        case VisualFieldKind::Fisher:
+        case VisualFieldKind::Coherence:
+        case VisualFieldKind::Curl:
+            return true;
+        default:
+            return false;
+    }
+}
+
 }  // namespace ftd

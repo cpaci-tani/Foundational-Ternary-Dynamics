@@ -3,6 +3,7 @@
 #include "ftd/constants.h"
 #include "ftd/field_operators.h"
 #include "ftd/render_bridge.h"
+#include "ftd/visual_sample_grid.h"
 
 #include <algorithm>
 #include <cmath>
@@ -10,49 +11,6 @@
 
 namespace ftd {
 namespace {
-
-constexpr std::size_t kMaxDenseVisualSamples = 262144u;
-
-bool is_vector_kind(VisualFieldKind kind) {
-    switch (kind) {
-        case VisualFieldKind::Electric:
-        case VisualFieldKind::Magnetic:
-        case VisualFieldKind::Poynting:
-        case VisualFieldKind::FluxVector:
-        case VisualFieldKind::Curl:
-        case VisualFieldKind::EmForce:
-        case VisualFieldKind::GravityForce:
-        case VisualFieldKind::StrongForce:
-            return true;
-        default:
-            return false;
-    }
-}
-
-bool is_interior_kind(VisualFieldKind kind) {
-    switch (kind) {
-        case VisualFieldKind::Vorticity:
-        case VisualFieldKind::Helicity:
-        case VisualFieldKind::Kretschmann:
-        case VisualFieldKind::Fisher:
-        case VisualFieldKind::Coherence:
-        case VisualFieldKind::Curl:
-            return true;
-        default:
-            return false;
-    }
-}
-
-int bounded_visual_stride(int lattice_size, int requested, bool interior) {
-    int stride = std::max(1, requested);
-    const int extent = std::max(0, lattice_size - (interior ? 2 : 0));
-    auto samples_for = [extent](int s) -> std::size_t {
-        const std::size_t n = static_cast<std::size_t>((extent + s - 1) / s);
-        return n * n * n;
-    };
-    while (samples_for(stride) > kMaxDenseVisualSamples) ++stride;
-    return stride;
-}
 
 double rho_at(const FieldSoA& fields, int idx) {
     const double x = fields.flux_x[static_cast<std::size_t>(idx)];
@@ -139,7 +97,7 @@ const char* visual_field_kind_name(VisualFieldKind kind) {
 }
 
 std::uint32_t visual_field_components(VisualFieldKind kind) {
-    return is_vector_kind(kind) ? 3u : 1u;
+    return is_vector_field_kind(kind) ? 3u : 1u;
 }
 
 void RenderBridge::copy_visual_field_sample(VisualFieldKind kind, int stride,
@@ -153,30 +111,16 @@ void RenderBridge::copy_visual_field_sample(VisualFieldKind kind, int stride,
     out = {};
     out.components = visual_field_components(kind);
     const int n = lattice_.size();
-    const bool interior = is_interior_kind(kind);
-    out.effective_stride = bounded_visual_stride(n, stride, interior);
-    if (interior && n < 3) return;
 
-    // Anchor the sample grid on the geometric center voxel. Every lattice size
-    // is odd, so (n-1)/2 is a true center on each axis. Left-anchoring at 0/1
-    // made INTERIOR kinds (curl, vorticity, helicity, …) sample {1,3,…,n-2} —
-    // an EVEN count that skips the (even) center voxel, so the pattern had no
-    // sample on the axis and read as offset toward high indices, and
-    // resolveSamplePlane rounded the shown mid-plane up to n/2+1. Centering the
-    // grid guarantees the center voxel is sampled and the grid stays symmetric
-    // about it for every size and stride. Non-interior kinds already anchor at
-    // 0 (which lands on the center voxel for these odd sizes), so they are
-    // unchanged.
-    const int estride = out.effective_stride;
-    const int center  = (n - 1) / 2;
-    const int lo      = interior ? 1 : 0;
-    const int hi      = interior ? n - 2 : n - 1;
-    const int start   = center - ((center - lo) / estride) * estride;  // >= lo, includes center
-    out.origin = start;
-    const int end = hi + 1;  // loop runs z < end, i.e. z <= hi
-    const int axis_count = (std::max(0, end - start) + estride - 1) / estride;
-    const std::size_t max_points = static_cast<std::size_t>(axis_count)
-                                 * axis_count * axis_count;
+    // Center-anchored sample grid, shared with the CUDA + WASM samplers so all
+    // three agree on which voxels are sampled (see visual_sample_grid.h).
+    const VisualSampleGrid grid = visual_sample_grid(n, stride, is_interior_field_kind(kind));
+    out.effective_stride = grid.stride;
+    out.origin = grid.origin;
+    if (grid.count == 0) return;  // lattice too small (e.g. interior kind on n < 3)
+
+    const std::size_t max_points = static_cast<std::size_t>(grid.count)
+                                 * grid.count * grid.count;
     out.positions.reserve(max_points * 3u);
     out.data.reserve(max_points * out.components);
 
@@ -200,9 +144,9 @@ void RenderBridge::copy_visual_field_sample(VisualFieldKind kind, int stride,
         }
     }
 
-    for (int z = start; z < end; z += out.effective_stride) {
-        for (int y = start; y < end; y += out.effective_stride) {
-            for (int x = start; x < end; x += out.effective_stride) {
+    for (int z = grid.origin; z < grid.end(); z += grid.stride) {
+        for (int y = grid.origin; y < grid.end(); y += grid.stride) {
+            for (int x = grid.origin; x < grid.end(); x += grid.stride) {
                 // A regular point sampler can miss a one-voxel Wilson loop,
                 // IC4 seed, or vortex core whenever the bounded visualization
                 // stride is >1.  FluxVector instead represents each regular
@@ -213,9 +157,9 @@ void RenderBridge::copy_visual_field_sample(VisualFieldKind kind, int stride,
                 if (kind == VisualFieldKind::FluxVector) {
                     double best_rho = 0.0;
                     Vec3 best{};
-                    const int bx_end = std::min(x + out.effective_stride, end);
-                    const int by_end = std::min(y + out.effective_stride, end);
-                    const int bz_end = std::min(z + out.effective_stride, end);
+                    const int bx_end = std::min(x + grid.stride, grid.end());
+                    const int by_end = std::min(y + grid.stride, grid.end());
+                    const int bz_end = std::min(z + grid.stride, grid.end());
                     for (int bz = z; bz < bz_end; ++bz) {
                         for (int by = y; by < by_end; ++by) {
                             for (int bx = x; bx < bx_end; ++bx) {
