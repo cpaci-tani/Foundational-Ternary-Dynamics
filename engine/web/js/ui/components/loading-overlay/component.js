@@ -1,16 +1,15 @@
 import { getLoadingOverlayTemplate } from './template.js';
 
 export class LoadingOverlayComponent {
-    constructor(root, { version = 'v2.11' } = {}) {
+    constructor(root) {
         this.root = root;
-        this.version = version;
         this._started = false;
     }
 
     init() {
         if (!this.root) return this;
         if (!this.root.querySelector('#load-cube')) {
-            this.root.innerHTML = getLoadingOverlayTemplate(this.version);
+            this.root.innerHTML = getLoadingOverlayTemplate();
         }
         if (!this._started) {
             this._started = true;

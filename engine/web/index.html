@@ -127,8 +127,33 @@
     </script>
     <!-- Skip-link: styled via .skip-link in css/ui/shell/app-shell.css -->
     <a href="#viewport" class="skip-link">Skip to simulation</a>
-    <!-- Loading overlay is rendered by js/ui/components/loading-overlay -->
-    <div id="loading-overlay" role="status" aria-live="polite"></div>
+    <!-- Loading overlay. The markup is INLINED (not left empty for JS to fill)
+         so it paints on the very first paint — before app.js runs and before the
+         coi-serviceworker's one-time first-load reload on GitHub Pages, which
+         otherwise left the first visit showing a blank page until the reload.
+         LoadingOverlayComponent.init() detects the existing #load-cube, skips
+         re-rendering, and just starts the canvas animation. Keep this in sync
+         with js/ui/components/loading-overlay/template.js. -->
+    <div id="loading-overlay" role="status" aria-live="polite">
+        <div class="load-lattice">
+            <canvas id="load-cube" width="512" height="512"></canvas>
+        </div>
+        <div class="load-copy">
+            <div class="load-logo" aria-hidden="true">
+                <span class="letter">F</span>
+                <span class="letter">T</span>
+                <span class="letter">D</span>
+                <span class="dot"></span>
+            </div>
+            <div class="load-subtitle">Foundational Ternary Dynamics</div>
+            <div class="load-progress-wrap">
+                <div class="load-bar-bg">
+                    <div class="load-bar-fill" id="load-bar"></div>
+                </div>
+                <div class="load-status" id="load-status"></div>
+            </div>
+        </div>
+    </div>
 
     <div id="app" class="mode-lattice" data-active-scale="0" data-shell-ready="false" data-layout-mode="desktop"
         data-orientation="landscape">
@@ -136,7 +161,7 @@
         <!-- ── Toolbar ──────────────────────────────── -->
         <!-- Scale toolbar contributions are rendered by each scale's register-*-ui.js -->
         <nav id="toolbar" aria-label="Simulation controls">
-            <h1 class="brand">FTD Engine <span>v2.18</span></h1>
+            <h1 class="brand">FTD Engine</h1>
             <!-- Playback controls (play / step / reset / speed) moved
                  to the floating play bar. See js/ui/components/play-bar/. -->
             <div class="tb-group">

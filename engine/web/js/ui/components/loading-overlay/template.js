@@ -1,4 +1,4 @@
-export function getLoadingOverlayTemplate(version = 'v2.11') {
+export function getLoadingOverlayTemplate() {
     return `
         <div class="load-lattice">
             <canvas id="load-cube" width="512" height="512"></canvas>
@@ -17,7 +17,6 @@ export function getLoadingOverlayTemplate(version = 'v2.11') {
                 </div>
                 <div class="load-status" id="load-status"></div>
             </div>
-            <div class="load-version">${version}</div>
         </div>
     `;
 }
