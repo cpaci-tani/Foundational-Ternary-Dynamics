@@ -417,15 +417,17 @@ export class CosmicMockBridge {
     getDiagnostics() {
         let totalMass = 0, totalKE = 0;
         const counts = new Array(9).fill(0);
+        let dmMass = 0;
         for (const b of this._bodies) {
             totalMass += b.mass;
             totalKE += 0.5 * b.mass * (b.vx * b.vx + b.vy * b.vy + b.vz * b.vz);
             const idx = b.type + 3;
             if (idx >= 0 && idx < 9) counts[idx]++;
+            if (b.type === CosmicMockBridge.TYPE.DARK_MATTER) dmMass += b.mass;
         }
         return {
             tick: this._tick, bodyCount: this._bodies.length,
-            countsByType: counts, totalMass, totalKE,
+            countsByType: counts, totalMass, totalKE, dmMass,
             // Live ΛCDM background (audit P0-9): _H and _a are integrated
             // each tick by _stepFriedmann, no longer the static H0/1.0.
             // hubbleParameter is the present (visual-clock) Hubble rate;

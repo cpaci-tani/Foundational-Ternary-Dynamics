@@ -104,6 +104,33 @@ std::string http_header_value(const std::string& request,
 
 }  // namespace
 
+bool ws_origin_allowed(const std::string& origin) {
+    if (origin.empty() || origin == "null" || origin == "NULL") return true;
+    std::string lower;
+    lower.reserve(origin.size());
+    for (unsigned char c : origin) {
+        lower.push_back(static_cast<char>(std::tolower(c)));
+    }
+    if (lower.rfind("file:", 0) == 0) return true;
+    const auto scheme = lower.find("://");
+    if (scheme == std::string::npos) return false;
+    const auto host_start = scheme + 3;
+    std::string host;
+    if (host_start < lower.size() && lower[host_start] == '[') {
+        // RFC 3986: IPv6 literals keep their colons inside [...]. Stopping at
+        // the first ':' would truncate "[::1]:8080" to "[".
+        const auto close = lower.find(']', host_start);
+        if (close == std::string::npos) return false;
+        host = lower.substr(host_start + 1, close - host_start - 1);
+    } else {
+        const auto host_end = lower.find_first_of("/:", host_start);
+        host = lower.substr(
+            host_start,
+            host_end == std::string::npos ? std::string::npos : host_end - host_start);
+    }
+    return host == "localhost" || host == "127.0.0.1" || host == "::1";
+}
+
 bool ws_handshake(SOCKET client) {
     // Browser upgrade requests are normally small, but cookies and user-agent
     // metadata can legitimately push them beyond 4 KiB. Keep a strict bound
@@ -132,6 +159,20 @@ bool ws_handshake(SOCKET client) {
 
     // HTTP field names are case-insensitive (RFC 9110 section 5.1). Chromium,
     // WebView2, and Node are all free to choose different casing here.
+    const std::string origin = http_header_value(request, "Origin");
+    if (!ws_origin_allowed(origin)) {
+        std::cerr << "[ws_server] Rejected handshake Origin: " << origin << "\n";
+        const char forbid[] =
+            "HTTP/1.1 403 Forbidden\r\n"
+            "Content-Type: text/plain\r\n"
+            "Content-Length: 18\r\n"
+            "Connection: close\r\n"
+            "\r\n"
+            "origin not allowed";
+        send_all(client, forbid, sizeof(forbid) - 1);
+        return false;
+    }
+
     const std::string ws_key = http_header_value(request, "Sec-WebSocket-Key");
     if (ws_key.empty()) {
         std::cerr << "[ws_server] No Sec-WebSocket-Key in handshake\n";

@@ -877,6 +877,8 @@ function wireToolbar() {
         updatePlayButton();
         if (engineMode === 'cosmic') {
             Scale5Controller.loadCosmicScenario(_makeCtx(), document.getElementById('cosmic-scenario-select')?.value || 'cosmic-galaxy');
+        } else if (engineMode === 'planetary') {
+            Scale4Controller.loadScenario(_makeCtx(), document.getElementById('planetary-scenario-select')?.value || 'planetary-solar');
         } else if (engineMode === 'molecules') {
             loadMoleculeScenario(document.getElementById('mol-scenario-select').value);
         } else if (engineMode === 'atoms') {
@@ -1308,6 +1310,12 @@ function wireKeyboard() {
                 bridge.aeTick();
             } else if (engineMode === 'particles') {
                 bridge.peTick();
+            } else if (engineMode === 'cosmic') {
+                Scale5Controller.step(_makeCtx());
+            } else if (engineMode === 'planetary') {
+                Scale4Controller.step();
+            } else if (engineMode === 'meta') {
+                // MetaUnit has no tick-based physics to step.
             } else {
                 Scale0Controller.step(_makeCtx());
             }
@@ -1319,6 +1327,12 @@ function wireKeyboard() {
                 loadAEScenario(document.getElementById('ae-scenario-select').value);
             } else if (engineMode === 'particles') {
                 loadPEScenario(document.getElementById('pe-scenario-select').value);
+            } else if (engineMode === 'cosmic') {
+                Scale5Controller.loadCosmicScenario(_makeCtx(), document.getElementById('cosmic-scenario-select')?.value || 'cosmic-galaxy');
+            } else if (engineMode === 'planetary') {
+                Scale4Controller.loadScenario(_makeCtx(), document.getElementById('planetary-scenario-select')?.value || 'planetary-solar');
+            } else if (engineMode === 'meta') {
+                Scale6Controller.loadScenario(_makeCtx());
             } else {
                 Scale0Controller.reset(_makeCtx());
             }

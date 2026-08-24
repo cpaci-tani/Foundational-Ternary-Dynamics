@@ -6,6 +6,7 @@
  */
 
 import { getAllParticles, getCategories, getByCategory, formatMass, chargeLabel } from './particle-catalog.js';
+import { escapeHtml } from './lib/origin-policy.js';
 
 // Generation buckets — the Moore-layer 3-generation structure ([SELECTION],
 // LEDGER FTD-0028: theorem-shaped argument, physical reading is selection).
@@ -72,10 +73,10 @@ function renderParticleCard(p) {
     return `<div class="zoo-card">
         <div class="zoo-card-line1">
             <span class="zoo-dot" style="background:${dotColor}"></span>
-            <span class="zoo-symbol">${p.symbol}</span>
-            <span class="zoo-name">${p.name}</span>
+            <span class="zoo-symbol">${escapeHtml(p.symbol)}</span>
+            <span class="zoo-name">${escapeHtml(p.name)}</span>
             <span class="zoo-accuracy" style="${accClass}" title="FTD-predicted mass deviation vs measured (yellow = strongly-motivated conjecture, grey = parametric)">${accStr}</span>
-            <button class="zoo-inject-btn" data-particle="${p.id}" title="Inject ${p.name}" ${canInject ? '' : 'disabled'}>+</button>
+            <button class="zoo-inject-btn" data-particle="${escapeHtml(p.id)}" title="Inject ${escapeHtml(p.name)}" ${canInject ? '' : 'disabled'}>+</button>
         </div>
         <div class="zoo-card-line2">
             <span class="zoo-mass" title="Measured (PDG) rest mass; electron uses the FTD anchor m_e = 0.511 MeV">${formatMass(p.mass_mev)}</span>

@@ -64,6 +64,10 @@ let poolThreads = 1;       // Phase 1 = 1 (serial off-thread). Phase 2 raises th
                            // nested pthread_create; POOL_SIZE=0 => no pre-spawn).
 let ctrlSab = null, ctrl = null;
 let timer = 0, tickAcc = 0;
+let initInFlight = false;
+let pendingCreate = null;
+let lastFluxHeap = null, lastFluxPtr = -1, lastFluxLen = -1;
+let lastInspect = null, lastForceAt = null;
 
 // Overlay sampler registry. Maps proxy kind-key → [C++ method name, 'vec'|'val'|'obj'].
 // 'vec' returns {positions, vectors, count}; 'val' returns {positions, values, count};
@@ -84,7 +88,7 @@ const SAMPLER_METHODS = {
   'state':         ['getStateFieldSampled',    'val'],
   'gaussResidual': ['getGaussResidualSampled', 'val'],
   'em':            ['getEMForceField',         'vec'],
-  'gravity':       ['getGravityForceField',    'vec'],
+  'gravity':       ['getGravityFieldSampled',  'vec'],
   'strong':        ['getStrongForceField',     'vec'],
   'gravityMetricAgg': ['getGravityMetricAgg', 'obj'],
 };
@@ -96,6 +100,46 @@ const wantedSamplers = new Map();
 // Knot telemetry/event payloads are WASM heap VIEWS (zero-copy). They are
 // invalidated by the next WASM call, so copy every typed array out before the
 // payload crosses the postMessage boundary back to the main thread.
+const WORKER_COMMAND_ALLOWLIST = new Set([
+  'tickScale0', 'setToggle', 'setDt', 'setOmega0',
+  'setLangevinTemp', 'setLangevinGamma', 'setFluxBoundary',
+  'injectParticle', 'injectFlux', 'injectWavepacket', 'injectWaveVel',
+  'createEntangledPair', 'clearField', 'seedRandomFlux',
+]);
+
+function cloneAudit(a) {
+  if (!a) return null;
+  const out = {};
+  const keys = [
+    'fieldEnergy', 'waveEnergy', 'particleKE', 'totalEnergy', 'gaussViolation',
+    'maxGaussError', 'selfFieldInjection', 'coulombPE', 'EFieldEnergy', 'BFieldEnergy',
+    'chargeTotal', 'manifested', 'totalPoynting', 'ELTotal', 'ERTotal', 'wvLTotal',
+    'wvRTotal', 'chiralityTotal', 'strongEnergy', 'weakEnergy', 'particleRestEnergy',
+    'particleEnergy', 'dynamicEnergy', 'cellVolume', 'fieldEnergyDensitySum',
+    'waveEnergyDensitySum', 'particleMomentum',
+  ];
+  for (const k of keys) {
+    if (a[k] === undefined) continue;
+    const v = a[k];
+    if (v && typeof v === 'object' && Number.isFinite(v.x)) {
+      out[k] = { x: v.x, y: v.y, z: v.z };
+    } else {
+      out[k] = v;
+    }
+  }
+  return out;
+}
+
+function applyCommand(method, args = []) {
+  if (method === 'tickScale0') { bridge.tick(); return; }
+  if (!WORKER_COMMAND_ALLOWLIST.has(method)) {
+    console.error('[WasmWorker] rejected command:', method);
+    return;
+  }
+  if (typeof mod[method] === 'function') { try { mod[method](bridge, ...args); } catch (e) { console.error('[WasmWorker] command ' + method + ' failed:', e); } }
+  else if (typeof bridge[method] === 'function') { try { bridge[method](...args); } catch (e) { console.error('[WasmWorker] command ' + method + ' failed:', e); } }
+}
+
 function copyKnotTelemetry(r) {
   if (!r || !r.count) return null;
   return { ids: new Int32Array(r.ids), signs: new Int32Array(r.signs), birth: new Int32Array(r.birth),
@@ -232,6 +276,9 @@ function buildBridge(n, scen) {
   if (!ctrlSab) { ctrlSab = new SharedArrayBuffer(CTRL.LEN * 4); ctrl = new Int32Array(ctrlSab); }
   Atomics.store(ctrl, CTRL.N, N);
   Atomics.store(ctrl, CTRL.RUNNING, 0);
+  lastFluxHeap = vol.buffer;
+  lastFluxPtr = vol.byteOffset;
+  lastFluxLen = vol.length;
   self.postMessage({
     type: 'ready', N, ctrl: ctrlSab, heap: vol.buffer, fluxPtr: vol.byteOffset, fluxLen: vol.length,
     setupOk, setupError,
@@ -241,7 +288,13 @@ function buildBridge(n, scen) {
 
 function postFrame() {
   if (!bridge) return;
-  mod.getFluxVolume(bridge);            // refresh the flux cache in the shared heap
+  const vol = mod.getFluxVolume(bridge);            // refresh the flux cache in the shared heap
+  if (vol && (vol.buffer !== lastFluxHeap || vol.byteOffset !== lastFluxPtr || vol.length !== lastFluxLen)) {
+    lastFluxHeap = vol.buffer;
+    lastFluxPtr = vol.byteOffset;
+    lastFluxLen = vol.length;
+    self.postMessage({ type: 'fluxRebind', heap: vol.buffer, fluxPtr: vol.byteOffset, fluxLen: vol.length });
+  }
   const tick = bridge.currentTick ? bridge.currentTick() : 0;
   let diag = null, parts = null, audit = null, lag = null;
   try { diag = mod.getDiagnostics(bridge); } catch (e) { /* ignore */ }
@@ -265,7 +318,7 @@ function postFrame() {
     try {
       const a = mod.getEnergyAudit(bridge);
       if (a && Number.isFinite(a.dynamicEnergy)) {
-        lastAudit = {
+        lastAudit = cloneAudit(a) || {
           dynamicEnergy: a.dynamicEnergy, totalEnergy: a.totalEnergy,
           particleRestEnergy: a.particleRestEnergy, fieldEnergy: a.fieldEnergy,
           waveEnergy: a.waveEnergy, particleKE: a.particleKE,
@@ -347,6 +400,7 @@ function postFrame() {
   }
   const engineTogglesMsg = engineTogglesDirty ? readEngineToggles() : null;
   self.postMessage({ type: 'frame', tick: tick | 0, diag, parts, audit, lag, samplers, knot, knotEvents, knotAgg,
+                     inspect: lastInspect, forceAt: lastForceAt,
                      ...(engineTogglesMsg ? { engineToggles: engineTogglesMsg } : {}) });
 }
 
@@ -378,41 +432,60 @@ if (!IS_EM_PTHREAD) self.onmessage = (e) => {
           ? [...msg.toggleNames]
           : Object.keys(toggles);
         if (typeof msg.pool === 'number' && msg.pool >= 1) poolThreads = msg.pool | 0;
-        if (!mod) initModule(() => { buildBridge(msg.N, msg.scenarioId || scenarioId); if (!timer) loop(); });
-        else { buildBridge(msg.N, msg.scenarioId || scenarioId); if (!timer) loop(); }
+        pendingCreate = msg;
+        if (mod) {
+          buildBridge(msg.N, msg.scenarioId || scenarioId);
+          if (!timer) loop();
+        } else if (!initInFlight) {
+          initInFlight = true;
+          initModule(() => {
+            initInFlight = false;
+            const m = pendingCreate;
+            pendingCreate = null;
+            if (m) buildBridge(m.N, m.scenarioId || scenarioId);
+            if (!timer) loop();
+          });
+        }
         break;
       case 'resize':
         if (mod) buildBridge(msg.N, msg.scenarioId || scenarioId);
         break;
       case 'command': {
         if (!mod || !bridge) break;
-        // A command (inject/step/toggle/clear) can change the field or energy;
-        // drop the cadence-cached energy audit so the postFrame below recomputes
-        // it — otherwise energy panels stay stale after an inject while paused at
-        // large N (matches WasmBridge, which invalidates on every injection).
         lastAudit = null; auditFrameCounter = 0;
-        const { method, args = [] } = msg;
-        if (method === 'tickScale0') { bridge.tick(); postFrame(); break; }
-        if (typeof mod[method] === 'function') { try { mod[method](bridge, ...args); } catch (e) { console.error('[WasmWorker] command ' + method + ' failed:', e); } }
-        else if (typeof bridge[method] === 'function') { try { bridge[method](...args); } catch (e) { console.error('[WasmWorker] command ' + method + ' failed:', e); } }
-        engineTogglesDirty = true;   // a setToggle may have landed
-        postFrame();          // reflect the effect immediately (even while paused)
+        applyCommand(msg.method, msg.args || []);
+        engineTogglesDirty = true;
+        postFrame();
         break;
       }
       case 'batchCommand': {
-        // Replay of commands that were sent before the bridge was ready (e.g.
-        // seedSpectrumComparator voxel injections during scenario load).
-        // Processes all commands in one synchronous pass, then calls postFrame()
-        // once at the end — avoids spamming the main thread with a frame per voxel.
         if (!mod || !bridge) break;
-        lastAudit = null; auditFrameCounter = 0;   // batch can inject/change field — force a fresh audit
+        lastAudit = null; auditFrameCounter = 0;
         for (const { method, args = [] } of (msg.commands || [])) {
-          if (method === 'tickScale0') { bridge.tick(); continue; }
-          if (typeof mod[method] === 'function') { try { mod[method](bridge, ...args); } catch (e) { console.error('[WasmWorker] batch ' + method + ' failed:', e); } }
-          else if (typeof bridge[method] === 'function') { try { bridge[method](...args); } catch (e) { console.error('[WasmWorker] batch ' + method + ' failed:', e); } }
+          applyCommand(method, args);
         }
-        engineTogglesDirty = true;   // a setToggle may have landed
+        engineTogglesDirty = true;
         postFrame();
+        break;
+      }
+      case 'inspectVoxel': {
+        lastInspect = null;
+        if (mod && bridge && typeof mod.inspectVoxel === 'function') {
+          try {
+            lastInspect = { x: msg.x | 0, y: msg.y | 0, z: msg.z | 0, voxel: mod.inspectVoxel(bridge, msg.x, msg.y, msg.z) };
+          } catch { lastInspect = null; }
+        }
+        self.postMessage({ type: 'inspectResult', inspect: lastInspect });
+        break;
+      }
+      case 'getForceAt': {
+        lastForceAt = null;
+        if (mod && bridge && typeof mod.getForceAt === 'function') {
+          try {
+            lastForceAt = { x: msg.x | 0, y: msg.y | 0, z: msg.z | 0, force: mod.getForceAt(bridge, msg.x, msg.y, msg.z) };
+          } catch { lastForceAt = null; }
+        }
+        self.postMessage({ type: 'forceAtResult', forceAt: lastForceAt });
         break;
       }
       case 'coarsen': {

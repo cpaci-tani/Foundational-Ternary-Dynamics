@@ -809,6 +809,8 @@ export class MolecularRenderer {
         disposeMesh(this._aeForceVdw);       this._aeForceVdw = null;
         disposeMesh(this._aeForceBond);      this._aeForceBond = null;
         disposeMesh(this._aeForceNet);       this._aeForceNet = null;
+        disposeMesh(this._aeDipoles);        this._aeDipoles = null;
+        disposeMesh(this._hbondLines);       this._hbondLines = null;
         this.clearElementLabels();
     }
 }

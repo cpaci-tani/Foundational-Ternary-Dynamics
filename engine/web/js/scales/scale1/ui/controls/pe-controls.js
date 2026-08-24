@@ -12,6 +12,7 @@
  */
 
 import { scale1State } from '../../state/store.js';
+import { escapeHtml } from '../../../../lib/origin-policy.js';
 
 // [id, label, title] — ids are the historical DOM ids app.js wires
 // (wireControls' peToggleMap); labels/titles carry the honest tags.
@@ -78,7 +79,7 @@ export function refreshPromotionCard() {
         lines.push(`positions display-scaled ×${p.displayScale.toFixed(3)} `
             + `[IMPOSED display mapping]`);
     }
-    el.innerHTML = lines.map(l => `<div>${l}</div>`).join('');
+    el.innerHTML = lines.map(l => `<div>${escapeHtml(l)}</div>`).join('');
 }
 
 export function createPeControlsCard() {

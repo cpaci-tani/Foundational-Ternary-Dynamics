@@ -9,8 +9,8 @@
  * Usage: ws_server.exe [lattice_size] [port] [--bind <addr>]
  *        Defaults: lattice_size=32, port=9100, bind=127.0.0.1 (loopback)
  *        LAN/remote control requires explicit opt-in: --bind 0.0.0.0
- *        (the protocol has no auth / no Origin check — see the runtime
- *        warning; revision 1.4 hardening, prior default was INADDR_ANY)
+ *        (Origin is allowlisted to loopback / file / missing; revision 1.4
+ *        default bind remains 127.0.0.1)
  *
  * Framing + handshake live in ws_protocol.{h,cpp}.  SHA-1 lives in ws_sha1.h.
  * This file is the command-dispatch loop and main().
@@ -23,6 +23,7 @@
 #include "ftd/lagrangian.h"
 #include "ftd/native_telemetry_scheduler.h"
 #include "ftd/visual_field_sample.h"
+#include "ftd/visual_sample_grid.h"
 
 #include <iostream>
 #include <iomanip>
@@ -295,9 +296,11 @@ std::vector<uint8_t> pack_particle_data(ftd::RenderBridge& rb) {
 }
 
 // Compact sampled visualization frame:
-// ["FTV2"][u32 latticeSize][u32 effectiveStride][u32 axisCount]
+// ["FTV2"][u32 latticeSize][u32 effectiveStride][u32 origin][u32 axisCount]
 // [float32 density[axisCount^3]], x-fastest.
 //
+// Origin is the centre-anchored first voxel of visual_sample_grid so the
+// dashboard can place samples at the same physical coordinates FTS2 uses.
 // The renderer draws at most 53^3 points. Sending the old dense FTV1 N^3
 // lattice therefore downloaded and transferred ~23.7 MiB on every L=181
 // refresh only to discard 97.5% of it in JavaScript. Reuse the sparse compact
@@ -314,14 +317,19 @@ std::vector<uint8_t> pack_flux_volume(ftd::RenderBridge& rb,
         ftd::VisualFieldKind::FluxVector, requested_stride, sample);
 
     const int stride = std::max(1, sample.effective_stride);
-    const int axis_count = (n + stride - 1) / stride;
-    const std::size_t count = static_cast<std::size_t>(axis_count)
-                            * axis_count * axis_count;
-    std::vector<uint8_t> buf(16u + count * sizeof(float), 0u);
-    const uint32_t header[4] = {
+    const auto grid = ftd::visual_sample_grid(
+        n, stride, ftd::is_interior_field_kind(ftd::VisualFieldKind::FluxVector));
+    const int origin = grid.origin;
+    const int axis_count = grid.count;
+    const std::size_t count = axis_count > 0
+        ? static_cast<std::size_t>(axis_count) * axis_count * axis_count
+        : 0;
+    std::vector<uint8_t> buf(20u + count * sizeof(float), 0u);
+    const uint32_t header[5] = {
         kFluxVolumeMagic,
         static_cast<uint32_t>(n),
         static_cast<uint32_t>(stride),
+        static_cast<uint32_t>(origin),
         static_cast<uint32_t>(axis_count),
     };
     std::memcpy(buf.data(), header, sizeof(header));
@@ -336,9 +344,9 @@ std::vector<uint8_t> pack_flux_volume(ftd::RenderBridge& rb,
         const int x = static_cast<int>(sample.positions[i * 3u + 0u]);
         const int y = static_cast<int>(sample.positions[i * 3u + 1u]);
         const int z = static_cast<int>(sample.positions[i * 3u + 2u]);
-        const int xi = x / stride;
-        const int yi = y / stride;
-        const int zi = z / stride;
+        const int xi = (x - origin) / stride;
+        const int yi = (y - origin) / stride;
+        const int zi = (z - origin) / stride;
         if (xi < 0 || yi < 0 || zi < 0
             || xi >= axis_count || yi >= axis_count || zi >= axis_count) {
             continue;
@@ -1653,7 +1661,8 @@ bool handle_command(const std::string& json, SOCKET client,
         double value = ftd::json_number(json, "value");
         if (!std::isfinite(value)) {
             std::cerr << "[ws_server] Rejected non-finite parameter " << name << "\n";
-            return true;
+            return send_json_response(
+                client, json_error("non-finite parameter", cmd), request_id);
         }
         bool changed = false;
         if (name == "dt") {
@@ -1697,9 +1706,13 @@ bool handle_command(const std::string& json, SOCKET client,
         else {
             std::cerr << "[ws_server] Rejected unknown/out-of-range parameter "
                       << name << '=' << value << "\n";
+            return send_json_response(
+                client,
+                json_error("unknown/out-of-range parameter: " + name, cmd),
+                request_id);
         }
         if (changed) telemetry.on_state_mutated(*rb);
-        return true;  // Fire-and-forget
+        return send_json_response(client, "{\"ok\":true,\"cmd\":\"set_param\"}", request_id);
     }
     else if (cmd == "inject_flux") {
         int x = static_cast<int>(ftd::json_number(json, "x"));

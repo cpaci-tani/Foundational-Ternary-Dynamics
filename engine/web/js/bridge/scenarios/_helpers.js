@@ -408,8 +408,11 @@ export function createScenarioHarness(bridge) {
         injectFlux: (x, y, z, fx, fy, fz) => bridge._injectFlux?.(x, y, z, fx, fy, fz),
         injectWaveVel: (x, y, z, vx, vy, vz) => bridge._injectWaveVel?.(x, y, z, vx, vy, vz),
         injectParticle: (x, y, z, state, opts = {}) => {
+            const fx = Number.isFinite(opts.fx) ? opts.fx : 0;
+            const fy = Number.isFinite(opts.fy) ? opts.fy : 0;
+            const fz = Number.isFinite(opts.fz) ? opts.fz : 0;
             const before = bridge._particles?.length ?? 0;
-            bridge.injectParticle?.(x, y, z, state);
+            bridge.injectParticle?.(x, y, z, state, fx, fy, fz);
             const after = bridge._particles?.length ?? 0;
             if (after > before && opts) {
                 const last = bridge._particles[after - 1];

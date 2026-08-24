@@ -272,7 +272,7 @@ static void ae_set_bonding(ftd::AtomEngine& ae, bool e) { ae.set_bonding_enabled
 static int ae_atom_count(ftd::AtomEngine& ae) { return static_cast<int>(ae.atoms().size()); }
 
 static void ae_clear(ftd::AtomEngine& ae) {
-    ae.atoms().clear();
+    ae.clear();
 }
 
 // ── AE Toggle getter/setter (generic, by name) ────────────────────

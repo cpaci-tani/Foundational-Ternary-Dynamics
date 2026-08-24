@@ -296,13 +296,18 @@ export class WasmBridge {
     // loader — the asymmetry looked intentional but was accretion. NOTE: no
     // heap-death recovery is attempted anywhere; ftd_core builds with
     // -fno-exceptions, so a WASM abort() stays permanent by design.
-    injectParticle(x, y, z, state) {
+    injectParticle(x, y, z, state, fx = 0, fy = 0, fz = 0) {
         if (!(this._module && this._bridge)) return;
         try {
-            this._module.injectParticle(this._bridge, x, y, z, state);
+            this._module.injectParticle(this._bridge, x, y, z, state, fx, fy, fz);
             this._invalidateScale0AuditCache();
         } catch (e) {
-            console.error('WASM injectParticle failed:', e);
+            try {
+                this._module.injectParticle(this._bridge, x, y, z, state);
+                this._invalidateScale0AuditCache();
+            } catch (e2) {
+                console.error('WASM injectParticle failed:', e2);
+            }
         }
     }
 

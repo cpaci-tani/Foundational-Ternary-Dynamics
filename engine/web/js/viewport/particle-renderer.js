@@ -226,7 +226,11 @@ export class ViewportParticleRenderer {
     updateAdmissibilityRings(peData, seedById, ids) {
         if (!this._admissibilityRings) this._buildAdmissibilityRings();
         const group = this._admissibilityRings;
-        while (group.children.length) group.remove(group.children[0]);
+        while (group.children.length) {
+            const child = group.children[0];
+            child.material?.dispose();
+            group.remove(child);
+        }
         if (!seedById || seedById.size === 0) return;
         for (let i = 0; i < peData.count; i++) {
             const seed = seedById.get(ids[i]);

@@ -17,6 +17,8 @@ import { debugLog } from './core/log.js';
 import { WasmBridge } from './bridge/wasm-bridge.js';
 import { particleDataToList, samplerOr } from './bridge/bridge-contract.js';
 import { K_B } from './constants.js';
+import { parseFtv2Frame } from './lib/ftv2.js';
+import { parseNativeWsPort } from './lib/origin-policy.js';
 
 const EMPTY_FIELD_SAMPLE = Object.freeze({
     positions: new Float32Array(0),
@@ -36,8 +38,9 @@ const EMPTY_KNOT_AGG = Object.freeze({ alive: 0, netCharge: 0, births: 0, deaths
 // now send compact FTV2 frames so large lattices never cross the socket merely
 // to discard most voxels in the renderer.
 const FLUX_VOLUME_MAGIC = 0x31565446;
-// [u32 "FTV2"][u32 latticeSize][u32 effectiveStride][u32 axisCount]
-// [float32 density[axisCount^3]], x-fastest.
+// [u32 "FTV2"][u32 latticeSize][u32 effectiveStride][u32 origin][u32 axisCount]
+// [float32 density[axisCount^3]], x-fastest. Legacy 16-byte headers (no origin)
+// are still accepted by parseFtv2Frame.
 const FLUX_VOLUME_COMPACT_MAGIC = 0x32565446;
 const FLUX_VOLUME_AXIS_SAMPLES = 53;
 // Extended particle frame matching the WASM particle contract. Positions are
@@ -1332,7 +1335,8 @@ export class WebSocketBridge {
         } else if (operation === 'get_flux_slice' || operation === 'slice') {
             this._sliceRequestsInFlight.clear();
             this._sliceRequestEpoch.clear();
-        } else if (operation === 'get_field_sample' || operation === 'field_sample') {
+        } else if (operation === 'get_field_sample' || operation === 'field_sample'
+            || operation === 'get_field_slices' || operation === 'field_slices') {
             this._fieldSampleRequestTokenByKey.clear();
             this._fieldSampleRequestsByToken.clear();
             this._fieldSampleDemandByKey.clear();
@@ -1425,7 +1429,8 @@ export class WebSocketBridge {
         } else if (operation === 'get_flux_slice' || operation === 'slice') {
             this._sliceRequestsInFlight.clear();
             this._sliceRequestEpoch.clear();
-        } else if (operation === 'get_field_sample' || operation === 'field_sample') {
+        } else if (operation === 'get_field_sample' || operation === 'field_sample'
+            || operation === 'get_field_slices' || operation === 'field_slices') {
             // The server emits no binary frame for a deferred sampler. Return
             // all bounded in-flight work to its fair demand queue and retry
             // only after telemetry has published or the tiny bounded delay.
@@ -1438,6 +1443,7 @@ export class WebSocketBridge {
                     kind: pending.kind,
                     stride: pending.stride,
                     epoch: this._visualEpoch,
+                    planesMid: pending.planesMid,
                 });
             }
         } else {
@@ -2011,32 +2017,19 @@ export class WebSocketBridge {
             }
             if (header.getUint32(0, true) === FLUX_VOLUME_COMPACT_MAGIC) {
                 this._volumeRequestInFlight = false;
-                if (buf.byteLength < 16) {
-                    console.warn(`[ws-bridge] Invalid FTV2 header: ${buf.byteLength} bytes`);
-                    this._volumeRequestEpoch = 0;
-                    this._notifyVisualDataReady();
-                    return;
-                }
-                const latticeSize = header.getUint32(4, true);
-                const stride = header.getUint32(8, true);
-                const axisCount = header.getUint32(12, true);
-                const count = axisCount * axisCount * axisCount;
-                const expectedBytes = 16 + count * 4;
-                if (latticeSize < 1 || stride < 1 || axisCount < 1 || axisCount > 64
-                    || !Number.isSafeInteger(count) || buf.byteLength !== expectedBytes) {
-                    console.warn(
-                        `[ws-bridge] Invalid FTV2 frame: L=${latticeSize}, stride=${stride}, ` +
-                        `axis=${axisCount}, bytes=${buf.byteLength}; expected ${expectedBytes}`,
-                    );
+                const parsed = parseFtv2Frame(buf);
+                if (!parsed) {
+                    console.warn(`[ws-bridge] Invalid FTV2 frame: ${buf.byteLength} bytes`);
                     this._volumeRequestEpoch = 0;
                     this._notifyVisualDataReady();
                     return;
                 }
                 this._volumeCache = {
-                    data: new Float32Array(buf, 16, count),
-                    latticeSize,
-                    stride,
-                    axisCount,
+                    data: parsed.data,
+                    latticeSize: parsed.latticeSize,
+                    stride: parsed.stride,
+                    origin: parsed.origin,
+                    axisCount: parsed.axisCount,
                 };
                 this._notifyVisualDataReady();
                 return;
@@ -2334,40 +2327,65 @@ export class WebSocketBridge {
         return this._toggles[name] ?? false;
     }
 
+    _seedPhysicsLocked() {
+        return !!(this._scenarioDraft || this._preparedScenario);
+    }
+
     setParam(name, value) {
-        if (Number.isFinite(Number(value))) this._params[name] = Number(value);
-        this._sendAndForget({ cmd: 'set_param', name, value });
+        const n = Number(value);
+        if (!Number.isFinite(n)) return;
+        const prev = this._params[name];
+        this._params[name] = n;
+        this._sendJSON({ cmd: 'set_param', name, value: n }, DIAGNOSTIC_COMMAND_TIMEOUT_MS)
+            .then((response) => {
+                if (response?.error) {
+                    if (prev === undefined) delete this._params[name];
+                    else this._params[name] = prev;
+                    console.warn('[ws-bridge] set_param rejected:', response.error);
+                }
+            })
+            .catch((err) => {
+                if (prev === undefined) delete this._params[name];
+                else this._params[name] = prev;
+                debugLog('[ws-bridge] set_param failed:', err?.message || err);
+            });
     }
 
     getParam(name) { return this._params[name]; }
     getOmega0() { return this._params.omega0 ?? 1.0; }
 
     injectFlux(x, y, z, fx, fy, fz) {
+        if (this._seedPhysicsLocked()) return;
         this._sendAndForget({ cmd: 'inject_flux', x, y, z, fx, fy, fz });
         this._markVisualDataDirty();
     }
 
-    injectParticle(x, y, z, state) {
-        this._sendAndForget({ cmd: 'inject_particle', x, y, z, state, fx: 0.1, fy: 0, fz: 0 });
+    injectParticle(x, y, z, state, fx = 0, fy = 0, fz = 0) {
+        if (this._seedPhysicsLocked()) return;
+        this._sendAndForget({ cmd: 'inject_particle', x, y, z, state, fx, fy, fz });
         this._markVisualDataDirty();
     }
 
     injectWavepacket(x, y, z, state) {
+        if (this._seedPhysicsLocked()) return;
         this._sendAndForget({ cmd: 'inject_wavepacket', x, y, z, state });
         this._markVisualDataDirty();
     }
 
     createEntangledPair(x, y, z, fx = K_B, fy = 0, fz = 0) {
+        if (this._seedPhysicsLocked()) return;
         this._sendAndForget({ cmd: 'create_pair', x, y, z, fx, fy, fz });
         this._markVisualDataDirty();
     }
 
     _injectFlux(x, y, z, fx, fy, fz) {
+        if (this._seedPhysicsLocked()) return;
         this._sendAndForget({ cmd: 'inject_flux_add', x, y, z, fx, fy, fz });
         this._markVisualDataDirty();
     }
 
     _injectWaveVel(x, y, z, wx, wy, wz) {
+        if (this._seedPhysicsLocked()) return;
         this._sendAndForget({ cmd: 'inject_wave_vel_add', x, y, z, wx, wy, wz });
         this._markVisualDataDirty();
     }
@@ -2835,11 +2853,11 @@ export class WebSocketBridge {
  * Try to connect to native GPU engine, return null if unavailable.
  */
 export async function tryNativeBridge(latticeSize = 32) {
-    const queryPort = new URLSearchParams(window.location.search).get('wsPort');
-    const parsedPort = queryPort === null ? 9100 : Number(queryPort);
-    const port = Number.isInteger(parsedPort) && parsedPort >= 1 && parsedPort <= 65535
-        ? parsedPort
-        : 9100;
+    const port = parseNativeWsPort(
+        window.location.search,
+        window.location.href,
+        9100,
+    );
     const bridge = new WebSocketBridge(`ws://127.0.0.1:${port}`);
     try {
         await bridge.connect();

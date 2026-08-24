@@ -64,7 +64,7 @@ const CHANNELS = {
     // Scale 5: Cosmic N-body
     '5': [
         { key: 'csBodies',   title: 'Body Count',      buffer: 'csBodies',  color: 'var(--chart-flux, #fb8c00)',   unit: 'ct' },
-        { key: 'csHubble',   title: 'Hubble parameter',buffer: 'csHubble',  color: 'var(--chart-energy, #42a5f5)', unit: 'H' },
+        { key: 'csHubble',   title: 'Background Hubble H(a)',buffer: 'csHubble',  color: 'var(--chart-energy, #42a5f5)', unit: 'H' },
         { key: 'csDM',       title: 'Dark Matter Frac',buffer: 'csDM',      color: 'var(--chart-eb, #a78bfa)',    unit: '%' }
     ]
 };

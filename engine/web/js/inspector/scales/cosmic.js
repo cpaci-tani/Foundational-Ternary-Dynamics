@@ -1,4 +1,5 @@
 import { setInspectorSectionVisibility } from '../chrome.js';
+import { LATTICE_TO_SOLAR_MASS } from '../../constants.js';
 
 export function handleCosmicClick(target, intersects) {
     if (intersects.length > 0) {
@@ -60,10 +61,11 @@ export function updateCosmicFields(target) {
 
     if (target.cosmicFields.id) target.cosmicFields.id.textContent = body.id;
 
+    const solarMass = body.mass * LATTICE_TO_SOLAR_MASS;
     let massStr = '';
-    if (body.mass >= 1e6) massStr = `${(body.mass / 1e6).toFixed(2)} M\u2609`;
-    else if (body.mass < 1) massStr = `${body.mass.toFixed(4)} M\u2609`;
-    else massStr = `${body.mass.toFixed(1)} M\u2609`;
+    if (solarMass >= 1e6) massStr = `${(solarMass / 1e6).toFixed(2)} M\u2609`;
+    else if (solarMass < 1) massStr = `${solarMass.toFixed(4)} M\u2609`;
+    else massStr = `${solarMass.toFixed(1)} M\u2609`;
 
     if (target.cosmicFields.mass) target.cosmicFields.mass.textContent = massStr;
     if (target.cosmicFields.radius) target.cosmicFields.radius.textContent = `${body.radius.toFixed(2)} R\u2609`;

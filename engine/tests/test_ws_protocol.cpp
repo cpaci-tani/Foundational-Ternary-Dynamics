@@ -71,6 +71,17 @@ void test_base64_vectors() {
     check("b64(\"foobar\") == Zm9vYmFy", b64("foobar") == "Zm9vYmFy", "6-byte");
 }
 
+void test_ws_origin_allowlist() {
+    section("WebSocket Origin allowlist");
+    check("empty Origin allowed (CLI / tests)", ws_origin_allowed(""), "");
+    check("null Origin allowed (file://)", ws_origin_allowed("null"), "");
+    check("localhost allowed", ws_origin_allowed("http://localhost:8080"), "");
+    check("127.0.0.1 allowed", ws_origin_allowed("http://127.0.0.1:9100"), "");
+    check("file Origin allowed", ws_origin_allowed("file:///C:/ftd/engine/web/index.html"), "");
+    check("foreign Origin rejected", !ws_origin_allowed("https://evil.example"), "");
+    check("IPv6 loopback allowed", ws_origin_allowed("http://[::1]:8080"), "");
+}
+
 void test_rfc6455_accept_derivation() {
     section("RFC 6455 Sec-WebSocket-Accept derivation");
     // The canonical example from RFC 6455 section 1.3 / 4.2.2: the exact
@@ -206,6 +217,7 @@ int main() {
     ftd::test::init("test_ws_protocol");
     ftd::test::test_sha1_fips_vectors();
     ftd::test::test_base64_vectors();
+    ftd::test::test_ws_origin_allowlist();
     ftd::test::test_rfc6455_accept_derivation();
     ftd::test::test_json_helpers();
 #ifndef _WIN32

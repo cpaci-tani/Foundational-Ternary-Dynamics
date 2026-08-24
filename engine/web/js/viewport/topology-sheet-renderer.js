@@ -208,7 +208,9 @@ export class TopologySheetRenderer {
         const N = this._getLatticeSize();
         if (this._gravSurfaceSize === N) return;
         this._gravSurface.geometry?.dispose();
+        this._gravSurface.material?.dispose();
         this._gravSurfaceWire.geometry?.dispose();
+        this._gravSurfaceWire.material?.dispose();
         this.scene.remove(this._gravSurface);
         this.scene.remove(this._gravSurfaceWire);
         this._gravSurface = null;

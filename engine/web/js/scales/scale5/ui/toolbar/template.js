@@ -33,7 +33,7 @@ export function getScale5TelemetryToolbarTemplate() {
         <div class="tb-group tb-group-telemetry scale5-only" id="cosmic-telemetry">
             <span class="tb-value" id="cosmic-tb-bodies" title="Body count">--</span>
             <span class="tb-value" id="cosmic-tb-tick" title="Simulation tick">--</span>
-            <span class="tb-value" id="cosmic-tb-hubble" title="Hubble parameter H(t)">--</span>
+            <span class="tb-value" id="cosmic-tb-hubble" title="Background Friedmann H(a); not N-body expansion">--</span>
             <span class="tb-value" id="cosmic-tb-scenario" title="Scenario-specific telemetry"></span>
         </div>
     `;

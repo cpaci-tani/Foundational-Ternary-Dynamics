@@ -101,8 +101,7 @@ export function updatePlanetaryFields(target) {
 
     target.planetaryFields.id.textContent = target._selectedPlanetaryId;
     target.planetaryFields.mass.textContent = typeof mass === 'number' ? `${mass.toFixed(4)} M☉` : mass;
-    const tK = 280 + (uTemp * 500);
-    target.planetaryFields.temp.textContent = Math.round(tK).toString();
+    target.planetaryFields.temp.textContent = `${uTemp.toFixed(2)} (relative)`;
     target.planetaryFields.biome.textContent = biome;
     target.planetaryFields.pos.textContent = `(${x.toFixed(4)}, ${y.toFixed(4)}, ${z.toFixed(4)})`;
     target.planetaryFields.vel.textContent = `(${vx.toFixed(4)}, ${vy.toFixed(4)}, ${vz.toFixed(4)})`;

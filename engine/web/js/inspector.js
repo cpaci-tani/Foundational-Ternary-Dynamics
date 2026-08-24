@@ -269,11 +269,13 @@ export class Inspector {
                     handlePlanetaryClick(this, []);
                 }
             }
-        } else if (this._engineMode === 'atoms') {
+        } else if (this._engineMode === 'atoms' || this._engineMode === 'molecules') {
             handleAEClick(this, intersects);
         } else if (this._engineMode === 'particles') {
             handlePEClick(this, intersects);
-        } else {
+        } else if (this._engineMode === 'meta') {
+            // Scale 6 binds its own canvas pointerdown inspector.
+        } else if (this._engineMode === 'lattice') {
             handleLatticeClick(this, intersects);
         }
     }

@@ -67,7 +67,7 @@ const SELECTOR_TOOLTIPS = [
     ['#raycast-threshold-val', 'Current inspector point-cloud hit radius.'],
     ['#cosmic-tb-bodies', 'Scale 5 telemetry: current number of simulated cosmic bodies.'],
     ['#cosmic-tb-tick', 'Scale 5 telemetry: current cosmic simulation tick.'],
-    ['#cosmic-tb-hubble', 'Scale 5 telemetry: current Hubble-like expansion parameter.'],
+    ['#cosmic-tb-hubble', 'Scale 5 background Friedmann clock H(a). Decorative ΛCDM; not coupled to the N-body particles.'],
 ];
 
 // Scale 0 diagnostic rows.

@@ -216,9 +216,9 @@ __global__ void visual_field_kernel(
             // thin Wilson loops / IC4 point seeds / vortex cores as soon as
             // the large-lattice traffic cap raises stride above one.
             double best_rho = 0.0;
-            const int x_end = (x + stride < b.L) ? x + stride : b.L;
-            const int y_end = (y + stride < b.L) ? y + stride : b.L;
-            const int z_end = (z + stride < b.L) ? z + stride : b.L;
+            const int x_end = x + stride;
+            const int y_end = y + stride;
+            const int z_end = z + stride;
             for (int bz = z; bz < z_end; ++bz) {
                 for (int by = y; by < y_end; ++by) {
                     for (int bx = x; bx < x_end; ++bx) {

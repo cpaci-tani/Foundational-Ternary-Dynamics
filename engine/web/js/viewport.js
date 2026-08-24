@@ -942,8 +942,9 @@ export class Viewport {
             if (this.wireframe) this.wireframe.visible = false;
         };
 
-        // ── Cosmic mode: hide all non-cosmic visuals ──
-        if (mode === 'cosmic') {
+        // ── Cosmic / planetary / meta: hide lattice overlays; those scales
+        // own their own cameras and meshes.
+        if (mode === 'cosmic' || mode === 'planetary' || mode === 'meta') {
             hideAllOverlays();
             return;
         }

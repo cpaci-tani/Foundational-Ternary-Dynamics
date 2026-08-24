@@ -141,6 +141,8 @@ export class WasmBridgeProxy {
         this._lastKnot = null;
         this._lastKnotEvents = null;
         this._lastKnotAgg = null;
+        this._lastInspect = null;
+        this._lastForceAt = null;
         this._pendingTPF = undefined;
         // Commands sent before 'ready' (i.e. while the worker is initialising the
         // WASM module) are buffered here and replayed as a single batchCommand once
@@ -259,6 +261,10 @@ export class WasmBridgeProxy {
                 this._worker.postMessage({ type: 'batchCommand', commands: this._pendingCommands });
                 this._pendingCommands = [];
             }
+            if (this._running === true) {
+                this._worker.postMessage({ type: 'setRunning', value: true });
+                if (this._ctrl) Atomics.store(this._ctrl, CTRL.RUNNING, 1);
+            }
             if (m.setupOk === false) {
                 const msg = m.setupError || (`Unknown or unhandled scenario: ${this._scenarioId}`);
                 console.error('[WasmWorker] setupScenario failed:', msg);
@@ -290,12 +296,24 @@ export class WasmBridgeProxy {
             if (m.knot) this._lastKnot = m.knot;
             if (m.knotEvents) this._lastKnotEvents = m.knotEvents;
             if (m.knotAgg) this._lastKnotAgg = m.knotAgg;
+            if (m.inspect) this._lastInspect = m.inspect;
+            if (m.forceAt) this._lastForceAt = m.forceAt;
             const hadSamplers = Boolean(m.samplers && Object.keys(m.samplers).length);
             if (hadSamplers) Object.assign(this._samplerCache, m.samplers);
 
             if (typeof window !== 'undefined' && window.__ftdCtx && typeof window.__ftdCtx.onBridgePostFrame === 'function') {
                 window.__ftdCtx.onBridgePostFrame(hadSamplers);
             }
+        } else if (m.type === 'fluxRebind') {
+            try {
+                this._fluxView = new Float64Array(m.heap, m.fluxPtr, m.fluxLen);
+            } catch {
+                this._fluxView = null;
+            }
+        } else if (m.type === 'inspectResult') {
+            this._lastInspect = m.inspect || null;
+        } else if (m.type === 'forceAtResult') {
+            this._lastForceAt = m.forceAt || null;
         } else if (m.type === 'coarsenResult') {
             const resolve = this._coarsenPending.get(m.reqId);
             if (resolve) {
@@ -411,7 +429,7 @@ export class WasmBridgeProxy {
     // Contract members with no production consumer today, implemented so the
     // anti-drift gate in scale0-worker.spec.js is satisfied by real forwarding
     // rather than by shrinking the contract.
-    getForceFieldSampled(stride = 2) { return samplerOr(this, 'em', stride, EMPTY_VEC()); }
+    getForceFieldSampled(stride = 2) { return this.getEMForceField(stride); }
     getGravityFieldSampled(stride = 2) { return samplerOr(this, 'gravity', stride, EMPTY_VEC()); }
     getFluxVolume() {
         if (!this._ready || !this._fluxView) return new Float64Array(0);
@@ -556,8 +574,18 @@ export class WasmBridgeProxy {
     // fallback instead of throwing and tripping the raf-coordinator error budget.
     // TODO (Phase 2): true worker-backed inspect via a request/response channel
     // into the worker's RenderBridge.
-    inspectVoxel() { return null; }
-    getForceAt() { return null; }
+    inspectVoxel(x, y, z) {
+        this._worker.postMessage({ type: 'inspectVoxel', x, y, z });
+        const c = this._lastInspect;
+        if (c && c.x === x && c.y === y && c.z === z) return c.voxel;
+        return c?.voxel ?? null;
+    }
+    getForceAt(x, y, z) {
+        this._worker.postMessage({ type: 'getForceAt', x, y, z });
+        const c = this._lastForceAt;
+        if (c && c.x === x && c.y === y && c.z === z) return c.force;
+        return c?.force ?? null;
+    }
     sampleVAtRay() { return { positions: new Float32Array(0), V: new Float32Array(0), count: 0 }; }
     // The worker does not currently post a constants payload, so there is no
     // cached value to forward — return null (callers should use constants.js).

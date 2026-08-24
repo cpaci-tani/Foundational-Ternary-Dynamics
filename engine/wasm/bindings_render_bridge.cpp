@@ -67,6 +67,11 @@ static void inject_particle_simple(ftd::RenderBridge& rb, int x, int y, int z, i
     rb.inject_particle(x, y, z, static_cast<int8_t>(state), ftd::Vec3(0, 0, 0));
 }
 
+static void inject_particle_with_flux(ftd::RenderBridge& rb, int x, int y, int z, int state,
+                                      double fx, double fy, double fz) {
+    rb.inject_particle(x, y, z, static_cast<int8_t>(state), ftd::Vec3(fx, fy, fz));
+}
+
 static void inject_wavepacket_simple(ftd::RenderBridge& rb, int x, int y, int z, int state) {
     rb.inject_wavepacket(x, y, z, static_cast<int8_t>(state));
 }
@@ -370,6 +375,7 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     // Force-field decomposition samplers (2026-04-19) — per-voxel force vectors
     // decomposed by physical interaction, for force-arrow overlay visualization.
     function("getGravityFieldSampled", &get_gravity_field_sampled);
+    function("getGravityForceField",   &get_gravity_field_sampled);
     function("getEMForceField",        &get_em_force_field);
     function("getStrongForceField",    &get_strong_force_field);
 
@@ -396,7 +402,8 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     function("getToggle",          &get_toggle);
 
     // Injection
-    function("injectParticle",     &inject_particle_simple);
+    function("injectParticle", select_overload<void(ftd::RenderBridge&, int, int, int, int)>(&inject_particle_simple));
+    function("injectParticle", select_overload<void(ftd::RenderBridge&, int, int, int, int, double, double, double)>(&inject_particle_with_flux));
     function("injectWavepacket",   &inject_wavepacket_simple);
     function("injectFlux",         &inject_flux);
     function("injectUniformFluxAdd", &inject_uniform_flux_add);

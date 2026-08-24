@@ -1110,11 +1110,9 @@ export class TelemetryHub {
         if (currentTick !== this._lastTick5) {
             this._lastTick5 = currentTick;
 
-            const counts = diag.countsByType || [];
-            const total = diag.bodyCount || 1;
-            const dmFraction = ((counts[3] || 0) / total) * 100;
-            // Single push({...}) — see the collectScale4 comment above for
-            // why per-channel .push() on a RingBufferView throws.
+            const dmMass = diag.dmMass || 0;
+            const totalMass = diag.totalMass || 0;
+            const dmFraction = totalMass > 0 ? (dmMass / totalMass) * 100 : 0;
             this._s5_cs.push({
                 csBodies: diag.bodyCount || diag.count || 0,
                 csHubble: diag.hubbleParameter || diag.hubble || diag.hubbleParam || 0,

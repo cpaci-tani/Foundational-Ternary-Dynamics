@@ -151,7 +151,7 @@ export function setupCartwheelCollision(ctx) {
         const ph = PI2 * rng();
         const M_enc = this._enclosedMass(r, M_target * 0.95, target_r_s);
         const sigma = Math.sqrt(G_N * M_enc / Math.max(r, 1)) * 0.7;
-        this.addBody(T.DARK_MATTER, (M_target * 0.40) / N_tdm,
+        this.addBody(T.DARK_MATTER, (M_target * _DM_FRAC) / N_tdm,
             r * Math.sin(th) * Math.cos(ph), r * Math.cos(th), r * Math.sin(th) * Math.sin(ph),
             sigma * randn(), sigma * randn(), sigma * randn());
     }
@@ -166,7 +166,7 @@ export function setupCartwheelCollision(ctx) {
         const vc = Math.sqrt(G_N * M_enc / Math.max(r, 0.5));
         const isNebula = (i % 4 === 0);
         const type = isNebula ? T.NEBULA : T.STAR;
-        const mass = (M_target * 0.55) / N_tstar;
+        const mass = (M_target * (1 - _DM_FRAC - 0.05)) / N_tstar;
         const bodyIndex = this._bodies.length;
         this.addBody(type, mass,
             r * Math.cos(ph), zz, r * Math.sin(ph),
@@ -526,7 +526,7 @@ export function setupSuperCluster(ctx) {
             const ph = PI2 * rng();
             const M_enc = this._enclosedMass(r, galMass, r_s);
             const vc = Math.sqrt(G_N * M_enc / Math.max(r, 1));
-            this.addBody(T.DARK_MATTER, (galMass * 0.35) / 500,
+            this.addBody(T.DARK_MATTER, (galMass * _DM_FRAC) / 150,
                 cx + r * Math.sin(th) * Math.cos(ph), r * Math.cos(th), cz + r * Math.sin(th) * Math.sin(ph),
                 vx_sys - vc * Math.sin(th) * Math.cos(ph), randn() * vc * 0.1, vz_sys + vc * Math.sin(th) * Math.sin(ph),
                 0);

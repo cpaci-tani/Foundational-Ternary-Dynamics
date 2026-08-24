@@ -382,10 +382,12 @@ export class PhysicsHarness {
      * the MockBridge convention of post-mutating the last entry.
      */
     injectParticle(x, y, z, state, opts = {}) {
+        const fx = Number.isFinite(opts.fx) ? opts.fx : 0;
+        const fy = Number.isFinite(opts.fy) ? opts.fy : 0;
+        const fz = Number.isFinite(opts.fz) ? opts.fz : 0;
         const before = (this.bridge?._particles?.length ?? 0);
-        this.bridge?.injectParticle?.(x, y, z, state);
+        this.bridge?.injectParticle?.(x, y, z, state, fx, fy, fz);
         const after = (this.bridge?._particles?.length ?? 0);
-        // Apply spin/color/locked to the just-injected particle, if any.
         if (after > before && opts) {
             const last = this.bridge._particles?.[after - 1];
             if (last) {

@@ -23,6 +23,7 @@
 import {
     ONTIC_TOTAL_CONSTANTS, TICK_PHASES,
 } from './constants.js';
+import { escapeHtml } from './lib/origin-policy.js';
 
 // ── Kolmogorov complexity estimates ──────────────────────────────────
 
@@ -234,7 +235,7 @@ export function renderFcCard(obs, container) {
             </div>
             <div>
                 <div class="oo-fc-label">C<sub>0</sub> = Boundary Datum</div>
-                <div class="oo-fc-value warning">${obs._scenarioName}</div>
+                <div class="oo-fc-value warning">${escapeHtml(obs._scenarioName)}</div>
                 <div class="oo-fc-sub">K(C<sub>0</sub>) = ${sp.kc0} bits</div>
                 <div class="oo-bar-track">
                     <div class="oo-bar-fill warning" style="width:${(sp.kc0 / maxBar * 100).toFixed(0)}%"></div>

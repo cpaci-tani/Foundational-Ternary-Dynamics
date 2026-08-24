@@ -299,7 +299,10 @@ export class ViewportFluxRenderer {
         for (let i = 0; i < samples; i++) {
             if (compact) {
                 vox[i] = i;
-                renderCoord[i] = Math.min(i * stride, N - 1) + 0.5;
+                const origin = Number.isFinite(Number(compact.origin))
+                    ? Number(compact.origin)
+                    : 0;
+                renderCoord[i] = Math.min(origin + i * stride, N - 1) + 0.5;
             } else {
                 const v = ((i + 0.5) * stride) | 0;
                 vox[i] = v < N ? v : N - 1;

@@ -8,8 +8,9 @@ or by bouncing the server. All three are friction we don't need.
 
 Usage (replaces `python -m http.server 8080 -d engine/web`):
 
-    python engine/web/serve.py            # port 8080
+    python engine/web/serve.py            # port 8080, bind 127.0.0.1
     python engine/web/serve.py 9090       # custom port
+    python engine/web/serve.py --host 0.0.0.0 9090   # LAN bind (opt-in)
 
 The handler adds `Cache-Control: no-store, must-revalidate` to every
 response, plus `Pragma: no-cache` and `Expires: 0` for the older
@@ -175,15 +176,23 @@ def main():
         ALLOW_CACHE = True
     if "--quiet" in raw:
         QUIET = True
+    host = "127.0.0.1"
+    if "--host" in raw:
+        idx = raw.index("--host")
+        if idx + 1 >= len(raw):
+            print("serve.py: --host requires an address", file=sys.stderr)
+            sys.exit(2)
+        host = raw[idx + 1]
+        raw = raw[:idx] + raw[idx + 2:]
     args = [a for a in raw if a not in ("--cache", "--quiet")]
     port = int(args[0]) if args else 8080
     web_root = os.path.dirname(os.path.abspath(__file__))
     os.chdir(web_root)
-    server = http.server.ThreadingHTTPServer(("", port), NoCacheHandler)
+    server = http.server.ThreadingHTTPServer((host, port), NoCacheHandler)
     server.allow_reuse_address = True
     mode = "cache" if ALLOW_CACHE else "no-cache"
     quiet = ", quiet" if QUIET else ""
-    print(f"FTD dev server: http://localhost:{port} ({mode}, COOP/COEP{quiet})  [Ctrl-C to stop]", flush=True)
+    print(f"FTD dev server: http://{host}:{port} ({mode}, COOP/COEP{quiet})  [Ctrl-C to stop]", flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:

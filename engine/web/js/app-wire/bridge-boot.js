@@ -5,6 +5,7 @@
 
 import { createBridge } from '../bridge-init.js';
 import { tryNativeBridge } from '../ws-bridge.js';
+import { parseNativeWsPort } from '../lib/origin-policy.js';
 import { debugLog } from '../core/log.js';
 
 /**
@@ -27,7 +28,7 @@ export async function bootBridge(latticeSize, ui) {
 
     let bridge = null;
     if (forceNative || !isLiveServerPort) {
-        const requestedWsPort = urlParams.get('wsPort') || '9100';
+        const requestedWsPort = parseNativeWsPort(urlParams, window.location.href, 9100);
         debugLog(`[init] Trying native GPU engine on ws://127.0.0.1:${requestedWsPort}...`);
         try {
             bridge = await tryNativeBridge(latticeSize);

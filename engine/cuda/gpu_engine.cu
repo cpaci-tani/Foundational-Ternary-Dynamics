@@ -1237,6 +1237,14 @@ void GpuEngine::tick() {
             bool captured = false;
             const cudaError_t begin_status = cudaStreamBeginCapture(
                 bufs_.stream, cudaStreamCaptureModeThreadLocal);
+            if (begin_status != cudaSuccess) {
+                static bool logged_capture_skip = false;
+                if (!logged_capture_skip) {
+                    std::fprintf(stderr, "[gpu] graph capture begin skipped: %s\n",
+                                 cudaGetErrorString(begin_status));
+                    logged_capture_skip = true;
+                }
+            }
             if (begin_status == cudaSuccess) {
                 bool recorded = true;
                 try {

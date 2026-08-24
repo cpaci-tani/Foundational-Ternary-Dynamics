@@ -71,10 +71,15 @@ bool send_all(SOCKET sock, const void* buf, size_t n);
 // WebSocket handshake + frames
 // ---------------------------------------------------------------------------
 
+// True when a browser Origin header is absent (CLI / tests) or names a
+// loopback / file origin. Foreign https origins are rejected.
+bool ws_origin_allowed(const std::string& origin);
+
 // Perform the server-side HTTP Upgrade handshake.
 // Reads one complete HTTP header block (bounded to 16 KiB) from `client`,
 // computes the Sec-WebSocket-Accept value, and sends the 101 Switching
 // Protocols response. Header names are matched case-insensitively.
+// When Origin is present it must pass ws_origin_allowed().
 bool ws_handshake(SOCKET client);
 
 // Read one WebSocket frame.  Returns opcode, fills `payload`.
