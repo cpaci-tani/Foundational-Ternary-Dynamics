@@ -13,6 +13,7 @@
 
 import { getActiveScale0Bridge } from '../state/store.js';
 import { C_SPEED } from '../../../constants.js';
+import { posKey } from './manifestation-flash.js';
 
 function sampleGridMetadata(sample) {
     const meta = {};
@@ -148,7 +149,7 @@ export function computeLagrangianDensityFrame(sampled, state) {
         // stand-in when we only sample the divergence-scalar field).
         let gradProxy = 0;
         if (divMap) {
-            const key = positions[i * 3] + ',' + positions[i * 3 + 1] + ',' + positions[i * 3 + 2];
+            const key = posKey(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]);
             const di = divMap.get(key);
             if (di !== undefined) {
                 const d = divF.values[di];
@@ -243,7 +244,7 @@ function buildPositionLookup(field) {
     if (!field || !field.count) return map;
     const { positions, count } = field;
     for (let i = 0; i < count; i++) {
-        map.set(positions[i * 3] + ',' + positions[i * 3 + 1] + ',' + positions[i * 3 + 2], i);
+        map.set(posKey(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]), i);
     }
     return map;
 }
@@ -289,7 +290,7 @@ export function computeEmEnergyFrame(sampled, state) {
         if (!field) return;
         const { positions: p, count: n } = field;
         for (let i = 0; i < n; i++) {
-            const key = p[i * 3] + ',' + p[i * 3 + 1] + ',' + p[i * 3 + 2];
+            const key = posKey(p[i * 3], p[i * 3 + 1], p[i * 3 + 2]);
             if (seen.has(key)) continue;
             seen.add(key);
             let e2 = 0, b2 = 0;

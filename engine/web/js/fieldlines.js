@@ -106,7 +106,7 @@ function cellIndexOf(positions, b3, cellSize, gridDim) {
 // Bucket membership is byte-identical to the old buildFieldIndex: same cellSize,
 // same gridDim, same clamped cell index. Per-cell ordering is ascending sample
 // index (== old push order), so lookups tie-break identically.
-function buildPersistentIndex(positions, vectors, count, N, stride) {
+export function buildPersistentIndex(positions, vectors, count, N, stride) {
     const cellSize = Math.max(stride * CELL_SIZE_STRIDE_MULT, CELL_SIZE_MIN);
     const gridDim = Math.ceil(N / cellSize);
     const totalCells = gridDim * gridDim * gridDim;
@@ -206,6 +206,19 @@ function lookupFieldInto(index, px, py, pz) {
         }
     }
     _fx = bx; _fy = by; _fz = bz;
+}
+
+/**
+ * Allocation-free nearest-sample field MAGNITUDE at (px,py,pz) using a
+ * persistent (CSR) index. The overlay-coloring hot path (field-overlays.js
+ * buildFluxStreamlines) uses this instead of the old buildFieldIndex +
+ * lookupField pair, which rebuilt an Array-of-Arrays and returned a fresh
+ * [fx,fy,fz] tuple per vertex (~30k throwaway arrays/frame). Reuses
+ * lookupFieldInto's _fx/_fy/_fz scratch; no per-call allocation.
+ */
+export function sampleFieldMagInto(index, px, py, pz) {
+    lookupFieldInto(index, px, py, pz);
+    return Math.sqrt(_fx * _fx + _fy * _fy + _fz * _fz);
 }
 
 /**

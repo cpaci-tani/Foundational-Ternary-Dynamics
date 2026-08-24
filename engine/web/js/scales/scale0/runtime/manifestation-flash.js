@@ -27,7 +27,7 @@ const SPAWN_FLASH_RATE_BOOST = 3.5;
 const BASE_RATE = 1.6;
 const _spawnTimes = new Map(); // packed voxel key -> frameSec first seen
 
-function posKey(x, y, z) {
+export function posKey(x, y, z) {
     // Native Scale 0 is capped at L=256, so 10 bits per wrapped coordinate is
     // collision-free. Numeric Map/Set keys avoid allocating and hashing up to
     // 100K "x,y,z" strings on every large-lattice visual refresh.

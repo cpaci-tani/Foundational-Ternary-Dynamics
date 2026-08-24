@@ -4,8 +4,8 @@ import {
     generateBFieldSeeds,
     generateImportanceSeeds,
     generateBImportanceSeeds,
-    buildFieldIndex,
-    lookupField,
+    buildPersistentIndex,
+    sampleFieldMagInto,
 } from '../../../fieldlines.js';
 import { DUAL_DELTA, K_GENESIS } from '../../../constants.js';
 import { SCALE0_MASS_GRAVITY_SCENARIOS } from '../../../config/toggles.js';
@@ -32,15 +32,10 @@ import {
     fillFieldParticleBuf,
 } from './streamline-integrator.js';
 import {
-    buildSampleSnapshot,
     createFieldSampleCache,
     createForceFieldCache,
 } from './field-sample-cache.js';
 
-/** @deprecated Prefer createFieldSampleCache + per-job ensureSample. */
-export function sampleFieldState(fieldCapability, flags, stride, acScale0) {
-    return buildSampleSnapshot(fieldCapability, flags, stride, acScale0);
-}
 
 const POISSON_LATENCY_KIND_OVERRIDE = Object.freeze({ latency: 'poissonLatency' });
 
@@ -56,52 +51,11 @@ export function scale0FieldKindOverrides(ctx, state) {
         : null;
 }
 
-export function buildQuantumOverlayData(ctx, state, sampled) {
-    const frame = {};
-    if (state.fieldFlags.showPsiSquared) {
-        frame.psiSquared = computePsiSquaredFrame(sampled, state, state.fieldFlags.showDualSubstrate);
-    }
-    if (state.fieldFlags.showPhase) {
-        frame.phase = computePhaseFrame(sampled, state, state.dualLVecs, state.dualRVecs);
-    }
-    if (state.fieldFlags.showLagrangianDensity) {
-        frame.lagrangianDensity = computeLagrangianDensityFrame(sampled, state);
-    }
-    if (state.fieldFlags.showEntropyDensity) {
-        frame.entropyDensity = computeEntropyDensityFrame(sampled, state);
-    }
-    if (state.fieldFlags.showGravPotential) {
-        frame.gravPotential = computeGravPotentialFrame(ctx, sampled, state);
-    }
-    if (state.fieldFlags.showEmEnergy) {
-        frame.emEnergy = computeEmEnergyFrame(sampled, state);
-    }
-    if (state.fieldFlags.showChargeDensity) {
-        frame.chargeDensity = computeChargeDensityFrame(sampled, state);
-    }
-    if (state.fieldFlags.showVorticity) {
-        frame.vorticity = computeVorticityFrame(sampled, state);
-    }
-    // Tier 1/2 (2026-04-18)
-    if (state.fieldFlags.showHorizon) {
-        frame.horizon = computeHorizonFrame(sampled, state);
-    }
-    if (state.fieldFlags.showEPressure) {
-        frame.ePressure = computeEPressureFrame(sampled, state);
-    }
-    if (state.fieldFlags.showBPressure) {
-        frame.bPressure = computeBPressureFrame(sampled, state);
-    }
-    return frame;
-}
 
 // ── Per-overlay EM streamline builders ──────────────────────────────────
-// Extracted verbatim from buildElectromagneticOverlayData so the overlay
-// scheduler can build E / B / flux as INDEPENDENT jobs (one heavy streamline
-// integration per frame) instead of stacking all three in a single frame.
-// The exported buildElectromagneticOverlayData below still calls all three in
-// order, so its behaviour is byte-for-byte unchanged for any non-scheduled
-// caller. `activeScale0` is the particle-frame source (mock vs main bridge),
+// The overlay scheduler builds E / B / flux as INDEPENDENT jobs (one heavy
+// streamline integration per frame) instead of stacking all three in a single
+// frame. `activeScale0` is the particle-frame source (mock vs main bridge),
 // lifted once and threaded in so E and B stay coherent.
 function emActiveScale0(ctx, state) {
     return getActiveScale0Capability(ctx, state) ?? ctx.bridge.capabilities.scale0;
@@ -133,8 +87,9 @@ function buildEFieldLines(activeScale0, state, sampled, latticeSize, stride, p) 
     // both toward the source and toward the sink, so the visible line spans
     // the natural field-line path.
     //
-    // Use the pre-snapshotted particleData from sampleFieldState so E and B
-    // both seed from the same tick's particle positions (fixes the offset bug).
+    // Use the pre-snapshotted particleData (from the shared per-sweep sample
+    // cache) so E and B both seed from the same tick's particle positions
+    // (fixes the offset bug).
     const particleData = sampled.particleData ?? activeScale0.getScale0ParticleFrame();
     fillFieldParticleBuf(state, particleData);
     const seeds = cachedSeeds(state, 'e', latticeSize, () => particleData.count > 0
@@ -200,7 +155,12 @@ function buildFluxStreamlines(state, sampled, latticeSize, stride, p) {
         mags = state.fluxLineMagScratch = new Float32Array(vertCount);
     }
     if (lines.count > 0) {
-        const fieldIndex = buildFieldIndex(
+        // Allocation-free CSR index + magnitude lookup (was buildFieldIndex +
+        // per-vertex lookupField, which rebuilt an Array-of-Arrays and returned a
+        // fresh tuple per vertex — ~30k throwaway arrays/frame). computeStreamlines
+        // already built the same persistent index moments earlier; rebuilding it
+        // here is allocation-free (scratch is reused) and keeps this self-contained.
+        const fieldIndex = buildPersistentIndex(
             sampled.fluxVector.positions, sampled.fluxVector.vectors, sampled.fluxVector.count,
             latticeSize, stride);
         for (let li = 0; li < lines.count; li++) {
@@ -211,51 +171,13 @@ function buildFluxStreamlines(state, sampled, latticeSize, stride, p) {
                 const vx = lines.buffer[base + i * 3];
                 const vy = lines.buffer[base + i * 3 + 1];
                 const vz = lines.buffer[base + i * 3 + 2];
-                const [fx, fy, fz] = lookupField(fieldIndex, vx, vy, vz);
-                mags[vBase + i] = Math.sqrt(fx * fx + fy * fy + fz * fz);
+                mags[vBase + i] = sampleFieldMagInto(fieldIndex, vx, vy, vz);
             }
         }
     }
     return { lines, maxFlux, mags };
 }
 
-export function buildElectromagneticOverlayData(ctx, state, sampled, latticeSize, stride, stepsScale, seedSpacing, params = {}) {
-    const frame = {};
-    const p = {
-        stepSize: 0.5, maxSteps: 100, maxSeeds: 150, maxLines: 200,
-        eOffset: 2, bRadius: 4, ...params,
-    };
-
-    // Source the particle frame from whichever bridge is currently being
-    // ticked. Reading ctx.bridge unconditionally would miss particles
-    // created by the mock when state.useFluxMock=true and silently fall
-    // back to importance-sampling — which renders, but anchors seeds to
-    // the |E|/|B| field instead of the actual sources. Lift the lookup
-    // once for both E and B so the two overlays stay coherent.
-    const activeScale0 = emActiveScale0(ctx, state);
-
-    if (state.fieldFlags.showEField && sampled.eField?.count > 0) {
-        frame.eFieldLines = buildEFieldLines(activeScale0, state, sampled, latticeSize, stride, p);
-    }
-
-    if (state.fieldFlags.showBField && sampled.bField?.count > 0) {
-        frame.bFieldLines = buildBFieldLines(activeScale0, state, sampled, latticeSize, stride, p);
-    }
-
-    if (state.fieldFlags.showPoynting && sampled.poynting?.count > 0) {
-        frame.poynting = sampled.poynting;
-    }
-
-    if (state.fieldFlags.showDivField && sampled.divergence?.count > 0) {
-        frame.divergence = sampled.divergence;
-    }
-
-    if (state.fieldFlags.showFluxLines && sampled.fluxVector?.count > 0) {
-        frame.fluxStreamlines = buildFluxStreamlines(state, sampled, latticeSize, stride, p);
-    }
-
-    return frame;
-}
 
 export function buildForceOverlayData(state, fieldCapability, sampled, latticeSize, stride, stepsScale, seedSpacing, params = {}, forceCache = null) {
     const anyForceOn = state.fieldFlags.showForceEM || state.fieldFlags.showForceGravity ||
@@ -458,70 +380,6 @@ export function buildDerivedSubstrateData(state, sampled, fieldCapability, N) {
     return frame;
 }
 
-// NOTE: superseded by the amortized scheduler (buildOverlayJobs +
-// updateFieldOverlays), which builds and applies each overlay per-job to spread
-// the work across frames. This monolithic build-then-apply-all entry point is
-// retained as exported API for any out-of-tree caller but is no longer used by
-// the controller. If you change overlay apply behaviour, update the per-job
-// dispatcher runJob (and its apply helpers applyForceFieldsJob / applyDerivedJob
-// + the SCALAR_JOBS table's per-row apply fns) — not just this function.
-export function applyOverlayFrame(viewportAdapter, overlayFrame, forceFrame, opts = {}) {
-    if (overlayFrame.eFieldLines) viewportAdapter.applyEFieldLines(overlayFrame.eFieldLines);
-    if (overlayFrame.bFieldLines) viewportAdapter.applyBFieldLines(overlayFrame.bFieldLines);
-    if (overlayFrame.poynting) viewportAdapter.applyPoynting(overlayFrame.poynting);
-    if (overlayFrame.divergence) viewportAdapter.applyDivergence(overlayFrame.divergence);
-    if (overlayFrame.fluxStreamlines) {
-        viewportAdapter.applyFluxStreamlines(
-            overlayFrame.fluxStreamlines.lines, overlayFrame.fluxStreamlines.maxFlux, overlayFrame.fluxStreamlines.mags);
-    }
-
-    if (forceFrame.anyForceOn) {
-        if (forceFrame.style === 'arrows') {
-            for (const item of forceFrame.items) {
-                viewportAdapter.applyForceArrowField(item.type, item.type === 'weak' ? item.weakScalar : item.data);
-            }
-        } else if (forceFrame.style === 'heatmap') {
-            for (const item of forceFrame.items) viewportAdapter.applyForceHeatmap(item.data, item.type);
-        } else if (forceFrame.style === 'flow') {
-            for (const item of forceFrame.items) viewportAdapter.applyForceStreamlines(item.flowLines, item.type);
-            // Advance the dash-offset animation ONLY when the sim is actually
-            // running. Previously this ticked on every overlay refresh — and
-            // since toggling any overlay dirties `fieldNeedsUpdate`, the
-            // forced refresh would bump the dash phase by 0.032 units even
-            // while the sim was paused. The user perceived that as "toggling
-            // an overlay plays one animation step", exactly the regression
-            // they reported. Gated by `opts.running` supplied from the
-            // controller's animate() loop (ctx.running).
-            if (opts.running) viewportAdapter.animateForceStreamlines(0.016);
-        } else if (forceFrame.style === 'glyphs') {
-            for (const item of forceFrame.items) viewportAdapter.applyForceGlyphs(item.data, item.type);
-        }
-    }
-
-    if (overlayFrame.darkMatterHalo) viewportAdapter.applyDarkMatterHalo(overlayFrame.darkMatterHalo);
-    if (overlayFrame.dampingZones) viewportAdapter.applyDampingZones(overlayFrame.dampingZones);
-    if (overlayFrame.knotZones) viewportAdapter.applyKnotZones(overlayFrame.knotZones);
-    if (overlayFrame.genesisIsosurface) viewportAdapter.applyGenesisIsosurface(overlayFrame.genesisIsosurface);
-    if (overlayFrame.dualFlux) viewportAdapter.applyDualFlux(overlayFrame.dualFlux.left, overlayFrame.dualFlux.right);
-    if (overlayFrame.chirality) viewportAdapter.applyChirality(overlayFrame.chirality);
-
-    // Tier 1 quantum overlays
-    if (overlayFrame.psiSquared) viewportAdapter.applyPsiSquared(overlayFrame.psiSquared);
-    if (overlayFrame.phase) viewportAdapter.applyPhase(overlayFrame.phase);
-    if (overlayFrame.lagrangianDensity) viewportAdapter.applyLagrangianDensity(overlayFrame.lagrangianDensity);
-    if (overlayFrame.entropyDensity) viewportAdapter.applyEntropyDensity(overlayFrame.entropyDensity);
-    if (overlayFrame.gravPotential) viewportAdapter.applyGravPotential(overlayFrame.gravPotential);
-
-    // Physics-topology overlays (rubber-sheet surfaces)
-    if (overlayFrame.emEnergy) viewportAdapter.applyEmEnergy(overlayFrame.emEnergy);
-    if (overlayFrame.chargeDensity) viewportAdapter.applyChargeDensity(overlayFrame.chargeDensity);
-    if (overlayFrame.vorticity) viewportAdapter.applyVorticity(overlayFrame.vorticity);
-
-    // Tier 1/2 additions (2026-04-18)
-    if (overlayFrame.horizon)       viewportAdapter.applyHorizon(overlayFrame.horizon);
-    if (overlayFrame.ePressure)     viewportAdapter.applyEPressure(overlayFrame.ePressure);
-    if (overlayFrame.bPressure)     viewportAdapter.applyBPressure(overlayFrame.bPressure);
-}
 
 // ══════════════════════════════════════════════════════════════════════
 // Amortized overlay scheduler (web/engine-optimization-2026-05-31)
@@ -624,8 +482,8 @@ const JOB_SCALAR = 7;       // one scalar/topology sheet (COST_SCALAR)
 // scalar job run with ZERO per-run allocation: it computes the frame value and
 // applies it directly via the adapter call, instead of boxing it in a fresh
 // `{ key: value }` object as the old `(s) => ({ key: ... })` closures did. The
-// compute/apply pair for each row is an exact extraction of the corresponding
-// build branch (buildQuantumOverlayData) + the matching viewport apply call.
+// compute/apply pair for each row pairs an overlay-frames.js compute*Frame
+// builder with the matching viewport-adapter apply call.
 const SCALAR_JOBS = [
     ['showPsiSquared',        (s, ctx, state) => computePsiSquaredFrame(s, state, state.fieldFlags.showDualSubstrate), (va, v) => va.applyPsiSquared(v)],
     ['showPhase',             (s, ctx, state) => computePhaseFrame(s, state, state.dualLVecs, state.dualRVecs),        (va, v) => va.applyPhase(v)],
@@ -701,9 +559,8 @@ function jobSlot(sched, index) {
 // Each job builds its slice into a scratch frame object and applies it
 // immediately, so both the CPU build AND the viewport upload for that
 // overlay land on the job's frame (spreading both halves of the cost).
-// The build/apply pairs below are exact extractions of the corresponding
-// branches in applyOverlayFrame + the build* functions — same inputs,
-// same viewport-adapter calls, same order.
+// The build/apply pairs below pair each overlay's compute*Frame / build*
+// helper with its viewport-adapter apply call — same inputs, same order.
 
 // Apply the force overlay's NON-flow styles (arrows / heatmap / glyphs). These
 // are cheap (the data was already sampled by buildForceOverlayData) so they all
