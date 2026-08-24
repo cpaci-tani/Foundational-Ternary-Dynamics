@@ -361,10 +361,62 @@ std::vector<uint8_t> pack_flux_volume(ftd::RenderBridge& rb,
 std::vector<uint8_t> pack_field_sample(ftd::RenderBridge& rb,
                                        ftd::VisualFieldKind kind,
                                        int stride,
-                                       std::uint32_t token) {
+                                       std::uint32_t token,
+                                       int planes_mid = -1) {
     constexpr std::uint32_t kFieldSampleMagic = 0x32535446u; // F T S 2
     ftd::VisualFieldSample sample;
     rb.copy_visual_field_sample(kind, stride, sample);
+
+    // Slice-panel mode. The dashboard's flux-slice panel only ever draws the
+    // three center mid-planes (x=mid, y=mid, z=mid), yet the full cube is
+    // several MiB per field over the WebSocket. When planes_mid >= 0, drop every
+    // sample NOT on one of those three planes before packing — identical FTS2
+    // layout (the client already slices by plane), but ~axis× fewer points
+    // (3·axis² instead of axis³). effective_stride/origin are left describing the
+    // FULL regular grid so the client's resolveSamplePlane still snaps to the
+    // right plane. The full-cube path (planes_mid < 0) is unchanged and still
+    // feeds the 3D viewport overlay, which genuinely needs the whole volume.
+    if (planes_mid >= 0 && sample.count() > 0) {
+        // Snap the requested mid to the nearest SAMPLED plane, mirroring the
+        // client's resolveSamplePlane (flux-slice-helpers.js) exactly, so both
+        // sides agree on which plane is kept vs drawn. Needed because the grid
+        // is center-anchored on (N-1)/2 at the effective stride: for an even N
+        // (e.g. the L=32 default) or a coarse stride, the raw mid=N>>1 is often
+        // NOT itself a sampled coordinate, and filtering at it would keep an
+        // empty plane while the client slices at the snapped one.
+        const int origin = (std::max)(0, sample.origin);
+        const int estride = (std::max)(1, sample.effective_stride);
+        const int lattice_n = static_cast<int>(rb.lattice().size());
+        const int last_allowed = origin > 0 ? lattice_n - 2 : lattice_n - 1;
+        const int last = origin + ((std::max)(0, last_allowed - origin) / estride) * estride;
+        int plane = planes_mid;
+        if (planes_mid >= origin) {  // Math.round((mid-origin)/estride), integer form
+            plane = origin + ((2 * (planes_mid - origin) + estride) / (2 * estride)) * estride;
+        }
+        plane = (std::max)(origin, (std::min)(last, plane));
+
+        const std::uint32_t comp = sample.components;
+        std::vector<float> fpos;
+        std::vector<float> fdata;
+        fpos.reserve(sample.positions.size());
+        fdata.reserve(sample.data.size());
+        const std::size_t n = sample.count();
+        for (std::size_t i = 0; i < n; ++i) {
+            // Positions are voxel centres (x + 0.5); truncation recovers x.
+            const int ix = static_cast<int>(sample.positions[i * 3u + 0u]);
+            const int iy = static_cast<int>(sample.positions[i * 3u + 1u]);
+            const int iz = static_cast<int>(sample.positions[i * 3u + 2u]);
+            if (ix != plane && iy != plane && iz != plane) continue;
+            fpos.push_back(sample.positions[i * 3u + 0u]);
+            fpos.push_back(sample.positions[i * 3u + 1u]);
+            fpos.push_back(sample.positions[i * 3u + 2u]);
+            for (std::uint32_t c = 0; c < comp; ++c)
+                fdata.push_back(sample.data[i * comp + c]);
+        }
+        sample.positions.swap(fpos);
+        sample.data.swap(fdata);
+    }
+
     const std::uint32_t kind_code = static_cast<std::uint32_t>(kind);
     const std::uint32_t components = sample.components;
     const std::uint32_t count = static_cast<std::uint32_t>(sample.count());
@@ -1519,10 +1571,10 @@ bool handle_command(const std::string& json, SOCKET client,
         if (axis_samples <= 0) axis_samples = 53;
         return ftd::ws_send_binary(client, pack_flux_volume(*rb, axis_samples));
     }
-    else if (cmd == "get_field_sample") {
+    else if (cmd == "get_field_sample" || cmd == "get_field_slices") {
         if (telemetry.has_pending_or_due_observation()) {
             return send_json_response(
-                client, json_visual_deferred("get_field_sample", telemetry), request_id);
+                client, json_visual_deferred(cmd.c_str(), telemetry), request_id);
         }
         const std::string kind_name = ftd::json_string(json, "kind");
         ftd::VisualFieldKind kind{};
@@ -1535,7 +1587,12 @@ bool handle_command(const std::string& json, SOCKET client,
         const double raw_token = ftd::json_number(json, "token");
         const std::uint32_t token = raw_token > 0.0
             ? static_cast<std::uint32_t>(raw_token) : 0u;
-        return ftd::ws_send_binary(client, pack_field_sample(*rb, kind, stride, token));
+        // get_field_slices carries the center mid-plane index; the packer then
+        // returns only the three orthogonal center planes (~axis× less traffic).
+        const int planes_mid = (cmd == "get_field_slices")
+            ? std::max(0, static_cast<int>(ftd::json_number(json, "mid")))
+            : -1;
+        return ftd::ws_send_binary(client, pack_field_sample(*rb, kind, stride, token, planes_mid));
     }
     else if (cmd == "set_toggle") {
         std::string name = ftd::json_string(json, "name");

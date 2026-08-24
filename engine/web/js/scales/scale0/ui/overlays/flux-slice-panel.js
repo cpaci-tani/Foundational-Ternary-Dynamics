@@ -729,12 +729,20 @@ export class FluxSlicePanel {
         // comment exists so a future edit to the size list doesn't reopen
         // the gap unknowingly.
         const coarseStride = (mid % 2 === 0) ? 2 : 1;
+        // Native-GPU bridge only: fetch just the three center mid-planes we draw
+        // (getFieldSlices) instead of the whole field cube — the cube is several
+        // MiB per field over the WebSocket and we discard ~95% of it. The WASM
+        // bridge samples in-process (a cheap heap view, no transfer), so it has
+        // no getFieldSlices and keeps the full-cube getSamplerOr path unchanged.
+        const useSlices = typeof bridge.getFieldSlices === 'function';
         const wantedKeys = new Set();
         for (const slot of neededSlots) {
             const kind = SLOT_TO_KIND[slot];
             if (!kind) continue;
             const stride = STRIDE_ONE_SLOTS.has(slot) ? 1 : coarseStride;
-            sampled[slot] = bridge.getSamplerOr?.(kind, stride) ?? null;
+            sampled[slot] = useSlices
+                ? (bridge.getFieldSlices(kind, mid, stride) ?? null)
+                : (bridge.getSamplerOr?.(kind, stride) ?? null);
             wantedKeys.add(`${kind}@${stride}`);
         }
         // Force fields: getEMForceField / getGravityForceField /
@@ -742,11 +750,20 @@ export class FluxSlicePanel {
         // once per visible force row, at the same coarse stride as raw kinds
         // (their own defaults are stride 2 too, so this matches, not
         // regresses, established convention).
+        // Force fields ('em'/'gravity'/'strong') are valid sample kinds too, so
+        // on the GPU bridge they take the same slice fast path; the WASM bridge
+        // keeps its dedicated getEM/Gravity/StrongForceField cube getters.
         for (const drv of visibleDrivers) {
             if (!drv.forceType || sampled[drv.slot] !== undefined) continue;
-            if (drv.forceType === 'em') sampled[drv.slot] = bridge.getEMForceField?.(coarseStride) ?? null;
-            else if (drv.forceType === 'gravity') sampled[drv.slot] = bridge.getGravityForceField?.(coarseStride) ?? null;
-            else if (drv.forceType === 'strong') sampled[drv.slot] = bridge.getStrongForceField?.(coarseStride) ?? null;
+            if (useSlices) {
+                sampled[drv.slot] = bridge.getFieldSlices(drv.forceType, mid, coarseStride) ?? null;
+            } else if (drv.forceType === 'em') {
+                sampled[drv.slot] = bridge.getEMForceField?.(coarseStride) ?? null;
+            } else if (drv.forceType === 'gravity') {
+                sampled[drv.slot] = bridge.getGravityForceField?.(coarseStride) ?? null;
+            } else if (drv.forceType === 'strong') {
+                sampled[drv.slot] = bridge.getStrongForceField?.(coarseStride) ?? null;
+            }
             wantedKeys.add(`${drv.forceType}@${coarseStride}`);
         }
         // Release any kind@stride that was wanted last frame but has no

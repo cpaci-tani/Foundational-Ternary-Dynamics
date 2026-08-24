@@ -59,6 +59,9 @@ const FIELD_SAMPLE_KINDS = Object.freeze([
     'poissonLatency',
 ]);
 const FIELD_SAMPLE_KIND_CODES = new Map(FIELD_SAMPLE_KINDS.map((kind, code) => [kind, code]));
+// 3-component (vector) kinds — used only to pick getFieldSlices' pre-first-frame
+// fallback shape; the real shape always comes from the FTS2 `components` field.
+const WS_VECTOR_FIELD_KINDS = new Set(['e', 'b', 'poynting', 'fluxVector', 'curlJ', 'em', 'gravity', 'strong']);
 const DEFAULT_COMMAND_TIMEOUT_MS = 5000;
 const LONG_OPERATION_TIMEOUT_MS = 120000;
 const DIAGNOSTIC_COMMAND_TIMEOUT_MS = 30000;
@@ -2601,7 +2604,14 @@ export class WebSocketBridge {
             this._fieldSampleRequestEpoch.set(key, pending.epoch);
             this._fieldSampleRequestTokenByKey.set(key, token);
             this._fieldSampleRequestsByToken.set(token, pending);
-            if (!this._sendAndForget({
+            const asSlices = Number.isInteger(pending.planesMid) && pending.planesMid >= 0;
+            if (!this._sendAndForget(asSlices ? {
+                cmd: 'get_field_slices',
+                kind: pending.kind,
+                stride: pending.stride,
+                mid: pending.planesMid,
+                token,
+            } : {
                 cmd: 'get_field_sample',
                 kind: pending.kind,
                 stride: pending.stride,
@@ -2618,10 +2628,17 @@ export class WebSocketBridge {
         }
     }
 
-    _getFieldSample(kind, stride = 2, fallback = EMPTY_FIELD_SAMPLE) {
+    _getFieldSample(kind, stride = 2, fallback = EMPTY_FIELD_SAMPLE, planesMid = -1) {
         if (!FIELD_SAMPLE_KIND_CODES.has(kind)) return fallback;
         const normalizedStride = Math.max(1, Math.min(64, Math.trunc(Number(stride) || 1)));
-        const key = `${kind}@${normalizedStride}`;
+        // Slice mode (planesMid >= 0): fetch only the three center mid-planes via
+        // get_field_slices — same FTS2 payload shape, ~axis× less traffic. Keyed
+        // separately (`#mid`) so it never collides with the full-cube cache the
+        // 3D viewport overlay populates for the same kind+stride.
+        const slice = Number.isInteger(planesMid) && planesMid >= 0;
+        const key = slice
+            ? `${kind}@${normalizedStride}#${planesMid}`
+            : `${kind}@${normalizedStride}`;
         const requestedEpoch = this._fieldSampleRequestEpoch.get(key) ?? 0;
         if (this._connected && !this._hasPendingScenarioWork() && !this._fieldSampleRequestTokenByKey.has(key)
             && requestedEpoch !== this._visualEpoch) {
@@ -2630,6 +2647,7 @@ export class WebSocketBridge {
             // before a newly-dirty E/B request can jump back to the front.
             this._fieldSampleDemandByKey.set(key, {
                 key, kind, stride: normalizedStride, epoch: this._visualEpoch,
+                planesMid: slice ? planesMid : -1,
             });
             this._drainFieldSampleRequests();
         }
@@ -2666,6 +2684,19 @@ export class WebSocketBridge {
     getStrongForceField(stride = 2) { return this._getFieldSample('strong', stride, EMPTY_FIELD_SAMPLE); }
     /** Kind-dispatched Scale-0 field sampler; see bridge-contract.js samplerOr. */
     getSamplerOr(kind, stride = 2, fallback) { return samplerOr(this, kind, stride, fallback); }
+
+    /**
+     * Flux-slice-panel fast path: fetch ONLY the three center mid-planes for
+     * `kind` (get_field_slices), not the whole cube — same {positions, vectors/
+     * values, count, effectiveStride, origin} shape the panel's slicers already
+     * consume, at ~axis× less WebSocket traffic. `mid` is the panel's own N>>1
+     * slice index. Present only on this (native-GPU) bridge; the panel feature-
+     * detects it and keeps its in-process getSamplerOr path on the WASM bridge.
+     */
+    getFieldSlices(kind, mid, stride = 2) {
+        const fallback = WS_VECTOR_FIELD_KINDS.has(kind) ? EMPTY_FIELD_SAMPLE : EMPTY_SCALAR_SAMPLE;
+        return this._getFieldSample(kind, stride, fallback, Math.max(0, mid | 0));
+    }
 
     // Scale 1 (ParticleEngine) fallback delegation
     initPE() { this._ensureFallback().initPE(); }
