@@ -512,9 +512,21 @@ export function mountKnotsPanel(host) {
     }
 
     const { unsubscribe } = rafCoordinator.subscribe(PANEL_ID, { hz: 4, cb: update });
-    const dispose = () => { unsubscribe(); forEachKnotTracker((t) => t.setContribEnabled(false)); panel.remove(); };
-    window.__ftdKnotsPanel = { dispose };
-    return { dispose };
+    // Match the sibling singleton panels (e.g. genesis-burst-panel): null the
+    // global on dispose, but only if it still points at THIS instance, so a
+    // newer mount that already replaced the global isn't clobbered. Without the
+    // null-out the stale {dispose} lingered on window after teardown.
+    const api = {};
+    api.dispose = () => {
+        unsubscribe();
+        forEachKnotTracker((t) => t.setContribEnabled(false));
+        panel.remove();
+        if (typeof window !== 'undefined' && window.__ftdKnotsPanel === api) {
+            window.__ftdKnotsPanel = null;
+        }
+    };
+    window.__ftdKnotsPanel = api;
+    return api;
 }
 
 export function initKnotsPanel() {

@@ -86,6 +86,16 @@ export function setForceStyleButtons(style) {
     }
 }
 
+// Sibling of setForceStyleButtons for the volumetric-scalar render-mode
+// meta-toggle (Default / Heat Map). Buttons carry data-scalar-mode.
+export function setScalarRenderButtons(mode) {
+    const row = getEl('scalar-render-row');
+    if (!row) return;
+    for (const btn of row.querySelectorAll('.style-btn')) {
+        btn.classList.toggle('active', btn.dataset.scalarMode === mode);
+    }
+}
+
 export function markScenarioOverrideRows(toggleDefs) {
     const advDetails = document.querySelector('.toggle-advanced');
     let advNeedsOpen = false;

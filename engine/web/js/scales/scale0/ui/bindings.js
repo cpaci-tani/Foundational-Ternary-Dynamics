@@ -11,6 +11,7 @@ import {
     /* v=2: Tier 1 quantum overlay bindings added — see SPEC_S0_QUANTUM_OVERLAYS.md */
     setButtonActive,
     setForceStyleButtons,
+    setScalarRenderButtons,
 } from './dom.js';
 import { COL_TO_TOGGLES } from './overlays/presets.js';
 import { applyScale0OverlayApplicability } from './overlays/applicability.js';
@@ -248,9 +249,7 @@ export function bindScale0UI(ctx, api) {
                 const mode = btn.dataset.scalarMode === 'heatmap' ? 'heatmap' : 'default';
                 if (mode === getScalarRenderMode()) return;
                 setScalarRenderMode(mode);
-                for (const b of scalarModeRow.querySelectorAll('.style-btn')) {
-                    b.classList.toggle('active', b.dataset.scalarMode === mode);
-                }
+                setScalarRenderButtons(mode);
                 api.viewportAdapter(ctx).syncScalarRenderMode(mode, getFieldStateSnapshot());
                 api.setLatticeNeedsUpload();
             });

@@ -25,6 +25,7 @@ import {
     setFieldToggle,
     setFluxMock,
     setForceStyle,
+    setScalarRenderMode,
     getActiveScale0Bridge,
     getScale0State,
 } from '../state/store.js';
@@ -36,6 +37,7 @@ import {
     setButtonActive,
     setCheckboxValue,
     setForceStyleButtons,
+    setScalarRenderButtons,
     setInputValue,
     setSelectedScenarioId,
 } from '../ui/dom.js';
@@ -565,6 +567,7 @@ export function captureOverlayPreferences(state, ctx = null) {
             : Number(readInputValue('flux-opacity', 0.70)),
         overlays,
         forceStyle: state?.forceStyle || 'arrows',
+        scalarRenderMode: state?.scalarRenderMode || 'default',
     };
 }
 
@@ -623,6 +626,16 @@ export function restoreOverlayPreferences(prefs, state, viewportAdapter, getForc
         viewportAdapter.syncForceStyle(prefs.forceStyle, fieldSnapshot);
     }
 
+    // Volumetric-scalar render mode (default / heat map). Same treatment as
+    // forceStyle: reset() cleared the viewport, so re-sync the meta-toggle
+    // against the just-restored active-field set or the heat-map clouds stay
+    // hidden while the default sheets show.
+    if (prefs.scalarRenderMode) {
+        setScalarRenderMode(prefs.scalarRenderMode);
+        setScalarRenderButtons(prefs.scalarRenderMode);
+        viewportAdapter.syncScalarRenderMode(prefs.scalarRenderMode, { ...state.fieldFlags });
+    }
+
     // Mark the lattice dirty so the next tick recomputes and repaints.
     state.fieldNeedsUpdate = true;
     recomputeAnyFieldActive();
@@ -631,6 +644,7 @@ export function restoreOverlayPreferences(prefs, state, viewportAdapter, getForc
 export function resetScale0VisualState(ctx, state, viewportAdapter) {
     resetFieldFlags();
     state.forceStyle = 'arrows';
+    state.scalarRenderMode = 'default';
     resetFrameState();
     // Reset the field-line knot trackers on scenario change so the next record()
     // doesn't match the new field's knots against the previous scenario's stale
@@ -644,6 +658,7 @@ export function resetScale0VisualState(ctx, state, viewportAdapter) {
     setButtonActive('toggle-flux-slice', false);
     for (const id of FIELD_BUTTON_IDS) setButtonActive(id, false);
     setForceStyleButtons('arrows');
+    setScalarRenderButtons('default');
 }
 
 /**
