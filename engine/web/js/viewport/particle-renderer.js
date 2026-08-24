@@ -952,7 +952,14 @@ export class ViewportParticleRenderer {
         disposeMesh(this.velocityVectors);
         disposeMesh(this.spinVectors);
         disposeMesh(this.trails);
-        disposeMesh(this._particleForces);
+        // Dispose all four PE force-arrow layers, not just _peForceNet (which
+        // _particleForces aliases) — the other three were leaking geometry +
+        // material and orphaning meshes on the scene graph on every teardown.
+        disposeMesh(this._peForceCoulomb);
+        disposeMesh(this._peForceGravity);
+        disposeMesh(this._peForceStrong);
+        disposeMesh(this._peForceNet);
+        this._peForceCoulomb = this._peForceGravity = this._peForceStrong = this._peForceNet = this._particleForces = null;
         disposeMesh(this._peSystem);
         disposeMesh(this._voxelDebug);
 

@@ -472,6 +472,7 @@ export class WebSocketBridge {
     dispose() {
         if (this._disposed) return;
         this._disposed = true;
+        this.ready = false;   // other teardown paths (onclose/onerror) clear this; dispose must too
         this._reconnecting = false;
         for (const t of ['_reconnectTimer', '_simulationWatchdog', '_telemetryDemandExpiryTimer',
                          '_visualDeferredRetryTimer', '_scenarioDispatchTimer', '_liveProfileDispatchTimer']) {
@@ -481,6 +482,12 @@ export class WebSocketBridge {
         for (const p of this._pendingQueue.splice(0)) {
             if (p.timeoutId) clearTimeout(p.timeoutId);
             try { p.reject?.(new Error('WebSocketBridge disposed')); } catch (_) { /* ignore */ }
+        }
+        // Settle the separate particle-frame promise slot too (see _resetVisualRequests).
+        if (this._binaryResolve) {
+            const resolve = this._binaryResolve;
+            this._binaryResolve = null;
+            try { resolve(this._particleData); } catch (_) { /* ignore */ }
         }
         const socket = this._ws;
         this._ws = null;
@@ -1441,6 +1448,14 @@ export class WebSocketBridge {
         this._visualDeferredRetryAt = 0;
         this._visualDeferredPending = false;
         this._particleRequestInFlight = false;
+        // Settle any awaiting getParticleDataAsync() — its resolver lives in the
+        // separate _binaryResolve slot (NOT _pendingQueue), so without this it
+        // hangs forever when the socket closes/errors before the frame arrives.
+        if (this._binaryResolve) {
+            const resolve = this._binaryResolve;
+            this._binaryResolve = null;
+            try { resolve(this._particleData); } catch (_) { /* ignore */ }
+        }
         this._volumeRequestInFlight = false;
         this._sliceRequestsInFlight.clear();
         this._fieldSampleRequestTokenByKey.clear();

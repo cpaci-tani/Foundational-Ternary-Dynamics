@@ -245,6 +245,11 @@ export function resetFrameState() {
     state.fieldDataVersion = 0;
     state.latticeNeedsUpload = true;
     state.tickAccumulator.reset();
+    // Drop the per-overlay peak-hold normalizer histories (overlay-frames.js
+    // updateDecayingMax). Without this a strong→weak scenario switch normalizes
+    // the new field against the stale peak, so EM-energy/pressure/vorticity
+    // clouds render washed-out and the horizon overlay stays blank for ~7 s.
+    state.decayingMax = null;
     // Drop cached streamline seeds so a new scenario/field never reuses stale
     // (wrong-field) seeds — they're keyed on fieldDataVersion, which a new
     // scenario may reset to 0 and collide with the previous field's cache.

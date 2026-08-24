@@ -385,13 +385,35 @@ export class WasmBridge {
         if (!this._module || !this._bridge) return EMPTY_PARTICLE_DATA;
         const raw = this._module.getParticleData(this._bridge);
         if (!raw || raw.count === 0) return EMPTY_PARTICLE_DATA;
+        // raw.* are embind typed_memory_views straight into the WASM heap; the
+        // next tick()/inject*() overwrites them in place (or a heap-growth
+        // detaches them), so returning them directly is a reuse-before-consume
+        // hazard AND made this in-thread path behave differently from the worker
+        // path (which copies — wasm-bridge.worker.js). Copy into grow-in-place
+        // scratch and hand back length-exact subarrays: correct + effectively
+        // allocation-free (the backing buffers are reused frame-to-frame).
+        const n = raw.count;
+        const c = this._pdScratch || (this._pdScratch = { cap: 0 });
+        if (c.cap < n) {
+            c.cap = n;
+            c.positions = new Float32Array(n * 3);
+            c.colors = new Float32Array(n * 3);
+            c.sizes = new Float32Array(n);
+            c.spin = new Float32Array(n);
+            c.colorCharge = new Float32Array(n);
+        }
+        c.positions.set(raw.positions.subarray(0, n * 3));
+        c.colors.set(raw.colors.subarray(0, n * 3));
+        c.sizes.set(raw.sizes.subarray(0, n));
+        c.spin.set(raw.spin.subarray(0, n));
+        c.colorCharge.set(raw.colorCharge.subarray(0, n));
         return {
-            positions: raw.positions,
-            colors: raw.colors,
-            sizes: raw.sizes,
-            spin: raw.spin,
-            colorCharge: raw.colorCharge,
-            count: raw.count
+            positions: c.positions.subarray(0, n * 3),
+            colors: c.colors.subarray(0, n * 3),
+            sizes: c.sizes.subarray(0, n),
+            spin: c.spin.subarray(0, n),
+            colorCharge: c.colorCharge.subarray(0, n),
+            count: n,
         };
     }
 

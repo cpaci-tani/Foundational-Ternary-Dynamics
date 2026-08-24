@@ -521,6 +521,7 @@ export class ViewportSceneCore {
         // Inspector helpers
         disposeMesh(this._voxelHighlight); this._voxelHighlight = null;
         disposeMesh(this._symHighlights);  this._symHighlights = null;
+        disposeMesh(this._areaHighlight);  this._areaHighlight = null;
 
         // Coordinate helpers
         disposeMesh(this.axes);    this.axes = null;

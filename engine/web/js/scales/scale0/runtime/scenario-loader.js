@@ -14,6 +14,7 @@ import {
 } from '../../../config/toggles.js';
 import { getScale0Scenario } from '../scenario-registry.js';
 import { mountGenesisBurstPanel } from '../ui/overlays/genesis-burst-panel.js';
+import { forEachKnotTracker } from './field-line-knots.js';
 import {
     clearFluxMock,
     markFieldDirty,
@@ -631,6 +632,11 @@ export function resetScale0VisualState(ctx, state, viewportAdapter) {
     resetFieldFlags();
     state.forceStyle = 'arrows';
     resetFrameState();
+    // Reset the field-line knot trackers on scenario change so the next record()
+    // doesn't match the new field's knots against the previous scenario's stale
+    // cell→ID map / histories (phantom birth/death/fission events + inherited
+    // IDs). Independent of the knots panel + the preserved knotTracking flag.
+    forEachKnotTracker((t) => t.reset());
     viewportAdapter.setFluxVolumeVisible(true);
     viewportAdapter.setFluxSliceVisible(false);
     viewportAdapter.clearScaleVisuals();

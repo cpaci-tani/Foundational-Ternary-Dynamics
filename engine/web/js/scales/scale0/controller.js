@@ -341,6 +341,7 @@ class Scale0LifecycleController extends BaseLifecycleController {
             try { window.__ftdKnotsPanel?.dispose?.(); } catch (e) { /* ignore */ }
             try { window.__ftdScaleContextPanel?.dispose?.(); } catch (e) { /* ignore */ }
             try { window.__ftdFluxSlicePanel?.dispose?.(); } catch (e) { /* ignore */ }
+            try { window.__ftdGenesisBurstPanel?.dispose?.(); } catch (e) { /* ignore */ }
         }
     }
 }
