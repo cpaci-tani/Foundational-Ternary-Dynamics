@@ -470,6 +470,31 @@ export const fieldQuantumMethods = {
         sc.geo.setDrawRange(0, vi);
     },
 
+    // ── Volumetric scalar HEAT MAP (overlays-panel "Heat Map" meta-toggle) ──
+    // Render any scalar frame {positions, values, count} as an additive glow
+    // cloud coloured by a color-ramps.js ramp — the thermal "heat map" view the
+    // Heat Map toggle switches the volumetric scalar overlays into, in place of
+    // their default rubber-sheet (emEnergy/pressures/charge/vorticity/gravPot)
+    // or native cloud (psi²/latency/…). Reuses the tested _updateScalarCloud
+    // infra under a 'heat:' key namespace so a field's heat-map cloud never
+    // collides with its own default cloud. `ramp` is a color-ramps writer
+    // (t,out,i); `signed` picks diverging vs magnitude normalisation.
+    updateScalarHeatmap(key, data, ramp, signed) {
+        this._updateScalarCloud('heat:' + key, data,
+            (t, rgb) => { ramp(t, rgb, 0); },
+            { signed: !!signed, normalizer: data && data.normalizer, threshold: 0.02 });
+    },
+    showScalarHeatmap(key, on) { this._toggleScalarCloud('heat:' + key, on); },
+    hideAllScalarHeatmaps() {
+        if (!this._scalarClouds) return;
+        for (const k in this._scalarClouds) {
+            if (k.indexOf('heat:') === 0) {
+                this._scalarClouds[k].points.visible = false;
+                this._scalarClouds[k].geo.setDrawRange(0, 0);
+            }
+        }
+    },
+
     // Latency L ∈ [0,1] — blue (low / flat space) → red (high / gravity well).
     toggleLatencyField(on) { this._toggleScalarCloud('latency', on); },
     updateLatencyField(data) {

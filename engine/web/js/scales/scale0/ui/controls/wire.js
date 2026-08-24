@@ -15,6 +15,7 @@
 
 import {
     SCALE0_TOGGLES,
+    SCALE0_ADVANCED_TOGGLES,
     getScale0ScenarioToggleProfile,
 } from '../../../../config/toggles.js';
 import { K_B } from '../../../../constants.js';
@@ -79,6 +80,21 @@ function wirePhysicsToggles(ctx, api) {
             const row = el.closest('.toggle-row');
             if (row) row.classList.remove('scenario-override');
             renderProfileStatus();
+        });
+    }
+
+    // Advanced / research toggles (SCALE0_ADVANCED_TOGGLES): same setToggle
+    // wiring, but deliberately NOT profile-status-tracked and NOT scenario-reset
+    // — they are absent from SCALE0_TOGGLES, so scenario-loader.js's whitelist
+    // reset leaves them alone and they persist across scenario loads (their
+    // "owned by the user" semantics). Requirement gating is documented in each
+    // label's tooltip (e.g. Triad Binding requires Color Forces ON).
+    for (const [toggleKey, , elId] of SCALE0_ADVANCED_TOGGLES) {
+        const el = getEl(elId);
+        if (!el) continue;
+        el.addEventListener('change', () => {
+            ctx.bridge.setToggle(toggleKey, el.checked);
+            getFluxMock()?.capabilities?.scale0?.setToggle(toggleKey, el.checked);
         });
     }
 

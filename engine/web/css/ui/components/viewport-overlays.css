@@ -428,6 +428,30 @@
     font-size: var(--fs-xs);
 }
 
+/* ── Panel-level meta control: volumetric scalar render mode (Heat Map) ────── */
+.s0-overlay-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 0 6px;
+}
+.s0-overlay-meta-label {
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+.s0-overlay-meta .force-style-row {
+    flex: 1 1 0;
+    margin-bottom: 0;
+    width: auto;
+}
+.s0-overlay-meta .force-style-row .style-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 3px 4px;
+    font-size: var(--fs-xs);
+}
+
 /* ── Filter input + active-overlays strip ─────────────────────────────────── */
 .s0-overlay-search { padding: 0 0 6px; }
 .s0-overlay-search-input {

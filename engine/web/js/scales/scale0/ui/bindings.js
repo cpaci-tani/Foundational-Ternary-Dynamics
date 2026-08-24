@@ -1,5 +1,5 @@
 import { formatS0SeedMetadata } from '../../../config/scenarios.js';
-import { FORCE_FIELD_KEYS, getFieldStateSnapshot, setFieldToggle, setForceStyle } from '../state/store.js';
+import { FORCE_FIELD_KEYS, getFieldStateSnapshot, setFieldToggle, setForceStyle, getScalarRenderMode, setScalarRenderMode } from '../state/store.js';
 import { getScale0Scenario, populateScale0ScenarioSelect } from '../scenario-registry.js';
 import {
     FIELD_TOGGLE_BINDINGS,
@@ -234,6 +234,24 @@ export function bindScale0UI(ctx, api) {
                 setForceStyle(style);
                 setForceStyleButtons(style);
                 api.viewportAdapter(ctx).syncForceStyle(style, getFieldStateSnapshot());
+                api.setLatticeNeedsUpload();
+            });
+        }
+    }
+
+    // Volumetric-scalar render-mode meta-toggle (Default / Heat Map). Flips every
+    // active scalar overlay between its native sheet/cloud and a thermal glow cloud.
+    const scalarModeRow = getEl('scalar-render-row');
+    if (scalarModeRow) {
+        for (const btn of scalarModeRow.querySelectorAll('.style-btn')) {
+            btn.addEventListener('click', () => {
+                const mode = btn.dataset.scalarMode === 'heatmap' ? 'heatmap' : 'default';
+                if (mode === getScalarRenderMode()) return;
+                setScalarRenderMode(mode);
+                for (const b of scalarModeRow.querySelectorAll('.style-btn')) {
+                    b.classList.toggle('active', b.dataset.scalarMode === mode);
+                }
+                api.viewportAdapter(ctx).syncScalarRenderMode(mode, getFieldStateSnapshot());
                 api.setLatticeNeedsUpload();
             });
         }

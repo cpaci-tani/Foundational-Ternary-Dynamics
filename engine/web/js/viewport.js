@@ -821,6 +821,11 @@ export class Viewport {
     updateChargeDensityField(data) { this._topoRenderer?.update('chargeDensity', data); }
     toggleVorticityField(on) { this._topoRenderer?.toggle('vorticity', on); }
     updateVorticityField(data) { this._topoRenderer?.update('vorticity', data); }
+    // Volumetric scalar heat-map (overlays "Heat Map" meta-toggle) — the glow
+    // clouds live on the field renderer's scalar-cloud pool (field-quantum-renderer).
+    updateScalarHeatmap(key, data, ramp, signed) { this._fieldRenderer.updateScalarHeatmap(key, data, ramp, signed); }
+    showScalarHeatmap(key, on) { this._fieldRenderer.showScalarHeatmap(key, on); }
+    hideAllScalarHeatmaps() { this._fieldRenderer.hideAllScalarHeatmaps(); }
     // Slide a rubber-sheet overlay's slice plane up/down (frac 0..0.999 of the
     // box): the sheet floats at y=frac·N and re-samples the field at that height.
     // key ∈ {gravPotential, emEnergy, ePressure, bPressure, chargeDensity, vorticity}.

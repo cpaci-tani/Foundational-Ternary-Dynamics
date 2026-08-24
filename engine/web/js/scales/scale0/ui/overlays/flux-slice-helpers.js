@@ -267,14 +267,14 @@ export const FIELD_DRIVERS = [
     },
     {
         key: 'forceGravity',
-        // getGravityForceField has no C++/WASM binding in this build (only
-        // getEMForceField and getStrongForceField exist in ftd_wasm.cpp) —
-        // the worker's postFrame() silently `continue`s past it every frame
-        // (typeof mod[method] !== 'function'), so this row is cheap but will
-        // render as a permanently-empty tile. Labeled honestly rather than
-        // pretending it works; remove this row entirely once/if the binding
-        // is added.
-        label: 'Gravity (N/A)',
+        // Density-gradient gravity force G_N·∇|J|, sampled via getGravityForceField
+        // (wasm-bridge.js alias → getGravityFieldSampled → ftd_wasm.cpp's
+        // get_gravity_field_sampled — the binding this note used to deny now exists
+        // and returns data; verified 4913 vectors on a flux field). [SELECTION —
+        // visualization]: the density-gradient heuristic, NOT FTD's substrate→Newton
+        // chain of record (see the 3D overlay tooltip). Empty only when |J| has no
+        // gradient.
+        label: 'Gravity',
         vizFlagKey: 'showForceGravity',
         signed: false,
         ramp: forcePaletteRamp('gravity'),

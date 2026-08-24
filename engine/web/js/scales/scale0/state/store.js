@@ -20,6 +20,9 @@ export const FIELD_TOGGLE_KEYS = [
     'showKnotZones',
     'showGenesisIsosurface',
     'showConfinement',
+    'showColorCharge',    // recolours manifested particles by colour charge — was
+                          // bound in dom.js + dispatched by the adapter but MISSING
+                          // here, so setFieldToggle silently no-op'd it (dead toggle).
     // Tier 1 quantum overlays — see docs/SPEC_S0_QUANTUM_OVERLAYS.md
     'showPsiSquared',
     'showPhase',
@@ -94,6 +97,11 @@ const state = {
     fieldDataVersion: 0,
     anyFieldActive: false,
     forceStyle: 'arrows',
+    // 'default' | 'heatmap' — overlays-panel "Heat Map" meta-toggle. When 'heatmap'
+    // the volumetric scalar overlays (EM energy, pressures, charge, vorticity, Φ,
+    // |ψ|², Lagrangian, entropy, latency, Gauss residual) render as thermal glow
+    // clouds instead of their default rubber-sheet / native scalar cloud.
+    scalarRenderMode: 'default',
     // Off-thread WASM Scale-0 owner (WasmBridgeProxy). Legacy names from the
     // MockBridge era — prefer getWasmWorker() / isUsingWasmWorker() accessors.
     fluxMock: null,
@@ -162,6 +170,15 @@ export function setKnotTracking(on) {
 
 export function setForceStyle(style) {
     state.forceStyle = style;
+    state.fieldNeedsUpdate = true;
+}
+
+export function getScalarRenderMode() {
+    return state.scalarRenderMode;
+}
+
+export function setScalarRenderMode(mode) {
+    state.scalarRenderMode = (mode === 'heatmap') ? 'heatmap' : 'default';
     state.fieldNeedsUpdate = true;
 }
 

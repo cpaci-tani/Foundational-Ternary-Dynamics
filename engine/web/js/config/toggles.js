@@ -200,6 +200,27 @@ export const SCALE0_TOGGLES = [
 // in SCALE0_TOGGLES would cause the whitelist-reset to clobber them on every
 // load. See scenario-loader.js and engine/include/ftd/scenarios.h.
 
+// ── Advanced / research toggles surfaced in the Physics card ─────────────
+// A CURATED subset of the engine terms omitted from SCALE0_TOGGLES above: only
+// the ones that are functional (a real native CUDA + CPU branch) and physically
+// sound — NOT speculative prototypes (lorentz_*_floquet, verlet/symplectic),
+// replacement/conflicting modes (emergent_forces, matched_gauss_dynamics,
+// geometric_gravity), diagnostics/guards (db_clock_coulomb, strict_validation),
+// or non-bool enums (bcc_stencil, langevin_site_filter). Kept in a SEPARATE list
+// so the per-scenario whitelist reset (scenario-loader.js iterates SCALE0_TOGGLES
+// only) never clobbers them — they persist across scenario loads, matching their
+// "owned by the user" semantics. Wired in ui/controls/wire.js. [key, default, domId].
+export const SCALE0_ADVANCED_TOGGLES = [
+    ['pair_production',          false, 't-pair-production'],
+    ['langevin',                 false, 't-langevin'],
+    ['triad_binding',            false, 't-triad'],
+    ['latency_field',            false, 't-latency-field'],
+    ['exact_dual_gauss',         false, 't-exact-dual-gauss'],
+    ['symmetric_movement_order', false, 't-symmetric-move'],
+    ['absorbing_boundary',       false, 't-absorbing'],
+    ['knot_tracking',            false, 't-knot-tracking'],
+];
+
 // Scale 2/3 (Atoms/Molecules) — matching AtomToggles in atom_engine.h
 export const SCALE2_TOGGLES = [
     ['ae-ionic', true, 'aeSetIonic'],

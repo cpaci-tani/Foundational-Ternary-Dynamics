@@ -1,4 +1,8 @@
 import { FORCE_FIELD_KEYS, markFieldDirty } from './state/store.js';
+import {
+    rampViridis, rampEmEnergy, rampVorticity, rampCharge, rampGrayscale,
+    rampGravWell, rampDivergingRdBu, rampEPressure, rampBPressure,
+} from '../../viewport/color-ramps.js';
 
 const NON_FORCE_OVERLAYS = {
     showEField: 'toggleEFieldLines',
@@ -41,7 +45,40 @@ const FORCE_ARROW_OVERLAYS = {
     showForceWeak: 'showWeakField',
 };
 
+// Volumetric scalar overlays the overlays-panel "Heat Map" meta-toggle re-renders
+// as a thermal glow cloud (viewport.updateScalarHeatmap) instead of their default
+// rubber-sheet (emEnergy/pressures/charge/vorticity/gravPotential via _topoRenderer)
+// or native scalar cloud (psi²/latency/gaussResidual/lagrangian/entropy). Keyed by
+// the show-flag. phase/state/horizon are intentionally EXCLUDED — directional /
+// discrete / threshold-shell quantities, not scalar densities. `update` = the
+// field's native render delegator; `toggle` = its native show/hide; `ramp` = the
+// color-ramps writer; `signed` picks diverging vs magnitude normalisation.
+const SCALAR_HEATMAP = {
+    showPsiSquared:        { key: 'psiSquared',    update: 'updatePsiSquaredField',        toggle: 'togglePsiSquaredField',        ramp: rampViridis,       signed: false },
+    showLagrangianDensity: { key: 'lagrangian',    update: 'updateLagrangianDensityField', toggle: 'toggleLagrangianDensityField',  ramp: rampDivergingRdBu, signed: true  },
+    showEntropyDensity:    { key: 'entropy',       update: 'updateEntropyDensityField',    toggle: 'toggleEntropyDensityField',    ramp: rampGrayscale,     signed: false },
+    showGravPotential:     { key: 'gravPotential', update: 'updateGravPotentialField',     toggle: 'toggleGravPotentialField',     ramp: rampGravWell,      signed: true  },
+    showEmEnergy:          { key: 'emEnergy',      update: 'updateEmEnergyField',          toggle: 'toggleEmEnergyField',          ramp: rampEmEnergy,      signed: false },
+    showChargeDensity:     { key: 'chargeDensity', update: 'updateChargeDensityField',     toggle: 'toggleChargeDensityField',     ramp: rampCharge,        signed: true  },
+    showVorticity:         { key: 'vorticity',     update: 'updateVorticityField',         toggle: 'toggleVorticityField',         ramp: rampVorticity,     signed: false },
+    showEPressure:         { key: 'ePressure',     update: 'updateEPressureField',         toggle: 'toggleEPressureField',         ramp: rampEPressure,     signed: false },
+    showBPressure:         { key: 'bPressure',     update: 'updateBPressureField',         toggle: 'toggleBPressureField',         ramp: rampBPressure,     signed: false },
+    showLatency:           { key: 'latency',       update: 'updateLatencyField',           toggle: 'toggleLatencyField',           ramp: rampEmEnergy,      signed: false },
+    showGaussResidual:     { key: 'gaussResidual', update: 'updateGaussResidualField',     toggle: 'toggleGaussResidualField',     ramp: rampCharge,        signed: true  },
+};
+const HM_KEY_TO_SPEC = {};
+for (const flag in SCALAR_HEATMAP) HM_KEY_TO_SPEC[SCALAR_HEATMAP[flag].key] = SCALAR_HEATMAP[flag];
+
 export function createScale0ViewportAdapter(viewport) {
+    // 'default' | 'heatmap' — the overlays-panel "Heat Map" meta-toggle. Managed
+    // by setScalarRenderMode / syncScalarRenderMode; read by the scalar apply
+    // methods + setOverlayVisible so a field's frame lands on the right surface.
+    let scalarMode = 'default';
+    const applyScalarField = (key, data) => {
+        const spec = HM_KEY_TO_SPEC[key];
+        if (scalarMode === 'heatmap') viewport?.updateScalarHeatmap?.(key, data, spec.ramp, spec.signed);
+        else viewport?.[spec.update]?.(data);
+    };
     return {
         raw: viewport,
         isFluxVolumeVisible() {
@@ -59,6 +96,20 @@ export function createScale0ViewportAdapter(viewport) {
         },
         setOverlayVisible(name, on) {
             if (!viewport) return;
+            // Volumetric scalar overlay: in Heat-Map mode the glow cloud is the
+            // visible surface and the native sheet/cloud stays hidden (and the
+            // reverse in default mode), so the two never render on top of each other.
+            const hm = SCALAR_HEATMAP[name];
+            if (hm) {
+                if (scalarMode === 'heatmap') {
+                    viewport[hm.toggle]?.(false);
+                    viewport.showScalarHeatmap?.(hm.key, on);
+                } else {
+                    viewport.showScalarHeatmap?.(hm.key, false);
+                    viewport[hm.toggle]?.(on);
+                }
+                return;
+            }
             if (NON_FORCE_OVERLAYS[name] && typeof viewport[NON_FORCE_OVERLAYS[name]] === 'function') {
                 viewport[NON_FORCE_OVERLAYS[name]](on);
                 return;
@@ -109,6 +160,23 @@ export function createScale0ViewportAdapter(viewport) {
             // them visible-but-empty until an unrelated event nudges the
             // dirty bit. Belt-and-braces alongside `setFieldToggle`'s
             // always-dirty fix — guards direct scenario-loader calls too.
+            markFieldDirty();
+        },
+        setScalarRenderMode(mode) {
+            scalarMode = (mode === 'heatmap') ? 'heatmap' : 'default';
+        },
+        // Re-sync every volumetric scalar overlay's two render surfaces to the new
+        // meta-mode: native sheet/cloud visible only in 'default', glow heat-map
+        // only in 'heatmap'. Mirrors syncForceStyle for the Forces column.
+        syncScalarRenderMode(mode, fieldState) {
+            scalarMode = (mode === 'heatmap') ? 'heatmap' : 'default';
+            if (!viewport) return;
+            for (const flag in SCALAR_HEATMAP) {
+                const hm = SCALAR_HEATMAP[flag];
+                const active = !!fieldState[flag];
+                viewport[hm.toggle]?.(active && scalarMode === 'default');
+                viewport.showScalarHeatmap?.(hm.key, active && scalarMode === 'heatmap');
+            }
             markFieldDirty();
         },
         clearScaleVisuals() {
@@ -226,37 +294,25 @@ export function createScale0ViewportAdapter(viewport) {
             viewport?.updateChiralityField?.(frame);
         },
         // ── Tier 1 quantum overlay data handoffs ─────────
-        applyPsiSquared(data) {
-            viewport?.updatePsiSquaredField?.(data);
-        },
-        applyPhase(data) {
-            viewport?.updatePhaseField?.(data);
-        },
-        applyLagrangianDensity(data) {
-            viewport?.updateLagrangianDensityField?.(data);
-        },
-        applyEntropyDensity(data) {
-            viewport?.updateEntropyDensityField?.(data);
-        },
-        applyGravPotential(data) {
-            viewport?.updateGravPotentialField?.(data);
-        },
-        applyEmEnergy(data) {
-            viewport?.updateEmEnergyField?.(data);
-        },
-        applyChargeDensity(data) {
-            viewport?.updateChargeDensityField?.(data);
-        },
-        applyVorticity(data) {
-            viewport?.updateVorticityField?.(data);
-        },
+        // Volumetric scalar densities route through applyScalarField so the Heat-Map
+        // meta-toggle sends the SAME frame to the glow renderer instead of the native
+        // sheet/cloud. phase (directional needles), state (discrete ternary), and
+        // horizon (threshold shell) are NOT densities — they keep their native render.
+        applyPsiSquared(data)        { applyScalarField('psiSquared', data); },
+        applyPhase(data)             { viewport?.updatePhaseField?.(data); },
+        applyLagrangianDensity(data) { applyScalarField('lagrangian', data); },
+        applyEntropyDensity(data)    { applyScalarField('entropy', data); },
+        applyGravPotential(data)     { applyScalarField('gravPotential', data); },
+        applyEmEnergy(data)          { applyScalarField('emEnergy', data); },
+        applyChargeDensity(data)     { applyScalarField('chargeDensity', data); },
+        applyVorticity(data)         { applyScalarField('vorticity', data); },
         // ── Tier 1/2 (2026-04-18) ──────────────────────
         applyHorizon(data)       { viewport?.updateHorizonField?.(data); },
-        applyEPressure(data)     { viewport?.updateEPressureField?.(data); },
-        applyBPressure(data)     { viewport?.updateBPressureField?.(data); },
+        applyEPressure(data)     { applyScalarField('ePressure', data); },
+        applyBPressure(data)     { applyScalarField('bPressure', data); },
         applyStateField(data)    { viewport?.updateStateField?.(data); },
-        applyLatency(data)       { viewport?.updateLatencyField?.(data); },
-        applyGaussResidual(data) { viewport?.updateGaussResidualField?.(data); },
+        applyLatency(data)       { applyScalarField('latency', data); },
+        applyGaussResidual(data) { applyScalarField('gaussResidual', data); },
         render() {
             viewport?.render?.();
         },

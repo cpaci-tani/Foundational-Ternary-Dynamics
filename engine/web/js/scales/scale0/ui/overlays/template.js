@@ -44,6 +44,14 @@ export function getScale0OverlayTemplate() {
           aria-label="Filter visualization overlays" />
     </div>
     <div class="s0-overlay-active" id="s0-overlay-active" aria-label="Active overlays" hidden></div>
+    <div class="s0-overlay-meta">
+      <span class="s0-overlay-meta-label">Scalar render</span>
+      <div class="force-style-row" id="scalar-render-row"
+          title="Render the volumetric scalar overlays (EM energy, pressures, charge, vorticity, Φ potential, |ψ|², Lagrangian, entropy, latency, Gauss residual) as thermal glow HEAT MAPS instead of their default rubber-sheet / scalar cloud. Applies to whichever of those overlays are currently active.">
+        <button class="style-btn active" data-scalar-mode="default" title="Native rubber-sheet / scalar-cloud rendering">Default</button>
+        <button class="style-btn" data-scalar-mode="heatmap" title="Volumetric thermal glow heat map">Heat&nbsp;Map</button>
+      </div>
+    </div>
     <div class="s0-overlay-body">
     <div class="s0-overlay-col" data-col="volume">
       <div class="s0-overlay-col-head">
