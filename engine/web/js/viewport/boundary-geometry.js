@@ -28,6 +28,55 @@
 
 import * as THREE from 'three';
 
+// ── Pre-normalized platonic clip tables ──────────────────────────────────
+// insideBoundary() is a per-voxel predicate run inside the overlay hot loops
+// (up to ~100K calls/frame on a large lattice). The dodecahedron/icosahedron
+// cases used to rebuild a 12-/20-row normals array AND re-normalize every row
+// (a sqrt per normal) on every call. Hoist both: build the tables once at
+// module load, pre-normalized and flattened to `[x,y,z, x,y,z, …]`, so the
+// predicate is a division-free, allocation-free dot-product scan.
+const _PHI = 1.618033988749895;
+
+function _normalizeRows(rows) {
+    const flat = new Float32Array(rows.length * 3);
+    for (let i = 0; i < rows.length; i++) {
+        const [x, y, z] = rows[i];
+        const len = Math.sqrt(x * x + y * y + z * z) || 1;
+        flat[i * 3]     = x / len;
+        flat[i * 3 + 1] = y / len;
+        flat[i * 3 + 2] = z / len;
+    }
+    return flat;
+}
+
+// Inradius / circumradius of the unit polytope (the clip threshold).
+const DODECA_INRADIUS = 0.7946;
+const ICOSA_INRADIUS = 0.7558;
+
+const DODECA_NORMALS = _normalizeRows([
+    [0, 1, _PHI], [0, -1, _PHI], [0, 1, -_PHI], [0, -1, -_PHI],
+    [1, _PHI, 0], [-1, _PHI, 0], [1, -_PHI, 0], [-1, -_PHI, 0],
+    [_PHI, 0, 1], [-_PHI, 0, 1], [_PHI, 0, -1], [-_PHI, 0, -1],
+]);
+
+const ICOSA_NORMALS = _normalizeRows([
+    [1, 1, 1], [1, 1, -1], [1, -1, 1], [1, -1, -1],
+    [-1, 1, 1], [-1, 1, -1], [-1, -1, 1], [-1, -1, -1],
+    [0, _PHI, 1 / _PHI], [0, _PHI, -1 / _PHI], [0, -_PHI, 1 / _PHI], [0, -_PHI, -1 / _PHI],
+    [1 / _PHI, 0, _PHI], [-1 / _PHI, 0, _PHI], [1 / _PHI, 0, -_PHI], [-1 / _PHI, 0, -_PHI],
+    [_PHI, 1 / _PHI, 0], [_PHI, -1 / _PHI, 0], [-_PHI, 1 / _PHI, 0], [-_PHI, -1 / _PHI, 0],
+]);
+
+// Half-space scan against a pre-normalized flat normal table: inside iff the
+// point projects no farther than `ir` along every face normal.
+function _insidePolytope(normals, ir, nx, ny, nz) {
+    for (let i = 0; i < normals.length; i += 3) {
+        const d = nx * normals[i] + ny * normals[i + 1] + nz * normals[i + 2];
+        if (d > ir) return false;
+    }
+    return true;
+}
+
 /**
  * Dispatch on shape; returns a THREE.Group containing the wireframe mesh.
  * @param {string} shape
@@ -205,42 +254,12 @@ export function insideBoundary(shape, nx, ny, nz) {
             return (nx * nx + ny * ny + nz * nz) <= 1.0;
         case 'octahedron':
             return (Math.abs(nx) + Math.abs(ny) + Math.abs(nz)) <= 1.0;
-        case 'dodecahedron': {
-            // Dodecahedron defined by 6 pairs of face normals
-            // Inradius of unit dodecahedron ≈ 0.7946
-            const phi = 1.618033988749895;
-            const ir = 0.7946; // inradius / circumradius
-            const normals = [
-                [0, 1, phi], [0, -1, phi], [0, 1, -phi], [0, -1, -phi],
-                [1, phi, 0], [-1, phi, 0], [1, -phi, 0], [-1, -phi, 0],
-                [phi, 0, 1], [-phi, 0, 1], [phi, 0, -1], [-phi, 0, -1],
-            ];
-            for (const n of normals) {
-                const len = Math.sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
-                const d = (nx * n[0] + ny * n[1] + nz * n[2]) / len;
-                if (d > ir) return false;
-            }
-            return true;
-        }
-        case 'icosahedron': {
-            // Icosahedron defined by 10 pairs of face normals
-            // Inradius of unit icosahedron ≈ 0.7558
-            const phi = 1.618033988749895;
-            const ir = 0.7558;
-            const normals = [
-                [1, 1, 1], [1, 1, -1], [1, -1, 1], [1, -1, -1],
-                [-1, 1, 1], [-1, 1, -1], [-1, -1, 1], [-1, -1, -1],
-                [0, phi, 1 / phi], [0, phi, -1 / phi], [0, -phi, 1 / phi], [0, -phi, -1 / phi],
-                [1 / phi, 0, phi], [-1 / phi, 0, phi], [1 / phi, 0, -phi], [-1 / phi, 0, -phi],
-                [phi, 1 / phi, 0], [phi, -1 / phi, 0], [-phi, 1 / phi, 0], [-phi, -1 / phi, 0],
-            ];
-            for (const n of normals) {
-                const len = Math.sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
-                const d = (nx * n[0] + ny * n[1] + nz * n[2]) / len;
-                if (d > ir) return false;
-            }
-            return true;
-        }
+        case 'dodecahedron':
+            // 6 pairs of face normals; threshold = unit-dodecahedron inradius.
+            return _insidePolytope(DODECA_NORMALS, DODECA_INRADIUS, nx, ny, nz);
+        case 'icosahedron':
+            // 10 pairs of face normals; threshold = unit-icosahedron inradius.
+            return _insidePolytope(ICOSA_NORMALS, ICOSA_INRADIUS, nx, ny, nz);
         case 'cylinder':
             return (nx * nx + nz * nz) <= 1.0 && Math.abs(ny) <= 1.0;
         case 'torus': {

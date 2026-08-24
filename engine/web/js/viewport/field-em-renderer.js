@@ -666,8 +666,9 @@ export const fieldEmMethods = {
         const sizes = new Float32Array(maxPts);
         const geo = new THREE.BufferGeometry();
         geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3)); // changed attribute to color for standard mesh, wait!
-        // No, original was particleColor! Wait, let's keep exact attributes to not break shader material!
+        // The particle shader material reads `particleColor`; updateDivergenceField
+        // only ever writes that attribute. (A stray `color` attribute was declared
+        // here too and never updated — removed as a dead GPU buffer.)
         geo.setAttribute('particleColor', new THREE.Float32BufferAttribute(colors, 3));
         geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
         _ensureManifestAttrs(geo, maxPts);

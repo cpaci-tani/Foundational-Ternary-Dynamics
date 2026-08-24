@@ -1,6 +1,6 @@
 /** fieldForceMethods — ViewportFieldRenderer mixin (EM/gravity/strong/weak force viz). */
 import * as THREE from 'three';
-import { FORCE_PALETTES, lerpPalette } from './color-ramps.js';
+import { FORCE_PALETTES, lerpPaletteInto } from './color-ramps.js';
 import {
     VOXEL_CENTER_OFFSET,
     _softSpriteTexture,
@@ -178,14 +178,11 @@ export const fieldForceMethods = {
                                       (pz - this._center) / this._radius)) continue;
 
             const t   = Math.min(1, abs / maxVal);
-            const rgb = lerpPalette(pal, t);
 
             posAttr.array[vi * 3]     = px;
             posAttr.array[vi * 3 + 1] = py;
             posAttr.array[vi * 3 + 2] = pz;
-            colAttr.array[vi * 3]     = rgb[0];
-            colAttr.array[vi * 3 + 1] = rgb[1];
-            colAttr.array[vi * 3 + 2] = rgb[2];
+            lerpPaletteInto(pal, t, colAttr.array, vi * 3);
             vi++;
         }
 
@@ -287,13 +284,10 @@ export const fieldForceMethods = {
             if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
 
             const t = mag / maxMag;
-            const [r, g, b] = lerpPalette(pal, t);
             posAttr.array[vi * 3]     = px;
             posAttr.array[vi * 3 + 1] = py;
             posAttr.array[vi * 3 + 2] = pz;
-            colAttr.array[vi * 3]     = r;
-            colAttr.array[vi * 3 + 1] = g;
-            colAttr.array[vi * 3 + 2] = b;
+            lerpPaletteInto(pal, t, colAttr.array, vi * 3);
             sizeAttr.array[vi] = Math.log(1 + t * 9) / Math.log(10) * sizeBase;
             vi++;
         }
@@ -521,10 +515,7 @@ export const fieldForceMethods = {
             mat4.setPosition(px, py, pz);
             mesh.setMatrixAt(vi, mat4);
 
-            const [r, g, b] = lerpPalette(pal, t);
-            colorArr[vi * 3]     = r;
-            colorArr[vi * 3 + 1] = g;
-            colorArr[vi * 3 + 2] = b;
+            lerpPaletteInto(pal, t, colorArr, vi * 3);
             vi++;
         }
 

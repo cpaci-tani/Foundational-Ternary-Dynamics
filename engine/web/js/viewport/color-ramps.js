@@ -219,6 +219,34 @@ export function lerpPalette(pal, t) {
     ];
 }
 
+/**
+ * Allocation-free variant of {@link lerpPalette}: writes the interpolated
+ * `[r, g, b]` directly into `out[base]`, `out[base + 1]`, `out[base + 2]`.
+ * Per-frame overlay loops (arrow-field, heatmap, glyphs) call this once per
+ * emitted point, so returning a fresh 3-tuple there churned one small array
+ * per voxel per frame (up to ~100K/frame on a large lattice). Prefer this in
+ * hot paths; keep `lerpPalette` for one-off callers that want a tuple.
+ *
+ * @param {object} pal  - `{ low: [r,g,b], mid: [r,g,b], high: [r,g,b] }`
+ * @param {number} t    - 0..1
+ * @param {ArrayLike<number>} out - destination color array (mutated)
+ * @param {number} base - write offset (typically `vi * 3`)
+ */
+export function lerpPaletteInto(pal, t, out, base) {
+    const tt = Math.max(0, Math.min(1, t));
+    if (tt < 0.5) {
+        const u = tt * 2;
+        out[base]     = pal.low[0] + (pal.mid[0] - pal.low[0]) * u;
+        out[base + 1] = pal.low[1] + (pal.mid[1] - pal.low[1]) * u;
+        out[base + 2] = pal.low[2] + (pal.mid[2] - pal.low[2]) * u;
+        return;
+    }
+    const u = (tt - 0.5) * 2;
+    out[base]     = pal.mid[0] + (pal.high[0] - pal.mid[0]) * u;
+    out[base + 1] = pal.mid[1] + (pal.high[1] - pal.mid[1]) * u;
+    out[base + 2] = pal.mid[2] + (pal.high[2] - pal.mid[2]) * u;
+}
+
 // ── Ramp registry (name → function) ───────────────────────────────────
 // Used by the topology-sheet config which carries ramp references by
 // string name (matches the legacy `this[cfg.ramp](...)` dispatch pattern

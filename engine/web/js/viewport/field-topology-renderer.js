@@ -402,7 +402,14 @@ export const fieldTopologyMethods = {
         const cell = Math.sqrt(J2_threshold_dist2);
         const buckets = this._confBuckets || (this._confBuckets = new Map());
         buckets.clear();
-        const keyOf = (cx, cy, cz) => cx + ',' + cy + ',' + cz;
+        // Integer cell key: exact base-4096 packing with a +1024 bias so the
+        // ±1 neighbour offsets stay non-negative. This is a bijection on cell
+        // indices in [-1024, 3071] — far outside any lattice we run (native
+        // caps at L=256) — so distinct cells still map to distinct buckets and
+        // the bit-exactness guarantee above is preserved. Avoids building the
+        // ~27·N short strings per frame the "cx,cy,cz" key used to churn.
+        const keyOf = (cx, cy, cz) =>
+            (cx + 1024) + (cy + 1024) * 4096 + (cz + 1024) * 16777216;
         for (let p = 0; p < count; p++) {
             const cx = Math.floor(pos[p * 3]     / cell);
             const cy = Math.floor(pos[p * 3 + 1] / cell);

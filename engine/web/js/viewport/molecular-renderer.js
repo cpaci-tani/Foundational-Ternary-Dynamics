@@ -188,11 +188,22 @@ export class MolecularRenderer {
         const idToIdx = new Map();
         for (let i = 0; i < atomData.count; i++) idToIdx.set(atomData.ids[i], i);
 
+        // Per-update scratch, reused across every bond/cylinder so the loop
+        // below allocates nothing (it can emit up to 1500 cylinders/frame and
+        // used to `new` ~10 THREE objects per bond).
         const mat4 = new THREE.Matrix4();
         const up = new THREE.Vector3(0, 1, 0);
         const dir = new THREE.Vector3();
         const quat = new THREE.Quaternion();
         const color = new THREE.Color();
+        const cA = new THREE.Color();
+        const cB = new THREE.Color();
+        const perp = new THREE.Vector3();
+        const perp2 = new THREE.Vector3();
+        const posV = new THREE.Vector3();
+        const scaleV = new THREE.Vector3();
+        const AXIS_Z = new THREE.Vector3(0, 0, 1);
+        const AXIS_X = new THREE.Vector3(1, 0, 0);
         let instIdx = 0;
 
         for (let b = 0; b < atomData.bondCount && instIdx < 1500; b++) {
@@ -210,9 +221,10 @@ export class MolecularRenderer {
             dir.set(dx, dy, dz).normalize();
             quat.setFromUnitVectors(up, dir);
 
-            // Color: blend CPK colors of bonded atoms
-            const cA = new THREE.Color(atomData.colors[iA * 3], atomData.colors[iA * 3 + 1], atomData.colors[iA * 3 + 2]);
-            const cB = new THREE.Color(atomData.colors[iB * 3], atomData.colors[iB * 3 + 1], atomData.colors[iB * 3 + 2]);
+            // Color: blend CPK colors of bonded atoms. .setRGB(r,g,b) matches
+            // `new THREE.Color(r,g,b)` exactly (both use the working space).
+            cA.setRGB(atomData.colors[iA * 3], atomData.colors[iA * 3 + 1], atomData.colors[iA * 3 + 2]);
+            cB.setRGB(atomData.colors[iB * 3], atomData.colors[iB * 3 + 1], atomData.colors[iB * 3 + 2]);
             color.copy(cA).lerp(cB, 0.5);
 
             const order = atomData.bondOrders ? atomData.bondOrders[b] : 1;
@@ -223,36 +235,36 @@ export class MolecularRenderer {
 
             if (isAromatic) {
                 // Aromatic: full-width main cylinder + thin offset companion.
-                const perp = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0, 0, 1));
-                if (perp.lengthSq() < 0.001) perp.crossVectors(dir, new THREE.Vector3(1, 0, 0));
+                perp.crossVectors(dir, AXIS_Z);
+                if (perp.lengthSq() < 0.001) perp.crossVectors(dir, AXIS_X);
                 perp.normalize().multiplyScalar(0.16);
                 // Main bond (centred).
-                mat4.compose(new THREE.Vector3(ax, ay, az), quat, new THREE.Vector3(0.15, bondLen, 0.15));
+                mat4.compose(posV.set(ax, ay, az), quat, scaleV.set(0.15, bondLen, 0.15));
                 this._bondCylinders.setMatrixAt(instIdx, mat4);
                 this._bondCylinders.setColorAt(instIdx, color);
                 instIdx++;
                 // Thin delocalised companion (offset to one side).
                 if (instIdx < 1500) {
                     const ox = ax + perp.x, oy = ay + perp.y, oz = az + perp.z;
-                    mat4.compose(new THREE.Vector3(ox, oy, oz), quat, new THREE.Vector3(0.07, bondLen, 0.07));
+                    mat4.compose(posV.set(ox, oy, oz), quat, scaleV.set(0.07, bondLen, 0.07));
                     this._bondCylinders.setMatrixAt(instIdx, mat4);
                     this._bondCylinders.setColorAt(instIdx, color);
                     instIdx++;
                 }
             } else if (order < 2) {
                 // Single bond: 1 cylinder, radius 0.15
-                mat4.compose(new THREE.Vector3(ax, ay, az), quat, new THREE.Vector3(0.15, bondLen, 0.15));
+                mat4.compose(posV.set(ax, ay, az), quat, scaleV.set(0.15, bondLen, 0.15));
                 this._bondCylinders.setMatrixAt(instIdx, mat4);
                 this._bondCylinders.setColorAt(instIdx, color);
                 instIdx++;
             } else if (order < 3) {
                 // Double bond: 2 parallel cylinders offset ±0.18
-                const perp = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0, 0, 1));
-                if (perp.lengthSq() < 0.001) perp.crossVectors(dir, new THREE.Vector3(1, 0, 0));
+                perp.crossVectors(dir, AXIS_Z);
+                if (perp.lengthSq() < 0.001) perp.crossVectors(dir, AXIS_X);
                 perp.normalize().multiplyScalar(0.18);
                 for (let s = -1; s <= 1; s += 2) {
                     const ox = ax + perp.x * s, oy = ay + perp.y * s, oz = az + perp.z * s;
-                    mat4.compose(new THREE.Vector3(ox, oy, oz), quat, new THREE.Vector3(0.12, bondLen, 0.12));
+                    mat4.compose(posV.set(ox, oy, oz), quat, scaleV.set(0.12, bondLen, 0.12));
                     if (instIdx < 1500) {
                         this._bondCylinders.setMatrixAt(instIdx, mat4);
                         this._bondCylinders.setColorAt(instIdx, color);
@@ -261,17 +273,17 @@ export class MolecularRenderer {
                 }
             } else if (order >= 3) {
                 // Triple bond: 3 cylinders in triangle arrangement
-                const perp = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0, 0, 1));
-                if (perp.lengthSq() < 0.001) perp.crossVectors(dir, new THREE.Vector3(1, 0, 0));
+                perp.crossVectors(dir, AXIS_Z);
+                if (perp.lengthSq() < 0.001) perp.crossVectors(dir, AXIS_X);
                 perp.normalize();
-                const perp2 = new THREE.Vector3().crossVectors(dir, perp).normalize();
+                perp2.crossVectors(dir, perp).normalize();
                 const angles = [0, 2 * Math.PI / 3, 4 * Math.PI / 3];
                 for (const angle of angles) {
                     const offX = Math.cos(angle) * 0.2, offY = Math.sin(angle) * 0.2;
                     const ox = ax + perp.x * offX + perp2.x * offY;
                     const oy = ay + perp.y * offX + perp2.y * offY;
                     const oz = az + perp.z * offX + perp2.z * offY;
-                    mat4.compose(new THREE.Vector3(ox, oy, oz), quat, new THREE.Vector3(0.10, bondLen, 0.10));
+                    mat4.compose(posV.set(ox, oy, oz), quat, scaleV.set(0.10, bondLen, 0.10));
                     if (instIdx < 1500) {
                         this._bondCylinders.setMatrixAt(instIdx, mat4);
                         this._bondCylinders.setColorAt(instIdx, color);
