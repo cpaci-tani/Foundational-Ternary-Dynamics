@@ -70,6 +70,47 @@ test('sparse crossing below density threshold → zero knots (density half of AN
     expect(tel.count).toBe(0);
 });
 
+test('adaptive threshold keeps a weaker isolated clump next to a dense one', () => {
+    // Production path: densityThreshold is null, so the detector must not let a
+    // busy region raise a global mean cut that hides a smaller but real tangle.
+    const tr = new FieldLineKnotTracker({ cellSize: 2, crossingDist: 2.0 });
+    const dense = [];
+    for (let i = 0; i < 20; i++) {
+        const o = (i - 10) * 0.04;
+        dense.push([[7, 8 + o, 8], [9, 8 + o, 8]]);
+    }
+    const sl = makeStreamlines([...dense, ...crossingClump([24, 24, 24])]);
+    const tel = tr.record(sl, null, 0, 33);
+    expect(tel.count).toBe(2);
+    const xs = [tel.fields[0], tel.fields[8]];
+    expect(xs.some((x) => Math.abs(x - 8) <= 3)).toBe(true);
+    expect(xs.some((x) => Math.abs(x - 24) <= 3)).toBe(true);
+});
+
+test('default minCellsPerKnot keeps a compact single-cell tangle', () => {
+    const tr = new FieldLineKnotTracker({ cellSize: 2, crossingDist: 1.0 });
+    const sl = makeStreamlines([
+        [[4.6, 5, 5], [5.4, 5, 5]],
+        [[5, 4.6, 5], [5, 5.4, 5]],
+        [[5, 5, 4.6], [5, 5, 5.4]],
+    ]);
+    const tel = tr.record(sl, null, 0, 33);
+    expect(tel.count).toBe(1);
+});
+
+test('maxKnots truncation reports how many real clumps were dropped', () => {
+    const tr = new FieldLineKnotTracker({
+        cellSize: 2, densityThreshold: 2, minCellsPerKnot: 1, crossingDist: 2.0, maxKnots: 3,
+    });
+    const centers = [[4, 4, 4], [12, 4, 4], [20, 4, 4], [4, 12, 4], [12, 12, 4]];
+    const sl = makeStreamlines(centers.flatMap((c) => crossingClump(c)));
+    const tel = tr.record(sl, null, 0, 33);
+    expect(tel.found).toBe(5);
+    expect(tel.count).toBe(3);
+    expect(tel.dropped).toBe(2);
+    expect(tr.getAggregate().dropped).toBe(2);
+});
+
 test('segments / length / legs match a direct attributeSegmentsToKnots call', () => {
     const tr = new FieldLineKnotTracker({ cellSize: 2, densityThreshold: 2, minCellsPerKnot: 1, crossingDist: 2.0 });
     const sl = makeStreamlines([...crossingClump([5, 5, 5]), ...crossingClump([25, 25, 25])]);

@@ -65,10 +65,17 @@ export class ConservationMicropanelComponent extends BaseComponent {
     }
 }
 
-function renderRow(label, value, color) {
+function renderRow(label, value, color, { missing = false, key = '' } = {}) {
+    const val = missing ? '        —' : formatExp(value);
+    const title = missing
+        ? 'Poynting (momentum) needs a live energy-audit snapshot — open Diagnostics, Lagrangian, Grid, Knots, or an E vs B / Gauss chart'
+        : '';
+    const titleAttr = title ? ` title="${title}"` : '';
+    const keyAttr = key ? ` data-cons="${key}"` : '';
+    const valKeyAttr = key ? ` data-cons-val="${key}"` : '';
     return `
-        <span class="cons-row-label">${label}</span>
-        <span class="cons-row-val" style="color:${color};">${formatExp(value)}</span>
+        <span class="cons-row-label"${keyAttr}${titleAttr}>${label}</span>
+        <span class="cons-row-val"${valKeyAttr} style="color:${color};">${val}</span>
         <span class="cons-row-dot" style="background:${color};"></span>
     `;
 }
@@ -106,6 +113,17 @@ export function mountConservationMicropanel(host, getBridge) {
             if (currentTick - history[i].tick <= lookback) return history[i];
         }
         return history[0];
+    }
+
+    /** Same window as findBaseline, but only among samples with live Poynting. */
+    function findPBaseline(currentTick, lookback) {
+        let fallback = null;
+        for (let i = 0; i < history.length; i++) {
+            if (!history[i].totals.pAvailable) continue;
+            if (!fallback) fallback = history[i];
+            if (currentTick - history[i].tick <= lookback) return history[i];
+        }
+        return fallback;
     }
 
     /** Render the 4 SVG sparklines used in the fullscreen modal. */
@@ -207,20 +225,24 @@ export function mountConservationMicropanel(host, getBridge) {
         // Compute headline deltas vs HEADLINE_WINDOW_TICKS-ago snapshot
         const start = findBaseline(totals.tick, HEADLINE_WINDOW_TICKS).totals;
         const dE = totals.E - start.E;
-        const dp = l2(totals.px - start.px, totals.py - start.py, totals.pz - start.pz);
+        const pLive = !!totals.pAvailable;
+        const pBase = pLive ? findPBaseline(totals.tick, HEADLINE_WINDOW_TICKS) : null;
+        const dp = pBase
+            ? l2(totals.px - pBase.totals.px, totals.py - pBase.totals.py, totals.pz - pBase.totals.pz)
+            : NaN;
         const dL = l2(totals.Lx - start.Lx, totals.Ly - start.Ly, totals.Lz - start.Lz);
         const dQ = totals.Q - start.Q;
 
         const colE = hyst.E.update(statusToken(dE));
-        const colP = hyst.p.update(statusToken(dp));
+        const colP = pBase ? hyst.p.update(statusToken(dp)) : 'var(--text-muted)';
         const colL = hyst.L.update(statusToken(dL));
         const colQ = hyst.Q.update(statusToken(dQ));
 
         rowsEl.innerHTML = [
-            renderRow('ΔE', dE, colE),
-            renderRow('Δp', dp, colP),
-            renderRow('ΔL', dL, colL),
-            renderRow('ΔQ', dQ, colQ),
+            renderRow('ΔE', dE, colE, { key: 'E' }),
+            renderRow('Δp', dp, colP, { key: 'p', missing: !pBase }),
+            renderRow('ΔL', dL, colL, { key: 'L' }),
+            renderRow('ΔQ', dQ, colQ, { key: 'Q' }),
         ].join('');
 
         statusEl.textContent = `t=${totals.tick}`;

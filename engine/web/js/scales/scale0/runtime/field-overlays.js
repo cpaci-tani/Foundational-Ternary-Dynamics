@@ -6,11 +6,17 @@ import {
     generateBImportanceSeeds,
     buildPersistentIndex,
     sampleFieldMagInto,
+    unionStreamlineSeeds,
 } from '../../../fieldlines.js';
 import { DUAL_DELTA, K_GENESIS } from '../../../constants.js';
 import { SCALE0_MASS_GRAVITY_SCENARIOS } from '../../../config/toggles.js';
 import { getActiveScale0Capability, getActiveLatticeSize, getActiveScale0Bridge } from '../state/store.js';
 import { getFieldLineKnotTracker } from './field-line-knots.js';
+import {
+    overlayWorkActive,
+    wantsStreamlineApply,
+    wantsStreamlineJob,
+} from './knot-streamline-plan.js';
 import {
     computePsiSquaredFrame,
     computePhaseFrame,
@@ -80,21 +86,23 @@ function cachedSeeds(state, type, latticeSize, generate) {
 }
 
 function buildEFieldLines(activeScale0, state, sampled, latticeSize, stride, p) {
-    // E-field: lines start on positive charges and terminate on negative ones.
-    // When particles exist we anchor seeds to them (real sources); otherwise
-    // we importance-sample from |E| so seeds cluster where the field is strong
-    // (iron-filings effect). Bidirectional integration draws from each seed
-    // both toward the source and toward the sink, so the visible line spans
-    // the natural field-line path.
+    // E-field: particle-anchored seeds (real sources) UNION importance-sampled
+    // |E| peaks so vacuum-field bunches away from charges still get streamlines
+    // (and therefore can be detected as knots). Bidirectional integration draws
+    // from each seed both toward the source and toward the sink.
     //
     // Use the pre-snapshotted particleData (from the shared per-sweep sample
     // cache) so E and B both seed from the same tick's particle positions
     // (fixes the offset bug).
     const particleData = sampled.particleData ?? activeScale0.getScale0ParticleFrame();
     fillFieldParticleBuf(state, particleData);
-    const seeds = cachedSeeds(state, 'e', latticeSize, () => particleData.count > 0
-        ? generateEFieldSeeds(state.fieldParticleBuf, p.eOffset, p.maxSeeds)
-        : generateImportanceSeeds(sampled.eField, p.maxSeeds));
+    const seeds = cachedSeeds(state, 'e', latticeSize, () => {
+        const particleSeeds = particleData.count > 0
+            ? generateEFieldSeeds(state.fieldParticleBuf, p.eOffset, Math.ceil(p.maxSeeds * 0.55))
+            : [];
+        const fieldSeeds = generateImportanceSeeds(sampled.eField, p.maxSeeds);
+        return unionStreamlineSeeds(particleSeeds, fieldSeeds, p.maxSeeds);
+    });
     return computeStreamlines(sampled.eField, seeds, {
         N: latticeSize, stride, maxSteps: p.maxSteps, stepSize: p.stepSize,
         maxLines: p.maxLines, bidirectional: true,
@@ -103,18 +111,21 @@ function buildEFieldLines(activeScale0, state, sampled, latticeSize, stride, p) 
 
 function buildBFieldLines(activeScale0, state, sampled, latticeSize, stride, p) {
     // B-field is divergence-free (∇·B=0), so lines must form closed loops.
-    // Anchor seeds to particles when present, else importance-sample with a
-    // perpendicular offset so seeds land on the loop circumference rather
-    // than at the center (where they'd integrate in place). Bidirectional
-    // integration is mandatory — half the loop runs each direction.
+    // Particle ring seeds UNION importance-sampled |B| peaks (perpendicular
+    // offset onto the loop circumference). Bidirectional integration is
+    // mandatory — half the loop runs each direction.
     //
     // Use the pre-snapshotted particleData so B seeds from the same particle
     // positions as E (same tick, same snapshot — fixes the offset bug).
     const particleData = sampled.particleData ?? activeScale0.getScale0ParticleFrame();
     fillFieldParticleBuf(state, particleData);
-    const seeds = cachedSeeds(state, 'b', latticeSize, () => particleData.count > 0
-        ? generateBFieldSeeds(state.fieldParticleBuf, p.bRadius, p.maxSeeds)
-        : generateBImportanceSeeds(sampled.bField, p.maxSeeds, p.bRadius));
+    const seeds = cachedSeeds(state, 'b', latticeSize, () => {
+        const particleSeeds = particleData.count > 0
+            ? generateBFieldSeeds(state.fieldParticleBuf, p.bRadius, Math.ceil(p.maxSeeds * 0.55))
+            : [];
+        const fieldSeeds = generateBImportanceSeeds(sampled.bField, p.maxSeeds, p.bRadius);
+        return unionStreamlineSeeds(particleSeeds, fieldSeeds, p.maxSeeds);
+    });
     return computeStreamlines(sampled.bField, seeds, {
         N: latticeSize, stride,
         // Loops need ~ 2·π·radius worth of steps to close — give B 1.5× the
@@ -327,13 +338,15 @@ export function buildDerivedSubstrateData(state, sampled, fieldCapability, N) {
         if (parts) frame.dampingZones = { particles: parts.positions, latticeSize: N };
     }
     if (flags.showKnotZones) {
-        // Boxes follow the detected FIELD-LINE knots (clumps of crossing E/B
-        // streamlines), not manifested particles. Dual frame: both the E and B
-        // knot families (the orthogonal EM pair); each empty when its field's
-        // overlay/tracking is off.
+        // Boxes follow the detected FIELD-LINE knots (clumps of crossing E/B/J
+        // streamlines), not manifested particles. Triple frame: E, B, and flux
+        // families; each empty when that family's streamlines have not been recorded.
         const e = getFieldLineKnotTracker('e').getKnotZones();
         const b = getFieldLineKnotTracker('b').getKnotZones();
-        if ((e && e.count) || (b && b.count)) frame.knotZones = { e, b };
+        const flux = getFieldLineKnotTracker('flux').getKnotZones();
+        if ((e && e.count) || (b && b.count) || (flux && flux.count)) {
+            frame.knotZones = { e, b, flux };
+        }
     }
 
     if (state.fieldFlags.showDualSubstrate && sampled.fluxVector?.count > 0) {
@@ -643,7 +656,9 @@ function runJob(sched, slot) {
                     tr.measureContributions({ eField: sampled.eField, bField, fluxVolume, divJ, latticeSize });
                 }
             }
-            viewportAdapter.applyEFieldLines(lines, knotColoring);
+            if (wantsStreamlineApply(state.fieldFlags, 'e')) {
+                viewportAdapter.applyEFieldLines(lines, knotColoring);
+            }
             break;
         }
         case JOB_BFIELD: {
@@ -669,14 +684,31 @@ function runJob(sched, slot) {
                     tr.measureContributions({ eField, bField: sampled.bField, fluxVolume, divJ, latticeSize });
                 }
             }
-            viewportAdapter.applyBFieldLines(lines, knotColoring);
+            if (wantsStreamlineApply(state.fieldFlags, 'b')) {
+                viewportAdapter.applyBFieldLines(lines, knotColoring);
+            }
             break;
         }
         case JOB_FLUX: {
             sampleCache.ensureSample('fluxVector');
             if (!sampled.fluxVector?.count) break;
             const fs = buildFluxStreamlines(state, sampled, latticeSize, stride, params);
-            viewportAdapter.applyFluxStreamlines(fs.lines, fs.maxFlux, fs.mags);
+            if (state.knotTracking) {
+                const tick = (sched.acScale0?.getScale0Diagnostics?.()?.tick | 0) || 0;
+                const tr = getFieldLineKnotTracker('flux');
+                tr.record(fs.lines, sampled.fluxVector, tick, latticeSize);
+                if (tr.isContribEnabled()) {
+                    const cap = sched.acScale0;
+                    const eField = cap?.getScale0FieldSamples?.({ kind: 'e', stride });
+                    const bField = cap?.getScale0FieldSamples?.({ kind: 'b', stride });
+                    const divJ = cap?.getScale0FieldSamples?.({ kind: 'divJ', stride });
+                    const fluxVolume = cap?.getScale0FluxVolume?.();
+                    tr.measureContributions({ eField, bField, fluxVolume, divJ, latticeSize });
+                }
+            }
+            if (wantsStreamlineApply(state.fieldFlags, 'flux')) {
+                viewportAdapter.applyFluxStreamlines(fs.lines, fs.maxFlux, fs.mags);
+            }
             break;
         }
         case JOB_PASS: {
@@ -781,15 +813,16 @@ function buildOverlayJobs(ctx, state, sched, viewportAdapter, latticeSize, param
     // to the next frame(s) of the same sweep. Each job's output is a complete,
     // atomic line set (identical geometry to the monolithic build) applied in
     // a single full-replace call — only the frame it lands on moves.
-    // Job planning uses visual flags only — samplers run lazily inside runJob
-    // so enabling many overlays does not multiply work at sweep start.
-    if (flags.showEField) {
+    // Job planning: visual flags OR knot tracking. Tracking rebuilds E/B/flux
+    // streamlines so clumps can be recorded without drawing the lines.
+    // Each job still applies to the viewport only when its visual flag is on.
+    if (wantsStreamlineJob(flags, state.knotTracking, 'e')) {
         const slot = jobSlot(sched, n++); slot.kind = JOB_EFIELD; slot.cost = COST_STREAMLINE;
     }
-    if (flags.showBField) {
+    if (wantsStreamlineJob(flags, state.knotTracking, 'b')) {
         const slot = jobSlot(sched, n++); slot.kind = JOB_BFIELD; slot.cost = COST_STREAMLINE;
     }
-    if (flags.showFluxLines) {
+    if (wantsStreamlineJob(flags, state.knotTracking, 'flux')) {
         const slot = jobSlot(sched, n++); slot.kind = JOB_FLUX; slot.cost = COST_STREAMLINE;
     }
     // Poynting / divergence are zero-cost passthroughs (forward a sampled
@@ -876,11 +909,11 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
     const fieldThrottle = latticeSize > 96 ? 12 : (latticeSize > 48 ? 6 : 3);
     const sched = ensureOverlaySched(state);
 
-    if (!state.anyFieldActive) {
-        // Nothing to draw — abandon any half-finished sweep so a later
-        // re-activation starts clean rather than resuming stale jobs. The job
-        // pool itself persists (its slots are reused next sweep); only the
-        // sweep liveness + shared snapshot are cleared.
+    if (!overlayWorkActive(state.anyFieldActive, state.knotTracking)) {
+        // No visual overlays and no knot tracking — abandon any half-finished
+        // sweep so a later re-activation starts clean rather than resuming
+        // stale jobs. The job pool itself persists (its slots are reused next
+        // sweep); only the sweep liveness + shared snapshot are cleared.
         sched.active = false;
         sched.sampled = null;
         sched.sampleCache = null;
@@ -955,7 +988,7 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
         );
         sched.forceCache = createForceFieldCache(fieldCapability);
         sched.sampled = sched.sampleCache.sampled;
-        if (state.fieldFlags.showEField || state.fieldFlags.showBField) {
+        if (state.fieldFlags.showEField || state.fieldFlags.showBField || state.knotTracking) {
             sched.sampleCache.ensureParticleData();
         }
         sched.running = !!ctx.running;

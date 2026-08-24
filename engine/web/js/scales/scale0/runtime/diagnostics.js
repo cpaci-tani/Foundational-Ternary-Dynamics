@@ -20,10 +20,14 @@ const _num = (v, d = 2) => (Number.isFinite(v) ? v.toFixed(d) : null);
 function _updateEnergyTooltip(el, diag) {
     if (!el) return;
     const parts = [];
-    const f = _num(diag.fieldEnergy, 1);
-    const w = _num(diag.waveEnergy, 1);
-    const k = _num(diag.particleKE);
-    const r = _num(diag.restEnergy);
+    // Decomposition lives on the energy-audit snapshot. When audit is gated
+    // off, cheap diag may omit these channels — prefer a live hub audit, then
+    // fall back to whatever the diag copy still carries.
+    const src = telemetryHub.s0?.audit || diag;
+    const f = _num(src.fieldEnergy ?? diag.fieldEnergy, 1);
+    const w = _num(src.waveEnergy ?? diag.waveEnergy, 1);
+    const k = _num(src.particleKE ?? diag.particleKE);
+    const r = _num(src.restEnergy ?? diag.restEnergy);
     if (f !== null) parts.push(`field ½|J|²: ${f}`);
     if (w !== null) parts.push(`wave ½|v|²: ${w}`);
     if (k !== null) parts.push(`particle KE: ${k}`);
@@ -82,12 +86,13 @@ export function updateDiagnosticsAndPanels(ctx, state) {
         ctx.dom.statusState.textContent = 'Idle';
     }
 
-    switch (ctx.activeTab) {
-        case 'diagnostics':
-            if (ctx.peTelemetry) ctx.peTelemetry.drawCharts();
-            break;
-        case 'inspector':
-            ctx.inspector.update();
-            break;
+    if (ctx.activeTab === 'diagnostics' && ctx.peTelemetry) {
+        ctx.peTelemetry.drawCharts();
     }
+    // Floated inspector is still visible after the dock activates another tab.
+    // Gate on isPanelVisible, not activeTab — same contract as Scale 1.
+    const inspectorLive = typeof ctx.isPanelVisible === 'function'
+        ? ctx.isPanelVisible('inspector')
+        : ctx.activeTab === 'inspector';
+    if (inspectorLive) ctx.inspector?.update();
 }

@@ -40,7 +40,9 @@
  *                                  ← scales/scale0/state/store.js:90,105,99,164
  *   - state.fieldFlags             ← store.js:63 (the toggle bag; off-by-default)
  *   - state.fieldNeedsUpdate       ← store.js:65 (one-shot dirty/preempt flag)
- *   - state.anyFieldActive         ← store.js:66 (gates the whole pipeline)
+ *   - state.anyFieldActive         ← store.js:66 (visual overlay aggregate)
+ *   - state.knotTracking           ← also keeps the overlay pipeline alive so
+ *                                     E/B/flux streamlines can be recorded without drawing
  *   - state.fieldDataVersion       ← set in runtime/tick.js:64 (monotonic, +1
  *                                     per real field tick; NEVER cleared)
  *   - state.overlaySched           ← runtime/field-overlays.js:599 (the scheduler)
@@ -560,6 +562,35 @@ test.describe('Scale-0 overlay scheduler invariants', () => {
         ).toBeLessThan(300);
 
         await page.evaluate(() => { window.__ftdCtx.running = false; });
+
+        const real = realErrors(errors);
+        expect(real, `console errors:\n  ${real.join('\n  ')}`).toHaveLength(0);
+    });
+
+    test('knot tracking without overlays still schedules E, B, and flux streamline jobs', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+        await gotoAndReady(page);
+        await waitForScale0Ctx(page);
+
+        await page.evaluate(async () => {
+            const { resetFieldFlags, setKnotTracking } = await import('./js/scales/scale0/state/store.js');
+            window.__ftdCtx.running = false;
+            resetFieldFlags();
+            setKnotTracking(true);
+        });
+
+        await expect.poll(
+            () => page.evaluate(async () => {
+                const { getScale0State } = await import('./js/scales/scale0/state/store.js');
+                const st = getScale0State();
+                const s = st.overlaySched;
+                if (!s) return { anyFieldActive: st.anyFieldActive, kinds: [] };
+                const kinds = [];
+                for (let i = 0; i < s.jobCount; i++) kinds.push(s.jobs[i].kind);
+                return { anyFieldActive: st.anyFieldActive, kinds };
+            }),
+            { timeout: 12_000, message: 'tracking-only never opened an E/B/flux streamline sweep' },
+        ).toEqual({ anyFieldActive: false, kinds: [0, 1, 2] });
 
         const real = realErrors(errors);
         expect(real, `console errors:\n  ${real.join('\n  ')}`).toHaveLength(0);

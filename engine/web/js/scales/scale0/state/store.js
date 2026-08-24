@@ -83,8 +83,9 @@ const state = {
     fieldFlags: createFieldFlags(),
     // Field-line knot tracking is NOT a visual overlay flag (it does not map to a
     // renderer toggle and must not count toward anyFieldActive), so it lives
-    // outside fieldFlags. It gates the JS FieldLineKnotTracker.record() call in
-    // the E-field overlay job. Survives resetFieldFlags() (scenario change).
+    // outside fieldFlags. It gates FieldLineKnotTracker.record() and schedules
+    // E/B/flux streamline jobs even when those overlays are off. Survives
+    // resetFieldFlags() (scenario change).
     knotTracking: false,
     fieldFrame: 0,
     fieldNeedsUpdate: false,

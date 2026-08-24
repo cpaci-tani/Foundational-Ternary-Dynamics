@@ -101,23 +101,28 @@ test('per-field tracker registry returns distinct, independent instances', () =>
     expect(Bf.getSensitivity()).toBeCloseTo(0.8, 6);  // independent
 });
 
-test('knotHue is field-aware: B is a half-turn from E, both in [0,1)', () => {
+test('knotHue is field-aware: B is a half-turn from E, flux a quarter-turn, all in [0,1)', () => {
     for (const id of [0, 1, 5, 42, 1000]) {
-        const e = knotHue(id, 'e'), b = knotHue(id, 'b');
+        const e = knotHue(id, 'e'), b = knotHue(id, 'b'), f = knotHue(id, 'flux');
         expect(e).toBeGreaterThanOrEqual(0); expect(e).toBeLessThan(1);
         expect(b).toBeGreaterThanOrEqual(0); expect(b).toBeLessThan(1);
+        expect(f).toBeGreaterThanOrEqual(0); expect(f).toBeLessThan(1);
         expect(b).not.toBe(e);
+        expect(f).not.toBe(e);
         expect(b).toBeCloseTo((e + 0.5) % 1, 6);
+        expect(f).toBeCloseTo((e + 0.25) % 1, 6);
     }
     expect(knotHue(7)).toBe(knotHue(7, 'e'));        // default field 'e'
 });
 
-test('forEachKnotTracker applies a shared op to both fields', () => {
+test('forEachKnotTracker applies a shared op to E, B, and flux families', () => {
     forEachKnotTracker((t) => t.setPerKnotColor(false));
     expect(getFieldLineKnotTracker('e').getPerKnotColor()).toBe(false);
     expect(getFieldLineKnotTracker('b').getPerKnotColor()).toBe(false);
+    expect(getFieldLineKnotTracker('flux').getPerKnotColor()).toBe(false);
     forEachKnotTracker((t) => t.setPerKnotColor(true));   // restore default
     expect(getFieldLineKnotTracker('b').getPerKnotColor()).toBe(true);
+    expect(getFieldLineKnotTracker('flux').getPerKnotColor()).toBe(true);
 });
 
 test('reset() clears the selection', () => {

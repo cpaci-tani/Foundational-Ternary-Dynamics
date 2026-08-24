@@ -92,7 +92,7 @@ test('reset() restarts ids at 0 and zeroes the aggregate', () => {
     tr.record(wide([5, 9]), null, 0, 33);
     expect(tr.getTelemetry().ids[0]).toBeGreaterThanOrEqual(0);
     tr.reset();
-    expect(tr.getAggregate()).toEqual({ alive: 0, births: 0, deaths: 0, fissions: 0, fusions: 0, sumSegs: 0 });
+    expect(tr.getAggregate()).toEqual({ alive: 0, births: 0, deaths: 0, fissions: 0, fusions: 0, sumSegs: 0, found: 0, dropped: 0 });
     const a = tr.record(makeStreamlines(clump([5, 5, 5])), null, 0, 33);
     expect(a.ids[0]).toBe(0);
 });

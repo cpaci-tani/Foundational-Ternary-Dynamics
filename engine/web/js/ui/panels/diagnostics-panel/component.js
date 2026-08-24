@@ -16,6 +16,7 @@ export class DiagnosticsPanelComponent {
     constructor(panelEl) {
         this.el = panelEl;
         this.tables = [];
+        this.tablesByScale = { '0': [], '1': [], ae: [] };
     }
 
     init() {
@@ -27,6 +28,7 @@ export class DiagnosticsPanelComponent {
                 const table = new DiagnosticsTable(section, telemetryHub, { resetScope: 0 });
                 scale0Root.appendChild(table.el);
                 this.tables.push(table);
+                this.tablesByScale['0'].push(table);
             }
             this.el.insertBefore(scale0Root, this.el.firstChild);
 
@@ -36,6 +38,7 @@ export class DiagnosticsPanelComponent {
                 const table = new DiagnosticsTable(section, telemetryHub, { resetScope: 1 });
                 scale1Root.appendChild(table.el);
                 this.tables.push(table);
+                this.tablesByScale['1'].push(table);
             }
             this.el.insertBefore(scale1Root, scale0Root.nextSibling);
 
@@ -47,6 +50,7 @@ export class DiagnosticsPanelComponent {
                 const table = new DiagnosticsTable(section, telemetryHub, { resetScope: 2 });
                 aeRoot.appendChild(table.el);
                 this.tables.push(table);
+                this.tablesByScale.ae.push(table);
             }
             this.el.insertBefore(aeRoot, scale1Root.nextSibling);
             this.el.dataset.panelRedesignMounted = '1';
@@ -63,12 +67,26 @@ export class DiagnosticsPanelComponent {
         // floated-collapsed diagnostics panel doesn't redraw ~23 sparklines.
         // `force` lets init() populate once regardless. Legacy: caller-gated (§6.4).
         if (!force && PerfFlags.panelRenderV2 && !isPanelLive(this.el)) return;
-        for (const t of this.tables) t.update();
+        if (force) {
+            for (const t of this.tables) t.update();
+            return;
+        }
+        const scale = document.getElementById('app')?.dataset.activeScale || '0';
+        const group = scale === '1'
+            ? this.tablesByScale['1']
+            : (scale === '2' || scale === '3')
+                ? this.tablesByScale.ae
+                : (scale === '0' ? this.tablesByScale['0'] : null);
+        if (!group) return;
+        for (const t of group) t.update();
     }
 
     cleanup() {
         for (const t of this.tables) t.destroy();
         this.tables.length = 0;
+        this.tablesByScale['0'].length = 0;
+        this.tablesByScale['1'].length = 0;
+        this.tablesByScale.ae.length = 0;
     }
 }
 

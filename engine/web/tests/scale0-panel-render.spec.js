@@ -42,6 +42,31 @@ test.describe('Scale-0 panel render V2 (FTD_PANEL_RENDER_V2)', () => {
         expect(r.nullEl, 'null → not live').toBe(false);
     });
 
+    test('floated Scale-0 inspector stays visible after dock switches tabs', async ({ page }) => {
+        await gotoAndReady(page);
+        const r = await page.evaluate(() => {
+            const ctx = window.__ftdCtx;
+            const dock = ctx.appShell?.panelDock;
+            if (!dock || typeof dock.floatPanel !== 'function') {
+                return { ok: false, reason: 'no dock.floatPanel' };
+            }
+            dock.floatPanel('inspector', 80, 80);
+            const panel = document.getElementById('panel-inspector');
+            return {
+                ok: true,
+                activeTab: ctx.activeTab,
+                inspectorVisible: ctx.isPanelVisible('inspector'),
+                floated: !!panel?.closest('.floating-window'),
+                collapsed: !!panel?.closest('.floating-window')?.classList.contains('is-collapsed'),
+            };
+        });
+        expect(r.ok, r.reason || 'dock.floatPanel available').toBe(true);
+        expect(r.floated, 'inspector extracted into a floating window').toBe(true);
+        expect(r.collapsed).toBe(false);
+        expect(r.inspectorVisible, 'isPanelVisible(inspector) true while floated').toBe(true);
+        expect(r.activeTab, 'dock must have activated another tab').not.toBe('inspector');
+    });
+
     test('telemetry grid renders + stays live when visible', async ({ page }) => {
         test.setTimeout(60_000);
         await page.addInitScript(() => { window.__ftdPanelRenderV2 = true; });

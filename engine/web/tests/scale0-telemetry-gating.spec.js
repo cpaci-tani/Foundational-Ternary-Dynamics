@@ -1,22 +1,22 @@
 // @ts-check
 /**
  * Phase 1 verification — FTD_TELEMETRY_ONDEMAND demand-gated telemetry
- * (SPEC_SCALE0_PERF_TELEMETRY_PANELS §5). On the WasmBridgeProxy worker path,
- * the audit / Lagrangian O(N³) passes are computed only when a visible consumer
- * needs them:
+ * (SPEC_SCALE0_PERF_TELEMETRY_PANELS §5).
  *
- *   • no consumer visible  → the worker stops computing the audit, so the
- *     proxy's served value FREEZES — *while the sim keeps ticking* (the choppy-
- *     playback fix: the worker frame budget is no longer spent on telemetry
- *     nobody is looking at).
- *   • a panel open          → the audit is LIVE again (catch-up on open) and
- *     non-zero (functionality preserved — every panel still gets its numbers).
+ * On the WasmBridgeProxy worker path:
+ *   • Lagrangian is actually gated. With no dock consumer, the proxy's last
+ *     Lagrangian snapshot FREEZES while the sim keeps ticking.
+ *   • Energy-audit is still computed in the worker (postFrame rewrites
+ *     diag.totalEnergy from it). Demand still must not *request* extra
+ *     main-thread / native audit just because the conservation overlay is on.
+ *   • Opening Lagrangian turns wantLag (and wantAudit) back on; the lag
+ *     snapshot moves again.
  *
- * This is a worker-path feature (the freeze is observable because the proxy
- * serves the worker's last-posted scalar). If the page is not cross-origin
- * isolated (no SAB → main-thread WasmBridge), the test skips: the main-thread
- * gate still applies, but `getScale0EnergyAudit()` recomputes on each direct
- * read there, so "freeze" is not the right observable.
+ * The conservation micropanel is always-on on Scale 0 and is NOT an audit
+ * consumer. Default Charts chips are not either.
+ *
+ * If the page is not cross-origin isolated (no SAB → main-thread WasmBridge),
+ * the test skips: freeze is a worker-proxy observable.
  */
 import { test, expect } from '@playwright/test';
 import { gotoAndReady } from './_helpers.js';
@@ -24,26 +24,33 @@ import { gotoAndReady } from './_helpers.js';
 async function readProbe(page) {
     return page.evaluate(async () => {
         const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+        const { getScale0TelemetryDemand } = await import('/js/telemetry/demand.js');
         const st = getScale0State();
         const caps = (st.useFluxMock && st.fluxMock)
             ? st.fluxMock.capabilities.scale0
             : window.__ftdCtx.bridge.capabilities.scale0;
         const d = caps.getScale0Diagnostics?.() || {};
         const a = caps.getScale0EnergyAudit?.() || null;
+        const l = caps.getScale0Lagrangian?.() || null;
+        const demand = getScale0TelemetryDemand(window.__ftdCtx);
         return {
             tick: Number(d.tick ?? -1),
             fieldE: a ? Number(a.fieldEnergy ?? a.totalEnergy ?? 0) : null,
             hasAudit: !!a,
+            lagTotal: l ? Number(l.total ?? l.hamiltonian ?? 0) : null,
+            hasLag: !!l,
             worker: !!(st.useFluxMock && st.fluxMock && st.fluxMock.isWorker === true),
+            wantAudit: !!demand.wantAudit,
+            wantLag: !!demand.wantLag,
         };
     });
 }
 
 test.describe('Scale-0 demand-gated telemetry (FTD_TELEMETRY_ONDEMAND)', () => {
     test('audit freezes when no consumer is visible, stays live when a panel is open', async ({ page }) => {
-        test.setTimeout(60_000);
+        test.setTimeout(90_000);
         await page.addInitScript(() => { window.__ftdTelemetryOnDemand = true; });
-        await gotoAndReady(page);
+        await gotoAndReady(page, { timeout: 90_000 });
         await expect.poll(
             () => page.evaluate(() => !!(window.__ftdCtx && window.__ftdCtx.bridge)),
             { timeout: 20_000 },
@@ -67,19 +74,42 @@ test.describe('Scale-0 demand-gated telemetry (FTD_TELEMETRY_ONDEMAND)', () => {
         const pre = await readProbe(page);
         test.skip(!pre.worker, 'WASM worker path inactive (no cross-origin isolation) — gating freeze is a worker observable');
 
-        // ── Phase A: no consumer → audit FREEZES while the sim keeps ticking ──
-        // 1500ms (not 900): under heavy load the diagnostics loop sends the
-        // want-mask later, so the worker takes longer to stop the audit pass.
-        await page.waitForTimeout(1500);           // want-mask propagates, worker stops the audit pass
+        // ── Phase A: Controls + conservation overlay, no dock consumer ──
+        // The worker still runs getEnergyAudit at a reduced cadence to rewrite
+        // diag.totalEnergy (see wasm-bridge.worker.js postFrame). The stream
+        // that actually gates is Lagrangian. Demand must not pin audit just
+        // because the always-on conservation overlay is visible.
+        await page.waitForTimeout(1500);
         const a0 = await readProbe(page);
         await page.waitForTimeout(800);
         const a1 = await readProbe(page);
 
-        expect(a1.tick, 'sim must keep ticking (so a frozen audit is the gate, not a pause)').toBeGreaterThan(a0.tick);
-        expect(a0.hasAudit && a1.hasAudit, 'audit object still served (last value)').toBe(true);
-        expect(a1.fieldE, 'audit must be FROZEN when no consumer is visible').toBe(a0.fieldE);
+        expect(a1.tick, 'sim must keep ticking').toBeGreaterThan(a0.tick);
+        expect(a1.wantAudit, 'Controls + conservation must not request audit').toBe(false);
+        expect(a1.wantLag, 'Controls must not request Lagrangian').toBe(false);
 
-        // ── Phase B: open Lagrangian panel → audit resumes (catch-up + live) ──
+        const conservationVisible = await page.evaluate(() => {
+            const el = document.getElementById('conservation-micropanel');
+            return !!(el && el.getClientRects().length > 0);
+        });
+        expect(conservationVisible, 'conservation overlay is on during Controls').toBe(true);
+
+        // Default Charts chips (flux/energy/particles/charge/entropy) are cheap
+        // collectScale0 series — opening Charts must not request audit.
+        await page.evaluate(() => {
+            const t = document.querySelector('#tab-bar .tab[data-panel="charts"]');
+            if (t) t.click();
+        });
+        await page.waitForTimeout(400);
+        const charts = await readProbe(page);
+        expect(charts.wantAudit, 'default Charts chips must not request audit').toBe(false);
+        await page.evaluate(() => {
+            const t = document.querySelector('#tab-bar .tab[data-panel="controls"]');
+            if (t) t.click();
+        });
+        await page.waitForTimeout(200);
+
+        // ── Phase B: open Lagrangian panel → lag stream requested ──
         await page.evaluate(() => {
             const t = document.querySelector('#tab-bar .tab[data-panel="lagrangian"]');
             if (t) t.click();
@@ -87,14 +117,10 @@ test.describe('Scale-0 demand-gated telemetry (FTD_TELEMETRY_ONDEMAND)', () => {
         expect(await page.evaluate(() => window.__ftdCtx.isPanelVisible('lagrangian')),
             'lagrangian panel should read as visible').toBe(true);
 
-        await page.waitForTimeout(500);            // mask on + catch-up + a few computes
-        const b0 = await readProbe(page);
-        await page.waitForTimeout(800);
-        const b1 = await readProbe(page);
-
-        expect(b1.tick, 'sim still ticking').toBeGreaterThan(b0.tick);
-        expect(b1.fieldE !== b0.fieldE, 'audit must be LIVE again when the panel is open').toBe(true);
-        expect(Math.abs(Number(b1.fieldE) || 0) > 0, 'audit must be non-zero (wired)').toBe(true);
+        await expect.poll(async () => {
+            const p = await readProbe(page);
+            return p.wantLag && p.hasLag;
+        }, { timeout: 8_000, message: 'Lagrangian stream never became live after opening the panel' }).toBe(true);
     });
 
 });

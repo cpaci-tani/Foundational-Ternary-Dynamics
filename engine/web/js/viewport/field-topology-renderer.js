@@ -216,9 +216,10 @@ export const fieldTopologyMethods = {
         const colAttr = this._knotZones.geometry.getAttribute('color');
         const maxSegments = 1600;
         let si = 0;
-        if (frame && (frame.e || frame.b)) {
+        if (frame && (frame.e || frame.b || frame.flux)) {
             si = this._writeKnotBoxSet(posAttr, colAttr, si, maxSegments, frame.e, 'e');
             si = this._writeKnotBoxSet(posAttr, colAttr, si, maxSegments, frame.b, 'b');
+            si = this._writeKnotBoxSet(posAttr, colAttr, si, maxSegments, frame.flux, 'flux');
         } else {
             si = this._writeKnotBoxSet(posAttr, colAttr, si, maxSegments, frame, 'e');
         }

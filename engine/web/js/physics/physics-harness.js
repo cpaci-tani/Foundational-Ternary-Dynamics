@@ -114,19 +114,35 @@ export class PhysicsHarness {
     /**
      * Aggregated conservation totals — single canonical source for
      * the conservation panel and any sweep-time invariant checks.
+     *
+     * Momentum (Poynting) is audit-only. Do NOT fall back to
+     * bridge.getEnergyAudit() — that recomputes the O(N³) pass on the
+     * in-thread WASM path and would pin audit even when demand-gating is on.
+     * When the hub has no live audit, pAvailable is false and callers must
+     * not present px=py=pz=0 as "perfect momentum conservation".
      */
     getConservationTotals() {
         const hubDiag = this.telemetry?.s0?.diag;
         const hubAudit = this.telemetry?.s0?.audit;
         const d = hubDiag ?? this.bridge?.getDiagnostics?.() ?? null;
-        const a = hubAudit ?? this.bridge?.getEnergyAudit?.() ?? null;
+        const a = hubAudit ?? null;
         if (!d) return null;
+        const diagTick = Number(d.tick);
+        const auditMeta = this.telemetry?.getScale0TelemetryMeta?.('audit');
+        const auditTick = Number(auditMeta?.tick ?? a?.tick);
+        const tickSlack = 16;
+        const pAvailable = !!a
+            && !auditMeta?.stale
+            && Number.isFinite(diagTick)
+            && Number.isFinite(auditTick)
+            && Math.abs(diagTick - auditTick) <= tickSlack;
         return {
             tick:    d.tick ?? 0,
             E:       a?.dynamicEnergy ?? d?.dynamicEnergy ?? d?.totalEnergy ?? 0,
-            px:      a?.totalPoynting?.x ?? a?.poyntingX ?? 0,
-            py:      a?.totalPoynting?.y ?? a?.poyntingY ?? 0,
-            pz:      a?.totalPoynting?.z ?? a?.poyntingZ ?? 0,
+            px:      pAvailable ? (a?.totalPoynting?.x ?? a?.poyntingX ?? 0) : 0,
+            py:      pAvailable ? (a?.totalPoynting?.y ?? a?.poyntingY ?? 0) : 0,
+            pz:      pAvailable ? (a?.totalPoynting?.z ?? a?.poyntingZ ?? 0) : 0,
+            pAvailable,
             Lx:      d.angMomX ?? 0,
             Ly:      d.angMomY ?? 0,
             Lz:      d.angMomZ ?? 0,

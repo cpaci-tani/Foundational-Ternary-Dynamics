@@ -921,6 +921,38 @@ function sampleByFieldMagnitude(fieldData, count, exponent = 1.5, jitter = 0.5) 
 }
 
 /**
+ * Merge two seed lists for coverage: keep `primary` first (particle-anchored),
+ * then fill leftover slots from `secondary` (importance-sampled field peaks).
+ * Seeds that land in the same integer voxel are treated as duplicates so a
+ * charge-anchored seed does not spend a slot that could cover a distant clump.
+ *
+ * @param {Array<[number,number,number]>|null|undefined} primary
+ * @param {Array<[number,number,number]>|null|undefined} secondary
+ * @param {number} maxSeeds
+ * @returns {Array<[number,number,number]>}
+ */
+export function unionStreamlineSeeds(primary, secondary, maxSeeds) {
+    const cap = Math.max(0, maxSeeds | 0);
+    const out = [];
+    const seen = new Set();
+    const add = (list) => {
+        if (!list) return;
+        for (let i = 0; i < list.length; i++) {
+            if (out.length >= cap) return;
+            const s = list[i];
+            if (!s || s.length < 3) continue;
+            const key = `${s[0] | 0},${s[1] | 0},${s[2] | 0}`;
+            if (seen.has(key)) continue;
+            seen.add(key);
+            out.push(s);
+        }
+    };
+    add(primary);
+    add(secondary);
+    return out;
+}
+
+/**
  * Generate seeds for E-field / divergence-bearing lines using importance
  * sampling: lines start where |E| is strongest. Combined with bidirectional
  * integration this produces lines that visibly originate at sources and

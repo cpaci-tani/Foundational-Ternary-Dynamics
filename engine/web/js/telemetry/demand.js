@@ -3,6 +3,27 @@
  * See SPEC_SCALE0_PERF_TELEMETRY_PANELS.md and CONTRACTS.md §5.
  */
 
+/** Scale-0 chart ids whose series are filled from the energy-audit path. */
+const SCALE0_AUDIT_CHART_IDS = Object.freeze(['eb-energy', 'gauss']);
+
+/**
+ * Charts is an audit consumer only when a card that *reads* audit buffers is
+ * actually active. Default chips (flux, particles, charge, entropy) are cheap
+ * collectScale0 history. Treating the whole Charts tab as an audit consumer
+ * kept the O(N³) pass running for users who never opened E vs B / Gauss.
+ */
+function scale0ChartsWantAudit(ctx, visible) {
+    if (!visible('charts')) return false;
+    const active = ctx?.chartsPanel?.active;
+    if (active && typeof active.has === 'function') {
+        for (const id of SCALE0_AUDIT_CHART_IDS) {
+            if (active.has(id)) return true;
+        }
+        return false;
+    }
+    return false;
+}
+
 /**
  * @param {object} ctx - scale-0 controller context (isPanelVisible, activeTab, …)
  * @returns {{ diagnostics:boolean, wantAudit:boolean, wantLag:boolean,
@@ -13,17 +34,16 @@ export function getScale0TelemetryDemand(ctx) {
     const visible = (id) => (typeof ctx?.isPanelVisible === 'function'
         ? ctx.isPanelVisible(id)
         : ctx?.activeTab === id);
-    // Keyed on the panel being RENDERED, not merely constructed.
-    // mountConservationMicropanel() assigns window.__ftdConservationPanel
-    // unconditionally, so testing the reference alone pinned wantAudit true for
-    // the entire Scale-0 session on behalf of a consumer that consumed nothing.
-    const consPanel = typeof window !== 'undefined' ? window.__ftdConservationPanel : null;
-    const consEl = (typeof document !== 'undefined')
-        ? document.getElementById('conservation-micropanel') : null;
-    const wantsConservationAudit = !!consPanel && !!consEl && consEl.getClientRects().length > 0;
-    const wantAudit = visible('diagnostics') || visible('charts')
+    // Conservation is always-on on Scale 0 (viewport overlay). It must NOT pin
+    // wantAudit — that undoes the demand gate for the whole session. ΔE/ΔL/ΔQ
+    // come from cheap diagnostics; Δp is shown only when a live hub audit
+    // already exists (Diagnostics / Lagrangian / Grid / Knots / E−B·Gauss).
+    // Knots used to call getScale0EnergyAudit() directly; it is now a named
+    // consumer so the worker mask and the hub stay in lockstep.
+    const wantAudit = visible('diagnostics')
+        || scale0ChartsWantAudit(ctx, visible)
         || visible('lagrangian') || visible('telemetry-grid')
-        || wantsConservationAudit;
+        || visible('knots');
     // The Charts panel has no Lagrangian series; requesting the deepest
     // stencil reduction merely because ordinary energy charts are visible
     // made native sidebars compete with playback.  The dedicated Lagrangian

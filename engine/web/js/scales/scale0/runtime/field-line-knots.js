@@ -2,8 +2,9 @@
 //
 // Field-line KNOT detection + quantification + identity tracking — JS-native.
 //
-// A "knot" is a coarse-grid region where the RENDERED E field-lines both BUNCH
-// densely AND CROSS (the density+crossings gate). Knots are detected from the
+// A "knot" is a coarse-grid region where RENDERED field-lines BUNCH densely
+// (and, optionally, CROSS). Adaptive detection seeds local density maxima so a
+// strong clump cannot hide a weaker isolated one. Knots are detected from the
 // pooled StreamlineResult geometry alone — independent of manifested particles,
 // so they are found even when Particles:0 (e.g. "Tau neutrino in vacuum").
 //
@@ -32,13 +33,13 @@ export class FieldLineKnotTracker {
         this.cellSize = opts.cellSize ?? 2;   // finer grid separates adjacent bundles
         this.densityThreshold = opts.densityThreshold ?? null; // null → adaptive
         this.crossingThreshold = opts.crossingThreshold ?? 1;
-        this.minCellsPerKnot = opts.minCellsPerKnot ?? 2;
+        this.minCellsPerKnot = opts.minCellsPerKnot ?? 1;
         this.crossingDist = opts.crossingDist ?? 1.0;
         // Two segments count as a CROSSING only if they pass within crossingDist
         // AND are not near-parallel (|cosθ| < parallelCos). The parallel cut is
         // what rejects a dense PARALLEL bundle (bunching, not a tangle).
         this.parallelCos = opts.parallelCos ?? 0.9;
-        this.maxKnots = opts.maxKnots ?? 64;
+        this.maxKnots = opts.maxKnots ?? 256;
         this.minOverlapCells = opts.minOverlapCells ?? 1;
         this.maxEvents = opts.maxEvents ?? 200;
         // Detection mode: when requireCrossings is OFF (default), a knot is any
@@ -60,7 +61,7 @@ export class FieldLineKnotTracker {
         this._prevIdSize = new Map();    // knotId → cellCount (previous record)
         this._histories = new Map();     // id → { birth, peak, lastTick }
         this._nextId = 0;
-        this._agg = { alive: 0, births: 0, deaths: 0, fissions: 0, fusions: 0, sumSegs: 0 };
+        this._agg = { alive: 0, births: 0, deaths: 0, fissions: 0, fusions: 0, sumSegs: 0, found: 0, dropped: 0 };
         this._events = [];
         this._tel = emptyTelemetry();
         this._zones = { count: 0, centroids: new Float32Array(0), extents: new Float32Array(0), ids: new Int32Array(0), latticeSize: 0 };
@@ -135,18 +136,14 @@ export class FieldLineKnotTracker {
             }
         }
 
-        // ── Adaptive density threshold (sensitivity-scaled) ──────────────
-        // Higher sensitivity → smaller multiplier → lower threshold → more cells
-        // pass → more knots. The mean-nonzero density adapts to how busy the
-        // field is so one slider works across scenarios.
-        let dThr = this.densityThreshold;
-        if (dThr == null) {
-            let sum = 0, nz = 0;
-            for (let c = 0; c < totalCells; c++) { if (density[c] > 0) { sum += density[c]; nz++; } }
-            const mean = nz ? sum / nz : 0;
-            const mult = 3.0 - 2.6 * this._sensitivity;   // sens 0→3.0, 0.5→1.7, 1→0.4
-            dThr = Math.max(3, Math.ceil(mult * mean));
-        }
+        // ── Density floor ────────────────────────────────────────────────
+        // Explicit densityThreshold keeps the global cut (unit tests pin it).
+        // Adaptive (production): a sensitivity-scaled floor, then local-maxima
+        // basins — a busy clump must not hide a weaker isolated one.
+        const adaptive = this.densityThreshold == null;
+        const dMin = adaptive
+            ? Math.max(1, Math.round(4 - 4 * this._sensitivity))   // sens 0→4, 0.5→2, 1→1
+            : this.densityThreshold;
 
         // ── Pass 2: crossings, only for density-passing cells ────────────
         // Bucket segments into per-cell singly-linked lists, then count
@@ -159,7 +156,7 @@ export class FieldLineKnotTracker {
             const segEnds = this._segEnds;
             const cd2 = this.crossingDist * this.crossingDist;
             for (let c = 0; c < totalCells; c++) {
-                if (density[c] < dThr) continue;
+                if (density[c] < dMin) continue;
                 // collect this cell's segments
                 let xings = 0;
                 for (let s = cellHead[c]; s !== -1; s = segNext[s]) {
@@ -171,18 +168,30 @@ export class FieldLineKnotTracker {
             }
         }
 
-        // ── Hot gate: dense (and crossing, only if requireCrossings) ─────
-        const needX = this.requireCrossings;
-        for (let c = 0; c < totalCells; c++) {
-            if (density[c] >= dThr && (!needX || cross[c] >= this.crossingThreshold)) hot[c] = 1;
+        let comps;
+        if (adaptive) {
+            comps = this._peakBasins(density, G, totalCells, dMin);
+            if (this.requireCrossings) {
+                comps = comps.filter((cc) => {
+                    let xs = 0;
+                    for (let j = 0; j < cc.cells.length; j++) xs += cross[cc.cells[j]];
+                    return xs >= this.crossingThreshold;
+                });
+            }
+        } else {
+            const needX = this.requireCrossings;
+            for (let c = 0; c < totalCells; c++) {
+                if (density[c] >= dMin && (!needX || cross[c] >= this.crossingThreshold)) hot[c] = 1;
+            }
+            comps = this._floodFill(hot, G, totalCells);
         }
-
-        // ── Connected components (26-neighbour) over hot cells ───────────
-        const comps = this._floodFill(hot, G, totalCells); // array of {cells:[ci...]}
-        // drop tiny, keep largest maxKnots
+        // drop tiny, keep largest maxKnots (report how many real clumps we hid)
         let knots = comps.filter((cc) => cc.cells.length >= this.minCellsPerKnot);
+        const found = knots.length;
+        let dropped = 0;
         if (knots.length > this.maxKnots) {
             knots.sort((a, b) => b.cells.length - a.cells.length);
+            dropped = knots.length - this.maxKnots;
             knots = knots.slice(0, this.maxKnots);
         }
         const K = knots.length;
@@ -259,10 +268,12 @@ export class FieldLineKnotTracker {
         }
         const idsCopy = Int32Array.from(ids);
         this._tel = { count: K, ids: idsCopy, age, size: sizes, peak, birth,
-                      stride: STRIDE, fields, dirs, extents };
+                      stride: STRIDE, fields, dirs, extents, found, dropped };
         this._zones = { count: K, centroids, extents, ids: idsCopy, latticeSize: N };
         this._agg.alive = K;
         this._agg.sumSegs = sumSegs;
+        this._agg.found = found;
+        this._agg.dropped = dropped;
         return this._tel;
     }
 
@@ -544,6 +555,72 @@ export class FieldLineKnotTracker {
         if (this._events.length > this.maxEvents) this._events.shift();
     }
 
+    // Local maxima of density (>= dMin) become seeds; each floods downhill
+    // through neighbours that stay >= dMin so a ridge stays one knot and a
+    // valley between two peaks keeps them separate.
+    _peakBasins(density, G, totalCells, dMin) {
+        const seeds = [];
+        for (let c = 0; c < totalCells; c++) {
+            if (density[c] < dMin) continue;
+            if (this._isLocalMax(c, density, G)) seeds.push(c);
+        }
+        seeds.sort((a, b) => density[b] - density[a] || a - b);
+        const claimed = this._hot;
+        claimed.fill(0, 0, totalCells);
+        const stack = this._stack;
+        const out = [];
+        for (let s = 0; s < seeds.length; s++) {
+            const seed = seeds[s];
+            if (claimed[seed]) continue;
+            const cells = [];
+            let sp = 0;
+            stack[sp++] = seed;
+            claimed[seed] = 1;
+            while (sp > 0) {
+                const cur = stack[--sp];
+                cells.push(cur);
+                const gx = cur % G, gy = ((cur / G) | 0) % G, gz = (cur / (G * G)) | 0;
+                for (let dz = -1; dz <= 1; dz++) {
+                    const nz = gz + dz; if (nz < 0 || nz >= G) continue;
+                    for (let dy = -1; dy <= 1; dy++) {
+                        const ny = gy + dy; if (ny < 0 || ny >= G) continue;
+                        for (let dx = -1; dx <= 1; dx++) {
+                            if (dx === 0 && dy === 0 && dz === 0) continue;
+                            const nx = gx + dx; if (nx < 0 || nx >= G) continue;
+                            const ni = (nz * G + ny) * G + nx;
+                            if (claimed[ni]) continue;
+                            if (density[ni] < dMin) continue;
+                            if (density[ni] > density[cur]) continue;
+                            claimed[ni] = 1;
+                            if (sp >= stack.length) break;
+                            stack[sp++] = ni;
+                        }
+                    }
+                }
+            }
+            out.push({ cells });
+        }
+        return out;
+    }
+
+    _isLocalMax(c, density, G) {
+        const gx = c % G, gy = ((c / G) | 0) % G, gz = (c / (G * G)) | 0;
+        const d = density[c];
+        for (let dz = -1; dz <= 1; dz++) {
+            const nz = gz + dz; if (nz < 0 || nz >= G) continue;
+            for (let dy = -1; dy <= 1; dy++) {
+                const ny = gy + dy; if (ny < 0 || ny >= G) continue;
+                for (let dx = -1; dx <= 1; dx++) {
+                    if (dx === 0 && dy === 0 && dz === 0) continue;
+                    const nx = gx + dx; if (nx < 0 || nx >= G) continue;
+                    const ni = (nz * G + ny) * G + nx;
+                    if (density[ni] > d) return false;
+                }
+            }
+        }
+        return true;
+    }
+
     // 26-neighbour flood fill over the binary `hot` grid.
     _floodFill(hot, G, totalCells) {
         const comp = this._comp, stack = this._stack;
@@ -605,7 +682,8 @@ export class FieldLineKnotTracker {
 function emptyTelemetry() {
     return { count: 0, ids: new Int32Array(0), age: new Int32Array(0), size: new Int32Array(0),
              peak: new Int32Array(0), birth: new Int32Array(0), stride: 8,
-             fields: new Float32Array(0), dirs: new Float32Array(0), extents: new Float32Array(0) };
+             fields: new Float32Array(0), dirs: new Float32Array(0), extents: new Float32Array(0),
+             found: 0, dropped: 0 };
 }
 
 function emptyContrib() {
@@ -657,27 +735,29 @@ function segsCross(segEnds, s, t, cd2, parallelCos) {
 // row + the viewport box.
 function clamp01(v) { v = +v; return v < 0 ? 0 : v > 1 ? 1 : (Number.isFinite(v) ? v : 0.5); }
 
-// Field-aware: B-field knots are shifted a half-turn from E so the two orthogonal
-// families are visually distinct (E-knot #k ≠ B-knot #k in color).
+// Field-aware: B-field knots are shifted a half-turn from E; flux a quarter-turn
+// so the three streamline families stay visually distinct.
 export function knotHue(id, field = 'e') {
     let h = (Math.imul(id | 0, 374761393) + 668265263) >>> 0;
     h = (Math.imul(h ^ (h >>> 13), 1274126177)) >>> 0;
     let hue = (h >>> 8) / 0x1000000; // top 24 bits → [0,1)
     if (field === 'b') hue = (hue + 0.5) % 1;
+    else if (field === 'flux') hue = (hue + 0.25) % 1;
     return hue;
 }
 
 // ── per-field tracker registry ──────────────────────────────────────────
-// One independent tracker per field-line field ('e', 'b'). Default 'e' keeps every
-// existing call working. E and B are the orthogonal EM pair, each tracked from its
-// own streamlines.
+// One independent tracker per streamline family ('e', 'b', 'flux'). Default 'e'
+// keeps every existing call working. E and B are the orthogonal EM pair; flux
+// is the J-streamline family.
+const KNOT_FIELDS = ['e', 'b', 'flux'];
 const _trackers = {};
 export function getFieldLineKnotTracker(field = 'e') {
     let t = _trackers[field];
     if (!t) { t = _trackers[field] = new FieldLineKnotTracker(); t._field = field; }
     return t;
 }
-// Apply a shared op (sensitivity / per-knot-color / contrib-enable / reset) to both.
+// Apply a shared op (sensitivity / per-knot-color / contrib-enable / reset) to all families.
 export function forEachKnotTracker(fn) {
-    for (const f of ['e', 'b']) fn(getFieldLineKnotTracker(f), f);
+    for (const f of KNOT_FIELDS) fn(getFieldLineKnotTracker(f), f);
 }
