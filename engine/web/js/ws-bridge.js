@@ -74,6 +74,12 @@ const MAX_FIELD_SAMPLE_REQUESTS_IN_FLIGHT = 2;
 // One-voxel inspector/force probes are compact, but hundreds of independent
 // requests still head-of-line block the serialized native command stream.
 const MAX_POINT_QUERY_REQUESTS_IN_FLIGHT = 4;
+// FIFO cap for the point-probe (voxel/force-at) result caches. They are keyed by
+// "x,y,z" and cleared only on scenario change, so without a bound every distinct
+// voxel a panel hovers/inspects/probes within one long scenario accumulates a
+// permanent entry (×2 caches) on lattices up to 256³. The per-tick epoch check
+// already invalidates stale values, so a plain FIFO evict is sufficient.
+const MAX_POINT_CACHE = 4096;
 const TELEMETRY_GROUPS = Object.freeze([
     'diagnostics', 'audit', 'lagrangian', 'gravity',
 ]);
@@ -2533,7 +2539,7 @@ export class WebSocketBridge {
             this._pointQueryRequestsInFlight++;
             this._voxelRequestEpoch.set(key, this._visualEpoch);
             this._sendJSON({ cmd: 'inspect_voxel', x: ix, y: iy, z: iz }, DIAGNOSTIC_COMMAND_TIMEOUT_MS)
-                .then(data => { if (!data?.error) this._voxelCache.set(key, data); })
+                .then(data => { if (!data?.error) { this._voxelCache.set(key, data); if (this._voxelCache.size > MAX_POINT_CACHE) this._voxelCache.delete(this._voxelCache.keys().next().value); } })
                 .catch(() => { this._voxelRequestEpoch.set(key, 0); })
                 .finally(() => {
                     this._voxelRequestsInFlight.delete(key);
@@ -2558,7 +2564,7 @@ export class WebSocketBridge {
             this._pointQueryRequestsInFlight++;
             this._forceAtRequestEpoch.set(key, this._visualEpoch);
             this._sendJSON({ cmd: 'get_force_at', x: ix, y: iy, z: iz }, DIAGNOSTIC_COMMAND_TIMEOUT_MS)
-                .then(data => { if (!data?.error) this._forceAtCache.set(key, data); })
+                .then(data => { if (!data?.error) { this._forceAtCache.set(key, data); if (this._forceAtCache.size > MAX_POINT_CACHE) this._forceAtCache.delete(this._forceAtCache.keys().next().value); } })
                 .catch(() => { this._forceAtRequestEpoch.set(key, 0); })
                 .finally(() => {
                     this._forceAtRequestsInFlight.delete(key);
