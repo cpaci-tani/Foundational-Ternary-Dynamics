@@ -9,7 +9,7 @@ import { BaseLifecycleController } from '../../lifecycle.js';
 import { PlanetaryMockBridge } from '../../bridge/mock-scale4.js';
 import { PlanetaryRenderer } from '../../planetary-renderer.js';
 import { rafCoordinator } from '../../lib/raf-coordinator.js';
-import { hideScale0Overlays } from '../scale-utils.js';
+import { hideScale0Overlays, saveScaleCameraState, restoreScaleCameraState } from '../scale-utils.js';
 import { telemetryHub } from '../../telemetry-hub.js';
 
 // F-6: drive the planetary loop from the shared rAF coordinator instead of
@@ -69,20 +69,7 @@ class Scale4LifecycleController extends BaseLifecycleController {
         // the originals pristine; destroy() nulls them so a later re-entry
         // re-captures a fresh baseline. Vectors are cloned so later camera
         // motion doesn't mutate the saved snapshot.
-        if (viewport && viewport.camera && !this._savedCamera) {
-            this._savedCamera = {
-                near: viewport.camera.near,
-                far: viewport.camera.far,
-                position: viewport.camera.position.clone(),
-            };
-        }
-        if (viewport && viewport.controls && !this._savedControls) {
-            this._savedControls = {
-                minDistance: viewport.controls.minDistance,
-                maxDistance: viewport.controls.maxDistance,
-                target: viewport.controls.target.clone(),
-            };
-        }
+        saveScaleCameraState(this, viewport);
 
         // Camera Presets
         viewport.camera.near = 0.001;
@@ -266,9 +253,13 @@ class Scale4LifecycleController extends BaseLifecycleController {
     _updateOverlayStatus() {
         const statusEl = document.getElementById('planetary-overlay-status');
         if (statusEl) {
-            statusEl.textContent = this._gravityMode === 'physical'
-                ? 'Orbital mechanics — Physical (Keplerian AU/M☉/yr; Earth year = 1 sim yr)'
-                : 'Orbital mechanics — Decorative (visual cadence; not AU/yr-faithful)';
+            if (this.bridge?._scenarioName === 'planetary-threebody') {
+                statusEl.textContent = 'Orbital mechanics — Figure-8 three-body (G=1 natural units; not AU/yr)';
+            } else {
+                statusEl.textContent = this._gravityMode === 'physical'
+                    ? 'Orbital mechanics — Physical (Keplerian AU/M☉/yr; Earth year = 1 sim yr)'
+                    : 'Orbital mechanics — Decorative (visual cadence; not AU/yr-faithful)';
+            }
         }
         const gravEl = document.getElementById('planetary-ctrl-gravity');
         if (gravEl && this.bridge) {
@@ -326,27 +317,7 @@ class Scale4LifecycleController extends BaseLifecycleController {
         // are restored too (harmless — setEngineMode overwrites them) so this
         // teardown stays self-contained.
         if (ctx && ctx.viewport) {
-            const viewport = ctx.viewport;
-            if (this._savedCamera && viewport.camera) {
-                viewport.camera.near = this._savedCamera.near;
-                viewport.camera.far = this._savedCamera.far;
-                viewport.camera.position.copy(this._savedCamera.position);
-                viewport.camera.updateProjectionMatrix();
-                this._savedCamera = null;
-            }
-            if (this._savedControls && viewport.controls) {
-                viewport.controls.minDistance = this._savedControls.minDistance;
-                viewport.controls.maxDistance = this._savedControls.maxDistance;
-                viewport.controls.target.copy(this._savedControls.target);
-                // Push the restored target/limits into OrbitControls now rather
-                // than relying on a later controls.update() from whatever scale
-                // mounts next — keeps the restore correct even if call order
-                // changes or the destination skips its own update().
-                if (typeof viewport.controls.update === 'function') {
-                    viewport.controls.update();
-                }
-                this._savedControls = null;
-            }
+            restoreScaleCameraState(this, ctx.viewport);
         }
     }
 }

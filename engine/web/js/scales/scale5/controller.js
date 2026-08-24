@@ -24,7 +24,7 @@
 import { BaseLifecycleController } from '../../lifecycle.js';
 import { CosmicRenderer } from '../../cosmic-renderer.js';
 import { CosmicMockBridge } from '../../bridge/mock-scale5.js';
-import { createStatusBarCache, hideScale0Overlays, createTickAccumulator } from '../scale-utils.js';
+import { createStatusBarCache, hideScale0Overlays, createTickAccumulator, saveScaleCameraState, restoreScaleCameraState } from '../scale-utils.js';
 import { telemetryHub } from '../../telemetry-hub.js';
 
 // ---------------------------------------------------------------------------
@@ -117,20 +117,7 @@ class Scale5LifecycleController extends BaseLifecycleController {
         }
 
         // Save prior camera state for destroy() to restore (audit P1-8, 2026-05-27)
-        if (viewport && viewport.camera && !this._savedCamera) {
-            this._savedCamera = {
-                near: viewport.camera.near,
-                far: viewport.camera.far,
-                position: viewport.camera.position.clone(),
-            };
-        }
-        if (viewport && viewport.controls && !this._savedControls) {
-            this._savedControls = {
-                minDistance: viewport.controls.minDistance,
-                maxDistance: viewport.controls.maxDistance,
-                target: viewport.controls.target.clone(),
-            };
-        }
+        saveScaleCameraState(this, viewport);
 
         // Configure camera for cosmic scale
         viewport.camera.near = 0.1;
@@ -197,20 +184,7 @@ class Scale5LifecycleController extends BaseLifecycleController {
         }
         // Restore camera/controls (audit P1-8 fix, 2026-05-27)
         if (ctx && ctx.viewport) {
-            const viewport = ctx.viewport;
-            if (this._savedCamera && viewport.camera) {
-                viewport.camera.near = this._savedCamera.near;
-                viewport.camera.far = this._savedCamera.far;
-                viewport.camera.position.copy(this._savedCamera.position);
-                viewport.camera.updateProjectionMatrix();
-                this._savedCamera = null;
-            }
-            if (this._savedControls && viewport.controls) {
-                viewport.controls.minDistance = this._savedControls.minDistance;
-                viewport.controls.maxDistance = this._savedControls.maxDistance;
-                viewport.controls.target.copy(this._savedControls.target);
-                this._savedControls = null;
-            }
+            restoreScaleCameraState(this, ctx.viewport);
         }
     }
 }

@@ -195,3 +195,59 @@ export function resetAETogglesToDefaults(bridge) {
     }
 }
 
+/**
+ * Snapshot the viewport camera + OrbitControls onto the controller so its
+ * destroy() can put them back exactly where the next scale found them (audit
+ * P1-8). Idempotent per field — a snapshot already taken is left untouched, so
+ * calling this on every mount re-captures a fresh baseline only after a restore
+ * cleared it. Vectors are cloned so later camera motion can't mutate the saved
+ * snapshot. Shared verbatim by scales 4/5/6 (was triplicated).
+ *
+ * @param {{_savedCamera?: object|null, _savedControls?: object|null}} controller
+ * @param {any} viewport
+ */
+export function saveScaleCameraState(controller, viewport) {
+    if (viewport && viewport.camera && !controller._savedCamera) {
+        controller._savedCamera = {
+            near: viewport.camera.near,
+            far: viewport.camera.far,
+            position: viewport.camera.position.clone(),
+        };
+    }
+    if (viewport && viewport.controls && !controller._savedControls) {
+        controller._savedControls = {
+            minDistance: viewport.controls.minDistance,
+            maxDistance: viewport.controls.maxDistance,
+            target: viewport.controls.target.clone(),
+        };
+    }
+}
+
+/**
+ * Restore (and clear) a camera/controls snapshot taken by
+ * {@link saveScaleCameraState}. The restored target/limits are pushed into
+ * OrbitControls immediately rather than relying on a later controls.update()
+ * from whatever scale mounts next, so the restore stays correct even if call
+ * order changes. No-op when nothing was saved or the viewport is gone.
+ *
+ * @param {{_savedCamera?: object|null, _savedControls?: object|null}} controller
+ * @param {any} viewport
+ */
+export function restoreScaleCameraState(controller, viewport) {
+    if (!viewport) return;
+    if (controller._savedCamera && viewport.camera) {
+        viewport.camera.near = controller._savedCamera.near;
+        viewport.camera.far = controller._savedCamera.far;
+        viewport.camera.position.copy(controller._savedCamera.position);
+        viewport.camera.updateProjectionMatrix();
+        controller._savedCamera = null;
+    }
+    if (controller._savedControls && viewport.controls) {
+        viewport.controls.minDistance = controller._savedControls.minDistance;
+        viewport.controls.maxDistance = controller._savedControls.maxDistance;
+        viewport.controls.target.copy(controller._savedControls.target);
+        if (typeof viewport.controls.update === 'function') viewport.controls.update();
+        controller._savedControls = null;
+    }
+}
+

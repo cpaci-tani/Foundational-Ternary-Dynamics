@@ -27,7 +27,7 @@ import { BaseLifecycleController } from '../../lifecycle.js';
 import { MetaUnit } from '../../meta-unit.js';
 import { buildMetaInfoPanel, buildSiteInspectPanel } from '../../meta-pedagogy.js';
 import { rafCoordinator } from '../../lib/raf-coordinator.js';
-import { hideScale0Overlays } from '../scale-utils.js';
+import { hideScale0Overlays, saveScaleCameraState, restoreScaleCameraState } from '../scale-utils.js';
 
 const META_LOOP_ID = 'scale6-meta-loop';
 const META_LOOP_HZ = 30;
@@ -69,20 +69,7 @@ class Scale6LifecycleController extends BaseLifecycleController {
         // Camera framing — capture pre-Scale-6 state once (mirrors Scale 4's
         // P1-8a restore pattern) so destroy() can put other scales' camera
         // back exactly where they were.
-        if (viewport.camera && !this._savedCamera) {
-            this._savedCamera = {
-                near: viewport.camera.near,
-                far: viewport.camera.far,
-                position: viewport.camera.position.clone(),
-            };
-        }
-        if (viewport.controls && !this._savedControls) {
-            this._savedControls = {
-                minDistance: viewport.controls.minDistance,
-                maxDistance: viewport.controls.maxDistance,
-                target: viewport.controls.target.clone(),
-            };
-        }
+        saveScaleCameraState(this, viewport);
         // The 27-site unit is centered at local (0,0,0) (meta-unit.js's own
         // MetaUnit._root origin — confirmed by inspection, not (1,1,1) as an
         // earlier draft of this file assumed) — frame it directly.
@@ -129,6 +116,7 @@ class Scale6LifecycleController extends BaseLifecycleController {
         this._raycaster = new THREE.Raycaster();
         const ndc = new THREE.Vector2();
 
+        if (this._pointerDownHandler) return;
         this._pointerDownHandler = (ev) => {
             const rect = canvas.getBoundingClientRect();
             ndc.x = ((ev.clientX - rect.left) / rect.width) * 2 - 1;
@@ -179,21 +167,7 @@ class Scale6LifecycleController extends BaseLifecycleController {
         }
 
         if (ctx && ctx.viewport) {
-            const viewport = ctx.viewport;
-            if (this._savedCamera && viewport.camera) {
-                viewport.camera.near = this._savedCamera.near;
-                viewport.camera.far = this._savedCamera.far;
-                viewport.camera.position.copy(this._savedCamera.position);
-                viewport.camera.updateProjectionMatrix();
-                this._savedCamera = null;
-            }
-            if (this._savedControls && viewport.controls) {
-                viewport.controls.minDistance = this._savedControls.minDistance;
-                viewport.controls.maxDistance = this._savedControls.maxDistance;
-                viewport.controls.target.copy(this._savedControls.target);
-                if (typeof viewport.controls.update === 'function') viewport.controls.update();
-                this._savedControls = null;
-            }
+            restoreScaleCameraState(this, ctx.viewport);
         }
     }
 }
