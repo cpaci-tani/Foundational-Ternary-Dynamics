@@ -1,0 +1,78 @@
+/* GPU Acceleration splash card — see js/ui/components/gpu-server-card.js.
+   Fixed bottom-right so it reads as part of the splash on load and remains a
+   tidy, dismissible card over the app afterwards. */
+#gpu-server-card {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 100000;                 /* above the loading overlay and the app */
+  width: 330px;
+  max-width: calc(100vw - 40px);
+  padding: 14px 16px 16px;
+  border-radius: 12px;
+  background: rgba(18, 22, 30, 0.94);
+  border: 1px solid rgba(120, 140, 180, 0.28);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  color: #e6ecf5;
+  font: 13px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+#gpu-server-card[hidden] { display: none; }
+
+.gpu-card-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  padding: 2px 6px;
+  border: none;
+  background: none;
+  color: #8a94a6;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.gpu-card-close:hover { color: #e6ecf5; }
+
+.gpu-card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; padding-right: 18px; }
+.gpu-card-dot { flex: none; width: 9px; height: 9px; border-radius: 50%; background: #5a6478; }
+.gpu-card-dot.on  { background: #4ade80; box-shadow: 0 0 8px rgba(74, 222, 128, 0.7); }
+.gpu-card-dot.off { background: #f0a742; }
+.gpu-card-title { font-weight: 600; letter-spacing: 0.01em; }
+.gpu-card-status { margin-left: auto; color: #9aa4b6; font-size: 12px; }
+
+.gpu-card-body { display: flex; flex-direction: column; gap: 10px; }
+.gpu-note { color: #b6c0d2; font-size: 12.5px; }
+.gpu-note code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(120, 140, 180, 0.16);
+  font-size: 11.5px;
+}
+.gpu-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.gpu-lattice-lbl { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #9aa4b6; }
+#gpu-lattice {
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(30, 36, 48, 0.9);
+  border: 1px solid rgba(120, 140, 180, 0.3);
+  color: #e6ecf5;
+  font: inherit;
+}
+.gpu-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 12px;
+  border-radius: 7px;
+  border: 1px solid rgba(120, 140, 180, 0.3);
+  background: rgba(40, 48, 64, 0.9);
+  color: #e6ecf5;
+  font: 600 12.5px/1 system-ui, -apple-system, "Segoe UI", sans-serif;
+  cursor: pointer;
+  text-decoration: none;
+}
+.gpu-btn:hover { border-color: rgba(120, 140, 180, 0.55); background: rgba(52, 62, 82, 0.95); }
+.gpu-btn.primary { background: #7c5cff; border-color: #7c5cff; color: #fff; }
+.gpu-btn.primary:hover { background: #6a4cf0; }
+.gpu-btn:disabled { opacity: 0.5; cursor: default; }
+.gpu-msg { min-height: 1em; font-size: 12px; color: #9aa4b6; }

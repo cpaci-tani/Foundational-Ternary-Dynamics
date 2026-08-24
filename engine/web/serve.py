@@ -25,8 +25,31 @@ H-4 cleanup ticket; pairs with the punch list in
 """
 
 import http.server
+import json
 import os
+import socket
+import subprocess
 import sys
+
+
+# ── GPU server (ws_server.exe) launcher paths ────────────────────────────────
+# The splash screen's "GPU Acceleration" card talks to the three /api/gpu-server/
+# routes below to show status, start the CUDA WebSocket server, and download the
+# binary. This only works when the dashboard is served by THIS script locally;
+# on GitHub Pages the routes are absent and the card degrades to a static note.
+_WEB_ROOT = os.path.dirname(os.path.abspath(__file__))          # engine/web
+_ENGINE_ROOT = os.path.dirname(_WEB_ROOT)                        # engine
+WS_SERVER_EXE = os.path.join(_ENGINE_ROOT, "build", "Release", "ws_server.exe")
+GPU_PORT = 9100
+
+
+def _gpu_running(host="127.0.0.1", port=GPU_PORT, timeout=0.25):
+    """True if something is accepting connections on the GPU server port."""
+    try:
+        with socket.create_connection((host, port), timeout=timeout):
+            return True
+    except OSError:
+        return False
 
 
 # When True (via the --cache CLI flag), the no-store headers are omitted so
@@ -58,6 +81,91 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Cross-Origin-Embedder-Policy", "require-corp")
         self.send_header("Cross-Origin-Resource-Policy", "same-origin")
         super().end_headers()
+
+    # ── GPU server (ws_server.exe) launcher API — loopback dev server only ──
+    def do_GET(self):
+        route = self.path.split("?", 1)[0]
+        if route == "/api/gpu-server/status":
+            return self._gpu_status()
+        if route == "/api/gpu-server/download":
+            return self._gpu_download()
+        return super().do_GET()
+
+    def do_POST(self):
+        route = self.path.split("?", 1)[0]
+        if route == "/api/gpu-server/start":
+            return self._gpu_start()
+        return self.send_error(404, "Not found")
+
+    def _client_is_local(self):
+        return bool(self.client_address) and self.client_address[0] in ("127.0.0.1", "::1")
+
+    def _send_json(self, obj, code=200):
+        body = json.dumps(obj).encode("utf-8")
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def _gpu_status(self):
+        exists = os.path.isfile(WS_SERVER_EXE)
+        self._send_json({
+            "running": _gpu_running(),
+            "port": GPU_PORT,
+            "exeExists": exists,
+            "exeSize": os.path.getsize(WS_SERVER_EXE) if exists else 0,
+        })
+
+    def _gpu_start(self):
+        # Loopback only, and only ever launch the ONE known binary with a single
+        # validated integer arg — never a client-supplied command, path, or flag.
+        if not self._client_is_local():
+            return self._send_json({"error": "forbidden (loopback only)"}, 403)
+        if _gpu_running():
+            return self._send_json({"running": True, "message": "already running"})
+        if not os.path.isfile(WS_SERVER_EXE):
+            return self._send_json(
+                {"error": "ws_server.exe not built — run engine\\build_native.bat"}, 404)
+        lattice = 0
+        length = int(self.headers.get("Content-Length", 0) or 0)
+        if length:
+            try:
+                lattice = int((json.loads(self.rfile.read(length) or b"{}") or {}).get("lattice", 0))
+            except (ValueError, TypeError):
+                lattice = 0
+        args = [WS_SERVER_EXE]
+        if 0 < lattice <= 256:  # 0 / out-of-range → the server picks its own default
+            args.append(str(lattice))
+        try:
+            creationflags = 0
+            if os.name == "nt":
+                # Detach so the GPU server outlives this dev server — Ctrl-C here
+                # must not kill the running simulation.
+                creationflags = subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP
+            proc = subprocess.Popen(
+                args, cwd=_ENGINE_ROOT, creationflags=creationflags,
+                stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            self._send_json({"started": True, "pid": proc.pid,
+                             "lattice": lattice if 0 < lattice <= 256 else "default"})
+        except OSError as exc:
+            self._send_json({"error": str(exc)}, 500)
+
+    def _gpu_download(self):
+        if not os.path.isfile(WS_SERVER_EXE):
+            return self.send_error(404, "ws_server.exe not built")
+        size = os.path.getsize(WS_SERVER_EXE)
+        self.send_response(200)
+        self.send_header("Content-Type", "application/octet-stream")
+        self.send_header("Content-Disposition", 'attachment; filename="ws_server.exe"')
+        self.send_header("Content-Length", str(size))
+        self.end_headers()
+        with open(WS_SERVER_EXE, "rb") as fh:
+            while True:
+                chunk = fh.read(1 << 16)
+                if not chunk:
+                    break
+                self.wfile.write(chunk)
 
 
 def main():
