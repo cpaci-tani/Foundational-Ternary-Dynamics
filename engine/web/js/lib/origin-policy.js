@@ -2,16 +2,16 @@
  * Loopback-only policy for the dashboard's native WebSocket probe and for
  * the C++ handshake's Origin allowlist (kept in sync with ws_origin_allowed).
  *
- * Missing Origin (CLI / unit tests / non-browser clients) is allowed.
- * Present Origin must be localhost / 127.0.0.1 / ::1 / file: / "null".
+ * Empty / "null" / file: Origin is allowed only from a loopback peer.
+ * Present http(s) Origin must be localhost / 127.0.0.1 / ::1.
  */
 
-export function wsOriginAllowed(origin) {
-    if (origin == null || origin === '') return true;
+export function wsOriginAllowed(origin, peerIsLoopback = true) {
+    if (origin == null || origin === '') return !!peerIsLoopback;
     const raw = String(origin);
-    if (raw === 'null' || raw === 'NULL') return true;
+    if (raw === 'null' || raw === 'NULL') return !!peerIsLoopback;
     const lower = raw.toLowerCase();
-    if (lower.startsWith('file:')) return true;
+    if (lower.startsWith('file:')) return !!peerIsLoopback;
     const scheme = lower.indexOf('://');
     if (scheme < 0) return false;
     const hostStart = scheme + 3;

@@ -120,6 +120,16 @@ export const SCALE0_SAMPLER_METHODS = Object.freeze({
     gaussResidual: 'getGaussResidualSampled',
 });
 
+/** [dependent, prerequisite] edges from TermToggles::validate() on the Scale-0 surface. */
+export const TOGGLE_REQUIRES = Object.freeze([
+    ['selective_damping', 'damping'],
+    ['larmor_radiation', 'damping'],
+    ['lorentz_force', 'forces'],
+    ['weak_transmutation', 'dual_substrate'],
+    ['triad_binding', 'dual_substrate'],
+    ['latency_field', 'gravity'],
+]);
+
 const _samplerDriftWarned = new Set();
 
 /**

@@ -205,6 +205,9 @@
     cursor: pointer;
     transition: all var(--dur-fast) var(--ease-out);
     background: var(--bg-input);
+    appearance: none;
+    font: inherit;
+    color: inherit;
 }
 
 .theme-swatch:hover {

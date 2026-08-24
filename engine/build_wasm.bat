@@ -12,7 +12,7 @@ REM      build_wasm64/  -> ftd_core64.{js,wasm}   (wasm64/Memory64, 8 GB, L~187)
 REM      build_wasm_mt/ -> ftd_core_mt.{js,wasm}  (wasm32 + pthreads / SAB;
 REM                                                off-thread Scale-0 worker)
 REM  The MT variant is the SAME ftd_wasm target with -DFTD_WASM_THREADS=ON
-REM  (renames output to ftd_core_mt, adds -pthread + PTHREAD_POOL_SIZE=0,
+REM  (renames output to ftd_core_mt, adds -pthread + PTHREAD_POOL_SIZE=8,
 REM  exports createFTDModuleMT). It is the DEFAULT Scale-0 engine when the page
 REM  is crossOriginIsolated (loaded by wasm-bridge.worker.js). Any embind binding
 REM  change MUST rebuild this variant too, or the worker loads a stale core.
@@ -74,7 +74,7 @@ if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] wasm64 build FAILED & exit /b 1 )
 REM --- WASM32 + THREADS (ftd_core_mt.{js,wasm}) ---
 REM Same ftd_wasm target with -DFTD_WASM_THREADS=ON (wasm32, NOT Memory64):
 REM renames output to ftd_core_mt, adds -pthread (SharedArrayBuffer heap) +
-REM -sPTHREAD_POOL_SIZE=0, exports createFTDModuleMT, ENVIRONMENT=node,web,worker.
+REM -sPTHREAD_POOL_SIZE=8, exports createFTDModuleMT, ENVIRONMENT=node,web,worker.
 REM This is the off-thread Scale-0 worker engine -- must track binding changes.
 echo === Configure WASM32+threads build (ftd_core_mt) ===
 call "%EMCMAKE%" cmake -S "%ENGINE_DIR%" -B "%BUILDMT%" -DCMAKE_BUILD_TYPE=Release -DFTD_MEMORY64=OFF -DFTD_WASM_THREADS=ON

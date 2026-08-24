@@ -280,12 +280,20 @@ export function mountSpectrumPanel(host, getBridge) {
     }
 
     function update() {
-        if (!isPanelLive(host)) return;
+        if (!isPanelLive(host)) {
+            getBridge?.()?.replaceSamplerWants?.('spectrum-panel', []);
+            return;
+        }
         const b = getBridge?.();
         const caps = getCaps();
         if (!caps) return;
-        const { diag, audit } = readScale0DiagAudit(b);
         const L = caps.latticeSize || 33;
+        const stride = liveStride(L);
+        getBridge?.()?.replaceSamplerWants?.('spectrum-panel', [
+            `fluxVector@${stride}`, `divJ@${stride}`,
+            ...METRIC_KINDS.map((m) => `${m.kind}@${stride}`),
+        ]);
+        const { diag, audit } = readScale0DiagAudit(b);
 
         // ① hero — only when live (deep freezes the snapshot)
         let sp;
@@ -339,6 +347,7 @@ export function mountSpectrumPanel(host, getBridge) {
 
 export function initSpectrumPanel() {
     if (typeof document === 'undefined') return null;
+    if (typeof window !== 'undefined' && window.__ftdSpectrumPanel) return window.__ftdSpectrumPanel;
     const host = document.getElementById('panel-spectrum');
     if (!host) return null;
     const getBridge = () => resolveActiveScale0BridgeFromWindow();

@@ -307,7 +307,13 @@ export function mountGravityPanel(host, getBridge) {
         // samplers) on visibility — when the Gravity tab isn't shown, do nothing.
         // This keeps the panel from loading the main thread (which otherwise
         // slows scale switches) and is the established panel pattern (isPanelLive).
-        if (!isPanelLive(host)) return;
+        if (!isPanelLive(host)) {
+            getBridge?.()?.replaceSamplerWants?.('gravity-panel', []);
+            return;
+        }
+        getBridge?.()?.replaceSamplerWants?.('gravity-panel', [
+            `latency@${STRIDE}`, `kretschmann@${STRIDE}`, `gravity@${STRIDE}`, 'gravityMetricAgg@0',
+        ]);
 
         const ver = (getScale0State()?.fieldDataVersion) | 0;
         // A native visual read is asynchronous. Do not recompute/paint a
@@ -376,6 +382,7 @@ export function mountGravityPanel(host, getBridge) {
 
 export function initGravityPanel() {
     if (typeof document === 'undefined') return null;
+    if (typeof window !== 'undefined' && window.__ftdGravityPanel) return window.__ftdGravityPanel;
     const host = document.getElementById('panel-gravity');
     if (!host) return null;
     const getBridge = () => resolveActiveScale0BridgeFromWindow();

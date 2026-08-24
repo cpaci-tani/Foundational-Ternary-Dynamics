@@ -1,10 +1,11 @@
 // Scale-0 WASM physics Web Worker. Hosts the threaded engine (ftd_core_mt) off
-// the main render thread so a heavy tick never stalls the UI. Phase 1: pool=1
-// (pure serial; no nested pthreads — PTHREAD_POOL_SIZE=0 means zero pre-spawn).
-// The engine's -pthread heap is a SharedArrayBuffer; the main-thread
-// WasmBridgeProxy reads the flux field zero-copy from it. Control + frame
-// counters ride a small shared CTRL SAB (Atomics); diag/particles ride
-// postMessage. Mirrors mock-bridge.worker.js for the JS MockBridge.
+// the main render thread so a heavy tick never stalls the UI. Thread pool is
+// pre-spawned (-sPTHREAD_POOL_SIZE=8 in engine/wasm/CMakeLists.txt) so nested
+// parallel_for does not deadlock. The engine's -pthread heap is a
+// SharedArrayBuffer; the main-thread WasmBridgeProxy reads a double-buffered
+// flux SAB (copied off the WASM heap each frame) so playback cannot tear.
+// Control + frame counters ride a small shared CTRL SAB (Atomics);
+// diag/particles ride postMessage.
 //
 // CLASSIC worker (Emscripten MODULARIZE exposes createFTDModuleMT as a global
 // via importScripts) — so this file CANNOT be an ES module; CTRL is inlined
@@ -17,6 +18,7 @@
 // (Without this, importScripts throws uncaught — which surfaces only via the
 // worker's onerror, and not reliably in every browser.)
 const FTD_WASM_BASE_URL = new URL('../../wasm/', self.location.href).href;
+importScripts(new URL('./sampler-registry.classic.js', self.location.href).href);
 try {
     // Resolve to an absolute HTTP URL before entering importScripts. Relative
     // paths become ambiguous when this worker is itself re-entered by
@@ -59,39 +61,47 @@ const TARGET_DT = 1000 / 60;
 
 let mod = null, bridge = null;
 let N = 33, scenarioId = 'flux-pulse', toggles = {}, toggleNames = [];
-let poolThreads = 1;       // Phase 1 = 1 (serial off-thread). Phase 2 raises this
-                           // for the 1.8-2.2x in-worker threading (on-demand
-                           // nested pthread_create; POOL_SIZE=0 => no pre-spawn).
+let poolThreads = 8;       // MUST equal -sPTHREAD_POOL_SIZE in engine/wasm/CMakeLists.txt
+                           // (pre-spawned pthread pool; proxy may clamp below this).
 let ctrlSab = null, ctrl = null;
 let timer = 0, tickAcc = 0;
 let initInFlight = false;
 let pendingCreate = null;
 let lastFluxHeap = null, lastFluxPtr = -1, lastFluxLen = -1;
+let fluxPubSab = null, fluxPubN = 0;
+
+function publishFlux(vol) {
+  if (!vol || !vol.length) return false;
+  const n = vol.length;
+  // 8-byte header: Int32 published-slot + 4 bytes pad. Float64Array views
+  // require a multiple-of-8 byteOffset; a 4-byte header throws and the
+  // catch below would silently revert to the torn single-buffer heap view.
+  const header = 8;
+  const bytes = n * 8;
+  const need = header + 2 * bytes;
+  try {
+    if (!fluxPubSab || fluxPubSab.byteLength < need || fluxPubN !== n) {
+      fluxPubSab = new SharedArrayBuffer(need);
+      fluxPubN = n;
+      Atomics.store(new Int32Array(fluxPubSab, 0, 1), 0, 0);
+      self.postMessage({ type: 'fluxRebind', fluxSab: fluxPubSab, fluxLen: n, doubleBuffered: true });
+    }
+    const slot = 1 - Atomics.load(new Int32Array(fluxPubSab, 0, 1), 0);
+    new Float64Array(fluxPubSab, header + slot * bytes, n).set(vol);
+    Atomics.store(new Int32Array(fluxPubSab, 0, 1), 0, slot);
+    return true;
+  } catch (e) {
+    fluxPubSab = null;
+    fluxPubN = 0;
+    return false;
+  }
+}
 let lastInspect = null, lastForceAt = null;
 
 // Overlay sampler registry. Maps proxy kind-key → [C++ method name, 'vec'|'val'|'obj'].
 // 'vec' returns {positions, vectors, count}; 'val' returns {positions, values, count};
 // 'obj' returns a plain object (no stride argument, e.g. gravityMetricAgg).
-const SAMPLER_METHODS = {
-  'e':             ['getEFieldSampled',       'vec'],
-  'b':             ['getBFieldSampled',        'vec'],
-  'poynting':      ['getPoyntingSampled',      'vec'],
-  'divJ':          ['getDivJSampled',          'val'],
-  'fluxVector':    ['getFluxVectorSampled',    'vec'],
-  'vorticity':     ['getVorticitySampled',     'val'],
-  'helicity':      ['getHelicitySampled',      'val'],
-  'kretschmann':   ['getKretschmannSampled',   'val'],
-  'latency':       ['getLatencySampled',       'val'],
-  'fisher':        ['getFisherSampled',        'val'],
-  'coherence':     ['getCoherenceSampled',     'val'],
-  'curlJ':         ['getCurlJSampled',         'vec'],
-  'state':         ['getStateFieldSampled',    'val'],
-  'gaussResidual': ['getGaussResidualSampled', 'val'],
-  'em':            ['getEMForceField',         'vec'],
-  'gravity':       ['getGravityFieldSampled',  'vec'],
-  'strong':        ['getStrongForceField',     'vec'],
-  'gravityMetricAgg': ['getGravityMetricAgg', 'obj'],
-};
+const SAMPLER_METHODS = self.FTD_SAMPLER_METHODS || {};
 
 // Samplers currently wanted by the proxy, keyed by "kind@stride".
 // Persists across scenario changes (overlay visibility is UI state, not scenario state).
@@ -179,14 +189,7 @@ function initModule(cb) {
 // which bursts "[TermToggles] Invalid combination" on every tick. Reads the
 // bridge's actual toggle state and corrects it; physics-neutral (the dependent
 // is already a no-op when its prerequisite is off). Mirrors WasmBridge.
-const TOGGLE_REQUIRES = [
-  ['selective_damping', 'damping'],
-  ['larmor_radiation', 'damping'],
-  ['lorentz_force', 'forces'],
-  ['weak_transmutation', 'dual_substrate'],
-  ['triad_binding', 'dual_substrate'],
-  ['latency_field', 'gravity'],
-];
+const TOGGLE_REQUIRES = self.FTD_TOGGLE_REQUIRES || [];
 function enforceToggleInvariants() {
   if (!mod || !bridge || typeof mod.getToggle !== 'function' || typeof mod.setToggle !== 'function') return;
   for (const [dep, prereq] of TOGGLE_REQUIRES) {
@@ -279,9 +282,11 @@ function buildBridge(n, scen) {
   lastFluxHeap = vol.buffer;
   lastFluxPtr = vol.byteOffset;
   lastFluxLen = vol.length;
+  const doubled = publishFlux(vol);
   self.postMessage({
     type: 'ready', N, ctrl: ctrlSab, heap: vol.buffer, fluxPtr: vol.byteOffset, fluxLen: vol.length,
     setupOk, setupError,
+    ...(doubled ? { fluxSab: fluxPubSab, doubleBuffered: true } : {}),
   });
   postFrame();
 }
@@ -289,7 +294,8 @@ function buildBridge(n, scen) {
 function postFrame() {
   if (!bridge) return;
   const vol = mod.getFluxVolume(bridge);            // refresh the flux cache in the shared heap
-  if (vol && (vol.buffer !== lastFluxHeap || vol.byteOffset !== lastFluxPtr || vol.length !== lastFluxLen)) {
+  const doubled = publishFlux(vol);
+  if (!doubled && vol && (vol.buffer !== lastFluxHeap || vol.byteOffset !== lastFluxPtr || vol.length !== lastFluxLen)) {
     lastFluxHeap = vol.buffer;
     lastFluxPtr = vol.byteOffset;
     lastFluxLen = vol.length;

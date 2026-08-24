@@ -14,12 +14,11 @@
          Loaded early so that one-time reload wastes minimal resources. -->
     <script src="coi-serviceworker.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
-        rel="stylesheet">
-    <!-- Modular CSS Architecture (Phase 0) -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Font CSS is injected after window.load with the rest of the deferred
+         sheets so a slow fonts.googleapis.com round-trip cannot stall load. -->
+    <!-- First-paint CSS: tokens, shell, loading overlay, viewport chrome, primitives, themes. -->
     <link rel="stylesheet" href="css/tokens.css?v=9">
-    <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/scale-visibility.css">
     <link rel="stylesheet" href="css/ui/shell/app-shell.css?v=3">
     <link rel="stylesheet" href="css/ui/shell/regions.css">
@@ -32,64 +31,83 @@
     <link rel="stylesheet" href="css/ui/components/panel-dock.css">
     <link rel="stylesheet" href="css/ui/components/floating-window.css">
     <link rel="stylesheet" href="css/ui/components/panel-mount.css?v=2">
-    <link rel="stylesheet" href="css/ui/components/panel-resources.css">
     <link rel="stylesheet" href="css/ui/components/viewport-frame.css?v=2">
     <link rel="stylesheet" href="css/ui/components/viewport-overlays.css?v=2">
     <link rel="stylesheet" href="css/ui/components/play-bar.css?v=3">
     <link rel="stylesheet" href="css/ui/components/sidebar-library.css">
-    <link rel="stylesheet" href="css/ui/components/knowledge-base.css">
-    <link rel="stylesheet" href="css/ui/components/faq.css">
-    <link rel="stylesheet" href="css/ui/components/tooltips.css">
     <link rel="stylesheet" href="css/ui/components/status-bar.css">
-    <link rel="stylesheet" href="css/ui/components/p1-observables-panel.css">
-    <link rel="stylesheet" href="css/ui/components/conservation-micropanel.css">
-    <link rel="stylesheet" href="css/ui/components/spectrum-panel.css">
-    <!-- gravity-panel.css is injected async by gravity-panel.js (off the render-blocking boot path) -->
-    <link rel="stylesheet" href="css/ui/components/assistant-sidebar.css">
-    <link rel="stylesheet" href="css/ui/components/settings-modal.css">
-    <link rel="stylesheet" href="css/ui/components/keyboard-help.css">
     <link rel="stylesheet" href="css/ui/scales/toolbar-groups.css">
     <link rel="stylesheet" href="css/ui/scales/scale0/toolbar.css">
-    <link rel="stylesheet" href="css/ui/scales/scale1/telemetry.css">
-    <link rel="stylesheet" href="css/ui/components/scale-overlay-panel.css">
-    <link rel="stylesheet" href="css/ui/scales/scale2/legend.css">
-    <link rel="stylesheet" href="css/ui/scales/scale2/toolbar.css">
-    <link rel="stylesheet" href="css/ui/scales/scale2/overlay.css">
-    <link rel="stylesheet" href="css/ui/scales/scale23/toolbar.css">
-    <link rel="stylesheet" href="css/ui/scales/scale4/overlays.css">
-    <!-- Primitive CSS (Phase 1) -->
     <link rel="stylesheet" href="css/ui/primitives/utilities.css">
     <link rel="stylesheet" href="css/ui/primitives/button.css?v=2">
     <link rel="stylesheet" href="css/ui/primitives/card.css">
     <link rel="stylesheet" href="css/ui/primitives/checkbox.css">
     <link rel="stylesheet" href="css/ui/primitives/field.css?v=6">
-    <link rel="stylesheet" href="css/ui/primitives/modal.css">
     <link rel="stylesheet" href="css/ui/primitives/segmented-control.css">
     <link rel="stylesheet" href="css/ui/primitives/select.css">
     <link rel="stylesheet" href="css/ui/primitives/slider.css">
     <link rel="stylesheet" href="css/ui/primitives/tabs.css">
     <link rel="stylesheet" href="css/ui/primitives/toggle.css">
-    <link rel="stylesheet" href="css/ui/primitives/toast.css">
-    <!-- Panel CSS (Phase 4) -->
-    <link rel="stylesheet" href="css/ui/panels/diagnostics-panel.css?v=7">
-    <link rel="stylesheet" href="css/ui/panels/charts-panel.css?v=8">
-    <link rel="stylesheet" href="css/ui/panels/telemetry-grid.css">
-    <link rel="stylesheet" href="css/ui/panels/inspector-panel.css?v=2">
-    <link rel="stylesheet" href="css/ui/panels/lagrangian-panel.css?v=4">
-    <link rel="stylesheet" href="css/ui/panels/zoo-panel.css">
-    <link rel="stylesheet" href="css/ui/panels/scene-panel.css?v=1">
-    <link rel="stylesheet" href="css/ui/panels/aggregation-bridge.css">
-    <link rel="stylesheet" href="css/ui/panels/meta-pedagogy.css">
-    <link rel="stylesheet" href="css/ui/panels/ontic-observatory.css">
-    <link rel="stylesheet" href="css/ui/panels/physics-charts.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
-    <!-- Chart primitives (Phase 1 of panels redesign) -->
-    <link rel="stylesheet" href="js/ui/charts/vendor/uPlot.min.css">
-    <link rel="stylesheet" href="css/ui/charts/uplot-theme.css">
     <link rel="stylesheet" href="css/themes/abyss.css">
     <link rel="stylesheet" href="css/themes/light.css">
     <link rel="stylesheet" href="css/themes/parchment.css">
     <link rel="stylesheet" href="css/themes/nord.css">
+    <!-- Non-critical CSS is injected after window.load. Parser <link> sheets
+         (even media=print) delay the load event and stall Playwright goto. -->
+    <script>
+        window.FTD_DEFER_CSS = [
+            { href: 'https://fonts.googleapis.com/css2?family=Outfit:wght@500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap', crossOrigin: 'anonymous' },
+            { href: 'css/ui/components/panel-resources.css' },
+            { href: 'css/ui/components/knowledge-base.css' },
+            { href: 'css/ui/components/faq.css' },
+            { href: 'css/ui/components/tooltips.css' },
+            { href: 'css/ui/components/p1-observables-panel.css' },
+            { href: 'css/ui/components/conservation-micropanel.css' },
+            { href: 'css/ui/components/spectrum-panel.css' },
+            { href: 'css/ui/components/assistant-sidebar.css' },
+            { href: 'css/ui/components/settings-modal.css' },
+            { href: 'css/ui/components/keyboard-help.css' },
+            { href: 'css/ui/scales/scale1/telemetry.css' },
+            { href: 'css/ui/components/scale-overlay-panel.css' },
+            { href: 'css/ui/scales/scale2/legend.css' },
+            { href: 'css/ui/scales/scale2/toolbar.css' },
+            { href: 'css/ui/scales/scale2/overlay.css' },
+            { href: 'css/ui/scales/scale23/toolbar.css' },
+            { href: 'css/ui/scales/scale4/overlays.css' },
+            { href: 'css/ui/primitives/modal.css' },
+            { href: 'css/ui/primitives/toast.css' },
+            { href: 'css/ui/panels/diagnostics-panel.css?v=7' },
+            { href: 'css/ui/panels/charts-panel.css?v=8' },
+            { href: 'css/ui/panels/telemetry-grid.css' },
+            { href: 'css/ui/panels/inspector-panel.css?v=2' },
+            { href: 'css/ui/panels/lagrangian-panel.css?v=4' },
+            { href: 'css/ui/panels/zoo-panel.css' },
+            { href: 'css/ui/panels/scene-panel.css?v=1' },
+            { href: 'css/ui/panels/aggregation-bridge.css' },
+            { href: 'css/ui/panels/meta-pedagogy.css' },
+            { href: 'css/ui/panels/ontic-observatory.css' },
+            { href: 'css/ui/panels/physics-charts.css' },
+            { href: 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css', crossOrigin: 'anonymous', integrity: 'sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+' },
+            { href: 'js/ui/charts/vendor/uPlot.min.css' },
+            { href: 'css/ui/charts/uplot-theme.css' },
+        ];
+        (function () {
+            function inject() {
+                var list = window.FTD_DEFER_CSS || [];
+                for (var i = 0; i < list.length; i++) {
+                    var spec = list[i];
+                    var l = document.createElement('link');
+                    l.rel = 'stylesheet';
+                    l.href = spec.href;
+                    if (spec.crossOrigin) l.crossOrigin = spec.crossOrigin;
+                    if (spec.integrity) l.integrity = spec.integrity;
+                    document.head.appendChild(l);
+                }
+            }
+            if (document.readyState === 'complete') inject();
+            else window.addEventListener('load', inject);
+        })();
+    </script>
     <script src="js/ui/charts/vendor/uPlot.iife.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" defer integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
     <script type="importmap">
@@ -121,6 +139,10 @@
                 var isSide = pref === 'left' || pref === 'right';
                 var effective = (isSide && window.innerWidth < 1024) ? 'bottom' : pref;
                 document.documentElement.dataset.panelMount = effective;
+                var theme = localStorage.getItem('ftd-theme');
+                if (theme && theme !== 'default') {
+                    document.documentElement.setAttribute('data-theme', theme);
+                }
             } catch (_e) {
                 document.documentElement.dataset.panelMount = 'bottom';
             }

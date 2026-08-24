@@ -10,12 +10,13 @@
 // field is C++-laid-out in the WASM heap, so reads are served directly from the
 // heap view + the last frame payload. See project memory 2026-06-16.
 //
-// The hosted module is ftd_core_mt (threaded build) run at pool=1 (pure serial,
-// off the main thread — Phase 1). Phase 2 raises the worker pool for the 1.8-2.2x
-// threading once on-demand nested pthread_create is resolved.
+// The hosted module is ftd_core_mt (threaded, -sPTHREAD_POOL_SIZE=8). The
+// proxy sends workerPoolSize() (host cores − 1, capped at 8). Flux reads go
+// through a double-buffered SAB with an atomic published-slot index.
 
 import { createScale0Capabilities } from './capabilities/scale0.js';
-import { samplerOr, particleDataToList } from './bridge-contract.js';
+import { particleDataToList } from './bridge-contract.js';
+import { createSamplerWantSet } from './sampler-want-set.js';
 
 const CTRL = { FRAME: 0, N: 1, TICK: 2, RUNNING: 3, PCOUNT: 4, TICKS_PER_FRAME: 5, LEN: 8 };
 const EMPTY_PARTS = () => ({ positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0), spin: new Float32Array(0), colorCharge: new Float32Array(0), count: 0 });
@@ -134,6 +135,9 @@ export class WasmBridgeProxy {
         this._frameWatchdog = null;     // setTimeout handle for the dead-worker watchdog
         this._ctrl = null;
         this._fluxView = null;
+        this._fluxSab = null;
+        this._fluxLen = 0;
+        this._fluxDouble = false;
         this._lastDiag = null;
         this._lastParts = null;
         this._lastAudit = null;
@@ -150,10 +154,17 @@ export class WasmBridgeProxy {
         // like seedSpectrumComparator work on the worker path even though WASM is not
         // synchronously available.
         this._pendingCommands = [];
-        // Overlay sampler cache: keyed by "kind@stride". _samplerWant tracks which
-        // kinds have been registered with the worker (idempotent per key).
+        // Overlay sampler cache: keyed by "kind@stride". Owners (overlays,
+        // panels, direct getters) union through _samplerWants.
         this._samplerCache = {};
-        this._samplerWant = new Map();
+        this._samplerWants = createSamplerWantSet((op, kind, stride) => {
+            if (this._terminated || !this._worker) return;
+            this._worker.postMessage({
+                type: op === 'want' ? 'wantSampler' : 'unwantSampler',
+                kind,
+                stride,
+            });
+        });
         // One-shot coarsen (Scale-0 → Scale-1) request/response bookkeeping.
         this._coarsenPending = new Map();
         this._coarsenReq = 0;
@@ -242,7 +253,7 @@ export class WasmBridgeProxy {
         if (m.type === 'ready') {
             this.latticeSize = m.N;
             this._ctrl = new Int32Array(m.ctrl);
-            this._fluxView = new Float64Array(m.heap, m.fluxPtr, m.fluxLen);
+            this._bindFlux(m);
             this._ready = true;
             this._readyAt = this._now();
             // The off-thread engine reported ready; cancel the never-ready watchdog.
@@ -305,11 +316,7 @@ export class WasmBridgeProxy {
                 window.__ftdCtx.onBridgePostFrame(hadSamplers);
             }
         } else if (m.type === 'fluxRebind') {
-            try {
-                this._fluxView = new Float64Array(m.heap, m.fluxPtr, m.fluxLen);
-            } catch {
-                this._fluxView = null;
-            }
+            this._bindFlux(m);
         } else if (m.type === 'inspectResult') {
             this._lastInspect = m.inspect || null;
         } else if (m.type === 'forceAtResult') {
@@ -430,25 +437,45 @@ export class WasmBridgeProxy {
     // anti-drift gate in scale0-worker.spec.js is satisfied by real forwarding
     // rather than by shrinking the contract.
     getForceFieldSampled(stride = 2) { return this.getEMForceField(stride); }
-    getGravityFieldSampled(stride = 2) { return samplerOr(this, 'gravity', stride, EMPTY_VEC()); }
-    getFluxVolume() {
-        if (!this._ready || !this._fluxView) return new Float64Array(0);
-        // Same transient-window / heap-growth guard getFluxSlice uses: a view
-        // detached by a worker heap grow (.length === 0) or left over from a
-        // different-lattice RenderBridge fails the length check → return empty,
-        // honoring the "empty until ready" contract instead of handing back a
-        // stale or wrong-sized zero-copy view.
-        const N = this.latticeSize | 0;
-        if (!(N > 0) || this._fluxView.length !== N * N * N) return new Float64Array(0);
+    getGravityFieldSampled(stride = 2) { return this._readSampler('gravity', stride, EMPTY_VEC); }
+    _bindFlux(m) {
+        if (m.fluxSab && m.doubleBuffered) {
+            this._fluxSab = m.fluxSab;
+            this._fluxLen = m.fluxLen | 0;
+            this._fluxDouble = true;
+            this._fluxView = null;
+            return;
+        }
+        this._fluxDouble = false;
+        try {
+            this._fluxView = new Float64Array(m.heap, m.fluxPtr, m.fluxLen);
+        } catch {
+            this._fluxView = null;
+        }
+    }
+
+    _currentFluxView() {
+        if (this._fluxDouble && this._fluxSab) {
+            const n = this._fluxLen | 0;
+            const N = this.latticeSize | 0;
+            if (!(N > 0) || n !== N * N * N) return null;
+            const slot = Atomics.load(new Int32Array(this._fluxSab, 0, 1), 0);
+            return new Float64Array(this._fluxSab, 8 + slot * n * 8, n);
+        }
         return this._fluxView;
     }
+
+    getFluxVolume() {
+        if (!this._ready) return new Float64Array(0);
+        const view = this._currentFluxView();
+        if (!view) return new Float64Array(0);
+        const N = this.latticeSize | 0;
+        if (!(N > 0) || view.length !== N * N * N) return new Float64Array(0);
+        return view;
+    }
     /**
-     * Slice the already-resident flux volume (this._fluxView, a zero-copy
-     * view over the worker's shared WASM heap — see getFluxVolume) into a
-     * single 2D plane, client-side. Was a permanent `return new
-     * Float64Array(0)` stub ("Phase 2: slice from heap") — the data was
-     * already resident (getFluxVolume works today), it just was never
-     * sliced.
+     * Slice the published flux volume (double-buffered SAB when the worker
+     * could allocate it, else the heap view) into a single 2D plane.
      *
      * Output layout is byte-for-byte identical to the direct WasmBridge's
      * C++ binding (ftd_wasm.cpp get_flux_slice: `cache[a*N+b]` with
@@ -459,17 +486,14 @@ export class WasmBridgeProxy {
      * getScale0FluxSlice) need no changes.
      */
     getFluxSlice(axis, index) {
-        if (!this._ready || !this._fluxView) return new Float64Array(0);
+        if (!this._ready) return new Float64Array(0);
+        const view = this._currentFluxView();
+        if (!view) return new Float64Array(0);
         const N = this.latticeSize | 0;
         if (!(N > 0)) return new Float64Array(0);
         const NN = N * N;
-        // Guards the transient window during a scenario swap where _ready
-        // is about to flip false / _fluxView may still reference the OLD
-        // RenderBridge's stale/wrong-length buffer — mirrors the same
-        // "empty until ready" contract every other proxy read already has.
-        if (this._fluxView.length !== NN * N) return new Float64Array(0);
+        if (view.length !== NN * N) return new Float64Array(0);
         const idx = Math.min(Math.max(index | 0, 0), N - 1);
-        const view = this._fluxView;
         const out = new Float64Array(NN);
         if (axis === 0) {
             // YZ plane, X fixed at `idx`: out[y*N+z] = density(idx, y, z)
@@ -509,30 +533,22 @@ export class WasmBridgeProxy {
     // and the cached result (initially empty) is returned. The worker computes the
     // sampler on its next postFrame() and sends the result back; subsequent calls
     // return the live cached data. One-frame latency on initial display only.
-    _wantSampler(kind, stride, emptyFn) {
+    _readSampler(kind, stride, emptyFn) {
         const key = `${kind}@${stride}`;
-        if (!this._samplerWant.has(key)) {
-            this._samplerWant.set(key, true);
-            this._worker.postMessage({ type: 'wantSampler', kind, stride });
-        }
         return this._samplerCache[key] ?? emptyFn();
     }
-    /**
-     * Release a previously-wanted kind+stride. _wantSampler's registration
-     * is otherwise permanently sticky for the life of the worker (matching
-     * `wantedSamplers`'s own "persists across scenario changes" design in
-     * wasm-bridge.worker.js) — a caller like flux-slice-panel.js that only
-     * needs a kind while a UI row is visible must explicitly un-want it when
-     * that row is hidden, or the worker keeps recomputing it on every
-     * postFrame() forever, for the rest of the session. No-op if the kind
-     * was never wanted (or was already released).
-     */
+    _wantSampler(kind, stride, emptyFn) {
+        const key = `${kind}@${stride}`;
+        this.replaceSamplerWants(`direct:${key}`, [key]);
+        return this._readSampler(kind, stride, emptyFn);
+    }
+    replaceSamplerWants(owner, keys) {
+        this._samplerWants.replace(owner, keys);
+    }
     unwantSampler(kind, stride) {
         const key = `${kind}@${stride}`;
-        if (!this._samplerWant.has(key)) return;
-        this._samplerWant.delete(key);
+        this.replaceSamplerWants(`direct:${key}`, []);
         delete this._samplerCache[key];
-        this._worker.postMessage({ type: 'unwantSampler', kind, stride });
     }
     getEFieldSampled(stride = 2)        { return this._wantSampler('e',            stride, EMPTY_VEC); }
     getBFieldSampled(stride = 2)        { return this._wantSampler('b',            stride, EMPTY_VEC); }
@@ -543,23 +559,23 @@ export class WasmBridgeProxy {
     getHelicitySampled(stride = 2)      { return this._wantSampler('helicity',     stride, EMPTY_VAL); }
     getKretschmannSampled(stride = 2)   { return this._wantSampler('kretschmann',  stride, EMPTY_VAL); }
     getLatencySampled(stride = 2)       { return this._wantSampler('latency',      stride, EMPTY_VAL); }
+    getPoissonLatencySampled(stride = 2){ return this._wantSampler('poissonLatency', stride, EMPTY_VAL); }
     getFisherSampled(stride = 2)        { return this._wantSampler('fisher',       stride, EMPTY_VAL); }
     getCoherenceSampled(stride = 2)     { return this._wantSampler('coherence',    stride, EMPTY_VAL); }
     getCurlJSampled(stride = 2)         { return this._wantSampler('curlJ',        stride, EMPTY_VEC); }
     getStateFieldSampled(stride = 1)    { return this._wantSampler('state',        stride, EMPTY_VAL); }
     getGaussResidualSampled(stride = 1) { return this._wantSampler('gaussResidual',stride, EMPTY_VAL); }
-    getEMForceField(stride = 2)         { return this._wantSampler('em',           stride, EMPTY_VEC); }
-    getGravityForceField(stride = 2)    { return this._wantSampler('gravity',      stride, EMPTY_VEC); }
-    getStrongForceField(stride = 2)     { return this._wantSampler('strong',       stride, EMPTY_VEC); }
-    /** Kind-dispatched Scale-0 field sampler; see bridge-contract.js samplerOr. */
-    getSamplerOr(kind, stride = 2, fallback) { return samplerOr(this, kind, stride, fallback); }
+    getEMForceField(stride = 2)         { return this._readSampler('em',           stride, EMPTY_VEC); }
+    getGravityForceField(stride = 2)    { return this._readSampler('gravity',      stride, EMPTY_VEC); }
+    getStrongForceField(stride = 2)     { return this._readSampler('strong',       stride, EMPTY_VEC); }
+    getSamplerOr(kind, stride = 2, fallback) {
+        const empty = fallback ?? EMPTY_VAL();
+        return this._readSampler(kind, stride, () => empty);
+    }
     getGravityMetricAgg() {
-        const key = 'gravityMetricAgg@0';
-        if (!this._samplerWant.has(key)) {
-            this._samplerWant.set(key, true);
-            this._worker.postMessage({ type: 'wantSampler', kind: 'gravityMetricAgg', stride: 0 });
-        }
-        return this._samplerCache[key] ?? { active: false, latencyMax: 0, latencyMean: 0, fMin: 1, gammaMax: 1, dilationMaxPct: 0, voxelCount: 0 };
+        return this._readSampler('gravityMetricAgg', 0, () => (
+            { active: false, latencyMax: 0, latencyMean: 0, fMin: 1, gammaMax: 1, dilationMaxPct: 0, voxelCount: 0 }
+        ));
     }
     getLatencyVolume() { return new Float64Array(0); }  // full volume not supported on worker path
     setBoundaryShape() {}
@@ -686,6 +702,7 @@ export class WasmBridgeProxy {
     resize(n) { this.reset(n); }
     terminate() {
         if (!this._terminated) { this._terminated = true; _live--; _terminated++; }
+        try { this._samplerWants.clear(); } catch { /* ignore */ }
         if (this._readyTimer) { try { clearTimeout(this._readyTimer); } catch { /* ignore */ } this._readyTimer = null; }
         this._clearFrameWatchdog();
         // Drop callbacks so a late queued message cannot reach the dashboard

@@ -19,7 +19,7 @@
  * No scenario claims SM particles emerge from the lattice.
  */
 
-import { K_B } from '../../constants.js';
+import { K_B, PROTON_RATIO } from '../../constants.js';
 import { takePromotionSeeds } from './promotion.js';
 import { scale1State } from './state/store.js';
 
@@ -179,14 +179,14 @@ export const SCALE1_SCENARIOS = [
         label: 'Three-Body Chaos',
         group: 'Dynamics',
         description:
-            'Two heavy +1 bodies (1836·K_B) and one light −1 body (K_B), all '
+            'Two heavy +1 bodies (PROTON_RATIO·K_B) and one light −1 body (K_B), all '
             + 'dynamic — genuinely three-body, chaotic. ICs [IMPOSED]; '
             + 'integrator [IMPOSED]; c = 1/√3 clamp [SELECTION] (FTD-0407).',
         physics: {},
         overlays: { trails: true },
         setup({ bridge }) {
-            const pA = bridge.peAddParticle(null, +1, 8, 0, 0, 0, 0, 0, 1836 * K_B, 0.5);
-            const pB = bridge.peAddParticle(null, +1, -8, 0, 0, 0, 0, 0, 1836 * K_B, 0.5);
+            const pA = bridge.peAddParticle(null, +1, 8, 0, 0, 0, 0, 0, PROTON_RATIO * K_B, 0.5);
+            const pB = bridge.peAddParticle(null, +1, -8, 0, 0, 0, 0, 0, PROTON_RATIO * K_B, 0.5);
             bridge.peAddParticle(null, -1, 0, 0, 1.5, 0, 0, 0, K_B, 0.3);
             bridge.peApplyEquilibriumOrbitBatch([
                 { particleId: pA, center: [0, 0, 0], tangent: [0, 1, 0], sign: 1 },

@@ -31,9 +31,9 @@ export const FAQ_SECTIONS = Object.freeze([
         description: 'Twelve hard problems of modern physics, framed through the FTD lens.',
         entries: [
             {
-                id: 'hard-problem-reference frame context',
+                id: 'hard-problem-reference-frame-structure',
                 question: 'Why is there subjective experience at all?',
-                shortQuestion: 'The hard problem of reference frame context',
+                shortQuestion: 'The hard problem of reference frame structure',
                 problem: [
                     'Chalmers\' "hard problem": even if every functional brain process were fully modeled, the question "why is there something it is like to be that system?" remains untouched. No combination of information-processing steps seems, on its face, to entail experience.',
                 ],

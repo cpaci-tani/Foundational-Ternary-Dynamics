@@ -11,16 +11,18 @@ import { fileURLToPath } from 'node:url';
 import { visualSampleGrid } from '../js/lib/visual-sample-grid.js';
 import { parseFtv2Frame, FTV2_MAGIC } from '../js/lib/ftv2.js';
 import { wsOriginAllowed, parseNativeWsPort } from '../js/lib/origin-policy.js';
+import { createSamplerWantSet } from '../js/bridge/sampler-want-set.js';
+import { SCALE0_SAMPLER_METHODS } from '../js/bridge/bridge-contract.js';
 
 const webRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 test('worker gravity sampler names the embind export, not the JS alias', () => {
     const src = fs.readFileSync(
-        path.join(webRoot, 'js', 'bridge', 'wasm-bridge.worker.js'),
+        path.join(webRoot, 'js', 'bridge', 'sampler-registry.classic.js'),
         'utf8',
     );
-    expect(src).toMatch(/['"]gravity['"]\s*:\s*\[['"]getGravityFieldSampled['"]/);
-    expect(src).not.toMatch(/['"]gravity['"]\s*:\s*\[['"]getGravityForceField['"]/);
+    expect(src).toMatch(/gravity:\s*\[['"]getGravityFieldSampled['"]/);
+    expect(src).not.toMatch(/gravity:\s*\[['"]getGravityForceField['"]/);
 });
 
 test('worker command dispatch is allowlisted', () => {
@@ -67,7 +69,10 @@ test('FTV2 parser reads origin from 20-byte headers and infers it on 16-byte fra
 
 test('Origin allowlist accepts loopback and rejects foreign sites', () => {
     expect(wsOriginAllowed('')).toBe(true);
+    expect(wsOriginAllowed('', false)).toBe(false);
     expect(wsOriginAllowed('null')).toBe(true);
+    expect(wsOriginAllowed('null', false)).toBe(false);
+    expect(wsOriginAllowed('file:///C:/ftd/engine/web/index.html', false)).toBe(false);
     expect(wsOriginAllowed('http://localhost:8080')).toBe(true);
     expect(wsOriginAllowed('http://127.0.0.1:9100')).toBe(true);
     expect(wsOriginAllowed('http://[::1]:8080')).toBe(true);
@@ -94,4 +99,146 @@ test('toolbar Reset/Step and keyboard handlers cover planetary/cosmic/meta', () 
     expect(reloadKb).toMatch(/planetary/);
     expect(reloadKb).toMatch(/cosmic/);
     expect(reloadKb).toMatch(/meta/);
+});
+
+test('sampler want-set unions owners and unwants only dropped keys', () => {
+    const ops = [];
+    const set = createSamplerWantSet((op, kind, stride) => ops.push(`${op}:${kind}@${stride}`));
+    set.replace('overlays', ['e@2', 'b@2']);
+    set.replace('gravity-panel', ['latency@2']);
+    expect([...set.wanted()].sort()).toEqual(['b@2', 'e@2', 'latency@2']);
+    set.replace('overlays', ['e@2']);
+    expect(ops.filter((x) => x.startsWith('unwant:'))).toEqual(['unwant:b@2']);
+    set.replace('gravity-panel', []);
+    expect(set.wanted().has('latency@2')).toBe(false);
+    expect(set.wanted().has('e@2')).toBe(true);
+});
+
+test('classic sampler registry covers every SCALE0_SAMPLER_METHODS key', () => {
+    const classic = fs.readFileSync(
+        path.join(webRoot, 'js', 'bridge', 'sampler-registry.classic.js'),
+        'utf8',
+    );
+    for (const kind of Object.keys(SCALE0_SAMPLER_METHODS)) {
+        expect(classic).toMatch(new RegExp(`\\b${kind}\\s*:`));
+    }
+    const worker = fs.readFileSync(
+        path.join(webRoot, 'js', 'bridge', 'wasm-bridge.worker.js'),
+        'utf8',
+    );
+    expect(worker).toMatch(/sampler-registry\.classic\.js/);
+    expect(worker).toMatch(/PTHREAD_POOL_SIZE=8/);
+});
+
+test('dev server COEP is credentialless, sends CSP, and loopback-gates GPU download', () => {
+    const serve = fs.readFileSync(path.join(webRoot, 'serve.py'), 'utf8');
+    expect(serve).toMatch(/Cross-Origin-Embedder-Policy".*credentialless/);
+    expect(serve).toMatch(/Content-Security-Policy/);
+    expect(serve).toMatch(/unsafe-eval/);
+    expect(serve).toMatch(/cdn\.jsdelivr\.net/);
+    const download = serve.slice(serve.indexOf('def _gpu_download'), serve.indexOf('def main'));
+    expect(download).toMatch(/_client_is_local/);
+    const status = serve.slice(serve.indexOf('def _gpu_status'), serve.indexOf('def _gpu_start'));
+    expect(status).toMatch(/_client_is_local/);
+});
+
+test('index hydrates theme, loads Outfit with CORS, and drops layout.css', () => {
+    const html = fs.readFileSync(path.join(webRoot, 'index.html'), 'utf8');
+    expect(html).toMatch(/family=Outfit/);
+    expect(html).toMatch(/FTD_DEFER_CSS/);
+    expect(html).toMatch(/crossOrigin: 'anonymous'/);
+    expect(html).toMatch(/localStorage\.getItem\('ftd-theme'\)/);
+    expect(html).not.toMatch(/href="css\/layout\.css"/);
+});
+
+test('unknown WS binaries are dropped, not parsed as particles', () => {
+    const src = fs.readFileSync(path.join(webRoot, 'js', 'ws-bridge.js'), 'utf8');
+    expect(src).toMatch(/Ignoring unknown binary frame magic/);
+    expect(src).not.toMatch(/Format: \[uint32 count\]\[float32 pos/);
+});
+
+test('in-thread energy-audit view maps manifested/strong/weak at 28-30', () => {
+    const wasm = fs.readFileSync(path.join(webRoot, '..', 'wasm', 'ftd_wasm.cpp'), 'utf8');
+    expect(wasm).toMatch(/s_audit_cache\(31\)/);
+    expect(wasm).toMatch(/typed_memory_view\(31/);
+    const bridge = fs.readFileSync(path.join(webRoot, 'js', 'bridge', 'wasm-bridge.js'), 'utf8');
+    expect(bridge).toMatch(/manifested:\s*arr\[28\]/);
+    expect(bridge).toMatch(/strongEnergy:\s*arr\[29\]/);
+    expect(bridge).toMatch(/weakEnergy:\s*arr\[30\]/);
+    expect(bridge).toMatch(/get _aeHasWasm[\s\S]*return false/);
+});
+
+test('wasm32 worker is not used above the Memory64 lattice cap', () => {
+    const src = fs.readFileSync(
+        path.join(webRoot, 'js', 'scales', 'scale0', 'runtime', 'scenario-loader.js'),
+        'utf8',
+    );
+    expect(src).toMatch(/WASM32_LATTICE_CAP\s*=\s*117/);
+    expect(src).toMatch(/N > WASM32_LATTICE_CAP/);
+});
+
+test('reduced-motion includes the loading overlay; GPU card uses tokens', () => {
+    const tokens = fs.readFileSync(path.join(webRoot, 'css', 'tokens.css'), 'utf8');
+    expect(tokens).not.toMatch(/#loading-overlay \*/);
+    const gpu = fs.readFileSync(path.join(webRoot, 'css', 'ui', 'components', 'gpu-server-card.css'), 'utf8');
+    expect(gpu).toMatch(/var\(--text-primary/);
+    expect(gpu).not.toMatch(/color:\s*#e6ecf5/);
+});
+
+test('FAQ uses reference-frame-structure vocabulary; Scale 1 uses PROTON_RATIO', () => {
+    const faq = fs.readFileSync(path.join(webRoot, 'js', 'ui', 'components', 'faq', 'data.js'), 'utf8');
+    expect(faq).toMatch(/hard-problem-reference-frame-structure/);
+    expect(faq).not.toMatch(/hard-problem-reference frame context/);
+    const s1 = fs.readFileSync(path.join(webRoot, 'js', 'scales', 'scale1', 'scenario-registry.js'), 'utf8');
+    expect(s1).toMatch(/PROTON_RATIO \* K_B/);
+    expect(s1).not.toMatch(/1836 \* K_B/);
+});
+
+test('theme swatches are keyboard radios', () => {
+    const tmpl = fs.readFileSync(
+        path.join(webRoot, 'js', 'ui', 'components', 'settings-modal', 'template.js'),
+        'utf8',
+    );
+    expect(tmpl).toMatch(/role="radio"/);
+    expect(tmpl).toMatch(/role="radiogroup"/);
+    const app = fs.readFileSync(path.join(webRoot, 'js', 'app.js'), 'utf8');
+    expect(app).toMatch(/ArrowRight/);
+    expect(app).toMatch(/sw\.tabIndex = on \? 0 : -1/);
+});
+
+test('non-critical CSS is injected after window.load', () => {
+    const html = fs.readFileSync(path.join(webRoot, 'index.html'), 'utf8');
+    expect(html).toMatch(/window\.FTD_DEFER_CSS/);
+    expect(html).toMatch(/addEventListener\('load', inject\)/);
+    expect(html).toMatch(/css\/ui\/panels\/zoo-panel\.css/);
+    expect(html).not.toMatch(/<link rel="stylesheet" href="css\/ui\/panels\/zoo-panel\.css"/);
+    const serve = fs.readFileSync(path.join(webRoot, 'serve.py'), 'utf8');
+    expect(serve).toMatch(/script-src.*blob:/);
+});
+
+test('flux publish SAB header is 8-byte aligned for Float64Array', () => {
+    const n = 8;
+    const buf = new ArrayBuffer(8 + 2 * n * 8);
+    expect(() => new Float64Array(buf, 8, n)).not.toThrow();
+    expect(() => new Float64Array(buf, 4, n)).toThrow();
+    const worker = fs.readFileSync(
+        path.join(webRoot, 'js', 'bridge', 'wasm-bridge.worker.js'),
+        'utf8',
+    );
+    const proxy = fs.readFileSync(
+        path.join(webRoot, 'js', 'bridge', 'wasm-bridge-proxy.js'),
+        'utf8',
+    );
+    expect(worker).toMatch(/const header = 8/);
+    expect(proxy).toMatch(/8 \+ slot \* n \* 8/);
+});
+
+test('in-thread and proxy expose getPoissonLatencySampled; TOGGLE_REQUIRES is imported', () => {
+    const wasm = fs.readFileSync(path.join(webRoot, 'js', 'bridge', 'wasm-bridge.js'), 'utf8');
+    const proxy = fs.readFileSync(path.join(webRoot, 'js', 'bridge', 'wasm-bridge-proxy.js'), 'utf8');
+    const contract = fs.readFileSync(path.join(webRoot, 'js', 'bridge', 'bridge-contract.js'), 'utf8');
+    expect(contract).toMatch(/export const TOGGLE_REQUIRES/);
+    expect(wasm).toMatch(/TOGGLE_REQUIRES/);
+    expect(wasm).toMatch(/getPoissonLatencySampled/);
+    expect(proxy).toMatch(/getPoissonLatencySampled/);
 });

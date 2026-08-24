@@ -82,6 +82,10 @@ export function createFieldSampleCache(fieldCapability, acScale0, stride, kindOv
         return result;
     }
 
+    function requestedKeys() {
+        return [...byKind.keys()];
+    }
+
     function ensureSamples(slots) {
         for (let i = 0; i < slots.length; i++) ensureSample(slots[i]);
     }
@@ -97,7 +101,7 @@ export function createFieldSampleCache(fieldCapability, acScale0, stride, kindOv
         return sampled.particleData;
     }
 
-    return { sampled, ensureSample, ensureSamples, ensureScalarDeps, ensureParticleData };
+    return { sampled, ensureSample, ensureSamples, ensureScalarDeps, ensureParticleData, requestedKeys };
 }
 
 /**
@@ -118,6 +122,7 @@ export function createForceFieldCache(fieldCapability) {
             }
             return result;
         },
+        requestedKeys() { return [...byKey.keys()]; },
         clear() {
             byKey.clear();
         },

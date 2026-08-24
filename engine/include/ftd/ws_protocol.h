@@ -71,15 +71,19 @@ bool send_all(SOCKET sock, const void* buf, size_t n);
 // WebSocket handshake + frames
 // ---------------------------------------------------------------------------
 
-// True when a browser Origin header is absent (CLI / tests) or names a
-// loopback / file origin. Foreign https origins are rejected.
-bool ws_origin_allowed(const std::string& origin);
+// True when Origin names a loopback / file origin, or when Origin is
+// absent/"null" AND the TCP peer is loopback. Foreign https origins are
+// rejected. Empty Origin from a non-loopback peer is rejected.
+bool ws_origin_allowed(const std::string& origin, bool peer_is_loopback = true);
+
+// True when getpeername() reports 127.0.0.0/8, ::1, or v4-mapped ::ffff:127.x.
+bool ws_peer_is_loopback(SOCKET sock);
 
 // Perform the server-side HTTP Upgrade handshake.
 // Reads one complete HTTP header block (bounded to 16 KiB) from `client`,
 // computes the Sec-WebSocket-Accept value, and sends the 101 Switching
 // Protocols response. Header names are matched case-insensitively.
-// When Origin is present it must pass ws_origin_allowed().
+// Origin must pass ws_origin_allowed(origin, ws_peer_is_loopback(client)).
 bool ws_handshake(SOCKET client);
 
 // Read one WebSocket frame.  Returns opcode, fills `payload`.

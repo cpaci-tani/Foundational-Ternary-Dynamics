@@ -2085,9 +2085,9 @@ int main(int argc, char* argv[]) {
     std::cout << "[ws_server] Listening on " << bind_addr << ":" << port << "\n";
     if (bind_addr != "127.0.0.1") {
         std::cout << "[ws_server] *** WARNING: bound to " << bind_addr << " — this protocol has\n"
-                     "[ws_server] *** NO authentication and NO Origin check; any host or webpage\n"
-                     "[ws_server] *** that can reach this port can drive the engine (toggles,\n"
-                     "[ws_server] *** scenarios, injection). Use only on trusted networks.\n";
+                     "[ws_server] *** NO authentication. Origin is enforced when the browser sends\n"
+                     "[ws_server] *** it; empty/null Origin is accepted only from loopback peers.\n"
+                     "[ws_server] *** Use only on trusted networks.\n";
     }
 
     // Main accept loop: one client at a time. Keep polling a retired snapshot

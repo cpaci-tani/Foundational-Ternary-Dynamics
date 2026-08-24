@@ -1412,7 +1412,10 @@ function wireKeyboard() {
             root.setAttribute('data-theme', name);
         }
         document.querySelectorAll('.theme-swatch').forEach(sw => {
-            sw.classList.toggle('active', sw.dataset.theme === name);
+            const on = sw.dataset.theme === name;
+            sw.classList.toggle('active', on);
+            sw.setAttribute('aria-checked', on ? 'true' : 'false');
+            sw.tabIndex = on ? 0 : -1;
         });
         persist(STORAGE_KEYS.theme, name);
     }
@@ -1478,6 +1481,23 @@ function wireKeyboard() {
     // ── Theme controls ──
     document.querySelectorAll('.theme-swatch').forEach(sw => {
         sw.addEventListener('click', () => applyTheme(sw.dataset.theme));
+        sw.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                applyTheme(sw.dataset.theme);
+                return;
+            }
+            if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft'
+                && e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+            e.preventDefault();
+            const all = [...document.querySelectorAll('.theme-swatch')];
+            const i = all.indexOf(sw);
+            if (i < 0) return;
+            const dir = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? 1 : -1;
+            const next = all[(i + dir + all.length) % all.length];
+            applyTheme(next.dataset.theme);
+            next.focus();
+        });
     });
 
     // ── Other preference controls ──

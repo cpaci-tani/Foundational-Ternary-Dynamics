@@ -229,7 +229,7 @@ val get_energy_audit(ftd::RenderBridge& rb) {
     return result;
 }
 
-static std::vector<double> s_audit_cache(28);
+static std::vector<double> s_audit_cache(31);
 val get_energy_audit_view(ftd::RenderBridge& rb) {
     auto ea = rb.energy_audit();
     s_audit_cache[0] = ea.field_energy;
@@ -262,7 +262,11 @@ val get_energy_audit_view(ftd::RenderBridge& rb) {
     s_audit_cache[25] = ea.cell_volume;
     s_audit_cache[26] = ea.field_energy_density_sum;
     s_audit_cache[27] = ea.wave_energy_density_sum;
-    return val(typed_memory_view(28, s_audit_cache.data()));
+    // Append-only: indices 0..27 retain their meanings.
+    s_audit_cache[28] = static_cast<double>(ea.manifested_count);
+    s_audit_cache[29] = ea.strong_energy;
+    s_audit_cache[30] = ea.weak_energy;
+    return val(typed_memory_view(31, s_audit_cache.data()));
 }
 
 // ── Lagrangian Extraction (full with constraints) ───────────────────

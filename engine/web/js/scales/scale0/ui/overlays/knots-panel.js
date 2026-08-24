@@ -540,8 +540,8 @@ export function mountKnotsPanel(host) {
 
 export function initKnotsPanel() {
     if (typeof window === 'undefined') return;
+    if (window.__ftdKnotsPanel) return window.__ftdKnotsPanel;
     const host = document.getElementById('panel-knots');
     if (!host) return;
-    window.__ftdKnotsPanel?.dispose?.();
-    mountKnotsPanel(host);
+    return mountKnotsPanel(host);
 }

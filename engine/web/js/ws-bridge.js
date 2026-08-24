@@ -83,6 +83,7 @@ const MAX_POINT_QUERY_REQUESTS_IN_FLIGHT = 4;
 // permanent entry (×2 caches) on lattices up to 256³. The per-tick epoch check
 // already invalidates stale values, so a plain FIFO evict is sufficient.
 const MAX_POINT_CACHE = 4096;
+const MAX_SLICE_CACHE = 64;
 const TELEMETRY_GROUPS = Object.freeze([
     'diagnostics', 'audit', 'lagrangian', 'gravity',
 ]);
@@ -174,7 +175,7 @@ export class WebSocketBridge {
         this._queuedSimulationTicks = 0;
 
         // Cached flux volume and slice data (async WebSocket channel)
-        this._sliceCache = {};
+        this._sliceCache = new Map();
         this._volumeCache = null;
         // Visual reads are asynchronous on the native socket.  Track the
         // engine-state epoch each cache request represents so repeated render
@@ -1506,7 +1507,7 @@ export class WebSocketBridge {
                 count: 0,
             };
             this._volumeCache = null;
-            this._sliceCache = {};
+            this._sliceCache = new Map();
             this._fieldSampleCache.clear();
             this._voxelCache.clear();
             this._forceAtCache.clear();
@@ -1855,7 +1856,10 @@ export class WebSocketBridge {
             if (data.type === 'flux_slice') {
                 const key = `${data.axis}_${data.index}`;
                 this._sliceRequestsInFlight.delete(key);
-                this._sliceCache[key] = new Float64Array(data.data);
+                this._sliceCache.set(key, new Float64Array(data.data));
+                if (this._sliceCache.size > MAX_SLICE_CACHE) {
+                    this._sliceCache.delete(this._sliceCache.keys().next().value);
+                }
                 this._notifyVisualDataReady();
                 return;
             }
@@ -2086,43 +2090,11 @@ export class WebSocketBridge {
             }
         }
 
-        // Format: [uint32 count][float32 pos[3N]][float32 col[3N]][float32 size[N]]
-        // Validate frame integrity before creating typed array views.
+        const magic = buf.byteLength >= 4 ? new DataView(buf).getUint32(0, true) : 0;
+        console.warn(`[ws-bridge] Ignoring unknown binary frame magic=0x${magic.toString(16)} bytes=${buf.byteLength}`);
         this._particleRequestInFlight = false;
-        if (buf.byteLength < 4) {
-            console.warn('[ws-bridge] Binary frame too short:', buf.byteLength);
-            this._particleRequestEpoch = 0;
-            this._notifyVisualDataReady();
-            return;
-        }
-        const view = new DataView(buf);
-        const count = view.getUint32(0, true);  // little-endian
-        const offset = 4;
-        const posBytes = count * 3 * 4;
-        const colBytes = count * 3 * 4;
-        const sizeBytes = count * 4;
-        const expectedBytes = offset + posBytes + colBytes + sizeBytes;
-
-        if (buf.byteLength < expectedBytes) {
-            console.warn(`[ws-bridge] Truncated binary frame: got ${buf.byteLength}, expected ${expectedBytes} for ${count} particles`);
-            this._particleRequestEpoch = 0;
-            this._notifyVisualDataReady();
-            return;
-        }
-
-        this._particleData = {
-            positions: new Float32Array(buf, offset, count * 3),
-            colors: new Float32Array(buf, offset + posBytes, count * 3),
-            sizes: new Float32Array(buf, offset + posBytes + colBytes, count),
-            count
-        };
+        this._volumeRequestInFlight = false;
         this._notifyVisualDataReady();
-
-        // Resolve binary promise if pending
-        if (this._binaryResolve) {
-            this._binaryResolve(this._particleData);
-            this._binaryResolve = null;
-        }
     }
 
     // ── Public API (matches MockBridge/WasmBridge) ───────────────────
@@ -2609,7 +2581,7 @@ export class WebSocketBridge {
                 this._sliceRequestEpoch.set(key, 0);
             }
         }
-        return this._sliceCache[key] || new Float64Array(0);
+        return this._sliceCache.get(key) || new Float64Array(0);
     }
     getFluxVolume() {
         if (this._connected && !this._hasPendingScenarioWork() && !this._volumeRequestInFlight
@@ -2723,6 +2695,8 @@ export class WebSocketBridge {
     getStrongForceField(stride = 2) { return this._getFieldSample('strong', stride, EMPTY_FIELD_SAMPLE); }
     /** Kind-dispatched Scale-0 field sampler; see bridge-contract.js samplerOr. */
     getSamplerOr(kind, stride = 2, fallback) { return samplerOr(this, kind, stride, fallback); }
+    replaceSamplerWants() {}
+    unwantSampler() {}
 
     /**
      * Flux-slice-panel fast path: fetch ONLY the three center mid-planes for

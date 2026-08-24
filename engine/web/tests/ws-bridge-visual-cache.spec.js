@@ -406,7 +406,11 @@ test('native visual caches wake paused Scale 0 without polling the same epoch', 
         bridge.getParticleData();
         bridge.getParticleData();
         const particleRequests = sent.filter(m => m.cmd === 'get_particles').length;
-        bridge._handleBinary(new ArrayBuffer(4)); // valid zero-particle frame
+        const emptyFtp2 = new ArrayBuffer(8);
+        const ftp2 = new DataView(emptyFtp2);
+        ftp2.setUint32(0, 0x32505446, true);
+        ftp2.setUint32(4, 0, true);
+        bridge._handleBinary(emptyFtp2);
 
         delete window.__ftdCtx;
         return {

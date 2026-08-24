@@ -420,7 +420,11 @@ export function mountTimePanel(host, getBridge) {
         if (b !== bridgeId) { bridgeId = b; resetTwin(); }
         // Gate the heavy work (latency sampler + radial bins) on visibility —
         // the established panel pattern (isPanelLive); idle when the tab is hidden.
-        if (!isPanelLive(host)) return;
+        if (!isPanelLive(host)) {
+            getBridge?.()?.replaceSamplerWants?.('time-panel', []);
+            return;
+        }
+        getBridge?.()?.replaceSamplerWants?.('time-panel', [`latency@${STRIDE}`]);
 
         const { diag: hubDiag } = readScale0DiagAudit(b);
         const diag = hubDiag || caps.getScale0Diagnostics?.() || {};
@@ -520,6 +524,7 @@ export function mountTimePanel(host, getBridge) {
 
 export function initTimePanel() {
     if (typeof document === 'undefined') return null;
+    if (typeof window !== 'undefined' && window.__ftdTimePanel) return window.__ftdTimePanel;
     const host = document.getElementById('panel-time');
     if (!host) return null;
     const getBridge = () => resolveActiveScale0BridgeFromWindow();

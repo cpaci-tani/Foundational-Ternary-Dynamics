@@ -914,6 +914,8 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
         // sweep so a later re-activation starts clean rather than resuming
         // stale jobs. The job pool itself persists (its slots are reused next
         // sweep); only the sweep liveness + shared snapshot are cleared.
+        getActiveScale0Bridge(ctx, state)?.replaceSamplerWants?.('overlays', []);
+        sched.lastWantKeys = [];
         sched.active = false;
         sched.sampled = null;
         sched.sampleCache = null;
@@ -1038,6 +1040,14 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
         runJob(sched, job);
         spent += job.cost;
         sched.cursor += 1;
+    }
+
+    const wantKeys = [];
+    if (sched.sampleCache?.requestedKeys) wantKeys.push(...sched.sampleCache.requestedKeys());
+    if (sched.forceCache?.requestedKeys) wantKeys.push(...sched.forceCache.requestedKeys());
+    if (wantKeys.length) sched.lastWantKeys = wantKeys;
+    if (sched.lastWantKeys) {
+        getActiveScale0Bridge(ctx, state)?.replaceSamplerWants?.('overlays', sched.lastWantKeys);
     }
 
     if (sched.cursor >= sched.jobCount) {

@@ -231,7 +231,10 @@ export const SCALE0_SCENARIO_VISUAL_PROFILES = {
 const FTD_WASM_WORKER = (typeof window !== 'undefined' && window.__ftdWasmWorker !== undefined)
     ? !!window.__ftdWasmWorker
     : true;
+export const WASM32_LATTICE_CAP = 117;
 function wasmWorkerEligible(scenarioId, bridge) {
+    const N = (bridge?.latticeSize | 0);
+    if (N > WASM32_LATTICE_CAP) return false;
     return FTD_WASM_WORKER
         && typeof SharedArrayBuffer !== 'undefined'
         && globalThis.crossOriginIsolated === true

@@ -231,6 +231,7 @@ export function mountThermoPanel(host, getBridge) {
 
 export function initThermoPanel() {
     if (typeof document === 'undefined') return null;
+    if (typeof window !== 'undefined' && window.__ftdThermoPanel) return window.__ftdThermoPanel;
     const host = document.getElementById('panel-thermo');
     if (!host) return null;
     const getBridge = () => resolveActiveScale0BridgeFromWindow();

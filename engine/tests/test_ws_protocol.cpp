@@ -73,8 +73,11 @@ void test_base64_vectors() {
 
 void test_ws_origin_allowlist() {
     section("WebSocket Origin allowlist");
-    check("empty Origin allowed (CLI / tests)", ws_origin_allowed(""), "");
-    check("null Origin allowed (file://)", ws_origin_allowed("null"), "");
+    check("empty Origin allowed on loopback", ws_origin_allowed("", true), "");
+    check("empty Origin rejected off-loopback", !ws_origin_allowed("", false), "");
+    check("null Origin allowed on loopback", ws_origin_allowed("null", true), "");
+    check("null Origin rejected off-loopback", !ws_origin_allowed("null", false), "");
+    check("file Origin rejected off-loopback", !ws_origin_allowed("file:///C:/ftd/engine/web/index.html", false), "");
     check("localhost allowed", ws_origin_allowed("http://localhost:8080"), "");
     check("127.0.0.1 allowed", ws_origin_allowed("http://127.0.0.1:9100"), "");
     check("file Origin allowed", ws_origin_allowed("file:///C:/ftd/engine/web/index.html"), "");

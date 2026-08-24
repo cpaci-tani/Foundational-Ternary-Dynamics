@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <cctype>
 #include <cstring>
+#include <cstdint>
 #include <iostream>
 
 namespace ftd {
@@ -104,14 +105,38 @@ std::string http_header_value(const std::string& request,
 
 }  // namespace
 
-bool ws_origin_allowed(const std::string& origin) {
-    if (origin.empty() || origin == "null" || origin == "NULL") return true;
+bool ws_peer_is_loopback(SOCKET sock) {
+    sockaddr_storage ss{};
+#ifdef _WIN32
+    int len = static_cast<int>(sizeof(ss));
+#else
+    socklen_t len = sizeof(ss);
+#endif
+    if (getpeername(sock, reinterpret_cast<sockaddr*>(&ss), &len) != 0) return false;
+    if (ss.ss_family == AF_INET) {
+        const auto* a = reinterpret_cast<sockaddr_in*>(&ss);
+        const uint32_t addr = ntohl(a->sin_addr.s_addr);
+        return (addr >> 24) == 127u;
+    }
+    if (ss.ss_family == AF_INET6) {
+        const auto* a = reinterpret_cast<sockaddr_in6*>(&ss);
+        const unsigned char* b = a->sin6_addr.s6_addr;
+        static const unsigned char loop6[16] = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,1};
+        if (std::memcmp(b, loop6, 16) == 0) return true;
+        static const unsigned char v4map[12] = {0,0,0,0, 0,0,0,0, 0,0,0xff,0xff};
+        if (std::memcmp(b, v4map, 12) == 0 && b[12] == 127) return true;
+    }
+    return false;
+}
+
+bool ws_origin_allowed(const std::string& origin, bool peer_is_loopback) {
+    if (origin.empty() || origin == "null" || origin == "NULL") return peer_is_loopback;
     std::string lower;
     lower.reserve(origin.size());
     for (unsigned char c : origin) {
         lower.push_back(static_cast<char>(std::tolower(c)));
     }
-    if (lower.rfind("file:", 0) == 0) return true;
+    if (lower.rfind("file:", 0) == 0) return peer_is_loopback;
     const auto scheme = lower.find("://");
     if (scheme == std::string::npos) return false;
     const auto host_start = scheme + 3;
@@ -160,7 +185,7 @@ bool ws_handshake(SOCKET client) {
     // HTTP field names are case-insensitive (RFC 9110 section 5.1). Chromium,
     // WebView2, and Node are all free to choose different casing here.
     const std::string origin = http_header_value(request, "Origin");
-    if (!ws_origin_allowed(origin)) {
+    if (!ws_origin_allowed(origin, ws_peer_is_loopback(client))) {
         std::cerr << "[ws_server] Rejected handshake Origin: " << origin << "\n";
         const char forbid[] =
             "HTTP/1.1 403 Forbidden\r\n"

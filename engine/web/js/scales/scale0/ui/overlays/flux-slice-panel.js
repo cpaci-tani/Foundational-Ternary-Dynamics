@@ -363,8 +363,9 @@ export class FluxSlicePanel {
     // update() — the only place that diff runs — stops being called at all
     // once hidden.
     _releaseAllWantedSamplers() {
-        if (!this._prevWantedKeys) return;
         const bridge = this.getBridge?.();
+        bridge?.replaceSamplerWants?.('flux-slice', []);
+        if (!this._prevWantedKeys) return;
         if (bridge && typeof bridge.unwantSampler === 'function') {
             for (const key of this._prevWantedKeys) {
                 const at = key.lastIndexOf('@');
@@ -773,7 +774,10 @@ export class FluxSlicePanel {
         // un-want without this). Diffed here (not per-driver-hide) because
         // several rows share the same slot (e.g. eField feeds |E|, emEnergy,
         // ePressure, ℒ(x) — only release once NONE of them are visible).
-        if (typeof bridge.unwantSampler === 'function') {
+        if (typeof bridge.replaceSamplerWants === 'function') {
+            bridge.replaceSamplerWants('flux-slice', [...wantedKeys]);
+            this._prevWantedKeys = wantedKeys;
+        } else if (typeof bridge.unwantSampler === 'function') {
             if (this._prevWantedKeys) {
                 for (const key of this._prevWantedKeys) {
                     if (wantedKeys.has(key)) continue;

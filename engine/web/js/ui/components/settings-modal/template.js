@@ -15,27 +15,27 @@ export function getSettingsModalTemplate() {
 
                     <div class="settings-subsection">
                         <label class="settings-label">Theme</label>
-                        <div class="settings-theme-grid">
-                            <div class="theme-swatch active" data-theme="default" title="Midnight (default)">
+                        <div class="settings-theme-grid" role="radiogroup" aria-label="Theme">
+                            <button type="button" class="theme-swatch active" role="radio" aria-checked="true" tabindex="0" data-theme="default" title="Midnight (default)">
                                 <div class="theme-swatch-colors" data-theme="default"><div></div><div></div><div></div><div></div></div>
                                 <div class="theme-swatch-name">Midnight</div>
-                            </div>
-                            <div class="theme-swatch" data-theme="abyss" title="Abyss (OLED dark)">
+                            </button>
+                            <button type="button" class="theme-swatch" role="radio" aria-checked="false" tabindex="-1" data-theme="abyss" title="Abyss (OLED dark)">
                                 <div class="theme-swatch-colors" data-theme="abyss"><div></div><div></div><div></div><div></div></div>
                                 <div class="theme-swatch-name">Abyss</div>
-                            </div>
-                            <div class="theme-swatch" data-theme="nord" title="Nord (cool blue)">
+                            </button>
+                            <button type="button" class="theme-swatch" role="radio" aria-checked="false" tabindex="-1" data-theme="nord" title="Nord (cool blue)">
                                 <div class="theme-swatch-colors" data-theme="nord"><div></div><div></div><div></div><div></div></div>
                                 <div class="theme-swatch-name">Nord</div>
-                            </div>
-                            <div class="theme-swatch" data-theme="light" title="Light mode">
+                            </button>
+                            <button type="button" class="theme-swatch" role="radio" aria-checked="false" tabindex="-1" data-theme="light" title="Light mode">
                                 <div class="theme-swatch-colors" data-theme="light"><div></div><div></div><div></div><div></div></div>
                                 <div class="theme-swatch-name">Light</div>
-                            </div>
-                            <div class="theme-swatch" data-theme="parchment" title="Parchment (warm tan)">
+                            </button>
+                            <button type="button" class="theme-swatch" role="radio" aria-checked="false" tabindex="-1" data-theme="parchment" title="Parchment (warm tan)">
                                 <div class="theme-swatch-colors" data-theme="parchment"><div></div><div></div><div></div><div></div></div>
                                 <div class="theme-swatch-name">Parchment</div>
-                            </div>
+                            </button>
                         </div>
                     </div>
 

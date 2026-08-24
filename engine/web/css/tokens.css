@@ -404,18 +404,18 @@ input[type="number"] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    html:not([data-motion="full"]) *:not(#loading-overlay *):not(#loading-overlay),
-    html:not([data-motion="full"]) *:not(#loading-overlay *)::before,
-    html:not([data-motion="full"]) *:not(#loading-overlay *)::after {
+    html:not([data-motion="full"]) *,
+    html:not([data-motion="full"]) *::before,
+    html:not([data-motion="full"]) *::after {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
 }
 
-html[data-motion="reduced"] *:not(#loading-overlay *):not(#loading-overlay),
-html[data-motion="reduced"] *:not(#loading-overlay *)::before,
-html[data-motion="reduced"] *:not(#loading-overlay *)::after {
+html[data-motion="reduced"] *,
+html[data-motion="reduced"] *::before,
+html[data-motion="reduced"] *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

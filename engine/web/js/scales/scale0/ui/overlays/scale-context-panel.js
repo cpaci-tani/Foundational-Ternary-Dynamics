@@ -227,6 +227,7 @@ export function mountScaleContextPanel(host, getBridge) {
 
 export function initScaleContextPanel() {
     if (typeof document === 'undefined') return null;
+    if (typeof window !== 'undefined' && window.__ftdScaleContextPanel) return window.__ftdScaleContextPanel;
     const host = document.getElementById('panel-scale-context');
     if (!host) return null;
     return mountScaleContextPanel(host, () => resolveActiveScale0BridgeFromWindow());

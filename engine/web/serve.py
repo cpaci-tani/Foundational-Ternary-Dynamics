@@ -72,15 +72,24 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
             self.send_header("Pragma", "no-cache")
             self.send_header("Expires", "0")
-        # Cross-origin isolation → unlocks SharedArrayBuffer for the Scale-0
-        # physics Web Worker (zero-copy field sharing). COOP+COEP make the page
-        # crossOriginIsolated; CORP:same-origin lets every same-origin asset
-        # (JS modules, the WASM binary, the worker) satisfy COEP require-corp.
-        # All dashboard assets are same-origin, so nothing is blocked. If a
-        # cross-origin (CDN) asset is ever added it must send its own CORP/CORS.
+        # Cross-origin isolation → SharedArrayBuffer for the Scale-0 worker.
+        # COEP credentialless matches coi-serviceworker.js on GH Pages so
+        # Google Fonts / KaTeX CDN can load; require-corp blocked them.
         self.send_header("Cross-Origin-Opener-Policy", "same-origin")
-        self.send_header("Cross-Origin-Embedder-Policy", "require-corp")
+        self.send_header("Cross-Origin-Embedder-Policy", "credentialless")
         self.send_header("Cross-Origin-Resource-Policy", "same-origin")
+        self.send_header(
+            "Content-Security-Policy",
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: https://cdn.jsdelivr.net; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; "
+            "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; "
+            "img-src 'self' data:; "
+            "connect-src 'self' ws://127.0.0.1:* ws://localhost:* "
+            "http://127.0.0.1:* http://localhost:*; "
+            "worker-src 'self' blob:; "
+            "child-src 'self' blob:",
+        )
         super().end_headers()
 
     # ── GPU server (ws_server.exe) launcher API — loopback dev server only ──
@@ -110,6 +119,8 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(body)
 
     def _gpu_status(self):
+        if not self._client_is_local():
+            return self._send_json({"error": "forbidden (loopback only)"}, 403)
         exists = os.path.isfile(WS_SERVER_EXE)
         self._send_json({
             "running": _gpu_running(),
@@ -153,6 +164,8 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
             self._send_json({"error": str(exc)}, 500)
 
     def _gpu_download(self):
+        if not self._client_is_local():
+            return self.send_error(403, "forbidden (loopback only)")
         if not os.path.isfile(WS_SERVER_EXE):
             return self.send_error(404, "ws_server.exe not built")
         size = os.path.getsize(WS_SERVER_EXE)

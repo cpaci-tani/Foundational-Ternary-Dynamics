@@ -33,7 +33,7 @@ import { debugLog } from '../core/log.js';
 import { createNativeParticleEngine } from './native-particle-engine.js';
 import { createAtomEngine } from './mock-atom-engine.js';
 import { reflectIntoBoundary } from './boundary.js';
-import { samplerOr, particleDataToList } from './bridge-contract.js';
+import { samplerOr, particleDataToList, TOGGLE_REQUIRES } from './bridge-contract.js';
 
 // ── WASM Bridge ────────────────────────────────────────────────────
 let _wasmLoadPromise = null; // singleton to prevent duplicate script injection
@@ -543,6 +543,7 @@ export class WasmBridge {
                 totalPoynting: { x: 0, y: 0, z: 0 },
                 gaussViolation: 0, maxGaussError: 0, selfFieldInjection: 0,
                 coulombPE: 0, chargeTotal: 0, manifested: 0,
+                strongEnergy: 0, weakEnergy: 0,
                 ELTotal: 0, ERTotal: 0, chiralityTotal: 0, wvLTotal: 0, wvRTotal: 0,
             };
         return this._getScale0AuditForTick(this.currentTick());
@@ -587,6 +588,9 @@ export class WasmBridge {
                 cellVolume: arr[25] ?? VOXEL_VOLUME,
                 fieldEnergyDensitySum: arr[26] ?? arr[0],
                 waveEnergyDensitySum: arr[27] ?? arr[1],
+                manifested: arr[28] ?? 0,
+                strongEnergy: arr[29] ?? 0,
+                weakEnergy: arr[30] ?? 0,
             };
         } else {
             audit = this._module.getEnergyAudit(this._bridge);
@@ -679,17 +683,7 @@ export class WasmBridge {
     _enforceToggleInvariants() {
         const m = this._module, b = this._bridge;
         if (!m || !b || typeof m.getToggle !== 'function' || typeof m.setToggle !== 'function') return;
-        // [dependent, prerequisite] edges from TermToggles::validate() reachable
-        // from the Scale-0 toggle surface.
-        const REQUIRES = [
-            ['selective_damping', 'damping'],
-            ['larmor_radiation', 'damping'],
-            ['lorentz_force', 'forces'],
-            ['weak_transmutation', 'dual_substrate'],
-            ['triad_binding', 'dual_substrate'],
-            ['latency_field', 'gravity'],
-        ];
-        for (const [dep, prereq] of REQUIRES) {
+        for (const [dep, prereq] of TOGGLE_REQUIRES) {
             try {
                 if (m.getToggle(b, dep) && !m.getToggle(b, prereq)) m.setToggle(b, dep, false);
             } catch { /* unknown toggle name in this build — skip */ }
@@ -798,6 +792,10 @@ export class WasmBridge {
         return _wasmCallOr(this, 'getLatencySampled', EMPTY_SCALAR_SAMPLE,
             (m, b) => m.getLatencySampled(b, stride));
     }
+    getPoissonLatencySampled(stride = 2) {
+        return _wasmCallOr(this, 'getPoissonLatencySampled', EMPTY_SCALAR_SAMPLE,
+            (m, b) => m.getPoissonLatencySampled(b, stride));
+    }
     getKretschmannSampled(stride = 2) {
         return _wasmCallOr(this, 'getKretschmannSampled', EMPTY_SCALAR_SAMPLE,
             (m, b) => m.getKretschmannSampled(b, stride));
@@ -812,6 +810,8 @@ export class WasmBridge {
     }
     /** Kind-dispatched Scale-0 field sampler; see bridge-contract.js samplerOr. */
     getSamplerOr(kind, stride = 2, fallback) { return samplerOr(this, kind, stride, fallback); }
+    replaceSamplerWants() {}
+    unwantSampler() {}
 
     // Force-field decomposition samplers (2026-04-19). Delegated to native
     // C++ implementations in ftd_wasm.cpp (see get_gravity_field_sampled,

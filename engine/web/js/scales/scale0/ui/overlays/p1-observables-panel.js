@@ -242,6 +242,7 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
 
 export function initP1ObservablesPanel() {
     if (typeof document === 'undefined') return null;
+    if (typeof window !== 'undefined' && window.__ftdP1Panel) return window.__ftdP1Panel;
     const host = document.getElementById('panel-p1-observables');
     if (!host) return null;
     const getBridge = () => resolveActiveScale0BridgeFromWindow();

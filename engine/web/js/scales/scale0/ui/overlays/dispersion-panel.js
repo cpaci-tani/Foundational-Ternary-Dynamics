@@ -187,6 +187,7 @@ export function mountDispersionPanel(host, getBridge) {
 
 export function initDispersionPanel() {
     if (typeof document === 'undefined') return null;
+    if (typeof window !== 'undefined' && window.__ftdDispersionPanel) return window.__ftdDispersionPanel;
     const host = document.getElementById('panel-dispersion');
     if (!host) return null;
     const getBridge = () => resolveActiveScale0BridgeFromWindow();

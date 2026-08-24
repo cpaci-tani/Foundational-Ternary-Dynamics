@@ -75,7 +75,7 @@ export class UIBinder {
             this.listen(slider, 'input', () => applyScale(parseFloat(slider.value)));
         }
 
-        const themeSwitches = document.querySelectorAll('.theme-switch');
+        const themeSwitches = document.querySelectorAll('.theme-swatch');
         for (const sw of themeSwitches) {
             this.listen(sw, 'click', () => applyTheme(sw.dataset.theme));
         }
