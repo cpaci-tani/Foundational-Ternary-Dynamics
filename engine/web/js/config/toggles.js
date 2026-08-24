@@ -143,7 +143,13 @@
  * 's0-seed-de-broglie-clock')} ScenarioId
  */
 
-// Scale 0 (Lattice) — physics term toggles matching TermToggles in term_toggles.h
+// Scale 0 (Lattice) — physics term toggles corresponding to TermToggles in
+// term_toggles.h. NOTE: the booleans here are the DASHBOARD defaults, applied
+// authoritatively to the engine on every scenario load — they are NOT required
+// to equal the C++ struct's field initializers, and a few intentionally differ
+// (e.g. `gravity` defaults ON in the struct for native benchmarks but OFF here,
+// since the lattice sandbox is EM/flux-first). This list wins at runtime, so
+// the divergence is by design, not drift.
 export const SCALE0_TOGGLES = [
     ['wave_propagation', true,  't-wave'],
     ['coupling',         true,  't-coupling'],
@@ -152,7 +158,7 @@ export const SCALE0_TOGGLES = [
     ['evaporation',      false, 't-evaporation'],
     ['gauss_projection', true,  't-gauss'],
     ['forces',           true,  't-forces'],
-    ['gravity',          false, 't-gravity'],
+    ['gravity',          false, 't-gravity'],   // struct defaults true; OFF here by design (see header note)
     ['movement',         true,  't-movement'],
     ['poisson_coulomb',  true,  't-poisson'],
     ['lorentz_force',    false, 't-lorentz'],
