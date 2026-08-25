@@ -17,9 +17,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Engine gate (revision 1.2 / ADR-0015): a public deploy can no longer ship
+  # Engine gate (revision 1.3 / ADR-0015): a public deploy can no longer ship
   # an engine regression — the pinned-golden merge_gate bundle must pass on
-  # the hash-canonical platform (windows MSVC) before Pages publishes.
+  # the hash-canonical platform (windows MSVC) before Pages publishes. Only
+  # the gate executables are built; the full suite remains a PR/manual check.
   engine-gate:
     runs-on: windows-latest
     timeout-minutes: 60
@@ -29,12 +30,12 @@ jobs:
       - name: Configure (CPU-only, Release)
         run: cmake -S engine -B engine/build -DFTD_ENABLE_CUDA=OFF
 
-      - name: Build
-        run: cmake --build engine/build --config Release --parallel 4
+      - name: Build focused merge gate
+        run: cmake --build engine/build --target ftd_merge_gate_build --config Release --parallel 4
 
       - name: merge_gate bundle (pinned goldens + determinism)
         working-directory: engine/build
-        run: ctest -L merge_gate -j 4 -C Release --output-on-failure
+        run: ctest -L merge_gate -j 32 -C Release --output-on-failure
 
   deploy:
     needs: engine-gate

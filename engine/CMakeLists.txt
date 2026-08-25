@@ -510,7 +510,7 @@ target_link_libraries(ftd_test_support PUBLIC ftd_core)
 # the engine itself, not any particular UI front-end.
 ftd_add_test(test_ui_observer_neutrality_cpu
              tests/test_ui_observer_neutrality_cpu.cpp
-             LABELS ui merge_gate)
+             LABELS ui)
 
 ftd_add_test(test_ui_thread_guard
              tests/test_ui_thread_guard.cpp
@@ -4285,20 +4285,46 @@ target_link_libraries(dump_koopman_trajectory PRIVATE ftd_core)
 add_executable(campaign_scale_context_confine tests/campaign_scale_context_confine.cpp)
 target_link_libraries(campaign_scale_context_confine PRIVATE ftd_core)
 # ============================================================================
-# merge_gate label — fast pre-push verification bundle (revision 0.3).
+# merge_gate label + lean build target — fast pre-push verification bundle
+# (revision 0.4).
 # ============================================================================
 # `ctest -L merge_gate -j 32 -C Release` is the <2-minute local gate to run
 # before every push (see engine/docs/CI_GATE.md). Composition: the absolute
 # golden gates + phase-order/lifecycle/determinism guards. GPU parity is NOT
 # in this bundle (run `ctest -L gpu` on the WSL2 build for that); neither are
-# campaign/benchmark tests. Labels are additive metadata only — test set,
-# commands, and timeouts are unchanged.
-foreach(_t render_bridge_golden render_bridge_golden_default knot_tracking_golden tick_phase_order
-            engine_lifecycle determinism gpu_term_contract)
-    if(TEST ${_t})
-        set_property(TEST ${_t} APPEND PROPERTY LABELS "merge_gate")
-    endif()
-endforeach()
+# campaign/benchmark tests.
+#
+# Keep the executable targets in one canonical list. The hosted Pages-deploy
+# job builds `ftd_merge_gate_build` instead of the default ALL target, avoiding the
+# cost of compiling 300+ unrelated test executables before running this gate.
+if(NOT EMSCRIPTEN)
+    set(_ftd_merge_gate_targets
+        test_render_bridge_golden
+        test_render_bridge_golden_default
+        test_knot_tracking_golden
+        test_tick_phase_order
+        test_engine_lifecycle
+        test_determinism
+        test_gpu_term_contract
+        test_ui_observer_neutrality_cpu)
+
+    foreach(_ftd_target IN LISTS _ftd_merge_gate_targets)
+        string(REGEX REPLACE "^test_" "" _ftd_test "${_ftd_target}")
+        if(NOT TARGET ${_ftd_target} OR NOT TEST ${_ftd_test})
+            message(FATAL_ERROR
+                "merge_gate entry '${_ftd_target}' must be both a build target and a CTest test")
+        endif()
+        set_property(TEST ${_ftd_test} APPEND PROPERTY LABELS "merge_gate")
+    endforeach()
+
+    add_custom_target(ftd_merge_gate_build
+        DEPENDS ${_ftd_merge_gate_targets}
+        COMMENT "Building the focused FTD merge-gate executables")
+
+    unset(_ftd_merge_gate_targets)
+    unset(_ftd_target)
+    unset(_ftd_test)
+endif()
 
 # ============================================================================
 # ftd_sim CLI smoke tests (revision 1.5) — the CLI research data-product path

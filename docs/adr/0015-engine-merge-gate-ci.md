@@ -16,18 +16,22 @@ goldens + phase-order/lifecycle/determinism, <2 min):
 1. **Local fast**: `scripts/ci_local.ps1` (Windows: build → merge_gate →
    Playwright parity lint; `-Wasm`/`-Full` switches) and `scripts/ci_local.sh`
    (WSL2: gcc golden → merge_gate serial; `--gpu` for the RTX 5090 label set).
-2. **CI**: `engine` job in `ci.yml` — windows-latest MSVC (the hash-canonical
-   platform), CPU-only configure, merge_gate + unit labels, helium_scale1
-   excluded (FTD-0270 pre-existing). Soak mode (`continue-on-error: true`)
-   until one week of green runs, then flip to required.
+2. **General CI**: `ci.yml` does not configure, build, or test the C++ engine.
+   Hosted engine builds repeatedly exceeded the runner time budget; Python
+   tests, linting, and constants validation remain there. Full engine
+   validation is a local pre-merge/release responsibility.
 3. **Deploy gate**: `engine-gate` job in `deploy-pages.yml`; `deploy` has
-   `needs: engine-gate`, so Pages cannot publish an engine regression.
+   `needs: engine-gate`, so Pages cannot publish an engine regression. The
+   deploy gate also builds only `ftd_merge_gate_build` rather than the default
+   ALL target.
 
 ## Consequences
 
 - (+) Public deploys are engine-gated; per-platform hash policy enforced in CI
 - (+) One command locally reproduces what CI runs
-- (−) ~10 min windows runner per deploy; GPU labels remain local-only (WSL2)
+- (+) General CI no longer spends a Windows runner on engine compilation or
+  the 300+ engine tests; Pages deploys compile and execute only the focused gate
+- (−) GPU labels remain local-only (WSL2)
 - WSL2 ctest must run SERIAL (CUDA context-creation contention — measured in
   `scripts/ci_local.sh`)
 

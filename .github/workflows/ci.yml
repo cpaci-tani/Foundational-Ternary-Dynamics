@@ -1,6 +1,7 @@
 # FTD Continuous Integration Pipeline
-# Runs Python tests, linting, physics validation, and the C++ engine merge
-# gate (revision 1.2 / ADR-0015) on every push and pull request.
+# Runs Python tests, linting, and physics validation. Engine builds/tests are
+# intentionally excluded; the Pages workflow owns its focused deploy gate and
+# full engine validation remains local (ADR-0015).
 # Quarto manuscript is built locally (not in CI).
 
 name: CI
@@ -12,45 +13,6 @@ on:
     branches: [main]
 
 jobs:
-  # Engine merge gate (ADR-0015, revision 1.2): CPU-only MSVC build + the
-  # pinned-golden merge_gate bundle + unit label. Matches the platform the
-  # golden hashes are pinned on (MSVC /fp:precise — see
-  # engine/docs/DESIGN_RNG_PORTABILITY.md). GPU/campaign/benchmark labels
-  # are excluded (GPU runs only on the local WSL2 RTX 5090 rig).
-  # SOAK MODE: continue-on-error until one week of green runs, then flip to
-  # required (ADR-0015 records the flip criteria).
-  engine:
-    runs-on: windows-latest
-    continue-on-error: true   # SOAK — remove after a week of green runs
-    timeout-minutes: 60
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Configure (CPU-only, Release)
-        run: cmake -S engine -B engine/build -DFTD_ENABLE_CUDA=OFF
-
-      - name: Build
-        run: cmake --build engine/build --config Release --parallel 4
-
-      # CTest -j is a PROCESSORS budget, not a test-count. CPU tests are
-      # costed at PROCESSORS 8 (engine/CMakeLists.txt scheduling block) so
-      # that `ctest -j 32` runs 4-wide. `ctest -j 4` therefore serializes
-      # the ~394-test unit label and exceeds the 60-minute job cap — every
-      # engine job since 2026-08-22 died this way once cmake configure
-      # started succeeding. ramsey_multicolor is a 10-minute combinatorial
-      # search (LABELS slow), not hosted-CI material.
-      - name: merge_gate bundle (pinned goldens + determinism)
-        working-directory: engine/build
-        run: ctest -L merge_gate -j 32 -C Release --output-on-failure
-
-      - name: unit label (non-interactive; excl. known helium_scale1)
-        working-directory: engine/build
-        run: ctest -L unit -LE "interactive|slow" -E "^helium_scale1$" -j 32 -C Release --timeout 600 --output-on-failure
-
-      - name: compensated D3D checks previously covered by unit
-        working-directory: engine/build
-        run: ctest -R "^(d3d12_adapter_selection|d3d12_shared_buffer)$" -C Release --output-on-failure
-
   test:
     runs-on: ubuntu-latest
     strategy:

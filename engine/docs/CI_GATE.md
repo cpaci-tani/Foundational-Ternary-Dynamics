@@ -14,6 +14,15 @@ cd engine/build && ctest -L merge_gate -j 32 -C Release
 default 14.51 toolset crashes CUDA 13.0's `cudafe++`; a raw `cmake --build` works
 only inside that vcvars shell.)
 
+The hosted Pages-deploy job uses the lean build target below so CMake does not
+compile the 300+ unrelated test executables first. General CI intentionally
+does not build or test the engine:
+
+```
+cmake --build engine/build --target ftd_merge_gate_build --config Release --parallel 4
+cd engine/build && ctest -L merge_gate -j 32 -C Release --output-on-failure
+```
+
 Runs in well under 2 minutes. Composition (labeled in `engine/CMakeLists.txt`,
 "merge_gate" block at the end of the file):
 
@@ -27,19 +36,6 @@ Runs in well under 2 minutes. Composition (labeled in `engine/CMakeLists.txt`,
 | `determinism` | Byte-identical reproducibility across runs/thread counts |
 | `gpu_term_contract` | Scale-0 CUDA completeness oracle — every `TOGGLE_SPECS` row classified by live implementation vs declared backend mask |
 | `ui_observer_neutrality_cpu` | UI-demand neutrality: per-tick ledger freshness, CPU observer trajectory/RNG neutrality, and single-slot telemetry semantics |
-| `ui_command_queue` | FIFO command queue: W4 four-command physics-parameter order plus last-write-at-last-position coalescing |
-| `ui_snapshot_publisher` | Immutable snapshot publisher: retained checksum integrity under concurrent publish/acquire |
-| `ui_command_boundary` | N4: real queue drain equals a direct between-tick toggle; Step does not tick inside the drain |
-| `ui_journal_replay` | Journal replay reproduces TermToggles and the six knobs; `applied` is the post-clamp engine value |
-| `ui_imgui_headless` | Phase 1a L1: OpenMP-neutral ImGui init, hooked IM_ASSERT, draw-data invariants, ### window name, deterministic re-draw, DPI font×ScaleAllSizes matrix |
-| `native_desktop_cli` | `--no-ui` is parsed and does not change sim flags; `--help` is parse-only |
-| `ui_scene_rect` | Phase 1b: scene-rectangle clamp, client-to-scene transform, camera aspect, pointer/keyboard arbitration helpers |
-| `ui_theme_parse` | Phase 3a: Graphite theme parse (empty/unknown/valid) and apply_theme |
-| `ui_workspace` | Phase 3a: workspace round-trip and corrupt-file fallback |
-| `ui_window_name` | Phase 3a: composed `Title###id` window names stay stable |
-| `ui_shell_draw` | Phase 3a: dockspace shell draws from a synthetic snapshot without a device |
-| `ui_boot_snapshot` | Session publishes a snapshot at construction, starts paused, GPU is the option default |
-| `ui_harness_commands` | Inject/clear/pair apply at the tick boundary while paused and recapture; harness commands do not coalesce |
 
 ## What the fast gate does NOT cover
 
