@@ -343,6 +343,7 @@ EXCEPTIONS = {
     "FTD-1020": "gravity-cosmology",            # frozen vacuum well vs live flux characteristics; class 0
     "FTD-1021": "gravity-cosmology",            # live Poisson occupancy; operator reads live L; freeze not test-body at 1/125
     "FTD-1022": "gravity-cosmology",            # 3^3 slow-envelope live Newton; freeze still not test-body at 27/125
+    "FTD-1023": "framework-postulates",         # owner-ratified v3 strict-discrete constitution
 }
 
 

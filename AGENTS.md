@@ -43,13 +43,13 @@
 
 ## What FTD Is
 
-A discrete computational framework for simulating physical systems from explicit postulates. The model postulates a 3D cubic lattice where each site ("voxel") occupies one of three states: void (0), positive (+1), or negative (−1). Dynamics proceed via local update rules within a 26-connected Moore neighborhood, with information propagating at maximum one lattice unit per discrete time step.
+A strict-discrete computational ontology for simulating physical systems from explicit postulates. The active v3 model uses finite records on an oriented 3D cubical cell complex. Site actuality is `s ∈ {−1,0,+1}`, but this is a many-to-one manifestation quotient of the complete finite record rather than the whole microscopic state.
 
-**Two-layer ontology:**
-- **Flux field** J ∈ ℝ³ — continuous vector field encoding potential energy density (dispositional)
-- **State field** s ∈ {−1, 0, +1} — discrete ternary states representing manifestation (actual)
+**Primitive/effective boundary:**
+- **Primitive:** finite cell records, cubical incidence, one global tick order, ternary manifestation readout, Moore-bounded causality, and one state-complete transaction law `Phi`.
+- **Effective recovery targets:** continuous flux `J`, phase space, action, probability/Born weights, matter, couplings, proper-time geometry, gravity, and particle fields.
 
-**Five postulates:** Discrete space (3D cubic lattice), discrete time (ticks), ternary states, local causality (26-neighbor Moore), determinism.
+**Five postulates (FTD-1023):** P1 oriented undefined-boundary cubic record complex; P2 one global ordinal clock and record lifetimes; P3 finite ontic alphabets with ternary manifestation quotient and no primitive continuum; P4 radius-one Moore causal ceiling; P5 one state-complete homogeneous deterministic law with explicit schedule and named non-injective expiry. Primitive closure is an admissibility rule, not a sixth postulate. Canonical source: [`SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md`](docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md).
 
 **Key results** (within framework assumptions):
 - Fine structure constant α = 1/137.036 from lemniscatic constant G* (1.26 ppm tree-level) — identification x₊ = 1/α is [STRONGLY MOTIVATED CONJECTURE]
@@ -64,7 +64,7 @@ A discrete computational framework for simulating physical systems from explicit
 - Confinement from area-law Wilson loops at x₋ (σ = 0.209)
 - Bell correlations: S = 2√2 (Tsirelson) is imported standard QM conditional on the [SELECTION] singlet — "FTD does not violate Bell"; the substrate itself is local/classical, S ≤ 2 natively (corrected 2026-07-01, FTD-0347)
 - Full nonlinear Einstein equations via Deser iterative bootstrap — the bootstrap *completes* a posited massless spin-2 field, it does not derive one (FTD-0189; emergent spin-2 mode is [OPEN])
-- D = 3 uniquely selected (no longer axiomatic)
+- D = 3 is selected once inside v3 P1; it is not separately forced or double-counted
 - Cyclotomic structure: Hamiltonian parameters are Phi_4, Phi_1·Phi_2, Phi_6 evaluated at sqrt(pi)
 - The Ratio and the Arrow: Euler reflection product (commutative, gives pi, time-symmetric) vs ratio (non-commutative, gives G*, time-asymmetric)
 - 50 physics predictions tested across three tiers: `scripts/exploration/test_all_physics.py` — an internal-consistency check (insertions reproduce fitted values), not 50 independently-confirmed predictions
@@ -158,6 +158,7 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
 ## Key Navigation Documents
 
 - **Full FTD spec**: `docs/SPEC_FTD.md`
+- **Active v3 constitution (FTD-1023)**: `docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md`
 - **Engine spec**: `engine/SPEC_ENGINE.md`
 - **Theory catalog**: `docs/theory/META_INDEX.md`
 - **Documentation map**: `META_DOCUMENTATION_MAP.md`

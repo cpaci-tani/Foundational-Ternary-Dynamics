@@ -1,0 +1,151 @@
+{
+  "meta": {
+    "name": "FTD-v3-strict-discrete-common-action-Phi-v2",
+    "status": "selected-finite-reference-law",
+    "date": "2026-08-24",
+    "constitution": "docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md",
+    "carrier": "docs/theory/01_reference/SPEC_V3_FINITE_CARRIER_INVENTORY_R1_v2.md",
+    "rule_specification": "docs/theory/01_reference/SPEC_V3_COMMON_ACTION_PHI_R2_R5_v2.md",
+    "firewall_verifier": "scripts/proofs/proof_v3_target_firewall.py"
+  },
+  "rule_core": {
+    "carrier_version": 2,
+    "cell_factors": {
+      "site": [
+        "T",
+        "C3",
+        "binary_exclusion_bank_384"
+      ],
+      "bond": [
+        "A9_primary",
+        "A9_reserve"
+      ],
+      "plaquette": [
+        "A9_primary_diagonal_plus",
+        "A9_reserve_diagonal_plus",
+        "A9_primary_diagonal_minus",
+        "A9_reserve_diagonal_minus"
+      ],
+      "cube": [
+        "blank"
+      ]
+    },
+    "field_channel_factorization": {
+      "directed_sc_tangent": 6,
+      "perpendicular_axial_normal": 4,
+      "hand": 2,
+      "c4_phase": 4,
+      "polarity": 2,
+      "channel_count": 384
+    },
+    "active_relation_shells": {
+      "sc_unoriented_lines": 3,
+      "fcc_unoriented_lines": 6,
+      "total_c18_lines": 9
+    },
+    "collision": {
+      "fixed_polarity_channel_count": 192,
+      "local_trigger_occupation": 2,
+      "layer_count": 3,
+      "table_rows": 55008,
+      "table_sha256_utf8_lf_no_terminal_newline": "D0BB71DBED7938ED286E1D6D91A16700DA31F4550E83B2FB3580CCC347B2BD25",
+      "table_generator": "scripts/proofs/proof_global_c3_cotangent_layer_equivariant_collision.py",
+      "selection_order": [
+        "signed_cubic_and_c4_orbit_partition",
+        "field_sum_preserving_fixed_point_free_self_involutions",
+        "fewest_options_first",
+        "maximum_exact_modular_rank_gain",
+        "lexicographically_first_tie",
+        "exact_rational_rank_postcheck"
+      ],
+      "modular_rank_prime": 1000003,
+      "nontrigger_action": "identity"
+    },
+    "internal_tick": {
+      "tangent_output": "hand_times_normal",
+      "normal_output": "hand_times_tangent_cross_normal",
+      "hand_output": "hand",
+      "phase_increment_mod4": 1,
+      "local_layer_decrement_mod3": 1
+    },
+    "stream": {
+      "hop_along_pre_tick_tangent": 1,
+      "maximum_chebyshev_hop": 1,
+      "manifested_departure_phase_half_turn_mod4": 2
+    },
+    "absorption": {
+      "phase_section": 2,
+      "target": "incident_sc_relation",
+      "required_primary_occupation": 0,
+      "required_reserve_occupation": 0,
+      "admission": "exactly_one_endpoint_channel_proposal",
+      "conflict_action": "identity",
+      "field_output": "blank",
+      "relation_output": "reserve_owns_c4_advanced_a9_payload"
+    },
+    "relation_crossing": {
+      "required_total_pair_occupation": 1,
+      "phase_section": 0,
+      "endpoint_field_parity": "even",
+      "admitted_action": "swap_primary_reserve_then_advance_c4",
+      "otherwise": "advance_c4_without_ownership_swap"
+    },
+    "actuality": {
+      "primary_tail_contribution": "a9_polarity",
+      "primary_head_contribution": "negative_a9_polarity",
+      "site_reduction": "balanced_residue_mod3"
+    }
+  },
+  "preparation_core": {
+    "finite_periodic_region": true,
+    "initial_local_layer": 0,
+    "relation_background": "translation_invariant_double_occupation_with_canceling_oriented_primary_source",
+    "field_reference": "uniform_counting_measure_on_one_fixed_polarity_192_channel_binary_bank",
+    "other_polarity_bank": "blank",
+    "adjustable_parameters": []
+  },
+  "selection_provenance": {
+    "collision_inputs": [
+      "finite channel census",
+      "signed cubic action",
+      "C4 action",
+      "Hodge internal permutation",
+      "six additive geometric field sums",
+      "record-number conservation",
+      "fixed-point-free involution requirement",
+      "maximum rank gain",
+      "lexicographic tie resolution"
+    ],
+    "collision_inputs_excluded": [
+      "recovery eigenvalues",
+      "wave speed",
+      "experimental constants",
+      "external data",
+      "fitted coefficients"
+    ],
+    "chronology": "The collision table is generated and hash-frozen by the symmetry/rank construction. The separate Floquet certificate consumes that frozen table and computes its spectrum. The spectrum is not an argument to the generator."
+  },
+  "verification_outputs_not_read_by_rule": {
+    "transverse_mode_pairs": 2,
+    "speed": "1/6",
+    "blocked_spatial_action_coefficient": "1/36",
+    "three_tick_error_bound": "(9/2)*kappa^2*exp(3*kappa)",
+    "charged_scalar_verdict": "not_closed"
+  },
+  "firewall_contract": {
+    "forbidden_rule_or_preparation_inputs": [
+      "physical coupling values",
+      "frequency weights for selected outcomes",
+      "desired detector results",
+      "catalog masses or identities",
+      "continuum geometry targets",
+      "recovery eigenvalues or speed",
+      "external replay or random tape"
+    ],
+    "allowed_verification_only": [
+      "outputs computed after the collision hash is frozen",
+      "comparisons that cannot alter the rule or preparation",
+      "failure reports and scoped nonclosures"
+    ]
+  }
+}

@@ -1,0 +1,298 @@
+{
+  "meta": {
+    "branch": "FTD-v3-strict-discrete-common-action",
+    "status": "ratified-successor-constitution-R1-R6-scoped-gates-pass",
+    "date": "2026-08-24",
+    "constitution": "docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md",
+    "verifier": "scripts/proofs/proof_v3_strict_discrete_postulate_register.py",
+    "predecessors_unchanged": [
+      "FTD-v1",
+      "FTD-v2-contextual-actualization"
+    ],
+    "ledger_row": "FTD-1023",
+    "guard": "This ratified successor does not rewrite v1/v2 in place; they remain provenance/reference branches. Compatibility is not derivation. The selected carrier, exact common-transaction Phi, scoped transverse vacuum recovery, and operational target firewall close R1-R6 only at their declared scopes. Stronger physical recovery gates remain open research."
+  },
+  "postulates": [
+    {
+      "id": "P1",
+      "name": "oriented cubic record complex",
+      "tag": "[AXIOM -- architecture selection, v3]",
+      "statement": "The substrate is an oriented three-dimensional cubic cell complex with sites, oriented bonds, oriented plaquettes, and cubes; a cell may own finitely many labeled incidence slots such as the two diagonals of a plaquette; every specified finite region admits one global integer-coordinate chart; adjacent cells exist at every specified position; no bounded container or completed infinite totality is postulated.",
+      "independent_price": [
+        "spatial dimension three",
+        "cubical incidence",
+        "global orientation and coordinate chart",
+        "undefined-boundary doctrine"
+      ],
+      "failure_condition": "A required physical carrier cannot be represented on a finite cubical cell complex, or an inequivalent substrate architecture is adopted without a successor amendment."
+    },
+    {
+      "id": "P2",
+      "name": "global ordinal clock and temporal existence",
+      "tag": "[AXIOM, v3]",
+      "statement": "There is one global tick order n in N_0 with first tick zero and no postulated final tick. Every physical record has a birth tick and an expiry tick that is either realized later or remains undefined while it persists. Local clocks are recurrent material processes counted against the global order; a C3 or C4 state permutation is not the global tick itself.",
+      "independent_price": [
+        "one global succession",
+        "first tick",
+        "temporally indexed physical existence",
+        "global-tick/local-clock distinction"
+      ],
+      "failure_condition": "A complete v3 dynamics requires more than one fundamental time order or a timeless physical record."
+    },
+    {
+      "id": "P3",
+      "name": "finite ontic carrier and ternary manifestation",
+      "tag": "[AXIOM -- strict-discrete successor, v3]",
+      "statement": "Every microscopic cell record belongs to a finite alphabet. The complete selected site record contains one ternary actuality slot, one local C3 layer, and a 384-channel binary Hodge/C4/polarity exclusion bank, so site actuality is a surjective many-to-one readout onto {-1,0,+1}. No real or complex amplitude, phase-space coordinate, flux vector, or latency scalar is ontic.",
+      "independent_price": [
+        "finite alphabet on each cell dimension",
+        "distinguished ternary manifestation quotient",
+        "no primitive continuum"
+      ],
+      "finite_alphabet_required": true,
+      "a9_scope": "A9 is the exact minimum for one blank plus independent C4 phase and Z2 polarity on relation ownership slots. R1-v2 selects A0=T x C3 x {0,1}^384, A1=A9^2, A2=A9^4, and A3=singleton; the field bank has one exclusion bit per complete Hodge/C4/polarity channel. The selection reopens if a mandatory gate requires another type.",
+      "failure_condition": "The required dynamics cannot be represented without an infinite-precision microscopic register or a primitive continuum type."
+    },
+    {
+      "id": "P4",
+      "name": "Moore-bounded local causality",
+      "tag": "[AXIOM -- causal ceiling, v3]",
+      "statement": "One tick may depend only on complete records in the closed radius-one cubic neighborhood at the preceding tick. Moore-26 is the maximum site dependency support, not the forced active interaction stencil.",
+      "independent_price": [
+        "finite range one",
+        "previous-tick dependence",
+        "Moore causal ceiling"
+      ],
+      "failure_condition": "A controllable physical influence or required microscopic update exceeds the declared one-tick dependency hull."
+    },
+    {
+      "id": "P5",
+      "name": "one state-complete homogeneous transaction law",
+      "tag": "[AXIOM -- LAW SELECTION; INSTANTIATED BY SELECTED REFERENCE LAW, v3]",
+      "statement": "One complete global update X_{n+1}=Phi(X_n) is built from one finite local rule phi and one explicit conflict-free schedule. The same target-blind rule applies at every location and tick and is covariant under unbroken substrate symmetries. Every seed, controller, context record, or pseudorandom state used by the dynamics is part of X_n. The selected law contains at least one named genuinely many-to-one expiry transition; distinctions not transferred into surviving physical records cease to exist ontically, so reversibility may be sector-local but is not global.",
+      "independent_price": [
+        "determinism",
+        "one-law closure",
+        "spatial and temporal homogeneity",
+        "substrate covariance",
+        "explicit update schedule",
+        "fundamental non-injectivity",
+        "record-conditioned memory",
+        "sector-scoped reversibility"
+      ],
+      "instantiated": true,
+      "instantiation": "docs/theory/01_reference/SPEC_V3_COMMON_ACTION_PHI_R2_R5_v2.md",
+      "executable_reference": "scripts/proofs/proof_v3_common_action_phi_v2.py",
+      "requires_explicit_expiry_map": true,
+      "expiry_map": "A uniquely admitted phase-2 Hodge packet is absorbed into its targeted blank SC reserve. Eight normal/hand presentations collapse to the same bound A9 output; phase, polarity, one work token, and the carrier line survive while arrival sign, normal, and hand expire.",
+      "failure_condition": "No complete finite local rule and conflict-free schedule can satisfy the v3 carrier, locality, named-expiry, and recovery contracts; the selected law is globally bijective; or an alleged expiry retains the lost distinctions in an undeclared carrier."
+    }
+  ],
+  "closure_contract": {
+    "status": "[DEFINITION / ADMISSIBILITY RULE -- not an additional physical postulate]",
+    "primitive_tuple": "F3=(K,N0,{A_k}_{k=0}^3,m,Phi)",
+    "statement": "The exhaustively declared primitive tuple is the complete v3 ontology. Every continuous, probabilistic, geometric, or sector-specific physical object must be a defined finite-resolution readout, history functional, or controlled completion of finite Phi histories with a stated error and stability contract.",
+    "reason_not_postulate": "The rule adds no carrier, state, relation, or dynamics. It makes explicit the semantic consequence of declaring the primitive tuple exhaustive and prevents unlisted downstream primitives from being relabeled as emergence.",
+    "forbidden_rule_inputs": [
+      "physical alpha",
+      "Born weights",
+      "desired outcomes",
+      "particle masses or catalog identifiers",
+      "continuum metric or lensing targets",
+      "undeclared replay tape"
+    ],
+    "required_derived_targets": [
+      "continuous flux and conjugate momentum",
+      "non-tautological action or history functional",
+      "physical preparation measure and event probabilities",
+      "matter and material clocks",
+      "electromagnetic field and operational coupling",
+      "gravity, light response, and geometry",
+      "observer and measurement representations"
+    ],
+    "failure_condition": "A claimed v3 sector requires an independently primitive field, action, measure, selector, coupling, metric, or particle catalog."
+  },
+  "carrier_inventory": {
+    "version": 2,
+    "status": "R1-closed-for-selected-R5-capable-v3-carrier",
+    "specification": "docs/theory/01_reference/SPEC_V3_FINITE_CARRIER_INVENTORY_R1_v2.md",
+    "verifier": "scripts/proofs/proof_v3_finite_carrier_inventory_v2.py",
+    "active_relation_set": "C18 = 3 unoriented SC lines plus 6 unoriented FCC face-diagonal lines; Moore26 remains the causal ceiling",
+    "collision_table_sha256": "D0BB71DBED7938ED286E1D6D91A16700DA31F4550E83B2FB3580CCC347B2BD25",
+    "primitive_payloads": {
+      "T": {
+        "definition": "{-1,0,+1}",
+        "cardinality": 3
+      },
+      "A9": {
+        "definition": "T^2 = blank disjoint-union (C4 phase x Z2 polarity)",
+        "cardinality": 9,
+        "readouts": [
+          "occupation n",
+          "capacity c=1-n",
+          "polarity epsilon",
+          "C4 phase (U,V)"
+        ]
+      },
+      "C3_layer": {
+        "definition": "local collision layer ell in Z3",
+        "cardinality": 3,
+        "readouts": [
+          "clock-indexed collision family address"
+        ]
+      },
+      "field_channel_bank": {
+        "definition": "one binary exclusion slot for each (six SC tangents x four perpendicular axial normals x two hands x four C4 phases x two polarities)",
+        "channel_count": 384,
+        "cardinality": "2^384",
+        "readouts": [
+          "binary channel occupation",
+          "C4 phase and polarity from channel label",
+          "directed polar tangent",
+          "axial face normal",
+          "pseudoscalar handedness"
+        ]
+      }
+    },
+    "cell_alphabets": {
+      "A0_site": {
+        "factorization": "T x C3 collision layer x binary exclusion bank on 384 complete field channels",
+        "cardinality": "9*2^384",
+        "owner": "one site",
+        "manifestation_readout": "m(s,ell,bank)=s"
+      },
+      "A1_bond": {
+        "factorization": "A9(primary) x A9(reserve-response companion)",
+        "cardinality": 81,
+        "owner": "one unoriented SC edge"
+      },
+      "A2_plaquette": {
+        "factorization": "A9(primary diagonal+) x A9(companion diagonal+) x A9(primary diagonal-) x A9(companion diagonal-)",
+        "cardinality": 6561,
+        "owner": "one oriented square plaquette"
+      },
+      "A3_cube": {
+        "factorization": "singleton blank",
+        "cardinality": 1,
+        "owner": "one cube"
+      }
+    },
+    "ownership_constraints": [
+      "one complete payload occupies at most one named slot",
+      "every field token is owned by one site/channel exclusion slot with no queue",
+      "SC and FCC primary/reserve pairs are separately owned by their minimal enclosing edge or labeled plaquette diagonal",
+      "one companion per relation prevents a hidden reverse-transaction selector",
+      "no packet identity, serial number, unbounded history, replay tape, real register, or hidden random seed is stored"
+    ],
+    "reopen_condition": "A successor amendment is required if the exact rule or a mandatory physical closure requires any carrier not factored by the declared A0 through A3 alphabets."
+  },
+  "selected_phi": {
+    "version": 2,
+    "status": "R2-R5-closed-at-declared-scope-for-selected-reference-law",
+    "specification": "docs/theory/01_reference/SPEC_V3_COMMON_ACTION_PHI_R2_R5_v2.md",
+    "executable_reference": "scripts/proofs/proof_v3_common_action_phi_v2.py",
+    "synchronous_cases": [
+      "unique phase-2 field-channel absorption into a blank SC relation reserve",
+      "frozen layer-covariant two-record cotangent collision within each polarity bank",
+      "shared-edge Hodge/C4 internal tick and one-hop exclusion-channel streaming",
+      "phase-0 A9 primary/reserve ownership crossing under even endpoint field parity",
+      "manifestation-dependent C4 half-turn on outgoing field channels",
+      "balanced-mod-3 site actuality reduction of oriented primary-relation sources"
+    ],
+    "schedule": "one synchronous radius-one map: every relation pair has one writer, every occupied field channel has one local collision output and one streaming destination, and every site actuality is one incidence reduction; opposing absorption proposals fail closed",
+    "expiry": "eight Hodge normal/hand presentations collapse to one bound A9 reserve while the token/work count is conserved",
+    "r4_witnesses": [
+      "one-hop finite propagation",
+      "period-eight reciprocal manifestation/withdrawal",
+      "localized one-relation material clock",
+      "exact oriented primary-source/current continuity"
+    ],
+    "r5_recovery": {
+      "scope": "real divergence-free vacuum flux sector on finite periodic regions",
+      "modes": "two transverse electric-magnetic polarization pairs",
+      "speed": "1/6 lattice units per global tick",
+      "action": "quadratic real transverse lattice wave action with spatial coefficient 1/36, up to an unfixed overall positive scale",
+      "one_macrostep_error_bound": "(9/2)*kappa^2*exp(3*kappa) for |k|<=kappa after three ticks",
+      "not_closed": [
+        "charged local Gauss pole",
+        "source/action normalization or physical coupling",
+        "finite-amplitude nonlinear slow-manifold protection",
+        "Lorentz/common-cone recovery with matter",
+        "gravity or lensing"
+      ]
+    }
+  },
+  "ontic_primitives": [
+    "oriented 3D cubical cells and incidence",
+    "global integer tick order",
+    "finite cell alphabets",
+    "ternary manifestation quotient",
+    "radius-one causal support",
+    "one finite homogeneous deterministic rule Phi and schedule",
+    "genuine expiry map and surviving physical records"
+  ],
+  "not_ontic_primitives": [
+    "real-valued flux J",
+    "real-valued latency L",
+    "continuous phase space",
+    "Lagrangian or Hamiltonian",
+    "Hilbert or potentiality algebra",
+    "Born probability",
+    "Lorentzian metric or Einstein equations",
+    "physical alpha or another coupling",
+    "particle and mass catalog"
+  ],
+  "not_inherited_as_bedrock": [
+    "FC-0",
+    "FC-1",
+    "FC-2 metric and proper-time clause",
+    "FC-3",
+    "FC-W",
+    "ACT-1",
+    "primitive continuous J",
+    "primitive latency L",
+    "v2 FC-CA1 through FC-CA7"
+  ],
+  "re_homed": [
+    {
+      "source": "FC-2 arrow clause",
+      "destination": "P5 selected non-injective expiry"
+    },
+    {
+      "source": "D=3 selected-type price",
+      "destination": "P1 single architecture price"
+    },
+    {
+      "source": "FC-3",
+      "destination": "methodological doctrine pending operational falsifier"
+    },
+    {
+      "source": "FC-W",
+      "destination": "quarantined empirical alpha-sector bridge"
+    }
+  ],
+  "ratification_blockers": [
+    "R1 complete finite carrier inventory",
+    "R2 exact local law Phi and conflict-free schedule",
+    "R3 explicit first many-to-one expiry map and surviving ledgers",
+    "R4 one-law nontriviality: propagation, reciprocal manifestation/expiry, localized recurrence, and source/current ledger",
+    "R5 blocked wave/action recovery with finite-region errors",
+    "R6 microscopic target firewall"
+  ],
+  "ratification_status": {
+    "R1": "closed for selected R5-capable carrier v2; conditional reopen if a mandatory gate needs a new type",
+    "R2": "closed for selected exact synchronous reference Phi v2",
+    "R3": "closed by exact eight-to-one Hodge-frame expiry with conserved A9 token/work ledger",
+    "R4": "closed at ratification minimum: propagation, reciprocal manifestation, localized recurrence, and source/current continuity from the same coupled Phi",
+    "R5": "closed for the real divergence-free vacuum flux-wave sector with two transverse modes, speed 1/6, quadratic blocked lattice action, and explicit finite-region infrared error bounds",
+    "R6": "closed by the operational/dataflow firewall certificate: active carrier, rule, preparation, and branch selection cannot read prohibited physical targets or recovery outputs"
+  },
+  "branch_guards": [
+    "No v1 or v2 tag moves.",
+    "No compatibility result is a v3 derivation until Phi is instantiated.",
+    "No primitive continuum may be relabeled as emergence.",
+    "No physical alpha, Born weight, desired outcome, mass, or metric target may select the microscopic rule.",
+    "The five headings carry no numerological significance; independent clauses and total rule description length are the Occam price.",
+    "Primitive closure is an admissibility rule, not a sixth physical postulate."
+  ]
+}

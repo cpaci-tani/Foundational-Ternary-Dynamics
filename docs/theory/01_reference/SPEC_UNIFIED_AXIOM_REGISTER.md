@@ -14,6 +14,21 @@
 > plus globally contextual selector are explicit adoptions/selections. DEC-1
 > remains true historically for v1 and is superseded only inside the v2 branch.
 
+> **Ratified v3 successor boundary (FTD-1023, 2026-08-24).**
+> [`SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md`](SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md)
+> defines the active strict-discrete/common-action branch with five
+> rewritten postulates P1--P5 plus a non-postulate primitive-closure/recovery
+> contract. Native expiry is carried inside P5's selected non-injective law;
+> block emergence is an admissibility rule rather than a sixth physical input.
+> It does not rewrite this frozen v1 register or the ratified v2 overlay;
+> those remain provenance/reference branches.
+> The selected v2 finite carrier and common-action reference law now close
+> draft blockers R1--R5 conditionally, including a scoped transverse vacuum
+> wave/action recovery. The operational/dataflow firewall also closes R6. All
+> stated technical ratification gates therefore pass at their declared scopes.
+> Owner ratification is FTD-1023; the stronger physical recovery programme
+> remains open.
+
 ---
 
 ## §0 · Scope and interpretive constraints

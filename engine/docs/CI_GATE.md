@@ -31,14 +31,24 @@ Runs in well under 2 minutes. Composition (labeled in `engine/CMakeLists.txt`,
 | `ui_snapshot_publisher` | Immutable snapshot publisher: retained checksum integrity under concurrent publish/acquire |
 | `ui_command_boundary` | N4: real queue drain equals a direct between-tick toggle; Step does not tick inside the drain |
 | `ui_journal_replay` | Journal replay reproduces TermToggles and the six knobs; `applied` is the post-clamp engine value |
+| `ui_imgui_headless` | Phase 1a L1: OpenMP-neutral ImGui init, hooked IM_ASSERT, draw-data invariants, ### window name, deterministic re-draw, DPI font×ScaleAllSizes matrix |
+| `native_desktop_cli` | `--no-ui` is parsed and does not change sim flags; `--help` is parse-only |
+| `ui_scene_rect` | Phase 1b: scene-rectangle clamp, client-to-scene transform, camera aspect, pointer/keyboard arbitration helpers |
+| `ui_theme_parse` | Phase 3a: Graphite theme parse (empty/unknown/valid) and apply_theme |
+| `ui_workspace` | Phase 3a: workspace round-trip and corrupt-file fallback |
+| `ui_window_name` | Phase 3a: composed `Title###id` window names stay stable |
+| `ui_shell_draw` | Phase 3a: dockspace shell draws from a synthetic snapshot without a device |
+| `ui_boot_snapshot` | Session publishes a snapshot at construction, starts paused, GPU is the option default |
+| `ui_harness_commands` | Inject/clear/pair apply at the tick boundary while paused and recapture; harness commands do not coalesce |
 
 ## What the fast gate does NOT cover
 
 - **GPU parity** — run `ctest -L gpu` on the WSL2 build (`engine/build_wsl`).
   Windows-native CUDA is compile-check only (see CLAUDE.md).
 - **`ui_observer_neutrality_gpu` / `ui_fixed_flush_order_gpu` (N5)** — interactive CUDA characterization. Run on WSL2 / RTX 5090, never on Windows-native CUDA for multi-tick suites.
-- **D3D12 debug-observability and DPI hidden-window tests** — owner-rig
+  - **D3D12 debug-observability, overlay, capture, ImGui-in-D3D12, and DPI hidden-window tests** — owner-rig
   `interactive` Windows device tests (`d3d12_debug_observability`,
+  `d3d12_overlay_once`, `d3d12_capture_lifecycle`, `ui_imgui_d3d12`,
   `native_desktop_dpi_awareness`). Hosted CI excludes `interactive` and
   compensates the two previously unit-covered D3D checks
   (`d3d12_adapter_selection`, `d3d12_shared_buffer`).

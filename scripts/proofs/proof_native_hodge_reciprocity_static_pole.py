@@ -339,6 +339,7 @@ def native_cpp_record() -> dict[str, object]:
 def main() -> int:
     prereg = REPO / (
         "docs/theory/10_eft_program/preregistrations/"
+        "common_action_mechanics_reciprocity/"
         "PREREG_NATIVE_HODGE_RECIPROCITY_STATIC_POLE_v1.md"
     )
     assert sha256(prereg) == PREREG_SHA

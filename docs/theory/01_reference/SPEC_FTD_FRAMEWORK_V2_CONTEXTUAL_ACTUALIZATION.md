@@ -1,5 +1,10 @@
 # SPEC — FTD Framework v2: Contextual Actualization
 
+> **Branch status (FTD-1023, 2026-08-24):** retained as the ratified v2
+> contextual reference branch. The active strict-discrete constitution is
+> [`SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md`](SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md).
+> V3 does not inherit the potentiality net as bedrock.
+
 **Status:** `[RATIFIED SUCCESSOR CONSTITUTION — FORMAL REFERENCE GATES PASS]`  
 **Programme row:** `FTD-0825`  
 **Date:** 2026-08-09  

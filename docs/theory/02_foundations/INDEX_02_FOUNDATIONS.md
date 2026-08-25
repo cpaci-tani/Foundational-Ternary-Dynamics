@@ -8,11 +8,12 @@
 
 ## Read first
 
-1. [FOUND_AXIOM_ZERO.md](FOUND_AXIOM_ZERO.md) — the single foundational axiom proposed to replace the five postulates; everything from state and position.
-2. [FOUND_THE_FIRST_DISTINCTION.md](FOUND_THE_FIRST_DISTINCTION.md) — why "i exists" is the right starting axiom.
-3. [FOUND_BLIND_DERIVATION_CHAIN.md](FOUND_BLIND_DERIVATION_CHAIN.md) — the 13-step path from i to α⁻¹, every step tagged.
-4. [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) — how dimensions, time, and gravity emerge from relations.
-5. [FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md](FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md) — the boundary theorem: the line between what a discrete ontology fixes and what it does not.
+1. [FOUND_FTD_ONTOLOGY_EMERGENCE_SYNTHESIS.md](FOUND_FTD_ONTOLOGY_EMERGENCE_SYNTHESIS.md) — complete ontology-to-mathematics-to-physics synthesis; separates the active ratified v3 ontology from retained v1/v2 branches.
+2. [FOUND_AXIOM_ZERO.md](FOUND_AXIOM_ZERO.md) — historical/proposed mathematical seed; not a replacement for the ratified v3 P1--P5 register.
+3. [FOUND_THE_FIRST_DISTINCTION.md](FOUND_THE_FIRST_DISTINCTION.md) — why "i exists" is the right starting axiom.
+4. [FOUND_BLIND_DERIVATION_CHAIN.md](FOUND_BLIND_DERIVATION_CHAIN.md) — the 13-step path from i to α⁻¹, every step tagged.
+5. [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) — how dimensions, time, and gravity emerge from relations.
+6. [FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md](FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md) — the boundary theorem: the line between what a discrete ontology fixes and what it does not.
 
 ---
 
@@ -92,6 +93,7 @@
 
 | File | Tag | Purpose |
 |---|---|---|
+| [FOUND_FTD_ONTOLOGY_EMERGENCE_SYNTHESIS.md](FOUND_FTD_ONTOLOGY_EMERGENCE_SYNTHESIS.md) | [SYNTHESIS after FTD-1023] | Complete conversation-informed account of FTD ontology and physics emergence. Treats v3 finite carriers/common action as active bedrock while retaining v1 continuous flux and v2 contextual potentiality as reference branches; covers clocks, matter, records, continuum completion, Gaussian-history Born intuition, action, coupling, gravity, Bell, and falsifiers without promoting physical claims. |
 | [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) | historical/interpretive atlas | The γ → ϖ → M → π → G* constant chain; not the canonical α derivation (see re-eval note). |
 | [FOUND_THE_RATIO_AND_THE_PRODUCT.md](FOUND_THE_RATIO_AND_THE_PRODUCT.md) | [CONJECTURE] | Why physics followed the Euler-reflection product (π) and what the ratio (G*) contains. |
 | [FOUND_GSTAR_SCALE.md](FOUND_GSTAR_SCALE.md) | [CONJECTURE] | The G*ⁿ scale as the symmetric algebra of h¹(E_i) — the ring of physics. |
@@ -142,4 +144,4 @@ The section-schema/four-walls lineage (FTD-0357 → FTD-0520) and the relational
 
 ---
 
-91 active docs in this cluster (+ 0 archived).
+93 active docs in this cluster (+ 0 archived).

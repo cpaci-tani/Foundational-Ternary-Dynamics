@@ -1,10 +1,10 @@
 # Open Items Tracker — Index
 
-Generated companion to `TRACKER_OPEN_ITEMS.md` (83 item headings). **Do not edit by hand** — regenerate with `python scripts/theory/build_open_items_index.py`.
+Generated companion to `TRACKER_OPEN_ITEMS.md` (85 item headings). **Do not edit by hand** — regenerate with `python scripts/theory/build_open_items_index.py`.
 
 This is a *navigation aid*, not a source of truth. `TRACKER_OPEN_ITEMS.md` remains canonical; open/closed status here is read mechanically from each item's own heading text (a `CLOSED`/`RETRACTED`/`not counted as open` marker), not reclassified. Where this index and the tracker's prose disagree, the tracker wins.
 
-**41 open, 42 closed/retired** (of 83 item headings).
+**42 open, 43 closed/retired** (of 85 item headings).
 
 ---
 
@@ -37,7 +37,7 @@ This is a *navigation aid*, not a source of truth. `TRACKER_OPEN_ITEMS.md` remai
 
 ## §2 Theory — derivations (`docs/theory/03_derivations/`)
 
-**9 open / 14 total.**
+**10 open / 16 total.**
 
 | # | Item | Status | Open? |
 |---|---|---|---|
@@ -52,6 +52,8 @@ This is a *navigation aid*, not a source of truth. `TRACKER_OPEN_ITEMS.md` remai
 | 2.9 | [Variational proof](TRACKER_OPEN_ITEMS.md#29-variational-proof-2-open) | **2 `[OPEN]`** | **OPEN** |
 | 2.10 | [QM from lattice](TRACKER_OPEN_ITEMS.md#210-qm-from-lattice-closed-declined-2026-06-10) | CLOSED DECLINED 2026-06-10 |  |
 | 2.10a | [Contextual-actualization successor](TRACKER_OPEN_ITEMS.md#210a-contextual-actualization-successor-4-open-v2-branch-ftd-0825) | **4 `[OPEN]` (v2 branch, FTD-0825)** | **OPEN** |
+| 2.10b | [Strict-discrete common-action successor](TRACKER_OPEN_ITEMS.md#210b-strict-discrete-common-action-successor-closed-ratified-ftd-1023-0-open-constitutional-gates) | **[CLOSED — RATIFIED FTD-1023; 0 open constitutional gates]** |  |
+| 2.10c | [V3 five-sector physical recovery](TRACKER_OPEN_ITEMS.md#210c-v3-five-sector-physical-recovery-5-open-active-candidate-extension-programme-no-ledger-rows) | **5 `[OPEN]` (active candidate-extension programme, no LEDGER rows)** | **OPEN** |
 | 2.11 | [K_comp volumetric shell](TRACKER_OPEN_ITEMS.md#211-k_comp-volumetric-shell-2-open) | **2 `[OPEN]`** | **OPEN** |
 | 2.12 | [Single-file 1-`[OPEN]` items in derivations](TRACKER_OPEN_ITEMS.md#212-single-file-1-open-items-in-derivations) | — | **OPEN** |
 | 2.13 | [Mechanism C](TRACKER_OPEN_ITEMS.md#213-mechanism-c-g_c-from-bcc-bridge-operator-closed-negative-archived) | `g_c` from BCC bridge operator — **CLOSED NEGATIVE (archived)** |  |

@@ -1,5 +1,10 @@
 # SPEC — The FTD Framework, Version 1 (the Constitution)
 
+> **Branch status (FTD-1023, 2026-08-24):** retained as the v1
+> provenance/reference constitution. The active strict-discrete postulates are
+> now [`SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md`](SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md).
+> Nothing in this historical branch is promoted by the v3 adoption.
+
 **Tag:** `[SYNTHESIS]` (re-states canonical claims at their canonical tags) **+ five `[AXIOM]`-class framework-commitment declarations (FC-0, FC-1, FC-2, FC-3, FC-4)** + `[SELECTION]` (the register and decomposition choices made here).
 **LEDGER:** FTD-0254 (this document); FC-1 = FTD-0255; FC-2 = FTD-0256 (metric-half scope amended 2026-08-13, FTD-1000 — CLK-1 fold, tag unchanged); the two-field formalization = FTD-0257; the deviation ledger = FTD-0258; FC-3 = FTD-0304; the carrier-narrowing theorem = FTD-0314; FC-4 (FC-W) = FTD-0315; the CLK-1/FC-2 fold = FTD-1000.
 **Status line (read first):** **Nothing is promoted by this document.** `x₊ = 1/α` (FTD-0013) stays `[STRONGLY MOTIVATED CONJECTURE]`; MC-T4.3 stays a `[FOUNDATIONAL OBSTRUCTION]`; FTD-0208 stays `[CLOSED NEGATIVE]`; the algebraic spine count (7 theorem-grade + 2 honestly tiered) is unchanged. The new content of this document is a set of **declarations** — choices of model, not derivations — plus the assembly of existing results into one constitution.

@@ -87,6 +87,7 @@ the canonical document is right and the downstream document is the drift to fix.
 | Tier | Document | Authoritative for | Answers |
 |------|----------|-------------------|---------|
 | Bedrock | [07_assessment/core_ledgers/LEDGER.md](07_assessment/core_ledgers/LEDGER.md) | The **epistemic tag** of every load-bearing claim (`FTD-NNNN` rows) — `[THEOREM]`, `[DERIVED]`, `[SMC]`, `[PARAMETRIC]`, `[CLOSED NEGATIVE]`, … — with tag history and dependencies. | "What is claim X's status, and how did it get there?" |
+| Constitution | [01_reference/SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md](01_reference/SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md) | The **active primitive type/law declarations** of FTD v3 and the boundary between bedrock and recovery targets (FTD-1023). V1/v2 remain reference branches. | "What does active FTD assume, and what must it recover?" |
 | Bedrock | [07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md](07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) | The **truth tier** (T1–T5) of the ~dozen claims that carry the framework (`OT-N.M` rows). Co-canonical with the LEDGER — the LEDGER wins on the *tag*, this tracker wins on the *tier*. | "How solid is X on the 5-tier bedrock scale?" |
 | Theorems | [01_reference/SPEC_ALGEBRAIC_SPINE.md](01_reference/SPEC_ALGEBRAIC_SPINE.md) | The **theorem statements** — which numbered results are theorem-grade, which are honestly tiered below it, and the exact statement + proof obligation of each. | "Is X actually a theorem, and what precisely does it say?" |
 | Roll-up | [01_reference/SPEC_DOCTRINE_LEDGER.md](01_reference/SPEC_DOCTRINE_LEDGER.md) | A **single-page status map** of the three above. It introduces no claim of its own; every row points at a Bedrock/Theorems source. If it disagrees with one, it is the drift. | "What is the whole status map at a glance?" |
@@ -107,8 +108,10 @@ paper under `docs/papers/`. Downstream documents **cite** canonical status; they
 **define** it. A `[THEOREM]` tag printed in a derivation doc is a copy of the LEDGER
 tag — not an independent grant of theorem status.
 
-**Conflict rule.** When two documents disagree about a claim, the more-canonical one is
-correct and the other is a drift site. Reconciliation copies the canonical status into
+**Conflict rule.** LEDGER tags take precedence over every constitution; the active v3
+constitution takes precedence on current primitive membership; branch constitutions
+govern only their own branches. Otherwise, when two documents disagree about a claim,
+the more-canonical one is correct and the other is a drift site. Reconciliation copies the canonical status into
 the drifted document — it never promotes or demotes the claim itself.
 
 ---

@@ -4,6 +4,14 @@
 
 **Status:** `[REFERENCE / PARTIAL ENGINE MAP]`. Algebraic identities and individual field-sector results retain their row-level tags; the particle causal budget is `[AXIOM + measured implementation conformance]`. FTD-0405 remains the double-obstruction result for the unmodified direct colour tick. After explicit owner authorization, FTD-0406 installs a default-off **selected** CPU v1 pair Hamiltonian, collision-free energy/momentum projection, local string T00/stress and `T00/C_SPEED²` latency source. That closes the common strong-energy contract only on its frozen domain; a complete backend-independent action remains `[OPEN]`.
 
+> **One-action boundary (2026-08-23):** This reference action remains a
+> sectoral/engine map. It is not the requested single generative action for
+> manifestation, matter, clocks, electromagnetic coupling, gravity, and
+> contextual actualization. The first explicitly priced common-carrier
+> candidate is
+> [`SCOPE_PHASE_COMPLETE_BOND_TRANSACTION_ACTION_v1.md`](../10_eft_program/scopes_and_specs/SCOPE_PHASE_COMPLETE_BOND_TRANSACTION_ACTION_v1.md).
+> That scope adopts nothing and leaves every physical closure gate open.
+
 ---
 
 ## §1. Axioms

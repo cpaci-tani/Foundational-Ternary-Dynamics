@@ -35,7 +35,7 @@ How {N_c, N_base, b_3, N_eff} and the coefficient 16 arise as structural invaria
 | File | Tag | Purpose |
 |---|---|---|
 | [DERIV_CUBOCTAHEDRAL_INTEGERS.md](DERIV_CUBOCTAHEDRAL_INTEGERS.md) | [THEOREM] | {3,4,7,13} uniquely determined by cuboctahedron geometry; resolves the integer-circularity problem. |
-| [DERIV_EXISTENTIAL_UNIT.md](DERIV_EXISTENTIAL_UNIT.md) | [THEOREM] §1–8, [CONJECTURE] §9 | The 3³ lattice as minimal complete lattice; integers sum to N_c³, selecting N_c = 3. |
+| [DERIV_EXISTENTIAL_UNIT.md](DERIV_EXISTENTIAL_UNIT.md) | [THEOREM] §1–8, [CONJECTURE] §9, [CLOSED NEGATIVE] former distinct-irrep=b₃ reading | The 3³ lattice as minimal complete lattice; integers sum to N_c³, selecting N_c = 3. The 2026-08-23 exact correction replaces cuboctahedral T1g by T2g; 13+13, 4A1g, and 3T1u survive. |
 | [DERIV_DUAL_DERIVATION_OF_16.md](DERIV_DUAL_DERIVATION_OF_16.md) | [THEOREM] | Coefficient 16 from \|Aut(E_i)\|² and the O_h axis-stabilizer index — same number, two routes. |
 | [DERIV_STABILIZER_DECOMPOSITION.md](DERIV_STABILIZER_DECOMPOSITION.md) | [THEOREM] | Stab_{O_h}(e₃) ≅ D₄ × ℤ/2; bridges CM-curve Aut(E_i) to cubic lattice symmetry. |
 

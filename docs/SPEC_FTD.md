@@ -5,7 +5,9 @@
 **Document Classification:** Framework overview / readable orientation — **not** a status authority (defers to the canonical hierarchy in [`docs/theory/META_STRUCTURE.md`](theory/META_STRUCTURE.md))
 
 > ** NAVIGATION:** For the single-page status map across all 14 doctrine sectors with canonical tags, see [`docs/theory/01_reference/SPEC_DOCTRINE_LEDGER.md`](theory/01_reference/SPEC_DOCTRINE_LEDGER.md) (FTD-0145 [SYNTHESIS]).
-> ** CONSTITUTION:** The standalone-framework constitution — postulates + framework commitments (FC-0/FC-1/FC-2) + calibrations + the computational-EFT catalog + the deviation-prediction spine — is [`docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md`](theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md) (FTD-0254 [SYNTHESIS] + [AXIOM]-class declarations; promotes nothing). On any conflict: LEDGER > constitution > this overview.
+> ** ACTIVE CONSTITUTION:** The ratified strict-discrete constitution is [`docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md`](theory/01_reference/SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md) (FTD-1023 `[AXIOM — OWNER-RATIFIED SUCCESSOR CONSTITUTION]`). V1 and v2 remain provenance/reference branches. On any conflict: LEDGER > active v3 constitution > branch constitutions > this overview.
+>
+> ** V3 ONTOLOGY NOTICE:** Primitive continuous `J`, a continuum action, Born weights, a Lorentzian metric, and particle fields are not v3 bedrock. They are effective recovery targets. Much of this long overview still catalogs the v1 engine and historical continuum constructions; compatibility with those constructions is not a v3 derivation.
 >
 > ** STALE-TAG NOTICE:** This document's body uses an older version-marker style, and several epistemic tags in the prose below are **STALE** relative to the canonical ledger. The mathematical CONTENT remains mostly accurate, but tags must be read against the LEDGER. The corrected status of the load-bearing items:
 >
@@ -511,17 +513,15 @@ The following tags indicate the epistemic status of claims throughout this docum
 
 The simulation is built on the following axiomatic postulates. These are **not derived**; they define the model.
 
-### POSTULATE 1: Discrete Space (Undefined-Boundary Cubic Lattice)
-Space is represented as a 3D cubic lattice **L** that is **uncontained and has no defined boundary**: at every specified position, the six axis-adjacent (and 26-Moore-adjacent) sites exist. This is neither a bounded container nor a claim that the substrate is a completed-infinity totality. Finitude belongs to specified or realized configurations and computations — finite in extent or support as a cloud, star, or galaxy is finite — while the substrate itself has no enclosing wall. Each lattice point is called a "voxel."
+### POSTULATE 1: Oriented Cubic Record Complex
+The substrate is an oriented three-dimensional cubical cell complex containing sites, bonds, plaquettes, and cubes. Every specified finite region admits one global integer-coordinate chart, and adjacent cells exist at every specified position. No bounded outer container and no completed infinite totality are postulated. Spatial dimension three, cubical incidence, global orientation, and the undefined-boundary doctrine are selected here exactly once.
 
 *Motivation*: Discreteness enables finite computation. The uncontained, undefined-boundary stance avoids both an enclosing boundary and the further commitment to a completed-infinity lattice (no ℤ³ as a single completed object, no load-bearing L → ∞ limits). Algebraic identities (e.g. G\* via Γ(1/4)) are computable to arbitrary finite precision and remain admissible; appeals to "the whole lattice as one object" are not.
 
-### POSTULATE 2: Discrete Time
-Time advances in discrete steps called "ticks." The tick counter t ∈ **N** serves as a global clock.
+### POSTULATE 2: Global Ordinal Clock and Temporal Existence
+The substrate has one successor order `n ∈ N₀`, with a first tick `n=0` and no postulated final tick. Every physical record has a birth tick and an expiry tick that is either realized later or remains undefined while the record persists. The global tick never dilates. A local clock is a recurrent material process counted against this global order; proper time and time dilation are recovery properties of such processes, not additional fundamental times.
 
-*Note*: This implies absolute simultaneity within the simulation, which differs from relativistic physics.
-
-### LATTICE  PHYSICAL CALIBRATION (electron-primary default)
+### EFFECTIVE PHYSICAL CALIBRATION (v1/engine benchmark; not a v3 postulate)
 
 Predictions in lattice units convert to physical units through a minimal set of imported dimensional constants. The framework's **default gauge is electron-primary** (FTD-0137 §4.5; full treatment [`FOUND_ELECTRON_PRIMARY_GAUGE.md`](theory/02_foundations/FOUND_ELECTRON_PRIMARY_GAUGE.md)):
 
@@ -544,10 +544,12 @@ This is the same epistemic position as every effective field theory's matching t
 
 **Reference map.** The full dimensionless  dimensional bridge — the seven algebraic-spine theorems, the four dimensionless physical predictions (α, N_c, m_μ/m_e, m_τ/m_e), the three calibration declarations theorem-enforced by FTD-0059 + FTD-0096 (`a_phys ≡ ℓ_P`, `t_phys = ℓ_P/(√3·c)`, `K_B = m_e`), and one worked dimensional application (m_e in MeV) — is catalogued in `docs/theory/01_reference/SPEC_DIMENSIONAL_MAP.md` (rendered) and `docs/theory/01_reference/dimensional_map.json` (canonical data). When drafting papers or replying to reviewers about whether a claim is dimensionless or calibration-conditional, cite the map entry by id.
 
-### POSTULATE 3: Ternary States (J-primary, s as manifestation; values grounded in Axiom 0)
-Each voxel v ∈ **L** carries a flux field J(v, t) ∈ ℝ³ (the dispositional layer) and a discrete state s(v, t) ∈ {i², 0, |i²|} = {−1, 0, +1} (the manifestation layer). **J is primary; s is the action of J via the Genesis threshold rule** (§3.3): when |J(v, t)| crosses the manifestation threshold K_B, the void voxel manifests as s = ±1 according to the sign of the flux divergence; otherwise s = 0. Thus s is not an independent field — it is the discrete observable layer that records when J's local intensity crosses K_B.
+### POSTULATE 3: Finite Ontic Carriers and Ternary Manifestation
+Every microscopic record on every cell belongs to a finite alphabet. Site actuality is a surjective, generally many-to-one readout `m:A₀→{−1,0,+1}`. The ternary value is manifestation, not the complete microscopic state. No real or complex amplitude, continuous flux vector, phase-space coordinate, or latency scalar is ontic in v3. Smooth fields may exist only as finite-resolution block summaries or controlled completions of finite histories.
 
-**Grounding via Axiom 0 (FTD-0128):** the state space is the real projection of `Z[i]^× ∪ {0}` (the unit group of Gaussian integers extended by the additive identity). Numerical values `{−1, 0, +1}` are algebraic consequences of Axiom 0 ("i exists") via `s = i²` plus the additive identity, not independent settings. The `{s, 0, |s|}` notation makes the polarity-magnitude pairing of the two non-zero states explicit: they are not arbitrary independent integers but a `(value, magnitude)` pair generated by `i²`. The voxel is the invariant lattice substrate; state assignment varies per tick; "infinite potential" content per non-zero state is carried by the continuous flux field `J ∈ ℝ³`. Axiomatic-footprint consequence: three previously-arbitrary numerical settings are now derivable from an existing axiom. See [`docs/theory/02_foundations/FOUND_TERNARY_STATE_FROM_I.md`](theory/02_foundations/FOUND_TERNARY_STATE_FROM_I.md).
+The selected v3 reference carrier uses finite A9 phase/polarity/occupancy records and a finite cell-factor inventory. That inventory is a constitutional selection, not a theorem that two trits exhaust nature.
+
+**Historical v1 grounding (not a v3 postulate):** v1 read the ternary alphabet through `Z[i]^× ∪ {0}` and paired it with primitive `J ∈ R³`. V3 retains the ternary manifestation codomain but does not inherit primitive `J` or the claim that the Gaussian reading forces the physical carrier. FC-0 may reappear only as a derived finite-phase representation or a separately priced interpretation.
 
 | State | Label | Interpretation (Speculative) |
 |-------|-------|------------------------------|
@@ -555,9 +557,14 @@ Each voxel v ∈ **L** carries a flux field J(v, t) ∈ ℝ³ (the dispositional
 | +1 | Positive | Manifested entity (matter-like; J crossed K_B with positive divergence) |
 | -1 | Negative | Manifested entity (antimatter-like; J crossed K_B with negative divergence) |
 
-**Why this is one postulate, not two:** the flux field J is the dispositional content of the void substrate (Postulate 1); the ternary state s is the manifestation projection of J via the Genesis rule. The graded-monism table below makes the dependence explicit. Treating s as primary and J as separate would double-count: J's existence is implicit in the void's dispositional character, and s is definitionally the threshold-projection of J, not an independent observable.
+**Historical v1 rationale:** the following graded-monism language describes the v1 continuous-flux branch. Under v3, dispositional flux must be reconstructed from finite relational histories and is not a primitive companion field.
 
-### The Void as Dispositional Substrate
+### The Void as Dispositional Substrate — Historical v1 Branch Only
+
+> **Not active v3 ontology.** This subsection preserves the former
+> continuous-`J` interpretation as provenance. Under P3, active v3 has only
+> finite ontic records; any dispositional flux must be recovered as a block or
+> history readout and may not be used as microscopic state.
 
 The void (state 0) is not "empty space"—it is a **null substrate awaiting activation**:
 
@@ -580,23 +587,24 @@ The void (state 0) is not "empty space"—it is a **null substrate awaiting acti
 
 This is **graded monism**: one substance (void), with dispositions as modes of that substance, and manifestations as actualized modes.
 
-The flux is not "merely epistemic"—it is ontic but dispositional, not substantial.
+On the historical v1 branch, flux is not "merely epistemic"—it is ontic but
+dispositional, not substantial. That sentence does not apply to v3.
 
-### POSTULATE 4: Local Causality
-Updates to voxel v at tick t depend only on the state of v and its 26 neighbors (Moore neighborhood) at tick t-1.
+### POSTULATE 4: Moore-Bounded Local Causality
+During one global tick, a cell update may depend only on complete finite records in its closed radius-one cubic neighborhood at the preceding tick. Moore-26 is a maximum dependency support, not a theorem that all 26 neighbors interact or carry equal weights. The active shells and orbits are selected by Postulate 5's law. The dependency hull is not automatically physical light speed.
 
-*Consequence*: Information propagates at most 1 lattice unit per tick. This defines the simulation's "speed of causality" C = 1.
+### POSTULATE 5: One State-Complete Homogeneous Transaction Law
+There is one complete update `X_{n+1}=Phi(X_n)`, constructed from one finite local transaction rule and one explicit conflict-free schedule. Once the complete state is supplied, the next state is unique. Every seed, controller, context record, or pseudorandom state used by an implementation is part of `X_n`; nothing stochastic acts from outside the actual ontology.
 
-### POSTULATE 5: Determinism
-Given complete initial conditions, the evolution is deterministic. Apparent randomness arises from sensitivity to unobserved sub-lattice structure (epistemic, not ontic).
+The same target-blind law applies at every location and tick and is covariant under unbroken substrate symmetries. Its selected reference instantiation contains a named genuinely many-to-one expiry: distinctions not transferred into surviving physical records cease to exist ontically. Reversible sectors may occur, but the complete law is not globally reversible.
 
-*Caveat*: The implementation uses pseudo-random number generation for manifestation probability. This is a computational convenience; the model assumes underlying determinism.
+**Primitive-closure contract (not a sixth postulate):** the tuple consisting of the cell complex, global tick, finite alphabets, manifestation readout, and `Phi` exhausts v3 bedrock. Continuous fields, action, probability, matter, couplings, clocks, and geometry count as v3 results only when supplied with explicit finite-history readouts and recovery/error statements.
 
 ## 1.2 Formal Axiomatic Foundation
 
 > *Merged from SPEC_THE_COMPLETE_PROOF_RIGOROUS.md (v2.0)*
 
-The five postulates above define the simulation. Beneath them lies a deeper axiomatic structure from which the ternary ontology can be *motivated* (though the postulates remain the operational foundation):
+The five postulates above define the active v3 ontology. The older A1/A2 construction below is retained as historical mathematical motivation; it is not part of the v3 primitive tuple and does not force the selected carrier or `Phi`.
 
 **Axiom A1 (First Distinction):** 0 = (+1) + (−1)
 
@@ -617,10 +625,11 @@ Self-reference — the existence of self-observing systems — cannot be derived
 
 ## 1.3 What These Postulates Exclude
 
-- Continuous spacetime
-- Superposition of states (voxels are always in exactly one state)
-- Non-local influences
-- True ontological randomness
+- a primitive continuous field, phase space, action, metric, or probability law;
+- an unbounded microscopic register or hidden replay tape;
+- controllable influence outside the Moore dependency hull;
+- stochastic actualization from outside the complete state; and
+- independent sector laws inserted beside `Phi` and relabeled as one action.
 
 These exclusions represent modeling choices, not claims about physical reality.
 
@@ -2010,25 +2019,25 @@ F(v) = F_grav + F_elec + F_mag + F_strong + F_weak
 
 | ID | Statement | Status |
 |----|-----------|--------|
-| DEF.1 | Space is a 3D cubic lattice with no defined boundary (axis-adjacent neighbours exist at every specified site; no completed-totality commitment) | Postulated |
-| DEF.2 | Time is discrete ticks | Postulated |
-| DEF.3 | States are {-1, 0, +1} | Postulated |
-| DEF.4 | Flux is R³-valued | Postulated |
-| DEF.5 | C = 1 voxel/tick | Postulated |
-| DEF.6 | H = 1 (lattice unit) | Convention |
-| DEF.7 | KB = 0.511 | Parameter (matched to electron mass) |
+| P1 | One oriented 3D cubical record-complex schema with a global chart and undefined boundary | `[AXIOM — architecture selection]` |
+| P2 | One global successor order; every physical record has a birth tick and a realized or undefined expiry tick | `[AXIOM]` |
+| P3 | Every microscopic alphabet is finite; site manifestation is the many-to-one quotient `A₀→{−1,0,+1}`; no primitive continuum | `[AXIOM — strict-discrete successor]` |
+| P4 | One-tick dependencies lie in the preceding closed radius-one Moore neighborhood | `[AXIOM — causal ceiling]` |
+| P5 | One state-complete homogeneous target-blind finite law `Phi`, with explicit schedule and named noninjective expiry | `[AXIOM — law selection]` |
+| CLOSURE | `K`, the global tick, finite alphabets, manifestation readout, and `Phi` exhaust v3 bedrock | `[DEFINITION / ADMISSIBILITY RULE — not a sixth postulate]` |
+| CAL.1 | A lattice-to-physical unit map, including any seconds, length, mass, or coupling normalization | `[IMPOSED]` when used; not a postulate |
 
-## 21.2 Assumptions (Modeling Choices)
+## 21.2 Historical v1/engine assumptions (not active v3 postulates)
 
 | ID | Statement | Justification |
 |----|-----------|---------------|
-| ASSUMP.1 | Updates are local (26-neighbor) | Finite causality |
-| ASSUMP.2 | Flux encodes energy/momentum | Interpretive |
-| ASSUMP.3 | Genesis probability is exponential | Smoothness |
-| ASSUMP.4 | Divergence sign → polarity | Symmetry breaking |
-| ASSUMP.5 | Retarded positions for forces | Causality |
-| ASSUMP.6 | DECAY_RATE = α | Phenomenological targeting |
-| ASSUMP.7 | Triads are stable | Geometric stability |
+| ASSUMP.1 | All 26 neighbors actively interact | Historical engine choice; P4 supplies only a ceiling |
+| ASSUMP.2 | Primitive real flux encodes energy/momentum | Historical v1 interpretation; excluded by v3 P3 |
+| ASSUMP.3 | Genesis probability is exponential | Historical phenomenology; not in target-blind v3 `Phi` |
+| ASSUMP.4 | Divergence sign directly assigns polarity | Historical v1 mapping; polarity provenance is a v3 recovery/seed question |
+| ASSUMP.5 | Retarded positions are inserted into force laws | Historical engine implementation; not a v3 postulate |
+| ASSUMP.6 | `DECAY_RATE=alpha` | Phenomenological targeting; forbidden as a v3 microscopic input |
+| ASSUMP.7 | Triads are stable | Unproved interpretation; stable matter remains `[OPEN]` |
 
 ## 21.3 Claims (Require Validation)
 

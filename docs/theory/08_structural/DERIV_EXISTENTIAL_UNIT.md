@@ -1,14 +1,21 @@
 # The Existential Unit: The 3^3 Minimal Complete Lattice
 
-**Status:** [THEOREM] (Sections 1-8), [CONJECTURE] (Section 9)
-**Proof script:** `scripts/exploration/lattice_3x3x3_symmetries.py`
+**Status:** [THEOREM] (Sections 1-8, subject to the correction below), [CONJECTURE] (Section 9)
+**Proof scripts:** `scripts/exploration/lattice_3x3x3_symmetries.py`; exact independent correction certificate `scripts/proofs/proof_moore_bond_capacity_type_census.py`
 **Dependencies:** DERIV_MOORE_GAUGE_STRUCTURE, DERIV_CUBOCTAHEDRAL_INTEGERS, DERIV_STABILIZER_DECOMPOSITION
+
+> **Correction (2026-08-23):** The cuboctahedral even triplet is
+> \(T_{2g}\), not \(T_{1g}\).  Consequently the full permutation module
+> contains two copies of \(T_{2g}\), no \(T_{1g}\), and six distinct irrep
+> labels rather than seven.  The former identification “distinct irrep labels
+> \(=b_3=7\)” is closed negative.  The 13+13 parity split and the multiplicities
+> \(4A_{1g}\), \(3T_{1u}\) are unchanged.
 
 ---
 
 ## Abstract
 
-The 3x3x3 cubic lattice is the **minimal complete lattice**: the smallest periodic cubic lattice in which a center point possesses a full, non-self-intersecting 26-neighbor Moore neighborhood. We prove that the requirement for the four framework integers {N_c, N_base, b_3, N_eff} to sum to the lattice volume N_c^3 uniquely selects N_c = 3, given |Aut(E_i)| = 4 from the CM elliptic curve y^2 = x^3 - x. This self-consistency condition, combined with the O_h representation theory of the 27-site permutation representation, recovers all framework integers as structural invariants of the lattice geometry.
+The 3x3x3 cubic lattice is the **minimal complete lattice**: the smallest periodic cubic lattice in which a center point possesses a full, non-self-intersecting 26-neighbor Moore neighborhood. We prove that the requirement for the four framework integers {N_c, N_base, b_3, N_eff} to sum to the lattice volume N_c^3 uniquely selects N_c = 3, given |Aut(E_i)| = 4 from the CM elliptic curve y^2 = x^3 - x. The O_h permutation representation independently recovers the multiplicities 4 and 3 and the 13+13 parity split. It does not recover b_3 from the number of distinct irrep labels; that earlier identification was corrected on 2026-08-23.
 
 ---
 
@@ -88,7 +95,7 @@ The 27 lattice sites carry a permutation representation of the octahedral group 
 
 **Theorem 4.1.** The 27-dimensional permutation representation decomposes as:
 
-    27 = 4*A1g + A2u + 2*Eg + T1g + T2g + 3*T1u + T2u
+    27 = 4*A1g + A2u + 2*Eg + 2*T2g + 3*T1u + T2u
 
 where A1g, A2g, Eg, T1g, T2g, A1u, A2u, Eu, T1u, T2u are the 10 irreducible representations of O_h.
 
@@ -98,7 +105,7 @@ where A1g, A2g, Eg, T1g, T2g, A1u, A2u, Eu, T1u, T2u are the 10 irreducible repr
 |-------|-------|-------------------|
 | Center | 1 | A1g |
 | Octahedron | 6 | A1g + Eg + T1u |
-| Cuboctahedron | 12 | A1g + Eg + T1g + T1u + T2u |
+| Cuboctahedron | 12 | A1g + Eg + T2g + T1u + T2u |
 | Cube | 8 | A1g + A2u + T1u + T2g |
 
 **Theorem 4.2.** The multiplicities of the irreducible representations reproduce the framework integers:
@@ -107,7 +114,7 @@ where A1g, A2g, Eg, T1g, T2g, A1u, A2u, Eu, T1u, T2u are the 10 irreducible repr
 |----------|-------|-------------------|
 | Number of A1g (scalar) reps | 4 | N_base = |Aut(E_i)| |
 | Number of T1u (vector) reps | 3 | N_c |
-| Number of distinct irreps appearing | 7 | b_3 |
+| Number of distinct irrep labels appearing | 6 | No framework-integer identification |
 | Total dimension in triplet reps | 18 | 18-point stencil |
 | Number of singlet types (1-dim reps) | 5 | Number of FTD postulates |
 
@@ -119,7 +126,7 @@ where A1g, A2g, Eg, T1g, T2g, A1u, A2u, Eu, T1u, T2u are the 10 irreducible repr
 
 The 26-dimensional neighbor representation (27 minus center) splits under the inversion element of O_h:
 
-    Gerade (even): 3*A1g + 2*Eg + T1g + T2g = 3 + 4 + 3 + 3 = 13
+    Gerade (even): 3*A1g + 2*Eg + 2*T2g = 3 + 4 + 6 = 13
     Ungerade (odd): A2u + 3*T1u + T2u = 1 + 9 + 3 = 13
 
 **Theorem 5.1.** The Moore neighborhood splits as 13 + 13 = N_eff + N_eff under inversion parity.
@@ -214,7 +221,7 @@ Whether this minimal structure has physical significance beyond its mathematical
 | 3^3 is the minimal complete lattice | [THEOREM] | 1 |
 | Shell decomposition 1+6+12+8 = 27 | [THEOREM] | 2 |
 | N_c = 3 uniquely from self-consistency | [THEOREM] | 3 |
-| O_h irrep decomposition with framework integers | [THEOREM] | 4 |
+| Corrected O_h irrep decomposition; 4 A1g, 3 T1u, and 13+13 retained; distinct-irrep=b_3 identification closed negative | [THEOREM]/[CLOSED NEGATIVE] | 4-5 |
 | 13+13 parity split = N_eff + N_eff | [THEOREM] | 5 |
 | Vieta coefficients e_1 = 3^3, e_2 = 3^5 | [THEOREM] | 6 |
 | Stabilizer of cuboctahedron = |Aut(E_i)| | [THEOREM] | 7 |

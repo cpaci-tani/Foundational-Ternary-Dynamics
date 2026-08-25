@@ -396,3 +396,46 @@ the local current that realizes it:
 A positive answer would begin to derive the gearbox between the substrate's
 clock hardware and its fuel supply. A negative answer would price the reserve
 field as an additional adopted physical type.
+
+### Subsequent unbooked carrier result (2026-08-24)
+
+The preregistered
+[C4 field-packet reserve-current successor](../common_action_mechanics_reciprocity/THEOREM_C4_FIELD_PACKET_RESERVE_DENSITY_CURRENT_AND_ATOMIC_CLOCK_DEBIT_BOUNDARY_v1.md)
+answers the finite carrier/interface part conditionally. Under the already
+selected C4-trivial field metric and phase-parity half-admission, the outgoing
+Maxwell packet has a pointwise nonnegative finite density, exact Moore-local
+antisymmetric current, finite-domain boundary flux, retained phase-complete
+inverse, and atomic whole-packet ownership debit. Packet counts realize
+equation (2) exactly, with $\Phi$ represented by explicit boundary crossings.
+
+The locked census passes 2,046,451 exact checks, Outcome B. It does not promote
+this row or close the native-action boundary: carrier metric/admission,
+absorption into the common clock, and field/clock scale compliance remain
+selected. The successor sharpens the next gate to a local reciprocal
+absorption generator. If $d$ packets of energy $\Gamma$ maintain one clock
+quantum $\omega_0I_*$, the required but unforced compliance is
+
+\[
+ \chi_{\rm EM}={\Gamma\over I_*}={\omega_0\over d}.       \tag{21}
+\]
+
+No value of either side is derived or compared with a target.
+
+### Subsequent unbooked reciprocal-absorption result (2026-08-24)
+
+The preregistered
+[packet/clock/recoil absorption successor](../common_action_mechanics_reciprocity/THEOREM_RECIPROCAL_PACKET_CLOCK_RECOIL_ABSORPTION_GENERATOR_AND_GRAVITY_SOURCE_BOUNDARY_v1.md)
+selects one type-2 generating function that realizes the admitted packet debit
+as physical clock action plus material recoil. It is exactly symplectic,
+energy conserving, translation-charge exchanging, and history invertible.
+For a quadratic body,
+
+\[
+ \omega\Delta I=d\Gamma+K(P)-K(P+p).                   \tag{22}
+\]
+
+Complete local energy ownership is therefore continuous across the seam,
+which conditionally preserves the scalar gravity source. The locked result is
+Outcome B and remains unbooked. It does not promote FTD-0999: the trigger,
+canonical packet momentum, inertia, clock/action scale, finite microscopic
+lift, tensor stress, and native action remain selected or open.

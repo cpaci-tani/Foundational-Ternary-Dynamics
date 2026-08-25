@@ -4430,6 +4430,478 @@ The v1 FC-1 closure above remains historical and is not reopened. The v2 branch
 explicitly adopts measurement independence and pays for nonlocal contextuality;
 failure of any constitution stop condition archives v2 as closed negative.
 
+### 2.10b Strict-discrete common-action successor — **[CLOSED — RATIFIED FTD-1023; 0 open constitutional gates]**
+**Files:** `SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md`,
+`SPEC_V3_FINITE_CARRIER_INVENTORY_R1_v2.md`,
+`SPEC_V3_COMMON_ACTION_PHI_R2_R5_v2.md`,
+`strict_discrete_common_action_register_v3.json`,
+`proof_v3_strict_discrete_postulate_register.py`,
+`proof_v3_finite_carrier_inventory_v2.py`,
+`proof_v3_common_action_phi_v2.py`, and
+`proof_v3_target_firewall.py`. The v1 R1/Phi documents are retained as
+superseded construction provenance.
+
+The 2026-08-24 owner-ratified Occam rewrite states five v3 postulates. Native expiry and
+physical memory are part of P5's selected non-injective law, not a separately
+counted P6; primitive closure/block emergence is a constitutional
+admissibility rule, not a separately counted P7. No carrier, rule, R1--R6
+status, or open physics count changed in this consolidation.
+
+- **V3-R1 — [CLOSED FOR SELECTED V3 CARRIER; not counted as open]:** the
+  R5-capable inventory is `A0=T*C3*{0,1}^384`, `A1=A9^2`, `A2=A9^4`, and
+  singleton `A3`, with unique exclusion/incidence ownership, explicit
+  readouts, no queue/serial/replay register, a frozen collision-table hash,
+  and 25/25 exact checks. R1 automatically reopens if another mandatory gate
+  requires a new microscopic type. This closes a carrier selection, not a
+  uniqueness theorem.
+- **V3-R2 — [CLOSED FOR SELECTED REFERENCE LAW; not counted as open]:** the
+  exact synchronous `Phi` gives one writer per relation, directed destination
+  port, and site incidence reduction; opposing absorptions fail closed. It is
+  homogeneous, translation covariant, Moore local, deterministic, and has no
+  hidden scheduler. Included in the 32/32 exact rule certificate.
+- **V3-R3 — [CLOSED FOR SELECTED REFERENCE LAW; not counted as open]:** eight
+  distinct Hodge normal/hand presentations absorb into one bound A9 reserve.
+  Phase, polarity, one token/work unit, and carrier line survive; arrival
+  sign, normal, and hand expire. No inverse tape is retained.
+- **V3-R4 — [CLOSED AT RATIFICATION MINIMUM; not counted as open]:** the same
+  coupled `Phi` gives one-hop propagation, period-eight reciprocal
+  manifestation/withdrawal, a localized one-relation proto-clock, and exact
+  source/current continuity. This is not stable matter or Maxwell recovery.
+- **V3-R5 — [CLOSED FOR TRANSVERSE VACUUM SCOPE; not counted as open]:** the
+  exact cotangent collision/Floquet certificate gives two divergence-free real
+  transverse field pairs at speed `1/6`; the resulting quadratic lattice
+  action has spatial coefficient `1/36`, and the three-tick infrared remainder
+  is bounded by `(9/2) kappa^2 exp(3 kappa)` with a finite-step telescoping
+  bound. Charged Gauss, source normalization/coupling, and nonlinear
+  slow-manifold protection remain stronger physics gates.
+- **V3-R6 — [CLOSED BY OPERATIONAL/DATAFLOW CERTIFICATE; not counted as
+  open]:** active microscopic inputs contain no `alpha`, Born weights/outcomes,
+  particle masses/catalog, continuum metric/lensing target, recovery spectrum,
+  or undeclared replay/random tape. The certificate freezes the carrier hash,
+  audits generator imports/AST/data reads, separates recovery outputs from rule
+  inputs, and enforces one-way rule-to-recovery dependency. This is not a
+  uniqueness or historical-ignorance claim.
+
+The v3 document is the ratified active constitution (FTD-1023). All R1--R6
+technical gates pass at their declared scopes. Ratification is a governance
+adoption, not a physical closure, and is not counted as an `[OPEN]` physics
+item. V1 and v2 remain provenance/reference branches.
+
+### 2.10c V3 five-sector physical recovery — **5 `[OPEN]` (active candidate-extension programme, no LEDGER rows)**
+**Scope:** `SCOPE_V3_FIVE_SECTOR_RECOVERY_PROGRAM_v1.md`.
+
+- **V3-GAUSS — [OPEN; pure-bound charged full-tick kinematics exact]:** the
+  existing carrier supports dressed sources with `div E=Q`,
+  `Delta Q+div j=0`, and `Delta E=-j`. The charged Phi-v3 candidate now adds a
+  state-only conflict-free radius-one schedule, one-hop endpoint transport,
+  repeated circulation-framed plaquette deformation, and exact R5-vacuum
+  inactivity (25/25; 5,760 packet, 1,728 source, 288 endpoint, 192 frame, and
+  9,984 nearby-pair rows). It is not canonical Phi. Divergence-preserving
+  relaxation, reciprocal work, and the charged massless static pole remain
+  open; an isolated four-cycle cannot supply the pole by Laurent regularity.
+  An exact successor seam uses two existing opposite-polarity field slots as
+  a neutral C12 rotor. Repeated source tokens then give unit Gauss flow,
+  Dirichlet-Poisson residual `8/N`, and current-gradient error `8/(3N)`,
+  conditionally selecting the large-domain `1/Lambda` history pole (16/16).
+  An `R4`-offset opposite-polarity marker then supplies a carrier-complete
+  neutral sampler: unique state-only roles, a zero-field radius-one move, and
+  exact reproduction of the Green histories (9/9; 294,912 local and 27,648
+  cubic rows). Charged A9/string composition, rotor/sink integration,
+  autonomous preparation/renewal, and field writeback remain unclosed prices.
+  A cross-sector event successor now gives one prepared bright/recovery
+  transaction explicit A2-to-SC/source provenance, exact Gauss/continuity,
+  and a matched neutral gravity-source handoff (16/16). It does not integrate
+  the source into homogeneous charged traffic or generate the charged pole.
+  The Phi-v4 event-halo candidate now integrates that source into a
+  conflict-free homogeneous radius-one schedule on prepared exact halos:
+  6,000 overlap placements, all 147,840 pointer addresses, and all 36
+  direction/sign/layer source packings pass (17/17). This closes prepared-halo
+  arbitration, not autonomous charged traffic, relaxation, or the pole.
+- **V3-COUPLING — [OPEN; exact bare metric, physical normalization still
+  free]:** uniform finite field-bank counting gives `Cov(E,B)=16 I6`,
+  packet-coordinate covariance `I6/4`, Hessian `4 I6`, and unit-packet bare
+  cost two (20/20). Conditional identification gives
+  `chi_EM=4 lambda_common` and `alpha_native=6 lambda_common/pi`, but the same
+  transition admits every positive multiplier. The dynamics selects neither
+  the measure nor equality of counting and dynamical Hessians, and no
+  integrated action-priced charged static residue exists yet.
+  The rotor seam fixes the unit-token Green shape but not its action energy,
+  so the common multiplier remains free.
+  A reciprocal finite-clock successor narrows the momentum-neutral branch to
+  the exact ladder `alpha_native=3w/(dT)`, where `w` is clock winding, `T`
+  global period, and `d` complete-packet debit (10/10). Tick refinement leaves
+  the ratio invariant. A triplet-clock successor now derives the material
+  cadence itself: eight C4 quarter-turns in sixteen global ticks give
+  `w/T=1/8` and `omega_M=pi/4`, reducing the neutral ladder to `3/(8d)` and
+  the recoil branch to `3/[8(d-r)]` (12/12). Phi-v12 assembly has zero packet
+  debit and cannot supply `d`. A prepared paired-packet successor now fixes
+  the minimum moving-current-neutral port debit: every outgoing complete
+  packet has unit energy and current `r/6`, so exactly two opposite packets
+  are necessary and sufficient. Their atomic reserve-to-clock-port transfer
+  gates every clean triplet COMMIT presentation and has an exact retained-
+  payload inverse over 36,864 rows (13/13). Thus `d=2` on this selected branch;
+  with `omega_M=pi/4`, it gives `chi_port=pi/8` and conditional ladder value
+  `3/16`, closing the Occam-minimum port negative as physical fine-structure
+  normalization. Selected symmetric stress cancels the pair momentum while
+  retaining axial stress, and a selected common coefficient makes the rotor
+  static/free estimators equal. The finite map still does not derive field
+  Noether charge, trigger/refill, the static/free coefficient tie, or a
+  protected interacting residue; physical normalization remains `[OPEN]` and
+  target-driven selection remains forbidden.
+  An exact
+  transaction census now proves that absorption plus all 37,632 repair rows
+  force `e_F=e_A1_SC=e_A2` in every homogeneous phase-blind additive invariant,
+  while FCC-A1 is the sole separate role:
+  `H=Gamma*(N_F+N_A1_SC+N_A2)+Eta*N_A1_FCC` (14/14). A target-blind selected
+  FCC-bond/A2-diagonal crossing on one C3 section is an exact source-neutral,
+  one-writer, signed-cubic finite permutation; adding it raises the exchange
+  rank to three and conditionally forces
+  `e_F=e_A1_SC=e_A1_FCC=e_A2` (12/12). Relative occupancy normalization is
+  therefore closed conditional on this selected bridge and additive ansatz.
+  The bridge lacks common-action provenance/Phi integration, and absolute
+  `Gamma`, the interacting blocked curvature/pole residue, native Noether
+  recoil, and the nonminimal action structure required after the `d=2` branch
+  closure remain free. The common event successor conserves the all-equal ray with
+  exact role delta `(8,1,0,-9)`, proving event-level composition but leaving
+  `Gamma` invisible. Its homogeneous halo successor converts both neutral
+  source packets from the same finite work reserve and has exact delta
+  `(32,1,0,-33)`, again conserving only the relative ray. `Gamma`, the
+  interacting Hessian, and the operational response ratio remain invisible.
+  The self-correcting triplet does not remove this degeneracy: all clean and
+  registered one-error states have the same occupancy vector `(6,3,0,0)`, its
+  isotropic source `-I/36` retains a free response multiplier, and its clean
+  packet debit is zero (13/13). A positive relational repair gap would require
+  exact work export with an independently underived coefficient.
+  A selected Phi-v5 prepared-sector successor now realizes the relative
+  transfer: three 33-symbol pending herald copies fit in the clear controller
+  pool, and every one of 2,256 registered errors changes one fixed-occupancy
+  A2 work token READY→EXCITED while restoring the body within two ticks. The
+  exact ledger is `1+0=0+1` and a busy port fails closed (12/12). This fixes
+  neither `epsilon_syn` nor the absolute field/source response multiplier, and
+  the EXCITED record has no causal export/reset law.
+  Physical coupling normalization therefore stays `[OPEN]`.
+- **V3-MATTER — [OPEN; recurrent proto-objects, atomic repair, prepared
+  radius-two symbol basin, and genesis-seeded triplet assembly exact; chart
+  origin, binding, and general stability open]:** the dressed source gives a covariant
+  288-state period-24 family. The charged frame gives a 24-state anchor family
+  on period-four orbits. Its original macro rejects all 37,632 registered
+  one-coordinate defects (13/13), but those states have unique exact parents
+  and the exact-frame code has minimum mixed-carrier distance 36. A selected
+  projection repairs the complete shell in one tick (10/10), establishing a
+  conditional kinematic basin. Its reversible successor gives all 37,632
+  defects disjoint syndrome cycles and any registered finite exact-object
+  survival horizon `H` (12/12). Minimum one-step syndrome capacity is 1,569
+  states: 11 bits, 7 trits, or four A9 registers. Finite bijectivity forbids a
+  permanent repair attractor; the alternative is genuine noninjective expiry.
+  An existing-carrier successor supplies 6,435 constant-weight syndrome
+  codewords using eighteen zero-`E/B` field records and gives every operational
+  syndrome a signed-cubic radius-one conveyor with exact inverse (12/12;
+  19,305 local and 75,312 covariance rows). A selected atomic successor now
+  maps all 37,632 defects Moore-locally to the exact next frame plus their
+  unique neutral syndrome, with an injective inverse and exact generalized
+  object+syndrome+work count. Its `0/1/2` output-work census is
+  `480/672/36,480`, and the defect index is cyclic-axis/charge-conjugation
+  covariant after the exact C4/C3 clock-section normalization (12/12). A second
+  successor places the work occupancy in two existing A2 A9 slots with full
+  phase/polarity, gives a 37,632-row finite bijection, and conserves a selected
+  equal-occupancy energy (11/11). The coupling census now forces its relative
+  field/SC-A1/A2 weights inside the additive phase-blind ansatz, and a selected
+  FCC/A2 bridge conditionally completes the all-role equality ray. Common-action
+  provenance and the absolute multiplier and reciprocal clock-debit work remain open.
+  A symmetry successor closes the prior reflection gap conditional on an
+  enlarged oriented-header chart: the existing ready header supplies the
+  missing polar repair normal, and all 1,569 codewords, 37,632 defect indices,
+  repair ports, A2 payloads, and exact outputs are full signed-cubic covariant
+  without a new type (12/12; 1,152 combined charts). Native formation/admission
+  of that chart, traffic arbitration, Phi integration, environmental survival,
+  scattering, and mass/dispersion remain open. The common event successor
+  proves that exact-apparatus, forward-repair, and retained-syndrome reverse-
+  repair admissions are state-disjoint across the full defect census, closing
+  one local collision but not formation or survival; no particle claim is
+  licensed. The event-halo successor adds a globally unique center code,
+  seventeen exclusion markers, and a retained prior-tick herald, closing
+  prepared-halo overlap arbitration without forming the frame or producing a
+  perturbative survival basin. An exact formation census then sharpens that
+  debt: the registered READY halo contains 567 occupied field records and its
+  active state 599. Conditional on the selected nonnegative all-equal
+  occupancy invariant, formation from a completely blank causal past is
+  impossible (13/13). Formation therefore requires a nonblank finite genesis
+  seed, causal boundary inflow, or explicit invariant replacement. A
+  prepared-sector successor now supplies the first explicit survival rule:
+  three disjoint orthogonal A9 relation clocks and three copied neutral center
+  heralds form a radius-one period-16 repetition code. Every one-register
+  valid-symbol substitution at every phase—1,488 exact cases—rejoins the clean
+  orbit within two ticks; the repair is noninjective, signed-cubic covariant,
+  and its mean capacity deficit is isotropic `-I/36` (12/12). This closes one
+  registered discrete perturbation basin, not genesis-seed assembly, positive
+  binding/work, occupancy loss/gain, multiple errors, traffic/collisions,
+  translation, mass/dispersion, or canonical-Phi integration. Stable matter
+  stays `[OPEN]`. A companion exact action boundary prevents overpromotion:
+  every clean/error state has role vector `(6,3,0,0)`, so the additive
+  occupancy defect rank is zero and the selected ray gives flat energy
+  `9 Gamma`. Positive relational syndrome energy requires exact work export
+  `W=epsilon_syn`, whose coefficient is free. The source shape `-I/36` also
+  retains a free response multiplier, and zero clean packet debit cannot
+  normalize the finite-clock ladder (13/13). Binding and coupling therefore
+  require a common relational curvature/work transaction rather than another
+  occupancy count. A selected Phi-v5 candidate now closes the relative
+  syndrome/work transaction on this prepared basin: all 2,256 registered
+  errors repair into one generic EXCITED A2 record with `h+w=1`, and a second
+  error fails closed while the port is busy (12/12). Error identity expires,
+  physical consequence survives. The coefficient, work export/reset, native
+  formation, general errors, motion, collisions, and mass remain open. A
+  Phi-v6 prepared successor now closes the registered motion subcase without
+  dropping that work record. The one-sided arm slab and existing polar header
+  give a homogeneous radius-one move of one SC hop per global tick. The clean
+  period-16 sector has an exact inverse on all 18,432 chart-phase states, and
+  all 2,256 Phi-v5 substitutions recover while moving with READY→EXCITED work
+  retained. Occupancy stays `(6,3,0,1)` and the rule is fully signed-cubic
+  covariant (15/15). Clean additive translation work is exactly zero. Native
+  formation, destination/multi-object collision arbitration, binding,
+  inertia, mass/dispersion, packet emission, canonical Phi integration, and
+  general environmental stability remained open at that stage. A selected
+  Phi-v12 successor now closes the first exact seed-to-body formation subcase:
+  conditional on one finite nonblank oriented genesis chart, three SC A9
+  owners, three neutral field-pair markers, and one A2 phase/work owner form
+  the exact Phi-v5 triplet in one Moore-local tick with occupancy
+  `(6,3,0,1)->(6,3,0,1)`. All sixteen clean logical seeds and 1,440 one-symbol
+  seed mutations pass; corrected rows retain one EXCITED work record while
+  detailed error identity expires. The branch is fail-closed and signed-cubic
+  covariant over 1,152 charts, and its output enters the period-16 clock
+  (14/14). Formation from blank remains forbidden. Origin of the oriented
+  chart, canonical-Phi provenance, positive binding, occupancy faults,
+  traffic/collisions, mass, and general environmental stability stay open.
+  A prepared five-copy successor now raises the repetition distance to five.
+  Five 33-symbol neutral registers consume 165 of the existing 170 clear
+  controller states; a sixth would require 198 and cannot fit at one site.
+  Every one- and two-position snapshot substitution—395,600 exact rows—rejoins
+  the period-16 clock within two ticks with retained A2 work level one or two
+  (14/14). The chart-relative five-direction dyad is `diag(2,2,1)`, not
+  isotropic. Quintet formation, positive binding/action scale, work
+  export/reset, occupancy and mid-transaction errors, multisite six-copy
+  realization, traffic, mass, canonical Phi, and general environmental
+  stability remain open.
+  A lean Phi-v7
+  successor now composes one physical neutral request, 24 explicit A2 reserve
+  occupancies, the Phi-v6 hop, the theorem-minimum two-packet motion source,
+  and READY→EXCITED work. All 18,432 chart/phase rows are radius-one and
+  signed-cubic covariant; delta `(24,0,0,-24)`, ledger `1+0=0+1`, and exact
+  absorption are verified (14/14). This closes reciprocal packet release on
+  the prepared image, not persistent matter. Native reserve refill, forward
+  work export/reset, full event-halo motion integration, moving repair under
+  traffic, positive binding/inertia, canonical Phi, and general environmental
+  stability remained open at that stage. Phi-v8 now closes prepared finite-
+  horizon source persistence without charging formation work on every hop.
+  Two future-parallel packet rails retain the one-time 24-A2 startup; one
+  neighboring A2 owner accepts the EXCITED body record by an exact swap, and
+  the reset triplet co-translates with both source packets through `4H`
+  prepared neutral router records. Every later hop has exact inverse, role
+  delta `(0,0,0,0)`, and zero A2 debit for arbitrary declared finite `H`
+  (14/14). Native router formation/recycling, packet/occupancy perturbation
+  repair, full-halo and multi-object traffic, positive binding/inertial action
+  curvature, canonical Phi, and general environmental stability remain open;
+  stable matter stays `[OPEN]`.
+- **V3-BORN — [OPEN; finite source-bank formation, protected persistent-click
+  apparatus, and prepared local bipartite no-signalling exact; formation,
+  reciprocal work, and paired laboratory routing open]:** on each of twelve v3 tangent/polarity ports, finite C4 counts give
+  `Z=(N0-N2)+i(N1-N3)` and compatible ordered-pair cardinality `|Z|^2`. The
+  same uniform bank measure gives the exact EM counting metric. But every
+  isolated charged cycle has a deterministic family/polarity label while
+  arbitrary convex mixtures of the six cycles remain invariant (18/18).
+  The neutral-rotor successor provides a target-blind `1/N` deterministic
+  frequency-convergence mechanism, but not native outcome-bank formation.
+  The reversible-conveyor theorem proves the general boundary: invariant
+  measures of any finite permutation are arbitrary mixtures of uniform cycle
+  measures and are unique iff the law is one transitive cycle. A prepared
+  Born mixer can therefore have exact time frequencies without selecting its
+  own preparation weight. The cubic-centralizer successor closes the naive
+  "make the full bank one cycle" escape: a transitive cycle has cyclic
+  centralizer, but the full signed-cubic action is faithful and nonabelian on
+  the 384-channel bank (12/12). A physical frame/seed, retained environment,
+  declared expiry basin, or nonfaithful symmetry quotient is therefore
+  required to select the operational component. A contextual successor now
+  supplies an explicit allowed route: an oriented apparatus chart orders all
+  384 channels, while existing zero-`E/B` pointer pairs plus A9 polarity run
+  fixed 384/385 coprime cycles. One reusable ternary detector gives a total
+  443,520-state permutation, one manifested event per compatible residual
+  pair, exact prepared `|Z|^2` frequencies, and heralded event-window bound
+  `<B/N` (15/15). The apparatus chart transforms with the frame rather than
+  commuting globally, so it respects the centralizer no-go. A selected
+  Phi-v13 successor now forms a finite bank from an actual retained source
+  history: an A9 source, eight fixed-occupancy A2 controller bits, one A2
+  cursor, and eight A2 reserve occupancies write eight physical field records
+  with tickwise delta field `+1`, A2 `-1`. All 4,096 histories, 32,768 inverse
+  ticks, 151 count vectors, 22,792 nontrivial normalized two-history rows, and
+  7,248 covariance rows pass; each formed bank has exact `M=|Z|^2` (12/12).
+  A prepared Phi-v14 successor now closes the finite apparatus protection and
+  persistent-record subgate. Three copies of each 384/385 pointer and three
+  detector trits use a two-layer majority wrapper; twelve fixed-occupancy A2
+  counters retain manifested outcomes. The 23-site Moore-block fixture passes
+  all 443,520 clean states and 884,754 one-copy substitutions. All 151
+  Phi-v13 source-formed bank classes write exact `|Z|^2`; one 147,892-step
+  cycle returns the live apparatus with 26 retained clicks, and the exact
+  reverse clears them (13/13). Source/controller/chart and apparatus
+  formation, bank/occupancy faults, reciprocal detector work/backreaction,
+  overlapping multi-block traffic, indefinite renewal, macroscopic
+  amplification, paired-trial routing, and canonical Phi remain open. The
+  selected Phi-v15 successor now supplies one explicit finite reference
+  measure. One raw A2 phase bank bijects with all 4,096 Phi-v13 histories; two
+  A2 owners form one exact 16,777,216-pair odometer. All 8,192 bank formations
+  and 65,536 inverse ticks pass. Its constant-deadline trial clock gives
+  `Cov(Re Z,Im Z)=(79/16)I2`, `E|Z|^2=79/8`, and exact Born normalization on
+  all 16,694,272 non-dark ordered history pairs (16/16). This closes a
+  selected transitive **reference time measure**, not the general laboratory
+  ensemble. Scheduler/source/reserve/chart formation and protection,
+  canonical-Phi provenance, cross-block routing, detector work/backreaction,
+  full-cycle memory export, state-specific preparation, amplification, and
+  Bell-correlation recovery remain open. A selected Phi-v16 successor now
+  retains the two-A2 scheduler address as one physical common-origination
+  record and convoys its two complete eight-record banks along opposite SC
+  routes. Existing A2 TRANSIT/ENDPOINT/DELIVERED owners give exact one-hop
+  motion, terminal handoff, role conservation, covariance, and inverse. All
+  8,192 banks, 16,384 local transactions, 1,208 route fixtures, and 22,801
+  remote-bank-independence rows retain the exact `N`, `Z`, and `|Z|^2` data
+  (13/13). This closes prepared owned causal routing, not source/corridor/
+  apparatus formation, canonical Phi, traffic and bank-fault protection,
+  physical settings, detector work, amplification, record export, or actual
+  Bell-correlation recovery. The
+  common event successor now
+  transfers each bright pointer token into actual Gauss/stress/gravity-source
+  records and retains the prepared `|Z|^2` count exactly. This closes isolated
+  source composition, not native preparation or physical no-signalling. The
+  event-halo successor preserves the same count through an exact 295,739-state
+  READY/HERALD/RECOVERY permutation and places every physical pointer address
+  inside the causal halo. It still consumes a prepared bank and reserve; it
+  supplies no native ensemble formation. A bipartite prepared-sector successor
+  now composes finite common-source sectors with two local native `|Z|^2`
+  banks. Source-independent complete cardinality makes both marginals and each
+  opposite-wing event sequence exactly independent of the remote setting;
+  setting/sector-dependent incomplete retention gives an exact `1/2→1/3`
+  sampled-drift control. All sixteen setting-independent deterministic local
+  tables have `S=±2`, so mixtures obey `|S|≤2` (12/12). Uncoupled context-
+  specific preparations without a physical record coupling do not define one
+  CHSH joint model. Native source/controller/chart formation, paired-trial
+  routing, apparatus formation, reciprocal work/backreaction, macro-amplification,
+  traffic/reset, and actual Bell-correlation recovery remain open.
+- **V3-GRAVITY — [OPEN; joint scalar/vector/STF carrier, common
+  blocked-history Green seam, and prepared one-fault packet protection exact;
+  autonomous constraint/tensor modes absent]:**
+  the dressed source carries charge-even stress `4(dd^T-I/3)`. One-record
+  stress supplies only diagonal `Eg`, but all 18,336 two-record composites span
+  the full rank-five `Eg+T2g` STF carrier and common-phase pairs span a
+  rank-ten C4 doublet. The selected collision changes exactly 192 pair tensors
+  per C3 layer (12/12 after the 128,499-check parent). A carrier-complete
+  neutral successor transports five independent STF payloads by radius-one
+  moves with zero additive `E/B`; their visit fields obey the componentwise
+  Dirichlet-Poisson bound and conditionally inherit the scalar `1/Lambda`
+  blocked-history pole (12/12). A constraint successor adds a rank-three
+  neutral polar-vector walker with exact radius-one covariance and
+  componentwise `1/Lambda` history seam. An exact algebraic-symbol witness
+  proves that instantaneous translation-invariant finite-range TT projection
+  is impossible because the projector denominator is nonremovable (12/12). A
+  joint successor now packages the scalar visit unit, five STF coordinates,
+  and three vector coordinates in one state-only recognizable ten-record
+  neutral packet. Its 34,560 exact signatures span rank nine; 1,296 local
+  moves and inverses plus 432 covariance rows pass, and all components inherit
+  one controlled blocked-history `1/Lambda` kernel (14/14). Separate carrier
+  composition is therefore closed. A prepared successor triples the complete
+  transaction on parallel rails and uses one fixed-occupancy A2
+  READ/COMMIT/work owner. Seven Moore-block sites suffice; all 1,296 clean
+  moves/inverses, 3,888 one-copy substitution rows, 432 covariance rows, and
+  every one of 2,088 finite-history fault ticks pass (13/13). Its visit measure
+  equals the clean parent measure exactly, so the same conditional common
+  `1/Lambda` kernel survives. This closes a finite packet-symbol basin, not an
+  autonomous tensor mode. Phi integration, native rail/source/sink formation,
+  rotor-background protection and work export, propagated scalar/vector
+  constraint dynamics and TT composition, interacting action/normalization,
+  universal stress coupling, common cone, and lensing remain open. The common event
+  successor selects two orbit-disjoint packets per charged source and proves
+  `T_++T_-=3S_d` and `2(v_++v_-)=3S_dq` with inverse and full cubic
+  covariance. That closes one prepared material-source coordinate handoff,
+  not a protected response or universal coupling. The homogeneous halo
+  successor now packs and schedules those two packets from the same finite A2
+  reserve in every direction/sign/layer. Exact recovery leaves no outgoing
+  field; persistent release costs 33 reserve occupancies per event unless a
+  causal refill enters. Tensor protection, universal response, and lensing
+  remain `[OPEN]`. A triplet-source successor now decomposes the selected
+  positive capacity-rest readout `I/36` into scalar `1/12`, zero vector, and
+  zero STF source. Six distinct cubic images of one existing joint packet sum
+  exactly to a pure scalar cycle; their deterministic history obeys residual
+  bound `2/(3N)` and conditionally yields `(1/12)/Lambda` (13/13). This closes
+  one prepared static matter-to-scalar Green seam and establishes exact tensor
+  silence at rest. The readout is not yet gravitational mass, and homogeneous
+  Phi formation/renewal, motion-generated stress, protected poles, universal
+  normalization, common cone, lensing, and nonlinear closure remain `[OPEN]`.
+  A discrete-motion successor conditionally classifies the source of an
+  admitted SC chord `u`: cubic symmetry fixes scalar, vector `u`, and STF
+  `3uu^T-I` shapes but leaves their coefficients independent. The selected
+  minimal chord second moment ties those coordinates. One joint packet is
+  exhaustively impossible; two existing packets realize the tied moment
+  minimally over all 48 signed-cubic charts. The `(1/12)`-weighted source has
+  even scalar/STF, odd vector, residual bound `4/(3N)`, and conditional common
+  `1/Lambda` response (16/16). Phi-v6 supplies the prepared chord, and a lean
+  Phi-v7 reciprocal successor now releases the exact two-packet kit from a
+  24-occupancy A2 reserve while moving the triplet and exciting the work port.
+  Exact absorption restores packets, reserve, request, work, and prior matter
+  state on all 18,432 rows; relative delta `(24,0,0,-24)` is conserved
+  (14/14). Phi-v8 then exports the work excitation to one neighboring A2
+  owner and co-translates the reset triplet plus both marked packets through
+  `4H` prepared neutral router records. Every later hop is a zero-debit exact
+  permutation with unchanged motion signature; local induction gives every
+  declared finite `H` (14/14). Thus prepared finite source persistence and
+  forward work reset are closed. Native rail formation/recycling, traffic and
+  general perturbative protection remained open at that stage. A finite
+  A2-memory successor now gives each measured SC edge one fixed-occupancy
+  4,096-state register and retains `N` in another. The certified radius-one
+  apparatus uses 108 edge owners plus one source owner; its instantaneous
+  records reproduce rotor currents and exact unit divergence. Every edge
+  obeys `|J_N-grad G_D|<=8/(3N)+8K_e/N`, so arbitrary initial rotor phases
+  differ by at most twice that bound; all 192 native phases pass at `N=37`
+  (15/15). This closes finite physical writeback and **initial-rotor-phase**
+  protection. It does not close malformed-router, collision, traffic,
+  overflow, or backreaction protection. Because A2 occupancy stays fixed,
+  the common relative occupancy action assigns zero delta to every memory
+  write. Native rail/apparatus formation and recycling, physical
+  stress/inertia identification, phase-sensitive reciprocal force/poles,
+  absolute universal residue, common cone, lensing, and nonlinear closure
+  remain `[OPEN]`.
+  A Phi-v9 prepared response-apparatus candidate now converts physical
+  `(C,N)` into exactly `|C|` finite pulses per `12N` ticks, hence average
+  probe impulse `-C/(12N)`. Each pulse writes equal-and-opposite
+  probe/reaction momentum, and the selected phase action
+  `p_P^2+p_R^2+W` conserves a horizon-only work reserve on every tick. Seven
+  fixed-occupancy A2 owners suffice; all 192 rotor phases inherit the exact
+  response bound at `N=37` (13/13). This closes reciprocal **impulse and work
+  bookkeeping** on a prepared component. It does not derive the phase action
+  from canonical Phi, return the reaction to source matter, compose the
+  momentum record with actual triplet acceleration, resolve multi-edge
+  traffic, or fix the absolute multiplier. Those physical force/pole debts
+  remain `[OPEN]`.
+  Phi-v10 then composes each carry pulse with the existing clean Phi-v6 body
+  hop. A prepared force-aligned triplet moves exactly `-C` edge cells per
+  `12N`-tick window, averages `-C*d/(12N)`, takes at most one hop per tick,
+  retains its clean occupancy, and has an exact combined inverse. All 192
+  rotor phases inherit the Green bound at `N=37` (10/10). This closes
+  **prepared mechanical drift**: the retained response changes a physical
+  matter position history. It does not close inertial acceleration. The
+  certificate explicitly leaves a nonzero momentum record in a subsequent
+  dark window and observes zero continuation hop. Native steering and
+  multi-edge vector composition, the momentum--velocity/clock map, reaction
+  return, formation, traffic, canonical Phi, scale, tensor modes, cone,
+  lensing, and nonlinear closure remain `[OPEN]`.
+  Phi-v11 now selects the exact 16-tick clean triplet recurrence as a finite
+  inertial denominator. One existing A2 phase owner gives exactly `|p|`
+  signed body hops per 16 ticks for every `|p|<=16`, and retained response
+  momentum continues through a later dark window. Matching the minimum
+  quadratic phase action to this cadence selects relative coefficient
+  `1/32`, gives `v=p/16`, and closes `F_bar=16a_bar` on the block variables.
+  All admitted momenta and all 192 rotor phases pass exact inverse/protection
+  checks (12/12). This closes a prepared **clocked inertia candidate**, not a
+  canonical or dimensional mass derivation. Native formation/steering,
+  reaction-body/source return, general momentum and relativistic saturation,
+  traffic/repair, canonical Phi, physical units, universal coupling, tensor
+  modes, cone, lensing, and nonlinear closure remain `[OPEN]`.
+
 ### 2.11 K_comp volumetric shell — **2 `[OPEN]`**
 **File:** `DERIV_KCOMP_VOLUMETRIC_SHELL.md`.
 

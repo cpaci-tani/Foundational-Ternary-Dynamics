@@ -1,6 +1,6 @@
 # LEDGER index — categorised claim map
 
-**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (941 claim rows). **Do not edit by hand** — regenerate instead.
+**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (942 claim rows). **Do not edit by hand** — regenerate instead.
 
 This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the single source of truth for claim status; where this index and the ledger disagree, **the ledger wins**.
 
@@ -15,7 +15,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | [Algebraic spine — master quadratic](#algebraic-spine-master-quadratic) | 18 | The polynomial x^2-16G*^2x+16G*^3, its roots, the coefficient 16, D=3, minimality/uniqueness scans, and the x+ = 1/alpha identification. |
 | [Algebraic spine — G*, CM curves, modular](#algebraic-spine-g-cm-curves-modular) | 41 | G* itself, lemniscatic/CM-curve theory, Chowla-Selberg, modular and quasi-modular values, the chi_-4 character, FQCR, Sym^k period algebra. |
 | [Algebraic spine — periods, Watson, transcendence](#algebraic-spine-periods-watson-transcendence) | 14 | Watson integrals, lattice Green-function periods, the native closure N, delta-independence, E1/E2 transcendence, the period-import frontier. |
-| [Framework — postulates & constitution](#framework-postulates-constitution) | 14 | P1-P5, the Framework Commitments (FC-0/1/2/3/W), the axiom register, calibrations, adoption-pricing rules. |
+| [Framework — postulates & constitution](#framework-postulates-constitution) | 15 | P1-P5, the Framework Commitments (FC-0/1/2/3/W), the axiom register, calibrations, adoption-pricing rules. |
 | [Framework — boundary, imports, consumption](#framework-boundary-imports-consumption) | 55 | The modulus/argument frontier, type-priority, the priced-import ledger, the consumption programme, act-counts, what the ontology cannot self-set. |
 | [Framework — audits, red-teams, reconciliation](#framework-audits-red-teams-reconciliation) | 25 | Adversarial audits, red-team remediation, retractions, tag-honesty and corpus-wide reconciliation passes, rigidity / look-elsewhere audits. |
 | [Quantum foundations](#quantum-foundations) | 19 | Born rule, measurement and the declined map M, CHSH/Bell, Spekkens, the deviation-prediction ledger, frame-relative projection. |
@@ -144,7 +144,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *P1-P5, the Framework Commitments (FC-0/1/2/3/W), the axiom register, calibrations, adoption-pricing rules.*
 
-**14 claims.**
+**15 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -162,6 +162,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0256` | AXIOM, SYNTHESIS, THEOREM, CLOSED_NEGATIVE | FC-2 — the arrow is native; global reversibility declined; Lorentzian metric emergent-IR + sector-scoped; space ⊥ time | L419 |
 | `FTD-0257` | SYNTHESIS, SELECTION, MEASURED, THEOREM, IMPOSED | Two-orthogonal-fields formalization — Flux ⊥ State primary pair; nested symplectic (q,p) quadrature pair; decompositions-not-dimensions | L420 |
 | `FTD-1000` | SUPERSEDED, SYNTHESIS | Does folding CLK-1 into FC-2's metric-half declaration correctly register an adoption rather than a derivation, and does it require disambiguating… | L1138 |
+| `FTD-1023` | AXIOM, SELECTION, SYNTHESIS, OPEN | Ratification of the FTD v3 strict-discrete common-action constitution and complete rewrite of P1--P5 | L1162 |
 
 ---
 
@@ -1256,12 +1257,12 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 |---|---:|
 | THEOREM | 433 |
 | CLOSED_NEGATIVE | 244 |
-| OPEN | 242 |
+| OPEN | 243 |
 | MEASURED | 185 |
-| SELECTION | 110 |
+| SELECTION | 111 |
 | DERIVED | 102 |
 | SMC | 84 |
-| SYNTHESIS | 68 |
+| SYNTHESIS | 69 |
 | NUMERICAL_FACT | 54 |
 | CONSTRUCTIVE | 48 |
 | FOUNDATIONAL_OBSTRUCTION | 43 |
@@ -1270,8 +1271,8 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 | IMPOSED | 33 |
 | CONJECTURE | 31 |
 | EXECUTION_INVALID | 30 |
+| AXIOM | 29 |
 | SELECTED_DYNAMICS | 29 |
-| AXIOM | 28 |
 | NO_GO | 23 |
 | PARAMETRIC | 20 |
 | RETRACTED | 20 |

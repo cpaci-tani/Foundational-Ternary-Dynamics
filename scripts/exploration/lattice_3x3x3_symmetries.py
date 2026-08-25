@@ -204,7 +204,7 @@ print("-" * 72)
 # (1 + 2 + 3 = 6) ✓
 #
 # For the cuboctahedron (12 edge-diagonal sites):
-# Permutation rep = A1g + Eg + T1g + T1u + T2u
+# Permutation rep = A1g + Eg + T2g + T1u + T2u
 # (1 + 2 + 3 + 3 + 3 = 12) ✓
 #
 # For the cube (8 corner sites):
@@ -212,9 +212,9 @@ print("-" * 72)
 # (1 + 1 + 3 + 3 = 8) ✓
 #
 # TOTAL 27-dim rep:
-# 4*A1g + A2u + 2*Eg + T1g + T2g + 3*T1u + T2u
-# = 4(1) + 1(1) + 2(2) + 1(3) + 1(3) + 3(3) + 1(3)
-# = 4 + 1 + 4 + 3 + 3 + 9 + 3 = 27 ✓
+# 4*A1g + A2u + 2*Eg + 2*T2g + 3*T1u + T2u
+# = 4(1) + 1(1) + 2(2) + 2(3) + 3(3) + 1(3)
+# = 4 + 1 + 4 + 6 + 9 + 3 = 27 ✓
 
 print(f"""
   The 27 sites decompose under O_h as:
@@ -223,22 +223,22 @@ print(f"""
   ---------------|-------|----------------------------------
   Center         |   1   | A1g
   Octahedron     |   6   | A1g + Eg + T1u
-  Cuboctahedron  |  12   | A1g + Eg + T1g + T1u + T2u
+  Cuboctahedron  |  12   | A1g + Eg + T2g + T1u + T2u
   Cube (2 tetra) |   8   | A1g + A2u + T1u + T2g
   ---------------|-------|----------------------------------
-  TOTAL          |  27   | 4*A1g + A2u + 2*Eg + T1g + T2g + 3*T1u + T2u
+  TOTAL          |  27   | 4*A1g + A2u + 2*Eg + 2*T2g + 3*T1u + T2u
 
   Counting by dimension:
     dim 1: 4*A1g + A2u = 5 singlets
     dim 2: 2*Eg = 4 (two doublets)
-    dim 3: T1g + T2g + 3*T1u + T2u = 18 (six triplets)
+    dim 3: 2*T2g + 3*T1u + T2u = 18 (six triplets)
     Total: 5 + 4 + 18 = 27 ✓
 
   FRAMEWORK NUMBERS IN THE DECOMPOSITION:
     Number of A1g (scalar) reps:     4 = N_base = |Aut(E_i)|
     Number of T1u (vector) reps:     3 = N_c
     Number of singlet types:         5 = number of FTD postulates
-    Number of distinct irreps used:  7 = b_3
+    Number of distinct irrep labels: 6 (no b_3 identification)
     Number of triplet reps:          6 = number of faces / SC neighbors
     Total dimensions in triplets:   18 = 6 + 12 = SC + FCC = 18-pt stencil!
 """)
@@ -340,11 +340,11 @@ print(f"""
   Remove the center: 27 - 1 = 26 = Moore neighborhood.
 
   The 26-dim rep decomposes as:
-    26 = 3*A1g + A2u + 2*Eg + T1g + T2g + 3*T1u + T2u
+    26 = 3*A1g + A2u + 2*Eg + 2*T2g + 3*T1u + T2u
        = (trivially: 27-dim minus center A1g)
 
   Counting by gerade/ungerade (even/odd under inversion):
-    Gerade (even):  3*A1g + 2*Eg + T1g + T2g = 3 + 4 + 3 + 3 = 13 = N_eff
+    Gerade (even):  3*A1g + 2*Eg + 2*T2g = 3 + 4 + 6 = 13 = N_eff
     Ungerade (odd):  A2u + 3*T1u + T2u = 1 + 9 + 3 = 13 = N_eff
 
   THE 26-DIMENSIONAL REP SPLITS AS 13 + 13 = N_eff + N_eff
@@ -465,10 +465,10 @@ print(f"""
     8 cube = 2 tetrahedra -- BCC sublattice (corner neighbors)
 
   REPRESENTATION THEORY:
-    27 = 4*A1g + A2u + 2*Eg + T1g + T2g + 3*T1u + T2u
+    27 = 4*A1g + A2u + 2*Eg + 2*T2g + 3*T1u + T2u
     - 4 scalar (A1g) reps = N_base = |Aut(E_i)|
     - 3 vector (T1u) reps = N_c
-    - 7 distinct irreps used = b_3
+    - 6 distinct irrep labels; the former b_3=7 identification is closed negative
     - 18 triplet dimensions = 18-point stencil
 
   PARITY DECOMPOSITION:

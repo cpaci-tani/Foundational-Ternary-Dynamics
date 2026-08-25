@@ -14,7 +14,8 @@ For documentation-cleanup provenance and deferred remediation notes, see [docs/a
 
 | If you want to... | Start here |
 |-------------------|------------|
-| Understand FTD from scratch | [docs/SPEC_FTD.md](docs/SPEC_FTD.md) — **the single source of truth** |
+| Understand FTD from scratch | [SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md](docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md) — **active constitution (FTD-1023)**; [docs/SPEC_FTD.md](docs/SPEC_FTD.md) is the readable overview |
+| Understand the ontology-to-physics emergence claim | [FOUND_FTD_ONTOLOGY_EMERGENCE_SYNTHESIS.md](docs/theory/02_foundations/FOUND_FTD_ONTOLOGY_EMERGENCE_SYNTHESIS.md) — tagged synthesis separating active v3 from retained v1/v2 branches |
 | Understand how the simulator works visually | [engine/VISUAL_GUIDE.md](engine/VISUAL_GUIDE.md) — guided diagrams for scenarios, ticks, manifestation, and discrete emergence |
 | Get contributor onboarding | [META_CONTRIBUTOR_ONBOARDING.md](META_CONTRIBUTOR_ONBOARDING.md) — balanced guide across theory, engine, verification, and critique |
 | Audit documentation drift | [docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md](docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md) — cleanup ledger, status model, and remediation queue |
@@ -36,10 +37,11 @@ For documentation-cleanup provenance and deferred remediation notes, see [docs/a
 4. [AUDIT_HIDDEN_SELECTIONS.md](docs/theory/07_assessment/spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md) — Explicit selection principles
 
 ### For Philosophers
-1. [FOUND_THE_FIRST_DISTINCTION.md](docs/theory/02_foundations/FOUND_THE_FIRST_DISTINCTION.md) — From void to existence
-2. [FOUND_ONTOLOGICAL_GENESIS.md](docs/theory/02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) — 13-level emergence hierarchy
-3. [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](docs/theory/06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) — Reference frame context from QFT/GR bridge
-4. [FOUND_THE_EXISTENCE_FILTER.md](docs/theory/06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md) — E(x) = Re(x) and the Born rule
+1. [FOUND_FTD_ONTOLOGY_EMERGENCE_SYNTHESIS.md](docs/theory/02_foundations/FOUND_FTD_ONTOLOGY_EMERGENCE_SYNTHESIS.md) — Complete tagged ontology-to-physics synthesis
+2. [FOUND_THE_FIRST_DISTINCTION.md](docs/theory/02_foundations/FOUND_THE_FIRST_DISTINCTION.md) — From void to existence
+3. [FOUND_ONTOLOGICAL_GENESIS.md](docs/theory/02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) — 13-level emergence hierarchy
+4. [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](docs/theory/06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) — Reference frame context from QFT/GR bridge
+5. [FOUND_THE_EXISTENCE_FILTER.md](docs/theory/06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md) — E(x) = Re(x) and the Born rule
 
 ### For Programmers
 1. [engine/VISUAL_GUIDE.md](engine/VISUAL_GUIDE.md) — Visual guide to the simulation mental model

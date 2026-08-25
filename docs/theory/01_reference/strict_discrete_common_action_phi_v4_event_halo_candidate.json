@@ -1,0 +1,103 @@
+{
+  "meta": {
+    "name": "FTD-v3-strict-discrete-common-action-Phi-v4-event-halo-candidate",
+    "status": "candidate-extension-not-canonical",
+    "date": "2026-08-24",
+    "constitution": "docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md",
+    "rule_specification": "docs/theory/01_reference/SPEC_V3_COMMON_ACTION_PHI_v4_EVENT_HALO_CANDIDATE.md",
+    "verifier": "scripts/proofs/proof_v3_homogeneous_event_halo_phi_v4_candidate.py",
+    "promotion_guard": "The candidate does not replace selected Phi-v2 or promote charged Phi-v3. It is exact only on prepared event halos and leaves formation, persistent release, stable matter, dynamical poles, absolute normalization, no-signalling, and lensing open."
+  },
+  "carrier_version": 2,
+  "base_law": {
+    "manifest": "docs/theory/01_reference/strict_discrete_common_action_phi_v3_charged_candidate.json",
+    "status": "candidate-extension-not-canonical"
+  },
+  "event_halo": {
+    "shape": "one closed radius-one Moore cube",
+    "role_sites": 10,
+    "marker_only_sites": 17,
+    "new_cell_types": [],
+    "maximum_chebyshev_dependency": 1,
+    "uses_coordinate_coloring": false,
+    "uses_randomness": false,
+    "uses_tie_breaker": false,
+    "center_chart_code": "globally unique existing-carrier zero-E/B signature",
+    "role_codes": "chart-relative existing-carrier zero-E/B pads clear of every registered writer",
+    "overlap_exclusion": "For all 48 signed-cubic relative orientations and all overlapping displacements, at least one shared site is marker-only in one halo. Marker codes are globally distinct; the center code is globally distinct from every marker; noncentral role pads have different constant weight. Two complete event halos therefore cannot overlap."
+  },
+  "stages": {
+    "ready_to_herald": "The center recognizes the complete prepared halo and replaces the retained dark neutral pair by the addressed dark/event herald. Physical pointer records remain in the halo.",
+    "dark_herald": "Advance the two local pointer cycles and restore the dark herald.",
+    "bright_herald": "On the following tick, role sites read the retained center herald and create one charged source packet plus two neutral gravity packets.",
+    "recovery": "Reverse the source/packet creation, advance the pointer cycles, and restore the dark herald.",
+    "permutation": "READY, HERALD, and RECOVERY form one exact finite staged permutation on the prepared apparatus component."
+  },
+  "prepared_resources": {
+    "required": [
+      "oriented charged frame",
+      "complete marker/role halo",
+      "finite field bank",
+      "two physical neutral pointers and A2 tokens",
+      "retained neutral herald register",
+      "finite A2 work reserve"
+    ],
+    "not_supplied_by_candidate": [
+      "native formation",
+      "persistent amplification",
+      "causal reserve refill"
+    ]
+  },
+  "active_event": {
+    "field_records_created": 32,
+    "SC_A1_sources_created": 1,
+    "A2_work_records_consumed": 33,
+    "role_delta": [32, 1, 0, -33],
+    "identities": [
+      "sum_role_delta_equals_zero",
+      "div_E_equals_Q",
+      "Delta_Q_plus_div_j_equals_0",
+      "charge_even_source_stress",
+      "matched_scalar_vector_STF_gravity_source_coordinates",
+      "prepared_event_counts_equal_abs_Z_squared"
+    ]
+  },
+  "schedule": [
+    "recognize_complete_center_chart_code_and_event_halo",
+    "retain_or_replace_center_herald",
+    "hold_all_prepared_halo_records_on_ready_or_dark_stages",
+    "on_bright_herald_write_disjoint_charged_and_neutral_source_records",
+    "on_recovery_apply_the_exact_inverse_and_advance_local_pointers",
+    "apply_charged_Phi_v3_candidate_to_unclaimed_charged_coordinates",
+    "apply_frozen_Phi_v2_to_all_remaining_unclaimed_coordinates"
+  ],
+  "verification": {
+    "checks": 17,
+    "overlapping_halo_rows": 6000,
+    "marker_signatures": 19584,
+    "marker_generator_covariance_rows": 58752,
+    "physical_pointer_rows": 147840,
+    "staged_apparatus_states": 295739,
+    "active_packing_rows": 36,
+    "result": "all_pass"
+  },
+  "firewall": {
+    "forbidden_inputs": [
+      "physical coupling or master root",
+      "Born weight or desired event",
+      "particle mass or catalog identity",
+      "continuum metric or lensing target",
+      "external random, replay, or coordinate-coloring tape"
+    ]
+  },
+  "not_closed": [
+    "native halo frame bank and work-reserve formation",
+    "persistent amplified records versus exact recovery",
+    "causal reserve refill for unbounded trial renewal",
+    "perturbatively stable translating matter",
+    "charged and protected tensor dynamical poles",
+    "absolute interacting action and coupling normalization",
+    "multipartite no-signalling",
+    "universal response lensing and nonlinear gravity"
+  ]
+}

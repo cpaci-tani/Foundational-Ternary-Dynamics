@@ -1,0 +1,108 @@
+{
+  "meta": {
+    "name": "FTD-v3-strict-discrete-common-action-Phi-v3-charged-candidate",
+    "status": "candidate-extension-not-canonical",
+    "date": "2026-08-24",
+    "constitution": "docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md",
+    "rule_specification": "docs/theory/01_reference/SPEC_V3_CHARGED_COMMON_ACTION_PHI_v3_CANDIDATE.md",
+    "verifier": "scripts/proofs/proof_v3_charged_common_action_phi_v3_candidate.py",
+    "promotion_guard": "The candidate does not replace selected Phi-v2 until the charged pole and reciprocal-work gates pass or the owner separately selects the narrower law."
+  },
+  "carrier_version": 2,
+  "base_law": {
+    "manifest": "docs/theory/01_reference/strict_discrete_common_action_phi_v2.json",
+    "specification": "docs/theory/01_reference/SPEC_V3_COMMON_ACTION_PHI_R2_R5_v2.md",
+    "collision_sha256": "D0BB71DBED7938ED286E1D6D91A16700DA31F4550E83B2FB3580CCC347B2BD25"
+  },
+  "candidate_extension": {
+    "new_cell_types": [],
+    "maximum_chebyshev_dependency": 1,
+    "uses_coordinate_coloring": false,
+    "uses_randomness": false,
+    "uses_tie_breaker": false,
+    "pure_bound_admission": "For each affected site and polarity, the finite field bank is exactly the disjoint union of complete packets owned by incident primary dressed-SC relations; no free channel of that polarity is present.",
+    "source_macro": {
+      "activation": "reserve_phase_0 plus blank target packet -> primary_phase_1 plus complete target packet",
+      "withdrawal": "primary_phase_0 plus complete target packet -> reserve_phase_1 plus packet removal",
+      "hold": "advance A9 phase and retime the complete packet to the output C4/C3 frame",
+      "site_layer_action": "decrement C3 unless the site is claimed by a circulation-frame plaquette",
+      "identities": [
+        "div_E_equals_Q",
+        "Delta_Q_plus_div_j_equals_0",
+        "Delta_E_equals_minus_j"
+      ]
+    },
+    "circulation_frame": {
+      "plane_families": [
+        "xy_when_C3_layer_0",
+        "yz_when_C3_layer_1",
+        "zx_when_C3_layer_2"
+      ],
+      "boundary_phase_pattern": "role_i carries C4 phase offset_plus_i mod 4",
+      "even_offset_active_path_roles": [
+        0,
+        1
+      ],
+      "odd_offset_active_path_roles": [
+        3,
+        2
+      ],
+      "tick": "swap active and reserve two-edge paths, advance all four C4 phases, replace sixteen input packet bits by sixteen output packet bits, and stall the four vertex C3 layers",
+      "orbit_period": 4,
+      "conflict_exclusion": "Shared-edge phase and parity demand incompatible ownership for same-plane neighbors; distinct plane families demand incompatible C3 layers at every shared vertex."
+    },
+    "schedule": [
+      "recognize_complete_circulation_frames",
+      "form_the_union_of_frame_vertex_layer_stalls",
+      "write_all_disjoint_circulation_frame_transactions",
+      "retime_nonplaquette_dressed_sources",
+      "reduce_all_primary_relation_incidence_to_site_actuality",
+      "apply_frozen_Phi_v2_to_all_unclaimed_coordinates"
+    ],
+    "charged_invariant_sector": {
+      "name": "pure_bound_dressed_SC_networks_with_circulation_frames",
+      "exact_properties": [
+        "state_only_recognition",
+        "finite packet ownership",
+        "parallel source continuity",
+        "one_hop_endpoint_transport_by_path_extension_or_withdrawal",
+        "divergence_free_plaquette_deformation",
+        "conflict_free_local_schedule",
+        "canonical_vacuum_inactivity"
+      ]
+    }
+  },
+  "vacuum_firewall": {
+    "preparation": "registered_R5_transverse_vacuum",
+    "required_relation_occupation": 2,
+    "candidate_macro_relation_occupation": 1,
+    "verdict": "candidate extension inert; frozen Phi-v2 vacuum collision and speed remain unchanged"
+  },
+  "firewall": {
+    "statement": "Physical targets are verification-only and cannot be read by the active candidate extension.",
+    "forbidden_inputs": [
+      "physical coupling or master root",
+      "Born weight or desired event",
+      "particle mass or catalog identity",
+      "continuum metric or lensing target",
+      "external random, replay, or coordinate-coloring tape"
+    ]
+  },
+  "verification_outputs_not_read_by_rule": {
+    "source_packet_channels": 8,
+    "plaquette_packet_channels": 16,
+    "plaquette_orbit_period": 4,
+    "moving_endpoint_hop": 1,
+    "vacuum_speed_retained": "1/6"
+  },
+  "not_closed": [
+    "charged_static_pole",
+    "physically_selected_history_measure",
+    "reciprocal_work_normalization",
+    "physical_coupling_normalization",
+    "stable_matter",
+    "physical_Born_statistics",
+    "complete_tensor_carrier",
+    "gravity"
+  ]
+}
