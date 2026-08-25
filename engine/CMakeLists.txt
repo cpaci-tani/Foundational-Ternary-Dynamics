@@ -1215,7 +1215,7 @@ ftd_add_test(test_erdos_unit_distance tests/test_erdos_unit_distance.cpp
              CTEST_NAME erdos_unit_distance TIMEOUT 600 LABELS mathematical)
 
 ftd_add_test(test_ramsey_multicolor tests/test_ramsey_multicolor.cpp
-             CTEST_NAME ramsey_multicolor TIMEOUT 600 LABELS mathematical)
+             CTEST_NAME ramsey_multicolor TIMEOUT 600 LABELS mathematical slow)
 
 ftd_add_test(test_blume_capel_glass tests/test_blume_capel_glass.cpp
              CTEST_NAME blume_capel_glass TIMEOUT 600 LABELS mathematical)
@@ -4360,6 +4360,9 @@ endif()
 #     was measured to stretch the sweep into hours.
 #   • everything else: OMP_NUM_THREADS=8 + PROCESSORS 8 → at most 4
 #     concurrent CPU tests × 8 threads = 32 threads machine-wide.
+# Hosted GitHub Actions (`windows-latest`, 4 vCPU) MUST pass -j 32 (or any
+# budget ≥ 8). `ctest -j 4` is a 4-slot budget, so PROCESSORS 8 serializes
+# the unit label and exceeds the 60-minute job cap (observed 2026-08-22+).
 # Determinism note: the CPU engine is bit-exact across thread counts (the
 # 2026-06-11 golden gate guarantees OMP_NUM_THREADS=1 == full pool), so the
 # 8-thread cap cannot move any golden hash.
