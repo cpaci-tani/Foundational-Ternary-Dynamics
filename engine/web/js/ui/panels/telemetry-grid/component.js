@@ -8,6 +8,11 @@ import { isPanelLive } from '../panel-visibility.js';
 const PANEL_MIN_INTERVAL_MS = 33;   // ~30 Hz cap for floated panels (SPEC_SCALE0_PERF §6.1)
 const GRID_VISIBLE_SAMPLES = 120;   // display window; source ring buffers still retain their full history
 const MAX_SPARK = GRID_VISIBLE_SAMPLES;
+// A sparkline only pays for a y-scale recompute when its data leaves the last
+// applied range; this many ticks (~3.75 s at the 8 Hz panel cadence) forces a
+// periodic recompute so a transient spike that widened the range eventually
+// recompacts. See _drawEntry.
+const RESCALE_RECOVERY_TICKS = 30;
 
 // ── Telemetry Channel Definitions per Active Scale ──────────────────────────
 const CHANNELS = {
@@ -78,6 +83,11 @@ export class TelemetryGridPanelComponent {
         this.charts = new Map(); // channelKey -> uPlotInstance
         this._bound = false;
         this._ro = null;
+        // Visibility gate + lazy builder: only charts whose card intersects the
+        // viewport are built (new uPlot) and redrawn each tick. The panel is
+        // ~4000px tall, so most of its 23–39 sparklines are off-screen at any
+        // moment and used to redraw (and be created) needlessly.
+        this._io = null;
     }
 
     init() {
@@ -94,6 +104,16 @@ export class TelemetryGridPanelComponent {
         const app = document.getElementById('app');
         this.activeScale = app?.dataset.activeScale || '0';
 
+        // Build/redraw only cards near the viewport. rootMargin pre-builds a
+        // little above/below so a scroll doesn't reveal a blank chart. root:null
+        // (viewport) still accounts for the panel's own scroll clip per spec.
+        if (typeof IntersectionObserver === 'function') {
+            this._io = new IntersectionObserver(
+                (obsEntries) => this._onIntersect(obsEntries),
+                { root: null, rootMargin: '150px 0px', threshold: 0 },
+            );
+        }
+
         this.rebuildGrid();
 
         this._ro = new ResizeObserver(() => this.reflowCharts());
@@ -107,6 +127,8 @@ export class TelemetryGridPanelComponent {
     }
 
     rebuildGrid() {
+        // Stop observing the old cards before they are removed.
+        this._io?.disconnect();
         // Destroy existing uPlots
         this.charts.forEach((entry) => {
             entry.hoverTarget?.removeEventListener('pointerenter', entry.onPointerEnter);
@@ -128,7 +150,9 @@ export class TelemetryGridPanelComponent {
         }
 
         activeChannels.forEach((chan) => {
-            // 1. Create card DOM wrapper
+            // Card DOM is cheap and built for every channel so the panel keeps
+            // its full scroll height; the uPlot itself is created lazily by
+            // _buildChart the first time the card scrolls into view.
             const card = document.createElement('article');
             card.className = 'telemetry-card';
             card.dataset.channelKey = chan.key;
@@ -143,99 +167,134 @@ export class TelemetryGridPanelComponent {
 
             this.container.appendChild(card);
 
-            const plotContainer = card.querySelector('.telemetry-card-plot');
-            let entry = null;
-
-            // 2. Prepare high-performance sparkline configurations
-            const strokeColor = resolveChartColor(chan.color);
-            // Derive a smooth, glowing translucent fill
-            const fillColor = strokeColor.startsWith('rgba') 
-                ? strokeColor.replace(/[\d\.]+\)$/, '0.05)') 
-                : `${strokeColor}0c`;
-
-            const uopts = {
-                width: plotContainer.clientWidth || 240,
-                height: 70,
-                legend: { show: false },
-                title: '',
-                pxAlign: 1,
-                cursor: {
-                    sync: {
-                        key: "telemetry-grid-sync"
-                    },
-                    y: false // Only sync X crosshair
-                },
-                scales: {
-                    x: { time: false },
-                    y: { auto: true }
-                },
-                axes: [
-                    { show: false }, // Hide X axis
-                    { show: false }  // Hide Y axis
-                ],
-                series: [
-                    {}, // X axis series
-                    {
-                        stroke: strokeColor,
-                        fill: fillColor,
-                        width: 1.5,
-                        points: { show: false }
-                    }
-                ],
-                padding: [4, 0, 4, 0],
-                hooks: {
-                    setCursor: [
-                        () => { if (entry) this.renderTooltip(entry, chan); },
-                    ],
-                },
-            };
-
-            // eslint-disable-next-line no-undef
-            const u = new uPlot(uopts, [[], []], plotContainer);
-            const tooltip = new ChartHoverTooltip(plotContainer);
-
-            // Cache the value <span> + preallocate the sparkline buffers ONCE so
-            // update() neither queries the DOM nor allocates per frame (§6.1). xs
-            // is a static index ramp; ys is refilled each update.
-            const valueEl = card.querySelector('.telemetry-card-value');
-            const xs = new Float64Array(MAX_SPARK);
-            const ys = new Float64Array(MAX_SPARK);
-
-            entry = {
-                u,
-                valueEl,
-                xs,
-                ys,
-                tooltip,
+            // Preallocate the sparkline buffers ONCE (§6.1) and cache the value
+            // <span>. onScreen defaults true so a card already in view draws as
+            // soon as it is built; the observer's first callback corrects the
+            // off-screen ones.
+            const entry = {
+                chan,
+                card,
+                plotContainer: card.querySelector('.telemetry-card-plot'),
+                valueEl: card.querySelector('.telemetry-card-value'),
+                xs: new Float64Array(MAX_SPARK),
+                ys: new Float64Array(MAX_SPARK),
+                u: null,
+                tooltip: null,
+                built: false,
+                onScreen: true,
                 hoverActive: false,
                 lastN: 0,
-                color: strokeColor,
+                color: null,
+                appliedRange: null,   // {min,max} last handed to uPlot's y-scale
+                sinceRescale: 0,
                 // The grid may be asked to repaint at UI cadence while the
                 // native telemetry snapshot arrives only a few times per
                 // second. Reusing the last uPlot data until its ring buffer
-                // advances avoids redrawing every mini-chart with identical
-                // samples on intervening animation frames.
+                // advances avoids redrawing a chart with identical samples.
                 lastBuffer: null,
                 lastTotal: -1,
                 lastValue: Number.NaN,
             };
-            entry.onPointerEnter = () => {
-                entry.hoverActive = true;
-                this.renderTooltip(entry, chan);
-            };
-            entry.onPointerLeave = () => {
-                entry.hoverActive = false;
-                entry.tooltip.hide();
-            };
-            const hoverTarget = u.over || plotContainer;
-            entry.hoverTarget = hoverTarget;
-            hoverTarget.addEventListener('pointerenter', entry.onPointerEnter);
-            hoverTarget.addEventListener('pointerleave', entry.onPointerLeave);
-            hoverTarget.addEventListener('mouseenter', entry.onPointerEnter);
-            hoverTarget.addEventListener('mouseleave', entry.onPointerLeave);
-
             this.charts.set(chan.key, entry);
+
+            if (this._io) this._io.observe(card);
+            else this._buildChart(entry);   // no IntersectionObserver: eager fallback
         });
+    }
+
+    // Create the uPlot + tooltip + hover wiring for one card. Called lazily the
+    // first time the card intersects the viewport (or eagerly when there is no
+    // IntersectionObserver). Idempotent.
+    _buildChart(entry) {
+        if (entry.built) return;
+        const { chan, plotContainer } = entry;
+
+        const strokeColor = resolveChartColor(chan.color);
+        // Derive a smooth, glowing translucent fill
+        const fillColor = strokeColor.startsWith('rgba')
+            ? strokeColor.replace(/[\d\.]+\)$/, '0.05)')
+            : `${strokeColor}0c`;
+        entry.color = strokeColor;
+
+        const uopts = {
+            width: plotContainer.clientWidth || 240,
+            height: 70,
+            legend: { show: false },
+            title: '',
+            pxAlign: 1,
+            cursor: {
+                sync: {
+                    key: "telemetry-grid-sync"
+                },
+                y: false // Only sync X crosshair
+            },
+            scales: {
+                x: { time: false },
+                y: { auto: true }
+            },
+            axes: [
+                { show: false }, // Hide X axis
+                { show: false }  // Hide Y axis
+            ],
+            series: [
+                {}, // X axis series
+                {
+                    stroke: strokeColor,
+                    fill: fillColor,
+                    width: 1.5,
+                    points: { show: false }
+                }
+            ],
+            padding: [4, 0, 4, 0],
+            hooks: {
+                setCursor: [
+                    () => { if (entry.hoverActive) this.renderTooltip(entry, chan); },
+                ],
+            },
+        };
+
+        // eslint-disable-next-line no-undef
+        entry.u = new uPlot(uopts, [[], []], plotContainer);
+        entry.tooltip = new ChartHoverTooltip(plotContainer);
+
+        entry.onPointerEnter = () => {
+            entry.hoverActive = true;
+            this.renderTooltip(entry, chan);
+        };
+        entry.onPointerLeave = () => {
+            entry.hoverActive = false;
+            entry.tooltip.hide();
+        };
+        const hoverTarget = entry.u.over || plotContainer;
+        entry.hoverTarget = hoverTarget;
+        hoverTarget.addEventListener('pointerenter', entry.onPointerEnter);
+        hoverTarget.addEventListener('pointerleave', entry.onPointerLeave);
+        hoverTarget.addEventListener('mouseenter', entry.onPointerEnter);
+        hoverTarget.addEventListener('mouseleave', entry.onPointerLeave);
+
+        entry.built = true;
+    }
+
+    // IntersectionObserver callback: build-on-first-view and maintain the
+    // onScreen flag that update() gates on. A freshly revealed chart has its
+    // dirty-check invalidated and is drawn immediately so it never shows blank.
+    _onIntersect(obsEntries) {
+        for (const oe of obsEntries) {
+            const entry = this.charts.get(oe.target.dataset.channelKey);
+            if (!entry) continue;
+            if (oe.isIntersecting) {
+                if (!entry.built) this._buildChart(entry);
+                if (!entry.onScreen) {
+                    entry.lastBuffer = null;
+                    entry.lastTotal = -1;
+                    entry.lastValue = Number.NaN;
+                }
+                entry.onScreen = true;
+                if (entry.u) this._drawEntry(entry);
+            } else {
+                entry.onScreen = false;
+            }
+        }
     }
 
     update() {
@@ -266,41 +325,70 @@ export class TelemetryGridPanelComponent {
 
         activeChannels.forEach((chan) => {
             const entry = this.charts.get(chan.key);
-            if (!entry) return;
-
-            // Resolve ring buffer source path from telemetryHub
-            const pathParts = chan.buffer.split('.');
-            let buf = telemetryHub;
-            for (const part of pathParts) {
-                if (buf) buf = buf[part];
-            }
-
-            if (!buf || buf.count === 0) return;
-
-            const total = buf.total ?? buf.count;
-            const latestValue = buf.last();
-            if (entry.lastBuffer === buf && entry.lastTotal === total
-                && Object.is(entry.lastValue, latestValue)) return;
-
-            // Reuse the preallocated buffers + cached value element — no per-frame
-            // allocation and no DOM query (§6.1).
-            const { u, valueEl, xs, ys } = entry;
-            const n = Math.min(buf.count, GRID_VISIBLE_SAMPLES);
-            const start = Math.max(0, buf.count - n);
-            const xStart = Math.max(0, (buf.total ?? buf.count) - n);
-            for (let i = 0; i < n; i++) {
-                xs[i] = xStart + i;
-                ys[i] = buf.get(start + i);
-            }
-            entry.lastN = n;
-            entry.lastBuffer = buf;
-            entry.lastTotal = total;
-            entry.lastValue = latestValue;
-
-            u.setData([xs.subarray(0, n), ys.subarray(0, n)], true);
-            if (valueEl) valueEl.textContent = this.formatValue(latestValue, chan.unit);
-            if (entry.hoverActive) this.renderTooltip(entry, chan);
+            // Cull off-screen (and not-yet-built) charts: the observer keeps
+            // onScreen accurate, so a ~4000px panel only redraws the handful of
+            // sparklines actually in view instead of all 23–39 every tick.
+            if (!entry || !entry.onScreen || !entry.u) return;
+            this._drawEntry(entry);
         });
+    }
+
+    // Pull the latest window from this channel's ring buffer into its sparkline.
+    // Skips when nothing advanced (dirty-check), reuses the preallocated buffers
+    // (no per-frame allocation / DOM query, §6.1), and forces a y-scale recompute
+    // only when the data actually left the last applied range — otherwise uPlot
+    // redraws without the per-tick auto-range pass.
+    _drawEntry(entry) {
+        const chan = entry.chan;
+
+        // Resolve ring buffer source path from telemetryHub
+        const pathParts = chan.buffer.split('.');
+        let buf = telemetryHub;
+        for (const part of pathParts) {
+            if (buf) buf = buf[part];
+        }
+
+        if (!buf || buf.count === 0) return;
+
+        const total = buf.total ?? buf.count;
+        const latestValue = buf.last();
+        if (entry.lastBuffer === buf && entry.lastTotal === total
+            && Object.is(entry.lastValue, latestValue)) return;
+
+        const { u, valueEl, xs, ys } = entry;
+        const n = Math.min(buf.count, GRID_VISIBLE_SAMPLES);
+        const start = Math.max(0, buf.count - n);
+        const xStart = Math.max(0, (buf.total ?? buf.count) - n);
+        let yMin = Infinity, yMax = -Infinity;
+        for (let i = 0; i < n; i++) {
+            xs[i] = xStart + i;
+            const v = buf.get(start + i);
+            ys[i] = v;
+            if (v < yMin) yMin = v;
+            if (v > yMax) yMax = v;
+        }
+        entry.lastN = n;
+        entry.lastBuffer = buf;
+        entry.lastTotal = total;
+        entry.lastValue = latestValue;
+
+        // Rescale only when the data grew past the last applied range, or once
+        // every RESCALE_RECOVERY_TICKS to recompact after a transient spike.
+        const ar = entry.appliedRange;
+        let reset = false;
+        if (!ar || yMin < ar.min || yMax > ar.max) {
+            reset = true;
+        } else if (++entry.sinceRescale >= RESCALE_RECOVERY_TICKS) {
+            reset = true;
+        }
+        if (reset) {
+            entry.appliedRange = { min: yMin, max: yMax };
+            entry.sinceRescale = 0;
+        }
+
+        u.setData([xs.subarray(0, n), ys.subarray(0, n)], reset);
+        if (valueEl) valueEl.textContent = this.formatValue(latestValue, chan.unit);
+        if (entry.hoverActive) this.renderTooltip(entry, chan);
     }
 
     renderTooltip(entry, chan) {
@@ -343,6 +431,7 @@ export class TelemetryGridPanelComponent {
 
     reflowCharts() {
         this.charts.forEach((entry, key) => {
+            if (!entry.u) return;   // not yet built (still off-screen)
             const card = this.container.querySelector(`[data-channel-key="${key}"]`);
             if (card) {
                 const plotContainer = card.querySelector('.telemetry-card-plot');
@@ -361,13 +450,17 @@ export class TelemetryGridPanelComponent {
             this._ro.disconnect();
             this._ro = null;
         }
+        if (this._io) {
+            this._io.disconnect();
+            this._io = null;
+        }
         this.charts.forEach((entry) => {
             entry.hoverTarget?.removeEventListener('pointerenter', entry.onPointerEnter);
             entry.hoverTarget?.removeEventListener('pointerleave', entry.onPointerLeave);
             entry.hoverTarget?.removeEventListener('mouseenter', entry.onPointerEnter);
             entry.hoverTarget?.removeEventListener('mouseleave', entry.onPointerLeave);
             entry.tooltip?.destroy();
-            entry.u.destroy();
+            entry.u?.destroy();
         });
         this.charts.clear();
     }
