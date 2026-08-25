@@ -8,11 +8,6 @@ import { isPanelLive } from '../panel-visibility.js';
 const PANEL_MIN_INTERVAL_MS = 33;   // ~30 Hz cap for floated panels (SPEC_SCALE0_PERF §6.1)
 const GRID_VISIBLE_SAMPLES = 120;   // display window; source ring buffers still retain their full history
 const MAX_SPARK = GRID_VISIBLE_SAMPLES;
-// A sparkline only pays for a y-scale recompute when its data leaves the last
-// applied range; this many ticks (~3.75 s at the 8 Hz panel cadence) forces a
-// periodic recompute so a transient spike that widened the range eventually
-// recompacts. See _drawEntry.
-const RESCALE_RECOVERY_TICKS = 30;
 
 // ── Telemetry Channel Definitions per Active Scale ──────────────────────────
 const CHANNELS = {
@@ -185,8 +180,6 @@ export class TelemetryGridPanelComponent {
                 hoverActive: false,
                 lastN: 0,
                 color: null,
-                appliedRange: null,   // {min,max} last handed to uPlot's y-scale
-                sinceRescale: 0,
                 // The grid may be asked to repaint at UI cadence while the
                 // native telemetry snapshot arrives only a few times per
                 // second. Reusing the last uPlot data until its ring buffer
@@ -334,10 +327,10 @@ export class TelemetryGridPanelComponent {
     }
 
     // Pull the latest window from this channel's ring buffer into its sparkline.
-    // Skips when nothing advanced (dirty-check), reuses the preallocated buffers
-    // (no per-frame allocation / DOM query, §6.1), and forces a y-scale recompute
-    // only when the data actually left the last applied range — otherwise uPlot
-    // redraws without the per-tick auto-range pass.
+    // Skips when nothing advanced (dirty-check) and reuses the preallocated
+    // buffers (no per-frame allocation / DOM query, §6.1). Only visible charts
+    // reach here (update() culls off-screen ones), which is where the real win
+    // is; each visible redraw re-ranges both axes (see the setData note below).
     _drawEntry(entry) {
         const chan = entry.chan;
 
@@ -359,34 +352,22 @@ export class TelemetryGridPanelComponent {
         const n = Math.min(buf.count, GRID_VISIBLE_SAMPLES);
         const start = Math.max(0, buf.count - n);
         const xStart = Math.max(0, (buf.total ?? buf.count) - n);
-        let yMin = Infinity, yMax = -Infinity;
         for (let i = 0; i < n; i++) {
             xs[i] = xStart + i;
-            const v = buf.get(start + i);
-            ys[i] = v;
-            if (v < yMin) yMin = v;
-            if (v > yMax) yMax = v;
+            ys[i] = buf.get(start + i);
         }
         entry.lastN = n;
         entry.lastBuffer = buf;
         entry.lastTotal = total;
         entry.lastValue = latestValue;
 
-        // Rescale only when the data grew past the last applied range, or once
-        // every RESCALE_RECOVERY_TICKS to recompact after a transient spike.
-        const ar = entry.appliedRange;
-        let reset = false;
-        if (!ar || yMin < ar.min || yMax > ar.max) {
-            reset = true;
-        } else if (++entry.sinceRescale >= RESCALE_RECOVERY_TICKS) {
-            reset = true;
-        }
-        if (reset) {
-            entry.appliedRange = { min: yMin, max: yMax };
-            entry.sinceRescale = 0;
-        }
-
-        u.setData([xs.subarray(0, n), ys.subarray(0, n)], reset);
+        // resetScales MUST stay true: the x window advances every tick (xStart
+        // climbs), so drawing with resetScales=false leaves the line plotted
+        // against a stale x-domain — it scrolls off the frozen range and looks
+        // frozen/clipped. The auto-range is a cheap min/max over the 120-sample
+        // window and the redraw happens either way; the perf win is culling the
+        // off-screen charts entirely (update()), not skipping this scan.
+        u.setData([xs.subarray(0, n), ys.subarray(0, n)], true);
         if (valueEl) valueEl.textContent = this.formatValue(latestValue, chan.unit);
         if (entry.hoverActive) this.renderTooltip(entry, chan);
     }
