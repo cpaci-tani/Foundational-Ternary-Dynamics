@@ -32,6 +32,28 @@ foreach(_ftd_target IN LISTS _ftd_build_targets)
 endforeach()
 list(REMOVE_DUPLICATES _ftd_owned_test_sources)
 
+# Targets behind build options are absent from BUILDSYSTEM_TARGETS when their
+# option is disabled. Their sources are still owned, not frontier research.
+get_property(_ftd_conditional_test_sources GLOBAL
+             PROPERTY FTD_CONDITIONAL_TEST_SOURCES)
+if(NOT _ftd_conditional_test_sources)
+    set(_ftd_conditional_test_sources)
+endif()
+list(REMOVE_DUPLICATES _ftd_conditional_test_sources)
+foreach(_ftd_conditional_source IN LISTS _ftd_conditional_test_sources)
+    if(NOT EXISTS "${CMAKE_SOURCE_DIR}/${_ftd_conditional_source}")
+        message(FATAL_ERROR
+            "Stale conditional test source: ${_ftd_conditional_source}")
+    endif()
+    if("${_ftd_conditional_source}" IN_LIST FTD_FRONTIER_RESEARCH_SOURCES)
+        message(FATAL_ERROR
+            "Conditional target source is also quarantined: "
+            "${_ftd_conditional_source}")
+    endif()
+    list(APPEND _ftd_owned_test_sources "${_ftd_conditional_source}")
+endforeach()
+list(REMOVE_DUPLICATES _ftd_owned_test_sources)
+
 set(_ftd_frontier_unique ${FTD_FRONTIER_RESEARCH_SOURCES})
 list(LENGTH FTD_FRONTIER_RESEARCH_SOURCES _ftd_frontier_count)
 list(REMOVE_DUPLICATES _ftd_frontier_unique)
@@ -62,10 +84,15 @@ foreach(_ftd_test_source IN LISTS _ftd_test_cpp_sources)
 endforeach()
 
 list(LENGTH _ftd_test_cpp_sources _ftd_test_source_count)
+list(LENGTH _ftd_conditional_test_sources _ftd_conditional_source_count)
 message(STATUS
     "Engine test-source ownership: ${_ftd_test_source_count} total, "
-    "${_ftd_frontier_count} explicitly quarantined")
+    "${_ftd_frontier_count} explicitly quarantined, "
+    "${_ftd_conditional_source_count} conditionally targeted")
 unset(_ftd_build_targets)
+unset(_ftd_conditional_source)
+unset(_ftd_conditional_source_count)
+unset(_ftd_conditional_test_sources)
 unset(_ftd_frontier_count)
 unset(_ftd_frontier_source)
 unset(_ftd_frontier_unique)

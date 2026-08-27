@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
     paths:
+      - '.github/workflows/deploy-pages.yml'
+      - 'engine/CMakeLists.txt'
+      - 'engine/cmake/**'
       - 'engine/web/**'
   workflow_dispatch:
 

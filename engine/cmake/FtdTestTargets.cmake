@@ -3,6 +3,57 @@
 # ============================================================================
 if(NOT EMSCRIPTEN)
 
+# Sources owned by CUDA-only targets below. They must remain classified when a
+# CPU-only configure skips those target declarations (for example the Pages
+# merge gate), but they are not frontier/quarantined research sources.
+set_property(GLOBAL APPEND PROPERTY FTD_CONDITIONAL_TEST_SOURCES
+    tests/benchmark_alpha_scaling.cpp
+    tests/benchmark_langevin_gpu.cpp
+    tests/benchmark_nucleon_mass_gpu.cpp
+    tests/benchmark_sm_masses_gpu.cpp
+    tests/campaign_aged_wake_entrainment_cuda.cpp
+    tests/campaign_annihilation_angular.cpp
+    tests/campaign_long_transport_dynamic_response_cuda.cpp
+    tests/campaign_total_momentum_stress_ledger.cpp
+    tests/test_cuda_fractional_center_state_only_observer.cpp
+    tests/test_cuda_paired_field_response.cpp
+    tests/test_cuda_state_only_support_ladder.cpp
+    tests/test_cuda_transported_chart_morphology.cpp
+    tests/test_gauss_law_fidelity_gpu.cpp
+    tests/test_gpu_benchmark.cpp
+    tests/test_gpu_compact_diagnostics.cpp
+    tests/test_gpu_confinement_parity.cpp
+    tests/test_gpu_continuity_ledger.cpp
+    tests/test_gpu_delta_upload.cpp
+    tests/test_gpu_dissipation_source.cpp
+    tests/test_gpu_eft_parity.cpp
+    tests/test_gpu_energy_ledger_parity.cpp
+    tests/test_gpu_experiments.cpp
+    tests/test_gpu_floquet_parity.cpp
+    tests/test_gpu_force_stack_parity.cpp
+    tests/test_gpu_geometric_gravity_parity.cpp
+    tests/test_gpu_graph_capture.cpp
+    tests/test_gpu_identity_lifecycle_parity.cpp
+    tests/test_gpu_matched_gauss_parity.cpp
+    tests/test_gpu_movement_transaction.cpp
+    tests/test_gpu_native_extension_parity.cpp
+    tests/test_gpu_parity.cpp
+    tests/test_gpu_parity_complete.cpp
+    tests/test_gpu_particle_capacity.cpp
+    tests/test_gpu_physics.cpp
+    tests/test_gpu_profile_compare.cpp
+    tests/test_gpu_shell_256.cpp
+    tests/test_gpu_shell_battery.cpp
+    tests/test_gpu_stream_binding.cpp
+    tests/test_gpu_strong_stress_parity.cpp
+    tests/test_gpu_symmetric_movement_parity.cpp
+    tests/test_gpu_verlet_parity.cpp
+    tests/test_gpu_visual_field_sample.cpp
+    tests/test_gpu_visual_snapshot.cpp
+    tests/test_ui_observer_neutrality_gpu.cpp
+    tests/test_wilson_dirac_cuda_parity.cpp
+)
+
 # ============================================================================
 # Phase 7 (2026-04-27): Test support static library
 # ----------------------------------------------------------------------------
