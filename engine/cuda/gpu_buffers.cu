@@ -4,6 +4,7 @@
  */
 
 #include "ftd/gpu_buffers.h"
+#include "ftd/lattice.h"
 #include "ftd/constants.h"
 #include <cuda_runtime.h>
 #include <cub/device/device_select.cuh>
@@ -55,14 +56,7 @@ struct ByteFlagToInt {
 
 void GpuBuffers::allocate(int lattice_size) {
     L = lattice_size;
-    // N and L are int32 (gpu_buffers.h). At L≳1290, L*L*L overflows int32 and
-    // N wraps negative/wrong → every cudaMalloc below sizes garbage. This is far
-    // above the enforced L≤256 cap, so it is a latent-ceiling guard mirroring the
-    // one in lattice.h; compute L³ in 64-bit and reject before it wraps.
-    const int64_t total64 = static_cast<int64_t>(L) * L * L;
-    assert(total64 <= static_cast<int64_t>(INT_MAX) &&
-           "GpuBuffers: L too large — L^3 overflows int32 N (widen N/L to int64_t first)");
-    N = static_cast<int>(total64);
+    N = static_cast<int>(Lattice::checked_total_sites(L));
 
     try {
 

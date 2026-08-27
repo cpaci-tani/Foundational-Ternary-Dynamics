@@ -917,12 +917,22 @@ export function getKnowledgeBaseEntry(entryId) {
     return KNOWLEDGE_BASE_ENTRIES.find((entry) => entry.id === entryId) || null;
 }
 
+function normalizeKnowledgeSearchText(value) {
+    return String(value || '')
+        .normalize('NFKC')
+        .toLowerCase()
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
 export function searchKnowledgeBase(query = '', sectionId = 'all') {
-    const normalizedQuery = String(query || '').trim().toLowerCase();
+    const normalizedQuery = normalizeKnowledgeSearchText(query);
     return KNOWLEDGE_BASE_ENTRIES.filter((entry) => {
         if (sectionId !== 'all' && entry.sectionId !== sectionId) return false;
         if (!normalizedQuery) return true;
         const haystack = [
+            entry.id,
+            entry.id.replace(/[-_]+/g, ' '),
             entry.title,
             entry.shortTitle,
             entry.summary,
@@ -933,8 +943,7 @@ export function searchKnowledgeBase(query = '', sectionId = 'all') {
             entry.sectionTitle,
         ]
             .filter(Boolean)
-            .join(' ')
-            .toLowerCase();
-        return haystack.includes(normalizedQuery);
+            .join(' ');
+        return normalizeKnowledgeSearchText(haystack).includes(normalizedQuery);
     });
 }

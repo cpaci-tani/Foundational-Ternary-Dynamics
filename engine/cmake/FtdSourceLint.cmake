@@ -82,6 +82,76 @@ if(_qviolations)
 endif()
 message(STATUS "FtdSourceLint: OK — quarantine boundary intact (ADR-0016)")
 
+# Latency horizon clamp single-source guard (revision 3.8).
+# The value is defined in include/ftd/constants.h. Runtime implementations
+# must name it instead of copying the numeric literal, otherwise CPU, CUDA,
+# WASM, and the browser proxy can silently diverge.
+set(_latency_impls
+    "${ENGINE_DIR}/src/visual_field_sample.cpp"
+    "${ENGINE_DIR}/cuda/visual_field_sample.cu"
+    "${ENGINE_DIR}/wasm/ftd_wasm.cpp"
+    "${ENGINE_DIR}/web/js/scales/scale0/analysis/gravity-analysis.js"
+)
+set(_latency_violations "")
+foreach(_f ${_latency_impls})
+    file(READ "${_f}" _src)
+    string(FIND "${_src}" "0.998" _bare_literal)
+    string(FIND "${_src}" "LATENCY_HORIZON_CLAMP" _named_constant)
+    if(NOT _bare_literal EQUAL -1)
+        list(APPEND _latency_violations "${_f}: copies the bare 0.998 literal")
+    endif()
+    if(_named_constant EQUAL -1)
+        list(APPEND _latency_violations "${_f}: does not reference LATENCY_HORIZON_CLAMP")
+    endif()
+endforeach()
+if(_latency_violations)
+    list(JOIN _latency_violations "\n  " _latency_msg)
+    message(FATAL_ERROR
+        "FtdSourceLint: latency horizon clamp drift risk:\n  ${_latency_msg}")
+endif()
+message(STATUS "FtdSourceLint: OK — latency horizon clamp is named across runtime paths")
+
+# Epistemic-copy guard: these umbrella/binding comments are user- and
+# maintainer-facing metadata. Keep imposed/conjectural physical mappings from
+# drifting back into theorem-grade language; this check changes no runtime.
+file(READ "${ENGINE_DIR}/include/ftd/ontic.h" _ontic_header)
+file(READ "${ENGINE_DIR}/include/ftd/ontic/consciousness.h" _reference_frame_header)
+file(READ "${ENGINE_DIR}/wasm/ftd_wasm.cpp" _wasm_binding)
+set(_epistemic_violations "")
+foreach(_phrase
+        "Everything from nothing"
+        "each derived from the one above"
+        "Every physical constant in the engine traces back")
+    string(FIND "${_ontic_header}" "${_phrase}" _hit)
+    if(NOT _hit EQUAL -1)
+        list(APPEND _epistemic_violations "ontic.h: forbidden overclaim '${_phrase}'")
+    endif()
+endforeach()
+foreach(_phrase
+        "irreducibly subjective"
+        "This proves φ is not an imposed constant"
+        "[THEOREM] PT-unbroken")
+    string(FIND "${_reference_frame_header}" "${_phrase}" _hit)
+    if(NOT _hit EQUAL -1)
+        list(APPEND _epistemic_violations "ontic/consciousness.h: forbidden overclaim '${_phrase}'")
+    endif()
+endforeach()
+string(FIND "${_reference_frame_header}" "[IMPOSED]" _has_imposed)
+string(FIND "${_reference_frame_header}" "[CONJECTURE]" _has_conjecture)
+string(FIND "${_wasm_binding}" "EFT-derived:" _wasm_overclaim)
+if(_has_imposed EQUAL -1 OR _has_conjecture EQUAL -1)
+    list(APPEND _epistemic_violations
+        "ontic/consciousness.h: construction must retain [IMPOSED] and [CONJECTURE] tags")
+endif()
+if(NOT _wasm_overclaim EQUAL -1)
+    list(APPEND _epistemic_violations "ftd_wasm.cpp: ALPHA_EFT mislabeled as EFT-derived")
+endif()
+if(_epistemic_violations)
+    list(JOIN _epistemic_violations "\n  " _epistemic_msg)
+    message(FATAL_ERROR "FtdSourceLint: epistemic copy drift:\n  ${_epistemic_msg}")
+endif()
+message(STATUS "FtdSourceLint: OK — audited engine epistemic copy retains status tags")
+
 # ── CPU tick phase-order pin (revision 3.2) ─────────────────────────────────
 # The CPU tick ladder's ordering constraints (CALLSTACKS.md §3.1, ADR-0008)
 # are enforced structurally (private methods, sequential code) and validated

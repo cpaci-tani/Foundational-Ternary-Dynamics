@@ -860,30 +860,42 @@ export function createAtomEngine(state) {
     }
 
     function aeGetDiagnostics() {
-        if (!state._ae) return { tick: 0, atomCount: 0, bondCount: 0, totalKE: 0, totalPEIonic: 0, totalPEVdw: 0, totalPEBond: 0, totalEnergy: 0, momentumX: 0, momentumY: 0, momentumZ: 0, temperature: 0 };
+        if (!state._ae) return { tick: 0, atomCount: 0, bondCount: 0, totalKE: 0, totalPEIonic: 0, totalPEVdw: 0, totalPEBond: 0, totalEnergy: 0, momentumX: 0, momentumY: 0, momentumZ: 0, temperature: 0, energyComplete: true, energyConservative: false, energyStatus: 'complete-driven' };
         const atoms = state._ae.atoms;
         let ke = 0, pe_ionic = 0, pe_vdw = 0, pe_bond = 0;
+        let freeKE = 0, freeAtoms = 0;
         let px = 0, py = 0, pz = 0;
         const soft2 = state._ae.soft * state._ae.soft;
 
         for (const a of atoms) {
             const v2 = a.vx * a.vx + a.vy * a.vy + a.vz * a.vz;
-            ke += 0.5 * a.mass * v2;
+            const atomKE = 0.5 * a.mass * v2;
+            ke += atomKE;
             px += a.mass * a.vx; py += a.mass * a.vy; pz += a.mass * a.vz;
+            if (!a.locked) {
+                freeKE += atomKE;
+                freeAtoms++;
+            }
         }
 
+        _aeBuildBondLookup();
         for (let i = 0; i < atoms.length; i++) {
             for (let j = i + 1; j < atoms.length; j++) {
                 const ai = atoms[i], aj = atoms[j];
                 const dx = aj.x - ai.x, dy = aj.y - ai.y, dz = aj.z - ai.z;
                 const r = Math.sqrt(dx * dx + dy * dy + dz * dz + soft2);
-                if (Math.abs(ai.q_frac) > 1e-6 || Math.abs(aj.q_frac) > 1e-6) {
+                const isBonded = _aeIsBonded(ai.id, aj.id);
+                const is13 = !isBonded && _aeIs13(i, j);
+                if (state._ae.ionic && !isBonded && !is13 &&
+                    (Math.abs(ai.q_frac) > 1e-6 || Math.abs(aj.q_frac) > 1e-6)) {
                     pe_ionic += AE_K_COULOMB * ai.q_frac * aj.q_frac / r;
                 }
-                const eps_mix = Math.sqrt(ai.vdw_epsilon * aj.vdw_epsilon);
-                const sig_mix = (ai.vdw_sigma + aj.vdw_sigma) / 2;
-                const sr = sig_mix / r; const sr6 = sr ** 6; const sr12 = sr6 * sr6;
-                pe_vdw += 4.0 * eps_mix * (sr12 - sr6);
+                if (state._ae.vdw && !isBonded && !is13) {
+                    const eps_mix = Math.sqrt(ai.vdw_epsilon * aj.vdw_epsilon);
+                    const sig_mix = (ai.vdw_sigma + aj.vdw_sigma) / 2;
+                    const sr = sig_mix / r; const sr6 = sr ** 6; const sr12 = sr6 * sr6;
+                    pe_vdw += 4.0 * eps_mix * (sr12 - sr6);
+                }
             }
         }
 
@@ -891,18 +903,20 @@ export function createAtomEngine(state) {
         // bond loop is O(1) instead of an O(N) Array.find per bond (was O(N²)).
         const idToAtom = new Map();
         for (let i = 0; i < atoms.length; i++) idToAtom.set(atoms[i].id, atoms[i]);
-        const counted = new Set();
-        for (const a of atoms) {
-            for (const b of a.bonds) {
-                const key = Math.min(a.id, b.partner_id) + ',' + Math.max(a.id, b.partner_id);
-                if (counted.has(key)) continue;
-                counted.add(key);
-                const partner = idToAtom.get(b.partner_id);
-                if (!partner) continue;
-                const dx = partner.x - a.x, dy = partner.y - a.y, dz = partner.z - a.z;
-                const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                const dr = r - b.r_eq;
-                pe_bond += 0.5 * b.k_bond * dr * dr;
+        if (state._ae.bonds_force) {
+            const counted = new Set();
+            for (const a of atoms) {
+                for (const b of a.bonds) {
+                    const key = Math.min(a.id, b.partner_id) + ',' + Math.max(a.id, b.partner_id);
+                    if (counted.has(key)) continue;
+                    counted.add(key);
+                    const partner = idToAtom.get(b.partner_id);
+                    if (!partner) continue;
+                    const dx = partner.x - a.x, dy = partner.y - a.y, dz = partner.z - a.z;
+                    const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                    const dr = r - b.r_eq;
+                    pe_bond += 0.5 * b.k_bond * dr * dr;
+                }
             }
         }
 
@@ -915,13 +929,20 @@ export function createAtomEngine(state) {
         // No Boltzmann conversion is applied — this is the bare 2⟨KE⟩/(3N)
         // statistic. The UI relabels it "(sim)" (audit P0-10); do not append
         // a "K" suffix or treat this as an SI temperature downstream.
-        const T = atoms.length > 0 ? 2.0 * ke / (3.0 * atoms.length) : 0;
+        const T = freeAtoms > 0 ? 2.0 * freeKE / (3.0 * freeAtoms) : 0;
+        const energyComplete = !(state._ae.h_bonds || state._ae.angle_strain || state._ae.dipole_dipole);
+        const energyConservative = energyComplete && !(state._ae.damping || state._ae.thermostat ||
+            state._ae.bonding || state._ae.speed_limit || state._ae.electronegativity);
+        const energyStatus = !energyComplete
+            ? 'partial-untracked-potential'
+            : (energyConservative ? 'complete-conservative' : 'complete-driven');
 
         return {
             tick: state._ae.tick, atomCount: atoms.length, bondCount,
             totalKE: ke, totalPEIonic: pe_ionic, totalPEVdw: pe_vdw, totalPEBond: pe_bond,
             totalEnergy: ke + pe_ionic + pe_vdw + pe_bond,
-            momentumX: px, momentumY: py, momentumZ: pz, temperature: T
+            momentumX: px, momentumY: py, momentumZ: pz, temperature: T,
+            energyComplete, energyConservative, energyStatus
         };
     }
 

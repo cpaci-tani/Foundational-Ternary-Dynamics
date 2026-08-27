@@ -58,7 +58,8 @@ struct AtomToggles {
     void enable_all();                               // every toggle ON
     void minimal();                                  // recommended-default profile
     bool get_toggle(std::string_view name) const;    // false if unknown
-    bool set_toggle(std::string_view name, bool value); // false if unknown
+    bool set_toggle(std::string_view name, bool value,
+                    std::string* err = nullptr); // transactional; false if unknown/invalid
 };
 
 // ─────────────────────────────────────────────────────────────────────
@@ -67,11 +68,9 @@ struct AtomToggles {
 //   default_value — constructor default (copied verbatim from the fields)
 //   minimal_value — value applied by minimal() (== default for every Atom row)
 //   requires_     — single dependency name that must also be ON (empty = none).
-//                   Every Atom dependency is a single AND-dependency, so it maps
-//                   cleanly here; validate() needs no hand-rolled pass. The
-//                   generated message is "X requires Y" (the legacy parenthetical
-//                   reasons are kept as row comments); no caller or test pins the
-//                   wording, and the pass/fail verdict is identical.
+//                   No current force term requires another force toggle: bond
+//                   topology and intrinsic atom properties remain available when
+//                   their corresponding force terms are isolated OFF.
 // ─────────────────────────────────────────────────────────────────────
 struct AtomToggleSpec {
     const char* name;
@@ -90,11 +89,11 @@ inline constexpr AtomToggleSpec ATOM_TOGGLE_SPECS[] = {
     {"auto_bonding",       &AtomToggles::auto_bonding,       true,  true,  "",                  "Auto-detect bond formation/breaking"},
     {"damping",            &AtomToggles::damping,            false, false, "",                  "Velocity damping (off for energy conservation)"},
     {"h_bonds",            &AtomToggles::h_bonds,            false, false, "",                  "Hydrogen bonds (10-12 potential)"},
-    {"dipole_dipole",      &AtomToggles::dipole_dipole,      false, false, "electronegativity", "Dipole-dipole force (needs chi-derived dipole moments)"},
-    {"angle_strain",       &AtomToggles::angle_strain,       false, false, "covalent_bonds",    "Angle strain (needs bond geometry)"},
-    {"torsional",          &AtomToggles::torsional,          false, false, "covalent_bonds",    "Torsional/dihedral force (needs dihedral chain)"},
-    {"improper_torsional", &AtomToggles::improper_torsional, false, false, "covalent_bonds",    "Improper torsional force (needs bond topology)"},
-    {"thermostat",         &AtomToggles::thermostat,         false, false, "damping",           "Berendsen thermostat (applies velocity damping)"},
+    {"dipole_dipole",      &AtomToggles::dipole_dipole,      false, false, "",                  "Dipole-dipole force from stored atom/bond properties"},
+    {"angle_strain",       &AtomToggles::angle_strain,       false, false, "",                  "Angle strain from bond topology (independent of bond-force toggle)"},
+    {"torsional",          &AtomToggles::torsional,          false, false, "",                  "Torsional/dihedral force from bond topology"},
+    {"improper_torsional", &AtomToggles::improper_torsional, false, false, "",                  "Improper torsional force from bond topology"},
+    {"thermostat",         &AtomToggles::thermostat,         false, false, "",                  "Berendsen thermostat (independent velocity rescaling)"},
     {"electronegativity",  &AtomToggles::electronegativity,  false, false, "",                  "Electronegativity/QEq charge transfer"},
 };
 static_assert(sizeof(ATOM_TOGGLE_SPECS) / sizeof(ATOM_TOGGLE_SPECS[0]) == 12,
@@ -105,9 +104,18 @@ inline bool AtomToggles::get_toggle(std::string_view name) const {
         if (name == s.name) return this->*(s.field);
     return false;
 }
-inline bool AtomToggles::set_toggle(std::string_view name, bool value) {
-    for (const auto& s : ATOM_TOGGLE_SPECS)
-        if (name == s.name) { this->*(s.field) = value; return true; }
+inline bool AtomToggles::set_toggle(std::string_view name, bool value,
+                                    std::string* err) {
+    for (const auto& s : ATOM_TOGGLE_SPECS) {
+        if (name != s.name) continue;
+        AtomToggles staged = *this;
+        staged.*(s.field) = value;
+        if (!staged.validate(err)) return false;
+        *this = staged;
+        if (err) err->clear();
+        return true;
+    }
+    if (err) *err = "unknown atom toggle";
     return false;
 }
 inline void AtomToggles::enable_all() {
@@ -334,9 +342,11 @@ struct AtomDiagnostics {
     double total_pe_ionic = 0.0;
     double total_pe_vdw = 0.0;
     double total_pe_bond = 0.0;
-    double total_energy = 0.0;    // KE + all PE terms
+    double total_energy = 0.0;    // KE + the potential terms tracked above
     Vec3 total_momentum;
-    double temperature = 0.0;     // T = 2*KE / (3*N*k_B) in FTD units
+    double temperature = 0.0;     // T = 2*KE_free / (3*N_free*k_B) in FTD units
+    bool energy_complete = true;  // every enabled conservative PE term is tracked
+    bool energy_conservative = false; // complete and no driven/topology-changing term
 };
 
 /**
@@ -395,8 +405,13 @@ public:
         return toggles.get_toggle(name);
     }
 
+    bool try_set_toggle(std::string_view name, bool value,
+                        std::string* err = nullptr) {
+        return toggles.set_toggle(name, value, err);
+    }
+
     void set_toggle(const std::string& name, bool value) override {
-        toggles.set_toggle(name, value);
+        (void)try_set_toggle(name, value);
     }
 
     ScaleBaseDiagnostics base_diagnostics() const override {

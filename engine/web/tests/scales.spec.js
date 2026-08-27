@@ -693,8 +693,9 @@ test('Knowledge base opens as a single responsive library with shared content', 
     }));
 
     expect(scenarioState.resultCount).toBeGreaterThan(0);
-    expect(scenarioState.readerTitle).toContain('Born Rule');
-    expect(scenarioState.readerText).toContain('|J|²');
+    expect(scenarioState.readerTitle).toContain('A Burst of New Matter');
+    expect(scenarioState.readerText).toContain('not a Born-law measurement');
+    expect(scenarioState.readerText).toContain('P proportional to |J| squared');
 
     await page.fill('#kb-sidebar-search', 'TRAPPIST-1');
 

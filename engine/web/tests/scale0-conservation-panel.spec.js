@@ -11,18 +11,20 @@ import { test, expect } from '@playwright/test';
 import { gotoAndReady } from './_helpers.js';
 
 test.describe('Conservation panel and WASM diagnostics', () => {
+    /** @type {import('@playwright/test').BrowserContext|undefined} */
+    let context;
     /** @type {import('@playwright/test').Page} */
     let page;
 
     test.beforeAll(async ({ browser, baseURL }) => {
-        const context = await browser.newContext({ baseURL });
+        context = await browser.newContext({ baseURL });
         page = await context.newPage();
         page.setDefaultTimeout(60_000);
         await gotoAndReady(page);
     });
 
     test.afterAll(async () => {
-        if (page) await page.close();
+        await context?.close();
     });
 
     test('conservation panel follows worker-owned flux-pulse ticks', async () => {

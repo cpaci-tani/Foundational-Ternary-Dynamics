@@ -308,7 +308,10 @@ void CosmicEngine::setup_galaxy_merger(double mass1, double mass2,
 
     box_size_ = separation * 3.0;
     softening_ = box_size_ * cosmic::SOFTENING_SCALE;
-    toggles.galaxy_mergers = true;
+    // The initial two-galaxy collision evolves under implemented N-body
+    // gravity. The reserved galaxy_mergers/dynamical-friction toggle has no
+    // native tick consumer and therefore stays OFF until that phase exists.
+    toggles.galaxy_mergers = false;
 }
 
 void CosmicEngine::setup_quasar(double mass, int n_gas) {

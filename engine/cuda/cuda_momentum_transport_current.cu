@@ -70,6 +70,15 @@ DeviceTriplet view(const CudaMatchedFieldDeviceView& field) {
   return {field.x, field.y, field.z};
 }
 
+double reduce_host_blocks(const std::vector<double>& values, int quantity,
+                          int blocks) {
+  long double total = 0.0L;
+  const std::size_t base = static_cast<std::size_t>(quantity) * blocks;
+  for (int block = 0; block < blocks; ++block)
+    total += values[base + static_cast<std::size_t>(block)];
+  return static_cast<double>(total);
+}
+
 __device__ int wrap_coordinate(int value, int L) {
   value %= L;
   return value < 0 ? value + L : value;
@@ -540,29 +549,28 @@ CudaMomentumLedgerTick CudaMomentumTransportLedger::observe(
       }
       telemetry.device_to_host_bytes += download_bytes;
 
-      const auto reduce = [&](int quantity) {
-        long double total = 0.0L;
-        const std::size_t base =
-            static_cast<std::size_t>(quantity) * blocks;
-        for (int block = 0; block < blocks; ++block)
-          total += host[base + static_cast<std::size_t>(block)];
-        return static_cast<double>(total);
-      };
       for (int slot = 0; slot < kCudaMomentumSlots; ++slot) {
         auto& terms = result.terms[localization][component][slot];
         const int base = slot * kQuantities;
-        terms.phi_plain = reduce(base + kQuantityPhiPlain);
-        terms.phi_binding = reduce(base + kQuantityPhiBinding);
+        terms.phi_plain = reduce_host_blocks(
+            host, base + kQuantityPhiPlain, blocks);
+        terms.phi_binding = reduce_host_blocks(
+            host, base + kQuantityPhiBinding, blocks);
         terms.phi_plain_complement =
-            reduce(base + kQuantityPhiPlainComplement);
+            reduce_host_blocks(host, base + kQuantityPhiPlainComplement, blocks);
         terms.phi_binding_complement =
-            reduce(base + kQuantityPhiBindingComplement);
-        terms.sweep = reduce(base + kQuantitySweep);
-        terms.sweep_complement = reduce(base + kQuantitySweepComplement);
-        terms.source = reduce(base + kQuantitySource);
-        terms.content_after = reduce(base + kQuantityContentAfter);
-        terms.content_before = reduce(base + kQuantityContentBefore);
-        terms.content_old = reduce(base + kQuantityContentOld);
+            reduce_host_blocks(host, base + kQuantityPhiBindingComplement,
+                               blocks);
+        terms.sweep = reduce_host_blocks(host, base + kQuantitySweep, blocks);
+        terms.sweep_complement = reduce_host_blocks(
+            host, base + kQuantitySweepComplement, blocks);
+        terms.source = reduce_host_blocks(host, base + kQuantitySource, blocks);
+        terms.content_after = reduce_host_blocks(
+            host, base + kQuantityContentAfter, blocks);
+        terms.content_before = reduce_host_blocks(
+            host, base + kQuantityContentBefore, blocks);
+        terms.content_old = reduce_host_blocks(
+            host, base + kQuantityContentOld, blocks);
         // Sec 3: every momentum-sector quantity carries interaction_scale,
         // applied at the same point the existing local_momentum lambda does.
         scale_momentum_ledger_tick_terms(terms, options.interaction_scale);

@@ -6,8 +6,8 @@
  *          phase_movement methods become thin orchestrators that call
  *          these free functions; the actual physics lives in
  *          engine/src/render_bridge_phases/<phase>.cpp TUs.
- * @consumers engine/src/render_bridge.cpp (orchestrator), all
- *            engine/src/render_bridge_phases/*.cpp TUs.
+ * @consumers engine/src/render_bridge.cpp (orchestrator), all phase
+ *            implementation TUs under engine/src/render_bridge_phases/.
  * @related engine/include/ftd/render_bridge.h (the class),
  *          engine/include/ftd/render_bridge_diagnostics.h (POD structs)
  *

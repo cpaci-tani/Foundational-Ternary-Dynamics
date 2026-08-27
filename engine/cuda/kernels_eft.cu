@@ -11,6 +11,7 @@
 #include <cstdio>
 
 #include "cuda_error.cuh"  // CUDA_CHECK (revision C1 consolidation)
+#include "cuda_device_buffer.cuh"
 
 namespace ftd {
 namespace eft {
@@ -329,8 +330,8 @@ void gpu_compute_eft_means(const GpuSnapshotPair& p, double* out_means) {
     int N = p.total_sites();
 
     // 1. Allocate intermediate GPU results buffer (10 operators × N)
-    double* d_op_results = nullptr;
-    CUDA_CHECK(cudaMalloc(&d_op_results, 10 * N * sizeof(double)));
+    ftd::gpu::CudaDeviceBuffer<double> op_results(
+        static_cast<std::size_t>(10) * N);
 
     // 2. Launch the operator evaluation kernel
     dim3 block(4, 8, 8);
@@ -338,45 +339,41 @@ void gpu_compute_eft_means(const GpuSnapshotPair& p, double* out_means) {
     compute_eft_operators_gpu_kernel<<<grid, block>>>(
         p.before.d_rho_cell, p.before.d_phi_x, p.before.d_phi_y, p.before.d_phi_z,
         p.after.d_rho_cell, p.after.d_phi_x, p.after.d_phi_y, p.after.d_phi_z,
-        d_op_results, L
+        op_results.get(), L
     );
     CUDA_CHECK(cudaGetLastError());
 
     // 3. Setup temporary reduction workspace
     // Maximum blocks for 1st pass: (N + 511) / 512
     int max_blocks = (N + 511) / 512;
-    double* d_temp = nullptr;
-    CUDA_CHECK(cudaMalloc(&d_temp, max_blocks * sizeof(double)));
-
-    double* d_scalar = nullptr;
-    CUDA_CHECK(cudaMalloc(&d_scalar, sizeof(double)));
+    ftd::gpu::CudaDeviceBuffer<double> temp(max_blocks);
+    ftd::gpu::CudaDeviceBuffer<double> scalar(1);
 
     // 4. Reduce each of the 10 operators independently
     for (int op = 0; op < 10; ++op) {
-        double* d_input = d_op_results + op * N;
+        double* d_input = op_results.get() + op * N;
 
         // Pass 1: Reduce N to block-sums
         int threads1 = 256;
         int blocks1 = (N + (threads1 * 2) - 1) / (threads1 * 2);
-        reduce_blocks_kernel<<<blocks1, threads1, threads1 * sizeof(double)>>>(d_input, d_temp, N);
+        reduce_blocks_kernel<<<blocks1, threads1, threads1 * sizeof(double)>>>(
+            d_input, temp.get(), N);
         CUDA_CHECK(cudaGetLastError());
 
         // Pass 2: Reduce block-sums to final scalar sum
         int threads2 = 256;
         int blocks2 = 1;
-        reduce_blocks_kernel<<<blocks2, threads2, threads2 * sizeof(double)>>>(d_temp, d_scalar, blocks1);
+        reduce_blocks_kernel<<<blocks2, threads2, threads2 * sizeof(double)>>>(
+            temp.get(), scalar.get(), blocks1);
         CUDA_CHECK(cudaGetLastError());
 
         // Copy final sum to host and divide by N to get the mean
         double sum_val = 0.0;
-        CUDA_CHECK(cudaMemcpy(&sum_val, d_scalar, sizeof(double), cudaMemcpyDeviceToHost));
+        CUDA_CHECK(cudaMemcpy(&sum_val, scalar.get(), sizeof(double),
+                              cudaMemcpyDeviceToHost));
         out_means[op] = sum_val / static_cast<double>(N);
     }
 
-    // 5. Clean up device memory
-    cudaFree(d_op_results);
-    cudaFree(d_temp);
-    cudaFree(d_scalar);
 }
 
 } // namespace gpu

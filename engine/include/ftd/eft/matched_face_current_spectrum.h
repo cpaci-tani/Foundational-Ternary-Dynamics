@@ -36,7 +36,7 @@ struct MatchedFaceCurrentSpectrum {
 
 MatchedFaceCurrentSpectrum observe_sparse_face_current_spectrum(
     int L,
-    const std::vector<QuadraticCoatFaceEntry>& entries,
+    const std::vector<QuadraticCoatSparseCurrentEntry>& entries,
     const std::array<double, 3>& wavevector,
     double normalization);
 

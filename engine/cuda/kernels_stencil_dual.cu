@@ -192,21 +192,17 @@ __global__ void phase_read_dual_kernel(
 // ---------- Strong Field (Stella Octangula) Kernel ----------
 // Propagates strong flux along the 8 vertex neighbors.
 //
-// KNOWN IN-PLACE STENCIL RACE (deferred, not a correctness fix): the Laplacian
-// reads fs_[v1..v8] + fs_[i] (below) while the leapfrog writes fs_[i] in place,
-// so a vertex-neighbor thread's read of fs_[i] races this cell's write —
-// Gauss-Seidel-vs-Jacobi nondeterminism run-to-run. This path is GPU-only (no
-// CPU reference to diverge from) and toggle-gated OFF in the shipping/golden
-// profile; GPC-22 already validates it only to ~1e-5 relative, not to the bit,
-// and the shipping golden avoids it entirely. The correct fix is Jacobi
-// double-buffering (read fs_in, write fs_out, swap) — deferred because it needs
-// a second fs triple (~400 MB at L=256, so an owner memory decision) and WSL2
-// GPU behavioral validation. Documented here so it is not mistaken for clean.
-__global__ void strong_field_stencil_kernel(
-    double* __restrict__ fs_x, double* __restrict__ fs_y, double* __restrict__ fs_z,
+// Jacobi step, phase 1: every thread reads the same pre-step flux image and
+// updates only its own velocity. A second kernel commits flux+damping after
+// this kernel completes on the same stream. Splitting the leapfrog this way
+// removes the prior neighbor read/write race without allocating another field
+// triple (which would cost ~400 MiB per sector at L=256).
+__global__ void strong_field_velocity_kernel(
+    const double* __restrict__ fs_x, const double* __restrict__ fs_y,
+    const double* __restrict__ fs_z,
     double* __restrict__ wvs_x, double* __restrict__ wvs_y, double* __restrict__ wvs_z,
     const int8_t* __restrict__ state, const int8_t* __restrict__ color,
-    double damp, int L
+    int L
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -251,31 +247,17 @@ __global__ void strong_field_stencil_kernel(
     wvs_x[i] += djx;
     wvs_y[i] += djy;
     wvs_z[i] += djz;
-
-    // Implicit leapfrog write
-    fs_x[i] += wvs_x[i];
-    fs_y[i] += wvs_y[i];
-    fs_z[i] += wvs_z[i];
-
-    // Damping
-    fs_x[i] *= damp;
-    fs_y[i] *= damp;
-    fs_z[i] *= damp;
-    wvs_x[i] *= damp;
-    wvs_y[i] *= damp;
-    wvs_z[i] *= damp;
 }
 
 // ---------- Weak Field (Cuboctahedron) Kernel ----------
 // Propagates weak flux along the 12 edge neighbors.
-// Shares the same known in-place stencil race documented on
-// strong_field_stencil_kernel above (edge neighbors here instead of vertex);
-// same deferred Jacobi double-buffer fix, same GPU-only / non-golden framing.
-__global__ void weak_field_stencil_kernel(
-    double* __restrict__ fw_x, double* __restrict__ fw_y, double* __restrict__ fw_z,
+// Jacobi phase 1 for the weak sector; flux commit is a separate ordered kernel.
+__global__ void weak_field_velocity_kernel(
+    const double* __restrict__ fw_x, const double* __restrict__ fw_y,
+    const double* __restrict__ fw_z,
     double* __restrict__ wvw_x, double* __restrict__ wvw_y, double* __restrict__ wvw_z,
     const int8_t* __restrict__ state, const int8_t* __restrict__ flavor,
-    double damp, int L
+    int L
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -315,19 +297,27 @@ __global__ void weak_field_stencil_kernel(
     wvw_x[i] += djx;
     wvw_y[i] += djy;
     wvw_z[i] += djz;
+}
 
-    // Implicit leapfrog write
-    fw_x[i] += wvw_x[i];
-    fw_y[i] += wvw_y[i];
-    fw_z[i] += wvw_z[i];
+// Jacobi phase 2 shared by strong and weak sectors. Same-stream launch order
+// guarantees the velocity kernel has finished reading every flux value before
+// any value is changed here.
+__global__ void field_leapfrog_commit_kernel(
+    double* __restrict__ field_x, double* __restrict__ field_y,
+    double* __restrict__ field_z,
+    double* __restrict__ wave_x, double* __restrict__ wave_y,
+    double* __restrict__ wave_z,
+    double damp, int N
+) {
+    const int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= N) return;
 
-    // Damping
-    fw_x[i] *= damp;
-    fw_y[i] *= damp;
-    fw_z[i] *= damp;
-    wvw_x[i] *= damp;
-    wvw_y[i] *= damp;
-    wvw_z[i] *= damp;
+    field_x[i] = (field_x[i] + wave_x[i]) * damp;
+    field_y[i] = (field_y[i] + wave_y[i]) * damp;
+    field_z[i] = (field_z[i] + wave_z[i]) * damp;
+    wave_x[i] *= damp;
+    wave_y[i] *= damp;
+    wave_z[i] *= damp;
 }
 
 // ---------- Dual Phase Write Kernel ----------
@@ -608,12 +598,20 @@ void launch_strong_field_stencil(GpuBuffers& bufs, double damp) {
     dim3 block(4, 8, 8);  // 256 threads
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
 
-    strong_field_stencil_kernel<<<grid, block, 0, stream>>>(
+    strong_field_velocity_kernel<<<grid, block, 0, stream>>>(
         bufs.d_flux_strong_x, bufs.d_flux_strong_y, bufs.d_flux_strong_z,
         bufs.d_wave_vel_strong_x, bufs.d_wave_vel_strong_y, bufs.d_wave_vel_strong_z,
         bufs.d_state, bufs.d_color,
-        damp, L
+        L
     );
+    CUDA_CHECK(cudaGetLastError());
+
+    constexpr int threads = 256;
+    const int blocks = (bufs.N + threads - 1) / threads;
+    field_leapfrog_commit_kernel<<<blocks, threads, 0, stream>>>(
+        bufs.d_flux_strong_x, bufs.d_flux_strong_y, bufs.d_flux_strong_z,
+        bufs.d_wave_vel_strong_x, bufs.d_wave_vel_strong_y, bufs.d_wave_vel_strong_z,
+        damp, bufs.N);
     CUDA_CHECK(cudaGetLastError());
 }
 
@@ -623,12 +621,20 @@ void launch_weak_field_stencil(GpuBuffers& bufs, double damp) {
     dim3 block(4, 8, 8);  // 256 threads
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
 
-    weak_field_stencil_kernel<<<grid, block, 0, stream>>>(
+    weak_field_velocity_kernel<<<grid, block, 0, stream>>>(
         bufs.d_flux_weak_x, bufs.d_flux_weak_y, bufs.d_flux_weak_z,
         bufs.d_wave_vel_weak_x, bufs.d_wave_vel_weak_y, bufs.d_wave_vel_weak_z,
         bufs.d_state, bufs.d_flavor,
-        damp, L
+        L
     );
+    CUDA_CHECK(cudaGetLastError());
+
+    constexpr int threads = 256;
+    const int blocks = (bufs.N + threads - 1) / threads;
+    field_leapfrog_commit_kernel<<<blocks, threads, 0, stream>>>(
+        bufs.d_flux_weak_x, bufs.d_flux_weak_y, bufs.d_flux_weak_z,
+        bufs.d_wave_vel_weak_x, bufs.d_wave_vel_weak_y, bufs.d_wave_vel_weak_z,
+        damp, bufs.N);
     CUDA_CHECK(cudaGetLastError());
 }
 

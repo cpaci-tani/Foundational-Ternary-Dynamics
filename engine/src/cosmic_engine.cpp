@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <cmath>
 #include <numeric>
+#include <stdexcept>
 
 namespace ftd {
 
@@ -368,6 +369,10 @@ void CosmicEngine::enforce_speed_limit() {
 // ============================================================================
 
 void CosmicEngine::tick() {
+    std::string toggle_error;
+    if (!toggles.validate(&toggle_error)) {
+        throw std::logic_error("CosmicEngine invalid toggle profile: " + toggle_error);
+    }
     // ================================================================
     // Tick cycle follows Gadget-2 conventions:
     //   1. Compute forces at current positions

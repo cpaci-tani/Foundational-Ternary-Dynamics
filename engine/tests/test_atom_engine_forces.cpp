@@ -769,7 +769,10 @@ static void section_thermostat() {
         }
 
         ae.set_target_temperature(1.0);  // much higher than initial
-        ae.set_thermostat_tau(0.5);
+        // Keep dt/tau below one, as in TH1. tau=0.5 makes dt/tau=2 and
+        // produces a deterministic cold/hot two-cycle; an even tick count
+        // then returns to the initial energy and does not test heat exchange.
+        ae.set_thermostat_tau(4.0);
         ae.toggles.ionic = false;
         ae.toggles.van_der_waals = false;
         ae.toggles.thermostat = true;
@@ -778,7 +781,13 @@ static void section_thermostat() {
         ae.run(200);
         auto d1 = ae.diagnostics();
 
-        std::cout << "  E0=" << d0.total_energy << " E1=" << d1.total_energy << "\n";
+        std::cout << "  E0=" << d0.total_energy << " E1=" << d1.total_energy
+                  << " KE0=" << d0.total_ke << " KE1=" << d1.total_ke
+                  << " T0=" << d0.temperature << " T1=" << d1.temperature << "\n";
+        ftd::test::check("TH5: thermostat heating increases kinetic energy",
+              d1.total_ke > d0.total_ke);
+        ftd::test::check("TH5: temperature moves toward heating target",
+              std::abs(d1.temperature - 1.0) < std::abs(d0.temperature - 1.0));
         ftd::test::check("TH5: energy changes with thermostat (heating adds KE)",
               std::abs(d1.total_energy - d0.total_energy) > 1e-10);
     }

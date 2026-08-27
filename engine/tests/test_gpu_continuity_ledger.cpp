@@ -49,11 +49,13 @@ void place(std::vector<ftd::Voxel>& voxels,
            int L, int x, int y, int z,
            int8_t state,
            const ftd::Vec3& flux,
-           const ftd::Vec3& velocity = {}) {
+           const ftd::Vec3& velocity = {},
+           const ftd::Vec3& remainder = {}) {
   auto& v = voxels[static_cast<size_t>(index(L, x, y, z))];
   v.state = state;
   v.flux = flux;
   v.velocity = velocity;
+  v.remainder = remainder;
   v.particle_id = index(L, x, y, z);
 }
 
@@ -257,7 +259,11 @@ int main() {
   {
     std::cout << "\n-- GCL-1: x-face positive transport --\n";
     std::vector<ftd::Voxel> voxels(static_cast<size_t>(L * L * L));
-    place(voxels, L, 3, 1, 1, +1, {0, 0, ftd::K_B}, {1, 0, 0});
+    // The raw unit velocity is projected below C_SPEED at movement entry.
+    // Preload a legal sub-cell remainder so this one-tick ledger fixture
+    // crosses a face after that projection instead of merely drifting.
+    place(voxels, L, 3, 1, 1, +1, {0, 0, ftd::K_B}, {1, 0, 0},
+          {0.75, 0, 0});
     check_ledger_matches("GCL-1 x transport", voxels,
                          toggles_with_movement_only(), 1, 0, 0);
   }
@@ -265,7 +271,8 @@ int main() {
   {
     std::cout << "\n-- GCL-2: diagonal Moore transport --\n";
     std::vector<ftd::Voxel> voxels(static_cast<size_t>(L * L * L));
-    place(voxels, L, 3, 3, 1, +1, {ftd::K_B, ftd::K_B, 0}, {1, 1, 0});
+    place(voxels, L, 3, 3, 1, +1, {ftd::K_B, ftd::K_B, 0}, {1, 1, 0},
+          {0.75, 0.75, 0});
     check_ledger_matches("GCL-2 diagonal transport", voxels,
                          toggles_with_movement_only(), 1, 0, 0);
   }
@@ -273,7 +280,8 @@ int main() {
   {
     std::cout << "\n-- GCL-3: opposite-sign annihilation --\n";
     std::vector<ftd::Voxel> voxels(static_cast<size_t>(L * L * L));
-    place(voxels, L, 3, 1, 1, +1, {0, 0, ftd::K_B}, {1, 0, 0});
+    place(voxels, L, 3, 1, 1, +1, {0, 0, ftd::K_B}, {1, 0, 0},
+          {0.75, 0, 0});
     place(voxels, L, 4, 1, 1, -1, {0, 0, -ftd::K_B});
     check_ledger_matches("GCL-3 annihilation", voxels,
                          toggles_with_movement_only(), 0, 1, 0);

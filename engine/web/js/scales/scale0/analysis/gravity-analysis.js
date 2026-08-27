@@ -9,7 +9,14 @@
  */
 
 import { metricStats, histogram, magnitudeGrid } from './lattice-topology.js';
-import { G_N, K_B, ALPHA_G_APPROX, LAPLACIAN_FACE_WEIGHT, LAPLACIAN_EDGE_WEIGHT } from '../../../constants.js';
+import {
+    G_N,
+    K_B,
+    ALPHA_G_APPROX,
+    LATENCY_HORIZON_CLAMP,
+    LAPLACIAN_FACE_WEIGHT,
+    LAPLACIAN_EDGE_WEIGHT,
+} from '../../../constants.js';
 
 /**
  * Pairwise gravitational potential energy over manifested particles:
@@ -77,7 +84,7 @@ export function gravityPEFromPositions(positions, count) {
 /**
  * Time-dilation percentage from the peak latency: with metric lapse f = 1−L²,
  * a clock runs at rate √f, so the slowdown is (1−√f)·100. L is clamped below the
- * 0.999 horizon clamp. dilationPct(0)=0; dilationPct(0.998)≈93.7%.
+ * named horizon clamp. dilationPct(0)=0; the capped value is approximately 93.7%.
  */
 export function dilationPct(Lmax) {
     const L = Math.min(Math.max(Lmax || 0, 0), 0.999);
@@ -108,7 +115,8 @@ export function maxRhoOf(mag, M) {
  * unlike a Mock-only sampler). Returns Float64Array(N²) in getFluxSlice's
  * `data[a*N+b]` layout (feed through transposeAndFlipNN to paint).
  *
- * Latency proxy L = √min(|J|²/maxRho, 0.998) — identical to buildLatencyProxy.
+ * Latency proxy L = √min(|J|²/maxRho, LATENCY_HORIZON_CLAMP) — identical
+ * to buildLatencyProxy.
  * kind: latency=L, dilation=L² (lapse deficit), kretschmann=(∇²L)² (18-pt Moore),
  * force=G_N·|∇|J|| (central diff). Stencil kinds zero the one-voxel border.
  * @param {ArrayLike<number>} mag  dense |J| volume, layout idx=(z*N+y)*N+x
@@ -124,7 +132,10 @@ export function gravitySlice(mag, N, axis, index, kind = 'latency', maxRho = 0, 
     const invH = 1 / h;
     const invH2 = invH * invH;
     const vidx = (x, y, z) => (z * N + y) * N + x;
-    const Lof = (x, y, z) => { const m = mag[vidx(x, y, z)]; return Math.sqrt(Math.min(m * m * invRho, 0.998)); };
+    const Lof = (x, y, z) => {
+        const m = mag[vidx(x, y, z)];
+        return Math.sqrt(Math.min(m * m * invRho, LATENCY_HORIZON_CLAMP));
+    };
     const edge = (x, y, z) => (x <= 0 || x >= N - 1 || y <= 0 || y >= N - 1 || z <= 0 || z >= N - 1);
     const F3 = LAPLACIAN_FACE_WEIGHT, E6 = LAPLACIAN_EDGE_WEIGHT;
     for (let a = 0; a < N; a++) {

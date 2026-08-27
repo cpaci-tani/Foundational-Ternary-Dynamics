@@ -19,6 +19,7 @@
 #include "ftd/constants.h"
 #include "ftd/test_telemetry.h"
 #include "ftd/volumetric_measure.h"
+#include "bridge_fixtures.h"
 
 #include <cmath>
 #include <cstring>
@@ -76,7 +77,6 @@ void test_energy_audit_half_factor() {
     check_close("field_energy = ½·|J|²·V_cell (|J|²=2)",
                 audit2.field_energy, VOXEL_VOLUME, 1e-9);
 }
-
 // ---------------------------------------------------------------------------
 // G-1: Locked-particle pair force does NOT skip the unlocked partner.
 //
@@ -122,7 +122,7 @@ static double run_pair_and_get_b_speed(bool lock_a) {
     }
 
     // Few ticks — long enough for Poisson to settle and forces to integrate.
-    for (int t = 0; t < 5; ++t) rb.tick();
+    run_for(rb, 5);
 
     // B is the unlocked partner at (10,8,8).
     const auto& vB = rb.voxels()[rb.lattice().index(10, 8, 8)].velocity;
@@ -253,7 +253,7 @@ void test_coulomb_pe_pair_convention() {
     rb.inject_particle(7, 8, 8, +1, {0, 0, 0});
     rb.inject_particle(9, 8, 8, -1, {0, 0, 0});
 
-    for (int t = 0; t < 10; ++t) rb.tick();
+    run_for(rb, 10);
 
     const auto& voxels      = rb.voxels();
     const auto& phi_coulomb = rb.phi_coulomb();

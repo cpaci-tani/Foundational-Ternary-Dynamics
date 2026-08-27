@@ -56,7 +56,7 @@ try {
 const IS_EM_PTHREAD = typeof globalThis.name === 'string'
     && globalThis.name.startsWith('em-pthread');
 
-const CTRL = { FRAME: 0, N: 1, TICK: 2, RUNNING: 3, PCOUNT: 4, TICKS_PER_FRAME: 5, LEN: 8 };
+const CTRL = { FRAME: 0, N: 1, TICK: 2, RUNNING: 3, PCOUNT: 4, TICKS_PER_FRAME: 5, DATA_VERSION: 6, LEN: 8 };
 const TARGET_DT = 1000 / 60;
 
 let mod = null, bridge = null;
@@ -288,10 +288,10 @@ function buildBridge(n, scen) {
     setupOk, setupError,
     ...(doubled ? { fluxSab: fluxPubSab, doubleBuffered: true } : {}),
   });
-  postFrame();
+  postFrame(true);
 }
 
-function postFrame() {
+function postFrame(fieldChanged = false) {
   if (!bridge) return;
   const vol = mod.getFluxVolume(bridge);            // refresh the flux cache in the shared heap
   const doubled = publishFlux(vol);
@@ -359,6 +359,7 @@ function postFrame() {
       sizes:       p.sizes       ? new Float32Array(p.sizes)       : new Float32Array(0),
       spin:        p.spin        ? new Float32Array(p.spin)        : new Float32Array(0),
       colorCharge: p.colorCharge ? new Float32Array(p.colorCharge) : new Float32Array(0),
+      locked:      p.locked      ? new Uint8Array(p.locked)        : new Uint8Array(0),
       count: p.count | 0,
     };
   } catch (e) { /* ignore */ }
@@ -402,6 +403,7 @@ function postFrame() {
   if (ctrl) {
     Atomics.store(ctrl, CTRL.TICK, tick | 0);
     Atomics.store(ctrl, CTRL.PCOUNT, parts ? parts.count : 0);
+    if (fieldChanged) Atomics.add(ctrl, CTRL.DATA_VERSION, 1);
     Atomics.add(ctrl, CTRL.FRAME, 1);
   }
   const engineTogglesMsg = engineTogglesDirty ? readEngineToggles() : null;
@@ -422,7 +424,7 @@ function loop() {
     const maxTicks = N > 96 ? 1 : (N > 48 ? 1 : (N > 32 ? 2 : whole));
     const toRun = Math.min(whole, maxTicks);
     for (let i = 0; i < toRun; i++) bridge.tick();
-    if (toRun > 0) postFrame();
+    if (toRun > 0) postFrame(true);
   }
   const elapsed = performance.now() - t0;
   timer = setTimeout(loop, Math.max(0, TARGET_DT - elapsed));
@@ -461,7 +463,7 @@ if (!IS_EM_PTHREAD) self.onmessage = (e) => {
         lastAudit = null; auditFrameCounter = 0;
         applyCommand(msg.method, msg.args || []);
         engineTogglesDirty = true;
-        postFrame();
+        postFrame(true);
         break;
       }
       case 'batchCommand': {
@@ -471,7 +473,7 @@ if (!IS_EM_PTHREAD) self.onmessage = (e) => {
           applyCommand(method, args);
         }
         engineTogglesDirty = true;
-        postFrame();
+        postFrame(true);
         break;
       }
       case 'inspectVoxel': {
@@ -512,7 +514,7 @@ if (!IS_EM_PTHREAD) self.onmessage = (e) => {
         // When paused the tick loop never calls postFrame(), so the proxy cache
         // stays empty and the overlay never appears. Push a frame immediately so
         // the newly registered sampler is delivered to the proxy right away.
-        if (bridge && ctrl && !Atomics.load(ctrl, CTRL.RUNNING)) postFrame();
+        if (bridge && ctrl && !Atomics.load(ctrl, CTRL.RUNNING)) postFrame(false);
         break;
       case 'unwantSampler':
         // Counterpart to 'wantSampler' — a caller no longer needs this
@@ -527,6 +529,10 @@ if (!IS_EM_PTHREAD) self.onmessage = (e) => {
         break;
       case 'setRunning':
         if (ctrl) Atomics.store(ctrl, CTRL.RUNNING, msg.value ? 1 : 0);
+        // This handler cannot run until any in-progress loop()/postFrame() has
+        // returned. Posting the acknowledgement here makes it a FIFO barrier:
+        // the proxy receives all committed frames before the settled state.
+        self.postMessage({ type: 'runningState', running: !!msg.value, seq: msg.seq | 0 });
         break;
       case 'dispose':
         if (timer) { clearTimeout(timer); timer = 0; }

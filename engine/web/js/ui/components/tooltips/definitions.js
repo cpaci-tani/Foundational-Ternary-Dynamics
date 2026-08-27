@@ -207,27 +207,28 @@ const AE_CARD_TOOLTIPS = {
     // engine applies no eV calibration — formatEnergy(value, 2) only
     // auto-scales the magnitude suffix, it does not convert sim units to
     // eV. The cards are suffixed "(sim)" so they no longer claim eV.
-    'Kinetic Energy sim': '⚠ Sim-unit energy (no eV calibration applied). Total KE across all atoms \\(\\sum \\tfrac{1}{2}m|v|^2\\) in the AtomEngine\'s native MD units. Related to the sim-unit Temperature proxy via \\(T_{\\text{sim}} = 2\\langle KE\\rangle/(3 N)\\).',
-    'Total Energy sim':   '⚠ Sim-unit energy (no eV calibration applied). KE + PE_ionic + PE_vdw + PE_bonds in native MD units. Should be conserved when no thermostat is attached.',
+    'Kinetic Energy sim': '⚠ Sim-unit energy (no eV calibration applied). Total KE across all atoms \\(\\sum \\tfrac{1}{2}m|v|^2\\) in the AtomEngine\'s native MD units. Temperature uses only unlocked atoms and their unconstrained KE.',
+    'Tracked Energy sim': '⚠ Sim-unit energy (no eV calibration applied). KE plus the enabled ionic, vdW, and bond potentials. The Accounting row reports when an enabled many-body potential is not included; this is not a complete Hamiltonian in that state.',
     'PE Ionic sim':       '⚠ Sim-unit energy (no eV calibration applied). Electrostatic energy from atom partial charges: \\(\\sum k q_i q_j / r\\). Usually positive (repulsion) for salts; dominant term in ionic crystals.',
     'PE Van der Waals sim': '⚠ Sim-unit energy (no eV calibration applied). Lennard-Jones 12-6 potential summed over non-bonded atom pairs: 4\u03b5[(\u03c3/r)\u00b9\u00b2 \u2212 (\u03c3/r)\u2076]. Captures hard-core repulsion + weak dispersion attraction.',
     'PE Bonds sim':      '⚠ Sim-unit energy (no eV calibration applied). Harmonic bond potential \\(\\sum \\tfrac{1}{2} k_b (r - r_0)^2\\) for every covalent bond. Zero at equilibrium length, grows quadratically with strain.',
 
     // ─── Thermo + momentum ────────────────────────────────────────────
-    'Temperature sim': '\u26a0 Sim-unit equipartition proxy: \\(T_{\\text{sim}} = 2\\langle KE\\rangle / (3 N)\\) with implicit k_B = 1. NOT kelvin \u2014 no Boltzmann conversion is applied, so the value (suffixed "(sim)") is in the same sim units as the AE energy cards. (Audit P0-10: kelvin claim corrected 2026-05-27.)',
+    'Temperature sim': '\u26a0 Sim-unit equipartition proxy: \\(T_{\\text{sim}} = 2 KE_{\\text{free}} / (3 N_{\\text{free}})\\) with implicit k_B = 1; locked constraints are excluded. NOT kelvin \u2014 no Boltzmann conversion is applied.',
     'Momentum |p|':  'Magnitude of the total linear momentum. Conserved in a closed system; non-conservation flags a bug.',
 
     // ─── Bookkeeping ──────────────────────────────────────────────────
     'AE Tick':      'AtomEngine tick counter. Runs faster than Scale-0 ticks because atomic vibration rates are orders of magnitude below the lattice speed limit.',
-    'Energy Drift': 'Cumulative percent drift of Total Energy from its initial value. Same interpretation as the Scale-1 Drift \u2014 well-tuned scenarios stay below 0.1 %.',
+    'Accounting': 'Whether every enabled conservative potential is included in Tracked Energy, and whether topology changes, thermostat, damping, charge transfer, or speed limiting make the run externally driven.',
+    'Conservative Drift': 'Percent drift of Tracked Energy from its baseline, shown only when accounting is complete and the active dynamics are conservative. An em dash means the metric is not valid for the current toggles.',
 
     // ─── Atomic-scale properties ──────────────────────────────────────
-    'Atomic Mass':  'The selected element\'s standard atomic mass in atomic mass units (u). Sourced from the periodic-table data table.',
+    'Atomic Mass':  'SEMF-estimated composite atomic rest-mass energy: free proton, neutron, and electron masses minus nuclear binding and the Thomas–Fermi electronic binding magnitude. This is a model estimate, not a tabulated standard atomic weight.',
     'Nuclear B.E.': 'Nuclear binding energy from the Semi-Empirical Mass Formula (SEMF), in MeV. Energy released if the nucleus were fully separated into free nucleons.',
     'B/A MeV':      'Binding energy per nucleon B/A. Peaks at \u2248 8.8 MeV around iron \u2014 this curve is what drives fusion (low A) and fission (high A) energetics.',
     'Electron B.E.': 'Total electron binding energy from the Thomas–Fermi atomic-binding prefactor: \\(E_{\\text{atom}} \\approx -20.93 \\cdot Z^{7/3}\\) eV (Lieb–Simon 1977, [IMPOSED — external]). Not a shell-summed Slater-hydrogenic calculation despite earlier tooltip wording. Typical magnitude: tens to hundreds of eV for light atoms; thousands for heavy.',
     // Card title is "Mass (K_B)" with <sub>B</sub>; textContent renders as "Mass (KB)" \u2192 normalized "Mass KB".
-    'Mass KB':      'Composite atomic mass in units of the PDG electron mass \\(m_e = 0.510999\\) MeV (the divisor used in atomic-energy.js), including both nuclear and electron binding corrections. Despite the K_B-labelled key, the value is NOT divided by the FTD anchor K_B = 0.511; the two agree by construction to ~0.2%. This card is display-only — Scale-0 genesis uses K_GENESIS = N_c · K_MANIFEST (= 3·W_SC since FTD-0388), not this value (audit P0-11 / P1-19).',
+    'Mass KB':      'Composite atomic mass in units of the PDG electron mass \\(m_e = 0.51099895\\) MeV (the divisor used in atomic-energy.js), including nuclear and electronic binding corrections. Despite the K_B-labelled key, the value is NOT divided by the rounded FTD anchor K_B = 0.511 MeV; those electron-mass scales differ by about 2.05 ppm, not 0.2%. This card is display-only — Scale-0 genesis uses K_GENESIS = N_c · K_MANIFEST (= 3·W_SC since FTD-0388), not this value.',
 };
 
 function annotateScale0Diagnostics(root) {

@@ -77,6 +77,7 @@ const EMPTY_PARTICLE_DATA = Object.freeze({
     sizes: new Float32Array(0),
     spin: new Float32Array(0),
     colorCharge: new Float32Array(0),
+    locked: new Uint8Array(0),
     count: 0,
 });
 const EMPTY_KNOT_TELEMETRY = Object.freeze({ ids: new Int32Array(0), signs: new Int32Array(0), birth: new Int32Array(0), age: new Int32Array(0), size: new Int32Array(0), peak: new Int32Array(0), fields: new Float32Array(0), stride: 11, count: 0 });
@@ -406,18 +407,21 @@ export class WasmBridge {
             c.sizes = new Float32Array(n);
             c.spin = new Float32Array(n);
             c.colorCharge = new Float32Array(n);
+            c.locked = new Uint8Array(n);
         }
         c.positions.set(raw.positions.subarray(0, n * 3));
         c.colors.set(raw.colors.subarray(0, n * 3));
         c.sizes.set(raw.sizes.subarray(0, n));
         c.spin.set(raw.spin.subarray(0, n));
         c.colorCharge.set(raw.colorCharge.subarray(0, n));
+        c.locked.set(raw.locked.subarray(0, n));
         return {
             positions: c.positions.subarray(0, n * 3),
             colors: c.colors.subarray(0, n * 3),
             sizes: c.sizes.subarray(0, n),
             spin: c.spin.subarray(0, n),
             colorCharge: c.colorCharge.subarray(0, n),
+            locked: c.locked.subarray(0, n),
             count: n,
         };
     }

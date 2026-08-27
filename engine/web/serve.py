@@ -63,6 +63,16 @@ QUIET = False
 
 
 class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
+    def handle(self):
+        """Suppress normal browser disconnects without hiding server faults."""
+        try:
+            super().handle()
+        except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
+            # Browsers routinely cancel speculative/static/API fetches when a
+            # test page or tab closes. The response is no longer deliverable;
+            # logging a full request-thread traceback is only noise.
+            pass
+
     def log_message(self, format, *args):
         if not QUIET:
             super().log_message(format, *args)

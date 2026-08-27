@@ -35,15 +35,16 @@ export function advanceSimulation(ctx, state) {
 
     // Worker-backed physics (WasmBridgeProxy): the worker self-ticks on its own
     // ~60Hz loop when CTRL.RUNNING=1. Forward the desired run state (deduped in
-    // the proxy) and drive overlay/render refresh from the worker's frame counter,
+    // the proxy) and drive overlay/render refresh from the worker's physics-data
+    // version (sampler-only readbacks must not impersonate a physics update),
     // then return — the in-thread tick path below is for non-worker scenarios only.
     const fm = state.fluxMock;
     if (fm && fm.isWorker && state.useFluxMock) {
         if (typeof fm.setRunning === 'function') fm.setRunning(ctx.running);
         if (typeof fm.setTicksPerFrame === 'function') fm.setTicksPerFrame(ctx.ticksPerFrame);
-        const fc = fm.frameCounter || 0;
-        if (fc !== state._lastWorkerFrame) {
-            state._lastWorkerFrame = fc;
+        const dataVersion = fm.dataVersion || 0;
+        if (dataVersion !== state._lastWorkerDataVersion) {
+            state._lastWorkerDataVersion = dataVersion;
             state.latticeNeedsUpload = true;
             state.fieldDataVersion = (state.fieldDataVersion || 0) + 1;
         }

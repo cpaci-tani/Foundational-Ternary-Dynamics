@@ -70,6 +70,7 @@ int main(int argc, char* argv[]) {
     if (argc > 6) spatial_stride = std::atoi(argv[6]);
 
     using namespace ftd::cli_demos;
+    int exit_code = 0;
     switch (scenario) {
         case 'A': scenario_A(lattice_size, num_ticks); break;
         case 'B': scenario_B(lattice_size, num_ticks); break;
@@ -80,9 +81,12 @@ int main(int argc, char* argv[]) {
         case 'I': scenario_I(lattice_size, num_ticks, outdir); break;
         case 'J': scenario_J(lattice_size, num_ticks, outdir); break;
         case 'K': scenario_K(lattice_size, num_ticks, outdir); break;
-        case 'V': scenario_V(lattice_size, num_ticks, outdir, frame_interval, spatial_stride); break;
+        case 'V':
+            exit_code = scenario_V(
+                lattice_size, num_ticks, outdir, frame_interval, spatial_stride) ? 0 : 1;
+            break;
         default:  scenario_default(lattice_size, num_ticks); break;
     }
 
-    return 0;
+    return exit_code;
 }

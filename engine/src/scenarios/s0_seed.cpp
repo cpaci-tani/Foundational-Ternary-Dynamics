@@ -259,37 +259,29 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
     }
     else if (name == "s0-seed-cluster-law-subknee") {
         // Scenario ID: s0-seed-cluster-law-subknee
-        // Physical Purpose: Clean visualization of cluster-law sub-knee regime (A=12).
+        // Physical Purpose: Fixed finite-box genesis response at A=12.
         // Initial Condition Parameters: None.
-        // Expected Behaviour: Compact 27-block cascade of ~8 voxels under zero temperature.
-        // Discrepancy: None.
-        // FTD-0269 answer-key: sub-knee regime (A=12). Compact 27-block
-        // cascade; GPU campaign cluster ~ 8 voxels (FTD-0261). T=0 for a clean
-        // deterministic view (no thermal background).
+        // Expected Behaviour: Smallest nonzero member of the registered
+        // A=12/16/40 ordering, stable from ticks 200 to 220 at L=24.
+        // No universal N(A) law or geometric-regime label is inferred.
         configure_genesis_cluster_terms(rb, 0.0);
         IF(rb, mc, mc, mc, 12.0 * K_GENESIS, 0, 0);
     }
     else if (name == "s0-seed-cluster-law-knee") {
         // Scenario ID: s0-seed-cluster-law-knee
-        // Physical Purpose: Clean visualization of cluster-law knee escape (A=16).
+        // Physical Purpose: Fixed finite-box genesis response at A=16.
         // Initial Condition Parameters: None.
-        // Expected Behaviour: escape from 27-block to ~21 voxels under zero temperature.
-        // Discrepancy: None.
-        // FTD-0269 answer-key: the knee (A=16) — the 27-block escape where the
-        // geometry-limited cascade hands off to the energy budget. GPU campaign
-        // cluster ~ 21 voxels (FTD-0261). T=0.
+        // Expected Behaviour: Middle member of the registered A=12/16/40
+        // ordering, stable from ticks 200 to 220 at L=24. No knee is claimed.
         configure_genesis_cluster_terms(rb, 0.0);
         IF(rb, mc, mc, mc, 16.0 * K_GENESIS, 0, 0);
     }
     else if (name == "s0-seed-cluster-law-superknee") {
         // Scenario ID: s0-seed-cluster-law-superknee
-        // Physical Purpose: Clean visualization of cluster-law super-knee regime (A=40).
+        // Physical Purpose: Fixed finite-box genesis response at A=40.
         // Initial Condition Parameters: None.
-        // Expected Behaviour: Large bulk-volume expansion of ~92 voxels under zero temperature.
-        // Discrepancy: None.
-        // FTD-0269 answer-key: super-knee regime (A=40) — bulk-lattice volume
-        // expansion, N = k_eff*A^2. GPU campaign cluster ~ 92 voxels (FTD-0261).
-        // T=0.
+        // Expected Behaviour: Largest member of the registered A=12/16/40
+        // ordering, stable from ticks 200 to 220 at L=24. No A-squared law is claimed.
         configure_genesis_cluster_terms(rb, 0.0);
         IF(rb, mc, mc, mc, 40.0 * K_GENESIS, 0, 0);
     }

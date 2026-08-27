@@ -1,19 +1,52 @@
 // @ts-check
-import { test, expect } from '@playwright/test';
-import { gotoAndReady } from './_helpers.js';
+import { test as base, expect } from '@playwright/test';
 
 async function gotoPanelMount(page) {
-    await gotoAndReady(page, { timeout: 30_000 });
+    if (await page.locator('[data-panel-mount-toggle]').count() === 0) {
+        await page.goto('/', { waitUntil: 'domcontentloaded' });
+    }
+    // This suite exercises shell layout only. Waiting on the physics bridge
+    // needlessly cold-boots WASM for every CSS assertion and makes unrelated
+    // engine load pressure look like a panel failure.
+    await page.waitForFunction(() =>
+        document.documentElement.hasAttribute('data-panel-mount')
+        && document.querySelectorAll('[data-panel-mount-toggle] button').length === 3
+        && !!document.querySelector('#tab-bar .tab'),
+        undefined,
+        { timeout: 30_000 },
+    );
 }
 
-test.beforeEach(async ({ page }) => {
+const test = base.extend({
+    sharedPage: [async ({ browser }, use) => {
+        const context = await browser.newContext({ viewport: { width: 1280, height: 720 } });
+        const page = await context.newPage();
+        await page.addInitScript(() => window.localStorage.clear());
+        await gotoPanelMount(page);
+        await use(page);
+        await context.close();
+    }, { scope: 'worker' }],
+});
+
+test.describe.configure({ mode: 'serial' });
+
+test.beforeEach(async ({ sharedPage: page }) => {
     await page.setViewportSize({ width: 1280, height: 720 });
-    await page.addInitScript(() => {
-        window.localStorage.clear();
+    await gotoPanelMount(page);
+    await page.evaluate(async () => {
+        const { writePanelMount } = await import('/js/ui/shell/panel-mount-state.js');
+        localStorage.removeItem('ftd.panel.mount');
+        localStorage.removeItem('ftd-panels-collapsed');
+        document.getElementById('app')?.classList.remove('panels-collapsed');
+        writePanelMount('left');
+        // Leave the DOM in the default state without creating a persisted user
+        // preference. The one-time migration version belongs to the app boot.
+        localStorage.removeItem('ftd.panel.mount');
+        await new Promise((resolve) => requestAnimationFrame(resolve));
     });
 });
 
-test('every panel descriptor exposes a unicode icon glyph', async ({ page }) => {
+test('every panel descriptor exposes a unicode icon glyph', async ({ sharedPage: page }) => {
     await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
@@ -29,7 +62,7 @@ test('every panel descriptor exposes a unicode icon glyph', async ({ page }) => 
     }
 });
 
-test('tab bar renders icons alongside labels', async ({ page }) => {
+test('tab bar renders icons alongside labels', async ({ sharedPage: page }) => {
     await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
@@ -46,7 +79,7 @@ test('tab bar renders icons alongside labels', async ({ page }) => {
     }
 });
 
-test('html[data-panel-mount] is set before first paint and defaults to left on desktop', async ({ page }) => {
+test('html[data-panel-mount] is set before first paint and defaults to left on desktop', async ({ sharedPage: page }) => {
     // Desktop Chrome viewport is 1280px (>= 1024 side-mount minimum), so the
     // new 'left' default resolves to 'left'. The one-time migration (v2) clears
     // any stale stored mount so the new default applies; the version key is set.
@@ -59,14 +92,14 @@ test('html[data-panel-mount] is set before first paint and defaults to left on d
     expect(state.version).toBe('2');
 });
 
-test('side-mount default falls back to bottom-sheet on a narrow viewport', async ({ page }) => {
+test('side-mount default falls back to bottom-sheet on a narrow viewport', async ({ sharedPage: page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await gotoPanelMount(page);
     const mount = await page.evaluate(() => document.documentElement.dataset.panelMount);
     expect(mount).toBe('bottom'); // left default is width-gated to >= 1024px
 });
 
-test('panel-mount state module exposes read/write helpers', async ({ page }) => {
+test('panel-mount state module exposes read/write helpers', async ({ sharedPage: page }) => {
     await gotoPanelMount(page);
     const api = await page.evaluate(async () => {
         const mod = await import('/js/ui/shell/panel-mount-state.js');
@@ -81,7 +114,7 @@ test('panel-mount state module exposes read/write helpers', async ({ page }) => 
     expect(api).toEqual({ hasRead: true, hasWrite: true, hasValid: true, valid: true, invalid: true });
 });
 
-test('writePanelMount persists to localStorage and updates attribute', async ({ page }) => {
+test('writePanelMount persists to localStorage and updates attribute', async ({ sharedPage: page }) => {
     await gotoPanelMount(page);
     const after = await page.evaluate(async () => {
         const { writePanelMount } = await import('/js/ui/shell/panel-mount-state.js');
@@ -97,7 +130,7 @@ test('writePanelMount persists to localStorage and updates attribute', async ({ 
     await page.evaluate(() => localStorage.removeItem('ftd.panel.mount'));
 });
 
-test('bottom-mount panel-area keeps absolute centering layout', async ({ page }) => {
+test('bottom-mount panel-area keeps absolute centering layout', async ({ sharedPage: page }) => {
     await gotoPanelMount(page);
     // The default mount is now 'left'; switching to 'bottom' needs a frame for
     // layout to settle (the translateX(-50%) centering is width-dependent, and
@@ -120,7 +153,7 @@ test('bottom-mount panel-area keeps absolute centering layout', async ({ page })
     expect(styles.transform).not.toBe('matrix(1, 0, 0, 1, 0, 0)');
 });
 
-test('left-mount panel-area loses the centering transform', async ({ page }) => {
+test('left-mount panel-area loses the centering transform', async ({ sharedPage: page }) => {
     await gotoPanelMount(page);
     await page.evaluate(() => { document.documentElement.dataset.panelMount = 'left'; });
     await page.waitForTimeout(50);
@@ -141,7 +174,7 @@ test('left-mount panel-area loses the centering transform', async ({ page }) => 
     await page.evaluate(() => { document.documentElement.dataset.panelMount = 'bottom'; });
 });
 
-test('left mount docks the panel to the left edge with viewport-safe height', async ({ page }) => {
+test('left mount docks the panel to the left edge with viewport-safe height', async ({ sharedPage: page }) => {
     await gotoPanelMount(page);
     await page.waitForTimeout(600);
 
@@ -168,7 +201,7 @@ test('left mount docks the panel to the left edge with viewport-safe height', as
     expect(box.height).toBeGreaterThan(box.innerHeight * 0.5);
 });
 
-test('right mount docks the panel to the right edge', async ({ page }) => {
+test('right mount docks the panel to the right edge', async ({ sharedPage: page }) => {
     await gotoPanelMount(page);
     await page.waitForTimeout(600);
 
@@ -190,7 +223,7 @@ test('right mount docks the panel to the right edge', async ({ page }) => {
     expect(box.width).toBeGreaterThanOrEqual(320);
 });
 
-test('viewport stays full-bleed in every mount state', async ({ page }) => {
+test('viewport stays full-bleed in every mount state', async ({ sharedPage: page }) => {
     await gotoPanelMount(page);
     await page.waitForTimeout(600);
 
@@ -213,7 +246,7 @@ test('viewport stays full-bleed in every mount state', async ({ page }) => {
     expect(Math.abs(rects.bottom.h - rects.left.h)).toBeLessThan(tol);
 });
 
-test('mount toggle renders three buttons with aria-pressed reflecting current mount', async ({ page }) => {
+test('mount toggle renders three buttons with aria-pressed reflecting current mount', async ({ sharedPage: page }) => {
     await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
@@ -232,7 +265,7 @@ test('mount toggle renders three buttons with aria-pressed reflecting current mo
     expect(snapshot.find((b) => b.value === 'right').pressed).toBe('false');
 });
 
-test('clicking a toggle button switches the mount and persists it', async ({ page }) => {
+test('clicking a toggle button switches the mount and persists it', async ({ sharedPage: page }) => {
     await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
@@ -252,7 +285,7 @@ test('clicking a toggle button switches the mount and persists it', async ({ pag
     await page.evaluate(() => localStorage.removeItem('ftd.panel.mount'));
 });
 
-test('keyboard shortcuts change the mount', async ({ page }) => {
+test('keyboard shortcuts change the mount', async ({ sharedPage: page }) => {
     await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
@@ -268,7 +301,7 @@ test('keyboard shortcuts change the mount', async ({ page }) => {
     await page.evaluate(() => localStorage.removeItem('ftd.panel.mount'));
 });
 
-test('side-mount collapse hides panel-area but keeps tab rail visible', async ({ page }) => {
+test('side-mount collapse hides panel-area but keeps tab rail visible', async ({ sharedPage: page }) => {
     await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
@@ -305,7 +338,7 @@ test('side-mount collapse hides panel-area but keeps tab rail visible', async ({
     });
 });
 
-test('bottom mount sets both safe-edge vars to 0px', async ({ page }) => {
+test('bottom mount sets both safe-edge vars to 0px', async ({ sharedPage: page }) => {
     await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
@@ -326,7 +359,7 @@ test('bottom mount sets both safe-edge vars to 0px', async ({ page }) => {
     await page.evaluate(() => localStorage.removeItem('ftd.panel.mount'));
 });
 
-test('left mount sets a positive viewport-safe-left and zero right', async ({ page }) => {
+test('left mount sets a positive viewport-safe-left and zero right', async ({ sharedPage: page }) => {
     await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
@@ -347,7 +380,7 @@ test('left mount sets a positive viewport-safe-left and zero right', async ({ pa
     await page.evaluate(() => localStorage.removeItem('ftd.panel.mount'));
 });
 
-test('right mount sets a positive viewport-safe-right and zero left', async ({ page }) => {
+test('right mount sets a positive viewport-safe-right and zero left', async ({ sharedPage: page }) => {
     await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
@@ -368,7 +401,7 @@ test('right mount sets a positive viewport-safe-right and zero left', async ({ p
     await page.evaluate(() => localStorage.removeItem('ftd.panel.mount'));
 });
 
-test('narrow viewport (<900px) snaps side mount to bottom without clearing localStorage', async ({ page }) => {
+test('narrow viewport (<900px) snaps side mount to bottom without clearing localStorage', async ({ sharedPage: page }) => {
     await page.setViewportSize({ width: 800, height: 700 });
     await gotoPanelMount(page);
     await page.waitForTimeout(800);
@@ -393,7 +426,7 @@ test('narrow viewport (<900px) snaps side mount to bottom without clearing local
     await page.evaluate(() => localStorage.removeItem('ftd.panel.mount'));
 });
 
-test('narrow viewport disables side-mount buttons with aria-disabled', async ({ page }) => {
+test('narrow viewport disables side-mount buttons with aria-disabled', async ({ sharedPage: page }) => {
     await page.setViewportSize({ width: 800, height: 700 });
     await gotoPanelMount(page);
     await page.waitForTimeout(800);
@@ -415,7 +448,7 @@ test('narrow viewport disables side-mount buttons with aria-disabled', async ({ 
     expect(bottom.disabled).toBeNull();
 });
 
-test('wide viewport (>=900px) re-enables side-mount buttons', async ({ page }) => {
+test('wide viewport (>=900px) re-enables side-mount buttons', async ({ sharedPage: page }) => {
     await page.setViewportSize({ width: 800, height: 700 });
     await gotoPanelMount(page);
     await page.waitForTimeout(800);

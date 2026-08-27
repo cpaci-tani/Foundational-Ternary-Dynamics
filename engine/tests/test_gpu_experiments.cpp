@@ -14,6 +14,7 @@
  *   GP-EXP-BREMSSTRAHLUNG: Larmor (1897) — acceleration-dependent radiation
  *   GP-EXP-CYCLOTRON:      Lawrence (1932) — circular orbits in B-field
  *   GP-EXP-SCREENING:      Debye-Hückel (1923) — charge screening
+ *                          [CLOSED NEGATIVE for this protocol]
  *
  * Ontic constants under test (from ontic.h):
  *   ALPHA = 1/137.036   C_WAVE = 1/sqrt(3)   K_B = 0.511
@@ -1513,7 +1514,16 @@ static void test_cyclotron() {
 // ============================================================
 // Real experiment: Debye-Hückel (1923). Free charges screen a
 // test charge: φ ~ exp(-r/λ_D)/r decays faster than bare 1/r.
-static void test_screening() {
+// The fixed FTD protocol below instead expels the negative charges and
+// increases the long-range potential. Preserve that falsification as a
+// closed-negative regression signature; do not reinterpret it as screening.
+struct ScreeningOutcome {
+    bool reduced_at_r20 = false;
+    bool faster_large_r_decay = false;
+    bool effective_at_r25 = false;
+};
+
+static ScreeningOutcome test_screening() {
     std::printf("\n=== GP-EXP-SCREENING: Debye Charge Screening ===\n");
     constexpr int L = 128;
     constexpr int CENTER = L / 2;
@@ -1649,14 +1659,18 @@ static void test_screening() {
 
     // Compare screened vs unscreened potentials
     // SCRN-5: φ_screened < φ_unscreened at large r
-    CHECK(phi_screened[3] < phi_unscreened[3] || phi_unscreened[3] < 1e-15,
+    const bool reduced_at_r20 =
+        phi_screened[3] < phi_unscreened[3] || phi_unscreened[3] < 1e-15;
+    CHECK(reduced_at_r20,
           "SCRN-5: phi_screened(r=20) < phi_unscreened(r=20)");
 
     // SCRN-6: Screened decays faster at large r
     double ratio_small = (phi_unscreened[0] > 1e-15) ? phi_screened[0] / phi_unscreened[0] : 1.0;
     double ratio_large = (phi_unscreened[4] > 1e-15) ? phi_screened[4] / phi_unscreened[4] : 1.0;
     std::printf("  Screening ratio at r=5: %.4f, at r=25: %.4f\n", ratio_small, ratio_large);
-    CHECK(ratio_large < ratio_small || ratio_small < 0.01,
+    const bool faster_large_r_decay =
+        ratio_large < ratio_small || ratio_small < 0.01;
+    CHECK(faster_large_r_decay,
           "SCRN-6: Screened potential decays faster at large r");
 
     // SCRN-7: Short-range approximately same (screening doesn't fully penetrate)
@@ -1670,8 +1684,11 @@ static void test_screening() {
     CHECK(std::isfinite(coulomb_pe_end), "SCRN-10: Energy finite");
 
     // SCRN-11: Screening ratio at large r
-    CHECK(ratio_large < 0.8,
+    const bool effective_at_r25 = ratio_large < 0.8;
+    CHECK(effective_at_r25,
           "SCRN-11: Screening effective (phi_s/phi_u < 0.8 at r=25)");
+
+    return {reduced_at_r20, faster_large_r_decay, effective_at_r25};
 }
 
 
@@ -1692,12 +1709,26 @@ int main() {
     test_double_slit();       // 5. Continuous source injection
     test_bremsstrahlung();    // 6. Larmor toggle comparison
     test_cyclotron();         // 7. Custom B-field initialization
-    test_screening();         // 8. Multi-particle equilibration
+    const int failures_before_screening = tests_failed;
+    const ScreeningOutcome screening =
+        test_screening();     // 8. Multi-particle equilibration
+    const int screening_failures = tests_failed - failures_before_screening;
+    const bool closed_negative_reproduced =
+        !screening.reduced_at_r20
+        && !screening.faster_large_r_decay
+        && !screening.effective_at_r25
+        && screening_failures == 3;
 
     std::printf("\n══════════════════════════════════════════════════════\n");
     std::printf("  TOTAL: %d passed, %d failed (out of %d)\n",
                 tests_passed, tests_failed, tests_passed + tests_failed);
+    std::printf("  SCREENING STATUS: %s\n",
+                closed_negative_reproduced
+                    ? "[CLOSED NEGATIVE] fixed anti-screening signature reproduced"
+                    : "DRIFT: screening protocol requires scientific re-audit");
     std::printf("══════════════════════════════════════════════════════\n");
 
-    return tests_failed > 0 ? 1 : 0;
+    // All ordinary checks must pass. The only permitted CHECK failures are
+    // the three named screening hypotheses whose falsification is now pinned.
+    return failures_before_screening == 0 && closed_negative_reproduced ? 0 : 1;
 }

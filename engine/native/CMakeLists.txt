@@ -274,6 +274,7 @@ if(WIN32)
     # PNG writer); shell32 = CommandLineToArgvW.
     add_executable(native_app WIN32
         src/app/main.cpp
+        src/app/run_app.cpp
         src/app/app_options.cpp
         src/app/app_util.cpp
         src/app/ui_model.cpp

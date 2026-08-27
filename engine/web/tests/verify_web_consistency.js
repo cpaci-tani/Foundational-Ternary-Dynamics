@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -71,7 +71,6 @@ try {
     }
 
     if (fs.existsSync(hubPath) && fs.existsSync(compPath)) {
-        const hubContent = fs.readFileSync(hubPath, 'utf8');
         const compContent = fs.readFileSync(compPath, 'utf8');
 
         // Extract all buffer values from component.js
@@ -83,14 +82,14 @@ try {
             errors.push('No telemetry buffer paths found in component.js');
         }
 
-        // Parse and mock evaluate telemetry-hub.js
-        const hubCleaned = hubContent
-            .replace(/export class/g, 'class')
-            .replace(/export const/g, 'const');
-
-        // Create constructor and execute inside a function block to avoid scope issues
-        const factory = new Function(`${hubCleaned}\nreturn new TelemetryHub();`);
-        const hubInstance = factory();
+        // Load the production module through Node's native ESM parser. Textual
+        // export/import stripping broke as soon as TelemetryHub gained a
+        // multiline named import and would remain unsafe for future syntax.
+        const hubModule = await import(pathToFileURL(hubPath).href);
+        if (typeof hubModule.TelemetryHub !== 'function') {
+            throw new Error('telemetry-hub.js does not export TelemetryHub');
+        }
+        const hubInstance = new hubModule.TelemetryHub();
 
         // Check if each buffer path is resolvable on the TelemetryHub instance
         for (const p of bufferPaths) {

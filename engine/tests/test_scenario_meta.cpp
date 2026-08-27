@@ -4,12 +4,17 @@
 
 #include <string>
 #include <string_view>
+#include <type_traits>
 #include <unordered_set>
 
 int main() {
     ftd::test::init("test_scenario_meta");
 
     const auto& ids = ftd::scale0_scenario_ids();
+    static_assert(std::is_same_v<
+        typename std::decay_t<decltype(ids)>::value_type,
+        std::string_view>,
+        "scale0_scenario_ids must expose non-owning string_view entries");
     ftd::test::check("meta count is 130", ftd::scenario_meta_count() == 130);
     ftd::test::check("id list count is 130", ids.size() == 130);
     ftd::test::check("meta count matches id list",
@@ -32,7 +37,15 @@ int main() {
     }
     ftd::test::check("meta ids are unique", meta_ids.size() == ids.size());
 
-    std::unordered_set<std::string> cpp_ids(ids.begin(), ids.end());
+    // std::string's string_view conversion is explicit. MSVC accepted the
+    // range constructor here, but GCC correctly rejects that implicit
+    // conversion. Make ownership at the test boundary deliberate.
+    std::unordered_set<std::string> cpp_ids;
+    cpp_ids.reserve(ids.size());
+    for (const std::string_view id : ids) {
+        cpp_ids.emplace(id.data(), id.size());
+    }
+    ftd::test::check("scale0 ids are unique", cpp_ids.size() == ids.size());
     ftd::test::check("meta covers every scale0 id", meta_ids == cpp_ids);
 
     const ftd::ScenarioMeta* hydrogen = ftd::find_scenario_meta("s0-seed-hydrogen");

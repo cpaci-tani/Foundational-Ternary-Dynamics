@@ -97,7 +97,7 @@ test('driven polarity exposes the selected sub-voxel response without promoting 
         't-dual': false,
     });
     expect(result.warningHidden).toBe(true);
-    expect(result.scenarioLabel).toContain('Driven Polarity');
+    expect(result.scenarioLabel).toContain('A Nudged Charge Responds');
     expect(result.description).toContain('no integer hop');
     for (const [name, state] of Object.entries(result.overlays)) {
         expect(state.applicable, `${name} overlay applies`).toBe(true);

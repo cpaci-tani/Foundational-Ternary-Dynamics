@@ -265,6 +265,17 @@ const isolatedScale0Profile = (...enabledTerms) => {
         [key, enabled.has(key), elementId]);
 };
 
+// Executable JS mirror of engine/include/ftd/scenario_profiles.h. Both the
+// fallback scenario helper and requested UI profile consume this one list.
+export const SCALE0_PREPARED_COULOMB_TERMS = Object.freeze([
+    'wave_propagation',
+    'coupling',
+    'damping',
+    'gauss_projection',
+    'forces',
+    'movement',
+]);
+
 export const SCALE0_SCENARIO_OVERRIDES = {
     'flux-pulse': isolatedScale0Profile('wave_propagation'),
     // Visible mirror of the isolated native pair-rule profile. Hidden
@@ -371,11 +382,12 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     's0-vacuum-w-minus-boson': isolatedScale0Profile('wave_propagation'),
     's0-vacuum-z-boson':      isolatedScale0Profile('wave_propagation'),
     's0-vacuum-higgs':        isolatedScale0Profile('wave_propagation'),
-    // Prepared locked-nucleus Coulomb candidates. No gravity, wave, color,
-    // genesis, or inherited interaction terms participate.
-    's0-seed-hydrogen':       isolatedScale0Profile('forces', 'poisson_coulomb', 'movement'),
-    's0-seed-helium':         isolatedScale0Profile('forces', 'poisson_coulomb', 'movement'),
-    's0-seed-h2-bond-formation': isolatedScale0Profile('forces', 'poisson_coulomb', 'movement'),
+    // Prepared locked-nucleus candidates use the visible flux as both the
+    // dynamical carrier and the force source. Poisson-Coulomb is deliberately
+    // off; gravity, color, genesis, and inherited terms remain isolated.
+    's0-seed-hydrogen':       isolatedScale0Profile(...SCALE0_PREPARED_COULOMB_TERMS),
+    's0-seed-helium':         isolatedScale0Profile(...SCALE0_PREPARED_COULOMB_TERMS),
+    's0-seed-h2-bond-formation': isolatedScale0Profile(...SCALE0_PREPARED_COULOMB_TERMS),
     's0-seed-spark-of-life': isolatedScale0Profile('wave_propagation', 'coupling', 'damping', 'genesis', 'gauss_projection', 'forces', 'movement'),
 
     // Unlocked selected-color candidates: static dressing, force, color force,

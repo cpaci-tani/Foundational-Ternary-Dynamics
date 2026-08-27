@@ -355,8 +355,8 @@ export class CosmicMockBridge {
                 sizes: new Float32Array(n),
                 // True body mass in lattice units (audit P0-7). `sizes` is a
                 // radius-like field (b.radius || cbrt(mass)·…); the BH renderer
-                // needs the actual mass to draw a Schwarzschild horizon
-                // r_s = 2 G_N M that is LINEAR in M rather than ∝ M^(1/3).
+                // needs the actual mass to draw a Schwarzschild-inspired
+                // radius proxy linear in M rather than ∝ M^(1/3).
                 masses: new Float32Array(n),
                 densities: new Float32Array(n),
                 luminosities: new Float32Array(n),

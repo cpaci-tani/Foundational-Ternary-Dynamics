@@ -55,7 +55,8 @@ test.beforeEach(async ({ page }) => {
 
 /**
  * Build the live toggle inventory from the running app:
- *   { keys, bindings, withButton, stateOnly, missingButton }
+ *   { keys, bindings, withButton, applicableButtons, inapplicableButtons,
+ *     stateOnly, missingButton }
  * - keys:          all fieldFlags keys (the canon)
  * - bindings:      [[buttonId, fieldKey], ...] from FIELD_TOGGLE_BINDINGS
  * - withButton:    bindings whose DOM element is actually present + is a field key
@@ -72,17 +73,27 @@ async function buildInventory(page) {
         const boundKeys = new Set(bindings.map(([, key]) => key));
 
         const withButton = [];
+        const applicableButtons = [];
+        const inapplicableButtons = [];
         const missingButton = [];
         for (const [id, key] of bindings) {
             const el = document.getElementById(id);
             // A binding only counts as "has a usable button" if the element
             // exists AND the key is a real fieldFlags key (guards against a
             // stray binding row pointing at a non-store key).
-            if (el && keys.includes(key)) withButton.push([id, key]);
-            else missingButton.push([id, key, { elPresent: !!el, keyInStore: keys.includes(key) }]);
+            if (el && keys.includes(key)) {
+                withButton.push([id, key]);
+                (el.classList.contains('is-inapplicable')
+                    ? inapplicableButtons : applicableButtons).push([id, key]);
+            } else {
+                missingButton.push([id, key, { elPresent: !!el, keyInStore: keys.includes(key) }]);
+            }
         }
         const stateOnly = keys.filter((k) => !boundKeys.has(k));
-        return { keys, bindings, withButton, stateOnly, missingButton };
+        return {
+            keys, bindings, withButton, applicableButtons, inapplicableButtons,
+            stateOnly, missingButton,
+        };
     });
 }
 
@@ -130,7 +141,7 @@ test.describe('Scale-0 field toggle coverage', () => {
         await gotoAndReady(page);
 
         const inv = await buildInventory(page);
-        expect(inv.withButton.length, 'expected a healthy set of button-backed toggles').toBeGreaterThan(10);
+        expect(inv.applicableButtons.length, 'expected a healthy set of applicable button-backed toggles').toBeGreaterThan(10);
 
         /** @type {string[]} */
         const broken = [];
@@ -138,7 +149,7 @@ test.describe('Scale-0 field toggle coverage', () => {
         // Exercise each toggle in its own round-trip. Normalise to a known
         // state first (we drive OFF→ON→OFF off the *measured* start so the
         // click is always a genuine transition regardless of scenario defaults).
-        for (const [buttonId, fieldKey] of inv.withButton) {
+        for (const [buttonId, fieldKey] of inv.applicableButtons) {
             const result = await page.evaluate(async ({ buttonId, fieldKey }) => {
                 const { getScale0State } = await import('./js/scales/scale0/state/store.js');
                 const st = getScale0State();
@@ -176,6 +187,51 @@ test.describe('Scale-0 field toggle coverage', () => {
         // Wiring must not emit console errors anywhere across the full sweep.
         const real = realErrors(errors);
         expect(real, `console errors during toggle sweep:\n  ${real.join('\n  ')}`).toEqual([]);
+    });
+
+    test('scenario-inapplicable buttons are hidden, untabbable, and no-op', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+        await gotoAndReady(page);
+
+        const inv = await buildInventory(page);
+        expect(inv.inapplicableButtons.length,
+            'default scenario should exercise the inapplicable-control contract').toBeGreaterThan(0);
+
+        const broken = [];
+        for (const [buttonId, fieldKey] of inv.inapplicableButtons) {
+            const result = await page.evaluate(async ({ buttonId, fieldKey }) => {
+                const { getScale0State } = await import('./js/scales/scale0/state/store.js');
+                const btn = document.getElementById(buttonId);
+                if (!btn) return { buttonId, fieldKey, fatal: 'button vanished mid-sweep' };
+                const before = !!getScale0State().fieldFlags[fieldKey];
+                btn.click();
+                const after = !!getScale0State().fieldFlags[fieldKey];
+                return {
+                    buttonId,
+                    fieldKey,
+                    before,
+                    after,
+                    hidden: btn.getAttribute('aria-hidden'),
+                    tabIndex: btn.getAttribute('tabindex'),
+                    inapplicable: btn.classList.contains('is-inapplicable'),
+                };
+            }, { buttonId, fieldKey });
+
+            if (result.fatal) {
+                broken.push(`${result.buttonId} (${result.fieldKey}): ${result.fatal}`);
+                continue;
+            }
+            if (!result.inapplicable || result.hidden !== 'true' || result.tabIndex !== '-1') {
+                broken.push(`${result.buttonId}: applicability accessibility state is inconsistent`);
+            }
+            if (result.before !== false || result.after !== result.before) {
+                broken.push(`${result.buttonId} → fieldFlags.${result.fieldKey}: inapplicable click mutated state (${result.before} → ${result.after})`);
+            }
+        }
+
+        expect(broken, `broken inapplicable-toggle contracts:\n  ${broken.join('\n  ')}`).toEqual([]);
+        const real = realErrors(errors);
+        expect(real, `console errors during inapplicable sweep:\n  ${real.join('\n  ')}`).toEqual([]);
     });
 
     // ────────────────────────────────────────────────────────────────────

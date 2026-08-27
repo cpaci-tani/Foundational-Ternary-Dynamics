@@ -4,6 +4,7 @@
 #include "ftd/visual_sample_grid.h"
 
 #include "cuda_error.cuh"
+#include "cuda_device_buffer.cuh"
 
 #include <cuda_runtime.h>
 #include <math_constants.h>
@@ -69,20 +70,6 @@ VisualDeviceView make_visual_view(const GpuBuffers& b) {
     return v;
 }
 
-template <typename T>
-class DeviceArray {
-public:
-    explicit DeviceArray(std::size_t count) {
-        if (count != 0) CUDA_CHECK(cudaMalloc(&ptr_, count * sizeof(T)));
-    }
-    ~DeviceArray() { if (ptr_) cudaFree(ptr_); }
-    DeviceArray(const DeviceArray&) = delete;
-    DeviceArray& operator=(const DeviceArray&) = delete;
-    T* get() const { return ptr_; }
-private:
-    T* ptr_ = nullptr;
-};
-
 __device__ __forceinline__ int wrap_coord(int value, int L) {
     if (value < 0) return value + L;
     if (value >= L) return value - L;
@@ -131,7 +118,7 @@ __device__ __forceinline__ double divergence_at(
 
 __device__ __forceinline__ double latency_proxy_at(
     const VisualDeviceView& b, int idx, double max_rho) {
-    return sqrt(fmin(rho_at(b, idx) / max_rho, 0.998));
+    return sqrt(fmin(rho_at(b, idx) / max_rho, LATENCY_HORIZON_CLAMP));
 }
 
 __device__ __forceinline__ void inactive(float* out, int q, int components) {
@@ -369,7 +356,7 @@ void GpuEngine::copy_visual_field_sample(VisualFieldKind kind, int requested_str
 
     double max_rho = 1.0;
     if (kind == VisualFieldKind::Latency || kind == VisualFieldKind::Kretschmann) {
-        DeviceArray<unsigned long long> d_max(1);
+        CudaDeviceBuffer<unsigned long long> d_max(1);
         CUDA_CHECK(cudaMemset(d_max.get(), 0, sizeof(unsigned long long)));
         constexpr int block = 256;
         reduce_max_rho_kernel<<<(N_ + block - 1) / block, block>>>(view, d_max.get());
@@ -382,7 +369,7 @@ void GpuEngine::copy_visual_field_sample(VisualFieldKind kind, int requested_str
 
     const std::size_t raw_count = static_cast<std::size_t>(candidate_count)
                                 * out.components;
-    DeviceArray<float> d_values(raw_count);
+    CudaDeviceBuffer<float> d_values(raw_count);
     constexpr int block = 256;
     visual_field_kernel<<<(candidate_count + block - 1) / block, block>>>(
         view, static_cast<int>(kind), start, out.effective_stride, axis_count,
@@ -412,8 +399,8 @@ void GpuEngine::copy_visual_particle_attributes(
     const std::vector<int>& indices, std::vector<float>& out) const {
     out.clear();
     if (indices.empty()) return;
-    DeviceArray<int> d_indices(indices.size());
-    DeviceArray<float> d_values(indices.size() * 5u);
+    CudaDeviceBuffer<int> d_indices(indices.size());
+    CudaDeviceBuffer<float> d_values(indices.size() * 5u);
     const VisualDeviceView view = make_visual_view(bufs_);
     CUDA_CHECK(cudaMemcpy(d_indices.get(), indices.data(), indices.size() * sizeof(int),
                           cudaMemcpyHostToDevice));

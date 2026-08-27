@@ -863,27 +863,27 @@ export const SCALE0_SCENARIO_CATALOG = [
      */
     makeScenario('2. Validated State Dynamics', 's0-seed-cluster-law', 'Interactive Genesis Response — Default A=10 Qualified', ['seed', 'genesis', 'response', 'interactive'], '[EMERGENT] default point; arbitrary amplitudes [OPEN]'),
     /*
-     * Scenario: s0-seed-cluster-law-subknee (N(A) law — sub-knee (A=12, geometry-limited))
-     * Physical purpose: Clean visualization of cluster-law sub-knee regime (A=12).
+     * Scenario: s0-seed-cluster-law-subknee (fixed A=12 response)
+     * Physical purpose: Finite-box selected genesis response at A=12.
      * Parameters: None.
-     * Expected behavior: Compact 27-block cascade of ~8 voxels under zero temperature.
-     * Discrepancy: None.
+     * Expected behavior: Smallest nonzero member of the registered A=12/16/40 ordering.
+     * Discrepancy: No universal N(A) or geometric-regime claim is established.
      */
     makeScenario('2. Validated State Dynamics', 's0-seed-cluster-law-subknee', 'Selected Genesis Response — A=12', ['seed', 'genesis', 'cluster', 'response'], '[EMERGENT] under [SELECTION] genesis/wave/Gauss map'),
     /*
-     * Scenario: s0-seed-cluster-law-knee (N(A) law — the knee (A=16, 27-block escape))
-     * Physical purpose: Clean visualization of cluster-law knee escape (A=16).
+     * Scenario: s0-seed-cluster-law-knee (fixed A=16 response)
+     * Physical purpose: Finite-box selected genesis response at A=16.
      * Parameters: None.
-     * Expected behavior: escape from 27-block to ~21 voxels under zero temperature.
-     * Discrepancy: None.
+     * Expected behavior: Middle member of the registered A=12/16/40 ordering.
+     * Discrepancy: No geometric-knee claim is established.
      */
     makeScenario('2. Validated State Dynamics', 's0-seed-cluster-law-knee', 'Selected Genesis Response — A=16', ['seed', 'genesis', 'cluster', 'response'], '[EMERGENT] under [SELECTION] genesis/wave/Gauss map'),
     /*
-     * Scenario: s0-seed-cluster-law-superknee (N(A) law — super-knee (A=40, energy budget N=k·A²))
-     * Physical purpose: Clean visualization of cluster-law super-knee regime (A=40).
+     * Scenario: s0-seed-cluster-law-superknee (fixed A=40 response)
+     * Physical purpose: Finite-box selected genesis response at A=40.
      * Parameters: None.
-     * Expected behavior: Large bulk-volume expansion of ~92 voxels under zero temperature.
-     * Discrepancy: None.
+     * Expected behavior: Largest member of the registered A=12/16/40 ordering.
+     * Discrepancy: No N proportional to A-squared claim is established.
      */
     makeScenario('2. Validated State Dynamics', 's0-seed-cluster-law-superknee', 'Selected Genesis Response — A=40', ['seed', 'genesis', 'cluster', 'response'], '[EMERGENT] under [SELECTION] genesis/wave/Gauss map'),
     // s0-seed-symmetry-regression removed 2026-04-28 (audit removal): engine CI

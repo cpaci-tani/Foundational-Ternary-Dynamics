@@ -15,6 +15,7 @@
 #include "ftd/particle_engine.h"
 #include <algorithm>
 #include <cmath>
+#include <stdexcept>
 
 #ifdef FTD_ENABLE_CUDA
 #include "ftd/gpu_particle_engine.h"
@@ -151,6 +152,34 @@ inline void accumulate_coulomb_gravity(const ParticleToggles& toggles,
         Vec3 fg = r_hat * f_grav;
         f += fg;
         if (diag) diag->f_gravity += fg;
+    }
+}
+
+inline void apply_force_postprocessing(const ParticleToggles& toggles,
+                                       const Particle& p, Vec3& force,
+                                       ParticleForceDiag* diag) {
+    // Radiation reaction (self-interaction, not pairwise).
+    if (toggles.radiation && p.prev_acceleration.mag2() > 1e-30
+        && p.velocity.mag2() > 1e-30) {
+        const double a2 = p.prev_acceleration.mag2();
+        const double q2 = static_cast<double>(p.charge) * p.charge;
+        const double c3 = C_SPEED * C_SPEED * C_SPEED;
+        const double coeff_rad = -(2.0 / 3.0) * ALPHA * q2 / (p.mass * c3);
+        const Vec3 v_hat = p.velocity * (1.0 / p.velocity.mag());
+        const Vec3 f_rad = v_hat * (coeff_rad * a2);
+        force += f_rad;
+        if (diag) diag->f_radiation += f_rad;
+    }
+
+    // Relativistic visual correction (must be last on the total force).
+    if (toggles.relativistic) {
+        const double beta2 = p.velocity.mag2() / (C_SPEED * C_SPEED);
+        if (beta2 > 1e-10 && beta2 < 1.0) {
+            const double gamma = 1.0 / std::sqrt(1.0 - beta2);
+            const Vec3 f_rel = force * (1.0 / gamma - 1.0);
+            force += f_rel;
+            if (diag) diag->f_relativistic += f_rel;
+        }
     }
 }
 }  // namespace
@@ -334,20 +363,7 @@ Vec3 ParticleEngine::compute_force(int i) const {
     // and fail the expected 1/gamma ratio (see test_pe_forces RE1/RE3/RE4).
     const auto& pi = particles_[i];
 
-    // 8. Radiation reaction (self-interaction, not pairwise)
-    if (toggles.radiation && pi.prev_acceleration.mag2() > 1e-30
-        && pi.velocity.mag2() > 1e-30) {
-        double a2 = pi.prev_acceleration.mag2();
-        double q2 = static_cast<double>(pi.charge) * pi.charge;
-        double c3 = C_SPEED * C_SPEED * C_SPEED;
-        double coeff_rad = -(2.0 / 3.0) * ALPHA * q2 / (pi.mass * c3);
-        double v_mag = pi.velocity.mag();
-        Vec3 v_hat = pi.velocity * (1.0 / v_mag);
-        Vec3 frad = v_hat * (coeff_rad * a2);
-        f += frad;
-    }
-
-    // 9. Relativistic correction (MUST BE LAST on total force)
+    // Apply the same non-pairwise terms used by compute_all_forces().
     //
     // CAVEAT (2026-06-15 audit): this is a crude, NON-COVARIANT approximation.
     // It rescales the *entire* force isotropically by (1/gamma - 1), which only
@@ -357,18 +373,33 @@ Vec3 ParticleEngine::compute_force(int i) const {
     // For physically faithful dynamics use the dedicated relativistic-Verlet
     // integrator (momentum push p += F*dt with v = p / sqrt(m^2 + p^2/c^2)),
     // not this toggle. Kept only as a cheap "mass grows near c" visual cue.
-    if (toggles.relativistic) {
-        double v2 = pi.velocity.mag2();
-        double c2 = C_SPEED * C_SPEED;
-        double beta2 = v2 / c2;
-        if (beta2 > 1e-10 && beta2 < 1.0) {
-            double gamma = 1.0 / std::sqrt(1.0 - beta2);
-            Vec3 frel = f * (1.0 / gamma - 1.0);
-            f += frel;
-        }
-    }
+    ParticleForceDiag* diag = i < static_cast<int>(force_diag_.size())
+        ? &force_diag_[i] : nullptr;
+    apply_force_postprocessing(toggles, pi, f, diag);
 
     return f;
+}
+
+ParticleForceDiag ParticleEngine::compute_force_diagnostic(int i) const {
+    if (i < 0 || i >= static_cast<int>(particles_.size())) return {};
+    if (force_diag_.size() < particles_.size()) {
+        force_diag_.resize(particles_.size());
+    }
+    force_diag_[i] = {};
+    (void)compute_force(i);
+    return force_diag_[i];
+}
+
+ParticleForceDiag ParticleEngine::compute_pair_force_diagnostic(int i, int j) const {
+    if (i < 0 || j < 0 || i == j ||
+        i >= static_cast<int>(particles_.size()) ||
+        j >= static_cast<int>(particles_.size())) return {};
+    if (force_diag_.size() < particles_.size()) {
+        force_diag_.resize(particles_.size());
+    }
+    force_diag_[i] = {};
+    (void)compute_pairwise_force(i, j);
+    return force_diag_[i];
 }
 
 void ParticleEngine::compute_all_forces() {
@@ -431,32 +462,7 @@ void ParticleEngine::compute_all_forces() {
 
         ParticleForceDiag* diag = &force_diag_[i];
 
-        // 8. Radiation reaction (self-interaction, not pairwise)
-        if (toggles.radiation && pi.prev_acceleration.mag2() > 1e-30
-            && pi.velocity.mag2() > 1e-30) {
-            double a2 = pi.prev_acceleration.mag2();
-            double q2 = static_cast<double>(pi.charge) * pi.charge;
-            double c3 = C_SPEED * C_SPEED * C_SPEED;
-            double coeff_rad = -(2.0 / 3.0) * ALPHA * q2 / (pi.mass * c3);
-            double v_mag = pi.velocity.mag();
-            Vec3 v_hat = pi.velocity * (1.0 / v_mag);
-            Vec3 frad = v_hat * (coeff_rad * a2);
-            f += frad;
-            diag->f_radiation += frad;
-        }
-
-        // 9. Relativistic correction: MUST BE LAST on total force
-        if (toggles.relativistic) {
-            double v2 = pi.velocity.mag2();
-            double c2 = C_SPEED * C_SPEED;
-            double beta2 = v2 / c2;
-            if (beta2 > 1e-10 && beta2 < 1.0) {
-                double gamma = 1.0 / std::sqrt(1.0 - beta2);
-                Vec3 frel = f * (1.0 / gamma - 1.0);
-                diag->f_relativistic += frel;
-                f += frel;
-            }
-        }
+        apply_force_postprocessing(toggles, pi, f, diag);
 
         forces_[i] = f;
     }
@@ -587,6 +593,10 @@ void ParticleEngine::evolve_spin_axes() {
 }
 
 void ParticleEngine::tick() {
+    std::string toggle_error;
+    if (!toggles.validate(&toggle_error)) {
+        throw std::logic_error("ParticleEngine invalid toggle profile: " + toggle_error);
+    }
     // Velocity Verlet:
     // 1. Compute forces at current positions
     compute_all_forces();

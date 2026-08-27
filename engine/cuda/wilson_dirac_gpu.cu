@@ -16,6 +16,7 @@
 #include <cuda_runtime.h>
 
 #include "cuda_error.cuh"
+#include "cuda_device_buffer.cuh"
 #include "cuda_index.cuh"
 
 namespace ftd {
@@ -130,25 +131,15 @@ void apply_wilson_dirac_gpu(SpinorField& out,
     const std::size_t spinor_bytes = static_cast<std::size_t>(N) * 4 * sizeof(c2);
     const std::size_t links_bytes = static_cast<std::size_t>(N) * 3 * sizeof(c2);
 
-    c2* d_psi = nullptr;
-    c2* d_out = nullptr;
-    c2* d_U = nullptr;
-
-    const auto cleanup = [&] {
-        if (d_psi) { cudaFree(d_psi); d_psi = nullptr; }
-        if (d_out) { cudaFree(d_out); d_out = nullptr; }
-        if (d_U)   { cudaFree(d_U);   d_U = nullptr; }
-    };
-
-    try {
-    CUDA_CHECK(cudaMalloc(&d_psi, spinor_bytes));
-    CUDA_CHECK(cudaMalloc(&d_out, spinor_bytes));
-    CUDA_CHECK(cudaMalloc(&d_U,   links_bytes));
+    ftd::gpu::CudaDeviceBuffer<c2> d_psi(spinor_bytes / sizeof(c2));
+    ftd::gpu::CudaDeviceBuffer<c2> d_out(spinor_bytes / sizeof(c2));
+    ftd::gpu::CudaDeviceBuffer<c2> d_U(links_bytes / sizeof(c2));
 
     // Pack psi.
     static_assert(sizeof(Spinor) == 4 * sizeof(c2),
                   "Spinor must pack as 4 cuDoubleComplex (8 doubles)");
-    CUDA_CHECK(cudaMemcpy(d_psi, psi.data.data(), spinor_bytes, cudaMemcpyHostToDevice));
+    CUDA_CHECK(cudaMemcpy(d_psi.get(), psi.data.data(), spinor_bytes,
+                          cudaMemcpyHostToDevice));
 
     // Pack U: layout [mu * N + site].
     {
@@ -159,24 +150,20 @@ void apply_wilson_dirac_gpu(SpinorField& out,
                 U_flat[static_cast<std::size_t>(mu) * N + i] = make_cuDoubleComplex(u.real(), u.imag());
             }
         }
-        CUDA_CHECK(cudaMemcpy(d_U, U_flat.data(), links_bytes, cudaMemcpyHostToDevice));
+        CUDA_CHECK(cudaMemcpy(d_U.get(), U_flat.data(), links_bytes,
+                              cudaMemcpyHostToDevice));
     }
 
     const int block = 128;
     const int grid = (N + block - 1) / block;
-    wilson_dirac_kernel<<<grid, block>>>(d_out, d_psi, d_U, L, params.m, params.r,
+    wilson_dirac_kernel<<<grid, block>>>(d_out.get(), d_psi.get(), d_U.get(),
+                                         L, params.m, params.r,
                                          params.a, params.spatial_speed);
     CUDA_CHECK(cudaGetLastError());
     CUDA_CHECK(cudaDeviceSynchronize());
 
-    CUDA_CHECK(cudaMemcpy(out.data.data(), d_out, spinor_bytes, cudaMemcpyDeviceToHost));
-
-    } catch (...) {
-        cleanup();
-        throw;
-    }
-
-    cleanup();
+    CUDA_CHECK(cudaMemcpy(out.data.data(), d_out.get(), spinor_bytes,
+                          cudaMemcpyDeviceToHost));
 }
 
 }  // namespace wilson_dirac

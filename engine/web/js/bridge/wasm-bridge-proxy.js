@@ -18,8 +18,8 @@ import { createScale0Capabilities } from './capabilities/scale0.js';
 import { particleDataToList } from './bridge-contract.js';
 import { createSamplerWantSet } from './sampler-want-set.js';
 
-const CTRL = { FRAME: 0, N: 1, TICK: 2, RUNNING: 3, PCOUNT: 4, TICKS_PER_FRAME: 5, LEN: 8 };
-const EMPTY_PARTS = () => ({ positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0), spin: new Float32Array(0), colorCharge: new Float32Array(0), count: 0 });
+const CTRL = { FRAME: 0, N: 1, TICK: 2, RUNNING: 3, PCOUNT: 4, TICKS_PER_FRAME: 5, DATA_VERSION: 6, LEN: 8 };
+const EMPTY_PARTS = () => ({ positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0), spin: new Float32Array(0), colorCharge: new Float32Array(0), locked: new Uint8Array(0), count: 0 });
 const EMPTY_VEC = () => ({ positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 });
 const EMPTY_VAL = () => ({ positions: new Float32Array(0), values: new Float32Array(0), count: 0 });
 
@@ -130,6 +130,9 @@ export class WasmBridgeProxy {
         this._wantLag = true;
         this._ready = false;
         this._running = null;
+        this._runCommandSeq = 0;       // monotonically identifies run-state commands
+        this._runAckSeq = 0;           // last command processed by the worker event loop
+        this._runningAck = null;       // worker-observed state for _runAckSeq
         this._readyAt = 0;              // performance.now() when 'ready' arrived
         this._lastFrameAt = 0;          // performance.now() of the last 'frame'
         this._frameWatchdog = null;     // setTimeout handle for the dead-worker watchdog
@@ -273,7 +276,7 @@ export class WasmBridgeProxy {
                 this._pendingCommands = [];
             }
             if (this._running === true) {
-                this._worker.postMessage({ type: 'setRunning', value: true });
+                this._worker.postMessage({ type: 'setRunning', value: true, seq: this._runCommandSeq });
                 if (this._ctrl) Atomics.store(this._ctrl, CTRL.RUNNING, 1);
             }
             if (m.setupOk === false) {
@@ -317,6 +320,12 @@ export class WasmBridgeProxy {
             }
         } else if (m.type === 'fluxRebind') {
             this._bindFlux(m);
+        } else if (m.type === 'runningState') {
+            // Worker messages are delivered FIFO. A pause acknowledgement can
+            // therefore arrive only after any frame already committed by the
+            // worker loop, giving tests/controllers a real quiescence signal.
+            this._runAckSeq = Number(m.seq) || 0;
+            this._runningAck = !!m.running;
         } else if (m.type === 'inspectResult') {
             this._lastInspect = m.inspect || null;
         } else if (m.type === 'forceAtResult') {
@@ -350,9 +359,14 @@ export class WasmBridgeProxy {
         this._worker.postMessage({ type: 'command', method, args });
     }
 
-    /** Monotonic frame counter from the worker (shared) — drives render refresh in tick.js. */
+    /** Monotonic publication counter from the worker, including readback-only frames. */
     get frameCounter() { return this._ctrl ? Atomics.load(this._ctrl, CTRL.FRAME) : 0; }
+    /** Monotonic physics-data version; sampler-only readbacks do not advance it. */
+    get dataVersion() { return this._ctrl ? Atomics.load(this._ctrl, CTRL.DATA_VERSION) : 0; }
     get ready() { return this._ready; }
+    get runningStateSettled() {
+        return this._runAckSeq === this._runCommandSeq && this._runningAck === this._running;
+    }
     currentTick() { return this._ctrl ? Atomics.load(this._ctrl, CTRL.TICK) : 0; }
     /** True once the worker has published a real engine-state readback. */
     get hasEngineToggles() { return this._engineToggles !== null; }
@@ -636,7 +650,12 @@ export class WasmBridgeProxy {
         v = !!v;
         if (v === this._running) return;                              // dedupe — tick.js calls every frame
         this._running = v;
-        this._worker.postMessage({ type: 'setRunning', value: v });
+        const seq = ++this._runCommandSeq;
+        // RUNNING lives in a SharedArrayBuffer, so publish the transition
+        // immediately. Relying only on postMessage leaves one or more worker
+        // loop turns between a UI pause and the worker observing it.
+        if (this._ctrl) Atomics.store(this._ctrl, CTRL.RUNNING, v ? 1 : 0);
+        this._worker.postMessage({ type: 'setRunning', value: v, seq });
         // Frame-watchdog follows the run state: arm when we start running (a
         // ready-but-dead worker will never post a frame), clear when paused so a
         // legitimately idle worker isn't falsely tripped.

@@ -80,7 +80,7 @@ export const N_EFF     = 13;
 // 2026-04-17: G_C upgraded from sqrt(1/X_PLUS tree) to sqrt(1/X_PLUS_PRECISION)
 // so ALPHA = G_C² matches CODATA 2022 (137.035999177) — see TRACKER §1.5.
 export const G_C       = 0.0854245431028543695;      // state-flux coupling = sqrt(1/X_PLUS_PRECISION)
-export const ALPHA_EFT = G_C * G_C;                   // EFT-derived fine structure
+export const ALPHA_EFT = G_C * G_C;                   // identity by calibrated construction, not an EFT derivation
 // alias: alpha = G_C^2 — algebraic identity is exact ([THEOREM]); G_C
 // itself is [CALIBRATED] to sqrt(1/X_PLUS_PRECISION) so this matches
 // CODATA α numerically. The physical identification x_+ ↔ 1/α is
@@ -99,6 +99,9 @@ export const ALPHA_PRECISION = ALPHA;                  // alias; matches CODATA
 // derived-gravity block after M_PLANCK_GEV. Do NOT use G_N for pairwise
 // particle gravity; it is ~10⁴³× too strong for the physical α_G coupling.
 export const G_N   = 1.0 / ((B_3 + N_C) * (B_3 + N_C));  // = 0.01 lattice-toy (Scale 0/4/5 only)
+// Shared with ftd::LATENCY_HORIZON_CLAMP. Keep the web proxy below the
+// f = 1 - L² horizon using the same cap as native, CUDA, and WASM paths.
+export const LATENCY_HORIZON_CLAMP = 0.998;
 // [PARAMETRIC, demoted 2026-04-19 / FTD-0018] — integer-combination
 // matches to measured couplings (3.5% and ~few-% level), NOT derivations.
 export const SIN2_WEINBERG = N_C / N_EFF;             // sin^2(theta_W) = 3/13 (IR match)
@@ -156,7 +159,7 @@ export const R_BOHR   = 4.0 * PI_FTD / (K_B * ALPHA);  // Ontic-derived pi
 export const M_Z = 91.1876;                           // Z boson mass (GeV)
 export const M_W = M_Z * Math.sqrt(1.0 - SIN2_WEINBERG); // W boson mass (GeV)
 export const V_HIGGS = 246.09;                         // Higgs VEV (GeV)
-export const M_HIGGS = 124.8;                          // Higgs mass (GeV) = (N_eff/α²)·m_e
+export const M_HIGGS = (N_EFF / (ALPHA * ALPHA)) * M_E / 1000.0; // GeV; structurally motivated parametric relation
 export const G_FERMI = Math.PI * ALPHA * Math.sqrt(2) / (2 * SIN2_WEINBERG * M_W * M_W); // Fermi coupling (GeV^-2), tree-level
 
 // ── QED / CHSH Reference Constants [PARAMETRIC CODATA / theorem] ────
@@ -285,13 +288,11 @@ export const M_B_PHYS = 4180.0;     // bottom quark
 export const M_T_PHYS = 172760.0;   // top quark
 
 // ── Neutrino Mass Upper Bounds (MeV) [PARAMETRIC PDG] ───────────────
-// Cosmological + oscillation upper bounds; not derivable from current
-// FTD chain. Values reflect literals already in particle-catalog.js
-// for backward compatibility with existing UI readouts.
-// 2026-06-15 fix: M_NU_MU_PHYS / M_NU_TAU_PHYS previously held eV magnitudes
-// mislabeled as MeV (a ×1e6 error → keV-scale, not meV). Corrected to true MeV
-// magnitudes (neutrino masses are meV-scale upper bounds).
-export const M_NU_E_PHYS   = 4.1e-9;     // m(ν_e)   bound = 4.1  meV (in MeV)
+// [PARAMETRIC] adopted seesaw mass references, not derivable from the current
+// FTD chain. Catalog masses are stored in MeV. The lightest value is 4.1 neV
+// = 4.1e-9 eV = 4.1e-15 MeV; the previous 4.1e-9 MeV literal silently changed
+// the C++ value by 10^6.
+export const M_NU_E_PHYS   = 4.1e-15;    // m(ν_1) = 4.1 neV (in MeV)
 export const M_NU_MU_PHYS  = 8.58e-9;    // m(ν_mu)  bound = 8.58 meV (in MeV)
 export const M_NU_TAU_PHYS = 4.955e-8;   // m(ν_tau) bound = 49.55 meV (in MeV)
 

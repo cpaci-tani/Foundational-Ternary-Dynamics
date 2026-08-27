@@ -141,8 +141,23 @@ test.describe('Scale-0 overlay scheduler invariants', () => {
             resetFieldFlags();
             setFieldToggle('showEField', true);   // one overlay active
             const st = getScale0State();
+            st.fluxMock?.setRunning?.(false);     // publish pause to the active worker now
             st.fieldNeedsUpdate = false;          // discard the toggle's dirty for a clean baseline
         });
+
+        // A tick already executing when RUNNING flips is real committed work.
+        // Wait for the worker's FIFO pause acknowledgement, then for the rAF
+        // controller to consume the acknowledged frame counter. This is the
+        // actual quiescent boundary; a fixed delay is inherently race-prone.
+        await expect.poll(
+            () => page.evaluate(async () => {
+                const { getScale0State } = await import('./js/scales/scale0/state/store.js');
+                const st = getScale0State();
+                const fm = st.fluxMock;
+                return !!fm?.runningStateSettled && st._lastWorkerDataVersion === fm.dataVersion;
+            }),
+            { timeout: 10_000, message: 'worker pause was not acknowledged and consumed by the controller' },
+        ).toBe(true);
 
         // QUIESCE first to kill a startup race: sched.lastVersion initializes to
         // -1 (field-overlays.js:611), so the FIRST boundary opens one sweep that

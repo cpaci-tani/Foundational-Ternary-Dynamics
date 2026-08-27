@@ -31,7 +31,8 @@
  *     + .controls.{maxDistance,target}. The cosmic controller saves these on
  *     enter and restores them on destroy() (js/scales/scale5/controller.js:
  *     114-135 save+mutate, :193-207 restore). far (2000→50000) and maxDistance
- *     (500→5000) are the load-bearing fields the audit P1-8 fix restores.
+ *     (currently 100,000,000 on both scales) are the load-bearing fields the
+ *     audit P1-8 fix restores.
  *
  * The module-private controller state (_listeners/_timers/_threeObjects on
  * each BaseLifecycleController instance, js/lifecycle.js:11-15) is NOT
@@ -233,7 +234,7 @@ test.describe('lifecycle harness — scale round-trips leak nothing', () => {
     //
     // Capture camera.{far,position} + controls.{maxDistance,target} at the
     // lattice baseline. Switch to cosmic (which mutates far 2000→50000 and
-    // maxDistance 500→5000, scale5/controller.js:131-135) and back. The
+    // a cosmic camera preset, scale5/controller.js:122-151) and back. The
     // destroy() restore (scale5/controller.js:193-207) must put the lattice
     // values back. far + maxDistance are the load-bearing fields.
     // ────────────────────────────────────────────────────────────────────
@@ -247,7 +248,7 @@ test.describe('lifecycle harness — scale round-trips leak nothing', () => {
         const b = /** @type {NonNullable<typeof before>} */ (before);
 
         // Sanity: we are at the lattice defaults the mutation departs from
-        // (camera far 2000, controls maxDistance 500 — viewport.js:142/159).
+        // (camera far 2000, controls maxDistance 100,000,000).
         expect(b.far, 'lattice baseline camera.far').toBe(2000);
         expect(b.maxDistance, 'lattice baseline controls.maxDistance').toBe(100000000);
 

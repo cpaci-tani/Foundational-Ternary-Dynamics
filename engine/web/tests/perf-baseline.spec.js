@@ -9,7 +9,7 @@ import { dirname, join } from 'node:path';
  *
  * Measures four metrics on a fixed, reproducible configuration:
  *     Scenario:   flux-pulse
- *     Lattice:    N=32
+ *     Lattice:    requested N=32 (canonical odd runtime N=33)
  *     Preset:     "Full physics" (all overlays on)
  *     Sample at:  tick >= 200 (steady state, past initial transients)
  *
@@ -26,8 +26,8 @@ import { dirname, join } from 'node:path';
  * commits.
  *
  * REGRESSION GATES (fails the test if violated vs stored baseline):
- *     - FPS down > 5 %
- *     - updateFieldOverlays mean time up > 2 ms absolute
+ *     - site-normalized FPS down > 5 %
+ *     - site-normalized updateFieldOverlays mean time up > 2 ms absolute
  *     - JS heap up > 10 %
  *     - GC pause rate up > 20 %
  *
@@ -186,7 +186,7 @@ async function runObservation(page, windowMs) {
 }
 
 test.describe('perf baseline', () => {
-    test('flux-pulse N=32 full-physics steady-state', async ({ page }) => {
+    test('flux-pulse canonical ~32 full-physics steady-state', async ({ page }) => {
         // Give the page a long timeout — we intentionally sit and sample.
         test.setTimeout(90_000);
 
@@ -206,7 +206,9 @@ test.describe('perf baseline', () => {
             }
         });
 
-        // Load flux-pulse, set N=32
+        // Request the historical N=32 workload. Current production enforces a
+        // true center voxel and canonicalizes this to odd N=33; the comparison
+        // below normalizes volume-dominated metrics by the recorded site count.
         await page.evaluate(() => {
             // Set lattice size via the size select
             const sizeSel = document.getElementById('lattice-size');
@@ -317,9 +319,25 @@ test.describe('perf baseline', () => {
             'utf8',
         );
 
-        // Compute deltas
-        const fpsDownPct = ((baseMetrics.fpsMedian - curr.fpsMedian) / baseMetrics.fpsMedian) * 100;
-        const overlayUpMs = curr.overlayTimeMs - baseMetrics.overlayTimeMs;
+        // The historical baseline predates odd-lattice canonicalization and
+        // records N=32; current production turns the same UI request into N=33.
+        // FPS and overlay work are dominated by N^3 field traversal, so compare
+        // their per-site equivalents while keeping both raw values in the report.
+        const baseN = Number(baseline.config?.latticeSize);
+        const currN = Number(record.config?.latticeSize);
+        if (!Number.isFinite(baseN) || !Number.isFinite(currN) || baseN <= 0 || currN <= 0) {
+            throw new Error(`Invalid perf lattice metadata: baseline=${baseN}, current=${currN}`);
+        }
+        if (Math.abs(currN - baseN) > 1) {
+            throw new Error(`Perf workloads are not comparable: baseline N=${baseN}, current N=${currN}`);
+        }
+        const workloadScale = Math.pow(currN / baseN, 3);
+        const normalizedFps = curr.fpsMedian * workloadScale;
+        const normalizedOverlayMs = curr.overlayTimeMs / workloadScale;
+
+        // Compute gated deltas from the normalized volume workload.
+        const fpsDownPct = ((baseMetrics.fpsMedian - normalizedFps) / baseMetrics.fpsMedian) * 100;
+        const overlayUpMs = normalizedOverlayMs - baseMetrics.overlayTimeMs;
         const heapUpPct = ((curr.heapBytes - baseMetrics.heapBytes) / baseMetrics.heapBytes) * 100;
         const gcrateUpPct = baseMetrics.gcPauseRatePerSec > 0
             ? ((curr.gcPauseRatePerSec - baseMetrics.gcPauseRatePerSec) / baseMetrics.gcPauseRatePerSec) * 100
@@ -337,6 +355,13 @@ test.describe('perf baseline', () => {
                 overlayTimeMs: curr.overlayTimeMs,
                 heapMB: curr.heapMB,
                 gcPauseRatePerSec: curr.gcPauseRatePerSec,
+            },
+            workloadNormalization: {
+                baselineLatticeSize: baseN,
+                currentLatticeSize: currN,
+                siteCountScale: workloadScale,
+                normalizedFpsMedian: normalizedFps,
+                normalizedOverlayTimeMs: normalizedOverlayMs,
             },
             deltas: {
                 fpsDownPct: fpsDownPct.toFixed(2),
@@ -357,8 +382,8 @@ test.describe('perf baseline', () => {
         });
 
         // Assertions — each gate is one expect().
-        expect(fpsDownPct, `FPS regression ${fpsDownPct.toFixed(2)}% > ${GATE_FPS_DOWN_PCT}%`).toBeLessThanOrEqual(GATE_FPS_DOWN_PCT);
-        expect(overlayUpMs, `updateFieldOverlays regression +${overlayUpMs.toFixed(2)}ms > ${GATE_OVERLAY_UP_MS}ms`).toBeLessThanOrEqual(GATE_OVERLAY_UP_MS);
+        expect(fpsDownPct, `Site-normalized FPS regression ${fpsDownPct.toFixed(2)}% > ${GATE_FPS_DOWN_PCT}%`).toBeLessThanOrEqual(GATE_FPS_DOWN_PCT);
+        expect(overlayUpMs, `Site-normalized updateFieldOverlays regression +${overlayUpMs.toFixed(2)}ms > ${GATE_OVERLAY_UP_MS}ms`).toBeLessThanOrEqual(GATE_OVERLAY_UP_MS);
         expect(heapUpPct, `Heap regression +${heapUpPct.toFixed(2)}% > ${GATE_HEAP_UP_PCT}%`).toBeLessThanOrEqual(GATE_HEAP_UP_PCT);
         expect(gcrateUpPct, `GC pause rate regression +${gcrateUpPct.toFixed(2)}% > ${GATE_GCRATE_UP_PCT}%`).toBeLessThanOrEqual(GATE_GCRATE_UP_PCT);
     });

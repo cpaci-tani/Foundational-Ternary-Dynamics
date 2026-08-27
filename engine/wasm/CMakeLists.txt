@@ -54,13 +54,14 @@ if(EMSCRIPTEN)
     #   -mbulk-memory       memory.copy / memory.fill instructions
     #   -mnontrapping-fptoint  faster fp→int conversions
     #   -msign-ext          sign-extension instructions
-    #   -ffast-math         FP reassociation, fused muls, vectorizable reductions
+    #   -ffp-contract=fast  permit fused multiply-add without changing IEEE
+    #                       NaN/Inf classification semantics
     #
-    # ftd_core ALSO gets -fno-rtti -fno-exceptions (no dynamic_cast or throw
-    # used). ftd_wasm CANNOT have either: Embind uses both internally.
+    # Both targets retain RTTI and exceptions: Embind needs RTTI, and public
+    # engine constructors use exceptions to reject invalid dimensions safely.
     set(_FTD_WASM_OPTS
         -O3 -flto -msimd128 -mbulk-memory -mnontrapping-fptoint -msign-ext
-        -ffast-math
+        -ffp-contract=fast
     )
     # Memory64 must be set at BOTH compile and link time (it changes the
     # pointer ABI), so it goes into the shared compile opts applied to
@@ -74,11 +75,12 @@ if(EMSCRIPTEN)
         list(APPEND _FTD_WASM_OPTS -pthread)
     endif()
 
-    # ftd_core: drop exceptions only. RTTI must stay on because LTO sees
+    # ftd_core: RTTI and exceptions stay enabled. RTTI is required because LTO sees
     # ftd_wasm's embind references to type_info for ftd_core classes
-    # (DagEngine, ParticleEngine, AtomEngine, RenderBridge). Stripping
-    # RTTI here causes "undefined typeinfo" link errors at LTO time.
-    target_compile_options(ftd_core PRIVATE ${_FTD_WASM_OPTS} -fno-exceptions)
+    # (DagEngine, ParticleEngine, AtomEngine, RenderBridge). Exceptions are
+    # required so invalid public constructor arguments are rejected instead of
+    # reaching modulo-by-zero or oversized-allocation paths.
+    target_compile_options(ftd_core PRIVATE ${_FTD_WASM_OPTS})
 
     # ftd_wasm: keep exceptions AND RTTI (Embind uses both for type dispatch)
     target_compile_options(ftd_wasm PRIVATE ${_FTD_WASM_OPTS})
@@ -108,7 +110,8 @@ if(EMSCRIPTEN)
     endif()
 
     target_link_options(ftd_wasm PRIVATE
-        -O3 -flto -msimd128 -ffast-math
+        -O3 -flto -msimd128 -ffp-contract=fast
+        -sDISABLE_EXCEPTION_CATCHING=0
         -lembind
         -sEXPORT_NAME=${_FTD_WASM_EXPORT}
         -sMODULARIZE=1

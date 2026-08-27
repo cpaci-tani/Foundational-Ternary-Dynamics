@@ -24,6 +24,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
+#include <limits>
 
 namespace ftd::eft {
 
@@ -50,7 +51,9 @@ struct MatchedFaceEnergyTransaction {
 
 inline long double matched_face_dot(const MatchedFaceFlux& a,
                                     const MatchedFaceFlux& b) {
-  if (a.L != b.L || a.x.size() != b.x.size()) return NAN;
+  if (a.L != b.L || a.x.size() != b.x.size()) {
+    return std::numeric_limits<long double>::quiet_NaN();
+  }
   long double value = 0.0L;
   for (std::size_t index = 0; index < a.x.size(); ++index) {
     value += static_cast<long double>(a.x[index]) * b.x[index];
@@ -62,7 +65,9 @@ inline long double matched_face_dot(const MatchedFaceFlux& a,
 
 inline long double matched_edge_dot(const MatchedEdgeField& a,
                                     const MatchedEdgeField& b) {
-  if (a.L != b.L || a.x.size() != b.x.size()) return NAN;
+  if (a.L != b.L || a.x.size() != b.x.size()) {
+    return std::numeric_limits<long double>::quiet_NaN();
+  }
   long double value = 0.0L;
   for (std::size_t index = 0; index < a.x.size(); ++index) {
     value += static_cast<long double>(a.x[index]) * b.x[index];
@@ -74,7 +79,9 @@ inline long double matched_edge_dot(const MatchedEdgeField& a,
 
 inline double matched_face_max_difference(const MatchedFaceFlux& a,
                                           const MatchedFaceFlux& b) {
-  if (a.L != b.L || a.x.size() != b.x.size()) return INFINITY;
+  if (a.L != b.L || a.x.size() != b.x.size()) {
+    return std::numeric_limits<double>::infinity();
+  }
   double value = 0.0;
   for (std::size_t index = 0; index < a.x.size(); ++index) {
     value = std::max(value, std::abs(a.x[index] - b.x[index]));
@@ -86,7 +93,9 @@ inline double matched_face_max_difference(const MatchedFaceFlux& a,
 
 inline double matched_edge_max_difference(const MatchedEdgeField& a,
                                           const MatchedEdgeField& b) {
-  if (a.L != b.L || a.x.size() != b.x.size()) return INFINITY;
+  if (a.L != b.L || a.x.size() != b.x.size()) {
+    return std::numeric_limits<double>::infinity();
+  }
   double value = 0.0;
   for (std::size_t index = 0; index < a.x.size(); ++index) {
     value = std::max(value, std::abs(a.x[index] - b.x[index]));
@@ -109,7 +118,9 @@ inline MatchedFaceFlux matched_current_field(
 inline double matched_modified_energy(const MatchedFaceFlux& electric,
                                       const MatchedEdgeField& magnetic_half,
                                       double lambda) {
-  if (electric.L != magnetic_half.L || !std::isfinite(lambda)) return NAN;
+  if (electric.L != magnetic_half.L || !std::isfinite(lambda)) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
   const auto curl_adjoint = matched_curl_adjoint(electric);
   return quadratic_energy(electric) + quadratic_energy(magnetic_half)
       - 0.5 * lambda * static_cast<double>(

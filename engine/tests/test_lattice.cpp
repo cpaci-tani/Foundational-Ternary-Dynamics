@@ -11,7 +11,9 @@
  */
 
 #include <iostream>
+#include <stdexcept>
 #include "ftd/lattice.h"
+#include "ftd/render_bridge.h"
 #include "ftd/test_telemetry.h"
 
 using ftd::test::check;
@@ -23,6 +25,27 @@ int main() {
 
     check("Size = 8", lat.size() == 8);
     check("Total = 512", lat.total_sites() == 512);
+
+    bool zero_rejected = false;
+    bool negative_rejected = false;
+    bool overflow_rejected = false;
+    bool bridge_zero_rejected = false;
+    try { ftd::Lattice invalid(0); }
+    catch (const std::invalid_argument&) { zero_rejected = true; }
+    try { ftd::Lattice invalid(-4); }
+    catch (const std::invalid_argument&) { negative_rejected = true; }
+    try { ftd::Lattice invalid(ftd::Lattice::kMaxIndexableSize + 1); }
+    catch (const std::length_error&) { overflow_rejected = true; }
+    try { ftd::RenderBridge invalid(0); }
+    catch (const std::invalid_argument&) { bridge_zero_rejected = true; }
+    check("Zero lattice size rejected", zero_rejected);
+    check("Negative lattice size rejected", negative_rejected);
+    check("Flat-index overflow lattice rejected", overflow_rejected);
+    check("RenderBridge rejects invalid lattice before allocation", bridge_zero_rejected);
+
+    ftd::Lattice largest_indexable(ftd::Lattice::kMaxIndexableSize);
+    check("Largest indexable lattice has safe total",
+          largest_indexable.total_sites() <= INT_MAX);
 
     // Index roundtrip
     for (int x = 0; x < 8; ++x) {

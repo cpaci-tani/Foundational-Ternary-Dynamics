@@ -7,7 +7,8 @@
  * Sources:
  *   s2.diag    — aeGetDiagnostics() snapshot: tick, atomCount, bondCount,
  *                totalKE, totalPEIonic, totalPEVdw, totalPEBond,
- *                totalEnergy, momentumX/Y/Z, temperature
+ *                totalEnergy, momentumX/Y/Z, temperature,
+ *                energyComplete, energyConservative, energyStatus
  *   s2.runtime — aeGetRuntimeState() snapshot + scenario label:
  *                scenario, dt, softening, thermostatTemp, toggles.*
  *
@@ -58,7 +59,7 @@ export const sections = [
     },
     {
         id: 'ae-hamiltonian',
-        title: 'Active Hamiltonian',
+        title: 'Tracked Energy',
         rows: [
             { id: 'atoms', label: 'Atoms', unit: 'ct',
               source: 's2.diag.atomCount', trend: 'aeAtomCount' },
@@ -72,9 +73,11 @@ export const sections = [
               source: 's2.diag.totalPEVdw', trend: 'aePEVdw' },
             { id: 'pe-bond', label: 'PE Bond', unit: '(sim)',
               source: 's2.diag.totalPEBond', trend: 'aePEBond' },
-            { id: 'total', label: 'Total Energy', unit: '(sim)',
+            { id: 'accounting', label: 'Accounting', unit: '', format: 'text',
+              source: 's2.diag.energyStatus' },
+            { id: 'total', label: 'Tracked Energy', unit: '(sim)',
               source: 's2.diag.totalEnergy', trend: 'aeEnergy' },
-            { id: 'drift', label: 'Energy Drift', unit: '%',
+            { id: 'drift', label: 'Conservative Drift', unit: '%',
               compute: (hub) => hub.aeDrift.last(), trend: 'aeDrift' },
         ],
     },

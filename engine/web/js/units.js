@@ -127,6 +127,8 @@ function _autoScaleEnergy_MeV(mev) {
     if (abs >= 1e-3)     return _fmt(mev * 1e3, 'keV');
     if (abs >= 1e-6)     return _fmt(mev * 1e6, 'eV');
     if (abs >= 1e-9)     return _fmt(mev * 1e9, 'meV', 3);
+    if (abs >= 1e-12)    return _fmt(mev * 1e12, 'µeV', 3);
+    if (abs >= 1e-15)    return _fmt(mev * 1e15, 'neV', 3);
     return { text: mev.toExponential(2) + ' MeV', value: mev, unit: 'MeV' };
 }
 

@@ -50,10 +50,11 @@ import {
     M_NU_E_PHYS, M_NU_MU_PHYS, M_NU_TAU_PHYS,
     // Σ⁰/Σ⁻ isospin partners (Σ⁺ = M_SIGMA_PHYS above).
     M_SIGMA0_PHYS, M_SIGMA_MINUS_PHYS,
-    M_W_PHYS, M_Z_PHYS, M_HIGGS_PHYS,
+    M_W_PHYS, M_Z_PHYS, M_HIGGS_PHYS, M_HIGGS,
     M_LAMBDA_PHYS, M_XI_0_PHYS, M_XI_M_PHYS,
     M_ETA_PHYS, M_RHO_PHYS, M_J_PSI_PHYS, M_UPSILON_PHYS,
 } from './constants.js';
+import { formatMassCompat } from './units.js';
 
 const PARTICLES = [
     // ═══════════════════════════════════════════════════════════════
@@ -121,11 +122,10 @@ const PARTICLES = [
     {
         id: 'nu_e', name: 'Electron Neutrino', symbol: 'νₑ',
         category: 'leptons', generation: 1,
-        // Single-sourced from constants.js (2026-06-15): M_NU_E_PHYS = 4.1e-9 MeV
-        // (4.1 meV upper bound, [PARAMETRIC PDG]).
+        // Single-sourced from constants.js: 4.1e-15 MeV = 4.1 neV.
         mass_mev: M_NU_E_PHYS, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'antinu_e',
-        ftd_formula: 'm₃·(m_e/m_τ)² ≈ 4.1 meV',
+        ftd_formula: 'm₃·(m_e/m_τ)² ≈ 4.1 neV',
         // Neutrino masses are NOT derivable from the current FTD chain
         // (constants.js: [PARAMETRIC PDG] bounds); ftd_formula is a motivating
         // match only. 'derived'→'parametric'. 2026-06-15 audit.
@@ -355,8 +355,8 @@ const PARTICLES = [
         category: 'scalar', generation: null,
         mass_mev: M_HIGGS_PHYS, charge: 0, spin: 0,
         color_charge: 'none', antiparticle: 'higgs',
-        ftd_formula: 'm_e·N_eff/α² ≈ 124.8 GeV',
-        ftd_accuracy: 0.36, ftd_status: 'selection',
+        ftd_formula: `m_e·N_eff/α² ≈ ${M_HIGGS.toFixed(2)} GeV (−0.36%; excluded at PDG-2024 precision)`,
+        ftd_accuracy: 0.36, ftd_status: 'parametric',
         display_color: [1.00, 0.84, 0.00], display_size: 8
     },
 
@@ -675,12 +675,7 @@ export function getSimulableParticles() {
 }
 
 export function formatMass(mass_mev) {
-    if (mass_mev === 0) return 'massless';
-    if (mass_mev < 1e-6) return (mass_mev * 1e6).toFixed(1) + ' neV';
-    if (mass_mev < 1e-3) return (mass_mev * 1e3).toFixed(1) + ' eV';
-    if (mass_mev < 1) return (mass_mev * 1e3).toFixed(1) + ' keV';
-    if (mass_mev < 1000) return mass_mev.toFixed(1) + ' MeV';
-    return (mass_mev / 1000).toFixed(2) + ' GeV';
+    return formatMassCompat(mass_mev);
 }
 
 export function chargeLabel(charge) {

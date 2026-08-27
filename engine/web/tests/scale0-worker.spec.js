@@ -3,8 +3,8 @@
  * Scale-0 physics Web Worker regression (Phase 1 WASM off-thread). Pins that,
  * when the page is cross-origin isolated (SharedArrayBuffer available),
  * flux-* scenarios run on WasmBridgeProxy / wasm-bridge.worker.js, the worker
- * self-ticks the C++ engine, the shared SAB field populates, and switching to a
- * non-worker WASM scenario tears the worker down.
+ * self-ticks the C++ engine, the shared SAB field populates, and scenario
+ * changes retain a valid worker-owned engine.
  *
  * Requires a COOP/COEP server. The default test server is plain http.server
  * (not isolated) so these tests SKIP there; run against the caching+COOP server
@@ -57,7 +57,7 @@ test.describe('Scale-0 physics Web Worker', () => {
         expect(nonzero, 'shared flux field is populated').toBeGreaterThan(0);
     });
 
-    test('switching to a WASM-owned scenario (empty) tears the worker down', async ({ page }) => {
+    test('switching to empty retains the WASM worker and publishes an empty particle frame', async ({ page }) => {
         await gotoAndReady(page);
         test.skip(!(await coiReady(page)), 'requires cross-origin isolation');
 
@@ -69,9 +69,18 @@ test.describe('Scale-0 physics Web Worker', () => {
             s.value = 'empty'; s.dispatchEvent(new Event('change', { bubbles: true }));
         });
         await expect.poll(async () => (await fluxMockInfo(page)).scenario, { timeout: 15_000 }).toBe('empty');
+        await expect.poll(async () => (await fluxMockInfo(page)).ready, { timeout: 20_000 }).toBe(true);
 
         const info = await fluxMockInfo(page);
-        expect(info.useFluxMock, 'empty is WASM-owned (direct bridge, no worker proxy)').toBe(false);
+        expect(info.useFluxMock, 'empty remains owned by the WASM worker').toBe(true);
+        expect(info.isWorker).toBe(true);
+        await expect.poll(
+            () => page.evaluate(async () => {
+                const fm = (await import('/js/scales/scale0/state/store.js')).getScale0State().fluxMock;
+                return fm?.capabilities?.scale0?.getScale0ParticleFrame?.()?.count ?? -1;
+            }),
+            { timeout: 10_000, message: 'empty worker frame did not publish' },
+        ).toBe(0);
     });
 
     // ── Bridge-wiring regression (audit 2026-06-03) ──────────────────────────
@@ -119,8 +128,19 @@ test.describe('Scale-0 physics Web Worker', () => {
             expect(r[k].direct, `${k}: direct count is a number`).not.toBeNull();
             expect(r[k].direct, `${k}: direct read matches capability path`).toBe(r[k].cap);
         }
-        const anyPopulated = ['e', 'b', 'poynting', 'divJ'].some((k) => (r[k].direct ?? 0) > 0);
-        expect(anyPopulated, 'at least one field sampler is non-empty (charts have data)').toBe(true);
+        await expect.poll(
+            () => page.evaluate(async () => {
+                const fm = (await import('/js/scales/scale0/state/store.js')).getScale0State().fluxMock;
+                const reads = [
+                    fm.getEFieldSampled(1),
+                    fm.getBFieldSampled(1),
+                    fm.getPoyntingSampled(1),
+                    fm.getDivJSampled(1),
+                ];
+                return reads.some((sample) => (sample?.count ?? 0) > 0);
+            }),
+            { timeout: 10_000, message: 'worker never published a requested field sampler' },
+        ).toBe(true);
     });
 
     test('WasmBridgeProxy answers every canonical direct-read (anti-drift contract)', async ({ page }) => {

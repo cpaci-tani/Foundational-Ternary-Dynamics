@@ -92,6 +92,9 @@ export function spectralMoments(k, E) {
 
 export function spectrumFingerprint(spec, { parsevalRatio = NaN, chargeDipoleMagnitude = 0 } = {}) {
     const m = spectralMoments(spec?.k ?? [], spec?.E ?? []);
+    const slopeAvailable = Number.isFinite(m.slope);
+    const parsevalAvailable = Number.isFinite(parsevalRatio);
+    const dipoleAvailable = Number.isFinite(chargeDipoleMagnitude);
     return {
         labels: [
             'log1pTotalPower',
@@ -115,11 +118,16 @@ export function spectrumFingerprint(spec, { parsevalRatio = NaN, chargeDipoleMag
             m.irFraction,
             m.midFraction,
             m.uvFraction,
-            m.slope,
-            parsevalRatio,
-            chargeDipoleMagnitude,
+            slopeAvailable ? m.slope : 0,
+            parsevalAvailable ? parsevalRatio : 0,
+            dipoleAvailable ? chargeDipoleMagnitude : 0,
         ],
         moments: m,
+        availability: {
+            slope: slopeAvailable,
+            parsevalRatio: parsevalAvailable,
+            chargeDipoleMagnitude: dipoleAvailable,
+        },
     };
 }
 

@@ -9,7 +9,9 @@
 
 #include "ftd/constants.h"
 #include "ftd/render_bridge.h"
+#include "ftd/scenario_profiles.h"
 #include "ftd/scenarios.h"
+#include "bridge_fixtures.h"
 
 #include <algorithm>
 #include <cmath>
@@ -225,9 +227,6 @@ bool only_terms_enabled(const ftd::RenderBridge& rb,
     return true;
 }
 
-void tick_n(ftd::RenderBridge& rb, int n) {
-    for (int i = 0; i < n; ++i) rb.tick();
-}
 
 struct ResearchSetupStats {
     int manifested = 0;
@@ -333,8 +332,8 @@ void test_remaining_research_setup_probe_matrix() {
         check(std::string(id) + " research setup dispatches twice", da && db);
         const auto initial = research_setup_stats(a);
         const std::string terms = enabled_term_list(a);
-        tick_n(a, ticks);
-        tick_n(b, ticks);
+        ftd::test::run_for(a, ticks);
+        ftd::test::run_for(b, ticks);
         const auto final = research_setup_stats(a);
         std::cout << "    PROBE " << id
                   << " terms=" << terms
@@ -404,7 +403,7 @@ void test_unlocked_composite_candidate_outcomes() {
         ftd::RenderBridge replay(24);
         replay.force_cpu();
         ftd::dispatch_scenario(replay, c.id);
-        tick_n(replay, 64);
+        ftd::test::run_for(replay, 64);
         check(std::string(c.id) + " 64-tick history replays bit-exactly",
               exact_research_setup_replay(rb, replay));
         check(std::string(c.id) + " does not survive as a bound candidate",
@@ -445,8 +444,8 @@ void test_unlocked_composite_candidate_outcomes() {
     }
     check("charged- and neutral-pion labels initialize bit-identical candidates",
           exact_research_setup_replay(charged, neutral));
-    tick_n(charged, 16);
-    tick_n(neutral, 16);
+    ftd::test::run_for(charged, 16);
+    ftd::test::run_for(neutral, 16);
     check("charged- and neutral-pion labels remain bit-identical",
           exact_research_setup_replay(charged, neutral));
 }
@@ -487,6 +486,9 @@ void test_long_baseline_opposite_polarity_collision() {
 }
 
 void test_prepared_coulomb_candidate_outcomes() {
+    const std::vector<std::string> prepared_terms(
+        ftd::PREPARED_COULOMB_CANDIDATE_TERMS.begin(),
+        ftd::PREPARED_COULOMB_CANDIDATE_TERMS.end());
     struct Case {
         const char* id;
         int initial;
@@ -505,8 +507,8 @@ void test_prepared_coulomb_candidate_outcomes() {
         check(std::string(c.id) + " prepared Coulomb candidate dispatched",
               ftd::dispatch_scenario(rb, c.id));
         const auto initial = research_setup_stats(rb);
-        check(std::string(c.id) + " isolates Poisson force and movement",
-              only_terms_enabled(rb, {"forces", "poisson_coulomb", "movement"})
+        check(std::string(c.id) + " isolates substrate-field force and movement",
+              only_terms_enabled(rb, prepared_terms)
               && rb.toggles.flux_boundary == ftd::FluxBoundaryMode::Periodic);
         check(std::string(c.id) + " has its declared locked/mobile cohort",
               initial.manifested == c.initial && initial.locked == c.locked
@@ -546,7 +548,7 @@ void test_prepared_coulomb_candidate_outcomes() {
         ftd::RenderBridge replay(24);
         replay.force_cpu();
         ftd::dispatch_scenario(replay, c.id);
-        tick_n(replay, 64);
+        ftd::test::run_for(replay, 64);
         check(std::string(c.id) + " prepared 64-tick history replays bit-exactly",
               exact_research_setup_replay(rb, replay));
     }
@@ -821,7 +823,7 @@ void test_empty_baseline_stays_empty() {
         return true;
     };
     check("empty baseline starts exactly empty", exactly_empty());
-    tick_n(rb, 16);
+    ftd::test::run_for(rb, 16);
     check("empty baseline remains exactly empty across ticks", exactly_empty());
 }
 
@@ -842,7 +844,7 @@ void test_vacuum_photon_translates() {
           && !rb.toggles.damping && !rb.toggles.genesis
           && !rb.toggles.forces && !rb.toggles.movement);
 
-    tick_n(rb, 20);
+    ftd::test::run_for(rb, 20);
     const auto final = x_profile(rb);
     const double dx = forward_delta(final.centroid, initial.centroid, L);
     const double speed = dx / 20.0;
@@ -865,7 +867,7 @@ void test_photon_race_common_speed() {
 
     const auto low0 = x_profile(rb, {}, 1);
     const auto high0 = x_profile(rb, {}, 2);
-    tick_n(rb, 16);
+    ftd::test::run_for(rb, 16);
     const auto low1 = x_profile(rb, {}, 1);
     const auto high1 = x_profile(rb, {}, 2);
     const double dx_low = forward_delta(low1.centroid, low0.centroid, L);
@@ -898,7 +900,7 @@ void test_rainbow_modes_are_transverse() {
     check("rainbow has nonzero field energy", total_energy > 0.0);
     check("all rainbow modes are exactly transverse", longitudinal_energy < 1e-24);
     check("rainbow initial divergence is machine zero", normalized_divergence(rb) < 1e-12);
-    tick_n(rb, 8);
+    ftd::test::run_for(rb, 8);
     check("rainbow remains unmanifested", manifested_count(rb) == 0);
 }
 
@@ -927,7 +929,7 @@ void test_exact_traveling_harmonic() {
     check("traveling harmonic is exactly transverse",
           normalized_divergence(rb) < 1e-12);
 
-    tick_n(rb, ticks);
+    ftd::test::run_for(rb, ticks);
     const auto measured = project_jz_harmonic(rb, mode_n);
     const double expected_sine = amp * std::cos(omega * ticks);
     const double expected_cosine = -amp * std::sin(omega * ticks);
@@ -975,7 +977,7 @@ void test_gravity_named_wave_aliases_are_plain_native_modes() {
           && normalized_divergence(wave) < 1e-12
           && manifested_count(wave) == 0);
 
-    tick_n(wave, ticks); tick_n(well_alias, ticks); tick_n(twin_alias, ticks);
+    ftd::test::run_for(wave, ticks); ftd::test::run_for(well_alias, ticks); ftd::test::run_for(twin_alias, ticks);
     const auto measured = project_jz_harmonic(wave, mode_n);
     const double phase_error = std::hypot(
         measured.sine - amp * std::cos(omega * ticks),
@@ -1030,7 +1032,7 @@ void test_gravity_named_radial_ansatz_and_optical_null() {
         check("radial profile is exactly the declared inward inverse-square ansatz",
               states == 1 && radial.voxel_at(c, c, c).state == +1
               && max_error < 1e-15);
-        tick_n(radial, 8); tick_n(horizon_alias, 8);
+        ftd::test::run_for(radial, 8); ftd::test::run_for(horizon_alias, 8);
         check("inert radial aliases remain bit-identical without gravity dynamics",
               exact_research_setup_replay(radial, horizon_alias));
     }
@@ -1081,7 +1083,7 @@ void test_gravity_named_radial_ansatz_and_optical_null() {
               only_terms_enabled(full, {"wave_propagation"})
               && decomposition_error(full, radial, packet) < 1e-15);
         const double y0 = y_centroid(packet);
-        tick_n(full, ticks); tick_n(radial, ticks); tick_n(packet, ticks);
+        ftd::test::run_for(full, ticks); ftd::test::run_for(radial, ticks); ftd::test::run_for(packet, ticks);
         const double residual = decomposition_error(full, radial, packet);
         const double y1 = y_centroid(packet);
         std::cout << "    gravity-optics residual=" << residual
@@ -1117,7 +1119,7 @@ void test_exact_standing_harmonic() {
           && !rb.toggles.coupling && !rb.toggles.damping
           && !rb.toggles.genesis && !rb.toggles.dual_substrate);
 
-    tick_n(rb, ticks);
+    ftd::test::run_for(rb, ticks);
     const auto measured = project_jz_harmonic(rb, mode_n);
     const double expected_sine = amp * std::cos(omega * ticks);
     const double temporal_error = std::fabs(measured.sine - expected_sine) / amp;
@@ -1186,9 +1188,9 @@ void test_two_coherent_source_qualification_gate() {
         }
     }
 
-    tick_n(pair, ticks);
-    tick_n(lower, ticks);
-    tick_n(upper, ticks);
+    ftd::test::run_for(pair, ticks);
+    ftd::test::run_for(lower, ticks);
+    ftd::test::run_for(upper, ticks);
 
     double residual2 = 0.0;
     double pair_norm2 = 0.0;
@@ -1274,7 +1276,7 @@ void test_neutral_candidate_is_dynamic() {
           scaled_residual(base, medium, 1.3) < 1e-12
           && scaled_residual(base, high, 1.6) < 1e-12);
 
-    tick_n(base, 12); tick_n(medium, 12); tick_n(high, 12);
+    ftd::test::run_for(base, 12); ftd::test::run_for(medium, 12); ftd::test::run_for(high, 12);
     const Profile final[3] = {
         x_profile(base), x_profile(medium), x_profile(high),
     };
@@ -1317,7 +1319,7 @@ void test_neutral_candidate_is_dynamic() {
           scaled_residual(abase, amedium, 1.3) < 1e-12
           && scaled_residual(abase, ahigh, 1.6) < 1e-12);
 
-    tick_n(abase, 12); tick_n(amedium, 12); tick_n(ahigh, 12);
+    ftd::test::run_for(abase, 12); ftd::test::run_for(amedium, 12); ftd::test::run_for(ahigh, 12);
     const Profile afinal[3] = {
         x_profile(abase), x_profile(amedium), x_profile(ahigh),
     };
@@ -1421,7 +1423,7 @@ void test_particle_named_wave_template_cohorts() {
             check(std::string(c.id) + " field norm follows the imposed amplitude code",
                   std::fabs(s0.field_norm / base_norm - expected_ratio) < 1e-12);
             const double h0 = periodic_modified_hamiltonian(rb);
-            tick_n(rb, 12);
+            ftd::test::run_for(rb, 12);
             const double h1 = periodic_modified_hamiltonian(rb);
             check(std::string(c.id) + " is a stable source-free wave evolution",
                   std::fabs(h1 - h0) / std::max(1e-30, std::fabs(h0)) < 1e-12
@@ -1458,7 +1460,7 @@ void test_particle_named_wave_template_cohorts() {
               && only_terms_enabled(base, {"wave_propagation"})
               && only_terms_enabled(medium, {"wave_propagation"})
               && only_terms_enabled(high, {"wave_propagation"}));
-        tick_n(base, 12); tick_n(medium, 12); tick_n(high, 12);
+        ftd::test::run_for(base, 12); ftd::test::run_for(medium, 12); ftd::test::run_for(high, 12);
         check("amplitude copies remain exact under the linear wave map",
               scaled_error(base, medium, 1.2) < 1e-12
               && scaled_error(base, high, 1.5) < 1e-12
@@ -1495,7 +1497,7 @@ void test_particle_named_wave_template_cohorts() {
               && only_terms_enabled(base, {"wave_propagation"})
               && only_terms_enabled(medium, {"wave_propagation"})
               && only_terms_enabled(high, {"wave_propagation"}));
-        tick_n(base, 12); tick_n(medium, 12); tick_n(high, 12);
+        ftd::test::run_for(base, 12); ftd::test::run_for(medium, 12); ftd::test::run_for(high, 12);
         check("amplitude copies remain exact under the linear wave map",
               scaled_error2(base, medium, 1.2) < 1e-12
               && scaled_error2(base, high, 1.5) < 1e-12
@@ -1512,7 +1514,7 @@ void test_particle_named_wave_template_cohorts() {
         // (L^12(-J0) = -L^12(J0) only when both sides share the same tick
         // count — comparing a ticked base against an unticked reference
         // would spuriously fail even for an exact charge-sign mirror).
-        tick_n(electron_ref, 12);
+        ftd::test::run_for(electron_ref, 12);
         double mirror_r2 = 0.0, mirror_n2 = 0.0;
         for (std::size_t i = 0; i < electron_ref.voxels().size(); ++i) {
             mirror_r2 += (base.voxels()[i].flux + electron_ref.voxels()[i].flux).mag2()
@@ -1545,7 +1547,7 @@ void test_particle_named_wave_template_cohorts() {
                   && s0.manifested == c.expected_states
                   && only_terms_enabled(rb, {"wave_propagation"}));
             const double h0 = periodic_modified_hamiltonian(rb);
-            tick_n(rb, 12);
+            ftd::test::run_for(rb, 12);
             const double h1 = periodic_modified_hamiltonian(rb);
             const auto s1 = research_setup_stats(rb);
             const double drift = std::fabs(h1 - h0)
@@ -1672,7 +1674,7 @@ void test_moore_geometry_seed_contracts() {
         check(std::string(c.id) + " uses an inert all-terms-off profile",
               only_terms_enabled(rb, {}));
 
-        tick_n(rb, 8);
+        ftd::test::run_for(rb, 8);
         check(std::string(c.id) + " remains the same inert construction",
               manifested_count(rb) == c.total && only_terms_enabled(rb, {}));
     }
@@ -1692,10 +1694,10 @@ void test_cluster_amplitude_ordering() {
         check(std::string(ids[i]) + " uses isolated genesis-response terms",
               only_terms_enabled(rb, {"wave_propagation", "genesis",
                                       "gauss_projection", "langevin"}));
-        tick_n(rb, 200);
+        ftd::test::run_for(rb, 200);
         counts[i] = manifested_count(rb);
         const int at_200 = counts[i];
-        tick_n(rb, 20);
+        ftd::test::run_for(rb, 20);
         check(std::string(ids[i]) + " response is stable from tick 200 to 220",
               manifested_count(rb) == at_200);
     }
@@ -1725,7 +1727,7 @@ void test_locked_mass_latency_probe() {
     check("locked mass probe seeds the exact compact 33-site ball", count == 33);
     check("every mass-source site is locked", all_locked);
 
-    tick_n(rb, 4);
+    ftd::test::run_for(rb, 4);
     const double center = rb.voxel_at(m, m, m).latency;
     const double near = rb.voxel_at(m + 4, m, m).latency;
     const double far = rb.voxel_at(0, m, m).latency;
@@ -1775,7 +1777,7 @@ void test_high_amplitude_packet_dispersion() {
     check("high-amplitude packet is transverse and unmanifested",
           normalized_divergence(rb) < 1e-12 && manifested_count(rb) == 0);
     const auto before = x_profile(rb);
-    tick_n(rb, 20);
+    ftd::test::run_for(rb, 20);
     const auto after = x_profile(rb);
     const double dx = forward_delta(after.centroid, before.centroid, L);
     const double width_ratio = after.width / before.width;
@@ -1800,7 +1802,7 @@ void test_field_photon_packet_qualification_gate() {
     check("field photon packet is transverse",
           normalized_divergence(rb) < 1e-12);
     const auto before = x_profile(rb);
-    tick_n(rb, 20);
+    ftd::test::run_for(rb, 20);
     const auto after = x_profile(rb);
     const double dx = forward_delta(after.centroid, before.centroid, L);
     const double speed = dx / 20.0;
@@ -1825,7 +1827,7 @@ void test_bidirectional_transverse_lobes() {
     check("bidirectional lobes are transverse and unmanifested",
           normalized_divergence(rb) < 1e-12 && manifested_count(rb) == 0);
     const auto before = x_profile(rb);
-    tick_n(rb, 12);
+    ftd::test::run_for(rb, 12);
     const auto after = x_profile(rb);
     double left = 0.0;
     double right = 0.0;
@@ -1861,7 +1863,7 @@ void test_uniform_field_initial_data() {
                 && v.wave_vel.y == 0.0 && v.wave_vel.z == 0.0;
         }
         check("uniform electric proxy is exact inert canonical momentum", exact);
-        tick_n(rb, 8);
+        ftd::test::run_for(rb, 8);
         check("uniform electric proxy remains unchanged with all terms off",
               std::fabs(rb.voxel_at(L/2, L/2, L/2).wave_vel.x + 0.1) < 1e-15);
     }
@@ -1883,7 +1885,7 @@ void test_uniform_field_initial_data() {
                   << " transverse_curl=" << max_other << '\n';
         check("uniform magnetic proxy has exact interior z curl",
               only_terms_enabled(rb, {}) && max_error < 1e-12 && max_other < 1e-12);
-        tick_n(rb, 8);
+        ftd::test::run_for(rb, 8);
         const auto b = rb.curl_flux(rb.lattice().index(L/2, L/2, L/2));
         check("uniform magnetic proxy remains unchanged with all terms off",
               std::fabs(b.z - 0.05) < 1e-12);
@@ -1914,7 +1916,7 @@ void test_reference_geometry_ansatze() {
         }
         check("tangential ring has 12 equal-flux sites in one plane",
               count == 12 && exact && flux_sum.mag2() < 1e-24);
-        tick_n(rb, 8);
+        ftd::test::run_for(rb, 8);
         check("tangential ring remains an inert ansatz", manifested_count(rb) == 12);
     }
     {
@@ -1938,7 +1940,7 @@ void test_reference_geometry_ansatze() {
         }
         check("alternating cell is the exact imposed 1+6+12+8 pattern",
               exact && shells[0]==1 && shells[1]==6 && shells[2]==12 && shells[3]==8);
-        tick_n(rb, 8);
+        ftd::test::run_for(rb, 8);
         check("alternating Moore-shell cell remains inert", manifested_count(rb) == 27);
     }
 }
@@ -1969,7 +1971,7 @@ void test_gauge_named_initial_data_without_gauge_claims() {
         }
         check("square path is the exact oriented 8R-site vector ansatz",
               exact && support == 8*R && sum.mag2() < 1e-24);
-        tick_n(rb, 4);
+        ftd::test::run_for(rb, 4);
         check("square path remains inert and computes no Wilson observable",
               manifested_count(rb) == 0 && only_terms_enabled(rb, {}));
     }
@@ -2097,7 +2099,7 @@ void test_symmetric_wave_pair_profiles() {
               only_terms_enabled(rb,{"wave_propagation"})
               &&rb.toggles.flux_boundary==ftd::FluxBoundaryMode::Periodic);
         check("antisymmetric pair starts at exact odd x parity",x_reflection_error(rb,-1.0)<1e-13);
-        tick_n(rb,12);
+        ftd::test::run_for(rb,12);
         check("native wave evolution preserves odd x parity without manifestation",
               x_reflection_error(rb,-1.0)<1e-12&&manifested_count(rb)==0);
     }
@@ -2108,7 +2110,7 @@ void test_symmetric_wave_pair_profiles() {
         check("broadband pair starts even with zero canonical momentum",
               only_terms_enabled(rb,{"wave_propagation"})&&w2==0.0
               &&x_reflection_error(rb,+1.0)<1e-13);
-        tick_n(rb,12);
+        ftd::test::run_for(rb,12);
         check("native wave evolution preserves even x parity without manifestation",
               x_reflection_error(rb,+1.0)<1e-12&&manifested_count(rb)==0);
     }
@@ -2144,7 +2146,7 @@ void test_wave_family_native_dispersion() {
         const double k=2.0*ftd::PI*lane.mode/L;
         const double omega=2.0*std::asin(ftd::C_SPEED*std::sin(k/2.0));
         const auto a0=project_flux_harmonic(rb,lane.mode,lane.axis);
-        tick_n(rb,1);
+        ftd::test::run_for(rb,1);
         const auto a1=project_flux_harmonic(rb,lane.mode,lane.axis);
         const double expected_s=a0.sine*std::cos(omega)+a0.cosine*std::sin(omega);
         const double expected_c=a0.cosine*std::cos(omega)-a0.sine*std::sin(omega);
@@ -2166,8 +2168,8 @@ void test_wave_family_native_dispersion() {
     const double native_omega=2.0*std::asin(ftd::C_SPEED*std::sin(k/2.0));
     const double seed_omega=2.0*(ftd::C_SPEED/8.0)*std::sin(k/2.0);
     const auto a0=project_flux_harmonic(sound,mode,0);
-    tick_n(sound,1);const auto a1=project_flux_harmonic(sound,mode,0);
-    tick_n(sound,1);const auto a2=project_flux_harmonic(sound,mode,0);
+    ftd::test::run_for(sound,1);const auto a1=project_flux_harmonic(sound,mode,0);
+    ftd::test::run_for(sound,1);const auto a2=project_flux_harmonic(sound,mode,0);
     const double scale=std::max(1e-30,std::hypot(a0.sine,a0.cosine));
     const auto recurrence_error=[&](double omega){
         const double s=a2.sine-2.0*std::cos(omega)*a1.sine+a0.sine;
@@ -2231,7 +2233,7 @@ void test_multilobe_wave_symmetries() {
               &&rb.toggles.flux_boundary==ftd::FluxBoundaryMode::Periodic);
         check(std::string(id)+" starts even under x and z reflection",
               x_reflection_error(rb,+1.0)<1e-13&&z_reflection_error(rb,+1.0)<1e-13);
-        tick_n(rb,12);
+        ftd::test::run_for(rb,12);
         check(std::string(id)+" preserves both reflection symmetries",
               x_reflection_error(rb,+1.0)<1e-12&&z_reflection_error(rb,+1.0)<1e-12
               &&manifested_count(rb)==0);
@@ -2246,7 +2248,7 @@ void test_multilobe_wave_symmetries() {
         const ftd::Vec3 signs(+1.0,-1.0,-1.0);
         check("mirror pair starts with exact even/odd component parity",
               x_component_parity_error(rb,signs)<1e-13);
-        tick_n(rb,12);
+        ftd::test::run_for(rb,12);
         check("native wave map preserves the mixed component parity",
               x_component_parity_error(rb,signs)<1e-12&&manifested_count(rb)==0);
     }
@@ -2300,8 +2302,8 @@ void test_imposed_uniform_b_native_curvature() {
     straight.toggles.lorentz_force = false;
     const int control_id = straight.voxels()[static_cast<std::size_t>(initial_idx)].particle_id;
 
-    tick_n(magnetic, ticks);
-    tick_n(straight, ticks);
+    ftd::test::run_for(magnetic, ticks);
+    ftd::test::run_for(straight, ticks);
     const Endpoint curved = endpoint(magnetic, particle_id);
     const Endpoint control = endpoint(straight, control_id);
     check("magnetic and control markers survive", curved.found && control.found);
@@ -2366,7 +2368,7 @@ void test_prepared_polarity_geometry_seeds() {
         for (const auto& v : rb.voxels()) field2 += v.flux.mag2();
         check("polarity shell carries a nonzero imposed radial dressing", field2 > 0.0);
         const auto before = rb.voxels();
-        tick_n(rb, 8);
+        ftd::test::run_for(rb, 8);
         check("octahedral polarity-shell primitives remain exact",
               primitive_equal(before, rb.voxels()));
     }
@@ -2394,7 +2396,7 @@ void test_prepared_polarity_geometry_seeds() {
               count == 3 && signed_sum == 3 && locked == 0 && positions);
         check("threefold seed carries nonzero imposed inward dressing", field2 > 0.0);
         const auto before = rb.voxels();
-        tick_n(rb, 8);
+        ftd::test::run_for(rb, 8);
         check("threefold seed primitives remain exact without binding",
               primitive_equal(before, rb.voxels()));
     }
@@ -2511,7 +2513,7 @@ void test_deterministic_random_wave_profiles() {
         check("localized random-wave profile starts inside its declared support",
               (e0.first / std::max(1e-30, e0.second)) < 1e-4
               && e0.second > 0.0 && manifested_count(rb) == 0);
-        tick_n(rb, 12);
+        ftd::test::run_for(rb, 12);
         const auto e12 = outside_energy(rb, corner, corner, corner, 6);
         const double h12 = periodic_modified_hamiltonian(rb);
         const double outside_fraction = e12.first / std::max(1e-30, e12.second);
@@ -2537,7 +2539,7 @@ void test_deterministic_random_wave_profiles() {
         check("random-wave ball initial data is exact fixed-seed replay",
               field_equal(a, b) && manifested_count(a) == 0);
         const double h0 = periodic_modified_hamiltonian(a);
-        tick_n(a, 12); tick_n(b, 12);
+        ftd::test::run_for(a, 12); ftd::test::run_for(b, 12);
         const double h12 = periodic_modified_hamiltonian(a);
         const double h_drift = std::fabs(h12 - h0) / std::max(1e-30, std::fabs(h0));
         check("random-wave ball remains exact replay without ongoing noise",
@@ -2622,7 +2624,7 @@ void test_multistate_free_transport_controls() {
               only_terms_enabled(rb, {"movement"}));
         const int left_id = rb.voxel_at(left_x, mc, mc).particle_id;
         const int right_id = rb.voxel_at(right_x, mc, mc).particle_id;
-        tick_n(rb, 4);
+        ftd::test::run_for(rb, 4);
         const Site left = find_id(rb, left_id);
         const Site right = find_id(rb, right_id);
         check("outward states translate one lattice face after four ticks",
@@ -2652,7 +2654,7 @@ void test_multistate_free_transport_controls() {
         const int sea_id = rb.voxel_at(28, 28, mc).particle_id;
         std::cout << "    threefold ids=" << id0 << '/' << id1 << '/' << id2
                   << " opposite=" << sea_id << '\n';
-        tick_n(rb, 30);
+        ftd::test::run_for(rb, 30);
         const Site p0 = find_id(rb, id0);
         const Site p1 = find_id(rb, id1);
         const Site p2 = find_id(rb, id2);
@@ -2713,7 +2715,7 @@ void test_fixed_temperature_langevin_genesis_probe() {
           excitation(a) == 0.0 && manifested_count(a) == 0 &&
           exact_state_and_field(a, b));
 
-    tick_n(a, 100); tick_n(b, 100);
+    ftd::test::run_for(a, 100); ftd::test::run_for(b, 100);
     const double e100 = excitation(a);
     const int n100 = manifested_count(a);
     std::cout << "    T=0.03 bath t=100 excitation=" << e100
@@ -2797,7 +2799,7 @@ void test_longitudinal_packet_overlap_is_linear() {
     check("declared lane decomposition reconstructs the initial field",
           relative_superposition_error(pair, left, right) < 1e-12);
 
-    tick_n(pair, ticks); tick_n(left, ticks); tick_n(right, ticks);
+    ftd::test::run_for(pair, ticks); ftd::test::run_for(left, ticks); ftd::test::run_for(right, ticks);
     const double residual = relative_superposition_error(pair, left, right);
     double overlap = 0.0, left_norm = 0.0, right_norm = 0.0;
     for (std::size_t i = 0; i < pair.voxels().size(); ++i) {
@@ -2846,7 +2848,7 @@ void test_quantum_named_two_source_field_is_classical() {
             upper.inject_wave_vel_add(x, y, z, src.wave_vel * upper_share);
         }
     }
-    tick_n(pair, ticks); tick_n(lower, ticks); tick_n(upper, ticks);
+    ftd::test::run_for(pair, ticks); ftd::test::run_for(lower, ticks); ftd::test::run_for(upper, ticks);
     double residual2 = 0.0, norm2 = 0.0;
     for (std::size_t i = 0; i < pair.voxels().size(); ++i) {
         const ftd::Vec3 dj = pair.voxels()[i].flux
@@ -2951,7 +2953,7 @@ void test_quantum_well_markers_do_not_confine() {
     check("well contains exactly two locked marker planes",
           state_count == 2 * L * L && locked_count == state_count);
 
-    tick_n(marked, 8); tick_n(no_markers, 8);
+    ftd::test::run_for(marked, 8); ftd::test::run_for(no_markers, 8);
     double residual2 = 0.0, norm2 = 0.0, outside = 0.0, total = 0.0;
     for (int z = 0; z < L; ++z)
     for (int y = 0; y < L; ++y)
@@ -3017,7 +3019,7 @@ void test_aharonov_bohm_named_geometry_has_no_phase_mechanism() {
         return std::sqrt(residual2 / std::max(1e-30, norm2));
     };
     const double initial_residual = superposition_error(rb, tube, paths);
-    tick_n(rb, 12); tick_n(tube, 12); tick_n(paths, 12);
+    ftd::test::run_for(rb, 12); ftd::test::run_for(tube, 12); ftd::test::run_for(paths, 12);
     const double evolved_residual = superposition_error(rb, tube, paths);
     std::cout << "    AB-geometry initial_residual=" << initial_residual
               << " evolved_residual=" << evolved_residual
@@ -3052,7 +3054,7 @@ void test_casimir_named_plates_are_wave_transparent() {
     }
     check("plate control contains exactly two locked marker planes",
           states == 2 * L * L && locked == states);
-    tick_n(plates, 12); tick_n(no_plates, 12);
+    ftd::test::run_for(plates, 12); ftd::test::run_for(no_plates, 12);
     double residual2 = 0.0, norm2 = 0.0;
     for (std::size_t i = 0; i < plates.voxels().size(); ++i) {
         const ftd::Vec3 dj = plates.voxels()[i].flux - no_plates.voxels()[i].flux;
@@ -3094,7 +3096,7 @@ void test_locked_state_wall_native_transmission() {
     }
     check("state wall is exactly three locked full planes",
           states == wall_width * L * L && locked == states);
-    tick_n(wall, ticks); tick_n(control, ticks);
+    ftd::test::run_for(wall, ticks); ftd::test::run_for(control, ticks);
     auto right_energy = [](const ftd::RenderBridge& rb) {
         const int n = rb.lattice().size();
         double e = 0.0;
@@ -3152,7 +3154,7 @@ void test_eraser_named_grid_is_a_coupling_source() {
     }
     check("eraser-named grid is exactly one locked checkerboard plane",
           states == L * L / 2 && locked == states);
-    tick_n(grid, ticks); tick_n(control, ticks);
+    ftd::test::run_for(grid, ticks); ftd::test::run_for(control, ticks);
     auto downstream_energy = [](const ftd::RenderBridge& rb) {
         const int n = rb.lattice().size();
         double e = 0.0;
@@ -3230,9 +3232,9 @@ void test_emergent_genesis_profile_matrix() {
               a.toggles.langevin_T == c.temperature &&
               a.toggles.langevin_gamma == 0.02);
         check(std::string(c.id) + " initial data replays exactly", exact_replay(a, b));
-        tick_n(a, 100); tick_n(b, 100);
+        ftd::test::run_for(a, 100); ftd::test::run_for(b, 100);
         const int n100 = manifested_count(a);
-        tick_n(a, 20); tick_n(b, 20);
+        ftd::test::run_for(a, 20); ftd::test::run_for(b, 20);
         const int n120 = manifested_count(a);
         std::cout << "    " << c.id << " count@100/120="
                   << n100 << '/' << n120 << '\n';

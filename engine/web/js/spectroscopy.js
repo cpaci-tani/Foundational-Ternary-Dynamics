@@ -25,12 +25,13 @@ export function hydrogenEnergyLevel(n, Z = 1) {
 
 /**
  * Fine structure correction to energy level.
- * delta_E = E_n * alpha^2 / n * (1/(j+1/2) - 3/(4n))
+ * delta_E = E_n * (Z*alpha)^2 / n * (1/(j+1/2) - 3/(4n))
  * where j = l +/- 1/2 is the total angular momentum quantum number.
  */
 export function fineStructureCorrection(n, j, Z = 1) {
     const E_n = hydrogenEnergyLevel(n, Z);
-    return E_n * ALPHA * ALPHA / n * (1.0 / (j + 0.5) - 3.0 / (4.0 * n));
+    const zAlpha = Z * ALPHA;
+    return E_n * zAlpha * zAlpha / n * (1.0 / (j + 0.5) - 3.0 / (4.0 * n));
 }
 
 /** Bohr radius in femtometers: a_0 = hbar*c / (m_e * c^2 * alpha) */

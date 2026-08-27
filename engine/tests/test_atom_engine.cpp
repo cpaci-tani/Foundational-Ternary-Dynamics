@@ -306,6 +306,44 @@ int main() {
 
     // ── AE15: OnticEntity conversion ────────────────────────────────
     {
+        std::cout << "\n--- AE14b: Diagnostics follow active model ---\n";
+        AtomEngine ae;
+        ae.set_bonding_enabled(false);
+        ae.set_damping_enabled(false);
+        ae.add_atom(1, {0.0, 0.0, 0.0}, {}, 1);
+        ae.add_atom(1, {3.0, 0.0, 0.0}, {}, -1);
+
+        // Fractional charge is force-authoritative; formal charge remains
+        // unchanged so this catches accidental fallback to Atom::charge.
+        ae.atoms()[0].q_frac = 0.25;
+        ae.atoms()[1].q_frac = -0.5;
+        AtomDiagnostics active = ae.diagnostics();
+        const double r = std::sqrt(9.0 + ae.softening() * ae.softening());
+        const double expected_ionic = ALPHA * 0.25 * -0.5 / (4.0 * PI * r);
+        check_close("ionic PE uses q_frac", active.total_pe_ionic,
+                    expected_ionic, std::abs(expected_ionic) * 1e-12 + 1e-18);
+        check("default tracked accounting complete", active.energy_complete);
+        check("static no-bonding profile conservative", active.energy_conservative);
+
+        ae.toggles.ionic = false;
+        ae.toggles.van_der_waals = false;
+        AtomDiagnostics disabled = ae.diagnostics();
+        check("disabled ionic PE is zero", disabled.total_pe_ionic == 0.0);
+        check("disabled vdW PE is zero", disabled.total_pe_vdw == 0.0);
+
+        check("bond fixture created", ae.create_bond(0, 1));
+        check("enabled bond PE is tracked", ae.diagnostics().total_pe_bond > 0.0);
+        ae.toggles.covalent_bonds = false;
+        check("disabled bond PE is zero", ae.diagnostics().total_pe_bond == 0.0);
+
+        ae.toggles.angle_strain = true;
+        AtomDiagnostics partial = ae.diagnostics();
+        check("untracked many-body PE marks accounting partial", !partial.energy_complete);
+        check("partial accounting cannot claim conservation", !partial.energy_conservative);
+    }
+
+    // ── AE15: OnticEntity conversion ────────────────────────────────
+    {
         std::cout << "\n--- AE15: OnticEntity conversion ---\n";
         AtomEngine ae;
         ae.add_atom(6, {0.0, 0.0, 0.0});
@@ -322,6 +360,14 @@ int main() {
         ae.set_bonding_enabled(false);
         ae.add_locked_atom(1, {50.0, 50.0, 50.0});
         ae.add_atom(1, {55.0, 50.0, 50.0}, {0.01, 0.0, 0.0});
+        // A stale constrained velocity must remain visible in total KE but
+        // cannot contaminate the free-particle temperature.
+        ae.atoms()[0].velocity = {10.0, 0.0, 0.0};
+        AtomDiagnostics constrained = ae.diagnostics();
+        const double mobile_ke = 0.5 * ae.atoms()[1].mass * 0.01 * 0.01;
+        check_close("locked KE excluded from temperature", constrained.temperature,
+                    2.0 * mobile_ke / 3.0, 1e-15);
+        check("locked KE remains in total energy", constrained.total_ke > mobile_ke);
         Vec3 pos0 = ae.atoms()[0].position;
         ae.run(100);
         Vec3 pos1 = ae.atoms()[0].position;

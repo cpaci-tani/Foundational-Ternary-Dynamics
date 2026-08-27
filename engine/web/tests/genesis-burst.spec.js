@@ -60,11 +60,13 @@ async function loadAndSettle(page, id, ticks) {
 }
 
 test.describe('Selected genesis amplitude response (FTD-0269 provenance)', () => {
+    /** @type {import('@playwright/test').BrowserContext|undefined} */
+    let context;
     /** @type {import('@playwright/test').Page} */
     let page;
 
     test.beforeAll(async ({ browser, baseURL }) => {
-        const context = await browser.newContext({ baseURL });
+        context = await browser.newContext({ baseURL });
         page = await context.newPage();
         page.setDefaultTimeout(60_000);
         await gotoAndReady(page);
@@ -72,7 +74,7 @@ test.describe('Selected genesis amplitude response (FTD-0269 provenance)', () =>
     });
 
     test.afterAll(async () => {
-        await page.close();
+        await context?.close();
     });
 
     test('fixed amplitudes give N(12) < N(16) < N(40)', async () => {

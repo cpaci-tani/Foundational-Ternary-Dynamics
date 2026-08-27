@@ -118,6 +118,32 @@ void test_json_helpers() {
     check("json_string missing key is empty", json_string(j, "nope").empty(), "");
 }
 
+void test_unaligned_binary_codec() {
+    section("unaligned byte-buffer binary codec");
+    std::vector<std::uint8_t> bytes(13u, 0u);
+    const std::uint32_t marker = 0x12345678u;
+    const float scalar = 1.25f;
+    write_binary_value(bytes, 1u, marker);
+    write_binary_value(bytes, 7u, scalar);
+
+    check("u32 bytes are little-endian and byte-exact",
+          bytes[1] == 0x78u && bytes[2] == 0x56u
+              && bytes[3] == 0x34u && bytes[4] == 0x12u,
+          "binary header encoding drifted");
+    check("unaligned u32 round-trip",
+          read_binary_value<std::uint32_t>(bytes, 1u) == marker, "");
+    check("unaligned float round-trip",
+          read_binary_value<float>(bytes, 7u) == scalar, "");
+
+    bool bounds_rejected = false;
+    try {
+        write_binary_value(bytes, bytes.size() - 1u, marker);
+    } catch (const std::out_of_range&) {
+        bounds_rejected = true;
+    }
+    check("out-of-bounds binary write rejected", bounds_rejected, "");
+}
+
 #ifndef _WIN32
 void test_lowercase_websocket_handshake() {
     section("HTTP header names are case-insensitive during WebSocket upgrade");
@@ -223,6 +249,7 @@ int main() {
     ftd::test::test_ws_origin_allowlist();
     ftd::test::test_rfc6455_accept_derivation();
     ftd::test::test_json_helpers();
+    ftd::test::test_unaligned_binary_codec();
 #ifndef _WIN32
     ftd::test::test_lowercase_websocket_handshake();
     ftd::test::test_client_frame_validation();

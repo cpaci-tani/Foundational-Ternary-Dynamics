@@ -108,7 +108,7 @@ int main(){
     ftd::Vec3 direction{1,0,0};for(int turn=0;turn<axis;++turn)direction=cycle(direction);
     for(int sign:{-1,1})for(int scale=0;scale<2;++scale){
       const double delta=deltas[scale];
-      std::vector<ftd::eft::QuadraticCoatFaceEntry> entries;
+      std::vector<ftd::eft::QuadraticCoatSparseCurrentEntry> entries;
       for(const auto&p:points){
         const auto segment=ftd::eft::make_quadratic_coat_face_current(
             L,p.position,p.position+direction*(sign*delta),p.charge,false);

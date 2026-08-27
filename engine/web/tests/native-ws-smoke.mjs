@@ -81,18 +81,39 @@ function u32(view, byteOffset) {
     return view.getUint32(byteOffset, true);
 }
 
+const FTV2 = Object.freeze({
+    MAGIC: 0x32565446,
+    HEADER_BYTES: 20,
+    LATTICE_SIZE: 4,
+    STRIDE: 8,
+    ORIGIN: 12,
+    AXIS_COUNT: 16,
+});
+
+function centeredGrid(latticeSize, stride) {
+    const center = Math.floor((latticeSize - 1) / 2);
+    const origin = center - Math.floor(center / stride) * stride;
+    const axisCount = Math.floor((latticeSize - 1 - origin) / stride) + 1;
+    return { origin, axisCount };
+}
+
 function ftv2Stats(buffer) {
     const view = new DataView(buffer);
-    assert.equal(u32(view, 0), 0x32565446, 'FTV2 magic');
-    const latticeSize = u32(view, 4);
-    const stride = u32(view, 8);
-    const axisCount = u32(view, 12);
+    assert(buffer.byteLength >= FTV2.HEADER_BYTES, 'FTV2 header size');
+    assert.equal(u32(view, 0), FTV2.MAGIC, 'FTV2 magic');
+    const latticeSize = u32(view, FTV2.LATTICE_SIZE);
+    const stride = u32(view, FTV2.STRIDE);
+    const origin = u32(view, FTV2.ORIGIN);
+    const axisCount = u32(view, FTV2.AXIS_COUNT);
+    const expectedGrid = centeredGrid(latticeSize, stride);
+    assert.equal(origin, expectedGrid.origin, 'FTV2 center-anchored origin');
+    assert.equal(axisCount, expectedGrid.axisCount, 'FTV2 center-anchored axis count');
     const count = axisCount ** 3;
-    assert.equal(buffer.byteLength, 16 + count * 4, 'FTV2 payload size');
+    assert.equal(buffer.byteLength, FTV2.HEADER_BYTES + count * 4, 'FTV2 payload size');
     let maxAbs = 0;
     for (let i = 0; i < count; i++)
-        maxAbs = Math.max(maxAbs, Math.abs(view.getFloat32(16 + i * 4, true)));
-    return { latticeSize, stride, axisCount, count, maxAbs };
+        maxAbs = Math.max(maxAbs, Math.abs(view.getFloat32(FTV2.HEADER_BYTES + i * 4, true)));
+    return { latticeSize, stride, origin, axisCount, count, maxAbs };
 }
 
 function fts2Stats(buffer, expected = {}) {
@@ -174,15 +195,12 @@ try {
 
     const volumeFrame = await requestBinary(
         { cmd: 'get_flux_volume', axisSamples: 5 },
-        (buffer) => buffer.byteLength >= 16
-            && u32(new DataView(buffer), 0) === 0x32565446);
-    const volumeView = new DataView(volumeFrame);
-    assert.equal(u32(volumeView, 4), 16, 'FTV2 lattice size');
-    const volumeStride = u32(volumeView, 8);
-    const volumeAxis = u32(volumeView, 12);
-    assert(volumeStride >= 1);
-    assert.equal(volumeAxis, Math.ceil(16 / volumeStride));
-    assert.equal(volumeFrame.byteLength, 16 + volumeAxis ** 3 * 4, 'FTV2 frame layout');
+        (buffer) => buffer.byteLength >= FTV2.HEADER_BYTES
+            && u32(new DataView(buffer), 0) === FTV2.MAGIC);
+    const volume = ftv2Stats(volumeFrame);
+    assert.equal(volume.latticeSize, 16, 'FTV2 lattice size');
+    assert(volume.stride >= 1);
+    assert(volume.origin < volume.stride, 'FTV2 origin must be the first center-anchored sample');
 
     const fieldFrame = await requestBinary(
         { cmd: 'get_field_sample', kind: 'e', stride: 1, token: 42 },
@@ -400,18 +418,41 @@ try {
             && message.value.tick === 2,
         'edit-before-tick completion', 30000);
     assert.equal(immediateTick.value.tick, 2);
-    const forcedPostTick = await waitFor(
-        (message) => message.type === 'json'
-            && message.value.type === 'telemetry_snapshot'
-            && message.value.groupMeta?.diagnostics?.epoch
-                > immediateTickInvalidation.value.epoch
-            && message.value.groupMeta?.diagnostics?.tick === 2
-            && message.value.groupMeta?.audit?.tick === 2
-            && message.value.groupMeta?.gravity?.tick === 2
-            && message.value.groupMeta?.lagrangian?.tick === 2,
-        'forced post-edit slow telemetry groups', 30000);
-    assert.equal(forcedPostTick.value.publishedMask, 15);
-    assert.equal(forcedPostTick.value.sourceEpoch, moving.sourceEpoch);
+    // GPU producer QoS may return the forced groups in more than one delta
+    // (for example diagnostics/audit/gravity followed by lagrangian). The
+    // contract is that every demanded group becomes fresh for this settled
+    // tick, not that unrelated reductions share one transport frame.
+    const forcedGroups = [
+        [1, 'diagnostics'],
+        [2, 'audit'],
+        [4, 'gravity'],
+        [8, 'lagrangian'],
+    ];
+    const forcedDeadline = Date.now() + 30000;
+    let forcedPostTickMask = 0;
+    while (forcedPostTickMask !== 15) {
+        const remainingMs = forcedDeadline - Date.now();
+        assert(remainingMs > 0, 'timed out waiting for forced post-edit telemetry groups');
+        const publication = await waitFor(
+            (message) => message.type === 'json'
+                && message.value.type === 'telemetry_snapshot'
+                && message.value.epoch > immediateTickInvalidation.value.epoch
+                && (message.value.publishedMask & ~forcedPostTickMask) !== 0,
+            'next forced post-edit telemetry group', remainingMs);
+        assert.equal(publication.value.sourceEpoch, moving.sourceEpoch);
+        for (const [bit, group] of forcedGroups) {
+            if ((publication.value.publishedMask & bit) === 0) continue;
+            assert(publication.value.groupMeta?.[group], `${group} metadata is required`);
+            assert.equal(publication.value.groupMeta[group].tick, 2,
+                `${group} must be sampled at the settled post-edit tick`);
+            assert(publication.value.groupMeta[group].epoch
+                > immediateTickInvalidation.value.epoch,
+            `${group} must be newer than the edit invalidation`);
+            assert.equal(publication.value.groupMeta[group].stale, false);
+            forcedPostTickMask |= bit;
+        }
+    }
+    assert.equal(forcedPostTickMask, 15);
 
     const largeSize = Math.trunc(Number(process.env.FTD_WS_LARGE || 0));
     if (largeSize > 0) {
@@ -458,13 +499,12 @@ try {
 
         const largeVolume = await requestBinary(
             { cmd: 'get_flux_volume', axisSamples: 53 },
-            (buffer) => buffer.byteLength >= 16
-                && u32(new DataView(buffer), 0) === 0x32565446,
+            (buffer) => buffer.byteLength >= FTV2.HEADER_BYTES
+                && u32(new DataView(buffer), 0) === FTV2.MAGIC,
             120000);
-        const largeVolumeView = new DataView(largeVolume);
-        const largeAxis = u32(largeVolumeView, 12);
-        assert(largeAxis <= 53, `FTV2 axis cap exceeded (${largeAxis})`);
-        assert.equal(largeVolume.byteLength, 16 + largeAxis ** 3 * 4);
+        const largeVolumeStats = ftv2Stats(largeVolume);
+        assert(largeVolumeStats.axisCount <= 53,
+            `FTV2 axis cap exceeded (${largeVolumeStats.axisCount})`);
         assert(largeVolume.byteLength < 1024 * 1024, 'large FTV2 frame must stay below 1 MiB');
 
         const setupLargeScenario = async (name) => {
@@ -476,8 +516,8 @@ try {
         const sampleLargeVolume = async () => {
             const frame = await requestBinary(
                 { cmd: 'get_flux_volume', axisSamples: 53 },
-                (buffer) => buffer.byteLength >= 16
-                    && u32(new DataView(buffer), 0) === 0x32565446,
+                (buffer) => buffer.byteLength >= FTV2.HEADER_BYTES
+                    && u32(new DataView(buffer), 0) === FTV2.MAGIC,
                 120000);
             return ftv2Stats(frame);
         };

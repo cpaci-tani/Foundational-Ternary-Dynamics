@@ -290,7 +290,7 @@ them derived or parameter-free. Consult the LEDGER and this specification's
 active/reference constant notes for each value's status:
 - **9 body types**: Dark matter, gas, stars, neutron stars, black holes, quasars, nebulae, white dwarfs, dark energy field
 - **18-phase cosmic tick cycle**: octree build, gravity, SPH density/forces, Friedmann expansion, dark energy, accretion, jets, star formation, stellar evolution, magnetic fields, radiation pressure, gravitational waves, Verlet integration
-- **14 toggles**: gravity, sph_gas, hubble_expansion (core ON); dark_energy, dark_matter_halos, black_hole_accretion, cosmic_radiation, star_formation, stellar_evolution, galaxy_mergers, magnetic_fields, radiation_pressure, relativistic_jets, gravitational_waves (extensions OFF)
+- **14 toggle names**: gravity, sph_gas, hubble_expansion (core ON); dark_energy, black_hole_accretion, star_formation, stellar_evolution, magnetic_fields, radiation_pressure, relativistic_jets, and gravitational_waves are implemented extensions (default OFF). `dark_matter_halos`, `cosmic_radiation`, and `galaxy_mergers` are reserved names with no native tick consumer; transactional setters reject enabling them.
 - **FTD constants**: G_N=0.01, Omega_Lambda=2/3, DM_frac=17/27, gamma=5/3, c=1/sqrt(3)
 
 ### Abstract Base Class: ScaleEngine (v2.12)

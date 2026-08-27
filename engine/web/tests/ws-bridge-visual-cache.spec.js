@@ -817,6 +817,7 @@ test('scenario-local visibility tuning restores user volume controls on the next
             setFluxSliceVisible(v) { calls.push(['slice', v]); },
             setOverlayVisible() {},
             syncForceStyle() {},
+            syncScalarRenderMode() {},
         };
         const ctx = { viewport };
         const state = { forceStyle: 'arrows', latticeNeedsUpload: false };
@@ -1827,12 +1828,15 @@ test('native scalar physics controls reach set_param and read from server-backed
         };
     });
 
-    expect(result.sent).toEqual([
+    expect(result.sent.map(({ _requestId, ...message }) => message)).toEqual([
         { cmd: 'set_param', name: 'dt', value: 0.25 },
         { cmd: 'set_param', name: 'omega0', value: 0.3 },
         { cmd: 'set_param', name: 'langevin_T', value: 0.05 },
         { cmd: 'set_param', name: 'langevin_gamma', value: 0.02 },
     ]);
+    const requestIds = result.sent.map(message => message._requestId);
+    expect(requestIds.every(Number.isFinite)).toBe(true);
+    expect(new Set(requestIds).size).toBe(requestIds.length);
     expect(result).toMatchObject({
         dt: 0.25,
         physicalTime: 1.75,

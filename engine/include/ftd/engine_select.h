@@ -25,15 +25,20 @@ namespace ftd {
 
 class SimEngine {
 public:
-    explicit SimEngine(int lattice_size)
-        : size_(lattice_size), N_(lattice_size * lattice_size * lattice_size)
+    explicit SimEngine(int lattice_size, bool prefer_gpu = true)
+        : size_(lattice_size),
+          N_(static_cast<int>(Lattice::checked_total_sites(lattice_size))),
+          use_gpu_(false)
     {
 #ifdef FTD_ENABLE_CUDA
-        gpu_ = std::make_unique<gpu::GpuEngine>(lattice_size);
-        use_gpu_ = true;
+        if (prefer_gpu) {
+            gpu_ = std::make_unique<gpu::GpuEngine>(lattice_size);
+            use_gpu_ = true;
+        }
 #endif
         if (!use_gpu_) {
             cpu_ = std::make_unique<RenderBridge>(lattice_size);
+            cpu_->force_cpu();
         }
     }
 

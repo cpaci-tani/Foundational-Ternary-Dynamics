@@ -650,7 +650,8 @@ static void gpc_20_longrun() {
 
 // ============================================================
 // GPC-21: Weak substrate field — inertness parity (flavor == 0)
-// The weak substrate field is stepped ONLY on the GPU (weak_field_stencil_kernel,
+// The weak substrate field is stepped ONLY on the GPU (the ordered weak-field
+// velocity/commit kernels,
 // gated by weak_field_active_); the CPU has no weak stepper. When nothing
 // excites it (flavor==0, no weak flux), weak_field_active_ stays false, the weak
 // sector is inert, and it must not perturb the observable single-substrate
@@ -714,6 +715,20 @@ static void gpc_22_weak_active() {
     g2.run(TICKS);
     auto ga2 = g2.energy_audit();
 
+    std::vector<Voxel> gv1;
+    std::vector<Voxel> gv2;
+    g1.sync_to_host(gv1);
+    g2.sync_to_host(gv2);
+    bool weak_fields_exact = gv1.size() == gv2.size();
+    for (std::size_t i = 0; weak_fields_exact && i < gv1.size(); ++i) {
+        weak_fields_exact = gv1[i].flux_weak.x == gv2[i].flux_weak.x
+            && gv1[i].flux_weak.y == gv2[i].flux_weak.y
+            && gv1[i].flux_weak.z == gv2[i].flux_weak.z
+            && gv1[i].wave_vel_weak.x == gv2[i].wave_vel_weak.x
+            && gv1[i].wave_vel_weak.y == gv2[i].wave_vel_weak.y
+            && gv1[i].wave_vel_weak.z == gv2[i].wave_vel_weak.z;
+    }
+
     // CPU run — same setup + flavor; the weak sector is a no-op (no CPU stepper).
     RenderBridge cpu(L); cpu.force_cpu(); setup(cpu);
     cpu.inject_particle(L/2, L/2, L/2, +1, Vec3(0, 0, K_B), +1, 0);
@@ -740,6 +755,8 @@ static void gpc_22_weak_active() {
     CHECK_CLOSE(ga2.weak_energy, ga1.weak_energy,
                 std::abs(ga1.weak_energy) * 1e-5 + 1e-12,
                 "GPC-22 GPU weak_energy reproducible across runs (<=1e-5 rel)");
+    CHECK(weak_fields_exact,
+          "GPC-22 weak stencil field/velocity image is bit-exact across runs");
     // 4. Documented asymmetry: the CPU has no weak stepper, so its weak field
     //    stays zero while the GPU evolves one. GPU-only physics, not a parity
     //    failure — asserted so the asymmetry cannot silently change.

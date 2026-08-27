@@ -13,8 +13,8 @@
 
 #include <array>
 #include <cstdint>
-#include <cassert>
 #include <climits>
+#include <stdexcept>
 
 namespace ftd {
 
@@ -28,14 +28,23 @@ struct Coord {
 
 class Lattice {
 public:
-    explicit Lattice(int size)
-        : size_(size), total_(static_cast<int64_t>(size) * size * size) {
-        // index() computes wrap(x)*size_*size_ + ... in int32; at L≳1290,
-        // size_³ overflows INT_MAX → the flat index wraps negative → OOB. This
-        // is well above the enforced L≤256 cap, so it is a latent-ceiling guard.
-        assert(total_ <= static_cast<int64_t>(INT_MAX) &&
-               "Lattice L too large: int32 flat index would overflow (raise index() to int64_t first)");
+    // index() returns int and uses x*L^2 + y*L + z, so L=1290 is the
+    // largest cube whose flat index domain fits in INT_MAX.
+    static constexpr int kMaxIndexableSize = 1290;
+
+    static int64_t checked_total_sites(int size) {
+        if (size <= 0) {
+            throw std::invalid_argument("Lattice size must be positive");
+        }
+        if (size > kMaxIndexableSize) {
+            throw std::length_error(
+                "Lattice size exceeds the int32 flat-index capacity");
+        }
+        return static_cast<int64_t>(size) * size * size;
     }
+
+    explicit Lattice(int size)
+        : size_(size), total_(checked_total_sites(size)) {}
 
     int size() const { return size_; }
     int64_t total_sites() const { return total_; }

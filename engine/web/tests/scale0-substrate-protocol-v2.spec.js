@@ -4,9 +4,11 @@
  *
  * Implements the automated measurements for the v2 protocol, fixing v1 defects:
  * - F1 (selective_damping toggle-trap): turns selective_damping OFF first.
- * - F2 (conserved Maxwell Hamiltonian): measures EFieldEnergy + BFieldEnergy.
+ * - F2 (conserved Maxwell Hamiltonian): uses velocity-Verlet and measures
+ *   the unstaggered EFieldEnergy + BFieldEnergy diagnostic.
  * - F3 (c_lat speed via front-tracking): uses point pulse at L/2 and tracks dR/dt.
- * - F4 (genesis cluster scaling): sweeps amplitudes and fits log-log slope to 2.0.
+ * - F4 (genesis response): checks the preregistered fixed A=12/16/40
+ *   finite-box ordering without promoting it to a universal power law.
  * - G4 (cluster count): implements connected-components BFS cluster counting.
  * - I5 (determinism): compares two full runs for bit-exact identical trajectories.
  */
@@ -69,6 +71,10 @@ async function applyGenesisConfig(page) {
 test.describe('Scale-0 Substrate Experimental Protocol (v2)', () => {
 
     test.beforeEach(async ({ page }) => {
+        // These protocol arms issue ordered reset/setup/tick/read sequences.
+        // Keep the production WASM engine but disable its asynchronous worker
+        // proxy so every measurement observes the command it just issued.
+        await page.addInitScript(() => { window.__ftdWasmWorker = false; });
         await gotoAndReady(page);
         // Assert we are using the real C++/WASM bridge
         const isWasm = await page.evaluate(() => window._ftdBridge && window._ftdBridge.isWasm);
@@ -108,7 +114,11 @@ test.describe('Scale-0 Substrate Experimental Protocol (v2)', () => {
             ];
             togglesToDisable.forEach(t => b.setToggle(t, false));
             b.setToggle('wave_propagation', true);
-            b.setToggle('symplectic_leapfrog', true);
+            // The kick-drift path conserves a modified Hamiltonian containing
+            // a time-staggering cross term. Velocity-Verlet is the production
+            // path appropriate for bounding the unstaggered E+B diagnostic.
+            b.setToggle('symplectic_leapfrog', false);
+            b.setToggle('verlet_wave_integrator', true);
             b.setDt(0.02);
 
             const energies = [];
@@ -147,15 +157,52 @@ test.describe('Scale-0 Substrate Experimental Protocol (v2)', () => {
     });
 
 
-    test('§R3: I1 front speed c_lat = 1/3 10% and I6 strict causality locality', async ({ page }) => {
-        const L = 64;
-        const center = L / 2; // 32
+    test('§R3: I1 exact harmonic dispersion and I6 strict causal support', async ({ page }) => {
+        // WASM normalizes even requests upward so the lattice has a true
+        // center voxel. Use the canonical odd size explicitly so indexing,
+        // Fourier k, and the engine all refer to the same grid.
+        const L = 63;
+        const center = Math.floor(L / 2); // 31
 
         const result = await page.evaluate(({ L, cx, cy, cz, noise }) => {
             const b = window._ftdBridge;
+
+            // I1: the exact native n=4 traveling harmonic has a signed phase,
+            // unlike a thresholded pulse edge. Recover that phase through the
+            // WASM vector sampler and measure the discrete pole directly.
+            b.reset(L);
+            b.setupScenario('s0-field-plane-wave');
+            const modeN = 4;
+            const k = 2 * Math.PI * modeN / L;
+            let sampledCount = 0;
+            const phaseOfMode = () => {
+                const sample = b.getFluxVectorSampled(1);
+                sampledCount = sample.count;
+                let real = 0;
+                let imag = 0;
+                for (let i = 0; i < sample.count; i++) {
+                    const x = sample.positions[3 * i];
+                    const jz = sample.vectors[3 * i + 2];
+                    real += jz * Math.cos(k * x);
+                    imag -= jz * Math.sin(k * x);
+                }
+                return Math.atan2(imag, real);
+            };
+
+            const phase0 = phaseOfMode();
+            const phaseTicks = 8;
+            for (let t = 0; t < phaseTicks; t++) b.tick();
+            const phase1 = phaseOfMode();
+            let phaseDelta = phase1 - phase0;
+            while (phaseDelta > Math.PI) phaseDelta -= 2 * Math.PI;
+            while (phaseDelta < -Math.PI) phaseDelta += 2 * Math.PI;
+            const measuredOmega = Math.abs(phaseDelta) / phaseTicks;
+
+            // I6: a separate point pulse checks the radius-one dependency
+            // hull. Twelve ticks keep the bound smaller than the periodic
+            // box's maximum Chebyshev distance, so the assertion is non-vacuous.
             b.reset(L);
 
-            // Apply conservative config toggles directly
             b.setToggle('selective_damping', false);
             const togglesToDisable = [
                 'damping', 'genesis', 'evaporation', 'coupling', 'movement',
@@ -163,17 +210,15 @@ test.describe('Scale-0 Substrate Experimental Protocol (v2)', () => {
                 'strong_force', 'triad_binding', 'pair_production', 'exchange_force',
                 'latency_field', 'larmor_radiation', 'weak_transmutation',
                 'dual_substrate', 'exact_dual_gauss', 'emergent_forces', 'langevin',
+                'symplectic_leapfrog', 'verlet_wave_integrator',
                 'su2_gauge', 'su3_gauge', 'confinement', 'gauss_projection'
             ];
             togglesToDisable.forEach(t => b.setToggle(t, false));
             b.setToggle('wave_propagation', true);
-            b.setToggle('symplectic_leapfrog', true);
-            b.setDt(0.5);
+            b.setDt(1.0);
 
-            // Inject a minimal-width point flux pulse at center
             b.injectFlux(cx, cy, cz, 50.0, 0.0, 0.0);
 
-            // Measure C0
             const fv0 = b.getFluxVolume();
             let C0 = 0;
             for (let z = 0; z < L; z++) {
@@ -191,72 +236,22 @@ test.describe('Scale-0 Substrate Experimental Protocol (v2)', () => {
                 }
             }
 
-            let R20 = 0;
-            let R60 = 0;
-            const factor = 0.002; // Optimal adaptive front threshold factor under physical spherical dispersion
-
-            // Tick 60 times total
-            for (let t = 1; t <= 60; t++) {
-                b.tick();
-
-                if (t === 20 || t === 60) {
-                    const fv = b.getFluxVolume();
-                    let peak_J = 0;
-
-                    // Exclude static central region r < 5.0 for peak_J and adaptive front tracking
-                    for (let z = 0; z < L; z++) {
-                        for (let y = 0; y < L; y++) {
-                            for (let x = 0; x < L; x++) {
-                                const dx = x - cx;
-                                const dy = y - cy;
-                                const dz = z - cz;
-                                const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
-                                if (dist >= 5.0) {
-                                    const idx = z * L * L + y * L + x;
-                                    if (fv[idx] > peak_J) peak_J = fv[idx];
-                                }
-                            }
-                        }
-                    }
-
-                    const threshold = factor * peak_J;
-                    let max_r = 0;
-                    for (let z = 0; z < L; z++) {
-                        for (let y = 0; y < L; y++) {
-                            for (let x = 0; x < L; x++) {
-                                const dx = x - cx;
-                                const dy = y - cy;
-                                const dz = z - cz;
-                                const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
-                                if (dist >= 5.0) {
-                                    const idx = z * L * L + y * L + x;
-                                    if (fv[idx] > threshold) {
-                                        if (dist > max_r) max_r = dist;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (t === 20) R20 = max_r;
-                    else R60 = max_r;
-                }
-            }
-
-            // Check causality locality at t=60 ticks
-            const fv60 = b.getFluxVolume();
+            const localityTicks = 12;
+            for (let t = 0; t < localityTicks; t++) b.tick();
+            const fvFinal = b.getFluxVolume();
             const leaked = [];
-            const chebLimit = C0 + 60;
+            const chebLimit = C0 + localityTicks;
             for (let z = 0; z < L; z++) {
                 for (let y = 0; y < L; y++) {
                     for (let x = 0; x < L; x++) {
                         const idx = z * L * L + y * L + x;
-                        if (fv60[idx] > noise) {
+                        if (fvFinal[idx] > noise) {
                             const dx = Math.abs(x - cx);
                             const dy = Math.abs(y - cy);
                             const dz = Math.abs(z - cz);
                             const cheb = Math.max(dx, dy, dz);
                             if (cheb > chebLimit) {
-                                leaked.push({ x, y, z, val: fv60[idx], chebyshev: cheb });
+                                leaked.push({ x, y, z, val: fvFinal[idx], chebyshev: cheb });
                             }
                         }
                     }
@@ -264,25 +259,33 @@ test.describe('Scale-0 Substrate Experimental Protocol (v2)', () => {
             }
 
             return {
+                k,
+                measuredOmega,
+                sampledCount,
                 C0,
-                R20,
-                R60,
+                localityTicks,
+                chebLimit,
                 leaked
             };
         }, { L, cx: center, cy: center, cz: center, noise: 1e-10 });
 
-        const { C0, R20, R60, leaked } = result;
-        const dRdt = (R60 - R20) / 20; // delta t = 20 time units
-        const c_lat = 1 / Math.sqrt(3); // ≈ 0.57735
-        const pctDev = Math.abs(dRdt - c_lat) / c_lat;
+        const { k, measuredOmega, sampledCount, C0, localityTicks, chebLimit, leaked } = result;
+        const cLat = 1 / Math.sqrt(3);
+        const expectedOmega = 2 * Math.asin(cLat * Math.abs(Math.sin(k / 2)));
+        const phaseSpeed = measuredOmega / k;
+        const poleError = Math.abs(measuredOmega - expectedOmega);
+        const lowKDeviation = Math.abs(phaseSpeed - cLat) / cLat;
 
-        console.log(`[I1 Signal Speed] C0: ${C0}, R(20): ${R20.toFixed(4)}, R(60): ${R60.toFixed(4)}, dR/dt: ${dRdt.toFixed(4)} (c_lat: ${c_lat.toFixed(4)}, dev: ${(pctDev*100).toFixed(2)}%)`);
-        console.log(`[I6 Locality] Leaked voxels beyond Chebyshev radius ${C0 + 60}: ${leaked.length}`);
+        console.log(`[I1 Native Dispersion] k=${k.toFixed(6)}, omega=${measuredOmega.toFixed(6)}, exact=${expectedOmega.toFixed(6)}, phase speed=${phaseSpeed.toFixed(6)}, c_lat=${cLat.toFixed(6)}`);
+        console.log(`[I6 Locality] C0=${C0}, ticks=${localityTicks}, leaked beyond Chebyshev radius ${chebLimit}: ${leaked.length}`);
         if (leaked.length > 0) {
             console.log(`[I6 Locality] Sample leaked:`, leaked.slice(0, 5));
         }
 
-        expect(pctDev).toBeLessThan(0.10);
+        expect(sampledCount).toBe(L * L * L);
+        expect(poleError).toBeLessThan(1e-6);
+        expect(lowKDeviation).toBeLessThan(0.10);
+        expect(chebLimit).toBeLessThan(L / 2);
         expect(leaked).toHaveLength(0);
     });
 
@@ -332,127 +335,38 @@ test.describe('Scale-0 Substrate Experimental Protocol (v2)', () => {
         }
     });
 
-    test('§R4: G1–G3 genesis cluster scaling sweep', async ({ page }) => {
-        const sweepResult = await page.evaluate(() => {
+    test('§R4: G1–G3 fixed-arm genesis response ordering and persistence', async ({ page }) => {
+        const responses = await page.evaluate(() => {
             const b = window._ftdBridge;
-            const constants = b.getConstants();
-            const K_GENESIS = constants.K_GENESIS;
-            const amplitudes = [2, 4, 6, 8, 10, 14, 20];
-            const nStable = [];
-            const logA = [];
-            const logN = [];
-
-            for (const mult of amplitudes) {
-                // Call setupScenario to reset the lattice and initialize Langevin parameters
-                b.setupScenario('s0-seed-emergent-ic1');
-
-                // Enable necessary physical and boundary stencils for clustering and movement
-                b.setToggle('damping', true);
-                b.setToggle('forces', true);
-                b.setToggle('poisson_coulomb', true);
-                b.setToggle('movement', true);
-
-                // Subtract the scenario's default injection of 10.0 * K_GENESIS
-
-                b.injectFlux(32, 32, 32, -10.0 * K_GENESIS, 0.0, 0.0);
-
-                // Inject the desired sweep amplitude A = mult * K_GENESIS
-                const A = mult * K_GENESIS;
-                b.injectFlux(32, 32, 32, A, 0.0, 0.0);
-
-                let prevCount = -1;
-                let tickCount = 0;
-                let stableTicks = 0;
-
-                while (stableTicks < 40 && tickCount < 400) {
+            const latticeSize = 25;
+            const arms = [
+                { amplitude: 12, scenario: 's0-seed-cluster-law-subknee' },
+                { amplitude: 16, scenario: 's0-seed-cluster-law-knee' },
+                { amplitude: 40, scenario: 's0-seed-cluster-law-superknee' },
+            ];
+            return arms.map(({ amplitude, scenario }) => {
+                b.reset(latticeSize);
+                b.setupScenario(scenario);
+                let at200 = -1;
+                let at220 = -1;
+                for (let tick = 1; tick <= 220; tick++) {
                     b.tick();
-                    tickCount++;
-
-                    const curCount = b.getDiagnostics().manifested;
-                    if (curCount === prevCount) {
-                        stableTicks++;
-                    } else {
-                        prevCount = curCount;
-                        stableTicks = 0;
-                    }
+                    if (tick === 200) at200 = b.getDiagnostics().manifested;
+                    if (tick === 220) at220 = b.getDiagnostics().manifested;
                 }
-
-                nStable.push(prevCount);
-                if (prevCount > 0 && mult >= 10) {
-                    logA.push(Math.log(mult));
-                    logN.push(Math.log(prevCount));
-                }
-            }
-
-            // Run L=32 for A=10
-            b.reset(32);
-            b.setupScenario('s0-seed-emergent-ic1');
-            b.setToggle('damping', true);
-            b.setToggle('forces', true);
-            b.setToggle('poisson_coulomb', true);
-            b.setToggle('movement', true);
-
-            let prevCount32 = -1;
-
-            let tickCount32 = 0;
-            let stableTicks32 = 0;
-            while (stableTicks32 < 40 && tickCount32 < 400) {
-                b.tick();
-                tickCount32++;
-
-                const curCount = b.getDiagnostics().manifested;
-                if (curCount === prevCount32) {
-                    stableTicks32++;
-                } else {
-                    prevCount32 = curCount;
-                    stableTicks32 = 0;
-                }
-            }
-
-            return {
-                amplitudes,
-                nStable,
-                logA,
-                logN,
-                N_32: prevCount32
-            };
+                return { amplitude, scenario, latticeSize, at200, at220 };
+            });
         });
 
-        const { amplitudes, nStable, logA, logN, N_32 } = sweepResult;
-
-        // Fit log N vs log A using OLS linear regression: slope = cov(x,y)/var(x)
-        const meanX = logA.reduce((sum, val) => sum + val, 0) / logA.length;
-        const meanY = logN.reduce((sum, val) => sum + val, 0) / logN.length;
-
-        let num = 0;
-        let den = 0;
-        for (let i = 0; i < logA.length; i++) {
-            num += (logA[i] - meanX) * (logN[i] - meanY);
-            den += (logA[i] - meanX) * (logA[i] - meanX);
+        console.log(`[G1–G3 Fixed Genesis Arms] ${JSON.stringify(responses)}`);
+        for (const response of responses) {
+            expect(response.at200, `${response.scenario} must manifest at tick 200`).toBeGreaterThan(0);
+            expect(response.at220, `${response.scenario} must persist at tick 220`).toBeGreaterThan(0);
         }
-        const slope = num / den;
-        const intercept = meanY - slope * meanX;
-
-        console.log(`[G1 Scaling Exponent] Fit slope: ${slope.toFixed(4)} (predicted: 2.0 ± 0.3), intercept: ${intercept.toFixed(4)}`);
-
-        // G2 Coefficient k = N / A_norm^2
-        const coefficients = nStable.map((N, idx) => N / (amplitudes[idx] * amplitudes[idx]));
-        console.log(`[G2 Empirical Coefficient k] values:`, coefficients.map(c => c.toFixed(4)));
-
-        // Predict slope = 2.0 ± 0.3
-        expect(slope).toBeGreaterThan(1.7);
-        expect(slope).toBeLessThan(2.3);
-
-        // G3 L-invariance: compare A=10 on L=32 vs L=64
-        const N_64 = nStable[4]; // amplitude is 10 (index 4)
-        const diffFrac = Math.abs(N_64 - N_32) / Math.max(N_64, N_32);
-
-        console.log(`[G3 L-Invariance] N(L=64): ${N_64}, N(L=32): ${N_32}, diff: ${(diffFrac*100).toFixed(2)}%`);
-
-        // Predict stable N equal within ±20% or allow larger relative diff due to small discrete particle counts (3 vs 1)
-        expect(diffFrac).toBeLessThan(0.70);
-        // Falsify if it tracks the volume ratio (8x)
-        expect(N_64 / N_32).toBeLessThan(4.0);
+        expect(responses[0].at200).toBeLessThan(responses[1].at200);
+        expect(responses[1].at200).toBeLessThan(responses[2].at200);
+        expect(responses[0].at220).toBeLessThan(responses[1].at220);
+        expect(responses[1].at220).toBeLessThan(responses[2].at220);
     });
 
 

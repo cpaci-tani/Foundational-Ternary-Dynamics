@@ -5,4 +5,4 @@
 export {
   getScale3OverlayTemplate,
   getScale3LegendTemplate,
-} from '../../scale2/ui/overlays/template.js';
+} from '../../../scale2/ui/overlays/template.js';

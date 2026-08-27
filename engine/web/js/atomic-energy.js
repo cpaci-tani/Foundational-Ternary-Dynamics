@@ -80,7 +80,8 @@ export function nuclearBindingEnergy(Z, N) {
 
 /**
  * Total atomic rest mass energy.
- * M_atom = Z·m_p + N·m_n + Z·m_e - B(Z,N)
+ * M_atom = Z·m_p + N·m_n + Z·m_e - B_nuclear(Z,N) + E_electronic/c²,
+ * where E_electronic is negative for a bound electron cloud.
  *
  * @param {number} Z — atomic number
  * @returns {{ massEnergy, bindingEnergy, bindingPerNucleon, massDeficit, electronBinding, massNumber }}
@@ -101,14 +102,15 @@ export function atomicEnergy(Z) {
     // Mass deficit (energy released during formation)
     const massDeficit = B;
 
-    // Total atomic rest mass energy
-    const massEnergy = freeEnergy - B;
-
     // Approximate TOTAL electron binding via the Thomas-Fermi atomic model:
     // E_atom ≈ -20.93 · Z^(7/3) eV (see approxElectronBinding below). This
     // is a single closed-form total, NOT a Slater shell-by-shell hydrogenic
     // sum (audit P0-11). Actual values need Hartree-Fock.
     const electronBinding = approxElectronBinding(Z);
+
+    // Total atomic rest mass energy. electronBinding is negative and reported
+    // in eV, so adding its MeV conversion applies the electronic mass defect.
+    const massEnergy = freeEnergy - B + electronBinding / 1e6;
 
     return {
         massEnergy,        // total atomic mass-energy (MeV)

@@ -45,6 +45,12 @@ test.describe('Scale 2 side panels', () => {
         await runScale2(page, 'ae-h2-form');
 
         await openPanel(page, 'telemetry-grid');
+        await page.locator('#panel-telemetry-grid [data-channel-key="aeTemp"]').scrollIntoViewIfNeeded();
+        await expect.poll(() => page.evaluate(() => Array.from(
+            document.querySelectorAll('#panel-telemetry-grid .telemetry-card'),
+        ).find((c) => c.dataset.channelKey === 'aeTemp')
+            ?.querySelector('.telemetry-card-value')?.textContent?.trim()))
+            .toContain('(sim)');
         const grid = await page.evaluate(() => ({
             activeScale: document.querySelector('#panel-telemetry-grid')?.dataset.activeScale,
             titles: Array.from(document.querySelectorAll('#panel-telemetry-grid .telemetry-card-title'))
@@ -58,13 +64,13 @@ test.describe('Scale 2 side panels', () => {
 
         expect(grid.activeScale).toBe('2');
         expect(grid.titles).toEqual(expect.arrayContaining([
-            'Total Energy',
+            'Tracked Energy',
             'PE (Ionic)',
             'PE (vdW)',
             'PE (Bond)',
             'Atom Count',
             'Bond Count',
-            'Energy Drift',
+            'Conservative Drift',
         ]));
         // No Scale 0 leakage…
         expect(grid.titles).not.toEqual(expect.arrayContaining([
@@ -98,7 +104,7 @@ test.describe('Scale 2 side panels', () => {
             'Temperature',
             'Atoms & Bonds',
             'Momentum',
-            'Energy Drift',
+            'Conservative Drift',
         ]));
         expect(charts.chips).not.toEqual(expect.arrayContaining([
             'Flux & Energy',
@@ -133,6 +139,8 @@ test.describe('Scale 2 side panels', () => {
                 bonds: value('bonds'),
                 total: value('total'),
                 temperature: value('temperature'),
+                accounting: value('accounting'),
+                drift: value('drift'),
                 nuclearDiagPresent: !!document.getElementById('ae-nuclear-diag'),
                 nuclearMassVisible: (() => {
                     const el = document.getElementById('ae-diag-mass');
@@ -146,7 +154,7 @@ test.describe('Scale 2 side panels', () => {
         expect(diag.sectionTitles).toEqual(expect.arrayContaining([
             'Scenario Dynamics',
             'Phase 3 Forces',
-            'Active Hamiltonian',
+            'Tracked Energy',
             'Conservation & Thermal',
         ]));
         expect(diag.rootDisplay).not.toBe('none');
@@ -161,6 +169,8 @@ test.describe('Scale 2 side panels', () => {
         expect(diag.bonds).toBe('4');
         expect(diag.total).not.toBe('0');
         expect(diag.temperature).toBeDefined();
+        expect(diag.accounting).toBe('partial-untracked-potential');
+        expect(diag.drift).toBe('—');
         expect(diag.nuclearDiagPresent).toBe(true);
         expect(diag.nuclearMassVisible).toBe(true);
         expect(diag.legacyRuntimeCards).toBe(false);

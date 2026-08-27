@@ -62,7 +62,7 @@ bool finalize(MatchedFaceCurrentSpectrum& result) {
 
 MatchedFaceCurrentSpectrum observe_sparse_face_current_spectrum(
     int L,
-    const std::vector<QuadraticCoatFaceEntry>& entries,
+    const std::vector<QuadraticCoatSparseCurrentEntry>& entries,
     const std::array<double, 3>& wavevector,
     double normalization) {
   MatchedFaceCurrentSpectrum result;
@@ -102,7 +102,7 @@ MatchedFaceCurrentSpectrum observe_dense_face_current_spectrum(
   if (L < 5 || current.x.size() != expected || current.y.size() != expected
       || current.z.size() != expected)
     return {};
-  std::vector<QuadraticCoatFaceEntry> entries;
+  std::vector<QuadraticCoatSparseCurrentEntry> entries;
   for (int x = 0; x < L; ++x) {
     for (int y = 0; y < L; ++y) {
       for (int z = 0; z < L; ++z) {

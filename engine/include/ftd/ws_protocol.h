@@ -12,7 +12,10 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
+#include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 // ---------------------------------------------------------------------------
@@ -45,6 +48,34 @@
 #endif
 
 namespace ftd {
+
+// Store/load trivially-copyable protocol values without creating a potentially
+// misaligned typed pointer into a byte vector. The WebSocket binary formats are
+// native little-endian by contract on every supported engine target.
+template <typename T>
+inline void write_binary_value(std::vector<std::uint8_t>& buffer,
+                               std::size_t offset,
+                               const T& value) {
+    static_assert(std::is_trivially_copyable<T>::value,
+                  "binary protocol values must be trivially copyable");
+    if (offset > buffer.size() || sizeof(T) > buffer.size() - offset) {
+        throw std::out_of_range("binary protocol write exceeds frame buffer");
+    }
+    std::memcpy(buffer.data() + offset, &value, sizeof(T));
+}
+
+template <typename T>
+inline T read_binary_value(const std::vector<std::uint8_t>& buffer,
+                           std::size_t offset) {
+    static_assert(std::is_trivially_copyable<T>::value,
+                  "binary protocol values must be trivially copyable");
+    if (offset > buffer.size() || sizeof(T) > buffer.size() - offset) {
+        throw std::out_of_range("binary protocol read exceeds frame buffer");
+    }
+    T value{};
+    std::memcpy(&value, buffer.data() + offset, sizeof(T));
+    return value;
+}
 
 // ---------------------------------------------------------------------------
 // WebSocket opcodes

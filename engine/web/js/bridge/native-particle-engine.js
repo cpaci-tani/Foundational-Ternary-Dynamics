@@ -36,7 +36,7 @@
  *     "second drifted re-implementation" class of defect is structurally gone.
  */
 
-import { C_SPEED, K_B, COULOMB_K_FORCE } from '../constants.js';
+import { C_SPEED, K_B } from '../constants.js';
 import { getById } from '../particle-catalog.js';
 import {
     catalogColorId, catalogSpin, initSpinAxis, resetColorWheel,
@@ -435,30 +435,29 @@ export function createNativeParticleEngine(bridge) {
         const fz = data.forces[idx * 3 + 2];
         const fNetMag = Math.sqrt(fx * fx + fy * fy + fz * fz);
 
-        let nearestId = -1, nearestDist = Infinity, orbitalR = -1;
+        let nearestId = -1, nearestIdx = -1, nearestDist = Infinity, orbitalR = -1;
         for (let j = 0; j < data.count; j++) {
             if (j === idx) continue;
             const dx = data.positions[j * 3] - px;
             const dy = data.positions[j * 3 + 1] - py;
             const dz = data.positions[j * 3 + 2] - pz;
             const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            if (r < nearestDist) { nearestDist = r; nearestId = data.ids[j]; }
+            if (r < nearestDist) {
+                nearestDist = r;
+                nearestId = data.ids[j];
+                nearestIdx = j;
+            }
             const qj = data.charges[j];
             if (charge !== 0 && qj !== 0 && Math.sign(charge) !== Math.sign(qj)) {
                 if (orbitalR < 0 || r < orbitalR) orbitalR = r;
             }
         }
 
-        let fCoulombNearest = 0;
-        if (nearestId >= 0 && Number.isFinite(nearestDist)) {
-            for (let j = 0; j < data.count; j++) {
-                if (data.ids[j] !== nearestId) continue;
-                const r2 = nearestDist * nearestDist;
-                fCoulombNearest = Math.abs(
-                    COULOMB_K_FORCE * charge * data.charges[j] / (r2 || 1e-30));
-                break;
-            }
-        }
+        // The inspector must use the same toggle-aware, softened pair
+        // evaluator as integration. Do not reconstruct Coulomb from distance.
+        const fCoulombNearest = nearestIdx >= 0
+            ? m.getPECoulombPairForceMagnitude(_pe, idx, nearestIdx)
+            : 0;
 
         const pd = m.getPEParticleData(_pe);
         return {

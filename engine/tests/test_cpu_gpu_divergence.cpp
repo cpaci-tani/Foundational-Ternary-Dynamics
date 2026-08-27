@@ -8,15 +8,64 @@
 #include "ftd/render_bridge.h"
 #include "ftd/voxel.h"
 
+namespace {
+
+struct DifferenceSummary {
+    double max_flux = 0.0;
+    double max_wave_vel = 0.0;
+    int state_count = 0;
+    int spin_count = 0;
+    int color_count = 0;
+
+    bool diverged(double tolerance) const {
+        return !std::isfinite(max_flux) || !std::isfinite(max_wave_vel)
+            || max_flux > tolerance || max_wave_vel > tolerance
+            || state_count > 0 || spin_count > 0 || color_count > 0;
+    }
+};
+
+DifferenceSummary compare_voxels(const std::vector<ftd::Voxel>& gpu,
+                                 const std::vector<ftd::Voxel>& cpu) {
+    DifferenceSummary result;
+    if (gpu.size() != cpu.size()) {
+        result.state_count = 1;
+        return result;
+    }
+    for (std::size_t i = 0; i < gpu.size(); ++i) {
+        const auto& vg = gpu[i];
+        const auto& vc = cpu[i];
+        result.max_flux = std::max(result.max_flux, std::max({
+            std::abs(vg.flux.x - vc.flux.x),
+            std::abs(vg.flux.y - vc.flux.y),
+            std::abs(vg.flux.z - vc.flux.z),
+        }));
+        result.max_wave_vel = std::max(result.max_wave_vel, std::max({
+            std::abs(vg.wave_vel.x - vc.wave_vel.x),
+            std::abs(vg.wave_vel.y - vc.wave_vel.y),
+            std::abs(vg.wave_vel.z - vc.wave_vel.z),
+        }));
+        result.state_count += (vg.state != vc.state);
+        result.spin_count += (vg.spin != vc.spin);
+        result.color_count += (vg.color != vc.color);
+    }
+    return result;
+}
+
+}  // namespace
+
 int main() {
     std::setvbuf(stdout, nullptr, _IONBF, 0);
     std::printf("================================================================\n");
     std::printf("  TEST-DIVERGENCE: CPU/GPU Parity Divergence Checker\n");
     std::printf("================================================================\n");
 
-    const int L = 32;
+    // L=16 retains the nonlinear genesis/coupling/Langevin interaction while
+    // avoiding 32^3 * 5000 redundant CPU SOR sweeps per tick. 256 sweeps are
+    // sufficient for the live 1e-5 parity threshold on this bounded lattice.
+    const int L = 16;
     const double A = 30.0;
     const unsigned int seed = 0xE0102000u;
+    constexpr double tolerance = 1e-5;
 
     ftd::RenderBridge rb_gpu(L);
     ftd::RenderBridge rb_cpu(L);
@@ -36,7 +85,22 @@ int main() {
     }
 
     rb_cpu.force_cpu();
-    rb_cpu.set_sor_iterations(5000);
+    rb_cpu.set_sor_iterations(256);
+
+    if (rb_gpu.backend_kind() != ftd::Backend::Kind::Gpu) {
+        std::fprintf(stderr, "FAIL: test requires an active CUDA backend\n");
+        return EXIT_FAILURE;
+    }
+
+    // Prove the comparison predicate used below is failure-capable instead of
+    // relying only on a live run that is expected to match.
+    std::vector<ftd::Voxel> synthetic_cpu(1);
+    std::vector<ftd::Voxel> synthetic_gpu(1);
+    synthetic_gpu[0].state = 1;
+    if (!compare_voxels(synthetic_gpu, synthetic_cpu).diverged(tolerance)) {
+        std::fprintf(stderr, "FAIL: mismatch predicate did not detect synthetic divergence\n");
+        return EXIT_FAILURE;
+    }
 
     // Inject flux at center
     const int cx = L / 2;
@@ -59,40 +123,15 @@ int main() {
         const auto& voxels_gpu = static_cast<const ftd::RenderBridge&>(rb_gpu).voxels();
         const auto& voxels_cpu = static_cast<const ftd::RenderBridge&>(rb_cpu).voxels();
 
-        double max_diff_flux = 0.0;
-        double max_diff_wv = 0.0;
-        int diff_state_count = 0;
-        int diff_spin_count = 0;
-        int diff_color_count = 0;
+        const DifferenceSummary diff = compare_voxels(voxels_gpu, voxels_cpu);
 
-        for (int i = 0; i < N; ++i) {
-            const auto& vg = voxels_gpu[i];
-            const auto& vc = voxels_cpu[i];
+        std::printf("  Max Flux Diff     : %.8e\n", diff.max_flux);
+        std::printf("  Max Wave_vel Diff : %.8e\n", diff.max_wave_vel);
+        std::printf("  State Mismatches  : %d\n", diff.state_count);
+        std::printf("  Spin Mismatches   : %d\n", diff.spin_count);
+        std::printf("  Color Mismatches  : %d\n", diff.color_count);
 
-            double dfx = std::abs(vg.flux.x - vc.flux.x);
-            double dfy = std::abs(vg.flux.y - vc.flux.y);
-            double dfz = std::abs(vg.flux.z - vc.flux.z);
-            double df = std::max({dfx, dfy, dfz});
-            if (df > max_diff_flux) max_diff_flux = df;
-
-            double dwx = std::abs(vg.wave_vel.x - vc.wave_vel.x);
-            double dwy = std::abs(vg.wave_vel.y - vc.wave_vel.y);
-            double dwz = std::abs(vg.wave_vel.z - vc.wave_vel.z);
-            double dw = std::max({dwx, dwy, dwz});
-            if (dw > max_diff_wv) max_diff_wv = dw;
-
-            if (vg.state != vc.state) diff_state_count++;
-            if (vg.spin != vc.spin) diff_spin_count++;
-            if (vg.color != vc.color) diff_color_count++;
-        }
-
-        std::printf("  Max Flux Diff     : %.8e\n", max_diff_flux);
-        std::printf("  Max Wave_vel Diff : %.8e\n", max_diff_wv);
-        std::printf("  State Mismatches  : %d\n", diff_state_count);
-        std::printf("  Spin Mismatches   : %d\n", diff_spin_count);
-        std::printf("  Color Mismatches  : %d\n", diff_color_count);
-
-        if (diff_state_count > 0 || diff_spin_count > 0 || max_diff_flux > 1e-5) {
+        if (diff.diverged(tolerance)) {
             std::printf("--- State/Spin Mismatch Details (first 20) ---\n");
             int printed = 0;
             for (int i = 0; i < N && printed < 20; ++i) {
@@ -100,9 +139,9 @@ int main() {
                 const auto& vc = voxels_cpu[i];
                 bool is_mismatch = (vg.state != vc.state) || (vg.spin != vc.spin);
                 if (is_mismatch) {
-                    int iz = i % L;
+                    int ix = i % L;
                     int iy = (i / L) % L;
-                    int ix = i / (L * L);
+                    int iz = i / (L * L);
                     std::printf("  Site %d (%d,%d,%d):\n", i, ix, iy, iz);
                     std::printf("    State: GPU=%d, CPU=%d\n", vg.state, vc.state);
                     std::printf("    Spin:  GPU=%d, CPU=%d\n", vg.spin, vc.spin);
@@ -114,10 +153,10 @@ int main() {
                 }
             }
             std::printf("  DIVERGED at tick %d!\n", t);
-            break;
+            return EXIT_FAILURE;
         }
     }
 
     std::printf("================================================================\n");
-    return 0;
+    return EXIT_SUCCESS;
 }

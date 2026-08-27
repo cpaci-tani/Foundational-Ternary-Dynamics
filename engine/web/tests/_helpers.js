@@ -19,7 +19,10 @@ export async function gotoAndReady(page, opts = {}) {
     const path = opts.path ?? '/';
     const timeout = opts.timeout ?? 60_000;
     await page.goto(path, { waitUntil: 'domcontentloaded', timeout: Math.max(timeout, 60_000) });
-    await page.waitForFunction(() => !!window._ftdBridge, { timeout });
+    // Playwright's second parameter is the argument passed into the page
+    // function; timeout belongs in the third options parameter. Passing the
+    // object second silently left this wait at the page's 30 s default.
+    await page.waitForFunction(() => !!window._ftdBridge, undefined, { timeout });
 }
 
 /**
@@ -32,9 +35,25 @@ export async function switchMode(page, mode) {
     await page.evaluate((m) => {
         const sel = document.getElementById('engine-mode');
         if (!sel) throw new Error('engine-mode select not found');
+        // Some implemented controllers are intentionally hidden from the
+        // public menu while their product surface is unfinished (currently
+        // Scale 5 / cosmic). Tests still need to exercise their lifecycle.
+        // Install a clearly test-only option so assigning the value cannot
+        // silently collapse to "" and make the switch assertion vacuous.
+        if (![...sel.options].some((option) => option.value === m)) {
+            const option = new Option(`${m} (test-only)`, m);
+            option.dataset.testOnly = 'true';
+            sel.add(option);
+        }
         sel.value = m;
         sel.dispatchEvent(new Event('change', { bubbles: true }));
     }, mode);
+    await page.waitForFunction(
+        (m) => document.getElementById('engine-mode')?.value === m
+            && window.__ftdCtx?.engineMode === m,
+        mode,
+        { timeout: 15_000 },
+    );
 }
 
 /**

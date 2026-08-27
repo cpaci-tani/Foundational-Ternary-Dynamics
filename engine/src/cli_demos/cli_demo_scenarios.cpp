@@ -902,13 +902,13 @@ void scenario_K(int lattice_size, int num_ticks, const std::string& outdir) {
 // SCENARIO V: ParaView/VTK Research Export
 // ============================================================================
 
-void scenario_V(int lattice_size, int num_ticks, const std::string& outdir,
+bool scenario_V(int lattice_size, int num_ticks, const std::string& outdir,
                 int frame_interval, int spatial_stride) {
     if (frame_interval <= 0) frame_interval = std::max(1, num_ticks / 10);
     if (spatial_stride <= 0) spatial_stride = 1;
 
     std::cout << "SCENARIO V: ParaView/VTK Research Export\n";
-    std::cout << "  Full-physics reference pulse, " << lattice_size
+    std::cout << "  Deterministic full-interaction reference pulse, " << lattice_size
               << "^3 lattice, " << num_ticks << " ticks\n";
     std::cout << "  Output: " << outdir << "/\n";
     std::cout << "  Frame interval: " << frame_interval
@@ -921,15 +921,16 @@ void scenario_V(int lattice_size, int num_ticks, const std::string& outdir,
     engine.toggles.pair_production = true;
     engine.toggles.exchange_force = true;
     engine.toggles.latency_field = true;
-    engine.toggles.langevin = true;
-    engine.toggles.langevin_T = 0.005;
-    engine.toggles.langevin_gamma = 0.02;
-    engine.toggles.langevin_seed = 1;
+    // Keep the dual substrate and triad-binding channel used by the exported
+    // dual/cluster products. Langevin is single-substrate-only and therefore
+    // cannot be part of this profile; leaving both enabled made Scenario V
+    // fail validation before producing a frame.
+    engine.toggles.langevin = false;
 
     std::string err;
     if (!engine.toggles.validate(&err)) {
         std::cerr << "  Toggle configuration invalid: " << err << "\n";
-        return;
+        return false;
     }
 
     const int c = lattice_size / 2;
@@ -952,7 +953,7 @@ void scenario_V(int lattice_size, int num_ticks, const std::string& outdir,
     ftd::sciviz::ResearchExportSession session(options);
     if (!session.record(engine)) {
         std::cerr << "  Initial VTK export failed.\n";
-        return;
+        return false;
     }
     std::cout << "  Exported frame 0 at tick " << engine.current_tick() << "\n";
 
@@ -963,7 +964,7 @@ void scenario_V(int lattice_size, int num_ticks, const std::string& outdir,
         if (at_interval || at_end) {
             if (!session.record(engine)) {
                 std::cerr << "  VTK export failed at tick " << engine.current_tick() << ".\n";
-                return;
+                return false;
             }
             std::cout << "  Exported frame " << (session.frame_count() - 1)
                       << " at tick " << engine.current_tick() << "\n";
@@ -972,12 +973,13 @@ void scenario_V(int lattice_size, int num_ticks, const std::string& outdir,
 
     if (!session.finalize()) {
         std::cerr << "  VTK export finalization failed.\n";
-        return;
+        return false;
     }
 
     std::cout << "\n  Done. " << session.frame_count()
               << " frames written for ParaView.\n";
     std::cout << "  Open: " << outdir << "/fields.pvd, particles.pvd, or clusters.pvd\n";
+    return true;
 }
 
 }  // namespace cli_demos

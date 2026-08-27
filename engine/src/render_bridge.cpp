@@ -1005,7 +1005,7 @@ void RenderBridge::tick() {
     begin_strong_energy_step(*this);
 
   // Rule 3c: Latency field (gravitational potential) — Poisson solver
-  // ∇²φ_L = 4πG·ρ_mass, then L = √(clamp(φ_L, 0, 0.998))
+  // ∇²φ_L = 4πG·ρ_mass, then L is capped by LATENCY_HORIZON_CLAMP.
   // Must run after Gauss (which modifies flux) and before forces (which use L).
   if (toggles.latency_field)
     solve_latency_poisson();

@@ -97,7 +97,8 @@ export function setupVacuumScenario(name, harness, ctx) {
 
         case 's0-vacuum-photon': {
             // Mirror of s0-seed-photon — J_z-polarized Gaussian pulse
-            // propagating +x. c = 1/√3 [THEOREM] from cubic-lattice CFL.
+            // propagating +x. c = 1/√3 is a conservative [SELECTION], not
+            // the CFL ceiling of the production 18-point stencil (FTD-0407).
             // genesis=false (audit 2026-04-28): a free EM wave should not
             // spontaneously pair-produce.
             for (const [key, value] of [

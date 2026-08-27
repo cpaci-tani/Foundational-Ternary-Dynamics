@@ -21,6 +21,7 @@
 // ==========================================================================
 
 #include "ftd/render_bridge.h"
+#include "ftd/scenario_profiles.h"
 #include "ftd/constants.h"
 #include "ftd/voxel.h"
 
@@ -278,7 +279,7 @@ inline void configure_unlocked_composite_terms(RenderBridge& rb) {
 // color, reaction, or damping phase can masquerade as atomic binding.
 inline void configure_prepared_coulomb_candidate_terms(RenderBridge& rb) {
     auto& t = rb.toggles;
-    for (const auto& spec : TOGGLE_SPECS) t.*(spec.field) = false;
+    apply_isolated_toggle_profile(t, PREPARED_COULOMB_CANDIDATE_TERMS);
     t.flux_boundary = FluxBoundaryMode::Periodic;
     // Substrate-mediated Coulomb (not the instantaneous Poisson shortcut): the
     // flux field J is the physical carrier of the interaction, so it must be the
@@ -295,13 +296,6 @@ inline void configure_prepared_coulomb_candidate_terms(RenderBridge& rb) {
     //   damping          : dissipates the radiated wake so it fades instead of
     //                      accumulating (a moving charge radiates; the field
     //                      trails then decays, as a retarded field should).
-    t.wave_propagation = true;
-    t.coupling = true;
-    t.gauss_projection = true;
-    t.damping = true;
-    t.forces = true;
-    t.movement = true;
-    t.dual_substrate = false;
 }
 
 // Uniform positive-background drive plus the selected genesis stack. The

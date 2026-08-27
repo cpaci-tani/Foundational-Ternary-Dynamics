@@ -29,6 +29,7 @@
 #include "ftd/atom_engine.h"
 #include <algorithm>
 #include <cmath>
+#include <stdexcept>
 
 namespace ftd {
 
@@ -225,6 +226,10 @@ void AtomEngine::drift() {
 // ============================================================================
 
 void AtomEngine::tick() {
+    std::string toggle_error;
+    if (!toggles.validate(&toggle_error)) {
+        throw std::logic_error("AtomEngine invalid toggle profile: " + toggle_error);
+    }
     // 0. Compute dipole moments for dipole-dipole force
     compute_dipole_moments();
     // 1. Forces at current positions
@@ -279,11 +284,19 @@ AtomDiagnostics AtomEngine::diagnostics() const {
     }
     d.bond_count = total_bonds / 2;
 
-    // Kinetic energy and momentum
+    // Kinetic energy and momentum. Locked atoms remain part of the system
+    // energy/momentum snapshot, but not the kinetic temperature population.
+    double free_ke = 0.0;
+    int free_atoms = 0;
     for (const auto& a : atoms_) {
         double v2 = a.velocity.mag2();
-        d.total_ke += 0.5 * a.mass * v2;
+        const double ke = 0.5 * a.mass * v2;
+        d.total_ke += ke;
         d.total_momentum += a.velocity * a.mass;
+        if (!a.locked) {
+            free_ke += ke;
+            ++free_atoms;
+        }
     }
 
     // Potential energy (pairwise)
@@ -295,16 +308,18 @@ AtomDiagnostics AtomEngine::diagnostics() const {
             Vec3 r_vec = aj.position - ai.position;
             double r = std::sqrt(r_vec.mag2() + soft_ * soft_);
 
-            // Ionic PE
-            if (ai.charge != 0 && aj.charge != 0) {
-                d.total_pe_ionic += ALPHA * ai.charge * aj.charge
+            // Ionic PE uses the same fractional charges and toggle as the
+            // force evaluator. Integer formal charge is only an input seed.
+            if (toggles.ionic &&
+                (std::abs(ai.q_frac) > 1e-6 || std::abs(aj.q_frac) > 1e-6)) {
+                d.total_pe_ionic += ALPHA * ai.q_frac * aj.q_frac
                                   / (4.0 * PI * r);
             }
 
             // Van der Waals PE (LJ): 4*eps * [(sig/r)^12 - (sig/r)^6]
             double eps_mix = std::sqrt(ai.vdw_epsilon * aj.vdw_epsilon);
             double sig_mix = 0.5 * (ai.vdw_sigma + aj.vdw_sigma);
-            if (eps_mix > 0.0 && sig_mix > 0.0) {
+            if (toggles.van_der_waals && eps_mix > 0.0 && sig_mix > 0.0) {
                 double sr = sig_mix / r;
                 double sr6 = sr * sr * sr * sr * sr * sr;
                 double sr12 = sr6 * sr6;
@@ -312,11 +327,13 @@ AtomDiagnostics AtomEngine::diagnostics() const {
             }
 
             // Bond PE (harmonic): 0.5 * k * (r - r_eq)^2
-            for (const auto& bond : ai.bonds) {
-                if (bond.partner_id == aj.id) {
-                    double dr = r - bond.r_eq;
-                    d.total_pe_bond += 0.5 * bond.k_bond * dr * dr;
-                    break;
+            if (toggles.covalent_bonds) {
+                for (const auto& bond : ai.bonds) {
+                    if (bond.partner_id == aj.id) {
+                        double dr = r - bond.r_eq;
+                        d.total_pe_bond += 0.5 * bond.k_bond * dr * dr;
+                        break;
+                    }
                 }
             }
         }
@@ -324,14 +341,19 @@ AtomDiagnostics AtomEngine::diagnostics() const {
 
     d.total_energy = d.total_ke + d.total_pe_ionic + d.total_pe_vdw + d.total_pe_bond;
 
-    // Temperature: T = 2*KE / (3*N) in FTD natural units (k_B_Boltzmann = 1)
-    int free_atoms = 0;
-    for (const auto& a : atoms_) {
-        if (!a.locked) free_atoms++;
-    }
+    // Temperature: locked constraints do not contribute degrees of freedom.
     if (free_atoms > 0) {
-        d.temperature = 2.0 * d.total_ke / (3.0 * free_atoms);
+        d.temperature = 2.0 * free_ke / (3.0 * free_atoms);
     }
+
+    // The currently exported PE decomposition does not yet include these
+    // implemented many-body potentials. Report that limitation explicitly.
+    d.energy_complete = !(toggles.h_bonds || toggles.dipole_dipole ||
+                          toggles.angle_strain || toggles.torsional ||
+                          toggles.improper_torsional);
+    d.energy_conservative = d.energy_complete &&
+                            !(toggles.damping || toggles.auto_bonding ||
+                              toggles.thermostat || toggles.electronegativity);
 
     return d;
 }

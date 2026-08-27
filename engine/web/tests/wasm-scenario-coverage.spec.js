@@ -82,18 +82,27 @@ const NEWLY_PORTED_SCENARIOS = [
 ];
 
 test.describe('WASM Scale-0 scenario coverage', () => {
-    test.beforeEach(async ({ page }) => {
+    test.describe.configure({ mode: 'serial' });
+    /** @type {import('@playwright/test').BrowserContext} */
+    let context;
+    /** @type {import('@playwright/test').Page} */
+    let page;
+    let isWasm = false;
+
+    test.beforeAll(async ({ browser }) => {
+        context = await browser.newContext();
+        page = await context.newPage();
         page.on('pageerror', (e) => console.error('PAGEERROR:', e.message));
         await gotoAndReady(page);
         // Confirm we're on the WASM bridge.
-        const isWasm = await page.evaluate(() => !!window._ftdBridge?.isWasm);
-        if (!isWasm) {
-            test.skip(true, 'WASM bridge not active — coverage test requires real WASM backend.');
-        }
+        isWasm = await page.evaluate(() => !!window._ftdBridge?.isWasm);
     });
 
+    test.afterAll(async () => { await context?.close(); });
+
     for (const [name, tag, group] of NEWLY_PORTED_SCENARIOS) {
-        test(`${name.padEnd(32)} [${tag}, group: ${group}]`, async ({ page }) => {
+        test(`${name.padEnd(32)} [${tag}, group: ${group}]`, async () => {
+            test.skip(!isWasm, 'WASM bridge not active — coverage test requires real WASM backend.');
             const result = await page.evaluate((scenarioName) => {
                 const b = window._ftdBridge;
                 b.setupScenario(scenarioName);
@@ -121,7 +130,8 @@ test.describe('WASM Scale-0 scenario coverage', () => {
         });
     }
 
-    test('qualified reaction scenarios retain isolated native toggle profiles', async ({ page }) => {
+    test('qualified reaction scenarios retain isolated native toggle profiles', async () => {
+        test.skip(!isWasm, 'WASM bridge not active — coverage test requires real WASM backend.');
         const result = await page.evaluate(() => {
             const b = window._ftdBridge;
             const names = [

@@ -36,6 +36,7 @@
 #include <string_view>
 
 #include "ftd/render_bridge.h"
+#include "ftd/scenario_profiles.h"
 #include "ftd/scenarios.h"
 
 namespace {
@@ -161,10 +162,20 @@ int audit_interactive_gpu_contract() {
     return failures;
 }
 
-std::map<std::string_view, std::string_view> expected_scenario_profiles() {
-    std::map<std::string_view, std::string_view> expected;
+template <std::size_t N>
+std::string profile_csv(const std::array<std::string_view, N>& terms) {
+    std::string result;
+    for (const std::string_view term : terms) {
+        if (!result.empty()) result += ',';
+        result += term;
+    }
+    return result;
+}
+
+std::map<std::string_view, std::string> expected_scenario_profiles() {
+    std::map<std::string_view, std::string> expected;
     const auto add = [&](std::initializer_list<const char*> ids,
-                         std::string_view profile) {
+                         std::string profile) {
         for (const char* id : ids) expected.emplace(id, profile);
     };
 
@@ -239,7 +250,7 @@ std::map<std::string_view, std::string_view> expected_scenario_profiles() {
     }, "forces,movement,color_forces");
     add({
         "s0-seed-hydrogen", "s0-seed-helium", "s0-seed-h2-bond-formation",
-    }, "forces,poisson_coulomb,movement");
+    }, profile_csv(ftd::PREPARED_COULOMB_CANDIDATE_TERMS));
     add({"s0-seed-spark-of-life"},
         "wave_propagation,coupling,damping,genesis,gauss_projection,forces,movement");
     add({"s0-seed-ew-phase-transition"},

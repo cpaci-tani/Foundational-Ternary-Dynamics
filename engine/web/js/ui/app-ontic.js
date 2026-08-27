@@ -91,7 +91,7 @@ export function createOnticPanel(deps) {
             ['1/α', X_PLUS.toFixed(7), 'Fine structure inverse'],
             ['x₋', X_MINUS.toFixed(7), 'Smaller master-quadratic root; identification ↔ N_c RETIRED (Cleanup Taxonomy v1.4 §5)'],
             ['α', ALPHA.toFixed(10), 'Fine structure constant'],
-            ['K_B', K_B + ' MeV', 'Electron mass / threshold'],
+            ['K_B', K_B + ' MeV', 'Imposed electron-mass anchor (not the genesis threshold)'],
         ];
         for (const [sym, val, _desc] of constants) {
             rows += `<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid var(--bg-card)">

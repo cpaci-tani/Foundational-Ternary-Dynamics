@@ -55,7 +55,7 @@ PARITY_PAIRS: list[tuple[str, str, float | None]] = [
     ("M_TOV_LATTICE", "M_tov_lattice", 1e-9),
     # Theme D
     ("THOMAS_FERMI_PREFACTOR_EV", "thomas_fermi_prefactor_ev", 1e-9),
-    # Neutrinos (in MeV; constants.py mirrors the values added to JS)
+    # Neutrinos (in MeV; the lightest 4.1 neV state is 4.1e-15 MeV)
     ("M_NU_E_PHYS", "m_nu_e", 1e-9),
     ("M_NU_MU_PHYS", "m_nu_mu", 1e-9),
     ("M_NU_TAU_PHYS", "m_nu_tau", 1e-9),

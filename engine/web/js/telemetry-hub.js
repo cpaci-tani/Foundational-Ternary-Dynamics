@@ -18,7 +18,7 @@
  *   This ensures a single write path and eliminates duplicate data stores.
  */
 
-import { C_SPEED } from './constants.js';
+import { C_SPEED, G_N } from './constants.js';
 
 // Native CUDA telemetry is published as independent group deltas.  Keep each
 // group’s provenance instead of attaching one misleading "current tick" to
@@ -149,7 +149,13 @@ export class MultiRingBuffer {
     push(frame) {
         for (let i = 0; i < this.numChannels; i++) {
             const val = frame[this.channels[i]];
-            this.data[(i * this.size) + this.head] = isFinite(val) ? val : 0;
+            // An explicit NaN is a meaningful "measurement unavailable"
+            // sample (for example, drift under non-conservative dynamics).
+            // Preserve it so tables render an em dash and charts show a gap;
+            // continue normalizing absent/invalid producer values to zero.
+            this.data[(i * this.size) + this.head] = Number.isNaN(val)
+                ? Number.NaN
+                : (Number.isFinite(val) ? val : 0);
         }
         this.head = (this.head + 1) % this.size;
         if (this.count < this.size) this.count++;
@@ -208,7 +214,9 @@ export class RingBufferView {
         if (this.parent.count === 0) return;
         const pSize = this.parent.size;
         const idx = (this.parent.head - 1 + pSize) % pSize;
-        this.parent.data[this.offset + idx] = Number.isFinite(value) ? value : 0;
+        this.parent.data[this.offset + idx] = Number.isNaN(value)
+            ? Number.NaN
+            : (Number.isFinite(value) ? value : 0);
     }
 
     max() {
@@ -959,12 +967,15 @@ export class TelemetryHub {
         const pMag = Math.sqrt(
             (diag.momentumX || 0) ** 2 + (diag.momentumY || 0) ** 2 + (diag.momentumZ || 0) ** 2
         );
-        if (this._aeInitialEnergy === null && Math.abs(totalEnergy) > 1e-12) {
+        const driftAvailable = diag.energyComplete === true && diag.energyConservative === true;
+        if (!driftAvailable) {
+            this._aeInitialEnergy = null;
+        } else if (this._aeInitialEnergy === null && Math.abs(totalEnergy) > 1e-12) {
             this._aeInitialEnergy = totalEnergy;
         }
-        const energyDrift = this._aeInitialEnergy
+        const energyDrift = driftAvailable && this._aeInitialEnergy
             ? ((totalEnergy - this._aeInitialEnergy) / Math.abs(this._aeInitialEnergy)) * 100
-            : 0;
+            : Number.NaN;
 
         // Runtime snapshot (engine truth for the diagnostics descriptors).
         // Scenario label from the DOM: scale 3 owns mol-scenario-select,
@@ -1036,7 +1047,9 @@ export class TelemetryHub {
                 sumMz += m * b.z;
             }
 
-            const G = bridge.G || 0.01;
+            // A bridge may intentionally disable gravity with G = 0. Only a
+            // missing value falls back to the canonical lattice coupling.
+            const G = bridge.G ?? G_N;
             for (let i = 0; i < N; i++) {
                 const bi = bodies[i];
                 const mi = bi.mass || 0;

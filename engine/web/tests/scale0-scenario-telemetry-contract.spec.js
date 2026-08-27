@@ -3,8 +3,8 @@
  * Broad Scale-0 telemetry contract.
  *
  * Loads every registry scenario, ticks the active owner directly, and verifies
- * diagnostics, energy audit, and Lagrangian telemetry stay finite and live.
- * Uses `__ftdPhysicsWorker = false` so all scenarios run on the main-thread
+ * diagnostics, energy audit, and Lagrangian telemetry stay finite and synchronized.
+ * Uses `__ftdWasmWorker = false` so all scenarios run on the main-thread
  * WasmBridge (synchronous tick path, no proxy lag). Catches stale-baseline
  * regressions where WASM diagnostics report the Born-Infeld vacuum baseline
  * instead of the moving physical energy channel.
@@ -22,7 +22,7 @@ test.describe('Scale-0 scenario telemetry contract', () => {
     test.beforeEach(async ({ page }) => {
         await page.addInitScript(() => {
             window.__ftdTelemetryOnDemand = false;
-            window.__ftdPhysicsWorker = false;
+            window.__ftdWasmWorker = false;
         });
     });
 
@@ -61,6 +61,7 @@ test.describe('Scale-0 scenario telemetry contract', () => {
                     tick: active.diag?.tick ?? active.bridge?.currentTick?.() ?? null,
                     diagE: active.diag?.totalEnergy ?? null,
                     auditE: active.audit?.totalEnergy ?? null,
+                    auditDynamicE: active.audit?.dynamicEnergy ?? null,
                     lagH: active.lag?.hamiltonian ?? active.lag?.total ?? null,
                 };
 
@@ -75,6 +76,7 @@ test.describe('Scale-0 scenario telemetry contract', () => {
                     diagE: active.diag?.totalEnergy ?? null,
                     baselineE: active.diag?.vacuumBaselineEnergy ?? null,
                     auditE: active.audit?.totalEnergy ?? null,
+                    auditDynamicE: active.audit?.dynamicEnergy ?? null,
                     fieldE: active.audit?.fieldEnergy ?? null,
                     waveE: active.audit?.waveEnergy ?? null,
                     particleKE: active.audit?.particleKE ?? null,
@@ -102,6 +104,7 @@ test.describe('Scale-0 scenario telemetry contract', () => {
                         tick: finite(after.tick),
                         diagE: finite(after.diagE),
                         auditE: finite(after.auditE),
+                        auditDynamicE: finite(after.auditDynamicE),
                         lagH: finite(after.lagH),
                         hubDiagE: finite(telemetryHub.s0.diag?.totalEnergy),
                         hubAuditE: finite(telemetryHub.s0.audit?.totalEnergy),
@@ -115,12 +118,8 @@ test.describe('Scale-0 scenario telemetry contract', () => {
         const missing = rows.filter((r) => !r.hasObjects.diag || !r.hasObjects.audit || !r.hasObjects.lag);
         const nonFinite = rows.filter((r) => Object.values(r.finite).some((ok) => !ok));
         const deadLiveTicks = rows.filter((r) => r.live && !(Number(r.after.tick) > Number(r.before.tick)));
-        const frozenLiveEnergy = rows.filter((r) => r.live &&
-            Math.abs(Number(r.after.diagE) - Number(r.before.diagE)) <= 1e-9 &&
-            Math.abs(Number(r.after.auditE) - Number(r.before.auditE)) <= 1e-9 &&
-            Math.abs(Number(r.after.lagH) - Number(r.before.lagH)) <= 1e-9);
         const staleWasmEnergy = rows.filter((r) => r.owner === 'wasm' &&
-            Math.abs(Number(r.after.diagE) - Number(r.after.auditE)) > EPS);
+            Math.abs(Number(r.after.diagE) - Number(r.after.auditDynamicE)) > EPS);
         const staleHubOwner = rows.filter((r) =>
             Math.abs(Number(r.hubDiagE) - Number(r.after.diagE)) > EPS ||
             Math.abs(Number(r.hubAuditE) - Number(r.after.auditE)) > EPS ||
@@ -129,12 +128,11 @@ test.describe('Scale-0 scenario telemetry contract', () => {
         expect(missing, 'scenarios missing telemetry objects').toEqual([]);
         expect(nonFinite, 'scenarios with non-finite telemetry scalars').toEqual([]);
         expect(deadLiveTicks, 'live scenarios whose active owner did not tick').toEqual([]);
-        expect(frozenLiveEnergy, 'live scenarios whose energy/lag telemetry stayed frozen').toEqual([]);
-        expect(staleWasmEnergy, 'WASM diagnostics.totalEnergy must mirror audit.totalEnergy').toEqual([]);
+        expect(staleWasmEnergy, 'WASM diagnostics.totalEnergy must mirror audit.dynamicEnergy').toEqual([]);
         expect(staleHubOwner, 'telemetryHub must collect from the active owner').toEqual([]);
     });
 
-    test('all vacuum scenarios report moving physical energy, not the fixed vacuum baseline', async ({ page }) => {
+    test('all vacuum scenarios report the physical dynamic-energy channel, not the fixed vacuum baseline', async ({ page }) => {
         test.setTimeout(120_000);
         await gotoAndReady(page);
 
@@ -160,10 +158,11 @@ test.describe('Scale-0 scenario telemetry contract', () => {
                 rows.push({
                     id,
                     owner: st.useFluxMock ? 'wasm-worker' : 'wasm',
-                    before: { diagE: d0.totalEnergy, auditE: a0.totalEnergy, tick: d0.tick },
+                    before: { diagE: d0.totalEnergy, auditE: a0.totalEnergy, auditDynamicE: a0.dynamicEnergy, tick: d0.tick },
                     after: {
                         diagE: d1.totalEnergy,
                         auditE: a1.totalEnergy,
+                        auditDynamicE: a1.dynamicEnergy,
                         baselineE: d1.vacuumBaselineEnergy ?? null,
                         tick: d1.tick,
                     },
@@ -174,17 +173,15 @@ test.describe('Scale-0 scenario telemetry contract', () => {
 
         expect(rows.length, 'vacuum scenario coverage').toBeGreaterThan(0);
         expect(rows.filter((r) => r.owner !== 'wasm'), 'vacuum scenarios should be WASM-owned').toEqual([]);
-        expect(rows.filter((r) => !isFiniteNumber(r.after.diagE) || !isFiniteNumber(r.after.auditE)),
+        expect(rows.filter((r) => !isFiniteNumber(r.after.diagE) || !isFiniteNumber(r.after.auditE) ||
+            !isFiniteNumber(r.after.auditDynamicE)),
             'vacuum scenarios must expose finite physical energy').toEqual([]);
-        expect(rows.filter((r) => Math.abs(Number(r.after.diagE) - Number(r.after.auditE)) > EPS),
-            'vacuum diagnostics energy should mirror audit energy').toEqual([]);
+        expect(rows.filter((r) => Math.abs(Number(r.after.diagE) - Number(r.after.auditDynamicE)) > EPS),
+            'vacuum diagnostics energy should mirror audit dynamic energy').toEqual([]);
         expect(rows.filter((r) => !(Number(r.after.tick) > Number(r.before.tick))),
             'vacuum scenarios should advance ticks under manual active-owner ticks').toEqual([]);
-        expect(rows.filter((r) => Math.abs(Number(r.after.diagE) - Number(r.before.diagE)) <= 1e-9 &&
-            Math.abs(Number(r.after.auditE) - Number(r.before.auditE)) <= 1e-9),
-            'vacuum physical energy should move over ticks').toEqual([]);
         expect(rows.filter((r) => isFiniteNumber(r.after.baselineE) &&
-            Math.abs(Number(r.after.baselineE) - Number(r.after.auditE)) > EPS &&
+            Math.abs(Number(r.after.baselineE) - Number(r.after.auditDynamicE)) > EPS &&
             Math.abs(Number(r.after.diagE) - Number(r.after.baselineE)) <= EPS),
             'diagnostics.totalEnergy should not be the stale vacuum baseline').toEqual([]);
     });

@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <cstdint>
 #include <optional>
 #include <string>   // get_engine_version (revision 6.1)
 #include "ftd/render_bridge.h"
@@ -41,7 +42,8 @@ namespace ftd_wasm_internal {
 
 // ── Particle Data Extraction ─────────────────────────────────────────
 // Returns a JS object with Float32Array views for direct BufferAttribute upload.
-// Format: { positions, colors, sizes, spin, colorCharge: Float32Array, count: int }
+// Format: { positions, colors, sizes, spin, colorCharge: Float32Array,
+//           locked: Uint8Array, count: int }
 //
 // `colors` (RGB triple) is the decorative charge-sign color (green/red for
 // +1/-1) used by the base particle renderer. `spin` and `colorCharge` are
@@ -55,6 +57,7 @@ val get_particle_data(ftd::RenderBridge& rb) {
     // PERF: zero-copy via typed_memory_view. Skip void density voxels entirely
     // and return only manifested particles (state != 0).
     static std::vector<float> pos_cache, col_cache, size_cache, spin_cache, color_charge_cache;
+    static std::vector<std::uint8_t> locked_cache;
     const int N = rb.lattice().size();
     const auto& active = rb.ordered_active_indices();
     const int count = static_cast<int>(active.size());
@@ -66,6 +69,7 @@ val get_particle_data(ftd::RenderBridge& rb) {
         size_cache.resize(count);
         spin_cache.resize(count);
         color_charge_cache.resize(count);
+        locked_cache.resize(count);
     }
 
     int idx = 0;
@@ -100,6 +104,7 @@ val get_particle_data(ftd::RenderBridge& rb) {
         size_cache[idx] = 6.0f;
         spin_cache[idx] = static_cast<float>(voxel.spin);
         color_charge_cache[idx] = static_cast<float>(voxel.color);
+        locked_cache[idx] = voxel.locked ? 1U : 0U;
         idx++;
     }
 
@@ -109,6 +114,7 @@ val get_particle_data(ftd::RenderBridge& rb) {
     result.set("sizes",       val(typed_memory_view(count,     size_cache.data())));
     result.set("spin",        val(typed_memory_view(count,     spin_cache.data())));
     result.set("colorCharge", val(typed_memory_view(count,     color_charge_cache.data())));
+    result.set("locked",      val(typed_memory_view(count,     locked_cache.data())));
     result.set("count", count);
     return result;
 }
@@ -414,12 +420,13 @@ val get_constants() {
     val result = val::object();
     result.set("ALPHA",       ftd::ALPHA);
     result.set("ALPHA_INV",   1.0 / ftd::ALPHA);
-    result.set("ALPHA_EFT",   ftd::ALPHA_EFT);  // EFT-derived: = G_C * G_C (compile-time assert in constants.h)
+    result.set("ALPHA_EFT",   ftd::ALPHA_EFT);  // identity by calibrated construction: G_C²
     result.set("G_STAR",      ftd::G_STAR);
     result.set("K_B",         ftd::K_B);
     result.set("K_GENESIS",   ftd::K_GENESIS);
     result.set("G_C",         ftd::G_C);
     result.set("G_N",         ftd::G_N);
+    result.set("LATENCY_HORIZON_CLAMP", ftd::LATENCY_HORIZON_CLAMP);
     result.set("DAMPING",     ftd::DAMPING);
     result.set("C_SPEED",     ftd::C_SPEED);
     result.set("N_C",         ftd::N_C);
@@ -1155,8 +1162,8 @@ val get_fisher_sampled(ftd::RenderBridge& rb, int stride) {
         });
 }
 
-// Per-voxel latency proxy L(x) = √(|J|²/|J|²_max), clamped to the horizon
-// (0.998). Event-horizon overlay thresholds this at L ≥ 0.95.
+// Per-voxel latency proxy L(x) = √(|J|²/|J|²_max), clamped by
+// LATENCY_HORIZON_CLAMP. Event-horizon overlay thresholds this at L ≥ 0.95.
 val get_latency_sampled(ftd::RenderBridge& rb, int stride) {
     const auto& fields = rb.fields();
     const int NNN = rb.lattice().size() * rb.lattice().size() * rb.lattice().size();
@@ -1172,7 +1179,8 @@ val get_latency_sampled(ftd::RenderBridge& rb, int stride) {
     const double inv = (max_rho < 1e-30) ? 0.0 : 1.0 / max_rho;
     return sample_scalar_overlay(rb, stride, /*interior=*/false,
         [&](int, int, int, int idx) -> std::optional<double> {
-            const double L = std::sqrt(std::min(rho_at(idx) * inv, 0.998));
+            const double L = std::sqrt(std::min(
+                rho_at(idx) * inv, ftd::LATENCY_HORIZON_CLAMP));
             if (L < 1e-6) return std::nullopt;
             return L;
         });
@@ -1194,7 +1202,10 @@ val get_kretschmann_sampled(ftd::RenderBridge& rb, int stride) {
     double max_rho = 0.0;
     for (int i = 0; i < NNN; ++i) max_rho = std::max(max_rho, rho_at(i));
     const double inv = (max_rho < 1e-30) ? 0.0 : 1.0 / max_rho;  // empty field ⇒ all L = 0
-    for (int i = 0; i < NNN; ++i) Lgrid[i] = static_cast<float>(std::sqrt(std::min(rho_at(i) * inv, 0.998)));
+    for (int i = 0; i < NNN; ++i) {
+        Lgrid[i] = static_cast<float>(std::sqrt(std::min(
+            rho_at(i) * inv, ftd::LATENCY_HORIZON_CLAMP)));
+    }
 
     constexpr double INV3 = 1.0 / 3.0, INV6 = 1.0 / 6.0;
     return sample_scalar_overlay(rb, stride, /*interior=*/true,
@@ -1347,6 +1358,19 @@ val get_knot_aggregate(ftd::RenderBridge& rb) {
 // Revision 6.1: expose the single-sourced engine version to the dashboard.
 static std::string get_engine_version() { return ftd::ENGINE_VERSION; }
 
+// Runtime guard for the WASM optimization contract. Whole-target fast-math
+// makes std::isfinite/std::isnan constant-fold to the wrong answers, which in
+// turn disables more than a thousand non-finite safety checks in the engine.
+static bool numeric_semantics_are_ieee() {
+    volatile double zero = 0.0;
+    const double infinity = 1.0 / zero;
+    const double not_a_number = zero / zero;
+    return std::isinf(infinity)
+        && std::isnan(not_a_number)
+        && !std::isfinite(infinity)
+        && !std::isfinite(not_a_number);
+}
+
 EMSCRIPTEN_BINDINGS(ftd_module_core) {
     class_<ftd::RenderBridge>("RenderBridge")
         .constructor<int>()
@@ -1355,4 +1379,5 @@ EMSCRIPTEN_BINDINGS(ftd_module_core) {
         .function("currentTick", &ftd::RenderBridge::current_tick)
         ;
     emscripten::function("getEngineVersion", &get_engine_version);
+    emscripten::function("numericSemanticsAreIeee", &numeric_semantics_are_ieee);
 }

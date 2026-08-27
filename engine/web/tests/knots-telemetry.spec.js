@@ -20,11 +20,13 @@ import { gotoAndReady } from './_helpers.js';
  */
 
 test.describe('Knot telemetry (Scale-0 KnotTracker)', () => {
+    /** @type {import('@playwright/test').BrowserContext|undefined} */
+    let context;
     /** @type {import('@playwright/test').Page} */
     let page;
 
     test.beforeAll(async ({ browser, baseURL }) => {
-        const context = await browser.newContext({ baseURL });
+        context = await browser.newContext({ baseURL });
         page = await context.newPage();
         page.setDefaultTimeout(60_000);
         // Force the in-thread WASM path (documented tests/fallback hook,
@@ -38,7 +40,7 @@ test.describe('Knot telemetry (Scale-0 KnotTracker)', () => {
     });
 
     test.afterAll(async () => {
-        await page.close();
+        await context?.close();
     });
 
     test('emergent-ic1 manifests a cluster and reports per-knot telemetry under tracking', async () => {

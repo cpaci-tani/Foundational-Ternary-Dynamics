@@ -1,12 +1,12 @@
 #pragma once
 /**
- * The Ontic Derivation Chain — umbrella header.
+ * Ontic constant registry — umbrella header.
  *
- * Everything from nothing: e → γ → Γ(1/4) → θ₃ → ϖ → M → G* → π → all physics.
- *
- * Nine layers, each derived from the one above.
- * The only inputs are D=3 (spatial dimensions) and the lemniscate constant ϖ.
- * Every physical constant in the engine traces back through this chain.
+ * The early mathematical layers organize exact definitions and identities from
+ * D=3 and the lemniscate constant ϖ. Physical identifications, calibrated
+ * runtime values, selected operators, and imposed anchors are explicitly not
+ * promoted to derivations merely because they are stored in this registry.
+ * See constants.h and each leaf header for the status of individual values.
  *
  * Layer -1: Self-Referential Seed  (e)                        → ontic/lemniscate.h
  * Layer 0:  Transcendental Seeds   (γ, Γ(1/4))                → ontic/lemniscate.h
@@ -26,8 +26,8 @@
  * Layer 6c: Mass Ratios            (MU_RATIO, TAU_RATIO, ...) → ontic/particle_masses.h
  * Layer 7:  Precision Formula      (ε, c₁-c₄, corrected α)    → ontic/gauge_couplings.h
  * Layer 7b: Absolute ν Masses      (seesaw: m_D, M_R, m_1/2/3)→ ontic/neutrino.h
- * Layer 8:  Reference frame context          (y, θ_C, K_C)              → ontic/reference frame context.h
- * Layer 8b: Golden Ratio Fixed Pt  (φ, λ_loop, β_intr)        → ontic/reference frame context.h
+ * Layer 8:  Reference-frame interpretation [CONJECTURE] (y, θ_C, K_C) → ontic/consciousness.h
+ * Layer 8b: Conditional fixed-point identities (φ, λ_loop, β_intr) → ontic/consciousness.h
  *
  * All constants live in namespace ftd::ontic. Downstream code should
  * continue to #include "ftd/ontic.h" — this umbrella re-exports every

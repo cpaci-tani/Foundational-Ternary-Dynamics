@@ -16,6 +16,7 @@
  * same label) and routed through ftd::test::check for uniform telemetry.
  */
 
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 
@@ -1044,6 +1045,61 @@ static void section_spin_precession() {
     }
 }
 
+// --- Section: diagnostic_snapshot ---
+
+static void section_diagnostic_snapshot() {
+    ftd::ParticleEngine pe;
+    pe.set_damping_enabled(false);
+    pe.add_particle(+1, {0.0, 0.0, 0.0}, {0.0, 0.1, 0.0},
+                    ftd::K_B, 2.48, +1, 1);
+    pe.add_particle(+1, {4.0, 1.0, 0.0}, {0.0, -0.05, 0.0},
+                    ftd::K_B, 2.48, +1, 2);
+    pe.particles()[0].spin_axis = {0.0, 0.0, 1.0};
+    pe.particles()[1].spin_axis = {0.0, 1.0, 0.0};
+    pe.particles()[0].prev_acceleration = {0.2, 0.0, 0.0};
+
+    pe.toggles.coulomb = true;
+    pe.toggles.gravity = true;
+    pe.toggles.exchange = true;
+    pe.toggles.strong = true;
+    pe.toggles.magnetic_dipole = true;
+    pe.toggles.spin_orbit = true;
+    pe.toggles.lorentz = true;
+    pe.toggles.radiation = true;
+    pe.toggles.relativistic = true;
+
+    const ftd::Vec3 direct = pe.compute_force(0);
+    const ftd::ParticleForceDiag first = pe.compute_force_diagnostic(0);
+    const ftd::ParticleForceDiag second = pe.compute_force_diagnostic(0);
+    const double scale = std::max(1.0, direct.mag());
+
+    ftd::test::check("DS1: diagnostic total equals core exact force",
+                     (first.total() - direct).mag() <= 1e-12 * scale);
+    ftd::test::check("DS2: repeated snapshots clear prior accumulation",
+                     (second.total() - first.total()).mag() <= 1e-12 * scale);
+    ftd::test::check("DS3: pairwise components populated",
+                     first.f_coulomb.mag() > 0.0 && first.f_gravity.mag() > 0.0 &&
+                     first.f_strong.mag() > 0.0);
+    ftd::test::check("DS4: post-processing components populated",
+                     first.f_radiation.mag() > 0.0 && first.f_relativistic.mag() > 0.0);
+
+    pe.toggles.coulomb = true;
+    pe.set_softening(2.5);
+    const ftd::ParticleForceDiag pair = pe.compute_pair_force_diagnostic(0, 1);
+    const ftd::Vec3 dr = pe.particles()[1].position - pe.particles()[0].position;
+    const double softened_r2 = dr.mag2() + pe.softening() * pe.softening();
+    const double softened_r = std::sqrt(softened_r2);
+    const double expected_coulomb = std::abs(
+        -ftd::ALPHA_EFT * pe.particles()[0].charge * pe.particles()[1].charge /
+        (4.0 * ftd::PI * softened_r2)) * (dr.mag() / softened_r);
+    ftd::test::check("DS5: pair inspector uses configured softening",
+                     std::abs(pair.f_coulomb.mag() - expected_coulomb) <=
+                         expected_coulomb * 1e-12 + 1e-18);
+    pe.toggles.coulomb = false;
+    ftd::test::check("DS6: pair inspector honors Coulomb toggle",
+                     pe.compute_pair_force_diagnostic(0, 1).f_coulomb.mag() == 0.0);
+}
+
 // --- main ---
 
 int main() {
@@ -1075,6 +1131,9 @@ int main() {
 
     ftd::test::section("cpu_gpu_parity");
     section_cpu_gpu_parity();
+
+    ftd::test::section("diagnostic_snapshot");
+    section_diagnostic_snapshot();
 
     return ftd::test::finalize();
 }

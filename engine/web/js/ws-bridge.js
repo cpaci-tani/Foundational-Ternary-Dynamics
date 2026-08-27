@@ -14,10 +14,15 @@
  */
 
 import { debugLog } from './core/log.js';
-import { WasmBridge } from './bridge/wasm-bridge.js';
 import { particleDataToList, samplerOr } from './bridge/bridge-contract.js';
+import { WebSocketScaleFallbackFacade } from './bridge/ws-scale-fallback-facade.js';
+import {
+    decodeNativeBinaryFrame,
+    FIELD_SAMPLE_KIND_CODES,
+    FLUX_VOLUME_AXIS_SAMPLES,
+    WS_VECTOR_FIELD_KINDS,
+} from './bridge/ws-binary-codec.js';
 import { K_B } from './constants.js';
-import { parseFtv2Frame } from './lib/ftv2.js';
 import { parseNativeWsPort } from './lib/origin-policy.js';
 
 const EMPTY_FIELD_SAMPLE = Object.freeze({
@@ -33,38 +38,6 @@ const EMPTY_SCALAR_SAMPLE = Object.freeze({
 const EMPTY_KNOT_TELEMETRY = Object.freeze({ ids: new Int32Array(0), signs: new Int32Array(0), birth: new Int32Array(0), age: new Int32Array(0), size: new Int32Array(0), peak: new Int32Array(0), fields: new Float32Array(0), stride: 11, count: 0 });
 const EMPTY_KNOT_EVENTS = Object.freeze({ tick: new Int32Array(0), type: new Int32Array(0), nparents: new Int32Array(0), nchildren: new Int32Array(0), sign: new Int32Array(0), count: 0 });
 const EMPTY_KNOT_AGG = Object.freeze({ alive: 0, netCharge: 0, births: 0, deaths: 0, fissions: 0, fusions: 0 });
-// Legacy dense flux-volume frames begin with little-endian ASCII "FTV1",
-// followed by uint32 sample count and count float32 magnitudes. Native builds
-// now send compact FTV2 frames so large lattices never cross the socket merely
-// to discard most voxels in the renderer.
-const FLUX_VOLUME_MAGIC = 0x31565446;
-// [u32 "FTV2"][u32 latticeSize][u32 effectiveStride][u32 origin][u32 axisCount]
-// [float32 density[axisCount^3]], x-fastest. Legacy 16-byte headers (no origin)
-// are still accepted by parseFtv2Frame.
-const FLUX_VOLUME_COMPACT_MAGIC = 0x32565446;
-const FLUX_VOLUME_AXIS_SAMPLES = 53;
-// Extended particle frame matching the WASM particle contract. Positions are
-// already mechanical positions (cell centre + bounded movement remainder).
-const PARTICLE_FRAME_MAGIC = 0x32505446; // little-endian ASCII "FTP2"
-// Binary sampled-field frame, little-endian ASCII "FTS1". Layout:
-//   u32 magic, u32 request token, u32 kind code, u32 components, u32 count,
-//   float32 positions[3*count], float32 payload[components*count].
-// Keeping sampled fields binary matters at native lattice sizes: a compact
-// stride-2 vector field is already several MiB, while JSON would multiply both
-// allocation pressure and time spent on the browser main thread.
-const FIELD_SAMPLE_MAGIC = 0x31535446;
-// FTS2 extends FTS1 with u32 effectiveStride + u32 origin after count.
-const FIELD_SAMPLE_V2_MAGIC = 0x32535446;
-const FIELD_SAMPLE_KINDS = Object.freeze([
-    'e', 'b', 'poynting', 'divJ', 'fluxVector', 'vorticity', 'helicity',
-    'kretschmann', 'latency', 'fisher', 'coherence', 'curlJ', 'state',
-    'gaussResidual', 'em', 'gravity', 'strong',
-    'poissonLatency',
-]);
-const FIELD_SAMPLE_KIND_CODES = new Map(FIELD_SAMPLE_KINDS.map((kind, code) => [kind, code]));
-// 3-component (vector) kinds — used only to pick getFieldSlices' pre-first-frame
-// fallback shape; the real shape always comes from the FTS2 `components` field.
-const WS_VECTOR_FIELD_KINDS = new Set(['e', 'b', 'poynting', 'fluxVector', 'curlJ', 'em', 'gravity', 'strong']);
 const DEFAULT_COMMAND_TIMEOUT_MS = 5000;
 const LONG_OPERATION_TIMEOUT_MS = 120000;
 const DIAGNOSTIC_COMMAND_TIMEOUT_MS = 30000;
@@ -100,8 +73,9 @@ function hasOwn(value, key) {
 }
 
 
-export class WebSocketBridge {
+export class WebSocketBridge extends WebSocketScaleFallbackFacade {
     constructor(url = 'ws://127.0.0.1:9100') {
+        super();
         this._url = url;
         this._ws = null;
         this._connected = false;
@@ -144,7 +118,6 @@ export class WebSocketBridge {
 
         // Visual settings placeholder
         this._visualSettings = null;
-        this._fallback = null;
 
         // Scientific telemetry is one coherent native snapshot.  Individual
         // panel getters only add their desired group to this request; they do
@@ -1990,108 +1963,52 @@ export class WebSocketBridge {
     }
 
     _handleBinary(buf) {
-        if (buf.byteLength >= 8) {
-            const header = new DataView(buf);
-            if (header.getUint32(0, true) === PARTICLE_FRAME_MAGIC) {
-                this._particleRequestInFlight = false;
-                const count = header.getUint32(4, true);
-                const posBytes = count * 3 * 4;
-                const colBytes = count * 3 * 4;
-                const scalarBytes = count * 4;
-                const expectedBytes = 8 + posBytes + colBytes + scalarBytes * 3;
-                if (buf.byteLength !== expectedBytes) {
-                    console.warn(`[ws-bridge] Invalid FTP2 particle frame: got ${buf.byteLength}, expected ${expectedBytes}`);
-                    this._particleRequestEpoch = 0;
-                    this._notifyVisualDataReady();
-                    return;
-                }
-                let offset = 8;
-                const positions = new Float32Array(buf, offset, count * 3); offset += posBytes;
-                const colors = new Float32Array(buf, offset, count * 3); offset += colBytes;
-                const sizes = new Float32Array(buf, offset, count); offset += scalarBytes;
-                const spin = new Float32Array(buf, offset, count); offset += scalarBytes;
-                const colorCharge = new Float32Array(buf, offset, count);
-                this._particleData = { positions, colors, sizes, spin, colorCharge, count };
-                this._notifyVisualDataReady();
-                if (this._binaryResolve) {
-                    this._binaryResolve(this._particleData);
-                    this._binaryResolve = null;
-                }
-                return;
+        const frame = decodeNativeBinaryFrame(buf, { latticeSize: this.latticeSize });
+        if (frame.type === 'particles') {
+            this._particleRequestInFlight = false;
+            this._particleData = frame.data;
+            this._notifyVisualDataReady();
+            if (this._binaryResolve) {
+                this._binaryResolve(this._particleData);
+                this._binaryResolve = null;
             }
-            if (header.getUint32(0, true) === FLUX_VOLUME_COMPACT_MAGIC) {
-                this._volumeRequestInFlight = false;
-                const parsed = parseFtv2Frame(buf);
-                if (!parsed) {
-                    console.warn(`[ws-bridge] Invalid FTV2 frame: ${buf.byteLength} bytes`);
-                    this._volumeRequestEpoch = 0;
-                    this._notifyVisualDataReady();
-                    return;
-                }
-                this._volumeCache = {
-                    data: parsed.data,
-                    latticeSize: parsed.latticeSize,
-                    stride: parsed.stride,
-                    origin: parsed.origin,
-                    axisCount: parsed.axisCount,
-                };
-                this._notifyVisualDataReady();
-                return;
-            }
-            if (header.getUint32(0, true) === FLUX_VOLUME_MAGIC) {
-                this._volumeRequestInFlight = false;
-                const count = header.getUint32(4, true);
-                const expectedBytes = 8 + count * 4;
-                if (buf.byteLength !== expectedBytes) {
-                    console.warn(`[ws-bridge] Invalid flux-volume frame: got ${buf.byteLength}, expected ${expectedBytes}`);
-                    this._volumeRequestEpoch = 0;
-                    this._notifyVisualDataReady();
-                    return;
-                }
-                this._volumeCache = new Float32Array(buf, 8, count);
-                this._notifyVisualDataReady();
-                return;
-            }
-            const fieldMagic = header.getUint32(0, true);
-            if (fieldMagic === FIELD_SAMPLE_MAGIC || fieldMagic === FIELD_SAMPLE_V2_MAGIC) {
-                const isV2 = fieldMagic === FIELD_SAMPLE_V2_MAGIC;
-                const headerBytes = isV2 ? 28 : 20;
-                if (buf.byteLength < headerBytes) {
-                    this._rejectFieldSample(0, `short FTS${isV2 ? 2 : 1} header (${buf.byteLength} bytes)`);
-                    return;
-                }
-                const token = header.getUint32(4, true);
-                const kindCode = header.getUint32(8, true);
-                const components = header.getUint32(12, true);
-                const count = header.getUint32(16, true);
-                const effectiveStride = isV2 ? header.getUint32(20, true) : null;
-                const origin = isV2 ? header.getUint32(24, true) : null;
-                const kind = FIELD_SAMPLE_KINDS[kindCode];
-                const expectedBytes = headerBytes + count * (3 + components) * 4;
-                if (!kind || (components !== 1 && components !== 3)
-                    || (isV2 && (effectiveStride < 1 || origin > this.latticeSize))
-                    || buf.byteLength !== expectedBytes) {
-                    this._rejectFieldSample(
-                        token,
-                        `got kind=${kindCode}, components=${components}, bytes=${buf.byteLength}; expected ${expectedBytes}`,
-                    );
-                    return;
-                }
-                const positions = new Float32Array(buf, headerBytes, count * 3);
-                const payload = new Float32Array(
-                    buf, headerBytes + count * 3 * 4, count * components,
-                );
-                const pending = this._fieldSampleRequestsByToken.get(token);
-                this._completeFieldSample(
-                    token, kind, pending?.stride || 1, components, positions, payload, count,
-                    effectiveStride, origin,
-                );
-                return;
-            }
+            return;
+        }
+        if (frame.type === 'invalid-particles') {
+            this._particleRequestInFlight = false;
+            this._particleRequestEpoch = 0;
+            console.warn(`[ws-bridge] Invalid FTP2 particle frame: ${frame.error}`);
+            this._notifyVisualDataReady();
+            return;
+        }
+        if (frame.type === 'volume') {
+            this._volumeRequestInFlight = false;
+            this._volumeCache = frame.data;
+            this._notifyVisualDataReady();
+            return;
+        }
+        if (frame.type === 'invalid-volume') {
+            this._volumeRequestInFlight = false;
+            this._volumeRequestEpoch = 0;
+            console.warn(`[ws-bridge] Invalid flux-volume frame: ${frame.error}`);
+            this._notifyVisualDataReady();
+            return;
+        }
+        if (frame.type === 'field') {
+            const pending = this._fieldSampleRequestsByToken.get(frame.token);
+            this._completeFieldSample(
+                frame.token, frame.kind, pending?.stride || 1,
+                frame.components, frame.positions, frame.payload, frame.count,
+                frame.effectiveStride, frame.origin,
+            );
+            return;
+        }
+        if (frame.type === 'invalid-field') {
+            this._rejectFieldSample(frame.token, frame.error);
+            return;
         }
 
-        const magic = buf.byteLength >= 4 ? new DataView(buf).getUint32(0, true) : 0;
-        console.warn(`[ws-bridge] Ignoring unknown binary frame magic=0x${magic.toString(16)} bytes=${buf.byteLength}`);
+        console.warn(`[ws-bridge] Ignoring unknown binary frame magic=0x${frame.magic.toString(16)} bytes=${frame.byteLength}`);
         this._particleRequestInFlight = false;
         this._volumeRequestInFlight = false;
         this._notifyVisualDataReady();
@@ -2360,25 +2277,6 @@ export class WebSocketBridge {
         if (this._seedPhysicsLocked()) return;
         this._sendAndForget({ cmd: 'inject_wave_vel_add', x, y, z, wx, wy, wz });
         this._markVisualDataDirty();
-    }
-
-    _ensureFallback() {
-        if (!this._fallback) {
-            this._fallback = new WasmBridge();
-            // Scale 1 runs on the in-page WASM module (native ParticleEngine),
-            // independent of the native-server socket. Kick off the module
-            // load; until it resolves, pe* calls return contract-empty shapes
-            // and peGetBackendCapabilities().backend === 'unavailable'.
-            // Scale 1/2 engines are standalone.  They only need the WASM
-            // module, not a duplicate full-size Scale 0 lattice alongside the
-            // native CUDA owner.  Use the smallest supported control lattice.
-            this._fallbackInit = this._fallback.init(9)
-                .catch(err => {
-                    console.warn('[WSBridge] Scale-1 WASM fallback failed to load;',
-                                 'particle engine unavailable in this session:', err);
-                });
-        }
-        return this._fallback;
     }
 
     _requireSuccessfulResponse(response, operation) {
@@ -2711,56 +2609,8 @@ export class WebSocketBridge {
         return this._getFieldSample(kind, stride, fallback, Math.max(0, mid | 0));
     }
 
-    // Scale 1 (ParticleEngine) fallback delegation
-    initPE() { this._ensureFallback().initPE(); }
-    resetPE() { this._ensureFallback().resetPE(); }
-    peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff) {
-        return this._ensureFallback().peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff);
-    }
-    peAddLockedParticle(catalogId, charge, x, y, z, mass, r_eff) {
-        return this._ensureFallback().peAddLockedParticle(catalogId, charge, x, y, z, mass, r_eff);
-    }
-    peApplyEquilibriumOrbit(particleId, options = {}) {
-        return this._ensureFallback().peApplyEquilibriumOrbit(particleId, options);
-    }
-    peApplyEquilibriumOrbitBatch(entries) {
-        return this._ensureFallback().peApplyEquilibriumOrbitBatch?.(entries);
-    }
-    peScaleVelocity(particleId, scale) {
-        return this._ensureFallback().peScaleVelocity(particleId, scale);
-    }
-    peSetSpinAxis(id, ax, ay, az) {
-        return this._ensureFallback().peSetSpinAxis(id, ax, ay, az);
-    }
-    peGetForceDecomposition() { return this._ensureFallback().peGetForceDecomposition(); }
-    peTick() { this._ensureFallback().peTick(); }
-    peGetParticleData() { return this._ensureFallback().peGetParticleData(); }
-    peGetDiagnostics() { return this._ensureFallback().peGetDiagnostics(); }
-    peGetExtendedData() { return this._ensureFallback().peGetExtendedData(); }
-    peGetForces() { return this._ensureFallback().peGetForces(); }
-    peGetFieldSources() { return this._ensureFallback().peGetFieldSources(); }
-    peSetDt(dt) { this._ensureFallback().peSetDt(dt); }
-    peGetDt() { return this._ensureFallback().peGetDt(); }
-    peSetSoftening(s) { this._ensureFallback().peSetSoftening(s); }
-    peSetCoulomb(e) { this._ensureFallback().peSetCoulomb(e); }
-    peSetDamping(e) { this._ensureFallback().peSetDamping(e); }
-    peSetGravity(e) { this._ensureFallback().peSetGravity(e); }
-    peSetLorentz(e) { this._ensureFallback().peSetLorentz(e); }
-    peSetExchange(e) { this._ensureFallback().peSetExchange(e); }
-    peSetStrong(e) { this._ensureFallback().peSetStrong(e); }
-    peSetMagneticDipole(e) { this._ensureFallback().peSetMagneticDipole(e); }
-    peSetSpinOrbit(e) { this._ensureFallback().peSetSpinOrbit(e); }
-    peSetRadiation(e) { this._ensureFallback().peSetRadiation(e); }
-    peSetRelativistic(e) { this._ensureFallback().peSetRelativistic(e); }
-    peSetRelativisticVerlet(e) { this._ensureFallback().peSetRelativisticVerlet(e); }
-    peGetToggle(name) { return this._ensureFallback().peGetToggle(name); }
-    peGetBackendCapabilities() { return this._ensureFallback().peGetBackendCapabilities(); }
-    peParticleCount() { return this._ensureFallback().peParticleCount(); }
-    peClear() { this._ensureFallback().peClear(); }
-    peGetParticleTypes() { return this._ensureFallback().peGetParticleTypes(); }
-    peInspectParticle(id) { return this._ensureFallback().peInspectParticle(id); }
-
-    // Scale 2 (AtomEngine) fallback delegation
+    // Scale-0 native boundary controls. Scale 1/2 fallback methods are
+    // inherited from WebSocketScaleFallbackFacade.
     setBoundaryShape(shape) {
         this._boundaryShape = shape;
     }
@@ -2779,44 +2629,6 @@ export class WebSocketBridge {
         this._reflectiveBoundary = !!on;
         this.setToggle('reflective_boundary', this._reflectiveBoundary);
     }
-    initAE() { this._ensureFallback().initAE(); }
-    resetAE() { this._ensureFallback().resetAE(); }
-    aeAddAtom(Z, x, y, z, vx, vy, vz, charge, N) {
-        return this._ensureFallback().aeAddAtom(Z, x, y, z, vx, vy, vz, charge, N);
-    }
-    aeAddLockedAtom(Z, x, y, z, charge, N) {
-        return this._ensureFallback().aeAddLockedAtom(Z, x, y, z, charge, N);
-    }
-    aeCreateBond(idA, idB, order) { this._ensureFallback().aeCreateBond(idA, idB, order); }
-    aeTick() { this._ensureFallback().aeTick(); }
-    aeGetAtomData() { return this._ensureFallback().aeGetAtomData(); }
-    aeGetDiagnostics() { return this._ensureFallback().aeGetDiagnostics(); }
-    aeGetFieldSources() { return this._ensureFallback().aeGetFieldSources(); }
-    aeGetForceDecomposition(want) { return this._ensureFallback().aeGetForceDecomposition(want); }
-    aeGetRuntimeState() { return this._ensureFallback().aeGetRuntimeState(); }
-    aeGetVelocities() { return this._ensureFallback().aeGetVelocities(); }
-    aeGetDipoles() { return this._ensureFallback().aeGetDipoles(); }
-    aeGetHBondPairs() { return this._ensureFallback().aeGetHBondPairs(); }
-    aeSetDt(dt) { this._ensureFallback().aeSetDt(dt); }
-    aeGetDt() { return this._ensureFallback().aeGetDt(); }
-    aeSetSoftening(s) { this._ensureFallback().aeSetSoftening(s); }
-    aeSetDamping(e) { this._ensureFallback().aeSetDamping(e); }
-    aeSetBonding(e) { this._ensureFallback().aeSetBonding(e); }
-    aeSetIonic(e) { this._ensureFallback().aeSetIonic(e); }
-    aeSetVdw(e) { this._ensureFallback().aeSetVdw(e); }
-    aeSetBondsForce(e) { this._ensureFallback().aeSetBondsForce(e); }
-    aeSetSpeedLimit(e) { this._ensureFallback().aeSetSpeedLimit(e); }
-    aeSetHBonds(e) { this._ensureFallback().aeSetHBonds(e); }
-    aeSetAngleStrain(e) { this._ensureFallback().aeSetAngleStrain(e); }
-    aeSetDipoleDipole(e) { this._ensureFallback().aeSetDipoleDipole(e); }
-    aeSetThermostat(e) { this._ensureFallback().aeSetThermostat(e); }
-    aeSetThermostatTemp(t) { this._ensureFallback().aeSetThermostatTemp(t); }
-    aeSetElectronegativity(e) { this._ensureFallback().aeSetElectronegativity(e); }
-    aePreBond() { this._ensureFallback().aePreBond(); }
-    aeAtomCount() { return this._ensureFallback().aeAtomCount(); }
-    aeInspectAtom(id) { return this._ensureFallback().aeInspectAtom(id); }
-    aeClear() { this._ensureFallback().aeClear(); }
-
     // Stubs for compatibility with MockBridge API
     currentTick() { return this._lastDiag?.tick ?? 0; }
     setVisualSettings(vs) { this._visualSettings = vs; }

@@ -84,13 +84,13 @@ int main() {
         check("validate default → valid", def.validate(&err) == true);
 
         ftd::ParticleToggles so; so.coulomb = false; so.gravity = false; so.spin_orbit = true;
-        check("spin_orbit w/o coulomb|gravity → invalid", so.validate() == false);
+        check("spin_orbit can be isolated from central forces", so.validate() == true);
 
         ftd::ParticleToggles so_ok; so_ok.coulomb = true; so_ok.gravity = false; so_ok.spin_orbit = true;
         check("spin_orbit w/ coulomb → valid", so_ok.validate() == true);
 
         ftd::ParticleToggles md; md.coulomb = false; md.gravity = false; md.magnetic_dipole = true;
-        check("magnetic_dipole w/o coulomb|gravity → invalid", md.validate() == false);
+        check("magnetic_dipole can be isolated from central forces", md.validate() == true);
 
         ftd::ParticleToggles md_ok; md_ok.coulomb = false; md_ok.gravity = true; md_ok.magnetic_dipole = true;
         check("magnetic_dipole w/ gravity → valid", md_ok.validate() == true);
@@ -121,7 +121,10 @@ int main() {
         pe.set_toggle("coulomb", true);
         pe.set_toggle("does_not_exist", true);      // must not throw / must not corrupt
         check("unknown set_toggle no-op", pe.get_toggle("does_not_exist") == false &&
-                                          pe.get_toggle("coulomb") == true);
+                                           pe.get_toggle("coulomb") == true);
+        std::string error;
+        check("typed setter reports unknown toggle",
+              !pe.try_set_toggle("does_not_exist", true, &error) && !error.empty());
     }
 
     std::cout << (failures == 0 ? "ALL PASS\n" : (std::to_string(failures) + " FAIL\n"));

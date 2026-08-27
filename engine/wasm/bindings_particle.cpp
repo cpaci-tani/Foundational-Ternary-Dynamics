@@ -24,128 +24,7 @@ using namespace emscripten;
 
 static ftd::ParticleForceDiag compute_pe_force_diag_snapshot(
     const ftd::ParticleEngine& pe, int i) {
-    ftd::ParticleForceDiag diag;
-    const auto& particles = pe.particles();
-    if (i < 0 || i >= static_cast<int>(particles.size())) return diag;
-
-    const auto& pi = particles[i];
-    const auto& toggles = pe.toggles;
-    const double soft = pe.softening();
-
-    for (int j = 0; j < static_cast<int>(particles.size()); ++j) {
-        if (i == j) continue;
-        const auto& pj = particles[j];
-
-        ftd::Vec3 r_vec = pj.position - pi.position;
-        double raw_r2 = r_vec.mag2();
-        double r2 = raw_r2 + soft * soft;
-        double r = std::sqrt(r2);
-        if (r < 1e-30) continue;
-
-        ftd::Vec3 r_hat = r_vec * (1.0 / r);
-
-        if (toggles.coulomb) {
-            double f_em = -ftd::ALPHA_EFT * pi.charge * pj.charge / (4.0 * ftd::PI * r2);
-            diag.f_coulomb += r_hat * f_em;
-        }
-
-        if (toggles.gravity) {
-            double f_grav = ftd::G_PE * pi.mass * pj.mass / r2;
-            diag.f_gravity += r_hat * f_grav;
-        }
-
-        if (toggles.exchange && pi.spin != 0 && pj.spin == pi.spin
-            && pi.charge == pj.charge) {
-            double f_mag = ftd::ALPHA_EXCHANGE * std::exp(-r2 / ftd::EXCHANGE_RANGE_SQ) / r2;
-            diag.f_exchange += r_hat * (-f_mag);
-        }
-
-        if (toggles.strong && pi.color != 0 && pj.color != 0) {
-            double cf = (pi.color == pj.color) ? 0.5 : -1.0;
-            double raw_r = std::sqrt(raw_r2);
-            if (raw_r < 1.0) raw_r = 1.0;
-            double raw_force;
-            if (raw_r < 3.0) {
-                double as = ftd::alpha_s_lattice(raw_r);
-                raw_force = as * cf / (raw_r * raw_r);
-            } else if (raw_r < 8.0) {
-                double as = ftd::alpha_s_lattice(raw_r);
-                raw_force = as * cf / (3.0 * raw_r);
-            } else {
-                raw_force = ftd::SIGMA_STRING * cf;
-            }
-            diag.f_strong += r_hat * (-raw_force);
-        }
-
-        if (toggles.magnetic_dipole
-            && pi.spin_axis.mag2() > 1e-30 && pj.spin_axis.mag2() > 1e-30) {
-            ftd::Vec3 mi_mu = pi.spin_axis * (static_cast<double>(pi.charge) / pi.mass);
-            ftd::Vec3 mj_mu = pj.spin_axis * (static_cast<double>(pj.charge) / pj.mass);
-
-            double r3 = r * r2;
-            double r5 = r3 * r2;
-            double mi_dot_r = mi_mu.dot(r_vec);
-            double mj_dot_r = mj_mu.dot(r_vec);
-            double mi_dot_mj = mi_mu.dot(mj_mu);
-
-            double coeff = 3.0 * ftd::ALPHA_EFT / (4.0 * ftd::PI * r5);
-            ftd::Vec3 fdd = (r_vec * (5.0 * mi_dot_r * mj_dot_r / r2)
-                             - mj_mu * mi_dot_r - mi_mu * mj_dot_r
-                             - r_vec * mi_dot_mj) * coeff;
-            diag.f_magnetic_dipole += fdd;
-        }
-
-        if (toggles.spin_orbit && pi.spin_axis.mag2() > 1e-30) {
-            ftd::Vec3 p_rel = pi.velocity * pi.mass;
-            ftd::Vec3 L_orb = ftd::Vec3::cross(r_vec, p_rel);
-            double L_dot_S = L_orb.dot(pi.spin_axis);
-            double raw_r = std::sqrt(raw_r2);
-            if (raw_r > 1e-15) {
-                double r3 = raw_r * raw_r * raw_r;
-                double m2c2 = pi.mass * pi.mass * ftd::C_SPEED * ftd::C_SPEED;
-                double coeff_so = ftd::ALPHA / (2.0 * m2c2 * r3);
-                diag.f_spin_orbit += r_hat * (coeff_so * L_dot_S);
-            }
-        }
-
-        if (toggles.lorentz && pi.velocity.mag2() > 1e-30
-            && pj.spin_axis.mag2() > 1e-30) {
-            ftd::Vec3 mj = pj.spin_axis * (static_cast<double>(pj.charge) / pj.mass);
-            double r3 = r * r2;
-            double m_dot_rh = mj.dot(r_hat);
-            ftd::Vec3 B_j = (r_hat * (3.0 * m_dot_rh) - mj)
-                           * (1.0 / (4.0 * ftd::PI * r3));
-            diag.f_lorentz += ftd::Vec3::cross(pi.velocity, B_j)
-                            * (ftd::ALPHA * pi.charge);
-        }
-    }
-
-    ftd::Vec3 total = diag.total();
-
-    if (toggles.radiation && pi.prev_acceleration.mag2() > 1e-30
-        && pi.velocity.mag2() > 1e-30) {
-        double a2 = pi.prev_acceleration.mag2();
-        double q2 = static_cast<double>(pi.charge) * pi.charge;
-        double c3 = ftd::C_SPEED * ftd::C_SPEED * ftd::C_SPEED;
-        double coeff_rad = -(2.0 / 3.0) * ftd::ALPHA * q2 / (pi.mass * c3);
-        double v_mag = pi.velocity.mag();
-        ftd::Vec3 v_hat = pi.velocity * (1.0 / v_mag);
-        ftd::Vec3 frad = v_hat * (coeff_rad * a2);
-        diag.f_radiation += frad;
-        total += frad;
-    }
-
-    if (toggles.relativistic) {
-        double v2 = pi.velocity.mag2();
-        double c2 = ftd::C_SPEED * ftd::C_SPEED;
-        double beta2 = v2 / c2;
-        if (beta2 > 1e-10 && beta2 < 1.0) {
-            double gamma = 1.0 / std::sqrt(1.0 - beta2);
-            diag.f_relativistic += total * (1.0 / gamma - 1.0);
-        }
-    }
-
-    return diag;
+    return pe.compute_force_diagnostic(i);
 }
 
 // ── PE Particle Data Extraction ─────────────────────────────────────
@@ -347,9 +226,8 @@ static const std::unordered_map<std::string, PeBoolPTM>& pe_toggle_map() {
     return kMap;
 }
 
-static void pe_set_toggle(ftd::ParticleEngine& pe, const std::string& name, bool val) {
-    auto it = pe_toggle_map().find(name);
-    if (it != pe_toggle_map().end()) pe.toggles.*(it->second) = val;
+static bool pe_set_toggle(ftd::ParticleEngine& pe, const std::string& name, bool val) {
+    return pe.try_set_toggle(name, val);
 }
 
 static bool pe_get_toggle(ftd::ParticleEngine& pe, const std::string& name) {
@@ -376,6 +254,11 @@ static val get_pe_force_diag(ftd::ParticleEngine& pe, int idx) {
     auto tot = d.total();
     result.set("total_x", tot.x); result.set("total_y", tot.y); result.set("total_z", tot.z);
     return result;
+}
+
+static double get_pe_pair_coulomb_force_magnitude(
+    ftd::ParticleEngine& pe, int i, int j) {
+    return pe.compute_pair_force_diagnostic(i, j).f_coulomb.mag();
 }
 
 static val get_pe_forces(ftd::ParticleEngine& pe) {
@@ -572,6 +455,7 @@ EMSCRIPTEN_BINDINGS(ftd_module_particle) {
     function("peSetToggle",         &pe_set_toggle);
     function("peGetToggle",         &pe_get_toggle);
     function("peGetForceDiag",      &get_pe_force_diag);
+    function("getPECoulombPairForceMagnitude", &get_pe_pair_coulomb_force_magnitude);
     function("peParticleCount",     &pe_particle_count);
     function("peClear",             &pe_clear);
 }

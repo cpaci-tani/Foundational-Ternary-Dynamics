@@ -39,7 +39,7 @@ const CHANNELS = {
     // audit P0-10): unit strings say "(sim)", never MeV / MK / Kelvin.
     // Assigned to both '2' and '3' below this object literal.
     '2': [
-        { key: 'aeEnergy',    title: 'Total Energy',    buffer: 'aeEnergy',    color: 'var(--chart-ae-total, #e8e8e8)',    unit: '(sim)' },
+        { key: 'aeEnergy',    title: 'Tracked Energy',  buffer: 'aeEnergy',    color: 'var(--chart-ae-total, #e8e8e8)',    unit: '(sim)' },
         { key: 'aeKE',        title: 'Kinetic Energy',  buffer: 'aeKE',        color: 'var(--chart-ae-ke, #4ade80)',       unit: '(sim)' },
         { key: 'aePEIonic',   title: 'PE (Ionic)',      buffer: 'aePEIonic',   color: 'var(--chart-ae-pe-ionic, #f87171)', unit: '(sim)' },
         { key: 'aePEVdw',     title: 'PE (vdW)',        buffer: 'aePEVdw',     color: 'var(--chart-ae-pe-vdw, #2dd4bf)',   unit: '(sim)' },
@@ -48,7 +48,7 @@ const CHANNELS = {
         { key: 'aeAtomCount', title: 'Atom Count',      buffer: 'aeAtomCount', color: 'var(--chart-ae-atoms, #42a5f5)',    unit: 'ct' },
         { key: 'aeBonds',     title: 'Bond Count',      buffer: 'aeBonds',     color: 'var(--chart-ae-bonds, #a78bfa)',    unit: 'ct' },
         { key: 'aeMomentum',  title: 'Momentum |p|',    buffer: 'aeMomentum',  color: 'var(--chart-ae-momentum, #60a5fa)', unit: '(sim)' },
-        { key: 'aeDrift',     title: 'Energy Drift',    buffer: 'aeDrift',     color: 'var(--chart-ae-drift, #fbbf24)',    unit: '%' }
+        { key: 'aeDrift',     title: 'Conservative Drift', buffer: 'aeDrift',  color: 'var(--chart-ae-drift, #fbbf24)',    unit: '%' }
     ],
     // Scale 4: Planetary N-body
     '4': [
@@ -187,6 +187,7 @@ export class TelemetryGridPanelComponent {
                 lastBuffer: null,
                 lastTotal: -1,
                 lastValue: Number.NaN,
+                lastDisplayValue: Number.NaN,
             };
             this.charts.set(chan.key, entry);
 
@@ -318,12 +319,36 @@ export class TelemetryGridPanelComponent {
 
         activeChannels.forEach((chan) => {
             const entry = this.charts.get(chan.key);
+            if (!entry) return;
+            this._refreshValue(entry);
             // Cull off-screen (and not-yet-built) charts: the observer keeps
             // onScreen accurate, so a ~4000px panel only redraws the handful of
             // sparklines actually in view instead of all 23–39 every tick.
-            if (!entry || !entry.onScreen || !entry.u) return;
+            if (!entry.onScreen || !entry.u) return;
             this._drawEntry(entry);
         });
+    }
+
+    _resolveBuffer(chan) {
+        const pathParts = chan.buffer.split('.');
+        let buf = telemetryHub;
+        for (const part of pathParts) {
+            if (buf) buf = buf[part];
+        }
+        return buf;
+    }
+
+    // Numeric card values are cheap and must not wait for IntersectionObserver
+    // to allocate the heavier uPlot. This keeps the first visible paint live.
+    _refreshValue(entry) {
+        const buf = this._resolveBuffer(entry.chan);
+        if (!buf || buf.count === 0) return;
+        const latestValue = buf.last();
+        if (Object.is(entry.lastDisplayValue, latestValue)) return;
+        entry.lastDisplayValue = latestValue;
+        if (entry.valueEl) {
+            entry.valueEl.textContent = this.formatValue(latestValue, entry.chan.unit);
+        }
     }
 
     // Pull the latest window from this channel's ring buffer into its sparkline.
@@ -334,12 +359,7 @@ export class TelemetryGridPanelComponent {
     _drawEntry(entry) {
         const chan = entry.chan;
 
-        // Resolve ring buffer source path from telemetryHub
-        const pathParts = chan.buffer.split('.');
-        let buf = telemetryHub;
-        for (const part of pathParts) {
-            if (buf) buf = buf[part];
-        }
+        const buf = this._resolveBuffer(chan);
 
         if (!buf || buf.count === 0) return;
 
@@ -360,6 +380,7 @@ export class TelemetryGridPanelComponent {
         entry.lastBuffer = buf;
         entry.lastTotal = total;
         entry.lastValue = latestValue;
+        entry.lastDisplayValue = latestValue;
 
         // resetScales MUST stay true: the x window advances every tick (xStart
         // climbs), so drawing with resetScales=false leaves the line plotted

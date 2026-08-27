@@ -467,7 +467,8 @@ void launch_interop_particle_gather(GpuBuffers& bufs, int lattice_size,
 // ---------- Construction / Destruction ----------
 
 GpuEngine::GpuEngine(int lattice_size)
-    : size_(lattice_size), N_(lattice_size * lattice_size * lattice_size)
+    : size_(lattice_size),
+      N_(static_cast<int>(Lattice::checked_total_sites(lattice_size)))
 {
     try {
     // Allocate device buffers

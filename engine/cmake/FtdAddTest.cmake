@@ -44,6 +44,8 @@
 #   TIMEOUT      — CTest timeout in seconds (default: 300; runner honors this)
 #   LABELS       — additional CTest labels (beyond automatic "gpu" / "unit" /
 #                  "campaign"; space-separated list)
+#   TEST_ARGS    — arguments passed only by the CTest registration; direct
+#                  executable invocations keep their production defaults
 #
 # Side effects:
 #   Registers a global CMake property FTD_ALL_TESTS that accumulates every
@@ -59,7 +61,7 @@ endif()
 function(ftd_add_test target source)
     set(options GPU_HEAVY NO_CORE BUILD_ONLY)
     set(one_value_args CTEST_NAME TIMEOUT)
-    set(multi_value_args LABELS)
+    set(multi_value_args LABELS TEST_ARGS)
     cmake_parse_arguments(FAT "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
 
     # Derive CTest name if not explicitly provided.
@@ -119,7 +121,7 @@ function(ftd_add_test target source)
     endif()
 
     # Register with CTest.
-    add_test(NAME ${FAT_CTEST_NAME} COMMAND ${target})
+    add_test(NAME ${FAT_CTEST_NAME} COMMAND ${target} ${FAT_TEST_ARGS})
 
     # Automatic label: "gpu" for GPU_HEAVY tests.
     if(FAT_GPU_HEAVY)

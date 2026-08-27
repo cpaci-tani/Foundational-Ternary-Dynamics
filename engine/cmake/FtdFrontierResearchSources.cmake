@@ -1,0 +1,174 @@
+# Explicit quarantine for frontier research programs that are intentionally
+# not part of the production build or default CTest inventory. These files are
+# executable research instruments, preflights, or unresolved experiments; they
+# must be promoted to a real target (and removed here) before being treated as
+# regression evidence.
+
+set(FTD_FRONTIER_CPU_RESEARCH_SOURCES
+    tests/campaign_blocked_hop_work_decomposition.cpp
+    tests/campaign_explicit_rounding_causal_horizon_m2.cpp
+    tests/test_analytic_center_collective_boost_ladder_v2.cpp
+    tests/test_analytic_center_collective_boost_ladder_v3.cpp
+    tests/test_analytic_center_collective_boost_ladder.cpp
+    tests/test_analytic_center_long_horizon_transport.cpp
+    tests/test_balanced_gait_phase_return.cpp
+    tests/test_batched_matched_symmetry_ray_spectrum.cpp
+    tests/test_batched_regional_energy_profile.cpp
+    tests/test_bound_dressing_persistence.cpp
+    tests/test_canonical_precontact_mode_decay.cpp
+    tests/test_capture_root_regularity_neighborhood.cpp
+    tests/test_captured_state_perturbation_survival.cpp
+    tests/test_causal_bound_internal_gait_continuation.cpp
+    tests/test_causal_buffer_relational_formation.cpp
+    tests/test_causal_excitation_separation_block_v1.cpp
+    tests/test_causal_excitation_separation_indexed_local_v1.cpp
+    tests/test_causal_excitation_separation_l113_v1.cpp
+    tests/test_causal_excitation_separation_local_v1.cpp
+    tests/test_causal_excitation_separation_preflight.cpp
+    tests/test_causal_excitation_separation_v1.cpp
+    tests/test_causal_excitation_separation_v2.cpp
+    tests/test_causal_excitation_separation_v3.cpp
+    tests/test_causal_excitation_separation_v4.cpp
+    tests/test_causal_horizon_csv_loader.cpp
+    tests/test_causal_horizon_environmental_persistence.cpp
+    tests/test_causal_regional_field_flow.cpp
+    tests/test_causally_isolated_envelope_turning.cpp
+    tests/test_causally_isolated_internal_recurrence.cpp
+    tests/test_cell_measure_common_action_closure.cpp
+    tests/test_cell_measure_fixed_mass_refinement.cpp
+    tests/test_cell_measure_long_horizon_transport_v2.cpp
+    tests/test_cell_measure_long_horizon_transport.cpp
+    tests/test_closed_symmetry_balanced_gait.cpp
+    tests/test_complete_moving_dressing_relative_orbit.cpp
+    tests/test_component_aware_radial_field_profile.cpp
+    tests/test_connected_bipole_deposited_current_form_factor.cpp
+    tests/test_connected_block_analytic_dynamical_rest.cpp
+    tests/test_connected_block_analytic_envelope_hessian.cpp
+    tests/test_connected_block_analytic_matter_modes.cpp
+    tests/test_connected_block_analytic_static_refinement.cpp
+    tests/test_connected_block_coupled_transverse_response.cpp
+    tests/test_connected_block_cubic_eight_fibre.cpp
+    tests/test_connected_block_dynamic_stabilization.cpp
+    tests/test_connected_block_dynamical_rest_recurrence.cpp
+    tests/test_connected_block_eight_fibre_static_basin.cpp
+    tests/test_connected_block_fixed_mass_refinement_obstruction.cpp
+    tests/test_connected_block_full_constituent_hessian_v2.cpp
+    tests/test_connected_block_full_constituent_hessian.cpp
+    tests/test_connected_block_full_half_static_refinement.cpp
+    tests/test_connected_block_independent_field_modes.cpp
+    tests/test_connected_block_knot_local_hessian.cpp
+    tests/test_connected_block_linear_modes.cpp
+    tests/test_connected_block_shared_anchor_fibre.cpp
+    tests/test_connected_block_static_dressing_refinement.cpp
+    tests/test_connected_block_translation_curvature.cpp
+    tests/test_connected_block_translation_stability.cpp
+    tests/test_connected_dressed_matter_high_speed_preflight.cpp
+    tests/test_connected_moore_block_common_action.cpp
+    tests/test_connected_moore_block_local_residual_solve.cpp
+    tests/test_connected_moore_block_matrix_free_solve.cpp
+    tests/test_connected_moore_block_repeated_dynamics.cpp
+    tests/test_connected_moore_block_solve_cache.cpp
+    tests/test_covariant_lower_energy_formation.cpp
+    tests/test_derived_interaction_graph_transaction.cpp
+    tests/test_energy_adapted_mixed_capture_corners.cpp
+    tests/test_field_assisted_capture_window.cpp
+    tests/test_field_assisted_derived_pair_capture.cpp
+    tests/test_finite_support_environmental_closure.cpp
+    tests/test_finite_support_outgoing_tail_formation.cpp
+    tests/test_finite_support_pair_preparation.cpp
+    tests/test_interacting_common_action_root_multiseed.cpp
+    tests/test_internal_excitation_symmetry_ray_spectrum_v1.cpp
+    tests/test_internal_excitation_symmetry_ray_spectrum_v2.cpp
+    tests/test_internal_gait_angular_response.cpp
+    tests/test_internal_mode_action_transfer_v2.cpp
+    tests/test_internal_mode_action_transfer_v3.cpp
+    tests/test_internal_mode_action_transfer.cpp
+    tests/test_internal_mode_return_time.cpp
+    tests/test_internal_walker_direction_persistence.cpp
+    tests/test_l33_full_impulse_rest_solve.cpp
+    tests/test_l33_symmetry_rest_refinement.cpp
+    tests/test_late_reentry_covariance_convergence.cpp
+    tests/test_localized_basin_relaxation_v2.cpp
+    tests/test_localized_basin_relaxation_v3.cpp
+    tests/test_localized_basin_relaxation.cpp
+    tests/test_lower_energy_covariance_conditioning.cpp
+    tests/test_lower_energy_formation_crossover.cpp
+    tests/test_mass_metric_modal_energy.cpp
+    tests/test_matched_regional_energy_transport.cpp
+    tests/test_mobile_dressing_structure_factor_v2.cpp
+    tests/test_mobile_dressing_structure_factor.cpp
+    tests/test_moving_dressed_matter_transverse_field_growth.cpp
+    tests/test_multipass_formation_persistence.cpp
+    tests/test_native_excited_matter_clock.cpp
+    tests/test_out_of_sample_mobility_convergence.cpp
+    tests/test_period_three_common_action_preflight.cpp
+    tests/test_period_three_comoving_field_source.cpp
+    tests/test_period_three_field_bound_common_action_selector.cpp
+    tests/test_period_three_internal_momentum_lift.cpp
+    tests/test_persistence_covariance_convergence.cpp
+    tests/test_persistence_reentry_volume_discriminator.cpp
+    tests/test_polarity_snapshot_current_nonuniqueness.cpp
+    tests/test_precontact_energetic_capture_delay.cpp
+    tests/test_prescribed_trajectory_comoving_field_shooting.cpp
+    tests/test_qualified_interior_compact_matter_transport.cpp
+    tests/test_recovery_reservoir_donor.cpp
+    tests/test_refined_core_peierls_landscape.cpp
+    tests/test_refined_single_core_directional_boost.cpp
+    tests/test_repeated_exact_root_acceleration.cpp
+    tests/test_resonant_internal_gait_cancellation.cpp
+    tests/test_rest_qualified_moving_dressing_relative_orbit.cpp
+    tests/test_shared_anchor_constituent_fibre_transport.cpp
+    tests/test_single_core_neutralizer_control.cpp
+    tests/test_site_admissible_compact_matter_motion.cpp
+    tests/test_spline_poynting_noether_defect.cpp
+    tests/test_state_only_matter_field_observer_covariance.cpp
+    tests/test_state_only_matter_field_observer.cpp
+    tests/test_support_invariant_matter_predicate.cpp
+    tests/test_uniform_neutralized_single_core_static.cpp
+    tests/test_uniform_single_core_stationary_refinement.cpp
+    tests/test_volume_scaled_internal_mode_transfer_v2.cpp
+    tests/test_volume_scaled_internal_mode_transfer.cpp
+    tests/test_wave_spin_invariant.cpp
+    tests/test_zero_momentum_internal_mode_mobility.cpp
+)
+
+# CUDA research is WSL2-only by project policy. These sources are not valid
+# Windows-native CUDA ownership candidates and must be promoted through an
+# explicit WSL2 target with a registered backend contract.
+set(FTD_FRONTIER_CUDA_RESEARCH_SOURCES
+    tests/campaign_canonical_current_horizon_cuda.cpp
+    tests/campaign_causal_horizon_environmental_persistence_cuda.cpp
+    tests/campaign_deterministic_canonical_current_cuda.cpp
+    tests/campaign_explicit_rounding_e1_cuda_parity.cpp
+    tests/campaign_fractional_center_dressing_observer_cuda.cpp
+    tests/campaign_m3_device_resident_pipeline_parity_cuda.cpp
+    tests/campaign_m3_fixed_chart_held_out_validation_cuda.cpp
+    tests/campaign_m3_fixed_chart_parent_qualification_cuda.cpp
+    tests/campaign_m3_parent_replay_forensics_cuda.cpp
+    tests/campaign_m3_relational_chart_held_out_validation_cuda.cpp
+    tests/campaign_m3_support_invariant_validation_cuda.cpp
+    tests/campaign_m4_boosted_relational_transport_discovery_cuda.cpp
+    tests/campaign_m4_moving_dressing_observer_forensics_cuda.cpp
+    tests/campaign_ordered_current_observer_cuda.cpp
+    tests/campaign_stagewise_e1_cpu_cuda_parity.cpp
+    tests/campaign_state_only_observer_discovery_cuda.cpp
+    tests/campaign_transported_chart_matter_morphology_cuda.cpp
+    tests/test_cuda_canonical_current_deposition.cpp
+    tests/test_cuda_matched_field_pipeline.cpp
+    tests/test_cuda_ordered_current_observer.cpp
+    tests/test_cuda_quadratic_coat_orbit_gather.cpp
+)
+
+# Minimal diagnostics used to reproduce or inspect a failure. They intentionally
+# have no CTest semantics and must not be mistaken for scientific regressions.
+set(FTD_FRONTIER_DIAGNOSTIC_SOURCES
+    tests/_repro_gpu_empty_bridge.cpp
+    tests/probe_cpu_current_support.cpp
+    tests/probe_cuda_current_support.cpp
+)
+
+set(FTD_FRONTIER_RESEARCH_SOURCES
+    ${FTD_FRONTIER_CPU_RESEARCH_SOURCES}
+    ${FTD_FRONTIER_CUDA_RESEARCH_SOURCES}
+    ${FTD_FRONTIER_DIAGNOSTIC_SOURCES}
+)

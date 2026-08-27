@@ -54,6 +54,82 @@ test.describe('Scale 2 physics invariants', () => {
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
     });
 
+    test('diagnostics gate tracked terms and expose accounting validity', async ({ page }) => {
+        const result = await page.evaluate(async () => {
+            const { createAtomEngine } = await import('./js/bridge/mock-atom-engine.js');
+            const state = {};
+            const ae = createAtomEngine(state);
+            ae.initAE();
+            ae.aeSetBonding(false);
+            ae.aeSetSpeedLimit(false);
+            const a = ae.aeAddAtom(1, 0, 0, 0, 2, 0, 0, 1);
+            const b = ae.aeAddAtom(1, 4, 0, 0, -1, 0, 0, -1);
+
+            const active = ae.aeGetDiagnostics();
+            ae.aeSetIonic(false);
+            ae.aeSetVdw(false);
+            const pairOff = ae.aeGetDiagnostics();
+
+            ae.aeCreateBond(a, b);
+            const bondOn = ae.aeGetDiagnostics();
+            ae.aeSetBondsForce(false);
+            const bondOff = ae.aeGetDiagnostics();
+
+            // Exercise the constrained-temperature path with an intentionally
+            // stale locked velocity, while retaining one free atom.
+            state._ae.atoms[0].locked = true;
+            state._ae.atoms[0].vx = 100;
+            const constrained = ae.aeGetDiagnostics();
+            const mobile = state._ae.atoms[1];
+            const mobileKE = 0.5 * mobile.mass * (mobile.vx ** 2 + mobile.vy ** 2 + mobile.vz ** 2);
+
+            ae.aeSetAngleStrain(true);
+            const partial = ae.aeGetDiagnostics();
+            ae.aeSetAngleStrain(false);
+            ae.aeSetThermostat(true);
+            const driven = ae.aeGetDiagnostics();
+
+            const { telemetryHub } = await import('./js/telemetry-hub.js');
+            telemetryHub.resetScale(2);
+            let diag = { ...active, tick: 1, totalEnergy: 100,
+                energyComplete: true, energyConservative: true };
+            const bridge = {
+                aeGetDiagnostics: () => diag,
+                aeGetRuntimeState: () => ({ toggles: {} }),
+            };
+            telemetryHub.collectScale2(bridge);
+            const baselineDrift = telemetryHub.aeDrift.last();
+            diag = { ...diag, tick: 2, totalEnergy: 102 };
+            telemetryHub.collectScale2(bridge);
+            const validDrift = telemetryHub.aeDrift.last();
+            diag = { ...diag, tick: 3, energyComplete: false, energyConservative: false };
+            telemetryHub.collectScale2(bridge);
+            const invalidDrift = telemetryHub.aeDrift.last();
+
+            return {
+                active, pairOff, bondOn, bondOff, constrained, mobileKE,
+                partial, driven, baselineDrift, validDrift,
+                invalidDriftIsNaN: Number.isNaN(invalidDrift),
+            };
+        });
+
+        expect(Math.abs(result.active.totalPEIonic)).toBeGreaterThan(0);
+        expect(Math.abs(result.active.totalPEVdw)).toBeGreaterThan(0);
+        expect(result.active.energyStatus).toBe('complete-conservative');
+        expect(result.pairOff.totalPEIonic).toBe(0);
+        expect(result.pairOff.totalPEVdw).toBe(0);
+        expect(result.bondOn.totalPEBond).toBeGreaterThan(0);
+        expect(result.bondOff.totalPEBond).toBe(0);
+        expect(result.constrained.temperature).toBeCloseTo(2 * result.mobileKE / 3, 12);
+        expect(result.partial.energyStatus).toBe('partial-untracked-potential');
+        expect(result.partial.energyComplete).toBe(false);
+        expect(result.driven.energyStatus).toBe('complete-driven');
+        expect(result.driven.energyConservative).toBe(false);
+        expect(result.baselineDrift).toBe(0);
+        expect(result.validDrift).toBeCloseTo(2, 12);
+        expect(result.invalidDriftIsNaN).toBe(true);
+    });
+
     test('momentum is conserved through a head-on LJ collision', async ({ page }) => {
         const errors = attachConsoleWatcher(page);
         await loadScenario(page, 'ae-collision', 2);
@@ -198,12 +274,25 @@ test.describe('Scale 2 physics invariants', () => {
 
         const ba = await page.evaluate(async () => {
             const { atomicEnergy } = await import('./js/atomic-energy.js');
+            const { M_P_PHYS, M_E_PHYS } = await import('./js/constants.js');
+            const hydrogen = atomicEnergy(1);
             return {
                 he4: atomicEnergy(2).bindingPerNucleon,
                 fe56: atomicEnergy(26).bindingPerNucleon,
                 u238: atomicEnergy(92).bindingPerNucleon,
+                hydrogen,
+                hydrogenFree: M_P_PHYS + M_E_PHYS,
+                electronMass: M_E_PHYS,
             };
         });
+
+        // Electronic binding is negative and must reduce, not merely annotate,
+        // the composite rest mass. Hydrogen has no nuclear SEMF binding.
+        expect(ba.hydrogen.bindingEnergy).toBe(0);
+        expect(ba.hydrogen.massEnergy).toBeCloseTo(
+            ba.hydrogenFree + ba.hydrogen.electronBinding / 1e6, 12);
+        expect(ba.hydrogen.massInKB).toBeCloseTo(
+            ba.hydrogen.massEnergy / ba.electronMass, 12);
 
         // Wapstra-coefficient SEMF: B/A(Fe-56) ≈ 8.79 MeV experimentally;
         // accept the formula within (8.3, 9.2) and require the curve SHAPE

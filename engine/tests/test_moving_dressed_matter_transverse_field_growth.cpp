@@ -161,12 +161,12 @@ double growth_omega(const std::array<double, 3>& lattice_wavevector) {
   return 2.0 * std::asin(0.5 * ftd::C_SPEED * std::sqrt(sum));
 }
 
-std::vector<ftd::eft::QuadraticCoatFaceEntry> growth_entries(
+std::vector<ftd::eft::QuadraticCoatSparseCurrentEntry> growth_entries(
     const ftd::eft::ConnectedMooreBlockStepResult& step) {
   std::size_t count_entries = 0;
   for (const auto& segment : step.segments)
     count_entries += segment.sparse_current.size();
-  std::vector<ftd::eft::QuadraticCoatFaceEntry> entries;
+  std::vector<ftd::eft::QuadraticCoatSparseCurrentEntry> entries;
   entries.reserve(count_entries);
   for (const auto& segment : step.segments) {
     entries.insert(entries.end(), segment.sparse_current.begin(),
@@ -190,7 +190,7 @@ GrowthModeTick growth_observe_mode(
     const GrowthMode& requested, double target_speed, double displacement,
     const ftd::eft::ConnectedMooreBlockState& initial,
     const ftd::eft::ConnectedMooreBlockState& state,
-    const std::vector<ftd::eft::QuadraticCoatFaceEntry>& entries) {
+    const std::vector<ftd::eft::QuadraticCoatSparseCurrentEntry>& entries) {
   GrowthModeTick row;
   row.label = requested.label;
   row.mode = requested.mode;

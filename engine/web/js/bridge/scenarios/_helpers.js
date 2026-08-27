@@ -13,6 +13,7 @@
  */
 
 import { C_SPEED, K_B } from '../../constants.js';
+import { SCALE0_PREPARED_COULOMB_TERMS } from '../../config/toggles.js';
 
 /** Equilateral-triangle vertex angles in the xy plane (N_c = 3). */
 export const TRIAD_ANGLES = Object.freeze([0, 2 * Math.PI / 3, 4 * Math.PI / 3]);
@@ -89,15 +90,11 @@ export function configureUnlockedCompositeTerms(harness) {
     harness.setToggle('dual_substrate', false);
 }
 
-/** Locked nuclear markers + Poisson-Coulomb force + mobile outer markers. */
+/** Locked nuclear markers + substrate-carried flux force + mobile markers. */
 export function configurePreparedCoulombCandidateTerms(harness) {
     for (const key of FREE_WAVE_DISABLED_TERMS) harness.setToggle(key, false);
     harness.bridge?.setFluxBoundaryMode?.(0); // Periodic
-    harness.setToggle('wave_propagation', false);
-    harness.setToggle('gauss_projection', false);
-    harness.setToggle('forces', true);
-    harness.setToggle('poisson_coulomb', true);
-    harness.setToggle('movement', true);
+    for (const key of SCALE0_PREPARED_COULOMB_TERMS) harness.setToggle(key, true);
     harness.setToggle('dual_substrate', false);
 }
 

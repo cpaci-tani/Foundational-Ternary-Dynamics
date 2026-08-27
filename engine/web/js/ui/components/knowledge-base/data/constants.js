@@ -129,12 +129,12 @@ export const SECTION_CONSTANTS = Object.freeze({
                 shortTitle: 'K_B',
                 summary: 'Engine-side named constant currently exported as 0.511.',
                 body: [
-                    'In the web engine tests, \\(K_B\\) is verified as a named export with value 0.511. The project instructions describe this as the manifestation constant derived from the model’s mass story.',
+                    'In the web engine tests, \\(K_B\\) is verified as a named export with value 0.511. It is the runtime electron-mass anchor [IMPOSED], not a value derived by the engine from the substrate dynamics.',
                     'This is not the same thing as the lowercase \\(k_B\\) used for the Boltzmann constant in natural-units notation. The near-identical names make this one worth learning explicitly.',
                 ],
                 bullets: [
                     'Named export in the JS constants module.',
-                    'Tested in the web suite as 0.511.',
+                    'Tested in the web suite as the imposed value 0.511.',
                     'Different from the lowercase \\(k_B\\) of thermodynamics.',
                 ],
                 notation: ['\\(K_B = 0.511\\)', '\\(k_B = 1\\)'],

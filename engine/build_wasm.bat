@@ -60,7 +60,7 @@ echo === Configure WASM32 build ===
 call "%EMCMAKE%" cmake -S "%ENGINE_DIR%" -B "%BUILD32%" -DCMAKE_BUILD_TYPE=Release -DFTD_MEMORY64=OFF
 if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] wasm32 configure FAILED & exit /b 1 )
 echo === Build WASM32 ftd_wasm target ===
-call "%EMMAKE%" cmake --build "%BUILD32%" --target ftd_wasm
+call "%EMMAKE%" cmake --build "%BUILD32%" --target ftd_wasm --parallel 24
 if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] wasm32 build FAILED & exit /b 1 )
 
 REM --- WASM64 / Memory64 (ftd_core64.{js,wasm}) ---
@@ -68,7 +68,7 @@ echo === Configure WASM64 build (Memory64) ===
 call "%EMCMAKE%" cmake -S "%ENGINE_DIR%" -B "%BUILD64%" -DCMAKE_BUILD_TYPE=Release -DFTD_MEMORY64=ON
 if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] wasm64 configure FAILED & exit /b 1 )
 echo === Build WASM64 ftd_wasm target ===
-call "%EMMAKE%" cmake --build "%BUILD64%" --target ftd_wasm
+call "%EMMAKE%" cmake --build "%BUILD64%" --target ftd_wasm --parallel 24
 if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] wasm64 build FAILED & exit /b 1 )
 
 REM --- WASM32 + THREADS (ftd_core_mt.{js,wasm}) ---
@@ -80,17 +80,20 @@ echo === Configure WASM32+threads build (ftd_core_mt) ===
 call "%EMCMAKE%" cmake -S "%ENGINE_DIR%" -B "%BUILDMT%" -DCMAKE_BUILD_TYPE=Release -DFTD_MEMORY64=OFF -DFTD_WASM_THREADS=ON
 if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] wasm_mt configure FAILED & exit /b 1 )
 echo === Build WASM32+threads ftd_wasm target ===
-call "%EMMAKE%" cmake --build "%BUILDMT%" --target ftd_wasm
+call "%EMMAKE%" cmake --build "%BUILDMT%" --target ftd_wasm --parallel 24
 if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] wasm_mt build FAILED & exit /b 1 )
 
-REM --- Deploy all three module pairs (revision 1.3: staged all-or-nothing) ---
-REM Copies were previously unguarded: a failed copy could leave a
-REM mixed-generation engine/web/wasm/. Now every artifact is staged, checked
-REM for existence + plausible size, stamped with the git SHA, and only then
-REM moved into the deploy dir.
+REM --- Deploy all three module pairs (directory-level atomic swap) ---
+REM Stage as a SIBLING of the live directory. Staging inside engine/web/wasm
+REM followed by seven individual moves still exposed mixed generations when a
+REM later move failed. A same-volume directory rename makes the complete set
+REM visible together; the previous directory is restored if the second rename
+REM fails.
 echo === Deploy to engine/web/wasm/ (staged) ===
-set "STAGE_DIR=%DEPLOY_DIR%\.staging"
+set "STAGE_DIR=%ENGINE_DIR%\web\wasm.next"
+set "BACKUP_DIR=%ENGINE_DIR%\web\wasm.previous"
 if exist "%STAGE_DIR%" rmdir /s /q "%STAGE_DIR%"
+if exist "%BACKUP_DIR%" rmdir /s /q "%BACKUP_DIR%"
 mkdir "%STAGE_DIR%"
 if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] staging dir creation FAILED & exit /b 1 )
 
@@ -130,12 +133,20 @@ if defined GIT_DIRTY set "GIT_SHA=%GIT_SHA%-dirty"
 >> "%STAGE_DIR%\build_info.txt" echo built=%DATE% %TIME%
 >> "%STAGE_DIR%\build_info.txt" echo variants=wasm32,wasm64,wasm32-threads
 
-REM All artifacts verified good -- move into place (same-volume renames).
-for %%F in (ftd_core.js ftd_core.wasm ftd_core64.js ftd_core64.wasm ftd_core_mt.js ftd_core_mt.wasm build_info.txt) do (
-    move /y "%STAGE_DIR%\%%F" "%DEPLOY_DIR%\" >nul
-    if ERRORLEVEL 1 ( echo [build_wasm] deploy move %%F FAILED -- deploy dir may be mixed-generation, re-run & exit /b 1 )
+REM All artifacts verified good -- swap the whole directory on the same volume.
+set "HAD_DEPLOY="
+if exist "%DEPLOY_DIR%" (
+    move "%DEPLOY_DIR%" "%BACKUP_DIR%" >nul
+    if ERRORLEVEL 1 ( echo [build_wasm] could not preserve live deploy directory & exit /b 1 )
+    set "HAD_DEPLOY=1"
 )
-rmdir /s /q "%STAGE_DIR%"
+move "%STAGE_DIR%" "%DEPLOY_DIR%" >nul
+if ERRORLEVEL 1 (
+    echo [build_wasm] atomic deploy rename FAILED -- restoring previous directory
+    if defined HAD_DEPLOY move "%BACKUP_DIR%" "%DEPLOY_DIR%" >nul
+    exit /b 1
+)
+if defined HAD_DEPLOY rmdir /s /q "%BACKUP_DIR%"
 echo [build_wasm] OK -- wasm32 + wasm64 + wasm32-threads modules deployed to %DEPLOY_DIR% (sha=%GIT_SHA%)
 
 endlocal

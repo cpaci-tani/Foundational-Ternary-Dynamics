@@ -126,7 +126,7 @@ struct GpuBuffers {
     double*   d_phi         = nullptr;  // Gauss potential (warm-started)
     double*   d_phi_coulomb = nullptr;  // Coulomb potential (warm-started)
     double*   d_phi_latency = nullptr;  // Latency Poisson potential (warm-started)
-    double*   d_latency     = nullptr;  // voxel.latency = sqrt(clamp(|phi_latency|, 0, 0.998))
+    double*   d_latency     = nullptr;  // voxel.latency capped by LATENCY_HORIZON_CLAMP
     double*   d_tau         = nullptr;  // voxel.tau: accumulated proper time
     double*   d_phase       = nullptr;  // voxel.phase: de Broglie clock phase
 
@@ -156,9 +156,9 @@ struct GpuBuffers {
     double*   d_delta_j_R_z  = nullptr;
 
     // --- Strong Substrate Field (Stella Octangula) ---
-    // Note: strong_field_stencil_kernel writes wvs_* / fs_* in-place (leapfrog
-    // fuses the delta_j accumulator into the velocity update), so no separate
-    // d_delta_j_strong_* buffers are needed. Same for weak below.
+    // The stencil uses an ordered two-kernel Jacobi step: velocity first, then
+    // per-cell flux commit. No separate delta_j or duplicate field triple is
+    // needed. Same for weak below.
     double*   d_flux_strong_x     = nullptr;
     double*   d_flux_strong_y     = nullptr;
     double*   d_flux_strong_z     = nullptr;

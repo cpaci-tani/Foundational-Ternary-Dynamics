@@ -139,7 +139,7 @@ test.describe('Audit regression — scenario invariants', () => {
     // always-collect. Gating itself is covered by scale0-telemetry-gating.spec.js.
     test.beforeEach(async ({ page }) => {
         await page.addInitScript(() => {
-            window.__ftdPhysicsWorker = false;       // main-thread WasmBridge (no proxy)
+            window.__ftdWasmWorker = false;          // main-thread WasmBridge (no proxy)
             window.__ftdTelemetryOnDemand = false;   // legacy always-collect (defensive)
         });
     });
@@ -159,14 +159,22 @@ test.describe('Audit regression — scenario invariants', () => {
             const state = getScale0State();
             const b = (state.useFluxMock && state.fluxMock) ? state.fluxMock : window._ftdBridge;
             const diag = b.capabilities?.scale0?.getScale0Diagnostics?.() || {};
-            console.log('DIAGNOSTICS:', JSON.stringify(diag));
+            const debugJson = (value) => JSON.stringify(
+                value,
+                (_key, item) => typeof item === 'bigint' ? `${item}n` : item,
+            );
+            console.log('DIAGNOSTICS:', debugJson(diag));
             const ps = (typeof b.getScale0ParticleList === 'function'
                 ? b.getScale0ParticleList()
                 : b.capabilities?.scale0?.getScale0ParticleList?.()) || [];
             console.log('PARTICLES BEFORE TICK:', JSON.stringify(ps));
         });
 
-        await tickN(page, 300);
+        // The causally projected electron moves about 0.46 voxels in 300
+        // deterministic ticks on the canonical WASM build. Observe long
+        // enough to retain the stronger half-voxel motion gate without
+        // conflating a slow free particle with a locked one.
+        await tickN(page, 400);
         await page.evaluate(async () => {
             const { getScale0State } = await import('/js/scales/scale0/state/store.js');
             const state = getScale0State();

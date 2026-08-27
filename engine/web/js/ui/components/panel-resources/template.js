@@ -1,3 +1,7 @@
+import { G_N } from '../../../constants.js';
+
+const G_N_LABEL = G_N.toFixed(2);
+
 export function getScaleControlsBlocksTemplate() {
     return `
         <!-- Planetary Controls (visible only in planetary mode) -->
@@ -6,7 +10,7 @@ export function getScaleControlsBlocksTemplate() {
                 <div class="card">
                     <div class="card-title">FTD Sandbox Physics</div>
                     <div class="scale-info-mono">
-                        <div>Gravity ($G_N$): <span id="planetary-ctrl-gravity">0.01</span></div>
+                        <div>Gravity ($G_N$): <span id="planetary-ctrl-gravity">${G_N_LABEL}</span></div>
                         <div>Verlet $\\Delta t$: <span>0.0001 (N-body)</span></div>
                     </div>
                 </div>
@@ -37,7 +41,7 @@ export function getScaleControlsBlocksTemplate() {
                     <div class="scale-info-copy">
                         <div title="Engine [CONJECTURE], not a derived dark-energy density: Ω_Λ = 2/3 does NOT match the observed Ω_Λ ≈ 0.685. FTD natively predicts Λ = 0 (FC-1 declines ℏ); any nonzero value is a [BOUNDARY] needing a horizon length L_H. See FAQ 'dark-energy'.">&Omega;<sub>m</sub> = 1/3 &nbsp; &Omega;<sub>&Lambda;</sub> = 2/3 <span style="opacity:0.6">[CONJECTURE]</span></div>
                         <div title="Moore-shell [SELECTION]; does NOT match Planck 2018 observed Ω_DM/Ω_m ≈ 84%. See FAQ 'dark-matter'.">DM frac = 17/27 &asymp; 63% <span style="opacity:0.6">[SELECTION]</span></div>
-                        <div title="G_N = 0.01 is the lattice-natural simulation constant [IMPOSED]. The 1/(b₃+N_c)² identification with the physical Newton constant is RETIRED — FTD-0131 [CLOSED NEGATIVE].">G<sub>N</sub> = 0.01 <span style="opacity:0.6">[IMPOSED]</span></div>
+                        <div title="G_N = ${G_N_LABEL} is the lattice-natural simulation constant [IMPOSED]. The 1/(b₃+N_c)² identification with the physical Newton constant is RETIRED — FTD-0131 [CLOSED NEGATIVE].">G<sub>N</sub> = ${G_N_LABEL} <span style="opacity:0.6">[IMPOSED]</span></div>
                         <div>&gamma; = (D+2)/D = 5/3</div>
                         <div>c = 1/&radic;3</div>
                     </div>
@@ -254,7 +258,7 @@ export function getInspectorPanelTemplate() {
                 <div class="scale-ae panel-resource-hidden" id="ae-scenario-info">
                     <div class="card panel-resource-card panel-resource-section-card">
                         <div class="card-title" id="ae-scenario-title">--</div>
-                        <div class="panel-resource-muted-copy" id="ae-scenario-desc">--</div>
+                        <div class="panel-resource-muted-copy" id="ae-inspector-scenario-desc">--</div>
                         <dl class="inspector-grid" id="ae-scenario-fields"></dl>
                     </div>
                 </div>
@@ -545,8 +549,8 @@ export function getCosmicInfoPanelTemplate() {
                 <table class="panel-resource-table">
                     <tr>
                         <td class="panel-resource-key">G<sub>N</sub></td>
-                        <td>= 0.01</td>
-                        <td class="panel-resource-note" title="G_N = 0.01 is the lattice-natural simulation constant [IMPOSED]. The 1/(b₃+N_c)² identification with the physical Newton constant is RETIRED — FTD-0131 [CLOSED NEGATIVE] (off by 10²⁰–10⁴³ under any natural calibration).">Gravity [IMPOSED] · 1/(b₃+N_c)² RETIRED (FTD-0131)</td>
+                        <td>= ${G_N_LABEL}</td>
+                        <td class="panel-resource-note" title="G_N = ${G_N_LABEL} is the lattice-natural simulation constant [IMPOSED]. The 1/(b₃+N_c)² identification with the physical Newton constant is RETIRED — FTD-0131 [CLOSED NEGATIVE] (off by 10²⁰–10⁴³ under any natural calibration).">Gravity [IMPOSED] · 1/(b₃+N_c)² RETIRED (FTD-0131)</td>
                     </tr>
                     <tr>
                         <td class="panel-resource-key">&Omega;<sub>&Lambda;</sub></td>
@@ -571,12 +575,12 @@ export function getCosmicInfoPanelTemplate() {
                     <tr>
                         <td class="panel-resource-key">c</td>
                         <td>= 1/&radic;3</td>
-                        <td class="panel-resource-note">CFL speed</td>
+                        <td class="panel-resource-note">Selected lattice speed [SELECTION]</td>
                     </tr>
                     <tr>
                         <td class="panel-resource-key">r<sub>s</sub></td>
-                        <td>= 2 G<sub>N</sub> M</td>
-                        <td class="panel-resource-note" title="Schwarzschild horizon, linear in M (audit P0-7). Rendered radius applies an on-screen visual gauge and is clamped to a visible band, but scales ∝ M as shown.">BH horizon [SELECTION]</td>
+                        <td>= 2 G<sub>N</sub> M / c²</td>
+                        <td class="panel-resource-note" title="Schwarzschild-inspired lattice radius proxy, linear in M. Scale 5 does not solve a Schwarzschild metric; G_N and the on-screen visual gauge are imposed, and the rendered radius is clamped to a visible band.">BH radius proxy [IMPOSED]</td>
                     </tr>
                 </table>
                 <div class="panel-resource-divider">
@@ -587,4 +591,3 @@ export function getCosmicInfoPanelTemplate() {
         </div>
     `;
 }
-

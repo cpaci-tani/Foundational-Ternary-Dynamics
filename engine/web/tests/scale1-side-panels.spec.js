@@ -123,7 +123,7 @@ test.describe('Scale 1 side panels', () => {
             'Conservation',
             'Forces & Geometry',
         ]));
-        expect(diag.scenario).toContain('Cluster Pair');
+        expect(diag.scenario).toContain('A Pair of Orbiting Charges');
         expect(diag.coulomb).toBe('on');
         expect(diag.gravity).toBe('on');
         expect(diag.damping).toBe('off');

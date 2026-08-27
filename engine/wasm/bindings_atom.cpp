@@ -241,6 +241,8 @@ static val get_ae_diagnostics(ftd::AtomEngine& ae) {
     result.set("momentumY",     d.total_momentum.y);
     result.set("momentumZ",     d.total_momentum.z);
     result.set("temperature",   d.temperature);
+    result.set("energyComplete", d.energy_complete);
+    result.set("energyConservative", d.energy_conservative);
     return result;
 }
 
@@ -289,9 +291,8 @@ static const std::unordered_map<std::string, AeBoolPTM>& ae_toggle_map() {
     return kMap;
 }
 
-static void ae_set_toggle(ftd::AtomEngine& ae, const std::string& name, bool val) {
-    auto it = ae_toggle_map().find(name);
-    if (it != ae_toggle_map().end()) ae.toggles.*(it->second) = val;
+static bool ae_set_toggle(ftd::AtomEngine& ae, const std::string& name, bool val) {
+    return ae.try_set_toggle(name, val);
 }
 
 static bool ae_get_toggle(ftd::AtomEngine& ae, const std::string& name) {

@@ -82,19 +82,19 @@ int main() {
         check("validate default → valid", def.validate() == true);
 
         ftd::AtomToggles a; a.covalent_bonds = false; a.angle_strain = true;
-        check("angle_strain w/o covalent_bonds → invalid", a.validate() == false);
+        check("angle_strain uses topology independently of bond force", a.validate() == true);
 
         ftd::AtomToggles to; to.covalent_bonds = false; to.torsional = true;
-        check("torsional w/o covalent_bonds → invalid", to.validate() == false);
+        check("torsional uses topology independently of bond force", to.validate() == true);
 
         ftd::AtomToggles ip; ip.covalent_bonds = false; ip.improper_torsional = true;
-        check("improper_torsional w/o covalent_bonds → invalid", ip.validate() == false);
+        check("improper torsion uses topology independently of bond force", ip.validate() == true);
 
         ftd::AtomToggles th; th.damping = false; th.thermostat = true;
-        check("thermostat w/o damping → invalid", th.validate() == false);
+        check("thermostat is independent velocity rescaling", th.validate() == true);
 
         ftd::AtomToggles dd; dd.electronegativity = false; dd.dipole_dipole = true;
-        check("dipole_dipole w/o electronegativity → invalid", dd.validate() == false);
+        check("dipole force uses stored intrinsic properties", dd.validate() == true);
 
         ftd::AtomToggles a_ok; a_ok.covalent_bonds = true; a_ok.angle_strain = true;
         check("angle_strain w/ covalent_bonds → valid", a_ok.validate() == true);
@@ -128,7 +128,10 @@ int main() {
         ae.set_toggle("ionic", true);
         ae.set_toggle("does_not_exist", true);
         check("unknown set_toggle no-op", ae.get_toggle("does_not_exist") == false &&
-                                          ae.get_toggle("ionic") == true);
+                                           ae.get_toggle("ionic") == true);
+        std::string error;
+        check("typed setter reports unknown toggle",
+              !ae.try_set_toggle("does_not_exist", true, &error) && !error.empty());
     }
 
     std::cout << (failures == 0 ? "ALL PASS\n" : (std::to_string(failures) + " FAIL\n"));

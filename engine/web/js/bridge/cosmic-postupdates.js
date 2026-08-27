@@ -35,9 +35,9 @@ export function postCosmicUpdates(TYPE) {
     // radius — a numerically-bounded tuning parameter that decides when a
     // nearby body is swallowed. It is deliberately small and sub-linear in
     // mass so the merger / binary-AGN scenarios (BH separations ~30 lu)
-    // stay stable. It is NOT the displayed Schwarzschild horizon, which is
-    // r_s = 2 G_N M (linear in M) and is what the cosmic info panel claims
-    // and the renderer draws (cosmic-renderer.js schwarzschildRenderRadius).
+    // stay stable. It is NOT the displayed Schwarzschild-inspired radius
+    // proxy, which is linear in M and separately visual-scaled by the renderer
+    // (cosmic-renderer.js schwarzschildRenderRadius).
     // Keeping these separate is intentional: changing the sink to the full
     // linear r_s would vacuum whole disks instantly. Cross-ref P0-7.
     for (const bh of this._bodies) {

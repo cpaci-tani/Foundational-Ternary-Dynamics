@@ -26,6 +26,12 @@ test.describe('Helium lattice-spectrum protocol helpers', () => {
         const fp = spectrumFingerprint({ k, E }, { parsevalRatio: 1, chargeDipoleMagnitude: 2 });
         expect(fp.labels).toHaveLength(fp.values.length);
         expect(fp.values.every(Number.isFinite)).toBe(true);
+        expect(fp.availability).toEqual({
+            slope: false,
+            parsevalRatio: true,
+            chargeDipoleMagnitude: true,
+        });
+        expect(Number.isNaN(fp.moments.slope)).toBe(true);
     });
 
     test('spectrum distance is zero for self and positive for shifted spectra', () => {

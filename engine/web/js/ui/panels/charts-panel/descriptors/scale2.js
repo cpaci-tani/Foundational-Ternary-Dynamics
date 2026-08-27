@@ -19,7 +19,7 @@ export const charts = [
             { key: 'ionic',   label: 'PE Ionic', color: 'var(--chart-ae-pe-ionic, #f87171)', buffer: 'aePEIonic', unit: '(sim)' },
             { key: 'vdw',     label: 'PE vdW',   color: 'var(--chart-ae-pe-vdw, #2dd4bf)',   buffer: 'aePEVdw', unit: '(sim)' },
             { key: 'bond',    label: 'PE Bond',  color: 'var(--chart-ae-pe-bond, #fb923c)',  buffer: 'aePEBond', unit: '(sim)' },
-            { key: 'total',   label: 'Total',    color: 'var(--chart-ae-total, #e8e8e8)',    buffer: 'aeEnergy', unit: '(sim)' },
+            { key: 'total',   label: 'Tracked',  color: 'var(--chart-ae-total, #e8e8e8)',    buffer: 'aeEnergy', unit: '(sim)' },
         ],
     },
     {
@@ -55,7 +55,7 @@ export const charts = [
     },
     {
         id: 'ae-drift',
-        title: 'Energy Drift',
+        title: 'Conservative Drift',
         xLabel: 'sample',
         yLabel: '%',
         defaultActive: false,

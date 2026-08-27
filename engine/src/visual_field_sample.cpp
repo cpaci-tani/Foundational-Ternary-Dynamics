@@ -139,7 +139,8 @@ void RenderBridge::copy_visual_field_sample(VisualFieldKind kind, int stride,
             const double inv = 1.0 / max_rho;
             for (int i = 0, total = n * n * n; i < total; ++i) {
                 latency_grid[static_cast<std::size_t>(i)] = static_cast<float>(
-                    std::sqrt(std::min(rho_at(fields_ref, i) * inv, 0.998)));
+                    std::sqrt(std::min(rho_at(fields_ref, i) * inv,
+                                       LATENCY_HORIZON_CLAMP)));
             }
         }
     }
@@ -250,7 +251,8 @@ void RenderBridge::copy_visual_field_sample(VisualFieldKind kind, int stride,
                     }
                     case VisualFieldKind::Latency: {
                         const double value = std::sqrt(
-                            std::min(rho_at(fields_ref, idx) / max_rho, 0.998));
+                            std::min(rho_at(fields_ref, idx) / max_rho,
+                                     LATENCY_HORIZON_CLAMP));
                         if (value >= 1e-6) append_scalar(out, value, x, y, z);
                         break;
                     }

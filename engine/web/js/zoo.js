@@ -82,7 +82,7 @@ function renderParticleCard(p) {
             <span class="zoo-mass" title="Measured (PDG) rest mass; electron uses the FTD anchor m_e = 0.511 MeV">${formatMass(p.mass_mev)}</span>
             <span class="zoo-meta">q ${chargeLabel(p.charge)}</span>
             <span class="zoo-meta">spin ${p.spin}</span>
-            <span class="zoo-formula" title="FTD-predicted mass formula (motivating match, not a derivation): ${p.ftd_formula}">${p.ftd_formula || '--'}</span>
+            <span class="zoo-formula" title="FTD motivating mass relation [${p.ftd_status || 'unclassified'}], not a substrate derivation: ${p.ftd_formula}">${p.ftd_formula || '--'}</span>
         </div>
     </div>`;
 }

@@ -8,13 +8,11 @@
  * and takes high-resolution screenshots of the 3D WebGL simulation canvas.
  */
 
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { gotoAndReady } from './_helpers.js';
-import path from 'path';
-import fs from 'fs';
 
 test.describe('FTD Simulation Gallery Generator', () => {
-    test('Capture beautiful front-orientated, zoomed-out simulation screenshots', async ({ page }) => {
+    test('Capture beautiful front-orientated, zoomed-out simulation screenshots', async ({ page }, testInfo) => {
         // Set test timeout to 90000ms to allow multi-step renders to finish
         test.setTimeout(90000);
 
@@ -30,11 +28,6 @@ test.describe('FTD Simulation Gallery Generator', () => {
                 window.__ftdCtx.running = false;
             }
         });
-
-        const targetDir = 'C:\\Users\\cpaci\\.gemini\\antigravity\\brain\\72ac71da-1d05-4f01-a50c-8823bc3a580f';
-        if (!fs.existsSync(targetDir)) {
-            fs.mkdirSync(targetDir, { recursive: true });
-        }
 
         const scenarios = [
             {
@@ -126,7 +119,7 @@ test.describe('FTD Simulation Gallery Generator', () => {
             await cleanUIAndOrientCamera(1.35);
 
             await page.waitForTimeout(400); // let Three.js repaint
-            let screenshotPathT0 = path.join(targetDir, `${sc.name}_t0.png`);
+            const screenshotPathT0 = testInfo.outputPath(`${sc.name}_t0.png`);
             console.log(`Taking screenshot of tick 0 at: ${screenshotPathT0}`);
             await page.locator('#viewport').screenshot({ path: screenshotPathT0 });
 
@@ -151,7 +144,7 @@ test.describe('FTD Simulation Gallery Generator', () => {
             await cleanUIAndOrientCamera(1.35);
 
             await page.waitForTimeout(400); // let Three.js repaint
-            let screenshotPathT = path.join(targetDir, `${sc.name}_t${sc.ticks}.png`);
+            const screenshotPathT = testInfo.outputPath(`${sc.name}_t${sc.ticks}.png`);
             console.log(`Taking screenshot of tick ${sc.ticks} at: ${screenshotPathT}`);
             await page.locator('#viewport').screenshot({ path: screenshotPathT });
         }

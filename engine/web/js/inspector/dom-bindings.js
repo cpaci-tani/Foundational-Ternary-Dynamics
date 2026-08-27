@@ -9,7 +9,7 @@ export function collectInspectorDom() {
         aeMolInfoEl: document.getElementById('ae-mol-info'),
         aeScenarioInfoEl: document.getElementById('ae-scenario-info'),
         aeScenarioTitle: document.getElementById('ae-scenario-title'),
-        aeScenarioDesc: document.getElementById('ae-scenario-desc'),
+        aeScenarioDesc: document.getElementById('ae-inspector-scenario-desc'),
         aeScenarioFields: document.getElementById('ae-scenario-fields'),
         planetaryEmptyEl: document.getElementById('planetary-inspector-empty'),
         planetaryContentEl: document.getElementById('planetary-inspector-content'),

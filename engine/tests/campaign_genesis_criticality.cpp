@@ -29,6 +29,7 @@
  * Usage:
  *   campaign_genesis_criticality --L=24 --Ts=0.02,0.04,0.06,0.08,0.10 \
  *       --seeds=8 --equil=2000 --sample=1000 --cpu --output-dir=PATH --tag=run
+ *   campaign_genesis_criticality --smoke
  */
 
 #include "ftd/constants.h"
@@ -83,7 +84,20 @@ int main(int argc, char** argv) {
 
     for (int i = 1; i < argc; ++i) {
         const std::string a = argv[i];
-        if      (a.rfind("--L=", 0) == 0)          L = std::atoi(a.c_str() + 4);
+        if (a == "--smoke") {
+            // CTest contract: exercise the complete temperature/seed/output
+            // orchestration without turning the routine native suite into the
+            // full WSL2 measurement campaign. Explicit arguments after
+            // --smoke may still override individual values for local probes.
+            L = 8;
+            Ts_str = "0.02,0.12";
+            seeds = 2;
+            equil = 10;
+            sample = 5;
+            tag = "ctest-smoke";
+            output_dir = "engine/results/genesis_criticality_smoke/";
+        }
+        else if (a.rfind("--L=", 0) == 0)          L = std::atoi(a.c_str() + 4);
         else if (a.rfind("--Ts=", 0) == 0)         Ts_str = a.substr(5);
         else if (a.rfind("--seeds=", 0) == 0)      seeds = std::atoi(a.c_str() + 8);
         else if (a.rfind("--equil=", 0) == 0)      equil = std::atoi(a.c_str() + 8);

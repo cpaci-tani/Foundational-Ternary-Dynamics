@@ -170,10 +170,12 @@ struct CosmicToggles {
     // validate() is NEW here (ticket 3.3): Cosmic previously had none, so it
     // matches the ADR-0013 surface used by the other sub-engines.
     bool validate(std::string* err = nullptr) const; // false + message on violation
-    void enable_all();                               // every toggle ON
+    void enable_all();                               // every implemented toggle ON
     void minimal();                                  // recommended-default profile
     bool get_toggle(std::string_view name) const;    // false if unknown
-    bool set_toggle(std::string_view name, bool value); // false if unknown
+    bool is_toggle_supported(std::string_view name) const;
+    bool set_toggle(std::string_view name, bool value,
+                    std::string* err = nullptr); // transactional; false if unknown/invalid
 };
 
 // ─────────────────────────────────────────────────────────────────────
@@ -191,26 +193,27 @@ struct CosmicToggleSpec {
     bool CosmicToggles::* field;
     bool default_value;
     bool minimal_value;
+    bool implemented;
     const char* requires_;
     const char* description;
 };
 
 inline constexpr CosmicToggleSpec COSMIC_TOGGLE_SPECS[] = {
-    // {name, field, default, minimal, requires_, description}
-    {"gravity",              &CosmicToggles::gravity,              true,  true,  "", "N-body gravitational force"},
-    {"sph_gas",              &CosmicToggles::sph_gas,              true,  true,  "", "SPH gas dynamics"},
-    {"hubble_expansion",     &CosmicToggles::hubble_expansion,     true,  true,  "", "Friedmann scale factor a(t)"},
-    {"dark_energy",          &CosmicToggles::dark_energy,          false, false, "", "Cosmological constant Omega_Lambda"},
-    {"dark_matter_halos",    &CosmicToggles::dark_matter_halos,    false, false, "", "DM substructure & halo profiles"},
-    {"black_hole_accretion", &CosmicToggles::black_hole_accretion, false, false, "", "Bondi-Hoyle accretion + jets"},
-    {"cosmic_radiation",     &CosmicToggles::cosmic_radiation,     false, false, "", "Radiative cooling/heating"},
-    {"star_formation",       &CosmicToggles::star_formation,       false, false, "", "Gas -> star conversion (Jeans)"},
-    {"stellar_evolution",    &CosmicToggles::stellar_evolution,    false, false, "", "Star -> WD/NS/BH transitions"},
-    {"galaxy_mergers",       &CosmicToggles::galaxy_mergers,       false, false, "", "Dynamical friction"},
-    {"magnetic_fields",      &CosmicToggles::magnetic_fields,      false, false, "", "Cosmic dynamo B-field"},
-    {"radiation_pressure",   &CosmicToggles::radiation_pressure,   false, false, "", "Luminosity-driven gas pushing"},
-    {"relativistic_jets",    &CosmicToggles::relativistic_jets,    false, false, "", "Bipolar jets from BH/Quasar"},
-    {"gravitational_waves",  &CosmicToggles::gravitational_waves,  false, false, "", "GW emission from mergers"},
+    // {name, field, default, minimal, implemented, requires_, description}
+    {"gravity",              &CosmicToggles::gravity,              true,  true,  true,  "", "N-body gravitational force"},
+    {"sph_gas",              &CosmicToggles::sph_gas,              true,  true,  true,  "", "SPH gas dynamics"},
+    {"hubble_expansion",     &CosmicToggles::hubble_expansion,     true,  true,  true,  "", "Friedmann scale factor a(t)"},
+    {"dark_energy",          &CosmicToggles::dark_energy,          false, false, true,  "", "Cosmological constant Omega_Lambda"},
+    {"dark_matter_halos",    &CosmicToggles::dark_matter_halos,    false, false, false, "", "Reserved: DM substructure & halo profiles (no tick consumer)"},
+    {"black_hole_accretion", &CosmicToggles::black_hole_accretion, false, false, true,  "", "Bondi-Hoyle accretion + jets"},
+    {"cosmic_radiation",     &CosmicToggles::cosmic_radiation,     false, false, false, "", "Reserved: radiative cooling/heating (no tick consumer)"},
+    {"star_formation",       &CosmicToggles::star_formation,       false, false, true,  "", "Gas -> star conversion (Jeans)"},
+    {"stellar_evolution",    &CosmicToggles::stellar_evolution,    false, false, true,  "", "Star -> WD/NS/BH transitions"},
+    {"galaxy_mergers",       &CosmicToggles::galaxy_mergers,       false, false, false, "", "Reserved: dynamical friction (no tick consumer)"},
+    {"magnetic_fields",      &CosmicToggles::magnetic_fields,      false, false, true,  "", "Cosmic dynamo B-field"},
+    {"radiation_pressure",   &CosmicToggles::radiation_pressure,   false, false, true,  "", "Luminosity-driven gas pushing"},
+    {"relativistic_jets",    &CosmicToggles::relativistic_jets,    false, false, true,  "", "Bipolar jets from BH/Quasar"},
+    {"gravitational_waves",  &CosmicToggles::gravitational_waves,  false, false, true,  "", "GW emission from mergers"},
 };
 static_assert(sizeof(COSMIC_TOGGLE_SPECS) / sizeof(COSMIC_TOGGLE_SPECS[0]) == 14,
               "CosmicToggles has 14 boolean toggles — update the table and this pin together");
@@ -220,13 +223,27 @@ inline bool CosmicToggles::get_toggle(std::string_view name) const {
         if (name == s.name) return this->*(s.field);
     return false;
 }
-inline bool CosmicToggles::set_toggle(std::string_view name, bool value) {
+inline bool CosmicToggles::is_toggle_supported(std::string_view name) const {
     for (const auto& s : COSMIC_TOGGLE_SPECS)
-        if (name == s.name) { this->*(s.field) = value; return true; }
+        if (name == s.name) return s.implemented;
+    return false;
+}
+inline bool CosmicToggles::set_toggle(std::string_view name, bool value,
+                                      std::string* err) {
+    for (const auto& s : COSMIC_TOGGLE_SPECS) {
+        if (name != s.name) continue;
+        CosmicToggles staged = *this;
+        staged.*(s.field) = value;
+        if (!staged.validate(err)) return false;
+        *this = staged;
+        if (err) err->clear();
+        return true;
+    }
+    if (err) *err = "unknown cosmic toggle";
     return false;
 }
 inline void CosmicToggles::enable_all() {
-    for (const auto& s : COSMIC_TOGGLE_SPECS) this->*(s.field) = true;
+    for (const auto& s : COSMIC_TOGGLE_SPECS) this->*(s.field) = s.implemented;
 }
 inline void CosmicToggles::minimal() {
     for (const auto& s : COSMIC_TOGGLE_SPECS) this->*(s.field) = s.minimal_value;
@@ -236,6 +253,10 @@ inline bool CosmicToggles::validate(std::string* err) const {
     // Table-driven single-name requires_ (none declared for Cosmic today).
     for (const auto& s : COSMIC_TOGGLE_SPECS) {
         if (!(this->*(s.field))) continue;
+        if (!s.implemented) {
+            msg += s.name; msg += " is not implemented\n";
+            continue;
+        }
         if (s.requires_ && *s.requires_) {
             for (const auto& dep : COSMIC_TOGGLE_SPECS) {
                 if (std::string_view(s.requires_) == dep.name) {
@@ -438,8 +459,13 @@ public:
         return toggles.get_toggle(name);
     }
 
+    bool try_set_toggle(std::string_view name, bool value,
+                        std::string* err = nullptr) {
+        return toggles.set_toggle(name, value, err);
+    }
+
     void set_toggle(const std::string& name, bool value) override {
-        toggles.set_toggle(name, value);
+        (void)try_set_toggle(name, value);
     }
 
     ScaleBaseDiagnostics base_diagnostics() const override {

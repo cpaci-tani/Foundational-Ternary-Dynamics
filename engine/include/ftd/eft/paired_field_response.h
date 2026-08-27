@@ -7,8 +7,12 @@
 #include "ftd/eft/connected_moore_block_action.h"
 
 #include <array>
+#include <limits>
 
 namespace ftd::eft {
+
+inline constexpr double kInvalidFieldResponseResidual =
+    std::numeric_limits<double>::infinity();
 
 enum class FieldResponseRegionKind {
   OrientedSlab,
@@ -65,9 +69,9 @@ struct PairedFieldResponseObservation {
   bool valid = false;
   Vec3 moving_bound_center{};
   Vec3 rest_bound_center{};
-  double moving_bound_gauss_residual = INFINITY;
-  double rest_bound_gauss_residual = INFINITY;
-  double maximum_energy_identity_residual = INFINITY;
+  double moving_bound_gauss_residual = kInvalidFieldResponseResidual;
+  double rest_bound_gauss_residual = kInvalidFieldResponseResidual;
+  double maximum_energy_identity_residual = kInvalidFieldResponseResidual;
   std::array<PairedFieldResponseRegion, 4> regions{};
 };
 
@@ -84,9 +88,9 @@ struct RegionalModifiedEnergyTransportObservation {
   double boundary_transport_into_complement = 0.0;
   double source_exchange_into_field = 0.0;
   double energy_change = 0.0;
-  double global_source_free_residual = INFINITY;
-  double boundary_quadrature_residual = INFINITY;
-  double ledger_residual = INFINITY;
+  double global_source_free_residual = kInvalidFieldResponseResidual;
+  double boundary_quadrature_residual = kInvalidFieldResponseResidual;
+  double ledger_residual = kInvalidFieldResponseResidual;
 };
 
 /** Exact discrete Reynolds term between two region charts on one before-state. */
@@ -97,9 +101,9 @@ struct RegionalControlVolumeTransportObservation {
   double current_energy_after = 0.0;
   double mask_sweep_into = 0.0;
   double mask_sweep_into_complement = 0.0;
-  double mask_sweep_quadrature_residual = INFINITY;
+  double mask_sweep_quadrature_residual = kInvalidFieldResponseResidual;
   double transported_energy_change = 0.0;
-  double transport_identity_residual = INFINITY;
+  double transport_identity_residual = kInvalidFieldResponseResidual;
 };
 
 std::array<FieldResponseRegionSpec, 4> make_ftd0768_response_regions(

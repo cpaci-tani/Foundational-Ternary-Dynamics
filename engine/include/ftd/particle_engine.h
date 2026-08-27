@@ -57,7 +57,8 @@ struct ParticleToggles {
     void enable_all();                               // every toggle ON
     void minimal();                                  // recommended-default profile
     bool get_toggle(std::string_view name) const;    // false if unknown
-    bool set_toggle(std::string_view name, bool value); // false if unknown
+    bool set_toggle(std::string_view name, bool value,
+                    std::string* err = nullptr); // transactional; false if unknown/invalid
 };
 
 // ─────────────────────────────────────────────────────────────────────
@@ -68,10 +69,9 @@ struct ParticleToggles {
 //                   relativistic_verlet (default OFF, minimal ON — the legacy
 //                   minimal() turned it on)
 //   requires_     — single dependency name that must also be ON (empty = none).
-//                   Particle's OR-dependencies (spin_orbit / magnetic_dipole need
-//                   coulomb OR gravity) cannot be expressed by a single-name AND
-//                   requires_, so they live in validate()'s Pass 2, exactly like
-//                   term_toggles.h keeps cross-cutting rules hand-rolled.
+//                   No current particle term depends on another term being ON:
+//                   magnetic-dipole and spin-orbit forces are independently
+//                   implemented and are intentionally isolatable in tests.
 // ─────────────────────────────────────────────────────────────────────
 struct ParticleToggleSpec {
     const char* name;
@@ -104,9 +104,18 @@ inline bool ParticleToggles::get_toggle(std::string_view name) const {
         if (name == s.name) return this->*(s.field);
     return false;
 }
-inline bool ParticleToggles::set_toggle(std::string_view name, bool value) {
-    for (const auto& s : PARTICLE_TOGGLE_SPECS)
-        if (name == s.name) { this->*(s.field) = value; return true; }
+inline bool ParticleToggles::set_toggle(std::string_view name, bool value,
+                                        std::string* err) {
+    for (const auto& s : PARTICLE_TOGGLE_SPECS) {
+        if (name != s.name) continue;
+        ParticleToggles staged = *this;
+        staged.*(s.field) = value;
+        if (!staged.validate(err)) return false;
+        *this = staged;
+        if (err) err->clear();
+        return true;
+    }
+    if (err) *err = "unknown particle toggle";
     return false;
 }
 inline void ParticleToggles::enable_all() {
@@ -131,12 +140,6 @@ inline bool ParticleToggles::validate(std::string* err) const {
             }
         }
     }
-    // Pass 2: OR-dependencies the single-name requires_ column cannot express.
-    // Preserves the exact verdicts of the pre-refactor validate().
-    if (spin_orbit && !coulomb && !gravity)
-        msg += "spin_orbit has no effect without coulomb or gravity\n";
-    if (magnetic_dipole && !coulomb && !gravity)
-        msg += "magnetic_dipole has no effect without coulomb or gravity\n";
     if (err) *err = msg;
     return msg.empty();
 }
@@ -307,8 +310,13 @@ public:
         return toggles.get_toggle(name);
     }
 
+    bool try_set_toggle(std::string_view name, bool value,
+                        std::string* err = nullptr) {
+        return toggles.set_toggle(name, value, err);
+    }
+
     void set_toggle(const std::string& name, bool value) override {
-        toggles.set_toggle(name, value);
+        (void)try_set_toggle(name, value);
     }
 
     ScaleBaseDiagnostics base_diagnostics() const override {
@@ -331,6 +339,14 @@ public:
 
     /// Compute specific exact force on particle i
     Vec3 compute_force(int i) const;
+
+    /// Compute an exact, self-contained per-term force snapshot for particle i.
+    /// Unlike force_diag(), this does not require a prior tick and clears the
+    /// target diagnostic row before evaluating it.
+    ParticleForceDiag compute_force_diagnostic(int i) const;
+
+    /// Compute one exact pair contribution without requiring a prior tick.
+    ParticleForceDiag compute_pair_force_diagnostic(int i, int j) const;
 
 private:
     // Velocity Verlet integration

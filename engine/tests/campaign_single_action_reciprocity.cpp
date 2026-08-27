@@ -33,6 +33,7 @@ enum class Branch { Legacy, Emergent };
 void configure(ftd::RenderBridge& bridge) {
   bridge.force_cpu();
   bridge.toggles.disable_all();
+  bridge.toggles.forces = true;
   bridge.toggles.strict_validation = true;
 }
 
@@ -107,6 +108,7 @@ struct ForceRow {
   ftd::Vec3 coded_expected;
   double formula_residual = 0.0;
   double action_residual = 0.0;
+  bool cpu_backend = false;
 };
 
 ForceRow run_force_row(int axis, int sign, Fixture fixture, Branch branch) {
@@ -125,6 +127,7 @@ ForceRow run_force_row(int axis, int sign, Fixture fixture, Branch branch) {
   row.sign = sign;
   row.fixture = fixture;
   row.branch = branch;
+  row.cpu_backend = bridge.backend_kind() == ftd::Backend::Kind::Cpu;
   row.grad_div = bridge.gradient_divergence(probe);
   row.grad_density = tier2_density_gradient(bridge, probe);
   row.action = row.grad_div * (ftd::G_C * static_cast<double>(sign));
@@ -145,6 +148,7 @@ ForceRow run_force_row(int axis, int sign, Fixture fixture, Branch branch) {
 struct SourceResult {
   double source_residual = 0.0;
   long double adjoint_residual = 0.0L;
+  bool cpu_backend = false;
 };
 
 SourceResult run_source_and_adjoint() {
@@ -158,6 +162,8 @@ SourceResult run_source_and_adjoint() {
   ftd::phase_write_main_loop(source);
 
   SourceResult result;
+  result.cpu_backend =
+      source.backend_kind() == ftd::Backend::Kind::Cpu;
   for (int index = 0; index < static_cast<int>(source.voxels().size());
        ++index) {
     const auto expected = ftd::gradient_state_op(
@@ -170,6 +176,8 @@ SourceResult run_source_and_adjoint() {
 
   ftd::RenderBridge adjoint(kL);
   configure(adjoint);
+  result.cpu_backend = result.cpu_backend
+      && adjoint.backend_kind() == ftd::Backend::Kind::Cpu;
   adjoint.inject_particle(kCenter, kCenter, kCenter, +1, {});
   adjoint.voxels()[static_cast<std::size_t>(center)].locked = true;
   for (int index = 0; index < static_cast<int>(adjoint.voxels().size());
@@ -206,12 +214,15 @@ struct PoissonResult {
   double j_independence_residual = 0.0;
   double quadratic_action_residual = 0.0;
   double affine_action_residual = 0.0;
+  bool cpu_backend = false;
 };
 
 ftd::Vec3 run_poisson_fixture(int axis, Fixture fixture,
-                              ftd::Vec3& action) {
+                              ftd::Vec3& action,
+                              bool& cpu_backend) {
   ftd::RenderBridge bridge(kL);
   configure(bridge);
+  cpu_backend = bridge.backend_kind() == ftd::Backend::Kind::Cpu;
   bridge.toggles.poisson_coulomb = true;
   bridge.inject_particle(kCenter, kCenter, kCenter, +1, {});
   std::array<int, 3> neutralizer{{kCenter, kCenter, kCenter}};
@@ -231,15 +242,18 @@ ftd::Vec3 run_poisson_fixture(int axis, Fixture fixture,
 PoissonResult run_poisson_axis(int axis) {
   ftd::Vec3 quadratic_action;
   ftd::Vec3 affine_action;
+  bool quadratic_cpu = false;
+  bool affine_cpu = false;
   const auto quadratic = run_poisson_fixture(
-      axis, Fixture::Quadratic, quadratic_action);
+      axis, Fixture::Quadratic, quadratic_action, quadratic_cpu);
   const auto affine = run_poisson_fixture(axis, Fixture::Affine,
-                                          affine_action);
+                                          affine_action, affine_cpu);
   PoissonResult result;
   result.axis = axis;
   result.j_independence_residual = (quadratic - affine).mag();
   result.quadratic_action_residual = (quadratic - quadratic_action).mag();
   result.affine_action_residual = (affine - affine_action).mag();
+  result.cpu_backend = quadratic_cpu && affine_cpu;
   return result;
 }
 
@@ -274,6 +288,7 @@ int main() {
   double worst_oddness = 0.0;
   bool finite = std::isfinite(source.source_residual)
       && std::isfinite(static_cast<double>(source.adjoint_residual));
+  bool cpu_backend = source.cpu_backend;
   bool legacy_action = true;
   bool emergent_action = true;
   double helper_action_residual = 0.0;
@@ -284,6 +299,7 @@ int main() {
         helper_action_residual, (row.helper - row.action).mag());
     finite = finite && std::isfinite(row.formula_residual)
         && std::isfinite(row.action_residual);
+    cpu_backend = cpu_backend && row.cpu_backend;
     if (row.branch == Branch::Legacy)
       legacy_action = legacy_action && row.action_residual <= kGate;
     else
@@ -345,6 +361,7 @@ int main() {
     finite = finite && std::isfinite(result.j_independence_residual)
         && std::isfinite(result.quadratic_action_residual)
         && std::isfinite(result.affine_action_residual);
+    cpu_backend = cpu_backend && result.cpu_backend;
     std::cout << "poisson,axis," << result.axis
               << ",j_independence_residual,"
               << result.j_independence_residual
@@ -354,7 +371,7 @@ int main() {
               << result.affine_action_residual << '\n';
   }
 
-  const bool protocol_valid = finite
+  const bool protocol_valid = finite && cpu_backend
       && source.source_residual <= kGate
       && source.adjoint_residual <= kGate
       && worst_formula <= kGate
@@ -380,8 +397,9 @@ int main() {
             << min_poisson_action_residual
             << ",legacy_action," << (legacy_action ? "true" : "false")
             << ",emergent_action," << (emergent_action ? "true" : "false")
-            << ",poisson_action," << (poisson_action ? "true" : "false")
-            << ",valid," << (protocol_valid ? "true" : "false") << '\n';
+             << ",poisson_action," << (poisson_action ? "true" : "false")
+             << ",cpu_backend," << (cpu_backend ? "true" : "false")
+             << ",valid," << (protocol_valid ? "true" : "false") << '\n';
   std::cout << "verdict," << verdict << '\n';
   return protocol_valid ? 0 : 1;
 }

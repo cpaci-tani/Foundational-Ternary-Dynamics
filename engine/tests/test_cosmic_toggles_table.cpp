@@ -43,7 +43,7 @@ int main() {
         check("default gravitational_waves=OFF", t.gravitational_waves == false);
     }
 
-    // ---- Section B: enable_all() → every toggle ON ----
+    // ---- Section B: enable_all() → every implemented toggle ON ----
     {
         ftd::CosmicToggles t;
         t.enable_all();
@@ -51,12 +51,12 @@ int main() {
         check("enable_all sph_gas",              t.sph_gas             == true);
         check("enable_all hubble_expansion",     t.hubble_expansion    == true);
         check("enable_all dark_energy",          t.dark_energy         == true);
-        check("enable_all dark_matter_halos",    t.dark_matter_halos   == true);
+        check("enable_all rejects reserved dark_matter_halos", t.dark_matter_halos == false);
         check("enable_all black_hole_accretion", t.black_hole_accretion == true);
-        check("enable_all cosmic_radiation",     t.cosmic_radiation    == true);
+        check("enable_all rejects reserved cosmic_radiation", t.cosmic_radiation == false);
         check("enable_all star_formation",       t.star_formation      == true);
         check("enable_all stellar_evolution",    t.stellar_evolution   == true);
-        check("enable_all galaxy_mergers",       t.galaxy_mergers      == true);
+        check("enable_all rejects reserved galaxy_mergers", t.galaxy_mergers == false);
         check("enable_all magnetic_fields",      t.magnetic_fields     == true);
         check("enable_all radiation_pressure",   t.radiation_pressure  == true);
         check("enable_all relativistic_jets",    t.relativistic_jets   == true);
@@ -84,17 +84,20 @@ int main() {
         check("minimal gravitational_waves=OFF", t.gravitational_waves == false);
     }
 
-    // ---- Section D: validate() — NEW in ticket 3.3 (Cosmic had none). Cosmic
-    //      declares no cross-toggle constraints, so every combination is valid;
-    //      validate() exists so Cosmic matches the ADR-0013 surface. ----
+    // ---- Section D: validation rejects advertised terms with no tick phase. ----
     {
         ftd::CosmicToggles def;
         check("validate default → valid", def.validate() == true);
         ftd::CosmicToggles all; all.enable_all();
-        check("validate enable_all → valid", all.validate() == true);
+        check("validate implemented enable_all → valid", all.validate() == true);
         ftd::CosmicToggles none;
         none.gravity = none.sph_gas = none.hubble_expansion = false;
         check("validate all-off → valid", none.validate() == true);
+        ftd::CosmicToggles unsupported;
+        unsupported.dark_matter_halos = true;
+        std::string error;
+        check("validate reserved toggle → invalid",
+              !unsupported.validate(&error) && error.find("not implemented") != std::string::npos);
     }
 
     // ---- Section E: string get/set round-trip via the ScaleEngine surface ----
@@ -111,17 +114,21 @@ int main() {
         check("get_toggle dark_energy default false", ce.get_toggle("dark_energy") == false);
         bool roundtrip_ok = true;
         for (const char* n : names) {
-            ce.set_toggle(n, true);
-            if (ce.get_toggle(n) != true) roundtrip_ok = false;
+            const bool supported = ce.toggles.is_toggle_supported(n);
+            const bool accepted = ce.try_set_toggle(n, true);
+            if (accepted != supported || ce.get_toggle(n) != supported) roundtrip_ok = false;
             ce.set_toggle(n, false);
             if (ce.get_toggle(n) != false) roundtrip_ok = false;
         }
-        check("set/get round-trip all 14 names", roundtrip_ok);
+        check("set/get accepts only implemented names", roundtrip_ok);
         check("unknown get_toggle → false", ce.get_toggle("does_not_exist") == false);
         ce.set_toggle("gravity", true);
         ce.set_toggle("does_not_exist", true);
         check("unknown set_toggle no-op", ce.get_toggle("does_not_exist") == false &&
-                                          ce.get_toggle("gravity") == true);
+                                           ce.get_toggle("gravity") == true);
+        std::string error;
+        check("typed setter reports unknown toggle",
+              !ce.try_set_toggle("does_not_exist", true, &error) && !error.empty());
     }
 
     std::cout << (failures == 0 ? "ALL PASS\n" : (std::to_string(failures) + " FAIL\n"));

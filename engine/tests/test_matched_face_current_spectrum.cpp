@@ -16,7 +16,7 @@ constexpr char protocol_sha256[] =
 
 using ftd::Vec3;
 using ftd::eft::MatchedFaceCurrentSpectrum;
-using ftd::eft::QuadraticCoatFaceEntry;
+using ftd::eft::QuadraticCoatSparseCurrentEntry;
 
 double coefficient_residual(const MatchedFaceCurrentSpectrum& lhs,
                             const MatchedFaceCurrentSpectrum& rhs) {
@@ -57,7 +57,7 @@ int main() {
   double worst_partition = 0.0;
 
   const std::array<double, 3> k{{0.7, -0.45, 0.3}};
-  const std::vector<QuadraticCoatFaceEntry> one{{{2, 3, 4}, 0, 2.0}};
+  const std::vector<QuadraticCoatSparseCurrentEntry> one{{{2, 3, 4}, 0, 2.0}};
   const auto one_result = ftd::eft::observe_sparse_face_current_spectrum(
       L, one, k, 2.0);
   const double phase = k[0]*2.5+k[1]*3.0+k[2]*4.0;
@@ -147,8 +147,8 @@ int main() {
   pass = pass && superposed.valid
       && coefficient_residual(superposed, sparse) <= 1e-14;
 
-  const std::vector<QuadraticCoatFaceEntry> invalid_axis{{{1,1,1},3,1.0}};
-  const std::vector<QuadraticCoatFaceEntry> invalid_value{{
+  const std::vector<QuadraticCoatSparseCurrentEntry> invalid_axis{{{1,1,1},3,1.0}};
+  const std::vector<QuadraticCoatSparseCurrentEntry> invalid_value{{
       {1,1,1},0,std::numeric_limits<double>::quiet_NaN()}};
   pass = pass
       && !ftd::eft::observe_sparse_face_current_spectrum(
