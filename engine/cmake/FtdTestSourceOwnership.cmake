@@ -6,6 +6,9 @@ include(${CMAKE_SOURCE_DIR}/cmake/FtdFrontierResearchSources.cmake)
 
 file(GLOB _ftd_test_cpp_sources CONFIGURE_DEPENDS
      RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/tests/*.cpp)
+# `_repro_*.cpp` is the gitignored local-diagnostic convention. These files
+# never ship to CI and therefore cannot be valid manifest or target sources.
+list(FILTER _ftd_test_cpp_sources EXCLUDE REGEX "^tests/_repro_.*\\.cpp$")
 get_property(_ftd_build_targets DIRECTORY PROPERTY BUILDSYSTEM_TARGETS)
 set(_ftd_owned_test_sources)
 foreach(_ftd_target IN LISTS _ftd_build_targets)

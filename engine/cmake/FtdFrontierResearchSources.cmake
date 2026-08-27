@@ -162,7 +162,6 @@ set(FTD_FRONTIER_CUDA_RESEARCH_SOURCES
 # Minimal diagnostics used to reproduce or inspect a failure. They intentionally
 # have no CTest semantics and must not be mistaken for scientific regressions.
 set(FTD_FRONTIER_DIAGNOSTIC_SOURCES
-    tests/_repro_gpu_empty_bridge.cpp
     tests/probe_cpu_current_support.cpp
     tests/probe_cuda_current_support.cpp
 )
