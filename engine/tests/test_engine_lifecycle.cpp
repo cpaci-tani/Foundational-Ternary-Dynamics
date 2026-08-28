@@ -21,25 +21,17 @@
 //   L6  construct+populate+destruct in a tight loop exercises ~ScaleEngine()
 //       member-RAII teardown with no crash and no unbounded growth.
 //
-// This is a DETERMINISTIC CPU test. It instantiates every concrete subclass
-// that is practical to build standalone (no RenderBridge / scene required):
+// This is a DETERMINISTIC CPU test. It instantiates every production concrete
+// subclass that is practical to build standalone (no RenderBridge / scene required):
 //   - ParticleEngine (Scale 1)
 //   - CosmicEngine   (Scale 5)
-//   - DagEngine      (Scale 0, EXPERIMENTAL)
 //
-// DagEngine caveat (real engine quirk, NOT a test bug): its entity_count()
-// reads active_indices_, a member that is declared but never written anywhere
-// in the codebase (see dag_engine.h line ~103 and the grep-confirmed absence
-// of any write). So DagEngine::entity_count() is permanently 0. For DagEngine
-// the population / clear invariants are therefore asserted against the DAG's
-// voxel state directly (eng.dag().get_voxel(...)), and the broken
-// entity_count() contract is recorded as a check with an explanatory note
-// rather than silently skipped.
+// DagEngine is deliberately absent: it is quarantined behind
+// FTD_BUILD_EXPERIMENTAL and owns a dedicated test_dag_engine target.
 // ============================================================================
 
 #include "ftd/particle_engine.h"
 #include "ftd/cosmic_engine.h"
-#include "ftd/dag_engine.h"
 #include "ftd/scale_engine.h"
 #include "ftd/test_telemetry.h"
 
@@ -231,107 +223,6 @@ void test_cosmic_engine_lifecycle() {
 }
 
 // ===========================================================================
-// DagEngine (Scale 0, EXPERIMENTAL)
-//
-// clear() impl (dag_engine.cpp):
-//   int sz = dag_->size();
-//   dag_ = make_unique<SparseVoxelDAG>(sz);   // rebuilds → all flux wiped
-//   tick_ = 0;
-// Does NOT reset: dt_, toggles_, the delta_j_ buffer's allocated size.
-//
-// entity_count() is permanently 0 (active_indices_ is never written) — so the
-// population / clear invariants are asserted against the DAG voxel state
-// directly. The broken entity_count() contract is recorded explicitly.
-//
-// Public API used:
-//   explicit DagEngine(int lattice_size);   // size must be a power of two
-//   void inject_flux(int x, int y, int z, double fx, double fy, double fz);
-//   const SparseVoxelDAG& dag() const;       // -> get_voxel(x,y,z) -> Voxel
-//   void tick() override;                    int  current_tick() const override;
-//   int  entity_count() const override;      void clear() override;
-// ===========================================================================
-void test_dag_engine_lifecycle() {
-    section("DagEngine (Scale 0): clear() + RAII lifecycle");
-
-    DagEngine de(16);
-
-    // Record the documented entity_count() quirk up front so it is visible
-    // in the report rather than hidden behind a silent skip.
-    check("DAG: entity_count() is 0 on construction (active_indices_ unused)",
-          de.entity_count() == 0,
-          "DagEngine::entity_count() reads active_indices_, which is declared "
-          "but never written; it is permanently 0. Population is asserted via "
-          "the DAG voxel state below.");
-
-    // L1: construct → inject flux → DAG carries it.
-    de.inject_flux(8, 8, 8, 1.0, 0.0, 0.0);
-    {
-        Voxel injected = de.dag().get_voxel(8, 8, 8);
-        Voxel untouched = de.dag().get_voxel(0, 0, 0);
-        check("L1: injected voxel carries flux", injected.flux.x == 1.0);
-        check("L1: untouched void voxel stays zero", untouched.flux.mag() == 0.0);
-    }
-
-    // L2: step a few times → finite, no crash.
-    for (int t = 0; t < 4; ++t) de.tick();
-    {
-        check("L2: tick advanced", de.current_tick() == 4);
-        Voxel center = de.dag().get_voxel(8, 8, 8);
-        Voxel right  = de.dag().get_voxel(9, 8, 8);
-        check("L2: center flux finite after stepping", finite_vec(center.flux));
-        check("L2: neighbor flux finite after stepping", finite_vec(right.flux));
-    }
-
-    // L3: clear() → DAG wiped + tick reset.
-    de.clear();
-    check("L3: current_tick() == 0 after clear()", de.current_tick() == 0);
-    {
-        Voxel center = de.dag().get_voxel(8, 8, 8);
-        check("L3: injected flux wiped after clear() (DAG rebuilt)",
-              center.flux.mag() == 0.0);
-        check("L3: DAG size preserved across clear()", de.dag().size() == 16);
-    }
-
-    // L4: re-inject after clear() → reusable.
-    de.inject_flux(4, 4, 4, 2.0, 0.0, 0.0);
-    {
-        Voxel reborn = de.dag().get_voxel(4, 4, 4);
-        check("L4: inject_flux works after clear()", reborn.flux.x == 2.0);
-    }
-    de.tick();
-    check("L4: tick after re-injection advances to 1", de.current_tick() == 1);
-    {
-        Voxel after = de.dag().get_voxel(4, 4, 4);
-        check("L4: flux finite after post-clear tick", finite_vec(after.flux));
-    }
-
-    // L5: double-clear() idempotent.
-    de.clear();
-    de.clear();
-    check("L5: current_tick() == 0 after double clear()", de.current_tick() == 0);
-    {
-        Voxel center = de.dag().get_voxel(4, 4, 4);
-        check("L5: DAG empty after double clear()", center.flux.mag() == 0.0);
-        check("L5: DAG size still 16 after double clear()", de.dag().size() == 16);
-    }
-
-    // L6: construct + populate + destruct loop (RAII smoke test).
-    // DagEngine owns a unique_ptr<SparseVoxelDAG>; this exercises that the
-    // defaulted ~DagEngine() frees the octree pools every iteration.
-    bool loop_ok = true;
-    for (int i = 0; i < 50; ++i) {
-        DagEngine tmp(16);
-        tmp.inject_flux(8, 8, 8, 1.0, 0.0, 0.0);
-        tmp.tick();
-        loop_ok = loop_ok && (tmp.dag().get_voxel(8, 8, 8).flux.mag() != 0.0
-                              || tmp.current_tick() == 1);
-        // tmp destructs here every iteration — exercises ~DagEngine() + the
-        // unique_ptr<SparseVoxelDAG> teardown.
-    }
-    check("L6: 50× construct/populate/destruct loop completed cleanly", loop_ok);
-}
-
-// ===========================================================================
 // Polymorphic teardown: delete-through-base-pointer.
 //
 // The whole reason ScaleEngine has `virtual ~ScaleEngine() = default;` is so
@@ -362,17 +253,6 @@ void test_polymorphic_destruction() {
         delete e;
         check("CosmicEngine: delete via ScaleEngine* did not crash", true);
     }
-    {
-        ScaleEngine* e = new DagEngine(16);
-        static_cast<DagEngine*>(e)->inject_flux(8, 8, 8, 1.0, 0.0, 0.0);
-        e->tick();
-        // entity_count() is permanently 0 for DagEngine; assert via tick.
-        check("DagEngine: tick advanced via base ptr", e->current_tick() == 1);
-        e->clear();
-        check("DagEngine: clear() via base ptr resets tick", e->current_tick() == 0);
-        delete e;  // must dispatch ~DagEngine() (frees the unique_ptr DAG)
-        check("DagEngine: delete via ScaleEngine* did not crash", true);
-    }
 }
 
 }  // namespace test
@@ -383,7 +263,6 @@ int main() {
 
     ftd::test::test_particle_engine_lifecycle();
     ftd::test::test_cosmic_engine_lifecycle();
-    ftd::test::test_dag_engine_lifecycle();
     ftd::test::test_polymorphic_destruction();
 
     return ftd::test::finalize();

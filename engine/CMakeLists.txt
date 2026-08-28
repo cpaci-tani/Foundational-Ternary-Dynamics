@@ -139,7 +139,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 # Experimental-module quarantine (revision 3.7, ADR-0016): DagEngine, the
 # cognition sidecar, and the discrete-universe CUDA prototype are kept —
 # never deleted (provenance convention) — but their build membership is an
-# explicit boundary. Declared here (moved 2026-08-16 from its prior location
+# explicit opt-in boundary. Declared here (moved 2026-08-16 from its prior location
 # ~250 lines down, immediately before the ftd_core target that also gates on
 # it) because CMake processes top-to-bottom: this option() must exist before
 # any if(FTD_BUILD_EXPERIMENTAL) check, including the ftd_cognition library
@@ -153,7 +153,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 # build directory, since CMake reuses a variable already in the cache from
 # the very start of the next run, which is exactly why this went unnoticed
 # locally but failed on every CI run's from-scratch checkout.
-option(FTD_BUILD_EXPERIMENTAL "Build experimental/quarantined modules (DagEngine, cognition sidecar, discrete-universe prototype)" ON)
+option(FTD_BUILD_EXPERIMENTAL "Build experimental/quarantined modules (DagEngine, cognition sidecar, discrete-universe prototype)" OFF)
 
 # ftd_cognition — sidecar ternary memory/retrieval substrate for LLM/agent
 # workflows. Deliberately independent of ftd_core / RenderBridge / Voxel.
@@ -410,9 +410,9 @@ option(FTD_ENABLE_PCH "Use precompiled headers for ftd_core (compile-speed only)
 
 # FTD_BUILD_EXPERIMENTAL is declared earlier now (~line 140, before the
 # ftd_cognition target that needs it defined first on a fresh configure —
-# see the comment there, 2026-08-16). Default ON = zero change to any
-# existing build; OFF produces a lean core with the experimental targets
-# absent. A source-lint (cmake/FtdSourceLint.cmake) guards that no production
+# see the comment there, 2026-08-16). Default OFF keeps normal builds lean;
+# opt in with -DFTD_BUILD_EXPERIMENTAL=ON when working on quarantined modules.
+# A source-lint (cmake/FtdSourceLint.cmake) guards that no production
 # TU includes the quarantined headers.
 if(FTD_ENABLE_PCH AND NOT EMSCRIPTEN)
     target_precompile_headers(ftd_core PRIVATE

@@ -14,8 +14,8 @@ re-discovering them as "dead code?" (engine revision program 0.11/3.7).
 
 ## Decision
 
-CMake option `FTD_BUILD_EXPERIMENTAL` (default **ON** — zero change to any
-existing build) gates: `src/dag_engine.cpp` in `ftd_core`, the
+CMake option `FTD_BUILD_EXPERIMENTAL` (default **OFF** — explicit opt-in)
+gates: `src/dag_engine.cpp` in `ftd_core`, the
 `ftd_cognition` library, their tests/benchmarks, and
 `experimental_discrete_universe`. The `source_lint` CTest additionally fails
 if any production TU includes a quarantined header
@@ -25,9 +25,16 @@ if any production TU includes a quarantined header
 ## Consequences
 
 - (+) The experimental boundary is explicit, CI-visible, and lint-enforced
-- (+) `-DFTD_BUILD_EXPERIMENTAL=OFF` gives a lean core for deployments
+- (+) Normal builds and deployments contain only maintained production engines
+- (+) `-DFTD_BUILD_EXPERIMENTAL=ON` keeps the quarantined modules buildable and tested on demand
 - (−) Two extra CMake conditionals to maintain
 - Revisit: 2026-Q4 — DAG unblock criterion is sparse L>64 void-field work
+
+**Default changed 2026-08-27.** The original default-ON decision minimized
+behavior change while the quarantine boundary was introduced. Once the engine
+inventory proved these targets had no production consumers, leaving them in
+every normal build made the boundary nominal rather than operational. Their
+sources and opt-in tests remain intact; only default build membership changed.
 
 ## Alternatives considered
 

@@ -3,10 +3,11 @@
 # ============================================================================
 if(NOT EMSCRIPTEN)
 
-# Sources owned by CUDA-only targets below. They must remain classified when a
-# CPU-only configure skips those target declarations (for example the Pages
-# merge gate), but they are not frontier/quarantined research sources.
+# Sources owned by targets that can be absent in a lean configure. They must
+# remain classified when CUDA or experimental modules are disabled (for
+# example the Pages merge gate), but they are not frontier research sources.
 set_property(GLOBAL APPEND PROPERTY FTD_CONDITIONAL_TEST_SOURCES
+    tests/benchmark_cognitive_lattice.cpp
     tests/benchmark_alpha_scaling.cpp
     tests/benchmark_langevin_gpu.cpp
     tests/benchmark_nucleon_mass_gpu.cpp
@@ -19,6 +20,8 @@ set_property(GLOBAL APPEND PROPERTY FTD_CONDITIONAL_TEST_SOURCES
     tests/test_cuda_paired_field_response.cpp
     tests/test_cuda_state_only_support_ladder.cpp
     tests/test_cuda_transported_chart_morphology.cpp
+    tests/test_cognitive_lattice.cpp
+    tests/test_dag_engine.cpp
     tests/test_gauss_law_fidelity_gpu.cpp
     tests/test_gpu_benchmark.cpp
     tests/test_gpu_compact_diagnostics.cpp
