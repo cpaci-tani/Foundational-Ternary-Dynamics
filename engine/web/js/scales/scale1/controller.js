@@ -59,8 +59,6 @@ export function setPEForceCoulomb(on) { scale1State.overlays.forceCoulomb = on; 
 export function setPEForceGravity(on) { scale1State.overlays.forceGravity = on; }
 export function setPEForceStrong(on)  { scale1State.overlays.forceStrong = on; }
 export function setPEForceNet(on)     { scale1State.overlays.forceNet = on; }
-/** @deprecated Use setPEForceNet — kept for callers that still say "forces". */
-export function setPEForces(on)       { setPEForceNet(on); }
 export function setPESystem(on)       { scale1State.overlays.system = on; }
 export function setVelocities(on)     { scale1State.overlays.velocities = on; }
 export function setTrails(on)         { scale1State.overlays.trails = on; }

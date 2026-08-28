@@ -1,5 +1,9 @@
 # SPEC: Vacuum Particle Scenarios (`s0-vacuum-*` family)
 
+> **Historical implementation record.** Its JS mirror paths were archived on
+> 2026-08-27; the live seed bodies are the corresponding C++ scenarios under
+> `engine/src/scenarios/`.
+
 **Status:** Draft
 **Companion:** existing scenario system at `engine/web/js/bridge/scenarios/`,
 existing C++ scenarios at `engine/src/scenarios/`,

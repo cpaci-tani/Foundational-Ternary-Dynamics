@@ -240,6 +240,11 @@ def main() -> None:
     entries = []
     for rel in files:
         fp = repo / rel
+        # `git ls-files` reports index entries that may already be deleted in the
+        # working tree.  A generated working-tree manifest must not preserve
+        # those paths as zero-line ghost files while cleanup is in progress.
+        if not fp.is_file():
+            continue
         text = _read_text(fp)
         loc = text.count("\n") + (1 if text and not text.endswith("\n") else 0)
         lang = LANG.get(fp.suffix.lower(), "other")

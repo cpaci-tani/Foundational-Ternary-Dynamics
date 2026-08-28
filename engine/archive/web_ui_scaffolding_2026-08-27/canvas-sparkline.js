@@ -87,6 +87,3 @@ export class CanvasSparkline {
         this.draw();
     }
 }
-
-/** @deprecated Use CanvasSparkline — kept for one release of import stability. */
-export const Sparkline = CanvasSparkline;

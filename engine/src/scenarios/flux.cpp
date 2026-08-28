@@ -2,7 +2,7 @@
 //  engine/src/scenarios/flux.cpp
 //
 //  Group: flux-* (22 scenarios)
-//  JS source: engine/web/js/bridge/scenarios/flux-scenarios.js
+//  Canonical seed implementation; the former JS mirror is archived.
 //
 //  Split out of engine/src/scenarios.cpp (ticket S1). Every scenario body
 //  is byte-identical to the pre-split source — see _helpers.h for the

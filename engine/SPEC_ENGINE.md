@@ -2301,10 +2301,9 @@ Hamiltonian-consistent energy-flow diagnostic is S = c²(E x B).
 `ftd::dispatch_scenario(RenderBridge& rb, const std::string& name)`
 (declared in `include/ftd/scenarios.h`) is the public C++ entry point for
 scenario setup. The thin router and shared RNG live in `src/scenarios.cpp`;
-scenario bodies are split by responsibility under `src/scenarios/`. It is a
-straight port of the browser-side JS scenario library under
-`engine/web/js/bridge/scenarios/` — the two code paths stay in lockstep
-so that WASM, CLI, and native hosts all seed the lattice identically.
+scenario bodies are split by responsibility under `src/scenarios/`. This is
+the sole Scale-0 seed implementation, so WASM, worker, CLI, WebSocket, and
+native hosts all seed the lattice identically by construction.
 
 After handling the exact `empty` baseline, dispatch tries six prefix groups in
 order and returns `true` on the first match:

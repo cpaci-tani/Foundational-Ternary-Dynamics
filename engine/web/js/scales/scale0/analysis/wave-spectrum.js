@@ -1,4 +1,4 @@
-import { C_SPEED } from '../../constants.js';
+import { C_SPEED } from '../../../constants.js';
 
 export const RF_LATTICE_WAVE_SCENARIO_ID = 's0-field-rf-lattice-wave';
 export const LIGHT_LATTICE_WAVE_SCENARIO_ID = 's0-field-light-lattice-wave';

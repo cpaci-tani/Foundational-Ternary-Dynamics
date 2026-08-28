@@ -2,7 +2,7 @@
 //  engine/src/scenarios/s0_seed.cpp
 //
 //  Group: s0-seed-* (50 scenarios)
-//  JS source: engine/web/js/bridge/scenarios/s0-seed-scenarios.js
+//  Canonical seed implementation; the former JS mirror is archived.
 //
 //  Split out of engine/src/scenarios.cpp (ticket S1). The three internal
 //  static helpers seed_lepton / dp / tri moved with this group because
@@ -865,8 +865,8 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
     // existing gravity seed so the latency well (gravitational clock-slowdown)
     // is real; no new physics. The latency SAMPLER builds dτ/dt from the |J|²
     // flux field, so these reuse FLUX-producing wells (a locked-rest-mass body
-    // has zero flux → no proxy latency). Kept in sync with the JS delegating
-    // cases in engine/web/js/bridge/scenarios/s0-seed-scenarios.js.
+    // has zero flux → no proxy latency). The former JS delegating cases are
+    // retained only as historical provenance in the archived Scale-0 mirror.
     else if (name == "s0-seed-time-gravity-well" || name == "s0-seed-time-twin-clocks") {
         // Legacy IDs: s0-seed-time-{gravity-well,twin-clocks}.
         // Qualification: exact aliases of the plain native harmonic.  No well,

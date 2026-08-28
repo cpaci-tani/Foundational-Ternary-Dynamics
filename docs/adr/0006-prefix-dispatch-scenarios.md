@@ -13,23 +13,22 @@ while keeping dispatch O(1) and discoverable.
 
 ## Decision
 
-Scenarios are partitioned by filename prefix into 5 group files in
-`engine/web/js/bridge/scenarios/`: `flux-scenarios.js`, `light-scenarios.js`,
-`quantum-scenarios.js`, `s0-seed-scenarios.js`, `s0-field-scenarios.js`.
-Each group exports `setupXxxScenario(name, ctx)` that returns `true` if it
-handled the scenario (matched its prefix AND completed setup) or `false`
-if the prefix didn't match.
+Scenarios are partitioned by filename prefix into group translation units
+under `engine/src/scenarios/`: `flux.cpp`, `light.cpp`, `quantum.cpp`,
+`vacuum.cpp`, `s0_seed.cpp`, and `s0_field.cpp`. Each group returns `true` if
+it handled the scenario or `false` if the prefix did not match. The thin
+router in `engine/src/scenarios.cpp` owns ordering and deterministic RNG reset.
 
-The dispatcher `runSetupScenario` in `index.js` chains them via
-`.call(this, name, ctx)` so the scenario body has access to the bridge's
-mutation methods.
+**Amendment 2026-08-27:** the former JS mirror under
+`engine/web/js/bridge/scenarios/` was archived after Scale-0 became C++-only.
+The prefix-dispatch decision remains; the duplicate implementation does not.
 
 ## Consequences
 
-- (+) New scenarios drop into the appropriate group file
+- (+) New scenarios drop into the appropriate C++ group file
 - (+) New domains add a new group file + one line in the dispatcher chain
 - (+) Each scenario file is small and focused
-- (+) C++ side mirrors this partitioning (`engine/src/scenarios/<group>.cpp`)
+- (+) Every host reaches the same seed body through `ftd::dispatch_scenario`
 - (−) Slight indirection if you don't know the prefix convention
 
 ## Alternatives considered
@@ -41,5 +40,5 @@ mutation methods.
 
 ## References
 
-- Files: `engine/web/js/bridge/scenarios/`, `engine/src/scenarios/`
+- Files: `engine/src/scenarios.cpp`, `engine/src/scenarios/`
 - Cross-refs: CONTRACTS.md §4

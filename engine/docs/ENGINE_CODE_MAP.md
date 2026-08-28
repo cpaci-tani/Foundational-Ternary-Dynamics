@@ -242,8 +242,8 @@ scale0's; refresh-or-retire `viewport/REFACTOR_MAP.md`; keep this map + manifest
 
 | Item | LOC | Status |
 |---|--:|---|
-| `bridge/scenarios/` JS scenario dispatcher (`index.js::runSetupScenario` + 6 group files) | ~2000 | **Verified dead** — no live importer; live Scale-0 calls native C++ `setupScenario`. (NB: `cosmic-scenarios/` via `mock-scale5.js` **is** live — don't confuse.) |
-| Meta/Scale-6 triad (`meta-unit.js`, `meta-unit-geometry.js`, `meta-pedagogy.js`) | ~1270 | **Orphaned** — nothing imports them; not in `CONTROLLERS`. Wire or archive (owner decision). |
+| Former `bridge/scenarios/` JS seed dispatcher + 6 group files | ~2000 | **Archived 2026-08-27** — live Scale-0 calls native C++ `setupScenario`; the still-live wave analysis and genesis-panel term profile were extracted into the Scale-0 package. (NB: `cosmic-scenarios/` via `mock-scale5.js` **is** live — don't confuse.) |
+| Meta/Scale-6 triad (`meta-unit.js`, `meta-unit-geometry.js`, `meta-pedagogy.js`) | ~1270 | **Live** — reconnected through `scales/scale6/controller.js` and `app.js`. |
 | `MockBridge` doc ghosts (`bridge/README.md`, `bridge-contract.js`, `bridge-init.js` JSDoc) | — | Reference deleted `mock-bridge.js`/`mock-diagnostics.js` — cheap doc fix. |
 | Scale-1/2 mock-vs-C++ drift | — | Not dead, but **un-gated**: web Scale-1/2 physics is JS-only (`_aeHasWasm=false`); only Scale-0 has the golden gate. Any physics fix must be hand-mirrored. |
 | `engine/archive/` (12 files, ~5.6k LOC) | — | **Exemplary** provenance graveyard with `README.md` closure map — the model to follow, no action. |

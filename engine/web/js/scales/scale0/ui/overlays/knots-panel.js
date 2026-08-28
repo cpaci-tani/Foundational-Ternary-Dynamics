@@ -6,8 +6,8 @@ import { RingBuffer, telemetryHub } from '../../../../telemetry-hub.js';
 import { ChartHoverTooltip, formatChartValue } from '../../../../ui/charts/chart-hover-tooltip.js';
 
 // Small fixed-range [0,1] multi-trace line chart for a knot's contribution history.
-// (CanvasSparkline is single-trace + streaming + auto-ranged, so a direct draw of the
-// three fraction arrays is simpler + keeps the 0–100% axis honest.)
+// A generic streaming sparkline is single-trace and auto-ranged, so drawing the
+// three fraction arrays directly is simpler and keeps the 0–100% axis honest.
 const CONTRIB_TRACES = [
     { key: 'energyFrac', color: '#f6c453', label: 'energy' },
     { key: 'fluxFrac', color: '#5ad2e0', label: 'flux' },

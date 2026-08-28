@@ -17,8 +17,8 @@ keeps these docs honest; counts/line numbers may drift).
 > **Retired (do not reintroduce as the live Scale-0 path):** `MockBridge` /
 > `mock-bridge.js` / `MockBridgeProxy` / `mock-bridge-proxy.js`. Scale-0 physics
 > is owned by the WASM `RenderBridge` (`WasmBridge` in-thread or `WasmBridgeProxy`
-> off-thread). The JS tree under `bridge/scenarios/` is a **parity mirror** of
-> `engine/src/scenarios/*.cpp`, not the live seed path. See `bridge/README.md`.
+> off-thread). Scale-0 scenarios have one seed implementation:
+> `engine/src/scenarios/*.cpp`, reached through every live bridge.
 
 ---
 
@@ -242,9 +242,9 @@ worker teardown specs.
 | WASM worker proxy | `bridge/wasm-bridge-proxy.js` + `bridge/wasm-bridge.worker.js` |
 | Capability factory | `bridge/capabilities/install.js` + `scale0.js`/`scale1.js`/`scale2.js` |
 | Contract + direct-reads | `bridge/bridge-contract.js` |
-| Construction / re-export shim | `bridge-init.js` → `bridge/bridge-factory.js` |
+| Construction / re-export shim | `bridge-init.js` |
 | Selection / boot probe | `app.js` (native → WASM); worker ownership: `scales/scale0/runtime/scenario-loader.js` |
-| JS scenario parity mirror | `bridge/scenarios/` (not the live seed path) |
+| Native scenario implementation | `engine/src/scenarios/` |
 | Scale-2 JS MD fallback | `bridge/mock-atom-engine.js` |
 
 *`file:line` references reflect the source at writing; re-derive before relying on them.*

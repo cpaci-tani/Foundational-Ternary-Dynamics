@@ -57,22 +57,22 @@ You've just run two self-consistent simulations of the FTD substrate. Every deep
 
 ---
 
-## 2. The two backends — and which one you're on
+## 2. The Scale-0 backends — and which one you're on
 
-The dashboard has **two simulation backends**:
+Scale 0 always runs the C++ `RenderBridge`, hosted in one of three ways:
 
 | Backend | How activated | Perf | Scale 0 coverage |
 |---|---|---|---|
-| **WASM** (default) | Auto-loaded from `wasm/ftd_core.wasm` on page load | ~2× faster than Mock; uses SIMD + LTO | Registered Scale 0 scenarios |
-| **MockBridge** (JS fallback) | Used if WASM fails to load, OR you toggle via `?dev=1` URL param | Slower but modifiable without rebuild | Registered Scale 0 scenarios |
+| **WASM** (default) | Auto-loaded from `wasm/ftd_core.wasm` on page load | Compiled C++ in-browser | All registered Scale-0 scenarios |
+| **WASM worker** | Auto-selected when cross-origin isolation and `SharedArrayBuffer` are available | Same C++ engine off the UI thread | All registered Scale-0 scenarios |
+| **Native WebSocket** | Local `ws_server` is available | Native CPU/CUDA engine | All registered Scale-0 scenarios |
 
 **Which am I on?** Look at the `Engine` label top-left:
 - `WASM Engine` (green) — you're on the compiled C++ path.
-- `Mock Bridge` (amber) — you're on the JS fallback.
+- `Native GPU` — you're connected to the local C++/CUDA server.
 
-**Force MockBridge for development:** append `?dev=1` to the URL. Useful when iterating on scenario authoring (edit `engine/web/js/bridge/scenarios/*.js`, refresh page, changes live — no WASM rebuild needed).
-
-**Why two backends exist:** The WASM backend runs real FTD physics at native speed. MockBridge exists so new scenario authors can iterate in pure JS, and so CI can test the UI without an Emscripten toolchain. Both implementations are audited for parity — every UI scenario produces equivalent behavior on both.
+Every host uses the same C++ scenario and tick implementation. There is no
+separate JS Scale-0 physics fallback.
 
 ---
 
@@ -427,7 +427,7 @@ window._ftdBridge.setToggle('genesis', true);
 // ... or check: window._ftdBridge.getToggle('dual_substrate')
 ```
 
-### Compare JS-fallback vs WASM on a scenario
+### Inspect a WASM scenario programmatically
 ```js
 // Start in WASM (default)
 const w = window._ftdBridge;
@@ -436,10 +436,6 @@ for (let t = 0; t < 100; t++) w.tick();
 const wasmResult = w.getDiagnostics();
 console.log('WASM:', wasmResult);
 
-// Reload with ?dev=1 to force MockBridge, then:
-// const m = window._ftdBridge; m.setupScenario('flux-pulse');
-// for (let t = 0; t < 100; t++) m.tick();
-// console.log('Mock:', m.getDiagnostics());
 ```
 
 ### Sample a field programmatically
@@ -482,9 +478,9 @@ forward navigation precise:
 
 ## 14. Troubleshooting
 
-### "Mock Bridge" shown instead of "WASM Engine"
-- **Cause:** Browser blocked the .wasm file (common in IE/old Edge), or `?dev=1` is in URL.
-- **Fix:** Use Chrome/Edge/Firefox; remove `?dev=1`; check console for 404s on `/wasm/ftd_core.wasm`.
+### WASM engine fails to initialize
+- **Cause:** Browser blocked the `.wasm` file or the asset was not deployed.
+- **Fix:** Use a current Chrome/Edge/Firefox build and check the console for 404s on `/wasm/ftd_core.wasm`.
 
 ### "Dashboard loads but no overlays render"
 - **Cause:** WebGL context failed.
@@ -494,7 +490,7 @@ forward navigation precise:
 - **Cause:** Flux field is below the minimum threshold. The overlay renders only voxels with `|ψ|² > 1e-4`.
 - **Fix:** Pick a scenario that actually seeds flux (e.g. `flux-pulse`). Verify via `window._ftdBridge.getDiagnostics().totalFlux > 0`.
 
-### "Scenario loads but lattice stays empty on WASM (not Mock)"
+### "Scenario loads but lattice stays empty on WASM"
 - All 84 UI scenarios run on WASM. If you see this, hard-refresh (Ctrl+Shift+R) to clear cached WASM binary.
 
 ### "Sim runs too fast / blinks particles"
@@ -508,7 +504,7 @@ forward navigation precise:
 ### "Scenario xyz doesn't work"
 - Check the console for a JS error.
 - Try `window._ftdBridge.setupScenario('xyz')` directly. If no error, look at tick 0 state via `getDiagnostics()`.
-- Cross-check: does the scenario exist in BOTH `engine/web/js/bridge/scenarios/*.js` (JS side) AND `engine/src/scenarios.cpp` (C++ side)? If only one, that's the bug.
+- Cross-check that the id exists in both the UI registry and the matching C++ group under `engine/src/scenarios/`.
 
 ---
 
@@ -516,18 +512,15 @@ forward navigation precise:
 
 ### Adding a new scenario
 
-Scenarios live in **two places** that must stay in sync:
-1. **JS side** — `engine/web/js/bridge/scenarios/<group>-scenarios.js`
-2. **C++ side** — `engine/src/scenarios.cpp` (mirror the JS body in corresponding `setup_<group>_scenario` function)
-3. **UI registry** — `engine/web/js/scales/scale0/scenario-registry.js` (adds the dropdown entry)
+Scenarios have one physics implementation plus their UI descriptor:
+1. **C++ seed** — the matching group under `engine/src/scenarios/`
+2. **UI registry** — `engine/web/js/scales/scale0/scenario-registry.js` (adds the dropdown entry)
 
 For a new prefix group, also register in:
-- `engine/web/js/bridge/scenarios/index.js` (JS dispatcher)
 - `engine/include/ftd/scenarios.h` + `engine/src/scenarios.cpp::dispatch_scenario` (C++ dispatcher)
 
-> **Note:** The `scenario-parity.spec.js` test will fail CI if you add a scenario
-> to one side and forget the other. Add it to BOTH the JS group file AND
-> `engine/src/scenarios.cpp`'s corresponding `setup_<group>_scenario` function,
+> **Note:** The `scenario-parity.spec.js` test fails if the UI registry and
+> C++ dispatcher drift. Add the id to the matching C++ group and the registry,
 > OR add the name to the `KNOWN_LEGACY_ONLY` allowlist in
 > `engine/web/tests/scenario-parity.spec.js` if it's intentionally backward-compat-only.
 

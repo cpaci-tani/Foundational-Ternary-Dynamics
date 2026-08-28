@@ -9,9 +9,8 @@ web engine:
 - `engine/web/docs/INDEX.md`
 - `engine/web/docs/SPEC_SCALE0_BRIDGE_ARCHITECTURE.md`
 - `engine/web/docs/SPEC_SCALE0_RUNTIME_PIPELINE.md`
-- `engine/web/docs/SPEC_SCALE0_SCENARIO_ARCHITECTURE.md`
+- `engine/SCENARIO_ARCHITECTURE.md`
 - `engine/web/js/bridge/README.md`
-- `engine/web/js/bridge/scenarios/README.md`
 - `engine/web/js/scales/scale0/README.md`
 
 If a detailed Scale-0 rule here conflicts with those web specs, the web spec
@@ -139,25 +138,23 @@ Rules:
 
 ## 4. Scale-0 Scenario Contract
 
-The current Scale-0 scenario system has multiple coordinated layers:
+The current Scale-0 scenario system has coordinated UI and native layers:
 
 - UI registry: `engine/web/js/scales/scale0/scenario-registry.js`
-- JS seeds: `engine/web/js/bridge/scenarios/*.js`
-- C++ seeds: `engine/src/scenarios/*.cpp`
+- Canonical seeds: `engine/src/scenarios/*.cpp`
 - Metadata: `engine/web/js/config/scenarios.js`
 - Toggle profiles: `engine/web/js/config/toggles.js`
 
-The authoritative scenario architecture is
-`engine/web/docs/SPEC_SCALE0_SCENARIO_ARCHITECTURE.md`.
+The authoritative scenario architecture is `engine/SCENARIO_ARCHITECTURE.md`.
 
 Rules:
 
-1. Scenario ids must stay consistent across registry, JS dispatcher, C++
-   dispatcher, metadata, and tests.
-2. A JS scenario handler returns `true` when it handles an id and `false` when
+1. Scenario ids must stay consistent across the UI registry, C++ dispatcher,
+   metadata, and tests.
+2. C++ scenario groups return `true` when they handle an id and `false` when
    the prefix does not apply.
-3. Scenario handlers receive `(name, harness, ctx)` and should use shared
-   helpers from `engine/web/js/bridge/scenarios/_helpers.js`.
+3. Browser scenario loading delegates through the bridge to
+   `ftd::dispatch_scenario`; do not add a second JS seed implementation.
 4. Prefer declarative toggle profiles in `SCALE0_SCENARIO_OVERRIDES` over
    imperative scenario-body toggle mutation. Bridge reset currently prevents
    known leaks, but imperative mutations remain harder to audit and document.

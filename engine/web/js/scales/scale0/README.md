@@ -38,7 +38,7 @@ Plus: `getFluxMock` (legacy name for the off-thread `WasmBridgeProxy`),
 
 ## Dependencies
 
-- **Imports from**: `../../constants.js`, `../../config/toggles.js`, `../../bridge/scenarios/`, `../../bridge-init.js` (re-export shim; underlying classes live in `../../bridge/`), `../../viewport.js` (1256-LOC orchestrator that composes 4 sub-renderers — see below)
+- **Imports from**: `../../constants.js`, `../../config/toggles.js`, `../../bridge-init.js` (re-export shim; underlying classes live in `../../bridge/`), `../../viewport.js` (1256-LOC orchestrator that composes 4 sub-renderers — see below)
 - **Imported by**: `../../app.js` (dashboard root)
 - **No cross-scale imports** (Scale 1, 2, etc. are independent)
 
@@ -64,8 +64,7 @@ for the canonical shape and the rules that govern who reads/writes what.
    a. If `wasmWorkerEligible` (COI + SAB + primary `isWasm` + worker not disabled), construct
       `WasmBridgeProxy` and store it in legacy `fluxMock` / `useFluxMock` slots
    b. Otherwise keep physics on `ctx.bridge` (`WasmBridge` or WebSocketBridge)
-   c. Active bridge runs `setupScenario` → WASM `ftd::dispatch_scenario` (JS `bridge/scenarios/`
-      is parity-only; registry `load(harness)` always uses the catalog id)
+   c. Active bridge runs `setupScenario` → native `ftd::dispatch_scenario`
    d. `applyToggleDefaults` + post-load profile / research terms on the active owner
    e. `viewport.setLatticeSize(activeN)` when viewport N differs from active bridge
    f. Resets visual state, restores overlay prefs, marks `fieldNeedsUpdate` + `latticeNeedsUpload`
@@ -102,4 +101,4 @@ Worker init failure → `onInitFailure` falls back to in-thread WASM and latches
 - **Add a new panel** → drop into `ui/panels/` or `ui/overlays/`; register in `bindings.js`
 - **Add a new control** → drop into `ui/controls/`; wire in `wire.js` (use `dualHarness` / active-owner helpers)
 - **Add a new tick phase** → extend `runtime/tick.js`; document the phase order
-- **Change scenario behavior** → edit `runtime/scenario-loader.js` (loader logic) or `bridge/scenarios/<group>-scenarios.js` (per-scenario setup)
+- **Change scenario behavior** → edit `runtime/scenario-loader.js` (loader logic) or `engine/src/scenarios/<group>.cpp` (per-scenario setup)

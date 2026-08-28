@@ -7,7 +7,7 @@ It is the cross-scale companion to:
 - [VISUAL_GUIDE.md](VISUAL_GUIDE.md) - learner-facing view of what the simulator teaches.
 - [CALLSTACKS.md](CALLSTACKS.md) - call graphs for primary runtime features.
 - [SPEC_ENGINE.md](SPEC_ENGINE.md) - detailed engine reference.
-- [web/docs/SPEC_SCALE0_SCENARIO_ARCHITECTURE.md](web/docs/SPEC_SCALE0_SCENARIO_ARCHITECTURE.md) - deep Scale 0 scenario subsystem audit.
+- [web/docs/SPEC_SCALE0_SCENARIO_ARCHITECTURE.md](web/docs/SPEC_SCALE0_SCENARIO_ARCHITECTURE.md) - historical pre-consolidation subsystem audit.
 
 ## 1. What A Scenario Is
 
@@ -35,7 +35,7 @@ engines, but the same ownership pattern recurs.
 | Catalog / registry | User-facing ids, titles, categories, epistemic labels | `web/js/scales/scale0/scenario-registry.js`, `web/js/config/scenarios.js` |
 | Loader / lifecycle | Reset, toggle defaults, bridge choice, UI sync, resize/reload | `web/js/scales/*/controller.js`, `web/js/scales/scale0/runtime/scenario-loader.js` |
 | Bridge capability | Common method such as `setupScenario`, plus injection helpers | `web/js/physics/physics-harness.js`, `web/js/bridge/*`, `wasm/ftd_wasm.cpp` |
-| Seed bodies | Imperative setup switch/cases that place initial objects/fields | `web/js/bridge/scenarios/*.js`, `src/scenarios/*.cpp`, `web/js/scales/*/scenarios.js` |
+| Seed bodies | Imperative setup switch/cases that place initial objects/fields | `src/scenarios/*.cpp`, `web/js/scales/*/scenarios.js` |
 | Toggle profiles | Scenario-owned toggle defaults and boundary profiles | `web/js/config/toggles.js` |
 | Static manifests | Data catalogs for docs/configuration surfaces; not always the live runtime source | `config/scenarios/*.json` |
 
@@ -45,20 +45,20 @@ partially wired.
 
 ## 3. Scale 0 Lattice Scenarios
 
-Scale 0 is the most developed scenario stack because it has two execution
-implementations: JS MockBridge and C++ RenderBridge through WASM/native paths.
+Scale 0 is the most developed scenario stack. It has one seed implementation
+in C++, reached through in-thread WASM, worker WASM, native WebSocket, CLI, and
+native-host paths.
 The live dashboard path is spread across several definition layers:
 
 | Concern | File |
 |---|---|
 | UI descriptors and optgroups | [web/js/scales/scale0/scenario-registry.js](web/js/scales/scale0/scenario-registry.js) |
 | Runtime load/resize/tick owner | [web/js/scales/scale0/runtime/scenario-loader.js](web/js/scales/scale0/runtime/scenario-loader.js) |
-| JS dispatcher and seed bodies | [web/js/bridge/scenarios/index.js](web/js/bridge/scenarios/index.js), [web/js/bridge/scenarios/](web/js/bridge/scenarios/) |
 | C++ dispatcher and seed bodies | [include/ftd/scenarios.h](include/ftd/scenarios.h), [src/scenarios.cpp](src/scenarios.cpp), [src/scenarios/](src/scenarios/) |
 | WASM binding | [wasm/ftd_wasm.cpp](wasm/ftd_wasm.cpp) |
 | Toggle/boundary overrides | [web/js/config/toggles.js](web/js/config/toggles.js) |
 | Metadata and explanatory text | [web/js/config/scenarios.js](web/js/config/scenarios.js) |
-| Deep subsystem spec | [web/docs/SPEC_SCALE0_SCENARIO_ARCHITECTURE.md](web/docs/SPEC_SCALE0_SCENARIO_ARCHITECTURE.md) |
+| Historical subsystem audit | [web/docs/SPEC_SCALE0_SCENARIO_ARCHITECTURE.md](web/docs/SPEC_SCALE0_SCENARIO_ARCHITECTURE.md) |
 
 ### 3.1 Descriptor Contract
 
@@ -90,40 +90,39 @@ UI select / app caller
   -> scale0/controller.js loadScenario(ctx, id)
   -> runtime/scenario-loader.js loadScale0Scenario(ctx, state, viewportAdapter, id)
      -> getScale0Scenario(id)
-     -> shouldUseFluxMock(ctx.bridge, id)
-     -> maybe create MockBridge / MockBridgeProxy
-     -> applyToggleDefaults(mainScale0, mockScale0, id)
+     -> choose in-thread, worker, or native bridge ownership
+     -> applyToggleDefaults(activeScale0, id)
      -> reset visual state and auxiliary defaults
      -> getPhysicsHarness(active bridge)
      -> scenario.load(harness, params)
         -> harness.setupScenario(id)
         -> bridge.setupScenario(id)
-        -> JS runSetupScenario(...) or C++ dispatch_scenario(...)
+        -> C++ dispatch_scenario(...)
      -> apply late boundary/gravity/wave flags
      -> sync UI selection, sliders, override markers, and overlay prefs
 ```
 
-`stepScale0(...)` then ticks the owner chosen during load. If the scenario is
-mock-owned, the flux mock is ticked. Otherwise the main bridge is ticked.
+`stepScale0(...)` then ticks the owner chosen during load. The legacy
+`fluxMock` state slot now holds only a `WasmBridgeProxy`, never a JS physics
+engine.
 
 ### 3.3 Bridge Ownership
 
-`shouldUseFluxMock(...)` decides whether the scenario runs on the JS mock path
-or the primary bridge:
+`wasmWorkerEligible(...)` decides whether Scale 0 runs on an off-thread WASM
+proxy or the primary bridge:
 
-1. Native GPU and WebSocket bridges do not use the flux mock.
-2. `flux-*` scenarios are mock-owned by default.
-3. Other scenarios use the mock only if the active bridge cannot expose a flux
-   volume.
+1. Native GPU and WebSocket bridges remain the primary owner.
+2. Cross-origin-isolated WASM sessions may use the worker proxy.
+3. Other sessions use the in-thread WASM bridge.
 
-When worker conditions are available, `MockBridgeProxy` can put that mock in a
-Web Worker backed by `SharedArrayBuffer`. This creates a two-bridge setup:
+When worker conditions are available, `WasmBridgeProxy` runs the same C++
+engine in a Web Worker backed by `SharedArrayBuffer`. This creates a two-bridge setup:
 `ctx.bridge` remains the primary engine, while `state.fluxMock` owns the actual
 Scale 0 ticking for that scenario.
 
-### 3.4 Dispatch And Parity
+### 3.4 Dispatch
 
-JS and C++ use the same prefix-dispatch architecture:
+The canonical C++ dispatcher uses a prefix-partitioned architecture:
 
 ```text
 flux-*       -> flux scenario group
@@ -134,13 +133,10 @@ s0-seed-*    -> particle/aggregate seed group
 s0-field-*   -> field configuration group
 ```
 
-JS dispatch lives in [web/js/bridge/scenarios/index.js](web/js/bridge/scenarios/index.js).
 C++ dispatch lives in [src/scenarios.cpp](src/scenarios.cpp) and is declared in
 [include/ftd/scenarios.h](include/ftd/scenarios.h). The C++ path resets a
 thread-local scenario RNG at the start of each `dispatch_scenario(...)` call so
-stochastic C++ seeds are reproducible per setup call. JS `Math.random()` is not
-bit-exact with that stream, so stochastic parity is structural/statistical, not
-sample-for-sample identical.
+stochastic seeds are reproducible per setup call.
 
 ### 3.5 Toggle Ownership
 
@@ -163,16 +159,14 @@ and [include/ftd/scenarios.h](include/ftd/scenarios.h).
 
 To add a fully wired Scale 0 scenario:
 
-1. Add the JS seed case in the correct group file under
-   [web/js/bridge/scenarios/](web/js/bridge/scenarios/).
-2. Mirror the seed in the matching C++ group under [src/scenarios/](src/scenarios/).
-3. Register the id in [web/js/scales/scale0/scenario-registry.js](web/js/scales/scale0/scenario-registry.js).
-4. Add metadata/explanatory text in [web/js/config/scenarios.js](web/js/config/scenarios.js) if the UI or knowledge base needs it.
-5. Add toggle/boundary overrides in [web/js/config/toggles.js](web/js/config/toggles.js) when non-default behavior is required.
-6. Run the web parity/health specs that cover scenario inventory and loading.
+1. Add the seed in the matching C++ group under [src/scenarios/](src/scenarios/).
+2. Register the id in [web/js/scales/scale0/scenario-registry.js](web/js/scales/scale0/scenario-registry.js).
+3. Add metadata/explanatory text in [web/js/config/scenarios.js](web/js/config/scenarios.js) if the UI or knowledge base needs it.
+4. Add toggle/boundary overrides in [web/js/config/toggles.js](web/js/config/toggles.js) when non-default behavior is required.
+5. Run the web parity/health specs that cover scenario inventory and loading.
 
-The root rule is simple: scenario id, JS seed, C++ seed, registry entry, and
-toggle profile must agree.
+The root rule is simple: scenario id, C++ seed, registry entry, and toggle
+profile must agree.
 
 ## 4. Macro-Scale Scenario Patterns
 
@@ -233,7 +227,7 @@ manifests for scale catalogs, documentation, and data-driven experiments. They
 should not be assumed to be the authoritative live dashboard registry unless a
 specific controller imports them.
 
-Current live dashboard Scale 0 dispatch is JS-registry plus JS/C++ seed bodies.
+Current live dashboard Scale 0 dispatch is a JS registry over C++ seed bodies.
 If a scenario id is added only to a JSON manifest, it may be visible to a config
 reader but still absent from the browser dropdown, the C++ dispatcher, or the
 WASM path.
@@ -269,7 +263,7 @@ explicitly promotes one to a formal benchmark.
 |---|---|
 | Scenario absent from dropdown | `web/js/scales/scale0/scenario-registry.js` or scale controller select population |
 | Scenario dropdown exists but seeds nothing on WASM | `include/ftd/scenarios.h`, `src/scenarios.cpp`, matching `src/scenarios/*.cpp` group |
-| JS mock and WASM differ | Compare `web/js/bridge/scenarios/<group>.js` to `src/scenarios/<group>.cpp`; run parity specs |
+| UI and native scenario ids differ | Compare `web/js/scales/scale0/scenario-registry.js` to `src/scenarios/<group>.cpp`; run parity specs |
 | Toggle appears stuck after switching scenarios | `web/js/config/toggles.js` whitelist and `runtime/scenario-loader.js::applyToggleDefaults` |
 | Boundary or absorbing behavior changes unexpectedly | `SCALE0_SCENARIO_BOUNDARY`, `SCALE0_ABSORBING_SCENARIOS`, late boundary flags in the loader |
 | Resize loses scenario state | `resizeScale0Lattice(...)` and fluxMock rebuild logic |

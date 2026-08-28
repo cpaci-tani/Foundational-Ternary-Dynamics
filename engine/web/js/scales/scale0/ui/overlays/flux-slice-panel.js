@@ -1073,18 +1073,6 @@ export class FluxSlicePanel {
  * captured by the first mount would silently keep reading the original
  * ctx, leaving the panel pointed at a torn-down bridge.
  */
-export function mountFluxSlicePanel(parentEl, getBridge) {
-    if (typeof window !== 'undefined' && window.__ftdFluxSlicePanel) {
-        const existing = window.__ftdFluxSlicePanel;
-        if (typeof getBridge === 'function') existing.getBridge = getBridge;
-        return existing;
-    }
-    const panel = new FluxSlicePanel({ getBridge });
-    panel.init(parentEl);
-    if (typeof window !== 'undefined') window.__ftdFluxSlicePanel = panel;
-    return panel;
-}
-
 /**
  * Side-panel-tab init function. Mounts the flux-slice panel inside the
  * #panel-flux-slice slot in dock mode, with auto-shrinking tile sizing

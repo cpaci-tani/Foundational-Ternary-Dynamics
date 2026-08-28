@@ -1,11 +1,5 @@
 export { DiagnosticsPanelComponent, initDiagnosticsPanel } from './diagnostics-panel/component.js';
 export { ChartsPanelComponent, initChartsPanel } from './charts-panel/component.js';
 export { LagrangianPanelComponent, initLagrangianPanel } from './lagrangian-panel/component.js';
-export { InspectorPanelComponent, initInspectorPanel } from './inspector-panel/component.js';
-export { ZooPanelComponent, initZooPanel } from './zoo-panel/component.js';
-export { OnticPanelComponent, initOnticPanel } from './ontic-panel/component.js';
-export { PhysicsPanelComponent, initPhysicsPanel } from './physics-panel/component.js';
-export { PlanetaryPanelComponent, initPlanetaryPanel } from './planetary-panel/component.js';
-export { CosmicInfoPanelComponent, initCosmicInfoPanel } from './cosmic-info-panel/component.js';
 export { ScenePanelComponent, initScenePanel } from './scene-panel/component.js';
 export { TelemetryGridPanelComponent, initTelemetryGridPanel } from './telemetry-grid/component.js';

@@ -2,7 +2,7 @@
 //  engine/src/scenarios/s0_field.cpp
 //
 //  Group: s0-field-* (9 scenarios)
-//  JS source: engine/web/js/bridge/scenarios/s0-field-scenarios.js
+//  Canonical seed implementation; the former JS mirror is archived.
 //
 //  Split out of engine/src/scenarios.cpp (ticket S1).
 // ==========================================================================

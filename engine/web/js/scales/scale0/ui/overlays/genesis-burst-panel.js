@@ -15,7 +15,7 @@
 
 import { BaseComponent } from '../../../../core/component.js';
 import { K_GENESIS } from '../../../../constants.js';
-import { configureGenesisClusterTerms } from '../../../../bridge/scenarios/_helpers.js';
+import { configureGenesisClusterTerms } from '../../runtime/genesis-cluster-profile.js';
 
 const PANEL_ID = 'genesis-burst-panel';
 const SCENARIO_ID = 's0-seed-cluster-law';

@@ -1,7 +1,7 @@
 /**
  * @file engine/web/js/bridge-init.js
  * @purpose Bridge barrel + capability-getter installer. Re-exports the
- *          bridge classes (WasmBridge, CosmicMockBridge) and the
+ *          Scale-0 bridge classes and the
  *          createBridge() factory; on module load, also installs the lazy
  *          `bridge.capabilities` getter on WasmBridge and WebSocketBridge
  *          prototypes (CONTRACTS.md §2).
@@ -19,5 +19,14 @@ installCapabilityGetter(WebSocketBridge.prototype);
 
 // ── Public re-exports ──────────────────────────────────────────────
 export { WasmBridge, WebSocketBridge };
-export { CosmicMockBridge } from './bridge/mock-scale5.js';
-export { createBridge } from './bridge/bridge-factory.js';
+
+/**
+ * Create the canonical in-thread WASM bridge.
+ * @param {number} latticeSize cubic lattice dimension
+ * @returns {Promise<WasmBridge>}
+ */
+export async function createBridge(latticeSize = 33) {
+    const wasm = new WasmBridge();
+    if (await wasm.init(latticeSize)) return wasm;
+    throw new Error('WASM engine initialization failed — check console for details.');
+}

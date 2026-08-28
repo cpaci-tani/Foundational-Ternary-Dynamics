@@ -492,9 +492,8 @@ export class PhysicsHarness {
 
     /**
      * Set up a scenario by name. Defers to the underlying bridge: the
-     * WASM bridge dispatches to the canonical C++ scenario library
-     * (`engine/src/scenarios/*.cpp`); the MockBridge dispatches to its
-     * native JS scenario library (`engine/web/js/bridge/scenarios/*`).
+     * Scale-0 bridge dispatches to the canonical C++ scenario library
+     * (`engine/src/scenarios/*.cpp`).
      * Returns true iff the bridge handled the name.
      */
     setupScenario(name) {

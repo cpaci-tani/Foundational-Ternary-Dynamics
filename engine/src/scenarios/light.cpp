@@ -2,7 +2,7 @@
 //  engine/src/scenarios/light.cpp
 //
 //  Group: light-* (4 scenarios)
-//  JS source: engine/web/js/bridge/scenarios/light-scenarios.js
+//  Canonical seed implementation; the former JS mirror is archived.
 //
 //  Split out of engine/src/scenarios.cpp (ticket S1).
 // ==========================================================================

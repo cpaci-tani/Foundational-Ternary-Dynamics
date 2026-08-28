@@ -1,13 +1,13 @@
 # ADR 0002 — Scale 0 scenario definition: guard four layers, or unify to one
 
-**Status:** Proposed (STUB — awaiting a direction decision; do not treat as Accepted)
+**Status:** Superseded 2026-08-27 — duplicate JS seed layer retired
 **Decider:** _unassigned_
 **Context:** Scale-0 scenario subsystem audit + modularization plan
 
 ## Context
 
-A Scale-0 scenario is defined across **four parallel layers** keyed only by a string id — the UI
-registry (`scales/scale0/scenario-registry.js`), the JS seed impl (`bridge/scenarios/*.js`), the
+A Scale-0 scenario was defined across **four parallel layers** keyed only by a string id — the UI
+registry (`scales/scale0/scenario-registry.js`), the former JS seed impl, the
 C++ seed impl (`engine/src/scenarios/*.cpp`), and the metadata (`config/scenarios.js`) — plus a
 toggle profile (`config/toggles.js`). Full treatment in
 [`../SPEC_SCALE0_SCENARIO_ARCHITECTURE.md`](../SPEC_SCALE0_SCENARIO_ARCHITECTURE.md).
@@ -25,7 +25,12 @@ deferring this decision until Tier 1's guards provide evidence.
 
 ## Decision
 
-**TBD.** Choose one once Tier 1 lands:
+**Resolved.** The live system keeps the registry, C++ seed, metadata, and toggle
+profile, and removes the second seed implementation. Scenario parity now checks
+the UI registry directly against C++. The retired JS mirror is preserved under
+`engine/archive/web_scale0_scenario_mirror_2026-08-27/`.
+
+The original alternatives were:
 
 - **Direction A — keep four layers, guard every edge.** Extend the parity guard to custom-literal
   registry entries, add registrymetadata + overlay-setcanonical-keys assertions, and document

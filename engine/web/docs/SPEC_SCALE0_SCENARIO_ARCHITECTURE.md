@@ -1,6 +1,12 @@
 # SPEC — Scale 0 Scenario Subsystem Architecture
 
-**Status:** foundation reference (descriptive — documents the system as built).
+> **Superseded 2026-08-27.** This document preserves the four-layer
+> JS/C++-mirror design for historical audit provenance. The JS seed mirror was
+> archived after C++ became the sole Scale-0 scenario implementation. The live
+> architecture is documented in [`engine/SCENARIO_ARCHITECTURE.md`](../../SCENARIO_ARCHITECTURE.md).
+> Paths under `bridge/scenarios/` below are intentionally historical.
+
+**Status:** superseded historical reference.
 **Companion docs:** the gap/drift findings live in
 [`audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md`](audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md);
     the current per-scenario qualification and promotion plan in

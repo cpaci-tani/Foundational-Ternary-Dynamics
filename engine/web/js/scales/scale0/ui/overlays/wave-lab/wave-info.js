@@ -14,7 +14,7 @@ import {
     setWaveScenarioSettings,
     SOUND_LATTICE_WAVE_SCENARIO_ID,
     SOUND_COLLISION_SCENARIO_ID,
-} from '../../../../../bridge/scenarios/spectrum-comparator.js';
+} from '../../../analysis/wave-spectrum.js';
 import { markFieldDirty, setLatticeNeedsUpload } from '../../../state/store.js';
 import { cardStyle, titleStyle, tagBadge, formatExp, formatFixed } from '../_card-helpers.js';
 import { LatticeSynth } from '../../../../../audio/lattice-synth.js';

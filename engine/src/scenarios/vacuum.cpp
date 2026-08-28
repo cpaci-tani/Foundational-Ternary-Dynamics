@@ -2,7 +2,7 @@
 //  engine/src/scenarios/vacuum.cpp
 //
 //  Group: s0-vacuum-* (15 scenarios)
-//  JS source: engine/web/js/bridge/scenarios/vacuum-scenarios.js
+//  Canonical seed implementation; the former JS mirror is archived.
 //  Spec:      engine/web/docs/SPEC_VACUUM_PARTICLE_SCENARIOS.md
 //
 //  12 of 15 case bodies mirror s0-seed-* injectors verbatim (just renamed);

@@ -1,29 +1,25 @@
 // @ts-check
 /**
- * JS ↔ C++ scenario-parity guard.
+ * UI ↔ C++ scenario-parity guard.
  *
- * After the April-2026 WASM-scenario port (engine/src/scenarios.cpp), all 83
- * UI-exposed Scale-0 scenarios have C++ implementations. The JS scenario group
- * files (engine/web/js/bridge/scenarios/*.js) are kept as dead-code until Phase 7
- * cleanup; in the meantime this lint ensures C++ coverage hasn't drifted.
+ * After the April-2026 WASM-scenario port, C++ became the sole live Scale-0
+ * seed implementation. The former JS parity mirror was archived in the
+ * 2026-08-27 redundant-engine cleanup. This lint now compares the two live
+ * definition layers directly: the dashboard registry and the C++ dispatcher.
  *
  * This is refactoring-analyst ticket RF-5 (Option B): a cheap lint that runs
  * as part of the Playwright suite and fails CI if the two sides drift.
  *
  * What it checks
  * --------------
- *   1. Every `case '…':` in JS group files has a matching C++ `name == "…"`
- *      branch in scenarios.cpp.
- *   2. Every C++ branch has a matching JS case (minus a small allowlist of
- *      legacy-only names kept for backward compat in ftd_wasm.cpp's post-
- *      dispatcher switch — listed in KNOWN_LEGACY_ONLY below).
- *   3. Every scenario in the UI validation manifest (scenario-validation.js) has a JS
- *      implementation.
+ *   1. Every UI scenario has a C++ `name == "…"` dispatcher branch.
+ *   2. Every C++ legacy alias is either shared or explicitly allowlisted.
+ *   3. The UI registry, catalog, validation manifest, and C++ dispatcher agree.
  *
  * Why node: no WASM load needed; we just parse source text. Fast.
  */
 import { test, expect } from '@playwright/test';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -43,51 +39,7 @@ const KNOWN_LEGACY_ONLY = new Set([
     'production', 'scattering', 'triad', 'vacuum', 'wave',
 ]);
 
-// Scenarios that are delegated to another scenario in their JS load() method,
-// so they don't need a standalone JS mock-bridge case or C++ implementation.
-const DELEGATED_SCENARIOS = new Set([
-    's0-seed-ew-phase-transition',
-]);
-
 // ── Extractors ──────────────────────────────────────────────────────
-
-function extractJsScenarios() {
-    const groupDir = join(WEB_ROOT, 'js', 'bridge', 'scenarios');
-    const allFiles = readdirSync(groupDir).filter((f) => f.endsWith('.js'));
-    // Scenario-id constants defined anywhere in the group dir, e.g.
-    // spectrum-comparator.js: `export const RF_LATTICE_WAVE_SCENARIO_ID =
-    // 's0-field-rf-lattice-wave';` — group files use these in identifier-form
-    // `case RF_LATTICE_WAVE_SCENARIO_ID:` labels, which the string-literal
-    // regex below cannot see (revision 0.4 lint-blindness fix: the four
-    // spectrum-comparator wave scenarios were implemented all along).
-    const idConsts = new Map();
-    for (const f of allFiles) {
-        const src = readFileSync(join(groupDir, f), 'utf8');
-        const reConst = /const\s+([A-Z][A-Z0-9_]*)\s*=\s*['"]([^'"]+)['"]/g;
-        let m;
-        while ((m = reConst.exec(src))) idConsts.set(m[1], m[2]);
-    }
-    const files = allFiles.filter((f) =>
-        f.endsWith('-scenarios.js') && f !== 'index.js'
-    );
-    const names = new Set();
-    for (const f of files) {
-        const src = readFileSync(join(groupDir, f), 'utf8');
-        // Matches `case 'foo-bar':` (single or double quotes)
-        const re = /case\s+['"]([^'"]+)['"]\s*:/g;
-        let m;
-        while ((m = re.exec(src))) names.add(m[1]);
-        // Matches `case SOME_SCENARIO_ID:` resolved through idConsts.
-        const reIdent = /case\s+([A-Z][A-Z0-9_]*)\s*:/g;
-        while ((m = reIdent.exec(src))) {
-            const resolved = idConsts.get(m[1]);
-            if (resolved) names.add(resolved);
-        }
-    }
-    // 'empty' is handled by the dispatcher itself (index.js), not in any group file.
-    names.add('empty');
-    return names;
-}
 
 function extractCppScenarios() {
     // April 2026 post-audit cleanup (ticket S1): scenarios.cpp was split into
@@ -220,19 +172,6 @@ function extractCppToggleSpecs() {
     return entries;
 }
 
-function extractFreeWaveDisabledTerms() {
-    const src = readFileSync(
-        join(WEB_ROOT, 'js', 'bridge', 'scenarios', '_helpers.js'), 'utf8');
-    const blockMatch = src.match(
-        /export const FREE_WAVE_DISABLED_TERMS = Object\.freeze\(\[([\s\S]*?)\]\);/);
-    if (!blockMatch) return new Set();
-    const entries = new Set();
-    const re = /'([a-z0-9_]+)'/g;
-    let m;
-    while ((m = re.exec(blockMatch[1]))) entries.add(m[1]);
-    return entries;
-}
-
 // SCALE0_TOGGLES defaults are the dashboard's SCENARIO-RESET baseline, not the
 // C++ construction default — four toggles intentionally diverge (the dashboard
 // baseline profile starts them off; the C++ TermToggles constructor starts
@@ -300,53 +239,9 @@ test.describe('Toggle parity (JS whitelist ⊆ C++ TOGGLE_SPECS)', () => {
         expect(problems, problems.join('\n')).toEqual([]);
     });
 
-    test('isolated JS wave profile disables every non-wave C++ toggle', () => {
-        const cpp = extractCppToggleSpecs();
-        const disabled = extractFreeWaveDisabledTerms();
-        const expected = new Set([...cpp.keys()].filter(
-            (name) => name !== 'wave_propagation' && name !== 'gauss_projection'));
-        const missing = [...expected].filter((name) => !disabled.has(name));
-        const unknown = [...disabled].filter((name) => !cpp.has(name));
-        expect(disabled.size, 'FREE_WAVE_DISABLED_TERMS extraction failed').toBeGreaterThan(30);
-        expect(missing, `non-wave C++ toggles omitted from the isolated JS profile: ${missing.join(', ')}`)
-            .toEqual([]);
-        expect(unknown, `isolated JS profile contains unknown toggles: ${unknown.join(', ')}`)
-            .toEqual([]);
-    });
 });
 
-test.describe('Scenario parity (JS ↔ C++)', () => {
-    test('every JS scenario has a C++ implementation in scenarios.cpp', () => {
-        const js = extractJsScenarios();
-        const cpp = extractCppScenarios();
-        const missing = [];
-        for (const name of js) {
-            if (name === 'empty') continue; // handled by dispatcher, not group
-            if (!cpp.has(name)) missing.push(name);
-        }
-        expect(missing,
-            `${missing.length} JS scenarios are missing from engine/src/scenarios.cpp.\n` +
-            `Add a corresponding C++ branch (name == "X") or remove the JS entry.\n` +
-            `Missing:\n  - ${missing.join('\n  - ')}`
-        ).toEqual([]);
-    });
-
-    test('every C++ scenario in scenarios.cpp has a JS implementation', () => {
-        const js = extractJsScenarios();
-        const cpp = extractCppScenarios();
-        const missing = [];
-        for (const name of cpp) {
-            // DELEGATED_SCENARIOS reach their physics via another scenario in
-            // the JS registry load(); C++ keeps a native branch for CLI/tests.
-            if (DELEGATED_SCENARIOS.has(name)) continue;
-            if (!js.has(name)) missing.push(name);
-        }
-        expect(missing,
-            `${missing.length} C++ scenarios are missing from JS group files.\n` +
-            `Add a corresponding 'case' in engine/web/js/bridge/scenarios/ or remove the C++ branch.\n` +
-            `Missing:\n  - ${missing.join('\n  - ')}`
-        ).toEqual([]);
-    });
+test.describe('Scenario parity (UI ↔ C++)', () => {
 
     test('every legacy-switch scenario in ftd_wasm.cpp is either shared or on the allowlist', () => {
         const legacy = extractCppLegacyScenarios();
@@ -367,17 +262,16 @@ test.describe('Scenario parity (JS ↔ C++)', () => {
         ).toEqual([]);
     });
 
-    test('every UI-registered scenario has a JS (and therefore C++) implementation', () => {
+    test('every UI-registered scenario has a C++ implementation', () => {
         const ui = extractUiRegistryScenarios();
-        const js = extractJsScenarios();
+        const cpp = extractCppScenarios();
         const missing = [];
         for (const name of ui) {
-            if (DELEGATED_SCENARIOS.has(name)) continue;
-            if (!js.has(name)) missing.push(name);
+            if (!cpp.has(name)) missing.push(name);
         }
         expect(missing,
-            `${missing.length} scenarios appear in the UI dropdown but have no JS implementation.\n` +
-            `Add the case to a group file in engine/web/js/bridge/scenarios/ or remove from the UI registry.\n` +
+            `${missing.length} scenarios appear in the UI dropdown but have no C++ implementation.\n` +
+            `Add a dispatcher branch under engine/src/scenarios/ or remove the UI entry.\n` +
             `Missing:\n  - ${missing.join('\n  - ')}`
         ).toEqual([]);
     });
@@ -483,30 +377,28 @@ test.describe('Scenario parity (JS ↔ C++)', () => {
 
     test('every metadata entry maps to a real scenario (no orphan docs)', () => {
         const meta = extractMetadataScenarios();
-        const js = extractJsScenarios();
-        const orphan = [...meta].filter((n) => !js.has(n));
+        const cpp = extractCppScenarios();
+        const orphan = [...meta].filter((n) => !cpp.has(n));
         expect(orphan,
-            `${orphan.length} S0_SEED_SCENARIO_METADATA entries describe scenarios with no JS ` +
+            `${orphan.length} S0_SEED_SCENARIO_METADATA entries describe scenarios with no C++ ` +
             `implementation (orphaned docs). Remove them from engine/web/js/config/scenarios.js ` +
-            `or add the scenario.\nOrphans:\n  - ${orphan.join('\n  - ')}`
+            `or add the native scenario.\nOrphans:\n  - ${orphan.join('\n  - ')}`
         ).toEqual([]);
     });
 
     test('inventory summary (informational — no assertion)', () => {
         const ui = extractUiRegistryScenarios();
         const catalog = extractCatalogScenarios();
-        const js = extractJsScenarios();
         const cpp = extractCppScenarios();
         const legacy = extractCppLegacyScenarios();
 
         console.log('\n=== Scenario inventory ===');
         console.log(`  UI registry (dropdown):     ${ui.size}`);
         console.log(`  Internal research catalog:  ${catalog.size}`);
-        console.log(`  JS group files (cases):     ${js.size}`);
         console.log(`  C++ scenarios.cpp:          ${cpp.size}`);
         console.log(`  C++ legacy (ftd_wasm.cpp):  ${legacy.size}`);
-        const shared = new Set([...js].filter((n) => cpp.has(n)));
-        console.log(`  JS ∩ C++ (shared):          ${shared.size}`);
+        const shared = new Set([...ui].filter((n) => cpp.has(n)));
+        console.log(`  UI ∩ C++ (shared):          ${shared.size}`);
 
         // No assertion; this is for visibility only.
         expect(shared.size).toBeGreaterThan(0);
@@ -569,7 +461,6 @@ test.describe('Catalog counts (derived, never hand-written)', () => {
             'scenario map (module)': registry.SCALE0_SCENARIO_MAP.size,
             'evidence manifest (module)': Object.keys(registry.SCALE0_SCENARIO_VALIDATION).length,
             'UI registry (source text)': extractUiRegistryScenarios().size,
-            'JS group files (source text)': extractJsScenarios().size,
             'C++ scenarios.cpp (source text)': extractCppScenarios().size,
         };
         const divergent = Object.entries(layers).filter(([, n]) => n !== total);
@@ -750,45 +641,6 @@ test.describe('Catalog counts (derived, never hand-written)', () => {
         expect(toggles.SCALE0_SCENARIO_BOUNDARY['flux-pulse'],
             'flux-pulse dashboard metadata must match its inherited C++ boundary')
             .toEqual({ mode: 0 });
-    });
-
-    test('JS helpers that pin Periodic have SCALE0_SCENARIO_BOUNDARY entries for callers', async () => {
-        const helpersPath = join(WEB_ROOT, 'js', 'bridge', 'scenarios', '_helpers.js');
-        const helpersSrc = readFileSync(helpersPath, 'utf8');
-        const helperRe = /export function (\w+)\([^)]*\)\s*\{/g;
-        const helpers = [];
-        let hm;
-        while ((hm = helperRe.exec(helpersSrc))) helpers.push({ name: hm[1], idx: hm.index });
-        const periodicHelpers = [];
-        for (let i = 0; i < helpers.length; i++) {
-            const body = helpersSrc.slice(helpers[i].idx, i + 1 < helpers.length ? helpers[i + 1].idx : helpersSrc.length);
-            if (/setFluxBoundaryMode\?\.\(\s*0\s*\)/.test(body)) periodicHelpers.push(helpers[i].name);
-        }
-        expect(periodicHelpers.length).toBeGreaterThan(0);
-
-        const groupDir = join(WEB_ROOT, 'js', 'bridge', 'scenarios');
-        const files = readdirSync(groupDir).filter((f) => f.endsWith('-scenarios.js'));
-        const needsPin = new Set();
-        for (const f of files) {
-            const text = readFileSync(join(groupDir, f), 'utf8');
-            const caseRe = /case\s+['"]([^'"]+)['"]\s*:/g;
-            const cases = [];
-            let m;
-            while ((m = caseRe.exec(text))) cases.push({ id: m[1], idx: m.index });
-            for (let i = 0; i < cases.length; i++) {
-                const body = text.slice(cases[i].idx, i + 1 < cases.length ? cases[i + 1].idx : text.length);
-                const uses =
-                    /setFluxBoundaryMode\?\.\(\s*0\s*\)/.test(body) ||
-                    periodicHelpers.some((h) => new RegExp(`\\b${h}\\s*\\(`).test(body));
-                if (uses) needsPin.add(cases[i].id);
-            }
-        }
-
-        const togglesPath = join(WEB_ROOT, 'js', 'config', 'toggles.js');
-        const toggles = await import(pathToFileURL(togglesPath).href);
-        const missing = [...needsPin].filter((id) => !(id in toggles.SCALE0_SCENARIO_BOUNDARY)).sort();
-        expect(missing, `Periodic-pinning scenarios missing SCALE0_SCENARIO_BOUNDARY:\n  ${missing.join('\n  ')}`)
-            .toEqual([]);
     });
 
     test('the qualification class table matches the registry categories', async () => {
