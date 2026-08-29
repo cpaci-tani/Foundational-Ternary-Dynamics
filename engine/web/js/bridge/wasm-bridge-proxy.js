@@ -151,6 +151,12 @@ export class WasmBridgeProxy {
         this._lastInspect = null;
         this._lastForceAt = null;
         this._lastDynamicalStateDigest = null;
+        this.artifactIdentity = null;
+        this.artifactIdentityState = 'loading';
+        this._artifactIdentityResolve = null;
+        this.artifactIdentityReady = new Promise((resolve) => {
+            this._artifactIdentityResolve = resolve;
+        });
         this._pendingTPF = undefined;
         // Commands sent before 'ready' (i.e. while the worker is initialising the
         // WASM module) are buffered here and replayed as a single batchCommand once
@@ -257,6 +263,18 @@ export class WasmBridgeProxy {
         // still mutate UI / postFrame callbacks for a dead owner.
         if (this._terminated || this._initFailed) return;
         if (m.type === 'ready') {
+            if (!m.artifactIdentity
+                || m.artifactIdentity.variant?.id !== 'wasm32-threads') {
+                this.artifactIdentityState = 'failed';
+                this._artifactIdentityResolve?.(null);
+                this._artifactIdentityResolve = null;
+                this._triggerFallback('worker ready without verified threaded artifact identity');
+                return;
+            }
+            this.artifactIdentity = m.artifactIdentity;
+            this.artifactIdentityState = 'ready';
+            this._artifactIdentityResolve?.(this.artifactIdentity);
+            this._artifactIdentityResolve = null;
             this.latticeSize = m.N;
             this._ctrl = new Int32Array(m.ctrl);
             this._bindFlux(m);
@@ -468,6 +486,7 @@ export class WasmBridgeProxy {
     getDynamicalStateDigest() { return this.captureDynamicalStateDigest(); }
     getScale0DynamicalStateDigest() { return this.getDynamicalStateDigest(); }
     getCachedDynamicalStateDigest() { return this._lastDynamicalStateDigest; }
+    getWasmArtifactIdentity() { return this.artifactIdentity; }
 
     // ── Bridge reads the capability factory calls ───────────────────────────
     tick() {}                                                        // no-op; worker self-ticks
@@ -759,6 +778,11 @@ export class WasmBridgeProxy {
     resize(n) { this.reset(n); }
     terminate() {
         if (!this._terminated) { this._terminated = true; _live--; _terminated++; }
+        if (this._artifactIdentityResolve) {
+            this.artifactIdentityState = 'failed';
+            try { this._artifactIdentityResolve(null); } catch { /* ignore */ }
+            this._artifactIdentityResolve = null;
+        }
         try { this._samplerWants.clear(); } catch { /* ignore */ }
         if (this._readyTimer) { try { clearTimeout(this._readyTimer); } catch { /* ignore */ } this._readyTimer = null; }
         this._clearFrameWatchdog();

@@ -34,9 +34,35 @@ import { createNativeParticleEngine } from './native-particle-engine.js';
 import { createAtomEngine } from './mock-atom-engine.js';
 import { reflectIntoBoundary } from './boundary.js';
 import { samplerOr, particleDataToList, TOGGLE_REQUIRES } from './bridge-contract.js';
+import { loadVerifiedWasmVariant } from './wasm-artifact-identity.js';
 
 // ── WASM Bridge ────────────────────────────────────────────────────
 let _wasmLoadPromise = null; // singleton to prevent duplicate script injection
+
+async function installVerifiedFactory(variantId, factoryName) {
+    const verified = await loadVerifiedWasmVariant(variantId);
+    const scriptUrl = URL.createObjectURL(new Blob(
+        [verified.loaderText], { type: 'text/javascript' },
+    ));
+    try {
+        await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = scriptUrl;
+            script.onload = () => { script.remove(); resolve(); };
+            script.onerror = () => {
+                script.remove();
+                reject(new Error(`Verified WASM loader execution failed: ${variantId}`));
+            };
+            document.head.appendChild(script);
+        });
+    } finally {
+        URL.revokeObjectURL(scriptUrl);
+    }
+    if (typeof globalThis[factoryName] !== 'function') {
+        throw new Error(`Verified WASM loader did not publish ${factoryName}`);
+    }
+    return verified;
+}
 
 // Memory64 (wasm64) feature-detection, computed once per session. When
 // supported we load the 8 GB `ftd_core64` build (lifts the in-browser lattice
@@ -128,6 +154,9 @@ export class WasmBridge {
         this.ready = false;
         this.isWasm = true;
         this.isWasm64 = false;   // set true in init() when the Memory64 build loads
+        this.artifactIdentity = null;
+        this.artifactIdentityState = 'not-loaded';
+        this.artifactIdentityReady = Promise.resolve(null);
         this._lastScale0Audit = null;
         this._lastScale0AuditTick = -1;
         // Scale-1 PE: native C++/WASM ParticleEngine via embind adapter.
@@ -158,25 +187,26 @@ export class WasmBridge {
             // browser), so the single _wasmLoadPromise is safe with a dynamic src.
             const use64 = supportsMemory64();
             this.isWasm64 = use64;
-            const scriptSrc = use64 ? 'wasm/ftd_core64.js' : 'wasm/ftd_core.js';
             const factoryName = use64 ? 'createFTDModule64' : 'createFTDModule';
-            if (typeof globalThis[factoryName] === 'undefined') {
-                if (!_wasmLoadPromise) {
-                    _wasmLoadPromise = new Promise((resolve, reject) => {
-                        const script = document.createElement('script');
-                        script.src = scriptSrc;
-                        script.onload = resolve;
-                        script.onerror = () => {
-                            _wasmLoadPromise = null; // allow retry
-                            reject(new Error('Failed to load ' + scriptSrc));
-                        };
-                        document.head.appendChild(script);
+            const variantId = use64 ? 'wasm64' : 'wasm32';
+            this.artifactIdentityState = 'loading';
+            if (!_wasmLoadPromise) {
+                _wasmLoadPromise = installVerifiedFactory(variantId, factoryName)
+                    .catch((error) => {
+                        _wasmLoadPromise = null;
+                        throw error;
                     });
-                }
-                await _wasmLoadPromise;
             }
+            const verified = await _wasmLoadPromise;
+            if (verified.identity.variant.id !== variantId) {
+                throw new Error('Cached WASM factory variant does not match the selected ABI');
+            }
+            this.artifactIdentity = verified.identity;
+            this.artifactIdentityState = 'ready';
+            this.artifactIdentityReady = Promise.resolve(verified.identity);
             this._module = await globalThis[factoryName]({
-                locateFile: (path) => 'wasm/' + path
+                wasmBinary: verified.moduleBytes,
+                locateFile: (path) => 'wasm/' + path,
             });
             debugLog('[WasmBridge] loaded ' + (use64 ? 'wasm64 (Memory64, 8 GB heap)' : 'wasm32 (2 GB heap)'));
             // Every module-level scenario/injection function takes a
@@ -194,6 +224,9 @@ export class WasmBridge {
             return true;
         } catch (e) {
             this.wasmLoadState = 'failed';
+            this.artifactIdentity = null;
+            this.artifactIdentityState = 'failed';
+            this.artifactIdentityReady = Promise.resolve(null);
             console.warn('WASM module not available:', e.message);
             return false;
         }
@@ -219,6 +252,7 @@ export class WasmBridge {
     }
     getDynamicalStateDigest() { return this.captureDynamicalStateDigest(); }
     getScale0DynamicalStateDigest() { return this.getDynamicalStateDigest(); }
+    getWasmArtifactIdentity() { return this.artifactIdentity; }
 
     setDt(dt) {
         if (this._module && this._bridge) this._module.setDt(this._bridge, dt);

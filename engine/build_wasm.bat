@@ -132,21 +132,34 @@ REM generated modules and build_info.txt under web/wasm.
 set "GIT_SHA=unknown"
 for /f %%H in ('git -C "%ENGINE_DIR%" rev-parse HEAD 2^>nul') do set "GIT_SHA=%%H"
 set "GIT_DIRTY="
-git -C "%ENGINE_DIR%" status --porcelain --untracked-files=no -- . 2>nul | %SystemRoot%\System32\findstr.exe /v /c:"engine/web/wasm/" /c:"web/wasm/" >nul
+git -C "%ENGINE_DIR%" status --porcelain --untracked-files=all -- . 2>nul | %SystemRoot%\System32\findstr.exe /v /c:"engine/web/wasm/" /c:"web/wasm/" >nul
 if not ERRORLEVEL 1 set "GIT_DIRTY=1"
 if defined GIT_DIRTY set "GIT_SHA=%GIT_SHA%-dirty"
 set "EMCC_VERSION=unknown"
 for /f "delims=" %%V in ('call "%EMSDK%\upstream\emscripten\emcc.bat" --version 2^>nul ^| findstr /b /c:"emcc "') do if "%EMCC_VERSION%"=="unknown" set "EMCC_VERSION=%%V"
+set "CMAKE_VERSION=unknown"
+for /f "delims=" %%V in ('cmake --version 2^>nul ^| findstr /b /c:"cmake version "') do if "%CMAKE_VERSION%"=="unknown" set "CMAKE_VERSION=%%V"
+
+REM Deterministic, schema-versioned machine-readable identity. It deliberately
+REM contains no wall clock, host path, or other per-build noise, so two clean
+REM builds from one source/toolchain can compare this file byte-for-byte.
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ENGINE_DIR%\tools\write_wasm_build_info.ps1" -StageDir "%STAGE_DIR%" -SourceSha "%GIT_SHA%" -EmccVersion "%EMCC_VERSION%" -CmakeVersion "%CMAKE_VERSION%"
+if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] build_info.json generation FAILED & exit /b 1 )
+
 > "%STAGE_DIR%\build_info.txt" echo sha=%GIT_SHA%
 >> "%STAGE_DIR%\build_info.txt" echo built=%DATE% %TIME%
 >> "%STAGE_DIR%\build_info.txt" echo variants=wasm32,wasm64,wasm32-threads
 >> "%STAGE_DIR%\build_info.txt" echo source_scope=engine/** excluding engine/web/wasm/**
 >> "%STAGE_DIR%\build_info.txt" echo emcc=%EMCC_VERSION%
+>> "%STAGE_DIR%\build_info.txt" echo cmake=%CMAKE_VERSION%
+>> "%STAGE_DIR%\build_info.txt" echo deterministic_manifest=build_info.json
 >> "%STAGE_DIR%\build_info.txt" echo cmake_flags.wasm32=-DCMAKE_BUILD_TYPE=Release -DFTD_MEMORY64=OFF -DFTD_WASM_THREADS=OFF
 >> "%STAGE_DIR%\build_info.txt" echo cmake_flags.wasm64=-DCMAKE_BUILD_TYPE=Release -DFTD_MEMORY64=ON -DFTD_WASM_THREADS=OFF
 >> "%STAGE_DIR%\build_info.txt" echo cmake_flags.wasm32-threads=-DCMAKE_BUILD_TYPE=Release -DFTD_MEMORY64=OFF -DFTD_WASM_THREADS=ON
 for %%F in (ftd_core.js ftd_core.wasm ftd_core64.js ftd_core64.wasm ftd_core_mt.js ftd_core_mt.wasm) do call :append_artifact_hash "%%F"
 if ERRORLEVEL 1 ( echo [build_wasm] artifact hashing FAILED & exit /b 1 )
+call :append_artifact_hash "build_info.json"
+if ERRORLEVEL 1 ( echo [build_wasm] build manifest hashing FAILED & exit /b 1 )
 
 REM All artifacts verified good -- swap the whole directory on the same volume.
 set "HAD_DEPLOY="

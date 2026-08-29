@@ -19,47 +19,19 @@
 // worker's onerror, and not reliably in every browser.)
 const FTD_WASM_BASE_URL = new URL('../../wasm/', self.location.href).href;
 importScripts(new URL('./sampler-registry.classic.js', self.location.href).href);
-try {
-    // Resolve to an absolute HTTP URL before entering importScripts. Relative
-    // paths become ambiguous when this worker is itself re-entered by
-    // Emscripten as an em-pthread bootstrap.
-    importScripts(FTD_WASM_BASE_URL + 'ftd_core_mt.js');
-} catch (e) {
-    try {
-        self.postMessage({
-            type: 'error',
-            where: 'init',
-            msg: `importScripts failed [${e?.name || 'Error'}]: ${String(e?.message || e)}`,
-        });
-    } catch (_) { /* ignore */ }
-    // Do not rethrow: a synchronous throw can overtake the diagnostic
-    // postMessage and reduce the browser report to an opaque NetworkError.
-    // The proxy tears this worker down immediately on the init-error message.
-}
+// The threaded glue is intentionally NOT imported here. initModule() first
+// verifies the manifest, glue, and module bytes, then executes the verified
+// glue from a Blob URL and supplies the verified module through `wasmBinary`.
 
-// ── Emscripten pthread re-entry guard ──────────────────────────────────────
-// The threaded engine pre-spawns its pthread pool (-sPTHREAD_POOL_SIZE) at
-// module init. Emscripten spawns each pthread as
-// `new Worker(<this file>, { name: 'em-pthread-N' })` — this file IS the pthread
-// bootstrap (its URL is the module's _scriptName) — so a pthread worker re-runs
-// THIS file top to bottom. The `importScripts(ftd_core_mt.js)` above then loads
-// the glue, whose OWN trailing bootstrap (`isPthread && createFTDModuleMT()`)
-// detects the em-pthread name and auto-instantiates the pthread runtime,
-// installing the glue's self.onmessage (message queue → handleMessage) to
-// receive the compiled wasm module + shared memory and start the thread. So we
-// must NOT call the factory again here (a second createFTDModuleMT() double-
-// inits the pthread and throws "err is not a function"), and — critically — the
-// dashboard worker's own `self.onmessage = ...` near the bottom of this file
-// must NOT run, or it clobbers the glue's handler and the thread never starts.
-// This flag gates that assignment (see `if (!IS_EM_PTHREAD)` below); every other
-// top-level const/function declaration here is inert in a pthread worker.
-const IS_EM_PTHREAD = typeof globalThis.name === 'string'
-    && globalThis.name.startsWith('em-pthread');
+// Emscripten pthreads start from the verified glue Blob URL supplied as
+// mainScriptUrlOrBlob. They therefore execute only Emscripten's bootstrap,
+// never this dashboard-worker controller.
 
 const CTRL = { FRAME: 0, N: 1, TICK: 2, RUNNING: 3, PCOUNT: 4, TICKS_PER_FRAME: 5, DATA_VERSION: 6, LEN: 8 };
 const TARGET_DT = 1000 / 60;
 
 let mod = null, bridge = null;
+let artifactIdentity = null, verifiedGlueBlobUrl = null;
 let N = 33, scenarioId = 'flux-pulse', toggles = {}, toggleNames = [];
 let poolThreads = 8;       // MUST equal -sPTHREAD_POOL_SIZE in engine/wasm/CMakeLists.txt
                            // (pre-spawned pthread pool; proxy may clamp below this).
@@ -195,18 +167,96 @@ function captureDynamicalStateDigest() {
   catch (e) { return null; }
 }
 
+async function sha256Hex(bytes) {
+  if (!self.crypto?.subtle) throw new Error('WebCrypto SHA-256 is unavailable');
+  const digest = await self.crypto.subtle.digest('SHA-256', bytes);
+  return [...new Uint8Array(digest)]
+    .map((value) => value.toString(16).padStart(2, '0')).join('');
+}
+
+function canonicalBundleBytes(manifest) {
+  let value = 'ftd-wasm-bundle-v1\n';
+  for (const variant of manifest.variants || []) {
+    for (const artifact of variant.artifacts || []) {
+      value += `${artifact.file}\0${artifact.sizeBytes}\0${artifact.sha256}\n`;
+    }
+  }
+  return new TextEncoder().encode(value);
+}
+
+async function fetchVerifiedBytes(artifact, bundleSha256) {
+  const url = new URL(artifact.file, FTD_WASM_BASE_URL);
+  url.searchParams.set('bundle', bundleSha256);
+  const response = await fetch(url, { cache: 'no-store' });
+  if (!response.ok) throw new Error(`artifact fetch failed: ${artifact.file}`);
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  if (bytes.byteLength !== artifact.sizeBytes) {
+    throw new Error(`artifact size mismatch: ${artifact.file}`);
+  }
+  if (await sha256Hex(bytes) !== artifact.sha256) {
+    throw new Error(`artifact hash mismatch: ${artifact.file}`);
+  }
+  return bytes;
+}
+
+async function loadVerifiedThreadedBundle() {
+  const manifestUrl = new URL('build_info.json', FTD_WASM_BASE_URL);
+  const response = await fetch(manifestUrl, { cache: 'no-store' });
+  if (!response.ok) throw new Error(`build manifest fetch failed: HTTP ${response.status}`);
+  const manifest = await response.json();
+  if (manifest.schemaVersion !== 1
+      || !/^[0-9a-f]{64}$/.test(String(manifest.bundleSha256 || ''))
+      || !/^[0-9a-f]{40}$/.test(String(manifest.source?.commit || ''))
+      || typeof manifest.source?.dirty !== 'boolean') {
+    throw new Error('build manifest identity is invalid');
+  }
+  if (await sha256Hex(canonicalBundleBytes(manifest)) !== manifest.bundleSha256) {
+    throw new Error('build manifest canonical bundle hash mismatch');
+  }
+  const variant = manifest.variants?.find((candidate) => candidate?.id === 'wasm32-threads');
+  if (!variant || variant.factory !== 'createFTDModuleMT'
+      || variant.abi?.pointerBits !== 32 || variant.abi?.threads !== true
+      || variant.abi?.sharedMemory !== true || variant.artifacts?.length !== 2) {
+    throw new Error('threaded WASM variant contract is invalid');
+  }
+  const bytesByRole = {};
+  for (const artifact of variant.artifacts) {
+    bytesByRole[artifact.role] = await fetchVerifiedBytes(artifact, manifest.bundleSha256);
+  }
+  if (!bytesByRole.loader || !bytesByRole.module) {
+    throw new Error('threaded WASM artifact roles are incomplete');
+  }
+  return {
+    identity: {
+      schemaVersion: manifest.schemaVersion,
+      bundleSha256: manifest.bundleSha256,
+      source: manifest.source,
+      toolchain: manifest.toolchain,
+      variant,
+      manifestUrl: manifestUrl.href,
+    },
+    loaderText: new TextDecoder().decode(bytesByRole.loader),
+    moduleBytes: bytesByRole.module,
+  };
+}
+
 function initModule(cb) {
-  createFTDModuleMT({
-    locateFile: (p) => FTD_WASM_BASE_URL + p,
-    // Spawn the pthread-pool workers from the glue itself. Its trailing
-    // `isPthread && createFTDModuleMT()` bootstrap auto-instantiates a pthread
-    // worker cleanly. Without this, Emscripten falls back to _scriptName == THIS
-    // file, so every pool worker re-enters the whole dashboard worker and must be
-    // caught by the em-pthread guard above — workable but fragile. Pointing the
-    // pool at the glue is the standard Emscripten path and is what the pool
-    // pre-spawn (PTHREAD_POOL_SIZE) was validated against. (The guard above stays
-    // as defense in case this ever regresses.)
-    mainScriptUrlOrBlob: FTD_WASM_BASE_URL + 'ftd_core_mt.js',
+  loadVerifiedThreadedBundle().then((verified) => {
+    artifactIdentity = verified.identity;
+    verifiedGlueBlobUrl = URL.createObjectURL(new Blob(
+      [verified.loaderText], { type: 'text/javascript' },
+    ));
+    importScripts(verifiedGlueBlobUrl);
+    if (typeof createFTDModuleMT !== 'function') {
+      throw new Error('verified threaded loader did not publish createFTDModuleMT');
+    }
+    return createFTDModuleMT({
+      wasmBinary: verified.moduleBytes,
+      locateFile: (p) => FTD_WASM_BASE_URL + p,
+      // The verified Blob URL is also the pthread bootstrap. It must stay live
+      // for the module lifetime and is revoked only on dispose.
+      mainScriptUrlOrBlob: verifiedGlueBlobUrl,
+    });
   }).then((m) => {
     mod = m;
     // Must set the pool BEFORE the first parallel_for (first tick) constructs it.
@@ -324,7 +374,7 @@ function buildBridge(n, scen) {
   const doubled = publishFlux(vol);
   self.postMessage({
     type: 'ready', N, ctrl: ctrlSab, heap: vol.buffer, fluxPtr: vol.byteOffset, fluxLen: vol.length,
-    setupOk, setupError,
+    setupOk, setupError, artifactIdentity,
     ...(doubled ? { fluxSab: fluxPubSab, doubleBuffered: true } : {}),
   });
   postFrame(true);
@@ -472,7 +522,7 @@ function loop() {
   timer = setTimeout(loop, Math.max(0, TARGET_DT - elapsed));
 }
 
-if (!IS_EM_PTHREAD) self.onmessage = (e) => {
+self.onmessage = (e) => {
   const msg = e.data;
   try {
     switch (msg.type) {
@@ -593,6 +643,10 @@ if (!IS_EM_PTHREAD) self.onmessage = (e) => {
         if (timer) { clearTimeout(timer); timer = 0; }
         try { if (bridge) bridge.delete(); } catch (e) { /* ignore */ }
         bridge = null;
+        if (verifiedGlueBlobUrl) {
+          try { URL.revokeObjectURL(verifiedGlueBlobUrl); } catch (e) { /* ignore */ }
+          verifiedGlueBlobUrl = null;
+        }
         break;
     }
   } catch (err) {
