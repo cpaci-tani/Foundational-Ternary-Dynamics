@@ -150,6 +150,7 @@ export class WasmBridgeProxy {
         this._lastKnotAgg = null;
         this._lastInspect = null;
         this._lastForceAt = null;
+        this._lastDynamicalStateDigest = null;
         this._pendingTPF = undefined;
         // Commands sent before 'ready' (i.e. while the worker is initialising the
         // WASM module) are buffered here and replayed as a single batchCommand once
@@ -171,6 +172,8 @@ export class WasmBridgeProxy {
         // One-shot coarsen (Scale-0 → Scale-1) request/response bookkeeping.
         this._coarsenPending = new Map();
         this._coarsenReq = 0;
+        this._digestPending = new Map();
+        this._digestReq = 0;
 
         // CLASSIC worker (Emscripten module via importScripts). No { type: 'module' }.
         this._worker = new Worker(new URL('./wasm-bridge.worker.js', import.meta.url));
@@ -312,6 +315,9 @@ export class WasmBridgeProxy {
             if (m.knotAgg) this._lastKnotAgg = m.knotAgg;
             if (m.inspect) this._lastInspect = m.inspect;
             if (m.forceAt) this._lastForceAt = m.forceAt;
+            if (m.dynamicalStateDigest !== undefined) {
+                this._lastDynamicalStateDigest = m.dynamicalStateDigest;
+            }
             const hadSamplers = Boolean(m.samplers && Object.keys(m.samplers).length);
             if (hadSamplers) Object.assign(this._samplerCache, m.samplers);
 
@@ -335,6 +341,13 @@ export class WasmBridgeProxy {
             if (resolve) {
                 this._coarsenPending.delete(m.reqId);
                 resolve(m.data ?? null);
+            }
+        } else if (m.type === 'digestResult') {
+            const resolve = this._digestPending.get(m.reqId);
+            if (resolve) {
+                this._digestPending.delete(m.reqId);
+                this._lastDynamicalStateDigest = m.digest ?? null;
+                resolve(this._lastDynamicalStateDigest);
             }
         } else if (m.type === 'error') {
             console.error('[WasmWorker]', m.where, m.msg);
@@ -431,6 +444,30 @@ export class WasmBridgeProxy {
             }, timeoutMs);
         });
     }
+
+    /**
+     * Request a fresh canonical digest from the worker-hosted RenderBridge.
+     * This is asynchronous and intentionally one-shot: hashing is O(N^3) and
+     * must not enter the worker's 60 Hz postFrame loop. The cached synchronous
+     * getter below exposes the initial post-build capture or most recent reply.
+     */
+    captureDynamicalStateDigest(timeoutMs = 5000) {
+        if (!this._ready || this._terminated) return Promise.resolve(null);
+        const reqId = ++this._digestReq;
+        return new Promise((resolve) => {
+            this._digestPending.set(reqId, resolve);
+            this._worker.postMessage({ type: 'captureDigest', reqId });
+            setTimeout(() => {
+                if (this._digestPending.has(reqId)) {
+                    this._digestPending.delete(reqId);
+                    resolve(null);
+                }
+            }, timeoutMs);
+        });
+    }
+    getDynamicalStateDigest() { return this.captureDynamicalStateDigest(); }
+    getScale0DynamicalStateDigest() { return this.getDynamicalStateDigest(); }
+    getCachedDynamicalStateDigest() { return this._lastDynamicalStateDigest; }
 
     // ── Bridge reads the capability factory calls ───────────────────────────
     tick() {}                                                        // no-op; worker self-ticks
@@ -634,6 +671,7 @@ export class WasmBridgeProxy {
         // new `create` completes. Clear them so exact-step observatories do not
         // mistake an old high tick count for completion of a newly reset run.
         this._lastDiag = null;
+        this._lastDynamicalStateDigest = null;
         this._lastTick = -1;
         this._clearFrameWatchdog();   // old-scenario watchdog is stale; re-arms on next 'ready'/setRunning
         this._samplerCache = {};   // stale; worker will repopulate on first frame of new scenario
@@ -729,6 +767,10 @@ export class WasmBridgeProxy {
         this._onEngineToggles = null;
         this._onInitFailure = null;
         this._onSetupFailure = null;
+        for (const resolve of this._digestPending.values()) {
+            try { resolve(null); } catch { /* ignore */ }
+        }
+        this._digestPending.clear();
         try { this._worker.onmessage = null; } catch (e) { /* ignore */ }
         try { this._worker.onerror = null; } catch (e) { /* ignore */ }
         try { this._worker.postMessage({ type: 'dispose' }); } catch (e) { /* ignore */ }

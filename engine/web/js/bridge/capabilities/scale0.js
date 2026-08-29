@@ -36,6 +36,11 @@ export function createScale0Capabilities(bridge) {
         },
         getScale0Diagnostics: () => bridge.getDiagnostics(),
         getScale0EnergyAudit: () => bridge.getEnergyAudit(),
+        // Explicit O(L^3) scientific qualification capture. Direct WASM may
+        // return synchronously; worker/native transports return a Promise.
+        // Consumers must use `await Promise.resolve(...)` and must never poll
+        // this from requestAnimationFrame.
+        getScale0DynamicalStateDigest: () => bridge.getDynamicalStateDigest?.() ?? null,
         getScale0Lagrangian: () => bridge.getLagrangian(),
         getScale0KnotTelemetry: () => bridge.getKnotTelemetry?.() ?? null,
         getScale0KnotEvents: () => bridge.getKnotEvents?.() ?? null,

@@ -94,6 +94,31 @@ function _wasmCallOr(bridge, methodName, fallback, fn) {
     return fn(bridge._module, bridge._bridge);
 }
 
+function normalizeDynamicalStateDigest(raw, transport = 'direct') {
+    if (!raw) return null;
+    return {
+        schemaVersion: raw.schema_version,
+        latticeSize: raw.lattice_size,
+        siteCount: raw.site_count,
+        tick: raw.tick,
+        stateVersion: raw.state_version,
+        // Native WebSocket owns a telemetry source epoch; standalone WASM
+        // does not. Preserve the shared field explicitly as unavailable.
+        sourceEpoch: null,
+        telemetrySourceEpoch: null,
+        hashLo: raw.hash_lo,
+        hashHi: raw.hash_hi,
+        nonfiniteValueCount: raw.nonfinite_value_count,
+        nondefaultValueCount: raw.nondefault_value_count,
+        deviceToHostBytes: raw.device_to_host_bytes,
+        fullMirrorCalls: raw.full_mirror_calls,
+        exactDefaultRecord: raw.exact_default_record,
+        compute: 'CPU',
+        runtime: 'wasm',
+        transport,
+    };
+}
+
 /** @implements {import('./bridge/bridge-contract.js').ScaleBridge} */
 export class WasmBridge {
     constructor() {
@@ -177,6 +202,23 @@ export class WasmBridge {
     tick() { if (this._bridge) this._bridge.tick(); }
     run(n) { if (this._bridge) this._bridge.run(n); }
     currentTick() { return this._bridge ? this._bridge.currentTick() : 0; }
+
+    /**
+     * Capture the canonical schema-versioned Scale-0 dynamical-state digest.
+     *
+     * Direct WASM is synchronous because the RenderBridge lives on this
+     * thread. The uint64 hash lanes are already fixed-width lowercase hex
+     * strings at the Embind boundary; JavaScript must never coerce them to
+     * Number. This is an observer/provenance surface, not a claim that the
+     * imposed `empty` null control is a physical vacuum.
+     */
+    captureDynamicalStateDigest() {
+        const raw = _wasmCallOr(this, 'captureDynamicalStateDigest', null,
+            (m, b) => m.captureDynamicalStateDigest(b));
+        return normalizeDynamicalStateDigest(raw, 'direct');
+    }
+    getDynamicalStateDigest() { return this.captureDynamicalStateDigest(); }
+    getScale0DynamicalStateDigest() { return this.getDynamicalStateDigest(); }
 
     setDt(dt) {
         if (this._module && this._bridge) this._module.setDt(this._bridge, dt);

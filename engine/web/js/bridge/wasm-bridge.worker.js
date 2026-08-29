@@ -97,6 +97,8 @@ function publishFlux(vol) {
   }
 }
 let lastInspect = null, lastForceAt = null;
+let lastDynamicalStateDigest = null;
+let publishDynamicalStateDigest = false;
 
 // Overlay sampler registry. Maps proxy kind-key → [C++ method name, 'vec'|'val'|'obj'].
 // 'vec' returns {positions, vectors, count}; 'val' returns {positions, values, count};
@@ -160,6 +162,37 @@ function copyKnotEvents(r) {
   if (!r) return null;
   return { tick: new Int32Array(r.tick), type: new Int32Array(r.type), nparents: new Int32Array(r.nparents),
            nchildren: new Int32Array(r.nchildren), sign: new Int32Array(r.sign), count: r.count };
+}
+
+function normalizeDynamicalStateDigest(raw) {
+  if (!raw) return null;
+  return {
+    schemaVersion: raw.schema_version,
+    latticeSize: raw.lattice_size,
+    siteCount: raw.site_count,
+    tick: raw.tick,
+    stateVersion: raw.state_version,
+    // This worker owns one WASM RenderBridge, not the native telemetry
+    // scheduler. Null is explicit unavailability, never an invented epoch.
+    sourceEpoch: null,
+    telemetrySourceEpoch: null,
+    hashLo: raw.hash_lo,
+    hashHi: raw.hash_hi,
+    nonfiniteValueCount: raw.nonfinite_value_count,
+    nondefaultValueCount: raw.nondefault_value_count,
+    deviceToHostBytes: raw.device_to_host_bytes,
+    fullMirrorCalls: raw.full_mirror_calls,
+    exactDefaultRecord: raw.exact_default_record,
+    compute: 'CPU',
+    runtime: 'wasm',
+    transport: 'worker',
+  };
+}
+
+function captureDynamicalStateDigest() {
+  if (!mod || !bridge || typeof mod.captureDynamicalStateDigest !== 'function') return null;
+  try { return normalizeDynamicalStateDigest(mod.captureDynamicalStateDigest(bridge)); }
+  catch (e) { return null; }
 }
 
 function initModule(cb) {
@@ -274,6 +307,12 @@ function buildBridge(n, scen) {
   engineTogglesDirty = true;   // the C++ body just replaced the whole profile
   lastAudit = null; auditFrameCounter = 0;   // force a fresh audit for the new N/profile
   scenarioId = scen;
+  // O(N^3), so capture once per newly built scenario and thereafter only on
+  // an explicit `captureDigest` request. Never put digest work in the 60 Hz
+  // loop. The initial value lets the proxy expose a truthful cached getter as
+  // soon as its first frame arrives.
+  lastDynamicalStateDigest = captureDynamicalStateDigest();
+  publishDynamicalStateDigest = true;
   // Flux-volume cache pointer is stable for a fixed N; publish the heap + offset.
   const vol = mod.getFluxVolume(bridge);
   if (!ctrlSab) { ctrlSab = new SharedArrayBuffer(CTRL.LEN * 4); ctrl = new Int32Array(ctrlSab); }
@@ -407,8 +446,11 @@ function postFrame(fieldChanged = false) {
     Atomics.add(ctrl, CTRL.FRAME, 1);
   }
   const engineTogglesMsg = engineTogglesDirty ? readEngineToggles() : null;
+  const digestMsg = publishDynamicalStateDigest ? lastDynamicalStateDigest : undefined;
+  publishDynamicalStateDigest = false;
   self.postMessage({ type: 'frame', tick: tick | 0, diag, parts, audit, lag, samplers, knot, knotEvents, knotAgg,
                      inspect: lastInspect, forceAt: lastForceAt,
+                     ...(digestMsg !== undefined ? { dynamicalStateDigest: digestMsg } : {}),
                      ...(engineTogglesMsg ? { engineToggles: engineTogglesMsg } : {}) });
 }
 
@@ -506,6 +548,19 @@ if (!IS_EM_PTHREAD) self.onmessage = (e) => {
           try { data = mod.coarsenToParticles(bridge); } catch (e) { data = null; }
         }
         self.postMessage({ type: 'coarsenResult', reqId: msg.reqId, data });
+        break;
+      }
+      case 'captureDigest': {
+        // Explicit scientific observation request. It is deliberately outside
+        // postFrame()/loop() so canonical O(N^3) hashing never taxes 60 Hz
+        // rendering. The result is a plain structured-cloneable object whose
+        // uint64 lanes were serialized to hex by Embind.
+        lastDynamicalStateDigest = captureDynamicalStateDigest();
+        self.postMessage({
+          type: 'digestResult',
+          reqId: msg.reqId,
+          digest: lastDynamicalStateDigest,
+        });
         break;
       }
       case 'wantSampler':

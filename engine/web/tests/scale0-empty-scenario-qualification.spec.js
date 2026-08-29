@@ -19,6 +19,7 @@ import {
 
 const EMPTY = 'empty';
 const WASM_PATH = '/?engine=wasm';
+let workerDigestReference = null;
 
 test.describe.configure({ mode: 'serial' });
 test.beforeEach(async ({ page }) => {
@@ -125,6 +126,53 @@ async function readEmptySnapshot(page) {
     });
 }
 
+/** Explicit O(L^3) observation; never call this from a polling/render loop. */
+async function readCanonicalDigest(page) {
+    return page.evaluate(async () => {
+        const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+        const state = getScale0State();
+        const owner = state.useFluxMock && state.fluxMock
+            ? state.fluxMock
+            : window.__ftdCtx?.bridge;
+        const capture = owner?.capabilities?.scale0?.getScale0DynamicalStateDigest;
+        return typeof capture === 'function' ? await Promise.resolve(capture()) : null;
+    });
+}
+
+function expectCanonicalEmptyDigest(digest, snapshot, transport) {
+    expect(digest, 'canonical dynamical-state digest must be published').not.toBeNull();
+    expect(digest.schemaVersion).toBe(1);
+    expect(digest.latticeSize).toBe(snapshot.latticeSize);
+    expect(digest.siteCount).toBe(snapshot.latticeSize ** 3);
+    expect(Number.isSafeInteger(digest.tick)).toBe(true);
+    expect(Number.isSafeInteger(digest.stateVersion)).toBe(true);
+    expect(digest.hashLo).toMatch(/^[0-9a-f]{16}$/);
+    expect(digest.hashHi).toMatch(/^[0-9a-f]{16}$/);
+    expect(digest.nonfiniteValueCount).toBe(0);
+    expect(digest.nondefaultValueCount).toBe(0);
+    expect(digest.exactDefaultRecord).toBe(true);
+    expect(digest.deviceToHostBytes).toBe(0);
+    expect(digest.fullMirrorCalls).toBe(0);
+    expect(digest.compute).toBe('CPU');
+    expect(digest.runtime).toBe('wasm');
+    expect(digest.transport).toBe(transport);
+    expect(digest.sourceEpoch).toBeNull();
+    expect(digest.telemetrySourceEpoch).toBeNull();
+}
+
+function scientificDigestIdentity(digest) {
+    return {
+        schemaVersion: digest.schemaVersion,
+        latticeSize: digest.latticeSize,
+        siteCount: digest.siteCount,
+        hashLo: digest.hashLo,
+        hashHi: digest.hashHi,
+        nonfiniteValueCount: digest.nonfiniteValueCount,
+        nondefaultValueCount: digest.nondefaultValueCount,
+        exactDefaultRecord: digest.exactDefaultRecord,
+    };
+}
+
 function expectFiniteExactZeros(record, keys, label) {
     expect(record, `${label} object must be published`).not.toBeNull();
     for (const key of keys) {
@@ -181,12 +229,18 @@ test('is an exact null after load, reset/reload, supported resize, and rapid gen
         description: `${initial.owner} qualified live; native-GPU parity is not asserted without a connected native backend`,
     });
     expectExactNull(initial);
+    const initialDigest = await readCanonicalDigest(page);
+    expectCanonicalEmptyDigest(initialDigest, initial, 'worker');
+    workerDigestReference = scientificDigestIdentity(initialDigest);
 
     await page.locator('#btn-reset').click();
     await waitForEmptyReady(page, initial.latticeSize);
     const reloaded = await readEmptySnapshot(page);
     expect(reloaded.generation).toBeGreaterThan(initial.generation);
     expectExactNull(reloaded);
+    const reloadedDigest = await readCanonicalDigest(page);
+    expectCanonicalEmptyDigest(reloadedDigest, reloaded, 'worker');
+    expect(scientificDigestIdentity(reloadedDigest)).toEqual(workerDigestReference);
 
     const resizeTarget = initial.latticeSize === 49 ? 33 : 49;
     const resizeSupported = await page.evaluate((size) => {
@@ -312,6 +366,13 @@ test('matches the exact-null browser contract on the main-thread WASM runtime', 
     expect(initial.owner, 'the opt-out must exercise WasmBridge in the browser main thread')
         .toBe('wasm-main');
     expectExactNull(initial);
+    const initialDigest = await readCanonicalDigest(page);
+    expectCanonicalEmptyDigest(initialDigest, initial, 'direct');
+    if (workerDigestReference?.latticeSize === initial.latticeSize) {
+        expect(scientificDigestIdentity(initialDigest),
+            'main-thread and worker WASM paths must publish the same canonical state')
+            .toEqual(workerDigestReference);
+    }
 
     const tickResult = await page.evaluate(() => {
         const caps = window.__ftdCtx?.bridge?.capabilities?.scale0;
@@ -323,7 +384,12 @@ test('matches the exact-null browser contract on the main-thread WASM runtime', 
     expect(Number.isFinite(tickResult.before)).toBe(true);
     expect(tickResult.after, 'main-thread ticks advance the real WASM engine synchronously')
         .toBe(tickResult.before + 16);
-    expectExactNull(await readEmptySnapshot(page));
+    const afterTick = await readEmptySnapshot(page);
+    expectExactNull(afterTick);
+    const afterTickDigest = await readCanonicalDigest(page);
+    expectCanonicalEmptyDigest(afterTickDigest, afterTick, 'direct');
+    expect(scientificDigestIdentity(afterTickDigest))
+        .toEqual(scientificDigestIdentity(initialDigest));
 
     const beforeRapid = await page.evaluate(() => Number(window.__ftdCtx?._loadGeneration ?? 0));
     await page.evaluate(() => {

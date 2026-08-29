@@ -2198,6 +2198,23 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         return this._isTelemetryGroupCurrent('audit') ? (this._lastAudit || null) : null;
     }
 
+    /**
+     * Capture the canonical Scale-0 dynamical-state digest on demand.
+     *
+     * This is intentionally an explicit asynchronous qualification operation,
+     * never a render-loop read: the digest visits all L^3 sites. Hash lanes
+     * remain fixed-width hexadecimal strings so JavaScript cannot round the
+     * native uint64 values.
+     */
+    async getDynamicalStateDigest() {
+        const response = await this._sendJSON(
+            { cmd: 'get_dynamical_state_digest' },
+            DIAGNOSTIC_COMMAND_TIMEOUT_MS,
+        );
+        if (response?.error) throw new Error(response.error);
+        return response;
+    }
+
     setToggle(name, value) {
         const normalized = !!value;
         if (this._scenarioDraft) {
