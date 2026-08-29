@@ -1,6 +1,6 @@
 #pragma once
 //
-// host/run_config.h — scale-common run knobs (SPEC_NATIVE_REBUILD_R0R1 §4.1).
+// host/run_config.h — scale-common run knobs.
 //
 // A field is 0/ignored where a scale has no analogue. Scale-specific setup
 // (initial conditions, catalog picks, …) rides the scale command payload, never

@@ -5,7 +5,7 @@
     width: 100%;
     padding: 14px 14px 18px;
     font-family: var(--font-sans, system-ui, -apple-system, "Segoe UI", sans-serif);
-    font-size: 13px;
+    font-size: 16px;
     line-height: 1.45;
     color: var(--text-primary);
     background: transparent;
@@ -18,10 +18,10 @@
     margin-bottom: 14px;
 }
 
-.grav-title { font-weight: 600; color: var(--accent); font-size: 15px; letter-spacing: 0.02em; }
+.grav-title { font-weight: 600; color: var(--accent-text); font-size: 16px; letter-spacing: 0.02em; }
 
 .grav-mode {
-    font-size: 11px;
+    font-size: 16px;
     color: var(--text-muted);
     font-family: var(--font-mono);
     padding: 2px 8px;
@@ -39,7 +39,7 @@
     color: var(--text-muted);
     padding: 5px 0;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 16px;
     border-radius: 5px;
     font-family: var(--font-mono);
 }
@@ -61,7 +61,7 @@
 .grav-tile-meta {
     display: flex;
     justify-content: space-between;
-    font-size: 9px;
+    font-size: 16px;
     font-family: var(--font-mono);
     color: var(--text-muted);
 }
@@ -74,7 +74,7 @@
     align-items: baseline;
     padding: 3px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    font-size: 12px;
+    font-size: 16px;
 }
 .grav-row-l { color: var(--text-muted); }
 .grav-row-v { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
@@ -84,7 +84,7 @@
     justify-content: space-between;
     gap: 8px;
     margin-top: 8px;
-    font-size: 10px;
+    font-size: 16px;
     font-family: var(--font-mono);
     color: var(--text-muted);
 }
@@ -101,10 +101,10 @@
     padding: 6px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
-.grav-spark-label { grid-area: label; font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); }
+.grav-spark-label { grid-area: label; font-size: 16px; color: var(--text-muted); font-family: var(--font-mono); }
 .grav-spark { grid-area: spark; width: 100%; height: 26px; display: block; margin-top: 4px; }
-.grav-spark-now { grid-area: now; font-size: 10px; font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-primary); text-align: right; }
-.grav-spark-delta { grid-area: delta; font-size: 10px; font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-muted); text-align: right; }
+.grav-spark-now { grid-area: now; font-size: 16px; font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-primary); text-align: right; }
+.grav-spark-delta { grid-area: delta; font-size: 16px; font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-muted); text-align: right; }
 .grav-delta-na { color: var(--text-muted); }
 
 .grav-empty {
@@ -114,6 +114,6 @@
     min-height: 80px;
     color: var(--text-muted);
     font-style: italic;
-    font-size: 12px;
+    font-size: 16px;
     text-align: center;
 }

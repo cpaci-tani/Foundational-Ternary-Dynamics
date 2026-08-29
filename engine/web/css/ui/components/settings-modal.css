@@ -14,7 +14,7 @@
     height: 100%;
     z-index: var(--z-modal);
     background: var(--modal-backdrop);
-    backdrop-filter: blur(6px);
+    backdrop-filter: var(--glass-filter-low);
     align-items: center;
     justify-content: center;
 }
@@ -25,7 +25,7 @@
 /* ── Settings box (modal content shell) ──────────────── */
 .settings-box {
     background: var(--bg-elevated);
-    backdrop-filter: blur(24px);
+    backdrop-filter: var(--glass-filter-high);
     border: 1px solid var(--border-light);
     border-radius: var(--radius-xl);
     padding: 24px 28px;
@@ -98,6 +98,95 @@
     line-height: 1.45;
 }
 
+.settings-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--row-gap);
+}
+
+.settings-toggle-row > div {
+    min-width: 0;
+}
+
+.settings-toggle-row .settings-label,
+.settings-toggle-row .settings-help {
+    margin-bottom: 0;
+}
+
+.settings-switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 52px;
+    width: 52px;
+    min-height: var(--tap-min);
+    cursor: pointer;
+}
+
+.settings-switch input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.settings-switch-track {
+    position: relative;
+    pointer-events: none;
+    width: 44px;
+    height: 24px;
+    border: 1px solid var(--border-light);
+    border-radius: 999px;
+    background: var(--bg-input);
+    transition: background var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out),
+                box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.settings-switch-track span {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    transition: transform var(--dur-fast) var(--ease-out),
+                background var(--dur-fast) var(--ease-out);
+}
+
+.settings-switch input:checked + .settings-switch-track {
+    background: var(--state-active-bg);
+    border-color: var(--accent);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 24%, transparent);
+}
+
+.settings-switch input:checked + .settings-switch-track span {
+    transform: translateX(20px);
+    background: var(--accent);
+}
+
+.settings-switch input:focus-visible + .settings-switch-track {
+    box-shadow: var(--state-focus-ring);
+}
+
+.settings-glass-controls {
+    margin-top: var(--sec-gap);
+    transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+.settings-glass-controls.is-disabled {
+    opacity: var(--state-disabled-opacity);
+}
+
+.settings-glass-controls input:disabled {
+    cursor: not-allowed;
+}
+
 /* UI Scale row */
 .settings-scale-row {
     display: flex;
@@ -109,7 +198,7 @@
     font-family: var(--font-mono);
     font-size: var(--fs-lg);
     font-weight: bold;
-    color: var(--accent);
+    color: var(--accent-text);
     min-width: 44px;
     text-align: center;
 }
@@ -141,7 +230,10 @@
     background: var(--bg-input);
     color: var(--text-secondary);
     border: 1px solid var(--border);
-    transition: all var(--dur-fast) var(--ease-out);
+    transition: background-color var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out),
+                box-shadow var(--dur-fast) var(--ease-out);
     font-size: var(--fs-sm);
     font-weight: 600;
 }
@@ -171,7 +263,9 @@
     background: var(--bg-input);
     color: var(--text-secondary);
     border: 1px solid var(--border);
-    transition: all var(--dur-fast) var(--ease-out);
+    transition: background-color var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out);
 }
 
 .settings-preset:hover {
@@ -203,7 +297,10 @@
     border-radius: var(--radius-md);
     border: 2px solid transparent;
     cursor: pointer;
-    transition: all var(--dur-fast) var(--ease-out);
+    transition: background-color var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out),
+                transform var(--dur-fast) var(--ease-out),
+                box-shadow var(--dur-fast) var(--ease-out);
     background: var(--bg-input);
     appearance: none;
     font: inherit;
@@ -288,12 +385,15 @@
     background: var(--bg-input);
     color: var(--text-secondary);
     border: 1px solid var(--border);
-    transition: all var(--dur-fast) var(--ease-out);
+    transition: background-color var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out),
+                box-shadow var(--dur-fast) var(--ease-out);
 }
 
 .settings-footer button:hover {
     background: var(--negative);
-    color: #fff;
+    color: var(--on-negative);
     border-color: var(--negative);
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }

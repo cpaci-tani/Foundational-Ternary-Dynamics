@@ -479,6 +479,11 @@ bool GpuBackend::copy_visual_flux_magnitude_plane(
 bool GpuBackend::copy_visual_field_sample(VisualFieldKind kind, int stride,
                                           VisualFieldSample& out) {
     if (!engine_) return false;
+    // Compact visualization can run while paused, before any GPU tick has
+    // copied the bridge profile. Keep branch-selecting toggles current here;
+    // otherwise geometric GravityForce silently evaluates the default |J|
+    // operator against an otherwise correctly uploaded latency field.
+    engine_->toggles = bridge_.toggles;
     engine_->copy_visual_field_sample(kind, stride, out);
     return true;
 }

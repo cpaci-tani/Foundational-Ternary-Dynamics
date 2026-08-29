@@ -20,6 +20,7 @@ coordinates are relaxed first. FTD-0787's quartic was the curvature of a
 rectilinear chord across an exactly flat valley.
 """
 import itertools, json, sys
+from pathlib import Path
 import numpy as np
 from scipy.optimize import minimize
 from scipy.linalg import null_space, orth
@@ -28,6 +29,10 @@ EPS = 0.01
 CUT = 1.5                      # compact support in q
 NULL_TOL = 1e-7                # prereg 7.5; re-run at 1e-6 and 1e-8
 RNG = np.random.default_rng(20260804)
+OUTPUT_PATH = (
+    Path(__file__).resolve().parent
+    / "recorded_results" / "ftd_0800" / "maxwell_c3_results.json"
+)
 
 
 # ----------------------------------------------------------------- model ---
@@ -326,19 +331,22 @@ def tier_c():
 
 
 if __name__ == "__main__":
+    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     res = tier_a()
     ok = all(r.get("control_ok", True) for r in res)
     print("\n" + "=" * 72)
     print(f"TIER A CONTROLS: {'PASS - screen is valid, proceed' if ok else 'FAIL - SCREEN_INVALID'}")
     if not ok:
-        json.dump(dict(verdict="SCREEN_INVALID", tierA=res),
-                  open("maxwell_c3_results.json", "w"), indent=1, default=str)
+        with OUTPUT_PATH.open("w", encoding="utf-8") as output:
+            json.dump(dict(verdict="SCREEN_INVALID", tierA=res),
+                      output, indent=1, default=str)
         sys.exit(1)
     C = tier_c()
     B, tally, checked = tier_b()
-    json.dump(dict(tierA=res, tierC=C, tierB_hits=B, tierB_tally=tally,
-                   tierB_checked=checked),
-              open("maxwell_c3_results.json", "w"), indent=1, default=str)
+    with OUTPUT_PATH.open("w", encoding="utf-8") as output:
+        json.dump(dict(tierA=res, tierC=C, tierB_hits=B, tierB_tally=tally,
+                       tierB_checked=checked),
+                  output, indent=1, default=str)
     hits = [r for r in (res + C + B) if "n=4 CANDIDATE" in r["verdict"]]
     print("\n" + "=" * 72)
     print(f"OUTCOME: {'N4_FOUND - ' + str(len(hits)) + ' candidate(s)' if hits else 'NO_NATIVE_N4'}")

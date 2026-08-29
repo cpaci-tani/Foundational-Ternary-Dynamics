@@ -25,6 +25,7 @@ export class MobilePanelController {
 
         this._touch  = { active: false, startY: 0, lastY: 0, startCollapsed: false };
         this._obs    = null;
+        this._initialized = false;
 
         this._onTouchStart = this._onTouchStart.bind(this);
         this._onTouchMove  = this._onTouchMove.bind(this);
@@ -32,7 +33,8 @@ export class MobilePanelController {
     }
 
     init() {
-        if (!this.panelArea) return this;
+        if (!this.panelArea || this._initialized) return this;
+        this._initialized = true;
 
         // Watch for panels-collapsed attribute changes to toggle body scroll lock.
         this._obs = new MutationObserver(() => this._syncScrollLock());
@@ -40,11 +42,12 @@ export class MobilePanelController {
         this._syncScrollLock();
 
         // Attach touch listeners to the grip handle and the panel header area.
-        const targets = [this.resizer, this.panelArea].filter(Boolean);
+        const targets = this._getTouchTargets();
         targets.forEach((el) => {
             el.addEventListener('touchstart', this._onTouchStart, { passive: true });
             el.addEventListener('touchmove',  this._onTouchMove,  { passive: false });
             el.addEventListener('touchend',   this._onTouchEnd,   { passive: true });
+            el.addEventListener('touchcancel', this._onTouchEnd,  { passive: true });
         });
 
         return this;
@@ -52,13 +55,18 @@ export class MobilePanelController {
 
     destroy() {
         this._obs?.disconnect();
-        const targets = [this.resizer, this.panelArea].filter(Boolean);
+        this._obs = null;
+        const targets = this._getTouchTargets();
         targets.forEach((el) => {
             el.removeEventListener('touchstart', this._onTouchStart);
             el.removeEventListener('touchmove',  this._onTouchMove);
             el.removeEventListener('touchend',   this._onTouchEnd);
+            el.removeEventListener('touchcancel', this._onTouchEnd);
         });
         document.body.classList.remove('body-panel-open');
+        this._touch.active = false;
+        if (this.panelArea) this.panelArea.style.transform = '';
+        this._initialized = false;
     }
 
     // ── Touch handlers ───────────────────────────────────────────────────────
@@ -130,5 +138,15 @@ export class MobilePanelController {
 
     _isOnResizer(e) {
         return this.resizer && this.resizer.contains(e.target);
+    }
+
+    _getTouchTargets() {
+        // #panel-resizer normally lives inside #panel-area, so listening on
+        // both would process every bubbling grip gesture twice. Keep the
+        // resizer as a separate target only for nonstandard external layouts.
+        if (this.resizer && !this.panelArea?.contains(this.resizer)) {
+            return [this.panelArea, this.resizer].filter(Boolean);
+        }
+        return this.panelArea ? [this.panelArea] : [];
     }
 }

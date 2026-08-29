@@ -420,7 +420,7 @@ For complete closed-negative provenance see `LEDGER.md` per-row entries.
 
 `TRACKER_OPEN_ITEMS.md` at `docs/theory/07_assessment/` carries ~200 atomic `[OPEN]` markers across ~75 files. **The math-relevant subset is captured above**; the rest are:
 
-- **Engine code** (§1 of TRACKER_OPEN_ITEMS): mostly closed; 3 [BLOCKED] DagEngine stubs awaiting sparse-cosmology branch trigger.
+- **Engine code** (§1 of TRACKER_OPEN_ITEMS): the former sparse-DAG stubs were removed in the 2026-08-28 product consolidation and are no longer counted as open work.
 - **Documentation TODOs**: doc-only items in foundations + reference docs, not new mathematics.
 - **Exploration scripts** (§8 of TRACKER_OPEN_ITEMS): unfinished investigations; their conclusions stop short of closed derivations but do not block sector progress.
 

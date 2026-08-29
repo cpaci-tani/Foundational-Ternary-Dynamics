@@ -55,7 +55,7 @@
 .pe-ctrl-value {
     font-family: var(--font-mono);
     font-size: var(--fs-xs);
-    color: var(--accent);
+    color: var(--accent-text);
     min-width: 40px;
     text-align: right;
 }
@@ -64,7 +64,7 @@
 .insp-pos-input {
     width: 36px;
     background: var(--bg-input);
-    color: var(--accent);
+    color: var(--accent-text);
     border: 1px solid var(--border);
     border-radius: 2px;
     font-family: var(--font-mono);
@@ -110,7 +110,7 @@
     border-radius: 7px;
     background: color-mix(in srgb, #f59e0b 12%, transparent);
     color: #fbbf24;
-    font-size: 10px;
+    font-size: 16px;
     font-weight: 700;
     line-height: 1.35;
     letter-spacing: 0.035em;
@@ -240,11 +240,11 @@
 
 .coord-step:hover {
     background: var(--state-hover-bg, rgba(255, 255, 255, 0.08));
-    color: var(--accent);
+    color: var(--accent-text);
 }
 
 .coord-step:active {
-    color: var(--accent);
+    color: var(--accent-text);
     transform: scale(0.9);
 }
 
@@ -355,6 +355,39 @@
 .sel-axis-btn:active {
     background: rgba(255,255,255,0.2);
 }
+
+.axis-x-text { color: var(--axis-x-text); }
+.axis-y-text { color: var(--axis-y-text); }
+.axis-z-text { color: var(--axis-z-text); }
+.combo-section-label.is-positive { color: var(--positive-text); opacity: 1; }
+.combo-section-label.is-negative { color: var(--negative-text); opacity: 1; }
+.combo-section-spaced { margin-top: var(--sp-md); }
+
+.selection-card-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-sm);
+    margin-top: var(--sp-md);
+}
+.selection-card-actions .tb-btn {
+    width: auto;
+    font-size: var(--fs-base);
+    padding: 4px 6px;
+}
+.selection-area-toggle { flex: 1; }
+.selection-area-toggle[data-active="true"] {
+    color: var(--text-primary);
+    background: color-mix(in srgb, var(--selection-text) 20%, transparent);
+    border-color: var(--selection-text);
+}
+.selection-submit {
+    flex: 2;
+    color: var(--text-primary);
+    background: color-mix(in srgb, var(--selection-text) 15%, transparent);
+    border-color: var(--selection-text);
+}
+.selection-area-controls { margin-top: var(--sp-md); }
+.selection-area-controls[hidden] { display: none; }
 
 /* Touch target — axis-nav buttons split a row (flex:1); raise height to the
    tap floor on phones. */

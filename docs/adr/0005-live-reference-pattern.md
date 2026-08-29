@@ -2,6 +2,11 @@
 
 **Status:** Accepted (load-bearing for Phase 2)
 
+**Current scope (2026-08-28):** Scale-0 `MockBridge` and its diagnostics,
+particle, and lattice factories were retired when the web engine became
+WASM-only. The decision remains active for `createAtomEngine(state)`, the
+Scale-2 JS helper hosted by `WasmBridge`.
+
 ## Context
 
 When extracting subsystems from `MockBridge` (diagnostics, particle engine,
@@ -32,7 +37,7 @@ Rules (codified in CONTRACTS.md §1):
   is immediately visible to the factory's methods.
 - Each module's STATE CONTRACT block enumerates ownership and invariants.
 
-Reference exemplar: `engine/web/js/bridge/mock-diagnostics.js` lines 26–50.
+Current exemplar: `engine/web/js/bridge/mock-atom-engine.js` lines 14–28.
 
 ## Consequences
 
@@ -49,5 +54,7 @@ Reference exemplar: `engine/web/js/bridge/mock-diagnostics.js` lines 26–50.
 
 ## References
 
-- Files: `engine/web/js/bridge/mock-{diagnostics,particle-engine,lattice-samplers,atom-engine}.js`
+- Current file: `engine/web/js/bridge/mock-atom-engine.js`
+- Retired Scale-0 factories remain available in Git history before the
+  August 2026 product consolidation.
 - Cross-refs: CONTRACTS.md §1, ADR-0002 (capability factories)

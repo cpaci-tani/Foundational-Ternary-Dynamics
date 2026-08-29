@@ -3,9 +3,10 @@
  * Mounts all Scale 0 control cards into the controls panel
  */
 
-import { createPhysicsTogglesCard } from './physics-toggles.js';
-import { createSubstrateControlsCard } from './substrate-controls.js';
-import { createFluxVolumeCard, createParticleDisplayCard, createSelectionCard } from './flux-volume.js';
+import { createPhysicsTogglesCard } from './physics-toggles.js?v=2';
+import { createSubstrateControlsCard } from './substrate-controls.js?v=2';
+import { createFluxVolumeCard, createParticleDisplayCard, createSelectionCard } from './flux-volume.js?v=2';
+import { createFlowLinesCard } from './flow-lines.js?v=1';
 
 export class Scale0ControlsComponent {
   constructor(panelControlsDiv) {
@@ -31,6 +32,7 @@ export class Scale0ControlsComponent {
     gridContainer.appendChild(createPhysicsTogglesCard());
     gridContainer.appendChild(createSubstrateControlsCard());
     gridContainer.appendChild(createFluxVolumeCard());
+    gridContainer.appendChild(createFlowLinesCard());
     gridContainer.appendChild(createParticleDisplayCard());
     gridContainer.appendChild(createSelectionCard());
 

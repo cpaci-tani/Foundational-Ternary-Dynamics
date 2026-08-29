@@ -1,7 +1,7 @@
 #pragma once
 //
 // host/adapters/scale0_adapter.h — Scale 0 (voxel field, RenderBridge) behind
-// the ScaleAdapter seam (SPEC_NATIVE_REBUILD_R0R1 §2.2, §4.1).
+// the ScaleAdapter seam.
 //
 // This is the OLD NativeEngineSession/command_applier/ui_snapshot_builder logic
 // re-homed. It owns the RenderBridge + the telemetry scheduler + the interop

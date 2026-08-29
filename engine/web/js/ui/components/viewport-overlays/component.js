@@ -7,7 +7,8 @@
  * - Bottom status-bar scene/environment controls
  */
 
-import { getScale0OverlayTemplate } from '../../../scales/scale0/ui/overlays/template.js';
+import { getScale0OverlayTemplate } from '../../../scales/scale0/ui/overlays/template.js?v=3';
+import { getScale0StandardModelHudTemplate } from '../../../scales/scale0/ui/overlays/standard-model.js?v=2';
 import { getScale1OverlayTemplate } from '../../../scales/scale1/ui/overlays/template.js';
 import { getScale2OverlayTemplate } from '../../../scales/scale2/ui/overlays/template.js';
 import { getScale4OverlayTemplate } from '../../../scales/scale4/ui/overlays/template.js';
@@ -28,6 +29,7 @@ export class ViewportOverlaysComponent {
     };
 
     this.overlays.set('scale0', append(getScale0OverlayTemplate()));
+    this._legends.push(append(getScale0StandardModelHudTemplate()));
     this.overlays.set('scale1', append(getScale1OverlayTemplate()));
 
     const scale2 = getScale2OverlayTemplate();

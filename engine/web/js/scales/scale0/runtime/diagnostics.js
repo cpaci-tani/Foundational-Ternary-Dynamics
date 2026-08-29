@@ -63,6 +63,11 @@ export function updateDiagnosticsAndPanels(ctx, state) {
         ctx.diagnosticsPanel?.update();
     } else if (ctx.activeTab === 'charts') {
         ctx.chartsPanel?.update();
+    } else if (ctx.activeTab === 'telemetry-grid') {
+        // Consume the sample in the same frame that published it. The app-level
+        // fallback is reserved for floated/non-Scale-0 grids; its former 125 ms
+        // gate dropped most Scale-0 samples and made these sparklines step.
+        ctx.telemetryGridPanel?.update();
     } else if (ctx.activeTab === 'lagrangian') {
         ctx.lagrangianPanel?.update();
     }

@@ -1,6 +1,6 @@
 #pragma once
 //
-// host/scale_host.h — the scale-generic session host (SPEC_NATIVE_REBUILD_R0R1 §4.1).
+// host/scale_host.h — the scale-generic session host.
 //
 // ScaleHost owns the boot/reload/tick/drain/publish loop and the interop
 // lifecycle for WHATEVER scale is active, holding it behind a ScaleAdapter. No

@@ -742,25 +742,46 @@ val get_force_field_sampled(ftd::RenderBridge& rb, int stride) {
 // (x + 0.5f) to match the particle-render convention — see the April-19
 // fix to get_particle_data() for the rationale.
 
-// Gravity-force-field sampler: gradient of flux-density magnitude, scaled
-// by G_N. F_grav ≈ G_N · ∇|J|  — pulls material toward high-density regions,
-// reproducing the lattice analogue of Newtonian gravity (see FTD paper
-// §Gravity). Periodic-wrap at the boundaries matches the engine's own
-// `lattice().index()` convention.
+// Gravity-force-field sampler: the exact finite force-law field selected by
+// phase_forces, evaluated at every sampled site (the tick itself applies it
+// only at manifested sites).  The default branch is the radius-2 centred
+// difference G_N·delta_2|J|; geometric_gravity selects
+// M_INERTIAL·C_SPEED^2·L·delta_2L.  Periodic wrap matches lattice().index().
 val get_gravity_field_sampled(ftd::RenderBridge& rb, int stride) {
     const auto& lat = rb.lattice();
     const auto& fields = rb.fields();
-    auto density = [&](int x, int y, int z) -> double {
-        return fields.density_at(static_cast<std::size_t>(lat.index(x, y, z)));
-    };
+    const auto& voxels = rb.voxels();
     return sample_vector_overlay(rb, stride, /*interior=*/false,
-        [&](int x, int y, int z, int) -> std::optional<std::array<double, 3>> {
-            // Central difference of |J| — periodic wrap via lattice().index().
-            const double gx = (density(x + 1, y, z) - density(x - 1, y, z)) * 0.5;
-            const double gy = (density(x, y + 1, z) - density(x, y - 1, z)) * 0.5;
-            const double gz = (density(x, y, z + 1) - density(x, y, z - 1)) * 0.5;
-            if (std::sqrt(gx * gx + gy * gy + gz * gz) < 1e-10) return std::nullopt;
-            return std::array<double, 3>{ftd::G_N * gx, ftd::G_N * gy, ftd::G_N * gz};
+        [&](int x, int y, int z, int idx) -> std::optional<std::array<double, 3>> {
+            const int xp = lat.index(x + 2, y, z), xm = lat.index(x - 2, y, z);
+            const int yp = lat.index(x, y + 2, z), ym = lat.index(x, y - 2, z);
+            const int zp = lat.index(x, y, z + 2), zm = lat.index(x, y, z - 2);
+            double fx = 0.0, fy = 0.0, fz = 0.0;
+            if (rb.toggles.geometric_gravity) {
+                const double pre = ftd::M_INERTIAL * ftd::C_SPEED * ftd::C_SPEED
+                                 * voxels[static_cast<std::size_t>(idx)].latency;
+                fx = pre * ftd::GRAD_TIER2_SCALE
+                   * (voxels[static_cast<std::size_t>(xp)].latency
+                    - voxels[static_cast<std::size_t>(xm)].latency);
+                fy = pre * ftd::GRAD_TIER2_SCALE
+                   * (voxels[static_cast<std::size_t>(yp)].latency
+                    - voxels[static_cast<std::size_t>(ym)].latency);
+                fz = pre * ftd::GRAD_TIER2_SCALE
+                   * (voxels[static_cast<std::size_t>(zp)].latency
+                    - voxels[static_cast<std::size_t>(zm)].latency);
+            } else {
+                fx = ftd::G_N * ftd::GRAD_TIER2_SCALE
+                   * (fields.density_at(static_cast<std::size_t>(xp))
+                    - fields.density_at(static_cast<std::size_t>(xm)));
+                fy = ftd::G_N * ftd::GRAD_TIER2_SCALE
+                   * (fields.density_at(static_cast<std::size_t>(yp))
+                    - fields.density_at(static_cast<std::size_t>(ym)));
+                fz = ftd::G_N * ftd::GRAD_TIER2_SCALE
+                   * (fields.density_at(static_cast<std::size_t>(zp))
+                    - fields.density_at(static_cast<std::size_t>(zm)));
+            }
+            if (std::sqrt(fx * fx + fy * fy + fz * fz) < 1e-15) return std::nullopt;
+            return std::array<double, 3>{fx, fy, fz};
         });
 }
 
@@ -1186,6 +1207,19 @@ val get_latency_sampled(ftd::RenderBridge& rb, int stride) {
         });
 }
 
+// Real latency-Poisson well depth stored in voxel.latency.  This is distinct
+// from get_latency_sampled's historical normalized-|J|^2 display proxy and
+// mirrors native FTS2 kind poissonLatency exactly.
+val get_poisson_latency_sampled(ftd::RenderBridge& rb, int stride) {
+    const auto& voxels = rb.voxels();
+    return sample_scalar_overlay(rb, stride, /*interior=*/false,
+        [&](int, int, int, int idx) -> std::optional<double> {
+            const double value = voxels[static_cast<std::size_t>(idx)].latency;
+            if (value < 1e-15) return std::nullopt;
+            return value;
+        });
+}
+
 // Kretschmann-like curvature proxy K(x) = (∇²L)² with the 18-point Moore
 // Laplacian (face 1/3, edge 1/6) applied to the latency proxy L.
 val get_kretschmann_sampled(ftd::RenderBridge& rb, int stride) {
@@ -1346,15 +1380,6 @@ val get_knot_aggregate(ftd::RenderBridge& rb) {
 // bindings_atom.cpp. Emscripten unions every EMSCRIPTEN_BINDINGS block
 // into the final module.
 //
-// DagEngine binding intentionally removed (2026 consolidation sweep).
-// The web engine always uses RenderBridge — see the binding above and
-// the comment in web/js/bridge-init.js explaining why. DagEngine
-// is now an experimental C++-only data-structure prototype; exposing
-// it through WASM would invite callers into an unfinished code path
-// whose gauss_project / phase_forces / phase_movement are stubs.
-//
-// If you're reading this because you hit a missing-binding error:
-// use RenderBridge. The API surface is identical for tick/run/etc.
 // Revision 6.1: expose the single-sourced engine version to the dashboard.
 static std::string get_engine_version() { return ftd::ENGINE_VERSION; }
 

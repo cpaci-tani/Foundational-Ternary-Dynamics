@@ -1,15 +1,9 @@
-# engine/native — clean-slate native rebuild.
+# engine/native — retained Win64 native application.
 #
-# The UI is a custom Direct3D 12 + Direct2D/DirectWrite layer built in the
-# engine's own device (owner decision 2026-08-20 — no Dear ImGui). This tree
-# therefore carries only the ImGui-free salvage spine: the D3D12 presenter +
-# CUDA<->D3D12 interop, the transport (command queue / snapshot publisher /
-# journal), and the engine session. The shell/panels/theme are rebuilt on the
-# custom UI in a later phase. The native_* target-name prefix namespaces this
-# tree's libraries (the native_desktop prototype it once coexisted with was
-# retired 2026-08-21).
-#
-# See native/docs/PLAN_NATIVE_REBUILD.md + SPEC_NATIVE_REBUILD_R0R1.md.
+# RmlUi renders through the app's D3D12 device. Physics runs in-process, with
+# CUDA<->D3D12 interop when available. The native_* target prefix namespaces
+# the app's libraries. See native/README.md and
+# native/docs/SPEC_NATIVE_UI_RMLUI.md.
 
 # ── native_cli: command-line options ──
 add_library(native_cli STATIC src/cli_options.cpp)
@@ -39,7 +33,7 @@ endif()
 
 # ── native_host: scale-generic seam (ScaleHost + ScaleAdapter + Scale-0 adapter) ──
 # The scale-agnostic session host + the concrete Scale-0 adapter that re-homes
-# the RenderBridge session logic behind it (SPEC_NATIVE_REBUILD_R0R1 §4).
+# the RenderBridge session logic behind the scale-host boundary.
 # ScaleHost owns a ScaleAdapter, never a concrete engine; the Scale-0 adapter
 # reuses native_session's proven apply/observe/build free functions so behavior
 # is identical. Boundary: no concrete scale type appears in scale_host.{h,cpp}.

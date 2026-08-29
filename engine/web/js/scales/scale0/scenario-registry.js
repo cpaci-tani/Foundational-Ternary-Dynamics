@@ -1056,6 +1056,21 @@ export function populateScale0ScenarioSelect(select, selectedId = 'flux-pulse') 
         groups.get(scenario.category).push(scenario);
     }
 
+    // The toolbar component populates once when it creates the group and the
+    // Scale-0 binding layer reconciles the browser-restored selection later.
+    // If the registry-backed option tree is already current, preserve it and
+    // change only the live value instead of tearing down/recreating 130 options.
+    const expectedIds = [...groups.values()].flat().map((scenario) => scenario.id);
+    const currentIds = Array.from(select.options, (option) => option.value);
+    const alreadyPopulated = currentIds.length === expectedIds.length
+        && currentIds.every((id, index) => id === expectedIds[index]);
+    if (alreadyPopulated) {
+        if (select.value !== selectedId && expectedIds.includes(selectedId)) {
+            select.value = selectedId;
+        }
+        return;
+    }
+
     select.innerHTML = '';
     for (const [category, scenarios] of groups) {
         const group = document.createElement('optgroup');

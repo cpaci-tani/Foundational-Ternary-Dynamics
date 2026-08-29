@@ -14,6 +14,7 @@ export class FloatingWindow {
         this.panelEl = opts.panelEl;
         this.initialPos = opts.initialPos || { x: 100, y: 100 };
         this.onDock = typeof opts.onDock === 'function' ? opts.onDock : null;
+        this.onDestroy = typeof opts.onDestroy === 'function' ? opts.onDestroy : null;
 
         this.el = null;
         this.header = null;
@@ -24,6 +25,7 @@ export class FloatingWindow {
         this._onPointerDown = this._onPointerDown.bind(this);
         this._onPointerMove = this._onPointerMove.bind(this);
         this._onPointerUp = this._onPointerUp.bind(this);
+        this._destroyed = false;
         this._ro = null;
     }
 
@@ -110,13 +112,24 @@ export class FloatingWindow {
     }
 
     dock() {
-        if (this.onDock) {
-            this.onDock(this.panelId, this.panelEl);
+        try {
+            if (this.onDock) {
+                this.onDock(this.panelId, this.panelEl);
+            }
+        } finally {
+            this.destroy();
         }
-        this.destroy();
     }
 
     destroy() {
+        if (this._destroyed) return;
+        this._destroyed = true;
+
+        // A panel can be docked or torn down while a pointer drag is still in
+        // flight (pointer cancellation, scale teardown, browser focus loss).
+        // Always release the window-level listeners here; otherwise the
+        // detached panel remains retained until another pointerup happens.
+        this._finishDrag({ resize: false });
         if (this._ro) {
             this._ro.disconnect();
             this._ro = null;
@@ -125,6 +138,7 @@ export class FloatingWindow {
             this.el.remove();
         }
         _activeWindows = _activeWindows.filter(win => win !== this);
+        this.onDestroy?.(this.panelId, this);
     }
 
     triggerChartResize() {
@@ -141,6 +155,7 @@ export class FloatingWindow {
     // ── Drag mechanics ───────────────────────────────────────────────────────
 
     startDrag(clientX, clientY) {
+        if (this._destroyed || !this.el) return;
         this.focus();
         const rect = this.el.getBoundingClientRect();
         this._drag.active = true;
@@ -150,6 +165,8 @@ export class FloatingWindow {
 
         window.addEventListener('pointermove', this._onPointerMove);
         window.addEventListener('pointerup', this._onPointerUp);
+        window.addEventListener('pointercancel', this._onPointerUp);
+        window.addEventListener('blur', this._onPointerUp);
     }
 
     _onPointerDown(e) {
@@ -173,12 +190,18 @@ export class FloatingWindow {
     }
 
     _onPointerUp() {
-        if (!this._drag.active) return;
+        this._finishDrag({ resize: true });
+    }
+
+    _finishDrag({ resize } = { resize: false }) {
+        const wasActive = this._drag.active;
         this._drag.active = false;
-        this.el.classList.remove('is-dragging');
+        this.el?.classList.remove('is-dragging');
         window.removeEventListener('pointermove', this._onPointerMove);
         window.removeEventListener('pointerup', this._onPointerUp);
-        this.triggerChartResize();
+        window.removeEventListener('pointercancel', this._onPointerUp);
+        window.removeEventListener('blur', this._onPointerUp);
+        if (wasActive && resize) this.triggerChartResize();
     }
 }
 
@@ -202,7 +225,12 @@ export class FloatingWindowManager {
             onDock: (id, el) => {
                 this.windows.delete(id);
                 if (onDock) onDock(id, el);
-            }
+            },
+            onDestroy: (id, destroyedWindow) => {
+                if (this.windows.get(id) === destroyedWindow) {
+                    this.windows.delete(id);
+                }
+            },
         }).init();
 
         this.windows.set(panelId, win);

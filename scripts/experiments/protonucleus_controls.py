@@ -3,11 +3,13 @@ T1 neutral seed · T2 lattice-size · T3 held-out RNG · T4 collision order
 T5 long run · T6 quench-mechanism diagnostic.
 """
 import numpy as np, sys, time, json
+from pathlib import Path
 
 C_WAVE2 = np.float32(1.0/3.0)
 G_C     = np.float32(0.0854245431028543695)
 K_GEN   = np.float32(1.5163860591519780)
 K_MAN   = np.float32(0.5054620197173260)
+OUTPUT_DIR = Path(__file__).resolve().parent / "recorded_results" / "ftd_0799"
 
 def lap18(F, out):
     np.multiply(F, np.float32(-4.0), out=out)
@@ -97,6 +99,7 @@ def run(R0, L, ticks=600, seed=20260803, shuffle=False, mode="uniform",
     return out
 
 if __name__ == "__main__":
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     which = sys.argv[1] if len(sys.argv) > 1 else "all"
     res = []
     if which in ("all", "t1"):
@@ -112,4 +115,6 @@ if __name__ == "__main__":
         print("=== T5/T6 LONG RUN + QUENCH DIAGNOSTIC ===")
         res.append(run(20, 161, ticks=1200, label="R0=20 long (1200t)", diag=True))
         res.append(run(16, 129, ticks=1200, label="R0=16 long (1200t)", diag=True))
-    json.dump(res, open(f"protonucleus_controls_{which}.json","w"), indent=1, default=str)
+    output_path = OUTPUT_DIR / f"protonucleus_controls_{which}.json"
+    with output_path.open("w", encoding="utf-8") as output:
+        json.dump(res, output, indent=1, default=str)

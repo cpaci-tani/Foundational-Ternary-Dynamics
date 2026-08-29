@@ -94,8 +94,21 @@ export function createScale0ViewportAdapter(viewport) {
             viewport.hideAllForceStyles?.();
             if (!anyForceOn) return;
             if (style === 'arrows') viewport.showArrowForces?.(fieldState);
-            else if (style === 'heatmap') viewport.showForceHeatmap?.(true);
-            else if (style === 'glyphs') {
+            else if (style === 'heatmap') {
+                viewport.showForceHeatmap?.({
+                    em:      !!fieldState.showForceEM,
+                    gravity: !!fieldState.showForceGravity,
+                    strong:  !!fieldState.showForceStrong,
+                    weak:    !!fieldState.showForceWeak,
+                });
+            } else if (style === 'flow') {
+                viewport.showForceStreamlines_vis?.({
+                    em:      !!fieldState.showForceEM,
+                    gravity: !!fieldState.showForceGravity,
+                    strong:  !!fieldState.showForceStrong,
+                    weak:    !!fieldState.showForceWeak,
+                });
+            } else if (style === 'glyphs') {
                 // Per-type visibility so only the enabled force's glyph mesh
                 // renders. Previously this passed a global `true` and every
                 // force's InstancedMesh went visible — but the meshes share
@@ -201,6 +214,9 @@ export function createScale0ViewportAdapter(viewport) {
         },
         applyForceStreamlines(lines, type) {
             viewport?.updateForceStreamlines?.(lines, type);
+        },
+        clearForceVisualization(type, style) {
+            viewport?.clearForceVisualization?.(type, style);
         },
         animateForceStreamlines(dt) {
             viewport?.animateForceStreamlines?.(dt);

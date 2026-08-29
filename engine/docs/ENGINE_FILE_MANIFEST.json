@@ -3,13 +3,13 @@
   "generated_by": "engine/tools/build_file_manifest.py",
   "note": "Mechanical per-file catalog. Conceptual docs: engine/ARCHITECTURE.md, CALLSTACKS.md, SCENARIO_ARCHITECTURE.md, SPEC_ENGINE.md, engine/docs/ENGINE_CODE_MAP.md.",
   "totals": {
-    "files": 2693,
-    "loc": 713116
+    "files": 2616,
+    "loc": 692518
   },
   "subsystems": {
     "tests": {
-      "files": 814,
-      "loc": 246523
+      "files": 810,
+      "loc": 245128
     },
     "other": {
       "files": 806,
@@ -20,16 +20,16 @@
       "loc": 74989
     },
     "src/core": {
-      "files": 198,
-      "loc": 67371
+      "files": 196,
+      "loc": 66956
     },
     "include": {
-      "files": 310,
-      "loc": 39309
+      "files": 296,
+      "loc": 37353
     },
     "cuda": {
-      "files": 30,
-      "loc": 18359
+      "files": 29,
+      "loc": 17907
     },
     "web/scale0": {
       "files": 65,
@@ -37,15 +37,11 @@
     },
     "web/tests": {
       "files": 93,
-      "loc": 17216
+      "loc": 17215
     },
     "web/ui": {
       "files": 84,
-      "loc": 11052
-    },
-    "archive": {
-      "files": 28,
-      "loc": 8761
+      "loc": 10986
     },
     "web/viewport": {
       "files": 19,
@@ -53,11 +49,7 @@
     },
     "web/bridge": {
       "files": 24,
-      "loc": 7649
-    },
-    "tools": {
-      "files": 30,
-      "loc": 6918
+      "loc": 7646
     },
     "src/scenarios": {
       "files": 7,
@@ -65,7 +57,7 @@
     },
     "wasm": {
       "files": 5,
-      "loc": 2715
+      "loc": 2706
     },
     "web/scale1": {
       "files": 14,
@@ -99,17 +91,13 @@
       "files": 9,
       "loc": 1291
     },
-    "src/cli_demos": {
-      "files": 1,
-      "loc": 986
+    "tools": {
+      "files": 4,
+      "loc": 1199
     },
     "src/atom": {
       "files": 3,
       "loc": 844
-    },
-    "src/cognition": {
-      "files": 1,
-      "loc": 835
     },
     "web/backgrounds": {
       "files": 7,
@@ -233,336 +221,6 @@
       "primary": false,
       "purpose": "",
       "symbols": []
-    },
-    {
-      "path": "engine/archive/cuda_exploratory/campaign_3d_einstein_gpu_2026-06-04.cu",
-      "lang": "cuda",
-      "loc": 208,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "",
-      "symbols": []
-    },
-    {
-      "path": "engine/archive/cuda_exploratory/confinement_kernel_2026-06-04.cu",
-      "lang": "cuda",
-      "loc": 172,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "FTD Flux field J (Ux, Uy) has curl F = S1 + S2, where S1, S2 are independent ternary topological noise.",
-      "symbols": []
-    },
-    {
-      "path": "engine/archive/cuda_exploratory/test_compile_confinement_2026-06-04.cu",
-      "lang": "cuda",
-      "loc": 84,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "",
-      "symbols": []
-    },
-    {
-      "path": "engine/archive/dumps_non_load_bearing/dump_a1g_decay.cpp",
-      "lang": "cpp",
-      "loc": 134,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "Diagnostic: dump A_{1g} fraction per tick for sub-genesis \u03b4_center IC.",
-      "symbols": [
-        "Config",
-        "ConfigEx"
-      ]
-    },
-    {
-      "path": "engine/archive/exploratory/campaign_wang_extraction_2026-06-04.cpp",
-      "lang": "cpp",
-      "loc": 174,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "Archived 2026-06-04 from engine/tests/campaign_wang_extraction.cpp.",
-      "symbols": []
-    },
-    {
-      "path": "engine/archive/link8_closed/tests/test_link8_kadanoff.cpp",
-      "lang": "cpp",
-      "loc": 392,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "@file test_link8_kadanoff.cpp @brief Link 8 Candidate 1 \u2014 Kadanoff blocking vs master-quadratic recurrence.",
-      "symbols": [
-        "LinFit",
-        "LevelData",
-        "RunResult"
-      ]
-    },
-    {
-      "path": "engine/archive/link8_closed/tests/test_link8_run3_thermal.cpp",
-      "lang": "cpp",
-      "loc": 267,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "@file test_link8_run3_thermal.cpp @brief Link 8 Candidate 1 \u2014 Run 3 redo on Langevin-thermalized ensemble.",
-      "symbols": [
-        "LevelStat"
-      ]
-    },
-    {
-      "path": "engine/archive/phase_b_2026-04/campaign_emergent_spectrum_2026-04-27.cpp",
-      "lang": "cpp",
-      "loc": 435,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "@file campaign_emergent_spectrum_2026-04-27.cpp @brief FTD-0102: Emergent particle spectrum from generic initial conditions.",
-      "symbols": [
-        "Cluster",
-        "RunSummary"
-      ]
-    },
-    {
-      "path": "engine/archive/phase_b_2026-04/campaign_operator_mixing_2026-04-26.cpp",
-      "lang": "cpp",
-      "loc": 1160,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "@file campaign_operator_mixing_2026-04-26.cpp @brief FTD-0098: First measured native operator-mixing matrix M_ab(b=2).",
-      "symbols": [
-        "CovResult",
-        "EigResult"
-      ]
-    },
-    {
-      "path": "engine/archive/phase_b_2026-04/campaign_s_eff_nonlinear_2026-04-29.cpp",
-      "lang": "cpp",
-      "loc": 1075,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "@file campaign_s_eff_nonlinear_2026-04-29.cpp @brief FTD-0112: Nonlinear S_eff measurement campaign.",
-      "symbols": [
-        "CovResult",
-        "Args"
-      ]
-    },
-    {
-      "path": "engine/archive/phase_b_2026-04/campaign_s_eff_nonlinear_wilson_2026-06-04.cpp",
-      "lang": "cpp",
-      "loc": 1110,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "@file engine/archive/phase_b_2026-04/campaign_s_eff_nonlinear_wilson_2026-06-04.cpp @purpose Archived unregistered nonlinear S_eff campaign variant with Wilson-coefficient CLI hooks.",
-      "symbols": [
-        "CovResult",
-        "Args"
-      ]
-    },
-    {
-      "path": "engine/archive/phase_b_2026-04/campaign_topological_observables_2026-04-27.cpp",
-      "lang": "cpp",
-      "loc": 386,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "@file campaign_topological_observables_2026-04-27.cpp @brief FTD-0104: Topological observable mapping (engine-native exploration) Pre-registration: docs/theory/10_eft_program/PROTOCOL_TOPOLOGICAL_O...",
-      "symbols": [
-        "TubeMetrics",
-        "MonopoleMetrics",
-        "RunSummary"
-      ]
-    },
-    {
-      "path": "engine/archive/web_scale0_scenario_mirror_2026-08-27/scenarios/_helpers.js",
-      "lang": "js",
-      "loc": 595,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "Shared scenario primitives \u2014 JS mirror of `engine/src/scenarios/_helpers.h`.",
-      "symbols": [
-        "configureFreeWaveTerms()",
-        "configureGenesisGateTerms()",
-        "configurePairProductionTerms()",
-        "configureFreeMovementTerms()",
-        "configureAnnihilationTerms()",
-        "configureUnlockedCompositeTerms()",
-        "configurePreparedCoulombCandidateTerms()",
-        "configureUniformGenesisDriveTerms()",
-        "configureWeakTransmutationProbeTerms()",
-        "configureThermalTransportTerms()",
-        "configurePatternedGenesisResponseTerms()",
-        "configureStaticSeedTerms()"
-      ]
-    },
-    {
-      "path": "engine/archive/web_scale0_scenario_mirror_2026-08-27/scenarios/flux-scenarios.js",
-      "lang": "js",
-      "loc": 515,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "Flux scenarios \u2014 flux-* group.",
-      "symbols": [
-        "setupFluxScenario()"
-      ]
-    },
-    {
-      "path": "engine/archive/web_scale0_scenario_mirror_2026-08-27/scenarios/index.js",
-      "lang": "js",
-      "loc": 87,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "Scale-0 scenario dispatcher \u2014 JS parity mirror of engine/src/scenarios/*.",
-      "symbols": [
-        "runSetupScenario()"
-      ]
-    },
-    {
-      "path": "engine/archive/web_scale0_scenario_mirror_2026-08-27/scenarios/light-scenarios.js",
-      "lang": "js",
-      "loc": 114,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "Light scenarios \u2014 light-* group.",
-      "symbols": [
-        "setupLightScenario()"
-      ]
-    },
-    {
-      "path": "engine/archive/web_scale0_scenario_mirror_2026-08-27/scenarios/physics-lattice.js",
-      "lang": "js",
-      "loc": 58,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "Fixed-voxel physics extents for Scale-0 scenarios.",
-      "symbols": [
-        "physicsVox()",
-        "physicsSigma()",
-        "physicsBand()",
-        "createPhysicsLatticeHelpers()",
-        "PHYSICS_REFERENCE_L"
-      ]
-    },
-    {
-      "path": "engine/archive/web_scale0_scenario_mirror_2026-08-27/scenarios/quantum-scenarios.js",
-      "lang": "js",
-      "loc": 201,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "Quantum scenarios \u2014 quantum-* group.",
-      "symbols": [
-        "setupQuantumScenario()"
-      ]
-    },
-    {
-      "path": "engine/archive/web_scale0_scenario_mirror_2026-08-27/scenarios/s0-field-scenarios.js",
-      "lang": "js",
-      "loc": 262,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "S0Field scenarios \u2014 s0-field-* group.",
-      "symbols": [
-        "setupS0FieldScenario()"
-      ]
-    },
-    {
-      "path": "engine/archive/web_scale0_scenario_mirror_2026-08-27/scenarios/s0-seed-scenarios.js",
-      "lang": "js",
-      "loc": 859,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "S0Seed scenarios \u2014 s0-seed-* group.",
-      "symbols": [
-        "setupS0SeedScenario()"
-      ]
-    },
-    {
-      "path": "engine/archive/web_scale0_scenario_mirror_2026-08-27/scenarios/vacuum-scenarios.js",
-      "lang": "js",
-      "loc": 252,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "Vacuum Particle Scenarios \u2014 s0-vacuum-* group.",
-      "symbols": [
-        "setupVacuumScenario()"
-      ]
-    },
-    {
-      "path": "engine/archive/web_ui_scaffolding_2026-08-27/canvas-sparkline.js",
-      "lang": "js",
-      "loc": 89,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "CanvasSparkline \u2014 lightweight canvas mini-chart for legacy PE telemetry rows.",
-      "symbols": [
-        "CanvasSparkline"
-      ]
-    },
-    {
-      "path": "engine/archive/web_ui_scaffolding_2026-08-27/cosmic-info-panel/component.js",
-      "lang": "js",
-      "loc": 22,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "Cosmic Info Panel Component Wraps #panel-cosmic-info and owns lifecycle for future migration.",
-      "symbols": [
-        "CosmicInfoPanelComponent",
-        "initCosmicInfoPanel()"
-      ]
-    },
-    {
-      "path": "engine/archive/web_ui_scaffolding_2026-08-27/inspector-panel/component.js",
-      "lang": "js",
-      "loc": 22,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "Inspector Panel Component Wraps #panel-inspector and owns lifecycle for future migration.",
-      "symbols": [
-        "InspectorPanelComponent",
-        "initInspectorPanel()"
-      ]
-    },
-    {
-      "path": "engine/archive/web_ui_scaffolding_2026-08-27/ontic-panel/component.js",
-      "lang": "js",
-      "loc": 22,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "Ontic Panel Component Wraps #panel-ontic and owns lifecycle for future migration.",
-      "symbols": [
-        "OnticPanelComponent",
-        "initOnticPanel()"
-      ]
-    },
-    {
-      "path": "engine/archive/web_ui_scaffolding_2026-08-27/physics-panel/component.js",
-      "lang": "js",
-      "loc": 22,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "Physics Panel Component Wraps #panel-physics and owns lifecycle for future migration.",
-      "symbols": [
-        "PhysicsPanelComponent",
-        "initPhysicsPanel()"
-      ]
-    },
-    {
-      "path": "engine/archive/web_ui_scaffolding_2026-08-27/planetary-panel/component.js",
-      "lang": "js",
-      "loc": 22,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "Planetary Panel Component Wraps #panel-planetary and owns lifecycle for future migration.",
-      "symbols": [
-        "PlanetaryPanelComponent",
-        "initPlanetaryPanel()"
-      ]
-    },
-    {
-      "path": "engine/archive/web_ui_scaffolding_2026-08-27/zoo-panel/component.js",
-      "lang": "js",
-      "loc": 22,
-      "subsystem": "archive",
-      "primary": false,
-      "purpose": "Zoo Panel Component Wraps #panel-zoo and owns lifecycle for future migration.",
-      "symbols": [
-        "ZooPanelComponent",
-        "initZooPanel()"
-      ]
     },
     {
       "path": "engine/cuda/atom_engine_gpu.cu",
@@ -713,15 +371,6 @@
       "symbols": [
         "DiagnosticView"
       ]
-    },
-    {
-      "path": "engine/cuda/experimental_discrete_universe.cu",
-      "lang": "cuda",
-      "loc": 452,
-      "subsystem": "cuda",
-      "primary": true,
-      "purpose": "@file experimental_discrete_universe.cu @brief Standalone, hyper-optimized GPU Discrete Universe simulation engine prototype.",
-      "symbols": []
     },
     {
       "path": "engine/cuda/gpu_buffers.cu",
@@ -990,15 +639,6 @@
       "symbols": []
     },
     {
-      "path": "engine/include/ftd/cli_demos.h",
-      "lang": "c-header",
-      "loc": 41,
-      "subsystem": "include",
-      "primary": true,
-      "purpose": "CLI demo scenarios extracted from main.cpp.",
-      "symbols": []
-    },
-    {
       "path": "engine/include/ftd/cluster_genealogy.h",
       "lang": "c-header",
       "loc": 282,
@@ -1034,28 +674,6 @@
         "ClusterSnapshot",
         "ClusterHistory",
         "ClusterTracker"
-      ]
-    },
-    {
-      "path": "engine/include/ftd/cognition/cognitive_lattice.h",
-      "lang": "c-header",
-      "loc": 338,
-      "subsystem": "include",
-      "primary": true,
-      "purpose": "@file cognitive_lattice.h @brief Ternary cognitive sidecar for LLM memory and retrieval routing.",
-      "symbols": [
-        "SourceRef",
-        "CognitiveEdge",
-        "CognitiveEvent",
-        "QueryIntent",
-        "ContextBudget",
-        "ContextItem",
-        "ContextBrief",
-        "CandidateDraft",
-        "CandidateScore",
-        "PrivacyScope",
-        "CognitiveTernaryField",
-        "CognitiveFieldSoA"
       ]
     },
     {
@@ -1135,29 +753,6 @@
       "primary": true,
       "purpose": "CSV Data Export Utility for FTD Simulations Utility for exporting simulation data to CSV files.",
       "symbols": []
-    },
-    {
-      "path": "engine/include/ftd/dag_engine.h",
-      "lang": "c-header",
-      "loc": 154,
-      "subsystem": "include",
-      "primary": true,
-      "purpose": "@brief DagEngine \u2014 EXPERIMENTAL / DEPRECATED sparse-voxel-DAG prototype.",
-      "symbols": [
-        "DagEngine"
-      ]
-    },
-    {
-      "path": "engine/include/ftd/dag_lattice.h",
-      "lang": "c-header",
-      "loc": 181,
-      "subsystem": "include",
-      "primary": true,
-      "purpose": "SparseVoxelDAG A Directed Acyclic Graph that compresses identical octree nodes.",
-      "symbols": [
-        "DagNodeHash",
-        "SparseVoxelDAG"
-      ]
     },
     {
       "path": "engine/include/ftd/diagnostics_compute.h",
@@ -4353,7 +3948,7 @@
     {
       "path": "engine/include/ftd/test_telemetry.h",
       "lang": "c-header",
-      "loc": 154,
+      "loc": 152,
       "subsystem": "include",
       "primary": true,
       "purpose": "============================================================================ ftd/test_telemetry.h \u2014 NDJSON telemetry for the FTD Test Bench runner ==================================================...",
@@ -4511,110 +4106,6 @@
       ]
     },
     {
-      "path": "engine/include/tritium/arithmetic.h",
-      "lang": "c-header",
-      "loc": 172,
-      "subsystem": "include",
-      "primary": true,
-      "purpose": "tritium/arithmetic.h \u2014 Balanced ternary arithmetic on packed TritWord64 All operations process 32 trits in parallel via bitwise ops on uint64_t.",
-      "symbols": [
-        "TritAddResult"
-      ]
-    },
-    {
-      "path": "engine/include/tritium/convolution.h",
-      "lang": "c-header",
-      "loc": 114,
-      "subsystem": "include",
-      "primary": true,
-      "purpose": "tritium/convolution.h \u2014 1D/2D/3D ternary convolution with trit kernels Convolution with trit-valued kernels produces integer outputs.",
-      "symbols": [
-        "Volume3D"
-      ]
-    },
-    {
-      "path": "engine/include/tritium/logic.h",
-      "lang": "c-header",
-      "loc": 112,
-      "subsystem": "include",
-      "primary": true,
-      "purpose": "tritium/logic.h \u2014 Kleene strong three-valued logic on packed TritWord64 Maps balanced ternary to truth values: Neg = False, Zero = Unknown, Pos = True Logic ops: NOT, AND (min), OR (max), CONSENSUS...",
-      "symbols": []
-    },
-    {
-      "path": "engine/include/tritium/packing.h",
-      "lang": "c-header",
-      "loc": 137,
-      "subsystem": "include",
-      "primary": true,
-      "purpose": "tritium/packing.h \u2014 Conversion between compute (TritWord64) and storage (TritPack) formats Uses precomputed lookup tables for zero-branch encode/decode.",
-      "symbols": [
-        "DecodeEntry",
-        "DecodeLUT"
-      ]
-    },
-    {
-      "path": "engine/include/tritium/simd.h",
-      "lang": "c-header",
-      "loc": 171,
-      "subsystem": "include",
-      "primary": true,
-      "purpose": "tritium/simd.h \u2014 SIMD-accelerated operations for packed trit words Provides optimized implementations using SSE4.2/AVX2 intrinsics with scalar fallbacks for portability.",
-      "symbols": []
-    },
-    {
-      "path": "engine/include/tritium/threshold.h",
-      "lang": "c-header",
-      "loc": 90,
-      "subsystem": "include",
-      "primary": true,
-      "purpose": "tritium/threshold.h \u2014 Convert continuous values to/from balanced ternary Hard quantization (deterministic) and stochastic quantization (FTD Born rule).",
-      "symbols": []
-    },
-    {
-      "path": "engine/include/tritium/trit.h",
-      "lang": "c-header",
-      "loc": 175,
-      "subsystem": "include",
-      "primary": true,
-      "purpose": "tritium/trit.h \u2014 Core ternary types for balanced ternary {-1, 0, +1} Two representations: TritWord64 \u2014 compute format: 32 trits in uint64_t (2 bits each) TritPack \u2014 storage format: 5 trits in uint8...",
-      "symbols": [
-        "TritWord64",
-        "TritPack"
-      ]
-    },
-    {
-      "path": "engine/include/tritium/trit_matrix.h",
-      "lang": "c-header",
-      "loc": 87,
-      "subsystem": "include",
-      "primary": true,
-      "purpose": "tritium/trit_matrix.h \u2014 Row-major trit matrix with mat-vec and mat-mat operations Each row is a TritVector.",
-      "symbols": [
-        "TritMatrix"
-      ]
-    },
-    {
-      "path": "engine/include/tritium/trit_vector.h",
-      "lang": "c-header",
-      "loc": 158,
-      "subsystem": "include",
-      "primary": true,
-      "purpose": "tritium/trit_vector.h \u2014 Dynamic-length packed trit arrays with fast operations Backed by TritWord64 (compute format).",
-      "symbols": [
-        "TritVector"
-      ]
-    },
-    {
-      "path": "engine/include/tritium/tritium.h",
-      "lang": "c-header",
-      "loc": 24,
-      "subsystem": "include",
-      "primary": true,
-      "purpose": "tritium.h \u2014 Single-include header for the Tritium ternary compute library Tritium provides efficient balanced ternary {-1, 0, +1} computation: - Hybrid storage: 2-bit compute format (32 trits/uint6...",
-      "symbols": []
-    },
-    {
       "path": "engine/native/include/native/backgrounds.h",
       "lang": "c-header",
       "loc": 40,
@@ -4728,7 +4219,7 @@
       "loc": 189,
       "subsystem": "other",
       "primary": true,
-      "purpose": "host/adapters/scale0_adapter.h \u2014 Scale 0 (voxel field, RenderBridge) behind the ScaleAdapter seam (SPEC_NATIVE_REBUILD_R0R1 \u00a72.2, \u00a74.1).",
+      "purpose": "host/adapters/scale0_adapter.h \u2014 Scale 0 (voxel field, RenderBridge) behind the ScaleAdapter seam.",
       "symbols": [
         "RenderBridge",
         "Scale0Adapter"
@@ -4740,7 +4231,7 @@
       "loc": 83,
       "subsystem": "other",
       "primary": true,
-      "purpose": "host/adapters/scale1_adapter.h \u2014 Scale 1 (ParticleEngine) behind the ScaleAdapter seam (SPEC_NATIVE_REBUILD_R0R1 \u00a74.1; R1 validation that the seam is scale-generic \u2014 a SECOND adapter with a structu...",
+      "purpose": "host/adapters/scale1_adapter.h \u2014 Scale 1 (ParticleEngine) behind the ScaleAdapter seam (validation that the seam is scale-generic \u2014 a SECOND adapter with a structurally different engine).",
       "symbols": [
         "ParticleEngine",
         "Scale1Adapter"
@@ -4775,7 +4266,7 @@
       "loc": 20,
       "subsystem": "other",
       "primary": true,
-      "purpose": "host/run_config.h \u2014 scale-common run knobs (SPEC_NATIVE_REBUILD_R0R1 \u00a74.1).",
+      "purpose": "host/run_config.h \u2014 scale-common run knobs.",
       "symbols": [
         "RunConfig"
       ]
@@ -4786,7 +4277,7 @@
       "loc": 114,
       "subsystem": "other",
       "primary": true,
-      "purpose": "host/scale_adapter.h \u2014 the uniform contract every scale implements (SPEC_NATIVE_REBUILD_R0R1 \u00a74.1).",
+      "purpose": "host/scale_adapter.h \u2014 the uniform contract every scale implements used by every retained native scale.",
       "symbols": [
         "ScaleEngine",
         "ScenarioMeta",
@@ -4801,7 +4292,7 @@
       "loc": 103,
       "subsystem": "other",
       "primary": true,
-      "purpose": "host/scale_host.h \u2014 the scale-generic session host (SPEC_NATIVE_REBUILD_R0R1 \u00a74.1).",
+      "purpose": "host/scale_host.h \u2014 the scale-generic session host.",
       "symbols": [
         "HostOptions",
         "ScaleHost"
@@ -4836,7 +4327,7 @@
       "loc": 83,
       "subsystem": "other",
       "primary": true,
-      "purpose": "model/commands.h \u2014 the scale-generic command vocabulary (SPEC_NATIVE_REBUILD_R0R1 \u00a74.2).",
+      "purpose": "model/commands.h \u2014 the scale-generic command vocabulary.",
       "symbols": [
         "SetRunConfig",
         "SwitchScale",
@@ -4852,7 +4343,7 @@
       "loc": 121,
       "subsystem": "other",
       "primary": true,
-      "purpose": "model/draw_list.h \u2014 the scale-generic render vocabulary (SPEC_NATIVE_REBUILD_R0R1 \u00a74.3).",
+      "purpose": "model/draw_list.h \u2014 the scale-generic render vocabulary.",
       "symbols": [
         "PointCloud",
         "LineSet",
@@ -4873,7 +4364,7 @@
       "loc": 80,
       "subsystem": "other",
       "primary": true,
-      "purpose": "model/snapshot.h \u2014 the scale-generic published snapshot (SPEC_NATIVE_REBUILD_R0R1 \u00a74.4).",
+      "purpose": "model/snapshot.h \u2014 the scale-generic published snapshot.",
       "symbols": [
         "Scale1Snapshot",
         "HostSnapshot"
@@ -5535,7 +5026,7 @@
       "loc": 87,
       "subsystem": "other",
       "primary": true,
-      "purpose": "Counts OverlayRecorder::record() invocations: SPEC_UI_V2 \u00a73.5 requires exactly one overlay record per D3D12Presenter::render(), with a NULL DSV rebind already performed by the presenter (this fake...",
+      "purpose": "Counts OverlayRecorder::record() invocations: the composition contract requires exactly one overlay record per D3D12Presenter::render(), with a NULL DSV rebind already performed by the presenter (t...",
       "symbols": [
         "CountingRecorder"
       ]
@@ -5963,26 +5454,6 @@
       ]
     },
     {
-      "path": "engine/src/cli_demos/cli_demo_scenarios.cpp",
-      "lang": "cpp",
-      "loc": 986,
-      "subsystem": "src/cli_demos",
-      "primary": true,
-      "purpose": "Implementations of the ftd_sim CLI demo scenarios.",
-      "symbols": [
-        "ParticleInfo"
-      ]
-    },
-    {
-      "path": "engine/src/cognition/cognitive_lattice.cpp",
-      "lang": "cpp",
-      "loc": 835,
-      "subsystem": "src/cognition",
-      "primary": true,
-      "purpose": "",
-      "symbols": []
-    },
-    {
       "path": "engine/src/constructors/_common.h",
       "lang": "c-header",
       "loc": 88,
@@ -6097,15 +5568,6 @@
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
-      "symbols": []
-    },
-    {
-      "path": "engine/src/dag_engine.cpp",
-      "lang": "cpp",
-      "loc": 323,
-      "subsystem": "src/core",
-      "primary": true,
-      "purpose": "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 STATUS BANNER \u2014 DAG Engine is a DEPRECATED SKELETON (ticket W6), NOT the production physics path.",
       "symbols": []
     },
     {
@@ -7722,15 +7184,6 @@
       "symbols": []
     },
     {
-      "path": "engine/src/main.cpp",
-      "lang": "cpp",
-      "loc": 92,
-      "subsystem": "src/core",
-      "primary": true,
-      "purpose": "FTD Render-Bridge Simulation Engine \u2014 CLI entry point.",
-      "symbols": []
-    },
-    {
       "path": "engine/src/native_telemetry_scheduler.cpp",
       "lang": "cpp",
       "loc": 446,
@@ -8111,18 +7564,6 @@
       "primary": false,
       "purpose": "BUDGET EQUATION EXPERIMENT Tests: x/K + G_star/x = 1 The budget equation says the coupling x partitions between two phases: Coulomb (deconfined): fraction = x/K ~ 0.978 Confined: fraction = G_star/...",
       "symbols": []
-    },
-    {
-      "path": "engine/tests/benchmark_cognitive_lattice.cpp",
-      "lang": "cpp",
-      "loc": 260,
-      "subsystem": "tests",
-      "primary": false,
-      "purpose": "@file benchmark_cognitive_lattice.cpp @brief Non-physics timing probe for the ternary cognitive sidecar.",
-      "symbols": [
-        "Args",
-        "Row"
-      ]
     },
     {
       "path": "engine/tests/benchmark_dirac_electron_in_B.cpp",
@@ -11513,15 +10954,6 @@
       "symbols": []
     },
     {
-      "path": "engine/tests/test_cognitive_lattice.cpp",
-      "lang": "cpp",
-      "loc": 180,
-      "subsystem": "tests",
-      "primary": false,
-      "purpose": "",
-      "symbols": []
-    },
-    {
       "path": "engine/tests/test_collective_reaction_triplet_inertia.cpp",
       "lang": "cpp",
       "loc": 191,
@@ -12285,15 +11717,6 @@
       "symbols": []
     },
     {
-      "path": "engine/tests/test_dag_engine.cpp",
-      "lang": "cpp",
-      "loc": 106,
-      "subsystem": "tests",
-      "primary": false,
-      "purpose": "test_dag_engine.cpp \u2014 SparseVoxelDAG structural-parity tests.",
-      "symbols": []
-    },
-    {
       "path": "engine/tests/test_dark_matter.cpp",
       "lang": "cpp",
       "loc": 226,
@@ -12662,7 +12085,7 @@
     {
       "path": "engine/tests/test_engine_lifecycle.cpp",
       "lang": "cpp",
-      "loc": 269,
+      "loc": 267,
       "subsystem": "tests",
       "primary": false,
       "purpose": "============================================================================ test_engine_lifecycle.cpp \u2014 ScaleEngine RAII / lifecycle contract (ticket W5) ------------------------------------------...",
@@ -16259,15 +15682,6 @@
       "subsystem": "tests",
       "primary": false,
       "purpose": "Test: Triad Binding from Confinement (Checklist #38) Verifies that three same-sign particles with different color orientations form a bound state via the color confinement force, rather than relyin...",
-      "symbols": []
-    },
-    {
-      "path": "engine/tests/test_tritium_algebra.cpp",
-      "lang": "cpp",
-      "loc": 847,
-      "subsystem": "tests",
-      "primary": false,
-      "purpose": "Test: Tritium algebra (consolidated suite) Merges 7 legacy header-only test files into a single ftd::test-instrumented suite using the Phase 2a NDJSON telemetry API: test_trit_packing -> section \"p...",
       "symbols": []
     },
     {
@@ -24019,7 +23433,7 @@
     {
       "path": "engine/tools/build_file_manifest.py",
       "lang": "python",
-      "loc": 335,
+      "loc": 329,
       "subsystem": "tools",
       "primary": true,
       "purpose": "Build a machine-readable manifest of every tracked code file in engine/.",
@@ -24044,329 +23458,6 @@
       "purpose": "Print the complete ontic derivation chain to 12 decimal places.",
       "symbols": [
         "row()"
-      ]
-    },
-    {
-      "path": "engine/tools/test_runner/include/FieldLines.h",
-      "lang": "c-header",
-      "loc": 52,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ FieldLines.h \u2014 RK4 vector-field line integrator (stub) =================================================================...",
-      "symbols": [
-        "FieldLineParams"
-      ]
-    },
-    {
-      "path": "engine/tools/test_runner/include/HistoryDb.h",
-      "lang": "c-header",
-      "loc": 161,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ HistoryDb.h \u2014 SQLite-backed run history for the FTD Test Bench =========================================================...",
-      "symbols": [
-        "RunSummary",
-        "TestResultRow",
-        "Regression",
-        "HistoryDb"
-      ]
-    },
-    {
-      "path": "engine/tools/test_runner/include/HistoryTab.h",
-      "lang": "c-header",
-      "loc": 78,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ HistoryTab.h \u2014 \"History\" tab widget for the FTD Test Bench =============================================================...",
-      "symbols": [
-        "QLabel",
-        "QPushButton",
-        "QStandardItemModel",
-        "QTableView",
-        "QTextEdit",
-        "HistoryDb",
-        "Regression",
-        "RunSummary",
-        "TestResultRow",
-        "HistoryTab"
-      ]
-    },
-    {
-      "path": "engine/tools/test_runner/include/LatticeViewer.h",
-      "lang": "c-header",
-      "loc": 142,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ LatticeViewer.h \u2014 live 3D voxel viewer (QOpenGLWidget, OpenGL 3.3 core) ================================================...",
-      "symbols": [
-        "QOpenGLShaderProgram",
-        "QMouseEvent",
-        "QWheelEvent",
-        "LatticeFrame",
-        "LatticeViewer"
-      ]
-    },
-    {
-      "path": "engine/tools/test_runner/include/MainWindow.h",
-      "lang": "c-header",
-      "loc": 135,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ MainWindow.h \u2014 top-level window for the FTD Test Bench =================================================================...",
-      "symbols": [
-        "QLabel",
-        "QProgressBar",
-        "QPushButton",
-        "QTimer",
-        "QTreeView",
-        "QAction",
-        "QCheckBox",
-        "HistoryDb",
-        "HistoryTab",
-        "LatticeViewer",
-        "OutputPanel",
-        "SmartDispatcher"
-      ]
-    },
-    {
-      "path": "engine/tools/test_runner/include/NdjsonParser.h",
-      "lang": "c-header",
-      "loc": 65,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ NdjsonParser.h \u2014 incremental line-based NDJSON parser for test subprocesses ============================================...",
-      "symbols": [
-        "NdjsonParser"
-      ]
-    },
-    {
-      "path": "engine/tools/test_runner/include/OutputPanel.h",
-      "lang": "c-header",
-      "loc": 61,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ OutputPanel.h \u2014 interleaved per-test output view for Phase 3 scaffold ==================================================...",
-      "symbols": [
-        "QTextEdit",
-        "QPushButton",
-        "QLabel",
-        "OutputPanel"
-      ]
-    },
-    {
-      "path": "engine/tools/test_runner/include/SmartDispatcher.h",
-      "lang": "c-header",
-      "loc": 90,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ SmartDispatcher.h \u2014 parallel CPU + serial GPU test scheduler ===========================================================...",
-      "symbols": [
-        "TestRunner",
-        "SmartDispatcher",
-        "PendingRun"
-      ]
-    },
-    {
-      "path": "engine/tools/test_runner/include/TelemetryCharts.h",
-      "lang": "c-header",
-      "loc": 144,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ TelemetryCharts.h \u2014 live multi-trace scalar telemetry (Qt6 QtCharts) ===================================================...",
-      "symbols": [
-        "QChart",
-        "QChartView",
-        "QComboBox",
-        "QLabel",
-        "QLineSeries",
-        "QStackedWidget",
-        "QValueAxis",
-        "QVBoxLayout",
-        "TelemetryCharts",
-        "TraceData",
-        "TestChartSet"
-      ]
-    },
-    {
-      "path": "engine/tools/test_runner/include/TestModel.h",
-      "lang": "c-header",
-      "loc": 118,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ TestModel.h \u2014 two-level (Category \u2192 Test) tree model for FTD Test Bench ================================================...",
-      "symbols": [
-        "TestInfo",
-        "TestModel"
-      ]
-    },
-    {
-      "path": "engine/tools/test_runner/include/TestRunner.h",
-      "lang": "c-header",
-      "loc": 100,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ TestRunner.h \u2014 QProcess-per-test subprocess launcher for FTD Test Bench ================================================...",
-      "symbols": [
-        "NdjsonParser",
-        "RunningTest",
-        "TestRunner"
-      ]
-    },
-    {
-      "path": "engine/tools/test_runner/src/FieldLines.cpp",
-      "lang": "cpp",
-      "loc": 24,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ FieldLines.cpp \u2014 RK4 vector-field line integrator (stub) ===============================================================...",
-      "symbols": []
-    },
-    {
-      "path": "engine/tools/test_runner/src/HistoryDb.cpp",
-      "lang": "cpp",
-      "loc": 483,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ HistoryDb.cpp \u2014 sqlite-backed run history ============================================================================",
-      "symbols": []
-    },
-    {
-      "path": "engine/tools/test_runner/src/HistoryTab.cpp",
-      "lang": "cpp",
-      "loc": 450,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ HistoryTab.cpp \u2014 \"History\" tab widget for the FTD Test Bench ===========================================================...",
-      "symbols": []
-    },
-    {
-      "path": "engine/tools/test_runner/src/LatticeViewer.cpp",
-      "lang": "cpp",
-      "loc": 523,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ LatticeViewer.cpp \u2014 implementation ============================================================================",
-      "symbols": []
-    },
-    {
-      "path": "engine/tools/test_runner/src/LatticeViewer_shaders.h",
-      "lang": "c-header",
-      "loc": 87,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ LatticeViewer_shaders.h \u2014 inline GLSL 330 core shader sources ==========================================================...",
-      "symbols": []
-    },
-    {
-      "path": "engine/tools/test_runner/src/MainWindow.cpp",
-      "lang": "cpp",
-      "loc": 510,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ MainWindow.cpp \u2014 top-level window wiring ============================================================================",
-      "symbols": []
-    },
-    {
-      "path": "engine/tools/test_runner/src/NdjsonParser.cpp",
-      "lang": "cpp",
-      "loc": 97,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ NdjsonParser.cpp \u2014 implementation ============================================================================",
-      "symbols": []
-    },
-    {
-      "path": "engine/tools/test_runner/src/OutputPanel.cpp",
-      "lang": "cpp",
-      "loc": 158,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ OutputPanel.cpp \u2014 interleaved output view ============================================================================",
-      "symbols": []
-    },
-    {
-      "path": "engine/tools/test_runner/src/SmartDispatcher.cpp",
-      "lang": "cpp",
-      "loc": 111,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ SmartDispatcher.cpp \u2014 parallel CPU + serial GPU scheduler ==============================================================...",
-      "symbols": []
-    },
-    {
-      "path": "engine/tools/test_runner/src/TelemetryCharts.cpp",
-      "lang": "cpp",
-      "loc": 450,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ TelemetryCharts.cpp \u2014 live multi-trace scalar telemetry (Qt6 QtCharts) =================================================...",
-      "symbols": [
-        "TelemetryCharts"
-      ]
-    },
-    {
-      "path": "engine/tools/test_runner/src/TestModel.cpp",
-      "lang": "cpp",
-      "loc": 556,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ TestModel.cpp \u2014 CTest-driven Category\u2192Test tree model ==================================================================...",
-      "symbols": [
-        "CategoryRule",
-        "PrefixRule"
-      ]
-    },
-    {
-      "path": "engine/tools/test_runner/src/TestRunner.cpp",
-      "lang": "cpp",
-      "loc": 230,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ TestRunner.cpp \u2014 QProcess-based subprocess launcher ====================================================================...",
-      "symbols": []
-    },
-    {
-      "path": "engine/tools/test_runner/src/main.cpp",
-      "lang": "cpp",
-      "loc": 66,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "============================================================================ main.cpp \u2014 entry point for the FTD Test Bench runner (ftd_test_runner) =================================================...",
-      "symbols": []
-    },
-    {
-      "path": "engine/tools/visualize_engine.py",
-      "lang": "python",
-      "loc": 257,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "FTD Engine Visualizer \u2014 generates figures from CSV scenario outputs.",
-      "symbols": [
-        "load_slice()",
-        "load_timeseries()",
-        "plot_interference()",
-        "plot_pair_production()",
-        "plot_force_law()"
-      ]
-    },
-    {
-      "path": "engine/tools/visualize_sims.py",
-      "lang": "python",
-      "loc": 565,
-      "subsystem": "tools",
-      "primary": true,
-      "purpose": "FTD Simulation Visualizer ========================= Reads CSV data exported by ftd_sim scenarios H/I/J and generates publication-quality figures.",
-      "symbols": [
-        "load_density_slice()",
-        "load_timeseries()",
-        "plot_interference()",
-        "plot_interference_heatmap()",
-        "plot_helium()",
-        "plot_helium_timeseries()",
-        "plot_pair_production()",
-        "plot_pair_timeseries()",
-        "plot_dashboard()",
-        "main()"
       ]
     },
     {
@@ -24410,7 +23501,7 @@
     {
       "path": "engine/wasm/ftd_wasm.cpp",
       "lang": "cpp",
-      "loc": 1383,
+      "loc": 1374,
       "subsystem": "wasm",
       "primary": true,
       "purpose": "@file ftd_wasm.cpp @brief Emscripten Embind bindings for the FTD engine \u2014 shared helpers.",
@@ -24998,7 +24089,7 @@
     {
       "path": "engine/web/js/bridge/wasm-bridge.js",
       "lang": "js",
-      "loc": 1060,
+      "loc": 1057,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "@file engine/web/js/bridge/wasm-bridge.js @purpose Thin wrapper around the compiled C++/WASM physics engine (engine/wasm/ftd_wasm.cpp).",
@@ -27705,7 +26796,7 @@
     {
       "path": "engine/web/js/ui/components/tooltips/definitions.js",
       "lang": "js",
-      "loc": 435,
+      "loc": 434,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -27716,7 +26807,7 @@
     {
       "path": "engine/web/js/ui/components/topbar/component.js",
       "lang": "js",
-      "loc": 225,
+      "loc": 163,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -27727,7 +26818,7 @@
     {
       "path": "engine/web/js/ui/components/topbar/template.js",
       "lang": "js",
-      "loc": 65,
+      "loc": 62,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -29033,7 +28124,7 @@
     {
       "path": "engine/web/tests/playwright.config.js",
       "lang": "js",
-      "loc": 50,
+      "loc": 51,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -29402,7 +28493,7 @@
     {
       "path": "engine/web/tests/scales.spec.js",
       "lang": "js",
-      "loc": 713,
+      "loc": 711,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",

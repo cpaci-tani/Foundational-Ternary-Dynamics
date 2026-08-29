@@ -1,7 +1,7 @@
 # FTD Simulation Engine Reference
 
 **Living document for AI agents and developers.**
-**Engine version:** 2.18.0 (single-sourced as `ftd::ENGINE_VERSION` in `include/ftd/constants.h`; mirrored by CMake `project(VERSION)`, `ftd_sim --version`, and the WASM `getEngineVersion()` binding — revision 6.1)
+**Engine version:** 2.18.0 (single-sourced as `ftd::ENGINE_VERSION` in `include/ftd/constants.h`; mirrored by CMake `project(VERSION)` and the WASM `getEngineVersion()` binding — revision 6.1)
 **Golden regression pins:** `GOLDEN_HASH=0xc54ffbeda5a3ea63`, `GOLDEN_STATE_HASH=0xe9633be07656e741`, and `GOLDEN_AUDIT_HASH=0x48bd8b3fc2efdba3` for the frozen L=17 profile in `test_render_bridge_golden`. These pins cover only that profile's folded fields; they do not cover off-profile toggles, larger lattices, or horizons beyond its 100 ticks. Rationale and pin history live in `test_render_bridge_golden.cpp`.
 **Test surface:** C++ tests, Playwright specs, and Python-adjacent verification helpers are registered through CMake and the web test harness. CTest uses the `unit`/`physics`/`golden`/`slow`/`gpu` label scheme; CUDA targets are conditional on `FTD_ENABLE_CUDA`.
 
@@ -377,14 +377,6 @@ cp engine/build_wasm/wasm/ftd_core.{js,wasm} engine/web/wasm/
 python engine/web/serve.py 8080
 # Open: http://localhost:8080
 ```
-
-### CLI simulation
-```bash
-./engine/build/Release/ftd_sim.exe [scenario] [lattice_size] [num_ticks]
-```
-Scenarios: `A` (Coulomb electron-proton), `B` (pair production from flux), `D` (locked particle stability), `E` (helium atom), `F` (gravitational cluster), `G` (scale stress test), `H`/`I`/`J` (CSV export variants), `K` (force law profile).
-
----
 
 ## 4. The Tick Cycle
 
@@ -2480,24 +2472,22 @@ The C++ engine compiles to WASM via Emscripten. The browser dashboard provides z
 ```
 ftd_core (C++ library)
     |
+    +-- Native app (native/, RmlUi + D3D12 + in-process CUDA)
+    |
     +-- WASM Bindings (wasm/ftd_wasm.cpp, Embind)
     |       |
     |       +-- Browser Frontend (web/)
     |           +-- Three.js 3D viewport
     |           +-- Canvas 2D charts
     |           +-- Vanilla JS (ES modules, zero build step)
-    |
-    +-- CLI (src/main.cpp, native)
 ```
 
-### Windows desktop shell
+### Native desktop and browser bridge
 
-`engine/desktop/` provides the first-class Windows interface. It is a WPF
-application with an embedded WebView2 surface; a small in-process Kestrel host
-serves `engine/web` on loopback without cache, and `EngineHost` supervises the
-canonical WSL2 `engine/build_wsl/ws_server` process. The WebSocket bridge accepts
-the desktop-supplied `?wsPort=<port>` query parameter (9100 remains the browser
-default).
+`engine/native/` is the sole Windows desktop application. It hosts
+`RenderBridge`, CUDA, D3D12 rendering, and RmlUi in one process. The browser
+dashboard remains under `engine/web/`, backed by WASM or the optional
+`ws_server` native bridge; port 9100 remains the browser default.
 
 The desktop status is runtime-accurate: `ws_server` reports the active
 `RenderBridge::backend_kind()` as `backend: "cuda"` or `backend: "cpu"`, along

@@ -5,6 +5,7 @@ import { telemetryHub } from '../../../telemetry-hub.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../../constants.js';
 import {
     SCALE0_TOGGLES,
+    SCALE0_ADVANCED_TOGGLES,
     SCALE0_SCENARIO_OVERRIDES,
     LIGHT_SCENARIO_OVERRIDES,
     SCALE0_SCENARIO_BOUNDARY,
@@ -31,6 +32,7 @@ import {
 } from '../state/store.js';
 import {
     FIELD_TOGGLE_BINDINGS,
+    getEl,
     markScenarioOverrideRows,
     readButtonActive,
     readInputValue,
@@ -40,8 +42,9 @@ import {
     setScalarRenderButtons,
     setInputValue,
     setSelectedScenarioId,
-} from '../ui/dom.js';
-import { applyScale0OverlayApplicability } from '../ui/overlays/applicability.js';
+} from '../ui/dom.js?v=3';
+import { applyScale0OverlayApplicability } from '../ui/overlays/applicability.js?v=4';
+import { MAX_WASM_INTERACTIVE_LATTICE } from '../ui/toolbar/limits.js';
 
 // Toggle-reset whitelist used by `applyToggleDefaults`.
 //
@@ -53,6 +56,27 @@ import { applyScale0OverlayApplicability } from '../ui/overlays/applicability.js
 //     a configure_* helper clears them, or SCALE0_SCENARIO_RESEARCH_TERMS pins
 //     them for a specific scenario (applied after the whitelist reset).
 const DEFAULT_TOGGLES = SCALE0_TOGGLES;
+const PHYSICS_UI_TOGGLES = [...SCALE0_TOGGLES, ...SCALE0_ADVANCED_TOGGLES];
+
+function setPhysicsToggleCardPending(pending) {
+    const card = getEl('physics-profile-warning')?.closest('.card');
+    if (!card) return;
+    const busyValue = pending ? 'true' : 'false';
+    if (card.getAttribute('aria-busy') !== busyValue) {
+        card.setAttribute('aria-busy', busyValue);
+    }
+    for (const input of card.querySelectorAll('input[type="checkbox"]')) {
+        if (pending) {
+            if (!input.disabled) {
+                input.disabled = true;
+                input.dataset.scale0PendingDisabled = '1';
+            }
+        } else if (input.dataset.scale0PendingDisabled === '1') {
+            input.disabled = false;
+            delete input.dataset.scale0PendingDisabled;
+        }
+    }
+}
 
 function reportScenarioSetupFailure(msg) {
     console.error('[Scale0]', msg);
@@ -254,21 +278,26 @@ export function syncComboSliders(ctx, state) {
         const display = document.getElementById(slider.valId);
         if (!el || !display) continue;
         const value = activeBridge?.getParam ? activeBridge.getParam(slider.param) : defaults[slider.param];
-        // Native constants are authoritative engine echoes, not user-selectable
-        // range values.  HTML range inputs quantize assignments to their
+        // Engine constants are authoritative readouts, not user-selectable
+        // range values. HTML range inputs quantize assignments to their
         // configured edit step, which made an acknowledged value such as
         // 0.5123 appear as 0.51 even while the text label showed 0.512.  Remove
-        // that edit quantization before mirroring the read-only native value.
-        if (ctx?.bridge?.isNativeGPU) el.step = 'any';
+        // that edit quantization before mirroring the read-only value.
+        el.step = 'any';
         if (value != null) {
-            el.value = value;
-            display.textContent = value.toFixed(slider.fmt);
+            const valueText = String(value);
+            const displayText = value.toFixed(slider.fmt);
+            if (el.value !== valueText) el.value = valueText;
+            if (display.textContent !== displayText) display.textContent = displayText;
         }
-        if (ctx?.bridge?.isNativeGPU) {
-            el.disabled = true;
-            el.setAttribute('aria-readonly', 'true');
-            el.title = `${slider.param} is read-only in native mode; value echoed by the engine profile.`;
-        }
+        el.disabled = true;
+        el.setAttribute('aria-readonly', 'true');
+        el.setAttribute('aria-disabled', 'true');
+        el.title = ctx?.bridge?.isNativeGPU
+            ? `${slider.param} is read-only; value echoed by the native engine profile.`
+            : `${slider.param} is a read-only compile-time engine constant.`;
+        el.classList.add('ctrl-slider-disabled');
+        el.closest('.pe-ctrl-row')?.classList.add('ctrl-native-readonly');
     }
 }
 
@@ -427,9 +456,6 @@ function applyAuxiliaryDefaults(ctx, viewportAdapter, scenarioId, { resetSpeed =
     const mode = bnd.mode ?? (bnd.reflective === true ? 1 : 2);
     ctx.applyBoundaryShape(bnd.shape ?? 'cube');
     ctx.applyFluxBoundaryMode(mode);
-    // Particle rendering still consumes the legacy reflective flag. It must
-    // describe only mode 1; periodic flux is not a reflective particle wall.
-    ctx.viewport?.setReflectiveBoundary?.(mode === 1);
     viewportAdapter.setFluxVolumeVisible(true);
     viewportAdapter.setFluxSliceVisible(false);
     setButtonActive('toggle-flux-volume', true);
@@ -519,7 +545,9 @@ export function syncScale0ToggleUiFromEngine(ctx, viewportAdapter, scenarioId) {
     if (bridge.isWorker && !bridge.hasEngineToggles) return false;
 
     const terms = {};
-    for (const [key, , elId] of DEFAULT_TOGGLES) {
+    const generation = String(ctx._loadGeneration || 0);
+    const captureBaseline = String(ctx._scale0ToggleBaselineGeneration ?? '') !== generation;
+    for (const [key, , elId] of PHYSICS_UI_TOGGLES) {
         // The native `confinement` field is serialization intent only; no C++
         // phase consumes it. Keep the physics card false/disabled and leave the
         // separate viewport confinement overlay as the explicit visual proxy.
@@ -528,8 +556,13 @@ export function syncScale0ToggleUiFromEngine(ctx, viewportAdapter, scenarioId) {
             : !!bridge.getToggle(key);
         terms[key] = value;
         setCheckboxValue(elId, value);
+        const el = getEl(elId);
+        if (el && captureBaseline) el.dataset.scale0ProfileValue = value ? '1' : '0';
     }
-    markScenarioOverrideRows(DEFAULT_TOGGLES);
+    if (captureBaseline) ctx._scale0ToggleBaselineGeneration = generation;
+    markScenarioOverrideRows(PHYSICS_UI_TOGGLES);
+    setPhysicsToggleCardPending(false);
+    ctx.onScale0ToggleProfileSynced?.(scenarioId);
     applyScale0OverlayApplicability(scenarioId, viewportAdapter, terms);
     return true;
 }
@@ -701,6 +734,9 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // Monotonic load generation: ignore late worker callbacks from a superseded load.
     ctx._loadGeneration = (ctx._loadGeneration || 0) + 1;
     const loadGen = ctx._loadGeneration;
+    ctx._scale0ToggleBaselineGeneration = -1;
+    ctx._scale0ToggleUserEditGeneration = -1;
+    setPhysicsToggleCardPending(true);
     // Publish the intended id BEFORE async worker create so onEngineToggles /
     // onSetupFailure can gate against the current selection immediately.
     setCurrentScenarioId(scenario.id);
@@ -837,6 +873,9 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // Keep viewport world coords (wireframe, clip, streamlines) aligned with
     // the bridge that owns physics — resize already does this; load must too.
     const activeN = activeBridge.latticeSize || latticeSize;
+    ctx.syncScale0InjectionBounds?.(activeN);
+    ctx.syncScale0SelectionBounds?.(activeN);
+    ctx.syncScale0FlowLineControls?.(activeN);
     if (ctx.viewport?.latticeSize !== activeN) {
         ctx.viewport.setLatticeSize(activeN);
     }
@@ -910,6 +949,15 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
     const projectedBytes = Math.ceil(newSize ** 3 * bytesPerVoxel);
     const maxBytes = capGB * 1024 * 1024 * 1024;
 
+    if (!nativeCombinedResize && newSize > MAX_WASM_INTERACTIVE_LATTICE) {
+        const msg = `L=${newSize} requires the native GPU backend. Browser WASM is limited to `
+            + `L=${MAX_WASM_INTERACTIVE_LATTICE} to preserve the 60 FPS UI budget.`;
+        if (typeof window.showToast === 'function') window.showToast(msg, 'error');
+        else console.warn('[Scale0] ' + msg);
+        setInputValue('lattice-size', previousSize);
+        return;
+    }
+
     if (!nativeCombinedResize && projectedBytes >= maxBytes) {
         const projGB = (projectedBytes / 1024 / 1024 / 1024).toFixed(2);
         const msg = `L=${newSize} would need ~${projGB} GB of WASM heap (max ${capGB} GB here). Refusing to resize.`;
@@ -969,8 +1017,8 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
     setInputValue('lattice-size', getActiveScale0Bridge(ctx, state)?.latticeSize || newSize);
 }
 
-export function stepScale0(ctx, state) {
-    runScale0PhysicsTicks(ctx, state, 1);
+export function stepScale0(ctx, state, tickCount = 1) {
+    runScale0PhysicsTicks(ctx, state, tickCount);
     state.fieldNeedsUpdate = true;
 }
 

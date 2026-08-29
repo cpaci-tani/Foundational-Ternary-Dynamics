@@ -149,7 +149,6 @@ Current claim tags defer to the project LEDGER.
 
 ### Infrastructure
 - **WASM**: ftd_core.js/wasm deployed to engine/web/wasm/
-- **DagEngine**: 4 pure virtual overrides present (required for WASM build)
 
 ### Updated Assessment
 - **Software engineering**: Excellent (A)

@@ -21,8 +21,9 @@ runaway.
 
 ## 2. Model — taken verbatim from engine source, no substitutions
 
-Field (from `dag_engine.cpp` `recursive_read`/`recursive_write`, movement and
-curl off in this profile):
+Field (from the retired DagEngine `recursive_read`/`recursive_write` source,
+recoverable from Git history through baseline `21566b63`; movement and curl off
+in this profile):
 
 ```text
 delta_j    = C_WAVE^2 * lap18(J) - G_C * grad(s)
@@ -30,8 +31,9 @@ wave_vel  += delta_j
 J         += wave_vel
 ```
 
-`lap18` is the 18-point SC+FCC Moore stencil exactly as
-`dag_engine.cpp:145-171` (6 faces at 1/3, 12 edges at 1/6, centre -4).
+`lap18` is the 18-point SC+FCC Moore stencil (6 faces at 1/3, 12 edges at 1/6,
+centre -4), matching the active production operator in
+`engine/src/render_bridge_phases/phase_read.cpp`.
 `C_WAVE^2 = 1/3`, `G_C = 0.0854245431028543695`.
 
 Genesis (from `transmutation_phases.cpp` `pair_production_cpu`):

@@ -4,27 +4,25 @@
 > Machine-readable source of truth: [`ENGINE_FILE_MANIFEST.json`](ENGINE_FILE_MANIFEST.json)  
 > Narrative map: [`ENGINE_CODE_MAP.md`](ENGINE_CODE_MAP.md)
 
-**2693 code files, 713,116 LOC** (tracked `.cpp/.cc/.h/.hpp/.cu/.cuh/.js/.mjs/.py` under `engine/`).
+**2616 code files, 692,518 LOC** (tracked `.cpp/.cc/.h/.hpp/.cu/.cuh/.js/.mjs/.py` under `engine/`).
 
 ## Subsystem rollup
 
 | Subsystem | Files | LOC |
 |---|--:|--:|
-| `tests` | 814 | 246,523 |
+| `tests` | 810 | 245,128 |
 | `other` | 806 | 163,084 |
 | `web/js-toplevel` | 51 | 74,989 |
-| `src/core` | 198 | 67,371 |
-| `include` | 310 | 39,309 |
-| `cuda` | 30 | 18,359 |
+| `src/core` | 196 | 66,956 |
+| `include` | 296 | 37,353 |
+| `cuda` | 29 | 17,907 |
 | `web/scale0` | 65 | 17,876 |
-| `web/tests` | 93 | 17,216 |
-| `web/ui` | 84 | 11,052 |
-| `archive` | 28 | 8,761 |
+| `web/tests` | 93 | 17,215 |
+| `web/ui` | 84 | 10,986 |
 | `web/viewport` | 19 | 8,653 |
-| `web/bridge` | 24 | 7,649 |
-| `tools` | 30 | 6,918 |
+| `web/bridge` | 24 | 7,646 |
 | `src/scenarios` | 7 | 3,387 |
-| `wasm` | 5 | 2,715 |
+| `wasm` | 5 | 2,706 |
 | `web/scale1` | 14 | 2,077 |
 | `web/scale2` | 12 | 2,074 |
 | `sim` | 16 | 1,951 |
@@ -33,9 +31,8 @@
 | `web/atlas` | 9 | 1,386 |
 | `web/config` | 4 | 1,373 |
 | `web/inspector` | 9 | 1,291 |
-| `src/cli_demos` | 1 | 986 |
+| `tools` | 4 | 1,199 |
 | `src/atom` | 3 | 844 |
-| `src/cognition` | 1 | 835 |
 | `web/backgrounds` | 7 | 781 |
 | `web/scale4` | 5 | 427 |
 | `web/other` | 6 | 408 |
@@ -49,7 +46,7 @@
 
 ## Files by subsystem
 
-### `tests`  (814 files, 246,523 LOC)
+### `tests`  (810 files, 245,128 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
@@ -75,7 +72,6 @@
 | [`test_causal_excitation_separation_v1.cpp`](../../engine/tests/test_causal_excitation_separation_v1.cpp) | 927 | FTD-0684/0685: fresh causal excitation-separation discriminator. |
 | [`test_full_mirrored_internal_shape_core.cpp`](../../engine/tests/test_full_mirrored_internal_shape_core.cpp) | 906 | FTD-0605: full mirrored internal-shape matter-core discriminator. |
 | [`campaign_m4_boosted_relational_transport_discovery_cuda.cpp`](../../engine/tests/campaign_m4_boosted_relational_transport_discovery_cuda.cpp) | 873 | FTD-0761: boosted transport discovery for the certified M3 family. |
-| [`test_tritium_algebra.cpp`](../../engine/tests/test_tritium_algebra.cpp) | 847 | Test: Tritium algebra (consolidated suite) Merges 7 legacy header-only test files into a single ftd::test-instrumented suite using the Phase 2a NDJSON telemetry API: test_trit_packing -> section "p... |
 | [`campaign_genesis_amplitude_ceiling.cpp`](../../engine/tests/campaign_genesis_amplitude_ceiling.cpp) | 844 | @file campaign_genesis_amplitude_ceiling.cpp @brief Is there a maximum amplitude for coherent light in FTD? |
 | [`test_captured_state_perturbation_survival.cpp`](../../engine/tests/test_captured_state_perturbation_survival.cpp) | 840 | FTD-0732: locked captured-state perturbation survival campaign. |
 | [`campaign_coulomb_force_law.cpp`](../../engine/tests/campaign_coulomb_force_law.cpp) | 837 | Campaign: Coulomb force law (consolidated suite) Merges 5 legacy test/campaign_*.cpp files into a single ftd::test-instrumented suite using the Phase 2a NDJSON telemetry API: test_poisson_coulomb -... |
@@ -383,12 +379,12 @@
 | [`campaign_moore_hop_route_ambiguity.cpp`](../../engine/tests/campaign_moore_hop_route_ambiguity.cpp) | 271 | @file campaign_moore_hop_route_ambiguity.cpp @brief FTD-0445 Moore-hop to oriented-face routing audit. |
 | [`test_nonlinear_flow_multiscale.cpp`](../../engine/tests/test_nonlinear_flow_multiscale.cpp) | 270 | @file test_nonlinear_flow_multiscale.cpp @brief P2.1 + P2.2 + P2.3: native response tuple at b ∈ {1, 2, 4, 8} under mixed-toggle nonlinear dynamics, with ensemble uncertainties. |
 | [`test_particle_engine.cpp`](../../engine/tests/test_particle_engine.cpp) | 270 | Phase 7 — Stage 2: ParticleEngine unit tests (12 checks) PE1: Particle injection (id assigned, charge correct) PE2: Free particle (constant velocity when alone, no damping) PE3: Opposite attract (f... |
-| [`test_engine_lifecycle.cpp`](../../engine/tests/test_engine_lifecycle.cpp) | 269 | ============================================================================ test_engine_lifecycle.cpp — ScaleEngine RAII / lifecycle contract (ticket W5) ------------------------------------------... |
 | [`test_gpu_delta_upload.cpp`](../../engine/tests/test_gpu_delta_upload.cpp) | 269 | ============================================================================ test_gpu_delta_upload.cpp — C5 (CUDA ticket): host→device delta upload. |
 | [`campaign_causal_horizon_environmental_persistence_cuda.cpp`](../../engine/tests/campaign_causal_horizon_environmental_persistence_cuda.cpp) | 268 | FTD-0747 candidate: CUDA successor to the aborted FTD-0746 CPU run. |
 | [`test_native_ternary_dipole_phase_wedge_memory.cpp`](../../engine/tests/test_native_ternary_dipole_phase_wedge_memory.cpp) | 268 |  |
 | [`test_color_binding_and_structure.cpp`](../../engine/tests/test_color_binding_and_structure.cpp) | 267 | @file test_color_binding_and_structure.cpp @brief Phase-4i: Combined tests for (1) RGB triad binding and (2) FTD "color" transformation structure vs SU(3). |
 | [`test_cusp_dressing_integrability.cpp`](../../engine/tests/test_cusp_dressing_integrability.cpp) | 267 | FTD-0494: cellwise cusp primitive and global gluing obstruction. |
+| [`test_engine_lifecycle.cpp`](../../engine/tests/test_engine_lifecycle.cpp) | 267 | ============================================================================ test_engine_lifecycle.cpp — ScaleEngine RAII / lifecycle contract (ticket W5) ------------------------------------------... |
 | [`campaign_integer_sweep.cpp`](../../engine/tests/campaign_integer_sweep.cpp) | 266 | Campaign: Integer Uniqueness Sweep THE critical test for scientific credibility. |
 | [`test_derived_interaction_graph_transaction.cpp`](../../engine/tests/test_derived_interaction_graph_transaction.cpp) | 266 | FTD-0721: derived interaction graph and closed-pair capture discriminator. |
 | [`test_master_quadratic_uniqueness.cpp`](../../engine/tests/test_master_quadratic_uniqueness.cpp) | 266 | @file test_master_quadratic_uniqueness.cpp @brief Program E — Uniqueness of the master quadratic as minimal polynomial. |
@@ -403,7 +399,6 @@
 | [`test_collective_source_history_bound.cpp`](../../engine/tests/test_collective_source_history_bound.cpp) | 262 | FTD-0588: collective common-history and asynchronous source bounds. |
 | [`benchmark_field_soa_cpu.cpp`](../../engine/tests/benchmark_field_soa_cpu.cpp) | 261 | @file benchmark_field_soa_cpu.cpp @brief Non-physics timing probe for CPU FieldSoA read paths. |
 | [`campaign_proton_stability.cpp`](../../engine/tests/campaign_proton_stability.cpp) | 261 | @file campaign_proton_stability.cpp @brief FTD-0301: is the proton (uud triad) dynamically stable, or does it DECAY (evaporate / transmute) under FTD's native dynamics? |
-| [`benchmark_cognitive_lattice.cpp`](../../engine/tests/benchmark_cognitive_lattice.cpp) | 260 | @file benchmark_cognitive_lattice.cpp @brief Non-physics timing probe for the ternary cognitive sidecar. |
 | [`campaign_production_local_flux_carry_work.cpp`](../../engine/tests/campaign_production_local_flux_carry_work.cpp) | 260 | @file campaign_production_local_flux_carry_work.cpp @brief FTD-0461 energy accounting for production's integer-hop flux carry. |
 | [`test_native_source_core_fork.cpp`](../../engine/tests/test_native_source_core_fork.cpp) | 260 | Native source-core fork audit. |
 | [`campaign_topological_charge_transport.cpp`](../../engine/tests/campaign_topological_charge_transport.cpp) | 259 | @file campaign_topological_charge_transport.cpp @brief FTD-0398 terminal transport test for the existing octahedral Berg--Luescher charge convention. |
@@ -595,7 +590,6 @@
 | [`test_wilson_dirac_smoke.cpp`](../../engine/tests/test_wilson_dirac_smoke.cpp) | 182 | Wilson-Dirac smoke test (Phase II.2-A milestone). |
 | [`campaign_inertial_mass.cpp`](../../engine/tests/campaign_inertial_mass.cpp) | 181 | Campaign: Inertial Mass Measurement (Phase 4 — Emergent Mass Spectrum) Measures effective inertial mass of manifested particles via F = ma. |
 | [`test_sublattice_laplacian.cpp`](../../engine/tests/test_sublattice_laplacian.cpp) | 181 | @file test_sublattice_laplacian.cpp @brief Validate sublattice-projected Laplacians (laplacian_sc, _fcc, _bcc). |
-| [`test_cognitive_lattice.cpp`](../../engine/tests/test_cognitive_lattice.cpp) | 180 |  |
 | [`test_reciprocal_carry_reservoir.cpp`](../../engine/tests/test_reciprocal_carry_reservoir.cpp) | 180 |  |
 | [`campaign_cluster_relaxation.cpp`](../../engine/tests/campaign_cluster_relaxation.cpp) | 179 | campaign_cluster_relaxation — Exp-B of the cluster-thermodynamics EXPLORATORY pass (P4 N_internal + P1 cost<->N). |
 | [`campaign_statistical_convergence.cpp`](../../engine/tests/campaign_statistical_convergence.cpp) | 179 | Campaign: Statistical Convergence (Phase 1 — Measurement Infrastructure) Validates that ensemble moments converge as N_runs increases. |
@@ -756,7 +750,6 @@
 | [`test_relativistic_verlet.cpp`](../../engine/tests/test_relativistic_verlet.cpp) | 109 | @file test_relativistic_verlet.cpp @brief Relativistic Verlet integrator speed cap and momentum verification test. |
 | [`test_sublattice_helpers.cpp`](../../engine/tests/test_sublattice_helpers.cpp) | 108 | @file test_sublattice_helpers.cpp @brief Unit tests for sublattice classification and neighbors_8_corner. |
 | [`test_lorentz_period2_floquet.cpp`](../../engine/tests/test_lorentz_period2_floquet.cpp) | 107 | @file test_lorentz_period2_floquet.cpp @brief FTD-0408 exact and engine-wiring gates for the P4 period-two wave map. |
-| [`test_dag_engine.cpp`](../../engine/tests/test_dag_engine.cpp) | 106 | test_dag_engine.cpp — SparseVoxelDAG structural-parity tests. |
 | [`test_manifestation_background.cpp`](../../engine/tests/test_manifestation_background.cpp) | 106 | @file test_manifestation_background.cpp @brief Unit tests for prepare_manifestation_background. |
 | [`test_dissipation.cpp`](../../engine/tests/test_dissipation.cpp) | 105 | Test: Rayleigh Dissipation Function Verifies R = (DAMPING/2) * \|wave_vel\|^2 where DAMPING = alpha [IMPOSED — see ontic.h ASSUMP.6]. |
 | [`test_dynamic_flux_dressing_scenario.cpp`](../../engine/tests/test_dynamic_flux_dressing_scenario.cpp) | 105 | @file test_dynamic_flux_dressing_scenario.cpp @brief Behavioral admission gate for s0-seed-dynamical-flux-dressing. |
@@ -1058,7 +1051,7 @@
 | [`test_d3d12_render_frame_fencing.cpp`](../../engine/native/tests/test_d3d12_render_frame_fencing.cpp) | 192 | engine/native/tests/test_d3d12_render_frame_fencing.cpp D3D12Presenter::render() is called from exactly one place in the whole repo -- main.cpp's message loop -- so before this test existed, no CTe... |
 | [`Factory.h`](../../engine/thirdparty/rmlui/Include/RmlUi/Core/Factory.h) | 191 | The Factory contains a registry of instancers for different types. |
 | [`d3d12_presenter.h`](../../engine/native/include/native/d3d12_presenter.h) | 189 | _symbols:_ Camera, NativeViewOptions, D3D12PresenterOptions, CaptureToken |
-| [`scale0_adapter.h`](../../engine/native/include/native/host/adapters/scale0_adapter.h) | 189 | host/adapters/scale0_adapter.h — Scale 0 (voxel field, RenderBridge) behind the ScaleAdapter seam (SPEC_NATIVE_REBUILD_R0R1 §2.2, §4.1). |
+| [`scale0_adapter.h`](../../engine/native/include/native/host/adapters/scale0_adapter.h) | 189 | host/adapters/scale0_adapter.h — Scale 0 (voxel field, RenderBridge) behind the ScaleAdapter seam. |
 | [`RenderInterfaceCompatibility.cpp`](../../engine/thirdparty/rmlui/Source/Core/RenderInterfaceCompatibility.cpp) | 189 | vertices |
 | [`parameter_journal.cpp`](../../engine/native/src/parameter_journal.cpp) | 188 |  |
 | [`spectrum.cpp`](../../engine/native/src/spectrum.cpp) | 188 | native/spectrum.cpp — E(k) of the flux field (see native/spectrum.h). |
@@ -1170,7 +1163,7 @@
 | [`TextureLayoutTexture.cpp`](../../engine/thirdparty/rmlui/Source/Core/TextureLayoutTexture.cpp) | 123 |  |
 | [`psstack.h`](../../engine/thirdparty/freetype/src/psaux/psstack.h) | 122 | psstack.h Adobe's code for emulating a CFF stack (specification). |
 | [`Vector3.h`](../../engine/thirdparty/rmlui/Include/RmlUi/Core/Vector3.h) | 122 | Templated class for a generic three-component vector. |
-| [`draw_list.h`](../../engine/native/include/native/model/draw_list.h) | 121 | model/draw_list.h — the scale-generic render vocabulary (SPEC_NATIVE_REBUILD_R0R1 §4.3). |
+| [`draw_list.h`](../../engine/native/include/native/model/draw_list.h) | 121 | model/draw_list.h — the scale-generic render vocabulary. |
 | [`Event.h`](../../engine/thirdparty/rmlui/Include/RmlUi/Core/Event.h) | 121 | An event that propagates through the element hierarchy. |
 | [`pserror.h`](../../engine/thirdparty/freetype/src/psaux/pserror.h) | 120 | pserror.h Adobe's code for error handling (specification). |
 | [`native_frame.h`](../../engine/native/include/native/native_frame.h) | 119 | _symbols:_ NativeParticle, NativeLine, NativeSheetVertex, NativeGlyph |
@@ -1191,7 +1184,7 @@
 | [`PropertySpecification.h`](../../engine/thirdparty/rmlui/Include/RmlUi/Core/PropertySpecification.h) | 115 | A property specification stores a group of property definitions. |
 | [`InlineLevelBox.h`](../../engine/thirdparty/rmlui/Source/Core/Layout/InlineLevelBox.h) | 115 | A box that takes part in inline layout. |
 | [`PluginRegistry.cpp`](../../engine/thirdparty/rmlui/Source/Core/PluginRegistry.cpp) | 115 | _symbols:_ PluginVectors |
-| [`scale_adapter.h`](../../engine/native/include/native/host/scale_adapter.h) | 114 | host/scale_adapter.h — the uniform contract every scale implements (SPEC_NATIVE_REBUILD_R0R1 §4.1). |
+| [`scale_adapter.h`](../../engine/native/include/native/host/scale_adapter.h) | 114 | host/scale_adapter.h — the uniform contract every scale implements used by every retained native scale. |
 | [`test_interop_gather.cpp`](../../engine/native/tests/test_interop_gather.cpp) | 113 |  |
 | [`FontEffectBlur.cpp`](../../engine/thirdparty/rmlui/Source/Core/FontEffectBlur.cpp) | 113 | glyph |
 | [`Pool.h`](../../engine/thirdparty/rmlui/Source/Core/Pool.h) | 113 | Iterator objects are used for safe traversal of the allocated members of a pool. |
@@ -1216,7 +1209,7 @@
 | [`t1cmap.h`](../../engine/thirdparty/freetype/src/psaux/t1cmap.h) | 104 | t1cmap.h Type 1 character map support (specification). |
 | [`Decorator.h`](../../engine/thirdparty/rmlui/Include/RmlUi/Core/Decorator.h) | 104 | The abstract base class for any visual object that can be attached to any element. |
 | [`FontEngineInterface.h`](../../engine/thirdparty/rmlui/Include/RmlUi/Core/FontEngineInterface.h) | 104 | The abstract base class for an application-specific font engine implementation. |
-| [`scale_host.h`](../../engine/native/include/native/host/scale_host.h) | 103 | host/scale_host.h — the scale-generic session host (SPEC_NATIVE_REBUILD_R0R1 §4.1). |
+| [`scale_host.h`](../../engine/native/include/native/host/scale_host.h) | 103 | host/scale_host.h — the scale-generic session host. |
 | [`ElementFormControlSelect.h`](../../engine/thirdparty/rmlui/Include/RmlUi/Core/Elements/ElementFormControlSelect.h) | 103 | A drop-down select form control. |
 | [`StyleSheetSpecification.h`](../../engine/thirdparty/rmlui/Include/RmlUi/Core/StyleSheetSpecification.h) | 103 | _symbols:_ PropertyParser, DefaultStyleSheetParsers, RMLUICORE_API |
 | [`DataTypeRegister.cpp`](../../engine/thirdparty/rmlui/Source/Core/DataTypeRegister.cpp) | 103 |  |
@@ -1272,15 +1265,15 @@
 | [`streamlines.h`](../../engine/native/include/native/host/adapters/streamlines.h) | 88 | host/adapters/streamlines.h — CPU RK4 field-line integrator for the Scale-0 STREAMLINE overlays (Flux Lines · Radiative E · B Field), ported from the web dashboard's engine/web/js/fieldlines.js `co... |
 | [`svsfnt.h`](../../engine/thirdparty/freetype/include/freetype/internal/services/svsfnt.h) | 88 | svsfnt.h The FreeType SFNT table loading service (specification). |
 | [`afmparse.h`](../../engine/thirdparty/freetype/src/psaux/afmparse.h) | 88 |  |
-| [`test_d3d12_overlay_once.cpp`](../../engine/native/tests/test_d3d12_overlay_once.cpp) | 87 | Counts OverlayRecorder::record() invocations: SPEC_UI_V2 §3.5 requires exactly one overlay record per D3D12Presenter::render(), with a NULL DSV rebind already performed by the presenter (this fake... |
+| [`test_d3d12_overlay_once.cpp`](../../engine/native/tests/test_d3d12_overlay_once.cpp) | 87 | Counts OverlayRecorder::record() invocations: the composition contract requires exactly one overlay record per D3D12Presenter::render(), with a NULL DSV rebind already performed by the presenter (t... |
 | [`svpsinfo.h`](../../engine/thirdparty/freetype/include/freetype/internal/services/svpsinfo.h) | 86 | svpsinfo.h The FreeType PostScript info service (specification). |
 | [`ftccback.h`](../../engine/thirdparty/freetype/src/cache/ftccback.h) | 85 | ftccback.h Callback functions of the caching sub-system (specification only). |
 | [`Rectangle.h`](../../engine/thirdparty/rmlui/Include/RmlUi/Core/Rectangle.h) | 85 | Templated class for a generic axis-aligned rectangle. |
 | [`Unit.h`](../../engine/thirdparty/rmlui/Include/RmlUi/Core/Unit.h) | 85 |  |
 | [`IdNameMap.h`](../../engine/thirdparty/rmlui/Source/Core/IdNameMap.h) | 85 | _symbols:_ IdNameMap, PropertyIdNameMap, ShorthandIdNameMap |
 | [`cffobjs.h`](../../engine/thirdparty/freetype/src/cff/cffobjs.h) | 84 | cffobjs.h OpenType objects manager (specification). |
-| [`scale1_adapter.h`](../../engine/native/include/native/host/adapters/scale1_adapter.h) | 83 | host/adapters/scale1_adapter.h — Scale 1 (ParticleEngine) behind the ScaleAdapter seam (SPEC_NATIVE_REBUILD_R0R1 §4.1; R1 validation that the seam is scale-generic — a SECOND adapter with a structu... |
-| [`commands.h`](../../engine/native/include/native/model/commands.h) | 83 | model/commands.h — the scale-generic command vocabulary (SPEC_NATIVE_REBUILD_R0R1 §4.2). |
+| [`scale1_adapter.h`](../../engine/native/include/native/host/adapters/scale1_adapter.h) | 83 | host/adapters/scale1_adapter.h — Scale 1 (ParticleEngine) behind the ScaleAdapter seam (validation that the seam is scale-generic — a SECOND adapter with a structurally different engine). |
+| [`commands.h`](../../engine/native/include/native/model/commands.h) | 83 | model/commands.h — the scale-generic command vocabulary. |
 | [`test_engine_session.cpp`](../../engine/native/tests/test_engine_session.cpp) | 83 |  |
 | [`psintrp.h`](../../engine/thirdparty/freetype/src/psaux/psintrp.h) | 83 |  |
 | [`ttcolr.h`](../../engine/thirdparty/freetype/src/sfnt/ttcolr.h) | 83 | ttcolr.h TrueType and OpenType colored glyph layer support (specification). |
@@ -1291,7 +1284,7 @@
 | [`Core.h`](../../engine/thirdparty/rmlui/Include/RmlUi/Core.h) | 82 |  |
 | [`DataTypes.h`](../../engine/thirdparty/rmlui/Include/RmlUi/Core/DataTypes.h) | 82 | _symbols:_ VariableDefinition, DataTypeRegister, TransformFuncRegister, DataModelHandle |
 | [`ScrollController.h`](../../engine/thirdparty/rmlui/Source/Core/ScrollController.h) | 81 | Implements scrolling behavior that occurs over time. |
-| [`snapshot.h`](../../engine/native/include/native/model/snapshot.h) | 80 | model/snapshot.h — the scale-generic published snapshot (SPEC_NATIVE_REBUILD_R0R1 §4.4). |
+| [`snapshot.h`](../../engine/native/include/native/model/snapshot.h) | 80 | model/snapshot.h — the scale-generic published snapshot. |
 | [`test_d3d12_capture_lifecycle.cpp`](../../engine/native/tests/test_d3d12_capture_lifecycle.cpp) | 79 | Capture seam: request_capture returns a token; the next render records the readback copy; poll_capture stays Pending until the submission fence retires, then Ready with pitched bytes. |
 | [`test_ui_harness_commands.cpp`](../../engine/native/tests/test_ui_harness_commands.cpp) | 79 |  |
 | [`EventDispatcher.h`](../../engine/thirdparty/rmlui/Source/Core/EventDispatcher.h) | 79 | The Event Dispatcher manages a list of event listeners and triggers the events via EventHandlers whenever requested. |
@@ -1648,7 +1641,7 @@
 | [`WidgetTextInputSingleLine.h`](../../engine/thirdparty/rmlui/Source/Core/Elements/WidgetTextInputSingleLine.h) | 22 | A specialisation of the text input widget for single-line input fields. |
 | [`Profiling.cpp`](../../engine/thirdparty/rmlui/Source/Core/Profiling.cpp) | 21 |  |
 | [`PropertyParserKeyword.cpp`](../../engine/thirdparty/rmlui/Source/Core/PropertyParserKeyword.cpp) | 21 |  |
-| [`run_config.h`](../../engine/native/include/native/host/run_config.h) | 20 | host/run_config.h — scale-common run knobs (SPEC_NATIVE_REBUILD_R0R1 §4.1). |
+| [`run_config.h`](../../engine/native/include/native/host/run_config.h) | 20 | host/run_config.h — scale-common run knobs. |
 | [`snapshot_publisher.h`](../../engine/native/include/native/snapshot_publisher.h) | 20 | _symbols:_ SnapshotPublisher |
 | [`ATARI.H`](../../engine/thirdparty/freetype/builds/atari/ATARI.H) | 20 | too many unevaluated variables in gxvalid |
 | [`XMLNodeHandlerSelect.h`](../../engine/thirdparty/rmlui/Source/Core/Elements/XMLNodeHandlerSelect.h) | 20 | XML node handler for processing the select and option tags. |
@@ -1735,7 +1728,7 @@
 | [`bridge-init.js`](../../engine/web/js/bridge-init.js) | 32 | @file engine/web/js/bridge-init.js @purpose Bridge barrel + capability-getter installer. |
 | [`status.js`](../../engine/web/js/app-wire/status.js) | 27 | app-wire/status.js — toast + loading-bar helpers for the dashboard. |
 
-### `src/core`  (198 files, 67,371 LOC)
+### `src/core`  (196 files, 66,956 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
@@ -1815,7 +1808,6 @@
 | [`cosmic_scenarios.cpp`](../../engine/src/cosmic/cosmic_scenarios.cpp) | 332 | CosmicEngine scenario builders. |
 | [`native_hop_dressing_obstruction.cpp`](../../engine/src/eft/native_hop_dressing_obstruction.cpp) | 327 |  |
 | [`ten_source_temporal_product_capacity.cpp`](../../engine/src/eft/ten_source_temporal_product_capacity.cpp) | 324 | Recompile the frozen FTD-0596 observer under a private symbol so this verifier can reuse its exact cyclotomic association-scheme reconstruction and LP certificate checker without changing the paren... |
-| [`dag_engine.cpp`](../../engine/src/dag_engine.cpp) | 323 | ══════════════════════════════════════════════════════════════════════ STATUS BANNER — DAG Engine is a DEPRECATED SKELETON (ticket W6), NOT the production physics path. |
 | [`matched_symmetry_ray_spectrum.cpp`](../../engine/src/eft/matched_symmetry_ray_spectrum.cpp) | 322 | _symbols:_ RayBins |
 | [`overshoot_preserving_contact_rebase.cpp`](../../engine/src/eft/overshoot_preserving_contact_rebase.cpp) | 322 |  |
 | [`passive_dressing_depinning_obstruction.cpp`](../../engine/src/eft/passive_dressing_depinning_obstruction.cpp) | 322 | _symbols:_ Threshold, PassiveFixture |
@@ -1921,7 +1913,6 @@
 | [`cosmic_gravitational_waves.cpp`](../../engine/src/cosmic/cosmic_gravitational_waves.cpp) | 99 | CosmicEngine gravitational wave emission + propagation. |
 | [`ws_server_internal.h`](../../engine/src/ws_server_internal.h) | 96 | @file ws_server_internal.h @brief Private module boundary for the native WebSocket server. |
 | [`canonical_subcell_section.cpp`](../../engine/src/eft/canonical_subcell_section.cpp) | 95 | _symbols:_ CanonicalAxis |
-| [`main.cpp`](../../engine/src/main.cpp) | 92 | FTD Render-Bridge Simulation Engine — CLI entry point. |
 | [`_common.h`](../../engine/src/constructors/_common.h) | 88 | Internal shared helpers for the split constructors.cpp translation units. |
 | [`eight_source_orbit_coherence.cpp`](../../engine/src/eft/eight_source_orbit_coherence.cpp) | 83 |  |
 | [`ten_source_orbit_coherence.cpp`](../../engine/src/eft/ten_source_orbit_coherence.cpp) | 83 |  |
@@ -1938,7 +1929,7 @@
 | [`pole_matching.cpp`](../../engine/src/eft/pole_matching.cpp) | 34 |  |
 | [`ws_server.cpp`](../../engine/src/ws_server.cpp) | 12 | FTD WebSocket Server Standalone executable bridging the native engine to the web dashboard. |
 
-### `include`  (310 files, 39,309 LOC)
+### `include`  (296 files, 37,353 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
@@ -1956,7 +1947,6 @@
 | [`engine_state.h`](../../engine/include/ftd/engine_state.h) | 408 | @file engine_state.h @brief Cache-friendly simulation storage anchored by authoritative ternary state. |
 | [`connected_moore_block_action.h`](../../engine/include/ftd/eft/connected_moore_block_action.h) | 379 | @file connected_moore_block_action.h @brief Runtime-size Moore-local integer-carrier common action (FTD-0622). |
 | [`minimum_norm_transaction_selector.h`](../../engine/include/ftd/eft/minimum_norm_transaction_selector.h) | 339 | @file minimum_norm_transaction_selector.h @brief Independent certificate for the minimum-norm zero-energy selector. |
-| [`cognitive_lattice.h`](../../engine/include/ftd/cognition/cognitive_lattice.h) | 338 | @file cognitive_lattice.h @brief Ternary cognitive sidecar for LLM memory and retrieval routing. |
 | [`constructors.h`](../../engine/include/ftd/constructors.h) | 338 | ftd/constructors.h — lattice constructor library Named factory functions that stamp FTD theoretical entities onto a RenderBridge's voxel grid. |
 | [`branch_holonomy.h`](../../engine/include/ftd/branch_holonomy.h) | 326 | branch_holonomy.h — signed difference operator and Z_2 torus branch twists. |
 | [`cluster_tracker.h`](../../engine/include/ftd/cluster_tracker.h) | 315 | Cluster Tracker — Connected-component cluster identification + persistence. |
@@ -2004,12 +1994,8 @@
 | [`dynamical_flux_dressing_observer.h`](../../engine/include/ftd/eft/dynamical_flux_dressing_observer.h) | 192 | @file dynamical_flux_dressing_observer.h @brief Read-only source-centred flux morphology for FTD-0476. |
 | [`lemniscate.h`](../../engine/include/ftd/ontic/lemniscate.h) | 189 | ontic/lemniscate.h — Layers -1 through 2b of the ontic chain. |
 | [`canonical_source_centered_gauss_gate.h`](../../engine/include/ftd/eft/canonical_source_centered_gauss_gate.h) | 186 | @file canonical_source_centered_gauss_gate.h @brief FTD-0885/0886 canonical Gauss-layer and battery-phase boundary. |
-| [`dag_lattice.h`](../../engine/include/ftd/dag_lattice.h) | 181 | SparseVoxelDAG A Directed Acyclic Graph that compresses identical octree nodes. |
 | [`contextual_actualization.h`](../../engine/include/ftd/eft/contextual_actualization.h) | 178 | @file contextual_actualization.h @brief FTD-0825 isolated contextual-actualization reference interfaces. |
-| [`trit.h`](../../engine/include/tritium/trit.h) | 175 | tritium/trit.h — Core ternary types for balanced ternary {-1, 0, +1} Two representations: TritWord64 — compute format: 32 trits in uint64_t (2 bits each) TritPack — storage format: 5 trits in uint8... |
-| [`arithmetic.h`](../../engine/include/tritium/arithmetic.h) | 172 | tritium/arithmetic.h — Balanced ternary arithmetic on packed TritWord64 All operations process 32 trits in parallel via bitwise ops on uint64_t. |
 | [`matched_gauss_transport.h`](../../engine/include/ftd/eft/matched_gauss_transport.h) | 171 | @file ftd/eft/matched_gauss_transport.h @brief Projection-free oriented-face Gauss transport sidecar (FTD-0427). |
-| [`simd.h`](../../engine/include/tritium/simd.h) | 171 | tritium/simd.h — SIMD-accelerated operations for packed trit words Provides optimized implementations using SSE4.2/AVX2 intrinsics with scalar fallbacks for portability. |
 | [`scenario_meta.h`](../../engine/include/ftd/scenario_meta.h) | 169 | Scale-0 scenario descriptors for the native shell. |
 | [`a1g_projector.h`](../../engine/include/ftd/a1g_projector.h) | 168 | A_{1g} projector for the 27-voxel Moore block. |
 | [`fixed_j_recoil_capacity.h`](../../engine/include/ftd/eft/fixed_j_recoil_capacity.h) | 168 | @file fixed_j_recoil_capacity.h @brief Global minimum tick-energy cost of a fixed-J wave-velocity recoil. |
@@ -2017,15 +2003,13 @@
 | [`causal_kinematics.h`](../../engine/include/ftd/causal_kinematics.h) | 162 | Raw-lattice causal kinematics — FTD-0402 source of truth. |
 | [`native_reaction_polarity_slow_mode.h`](../../engine/include/ftd/eft/native_reaction_polarity_slow_mode.h) | 160 | @file native_reaction_polarity_slow_mode.h @brief Read-only reaction/source mode observer for FTD-0431. |
 | [`reversible_checkerboard_gauss_preparation.h`](../../engine/include/ftd/eft/reversible_checkerboard_gauss_preparation.h) | 158 | @file reversible_checkerboard_gauss_preparation.h @brief FTD-0881/0882 reversible local matched-Gauss preparation witness. |
-| [`trit_vector.h`](../../engine/include/tritium/trit_vector.h) | 158 | tritium/trit_vector.h — Dynamic-length packed trit arrays with fast operations Backed by TritWord64 (compute format). |
 | [`native_evaporation_hazard_observer.h`](../../engine/include/ftd/eft/native_evaporation_hazard_observer.h) | 155 | @file native_evaporation_hazard_observer.h @brief Exact pre-RNG conditional evaporation observer for FTD-0432. |
-| [`dag_engine.h`](../../engine/include/ftd/dag_engine.h) | 154 | @brief DagEngine — EXPERIMENTAL / DEPRECATED sparse-voxel-DAG prototype. |
 | [`common_relative_connection_gearbox.h`](../../engine/include/ftd/eft/common_relative_connection_gearbox.h) | 154 | @file common_relative_connection_gearbox.h @brief FTD-0899/0901 isolated common/relative connection witness. |
-| [`test_telemetry.h`](../../engine/include/ftd/test_telemetry.h) | 154 | ============================================================================ ftd/test_telemetry.h — NDJSON telemetry for the FTD Test Bench runner ==================================================... |
 | [`blocking.h`](../../engine/include/ftd/eft/blocking.h) | 153 | @file ftd/eft/blocking.h @brief Real-space block-spin transformation (EFT Recovery Program, Phase 2A). |
 | [`implicit_atomic_face_action.h`](../../engine/include/ftd/eft/implicit_atomic_face_action.h) | 153 | @file implicit_atomic_face_action.h @brief Observer-only minimal implicit face-action endpoint audit (FTD-0536). |
 | [`engine_select.h`](../../engine/include/ftd/engine_select.h) | 153 | Engine selection helper. |
 | [`coupled_matched_face_transaction.h`](../../engine/include/ftd/eft/coupled_matched_face_transaction.h) | 152 | @file coupled_matched_face_transaction.h @brief Observer-only coupled matter/matched-field transaction (FTD-0479). |
+| [`test_telemetry.h`](../../engine/include/ftd/test_telemetry.h) | 152 | ============================================================================ ftd/test_telemetry.h — NDJSON telemetry for the FTD Test Bench runner ==================================================... |
 | [`matched_face_momentum_transaction.h`](../../engine/include/ftd/eft/matched_face_momentum_transaction.h) | 151 | @file matched_face_momentum_transaction.h @brief Observer-only local translation pseudomomentum for matched fields. |
 | [`cuda_matched_field_pipeline.h`](../../engine/include/ftd/eft/cuda_matched_field_pipeline.h) | 150 | @file cuda_matched_field_pipeline.h @brief CUDA accelerator for the selected matched face/edge field step. |
 | [`ws_protocol.h`](../../engine/include/ftd/ws_protocol.h) | 149 | WebSocket framing protocol (RFC 6455) + minimal string-search JSON helpers. |
@@ -2036,7 +2020,6 @@
 | [`native_event_characteristics.h`](../../engine/include/ftd/eft/native_event_characteristics.h) | 140 | @file native_event_characteristics.h @brief FTD-0858 isolated event-acceptance and characteristic-chart witness. |
 | [`local_canonical_hamiltonian_parity_rail.h`](../../engine/include/ftd/eft/local_canonical_hamiltonian_parity_rail.h) | 138 | @file local_canonical_hamiltonian_parity_rail.h @brief FTD-0875 local canonical Hamiltonian lift of the parity rail. |
 | [`ws_sha1.h`](../../engine/include/ftd/ws_sha1.h) | 138 | Minimal SHA-1 (RFC 3174) Header-only, stdlib-only. |
-| [`packing.h`](../../engine/include/tritium/packing.h) | 137 | tritium/packing.h — Conversion between compute (TritWord64) and storage (TritPack) formats Uses precomputed lookup tables for zero-branch encode/decode. |
 | [`oriented_even_self_pair_rectifier.h`](../../engine/include/ftd/eft/oriented_even_self_pair_rectifier.h) | 136 | @file oriented_even_self_pair_rectifier.h @brief FTD-0904 isolated oriented even-self-pair rectifier witness. |
 | [`gauss_record_canonical_reduction.h`](../../engine/include/ftd/eft/gauss_record_canonical_reduction.h) | 135 | @file gauss_record_canonical_reduction.h @brief Matched Gauss-record canonical reduction witness (FTD-0877/0880). |
 | [`paired_field_response.h`](../../engine/include/ftd/eft/paired_field_response.h) | 135 | @file paired_field_response.h @brief Observer-only moving/rest field-response algebra (FTD-0768). |
@@ -2062,10 +2045,8 @@
 | [`voxel_rng.h`](../../engine/include/ftd/voxel_rng.h) | 115 | FTD voxel-level RNG (BH-F5 / BH-F8 / BH-F9 closure, 2026-05-05). |
 | [`cubic_reaction_vector_source_transport.h`](../../engine/include/ftd/eft/cubic_reaction_vector_source_transport.h) | 114 | @file cubic_reaction_vector_source_transport.h @brief FTD-0889/0890 cubic reaction-vector/source-transport reference. |
 | [`signal_acknowledged_two_stroke_reset.h`](../../engine/include/ftd/eft/signal_acknowledged_two_stroke_reset.h) | 114 | @file signal_acknowledged_two_stroke_reset.h @brief FTD-0869 isolated signal-acknowledged recursive reset witness. |
-| [`convolution.h`](../../engine/include/tritium/convolution.h) | 114 | tritium/convolution.h — 1D/2D/3D ternary convolution with trit kernels Convolution with trit-valued kernels produces integer outputs. |
 | [`catalytic_phase_reference.h`](../../engine/include/ftd/eft/catalytic_phase_reference.h) | 113 | @file catalytic_phase_reference.h @brief FTD-0863 isolated catalytic phase-reference transducer witness. |
 | [`cuda_momentum_transport_current.h`](../../engine/include/ftd/eft/cuda_momentum_transport_current.h) | 113 | @file cuda_momentum_transport_current.h @brief Fused per-tick masked momentum-ledger reduction on CUDA. |
-| [`logic.h`](../../engine/include/tritium/logic.h) | 112 | tritium/logic.h — Kleene strong three-valued logic on packed TritWord64 Maps balanced ternary to truth values: Neg = False, Zero = Unknown, Pos = True Logic ops: NOT, AND (min), OR (max), CONSENSUS... |
 | [`genesis_natural_extension.h`](../../engine/include/ftd/eft/genesis_natural_extension.h) | 111 | @file genesis_natural_extension.h @brief Observer-only exact-real natural extension and branchwise symplectic lift of the canonical single-genesis trial (FTD-0570). |
 | [`ignition_cut_support_ablation.h`](../../engine/include/ftd/eft/ignition_cut_support_ablation.h) | 111 | @file ignition_cut_support_ablation.h @brief Observer-only ignition-cut mechanism ablation (FTD-0587). |
 | [`momentum_face_balance.h`](../../engine/include/ftd/eft/momentum_face_balance.h) | 111 | @file momentum_face_balance.h @brief Exact componentwise momentum-continuity lift of oriented face current (FTD-0514). |
@@ -2100,7 +2081,6 @@
 | [`derived_interaction_graph.h`](../../engine/include/ftd/eft/derived_interaction_graph.h) | 91 | @file derived_interaction_graph.h @brief Observer-only reversible derived-topology pair transaction (FTD-0721). |
 | [`bloch_quasimomentum_lift.h`](../../engine/include/ftd/eft/bloch_quasimomentum_lift.h) | 90 | @file bloch_quasimomentum_lift.h @brief FTD-0894/0896 isolated Bloch wrap/lift/carry reference witness. |
 | [`centered_fiber_knot_transaction.h`](../../engine/include/ftd/eft/centered_fiber_knot_transaction.h) | 90 | @file centered_fiber_knot_transaction.h @brief Unique centered knot-to-subcell transaction with an explicit dressing-history fiber (FTD-0496). |
-| [`threshold.h`](../../engine/include/tritium/threshold.h) | 90 | tritium/threshold.h — Convert continuous values to/from balanced ternary Hard quantization (deterministic) and stochastic quantization (FTD Born rule). |
 | [`common_moore_worldline_action.h`](../../engine/include/ftd/eft/common_moore_worldline_action.h) | 89 | @file common_moore_worldline_action.h @brief Observer-only spacetime/action completion of the Moore coat (FTD-0578). |
 | [`dressed_boost_momentum_map.h`](../../engine/include/ftd/eft/dressed_boost_momentum_map.h) | 89 | @file dressed_boost_momentum_map.h @brief FTD-0893 conditional dressed-inertia reference witness. |
 | [`quartic_relative_carry_gearbox.h`](../../engine/include/ftd/eft/quartic_relative_carry_gearbox.h) | 89 | @file quartic_relative_carry_gearbox.h @brief FTD-0898 isolated relative-quartic impulse/carry composition. |
@@ -2108,7 +2088,6 @@
 | [`reciprocal_carry_reservoir.h`](../../engine/include/ftd/eft/reciprocal_carry_reservoir.h) | 88 | @file reciprocal_carry_reservoir.h @brief FTD-0897 isolated reciprocal-carry transaction witness. |
 | [`quadratic_coat_composite_peierls.h`](../../engine/include/ftd/eft/quadratic_coat_composite_peierls.h) | 87 | @file quadratic_coat_composite_peierls.h @brief Observer-only rigid-composite Peierls analysis (FTD-0553). |
 | [`visual_field_sample.h`](../../engine/include/ftd/visual_field_sample.h) | 87 | _symbols:_ VisualFieldSample |
-| [`trit_matrix.h`](../../engine/include/tritium/trit_matrix.h) | 87 | tritium/trit_matrix.h — Row-major trit matrix with mat-vec and mat-mat operations Each row is a TritVector. |
 | [`native_moving_source_pole.h`](../../engine/include/ftd/eft/native_moving_source_pole.h) | 85 | @file native_moving_source_pole.h @brief Observer-only correction of the native moving-source pole (FTD-0558). |
 | [`alternating_oriented_ternary_parity_rail.h`](../../engine/include/ftd/eft/alternating_oriented_ternary_parity_rail.h) | 83 | @file alternating_oriented_ternary_parity_rail.h @brief FTD-0874 isolated alternating nearest-neighbour ternary rail. |
 | [`production_hop_kinematics.h`](../../engine/include/ftd/eft/production_hop_kinematics.h) | 83 | @file production_hop_kinematics.h @brief Analysis-only momentum form of the production flat kinematics. |
@@ -2226,7 +2205,6 @@
 | [`conserved_charge_basis.h`](../../engine/include/ftd/eft/conserved_charge_basis.h) | 42 | @file ftd/eft/conserved_charge_basis.h @brief Exact additive-charge nullspace for the frozen native event catalog. |
 | [`native_motion_reaction_front.h`](../../engine/include/ftd/eft/native_motion_reaction_front.h) | 42 | @file native_motion_reaction_front.h @brief Observer-only transport/reaction/source-memory discriminator (FTD-0585). |
 | [`ternary_block_bipole_peierls.h`](../../engine/include/ftd/eft/ternary_block_bipole_peierls.h) | 42 | @file ternary_block_bipole_peierls.h @brief Exact integer-site extended-carrier spectral observer (FTD-0621). |
-| [`cli_demos.h`](../../engine/include/ftd/cli_demos.h) | 41 | CLI demo scenarios extracted from main.cpp. |
 | [`centered_trace_work.h`](../../engine/include/ftd/eft/centered_trace_work.h) | 41 | @file centered_trace_work.h @brief Exact work omitted by the centered knot trace (FTD-0493). |
 | [`contact_quotient_coupling_scope.h`](../../engine/include/ftd/eft/contact_quotient_coupling_scope.h) | 40 | @file contact_quotient_coupling_scope.h @brief Native snapshot source versus exact history-current quotient audit (FTD-0528). |
 | [`single_slab_connection_compatibility.h`](../../engine/include/ftd/eft/single_slab_connection_compatibility.h) | 40 | @file single_slab_connection_compatibility.h @brief Faraday compatibility of the FTD-0531 work field and staggered magnetic history (FTD-0534). |
@@ -2249,11 +2227,10 @@
 | [`cuda_transported_chart_morphology.h`](../../engine/include/ftd/eft/cuda_transported_chart_morphology.h) | 29 | CUDA reduction counterpart of the FTD-0764 morphology observer. |
 | [`injection.h`](../../engine/include/ftd/injection.h) | 28 | Injection — state-mutating primitives for seeding the lattice. |
 | [`diagnostics_compute.h`](../../engine/include/ftd/diagnostics_compute.h) | 26 | Diagnostics — read-only reductions over voxel state. |
-| [`tritium.h`](../../engine/include/tritium/tritium.h) | 24 | tritium.h — Single-include header for the Tritium ternary compute library Tritium provides efficient balanced ternary {-1, 0, +1} computation: - Hybrid storage: 2-bit compute format (32 trits/uint6... |
 | [`proper_time_rate.h`](../../engine/include/ftd/proper_time_rate.h) | 6 | Compatibility include. |
 | [`native_wave_energy.h`](../../engine/include/ftd/eft/native_wave_energy.h) | 3 | Compatibility name for the exact wave-energy observer used by FTD-0452. |
 
-### `cuda`  (30 files, 18,359 LOC)
+### `cuda`  (29 files, 17,907 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
@@ -2271,7 +2248,6 @@
 | [`kernels_poisson.cu`](../../engine/cuda/kernels_poisson.cu) | 537 | FFT-based Poisson solver for FTD GPU engine. |
 | [`kernels_gauge.cu`](../../engine/cuda/kernels_gauge.cu) | 480 | @file kernels_gauge.cu @brief GPU kernels for Scale 0 Gauge Field non-Abelian plaquette relaxation. |
 | [`cuda_quadratic_coat_orbit_gather.cu`](../../engine/cuda/cuda_quadratic_coat_orbit_gather.cu) | 468 | _symbols:_ DeviceVec3, DeviceCurrentEntry, DeviceOrbitSegment, DeviceOrbitOutput |
-| [`experimental_discrete_universe.cu`](../../engine/cuda/experimental_discrete_universe.cu) | 452 | @file experimental_discrete_universe.cu @brief Standalone, hyper-optimized GPU Discrete Universe simulation engine prototype. |
 | [`cuda_transported_chart_morphology.cu`](../../engine/cuda/cuda_transported_chart_morphology.cu) | 451 | _symbols:_ DeviceTriplet |
 | [`visual_field_sample.cu`](../../engine/cuda/visual_field_sample.cu) | 418 | _symbols:_ VisualDeviceView |
 | [`kernels_eft.cu`](../../engine/cuda/kernels_eft.cu) | 381 | @file kernels_eft.cu @brief GPU-native EFT calculations: face-flux conversion, blocking, operator evaluation, and parallel reductions. |
@@ -2358,12 +2334,12 @@
 | [`register-scale0-ui.js`](../../engine/web/js/scales/scale0/ui/register-scale0-ui.js) | 19 | _symbols:_ registerScale0ToolbarUI() |
 | [`component.js`](../../engine/web/js/scales/scale0/ui/toolbar/component.js) | 18 | _symbols:_ createScale0ScenarioToolbarGroup(), createScale0LatticeSizeToolbarGroup() |
 
-### `web/tests`  (93 files, 17,216 LOC)
+### `web/tests`  (93 files, 17,215 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
 | [`ws-bridge-visual-cache.spec.js`](../../engine/web/tests/ws-bridge-visual-cache.spec.js) | 2411 | @ts-check |
-| [`scales.spec.js`](../../engine/web/tests/scales.spec.js) | 713 | @ts-check |
+| [`scales.spec.js`](../../engine/web/tests/scales.spec.js) | 711 | @ts-check |
 | [`scenario-parity.spec.js`](../../engine/web/tests/scenario-parity.spec.js) | 675 | @ts-check |
 | [`overlay-scheduler.spec.js`](../../engine/web/tests/overlay-scheduler.spec.js) | 613 | @ts-check |
 | [`native-ws-smoke.mjs`](../../engine/web/tests/native-ws-smoke.mjs) | 605 |  |
@@ -2437,7 +2413,7 @@
 | [`scale0-scalecontext.spec.js`](../../engine/web/tests/scale0-scalecontext.spec.js) | 63 | @ts-check |
 | [`scale0-inject-paused.spec.js`](../../engine/web/tests/scale0-inject-paused.spec.js) | 59 | @ts-check |
 | [`math-formatting.spec.js`](../../engine/web/tests/math-formatting.spec.js) | 55 | @ts-check |
-| [`playwright.config.js`](../../engine/web/tests/playwright.config.js) | 50 | @ts-check |
+| [`playwright.config.js`](../../engine/web/tests/playwright.config.js) | 51 | @ts-check |
 | [`field-line-knots-seeds.spec.js`](../../engine/web/tests/field-line-knots-seeds.spec.js) | 48 | engine/web/tests/field-line-knots-seeds.spec.js Coverage seeds: particle-anchored + importance-sampled field peaks, voxel-deduped. |
 | [`particle-units-contract.spec.js`](../../engine/web/tests/particle-units-contract.spec.js) | 45 |  |
 | [`field-line-knots-attribution-integration.spec.js`](../../engine/web/tests/field-line-knots-attribution-integration.spec.js) | 44 | engine/web/tests/field-line-knots-attribution-integration.spec.js The tracker's per-knot segments/length/legs must equal attributeSegmentsToKnots run against the tracker's OWN detected centroids (g... |
@@ -2456,7 +2432,7 @@
 | [`knot-line-attribution.spec.js`](../../engine/web/tests/knot-line-attribution.spec.js) | 15 | engine/web/tests/knot-line-attribution.spec.js |
 | [`playwright.manual.config.js`](../../engine/web/tests/playwright.manual.config.js) | 8 | @ts-check |
 
-### `web/ui`  (84 files, 11,052 LOC)
+### `web/ui`  (84 files, 10,986 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
@@ -2464,7 +2440,7 @@
 | [`template.js`](../../engine/web/js/ui/components/panel-resources/template.js) | 593 | _symbols:_ getScaleControlsBlocksTemplate(), getZooPanelTemplate(), getInspectorPanelTemplate(), getPhysicsPanelTemplate() |
 | [`component.js`](../../engine/web/js/ui/panels/telemetry-grid/component.js) | 474 | _symbols:_ TelemetryGridPanelComponent, initTelemetryGridPanel() |
 | [`data.js`](../../engine/web/js/ui/components/faq/data.js) | 443 | FAQ sidebar data — 16 canonical hard problems framed through the FTD lens. |
-| [`definitions.js`](../../engine/web/js/ui/components/tooltips/definitions.js) | 435 | _symbols:_ applyUiTooltipDefinitions() |
+| [`definitions.js`](../../engine/web/js/ui/components/tooltips/definitions.js) | 434 | _symbols:_ applyUiTooltipDefinitions() |
 | [`table.js`](../../engine/web/js/ui/panels/diagnostics-panel/table.js) | 352 | DiagnosticsTable — renders one section's table + owns per-row cells, reset-scoped running stats, and per-row Sparkline instances. |
 | [`panel-dock-controller.js`](../../engine/web/js/ui/shell/panel-dock-controller.js) | 308 | _symbols:_ PanelDockController |
 | [`component.js`](../../engine/web/js/ui/components/sidebar-library/component.js) | 239 | SidebarLibraryComponent — reusable library-style sidebar. |
@@ -2472,7 +2448,6 @@
 | [`app-ontic.js`](../../engine/web/js/ui/app-ontic.js) | 233 | Ontic Observatory / Physics / Hierarchy panel glue. |
 | [`component.js`](../../engine/web/js/ui/components/play-bar/component.js) | 229 | PlayBarComponent — the floating transport + speed bar at the bottom of the viewport. |
 | [`component.js`](../../engine/web/js/ui/components/floating-window/component.js) | 227 | FloatingWindow — high-performance draggable/resizable glassmorphic panel wrapper. |
-| [`component.js`](../../engine/web/js/ui/components/topbar/component.js) | 225 | _symbols:_ TopbarComponent |
 | [`scale1.js`](../../engine/web/js/ui/panels/diagnostics-panel/descriptors/scale1.js) | 224 | Scale 1 diagnostics table descriptor. |
 | [`app-shell.js`](../../engine/web/js/ui/shell/app-shell.js) | 223 | Shell facade around the current dashboard DOM. |
 | [`adapter.js`](../../engine/web/js/ui/panels/scene-panel/adapter.js) | 212 | SceneAdapter — one place to translate "the user moved a slider" into "change this Three.js object on the Viewport". |
@@ -2482,6 +2457,7 @@
 | [`component.js`](../../engine/web/js/ui/components/tooltips/component.js) | 194 | _symbols:_ TooltipComponent |
 | [`mount-toggle.js`](../../engine/web/js/ui/components/panel-dock/mount-toggle.js) | 181 | Updates --viewport-safe-left / --viewport-safe-right on <html> so that any overlay consumers can inset themselves past the sidebar without hardcoding the sidebar width. |
 | [`dimensions-units.js`](../../engine/web/js/ui/components/knowledge-base/data/dimensions-units.js) | 178 | Knowledge-base section `dimensions-units` |
+| [`component.js`](../../engine/web/js/ui/components/topbar/component.js) | 163 | _symbols:_ TopbarComponent |
 | [`constants.js`](../../engine/web/js/ui/components/knowledge-base/data/constants.js) | 161 | Knowledge-base section `constants` |
 | [`component.js`](../../engine/web/js/ui/panels/lagrangian-panel/component.js) | 155 | Build a small-multiple card for one Lagrangian term. |
 | [`gpu-server-card.js`](../../engine/web/js/ui/components/gpu-server-card.js) | 154 | GPU Acceleration splash card (local dev only). |
@@ -2512,8 +2488,8 @@
 | [`panel-shell.js`](../../engine/web/js/ui/components/viewport-overlays/panel-shell.js) | 70 | Shared viewport overlay panel shell — scales 1–5 (Scale 0 uses s0-overlay-panel). |
 | [`shell-template.js`](../../engine/web/js/ui/shell/shell-template.js) | 69 | Phase 0 template pass: annotate the current DOM with shell regions and create future mount roots without reparenting the existing markup yet. |
 | [`scale2.js`](../../engine/web/js/ui/panels/charts-panel/descriptors/scale2.js) | 66 | Scale 2/3 (Atom / Molecule Engine) charts panel descriptor. |
-| [`template.js`](../../engine/web/js/ui/components/topbar/template.js) | 65 | _symbols:_ getTopbarInlineTemplate(), getTopbarActionButtons(), getAssistantSidebarTemplate() |
 | [`theme.js`](../../engine/web/js/ui/charts/theme.js) | 64 | Chart theme reader — converts CSS custom properties into a uPlot-shaped theme object. |
+| [`template.js`](../../engine/web/js/ui/components/topbar/template.js) | 62 | _symbols:_ getTopbarInlineTemplate(), getTopbarActionButtons(), getAssistantSidebarTemplate() |
 | [`template.js`](../../engine/web/js/ui/components/sidebar-library/template.js) | 60 | Shared template for library-style sidebars (KB, FAQ, any future ones). |
 | [`breakpoint-service.js`](../../engine/web/js/ui/shell/breakpoint-service.js) | 60 | Observes viewport size and emits shell layout snapshots. |
 | [`chart-card.js`](../../engine/web/js/ui/panels/charts-panel/chart-card.js) | 55 | ChartCard — wraps a chart descriptor entry in a .chart-card DOM node and owns the UPlotChart lifecycle. |
@@ -2545,39 +2521,6 @@
 | [`template.js`](../../engine/web/js/ui/components/viewport-frame/template.js) | 3 | _symbols:_ getViewportFrameTemplate() |
 | [`uPlot.iife.min.js`](../../engine/web/js/ui/charts/vendor/uPlot.iife.min.js) | 2 | ! https://github.com/leeoniya/uPlot (v1.6.30) |
 
-### `archive`  (28 files, 8,761 LOC)
-
-| File | LOC | Purpose |
-|---|--:|---|
-| [`campaign_operator_mixing_2026-04-26.cpp`](../../engine/archive/phase_b_2026-04/campaign_operator_mixing_2026-04-26.cpp) | 1160 | @file campaign_operator_mixing_2026-04-26.cpp @brief FTD-0098: First measured native operator-mixing matrix M_ab(b=2). |
-| [`campaign_s_eff_nonlinear_wilson_2026-06-04.cpp`](../../engine/archive/phase_b_2026-04/campaign_s_eff_nonlinear_wilson_2026-06-04.cpp) | 1110 | @file engine/archive/phase_b_2026-04/campaign_s_eff_nonlinear_wilson_2026-06-04.cpp @purpose Archived unregistered nonlinear S_eff campaign variant with Wilson-coefficient CLI hooks. |
-| [`campaign_s_eff_nonlinear_2026-04-29.cpp`](../../engine/archive/phase_b_2026-04/campaign_s_eff_nonlinear_2026-04-29.cpp) | 1075 | @file campaign_s_eff_nonlinear_2026-04-29.cpp @brief FTD-0112: Nonlinear S_eff measurement campaign. |
-| [`s0-seed-scenarios.js`](../../engine/archive/web_scale0_scenario_mirror_2026-08-27/scenarios/s0-seed-scenarios.js) | 859 | S0Seed scenarios — s0-seed-* group. |
-| [`_helpers.js`](../../engine/archive/web_scale0_scenario_mirror_2026-08-27/scenarios/_helpers.js) | 595 | Shared scenario primitives — JS mirror of `engine/src/scenarios/_helpers.h`. |
-| [`flux-scenarios.js`](../../engine/archive/web_scale0_scenario_mirror_2026-08-27/scenarios/flux-scenarios.js) | 515 | Flux scenarios — flux-* group. |
-| [`campaign_emergent_spectrum_2026-04-27.cpp`](../../engine/archive/phase_b_2026-04/campaign_emergent_spectrum_2026-04-27.cpp) | 435 | @file campaign_emergent_spectrum_2026-04-27.cpp @brief FTD-0102: Emergent particle spectrum from generic initial conditions. |
-| [`test_link8_kadanoff.cpp`](../../engine/archive/link8_closed/tests/test_link8_kadanoff.cpp) | 392 | @file test_link8_kadanoff.cpp @brief Link 8 Candidate 1 — Kadanoff blocking vs master-quadratic recurrence. |
-| [`campaign_topological_observables_2026-04-27.cpp`](../../engine/archive/phase_b_2026-04/campaign_topological_observables_2026-04-27.cpp) | 386 | @file campaign_topological_observables_2026-04-27.cpp @brief FTD-0104: Topological observable mapping (engine-native exploration) Pre-registration: docs/theory/10_eft_program/PROTOCOL_TOPOLOGICAL_O... |
-| [`test_link8_run3_thermal.cpp`](../../engine/archive/link8_closed/tests/test_link8_run3_thermal.cpp) | 267 | @file test_link8_run3_thermal.cpp @brief Link 8 Candidate 1 — Run 3 redo on Langevin-thermalized ensemble. |
-| [`s0-field-scenarios.js`](../../engine/archive/web_scale0_scenario_mirror_2026-08-27/scenarios/s0-field-scenarios.js) | 262 | S0Field scenarios — s0-field-* group. |
-| [`vacuum-scenarios.js`](../../engine/archive/web_scale0_scenario_mirror_2026-08-27/scenarios/vacuum-scenarios.js) | 252 | Vacuum Particle Scenarios — s0-vacuum-* group. |
-| [`campaign_3d_einstein_gpu_2026-06-04.cu`](../../engine/archive/cuda_exploratory/campaign_3d_einstein_gpu_2026-06-04.cu) | 208 |  |
-| [`quantum-scenarios.js`](../../engine/archive/web_scale0_scenario_mirror_2026-08-27/scenarios/quantum-scenarios.js) | 201 | Quantum scenarios — quantum-* group. |
-| [`campaign_wang_extraction_2026-06-04.cpp`](../../engine/archive/exploratory/campaign_wang_extraction_2026-06-04.cpp) | 174 | Archived 2026-06-04 from engine/tests/campaign_wang_extraction.cpp. |
-| [`confinement_kernel_2026-06-04.cu`](../../engine/archive/cuda_exploratory/confinement_kernel_2026-06-04.cu) | 172 | FTD Flux field J (Ux, Uy) has curl F = S1 + S2, where S1, S2 are independent ternary topological noise. |
-| [`dump_a1g_decay.cpp`](../../engine/archive/dumps_non_load_bearing/dump_a1g_decay.cpp) | 134 | Diagnostic: dump A_{1g} fraction per tick for sub-genesis δ_center IC. |
-| [`light-scenarios.js`](../../engine/archive/web_scale0_scenario_mirror_2026-08-27/scenarios/light-scenarios.js) | 114 | Light scenarios — light-* group. |
-| [`canvas-sparkline.js`](../../engine/archive/web_ui_scaffolding_2026-08-27/canvas-sparkline.js) | 89 | CanvasSparkline — lightweight canvas mini-chart for legacy PE telemetry rows. |
-| [`index.js`](../../engine/archive/web_scale0_scenario_mirror_2026-08-27/scenarios/index.js) | 87 | Scale-0 scenario dispatcher — JS parity mirror of engine/src/scenarios/*. |
-| [`test_compile_confinement_2026-06-04.cu`](../../engine/archive/cuda_exploratory/test_compile_confinement_2026-06-04.cu) | 84 |  |
-| [`physics-lattice.js`](../../engine/archive/web_scale0_scenario_mirror_2026-08-27/scenarios/physics-lattice.js) | 58 | Fixed-voxel physics extents for Scale-0 scenarios. |
-| [`component.js`](../../engine/archive/web_ui_scaffolding_2026-08-27/cosmic-info-panel/component.js) | 22 | Cosmic Info Panel Component Wraps #panel-cosmic-info and owns lifecycle for future migration. |
-| [`component.js`](../../engine/archive/web_ui_scaffolding_2026-08-27/inspector-panel/component.js) | 22 | Inspector Panel Component Wraps #panel-inspector and owns lifecycle for future migration. |
-| [`component.js`](../../engine/archive/web_ui_scaffolding_2026-08-27/ontic-panel/component.js) | 22 | Ontic Panel Component Wraps #panel-ontic and owns lifecycle for future migration. |
-| [`component.js`](../../engine/archive/web_ui_scaffolding_2026-08-27/physics-panel/component.js) | 22 | Physics Panel Component Wraps #panel-physics and owns lifecycle for future migration. |
-| [`component.js`](../../engine/archive/web_ui_scaffolding_2026-08-27/planetary-panel/component.js) | 22 | Planetary Panel Component Wraps #panel-planetary and owns lifecycle for future migration. |
-| [`component.js`](../../engine/archive/web_ui_scaffolding_2026-08-27/zoo-panel/component.js) | 22 | Zoo Panel Component Wraps #panel-zoo and owns lifecycle for future migration. |
-
 ### `web/viewport`  (19 files, 8,653 LOC)
 
 | File | LOC | Purpose |
@@ -2602,12 +2545,12 @@
 | [`field-renderer-core.js`](../../engine/web/js/viewport/field-renderer-core.js) | 46 | fieldCoreMethods — ViewportFieldRenderer mixin (clip / center sync). |
 | [`constants.js`](../../engine/web/js/viewport/constants.js) | 41 | @file engine/web/js/viewport/constants.js @purpose Shared pre-allocated-buffer sizes for the viewport renderer cluster. |
 
-### `web/bridge`  (24 files, 7,649 LOC)
+### `web/bridge`  (24 files, 7,646 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
 | [`mock-atom-engine.js`](../../engine/web/js/bridge/mock-atom-engine.js) | 1261 | Scale-2 Atom Engine (AE) — MockBridge side only. |
-| [`wasm-bridge.js`](../../engine/web/js/bridge/wasm-bridge.js) | 1060 | @file engine/web/js/bridge/wasm-bridge.js @purpose Thin wrapper around the compiled C++/WASM physics engine (engine/wasm/ftd_wasm.cpp). |
+| [`wasm-bridge.js`](../../engine/web/js/bridge/wasm-bridge.js) | 1057 | @file engine/web/js/bridge/wasm-bridge.js @purpose Thin wrapper around the compiled C++/WASM physics engine (engine/wasm/ftd_wasm.cpp). |
 | [`wasm-bridge-proxy.js`](../../engine/web/js/bridge/wasm-bridge-proxy.js) | 738 | Main-thread proxy for the Scale-0 WASM physics Web Worker. |
 | [`cosmic-physics.js`](../../engine/web/js/bridge/cosmic-physics.js) | 563 | Cosmic scale-5 force kernel. |
 | [`wasm-bridge.worker.js`](../../engine/web/js/bridge/wasm-bridge.worker.js) | 546 | Scale-0 WASM physics Web Worker. |
@@ -2631,41 +2574,6 @@
 | [`sampler-registry.classic.js`](../../engine/web/js/bridge/sampler-registry.classic.js) | 33 | Classic-worker sampler + toggle-requires registry. |
 | [`scale2.js`](../../engine/web/js/bridge/capabilities/scale2.js) | 25 | @file engine/web/js/bridge/capabilities/scale2.js @purpose Scale-2 (atom engine) capability factory. |
 
-### `tools`  (30 files, 6,918 LOC)
-
-| File | LOC | Purpose |
-|---|--:|---|
-| [`audit_ontic_phase0.py`](../../engine/tools/audit_ontic_phase0.py) | 630 | Phase 0 Ontic Derivation Chain Audit ===================================== Independent verification of every constant in engine/include/ftd/ontic.h using mpmath high-precision arithmetic. |
-| [`visualize_sims.py`](../../engine/tools/visualize_sims.py) | 565 | FTD Simulation Visualizer ========================= Reads CSV data exported by ftd_sim scenarios H/I/J and generates publication-quality figures. |
-| [`TestModel.cpp`](../../engine/tools/test_runner/src/TestModel.cpp) | 556 | ============================================================================ TestModel.cpp — CTest-driven Category→Test tree model ==================================================================... |
-| [`LatticeViewer.cpp`](../../engine/tools/test_runner/src/LatticeViewer.cpp) | 523 | ============================================================================ LatticeViewer.cpp — implementation ============================================================================ |
-| [`MainWindow.cpp`](../../engine/tools/test_runner/src/MainWindow.cpp) | 510 | ============================================================================ MainWindow.cpp — top-level window wiring ============================================================================ |
-| [`HistoryDb.cpp`](../../engine/tools/test_runner/src/HistoryDb.cpp) | 483 | ============================================================================ HistoryDb.cpp — sqlite-backed run history ============================================================================ |
-| [`HistoryTab.cpp`](../../engine/tools/test_runner/src/HistoryTab.cpp) | 450 | ============================================================================ HistoryTab.cpp — "History" tab widget for the FTD Test Bench ===========================================================... |
-| [`TelemetryCharts.cpp`](../../engine/tools/test_runner/src/TelemetryCharts.cpp) | 450 | ============================================================================ TelemetryCharts.cpp — live multi-trace scalar telemetry (Qt6 QtCharts) =================================================... |
-| [`build_file_manifest.py`](../../engine/tools/build_file_manifest.py) | 335 | Build a machine-readable manifest of every tracked code file in engine/. |
-| [`visualize_engine.py`](../../engine/tools/visualize_engine.py) | 257 | FTD Engine Visualizer — generates figures from CSV scenario outputs. |
-| [`TestRunner.cpp`](../../engine/tools/test_runner/src/TestRunner.cpp) | 230 | ============================================================================ TestRunner.cpp — QProcess-based subprocess launcher ====================================================================... |
-| [`print_ontic.py`](../../engine/tools/print_ontic.py) | 189 | Print the complete ontic derivation chain to 12 decimal places. |
-| [`HistoryDb.h`](../../engine/tools/test_runner/include/HistoryDb.h) | 161 | ============================================================================ HistoryDb.h — SQLite-backed run history for the FTD Test Bench =========================================================... |
-| [`OutputPanel.cpp`](../../engine/tools/test_runner/src/OutputPanel.cpp) | 158 | ============================================================================ OutputPanel.cpp — interleaved output view ============================================================================ |
-| [`TelemetryCharts.h`](../../engine/tools/test_runner/include/TelemetryCharts.h) | 144 | ============================================================================ TelemetryCharts.h — live multi-trace scalar telemetry (Qt6 QtCharts) ===================================================... |
-| [`LatticeViewer.h`](../../engine/tools/test_runner/include/LatticeViewer.h) | 142 | ============================================================================ LatticeViewer.h — live 3D voxel viewer (QOpenGLWidget, OpenGL 3.3 core) ================================================... |
-| [`MainWindow.h`](../../engine/tools/test_runner/include/MainWindow.h) | 135 | ============================================================================ MainWindow.h — top-level window for the FTD Test Bench =================================================================... |
-| [`TestModel.h`](../../engine/tools/test_runner/include/TestModel.h) | 118 | ============================================================================ TestModel.h — two-level (Category → Test) tree model for FTD Test Bench ================================================... |
-| [`SmartDispatcher.cpp`](../../engine/tools/test_runner/src/SmartDispatcher.cpp) | 111 | ============================================================================ SmartDispatcher.cpp — parallel CPU + serial GPU scheduler ==============================================================... |
-| [`TestRunner.h`](../../engine/tools/test_runner/include/TestRunner.h) | 100 | ============================================================================ TestRunner.h — QProcess-per-test subprocess launcher for FTD Test Bench ================================================... |
-| [`NdjsonParser.cpp`](../../engine/tools/test_runner/src/NdjsonParser.cpp) | 97 | ============================================================================ NdjsonParser.cpp — implementation ============================================================================ |
-| [`SmartDispatcher.h`](../../engine/tools/test_runner/include/SmartDispatcher.h) | 90 | ============================================================================ SmartDispatcher.h — parallel CPU + serial GPU test scheduler ===========================================================... |
-| [`LatticeViewer_shaders.h`](../../engine/tools/test_runner/src/LatticeViewer_shaders.h) | 87 | ============================================================================ LatticeViewer_shaders.h — inline GLSL 330 core shader sources ==========================================================... |
-| [`HistoryTab.h`](../../engine/tools/test_runner/include/HistoryTab.h) | 78 | ============================================================================ HistoryTab.h — "History" tab widget for the FTD Test Bench =============================================================... |
-| [`main.cpp`](../../engine/tools/test_runner/src/main.cpp) | 66 | ============================================================================ main.cpp — entry point for the FTD Test Bench runner (ftd_test_runner) =================================================... |
-| [`NdjsonParser.h`](../../engine/tools/test_runner/include/NdjsonParser.h) | 65 | ============================================================================ NdjsonParser.h — incremental line-based NDJSON parser for test subprocesses ============================================... |
-| [`OutputPanel.h`](../../engine/tools/test_runner/include/OutputPanel.h) | 61 | ============================================================================ OutputPanel.h — interleaved per-test output view for Phase 3 scaffold ==================================================... |
-| [`FieldLines.h`](../../engine/tools/test_runner/include/FieldLines.h) | 52 | ============================================================================ FieldLines.h — RK4 vector-field line integrator (stub) =================================================================... |
-| [`audit_reexports.py`](../../engine/tools/audit_reexports.py) | 51 | Item 0.21: Verify constants.h re-exports match ontic.h (no stale overrides) |
-| [`FieldLines.cpp`](../../engine/tools/test_runner/src/FieldLines.cpp) | 24 | ============================================================================ FieldLines.cpp — RK4 vector-field line integrator (stub) ===============================================================... |
-
 ### `src/scenarios`  (7 files, 3,387 LOC)
 
 | File | LOC | Purpose |
@@ -2678,11 +2586,11 @@
 | [`quantum.cpp`](../../engine/src/scenarios/quantum.cpp) | 229 | ========================================================================== engine/src/scenarios/quantum.cpp Group: quantum-* (8 scenarios) Canonical seed implementation; the former JS mirror is arc... |
 | [`light.cpp`](../../engine/src/scenarios/light.cpp) | 116 | ========================================================================== engine/src/scenarios/light.cpp Group: light-* (4 scenarios) Canonical seed implementation; the former JS mirror is archived. |
 
-### `wasm`  (5 files, 2,715 LOC)
+### `wasm`  (5 files, 2,706 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
-| [`ftd_wasm.cpp`](../../engine/wasm/ftd_wasm.cpp) | 1383 | @file ftd_wasm.cpp @brief Emscripten Embind bindings for the FTD engine — shared helpers. |
+| [`ftd_wasm.cpp`](../../engine/wasm/ftd_wasm.cpp) | 1374 | @file ftd_wasm.cpp @brief Emscripten Embind bindings for the FTD engine — shared helpers. |
 | [`bindings_particle.cpp`](../../engine/wasm/bindings_particle.cpp) | 461 | @file bindings_particle.cpp @brief Embind bindings for ParticleEngine (Scale 1). |
 | [`bindings_render_bridge.cpp`](../../engine/wasm/bindings_render_bridge.cpp) | 434 | @file bindings_render_bridge.cpp @brief Embind bindings for RenderBridge (Scale 0 — voxel lattice engine). |
 | [`bindings_atom.cpp`](../../engine/wasm/bindings_atom.cpp) | 345 | @file bindings_atom.cpp @brief Embind bindings for AtomEngine (Scale 2). |
@@ -2808,11 +2716,14 @@
 | [`pointer-controller.js`](../../engine/web/js/inspector/pointer-controller.js) | 63 | _symbols:_ bindInspectorPointerControls() |
 | [`app-runtime.js`](../../engine/web/js/inspector/app-runtime.js) | 51 | _symbols:_ createInspectorAppRuntime() |
 
-### `src/cli_demos`  (1 files, 986 LOC)
+### `tools`  (4 files, 1,199 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
-| [`cli_demo_scenarios.cpp`](../../engine/src/cli_demos/cli_demo_scenarios.cpp) | 986 | Implementations of the ftd_sim CLI demo scenarios. |
+| [`audit_ontic_phase0.py`](../../engine/tools/audit_ontic_phase0.py) | 630 | Phase 0 Ontic Derivation Chain Audit ===================================== Independent verification of every constant in engine/include/ftd/ontic.h using mpmath high-precision arithmetic. |
+| [`build_file_manifest.py`](../../engine/tools/build_file_manifest.py) | 329 | Build a machine-readable manifest of every tracked code file in engine/. |
+| [`print_ontic.py`](../../engine/tools/print_ontic.py) | 189 | Print the complete ontic derivation chain to 12 decimal places. |
+| [`audit_reexports.py`](../../engine/tools/audit_reexports.py) | 51 | Item 0.21: Verify constants.h re-exports match ontic.h (no stale overrides) |
 
 ### `src/atom`  (3 files, 844 LOC)
 
@@ -2821,12 +2732,6 @@
 | [`atom_forces.cpp`](../../engine/src/atom/atom_forces.cpp) | 629 | AtomEngine force computation. |
 | [`atom_thermostat.cpp`](../../engine/src/atom/atom_thermostat.cpp) | 142 | AtomEngine velocity post-processing: speed limit, damping, Berendsen thermostat, and per-atom dipole moment computation. |
 | [`atom_bonding.cpp`](../../engine/src/atom/atom_bonding.cpp) | 73 | AtomEngine dynamic bond formation / breaking. |
-
-### `src/cognition`  (1 files, 835 LOC)
-
-| File | LOC | Purpose |
-|---|--:|---|
-| [`cognitive_lattice.cpp`](../../engine/src/cognition/cognitive_lattice.cpp) | 835 |  |
 
 ### `web/backgrounds`  (7 files, 781 LOC)
 

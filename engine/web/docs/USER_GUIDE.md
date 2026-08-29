@@ -367,11 +367,16 @@ The biggest wins for FPS:
 2. Turn off `selective_damping` → ~10% faster (but you'll lose vacuum energy conservation).
 3. Close unused charts (each one updates per-tick even when not visible).
 
-### WASM vs Mock
-WASM is ~2× faster than MockBridge for Scale 0 physics. If you're running long experiments, always use WASM (default).
+### WASM execution
+Scale 0 physics is WASM-only. Depending on browser capabilities, the same C++
+engine runs in-thread through `WasmBridge` or in a worker through
+`WasmBridgeProxy`; there is no JavaScript MockBridge fallback.
 
 ### GPU (WS server)
-For truly heavy work, launch `engine/start_gpu_dashboard.bat` which runs the native CUDA-accelerated engine and streams to the browser via WebSocket. Expect 20-50× speedups at N=128.
+For the GPU path, build and launch the retained `ws_server` target from the
+canonical WSL2 `engine/build_wsl` tree, then serve `engine/web`. The dashboard
+connects to the loopback WebSocket bridge; the standalone browser/WASM path
+remains CPU-only.
 
 ---
 

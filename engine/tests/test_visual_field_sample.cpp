@@ -8,8 +8,10 @@
 #include "ftd/render_bridge.h"
 #include "ftd/scenarios.h"
 #include "ftd/visual_field_sample.h"
+#include "ftd/constants.h"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <iostream>
 #include <string>
@@ -41,6 +43,19 @@ double max_abs_component(const ftd::VisualFieldSample& sample, int component) {
          i < sample.data.size(); i += sample.components)
         result = std::max(result, std::abs(static_cast<double>(sample.data[i])));
     return result;
+}
+
+bool vector_at(const ftd::VisualFieldSample& sample, float x, float y, float z,
+               std::array<double, 3>& out) {
+    for (std::size_t i = 0; i < sample.count(); ++i) {
+        if (sample.positions[i * 3] == x
+            && sample.positions[i * 3 + 1] == y
+            && sample.positions[i * 3 + 2] == z) {
+            out = {sample.data[i * 3], sample.data[i * 3 + 1], sample.data[i * 3 + 2]};
+            return true;
+        }
+    }
+    return false;
 }
 
 }  // namespace
@@ -145,6 +160,54 @@ int main() {
               real_latency.count() == 1);
         if (real_latency.count() == 1)
             check_close("real latency remains voxel-backed", real_latency.data[0], 0.375);
+    }
+
+    // Gravity is a selected effective lattice force, not a continuum 1/r
+    // reconstruction. Its visual sampler must expose the exact radius-two
+    // finite operator even when the tick force diagnostics are disabled and
+    // even at an unmanifested site.
+    {
+        constexpr int L = 9;
+        constexpr int C = 4;
+        ftd::RenderBridge rb(L);
+        rb.force_cpu();
+        rb.toggles.disable_all();
+        rb.inject_flux(C + 2, C, C, {3.0, 0.0, 0.0});
+        rb.inject_flux(C - 2, C, C, {1.0, 0.0, 0.0});
+
+        ftd::VisualFieldSample gravity;
+        rb.copy_visual_field_sample(ftd::VisualFieldKind::GravityForce, 1, gravity);
+        std::array<double, 3> center{};
+        check("default gravity samples an unmanifested center site",
+              vector_at(gravity, C + 0.5f, C + 0.5f, C + 0.5f, center));
+        check_close("default gravity uses exact radius-two x operator", center[0],
+                    ftd::G_N * ftd::GRAD_TIER2_SCALE * (3.0 - 1.0));
+        check_close("default gravity y component vanishes", center[1], 0.0);
+        check_close("default gravity z component vanishes", center[2], 0.0);
+    }
+
+    {
+        constexpr int L = 9;
+        constexpr int C = 4;
+        ftd::RenderBridge rb(L);
+        rb.force_cpu();
+        rb.toggles.disable_all();
+        rb.toggles.geometric_gravity = true;
+        rb.voxel_at(C, C, C).latency = 0.4;
+        rb.voxel_at(C + 2, C, C).latency = 0.6;
+        rb.voxel_at(C - 2, C, C).latency = 0.2;
+
+        ftd::VisualFieldSample gravity;
+        rb.copy_visual_field_sample(ftd::VisualFieldKind::GravityForce, 1, gravity);
+        std::array<double, 3> center{};
+        check("geometric gravity samples latency at the center",
+              vector_at(gravity, C + 0.5f, C + 0.5f, C + 0.5f, center));
+        const double expected = ftd::M_INERTIAL * ftd::C_SPEED * ftd::C_SPEED
+                              * 0.4 * ftd::GRAD_TIER2_SCALE * (0.6 - 0.2);
+        check_close("geometric gravity uses L times radius-two delta L",
+                    center[0], expected);
+        check_close("geometric gravity y component vanishes", center[1], 0.0);
+        check_close("geometric gravity z component vanishes", center[2], 0.0);
     }
 
     {

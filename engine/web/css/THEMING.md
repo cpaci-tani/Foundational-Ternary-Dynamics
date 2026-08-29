@@ -18,7 +18,7 @@ The application must feel "alive" and instantaneously responsive to data flows a
 
 *   **Elevating the Z-Axis:** Elements like the `.tb-btn` buttons, `cards`, or sliders do not just change background colors on state `:hover`. They must visibly lift towards the user `transform: translateY(-2px)` to indicate interactivity mapped down into a `var(--shadow-md)` shadow escalation.
 *   **Active State Glowing:** Using the standard accent token (`var(--accent-glow)`), active selection states require a diffuse box-shadow perimeter glow. 
-*   **Transition Phrasing:** The `tokens.css` transition variables map everything linearly. All interactive elements must bind to `transition: all var(--dur-fast) var(--ease-out)` ensuring snap elasticity rather than linear fade lagging.
+*   **Transition Phrasing:** Animate only the properties a component intentionally changes (usually `background-color`, `color`, `border-color`, `box-shadow`, `opacity`, and `transform`). Never use `transition: all`: it can animate layout and typography, trigger avoidable style work, and overshoot accessibility floors.
 
 ## 3. Typography & Hierarchy
 All raw string text must be formatted under a structured variable tree governed by high-readability screen fonts.
@@ -64,4 +64,3 @@ Add `.u-no-baseline` to an individual element that must not inherit the baseline
 ### When to override upward
 
 Use `--sp-lg` / `--sp-xl` for hero controls (e.g. a "Play" pill), card-level padding, or anywhere the element is a primary action. Never step *down* to `0` or raw pixel values below the tokens; instead, adjust `--ui-scale` or request a new size token.
-

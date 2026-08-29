@@ -28,6 +28,19 @@ html[data-theme="light"] {
     --accent:      #3b82f6;
     --accent-dim:  #2563eb;
     --accent-glow: rgba(59, 130, 246, 0.45);
+    --accent-text:    #1d4ed8;
+    --on-accent:      #ffffff;
+    --positive-text:  #047857;
+    --negative-text:  #b91c1c;
+    --warning-text:   #92400e;
+    --caution-text:   #9a3412;
+    --on-positive:    #052e16;
+    --on-negative:    #0f172a;
+    --on-warning:     #2e1a02;
+    --axis-x-text:    #b91c1c;
+    --axis-y-text:    #065f46;
+    --axis-z-text:    #1d4ed8;
+    --selection-text: #075985;
 
     /* Status */
     --positive: #10b981;

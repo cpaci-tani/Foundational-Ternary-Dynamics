@@ -17,8 +17,6 @@
 
 **CTest registration snapshot (2026-08-18): 610** (CPU + GPU-conditional; counted from `engine/CMakeLists.txt` as 444 `ftd_add_test(...)` calls minus 12 `BUILD_ONLY` calls that do not register a CTest, plus 178 direct `add_test(...)` calls. `engine/cuda/CMakeLists.txt` builds only the `ftd_cuda` library and registered no tests; no other `engine/**/CMakeLists.txt` registered tests at that date.)
 
-**DagEngine** (sparse-voxel-DAG prototype): `phase_read` + `phase_write` implemented against `SparseVoxelDAG`; `gauss_project`, `phase_forces`, `phase_movement` are `[OPEN]` stubs. **Experimental, not production.** See `include/ftd/dag_engine.h` banner.
-
 ---
 
 ## Scale 0 — Lattice Field Theory (RenderBridge)

@@ -13,7 +13,7 @@
 }
 
 .oo-fc-label {
-    font-size: 10px;
+    font-size: 16px;
     color: var(--text-muted);
     margin-bottom: 4px;
 }
@@ -22,11 +22,11 @@
     font-family: var(--font-mono);
     font-size: 16px;
 }
-.oo-fc-value.accent { color: var(--accent); }
-.oo-fc-value.warning { color: var(--warning); }
+.oo-fc-value.accent { color: var(--accent-text); }
+.oo-fc-value.warning { color: var(--warning-text); }
 
 .oo-fc-sub {
-    font-size: 11px;
+    font-size: 16px;
     color: var(--text-secondary);
     margin-top: 2px;
 }
@@ -60,21 +60,21 @@
 
 .oo-fc-footer {
     margin-top: 8px;
-    font-size: 10px;
+    font-size: 16px;
     color: var(--text-muted);
     text-align: center;
 }
 
 /* Observer Card */
 .oo-obs-role {
-    font-size: 12px;
-    color: var(--positive);
+    font-size: 16px;
+    color: var(--positive-text);
     margin-bottom: 8px;
     font-weight: 500;
 }
 
 .oo-obs-hint {
-    font-size: 11px;
+    font-size: 16px;
     color: var(--text-secondary);
     margin-bottom: 6px;
 }
@@ -83,7 +83,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 4px 12px;
-    font-size: 11px;
+    font-size: 16px;
 }
 
 .oo-obs-grid-label {
@@ -100,10 +100,10 @@
     padding: 6px 8px;
     background: var(--bg-input);
     border-radius: 4px;
-    font-size: 10px;
+    font-size: 16px;
 }
 
-.oo-trilemma-label { color: var(--warning); }
+.oo-trilemma-label { color: var(--warning-text); }
 .oo-trilemma-desc { color: var(--text-secondary); }
 
 /* Hierarchy Tower */
@@ -111,7 +111,7 @@
     padding: 6px 10px;
     margin-bottom: 3px;
     border-radius: 4px;
-    font-size: 11px;
+    font-size: 16px;
     font-weight: 500;
     display: flex;
     justify-content: space-between;
@@ -123,7 +123,7 @@
 
 .oo-hierarchy-detail {
     font-weight: 400;
-    font-size: 10px;
+    font-size: 16px;
 }
 
 @keyframes oo-pulse {
@@ -133,21 +133,21 @@
 
 /* Info Dynamics */
 .oo-info-hint {
-    font-size: 10px;
+    font-size: 16px;
     color: var(--text-muted);
     margin-bottom: 6px;
 }
 
 .oo-info-row {
     margin-bottom: 4px;
-    font-size: 11px;
+    font-size: 16px;
 }
 
 .oo-info-label {
     display: inline-block;
 }
-.oo-info-label.accent { color: var(--accent); }
-.oo-info-label.warning { color: var(--warning); }
+.oo-info-label.accent { color: var(--accent-text); }
+.oo-info-label.warning { color: var(--warning-text); }
 .oo-info-label.muted { color: var(--text-muted); }
 
 .oo-info-val {
@@ -158,12 +158,12 @@
 .oo-info-footer {
     text-align: center;
     margin-top: 8px;
-    font-size: 12px;
+    font-size: 16px;
     color: var(--text-secondary);
 }
 
 .oo-info-ratio {
-    color: var(--warning);
+    color: var(--warning-text);
     font-family: var(--font-mono);
     font-weight: 600;
 }

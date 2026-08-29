@@ -1,14 +1,14 @@
 # SPEC — RmlUi UI layer, rendered through D3D12
 
-**Status:** `[SPEC — DESIGN]` · **Created:** 2026-08-20 · **Decision:** M7 in [`PLAN_NATIVE_REBUILD.md`](PLAN_NATIVE_REBUILD.md). The native UI is **RmlUi** (RML markup + RCSS, a CSS subset) rendered through the engine's **own Direct3D 12 device**, so the UI draws in the presenter's command list — one device, no compositing boundary with the CUDA-interop 3D scene.
+**Status:** `[SPEC — IMPLEMENTED]` · **Created:** 2026-08-20 · **Updated:** 2026-08-28. The native UI is **RmlUi** (RML markup + RCSS, a CSS subset) rendered through the engine's **own Direct3D 12 device**, so the UI draws in the presenter's command list — one device, no compositing boundary with the CUDA-interop 3D scene.
 
-This document specifies how RmlUi plugs into the existing native shell: the D3D12 render backend, the frame flow, live-data binding, and the docking we build ourselves. It is the design for the UI workstream; the vendoring of RmlUi 6.2 + FreeType is the prerequisite (in progress).
+This document records how RmlUi plugs into the native shell: the D3D12 render backend, frame flow, live-data binding, and native instrument widgets. RmlUi 6.2 and FreeType are vendored under `engine/thirdparty/`.
 
 ---
 
 ## 1. Why RmlUi fits
 
-RmlUi is renderer-agnostic: it computes layout + style from RML/RCSS and emits **geometry** (vertices, indices, textures, scissor rects) through an abstract `RenderInterface` that *we* implement. So its output is drawn by our D3D12 device, in our command list — the exact property that made ImGui attractive (SPEC_UI_V2 D1), but with CSS instead of immediate-mode C++. It brings FreeType for text and a **data-model** system for binding live C++ values into the DOM.
+RmlUi is renderer-agnostic: it computes layout + style from RML/RCSS and emits **geometry** (vertices, indices, textures, scissor rects) through an abstract `RenderInterface` that *we* implement. Its output is drawn by our D3D12 device in our command list, with CSS instead of immediate-mode C++. It brings FreeType for text and a **data-model** system for binding live C++ values into the DOM.
 
 What we get from CSS (RCSS): the box model, **flexbox**, positioning, `%`/`vw`/`vh` units, media queries, transitions, animations, web fonts, pseudo-classes (`:hover`/`:active`/`:focus`), and cascading. What we still build: **docking** (RmlUi has no dock manager) and a few instrument-specific widgets (charts, the 3D viewport hole).
 
@@ -34,13 +34,13 @@ A new module in `engine/native` (owns no window; driven by the presenter). Imple
 
 ### 2.2 `Rml::SystemInterface`
 - `GetElapsedTime()` → seconds from a `std::chrono::steady_clock` started at boot (drives transitions/animations).
-- `LogMessage(type, msg)` → the native Log panel / status bar (§2.5 SPEC_UI_V2 failure-visibility contract still applies).
+- `LogMessage(type, msg)` → the native Log panel / status bar; failures stay visible to the operator.
 
 ### 2.3 Font engine
 RmlUi's default `FontEngineDefault` over vendored **FreeType**. Fonts loaded once at boot via `Rml::LoadFontFace(...)` (the embedded Inter face we already ship in `assets/`).
 
 ### 2.4 The UI pipeline (one PSO)
-A single small graphics pipeline: **VS** transforms `vec2 position` by `ortho(0,w,h,0) · translate` and passes colour + uv; **PS** samples the bound texture × vertex colour. Alpha blending on (`SRC_ALPHA`/`INV_SRC_ALPHA`), no depth test/write (UI over the scene), scissor enabled, one linear-clamp sampler. HLSL compiled at build (d3dcompiler, already linked). The SRV heap already reserves slots (SPEC_UI_V2 §3.5: index 0 interop, 1 font); RmlUi textures take slots 2+ from the free-list.
+A single small graphics pipeline: **VS** transforms `vec2 position` by `ortho(0,w,h,0) · translate` and passes colour + uv; **PS** samples the bound texture × vertex colour. Alpha blending on (`SRC_ALPHA`/`INV_SRC_ALPHA`), no depth test/write (UI over the scene), scissor enabled, one linear-clamp sampler. HLSL is compiled at build. The SRV heap reserves index 0 for interop and index 1 for the font; RmlUi textures take slots 2+ from the free-list.
 
 ---
 
@@ -53,7 +53,7 @@ GUI thread, per frame:
   snapshot = publisher.acquire()                     // immutable UiSnapshot
   update_data_models(snapshot)                       // push live values into RmlUi (§4)
   context->Update()                                  // RmlUi layout/style
-  presenter.render(scene_view, overlay = [&]{        // OverlayRecorder seam (SPEC_UI_V2 §3.5)
+  presenter.render(scene_view, overlay = [&]{        // OverlayRecorder seam
       // 3D scene already drawn by the presenter (interop particles/flux/lattice)
       bind UI PSO + ortho;  context->Render()        // RmlUi → RenderInterface → this command list
   })
@@ -78,7 +78,7 @@ The data-binding boundary keeps the panel logic declarative and the C++ side a t
 ## 5. Docking + instrument widgets (what we build)
 
 RmlUi gives layout/style/events; these we implement on top:
-- **Docking**: draggable/resizable panel chrome in RML/RCSS + a C++ (or RmlUi-scripted) dock manager — splitters, tab groups, float/redock, persisted layout (the salvaged `Workspace` concept re-expressed as serialized dock state + an `.rcss` theme). First cut: fixed flexbox layout (left/center/right/bottom) matching SPEC_UI_V2 §4.1; drag-dock second.
+- **Docking**: draggable/resizable panel chrome in RML/RCSS + a C++ dock manager — splitters, tab groups, float/redock, and persisted layout.
 - **The viewport hole**: a transparent RML element marking the 3D scene rectangle; the presenter renders the scene there, RmlUi renders chrome around/over it, input over it routes to the camera.
 - **Charts**: a custom RmlUi element drawing `History` series through the same UI pipeline.
 - **Theme**: RCSS stylesheets = the theme system (replaces the ImGui `Theme` struct). Light/dark/accent via CSS custom properties + `@media`. This is where the "CSS flexibility" pays off directly.

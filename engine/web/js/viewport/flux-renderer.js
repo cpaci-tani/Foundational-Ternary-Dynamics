@@ -70,6 +70,7 @@ const FLUX_DOT_MIN = 2.4;
 const FLUX_GLOW_UGLOW    = 0.06;   // gaussian halo intensity when glow on
 const FLUX_GLOW_UOPACITY = 0.34;   // per-dot opacity when glow on (additive)
 const FLUX_FLAT_UOPACITY = 0.60;   // per-dot opacity when glow off (normal blending)
+const FLUX_FLOW_LINE_MAX_VERTS = 16000;
 
 export class ViewportFluxRenderer {
     constructor({
@@ -95,6 +96,8 @@ export class ViewportFluxRenderer {
         this._fluxVolume = null;
         this._fluxVolumeSize = 0;
         this._fluxStreamlines = null;
+        this._fluxStreamlinesRequested = false;
+        this._flowLineOpacity = 0.7;
         this._fluxPointScale = 1.0;
         this._fluxThreshold = 0.005;
         this._scenarioScale = 1.0;
@@ -146,6 +149,7 @@ export class ViewportFluxRenderer {
         // Clear stale flux-streamlines draw range so old-L data doesn't persist.
         if (this._fluxStreamlines && this._fluxStreamlines.geometry) {
             this._fluxStreamlines.geometry.setDrawRange(0, 0);
+            this._fluxStreamlines.visible = false;
         }
     }
 
@@ -434,44 +438,55 @@ export class ViewportFluxRenderer {
     }
 
     toggleFluxVolume(on) {
-        if (!this._fluxVolume) this._buildFluxVolume(this._latticeSize);
-        this._fluxVolume.visible = on;
-        this.showFlux = on;
-        if (!on) this._fluxVolume.geometry.setDrawRange(0, 0);
+        const next = !!on;
+        this.showFlux = next;
+        if (!this._fluxVolume) { if (!next) return; this._buildFluxVolume(this._latticeSize); }
+        if (this._fluxVolume.visible === next) return;
+        this._fluxVolume.visible = next;
+        if (!next) this._fluxVolume.geometry.setDrawRange(0, 0);
     }
 
     // ── Flux Volume Controls ──────────────────────────────────────────
 
     setFluxOpacity(val) {
+        if (this._fluxOpacity === val) return;
         this._fluxOpacity = val;   // persisted; re-applied on every (re)build
         if (this._fluxVolume) this._fluxVolume.material.uniforms.uOpacity.value = val;
     }
 
     setFluxShape(shapeIndex) {
-        this._fluxShape = shapeIndex | 0;   // persisted; re-applied on every (re)build
+        const shape = shapeIndex | 0;
+        if (this._fluxShape === shape) return;
+        this._fluxShape = shape;   // persisted; re-applied on every (re)build
         if (this._fluxVolume) this._fluxVolume.material.uniforms.shapeType.value = this._fluxShape;
     }
 
     setFluxPointScale(scale) {
         // Store scale factor; applied in updateFluxVolume via _fluxPointScale
+        if (this._fluxPointScale === scale) return;
         this._fluxPointScale = scale;
     }
 
     setFluxThreshold(val) {
         // Store threshold; applied in updateFluxVolume
+        if (this._fluxThreshold === val) return;
         this._fluxThreshold = val;
     }
 
     // Organic (3D-jittered scatter) vs regular lattice grid. Changes dot POSITIONS, so the
     // caller must trigger a re-upload (latticeNeedsUpload) for it to take effect.
     setFluxOrganic(on) {
-        this._fluxOrganic = !!on;
+        const next = !!on;
+        if (this._fluxOrganic === next) return;
+        this._fluxOrganic = next;
     }
 
     // Additive glow bloom vs flat translucent dots. Swaps the material blend + uniforms
     // live (picked up on the next render — no re-upload needed).
     setFluxGlow(on) {
-        this._fluxGlow = !!on;
+        const next = !!on;
+        if (this._fluxGlow === next) return;
+        this._fluxGlow = next;
         this._applyFluxMaterialState();
     }
 
@@ -493,6 +508,7 @@ export class ViewportFluxRenderer {
     }
 
     setScenarioScale(scale) {
+        if (this._scenarioScale === scale) return;
         this._scenarioScale = scale;
         this._applyScenarioScale();
     }
@@ -505,6 +521,7 @@ export class ViewportFluxRenderer {
      * voxel positions.
      */
     setFluxLatticeSpacing(val) {
+        if (this._fluxLatticeSpacing === val) return;
         this._fluxLatticeSpacing = val;
         if (this._fluxVolume) {
             const s = val || 1.0;
@@ -519,8 +536,8 @@ export class ViewportFluxRenderer {
 
     // ── Flux Streamlines (flux colormap) ─────────────────────────────
     _buildFluxStreamlines() {
-        // Same cap as E-field (matching maxSteps profile — see field-overlays.js).
-        this._fluxStreamlines = this._buildStreamlineMesh(300 * 160 * 2, 0.7);
+        // Same audited cap as E-field (matching maxSteps profile).
+        this._fluxStreamlines = this._buildStreamlineMesh(FLUX_FLOW_LINE_MAX_VERTS, this._flowLineOpacity);
     }
 
     // `mags` (optional) is a flat per-vertex |J| magnitude array parallel to
@@ -546,12 +563,32 @@ export class ViewportFluxRenderer {
             const [r, g, b] = fluxToColor(mag, maxMag);
             rgb[0] = r; rgb[1] = g; rgb[2] = b;
         });
+        this._fluxStreamlines.visible = this._fluxStreamlinesRequested
+            && this._fluxStreamlines.geometry.drawRange.count > 0;
     }
 
     toggleFluxStreamlines(on) {
-        if (!this._fluxStreamlines) this._buildFluxStreamlines();
-        this._fluxStreamlines.visible = on;
-        if (!on) this._fluxStreamlines.geometry.setDrawRange(0, 0);
+        const next = !!on;
+        this._fluxStreamlinesRequested = next;
+        if (!this._fluxStreamlines) { if (!next) return; this._buildFluxStreamlines(); }
+        if (!next) {
+            this._fluxStreamlines.visible = false;
+            if (this._fluxStreamlines.geometry.drawRange.count !== 0) {
+                this._fluxStreamlines.geometry.setDrawRange(0, 0);
+            }
+            return;
+        }
+        const drawable = this._fluxStreamlines.geometry.drawRange.count > 0;
+        if (this._fluxStreamlines.visible !== drawable) this._fluxStreamlines.visible = drawable;
+    }
+
+    setFlowLineOpacity(value) {
+        const numeric = Number(value);
+        if (!Number.isFinite(numeric)) return;
+        const next = Math.max(0, Math.min(1, numeric));
+        if (this._flowLineOpacity === next) return;
+        this._flowLineOpacity = next;
+        if (this._fluxStreamlines?.material) this._fluxStreamlines.material.opacity = next;
     }
 
     dispose() {

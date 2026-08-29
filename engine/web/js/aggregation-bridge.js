@@ -325,8 +325,8 @@ export function renderEmergenceMonitor(trajectory, container) {
     svg += `<line x1="${pad.left}" y1="${H - pad.bottom}" x2="${W - pad.right}" y2="${H - pad.bottom}" stroke="var(--text-muted)" stroke-width="0.5"/>`;
 
     // Axis labels
-    svg += `<text x="${W / 2}" y="${H - 3}" fill="var(--text-muted)" text-anchor="middle" font-size="8">|R| (spatial extent)</text>`;
-    svg += `<text x="8" y="${H / 2}" fill="var(--text-muted)" text-anchor="middle" font-size="8" transform="rotate(-90,8,${H / 2})">t/τ (temporal)</text>`;
+    svg += `<text x="${W / 2}" y="${H - 3}" fill="var(--text-muted)" text-anchor="middle" font-size="16">|R| (spatial extent)</text>`;
+    svg += `<text x="8" y="${H / 2}" fill="var(--text-muted)" text-anchor="middle" font-size="16" transform="rotate(-90,8,${H / 2})">t/τ (temporal)</text>`;
 
     // Threshold lines
     const xThresh = pad.left + SPATIAL_THRESHOLD * plotW;
@@ -335,8 +335,8 @@ export function renderEmergenceMonitor(trajectory, container) {
     svg += `<line x1="${pad.left}" y1="${yThresh}" x2="${W - pad.right}" y2="${yThresh}" stroke="var(--warning)" stroke-width="0.5" stroke-dasharray="3,3"/>`;
 
     // Quadrant label
-    svg += `<text x="${xThresh + 4}" y="${yThresh - 4}" fill="var(--positive)" font-size="7">Emergence</text>`;
-    svg += `<text x="${pad.left + 4}" y="${H - pad.bottom - 4}" fill="var(--text-muted)" font-size="7">No emergence</text>`;
+    svg += `<text x="${xThresh + 4}" y="${yThresh - 4}" fill="var(--positive-text)" font-size="16">Emergence</text>`;
+    svg += `<text x="${pad.left + 4}" y="${H - pad.bottom - 4}" fill="var(--text-muted)" font-size="16">No emergence</text>`;
 
     // Plot points (last N frames)
     const maxSpatial = 1.0;

@@ -5,7 +5,7 @@
     width: 100%;
     padding: 14px 14px 18px;
     font-family: var(--font-sans, system-ui, -apple-system, "Segoe UI", sans-serif);
-    font-size: 13px;
+    font-size: 16px;
     line-height: 1.45;
     color: var(--text-primary);
     background: transparent;
@@ -18,10 +18,10 @@
     margin-bottom: 14px;
 }
 
-.time-title { font-weight: 600; color: var(--accent); font-size: 15px; letter-spacing: 0.02em; }
+.time-title { font-weight: 600; color: var(--accent-text); font-size: 16px; letter-spacing: 0.02em; }
 
 .time-mode {
-    font-size: 11px;
+    font-size: 16px;
     color: var(--text-muted);
     font-family: var(--font-mono);
     padding: 2px 8px;
@@ -39,12 +39,12 @@
     padding: 2px 0;
 }
 
-.time-row-l { color: var(--text-secondary); font-size: 12px; }
+.time-row-l { color: var(--text-secondary); font-size: 16px; }
 
 .time-row-v {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
-    font-size: 12px;
+    font-size: 16px;
     text-align: right;
     white-space: nowrap;
 }
@@ -54,13 +54,13 @@
     margin: 8px 0 4px;
     padding-top: 6px;
     border-top: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.09));
-    font-size: 11px;
+    font-size: 16px;
     font-weight: 600;
     color: var(--text-secondary);
 }
 
 .time-cpp-inactive {
-    font-size: 11px;
+    font-size: 16px;
     color: var(--text-muted);
     padding: 3px 0;
 }
@@ -70,7 +70,7 @@
 .time-spark { width: 100%; height: auto; display: block; }
 
 .time-chart-xlabel {
-    font-size: 9px;
+    font-size: 16px;
     color: var(--text-muted);
     text-align: right;
     margin: 1px 0 6px;
@@ -78,7 +78,7 @@
 }
 
 .time-subhead {
-    font-size: 11px;
+    font-size: 16px;
     font-weight: 600;
     color: var(--text-secondary);
     margin: 8px 0 2px;
@@ -92,7 +92,7 @@
     flex-wrap: wrap;
     gap: 4px 12px;
     margin-bottom: 4px;
-    font-size: 10px;
+    font-size: 16px;
     color: var(--text-muted);
 }
 
@@ -111,7 +111,7 @@
 
 /* provenance footer */
 .time-provenance {
-    font-size: 10px;
+    font-size: 16px;
     color: var(--text-muted);
     margin-top: 4px;
     font-style: italic;
@@ -126,12 +126,12 @@
 }
 
 .time-slider-row label {
-    font-size: 12px;
+    font-size: 16px;
     color: var(--text-secondary);
     white-space: nowrap;
 }
 
-.time-vval { font-family: var(--font-mono); color: var(--accent); }
+.time-vval { font-family: var(--font-mono); color: var(--accent-text); }
 
 .time-vslider {
     flex: 1;
@@ -144,20 +144,20 @@
     grid-template-columns: auto 1fr auto 1fr;
     gap: 2px 8px;
     margin-bottom: 6px;
-    font-size: 12px;
+    font-size: 16px;
     align-items: baseline;
 }
 
 .time-rg-v {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
-    color: var(--accent);
+    color: var(--accent-text);
     text-align: right;
 }
 
 /* empty state */
 .time-empty {
-    font-size: 12px;
+    font-size: 16px;
     color: var(--text-muted);
     font-style: italic;
     padding: 8px 0;

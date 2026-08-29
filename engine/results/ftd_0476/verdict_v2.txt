@@ -9,4 +9,4 @@ minimum_tick12_activity=0.013801985075358328
 minimum_tick12_radial_alignment=0.73759522663791344
 minimum_release_radius_growth=1.8644358454954197
 minimum_release_near_fraction_drop=0.1937433992713723
-worst_release_energy_drift=2.6364895324324906e-16
+worst_release_energy_drift=1.3502284983150281e-13

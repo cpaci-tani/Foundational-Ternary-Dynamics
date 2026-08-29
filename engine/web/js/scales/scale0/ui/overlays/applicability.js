@@ -22,6 +22,10 @@ import {
 } from '../../state/store.js';
 import { COL_TO_TOGGLES } from './presets.js';
 import { refreshOverlayPanelShell } from './panel-shell.js';
+import {
+    isScale0StandardModelScenario,
+    updateScale0StandardModelContext,
+} from './standard-model.js?v=2';
 
 const FIELD_KEY_BY_BUTTON = new Map(FIELD_TOGGLE_BINDINGS);
 
@@ -103,7 +107,15 @@ export function getScale0OverlayApplicability(scenarioId, engineTerms = null) {
         return {
             scenarioId,
             terms,
-            domains: { flux: false, state: false, dual: false, gravity: false, emForce: false, strong: false },
+            domains: {
+                flux: false,
+                state: false,
+                dual: false,
+                gravity: false,
+                emForce: false,
+                strong: false,
+                standardModel: false,
+            },
             applicable: new Set(),
         };
     }
@@ -126,6 +138,7 @@ export function getScale0OverlayApplicability(scenarioId, engineTerms = null) {
     const strong = state && !!(terms.color_forces || terms.strong_force || terms.confinement);
     const selectiveDamping = state && !!terms.selective_damping;
     const genesis = flux && !!terms.genesis;
+    const standardModel = isScale0StandardModelScenario(scenarioId);
 
     const applicable = new Set();
     const allow = (condition, ...ids) => {
@@ -146,11 +159,14 @@ export function getScale0OverlayApplicability(scenarioId, engineTerms = null) {
     allow(genesis, 'toggle-genesis-iso', 'toggle-color-charge');
     allow(selectiveDamping, 'toggle-damping-zones');
     allow(flux || state, 'toggle-gauss-residual');
+    // Static catalog context only. This deliberately does not depend on a live
+    // field value and does not make the overlay scheduler sample anything.
+    allow(standardModel, 'toggle-sm-reference');
 
     return {
         scenarioId,
         terms,
-        domains: { flux, state, dual, gravity, emForce, strong },
+        domains: { flux, state, dual, gravity, emForce, strong, standardModel },
         applicable,
     };
 }
@@ -166,6 +182,7 @@ export function applyScale0OverlayApplicability(scenarioId, viewportAdapter, eng
     const panel = document.getElementById('viewport-overlay');
     const body = panel?.querySelector('.s0-overlay-body');
     if (!panel || !body) return profile;
+    const state = getScale0State();
 
     for (const toggles of Object.values(COL_TO_TOGGLES)) {
         for (const buttonId of toggles) {
@@ -179,7 +196,10 @@ export function applyScale0OverlayApplicability(scenarioId, viewportAdapter, eng
 
             if (!isApplicable) {
                 const fieldKey = FIELD_KEY_BY_BUTTON.get(buttonId);
-                if (fieldKey) {
+                // State truth tells us whether there is anything to hide. The
+                // old unconditional false-write eagerly allocated every lazy
+                // renderer merely to make it invisible on each scenario load.
+                if (fieldKey && state.fieldFlags[fieldKey]) {
                     setFieldToggle(fieldKey, false);
                     viewportAdapter?.setOverlayVisible(fieldKey, false);
                 }
@@ -198,24 +218,33 @@ export function applyScale0OverlayApplicability(scenarioId, viewportAdapter, eng
         !COL_TO_TOGGLES.forces.some((id) => profile.applicable.has(id)),
     );
 
-    if (!fluxVolumeApplicable) viewportAdapter?.setFluxVolumeVisible(false);
-    if (!fluxSliceApplicable) viewportAdapter?.setFluxSliceVisible(false);
+    if (!fluxVolumeApplicable && viewportAdapter?.isFluxVolumeVisible?.()) {
+        viewportAdapter.setFluxVolumeVisible(false);
+    }
+    if (!fluxSliceApplicable && viewportAdapter?.isFluxSliceVisible?.()) {
+        viewportAdapter.setFluxSliceVisible(false);
+    }
 
     for (const [colName, toggles] of Object.entries(COL_TO_TOGGLES)) {
         const col = body.querySelector(`.s0-overlay-col[data-col="${colName}"]`);
-        const colApplicable = toggles.some((id) => profile.applicable.has(id));
+        const colApplicable = colName === 'standard-model'
+            ? profile.domains.standardModel
+            : toggles.some((id) => profile.applicable.has(id));
         col?.classList.toggle('is-inapplicable', !colApplicable);
         col?.setAttribute('aria-hidden', colApplicable ? 'false' : 'true');
     }
 
-    body.classList.toggle('is-applicability-empty', profile.applicable.size === 0);
+    body.classList.toggle(
+        'is-applicability-empty',
+        profile.applicable.size === 0 && !profile.domains.standardModel,
+    );
     panel.dataset.scenarioId = scenarioId;
     panel.dataset.overlayDomains = Object.entries(profile.domains)
         .filter(([, enabled]) => enabled)
         .map(([name]) => name)
         .join(' ');
+    updateScale0StandardModelContext(scenarioId, getScale0Scenario(scenarioId));
 
-    const state = getScale0State();
     viewportAdapter?.syncForceStyle(state.forceStyle, getFieldStateSnapshot());
     state.fieldNeedsUpdate = true;
     refreshOverlayPanelShell();

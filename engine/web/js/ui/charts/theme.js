@@ -39,7 +39,7 @@ export function getChartTheme() {
         bg:        readVar('--chart-bg',        'transparent'),
         text:      readVar('--text-primary',    '#e8e8e8'),
         textMuted: readVar('--text-muted',      '#6b7280'),
-        font:      '12px ' + readVar('--font-body', 'Inter, sans-serif'),
+        font:      '16px ' + readVar('--font-body', 'Inter, sans-serif'),
         fontMono:  '12px ' + readVar('--font-mono', 'JetBrains Mono, monospace'),
     };
 }

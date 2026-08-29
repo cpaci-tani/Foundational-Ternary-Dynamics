@@ -49,7 +49,7 @@
 .zoo-cat-header {
     position: sticky;
     top: 0;
-    z-index: 1; /* local stacking context; not a global layer */
+    z-index: var(--z-local-base); /* local stacking context */
     background: var(--bg-surface);
     font-weight: 600;
     font-size: var(--fs-xs);
@@ -85,7 +85,7 @@
 .zoo-mass {
     flex: none;
     font-family: var(--font-mono);
-    color: var(--accent);
+    color: var(--accent-text);
     font-size: var(--fs-xs);
     white-space: nowrap;
 }
@@ -128,12 +128,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all var(--dur-fast) var(--ease-out);
+    transition: background-color var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out),
+                transform var(--dur-fast) var(--ease-out);
 }
 
 .zoo-inject-btn:hover {
     background: var(--accent-dim);
-    color: var(--text-primary);
+    color: var(--on-accent);
     border-color: var(--accent);
 }
 

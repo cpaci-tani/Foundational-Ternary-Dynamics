@@ -11,7 +11,7 @@
     gap: var(--sp-lg);
     padding: 0 var(--sp-xl);
     background: var(--bg-surface);
-    backdrop-filter: blur(16px);
+    backdrop-filter: var(--glass-filter-mid);
     border-bottom: 1px solid var(--border);
     box-shadow: var(--chrome-shadow);
     overflow-x: auto;
@@ -25,7 +25,7 @@
     font-weight: 600;
     font-size: var(--fs-xl);
     letter-spacing: 0.5px;
-    color: var(--accent);
+    color: var(--accent-text);
     margin-right: 8px;
     text-shadow: 0 0 10px var(--accent-glow);
 }
@@ -61,7 +61,7 @@
 .tb-value {
     font-family: var(--font-mono);
     font-size: var(--fs-sm);
-    color: var(--accent);
+    color: var(--accent-text);
     min-width: 24px;
     text-align: right;
 }
@@ -158,7 +158,7 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--accent-text);
 }
 
 .topbar-context-copy {
@@ -186,19 +186,19 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
 }
 
 .tb-btn-vtk {
-    color: var(--positive);
+    color: var(--positive-text);
     border-color: color-mix(in srgb, var(--positive) 52%, var(--border));
 }
 
 .tb-btn-vtk:hover,
 .tb-btn-vtk[data-state="copied"] {
-    color: var(--bg);
+    color: var(--on-positive);
     background: var(--positive);
     border-color: var(--positive);
 }
 
 .tb-btn-vtk[data-state="failed"] {
-    color: var(--warning);
+    color: var(--warning-text);
     border-color: var(--warning);
 }
 
@@ -314,7 +314,7 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
     border-radius: 999px;
     background: color-mix(in oklch, var(--accent) 28%, transparent);
     border: 1px solid color-mix(in oklch, var(--accent) 60%, transparent);
-    color: var(--accent);
+    color: var(--accent-text);
     box-shadow: 0 0 0 1px color-mix(in oklch, var(--accent-glow) 35%, transparent),
                 0 0 10px color-mix(in oklch, var(--accent-glow) 25%, transparent);
     font-size: var(--fs-base);

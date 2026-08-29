@@ -28,6 +28,19 @@ html[data-theme="abyss"] {
     --accent:      #6366f1;
     --accent-dim:  #4f46e5;
     --accent-glow: rgba(99, 102, 241, 0.55);
+    --accent-text:    #a5b4fc;
+    --on-accent:      #ffffff;
+    --positive-text:  #4ade80;
+    --negative-text:  #fb7185;
+    --warning-text:   #fbbf24;
+    --caution-text:   #fb923c;
+    --on-positive:    #052e16;
+    --on-negative:    #05080f;
+    --on-warning:     #1f1300;
+    --axis-x-text:    #f87171;
+    --axis-y-text:    #4ade80;
+    --axis-z-text:    #60a5fa;
+    --selection-text: #7dd3fc;
 
     /* Status — deeper vibrancy against black */
     --positive: #10b981;

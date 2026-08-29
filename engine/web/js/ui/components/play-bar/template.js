@@ -80,7 +80,7 @@ export function getPlayBarTemplate() {
                 <div class="play-bar-settings-row">
                     <span class="play-bar-settings-label">Fine</span>
                     <input type="range" class="play-bar-slider" id="ticks-per-frame"
-                        min="0" max="100" step="0.1" value="50"
+                        min="0" max="100" step="0.001" value="50"
                         title="Simulation speed (ticks per animation frame)"
                         aria-label="Simulation speed">
                 </div>

@@ -5,10 +5,10 @@
  */
 import { setVoxelCenterOffset } from './field-renderer-shared.js';
 import { fieldCoreMethods } from './field-renderer-core.js';
-import { fieldEmMethods } from './field-em-renderer.js';
-import { fieldForceMethods } from './field-force-renderer.js';
-import { fieldTopologyMethods } from './field-topology-renderer.js';
-import { fieldQuantumMethods } from './field-quantum-renderer.js';
+import { fieldEmMethods } from './field-em-renderer.js?v=5';
+import { fieldForceMethods } from './field-force-renderer.js?v=4';
+import { fieldTopologyMethods } from './field-topology-renderer.js?v=2';
+import { fieldQuantumMethods } from './field-quantum-renderer.js?v=2';
 export { VOXEL_CENTER_OFFSET, getVoxelCenterOffset } from './field-renderer-shared.js';
 
 export class ViewportFieldRenderer {
@@ -42,6 +42,8 @@ export class ViewportFieldRenderer {
         this._fluxSliceMesh = null;
         this._fluxSliceMeshSize = 0;
         this._fluxSliceAxes = { 0: true, 1: true, 2: true };
+        this._fluxSliceOpacity = 0.7;
+        this._fluxSliceShape = 0;
         this._fluxSlicePointScale = 1.0;
         this._fluxSliceThreshold = 0.005;
         this._fieldVectors = null;
@@ -49,16 +51,32 @@ export class ViewportFieldRenderer {
         this._gravityVectors = null;
         this._eFieldLines = null;
         this._bFieldLines = null;
+        this._flowLineOpacity = 0.7;
         this._poyntingVectors = null;
+        // Requested visibility is intentionally separate from mesh visibility.
+        // A toggle can be active while its sampled field is empty; keeping a
+        // transparent zero-range LineSegments visible still submits an empty
+        // draw on Edge/ANGLE. Two such empty EM layers beside a drawable third
+        // layer can collapse the compositor below 60 FPS. The request flags
+        // retain exact UI truth while the mesh enters the render list only
+        // after an update supplies drawable vertices.
+        this._eFieldLinesRequested = false;
+        this._bFieldLinesRequested = false;
+        this._poyntingVectorsRequested = false;
         this._divField = null;
         this._forceVolume = null;
         this._gravityField = null;
+        this._gravityFieldRequested = false;
         this._strongForce = null;
         this._weakField = null;
+        this._forceHeatmaps = null;
         this._forceHeatmap = null;
+        this._forceHeatmapRequested = { em: false, gravity: false, strong: false, weak: false };
+        this._forceStreamlineMeshes = null;
         this._forceStreamlinePool = null;
         this._forceStreamlineMats = null;
         this._forceStreamlineCount = 0;
+        this._forceStreamlineRequested = { em: false, gravity: false, strong: false, weak: false };
         this._forceGlyphMeshes = null;
         this._darkMatterHalo = null;
         this._eventHorizonSphere = null;
@@ -150,7 +168,7 @@ export class ViewportFieldRenderer {
             this._fieldVectors, this._peStreamlines, this._gravityVectors,
             this._eFieldLines, this._bFieldLines, this._poyntingVectors,
             this._divField, this._forceVolume, this._gravityField,
-            this._strongForce, this._weakField, this._forceHeatmap,
+            this._strongForce, this._weakField,
             this._darkMatterHalo, this._dampingZones, this._genesisIsosurface,
             this._confinementStrings, this._dualFluxVolume,
             this._chiralityField, this._phaseNeedles,
@@ -158,6 +176,32 @@ export class ViewportFieldRenderer {
         ];
         for (const m of dynamicMeshes) {
             if (m && m.geometry) m.geometry.setDrawRange(0, 0);
+        }
+        // These three renderers distinguish requested from drawable state.
+        // A resize invalidates their buffers, so hide the meshes until the
+        // next coherent overlay update repopulates a non-empty draw range.
+        if (this._eFieldLines) this._eFieldLines.visible = false;
+        if (this._bFieldLines) this._bFieldLines.visible = false;
+        if (this._poyntingVectors) this._poyntingVectors.visible = false;
+        if (this._gravityField) this._gravityField.visible = false;
+        if (this._forceHeatmaps) {
+            for (const mesh of Object.values(this._forceHeatmaps)) {
+                mesh.geometry.setDrawRange(0, 0);
+                mesh.visible = false;
+            }
+        }
+        if (this._forceStreamlineMeshes) {
+            for (const entry of Object.values(this._forceStreamlineMeshes)) {
+                entry.mesh.geometry.setDrawRange(0, 0);
+                entry.mesh.visible = false;
+                entry.vertexCount = 0;
+            }
+        }
+        if (this._forceGlyphMeshes) {
+            for (const mesh of Object.values(this._forceGlyphMeshes)) {
+                mesh.count = 0;
+                mesh.visible = false;
+            }
         }
     }
     setBoundaryShape(shape) {
@@ -209,7 +253,6 @@ export class ViewportFieldRenderer {
             '_fieldHeatmap', '_fluxSliceMesh', '_fieldVectors', '_peStreamlines', '_gravityVectors',
             '_eFieldLines', '_bFieldLines', '_poyntingVectors', '_divField',
             '_forceVolume', '_gravityField', '_strongForce', '_weakField',
-            '_forceHeatmap',
             '_darkMatterHalo', '_dampingZones', '_knotZones', '_genesisIsosurface',
             '_confinementStrings',
             '_dualFluxVolume', '_chiralityField',
@@ -227,12 +270,19 @@ export class ViewportFieldRenderer {
             this._forceGlyphMeshes = null;
         }
 
-        // Force streamline pool (array of Line objects).
-        if (this._forceStreamlinePool) {
-            for (const line of this._forceStreamlinePool) disposeMesh(line);
-            this._forceStreamlinePool = null;
-            this._forceStreamlineMats = null;
+        // Typed force heatmaps and batched streamline meshes own their resources;
+        // the singular fields below are compatibility aliases only.
+        if (this._forceHeatmaps) {
+            for (const mesh of Object.values(this._forceHeatmaps)) disposeMesh(mesh);
+            this._forceHeatmaps = null;
         }
+        this._forceHeatmap = null;
+        if (this._forceStreamlineMeshes) {
+            for (const entry of Object.values(this._forceStreamlineMeshes)) disposeMesh(entry.mesh);
+            this._forceStreamlineMeshes = null;
+        }
+        this._forceStreamlinePool = null;
+        this._forceStreamlineMats = null;
 
         // Horizon field (wraps a Points object plus metadata).
         if (this._horizonField) {

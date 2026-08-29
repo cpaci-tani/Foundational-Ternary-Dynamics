@@ -74,7 +74,7 @@ export class CoulombComponent extends BaseComponent {
         } else {
             metaLine = `Engine field unavailable — falling back to analytic-source probe`;
             heroLine = `
-                <div style="font-size:13px;color:var(--text-muted);">
+                <div style="font-size:16px;color:var(--text-muted);">
                     ${tagBadge('T')} no engine field samples — chart frame shown for layout stability
                 </div>
             `;
@@ -206,13 +206,13 @@ export class CoulombComponent extends BaseComponent {
         let svg = `<svg viewBox="0 0 ${W} ${H}" class="p1-svg-plot">`;
         svg += `<rect x="${margin.left}" y="${margin.top}" width="${innerW}" height="${innerH}" fill="rgba(255,255,255,0.02)" stroke="var(--border-light, rgba(255,255,255,0.08))" stroke-width="1"/>`;
 
-        svg += `<text x="${margin.left - 6}" y="${margin.top + 4}" text-anchor="end" fill="var(--text-muted)" font-size="10" font-family="var(--font-mono)">${hasData ? formatExp(emax) : ''}</text>`;
-        svg += `<text x="${margin.left - 6}" y="${margin.top + innerH + 4}" text-anchor="end" fill="var(--text-muted)" font-size="10" font-family="var(--font-mono)">${hasData ? formatExp(emin) : ''}</text>`;
+        svg += `<text x="${margin.left - 6}" y="${margin.top + 4}" text-anchor="end" fill="var(--text-muted)" font-size="16" font-family="var(--font-mono)">${hasData ? formatExp(emax) : ''}</text>`;
+        svg += `<text x="${margin.left - 6}" y="${margin.top + innerH + 4}" text-anchor="end" fill="var(--text-muted)" font-size="16" font-family="var(--font-mono)">${hasData ? formatExp(emin) : ''}</text>`;
 
-        svg += `<text x="${margin.left}" y="${margin.top + innerH + 14}" fill="var(--text-muted)" font-size="10" font-family="var(--font-mono)">r=${rmin.toFixed(1)}</text>`;
-        svg += `<text x="${margin.left + innerW}" y="${margin.top + innerH + 14}" text-anchor="end" fill="var(--text-muted)" font-size="10" font-family="var(--font-mono)">r=${rmax.toFixed(1)}</text>`;
+        svg += `<text x="${margin.left}" y="${margin.top + innerH + 14}" fill="var(--text-muted)" font-size="16" font-family="var(--font-mono)">r=${rmin.toFixed(1)}</text>`;
+        svg += `<text x="${margin.left + innerW}" y="${margin.top + innerH + 14}" text-anchor="end" fill="var(--text-muted)" font-size="16" font-family="var(--font-mono)">r=${rmax.toFixed(1)}</text>`;
 
-        svg += `<text x="${margin.left + innerW / 2}" y="${H - 4}" text-anchor="middle" fill="var(--text-muted)" font-size="10">Radius r from positive charge center</text>`;
+        svg += `<text x="${margin.left + innerW / 2}" y="${H - 4}" text-anchor="middle" fill="var(--text-muted)" font-size="16">Radius r from positive charge center</text>`;
 
         if (hasData) {
             let pLattice = '';
@@ -241,7 +241,7 @@ export class CoulombComponent extends BaseComponent {
             svg += `<circle cx="${rx.toFixed(2)}" cy="${ryL.toFixed(2)}" r="3" fill="red"/>`;
             svg += `<circle cx="${rx.toFixed(2)}" cy="${ryA.toFixed(2)}" r="3" fill="red"/>`;
         } else {
-            svg += `<text x="${margin.left + innerW / 2}" y="${margin.top + innerH / 2 + 4}" text-anchor="middle" fill="var(--text-muted)" font-size="11" font-style="italic">Need: ≥2 opposite-charge particles</text>`;
+            svg += `<text x="${margin.left + innerW / 2}" y="${margin.top + innerH / 2 + 4}" text-anchor="middle" fill="var(--text-muted)" font-size="16" font-style="italic">Need: ≥2 opposite-charge particles</text>`;
         }
 
         svg += `</svg>`;

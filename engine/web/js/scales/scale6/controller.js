@@ -99,7 +99,7 @@ class Scale6LifecycleController extends BaseLifecycleController {
         panel.style.cssText =
             'position:absolute; top:12px; left:12px; z-index:40; width:300px; ' +
             'max-height:calc(100% - 24px); overflow-y:auto; border-radius:12px; ' +
-            'font-family:var(--font-sans,sans-serif); font-size:12px; ' +
+            'font-family:var(--font-sans,sans-serif); font-size:16px; ' +
             'background:var(--color-background-primary,rgba(20,20,24,0.92)); ' +
             'border:0.5px solid var(--color-border-secondary,rgba(255,255,255,0.25)); ' +
             'color:var(--color-text-primary,#eee); box-shadow:0 2px 12px rgba(0,0,0,0.3);';

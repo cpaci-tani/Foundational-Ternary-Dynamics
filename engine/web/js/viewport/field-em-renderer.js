@@ -11,6 +11,13 @@ import {
     _ensureManifestAttrs,
 } from './field-renderer-shared.js';
 
+// Audited maximum after per-size integration caps. The old meshes reserved
+// 96k E vertices and 144k B vertices for obsolete 300-line sweeps; current
+// worst cases are <14.3k and <21.5k respectively, including bidirectional
+// point expansion and LineSegments duplication.
+const EM_FLOW_LINE_MAX_VERTS = 16000;
+const B_FLOW_LINE_MAX_VERTS = 24000;
+
 export const fieldEmMethods = {
     _buildFieldHeatmap() {
         const positions = new Float32Array(MAX_FIELD_GRID * 3);
@@ -53,9 +60,14 @@ export const fieldEmMethods = {
         this._fieldHeatmap.geometry.setDrawRange(0, n);
     },
     toggleFieldHeatmap(on) {
-        if (!this._fieldHeatmap) this._buildFieldHeatmap();
-        this._fieldHeatmap.visible = on;
-        if (!on) this._fieldHeatmap.geometry.setDrawRange(0, 0);
+        const next = !!on;
+        if (!this._fieldHeatmap) {
+            if (!next) return;
+            this._buildFieldHeatmap();
+        }
+        if (this._fieldHeatmap.visible === next) return;
+        this._fieldHeatmap.visible = next;
+        if (!next) this._fieldHeatmap.geometry.setDrawRange(0, 0);
     },
 
     // ── Flux Slice (dedicated _fluxSliceMesh, all-axis) ───────────────
@@ -77,7 +89,8 @@ export const fieldEmMethods = {
         geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
         _ensureManifestAttrs(geo, maxPts);
         geo.setDrawRange(0, 0);
-        const mat = _makeParticleFragMaterial({ uOpacity: { value: 0.7 } });
+        const mat = _makeParticleFragMaterial({ uOpacity: { value: this._fluxSliceOpacity } });
+        mat.uniforms.shapeType.value = this._fluxSliceShape;
         this._fluxSliceMesh = new THREE.Points(geo, mat);
         this._fluxSliceMesh.visible = this.showHeatmap;
         this._fluxSliceMesh.frustumCulled = false;
@@ -187,31 +200,46 @@ export const fieldEmMethods = {
         this.updateFluxSlices([{ axis, data: sliceData }], latticeSize, index);
     },
     toggleFluxSlice(on) {
-        if (!this._fluxSliceMesh) this._buildFluxSliceMesh(this._latticeSize);
-        this._fluxSliceMesh.visible = on;
-        this.showHeatmap = on;
-        if (!on) this._fluxSliceMesh.geometry.setDrawRange(0, 0);
+        const next = !!on;
+        this.showHeatmap = next;
+        if (!this._fluxSliceMesh) {
+            if (!next) return;
+            this._buildFluxSliceMesh(this._latticeSize);
+        }
+        if (this._fluxSliceMesh.visible === next) return;
+        this._fluxSliceMesh.visible = next;
+        if (!next) this._fluxSliceMesh.geometry.setDrawRange(0, 0);
     },
 
     // Flux-slice appearance controls — wired in parallel with the Flux Volume
     // card (see wire.js::wireFluxVolume + ViewportFluxRenderer.setFlux*).
     setFluxSliceOpacity(val) {
+        if (this._fluxSliceOpacity === val) return;
+        this._fluxSliceOpacity = val;
         if (this._fluxSliceMesh) this._fluxSliceMesh.material.uniforms.uOpacity.value = val;
     },
     setFluxSliceShape(shapeIndex) {
-        if (this._fluxSliceMesh) this._fluxSliceMesh.material.uniforms.shapeType.value = shapeIndex;
+        const shape = shapeIndex | 0;
+        if (this._fluxSliceShape === shape) return;
+        this._fluxSliceShape = shape;
+        if (this._fluxSliceMesh) this._fluxSliceMesh.material.uniforms.shapeType.value = shape;
     },
     setFluxSlicePointScale(scale) {
+        if (this._fluxSlicePointScale === scale) return;
         this._fluxSlicePointScale = scale;   // applied on the next updateFluxSlices
     },
     setFluxSliceThreshold(val) {
+        if (this._fluxSliceThreshold === val) return;
         this._fluxSliceThreshold = val;       // applied on the next updateFluxSlices
     },
 
     // Per-axis visibility (axis index 0=yz, 1=xz, 2=xy). frame-sync reads the
     // enabled set each upload tick to decide which planes to gather + pack.
     setFluxSliceAxisEnabled(axis, on) {
-        if (axis in this._fluxSliceAxes) this._fluxSliceAxes[axis] = !!on;
+        if (axis in this._fluxSliceAxes) {
+            const next = !!on;
+            if (this._fluxSliceAxes[axis] !== next) this._fluxSliceAxes[axis] = next;
+        }
     },
     getEnabledFluxSliceAxes() {
         const out = [];
@@ -526,7 +554,7 @@ export const fieldEmMethods = {
 
     // ── E-Field Lines (Cyan) ─────────────────────────────────────────
     _buildEFieldLines() {
-        this._eFieldLines = this._buildStreamlineMesh(300 * 160 * 2, 0.7);
+        this._eFieldLines = this._buildStreamlineMesh(EM_FLOW_LINE_MAX_VERTS, this._flowLineOpacity);
     },
     updateEFieldLines(streamlines, knotColoring) {
         if (!this._eFieldLines) this._buildEFieldLines();
@@ -547,16 +575,27 @@ export const fieldEmMethods = {
             }
             rgb[0] = 0.3 * alpha; rgb[1] = 0.82 * alpha; rgb[2] = 0.88 * alpha;
         });
+        this._eFieldLines.visible = this._eFieldLinesRequested
+            && this._eFieldLines.geometry.drawRange.count > 0;
     },
     toggleEFieldLines(on) {
-        if (!this._eFieldLines) this._buildEFieldLines();
-        this._eFieldLines.visible = on;
-        if (!on) this._eFieldLines.geometry.setDrawRange(0, 0);
+        const next = !!on;
+        this._eFieldLinesRequested = next;
+        if (!this._eFieldLines) { if (!next) return; this._buildEFieldLines(); }
+        if (!next) {
+            this._eFieldLines.visible = false;
+            if (this._eFieldLines.geometry.drawRange.count !== 0) {
+                this._eFieldLines.geometry.setDrawRange(0, 0);
+            }
+            return;
+        }
+        const drawable = this._eFieldLines.geometry.drawRange.count > 0;
+        if (this._eFieldLines.visible !== drawable) this._eFieldLines.visible = drawable;
     },
 
     // ── B-Field Lines (Green) ────────────────────────────────────────
     _buildBFieldLines() {
-        this._bFieldLines = this._buildStreamlineMesh(300 * 240 * 2, 0.7);
+        this._bFieldLines = this._buildStreamlineMesh(B_FLOW_LINE_MAX_VERTS, this._flowLineOpacity);
     },
     updateBFieldLines(streamlines, knotColoring) {
         if (!this._bFieldLines) this._buildBFieldLines();
@@ -575,11 +614,32 @@ export const fieldEmMethods = {
             }
             rgb[0] = 0.4 * alpha; rgb[1] = 0.73 * alpha; rgb[2] = 0.42 * alpha;
         });
+        this._bFieldLines.visible = this._bFieldLinesRequested
+            && this._bFieldLines.geometry.drawRange.count > 0;
     },
     toggleBFieldLines(on) {
-        if (!this._bFieldLines) this._buildBFieldLines();
-        this._bFieldLines.visible = on;
-        if (!on) this._bFieldLines.geometry.setDrawRange(0, 0);
+        const next = !!on;
+        this._bFieldLinesRequested = next;
+        if (!this._bFieldLines) { if (!next) return; this._buildBFieldLines(); }
+        if (!next) {
+            this._bFieldLines.visible = false;
+            if (this._bFieldLines.geometry.drawRange.count !== 0) {
+                this._bFieldLines.geometry.setDrawRange(0, 0);
+            }
+            return;
+        }
+        const drawable = this._bFieldLines.geometry.drawRange.count > 0;
+        if (this._bFieldLines.visible !== drawable) this._bFieldLines.visible = drawable;
+    },
+
+    setFlowLineOpacity(value) {
+        const numeric = Number(value);
+        if (!Number.isFinite(numeric)) return;
+        const next = Math.max(0, Math.min(1, numeric));
+        if (this._flowLineOpacity === next) return;
+        this._flowLineOpacity = next;
+        if (this._eFieldLines?.material) this._eFieldLines.material.opacity = next;
+        if (this._bFieldLines?.material) this._bFieldLines.material.opacity = next;
     },
 
     // ── Poynting Vectors (Yellow-Orange arrows) ──────────────────────
@@ -651,11 +711,21 @@ export const fieldEmMethods = {
         posAttr.needsUpdate = true;
         colAttr.needsUpdate = true;
         this._poyntingVectors.geometry.setDrawRange(0, vi * 2);
+        this._poyntingVectors.visible = this._poyntingVectorsRequested && vi > 0;
     },
     togglePoyntingVectors(on) {
-        if (!this._poyntingVectors) this._buildPoyntingVectors();
-        this._poyntingVectors.visible = on;
-        if (!on) this._poyntingVectors.geometry.setDrawRange(0, 0);
+        const next = !!on;
+        this._poyntingVectorsRequested = next;
+        if (!this._poyntingVectors) { if (!next) return; this._buildPoyntingVectors(); }
+        if (!next) {
+            this._poyntingVectors.visible = false;
+            if (this._poyntingVectors.geometry.drawRange.count !== 0) {
+                this._poyntingVectors.geometry.setDrawRange(0, 0);
+            }
+            return;
+        }
+        const drawable = this._poyntingVectors.geometry.drawRange.count > 0;
+        if (this._poyntingVectors.visible !== drawable) this._poyntingVectors.visible = drawable;
     },
 
     // ── Divergence Field (Red-Blue dots) ─────────────────────────────
@@ -736,9 +806,11 @@ export const fieldEmMethods = {
         this._divField.geometry.setDrawRange(0, vi);
     },
     toggleDivergenceField(on) {
-        if (!this._divField) this._buildDivergenceField();
-        this._divField.visible = on;
-        if (!on) this._divField.geometry.setDrawRange(0, 0);
+        const next = !!on;
+        if (!this._divField) { if (!next) return; this._buildDivergenceField(); }
+        if (this._divField.visible === next) return;
+        this._divField.visible = next;
+        if (!next) this._divField.geometry.setDrawRange(0, 0);
     },
 
     // ── EM Force Volume (Cyan arrows) ────────────────────────────────
@@ -751,10 +823,12 @@ export const fieldEmMethods = {
             '_strongMagCache', 1.5, 0.03);
     },
     togglePhaseField(on) {
-        this._phaseVisible = !!on;
-        if (!this._phaseNeedles) this._buildPhaseNeedles();
-        this._phaseNeedles.visible = !!on;
-        if (!on) this._phaseNeedles.geometry.setDrawRange(0, 0);
+        const next = !!on;
+        if (this._phaseVisible === next && (this._phaseNeedles || !next)) return;
+        this._phaseVisible = next;
+        if (!this._phaseNeedles) { if (!next) return; this._buildPhaseNeedles(); }
+        this._phaseNeedles.visible = next;
+        if (!next) this._phaseNeedles.geometry.setDrawRange(0, 0);
         this._quantumSetVisibility();
     },
     updatePhaseField(data) {
@@ -819,9 +893,11 @@ export const fieldEmMethods = {
         this._stateField = { points, geo, capacity: max };
     },
     toggleStateField(on) {
-        if (!this._stateField) this._buildStateField();
-        this._stateField.points.visible = !!on;
-        if (!on) this._stateField.geo.setDrawRange(0, 0);
+        const next = !!on;
+        if (!this._stateField) { if (!next) return; this._buildStateField(); }
+        if (this._stateField.points.visible === next) return;
+        this._stateField.points.visible = next;
+        if (!next) this._stateField.geo.setDrawRange(0, 0);
     },
     updateStateField(data) {
         this._syncCenterAndRadius();

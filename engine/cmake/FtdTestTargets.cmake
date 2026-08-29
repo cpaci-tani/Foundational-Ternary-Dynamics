@@ -4,10 +4,9 @@
 if(NOT EMSCRIPTEN)
 
 # Sources owned by targets that can be absent in a lean configure. They must
-# remain classified when CUDA or experimental modules are disabled (for
+# remain classified when CUDA modules are disabled (for
 # example the Pages merge gate), but they are not frontier research sources.
 set_property(GLOBAL APPEND PROPERTY FTD_CONDITIONAL_TEST_SOURCES
-    tests/benchmark_cognitive_lattice.cpp
     tests/benchmark_alpha_scaling.cpp
     tests/benchmark_langevin_gpu.cpp
     tests/benchmark_nucleon_mass_gpu.cpp
@@ -20,8 +19,6 @@ set_property(GLOBAL APPEND PROPERTY FTD_CONDITIONAL_TEST_SOURCES
     tests/test_cuda_paired_field_response.cpp
     tests/test_cuda_state_only_support_ladder.cpp
     tests/test_cuda_transported_chart_morphology.cpp
-    tests/test_cognitive_lattice.cpp
-    tests/test_dag_engine.cpp
     tests/test_gauss_law_fidelity_gpu.cpp
     tests/test_gpu_benchmark.cpp
     tests/test_gpu_compact_diagnostics.cpp
@@ -109,7 +106,7 @@ endif()
 # directory. Each test_*.cpp includes <ftd/test_telemetry.h>; the impl now
 # lives in ftd_test_support. This avoids touching every existing
 # `target_link_libraries(test_xxx ftd_core)` site individually. Targets
-# defined BEFORE this point (the engine library, ftd_sim, ws_server) are
+# defined BEFORE this point (the engine libraries and ws_server) are
 # unaffected because link_libraries() applies forward only.
 link_libraries(ftd_test_support)
 
@@ -147,15 +144,6 @@ ftd_add_test(test_voxel_layout tests/test_voxel_layout.cpp
 # link needed (same rationale as test_scale_ratio's NO_CORE above).
 ftd_add_test(test_interop_particle_record_layout tests/test_interop_particle_record_layout.cpp
              NO_CORE CTEST_NAME interop_particle_record_layout TIMEOUT 60 LABELS unit foundation)
-if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016 quarantine
-add_executable(test_cognitive_lattice tests/test_cognitive_lattice.cpp)
-target_include_directories(test_cognitive_lattice PRIVATE ${CMAKE_SOURCE_DIR}/include)
-target_link_libraries(test_cognitive_lattice PRIVATE ftd_cognition)
-add_test(NAME cognitive_lattice COMMAND test_cognitive_lattice)
-set_tests_properties(cognitive_lattice PROPERTIES TIMEOUT 120)
-set_property(TEST cognitive_lattice APPEND PROPERTY LABELS unit cognition)
-set_property(GLOBAL APPEND PROPERTY FTD_ALL_TESTS cognitive_lattice)
-endif()  # FTD_BUILD_EXPERIMENTAL (cognitive test)
 # Conservation profile: pins the engine's REAL energy-conservation physics
 # (bare-leapfrog well-posedness, gauss-projection runaway, iteration-independent
 # gauss_violation floor). Documentation-of-reality, not a quality gate.
@@ -520,12 +508,6 @@ target_link_libraries(test_thermodynamics ftd_core)
 
 add_executable(test_lagrangian tests/test_lagrangian.cpp)
 target_link_libraries(test_lagrangian ftd_core)
-
-# DAG Engine Phase 3
-if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016 quarantine
-add_executable(test_dag_engine tests/test_dag_engine.cpp)
-target_link_libraries(test_dag_engine ftd_core)
-endif()
 
 # Ontic physics
 add_executable(test_ontic_chain tests/test_ontic_chain.cpp)
@@ -1221,25 +1203,6 @@ if(FTD_ENABLE_CUDA)
     set_tests_properties(benchmark_invariant_matrix_constant_memory
                          PROPERTIES TIMEOUT 120 LABELS "gpu;benchmark")
 
-    # Standalone hyper-optimized GPU Discrete Universe simulation engine prototype
-    if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016 quarantine
-    add_executable(experimental_discrete_universe cuda/experimental_discrete_universe.cu)
-    target_link_libraries(experimental_discrete_universe ftd_core ftd_cuda)
-    target_compile_options(experimental_discrete_universe PRIVATE
-        $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>
-        $<$<COMPILE_LANGUAGE:CUDA>:--allow-unsupported-compiler>
-    )
-    if(MSVC)
-        target_compile_options(experimental_discrete_universe PRIVATE
-            $<$<COMPILE_LANGUAGE:CUDA>:-Xcompiler=/Z7>
-        )
-    endif()
-    set_target_properties(experimental_discrete_universe PROPERTIES
-                          CUDA_SEPARABLE_COMPILATION ON
-                          CUDA_RESOLVE_DEVICE_SYMBOLS ON
-                          COMPILE_PDB_NAME ""
-                          COMPILE_PDB_OUTPUT_DIRECTORY "")
-    endif()  # FTD_BUILD_EXPERIMENTAL (discrete-universe prototype)
 endif()
 
 # ============================================================================
@@ -2302,8 +2265,7 @@ ftd_add_test(test_nonlinear_flow_multiscale tests/test_nonlinear_flow_multiscale
 # spectrum from generic initial conditions. 5 IC classes × 5 seeds at L=32.
 # Pre-registered in PROTOCOL_EMERGENT_PARTICLE_SPECTRUM.md. Output: per-IC
 # clustering history + stable-cluster mass histogram + volumetric snapshots.
-# Archived 2026-05-27 → engine/archive/phase_b_2026-04/campaign_emergent_spectrum_2026-04-27.cpp.
-# To restore: git mv back to engine/tests/ and re-enable the ftd_add_test block.
+# Retired source remains in Git history through baseline 21566b63.
 
 # FTD-0107 regression + L¹-ball-radius-2 topology verification.
 # Confirms the deterministic 25-voxel cluster (FTD-0102/0107) and tests the
@@ -2503,7 +2465,7 @@ ftd_add_test(campaign_gnc_qij tests/campaign_gnc_qij.cpp
 # engine-as-instrument portfolio). Four sub-experiments — Wilson loop,
 # flux tube, monopole, vacuum instanton — with shared per-snapshot CSV.
 # Pre-registered in PROTOCOL_TOPOLOGICAL_OBSERVABLES.md.
-# Archived 2026-05-27 → engine/archive/phase_b_2026-04/campaign_topological_observables_2026-04-27.cpp.
+# Retired source remains in Git history through baseline 21566b63.
 
 # FTD-0098 (2026-04-26): first measured native operator-mixing matrix M_ab(b=2).
 # Pre-registered in docs/theory/10_eft_program/PROTOCOL_OPERATOR_MIXING_MATRIX.md.
@@ -2511,7 +2473,7 @@ ftd_add_test(campaign_gnc_qij tests/campaign_gnc_qij.cpp
 # L=16, 40 samples × 5-tick stride, 5 seeds) and extracts the 6-operator basis
 # moments before/after b=2 blocking, solving for M_ab via the Wilsonian normal
 # equations with bootstrap stderr.
-# Archived 2026-05-27 → engine/archive/phase_b_2026-04/campaign_operator_mixing_2026-04-26.cpp.
+# Retired source remains in Git history through baseline 21566b63.
 
 # FTD-0112: reaction-sector operators (O7-O10) unit tests.
 # Pre-registration: docs/theory/10_eft_program/PROTOCOL_S_EFF_NONLINEAR_CAMPAIGN.md
@@ -2530,9 +2492,7 @@ ftd_add_test(test_reaction_operators tests/test_reaction_operators.cpp
 # pair-rich, mixed-balanced}, --L, --N-seeds, --N-samples, --b4, --smoke.
 # Long-running production: 5-8 hours per L size on RTX 5090; smoke variant
 # completes in <30s.
-# Archived 2026-05-27 → engine/archive/phase_b_2026-04/campaign_s_eff_nonlinear_2026-04-29.cpp.
-# A later unregistered src/ duplicate with Wilson-coefficient CLI hooks was
-# archived 2026-06-04 → engine/archive/phase_b_2026-04/campaign_s_eff_nonlinear_wilson_2026-06-04.cpp.
+# Retired campaign sources remain in Git history through baseline 21566b63.
 
 # Phase-4 fermion-emergence alternative routes (FTD-0061 extension).
 # Runs WH/Clifford anticommutator measurement under three alternative
@@ -2827,15 +2787,6 @@ ftd_add_test(benchmark_field_soa_cpu
              tests/benchmark_field_soa_cpu.cpp
              CTEST_NAME benchmark_field_soa_cpu TIMEOUT 600
              LABELS benchmark)
-if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016 quarantine
-add_executable(benchmark_cognitive_lattice tests/benchmark_cognitive_lattice.cpp)
-target_include_directories(benchmark_cognitive_lattice PRIVATE ${CMAKE_SOURCE_DIR}/include)
-target_link_libraries(benchmark_cognitive_lattice PRIVATE ftd_cognition)
-add_test(NAME benchmark_cognitive_lattice COMMAND benchmark_cognitive_lattice)
-set_tests_properties(benchmark_cognitive_lattice PROPERTIES TIMEOUT 600)
-set_property(TEST benchmark_cognitive_lattice APPEND PROPERTY LABELS benchmark cognition)
-set_property(GLOBAL APPEND PROPERTY FTD_ALL_TESTS benchmark_cognitive_lattice)
-endif()  # FTD_BUILD_EXPERIMENTAL (cognitive benchmark)
 ftd_add_test(benchmark_alpha_convergence tests/benchmark_alpha_convergence.cpp
              CTEST_NAME benchmark_alpha_convergence TIMEOUT 7200 LABELS benchmark eft)
 if(FTD_ENABLE_CUDA)
@@ -3025,7 +2976,7 @@ add_executable(test_a1g_projector tests/test_a1g_projector.cpp)
 target_link_libraries(test_a1g_projector PRIVATE ftd_core)
 add_executable(test_a1g_bridge_i_empirical tests/test_a1g_bridge_i_empirical.cpp)
 target_link_libraries(test_a1g_bridge_i_empirical PRIVATE ftd_core)
-# dump_a1g_decay archived 2026-05-27 → engine/archive/dumps_non_load_bearing/dump_a1g_decay.cpp.
+# The retired dump_a1g_decay source remains in Git history through baseline 21566b63.
 # Non-load-bearing per SPEC_ENGINE.md §5.6.23–27. Load-bearing dumps (dump_full_physics*,
 # dump_toggle_bisection) remain in engine/tests/.
 add_executable(test_ftd0110_cluster_geometry tests/test_ftd0110_cluster_geometry.cpp)
@@ -3063,9 +3014,5 @@ add_executable(test_triad_confinement tests/test_triad_confinement.cpp)
 target_link_libraries(test_triad_confinement PRIVATE ftd_core)
 add_executable(test_wz_mass tests/test_wz_mass.cpp)
 target_link_libraries(test_wz_mass PRIVATE ftd_core)
-
-# Tritium ternary compute library tests (header-only, no ftd_core dependency)
-# Phase 1+2b POC: consolidated into test_tritium_algebra (7 legacy files merged)
-ftd_add_test(test_tritium_algebra tests/test_tritium_algebra.cpp NO_CORE)
 
 endif() # NOT EMSCRIPTEN — end of tests/campaigns/CLI

@@ -71,19 +71,16 @@ loops live in their own translation units.
 | `src/transmutation_phases.cpp` | Pair production, weak transmutation, proper time, **triad binding** | — |
 | `src/injection.cpp` | How scenario seeds enter the lattice (feeds the golden tick) | — |
 | `src/scenarios/` | Scenario library (C++ port of all Scale-0 scenarios) | **`s0_seed.cpp` (1109)** ← split candidate, `s0_field.cpp`, `flux/light/quantum.cpp` |
-| `src/cli_demos/` | Headless demo runners (orchestration only, no tick physics) | **`cli_demo_scenarios.cpp` (981)** ← split candidate |
 | `src/atom/` | Scale-2 atom engine forces | `atom_forces.cpp` (632) |
-| `src/cognition/` | Standalone `ftd_cognition` lib (own exe; **not** in the tick path) | `cognitive_lattice.cpp` (835) |
 | `src/vtk_export.cpp` (636) | ParaView/CSV export (pure I/O, zero physics) | ← split candidate |
 | `src/particle_engine.cpp` (669) | Scale-1 macro engine (Barnes-Hut N-body) | — |
 | `src/scale_bridge.cpp` | Cross-scale coarsen/refine between engines | — |
 
-**Macro engines** (`ParticleEngine`, `AtomEngine`, `CosmicEngine`, `DagEngine`)
-implement the `ScaleEngine` interface but are coarser analytical layers, **separate
-from the Scale-0 golden path**. `DagEngine` is an experimental sparse-lattice
-prototype, not used for physics claims.
+**Macro engines** (`ParticleEngine`, `AtomEngine`, `CosmicEngine`) implement the
+`ScaleEngine` interface but are coarser analytical layers, **separate from the
+Scale-0 golden path**.
 
-## 2. Headers — `include/ftd/` (129 files)
+## 2. Headers — `include/ftd/`
 
 The public API + data model. Read these first when extending physics:
 
@@ -108,7 +105,6 @@ hash** — guarded by separate `gpu_parity` tests instead.
 | `kernels_stencil_single.cu` / `_dual.cu` | 18-point Moore stencil, single vs dual substrate (~85% shared — templating is high parity-risk, deferred) |
 | `kernels_forces.cu` (1027) | Force kernels (Coulomb/gravity/Lorentz/color) |
 | `kernels_poisson.cu`, `kernels_eft.cu`, `kernels_aux.cu` | Solvers + EFT + auxiliary |
-| `experimental_discrete_universe.cu` (459) | Deliberate standalone prototype (built; uses its own namespace — not the production path) |
 
 Known small duplication: `CUDA_CHECK` redefined 11×, local `wrap`/`idx3d` in two
 kernels — see §7 tickets T2/T8.
@@ -177,7 +173,7 @@ refactor lever, and the **lowest-risk** because tests don't touch the golden has
 
 ## 7. Largest files & split status
 
-Verified by deep read of the top ~40 files. **"GOLDEN-SAFE"** = test/CLI/VTK/web
+Verified by deep read of the top ~40 files. **"GOLDEN-SAFE"** = test/VTK/web
 (no golden exposure); **"GOLDEN-RISK"** = tick-path, requires byte-identical
 code-motion + golden re-verify after each step.
 
@@ -197,8 +193,6 @@ code-motion + golden re-verify after each step.
 | `src/scenarios/s0_seed.cpp` | 1109 | ✅ → 6–8 family TUs (one at a time) | ~42 scenarios by family | **GOLDEN-RISK** |
 | `tests/test_pe_forces.cpp` | 1080 | ❌ leave | already clean by force type | — |
 | `cuda/kernels_forces.cu` | 1027 | ❌ extract device helpers | tier-2 gradient/density dup | parity-risk |
-| `src/cli_demos/cli_demo_scenarios.cpp` | 981 | ✅ → 4 thematic TUs | 11 self-contained demos | GOLDEN-SAFE |
-| `src/cognition/cognitive_lattice.cpp` | 835 | ⚠️ defer | decoupled subsystem | not golden |
 | `src/render_bridge.cpp` | 795 | ❌ already decomposed | hot loops already in phases/ | — |
 | `src/vtk_export.cpp` | 636 | ✅ → 6 I/O TUs | pure I/O by export type | GOLDEN-SAFE |
 
@@ -217,7 +211,7 @@ code-motion + golden re-verify after each step.
 | `telemetry-hub.js` | 927 | ⚠️ extract ring-buffers now; defer the singleton | 4 classes; hub is a god-object | low / high |
 
 **Recommended sequencing:** zero-risk native wins first (dedup `benchmark_utils.h`,
-`cuda_error_check.cuh`, label the 9 tests) → GOLDEN-SAFE test/CLI/VTK splits → web
+`cuda_error_check.cuh`, label the 9 tests) → GOLDEN-SAFE test/VTK splits → web
 Tier-A splits (shard `data.js` first) → parity-gated CUDA → GOLDEN-RISK tick-path
 last, each with a golden re-run. **Full prioritized ticket list (T1–T19) is in §7 of
 the C++ analysis and §1 of the web analysis** captured in the session report.
@@ -242,14 +236,11 @@ scale0's; refresh-or-retire `viewport/REFACTOR_MAP.md`; keep this map + manifest
 
 | Item | LOC | Status |
 |---|--:|---|
-| Former `bridge/scenarios/` JS seed dispatcher + 6 group files | ~2000 | **Archived 2026-08-27** — live Scale-0 calls native C++ `setupScenario`; the still-live wave analysis and genesis-panel term profile were extracted into the Scale-0 package. (NB: `cosmic-scenarios/` via `mock-scale5.js` **is** live — don't confuse.) |
 | Meta/Scale-6 triad (`meta-unit.js`, `meta-unit-geometry.js`, `meta-pedagogy.js`) | ~1270 | **Live** — reconnected through `scales/scale6/controller.js` and `app.js`. |
 | `MockBridge` doc ghosts (`bridge/README.md`, `bridge-contract.js`, `bridge-init.js` JSDoc) | — | Reference deleted `mock-bridge.js`/`mock-diagnostics.js` — cheap doc fix. |
 | Scale-1/2 mock-vs-C++ drift | — | Not dead, but **un-gated**: web Scale-1/2 physics is JS-only (`_aeHasWasm=false`); only Scale-0 has the golden gate. Any physics fix must be hand-mirrored. |
-| `engine/archive/` (12 files, ~5.6k LOC) | — | **Exemplary** provenance graveyard with `README.md` closure map — the model to follow, no action. |
-
-`engine/` also has several stale build dirs (`build/`, `build_cuda/`,
-`build_wasm*/`, `build_wsl/`) — disk clutter; confirm `.gitignore` coverage.
+Canonical generated trees are `build/`, `build_wasm/`, and `build_wsl/`; other
+one-off build trees were removed in the 2026-08-28 product consolidation.
 
 ---
 

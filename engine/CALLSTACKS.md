@@ -113,16 +113,9 @@ engine/src/ws_server.cpp
         / "get_flux_slice" / "get_flux_volume" / "info" -> read-back responses
 ```
 
-### 1.4 CLI And Tests
+### 1.4 Tests
 
 ```text
-engine/src/main.cpp
-  -> ftd::cli_demos::scenario_X(lattice_size, num_ticks, ...)   (engine/src/cli_demos/)
-     -> RenderBridge engine(L)
-     -> scenario setup / direct injection / toggle setup
-     -> for N ticks: engine.tick()  (or engine.run(N))
-     -> diagnostics / energy_audit / energy_ledger / exported samples
-
 CTest/benchmark code
   -> RenderBridge rb(L)
   -> scenario setup / direct injection / toggle setup

@@ -20,7 +20,7 @@ html[data-theme="nord"] {
     /* Text hierarchy */
     --text-primary:   #eceff4;
     --text-secondary: #d8dee9;
-    --text-muted:     #b4becc;
+    --text-muted:     #cbd5e1;
     --text-accent:    #e5e9f0;
     --text-dim:       #95a2b8;   /* disabled / inert (≥3:1 per WCAG 1.4.11) */
 
@@ -28,6 +28,19 @@ html[data-theme="nord"] {
     --accent:      #88c0d0;
     --accent-dim:  #8fbcbb;
     --accent-glow: rgba(136, 192, 208, 0.60);
+    --accent-text:    #b9e4ef;
+    --on-accent:      #2e3440;
+    --positive-text:  #c2dfa8;
+    --negative-text:  #fca5a5;
+    --warning-text:   #fde68a;
+    --caution-text:   #f8c7b5;
+    --on-positive:    #2e3440;
+    --on-negative:    #05080f;
+    --on-warning:     #2e3440;
+    --axis-x-text:    #fecaca;
+    --axis-y-text:    #c2dfa8;
+    --axis-z-text:    #b4cdfa;
+    --selection-text: #a5d8ff;
 
     /* Status — Nord aurora */
     --positive: #a3be8c;

@@ -545,117 +545,9 @@ function integrateInto(x0, y0, z0, h, maxSteps, minMag, bounds, originCentered, 
  *          use lengths[i] (NOT buffer.length — the flat buffer is over-long).
  */
 export function computeStreamlines(fieldData, seeds, opts = {}) {
-    const {
-        N = 32,
-        stride = 2,
-        maxSteps = 100,
-        stepSize = 0.5,
-        minMag = 1e-10,
-        bidirectional = true,
-        bounds = 0,  // if > 0, uses origin-centered sphere bounds instead of lattice [0,N)
-        maxLines = 200  // Global cap (callers can raise for large lattices)
-    } = opts;
-
-    if (seeds.length === 0) return _emptyResult;
-
-    // Select the field-sampling mode ONCE for this call (no per-step closure).
-    // Direct fieldFn (PE mode) vs grid-based nearest-sample lookup (Scale 0).
-    if (fieldData && fieldData.fieldFn) {
-        _mode = MODE_FIELDFN;
-        _userFieldFn = fieldData.fieldFn;
-        _gridIndex = null;
-    } else {
-        if (!fieldData || fieldData.count === 0) return _emptyResult;
-        _mode = MODE_GRID;
-        _userFieldFn = null;
-        _gridIndex = buildPersistentIndex(fieldData.positions, fieldData.vectors, fieldData.count, N, stride);
-    }
-
-    const effectiveBounds = bounds > 0 ? bounds : N;
-    const originCentered = bounds > 0;
-
-    // Backward integration needs (maxSteps+1) points of scratch just like
-    // forward; the combined line is at most fwdLen + bwdLen floats.
-    ensureVertScratch(maxSteps);
-
-    // Acquire this call's pooled output slot (next ring slot) and size its flat
-    // buffer to the worst case for these opts, so the append loop below never
-    // grows it (and thus never allocates) in steady state. Worst case per line
-    // is fwd + bwd at full length: 2·(maxSteps+1) points × 3 floats for the
-    // bidirectional case, (maxSteps+1)×3 for unidirectional. The line count is
-    // bounded by min(seeds, maxLines).
-    const lineCap = Math.min(seeds.length, maxLines);
-    const perLinePts = bidirectional ? 2 * (maxSteps + 1) : (maxSteps + 1);
-    const out = nextResultSlot();
-    ensureResultCapacity(out, lineCap * perLinePts * 3, lineCap);
-    const buffer = out.buffer;
-    const offsets = out.offsets;
-    const lengths = out.lengths;
-    let count = 0;   // live line count (== old lines.length)
-    let cursor = 0;  // running float offset into the flat buffer
-
-    for (let s = 0; s < seeds.length && count < maxLines; s++) {
-        const seed = seeds[s];
-        const sx = seed[0], sy = seed[1], sz = seed[2];
-
-        if (bidirectional) {
-            // FORWARD then BACKWARD, matching the old order (fwd computed first).
-            // Both integrate from the same seed over the read-only field, so the
-            // two passes are independent; the only reason order matters here is
-            // that both write the SHARED _vertScratch. So: run forward, copy its
-            // floats out into the persistent _fwdHold scratch (replacing the old
-            // per-seed `fwd` Float32Array), then run backward into _vertScratch.
-            // The final combined layout is [reversed backward, forward] — byte
-            // for byte the old layout.
-            const fwdLen = integrateInto(sx, sy, sz, stepSize, maxSteps, minMag, effectiveBounds, originCentered, DIR_FORWARD);
-            ensureFwdHold(fwdLen);
-            const fwd = _fwdHold;
-            for (let i = 0; i < fwdLen; i++) fwd[i] = _vertScratch[i];
-
-            const bwdLen = integrateInto(sx, sy, sz, stepSize, maxSteps, minMag, effectiveBounds, originCentered, DIR_BACKWARD);
-            const bwd = _vertScratch;
-
-            // Combine: reverse backward + forward (identical to the old layout).
-            // The old code built a per-line `combined = new Float32Array(...)`;
-            // here the SAME [reversed-backward, forward] float run is written
-            // directly into the pooled flat buffer at `cursor`, recording its
-            // offset+length. buffer is Float32 and _vertScratch/_fwdHold are
-            // Float64, so each value still takes exactly ONE double→Float32
-            // rounding — bit-identical to the old per-line array.
-            if (bwdLen > MIN_VERTS_FLOATS || fwdLen > MIN_VERTS_FLOATS) {
-                const base = cursor;
-                const bwdPts = bwdLen / 3;
-                for (let i = 0; i < bwdPts; i++) {
-                    const ri = bwdPts - 1 - i;
-                    buffer[base + i * 3]     = bwd[ri * 3];
-                    buffer[base + i * 3 + 1] = bwd[ri * 3 + 1];
-                    buffer[base + i * 3 + 2] = bwd[ri * 3 + 2];
-                }
-                for (let i = 0; i < fwdLen; i++) buffer[base + bwdLen + i] = fwd[i];
-                offsets[count] = base;
-                lengths[count] = bwdLen + fwdLen;
-                count++;
-                cursor = base + bwdLen + fwdLen;
-            }
-        } else {
-            const fwdLen = integrateInto(sx, sy, sz, stepSize, maxSteps, minMag, effectiveBounds, originCentered, DIR_FORWARD);
-            if (fwdLen > MIN_VERTS_FLOATS) {
-                const base = cursor;
-                for (let i = 0; i < fwdLen; i++) buffer[base + i] = _vertScratch[i];
-                offsets[count] = base;
-                lengths[count] = fwdLen;
-                count++;
-                cursor = base + fwdLen;
-            }
-        }
-    }
-
-    // Release fieldFn ref so a per-call closure can't be retained between calls.
-    _userFieldFn = null;
-    _gridIndex = null;
-
-    out.count = count;
-    return out;
+    beginStreamlineTask(_syncStreamlineTask, fieldData, seeds, opts);
+    while (!advanceStreamlineTask(_syncStreamlineTask)) { /* synchronous compatibility path */ }
+    return _syncStreamlineTask.result;
 }
 
 // Secondary persistent scratch holding the forward-pass floats while the
@@ -744,6 +636,187 @@ function ensureResultCapacity(slot, totalFloats, maxLines) {
     }
 }
 
+/** Reusable state for a streamline integration split across animation frames. */
+export function createStreamlineTaskState() {
+    return {
+        done: true,
+        result: _emptyResult,
+        seeds: null,
+        seedCursor: 0,
+        lineCount: 0,
+        floatCursor: 0,
+        mode: MODE_GRID,
+        fieldFn: null,
+        gridIndex: null,
+        maxSteps: 0,
+        stepSize: 0.5,
+        minMag: 1e-10,
+        bidirectional: true,
+        effectiveBounds: 0,
+        originCentered: false,
+        maxLines: 0,
+    };
+}
+
+/**
+ * Initialize a reusable task without integrating any seeds. Grid task state is
+ * intentionally exclusive: buildPersistentIndex owns one module-wide pooled
+ * CSR index, matching computeStreamlines' existing single-call contract.
+ */
+export function beginStreamlineTask(task, fieldData, seeds, opts = {}) {
+    const {
+        N = 32,
+        stride = 2,
+        maxSteps = 100,
+        stepSize = 0.5,
+        minMag = 1e-10,
+        bidirectional = true,
+        bounds = 0,
+        maxLines = 200,
+    } = opts;
+
+    task.done = true;
+    task.result = _emptyResult;
+    task.seeds = null;
+    task.fieldFn = null;
+    task.gridIndex = null;
+    if (!seeds?.length) return task;
+
+    if (fieldData?.fieldFn) {
+        task.mode = MODE_FIELDFN;
+        task.fieldFn = fieldData.fieldFn;
+    } else {
+        if (!fieldData || fieldData.count === 0) return task;
+        task.mode = MODE_GRID;
+        task.gridIndex = buildPersistentIndex(
+            fieldData.positions, fieldData.vectors, fieldData.count, N, stride,
+        );
+    }
+
+    ensureVertScratch(maxSteps);
+    const lineCap = Math.min(seeds.length, maxLines);
+    const perLinePts = bidirectional ? 2 * (maxSteps + 1) : (maxSteps + 1);
+    const out = nextResultSlot();
+    ensureResultCapacity(out, lineCap * perLinePts * 3, lineCap);
+    out.count = 0;
+
+    task.done = false;
+    task.result = out;
+    task.seeds = seeds;
+    task.seedCursor = 0;
+    task.lineCount = 0;
+    task.floatCursor = 0;
+    task.maxSteps = maxSteps;
+    task.stepSize = stepSize;
+    task.minMag = minMag;
+    task.bidirectional = bidirectional;
+    task.effectiveBounds = bounds > 0 ? bounds : N;
+    task.originCentered = bounds > 0;
+    task.maxLines = maxLines;
+    return task;
+}
+
+function finishStreamlineTask(task) {
+    task.done = true;
+    task.result.count = task.lineCount;
+    task.seeds = null;
+    task.fieldFn = null;
+    task.gridIndex = null;
+    _userFieldFn = null;
+    _gridIndex = null;
+}
+
+/** Release a preempted task's retained sample/seed references. */
+export function cancelStreamlineTask(task) {
+    if (!task) return;
+    task.done = true;
+    task.seeds = null;
+    task.fieldFn = null;
+    task.gridIndex = null;
+}
+
+/**
+ * Integrate at most `maxSeeds` and approximately `maxMilliseconds` of work.
+ * The time gate is checked between complete lines, so geometry is always
+ * published atomically and a partial RK4 trajectory is never observable.
+ * Returns true only when the complete result is ready.
+ */
+export function advanceStreamlineTask(task, {
+    maxSeeds = Infinity,
+    maxMilliseconds = Infinity,
+} = {}) {
+    if (task.done) return true;
+
+    _mode = task.mode;
+    _userFieldFn = task.fieldFn;
+    _gridIndex = task.gridIndex;
+    const out = task.result;
+    const buffer = out.buffer;
+    const offsets = out.offsets;
+    const lengths = out.lengths;
+    const started = Number.isFinite(maxMilliseconds) ? performance.now() : 0;
+    let processed = 0;
+
+    while (task.seedCursor < task.seeds.length && task.lineCount < task.maxLines) {
+        const seed = task.seeds[task.seedCursor++];
+        const sx = seed[0], sy = seed[1], sz = seed[2];
+
+        if (task.bidirectional) {
+            const fwdLen = integrateInto(
+                sx, sy, sz, task.stepSize, task.maxSteps, task.minMag,
+                task.effectiveBounds, task.originCentered, DIR_FORWARD,
+            );
+            ensureFwdHold(fwdLen);
+            for (let i = 0; i < fwdLen; i++) _fwdHold[i] = _vertScratch[i];
+            const bwdLen = integrateInto(
+                sx, sy, sz, task.stepSize, task.maxSteps, task.minMag,
+                task.effectiveBounds, task.originCentered, DIR_BACKWARD,
+            );
+
+            if (bwdLen > MIN_VERTS_FLOATS || fwdLen > MIN_VERTS_FLOATS) {
+                const base = task.floatCursor;
+                const bwdPts = bwdLen / 3;
+                for (let i = 0; i < bwdPts; i++) {
+                    const ri = bwdPts - 1 - i;
+                    buffer[base + i * 3] = _vertScratch[ri * 3];
+                    buffer[base + i * 3 + 1] = _vertScratch[ri * 3 + 1];
+                    buffer[base + i * 3 + 2] = _vertScratch[ri * 3 + 2];
+                }
+                for (let i = 0; i < fwdLen; i++) buffer[base + bwdLen + i] = _fwdHold[i];
+                offsets[task.lineCount] = base;
+                lengths[task.lineCount] = bwdLen + fwdLen;
+                task.lineCount++;
+                task.floatCursor = base + bwdLen + fwdLen;
+            }
+        } else {
+            const fwdLen = integrateInto(
+                sx, sy, sz, task.stepSize, task.maxSteps, task.minMag,
+                task.effectiveBounds, task.originCentered, DIR_FORWARD,
+            );
+            if (fwdLen > MIN_VERTS_FLOATS) {
+                const base = task.floatCursor;
+                for (let i = 0; i < fwdLen; i++) buffer[base + i] = _vertScratch[i];
+                offsets[task.lineCount] = base;
+                lengths[task.lineCount] = fwdLen;
+                task.lineCount++;
+                task.floatCursor = base + fwdLen;
+            }
+        }
+
+        processed++;
+        out.count = task.lineCount;
+        if (processed >= maxSeeds) break;
+        if (Number.isFinite(maxMilliseconds) && performance.now() - started >= maxMilliseconds) break;
+    }
+
+    if (task.seedCursor >= task.seeds.length || task.lineCount >= task.maxLines) {
+        finishStreamlineTask(task);
+    }
+    return task.done;
+}
+
+const _syncStreamlineTask = createStreamlineTaskState();
+
 /**
  * Generate seed points for E-field streamlines around particles.
  * 6 seeds per particle (±x, ±y, ±z offset).
@@ -824,9 +897,13 @@ export function generateBFieldSeeds(particles, radius = 4, maxSeeds = 200) {
  */
 export function generateGridSeeds(N, spacing = 8, maxSeeds = 200) {
     const seeds = [];
-    for (let z = spacing / 2; z < N && seeds.length < maxSeeds; z += spacing) {
-        for (let y = spacing / 2; y < N && seeds.length < maxSeeds; y += spacing) {
-            for (let x = spacing / 2; x < N && seeds.length < maxSeeds; x += spacing) {
+    // Seeds are shifted to voxel centres below. Stop half a voxel before N so
+    // the shift cannot place the final seed on/outside the upper boundary
+    // (L=17 with spacing=3 previously emitted coordinates equal to 17).
+    const limit = N - 0.5;
+    for (let z = spacing / 2; z < limit && seeds.length < maxSeeds; z += spacing) {
+        for (let y = spacing / 2; y < limit && seeds.length < maxSeeds; y += spacing) {
+            for (let x = spacing / 2; x < limit && seeds.length < maxSeeds; x += spacing) {
                 seeds.push([x + 0.5, y + 0.5, z + 0.5]);
             }
         }

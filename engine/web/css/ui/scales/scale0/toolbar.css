@@ -28,8 +28,8 @@
     padding: 10px 12px;
     border: 1px solid var(--border);
     border-radius: 12px;
-    background: rgba(8, 12, 20, 0.94);
-    backdrop-filter: blur(16px);
+    background: var(--bg-elevated);
+    backdrop-filter: var(--glass-filter-mid);
     box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
 }
 
@@ -43,7 +43,7 @@
     padding: 12px;
     border-radius: var(--radius-lg);
     font-size: var(--fs-sm);
-    backdrop-filter: blur(8px);
+    backdrop-filter: var(--glass-filter-low);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     pointer-events: auto;
     /* Constrain the floating panel to the viewport so it never overflows on
@@ -53,7 +53,7 @@
     overflow-y: auto;
 }
 .sym-panel-title {
-    color: var(--positive);
+    color: var(--positive-text);
     font-weight: bold;
     margin-bottom: 8px;
     border-bottom: 1px solid var(--border);
@@ -79,8 +79,8 @@
     padding: 6px 12px;
     border-radius: var(--radius-md);
     border: 1px solid var(--border);
-    background: rgba(8, 12, 20, 0.85);
-    backdrop-filter: blur(8px);
+    background: var(--bg-raised);
+    backdrop-filter: var(--glass-filter-low);
     color: var(--text-secondary);
     font-size: var(--fs-sm);
     letter-spacing: 0.04em;
@@ -93,7 +93,7 @@
     border-color: var(--positive);
 }
 .flux-slice-chip.active {
-    color: var(--positive);
+    color: var(--positive-text);
     border-color: var(--positive);
     box-shadow: 0 0 0 1px rgba(80, 220, 160, 0.25) inset;
 }
@@ -109,8 +109,8 @@
     padding: 10px 12px;
     border-radius: var(--radius-lg);
     border: 1px solid var(--border);
-    background: rgba(8, 12, 20, 0.92);
-    backdrop-filter: blur(12px) saturate(1.1);
+    background: var(--bg-elevated);
+    backdrop-filter: var(--glass-filter-mid);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
     color: var(--text-secondary);
     font-size: var(--fs-sm);
@@ -132,7 +132,7 @@
     padding-bottom: 4px;
 }
 .flux-slice-title {
-    color: var(--positive);
+    color: var(--positive-text);
     font-weight: 600;
     letter-spacing: 0.04em;
 }
@@ -170,7 +170,7 @@
     border-color: var(--text-secondary);
 }
 .flux-slice-axis-btn.active {
-    color: var(--positive);
+    color: var(--positive-text);
     border-color: var(--positive);
     background: rgba(80, 220, 160, 0.10);
 }
@@ -433,8 +433,8 @@
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.55);
-    z-index: 199;
-    backdrop-filter: blur(2px);
+    z-index: var(--z-scale0-backdrop);
+    backdrop-filter: var(--glass-filter-low);
 }
 
 .s0-expand-modal {
@@ -445,9 +445,9 @@
     max-width: 1600px;
     max-height: 1100px;
     margin: auto;
-    z-index: 200;
+    z-index: var(--z-scale0-popover);
     overflow: auto;
-    background: rgba(8, 12, 20, 0.96);
+    background: var(--bg-elevated);
     border: 1px solid rgba(120, 200, 255, 0.35);
     border-radius: 8px;
     padding: 10px 12px;
@@ -467,7 +467,7 @@
     color: var(--text-secondary, #aaa);
     font-size: 24px;
     cursor: pointer;
-    z-index: 210;
+    z-index: var(--z-scale0-tooltip);
 }
 
 /* ── Scale 0 Field Overlay Swatches ────────────────────── */

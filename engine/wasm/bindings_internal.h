@@ -66,6 +66,7 @@ emscripten::val get_curlj_sampled(ftd::RenderBridge& rb, int stride);
 emscripten::val get_coherence_sampled(ftd::RenderBridge& rb, int stride);
 emscripten::val get_fisher_sampled(ftd::RenderBridge& rb, int stride);
 emscripten::val get_latency_sampled(ftd::RenderBridge& rb, int stride);
+emscripten::val get_poisson_latency_sampled(ftd::RenderBridge& rb, int stride);
 emscripten::val get_kretschmann_sampled(ftd::RenderBridge& rb, int stride);
 emscripten::val get_state_field_sampled(ftd::RenderBridge& rb, int stride);
 emscripten::val get_gauss_residual_sampled(ftd::RenderBridge& rb, int stride);

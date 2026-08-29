@@ -1,7 +1,10 @@
 /* ─────────────────────────────────────────────────────────────────────────
  * Panel Mount — left/right sidebar overlays
  *
- * Controlled by html[data-panel-mount]. Bottom mount lives in panel-dock.css
+ * Controlled by localized .panel-mount-* shell classes. The canonical state
+ * remains html[data-panel-mount], but CSS deliberately avoids root selectors
+ * so a mount change does not invalidate every dashboard descendant.
+ * Bottom mount lives in panel-dock.css
  * and is the default. Left/right are glass overlays anchored to the viewport
  * edge; the viewport itself is never resized.
  *
@@ -15,6 +18,15 @@
     --panel-mount-gap: 12px;
     --panel-width-left: clamp(380px, 25vw, 520px);
     --panel-width-right: clamp(380px, 25vw, 520px);
+    --panel-rail-width: 44px;
+}
+
+#panel-rail-resizer,
+#panel-side-resizer {
+    display: none;
+}
+
+#viewport {
     --viewport-safe-left: 0px;
     --viewport-safe-right: 0px;
 }
@@ -31,16 +43,16 @@
 
     /* ── Left mount ───────────────────────────────────────────────────────── */
     /* Icon rail sits at the far-left edge; panel opens to the right of the rail. */
-    html[data-panel-mount="left"] #panel-area {
+    #panel-area.panel-mount-left {
         position: absolute;
         grid-area: viewport;
         top: var(--panel-mount-top-offset);
         bottom: var(--panel-mount-bottom-offset);
-        left: calc(var(--panel-mount-gap) + 44px + 6px);  /* 44px rail + 6px gap */
+        left: calc(var(--panel-mount-gap) + var(--panel-rail-width) + 6px);
         right: auto;
         transform: none;
         width: var(--panel-width-left);
-        max-width: 50vw;
+        max-width: calc(100vw - var(--panel-rail-width) - 48px);
         min-width: min(320px, calc(100vw - 100px));
         max-height: none;
         overflow-y: auto;
@@ -50,16 +62,16 @@
 
     /* ── Right mount ──────────────────────────────────────────────────────── */
     /* Icon rail sits at the far-right edge; panel opens to the left of the rail. */
-    html[data-panel-mount="right"] #panel-area {
+    #panel-area.panel-mount-right {
         position: absolute;
         grid-area: viewport;
         top: var(--panel-mount-top-offset);
         bottom: var(--panel-mount-bottom-offset);
-        right: calc(var(--panel-mount-gap) + 44px + 6px);  /* 44px rail + 6px gap */
+        right: calc(var(--panel-mount-gap) + var(--panel-rail-width) + 6px);
         left: auto;
         transform: none;
         width: var(--panel-width-right);
-        max-width: 50vw;
+        max-width: calc(100vw - var(--panel-rail-width) - 48px);
         min-width: min(320px, calc(100vw - 100px));
         max-height: none;
         overflow-y: auto;
@@ -68,29 +80,83 @@
     }
 
     /* Collapsed in side mount: hide the panel, keep the icon rail visible */
-    html[data-panel-mount="left"]  #app.panels-collapsed #panel-area,
-    html[data-panel-mount="right"] #app.panels-collapsed #panel-area {
+    #app.panels-collapsed #panel-area.panel-mount-left,
+    #app.panels-collapsed #panel-area.panel-mount-right {
         display: none;
         transform: none;
     }
 
-    /* ── Hide the vertical (height) resizer in side mounts ───────────────── */
-    html[data-panel-mount="left"]  #panel-resizer,
-    html[data-panel-mount="right"] #panel-resizer {
+    /* ── The top-edge height resizer is bottom-mount only ────────────────── */
+    #panel-resizer.panel-mount-left,
+    #panel-resizer.panel-mount-right {
         display: none;
     }
 
+    /* Two separate vertical separators keep the gestures unambiguous:
+       rail edge changes label width; panel edge changes content width. */
+    #panel-rail-resizer.panel-mount-left,
+    #panel-rail-resizer.panel-mount-right,
+    #panel-side-resizer.panel-mount-left,
+    #panel-side-resizer.panel-mount-right {
+        position: absolute;
+        grid-area: viewport;
+        top: var(--panel-mount-top-offset);
+        bottom: var(--panel-mount-bottom-offset);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 12px;
+        cursor: ew-resize;
+        touch-action: none;
+        z-index: calc(var(--z-panel-toggle) + 1);
+        outline: none;
+    }
+
+    #panel-rail-resizer.panel-mount-left {
+        left: calc(var(--panel-mount-gap) + var(--panel-rail-width) - 6px);
+    }
+    #panel-rail-resizer.panel-mount-right {
+        right: calc(var(--panel-mount-gap) + var(--panel-rail-width) - 6px);
+    }
+    #panel-side-resizer.panel-mount-left {
+        left: calc(var(--panel-mount-gap) + var(--panel-rail-width) + 6px + var(--panel-width-left) - 6px);
+    }
+    #panel-side-resizer.panel-mount-right {
+        right: calc(var(--panel-mount-gap) + var(--panel-rail-width) + 6px + var(--panel-width-right) - 6px);
+    }
+
+    #panel-rail-resizer span,
+    #panel-side-resizer span {
+        width: 3px;
+        height: 48px;
+        border-radius: 999px;
+        background: color-mix(in oklch, var(--text-muted) 56%, transparent);
+        box-shadow: 0 0 0 1px color-mix(in oklch, var(--border) 76%, transparent);
+        transition: height var(--dur-fast) var(--ease-out),
+                    background-color var(--dur-fast) var(--ease-out),
+                    box-shadow var(--dur-fast) var(--ease-out);
+    }
+
+    #panel-rail-resizer:hover span,
+    #panel-side-resizer:hover span,
+    #panel-rail-resizer:focus-visible span,
+    #panel-side-resizer:focus-visible span {
+        height: 72px;
+        background: var(--accent);
+        box-shadow: 0 0 10px var(--accent-glow);
+    }
+
     /* ── Inner panel grids collapse to 1 column when the sidebar is narrow ── */
-    html[data-panel-mount="left"]  .panel-grid-3,
-    html[data-panel-mount="right"] .panel-grid-3,
-    html[data-panel-mount="left"]  .panel-grid-2,
-    html[data-panel-mount="right"] .panel-grid-2 {
+    .panel.panel-mount-left .panel-grid-3,
+    .panel.panel-mount-right .panel-grid-3,
+    .panel.panel-mount-left .panel-grid-2,
+    .panel.panel-mount-right .panel-grid-2 {
         grid-template-columns: 1fr;
     }
 
     /* ── Tab bar reorients as a vertical icon rail on the inner edge ─────── */
-    html[data-panel-mount="left"] #tab-bar,
-    html[data-panel-mount="right"] #tab-bar {
+    #tab-bar.panel-mount-left,
+    #tab-bar.panel-mount-right {
         position: absolute;
         grid-area: viewport;
         top: var(--panel-mount-top-offset);
@@ -104,52 +170,57 @@
         gap: 0;
         padding: 4px;
         background: var(--bg-surface);
-        backdrop-filter: blur(16px);
+        backdrop-filter: var(--glass-filter-mid);
         border: 1px solid var(--border);
         border-radius: var(--radius-xl);
         box-shadow: var(--tabs-shadow);
-        width: 44px;
+        width: var(--panel-rail-width);
         overflow-y: auto;
         overflow-x: hidden;
         scrollbar-width: none;
+        overscroll-behavior: contain;
+        touch-action: pan-y;
+        transition: width var(--dur-fast) var(--ease-out),
+                    border-color var(--dur-fast) var(--ease-out);
     }
 
-    html[data-panel-mount="left"] #tab-bar::-webkit-scrollbar,
-    html[data-panel-mount="right"] #tab-bar::-webkit-scrollbar {
+    #tab-bar.panel-mount-left::-webkit-scrollbar,
+    #tab-bar.panel-mount-right::-webkit-scrollbar {
         display: none;
     }
 
     /* Rail anchors to the outer viewport edge and stays visible even when collapsed */
-    html[data-panel-mount="left"] #tab-bar {
+    #tab-bar.panel-mount-left {
         left: var(--panel-mount-gap);
     }
 
-    html[data-panel-mount="right"] #tab-bar {
+    #tab-bar.panel-mount-right {
         right: var(--panel-mount-gap);
     }
 
     /* Make the inner strip vertical too */
-    html[data-panel-mount="left"]  #tab-bar .workspace-tabs-strip,
-    html[data-panel-mount="right"] #tab-bar .workspace-tabs-strip {
+    #tab-bar.panel-mount-left .workspace-tabs-strip,
+    #tab-bar.panel-mount-right .workspace-tabs-strip {
         flex-direction: column;
         align-items: stretch;
         gap: 2px;
         overflow: visible;
         flex: 1 1 auto;
+        min-height: min-content;
     }
 
     /* Hide the mobile dropdown in side-mount */
-    html[data-panel-mount="left"]  #tab-bar .workspace-tabs-mobile,
-    html[data-panel-mount="right"] #tab-bar .workspace-tabs-mobile {
+    #tab-bar.panel-mount-left .workspace-tabs-mobile,
+    #tab-bar.panel-mount-right .workspace-tabs-mobile {
         display: none !important;
     }
 
 } /* End desktop side mounts */
 
 @media (min-width: 768px) {
-    html[data-panel-mount="left"] #tab-bar .tab,
-    html[data-panel-mount="right"] #tab-bar .tab {
-        width: 36px;
+    #tab-bar.panel-mount-left .tab,
+    #tab-bar.panel-mount-right .tab {
+        width: calc(var(--panel-rail-width) - 8px);
         height: 36px;
         padding: 0;
         display: flex;
@@ -162,29 +233,48 @@
         transition: background var(--dur-fast) var(--ease-out),
                     color var(--dur-fast) var(--ease-out);
         flex-shrink: 0;
+        min-width: 36px;
+        gap: 8px;
+        overflow: hidden;
     }
 
-    html[data-panel-mount="left"] #tab-bar .tab .tab-label,
-    html[data-panel-mount="right"] #tab-bar .tab .tab-label {
+    #tab-bar.panel-mount-left .tab .tab-label,
+    #tab-bar.panel-mount-right .tab .tab-label {
         display: none;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
-    html[data-panel-mount="left"] #tab-bar .tab .tab-icon,
-    html[data-panel-mount="right"] #tab-bar .tab .tab-icon {
+    #tab-bar.panel-mount-left .tab .tab-icon,
+    #tab-bar.panel-mount-right .tab .tab-icon {
         font-size: 18px;
         line-height: 1;
+        flex: 0 0 20px;
+        text-align: center;
     }
 
-    html[data-panel-mount="left"] #tab-bar .tab.active,
-    html[data-panel-mount="right"] #tab-bar .tab.active {
+    #tab-bar.panel-mount-left[data-rail-expanded="true"] .tab,
+    #tab-bar.panel-mount-right[data-rail-expanded="true"] .tab {
+        justify-content: flex-start;
+        padding: 0 8px;
+    }
+
+    #tab-bar.panel-mount-left[data-rail-expanded="true"] .tab .tab-label,
+    #tab-bar.panel-mount-right[data-rail-expanded="true"] .tab .tab-label {
+        display: block;
+    }
+
+    #tab-bar.panel-mount-left .tab.active,
+    #tab-bar.panel-mount-right .tab.active {
         background: var(--state-hover-bg);
         color: var(--text-primary);
         border-color: var(--accent);
     }
 
     /* Collapse toggle pinned to the top of the rail */
-    html[data-panel-mount="left"] #tab-bar #btn-panel-toggle,
-    html[data-panel-mount="right"] #tab-bar #btn-panel-toggle {
+    #tab-bar.panel-mount-left #btn-panel-toggle,
+    #tab-bar.panel-mount-right #btn-panel-toggle {
         order: -1;             /* flex first regardless of DOM order */
         margin-top: 0;
         margin-bottom: 0;
@@ -192,7 +282,7 @@
         border-left: none;
         border-bottom: 1px solid var(--border);   /* separator below collapse btn */
         border-top: none;
-        width: 36px;
+        width: calc(var(--panel-rail-width) - 8px);
         height: 36px;
         padding: 0;
         display: flex;
@@ -200,6 +290,41 @@
         justify-content: center;
         flex-shrink: 0;
         border-radius: var(--radius-md);
+        gap: 8px;
+        overflow: hidden;
+    }
+
+    #tab-bar.panel-mount-left #btn-panel-toggle .panel-toggle-label,
+    #tab-bar.panel-mount-right #btn-panel-toggle .panel-toggle-label {
+        display: none;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    #tab-bar.panel-mount-left[data-rail-expanded="true"] #btn-panel-toggle,
+    #tab-bar.panel-mount-right[data-rail-expanded="true"] #btn-panel-toggle {
+        justify-content: flex-start;
+        padding: 0 8px;
+    }
+
+    #tab-bar.panel-mount-left[data-rail-expanded="true"] #btn-panel-toggle .panel-toggle-label,
+    #tab-bar.panel-mount-right[data-rail-expanded="true"] #btn-panel-toggle .panel-toggle-label {
+        display: block;
+    }
+
+    #tab-bar.is-rail-scrolling {
+        cursor: grabbing;
+        user-select: none;
+    }
+
+    #app.is-panel-resizing #tab-bar.panel-mount-left,
+    #app.is-panel-resizing #tab-bar.panel-mount-right {
+        transition: none;
+    }
+
+    #app.panels-collapsed #panel-side-resizer {
+        display: none;
     }
 }
 
@@ -209,21 +334,30 @@
    to tap-min + its 4px padding on each side so the larger tabs are not
    clipped, and the left-mount panel shifts over to clear the wider rail. */
 @media (max-width: 479px) {
-    html[data-panel-mount="left"] #tab-bar,
-    html[data-panel-mount="right"] #tab-bar {
+    #tab-bar.panel-mount-left,
+    #tab-bar.panel-mount-right {
         width: calc(var(--tap-min) + 8px);
     }
-    html[data-panel-mount="left"] #tab-bar .tab,
-    html[data-panel-mount="right"] #tab-bar .tab,
-    html[data-panel-mount="left"] #tab-bar #btn-panel-toggle,
-    html[data-panel-mount="right"] #tab-bar #btn-panel-toggle {
+    #tab-bar.panel-mount-left .tab,
+    #tab-bar.panel-mount-right .tab,
+    #tab-bar.panel-mount-left #btn-panel-toggle,
+    #tab-bar.panel-mount-right #btn-panel-toggle {
         width: var(--tap-min);
         height: var(--tap-min);
     }
-    html[data-panel-mount="left"] #panel-area {
-        left: calc(var(--panel-mount-gap) + var(--tap-min) + 8px + 6px);
+    #panel-area.panel-mount-left {
+        left: calc(var(--panel-mount-gap) + var(--panel-rail-width) + 6px);
     }
-    html[data-panel-mount="right"] #panel-area {
-        right: calc(var(--panel-mount-gap) + var(--tap-min) + 8px + 6px);
+    #panel-area.panel-mount-right {
+        right: calc(var(--panel-mount-gap) + var(--panel-rail-width) + 6px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #tab-bar.panel-mount-left,
+    #tab-bar.panel-mount-right,
+    #panel-rail-resizer span,
+    #panel-side-resizer span {
+        transition: none;
     }
 }

@@ -284,7 +284,46 @@ void RenderBridge::copy_visual_field_sample(VisualFieldKind kind, int stride,
                         break;
                     }
                     case VisualFieldKind::GravityForce: {
-                        const Vec3 value = force[static_cast<std::size_t>(idx)].f_gravity;
+                        // Full visualization field of the exact selected
+                        // phase_forces operator.  Reading force_diag here was
+                        // sparse to manifested sites and stale whenever forces
+                        // were off, while WASM recomputed a different r=1
+                        // gradient.  Evaluate the radius-2 operator directly so
+                        // CPU, CUDA, WASM, and the tick agree site-for-site.
+                        const int xp = lattice_.index(x + 2, y, z);
+                        const int xm = lattice_.index(x - 2, y, z);
+                        const int yp = lattice_.index(x, y + 2, z);
+                        const int ym = lattice_.index(x, y - 2, z);
+                        const int zp = lattice_.index(x, y, z + 2);
+                        const int zm = lattice_.index(x, y, z - 2);
+                        Vec3 value;
+                        if (toggles.geometric_gravity) {
+                            const double pre = M_INERTIAL * C_SPEED * C_SPEED
+                                             * voxels_[static_cast<std::size_t>(idx)].latency;
+                            value = {
+                                pre * GRAD_TIER2_SCALE
+                                    * (voxels_[static_cast<std::size_t>(xp)].latency
+                                     - voxels_[static_cast<std::size_t>(xm)].latency),
+                                pre * GRAD_TIER2_SCALE
+                                    * (voxels_[static_cast<std::size_t>(yp)].latency
+                                     - voxels_[static_cast<std::size_t>(ym)].latency),
+                                pre * GRAD_TIER2_SCALE
+                                    * (voxels_[static_cast<std::size_t>(zp)].latency
+                                     - voxels_[static_cast<std::size_t>(zm)].latency),
+                            };
+                        } else {
+                            value = {
+                                G_N * GRAD_TIER2_SCALE
+                                    * (fields_ref.density_at(static_cast<std::size_t>(xp))
+                                     - fields_ref.density_at(static_cast<std::size_t>(xm))),
+                                G_N * GRAD_TIER2_SCALE
+                                    * (fields_ref.density_at(static_cast<std::size_t>(yp))
+                                     - fields_ref.density_at(static_cast<std::size_t>(ym))),
+                                G_N * GRAD_TIER2_SCALE
+                                    * (fields_ref.density_at(static_cast<std::size_t>(zp))
+                                     - fields_ref.density_at(static_cast<std::size_t>(zm))),
+                            };
+                        }
                         if (value.mag() >= 1e-15) append_vector(out, value, x, y, z);
                         break;
                     }

@@ -21,14 +21,13 @@ interface or adding a new cross-module pattern.
 
 ## 1. Bridge State Contract
 
-Mock bridge subsystems use the live-reference factory pattern. A provider
-factory receives the bridge instance and must keep that live reference, not a
-destructured snapshot.
+Stateful JS helper factories use the live-reference pattern. A provider
+factory receives its owner object and must keep that live reference, not a
+destructured snapshot. Scale 0 itself is WASM-only; this pattern remains
+load-bearing for the Scale-2 atom helper hosted by `WasmBridge`.
 
-Reference examples (the Scale-1/2 engine helpers; Scale-0 is WASM-only and no
-longer has JS live-ref factories):
+Current reference example:
 
-- `engine/web/js/bridge/mock-particle-engine.js`
 - `engine/web/js/bridge/mock-atom-engine.js`
 
 Rules:
@@ -37,8 +36,8 @@ Rules:
 2. Returned methods re-read state on every call.
 3. Cache fields are owned and documented by the provider that writes them.
 4. Providers must honor bridge-side cache invalidation sentinels.
-5. Consumers must not poke private bridge fields such as `_fluxJ`, `_toggles`,
-   or `_particles` directly.
+5. Scale-0 consumers use the public surface in
+   `engine/web/js/bridge/bridge-contract.js`; no JS physics shadow is allowed.
 
 ---
 

@@ -23,9 +23,9 @@ export function getScale0LatticeSizeToolbarTemplate() {
                 <option value="49">49</option>
                 <option value="65">65</option>
                 <option value="97">97</option>
-                <option value="113">113</option>
-                <option value="145">145</option>
-                <option value="181">181</option>
+                <option value="113" data-native-only disabled>113 · Native GPU</option>
+                <option value="145" data-native-only disabled>145 · Native GPU</option>
+                <option value="181" data-native-only disabled>181 · Native GPU</option>
             </select>
             <label class="tb-label" for="flux-boundary-mode" style="margin-left:6px">Boundary</label>
             <select class="tb-select" id="flux-boundary-mode" title="Flux field boundary: Dispersal = energy exits the box and is removed; Reflective = perfect cavity mirror (∂J/∂n=0); Periodic = toroidal wrap (default physics)">

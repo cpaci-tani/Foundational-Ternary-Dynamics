@@ -1,21 +1,18 @@
 /**
  * Scale 0 Viewport Overlay — Field visualization controls
  *
- * A dense 2-up chip grid: a filter box + an active-overlays strip on top, then the
- * toggles grouped into semantic categories (collapsible per-category, expanded by
- * default so every applicable overlay is visible without clicking through headers —
- * the collapse / filter / active-strip behaviour lives in overlays/panel-shell.js;
- * the toggles themselves are wired in scale0/ui/bindings.js). Each category renders
- * its buttons in a 2-column grid (labels wrap instead of truncating, so nothing is
- * ever cut off); a button that owns its own full-width sub-row (e.g. Flux Volume's
- * Organic/Glow style row, Flux Slice's xy/xz/yz plane row) is wrapped together with
- * that sub-row in a `.s0-overlay-group` so the pair occupies one grid cell instead of
- * leaving an empty half-row next to its own trigger. The categories:
+ * A compact layer inspector: command header, filter, active-layer rail, shared
+ * presentation controls, then semantic accordion cards. The collapse / filter /
+ * active-rail behavior lives in overlays/panel-shell.js; the physics toggles remain
+ * wired in scale0/ui/bindings.js. Context controls (volume treatment, slice planes,
+ * sheet height) stay adjacent to their owning layer and are revealed only while that
+ * layer is active. The categories:
  *
+ *   STANDARD MODEL — contextual catalog reference, only on elementary-particle scenarios
  *   VOLUME    — how the raw flux field is rendered (volume, slice, lines, ∇·J)
  *   FIELDS    — EM-derived vector fields (E, B, Poynting arrows, Poynting glow)
- *   FORCES    — per-particle force vectors, with a render-style selector
- *               (Arrows / Heatmap / Flow / Glyphs) at the top of the column
+ *   FORCES    — per-particle force vectors; its presentation selector is shared
+ *               with the scalar selector in the panel-level Render card
  *   PHENOMENA — emergent / composite overlays (chirality, DM halo, confinement, …)
  *
  * The same physical quantity may appear twice if the styles are distinct
@@ -28,31 +25,91 @@ export function getScale0OverlayTemplate() {
   container.className = 'scale0-only s0-overlay-panel';
   container.innerHTML = `
     <header class="s0-overlay-header">
-      <span class="s0-overlay-title">Visualization</span>
+      <div class="s0-overlay-identity">
+        <span class="s0-overlay-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+        <span class="s0-overlay-title-group">
+          <span class="s0-overlay-title">Visualization</span>
+          <span class="s0-overlay-subtitle">Scale 0 · field layers</span>
+        </span>
+      </div>
       <div class="s0-overlay-header-tools">
+        <span class="s0-overlay-summary" id="s0-overlay-summary" aria-live="polite">0 active</span>
         <button class="s0-overlay-collapse u-no-baseline" type="button"
             aria-label="Collapse visualization overlay"
             aria-expanded="true"
             title="Collapse overlay">
-          <span class="s0-overlay-collapse-icon" aria-hidden="true">&#9652;</span>
+          <span class="s0-overlay-collapse-icon" aria-hidden="true"></span>
         </button>
       </div>
     </header>
-    <div class="s0-overlay-search">
-      <input type="search" id="s0-overlay-search" class="s0-overlay-search-input"
-          placeholder="Filter overlays…" autocomplete="off" spellcheck="false"
-          aria-label="Filter visualization overlays" />
+    <div class="s0-overlay-command">
+      <label class="s0-overlay-search" for="s0-overlay-search">
+        <span class="s0-overlay-search-icon" aria-hidden="true"></span>
+        <input type="search" id="s0-overlay-search" class="s0-overlay-search-input"
+            placeholder="Find a field layer" autocomplete="off" spellcheck="false"
+            aria-label="Filter visualization overlays" />
+        <button class="s0-overlay-search-clear u-no-baseline" id="s0-overlay-search-clear"
+            type="button" aria-label="Clear overlay filter" title="Clear filter" hidden></button>
+      </label>
     </div>
     <div class="s0-overlay-active" id="s0-overlay-active" aria-label="Active overlays" hidden></div>
-    <div class="s0-overlay-meta">
-      <span class="s0-overlay-meta-label">Scalar render</span>
-      <div class="force-style-row" id="scalar-render-row"
-          title="Render the volumetric scalar overlays (EM energy, pressures, charge, vorticity, Φ potential, |ψ|², Lagrangian, entropy, latency, Gauss residual) as thermal glow HEAT MAPS instead of their default rubber-sheet / scalar cloud. Applies to whichever of those overlays are currently active.">
-        <button class="style-btn active" data-scalar-mode="default" title="Native rubber-sheet / scalar-cloud rendering">Default</button>
-        <button class="style-btn" data-scalar-mode="heatmap" title="Volumetric thermal glow heat map">Heat&nbsp;Map</button>
+    <section class="s0-overlay-render-deck" aria-labelledby="s0-overlay-render-title">
+      <div class="s0-overlay-render-head">
+        <span id="s0-overlay-render-title">Rendering</span>
+        <span>presentation only</span>
       </div>
-    </div>
+      <div class="s0-overlay-render-row">
+        <span class="s0-overlay-render-label">Scalar</span>
+        <div class="force-style-row" id="scalar-render-row" role="group"
+            aria-label="Scalar layer rendering"
+            title="Render volumetric scalar overlays as their native surface/cloud or a thermal heat map.">
+          <button class="style-btn active" type="button" data-scalar-mode="default"
+              aria-pressed="true" title="Native rubber-sheet or scalar-cloud rendering">Surface</button>
+          <button class="style-btn" type="button" data-scalar-mode="heatmap"
+              aria-pressed="false" title="Volumetric thermal glow heat map">Heat map</button>
+        </div>
+      </div>
+      <div class="s0-overlay-render-row">
+        <span class="s0-overlay-render-label">Vector</span>
+        <div class="force-style-row" id="force-style-row" role="group"
+            aria-label="Vector force rendering" title="Render style for force-field overlays">
+          <button class="style-btn active" type="button" data-style="arrows" aria-pressed="true" title="Vector arrows">Arrows</button>
+          <button class="style-btn" type="button" data-style="heatmap" aria-pressed="false" title="Gaussian heatmap">Heat</button>
+          <button class="style-btn" type="button" data-style="flow" aria-pressed="false" title="Animated streamlines">Flow</button>
+          <button class="style-btn" type="button" data-style="glyphs" aria-pressed="false" title="Oriented glyph field">Glyphs</button>
+        </div>
+      </div>
+    </section>
     <div class="s0-overlay-body">
+    <div class="s0-overlay-col" data-col="standard-model">
+      <div class="s0-overlay-col-head">
+        <span class="s0-overlay-col-label">Standard Model</span>
+        <span class="s0-overlay-col-count" data-count-for="standard-model" aria-hidden="true">0</span>
+        <button class="s0-overlay-col-clear u-no-baseline" data-clear-col="standard-model" type="button"
+            title="Hide the Standard Model reference overlay">&#10005;</button>
+      </div>
+      <div class="s0-sm-context-card" id="s0-sm-context-card">
+        <div class="s0-sm-context-head">
+          <span><strong data-sm-field="symbol">—</strong> <span data-sm-field="name">Standard Model particle</span></span>
+          <span class="s0-sm-reference-tag">Reference</span>
+        </div>
+        <div class="s0-sm-context-values">
+          <span>spin <b data-sm-field="spin">—</b></span>
+          <span>Q <b data-sm-field="charge">—</b></span>
+          <span>chirality <b data-sm-field="chirality">—</b></span>
+          <span>gen <b data-sm-field="generation">—</b></span>
+          <span>color <b data-sm-field="color">—</b></span>
+        </div>
+        <p>Catalog quantum numbers only. They are not measured or derived by this Scale 0 template.</p>
+      </div>
+      <button class="view-toggle field-toggle" id="toggle-sm-reference"
+          title="Show a compact viewport card of Standard Model reference quantum numbers: spin, electric charge, chiral sector, generation, and color representation. This is static catalog context, not live Scale 0 data; the scenario's audited identity status is preserved.">
+        <span class="field-swatch field-swatch-sm-reference"></span>Quantum numbers
+      </button>
+    </div>
+
     <div class="s0-overlay-col" data-col="volume">
       <div class="s0-overlay-col-head">
         <span class="s0-overlay-col-label">Volume</span>
@@ -124,19 +181,12 @@ export function getScale0OverlayTemplate() {
         <button class="s0-overlay-col-clear u-no-baseline" data-clear-col="forces" type="button"
             title="Turn off every force overlay (preserves the current style selection)">&#10005;</button>
       </div>
-      <div class="force-style-row" id="force-style-row"
-          title="Render style for force-field overlays">
-        <button class="style-btn active" data-style="arrows" title="Vector arrows">Arrows</button>
-        <button class="style-btn" data-style="heatmap" title="Gaussian heatmap">Heatmap</button>
-        <button class="style-btn" data-style="flow" title="Animated streamlines">Flow</button>
-        <button class="style-btn" data-style="glyphs" title="Oriented glyph field">Glyphs</button>
-      </div>
       <button class="view-toggle field-toggle" id="toggle-force-em"
           title="[PARAMETRIC] Electrostatic force on a unit test charge: F = (α/4π)·Σ_p s_p·(r-r_p)/(|r-r_p|²+1)^1.5, summed over manifested voxels with periodic minimum-image and 1-voxel softening. Textbook continuum Coulomb law with FTD's α inserted — NOT the lattice Green's function of Phase G, and NOT the force the tick loop actually applies. No Lorentz v×B term is included, even when the lorentz_force toggle is on.">
         <span class="field-swatch field-swatch-em"></span>EM
       </button>
       <button class="view-toggle field-toggle" id="toggle-force-gravity"
-          title="[SELECTION — visualization] Density-gradient attraction G_N·∇|J|, with G_N the constant whose identification with physical G was falsified (LEDGER FTD-0131); arrows point up the flux-density gradient. This heuristic is not FTD's substrate→Newton chain of record — that chain is [DERIVED] conditional on the clock-hypothesis axiom and outputs α_G=(m_e/m_P)², not this field.">
+          title="[SELECTION — visualization] Exact finite Scale-0 gravity-law field. Default: G_N·δ₂|J| with δ₂f=[f(x+2)−f(x−2)]/4 on the periodic computational quotient. With Geometric Gravity selected: M·c²·L·δ₂L. The tick applies this field only at manifested sites; the overlay samples it throughout the lattice. G_N's identification with physical G is falsified (LEDGER FTD-0131), so this is not presented as derived Newtonian gravity.">
         <span class="field-swatch field-swatch-gravity"></span>Gravity
       </button>
       <button class="view-toggle field-toggle" id="toggle-force-strong"
@@ -183,7 +233,7 @@ export function getScale0OverlayTemplate() {
       </div>
       <div class="s0-overlay-group">
       <button class="view-toggle field-toggle" id="toggle-grav-potential"
-          title="[PROXY] Gravitational potential stand-in — inverted flux density −|J|², box-blurred at render time. No bridge solves a real Φ. A true Φ would obey ∇²Φ=4πGρ and carry a long 1/r tail; this one is purely local, so wells do not add up at a distance. The y slider slides the sheet up/down and samples Φ in a thin slab at that height (was a y-column average).">
+          title="[SELECTION — visualization] Finite gravity scalar. When the native latency-Poisson term is active, this shows its clamped well potential Φ_L=−L² from the engine's 18-point finite Poisson solve. Otherwise it shows Φ_local=−G_N|J|, whose matching radius-2 difference gives the default selected gravity field exactly. The rubber-sheet interpolation and box blur are presentation only, not primitive continuum geometry. The y slider selects a thin lattice slab.">
         <span class="field-swatch field-swatch-grav-potential"></span>&Phi; potential
       </button>
       <div class="s0-sheet-height-row" data-sheet-height="gravPotential">
@@ -285,7 +335,7 @@ export function getScale0OverlayTemplate() {
       </button>
       <button class="view-toggle field-toggle" id="toggle-chirality"
           title="[PROXY] Chiral amplitude |J|·δ, δ=DUAL_DELTA — a NON-NEGATIVE magnitude, so it cannot show which handedness dominates. The signed handedness diagnostic (per-voxel chirality density) is not sampled to JS here.">
-        <span class="field-swatch field-swatch-chirality"></span>Chirality
+        <span class="field-swatch field-swatch-chirality"></span>Chiral amplitude
       </button>
       <button class="view-toggle field-toggle" id="toggle-dark-halo"
           title="[PROXY] Sub-threshold flux envelope: voxels with 0.003 &lt; |J| &lt; K_GENESIS. Pedagogical analogue for un-manifested flux. Unrelated to the 17/27 Moore-shell figure, which is a separate [SELECTION]-tagged dark-state count, not a derivation and not a density prediction.">

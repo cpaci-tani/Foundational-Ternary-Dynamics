@@ -4,13 +4,16 @@ import {
     generateBFieldSeeds,
     generateImportanceSeeds,
     generateBImportanceSeeds,
-    buildPersistentIndex,
-    sampleFieldMagInto,
     unionStreamlineSeeds,
 } from '../../../fieldlines.js';
 import { DUAL_DELTA, K_GENESIS } from '../../../constants.js';
 import { SCALE0_MASS_GRAVITY_SCENARIOS } from '../../../config/toggles.js';
-import { getActiveScale0Capability, getActiveLatticeSize, getActiveScale0Bridge } from '../state/store.js';
+import {
+    getActiveScale0Capability,
+    getActiveLatticeSize,
+    getActiveScale0Bridge,
+    getFlowLineSettings,
+} from '../state/store.js';
 import { getFieldLineKnotTracker } from './field-line-knots.js';
 import {
     overlayWorkActive,
@@ -32,15 +35,15 @@ import {
     computeStateFieldFrame,
     computeLatencyFrame,
     computeGaussResidualFrame,
-} from './overlay-frames.js';
+} from './overlay-frames.js?v=2';
 import {
     computeStreamlineParams,
     fillFieldParticleBuf,
-} from './streamline-integrator.js';
+} from './streamline-integrator.js?v=2';
 import {
     createFieldSampleCache,
     createForceFieldCache,
-} from './field-sample-cache.js';
+} from './field-sample-cache.js?v=2';
 
 
 const POISSON_LATENCY_KIND_OVERRIDE = Object.freeze({ latency: 'poissonLatency' });
@@ -85,7 +88,7 @@ function cachedSeeds(state, type, latticeSize, generate) {
     return cache[type];
 }
 
-function buildEFieldLines(activeScale0, state, sampled, latticeSize, stride, p) {
+function eFieldLineSeeds(activeScale0, state, sampled, latticeSize, p) {
     // E-field: particle-anchored seeds (real sources) UNION importance-sampled
     // |E| peaks so vacuum-field bunches away from charges still get streamlines
     // (and therefore can be detected as knots). Bidirectional integration draws
@@ -103,13 +106,10 @@ function buildEFieldLines(activeScale0, state, sampled, latticeSize, stride, p) 
         const fieldSeeds = generateImportanceSeeds(sampled.eField, p.maxSeeds);
         return unionStreamlineSeeds(particleSeeds, fieldSeeds, p.maxSeeds);
     });
-    return computeStreamlines(sampled.eField, seeds, {
-        N: latticeSize, stride, maxSteps: p.maxSteps, stepSize: p.stepSize,
-        maxLines: p.maxLines, bidirectional: true,
-    });
+    return seeds;
 }
 
-function buildBFieldLines(activeScale0, state, sampled, latticeSize, stride, p) {
+function bFieldLineSeeds(activeScale0, state, sampled, latticeSize, p) {
     // B-field is divergence-free (∇·B=0), so lines must form closed loops.
     // Particle ring seeds UNION importance-sampled |B| peaks (perpendicular
     // offset onto the loop circumference). Bidirectional integration is
@@ -126,67 +126,14 @@ function buildBFieldLines(activeScale0, state, sampled, latticeSize, stride, p) 
         const fieldSeeds = generateBImportanceSeeds(sampled.bField, p.maxSeeds, p.bRadius);
         return unionStreamlineSeeds(particleSeeds, fieldSeeds, p.maxSeeds);
     });
-    return computeStreamlines(sampled.bField, seeds, {
-        N: latticeSize, stride,
-        // Loops need ~ 2·π·radius worth of steps to close — give B 1.5× the
-        // baseline so a typical loop completes inside the integration budget.
-        maxSteps: Math.ceil(p.maxSteps * 1.5),
-        stepSize: p.stepSize, bidirectional: true, maxLines: p.maxLines,
-    });
+    return seeds;
 }
 
-function buildFluxStreamlines(state, sampled, latticeSize, stride, p) {
+function fluxLineSeeds(state, sampled, latticeSize, p) {
     // Flux ∇·J carries divergence (sources/sinks), same topology as E.
     // Importance-sample by |J| so streamlines cluster on flux concentrations.
     const seeds = cachedSeeds(state, 'flux', latticeSize, () => generateImportanceSeeds(sampled.fluxVector, p.maxSeeds));
-    const lines = computeStreamlines(sampled.fluxVector, seeds, {
-        N: latticeSize, stride, maxSteps: p.maxSteps, stepSize: p.stepSize,
-        maxLines: p.maxLines, bidirectional: true,
-    });
-    let maxFlux = 0;
-    for (let i = 0; i < sampled.fluxVector.count; i++) {
-        const x = sampled.fluxVector.vectors[i * 3];
-        const y = sampled.fluxVector.vectors[i * 3 + 1];
-        const z = sampled.fluxVector.vectors[i * 3 + 2];
-        const mag = Math.sqrt(x * x + y * y + z * z);
-        if (mag > maxFlux) maxFlux = mag;
-    }
-
-    // Per-vertex LOCAL |J| magnitude, sampled from the same field buffer used
-    // to integrate the lines above (nearest-sample lookup, same mechanism
-    // computeStreamlines uses internally). This lets the renderer color each
-    // point along a streamline by the field strength actually AT that point,
-    // instead of by the point's arc-length position along the line (audit fix:
-    // the old coloring made the Flux Lines ramp mean something different from
-    // the identical-looking ramp on Flux Volume). One scratch buffer reused
-    // across frames, sized to the pooled streamline buffer's vertex count.
-    const vertCount = lines.buffer.length / 3;
-    let mags = state.fluxLineMagScratch;
-    if (!mags || mags.length < vertCount) {
-        mags = state.fluxLineMagScratch = new Float32Array(vertCount);
-    }
-    if (lines.count > 0) {
-        // Allocation-free CSR index + magnitude lookup (was buildFieldIndex +
-        // per-vertex lookupField, which rebuilt an Array-of-Arrays and returned a
-        // fresh tuple per vertex — ~30k throwaway arrays/frame). computeStreamlines
-        // already built the same persistent index moments earlier; rebuilding it
-        // here is allocation-free (scratch is reused) and keeps this self-contained.
-        const fieldIndex = buildPersistentIndex(
-            sampled.fluxVector.positions, sampled.fluxVector.vectors, sampled.fluxVector.count,
-            latticeSize, stride);
-        for (let li = 0; li < lines.count; li++) {
-            const base = lines.offsets[li];
-            const nPts = lines.lengths[li] / 3;
-            const vBase = base / 3;
-            for (let i = 0; i < nPts; i++) {
-                const vx = lines.buffer[base + i * 3];
-                const vy = lines.buffer[base + i * 3 + 1];
-                const vz = lines.buffer[base + i * 3 + 2];
-                mags[vBase + i] = sampleFieldMagInto(fieldIndex, vx, vy, vz);
-            }
-        }
-    }
-    return { lines, maxFlux, mags };
+    return seeds;
 }
 
 
@@ -283,7 +230,7 @@ export function buildForceOverlayData(state, fieldCapability, sampled, latticeSi
  * per-item body of buildForceOverlayData's flow loop, so the geometry is
  * identical whether run inline or as a scheduled per-force job.
  */
-function computeForceItemFlow(item, latticeSize, stride, params = {}) {
+function forceItemFlowPlan(item, latticeSize, stride, params = {}, state = null) {
     const { stepSize = 0.5, maxSteps = 100, maxSeeds = 150, maxLines = 200 } = params;
     // Force flow lines stay shorter than EM streamlines (≈ 40% of full length)
     // so the field-arrow visualization stays visually distinct from B/E lines.
@@ -298,11 +245,19 @@ function computeForceItemFlow(item, latticeSize, stride, params = {}) {
     // Importance-sample by |force| so streamlines cluster where the interaction
     // is strongest (e.g., near charges for EM, near masses for gravity),
     // matching the iron-filing visualization metaphor.
-    const seeds = generateImportanceSeeds(item.data, seedCount);
-    return computeStreamlines(item.data, seeds, {
+    const buildSeeds = () => generateImportanceSeeds(item.data, seedCount);
+    const seeds = state
+        ? cachedSeeds(state, `force-${item.type}`, latticeSize, buildSeeds)
+        : buildSeeds();
+    return { seeds, opts: {
         N: latticeSize, stride, maxSteps: stepCount, stepSize,
         maxLines: lineCount, bidirectional: true,
-    });
+    } };
+}
+
+function computeForceItemFlow(item, latticeSize, stride, params = {}) {
+    const plan = forceItemFlowPlan(item, latticeSize, stride, params);
+    return computeStreamlines(item.data, plan.seeds, plan.opts);
 }
 
 export function buildDerivedSubstrateData(state, sampled, fieldCapability, N) {
@@ -433,23 +388,21 @@ export function buildDerivedSubstrateData(state, sampled, fieldCapability, N) {
 // The budget is sized so a single streamline job fits in a frame but a
 // second one is deferred — that is the whole point (spread the streamlines
 // across frames). Cheap scalar jobs keep packing until the budget is spent.
-const OVERLAY_FRAME_BUDGET = 100;
-// Relative cost weights (calibrated from reading the job bodies, not timed):
-//   streamline jobs build a spatial index + bidirectional RK4 over up to
-//   ~300 lines × ~maxSteps steps × a 27-cell neighbour scan → dominant.
-// Lowered from 100 → 50 so E and B both fit in one frame budget when both
-// are enabled. At 100 (= OVERLAY_FRAME_BUDGET) the scheduler could only fit
-// one streamline job per frame, causing E and B to update on consecutive
-// frames. Since they seed from particle positions and the particle frame was
-// re-fetched live inside each job body, B's seeds would be one frame newer
-// than E's — producing the "B field shifts/translates offset" visual bug
-// when both fields were enabled simultaneously. At 50, both E and B land on
-// the same frame and read the same snapshotted particle positions.
+const OVERLAY_FRAME_BUDGET = 50;
+// Relative cost weights. E/B/Flux reserve a scheduler frame for submit/poll/
+// atomic apply while their spatial index + bidirectional RK4 work runs in the
+// visualization worker. Force-flow uses the same worker transaction path.
+// E and B formerly had to land on the same frame because each job fetched its
+// particle seeds live. The sweep now snapshots particleData once and every job
+// reads that coherent snapshot, so staggering E/B is both correct and necessary:
+// admitting both 50-unit RK4 jobs in one frame recreated a repeatable 27–35 ms
+// interaction stall whenever a toggle dirtied a fully-populated overlay sweep.
 const COST_STREAMLINE = 50;   // E / B / flux / each force-flow field
 const COST_FORCE_FIELD = 25;  // a force arrow/heatmap/glyph field (sampler + O(count))
 const COST_DERIVED = 20;      // dual-substrate / chirality / mock-derived overlays
 const COST_SCALAR = 12;       // a Tier-1/2/3 scalar topology sheet (one O(count) pass)
 const COST_PASSTHROUGH = 4;   // poynting / divField / light — forward a sampled buffer
+const STREAMLINE_WORKER_URL = new URL('./streamline-worker.js?v=2', import.meta.url);
 // Safety-valve ceiling on how many frames a single sweep may span. This is a
 // LAG cap, not the primary spreading mechanism: because the budget loop always
 // runs at least the first remaining job each frame (the first-job exception
@@ -539,6 +492,9 @@ function ensureOverlaySched(state) {
             lastVersion: -1,   // fieldDataVersion sampled at the last sweep start
             forceFrame: null,  // force-fields-job output (read by flow jobs)
             flowTypes: [],     // PERSISTENT scratch for active force-flow types
+            streamlineWorkerClient: null,
+            loadGeneration: 0,
+            flowLineSettingsVersion: 0,
             // Per-sweep context the closure-free dispatcher reads in place of a
             // captured closure. All stable for the sweep's duration; set once at
             // sweep start in buildOverlayJobs.
@@ -562,10 +518,100 @@ function ensureOverlaySched(state) {
 function jobSlot(sched, index) {
     let slot = sched.jobs[index];
     if (slot === undefined) {
-        slot = { kind: -1, cost: 0, scalarIndex: -1, flowType: '', isLastFlow: false };
+        slot = {
+            kind: -1,
+            cost: 0,
+            scalarIndex: -1,
+            flowType: '',
+            isLastFlow: false,
+            phase: 0,
+            workerResult: null,
+            requestId: 0,
+            sampleTick: 0,
+        };
         sched.jobs[index] = slot;
     }
     return slot;
+}
+
+function cancelStreamlineJobs(sched) {
+    const client = sched.streamlineWorkerClient;
+    if (client) {
+        client.worker.terminate();
+        client.pending.clear();
+        sched.streamlineWorkerClient = null;
+    }
+    for (let i = 0; i < sched.jobCount; i++) {
+        const slot = sched.jobs[i];
+        if (slot) {
+            slot.phase = 0;
+            slot.workerResult = null;
+            slot.requestId = 0;
+        }
+    }
+}
+
+function ensureStreamlineWorker(sched) {
+    if (sched.streamlineWorkerClient) return sched.streamlineWorkerClient;
+    if (typeof Worker === 'undefined') return null;
+    const worker = new Worker(STREAMLINE_WORKER_URL, { type: 'module' });
+    const client = { worker, nextId: 1, pending: new Map() };
+    worker.onmessage = ({ data }) => {
+        const slot = client.pending.get(data?.id);
+        if (!slot) return;
+        client.pending.delete(data.id);
+        if (slot.requestId !== data.id) return;
+        slot.workerResult = data;
+    };
+    worker.onerror = (event) => {
+        const message = event.message || 'unknown worker error';
+        for (const slot of client.pending.values()) slot.workerResult = { error: message };
+        client.pending.clear();
+        console.error('[Scale0] streamline worker failed:', message);
+    };
+    worker.onmessageerror = () => {
+        for (const slot of client.pending.values()) {
+            slot.workerResult = { error: 'worker response could not be decoded' };
+        }
+        client.pending.clear();
+    };
+    sched.streamlineWorkerClient = client;
+    return client;
+}
+
+function submitStreamlineJob(sched, slot, kind, fieldData, seeds, opts) {
+    const client = ensureStreamlineWorker(sched);
+    if (!client) {
+        // Emergency non-Worker fallback. Browser production paths always use
+        // the module worker; this keeps embedded/test environments functional.
+        slot.workerResult = { kind, lines: computeStreamlines(fieldData, seeds, opts), maxFlux: 0, mags: null };
+        return;
+    }
+    const id = client.nextId++;
+    slot.requestId = id;
+    slot.workerResult = null;
+    client.pending.set(id, slot);
+    client.worker.postMessage({
+        id,
+        kind,
+        fieldData: {
+            positions: fieldData.positions,
+            vectors: fieldData.vectors,
+            count: fieldData.count,
+        },
+        seeds,
+        opts,
+    });
+}
+
+export function disposeFieldOverlayRuntime(state) {
+    const sched = state?.overlaySched;
+    if (!sched) return;
+    cancelStreamlineJobs(sched);
+    sched.active = false;
+    sched.sampled = null;
+    sched.sampleCache = null;
+    sched.forceCache = null;
 }
 
 // ── Per-overlay apply dispatch ──────────────────────────────────────────
@@ -592,6 +638,17 @@ function applyForceFieldsJob(sched, viewportAdapter) {
     } else if (forceFrame.style === 'glyphs') {
         for (const item of forceFrame.items) viewportAdapter.applyForceGlyphs(item.data, item.type);
     }
+    // A sampler may legitimately return no vectors (uniform density is the
+    // canonical gravity example). Clear only that force's resident geometry;
+    // otherwise a previous non-empty sweep remains visible as stale physics.
+    if (forceFrame.style !== 'flow') {
+        for (let i = 0; i < FLOW_TYPES.length; i++) {
+            const [flag, type] = FLOW_TYPES[i];
+            if (sched.state.fieldFlags[flag] && !findForceItem(forceFrame.items, type)) {
+                viewportAdapter.clearForceVisualization(type, forceFrame.style);
+            }
+        }
+    }
     // 'flow' falls through: handled by the per-force flow jobs.
 }
 
@@ -604,6 +661,13 @@ function findForceItem(items, type) {
         if (items[i].type === type) return items[i];
     }
     return undefined;
+}
+
+function forceTypeEnabled(state, type) {
+    if (type === 'em') return !!state.fieldFlags.showForceEM;
+    if (type === 'gravity') return !!state.fieldFlags.showForceGravity;
+    if (type === 'strong') return !!state.fieldFlags.showForceStrong;
+    return type === 'weak' && !!state.fieldFlags.showForceWeak;
 }
 
 // Scalar / derived / passthrough applies are 1:1 with their overlayFrame key.
@@ -628,10 +692,35 @@ function runJob(sched, slot) {
     const { stride } = params;
     switch (slot.kind) {
         case JOB_EFIELD: {
-            sampleCache.ensureSample('eField');
-            sampleCache.ensureParticleData();
-            if (!sampled.eField?.count) break;
-            const lines = buildEFieldLines(sched.acScale0, state, sampled, latticeSize, stride, params);
+            if (slot.phase === 0) {
+                sampleCache.ensureSample('eField');
+                sampleCache.ensureParticleData();
+                if (!sampled.eField?.count) return true;
+                submitStreamlineJob(
+                    sched,
+                    slot,
+                    'e',
+                    sampled.eField,
+                    eFieldLineSeeds(sched.acScale0, state, sampled, latticeSize, params),
+                    {
+                        N: latticeSize,
+                        stride,
+                        maxSteps: params.maxSteps,
+                        stepSize: params.stepSize,
+                        maxLines: params.maxLines,
+                        bidirectional: true,
+                    },
+                );
+                slot.sampleTick = (sched.acScale0?.getScale0Diagnostics?.()?.tick | 0) || 0;
+                slot.phase = 1;
+                return false;
+            }
+            if (!slot.workerResult) return false;
+            if (slot.workerResult.error) {
+                console.error('[Scale0] E streamline job failed:', slot.workerResult.error);
+                return true;
+            }
+            const lines = slot.workerResult.lines;
             // Field-line knot tracking: record from the SAME rebuilt streamlines,
             // synchronously, before the pooled ring recycles `lines`. Observation-
             // only; gated on the dedicated knotTracking flag (NOT a visual overlay).
@@ -639,9 +728,8 @@ function runJob(sched, slot) {
             // belongs to (matching the panel rows + boxes) when per-knot colors is on.
             let knotColoring = null;
             if (state.knotTracking) {
-                const tick = (sched.acScale0?.getScale0Diagnostics?.()?.tick | 0) || 0;
                 const tr = getFieldLineKnotTracker('e');
-                tr.record(lines, sampled.eField, tick, latticeSize);
+                tr.record(lines, sampled.eField, slot.sampleTick, latticeSize);
                 if (tr.getPerKnotColor()) {
                     knotColoring = { lineIds: tr.assignLinesToKnots(lines), selectedId: tr.getSelected(), perKnotColor: true };
                 }
@@ -659,20 +747,44 @@ function runJob(sched, slot) {
             if (wantsStreamlineApply(state.fieldFlags, 'e')) {
                 viewportAdapter.applyEFieldLines(lines, knotColoring);
             }
-            break;
+            return true;
         }
         case JOB_BFIELD: {
-            sampleCache.ensureSample('bField');
-            sampleCache.ensureParticleData();
-            if (!sampled.bField?.count) break;
-            const lines = buildBFieldLines(sched.acScale0, state, sampled, latticeSize, stride, params);
+            if (slot.phase === 0) {
+                sampleCache.ensureSample('bField');
+                sampleCache.ensureParticleData();
+                if (!sampled.bField?.count) return true;
+                submitStreamlineJob(
+                    sched,
+                    slot,
+                    'b',
+                    sampled.bField,
+                    bFieldLineSeeds(sched.acScale0, state, sampled, latticeSize, params),
+                    {
+                        N: latticeSize,
+                        stride,
+                        maxSteps: Math.ceil(params.maxSteps * 1.5),
+                        stepSize: params.stepSize,
+                        maxLines: params.maxLines,
+                        bidirectional: true,
+                    },
+                );
+                slot.sampleTick = (sched.acScale0?.getScale0Diagnostics?.()?.tick | 0) || 0;
+                slot.phase = 1;
+                return false;
+            }
+            if (!slot.workerResult) return false;
+            if (slot.workerResult.error) {
+                console.error('[Scale0] B streamline job failed:', slot.workerResult.error);
+                return true;
+            }
+            const lines = slot.workerResult.lines;
             // B-field-line knots — the orthogonal magnetic partner to E. Same pipeline,
             // its own tracker; detected from the B streamlines, colored per B-knot.
             let knotColoring = null;
             if (state.knotTracking) {
-                const tick = (sched.acScale0?.getScale0Diagnostics?.()?.tick | 0) || 0;
                 const tr = getFieldLineKnotTracker('b');
-                tr.record(lines, sampled.bField, tick, latticeSize);
+                tr.record(lines, sampled.bField, slot.sampleTick, latticeSize);
                 if (tr.getPerKnotColor()) {
                     knotColoring = { lineIds: tr.assignLinesToKnots(lines), selectedId: tr.getSelected(), perKnotColor: true };
                 }
@@ -687,16 +799,40 @@ function runJob(sched, slot) {
             if (wantsStreamlineApply(state.fieldFlags, 'b')) {
                 viewportAdapter.applyBFieldLines(lines, knotColoring);
             }
-            break;
+            return true;
         }
         case JOB_FLUX: {
-            sampleCache.ensureSample('fluxVector');
-            if (!sampled.fluxVector?.count) break;
-            const fs = buildFluxStreamlines(state, sampled, latticeSize, stride, params);
+            if (slot.phase === 0) {
+                sampleCache.ensureSample('fluxVector');
+                if (!sampled.fluxVector?.count) return true;
+                submitStreamlineJob(
+                    sched,
+                    slot,
+                    'flux',
+                    sampled.fluxVector,
+                    fluxLineSeeds(state, sampled, latticeSize, params),
+                    {
+                        N: latticeSize,
+                        stride,
+                        maxSteps: params.maxSteps,
+                        stepSize: params.stepSize,
+                        maxLines: params.maxLines,
+                        bidirectional: true,
+                    },
+                );
+                slot.sampleTick = (sched.acScale0?.getScale0Diagnostics?.()?.tick | 0) || 0;
+                slot.phase = 1;
+                return false;
+            }
+            if (!slot.workerResult) return false;
+            if (slot.workerResult.error) {
+                console.error('[Scale0] Flux streamline job failed:', slot.workerResult.error);
+                return true;
+            }
+            const fs = slot.workerResult;
             if (state.knotTracking) {
-                const tick = (sched.acScale0?.getScale0Diagnostics?.()?.tick | 0) || 0;
                 const tr = getFieldLineKnotTracker('flux');
-                tr.record(fs.lines, sampled.fluxVector, tick, latticeSize);
+                tr.record(fs.lines, sampled.fluxVector, slot.sampleTick, latticeSize);
                 if (tr.isContribEnabled()) {
                     const cap = sched.acScale0;
                     const eField = cap?.getScale0FieldSamples?.({ kind: 'e', stride });
@@ -709,7 +845,7 @@ function runJob(sched, slot) {
             if (wantsStreamlineApply(state.fieldFlags, 'flux')) {
                 viewportAdapter.applyFluxStreamlines(fs.lines, fs.maxFlux, fs.mags);
             }
-            break;
+            return true;
         }
         case JOB_PASS: {
             const flags = state.fieldFlags;
@@ -737,12 +873,31 @@ function runJob(sched, slot) {
         case JOB_FORCE_FLOW: {
             const ff = sched.forceFrame;
             const item = findForceItem(ff?.items, slot.flowType);
-            // item may be absent if the sampler returned zero count (e.g. no
-            // particles for that force) — that force simply has nothing to draw,
-            // matching the original loop.
-            if (item) {
-                item.flowLines = computeForceItemFlow(item, latticeSize, stride, params);
-                viewportAdapter.applyForceStreamlines(item.flowLines, item.type);
+            if (slot.phase === 0) {
+                // Current UI truth wins over the immutable sweep snapshot. This
+                // prevents a late async result from repainting a style/type the
+                // user disabled while the worker was integrating.
+                if (state.forceStyle !== 'flow' || !forceTypeEnabled(state, slot.flowType) || !item) {
+                    viewportAdapter.clearForceVisualization(slot.flowType, 'flow');
+                    return true;
+                }
+                const plan = forceItemFlowPlan(item, latticeSize, stride, params, state);
+                submitStreamlineJob(
+                    sched, slot, `force-${item.type}`, item.data, plan.seeds, plan.opts,
+                );
+                slot.phase = 1;
+                return false;
+            }
+            if (!slot.workerResult) return false;
+            if (slot.workerResult.error) {
+                viewportAdapter.clearForceVisualization(slot.flowType, 'flow');
+                console.error(`[Scale0] ${slot.flowType} force-flow job failed:`, slot.workerResult.error);
+                return true;
+            }
+            if (state.forceStyle === 'flow' && forceTypeEnabled(state, slot.flowType)) {
+                viewportAdapter.applyForceStreamlines(slot.workerResult.lines, slot.flowType);
+            } else {
+                viewportAdapter.clearForceVisualization(slot.flowType, 'flow');
             }
             // Advance the dash-offset animation exactly ONCE per sweep, on the
             // last flow job, only while running — matching the pre-amortization
@@ -771,6 +926,7 @@ function runJob(sched, slot) {
             break;
         }
     }
+    return true;
 }
 
 // Refill the persistent job pool IN PLACE for one sweep. Mutates pre-allocated
@@ -805,25 +961,22 @@ function buildOverlayJobs(ctx, state, sched, viewportAdapter, latticeSize, param
     let n = 0; // running job count; jobSlot(sched, n) reuses the pooled slot
 
     // ── EM streamline overlays — E, B, flux each as an INDEPENDENT job ────
-    // These three are the heaviest work (each a full bidirectional-RK4 line
-    // integration over a fresh spatial index). Splitting them into one job
-    // apiece is what unstacks the 160–215 ms "flux + E/B" spike: each carries
-    // COST_STREAMLINE, which exceeds the per-frame budget, so the budget gate
-    // admits at most ONE streamline integration per frame and defers the rest
-    // to the next frame(s) of the same sweep. Each job's output is a complete,
-    // atomic line set (identical geometry to the monolithic build) applied in
-    // a single full-replace call — only the frame it lands on moves.
+    // These three are the heaviest work (fresh spatial index + bidirectional
+    // RK4). Each becomes an independent visualization-worker transaction. The
+    // scheduler waits for that transaction before advancing, then applies one
+    // complete atomic line set; no partial geometry or UI-thread integration is
+    // exposed.
     // Job planning: visual flags OR knot tracking. Tracking rebuilds E/B/flux
     // streamlines so clumps can be recorded without drawing the lines.
     // Each job still applies to the viewport only when its visual flag is on.
     if (wantsStreamlineJob(flags, state.knotTracking, 'e')) {
-        const slot = jobSlot(sched, n++); slot.kind = JOB_EFIELD; slot.cost = COST_STREAMLINE;
+        const slot = jobSlot(sched, n++); slot.kind = JOB_EFIELD; slot.cost = COST_STREAMLINE; slot.phase = 0;
     }
     if (wantsStreamlineJob(flags, state.knotTracking, 'b')) {
-        const slot = jobSlot(sched, n++); slot.kind = JOB_BFIELD; slot.cost = COST_STREAMLINE;
+        const slot = jobSlot(sched, n++); slot.kind = JOB_BFIELD; slot.cost = COST_STREAMLINE; slot.phase = 0;
     }
     if (wantsStreamlineJob(flags, state.knotTracking, 'flux')) {
-        const slot = jobSlot(sched, n++); slot.kind = JOB_FLUX; slot.cost = COST_STREAMLINE;
+        const slot = jobSlot(sched, n++); slot.kind = JOB_FLUX; slot.cost = COST_STREAMLINE; slot.phase = 0; slot.workerResult = null;
     }
     // Poynting / divergence are zero-cost passthroughs (forward a sampled
     // buffer); batch them as one cheap job.
@@ -870,6 +1023,9 @@ function buildOverlayJobs(ctx, state, sched, viewportAdapter, latticeSize, param
                 slot.cost = COST_STREAMLINE;
                 slot.flowType = flowTypes[i];
                 slot.isLastFlow = i === flowTypes.length - 1;
+                slot.phase = 0;
+                slot.workerResult = null;
+                slot.requestId = 0;
             }
         }
     }
@@ -916,6 +1072,7 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
         // sweep); only the sweep liveness + shared snapshot are cleared.
         getActiveScale0Bridge(ctx, state)?.replaceSamplerWants?.('overlays', []);
         sched.lastWantKeys = [];
+        cancelStreamlineJobs(sched);
         sched.active = false;
         sched.sampled = null;
         sched.sampleCache = null;
@@ -923,13 +1080,17 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
         return;
     }
 
-    // An explicit dirty (overlay toggle, force-style change, scenario load /
-    // reset — all set fieldNeedsUpdate) means the world the in-flight sweep is
-    // painting is stale. Preempt it: drop the half-finished sweep and its old
-    // snapshot so the gate below opens a fresh sweep against current data.
-    // Without this, loading a new scenario mid-sweep would paint one frame of
-    // the previous scenario's overlays before catching up.
-    if (state.fieldNeedsUpdate && sched.active) {
+    // Sampler deliveries also set fieldNeedsUpdate, so that bit alone cannot
+    // preempt an asynchronous worker job: doing so terminated every request
+    // just before its response arrived. Only ownership changes invalidate an
+    // in-flight immutable snapshot. Toggle-off is safe without cancellation
+    // because every apply path re-checks current visibility before painting.
+    const ownershipChanged = sched.active && (
+        sched.loadGeneration !== (ctx._loadGeneration || 0)
+        || sched.flowLineSettingsVersion !== (state.flowLineSettingsVersion || 0)
+    );
+    if (ownershipChanged) {
+        cancelStreamlineJobs(sched);
         sched.active = false;
         sched.sampled = null;
         sched.sampleCache = null;
@@ -978,7 +1139,15 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
         // it allocates no new job array/objects in steady state.
         state.fieldNeedsUpdate = false;
         sched.lastVersion = version;
-        const params = computeStreamlineParams(latticeSize);
+        sched.loadGeneration = ctx._loadGeneration || 0;
+        sched.flowLineSettingsVersion = state.flowLineSettingsVersion || 0;
+        const activeScale0Bridge = getActiveScale0Bridge(ctx, state) ?? ctx.bridge;
+        const flowLines = getFlowLineSettings();
+        const params = computeStreamlineParams(latticeSize, {
+            inThreadWasm: !!activeScale0Bridge?.isWasm && !activeScale0Bridge?.isWorker,
+            density: flowLines.density,
+            length: flowLines.length,
+        });
         const fieldCapability = getActiveScale0Bridge(ctx, state)?.capabilities?.scale0
             ?? ctx.bridge.capabilities.scale0;
         const acScale0ForSnapshot = emActiveScale0(ctx, state);
@@ -1037,20 +1206,28 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
         const job = sched.jobs[sched.cursor];
         const isFirstThisFrame = spent === 0;
         if (!forceFinish && !isFirstThisFrame && spent + job.cost > OVERLAY_FRAME_BUDGET) break;
-        runJob(sched, job);
+        const completed = runJob(sched, job);
         spent += job.cost;
-        sched.cursor += 1;
-    }
-
-    const wantKeys = [];
-    if (sched.sampleCache?.requestedKeys) wantKeys.push(...sched.sampleCache.requestedKeys());
-    if (sched.forceCache?.requestedKeys) wantKeys.push(...sched.forceCache.requestedKeys());
-    if (wantKeys.length) sched.lastWantKeys = wantKeys;
-    if (sched.lastWantKeys) {
-        getActiveScale0Bridge(ctx, state)?.replaceSamplerWants?.('overlays', sched.lastWantKeys);
+        if (completed) sched.cursor += 1;
+        else break;
     }
 
     if (sched.cursor >= sched.jobCount) {
+        // Publish sampler ownership only after the WHOLE sweep has run. A
+        // multi-frame sweep discovers dependencies incrementally: E/B may run
+        // on frame 1 while Poynting runs on frame 2. Publishing the frame-1
+        // partial set temporarily unwants Poynting; frame 2 then wants it again.
+        // On a paused worker every new want immediately posts a sampler frame,
+        // whose dirty callback starts another sweep and repeats the cycle at
+        // ~30 Hz. Besides redundant worker work, each delivery costs a missed
+        // UI frame. The cache persists for the entire sweep, so at completion
+        // requestedKeys() is the exact, full dependency set.
+        const wantKeys = [];
+        if (sched.sampleCache?.requestedKeys) wantKeys.push(...sched.sampleCache.requestedKeys());
+        if (sched.forceCache?.requestedKeys) wantKeys.push(...sched.forceCache.requestedKeys());
+        sched.lastWantKeys = wantKeys;
+        getActiveScale0Bridge(ctx, state)?.replaceSamplerWants?.('overlays', wantKeys);
+
         // Sweep complete. Release the snapshot so the next trigger re-samples;
         // the slot pool persists for reuse on the next sweep.
         sched.active = false;

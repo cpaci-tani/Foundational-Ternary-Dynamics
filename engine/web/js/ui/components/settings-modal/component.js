@@ -1,4 +1,4 @@
-import { getSettingsModalTemplate } from './template.js';
+import { getSettingsModalTemplate } from './template.js?v=2';
 
 /**
  * Settings Modal Component

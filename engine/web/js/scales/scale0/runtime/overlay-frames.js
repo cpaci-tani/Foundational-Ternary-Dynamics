@@ -12,7 +12,7 @@
 // ══════════════════════════════════════════════════════════════════════
 
 import { getActiveScale0Bridge } from '../state/store.js';
-import { C_SPEED } from '../../../constants.js';
+import { C_SPEED, G_N } from '../../../constants.js';
 import { posKey } from './manifestation-flash.js';
 
 function sampleGridMetadata(sample) {
@@ -202,34 +202,68 @@ export function computeEntropyDensityFrame(sampled, state) {
 }
 
 export function computeGravPotentialFrame(ctx, sampled, state) {
-    // If the bridge already exposes a gravitational potential field, prefer
-    // that. Otherwise we approximate Φ(x) by a smoothed |J|² mass density:
-    // true Φ satisfies ∇²Φ = 4πGρ, and a Gaussian smoothing of ρ is the
-    // lowest-pass-filter analogue at fixed resolution — good enough to show
-    // wells and peaks qualitatively.
-    if (!sampled.fluxVector?.count) return null;
+    // Prefer the actual finite Poisson-latency well whenever that engine term
+    // is active.  The solver stores L=sqrt(max(-phi_latency,0)); therefore
+    // -L² reconstructs its clamped negative well potential without importing a
+    // continuum 1/r formula into the visual layer.
     const activeBridge = getActiveScale0Bridge(ctx, state) ?? ctx.bridge;
-    if (typeof activeBridge?.getGravPotentialSamples === 'function') {
-        const data = activeBridge.getGravPotentialSamples();
-        if (data?.count > 0) return data;
+    const poisson = sampled.poissonLatency;
+    const latencyToggle = activeBridge?.getToggle?.('latency_field');
+    if (poisson?.count > 0 && latencyToggle !== false) {
+        const buf = ensureTier1Buffers(state, poisson.count);
+        const { positions, values, count } = poisson;
+        let instantMax = 0;
+        for (let i = 0; i < count; i++) {
+            const well = values[i] * values[i];
+            buf.gravPot[i] = -well;
+            if (well > instantMax) instantMax = well;
+        }
+        const normalizer = updateDecayingMax(
+            state, 'gravPotentialPoisson', instantMax,
+        );
+        buf.normalizer.gravMax = normalizer;
+        return {
+            positions,
+            values: buf.gravPot,
+            count,
+            normalizer,
+            source: 'poisson-latency',
+            operator: 'phi=-L^2',
+            ...sampleGridMetadata(poisson),
+        };
     }
+
+    // The default selected Scale-0 gravity force is exactly
+    // F=G_N*delta_2|J| on the finite periodic quotient.  Its matching local
+    // scalar is Phi_local=-G_N|J|, because -delta_2(Phi_local)=F under the same
+    // radius-2 centred difference.  This is deliberately NOT labelled as the
+    // Poisson/Newton potential; it is the potential of the engine's local
+    // selected force law.
+    if (!sampled.fluxVector?.count) return null;
     const buf = ensureTier1Buffers(state, sampled.fluxVector.count);
     const { vectors, positions, count } = sampled.fluxVector;
-    // Build |J|² as a pseudo-mass, normalize, then invert (negative for wells).
-    let maxAbs = 0;
+    let instantMax = 0;
     for (let i = 0; i < count; i++) {
         const x = vectors[i * 3];
         const y = vectors[i * 3 + 1];
         const z = vectors[i * 3 + 2];
-        const m = x * x + y * y + z * z;
-        // Φ is negative where mass is concentrated → use -m as a monotone
-        // proxy. Real Φ would be a spatial integral; smoothing happens at
-        // render time.
-        buf.gravPot[i] = -m;
-        if (m > maxAbs) maxAbs = m;
+        const well = G_N * Math.sqrt(x * x + y * y + z * z);
+        buf.gravPot[i] = -well;
+        if (well > instantMax) instantMax = well;
     }
-    buf.normalizer.gravMax = maxAbs;
-    return { positions, values: buf.gravPot, count, normalizer: maxAbs, ...sampleGridMetadata(sampled.fluxVector) };
+    const normalizer = updateDecayingMax(
+        state, 'gravPotentialLocal', instantMax,
+    );
+    buf.normalizer.gravMax = normalizer;
+    return {
+        positions,
+        values: buf.gravPot,
+        count,
+        normalizer,
+        source: 'local-density-gradient',
+        operator: 'phi=-G_N|J|',
+        ...sampleGridMetadata(sampled.fluxVector),
+    };
 }
 
 // ══════════════════════════════════════════════════════════════════════

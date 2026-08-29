@@ -191,12 +191,17 @@ export function hideLatticeInspector(target) {
     setInspectorSectionVisibility(target.emptyEl, target.contentEl, false);
     if (target.viewport && target.viewport.setVoxelHighlight) {
         target.viewport.setVoxelHighlight(0, 0, 0, false);
+        // The Selection card owns the optional area box, but inspector Clear,
+        // an empty viewport click, and a scale switch all mean that every
+        // selection overlay must disappear together.
+        target.viewport.setAreaHighlight?.(0, 0, 0, 1, false);
         target.viewport.setSymmetryHighlights(0, 0, 0, false, false, false);
     }
     const symPanel = document.getElementById('floating-symmetry-panel');
     if (symPanel) symPanel.style.display = 'none';
     target._latticeInspectionCache = null;
     target._updateInspectorChrome();
+    document.dispatchEvent(new CustomEvent('ftd:voxel-selection-cleared'));
 }
 
 export function updateLatticeFields(target) {
@@ -296,7 +301,7 @@ export function updateLatticeFields(target) {
         let html = '';
         for (let dz = -1; dz <= 1; dz++) {
             html += '<div style="display:inline-block; margin: 0 8px;">';
-            html += `<div style="color:var(--text-muted);font-size:10px;margin-bottom:6px">Z${dz === 0 ? '' : (dz > 0 ? `+${dz}` : dz)}</div>`;
+            html += `<div style="color:var(--text-muted);font-size:16px;margin-bottom:6px">Z${dz === 0 ? '' : (dz > 0 ? `+${dz}` : dz)}</div>`;
             for (let dy = 1; dy >= -1; dy--) {
                 html += '<div style="display:flex;gap:4px;margin-bottom:4px">';
                 for (let dx = -1; dx <= 1; dx++) {

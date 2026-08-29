@@ -17,7 +17,8 @@ export function createPhysicsTogglesCard() {
     <div class="toggle-row"><input type="checkbox" id="t-gauss" checked><label for="t-gauss" title="Enforce div(J) = charge density via SOR solver on void sites">Gauss Projection</label></div>
 
     <div class="combo-section-label">Matter</div>
-    <div class="toggle-row"><input type="checkbox" id="t-genesis" checked><label for="t-genesis" title="Particles manifest when |J| exceeds K_B; evaporate when field energy drains">Genesis / Evaporation</label></div>
+    <div class="toggle-row"><input type="checkbox" id="t-genesis" checked><label for="t-genesis" title="Particles manifest when |J| exceeds K_B">Genesis</label></div>
+    <div class="toggle-row"><input type="checkbox" id="t-evaporation"><label for="t-evaporation" title="Manifested particles evaporate when their local field energy drains">Evaporation</label></div>
     <div class="toggle-row"><input type="checkbox" id="t-movement" checked><label for="t-movement" title="Particles accumulate force into velocity remainder and move on the lattice">Movement</label></div>
 
     <div class="combo-section-label">Forces</div>

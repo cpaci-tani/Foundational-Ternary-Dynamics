@@ -24,8 +24,9 @@ coupling, Gauss projection, genesis/evaporation. OFF — Langevin, imposed de Br
 clock, latency, dual substrate, **forces, movement**, and all other bulk-managed
 toggles.
 
-The per-tick continuous update (`dag_engine.cpp`, `recursive_read`/`recursive_write`,
-CPU path — the path the campaign ran):
+The per-tick continuous update came from the retired DagEngine CPU source
+(`recursive_read`/`recursive_write`, recoverable from Git history through
+baseline `21566b63`) — the path the campaign ran:
 
 ```text
 delta = C_WAVE^2 * laplacian(J)          [wave_propagation]
@@ -109,8 +110,8 @@ The screen is **not thereby worthless** — its purpose changes, and for the bet
 
 ## 6. Scope
 
-Source audit covers the CPU path the campaign executed: `dag_engine.cpp` (wave +
-coupling), `transmutation_phases.cpp` (genesis), the Gauss projector's linearity, and
+Source audit covers the CPU path the campaign executed: the retired DagEngine
+source (wave + coupling), `transmutation_phases.cpp` (genesis), the Gauss projector's linearity, and
 the locked toggle list; evaporation is characterised from registered results
 (FTD-0567/0569) rather than fresh line-by-line reading. The theorem is scoped to the
 locked profile: it says nothing about latency-enabled, movement-enabled, Langevin, or

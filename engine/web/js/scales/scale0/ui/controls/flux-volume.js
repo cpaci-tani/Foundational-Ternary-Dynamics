@@ -12,7 +12,7 @@ export function createSelectionCard() {
     <div class="combo-section-label">Position</div>
     <div class="ctrl-row ctrl-row-compact">
       <div class="coord-stepper" data-axis="x">
-        <label class="ctrl-label ctrl-label-xs" style="color:#f87171">X</label>
+        <label class="ctrl-label ctrl-label-xs axis-x-text">X</label>
         <input type="number" class="ctrl-input ctrl-input-coord" id="sel-x" value="16" min="0" max="31" aria-label="Selection x">
         <div class="coord-stepper-btns">
           <button type="button" class="coord-step sel-coord-step" data-step="1" data-for="sel-x" aria-label="Increment x">&#9650;</button>
@@ -20,7 +20,7 @@ export function createSelectionCard() {
         </div>
       </div>
       <div class="coord-stepper" data-axis="y">
-        <label class="ctrl-label ctrl-label-xs" style="color:#4ade80">Y</label>
+        <label class="ctrl-label ctrl-label-xs axis-y-text">Y</label>
         <input type="number" class="ctrl-input ctrl-input-coord" id="sel-y" value="16" min="0" max="31" aria-label="Selection y">
         <div class="coord-stepper-btns">
           <button type="button" class="coord-step sel-coord-step" data-step="1" data-for="sel-y" aria-label="Increment y">&#9650;</button>
@@ -28,7 +28,7 @@ export function createSelectionCard() {
         </div>
       </div>
       <div class="coord-stepper" data-axis="z">
-        <label class="ctrl-label ctrl-label-xs" style="color:#60a5fa">Z</label>
+        <label class="ctrl-label ctrl-label-xs axis-z-text">Z</label>
         <input type="number" class="ctrl-input ctrl-input-coord" id="sel-z" value="16" min="0" max="31" aria-label="Selection z">
         <div class="coord-stepper-btns">
           <button type="button" class="coord-step sel-coord-step" data-step="1" data-for="sel-z" aria-label="Increment z">&#9650;</button>
@@ -37,30 +37,28 @@ export function createSelectionCard() {
       </div>
     </div>
 
-    <div class="combo-section-label" style="margin-top:8px">Navigate Axis</div>
+    <div class="combo-section-label combo-section-spaced">Navigate Axis</div>
     <div class="sel-axis-nav">
       <div class="sel-axis-pair">
-        <button class="sel-axis-btn" data-axis="x" data-dir="-1" style="color:#f87171">−X</button>
-        <button class="sel-axis-btn" data-axis="x" data-dir="1"  style="color:#f87171">+X</button>
+        <button type="button" class="sel-axis-btn axis-x-text" data-axis="x" data-dir="-1">−X</button>
+        <button type="button" class="sel-axis-btn axis-x-text" data-axis="x" data-dir="1">+X</button>
       </div>
       <div class="sel-axis-pair">
-        <button class="sel-axis-btn" data-axis="y" data-dir="-1" style="color:#4ade80">−Y</button>
-        <button class="sel-axis-btn" data-axis="y" data-dir="1"  style="color:#4ade80">+Y</button>
+        <button type="button" class="sel-axis-btn axis-y-text" data-axis="y" data-dir="-1">−Y</button>
+        <button type="button" class="sel-axis-btn axis-y-text" data-axis="y" data-dir="1">+Y</button>
       </div>
       <div class="sel-axis-pair">
-        <button class="sel-axis-btn" data-axis="z" data-dir="-1" style="color:#60a5fa">−Z</button>
-        <button class="sel-axis-btn" data-axis="z" data-dir="1"  style="color:#60a5fa">+Z</button>
+        <button type="button" class="sel-axis-btn axis-z-text" data-axis="z" data-dir="-1">−Z</button>
+        <button type="button" class="sel-axis-btn axis-z-text" data-axis="z" data-dir="1">+Z</button>
       </div>
     </div>
 
-    <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
-      <button class="tb-btn" id="sel-area-toggle" data-active="false"
-              style="flex:1;font-size:11px;padding:4px 6px">◻ Area</button>
-      <button class="tb-btn" id="btn-select"
-              style="flex:2;font-size:12px;padding:5px 8px;background:rgba(56,189,248,0.15);border-color:#38bdf8;color:#38bdf8">▶ SELECT</button>
+    <div class="selection-card-actions">
+      <button class="tb-btn selection-area-toggle" id="sel-area-toggle" data-active="false">◻ Area</button>
+      <button class="tb-btn selection-submit" id="btn-select">▶ SELECT</button>
     </div>
 
-    <div id="sel-area-controls" style="display:none;margin-top:8px">
+    <div id="sel-area-controls" class="selection-area-controls" hidden>
       <div class="combo-section-label">Radius</div>
       <div class="ctrl-slider-row">
         <input type="range" class="pe-slider" id="sel-radius" min="1" max="10" step="1" value="2">
@@ -89,13 +87,13 @@ export function createParticleDisplayCard() {
       <option value="7">Cross</option>
     </select>
 
-    <div class="combo-section-label" style="color:#6fe88a">+ Positive Size</div>
+    <div class="combo-section-label is-positive">+ Positive Size</div>
     <div class="ctrl-slider-row">
       <input type="range" class="pe-slider" id="particle-pos-size" min="1" max="40" step="0.5" value="14">
       <span class="pe-ctrl-value" id="particle-pos-size-val">14.0</span>
     </div>
 
-    <div class="combo-section-label" style="color:#f87070">− Negative Size</div>
+    <div class="combo-section-label is-negative">− Negative Size</div>
     <div class="ctrl-slider-row">
       <input type="range" class="pe-slider" id="particle-neg-size" min="1" max="40" step="0.5" value="10">
       <span class="pe-ctrl-value" id="particle-neg-size-val">10.0</span>

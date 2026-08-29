@@ -37,16 +37,16 @@ function ensureCss() {
     const s = document.createElement('style');
     s.id = 'thermo-panel-css';
     s.textContent = `
-    #${PANEL_ID}{font-family:var(--font-sans,sans-serif);font-size:12px;color:var(--text-primary,#eee);padding:2px}
+    #${PANEL_ID}{font-family:var(--font-sans,sans-serif);font-size:16px;color:var(--text-primary,#eee);padding:2px}
     #${PANEL_ID} .tp-title{font-weight:600;letter-spacing:0.2px;margin:2px 0 8px}
     #${PANEL_ID} .tp-title small{color:var(--text-muted,#888);font-weight:400}
     #${PANEL_ID} .tp-ctl{display:flex;align-items:center;gap:8px;margin-bottom:4px}
     #${PANEL_ID} .tp-ctl input[type=range]{flex:1}
     #${PANEL_ID} .tp-ctl .tp-tval{width:46px;text-align:right;font-variant-numeric:tabular-nums}
-    #${PANEL_ID} .tp-scale{display:flex;justify-content:space-between;font-size:9.5px;color:var(--text-muted,#888);margin-bottom:7px}
+    #${PANEL_ID} .tp-scale{display:flex;justify-content:space-between;font-size:16px;color:var(--text-muted,#888);margin-bottom:7px}
     #${PANEL_ID} .tp-tup{color:var(--accent,#e8b04b)}
     #${PANEL_ID} .tp-presets{display:flex;gap:6px;margin-bottom:9px}
-    #${PANEL_ID} .tp-presets button{flex:1;padding:5px;border-radius:6px;cursor:pointer;border:0.5px solid var(--border-light,rgba(255,255,255,0.18));background:var(--surface-2,rgba(255,255,255,0.06));color:inherit;font-size:11px}
+    #${PANEL_ID} .tp-presets button{flex:1;padding:5px;border-radius:6px;cursor:pointer;border:0.5px solid var(--border-light,rgba(255,255,255,0.18));background:var(--surface-2,rgba(255,255,255,0.06));color:inherit;font-size:16px}
     #${PANEL_ID} .tp-phase{display:flex;align-items:center;gap:8px;margin-bottom:8px}
     #${PANEL_ID} .tp-phase .tp-plabel{font-weight:600;min-width:80px}
     #${PANEL_ID} .tp-bar{flex:1;height:11px;border-radius:6px;background:#0c0c11;overflow:hidden;border:0.5px solid var(--border-light,rgba(255,255,255,0.12))}
@@ -56,10 +56,10 @@ function ensureCss() {
     #${PANEL_ID} .tp-row{display:flex;justify-content:space-between;padding:2px 0;border-bottom:0.5px solid var(--border-light,rgba(255,255,255,0.05))}
     #${PANEL_ID} .tp-row span:last-child{font-variant-numeric:tabular-nums;color:var(--text-secondary,#ccc)}
     #${PANEL_ID} .tp-heatwrap{margin:4px 0}
-    #${PANEL_ID} .tp-heatlabel{font-size:10px;color:var(--text-muted,#888);margin-bottom:3px;display:flex;justify-content:space-between}
+    #${PANEL_ID} .tp-heatlabel{font-size:16px;color:var(--text-muted,#888);margin-bottom:3px;display:flex;justify-content:space-between}
     #${PANEL_ID} canvas.tp-heat{width:100%;display:block;border-radius:6px;background:#0c0c11;image-rendering:pixelated;aspect-ratio:1/1}
     #${PANEL_ID} .tp-spark{width:100%;height:34px;display:block;margin-top:4px}
-    #${PANEL_ID} .tp-foot{margin-top:9px;padding-top:8px;border-top:0.5px solid var(--border-light,rgba(255,255,255,0.12));font-size:10px;color:var(--text-muted,#888);line-height:1.45}
+    #${PANEL_ID} .tp-foot{margin-top:9px;padding-top:8px;border-top:0.5px solid var(--border-light,rgba(255,255,255,0.12));font-size:16px;color:var(--text-muted,#888);line-height:1.45}
     #${PANEL_ID} .tp-foot b{color:var(--text-secondary,#aaa)}`;
     document.head.appendChild(s);
 }

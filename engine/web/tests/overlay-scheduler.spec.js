@@ -9,7 +9,7 @@
  *   - sampled ONCE per sweep (sched.sampled), every job reads that snapshot;
  *   - the build+apply of each overlay is a "job" with a cost weight;
  *   - jobs drain across consecutive animate frames under a per-frame budget
- *     (OVERLAY_FRAME_BUDGET=100), with a persistent round-robin cursor;
+ *     (OVERLAY_FRAME_BUDGET=50), with a persistent round-robin cursor;
  *   - a NEW sweep only starts when the underlying data actually changed
  *     (fieldNeedsUpdate dirty, or the monotonic fieldDataVersion advanced).
  *
@@ -52,7 +52,7 @@
  *        .sampled     :607   the one shared field snapshot for the sweep
  *        .sweepFrames :610   frames elapsed in the current sweep
  *        .lastVersion :611   fieldDataVersion latched at last sweep start (init -1)
- *   - constants OVERLAY_FRAME_BUDGET=100, COST_STREAMLINE=100,
+ *   - constants OVERLAY_FRAME_BUDGET=50, COST_STREAMLINE=50,
  *     OVERLAY_SWEEP_MAX_FRAMES=30   ← field-overlays.js:515,519,534
  *   - trigger gate (skip-unchanged): dataChanged = fieldNeedsUpdate ||
  *     version !== sched.lastVersion; if (!onBoundary || !dataChanged) return;
@@ -392,8 +392,8 @@ test.describe('Scale-0 overlay scheduler invariants', () => {
     // ────────────────────────────────────────────────────────────────────
     // 3. WORK-BUDGET TIME-SLICING.
     //
-    // The scheduler caps work per frame at OVERLAY_FRAME_BUDGET=100. A single
-    // streamline job costs COST_STREAMLINE=100 — the ENTIRE budget — so the
+    // The scheduler caps work per frame at OVERLAY_FRAME_BUDGET=50. A single
+    // streamline job costs COST_STREAMLINE=50 — the ENTIRE budget — so the
     // budget gate (field-overlays.js:1002) admits exactly ONE streamline per
     // frame and defers the rest of the sweep. Therefore a sweep that contains
     // ≥2 streamline jobs (E + B + flux + force-flows) CANNOT finish in one
@@ -443,9 +443,8 @@ test.describe('Scale-0 overlay scheduler invariants', () => {
         });
 
         // PRECONDITION for the time-slice invariant: the sweep must actually
-        // carry ≥2 streamline-cost jobs (each COST_STREAMLINE=50, half the
-        // OVERLAY_FRAME_BUDGET=100 — lowered from 100→50 in the 2026-05-31
-        // web-optimization campaign so E and B both fit one frame). A streamline
+        // carry ≥2 streamline-cost jobs (each COST_STREAMLINE=50, equal to the
+        // OVERLAY_FRAME_BUDGET=50, so E and B cannot stack in one frame). A streamline
         // job is only emitted when its field sample is non-empty, so if this
         // scenario yielded count=0 for E/B/flux the sweep would be scalar-only
         // and drain in one frame — and a time-slicing assertion would then

@@ -1,6 +1,6 @@
 #pragma once
 //
-// model/draw_list.h — the scale-generic render vocabulary (SPEC_NATIVE_REBUILD_R0R1 §4.3).
+// model/draw_list.h — the scale-generic render vocabulary.
 //
 // A DrawList is what an adapter's capture() emits: a bag of GPU-primitive
 // descriptions the renderer consumes, one pipeline per primitive kind. It is

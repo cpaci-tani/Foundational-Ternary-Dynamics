@@ -7,7 +7,7 @@
     position: absolute;
     inset: 0;
     background: var(--modal-backdrop);
-    backdrop-filter: blur(6px);
+    backdrop-filter: var(--glass-filter-low);
     z-index: var(--z-sidebar-backdrop);
 }
 
@@ -25,7 +25,7 @@
     border: 1px solid var(--border-light);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-xl);
-    backdrop-filter: blur(22px);
+    backdrop-filter: var(--glass-filter-high);
     z-index: var(--z-sidebar);
     transform: translateX(calc(100% + 24px));
     opacity: 0;
@@ -53,7 +53,7 @@
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--accent-text);
 }
 
 .assistant-title {
@@ -144,7 +144,7 @@
     border: none;
     border-radius: var(--radius-lg);
     background: var(--accent-dim);
-    color: var(--text-primary);
+    color: var(--on-accent);
     font-weight: 600;
 }
 

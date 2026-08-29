@@ -70,22 +70,22 @@ import { insideBoundary } from './viewport/boundary-geometry.js';
 // viewport decomposition. Viewport composes a ViewportSceneCore and
 // forwards every scene-decoration method through a thin wrapper. See
 // viewport/REFACTOR_MAP.md §3a.
-import { ViewportSceneCore } from './viewport/scene-core.js';
+import { ViewportSceneCore } from './viewport/scene-core.js?v=3';
 // Rubber-sheet visualizations (gravitational potential + 10 topology fields).
 // Extracted per refactoring-analyst RF-1. Viewport holds the instance as
 // this._topoRenderer and forwards via thin delegators.
-import { TopologySheetRenderer } from './viewport/topology-sheet-renderer.js';
+import { TopologySheetRenderer } from './viewport/topology-sheet-renderer.js?v=3';
 // Flux volume + flux streamlines extracted as Phase 3b of the viewport
 // decomposition. Viewport composes a ViewportFluxRenderer and forwards
 // every flux-volume/streamline method through a thin wrapper. See
 // viewport/REFACTOR_MAP.md.
-import { ViewportFluxRenderer } from './viewport/flux-renderer.js';
+import { ViewportFluxRenderer } from './viewport/flux-renderer.js?v=4';
 // Particle Points mesh + trails + velocity-vectors + per-particle force arrows
 // extracted as Phase 3d. Viewport composes a ViewportParticleRenderer and
 // forwards every particle-mesh method through a thin wrapper. Atom/bond/
 // orbital rendering is owned by MolecularRenderer (see import above) and
 // remains delegated separately. See viewport/REFACTOR_MAP.md §3d.
-import { ViewportParticleRenderer } from './viewport/particle-renderer.js';
+import { ViewportParticleRenderer } from './viewport/particle-renderer.js?v=3';
 // Field overlays (E/B/Poynting/divergence/force volumes/dark matter/damping/
 // genesis/confinement/dual flux/chirality/light/horizon + quantum overlays)
 // extracted as Phase 3c — the largest viewport sub-renderer (66 methods, 27+
@@ -93,7 +93,7 @@ import { ViewportParticleRenderer } from './viewport/particle-renderer.js';
 // writeArrowFieldIntoMesh, writeStreamlinesIntoMesh) live HERE as the
 // canonical home; FluxRenderer + ParticleRenderer's constructor callbacks
 // route through bound methods on FieldRenderer. See viewport/REFACTOR_MAP.md §3c.
-import { ViewportFieldRenderer } from './viewport/field-renderer.js';
+import { ViewportFieldRenderer } from './viewport/field-renderer.js?v=6';
 
 // Pre-allocated buffer-size constants (MAX_PARTICLES / MAX_FIELD_GRID)
 // were centralized into viewport/constants.js (D-6). They were unused in
@@ -154,6 +154,7 @@ export class Viewport {
             opacity: 0.95,
             particleOpacity: 0.9,
             glowIntensity: 0.15,
+            particleShape: 0,
             // Color particles by their real genesis-assigned color charge
             // (Voxel::color in {0,1,2,3} = colorless/red/green/blue) instead
             // of the default charge-sign coloring. Off by default so every
@@ -276,6 +277,7 @@ export class Viewport {
             insideBoundary: (nx, ny, nz) => this._insideBoundary(nx, ny, nz),
             getBoundaryShape: () => this._boundaryShape,
             getBoundaryMode: () => this._boundaryMode,
+            getEngineMode: () => this._engineMode,
             visualSettings: this.visualSettings,
             writeArrowFieldIntoMesh: (m, f, c, k, b, t) => this._fieldRenderer.writeArrowFieldIntoMesh(m, f, c, k, b, t),
         });
@@ -666,6 +668,11 @@ export class Viewport {
     updateBFieldLines(streamlines, knotColoring) { this._fieldRenderer.updateBFieldLines(streamlines, knotColoring); }
     toggleBFieldLines(on) { this._fieldRenderer.toggleBFieldLines(on); }
 
+    setFlowLineOpacity(value) {
+        this._fieldRenderer.setFlowLineOpacity(value);
+        this._fluxRenderer.setFlowLineOpacity(value);
+    }
+
     // -- Poynting Vectors (Yellow-Orange arrows) --
     _buildPoyntingVectors() { this._fieldRenderer._buildPoyntingVectors(); }
     updatePoyntingVectors(fieldData) { this._fieldRenderer.updatePoyntingVectors(fieldData); }
@@ -723,6 +730,7 @@ export class Viewport {
     updateForceStreamlines(lines, forceType) { this._fieldRenderer.updateForceStreamlines(lines, forceType); }
     animateForceStreamlines(dt) { this._fieldRenderer.animateForceStreamlines(dt); }
     showForceStreamlines_vis(visible) { this._fieldRenderer.showForceStreamlines_vis(visible); }
+    clearForceVisualization(type, style) { this._fieldRenderer.clearForceVisualization(type, style); }
 
     _buildForceGlyphMesh(forceType) { return this._fieldRenderer._buildForceGlyphMesh(forceType); }
     _ensureForceGlyphInfra() { this._fieldRenderer._ensureForceGlyphInfra(); }
@@ -1010,18 +1018,17 @@ export class Viewport {
     updateParticles(data) { this._particleRenderer.updateParticles(data); }
     setPointShape(shapeIndex) { this._particleRenderer.setPointShape(shapeIndex); }
     setOpacity(val) { this._particleRenderer.setOpacity(val); }
-    setPositiveSize(val) {
-        this.visualSettings.positiveSize = val;
+    setParticleSizes(positive, negative) {
+        const positiveChanged = this.visualSettings.positiveSize !== positive;
+        const negativeChanged = this.visualSettings.negativeSize !== negative;
+        if (!positiveChanged && !negativeChanged) return;
+        this.visualSettings.positiveSize = positive;
+        this.visualSettings.negativeSize = negative;
         this._particleRenderer?.updateParticleSizes();
-        this.render();
     }
-    setNegativeSize(val) {
-        this.visualSettings.negativeSize = val;
-        this._particleRenderer?.updateParticleSizes();
-        this.render();
-    }
+    setPositiveSize(val) { this.setParticleSizes(val, this.visualSettings.negativeSize); }
+    setNegativeSize(val) { this.setParticleSizes(this.visualSettings.positiveSize, val); }
     setParticleOpacity(val) {
-        this.visualSettings.particleOpacity = val;
         this._particleRenderer.setOpacity(val);
     }
     setParticleGlow(val) { this._particleRenderer.setGlow(val); }

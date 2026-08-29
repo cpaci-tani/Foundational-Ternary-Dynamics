@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Inspector } from '../inspector.js';
+import { Inspector } from '../inspector.js?v=2';
 
 export function createInspectorAppRuntime({ viewport, bridge, setZooMode }) {
     const inspector = new Inspector(viewport, bridge);

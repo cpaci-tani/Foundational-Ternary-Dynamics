@@ -167,7 +167,7 @@ class Scale4LifecycleController extends BaseLifecycleController {
                 const li = document.createElement('li');
                 li.style.padding = '4px 8px';
                 li.style.borderBottom = '1px solid #1a1a2e';
-                li.style.fontSize = '12px';
+                li.style.fontSize = '16px';
                 li.style.cursor = 'pointer';
                 
                 let name = b.type === 0 ? "Host Star" : (b.type === 2 ? "Gas Giant" : "Rocky Planet");

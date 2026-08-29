@@ -70,7 +70,7 @@
 }
 #panel-scene .scene-control label {
     font-size: var(--fs-base);
-    color: var(--text, #ddd);
+    color: var(--text-primary);
 }
 #panel-scene .scene-control input[type="range"] {
     width: 100%;
@@ -108,7 +108,7 @@
     color: var(--text-muted, #888);
     font-style: italic;
 }
-#panel-scene .scene-hint em { font-style: normal; font-weight: 600; color: var(--text, #ddd); }
+#panel-scene .scene-hint em { font-style: normal; font-weight: 600; color: var(--text-primary); }
 
 #panel-scene .scene-footer {
     display: flex;
@@ -119,7 +119,7 @@
 #panel-scene .scene-reset {
     padding: 0.4rem 0.85rem;
     background: transparent;
-    color: var(--text, #ddd);
+    color: var(--text-primary);
     border: 1px solid var(--border, #333);
     border-radius: 4px;
     font-size: var(--fs-sm);
@@ -127,7 +127,7 @@
 }
 #panel-scene .scene-reset:hover {
     border-color: var(--accent, #3a7);
-    color: var(--accent, #3a7);
+    color: var(--accent-text, #67e8f9);
 }
 
 @media (max-width: 560px) {

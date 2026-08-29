@@ -92,9 +92,11 @@ export const fieldTopologyMethods = {
         this._darkMatterHalo.geometry.setDrawRange(0, vi);
     },
     toggleDarkMatterHalo(on) {
-        if (!this._darkMatterHalo) this._buildDarkMatterHalo();
-        this._darkMatterHalo.visible = on;
-        if (!on) this._darkMatterHalo.geometry.setDrawRange(0, 0);
+        const next = !!on;
+        if (!this._darkMatterHalo) { if (!next) return; this._buildDarkMatterHalo(); }
+        if (this._darkMatterHalo.visible === next) return;
+        this._darkMatterHalo.visible = next;
+        if (!next) this._darkMatterHalo.geometry.setDrawRange(0, 0);
     },
 
     // ── Event Horizon Sphere (Scale 1 black hole scenario) ─────────────
@@ -181,9 +183,11 @@ export const fieldTopologyMethods = {
         this._dampingZones.geometry.setDrawRange(0, si * 2);
     },
     toggleDampingZones(on) {
-        if (!this._dampingZones) this._buildDampingZones();
-        this._dampingZones.visible = on;
-        if (!on) this._dampingZones.geometry.setDrawRange(0, 0);
+        const next = !!on;
+        if (!this._dampingZones) { if (!next) return; this._buildDampingZones(); }
+        if (this._dampingZones.visible === next) return;
+        this._dampingZones.visible = next;
+        if (!next) this._dampingZones.geometry.setDrawRange(0, 0);
     },
 
     // ── Topological Knots (wireframe cubes around manifested states) ──
@@ -277,9 +281,11 @@ export const fieldTopologyMethods = {
         return si;
     },
     toggleKnotZones(on) {
-        if (!this._knotZones) this._buildKnotZones();
-        this._knotZones.visible = on;
-        if (!on) this._knotZones.geometry.setDrawRange(0, 0);
+        const next = !!on;
+        if (!this._knotZones) { if (!next) return; this._buildKnotZones(); }
+        if (this._knotZones.visible === next) return;
+        this._knotZones.visible = next;
+        if (!next) this._knotZones.geometry.setDrawRange(0, 0);
     },
 
     // ── Genesis Threshold Isosurface (birth boundary) ────────────────
@@ -348,9 +354,11 @@ export const fieldTopologyMethods = {
         this._genesisIsosurface.geometry.setDrawRange(0, vi);
     },
     toggleGenesisIsosurface(on) {
-        if (!this._genesisIsosurface) this._buildGenesisIsosurface();
-        this._genesisIsosurface.visible = on;
-        if (!on) this._genesisIsosurface.geometry.setDrawRange(0, 0);
+        const next = !!on;
+        if (!this._genesisIsosurface) { if (!next) return; this._buildGenesisIsosurface(); }
+        if (this._genesisIsosurface.visible === next) return;
+        this._genesisIsosurface.visible = next;
+        if (!next) this._genesisIsosurface.geometry.setDrawRange(0, 0);
     },
 
     // ── Confinement Strings (SU(3) 1D topological defects) ───────────
@@ -479,9 +487,11 @@ export const fieldTopologyMethods = {
         this._confinementStrings.geometry.setDrawRange(0, vi);
     },
     toggleConfinement(on) {
-        if (!this._confinementStrings) this._buildConfinementStrings();
-        this._confinementStrings.visible = on;
-        if (!on) this._confinementStrings.geometry.setDrawRange(0, 0);
+        const next = !!on;
+        if (!this._confinementStrings) { if (!next) return; this._buildConfinementStrings(); }
+        if (this._confinementStrings.visible === next) return;
+        this._confinementStrings.visible = next;
+        if (!next) this._confinementStrings.geometry.setDrawRange(0, 0);
     }
 
 };

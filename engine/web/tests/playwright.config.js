@@ -19,6 +19,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   workers: 1,
   reporter: [['list']],
+  outputDir: '../test-results',  // keep artifacts under engine/web, not the repo root
   timeout: 60_000,      // 60s per test instead of default 30s
 
   use: {

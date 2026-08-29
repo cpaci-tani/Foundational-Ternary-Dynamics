@@ -77,7 +77,7 @@ if(EMSCRIPTEN)
 
     # ftd_core: RTTI and exceptions stay enabled. RTTI is required because LTO sees
     # ftd_wasm's embind references to type_info for ftd_core classes
-    # (DagEngine, ParticleEngine, AtomEngine, RenderBridge). Exceptions are
+    # (ParticleEngine, AtomEngine, RenderBridge). Exceptions are
     # required so invalid public constructor arguments are rejected instead of
     # reaching modulo-by-zero or oversized-allocation paths.
     target_compile_options(ftd_core PRIVATE ${_FTD_WASM_OPTS})

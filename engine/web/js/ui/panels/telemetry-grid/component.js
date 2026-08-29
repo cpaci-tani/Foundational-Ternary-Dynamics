@@ -5,9 +5,10 @@ import { resolveChartColor } from '../../charts/theme.js';
 import { PerfFlags } from '../../../config/perf-flags.js';
 import { isPanelLive } from '../panel-visibility.js';
 
-const PANEL_MIN_INTERVAL_MS = 33;   // ~30 Hz cap for floated panels (SPEC_SCALE0_PERF §6.1)
+const PANEL_MIN_INTERVAL_MS = 33;   // ~30 Hz ceiling; Scale 0 redraws only when its ~20-24 Hz source advances
 const GRID_VISIBLE_SAMPLES = 120;   // display window; source ring buffers still retain their full history
 const MAX_SPARK = GRID_VISIBLE_SAMPLES;
+const COUNT_FORMAT = new Intl.NumberFormat();
 
 // ── Telemetry Channel Definitions per Active Scale ──────────────────────────
 const CHANNELS = {
@@ -78,6 +79,9 @@ export class TelemetryGridPanelComponent {
         this.charts = new Map(); // channelKey -> uPlotInstance
         this._bound = false;
         this._ro = null;
+        this._reflowRaf = null;
+        this._lastPanelWidth = 0;
+        this._wasLive = false;
         // Visibility gate + lazy builder: only charts whose card intersects the
         // viewport are built (new uPlot) and redrawn each tick. The panel is
         // ~4000px tall, so most of its 23–39 sparklines are off-screen at any
@@ -111,11 +115,11 @@ export class TelemetryGridPanelComponent {
 
         this.rebuildGrid();
 
-        this._ro = new ResizeObserver(() => this.reflowCharts());
+        this._ro = new ResizeObserver(() => this._scheduleReflow());
         this._ro.observe(this.el);
 
         // Bind custom _ftdResize directly to panel so FloatingWindow triggers it automatically
-        this.el._ftdResize = () => this.reflowCharts();
+        this.el._ftdResize = () => this._scheduleReflow();
 
         this._bound = true;
         return this;
@@ -128,8 +132,6 @@ export class TelemetryGridPanelComponent {
         this.charts.forEach((entry) => {
             entry.hoverTarget?.removeEventListener('pointerenter', entry.onPointerEnter);
             entry.hoverTarget?.removeEventListener('pointerleave', entry.onPointerLeave);
-            entry.hoverTarget?.removeEventListener('mouseenter', entry.onPointerEnter);
-            entry.hoverTarget?.removeEventListener('mouseleave', entry.onPointerLeave);
             entry.tooltip?.destroy();
             entry?.u?.destroy?.();
         });
@@ -171,8 +173,10 @@ export class TelemetryGridPanelComponent {
                 card,
                 plotContainer: card.querySelector('.telemetry-card-plot'),
                 valueEl: card.querySelector('.telemetry-card-value'),
+                bufferPath: chan.buffer.split('.'),
                 xs: new Float64Array(MAX_SPARK),
                 ys: new Float64Array(MAX_SPARK),
+                plotData: null,
                 u: null,
                 tooltip: null,
                 built: false,
@@ -188,6 +192,7 @@ export class TelemetryGridPanelComponent {
                 lastTotal: -1,
                 lastValue: Number.NaN,
                 lastDisplayValue: Number.NaN,
+                lastWidth: 0,
             };
             this.charts.set(chan.key, entry);
 
@@ -249,6 +254,7 @@ export class TelemetryGridPanelComponent {
 
         // eslint-disable-next-line no-undef
         entry.u = new uPlot(uopts, [[], []], plotContainer);
+        entry.lastWidth = plotContainer.clientWidth || 240;
         entry.tooltip = new ChartHoverTooltip(plotContainer);
 
         entry.onPointerEnter = () => {
@@ -263,8 +269,6 @@ export class TelemetryGridPanelComponent {
         entry.hoverTarget = hoverTarget;
         hoverTarget.addEventListener('pointerenter', entry.onPointerEnter);
         hoverTarget.addEventListener('pointerleave', entry.onPointerLeave);
-        hoverTarget.addEventListener('mouseenter', entry.onPointerEnter);
-        hoverTarget.addEventListener('mouseleave', entry.onPointerLeave);
 
         entry.built = true;
     }
@@ -278,6 +282,7 @@ export class TelemetryGridPanelComponent {
             if (!entry) continue;
             if (oe.isIntersecting) {
                 if (!entry.built) this._buildChart(entry);
+                this._scheduleReflow();
                 if (!entry.onScreen) {
                     entry.lastBuffer = null;
                     entry.lastTotal = -1;
@@ -292,21 +297,40 @@ export class TelemetryGridPanelComponent {
     }
 
     update() {
-        if (PerfFlags.panelRenderV2) {
-            // Don't redraw an invisible panel: skip when collapsed/hidden, and cap
-            // floated panels (driven every frame by app.js) to ~30 Hz (§6.1). A
-            // docked active tab is driven at ~20 Hz already, so the cap only bites
-            // the floated 60 Hz case.
-            if (!isPanelLive(this.el)) return;
-            const now = performance.now();
-            if (this._lastDraw && (now - this._lastDraw) < PANEL_MIN_INTERVAL_MS) return;
-            this._lastDraw = now;
-        } else if (!this.el.classList.contains('active') && !this.el.closest('.floating-window')) {
-            return;
-        }
-
+        let becameLive = false;
         const app = document.getElementById('app');
         const currentScale = app?.dataset.activeScale || '0';
+        if (PerfFlags.panelRenderV2) {
+            // Don't redraw an invisible panel: skip when collapsed/hidden, and
+            // cap floated/non-Scale-0 panels to ~30 Hz (§6.1). A docked Scale-0
+            // tab is called exactly when its source sample is published
+            // (~display refresh / 3), so no source samples are discarded here.
+            if (!isPanelLive(this.el)) {
+                this._wasLive = false;
+                return;
+            }
+            becameLive = !this._wasLive;
+            this._wasLive = true;
+            const now = performance.now();
+            const sourceSynchronized = currentScale === '0'
+                && this.el.classList.contains('active')
+                && !this.el.closest('.floating-window');
+            if (!sourceSynchronized && this._lastDraw
+                && (now - this._lastDraw) < PANEL_MIN_INTERVAL_MS) return;
+            this._lastDraw = now;
+        } else if (!this.el.classList.contains('active') && !this.el.closest('.floating-window')) {
+            this._wasLive = false;
+            return;
+        } else {
+            becameLive = !this._wasLive;
+            this._wasLive = true;
+        }
+
+        const panelWidth = this.el.clientWidth;
+        if (panelWidth > 0 && panelWidth !== this._lastPanelWidth) {
+            this._lastPanelWidth = panelWidth;
+            this._scheduleReflow();
+        }
 
         let activeChannels = CHANNELS[this.activeScale] || [];
 
@@ -320,19 +344,22 @@ export class TelemetryGridPanelComponent {
         activeChannels.forEach((chan) => {
             const entry = this.charts.get(chan.key);
             if (!entry) return;
-            this._refreshValue(entry);
+            // One cheap value sync on activation prevents a placeholder flash
+            // before IntersectionObserver publishes the newly visible cards.
+            // Steady-state updates remain strictly viewport-culled below.
+            if (becameLive) this._refreshValue(entry, this._resolveBuffer(entry));
             // Cull off-screen (and not-yet-built) charts: the observer keeps
             // onScreen accurate, so a ~4000px panel only redraws the handful of
-            // sparklines actually in view instead of all 23–39 every tick.
+            // sparklines and value nodes actually in view instead of touching
+            // all 23–39 cards every tick.
             if (!entry.onScreen || !entry.u) return;
             this._drawEntry(entry);
         });
     }
 
-    _resolveBuffer(chan) {
-        const pathParts = chan.buffer.split('.');
+    _resolveBuffer(entry) {
         let buf = telemetryHub;
-        for (const part of pathParts) {
+        for (const part of entry.bufferPath) {
             if (buf) buf = buf[part];
         }
         return buf;
@@ -340,8 +367,7 @@ export class TelemetryGridPanelComponent {
 
     // Numeric card values are cheap and must not wait for IntersectionObserver
     // to allocate the heavier uPlot. This keeps the first visible paint live.
-    _refreshValue(entry) {
-        const buf = this._resolveBuffer(entry.chan);
+    _refreshValue(entry, buf) {
         if (!buf || buf.count === 0) return;
         const latestValue = buf.last();
         if (Object.is(entry.lastDisplayValue, latestValue)) return;
@@ -358,23 +384,26 @@ export class TelemetryGridPanelComponent {
     // is; each visible redraw re-ranges both axes (see the setData note below).
     _drawEntry(entry) {
         const chan = entry.chan;
-
-        const buf = this._resolveBuffer(chan);
+        const buf = this._resolveBuffer(entry);
 
         if (!buf || buf.count === 0) return;
+        this._refreshValue(entry, buf);
 
         const total = buf.total ?? buf.count;
         const latestValue = buf.last();
         if (entry.lastBuffer === buf && entry.lastTotal === total
             && Object.is(entry.lastValue, latestValue)) return;
 
-        const { u, valueEl, xs, ys } = entry;
+        const { u, xs, ys } = entry;
         const n = Math.min(buf.count, GRID_VISIBLE_SAMPLES);
         const start = Math.max(0, buf.count - n);
         const xStart = Math.max(0, (buf.total ?? buf.count) - n);
         for (let i = 0; i < n; i++) {
             xs[i] = xStart + i;
             ys[i] = buf.get(start + i);
+        }
+        if (entry.lastN !== n || !entry.plotData) {
+            entry.plotData = [xs.subarray(0, n), ys.subarray(0, n)];
         }
         entry.lastN = n;
         entry.lastBuffer = buf;
@@ -388,8 +417,7 @@ export class TelemetryGridPanelComponent {
         // frozen/clipped. The auto-range is a cheap min/max over the 120-sample
         // window and the redraw happens either way; the perf win is culling the
         // off-screen charts entirely (update()), not skipping this scan.
-        u.setData([xs.subarray(0, n), ys.subarray(0, n)], true);
-        if (valueEl) valueEl.textContent = this.formatValue(latestValue, chan.unit);
+        u.setData(entry.plotData, true);
         if (entry.hoverActive) this.renderTooltip(entry, chan);
     }
 
@@ -417,7 +445,7 @@ export class TelemetryGridPanelComponent {
     formatValue(val, unit) {
         if (val === undefined || val === null || isNaN(val)) return '--';
         if (unit === 'ct' || unit === 'b') {
-            return Math.round(val).toLocaleString();
+            return COUNT_FORMAT.format(Math.round(val));
         }
         if (Math.abs(val) > 1e6) {
             return `${(val / 1e6).toFixed(3)}M ${unit}`;
@@ -431,18 +459,22 @@ export class TelemetryGridPanelComponent {
         return `${val.toFixed(4)} ${unit}`;
     }
 
+    _scheduleReflow() {
+        if (this._reflowRaf !== null) return;
+        this._reflowRaf = window.requestAnimationFrame(() => {
+            this._reflowRaf = null;
+            this.reflowCharts();
+        });
+    }
+
     reflowCharts() {
-        this.charts.forEach((entry, key) => {
-            if (!entry.u) return;   // not yet built (still off-screen)
-            const card = this.container.querySelector(`[data-channel-key="${key}"]`);
-            if (card) {
-                const plotContainer = card.querySelector('.telemetry-card-plot');
-                if (plotContainer && plotContainer.clientWidth > 0) {
-                    entry.u.setSize({
-                        width: plotContainer.clientWidth,
-                        height: 70
-                    });
-                }
+        if (PerfFlags.panelRenderV2 && !isPanelLive(this.el)) return;
+        this.charts.forEach((entry) => {
+            if (!entry.u || !entry.onScreen) return;
+            const width = entry.plotContainer?.clientWidth || 0;
+            if (width > 0 && width !== entry.lastWidth) {
+                entry.lastWidth = width;
+                entry.u.setSize({ width, height: 70 });
             }
         });
     }
@@ -456,15 +488,19 @@ export class TelemetryGridPanelComponent {
             this._io.disconnect();
             this._io = null;
         }
+        if (this._reflowRaf !== null) {
+            window.cancelAnimationFrame(this._reflowRaf);
+            this._reflowRaf = null;
+        }
         this.charts.forEach((entry) => {
             entry.hoverTarget?.removeEventListener('pointerenter', entry.onPointerEnter);
             entry.hoverTarget?.removeEventListener('pointerleave', entry.onPointerLeave);
-            entry.hoverTarget?.removeEventListener('mouseenter', entry.onPointerEnter);
-            entry.hoverTarget?.removeEventListener('mouseleave', entry.onPointerLeave);
             entry.tooltip?.destroy();
             entry.u?.destroy();
         });
         this.charts.clear();
+        this._wasLive = false;
+        if (this.el?._ftdResize) delete this.el._ftdResize;
     }
 }
 

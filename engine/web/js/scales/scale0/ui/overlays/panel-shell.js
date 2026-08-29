@@ -6,9 +6,9 @@
  * "container" behaviours of the revamped panel:
  *
  *   1. Per-category collapse — each `.s0-overlay-col` header is a clickable
- *      accordion row; all categories expanded by default (opt-in per-category
- *      collapse persists), state persisted per category. Multiple categories
- *      can be open — or collapsed — at once.
+ *      accordion row. Volume opens by default; the remaining categories start
+ *      collapsed so the panel reads as an inspector instead of one long list.
+ *      Multiple categories can still be open and state persists per category.
  *   2. Active-overlays strip — `#s0-overlay-active` shows a removable chip for
  *      every currently-active overlay, DERIVED from the buttons' `.active` state
  *      via a MutationObserver, so it can never drift. A chip's × re-fires that
@@ -20,17 +20,36 @@
  */
 
 import { COL_TO_TOGGLES } from './presets.js';
+import { initScale0StandardModelReferenceControl } from './standard-model.js?v=2';
 
-const lsKey = (col) => `ftd.s0overlay.cat.${col}.collapsed`;
+const lsKey = (col) => `ftd.s0overlay.inspector.v1.cat.${col}.collapsed`;
+let refreshFrame = null;
+
+function activeSignature() {
+    const ids = [];
+    for (const toggles of Object.values(COL_TO_TOGGLES)) {
+        for (const id of toggles) {
+            const btn = document.getElementById(id);
+            if (btn?.classList.contains('active') && !btn.classList.contains('is-inapplicable')) ids.push(id);
+        }
+    }
+    return ids.join('|');
+}
 
 function readCollapsed(col) {
     try {
         const v = localStorage.getItem(lsKey(col));
-        return v === null ? false : v === '1';   // default: expanded
+        return v === null ? col !== 'volume' : v === '1';
     } catch { return false; }
 }
 function writeCollapsed(col, collapsed) {
     try { localStorage.setItem(lsKey(col), collapsed ? '1' : '0'); } catch { /* ignore */ }
+}
+
+function setColumnCollapsed(col, collapsed, { persist = false } = {}) {
+    col.classList.toggle('is-collapsed', collapsed);
+    col.querySelector('.s0-overlay-col-head')?.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    if (persist) writeCollapsed(col.dataset.col, collapsed);
 }
 
 export function initOverlayPanelShell() {
@@ -41,21 +60,26 @@ export function initOverlayPanelShell() {
     const body = panel.querySelector('.s0-overlay-body');
     const strip = document.getElementById('s0-overlay-active');
     const search = document.getElementById('s0-overlay-search');
+    const searchClear = document.getElementById('s0-overlay-search-clear');
     if (!body) return;
+
+    for (const button of body.querySelectorAll('.view-toggle')) {
+        button.setAttribute('aria-pressed', button.classList.contains('active') ? 'true' : 'false');
+    }
+    initScale0StandardModelReferenceControl();
 
     // ── 1. Accordion collapse (per category, persisted) ──────────────────────
     for (const col of body.querySelectorAll('.s0-overlay-col')) {
         const head = col.querySelector('.s0-overlay-col-head');
         if (!head) continue;
-        col.classList.toggle('is-collapsed', readCollapsed(col.dataset.col));
+        setColumnCollapsed(col, readCollapsed(col.dataset.col));
         head.setAttribute('role', 'button');
         head.setAttribute('tabindex', '0');
         const toggle = (ev) => {
             // The clear-× lives inside the head and owns its own handler — ignore it.
             if (ev.target.closest('.s0-overlay-col-clear')) return;
             const next = !col.classList.contains('is-collapsed');
-            col.classList.toggle('is-collapsed', next);
-            writeCollapsed(col.dataset.col, next);
+            setColumnCollapsed(col, next, { persist: true });
         };
         head.addEventListener('click', toggle);
         head.addEventListener('keydown', (e) => {
@@ -64,17 +88,25 @@ export function initOverlayPanelShell() {
     }
 
     // ── 2. Active-overlays strip (derived from button .active state) ─────────
-    const refresh = () => refreshOverlayPanelShell();
-    refresh();
+    refreshOverlayPanelShell();
     // Toggle buttons live inside `body`; watch their class changes so the strip
     // (a sibling of body, so its own edits don't re-trigger us) stays in sync.
     new MutationObserver((mutations) => {
         const activeChanged = mutations.some((mutation) => {
             if (!mutation.target.classList?.contains('view-toggle')) return false;
             const oldClasses = new Set((mutation.oldValue || '').split(/\s+/).filter(Boolean));
-            return oldClasses.has('active') !== mutation.target.classList.contains('active');
+            const changed = oldClasses.has('active') !== mutation.target.classList.contains('active');
+            if (changed) {
+                mutation.target.setAttribute(
+                    'aria-pressed',
+                    mutation.target.classList.contains('active') ? 'true' : 'false',
+                );
+            }
+            return changed;
         });
-        if (activeChanged) refresh();
+        if (activeChanged && panel._activeSignature !== activeSignature()) {
+            scheduleOverlayPanelShellRefresh();
+        }
     }).observe(body, {
         subtree: true,
         attributes: true,
@@ -84,8 +116,37 @@ export function initOverlayPanelShell() {
 
     // ── 3. Filter ────────────────────────────────────────────────────────────
     if (search) {
-        search.addEventListener('input', () => applyFilter(body, search.value));
+        let filterFrame = null;
+        search.addEventListener('input', () => {
+            if (searchClear) searchClear.hidden = search.value.length === 0;
+            if (filterFrame !== null) return;
+            filterFrame = requestAnimationFrame(() => {
+                filterFrame = null;
+                applyFilter(body, search.value);
+            });
+        });
+        search.addEventListener('keydown', (event) => {
+            if (event.key !== 'Escape' || !search.value) return;
+            event.preventDefault();
+            search.value = '';
+            search.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+        searchClear?.addEventListener('click', () => {
+            if (!search.value) return;
+            search.value = '';
+            search.dispatchEvent(new Event('input', { bubbles: true }));
+            search.focus({ preventScroll: true });
+        });
     }
+}
+
+/** Coalesce toggle bursts and MutationObserver delivery to one shell repaint. */
+export function scheduleOverlayPanelShellRefresh() {
+    if (refreshFrame !== null) return;
+    refreshFrame = requestAnimationFrame(() => {
+        refreshFrame = null;
+        refreshOverlayPanelShell();
+    });
 }
 
 /**
@@ -94,14 +155,25 @@ export function initOverlayPanelShell() {
  * than waiting for the MutationObserver microtask.
  */
 export function refreshOverlayPanelShell() {
+    if (refreshFrame !== null) {
+        cancelAnimationFrame(refreshFrame);
+        refreshFrame = null;
+    }
     const panel = document.getElementById('viewport-overlay');
     const body = panel?.querySelector('.s0-overlay-body');
     if (!body) return;
 
-    rebuildActiveStrip(document.getElementById('s0-overlay-active'));
+    const activeCount = rebuildActiveStrip(document.getElementById('s0-overlay-active'));
+    const summary = document.getElementById('s0-overlay-summary');
+    if (summary) {
+        const next = `${activeCount} active`;
+        if (summary.textContent !== next) summary.textContent = next;
+        summary.classList.toggle('is-empty', activeCount === 0);
+    }
     refreshColumnCounts(body);
     const search = document.getElementById('s0-overlay-search');
     applyFilter(body, search?.value || '');
+    panel._activeSignature = activeSignature();
 }
 
 function refreshColumnCounts(body) {
@@ -113,29 +185,49 @@ function refreshColumnCounts(body) {
             const btn = document.getElementById(id);
             if (btn?.classList.contains('active') && !btn.classList.contains('is-inapplicable')) count++;
         }
-        badge.textContent = String(count);
+        const text = String(count);
+        if (badge.textContent !== text) {
+            const node = badge.firstChild;
+            if (badge.childNodes.length === 1 && node?.nodeType === 3) node.nodeValue = text;
+            else badge.textContent = text;
+        }
         badge.classList.toggle('is-zero', count === 0);
     }
 }
 
 function rebuildActiveStrip(strip) {
-    if (!strip) return;
-    strip.textContent = '';
-    let n = 0;
+    if (!strip) return 0;
+    const desired = [];
     for (const toggles of Object.values(COL_TO_TOGGLES)) {
         for (const id of toggles) {
             const btn = document.getElementById(id);
             if (!btn || !btn.classList.contains('active') || btn.classList.contains('is-inapplicable')) continue;
-            strip.appendChild(makeChip(btn));
-            n++;
+            desired.push(btn);
         }
     }
-    strip.hidden = n === 0;
+    const wanted = new Set(desired.map((btn) => btn.id));
+    const existing = new Map();
+    for (const chip of [...strip.querySelectorAll(':scope > .s0-overlay-chip')]) {
+        const id = chip.dataset.overlayId;
+        if (!id || !wanted.has(id) || existing.has(id)) chip.remove();
+        else existing.set(id, chip);
+    }
+    let cursor = strip.firstElementChild;
+    for (const btn of desired) {
+        let chip = existing.get(btn.id);
+        if (!chip) chip = makeChip(btn);
+        if (chip !== cursor) strip.insertBefore(chip, cursor);
+        cursor = chip.nextElementSibling;
+    }
+    const hidden = desired.length === 0;
+    if (strip.hidden !== hidden) strip.hidden = hidden;
+    return desired.length;
 }
 
 function makeChip(btn) {
     const chip = document.createElement('span');
     chip.className = 's0-overlay-chip';
+    chip.dataset.overlayId = btn.id;
 
     const sw = btn.querySelector('.field-swatch');
     if (sw) {
@@ -168,6 +260,7 @@ function makeChip(btn) {
 
 function applyFilter(body, query) {
     const q = query.trim().toLowerCase();
+    body.classList.toggle('is-searching', !!q);
 
     if (!q) {
         body.classList.remove('is-empty');
@@ -175,7 +268,7 @@ function applyFilter(body, query) {
         for (const group of body.querySelectorAll('.s0-overlay-group')) group.classList.remove('is-filtered-out');
         for (const col of body.querySelectorAll('.s0-overlay-col')) {
             col.classList.remove('is-filtered-out');
-            col.classList.toggle('is-collapsed', readCollapsed(col.dataset.col));   // restore persisted
+            setColumnCollapsed(col, readCollapsed(col.dataset.col));   // restore persisted
         }
         return;
     }
@@ -202,7 +295,7 @@ function applyFilter(body, query) {
             if (unitMatch) colMatch = true;
         }
         col.classList.toggle('is-filtered-out', !colMatch);
-        col.classList.remove('is-collapsed');   // auto-expand matching categories
+        setColumnCollapsed(col, false);   // auto-expand matching categories
         if (colMatch) anyMatch = true;
     }
     body.classList.toggle('is-empty', !anyMatch);

@@ -154,11 +154,8 @@ export class WasmBridge {
                 locateFile: (path) => 'wasm/' + path
             });
             debugLog('[WasmBridge] loaded ' + (use64 ? 'wasm64 (Memory64, 8 GB heap)' : 'wasm32 (2 GB heap)'));
-            // Must be RenderBridge, not DagEngine: every module function in
-            // ftd_wasm.cpp (setupScenario, injectParticle, injectFlux, setDt,
-            // etc.) takes `ftd::RenderBridge&`. The DagEngine embind class
-            // only exposes .tick/.clear and cannot be passed to those
-            // functions (embind throws BindingError on type mismatch).
+            // Every module-level scenario/injection function takes a
+            // RenderBridge reference, so this bridge owns that concrete type.
             debugLog('[WasmBridge] init() - constructing initial RenderBridge with L =', this.latticeSize);
             try {
                 this._bridge = new this._module.RenderBridge(this.latticeSize);
@@ -254,7 +251,7 @@ export class WasmBridge {
             // converts std::bad_alloc into abort()), the WASM module is
             // permanently dead — but with MAXIMUM_MEMORY = 2 GB, abort
             // is unreachable for any sane lattice size.
-            // RenderBridge (not DagEngine) — see init() above for rationale.
+            // Rebuild the concrete RenderBridge used by the module API.
             if (this._bridge) {
                 debugLog('[WasmBridge] reset() - deleting old RenderBridge...');
                 this._bridge.delete();

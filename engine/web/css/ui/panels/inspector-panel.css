@@ -24,25 +24,6 @@
     color: var(--text-primary);
 }
 
-/* Inspector position coordinate inputs */
-.insp-pos-input {
-    width: 36px;
-    background: var(--bg-input);
-    color: var(--accent);
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    font-family: var(--font-mono);
-    font-size: var(--fs-xs);
-}
-
-/* Touch target: the 36px-wide coordinate inputs are below the 44px tap floor
- * on phones (and aren't caught by the shell's .ctrl-input rule). */
-@media (max-width: 767px) {
-    .insp-pos-input {
-        min-height: var(--tap-min);
-    }
-}
-
 /* ============================================================
  *  Inspector-specific helpers (moved from panel-resources.css in Phase D)
  * ============================================================ */
@@ -65,7 +46,7 @@
     font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--accent-text);
 }
 
 .panel-inspector-summary {
@@ -108,17 +89,17 @@
 }
 
 /* ── Sidebar (left/right) mount overrides ────────────────────────── */
-html[data-panel-mount="left"] .panel-inspector-hero,
-html[data-panel-mount="right"] .panel-inspector-hero {
+.panel.panel-mount-left .panel-inspector-hero,
+.panel.panel-mount-right .panel-inspector-hero {
     flex-direction: column;
 }
 
-html[data-panel-mount="left"] .panel-inspector-hero-actions,
-html[data-panel-mount="right"] .panel-inspector-hero-actions {
+.panel.panel-mount-left .panel-inspector-hero-actions,
+.panel.panel-mount-right .panel-inspector-hero-actions {
     justify-content: flex-start;
 }
 
-html[data-panel-mount="left"] .panel-inspector-summary,
-html[data-panel-mount="right"] .panel-inspector-summary {
+.panel.panel-mount-left .panel-inspector-summary,
+.panel.panel-mount-right .panel-inspector-summary {
     max-width: 100%;
 }

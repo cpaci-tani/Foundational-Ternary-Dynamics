@@ -147,7 +147,7 @@ test.describe('Scale-0 flux slice — all axes + shared volume controls', () => 
             if (b && !b.classList.contains('active')) b.click();
         });
 
-        const res = await page.evaluate(() => {
+        const res = await page.evaluate(async () => {
             const setSlider = (id, val) => {
                 const s = document.getElementById(id);
                 s.value = String(val);
@@ -162,6 +162,10 @@ test.describe('Scale-0 flux slice — all axes + shared volume controls', () => 
             setSelect('flux-shape-select', 4);   // Triangle
             setSlider('flux-threshold', 0.077);
             setSlider('flux-point-scale', 2.3);
+            // Flux Volume card inputs are committed as one latest-value batch
+            // per animation frame so a pointer-drag burst cannot fan out into
+            // redundant viewport work.
+            await new Promise(resolve => requestAnimationFrame(() => resolve()));
             const fr = window.__ftdCtx.viewport._fieldRenderer;
             const m = fr._fluxSliceMesh;
             return {

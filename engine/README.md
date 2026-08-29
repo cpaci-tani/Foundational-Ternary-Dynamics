@@ -20,29 +20,15 @@ Detailed references:
 
 ## Quick Start
 
-### Windows Desktop (WSL2 CUDA + embedded dashboard)
+### Windows native desktop (in-process D3D12 + CUDA)
 
 ```bat
-engine\build_desktop.bat
-engine\start_desktop.bat
+engine\build_native.bat build --target native_app --parallel 32
+engine\build\native\Release\native_app.exe
 ```
 
-This creates a native WPF/WebView2 window, serves `engine/web` in-process, and
-supervises the canonical `engine/build_wsl/ws_server` CUDA backend. The shell
-requires a runtime `backend: "cuda"` response and does not silently fall back
-to CPU. See [desktop/README.md](desktop/README.md) for prerequisites, ports,
-arguments, and the exact per-feature GPU boundary.
-
-### Windows native D3D12 (in-process, no WebView2)
-
-Separate from the web dashboard and from the WPF/WebView2 shell. Physics
-runs in-process; particles are drawn with D3D12. Does not modify `engine/web`.
-
-```bat
-engine\start_native_desktop.bat --cpu --lattice 32
-```
-
-See [native_desktop/README.md](native_desktop/README.md).
+This is the sole native application. Physics, CUDA, D3D12 rendering, and the
+RmlUi interface share one process. See [native/README.md](native/README.md).
 
 ### Build (Windows native, CPU + CUDA)
 MUST use the MSVC 14.44 toolset — VS 18's default (14.51+) crashes CUDA 13.0's
@@ -71,7 +57,6 @@ cp engine/build_wasm/wasm/ftd_core.{js,wasm} engine/web/wasm/
 
 ### Run
 ```bash
-./engine/build/Release/ftd_sim.exe [scenario] [lattice_size] [num_ticks]
 python engine/web/serve.py 8080
 ```
 Open `http://localhost:8080` for the dashboard.
@@ -90,7 +75,6 @@ All scale engines inherit from the `ScaleEngine` abstract base class, providing 
 | **2** | `AtomEngine` | Production | Composite atoms, ionic/vdW forces, covalent auto-bonding, VSEPR angle strain |
 | **3** | `MoleculeEngine`| Production | Natively handled via `AtomEngine`; 25 molecular presets |
 | **5** | `CosmicEngine` | Production | N-body + SPH cosmic layer, 9 body types, Barnes-Hut octree gravity |
-| **DAG** | `DagEngine` | Experimental | Sparse-lattice prototype; do not use for physics claims |
 
 ---
 

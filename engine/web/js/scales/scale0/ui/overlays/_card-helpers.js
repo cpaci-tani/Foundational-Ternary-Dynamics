@@ -33,7 +33,7 @@ export function cardStyle(minHeightPx = 100) {
  */
 export function titleStyle() {
     return `
-        font-size: 14px;
+        font-size: 16px;
         font-weight: 600;
         color: var(--text-muted);
         text-transform: uppercase;
@@ -106,8 +106,7 @@ export function formatFixed(v, digits = 3) {
 // ── Status colors with hysteresis ───────────────────────────────────
 
 /**
- * Maps an absolute drift value to one of four status tokens
- * (--positive, --warning, --caution, --negative).
+ * Maps an absolute drift value to one of four accessible foreground tokens.
  *
  * Thresholds match the conservation panel spec:
  *   |Δ| < 1e-10 → positive (green)
@@ -118,10 +117,10 @@ export function formatFixed(v, digits = 3) {
 export function statusToken(absDelta) {
     if (!Number.isFinite(absDelta)) return 'var(--text-muted)';
     const a = Math.abs(absDelta);
-    if (a < 1e-10) return 'var(--positive)';
-    if (a < 1e-6)  return 'var(--warning)';
-    if (a < 1e-3)  return 'var(--caution)';
-    return 'var(--negative)';
+    if (a < 1e-10) return 'var(--positive-text)';
+    if (a < 1e-6)  return 'var(--warning-text)';
+    if (a < 1e-3)  return 'var(--caution-text)';
+    return 'var(--negative-text)';
 }
 
 /**
@@ -134,7 +133,7 @@ export function statusToken(absDelta) {
  *   const stable = hyst.update(rawStatusToken);   // returns the displayed token
  */
 export function createHysteresis({ holdEscalate = 3, holdRelax = 5 } = {}) {
-    let current = 'var(--positive)';
+    let current = 'var(--positive-text)';
     let pendingTarget = current;
     let countToward = 0;
     return {
@@ -152,10 +151,10 @@ export function createHysteresis({ holdEscalate = 3, holdRelax = 5 } = {}) {
             countToward += 1;
             // Severity ordering for "escalate vs relax" decision
             const order = {
-                'var(--positive)': 0,
-                'var(--warning)':  1,
-                'var(--caution)':  2,
-                'var(--negative)': 3,
+                'var(--positive-text)': 0,
+                'var(--warning-text)':  1,
+                'var(--caution-text)':  2,
+                'var(--negative-text)': 3,
             };
             const escalating = (order[target] ?? 0) > (order[current] ?? 0);
             const need = escalating ? holdEscalate : holdRelax;
@@ -191,5 +190,5 @@ export function tagBadge(kind, tooltip = '') {
     };
     const entry = labels[kind] || { txt: '[' + kind + ']', full: tooltip || kind };
     const title = tooltip || entry.full;
-    return `<span title="${title}" style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);opacity:0.75;margin-right:4px;">${entry.txt}</span>`;
+    return `<span title="${title}" style="font-family:var(--font-mono);font-size:16px;color:var(--text-muted);opacity:0.75;margin-right:4px;">${entry.txt}</span>`;
 }

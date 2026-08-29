@@ -13,19 +13,19 @@ read [CLAUDE.md](CLAUDE.md) → read [docs/WHERE_WE_LEFT_OFF.md](docs/WHERE_WE_L
 
 | If you want to… | Look here | Entry-point file |
 |---|---|---|
-| Add a new physics scenario | `engine/web/js/bridge/scenarios/` | `index.js` (prefix dispatcher) |
+| Add a new physics scenario | `engine/web/js/scales/scale0/scenario-registry.js` + `runtime/scenario-loader.js`; canonical native setup in `engine/src/scenarios/` | registry entry + native setup function |
 | Modify scenario toggle defaults | `engine/web/js/config/toggles.js` | `SCALE0_TOGGLES`, `SCALE0_SCENARIO_OVERRIDES` |
 | Change a physics constant | `engine/web/js/constants.js` (JS) + `engine/include/ftd/ontic.h` (C++) | layered by category |
 | Add a new toggle | `engine/include/ftd/term_toggles.h` (C++) + `engine/web/js/config/toggles.js` (JS) + `engine/wasm/bindings_render_bridge.cpp` (binding) | (Phase 6 will make this 1-place edit) |
-| Change MockBridge physics (JS) | `engine/web/js/bridge-init.js` `MockBridge` class (lines 62–1568); helpers in `engine/web/js/bridge/mock-*.js` | `_tickFlux`, `_computePairwiseForces` |
+| Change the web bridge/API surface | `engine/web/js/bridge/bridge-contract.js`, `wasm-bridge.js`, `wasm-bridge-proxy.js`, and `engine/web/js/ws-bridge.js` | `SCALE0_DIRECT_READS`, capability factories |
 | Change WasmBridge bindings | `engine/wasm/ftd_wasm.cpp`, `engine/wasm/bindings_*.cpp` | `EMSCRIPTEN_BINDINGS` block |
-| Change C++ engine physics | `engine/src/render_bridge.cpp` phase methods | `phase_read`, `phase_write`, `phase_forces`, `phase_movement` |
-| Change CUDA kernels | `engine/cuda/kernels_stencil.cu`, `kernels_forces.cu`, `kernels_poisson.cu` | `phase_*_kernel` |
+| Change C++ engine physics | `engine/src/render_bridge_phases/` plus focused engine source files | `phase_read`, `phase_write`, `phase_forces`, `phase_movement` |
+| Change CUDA kernels | `engine/cuda/kernels_stencil_{single,dual}.cu`, `kernels_stencil_common.cuh`, `kernels_forces.cu`, `kernels_poisson.cu` | `phase_*_kernel` |
 | Add a new dashboard view (3D rendering) | `engine/web/js/viewport.js` + `engine/web/js/viewport/*.js` | `Viewport` class methods |
 | Add a new dashboard panel | `engine/web/js/scales/scale0/ui/` (Scale 0 panels) | `bindings.js`, `controls/`, `overlays/` |
 | Change scenario load flow | `engine/web/js/scales/scale0/runtime/scenario-loader.js` | `loadScale0Scenario`, `applyToggleDefaults` |
 | Change diagnostics panel rows | `engine/web/js/ui/panels/diagnostics-panel/descriptors/scale0.js` | `sections[]` |
-| Add a C++ unit test | `engine/tests/test_*.cpp` + register in `engine/CMakeLists.txt` (`ftd_add_test` macro) | template: `engine/tests/test_audit_regression.cpp` |
+| Add a C++ unit test | `engine/tests/test_*.cpp` + register through `engine/cmake/FtdTestTargets.cmake` | template: `engine/tests/test_audit_regression.cpp` |
 | Add a JS Playwright test | `engine/web/tests/*.spec.js` | template: `engine/web/tests/audit-regression.spec.js` |
 | Add a Python verification script | `scripts/verification/` | template: `scripts/verification/verify_*.py` |
 | Add a formal proof | `scripts/proofs/proof_*.py` | run via `python -m scripts.proofs.<name>` |
@@ -72,6 +72,7 @@ ftd/
 │   │   └── 0001…0013-*.md             # Per-decision records (9 retroactive + 4 from refactor sweep)
 │   ├── audits/                        # Archived audit ledgers (per sweep)
 │   │   ├── INDEX.md
+│   │   ├── engine_agent_plans/         # Preserved graph/engine-overlay implementation plans
 │   │   ├── AUDIT_DOCUMENT_CLEANUP_LEDGER.md # Documentation cleanup provenance
 │   │   ├── archive/                   # Historical request/report provenance
 │   │   ├── AUDIT_2026-04_pre-refactor.md   # 122-finding sweep (78 resolved, archived)
@@ -168,19 +169,17 @@ ftd/
 │           │   ├── molecular-renderer.js, boundary-geometry.js
 │           │   ├── topology-sheet-renderer.js, color-ramps.js
 │           │   └── REFACTOR_MAP.md    # Phase 3 extraction guide (closed; archival reference)
-│           ├── bridge-init.js     # 42-LOC re-export shim (Phase 2; 2395 LOC originally)
+│           ├── bridge-init.js         # bridge barrel + capability installer
 │           ├── app.js             # Main entry / orchestrator
 │           ├── config/toggles.js      # SCALE0_TOGGLES + scenario overrides
-│           ├── bridge/                # Bridge layer (README.md inside; Phase 2 isolated)
-│           │   ├── mock-bridge.js     # 1578 LOC — MockBridge class (Phase 2a)
-│           │   ├── wasm-bridge.js     # 715 LOC — WasmBridge class (Phase 2b)
-│           │   ├── capabilities/      # Phase 2c capability factories
+│           ├── bridge/                # WASM bridge layer (README.md inside)
+│           │   ├── bridge-contract.js # canonical direct-read/sampler surface
+│           │   ├── wasm-bridge.js     # in-thread Emscripten bridge
+│           │   ├── wasm-bridge-proxy.js # worker-hosted WASM proxy
+│           │   ├── capabilities/      # scale capability factories
 │           │   │   ├── scale0.js, scale1.js, scale2.js, install.js
-│           │   ├── mock-diagnostics.js       # Live-reference factory exemplar
-│           │   ├── mock-particle-engine.js, mock-lattice-samplers.js
-│           │   ├── mock-atom-engine.js, mock-scale4.js, mock-scale5.js
-│           │   ├── boundary.js
-│           │   └── scenarios/         # 84 JS scenarios (README.md inside)
+│           │   ├── native-particle-engine.js # Scale-1 WASM facade
+│           │   └── mock-atom-engine.js, mock-scale4.js, mock-scale5.js
 │           ├── scales/scale0/         # Scale-0 controller (README.md inside)
 │           │   ├── controller.js
 │           │   ├── runtime/           # tick, frame-sync, scenario-loader, diagnostics
@@ -193,6 +192,7 @@ ftd/
     ├── verification/                  # Formal derivation verification
     ├── proofs/                        # Mathematical proofs with error bounds
     ├── experiments/                   # Bell tests, CERN analysis
+    │   └── recorded_results/          # Tracked raw evidence grouped by FTD claim ID
     ├── exploration/                   # Research investigations (50-test physics battery)
     ├── tests/                         # pytest suites
     ├── visualization/                 # Publication figure generation
@@ -227,16 +227,20 @@ graph TD
     RB <-.parity.-> Cuda
     RB --> Wasm
 
-    MockBridge["bridge-init.js<br/>MockBridge"]
-    WasmBridge["bridge-init.js<br/>WasmBridge"]
-    BridgeHelpers["bridge/mock-*.js<br/>(live-ref factories)"]
+    WasmBridge["bridge/wasm-bridge.js<br/>(in-thread WASM)"]
+    WorkerProxy["bridge/wasm-bridge-proxy.js<br/>(worker WASM)"]
+    WebSocketBridge["ws-bridge.js<br/>(native server transport)"]
+    BridgeContract["bridge/bridge-contract.js<br/>(shared read surface)"]
     Capabilities["createScale0/1/2Capabilities<br/>(symmetric surface)"]
 
-    JSConst --> MockBridge
     Wasm --> WasmBridge
-    MockBridge --> BridgeHelpers
-    MockBridge --> Capabilities
+    WasmBridge --> WorkerProxy
     WasmBridge --> Capabilities
+    WorkerProxy --> Capabilities
+    WebSocketBridge --> Capabilities
+    BridgeContract --> WasmBridge
+    BridgeContract --> WorkerProxy
+    BridgeContract --> WebSocketBridge
 
     AppDag["app.js<br/>(main entry)"]
     Scale0["scales/scale0/controller.js"]
@@ -249,12 +253,14 @@ graph TD
     Scale0 --> Capabilities
     OtherScales --> Capabilities
 
-    Scenarios["bridge/scenarios/<br/>(84 JS, prefix-dispatched)"]
-    SceneCpp["src/scenarios/<br/>(89 C++, mirrors JS)"]
+    Scenarios["scales/scale0/scenario-registry.js<br/>+ runtime/scenario-loader.js"]
+    SceneCpp["src/scenarios/<br/>(native setup implementations)"]
 
-    MockBridge --> Scenarios
+    Scenarios --> WasmBridge
+    Scenarios --> WorkerProxy
+    Scenarios --> WebSocketBridge
     RB --> SceneCpp
-    Scenarios <-.mirror.-> SceneCpp
+    Scenarios <-.catalog parity.-> SceneCpp
 
     Tests["engine/tests + engine/web/tests"]
     AuditLedger["docs/audits/INDEX.md"]
@@ -262,11 +268,14 @@ graph TD
     Contracts["CONTRACTS.md"]
 
     RB -.tested.-> Tests
-    MockBridge -.tested.-> Tests
+    WasmBridge -.tested.-> Tests
+    WorkerProxy -.tested.-> Tests
+    WebSocketBridge -.tested.-> Tests
     Tests --> AuditLedger
     AuditLedger -.feeds.-> ADR
     ADR -.codifies.-> Contracts
-    Contracts -.governs.-> BridgeHelpers
+    Contracts -.governs.-> BridgeContract
+    Contracts -.governs.-> Capabilities
 ```
 
 ---
@@ -299,7 +308,7 @@ graph TD
  * ======================================== */
 ```
 
-Reference exemplar: [`engine/web/js/bridge/mock-diagnostics.js`](engine/web/js/bridge/mock-diagnostics.js) lines 26–50. Phase 2/3 extractions all carry the `@file` block; new files must too.
+Reference exemplar: [`engine/web/js/bridge/mock-atom-engine.js`](engine/web/js/bridge/mock-atom-engine.js) lines 14–28. Scale-0 no longer uses JS live-reference physics factories; its current contract is [`bridge-contract.js`](engine/web/js/bridge/bridge-contract.js).
 
 ---
 
@@ -391,16 +400,16 @@ order, toggle coverage, and the energy-conservation profile:
 |---|---|---|
 | C++ | `engine/tests/test_conservation_profile.cpp` | energy-conservation profile (leak = non-variational Gauss-projection **operator**, not solver tol) |
 | C++ | `engine/tests/test_tick_phase_order.cpp` | `phase_read → phase_write → gauss_project → phase_forces → phase_movement` order |
-| C++ | `engine/tests/test_engine_lifecycle.cpp` | construct / run / teardown lifecycle; `DagEngine::entity_count()==0` documented |
+| C++ | `engine/tests/test_engine_lifecycle.cpp` | construct / run / teardown lifecycle for the production particle and cosmic engines |
 | JS (Playwright) | `engine/web/tests/lifecycle-harness.spec.js` | web bridge lifecycle |
 | JS (Playwright) | `engine/web/tests/reconcile-claims.spec.js` | claim reconciliation |
 | JS (Playwright) | `engine/web/tests/toggle-coverage.spec.js` | toggle coverage |
 | JS (Playwright) | `engine/web/tests/overlay-scheduler.spec.js` | overlay scheduler |
 
 This audit also **fixed a clean-checkout `cmake` break** (dangling
-`_repro_gpu_empty_bridge` reference in `engine/CMakeLists.txt`) and marked
-**DagEngine deprecate-clearly**. The MC-T4.3 theory-side companion is the
-route-invariance boundary audit
+`_repro_gpu_empty_bridge` reference in `engine/CMakeLists.txt`). The retired
+DagEngine implementation was removed during the August 2026 product
+consolidation; the MC-T4.3 theory-side companion remains the route-invariance boundary audit
 `docs/theory/07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`
 (FTD-0242, `[STRONGLY MOTIVATED CONJECTURE no-go]` — α is dynamical not
 structural; **nothing promoted**).

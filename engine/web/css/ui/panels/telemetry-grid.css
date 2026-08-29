@@ -128,8 +128,8 @@
     }
 }
 
-html[data-panel-mount="left"] .telemetry-grid-container,
-html[data-panel-mount="right"] .telemetry-grid-container {
+.panel.panel-mount-left .telemetry-grid-container,
+.panel.panel-mount-right .telemetry-grid-container {
     grid-template-columns: 1fr;
 }
 

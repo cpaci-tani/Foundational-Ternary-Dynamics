@@ -3,7 +3,7 @@
 // Titles, categories, tags, and epistemic strings are copied from
 // engine/web/js/scales/scale0/scenario-registry.js sourceTitle rows.
 // Ids must stay set-equal with ftd::scale0_scenario_ids().
-// description and min_lattice are unauthored (SPEC_UI_V2 §5.1).
+// description and min_lattice are unauthored.
 
 #include <cstddef>
 #include <string_view>

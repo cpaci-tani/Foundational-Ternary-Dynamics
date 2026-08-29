@@ -57,7 +57,7 @@
     margin-bottom: 4px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
     .lag-layout {
         grid-template-columns: 1fr;
     }
@@ -139,26 +139,26 @@
 /* ── Sidebar (left/right) mount overrides ────────────────────────── */
 /* minmax(420px, ...) and minmax(280px, ...) both exceed the ~350px
    sidebar content width — force single-column stack. */
-html[data-panel-mount="left"] .lag-layout,
-html[data-panel-mount="right"] .lag-layout {
+.panel.panel-mount-left .lag-layout,
+.panel.panel-mount-right .lag-layout {
     grid-template-columns: 1fr;
     gap: var(--sp-md);
 }
 
-html[data-panel-mount="left"] .lag-chart-col .chart-card-plot,
-html[data-panel-mount="right"] .lag-chart-col .chart-card-plot {
+.panel.panel-mount-left .lag-chart-col .chart-card-plot,
+.panel.panel-mount-right .lag-chart-col .chart-card-plot {
     aspect-ratio: 16 / 7;
     min-height: 160px;
     max-height: 240px;
 }
 
-html[data-panel-mount="left"] .lag-term-toggle,
-html[data-panel-mount="right"] .lag-term-toggle {
+.panel.panel-mount-left .lag-term-toggle,
+.panel.panel-mount-right .lag-term-toggle {
     font-size: var(--fs-xs);
 }
 
-html[data-panel-mount="left"] .lag-data-col,
-html[data-panel-mount="right"] .lag-data-col {
+.panel.panel-mount-left .lag-data-col,
+.panel.panel-mount-right .lag-data-col {
     gap: var(--sp-md);
 }
 
@@ -204,8 +204,8 @@ html[data-panel-mount="right"] .lag-data-col {
 }
 
 /* Narrow docks / phones: one card per row. */
-html[data-panel-mount="left"] .lag-charts-grid,
-html[data-panel-mount="right"] .lag-charts-grid {
+.panel.panel-mount-left .lag-charts-grid,
+.panel.panel-mount-right .lag-charts-grid {
     grid-template-columns: 1fr;
 }
 #app[data-layout-mode^="compact"] .lag-charts-grid {
@@ -215,8 +215,8 @@ html[data-panel-mount="right"] .lag-charts-grid {
     .lag-charts-grid { grid-template-columns: 1fr; }
 }
 
-html[data-panel-mount="left"] .lag-term-card .chart-card-plot,
-html[data-panel-mount="right"] .lag-term-card .chart-card-plot {
+.panel.panel-mount-left .lag-term-card .chart-card-plot,
+.panel.panel-mount-right .lag-term-card .chart-card-plot {
     min-height: 110px;
     max-height: 150px;
 }

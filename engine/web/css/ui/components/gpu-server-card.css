@@ -5,7 +5,7 @@
   position: fixed;
   right: 20px;
   bottom: 20px;
-  z-index: 100000;                 /* above the loading overlay and the app */
+  z-index: var(--z-gpu-card);      /* above app chrome; below dialogs/bootstrap */
   width: 330px;
   max-width: calc(100vw - 40px);
   padding: 14px 16px 16px;
@@ -14,9 +14,9 @@
   border: 1px solid color-mix(in srgb, var(--border, #788cb4) 28%, transparent);
   box-shadow: var(--shadow-lg, 0 12px 40px rgba(0, 0, 0, 0.5));
   color: var(--text-primary, #e6ecf5);
-  font: 13px/1.5 var(--font-body, system-ui, -apple-system, "Segoe UI", sans-serif);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  font: 16px/1.5 var(--font-body, system-ui, -apple-system, "Segoe UI", sans-serif);
+  -webkit-backdrop-filter: var(--glass-filter-low);
+  backdrop-filter: var(--glass-filter-low);
 }
 #gpu-server-card[hidden] { display: none; }
 
@@ -39,18 +39,18 @@
 .gpu-card-dot.on  { background: var(--ok, #4ade80); box-shadow: 0 0 8px color-mix(in srgb, var(--ok, #4ade80) 70%, transparent); }
 .gpu-card-dot.off { background: var(--warn, #f0a742); }
 .gpu-card-title { font-weight: 600; letter-spacing: 0.01em; }
-.gpu-card-status { margin-left: auto; color: var(--text-muted, #9aa4b6); font-size: 12px; }
+.gpu-card-status { margin-left: auto; color: var(--text-muted, #9aa4b6); font-size: 16px; }
 
 .gpu-card-body { display: flex; flex-direction: column; gap: 10px; }
-.gpu-note { color: var(--text-secondary, #b6c0d2); font-size: 12.5px; }
+.gpu-note { color: var(--text-secondary, #b6c0d2); font-size: 16px; }
 .gpu-note code {
   padding: 1px 5px;
   border-radius: var(--radius-sm, 4px);
   background: color-mix(in srgb, var(--border, #788cb4) 16%, transparent);
-  font-size: 11.5px;
+  font-size: 16px;
 }
 .gpu-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.gpu-lattice-lbl { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted, #9aa4b6); }
+.gpu-lattice-lbl { display: flex; align-items: center; gap: 6px; font-size: 16px; color: var(--text-muted, #9aa4b6); }
 #gpu-lattice {
   padding: 4px 8px;
   border-radius: var(--radius, 6px);
@@ -67,12 +67,12 @@
   border: 1px solid color-mix(in srgb, var(--border, #788cb4) 30%, transparent);
   background: color-mix(in srgb, var(--bg-input, #283040) 90%, transparent);
   color: var(--text-primary, #e6ecf5);
-  font: 600 12.5px/1 var(--font-body, system-ui, -apple-system, "Segoe UI", sans-serif);
+  font: 600 16px/1 var(--font-body, system-ui, -apple-system, "Segoe UI", sans-serif);
   cursor: pointer;
   text-decoration: none;
 }
 .gpu-btn:hover { border-color: color-mix(in srgb, var(--border, #788cb4) 55%, transparent); }
-.gpu-btn.primary { background: var(--accent, #7c5cff); border-color: var(--accent, #7c5cff); color: #fff; }
+.gpu-btn.primary { background: var(--accent-dim, #4f46e5); border-color: var(--accent, #7c5cff); color: var(--on-accent, #fff); }
 .gpu-btn.primary:hover { filter: brightness(0.92); }
 .gpu-btn:disabled { opacity: 0.5; cursor: default; }
-.gpu-msg { min-height: 1em; font-size: 12px; color: var(--text-muted, #9aa4b6); }
+.gpu-msg { min-height: 1em; font-size: 16px; color: var(--text-muted, #9aa4b6); }

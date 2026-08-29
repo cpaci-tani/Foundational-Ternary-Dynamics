@@ -13,7 +13,7 @@ int main() {
     ftd::test::check("default ui enabled", !empty.options.no_ui);
     ftd::test::check("help not requested", !empty.help);
 
-    ftd::test::section("--no-ui skips ImGui without changing sim flags");
+    ftd::test::section("--no-ui skips RmlUi without changing sim flags");
     const char* no_ui[] = {
         "ftd_native", "--no-ui", "--cpu", "--lattice", "48",
         "--scenario", "s0-seed-hydrogen"

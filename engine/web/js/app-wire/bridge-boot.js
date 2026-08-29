@@ -46,11 +46,11 @@ export async function bootBridge(latticeSize, ui) {
         loadProgress(30, 'GPU engine connected');
         if (engineEl) {
             engineEl.textContent = 'Native Engine';
-            engineEl.style.color = '#c084fc';
+            engineEl.style.color = 'var(--accent-text)';
         }
         if (computeEl) {
             computeEl.textContent = bridge.isNativeGPU ? 'GPU' : 'CPU';
-            computeEl.style.color = bridge.isNativeGPU ? '#4ade80' : '#60a5fa';
+            computeEl.style.color = bridge.isNativeGPU ? 'var(--positive-text)' : 'var(--axis-z-text)';
             computeEl.title = bridge.isNativeGPU
                 ? 'Connected to native GPU engine (CUDA)'
                 : 'Connected to native CPU engine';
@@ -72,11 +72,11 @@ export async function bootBridge(latticeSize, ui) {
     loadProgress(30, 'WASM engine ready');
     if (engineEl) {
         engineEl.textContent = 'WASM Engine';
-        engineEl.style.color = '#4ade80';
+        engineEl.style.color = 'var(--positive-text)';
     }
     if (computeEl) {
         computeEl.textContent = 'CPU';
-        computeEl.style.color = '#60a5fa';
+        computeEl.style.color = 'var(--axis-z-text)';
         computeEl.title = 'Browser WASM runs on CPU. Start ws_server.exe for GPU.';
     }
     return bridge;

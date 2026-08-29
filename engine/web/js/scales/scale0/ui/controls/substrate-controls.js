@@ -54,20 +54,23 @@ export function createSubstrateControlsCard() {
     </div>
 
     <div class="combo-section-label">Parameters</div>
-    <div class="pe-ctrl-row">
+    <div class="pe-ctrl-row ctrl-native-readonly">
       <span class="pe-ctrl-label ctrl-label-md" title="Engine K_B constant / manifestation anchor">K<sub>B</sub> (Thresh)</span>
-      <input type="range" class="pe-slider" id="combo-kb" min="0.05" max="2.0" step="0.01" value="${kbStr}">
+      <input type="range" class="pe-slider ctrl-slider-disabled" id="combo-kb" min="0.05" max="2.0" step="any" value="${kbStr}" disabled aria-readonly="true" aria-disabled="true" title="K_B is a read-only engine constant">
       <span class="pe-ctrl-value" id="combo-kb-val">${kbStr}</span>
+      <span class="ctrl-native-fixed" title="Read-only engine constant">fixed</span>
     </div>
-    <div class="pe-ctrl-row">
+    <div class="pe-ctrl-row ctrl-native-readonly">
       <span class="pe-ctrl-label ctrl-label-md" title="Engine lattice-gravity constant G_N">G<sub>N</sub> (Gravity)</span>
-      <input type="range" class="pe-slider" id="combo-gn" min="0.0" max="0.1" step="0.001" value="${gnStr}">
+      <input type="range" class="pe-slider ctrl-slider-disabled" id="combo-gn" min="0.0" max="0.1" step="any" value="${gnStr}" disabled aria-readonly="true" aria-disabled="true" title="G_N is a read-only engine constant">
       <span class="pe-ctrl-value" id="combo-gn-val">${gnStr}</span>
+      <span class="ctrl-native-fixed" title="Read-only engine constant">fixed</span>
     </div>
-    <div class="pe-ctrl-row">
+    <div class="pe-ctrl-row ctrl-native-readonly">
       <span class="pe-ctrl-label ctrl-label-sm" title="Engine damping constant alpha">Damp</span>
-      <input type="range" class="pe-slider" id="combo-damp" min="0.0" max="0.05" step="0.0001" value="${dampingStr}">
+      <input type="range" class="pe-slider ctrl-slider-disabled" id="combo-damp" min="0.0" max="0.05" step="any" value="${dampingStr}" disabled aria-readonly="true" aria-disabled="true" title="Damping is a read-only engine constant">
       <span class="pe-ctrl-value" id="combo-damp-val">${dampingStr}</span>
+      <span class="ctrl-native-fixed" title="Read-only engine constant">fixed</span>
     </div>
 
     <div class="combo-section-label">Field</div>

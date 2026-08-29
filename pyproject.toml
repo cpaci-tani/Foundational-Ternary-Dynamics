@@ -1,10 +1,12 @@
 [tool.pytest.ini_options]
+cache_dir = "scratch/cache/pytest"
 testpaths = ["scripts/tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 
 [tool.ruff]
+cache-dir = "scratch/cache/ruff"
 line-length = 120
 exclude = [
     ".venv",

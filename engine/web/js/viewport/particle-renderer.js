@@ -52,6 +52,7 @@ export class ViewportParticleRenderer {
         insideBoundary,
         getBoundaryShape,
         getBoundaryMode,
+        getEngineMode,
         visualSettings,
         writeArrowFieldIntoMesh,
     }) {
@@ -64,6 +65,7 @@ export class ViewportParticleRenderer {
         // of `this._boundaryShape` in updateParticles' fast-path check).
         this._getBoundaryShape = getBoundaryShape || (() => 'cube');
         this._getBoundaryMode = getBoundaryMode || (() => 'lattice');
+        this._getEngineMode = getEngineMode || (() => 'lattice');
         // visualSettings is shared with the Viewport orchestrator: both sides
         // hold a reference to the SAME object so opacity changes from
         // setOpacity propagate to readers on either side without explicit
@@ -84,6 +86,9 @@ export class ViewportParticleRenderer {
         this._admissibilityRings = null;  // Scale-1 promotion admissibility halo overlay
         this._provenanceLabels = null;    // Scale-1 promotion cluster-id/N label overlay
         this._massComparison = null;      // Scale-1 promotion voxel<->cluster mass-delta overlay
+        // CPU-only sign cache for the rendered slots. Size controls must remain
+        // correct when the color-charge overlay replaces decorative sign colors.
+        this._particleSigns = new Int8Array(MAX_PARTICLES);
 
         // Build the main particle Points mesh eagerly (mirrors the
         // pre-extraction behaviour of `this._initParticles()` being called
@@ -119,8 +124,9 @@ export class ViewportParticleRenderer {
         const material = new THREE.ShaderMaterial({
             uniforms: {
                 ...PARTICLE_SHADER_UNIFORMS,
-                uOpacity: { value: 0.9 },
-                uGlow: { value: 0.15 },
+                shapeType: { value: this.visualSettings.particleShape ?? 0 },
+                uOpacity: { value: this.visualSettings.particleOpacity ?? 0.9 },
+                uGlow: { value: this.visualSettings.glowIntensity ?? 0.15 },
             },
             vertexShader: PARTICLE_VERT,
             fragmentShader: PARTICLE_FRAG,
@@ -784,6 +790,7 @@ export class ViewportParticleRenderer {
         const rateAttr = geo.getAttribute('manifestRate');
         const hasManifest = !!(data.phases && data.rates);
         const colorByColorCharge = this.visualSettings.colorByColorCharge && !!data.colorCharge;
+        const latticeMode = this._getEngineMode() === 'lattice';
 
         const rawCount = Math.min(data.count, MAX_PARTICLES);
 
@@ -815,6 +822,10 @@ export class ViewportParticleRenderer {
             posAttr.array[count * 3] = px;
             posAttr.array[count * 3 + 1] = py;
             posAttr.array[count * 3 + 2] = pz;
+            const sourceR = data.colors[i * 3];
+            const sourceG = data.colors[i * 3 + 1];
+            const sign = sourceG > sourceR ? 1 : (sourceR > sourceG ? -1 : 0);
+            this._particleSigns[count] = sign;
             if (colorByColorCharge) {
                 const label = data.colorCharge[i] | 0;
                 const [cr, cg, cb] = COLOR_CHARGE_PALETTE[label] ?? COLOR_CHARGE_PALETTE[0];
@@ -826,7 +837,10 @@ export class ViewportParticleRenderer {
                 colAttr.array[count * 3 + 1] = data.colors[i * 3 + 1];
                 colAttr.array[count * 3 + 2] = data.colors[i * 3 + 2];
             }
-            sizeAttr.array[count] = (data.sizes[i] ?? 3.0) * this.visualSettings.globalScale;
+            const size = latticeMode && sign !== 0
+                ? (sign > 0 ? this.visualSettings.positiveSize : this.visualSettings.negativeSize)
+                : (data.sizes[i] ?? 3.0);
+            sizeAttr.array[count] = size * this.visualSettings.globalScale;
             if (hasManifest) {
                 phaseAttr.array[count] = data.phases[i];
                 rateAttr.array[count] = data.rates[i];
@@ -850,42 +864,48 @@ export class ViewportParticleRenderer {
     updateParticleSizes() {
         if (!this.particles) return;
         const geo = this.particles.geometry;
-        const colAttr = geo.getAttribute('particleColor');
         const sizeAttr = geo.getAttribute('size');
-        if (!colAttr || !sizeAttr) return;
+        if (!sizeAttr) return;
 
         const count = geo.drawRange.count;
+        if (count === 0) return;
+        let changed = false;
         for (let i = 0; i < count; i++) {
-            const cr = colAttr.array[i * 3], cg = colAttr.array[i * 3 + 1];
-            let baseSize;
-            if (cg > 0.6 && cr < 0.6) {
-                baseSize = this.visualSettings.positiveSize;
-            } else if (cr > 0.6 && cg < 0.6) {
-                baseSize = this.visualSettings.negativeSize;
-            } else {
-                continue; // Skip void or other particles where size isn't managed by pos/neg size controls
-            }
-            sizeAttr.array[i] = baseSize * this.visualSettings.globalScale;
+            const sign = this._particleSigns[i];
+            if (sign === 0) continue;
+            const baseSize = sign > 0
+                ? this.visualSettings.positiveSize
+                : this.visualSettings.negativeSize;
+            const next = baseSize * this.visualSettings.globalScale;
+            if (sizeAttr.array[i] === next) continue;
+            sizeAttr.array[i] = next;
+            changed = true;
         }
-        sizeAttr.needsUpdate = true;
+        if (changed) sizeAttr.needsUpdate = true;
     }
 
 
     // ── Particle shape and opacity ──────────────────────────────────
     setPointShape(shapeIndex) {
+        const shape = shapeIndex | 0;
+        if (shape < 0 || shape > 7 || this.visualSettings.particleShape === shape) return;
+        this.visualSettings.particleShape = shape;
         if (this.particles && this.particles.material.uniforms) {
-            this.particles.material.uniforms.shapeType.value = shapeIndex;
+            this.particles.material.uniforms.shapeType.value = shape;
         }
     }
 
     setOpacity(val) {
+        if (this.visualSettings.particleOpacity === val) return;
         if (this.particles && this.particles.material.uniforms) {
             this.particles.material.uniforms.uOpacity.value = val;
         }
+        this.visualSettings.particleOpacity = val;
         this.visualSettings.opacity = val;
     }
 
     setGlow(val) {
+        if (this.visualSettings.glowIntensity === val) return;
         if (this.particles && this.particles.material.uniforms) {
             this.particles.material.uniforms.uGlow.value = val;
         }

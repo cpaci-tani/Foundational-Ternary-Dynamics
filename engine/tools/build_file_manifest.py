@@ -68,18 +68,12 @@ def classify(path: str) -> tuple[str, bool]:
     # vendored / third-party
     if "VISUAL_GUIDE_files" in p or "/lib/" in p or "/libs/" in p or p.endswith("/lib.js"):
         return "vendor", False
-    if p.startswith("engine/archive/"):
-        return "archive", False
     if p.startswith("engine/src/render_bridge_phases/"):
         return "src/phases", True
     if p.startswith("engine/src/scenarios/"):
         return "src/scenarios", True
-    if p.startswith("engine/src/cli_demos/"):
-        return "src/cli_demos", True
     if p.startswith("engine/src/atom/"):
         return "src/atom", True
-    if p.startswith("engine/src/cognition/"):
-        return "src/cognition", True
     if p.startswith("engine/src/"):
         return "src/core", True
     if p.startswith("engine/include/"):

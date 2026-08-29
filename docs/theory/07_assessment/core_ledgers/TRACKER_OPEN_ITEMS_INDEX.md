@@ -14,7 +14,6 @@ This is a *navigation aid*, not a source of truth. `TRACKER_OPEN_ITEMS.md` remai
 
 | # | Item | Status | Open? |
 |---|---|---|---|
-| 1.1 | [DagEngine stubs](TRACKER_OPEN_ITEMS.md#11-dagengine-stubs) | — | **OPEN** |
 | 1.2 | [Causal velocity, clock, and mass roles](TRACKER_OPEN_ITEMS.md#12-causal-velocity-clock-and-mass-roles-closed-by-ftd-0403-v2-targeted-closure) | CLOSED by FTD-0403 v2 TARGETED-CLOSURE |  |
 | 1.3 | [Dynamical SU(3) colour force](TRACKER_OPEN_ITEMS.md#13-dynamical-su3-colour-force-partial-cpu-v1-selected-contract-domain-extension-open-reclassified-by-ftd-0406) | [PARTIAL — CPU v1 SELECTED CONTRACT; DOMAIN EXTENSION OPEN], reclassified by FTD-0406 | **OPEN** |
 | 1.4 | [Symplectic leapfrog integrator](TRACKER_OPEN_ITEMS.md#14-symplectic-leapfrog-integrator-closed-2026-04-17) | CLOSED 2026-04-17 |  |

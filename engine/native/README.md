@@ -8,10 +8,7 @@ Dear ImGui, no embedded browser, no separate render process. On the GPU backend
 the particle buffers are shared **CUDA↔D3D12 zero-copy**; the app falls back to a
 bounded visual-snapshot gather when interop is unavailable.
 
-Sibling surfaces, which this tree does not touch:
-
-- `engine/web` — the browser / WASM dashboard
-- `engine/desktop` — the WPF + WebView2 + WSL2 `ws_server` shell
+The sibling `engine/web` tree is the browser / WASM dashboard.
 
 The prior Dear ImGui prototype (`engine/native_desktop`) was retired 2026-08-21;
 `engine/native` is now the sole native app.
@@ -88,8 +85,6 @@ scenario search box):
 
 ## Reference
 
-- [`docs/PLAN_NATIVE_REBUILD.md`](docs/PLAN_NATIVE_REBUILD.md) — architecture and
-  phase decisions
 - [`docs/SPEC_NATIVE_UI_RMLUI.md`](docs/SPEC_NATIVE_UI_RMLUI.md) — the RmlUi UI
   contract (shell/RCSS, data models, the D3D12 render interface)
 - [`docs/CHECKLIST_WEB_PARITY.md`](docs/CHECKLIST_WEB_PARITY.md) — running parity

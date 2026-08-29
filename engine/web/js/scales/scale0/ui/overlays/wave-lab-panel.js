@@ -21,7 +21,7 @@ function buildPanel() {
         padding: 14px 14px 18px;
         background: transparent;
         font-family: var(--font-sans, system-ui, -apple-system, "Segoe UI", sans-serif);
-        font-size: 13px;
+        font-size: 16px;
         line-height: 1.45;
         color: var(--text-primary);
     `;

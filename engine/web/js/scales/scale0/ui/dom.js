@@ -43,7 +43,10 @@ export function getEl(id) {
 
 export function setButtonActive(id, active) {
     const el = getEl(id);
-    if (el) el.classList.toggle('active', !!active);
+    if (el) {
+        el.classList.toggle('active', !!active);
+        el.setAttribute('aria-pressed', active ? 'true' : 'false');
+    }
 }
 
 export function readButtonActive(id) {
@@ -82,7 +85,9 @@ export function setForceStyleButtons(style) {
     const row = getEl('force-style-row');
     if (!row) return;
     for (const btn of row.querySelectorAll('.style-btn')) {
-        btn.classList.toggle('active', btn.dataset.style === style);
+        const active = btn.dataset.style === style;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
     }
 }
 
@@ -92,41 +97,50 @@ export function setScalarRenderButtons(mode) {
     const row = getEl('scalar-render-row');
     if (!row) return;
     for (const btn of row.querySelectorAll('.style-btn')) {
-        btn.classList.toggle('active', btn.dataset.scalarMode === mode);
+        const active = btn.dataset.scalarMode === mode;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
     }
 }
 
 export function markScenarioOverrideRows(toggleDefs) {
-    const advDetails = document.querySelector('.toggle-advanced');
-    let advNeedsOpen = false;
+    const advancedSections = new Map();
     for (const [, defaultVal, elId] of toggleDefs) {
         const el = getEl(elId);
         if (!el) continue;
         const row = el.closest('.toggle-row');
         if (!row) continue;
-        if (el.checked !== defaultVal) {
-            row.classList.add('scenario-override');
-            if (advDetails && advDetails.contains(el)) advNeedsOpen = true;
+        const details = row.closest('details.toggle-advanced');
+        const overridden = el.checked !== defaultVal;
+        if (row.classList.contains('scenario-override') !== overridden) {
+            row.classList.toggle('scenario-override', overridden);
+        }
+        if (overridden) {
+            if (details) advancedSections.set(details, true);
         } else {
-            row.classList.remove('scenario-override');
+            if (details && !advancedSections.has(details)) advancedSections.set(details, false);
         }
     }
-    if (advDetails) advDetails.open = advNeedsOpen;
+    for (const [details, needsOpen] of advancedSections) {
+        if (details.open !== needsOpen) details.open = needsOpen;
+    }
 }
 
-export function renderScenarioDescription(_scenarioId, descriptionText) {
+export function renderScenarioDescription(_scenarioId, descriptionText, { preserveOpen = false } = {}) {
     const wrap = getEl('lat-scenario-desc');
     const text = getEl('lat-scenario-desc-text');
     if (!wrap || !text) return;
+    const wasOpen = wrap.open;
     if (descriptionText) {
-        text.textContent = descriptionText;
-        wrap.style.display = '';
+        if (text.textContent !== descriptionText) text.textContent = descriptionText;
+        if (wrap.style.display !== '') wrap.style.display = '';
         // Collapsed by default — the "Epistemic status" panel is shown but closed;
         // the user expands it on demand (it is advisory detail, not primary UI).
-        wrap.open = false;
+        if (!preserveOpen && wrap.open) wrap.open = false;
+        else if (preserveOpen && wrap.open !== wasOpen) wrap.open = wasOpen;
     } else {
-        text.textContent = '';
-        wrap.style.display = 'none';
-        wrap.open = false;
+        if (text.textContent !== '') text.textContent = '';
+        if (wrap.style.display !== 'none') wrap.style.display = 'none';
+        if (wrap.open) wrap.open = false;
     }
 }

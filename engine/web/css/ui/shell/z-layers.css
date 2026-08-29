@@ -6,6 +6,12 @@
  * ============================================================ */
 
 :root {
+    /* Local stacking contexts (never escape their positioned parent) */
+    --z-local-base:       1;
+    --z-local-raised:     2;
+    --z-local-cursor:     3;
+    --z-local-overlay:   10;
+
     /* Scene */
     --z-viewport:         1;
     --z-field-overlay:    5;   /* scale0 field visualisation stack */
@@ -18,6 +24,13 @@
     --z-status:           100;
     --z-panel-toggle:     101;
     --z-playback:         110;  /* playback controls that must stay clickable above docked panels */
+    --z-scale0-backdrop:  199;
+    --z-scale0-popover:   200;
+    --z-scale0-tooltip:   210;
+
+    /* Panel adjuncts */
+    --z-micropanel:        60;
+    --z-floating-window: 1000;
 
     /* Floating secondaries */
     --z-sidebar-backdrop: 149;
@@ -25,7 +38,11 @@
 
     /* Notifications + dialogs */
     --z-toast:            9000;
+    --z-gpu-card:         9200;
+    --z-focus-mode:       9400;
+    --z-focus-control:    9401;
     --z-modal:            9500;
+    --z-shortcuts:        9600;
 
     /* Fatal / bootstrap */
     --z-loading:          9999;

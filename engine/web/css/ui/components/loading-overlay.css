@@ -32,7 +32,7 @@
     animation: letter-in 0.6s ease forwards;
 }
 .load-logo .letter:nth-child(1) { animation-delay: 0.1s; }
-.load-logo .letter:nth-child(2) { animation-delay: 0.3s; color: var(--accent); font-weight: 600; }
+.load-logo .letter:nth-child(2) { animation-delay: 0.3s; color: var(--accent-text); font-weight: 600; }
 .load-logo .letter:nth-child(3) { animation-delay: 0.5s; }
 .load-logo .dot {
     width: 6px; height: 6px; border-radius: 50%;
