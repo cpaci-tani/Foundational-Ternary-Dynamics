@@ -1,0 +1,105 @@
+{
+    "schemaVersion":  1,
+    "bundleSha256":  "2498629d7e42fa1f5c07fdad151a3b285f028ea5bfe635733ff322eeeb5ba7d9",
+    "source":  {
+                   "commit":  "a351fd49772ca1e365285295f974608dd278fbfe",
+                   "dirty":  false,
+                   "scope":  "engine/** excluding generated engine/web/wasm{,.next,.previous}/**"
+               },
+    "toolchain":  {
+                      "emcc":  "emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 5.0.2 (dc80f645ee70178c11666de0c3860d9e064d50e4)",
+                      "cmake":  "cmake version 4.2.3",
+                      "generator":  "MinGW Makefiles",
+                      "powershell":  "5.1.26100.9168",
+                      "buildType":  "Release"
+                  },
+    "variants":  [
+                     {
+                         "id":  "wasm32",
+                         "factory":  "createFTDModule",
+                         "abi":  {
+                                     "pointerBits":  32,
+                                     "memory64":  false,
+                                     "threads":  false,
+                                     "sharedMemory":  false
+                                 },
+                         "cmakeFlags":  [
+                                            "-DCMAKE_BUILD_TYPE=Release",
+                                            "-DFTD_MEMORY64=OFF",
+                                            "-DFTD_WASM_THREADS=OFF"
+                                        ],
+                         "artifacts":  [
+                                           {
+                                               "role":  "loader",
+                                               "file":  "ftd_core.js",
+                                               "sizeBytes":  135810,
+                                               "sha256":  "26198e88a7199479555b2f111c10332505298bc43dc45dfbc0d7e991afd05211"
+                                           },
+                                           {
+                                               "role":  "module",
+                                               "file":  "ftd_core.wasm",
+                                               "sizeBytes":  730085,
+                                               "sha256":  "f8ef261e28df2e50411a6f1668d6674fcc783a18e278809674dd820a58150d33"
+                                           }
+                                       ]
+                     },
+                     {
+                         "id":  "wasm64",
+                         "factory":  "createFTDModule64",
+                         "abi":  {
+                                     "pointerBits":  64,
+                                     "memory64":  true,
+                                     "threads":  false,
+                                     "sharedMemory":  false
+                                 },
+                         "cmakeFlags":  [
+                                            "-DCMAKE_BUILD_TYPE=Release",
+                                            "-DFTD_MEMORY64=ON",
+                                            "-DFTD_WASM_THREADS=OFF"
+                                        ],
+                         "artifacts":  [
+                                           {
+                                               "role":  "loader",
+                                               "file":  "ftd_core64.js",
+                                               "sizeBytes":  144504,
+                                               "sha256":  "9484aefe160697b64e10454a998802e772d2e40d7fd034b78b6c422352098638"
+                                           },
+                                           {
+                                               "role":  "module",
+                                               "file":  "ftd_core64.wasm",
+                                               "sizeBytes":  754212,
+                                               "sha256":  "5a4ad2d726a150942d9702a7db969caf10e8dd3263d8c86dae6161ff44a87964"
+                                           }
+                                       ]
+                     },
+                     {
+                         "id":  "wasm32-threads",
+                         "factory":  "createFTDModuleMT",
+                         "abi":  {
+                                     "pointerBits":  32,
+                                     "memory64":  false,
+                                     "threads":  true,
+                                     "sharedMemory":  true
+                                 },
+                         "cmakeFlags":  [
+                                            "-DCMAKE_BUILD_TYPE=Release",
+                                            "-DFTD_MEMORY64=OFF",
+                                            "-DFTD_WASM_THREADS=ON"
+                                        ],
+                         "artifacts":  [
+                                           {
+                                               "role":  "loader",
+                                               "file":  "ftd_core_mt.js",
+                                               "sizeBytes":  158725,
+                                               "sha256":  "72051e08a6a69f533e8cfdc3a3ee37d99fbeb965fde0c10608b1c7096c3dc537"
+                                           },
+                                           {
+                                               "role":  "module",
+                                               "file":  "ftd_core_mt.wasm",
+                                               "sizeBytes":  751596,
+                                               "sha256":  "6a64f0f1cc60d9b6b6582b73201814c0e58dd06b8744ff32cf89962335454209"
+                                           }
+                                       ]
+                     }
+                 ]
+}

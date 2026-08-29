@@ -108,14 +108,46 @@ Current execution-path evidence remains deliberately non-equivalent:
 | GPU | native CUDA | in-process | shared device-resident digest/counters pass ordinary and interactive modes for all three boundaries through tick 64 without a full state mirror |
 | GPU when served by the CUDA server | native | WebSocket | the live protocol smoke dispatches `empty`, captures at ticks 0 and 1, and verifies exact-default counters, invariant lossless 64-bit hash lanes, source/state provenance, a 32-byte result transfer, and zero full-mirror calls |
 
-The checked-in WASM bundle was rebuilt from clean source revision
-`b2faf7db4558f4e795ddad6b77b2fdfa585b3b49` with
-Emscripten 5.0.2 for wasm32, wasm64/Memory64, and wasm32-threads. Its
-`build_info.txt` records the exact source commit, compiler identity, variant
-flags, and SHA-256 of all six generated modules. The browser qualification was
-rerun against that generation after the execution path was pinned explicitly;
-an available native WebSocket server can no longer silently replace a claimed
-WASM run.
+### Loaded-artifact identity evidence
+
+Two sequential clean builds on the same pinned host/toolchain were observed
+byte-identical from source revision
+`a351fd49772ca1e365285295f974608dd278fbfe`: Emscripten 5.0.2, CMake 4.2.3,
+the explicitly pinned `MinGW Makefiles` generator, and Windows PowerShell
+5.1.26100.9168. The comparison covered all six generated modules and the
+deterministic `build_info.json` (seven files total). Wall-clock
+`build_info.txt` was deliberately excluded. This is intra-environment
+repeatability evidence, not a cross-host/toolchain reproducibility claim. The
+two complete snapshots and equality verdict are preserved in
+[the repeatability evidence record](EVIDENCE_SCALE0_EMPTY_WASM_REPEATABILITY_a351fd49.json).
+
+| Identity field | Recorded value |
+|---|---|
+| Canonical bundle SHA-256 | `2498629d7e42fa1f5c07fdad151a3b285f028ea5bfe635733ff322eeeb5ba7d9` |
+| Deterministic manifest SHA-256 | `e29c75af11fba88bd817f77db403865ad0fc041e306675f5ff6bd09d8ea90dd2` |
+| Variants | `wasm32`, `wasm64`, `wasm32-threads` |
+| Artifact records | exact factory, ABI/thread mode, byte size, and SHA-256 for each loader/module pair in `engine/web/wasm/build_info.json` |
+
+Both direct and worker loaders fetch the manifest and selected loader/module
+bytes with no-store semantics, recompute the canonical manifest-record digest,
+verify the selected pair's exact size/SHA-256, and only then execute the verified
+loader and instantiate the already-verified WASM bytes. The bridge exposes the
+actually selected, verified variant separately through the same bridge alongside
+the scientific-state digest. A focused test changes one WASM byte and confirms
+rejection before instantiation; real main-thread and worker paths expose the
+expected verified pairs. A static test independently checks all six checked-in
+artifacts. These checks establish loaded-byte consistency with the checked-in
+manifest, not independent publisher authenticity; Git commit and deployment
+trust remain the authenticity boundary.
+
+The final focused browser evidence against the second build is: artifact
+identity `4/4` passed; `wasm-dynamical-state-digest.spec.js` passed `4/4`;
+`scale0-worker.spec.js` passed `4/4`; and the Scenario 1 qualification passed
+`5` with `1` genuine hidden-tab skip. The
+largest qualified WASM-worker lattice (`L = 97`) recorded 60.00 FPS with
+median/p95/p99/max frame interval 16.67 ms. The execution path is pinned
+explicitly, so an available native WebSocket server cannot silently replace a
+claimed WASM run.
 
 Required checks:
 
@@ -163,13 +195,13 @@ qualification but does not rewrite a scientific zero/nonzero result.
 
 | Gate | Status | Current evidence | Blocking work |
 |---|---|---|---|
-| 1. Static trace | in-progress | registry, reset + empty-profile initializer, toggle profile, boundary, native CPU target, explicit WASM main/worker paths, clean build identity, and knowledge-base wording located and aligned | complete export metadata and remaining native-WebSocket trace |
+| 1. Static trace | in-progress | registry, reset + empty-profile initializer, toggle profile, boundary, native CPU target, explicit WASM main/worker paths, deterministic seven-file build identity with a durable same-host repeatability record, verified loaded variant, and knowledge-base wording located and aligned | complete export metadata and remaining native-WebSocket trace |
 | 2. Mathematical well-posedness | in-progress | dynamical-null invariant, evolving bookkeeping, observer baseline, prohibited claims, and the schema-versioned named-field digest domain are separated; CPU and CUDA share one parallel two-lane combination contract with exact nonfinite/nondefault counters; WASM main, worker, and native WebSocket publish that shared engine digest without reimplementing it in JavaScript and preserve each uint64 lane as fixed-width hexadecimal | publish the remaining boundary proof |
-| 3. Numerical validity | in-progress | `empty_scenario_qualification` passes the native CPU product-size short matrix at `L=9,17,33,65,97`, all three flux boundaries, and checkpoints `0,1,2,8,16`; its preregistered long matrix passes `L=9,17` through ticks `256,4096` and `L=33` through tick `256` with invariant fieldwise digests; the WSL2 CUDA sibling passes ordinary/interactive modes and all three boundaries through tick 64 with exact CPU/GPU populated-state hash parity, 32-byte result transfer, and zero full-mirror calls; the clean, source-stamped WASM worker passes lifecycle/null checks at product sizes through `L=97`; worker and main-thread WASM publish identical canonical hashes for the same Empty record, and the main path remains invariant through 16 synchronous ticks; the native CUDA WebSocket smoke passes Empty digest publication at ticks 0 and 1 with invariant lanes and no full mirror | independent controls and the remaining declared browser/lifecycle campaigns remain open |
+| 3. Numerical validity | in-progress | `empty_scenario_qualification` passes the native CPU product-size short matrix at `L=9,17,33,65,97`, all three flux boundaries, and checkpoints `0,1,2,8,16`; its preregistered long matrix passes `L=9,17` through ticks `256,4096` and `L=33` through tick `256` with invariant fieldwise digests; the WSL2 CUDA sibling passes ordinary/interactive modes and all three boundaries through tick 64 with exact CPU/GPU populated-state hash parity, 32-byte result transfer, and zero full-mirror calls; two sequential clean builds on the same pinned host/toolchain from `a351fd49772ca1e365285295f974608dd278fbfe` were observed byte-identical across all six WASM modules plus the deterministic manifest; direct/worker loaders reject unverified selected bytes before instantiation and publish the actual verified variant; the source-stamped WASM worker passes lifecycle/null checks at product sizes through `L=97`; worker and main-thread WASM publish identical canonical hashes for the same Empty record, and the main path remains invariant through 16 synchronous ticks; the native CUDA WebSocket smoke passes Empty digest publication at ticks 0 and 1 with invariant lanes and no full mirror | independent controls and the remaining declared browser/lifecycle campaigns remain open |
 | 4. Scientific validity | not-started | null claim and falsifiers frozen | run controls without post-hoc tuning |
 | 5. Scale appropriateness | in-progress | the imposed finite lattice record belongs to Scale 0; exact-ID gating correctly excludes Standard Model overlays | replace unqualified particle/void nouns, remove stale Scale-up implications, and verify all generic panel applicability states |
-| 6. UI and interpretive truth | in-progress | focused browser test passes picker/current-state truth, unsupported-latency distinction, finite observer baseline, collapsed overlay demand, and WASM-main/worker origin distinction; the knowledge entry now states the imposed null-control and non-vacuum boundary; Diagnostics renders unresolved values as `—` while retaining exact measured zero; Lagrangian exposes the state-independent observer reference, baseline-subtracted `Δℒ`, stale/unavailable states, and an explicit non-vacuum/non-zero-point limitation; Flux Slice, Spectrum, and Gravity declare `empty` inapplicable and stop their scientific sampling/coordinator paths | live mutation does not yet suspend the displayed qualification; upstream telemetry still erases some unavailable diagnostics/audit/Lagrangian values into zero before formatting; remaining panel applicability, export metadata, and native-WebSocket presentation paths remain open |
-| 7. Performance and operational safety | in-progress | the final full WASM-worker coexistence campaign passes all 17 visible panels at `L=97`: every panel records 60.00 FPS with p95/p99 16.67 ms, all absolute fixed-work/callback budgets pass, no long tasks occur, and every collapsed panel records zero DOM/canvas work; Diagnostics passes with 5 mounted canvases/about 95 mutations; Lagrangian passes with 7 mounted canvases and on-demand action trends; Flux Slice, Spectrum, and Gravity perform zero periodic work for `empty`; rapid generation/reset/resize and five-reset lifecycle probes pass; the clean rebuilt bundle repeats the focused `L=97` pacing result at 60.00 FPS with p95/p99 16.67 ms | genuine hidden-tab evidence is unsupported in the current headless browser and was skipped rather than fabricated; longer foreground campaign and native-WebSocket browser evidence remain open |
+| 6. UI and interpretive truth | in-progress | focused browser test passes picker/current-state truth, unsupported-latency distinction, finite observer baseline, collapsed overlay demand, WASM-main/worker origin distinction, and actual verified WASM artifact identity; the knowledge entry now states the imposed null-control and non-vacuum boundary; Diagnostics renders unresolved values as `—` while retaining exact measured zero; Lagrangian exposes the state-independent observer reference, baseline-subtracted `Δℒ`, stale/unavailable states, and an explicit non-vacuum/non-zero-point limitation; Flux Slice, Spectrum, and Gravity declare `empty` inapplicable and stop their scientific sampling/coordinator paths | live mutation does not yet suspend the displayed qualification; upstream telemetry still erases some unavailable diagnostics/audit/Lagrangian values into zero before formatting; remaining panel applicability, export metadata, and native-WebSocket presentation paths remain open |
+| 7. Performance and operational safety | in-progress | the final full WASM-worker coexistence campaign passes all 17 visible panels at `L=97`: every panel records 60.00 FPS with p95/p99 16.67 ms, all absolute fixed-work/callback budgets pass, no long tasks occur, and every collapsed panel records zero DOM/canvas work; Diagnostics passes with 5 mounted canvases/about 95 mutations; Lagrangian passes with 7 mounted canvases and on-demand action trends; Flux Slice, Spectrum, and Gravity perform zero periodic work for `empty`; rapid generation/reset/resize and five-reset lifecycle probes pass; the second clean reproducible bundle repeats the focused `L=97` pacing result at 60.00 FPS with median/p95/p99/max 16.67 ms | genuine hidden-tab evidence is unsupported in the current headless browser and was skipped rather than fabricated; longer foreground campaign and native-WebSocket browser evidence remain open |
 
 ## 5. UI trace blockers
 

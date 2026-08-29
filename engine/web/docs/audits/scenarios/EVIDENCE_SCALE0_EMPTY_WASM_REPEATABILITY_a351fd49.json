@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "evidenceId": "scale0-empty-wasm-repeatability-a351fd49",
+  "scenarioId": "empty",
+  "observedDate": "2026-08-29",
+  "scope": "Two sequential clean builds on the same pinned Windows host and toolchain; intra-environment repeatability only.",
+  "method": {
+    "buildCommand": "engine\\build_wasm.bat clean",
+    "runs": 2,
+    "comparison": "After each completed build, independently recompute the actual size and SHA-256 of the six deployed artifacts, recompute the canonical bundle digest from the fixed-order manifest records, compute the deterministic manifest size and SHA-256, and compare the resulting seven-file snapshots field-for-field.",
+    "excluded": [
+      "engine/web/wasm/build_info.txt (contains wall-clock build time)"
+    ]
+  },
+  "source": {
+    "commit": "a351fd49772ca1e365285295f974608dd278fbfe",
+    "dirty": false
+  },
+  "toolchain": {
+    "emcc": "emcc 5.0.2 (dc80f645ee70178c11666de0c3860d9e064d50e4)",
+    "cmake": "4.2.3",
+    "generator": "MinGW Makefiles",
+    "powershell": "5.1.26100.9168",
+    "buildType": "Release"
+  },
+  "buildA": {
+    "bundleSha256": "2498629d7e42fa1f5c07fdad151a3b285f028ea5bfe635733ff322eeeb5ba7d9",
+    "manifest": {
+      "file": "build_info.json",
+      "sizeBytes": 5822,
+      "sha256": "e29c75af11fba88bd817f77db403865ad0fc041e306675f5ff6bd09d8ea90dd2"
+    },
+    "artifacts": [
+      { "variant": "wasm32", "file": "ftd_core.js", "sizeBytes": 135810, "sha256": "26198e88a7199479555b2f111c10332505298bc43dc45dfbc0d7e991afd05211" },
+      { "variant": "wasm32", "file": "ftd_core.wasm", "sizeBytes": 730085, "sha256": "f8ef261e28df2e50411a6f1668d6674fcc783a18e278809674dd820a58150d33" },
+      { "variant": "wasm64", "file": "ftd_core64.js", "sizeBytes": 144504, "sha256": "9484aefe160697b64e10454a998802e772d2e40d7fd034b78b6c422352098638" },
+      { "variant": "wasm64", "file": "ftd_core64.wasm", "sizeBytes": 754212, "sha256": "5a4ad2d726a150942d9702a7db969caf10e8dd3263d8c86dae6161ff44a87964" },
+      { "variant": "wasm32-threads", "file": "ftd_core_mt.js", "sizeBytes": 158725, "sha256": "72051e08a6a69f533e8cfdc3a3ee37d99fbeb965fde0c10608b1c7096c3dc537" },
+      { "variant": "wasm32-threads", "file": "ftd_core_mt.wasm", "sizeBytes": 751596, "sha256": "6a64f0f1cc60d9b6b6582b73201814c0e58dd06b8744ff32cf89962335454209" }
+    ]
+  },
+  "buildB": {
+    "bundleSha256": "2498629d7e42fa1f5c07fdad151a3b285f028ea5bfe635733ff322eeeb5ba7d9",
+    "manifest": {
+      "file": "build_info.json",
+      "sizeBytes": 5822,
+      "sha256": "e29c75af11fba88bd817f77db403865ad0fc041e306675f5ff6bd09d8ea90dd2"
+    },
+    "artifacts": [
+      { "variant": "wasm32", "file": "ftd_core.js", "sizeBytes": 135810, "sha256": "26198e88a7199479555b2f111c10332505298bc43dc45dfbc0d7e991afd05211" },
+      { "variant": "wasm32", "file": "ftd_core.wasm", "sizeBytes": 730085, "sha256": "f8ef261e28df2e50411a6f1668d6674fcc783a18e278809674dd820a58150d33" },
+      { "variant": "wasm64", "file": "ftd_core64.js", "sizeBytes": 144504, "sha256": "9484aefe160697b64e10454a998802e772d2e40d7fd034b78b6c422352098638" },
+      { "variant": "wasm64", "file": "ftd_core64.wasm", "sizeBytes": 754212, "sha256": "5a4ad2d726a150942d9702a7db969caf10e8dd3263d8c86dae6161ff44a87964" },
+      { "variant": "wasm32-threads", "file": "ftd_core_mt.js", "sizeBytes": 158725, "sha256": "72051e08a6a69f533e8cfdc3a3ee37d99fbeb965fde0c10608b1c7096c3dc537" },
+      { "variant": "wasm32-threads", "file": "ftd_core_mt.wasm", "sizeBytes": 751596, "sha256": "6a64f0f1cc60d9b6b6582b73201814c0e58dd06b8744ff32cf89962335454209" }
+    ]
+  },
+  "comparison": {
+    "filesCompared": 7,
+    "byteIdentical": true,
+    "differingFiles": []
+  },
+  "limitations": [
+    "This evidence does not establish cross-host or cross-toolchain reproducibility.",
+    "SHA-256 and manifest consistency do not independently authenticate the publisher; Git and deployment trust remain the authenticity boundary."
+  ]
+}
