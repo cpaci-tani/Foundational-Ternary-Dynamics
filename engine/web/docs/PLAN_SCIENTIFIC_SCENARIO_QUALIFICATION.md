@@ -48,27 +48,41 @@ measured outputs, uncertainty, and interpretation are kept distinct.
 10. **One-at-a-time closure.** Work advances only after the current scenario's
     audit record, tests, UI wording, and disposition agree.
 
-## 2. Scenario representation classes
+## 2. Orthogonal qualification axes
 
-These are presentation/qualification classes, not replacements for the
-project's canonical epistemic tags.
+Do not compress model provenance, experimental role, claim status, record
+lifecycle, and qualification progress into one label. They answer different
+questions and must remain machine-distinct.
 
-| Class | Meaning | Required UI wording |
+### 2.1 Model relation
+
+| Relation | Meaning | Required UI wording |
 |---|---|---|
-| Native experiment | Direct probe of the declared discrete rule and state | “Native experiment”; list enabled native terms |
-| Derived-given-selection | Consequence of a declared selected extension | “Conditional on [SELECTION] …” |
-| Candidate | Physical identification under unresolved tests | “[object] candidate”; display unmet gates |
-| Parametric model | Standard/effective formula with imported parameters | “[PARAMETRIC]”; identify the imported law and values |
-| Pedagogical demonstration | Explanatory or illustrative behavior | “Pedagogical”; prohibit evidentiary interpretation |
-| Reference only | Catalog data not produced by the running simulation | “Reference”; visually separate it from live observables |
-| Closed negative | A preregistered identification failed | “[CLOSED NEGATIVE]”; link the failure evidence |
-| Control | Null, mirror, calibration, or regression comparison | Name the controlled variable and expected result |
+| Native operator | Direct probe of declared discrete state and native terms | “Native operator”; list enabled terms |
+| Selected extension | Consequence conditional on a declared **[SELECTION]** | “Conditional on [SELECTION] …” |
+| Imported/effective | Standard/effective law, calibrated model, or external data | Name the imported law/data and mark each input **[PARAMETRIC]** or external |
+| Pedagogical | Explanatory construction not offered as scientific evidence | “Pedagogical”; prohibit evidentiary interpretation |
+| Reference only | Catalog data not produced by the running simulation | “Reference”; visually separate from live observables |
 
-The underlying claim must also carry the canonical epistemic tag appropriate to
-its evidence. In particular, an **[IMPOSED]** seed is not **[EMERGENT]**; a
-standard formula evaluated with FTD values is **[PARAMETRIC]**, not derived; and
-a proposed particle interpretation remains **[CONJECTURE]** or **[OPEN]** until
-its qualification gates are passed.
+### 2.2 Experimental role
+
+Roles include candidate, null control, mirror/conjugate control, calibration,
+benchmark, regression, demonstration, and reference. A null control may use the
+native operator while a physical identification tested against it closes
+negative; those facts are not competing scenario classes.
+
+### 2.3 Claim status and record lifecycle
+
+Every accepted or prohibited claim is a structured object with its own exact
+wording, scope, evidence, supporting gates, limitations, disposition, and
+canonical epistemic tag. The record lifecycle is separately one of `open`,
+`closed-negative`, `resolved`, `retracted`, or `superseded`. Qualification
+progress is separately tracked by the seven gate states and final disposition.
+
+In particular, an **[IMPOSED]** seed is not **[EMERGENT]**; a standard formula
+evaluated with FTD values is **[PARAMETRIC]**, not derived; and a proposed
+particle interpretation remains **[CONJECTURE]** or **[OPEN]** until its own
+qualification gates are passed.
 
 ## 3. Mathematical scenario contract
 
@@ -79,8 +93,9 @@ No scenario is scientifically qualified while a required field is missing.
 
 - Stable scenario ID and display name.
 - Owning scale and engine/backend.
-- Scenario representation class.
-- Canonical epistemic status and provenance reference.
+- Model relation and experimental role.
+- Claim-level canonical epistemic status and provenance references.
+- Record lifecycle, qualification state, and final disposition.
 - Responsible source module and validation test.
 - Version of the scenario contract and last qualification date.
 
@@ -137,8 +152,9 @@ Minimum conceptual schema:
 id
 display_name
 scale
-scenario_class
-epistemic_status
+model_relation
+experimental_role
+record_lifecycle
 mathematical_model
 state_space
 initial_conditions
@@ -147,7 +163,7 @@ enabled_terms
 parameter_provenance
 native_units
 physical_calibration
-observables
+observables (structured by source, units, role, comparator, and interpretation)
 accepted_claims
 prohibited_claims
 validation_protocol
