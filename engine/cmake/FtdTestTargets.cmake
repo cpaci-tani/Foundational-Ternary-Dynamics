@@ -26,6 +26,7 @@ set_property(GLOBAL APPEND PROPERTY FTD_CONDITIONAL_TEST_SOURCES
     tests/test_gpu_continuity_ledger.cpp
     tests/test_gpu_delta_upload.cpp
     tests/test_gpu_dissipation_source.cpp
+    tests/test_empty_scenario_qualification_gpu.cpp
     tests/test_gpu_eft_parity.cpp
     tests/test_gpu_energy_ledger_parity.cpp
     tests/test_gpu_experiments.cpp
@@ -488,6 +489,13 @@ ftd_add_test(test_empty_scenario_qualification
              tests/test_empty_scenario_qualification.cpp
              CTEST_NAME empty_scenario_qualification TIMEOUT 300
              LABELS scenario qualification scale0)
+if(FTD_ENABLE_CUDA)
+    ftd_add_test(test_empty_scenario_qualification_gpu
+                 tests/test_empty_scenario_qualification_gpu.cpp
+                 CTEST_NAME empty_scenario_qualification_gpu
+                 GPU_HEAVY TIMEOUT 300
+                 LABELS scenario qualification scale0)
+endif()
 ftd_add_test(test_scenario_meta tests/test_scenario_meta.cpp
              CTEST_NAME scenario_meta)
 

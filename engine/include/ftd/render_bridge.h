@@ -410,6 +410,12 @@ public:
     // Compute diagnostics for current state
     Diagnostics diagnostics() const;
 
+    // Canonical schema-versioned named-field state digest. CUDA reduces the
+    // resident SoA state and returns one fixed accumulator; CPU folds the same
+    // field contract in-place. Returns false only when a backend cannot serve
+    // the contract.
+    bool capture_dynamical_state_digest(DynamicalStateDigest& out);
+
     // Rigorous energy breakdown + Gauss constraint audit
     EnergyAudit energy_audit() const;
     // Native telemetry publisher contract. GPU begins a fence-backed compact

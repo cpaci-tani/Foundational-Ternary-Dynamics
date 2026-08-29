@@ -7,6 +7,7 @@
  * makes no claim about physical vacuum structure or any non-null scenario.
  */
 
+#include "ftd/dynamical_state_digest.h"
 #include "ftd/lagrangian.h"
 #include "ftd/render_bridge.h"
 #include "ftd/scenarios.h"
@@ -16,6 +17,7 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#include <limits>
 #include <memory>
 #include <string>
 
@@ -23,6 +25,8 @@ namespace {
 
 constexpr std::array<int, 5> k_lattice_sizes = {8, 17, 33, 65, 97};
 constexpr std::array<int, 5> k_checkpoints = {0, 1, 2, 8, 16};
+constexpr std::array<int, 3> k_long_lattice_sizes = {8, 17, 33};
+constexpr std::array<int, 3> k_long_checkpoints = {64, 256, 1024};
 
 struct BoundaryCase {
     ftd::FluxBoundaryMode mode;
@@ -52,6 +56,36 @@ bool finite_and_zero(const std::vector<double>& values) {
         if (!finite(value) || value != 0.0) return false;
     }
     return true;
+}
+
+ftd::DynamicalStateDigest capture_digest(
+    ftd::RenderBridge& bridge, const std::string& label) {
+    ftd::DynamicalStateDigest digest{};
+    ftd::test::check((label + " shared digest capture succeeds").c_str(),
+        bridge.capture_dynamical_state_digest(digest));
+    return digest;
+}
+
+bool same_digest_values(const ftd::DynamicalStateDigest& lhs,
+                        const ftd::DynamicalStateDigest& rhs) {
+    return lhs.hash_lo == rhs.hash_lo
+        && lhs.hash_hi == rhs.hash_hi
+        && lhs.nonfinite_value_count == rhs.nonfinite_value_count
+        && lhs.nondefault_value_count == rhs.nondefault_value_count;
+}
+
+bool exact_cpu_default_digest(const ftd::DynamicalStateDigest& digest,
+                              const ftd::RenderBridge& bridge,
+                              int tick) {
+    return digest.schema_version == ftd::DYNAMICAL_STATE_DIGEST_SCHEMA
+        && digest.lattice_size == bridge.lattice().size()
+        && digest.site_count == bridge.lattice().total_sites()
+        && digest.tick == tick
+        && digest.state_version == 0
+        && digest.device_to_host_bytes == 0
+        && digest.nonfinite_value_count == 0
+        && digest.nondefault_value_count == 0
+        && digest.exact_default_record();
 }
 
 bool voxel_is_finite(const ftd::Voxel& voxel) {
@@ -453,6 +487,99 @@ void run_resolution_boundary_matrix() {
     }
 }
 
+void run_long_duration_digest_matrix() {
+    ftd::test::section("Long-duration exact-null and canonical-digest matrix");
+
+    // Schema probes make the inclusion boundary executable: signed zero,
+    // clocks, and identity bookkeeping cannot move the digest, while an
+    // included dynamical field must move it with exact counters. Raw padding
+    // is unobservable by the shared API's named-field schema.
+    const BoundaryCase& schema_boundary = k_boundaries[0];
+    auto schema_baseline = make_empty_bridge(8, schema_boundary);
+    const auto schema_digest = capture_digest(
+        *schema_baseline, "CPU schema baseline");
+    ftd::test::check("CPU schema baseline has exact shared provenance/counters",
+        exact_cpu_default_digest(schema_digest, *schema_baseline, 0));
+
+    auto signed_zero_probe = make_empty_bridge(8, schema_boundary);
+    signed_zero_probe->voxel_at(0, 0, 0).flux.x = -0.0;
+    const auto signed_zero_digest = capture_digest(
+        *signed_zero_probe, "CPU signed-zero probe");
+    ftd::test::check("canonical digest treats an included -0 field as zero",
+        same_digest_values(signed_zero_digest, schema_digest)
+        && exact_cpu_default_digest(signed_zero_digest, *signed_zero_probe, 0));
+
+    auto excluded_probe = make_empty_bridge(8, schema_boundary);
+    auto& excluded_voxel = excluded_probe->voxel_at(0, 0, 0);
+    excluded_voxel.tau = 3.0;
+    excluded_voxel.phase = 4.0;
+    excluded_voxel.particle_id = 17;
+    excluded_voxel.pair_id = 23;
+    const auto excluded_digest = capture_digest(
+        *excluded_probe, "CPU clock/identity probe");
+    ftd::test::check("canonical digest excludes clocks and identity bookkeeping",
+        same_digest_values(excluded_digest, schema_digest)
+        && exact_cpu_default_digest(excluded_digest, *excluded_probe, 0));
+
+    auto included_probe = make_empty_bridge(8, schema_boundary);
+    included_probe->voxel_at(0, 0, 0).flux.x = 1.0;
+    const auto included_digest = capture_digest(
+        *included_probe, "CPU included-field probe");
+    ftd::test::check("canonical digest is sensitive to included dynamical fields",
+        !same_digest_values(included_digest, schema_digest)
+        && included_digest.nonfinite_value_count == 0
+        && included_digest.nondefault_value_count == 1
+        && !included_digest.exact_default_record());
+
+    auto nonfinite_probe = make_empty_bridge(8, schema_boundary);
+    nonfinite_probe->voxel_at(0, 0, 0).flux.x =
+        std::numeric_limits<double>::quiet_NaN();
+    const auto nonfinite_digest = capture_digest(
+        *nonfinite_probe, "CPU nonfinite-field probe");
+    ftd::test::check("canonical digest counts one nonfinite nondefault value",
+        nonfinite_digest.nonfinite_value_count == 1
+        && nonfinite_digest.nondefault_value_count == 1
+        && !nonfinite_digest.exact_default_record());
+
+    for (int lattice_size : k_long_lattice_sizes) {
+        ftd::DynamicalStateDigest size_canonical_digest{};
+        for (std::size_t boundary_index = 0;
+             boundary_index < k_boundaries.size(); ++boundary_index) {
+            const BoundaryCase& boundary = k_boundaries[boundary_index];
+            auto bridge = make_empty_bridge(lattice_size, boundary);
+            const auto initial_digest = capture_digest(
+                *bridge, case_name(lattice_size, boundary.name, 0));
+            ftd::test::check(
+                (case_name(lattice_size, boundary.name, 0)
+                 + " shared digest has exact default counters/provenance").c_str(),
+                exact_cpu_default_digest(initial_digest, *bridge, 0));
+
+            if (boundary_index == 0) {
+                size_canonical_digest = initial_digest;
+            }
+            ftd::test::check(
+                ("L=" + std::to_string(lattice_size) + " " + boundary.name
+                 + " initial canonical digest is boundary-independent").c_str(),
+                same_digest_values(initial_digest, size_canonical_digest));
+
+            int completed_ticks = 0;
+            for (int checkpoint : k_long_checkpoints) {
+                bridge->run(checkpoint - completed_ticks);
+                completed_ticks = checkpoint;
+                verify_checkpoint(*bridge, lattice_size, boundary, checkpoint);
+                const auto checkpoint_digest = capture_digest(
+                    *bridge, case_name(lattice_size, boundary.name, checkpoint));
+                ftd::test::check(
+                    (case_name(lattice_size, boundary.name, checkpoint)
+                     + " canonical dynamical digest is invariant").c_str(),
+                    same_digest_values(checkpoint_digest, initial_digest)
+                    && exact_cpu_default_digest(
+                        checkpoint_digest, *bridge, checkpoint));
+            }
+        }
+    }
+}
+
 void run_reload_reset_checks() {
     ftd::test::section("Native reconstruction and reload idempotence");
     constexpr int lattice_size = 33;
@@ -491,14 +618,15 @@ int main() {
         "[IMPOSED] all-zero initial record; native-operator invariance is tested",
         "scenario id empty; explicit finite lattice size and boundary law",
         "none",
-        "complete voxel state plus Diagnostics, EnergyAudit, EnergyLedger, LagrangianDiag, and GravityMetricAgg",
-        "native CPU; L in {8,17,33,65,97}; ticks in {0,1,2,8,16}; all three computational boundary laws",
+        "complete voxel state, canonical fieldwise dynamical digest, Diagnostics, EnergyAudit, EnergyLedger, LagrangianDiag, and GravityMetricAgg",
+        "native CPU; short matrix L in {8,17,33,65,97}, ticks in {0,1,2,8,16}; long matrix L in {8,17,33}, ticks in {64,256,1024}; all three computational boundary laws",
         "CPU only in this target; cross-backend parity is a separate gate",
-        "exact default lattice state and zero activity at every checkpoint",
+        "exact default lattice state, invariant clock-independent canonical digest, and zero activity at every checkpoint",
         "any non-default stored channel, non-finite readout, activity report, or reload drift rejects the null-control contract",
     });
 
     run_resolution_boundary_matrix();
+    run_long_duration_digest_matrix();
     run_reload_reset_checks();
     return ftd::test::finalize();
 }

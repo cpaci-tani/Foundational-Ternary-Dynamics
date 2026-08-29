@@ -26,6 +26,7 @@
 #include <memory>
 #include <cstdint>
 #include <vector>
+#include "ftd/dynamical_state_digest.h"
 #include "ftd/telemetry_snapshot.h"
 #include "ftd/visual_snapshot.h"
 
@@ -115,6 +116,13 @@ public:
         return false;
     }
 
+    /// Canonical schema-versioned Scale-0 state digest. CPU computes from its
+    /// resident named fields; CUDA performs a device reduction and copies one
+    /// fixed accumulator. No implementation may satisfy this via raw Voxel
+    /// bytes or a hidden full GPU mirror.
+    virtual bool capture_dynamical_state_digest(
+        DynamicalStateDigest& /*out*/) { return false; }
+
     /// Stage one versioned telemetry observation. GPU implementations return
     /// immediately after enqueuing their reduction/D2H fence; CPU captures a
     /// coherent fallback snapshot and makes it immediately pollable. A false
@@ -187,6 +195,8 @@ public:
         const VisualSnapshotRequest& request) override;
     bool visual_snapshot_ready() const override;
     bool poll_visual_snapshot(VisualSnapshot& out) override;
+    bool capture_dynamical_state_digest(
+        DynamicalStateDigest& out) override;
     bool visual_snapshot_safe_to_replace() const override { return true; }
     bool visual_snapshot_in_flight() const override { return false; }
     Kind kind() const override { return Kind::Cpu; }
@@ -227,6 +237,8 @@ public:
     bool copy_compact_lagrangian(LagrangianDiag& out) override;
     bool copy_compact_voxel(int index, VoxelInspection& out) override;
     bool copy_compact_force(int index, ForceDiag& out) override;
+    bool capture_dynamical_state_digest(
+        DynamicalStateDigest& out) override;
     bool begin_telemetry_snapshot(
         const TelemetrySnapshotRequest& request) override;
     bool telemetry_snapshot_ready() const override;

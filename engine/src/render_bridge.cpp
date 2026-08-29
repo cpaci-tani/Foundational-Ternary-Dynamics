@@ -1191,6 +1191,12 @@ Diagnostics RenderBridge::diagnostics() const {
   return ::ftd::compute_diagnostics(*this);
 }
 
+bool RenderBridge::capture_dynamical_state_digest(
+    DynamicalStateDigest& out) {
+  assert_sim_thread();
+  return backend_ && backend_->capture_dynamical_state_digest(out);
+}
+
 EnergyAudit RenderBridge::energy_audit() const {
   assert_sim_thread();
   EnergyAudit a;

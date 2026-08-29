@@ -180,6 +180,8 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMalloc(&d_compact_diagnostics,
                           COMPACT_DIAGNOSTIC_SCALARS * sizeof(double)));
     CUDA_CHECK(cudaMalloc(&d_compact_charge_sum, sizeof(long long)));
+    CUDA_CHECK(cudaMalloc(&d_dynamical_state_digest,
+                          sizeof(DynamicalStateDigestAccumulator)));
     // A telemetry publisher writes this buffer once per scheduler epoch then
     // begins a pinned async D2H copy. Keep it disjoint from
     // d_compact_diagnostics so a synchronous inspector cannot overwrite an
@@ -571,6 +573,10 @@ void GpuBuffers::free() {
     if (d_compact_charge_sum) {
         cudaFree(d_compact_charge_sum);
         d_compact_charge_sum = nullptr;
+    }
+    if (d_dynamical_state_digest) {
+        cudaFree(d_dynamical_state_digest);
+        d_dynamical_state_digest = nullptr;
     }
     // A telemetry copy is issued on the default stream. Synchronize its
     // per-engine fence before releasing pinned memory; unlike a raw device

@@ -4,6 +4,7 @@
 add_library(ftd_cuda STATIC
     gpu_buffers.cu
     gpu_engine.cu
+    dynamical_state_digest.cu
     diagnostic_reductions.cu
     kernels_proper_time.cu
     kernels_injection.cu
