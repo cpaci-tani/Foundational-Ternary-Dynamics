@@ -40,6 +40,8 @@ historical provenance, and where new cleanup or architecture notes should land.
 
 ## Active Plans
 
+- [`PLAN_SCIENTIFIC_SCENARIO_QUALIFICATION.md`](PLAN_SCIENTIFIC_SCENARIO_QUALIFICATION.md) — one-scenario-at-a-time mathematical, scientific, scale, UI-truth, and performance qualification program.
+- [`PLAN_CSS_MAINTAINABILITY_REFACTOR.md`](PLAN_CSS_MAINTAINABILITY_REFACTOR.md) — staged, test-gated CSS ownership and delivery roadmap.
 - [`PLAN_SCALE0_SCENARIO_MODULARIZATION.md`](PLAN_SCALE0_SCENARIO_MODULARIZATION.md) — scenario architecture cleanup roadmap.
 
 ## ADRs

@@ -78,6 +78,44 @@ function readPrimeTickOnLoadPref() {
     return true; // default ON
 }
 
+// Shared presentation controls for the three RK4 streamline channels. Density
+// and length are capped at 1 because 1 is the audited per-size 60 FPS work
+// envelope; opacity is renderer-only and can use the full visible range.
+export const DEFAULT_FLOW_LINE_SETTINGS = Object.freeze({
+    density: 1,
+    length: 1,
+    opacity: 0.7,
+});
+export const FLOW_LINE_SETTING_LIMITS = Object.freeze({
+    density: Object.freeze([0.25, 1]),
+    length: Object.freeze([0.4, 1]),
+    opacity: Object.freeze([0.2, 1]),
+});
+const FLOW_LINE_PREF_KEY = 'ftd.scale0.flowLines';
+
+function clampFlowLineSetting(key, value) {
+    const range = FLOW_LINE_SETTING_LIMITS[key];
+    if (!range) return null;
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) return DEFAULT_FLOW_LINE_SETTINGS[key];
+    return Math.max(range[0], Math.min(range[1], numeric));
+}
+
+function readFlowLineSettings() {
+    const settings = { ...DEFAULT_FLOW_LINE_SETTINGS };
+    try {
+        if (typeof localStorage !== 'undefined') {
+            const saved = JSON.parse(localStorage.getItem(FLOW_LINE_PREF_KEY) || 'null');
+            if (saved && typeof saved === 'object') {
+                for (const key of Object.keys(settings)) {
+                    settings[key] = clampFlowLineSetting(key, saved[key]);
+                }
+            }
+        }
+    } catch { /* malformed or blocked storage — use audited defaults */ }
+    return settings;
+}
+
 const state = {
     currentScenarioId: 'flux-pulse',
     fieldFlags: createFieldFlags(),
@@ -108,8 +146,13 @@ const state = {
     fluxMock: null,
     useFluxMock: false,
     primeTickOnLoad: readPrimeTickOnLoadPref(),
+    flowLineSettings: readFlowLineSettings(),
+    flowLineSettingsVersion: 0,
     latticeNeedsUpload: true,
     tickAccumulator: createTickAccumulator(),
+    playbackOwner: null,
+    requestedRunning: null,
+    requestedSpeed: null,
     fieldParticleBuf: [],
     dualLVecs: null,
     dualRVecs: null,
@@ -199,6 +242,41 @@ export function setPrimeTickOnLoad(on) {
     return state.primeTickOnLoad;
 }
 
+/** Stable settings object; mutate only through setFlowLineSetting(). */
+export function getFlowLineSettings() {
+    return state.flowLineSettings;
+}
+
+export function setFlowLineSetting(key, value) {
+    const next = clampFlowLineSetting(key, value);
+    if (next === null) return false;
+    if (state.flowLineSettings[key] === next) return false;
+    state.flowLineSettings[key] = next;
+    try {
+        if (typeof localStorage !== 'undefined') {
+            localStorage.setItem(FLOW_LINE_PREF_KEY, JSON.stringify(state.flowLineSettings));
+        }
+    } catch { /* preference remains in memory */ }
+
+    // Opacity writes one material property and never invalidates integration.
+    // Density/length change geometry, so discard stochastic seeds and preempt
+    // any in-flight multi-frame sweep through the established dirty gate.
+    if (key !== 'opacity') {
+        state.streamlineSeedCache = null;
+        state.flowLineSettingsVersion += 1;
+        state.fieldNeedsUpdate = true;
+    }
+    return true;
+}
+
+export function resetFlowLineSettings() {
+    let changed = false;
+    for (const [key, value] of Object.entries(DEFAULT_FLOW_LINE_SETTINGS)) {
+        changed = setFlowLineSetting(key, value) || changed;
+    }
+    return changed;
+}
+
 export function setFluxMock(mock, useMock = false) {
     // Dispose the prior worker/proxy before overwriting. Scenario churn used
     // to leak every previous owner for the page lifetime.
@@ -208,6 +286,9 @@ export function setFluxMock(mock, useMock = false) {
     }
     state.fluxMock = mock;
     state.useFluxMock = !!useMock;
+    state.playbackOwner = null;
+    state.requestedRunning = null;
+    state.requestedSpeed = null;
 }
 
 /** Canonical alias: off-thread WASM Scale-0 owner (WasmBridgeProxy). */
@@ -230,6 +311,9 @@ export function clearFluxMock() {
     }
     state.fluxMock = null;
     state.useFluxMock = false;
+    state.playbackOwner = null;
+    state.requestedRunning = null;
+    state.requestedSpeed = null;
 }
 
 export function setLatticeNeedsUpload(value = true) {
@@ -265,6 +349,37 @@ export function setCurrentScenarioId(id) {
 export function getActiveScale0Bridge(ctx, st = state) {
     if (st?.useFluxMock && st?.fluxMock) return st.fluxMock;
     return ctx?.bridge ?? null;
+}
+
+function syncPlaybackOwner(owner, st = state) {
+    if (st.playbackOwner === owner) return;
+    st.playbackOwner = owner;
+    st.requestedRunning = null;
+    st.requestedSpeed = null;
+}
+
+/** Send worker run-state only when the requested value or owner changes. */
+export function setScale0PlaybackRunning(ctx, running, st = state) {
+    const owner = getActiveScale0Bridge(ctx, st);
+    syncPlaybackOwner(owner, st);
+    if (!st.useFluxMock || owner !== st.fluxMock || typeof owner?.setRunning !== 'function') return false;
+    const next = !!running;
+    if (st.requestedRunning === next) return false;
+    st.requestedRunning = next;
+    owner.setRunning(next);
+    return true;
+}
+
+/** Send playback speed once per owner/value transition. */
+export function setScale0PlaybackSpeed(ctx, speed, st = state) {
+    const owner = getActiveScale0Bridge(ctx, st);
+    syncPlaybackOwner(owner, st);
+    const next = Number(speed);
+    if (!Number.isFinite(next) || next <= 0 || typeof owner?.setTicksPerFrame !== 'function') return false;
+    if (st.requestedSpeed === next) return false;
+    st.requestedSpeed = next;
+    owner.setTicksPerFrame(next);
+    return true;
 }
 
 /** scale0 capability on the active physics owner. */

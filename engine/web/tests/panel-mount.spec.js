@@ -346,7 +346,7 @@ test('bottom mount sets both safe-edge vars to 0px', async ({ sharedPage: page }
         const { writePanelMount } = await import('/js/ui/shell/panel-mount-state.js');
         writePanelMount('bottom');
         await new Promise((r) => requestAnimationFrame(r));
-        const cs = getComputedStyle(document.documentElement);
+        const cs = getComputedStyle(document.getElementById('viewport'));
         return {
             left:  cs.getPropertyValue('--viewport-safe-left').trim(),
             right: cs.getPropertyValue('--viewport-safe-right').trim(),
@@ -367,7 +367,7 @@ test('left mount sets a positive viewport-safe-left and zero right', async ({ sh
         const { writePanelMount } = await import('/js/ui/shell/panel-mount-state.js');
         writePanelMount('left');
         await new Promise((r) => requestAnimationFrame(r));
-        const cs = getComputedStyle(document.documentElement);
+        const cs = getComputedStyle(document.getElementById('viewport'));
         return {
             left:  cs.getPropertyValue('--viewport-safe-left').trim(),
             right: cs.getPropertyValue('--viewport-safe-right').trim(),
@@ -388,7 +388,7 @@ test('right mount sets a positive viewport-safe-right and zero left', async ({ s
         const { writePanelMount } = await import('/js/ui/shell/panel-mount-state.js');
         writePanelMount('right');
         await new Promise((r) => requestAnimationFrame(r));
-        const cs = getComputedStyle(document.documentElement);
+        const cs = getComputedStyle(document.getElementById('viewport'));
         return {
             left:  cs.getPropertyValue('--viewport-safe-left').trim(),
             right: cs.getPropertyValue('--viewport-safe-right').trim(),

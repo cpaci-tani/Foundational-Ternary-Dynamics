@@ -1,7 +1,7 @@
 #pragma once
 //
 // host/adapters/scale1_adapter.h — Scale 1 (ParticleEngine) behind the
-// ScaleAdapter seam (SPEC_NATIVE_REBUILD_R0R1 §4.1; R1 validation that the seam
+// ScaleAdapter seam (validation that the seam
 // is scale-generic — a SECOND adapter with a structurally different engine).
 //
 // Unlike Scale 0 (RenderBridge, which predates ScaleEngine and so returns a null

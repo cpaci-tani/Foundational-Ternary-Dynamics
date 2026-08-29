@@ -16,10 +16,19 @@ they are renamed `AUDIT_<YYYY-MM>_<slug>.md` and moved here.
 
 ---
 
+## Implementation-plan provenance
+
+| Collection | Scope | Disposition |
+|---|---|---|
+| [FTD engine agent plans](engine_agent_plans/README.md) | Six graph/engine-overlay plans plus the former root Scale-0 work plan; Plans 01–03 remain at the collection root | Preserved as implementation provenance; no claim status changed by relocation |
+
+---
+
 ## Archive
 
 | Date range | Slug | Findings | Resolved | Deferred | Not-a-bug |
 |---|---|---:|---:|---:|---:|
+| 2026-08-28 | [product consolidation](AUDIT_2026-08_PRODUCT_CONSOLIDATION.md) | retired app/prototype/build-tree inventory | native + web boundary established | none | theory-side trit work retained |
 | 2026-06-17 | [project cleanup plan](PLAN_PROJECT_CLEANUP_2026-06-17.md) | public GitHub/README cleanup plan | phase 1 complete | yes | n/a |
 | 2026-04-11 | [documentation cleanup ledger](AUDIT_DOCUMENT_CLEANUP_LEDGER.md) | repo-wide documentation drift ledger | mixed | yes | n/a |
 | 2026-04-27 | [pre-refactor sweep](AUDIT_2026-04_pre-refactor.md) | 122 | 78 | 40 | 4 |
@@ -33,13 +42,12 @@ they are renamed `AUDIT_<YYYY-MM>_<slug>.md` and moved here.
 
 | Area | Contents | Risk note |
 |---|---|---|
-| `engine/tools/test_runner/` | Qt6 desktop GUI (~15 C++ sources: MainWindow, LatticeViewer+OpenGL shaders, HistoryDb/SQLite, TelemetryCharts, NdjsonParser, SmartDispatcher); CMake gate `FTD_BUILD_TEST_RUNNER=AUTO` | Entire GUI application with zero audit or test coverage; NDJSON/SQLite schemas can drift silently against `test_telemetry.h` output |
 | `engine/tools/*.sh` | WSL2 campaign shell runners (`op_mixing_sweep.sh`, `run_topological_production.sh`, …) | Research data-product paths, uncovered; failures surface only mid-campaign |
-| `engine/tools/` Python visualizers + `build_file_manifest.py` | Plot/manifest utilities | Low risk; manifest generator's output IS committed (`engine/docs/ENGINE_FILE_MANIFEST.*`) so drift is visible in diffs |
+| `engine/tools/` Python utilities + `build_file_manifest.py` | Plot/manifest utilities | Low risk; manifest generator's output IS committed (`engine/docs/ENGINE_FILE_MANIFEST.*`) so drift is visible in diffs |
 
-A scoped follow-up sweep of `engine/tools/` (schema pinning for NDJSON/SQLite,
-smoke build of the Qt app under `FTD_BUILD_TEST_RUNNER=AUTO`, shellcheck of the
-campaign runners) is the recorded next step; until then, treat results produced
+A scoped follow-up sweep of `engine/tools/` (shellcheck of the campaign runners
+and smoke checks for the remaining Python utilities) is the recorded next step;
+until then, treat results produced
 via these tools as unaudited-pipeline outputs.
 
 ---

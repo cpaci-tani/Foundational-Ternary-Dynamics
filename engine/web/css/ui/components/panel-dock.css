@@ -1,7 +1,7 @@
 /* ── Desktop floating panel-area styles (bottom mount — default) ── */
 @media (min-width: 768px) {
-    html[data-panel-mount="bottom"] #panel-area,
-    html:not([data-panel-mount]) #panel-area {
+    #panel-area.panel-mount-bottom,
+    #panel-area:not(.panel-mount-left):not(.panel-mount-right):not(.panel-mount-bottom) {
         position: absolute !important;
         bottom: calc(var(--status-bar-offset, calc(28px * var(--ui-scale))) + 72px * var(--ui-scale));
         left: 50%;
@@ -14,14 +14,18 @@
         overflow-y: auto;
         overflow-x: hidden;
         background: var(--bg-surface);
-        backdrop-filter: blur(32px) saturate(1.4);
+        backdrop-filter: var(--glass-filter-high);
         border: 1px solid var(--border);
         border-top: 1px solid var(--border-light);
         border-radius: var(--radius-xl);
         /* Zero top padding — the resizer occupies the top edge of the panel */
         padding: 0 var(--sp-xl) var(--sp-xl);
         box-shadow: var(--dock-shadow);
-        transition: all var(--dur-base) var(--ease-out);
+        transition: background-color var(--dur-base) var(--ease-out),
+                    border-color var(--dur-base) var(--ease-out),
+                    box-shadow var(--dur-base) var(--ease-out),
+                    opacity var(--dur-base) var(--ease-out),
+                    transform var(--dur-base) var(--ease-out);
     }
 }
 
@@ -29,7 +33,7 @@
 #panel-area {
     z-index: var(--z-panel);
     background: var(--bg-surface);
-    backdrop-filter: blur(32px) saturate(1.4);
+    backdrop-filter: var(--glass-filter-high);
     border: 1px solid var(--border);
     border-radius: var(--radius-xl);
     box-shadow: var(--dock-shadow);
@@ -37,12 +41,12 @@
                 border-color var(--dur-base) var(--ease-out);
 }
 
-html[data-panel-mount="bottom"][data-panel-width="narrow"] #panel-area {
+html[data-panel-width="narrow"] #panel-area.panel-mount-bottom {
     width: 84vw;
     max-width: 1120px;
 }
 
-html[data-panel-mount="bottom"][data-panel-width="wide"] #panel-area {
+html[data-panel-width="wide"] #panel-area.panel-mount-bottom {
     width: 96vw;
     max-width: 1680px;
 }
@@ -90,7 +94,7 @@ html[data-density="compact"] #panel-area {
     background: var(--bg-surface);
     border: 1px solid var(--border-light);
     border-radius: 999px;
-    backdrop-filter: blur(12px) saturate(1.2);
+    backdrop-filter: var(--glass-filter-mid);
     box-shadow:
         0 2px 8px rgba(0, 0, 0, 0.28),
         inset 0 1px 0 rgba(255, 255, 255, 0.06);
@@ -163,7 +167,7 @@ html[data-density="compact"] #panel-area {
 }
 
 .panel-dock-kicker {
-    font-size: 10px;
+    font-size: 16px;
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -264,7 +268,7 @@ html[data-density="compact"] #panel-area {
     border: none;
     border-right: 1px solid var(--border);
     color: var(--text-muted);
-    font-size: 14px;
+    font-size: 16px;
     cursor: pointer;
     transition: background var(--dur-fast) var(--ease-out),
                 color var(--dur-fast) var(--ease-out);
@@ -280,8 +284,8 @@ html[data-density="compact"] #panel-area {
 }
 
 .mount-toggle .mount-toggle-btn.is-active {
-    background: var(--accent);
-    color: var(--accent-contrast, #fff);
+    background: var(--accent-dim);
+    color: var(--on-accent);
 }
 
 .mount-toggle .mount-toggle-btn[aria-disabled="true"] {

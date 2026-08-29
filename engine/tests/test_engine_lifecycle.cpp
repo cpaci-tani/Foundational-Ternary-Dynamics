@@ -26,8 +26,6 @@
 //   - ParticleEngine (Scale 1)
 //   - CosmicEngine   (Scale 5)
 //
-// DagEngine is deliberately absent: it is quarantined behind
-// FTD_BUILD_EXPERIMENTAL and owns a dedicated test_dag_engine target.
 // ============================================================================
 
 #include "ftd/particle_engine.h"

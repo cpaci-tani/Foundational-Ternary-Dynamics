@@ -82,7 +82,7 @@
 | [SPEC_FTD_LAGRANGIAN.md](SPEC_FTD_LAGRANGIAN.md) | [THEOREM] (action/EOM/limits) + [SELECTION] (IDs) | Canonical 3-term FTD action; the formal field theory. |
 | [SPEC_FTD_PHASE_LAW_V1.md](SPEC_FTD_PHASE_LAW_V1.md) | [CANDIDATE UPDATE CYCLE] | **The Canonical Transition Operator**: Explicit closed-form update law U mapping Ω_t → Ω_{t+1}, stating the operational 10-phase physics cycle, bounding energy non-conservation at the Gauss step, and localizing the exact readouts for empirical bridging. |
 | [MAP_LAGRANGIAN_TO_ENGINE.md](MAP_LAGRANGIAN_TO_ENGINE.md) | [REFERENCE] | Line-anchored cross-reference from Lagrangian terms to engine implementation sites. |
-| [MAP_ENGINE_ARCHITECTURE.md](MAP_ENGINE_ARCHITECTURE.md) | [REFERENCE] / [SYNTHESIS] / [ANALYSIS] | Complete C++ engine inventory, inclusion tree, 11-step runtime pipeline, host-device lazy sync, CUDA/cuFFT mapping, and DagEngine stubs gap analysis. |
+| [MAP_ENGINE_ARCHITECTURE.md](MAP_ENGINE_ARCHITECTURE.md) | [REFERENCE] / [SYNTHESIS] / [ANALYSIS] | Complete C++ engine inventory, inclusion tree, 11-step runtime pipeline, host-device lazy sync, CUDA/cuFFT mapping, and active performance gaps. |
 | [SPEC_SIX_ALGORITHMS.md](SPEC_SIX_ALGORITHMS.md) | reference document | The six algorithms of physics — complete technical reference for the engine's rule set. |
 | [SPEC_DISCRETE_NATIVE_DERIVATION.md](SPEC_DISCRETE_NATIVE_DERIVATION.md) | [METHODOLOGICAL REFRAME] | Discrete-native derivation program; reframes the substrate-derivation goal (FTD-0136). |
 | [SPEC_CLASS_B_CLUSTER_PERSISTENCE.md](SPEC_CLASS_B_CLUSTER_PERSISTENCE.md) | [INFRASTRUCTURE SPEC] | Cluster-persistence measurement instrument spec (protocol; engine implementation TBD). |

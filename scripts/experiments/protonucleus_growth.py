@@ -1,15 +1,20 @@
 """Protonucleus continued-growth experiment. Protocol: PREREG_PROTONUCLEUS_GROWTH_v1.
-Model taken verbatim from dag_engine.cpp (field) and transmutation_phases.cpp (genesis).
+Field operator matches the production 18-point stencil; genesis follows transmutation_phases.cpp.
 """
 import numpy as np, sys, json, time
+from pathlib import Path
 
 C_WAVE2 = np.float32(1.0/3.0)
 G_C     = np.float32(0.0854245431028543695)
 K_GEN   = np.float32(1.5163860591519780)
 K_MAN   = np.float32(0.5054620197173260)
+OUTPUT_PATH = (
+    Path(__file__).resolve().parent
+    / "recorded_results" / "ftd_0799" / "protonucleus_growth_results.json"
+)
 
 def lap18(F, out):
-    """18-point SC+FCC Moore stencil, exactly dag_engine.cpp:145-171."""
+    """18-point SC+FCC Moore stencil used by the production field operator."""
     np.multiply(F, np.float32(-4.0), out=out)
     for ax in range(3):
         out += np.roll(F, 1, ax); out += np.roll(F, -1, ax)
@@ -94,6 +99,7 @@ def run(R0, L, ticks=600, seed=20260803, shuffle=False, log_every=25):
     return dict(R0=R0, L=L, N0=N0, hist=hist, final_N=int((s != 0).sum()))
 
 if __name__ == "__main__":
+    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     arms = [(8,129),(12,129),(13,129),(16,161),(20,201)]
     if len(sys.argv) > 1:
         arms = [tuple(int(x) for x in a.split(",")) for a in sys.argv[1:]]
@@ -103,4 +109,5 @@ if __name__ == "__main__":
         t0 = time.time()
         out.append(run(R0, L))
         print(f"  [{time.time()-t0:.1f}s]  N: {out[-1]['N0']:,} -> {out[-1]['final_N']:,}")
-    json.dump(out, open("protonucleus_growth_results.json","w"), indent=1)
+    with OUTPUT_PATH.open("w", encoding="utf-8") as output:
+        json.dump(out, output, indent=1)

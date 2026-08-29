@@ -233,7 +233,7 @@ inline std::vector<std::vector<double>> SignedRing1D::build_matrix() const {
 // ---------------------------------------------------------------------------
 //
 // Adds the 3D-native primitives specified in
-// `ftd_engine_agent_plans/PLAN_01_BRANCH_HOLONOMY_GAP.md`: per-axis Z_2
+// `docs/audits/engine_agent_plans/PLAN_01_BRANCH_HOLONOMY_GAP.md`: per-axis Z_2
 // twist flags, holonomy and momentum-shift accessors, the 3D Laplacian
 // eigenvalue at general (m_x, m_y, m_z), and the closed-form k-twist
 // additivity result:

@@ -7,6 +7,10 @@
 commit `38292bf1` **before the runner existed**. Executed 2026-08-04.
 **Runners:** `scripts/experiments/maxwell_c3_screen.py`,
 `scripts/experiments/verify_sc_shear_quartic.py`
+**Raw:** `scripts/experiments/recorded_results/ftd_0800/maxwell_c3_results.json`
+(combined screen) and
+`scripts/experiments/recorded_results/ftd_0800/maxwell_c3_tierA.json`
+(preserved Tier-A control run)
 **Production impact:** none.
 
 ## 1 · Outcome

@@ -39,6 +39,30 @@ export function getSettingsModalTemplate() {
                         </div>
                     </div>
 
+                    <div class="settings-subsection" data-settings-glass>
+                        <div class="settings-toggle-row">
+                            <div>
+                                <label class="settings-label" for="settings-glass-enabled">Glassmorphism</label>
+                                <p class="settings-help" id="settings-glass-help">Frost translucent interface surfaces over the simulation.</p>
+                            </div>
+                            <label class="settings-switch" title="Toggle glassmorphism">
+                                <input class="u-no-baseline" type="checkbox" id="settings-glass-enabled"
+                                    role="switch" aria-describedby="settings-glass-help">
+                                <span class="settings-switch-track" aria-hidden="true"><span></span></span>
+                            </label>
+                        </div>
+                        <div class="settings-glass-controls is-disabled" id="settings-glass-controls" aria-disabled="true">
+                            <label class="settings-label" for="settings-glass-thickness">Glass thickness</label>
+                            <div class="settings-scale-row">
+                                <input type="range" id="settings-glass-thickness" min="4" max="32" step="1" value="16"
+                                    aria-describedby="settings-glass-thickness-help" disabled>
+                                <output id="settings-glass-thickness-val" class="settings-scale-val"
+                                    for="settings-glass-thickness">16 px</output>
+                            </div>
+                            <p class="settings-help" id="settings-glass-thickness-help">Sets the mid-tier blur depth; small and shell surfaces scale around it.</p>
+                        </div>
+                    </div>
+
                     <div class="settings-subsection">
                         <label class="settings-label">UI Scale</label>
                         <div class="settings-scale-row">

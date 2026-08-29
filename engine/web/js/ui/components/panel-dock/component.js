@@ -11,10 +11,19 @@ export class PanelDockComponent {
     constructor(root) {
         this.root = root;
         this.activeTitle = null;
+        this.mountToggle = null;
     }
 
     init() {
-        if (!this.root || this.root.querySelector('.panel-dock-body')) return this;
+        if (!this.root) return this;
+        if (this.root.querySelector('.panel-dock-body')) {
+            this.activeTitle = this.root.querySelector('#panel-dock-active-title');
+            const existingToggle = this.root.querySelector('#panel-mount-toggle');
+            if (existingToggle && !this.mountToggle) {
+                this.mountToggle = new MountToggleComponent(existingToggle).init();
+            }
+            return this;
+        }
 
         const existingChildren = Array.from(this.root.children);
         // Extract the resize handle so it sits at the top edge of panel-area,
@@ -34,12 +43,17 @@ export class PanelDockComponent {
         this.root.dataset.panelDock = 'true';
 
         const toggleEl = this.root.querySelector('#panel-mount-toggle');
-        if (toggleEl) new MountToggleComponent(toggleEl).init();
+        if (toggleEl) this.mountToggle = new MountToggleComponent(toggleEl).init();
 
         return this;
     }
 
     setActiveTitle(label) {
         if (this.activeTitle) this.activeTitle.textContent = label || 'Controls';
+    }
+
+    destroy() {
+        this.mountToggle?.destroy();
+        this.mountToggle = null;
     }
 }

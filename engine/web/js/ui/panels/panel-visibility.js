@@ -14,7 +14,11 @@
  */
 export function isPanelLive(el) {
     if (!el) return false;
-    if (el.classList.contains('active')) return true;
+    if (document.documentElement.classList.contains('ui-hidden')) return false;
+    if (el.classList.contains('active')) {
+        const app = el.closest('#app');
+        return !app?.classList.contains('panels-collapsed');
+    }
     const fw = el.closest('.floating-window');
     return !!fw && !fw.classList.contains('is-collapsed');
 }

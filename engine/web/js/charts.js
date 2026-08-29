@@ -52,7 +52,7 @@ function drawChart(canvas, series) {
     // larger, more legible label font. Keeps labels readable without eating the
     // already-tight plot width on a ~340px-wide mobile chart.
     const narrow = w < 420;
-    const axisFontPx = narrow ? 12 : 10;
+    const axisFontPx = 16;
     // Compute global range
     const margin = { top: 8, right: 8, bottom: narrow ? 22 : 20, left: narrow ? 36 : 50 };
     const plotW = w - margin.left - margin.right;

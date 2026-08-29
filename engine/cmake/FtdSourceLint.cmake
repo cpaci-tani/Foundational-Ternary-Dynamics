@@ -57,31 +57,6 @@ endif()
 
 message(STATUS "FtdSourceLint: OK — no tree-level constants in physics paths")
 
-# ── Experimental-quarantine include guard (revision 3.7, ADR-0016) ──────────
-# No production TU may include the quarantined headers; the experimental
-# implementations and their gated tests are exempt.
-file(GLOB_RECURSE _prod_srcs "${ENGINE_DIR}/src/*.cpp" "${ENGINE_DIR}/wasm/*.cpp")
-list(FILTER _prod_srcs EXCLUDE REGEX "src/dag_engine\.cpp$")
-list(FILTER _prod_srcs EXCLUDE REGEX "src/cognition/")
-set(_quarantined "ftd/dag_engine.h" "ftd/dag_lattice.h" "cognition/cognitive_lattice.h")
-set(_qviolations "")
-foreach(_f ${_prod_srcs})
-    file(READ "${_f}" _src)
-    foreach(_h ${_quarantined})
-        string(FIND "${_src}" "#include \"${_h}\"" _hit)
-        if(NOT _hit EQUAL -1)
-            list(APPEND _qviolations "${_f}: includes quarantined ${_h}")
-        endif()
-    endforeach()
-endforeach()
-if(_qviolations)
-    list(JOIN _qviolations "\n  " _qmsg)
-    message(FATAL_ERROR
-        "FtdSourceLint: production TU includes an experimental/quarantined "
-        "header (ADR-0016 boundary):\n  ${_qmsg}")
-endif()
-message(STATUS "FtdSourceLint: OK — quarantine boundary intact (ADR-0016)")
-
 # Latency horizon clamp single-source guard (revision 3.8).
 # The value is defined in include/ftd/constants.h. Runtime implementations
 # must name it instead of copying the numeric literal, otherwise CPU, CUDA,

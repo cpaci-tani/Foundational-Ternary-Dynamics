@@ -164,7 +164,7 @@
         var(--browser-nav-inset, 0px)
     ));
     transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
-    backdrop-filter: blur(32px) saturate(1.4);
+    backdrop-filter: var(--glass-filter-high);
     z-index: var(--z-panel);
 }
 
@@ -220,8 +220,8 @@ body.body-panel-open {
 
 /* ── Small phone extras (≤479px) ─────────────────────────────────────────── */
 @media (max-width: 479px) {
-    html[data-panel-mount="bottom"] #panel-area,
-    html:not([data-panel-mount]) #panel-area {
+    #panel-area.panel-mount-bottom,
+    #panel-area:not(.panel-mount-left):not(.panel-mount-right):not(.panel-mount-bottom) {
         max-height: 90dvh;
     }
 
@@ -316,8 +316,8 @@ body.body-panel-open {
  * guards added in the panels/scales sweeps. */
 @media (max-height: 500px) {
     /* Bottom-sheet must not eat the whole short screen */
-    html[data-panel-mount="bottom"] #panel-area,
-    html:not([data-panel-mount]) #panel-area {
+    #panel-area.panel-mount-bottom,
+    #panel-area:not(.panel-mount-left):not(.panel-mount-right):not(.panel-mount-bottom) {
         max-height: 88dvh !important;
     }
 

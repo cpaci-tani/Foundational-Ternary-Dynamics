@@ -6,7 +6,7 @@
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.45);
-    z-index: 90;
+    z-index: var(--z-sidebar-backdrop);
 }
 
 .sidelib-sidebar {
@@ -14,12 +14,12 @@
     top: 0; right: 0; bottom: 0;
     width: min(820px, 100%);
     max-width: 100vw;
-    background: var(--bg, #111);
-    color: var(--text, #ddd);
-    border-left: 1px solid var(--border, #333);
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    border-left: 1px solid var(--border);
     transform: translateX(100%);
     transition: transform 180ms ease;
-    z-index: 100;
+    z-index: var(--z-sidebar);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -35,25 +35,25 @@
     align-items: flex-start;
     gap: 1rem;
     padding: 1rem 1.25rem;
-    border-bottom: 1px solid var(--border, #333);
+    border-bottom: 1px solid var(--border);
 }
 .sidelib-kicker {
     font-size: var(--fs-xs);
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--text-muted, #888);
+    color: var(--text-muted);
 }
 .sidelib-title { margin: 0.25rem 0; font-size: var(--fs-lg); }
 .sidelib-page-copy {
     margin: 0;
     font-size: var(--fs-sm);
-    color: var(--text-muted, #888);
+    color: var(--text-muted);
     max-width: 60ch;
 }
 .sidelib-close {
     background: transparent;
-    border: 1px solid var(--border, #333);
-    color: var(--text, #ddd);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
     width: 2rem; height: 2rem;
     border-radius: 4px;
     font-size: var(--fs-xl);
@@ -63,7 +63,7 @@
 
 .sidelib-toolbar {
     padding: 0.6rem 1.25rem;
-    border-bottom: 1px solid var(--border, #333);
+    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     gap: 0.8rem;
@@ -76,34 +76,34 @@
     font-size: var(--fs-sm);
 }
 .sidelib-search-field input {
-    background: var(--surface-2, rgba(255,255,255,0.04));
-    border: 1px solid var(--border, #333);
-    color: var(--text, #ddd);
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
     padding: 0.4rem 0.6rem;
     border-radius: 4px;
     font-size: var(--fs-base);
 }
-.sidelib-page-meta { font-size: var(--fs-sm); color: var(--text-muted, #888); }
+.sidelib-page-meta { font-size: var(--fs-sm); color: var(--text-muted); }
 
 .sidelib-section-filter {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
     padding: 0.6rem 1.25rem;
-    border-bottom: 1px solid var(--border, #333);
+    border-bottom: 1px solid var(--border);
 }
 .sidelib-section-pill {
     padding: 0.3rem 0.75rem;
-    border: 1px solid var(--border, #333);
+    border: 1px solid var(--border);
     border-radius: 999px;
     background: transparent;
-    color: var(--text, #ddd);
+    color: var(--text-primary);
     font-size: var(--fs-sm);
     cursor: pointer;
 }
 .sidelib-section-pill.active {
-    background: var(--accent, #3a7);
-    color: var(--bg, #111);
+    background: var(--accent-dim);
+    color: var(--on-accent);
     border-color: transparent;
 }
 
@@ -114,7 +114,7 @@
     overflow: hidden;
 }
 .sidelib-entry-list {
-    border-right: 1px solid var(--border, #333);
+    border-right: 1px solid var(--border);
     overflow-y: auto;
     padding: 0.6rem;
     display: flex;
@@ -127,15 +127,15 @@
     background: transparent;
     border: 1px solid transparent;
     border-radius: 4px;
-    color: var(--text, #ddd);
+    color: var(--text-primary);
     font-size: var(--fs-base);
     line-height: 1.3;
     cursor: pointer;
 }
-.sidelib-entry-chip:hover { background: var(--surface-2, rgba(255,255,255,0.04)); }
+.sidelib-entry-chip:hover { background: var(--state-hover-bg); }
 .sidelib-entry-chip.active {
-    background: var(--surface-2, rgba(255,255,255,0.06));
-    border-color: var(--border, #333);
+    background: var(--state-active-bg);
+    border-color: var(--border);
 }
 
 .sidelib-entry-reader {
@@ -148,14 +148,14 @@
 
 .sidelib-empty-list {
     padding: 1rem;
-    color: var(--text-muted, #888);
+    color: var(--text-muted);
     font-size: var(--fs-base);
     font-style: italic;
 }
 
 @media (max-width: 720px) {
     .sidelib-body { grid-template-columns: 1fr; }
-    .sidelib-entry-list { border-right: 0; border-bottom: 1px solid var(--border, #333); max-height: 32vh; }
+    .sidelib-entry-list { border-right: 0; border-bottom: 1px solid var(--border); max-height: 32vh; }
     /* Finger-sized close target on touch devices. */
     .sidelib-close {
         min-width: var(--tap-min);

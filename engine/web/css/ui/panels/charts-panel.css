@@ -1,18 +1,5 @@
 /* Charts panel styles — migrated from components.css */
 
-/* Chart containers */
-.chart-container {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 12px;
-}
-
-.chart-container canvas {
-    width: 100%;
-    height: 160px;
-}
-
 .chart-title {
     font-size: var(--fs-xs);
     font-weight: 500;
@@ -86,7 +73,7 @@
 
 .charts-chip[aria-pressed="true"] {
     background: color-mix(in oklch, var(--accent) 18%, transparent);
-    color: var(--accent);
+    color: var(--accent-text);
     border-color: var(--accent);
     box-shadow: 0 0 0 2px color-mix(in oklch, var(--accent-glow, var(--accent)) 30%, transparent);
 }
@@ -100,8 +87,8 @@
 }
 
 /* ── Sidebar (left/right) mount overrides ────────────────────────── */
-html[data-panel-mount="left"] .charts-grid,
-html[data-panel-mount="right"] .charts-grid {
+.panel.panel-mount-left .charts-grid,
+.panel.panel-mount-right .charts-grid {
     grid-template-columns: 1fr;
 }
 
@@ -126,20 +113,20 @@ html[data-panel-mount="right"] .charts-grid {
     }
 }
 
-html[data-panel-mount="left"] .charts-chip-strip,
-html[data-panel-mount="right"] .charts-chip-strip {
+.panel.panel-mount-left .charts-chip-strip,
+.panel.panel-mount-right .charts-chip-strip {
     gap: 6px 8px;
     padding: 8px 6px 12px;
 }
 
-html[data-panel-mount="left"] .charts-chip,
-html[data-panel-mount="right"] .charts-chip {
+.panel.panel-mount-left .charts-chip,
+.panel.panel-mount-right .charts-chip {
     font-size: var(--fs-sm);
     padding: 6px 14px;
 }
 
-html[data-panel-mount="left"] .chart-card-plot,
-html[data-panel-mount="right"] .chart-card-plot {
+.panel.panel-mount-left .chart-card-plot,
+.panel.panel-mount-right .chart-card-plot {
     aspect-ratio: 16 / 7;
     min-height: 160px;
     max-height: 240px;
@@ -147,7 +134,7 @@ html[data-panel-mount="right"] .chart-card-plot {
 
 .chart-card {
     background: var(--bg-surface);
-    backdrop-filter: blur(16px) saturate(1.2);
+    backdrop-filter: var(--glass-filter-mid);
     border: 1px solid var(--border);
     border-radius: var(--radius, 8px);
     padding: 14px;
@@ -226,7 +213,7 @@ html[data-panel-mount="right"] .chart-card-plot {
 
 .chart-card-head .chart-card-expand:hover {
     background: var(--state-hover-bg);
-    color: var(--accent);
+    color: var(--accent-text);
     border-color: var(--border-light);
 }
 
@@ -248,13 +235,13 @@ html[data-panel-mount="right"] .chart-card-plot {
     position: absolute;
     inset: 0;
     background: var(--modal-backdrop);
-    backdrop-filter: blur(8px) saturate(1.3);
+    backdrop-filter: var(--glass-filter-low);
     cursor: pointer;
 }
 
 .chart-fs-content {
     position: relative;
-    z-index: 1;
+    z-index: var(--z-local-base);
     width: min(96vw, 1280px);
     max-height: 92vh;
     display: flex;

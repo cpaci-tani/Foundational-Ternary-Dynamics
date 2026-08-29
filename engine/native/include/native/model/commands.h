@@ -1,6 +1,6 @@
 #pragma once
 //
-// model/commands.h — the scale-generic command vocabulary (SPEC_NATIVE_REBUILD_R0R1 §4.2).
+// model/commands.h — the scale-generic command vocabulary.
 //
 // Composition, not a mega-variant: a ScaleCommand is EITHER a scale-common core
 // command (the host handles it directly: loop control, reload, scale switch,
@@ -30,7 +30,7 @@ using CoreCommand = std::variant<Pause, Run, Step, LoadScenario, SetRunConfig,
                                  SwitchScale, SetTelemetryDemand>;
 
 // ── per-scale payloads (the owning adapter handles these) ────────────────────
-// Scale 0 keeps the current SPEC_UI_V2 §3.4 vocabulary verbatim. SetLatticeSize
+// Scale 0 keeps the established native command vocabulary. SetLatticeSize
 // and ApplyReboot are intentionally NOT here: lattice resize is a reload knob
 // carried by the core SetRunConfig, so a scale never re-implements host reload.
 using Scale0Cmd = std::variant<

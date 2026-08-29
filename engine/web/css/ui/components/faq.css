@@ -45,13 +45,16 @@
     text-transform: uppercase;
     padding: 0.12rem 0.45rem;
     border-radius: 3px;
-    background: var(--surface-2, rgba(255,255,255,0.06));
-    color: var(--text, #ddd);
+    background: var(--state-hover-bg);
+    color: var(--text-primary);
     white-space: nowrap;
 }
 .faq-tag--theorem    { background: color-mix(in srgb, var(--positive, #3a7) 28%, transparent); }
-.faq-tag--selection  { background: color-mix(in srgb, var(--warning, #d8a24a) 26%, transparent); }
-.faq-tag--parametric { background: var(--surface-3, rgba(255,255,255,0.09)); font-style: italic; }
+.faq-tag--selection  {
+    color: var(--warning-text);
+    background: color-mix(in srgb, var(--warning) 14%, transparent);
+}
+.faq-tag--parametric { background: var(--bg-raised); font-style: italic; }
 .faq-tag--conjecture { background: transparent; border: 1px dashed var(--border, #333); }
 .faq-tag--open       { background: transparent; border: 1px dotted var(--border, #333); }
 

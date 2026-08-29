@@ -47,19 +47,19 @@ function ensureCss() {
     const s = document.createElement('style');
     s.id = 'dispersion-panel-css';
     s.textContent = `
-    #${PANEL_ID}{font-family:var(--font-sans,sans-serif);font-size:12px;color:var(--text-primary,#eee);padding:2px}
+    #${PANEL_ID}{font-family:var(--font-sans,sans-serif);font-size:16px;color:var(--text-primary,#eee);padding:2px}
     #${PANEL_ID} .dp-title{font-weight:600;margin:2px 0 6px}
     #${PANEL_ID} .dp-title small{color:var(--text-muted,#888);font-weight:400}
     #${PANEL_ID} svg.dp-plot{width:100%;display:block;background:#0c0c11;border-radius:6px}
-    #${PANEL_ID} .dp-legend{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0;font-size:10.5px;color:var(--text-secondary,#ccc)}
+    #${PANEL_ID} .dp-legend{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0;font-size:16px;color:var(--text-secondary,#ccc)}
     #${PANEL_ID} .dp-legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:middle}
     #${PANEL_ID} .dp-rows{margin:4px 0}
     #${PANEL_ID} .dp-row{display:flex;justify-content:space-between;padding:2px 0;border-bottom:0.5px solid var(--border-light,rgba(255,255,255,0.06))}
     #${PANEL_ID} .dp-row span:last-child{font-variant-numeric:tabular-nums;color:var(--text-secondary,#ccc)}
     #${PANEL_ID} .dp-actions{display:flex;gap:6px;align-items:center;margin:6px 0 2px}
-    #${PANEL_ID} .dp-actions button{padding:5px 9px;border-radius:6px;cursor:pointer;border:0.5px solid var(--border-light,rgba(255,255,255,0.18));background:var(--surface-2,rgba(255,255,255,0.06));color:inherit;font-size:11px}
-    #${PANEL_ID} .dp-status{font-size:10px;color:var(--text-muted,#888)}
-    #${PANEL_ID} .dp-foot{margin-top:8px;padding-top:7px;border-top:0.5px solid var(--border-light,rgba(255,255,255,0.12));font-size:10px;color:var(--text-muted,#888);line-height:1.45}
+    #${PANEL_ID} .dp-actions button{padding:5px 9px;border-radius:6px;cursor:pointer;border:0.5px solid var(--border-light,rgba(255,255,255,0.18));background:var(--surface-2,rgba(255,255,255,0.06));color:inherit;font-size:16px}
+    #${PANEL_ID} .dp-status{font-size:16px;color:var(--text-muted,#888)}
+    #${PANEL_ID} .dp-foot{margin-top:8px;padding-top:7px;border-top:0.5px solid var(--border-light,rgba(255,255,255,0.12));font-size:16px;color:var(--text-muted,#888);line-height:1.45}
     #${PANEL_ID} .dp-foot b{color:var(--text-secondary,#aaa)}`;
     document.head.appendChild(s);
 }
@@ -100,12 +100,12 @@ function renderPlot(svg, live) {
 
     // zone edge + IR region markers
     s += `<line x1="${X(K_MAX)}" y1="${m.top}" x2="${X(K_MAX)}" y2="${m.top + iH}" stroke="var(--warning,#e8b04b)" stroke-width="0.8" stroke-dasharray="2,3" opacity="0.7"/>`;
-    s += `<text x="${X(K_MAX) - 2}" y="${m.top + 9}" text-anchor="end" font-size="8.5" fill="var(--warning,#e8b04b)">zone edge (v_g→0)</text>`;
-    s += `<text x="${X(0) + 3}" y="${m.top + iH - 4}" font-size="8.5" fill="#7aa7ff">◄ radio · visible (k/k_zone≲1e-28)</text>`;
+    s += `<text x="${X(K_MAX) - 2}" y="${m.top + 9}" text-anchor="end" font-size="16" fill="var(--warning,#e8b04b)">zone edge (v_g→0)</text>`;
+    s += `<text x="${X(0) + 3}" y="${m.top + iH - 4}" font-size="16" fill="#7aa7ff">◄ radio · visible (k/k_zone≲1e-28)</text>`;
 
     // no-acoustic-branch contrast (greyed line where ω_s=c·k would sit, struck out)
     s += `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(0.55)}" y2="${Y(C * 0.55)}" stroke="#666" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/>`;
-    s += `<text x="${X(0.58)}" y="${Y(C * 0.5)}" font-size="8.5" fill="#888">no acoustic branch ✗</text>`;
+    s += `<text x="${X(0.58)}" y="${Y(C * 0.5)}" font-size="16" fill="#888">no acoustic branch ✗</text>`;
 
     // analytic curve ω = 2c|sin(k/2)|
     let path = '';
@@ -115,7 +115,7 @@ function renderPlot(svg, live) {
     let vg = '';
     for (let i = 0; i <= 80; i++) { const k = (i / 80) * K_MAX; const v = C * Math.cos(k / 2); vg += `${i ? 'L' : 'M'}${X(k).toFixed(1)},${Y(v).toFixed(1)} `; }
     s += `<path d="${vg}" fill="none" stroke="#5a6" stroke-width="0.8" stroke-dasharray="4,3" opacity="0.6"/>`;
-    s += `<text x="${X(0.15)}" y="${Y(C) - 2}" font-size="8" fill="#5a6">v_g</text>`;
+    s += `<text x="${X(0.15)}" y="${Y(C) - 2}" font-size="16" fill="#5a6">v_g</text>`;
 
     // measured atlas points
     for (const dir of Object.keys(ATLAS)) {
@@ -125,9 +125,9 @@ function renderPlot(svg, live) {
     if (live && live.length) for (const [k, w] of live) s += `<circle cx="${X(k).toFixed(1)}" cy="${Y(w).toFixed(1)}" r="2.4" fill="none" stroke="#7CFC8C" stroke-width="1.4"/>`;
 
     // axes labels
-    s += `<text x="${m.left + iW / 2}" y="${H - 4}" text-anchor="middle" font-size="9.5" fill="var(--text-muted,#888)">k (rad/voxel) · 0 → π</text>`;
-    s += `<text x="10" y="${m.top + iH / 2}" transform="rotate(-90 10 ${m.top + iH / 2})" text-anchor="middle" font-size="9.5" fill="var(--text-muted,#888)">ω (rad/tick)</text>`;
-    s += `<text x="${m.left - 3}" y="${Y(OMEGA_MAX) + 3}" text-anchor="end" font-size="8" fill="var(--text-muted,#888)">${OMEGA_MAX.toFixed(2)}</text>`;
+    s += `<text x="${m.left + iW / 2}" y="${H - 4}" text-anchor="middle" font-size="16" fill="var(--text-muted,#888)">k (rad/voxel) · 0 → π</text>`;
+    s += `<text x="10" y="${m.top + iH / 2}" transform="rotate(-90 10 ${m.top + iH / 2})" text-anchor="middle" font-size="16" fill="var(--text-muted,#888)">ω (rad/tick)</text>`;
+    s += `<text x="${m.left - 3}" y="${Y(OMEGA_MAX) + 3}" text-anchor="end" font-size="16" fill="var(--text-muted,#888)">${OMEGA_MAX.toFixed(2)}</text>`;
     s += `</svg>`;
     svg.outerHTML = s.replace('<svg ', `<svg class="dp-plot" id="${PANEL_ID}-plot" `);
 }

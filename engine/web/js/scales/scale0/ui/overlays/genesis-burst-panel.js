@@ -29,7 +29,7 @@ const KNEE_A = 16;
 const SWEEP_GRID = [10, 12, 14, 16, 20, 25, 30, 40, 50, 70, 90];
 
 const TEMPLATE = `
-    <div id="genesis-burst-panel" style="position:absolute; top:12px; right:12px; z-index:40; width:300px; padding:12px 14px; border-radius:12px; font-family:var(--font-sans,sans-serif); font-size:12px; background:var(--color-background-primary,rgba(20,20,24,0.92)); border:0.5px solid var(--color-border-secondary,rgba(255,255,255,0.25)); color:var(--color-text-primary,#eee); box-shadow:0 2px 12px rgba(0,0,0,0.3)">
+    <div id="genesis-burst-panel" style="position:absolute; top:12px; right:12px; z-index:40; width:300px; padding:12px 14px; border-radius:12px; font-family:var(--font-sans,sans-serif); font-size:16px; background:var(--color-background-primary,rgba(20,20,24,0.92)); border:0.5px solid var(--color-border-secondary,rgba(255,255,255,0.25)); color:var(--color-text-primary,#eee); box-shadow:0 2px 12px rgba(0,0,0,0.3)">
         <div style="font-weight:500;margin-bottom:8px">Selected genesis response N(A)</div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
             <span>A</span>
@@ -43,7 +43,7 @@ const TEMPLATE = `
         </div>
         <div ref="status" style="margin-bottom:6px;color:var(--color-text-secondary,#aaa);min-height:15px">ready</div>
         <canvas ref="plot" width="276" height="200" style="width:100%;display:block;border-radius:8px;background:var(--color-background-secondary,rgba(255,255,255,0.04))"></canvas>
-        <div style="margin-top:6px;font-size:11px;color:var(--color-text-tertiary,#888);line-height:1.4">
+        <div style="margin-top:6px;font-size:16px;color:var(--color-text-tertiary,#888);line-height:1.4">
             <span style="color:#378ADD">&#9679;</span> live (active owner) &nbsp;
             <span style="color:#BA7517">&#9675;</span> historical GPU run &nbsp;
             <span style="color:#639922">&#8211;</span> selected quadratic comparison
@@ -148,7 +148,7 @@ export function mountGenesisBurstPanel(harness) {
         ctx2d.clearRect(0, 0, W, H);
         ctx2d.strokeStyle = 'rgba(136,135,128,0.5)'; ctx2d.lineWidth = 1;
         ctx2d.beginPath(); ctx2d.moveTo(x0, y1); ctx2d.lineTo(x0, y0); ctx2d.lineTo(x1, y0); ctx2d.stroke();
-        ctx2d.fillStyle = 'rgba(150,150,150,0.9)'; ctx2d.font = '9px sans-serif';
+        ctx2d.fillStyle = 'rgba(150,150,150,0.9)'; ctx2d.font = '16px sans-serif';
         ctx2d.fillText('N', 4, y1 + 8); ctx2d.fillText('A', x1 - 8, y0 + 14);
         for (const A of [10, 16, 30, 90]) ctx2d.fillText(String(A), px(A) - 5, y0 + 12);
 

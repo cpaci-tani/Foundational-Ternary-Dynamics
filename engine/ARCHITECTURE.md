@@ -218,8 +218,8 @@ Lazy synchronization avoids unnecessary PCIe transfers:
 `ScaleEngine` provides a common interface (`tick`, `dt`, `set_dt`,
 diagnostics, toggle access) for Scale 0 and macro engines. `RenderBridge` is
 the production fundamental lattice engine. `ParticleEngine`, `AtomEngine`, and
-`CosmicEngine` model coarser analytical layers. `DagEngine` remains an
-experimental sparse-lattice prototype and is not used for physics claims.
+`CosmicEngine` model coarser analytical layers outside the Scale-0 production
+tick path.
 
 Cross-scale conversion lives in `scale_bridge.cpp`:
 

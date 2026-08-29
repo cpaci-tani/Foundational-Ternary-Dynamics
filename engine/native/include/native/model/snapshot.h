@@ -1,6 +1,6 @@
 #pragma once
 //
-// model/snapshot.h — the scale-generic published snapshot (SPEC_NATIVE_REBUILD_R0R1 §4.4).
+// model/snapshot.h — the scale-generic published snapshot.
 //
 // A HostSnapshot has a scale-common core (never hidden: tick, loop, backend,
 // identity, sequence bookkeeping) plus one scale-namespaced observation payload.

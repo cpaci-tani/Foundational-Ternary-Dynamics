@@ -2978,15 +2978,6 @@ deep, remains one thing critiquing itself.
 
 ## §1 Engine code
 
-### 1.1 DagEngine stubs
-**Location:** `engine/src/dag_engine.cpp` (6 `[OPEN]`), `engine/include/ftd/dag_engine.h` (1).
-
-- [OPEN] `gauss_project()` — recursive SOR solver that skips pure-void sparse-DAG subtrees.
-- [OPEN] `phase_forces()` — recursive Poisson + Lorentz-force summation over the DAG.
-- [OPEN] `phase_movement()` — fractional-remainder particle integration with sparse-aware reads.
-
-**Status:** [BLOCKED]. Production path is `RenderBridge`. These stubs exist for a future sparse-cosmology branch; no current scenario benefits from them. **Do not start here unless a sparse use case has appeared.** See `engine/README.md` "Engine files — what's production, what's experimental."
-
 ### 1.2 Causal velocity, clock, and mass roles — CLOSED by FTD-0403 v2 TARGETED-CLOSURE
 
 **Implementation:** `phase_forces()` now integrates momentum instead
@@ -3051,7 +3042,7 @@ Empirical audit via `tests/test_leapfrog_integrator_audit.cpp` showed the pair `
 
 The `max_residual_seen` per tick is large because `½|J|² + ½|v|²` is an L² indicator, not the true conserved Hamiltonian (which involves `|∇J|²`). Energy sloshes between the two forms every half period; leapfrog keeps cumulative injection ≈ dissipation.
 
-`C_SPEED = 1/√D = 1/√3` is the leapfrog CFL limit, correctly identified. **No code change needed.** **Follow-up completed (verified 2026-07-12):** the "forward Euler" honesty-sweep comments in `render_bridge.cpp` (~lines 372–380) and `dag_engine.cpp` (~lines 45–50) were already corrected to Störmer–Verlet in source; the last residue — `engine/PHYSICS_STATUS.md:27` — was fixed this pass. No live "forward Euler" description remains.
+`C_SPEED = 1/√D = 1/√3` is the leapfrog CFL limit, correctly identified. **No code change needed.** **Follow-up completed (verified 2026-07-12):** the "forward Euler" honesty-sweep comments in `render_bridge.cpp` and the since-retired DagEngine source were corrected to Störmer–Verlet; the last residue in `engine/PHYSICS_STATUS.md` was fixed in that pass. No live "forward Euler" description remains.
 
 ### 1.5 Engine α upgrade to precision value —  CLOSED 2026-04-17
 
@@ -5558,7 +5549,7 @@ Move items here with the closing commit / PR when an `[OPEN]` becomes ``.
 
 ### Engine code — 6 items resolved 2026-04-17 (dependency-ordered sweep)
 
--  **§1.4 Leapfrog integrator** — already symplectic. Audit via `tests/test_leapfrog_integrator_audit.cpp` showed 0.1 % cumulative energy balance over 5000 ticks with damping off. Corrected "forward Euler" comments in `render_bridge.cpp` and `dag_engine.cpp`. (CHANGELOG: "Step 1".)
+-  **§1.4 Leapfrog integrator** — already symplectic. Audit via `tests/test_leapfrog_integrator_audit.cpp` showed 0.1 % cumulative energy balance over 5000 ticks with damping off. Corrected "forward Euler" comments in `render_bridge.cpp` and the since-retired DagEngine source. (CHANGELOG: "Step 1".)
 -  **§1.8 Moore-Laplacian anisotropy** — already isotropic through O(h⁴). Direct Taylor expansion: `h²∇²f + (h⁴/12)(∇²)²f + O(h⁶)`. Empirical confirmation in `tests/test_moore_laplacian_isotropy.cpp` shows 11 % radial symmetry at L=64. (CHANGELOG: "Step 2".)
 -  **§1.5 `ALPHA_PRECISION` rollout** — engine `ALPHA = 1/X_PLUS_PRECISION`. `G_C`, JS mirror, two hardcoded-value tests updated. Static_assert confirms `G_C² ≈ ALPHA` to 1e-8. (CHANGELOG: "Step 3".)
 -  **§1.2 γ_FTD momentum integration** — replaced non-relativistic velocity clamp in `phase_forces` with `p = γmv` dynamics. Covered by `tests/test_gamma_ftd_momentum.cpp` (8/8 checks). Also removed over-strict secondary clamp in latency block. (CHANGELOG: "Step 4".)
@@ -5569,7 +5560,7 @@ Move items here with the closing commit / PR when an `[OPEN]` becomes ``.
 
 -  `2026-04-17` **EnergyLedger auto-populate (CPU)** — `RenderBridge::update_energy_ledger()` runs at the end of every CPU-path `tick()`. (CHANGELOG: "Consolidation Sweep".)
 -  `2026-04-17` **`ALPHA_PRECISION` first-class in engine** — `X_PLUS_PRECISION` + `ALPHA_PRECISION` defined in `ontic.h`, re-exported in `constants.h`. (CHANGELOG: "Honesty Sweep".)
--  `2026-04-17` **`DagEngine` vs `RenderBridge` ambiguity** — DagEngine explicitly marked EXPERIMENTAL, WASM binding removed, `engine/README.md` updated. (CHANGELOG: "Consolidation Sweep".)
+-  `2026-04-17` **sparse-DAG vs `RenderBridge` ambiguity** — the sparse branch was marked experimental and its WASM binding removed; the branch was later deleted in the 2026-08-28 product consolidation. (CHANGELOG: "Consolidation Sweep".)
 
 ---
 

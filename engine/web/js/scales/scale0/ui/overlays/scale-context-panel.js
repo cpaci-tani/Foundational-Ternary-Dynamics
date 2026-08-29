@@ -56,20 +56,20 @@ function ensureCss() {
     const s = document.createElement('style');
     s.id = `${PANEL_ID}-css`;
     s.textContent = `
-    #${PANEL_ID}{font-family:var(--font-sans,sans-serif);font-size:12px;color:var(--text-primary,#eee);padding:2px}
+    #${PANEL_ID}{font-family:var(--font-sans,sans-serif);font-size:16px;color:var(--text-primary,#eee);padding:2px}
     #${PANEL_ID} .sc-title{font-weight:600;margin:2px 0 6px}
     #${PANEL_ID} .sc-title small{color:var(--text-muted,#888);font-weight:400}
     #${PANEL_ID} svg.sc-ruler{width:100%;display:block;background:#0c0c11;border-radius:6px}
-    #${PANEL_ID} .sc-legend{display:flex;align-items:center;gap:5px;font-size:9.5px;color:var(--text-muted,#888);margin:3px 1px 0}
+    #${PANEL_ID} .sc-legend{display:flex;align-items:center;gap:5px;font-size:16px;color:var(--text-muted,#888);margin:3px 1px 0}
     #${PANEL_ID} .sc-legend i{width:7px;height:7px;border-radius:50%;background:#7CFC8C;display:inline-block;flex:0 0 auto}
-    #${PANEL_ID} .sc-sec{display:flex;justify-content:space-between;align-items:baseline;font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--text-muted,#888);margin:9px 0 2px}
+    #${PANEL_ID} .sc-sec{display:flex;justify-content:space-between;align-items:baseline;font-size:16px;letter-spacing:.04em;text-transform:uppercase;color:var(--text-muted,#888);margin:9px 0 2px}
     #${PANEL_ID} .sc-rows{margin:2px 0}
     #${PANEL_ID} .sc-row{display:flex;justify-content:space-between;gap:10px;padding:2px 0;border-bottom:0.5px solid var(--border-light,rgba(255,255,255,0.06))}
     #${PANEL_ID} .sc-row span:last-child{font-variant-numeric:tabular-nums;color:var(--text-secondary,#ccc);text-align:right;white-space:nowrap}
     #${PANEL_ID} .sc-row span:first-child{color:var(--text-secondary,#ccc)}
     #${PANEL_ID} .sc-row.sc-live span:last-child{color:#7CFC8C}
-    #${PANEL_ID} .sc-tag{color:var(--text-muted,#888);font-size:9.5px}
-    #${PANEL_ID} .sc-foot{margin-top:9px;padding-top:7px;border-top:0.5px solid var(--border-light,rgba(255,255,255,0.12));font-size:10px;color:var(--text-muted,#888);line-height:1.5}
+    #${PANEL_ID} .sc-tag{color:var(--text-muted,#888);font-size:16px}
+    #${PANEL_ID} .sc-foot{margin-top:9px;padding-top:7px;border-top:0.5px solid var(--border-light,rgba(255,255,255,0.12));font-size:16px;color:var(--text-muted,#888);line-height:1.5}
     #${PANEL_ID} .sc-foot b{color:var(--text-secondary,#aaa)}`;
     document.head.appendChild(s);
 }
@@ -111,30 +111,30 @@ function renderRuler(svg, L) {
         const x = X(Math.pow(10, dec) * PLANCK_LENGTH_M);
         s += `<line x1="${x.toFixed(1)}" y1="${axisY - 5}" x2="${x.toFixed(1)}" y2="${axisY + 4}" stroke="var(--accent,#4bb7e8)" stroke-width="0.6" opacity="0.3"/>`;
     }
-    s += `<text x="${X(1e6 * PLANCK_LENGTH_M).toFixed(1)}" y="${axisY + 24}" text-anchor="middle" font-size="8.5" fill="var(--text-muted,#999)" opacity="0.6">10⁶ vox</text>`;
+    s += `<text x="${X(1e6 * PLANCK_LENGTH_M).toFixed(1)}" y="${axisY + 24}" text-anchor="middle" font-size="16" fill="var(--text-muted,#999)" opacity="0.6">10⁶ vox</text>`;
 
     // the live lattice bracket: 1 voxel → L voxels (drawn first so the Planck tick sits on top).
     const x1 = Math.max(X(latM), xP + 2);
     s += `<rect x="${xP.toFixed(1)}" y="${axisY - 5}" width="${(x1 - xP).toFixed(1)}" height="10" fill="var(--accent,#4bb7e8)" opacity="0.85" rx="1.5"/>`;
     const xc = (xP + x1) / 2;
     s += `<line x1="${xc.toFixed(1)}" y1="${axisY - 6}" x2="${xc.toFixed(1)}" y2="${m.top + 4}" stroke="var(--accent,#4bb7e8)" stroke-width="0.7" opacity="0.7"/>`;
-    s += `<text x="${xP.toFixed(1)}" y="${m.top}" text-anchor="start" font-size="9" fill="var(--accent,#7fd0ff)">▼ your lattice (L=${L})</text>`;
-    s += `<text x="${xP.toFixed(1)}" y="${m.top + 10}" text-anchor="start" font-size="8.5" fill="var(--text-muted,#9bd)">1 → ${L} voxels · ${sci(latM, 2)} m</text>`;
+    s += `<text x="${xP.toFixed(1)}" y="${m.top}" text-anchor="start" font-size="16" fill="var(--accent,#7fd0ff)">▼ your lattice (L=${L})</text>`;
+    s += `<text x="${xP.toFixed(1)}" y="${m.top + 10}" text-anchor="start" font-size="16" fill="var(--text-muted,#9bd)">1 → ${L} voxels · ${sci(latM, 2)} m</text>`;
 
     // reference markers (ticks + labels) — on top of the bracket; anchored to avoid edge clipping.
     for (const mk of MARKERS) {
         const x = X(mk.m);
         const anchor = mk.anchor || 'middle';
         s += `<line x1="${x.toFixed(1)}" y1="${axisY - 4}" x2="${x.toFixed(1)}" y2="${axisY + 4}" stroke="var(--text-muted,#888)" stroke-width="0.8"/>`;
-        s += `<text x="${x.toFixed(1)}" y="${axisY + 15}" text-anchor="${anchor}" font-size="8.5" fill="var(--text-muted,#999)">${mk.label}</text>`;
-        s += `<text x="${x.toFixed(1)}" y="${axisY + 24}" text-anchor="${anchor}" font-size="8.5" fill="var(--text-muted,#999)">${mk.sub} m</text>`;
+        s += `<text x="${x.toFixed(1)}" y="${axisY + 15}" text-anchor="${anchor}" font-size="16" fill="var(--text-muted,#999)">${mk.label}</text>`;
+        s += `<text x="${x.toFixed(1)}" y="${axisY + 24}" text-anchor="${anchor}" font-size="16" fill="var(--text-muted,#999)">${mk.sub} m</text>`;
     }
 
     // LHC reach marker (CERN, far right of the lattice)
     const xLhc = X(LHC_LEN_M);
     s += `<line x1="${xLhc.toFixed(1)}" y1="${m.top - 6}" x2="${xLhc.toFixed(1)}" y2="${axisY + 4}" stroke="#e8b04b" stroke-width="0.9" stroke-dasharray="2,3" opacity="0.85"/>`;
-    s += `<text x="${xLhc.toFixed(1)}" y="${m.top - 9}" text-anchor="middle" font-size="8.5" fill="#e8b04b">CERN / LHC ▲</text>`;
-    s += `<text x="${xLhc.toFixed(1)}" y="${axisY - 8}" text-anchor="middle" font-size="8.5" fill="#e8b04b">≈ ${sci(LHC_VOXELS, 2)} voxels</text>`;
+    s += `<text x="${xLhc.toFixed(1)}" y="${m.top - 9}" text-anchor="middle" font-size="16" fill="#e8b04b">CERN / LHC ▲</text>`;
+    s += `<text x="${xLhc.toFixed(1)}" y="${axisY - 8}" text-anchor="middle" font-size="16" fill="#e8b04b">≈ ${sci(LHC_VOXELS, 2)} voxels</text>`;
 
     s += `</svg>`;
     svg.outerHTML = s.replace('<svg ', `<svg class="sc-ruler" id="${PANEL_ID}-ruler" `);

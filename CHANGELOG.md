@@ -1,5 +1,25 @@
 # Foundational Ternary Dynamics Changelog
 
+# FTD-1024 — Finite Cartesian Linearization / Tensor Composition Boundary (2026-08-26)
+
+- Proved the canonical finite composition theorem
+  `C[X_A x X_B] ~= C[X_A] tensor C[X_B]` once independent simultaneous
+  alternatives have the complete Cartesian type.
+- Derived product-norm and conditional Born-weight factorization, additive
+  local phase characters, canonical associativity/swap, and existence of
+  non-product vectors. The standard Hilbert-space Tsirelson ceiling is a
+  conditional operator corollary.
+- Closed negative the weaker claim that locality and independently acting
+  phases alone force tensor composition: commuting direct-sum block actions
+  are an exact countermodel.
+- Priced the missing type as independent conjunction / joint-label
+  completeness. It is not adopted as v3 P6/A8. Physical entangled
+  preparation, laboratory Bell recovery, exchange statistics, CAR/Fock, and
+  QFT remain open; the prepared local v3 sector retains `|S|<=2`.
+- Added theorem doc, exact 10/10 regression certificate, LEDGER row, and
+  navigation updates. No numerical search, target fit, constitution, engine,
+  or production change.
+
 # FTD-0998/0999 — Cumulative Clock-Growth Resource Law / Backpressure Boundary (2026-08-12)
 
 - Derived the unique accepted-batch reserve balance

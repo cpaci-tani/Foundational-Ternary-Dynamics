@@ -24,8 +24,11 @@ export function getWorkspaceTabsTemplate(panelDefs) {
         </label>
         <div class="workspace-tabs-strip">
             ${tabs}
-            <button id="btn-panel-toggle" title="Collapse or expand panels"
-                aria-label="Collapse or expand panels">&#9660;</button>
+            <button id="btn-panel-toggle" title="Collapse panel"
+                aria-label="Collapse panel">
+                <span class="panel-toggle-icon" aria-hidden="true">&#9660;</span>
+                <span class="panel-toggle-label">Collapse panel</span>
+            </button>
         </div>
     `;
 }

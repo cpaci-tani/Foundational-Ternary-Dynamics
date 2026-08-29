@@ -121,7 +121,7 @@ function sparkline(values, color, w = 116, h = 26) {
 function deltaSpan(cur, base) {
     if (base == null) return `<span class="grav-delta-na">—</span>`;
     const d = cur - base;
-    const col = Math.abs(d) < 1e-12 ? 'var(--text-muted)' : (d > 0 ? 'var(--positive)' : 'var(--negative)');
+    const col = Math.abs(d) < 1e-12 ? 'var(--text-muted)' : (d > 0 ? 'var(--positive-text)' : 'var(--negative-text)');
     const sign = d > 0 ? '+' : '';
     return `<span style="color:${col}">${sign}${formatExp(d)}</span>`;
 }
@@ -132,9 +132,9 @@ function deltaSpan(cur, base) {
 // distinct from the |J|² proxy rows. Honest: shows "inactive — proxy only" when
 // the engine isn't running the latency solver / there is no source.
 function renderCppBlock(agg) {
-    const head = `<div style="margin:8px 0 4px;padding-top:6px;border-top:1px solid var(--border-subtle,rgba(255,255,255,.09));font-size:11px;font-weight:600;color:var(--text-secondary);" title="The genuine voxel.latency from the engine's Poisson solver (∇²L=4πGρ), with ρ sourced from field-energy density ½|J|² — an [IMPOSED] engine model. Distinct from the |J|² proxy rows above.">Real C++ latency field (Poisson) ⓘ</div>`;
+    const head = `<div style="margin:8px 0 4px;padding-top:6px;border-top:1px solid var(--border-subtle,rgba(255,255,255,.09));font-size:16px;font-weight:600;color:var(--text-secondary);" title="The genuine voxel.latency from the engine's Poisson solver (∇²L=4πGρ), with ρ sourced from field-energy density ½|J|² — an [IMPOSED] engine model. Distinct from the |J|² proxy rows above.">Real C++ latency field (Poisson) ⓘ</div>`;
     if (!agg || !agg.active)
-        return head + `<div style="font-size:11px;color:var(--text-muted);padding:3px 0;">${tagBadge('C++')}inactive — proxy only (no latency source)</div>`;
+        return head + `<div style="font-size:16px;color:var(--text-muted);padding:3px 0;">${tagBadge('C++')}inactive — proxy only (no latency source)</div>`;
     let html = head;
     html += row('L (mean / max)', `${formatExp(agg.latencyMean)} / ${formatExp(agg.latencyMax)}`, 'C++', undefined, 'Real Poisson latency potential voxel.latency, sourced from field energy.');
     html += row('Lapse f_min', formatFixed(agg.fMin, 5), 'C++', undefined, 'Min lapse f = 1 − L_max² (deepest real time dilation).');
@@ -145,13 +145,13 @@ function renderCppBlock(agg) {
 }
 
 function renderTelemetry(container, m, agg) {
-    const horizonColor = m.horizon >= 0.95 ? 'var(--negative)' : m.horizon >= 0.5 ? 'var(--caution)' : 'var(--positive)';
+    const horizonColor = m.horizon >= 0.95 ? 'var(--negative-text)' : m.horizon >= 0.5 ? 'var(--caution-text)' : 'var(--positive-text)';
     let html = '';
     
     // ARC-UI (2026-06-10): Always render the div with visibility hidden when inactive
     // to prevent the entire telemetry block from jumping up and down (layout jitter).
     const warnVis = m.horizon >= 0.95 ? 'visible' : 'hidden';
-    html += `<div style="${heroStyle()};color:var(--negative);margin-bottom:6px;visibility:${warnVis};">⚠ horizon — L_max ${formatFixed(m.horizon, 3)}</div>`;
+    html += `<div style="${heroStyle()};color:var(--negative-text);margin-bottom:6px;visibility:${warnVis};">⚠ horizon — L_max ${formatFixed(m.horizon, 3)}</div>`;
     html += row('Latency L (mean / max)', `${formatFixed(m.L.mean, 3)} / ${formatFixed(m.L.max, 3)}`, 'M', undefined, 'Latency potential — the gravity-well depth proxy. max→1 ⇒ event horizon.');
     html += row('Kretschmann K (mean / max)', `${formatExp(m.K.mean)} / ${formatExp(m.K.max)}`, 'M', undefined, 'Curvature (∇²L)² — concentration = strong bending.');
     html += row('Force |F| (mean / max)', `${formatExp(m.F.mean)} / ${formatExp(m.F.max)}`, 'M', undefined, 'Gravity force magnitude G_N·|∇ρ|.');
@@ -170,8 +170,8 @@ function renderDelta(container, history, latched, cur) {
     const series = [
         { key: 'Lmax', label: 'L max', color: 'var(--accent)', sel: (h) => h.Lmax, c: cur.L.max },
         { key: 'Kmax', label: 'K max', color: 'var(--caution, #fb8c00)', sel: (h) => h.Kmax, c: cur.K.max },
-        { key: 'Fmean', label: '|F| mean', color: 'var(--positive)', sel: (h) => h.Fmean, c: cur.F.mean },
-        { key: 'dil', label: 'dilation %', color: 'var(--negative)', sel: (h) => h.dil, c: cur.dilationPct },
+        { key: 'Fmean', label: '|F| mean', color: 'var(--positive-text)', sel: (h) => h.Fmean, c: cur.F.mean },
+        { key: 'dil', label: 'dilation %', color: 'var(--negative-text)', sel: (h) => h.dil, c: cur.dilationPct },
     ];
     let html = '';
     for (const s of series) {

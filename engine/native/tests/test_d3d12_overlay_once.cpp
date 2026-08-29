@@ -1,4 +1,4 @@
-// Counts OverlayRecorder::record() invocations: SPEC_UI_V2 §3.5 requires
+// Counts OverlayRecorder::record() invocations: the composition contract requires
 // exactly one overlay record per D3D12Presenter::render(), with a NULL DSV
 // rebind already performed by the presenter (this fake recorder does not
 // issue draws). Interactive because initialize() needs a live swapchain.

@@ -6,8 +6,10 @@ THRESHOLD]` + `[CLOSED NEGATIVE — NO DERIVED BODY SIZE]`
 **Protocol:** `../preregistrations/PREREG_PROTONUCLEUS_GROWTH_v1.md`, locked
 2026-08-03 23:31 before execution. Executed 2026-08-04.
 **Runner:** `scripts/experiments/protonucleus_growth.py`
-**Raw:** `protonucleus_growth_results.json` (arms A–D),
-`protonucleus_controls_t2.json` (T2 lattice-size + held-out-seed controls)
+**Raw:** `scripts/experiments/recorded_results/ftd_0799/protonucleus_growth_results.json`
+(arms A–D),
+`scripts/experiments/recorded_results/ftd_0799/protonucleus_controls_t2.json`
+(T2 lattice-size + held-out-seed controls)
 **Production impact:** none. Standalone simulation; no engine constant, toggle,
 scenario, or golden state changed.
 

@@ -17,7 +17,7 @@
 //   (engine/include/ftd/scenarios.h). tests/test_scenario_catalog.cpp asserts
 //   that set-equality so this copy can never silently drift from the engine's
 //   real Scale-0 scenario set. `description` and `min_lattice` are unauthored
-//   (SPEC_UI_V2 §5.1): description = "", min_lattice = 0 (unconstrained).
+//   description = "", min_lattice = 0 (unconstrained).
 //
 #include <cstddef>
 #include <string_view>

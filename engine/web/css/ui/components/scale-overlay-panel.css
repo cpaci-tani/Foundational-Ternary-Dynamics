@@ -10,7 +10,7 @@
     max-width: min(280px, calc(100vw - 24px));
     padding: 0;
     background: var(--bg-surface);
-    backdrop-filter: blur(16px) saturate(1.2);
+    backdrop-filter: var(--glass-filter-mid);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     box-shadow: var(--tabs-shadow, 0 4px 24px rgba(0, 0, 0, 0.25));
@@ -85,7 +85,7 @@
 }
 
 .scale-overlay-section-hint {
-    font-size: 10px;
+    font-size: 16px;
     color: var(--text-muted);
     line-height: 1.25;
     margin-top: -2px;
@@ -168,14 +168,8 @@
     display: none !important;
 }
 
-.scale-overlay-panel.is-collapsed .scale-overlay-collapse-icon {
+.scale-overlay-panel.is-collapsed .viewport-overlay-collapse-icon {
     transform: rotate(180deg);
-}
-
-.scale4-overlay-status {
-    font-size: var(--fs-xs);
-    color: var(--text-secondary);
-    line-height: 1.35;
 }
 
 @media (max-width: 767px) {

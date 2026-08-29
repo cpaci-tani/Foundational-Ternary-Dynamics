@@ -157,13 +157,13 @@ export class AnisotropyComponent extends BaseComponent {
         let svg = `<svg viewBox="0 0 ${W} ${H}" class="p1-svg-plot">`;
         svg += `<rect x="${margin.left}" y="${margin.top}" width="${innerW}" height="${innerH}" fill="rgba(255,255,255,0.02)" stroke="var(--border-light, rgba(255,255,255,0.08))" stroke-width="1"/>`;
 
-        svg += `<text x="${margin.left - 6}" y="${margin.top + 4}" text-anchor="end" fill="var(--text-muted)" font-size="10" font-family="var(--font-mono)">${hasData ? amax.toFixed(1) + '%' : ''}</text>`;
-        svg += `<text x="${margin.left - 6}" y="${margin.top + innerH + 4}" text-anchor="end" fill="var(--text-muted)" font-size="10" font-family="var(--font-mono)">0%</text>`;
+        svg += `<text x="${margin.left - 6}" y="${margin.top + 4}" text-anchor="end" fill="var(--text-muted)" font-size="16" font-family="var(--font-mono)">${hasData ? amax.toFixed(1) + '%' : ''}</text>`;
+        svg += `<text x="${margin.left - 6}" y="${margin.top + innerH + 4}" text-anchor="end" fill="var(--text-muted)" font-size="16" font-family="var(--font-mono)">0%</text>`;
 
-        svg += `<text x="${margin.left}" y="${margin.top + innerH + 14}" fill="var(--text-muted)" font-size="10" font-family="var(--font-mono)">r=${rmin.toFixed(1)}a</text>`;
-        svg += `<text x="${margin.left + innerW}" y="${margin.top + innerH + 14}" text-anchor="end" fill="var(--text-muted)" font-size="10" font-family="var(--font-mono)">r=${rmax.toFixed(1)}a</text>`;
+        svg += `<text x="${margin.left}" y="${margin.top + innerH + 14}" fill="var(--text-muted)" font-size="16" font-family="var(--font-mono)">r=${rmin.toFixed(1)}a</text>`;
+        svg += `<text x="${margin.left + innerW}" y="${margin.top + innerH + 14}" text-anchor="end" fill="var(--text-muted)" font-size="16" font-family="var(--font-mono)">r=${rmax.toFixed(1)}a</text>`;
 
-        svg += `<text x="${margin.left + innerW / 2}" y="${H - 4}" text-anchor="middle" fill="var(--text-muted)" font-size="10">Radius r from charge center</text>`;
+        svg += `<text x="${margin.left + innerW / 2}" y="${H - 4}" text-anchor="middle" fill="var(--text-muted)" font-size="16">Radius r from charge center</text>`;
 
         if (hasData) {
             let path = '';

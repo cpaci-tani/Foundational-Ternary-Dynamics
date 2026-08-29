@@ -41,7 +41,7 @@ export function drawBindingEnergyCurve(canvas) {
     ctx2d.moveTo(x0, y1); ctx2d.lineTo(x0, y0); ctx2d.lineTo(x1, y0);
     ctx2d.stroke();
     ctx2d.fillStyle = 'rgba(150,150,150,0.9)';
-    ctx2d.font = '9px sans-serif';
+    ctx2d.font = '16px sans-serif';
     ctx2d.fillText('B/A', 2, y1 + 8);
     ctx2d.fillText('A', x1 - 8, y0 + 14);
     ctx2d.fillText('0', x0 - 4, y0 + 12);

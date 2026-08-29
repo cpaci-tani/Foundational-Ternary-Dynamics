@@ -57,7 +57,7 @@
 
 .const-table td:last-child {
     font-family: var(--font-mono);
-    color: var(--accent);
+    color: var(--accent-text);
     text-align: right;
 }
 
@@ -94,8 +94,8 @@
 }
 
 /* Positive/negative semantic colouring for dd cells */
-.diag-dd-positive { color: var(--positive); }
-.diag-dd-negative { color: var(--negative); }
+.diag-dd-positive { color: var(--positive-text); }
+.diag-dd-negative { color: var(--negative-text); }
 
 /* Badge rows for spin/color chips */
 .diag-badge-row {
@@ -111,9 +111,9 @@
     background: var(--state-hover-bg);
 }
 
-.diag-badge-r { background: rgba(248, 113, 113, 0.15); color: var(--negative); }
-.diag-badge-g { background: rgba(74, 222, 128, 0.15); color: var(--positive); }
-.diag-badge-b { background: rgba(96, 165, 250, 0.15); color: var(--accent); }
+.diag-badge-r { background: rgba(248, 113, 113, 0.15); color: var(--negative-text); }
+.diag-badge-g { background: rgba(74, 222, 128, 0.15); color: var(--positive-text); }
+.diag-badge-b { background: rgba(96, 165, 250, 0.15); color: var(--accent-text); }
 
 .diag-angular-mom { font-size: var(--fs-xs); }
 
@@ -185,28 +185,28 @@
 }
 
 /* Sidebar mounts: 380px panel can't fit two columns of diagnostic tables */
-html[data-panel-mount="left"] .diag-scale0-root,
-html[data-panel-mount="right"] .diag-scale0-root,
-html[data-panel-mount="left"] .diag-scale1-root,
-html[data-panel-mount="right"] .diag-scale1-root {
+.panel.panel-mount-left .diag-scale0-root,
+.panel.panel-mount-right .diag-scale0-root,
+.panel.panel-mount-left .diag-scale1-root,
+.panel.panel-mount-right .diag-scale1-root {
     grid-template-columns: 1fr;
     gap: var(--sp-md);
 }
 
-html[data-panel-mount="left"] .diag-section-title,
-html[data-panel-mount="right"] .diag-section-title {
+.panel.panel-mount-left .diag-section-title,
+.panel.panel-mount-right .diag-section-title {
     font-size: var(--fs-sm);
 }
 
-html[data-panel-mount="left"] .diag-table,
-html[data-panel-mount="right"] .diag-table {
+.panel.panel-mount-left .diag-table,
+.panel.panel-mount-right .diag-table {
     font-size: var(--fs-sm);
 }
 
-html[data-panel-mount="left"] .diag-table thead th,
-html[data-panel-mount="right"] .diag-table thead th,
-html[data-panel-mount="left"] .diag-table tbody td,
-html[data-panel-mount="right"] .diag-table tbody td {
+.panel.panel-mount-left .diag-table thead th,
+.panel.panel-mount-right .diag-table thead th,
+.panel.panel-mount-left .diag-table tbody td,
+.panel.panel-mount-right .diag-table tbody td {
     padding-inline: 7px;
 }
 
@@ -231,7 +231,7 @@ html[data-panel-mount="right"] .diag-table tbody td {
 }
 
 .diag-telemetry-stale .diag-section-freshness {
-    color: var(--warning, #d6a84a);
+    color: var(--warning-text);
 }
 
 .diag-table {
@@ -328,7 +328,7 @@ html[data-panel-mount="right"] .diag-table tbody td {
 }
 
 @keyframes diag-pulse {
-    0%   { color: var(--accent); text-shadow: 0 0 8px var(--accent-glow); }
+    0%   { color: var(--accent-text); text-shadow: 0 0 8px var(--accent-glow); }
     100% { color: var(--text-primary); text-shadow: none; }
 }
 .diag-value.is-pulsing { animation: diag-pulse 180ms ease-out; }

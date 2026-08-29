@@ -121,7 +121,7 @@ export class ThomsonComponent extends BaseComponent {
                 ${row('legacy-force |Δx|', formatExp(NATIVE_RECOIL_CANONICAL.legacyDisplacement), 'M')}
                 ${row('repeat residual', formatExp(NATIVE_RECOIL_CANONICAL.repeatResidual), 'M')}
             ` : ''}
-            <div style="margin-top:8px;color:var(--text-muted);font-size:12px;line-height:1.35;">
+            <div style="margin-top:8px;color:var(--text-muted);font-size:16px;line-height:1.35;">
                 ${tagBadge(unlocked ? 'M' : '~M')}${unlocked
                     ? 'C++ campaign uses beam/no-beam subtraction and exact replay. It validates the selected native flux-gradient response only; no electron, Thomson, alpha, or cross-section claim.'
                     : 'Locked-source campaign measures linear superposition and zero recoil; Thomson scattering is closed negative for this profile.'}

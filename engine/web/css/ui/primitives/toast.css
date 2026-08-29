@@ -24,7 +24,7 @@
     font-size: var(--fs-xs);
     line-height: 1.4;
     background: var(--bg-elevated);
-    backdrop-filter: blur(12px);
+    backdrop-filter: var(--glass-filter-mid);
     border: 1px solid var(--border-light);
     color: var(--text-primary);
     box-shadow: var(--shadow-lg);
@@ -62,7 +62,7 @@
 .toast-warning::before {
     content: '\26A0';
     margin-right: 2px;
-    color: var(--warning);
+    color: var(--warning-text);
 }
 
 .toast-error {
@@ -72,7 +72,7 @@
 .toast-error::before {
     content: '\2716';
     margin-right: 2px;
-    color: var(--negative);
+    color: var(--negative-text);
 }
 
 .toast-info {
@@ -82,7 +82,7 @@
 .toast-info::before {
     content: '\2139';
     margin-right: 2px;
-    color: var(--accent);
+    color: var(--accent-text);
 }
 
 /* ── Entrance animation ──────────────────────────────── */

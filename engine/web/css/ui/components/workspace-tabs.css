@@ -1,6 +1,6 @@
 /* ── Base tab-bar styles (bottom mount — default) ── */
-html[data-panel-mount="bottom"] #tab-bar,
-html:not([data-panel-mount]) #tab-bar {
+#tab-bar.panel-mount-bottom,
+#tab-bar:not(.panel-mount-left):not(.panel-mount-right):not(.panel-mount-bottom) {
     position: absolute;
     bottom: calc(28px * var(--ui-scale) + var(--sp-xl));
     left: 50%;
@@ -15,7 +15,7 @@ html:not([data-panel-mount]) #tab-bar {
        but side-mount has not yet kicked in. Capping the bar lets the strip scroll. */
     max-width: calc(100vw - 24px);
     background: var(--bg-surface);
-    backdrop-filter: blur(16px);
+    backdrop-filter: var(--glass-filter-mid);
     border: 1px solid var(--border);
     border-radius: var(--radius-xl);
     box-shadow: var(--tabs-shadow);
@@ -43,6 +43,10 @@ html:not([data-panel-mount]) #tab-bar {
 
 #btn-panel-toggle:hover {
     color: var(--text-primary);
+}
+
+.panel-toggle-label {
+    display: none;
 }
 
 /* ── Enhanced shell overrides ── */

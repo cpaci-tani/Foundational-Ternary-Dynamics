@@ -6,7 +6,7 @@
 namespace ftd::native {
 
 // Client-pixel rectangle of the 3D scene inside the top-level HWND
-// (SPEC_UI_V2 §3.5 / Phase 1b). Width or height 0 means "use the full
+// shared by scene and UI composition. Width or height 0 means "use the full
 // backbuffer" at the presenter.
 struct SceneRect {
     std::int32_t x = 0;

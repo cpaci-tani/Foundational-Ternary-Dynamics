@@ -72,9 +72,10 @@ level.
 
 ## 4. Part C refuted on fact — the production operator is not the de Rham Laplacian
 
-`engine/src/dag_engine.cpp:145-171` implements the **18-point SC+FCC Moore
-stencil**: six face neighbours at `1/3`, twelve edge neighbours at `1/6`, centre
-`-4`. Verified symbolically:
+The production **18-point SC+FCC Moore stencil** is implemented in
+`engine/src/render_bridge_phases/phase_read.cpp` and
+`engine/include/ftd/field_operators.h`: six face neighbours at `1/3`, twelve
+edge neighbours at `1/6`, centre `-4`. Verified symbolically:
 
 | symbol | `O(k^2)` | `O(k^4)` |
 |---|---|---|

@@ -4,6 +4,26 @@ A single-page orientation to where the framework stands and where its canonical 
 
 Foundational Ternary Dynamics is a philosophy-of-mathematics project: a discrete, finite, deterministic ternary-lattice ontology, the mathematics it forces, and the physics that mathematics suggests, ordered **Ontology > Logic > Math > Physics**. The project's aim is the Number-One Goal in `CLAUDE.md` (amended 2026-07-12, FTD-0383) — set the smallest honest set of types a discrete ontology can speak from; build the content forward, sector by sector, until every physical structure is either forced content or a marked-and-priced import; **drive** every priced line to retirement, a theorem-grade no-go, or a sharper falsifier — never leaving a line merely booked; and where a line provably resists retirement, search deliberately for the next honest type whose declared adoption converts it into content at a minimal, falsifiable price (the boundary marked *qualitatively* by the modulus/argument frontier, *quantitatively* by the priced-import ledger FTD-0371, and *driven* by the Consumption Program charter, `01_reference/SCOPE_CONSUMPTION_PROGRAM.md`).
 
+**LATEST — FTD-1024: finite Cartesian alternatives force tensor composition,
+but the Cartesian composition type is an explicit price.** If two resolved
+finite systems have complete simultaneous alternatives
+`X_AB=X_A x X_B`, their effective complex linearizations obey canonically
+
+`C[X_A x X_B] ~= C[X_A] tensor C[X_B]`.
+
+The pair-basis map is unitary, product norms and conditional Born weights
+factor, local phases add, repeated composition associates, and non-product
+vectors exist. The standard Hilbert-space Tsirelson ceiling is then a
+conditional operator corollary.
+
+The weaker claim is closed negative. Locality and independent phases alone
+also admit the commuting block-diagonal direct-sum representation. The added
+independent-conjunction/joint-label-completeness type is therefore visible and
+is **not** adopted here as v3 P6/A8. The prepared local v3 physical sector
+still obeys `|S|<=2`; homogeneous-Phi entangled preparation, laboratory Bell
+recovery, exchange statistics, CAR/Fock, and QFT remain open. Exact certificate
+10/10; no numerical search, constitution, engine, or production change.
+
 **LATEST — FTD-0998/0999: coherent growth now has an exact cumulative
 resource law; the native reserve current remains open.** For an accepted
 frontier batch `F_n`, let `D_n` be its total new maintained-clock energy,

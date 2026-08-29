@@ -65,8 +65,8 @@ function renderParticleCard(p) {
     const [r, g, b] = p.display_color;
     const dotColor = `rgb(${Math.round(r*255)},${Math.round(g*255)},${Math.round(b*255)})`;
     const accStr = p.ftd_accuracy !== null ? p.ftd_accuracy.toFixed(p.ftd_accuracy < 0.1 ? 3 : 1) + '%' : '--';
-    const accClass = p.ftd_status === 'derived' ? 'color:var(--positive)' :
-                     p.ftd_status === 'selection' ? 'color:var(--warning)' :
+    const accClass = p.ftd_status === 'derived' ? 'color:var(--positive-text)' :
+                     p.ftd_status === 'selection' ? 'color:var(--warning-text)' :
                      'color:var(--text-muted)';
     const canInject = _engineMode === 'particles' && p.charge !== 0 && p.mass_mev > 0;
 
@@ -125,14 +125,14 @@ function renderZoo() {
     }
 
     html += '</div>';
-    html += `<p class="zoo-note" style="font-size:11px;color:var(--text-muted);margin:6px 4px 0;line-height:1.4;">
+    html += `<p class="zoo-note" style="font-size:16px;color:var(--text-muted);margin:6px 4px 0;line-height:1.4;">
         <strong>Catalog injection is a [PARAMETRIC] extra</strong>: these are PDG-mass
         catalog particles dropped into the continuous engine, NOT lattice-derived
         objects — lattice genesis produces hybrid colored objects, not SM particles;
         lattice-derived matter enters via "⤴ Scale up" (mass = N·K_B).
         <strong>Mass</strong> is the measured (PDG) value (electron = FTD anchor m_e).
         <strong>FTD Formula</strong> + <strong>Acc.</strong> are FTD's <em>prediction</em> and its deviation —
-        motivating matches, not derivations. Colour: <span style="color:var(--warning)">yellow</span> = [SELECTION]/strongly-motivated conjecture,
+        motivating matches, not derivations. Colour: <span style="color:var(--warning-text)">yellow</span> = [SELECTION]/strongly-motivated conjecture,
         grey = [PARAMETRIC]. No Standard-Model mass is currently [DERIVED].
     </p>`;
     container.innerHTML = html;

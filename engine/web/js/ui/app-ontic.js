@@ -96,13 +96,13 @@ export function createOnticPanel(deps) {
         for (const [sym, val, _desc] of constants) {
             rows += `<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid var(--bg-card)">
                 <span style="color:var(--accent)">${sym}</span>
-                <span style="color:var(--text-primary);font-family:var(--font-mono);font-size:10px">${val}</span>
+                <span style="color:var(--text-primary);font-family:var(--font-mono);font-size:16px">${val}</span>
             </div>`;
         }
         container.innerHTML = `
             <div class="card-title">Ontic Chain Constants</div>
             ${rows}
-            <div style="margin-top:4px;font-size:9px;color:var(--text-muted)">
+            <div style="margin-top:4px;font-size:16px;color:var(--text-muted)">
                 ${ONTIC_TOTAL_CONSTANTS} constants across ${ONTIC_LAYERS.length} layers.
                 Inputs: D=3 + ϖ → algebraic chain [THEOREM]; physical identifications [SMC] (FTD-0013).
             </div>`;

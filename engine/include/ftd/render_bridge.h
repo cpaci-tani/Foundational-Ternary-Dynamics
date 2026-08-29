@@ -450,7 +450,7 @@ public:
         return energy_ledger_;
     }
 
-    // Debug-only owner-thread pin for native-UI observers (SPEC_UI_V2 §11).
+    // Debug-only owner-thread pin for native-UI observers.
     // Release (NDEBUG) bodies are no-ops, so goldens stay bit-identical.
     void bind_sim_thread();
     void assert_sim_thread() const;

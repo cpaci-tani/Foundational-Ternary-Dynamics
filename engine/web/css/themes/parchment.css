@@ -28,6 +28,19 @@ html[data-theme="parchment"] {
     --accent:      #d97706;
     --accent-dim:  #b45309;
     --accent-glow: rgba(217, 119, 6, 0.45);
+    --accent-text:    #92400e;
+    --on-accent:      #ffffff;
+    --positive-text:  #166534;
+    --negative-text:  #991b1b;
+    --warning-text:   #854d0e;
+    --caution-text:   #9a3412;
+    --on-positive:    #ffffff;
+    --on-negative:    #ffffff;
+    --on-warning:     #2c2416;
+    --axis-x-text:    #991b1b;
+    --axis-y-text:    #166534;
+    --axis-z-text:    #1e40af;
+    --selection-text: #075985;
 
     /* Status — muted to blend with parchment */
     --positive: #15803d;

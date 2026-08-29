@@ -68,6 +68,8 @@ export class ViewportSceneCore {
         // Inspector highlight overlays
         this._voxelHighlight = null;
         this._symHighlights = null;
+        this._areaHighlight = null;
+        this._areaHighlightRadius = null;
 
         // Post-processing (lazy init; public-API hook for any mode that opts into bloom).
         this._composer = null;
@@ -232,6 +234,7 @@ export class ViewportSceneCore {
     }
 
     setWireframeBrightness(val) {
+        if (this._wireframeBrightness === val) return;
         this._wireframeBrightness = val;
         if (!this.wireframe) return;
         this.wireframe.traverse(child => {
@@ -266,37 +269,52 @@ export class ViewportSceneCore {
             // snapped the highlight box to integer world coords, so the box
             // sat on the voxel's lower-left corner instead of its centre —
             // half-voxel shift visible when overlaid on particles/flux.
-            this._voxelHighlight.position.set(x + 0.5, y + 0.5, z + 0.5);
-            this._voxelHighlight.visible = true;
-        } else {
+            const px = x + 0.5;
+            const py = y + 0.5;
+            const pz = z + 0.5;
+            if (this._voxelHighlight.position.x !== px
+                || this._voxelHighlight.position.y !== py
+                || this._voxelHighlight.position.z !== pz) {
+                this._voxelHighlight.position.set(px, py, pz);
+            }
+            if (!this._voxelHighlight.visible) this._voxelHighlight.visible = true;
+        } else if (this._voxelHighlight.visible) {
             this._voxelHighlight.visible = false;
         }
     }
 
     setAreaHighlight(cx, cy, cz, radius, active) {
         if (!active) {
-            if (this._areaHighlight) this._areaHighlight.visible = false;
+            if (this._areaHighlight?.visible) this._areaHighlight.visible = false;
             return;
         }
         const r = Math.max(1, Math.round(radius));
         const size = r * 2 + 1;
-        if (!this._areaHighlight || this._areaHighlightRadius !== r) {
-            if (this._areaHighlight) {
-                this._scene.remove(this._areaHighlight);
-                this._areaHighlight.geometry.dispose();
-                this._areaHighlight.material.dispose();
-            }
-            const geo = new THREE.BoxGeometry(size, size, size);
+        if (!this._areaHighlight) {
+            // Keep one unit box for the SceneCore lifetime. Radius dragging now
+            // changes its transform instead of allocating/discarding geometry
+            // and GPU resources on every input frame.
+            const geo = new THREE.BoxGeometry(1, 1, 1);
             const edges = new THREE.EdgesGeometry(geo);
             geo.dispose();
             const mat = new THREE.LineBasicMaterial({ color: 0x38bdf8, linewidth: 2, transparent: true, opacity: 0.8 });
             this._areaHighlight = new THREE.LineSegments(edges, mat);
             this._areaHighlight.frustumCulled = false;
             this._scene.add(this._areaHighlight);
+        }
+        if (this._areaHighlightRadius !== r) {
+            this._areaHighlight.scale.setScalar(size);
             this._areaHighlightRadius = r;
         }
-        this._areaHighlight.position.set(cx + 0.5, cy + 0.5, cz + 0.5);
-        this._areaHighlight.visible = true;
+        const px = cx + 0.5;
+        const py = cy + 0.5;
+        const pz = cz + 0.5;
+        if (this._areaHighlight.position.x !== px
+            || this._areaHighlight.position.y !== py
+            || this._areaHighlight.position.z !== pz) {
+            this._areaHighlight.position.set(px, py, pz);
+        }
+        if (!this._areaHighlight.visible) this._areaHighlight.visible = true;
     }
 
     setSymmetryHighlights(x, y, z, u1, su2, su3) {
@@ -522,6 +540,7 @@ export class ViewportSceneCore {
         disposeMesh(this._voxelHighlight); this._voxelHighlight = null;
         disposeMesh(this._symHighlights);  this._symHighlights = null;
         disposeMesh(this._areaHighlight);  this._areaHighlight = null;
+        this._areaHighlightRadius = null;
 
         // Coordinate helpers
         disposeMesh(this.axes);    this.axes = null;

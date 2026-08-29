@@ -6,6 +6,21 @@ import {
     _softSpriteTexture,
 } from './field-renderer-shared.js';
 
+// Glyph meshes are heavier than point/line primitives. Deterministic
+// qualifying-index decimation below preserves global lattice coverage while
+// this fixed visual budget keeps the layer independent of quotient size.
+const MAX_FORCE_GLYPHS = 128;
+
+// Heatmap sprites are one draw call, but their translucent fragments overlap
+// heavily around compact sources. A quotient-size-independent cap prevents
+// fill-rate collapse while deterministic decimation retains coverage of the
+// complete sampled lattice instead of rendering only its first linear block.
+const MAX_FORCE_HEATMAP_POINTS = 64;
+
+// The line style is the densest exact-direction view. Cap only its visual
+// representatives; the sampler still evaluates the complete bounded field.
+const MAX_GRAVITY_ARROWS = 256;
+
 export const fieldForceMethods = {
     _buildForceVolume() {
         this._forceVolume = this._buildArrowFieldMesh(32768, 0.6);
@@ -17,14 +32,16 @@ export const fieldForceMethods = {
             '_magCache', 1.5, 0.03);
     },
     toggleForceVolume(on) {
-        if (!this._forceVolume) this._buildForceVolume();
-        this._forceVolume.visible = on;
-        if (!on) this._forceVolume.geometry.setDrawRange(0, 0);
+        const next = !!on;
+        if (!this._forceVolume) { if (!next) return; this._buildForceVolume(); }
+        if (this._forceVolume.visible === next) return;
+        this._forceVolume.visible = next;
+        if (!next) this._forceVolume.geometry.setDrawRange(0, 0);
     },
 
     // ── Gravity Field Volume (density gradient vectors) ─────────────
     _buildGravityField() {
-        const maxArrows = 32768;
+        const maxArrows = MAX_GRAVITY_ARROWS;
         const positions = new Float32Array(maxArrows * 2 * 3);
         const colors = new Float32Array(maxArrows * 2 * 3);
         const geo = new THREE.BufferGeometry();
@@ -43,6 +60,11 @@ export const fieldForceMethods = {
     updateGravityField(fieldData) {
         this._syncCenterAndRadius();
         if (!this._gravityField) this._buildGravityField();
+        if (!fieldData?.count) {
+            this._gravityField.geometry.setDrawRange(0, 0);
+            this._gravityField.visible = false;
+            return;
+        }
         const _needsClip = this._clipActive();
         const posAttr = this._gravityField.geometry.getAttribute('position');
         const colAttr = this._gravityField.geometry.getAttribute('color');
@@ -56,6 +78,11 @@ export const fieldForceMethods = {
             const m = Math.sqrt(a * a + b * b + c * c);
             mags[i] = m;
             if (m > maxMag) maxMag = m;
+        }
+        if (!(maxMag > 0)) {
+            this._gravityField.geometry.setDrawRange(0, 0);
+            this._gravityField.visible = false;
+            return;
         }
         const threshold = maxMag * 0.05;
         const arrowBase = 2.0;
@@ -96,11 +123,18 @@ export const fieldForceMethods = {
         posAttr.needsUpdate = true;
         colAttr.needsUpdate = true;
         this._gravityField.geometry.setDrawRange(0, vi * 2);
+        this._gravityField.visible = !!this._gravityFieldRequested && vi > 0;
     },
     toggleGravityField(on) {
-        if (!this._gravityField) this._buildGravityField();
-        this._gravityField.visible = on;
-        if (!on) this._gravityField.geometry.setDrawRange(0, 0);
+        const next = !!on;
+        this._gravityFieldRequested = next;
+        if (!this._gravityField) { if (!next) return; this._buildGravityField(); }
+        if (!next) {
+            this._gravityField.visible = false;
+            this._gravityField.geometry.setDrawRange(0, 0);
+            return;
+        }
+        this._gravityField.visible = this._gravityField.geometry.drawRange.count > 0;
     },
 
     // ── EM Force aliases ─────────────────────────────────────────────
@@ -112,9 +146,11 @@ export const fieldForceMethods = {
         this._strongForce = this._buildArrowFieldMesh(32768, 0.7);
     },
     toggleStrongForce(on) {
-        if (!this._strongForce) this._buildStrongForce();
-        this._strongForce.visible = on;
-        if (!on) this._strongForce.geometry.setDrawRange(0, 0);
+        const next = !!on;
+        if (!this._strongForce) { if (!next) return; this._buildStrongForce(); }
+        if (this._strongForce.visible === next) return;
+        this._strongForce.visible = next;
+        if (!next) this._strongForce.geometry.setDrawRange(0, 0);
     },
     showStrongForce(on) { this.toggleStrongForce(on); },
 
@@ -191,17 +227,21 @@ export const fieldForceMethods = {
         this._weakField.geometry.setDrawRange(0, vi);
     },
     toggleWeakField(on) {
-        if (!this._weakField) this._buildWeakField();
-        this._weakField.visible = on;
-        if (!on) this._weakField.geometry.setDrawRange(0, 0);
+        const next = !!on;
+        if (!this._weakField) { if (!next) return; this._buildWeakField(); }
+        if (this._weakField.visible === next) return;
+        this._weakField.visible = next;
+        if (!next) this._weakField.geometry.setDrawRange(0, 0);
     },
     showWeakField(on) { this.toggleWeakField(on); },
 
     // ══════════════════════════════════════════════════════════════════
     //  FORCE VISUALIZATION STYLES (Heatmap / Streamlines / Glyphs)
     // ══════════════════════════════════════════════════════════════════
-    _buildForceHeatmap() {
-        const maxPts = 8000;
+    _buildForceHeatmap(forceType = 'em') {
+        if (!this._forceHeatmaps) this._forceHeatmaps = Object.create(null);
+        if (this._forceHeatmaps[forceType]) return this._forceHeatmaps[forceType];
+        const maxPts = MAX_FORCE_HEATMAP_POINTS;
         const positions = new Float32Array(maxPts * 3);
         const colors    = new Float32Array(maxPts * 3);
         const sizes     = new Float32Array(maxPts);
@@ -232,8 +272,9 @@ export const fieldForceMethods = {
                 vec2 c = gl_PointCoord - vec2(0.5);
                 float r2 = dot(c, c);
                 if (r2 > 0.25) discard;
-                float gauss = exp(-r2 * 16.0);
-                gl_FragColor = vec4(vColor * gauss, gauss * uOpacity);
+                float falloff = max(0.0, 1.0 - r2 * 4.0);
+                float alpha = falloff * falloff;
+                gl_FragColor = vec4(vColor * alpha, alpha * uOpacity);
             }
         `;
         const mat = new THREE.ShaderMaterial({
@@ -244,42 +285,66 @@ export const fieldForceMethods = {
             blending: THREE.AdditiveBlending,
             depthWrite: false,
         });
-        this._forceHeatmap = new THREE.Points(geo, mat);
-        this._forceHeatmap.visible = false;
-        this._forceHeatmap.frustumCulled = false;
-        this._forceHeatmap.renderOrder = 2;
-        this._scene.add(this._forceHeatmap);
+        const points = new THREE.Points(geo, mat);
+        points.visible = false;
+        points.frustumCulled = false;
+        points.renderOrder = 2;
+        points.userData.forceType = forceType;
+        this._scene.add(points);
+        this._forceHeatmaps[forceType] = points;
+        // Legacy introspection alias. Ownership/disposal lives in the typed map.
+        if (!this._forceHeatmap) this._forceHeatmap = points;
+        return points;
     },
-    initForceHeatmap() { if (!this._forceHeatmap) this._buildForceHeatmap(); },
+    initForceHeatmap(forceType = 'em') { this._buildForceHeatmap(forceType); },
     updateForceHeatmap(fieldData, forceType) {
         this._syncCenterAndRadius();
-        if (!this._forceHeatmap) this._buildForceHeatmap();
-        const posAttr  = this._forceHeatmap.geometry.getAttribute('position');
-        const colAttr  = this._forceHeatmap.geometry.getAttribute('particleColor');
-        const sizeAttr = this._forceHeatmap.geometry.getAttribute('size');
+        const type = forceType || 'em';
+        const heatmap = this._buildForceHeatmap(type);
+        if (!fieldData?.count) {
+            heatmap.geometry.setDrawRange(0, 0);
+            heatmap.visible = false;
+            return;
+        }
+        const posAttr  = heatmap.geometry.getAttribute('position');
+        const colAttr  = heatmap.geometry.getAttribute('particleColor');
+        const sizeAttr = heatmap.geometry.getAttribute('size');
         const { positions, vectors, count } = fieldData;
         const maxPts = posAttr.array.length / 3;
-        const pal = FORCE_PALETTES[forceType] || FORCE_PALETTES.em;
+        const pal = FORCE_PALETTES[type] || FORCE_PALETTES.em;
 
-        let maxMag = 0;
-        if (!this._heatMagCache || this._heatMagCache.length < count) {
-            this._heatMagCache = new Float32Array(count);
+        const magKey = `_heatMagCache_${type}`;
+        if (!this[magKey] || this[magKey].length < count) {
+            this[magKey] = new Float32Array(count);
         }
-        const mags = this._heatMagCache;
+        const mags = this[magKey];
+        let maxMag = 0;
         for (let i = 0; i < count; i++) {
             const a = vectors[i * 3], b = vectors[i * 3 + 1], c = vectors[i * 3 + 2];
             mags[i] = Math.sqrt(a * a + b * b + c * c);
             if (mags[i] > maxMag) maxMag = mags[i];
         }
-        if (maxMag < 1e-15) maxMag = 1;
+        if (!(maxMag > 0)) {
+            heatmap.geometry.setDrawRange(0, 0);
+            heatmap.visible = false;
+            return;
+        }
         const threshold = maxMag * 0.02;
         const _needsClip = this._clipActive();
         const sizeBase = 15 + 10 * (this._latticeSize / 64);
         let vi = 0;
 
+        let qualifying = 0;
+        for (let i = 0; i < count; i++) if (mags[i] >= threshold) qualifying++;
+        const sampleStride = qualifying > maxPts
+            ? Math.ceil(qualifying / maxPts)
+            : 1;
+        let qualifyingSeen = 0;
+
         for (let i = 0; i < count && vi < maxPts; i++) {
             const mag = mags[i];
             if (mag < threshold) continue;
+            if ((qualifyingSeen++ % sampleStride) !== 0) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
 
@@ -294,138 +359,156 @@ export const fieldForceMethods = {
         posAttr.needsUpdate = true;
         colAttr.needsUpdate = true;
         sizeAttr.needsUpdate = true;
-        this._forceHeatmap.geometry.setDrawRange(0, vi);
+        heatmap.geometry.setDrawRange(0, vi);
+        heatmap.visible = !!this._forceHeatmapRequested?.[type] && vi > 0;
     },
     showForceHeatmap(visible) {
-        if (!this._forceHeatmap) this._buildForceHeatmap();
-        this._forceHeatmap.visible = visible;
-        if (!visible) this._forceHeatmap.geometry.setDrawRange(0, 0);
+        if (!this._forceHeatmapRequested) {
+            this._forceHeatmapRequested = { em: false, gravity: false, strong: false, weak: false };
+        }
+        const requested = this._forceHeatmapRequested;
+        if (typeof visible === 'object' && visible !== null) {
+            for (const type of Object.keys(requested)) requested[type] = !!visible[type];
+        } else {
+            const next = !!visible;
+            for (const type of Object.keys(requested)) requested[type] = next;
+        }
+        if (!this._forceHeatmaps) return;
+        for (const [type, points] of Object.entries(this._forceHeatmaps)) {
+            const next = !!requested[type];
+            points.visible = next && points.geometry.drawRange.count > 0;
+            if (!next) points.geometry.setDrawRange(0, 0);
+        }
     },
 
     // ── Animated Streamlines (Flow) ──────────────────────────────────
-    _buildForceStreamlines() {
-        this._forceStreamlinePool = [];
-        this._forceStreamlineMats = [];
+    _buildForceStreamlines(forceType = 'em') {
+        if (!this._forceStreamlineMeshes) this._forceStreamlineMeshes = Object.create(null);
+        if (this._forceStreamlineMeshes[forceType]) return this._forceStreamlineMeshes[forceType];
         const maxLines = 200;
         const maxSegs = 40;
-        for (let i = 0; i < maxLines; i++) {
-            const posArr = new Float32Array((maxSegs + 1) * 3);
-            const geo = new THREE.BufferGeometry();
-            geo.setAttribute('position', new THREE.Float32BufferAttribute(posArr, 3));
-            geo.setDrawRange(0, 0);
-            const mat = new THREE.LineDashedMaterial({
-                color: 0x00e5ff,
-                dashSize: 1.5,
-                gapSize: 0.8,
-                transparent: true,
-                opacity: 0.7,
-                depthWrite: false,
-            });
-            const line = new THREE.Line(geo, mat);
-            line.visible = false;
-            line.frustumCulled = false;
-            line.computeLineDistances();
-            this._scene.add(line);
-            this._forceStreamlinePool.push(line);
-            this._forceStreamlineMats.push(mat);
-        }
-        this._forceStreamlineCount = 0;
-        // F-5 change-detection cache — must be (re)initialised whenever the
-        // pool is (re)built so a fresh empty geometry is never mistaken for an
-        // already-uploaded line. -1 = "no data resident yet" → first update
-        // always writes + computes distances.
-        this._forceStreamlineDrawn = new Int32Array(maxLines).fill(-1);
+        const maxVertices = maxLines * maxSegs * 2;
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(
+            new Float32Array(maxVertices * 3), 3,
+        ));
+        geo.setAttribute('lineDistance', new THREE.Float32BufferAttribute(
+            new Float32Array(maxVertices), 1,
+        ));
+        geo.setDrawRange(0, 0);
+        const pal = FORCE_PALETTES[forceType] || FORCE_PALETTES.em;
+        const mat = new THREE.LineDashedMaterial({
+            color: new THREE.Color(pal.mid[0], pal.mid[1], pal.mid[2]),
+            dashSize: 1.5,
+            gapSize: 0.8,
+            transparent: true,
+            opacity: 0.7,
+            depthWrite: false,
+        });
+        // One batched LineSegments draw replaces 200 individual Line draws.
+        // lineDistance is written per segment below so dash phase restarts at
+        // each discrete streamline without a computeLineDistances traversal.
+        const mesh = new THREE.LineSegments(geo, mat);
+        mesh.visible = false;
+        mesh.frustumCulled = false;
+        mesh.userData.forceType = forceType;
+        this._scene.add(mesh);
+        const entry = { mesh, material: mat, maxLines, maxSegs, vertexCount: 0 };
+        this._forceStreamlineMeshes[forceType] = entry;
+        // Legacy introspection alias; ownership/disposal lives in the typed map.
+        if (!this._forceStreamlinePool) this._forceStreamlinePool = [mesh];
+        return entry;
     },
-    initForceStreamlines() { if (!this._forceStreamlinePool) this._buildForceStreamlines(); },
+    initForceStreamlines(forceType = 'em') { this._buildForceStreamlines(forceType); },
     updateForceStreamlines(lines, forceType) {
         this._syncCenterAndRadius();
-        if (!this._forceStreamlinePool) this._buildForceStreamlines();
-        const pool = this._forceStreamlinePool;
-        const mats = this._forceStreamlineMats;
-        const pal = FORCE_PALETTES[forceType] || FORCE_PALETTES.em;
-        const baseColor = pal.mid;
-        const colorHex = new THREE.Color(baseColor[0], baseColor[1], baseColor[2]);
-
-        // PERF (F-5): cache the per-line drawn vertex count so we can detect
-        // when an incoming streamline is element-wise identical to the one
-        // already resident in the GPU buffer. computeLineDistances() (dash
-        // arc-length integration) + computeBoundingSphere() + the position
-        // re-upload are deterministic functions of the vertex data, so when
-        // nothing changed they reproduce a byte-identical result — skipping
-        // them is output-exact, not approximate. The comparison is O(verts)
-        // but avoids the strictly-more-expensive distance integration + GPU
-        // upload for unchanged lines (overlay refreshes fire far more often
-        // than the field actually changes).
-        // `lines` is the POOLED StreamlineResult from computeStreamlines
-        // ({count, buffer, offsets, lengths}) — web/engine-optimization-
-        // 2026-05-31. Line li is buffer[offsets[li] .. offsets[li]+lengths[li]);
-        // `base + v` indexes the floats the old per-line `verts[v]` did, so the
-        // F-5 element-wise change comparison and the upload are byte-identical.
-        const drawnCounts = this._forceStreamlineDrawn ||
-            (this._forceStreamlineDrawn = new Int32Array(pool.length).fill(-1));
+        const type = forceType || 'em';
+        const entry = this._buildForceStreamlines(type);
+        const { mesh, maxLines, maxSegs } = entry;
+        if (!lines?.count) {
+            mesh.geometry.setDrawRange(0, 0);
+            mesh.visible = false;
+            entry.vertexCount = 0;
+            return;
+        }
+        const posAttr = mesh.geometry.getAttribute('position');
+        const distAttr = mesh.geometry.getAttribute('lineDistance');
+        const out = posAttr.array;
+        const distances = distAttr.array;
         const buffer = lines.buffer;
         const offsets = lines.offsets;
         const lengths = lines.lengths;
-        const usedCount = Math.min(lines.count, pool.length);
+        const usedCount = Math.min(lines.count, maxLines);
+        let vertex = 0;
         for (let li = 0; li < usedCount; li++) {
             const base = offsets[li];
-            const line = pool[li];
-            const posAttr = line.geometry.getAttribute('position');
-            const maxVerts = posAttr.array.length / 3;
-            const vertCount = Math.min(lengths[li] / 3, maxVerts);
-
-            const arr = posAttr.array;
-            const n3 = vertCount * 3;
-            let changed = drawnCounts[li] !== vertCount;
-            if (!changed) {
-                for (let v = 0; v < n3; v++) {
-                    if (arr[v] !== buffer[base + v]) { changed = true; break; }
-                }
+            const points = Math.min(lengths[li] / 3, maxSegs + 1);
+            let cumulative = 0;
+            for (let p = 1; p < points; p++) {
+                const a = base + (p - 1) * 3;
+                const b = base + p * 3;
+                const o0 = vertex * 3;
+                const o1 = o0 + 3;
+                const ax = buffer[a], ay = buffer[a + 1], az = buffer[a + 2];
+                const bx = buffer[b], by = buffer[b + 1], bz = buffer[b + 2];
+                out[o0] = ax; out[o0 + 1] = ay; out[o0 + 2] = az;
+                out[o1] = bx; out[o1 + 1] = by; out[o1 + 2] = bz;
+                const dx = bx - ax, dy = by - ay, dz = bz - az;
+                const nextDistance = cumulative + Math.sqrt(dx * dx + dy * dy + dz * dz);
+                distances[vertex] = cumulative;
+                distances[vertex + 1] = nextDistance;
+                cumulative = nextDistance;
+                vertex += 2;
             }
-            if (changed) {
-                for (let v = 0; v < n3; v++) {
-                    arr[v] = buffer[base + v];
-                }
-                posAttr.needsUpdate = true;
-                line.geometry.setDrawRange(0, vertCount);
-                line.geometry.computeBoundingSphere();
-                line.computeLineDistances();
-                drawnCounts[li] = vertCount;
-            }
-
-            mats[li].color.copy(colorHex);
-            mats[li].opacity = Math.min(0.8, 0.3 + vertCount / 40 * 0.5);
-            line.visible = true;
         }
-
-        for (let li = usedCount; li < pool.length; li++) {
-            pool[li].visible = false;
-        }
-        this._forceStreamlineCount = usedCount;
+        posAttr.needsUpdate = true;
+        distAttr.needsUpdate = true;
+        mesh.geometry.setDrawRange(0, vertex);
+        entry.vertexCount = vertex;
+        mesh.visible = !!this._forceStreamlineRequested?.[type] && vertex > 0;
     },
     animateForceStreamlines(dt) {
-        if (!this._forceStreamlineMats) return;
+        if (!this._forceStreamlineMeshes) return;
         const speed = 2.0;
-        for (let i = 0; i < this._forceStreamlineCount; i++) {
-            this._forceStreamlineMats[i].dashOffset -= speed * dt;
+        for (const entry of Object.values(this._forceStreamlineMeshes)) {
+            if (entry.mesh.visible && entry.vertexCount > 0) {
+                entry.material.dashOffset -= speed * dt;
+            }
         }
     },
     showForceStreamlines_vis(visible) {
-        if (!this._forceStreamlinePool) this._buildForceStreamlines();
-        for (let i = 0; i < this._forceStreamlinePool.length; i++) {
-            if (!visible) this._forceStreamlinePool[i].visible = false;
+        if (!this._forceStreamlineRequested) {
+            this._forceStreamlineRequested = { em: false, gravity: false, strong: false, weak: false };
+        }
+        const requested = this._forceStreamlineRequested;
+        if (typeof visible === 'object' && visible !== null) {
+            for (const type of Object.keys(requested)) requested[type] = !!visible[type];
+        } else {
+            const next = !!visible;
+            for (const type of Object.keys(requested)) requested[type] = next;
+        }
+        if (!this._forceStreamlineMeshes) return;
+        for (const [type, entry] of Object.entries(this._forceStreamlineMeshes)) {
+            const next = !!requested[type];
+            entry.mesh.visible = next && entry.vertexCount > 0;
+            if (!next) {
+                entry.mesh.geometry.setDrawRange(0, 0);
+                entry.vertexCount = 0;
+            }
         }
     },
 
     // ── Glyph Field (Instanced Cones) ────────────────────────────────
     _buildForceGlyphMesh(forceType) {
-        const maxInstances = 8000;
-        const coneGeo = new THREE.ConeGeometry(0.3, 1.0, 6);
+        const maxInstances = MAX_FORCE_GLYPHS;
+        // Four open faces make the discrete direction marker legible without
+        // the blended cap/overdraw cost of the previous six-sided cone.
+        const coneGeo = new THREE.ConeGeometry(0.3, 1.0, 4, 1, true);
         coneGeo.rotateX(Math.PI / 2);
         const mat = new THREE.MeshBasicMaterial({
-            transparent: true,
-            opacity: 0.7,
-            depthWrite: false,
+            transparent: false,
+            opacity: 1,
+            depthWrite: true,
         });
         const mesh = new THREE.InstancedMesh(coneGeo, mat, maxInstances);
         mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
@@ -462,7 +545,7 @@ export const fieldForceMethods = {
         this._ensureForceGlyphInfra();
         const mesh = this._forceGlyphMeshes[forceType] || this._forceGlyphMeshes.em;
         const { positions, vectors, count } = fieldData;
-        const maxInstances = mesh.count === undefined ? 8000 : (mesh.instanceMatrix.array.length / 16);
+        const maxInstances = mesh.instanceMatrix.array.length / 16;
         const pal = FORCE_PALETTES[forceType] || FORCE_PALETTES.em;
 
         const magKey = `_glyphMagCache_${forceType}`;
@@ -524,6 +607,7 @@ export const fieldForceMethods = {
         mesh.instanceColor.needsUpdate = true;
     },
     showForceGlyphs(visible) {
+        if (!this._forceGlyphMeshes && !visible) return;
         this._ensureForceGlyphInfra();
         if (typeof visible === 'object' && visible !== null) {
             for (const type of Object.keys(this._forceGlyphMeshes)) {
@@ -536,6 +620,39 @@ export const fieldForceMethods = {
                 const mesh = this._forceGlyphMeshes[type];
                 mesh.visible = !!visible;
                 if (!mesh.visible) mesh.count = 0;
+            }
+        }
+    },
+    clearForceVisualization(forceType, style) {
+        const type = forceType || 'em';
+        if (!style || style === 'arrows') {
+            const mesh = type === 'em' ? this._forceVolume
+                : type === 'gravity' ? this._gravityField
+                    : type === 'strong' ? this._strongForce
+                        : this._weakField;
+            if (mesh?.geometry) mesh.geometry.setDrawRange(0, 0);
+            if (mesh) mesh.visible = false;
+        }
+        if (!style || style === 'heatmap') {
+            const mesh = this._forceHeatmaps?.[type];
+            if (mesh) {
+                mesh.geometry.setDrawRange(0, 0);
+                mesh.visible = false;
+            }
+        }
+        if (!style || style === 'flow') {
+            const entry = this._forceStreamlineMeshes?.[type];
+            if (entry) {
+                entry.mesh.geometry.setDrawRange(0, 0);
+                entry.mesh.visible = false;
+                entry.vertexCount = 0;
+            }
+        }
+        if (!style || style === 'glyphs') {
+            const mesh = this._forceGlyphMeshes?.[type];
+            if (mesh) {
+                mesh.count = 0;
+                mesh.visible = false;
             }
         }
     },

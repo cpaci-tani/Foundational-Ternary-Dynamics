@@ -57,23 +57,21 @@ canvas {
     --ui-scale-base: 1.0;
     --ui-scale: var(--ui-scale-base);
 
-    /* Font size ramp — FLUID typography. Each token is
-           calc( clamp(MIN, PREF, MAX) * var(--ui-scale) )
+    /* Font size ramp — FLUID typography with a hard 16 CSS-pixel floor.
+       Every token resolves through
+           max(16px, calc(clamp(MIN, PREF, MAX) * var(--ui-scale)))
        where PREF interpolates MIN→MAX across the 375px→1280px viewport range,
-       so text scales smoothly instead of in fixed steps. MAX equals the prior
-       fixed size, so desktop (>=1280px) is byte-identical to before — no
-       desktop regression. MIN is the small-phone floor; it still multiplies
-       through --ui-scale, so the mobile +20% boost (responsive.css :root) lifts
-       the floor to a comfortable size (e.g. base 14*1.2 = 16.8px on a phone).
-       clamp holds MIN below 375px (down to 320px) and MAX above 1280px. */
-    --fs-xs:    calc(clamp(11px,   10.59px + 0.11vw, 12px) * var(--ui-scale));
-    --fs-sm:    calc(clamp(12px,   11.59px + 0.11vw, 13px) * var(--ui-scale));
-    --fs-base:  calc(clamp(14px,   13.59px + 0.11vw, 15px) * var(--ui-scale));
-    --fs-md:    calc(clamp(14.5px, 13.88px + 0.17vw, 16px) * var(--ui-scale));
-    --fs-lg:    calc(clamp(15px,   14.17px + 0.22vw, 17px) * var(--ui-scale));
-    --fs-xl:    calc(clamp(17px,   15.76px + 0.33vw, 20px) * var(--ui-scale));
-    --fs-2xl:   calc(clamp(20px,   18.34px + 0.44vw, 24px) * var(--ui-scale));
-    --fs-3xl:   calc(clamp(26px,   23.51px + 0.66vw, 32px) * var(--ui-scale));
+       so text scales smoothly above that accessibility floor. The max() guard
+       also prevents Compact mode (0.85) and responsive overrides from making
+       any typography token smaller than 16px. */
+    --fs-xs:    max(16px, calc(clamp(11px,   10.59px + 0.11vw, 12px) * var(--ui-scale)));
+    --fs-sm:    max(16px, calc(clamp(12px,   11.59px + 0.11vw, 13px) * var(--ui-scale)));
+    --fs-base:  max(16px, calc(clamp(14px,   13.59px + 0.11vw, 15px) * var(--ui-scale)));
+    --fs-md:    max(16px, calc(clamp(14.5px, 13.88px + 0.17vw, 16px) * var(--ui-scale)));
+    --fs-lg:    max(16px, calc(clamp(15px,   14.17px + 0.22vw, 17px) * var(--ui-scale)));
+    --fs-xl:    max(16px, calc(clamp(17px,   15.76px + 0.33vw, 20px) * var(--ui-scale)));
+    --fs-2xl:   max(16px, calc(clamp(20px,   18.34px + 0.44vw, 24px) * var(--ui-scale)));
+    --fs-3xl:   max(16px, calc(clamp(26px,   23.51px + 0.66vw, 32px) * var(--ui-scale)));
 
     /* Scaled spacing */
     --sp-xs:    calc(2px * var(--ui-scale));
@@ -142,6 +140,22 @@ canvas {
     --accent-dim:   hsl(var(--accent-h), var(--accent-s), calc(var(--accent-l) - 15%));
     --accent-glow:  hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.53);
 
+    /* Accessible foreground roles. `--accent` remains the decorative/fill
+       hue; text and glyphs use contrast-tuned semantic roles instead. */
+    --accent-text:    #67e8f9;
+    --on-accent:      #03131c;
+    --positive-text:  #4ade80;
+    --negative-text:  #fb7185;
+    --warning-text:   #fbbf24;
+    --caution-text:   #fb923c;
+    --on-positive:    #052e16;
+    --on-negative:    #2e3440;
+    --on-warning:     #2e1a02;
+    --axis-x-text:    #f87171;
+    --axis-y-text:    #4ade80;
+    --axis-z-text:    #60a5fa;
+    --selection-text: #38bdf8;
+
     /* Semantic status */
     --positive: #34d399;
     --negative: #fb7185;
@@ -162,12 +176,22 @@ canvas {
     --tabs-shadow:     0 8px 32px rgba(0, 0, 0, 0.50);  /* workspace tabs lift */
     --modal-backdrop:  rgba(0, 0, 0, 0.60);             /* modal blur screen */
 
+    /* App-wide glassmorphism controls. The filters intentionally default to
+       none so backdrop compositing is opt-in; JS only adjusts the blur tiers. */
+    --glass-thickness: 16px;
+    --glass-blur-low: 8px;
+    --glass-blur-mid: 16px;
+    --glass-blur-high: 24px;
+    --glass-filter-low: none;
+    --glass-filter-mid: none;
+    --glass-filter-high: none;
+
     /* Tooltip surfaces */
     --tooltip-bg:            rgba(10, 16, 28, 0.94);
     --tooltip-border:        rgba(126, 157, 196, 0.28);
     --tooltip-text:          var(--text-primary);
     --tooltip-shadow:        0 16px 40px rgba(0, 0, 0, 0.42);
-    --tooltip-backdrop:      blur(18px) saturate(1.2);
+    --tooltip-backdrop:      var(--glass-filter-mid);
     --tooltip-kicker:        var(--accent);
     --tooltip-muted:         var(--text-muted);
     --status-bar-offset:     calc(28px * var(--ui-scale));
@@ -267,6 +291,54 @@ canvas {
     --consciousness-gold: #ffd700;
 }
 
+html[data-glass="on"] {
+    --glass-filter-low: blur(var(--glass-blur-low)) saturate(1.08);
+    --glass-filter-mid: blur(var(--glass-blur-mid)) saturate(1.2);
+    --glass-filter-high: blur(var(--glass-blur-high)) saturate(1.35);
+}
+
+/* Glass off is a true solid-surface mode, not merely blur disabled. These
+   opaque values preserve each palette's RGB ladder while removing alpha. */
+html:not([data-glass="on"]) {
+    --bg-surface:  #0a0f1a;
+    --bg-card:     #121a2f;
+    --bg-input:    #19243c;
+    --bg-elevated: #19243c;
+    --bg-raised:   #233250;
+}
+
+html[data-theme="abyss"]:not([data-glass="on"]) {
+    --bg-surface:  #0a0a0f;
+    --bg-card:     #111118;
+    --bg-input:    #1a1a24;
+    --bg-elevated: #1f1f2a;
+    --bg-raised:   #25253a;
+}
+
+html[data-theme="light"]:not([data-glass="on"]) {
+    --bg-surface:  #ffffff;
+    --bg-card:     #ffffff;
+    --bg-input:    #e2e8f0;
+    --bg-elevated: #ffffff;
+    --bg-raised:   #ffffff;
+}
+
+html[data-theme="parchment"]:not([data-glass="on"]) {
+    --bg-surface:  #ece5d8;
+    --bg-card:     #e2dace;
+    --bg-input:    #d5cdc0;
+    --bg-elevated: #ede5d4;
+    --bg-raised:   #f2ebdd;
+}
+
+html[data-theme="nord"]:not([data-glass="on"]) {
+    --bg-surface:  #3b4252;
+    --bg-card:     #3f4758;
+    --bg-input:    #434c5e;
+    --bg-elevated: #465064;
+    --bg-raised:   #4c566a;
+}
+
 /* ╔══════════════════════════════════════════════════════╗
    ║  GLOBAL CONTROL BASELINE                             ║
    ║  Enforces the spacing minimums declared in tokens.   ║
@@ -345,6 +417,34 @@ html, body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* Native form controls and semantic small-print elements carry browser-UA
+   font reductions unless explicitly reset. Keep those implicit paths inside
+   the same 16px contract while retaining proportional type above the floor. */
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+    font-size: max(16px, 1em);
+}
+
+small {
+    font-size: max(16px, 0.875em);
+}
+
+sub,
+sup {
+    font-size: max(16px, 0.75em);
+}
+
+/* KaTeX intentionally shrinks script-style glyph runs below 1em. The
+   dashboard accessibility contract takes precedence over that typographic
+   convention, but leaves KaTeX's non-text layout struts untouched. */
+.katex .sizing,
+.katex .mtight {
+    font-size: max(16px, 1em) !important;
+}
+
 /* ── Form Element Primitives (theme-aware native controls) ── */
 input, select, textarea {
     color-scheme: dark;
@@ -413,12 +513,33 @@ input[type="number"] {
     }
 }
 
+/* Theme swaps are committed atomically by app.js. Component hover/focus
+   transitions remain available once this one-frame guard is released. */
+html[data-theme-changing="true"] *,
+html[data-theme-changing="true"] *::before,
+html[data-theme-changing="true"] *::after {
+    transition: none !important;
+}
+
 html[data-motion="reduced"] *,
 html[data-motion="reduced"] *::before,
 html[data-motion="reduced"] *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+}
+
+/* Honor the operating-system preference even before Settings has written the
+   app-specific data-motion attribute. This also prevents theme foreground and
+   surface colors from reaching different intermediate states. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 
 /* ── Smooth theme transitions ────────────────────────── */
@@ -496,6 +617,14 @@ body, #toolbar, #tab-bar, .tab, #panel-area, .panel, .card,
         --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 
         color-scheme: light;
+    }
+
+    :root:not([data-theme])[data-glass="on"] {
+        --bg-surface:  rgba(255, 255, 255, 0.60);
+        --bg-card:     rgba(255, 255, 255, 0.75);
+        --bg-input:    rgba(226, 232, 240, 0.80);
+        --bg-elevated: rgba(255, 255, 255, 0.90);
+        --bg-raised:   rgba(255, 255, 255, 0.98);
     }
 }
 

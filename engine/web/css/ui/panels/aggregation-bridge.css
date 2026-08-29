@@ -22,22 +22,22 @@
 
 .agg-content {
     flex: 1;
-    font-size: 10px;
+    font-size: 16px;
 }
 
 .agg-desc {
-    font-size: 9px;
+    font-size: 16px;
     color: var(--text-muted);
 }
 
 .agg-metric {
-    font-size: 9px;
-    color: var(--accent);
+    font-size: 16px;
+    color: var(--accent-text);
 }
 
 .agg-footer {
     margin-top: 6px;
-    font-size: 9px;
+    font-size: 16px;
     color: var(--text-muted);
 }
 
@@ -67,8 +67,8 @@
 }
 
 .sb-label {
-    font-size: 10px;
-    color: var(--accent);
+    font-size: 16px;
+    color: var(--accent-text);
     margin-bottom: 2px;
 }
 
@@ -78,7 +78,7 @@
 }
 
 .sb-force {
-    font-size: 8px;
+    font-size: 16px;
     color: var(--text-muted);
 }
 
@@ -87,7 +87,7 @@
     align-items: center;
     padding: 0 2px;
     color: var(--text-muted);
-    font-size: 14px;
+    font-size: 16px;
 }
 
 /* Emergence Monitor */
@@ -95,11 +95,11 @@
     width: 100%;
     height: 100%;
     font-family: var(--font-mono);
-    font-size: 8px;
+    font-size: 16px;
 }
 
 .em-status-ok {
-    color: var(--positive);
+    color: var(--positive-text);
 }
 
 .em-status-pending {
@@ -107,7 +107,7 @@
 }
 
 .em-footer {
-    font-size: 9px;
+    font-size: 16px;
     margin-top: 2px;
 }
 

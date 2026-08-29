@@ -5,7 +5,7 @@
     width: 100%;
     padding: 14px 14px 18px;
     font-family: var(--font-sans, system-ui, -apple-system, "Segoe UI", sans-serif);
-    font-size: 13px;
+    font-size: 16px;
     line-height: 1.45;
     color: var(--text-primary);
     background: transparent;
@@ -20,13 +20,13 @@
 
 .spec-title {
     font-weight: 600;
-    color: var(--accent);
-    font-size: 15px;
+    color: var(--accent-text);
+    font-size: 16px;
     letter-spacing: 0.02em;
 }
 
 .spec-mode {
-    font-size: 11px;
+    font-size: 16px;
     color: var(--text-muted);
     font-family: var(--font-mono);
     padding: 2px 8px;
@@ -44,7 +44,7 @@
     min-height: 180px;
     color: var(--text-muted);
     font-style: italic;
-    font-size: 12px;
+    font-size: 16px;
     text-align: center;
 }
 
@@ -56,7 +56,7 @@
     flex-wrap: wrap;
     gap: 4px 14px;
     margin-top: 8px;
-    font-size: 11px;
+    font-size: 16px;
     color: var(--text-muted);
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
@@ -71,9 +71,9 @@
     color: var(--text-primary);
     padding: 6px 14px;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 16px;
     border-radius: 5px;
-    font-family: var(--font-sans);
+    font-family: var(--font-body);
 }
 .spec-btn:hover:not(:disabled) { background: rgba(120, 200, 255, 0.22); }
 .spec-btn:disabled { opacity: 0.5; cursor: progress; }
@@ -86,7 +86,7 @@
     align-items: baseline;
     padding: 3px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    font-size: 12px;
+    font-size: 16px;
 }
 .spec-row-l { color: var(--text-muted); }
 .spec-row-v { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
@@ -99,10 +99,10 @@
     align-items: center;
     padding: 3px 0;
 }
-.spec-metric-name { font-family: var(--font-mono); color: var(--accent); font-size: 12px; }
-.spec-metric-sub { color: var(--text-muted); font-family: var(--font-sans); font-size: 10px; }
-.spec-metric-val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 11px; text-align: right; color: var(--text-primary); }
-.spec-metric-unit { color: var(--text-muted); font-size: 9px; margin-left: 3px; }
+.spec-metric-name { font-family: var(--font-mono); color: var(--accent-text); font-size: 16px; }
+.spec-metric-sub { color: var(--text-muted); font-family: var(--font-body); font-size: 16px; }
+.spec-metric-val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 16px; text-align: right; color: var(--text-primary); }
+.spec-metric-unit { color: var(--text-muted); font-size: 16px; margin-left: 3px; }
 .spec-mini-hist { width: 96px; height: 22px; display: block; }
 
 /* ④ energy partition bar */
@@ -121,7 +121,7 @@
     flex-wrap: wrap;
     gap: 4px 12px;
     margin-bottom: 8px;
-    font-size: 10px;
+    font-size: 16px;
     color: var(--text-muted);
     font-family: var(--font-mono);
 }

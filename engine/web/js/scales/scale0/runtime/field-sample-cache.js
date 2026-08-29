@@ -41,7 +41,10 @@ export const SCALAR_SAMPLE_DEPS = {
     showPhase: ['fluxVector'],
     showLagrangianDensity: ['fluxVector', 'poynting', 'divergence', 'eField'],
     showEntropyDensity: ['fluxVector'],
-    showGravPotential: ['fluxVector'],
+    // The finite Poisson well is preferred when latency_field is active;
+    // fluxVector supplies the exact local potential of the default G_N*delta_2|J|
+    // force law when no Poisson well exists.
+    showGravPotential: ['poissonLatency', 'fluxVector'],
     showEmEnergy: ['eField', 'bField'],
     showChargeDensity: ['divergence'],
     showVorticity: ['vorticity'],
@@ -150,6 +153,7 @@ export function buildSampleSnapshot(fieldCapability, flags, stride, acScale0) {
     if (flags.showVorticity) cache.ensureSample('vorticity');
     if (flags.showHorizon || flags.showLatency) cache.ensureSample('latency');
     if (flags.showForceWeak) cache.ensureSample('curlJ');
+    if (flags.showGravPotential) cache.ensureSample('poissonLatency');
     if (flags.showStateField) cache.ensureSample('state');
     if (flags.showGaussResidual) cache.ensureSample('gaussResidual');
 

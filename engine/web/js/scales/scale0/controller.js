@@ -6,12 +6,14 @@
  */
 
 import { BaseLifecycleController } from '../../lifecycle.js';
-import { getScale0ScenarioToggleProfile } from '../../config/toggles.js';
 import { createScale0ViewportAdapter } from './viewport-adapter.js';
 import {
     getFieldStateSnapshot,
     getScale0State,
+    getActiveScale0Bridge,
     getActiveScale0Capability,
+    setScale0PlaybackRunning,
+    setScale0PlaybackSpeed,
     setFieldToggle as setFieldToggleState,
     setForceStyle as setForceStyleState,
     setLatticeNeedsUpload as markLatticeUpload,
@@ -21,7 +23,7 @@ import {
 } from './state/store.js';
 import { advanceSimulation } from './runtime/tick.js';
 import { syncRenderableData } from './runtime/frame-sync.js';
-import { updateFieldOverlays } from './runtime/field-overlays.js';
+import { disposeFieldOverlayRuntime, updateFieldOverlays } from './runtime/field-overlays.js?v=16';
 import { updateDiagnosticsAndPanels } from './runtime/diagnostics.js';
 import {
     exitScale0,
@@ -32,11 +34,16 @@ import {
     syncComboSliders,
     syncScale0ToggleUiFromEngine,
     stepScale0,
-} from './runtime/scenario-loader.js';
-import { bindScale0UI, handleScale0ShortcutKey, updateScenarioMetadata } from './ui/bindings.js';
+} from './runtime/scenario-loader.js?v=10';
+import { bindScale0UI, handleScale0ShortcutKey } from './ui/bindings.js?v=9';
 import { getSelectedScenarioId } from './ui/dom.js';
-import { Scale0ControlsComponent } from './ui/controls/component.js';
-import { wireScale0Controls } from './ui/controls/wire.js';
+import { syncScale0LatticeSizeAvailability } from './ui/toolbar/limits.js';
+import { Scale0ControlsComponent } from './ui/controls/component.js?v=5';
+import {
+    syncScale0FlowLineControls,
+    syncScale0ParticleDisplay,
+    wireScale0Controls,
+} from './ui/controls/wire.js?v=12';
 import { mountSymmetryPanel } from './ui/overlays/symmetry-panel.js';
 // The Scale-0 overlay panels are first created by app.js at boot
 // ("Creating panels…", one-time). The controller ALSO drives their
@@ -140,22 +147,25 @@ export function bindUI(ctx) {
     appRegistry.register('scale0Ctx', ctx);
 
     // Browser/WebView form restoration can set an already-selected scenario
-    // without emitting `change`. Reconcile after the first paint and on
-    // pageshow, while deduplicating against the explicit boot load below.
+    // without emitting `change`. The explicit boot load below bindUI reads the
+    // restored selector synchronously. Only a genuine BFCache pageshow needs a
+    // later reconciliation; initial pageshow/rAF callbacks raced the explicit
+    // load and could begin a second worker replacement after the UI was ready.
     // Native reconnect is different: the server may own a fresh default
     // RenderBridge even though the DOM and client state still agree, so force
     // one atomic profile replay for every completed socket generation.
-    const reconcileRestoredScenario = () => {
+    const reconcileRestoredScenario = (event) => {
+        if (event && event.type === 'pageshow' && event.persisted !== true) return;
         if (ctx.engineMode && ctx.engineMode !== 'lattice') return;
         loadSelectedScenario(ctx);
     };
     if (!ctx._scale0ScenarioRestoreBound && typeof window !== 'undefined') {
         ctx._scale0ScenarioRestoreBound = true;
         window.addEventListener('pageshow', reconcileRestoredScenario);
-        requestAnimationFrame(reconcileRestoredScenario);
     }
     ctx.onBridgeConnectionReady = () => {
         if (ctx.engineMode && ctx.engineMode !== 'lattice') return;
+        syncScale0LatticeSizeAvailability(ctx.bridge?.isNativeGPU);
         loadSelectedScenario(ctx, { force: true });
     };
 
@@ -223,9 +233,6 @@ export function bindUI(ctx) {
         // that echo rather than leaving a cosmetic pre-ack value behind.
         syncComboSliders(ctx, state);
         syncScale0ToggleUiFromEngine(ctx, viewportAdapter(ctx), scenarioId);
-        const modified = getScale0ScenarioToggleProfile(scenarioId)
-            .some(([name, expected]) => !!ctx.bridge.getToggle?.(name) !== !!expected);
-        updateScenarioMetadata(scenarioId, { profileModified: modified });
         if (Number.isInteger(fluxBoundaryMode)) {
             const select = document.getElementById('flux-boundary-mode');
             if (select) select.value = String(fluxBoundaryMode);
@@ -257,6 +264,8 @@ export function mountScale0PlaybackUI() {
     if (!viewportEl) return;
     if (!_playBar) {
         _playBar = new PlayBarComponent(viewportEl).mount();
+    } else {
+        _playBar.mount();
     }
 }
 
@@ -310,9 +319,16 @@ class Scale0LifecycleController extends BaseLifecycleController {
         try { initScaleContextPanel(); } catch (e) { /* ignore */ }
         // Reveal the prime-tick toggle whenever Scale 0 becomes active.
         try { ensurePrimeTickButton(true); } catch (e) { /* ignore */ }
+        // Scale 1 owns the same particle shader while active and applies its
+        // own shape/glow preset. Replay Scale 0's retained card values on every
+        // re-entry so the visible controls and shared renderer cannot diverge.
+        try { syncScale0ParticleDisplay(ctx); } catch (e) { /* ignore */ }
+        try { syncScale0FlowLineControls(ctx); } catch (e) { /* ignore */ }
     }
 
     destroy(ctx) {
+        _playBar?.cancelPendingSteps();
+        try { disposeFieldOverlayRuntime(state); } catch (e) { /* ignore */ }
         super.destroy(ctx);
         try { exitScale0(); } catch (e) { /* ignore */ }
         // exitScale0/clearFluxMock null only the state.* copies; the ctx.* copies
@@ -365,6 +381,7 @@ export function destroy(ctx) {
 }
 
 export function loadScenario(ctx, scenarioId, params) {
+    _playBar?.cancelPendingSteps();
     _lastScenarioRequestBridge = ctx?.bridge ?? null;
     _lastScenarioRequestId = scenarioId;
     loadScale0Scenario(ctx, state, viewportAdapter(ctx), scenarioId, params);
@@ -395,15 +412,17 @@ export function animate(ctx) {
     _playBar?.refresh();
 }
 
-export function step(ctx) {
-    stepScale0(ctx, state);
+export function step(ctx, tickCount = 1) {
+    stepScale0(ctx, state, tickCount);
 }
 
 export function reset(ctx) {
+    _playBar?.cancelPendingSteps();
     resetScale0Scenario(ctx, state, viewportAdapter(ctx));
 }
 
 export async function resize(ctx, newSize) {
+    _playBar?.cancelPendingSteps();
     try {
         await resizeScale0Lattice(ctx, state, viewportAdapter(ctx), newSize);
     } catch (e) {
@@ -429,6 +448,18 @@ export function setLatticeNeedsUpload() {
 
 export function getFluxMock() {
     return state.fluxMock;
+}
+
+export function getActivePhysicsOwner(ctx) {
+    return getActiveScale0Bridge(ctx, state);
+}
+
+export function setPlaybackRunning(ctx, running) {
+    return setScale0PlaybackRunning(ctx, running, state);
+}
+
+export function setPlaybackSpeed(ctx, speed) {
+    return setScale0PlaybackSpeed(ctx, speed, state);
 }
 
 export function clearFluxMock() {

@@ -1,8 +1,8 @@
 # CHECKLIST — Native App Web-Dashboard Parity
 
-**Status:** `[TRACKER]` · **Created:** 2026-08-20 · **Updated:** 2026-08-21 · **Source:** derived from [`REF_WEB_ENGINE_ARCHITECTURE.md`](REF_WEB_ENGINE_ARCHITECTURE.md) (the web-dashboard map) scored against the current `engine/native` rebuild.
+**Status:** `[TRACKER]` · **Created:** 2026-08-20 · **Updated:** 2026-08-28 · **Source:** retained web-dashboard capabilities scored against the current `engine/native` implementation.
 
-This is the running parity checklist: every capability the web dashboard (`engine/web`) offers, marked by where the **native** app (`engine/native`, RmlUi + D3D12, in-process C++/CUDA) stands. It supersedes the reference's §11.3 gap table, which described the *old* `engine/native_desktop` shell before this rebuild.
+This is the running parity checklist: every capability the web dashboard (`engine/web`) offers, marked by where the **native** app (`engine/native`, RmlUi + D3D12, in-process C++/CUDA) stands.
 
 **Legend:** ✅ done · ◐ partial · ▢ not started · ⭐ native-only (beyond web)
 

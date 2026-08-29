@@ -12,14 +12,60 @@ import {
     setButtonActive,
     setForceStyleButtons,
     setScalarRenderButtons,
-} from './dom.js';
+} from './dom.js?v=4';
 import { COL_TO_TOGGLES } from './overlays/presets.js';
-import { applyScale0OverlayApplicability } from './overlays/applicability.js';
-import { initOverlayPanelShell, refreshOverlayPanelShell } from './overlays/panel-shell.js';
+import { applyScale0OverlayApplicability } from './overlays/applicability.js?v=4';
+import {
+    initOverlayPanelShell,
+    refreshOverlayPanelShell,
+    scheduleOverlayPanelShellRefresh,
+} from './overlays/panel-shell.js?v=6';
+import { syncScale0LatticeSizeAvailability } from './toolbar/limits.js';
+import {
+    setScale0StandardModelReferenceVisible,
+} from './overlays/standard-model.js?v=2';
 
 let _bound = false;
 
-export function updateScenarioMetadata(scenarioId, { profileModified = false } = {}) {
+function setDisplayText(display, text) {
+    if (!display || display.textContent === text) return;
+    const node = display.firstChild;
+    if (display.childNodes.length === 1 && node?.nodeType === 3) node.nodeValue = text;
+    else display.textContent = text;
+}
+
+function createLatestInputFrame(ctx) {
+    const pending = new Map();
+    let frame = null;
+    return (key, input, display, apply) => {
+        pending.set(key, {
+            generation: ctx._loadGeneration || 0,
+            input,
+            display,
+            apply,
+        });
+        if (frame !== null) return;
+        frame = requestAnimationFrame(() => {
+            frame = null;
+            const jobs = [...pending.values()];
+            pending.clear();
+            if (ctx.engineMode && ctx.engineMode !== 'lattice') return;
+            const generation = ctx._loadGeneration || 0;
+            for (const job of jobs) {
+                if (job.generation !== generation) continue;
+                const value = Number.parseFloat(job.input.value);
+                if (!Number.isFinite(value)) continue;
+                setDisplayText(job.display, value.toFixed(2));
+                job.apply(value);
+            }
+        });
+    };
+}
+
+export function updateScenarioMetadata(
+    scenarioId,
+    { profileModified = false, preserveDisclosure = false } = {},
+) {
     const scenario = getScale0Scenario(scenarioId);
     const sections = [];
     if (profileModified) {
@@ -35,6 +81,17 @@ export function updateScenarioMetadata(scenarioId, { profileModified = false } =
     if (scenario?.laymanTitle && scenario.sourceTitle
         && scenario.sourceTitle !== scenario.laymanTitle) {
         sections.push(`Technical name: ${scenario.sourceTitle}`, '');
+    }
+    // The registry is the canonical user-facing epistemic source. Keep this
+    // explicit even when validation or seed metadata follows: those sections
+    // qualify behavior, but they do not replace the scenario's claim status.
+    if (scenario?.epistemicStatus) {
+        sections.push(
+            'REGISTERED EPISTEMIC STATUS',
+            scenario.epistemicStatus,
+            `Evidence level: ${scenario.evidenceLevel || 'unspecified'}`,
+            '',
+        );
     }
     if (scenario?.validation) {
         sections.push(
@@ -52,7 +109,7 @@ export function updateScenarioMetadata(scenarioId, { profileModified = false } =
     }
     const seedMetadata = formatS0SeedMetadata(scenarioId);
     if (seedMetadata) sections.push('', seedMetadata);
-    renderScenarioDescription(scenarioId, sections.join('\n'));
+    renderScenarioDescription(scenarioId, sections.join('\n'), { preserveOpen: preserveDisclosure });
 }
 
 export function bindScale0UI(ctx, api) {
@@ -61,6 +118,7 @@ export function bindScale0UI(ctx, api) {
 
     populateScale0ScenarioSelect(getEl('scenario-select'), getSelectedScenarioId('flux-pulse'));
     updateScenarioMetadata(getSelectedScenarioId('flux-pulse'));
+    syncScale0LatticeSizeAvailability(ctx.bridge?.isNativeGPU);
 
     const boundarySelect = getEl('boundary-select');
     if (boundarySelect) {
@@ -182,7 +240,7 @@ export function bindScale0UI(ctx, api) {
             if (btn.classList.contains('is-inapplicable')) return;
             const on = !readButtonActive(buttonId);
             setToggleState(buttonId, fieldKey, on);
-            refreshOverlayPanelShell();
+            scheduleOverlayPanelShellRefresh();
         });
     }
 
@@ -197,14 +255,14 @@ export function bindScale0UI(ctx, api) {
         ['sheet-height-e-pressure',     'ePressure'],
         ['sheet-height-b-pressure',     'bPressure'],
     ];
+    const scheduleSheetHeight = createLatestInputFrame(ctx);
     for (const [sliderId, key] of SHEET_HEIGHT_SLIDERS) {
         const slider = getEl(sliderId);
         if (!slider) continue;
         const valEl = getEl(sliderId + '-val');
         slider.addEventListener('input', () => {
-            const v = parseFloat(slider.value);
-            if (valEl) valEl.textContent = v.toFixed(2);
-            api.viewportAdapter(ctx).setTopologySheetHeight(key, v);
+            scheduleSheetHeight(sliderId, slider, valEl,
+                (value) => api.viewportAdapter(ctx).setTopologySheetHeight(key, value));
         });
     }
 
@@ -214,15 +272,39 @@ export function bindScale0UI(ctx, api) {
         const toggles = COL_TO_TOGGLES[colName];
         if (!toggles) continue;
         clearBtn.addEventListener('click', () => {
+            let changed = false;
             for (const buttonId of toggles) {
                 if (getEl(buttonId)?.classList.contains('is-inapplicable')) continue;
                 if (!readButtonActive(buttonId)) continue;
+                if (buttonId === 'toggle-flux-volume') {
+                    setButtonActive(buttonId, false);
+                    if (typeof ctx._scale0ForcedFluxVolumePreference === 'boolean') {
+                        ctx._scale0ForcedFluxVolumePreference = false;
+                    }
+                    api.viewportAdapter(ctx).setFluxVolumeVisible(false);
+                    changed = true;
+                    continue;
+                }
+                if (buttonId === 'toggle-flux-slice') {
+                    setButtonActive(buttonId, false);
+                    api.viewportAdapter(ctx).setFluxSliceVisible(false);
+                    changed = true;
+                    continue;
+                }
+                if (buttonId === 'toggle-sm-reference') {
+                    setButtonActive(buttonId, false);
+                    setScale0StandardModelReferenceVisible(false);
+                    changed = true;
+                    continue;
+                }
                 const fieldKey = buttonIdToFieldKey.get(buttonId);
                 if (!fieldKey) continue;
                 setToggleState(buttonId, fieldKey, false, { silent: true });
+                changed = true;
             }
+            if (!changed) return;
             api.setLatticeNeedsUpload();
-            refreshOverlayPanelShell();
+            scheduleOverlayPanelShellRefresh();
         });
     }
 

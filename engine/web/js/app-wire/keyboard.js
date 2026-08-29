@@ -18,8 +18,7 @@
  * @param {{
  *   getEngineMode: () => string,
  *   getBridge: () => object,
- *   setRunning: (v: boolean) => void,
- *   updatePlayButton: () => void,
+ *   pauseSimulation: () => void,
  *   togglePlay: () => void,
  *   stepScenario: () => void,       // handles Scale0Controller.step / peTick / aeTick / etc.
  *   reloadScenario: () => void,     // handles loadAEScenario / loadPEScenario / Scale0Controller.reset
@@ -29,8 +28,7 @@
 export function wireKeyboard(deps) {
     const {
         getEngineMode,
-        setRunning,
-        updatePlayButton,
+        pauseSimulation,
         togglePlay,
         stepScenario,
         reloadScenario,
@@ -47,13 +45,11 @@ export function wireKeyboard(deps) {
                 togglePlay();
                 break;
             case 's':
-                setRunning(false);
-                updatePlayButton();
+                pauseSimulation();
                 stepScenario();
                 break;
             case 'r':
-                setRunning(false);
-                updatePlayButton();
+                pauseSimulation();
                 reloadScenario();
                 break;
         }

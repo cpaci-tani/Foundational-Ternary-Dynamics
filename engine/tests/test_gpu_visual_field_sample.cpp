@@ -38,6 +38,24 @@ void check_no_full_mirror(const std::string& label) {
           && ftd::gpu::g_gpu_full_voxel_download_bytes == 0);
 }
 
+void check_sample_parity(const std::string& label,
+                         const ftd::VisualFieldSample& cpu,
+                         const ftd::VisualFieldSample& gpu) {
+    check(label + " layout", gpu.components == cpu.components
+          && gpu.effective_stride == cpu.effective_stride
+          && gpu.origin == cpu.origin
+          && gpu.positions == cpu.positions
+          && gpu.data.size() == cpu.data.size());
+    if (gpu.data.size() != cpu.data.size()) return;
+    for (std::size_t i = 0; i < cpu.data.size(); ++i) {
+        if (std::abs(static_cast<double>(gpu.data[i] - cpu.data[i])) > 1e-6) {
+            check(label + " values", false);
+            return;
+        }
+    }
+    check(label + " values", true);
+}
+
 }  // namespace
 
 int main() {
@@ -110,6 +128,69 @@ int main() {
         check("GPU legacy |J|^2 latency proxy remains distinct",
               legacy_proxy.count() == 0);
         check_no_full_mirror("GPU legacy latency proxy also stays compact");
+    }
+
+    // Gravity-force visuals must evaluate the same exact radius-two operator
+    // on CPU and CUDA. They must not depend on sparse manifestation-only force
+    // diagnostics, and CUDA must stay on the compact selective-read path.
+    {
+        constexpr int L = 9;
+        constexpr int C = 4;
+        ftd::RenderBridge cpu(L);
+        cpu.force_cpu();
+        cpu.toggles.disable_all();
+        cpu.inject_flux(C + 2, C, C, {3.0, 0.0, 0.0});
+        cpu.inject_flux(C - 2, C, C, {1.0, 0.0, 0.0});
+        ftd::VisualFieldSample cpu_gravity;
+        cpu.copy_visual_field_sample(
+            ftd::VisualFieldKind::GravityForce, 1, cpu_gravity);
+
+        ftd::RenderBridge gpu(L);
+        gpu.set_interactive_gpu_mode(true);
+        gpu.toggles.disable_all();
+        gpu.inject_flux(C + 2, C, C, {3.0, 0.0, 0.0});
+        gpu.inject_flux(C - 2, C, C, {1.0, 0.0, 0.0});
+        reset_full_mirror_counters();
+        ftd::VisualFieldSample gpu_gravity;
+        gpu.copy_visual_field_sample(
+            ftd::VisualFieldKind::GravityForce, 1, gpu_gravity);
+
+        check("CPU/CUDA default gravity produces visible vectors",
+              cpu_gravity.count() != 0 && gpu_gravity.count() != 0);
+        check_sample_parity("CPU/CUDA default radius-two gravity", cpu_gravity, gpu_gravity);
+        check_no_full_mirror("GPU default gravity sample avoids full mirror");
+    }
+
+    {
+        constexpr int L = 9;
+        constexpr int C = 4;
+        ftd::RenderBridge cpu(L);
+        cpu.force_cpu();
+        cpu.toggles.disable_all();
+        cpu.toggles.geometric_gravity = true;
+        cpu.voxel_at(C, C, C).latency = 0.4;
+        cpu.voxel_at(C + 2, C, C).latency = 0.6;
+        cpu.voxel_at(C - 2, C, C).latency = 0.2;
+        ftd::VisualFieldSample cpu_gravity;
+        cpu.copy_visual_field_sample(
+            ftd::VisualFieldKind::GravityForce, 1, cpu_gravity);
+
+        ftd::RenderBridge gpu(L);
+        gpu.set_interactive_gpu_mode(true);
+        gpu.toggles.disable_all();
+        gpu.toggles.geometric_gravity = true;
+        gpu.voxel_at(C, C, C).latency = 0.4;
+        gpu.voxel_at(C + 2, C, C).latency = 0.6;
+        gpu.voxel_at(C - 2, C, C).latency = 0.2;
+        reset_full_mirror_counters();
+        ftd::VisualFieldSample gpu_gravity;
+        gpu.copy_visual_field_sample(
+            ftd::VisualFieldKind::GravityForce, 1, gpu_gravity);
+
+        check("CPU/CUDA geometric gravity produces visible vectors",
+              cpu_gravity.count() != 0 && gpu_gravity.count() != 0);
+        check_sample_parity("CPU/CUDA geometric latency gravity", cpu_gravity, gpu_gravity);
+        check_no_full_mirror("GPU geometric gravity sample avoids full mirror");
     }
 
     // Finally exercise d_latency as produced by the real CUDA Poisson phase,

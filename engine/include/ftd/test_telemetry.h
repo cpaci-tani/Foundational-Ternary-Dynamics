@@ -3,10 +3,8 @@
 // ============================================================================
 //
 // Provides a unified `ftd::test::` API that every C++ test can use to emit
-// structured events to stdout. The FTD Test Bench runner
-// (engine/tools/test_runner/) parses these NDJSON events live to drive the
-// test tree, live output panels, 3D lattice viewer, streaming telemetry
-// charts, and SQLite history DB.
+// structured events to stdout. CI and local tooling can parse the NDJSON
+// stream without coupling the tests to a dedicated GUI application.
 //
 // DESIGN: zero-overhead when FTD_TEST_TELEMETRY is not set.
 //   - Unset:  the helpers print human-readable "  PASS  name" / "  FAIL  name"

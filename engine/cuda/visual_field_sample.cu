@@ -87,6 +87,10 @@ __device__ __forceinline__ double rho_at(const VisualDeviceView& b, int i) {
     return x * x + y * y + z * z;
 }
 
+__device__ __forceinline__ double density_at(const VisualDeviceView& b, int i) {
+    return sqrt(rho_at(b, i));
+}
+
 __device__ __forceinline__ void curl_at(
     const VisualDeviceView& b, int x, int y, int z,
     double& cx, double& cy, double& cz) {
@@ -146,7 +150,7 @@ __global__ void reduce_max_rho_kernel(
 
 __global__ void visual_field_kernel(
     VisualDeviceView b, int kind_value, int start, int stride, int axis_count,
-    int components, double max_rho, float* out) {
+    int components, double max_rho, bool geometric_gravity, float* out) {
     const int q = blockIdx.x * blockDim.x + threadIdx.x;
     const int count = axis_count * axis_count * axis_count;
     if (q >= count) return;
@@ -304,10 +308,26 @@ __global__ void visual_field_kernel(
             if (sqrt(vx * vx + vy * vy + vz * vz) < 1e-15) return inactive(out, q, components);
             return write_vector(out, q, vx, vy, vz);
 
-        case VisualFieldKind::GravityForce:
-            vx = b.fd_gravity_x[idx]; vy = b.fd_gravity_y[idx]; vz = b.fd_gravity_z[idx];
+        case VisualFieldKind::GravityForce: {
+            const int xp = site_index(x + 2, y, z, b.L);
+            const int xm = site_index(x - 2, y, z, b.L);
+            const int yp = site_index(x, y + 2, z, b.L);
+            const int ym = site_index(x, y - 2, z, b.L);
+            const int zp = site_index(x, y, z + 2, b.L);
+            const int zm = site_index(x, y, z - 2, b.L);
+            if (geometric_gravity) {
+                const double pre = M_INERTIAL * C_SPEED * C_SPEED * b.latency[idx];
+                vx = pre * GRAD_TIER2_SCALE * (b.latency[xp] - b.latency[xm]);
+                vy = pre * GRAD_TIER2_SCALE * (b.latency[yp] - b.latency[ym]);
+                vz = pre * GRAD_TIER2_SCALE * (b.latency[zp] - b.latency[zm]);
+            } else {
+                vx = G_N * GRAD_TIER2_SCALE * (density_at(b, xp) - density_at(b, xm));
+                vy = G_N * GRAD_TIER2_SCALE * (density_at(b, yp) - density_at(b, ym));
+                vz = G_N * GRAD_TIER2_SCALE * (density_at(b, zp) - density_at(b, zm));
+            }
             if (sqrt(vx * vx + vy * vy + vz * vz) < 1e-15) return inactive(out, q, components);
             return write_vector(out, q, vx, vy, vz);
+        }
 
         case VisualFieldKind::StrongForce:
             vx = b.fd_strong_x[idx]; vy = b.fd_strong_y[idx]; vz = b.fd_strong_z[idx];
@@ -373,7 +393,8 @@ void GpuEngine::copy_visual_field_sample(VisualFieldKind kind, int requested_str
     constexpr int block = 256;
     visual_field_kernel<<<(candidate_count + block - 1) / block, block>>>(
         view, static_cast<int>(kind), start, out.effective_stride, axis_count,
-        static_cast<int>(out.components), max_rho, d_values.get());
+        static_cast<int>(out.components), max_rho, toggles.geometric_gravity,
+        d_values.get());
     CUDA_CHECK(cudaGetLastError());
 
     std::vector<float> raw(raw_count);

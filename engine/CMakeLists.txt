@@ -136,34 +136,6 @@ include(FtdAddTest)
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-# Experimental-module quarantine (revision 3.7, ADR-0016): DagEngine, the
-# cognition sidecar, and the discrete-universe CUDA prototype are kept —
-# never deleted (provenance convention) — but their build membership is an
-# explicit opt-in boundary. Declared here (moved 2026-08-16 from its prior location
-# ~250 lines down, immediately before the ftd_core target that also gates on
-# it) because CMake processes top-to-bottom: this option() must exist before
-# any if(FTD_BUILD_EXPERIMENTAL) check, including the ftd_cognition library
-# just below. It didn't before, so on a FRESH configure (no cached value from
-# a prior run — exactly what CI always does) that first if() saw an
-# undefined, falsy variable and silently skipped ftd_cognition, while
-# test_cognitive_lattice/benchmark_cognitive_lattice (gated further down,
-# after the old declaration point) correctly saw it ON and tried to link
-# against a library that was never built — LNK1181 "cannot open input file
-# ftd_cognition.lib". Invisible on any machine with a previously-configured
-# build directory, since CMake reuses a variable already in the cache from
-# the very start of the next run, which is exactly why this went unnoticed
-# locally but failed on every CI run's from-scratch checkout.
-option(FTD_BUILD_EXPERIMENTAL "Build experimental/quarantined modules (DagEngine, cognition sidecar, discrete-universe prototype)" OFF)
-
-# ftd_cognition — sidecar ternary memory/retrieval substrate for LLM/agent
-# workflows. Deliberately independent of ftd_core / RenderBridge / Voxel.
-if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016 quarantine
-add_library(ftd_cognition STATIC
-    src/cognition/cognitive_lattice.cpp
-)
-target_include_directories(ftd_cognition PUBLIC ${CMAKE_SOURCE_DIR}/include)
-endif()  # FTD_BUILD_EXPERIMENTAL (ftd_cognition)
-
 # ftd_eft — leaf library for EFT objects shared between ftd_core and ftd_cuda.
 # Solves a static-archive link-order issue (2026-05-03): gpu_engine.cu
 # (in libftd_cuda.a) calls DualCellContinuity::DualCellContinuity(int);
@@ -341,7 +313,6 @@ endif()
 add_library(ftd_core
     src/render_bridge.cpp
     src/native_telemetry_scheduler.cpp
-    # src/dag_engine.cpp is quarantined — added below under FTD_BUILD_EXPERIMENTAL (ADR-0016)
     src/lagrangian.cpp
     src/particle_engine.cpp
     src/atom_engine.cpp
@@ -408,23 +379,10 @@ add_library(ftd_core
 # Emscripten guard keeps the three WASM build trees untouched.
 option(FTD_ENABLE_PCH "Use precompiled headers for ftd_core (compile-speed only)" ON)
 
-# FTD_BUILD_EXPERIMENTAL is declared earlier now (~line 140, before the
-# ftd_cognition target that needs it defined first on a fresh configure —
-# see the comment there, 2026-08-16). Default OFF keeps normal builds lean;
-# opt in with -DFTD_BUILD_EXPERIMENTAL=ON when working on quarantined modules.
-# A source-lint (cmake/FtdSourceLint.cmake) guards that no production
-# TU includes the quarantined headers.
 if(FTD_ENABLE_PCH AND NOT EMSCRIPTEN)
     target_precompile_headers(ftd_core PRIVATE
         include/ftd/render_bridge.h
         <vector> <cmath> <cstdint> <algorithm> <memory> <string>)
-endif()
-
-# ADR-0016: DagEngine is compiled into ftd_core only when the experimental
-# boundary is open (its WASM binding was removed in the 2026 consolidation
-# sweep; the only consumer is test_dag_engine, gated below).
-if(FTD_BUILD_EXPERIMENTAL)
-    target_sources(ftd_core PRIVATE src/dag_engine.cpp)
 endif()
 
 target_include_directories(ftd_core PUBLIC
@@ -442,15 +400,6 @@ endif()
 target_link_libraries(ftd_core PUBLIC ftd_eft)
 if(FTD_ENABLE_CUDA)
     target_link_libraries(ftd_core PUBLIC ftd_cuda)
-endif()
-
-# Main simulation executable (native builds only)
-if(NOT EMSCRIPTEN)
-add_executable(ftd_sim
-    src/main.cpp
-    src/cli_demos/cli_demo_scenarios.cpp  # M1: 10 scenario_*() demos extracted from main.cpp
-)
-target_link_libraries(ftd_sim ftd_core)
 endif()
 
 # WebSocket server executable (native builds only — bridges engine to web dashboard)
@@ -472,7 +421,7 @@ endif()
 # In-process Win32/D3D12 desktop app (engine/native): RmlUi UI composited over
 # the live D3D12 lattice/particle scene. Isolated from engine/web. Windows-only.
 # The prior ImGui prototype (native_desktop) was retired 2026-08-21; engine/native
-# is now the sole native app. See native/docs/PLAN_NATIVE_REBUILD.md.
+# is now the sole native app. See native/README.md.
 if(NOT EMSCRIPTEN)
     option(FTD_BUILD_NATIVE
            "Build the native desktop app engine/native (does not affect web/WASM)" ON)

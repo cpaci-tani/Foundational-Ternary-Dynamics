@@ -31,8 +31,8 @@ struct NativeEngineOptions {
     bool force_cpu = false;
     // Matches the web Scale-0 toolbar default (Dispersal).
     int flux_boundary = 2;
-    // Skip ImGui init/draw and the dockspace shell. Renderer and sim loop
-    // stay unchanged (SPEC_UI_V2 §11). Keep this last so existing positional
+    // Skip RmlUi init/draw and the native shell. Renderer and sim loop
+    // stay unchanged. Keep this last so existing positional
     // brace-init of the first four fields stays valid.
     bool no_ui = false;
 };

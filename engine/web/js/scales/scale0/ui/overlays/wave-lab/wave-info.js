@@ -103,7 +103,7 @@ function laneName(lane) {
 }
 
 function laneRows(lanes = []) {
-    const headerStyle = 'color:var(--text-muted);font-size:11px;text-transform:uppercase;';
+    const headerStyle = 'color:var(--text-muted);font-size:16px;text-transform:uppercase;';
     const rowStyle = 'display:grid;grid-template-columns:minmax(58px,1fr) 30px 48px 56px 46px;gap:6px;align-items:baseline;margin:3px 0;';
     const rows = lanes.map((lane) => {
         const energyPct = (lane.energyShare ?? 0) * 100;
@@ -131,14 +131,14 @@ function laneRows(lanes = []) {
 function sparkRow(label, id) {
     return `
         <div style="display:flex;align-items:center;gap:12px;margin:4px 0;">
-            <span style="color:var(--text-muted);font-size:12px;width:120px;flex-shrink:0;">${label}</span>
+            <span style="color:var(--text-muted);font-size:16px;width:120px;flex-shrink:0;">${label}</span>
             <div data-spark="${id}" style="flex-grow:1;min-width:0;height:26px;"></div>
         </div>
     `;
 }
 
 function compactTag(text) {
-    return `<span style="display:inline-flex;align-items:center;min-height:20px;padding:2px 6px;border:1px solid var(--border);border-radius:6px;background:rgba(255,255,255,0.035);color:var(--text-muted);font-size:11px;line-height:1.2;">${text}</span>`;
+    return `<span style="display:inline-flex;align-items:center;min-height:20px;padding:2px 6px;border:1px solid var(--border);border-radius:6px;background:rgba(255,255,255,0.035);color:var(--text-muted);font-size:16px;line-height:1.2;">${text}</span>`;
 }
 
 function infoCenter(m, lane) {
@@ -148,7 +148,7 @@ function infoCenter(m, lane) {
                 <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;color:var(--text-primary);font-weight:600;">
                     ${tagBadge('T')} Wave information center
                 </div>
-                <div style="color:var(--text-muted);font-size:12px;line-height:1.35;">
+                <div style="color:var(--text-muted);font-size:16px;line-height:1.35;">
                     Select an admitted transverse lattice mode or the longitudinal sound-speed negative control. This panel then becomes the live wave recipe, controls, and telemetry center.
                 </div>
             </div>
@@ -176,7 +176,7 @@ function infoCenter(m, lane) {
                 ${compactTag(`native vg/c=${fmtRatio(lane.speedRatioToLight ?? 0, 3)}`)}
                 ${lane.proxy ? compactTag(`seed W ratio=${fmtRatio(lane.seedSpeedRatioToLight ?? 0, 3)}`) : ''}
             </div>
-            <div style="color:var(--text-muted);font-size:12px;line-height:1.35;">
+            <div style="color:var(--text-muted);font-size:16px;line-height:1.35;">
                 ${frequencyNote} The sliders reset the scenario immediately, but the reseed re-applies this scenario's fixed built-in lane (mode n, amplitude, beam radius, pulse width, phase are not yet threaded into the engine seed) -- the theoretical readouts above track the slider values, while measured energy, peaks, and samples below always come from that fixed seed.
             </div>
         </div>
@@ -189,7 +189,7 @@ function controlValue(name, value) {
 
 function sliderRow(name, label, value, min, max, step, display, attrs = '') {
     return `
-        <label style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin:7px 0;color:var(--text-muted);font-size:12px;">
+        <label style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin:7px 0;color:var(--text-muted);font-size:16px;">
             <span>${label}</span>
             ${controlValue(name, display)}
             <input data-wave-control="${name}" type="range" min="${min}" max="${max}" step="${step}" value="${value}" ${attrs}
@@ -200,7 +200,7 @@ function sliderRow(name, label, value, min, max, step, display, attrs = '') {
 
 function synthSliderRow(name, label, value, min, max, step, display, attrs = '') {
     return `
-        <label style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin:7px 0;color:var(--text-muted);font-size:12px;">
+        <label style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin:7px 0;color:var(--text-muted);font-size:16px;">
             <span>${label}</span>
             <span data-synth-value="${name}" style="font-family:var(--font-mono);font-variant-numeric:tabular-nums;color:#10b981;">${display}</span>
             <input data-synth-control="${name}" type="range" min="${min}" max="${max}" step="${step}" value="${value}" ${attrs}
@@ -212,9 +212,9 @@ function synthSliderRow(name, label, value, min, max, step, display, attrs = '')
 function synthSelectRow(name, label, options, selected) {
     const opts = options.map(o => `<option value="${o.value}" ${o.value === selected ? 'selected' : ''} style="background:var(--bg-elevated);color:var(--text-primary);">${o.label}</option>`).join('');
     return `
-        <label style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin:7px 0;color:var(--text-muted);font-size:12px;">
+        <label style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin:7px 0;color:var(--text-muted);font-size:16px;">
             <span>${label}</span>
-            <select data-synth-control="${name}" style="background:var(--bg-elevated);color:var(--text-primary);border:1px solid var(--border);border-radius:4px;padding:2px 4px;font-size:12px;outline:none;">
+            <select data-synth-control="${name}" style="background:var(--bg-elevated);color:var(--text-primary);border:1px solid var(--border);border-radius:4px;padding:2px 4px;font-size:16px;outline:none;">
                 ${opts}
             </select>
         </label>
@@ -223,7 +223,7 @@ function synthSelectRow(name, label, options, selected) {
 
 function synthToggleRow(name, label, checked) {
     return `
-        <label style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin:7px 0;color:var(--text-muted);font-size:12px;cursor:pointer;">
+        <label style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin:7px 0;color:var(--text-muted);font-size:16px;cursor:pointer;">
             <span>${label}</span>
             <input data-synth-control="${name}" type="checkbox" ${checked ? 'checked' : ''} style="accent-color:#10b981;cursor:pointer;">
         </label>
@@ -272,7 +272,7 @@ function singleWaveBody(m, lane) {
         ${row(`sample ${jLabel}/${wLabel}`, `${formatExp(lane.sampleFlux ?? 0)} / ${formatExp(lane.sampleWaveVel ?? 0)}`)}
         ${row('energy centroid x', fmtRatio(lane.energyCentroidX ?? 0, 3))}
         ${laneRows(m.lanes)}
-        <div style="margin-top:8px;color:var(--text-muted);font-size:12px;line-height:1.35;">
+        <div style="margin-top:8px;color:var(--text-muted);font-size:16px;line-height:1.35;">
             ${tagBadge(lane.proxy ? 'T' : 'M')}${note}
         </div>
     `;
@@ -308,7 +308,7 @@ export class WaveInfoComponent extends BaseComponent {
             this.refs.info.innerHTML = infoCenter(null, null);
             this.refs.controls.innerHTML = '';
             this.refs.body.innerHTML = `
-                <div style="color:var(--text-muted);font-size:12px;line-height:1.35;">
+                <div style="color:var(--text-muted);font-size:16px;line-height:1.35;">
                     ${tagBadge('T')}Standalone wave instruments are available as RF lattice wave, Light lattice wave, and Sound lattice proxy.
                 </div>
             `;
@@ -431,7 +431,7 @@ export class WaveInfoComponent extends BaseComponent {
         const speedControl = isSoundScenario
             ? sliderRow('speedRatio', 'seed W coefficient / c', settings.speedRatio.toFixed(3), 0.04, 0.50, 0.005, formatControlValue('speedRatio', settings.speedRatio))
             : `
-                <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin:7px 0;color:var(--text-muted);font-size:12px;">
+                <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin:7px 0;color:var(--text-muted);font-size:16px;">
                     <span>native wave coefficient / c</span>
                     ${controlValue('speedRatio', '1.000')}
                 </div>
@@ -440,7 +440,7 @@ export class WaveInfoComponent extends BaseComponent {
             <div style="margin:0 0 10px;padding:9px;border:1px solid var(--border);border-radius:7px;background:rgba(255,255,255,0.025);">
                 <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;">
                     <span style="color:var(--text-primary);font-weight:600;">Wave controls</span>
-                    <button data-wave-reset type="button" style="border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--text-muted);border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;">reset</button>
+                    <button data-wave-reset type="button" style="border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--text-muted);border-radius:6px;padding:3px 7px;font-size:16px;cursor:pointer;">reset</button>
                 </div>
                 ${sliderRow('modeN', 'frequency mode n', settings.modeN, 1, maxMode, 1, formatControlValue('modeN', settings.modeN))}
                 ${sliderRow('amp', 'amplitude |J|', settings.amp.toFixed(3), 0.001, 0.120, 0.001, formatControlValue('amp', settings.amp))}
@@ -448,7 +448,7 @@ export class WaveInfoComponent extends BaseComponent {
                 ${sliderRow('pulseFrac', 'pulse width', settings.pulseFrac.toFixed(3), 0.120, 1.000, 0.005, formatControlValue('pulseFrac', settings.pulseFrac))}
                 ${sliderRow('phase', 'phase offset', settings.phase.toFixed(3), 0, (Math.PI * 2).toFixed(3), 0.01, formatControlValue('phase', settings.phase))}
                 ${speedControl}
-                <div style="margin-top:6px;color:var(--text-muted);font-size:11px;line-height:1.35;">
+                <div style="margin-top:6px;color:var(--text-muted);font-size:16px;line-height:1.35;">
                     ${tagBadge('T')}Frequency is the native kick-drift dispersion readout from mode n. These controls drive the theoretical readouts above (frequency, wavelength, group velocity); the seeded lattice content itself is this scenario's fixed built-in lane and does not yet change with them.
                 </div>
             </div>
@@ -474,7 +474,7 @@ export class WaveInfoComponent extends BaseComponent {
                     ${synthToggleRow('filterEnabled', 'dynamic lowpass (total energy)', this.synth.filterEnabled)}
                     ${synthToggleRow('detuneEnabled', 'detune / chorus effect', this.synth.detuneEnabled)}
                     ${synthToggleRow('tremoloEnabled', 'tremolo (wave vel W)', this.synth.tremoloEnabled)}
-                    <div style="margin-top:6px;color:var(--text-muted);font-size:11px;line-height:1.35;">
+                    <div style="margin-top:6px;color:var(--text-muted);font-size:16px;line-height:1.35;">
                         Controls the raw Web Audio API node. Does not affect lattice physics.
                     </div>
                 </div>

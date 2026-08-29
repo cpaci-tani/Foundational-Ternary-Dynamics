@@ -103,7 +103,7 @@ function dualCurveChart(series, { w = 240, h = 110, xMin, xMax, yMin, yMax, mark
     for (const yv of [lo, (lo + hi) / 2, hi]) {
         const y = ypx(yv);
         svg += `<line x1="${m.left}" y1="${y.toFixed(1)}" x2="${(m.left + innerW)}" y2="${y.toFixed(1)}" stroke="var(--border-light, rgba(255,255,255,0.05))" stroke-width="0.4"/>`;
-        svg += `<text x="${m.left - 3}" y="${(y + 3).toFixed(1)}" text-anchor="end" fill="var(--text-muted)" font-size="8">${yv.toFixed(2)}</text>`;
+        svg += `<text x="${m.left - 3}" y="${(y + 3).toFixed(1)}" text-anchor="end" fill="var(--text-muted)" font-size="16">${yv.toFixed(2)}</text>`;
     }
     for (const s of series) {
         if (!s.pts.length) continue;
@@ -145,7 +145,7 @@ function renderClockBlock(agg) {
 function renderCardA(container, metrics, agg) {
     const { physicalTime, fMin, dtauMin, gammaMax } = metrics;
     let html = `<div style="${heroStyle()}" title="Lab-frame elapsed time (physical ticks of the substrate clock).">t = ${formatFixed(physicalTime, 1)}</div>`;
-    html += `<div style="font-size:11px;color:var(--text-muted);margin:2px 0 8px;">physical time (lab clock)</div>`;
+    html += `<div style="font-size:16px;color:var(--text-muted);margin:2px 0 8px;">physical time (lab clock)</div>`;
     html += row('Slowest dτ/dt', formatFixed(dtauMin, 5), '~M', undefined, 'Slowest clock rate √f over the sampled latency field (proxy unless the [C++] block below is active).');
     html += row('f_min (lapse)', formatFixed(fMin, 5), '~M', undefined, 'Minimum lapse f = 1 − L_max² over the sampled field.');
     html += row('Peak slowdown', `${formatFixed((1 - dtauMin) * 100, 3)} %`, '~M', undefined, 'Peak clock slowdown (1 − √f_min)·100 from the proxy field.');
@@ -217,12 +217,12 @@ function renderCardC(container, twin) {
     }
     const dtau = tauFar - tauDeep;
     let html = `<div style="${heroStyle()}" title="Accumulated proper-time lead of the far clock over the deep clock — the GPS/twin offset, built from Σ√f·dt at each probe.">Δτ = ${formatExp(dtau)}</div>`;
-    html += `<div style="font-size:11px;color:var(--text-muted);margin:2px 0 8px;">${tagBadge('~M')}far clock lead (twin / GPS offset)</div>`;
-    html += sparkline(history, 'var(--positive)', 232, 32);
+    html += `<div style="font-size:16px;color:var(--text-muted);margin:2px 0 8px;">${tagBadge('~M')}far clock lead (twin / GPS offset)</div>`;
+    html += sparkline(history, 'var(--positive-text)', 232, 32);
     html += `<div class="time-chart-xlabel">Δτ accumulating over ticks →</div>`;
     html += row('τ_deep (well floor)', formatExp(tauDeep), '~M', undefined, `Proper time at the deepest probe (latency L≈${formatFixed(lDeep, 3)}); runs slowest.`);
     html += row('τ_far (shallow edge)', formatExp(tauFar), '~M', undefined, `Proper time at the shallowest probe (latency L≈${formatFixed(lFar, 3)}); runs fastest.`);
-    html += row('Δτ = τ_far − τ_deep', formatExp(dtau), '~M', dtau >= 0 ? 'var(--positive)' : 'var(--negative)', 'The far clock outruns the deep clock — grows monotonically while the well stands.');
+    html += row('Δτ = τ_far − τ_deep', formatExp(dtau), '~M', dtau >= 0 ? 'var(--positive-text)' : 'var(--negative-text)', 'The far clock outruns the deep clock — grows monotonically while the well stands.');
     container.innerHTML = html;
 }
 
@@ -266,7 +266,7 @@ function renderCardD(container, vImposed) {
     html += dualCurveChart([
         { pts: srPts, color: 'var(--accent)', dashed: true },
         { pts: ftdPts, color: 'var(--caution, #fb8c00)' },
-        { pts: measPts, color: 'var(--negative)', dots: true },
+        { pts: measPts, color: 'var(--negative-text)', dots: true },
     ], { w: 240, h: 120, xMin: 0, xMax: vCap, yMin: 0, yMax: 1.0, marker: { x: vImposed, y: markY } });
     html += `<div class="time-chart-xlabel">velocity β = |u| / C_SPEED →   (dτ/dt vs β)</div>`;
     html += row('Mean residual (meas vs √(1−v²))', Number.isFinite(residPct) ? `${formatFixed(residPct, 2)} %` : '—', 'M', undefined, 'Mean |measured − √(1−v²)| / √(1−v²) over the baked FTD-0252 points.');
@@ -275,7 +275,7 @@ function renderCardD(container, vImposed) {
     // IR-convergence mini-chart: residual → 0 as L⁻² (γ emerges in the IR).
     const irPts = IR_CONVERGENCE.map((p) => ({ x: p.L, y: p.resid }));
     html += `<div class="time-subhead" title="Median |dτ/dt − √(1−v²)| vs lattice size L, mass held fixed (k⊥→0). Falls ~ L⁻²: exact Lorentz γ emerges in the IR / continuum limit.">IR convergence — γ emerges as L⁻² ⓘ</div>`;
-    html += dualCurveChart([{ pts: irPts, color: 'var(--positive)', dots: true }],
+    html += dualCurveChart([{ pts: irPts, color: 'var(--positive-text)', dots: true }],
         { w: 240, h: 70, yMin: 0 });
     html += `<div class="time-chart-xlabel">${tagBadge('M')}lattice L →   (median residual ↓)</div>`;
     container.innerHTML = html;
@@ -298,9 +298,9 @@ function renderCardE(container, db) {
     const phaseWrapped = ((phase % TWO_PI) + TWO_PI) % TWO_PI;   // clock-hand angle
     const turns = Math.floor(phase / TWO_PI);                    // completed cycles
     let html = `<div style="${heroStyle()}" title="The manifested cluster's internal de Broglie phase, winding at dφ/dt = ω₀·dτ/dt (the rest-frame Compton clock). Shown wrapped to [0, 2π) — the clock hand.">φ = ${formatFixed(phaseWrapped, 3)} rad</div>`;
-    html += `<div style="font-size:11px;color:var(--text-muted);margin:2px 0 8px;">${tagBadge(active ? 'M' : '~M')}internal clock phase (centre voxel) — ${active ? 'running' : 'idle'}</div>`;
+    html += `<div style="font-size:16px;color:var(--text-muted);margin:2px 0 8px;">${tagBadge(active ? 'M' : '~M')}internal clock phase (centre voxel) — ${active ? 'running' : 'idle'}</div>`;
     html += row('ω₀ (Compton freq.)', formatFixed(omega0, 3), 'IMPOSED', undefined, 'de Broglie internal-clock frequency ω₀∝K_B. IMPOSED — FTD\'s native flux is massless (no restoring term); the substrate fixes the shape, not the absolute scale (no ℏ).');
-    html += row('Clock active', active ? 'ON' : 'OFF', 'M', active ? 'var(--positive)' : 'var(--text-muted)', 'de_broglie_clock toggle: adds the Klein-Gordon mass term −ω₀²·J at manifested voxels.');
+    html += row('Clock active', active ? 'ON' : 'OFF', 'M', active ? 'var(--positive-text)' : 'var(--text-muted)', 'de_broglie_clock toggle: adds the Klein-Gordon mass term −ω₀²·J at manifested voxels.');
     html += row('cycles ticked', String(turns), 'M', undefined, 'Completed clock cycles = ⌊φ/2π⌋ since the clock started.');
     html += row('Period 2π/ω₀', Number.isFinite(period) ? `${formatFixed(period, 2)} ticks` : '—', 'D', undefined, 'Rest-frame oscillation period of the cluster\'s flux.');
     html += row('cluster speed u_raw', formatFixed(speed, 4), 'M', undefined, `Raw manifested-cluster speed in nodes/tick; β=|u|/C_SPEED=${formatFixed(speed / C_SPEED, 4)}.`);

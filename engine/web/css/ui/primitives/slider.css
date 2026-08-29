@@ -94,6 +94,26 @@
     transform: scale(1.15);
 }
 
+/* Engine-constant readouts reuse the range track as a compact visual scale,
+   but are deliberately non-interactive on every real Scale-0 backend. */
+.pe-slider.ctrl-slider-disabled {
+    cursor: not-allowed;
+    opacity: 0.58;
+}
+
+.ctrl-native-fixed {
+    flex: 0 0 auto;
+    padding: 1px 4px;
+    border: 1px solid var(--border-subtle, var(--border));
+    border-radius: var(--radius-sm, 3px);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 16px;
+    line-height: 1.2;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
 /* ── Consciousness slider row (.cs-slider-row) ───────── */
 .cs-slider-row {
     margin-top: 6px;

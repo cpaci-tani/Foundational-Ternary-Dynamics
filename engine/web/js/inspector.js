@@ -18,7 +18,7 @@ import {
     showLatticeInspector,
     hideLatticeInspector,
     updateLatticeFields,
-} from './inspector/scales/lattice.js';
+} from './inspector/scales/lattice.js?v=2';
 import {
     handlePEClick,
     showPEInspector,
@@ -151,6 +151,22 @@ export class Inspector {
 
     getSelectedLatticePosition() {
         return this._selectedPos;
+    }
+
+    /** Select a lattice position through the inspector's public lifecycle. */
+    selectLatticePosition(position) {
+        if (this._engineMode !== 'lattice' || !position) return false;
+        const L = Math.max(1, Math.trunc(Number(this.bridge?.latticeSize) || 32));
+        const bounded = {};
+        for (const axis of ['x', 'y', 'z']) {
+            const value = Number(position[axis]);
+            if (!Number.isFinite(value)) return false;
+            bounded[axis] = Math.max(0, Math.min(L - 1, Math.round(value)));
+        }
+        this.selectedIndex = -1;
+        this._selectedPos = bounded;
+        this._showLatticeInspector();
+        return true;
     }
 
     clearSelection() {
@@ -409,4 +425,3 @@ export class Inspector {
         }
     }
 }
-

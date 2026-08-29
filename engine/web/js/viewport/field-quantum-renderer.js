@@ -87,9 +87,11 @@ export const fieldQuantumMethods = {
         this._dualFluxVolume.geometry.setDrawRange(0, vi);
     },
     toggleDualFluxVolume(on) {
-        if (!this._dualFluxVolume) this._buildDualFluxVolume();
-        this._dualFluxVolume.visible = on;
-        if (!on) this._dualFluxVolume.geometry.setDrawRange(0, 0);
+        const next = !!on;
+        if (!this._dualFluxVolume) { if (!next) return; this._buildDualFluxVolume(); }
+        if (this._dualFluxVolume.visible === next) return;
+        this._dualFluxVolume.visible = next;
+        if (!next) this._dualFluxVolume.geometry.setDrawRange(0, 0);
     },
 
     // ── Chirality Field (Red L-dominant / Blue R-dominant) ───────────
@@ -156,9 +158,11 @@ export const fieldQuantumMethods = {
         this._chiralityField.geometry.setDrawRange(0, vi);
     },
     toggleChiralityField(on) {
-        if (!this._chiralityField) this._buildChiralityField();
-        this._chiralityField.visible = on;
-        if (!on) this._chiralityField.geometry.setDrawRange(0, 0);
+        const next = !!on;
+        if (!this._chiralityField) { if (!next) return; this._buildChiralityField(); }
+        if (this._chiralityField.visible === next) return;
+        this._chiralityField.visible = next;
+        if (!next) this._chiralityField.geometry.setDrawRange(0, 0);
     },
 
     // ══════════════════════════════════════════════════════════════════
@@ -259,8 +263,10 @@ export const fieldQuantumMethods = {
 
     // ── |ψ|² Born density ─────────────────────────────────────────────
     togglePsiSquaredField(on) {
-        this._psi2Visible = !!on;
-        if (!this._quantumField) this._buildQuantumField();
+        const next = !!on;
+        if (this._psi2Visible === next && (this._quantumField || !next)) return;
+        this._psi2Visible = next;
+        if (!this._quantumField) { if (!next) return; this._buildQuantumField(); }
         this._quantumSetVisibility();
     },
     updatePsiSquaredField(data) {
@@ -297,8 +303,10 @@ export const fieldQuantumMethods = {
         this._scene.add(this._phaseNeedles);
     },
     toggleLagrangianDensityField(on) {
-        this._lagrangianVisible = !!on;
-        if (!this._quantumField) this._buildQuantumField();
+        const next = !!on;
+        if (this._lagrangianVisible === next && (this._quantumField || !next)) return;
+        this._lagrangianVisible = next;
+        if (!this._quantumField) { if (!next) return; this._buildQuantumField(); }
         this._quantumSetVisibility();
     },
     updateLagrangianDensityField(data) {
@@ -314,9 +322,11 @@ export const fieldQuantumMethods = {
 
     // ── Entropy s(x) — jittering sparkles ─────────────────────────────
     toggleEntropyDensityField(on) {
-        this._entropyVisible = !!on;
-        if (!this._quantumField) this._buildQuantumField();
-        this._entropyJitterSeed = Date.now();
+        const next = !!on;
+        if (this._entropyVisible === next && (this._quantumField || !next)) return;
+        this._entropyVisible = next;
+        if (!this._quantumField) { if (!next) return; this._buildQuantumField(); }
+        if (next) this._entropyJitterSeed = Date.now();
         this._quantumSetVisibility();
     },
     updateEntropyDensityField(data) {
@@ -373,8 +383,9 @@ export const fieldQuantumMethods = {
         this._horizonField = { points, geo, capacity: max };
     },
     toggleHorizonField(on) {
-        if (!this._horizonField) this._buildHorizonField();
-        this._horizonField.points.visible = !!on;
+        const next = !!on;
+        if (!this._horizonField) { if (!next) return; this._buildHorizonField(); }
+        if (this._horizonField.points.visible !== next) this._horizonField.points.visible = next;
     },
     updateHorizonField(data) {
         this._syncCenterAndRadius();
@@ -427,9 +438,15 @@ export const fieldQuantumMethods = {
         this._scalarClouds[key] = { points, geo, capacity: size };
     },
     _toggleScalarCloud(key, on) {
-        if (!this._scalarClouds || !this._scalarClouds[key]) this._buildScalarCloud(key);
-        this._scalarClouds[key].points.visible = !!on;
-        if (!on) this._scalarClouds[key].geo.setDrawRange(0, 0);
+        const next = !!on;
+        if (!this._scalarClouds || !this._scalarClouds[key]) {
+            if (!next) return;
+            this._buildScalarCloud(key);
+        }
+        const cloud = this._scalarClouds[key];
+        if (cloud.points.visible === next) return;
+        cloud.points.visible = next;
+        if (!next) cloud.geo.setDrawRange(0, 0);
     },
     _updateScalarCloud(key, data, colorize, opts = {}) {
         this._syncCenterAndRadius();

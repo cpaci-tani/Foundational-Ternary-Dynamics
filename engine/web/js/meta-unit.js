@@ -398,7 +398,7 @@ export class MetaUnit {
             el.style.position = 'absolute';
             el.style.color = '#FFD700';
             el.style.fontFamily = 'monospace';
-            el.style.fontSize = '13px';
+            el.style.fontSize = '16px';
             el.style.fontWeight = 'bold';
             el.style.textShadow = '0 0 4px rgba(0,0,0,0.8)';
             el.style.whiteSpace = 'nowrap';
@@ -440,7 +440,7 @@ export class MetaUnit {
             el.style.position = 'absolute';
             el.style.color = 'var(--warning, #d8a24a)';
             el.style.fontFamily = 'monospace';
-            el.style.fontSize = '12px';
+            el.style.fontSize = '16px';
             el.style.fontWeight = 'bold';
             el.style.fontStyle = 'italic';
             el.style.textShadow = '0 0 4px rgba(0,0,0,0.8)';

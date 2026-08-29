@@ -1,4 +1,8 @@
-import { getActiveLatticeSize } from '../state/store.js';
+import {
+    getActiveLatticeSize,
+    setScale0PlaybackRunning,
+    setScale0PlaybackSpeed,
+} from '../state/store.js';
 
 /** Advance Scale-0 physics by `tickCount` ticks on the active owner only. */
 export function runScale0PhysicsTicks(ctx, state, tickCount = 1) {
@@ -40,8 +44,8 @@ export function advanceSimulation(ctx, state) {
     // then return — the in-thread tick path below is for non-worker scenarios only.
     const fm = state.fluxMock;
     if (fm && fm.isWorker && state.useFluxMock) {
-        if (typeof fm.setRunning === 'function') fm.setRunning(ctx.running);
-        if (typeof fm.setTicksPerFrame === 'function') fm.setTicksPerFrame(ctx.ticksPerFrame);
+        setScale0PlaybackRunning(ctx, ctx.running, state);
+        setScale0PlaybackSpeed(ctx, ctx.ticksPerFrame, state);
         const dataVersion = fm.dataVersion || 0;
         if (dataVersion !== state._lastWorkerDataVersion) {
             state._lastWorkerDataVersion = dataVersion;

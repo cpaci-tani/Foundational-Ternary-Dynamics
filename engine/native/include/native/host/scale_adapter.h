@@ -1,7 +1,7 @@
 #pragma once
 //
 // host/scale_adapter.h — the uniform contract every scale implements
-// (SPEC_NATIVE_REBUILD_R0R1 §4.1).
+// used by every retained native scale.
 //
 // Scale 0's adapter is the old NativeEngineSession/command_applier/
 // ui_snapshot_builder logic re-homed behind this interface; each further scale

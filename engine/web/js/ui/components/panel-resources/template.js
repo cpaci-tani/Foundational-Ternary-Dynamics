@@ -354,7 +354,7 @@ export function getInspectorPanelTemplate() {
                                 <dt title="Polarizability (&alpha;_pol): Cloud volume compliance to external fields.">&alpha;<sub>pol</sub></dt>
                                 <dd style="display:flex; flex-direction:column; gap:2px; min-width:0;">
                                     <div id="ae-insp-alpha-pol">--</div>
-                                    <div style="font-size:0.65rem; opacity:0.6; display:flex; justify-content:space-between;">
+                                    <div style="font-size:max(16px, 0.65rem); opacity:0.6; display:flex; justify-content:space-between;">
                                         <span id="ae-insp-alpha-pol-min">--</span>
                                         <span id="ae-insp-alpha-pol-avg">--</span>
                                         <span id="ae-insp-alpha-pol-max">--</span>
@@ -364,7 +364,7 @@ export function getInspectorPanelTemplate() {
                                 <dt title="Ionization Energy (E_ion): Energy required to strip the most loosely bound electron.">E<sub>ion</sub></dt>
                                 <dd style="display:flex; flex-direction:column; gap:2px; min-width:0;">
                                     <div id="ae-insp-e-ion">--</div>
-                                    <div style="font-size:0.65rem; opacity:0.6; display:flex; justify-content:space-between;">
+                                    <div style="font-size:max(16px, 0.65rem); opacity:0.6; display:flex; justify-content:space-between;">
                                         <span id="ae-insp-e-ion-min">--</span>
                                         <span id="ae-insp-e-ion-avg">--</span>
                                         <span id="ae-insp-e-ion-max">--</span>
@@ -374,7 +374,7 @@ export function getInspectorPanelTemplate() {
                                 <dt title="Electron Affinity (E_aff): Tendency to capture an external electron.">E<sub>aff</sub></dt>
                                 <dd style="display:flex; flex-direction:column; gap:2px; min-width:0;">
                                     <div id="ae-insp-e-aff">--</div>
-                                    <div style="font-size:0.65rem; opacity:0.6; display:flex; justify-content:space-between;">
+                                    <div style="font-size:max(16px, 0.65rem); opacity:0.6; display:flex; justify-content:space-between;">
                                         <span id="ae-insp-e-aff-min">--</span>
                                         <span id="ae-insp-e-aff-avg">--</span>
                                         <span id="ae-insp-e-aff-max">--</span>
@@ -384,7 +384,7 @@ export function getInspectorPanelTemplate() {
                                 <dt title="Scattering Cross-section (&sigma;_scatter): Interaction footprint for physical collisions.">&sigma;<sub>scatter</sub></dt>
                                 <dd style="display:flex; flex-direction:column; gap:2px; min-width:0;">
                                     <div id="ae-insp-sigma-scatter">--</div>
-                                    <div style="font-size:0.65rem; opacity:0.6; display:flex; justify-content:space-between;">
+                                    <div style="font-size:max(16px, 0.65rem); opacity:0.6; display:flex; justify-content:space-between;">
                                         <span id="ae-insp-sigma-scatter-min">--</span>
                                         <span id="ae-insp-sigma-scatter-avg">--</span>
                                         <span id="ae-insp-sigma-scatter-max">--</span>
@@ -394,7 +394,7 @@ export function getInspectorPanelTemplate() {
                                 <dt title="Effective Nuclear Charge (Z_eff): Net positive charge experienced by valence electrons.">Z<sub>eff</sub></dt>
                                 <dd style="display:flex; flex-direction:column; gap:2px; min-width:0;">
                                     <div id="ae-insp-zeff">--</div>
-                                    <div style="font-size:0.65rem; opacity:0.6; display:flex; justify-content:space-between;">
+                                    <div style="font-size:max(16px, 0.65rem); opacity:0.6; display:flex; justify-content:space-between;">
                                         <span id="ae-insp-zeff-min">--</span>
                                         <span id="ae-insp-zeff-avg">--</span>
                                         <span id="ae-insp-zeff-max">--</span>
@@ -404,7 +404,7 @@ export function getInspectorPanelTemplate() {
                                 <dt title="Fractional Charge (q_frac): Continuous charge due to charge equilibration (QEq) with bonded neighbors.">q<sub>frac</sub></dt>
                                 <dd style="display:flex; flex-direction:column; gap:2px; min-width:0;">
                                     <div id="ae-insp-q-frac">--</div>
-                                    <div style="font-size:0.65rem; opacity:0.6; display:flex; justify-content:space-between;">
+                                    <div style="font-size:max(16px, 0.65rem); opacity:0.6; display:flex; justify-content:space-between;">
                                         <span id="ae-insp-q-frac-min">--</span>
                                         <span id="ae-insp-q-frac-avg">--</span>
                                         <span id="ae-insp-q-frac-max">--</span>

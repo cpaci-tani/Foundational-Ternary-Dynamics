@@ -305,7 +305,7 @@ local-block measurement**:
 
 **Implementation:**
 - A_{1g} projector ([`engine/include/ftd/a1g_projector.h`](../../../../engine/include/ftd/a1g_projector.h)) — 4-dim orbit-sum basis (centre + SC face + FCC edge + BCC corner) on the 27-block. 13/13 sanity checks pass: δ_centre→f=1, uniform→f=1, pure E_g face vector→f=0, random IID Gaussian→f=4/27=0.148, periodic-wrap correctness, etc. ([`engine/tests/test_a1g_projector.cpp`](../../../../engine/tests/test_a1g_projector.cpp))
-- Per-toggle bisect ([`engine/tests/dump_a1g_decay.cpp`](../../../../engine/archive/dumps_non_load_bearing/dump_a1g_decay.cpp)) at L=32, sub-genesis amplitude A=0.5·K_GENESIS, deterministic (no Langevin), 200 ticks, IC = δ_centre·A·ê_x.
+- Per-toggle bisect (retired `dump_a1g_decay.cpp`, recoverable from Git history through baseline `21566b63`) at L=32, sub-genesis amplitude A=0.5·K_GENESIS, deterministic (no Langevin), 200 ticks, IC = δ_centre·A·ê_x.
 - Characterization regression test ([`engine/tests/test_a1g_bridge_i_empirical.cpp`](../../../../engine/tests/test_a1g_bridge_i_empirical.cpp)).
 
 **Empirical result:**

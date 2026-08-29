@@ -4,7 +4,7 @@
 .pe-telem-section { margin-bottom: var(--sp-md); }
 .pe-telem-title {
     font-size: var(--fs-sm); font-weight: 600; text-transform: uppercase;
-    letter-spacing: 0.08em; color: var(--accent); margin-bottom: var(--sp-sm);
+    letter-spacing: 0.08em; color: var(--accent-text); margin-bottom: var(--sp-sm);
 }
 .pe-conservation-row {
     display: grid; grid-template-columns: 50px minmax(0, 1fr) 20px 80px;
@@ -70,7 +70,7 @@
 .pe-insp-symbol {
     font-size: var(--fs-base);
     font-weight: 500;
-    color: var(--accent);
+    color: var(--accent-text);
 }
 
 /* ── Scale 1 Field Overlay Swatches ────────────────────── */

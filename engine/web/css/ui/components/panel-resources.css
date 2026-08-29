@@ -80,7 +80,7 @@
 .panel-resource-slider-value {
     min-width: 40px;
     font-size: var(--fs-sm);
-    color: var(--accent);
+    color: var(--accent-text);
 }
 
 .panel-resource-empty {
@@ -144,7 +144,7 @@
 
 .panel-resource-title {
     margin: 0 0 var(--sp-sm) 0;
-    color: var(--accent);
+    color: var(--accent-text);
     font-size: var(--fs-md);
 }
 

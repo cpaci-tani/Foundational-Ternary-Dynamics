@@ -7,16 +7,16 @@
  */
 
 import { appRegistry } from './core/registry.js';
-import { Viewport } from './viewport.js';
+import { Viewport } from './viewport.js?v=8';
 import { FluxEnergyChart, ParticleChart } from './charts.js';
 import { telemetryHub } from './telemetry-hub.js';
-import { createInspectorAppRuntime } from './inspector/app-runtime.js';
+import { createInspectorAppRuntime } from './inspector/app-runtime.js?v=2';
 import { initZoo, setEngineMode as setZooMode } from './zoo.js';
 import { getCategories, getMoleculesByCategory } from './molecules.js';
 import { debugLog } from './core/log.js';
 
 // ── Scale Controllers (extracted from inline code) ─────────────────
-import * as Scale0Controller from './scales/scale0/controller.js';
+import * as Scale0Controller from './scales/scale0/controller.js?v=26';
 import * as Scale1Controller from './scales/scale1/controller.js';
 import * as Scale2Controller from './scales/scale2/controller.js';
 import * as Scale3Controller from './scales/scale3/controller.js';
@@ -36,7 +36,7 @@ import { K_B } from './constants.js';
 import { AggregateDetector, EmergenceMonitor } from './aggregation-bridge.js';
 import { createOnticPanel } from './ui/app-ontic.js';
 import { BackgroundManager } from './backgrounds.js';
-import { AppShell } from './ui/shell/app-shell.js';
+import { AppShell } from './ui/shell/app-shell.js?v=2';
 import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initScenePanel, initTelemetryGridPanel } from './ui/panels/index.js';
 import { floatingWindowManager } from './ui/components/floating-window/component.js';
 import { initFluxSlicePanel } from './scales/scale0/ui/overlays/flux-slice-panel.js';
@@ -50,11 +50,12 @@ import { initThermoPanel } from './scales/scale0/ui/overlays/thermo-panel.js';
 import { initDispersionPanel } from './scales/scale0/ui/overlays/dispersion-panel.js';
 import { initKnotsPanel } from './scales/scale0/ui/overlays/knots-panel.js';
 import { initScaleContextPanel } from './scales/scale0/ui/overlays/scale-context-panel.js';
-import { initSettingsModal } from './ui/components/settings-modal/component.js';
+import { initSettingsModal } from './ui/components/settings-modal/component.js?v=2';
 // Wire / boot helpers extracted per refactoring-analyst RF-9 (partial).
 import { wireKeyboard as wireKeyboardExternal } from './app-wire/keyboard.js';
 import { showToast, loadProgress as _loadProgress } from './app-wire/status.js';
 import { bootBridge } from './app-wire/bridge-boot.js';
+import { sliderValueToSpeed, speedLabel } from './ui/components/play-bar/speed-scale.js';
 
 debugLog('[FTD] App version 20260318a loaded (cache-busted)');
 
@@ -202,29 +203,23 @@ function _makeCtx() {
 
 function pauseSimulation() {
     running = false;
+    bridge?.cancelQueuedTicks?.();
+    if (engineMode === 'lattice') {
+        Scale0Controller.setPlaybackRunning(_makeCtx(), false);
+    }
     updatePlayButton();
-}
-
-function sliderValueToSpeed(s, modeValue = engineMode) {
-    if (modeValue === 'planetary') return Math.pow(10, (s - 50) / 25);
-    if (s <= 50) return Math.pow(10, (s - 50) / 25);
-    return 1.0 + (s - 50) / 50;
-}
-
-function speedLabel(tpf) {
-    if (tpf < 0.1) return tpf.toFixed(2);
-    if (tpf < 1) return tpf.toFixed(1);
-    return tpf.toFixed(1);
 }
 
 function applyTicksPerFrameFromSlider(value) {
     const slider = document.getElementById('ticks-per-frame');
     const display = document.getElementById('tpf-display');
     if (slider) slider.value = String(value);
-    ticksPerFrame = sliderValueToSpeed(parseFloat(value), engineMode);
+    ticksPerFrame = sliderValueToSpeed(value);
     _tickAccumulator = 0;
     if (display) display.textContent = speedLabel(ticksPerFrame);
-    if (bridge && typeof bridge.setTicksPerFrame === 'function') {
+    if (engineMode === 'lattice') {
+        Scale0Controller.setPlaybackSpeed(_makeCtx(), ticksPerFrame);
+    } else if (bridge && typeof bridge.setTicksPerFrame === 'function') {
         bridge.setTicksPerFrame(ticksPerFrame);
     }
 }
@@ -241,18 +236,25 @@ function applyBoundaryShape(shape) {
 
 // 0 = Periodic (toroidal wrap), 1 = Reflective (perfect cavity mirror), 2 = Dispersal (energy exits)
 function applyFluxBoundaryMode(mode) {
+    const normalized = Number.isInteger(Number(mode)) && Number(mode) >= 0 && Number(mode) <= 2
+        ? Number(mode)
+        : 2;
     const sel = document.getElementById('flux-boundary-mode');
-    if (sel) sel.value = String(mode);
-    if (bridge?.setFluxBoundaryMode) bridge.setFluxBoundaryMode(mode);
-    const fm = Scale0Controller.getFluxMock();
-    if (fm?.setFluxBoundaryMode) fm.setFluxBoundaryMode(mode);
+    if (sel) sel.value = String(normalized);
+    // Exactly one physics owner receives a live boundary command. The idle
+    // main-thread bridge is rebuilt/reconfigured if worker fallback is needed;
+    // mirroring every UI input into it only created split ownership.
+    const owner = Scale0Controller.getActivePhysicsOwner(_makeCtx());
+    owner?.setFluxBoundaryMode?.(normalized);
+    // The viewport's legacy particle-wall flag must describe reflective mode
+    // for direct user changes as well as scenario defaults.
+    viewport?.setReflectiveBoundary?.(normalized === 1);
     Scale0Controller.setLatticeNeedsUpload();
 }
 
 function applyReflectiveBoundary(on) {
     // Legacy path: map bool → flux boundary mode (on=Reflective/1, off=Dispersal/2)
     applyFluxBoundaryMode(on ? 1 : 2);
-    if (viewport?.setReflectiveBoundary) viewport.setReflectiveBoundary(on);
 }
 
 /**
@@ -726,17 +728,21 @@ function animate(now) {
 const _panelUpdateIntervalMs = Object.freeze({
     diagnostics: 100,
     charts: 100,
-    'telemetry-grid': 125,
+    // The grid's visible sparklines must consume every published telemetry
+    // sample. 125 ms made them redraw at ~8 Hz while Scale 0 publishes at
+    // display-refresh / 3 (~20-24 Hz), producing the visibly stepped motion
+    // captured in the 2026-08-28 audit video. Floated and non-Scale-0 grids
+    // remain bounded by the component's matching ~30 Hz render cap.
+    'telemetry-grid': 33,
     lagrangian: 250,
 });
 const _panelLastUpdateAt = new Map();
 
 function _shouldAppUpdatePanel(panelId, now = performance.now()) {
-    const floating = floatingWindowManager.getWindow(panelId);
-    const visible = activeTab === panelId || (!!floating && !floating.isCollapsed);
-    if (!visible) return false;
+    if (!_isPanelVisibleFn(panelId)) return false;
     const scale0Owned = engineMode === 'lattice' &&
-        (panelId === 'charts' || panelId === 'diagnostics' || panelId === 'lagrangian') &&
+        (panelId === 'charts' || panelId === 'diagnostics' ||
+            panelId === 'telemetry-grid' || panelId === 'lagrangian') &&
         activeTab === panelId;
     if (scale0Owned) return false;
     const interval = _panelUpdateIntervalMs[panelId] ?? 100;
@@ -799,7 +805,10 @@ function _buildScale1Ctx(now) {
 // Same predicate _makeCtx() exposes, hoisted so the per-frame ctx builder
 // doesn't allocate a closure every frame.
 const _isPanelVisibleFn = (panelId) => {
-    if (activeTab === panelId) return true;
+    if (document.documentElement.classList.contains('ui-hidden')) return false;
+    if (activeTab === panelId) {
+        return !document.getElementById('app')?.classList.contains('panels-collapsed');
+    }
     const floating = floatingWindowManager.getWindow(panelId);
     return !!floating && !floating.isCollapsed;
 };
@@ -853,8 +862,7 @@ function wireToolbar() {
 
     // Step
     document.getElementById('btn-step').addEventListener('click', () => {
-        running = false;
-        updatePlayButton();
+        pauseSimulation();
         if (engineMode === 'atoms' || engineMode === 'molecules') {
             bridge.aeTick();
         } else if (engineMode === 'particles') {
@@ -873,8 +881,7 @@ function wireToolbar() {
 
     // Reset
     document.getElementById('btn-reset').addEventListener('click', () => {
-        running = false;
-        updatePlayButton();
+        pauseSimulation();
         if (engineMode === 'cosmic') {
             Scale5Controller.loadCosmicScenario(_makeCtx(), document.getElementById('cosmic-scenario-select')?.value || 'cosmic-galaxy');
         } else if (engineMode === 'planetary') {
@@ -894,12 +901,18 @@ function wireToolbar() {
 
     const slider = document.getElementById('ticks-per-frame');
     applyTicksPerFrameFromSlider(slider.value);
-    slider.addEventListener('input', () => applyTicksPerFrameFromSlider(slider.value));
+    let speedInputRaf = null;
+    slider.addEventListener('input', () => {
+        if (speedInputRaf !== null) return;
+        speedInputRaf = requestAnimationFrame(() => {
+            speedInputRaf = null;
+            applyTicksPerFrameFromSlider(slider.value);
+        });
+    });
 
     // Engine mode selector (Scale 0 / Scale 1)
     document.getElementById('engine-mode').addEventListener('change', (e) => {
-        running = false;
-        updatePlayButton();
+        pauseSimulation();
         switchEngineMode(e.target.value);
     });
 
@@ -1302,8 +1315,7 @@ function wireKeyboard() {
     wireKeyboardExternal({
         getEngineMode: () => engineMode,
         getBridge: () => bridge,
-        setRunning: (v) => { running = v; },
-        updatePlayButton,
+        pauseSimulation,
         togglePlay,
         stepScenario: () => {
             if (engineMode === 'atoms' || engineMode === 'molecules') {
@@ -1350,12 +1362,18 @@ function wireKeyboard() {
     const btnClose = document.getElementById('settings-close');
     const slider = document.getElementById('settings-ui-scale');
     const valDisplay = document.getElementById('settings-scale-val');
+    const glassToggle = document.getElementById('settings-glass-enabled');
+    const glassThicknessSlider = document.getElementById('settings-glass-thickness');
+    const glassThicknessValue = document.getElementById('settings-glass-thickness-val');
+    const glassControls = document.getElementById('settings-glass-controls');
     const btnReset = document.getElementById('settings-reset');
     const settingsButtons = Array.from(document.querySelectorAll('[data-setting][data-value]'));
 
     const DEFAULT_SETTINGS = Object.freeze({
         scale: 1.0,
         theme: 'default',
+        glass: 'off',
+        glassThickness: 16,
         density: 'comfortable',
         panelWidth: 'standard',
         tooltips: 'on',
@@ -1365,6 +1383,8 @@ function wireKeyboard() {
     const STORAGE_KEYS = Object.freeze({
         scale: 'ftd-ui-scale',
         theme: 'ftd-theme',
+        glass: 'ftd-glassmorphism',
+        glassThickness: 'ftd-glass-thickness',
         density: 'ftd-density',
         panelWidth: 'ftd-panel-width',
         tooltips: 'ftd-tooltips',
@@ -1382,6 +1402,63 @@ function wireKeyboard() {
 
     function persist(key, value) {
         try { localStorage.setItem(key, String(value)); } catch (e) { }
+    }
+
+    const GLASS_THICKNESS_MIN = 4;
+    const GLASS_THICKNESS_MAX = 32;
+    let glassThicknessFrame = 0;
+    let pendingGlassThickness = null;
+
+    function normalizeGlassThickness(value) {
+        const parsed = Number(value);
+        if (!Number.isFinite(parsed)) return DEFAULT_SETTINGS.glassThickness;
+        return Math.min(GLASS_THICKNESS_MAX, Math.max(GLASS_THICKNESS_MIN, Math.round(parsed)));
+    }
+
+    function updateGlassThicknessDisplay(thickness) {
+        if (glassThicknessSlider) glassThicknessSlider.value = String(thickness);
+        if (glassThicknessValue) glassThicknessValue.textContent = `${thickness} px`;
+    }
+
+    function applyGlassThickness(value) {
+        if (glassThicknessFrame) cancelAnimationFrame(glassThicknessFrame);
+        glassThicknessFrame = 0;
+        pendingGlassThickness = null;
+        const thickness = normalizeGlassThickness(value);
+        root.style.setProperty('--glass-thickness', `${thickness}px`);
+        root.style.setProperty('--glass-blur-low', `${thickness / 2}px`);
+        root.style.setProperty('--glass-blur-mid', `${thickness}px`);
+        root.style.setProperty('--glass-blur-high', `${thickness * 1.5}px`);
+        updateGlassThicknessDisplay(thickness);
+        persist(STORAGE_KEYS.glassThickness, thickness);
+    }
+
+    function queueGlassThickness(value) {
+        pendingGlassThickness = normalizeGlassThickness(value);
+        updateGlassThicknessDisplay(pendingGlassThickness);
+        if (glassThicknessFrame) return;
+        glassThicknessFrame = requestAnimationFrame(() => {
+            const thickness = pendingGlassThickness;
+            glassThicknessFrame = 0;
+            pendingGlassThickness = null;
+            applyGlassThickness(thickness);
+        });
+    }
+
+    function applyGlassMode(value) {
+        const mode = value === 'on' ? 'on' : 'off';
+        const enabled = mode === 'on';
+        root.dataset.glass = mode;
+        if (glassToggle) {
+            glassToggle.checked = enabled;
+            glassToggle.setAttribute('aria-checked', enabled ? 'true' : 'false');
+        }
+        if (glassThicknessSlider) glassThicknessSlider.disabled = !enabled;
+        if (glassControls) {
+            glassControls.classList.toggle('is-disabled', !enabled);
+            glassControls.setAttribute('aria-disabled', enabled ? 'false' : 'true');
+        }
+        persist(STORAGE_KEYS.glass, mode);
     }
 
     // ── Scale ──
@@ -1405,7 +1482,10 @@ function wireKeyboard() {
     }
 
     // ── Theme ──
+    let themeReleaseRaf = 0;
     function applyTheme(name) {
+        root.dataset.themeChanging = 'true';
+        if (themeReleaseRaf) cancelAnimationFrame(themeReleaseRaf);
         if (name === 'default') {
             root.removeAttribute('data-theme');
         } else {
@@ -1418,6 +1498,12 @@ function wireKeyboard() {
             sw.tabIndex = on ? 0 : -1;
         });
         persist(STORAGE_KEYS.theme, name);
+        themeReleaseRaf = requestAnimationFrame(() => {
+            themeReleaseRaf = requestAnimationFrame(() => {
+                delete root.dataset.themeChanging;
+                themeReleaseRaf = 0;
+            });
+        });
     }
 
 
@@ -1458,6 +1544,9 @@ function wireKeyboard() {
         const savedScale = localStorage.getItem(STORAGE_KEYS.scale);
         applyScale(savedScale ? parseFloat(savedScale) : DEFAULT_SETTINGS.scale);
         applyTheme(localStorage.getItem(STORAGE_KEYS.theme) || DEFAULT_SETTINGS.theme);
+        const savedGlassThickness = localStorage.getItem(STORAGE_KEYS.glassThickness);
+        applyGlassThickness(savedGlassThickness ?? DEFAULT_SETTINGS.glassThickness);
+        applyGlassMode(localStorage.getItem(STORAGE_KEYS.glass) || DEFAULT_SETTINGS.glass);
         applyDensity(localStorage.getItem(STORAGE_KEYS.density) || DEFAULT_SETTINGS.density);
         applyPanelWidth(localStorage.getItem(STORAGE_KEYS.panelWidth) || DEFAULT_SETTINGS.panelWidth);
         applyTooltipMode(localStorage.getItem(STORAGE_KEYS.tooltips) || DEFAULT_SETTINGS.tooltips);
@@ -1500,6 +1589,17 @@ function wireKeyboard() {
         });
     });
 
+    // ── Glass controls ──
+    if (glassToggle) {
+        glassToggle.addEventListener('change', () => applyGlassMode(glassToggle.checked ? 'on' : 'off'));
+    }
+    if (glassThicknessSlider) {
+        glassThicknessSlider.addEventListener('input', () => queueGlassThickness(glassThicknessSlider.value));
+        // Pointer release / keyboard commit flushes synchronously so an
+        // immediate reload cannot strand the final value in a queued frame.
+        glassThicknessSlider.addEventListener('change', () => applyGlassThickness(glassThicknessSlider.value));
+    }
+
     // ── Other preference controls ──
     settingsButtons.forEach((button) => {
         button.addEventListener('click', () => {
@@ -1518,6 +1618,8 @@ function wireKeyboard() {
         btnReset.addEventListener('click', () => {
             applyScale(DEFAULT_SETTINGS.scale);
             applyTheme(DEFAULT_SETTINGS.theme);
+            applyGlassThickness(DEFAULT_SETTINGS.glassThickness);
+            applyGlassMode(DEFAULT_SETTINGS.glass);
             applyDensity(DEFAULT_SETTINGS.density);
             applyPanelWidth(DEFAULT_SETTINGS.panelWidth);
             applyTooltipMode(DEFAULT_SETTINGS.tooltips);
@@ -1700,16 +1802,25 @@ function buildScale3MoleculeDropdown() {
 
 // ── Helpers ──────────────────────────────────────────────────────────
 function togglePlay() {
-    running = !running;
-    if (!running) bridge?.cancelQueuedTicks?.();
+    if (running) {
+        pauseSimulation();
+        return;
+    }
+    running = true;
+    if (engineMode === 'lattice') {
+        Scale0Controller.setPlaybackRunning(_makeCtx(), true);
+    }
     updatePlayButton();
 }
 
 function updatePlayButton() {
     const btn = document.getElementById('btn-play');
     if (!btn) return;
-    btn.innerHTML = running ? '&#9208;' : '&#9654;'; // ⏸ / ▶
-    btn.dataset.paused = running ? 'false' : 'true';
+    const paused = running ? 'false' : 'true';
+    const glyph = running ? '\u23F8' : '\u25B6';
+    if (btn.dataset.paused === paused && btn.textContent === glyph) return;
+    btn.textContent = glyph;
+    btn.dataset.paused = paused;
 }
 
 function clearCharts() {

@@ -27,8 +27,8 @@ deferring this decision until Tier 1's guards provide evidence.
 
 **Resolved.** The live system keeps the registry, C++ seed, metadata, and toggle
 profile, and removes the second seed implementation. Scenario parity now checks
-the UI registry directly against C++. The retired JS mirror is preserved under
-`engine/archive/web_scale0_scenario_mirror_2026-08-27/`.
+the UI registry directly against C++. The retired JS mirror remains available
+in Git history through baseline `21566b63`.
 
 The original alternatives were:
 

@@ -24,7 +24,7 @@ function buildPanel(dockMode = false) {
     root.className = 'scale0-only s0-overlay-panel p1-observables-panel';
     const baseTypography = `
         font-family: var(--font-sans, system-ui, -apple-system, "Segoe UI", sans-serif);
-        font-size: 13px;
+        font-size: 16px;
         line-height: 1.45;
         color: var(--text-primary);
     `;

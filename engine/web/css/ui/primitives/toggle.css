@@ -12,8 +12,12 @@
     border-radius: var(--radius);
     color: var(--text-secondary);
     cursor: pointer;
-    backdrop-filter: blur(8px);
-    transition: all var(--dur-base) var(--ease-out);
+    backdrop-filter: var(--glass-filter-low);
+    transition: background-color var(--dur-base) var(--ease-out),
+                color var(--dur-base) var(--ease-out),
+                border-color var(--dur-base) var(--ease-out),
+                transform var(--dur-base) var(--ease-out),
+                box-shadow var(--dur-base) var(--ease-out);
 }
 
 .view-toggle:hover {
@@ -26,16 +30,9 @@
 
 .view-toggle.active {
     background: var(--accent-dim);
-    color: var(--text-primary);
+    color: var(--on-accent);
     border-color: var(--accent);
     box-shadow: 0 0 12px var(--accent-glow);
-}
-
-/* Light/parchment theme: active state text should be white over accent bg
-   (accent is a strong hue, text-primary on those themes is dark). */
-html[data-theme="light"] .view-toggle.active,
-html[data-theme="parchment"] .view-toggle.active {
-    color: #fff;
 }
 
 /* Viewport overlays float over the 3D canvas. They inherit --bg-surface
@@ -45,13 +42,13 @@ html[data-theme="parchment"] .view-toggle.active {
     background: var(--bg-surface);
     color: var(--text-secondary);
     border-color: var(--border);
-    backdrop-filter: blur(12px);
+    backdrop-filter: var(--glass-filter-mid);
 }
 
 #viewport-overlay .view-toggle.active,
 #viewport-toggles-universal .view-toggle.active {
     background: var(--accent-dim);
-    color: var(--text-primary);
+    color: var(--on-accent);
     border-color: var(--accent);
 }
 
@@ -79,7 +76,7 @@ html[data-theme="parchment"] .view-toggle.active {
 .flux-slice-axis-mini {
     flex: 1;
     padding: 2px 0;
-    font-size: var(--fs-xs, 11px);
+    font-size: var(--fs-xs, 16px);
     text-align: center;
     text-transform: lowercase;
     letter-spacing: 0.04em;
@@ -95,6 +92,6 @@ html[data-theme="parchment"] .view-toggle.active {
 
 .dynamics-toggle.active {
     border-color: var(--warning);
-    color: var(--warning);
+    color: var(--warning-text);
     background: rgba(255, 167, 38, 0.1);
 }

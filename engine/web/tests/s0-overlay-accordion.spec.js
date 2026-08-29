@@ -1,13 +1,13 @@
 // @ts-check
 /**
- * Scale-0 Visualization panel — accordion revamp (2026-06-05).
+ * Scale-0 Visualization panel — layer-inspector redesign (2026-08-29).
  *
  * Pins the three behaviours added when the always-open 6-column grid became a
  * compact collapsible accordion (see overlays/panel-shell.js):
- *   - all categories expanded by default (opt-in per-category collapse persists),
- *     click-to-collapse, multiple open (or collapsed) at once;
- *   - an Active strip of removable chips derived from button .active state;
- *   - a filter that hides non-matching overlays + auto-expands matching categories.
+ *   - progressive-disclosure accordion cards with independent persisted state;
+ *   - a compact Active rail of removable chips derived from button state;
+ *   - unified scalar/vector presentation controls;
+ *   - filter/clear behavior and contextual subcontrols.
  * The toggle wiring itself is covered by toggle-coverage.spec.js and is unchanged.
  */
 import { test, expect } from '@playwright/test';
@@ -19,7 +19,7 @@ const expand = (page) => page.evaluate(() => {
 });
 
 test.describe('Scale-0 Visualization accordion', () => {
-    test('expands by default, compact, with an active-overlay chip', async ({ page }) => {
+    test('mounts the compact layer-inspector hierarchy without reserved dead space', async ({ page }) => {
         await gotoAndReady(page);
         await page.waitForTimeout(1500);
         await expand(page);
@@ -31,18 +31,48 @@ test.describe('Scale-0 Visualization accordion', () => {
                 hasStrip: !!document.getElementById('s0-overlay-active'),
                 width: Math.round(document.getElementById('viewport-overlay').getBoundingClientRect().width),
                 categories: cols.length,
-                allCollapsed: cols.every((c) => c.classList.contains('is-collapsed')),
+                openCategories: cols.filter((c) => !c.classList.contains('is-collapsed')).map((c) => c.dataset.col),
                 stripHidden: document.getElementById('s0-overlay-active').hidden,
+                stripHeight: Math.round(document.getElementById('s0-overlay-active').getBoundingClientRect().height),
                 chips: [...document.querySelectorAll('#s0-overlay-active .s0-overlay-chip-label')].map((e) => e.textContent),
+                summary: document.getElementById('s0-overlay-summary')?.textContent,
+                renderRows: document.querySelectorAll('.s0-overlay-render-row').length,
+                searchClearHidden: document.getElementById('s0-overlay-search-clear')?.hidden,
+                volumeExpanded: document.querySelector('[data-col="volume"] .s0-overlay-col-head')?.getAttribute('aria-expanded'),
             };
         });
         expect(s.hasSearch && s.hasStrip).toBe(true);
-        expect(s.categories).toBe(7);
-        expect(s.allCollapsed, 'all categories expanded by default').toBe(false);
-        expect(s.width, 'panel is compact, not the ~700px grid').toBeLessThan(320);
+        expect(s.categories).toBe(8);
+        expect(s.openCategories, 'only the primary active category opens by default').toEqual(['volume']);
+        expect(s.width, 'panel is a narrow inspector, not the old wide grid').toBeGreaterThanOrEqual(320);
+        expect(s.width).toBeLessThanOrEqual(370);
         // flux-volume is on by default → strip shown with a Flux Volume chip.
         expect(s.stripHidden).toBe(false);
+        expect(s.stripHeight, 'one active chip must not reserve multiple empty rows').toBeLessThanOrEqual(38);
         expect(s.chips.some((c) => /Flux Volume/.test(c))).toBe(true);
+        expect(s.summary).toBe('1 active');
+        expect(s.renderRows).toBe(2);
+        expect(s.searchClearHidden).toBe(true);
+        expect(s.volumeExpanded).toBe('true');
+
+        await page.setViewportSize({ width: 1024, height: 768 });
+        await page.waitForTimeout(100);
+        const responsive = await page.evaluate(() => {
+            const panel = document.getElementById('viewport-overlay');
+            const viewport = document.getElementById('viewport');
+            const body = panel.querySelector('.s0-overlay-body');
+            const panelRect = panel.getBoundingClientRect();
+            const viewportRect = viewport.getBoundingClientRect();
+            return {
+                width: Math.round(panelRect.width),
+                bounded: panelRect.left >= viewportRect.left
+                    && panelRect.right <= viewportRect.right
+                    && panelRect.top >= viewportRect.top
+                    && panelRect.bottom <= viewportRect.bottom,
+                bodyOverflow: getComputedStyle(body).overflowY,
+            };
+        });
+        expect(responsive).toEqual({ width: 326, bounded: true, bodyOverflow: 'auto' });
     });
 
     test('clicking a category header toggles it independently (not mutually exclusive)', async ({ page }) => {
@@ -53,9 +83,13 @@ test.describe('Scale-0 Visualization accordion', () => {
         const isOpen = (col) => page.evaluate((c) => !document.querySelector(`#viewport-overlay [data-col="${c}"]`).classList.contains('is-collapsed'), col);
         const clickHead = (col) => page.evaluate((c) => document.querySelector(`#viewport-overlay [data-col="${c}"] .s0-overlay-col-head`).click(), col);
 
-        // Both categories start expanded (default). Collapse volume only.
+        // Volume starts open and Fields starts closed. Opening Fields does not
+        // close Volume; each card remains independently controllable.
         expect(await isOpen('volume'), 'volume starts expanded').toBe(true);
-        expect(await isOpen('fields'), 'fields starts expanded').toBe(true);
+        expect(await isOpen('fields'), 'fields starts collapsed').toBe(false);
+        await clickHead('fields');
+        expect(await isOpen('fields'), 'fields opens independently').toBe(true);
+        expect(await isOpen('volume'), 'volume remains open').toBe(true);
         await clickHead('volume');
         expect(await isOpen('volume'), 'volume collapses on click').toBe(false);
         expect(await isOpen('fields'), 'fields untouched, stays open (multi-state independence)').toBe(true);
@@ -108,5 +142,138 @@ test.describe('Scale-0 Visualization accordion', () => {
         }));
         expect(r.anyFiltered, 'no filter classes after clear').toBe(false);
         expect(r.volCollapsed, 'categories restored back to expanded default').toBe(false);
+    });
+
+    test('search clear, ARIA truth, and contextual controls follow their owning layer', async ({ page }) => {
+        await gotoAndReady(page);
+        await page.waitForTimeout(1500);
+        await expand(page);
+
+        const result = await page.evaluate(async () => {
+            const display = (selector) => getComputedStyle(document.querySelector(selector)).display;
+            const twoFrames = async () => {
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+            };
+
+            const topology = document.querySelector('[data-col="topology"]');
+            if (topology.classList.contains('is-collapsed')) topology.querySelector('.s0-overlay-col-head').click();
+
+            const slice = document.getElementById('toggle-flux-slice');
+            const energy = document.getElementById('toggle-em-energy');
+            const before = {
+                slicePressed: slice.getAttribute('aria-pressed'),
+                sliceControls: display('#toggle-flux-slice + .flux-slice-axis-row'),
+                energySlider: display('#toggle-em-energy + .s0-sheet-height-row'),
+            };
+
+            slice.click();
+            energy.click();
+            await twoFrames();
+            const active = {
+                slicePressed: slice.getAttribute('aria-pressed'),
+                sliceControls: display('#toggle-flux-slice + .flux-slice-axis-row'),
+                energyPressed: energy.getAttribute('aria-pressed'),
+                energySlider: display('#toggle-em-energy + .s0-sheet-height-row'),
+            };
+            energy.click();
+            await twoFrames();
+            const energySliderAfterOff = display('#toggle-em-energy + .s0-sheet-height-row');
+
+            const search = document.getElementById('s0-overlay-search');
+            const clear = document.getElementById('s0-overlay-search-clear');
+            search.value = 'vortic';
+            search.dispatchEvent(new Event('input', { bubbles: true }));
+            await twoFrames();
+            const clearVisible = !clear.hidden;
+            clear.click();
+            await twoFrames();
+
+            return {
+                before,
+                active,
+                energySliderAfterOff,
+                search: { value: search.value, clearVisible, clearHidden: clear.hidden },
+            };
+        });
+
+        expect(result.before).toEqual({
+            slicePressed: 'false',
+            sliceControls: 'none',
+            energySlider: 'none',
+        });
+        expect(result.active).toEqual({
+            slicePressed: 'true',
+            sliceControls: 'flex',
+            energyPressed: 'true',
+            energySlider: 'grid',
+        });
+        expect(result.energySliderAfterOff).toBe('none');
+        expect(result.search).toEqual({ value: '', clearVisible: true, clearHidden: true });
+    });
+
+    test('interaction burst sustains the foreground frame budget without resource growth', async ({ page }) => {
+        await gotoAndReady(page);
+        await page.waitForTimeout(2500);
+        await expand(page);
+
+        const report = await page.evaluate(async () => {
+            const {
+                startScale0UiAuditProbe,
+                measureScale0UiActionToPaint,
+                stopScale0UiAuditProbe,
+            } = await import('/tests/scale0-ui-audit-probe.js');
+            const paint = (label, action) => measureScale0UiActionToPaint(label, action);
+            const click = (selector) => document.querySelector(selector).click();
+
+            // Warm every measured path once so module parsing/JIT and first-time
+            // renderer setup stay outside the steady interaction capture.
+            click('[data-col="fields"] .s0-overlay-col-head');
+            click('[data-col="fields"] .s0-overlay-col-head');
+            click('#force-style-row [data-style="glyphs"]');
+            click('#force-style-row [data-style="arrows"]');
+            click('#toggle-flux-slice');
+            click('#toggle-flux-slice');
+            const warmSearch = document.getElementById('s0-overlay-search');
+            warmSearch.value = 'vortic';
+            warmSearch.dispatchEvent(new Event('input', { bubbles: true }));
+            await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+            click('#s0-overlay-search-clear');
+            click('.s0-overlay-collapse');
+            click('.s0-overlay-collapse');
+            await new Promise((resolve) => setTimeout(resolve, 500));
+
+            startScale0UiAuditProbe({ rootSelector: '#viewport-overlay' });
+            await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+            await paint('open fields', () => click('[data-col="fields"] .s0-overlay-col-head'));
+            await paint('close fields', () => click('[data-col="fields"] .s0-overlay-col-head'));
+            await paint('vector glyphs', () => click('#force-style-row [data-style="glyphs"]'));
+            await paint('vector arrows', () => click('#force-style-row [data-style="arrows"]'));
+            await paint('slice on', () => click('#toggle-flux-slice'));
+            await paint('slice off', () => click('#toggle-flux-slice'));
+
+            const search = document.getElementById('s0-overlay-search');
+            await paint('filter', () => {
+                search.value = 'vortic';
+                search.dispatchEvent(new Event('input', { bubbles: true }));
+            });
+            await paint('clear filter', () => click('#s0-overlay-search-clear'));
+            await paint('panel collapse', () => click('.s0-overlay-collapse'));
+            await paint('panel expand', () => click('.s0-overlay-collapse'));
+
+            await new Promise((resolve) => setTimeout(resolve, 4000));
+            return stopScale0UiAuditProbe();
+        });
+
+        expect(report.frames.effectiveFps).toBeGreaterThanOrEqual(58);
+        expect(report.frames.p99Ms).toBeLessThanOrEqual(20);
+        expect(report.frames.intervalsOver33_4ms).toBe(0);
+        expect(report.longTasks).toEqual([]);
+        expect(report.actions.p95Ms).toBeLessThanOrEqual(50);
+        expect(report.resourceDelta.rafSubscribers).toBe(0);
+        expect(report.resourceDelta.domNodes).toBe(0);
+        expect(report.resourceDelta.canvases).toBe(0);
+        expect(report.errors).toEqual([]);
     });
 });

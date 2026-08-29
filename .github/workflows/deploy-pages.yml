@@ -31,7 +31,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Configure (CPU-only, Release)
-        run: cmake -S engine -B engine/build -DFTD_ENABLE_CUDA=OFF -DFTD_BUILD_EXPERIMENTAL=OFF
+        run: cmake -S engine -B engine/build -DFTD_ENABLE_CUDA=OFF
 
       - name: Build focused merge gate
         run: cmake --build engine/build --target ftd_merge_gate_build --config Release --parallel 4

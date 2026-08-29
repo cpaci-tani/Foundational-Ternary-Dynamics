@@ -120,7 +120,7 @@ export function renderEnergyLevels(Z, container) {
 
         // Energy label on right
         const eV = E * 1e6;
-        svg += `<text x="${x2 + 6}" y="${y + 3}" fill="var(--accent)" font-size="8">${eV.toFixed(1)} eV</text>`;
+        svg += `<text x="${x2 + 6}" y="${y + 3}" fill="var(--accent)" font-size="16">${eV.toFixed(1)} eV</text>`;
     }
 
     // Draw transition arrows (only first 3 series, limited transitions)
@@ -141,7 +141,7 @@ export function renderEnergyLevels(Z, container) {
     // Ionization line at E=0
     const y0 = topPad;
     svg += `<line x1="${leftMargin}" y1="${y0}" x2="${leftMargin + levelWidth * 0.6}" y2="${y0}" stroke="var(--text-muted)" stroke-width="0.5" stroke-dasharray="3,3"/>`;
-    svg += `<text x="${leftMargin + levelWidth * 0.6 + 6}" y="${y0 + 3}" fill="var(--text-muted)" font-size="8">ionized</text>`;
+    svg += `<text x="${leftMargin + levelWidth * 0.6 + 6}" y="${y0 + 3}" fill="var(--text-muted)" font-size="16">ionized</text>`;
 
     svg += '</svg>';
     container.innerHTML = `

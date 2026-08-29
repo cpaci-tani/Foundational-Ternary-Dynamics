@@ -91,6 +91,7 @@ export class TopologySheetRenderer {
         this._gravSurfaceWire = null;
         this._gravSurfaceSize = 0;
         this._gravPotVisible = false;
+        this._gravPotDrawable = false;
         this._gravPotData = null;
 
         // Topology sheets { key: { solid, wire, size, lastData } }
@@ -137,6 +138,7 @@ export class TopologySheetRenderer {
      */
     setHeight(key, frac) {
         const f = Math.max(0, Math.min(0.999, Number(frac) || 0));
+        if (this._heightFrac(key) === f) return;
         this._sheetHeights[key] = f;
         if (key === 'gravPotential') {
             const N = this._getLatticeSize();
@@ -173,7 +175,10 @@ export class TopologySheetRenderer {
     _buildGravSurface() {
         const N = this._getLatticeSize();
         this._gravSurfaceSize = N;
-        const segments = Math.max(24, Math.min(N, 40));
+        // The visual field sampler exposes at most ~33 support levels per
+        // dimension at large browser lattices. More surface subdivisions add
+        // interpolated wire fragments, not discrete information.
+        const segments = Math.max(24, Math.min(N, 32));
         const geo = new THREE.PlaneGeometry(N * 0.95, N * 0.95, segments, segments);
         geo.rotateX(-Math.PI / 2);
         const colors = new Float32Array(geo.attributes.position.count * 3);
@@ -189,14 +194,14 @@ export class TopologySheetRenderer {
         const gy = N * this._heightFrac('gravPotential');
         this._gravSurface = new THREE.Mesh(geo, mat);
         this._gravSurface.position.set(N / 2, gy, N / 2);
-        this._gravSurface.visible = false;
+        this._gravSurface.visible = this._gravPotVisible && this._gravPotDrawable;
         this._gravSurface.renderOrder = 3;
         // Deformable Y-vertices; keep frustum culling off so the camera can
         // dip inside a deep well without the mesh disappearing.
         this._gravSurface.frustumCulled = false;
         this._gravSurfaceWire = new THREE.Mesh(geo, wireMat);
         this._gravSurfaceWire.position.set(N / 2, gy + 0.02, N / 2);
-        this._gravSurfaceWire.visible = false;
+        this._gravSurfaceWire.visible = this._gravPotVisible && this._gravPotDrawable;
         this._gravSurfaceWire.renderOrder = 3;
         this._gravSurfaceWire.frustumCulled = false;
         this.scene.add(this._gravSurface);
@@ -216,23 +221,37 @@ export class TopologySheetRenderer {
         this._gravSurface = null;
         this._gravSurfaceWire = null;
         this._buildGravSurface();
-        this._gravSurface.visible = this._gravPotVisible;
-        this._gravSurfaceWire.visible = this._gravPotVisible;
+        this._gravSurface.visible = this._gravPotVisible && this._gravPotDrawable;
+        this._gravSurfaceWire.visible = this._gravPotVisible && this._gravPotDrawable;
     }
 
     toggleGravPotential(on) {
-        this._gravPotVisible = !!on;
-        if (!this._gravSurface) this._buildGravSurface();
-        this._gravSurface.visible = !!on;
-        this._gravSurfaceWire.visible = !!on;
+        const next = !!on;
+        if (this._gravPotVisible === next && (this._gravSurface || !next)) return;
+        this._gravPotVisible = next;
+        if (!this._gravSurface) { if (!next) return; this._buildGravSurface(); }
+        const drawable = next && this._gravPotDrawable;
+        this._gravSurface.visible = drawable;
+        this._gravSurfaceWire.visible = drawable;
+        if (drawable && this._gravPotData) this.updateGravPotential(this._gravPotData);
         if (this._onVisibilityChange) this._onVisibilityChange();
     }
 
     updateGravPotential(data) {
+        if (!data?.count || !(Number(data.normalizer) > 0)) {
+            this._gravPotData = null;
+            this._gravPotDrawable = false;
+            if (this._gravSurface) this._gravSurface.visible = false;
+            if (this._gravSurfaceWire) this._gravSurfaceWire.visible = false;
+            return;
+        }
         this._gravPotData = data;
-        if (!this._gravPotVisible || !data?.count) return;
+        this._gravPotDrawable = true;
+        if (!this._gravPotVisible) return;
         if (!this._gravSurface) this._buildGravSurface();
         this._rebuildGravSurfaceIfResized();
+        this._gravSurface.visible = true;
+        this._gravSurfaceWire.visible = true;
         const geo = this._gravSurface.geometry;
         const pos = geo.attributes.position;
         const col = geo.attributes.color;
@@ -337,10 +356,12 @@ export class TopologySheetRenderer {
      * @param {boolean} on
      */
     toggle(key, on) {
-        if (!this._topoSheets[key]) this._buildSheet(key);
+        const next = !!on;
+        if (!this._topoSheets[key]) { if (!next) return; this._buildSheet(key); }
         const s = this._topoSheets[key];
-        s.solid.visible = !!on;
-        s.wire.visible  = !!on;
+        if (s.solid.visible === next && s.wire.visible === next) return;
+        s.solid.visible = next;
+        s.wire.visible  = next;
     }
 
     /**

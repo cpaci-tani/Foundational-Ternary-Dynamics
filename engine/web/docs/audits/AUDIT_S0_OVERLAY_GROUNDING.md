@@ -1,7 +1,7 @@
 # Scale 0 Overlay Epistemic-Grounding & Engine-Truth Audit
 
 Status: `[AUDIT]` — per-overlay grounding + data-source truth for every Scale 0 lattice overlay
-Version: 1.0 (2026-06-03)
+Version: 1.1 (2026-08-28)
 Scope: Scale 0 (Lattice / Substrate) viewport overlays — 34 toggles across 7 columns
 Companion to: [`SPEC_OVERLAY_SEMANTICS.md`](../historical/SPEC_OVERLAY_SEMANTICS.md) (visual-encoding audit; older + partial)
 and [`SPEC_S0_QUANTUM_OVERLAYS.md`](SPEC_S0_QUANTUM_OVERLAYS.md) (quantum-tier spec).
@@ -95,7 +95,7 @@ Data source: where the field values come from (WASM C++ binding, JS compute, or 
 | Overlay | Quantity | Data source | WASM | Epistemic status | Verdict |
 |---|---|---|---|---|---|
 | EM | Coulomb + Lorentz | `getEMForceField` | ✓ | α-coeff [PARAMETRIC]; Phase-G Coulomb [THEOREM] | KEEP |
-| Gravity | `G·∇\|J\|` | `getGravityFieldSampled` | ✓ | [SELECTION] — mechanism not derived (FTD-0131) | KEEP — soften tooltip |
+| Gravity | default `G_N delta2\|J\|`; geometric `M_INERTIAL c^2 L delta2 L` | `getGravityFieldSampled` | ✓ | [SELECTION]/[IMPOSED] effective recovery; physical `G_N` id falsified (FTD-0131) | KEEP — exact discrete engine branch |
 | Strong | SU(3) / color | `getStrongForceField` | ✓ | confinement [THEOREM]; SU(3) id [SELECTION] (needs N_c) | KEEP — soften tooltip |
 | ∇×J pseudovector ("weak") | `∇×J` vector | `getCurlJSampled` | ✓ | [PROXY] — **NOT** SM weak force | FIX — relabel + recolumn |
 
@@ -110,7 +110,7 @@ Data source: where the field values come from (WASM C++ binding, JS compute, or 
 ### TOPOLOGY
 | Overlay | Quantity | Data source | WASM | Epistemic status | Verdict |
 |---|---|---|---|---|---|
-| Φ potential | `−\|J\|²` proxy | JS (`getGravPotentialSamples` absent → proxy) | ~ proxy | [PROXY] — not Poisson-solved | KEEP — upgrade path |
+| Φ potential | selected branch `Phi=-L^2`; fallback `-G_N\|J\|` | `getPoissonLatencySampled` with explicit local-density fallback | ✓ | [SELECTION]/[IMPOSED] effective recovery; fallback [PROXY] | KEEP — source-labeled |
 | EM energy u | `½(\|E\|²+\|B\|²)` | JS from `eField`+`bField` | ✓ | [DERIVED] | KEEP |
 | Charge ρ | `∇·J` | `getDivJSampled` | ✓ | [THEOREM] operator; charge id [SELECTION] | KEEP — ≡ ∇·J; cross-label |
 | Vorticity ω | `\|∇×J\|` | `getVorticitySampled` | ✓ | [THEOREM] operator | KEEP |
@@ -195,12 +195,29 @@ flux/s0 scenarios and are dead only on the WASM-owned (empty/light/quantum) scen
 the WasmBridge needs `getScale0DerivedOverlayData` there, which requires adapting `getParticleData()`'s
 shape to the `_particles` shape the renderers expect — a separate task, not bundled here.
 
+### Gravity implementation update (2026-08-28)
+
+- `getGravityFieldSampled` now evaluates the active engine operator directly in
+  the compact CPU, CUDA, and WASM sampling paths. The default and geometric
+  radius-2 centered stencils have explicit CPU/CUDA parity tests.
+- `getPoissonLatencySampled` exposes the real selected latency solution to WASM.
+  The topology surface reconstructs `Phi=-L^2`; when that selected solve is not
+  available, it declares and displays only the local `-G_N|J|` proxy.
+- A paused-CUDA toggle synchronization defect was repaired, preventing a selected
+  geometric overlay from falling back silently to the default operator.
+- Renderer work is bounded and lifecycle-owned. The all-size correctness matrix,
+  28 browser performance combinations, and a live L=97 Edge capture all passed;
+  every Edge force style held 144.05 FPS with p99 at or below 7.07 ms and no Long
+  Tasks.
+
 ## 6. Epistemic notes
 
 - Wiring a mock-only overlay to the engine makes it **engine-true**; it does **not** promote a proxy
-  to a true quantity. Φ stays `[PROXY]` until a real Poisson solve backs it; Curvature K stays a
-  latency-proxy even when the engine computes it; the `∇×J` overlay stays a curl visualization, not a
-  weak force.
+  to a primitive or derived physical quantity. Φ is now exact to the selected
+  engine Poisson-latency branch and source-labeled when it falls back locally;
+  the branch itself remains effective `[SELECTION]`/`[IMPOSED]`, not primitive
+  Newtonian gravity. Curvature K stays a latency-proxy even when the engine
+  computes it; the `∇×J` overlay stays a curl visualization, not a weak force.
 - The mock-only finding is itself a result in the spirit of the Number-One Goal's second clause: it
   honestly maps a boundary — *what the web layer actually shows of the engine* — rather than letting a
   dead toggle imply coverage it does not have.

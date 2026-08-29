@@ -163,9 +163,9 @@ export function mountConservationMicropanel(host, getBridge) {
             }
             html += `<svg viewBox="0 0 ${W} ${ROW_H}" class="cons-history-svg">`;
             html += `<rect x="${margin.left}" y="${margin.top}" width="${innerW}" height="${innerH}" fill="rgba(255,255,255,0.02)" stroke="var(--border-light, rgba(255,255,255,0.08))" stroke-width="0.5"/>`;
-            html += `<text x="8" y="${margin.top + innerH/2 + 4}" fill="var(--text-muted)" font-size="13" font-weight="600">${s.label}</text>`;
-            html += `<text x="${margin.left + innerW + 8}" y="${margin.top + 8}" fill="${status}" font-size="11" font-family="var(--font-mono)">${formatExp(peakAbs)}</text>`;
-            html += `<text x="${margin.left + innerW + 8}" y="${margin.top + innerH}" fill="var(--text-muted)" font-size="9" opacity="0.7">peak |Δ|</text>`;
+            html += `<text x="8" y="${margin.top + innerH/2 + 4}" fill="var(--text-muted)" font-size="16" font-weight="600">${s.label}</text>`;
+            html += `<text x="${margin.left + innerW + 8}" y="${margin.top + 8}" fill="${status}" font-size="16" font-family="var(--font-mono)">${formatExp(peakAbs)}</text>`;
+            html += `<text x="${margin.left + innerW + 8}" y="${margin.top + innerH}" fill="var(--text-muted)" font-size="16" opacity="0.7">peak |Δ|</text>`;
             html += `<path d="${path}" stroke="${status}" stroke-width="1.2" fill="none"/>`;
             html += `</svg>`;
         }

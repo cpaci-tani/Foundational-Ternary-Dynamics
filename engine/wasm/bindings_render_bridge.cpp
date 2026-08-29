@@ -389,6 +389,7 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     function("getCoherenceSampled",   &get_coherence_sampled);
     function("getFisherSampled",      &get_fisher_sampled);
     function("getLatencySampled",     &get_latency_sampled);
+    function("getPoissonLatencySampled", &get_poisson_latency_sampled);
     function("getKretschmannSampled", &get_kretschmann_sampled);
     function("getStateFieldSampled",  &get_state_field_sampled);
     function("getGaussResidualSampled", &get_gauss_residual_sampled);

@@ -12,7 +12,7 @@
     gap: var(--sp-xl);
     padding: 0 var(--sp-xl);
     background: var(--bg-surface);
-    backdrop-filter: blur(12px);
+    backdrop-filter: var(--glass-filter-mid);
     border-top: 1px solid var(--border);
     font-size: var(--fs-sm);
     color: var(--text-muted);
@@ -129,7 +129,7 @@ html[data-density="compact"] #status-bar {
 
 .status-menu[open] .status-menu-trigger,
 .status-menu-trigger:hover {
-    color: var(--accent);
+    color: var(--accent-text);
     border-color: var(--accent);
     background: color-mix(in oklch, var(--accent) 10%, transparent);
 }
@@ -148,7 +148,7 @@ html[data-density="compact"] #status-bar {
     border-top: 1px solid rgba(255, 255, 255, 0.22);
     border-radius: var(--radius-md);
     background: var(--bg-elevated, var(--bg-surface));
-    backdrop-filter: blur(24px) saturate(1.35);
+    backdrop-filter: var(--glass-filter-high);
     box-shadow: var(--glass-shadow), var(--shadow-lg);
     z-index: calc(var(--z-status) + 5);
 }

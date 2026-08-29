@@ -17,9 +17,6 @@ add_test(NAME boundary_movement COMMAND test_boundary_movement)
 add_test(NAME stress_energy COMMAND test_stress_energy)
 add_test(NAME thermodynamics COMMAND test_thermodynamics)
 add_test(NAME lagrangian COMMAND test_lagrangian)
-if(FTD_BUILD_EXPERIMENTAL)  # ADR-0016
-add_test(NAME dag_engine COMMAND test_dag_engine)
-endif()
 add_test(NAME ontic_chain COMMAND test_ontic_chain)
 add_test(NAME dual_substrate COMMAND test_dual_substrate)
 add_test(NAME genesis COMMAND test_genesis)
@@ -236,10 +233,6 @@ ftd_add_test(test_atom_toggles_table tests/test_atom_toggles_table.cpp
 ftd_add_test(test_cosmic_toggles_table tests/test_cosmic_toggles_table.cpp
              CTEST_NAME cosmic_toggles_table TIMEOUT 120 LABELS scale5 cosmic)
 
-# Tritium ternary compute library tests
-# Phase 1+2b POC: 7 legacy trit_* CTest entries consolidated under tritium_algebra
-# (registered by ftd_add_test() above).
-
 # GPU tests (only registered when CUDA is enabled)
 if(FTD_ENABLE_CUDA)
     add_test(NAME gpu_parity COMMAND test_gpu_parity)
@@ -377,7 +370,7 @@ set_tests_properties(
     falsifiability campaign_integer_sweep
     campaign_hydrogen_spectrum campaign_wave_dynamics
     latency_field
-    pe_forces tritium_algebra
+    pe_forces
     campaign_pe_fine_structure
     atom_engine_forces
     inflation dark_matter cosmological_constant consciousness sloop
@@ -421,7 +414,7 @@ set_property(TEST
     selective_damping em_energy_conservation continuity poynting
     larmor dipole_radiation thomson_scattering light
     ensemble correlations spectral tracker benchmark latency_field
-    # pe_forces and tritium_algebra auto-labeled as "unit" by ftd_add_test()
+    # pe_forces is auto-labeled as "unit" by ftd_add_test()
     # atom_engine_forces auto-labeled as "unit" by ftd_add_test()
     action_stationarity asymptotic_freedom atom_toggles atomic_energy
     baryogenesis bell_aggregate born_rule_ensemble confinement_test
@@ -701,41 +694,6 @@ set_property(TEST
 endif() # NOT EMSCRIPTEN — end of CTest labels block
 
 # ============================================================================
-# FTD Test Bench (Phase 3+: Qt6 native test runner)
-# ============================================================================
-#
-# Builds engine/tools/test_runner/ — a Qt6 Widgets native desktop application
-# that drives the CTest inventory, streams NDJSON telemetry from the test
-# subprocesses (see engine/include/ftd/test_telemetry.h), and displays
-# results in a main window with a category tree, output panel, lattice
-# viewer (Phase 4), telemetry charts (Phase 5), and history DB (Phase 6).
-#
-# Controlled by FTD_BUILD_TEST_RUNNER:
-#   AUTO (default) — build if Qt6 is present, silently skip otherwise
-#   ON             — require Qt6; fail configure if not found
-#   OFF            — never build
-#
-# Pass -DCMAKE_PREFIX_PATH=C:/Qt/6.10.2/msvc2022_64 (or equivalent) on the
-# configure command line so find_package(Qt6) resolves.
-#
-set(FTD_BUILD_TEST_RUNNER "AUTO" CACHE STRING
-    "Build the Qt6 test runner GUI (ON/OFF/AUTO)")
-set_property(CACHE FTD_BUILD_TEST_RUNNER PROPERTY STRINGS ON OFF AUTO)
-
-if(NOT FTD_BUILD_TEST_RUNNER STREQUAL "OFF" AND NOT EMSCRIPTEN)
-    find_package(Qt6 QUIET COMPONENTS Core Widgets OpenGL OpenGLWidgets Sql Charts)
-    if(Qt6_FOUND)
-        message(STATUS "FTD Test Bench: enabled (Qt6 ${Qt6_VERSION})")
-        add_subdirectory(tools/test_runner)
-    elseif(FTD_BUILD_TEST_RUNNER STREQUAL "ON")
-        message(FATAL_ERROR "FTD_BUILD_TEST_RUNNER=ON but Qt6 not found. "
-                            "Install Qt6 or set -DFTD_BUILD_TEST_RUNNER=OFF.")
-    else()
-        message(STATUS "FTD Test Bench: disabled (Qt6 not found)")
-    endif()
-endif()
-
-# ============================================================================
 # Per-test timeout overrides (added 2026-05-03, post-WSL2 ctest sweep triage).
 # ============================================================================
 # The default ctest timeout (300s) is too tight for several legitimately slow
@@ -862,34 +820,6 @@ if(NOT EMSCRIPTEN)
     unset(_ftd_merge_gate_targets)
     unset(_ftd_target)
     unset(_ftd_test)
-endif()
-
-# ============================================================================
-# ftd_sim CLI smoke tests (revision 1.5) — the CLI research data-product path
-# (CSV/VTK export bundles) previously had zero automated coverage. Three
-# representative routes at tiny L/ticks via cmake/FtdCliSmoke.cmake: exit 0
-# + expected non-empty output files. Not in merge_gate (see CI_GATE.md).
-# ============================================================================
-if(NOT EMSCRIPTEN)
-    add_test(NAME cli_smoke_D
-             COMMAND ${CMAKE_COMMAND}
-                     -DFTD_SIM=$<TARGET_FILE:ftd_sim> -DSCENARIO=D -DL=9 -DTICKS=5
-                     -P ${CMAKE_SOURCE_DIR}/cmake/FtdCliSmoke.cmake)
-    add_test(NAME cli_smoke_H_csv
-             COMMAND ${CMAKE_COMMAND}
-                     -DFTD_SIM=$<TARGET_FILE:ftd_sim> -DSCENARIO=H -DL=9 -DTICKS=5
-                     -DOUTDIR=${CMAKE_BINARY_DIR}/cli_smoke_out_H
-                     -DEXPECT_GLOB=timeseries.csv
-                     -P ${CMAKE_SOURCE_DIR}/cmake/FtdCliSmoke.cmake)
-    add_test(NAME cli_smoke_V_vtk
-             COMMAND ${CMAKE_COMMAND}
-                     "-DFTD_SIM=$<TARGET_FILE:ftd_sim>" -DSCENARIO=V -DL=9 -DTICKS=5
-                     -DOUTDIR=${CMAKE_BINARY_DIR}/cli_smoke_out_V
-                     "-DEXTRA_ARGS=2;1"
-                     -DEXPECT_GLOB=*.pvd
-                     -P ${CMAKE_SOURCE_DIR}/cmake/FtdCliSmoke.cmake)
-    set_tests_properties(cli_smoke_D cli_smoke_H_csv cli_smoke_V_vtk
-                         PROPERTIES TIMEOUT 300 LABELS "unit;cli")
 endif()
 
 # Source-text lint (revision 2.6): tree-level X_PLUS/X_MINUS must never leak

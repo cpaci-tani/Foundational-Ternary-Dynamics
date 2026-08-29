@@ -112,20 +112,20 @@ function renderSpectrum(container, r, isDeep) {
     for (let e = Math.ceil(leMin); e <= Math.floor(leMax); e++) {
         const yy = Y(Math.pow(10, e));
         svg += `<line x1="${m.left}" y1="${yy.toFixed(1)}" x2="${m.left + iW}" y2="${yy.toFixed(1)}" stroke="var(--border-light)" stroke-width="0.4" opacity="0.4"/>`;
-        svg += `<text x="${m.left - 4}" y="${(yy + 3).toFixed(1)}" text-anchor="end" font-size="9" font-family="var(--font-mono)" fill="var(--text-muted)">1e${e}</text>`;
+        svg += `<text x="${m.left - 4}" y="${(yy + 3).toFixed(1)}" text-anchor="end" font-size="16" font-family="var(--font-mono)" fill="var(--text-muted)">1e${e}</text>`;
     }
     // peak marker
     if (peak.kPeak > 0) {
         const xp = X(peak.kPeak);
-        svg += `<line x1="${xp.toFixed(1)}" y1="${m.top}" x2="${xp.toFixed(1)}" y2="${m.top + iH}" stroke="var(--warning)" stroke-width="0.8" stroke-dasharray="2,3" opacity="0.7"/>`;
-        svg += `<text x="${xp.toFixed(1)}" y="${m.top - 3}" text-anchor="middle" font-size="9" fill="var(--warning)">k*</text>`;
+        svg += `<line x1="${xp.toFixed(1)}" y1="${m.top}" x2="${xp.toFixed(1)}" y2="${m.top + iH}" stroke="var(--warning-text)" stroke-width="0.8" stroke-dasharray="2,3" opacity="0.7"/>`;
+        svg += `<text x="${xp.toFixed(1)}" y="${m.top - 3}" text-anchor="middle" font-size="16" fill="var(--warning-text)">k*</text>`;
     }
     // slope reference line over the inertial range
     if (Number.isFinite(slope.slope)) {
         const k1 = ks[2] || ks[0], k2 = ks[ks.length - 3] || ks[ks.length - 1];
         const eAtK1 = es[ks.indexOf(k1)] ?? es[0];
         const yLine = (k) => Y(eAtK1 * Math.pow(k / k1, slope.slope));
-        svg += `<line x1="${X(k1).toFixed(1)}" y1="${yLine(k1).toFixed(1)}" x2="${X(k2).toFixed(1)}" y2="${yLine(k2).toFixed(1)}" stroke="var(--positive)" stroke-width="1" stroke-dasharray="4,2" opacity="0.65"/>`;
+        svg += `<line x1="${X(k1).toFixed(1)}" y1="${yLine(k1).toFixed(1)}" x2="${X(k2).toFixed(1)}" y2="${yLine(k2).toFixed(1)}" stroke="var(--positive-text)" stroke-width="1" stroke-dasharray="4,2" opacity="0.65"/>`;
     }
     // E(k) polyline + points
     let path = '';
@@ -133,8 +133,8 @@ function renderSpectrum(container, r, isDeep) {
     svg += `<path d="${path}" fill="none" stroke="var(--accent)" stroke-width="1.4"/>`;
     for (let i = 0; i < ks.length; i++) svg += `<circle cx="${X(ks[i]).toFixed(1)}" cy="${Y(es[i]).toFixed(1)}" r="1.6" fill="var(--accent)"/>`;
     // axis labels
-    svg += `<text x="${m.left + iW / 2}" y="${H - 3}" text-anchor="middle" font-size="10" fill="var(--text-muted)">k (rad/voxel) — log</text>`;
-    svg += `<text x="11" y="${m.top + iH / 2}" transform="rotate(-90 11 ${m.top + iH / 2})" text-anchor="middle" font-size="10" fill="var(--text-muted)">E(k) — log</text>`;
+    svg += `<text x="${m.left + iW / 2}" y="${H - 3}" text-anchor="middle" font-size="16" fill="var(--text-muted)">k (rad/voxel) — log</text>`;
+    svg += `<text x="11" y="${m.top + iH / 2}" transform="rotate(-90 11 ${m.top + iH / 2})" text-anchor="middle" font-size="16" fill="var(--text-muted)">E(k) — log</text>`;
     svg += `</svg>`;
 
     const pOk = Math.abs(parseval - 1) < 0.05;
@@ -144,7 +144,7 @@ function renderSpectrum(container, r, isDeep) {
         <div class="spec-readouts">
             <span>${tagBadge('D')}peak λ* <b>${lam}</b> vox (k*=${peak.kPeak.toFixed(3)})</span>
             <span>${tagBadge('D')}slope p <b>${Number.isFinite(slope.slope) ? slope.slope.toFixed(2) : '—'}</b></span>
-            <span title="ΣE(k) / Σ|J|² — should be 1 if the FFT is correct">${tagBadge('M')}Parseval <b style="color:${pOk ? 'var(--positive)' : 'var(--warning)'}">${parseval.toFixed(3)}</b></span>
+            <span title="ΣE(k) / Σ|J|² — should be 1 if the FFT is correct">${tagBadge('M')}Parseval <b style="color:${pOk ? 'var(--positive-text)' : 'var(--warning-text)'}">${parseval.toFixed(3)}</b></span>
             <span>${isDeep ? `${tagBadge('D')}DEEP M=${r.M}³ · k&lt;${spec.kNyq.toFixed(2)}` : `${tagBadge('≈')}live M=${r.M}³ · band-limited k&lt;${spec.kNyq.toFixed(2)}`}</span>
         </div>`;
 }
@@ -159,7 +159,7 @@ function row(label, value, tag = 'D', color = 'var(--text-primary)', tip = '') {
 function renderTopology(container, t) {
     const gaugeOk = t.gauss < 1e-4;
     container.innerHTML =
-        row('Gauss violation Σ(∇·E−ρ)²', formatExp(t.gauss), 'M', gaugeOk ? 'var(--positive)' : 'var(--warning)',
+        row('Gauss violation Σ(∇·E−ρ)²', formatExp(t.gauss), 'M', gaugeOk ? 'var(--positive-text)' : 'var(--warning-text)',
             'Sum of squared Gauss-law residuals ∇·E−ρ over the lattice. Near 0 (green) = the constraint holds; large = drift.') +
         row('  max |Gauss error|', formatExp(t.gaussMax), 'M', 'var(--text-muted)', 'The worst single-voxel Gauss-law residual.') +
         row('Defects (src / sink / net)', `${t.defects.sources} / ${t.defects.sinks} / ${t.defects.net >= 0 ? '+' : ''}${t.defects.net}`, 'D', undefined,
@@ -200,8 +200,8 @@ function renderMetrics(container, metrics) {
 function renderEnergy(container, audit, entropy) {
     if (!audit) { container.innerHTML = `<div class="spec-hist-empty">No audit data.</div>`; return; }
     const parts = [
-        { k: 'E-field', v: audit.eFieldEnergy ?? audit.EFieldEnergy ?? 0, c: 'var(--positive)' },
-        { k: 'B-field', v: audit.bFieldEnergy ?? audit.BFieldEnergy ?? 0, c: 'var(--negative)' },
+        { k: 'E-field', v: audit.eFieldEnergy ?? audit.EFieldEnergy ?? 0, c: 'var(--positive-text)' },
+        { k: 'B-field', v: audit.bFieldEnergy ?? audit.BFieldEnergy ?? 0, c: 'var(--negative-text)' },
         { k: 'Wave',    v: audit.waveEnergy ?? 0, c: 'var(--chart-flux, #fb8c00)' },
         { k: 'Field',   v: audit.fieldEnergy ?? 0, c: 'var(--accent)' },
     ];

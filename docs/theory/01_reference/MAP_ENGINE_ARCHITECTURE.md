@@ -22,7 +22,7 @@ theory ledgers and `AUDIT_EPISTEMIC_AUDIT.md`.
 This map synthesizes:
 * **Section 1 (Inventory & Map):** Decoupled directory boundaries, file-by-file inventory, structural invariants, and production vs. experimental boundaries.
 * **Section 2 (Dependencies & Flows):** `#include` inclusion tree, compilation circularity prevention, the 11-step execution pipeline, multi-scale orchestration, AoS-to-SoA data mapping, lazy synchronization, and CUDA kernel targets.
-* **Section 3 (Structural Documentation & Gaps):** Table-driven documentation of the current 33 boolean Scale 0 runtime toggles plus typed configuration fields, explicit mathematical-to-code mapping of the ontic chain, `DagEngine` sparse-voxel stubs, and recommendations for performance scaling.
+* **Section 3 (Structural Documentation & Gaps):** Table-driven documentation of the current 33 boolean Scale 0 runtime toggles plus typed configuration fields, explicit mathematical-to-code mapping of the ontic chain, and recommendations for performance scaling.
 
 ---
 
@@ -146,9 +146,12 @@ Declares active CMake test targets validating the entire framework.
 * **Golden Gate Test**: `test_render_bridge_golden.cpp`—performs a deterministic byte-hash verification over 100 ticks to guarantee bit-exact physics across refactor commits (golden hash: `0x56fa28acb5b9fe88` @ L=17; prior pins `0xcd957b601d47868a` @ L=16, `0xebaa6f314f66db3f` @ L=17).
 * **GPU Parity Tests**: `test_gpu_parity.cpp`, `test_gpu_parity_complete.cpp`—verifies the bit-exact match of all float/double buffers between CPU and GPU runs.
 
-### 1.2 Production vs. Experimental Boundary
-* **Production Logic**: The core `RenderBridge` (Scale 0), `ParticleEngine` (Scale 1), `AtomEngine` (Scale 2), and `CosmicEngine` (Scale 5). All C++ tests, CTest benchmarks, and WASM dashboard features execute on these production classes.
-* **Experimental Logic**: Classes prefixed with `Dag` (`DagEngine`, `DagLattice`, `test_dag_engine.cpp`). While the sparse-voxel DAG structures are functionally complete, the Gauss projection and force equations are currently `[OPEN]` stubs. **Do not use`DagEngine` for physics calculations.**
+### 1.2 Maintained Engine Boundary
+The maintained engine classes are the core `RenderBridge` (Scale 0),
+`ParticleEngine` (Scale 1), `AtomEngine` (Scale 2), and `CosmicEngine` (Scale
+5). C++ tests, CTest benchmarks, the native desktop, and the WASM dashboard
+execute on these maintained classes. The former sparse-DAG experiment was
+removed in the 2026-08-28 product consolidation.
 
 ---
 
@@ -418,10 +421,11 @@ The first-principles cascade implemented in `engine/include/ftd/ontic/` maps dir
 
 A rigorous architectural review identifies the following gaps and open stubs in the C++ engine:
 
-### 8.1 `DagEngine` & Sparse-Voxel DAG Structures
-The classes `DagEngine`, `DagLattice`, and the associated unit test `test_dag_engine.cpp` represent an experimental sparse-voxel Directed Acyclic Graph (DAG) execution layer.
-* **Current Status:** While the structures compile and are functionally complete for storing coordinates and hierarchical tree pointers, **the Gauss projection and phase forces equations are currently open stubs.**
-* **Obstruction:** Solving the Poisson equation (for U(1) Gauss projection) on a sparse, non-uniform DAG requires replacing the fast Fourier transform (cufft) and Successive Over-Relaxation stencils with an algebraic multigrid (AMG) or sparse conjugate gradient (CG) solver. **Do not use `DagEngine` for active physical simulations.**
+### 8.1 Retired sparse-DAG branch
+The experimental sparse-DAG execution branch was removed from the maintained
+tree on 2026-08-28. It had no production consumer and its Gauss projection and
+force/movement phases remained open stubs. Its source provenance is available
+in Git history through baseline `21566b63`; it is not an active engine gap.
 
 ### 8.2 Performance Scaling Gaps
 1. **Device-Side Reduction for the Energy Ledger:** Currently, the per-tick energy ledger computation on the GPU path requires downloading the entire voxel array (~3 MB at $L=64$) over the PCIe bus to run the sum on the CPU.

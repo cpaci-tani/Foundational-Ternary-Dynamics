@@ -121,7 +121,7 @@ export class FineStructureComponent extends BaseComponent {
                 ${tagBadge('~M')} waiting for field buffers
             </div>
             `}
-            <div style="margin-top:8px;color:var(--text-muted);font-size:12px;line-height:1.35;">
+            <div style="margin-top:8px;color:var(--text-muted);font-size:16px;line-height:1.35;">
                 ${tagBadge('T')}α and the force coefficient are configured constants shown for audit only; the recoil scenario neither extracts nor validates them.${live ? ` ${tagBadge('E')}Live residual is visual-bridge telemetry, not a scattering cross section.` : ''}
             </div>
         `;

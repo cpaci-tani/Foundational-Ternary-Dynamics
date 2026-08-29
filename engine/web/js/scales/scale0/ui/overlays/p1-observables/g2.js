@@ -227,7 +227,7 @@ export class G2Component extends BaseComponent {
             }
             sparkSvg += `<path d="${path}" stroke="var(--accent)" stroke-width="1.4" fill="none"/>`;
         } else {
-            sparkSvg += `<text x="${m.left + innerW / 2}" y="${m.top + innerH / 2 + 4}" text-anchor="middle" fill="var(--text-muted)" font-size="10" font-style="italic">collecting samples…</text>`;
+            sparkSvg += `<text x="${m.left + innerW / 2}" y="${m.top + innerH / 2 + 4}" text-anchor="middle" fill="var(--text-muted)" font-size="16" font-style="italic">collecting samples…</text>`;
         }
         sparkSvg += `</svg>`;
 
