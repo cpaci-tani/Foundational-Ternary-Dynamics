@@ -124,14 +124,29 @@ REM dirty check is indistinguishable from a dirty build that happens to
 REM report a clean sha -- the failure is silent by construction. Appending
 REM -dirty when the tree has uncommitted changes to the sources this build
 REM actually compiled makes that distinction visible instead of assumed.
+REM The tracked deployment outputs MUST be excluded: this check runs after the
+REM newly built bundle has been staged, and otherwise every legitimate rebuild
+REM dirties its own provenance stamp. Build trees are gitignored; the scoped
+REM status below therefore covers engine inputs while excluding only the six
+REM generated modules and build_info.txt under web/wasm.
 set "GIT_SHA=unknown"
 for /f %%H in ('git -C "%ENGINE_DIR%" rev-parse HEAD 2^>nul') do set "GIT_SHA=%%H"
 set "GIT_DIRTY="
-for /f %%D in ('git -C "%ENGINE_DIR%" status --porcelain 2^>nul') do set "GIT_DIRTY=1"
+git -C "%ENGINE_DIR%" status --porcelain --untracked-files=no -- . 2>nul | %SystemRoot%\System32\findstr.exe /v /c:"engine/web/wasm/" /c:"web/wasm/" >nul
+if not ERRORLEVEL 1 set "GIT_DIRTY=1"
 if defined GIT_DIRTY set "GIT_SHA=%GIT_SHA%-dirty"
+set "EMCC_VERSION=unknown"
+for /f "delims=" %%V in ('call "%EMSDK%\upstream\emscripten\emcc.bat" --version 2^>nul ^| findstr /b /c:"emcc "') do if "%EMCC_VERSION%"=="unknown" set "EMCC_VERSION=%%V"
 > "%STAGE_DIR%\build_info.txt" echo sha=%GIT_SHA%
 >> "%STAGE_DIR%\build_info.txt" echo built=%DATE% %TIME%
 >> "%STAGE_DIR%\build_info.txt" echo variants=wasm32,wasm64,wasm32-threads
+>> "%STAGE_DIR%\build_info.txt" echo source_scope=engine/** excluding engine/web/wasm/**
+>> "%STAGE_DIR%\build_info.txt" echo emcc=%EMCC_VERSION%
+>> "%STAGE_DIR%\build_info.txt" echo cmake_flags.wasm32=-DCMAKE_BUILD_TYPE=Release -DFTD_MEMORY64=OFF -DFTD_WASM_THREADS=OFF
+>> "%STAGE_DIR%\build_info.txt" echo cmake_flags.wasm64=-DCMAKE_BUILD_TYPE=Release -DFTD_MEMORY64=ON -DFTD_WASM_THREADS=OFF
+>> "%STAGE_DIR%\build_info.txt" echo cmake_flags.wasm32-threads=-DCMAKE_BUILD_TYPE=Release -DFTD_MEMORY64=OFF -DFTD_WASM_THREADS=ON
+for %%F in (ftd_core.js ftd_core.wasm ftd_core64.js ftd_core64.wasm ftd_core_mt.js ftd_core_mt.wasm) do call :append_artifact_hash "%%F"
+if ERRORLEVEL 1 ( echo [build_wasm] artifact hashing FAILED & exit /b 1 )
 
 REM All artifacts verified good -- swap the whole directory on the same volume.
 set "HAD_DEPLOY="
@@ -150,3 +165,15 @@ if defined HAD_DEPLOY rmdir /s /q "%BACKUP_DIR%"
 echo [build_wasm] OK -- wasm32 + wasm64 + wasm32-threads modules deployed to %DEPLOY_DIR% (sha=%GIT_SHA%)
 
 endlocal
+exit /b 0
+
+:append_artifact_hash
+set "ARTIFACT_HASH="
+for /f "skip=1 tokens=* delims=" %%H in ('certutil -hashfile "%STAGE_DIR%\%~1" SHA256 2^>nul') do if not defined ARTIFACT_HASH set "ARTIFACT_HASH=%%H"
+set "ARTIFACT_HASH=%ARTIFACT_HASH: =%"
+if not defined ARTIFACT_HASH (
+    echo [build_wasm] SHA-256 failed for %~1
+    exit /b 1
+)
+>> "%STAGE_DIR%\build_info.txt" echo sha256.%~1=%ARTIFACT_HASH%
+exit /b 0
