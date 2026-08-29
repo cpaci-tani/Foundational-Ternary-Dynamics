@@ -7,6 +7,26 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+function Get-Sha256Hex {
+    param(
+        [Parameter(Mandatory = $true)][string]$LiteralPath
+    )
+    $stream = [System.IO.File]::Open(
+        $LiteralPath,
+        [System.IO.FileMode]::Open,
+        [System.IO.FileAccess]::Read,
+        [System.IO.FileShare]::Read
+    )
+    $sha256 = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        ([System.BitConverter]::ToString(
+            $sha256.ComputeHash($stream))).Replace('-', '').ToLowerInvariant()
+    } finally {
+        $sha256.Dispose()
+        $stream.Dispose()
+    }
+}
+
 $dirty = $SourceSha.EndsWith('-dirty', [System.StringComparison]::Ordinal)
 $commit = if ($dirty) {
     $SourceSha.Substring(0, $SourceSha.Length - '-dirty'.Length)
@@ -27,7 +47,7 @@ function New-ArtifactRecord {
         throw "Required staged artifact is missing: $File"
     }
     $item = Get-Item -LiteralPath $path
-    $hash = (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()
+    $hash = Get-Sha256Hex -LiteralPath $path
     [ordered]@{
         role = $Role
         file = $File
