@@ -57,7 +57,7 @@ if /i "%~1"=="clean" (
 
 REM --- WASM32 (ftd_core.{js,wasm}) ---
 echo === Configure WASM32 build ===
-call "%EMCMAKE%" cmake -S "%ENGINE_DIR%" -B "%BUILD32%" -DCMAKE_BUILD_TYPE=Release -DFTD_MEMORY64=OFF
+call "%EMCMAKE%" cmake -G "MinGW Makefiles" -S "%ENGINE_DIR%" -B "%BUILD32%" -DCMAKE_BUILD_TYPE=Release -DFTD_MEMORY64=OFF
 if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] wasm32 configure FAILED & exit /b 1 )
 echo === Build WASM32 ftd_wasm target ===
 call "%EMMAKE%" cmake --build "%BUILD32%" --target ftd_wasm --parallel 24
@@ -65,7 +65,7 @@ if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] wasm32 build FAILED & exit /b 1 )
 
 REM --- WASM64 / Memory64 (ftd_core64.{js,wasm}) ---
 echo === Configure WASM64 build (Memory64) ===
-call "%EMCMAKE%" cmake -S "%ENGINE_DIR%" -B "%BUILD64%" -DCMAKE_BUILD_TYPE=Release -DFTD_MEMORY64=ON
+call "%EMCMAKE%" cmake -G "MinGW Makefiles" -S "%ENGINE_DIR%" -B "%BUILD64%" -DCMAKE_BUILD_TYPE=Release -DFTD_MEMORY64=ON
 if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] wasm64 configure FAILED & exit /b 1 )
 echo === Build WASM64 ftd_wasm target ===
 call "%EMMAKE%" cmake --build "%BUILD64%" --target ftd_wasm --parallel 24
@@ -77,7 +77,7 @@ REM renames output to ftd_core_mt, adds -pthread (SharedArrayBuffer heap) +
 REM -sPTHREAD_POOL_SIZE=8, exports createFTDModuleMT, ENVIRONMENT=node,web,worker.
 REM This is the off-thread Scale-0 worker engine -- must track binding changes.
 echo === Configure WASM32+threads build (ftd_core_mt) ===
-call "%EMCMAKE%" cmake -S "%ENGINE_DIR%" -B "%BUILDMT%" -DCMAKE_BUILD_TYPE=Release -DFTD_MEMORY64=OFF -DFTD_WASM_THREADS=ON
+call "%EMCMAKE%" cmake -G "MinGW Makefiles" -S "%ENGINE_DIR%" -B "%BUILDMT%" -DCMAKE_BUILD_TYPE=Release -DFTD_MEMORY64=OFF -DFTD_WASM_THREADS=ON
 if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] wasm_mt configure FAILED & exit /b 1 )
 echo === Build WASM32+threads ftd_wasm target ===
 call "%EMMAKE%" cmake --build "%BUILDMT%" --target ftd_wasm --parallel 24
@@ -128,11 +128,11 @@ REM The tracked deployment outputs MUST be excluded: this check runs after the
 REM newly built bundle has been staged, and otherwise every legitimate rebuild
 REM dirties its own provenance stamp. Build trees are gitignored; the scoped
 REM status below therefore covers engine inputs while excluding only the six
-REM generated modules and build_info.txt under web/wasm.
+REM generated deploy, staging, and rollback directories under web/wasm*.
 set "GIT_SHA=unknown"
 for /f %%H in ('git -C "%ENGINE_DIR%" rev-parse HEAD 2^>nul') do set "GIT_SHA=%%H"
 set "GIT_DIRTY="
-git -C "%ENGINE_DIR%" status --porcelain --untracked-files=all -- . 2>nul | %SystemRoot%\System32\findstr.exe /v /c:"engine/web/wasm/" /c:"web/wasm/" >nul
+git -C "%ENGINE_DIR%" status --porcelain --untracked-files=all -- . 2>nul | %SystemRoot%\System32\findstr.exe /v /c:"engine/web/wasm/" /c:"web/wasm/" /c:"engine/web/wasm.next/" /c:"web/wasm.next/" /c:"engine/web/wasm.previous/" /c:"web/wasm.previous/" >nul
 if not ERRORLEVEL 1 set "GIT_DIRTY=1"
 if defined GIT_DIRTY set "GIT_SHA=%GIT_SHA%-dirty"
 set "EMCC_VERSION=unknown"
@@ -149,7 +149,7 @@ if %ERRORLEVEL% NEQ 0 ( echo [build_wasm] build_info.json generation FAILED & ex
 > "%STAGE_DIR%\build_info.txt" echo sha=%GIT_SHA%
 >> "%STAGE_DIR%\build_info.txt" echo built=%DATE% %TIME%
 >> "%STAGE_DIR%\build_info.txt" echo variants=wasm32,wasm64,wasm32-threads
->> "%STAGE_DIR%\build_info.txt" echo source_scope=engine/** excluding engine/web/wasm/**
+>> "%STAGE_DIR%\build_info.txt" echo source_scope=engine/** excluding generated engine/web/wasm{,.next,.previous}/**
 >> "%STAGE_DIR%\build_info.txt" echo emcc=%EMCC_VERSION%
 >> "%STAGE_DIR%\build_info.txt" echo cmake=%CMAKE_VERSION%
 >> "%STAGE_DIR%\build_info.txt" echo deterministic_manifest=build_info.json

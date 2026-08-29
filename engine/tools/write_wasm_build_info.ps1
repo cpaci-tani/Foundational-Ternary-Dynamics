@@ -7,7 +7,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-function Get-Sha256Hex {
+function Get-ArtifactFingerprint {
     param(
         [Parameter(Mandatory = $true)][string]$LiteralPath
     )
@@ -17,13 +17,21 @@ function Get-Sha256Hex {
         [System.IO.FileAccess]::Read,
         [System.IO.FileShare]::Read
     )
-    $sha256 = [System.Security.Cryptography.SHA256]::Create()
+    $sha256 = $null
     try {
-        ([System.BitConverter]::ToString(
+        $sizeBytes = [int64]$stream.Length
+        $sha256 = [System.Security.Cryptography.SHA256]::Create()
+        $hash = ([System.BitConverter]::ToString(
             $sha256.ComputeHash($stream))).Replace('-', '').ToLowerInvariant()
     } finally {
-        $sha256.Dispose()
+        if ($null -ne $sha256) {
+            $sha256.Dispose()
+        }
         $stream.Dispose()
+    }
+    [pscustomobject][ordered]@{
+        sizeBytes = $sizeBytes
+        sha256 = $hash
     }
 }
 
@@ -46,13 +54,12 @@ function New-ArtifactRecord {
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
         throw "Required staged artifact is missing: $File"
     }
-    $item = Get-Item -LiteralPath $path
-    $hash = Get-Sha256Hex -LiteralPath $path
+    $fingerprint = Get-ArtifactFingerprint -LiteralPath $path
     [ordered]@{
         role = $Role
         file = $File
-        sizeBytes = [int64]$item.Length
-        sha256 = $hash
+        sizeBytes = $fingerprint.sizeBytes
+        sha256 = $fingerprint.sha256
     }
 }
 
@@ -105,7 +112,9 @@ foreach ($variant in $variants) {
     foreach ($artifact in $variant.artifacts) {
         [void]$canonical.Append($artifact.file)
         [void]$canonical.Append([char]0)
-        [void]$canonical.Append($artifact.sizeBytes)
+        [void]$canonical.Append(
+            $artifact.sizeBytes.ToString([System.Globalization.CultureInfo]::InvariantCulture)
+        )
         [void]$canonical.Append([char]0)
         [void]$canonical.Append($artifact.sha256)
         [void]$canonical.Append("`n")
@@ -126,18 +135,19 @@ $manifest = [ordered]@{
     source = [ordered]@{
         commit = $commit
         dirty = $dirty
-        scope = 'engine/** excluding engine/web/wasm/**'
+        scope = 'engine/** excluding generated engine/web/wasm{,.next,.previous}/**'
     }
     toolchain = [ordered]@{
         emcc = $EmccVersion
         cmake = $CmakeVersion
         generator = 'MinGW Makefiles'
+        powershell = $PSVersionTable.PSVersion.ToString()
         buildType = 'Release'
     }
     variants = $variants
 }
 
-$json = $manifest | ConvertTo-Json -Depth 8
+$json = ($manifest | ConvertTo-Json -Depth 8) -replace "`r`n?", "`n"
 $output = Join-Path $StageDir 'build_info.json'
 [System.IO.File]::WriteAllText(
     $output,
