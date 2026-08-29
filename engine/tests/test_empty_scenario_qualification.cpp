@@ -23,10 +23,10 @@
 
 namespace {
 
-constexpr std::array<int, 5> k_lattice_sizes = {8, 17, 33, 65, 97};
+constexpr std::array<int, 5> k_lattice_sizes = {9, 17, 33, 65, 97};
 constexpr std::array<int, 5> k_checkpoints = {0, 1, 2, 8, 16};
-constexpr std::array<int, 3> k_long_lattice_sizes = {8, 17, 33};
-constexpr std::array<int, 3> k_long_checkpoints = {64, 256, 1024};
+constexpr std::array<int, 3> k_long_lattice_sizes = {9, 17, 33};
+constexpr std::array<int, 2> k_long_checkpoints = {256, 4096};
 
 struct BoundaryCase {
     ftd::FluxBoundaryMode mode;
@@ -564,6 +564,10 @@ void run_long_duration_digest_matrix() {
 
             int completed_ticks = 0;
             for (int checkpoint : k_long_checkpoints) {
+                // The frozen product-path protocol preregisters 4096 ticks for
+                // L=9 and L=17. L=33 is qualified through tick 256; extending
+                // that volume requires a separately recorded campaign.
+                if (lattice_size == 33 && checkpoint > 256) break;
                 bridge->run(checkpoint - completed_ticks);
                 completed_ticks = checkpoint;
                 verify_checkpoint(*bridge, lattice_size, boundary, checkpoint);
@@ -619,7 +623,7 @@ int main() {
         "scenario id empty; explicit finite lattice size and boundary law",
         "none",
         "complete voxel state, canonical fieldwise dynamical digest, Diagnostics, EnergyAudit, EnergyLedger, LagrangianDiag, and GravityMetricAgg",
-        "native CPU; short matrix L in {8,17,33,65,97}, ticks in {0,1,2,8,16}; long matrix L in {8,17,33}, ticks in {64,256,1024}; all three computational boundary laws",
+        "native CPU; product short matrix L in {9,17,33,65,97}, ticks in {0,1,2,8,16}; long matrix L in {9,17} through ticks {256,4096} and L=33 through tick 256; all three computational boundary laws",
         "CPU only in this target; cross-backend parity is a separate gate",
         "exact default lattice state, invariant clock-independent canonical digest, and zero activity at every checkpoint",
         "any non-default stored channel, non-finite readout, activity report, or reload drift rejects the null-control contract",

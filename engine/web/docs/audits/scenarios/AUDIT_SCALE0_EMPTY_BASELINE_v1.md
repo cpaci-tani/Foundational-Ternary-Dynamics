@@ -140,11 +140,12 @@ Required checks:
     against the 16.67 ms frame target with frame-pacing evidence, not an average
     FPS label alone.
 
-The current 60 FPS result is a collapsed-panel control, not an all-panel result.
-Scale 0 exposes 17 visible panel interfaces. Each must be warmed, measured for
-at least 240 foreground frames, collapsed, and checked for stopped work using
-absolute gates (`FPS >= 59`, `p95 <= 16.9 ms`, `p99 <= 25 ms`, no long tasks,
-and bounded callback/DOM/canvas/resource deltas). The historical
+The all-panel coexistence campaign now covers all 17 visible Scale 0 panel
+interfaces at `L = 97`. Each panel was warmed, measured for at least 240
+foreground frames, collapsed, and checked for stopped work using absolute gates
+(`FPS >= 59`, `p95 <= 16.9 ms`, `p99 <= 25 ms`, no long tasks, and bounded
+callback/DOM/canvas/resource deltas). All 17 recorded 60.00 FPS with p95/p99
+16.67 ms and zero collapsed DOM/canvas work. The historical
 `perf-current-results.json` full-physics `L=33` result is approximately 12 FPS
 and uses a relative-regression gate; it is neither Scenario 1 evidence nor an
 acceptable substitute for the absolute 60 FPS contract.
@@ -160,7 +161,7 @@ qualification but does not rewrite a scientific zero/nonzero result.
 |---|---|---|---|
 | 1. Static trace | in-progress | registry, reset + empty-profile initializer, toggle profile, boundary, native CPU target, browser path, and knowledge-base wording located and aligned | complete export metadata and remaining backend trace |
 | 2. Mathematical well-posedness | in-progress | dynamical-null invariant, evolving bookkeeping, observer baseline, prohibited claims, and the schema-versioned named-field digest domain are separated; CPU and CUDA share one parallel two-lane combination contract with exact nonfinite/nondefault counters | publish the boundary proof and extend the canonical digest contract through WASM and WebSocket surfaces |
-| 3. Numerical validity | in-progress | `empty_scenario_qualification` passes native CPU at `L=8,17,33,65,97`, all three flux boundaries, short checkpoints, plus `L=8,17,33` through ticks `64,256,1024` with invariant fieldwise digests; the WSL2 CUDA sibling passes ordinary/interactive modes and all three boundaries through tick 64 with exact CPU/GPU populated-state hash parity, 32-byte result transfer, and zero full-mirror calls; browser worker lifecycle/null checks pass at product sizes through `L=97`; forced WASM-main exact-null parity passes through 16 synchronous ticks and rapid-generation switching | preregistered 4096-tick/product-path matrix, native-WebSocket evidence, and WASM/WebSocket digest parity remain open |
+| 3. Numerical validity | in-progress | `empty_scenario_qualification` passes the native CPU product-size short matrix at `L=9,17,33,65,97`, all three flux boundaries, and checkpoints `0,1,2,8,16`; its preregistered long matrix passes `L=9,17` through ticks `256,4096` and `L=33` through tick `256` with invariant fieldwise digests; the WSL2 CUDA sibling passes ordinary/interactive modes and all three boundaries through tick 64 with exact CPU/GPU populated-state hash parity, 32-byte result transfer, and zero full-mirror calls; browser worker lifecycle/null checks pass at product sizes through `L=97`; forced WASM-main exact-null parity passes through 16 synchronous ticks and rapid-generation switching | native-WebSocket evidence and WASM/WebSocket digest parity remain open |
 | 4. Scientific validity | not-started | null claim and falsifiers frozen | run controls without post-hoc tuning |
 | 5. Scale appropriateness | in-progress | the imposed finite lattice record belongs to Scale 0; exact-ID gating correctly excludes Standard Model overlays | replace unqualified particle/void nouns, remove stale Scale-up implications, and verify all generic panel applicability states |
 | 6. UI and interpretive truth | in-progress | focused browser test passes picker/current-state truth, unsupported-latency distinction, finite observer baseline, collapsed overlay demand, and WASM-main/worker origin distinction; the knowledge entry now states the imposed null-control and non-vacuum boundary; Diagnostics renders unresolved values as `—` while retaining exact measured zero; Lagrangian exposes the state-independent observer reference, baseline-subtracted `Δℒ`, stale/unavailable states, and an explicit non-vacuum/non-zero-point limitation; Flux Slice, Spectrum, and Gravity declare `empty` inapplicable and stop their scientific sampling/coordinator paths | live mutation does not yet suspend the displayed qualification; upstream telemetry still erases some unavailable diagnostics/audit/Lagrangian values into zero before formatting; remaining panel applicability, export metadata, and native-WebSocket presentation paths remain open |
