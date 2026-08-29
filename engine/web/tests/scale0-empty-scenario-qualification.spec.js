@@ -18,6 +18,7 @@ import {
 } from './_helpers.js';
 
 const EMPTY = 'empty';
+const WASM_PATH = '/?engine=wasm';
 
 test.describe.configure({ mode: 'serial' });
 test.beforeEach(async ({ page }) => {
@@ -66,6 +67,15 @@ async function readEmptySnapshot(page) {
         const lagrangian = caps.getScale0Lagrangian?.() ?? null;
         const particles = caps.getScale0ParticleFrame?.() ?? null;
         const flux = caps.getScale0FluxVolume?.() ?? null;
+        const latticeSize = Number(owner?.latticeSize ?? 0);
+        const expectedFluxLength = latticeSize > 0 ? latticeSize ** 3 : null;
+        const fluxStatus = typeof caps.getScale0FluxVolume !== 'function'
+            ? 'unsupported'
+            : flux == null || flux.length === 0
+                ? 'not-published'
+                : flux.length === expectedFluxLength
+                    ? 'supported'
+                    : 'contract-error';
 
         const peak = (values) => {
             let out = 0;
@@ -100,9 +110,9 @@ async function readEmptySnapshot(page) {
             owner: owner?.isNativeGPU ? 'native-gpu' : (owner?.isWorker ? 'wasm-worker' : 'wasm-main'),
             ownerScenario: owner?._scenarioId ?? null,
             ready: !owner?.isWorker || owner.ready === true,
-            latticeSize: Number(owner?.latticeSize ?? 0),
+            latticeSize,
             flux: {
-                status: flux ? 'supported' : 'not-published',
+                status: fluxStatus,
                 length: flux?.length ?? null,
                 maxAbs: flux ? peak(flux) : null,
             },
@@ -161,7 +171,7 @@ async function readWorkerCounters(page) {
 test('is an exact null after load, reset/reload, supported resize, and rapid generation changes', async ({ page }, testInfo) => {
     test.setTimeout(180_000);
     const errors = attachConsoleWatcher(page);
-    await gotoAndReady(page, { timeout: 90_000 });
+    await gotoAndReady(page, { path: WASM_PATH, timeout: 90_000 });
     await selectScale0Scenario(page, EMPTY, { settleMs: 0 });
     await waitForEmptyReady(page);
 
@@ -214,7 +224,7 @@ test('is an exact null after load, reset/reload, supported resize, and rapid gen
 test('keeps null telemetry finite/zero while distinguishing unavailable data and collapsed demand', async ({ page }, testInfo) => {
     test.setTimeout(120_000);
     const errors = attachConsoleWatcher(page);
-    await gotoAndReady(page, { timeout: 90_000 });
+    await gotoAndReady(page, { path: WASM_PATH, timeout: 90_000 });
     await selectScale0Scenario(page, EMPTY, { settleMs: 0 });
     await waitForEmptyReady(page);
 
@@ -294,7 +304,7 @@ test('matches the exact-null browser contract on the main-thread WASM runtime', 
     test.setTimeout(150_000);
     const errors = attachConsoleWatcher(page);
     await page.addInitScript(() => { window.__ftdWasmWorker = false; });
-    await gotoAndReady(page, { timeout: 90_000 });
+    await gotoAndReady(page, { path: WASM_PATH, timeout: 90_000 });
     await selectScale0Scenario(page, EMPTY, { settleMs: 0 });
     await waitForEmptyReady(page);
 
@@ -342,7 +352,7 @@ test('matches the exact-null browser contract on the main-thread WASM runtime', 
 test('recovers from a real hidden tab without stale generation, worker churn, or a resume burst', async ({ page }, testInfo) => {
     test.setTimeout(180_000);
     const errors = attachConsoleWatcher(page);
-    await gotoAndReady(page, { timeout: 90_000 });
+    await gotoAndReady(page, { path: WASM_PATH, timeout: 90_000 });
     await selectScale0Scenario(page, EMPTY, { settleMs: 0 });
     await waitForEmptyReady(page);
 
@@ -448,7 +458,7 @@ test('recovers from a real hidden tab without stale generation, worker churn, or
 test('keeps reload listeners, workers, rAF subscriptions, and renderer allocations bounded', async ({ page }, testInfo) => {
     test.setTimeout(180_000);
     const errors = attachConsoleWatcher(page);
-    await gotoAndReady(page, { timeout: 90_000 });
+    await gotoAndReady(page, { path: WASM_PATH, timeout: 90_000 });
     await selectScale0Scenario(page, EMPTY, { settleMs: 0 });
     await waitForEmptyReady(page);
     await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
@@ -542,7 +552,7 @@ test('keeps reload listeners, workers, rAF subscriptions, and renderer allocatio
 test('records 60 FPS frame pacing at the largest lattice enabled for the active backend', async ({ page }, testInfo) => {
     test.setTimeout(240_000);
     const errors = attachConsoleWatcher(page);
-    await gotoAndReady(page, { timeout: 90_000 });
+    await gotoAndReady(page, { path: WASM_PATH, timeout: 90_000 });
     await selectScale0Scenario(page, EMPTY, { settleMs: 0 });
     await waitForEmptyReady(page);
 
