@@ -50,13 +50,13 @@ function makeScenarioEntry({
 
 const SCALE0_CATEGORY_GUIDES = Object.freeze({
     Empty: {
-        summary: 'A baseline reference state with minimal structure and no designed excitation.',
+        summary: 'An imposed null-control record with no deliberately prepared excitation.',
         body: [
-            'This category is useful for establishing what the engine does in the absence of a deliberately prepared field pattern. It gives you a quiet reference state for comparing later scenarios.',
-            'Mathematically, the empty case is the closest thing to a zero or vacuum-like initial condition in the live lattice UI. It is the right place to compare growth, decay, or spontaneous structure formation against a calm baseline.',
+            'This category establishes what the declared engine profile does from imposed null initial data. It gives later scenarios an implementation control, not a physical-vacuum model.',
+            'Mathematically, the empty case initializes the declared dynamical lattice fields at their exact null or sentinel values. Passing its qualification shows null preservation only for the tested finite configuration; it does not establish vacuum physics, zero-point energy, or absence of all ontology.',
         ],
-        notation: ['s(v,t) = 0', 'J(v,t) ≈ 0'],
-        tags: ['baseline', 'reference'],
+        notation: ['s(v,0) = 0', 'J(v,0) = 0'],
+        tags: ['baseline', 'null-control'],
     },
     'Wave Dynamics': {
         summary: 'Prepared flux patterns that emphasize propagation, superposition, circulation, and localized wave structure.',
@@ -197,12 +197,12 @@ const SCALE0_CATEGORY_GUIDES = Object.freeze({
 
 const SCALE0_SPECIFIC_GUIDES = Object.freeze({
     'empty': {
-        summary: 'A quiet reference lattice with no deliberately injected excitation.',
+        summary: 'An imposed all-zero initial record used as a finite null control.',
         body: [
-            'Use the empty lattice to calibrate your eye before reading more structured scenarios. It is the nearest thing the live engine has to a vacuum-like or zero-background initial state.',
-            'The relevant math is not complicated here: you are watching the neighborhood rules act on something close to s(v,t)=0 and J(v,t)≈0, so any later structure can be compared against an intentionally quiet baseline.',
+            'Use the empty lattice to verify that the selected finite update path preserves its declared null dynamical fields. This is imposed initial data and explicitly not a physical-vacuum identification.',
+            'The test begins with s(v,0)=0 and J(v,0)=0 while legitimate sentinels and observer baselines retain their documented values. Clocks and bookkeeping may advance even when the dynamical lattice fields remain null.',
         ],
-        notation: ['s(v,t) = 0', 'J(v,t) ≈ 0', 'baseline'],
+        notation: ['s(v,0) = 0', 'J(v,0) = 0', 'null control'],
     },
     'flux-pulse': {
         summary: 'A transverse native-wave packet for testing finite-box boundary algorithms.',

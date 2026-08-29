@@ -69,6 +69,10 @@ function scopeTick(hub, scope) {
     return null;
 }
 
+function setTextIfChanged(el, text) {
+    if (el && el.textContent !== text) el.textContent = text;
+}
+
 class RunningStats {
     constructor() {
         this.reset();
@@ -150,9 +154,20 @@ export class DiagnosticsTable {
         this.cells = new Map();
         this.stats = new Map();
         this.pulseTokens = new Map();
-        this.sparks = [];
+        this.sparkEntries = [];
+        this.sparkEntriesByHost = new Map();
         this.trendBuffers = new Map();
         this.sampleStamps = new Map();
+        this.sparkObserver = typeof IntersectionObserver === 'function'
+            ? new IntersectionObserver((entries) => {
+                for (const observed of entries) {
+                    const entry = this.sparkEntriesByHost.get(observed.target);
+                    if (!entry) continue;
+                    if (observed.isIntersecting) this.mountSpark(entry);
+                    else this.unmountSpark(entry);
+                }
+            })
+            : null;
 
         section.rows.forEach((row, idx) => {
             const tr = document.createElement('tr');
@@ -218,13 +233,14 @@ export class DiagnosticsTable {
                     trendCell.appendChild(sparkHost);
                     const buf = resolveBuffer(hub, row.trend);
                     if (buf && typeof buf.get === 'function') {
-                        const spark = new Sparkline(sparkHost, {
-                            buffer: buf,
-                            color:  'var(--accent)',
-                            height: 22,
-                            visibleSamples: TABLE_SPARK_VISIBLE_SAMPLES,
-                        });
-                        this.sparks.push(spark);
+                        const entry = { host: sparkHost, buffer: buf, spark: null, stamp: '' };
+                        this.sparkEntries.push(entry);
+                        this.sparkEntriesByHost.set(sparkHost, entry);
+                        if (this.sparkObserver) this.sparkObserver.observe(sparkHost);
+                        // IntersectionObserver is unavailable only on legacy
+                        // browsers. Preserve the trend there rather than
+                        // silently dropping a visible scientific channel.
+                        else this.mountSpark(entry);
                         this.trendBuffers.set(row.id, buf);
                     }
                     trendRow.appendChild(trendCell);
@@ -276,7 +292,35 @@ export class DiagnosticsTable {
                 }
             }
         }
-        for (const spark of this.sparks) spark.update();
+        for (const entry of this.sparkEntries) {
+            if (!entry.spark) continue;
+            const stamp = bufferStamp(entry.buffer);
+            if (stamp === entry.stamp) continue;
+            entry.stamp = stamp;
+            entry.spark.update();
+        }
+    }
+
+    mountSpark(entry) {
+        if (entry.spark) return;
+        entry.spark = new Sparkline(entry.host, {
+            buffer: entry.buffer,
+            color: 'var(--accent)',
+            height: 22,
+            visibleSamples: TABLE_SPARK_VISIBLE_SAMPLES,
+        });
+        entry.stamp = bufferStamp(entry.buffer);
+        entry.spark.update();
+    }
+
+    unmountSpark(entry) {
+        if (!entry.spark) return;
+        entry.spark.destroy();
+        entry.spark = null;
+        entry.stamp = '';
+        // uPlot currently removes its root in destroy(); keep the lifecycle
+        // contract explicit in case that implementation changes.
+        entry.host.replaceChildren();
     }
 
     /**
@@ -305,9 +349,10 @@ export class DiagnosticsTable {
         if (this.freshnessEl.textContent !== text) this.freshnessEl.textContent = text;
         const stale = entries.some(entry => entry.stale);
         this.el.classList.toggle('diag-telemetry-stale', stale);
-        this.freshnessEl.title = stale
+        const title = stale
             ? 'Waiting for a settled native GPU telemetry snapshot.'
             : 'Each group is sampled independently by the native GPU scheduler.';
+        if (this.freshnessEl.title !== title) this.freshnessEl.title = title;
     }
 
     resetStats() {
@@ -330,19 +375,21 @@ export class DiagnosticsTable {
         const avgCell = this.cells.get(`${rowId}:avg`);
         if (!stats || !minCell || !maxCell || !avgCell) return;
         if (stats.count === 0) {
-            minCell.textContent = DASH;
-            maxCell.textContent = DASH;
-            avgCell.textContent = DASH;
+            setTextIfChanged(minCell, DASH);
+            setTextIfChanged(maxCell, DASH);
+            setTextIfChanged(avgCell, DASH);
             return;
         }
-        minCell.textContent = formatValue(stats.min, { kind: 'scalar' });
-        maxCell.textContent = formatValue(stats.max, { kind: 'scalar' });
-        avgCell.textContent = formatValue(stats.avg, { kind: 'scalar' });
+        setTextIfChanged(minCell, formatValue(stats.min, { kind: 'scalar' }));
+        setTextIfChanged(maxCell, formatValue(stats.max, { kind: 'scalar' }));
+        setTextIfChanged(avgCell, formatValue(stats.avg, { kind: 'scalar' }));
     }
 
     destroy() {
-        for (const s of this.sparks) s.destroy();
-        this.sparks.length = 0;
+        this.sparkObserver?.disconnect();
+        for (const entry of this.sparkEntries) this.unmountSpark(entry);
+        this.sparkEntries.length = 0;
+        this.sparkEntriesByHost.clear();
         this.cells.clear();
         this.stats.clear();
         this.trendBuffers.clear();

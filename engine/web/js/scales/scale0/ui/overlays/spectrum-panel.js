@@ -31,6 +31,8 @@ const PANEL_ID = 'spectrum-panel';
 const HZ = 2;                 // exploratory data — slower cadence
 const M_LIVE = 32;            // live FFT grid (band-limited)
 const M_DEEP = 64;            // Deep Measure FFT grid (full band)
+const EMPTY_SCENARIO_ID = 'empty';
+const SCENARIO_SYNC_MAX_FRAMES = 120;
 
 const METRIC_KINDS = [
     { kind: 'vorticity',   name: 'Vorticity',   sym: 'ω',  desc: 'ω = |∇×J| — local rotation / swirl of the flux field; high where the field circulates.' },
@@ -225,30 +227,41 @@ function buildPanel() {
     const root = document.createElement('div');
     root.id = PANEL_ID;
     root.className = 'scale0-only spectrum-panel';
+    root.dataset.applicability = 'applicable';
     root.innerHTML = `
-        <header class="spec-header">
-            <span class="spec-title">Lattice Spectroscopy</span>
-            <span class="spec-mode" id="${PANEL_ID}-mode">live</span>
-        </header>
-        <section style="${cardStyle(230)}">
-            <div style="${titleStyle()}" title="${SECTION_HELP.spectrum}">Energy spectrum E(k) ⓘ</div>
-            <div id="${PANEL_ID}-spec" class="spec-hist-box"></div>
-            <div class="spec-actions">
-                <button id="${PANEL_ID}-deep" type="button" class="spec-btn" title="Full-resolution snapshot spectrum + topology of the current tick">Deep Measure</button>
-                <button id="${PANEL_ID}-live" type="button" class="spec-btn spec-btn-ghost" hidden title="Resume the live band-limited view">↻ Live</button>
-            </div>
-        </section>
-        <section style="${cardStyle(150)}">
-            <div style="${titleStyle()}" title="${SECTION_HELP.topology}">Topology ⓘ</div>
-            <div id="${PANEL_ID}-topo"></div>
-        </section>
-        <section style="${cardStyle(170)}">
-            <div style="${titleStyle()}" title="${SECTION_HELP.metrics}">Field metrics &amp; distributions ⓘ</div>
-            <div id="${PANEL_ID}-metrics"></div>
-        </section>
-        <section style="${cardStyle(130)}">
-            <div style="${titleStyle()}" title="${SECTION_HELP.energy}">Energy partition ⓘ</div>
-            <div id="${PANEL_ID}-energy"></div>
+        <div class="spectrum-applicable-content">
+            <header class="spec-header">
+                <span class="spec-title">Lattice Spectroscopy</span>
+                <span class="spec-mode" id="${PANEL_ID}-mode">live</span>
+            </header>
+            <section style="${cardStyle(230)}">
+                <div style="${titleStyle()}" title="${SECTION_HELP.spectrum}">Energy spectrum E(k) ⓘ</div>
+                <div id="${PANEL_ID}-spec" class="spec-hist-box"></div>
+                <div class="spec-actions">
+                    <button id="${PANEL_ID}-deep" type="button" class="spec-btn" title="Full-resolution snapshot spectrum + topology of the current tick">Deep Measure</button>
+                    <button id="${PANEL_ID}-live" type="button" class="spec-btn spec-btn-ghost" hidden title="Resume the live band-limited view">↻ Live</button>
+                </div>
+            </section>
+            <section style="${cardStyle(150)}">
+                <div style="${titleStyle()}" title="${SECTION_HELP.topology}">Topology ⓘ</div>
+                <div id="${PANEL_ID}-topo"></div>
+            </section>
+            <section style="${cardStyle(170)}">
+                <div style="${titleStyle()}" title="${SECTION_HELP.metrics}">Field metrics &amp; distributions ⓘ</div>
+                <div id="${PANEL_ID}-metrics"></div>
+            </section>
+            <section style="${cardStyle(130)}">
+                <div style="${titleStyle()}" title="${SECTION_HELP.energy}">Energy partition ⓘ</div>
+                <div id="${PANEL_ID}-energy"></div>
+            </section>
+        </div>
+        <section class="mode-unavailable spectrum-inapplicable"
+                 data-applicability="inapplicable" role="status" hidden>
+            <strong>Not applicable — imposed null control</strong>
+            <p>Scenario 1 · Empty does not define a field or spatial-spectrum domain.
+               No field sampling, FFT, topology, or spectral inference is performed.</p>
+            <p>An empty spectrum would be misleading: this control is not a
+               measurement of physical vacuum or zero-point fluctuations.</p>
         </section>
     `;
     return root;
@@ -263,9 +276,42 @@ export function mountSpectrumPanel(host, getBridge) {
     const el = (id) => panel.querySelector(`#${PANEL_ID}-${id}`);
     const specBody = el('spec'), topoBody = el('topo'), metBody = el('metrics'), enBody = el('energy');
     const modeBadge = el('mode'), deepBtn = el('deep'), liveBtn = el('live');
+    const applicableContent = panel.querySelector('.spectrum-applicable-content');
+    const inapplicableMessage = panel.querySelector('.spectrum-inapplicable');
 
     let mode = 'live';   // 'live' | 'deep' (deep freezes the hero on a full-band snapshot)
     let lastSpec = null; // last computed spectrum (exposed for tests/diagnostics)
+    let inapplicable = false;
+    let disposed = false;
+    let sub = null;
+    let deepTimer = 0;
+    let samplerWantSignature = '';
+    let scenarioSelect = null;
+    let scenarioSyncRaf = 0;
+    let scenarioSyncToken = 0;
+
+    function releaseSamplerWants(force = false) {
+        if (!force && !samplerWantSignature) return;
+        getBridge?.()?.replaceSamplerWants?.('spectrum-panel', []);
+        samplerWantSignature = '';
+    }
+
+    function setSamplerWants(bridge, keys) {
+        const signature = keys.join('|');
+        if (signature === samplerWantSignature) return;
+        bridge?.replaceSamplerWants?.('spectrum-panel', keys);
+        samplerWantSignature = signature;
+    }
+
+    function stopCoordinator() {
+        sub?.unsubscribe();
+        sub = null;
+    }
+
+    function startCoordinator() {
+        if (sub || inapplicable || disposed) return;
+        sub = rafCoordinator.subscribe(PANEL_ID, { hz: HZ, cb: update });
+    }
 
     function getCaps() {
         const b = getBridge?.();
@@ -280,8 +326,15 @@ export function mountSpectrumPanel(host, getBridge) {
     }
 
     function update() {
+        // The event-driven applicability transition normally removes the
+        // coordinator before an empty frame. This guard keeps direct/manual
+        // calls inert as well, with no bridge/sample/FFT access.
+        if (inapplicable || getScale0State().currentScenarioId === EMPTY_SCENARIO_ID) {
+            if (!inapplicable) setEmptyApplicability(true);
+            return;
+        }
         if (!isPanelLive(host)) {
-            getBridge?.()?.replaceSamplerWants?.('spectrum-panel', []);
+            releaseSamplerWants();
             return;
         }
         const b = getBridge?.();
@@ -289,7 +342,7 @@ export function mountSpectrumPanel(host, getBridge) {
         if (!caps) return;
         const L = caps.latticeSize || 33;
         const stride = liveStride(L);
-        getBridge?.()?.replaceSamplerWants?.('spectrum-panel', [
+        setSamplerWants(b, [
             `fluxVector@${stride}`, `divJ@${stride}`,
             ...METRIC_KINDS.map((m) => `${m.kind}@${stride}`),
         ]);
@@ -309,25 +362,144 @@ export function mountSpectrumPanel(host, getBridge) {
         renderEnergy(enBody, audit, diag?.entropy);
     }
 
+    function setEmptyApplicability(nextValue) {
+        const next = !!nextValue;
+        if (next === inapplicable) {
+            if (next) {
+                // A rapid empty → nonempty → empty sequence can leave the
+                // intermediate generation marked pending while the panel is
+                // already logically inapplicable. Reassert the complete null-
+                // control presentation as well as keeping all work stopped.
+                panel.dataset.applicability = 'inapplicable-empty';
+                panel.classList.add('is-inapplicable');
+                applicableContent.hidden = true;
+                applicableContent.setAttribute('aria-hidden', 'true');
+                inapplicableMessage.hidden = false;
+                deepBtn.disabled = true;
+                liveBtn.disabled = true;
+                stopCoordinator();
+                releaseSamplerWants(true);
+            } else {
+                panel.dataset.applicability = 'applicable';
+                deepBtn.disabled = false;
+                liveBtn.disabled = false;
+                startCoordinator();
+                update();
+            }
+            return;
+        }
+        inapplicable = next;
+        panel.dataset.applicability = next ? 'inapplicable-empty' : 'applicable';
+        panel.classList.toggle('is-inapplicable', next);
+        applicableContent.hidden = next;
+        applicableContent.setAttribute('aria-hidden', next ? 'true' : 'false');
+        inapplicableMessage.hidden = !next;
+        deepBtn.disabled = next;
+        liveBtn.disabled = next;
+
+        if (next) {
+            stopCoordinator();
+            releaseSamplerWants(true);
+            if (deepTimer) clearTimeout(deepTimer);
+            deepTimer = 0;
+            mode = 'live';
+            lastSpec = null;
+            modeBadge.textContent = 'live';
+            liveBtn.hidden = true;
+        } else {
+            deepBtn.disabled = false;
+            liveBtn.disabled = false;
+            startCoordinator();
+            update();
+        }
+    }
+
+    function handleScenarioIntent(scenarioId) {
+        const token = ++scenarioSyncToken;
+        if (scenarioSyncRaf) cancelAnimationFrame(scenarioSyncRaf);
+        scenarioSyncRaf = 0;
+
+        // Suspend on intent, before an older nonempty worker generation can
+        // publish a stale field into the null-control panel.
+        if (scenarioId === EMPTY_SCENARIO_ID) {
+            setEmptyApplicability(true);
+            return;
+        }
+
+        // A nonempty→nonempty load also replaces the active bridge. Stop the
+        // old generation and clear its sampler signature now; otherwise an
+        // identical kind list could be mistaken for already registered on the
+        // new bridge and the restored panel would read an unrequested cache.
+        stopCoordinator();
+        releaseSamplerWants(true);
+        if (deepTimer) clearTimeout(deepTimer);
+        deepTimer = 0;
+        mode = 'live';
+        lastSpec = null;
+        modeBadge.textContent = 'live';
+        liveBtn.hidden = true;
+        deepBtn.disabled = true;
+        panel.dataset.applicability = 'pending-scenario';
+
+        let remaining = SCENARIO_SYNC_MAX_FRAMES;
+        const reconcile = () => {
+            scenarioSyncRaf = 0;
+            if (disposed || token !== scenarioSyncToken) return;
+            if (getScale0State().currentScenarioId === scenarioId) {
+                setEmptyApplicability(false);
+                return;
+            }
+            remaining--;
+            if (remaining > 0) scenarioSyncRaf = requestAnimationFrame(reconcile);
+        };
+        reconcile();
+    }
+
+    function onScenarioChange(event) {
+        handleScenarioIntent(String(event.currentTarget?.value || ''));
+    }
+
+    function rebindScenarioApplicability() {
+        const nextSelect = document.getElementById('scenario-select');
+        if (nextSelect !== scenarioSelect) {
+            scenarioSelect?.removeEventListener('change', onScenarioChange);
+            scenarioSelect = nextSelect;
+            scenarioSelect?.addEventListener('change', onScenarioChange);
+        }
+        handleScenarioIntent(String(
+            scenarioSelect?.value || getScale0State().currentScenarioId || '',
+        ));
+    }
+
     deepBtn.addEventListener('click', () => {
+        if (inapplicable || getScale0State().currentScenarioId === EMPTY_SCENARIO_ID) return;
         const caps = getCaps();
         if (!caps) return;
         const L = caps.latticeSize || 33;
+        const token = scenarioSyncToken;
         mode = 'deep';
         modeBadge.textContent = 'measuring…';
         deepBtn.disabled = true;
         // Let the "measuring…" state paint before the (brief) full-res FFT.
-        setTimeout(() => {
+        deepTimer = setTimeout(() => {
+            deepTimer = 0;
+            if (disposed || inapplicable || token !== scenarioSyncToken) return;
             try { renderHero(caps, L, 1, M_DEEP, true); modeBadge.textContent = 'deep (frozen)'; }
             catch (e) { modeBadge.textContent = 'live'; mode = 'live'; console.error('[spectrum] deep measure', e); }
             deepBtn.disabled = false;
             liveBtn.hidden = false;
         }, 30);
     });
-    liveBtn.addEventListener('click', () => { mode = 'live'; modeBadge.textContent = 'live'; liveBtn.hidden = true; });
+    liveBtn.addEventListener('click', () => {
+        if (inapplicable) return;
+        mode = 'live'; modeBadge.textContent = 'live'; liveBtn.hidden = true;
+    });
 
-    update();
-    const sub = rafCoordinator.subscribe(PANEL_ID, { hz: HZ, cb: update });
+    rebindScenarioApplicability();
+    if (!inapplicable) {
+        update();
+        startCoordinator();
+    }
 
     const api = {
         update,
@@ -335,8 +507,21 @@ export function mountSpectrumPanel(host, getBridge) {
         get lastSpec() { return lastSpec; },
         deepMeasure: () => deepBtn.click(),
         get mode() { return mode; },
+        get applicability() { return inapplicable ? 'inapplicable-empty' : 'applicable'; },
+        get coordinatorActive() { return !!sub; },
+        get samplerWantsActive() { return !!samplerWantSignature; },
+        rebindScenarioApplicability,
         dispose: () => {
-            sub.unsubscribe();
+            disposed = true;
+            stopCoordinator();
+            releaseSamplerWants(true);
+            if (deepTimer) clearTimeout(deepTimer);
+            deepTimer = 0;
+            if (scenarioSyncRaf) cancelAnimationFrame(scenarioSyncRaf);
+            scenarioSyncRaf = 0;
+            scenarioSyncToken++;
+            scenarioSelect?.removeEventListener('change', onScenarioChange);
+            scenarioSelect = null;
             if (typeof window !== 'undefined' && window.__ftdSpectrumPanel === api) window.__ftdSpectrumPanel = null;
             panel.remove();
         },
@@ -347,7 +532,10 @@ export function mountSpectrumPanel(host, getBridge) {
 
 export function initSpectrumPanel() {
     if (typeof document === 'undefined') return null;
-    if (typeof window !== 'undefined' && window.__ftdSpectrumPanel) return window.__ftdSpectrumPanel;
+    if (typeof window !== 'undefined' && window.__ftdSpectrumPanel) {
+        window.__ftdSpectrumPanel.rebindScenarioApplicability?.();
+        return window.__ftdSpectrumPanel;
+    }
     const host = document.getElementById('panel-spectrum');
     if (!host) return null;
     const getBridge = () => resolveActiveScale0BridgeFromWindow();

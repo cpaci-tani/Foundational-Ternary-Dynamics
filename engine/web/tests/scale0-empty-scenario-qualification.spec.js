@@ -10,7 +10,9 @@
 import { test, expect } from '@playwright/test';
 import {
     attachConsoleWatcher,
+    getRendererMemory,
     gotoAndReady,
+    rafSize,
     realErrors,
     selectScale0Scenario,
 } from './_helpers.js';
@@ -149,6 +151,13 @@ function expectExactNull(snapshot) {
     }
 }
 
+/** @param {import('@playwright/test').Page} page */
+async function readWorkerCounters(page) {
+    return page.evaluate(() => (typeof window.__ftdWasmWorkers === 'function'
+        ? window.__ftdWasmWorkers()
+        : null));
+}
+
 test('is an exact null after load, reset/reload, supported resize, and rapid generation changes', async ({ page }, testInfo) => {
     test.setTimeout(180_000);
     const errors = attachConsoleWatcher(page);
@@ -278,6 +287,255 @@ test('keeps null telemetry finite/zero while distinguishing unavailable data and
         allOverlayColumnsHidden: true,
         overlayDomains: '',
     });
+    expect(realErrors(errors)).toEqual([]);
+});
+
+test('matches the exact-null browser contract on the main-thread WASM runtime', async ({ page }, testInfo) => {
+    test.setTimeout(150_000);
+    const errors = attachConsoleWatcher(page);
+    await page.addInitScript(() => { window.__ftdWasmWorker = false; });
+    await gotoAndReady(page, { timeout: 90_000 });
+    await selectScale0Scenario(page, EMPTY, { settleMs: 0 });
+    await waitForEmptyReady(page);
+
+    const initial = await readEmptySnapshot(page);
+    expect(initial.owner, 'the opt-out must exercise WasmBridge in the browser main thread')
+        .toBe('wasm-main');
+    expectExactNull(initial);
+
+    const tickResult = await page.evaluate(() => {
+        const caps = window.__ftdCtx?.bridge?.capabilities?.scale0;
+        const before = Number(caps?.getScale0Diagnostics?.()?.tick ?? NaN);
+        for (let i = 0; i < 16; i += 1) caps?.tickScale0?.();
+        const after = Number(caps?.getScale0Diagnostics?.()?.tick ?? NaN);
+        return { before, after };
+    });
+    expect(Number.isFinite(tickResult.before)).toBe(true);
+    expect(tickResult.after, 'main-thread ticks advance the real WASM engine synchronously')
+        .toBe(tickResult.before + 16);
+    expectExactNull(await readEmptySnapshot(page));
+
+    const beforeRapid = await page.evaluate(() => Number(window.__ftdCtx?._loadGeneration ?? 0));
+    await page.evaluate(() => {
+        const select = document.getElementById('scenario-select');
+        for (const id of ['empty', 'flux-pulse', 'empty']) {
+            select.value = id;
+            select.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+    });
+    await waitForEmptyReady(page, initial.latticeSize);
+    const final = await readEmptySnapshot(page);
+    expect(final.owner).toBe('wasm-main');
+    expect(final.generation).toBe(beforeRapid + 3);
+    expectExactNull(final);
+    testInfo.annotations.push({
+        type: 'backend-coverage',
+        description: 'exact-null contract qualified on main-thread WasmBridge; the serial worker tests qualify WasmBridgeProxy separately',
+    });
+    testInfo.annotations.push({
+        type: 'unsupported-path',
+        description: 'native GPU and WebSocket backends are not connected by this browser harness, so no parity claim is made for them',
+    });
+    expect(realErrors(errors)).toEqual([]);
+});
+
+test('recovers from a real hidden tab without stale generation, worker churn, or a resume burst', async ({ page }, testInfo) => {
+    test.setTimeout(180_000);
+    const errors = attachConsoleWatcher(page);
+    await gotoAndReady(page, { timeout: 90_000 });
+    await selectScale0Scenario(page, EMPTY, { settleMs: 0 });
+    await waitForEmptyReady(page);
+
+    const initial = await readEmptySnapshot(page);
+    if (initial.owner !== 'wasm-worker') {
+        testInfo.annotations.push({
+            type: 'unsupported-path',
+            description: `hidden-tab worker recovery requires WasmBridgeProxy; active runtime is ${initial.owner}`,
+        });
+        test.skip(true, 'WasmBridgeProxy is unavailable on this server/browser');
+    }
+    const workersBefore = await readWorkerCounters(page);
+    const generationBefore = initial.generation;
+    await page.evaluate(() => {
+        const play = document.getElementById('btn-play');
+        if (play?.getAttribute('data-paused') === 'true') play.click();
+    });
+    await expect.poll(async () => Number((await readEmptySnapshot(page)).diagnostics.value?.tick ?? 0),
+        { timeout: 10_000, message: 'worker did not begin ticking before tab backgrounding' })
+        .toBeGreaterThan(0);
+
+    const other = await page.context().newPage();
+    try {
+        await other.goto('about:blank');
+        await other.bringToFront();
+        const hiddenSupported = await page.waitForFunction(
+            () => document.visibilityState === 'hidden',
+            undefined,
+            { timeout: 5_000 },
+        ).then(() => true).catch(() => false);
+        if (!hiddenSupported) {
+            testInfo.annotations.push({
+                type: 'unsupported-path',
+                description: 'this headless Chromium session did not expose a real hidden-tab visibility transition; document.hidden was not fabricated',
+            });
+            test.skip(true, 'real hidden-tab lifecycle is not observable in this browser session');
+        }
+
+        const hiddenStart = await readEmptySnapshot(page);
+        await page.waitForTimeout(1_200);
+        const hiddenEnd = await readEmptySnapshot(page);
+        expect(hiddenEnd.generation, 'backgrounding cannot schedule a scenario reload')
+            .toBe(generationBefore);
+        expect(hiddenEnd.diagnostics.value.tick, 'worker ticks remain monotonic while the page is hidden')
+            .toBeGreaterThanOrEqual(hiddenStart.diagnostics.value.tick);
+
+        await page.bringToFront();
+        await page.waitForFunction(() => document.visibilityState === 'visible');
+        // Start after one foreground rAF so the hidden interval itself is not
+        // mislabeled as a dropped foreground frame.
+        await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(resolve)));
+        const recovery = await page.evaluate(async () => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            const frames = [];
+            const ticks = [];
+            let previous = await new Promise((resolve) => requestAnimationFrame(resolve));
+            for (let i = 0; i < 90; i += 1) {
+                const now = await new Promise((resolve) => requestAnimationFrame(resolve));
+                frames.push(now - previous);
+                previous = now;
+                const owner = getScale0State().fluxMock;
+                ticks.push(Number(owner?.capabilities?.scale0?.getScale0Diagnostics?.()?.tick ?? NaN));
+            }
+            const tickDeltas = ticks.slice(1).map((tick, index) => tick - ticks[index]);
+            const orderedFrames = [...frames].sort((a, b) => a - b);
+            return {
+                frameP95: orderedFrames[Math.floor(orderedFrames.length * 0.95)],
+                maxTickDelta: Math.max(0, ...tickDeltas),
+                minTickDelta: Math.min(0, ...tickDeltas),
+                finiteTicks: ticks.every(Number.isFinite),
+            };
+        });
+        const recovered = await readEmptySnapshot(page);
+        const workersAfter = await readWorkerCounters(page);
+        expect(recovered.generation).toBe(generationBefore);
+        expectExactNull(recovered);
+        expect(workersAfter, 'worker counters remain available').not.toBeNull();
+        expect(workersAfter).toEqual(workersBefore);
+        expect(recovery.finiteTicks).toBe(true);
+        expect(recovery.minTickDelta, 'resume never moves the scientific clock backwards').toBe(0);
+        expect(recovery.maxTickDelta, 'resume has no multi-tick catch-up burst between frames')
+            .toBeLessThanOrEqual(4);
+        expect(recovery.frameP95, 'foreground frame pacing recovers after a real hidden interval')
+            .toBeLessThanOrEqual(25);
+        await testInfo.attach('empty-hidden-tab-recovery', {
+            body: JSON.stringify({
+                backend: recovered.owner,
+                hiddenTicks: hiddenEnd.diagnostics.value.tick - hiddenStart.diagnostics.value.tick,
+                ...recovery,
+            }, null, 2),
+            contentType: 'application/json',
+        });
+        testInfo.annotations.push({
+            type: 'lifecycle-scope',
+            description: 'real Chromium visibility transition qualified for WasmBridgeProxy; no synthetic document.hidden override and no native GPU/WebSocket claim',
+        });
+    } finally {
+        await other.close();
+    }
+    expect(realErrors(errors)).toEqual([]);
+});
+
+test('keeps reload listeners, workers, rAF subscriptions, and renderer allocations bounded', async ({ page }, testInfo) => {
+    test.setTimeout(180_000);
+    const errors = attachConsoleWatcher(page);
+    await gotoAndReady(page, { timeout: 90_000 });
+    await selectScale0Scenario(page, EMPTY, { settleMs: 0 });
+    await waitForEmptyReady(page);
+    await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+
+    const initial = await readEmptySnapshot(page);
+    const baseline = {
+        raf: await rafSize(page),
+        renderer: await getRendererMemory(page),
+        workers: await readWorkerCounters(page),
+    };
+    const generations = [];
+    const workerSamples = [];
+    for (let i = 0; i < 5; i += 1) {
+        const before = await page.evaluate(() => Number(window.__ftdCtx?._loadGeneration ?? 0));
+        await page.locator('#btn-reset').click();
+        await waitForEmptyReady(page, initial.latticeSize);
+        const after = await page.evaluate(() => Number(window.__ftdCtx?._loadGeneration ?? 0));
+        expect(after, `reset ${i + 1} is handled exactly once`).toBe(before + 1);
+        generations.push(after);
+        const counters = await readWorkerCounters(page);
+        if (counters) {
+            expect(counters.created, `reset ${i + 1}: every created worker is accounted for`)
+                .toBe(counters.terminated + counters.live);
+            expect(counters.live, `reset ${i + 1}: worker proxies do not accumulate`)
+                .toBeLessThanOrEqual(1);
+            workerSamples.push(counters);
+        }
+        expectExactNull(await readEmptySnapshot(page));
+    }
+
+    // A single native change event must produce exactly one load generation.
+    // This is a behavioral proxy for duplicate scenario-select listeners.
+    const beforeChange = await page.evaluate(() => Number(window.__ftdCtx?._loadGeneration ?? 0));
+    await page.evaluate(() => {
+        const select = document.getElementById('scenario-select');
+        select.value = 'empty';
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    await waitForEmptyReady(page, initial.latticeSize);
+    const afterChange = await page.evaluate(() => Number(window.__ftdCtx?._loadGeneration ?? 0));
+    expect(afterChange, 'one scenario-select event has exactly one registered load handler')
+        .toBe(beforeChange + 1);
+
+    await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    const final = {
+        raf: await rafSize(page),
+        renderer: await getRendererMemory(page),
+        workers: await readWorkerCounters(page),
+        singletonCounts: await page.evaluate(() => ({
+            scenarioSelect: document.querySelectorAll('#scenario-select').length,
+            latticeSize: document.querySelectorAll('#lattice-size').length,
+            playButton: document.querySelectorAll('#btn-play').length,
+        })),
+    };
+    expect(final.singletonCounts).toEqual({ scenarioSelect: 1, latticeSize: 1, playButton: 1 });
+    expect(final.raf, 'scenario reloads do not accumulate rAF coordinator subscribers')
+        .toBeLessThanOrEqual(baseline.raf);
+    if (baseline.renderer && final.renderer) {
+        expect(final.renderer.geometries, 'renderer geometry allocations stay bounded across reloads')
+            .toBeLessThanOrEqual(baseline.renderer.geometries + 4);
+        expect(final.renderer.textures, 'renderer texture allocations stay bounded across reloads')
+            .toBeLessThanOrEqual(baseline.renderer.textures + 2);
+    } else {
+        testInfo.annotations.push({
+            type: 'unsupported-path',
+            description: 'Three.js renderer.info.memory was unavailable; no allocation value was fabricated',
+        });
+    }
+    if (initial.owner === 'wasm-worker') {
+        expect(baseline.workers).not.toBeNull();
+        expect(final.workers.created).toBe(final.workers.terminated + final.workers.live);
+        expect(final.workers.live).toBe(1);
+    } else {
+        testInfo.annotations.push({
+            type: 'unsupported-path',
+            description: `worker conservation is inapplicable on ${initial.owner}; main-thread lifecycle remains covered by generation/rAF/allocation proxies`,
+        });
+    }
+    await testInfo.attach('empty-reload-lifecycle-proxies', {
+        body: JSON.stringify({ baseline, final, generations, workerSamples }, null, 2),
+        contentType: 'application/json',
+    });
+    testInfo.annotations.push({
+        type: 'lifecycle-proxy',
+        description: 'rAF subscriber count, renderer.info.memory, worker conservation, singleton DOM nodes, and one-event/one-generation are bounded proxies; they are not a heap proof',
+    });
+    expectExactNull(await readEmptySnapshot(page));
     expect(realErrors(errors)).toEqual([]);
 });
 

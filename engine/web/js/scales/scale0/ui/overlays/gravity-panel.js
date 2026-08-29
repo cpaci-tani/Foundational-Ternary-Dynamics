@@ -30,6 +30,8 @@ const PANEL_ID = 'gravity-panel';
 // compact volume, and a metric aggregate from being enqueued every animation
 // frame on the native WebSocket bridge.
 const HZ = 4;
+const EMPTY_SCENARIO_ID = 'empty';
+const SCENARIO_SYNC_MAX_FRAMES = 120;
 
 // Load the panel stylesheet via a JS-injected (async, NON-render-blocking) link
 // instead of a <head> <link>, and only on first show. A render-blocking <link>
@@ -192,27 +194,39 @@ function buildPanel() {
     const root = document.createElement('div');
     root.id = PANEL_ID;
     root.className = 'scale0-only gravity-panel';
+    root.dataset.applicability = 'applicable';
     const qbtns = QUANTITIES.map((q, i) =>
         `<button type="button" class="grav-qbtn${i === 0 ? ' active' : ''}" data-kind="${q.kind}" title="${q.help}">${q.label}</button>`).join('');
     const tiles = AXES.map((a) =>
         `<div class="grav-tile"><canvas id="${PANEL_ID}-tile-${a.axis}" width="${TILE_PX}" height="${TILE_PX}"></canvas><div class="grav-tile-meta"><span>${a.tag}</span><span id="${PANEL_ID}-rd-${a.axis}" class="grav-tile-readout">—</span></div></div>`).join('');
     root.innerHTML = `
-        <header class="grav-header">
-            <span class="grav-title">Gravity Observatory</span>
-            <span class="grav-mode" id="${PANEL_ID}-mode" title="Web proxy gravity (|J|²-derived). The real C++ Poisson metric is Phase 2.">proxy</span>
-        </header>
-        <section style="${cardStyle(210)}">
-            <div style="${titleStyle()}" title="${SECTION_HELP.slices}">Gravity field slices ⓘ</div>
-            <div class="grav-qsel" id="${PANEL_ID}-qsel">${qbtns}</div>
-            <div class="grav-slice-tiles">${tiles}</div>
-        </section>
-        <section style="${cardStyle(220)}">
-            <div style="${titleStyle()}" title="${SECTION_HELP.telemetry}">Gravity telemetry ⓘ</div>
-            <div id="${PANEL_ID}-telemetry"></div>
-        </section>
-        <section style="${cardStyle(170)}">
-            <div style="${titleStyle()}" title="${SECTION_HELP.delta}">Live Δ-trace ⓘ</div>
-            <div id="${PANEL_ID}-delta"></div>
+        <div class="gravity-applicable-content">
+            <header class="grav-header">
+                <span class="grav-title">Gravity Observatory</span>
+                <span class="grav-mode" id="${PANEL_ID}-mode" title="Web proxy gravity (|J|²-derived). The real C++ Poisson metric is Phase 2.">proxy</span>
+            </header>
+            <section style="${cardStyle(210)}">
+                <div style="${titleStyle()}" title="${SECTION_HELP.slices}">Gravity field slices ⓘ</div>
+                <div class="grav-qsel" id="${PANEL_ID}-qsel">${qbtns}</div>
+                <div class="grav-slice-tiles">${tiles}</div>
+            </section>
+            <section style="${cardStyle(220)}">
+                <div style="${titleStyle()}" title="${SECTION_HELP.telemetry}">Gravity telemetry ⓘ</div>
+                <div id="${PANEL_ID}-telemetry"></div>
+            </section>
+            <section style="${cardStyle(170)}">
+                <div style="${titleStyle()}" title="${SECTION_HELP.delta}">Live Δ-trace ⓘ</div>
+                <div id="${PANEL_ID}-delta"></div>
+            </section>
+        </div>
+        <section class="mode-unavailable gravity-inapplicable"
+                 data-applicability="inapplicable" role="status" hidden>
+            <strong>Not applicable — imposed null control</strong>
+            <p>Scenario 1 · Empty does not define a gravity-source, metric, or
+               gravity-proxy domain. No gravity field sampling, slice analysis,
+               telemetry history, or gravitational inference is performed.</p>
+            <p>This imposed null control is not a measurement of physical
+               vacuum, inert vacuum, zero-point energy, or spacetime curvature.</p>
         </section>
     `;
     return root;
@@ -227,6 +241,9 @@ export function mountGravityPanel(host, getBridge) {
     const el = (id) => panel.querySelector(`#${PANEL_ID}-${id}`);
     const telBody = el('telemetry'), deltaBody = el('delta');
     const tiles = AXES.map((a) => ({ axis: a.axis, tag: a.tag, canvas: el(`tile-${a.axis}`), readout: el(`rd-${a.axis}`) }));
+    const applicableContent = panel.querySelector('.gravity-applicable-content');
+    const inapplicableMessage = panel.querySelector('.gravity-inapplicable');
+    const quantityButtons = [...panel.querySelectorAll('.grav-qbtn')];
 
     let activeKind = 'latency';
     let lastMetrics = null;
@@ -237,10 +254,19 @@ export function mountGravityPanel(host, getBridge) {
     let lastVer = -1;
     let lastComputedVer = -1;
     let lastHadVolume = false;
+    let inapplicable = false;
+    let disposed = false;
+    let armSub = null;
+    let liveSub = null;
+    let samplerWantSignature = '';
+    let samplerBridge = null;
+    let scenarioSelect = null;
+    let scenarioSyncRaf = 0;
+    let scenarioSyncToken = 0;
 
     panel.querySelector(`#${PANEL_ID}-qsel`).addEventListener('click', (e) => {
         const btn = e.target.closest('.grav-qbtn');
-        if (!btn) return;
+        if (!btn || inapplicable || panel.dataset.applicability !== 'applicable') return;
         activeKind = btn.dataset.kind;
         panel.querySelectorAll('.grav-qbtn').forEach((b) => b.classList.toggle('active', b === btn));
         const caps = getCaps();
@@ -250,6 +276,36 @@ export function mountGravityPanel(host, getBridge) {
     function getCaps() {
         const b = getBridge?.();
         return b?.capabilities?.scale0 || null;
+    }
+
+    function releaseSamplerWants(force = false) {
+        if (!force && !samplerWantSignature && !samplerBridge) return;
+        const target = samplerBridge || getBridge?.();
+        target?.replaceSamplerWants?.(PANEL_ID, []);
+        samplerWantSignature = '';
+        samplerBridge = null;
+    }
+
+    function setSamplerWants(bridge, keys) {
+        const signature = keys.join('|');
+        if (samplerBridge === bridge && samplerWantSignature === signature) return;
+        if (samplerBridge && samplerBridge !== bridge) {
+            samplerBridge.replaceSamplerWants?.(PANEL_ID, []);
+        }
+        bridge?.replaceSamplerWants?.(PANEL_ID, keys);
+        samplerBridge = bridge || null;
+        samplerWantSignature = signature;
+    }
+
+    function resetAnalysisState() {
+        lastMetrics = null;
+        lastAgg = null;
+        bridgeId = null;
+        history = [];
+        latched = null;
+        lastVer = -1;
+        lastComputedVer = -1;
+        lastHadVolume = false;
     }
 
     function paintSlices(caps) {
@@ -283,13 +339,20 @@ export function mountGravityPanel(host, getBridge) {
             paintSliceToCanvas(t.canvas, data, gridN, { ramp: q.ramp, signed: false, norm });
             t.readout.textContent = `max ${formatExp(max)}`;
         }
-        // A zero field is still a complete physical snapshot. Returning true
-        // here prevents an inert vacuum from turning into a perpetual retry
-        // loop merely because its correctly measured extrema are zero.
+        // A valid zero-valued proxy volume in a supported nonempty control is
+        // still a completed transport snapshot; applicability is decided from
+        // the scenario contract before this scientific path is entered.
         return true;
     }
 
     function update() {
+        // Empty is an imposed null control, not a gravity or vacuum sample.
+        // The scenario event normally removes both coordinators before this
+        // can run; this guard keeps direct/manual calls scientifically inert.
+        if (inapplicable || getScale0State().currentScenarioId === EMPTY_SCENARIO_ID) {
+            if (!inapplicable) setEmptyApplicability(true);
+            return;
+        }
         const b = getBridge?.();
         const caps = b?.capabilities?.scale0 || null;
         if (!caps) return;
@@ -308,10 +371,10 @@ export function mountGravityPanel(host, getBridge) {
         // This keeps the panel from loading the main thread (which otherwise
         // slows scale switches) and is the established panel pattern (isPanelLive).
         if (!isPanelLive(host)) {
-            getBridge?.()?.replaceSamplerWants?.('gravity-panel', []);
+            releaseSamplerWants();
             return;
         }
-        getBridge?.()?.replaceSamplerWants?.('gravity-panel', [
+        setSamplerWants(b, [
             `latency@${STRIDE}`, `kretschmann@${STRIDE}`, `gravity@${STRIDE}`, 'gravityMetricAgg@0',
         ]);
 
@@ -347,18 +410,140 @@ export function mountGravityPanel(host, getBridge) {
         lastComputedVer = ver;
     }
 
-    // Defer the rAF update loop + the stylesheet to first show. A light 2 Hz arm
-    // poll watches visibility; the heavy loop (volume read + slices + samplers)
-    // and the CSS fetch never touch the boot / scale-switch critical path until
-    // the Gravity tab is actually opened.
-    let liveSub = null;
-    const armSub = rafCoordinator.subscribe(`${PANEL_ID}-arm`, { hz: 2, cb: () => {
-        if (!isPanelLive(host)) return;
-        armSub.unsubscribe();
-        ensureGravityCss();
-        update();
-        liveSub = rafCoordinator.subscribe(PANEL_ID, { hz: HZ, cb: update });
-    } });
+    function stopCoordinators() {
+        armSub?.unsubscribe();
+        armSub = null;
+        liveSub?.unsubscribe();
+        liveSub = null;
+    }
+
+    function startRuntime() {
+        if (disposed || inapplicable || armSub || liveSub) return;
+        if (isPanelLive(host)) {
+            ensureGravityCss();
+            update();
+            if (!disposed && !inapplicable) {
+                liveSub = rafCoordinator.subscribe(PANEL_ID, { hz: HZ, cb: update });
+            }
+            return;
+        }
+        // Defer the heavy scientific path and stylesheet until first show.
+        // No arm subscription exists at all while the null control is active.
+        armSub = rafCoordinator.subscribe(`${PANEL_ID}-arm`, { hz: 2, cb: () => {
+            if (!isPanelLive(host) || disposed || inapplicable) return;
+            armSub?.unsubscribe();
+            armSub = null;
+            ensureGravityCss();
+            update();
+            if (!disposed && !inapplicable) {
+                liveSub = rafCoordinator.subscribe(PANEL_ID, { hz: HZ, cb: update });
+            }
+        } });
+    }
+
+    function stopRuntime() {
+        stopCoordinators();
+        releaseSamplerWants(true);
+    }
+
+    function presentInapplicable() {
+        panel.dataset.applicability = 'inapplicable-empty';
+        panel.classList.add('is-inapplicable');
+        applicableContent.hidden = true;
+        applicableContent.setAttribute('aria-hidden', 'true');
+        inapplicableMessage.hidden = false;
+        quantityButtons.forEach((button) => { button.disabled = true; });
+    }
+
+    function presentApplicable() {
+        panel.dataset.applicability = 'applicable';
+        panel.classList.remove('is-inapplicable');
+        applicableContent.hidden = false;
+        applicableContent.setAttribute('aria-hidden', 'false');
+        inapplicableMessage.hidden = true;
+        quantityButtons.forEach((button) => { button.disabled = false; });
+    }
+
+    function setEmptyApplicability(nextValue) {
+        const next = !!nextValue;
+        if (next === inapplicable) {
+            if (next) {
+                // Reassert after rapid empty → nonempty → empty churn, which
+                // may otherwise leave the intermediate pending label visible.
+                presentInapplicable();
+                stopRuntime();
+                resetAnalysisState();
+            } else {
+                presentApplicable();
+                startRuntime();
+            }
+            return;
+        }
+        inapplicable = next;
+        if (next) {
+            presentInapplicable();
+            stopRuntime();
+            resetAnalysisState();
+        } else {
+            presentApplicable();
+            startRuntime();
+        }
+    }
+
+    function handleScenarioIntent(scenarioId) {
+        const token = ++scenarioSyncToken;
+        if (scenarioSyncRaf) cancelAnimationFrame(scenarioSyncRaf);
+        scenarioSyncRaf = 0;
+
+        // Suspend immediately on intent, before a stale worker generation can
+        // publish a flux-derived gravity proxy into the null-control panel.
+        if (scenarioId === EMPTY_SCENARIO_ID) {
+            setEmptyApplicability(true);
+            return;
+        }
+
+        // Every scenario load replaces the active bridge generation. Retire
+        // old demands/history now and restore only after the canonical store
+        // confirms that the requested generation is active.
+        stopRuntime();
+        resetAnalysisState();
+        panel.dataset.applicability = 'pending-scenario';
+        applicableContent.hidden = true;
+        applicableContent.setAttribute('aria-hidden', 'true');
+        inapplicableMessage.hidden = true;
+        quantityButtons.forEach((button) => { button.disabled = true; });
+
+        let remaining = SCENARIO_SYNC_MAX_FRAMES;
+        const reconcile = () => {
+            scenarioSyncRaf = 0;
+            if (disposed || token !== scenarioSyncToken) return;
+            if (getScale0State().currentScenarioId === scenarioId) {
+                setEmptyApplicability(false);
+                return;
+            }
+            remaining--;
+            if (remaining > 0) scenarioSyncRaf = requestAnimationFrame(reconcile);
+        };
+        reconcile();
+    }
+
+    function onScenarioChange(event) {
+        handleScenarioIntent(String(event.currentTarget?.value || ''));
+    }
+
+    function rebindScenarioApplicability() {
+        const nextSelect = document.getElementById('scenario-select');
+        if (nextSelect !== scenarioSelect) {
+            scenarioSelect?.removeEventListener('change', onScenarioChange);
+            scenarioSelect = nextSelect;
+            scenarioSelect?.addEventListener('change', onScenarioChange);
+        }
+        handleScenarioIntent(String(
+            scenarioSelect?.value || getScale0State().currentScenarioId || '',
+        ));
+    }
+
+    rebindScenarioApplicability();
 
     const api = {
         update,
@@ -367,11 +552,25 @@ export function mountGravityPanel(host, getBridge) {
         get lastAgg() { return lastAgg; },
         get activeKind() { return activeKind; },
         refreshHz: HZ,
-        setKind: (k) => { activeKind = k; const caps = getCaps(); if (caps) paintSlices(caps); },
+        setKind: (k) => {
+            if (inapplicable || panel.dataset.applicability !== 'applicable') return;
+            activeKind = k;
+            const caps = getCaps();
+            if (caps) paintSlices(caps);
+        },
         get historyLength() { return history.length; },
+        get applicability() { return inapplicable ? 'inapplicable-empty' : 'applicable'; },
+        get coordinatorActive() { return !!armSub || !!liveSub; },
+        get samplerWantsActive() { return !!samplerWantSignature || !!samplerBridge; },
+        rebindScenarioApplicability,
         dispose: () => {
-            armSub.unsubscribe();
-            liveSub?.unsubscribe();
+            disposed = true;
+            stopRuntime();
+            if (scenarioSyncRaf) cancelAnimationFrame(scenarioSyncRaf);
+            scenarioSyncRaf = 0;
+            scenarioSyncToken++;
+            scenarioSelect?.removeEventListener('change', onScenarioChange);
+            scenarioSelect = null;
             if (typeof window !== 'undefined' && window.__ftdGravityPanel === api) window.__ftdGravityPanel = null;
             panel.remove();
         },
@@ -382,7 +581,10 @@ export function mountGravityPanel(host, getBridge) {
 
 export function initGravityPanel() {
     if (typeof document === 'undefined') return null;
-    if (typeof window !== 'undefined' && window.__ftdGravityPanel) return window.__ftdGravityPanel;
+    if (typeof window !== 'undefined' && window.__ftdGravityPanel) {
+        window.__ftdGravityPanel.rebindScenarioApplicability?.();
+        return window.__ftdGravityPanel;
+    }
     const host = document.getElementById('panel-gravity');
     if (!host) return null;
     const getBridge = () => resolveActiveScale0BridgeFromWindow();

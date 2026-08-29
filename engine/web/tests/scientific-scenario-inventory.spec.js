@@ -20,6 +20,9 @@ import {
 import {
     getScale5ScenarioToolbarTemplate,
 } from '../js/scales/scale5/ui/toolbar/template.js';
+import {
+    getKnowledgeBaseEntry,
+} from '../js/ui/components/knowledge-base/data.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const WEB_ROOT = path.resolve(HERE, '..');
@@ -134,8 +137,26 @@ test('Scenario 1 remains open and blocks progression', () => {
     const record = fs.readFileSync(recordPath, 'utf8');
 
     expect(record).toContain('**Scenario ID:** `empty`');
-    expect(record).toContain('**[OPEN]** preregistration');
+    expect(record).toContain('**[OPEN]** qualification in progress');
     expect(record).toContain('**Next scenario may open:** `no`');
     expect(record).toContain('vacuum physics');
     expect(record).toContain('16.67 ms frame target');
+});
+
+test('the empty-scenario knowledge entry states the imposed null-control boundary', () => {
+    const entry = getKnowledgeBaseEntry('scenario-empty');
+    expect(entry).toBeTruthy();
+
+    const scientificCopy = [
+        entry.summary,
+        ...(entry.body || []),
+        ...(entry.bullets || []),
+        ...(entry.notation || []),
+    ].join(' ');
+
+    expect(scientificCopy).toContain('imposed');
+    expect(scientificCopy).toContain('null control');
+    expect(scientificCopy).toContain('not a physical-vacuum identification');
+    expect(scientificCopy).toContain('Clocks and bookkeeping may advance');
+    expect(scientificCopy).not.toContain('vacuum-like');
 });

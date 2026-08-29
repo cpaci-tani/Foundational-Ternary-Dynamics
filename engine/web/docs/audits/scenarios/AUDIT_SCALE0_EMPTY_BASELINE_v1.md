@@ -1,6 +1,7 @@
 # Scenario Qualification — Scale 0 `empty` Baseline v1
 
-**Record status:** **[OPEN]** preregistration; measurement gates have not run.
+**Record status:** **[OPEN]** qualification in progress; partial measurements
+are recorded below and do not yet authorize a scenario-level claim.
 
 **Scenario ID:** `empty`
 
@@ -8,7 +9,7 @@
 
 **Audit opened:** 2026-08-29
 
-**Audit disposition:** `not-started`
+**Audit disposition:** `in-progress`
 
 This is a null-control experiment. Passing it may establish exact invariance of
 the implemented zero record under a declared finite configuration. It cannot
@@ -63,10 +64,14 @@ establish vacuum physics, zero-point energy, or physical emptiness.
 | `empty-is-physical-vacuum` | This scenario establishes physical vacuum, zero-point energy, cosmological vacuum, or absence of all ontology. | The scenario is an **[IMPOSED]** finite all-zero control. |
 | `empty-validates-nonzero-scenarios` | Passing the null control validates any nonzero scenario or physical identification. | A control verifies only its own declared implementation contract. |
 
-- Integrity observables: a canonical fieldwise dynamical-lattice hash and
-  direct reductions over the same stored arrays are redundant integrity checks,
-  not independent evidence. Any independent oracle must be separately
-  implemented and identified before it is counted as such.
+- Integrity observables: the native qualification target implements a
+  schema-versioned fieldwise dynamical-state digest over named persistent
+  fields, normalizes signed zero, and excludes raw padding, clocks,
+  bookkeeping, telemetry, RNG/counters, and temporary scratch. Direct
+  reductions over the same stored arrays are redundant integrity checks, not
+  independent evidence. Executable probes check signed-zero normalization,
+  clock/bookkeeping exclusion, and flux sensitivity. Any independent oracle
+  must be separately implemented and identified before it is counted as such.
 
 ## 3. Frozen acceptance protocol
 
@@ -93,6 +98,21 @@ The following tiered grid is preregistered before new candidate measurements:
 - Lifecycle repetitions: first load, reload, resize/reinitialize, rapid
   `empty -> nonempty -> empty` switching, hidden-tab recovery, and teardown.
 
+Current execution-path evidence remains deliberately non-equivalent:
+
+| Compute | Runtime | Transport | Current Scenario 1 evidence |
+|---|---|---|---|
+| CPU | native | in-process | deep fieldwise state, diagnostics, audit, ledger, Lagrangian, gravity, and digest checks |
+| CPU | WASM main | in-process/Embind | browser-visible exact-null and lifecycle checks; no canonical digest export |
+| CPU | WASM worker | worker | browser-visible exact-null, lifecycle, and pacing checks; no canonical digest export |
+| GPU | native CUDA | in-process | shared device-resident digest/counters pass ordinary and interactive modes for all three boundaries through tick 64 without a full state mirror |
+| GPU when served by the CUDA server | native | WebSocket | protocol-v2 smoke exists, but it does not exercise `empty` or expose the canonical digest |
+
+The checked-in WASM `build_info.txt` currently identifies a dirty build from a
+different source revision. It can support local behavioral development but is
+not a reproducible artifact for a final scientific gate. WASM evidence must be
+rerun after a clean wasm32/wasm64/threaded build and record the selected artifact.
+
 Required checks:
 
 1. the canonical fieldwise dynamical-lattice hash is unchanged from tick 0
@@ -117,8 +137,17 @@ Required checks:
    allocation or overlay sampling;
 11. presentation decimation does not change tick count or scientific state;
 12. on the reference machine/browser at `L = 97`, the foreground UI is measured
-   against the 16.67 ms frame target with frame-pacing evidence, not an average
-   FPS label alone.
+    against the 16.67 ms frame target with frame-pacing evidence, not an average
+    FPS label alone.
+
+The current 60 FPS result is a collapsed-panel control, not an all-panel result.
+Scale 0 exposes 17 visible panel interfaces. Each must be warmed, measured for
+at least 240 foreground frames, collapsed, and checked for stopped work using
+absolute gates (`FPS >= 59`, `p95 <= 16.9 ms`, `p99 <= 25 ms`, no long tasks,
+and bounded callback/DOM/canvas/resource deltas). The historical
+`perf-current-results.json` full-physics `L=33` result is approximately 12 FPS
+and uses a relative-regression gate; it is neither Scenario 1 evidence nor an
+acceptable substitute for the absolute 60 FPS contract.
 
 Any non-null dynamical lattice field, backend disagreement outside a preregistered
 tolerance, stale-generation mutation, non-finite telemetry, or presentation-
@@ -129,15 +158,43 @@ qualification but does not rewrite a scientific zero/nonzero result.
 
 | Gate | Status | Current evidence | Blocking work |
 |---|---|---|---|
-| 1. Static trace | in-progress | registry, reset + empty-profile initializer, toggle profile, boundary, native CPU target, and browser path located | complete export/help and remaining backend trace |
-| 2. Mathematical well-posedness | in-progress | dynamical-null invariant, evolving bookkeeping, observer baseline, and prohibited claims separated | publish canonical fieldwise serializer/hash definition and boundary proof |
-| 3. Numerical validity | in-progress | `empty_scenario_qualification` passes native CPU at `L=8,17,33,65,97`, all three flux boundaries, ticks `0,1,2,8,16`; browser worker lifecycle/null checks pass at product sizes through `L=97` | long invariant matrix, WASM-main/native-WebSocket/GPU evidence, and canonical hashes remain open |
+| 1. Static trace | in-progress | registry, reset + empty-profile initializer, toggle profile, boundary, native CPU target, browser path, and knowledge-base wording located and aligned | complete export metadata and remaining backend trace |
+| 2. Mathematical well-posedness | in-progress | dynamical-null invariant, evolving bookkeeping, observer baseline, prohibited claims, and the schema-versioned named-field digest domain are separated; CPU and CUDA share one parallel two-lane combination contract with exact nonfinite/nondefault counters | publish the boundary proof and extend the canonical digest contract through WASM and WebSocket surfaces |
+| 3. Numerical validity | in-progress | `empty_scenario_qualification` passes native CPU at `L=8,17,33,65,97`, all three flux boundaries, short checkpoints, plus `L=8,17,33` through ticks `64,256,1024` with invariant fieldwise digests; the WSL2 CUDA sibling passes ordinary/interactive modes and all three boundaries through tick 64 with exact CPU/GPU populated-state hash parity, 32-byte result transfer, and zero full-mirror calls; browser worker lifecycle/null checks pass at product sizes through `L=97`; forced WASM-main exact-null parity passes through 16 synchronous ticks and rapid-generation switching | preregistered 4096-tick/product-path matrix, native-WebSocket evidence, and WASM/WebSocket digest parity remain open |
 | 4. Scientific validity | not-started | null claim and falsifiers frozen | run controls without post-hoc tuning |
-| 5. Scale appropriateness | not-started | lattice null belongs to Scale 0 | audit all UI nouns and cross-scale implications |
-| 6. UI and interpretive truth | in-progress | focused browser test passes picker/current-state truth, unsupported-latency distinction, finite observer baseline, and collapsed overlay demand | export metadata, help/knowledge-base wording, and non-worker paths remain open |
-| 7. Performance and operational safety | in-progress | focused WASM-worker `L=97` run records 240 frames at 60.00 FPS with median/p95/p99/max 16.67 ms; rapid generation/reset/resize and collapsed demand pass | repeatable hardware/build artifact, long-frame campaign, native-GPU, hidden-tab recovery, teardown allocation, and all-panel envelope remain open |
+| 5. Scale appropriateness | in-progress | the imposed finite lattice record belongs to Scale 0; exact-ID gating correctly excludes Standard Model overlays | replace unqualified particle/void nouns, remove stale Scale-up implications, and verify all generic panel applicability states |
+| 6. UI and interpretive truth | in-progress | focused browser test passes picker/current-state truth, unsupported-latency distinction, finite observer baseline, collapsed overlay demand, and WASM-main/worker origin distinction; the knowledge entry now states the imposed null-control and non-vacuum boundary; Diagnostics renders unresolved values as `—` while retaining exact measured zero; Lagrangian exposes the state-independent observer reference, baseline-subtracted `Δℒ`, stale/unavailable states, and an explicit non-vacuum/non-zero-point limitation; Flux Slice, Spectrum, and Gravity declare `empty` inapplicable and stop their scientific sampling/coordinator paths | live mutation does not yet suspend the displayed qualification; upstream telemetry still erases some unavailable diagnostics/audit/Lagrangian values into zero before formatting; remaining panel applicability, export metadata, and native-WebSocket presentation paths remain open |
+| 7. Performance and operational safety | in-progress | the final full WASM-worker coexistence campaign passes all 17 visible panels at `L=97`: every panel records 60.00 FPS with p95/p99 16.67 ms, all absolute fixed-work/callback budgets pass, no long tasks occur, and every collapsed panel records zero DOM/canvas work; Diagnostics passes with 5 mounted canvases/about 95 mutations; Lagrangian passes with 7 mounted canvases and on-demand action trends; Flux Slice, Spectrum, and Gravity perform zero periodic work for `empty`; rapid generation/reset/resize and five-reset lifecycle probes pass | genuine hidden-tab evidence is unsupported in the current headless browser and was skipped rather than fabricated; clean reproducible WASM build identity, longer foreground campaign, and native-WebSocket browser evidence remain open |
 
-## 5. Disposition
+## 5. UI trace blockers
+
+The Scale 0 UI audit found the following qualification blockers. These are
+recorded here so later interface work cannot silently erase or bypass them:
+
+1. injecting, randomizing, or field-editing the live lattice does not suspend
+   the displayed `empty` qualification even though toggle edits do;
+2. Diagnostics now preserves unresolved values as unavailable, but upstream
+   telemetry paths still convert some unavailable, stale, or nonfinite data
+   into numeric zero before the panel receives them;
+3. generic Time, Thermodynamics, Dispersion, P1 Observatory, and Knots surfaces
+   need explicit `empty` applicability states;
+4. Scale 0 labels such as `Particle Count`, `Particle Display`, `void`, and
+   `entangled pair` exceed what a ternary manifestation record alone establishes;
+5. stale Scale 1/user-guide text still describes a removed `Scale up` action,
+   while the latent handoff payload lacks build, backend/runtime/transport,
+   boundary, toggle, mutation, source-epoch, and qualification provenance;
+6. no live scientific export/share implementation exists. A JSON-first export
+   must preserve run provenance, per-channel availability, exact observer
+   baselines, and the canonical digest; stale export claims in the user guide
+   are not evidence that such a path exists;
+7. global FAQ text about vacuum and ternary state predates the strict v3
+   complete-record/manifestation-quotient distinction and must not be read as
+   Scenario 1 evidence.
+
+These items are fixed and verified one interface at a time. A passing frame-rate
+measurement does not waive an interpretive-truth failure.
+
+## 6. Disposition
 
 **Disposition:** `not-set`
 
