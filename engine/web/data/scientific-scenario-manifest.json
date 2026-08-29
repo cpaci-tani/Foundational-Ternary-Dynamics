@@ -1,0 +1,560 @@
+{
+  "schema_version": 1,
+  "contract_version": "1",
+  "frozen_at_commit": "d5f672ad128584252643c9799da7153468d7a4a4",
+  "inventory_date": "2026-08-29",
+  "scales": [
+    {
+      "id": "scale0",
+      "mode_id": "lattice",
+      "display_name": "Scale 0 — Lattice/Substrate",
+      "visibility": "visible",
+      "contract_status": "open",
+      "may_represent": [
+        "Finite lattice records and their explicitly implemented tick dynamics",
+        "Ternary manifestation readout and named flux or record observables",
+        "Null controls whose finite configuration and execution path are declared"
+      ],
+      "must_not_imply": [
+        "Established Standard Model particle identity, atoms, QED, general relativity, or continuum physics",
+        "That an imposed all-zero finite record is the physical vacuum",
+        "That a presentation overlay is a scientific observable without an applicability and provenance contract"
+      ],
+      "source_refs": [
+        {
+          "path": "engine/web/docs/PLAN_SCIENTIFIC_SCENARIO_QUALIFICATION.md",
+          "role": "documentation",
+          "symbol": "Scale contracts"
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "empty",
+      "display_name": "Empty Lattice — Null Control",
+      "scale": "scale0",
+      "model_relation": "native-operator",
+      "experimental_roles": [
+        "null-control",
+        "regression"
+      ],
+      "record_lifecycle": "open",
+      "mathematical_model": "A finite fresh/reset lattice record is initialized to its declared null and sentinel values, every production term is disabled by the empty profile, and the ordinary deterministic finite tick schedule is applied. The proposed invariant concerns only named dynamical lattice fields; clock, scheduler, provenance, and ledger bookkeeping are separate tick-indexed records.",
+      "state_space": "The finite voxel record includes ternary storage, J, wave and matter velocities, dual fields, remainder, latency, tau, phase, locks and identifiers, spin/color/flavor, accelerations, strong/weak fields, scalar potentials, force buffers, active indexes, and event counters. Legitimate sentinels such as particle_id=-1 and pair_id=-1 are not reclassified as zero.",
+      "initial_conditions": "[IMPOSED] Fresh RenderBridge construction/reset followed by the empty profile supplies the all-null/all-sentinel initial record. dispatch_scenario(\"empty\") disables terms; it is not by itself the initializer.",
+      "boundary_conditions": "The preregistered native matrix includes periodic, reflective, and dispersal boundaries. The browser evidence frozen here exercised the product default periodic path; it is not evidence for browser boundary parity.",
+      "enabled_terms": [],
+      "parameter_provenance": [
+        {
+          "name": "initial-record",
+          "value_or_domain": "fresh/reset all-null and declared sentinel record",
+          "provenance": "IMPOSED",
+          "source_refs": [
+            {
+              "path": "engine/src/render_bridge.cpp",
+              "role": "initializer",
+              "symbol": "RenderBridge construction/reset"
+            }
+          ]
+        },
+        {
+          "name": "empty-term-profile",
+          "value_or_domain": "all production terms disabled",
+          "provenance": "IMPOSED",
+          "source_refs": [
+            {
+              "path": "engine/src/scenarios.cpp",
+              "role": "initializer",
+              "symbol": "dispatch_scenario empty"
+            },
+            {
+              "path": "engine/web/js/config/toggles.js",
+              "role": "parameter",
+              "symbol": "empty"
+            }
+          ]
+        },
+        {
+          "name": "qualification-grid",
+          "value_or_domain": {
+            "product_resolutions": [9, 17, 33, 65, 97],
+            "native_core_additional_resolutions": [8],
+            "boundaries": ["periodic", "reflective", "dispersal"],
+            "short_tick_checkpoints": [0, 1, 2, 16]
+          },
+          "provenance": "IMPOSED",
+          "source_refs": [
+            {
+              "path": "engine/web/docs/audits/scenarios/AUDIT_SCALE0_EMPTY_BASELINE_v1.md",
+              "role": "documentation",
+              "symbol": "Frozen acceptance protocol"
+            }
+          ]
+        }
+      ],
+      "native_units": "Finite lattice sites and ordinal ticks; field and telemetry values remain in named engine-native lattice units.",
+      "physical_calibration": "None. No conversion to a physical vacuum, zero-point energy, cosmological vacuum, or continuum quantity is licensed by this record.",
+      "observables": [
+        {
+          "id": "dynamical-record-null",
+          "implementation": {
+            "path": "engine/tests/test_empty_scenario_qualification.cpp",
+            "role": "test",
+            "symbol": "Exact null-control matrix"
+          },
+          "source_fields": [
+            "voxel record fields",
+            "active indexes",
+            "event counters",
+            "force and potential buffers"
+          ],
+          "units": "engine-native lattice record values",
+          "role": "primary",
+          "expected_domain": "Exact initialized null or declared sentinel value for every named dynamical field in a tested finite configuration",
+          "comparator": "Fieldwise exact equality; no canonical cross-runtime digest existed at the frozen commit",
+          "backend_availability": [
+            "cpu/native/in-process"
+          ],
+          "allowed_interpretation": "Implementation null-control invariance only within a configuration for which evidence is recorded"
+        },
+        {
+          "id": "activity-telemetry",
+          "implementation": {
+            "path": "engine/tests/test_empty_scenario_qualification.cpp",
+            "role": "observable",
+            "symbol": "Diagnostics and EnergyAudit checks"
+          },
+          "source_fields": [
+            "state counts",
+            "field and velocity maxima",
+            "charge and events",
+            "EnergyAudit field wave particle dynamic and total energies"
+          ],
+          "units": "named engine-native diagnostic units",
+          "role": "redundant-integrity",
+          "expected_domain": "Finite exact zero for explicitly named activity channels",
+          "comparator": "Exact numeric zero after an availability check",
+          "backend_availability": [
+            "cpu/native/in-process",
+            "cpu/wasm-worker/web-worker-partial"
+          ],
+          "allowed_interpretation": "A redundant check of the same implemented null record, not an independent physical oracle"
+        },
+        {
+          "id": "observer-baseline",
+          "implementation": {
+            "path": "engine/tests/test_empty_scenario_qualification.cpp",
+            "role": "observable",
+            "symbol": "state_independent_baseline_is_exact"
+          },
+          "source_fields": [
+            "Diagnostics total_energy",
+            "Born-Infeld sum",
+            "Lagrangian total",
+            "Hamiltonian total",
+            "action total"
+          ],
+          "units": "named engine-native diagnostic units",
+          "role": "redundant-integrity",
+          "expected_domain": "Finite documented state-independent observer baseline; not assumed to be zero",
+          "comparator": "Exact finite identities declared by the native qualification test",
+          "backend_availability": [
+            "cpu/native/in-process",
+            "cpu/wasm-worker/web-worker-partial"
+          ],
+          "allowed_interpretation": "Observer or functional baseline only; it is neither null excitation energy nor physical vacuum energy"
+        },
+        {
+          "id": "foreground-frame-pacing",
+          "implementation": {
+            "path": "engine/web/tests/scale0-empty-scenario-qualification.spec.js",
+            "role": "test",
+            "symbol": "records 60 FPS frame pacing at the largest lattice enabled for the active backend"
+          },
+          "source_fields": [
+            "requestAnimationFrame timestamp deltas"
+          ],
+          "units": "milliseconds per presentation frame and frames per second",
+          "role": "presentation-only",
+          "expected_domain": "Reference foreground Chromium run records 240 frames against the declared presentation budget",
+          "comparator": "FPS >= 59, p95 <= 16.9 ms, p99 <= 25 ms for the recorded focused run",
+          "backend_availability": [
+            "cpu/wasm-worker/web-worker-partial"
+          ],
+          "allowed_interpretation": "Focused collapsed-panel presentation pacing only; not an all-panel, GPU, or long-duration scientific-state result"
+        }
+      ],
+      "accepted_claims": [],
+      "prohibited_claims": [
+        {
+          "claim_id": "empty-is-physical-vacuum",
+          "wording": "This scenario establishes physical vacuum, zero-point energy, cosmological vacuum, or absence of all ontology.",
+          "scope": "All configurations and execution paths of the Scale 0 empty null control",
+          "epistemic_tag": "IMPOSED",
+          "evidence": [
+            {
+              "kind": "audit",
+              "path_or_uri": "engine/web/docs/audits/scenarios/AUDIT_SCALE0_EMPTY_BASELINE_v1.md",
+              "commit": "d5f672ad128584252643c9799da7153468d7a4a4",
+              "digest": "sha256:d41cf0204eaf86829a2f72ea71c19b2c1e8089e37e2c8e70d2e16df848d3ea12",
+              "symbol": "Claims",
+              "test_command": null,
+              "result": "The frozen audit defines the record as an [IMPOSED] null control and explicitly excludes physical-vacuum interpretation.",
+              "date": "2026-08-29"
+            }
+          ],
+          "supporting_gates": [],
+          "limitations": [
+            "This is an interpretive prohibition, not an empirical proof about the physical vacuum."
+          ],
+          "disposition": "prohibited"
+        },
+        {
+          "claim_id": "empty-validates-nonzero-scenarios",
+          "wording": "Passing the empty null control validates a nonzero scenario, cross-scale bridge, or physical identification.",
+          "scope": "All nonzero scenarios and all higher-scale representations",
+          "epistemic_tag": "IMPOSED",
+          "evidence": [
+            {
+              "kind": "audit",
+              "path_or_uri": "engine/web/docs/audits/scenarios/AUDIT_SCALE0_EMPTY_BASELINE_v1.md",
+              "commit": "d5f672ad128584252643c9799da7153468d7a4a4",
+              "digest": "sha256:d41cf0204eaf86829a2f72ea71c19b2c1e8089e37e2c8e70d2e16df848d3ea12",
+              "symbol": "Claims",
+              "test_command": null,
+              "result": "The frozen audit restricts this control to its own declared implementation contract.",
+              "date": "2026-08-29"
+            }
+          ],
+          "supporting_gates": [],
+          "limitations": [
+            "Each nonzero scenario requires its own contract, evidence, and gate disposition."
+          ],
+          "disposition": "prohibited"
+        }
+      ],
+      "validation_protocol": "Use the preregistered product resolutions L=9,17,33,65,97, with native-core L=8 recorded separately; periodic, reflective, and dispersal boundaries; short checkpoints 0,1,2,16; the declared long matrix; separate compute/runtime/transport records; load, reload, resize, rapid empty-to-nonempty-to-empty switching, hidden-tab recovery, and teardown. Missing or unsupported channels remain unavailable rather than numeric zero. Evidence added after frozen_at_commit must be recorded by a later manifest revision and may not be backdated into this record.",
+      "acceptance_gates": {
+        "static-trace": {
+          "status": "in-progress",
+          "evidence": [
+            {
+              "kind": "audit",
+              "path_or_uri": "engine/web/docs/audits/scenarios/AUDIT_SCALE0_EMPTY_BASELINE_v1.md",
+              "commit": "d5f672ad128584252643c9799da7153468d7a4a4",
+              "digest": "sha256:d41cf0204eaf86829a2f72ea71c19b2c1e8089e37e2c8e70d2e16df848d3ea12",
+              "symbol": "Frozen identity",
+              "test_command": null,
+              "result": "Registry, reset plus empty-profile initializer, toggle profile, boundary, native CPU target, and browser path were located.",
+              "date": "2026-08-29"
+            }
+          ],
+          "blocking_findings": [
+            "Complete export/help and remaining backend trace.",
+            "Post-freeze working-tree trace extensions are not evidence for this manifest revision."
+          ]
+        },
+        "mathematical-well-posedness": {
+          "status": "in-progress",
+          "evidence": [
+            {
+              "kind": "audit",
+              "path_or_uri": "engine/web/docs/audits/scenarios/AUDIT_SCALE0_EMPTY_BASELINE_v1.md",
+              "commit": "d5f672ad128584252643c9799da7153468d7a4a4",
+              "digest": "sha256:d41cf0204eaf86829a2f72ea71c19b2c1e8089e37e2c8e70d2e16df848d3ea12",
+              "symbol": "Scientific contract",
+              "test_command": null,
+              "result": "The dynamical-null invariant, evolving bookkeeping, observer baseline, and prohibited claims were separated.",
+              "date": "2026-08-29"
+            }
+          ],
+          "blocking_findings": [
+            "Publish the canonical fieldwise serializer and hash definition.",
+            "Publish the boundary proof and cross-runtime serialization contract."
+          ]
+        },
+        "numerical-validity": {
+          "status": "in-progress",
+          "evidence": [
+            {
+              "kind": "test",
+              "path_or_uri": "engine/tests/test_empty_scenario_qualification.cpp",
+              "commit": "d5f672ad128584252643c9799da7153468d7a4a4",
+              "digest": "sha256:0908af59d01320a768945e9a300dbe8d20063110eef2d612450d81793b96fd85",
+              "symbol": "Exact null-control matrix",
+              "test_command": "ctest --test-dir engine/build -C Release -R '^empty_scenario_qualification$' -j 24 --output-on-failure",
+              "result": "Passed native CPU at requested L=8,17,33,65,97, all three flux boundaries, and checkpoints 0,1,2,8,16.",
+              "date": "2026-08-29"
+            },
+            {
+              "kind": "test",
+              "path_or_uri": "engine/web/tests/scale0-empty-scenario-qualification.spec.js",
+              "commit": "d5f672ad128584252643c9799da7153468d7a4a4",
+              "digest": "sha256:fdc39f3c28662679569e4098d19d90620541110b0864c3598ab101bb5a59cab2",
+              "symbol": "exact null lifecycle and telemetry tests",
+              "test_command": "npx playwright test scale0-empty-scenario-qualification.spec.js --reporter=line",
+              "result": "Passed focused WASM-worker browser null, lifecycle, telemetry-availability, collapsed-demand, and largest-enabled-lattice checks through L=97.",
+              "date": "2026-08-29"
+            }
+          ],
+          "blocking_findings": [
+            "Run the preregistered long invariant matrix.",
+            "Add WASM-main, native-WebSocket, and native-GPU evidence.",
+            "Define and compare canonical fieldwise hashes across runtimes."
+          ]
+        },
+        "scientific-validity": {
+          "status": "not-started",
+          "evidence": [],
+          "blocking_findings": [
+            "Run the frozen null controls without post-hoc tuning.",
+            "No accepted scientific claim exists at the frozen commit."
+          ]
+        },
+        "scale-appropriateness": {
+          "status": "not-started",
+          "evidence": [],
+          "blocking_findings": [
+            "Audit every UI noun, overlay applicability state, and cross-scale implication for the empty record."
+          ]
+        },
+        "ui-interpretive-truth": {
+          "status": "in-progress",
+          "evidence": [
+            {
+              "kind": "test",
+              "path_or_uri": "engine/web/tests/scale0-empty-scenario-qualification.spec.js",
+              "commit": "d5f672ad128584252643c9799da7153468d7a4a4",
+              "digest": "sha256:fdc39f3c28662679569e4098d19d90620541110b0864c3598ab101bb5a59cab2",
+              "symbol": "telemetry and collapsed-demand test",
+              "test_command": "npx playwright test scale0-empty-scenario-qualification.spec.js --reporter=line",
+              "result": "Passed picker/current-state truth, unavailable-latency distinction, finite observer-baseline, and collapsed overlay-demand checks on the active WASM-worker path.",
+              "date": "2026-08-29"
+            }
+          ],
+          "blocking_findings": [
+            "Add export metadata and correct help or knowledge-base wording.",
+            "Qualify non-worker, native-WebSocket, and GPU presentation paths.",
+            "Post-freeze UI fixes remain blocking until recorded in a later evidence commit."
+          ]
+        },
+        "performance-operational-safety": {
+          "status": "in-progress",
+          "evidence": [
+            {
+              "kind": "test",
+              "path_or_uri": "engine/web/tests/scale0-empty-scenario-qualification.spec.js",
+              "commit": "d5f672ad128584252643c9799da7153468d7a4a4",
+              "digest": "sha256:fdc39f3c28662679569e4098d19d90620541110b0864c3598ab101bb5a59cab2",
+              "symbol": "records 60 FPS frame pacing at the largest lattice enabled for the active backend",
+              "test_command": "npx playwright test scale0-empty-scenario-qualification.spec.js --reporter=line",
+              "result": "The focused WASM-worker L=97 collapsed-panel run recorded 240 frames at 60.00 FPS with median, p95, p99, and maximum 16.67 ms; rapid generation, reset, resize, and collapsed demand passed.",
+              "date": "2026-08-29"
+            }
+          ],
+          "blocking_findings": [
+            "Capture a repeatable clean hardware and build artifact.",
+            "Run the long-frame campaign, hidden-tab recovery, teardown-allocation checks, all-panel envelope, and native-GPU path.",
+            "The focused collapsed-panel result is not an all-panel 60 FPS qualification."
+          ]
+        }
+      },
+      "falsification_gates": [
+        "Any named dynamical lattice field differs from its initialized null or sentinel value in a tested configuration.",
+        "Any unavailable or unsupported channel is reported as a measured numeric zero.",
+        "Any backend disagreement exceeds a preregistered tolerance after canonical parity evidence exists.",
+        "A stale generation mutates the restored empty record after rapid switching, reload, or resize.",
+        "Any required telemetry is non-finite or lacks origin and availability labels.",
+        "Presentation cadence or visibility changes the scientific tick count or lattice state."
+      ],
+      "known_limitations": [
+        "Qualification is in progress and accepted_claims is intentionally empty.",
+        "Scenario 2 may not open while any Scenario 1 acceptance gate is not pass.",
+        "The frozen evidence does not include the long matrix, WASM-main, native-WebSocket, native-GPU, cross-runtime canonical digests, hidden-tab recovery, teardown allocation, export metadata, or the all-panel performance envelope.",
+        "The checked-in WASM artifact at the frozen commit was a dirty build from a different source revision and cannot support a final reproducible gate.",
+        "Later working-tree extensions are blocking candidates until a new manifest revision freezes their own commit and evidence digests."
+      ],
+      "backend_support": [
+        {
+          "compute_backend": "cpu",
+          "runtime": "native",
+          "transport": "in-process",
+          "build_id": "source:d5f672ad128584252643c9799da7153468d7a4a4; binary-build-id-not-captured",
+          "availability": "supported",
+          "semantic_parity_class": "native-null-control-reference; cross-runtime parity remains open",
+          "tested_configurations": [
+            "requested L=8,17,33,65,97; periodic, reflective, dispersal; ticks 0,1,2,8,16"
+          ],
+          "limitations": [
+            "The preregistered long matrix and product-path L=9 evidence were not complete at the frozen commit.",
+            "No canonical digest artifact or compiler and hardware result bundle was frozen."
+          ],
+          "evidence": [
+            {
+              "kind": "test",
+              "path_or_uri": "engine/tests/test_empty_scenario_qualification.cpp",
+              "commit": "d5f672ad128584252643c9799da7153468d7a4a4",
+              "digest": "sha256:0908af59d01320a768945e9a300dbe8d20063110eef2d612450d81793b96fd85",
+              "symbol": "Exact null-control matrix",
+              "test_command": "ctest --test-dir engine/build -C Release -R '^empty_scenario_qualification$' -j 24 --output-on-failure",
+              "result": "Native CPU qualification target passed the recorded finite short matrix.",
+              "date": "2026-08-29"
+            }
+          ]
+        },
+        {
+          "compute_backend": "cpu",
+          "runtime": "wasm-main",
+          "transport": "in-process",
+          "build_id": "not-recorded-at-frozen-commit",
+          "availability": "unknown",
+          "semantic_parity_class": "unqualified-separate-path",
+          "tested_configurations": [],
+          "limitations": [
+            "No focused WASM-main Scenario 1 evidence existed at the frozen commit.",
+            "Unknown availability and values must not be represented as zero."
+          ],
+          "evidence": []
+        },
+        {
+          "compute_backend": "cpu",
+          "runtime": "wasm-worker",
+          "transport": "web-worker",
+          "build_id": "checked-in-dirty-wasm-build; source-revision-not-reproducibly-bound",
+          "availability": "partial",
+          "semantic_parity_class": "browser-visible-null-control-only; canonical digest parity open",
+          "tested_configurations": [
+            "product sizes through L=97 on the default periodic path; load, reset, supported resize, rapid generation switching, collapsed demand, and 240-frame pacing"
+          ],
+          "limitations": [
+            "No canonical digest export or reproducible clean WASM build artifact existed.",
+            "Full latency volume is unsupported by the worker contract and remains unavailable, not zero.",
+            "The pacing result covered a focused collapsed-panel run, not every panel."
+          ],
+          "evidence": [
+            {
+              "kind": "test",
+              "path_or_uri": "engine/web/tests/scale0-empty-scenario-qualification.spec.js",
+              "commit": "d5f672ad128584252643c9799da7153468d7a4a4",
+              "digest": "sha256:fdc39f3c28662679569e4098d19d90620541110b0864c3598ab101bb5a59cab2",
+              "symbol": "Scale-0 Scenario 1 browser qualification",
+              "test_command": "npx playwright test scale0-empty-scenario-qualification.spec.js --reporter=line",
+              "result": "Focused WASM-worker browser qualification passed while preserving unsupported latency as unavailable.",
+              "date": "2026-08-29"
+            }
+          ]
+        },
+        {
+          "compute_backend": "gpu",
+          "runtime": "native",
+          "transport": "in-process",
+          "build_id": "not-recorded-at-frozen-commit",
+          "availability": "unknown",
+          "semantic_parity_class": "unqualified-separate-path",
+          "tested_configurations": [],
+          "limitations": [
+            "No native-GPU empty-scenario sibling qualification target existed at the frozen commit.",
+            "Unknown availability and values must not be represented as zero."
+          ],
+          "evidence": []
+        },
+        {
+          "compute_backend": "gpu",
+          "runtime": "native",
+          "transport": "websocket",
+          "build_id": "not-recorded-at-frozen-commit",
+          "availability": "unknown",
+          "semantic_parity_class": "unqualified-native-websocket-path",
+          "tested_configurations": [],
+          "limitations": [
+            "Protocol smoke outside Scenario 1 is not empty-scenario evidence.",
+            "No native-WebSocket empty run or canonical digest was frozen.",
+            "Unknown availability and values must not be represented as zero."
+          ],
+          "evidence": []
+        }
+      ],
+      "backend_tolerances": [],
+      "resolution_domain": "Preregistered product L=9,17,33,65,97, with requested native-core L=8 reported separately. Evidence is valid only for the exact requested and actual resolution recorded by its execution path.",
+      "cross_scale_inputs": [],
+      "visual_defaults": {
+        "overlays": [],
+        "prohibited_overlays": [
+          "Standard Model particle identity, spin, chirality, helicity, flavor, color, or generation overlays",
+          "Physical-vacuum, zero-point-energy, or cosmological-vacuum overlays",
+          "Any field or particle overlay whose source observable is unavailable or not applicable to the empty null control"
+        ]
+      },
+      "performance_budget": {
+        "reference_frame_ms": 16.67,
+        "simulation_cadence_policy": "Scientific ticks and state updates are measured independently of presentation decimation; visibility must not change the scientific result.",
+        "rendering_cadence_policy": "Reference foreground presentation target is at least 59 FPS with p95 <= 16.9 ms and p99 <= 25 ms for an explicitly named panel and execution profile.",
+        "hidden_ui_policy": "Collapsed or hidden panels perform no polling, layout, chart drawing, or field extraction; hidden-tab recovery remains an open qualification item at the frozen commit.",
+        "reference_profile": "Windows 11 reference host, foreground Chromium, active CPU/WASM-worker/web-worker path, empty at largest enabled L; frozen evidence covers only the focused collapsed-panel 240-frame run."
+      },
+      "evidence_links": [
+        {
+          "kind": "audit",
+          "path_or_uri": "engine/web/docs/audits/scenarios/AUDIT_SCALE0_EMPTY_BASELINE_v1.md",
+          "commit": "d5f672ad128584252643c9799da7153468d7a4a4",
+          "digest": "sha256:d41cf0204eaf86829a2f72ea71c19b2c1e8089e37e2c8e70d2e16df848d3ea12",
+          "symbol": "Scenario Qualification — Scale 0 empty Baseline v1",
+          "test_command": null,
+          "result": "Open preregistration and partial evidence ledger; disposition not set and Scenario 2 blocked.",
+          "date": "2026-08-29"
+        },
+        {
+          "kind": "test",
+          "path_or_uri": "engine/tests/test_empty_scenario_qualification.cpp",
+          "commit": "d5f672ad128584252643c9799da7153468d7a4a4",
+          "digest": "sha256:0908af59d01320a768945e9a300dbe8d20063110eef2d612450d81793b96fd85",
+          "symbol": "empty_scenario_qualification",
+          "test_command": "ctest --test-dir engine/build -C Release -R '^empty_scenario_qualification$' -j 24 --output-on-failure",
+          "result": "Passed the frozen native CPU short qualification matrix.",
+          "date": "2026-08-29"
+        },
+        {
+          "kind": "test",
+          "path_or_uri": "engine/web/tests/scale0-empty-scenario-qualification.spec.js",
+          "commit": "d5f672ad128584252643c9799da7153468d7a4a4",
+          "digest": "sha256:fdc39f3c28662679569e4098d19d90620541110b0864c3598ab101bb5a59cab2",
+          "symbol": "Scale-0 Scenario 1 browser qualification",
+          "test_command": "npx playwright test scale0-empty-scenario-qualification.spec.js --reporter=line",
+          "result": "Passed the frozen focused WASM-worker browser qualification.",
+          "date": "2026-08-29"
+        }
+      ],
+      "contract_version": "1",
+      "qualification_state": "in-progress",
+      "source_refs": [
+        {
+          "path": "engine/web/js/scales/scale0/scenario-registry.js",
+          "role": "registry",
+          "symbol": "empty"
+        },
+        {
+          "path": "engine/src/scenarios.cpp",
+          "role": "initializer",
+          "symbol": "dispatch_scenario empty"
+        },
+        {
+          "path": "engine/web/js/config/toggles.js",
+          "role": "parameter",
+          "symbol": "empty"
+        },
+        {
+          "path": "engine/tests/test_empty_scenario_qualification.cpp",
+          "role": "test",
+          "symbol": "empty_scenario_qualification"
+        },
+        {
+          "path": "engine/web/tests/scale0-empty-scenario-qualification.spec.js",
+          "role": "test",
+          "symbol": "Scale-0 Scenario 1 browser qualification"
+        }
+      ]
+    }
+  ],
+  "aliases": []
+}
