@@ -97,6 +97,90 @@ function callbackWorst(report, key) {
         .reduce((worst, entry) => Math.max(worst, Number(entry[key] || 0)), 0);
 }
 
+test('P1 Observables suspends on Empty intent and restores only after a nonempty generation commits', async ({ page }) => {
+    test.setTimeout(180_000);
+    const consoleErrors = attachConsoleWatcher(page);
+    await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
+    await selectScale0Scenario(page, 'flux-pulse', { settleMs: 750 });
+    await page.locator('#tab-bar .tab[data-panel="p1-observables"]').click();
+
+    await expect.poll(() => page.evaluate(() => ({
+        applicability: window.__ftdP1Panel?.applicability ?? null,
+        coordinatorActive: window.__ftdP1Panel?.coordinatorActive ?? null,
+        mountedComponentCount: window.__ftdP1Panel?.mountedComponentCount ?? null,
+        updateCount: window.__ftdP1Panel?.updateCount ?? 0,
+    })), { timeout: 15_000 }).toMatchObject({
+        applicability: 'applicable',
+        coordinatorActive: true,
+        mountedComponentCount: 8,
+    });
+
+    const intentBoundary = await page.evaluate(() => {
+        const api = window.__ftdP1Panel;
+        const select = /** @type {HTMLSelectElement|null} */ (document.getElementById('scenario-select'));
+        if (!api || !select) throw new Error('P1 panel or scenario selector unavailable');
+        const before = api.updateCount;
+        select.value = 'empty';
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        api.update();
+        const root = document.getElementById('panel-p1-observables');
+        const panel = root?.querySelector('#p1-observables-panel');
+        const message = root?.querySelector('.p1-inapplicable');
+        return {
+            before,
+            afterManualUpdate: api.updateCount,
+            applicability: panel?.dataset.applicability ?? null,
+            messageStatus: message?.dataset.applicability ?? null,
+            message: message?.textContent?.replace(/\s+/g, ' ').trim() ?? null,
+            messageVisible: !!message && !message.hidden,
+            contentHidden: !!root?.querySelector('.p1-applicable-content')?.hidden,
+            mountedComponentCount: api.mountedComponentCount,
+            sectionCount: root?.querySelectorAll('.p1-applicable-content > section').length ?? null,
+            scientificControlCount: root?.querySelectorAll('.p1-applicable-content button, .p1-applicable-content input').length ?? null,
+            coordinatorActive: api.coordinatorActive,
+            subscriberPresent: [...(window.__ftdRAF?._subs?.keys?.() || [])]
+                .some((id) => id.startsWith('p1-observables-panel')),
+        };
+    });
+
+    expect(intentBoundary).toMatchObject({
+        applicability: 'inapplicable-empty',
+        messageStatus: 'inapplicable',
+        messageVisible: true,
+        contentHidden: true,
+        mountedComponentCount: 0,
+        sectionCount: 0,
+        scientificControlCount: 0,
+        coordinatorActive: false,
+        subscriberPresent: false,
+    });
+    expect(intentBoundary.afterManualUpdate, 'manual update remains inert after Empty intent')
+        .toBe(intentBoundary.before);
+    expect(intentBoundary.message).toContain('No particle-list or field-volume sampling is performed');
+    expect(intentBoundary.message).toContain('not a measurement of physical vacuum');
+
+    await expect.poll(() => page.evaluate(async () => {
+        const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+        return getScale0State().currentScenarioId;
+    }), { timeout: 90_000 }).toBe(EMPTY);
+    const frozenCount = await page.evaluate(() => window.__ftdP1Panel?.updateCount ?? null);
+    await page.waitForTimeout(1_000);
+    expect(await page.evaluate(() => window.__ftdP1Panel?.updateCount ?? null),
+        'Empty performs no periodic P1 scientific pass').toBe(frozenCount);
+
+    await selectScale0Scenario(page, 'flux-pulse', { settleMs: 750 });
+    await expect.poll(() => page.evaluate(() => ({
+        applicability: window.__ftdP1Panel?.applicability ?? null,
+        coordinatorActive: window.__ftdP1Panel?.coordinatorActive ?? null,
+        mountedComponentCount: window.__ftdP1Panel?.mountedComponentCount ?? null,
+    })), { timeout: 15_000 }).toEqual({
+        applicability: 'applicable',
+        coordinatorActive: true,
+        mountedComponentCount: 8,
+    });
+    expect(realErrors(consoleErrors)).toEqual([]);
+});
+
 test('distinguishes an unresolved Diagnostics source from a measured exact zero', async ({ page }) => {
     test.setTimeout(120_000);
     await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
@@ -645,6 +729,31 @@ test('all 17 visible panels sustain 60 Hz at empty L=97 and stop panel work when
                     };
                 }
 
+                if (panelId === 'p1-observables') {
+                    const api = window.__ftdP1Panel;
+                    const before = api?.updateCount ?? null;
+                    // Public/manual entry points must be inert as well as the
+                    // removed coordinator subscription.
+                    api?.update();
+                    const message = root.querySelector('.p1-inapplicable');
+                    result.p1ObservablesApplicability = {
+                        panelStatus: root.querySelector('#p1-observables-panel')?.dataset.applicability ?? null,
+                        messageStatus: message?.dataset.applicability ?? null,
+                        message: message?.textContent?.replace(/\s+/g, ' ').trim() ?? null,
+                        messageVisible: !!message && !message.hidden,
+                        contentHidden: !!root.querySelector('.p1-applicable-content')?.hidden,
+                        mountedComponentCount: api?.mountedComponentCount ?? null,
+                        sectionCount: root.querySelectorAll('.p1-applicable-content > section').length,
+                        scientificControlCount: root.querySelectorAll(
+                            '.p1-applicable-content button, .p1-applicable-content input',
+                        ).length,
+                        coordinatorActive: api?.coordinatorActive ?? null,
+                        updateCountStable: before === (api?.updateCount ?? null),
+                        subscriberPresent: [...(window.__ftdRAF?._subs?.keys?.() || [])]
+                            .some((id) => id.startsWith('p1-observables-panel')),
+                    };
+                }
+
                 if (panelId === 'gravity') {
                     const api = window.__ftdGravityPanel;
                     // Empty must remain inert even through public/manual panel
@@ -883,6 +992,31 @@ test('all 17 visible panels sustain 60 Hz at empty L=97 and stop panel work when
             expect.soft(audit.hasCppAggregate, `${label}: no stale C++ aggregate is presented`).toBe(false);
             expect.soft(audit.historyLength, `${label}: no null-control history is retained`).toBe(0);
             expect.soft(callbackSampleCount(active), `${label}: no periodic gravity callback ran`).toBe(0);
+            expect.soft(active.dom.mutationRecords, `${label}: static inapplicable state has no churn`)
+                .toBe(0);
+            expect.soft(active.dom.canvasDraws, `${label}: inapplicable state performs no draw`)
+                .toBe(0);
+        }
+
+        if (panel.panelId === 'p1-observables') {
+            const audit = panel.p1ObservablesApplicability;
+            expect.soft(audit.panelStatus, `${label}: explicit panel applicability state`)
+                .toBe('inapplicable-empty');
+            expect.soft(audit.messageStatus, `${label}: explicit message applicability state`)
+                .toBe('inapplicable');
+            expect.soft(audit.messageVisible, `${label}: inapplicable explanation is visible`).toBe(true);
+            expect.soft(audit.contentHidden, `${label}: experiment surface is hidden`).toBe(true);
+            expect.soft(audit.message, `${label}: null-control experiment boundary`)
+                .toContain('prepares no source, excitation, material clock');
+            expect.soft(audit.message, `${label}: no fabricated vacuum interpretation`)
+                .toContain('not a measurement of physical vacuum');
+            expect.soft(audit.mountedComponentCount, `${label}: experiment components are unmounted`).toBe(0);
+            expect.soft(audit.sectionCount, `${label}: stale experiment cards are removed`).toBe(0);
+            expect.soft(audit.scientificControlCount, `${label}: experiment controls are removed`).toBe(0);
+            expect.soft(audit.coordinatorActive, `${label}: P1 coordinator is stopped`).toBe(false);
+            expect.soft(audit.subscriberPresent, `${label}: no P1 rAF subscription remains`).toBe(false);
+            expect.soft(audit.updateCountStable, `${label}: manual update is inert`).toBe(true);
+            expect.soft(callbackSampleCount(active), `${label}: no periodic P1 callback ran`).toBe(0);
             expect.soft(active.dom.mutationRecords, `${label}: static inapplicable state has no churn`)
                 .toBe(0);
             expect.soft(active.dom.canvasDraws, `${label}: inapplicable state performs no draw`)

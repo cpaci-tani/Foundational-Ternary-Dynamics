@@ -41,7 +41,7 @@ import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initScenePa
 import { floatingWindowManager } from './ui/components/floating-window/component.js';
 import { initFluxSlicePanel } from './scales/scale0/ui/overlays/flux-slice-panel.js';
 import { initWaveLabPanel } from './scales/scale0/ui/overlays/wave-lab-panel.js?v=2';
-import { initP1ObservablesPanel } from './scales/scale0/ui/overlays/p1-observables-panel.js?v=2';
+import { initP1ObservablesPanel } from './scales/scale0/ui/overlays/p1-observables-panel.js?v=3';
 import { initConservationMicropanel } from './scales/scale0/ui/overlays/conservation-micropanel.js';
 import { initSpectrumPanel } from './scales/scale0/ui/overlays/spectrum-panel.js';
 import { initGravityPanel } from './scales/scale0/ui/overlays/gravity-panel.js';

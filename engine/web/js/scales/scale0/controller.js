@@ -56,7 +56,7 @@ import { mountSymmetryPanel } from './ui/overlays/symmetry-panel.js';
 // double-mount.
 import { initFluxSlicePanel } from './ui/overlays/flux-slice-panel.js';
 import { initWaveLabPanel } from './ui/overlays/wave-lab-panel.js?v=2';
-import { initP1ObservablesPanel } from './ui/overlays/p1-observables-panel.js?v=2';
+import { initP1ObservablesPanel } from './ui/overlays/p1-observables-panel.js?v=3';
 import { initConservationMicropanel } from './ui/overlays/conservation-micropanel.js';
 import { initSpectrumPanel } from './ui/overlays/spectrum-panel.js';
 import { initGravityPanel } from './ui/overlays/gravity-panel.js';
