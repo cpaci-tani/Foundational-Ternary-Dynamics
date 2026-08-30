@@ -3,6 +3,8 @@
  * Detaches any DOM panel and mounts it inside a viewport-floating window.
  */
 
+import { notifyPanelVisibilityChange } from '../../panels/panel-visibility.js?v=2';
+
 let _activeWindows = [];
 let _maxZIndex = 1000;
 
@@ -87,6 +89,11 @@ export class FloatingWindow {
         app.appendChild(this.el);
 
         _activeWindows.push(this);
+        notifyPanelVisibilityChange({
+            reason: 'floating-mount',
+            panelId: this.panelId,
+            collapsed: false,
+        });
 
         return this;
     }
@@ -108,6 +115,11 @@ export class FloatingWindow {
             btn.textContent = this.isCollapsed ? '⛶' : '—';
             btn.title = this.isCollapsed ? 'Restore' : 'Minimize';
         }
+        notifyPanelVisibilityChange({
+            reason: 'floating-collapse',
+            panelId: this.panelId,
+            collapsed: this.isCollapsed,
+        });
         this.triggerChartResize();
     }
 
@@ -138,6 +150,11 @@ export class FloatingWindow {
             this.el.remove();
         }
         _activeWindows = _activeWindows.filter(win => win !== this);
+        notifyPanelVisibilityChange({
+            reason: 'floating-destroy',
+            panelId: this.panelId,
+            collapsed: true,
+        });
         this.onDestroy?.(this.panelId, this);
     }
 

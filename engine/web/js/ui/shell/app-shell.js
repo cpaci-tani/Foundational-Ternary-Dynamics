@@ -1,6 +1,6 @@
 import { BreakpointService } from './breakpoint-service.js';
 import { ensureShellTemplate } from './shell-template.js';
-import { PanelDockController } from './panel-dock-controller.js';
+import { PanelDockController } from './panel-dock-controller.js?v=2';
 import { MobilePanelController } from './mobile-panel.js';
 import { LoadingOverlayComponent } from '../components/loading-overlay/component.js';
 import { TopbarComponent } from '../components/topbar/component.js';

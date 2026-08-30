@@ -157,10 +157,19 @@ const state = {
     fieldFlags: createFieldFlags(),
     // Field-line knot tracking is NOT a visual overlay flag (it does not map to a
     // renderer toggle and must not count toward anyFieldActive), so it lives
-    // outside fieldFlags. It gates FieldLineKnotTracker.record() and schedules
-    // E/B/flux streamline jobs even when those overlays are off. Survives
-    // resetFieldFlags() (scenario change).
+    // outside fieldFlags. `knotTracking` is the retained user preference;
+    // `knotTrackingApplicable` is the scenario/runtime gate. The effective
+    // conjunction gates FieldLineKnotTracker.record() and E/B/flux streamline
+    // jobs. This preserves the preference across an inapplicable scenario
+    // without spending work or manufacturing an observation there.
     knotTracking: false,
+    knotTrackingApplicable: true,
+    // Knot-zone boxes have a retained user preference and a separate effective
+    // renderer flag. An inapplicable/pending scenario must hide the boxes
+    // without erasing what the user asked to see when a qualified scenario is
+    // restored. `fieldFlags.showKnotZones` is always the effective value.
+    knotZonesRequested: false,
+    knotZonesApplicable: true,
     fieldFrame: 0,
     fieldNeedsUpdate: false,
     // Monotonic field-data version. Bumped once per real physics tick (tick.js);
@@ -423,11 +432,20 @@ export function recomputeAnyFieldActive() {
 export function resetFieldFlags() {
     state.fieldFlags = createFieldFlags();
     state.fieldNeedsUpdate = false;
-    recomputeAnyFieldActive();
+    // Re-establish retained/effective invariants after replacing the flag bag.
+    // This is intentionally store-owned: scenario loads and headless runs must
+    // not depend on a mounted Knots panel to restore a qualified user request.
+    syncKnotZonesEffective();
 }
 
 export function setFieldToggle(key, value) {
     if (!Object.prototype.hasOwnProperty.call(state.fieldFlags, key)) return;
+    // Keep every knot-zone write on the desired/effective path. This prevents a
+    // future generic caller from bypassing Empty/pending applicability.
+    if (key === 'showKnotZones') {
+        setKnotZonesRequested(value);
+        return;
+    }
     const prev = state.fieldFlags[key];
     const next = !!value;
     state.fieldFlags[key] = next;
@@ -460,6 +478,52 @@ export function getFieldStateSnapshot() {
 export function setKnotTracking(on) {
     state.knotTracking = !!on;
     state.fieldNeedsUpdate = true;
+    return syncKnotZonesEffective();
+}
+
+export function setKnotTrackingApplicability(on) {
+    const next = !!on;
+    if (state.knotTrackingApplicable !== next) {
+        state.knotTrackingApplicable = next;
+        state.fieldNeedsUpdate = true;
+    }
+    return syncKnotZonesEffective();
+}
+
+export function isKnotTrackingActive(snapshot = state) {
+    // Scientific applicability must fail closed in the runtime, not depend on
+    // the optional Knots UI being mounted to flip a flag. This also covers
+    // headless runs and the short interval between scenario commit and panel
+    // reconciliation.
+    return snapshot?.currentScenarioId !== 'empty'
+        && !!snapshot?.knotTracking
+        && snapshot?.knotTrackingApplicable !== false;
+}
+
+export function isKnotZonesActive(snapshot = state) {
+    return snapshot?.currentScenarioId !== 'empty'
+        && isKnotTrackingActive(snapshot)
+        && !!snapshot?.knotZonesRequested
+        && snapshot?.knotZonesApplicable !== false;
+}
+
+function syncKnotZonesEffective() {
+    const prev = !!state.fieldFlags.showKnotZones;
+    const next = isKnotZonesActive(state);
+    state.fieldFlags.showKnotZones = next;
+    if (prev !== next) state.fieldNeedsUpdate = true;
+    recomputeAnyFieldActive();
+    return next;
+}
+
+export function setKnotZonesRequested(on) {
+    state.knotZonesRequested = !!on;
+    return syncKnotZonesEffective();
+}
+
+export function setKnotZonesApplicability(on) {
+    state.knotZonesApplicable = !!on;
+    return syncKnotZonesEffective();
 }
 
 export function setForceStyle(style) {
@@ -593,6 +657,10 @@ export function resetFrameState() {
 
 export function setCurrentScenarioId(id) {
     state.currentScenarioId = id || 'flux-pulse';
+    // The store, rather than an optional mounted panel, owns the final Empty
+    // fail-closed boundary. On a committed nonempty load this also restores a
+    // retained request once the panel/runtime applicability gate is open.
+    syncKnotZonesEffective();
 }
 
 /** Bridge that owns live Scale-0 physics (WASM worker when useFluxMock). */

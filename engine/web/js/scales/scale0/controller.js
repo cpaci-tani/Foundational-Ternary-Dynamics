@@ -6,7 +6,7 @@
  */
 
 import { BaseLifecycleController } from '../../lifecycle.js';
-import { createScale0ViewportAdapter } from './viewport-adapter.js';
+import { createScale0ViewportAdapter } from './viewport-adapter.js?v=2';
 import {
     getFieldStateSnapshot,
     getScale0State,
@@ -25,7 +25,7 @@ import {
 } from './state/store.js';
 import { advanceSimulation } from './runtime/tick.js';
 import { syncRenderableData } from './runtime/frame-sync.js';
-import { disposeFieldOverlayRuntime, updateFieldOverlays } from './runtime/field-overlays.js?v=16';
+import { disposeFieldOverlayRuntime, updateFieldOverlays } from './runtime/field-overlays.js?v=17';
 import { updateDiagnosticsAndPanels } from './runtime/diagnostics.js';
 import {
     exitScale0,
@@ -36,7 +36,7 @@ import {
     syncComboSliders,
     syncScale0ToggleUiFromEngine,
     stepScale0,
-} from './runtime/scenario-loader.js?v=12';
+} from './runtime/scenario-loader.js?v=13';
 import { bindScale0UI, handleScale0ShortcutKey } from './ui/bindings.js?v=10';
 import { getSelectedScenarioId } from './ui/dom.js';
 import { syncScale0LatticeSizeAvailability } from './ui/toolbar/limits.js';

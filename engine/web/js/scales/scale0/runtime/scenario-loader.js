@@ -666,6 +666,15 @@ export function restoreOverlayPreferences(prefs, state, viewportAdapter, getForc
         viewportAdapter.setOverlayVisible(flagKey, wasOn);
     }
 
+    // Knot-zone boxes use a retained desired/effective state rather than an
+    // overlay-panel button. resetScale0VisualState() always clears their mesh;
+    // restore the store-qualified effective value even when the Knots panel is
+    // absent so state and renderer cannot diverge across scenario loads.
+    viewportAdapter.setOverlayVisible(
+        'showKnotZones',
+        !!state.fieldFlags.showKnotZones,
+    );
+
     // Force render style (arrows / heatmap / flow / glyphs)
     if (prefs.forceStyle) {
         setForceStyle(prefs.forceStyle);

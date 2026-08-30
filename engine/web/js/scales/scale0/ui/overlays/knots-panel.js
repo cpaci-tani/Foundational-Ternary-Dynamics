@@ -1,6 +1,18 @@
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
-import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
-import { getScale0State, setFieldToggle, setKnotTracking, markFieldDirty } from '../../state/store.js';
+import {
+    isPanelLive,
+    PANEL_VISIBILITY_CHANGE_EVENT,
+} from '../../../../ui/panels/panel-visibility.js?v=2';
+import {
+    getScale0State,
+    isKnotTrackingActive,
+    isKnotZonesActive,
+    markFieldDirty,
+    setKnotTracking,
+    setKnotTrackingApplicability,
+    setKnotZonesApplicability,
+    setKnotZonesRequested,
+} from '../../state/store.js';
 import { getFieldLineKnotTracker, forEachKnotTracker, knotHue } from '../../runtime/field-line-knots.js';
 import { RingBuffer, telemetryHub } from '../../../../telemetry-hub.js';
 import { ChartHoverTooltip, formatChartValue } from '../../../../ui/charts/chart-hover-tooltip.js';
@@ -170,6 +182,8 @@ function bindCanvasTip(canvas, tooltip, panelRoot) {
 }
 
 const PANEL_ID = 'knots-panel';
+const EMPTY_SCENARIO_ID = 'empty';
+const SCENARIO_SYNC_MAX_FRAMES = 120;
 
 // Event type integer order — matches the tracker's event enum:
 // 0=Birth 1=Death 2=Persist 3=Fission 4=Fusion 5=Ambiguous.
@@ -236,7 +250,9 @@ function ensureCss() {
 function buildPanel() {
     const root = document.createElement('div');
     root.id = PANEL_ID;
+    root.dataset.applicability = 'applicable';
     root.innerHTML = `
+      <div class="knots-applicable-content">
       <div class="kp-title">Field-Line Knots <small>· where streamlines tangle</small></div>
       <div class="kp-head">
         <span id="kp-track-dot" title="● = tracking on, ○ = off">○</span>
@@ -277,7 +293,18 @@ function buildPanel() {
         (flux exact from the dense |J| volume; energy ½(E²+B²) &amp; charge ∇·J sub-sampled).
         The <b>drawn field-line shape</b> (segments / crossings / legs / length) depends on how the lines are seeded —
         it's a Feynman-diagram <b>analogy</b>, <b>NOT</b> a physical amplitude. Ages are counted in whole ticks.
-      </div>`;
+      </div>
+      </div>
+      <section class="mode-unavailable knots-inapplicable"
+               data-applicability="inapplicable" role="status" hidden>
+        <strong>Not applicable — imposed null control</strong>
+        <p>Scenario 1 · Empty defines no field-line or streamline-sweep domain.
+           No field extraction, RK4 line integration, clump detection, lifecycle
+           tracking, or contribution measurement is performed.</p>
+        <p>A displayed zero-knot count would imply a detector run that did not
+           occur. This control is not evidence for physical vacuum or topological
+           triviality, and rendered streamline clumps are not knot invariants.</p>
+      </section>`;
     return root;
 }
 
@@ -288,18 +315,23 @@ export function mountKnotsPanel(host) {
     const panel = buildPanel();
     host.appendChild(panel);
     const el = (id) => panel.querySelector(`#${id}`);
-
-    // The (heavier) scientific contribution measurement runs in the field jobs only
-    // while this panel is mounted. Enable for BOTH the E and B trackers; mark the
-    // field dirty so a sweep measures promptly.
-    forEachKnotTracker((t) => t.setContribEnabled(true));
-    markFieldDirty();
+    const applicableContent = panel.querySelector('.knots-applicable-content');
+    const inapplicableMessage = panel.querySelector('.knots-inapplicable');
 
     // Scenario EM-energy history (sampled at the panel's 4 Hz from the engine's
     // energy audit). emTotal = ½(E²+B²); E/B/wave are the components.
     const emHub = { emTotal: new RingBuffer(240), eField: new RingBuffer(240), bField: new RingBuffer(240), wave: new RingBuffer(240) };
     let emResetVersion = -1;
     let lastAuditStamp = null;
+    let inapplicable = false;
+    let disposed = false;
+    let armSub = null;
+    let liveSub = null;
+    let measurementActive = false;
+    let updateCount = 0;
+    let scenarioSelect = null;
+    let scenarioSyncRaf = 0;
+    let scenarioSyncToken = 0;
 
     // Shared hover tooltip for all charts (value-at-cursor). The static charts are
     // bound once here; the per-knot history chart (rebuilt each paint) binds in update().
@@ -316,6 +348,7 @@ export function mountKnotsPanel(host) {
     // regardless. When off, knots are uniform cyan.
     colorCb.checked = getFieldLineKnotTracker('e').getPerKnotColor();
     colorCb.addEventListener('change', (e) => {
+        if (inapplicable || panel.dataset.applicability !== 'applicable') return;
         forEachKnotTracker((t) => t.setPerKnotColor(e.target.checked));
         markFieldDirty();   // recolor the flowlines + boxes on the next sweep
         update();
@@ -329,6 +362,7 @@ export function mountKnotsPanel(host) {
     sensSlider.value = Math.round(getFieldLineKnotTracker('e').getSensitivity() * 100);
     sensVal.textContent = sensSlider.value + '%';
     sensSlider.addEventListener('input', (e) => {
+        if (inapplicable || panel.dataset.applicability !== 'applicable') return;
         const pct = +e.target.value;
         sensVal.textContent = pct + '%';
         forEachKnotTracker((t) => t.setSensitivity(pct / 100));
@@ -338,22 +372,30 @@ export function mountKnotsPanel(host) {
     // The overlay checkbox drives the VISUAL flag (colored boxes around the
     // detected knots). The boxes are meaningless without tracking data, so
     // enabling the overlay auto-enables tracking (and syncs its checkbox).
-    overlayCb.checked = !!getScale0State().fieldFlags.showKnotZones;
+    overlayCb.checked = !!getScale0State().knotZonesRequested;
     overlayCb.addEventListener('change', (e) => {
+        if (inapplicable || panel.dataset.applicability !== 'applicable') return;
         const on = e.target.checked;
-        setFieldToggle('showKnotZones', on);
+        setKnotZonesRequested(on);
         if (on && !getScale0State().knotTracking) {
             setKnotTracking(true);
             trackCb.checked = true;
         }
+        window.__ftdCtx?.viewport?.toggleKnotZones?.(
+            isKnotZonesActive(getScale0State()),
+        );
     });
 
     // The tracking checkbox enables the JS FieldLineKnotTracker recorder (fed from
     // the E-field overlay job). Reset on un-check so stale knots/zones clear.
     trackCb.checked = !!getScale0State().knotTracking;
     trackCb.addEventListener('change', (e) => {
+        if (inapplicable || panel.dataset.applicability !== 'applicable') return;
         setKnotTracking(e.target.checked);
         if (!e.target.checked) forEachKnotTracker((t) => t.reset());
+        window.__ftdCtx?.viewport?.toggleKnotZones?.(
+            isKnotZonesActive(getScale0State()),
+        );
     });
 
     let expandedKey = null;   // "<field>:<id>" of the expanded/selected knot row
@@ -368,7 +410,16 @@ export function mountKnotsPanel(host) {
     }
 
     function update() {
+        // Empty and pending scenario generations are a hard scientific
+        // boundary. Direct/manual calls remain inert before tracker, telemetry,
+        // canvas, or DOM access.
+        if (inapplicable || getScale0State().currentScenarioId === EMPTY_SCENARIO_ID) {
+            if (!inapplicable) setEmptyApplicability(true);
+            return;
+        }
+        if (panel.dataset.applicability !== 'applicable' || !measurementActive) return;
         if (!isPanelLive(host)) return;
+        updateCount++;
         const trackingOn = !!getScale0State().knotTracking;
         el('kp-track-dot').textContent = trackingOn ? '●' : '○';
 
@@ -549,14 +600,203 @@ export function mountKnotsPanel(host) {
         }
     }
 
-    const { unsubscribe } = rafCoordinator.subscribe(PANEL_ID, { hz: 4, cb: update });
+    function clearScientificState() {
+        emResetVersion = -1;
+        lastAuditStamp = null;
+        for (const buffer of Object.values(emHub)) buffer.clear();
+        expandedKey = null;
+        chartTip.hide();
+        forEachKnotTracker((tracker) => tracker.reset());
+    }
+
+    function setMeasurementActive(on) {
+        const next = !!on && !inapplicable && !disposed;
+        if (measurementActive === next) return;
+        measurementActive = next;
+        forEachKnotTracker((tracker) => tracker.setContribEnabled(next));
+        // Contribution fields are fetched only for a live Knots panel. Force
+        // one fresh sweep when it opens so the first displayed ratios are not
+        // retained from a previously hidden panel.
+        if (next && isKnotTrackingActive(getScale0State())) markFieldDirty();
+    }
+
+    function stopLiveCoordinator() {
+        liveSub?.unsubscribe?.();
+        liveSub = null;
+        setMeasurementActive(false);
+    }
+
+    function stopAllCoordinators() {
+        armSub?.unsubscribe?.();
+        armSub = null;
+        stopLiveCoordinator();
+    }
+
+    function reconcileVisibility() {
+        if (inapplicable || disposed || panel.dataset.applicability !== 'applicable') return;
+        if (!isPanelLive(host)) {
+            stopLiveCoordinator();
+            return;
+        }
+        setMeasurementActive(true);
+        if (!liveSub) {
+            update();
+            liveSub = rafCoordinator.subscribe(PANEL_ID, { hz: 4, cb: () => {
+                if (!isPanelLive(host)) {
+                    stopLiveCoordinator();
+                    return;
+                }
+                update();
+            } });
+        }
+    }
+
+    function startVisibilityCoordinator() {
+        if (armSub || inapplicable || disposed) return;
+        reconcileVisibility();
+        armSub = rafCoordinator.subscribe(`${PANEL_ID}-arm`, { hz: 2, cb: reconcileVisibility });
+    }
+
+    // Dock/tab/floating visibility changes are explicit synchronous boundaries.
+    // The low-rate arm coordinator remains a recovery mechanism, but must not
+    // leave contribution field reads enabled for even one in-flight sweep after
+    // the panel becomes invisible.
+    function onPanelVisibilityChange() {
+        if (disposed || inapplicable || panel.dataset.applicability !== 'applicable'
+            || !isPanelLive(host)) {
+            stopLiveCoordinator();
+            return;
+        }
+        reconcileVisibility();
+    }
+    window.addEventListener(PANEL_VISIBILITY_CHANGE_EVENT, onPanelVisibilityChange);
+
+    function setControlsDisabled(disabled) {
+        applicableContent.querySelectorAll('button, input, select').forEach((control) => {
+            control.disabled = !!disabled;
+        });
+    }
+
+    function setKnotZoneApplicability(on) {
+        const effective = setKnotZonesApplicability(on);
+        overlayCb.checked = !!getScale0State().knotZonesRequested;
+        window.__ftdCtx?.viewport?.toggleKnotZones?.(effective);
+        return effective;
+    }
+
+    function setEmptyApplicability(nextValue) {
+        const next = !!nextValue;
+        inapplicable = next;
+        panel.dataset.applicability = next ? 'inapplicable-empty' : 'applicable';
+        panel.classList.toggle('is-inapplicable', next);
+        applicableContent.hidden = next;
+        applicableContent.setAttribute('aria-hidden', next ? 'true' : 'false');
+        inapplicableMessage.hidden = !next;
+        setControlsDisabled(next);
+
+        if (next) {
+            stopAllCoordinators();
+            setKnotTrackingApplicability(false);
+            setKnotZoneApplicability(false);
+            clearScientificState();
+        } else {
+            setKnotTrackingApplicability(true);
+            setKnotZoneApplicability(true);
+            trackCb.checked = !!getScale0State().knotTracking;
+            startVisibilityCoordinator();
+        }
+    }
+
+    function handleScenarioIntent(scenarioId) {
+        const token = ++scenarioSyncToken;
+        if (scenarioSyncRaf) cancelAnimationFrame(scenarioSyncRaf);
+        scenarioSyncRaf = 0;
+
+        // Stop the old generation synchronously on selection intent. This is
+        // required even for nonempty→nonempty loads because tracker histories
+        // and in-flight streamline jobs belong to one engine generation.
+        stopAllCoordinators();
+        setKnotTrackingApplicability(false);
+        setKnotZoneApplicability(false);
+        clearScientificState();
+
+        if (scenarioId === EMPTY_SCENARIO_ID) {
+            setEmptyApplicability(true);
+            return;
+        }
+
+        panel.dataset.applicability = 'pending-scenario';
+        applicableContent.hidden = true;
+        applicableContent.setAttribute('aria-hidden', 'true');
+        inapplicableMessage.hidden = true;
+        setControlsDisabled(true);
+
+        let remaining = SCENARIO_SYNC_MAX_FRAMES;
+        const reconcile = () => {
+            scenarioSyncRaf = 0;
+            if (disposed || token !== scenarioSyncToken) return;
+            if (getScale0State().currentScenarioId === scenarioId) {
+                setEmptyApplicability(false);
+                return;
+            }
+            remaining--;
+            if (remaining > 0) scenarioSyncRaf = requestAnimationFrame(reconcile);
+        };
+        reconcile();
+    }
+
+    function onScenarioChange(event) {
+        handleScenarioIntent(String(event.currentTarget?.value || ''));
+    }
+
+    function rebindScenarioApplicability() {
+        const nextSelect = document.getElementById('scenario-select');
+        if (nextSelect !== scenarioSelect) {
+            scenarioSelect?.removeEventListener('change', onScenarioChange);
+            scenarioSelect = nextSelect;
+            scenarioSelect?.addEventListener('change', onScenarioChange);
+        }
+        handleScenarioIntent(String(
+            scenarioSelect?.value || getScale0State().currentScenarioId || '',
+        ));
+    }
+
+    rebindScenarioApplicability();
+
     // Match the sibling singleton panels (e.g. genesis-burst-panel): null the
     // global on dispose, but only if it still points at THIS instance, so a
     // newer mount that already replaced the global isn't clobbered. Without the
     // null-out the stale {dispose} lingered on window after teardown.
-    const api = {};
+    const api = {
+        update,
+        rebindScenarioApplicability,
+        get applicability() { return inapplicable ? 'inapplicable-empty' : panel.dataset.applicability; },
+        get coordinatorActive() { return !!armSub || !!liveSub; },
+        get measurementActive() { return measurementActive; },
+        get updateCount() { return updateCount; },
+        get historyLength() { return emHub.emTotal.count; },
+        get trackingEffective() { return isKnotTrackingActive(getScale0State()); },
+        get knotZonesRequested() { return !!getScale0State().knotZonesRequested; },
+        get knotZonesEffective() { return isKnotZonesActive(getScale0State()); },
+        get contributionEnabled() {
+            return ['e', 'b', 'flux'].some((field) => getFieldLineKnotTracker(field).isContribEnabled());
+        },
+    };
     api.dispose = () => {
-        unsubscribe();
+        disposed = true;
+        stopAllCoordinators();
+        setKnotTrackingApplicability(
+            getScale0State().currentScenarioId !== EMPTY_SCENARIO_ID,
+        );
+        setKnotZoneApplicability(
+            getScale0State().currentScenarioId !== EMPTY_SCENARIO_ID,
+        );
+        if (scenarioSyncRaf) cancelAnimationFrame(scenarioSyncRaf);
+        scenarioSyncRaf = 0;
+        scenarioSyncToken++;
+        scenarioSelect?.removeEventListener('change', onScenarioChange);
+        scenarioSelect = null;
+        window.removeEventListener(PANEL_VISIBILITY_CHANGE_EVENT, onPanelVisibilityChange);
         forEachKnotTracker((t) => t.setContribEnabled(false));
         panel.remove();
         if (typeof window !== 'undefined' && window.__ftdKnotsPanel === api) {

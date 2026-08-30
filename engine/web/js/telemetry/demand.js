@@ -26,11 +26,12 @@ function scale0ChartsWantAudit(ctx, visible) {
 
 /**
  * @param {object} ctx - scale-0 controller context (isPanelVisible, activeTab, …)
+ * @param {object|null} state - optional Scale-0 runtime state for scenario gates
  * @returns {{ diagnostics:boolean, wantAudit:boolean, wantLag:boolean,
  *            wantGravity:boolean, audit:boolean, lagrangian:boolean,
  *            gravity:boolean, everyTicks:object }}
  */
-export function getScale0TelemetryDemand(ctx) {
+export function getScale0TelemetryDemand(ctx, state = null) {
     const visible = (id) => (typeof ctx?.isPanelVisible === 'function'
         ? ctx.isPanelVisible(id)
         : ctx?.activeTab === id);
@@ -40,10 +41,13 @@ export function getScale0TelemetryDemand(ctx) {
     // already exists (Diagnostics / Lagrangian / Grid / Knots / E−B·Gauss).
     // Knots used to call getScale0EnergyAudit() directly; it is now a named
     // consumer so the worker mask and the hub stay in lockstep.
+    const knotsApplicable = state?.currentScenarioId !== 'empty'
+        && state?.knotTrackingApplicable !== false;
+    const knotsTracking = state == null ? true : !!state.knotTracking;
     const wantAudit = visible('diagnostics')
         || scale0ChartsWantAudit(ctx, visible)
         || visible('lagrangian') || visible('telemetry-grid')
-        || visible('knots');
+        || (visible('knots') && knotsApplicable && knotsTracking);
     // The Charts panel has no Lagrangian series; requesting the deepest
     // stencil reduction merely because ordinary energy charts are visible
     // made native sidebars compete with playback.  The dedicated Lagrangian

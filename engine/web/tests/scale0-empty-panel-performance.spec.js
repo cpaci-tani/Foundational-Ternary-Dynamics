@@ -181,6 +181,383 @@ test('P1 Observables suspends on Empty intent and restores only after a nonempty
     expect(realErrors(consoleErrors)).toEqual([]);
 });
 
+test('Knots preserves user preference but suppresses all tracking work on Empty', async ({ page }) => {
+    test.setTimeout(180_000);
+    const consoleErrors = attachConsoleWatcher(page);
+    await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
+    await selectScale0Scenario(page, 'flux-pulse', { settleMs: 750 });
+    await page.locator('#tab-bar .tab[data-panel="knots"]').click();
+    expect(await page.evaluate(async () => {
+        const [{ getScale0State }, { getScale0TelemetryDemand }] = await Promise.all([
+            import('/js/scales/scale0/state/store.js'),
+            import('/js/telemetry/demand.js'),
+        ]);
+        const state = getScale0State();
+        return {
+            trackingPreference: state.knotTracking,
+            wantAudit: getScale0TelemetryDemand(window.__ftdCtx, state).wantAudit,
+        };
+    }), 'visible Knots with tracking off does not request the audit stream').toEqual({
+        trackingPreference: false,
+        wantAudit: false,
+    });
+    await page.locator('#kp-toggle-overlay').check();
+
+    await expect.poll(() => page.evaluate(async () => {
+        const {
+            getScale0State,
+            isKnotTrackingActive,
+            isKnotZonesActive,
+        } = await import('/js/scales/scale0/state/store.js');
+        const state = getScale0State();
+        return {
+            applicability: window.__ftdKnotsPanel?.applicability ?? null,
+            preference: state.knotTracking,
+            scenarioApplicable: state.knotTrackingApplicable,
+            effective: isKnotTrackingActive(state),
+            coordinatorActive: window.__ftdKnotsPanel?.coordinatorActive ?? null,
+            measurementActive: window.__ftdKnotsPanel?.measurementActive ?? null,
+            contributionEnabled: window.__ftdKnotsPanel?.contributionEnabled ?? null,
+            knotZonesRequested: state.knotZonesRequested,
+            knotZonesEffective: isKnotZonesActive(state),
+            knotZonesRendered: state.fieldFlags.showKnotZones,
+        };
+    }), { timeout: 15_000 }).toEqual({
+        applicability: 'applicable',
+        preference: true,
+        scenarioApplicable: true,
+        effective: true,
+        coordinatorActive: true,
+        measurementActive: true,
+        contributionEnabled: true,
+        knotZonesRequested: true,
+        knotZonesEffective: true,
+        knotZonesRendered: true,
+    });
+
+    await page.locator('#kp-toggle-tracking').uncheck();
+    await expect.poll(() => page.evaluate(async () => {
+        const {
+            getScale0State,
+            isKnotTrackingActive,
+            isKnotZonesActive,
+        } = await import('/js/scales/scale0/state/store.js');
+        const state = getScale0State();
+        const knotMesh = window.__ftdCtx?.viewport?._fieldRenderer?._knotZones ?? null;
+        return {
+            trackingPreference: state.knotTracking,
+            trackingEffective: isKnotTrackingActive(state),
+            knotZonesRequested: state.knotZonesRequested,
+            knotZonesEffective: isKnotZonesActive(state),
+            knotZonesRendered: state.fieldFlags.showKnotZones,
+            knotMeshVisible: knotMesh?.visible ?? false,
+            knotMeshDrawCount: knotMesh?.geometry?.drawRange?.count ?? null,
+            schedulerActive: !!state.overlaySched?.active,
+        };
+    }), { timeout: 15_000 }).toEqual({
+        trackingPreference: false,
+        trackingEffective: false,
+        knotZonesRequested: true,
+        knotZonesEffective: false,
+        knotZonesRendered: false,
+        knotMeshVisible: false,
+        knotMeshDrawCount: 0,
+        schedulerActive: false,
+    });
+    await page.locator('#kp-toggle-tracking').check();
+    await expect.poll(() => page.evaluate(async () => {
+        const { getScale0State, isKnotZonesActive } = await import('/js/scales/scale0/state/store.js');
+        const state = getScale0State();
+        return {
+            trackingPreference: state.knotTracking,
+            knotZonesRequested: state.knotZonesRequested,
+            knotZonesEffective: isKnotZonesActive(state),
+            knotZonesRendered: state.fieldFlags.showKnotZones,
+            knotMeshVisible: window.__ftdCtx?.viewport?._fieldRenderer?._knotZones?.visible ?? false,
+        };
+    }), { timeout: 15_000 }).toEqual({
+        trackingPreference: true,
+        knotZonesRequested: true,
+        knotZonesEffective: true,
+        knotZonesRendered: true,
+        knotMeshVisible: true,
+    });
+
+    const visibilityBoundary = await page.evaluate(() => {
+        const dock = window.__ftdCtx?.appShell?.panelDock;
+        const api = window.__ftdKnotsPanel;
+        if (!dock || !api) throw new Error('Knots visibility boundary unavailable');
+        const snapshot = () => ({
+            measurementActive: api.measurementActive,
+            contributionEnabled: api.contributionEnabled,
+            liveSubscriberPresent: [...(window.__ftdRAF?._subs?.keys?.() || [])]
+                .includes('knots-panel'),
+        });
+
+        dock.setCollapsed(true);
+        const afterCollapse = snapshot();
+        dock.setCollapsed(false);
+        const afterExpand = snapshot();
+        dock.activate('controls');
+        const afterTabHide = snapshot();
+        dock.activate('knots');
+        const afterTabRestore = snapshot();
+        const floating = dock.floatPanel('knots', 420, 120);
+        if (!floating) throw new Error('Knots floating window unavailable');
+        const afterFloat = snapshot();
+        floating.toggleCollapse();
+        const afterFloatingCollapse = snapshot();
+        floating.toggleCollapse();
+        const afterFloatingRestore = snapshot();
+        floating.dock();
+        const afterDockRestore = snapshot();
+        return {
+            afterCollapse,
+            afterExpand,
+            afterTabHide,
+            afterTabRestore,
+            afterFloat,
+            afterFloatingCollapse,
+            afterFloatingRestore,
+            afterDockRestore,
+        };
+    });
+    expect(visibilityBoundary).toEqual({
+        afterCollapse: {
+            measurementActive: false,
+            contributionEnabled: false,
+            liveSubscriberPresent: false,
+        },
+        afterExpand: {
+            measurementActive: true,
+            contributionEnabled: true,
+            liveSubscriberPresent: true,
+        },
+        afterTabHide: {
+            measurementActive: false,
+            contributionEnabled: false,
+            liveSubscriberPresent: false,
+        },
+        afterTabRestore: {
+            measurementActive: true,
+            contributionEnabled: true,
+            liveSubscriberPresent: true,
+        },
+        afterFloat: {
+            measurementActive: true,
+            contributionEnabled: true,
+            liveSubscriberPresent: true,
+        },
+        afterFloatingCollapse: {
+            measurementActive: false,
+            contributionEnabled: false,
+            liveSubscriberPresent: false,
+        },
+        afterFloatingRestore: {
+            measurementActive: true,
+            contributionEnabled: true,
+            liveSubscriberPresent: true,
+        },
+        afterDockRestore: {
+            measurementActive: true,
+            contributionEnabled: true,
+            liveSubscriberPresent: true,
+        },
+    });
+
+    const intentBoundary = await page.evaluate(async () => {
+        const [
+            { getScale0State, isKnotTrackingActive, isKnotZonesActive },
+            { getFieldLineKnotTracker },
+            { getScale0TelemetryDemand },
+        ] = await Promise.all([
+            import('/js/scales/scale0/state/store.js'),
+            import('/js/scales/scale0/runtime/field-line-knots.js'),
+            import('/js/telemetry/demand.js'),
+        ]);
+        const api = window.__ftdKnotsPanel;
+        const select = /** @type {HTMLSelectElement|null} */ (document.getElementById('scenario-select'));
+        if (!api || !select) throw new Error('Knots panel or scenario selector unavailable');
+        const before = api.updateCount;
+        select.value = 'empty';
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        api.update();
+        const state = getScale0State();
+        const root = document.getElementById('panel-knots');
+        const panel = root?.querySelector('#knots-panel');
+        const message = root?.querySelector('.knots-inapplicable');
+        return {
+            before,
+            afterManualUpdate: api.updateCount,
+            applicability: panel?.dataset.applicability ?? null,
+            messageStatus: message?.dataset.applicability ?? null,
+            message: message?.textContent?.replace(/\s+/g, ' ').trim() ?? null,
+            messageVisible: !!message && !message.hidden,
+            contentHidden: !!root?.querySelector('.knots-applicable-content')?.hidden,
+            controlsDisabled: [...(root?.querySelectorAll('.knots-applicable-content input, .knots-applicable-content button') || [])]
+                .every((control) => control.disabled),
+            preference: state.knotTracking,
+            scenarioApplicable: state.knotTrackingApplicable,
+            effective: isKnotTrackingActive(state),
+            knotZonesRequested: state.knotZonesRequested,
+            knotZonesApplicable: state.knotZonesApplicable,
+            knotZonesEffective: isKnotZonesActive(state),
+            knotZones: state.fieldFlags.showKnotZones,
+            coordinatorActive: api.coordinatorActive,
+            measurementActive: api.measurementActive,
+            contributionEnabled: api.contributionEnabled,
+            wantAudit: getScale0TelemetryDemand(window.__ftdCtx, state).wantAudit,
+            historyLength: api.historyLength,
+            trackerCounts: ['e', 'b', 'flux'].map((field) => getFieldLineKnotTracker(field).getTelemetry().count),
+            subscriberPresent: [...(window.__ftdRAF?._subs?.keys?.() || [])]
+                .some((id) => id.startsWith('knots-panel')),
+        };
+    });
+
+    expect(intentBoundary).toMatchObject({
+        applicability: 'inapplicable-empty',
+        messageStatus: 'inapplicable',
+        messageVisible: true,
+        contentHidden: true,
+        controlsDisabled: true,
+        preference: true,
+        scenarioApplicable: false,
+        effective: false,
+        knotZonesRequested: true,
+        knotZonesApplicable: false,
+        knotZonesEffective: false,
+        knotZones: false,
+        coordinatorActive: false,
+        measurementActive: false,
+        contributionEnabled: false,
+        wantAudit: false,
+        historyLength: 0,
+        trackerCounts: [0, 0, 0],
+        subscriberPresent: false,
+    });
+    expect(intentBoundary.afterManualUpdate, 'manual update remains inert after Empty intent')
+        .toBe(intentBoundary.before);
+    expect(intentBoundary.message).toContain('No field extraction, RK4 line integration');
+    expect(intentBoundary.message).toContain('not evidence for physical vacuum or topological triviality');
+
+    await expect.poll(() => page.evaluate(async () => {
+        const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+        return getScale0State().currentScenarioId;
+    }), { timeout: 90_000 }).toBe(EMPTY);
+    const frozenCount = await page.evaluate(() => window.__ftdKnotsPanel?.updateCount ?? null);
+    await page.waitForTimeout(1_000);
+    expect(await page.evaluate(() => window.__ftdKnotsPanel?.updateCount ?? null),
+        'Empty performs no periodic knot-panel pass').toBe(frozenCount);
+
+    await selectScale0Scenario(page, 'flux-pulse', { settleMs: 750 });
+    await expect.poll(() => page.evaluate(async () => {
+        const {
+            getScale0State,
+            isKnotTrackingActive,
+            isKnotZonesActive,
+        } = await import('/js/scales/scale0/state/store.js');
+        const state = getScale0State();
+        return {
+            applicability: window.__ftdKnotsPanel?.applicability ?? null,
+            preference: state.knotTracking,
+            scenarioApplicable: state.knotTrackingApplicable,
+            effective: isKnotTrackingActive(state),
+            coordinatorActive: window.__ftdKnotsPanel?.coordinatorActive ?? null,
+            measurementActive: window.__ftdKnotsPanel?.measurementActive ?? null,
+            knotZonesRequested: state.knotZonesRequested,
+            knotZonesApplicable: state.knotZonesApplicable,
+            knotZonesEffective: isKnotZonesActive(state),
+            knotZonesRendered: state.fieldFlags.showKnotZones,
+        };
+    }), { timeout: 15_000 }).toEqual({
+        applicability: 'applicable',
+        preference: true,
+        scenarioApplicable: true,
+        effective: true,
+        coordinatorActive: true,
+        measurementActive: true,
+        knotZonesRequested: true,
+        knotZonesApplicable: true,
+        knotZonesEffective: true,
+        knotZonesRendered: true,
+    });
+
+    // The runtime rule must remain fail-closed without a panel instance. A
+    // headless or temporarily unmounted Empty load cannot depend on UI code to
+    // suppress retained tracking preference.
+    await page.evaluate(() => window.__ftdKnotsPanel?.dispose?.());
+    await selectScale0Scenario(page, EMPTY, { settleMs: 0 });
+    await expect.poll(() => page.evaluate(async () => {
+        const [
+            { getScale0State, isKnotTrackingActive, isKnotZonesActive },
+            { getScale0TelemetryDemand },
+        ] = await Promise.all([
+            import('/js/scales/scale0/state/store.js'),
+            import('/js/telemetry/demand.js'),
+        ]);
+        const state = getScale0State();
+        const knotMesh = window.__ftdCtx?.viewport?._fieldRenderer?._knotZones ?? null;
+        return {
+            current: state.currentScenarioId,
+            preference: state.knotTracking,
+            effective: isKnotTrackingActive(state),
+            knotZonesRequested: state.knotZonesRequested,
+            knotZonesEffective: isKnotZonesActive(state),
+            knotZonesRendered: state.fieldFlags.showKnotZones,
+            knotMeshVisible: knotMesh?.visible ?? false,
+            knotMeshDrawCount: knotMesh?.geometry?.drawRange?.count ?? null,
+            panelPresent: !!document.getElementById('knots-panel'),
+            schedulerActive: !!state.overlaySched?.active,
+            wantAudit: getScale0TelemetryDemand(window.__ftdCtx, state).wantAudit,
+        };
+    }), { timeout: 90_000 }).toEqual({
+        current: EMPTY,
+        preference: true,
+        effective: false,
+        knotZonesRequested: true,
+        knotZonesEffective: false,
+        knotZonesRendered: false,
+        knotMeshVisible: false,
+        knotMeshDrawCount: 0,
+        panelPresent: false,
+        schedulerActive: false,
+        wantAudit: false,
+    });
+
+    await selectScale0Scenario(page, 'flux-pulse', { settleMs: 0 });
+    await expect.poll(() => page.evaluate(async () => {
+        const {
+            getScale0State,
+            isKnotTrackingActive,
+            isKnotZonesActive,
+        } = await import('/js/scales/scale0/state/store.js');
+        const state = getScale0State();
+        const knotMesh = window.__ftdCtx?.viewport?._fieldRenderer?._knotZones ?? null;
+        return {
+            current: state.currentScenarioId,
+            trackingPreference: state.knotTracking,
+            trackingEffective: isKnotTrackingActive(state),
+            knotZonesRequested: state.knotZonesRequested,
+            knotZonesEffective: isKnotZonesActive(state),
+            knotZonesRendered: state.fieldFlags.showKnotZones,
+            knotMeshVisible: knotMesh?.visible ?? false,
+            knotMeshDrawCount: knotMesh?.geometry?.drawRange?.count ?? null,
+            panelPresent: !!document.getElementById('knots-panel'),
+        };
+    }), { timeout: 90_000 }).toEqual({
+        current: 'flux-pulse',
+        trackingPreference: true,
+        trackingEffective: true,
+        knotZonesRequested: true,
+        knotZonesEffective: true,
+        knotZonesRendered: true,
+        knotMeshVisible: true,
+        knotMeshDrawCount: expect.any(Number),
+        panelPresent: false,
+    });
+    expect(realErrors(consoleErrors)).toEqual([]);
+});
+
 test('distinguishes an unresolved Diagnostics source from a measured exact zero', async ({ page }) => {
     test.setTimeout(120_000);
     await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
@@ -754,6 +1131,47 @@ test('all 17 visible panels sustain 60 Hz at empty L=97 and stop panel work when
                     };
                 }
 
+                if (panelId === 'knots') {
+                    const [
+                        { getScale0State, isKnotTrackingActive },
+                        { getFieldLineKnotTracker },
+                        { getScale0TelemetryDemand },
+                    ] = await Promise.all([
+                        import('/js/scales/scale0/state/store.js'),
+                        import('/js/scales/scale0/runtime/field-line-knots.js'),
+                        import('/js/telemetry/demand.js'),
+                    ]);
+                    const api = window.__ftdKnotsPanel;
+                    const before = api?.updateCount ?? null;
+                    api?.update();
+                    const state = getScale0State();
+                    const message = root.querySelector('.knots-inapplicable');
+                    result.knotsApplicability = {
+                        panelStatus: root.querySelector('#knots-panel')?.dataset.applicability ?? null,
+                        messageStatus: message?.dataset.applicability ?? null,
+                        message: message?.textContent?.replace(/\s+/g, ' ').trim() ?? null,
+                        messageVisible: !!message && !message.hidden,
+                        contentHidden: !!root.querySelector('.knots-applicable-content')?.hidden,
+                        controlsDisabled: [...root.querySelectorAll(
+                            '.knots-applicable-content input, .knots-applicable-content button',
+                        )].every((control) => control.disabled),
+                        preference: state.knotTracking,
+                        scenarioApplicable: state.knotTrackingApplicable,
+                        effective: isKnotTrackingActive(state),
+                        knotZones: state.fieldFlags.showKnotZones,
+                        coordinatorActive: api?.coordinatorActive ?? null,
+                        measurementActive: api?.measurementActive ?? null,
+                        contributionEnabled: api?.contributionEnabled ?? null,
+                        wantAudit: getScale0TelemetryDemand(window.__ftdCtx, state).wantAudit,
+                        historyLength: api?.historyLength ?? null,
+                        trackerCounts: ['e', 'b', 'flux']
+                            .map((field) => getFieldLineKnotTracker(field).getTelemetry().count),
+                        updateCountStable: before === (api?.updateCount ?? null),
+                        subscriberPresent: [...(window.__ftdRAF?._subs?.keys?.() || [])]
+                            .some((id) => id.startsWith('knots-panel')),
+                    };
+                }
+
                 if (panelId === 'gravity') {
                     const api = window.__ftdGravityPanel;
                     // Empty must remain inert even through public/manual panel
@@ -1017,6 +1435,37 @@ test('all 17 visible panels sustain 60 Hz at empty L=97 and stop panel work when
             expect.soft(audit.subscriberPresent, `${label}: no P1 rAF subscription remains`).toBe(false);
             expect.soft(audit.updateCountStable, `${label}: manual update is inert`).toBe(true);
             expect.soft(callbackSampleCount(active), `${label}: no periodic P1 callback ran`).toBe(0);
+            expect.soft(active.dom.mutationRecords, `${label}: static inapplicable state has no churn`)
+                .toBe(0);
+            expect.soft(active.dom.canvasDraws, `${label}: inapplicable state performs no draw`)
+                .toBe(0);
+        }
+
+        if (panel.panelId === 'knots') {
+            const audit = panel.knotsApplicability;
+            expect.soft(audit.panelStatus, `${label}: explicit panel applicability state`)
+                .toBe('inapplicable-empty');
+            expect.soft(audit.messageStatus, `${label}: explicit message applicability state`)
+                .toBe('inapplicable');
+            expect.soft(audit.messageVisible, `${label}: inapplicable explanation is visible`).toBe(true);
+            expect.soft(audit.contentHidden, `${label}: detector surface is hidden`).toBe(true);
+            expect.soft(audit.controlsDisabled, `${label}: detector controls are disabled`).toBe(true);
+            expect.soft(audit.message, `${label}: null-control detector boundary`)
+                .toContain('defines no field-line or streamline-sweep domain');
+            expect.soft(audit.message, `${label}: no fabricated topology interpretation`)
+                .toContain('not evidence for physical vacuum or topological triviality');
+            expect.soft(audit.scenarioApplicable, `${label}: scenario tracking gate is closed`).toBe(false);
+            expect.soft(audit.effective, `${label}: retained preference cannot schedule work`).toBe(false);
+            expect.soft(audit.knotZones, `${label}: stale knot-zone rendering is disabled`).toBe(false);
+            expect.soft(audit.coordinatorActive, `${label}: Knots coordinators are stopped`).toBe(false);
+            expect.soft(audit.measurementActive, `${label}: contribution measurement is stopped`).toBe(false);
+            expect.soft(audit.contributionEnabled, `${label}: trackers cannot request contributions`).toBe(false);
+            expect.soft(audit.wantAudit, `${label}: visible inapplicable panel requests no audit stream`).toBe(false);
+            expect.soft(audit.historyLength, `${label}: EM history is cleared`).toBe(0);
+            expect.soft(audit.trackerCounts, `${label}: detector histories are cleared`).toEqual([0, 0, 0]);
+            expect.soft(audit.updateCountStable, `${label}: manual update is inert`).toBe(true);
+            expect.soft(audit.subscriberPresent, `${label}: no Knots rAF subscription remains`).toBe(false);
+            expect.soft(callbackSampleCount(active), `${label}: no periodic Knots callback ran`).toBe(0);
             expect.soft(active.dom.mutationRecords, `${label}: static inapplicable state has no churn`)
                 .toBe(0);
             expect.soft(active.dom.canvasDraws, `${label}: inapplicable state performs no draw`)

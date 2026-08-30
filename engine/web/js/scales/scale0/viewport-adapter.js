@@ -157,6 +157,10 @@ export function createScale0ViewportAdapter(viewport) {
             viewport.toggleChiralityField?.(false);
             viewport.toggleDarkMatterHalo?.(false);
             viewport.toggleDampingZones?.(false);
+            // Knot boxes retain a user preference outside fieldFlags, but the
+            // renderer must still be cleared at every scenario boundary. The
+            // qualified effective value is restored explicitly after reset.
+            viewport.toggleKnotZones?.(false);
             viewport.toggleGenesisIsosurface?.(false);
             viewport.toggleConfinement?.(false);
             // Directional/discrete/threshold overlays remain native; scalar

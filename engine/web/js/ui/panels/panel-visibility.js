@@ -12,6 +12,21 @@
  * the host set by the floating-window manager; `is-collapsed` is the CSS-only
  * collapse class it toggles (floating-window/component.js).
  */
+export const PANEL_VISIBILITY_CHANGE_EVENT = 'ftd:panel-visibility-change';
+
+/**
+ * Publish an explicit, synchronous visibility boundary after dock/floating DOM
+ * state changes. Low-rate panel coordinators are still useful for recovery,
+ * but they are too slow to revoke expensive measurement work on the exact
+ * hide/collapse event.
+ */
+export function notifyPanelVisibilityChange(detail = {}) {
+    if (typeof window === 'undefined' || typeof window.dispatchEvent !== 'function') return;
+    window.dispatchEvent(new CustomEvent(PANEL_VISIBILITY_CHANGE_EVENT, {
+        detail: Object.freeze({ ...detail }),
+    }));
+}
+
 export function isPanelLive(el) {
     if (!el) return false;
     if (document.documentElement.classList.contains('ui-hidden')) return false;

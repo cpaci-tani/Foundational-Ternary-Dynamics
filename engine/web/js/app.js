@@ -16,7 +16,7 @@ import { getCategories, getMoleculesByCategory } from './molecules.js';
 import { debugLog } from './core/log.js';
 
 // ── Scale Controllers (extracted from inline code) ─────────────────
-import * as Scale0Controller from './scales/scale0/controller.js?v=28';
+import * as Scale0Controller from './scales/scale0/controller.js?v=30';
 import * as Scale1Controller from './scales/scale1/controller.js';
 import * as Scale2Controller from './scales/scale2/controller.js';
 import * as Scale3Controller from './scales/scale3/controller.js';
@@ -36,9 +36,9 @@ import { K_B } from './constants.js';
 import { AggregateDetector, EmergenceMonitor } from './aggregation-bridge.js';
 import { createOnticPanel } from './ui/app-ontic.js';
 import { BackgroundManager } from './backgrounds.js';
-import { AppShell } from './ui/shell/app-shell.js?v=2';
+import { AppShell } from './ui/shell/app-shell.js?v=3';
 import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initScenePanel, initTelemetryGridPanel } from './ui/panels/index.js';
-import { floatingWindowManager } from './ui/components/floating-window/component.js';
+import { floatingWindowManager } from './ui/components/floating-window/component.js?v=2';
 import { initFluxSlicePanel } from './scales/scale0/ui/overlays/flux-slice-panel.js';
 import { initWaveLabPanel } from './scales/scale0/ui/overlays/wave-lab-panel.js?v=2';
 import { initP1ObservablesPanel } from './scales/scale0/ui/overlays/p1-observables-panel.js?v=3';

@@ -70,7 +70,7 @@ export function updateDiagnosticsAndPanels(ctx, state) {
     const diag = telemetryHub.collectScale0(ctx.bridge, state.fluxMock, state.useFluxMock);
 
     if (PerfFlags.telemetryOnDemand) {
-        const demand = getScale0TelemetryDemand(ctx);
+        const demand = getScale0TelemetryDemand(ctx, state);
         collectScale0OnDemand(telemetryHub, ctx, state, demand);
     } else {
         collectScale0Unconditional(telemetryHub, ctx, state);
