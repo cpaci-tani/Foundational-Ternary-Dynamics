@@ -28,6 +28,16 @@ export function createScale0Capabilities(bridge) {
         // if a bridge has DROPPED a sampler (§2.4 surface drift) instead of blanking
         // the overlay silently. Consolidation only; behavior is unchanged.
         getScale0FieldSamples: ({ kind, stride = 2 } = {}) => bridge.getSamplerOr(kind, stride),
+        hasScale0SamplerSnapshot: (kind, stride = 2) => (
+            typeof bridge.hasSamplerSnapshot === 'function'
+                ? bridge.hasSamplerSnapshot(kind, stride)
+                : true
+        ),
+        getScale0SamplerSnapshotVersion: (kind, stride = 2) => (
+            typeof bridge.getSamplerSnapshotVersion === 'function'
+                ? bridge.getSamplerSnapshotVersion(kind, stride)
+                : null
+        ),
         getScale0ForceField: (type, stride = 2) => {
             if (type === 'em') return bridge.getEMForceField(stride);
             if (type === 'gravity') return bridge.getGravityForceField(stride);
@@ -55,11 +65,11 @@ export function createScale0Capabilities(bridge) {
         setFluxBoundaryMode: (mode) => bridge.setFluxBoundaryMode?.(mode),
         setupScenario: (name) => bridge.setupScenario(name),
         setToggle: (key, value) => bridge.setToggle?.(key, value),
-        // Phase 2 gravity panel: REAL C++ latency field (voxel.latency Poisson),
-        // distinct from the |J|² proxy. Both bridges expose these (WASM = real,
-        // MockBridge = inactive stub), so the panel contract is symmetric.
+        // Phase 2 gravity panel: engine Poisson-derived [IMPOSED]
+        // voxel.latency mapping, distinct from the |J|² proxy. Both bridges
+        // expose the contract (engine = mapped record, mock = inactive stub).
         getScale0GravityMetricAgg: () => bridge.getGravityMetricAgg?.()
-            ?? { active: false, latencyMax: 0, latencyMean: 0, fMin: 1, gammaMax: 1, dilationMaxPct: 0, voxelCount: 0 },
+            ?? { active: false, requested: null, latencyMax: 0, latencyMean: 0, fMin: 1, gammaMax: 1, dilationMaxPct: 0, voxelCount: 0 },
         getScale0LatencyVolume: () => bridge.getLatencyVolume?.() ?? new Float64Array(0),
         get latticeSize() { return bridge.latticeSize || 33; },
     };

@@ -23,8 +23,8 @@ const EMPTY_PARTS = () => ({ positions: new Float32Array(0), colors: new Float32
 const EMPTY_VEC = () => ({ positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 });
 const EMPTY_VAL = () => ({ positions: new Float32Array(0), values: new Float32Array(0), count: 0 });
 const SCENARIO_SCOPED_MESSAGE_TYPES = new Set([
-    'frame', 'fluxRebind', 'inspectResult', 'forceAtResult',
-    'coarsenResult', 'digestResult',
+    'ready', 'frame', 'configurationApplied', 'runningState', 'error',
+    'fluxRebind', 'inspectResult', 'forceAtResult', 'coarsenResult', 'digestResult',
 ]);
 
 // Complete boolean TermToggles registry, in the same order as
@@ -78,10 +78,22 @@ function workerPoolSize() {
     return DEFAULT_WORKER_POOL;
 }
 
-// Live-instance accounting (lifecycle test parity with the mock proxy).
+// Live-instance accounting (lifecycle test parity with the mock proxy). A
+// termination is counted only after the worker acknowledges disposal or the
+// hard-stop timer fires; requesting disposal is not itself proof of cleanup.
 let _live = 0, _created = 0, _terminated = 0;
+let _disposeAcknowledged = 0, _hardTerminated = 0;
+let _lastModuleInitCount = 0, _lastRenderBridgeGeneration = 0;
 if (typeof window !== 'undefined') {
-    window.__ftdWasmWorkers = () => ({ live: _live, created: _created, terminated: _terminated });
+    window.__ftdWasmWorkers = () => ({
+        live: _live,
+        created: _created,
+        terminated: _terminated,
+        disposeAcknowledged: _disposeAcknowledged,
+        hardTerminated: _hardTerminated,
+        lastModuleInitCount: _lastModuleInitCount,
+        lastRenderBridgeGeneration: _lastRenderBridgeGeneration,
+    });
 }
 
 // How long to wait for the worker's 'ready' reply before declaring the
@@ -91,6 +103,8 @@ if (typeof window !== 'undefined') {
 // that still fails fast if importScripts silently NetworkErrors (the failure
 // this guards — see scenario-loader's onInitFailure wiring).
 const WORKER_READY_TIMEOUT_MS = 8000;
+const CONFIGURATION_APPLIED_TIMEOUT_MS = 8000;
+const DISPOSE_ACK_TIMEOUT_MS = 1000;
 
 // How long a *ready* worker may go without posting a single 'frame' while the
 // simulation is supposed to be running before we declare it "ready but dead"
@@ -114,24 +128,32 @@ export class WasmBridgeProxy {
         this.isWasm = true;
         this.isWorker = true;
         this._terminated = false;
-        this._onInitFailure = (opts && typeof opts.onInitFailure === 'function') ? opts.onInitFailure : null;
+        this._disposing = false;
+        this._disposeTimer = null;
+        this._defaultCallbacks = {
+            onInitFailure: (opts && typeof opts.onInitFailure === 'function') ? opts.onInitFailure : null,
+            onSetupFailure: (opts && typeof opts.onSetupFailure === 'function') ? opts.onSetupFailure : null,
+            onEngineToggles: (opts && typeof opts.onEngineToggles === 'function') ? opts.onEngineToggles : null,
+            onConfigurationApplied: (opts && typeof opts.onConfigurationApplied === 'function')
+                ? opts.onConfigurationApplied : null,
+        };
+        this._configurationCallbacks = { token: 0, ...this._defaultCallbacks };
+        this._onInitFailure = this._defaultCallbacks.onInitFailure;
         this._initFailed = false;       // latched — fallback fires once
         // `opts.onSetupFailure(msg)` fires when the worker reports setupScenario
         // returned false or threw (unknown id / embind error). Distinct from
         // onInitFailure (module/worker load dead → in-thread fallback).
-        this._onSetupFailure = (opts && typeof opts.onSetupFailure === 'function') ? opts.onSetupFailure : null;
+        this._onSetupFailure = this._defaultCallbacks.onSetupFailure;
         // `opts.onEngineToggles()` (optional) fires whenever the worker publishes a
         // fresh engine-truth toggle readback — i.e. after the C++ scenario body has
         // replaced the profile the main thread sent. The UI uses it to repaint the
         // physics-toggles card and recompute overlay applicability from what the
         // engine is ACTUALLY running rather than from the JS model of it.
-        this._onEngineToggles = (opts && typeof opts.onEngineToggles === 'function') ? opts.onEngineToggles : null;
+        this._onEngineToggles = this._defaultCallbacks.onEngineToggles;
         // A frame/readback can precede post-setup commands queued by the loader.
         // Qualification must wait for this explicit FIFO barrier instead of
         // treating the worker's initial frame as the final scenario profile.
-        this._onConfigurationApplied = (opts && typeof opts.onConfigurationApplied === 'function')
-            ? opts.onConfigurationApplied
-            : null;
+        this._onConfigurationApplied = this._defaultCallbacks.onConfigurationApplied;
         this.latticeSize = (latticeSize % 2 === 0) ? latticeSize + 1 : latticeSize;
         this._scenarioId = 'flux-pulse';
         this._toggles = {};
@@ -139,10 +161,14 @@ export class WasmBridgeProxy {
         this._configurationSeq = 0;
         this._pendingConfigurationToken = 0;
         this._appliedConfigurationToken = 0;
+        this._configurationPrepared = false;
+        this._configurationTimer = null;
+        this._setupFailureToken = 0;
         this._requestedFluxBoundaryMode = null;
         this._engineFluxBoundaryMode = null;
-        this._wantAudit = true;         // telemetry demand mask (mirrors worker)
+        this._wantAudit = false;        // telemetry demand mask (mirrors worker)
         this._wantLag = true;
+        this._wantGravity = false;
         this._ready = false;
         this._running = null;
         this._runCommandSeq = 0;       // monotonically identifies run-state commands
@@ -169,7 +195,9 @@ export class WasmBridgeProxy {
         this._lastInspect = null;
         this._lastForceAt = null;
         this._lastDynamicalStateDigest = null;
+        this._pendingConfigurationFrame = null;
         this.artifactIdentity = null;
+        this._artifactIdentityFingerprint = null;
         this.artifactIdentityState = 'loading';
         this._artifactIdentityResolve = null;
         this.artifactIdentityReady = new Promise((resolve) => {
@@ -182,17 +210,32 @@ export class WasmBridgeProxy {
         // like seedSpectrumComparator work on the worker path even though WASM is not
         // synchronously available.
         this._pendingCommands = [];
+        this._deferredCommandsAfterBarrier = [];
+        // Multiple select/resize events can fire synchronously (keyboard
+        // repeat, scripted presets, rapid pointer input). Keep their UI/load
+        // generations, but publish only the latest worker `create` at the end
+        // of the current turn so superseded RenderBridges are never built.
+        this._pendingCreateMessage = null;
+        this._createScheduled = false;
         // Overlay sampler cache: keyed by "kind@stride". Owners (overlays,
         // panels, direct getters) union through _samplerWants.
         this._samplerCache = {};
-        this._samplerWants = createSamplerWantSet((op, kind, stride) => {
-            if (this._terminated || !this._worker) return;
-            this._worker.postMessage({
-                type: op === 'want' ? 'wantSampler' : 'unwantSampler',
-                kind,
-                stride,
-            });
-        });
+        this._samplerCacheVersion = {};
+        this._samplerWants = createSamplerWantSet(
+            (op, kind, stride, cadenceClass = 'realtime') => {
+                if (this._terminated || this._disposing || !this._worker) return;
+                this._worker.postMessage({
+                    type: op === 'want' ? 'wantSampler' : 'unwantSampler',
+                    kind,
+                    stride,
+                    cadenceClass,
+                });
+            },
+            (changes) => {
+                if (this._terminated || this._disposing || !this._worker) return;
+                this._worker.postMessage({ type: 'replaceSamplerWants', changes });
+            },
+        );
         // One-shot coarsen (Scale-0 → Scale-1) request/response bookkeeping.
         this._coarsenPending = new Map();
         this._coarsenReq = 0;
@@ -200,7 +243,7 @@ export class WasmBridgeProxy {
         this._digestReq = 0;
 
         // CLASSIC worker (Emscripten module via importScripts). No { type: 'module' }.
-        this._worker = new Worker(new URL('./wasm-bridge.worker.js?v=4', import.meta.url));
+        this._worker = new Worker(new URL('./wasm-bridge.worker.js?v=7', import.meta.url));
         this._worker.onmessage = (e) => this._onMessage(e.data);
         // A worker-level error (e.g. importScripts NetworkError loading the
         // -pthread MT glue) surfaces here. If it happens before the worker has
@@ -210,14 +253,154 @@ export class WasmBridgeProxy {
             console.error('[WasmWorker]', e.message || e);
             if (!this._ready) this._triggerFallback('worker onerror: ' + (e.message || 'load failed'));
         };
-        // Guard against a silent never-ready worker (importScripts can fail in
-        // ways that don't always reach onerror in every browser). If 'ready'
-        // hasn't arrived in time, fall back.
-        this._readyTimer = (typeof setTimeout === 'function')
-            ? setTimeout(() => { if (!this._ready) this._triggerFallback('ready timeout'); }, WORKER_READY_TIMEOUT_MS)
-            : null;
+        // Reconfiguration owns the timers. A constructed proxy may sit idle
+        // briefly while the loader stages defaults, so construction alone must
+        // not start a never-ready deadline.
+        this._readyTimer = null;
 
         this.capabilities = { scale0: this._buildCaps() };
+    }
+
+    /** True while the hosted module/worker is healthy enough to rebuild its RenderBridge. */
+    canReconfigure() {
+        return !!this._worker && !this._terminated && !this._disposing && !this._initFailed;
+    }
+
+    _callbacksForCurrentConfiguration() {
+        return this._configurationCallbacks?.token === this._pendingConfigurationToken
+            ? this._configurationCallbacks
+            : { token: this._pendingConfigurationToken, ...this._defaultCallbacks };
+    }
+
+    _clearConfigurationTimers() {
+        if (this._readyTimer) {
+            try { clearTimeout(this._readyTimer); } catch { /* ignore */ }
+            this._readyTimer = null;
+        }
+        if (this._configurationTimer) {
+            try { clearTimeout(this._configurationTimer); } catch { /* ignore */ }
+            this._configurationTimer = null;
+        }
+    }
+
+    _armReadyTimer(token) {
+        this._clearConfigurationTimers();
+        if (typeof setTimeout !== 'function') return;
+        this._readyTimer = setTimeout(() => {
+            this._readyTimer = null;
+            if (this._pendingConfigurationToken !== token || this._ready
+                || this._terminated || this._disposing || this._initFailed) return;
+            this._triggerFallback(`ready timeout for configuration ${token}`);
+        }, WORKER_READY_TIMEOUT_MS);
+    }
+
+    _armConfigurationTimer(token) {
+        if (this._configurationTimer) {
+            try { clearTimeout(this._configurationTimer); } catch { /* ignore */ }
+        }
+        if (typeof setTimeout !== 'function') return;
+        this._configurationTimer = setTimeout(() => {
+            this._configurationTimer = null;
+            if (this._pendingConfigurationToken !== token
+                || this._appliedConfigurationToken === token
+                || this._terminated || this._disposing || this._initFailed) return;
+            this._triggerFallback(`configuration acknowledgement timeout for ${token}`);
+        }, CONFIGURATION_APPLIED_TIMEOUT_MS);
+    }
+
+    _clearScientificGenerationCaches() {
+        this._ready = false;
+        this._ctrl = null;
+        this._fluxView = null;
+        this._fluxSab = null;
+        this._fluxLen = 0;
+        this._fluxDouble = false;
+        this._lastDiag = null;
+        this._lastDiagMeta = null;
+        this._lastParts = null;
+        this._lastAudit = null;
+        this._lastAuditMeta = null;
+        this._lastLag = null;
+        this._lastLagMeta = null;
+        this._lastKnot = null;
+        this._lastKnotEvents = null;
+        this._lastKnotAgg = null;
+        this._lastInspect = null;
+        this._lastForceAt = null;
+        this._lastDynamicalStateDigest = null;
+        this._pendingConfigurationFrame = null;
+        this._lastTick = -1;
+        this._engineToggles = null;
+        this._appliedConfigurationToken = 0;
+        this._requestedFluxBoundaryMode = null;
+        this._engineFluxBoundaryMode = null;
+        this._samplerCache = {};
+        this._samplerCacheVersion = {};
+        this._pendingCommands = [];
+        this._deferredCommandsAfterBarrier = [];
+        this._pendingCreateMessage = null;
+        this._clearFrameWatchdog();
+        for (const resolve of this._coarsenPending.values()) {
+            try { resolve(null); } catch { /* ignore */ }
+        }
+        this._coarsenPending.clear();
+        for (const resolve of this._digestPending.values()) {
+            try { resolve(null); } catch { /* ignore */ }
+        }
+        this._digestPending.clear();
+    }
+
+    /**
+     * Begin one authoritative RenderBridge replacement while retaining the
+     * expensive Worker, verified WASM module, pthread pool, and standing UI
+     * demand. The token is advanced before any defaults are staged, so every
+     * old-generation read and callback fails closed immediately.
+     */
+    beginConfiguration(opts = {}) {
+        if (!this.canReconfigure()) return 0;
+
+        // Stop the old bridge synchronously through its shared control word
+        // before dropping the view. Desired playback remains in `_running` and
+        // is replayed only after the new configuration barrier succeeds.
+        if (this._ctrl) {
+            try { Atomics.store(this._ctrl, CTRL.RUNNING, 0); } catch { /* ignore */ }
+        }
+
+        const token = ++this._configurationSeq;
+        this._pendingConfigurationToken = token;
+        const callback = (name) => Object.prototype.hasOwnProperty.call(opts, name)
+            ? (typeof opts[name] === 'function' ? opts[name] : null)
+            : this._defaultCallbacks[name];
+        this._configurationCallbacks = {
+            token,
+            onInitFailure: callback('onInitFailure'),
+            onSetupFailure: callback('onSetupFailure'),
+            onEngineToggles: callback('onEngineToggles'),
+            onConfigurationApplied: callback('onConfigurationApplied'),
+        };
+        // Preserve the legacy callback fields for focused harnesses that inspect
+        // or replace them, while all delivery remains token-scoped above.
+        this._onInitFailure = this._configurationCallbacks.onInitFailure;
+        this._onSetupFailure = this._configurationCallbacks.onSetupFailure;
+        this._onEngineToggles = this._configurationCallbacks.onEngineToggles;
+        this._onConfigurationApplied = this._configurationCallbacks.onConfigurationApplied;
+
+        if (Number.isFinite(Number(opts.latticeSize)) && Number(opts.latticeSize) > 0) {
+            const n = Number(opts.latticeSize) | 0;
+            this.latticeSize = (n % 2 === 0) ? n + 1 : n;
+        }
+        if (opts.scenarioId) this._scenarioId = String(opts.scenarioId);
+
+        this._clearConfigurationTimers();
+        this._clearScientificGenerationCaches();
+        if (opts.resetLocalProfile !== false) {
+            this._toggles = {};
+            this._omega0 = undefined;
+            this._langevinTemp = undefined;
+            this._langevinGamma = undefined;
+        }
+        this._configurationPrepared = true;
+        return token;
     }
 
     /**
@@ -232,15 +415,13 @@ export class WasmBridgeProxy {
      * themselves, so their behaviour is unchanged.
      */
     _triggerFallback(reason) {
-        if (this._initFailed) return;
+        if (this._initFailed || this._terminated || this._disposing) return;
         this._initFailed = true;
-        if (this._readyTimer) { try { clearTimeout(this._readyTimer); } catch { /* ignore */ } this._readyTimer = null; }
+        this._clearConfigurationTimers();
         this._clearFrameWatchdog();
         console.error('[WasmWorker] off-thread engine failed (' + reason + '); falling back to in-thread WASM engine.');
-        // Capture before terminate() nulls callbacks.
-        const cb = this._onInitFailure;
-        this._onInitFailure = null;
-        try { this.terminate(); } catch { /* ignore */ }
+        const cb = this._callbacksForCurrentConfiguration().onInitFailure;
+        this._hardTerminate();
         if (cb) { try { cb(reason); } catch (e) { console.error('[WasmWorker] onInitFailure handler threw:', e); } }
     }
 
@@ -331,16 +512,69 @@ export class WasmBridgeProxy {
         this[valueKey] = available ? value : null;
     }
 
+    _artifactFingerprint(identity) {
+        if (!identity) return null;
+        return [
+            identity.bundleSha256 || '',
+            identity.variant?.id || '',
+            identity.source?.commit || '',
+            identity.source?.dirty === true ? 'dirty' : 'clean',
+        ].join(':');
+    }
+
+    _acceptFrameMessage(m) {
+        const receivedAt = this._now();
+        // Reset the dead-worker watchdog only on TICK PROGRESS. A worker can
+        // publish readback frames while its scientific tick remains stuck.
+        const tick = (m.diag && typeof m.diag.tick === 'number') ? m.diag.tick : null;
+        if (tick !== null && tick !== this._lastTick) {
+            this._lastTick = tick;
+            this._lastFrameAt = receivedAt;
+            this._armFrameWatchdog();
+        }
+        this._acceptTelemetryGroupFrame('diagnostics', m.diag, m.diagMeta, receivedAt);
+        if (m.parts) this._lastParts = m.parts;
+        this._acceptTelemetryGroupFrame('audit', m.audit, m.auditMeta, receivedAt);
+        this._acceptTelemetryGroupFrame('lagrangian', m.lag, m.lagMeta, receivedAt);
+        if (m.engineToggles) {
+            this._engineToggles = m.engineToggles;
+            if (this._appliedConfigurationToken === this._pendingConfigurationToken) {
+                const cb = this._callbacksForCurrentConfiguration().onEngineToggles;
+                try { cb?.(m.engineToggles); } catch { /* UI callback must not kill the frame */ }
+            }
+        }
+        if (m.knot) this._lastKnot = m.knot;
+        if (m.knotEvents) this._lastKnotEvents = m.knotEvents;
+        if (m.knotAgg) this._lastKnotAgg = m.knotAgg;
+        if (m.inspect) this._lastInspect = m.inspect;
+        if (m.forceAt) this._lastForceAt = m.forceAt;
+        if (m.dynamicalStateDigest !== undefined) {
+            this._lastDynamicalStateDigest = m.dynamicalStateDigest;
+        }
+        const hadSamplers = Boolean(m.samplers && Object.keys(m.samplers).length);
+        if (hadSamplers) {
+            Object.assign(this._samplerCache, m.samplers);
+            const version = Number(m.dataVersion);
+            for (const key of Object.keys(m.samplers)) this._samplerCacheVersion[key] = version;
+        }
+        if (typeof window !== 'undefined' && window.__ftdCtx
+            && typeof window.__ftdCtx.onBridgePostFrame === 'function') {
+            window.__ftdCtx.onBridgePostFrame(hadSamplers);
+        }
+    }
+
     _onMessage(m) {
+        if (m?.type === 'disposed' && this._disposing && !this._terminated) {
+            this._finalizeWorkerTermination('acknowledged');
+            return;
+        }
         // Ignore in-flight messages after terminate()/dispose(). Scenario churn
-        // tears down the prior proxy while a 'ready'/'frame' may already be
-        // queued on the main-thread event loop; without this guard those would
-        // still mutate UI / postFrame callbacks for a dead owner.
-        if (this._terminated || this._initFailed) return;
+        // can replace the hosted bridge while old 'ready'/'frame' messages are
+        // queued. The disposing guard still admits the one `disposed` ack above.
+        if (this._terminated || this._disposing || this._initFailed || !m) return;
         if (SCENARIO_SCOPED_MESSAGE_TYPES.has(m.type)
             && Number(m.configurationToken) !== this._pendingConfigurationToken) return;
         if (m.type === 'ready') {
-            if (Number(m.configurationToken) !== this._pendingConfigurationToken) return;
             if (!m.artifactIdentity
                 || m.artifactIdentity.variant?.id !== 'wasm32-threads') {
                 this.artifactIdentityState = 'failed';
@@ -349,29 +583,40 @@ export class WasmBridgeProxy {
                 this._triggerFallback('worker ready without verified threaded artifact identity');
                 return;
             }
+            const fingerprint = this._artifactFingerprint(m.artifactIdentity);
+            if (this._artifactIdentityFingerprint && fingerprint !== this._artifactIdentityFingerprint) {
+                this._triggerFallback('threaded artifact identity changed during worker reuse');
+                return;
+            }
+            this._artifactIdentityFingerprint = fingerprint;
             this.artifactIdentity = m.artifactIdentity;
             this.artifactIdentityState = 'ready';
             this._artifactIdentityResolve?.(this.artifactIdentity);
             this._artifactIdentityResolve = null;
             this.latticeSize = m.N;
+            this._workerRuntimeId = m.workerRuntimeId || this._workerRuntimeId || null;
+            this._moduleInitCount = Number(m.moduleInitCount) || 0;
+            this._renderBridgeGeneration = Number(m.renderBridgeGeneration) || 0;
+            _lastModuleInitCount = this._moduleInitCount;
+            _lastRenderBridgeGeneration = this._renderBridgeGeneration;
             this._ctrl = new Int32Array(m.ctrl);
             this._bindFlux(m);
             this._ready = true;
             this._readyAt = this._now();
-            // The off-thread engine reported ready; cancel the never-ready watchdog.
+            // The current bridge reported ready; cancel its never-ready watchdog.
             if (this._readyTimer) { try { clearTimeout(this._readyTimer); } catch { /* ignore */ } this._readyTimer = null; }
-            // ...but a ready worker can still be dead (never posts a frame). If the
-            // sim is already running, arm the frame-watchdog now; otherwise it arms
-            // when setRunning(true) is next forwarded from the tick loop.
-            this._armFrameWatchdog();
             if (this._pendingTPF !== undefined) {
                 Atomics.store(this._ctrl, CTRL.TICKS_PER_FRAME, Math.round(this._pendingTPF * 1000));
             }
             if (m.setupOk === false) {
                 const msg = m.setupError || (`Unknown or unhandled scenario: ${this._scenarioId}`);
                 console.error('[WasmWorker] setupScenario failed:', msg);
-                try { this._onSetupFailure?.(msg); } catch (e) {
-                    console.error('[WasmWorker] onSetupFailure handler threw:', e);
+                if (this._setupFailureToken !== this._pendingConfigurationToken) {
+                    this._setupFailureToken = this._pendingConfigurationToken;
+                    const cb = this._callbacksForCurrentConfiguration().onSetupFailure;
+                    try { cb?.(msg); } catch (e) {
+                        console.error('[WasmWorker] onSetupFailure handler threw:', e);
+                    }
                 }
                 return;
             }
@@ -384,50 +629,21 @@ export class WasmBridgeProxy {
                 configurationToken: this._pendingConfigurationToken,
             });
             this._pendingCommands = [];
-            if (this._running === true) {
-                this._worker.postMessage({ type: 'setRunning', value: true, seq: this._runCommandSeq });
-                if (this._ctrl) Atomics.store(this._ctrl, CTRL.RUNNING, 1);
-            }
+            this._armConfigurationTimer(this._pendingConfigurationToken);
         } else if (m.type === 'frame') {
-            const receivedAt = this._now();
-            // Reset the dead-worker watchdog only on TICK PROGRESS. A worker can
-            // post frames (e.g. the initial scenario frame) while its tick stays
-            // stuck at 0 — the in-worker threaded engine reports ready but never
-            // advances. Resetting on every frame would mask that; resetting only
-            // when diag.tick changes lets the watchdog catch a ready-but-not-
-            // ticking worker and fall back to the in-thread engine.
-            const _tk = (m.diag && typeof m.diag.tick === 'number') ? m.diag.tick : null;
-            if (_tk !== null && _tk !== this._lastTick) {
-                this._lastTick = _tk;
-                this._lastFrameAt = this._now();
-                this._armFrameWatchdog();
+            if (this._appliedConfigurationToken !== this._pendingConfigurationToken) {
+                // The initial and post-batch worker frames precede the explicit
+                // FIFO acknowledgement. Stage only the newest one and publish
+                // no old/partial scientific cache until that barrier succeeds.
+                this._pendingConfigurationFrame = m;
+                return;
             }
-            this._acceptTelemetryGroupFrame('diagnostics', m.diag, m.diagMeta, receivedAt);
-            if (m.parts) this._lastParts = m.parts;
-            this._acceptTelemetryGroupFrame('audit', m.audit, m.auditMeta, receivedAt);
-            this._acceptTelemetryGroupFrame('lagrangian', m.lag, m.lagMeta, receivedAt);
-            if (m.engineToggles) {
-                this._engineToggles = m.engineToggles;
-                if (this._appliedConfigurationToken === this._pendingConfigurationToken) {
-                    try { this._onEngineToggles?.(m.engineToggles); } catch (e) { /* UI callback must not kill the frame */ }
-                }
-            }
-            if (m.knot) this._lastKnot = m.knot;
-            if (m.knotEvents) this._lastKnotEvents = m.knotEvents;
-            if (m.knotAgg) this._lastKnotAgg = m.knotAgg;
-            if (m.inspect) this._lastInspect = m.inspect;
-            if (m.forceAt) this._lastForceAt = m.forceAt;
-            if (m.dynamicalStateDigest !== undefined) {
-                this._lastDynamicalStateDigest = m.dynamicalStateDigest;
-            }
-            const hadSamplers = Boolean(m.samplers && Object.keys(m.samplers).length);
-            if (hadSamplers) Object.assign(this._samplerCache, m.samplers);
-
-            if (typeof window !== 'undefined' && window.__ftdCtx && typeof window.__ftdCtx.onBridgePostFrame === 'function') {
-                window.__ftdCtx.onBridgePostFrame(hadSamplers);
-            }
+            this._acceptFrameMessage(m);
         } else if (m.type === 'configurationApplied') {
-            if (Number(m.configurationToken) !== this._pendingConfigurationToken) return;
+            if (this._configurationTimer) {
+                try { clearTimeout(this._configurationTimer); } catch { /* ignore */ }
+                this._configurationTimer = null;
+            }
             if (m.engineToggles) this._engineToggles = m.engineToggles;
             if (Number.isInteger(m.fluxBoundaryMode)) this._engineFluxBoundaryMode = m.fluxBoundaryMode;
             const errors = Array.isArray(m.errors) ? [...m.errors] : [];
@@ -436,8 +652,29 @@ export class WasmBridgeProxy {
                 errors.push(`flux boundary acknowledgement mismatch: expected ${this._requestedFluxBoundaryMode}, got ${this._engineFluxBoundaryMode}`);
             }
             const acknowledgement = { ...m, ok: m.ok !== false && errors.length === 0, errors };
-            if (acknowledgement.ok) this._appliedConfigurationToken = this._pendingConfigurationToken;
-            try { this._onConfigurationApplied?.(acknowledgement); } catch (e) {
+            if (acknowledgement.ok) {
+                this._appliedConfigurationToken = this._pendingConfigurationToken;
+                const pendingFrame = this._pendingConfigurationFrame;
+                this._pendingConfigurationFrame = null;
+                if (pendingFrame
+                    && Number(pendingFrame.configurationToken) === this._pendingConfigurationToken) {
+                    this._acceptFrameMessage(pendingFrame);
+                }
+                const deferredCommands = this._deferredCommandsAfterBarrier.splice(0);
+                for (const command of deferredCommands) {
+                    this._worker.postMessage({
+                        type: 'command',
+                        ...command,
+                        configurationToken: this._pendingConfigurationToken,
+                    });
+                }
+                this._postRunningState(this._running === true);
+            } else if (this._ctrl) {
+                this._pendingConfigurationFrame = null;
+                Atomics.store(this._ctrl, CTRL.RUNNING, 0);
+            }
+            const cb = this._callbacksForCurrentConfiguration().onConfigurationApplied;
+            try { cb?.(acknowledgement); } catch (e) {
                 console.error('[WasmWorker] configuration acknowledgement handler threw:', e);
             }
         } else if (m.type === 'fluxRebind') {
@@ -472,20 +709,31 @@ export class WasmBridgeProxy {
             // haven't yet become ready.
             if (m.where === 'init' && !this._ready) this._triggerFallback('worker init error: ' + (m.msg || ''));
             if (m.where === 'setupScenario') {
-                try { this._onSetupFailure?.(m.msg || 'setupScenario failed'); } catch (e) {
-                    console.error('[WasmWorker] onSetupFailure handler threw:', e);
+                if (this._setupFailureToken !== this._pendingConfigurationToken) {
+                    this._setupFailureToken = this._pendingConfigurationToken;
+                    const cb = this._callbacksForCurrentConfiguration().onSetupFailure;
+                    try { cb?.(m.msg || 'setupScenario failed'); } catch (e) {
+                        console.error('[WasmWorker] onSetupFailure handler threw:', e);
+                    }
                 }
             }
         }
     }
 
     _cmd(method, ...args) {
-        if (!this._ready) {
+        if (!this._ready || this._terminated || this._disposing) {
             // Buffer the command; will be replayed as batchCommand after 'ready'.
-            this._pendingCommands.push({ method, args });
+            if (!this._terminated && !this._disposing) this._pendingCommands.push({ method, args });
             return;
         }
-        this._worker.postMessage({ type: 'command', method, args });
+        if (this._appliedConfigurationToken !== this._pendingConfigurationToken) {
+            this._deferredCommandsAfterBarrier.push({ method, args });
+            return;
+        }
+        this._worker.postMessage({
+            type: 'command', method, args,
+            configurationToken: this._pendingConfigurationToken,
+        });
     }
 
     /** Monotonic publication counter from the worker, including readback-only frames. */
@@ -493,6 +741,16 @@ export class WasmBridgeProxy {
     /** Monotonic physics-data version; sampler-only readbacks do not advance it. */
     get dataVersion() { return this._ctrl ? Atomics.load(this._ctrl, CTRL.DATA_VERSION) : 0; }
     get ready() { return this._ready; }
+    get configurationToken() { return this._pendingConfigurationToken; }
+    get lifecycleDebug() {
+        return Object.freeze({
+            workerRuntimeId: this._workerRuntimeId || null,
+            moduleInitCount: this._moduleInitCount || 0,
+            renderBridgeGeneration: this._renderBridgeGeneration || 0,
+            configurationToken: this._pendingConfigurationToken,
+            appliedConfigurationToken: this._appliedConfigurationToken,
+        });
+    }
     get runningStateSettled() {
         return this._runAckSeq === this._runCommandSeq && this._runningAck === this._running;
     }
@@ -642,7 +900,10 @@ export class WasmBridgeProxy {
     }
 
     getFluxVolume() {
-        if (!this._ready) return new Float64Array(0);
+        if (!this._ready
+            || this._appliedConfigurationToken !== this._pendingConfigurationToken) {
+            return new Float64Array(0);
+        }
         const view = this._currentFluxView();
         if (!view) return new Float64Array(0);
         const N = this.latticeSize | 0;
@@ -727,12 +988,16 @@ export class WasmBridgeProxy {
         return this._readSampler(kind, stride, emptyFn);
     }
     replaceSamplerWants(owner, keys) {
-        this._samplerWants.replace(owner, keys);
+        const boundedInstrument = owner === 'gravity-panel' || owner === 'time-panel';
+        this._samplerWants.replace(owner, keys, {
+            cadenceClass: boundedInstrument ? 'bounded-instrument' : 'realtime',
+        });
     }
     unwantSampler(kind, stride) {
         const key = `${kind}@${stride}`;
         this.replaceSamplerWants(`direct:${key}`, []);
         delete this._samplerCache[key];
+        delete this._samplerCacheVersion[key];
     }
     getEFieldSampled(stride = 2)        { return this._wantSampler('e',            stride, EMPTY_VEC); }
     getBFieldSampled(stride = 2)        { return this._wantSampler('b',            stride, EMPTY_VEC); }
@@ -756,9 +1021,25 @@ export class WasmBridgeProxy {
         const empty = fallback ?? EMPTY_VAL();
         return this._readSampler(kind, stride, () => empty);
     }
+    hasSamplerSnapshot(kind, stride = 2) {
+        const key = `${kind}@${stride}`;
+        // Cache entries are stamped by the exact worker frame message that
+        // carried them. Do not compare with the concurrently advancing shared
+        // DATA_VERSION atomic: the worker may tick again before the main thread
+        // handles this scientifically complete message. Consumers compare the
+        // three message-stamped sampler revisions as one accepted cycle.
+        return Object.prototype.hasOwnProperty.call(this._samplerCache, key)
+            && Object.prototype.hasOwnProperty.call(this._samplerCacheVersion, key);
+    }
+    getSamplerSnapshotVersion(kind, stride = 2) {
+        const key = `${kind}@${stride}`;
+        return Object.prototype.hasOwnProperty.call(this._samplerCacheVersion, key)
+            ? Number(this._samplerCacheVersion[key])
+            : null;
+    }
     getGravityMetricAgg() {
         return this._readSampler('gravityMetricAgg', 0, () => (
-            { active: false, latencyMax: 0, latencyMean: 0, fMin: 1, gammaMax: 1, dilationMaxPct: 0, voxelCount: 0 }
+            { active: false, requested: null, latencyMax: 0, latencyMean: 0, fMin: 1, gammaMax: 1, dilationMaxPct: 0, voxelCount: 0 }
         ));
     }
     getLatencyVolume() { return new Float64Array(0); }  // full volume not supported on worker path
@@ -808,65 +1089,70 @@ export class WasmBridgeProxy {
      * once the worker replies (ready.setupOk === false or error).
      */
     setupScenario(name) {
+        if (!this.canReconfigure()) return false;
+        if (!this._configurationPrepared) {
+            // Backward-compatible direct use: callers predating the loader's
+            // explicit transaction may have staged toggles before setup.
+            this.beginConfiguration({
+                latticeSize: this.latticeSize,
+                scenarioId: name || this._scenarioId,
+                resetLocalProfile: false,
+            });
+        }
         this._scenarioId = name || this._scenarioId;
-        this._ready = false;
-        // Diagnostics belong to the old worker-hosted RenderBridge until the
-        // new `create` completes. Clear them so exact-step observatories do not
-        // mistake an old high tick count for completion of a newly reset run.
-        this._lastDiag = null;
-        this._lastDiagMeta = null;
-        this._lastParts = null;
-        this._lastAudit = null;
-        this._lastAuditMeta = null;
-        this._lastLag = null;
-        this._lastLagMeta = null;
-        this._lastKnot = null;
-        this._lastKnotEvents = null;
-        this._lastKnotAgg = null;
-        this._lastInspect = null;
-        this._lastForceAt = null;
-        this._lastDynamicalStateDigest = null;
-        this._lastTick = -1;
-        this._appliedConfigurationToken = 0;
-        this._requestedFluxBoundaryMode = null;
-        this._engineFluxBoundaryMode = null;
-        this._clearFrameWatchdog();   // old-scenario watchdog is stale; re-arms on next 'ready'/setRunning
-        this._samplerCache = {};   // stale; worker will repopulate on first frame of new scenario
+        // Commands staged before setup are represented by the create payload
+        // (`_toggles`). Only post-setup commands belong in the barrier batch.
         this._pendingCommands = []; // discard any commands queued for the previous scenario
-        for (const resolve of this._coarsenPending.values()) {
-            try { resolve(null); } catch { /* ignore */ }
-        }
-        this._coarsenPending.clear();
-        for (const resolve of this._digestPending.values()) {
-            try { resolve(null); } catch { /* ignore */ }
-        }
-        this._digestPending.clear();
-        const configurationToken = ++this._configurationSeq;
-        this._pendingConfigurationToken = configurationToken;
-        this._worker.postMessage({
+        const configurationToken = this._pendingConfigurationToken;
+        this._configurationPrepared = false;
+        this._armReadyTimer(configurationToken);
+        const createMessage = {
             type: 'create', N: this.latticeSize, scenarioId: this._scenarioId,
-            toggles: this._toggles,
+            toggles: { ...this._toggles },
             toggleNames: SCALE0_ENGINE_TOGGLE_NAMES,
             pool: workerPoolSize(),
             configurationToken,
-        });
+        };
+        this._pendingCreateMessage = createMessage;
+        if (!this._createScheduled) {
+            this._createScheduled = true;
+            queueMicrotask(() => {
+                this._createScheduled = false;
+                const pending = this._pendingCreateMessage;
+                this._pendingCreateMessage = null;
+                if (!pending || this._terminated || this._disposing || this._initFailed
+                    || Number(pending.configurationToken) !== this._pendingConfigurationToken) return;
+                this._worker.postMessage(pending);
+            });
+        }
         return true;
     }
+
+    _postRunningState(value) {
+        if (!this._worker || this._terminated || this._disposing || !this._ready
+            || this._appliedConfigurationToken !== this._pendingConfigurationToken) return;
+        const seq = ++this._runCommandSeq;
+        if (this._ctrl) Atomics.store(this._ctrl, CTRL.RUNNING, value ? 1 : 0);
+        this._worker.postMessage({
+            type: 'setRunning', value: !!value, seq,
+            configurationToken: this._pendingConfigurationToken,
+        });
+        if (value) this._armFrameWatchdog();
+        else this._clearFrameWatchdog();
+    }
+
     setRunning(v) {
         v = !!v;
         if (v === this._running) return;                              // dedupe — tick.js calls every frame
         this._running = v;
-        const seq = ++this._runCommandSeq;
-        // RUNNING lives in a SharedArrayBuffer, so publish the transition
-        // immediately. Relying only on postMessage leaves one or more worker
-        // loop turns between a UI pause and the worker observing it.
-        if (this._ctrl) Atomics.store(this._ctrl, CTRL.RUNNING, v ? 1 : 0);
-        this._worker.postMessage({ type: 'setRunning', value: v, seq });
-        // Frame-watchdog follows the run state: arm when we start running (a
-        // ready-but-dead worker will never post a frame), clear when paused so a
-        // legitimately idle worker isn't falsely tripped.
-        if (v) this._armFrameWatchdog();
-        else this._clearFrameWatchdog();
+        // A configuration transaction remains paused until its explicit FIFO
+        // barrier succeeds. The desired value is retained and replayed there.
+        if (this._appliedConfigurationToken === this._pendingConfigurationToken) {
+            this._postRunningState(v);
+        } else {
+            if (!v && this._ctrl) Atomics.store(this._ctrl, CTRL.RUNNING, 0);
+            this._clearFrameWatchdog();
+        }
     }
     setTicksPerFrame(v) {
         this._pendingTPF = v;
@@ -882,12 +1168,14 @@ export class WasmBridgeProxy {
      * whether any panel consumed them. Sent only on change to avoid a
      * postMessage per frame.
      */
-    setTelemetryMask(wantAudit = true, wantLag = true) {
-        const a = !!wantAudit, l = !!wantLag;
-        if (a === this._wantAudit && l === this._wantLag) return;
-        this._wantAudit = a; this._wantLag = l;
-        if (this._worker && !this._terminated) {
-            this._worker.postMessage({ type: 'setTelemetryMask', wantAudit: a, wantLag: l });
+    setTelemetryMask(wantAudit = true, wantLag = true, wantGravity = false) {
+        const a = !!wantAudit, l = !!wantLag, g = !!wantGravity;
+        if (a === this._wantAudit && l === this._wantLag && g === this._wantGravity) return;
+        this._wantAudit = a; this._wantLag = l; this._wantGravity = g;
+        if (this._worker && !this._terminated && !this._disposing) {
+            this._worker.postMessage({
+                type: 'setTelemetryMask', wantAudit: a, wantLag: l, wantGravity: g,
+            });
         }
     }
 
@@ -922,18 +1210,59 @@ export class WasmBridgeProxy {
     // ── Lifecycle ───────────────────────────────────────────────────────────
     reset(n) {
         if (typeof n === 'number' && n > 0) this.latticeSize = (n % 2 === 0) ? n + 1 : n;
+        this.beginConfiguration({ latticeSize: this.latticeSize, scenarioId: this._scenarioId });
         this.setupScenario(this._scenarioId);
     }
     resize(n) { this.reset(n); }
-    terminate() {
-        if (!this._terminated) { this._terminated = true; _live--; _terminated++; }
+    _finalizeWorkerTermination(mode) {
+        if (this._terminated) return;
+        this._terminated = true;
+        this._disposing = false;
+        if (this._disposeTimer) {
+            try { clearTimeout(this._disposeTimer); } catch { /* ignore */ }
+            this._disposeTimer = null;
+        }
+        _live = Math.max(0, _live - 1);
+        _terminated++;
+        if (mode === 'acknowledged') _disposeAcknowledged++;
+        else _hardTerminated++;
+        try { this._worker.onmessage = null; } catch { /* ignore */ }
+        try { this._worker.onerror = null; } catch { /* ignore */ }
+        try { this._worker.terminate(); } catch { /* ignore */ }
         if (this._artifactIdentityResolve) {
             this.artifactIdentityState = 'failed';
             try { this._artifactIdentityResolve(null); } catch { /* ignore */ }
             this._artifactIdentityResolve = null;
         }
+    }
+
+    _hardTerminate() {
+        this._disposing = true;
+        this._pendingCreateMessage = null;
+        this._clearConfigurationTimers();
+        this._clearFrameWatchdog();
         try { this._samplerWants.clear(); } catch { /* ignore */ }
-        if (this._readyTimer) { try { clearTimeout(this._readyTimer); } catch { /* ignore */ } this._readyTimer = null; }
+        this._onEngineToggles = null;
+        this._onConfigurationApplied = null;
+        this._onInitFailure = null;
+        this._onSetupFailure = null;
+        for (const resolve of this._coarsenPending.values()) {
+            try { resolve(null); } catch { /* ignore */ }
+        }
+        this._coarsenPending.clear();
+        for (const resolve of this._digestPending.values()) {
+            try { resolve(null); } catch { /* ignore */ }
+        }
+        this._digestPending.clear();
+        this._finalizeWorkerTermination('hard');
+    }
+
+    terminate() {
+        if (this._terminated || this._disposing) return;
+        this._disposing = true;
+        this._pendingCreateMessage = null;
+        try { this._samplerWants.clear(); } catch { /* ignore */ }
+        this._clearConfigurationTimers();
         this._clearFrameWatchdog();
         // Drop callbacks so a late queued message cannot reach the dashboard
         // even if _onMessage's terminated guard is somehow bypassed.
@@ -941,14 +1270,30 @@ export class WasmBridgeProxy {
         this._onConfigurationApplied = null;
         this._onInitFailure = null;
         this._onSetupFailure = null;
+        for (const resolve of this._coarsenPending.values()) {
+            try { resolve(null); } catch { /* ignore */ }
+        }
+        this._coarsenPending.clear();
         for (const resolve of this._digestPending.values()) {
             try { resolve(null); } catch { /* ignore */ }
         }
         this._digestPending.clear();
-        try { this._worker.onmessage = null; } catch (e) { /* ignore */ }
-        try { this._worker.onerror = null; } catch (e) { /* ignore */ }
-        try { this._worker.postMessage({ type: 'dispose' }); } catch (e) { /* ignore */ }
-        try { this._worker.terminate(); } catch (e) { /* ignore */ }
+        try {
+            this._worker.postMessage({
+                type: 'dispose', configurationToken: this._pendingConfigurationToken,
+            });
+        } catch {
+            this._finalizeWorkerTermination('hard');
+            return;
+        }
+        if (typeof setTimeout === 'function') {
+            this._disposeTimer = setTimeout(() => {
+                this._disposeTimer = null;
+                if (!this._terminated) this._finalizeWorkerTermination('hard');
+            }, DISPOSE_ACK_TIMEOUT_MS);
+        } else {
+            this._finalizeWorkerTermination('hard');
+        }
     }
     dispose() { this.terminate(); }
 }

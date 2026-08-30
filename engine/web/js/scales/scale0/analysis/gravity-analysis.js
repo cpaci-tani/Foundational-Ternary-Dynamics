@@ -4,14 +4,16 @@
  * .claude/plans/let-s-plan-for-and-eager-tide.md §1.1.
  *
  * Honesty: these are the WEB **proxy** gravity scalars (latency L = |J|²-proxy,
- * Kretschmann K = (∇²L)², force |F| = G_N·∇ρ). The genuine C++ Poisson metric is
- * surfaced separately (Phase 2), tagged [C++]. Everything here is [proxy].
+ * curvature proxy K_p = (∇²L)², plus the separately sampled finite-engine
+ * gravity-force field). The slice-only force view uses G_N·|∇₁|J||. K_p is not
+ * the full Riemann-tensor Kretschmann invariant. The engine's Poisson-derived
+ * [IMPOSED] latency map is surfaced separately (Phase 2), tagged [ENGINE]; it
+ * is not a recovered physical metric. Everything here is [proxy].
  */
 
 import { metricStats, histogram, magnitudeGrid } from './lattice-topology.js';
 import {
     G_N,
-    K_B,
     ALPHA_G_APPROX,
     LATENCY_HORIZON_CLAMP,
     LAPLACIAN_FACE_WEIGHT,
@@ -19,72 +21,9 @@ import {
 } from '../../../constants.js';
 
 /**
- * Pairwise gravitational potential energy over manifested particles:
- *   U = −Σ_{i<j} G_N·K_B² / r_ij        (always negative — gravity is attractive)
- * Mirrors the Coulomb-PE loop in mock-diagnostics.js but unsigned (no charge),
- * matching the engine's pairwise force F = G_N·K_B²/r² (mock-bridge.js:619).
- */
-export function gravityPE(particles) {
-    if (!particles || !particles.length) return 0;
-    const K2 = K_B * K_B;
-    let pe = 0;
-    for (let i = 0; i < particles.length; i++) {
-        const pi = particles[i];
-        if ((pi.state ?? 0) === 0) continue;
-        const xi = pi.x ?? 0, yi = pi.y ?? 0, zi = pi.z ?? 0;
-        for (let j = i + 1; j < particles.length; j++) {
-            const pj = particles[j];
-            if ((pj.state ?? 0) === 0) continue;
-            const dx = xi - (pj.x ?? 0), dy = yi - (pj.y ?? 0), dz = zi - (pj.z ?? 0);
-            const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            if (r < 1e-6) continue;
-            pe -= G_N * K2 / r;
-        }
-    }
-    return pe;
-}
-
-/**
- * Same pairwise gravity PE, but from an interleaved positions buffer (the web
- * particle frame is render-data: { positions:Float32Array(count*3), count } with
- * no charge field — fine, since gravity is sign-independent).
- */
-export function gravityPEFromPositions(positions, count) {
-    if (!positions || !count) return 0;
-    const K2 = K_B * K_B;
-    let pe = 0;
-    
-    // ARC-PERF (2026-06-10): Pairwise O(N^2) on 35,000 particles is 612M iterations,
-    // which freezes the browser. We sub-sample heavily for dense fields and 
-    // scale the result proportionally. Gravity is long-range, so this proxy is robust.
-    let stride = 1;
-    if (count > 500) stride = Math.ceil(count / 500);
-    
-    let sampledCount = 0;
-    for (let i = 0; i < count; i += stride) {
-        sampledCount++;
-        const xi = positions[i * 3], yi = positions[i * 3 + 1], zi = positions[i * 3 + 2];
-        for (let j = i + stride; j < count; j += stride) {
-            const dx = xi - positions[j * 3], dy = yi - positions[j * 3 + 1], dz = zi - positions[j * 3 + 2];
-            const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            if (r < 1e-6) continue;
-            pe -= G_N * K2 / r;
-        }
-    }
-    
-    if (stride > 1 && sampledCount > 1) {
-        const actualPairs = (count * (count - 1)) / 2;
-        const sampledPairs = (sampledCount * (sampledCount - 1)) / 2;
-        pe *= (actualPairs / sampledPairs);
-    }
-    
-    return pe;
-}
-
-/**
- * Time-dilation percentage from the peak latency: with metric lapse f = 1−L²,
- * a clock runs at rate √f, so the slowdown is (1−√f)·100. L is clamped below the
- * named horizon clamp. dilationPct(0)=0; the capped value is approximately 93.7%.
+ * Proxy lapse slowdown from normalized L_p: f_p = 1−L_p² and
+ * (1−√f_p)·100. This is a derived web-proxy readout, not a native clock
+ * measurement or an event-horizon detector.
  */
 export function dilationPct(Lmax) {
     const L = Math.min(Math.max(Lmax || 0, 0), 0.999);
@@ -92,7 +31,7 @@ export function dilationPct(Lmax) {
     return f > 0 ? (1 - Math.sqrt(f)) * 100 : 100;
 }
 
-/** GW strain proxy: how far the peak latency rises above the mean (≥0). */
+/** Normalized field-contrast proxy: peak L_p above mean L_p (≥0). */
 export function strainProxy(Lmax, Lmean) {
     return Math.max(0, (Lmax || 0) - (Lmean || 0));
 }
@@ -107,6 +46,110 @@ export function maxRhoOf(mag, M) {
     let mx = 1e-30;
     for (let i = 0; i < M; i++) { const r = mag[i] * mag[i]; if (r > mx) mx = r; }
     return mx;
+}
+
+const MAX_DENSE_VISUAL_SAMPLES = 262144;
+
+/**
+ * Mirror ftd::visual_sample_grid (visual_sample_grid.h) for proxy telemetry
+ * derived from an already-read browser volume. Keeping the same centered grid
+ * means the direct-WASM fallback samples the same lattice sites as the native,
+ * GPU, and Worker samplers instead of introducing a second web-only geometry.
+ */
+export function gravityVisualSampleGrid(latticeSize, requestedStride, interior = false) {
+    const N = Math.max(0, Math.trunc(Number(latticeSize) || 0));
+    let stride = Math.max(1, Math.trunc(Number(requestedStride) || 1));
+    const extent = Math.max(0, N - (interior ? 2 : 0));
+    const sampleCount = (step) => {
+        const perAxis = Math.ceil(extent / step);
+        return perAxis * perAxis * perAxis;
+    };
+    while (sampleCount(stride) > MAX_DENSE_VISUAL_SAMPLES) stride += 1;
+    const lo = interior ? 1 : 0;
+    const hi = interior ? N - 2 : N - 1;
+    if (hi < lo) return { stride, origin: 0, count: 0, end: 0 };
+    const center = Math.trunc((N - 1) / 2);
+    const origin = center - Math.trunc((center - lo) / stride) * stride;
+    const count = Math.trunc((hi - origin) / stride) + 1;
+    return { stride, origin, count, end: origin + count * stride };
+}
+
+/**
+ * Build the L_p and K_p proxy samples from one dense |J| snapshot.
+ *
+ * This is deliberately limited to the two quantities already identified in
+ * the UI as presentation proxies. The selected gravity support field and
+ * Poisson-latency aggregate still come from their exact engine samplers. The
+ * thresholds, clamp, 18-point stencil, and center-anchored sampling grid match
+ * get_latency_sampled/get_kretschmann_sampled in ftd_wasm.cpp.
+ */
+export function gravityProxySamplesFromVolume(mag, latticeSize, requestedStride) {
+    const N = Math.max(0, Math.trunc(Number(latticeSize) || 0));
+    const M = N * N * N;
+    const empty = {
+        latencyVals: new Float64Array(0),
+        latencyCount: 0,
+        kretVals: new Float64Array(0),
+        kretCount: 0,
+        maxRho: 0,
+    };
+    if (!ArrayBuffer.isView(mag) || N < 1 || mag.length < M) return empty;
+
+    let maxRho = 0;
+    for (let i = 0; i < M; i += 1) {
+        const value = Number(mag[i]) || 0;
+        const rho = value * value;
+        if (rho > maxRho) maxRho = rho;
+    }
+    if (maxRho < 1e-30) return { ...empty, maxRho };
+
+    const invRho = 1 / maxRho;
+    const idx = (x, y, z) => (z * N + y) * N + x;
+    const latencyAt = (x, y, z) => {
+        const value = Number(mag[idx(x, y, z)]) || 0;
+        return Math.sqrt(Math.min(value * value * invRho, LATENCY_HORIZON_CLAMP));
+    };
+
+    const latencyGrid = gravityVisualSampleGrid(N, requestedStride, false);
+    const latencyVals = new Float64Array(latencyGrid.count ** 3);
+    let latencyCount = 0;
+    for (let z = latencyGrid.origin; z < latencyGrid.end; z += latencyGrid.stride) {
+        for (let y = latencyGrid.origin; y < latencyGrid.end; y += latencyGrid.stride) {
+            for (let x = latencyGrid.origin; x < latencyGrid.end; x += latencyGrid.stride) {
+                const value = latencyAt(x, y, z);
+                if (value < 1e-6) continue;
+                latencyVals[latencyCount++] = value;
+            }
+        }
+    }
+
+    const curvatureGrid = gravityVisualSampleGrid(N, requestedStride, true);
+    const kretVals = new Float64Array(curvatureGrid.count ** 3);
+    let kretCount = 0;
+    const F3 = LAPLACIAN_FACE_WEIGHT;
+    const E6 = LAPLACIAN_EDGE_WEIGHT;
+    for (let z = curvatureGrid.origin; z < curvatureGrid.end; z += curvatureGrid.stride) {
+        for (let y = curvatureGrid.origin; y < curvatureGrid.end; y += curvatureGrid.stride) {
+            for (let x = curvatureGrid.origin; x < curvatureGrid.end; x += curvatureGrid.stride) {
+                const self = latencyAt(x, y, z);
+                const faceSum = latencyAt(x + 1, y, z) + latencyAt(x - 1, y, z)
+                    + latencyAt(x, y + 1, z) + latencyAt(x, y - 1, z)
+                    + latencyAt(x, y, z + 1) + latencyAt(x, y, z - 1);
+                const edgeSum = latencyAt(x + 1, y + 1, z) + latencyAt(x + 1, y - 1, z)
+                    + latencyAt(x - 1, y + 1, z) + latencyAt(x - 1, y - 1, z)
+                    + latencyAt(x + 1, y, z + 1) + latencyAt(x + 1, y, z - 1)
+                    + latencyAt(x - 1, y, z + 1) + latencyAt(x - 1, y, z - 1)
+                    + latencyAt(x, y + 1, z + 1) + latencyAt(x, y + 1, z - 1)
+                    + latencyAt(x, y - 1, z + 1) + latencyAt(x, y - 1, z - 1);
+                const laplacian = F3 * faceSum + E6 * edgeSum - 4 * self;
+                const value = laplacian * laplacian;
+                if (value < 1e-18) continue;
+                kretVals[kretCount++] = value;
+            }
+        }
+    }
+
+    return { latencyVals, latencyCount, kretVals, kretCount, maxRho };
 }
 
 /**
@@ -176,7 +219,7 @@ export function gravitySlice(mag, N, axis, index, kind = 'latency', maxRho = 0, 
 /**
  * Roll up the proxy gravity scalars + histograms for the panel.
  * @param {{latencyVals:ArrayLike, latencyCount:number, kretVals:ArrayLike,
- *   kretCount:number, forceMags:ArrayLike, forceCount:number, particles:Array}} src
+ *   kretCount:number, forceMags:ArrayLike, forceCount:number}} src
  */
 export function aggregateMetrics(src) {
     const L = metricStats(src.latencyVals || [], src.latencyCount || 0);
@@ -187,11 +230,8 @@ export function aggregateMetrics(src) {
         K: { mean: K.mean, max: K.max },
         F: { mean: F.mean, max: F.max },
         dilationPct: dilationPct(L.max),
-        horizon: L.max,                       // L_max → 0.999 = event horizon
+        horizon: L.max,                       // proximity to the imposed proxy clamp
         strain: strainProxy(L.max, L.mean),
-        gravPE: src.particlePositions
-            ? gravityPEFromPositions(src.particlePositions, src.particleCount || 0)
-            : gravityPE(src.particles),
         gnG: G_N,
         alphaG: ALPHA_G_APPROX,
         histL: histogram(src.latencyVals || [], src.latencyCount || 0, 22),

@@ -826,10 +826,11 @@ export class WasmBridge {
             (m, b) => m.getFluxVolume(b));
     }
 
-    // Phase 2 gravity panel: REAL C++ latency field (voxel.latency), not the |J|² proxy.
+    // Phase 2 gravity panel: engine Poisson-derived [IMPOSED] voxel.latency
+    // mapping, not the |J|² proxy or a recovered physical spacetime metric.
     getGravityMetricAgg() {
         return _wasmCallOr(this, 'getGravityMetricAgg',
-            { active: false, latencyMax: 0, latencyMean: 0, fMin: 1, gammaMax: 1, dilationMaxPct: 0, voxelCount: 0 },
+            { active: false, requested: null, latencyMax: 0, latencyMean: 0, fMin: 1, gammaMax: 1, dilationMaxPct: 0, voxelCount: 0 },
             (m, b) => m.getGravityMetricAgg(b));
     }
 
@@ -933,6 +934,10 @@ export class WasmBridge {
     }
     /** Kind-dispatched Scale-0 field sampler; see bridge-contract.js samplerOr. */
     getSamplerOr(kind, stride = 2, fallback) { return samplerOr(this, kind, stride, fallback); }
+    // Direct WASM samplers are synchronous: an empty record is a completed
+    // scientific zero/unavailable result, never a lazy transport placeholder.
+    hasSamplerSnapshot() { return true; }
+    getSamplerSnapshotVersion() { return null; }
     replaceSamplerWants() {}
     unwantSampler() {}
 

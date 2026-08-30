@@ -163,6 +163,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         this._volumeRequestInFlight = false;
         this._sliceRequestsInFlight = new Set();
         this._fieldSampleCache = new Map();
+        this._fieldSampleCacheEpoch = new Map();
         this._fieldSampleRequestEpoch = new Map();
         this._fieldSampleRequestTokenByKey = new Map();
         this._fieldSampleRequestsByToken = new Map();
@@ -1479,6 +1480,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             this._volumeCache = null;
             this._sliceCache = new Map();
             this._fieldSampleCache.clear();
+            this._fieldSampleCacheEpoch.clear();
             this._voxelCache.clear();
             this._forceAtCache.clear();
             this._lastDiag = null;
@@ -1857,6 +1859,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         }
         if (Number.isInteger(origin) && origin >= 0) sample.origin = origin;
         this._fieldSampleCache.set(key, sample);
+        this._fieldSampleCacheEpoch.set(key, pending.epoch);
         this._drainFieldSampleRequests();
         this._notifyVisualDataReady(true, false);
         return true;
@@ -2704,8 +2707,9 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
     getHelicitySampled(stride = 2) { return this._getFieldSample('helicity', stride, EMPTY_SCALAR_SAMPLE); }
     getKretschmannSampled(stride = 2) { return this._getFieldSample('kretschmann', stride, EMPTY_SCALAR_SAMPLE); }
     getLatencySampled(stride = 2) { return this._getFieldSample('latency', stride, EMPTY_SCALAR_SAMPLE); }
-    // Real latency-Poisson solution (voxel.latency / CUDA d_latency). Keep the
-    // legacy `latency` sampler above as its normalized |J|^2 visual proxy.
+    // Engine Poisson-derived [IMPOSED] latency mapping (voxel.latency / CUDA
+    // d_latency), not a recovered physical metric. Keep the legacy `latency`
+    // sampler above as its normalized |J|^2 visual proxy.
     getPoissonLatencySampled(stride = 2) { return this._getFieldSample('poissonLatency', stride, EMPTY_SCALAR_SAMPLE); }
     getFisherSampled(stride = 2) { return this._getFieldSample('fisher', stride, EMPTY_SCALAR_SAMPLE); }
     getCoherenceSampled(stride = 2) { return this._getFieldSample('coherence', stride, EMPTY_SCALAR_SAMPLE); }
@@ -2718,6 +2722,25 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
     getStrongForceField(stride = 2) { return this._getFieldSample('strong', stride, EMPTY_FIELD_SAMPLE); }
     /** Kind-dispatched Scale-0 field sampler; see bridge-contract.js samplerOr. */
     getSamplerOr(kind, stride = 2, fallback) { return samplerOr(this, kind, stride, fallback); }
+    hasSamplerSnapshot(kind, stride = 2) {
+        if (kind === 'gravityMetricAgg') {
+            return this._lastGravityMetric != null && this._isTelemetryGroupCurrent('gravity');
+        }
+        const normalizedStride = Math.max(1, Math.min(64, Math.trunc(Number(stride) || 1)));
+        const key = `${kind}@${normalizedStride}`;
+        return this._fieldSampleCache.has(key) && this._fieldSampleCacheEpoch.has(key);
+    }
+    getSamplerSnapshotVersion(kind, stride = 2) {
+        if (kind === 'gravityMetricAgg') {
+            const meta = this._telemetryGroupCache?.gravity?.meta;
+            return Number.isFinite(Number(meta?.stateVersion)) ? Number(meta.stateVersion) : null;
+        }
+        const normalizedStride = Math.max(1, Math.min(64, Math.trunc(Number(stride) || 1)));
+        const key = `${kind}@${normalizedStride}`;
+        return this._fieldSampleCacheEpoch.has(key)
+            ? Number(this._fieldSampleCacheEpoch.get(key))
+            : null;
+    }
     replaceSamplerWants() {}
     unwantSampler() {}
 

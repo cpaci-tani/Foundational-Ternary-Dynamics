@@ -141,6 +141,9 @@ export function createScale0ViewportAdapter(viewport) {
         },
         clearScaleVisuals() {
             if (!viewport) return;
+            // Authoritative scenario/reset boundary: a new field must not be
+            // normalized against the prior scenario's held visual peak.
+            viewport.resetFluxNormalization?.();
             viewport.toggleEFieldLines?.(false);
             viewport.toggleBFieldLines?.(false);
             viewport.togglePoyntingVectors?.(false);

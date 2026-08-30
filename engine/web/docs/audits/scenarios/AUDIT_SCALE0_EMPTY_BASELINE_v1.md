@@ -262,6 +262,57 @@ records 60.00 FPS with p95/p99 16.67 ms, zero periodic callbacks, zero DOM/canva
 work, and zero collapsed work. An independent source red-team reports no
 remaining Knots blocker.
 
+Gravity now declares Scenario 1 explicitly inapplicable rather than presenting
+an all-zero proxy as evidence about gravity, vacuum, curvature, or time
+dilation. Selection intent, pending qualification, stale generations, size
+changes, collapse, hide, float/dock transitions, and Scale 0 teardown revoke
+the 4 Hz coordinator and all four sampler wants before another scientific read
+can publish. The static Empty boundary clears the three canvases, telemetry,
+native aggregate, and delta history and keeps public/manual updates inert.
+
+For applicable nonempty controls, the panel distinguishes its normalized
+presentation proxies (`L_p`, `K_p=(nabla^2 L_p)^2`, slice-only `|F_p|`) from the
+selected radius-2 engine support-field sampler and the Poisson-derived
+`[IMPOSED]` engine latency map. Branch-enabled status requires both the `forces`
+umbrella and `gravity` channel and states that `phase_forces` applies that field
+only at manifested sites; the displayed engine path is
+`nabla^2 phi_latency = 4 pi G_N (rho-rho_bar)` followed by the imposed mapping
+to `voxel.latency`. This is explicitly not presented as recovered spacetime or
+a physical clock measurement, and the causal tooltip uses the engine's exact
+`gamma_ftd = 1/sqrt(1-L^2-|v|^2/C_SPEED^2)` formula. No pairwise Scale 1
+gravitational-potential-energy estimate remains in this Scale 0 instrument.
+
+The direct-WASM fallback reads and copies the selected engine support field,
+then reads the engine latency aggregate, then obtains one zero-copy dense
+magnitude snapshot last. It reduces its already-labelled web proxies and paints
+the rotating slice synchronously before any later WASM call. An adversarial
+mounted-panel test poisons that snapshot at the first later engine call and
+verifies the retained metrics/slice. Worker/native transports retain explicit
+sampler readiness and all-component revision advancement. Worker reuse,
+configuration-token fencing, acknowledged disposal, FTV2 origin-aware slices,
+bounded volume pooling, one-plane-per-callback paint, hidden demand release,
+and current-generation restoration are regression-pinned.
+
+Fresh Gate 27 evidence records all nine Gravity scientific/lifecycle checks
+passing, both Node worker lifecycle checks passing, and the live
+sidepanel clearing the absolute foreground gate on the worker at `L=97` and on
+the direct fallback at its supported `L=33` ceiling. A deliberately forced
+direct-WASM `L=97` trace recorded only 16.49 FPS live and 18.47 FPS collapsed;
+because collapse had zero Gravity work, this falsified a panel-only cause and
+identified the main-thread physics tick as the blocker. The UI and resize path
+therefore refuse direct-WASM sizes above `L=33`; `L=49...97` require the WASM
+worker or native GPU, and `L>97` requires native GPU. A focused test invokes the
+production worker-init fallback path from a healthy L49 worker: it clamps and
+reloads direct WASM at L33, re-disables every larger menu option, and refuses a
+later L49 resize. Actual worker-init fault injection remains separate. The final
+warmed matrix uses an explicit native-GPU owner for all ten registered sizes
+(`L=9...181`) and all four force styles for 40 combinations: minimum 60.00 FPS,
+p95 no more than 17 ms, and worst p99 16.67 ms. Edge was used for appearance,
+force-branch truth, tooltips, and
+collapse/restore only; its extension automation footer was throttled and was
+not treated as performance evidence. This closes the Gravity interface gate,
+not Scenario 1 or the all-scenario qualification campaign.
+
 Fresh closure evidence: the availability/provenance suite, direct-WASM
 same-tick contract, status/Thermodynamics energy contract, and conservation
 suite record `10` applicable passes with `1` correctly identified
@@ -302,7 +353,7 @@ Required checks:
 The all-panel coexistence campaign now covers all 17 visible Scale 0 panel
 interfaces at `L = 97`. Each panel was warmed, measured for at least 240
 foreground frames, collapsed, and checked for stopped work using absolute gates
-(`FPS >= 59`, `p95 <= 16.9 ms`, `p99 <= 25 ms`, no long tasks, and bounded
+(`FPS >= 59.5`, `p95 <= 16.9 ms`, `p99 <= 20 ms`, no long tasks, and bounded
 callback/DOM/canvas/resource deltas). All 17 recorded 60.00 FPS with p95/p99
 16.67 ms and zero collapsed DOM/canvas work. The historical
 `perf-current-results.json` full-physics `L=33` result is approximately 12 FPS

@@ -62,12 +62,13 @@ struct AggregateProfile {
     int site_count = 0;         // sites with |J| > threshold
 };
 
-// Phase 2 (gravity panel): aggregate of the REAL C++ latency field
-// (voxel.latency from the Poisson solver), distinct from the |J|² web proxy.
+// Phase 2 (gravity panel): aggregate of the engine's Poisson-derived,
+// [IMPOSED] voxel.latency mapping, distinct from the |J|² web proxy. These
+// diagnostics do not establish a recovered physical metric or clock field.
 struct GravityMetricAgg {
-    double latency_max = 0.0;      // max voxel.latency (real gravity potential L)
+    double latency_max = 0.0;      // max mapped engine voxel.latency L
     double latency_mean = 0.0;     // mean over voxels with L>0
-    double f_min = 1.0;            // min lapse f = 1 - L_max² (deepest dilation)
+    double f_min = 1.0;            // min mapped lapse readout f = 1 - L_max²
     double gamma_max = 1.0;        // max gamma_ftd()
     double dilation_max_pct = 0.0; // (1 - sqrt(f_min))·100
     int voxel_count = 0;           // voxels with latency > 0
@@ -75,10 +76,10 @@ struct GravityMetricAgg {
     bool active = false;           // latency machinery on AND a non-trivial field
                                    // requested && !active distinguishes "term
                                    // off" from "term on but produced nothing" --
-                                   // the latter is how a backend that does not
-                                   // implement the term (field_energy_gravity
-                                   // has no CUDA read site) used to read as
-                                   // simply inactive. P4, 2026-07-26.
+                                   // the latter is how a backend that has not
+                                   // produced a non-trivial mapped record is
+                                   // distinguished from a disabled request.
+                                   // CPU and CUDA both read the request.
 };
 
 struct EnergyAudit {

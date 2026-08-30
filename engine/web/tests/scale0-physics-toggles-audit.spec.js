@@ -11,12 +11,18 @@ test.describe('Scale 0 physics-toggles controls-card audit gate', () => {
     test.beforeEach(async ({ page }, testInfo) => {
         testInfo.setTimeout(120_000);
         page.setDefaultTimeout(30_000);
-        await gotoAndReady(page);
-        await page.waitForFunction(() => {
+        await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
+        await page.waitForFunction(async () => {
+            const { getScale0QualificationState } =
+                await import('/js/scales/scale0/state/store.js');
             const worker = window.__ftdCtx?.fluxMock;
+            const lifecycle = worker?.lifecycleDebug;
             return document.getElementById('app')?.dataset.shellReady === 'true'
                 && worker?.ready === true
                 && worker?.hasEngineToggles === true
+                && !!lifecycle?.workerRuntimeId
+                && lifecycle.appliedConfigurationToken === lifecycle.configurationToken
+                && getScale0QualificationState().status === 'within-contract'
                 && document.getElementById('physics-profile-warning')
                     ?.closest('.card')?.getAttribute('aria-busy') === 'false';
         });
@@ -227,6 +233,7 @@ test.describe('Scale 0 physics-toggles controls-card audit gate', () => {
             return {
                 generation: window.__ftdCtx._loadGeneration,
                 workers: window.__ftdWasmWorkers(),
+                lifecycle: getScale0State().fluxMock?.lifecycleDebug ?? null,
                 warningVisible: !document.getElementById('physics-profile-warning').hidden,
             };
         });
@@ -240,26 +247,47 @@ test.describe('Scale 0 physics-toggles controls-card audit gate', () => {
         expect(immediate.disabled).toBe(true);
         expect(immediate.generation - before.generation).toBe(1);
 
-        await page.waitForFunction(() => {
-            return window.__ftdCtx?.fluxMock?.ready === true
-                && window.__ftdCtx?.fluxMock?.hasEngineToggles === true
+        await page.waitForFunction(async () => {
+            const { getScale0QualificationState } =
+                await import('/js/scales/scale0/state/store.js');
+            const owner = window.__ftdCtx?.fluxMock;
+            const lifecycle = owner?.lifecycleDebug;
+            const qualification = getScale0QualificationState();
+            return owner?.ready === true
+                && owner?.hasEngineToggles === true
+                && lifecycle?.appliedConfigurationToken === lifecycle?.configurationToken
+                && qualification.status === 'within-contract'
+                && qualification.anchor?.scenarioId === 'flux-pair-production'
+                && qualification.anchor?.loadGeneration === window.__ftdCtx?._loadGeneration
                 && document.getElementById('btn-reset-physics-toggles')?.disabled === false;
         });
         const after = await page.evaluate(async () => {
-            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            const { getScale0State, getScale0QualificationState } =
+                await import('/js/scales/scale0/state/store.js');
             const state = getScale0State();
             return {
                 generation: window.__ftdCtx._loadGeneration,
                 workers: window.__ftdWasmWorkers(),
+                lifecycle: state.fluxMock?.lifecycleDebug ?? null,
+                qualification: getScale0QualificationState(),
                 enginePair: state.fluxMock.getToggle('pair_production'),
                 uiPair: document.getElementById('t-pair-production').checked,
                 warningHidden: document.getElementById('physics-profile-warning').hidden,
             };
         });
         expect(after.generation - before.generation).toBe(1);
-        expect(after.workers.created - before.workers.created).toBe(1);
-        expect(after.workers.terminated - before.workers.terminated).toBe(1);
+        expect(after.workers.created - before.workers.created).toBe(0);
+        expect(after.workers.terminated - before.workers.terminated).toBe(0);
         expect(after.workers.live).toBe(1);
+        expect(after.lifecycle.workerRuntimeId).toBe(before.lifecycle.workerRuntimeId);
+        expect(after.lifecycle.moduleInitCount).toBe(1);
+        expect(after.lifecycle.renderBridgeGeneration
+            - before.lifecycle.renderBridgeGeneration).toBe(1);
+        expect(after.lifecycle.appliedConfigurationToken).toBe(after.lifecycle.configurationToken);
+        expect(after.qualification.status).toBe('within-contract');
+        expect(after.qualification.anchor.scenarioId).toBe('flux-pair-production');
+        expect(after.qualification.anchor.loadGeneration).toBe(after.generation);
+        expect(after.qualification.anchor.source).toBe('worker-configuration-applied');
         expect(after.enginePair).toBe(true);
         expect(after.uiPair).toBe(true);
         expect(after.warningHidden).toBe(true);

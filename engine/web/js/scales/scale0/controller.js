@@ -36,10 +36,10 @@ import {
     syncComboSliders,
     syncScale0ToggleUiFromEngine,
     stepScale0,
-} from './runtime/scenario-loader.js?v=13';
-import { bindScale0UI, handleScale0ShortcutKey } from './ui/bindings.js?v=10';
+} from './runtime/scenario-loader.js?v=17';
+import { bindScale0UI, handleScale0ShortcutKey } from './ui/bindings.js?v=11';
 import { getSelectedScenarioId } from './ui/dom.js';
-import { syncScale0LatticeSizeAvailability } from './ui/toolbar/limits.js';
+import { syncScale0LatticeSizeAvailability } from './ui/toolbar/limits.js?v=2';
 import { Scale0ControlsComponent } from './ui/controls/component.js?v=5';
 import {
     syncScale0FlowLineControls,
@@ -59,7 +59,7 @@ import { initWaveLabPanel } from './ui/overlays/wave-lab-panel.js?v=2';
 import { initP1ObservablesPanel } from './ui/overlays/p1-observables-panel.js?v=3';
 import { initConservationMicropanel } from './ui/overlays/conservation-micropanel.js';
 import { initSpectrumPanel } from './ui/overlays/spectrum-panel.js';
-import { initGravityPanel } from './ui/overlays/gravity-panel.js';
+import { initGravityPanel } from './ui/overlays/gravity-panel.js?v=6';
 import { appRegistry } from '../../core/registry.js';
 import { initTimePanel } from './ui/overlays/time-panel.js';
 import { initThermoPanel } from './ui/overlays/thermo-panel.js?v=3';
@@ -387,7 +387,10 @@ class Scale0LifecycleController extends BaseLifecycleController {
         try { initP1ObservablesPanel(); } catch (e) { /* ignore */ }
         try { initConservationMicropanel(); } catch (e) { /* ignore */ }
         try { initSpectrumPanel(); } catch (e) { /* ignore */ }
-        try { initGravityPanel(); } catch (e) { /* ignore */ }
+        try {
+            const gravityPanel = initGravityPanel();
+            if (gravityPanel) appRegistry.register('panel:gravity', gravityPanel);
+        } catch (e) { /* ignore */ }
         try { initTimePanel(); } catch (e) { /* ignore */ }
         try { initThermoPanel(); } catch (e) { /* ignore */ }
         try { initDispersionPanel(); } catch (e) { /* ignore */ }
@@ -421,6 +424,7 @@ class Scale0LifecycleController extends BaseLifecycleController {
         // DOM subtree, and clears its window singleton. Each is idempotent
         // and re-created on the next Scale-0 mount via its init*() call.
         appRegistry.unregister('scale0Ctx');
+        appRegistry.unregister('panel:gravity');
         if (typeof window !== 'undefined') {
             try { window.__ftdConservationPanel?.dispose?.(); } catch (e) { /* ignore */ }
             try { window.__ftdWaveLabPanel?.dispose?.(); } catch (e) { /* ignore */ }

@@ -1,6 +1,6 @@
 import { runScale0PhysicsTicks } from './tick.js';
 import { getPhysicsHarness } from '../../../physics/index.js';
-import { WasmBridgeProxy } from '../../../bridge/wasm-bridge-proxy.js?v=3';
+import { WasmBridgeProxy } from '../../../bridge/wasm-bridge-proxy.js?v=5';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../../constants.js';
 import {
@@ -47,7 +47,11 @@ import {
     setSelectedScenarioId,
 } from '../ui/dom.js?v=3';
 import { applyScale0OverlayApplicability } from '../ui/overlays/applicability.js?v=4';
-import { MAX_WASM_INTERACTIVE_LATTICE } from '../ui/toolbar/limits.js';
+import {
+    MAX_DIRECT_WASM_INTERACTIVE_LATTICE,
+    MAX_WASM_INTERACTIVE_LATTICE,
+    syncScale0LatticeSizeAvailability,
+} from '../ui/toolbar/limits.js?v=2';
 
 // Toggle-reset whitelist used by `applyToggleDefaults`.
 //
@@ -211,7 +215,7 @@ export const SCALE0_SCENARIO_VISUAL_PROFILES = {
     's0-seed-massive-body': {
         ...COMPACT_SEED_FOCUS,
         // J is exactly zero. The populated native views are the locked ternary
-        // mass and the real latency-Poisson solution (FTS2 kind 17).
+        // mass and the engine latency-Poisson mapping (FTS2 kind 17).
         fieldOverlays: ['toggle-state-field', 'toggle-latency'],
     },
     's0-field-spacetime-forcing-boundary': {
@@ -728,18 +732,47 @@ export function resetScale0VisualState(ctx, state, viewportAdapter) {
  *      path entirely (no point retrying a broken environment),
  *   2. clear the flux-mock so getActiveScale0Bridge() resolves to ctx.bridge
  *      (the in-thread WasmBridge, which loads ftd_core.wasm and ticks fine), and
- *   3. re-run loadScale0Scenario — now it takes the in-thread branch and seeds
+ *   3. clamp/relabel the lattice selector to the measured direct-WASM ceiling,
+ *      even when the current lattice already fits that ceiling, and
+ *   4. re-run loadScale0Scenario — now it takes the in-thread branch and seeds
  *      the engine on ctx.bridge so the panel (and everything) works.
  *
  * Idempotent: the latch means a second failure callback (if any) is a no-op.
  */
-function fallbackToInThreadEngine(ctx, state, viewportAdapter, scenarioId, params) {
+export async function enforceDirectWasmInteractiveFallback(ctx) {
+    let clamped = false;
+    if (Number(ctx.bridge?.latticeSize) > MAX_DIRECT_WASM_INTERACTIVE_LATTICE) {
+        if (typeof ctx.bridge.resize === 'function') {
+            await ctx.bridge.resize(MAX_DIRECT_WASM_INTERACTIVE_LATTICE);
+        } else {
+            ctx.bridge.reset(MAX_DIRECT_WASM_INTERACTIVE_LATTICE);
+        }
+        clamped = true;
+    }
+    setInputValue('lattice-size', MAX_DIRECT_WASM_INTERACTIVE_LATTICE);
+    // Worker-init failure can occur after the menu was populated for the
+    // off-thread ceiling. Recompute every option even when no clamp was needed.
+    syncScale0LatticeSizeAvailability(false, false);
+    return { clamped, latticeSize: Number(ctx.bridge?.latticeSize) };
+}
+
+export async function fallbackToInThreadEngine(ctx, state, viewportAdapter, scenarioId, params) {
     if (ctx._wasmWorkerDisabled) return;     // already fell back once
     ctx._wasmWorkerDisabled = true;
     setFluxMock(null, false);                // disposes the dead proxy; useFluxMock=false
     ctx.useFluxMock = false;
     ctx.fluxMock = null;
     try {
+        const fallback = await enforceDirectWasmInteractiveFallback(ctx);
+        if (fallback.clamped) {
+            if (typeof window.showToast === 'function') {
+                window.showToast(
+                    `WASM worker unavailable; reduced Scale 0 to L=${MAX_DIRECT_WASM_INTERACTIVE_LATTICE} `
+                    + 'to preserve the interactive UI budget.',
+                    'error',
+                );
+            }
+        }
         loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, params);
     } catch (e) {
         console.error('[Scale0] in-thread fallback load failed:', e);
@@ -796,13 +829,22 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
         // this ctx and re-run the load on the in-thread WasmBridge so the engine never
         // silently dies (the proxy is the ACTIVE bridge while useFluxMock=true, so a
         // dead worker means NOTHING ticks).
-        wasmWorker = new WasmBridgeProxy(latticeSize, {
+        const priorWorker = getScale0State().fluxMock;
+        wasmWorker = priorWorker?.isWorker && priorWorker?.canReconfigure?.()
+            ? priorWorker
+            : new WasmBridgeProxy(latticeSize);
+        let workerConfigurationToken = 0;
+        const callbackIsCurrent = () => workerConfigurationToken > 0
+            && wasmWorker.configurationToken === workerConfigurationToken
+            && ctx._loadGeneration === loadGen
+            && getScale0State().currentScenarioId === scenario.id;
+        const workerCallbacks = {
             onInitFailure: () => {
-                if (ctx._loadGeneration !== loadGen) return;
-                fallbackToInThreadEngine(ctx, state, viewportAdapter, scenarioId, params);
+                if (!callbackIsCurrent()) return;
+                void fallbackToInThreadEngine(ctx, state, viewportAdapter, scenarioId, params);
             },
             onSetupFailure: (msg) => {
-                if (ctx._loadGeneration !== loadGen) return;
+                if (!callbackIsCurrent()) return;
                 failScale0AuthoritativeLoad({
                     scenarioId: scenario.id,
                     loadGeneration: loadGen,
@@ -814,7 +856,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
             // before post-setup loader commands have crossed the worker FIFO.
             // It must never qualify the scenario.
             onEngineToggles: () => {
-                if (ctx._loadGeneration !== loadGen) return;
+                if (!callbackIsCurrent()) return;
                 const activeId = getScale0State().currentScenarioId;
                 if (!activeId || activeId !== scenario.id) return;
                 syncScale0ToggleUiFromEngine(ctx, viewportAdapter, activeId);
@@ -822,7 +864,8 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
             // This acknowledgement is emitted only after the worker applies
             // the complete queued post-setup batch and publishes final truth.
             onConfigurationApplied: (acknowledgement) => {
-                if (ctx._loadGeneration !== loadGen) return;
+                if (!callbackIsCurrent()
+                    || Number(acknowledgement?.configurationToken) !== workerConfigurationToken) return;
                 const activeId = getScale0State().currentScenarioId;
                 if (!activeId || activeId !== scenario.id) return;
                 if (!acknowledgement?.ok) {
@@ -846,8 +889,22 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
                     });
                 }
             },
+        };
+        const stageWorkerConfiguration = () => wasmWorker.beginConfiguration({
+            latticeSize,
+            scenarioId: scenario.id,
+            ...workerCallbacks,
         });
-        useWasmWorker = true;
+        workerConfigurationToken = stageWorkerConfiguration();
+        if (workerConfigurationToken <= 0) {
+            // A proxy that lost health between eligibility and transaction
+            // staging cannot safely host this load. Replace it once; if even a
+            // fresh worker cannot stage, the normal failure callback/fallback
+            // path will take over.
+            wasmWorker = new WasmBridgeProxy(latticeSize);
+            workerConfigurationToken = stageWorkerConfiguration();
+        }
+        useWasmWorker = workerConfigurationToken > 0;
     }
 
     // Native setup is an atomic profile transaction. Every setToggle and
@@ -918,8 +975,8 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     //     (render_bridge.cpp Rule 5b). It is not a derived radiation condition.
     //     Scoped here so other scenarios keep
     //     their full flux volume (enabling it broadly collapsed volumes to slabs).
-    //   • latency_field — run the REAL latency Poisson so the gravity panel shows
-    //     the genuine C++ potential, not only the |J|² proxy. Source is the
+    //   • latency_field — run the engine Poisson-latency mapping so the gravity
+    //     panel can distinguish it from the |J|² web proxy. Source is the
     //     [IMPOSED] field-energy density (field_energy_gravity) for the FLUX
     //     scenarios, OR imposed manifested gravity charge M_GRAVITATIONAL·|state| for the
     //     MASS-gravity scenarios (SCALE0_MASS_GRAVITY_SCENARIOS, e.g. massive-body).
@@ -1060,14 +1117,21 @@ async function performScale0LatticeResize(
     // build or 2 GB on the wasm32 fallback. Native CUDA uses the server's live
     // RAM/VRAM preflight instead of this WASM-only estimate.
     const useWasmWorker = wasmWorkerEligible(scenarioId, bridge) && !ctx._wasmWorkerDisabled;
+    const wasmInteractiveLimit = useWasmWorker
+        ? MAX_WASM_INTERACTIVE_LATTICE
+        : MAX_DIRECT_WASM_INTERACTIVE_LATTICE;
     const bytesPerVoxel = 1300;
     const capGB = bridge?.isWasm64 ? 8 : 2;
     const projectedBytes = Math.ceil(newSize ** 3 * bytesPerVoxel);
     const maxBytes = capGB * 1024 * 1024 * 1024;
 
-    if (!nativeCombinedResize && newSize > MAX_WASM_INTERACTIVE_LATTICE) {
-        const msg = `L=${newSize} requires the native GPU backend. Browser WASM is limited to `
-            + `L=${MAX_WASM_INTERACTIVE_LATTICE} to preserve the 60 FPS UI budget.`;
+    if (!nativeCombinedResize && newSize > wasmInteractiveLimit) {
+        const backend = useWasmWorker ? 'Browser WASM worker' : 'Direct main-thread WASM fallback';
+        const requirement = newSize > MAX_WASM_INTERACTIVE_LATTICE
+            ? 'the native GPU backend'
+            : 'the WASM worker or native GPU backend';
+        const msg = `L=${newSize} requires ${requirement}. ${backend} is limited to `
+            + `L=${wasmInteractiveLimit} to preserve the 60 FPS UI budget.`;
         if (typeof window.showToast === 'function') window.showToast(msg, 'error');
         else console.warn('[Scale0] ' + msg);
         setInputValue('lattice-size', previousSize);

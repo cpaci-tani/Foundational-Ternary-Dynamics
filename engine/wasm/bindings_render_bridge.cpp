@@ -188,8 +188,9 @@ static val capture_dynamical_state_digest(ftd::RenderBridge& rb) {
     return result;
 }
 
-// ── Gravity panel (Phase 2): REAL C++ latency field ──────────────────
-// Distinct from the |J|² web proxy: voxel.latency from the Poisson solver.
+// ── Gravity panel (Phase 2): engine Poisson-latency mapping ───────────
+// [IMPOSED] voxel.latency record, distinct from the |J|² web proxy; this
+// binding does not identify it as a recovered physical metric or clock field.
 static val get_gravity_metric_agg(ftd::RenderBridge& rb) {
     const ftd::GravityMetricAgg a = rb.gravity_metric_agg();
     val r = val::object();
@@ -199,6 +200,7 @@ static val get_gravity_metric_agg(ftd::RenderBridge& rb) {
     r.set("gammaMax",       a.gamma_max);
     r.set("dilationMaxPct", a.dilation_max_pct);
     r.set("voxelCount",     a.voxel_count);
+    r.set("requested",      a.requested);
     r.set("active",         a.active);
     return r;
 }

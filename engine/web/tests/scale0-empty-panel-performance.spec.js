@@ -16,6 +16,10 @@ import {
     selectScale0Scenario,
 } from './_helpers.js';
 
+// The campaign measures compositor cadence. Playwright trace screencasts add
+// their own WebGL readback and would make the result a measurement of tracing.
+test.use({ trace: 'off' });
+
 const EMPTY = 'empty';
 const LATTICE_SIZE = 97;
 const PANELS = Object.freeze([
@@ -50,9 +54,9 @@ const CAMPAIGN_PANELS = REQUESTED_PANELS.length ? REQUESTED_PANELS : PANELS;
 const GATES = Object.freeze({
     visibleFrames: 240,
     collapsedFrames: 180,
-    minFps: 59,
+    minFps: 59.5,
     p95Ms: 16.9,
-    p99Ms: 25,
+    p99Ms: 20,
     maxRootDomNodes: 2_500,
     maxRootCanvases: 12,
     maxCoordinatorSubscribers: 32,
@@ -799,29 +803,148 @@ test('Spectrum restores live nonempty analysis and rejects rapid stale-generatio
 
 test('Gravity restores nonempty analysis and rejects rapid stale-generation reactivation', async ({ page }) => {
     test.skip(!CAMPAIGN_PANELS.includes('gravity'), 'Gravity is outside this focused run');
-    test.setTimeout(120_000);
+    test.setTimeout(300_000);
     const consoleErrors = attachConsoleWatcher(page);
     await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
 
-    const readPanel = () => page.evaluate(() => {
+    const readPanel = () => page.evaluate(async () => {
+        const [{ getScale0QualificationState, getScale0State }, { getScale0TelemetryDemand }] = await Promise.all([
+            import('/js/scales/scale0/state/store.js'),
+            import('/js/telemetry/demand.js'),
+        ]);
         const root = document.getElementById('gravity-panel');
         const api = window.__ftdGravityPanel;
+        const state = getScale0State();
+        const qualification = getScale0QualificationState();
+        const demand = getScale0TelemetryDemand(window.__ftdCtx, state);
         return {
             status: root?.dataset.applicability ?? null,
             messageVisible: !!root?.querySelector('.gravity-inapplicable:not([hidden])'),
+            pendingVisible: !!root?.querySelector('.gravity-pending:not([hidden])'),
             contentHidden: !!root?.querySelector('.gravity-applicable-content')?.hidden,
             controlsDisabled: [...(root?.querySelectorAll('.grav-qbtn') || [])]
                 .every((control) => control.disabled),
             coordinatorActive: api?.coordinatorActive ?? null,
+            armCoordinatorActive: api?.armCoordinatorActive ?? null,
+            liveCoordinatorActive: api?.liveCoordinatorActive ?? null,
             samplerWantsActive: api?.samplerWantsActive ?? null,
+            wantGravity: demand.wantGravity,
             hasMetrics: !!api?.lastMetrics,
             historyLength: api?.historyLength ?? null,
+            authoritativeGenerationReady: api?.authoritativeGenerationReady ?? null,
+            qualifiedLoadGeneration: api?.qualifiedLoadGeneration ?? null,
+            qualificationStatus: qualification.status,
+            loadStatus: qualification.authoritativeLoad?.status ?? null,
+            loadGeneration: qualification.authoritativeLoad?.loadGeneration ?? null,
+            anchorGeneration: qualification.anchor?.loadGeneration ?? null,
+            currentGeneration: Number(window.__ftdCtx?._loadGeneration ?? -1),
         };
     });
 
-    expect(await readPanel()).toMatchObject({
+    await expect.poll(readPanel, { timeout: 90_000 }).toMatchObject({
         status: 'applicable', messageVisible: false, contentHidden: false,
-        coordinatorActive: true,
+        coordinatorActive: true, armCoordinatorActive: true,
+        liveCoordinatorActive: false, samplerWantsActive: false,
+        wantGravity: false, authoritativeGenerationReady: true,
+    });
+
+    await page.evaluate(() => window.__ftdCtx?.appShell?.panelDock?.activate('gravity'));
+    await expect.poll(readPanel).toMatchObject({
+        status: 'applicable', coordinatorActive: true,
+        armCoordinatorActive: false, liveCoordinatorActive: true,
+        samplerWantsActive: true, wantGravity: true,
+    });
+
+    const hideGravity = (action) => page.evaluate(async (requestedAction) => {
+        const [{ getScale0State }, { getScale0TelemetryDemand }] = await Promise.all([
+            import('/js/scales/scale0/state/store.js'),
+            import('/js/telemetry/demand.js'),
+        ]);
+        const dock = window.__ftdCtx?.appShell?.panelDock;
+        const api = window.__ftdGravityPanel;
+        if (!dock || !api) throw new Error('Gravity visibility boundary unavailable');
+        if (requestedAction === 'collapse') dock.setCollapsed(true);
+        else if (requestedAction === 'tab') dock.activate('controls');
+        else throw new Error(`Unknown Gravity hide action: ${requestedAction}`);
+        return {
+            armCoordinatorActive: api.armCoordinatorActive,
+            liveCoordinatorActive: api.liveCoordinatorActive,
+            samplerWantsActive: api.samplerWantsActive,
+            wantGravity: getScale0TelemetryDemand(window.__ftdCtx, getScale0State()).wantGravity,
+        };
+    }, action);
+
+    expect(await hideGravity('collapse')).toEqual({
+        armCoordinatorActive: true,
+        liveCoordinatorActive: false,
+        samplerWantsActive: false,
+        wantGravity: false,
+    });
+    await page.evaluate(() => window.__ftdCtx?.appShell?.panelDock?.setCollapsed(false));
+    await expect.poll(readPanel).toMatchObject({
+        armCoordinatorActive: false, liveCoordinatorActive: true,
+        samplerWantsActive: true, wantGravity: true,
+    });
+
+    expect(await hideGravity('tab')).toEqual({
+        armCoordinatorActive: true,
+        liveCoordinatorActive: false,
+        samplerWantsActive: false,
+        wantGravity: false,
+    });
+    await page.evaluate(() => window.__ftdCtx?.appShell?.panelDock?.activate('gravity'));
+    await expect.poll(readPanel).toMatchObject({
+        armCoordinatorActive: false, liveCoordinatorActive: true,
+        samplerWantsActive: true, wantGravity: true,
+    });
+
+    await page.evaluate(() => {
+        const dock = window.__ftdCtx?.appShell?.panelDock;
+        const floating = dock?.floatPanel('gravity', 420, 120);
+        if (!floating) throw new Error('Gravity floating window unavailable');
+    });
+    await expect.poll(readPanel).toMatchObject({
+        armCoordinatorActive: false, liveCoordinatorActive: true,
+        samplerWantsActive: true, wantGravity: true,
+    });
+    expect(await page.evaluate(async () => {
+        const [{ getScale0State }, { getScale0TelemetryDemand }] = await Promise.all([
+            import('/js/scales/scale0/state/store.js'),
+            import('/js/telemetry/demand.js'),
+        ]);
+        const floating = window.__ftdCtx?.appShell?.panelDock
+            ? (await import('/js/ui/components/floating-window/component.js')).floatingWindowManager
+                .getWindow('gravity')
+            : null;
+        floating?.toggleCollapse();
+        const api = window.__ftdGravityPanel;
+        return {
+            armCoordinatorActive: api?.armCoordinatorActive ?? null,
+            liveCoordinatorActive: api?.liveCoordinatorActive ?? null,
+            samplerWantsActive: api?.samplerWantsActive ?? null,
+            wantGravity: getScale0TelemetryDemand(window.__ftdCtx, getScale0State()).wantGravity,
+        };
+    })).toEqual({
+        armCoordinatorActive: true,
+        liveCoordinatorActive: false,
+        samplerWantsActive: false,
+        wantGravity: false,
+    });
+    await page.evaluate(async () => {
+        const { floatingWindowManager } = await import('/js/ui/components/floating-window/component.js');
+        floatingWindowManager.getWindow('gravity')?.toggleCollapse();
+    });
+    await expect.poll(readPanel).toMatchObject({
+        armCoordinatorActive: false, liveCoordinatorActive: true,
+        samplerWantsActive: true, wantGravity: true,
+    });
+    await page.evaluate(async () => {
+        const { floatingWindowManager } = await import('/js/ui/components/floating-window/component.js');
+        floatingWindowManager.getWindow('gravity')?.dock();
+    });
+    await expect.poll(readPanel).toMatchObject({
+        armCoordinatorActive: false, liveCoordinatorActive: true,
+        samplerWantsActive: true, wantGravity: true,
     });
 
     await selectScale0Scenario(page, EMPTY, { settleMs: 0 });
@@ -834,8 +957,14 @@ test('Gravity restores nonempty analysis and rejects rapid stale-generation reac
     await expect.poll(readPanel).toMatchObject({
         status: 'inapplicable-empty', messageVisible: true, contentHidden: true,
         controlsDisabled: true, coordinatorActive: false,
-        samplerWantsActive: false, hasMetrics: false, historyLength: 0,
+        armCoordinatorActive: false, liveCoordinatorActive: false,
+        samplerWantsActive: false, wantGravity: false,
+        hasMetrics: false, historyLength: 0,
     });
+
+    await page.evaluate(() => window.__ftdCtx?.appShell?.panelDock?.activate('time'));
+    expect((await readPanel()).wantGravity,
+        'visible Time must not request an undefined gravity aggregate on Empty').toBe(false);
 
     await selectScale0Scenario(page, 's0-seed-gravitational-wave', { settleMs: 0 });
     await page.evaluate(() => {
@@ -851,6 +980,112 @@ test('Gravity restores nonempty analysis and rejects rapid stale-generation reac
         (window.__ftdGravityPanel?.lastMetrics?.L?.max || 0) > 0
     )), { timeout: 15_000, message: 'restored gravity proxy did not repopulate' }).toBe(true);
 
+    const readImmediateLoadBoundary = (action) => page.evaluate(async (requestedAction) => {
+        const [{ getScale0QualificationState, getScale0State }, { getScale0TelemetryDemand }] = await Promise.all([
+            import('/js/scales/scale0/state/store.js'),
+            import('/js/telemetry/demand.js'),
+        ]);
+        if (requestedAction === 'reset') {
+            document.getElementById('btn-reset')?.click();
+        } else if (requestedAction === 'resize') {
+            const select = document.getElementById('lattice-size');
+            const target = [...select.options]
+                .map((option) => ({ value: option.value, size: Number(option.value), disabled: option.disabled }))
+                .find((option) => !option.disabled && option.size !== Number(select.value));
+            if (!target) throw new Error('No alternate supported lattice size');
+            select.value = target.value;
+            select.dispatchEvent(new Event('change', { bubbles: true }));
+        } else {
+            throw new Error(`Unknown authoritative boundary action: ${requestedAction}`);
+        }
+        const state = getScale0State();
+        const qualification = getScale0QualificationState();
+        const api = window.__ftdGravityPanel;
+        return {
+            requestedAction,
+            latticeSize: Number(document.getElementById('lattice-size')?.value),
+            status: api?.applicability ?? null,
+            pendingVisible: !!api?.element?.querySelector('.gravity-pending:not([hidden])'),
+            coordinatorActive: api?.coordinatorActive ?? null,
+            samplerWantsActive: api?.samplerWantsActive ?? null,
+            wantGravity: getScale0TelemetryDemand(window.__ftdCtx, state).wantGravity,
+            hasMetrics: !!api?.lastMetrics,
+            historyLength: api?.historyLength ?? null,
+            qualificationStatus: qualification.status,
+            loadStatus: qualification.authoritativeLoad?.status ?? null,
+            loadGeneration: qualification.authoritativeLoad?.loadGeneration ?? null,
+        };
+    }, action);
+
+    const resetBoundary = await readImmediateLoadBoundary('reset');
+    expect(resetBoundary).toMatchObject({
+        status: 'pending-load', pendingVisible: true,
+        coordinatorActive: false, samplerWantsActive: false, wantGravity: false,
+        hasMetrics: false, historyLength: 0,
+        qualificationStatus: 'pending', loadStatus: 'pending',
+    });
+    expect(resetBoundary.loadGeneration).toBeGreaterThan(0);
+    await expect.poll(readPanel, { timeout: 90_000 }).toMatchObject({
+        status: 'applicable', pendingVisible: false,
+        liveCoordinatorActive: true, samplerWantsActive: true, wantGravity: true,
+        authoritativeGenerationReady: true,
+        qualificationStatus: 'within-contract', loadStatus: null,
+    });
+    expect((await readPanel()).qualifiedLoadGeneration).toBe((await readPanel()).anchorGeneration);
+
+    const resizeBoundary = await readImmediateLoadBoundary('resize');
+    expect(resizeBoundary).toMatchObject({
+        status: 'pending-load', pendingVisible: true,
+        coordinatorActive: false, samplerWantsActive: false, wantGravity: false,
+        hasMetrics: false, historyLength: 0,
+        qualificationStatus: 'pending', loadStatus: 'pending',
+    });
+    await expect.poll(readPanel, { timeout: 90_000 }).toMatchObject({
+        status: 'applicable', pendingVisible: false,
+        liveCoordinatorActive: true, samplerWantsActive: true, wantGravity: true,
+        authoritativeGenerationReady: true,
+        qualificationStatus: 'within-contract', loadStatus: null,
+        qualifiedLoadGeneration: resizeBoundary.loadGeneration,
+        anchorGeneration: resizeBoundary.loadGeneration,
+    });
+
+    for (let cycle = 0; cycle < 2; cycle += 1) {
+        const before = await page.evaluate(() => {
+            window.__gravityPanelBeforeScaleSwitch = window.__ftdGravityPanel;
+            return {
+                connected: !!window.__ftdGravityPanel?.element?.isConnected,
+                registryCurrent: window.__FTD_DEV__?.panels?.gravity === window.__ftdGravityPanel,
+            };
+        });
+        expect(before).toEqual({ connected: true, registryCurrent: true });
+
+        await page.selectOption('#engine-mode', 'particles');
+        await expect.poll(() => page.evaluate(() => document.getElementById('app')?.classList.contains('mode-particles')))
+            .toBe(true);
+        expect(await page.evaluate(() => ({
+            oldConnected: !!window.__gravityPanelBeforeScaleSwitch?.element?.isConnected,
+            oldCoordinatorActive: window.__gravityPanelBeforeScaleSwitch?.coordinatorActive ?? null,
+            oldSamplerWantsActive: window.__gravityPanelBeforeScaleSwitch?.samplerWantsActive ?? null,
+            globalCleared: window.__ftdGravityPanel == null,
+            registryCleared: window.__FTD_DEV__?.panels?.gravity == null,
+        }))).toEqual({
+            oldConnected: false, oldCoordinatorActive: false,
+            oldSamplerWantsActive: false, globalCleared: true, registryCleared: true,
+        });
+
+        await page.selectOption('#engine-mode', 'lattice');
+        await expect.poll(readPanel, { timeout: 90_000 }).toMatchObject({
+            status: 'applicable', authoritativeGenerationReady: true,
+            qualificationStatus: 'within-contract', loadStatus: null,
+        });
+        expect(await page.evaluate(() => ({
+            newInstance: window.__ftdGravityPanel !== window.__gravityPanelBeforeScaleSwitch,
+            connected: !!window.__ftdGravityPanel?.element?.isConnected,
+            registryCurrent: window.__FTD_DEV__?.panels?.gravity === window.__ftdGravityPanel,
+        }))).toEqual({ newInstance: true, connected: true, registryCurrent: true });
+    }
+    await page.evaluate(() => { delete window.__gravityPanelBeforeScaleSwitch; });
+
     await page.evaluate(() => {
         const select = document.getElementById('scenario-select');
         for (const scenarioId of ['empty', 's0-seed-gravitational-wave', 'empty']) {
@@ -863,6 +1098,415 @@ test('Gravity restores nonempty analysis and rejects rapid stale-generation reac
         controlsDisabled: true, coordinatorActive: false,
         samplerWantsActive: false, hasMetrics: false, historyLength: 0,
     });
+    expect(realErrors(consoleErrors)).toEqual([]);
+});
+
+test('Gravity waits for paused lazy samplers without fabricating zero telemetry', async ({ page }) => {
+    test.skip(!CAMPAIGN_PANELS.includes('gravity'), 'Gravity is outside this focused run');
+    test.setTimeout(180_000);
+    const consoleErrors = attachConsoleWatcher(page);
+    await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
+    await page.evaluate(() => {
+        const dock = window.__ftdCtx?.appShell?.panelDock;
+        dock?.setCollapsed(false);
+        dock?.activate('controls');
+    });
+    await selectScale0Scenario(page, 's0-seed-gravitational-wave', { settleMs: 0 });
+
+    await expect.poll(async () => page.evaluate(async () => {
+        const store = await import('/js/scales/scale0/state/store.js');
+        const state = store.getScale0State();
+        const owner = store.getActiveScale0Bridge(window.__ftdCtx, state);
+        return state.useFluxMock === true
+            && owner?.isWorker === true
+            && owner.ready === true
+            && store.isScale0AuthoritativeGenerationReady(state);
+    }), { timeout: 90_000, message: 'qualified worker-backed source scenario did not load' }).toBe(true);
+    await page.evaluate(() => window.__ftdCtx.appShell.panelDock.activate('gravity'));
+    await expect.poll(() => page.evaluate(() => ({
+        ready: window.__ftdGravityPanel?.telemetryState === 'ready',
+        populated: (window.__ftdGravityPanel?.lastMetrics?.L?.max || 0) > 0,
+    })), { timeout: 15_000, message: 'source scenario did not populate Gravity telemetry' })
+        .toEqual({ ready: true, populated: true });
+    const previousTelemetry = await page.evaluate(() => (
+        document.querySelector('#gravity-panel-telemetry')?.textContent || ''
+    ));
+    expect(previousTelemetry).not.toContain('Waiting for current-generation gravity samplers');
+    expect(previousTelemetry).toContain('sampled mean / max; h=2');
+    expect(previousTelemetry).toContain('Engine force');
+    expect(previousTelemetry).not.toContain('gravity PE');
+
+    await page.evaluate(() => window.__ftdCtx.appShell.panelDock.activate('controls'));
+    await selectScale0Scenario(page, 'flux-pulse', { settleMs: 0 });
+    await expect.poll(async () => page.evaluate(async () => {
+        const store = await import('/js/scales/scale0/state/store.js');
+        const state = store.getScale0State();
+        const owner = store.getActiveScale0Bridge(window.__ftdCtx, state);
+        return state.useFluxMock === true
+            && owner?.isWorker === true
+            && owner.ready === true
+            && state.currentScenarioId === 'flux-pulse'
+            && store.isScale0AuthoritativeGenerationReady(state);
+    }), { timeout: 90_000, message: 'qualified worker-backed target scenario did not load' }).toBe(true);
+
+    await page.evaluate(async () => {
+        const store = await import('/js/scales/scale0/state/store.js');
+        const state = store.getScale0State();
+        window.__ftdCtx.running = false;
+        store.setScale0PlaybackRunning(window.__ftdCtx, false, state);
+    });
+    await expect.poll(async () => page.evaluate(async () => {
+        const store = await import('/js/scales/scale0/state/store.js');
+        const state = store.getScale0State();
+        const owner = store.getActiveScale0Bridge(window.__ftdCtx, state);
+        return window.__ftdCtx.running === false && owner?.runningStateSettled === true;
+    }), { timeout: 15_000, message: 'worker did not settle into the paused state' }).toBe(true);
+
+    const held = await page.evaluate(async () => {
+        const store = await import('/js/scales/scale0/state/store.js');
+        const state = store.getScale0State();
+        const owner = store.getActiveScale0Bridge(window.__ftdCtx, state);
+        const api = window.__ftdGravityPanel;
+        const stride = api.telemetryStride;
+        const targetKeys = [
+            `latency@${stride}`,
+            `kretschmann@${stride}`,
+            `gravity@${stride}`,
+            'gravityMetricAgg@0',
+        ];
+        for (const key of targetKeys) delete owner._samplerCache[key];
+
+        const worker = owner._worker;
+        const originalPostMessage = worker.postMessage;
+        const blocked = [];
+        worker.postMessage = function holdGravitySamplerWants(message, transfer) {
+            const targetChanges = message?.type === 'replaceSamplerWants'
+                ? (message.changes || []).filter((change) => (
+                    change.op === 'want' && targetKeys.includes(`${change.kind}@${change.stride}`)
+                ))
+                : [];
+            if (targetChanges.length) {
+                blocked.push({
+                    type: message.type,
+                    changes: message.changes.map((change) => ({ ...change })),
+                });
+                return;
+            }
+            return transfer === undefined
+                ? originalPostMessage.call(worker, message)
+                : originalPostMessage.call(worker, message, transfer);
+        };
+        window.__gravitySamplerBarrier = {
+            owner, worker, originalPostMessage, blocked, targetKeys,
+            tick: owner.currentTick(),
+            dataVersion: owner.dataVersion,
+            frameCounter: owner.frameCounter,
+            fieldDataVersion: state.fieldDataVersion,
+        };
+
+        window.__ftdCtx.appShell.panelDock.activate('gravity');
+        api.update();
+        return {
+            blocked: blocked.flatMap((message) => message.changes)
+                .filter((change) => change.op === 'want')
+                .map((change) => `${change.kind}@${change.stride}`).sort(),
+            blockedMessages: blocked.length,
+            lastMetrics: api.lastMetrics,
+            historyLength: api.historyLength,
+            wants: api.samplerWantsActive,
+            telemetryState: api.telemetryState,
+            telemetryText: document.querySelector('#gravity-panel-telemetry')?.textContent || '',
+            tileReadouts: [...document.querySelectorAll('.grav-tile-readout')]
+                .map((node) => node.textContent),
+            tick: owner.currentTick(),
+            dataVersion: owner.dataVersion,
+            frameCounter: owner.frameCounter,
+            fieldDataVersion: state.fieldDataVersion,
+        };
+    });
+
+    try {
+        expect(held).toMatchObject({
+            blocked: [
+                'gravity@2',
+                'gravityMetricAgg@0',
+                'kretschmann@2',
+                'latency@2',
+            ],
+            blockedMessages: 1,
+            lastMetrics: null,
+            historyLength: 0,
+            wants: true,
+            telemetryState: 'waiting-samplers',
+            telemetryText: 'Waiting for current-generation gravity samplers…',
+            tick: held.tick,
+            dataVersion: held.dataVersion,
+            frameCounter: held.frameCounter,
+            fieldDataVersion: held.fieldDataVersion,
+        });
+        expect(held.tileReadouts.filter((value) => value !== '—').length,
+            'only the current target volume may repaint one rotating plane while samplers are held')
+            .toBeLessThanOrEqual(1);
+
+        await page.evaluate(() => {
+            const barrier = window.__gravitySamplerBarrier;
+            barrier.worker.postMessage = barrier.originalPostMessage;
+            for (const message of barrier.blocked) {
+                barrier.originalPostMessage.call(barrier.worker, message);
+            }
+        });
+        await expect.poll(() => page.evaluate(() => {
+            const barrier = window.__gravitySamplerBarrier;
+            return barrier.targetKeys.every((key) => {
+                const at = key.lastIndexOf('@');
+                return barrier.owner.hasSamplerSnapshot(
+                    key.slice(0, at),
+                    Number(key.slice(at + 1)),
+                );
+            });
+        }), { timeout: 15_000, message: 'paused worker did not publish requested gravity samplers' }).toBe(true);
+
+        const populated = await expect.poll(() => page.evaluate(async () => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            const barrier = window.__gravitySamplerBarrier;
+            const api = window.__ftdGravityPanel;
+            return {
+                hasMetrics: !!api.lastMetrics,
+                telemetryState: api.telemetryState,
+                historyLength: api.historyLength,
+                latencyMax: api.lastMetrics?.L?.max || 0,
+                kretschmannMax: api.lastMetrics?.K?.max || 0,
+                tick: barrier.owner.currentTick(),
+                dataVersion: barrier.owner.dataVersion,
+                frameCounter: barrier.owner.frameCounter,
+                fieldDataVersion: getScale0State().fieldDataVersion,
+            };
+        }), { timeout: 15_000, message: 'Gravity did not consume sampler-only paused readback' }).toMatchObject({
+            hasMetrics: true,
+            telemetryState: 'ready',
+            historyLength: 1,
+            tick: held.tick,
+            dataVersion: held.dataVersion,
+            frameCounter: held.frameCounter + 1,
+            fieldDataVersion: held.fieldDataVersion,
+        });
+        void populated;
+        const scientificValues = await page.evaluate(() => ({
+            latencyMax: window.__ftdGravityPanel.lastMetrics.L.max,
+            kretschmannMax: window.__ftdGravityPanel.lastMetrics.K.max,
+        }));
+        expect(scientificValues.latencyMax).toBeGreaterThan(0);
+        expect(scientificValues.kretschmannMax).toBeGreaterThan(0);
+
+        const collapsed = await page.evaluate(async () => {
+            const [{ getScale0State }, { getScale0TelemetryDemand }] = await Promise.all([
+                import('/js/scales/scale0/state/store.js'),
+                import('/js/telemetry/demand.js'),
+            ]);
+            window.__ftdCtx.appShell.panelDock.setCollapsed(true);
+            return {
+                live: window.__ftdGravityPanel.liveCoordinatorActive,
+                wants: window.__ftdGravityPanel.samplerWantsActive,
+                wantGravity: getScale0TelemetryDemand(window.__ftdCtx, getScale0State()).wantGravity,
+                historyLength: window.__ftdGravityPanel.historyLength,
+            };
+        });
+        expect(collapsed).toEqual({ live: false, wants: false, wantGravity: false, historyLength: 1 });
+    } finally {
+        await page.evaluate(() => {
+            const barrier = window.__gravitySamplerBarrier;
+            if (barrier?.worker && barrier?.originalPostMessage) {
+                barrier.worker.postMessage = barrier.originalPostMessage;
+            }
+            delete window.__gravitySamplerBarrier;
+        });
+    }
+    expect(realErrors(consoleErrors)).toEqual([]);
+});
+
+test('Gravity live sidepanel sustains 60 Hz at the qualified backend limit and releases collapsed work', async ({ page }, testInfo) => {
+    test.skip(!CAMPAIGN_PANELS.includes('gravity'), 'Gravity is outside this focused run');
+    test.setTimeout(300_000);
+    const consoleErrors = attachConsoleWatcher(page);
+    const directWasm = process.env.FTD_GRAVITY_PANEL_BACKEND === 'direct-wasm';
+    const gravityLatticeSize = Number(
+        process.env.FTD_GRAVITY_PANEL_SIZE || (directWasm ? 33 : LATTICE_SIZE),
+    );
+    if (directWasm) {
+        await page.addInitScript(() => { window.__ftdWasmWorker = false; });
+    }
+    await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
+
+    if (directWasm) {
+        const directLimits = await page.evaluate(() => Object.fromEntries(
+            [33, 49, 65, 97].map((size) => {
+                const option = [...document.querySelectorAll('#lattice-size option')]
+                    .find((candidate) => Number(candidate.value) === size);
+                return [size, { disabled: option?.disabled ?? null, label: option?.textContent ?? '' }];
+            }),
+        ));
+        expect(directLimits[33].disabled).toBe(false);
+        for (const size of [49, 65, 97]) {
+            expect(directLimits[size].disabled).toBe(true);
+            expect(directLimits[size].label).toContain('WASM worker / Native GPU');
+        }
+    }
+
+    const workerSupported = await page.evaluate(() => globalThis.crossOriginIsolated === true
+        && typeof SharedArrayBuffer !== 'undefined');
+    if (!directWasm && !workerSupported) {
+        testInfo.annotations.push({
+            type: 'unsupported-path',
+            description: 'Live L=97 Gravity performance requires the COOP/COEP WasmBridgeProxy path',
+        });
+        test.skip(true, 'WasmBridgeProxy is unavailable on this server/browser');
+    }
+
+    const sizeEnabled = await page.evaluate((size) => {
+        const option = [...document.querySelectorAll('#lattice-size option')]
+            .find((candidate) => Number(candidate.value) === size);
+        return !!option && !option.disabled;
+    }, gravityLatticeSize);
+    if (!sizeEnabled) {
+        testInfo.annotations.push({
+            type: 'unsupported-path',
+            description: `L=${gravityLatticeSize} is not enabled for the active browser backend`,
+        });
+        test.skip(true, `L=${gravityLatticeSize} is unavailable`);
+    }
+
+    await selectScale0Scenario(page, 's0-seed-gravitational-wave', { settleMs: 0 });
+    await page.selectOption('#lattice-size', String(gravityLatticeSize));
+    await expect.poll(() => page.evaluate(async ({ scenarioId, latticeSize, directWasm }) => {
+        const { getScale0QualificationState, getScale0State,
+            getActiveScale0Bridge, isScale0AuthoritativeGenerationReady } =
+            await import('/js/scales/scale0/state/store.js');
+        const state = getScale0State();
+        const owner = getActiveScale0Bridge(window.__ftdCtx, state);
+        const ownerReady = directWasm
+            ? state.useFluxMock === false
+                && owner?.isWasm === true
+                && owner?.isWorker !== true
+            : state.useFluxMock === true
+                && owner?.isWorker === true
+                && owner?.ready === true
+                && owner?._scenarioId === scenarioId;
+        return state.currentScenarioId === scenarioId
+            && ownerReady
+            && Number(owner.latticeSize) === latticeSize
+            && isScale0AuthoritativeGenerationReady(getScale0QualificationState());
+    }, { scenarioId: 's0-seed-gravitational-wave', latticeSize: gravityLatticeSize, directWasm }), {
+        timeout: 90_000,
+        message: `qualified gravitational-wave owner did not become ready at L=${gravityLatticeSize}`,
+    }).toBe(true);
+
+    await page.evaluate(() => {
+        const dock = window.__ftdCtx?.appShell?.panelDock;
+        if (!dock) throw new Error('Panel dock unavailable');
+        dock.setCollapsed(false);
+        dock.activate('gravity');
+        const play = document.getElementById('btn-play');
+        if (play?.getAttribute('data-paused') === 'true') play.click();
+    });
+    await expect.poll(() => page.evaluate(() => ({
+        status: window.__ftdGravityPanel?.applicability ?? null,
+        live: window.__ftdGravityPanel?.liveCoordinatorActive ?? null,
+        wants: window.__ftdGravityPanel?.samplerWantsActive ?? null,
+        hasMetrics: !!window.__ftdGravityPanel?.lastMetrics,
+    })), { timeout: 30_000 }).toMatchObject({
+        status: 'applicable', live: true, wants: true, hasMetrics: true,
+    });
+    await page.waitForTimeout(1_500);
+
+    const live = await page.evaluate(async ({ visibleFrames }) => {
+        const probe = await import('/tests/scale0-ui-audit-probe.js');
+        const waitFrames = async (count) => {
+            for (let i = 0; i < count; i += 1) {
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+            }
+        };
+        probe.startScale0UiAuditProbe({
+            rootSelector: '#panel-gravity',
+            subscriberPrefixes: ['gravity-panel'],
+        });
+        await waitFrames(visibleFrames + 2);
+        return probe.stopScale0UiAuditProbe();
+    }, { visibleFrames: Math.max(GATES.visibleFrames, 720) });
+
+    const collapsedBoundary = await page.evaluate(async () => {
+        const [{ getScale0State }, { getScale0TelemetryDemand }] = await Promise.all([
+            import('/js/scales/scale0/state/store.js'),
+            import('/js/telemetry/demand.js'),
+        ]);
+        window.__ftdCtx?.appShell?.panelDock?.setCollapsed(true);
+        const api = window.__ftdGravityPanel;
+        return {
+            arm: api?.armCoordinatorActive ?? null,
+            live: api?.liveCoordinatorActive ?? null,
+            wants: api?.samplerWantsActive ?? null,
+            wantGravity: getScale0TelemetryDemand(window.__ftdCtx, getScale0State()).wantGravity,
+        };
+    });
+    expect(collapsedBoundary).toEqual({ arm: true, live: false, wants: false, wantGravity: false });
+
+    const collapsed = await page.evaluate(async ({ collapsedFrames }) => {
+        const probe = await import('/tests/scale0-ui-audit-probe.js');
+        const waitFrames = async (count) => {
+            for (let i = 0; i < count; i += 1) {
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+            }
+        };
+        probe.startScale0UiAuditProbe({
+            rootSelector: '#panel-gravity',
+            subscriberPrefixes: ['gravity-panel'],
+        });
+        await waitFrames(collapsedFrames + 2);
+        return probe.stopScale0UiAuditProbe();
+    }, { collapsedFrames: GATES.collapsedFrames });
+
+    await testInfo.attach(`scale0-gravity-live-performance-L${gravityLatticeSize}.json`, {
+        body: JSON.stringify({
+            scenario: 's0-seed-gravitational-wave',
+            backend: directWasm ? 'direct-wasm' : 'wasm-worker',
+            latticeSize: gravityLatticeSize,
+            viewportFluxVolume: 'default visible presentation',
+            gates: GATES,
+            collapsedBoundary,
+            live,
+            collapsed,
+        }, null, 2),
+        contentType: 'application/json',
+    });
+
+    expect(live.frames.count).toBeGreaterThanOrEqual(GATES.visibleFrames);
+    expect(live.frames.effectiveFps, JSON.stringify({
+        liveFrames: live.frames,
+        liveCallbacks: live.callbacks,
+        liveDom: live.dom,
+        collapsedFrames: collapsed.frames,
+        collapsedCallbacks: collapsed.callbacks,
+    }, null, 2))
+        .toBeGreaterThanOrEqual(GATES.minFps);
+    expect(live.frames.p95Ms).toBeLessThanOrEqual(GATES.p95Ms);
+    expect(live.frames.p99Ms).toBeLessThanOrEqual(GATES.p99Ms);
+    expect(live.longTasks).toEqual([]);
+    expect(callbackWorst(live, 'p99Ms')).toBeLessThanOrEqual(GATES.maxCallbackP99Ms);
+    expect(live.dom.mutationRecords).toBeLessThanOrEqual(GATES.maxVisibleMutations);
+    expect(live.dom.canvasDraws).toBeLessThanOrEqual(GATES.maxVisibleCanvasDraws);
+    expect(live.errors).toEqual([]);
+    if (live.resourcesStart.heapBytes && live.resourcesEnd.heapBytes) {
+        expect(live.resourceDelta.heapBytes).toBeLessThanOrEqual(GATES.maxHeapGrowthBytes);
+    }
+
+    expect(collapsed.frames.count).toBeGreaterThanOrEqual(GATES.collapsedFrames);
+    expect(collapsed.frames.effectiveFps).toBeGreaterThanOrEqual(GATES.minFps);
+    expect(collapsed.frames.p95Ms).toBeLessThanOrEqual(GATES.p95Ms);
+    expect(collapsed.frames.p99Ms).toBeLessThanOrEqual(GATES.p99Ms);
+    expect(callbackWorst(collapsed, 'maxMs')).toBeLessThanOrEqual(GATES.maxCollapsedCallbackMs);
+    expect(collapsed.dom.mutationRecords).toBe(0);
+    expect(collapsed.dom.canvasDraws).toBe(0);
+    expect(collapsed.longTasks).toEqual([]);
+    expect(collapsed.errors).toEqual([]);
     expect(realErrors(consoleErrors)).toEqual([]);
 });
 
@@ -1174,6 +1818,10 @@ test('all 17 visible panels sustain 60 Hz at empty L=97 and stop panel work when
 
                 if (panelId === 'gravity') {
                     const api = window.__ftdGravityPanel;
+                    const [{ getScale0State }, { getScale0TelemetryDemand }] = await Promise.all([
+                        import('/js/scales/scale0/state/store.js'),
+                        import('/js/telemetry/demand.js'),
+                    ]);
                     // Empty must remain inert even through public/manual panel
                     // entry points, not only after coordinator removal.
                     api?.update();
@@ -1189,7 +1837,13 @@ test('all 17 visible panels sustain 60 Hz at empty L=97 and stop panel work when
                         controlsDisabled: controls.length > 0
                             && controls.every((control) => control.disabled),
                         coordinatorActive: api?.coordinatorActive ?? null,
+                        armCoordinatorActive: api?.armCoordinatorActive ?? null,
+                        liveCoordinatorActive: api?.liveCoordinatorActive ?? null,
                         samplerWantsActive: api?.samplerWantsActive ?? null,
+                        wantGravity: getScale0TelemetryDemand(
+                            window.__ftdCtx,
+                            getScale0State(),
+                        ).wantGravity,
                         hasMetrics: !!api?.lastMetrics,
                         hasCppAggregate: !!api?.lastAgg,
                         historyLength: api?.historyLength ?? null,
@@ -1402,9 +2056,15 @@ test('all 17 visible panels sustain 60 Hz at empty L=97 and stop panel work when
             expect.soft(audit.controlsDisabled, `${label}: gravity-domain controls are disabled`).toBe(true);
             expect.soft(audit.coordinatorActive, `${label}: gravity arm/live coordinators are stopped`)
                 .toBe(false);
+            expect.soft(audit.armCoordinatorActive, `${label}: gravity arm coordinator is stopped`)
+                .toBe(false);
+            expect.soft(audit.liveCoordinatorActive, `${label}: gravity live coordinator is stopped`)
+                .toBe(false);
             expect.soft(audit.subscriberPresent, `${label}: no gravity rAF subscription remains`)
                 .toBe(false);
             expect.soft(audit.samplerWantsActive, `${label}: gravity sampler demand is released`)
+                .toBe(false);
+            expect.soft(audit.wantGravity, `${label}: inapplicable Gravity requests no native reduction`)
                 .toBe(false);
             expect.soft(audit.hasMetrics, `${label}: no stale proxy metrics are presented`).toBe(false);
             expect.soft(audit.hasCppAggregate, `${label}: no stale C++ aggregate is presented`).toBe(false);

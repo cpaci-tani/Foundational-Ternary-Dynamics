@@ -33,7 +33,7 @@ import {
     refreshOverlayPanelShell,
     scheduleOverlayPanelShellRefresh,
 } from './overlays/panel-shell.js?v=6';
-import { syncScale0LatticeSizeAvailability } from './toolbar/limits.js';
+import { syncScale0LatticeSizeAvailability } from './toolbar/limits.js?v=2';
 import {
     setScale0StandardModelReferenceVisible,
 } from './overlays/standard-model.js?v=2';

@@ -19,6 +19,7 @@
 // worker's onerror, and not reliably in every browser.)
 const FTD_WASM_BASE_URL = new URL('../../wasm/', self.location.href).href;
 importScripts(new URL('./sampler-registry.classic.js', self.location.href).href);
+importScripts(new URL('./sampler-cadence.classic.js?v=2', self.location.href).href);
 // The threaded glue is intentionally NOT imported here. initModule() first
 // verifies the manifest, glue, and module bytes, then executes the verified
 // glue from a Blob URL and supplies the verified module through `wasmBinary`.
@@ -34,6 +35,10 @@ let mod = null, bridge = null;
 let artifactIdentity = null, verifiedGlueBlobUrl = null;
 let N = 33, scenarioId = 'flux-pulse', toggles = {}, toggleNames = [];
 let activeConfigurationToken = 0;
+const workerRuntimeId = self.crypto?.randomUUID?.()
+  || `wasm-worker-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+let moduleInitCount = 0;
+let renderBridgeGeneration = 0;
 let poolThreads = 8;       // MUST equal -sPTHREAD_POOL_SIZE in engine/wasm/CMakeLists.txt
                            // (pre-spawned pthread pool; proxy may clamp below this).
 let ctrlSab = null, ctrl = null;
@@ -84,6 +89,14 @@ const SAMPLER_METHODS = self.FTD_SAMPLER_METHODS || {};
 // Samplers currently wanted by the proxy, keyed by "kind@stride".
 // Persists across scenario changes (overlay visibility is UI state, not scenario state).
 const wantedSamplers = new Map();
+const {
+  GRAVITY_SAMPLER_INTERVAL_MS,
+  isBoundedInstrumentSamplerWant,
+  createBoundedSamplerCadence,
+  advanceDemandFrameCadence,
+  visitScheduledSamplers,
+} = self.FTD_SAMPLER_CADENCE;
+const gravitySamplerCadence = createBoundedSamplerCadence(GRAVITY_SAMPLER_INTERVAL_MS);
 
 // Knot telemetry/event payloads are WASM heap VIEWS (zero-copy). They are
 // invalidated by the next WASM call, so copy every typed array out before the
@@ -302,10 +315,16 @@ function initModule(cb) {
     });
   }).then((m) => {
     mod = m;
+    moduleInitCount++;
     // Must set the pool BEFORE the first parallel_for (first tick) constructs it.
     if (typeof mod.ftdSetPoolThreads === 'function') mod.ftdSetPoolThreads(poolThreads);
     cb();
-  }).catch((e) => self.postMessage({ type: 'error', where: 'init', msg: String(e && e.message || e) }));
+  }).catch((e) => self.postMessage({
+    type: 'error',
+    where: 'init',
+    msg: String(e && e.message || e),
+    configurationToken: Number(pendingCreate?.configurationToken) || 0,
+  }));
 }
 
 // After a C++ setupScenario, clamp any TermToggles `requires` dependent that is
@@ -337,12 +356,14 @@ function enforceToggleInvariants() {
 let engineToggles = {};
 let engineTogglesDirty = true;
 
-// Telemetry demand mask (see telemetry/demand.js). Default ON so an un-masked
-// proxy behaves exactly as before this gate existed. NOTE: wantAudit is
-// accepted and recorded but deliberately NOT used to skip getEnergyAudit --
-// see the comment in postFrame(). Only wantLag actually gates work today.
-let wantAudit = true;
+// Telemetry demand mask (see telemetry/demand.js). O(N^3) audit and Gravity
+// reductions default OFF because neither has an always-on consumer. The proxy
+// publishes visible-panel demand and hydrates immediately when one opens.
+// Lagrangian retains its compatibility default and existing gate behavior.
+let wantAudit = false;
 let wantLag = true;
+let wantGravity = false;
+let gravityMetricAggVersion = null;
 
 // Energy-audit cadence cache — see postFrame(). getEnergyAudit is a full O(N^3)
 // pass, so large lattices sample it less often. The cached audit is published
@@ -387,16 +408,25 @@ function readEngineToggles() {
 
 function buildBridge(n, scen, configurationToken = 0) {
   activeConfigurationToken = Number(configurationToken) || 0;
+  tickAcc = 0;
+  lastInspect = null;
+  lastForceAt = null;
+  gravitySamplerCadence.reset();
+  gravityMetricAggVersion = null;
   if (bridge) { try { bridge.delete(); } catch (e) { /* ignore */ } bridge = null; }
   N = n | 0;
   bridge = new mod.RenderBridge(N);
+  renderBridgeGeneration++;
   const toggleErrors = [];
   for (const k in toggles) {
     try { mod.setToggle(bridge, k, toggles[k]); }
     catch (e) { toggleErrors.push(k + ': ' + (e && e.message || e)); }
   }
   if (toggleErrors.length) {
-    self.postMessage({ type: 'error', where: 'setToggle', msg: toggleErrors.slice(0, 5).join('; ') });
+    self.postMessage({
+      type: 'error', where: 'setToggle', msg: toggleErrors.slice(0, 5).join('; '),
+      configurationToken: activeConfigurationToken,
+    });
   }
   let setupOk = true;
   let setupError = null;
@@ -412,7 +442,10 @@ function buildBridge(n, scen, configurationToken = 0) {
   } catch (e) {
     setupOk = false;
     setupError = String(e && e.message || e);
-    self.postMessage({ type: 'error', where: 'setupScenario', msg: setupError });
+    self.postMessage({
+      type: 'error', where: 'setupScenario', msg: setupError,
+      configurationToken: activeConfigurationToken,
+    });
   }
   enforceToggleInvariants();
   engineTogglesDirty = true;   // the C++ body just replaced the whole profile
@@ -438,12 +471,19 @@ function buildBridge(n, scen, configurationToken = 0) {
   self.postMessage({
     type: 'ready', N, ctrl: ctrlSab, heap: vol.buffer, fluxPtr: vol.byteOffset, fluxLen: vol.length,
     setupOk, setupError, artifactIdentity, configurationToken,
+    workerRuntimeId, moduleInitCount, renderBridgeGeneration,
     ...(doubled ? { fluxSab: fluxPubSab, doubleBuffered: true } : {}),
   });
-  postFrame(true);
+  // Standing wants belong to UI state and survive scenario replacement. Force
+  // one coherent current-generation population after the new bridge is ready.
+  postFrame(true, true);
 }
 
-function postFrame(fieldChanged = false) {
+function postFrame(
+  fieldChanged = false,
+  forceGravitySamplerBatch = false,
+  allowUndemandedBoundedInstrument = false,
+) {
   if (!bridge) return;
   const vol = mod.getFluxVolume(bridge);            // refresh the flux cache in the shared heap
   const doubled = publishFlux(vol);
@@ -472,14 +512,18 @@ function postFrame(fieldChanged = false) {
     });
   }
   // getEnergyAudit is a full O(N^3) pass and, alongside the tick itself, the
-  // dominant per-frame cost on large lattices. Run it at a reduced cadence for
-  // large N and publish the last successful observation unchanged between
-  // samples. A reused observation remains explicitly tied to its original
-  // sample tick/version; it is not copied into a newly-current diagnostics
-  // packet. Small N (<=48) remains every-frame.
+  // dominant per-frame cost on large lattices. With no audit consumer it must
+  // execute zero times. While demanded, run it at a reduced large-N cadence
+  // and publish the last successful observation unchanged between samples. A
+  // reused observation remains explicitly tied to its original sample
+  // tick/version; it is not copied into a newly-current diagnostics packet.
   const auditEvery = N > 96 ? 8 : (N > 48 ? 4 : 1);
   let auditSampledThisFrame = false;
-  if (auditFrameCounter <= 0 || !lastAudit) {
+  const auditGate = advanceDemandFrameCadence(
+    wantAudit, auditFrameCounter, !!lastAudit, auditEvery,
+  );
+  auditFrameCounter = auditGate.nextCounter;
+  if (auditGate.sample) {
     try {
       const a = mod.getEnergyAudit(bridge);
       if (a && Number.isFinite(a.dynamicEnergy)) {
@@ -508,10 +552,18 @@ function postFrame(fieldChanged = false) {
         stateVersion: ++auditStateVersion, tick, stale: true, status: 'error',
       });
     }
-    auditFrameCounter = auditEvery;
+  } else if (!wantAudit) {
+    // Inactive is a new fail-closed observation boundary, not a stale value
+    // relabelled with the current tick. Publish it once per source generation.
+    lastAudit = null;
+    if (!lastAuditMeta || lastAuditMeta.status !== 'inactive'
+        || lastAuditMeta.sourceEpoch !== activeConfigurationToken) {
+      lastAuditMeta = telemetryGroupMeta({
+        stateVersion: ++auditStateVersion, tick, stale: true, status: 'inactive',
+      });
+    }
   }
-  auditFrameCounter--;
-  audit = lastAudit;
+  audit = wantAudit ? lastAudit : null;
   // The Lagrangian genuinely has no consumer beyond its panels, so it IS gated.
   if (wantLag) {
     try {
@@ -576,30 +628,43 @@ function postFrame(fieldChanged = false) {
       knotEvents = copyKnotEvents(mod.getKnotEvents(bridge));
     }
   } catch (e) { /* tracking off or not built */ }
-  // Overlay samplers — compute only the kinds the proxy has registered.
+  // Overlay samplers — ordinary/direct/viewport owners follow publication
+  // cadence. Only Time/Gravity instrument-owned readbacks share the bounded
+  // 4 Hz decision; a realtime co-owner wins in sampler-want-set. The helper
+  // also injects gravityMetricAgg@0 when Time alone owns telemetry demand.
   const samplers = {};
-  if (wantedSamplers.size > 0) {
-    for (const [key, { kind, stride }] of wantedSamplers) {
+  let gravityMetricAggSampled = false;
+  if (wantedSamplers.size > 0 || wantGravity) {
+    visitScheduledSamplers(wantedSamplers, {
+      wantGravity,
+      cadence: gravitySamplerCadence,
+      nowMs: performance.now(),
+      forceGravityBatch: forceGravitySamplerBatch,
+      allowUndemandedBoundedInstrument,
+    }, (key, { kind, stride }) => {
       const spec = SAMPLER_METHODS[kind];
-      if (!spec) continue;
+      if (!spec) return;
       const [method, type] = spec;
-      if (typeof mod[method] !== 'function') continue;
+      if (typeof mod[method] !== 'function') return;
       try {
         if (type === 'obj') {
           const raw = mod[method](bridge);
-          if (raw) samplers[key] = raw;
+          if (raw) {
+            samplers[key] = raw;
+            if (kind === 'gravityMetricAgg') gravityMetricAggSampled = true;
+          }
         } else {
           const raw = mod[method](bridge, stride);
-          if (!raw || !raw.count) continue;
+          if (!raw) return;
           // raw.positions / raw.vectors / raw.values are WASM heap views — copy before posting.
           if (type === 'vec') {
-            samplers[key] = { positions: new Float32Array(raw.positions), vectors: new Float32Array(raw.vectors), count: raw.count };
+            samplers[key] = { positions: new Float32Array(raw.positions || 0), vectors: new Float32Array(raw.vectors || 0), count: raw.count | 0 };
           } else {
-            samplers[key] = { positions: new Float32Array(raw.positions), values: new Float32Array(raw.values), count: raw.count };
+            samplers[key] = { positions: new Float32Array(raw.positions || 0), values: new Float32Array(raw.values || 0), count: raw.count | 0 };
           }
         }
       } catch { /* ignore — method may not be bound in this WASM build */ }
-    }
+    });
   }
 
   if (ctrl) {
@@ -608,11 +673,14 @@ function postFrame(fieldChanged = false) {
     if (fieldChanged) Atomics.add(ctrl, CTRL.DATA_VERSION, 1);
     Atomics.add(ctrl, CTRL.FRAME, 1);
   }
+  const dataVersion = ctrl ? Atomics.load(ctrl, CTRL.DATA_VERSION) : 0;
+  if (gravityMetricAggSampled) gravityMetricAggVersion = dataVersion;
   const engineTogglesMsg = engineTogglesDirty ? readEngineToggles() : null;
   const digestMsg = publishDynamicalStateDigest ? lastDynamicalStateDigest : undefined;
   publishDynamicalStateDigest = false;
   self.postMessage({ type: 'frame', configurationToken: activeConfigurationToken,
                      tick: tick | 0, diag, diagMeta, parts,
+                     dataVersion,
                      audit, auditMeta: lastAuditMeta,
                      lag, lagMeta: lastLagrangianMeta,
                      samplers, knot, knotEvents, knotAgg,
@@ -651,6 +719,7 @@ self.onmessage = (e) => {
         if (typeof msg.pool === 'number' && msg.pool >= 1) poolThreads = msg.pool | 0;
         pendingCreate = msg;
         if (mod) {
+          pendingCreate = null;
           buildBridge(msg.N, msg.scenarioId || scenarioId, msg.configurationToken);
           if (!timer) loop();
         } else if (!initInFlight) {
@@ -665,10 +734,13 @@ self.onmessage = (e) => {
         }
         break;
       case 'resize':
-        if (mod) buildBridge(msg.N, msg.scenarioId || scenarioId);
+        if (mod && Number(msg.configurationToken) >= activeConfigurationToken) {
+          buildBridge(msg.N, msg.scenarioId || scenarioId, msg.configurationToken);
+        }
         break;
       case 'command': {
-        if (!mod || !bridge) break;
+        if (!mod || !bridge
+            || Number(msg.configurationToken) !== activeConfigurationToken) break;
         lastAudit = null; lastAuditMeta = null; auditFrameCounter = 0;
         applyCommand(msg.method, msg.args || []);
         engineTogglesDirty = true;
@@ -676,7 +748,8 @@ self.onmessage = (e) => {
         break;
       }
       case 'batchCommand': {
-        if (!mod || !bridge) break;
+        if (!mod || !bridge
+            || Number(msg.configurationToken) !== activeConfigurationToken) break;
         lastAudit = null; lastAuditMeta = null; auditFrameCounter = 0;
         const errors = [];
         const expectedToggles = new Map();
@@ -713,6 +786,7 @@ self.onmessage = (e) => {
         break;
       }
       case 'inspectVoxel': {
+        if (Number(msg.configurationToken) !== activeConfigurationToken) break;
         lastInspect = null;
         if (mod && bridge && typeof mod.inspectVoxel === 'function') {
           try {
@@ -726,6 +800,7 @@ self.onmessage = (e) => {
         break;
       }
       case 'getForceAt': {
+        if (Number(msg.configurationToken) !== activeConfigurationToken) break;
         lastForceAt = null;
         if (mod && bridge && typeof mod.getForceAt === 'function') {
           try {
@@ -739,6 +814,7 @@ self.onmessage = (e) => {
         break;
       }
       case 'coarsen': {
+        if (Number(msg.configurationToken) !== activeConfigurationToken) break;
         // One-shot Scale-0 → Scale-1 coarse-graining snapshot (voxel debug
         // view / promotion pipeline). The embind export builds plain typed
         // arrays in this worker's JS context, so the result is structured-
@@ -754,6 +830,7 @@ self.onmessage = (e) => {
         break;
       }
       case 'captureDigest': {
+        if (Number(msg.configurationToken) !== activeConfigurationToken) break;
         // Explicit scientific observation request. It is deliberately outside
         // postFrame()/loop() so canonical O(N^3) hashing never taxes 60 Hz
         // rendering. The result is a plain structured-cloneable object whose
@@ -767,14 +844,26 @@ self.onmessage = (e) => {
         });
         break;
       }
-      case 'wantSampler':
-        // Proxy registers a sampler kind+stride it wants computed each frame.
-        wantedSamplers.set(`${msg.kind}@${msg.stride}`, { kind: msg.kind, stride: msg.stride });
+      case 'wantSampler': {
+        const key = `${msg.kind}@${msg.stride}`;
+        const added = !wantedSamplers.has(key);
+        const cadenceClass = msg.cadenceClass === 'bounded-instrument'
+          ? 'bounded-instrument' : 'realtime';
+        const want = { kind: msg.kind, stride: msg.stride, cadenceClass };
+        const boundedInstrumentAdded = added && (
+          isBoundedInstrumentSamplerWant(want)
+          || (msg.kind === 'gravityMetricAgg' && cadenceClass === 'bounded-instrument')
+        );
+        wantedSamplers.set(key, want);
+        if (boundedInstrumentAdded) gravitySamplerCadence.reset();
         // When paused the tick loop never calls postFrame(), so the proxy cache
         // stays empty and the overlay never appears. Push a frame immediately so
         // the newly registered sampler is delivered to the proxy right away.
-        if (bridge && ctrl && !Atomics.load(ctrl, CTRL.RUNNING)) postFrame(false);
+        if (added && bridge && ctrl && !Atomics.load(ctrl, CTRL.RUNNING)) {
+          postFrame(false, boundedInstrumentAdded, boundedInstrumentAdded);
+        }
         break;
+      }
       case 'unwantSampler':
         // Counterpart to 'wantSampler' — a caller no longer needs this
         // kind+stride computed every frame (e.g. a UI overlay row was
@@ -782,16 +871,77 @@ self.onmessage = (e) => {
         // life of the worker.
         wantedSamplers.delete(`${msg.kind}@${msg.stride}`);
         break;
-      case 'setTelemetryMask':
-        wantAudit = msg.wantAudit !== false;
-        wantLag   = msg.wantLag   !== false;
+      case 'replaceSamplerWants': {
+        let added = false;
+        let boundedInstrumentAdded = false;
+        for (const change of Array.isArray(msg.changes) ? msg.changes : []) {
+          const kind = String(change?.kind || '');
+          const stride = Number(change?.stride);
+          if (!kind || !Number.isFinite(stride)) continue;
+          const key = `${kind}@${stride}`;
+          if (change.op === 'want') {
+            const isNew = !wantedSamplers.has(key);
+            const cadenceClass = change.cadenceClass === 'bounded-instrument'
+              ? 'bounded-instrument' : 'realtime';
+            const want = { kind, stride, cadenceClass };
+            wantedSamplers.set(key, want);
+            added ||= isNew;
+            boundedInstrumentAdded ||= isNew && (
+              isBoundedInstrumentSamplerWant(want)
+              || (kind === 'gravityMetricAgg' && cadenceClass === 'bounded-instrument')
+            );
+          } else if (change.op === 'unwant') {
+            wantedSamplers.delete(key);
+          }
+        }
+        if (boundedInstrumentAdded) gravitySamplerCadence.reset();
+        // One owner-set replacement is one atomic scientific demand change.
+        // A paused worker publishes the complete new union exactly once.
+        if (added && bridge && ctrl && !Atomics.load(ctrl, CTRL.RUNNING)) {
+          postFrame(false, boundedInstrumentAdded, boundedInstrumentAdded);
+        }
         break;
+      }
+      case 'setTelemetryMask': {
+        const nextWantAudit = msg.wantAudit !== false;
+        const auditChanged = nextWantAudit !== wantAudit;
+        const nextWantGravity = msg.wantGravity === true;
+        const gravityBecameWanted = nextWantGravity && !wantGravity;
+        wantAudit = nextWantAudit;
+        wantLag   = msg.wantLag   !== false;
+        wantGravity = nextWantGravity;
+        if (auditChanged) {
+          // Never reuse an observation across an inactive boundary. The next
+          // demanded postFrame samples current state; the inactive path emits
+          // an explicit null/status boundary.
+          lastAudit = null;
+          auditFrameCounter = 0;
+        }
+        let publishPausedMaskChange = auditChanged;
+        if (gravityBecameWanted) {
+          gravitySamplerCadence.reset();
+          const dataVersion = ctrl ? Atomics.load(ctrl, CTRL.DATA_VERSION) : 0;
+          // Time may be opened while playback is paused and owns no direct
+          // aggregate want. Populate once immediately unless the just-added
+          // Gravity batch already supplied this exact data generation.
+          publishPausedMaskChange ||= gravityMetricAggVersion !== dataVersion;
+        }
+        if (publishPausedMaskChange && bridge && ctrl
+            && !Atomics.load(ctrl, CTRL.RUNNING)) {
+          postFrame(false, gravityBecameWanted);
+        }
+        break;
+      }
       case 'setRunning':
+        if (Number(msg.configurationToken) !== activeConfigurationToken) break;
         if (ctrl) Atomics.store(ctrl, CTRL.RUNNING, msg.value ? 1 : 0);
         // This handler cannot run until any in-progress loop()/postFrame() has
         // returned. Posting the acknowledgement here makes it a FIFO barrier:
         // the proxy receives all committed frames before the settled state.
-        self.postMessage({ type: 'runningState', running: !!msg.value, seq: msg.seq | 0 });
+        self.postMessage({
+          type: 'runningState', running: !!msg.value, seq: msg.seq | 0,
+          configurationToken: activeConfigurationToken,
+        });
         break;
       case 'dispose':
         if (timer) { clearTimeout(timer); timer = 0; }
@@ -801,9 +951,23 @@ self.onmessage = (e) => {
           try { URL.revokeObjectURL(verifiedGlueBlobUrl); } catch (e) { /* ignore */ }
           verifiedGlueBlobUrl = null;
         }
+        wantedSamplers.clear();
+        pendingCreate = null;
+        self.postMessage({
+          type: 'disposed',
+          configurationToken: Number(msg.configurationToken) || activeConfigurationToken,
+          workerRuntimeId,
+          moduleInitCount,
+          renderBridgeGeneration,
+        });
         break;
     }
   } catch (err) {
-    self.postMessage({ type: 'error', where: msg && msg.type, msg: String(err && err.message || err) });
+    self.postMessage({
+      type: 'error',
+      where: msg && msg.type,
+      msg: String(err && err.message || err),
+      configurationToken: Number(msg?.configurationToken) || activeConfigurationToken,
+    });
   }
 };

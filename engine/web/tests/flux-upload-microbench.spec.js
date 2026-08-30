@@ -9,16 +9,19 @@
  *
  * Why this path: at large L physics is off-thread (worker) and the GPU
  * upload is cadence-throttled (frame-sync.js: every 6th frame at L>96), so
- * the remaining per-upload main-thread cost is updateFluxVolume. Its render
- * write-loop is already `step`-decimated (1/2/4), but the maxFlux scan
- * (flux-renderer.js) iterates the full N^3 array every call. This bench
- * quantifies that before/after a fix.
+ * the remaining per-upload main-thread cost is updateFluxVolume. The
+ * renderer uniformly samples a bounded presentation grid over the full
+ * source extent. This bench detects regressions in that scan/write budget.
  *
  * Run:   npx playwright test flux-upload-microbench.spec.js --reporter=list
  * Output: per-N ms/call table to stdout + attached JSON.
  */
 import { test, expect } from '@playwright/test';
 import { gotoAndReady } from './_helpers.js';
+
+// WebGL trace screencasts add compositor readback cost to the quantity this
+// microbenchmark isolates. Keep this measurement untraced.
+test.use({ trace: 'off' });
 
 const SIZES = [49, 65, 97, 129];
 const ITERS = 120;        // timed calls per size (after a warmup call)

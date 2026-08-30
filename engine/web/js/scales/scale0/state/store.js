@@ -248,6 +248,24 @@ export function getScale0QualificationState() {
     });
 }
 
+/**
+ * Whether the current scenario generation has crossed its authoritative load
+ * barrier. This is deliberately narrower than full run qualification: a later
+ * manual scientific mutation may suspend the qualification claim without
+ * reopening a scenario setup transaction, so live instruments may continue to
+ * observe it. Pending/failed/invalidated setup generations remain fail-closed.
+ * Accepts either the mutable Scale-0 store or a qualification snapshot.
+ */
+export function isScale0AuthoritativeGenerationReady(snapshot = state) {
+    const scenarioId = snapshot?.currentScenarioId ?? snapshot?.scenarioId;
+    const anchor = snapshot?.qualificationAnchor ?? snapshot?.anchor;
+    return !!scenarioId
+        && snapshot?.authoritativeLoad == null
+        && anchor?.scenarioId === scenarioId
+        && Number.isInteger(Number(anchor?.loadGeneration))
+        && Number(anchor.loadGeneration) >= 0;
+}
+
 function publishQualificationState() {
     const snapshot = getScale0QualificationState();
     for (const listener of qualificationListeners) {

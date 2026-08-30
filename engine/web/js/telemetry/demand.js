@@ -3,6 +3,8 @@
  * See SPEC_SCALE0_PERF_TELEMETRY_PANELS.md and CONTRACTS.md §5.
  */
 
+import { isScale0AuthoritativeGenerationReady } from '../scales/scale0/state/store.js';
+
 /** Scale-0 chart ids whose series are filled from the energy-audit path. */
 const SCALE0_AUDIT_CHART_IDS = Object.freeze(['eb-energy', 'gauss']);
 
@@ -57,7 +59,14 @@ export function getScale0TelemetryDemand(ctx, state = null) {
     // Both the Gravity and Time panels render the native latency aggregate.
     // They therefore share the gravity scheduler stream; neither panel may
     // issue a separate bridge getter/RPC from its own rAF callback.
-    const wantGravity = visible('gravity') || visible('time');
+    // Empty defines neither a gravity source nor a material clock/metric
+    // observation. A visible inapplicable panel must not keep the native
+    // gravity reduction/RPC stream alive.
+    const gravityApplicable = state == null || (
+        state?.currentScenarioId !== 'empty'
+        && isScale0AuthoritativeGenerationReady(state)
+    );
+    const wantGravity = gravityApplicable && (visible('gravity') || visible('time'));
     const latticeSize = Math.max(1, Math.trunc(Number(ctx?.bridge?.latticeSize) || 32));
     const everyTicks = latticeSize >= 113
         ? { diagnostics: 1, audit: 8, gravity: 4, lagrangian: 12 }
@@ -107,7 +116,7 @@ export function collectScale0OnDemand(telemetryHub, ctx, state, demand) {
 
     const fm = state.useFluxMock ? state.fluxMock : null;
     if (fm && typeof fm.setTelemetryMask === 'function') {
-        fm.setTelemetryMask(wantAudit, wantLag);
+        fm.setTelemetryMask(wantAudit, wantLag, !!demand.wantGravity);
     }
 
     // Native `getTelemetrySnapshot()` is a read-only versioned store. Ingest
@@ -141,11 +150,13 @@ export function collectScale0OnDemand(telemetryHub, ctx, state, demand) {
  * Unconditional audit + Lagrangian collection (rollback path when PerfFlags.telemetryOnDemand is off).
  */
 export function collectScale0Unconditional(telemetryHub, ctx, state) {
+    const gravityReady = state?.currentScenarioId !== 'empty'
+        && isScale0AuthoritativeGenerationReady(state);
     const demand = {
         diagnostics: true,
         audit: true,
         lagrangian: true,
-        gravity: true,
+        gravity: gravityReady,
         everyTicks: { diagnostics: 1, audit: 1, gravity: 1, lagrangian: 1 },
     };
     if (publishNativeTelemetryDemand(ctx, state, demand)) {
