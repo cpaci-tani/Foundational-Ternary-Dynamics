@@ -97,18 +97,22 @@ export const sections = [
         rows: [
             { id: 'e-field',  label: 'E-Field |E|\u00B2/2', unit: 'E*',
               compute: (hub) => hub.s0.audit?.EFieldEnergy ?? hub.s0.audit?.eFieldEnergy,
+              telemetryGroup: 'audit',
               trend: 'aud.eFieldEnergy' },
             { id: 'b-field',  label: 'B-Field (c\u00B2/2)|B|\u00B2', unit: 'E*',
               compute: (hub) => hub.s0.audit?.BFieldEnergy ?? hub.s0.audit?.bFieldEnergy,
+              telemetryGroup: 'audit',
               trend: 'aud.bFieldEnergy' },
             { id: 'poynting', label: 'Poynting |S|',        unit: '|S|',
               compute: (hub) => {
                   const a = hub.s0.audit; if (!a) return undefined;
-                  const px = a.totalPoynting?.x ?? a.poyntingX ?? 0;
-                  const py = a.totalPoynting?.y ?? a.poyntingY ?? 0;
-                  const pz = a.totalPoynting?.z ?? a.poyntingZ ?? 0;
-                  return Math.sqrt(px*px + py*py + pz*pz);
+                  const px = a.totalPoynting?.x ?? a.poyntingX;
+                  const py = a.totalPoynting?.y ?? a.poyntingY;
+                  const pz = a.totalPoynting?.z ?? a.poyntingZ;
+                  return [px, py, pz].every(Number.isFinite)
+                      ? Math.hypot(px, py, pz) : undefined;
               },
+              telemetryGroup: 'audit',
               trend: 'aud.poyntingMag' },
             { id: 'ang-mom', label: 'Angular Mom',  unit: '\u210F', format: 'vector',
               source: ['s0.diag.angMomX', 's0.diag.angMomY', 's0.diag.angMomZ'] },
@@ -134,14 +138,24 @@ export const sections = [
         rows: [
             { id: 'e-left',    label: 'E_L (left)',   unit: 'E*',
               compute: (hub) => hub.s0.audit?.ELTotal ?? hub.s0.audit?.eLTotal,
+              telemetryGroup: 'audit',
               trend: 'aud.eLeftEnergy' },
             { id: 'e-right',   label: 'E_R (right)',  unit: 'E*',
               compute: (hub) => hub.s0.audit?.ERTotal ?? hub.s0.audit?.eRTotal,
+              telemetryGroup: 'audit',
               trend: 'aud.eRightEnergy' },
             { id: 'chirality', label: 'Chirality',    unit: '',
               source: 's0.audit.chiralityTotal',     trend: 'aud.chirality' },
             { id: 'wave-lr',   label: 'Wave L / R',   unit: '|w|\u00B2', format: 'pair',
-              source: ['s0.audit.wvLTotal', 's0.audit.wvRTotal'] },
+              compute: (hub) => {
+                  const a = hub.s0.audit;
+                  if (!a) return undefined;
+                  return [
+                      a.wvLTotal ?? a.waveLTotal,
+                      a.wvRTotal ?? a.waveRTotal,
+                  ];
+              },
+              telemetryGroup: 'audit' },
         ],
     },
 ];

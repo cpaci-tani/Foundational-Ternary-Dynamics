@@ -157,9 +157,12 @@ export class WasmBridgeProxy {
         this._fluxLen = 0;
         this._fluxDouble = false;
         this._lastDiag = null;
+        this._lastDiagMeta = null;
         this._lastParts = null;
         this._lastAudit = null;
+        this._lastAuditMeta = null;
         this._lastLag = null;
+        this._lastLagMeta = null;
         this._lastKnot = null;
         this._lastKnotEvents = null;
         this._lastKnotAgg = null;
@@ -197,7 +200,7 @@ export class WasmBridgeProxy {
         this._digestReq = 0;
 
         // CLASSIC worker (Emscripten module via importScripts). No { type: 'module' }.
-        this._worker = new Worker(new URL('./wasm-bridge.worker.js?v=2', import.meta.url));
+        this._worker = new Worker(new URL('./wasm-bridge.worker.js?v=4', import.meta.url));
         this._worker.onmessage = (e) => this._onMessage(e.data);
         // A worker-level error (e.g. importScripts NetworkError loading the
         // -pthread MT glue) surfaces here. If it happens before the worker has
@@ -271,6 +274,63 @@ export class WasmBridgeProxy {
         if (this._frameWatchdog) { try { clearTimeout(this._frameWatchdog); } catch { /* ignore */ } this._frameWatchdog = null; }
     }
 
+    /**
+     * Accept one telemetry-group publication without changing the provenance of
+     * a repeated observation. Worker frames can republish the same staggered
+     * audit stateVersion many times; `receivedAt` and `sampledAt` therefore
+     * belong to the observation identity, not to each transport frame.
+     *
+     * Unavailable/error/non-finite metadata always clears the cached value even
+     * if a buggy or older worker also supplied a retained payload. This keeps a
+     * failed audit from leaking through getEnergyAudit().
+     */
+    _acceptTelemetryGroupFrame(group, value, meta, receivedAt) {
+        const slots = {
+            diagnostics: ['_lastDiag', '_lastDiagMeta'],
+            audit: ['_lastAudit', '_lastAuditMeta'],
+            lagrangian: ['_lastLag', '_lastLagMeta'],
+        };
+        const slot = slots[group];
+        if (!slot) return;
+        const [valueKey, metaKey] = slot;
+
+        // Compatibility with workers predating group metadata. Presence of a
+        // payload (including explicit null) still updates the value cache.
+        if (!meta) {
+            if (value !== undefined) this[valueKey] = value ?? null;
+            return;
+        }
+
+        const prior = this[metaKey];
+        const sameObservation = prior != null
+            && meta.stateVersion != null
+            && Object.is(prior.sourceEpoch ?? null, meta.sourceEpoch ?? null)
+            && Object.is(prior.stateVersion, meta.stateVersion);
+        const anchoredReceivedAt = sameObservation && Number.isFinite(prior.receivedAt)
+            ? prior.receivedAt : receivedAt;
+        const anchoredSampledAt = sameObservation && Number.isFinite(prior.sampledAt)
+            ? prior.sampledAt : meta.sampledAt;
+        const anchoredSampleTick = sameObservation
+            ? (prior.sampleTick ?? prior.tick ?? null)
+            : (meta.sampleTick ?? meta.tick ?? null);
+        const anchoredTick = sameObservation
+            ? (prior.tick ?? prior.sampleTick ?? null)
+            : (meta.tick ?? meta.sampleTick ?? null);
+        const acceptedMeta = {
+            ...meta,
+            sampleTick: anchoredSampleTick,
+            tick: anchoredTick,
+            sampledAt: anchoredSampledAt,
+            receivedAt: anchoredReceivedAt,
+        };
+        this[metaKey] = acceptedMeta;
+
+        const available = acceptedMeta.status === 'available'
+            && acceptedMeta.stale !== true
+            && value != null;
+        this[valueKey] = available ? value : null;
+    }
+
     _onMessage(m) {
         // Ignore in-flight messages after terminate()/dispose(). Scenario churn
         // tears down the prior proxy while a 'ready'/'frame' may already be
@@ -329,6 +389,7 @@ export class WasmBridgeProxy {
                 if (this._ctrl) Atomics.store(this._ctrl, CTRL.RUNNING, 1);
             }
         } else if (m.type === 'frame') {
+            const receivedAt = this._now();
             // Reset the dead-worker watchdog only on TICK PROGRESS. A worker can
             // post frames (e.g. the initial scenario frame) while its tick stays
             // stuck at 0 — the in-worker threaded engine reports ready but never
@@ -341,10 +402,10 @@ export class WasmBridgeProxy {
                 this._lastFrameAt = this._now();
                 this._armFrameWatchdog();
             }
-            this._lastDiag = m.diag;
+            this._acceptTelemetryGroupFrame('diagnostics', m.diag, m.diagMeta, receivedAt);
             if (m.parts) this._lastParts = m.parts;
-            if (m.audit) this._lastAudit = m.audit;
-            if (m.lag)   this._lastLag   = m.lag;
+            this._acceptTelemetryGroupFrame('audit', m.audit, m.auditMeta, receivedAt);
+            this._acceptTelemetryGroupFrame('lagrangian', m.lag, m.lagMeta, receivedAt);
             if (m.engineToggles) {
                 this._engineToggles = m.engineToggles;
                 if (this._appliedConfigurationToken === this._pendingConfigurationToken) {
@@ -470,6 +531,7 @@ export class WasmBridgeProxy {
         caps.getScale0ParticleFrame = () => this._lastParts ?? EMPTY_PARTS();
         caps.getScale0EnergyAudit = () => this._lastAudit ?? null;
         caps.getScale0Lagrangian = () => this._lastLag ?? null;
+        caps.getScale0TelemetryGroupMeta = (group) => this.getScale0TelemetryGroupMeta(group);
         caps.getScale0KnotTelemetry = () => this._lastKnot ?? null;
         caps.getScale0KnotEvents = () => this._lastKnotEvents ?? null;
         caps.getScale0KnotAggregate = () => this._lastKnotAgg ?? null;
@@ -639,6 +701,14 @@ export class WasmBridgeProxy {
     getDiagnostics() { return this._lastDiag ?? null; }
     getEnergyAudit() { return this._lastAudit ?? null; }
     getLagrangian() { return this._lastLag ?? null; }
+    getScale0TelemetryGroupMeta(group) {
+        const meta = {
+            diagnostics: this._lastDiagMeta,
+            audit: this._lastAuditMeta,
+            lagrangian: this._lastLagMeta,
+        }[group] ?? null;
+        return meta ? { ...meta } : null;
+    }
     getKnotTelemetry() { return this._lastKnot ?? null; }
     getKnotEvents() { return this._lastKnotEvents ?? null; }
     getKnotAggregate() { return this._lastKnotAgg ?? null; }
@@ -744,9 +814,12 @@ export class WasmBridgeProxy {
         // new `create` completes. Clear them so exact-step observatories do not
         // mistake an old high tick count for completion of a newly reset run.
         this._lastDiag = null;
+        this._lastDiagMeta = null;
         this._lastParts = null;
         this._lastAudit = null;
+        this._lastAuditMeta = null;
         this._lastLag = null;
+        this._lastLagMeta = null;
         this._lastKnot = null;
         this._lastKnotEvents = null;
         this._lastKnotAgg = null;

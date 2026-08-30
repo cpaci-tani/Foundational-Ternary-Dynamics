@@ -200,6 +200,48 @@ and the explicitly worker-pinned Empty panel/performance file passes `5/5`.
 The native coalescing case verifies that only the first and final requests
 publish their own exact client load-generation tokens.
 
+### Telemetry availability and observation provenance
+
+Scale 0 telemetry now treats availability as part of the scientific value.
+Exact numeric zero is retained. Missing, null, ABI-absent, stale, and nonfinite
+channels remain unavailable and render as `—`; they do not become a calm zero,
+advance statistics, or fill chart history. Signed Lagrangian terms remain
+signed from the bridge through the table and trend buffers.
+
+Diagnostics, energy audit, Lagrangian, and gravity are independent observation
+groups with their own source epoch, state/snapshot version, sample tick, sample
+time, and receipt time. A reused worker audit retains its original identity and
+cannot be relabelled as a newer diagnostics observation. Failed/nonfinite worker
+reductions clear the retained value. Direct WASM maintains a state version in
+addition to the engine tick, so a paused same-tick scientific write advances
+history; a null getter marks the retained value unavailable; and a source/
+configuration epoch establishes a new conservation baseline rather than
+reporting an intervention as drift. Native WebSocket group packets remain
+immutable, and its JSON serializer emits nonfinite floating channels as JSON
+`null` so one unavailable value cannot invalidate the complete frame.
+
+Downstream consumers enforce the same contract. Diagnostics/Grid rows require
+a finite current group tick; computed audit rows carry explicit audit
+provenance; status and Thermodynamics accept only `audit.dynamicEnergy` or an
+explicitly published `diag.dynamicEnergy`, never the observer-baseline
+`Diagnostics.totalEnergy`. Conservation maintains separate diagnostics,
+energy-audit, and momentum-audit observation histories, deduplicates a reused
+audit independently of the newer diagnostics clock, and rejects null audit
+provenance instead of coercing it to tick/version zero. Time, Thermodynamics,
+Knots, charts, and Lagrangian reset or gap their derived histories across source
+turnover, and unchanged observations do not cause age-driven or repeated
+scientific DOM/chart work.
+
+Fresh closure evidence: the availability/provenance suite, direct-WASM
+same-tick contract, status/Thermodynamics energy contract, and conservation
+suite record `10` applicable passes with `1` correctly identified
+main-thread-WASM-only skip while the connected owner is native WebSocket. The
+native telemetry cache/provenance regression set passes, the pinned MSVC 14.44
+`ws_server` target is current, and an independent three-pass red-team closed its
+final null-provenance falsifier. The final explicitly worker-pinned `L = 97`
+all-panel campaign again records 60.00 FPS with p95/p99 16.67 ms for all 17
+panels, no long-task gate failures, and zero collapsed DOM/canvas work.
+
 Required checks:
 
 1. the canonical fieldwise dynamical-lattice hash is unchanged from tick 0
@@ -251,8 +293,8 @@ qualification but does not rewrite a scientific zero/nonzero result.
 | 3. Numerical validity | in-progress | `empty_scenario_qualification` passes the native CPU product-size short matrix at `L=9,17,33,65,97`, all three flux boundaries, and checkpoints `0,1,2,8,16`; its preregistered long matrix passes `L=9,17` through ticks `256,4096` and `L=33` through tick `256` with invariant fieldwise digests; the WSL2 CUDA sibling passes ordinary/interactive modes and all three boundaries through tick 64 with exact CPU/GPU populated-state hash parity, 32-byte result transfer, and zero full-mirror calls; two sequential clean builds on the same pinned host/toolchain from `a351fd49772ca1e365285295f974608dd278fbfe` were observed byte-identical across all six WASM modules plus the deterministic manifest; direct/worker loaders reject unverified selected bytes before instantiation and publish the actual verified variant; the source-stamped WASM worker passes lifecycle/null checks at product sizes through `L=97`; worker and main-thread WASM publish identical canonical hashes for the same Empty record, and the main path remains invariant through 16 synchronous ticks; the native CUDA WebSocket smoke passes Empty digest publication at ticks 0 and 1 with invariant lanes and no full mirror | independent controls and the remaining declared browser/lifecycle campaigns remain open |
 | 4. Scientific validity | not-started | null claim and falsifiers frozen | run controls without post-hoc tuning |
 | 5. Scale appropriateness | in-progress | the imposed finite lattice record belongs to Scale 0; exact-ID gating correctly excludes Standard Model overlays | replace unqualified particle/void nouns, remove stale Scale-up implications, and verify all generic panel applicability states |
-| 6. UI and interpretive truth | in-progress | focused browser test passes picker/current-state truth, unsupported-latency distinction, finite observer baseline, collapsed overlay demand, WASM-main/worker origin distinction, and actual verified WASM artifact identity; the knowledge entry now states the imposed null-control and non-vacuum boundary; Diagnostics renders unresolved values as `—` while retaining exact measured zero; Lagrangian exposes the state-independent observer reference, baseline-subtracted `Δℒ`, stale/unavailable states, and an explicit non-vacuum/non-zero-point limitation; Flux Slice, Spectrum, and Gravity declare `empty` inapplicable and stop their scientific sampling/coordinator paths; a monotonic scientific-mutation epoch now suspends qualification for every audited live write, while backend-specific, matching-generation engine barriers are required to establish a new baseline and visual-only work remains non-mutating | upstream telemetry still erases some unavailable diagnostics/audit/Lagrangian values into zero before formatting; remaining panel applicability, export metadata, and native-WebSocket presentation paths remain open |
-| 7. Performance and operational safety | in-progress | the fresh, explicitly worker-pinned full campaign passes all 17 visible panels at `L=97`: every panel records 60.00 FPS with p95/p99 16.67 ms, all absolute fixed-work/callback budgets pass, no long tasks occur, and every collapsed panel records zero DOM/canvas work; Diagnostics passes with 5 mounted canvases and 90 mutations; Lagrangian passes with 7 mounted canvases and on-demand action trends; Flux Slice, Spectrum, and Gravity perform zero periodic work for `empty`; rapid generation/reset/resize and five-reset lifecycle probes pass | genuine hidden-tab evidence is unsupported in the current headless browser and was skipped rather than fabricated; longer foreground campaign and native-WebSocket browser evidence remain open |
+| 6. UI and interpretive truth | in-progress | focused browser test passes picker/current-state truth, unsupported-latency distinction, finite observer baseline, collapsed overlay demand, WASM-main/worker origin distinction, and actual verified WASM artifact identity; the knowledge entry now states the imposed null-control and non-vacuum boundary; the complete Scale 0 telemetry path preserves exact zero while keeping missing/null/nonfinite/ABI-absent/stale values unavailable, carries independent observation provenance across native, direct-WASM, and worker paths, preserves signed Lagrangian terms, prevents staggered audit relabelling and baseline-energy substitution, and makes downstream Diagnostics/Grid/status/Thermodynamics/conservation/Time/Knots/chart histories fail closed; Flux Slice, Spectrum, and Gravity declare `empty` inapplicable and stop their scientific sampling/coordinator paths; a monotonic scientific-mutation epoch now suspends qualification for every audited live write, while backend-specific, matching-generation engine barriers are required to establish a new baseline and visual-only work remains non-mutating | remaining panel applicability, export metadata, and native-WebSocket presentation paths remain open |
+| 7. Performance and operational safety | in-progress | the final, explicitly worker-pinned full campaign passes all 17 visible panels at `L=97`: every panel records 60.00 FPS with p95/p99 16.67 ms, all absolute fixed-work/callback budgets pass, no long tasks occur, and every collapsed panel records zero DOM/canvas work; Diagnostics uses 5 mounted canvases; Lagrangian uses 7 mounted canvases with on-demand action trends; Flux Slice, Spectrum, and Gravity perform zero periodic work for `empty`; rapid generation/reset/resize and five-reset lifecycle probes pass | genuine hidden-tab evidence is unsupported in the current headless browser and was skipped rather than fabricated; longer foreground campaign and native-WebSocket browser evidence remain open |
 
 ## 5. UI trace blockers
 
@@ -265,9 +307,11 @@ recorded here so later interface work cannot silently erase or bypass them:
    the displayed qualification exactly once. Matching-generation authoritative
    reload readback is required to restore it; visual-only controls do not
    suspend it;
-2. Diagnostics now preserves unresolved values as unavailable, but upstream
-   telemetry paths still convert some unavailable, stale, or nonfinite data
-   into numeric zero before the panel receives them;
+2. **[RESOLVED 2026-08-29]** Exact zero and unavailable telemetry now remain
+   distinct through native, direct-WASM, worker, hub, derived-consumer, and UI
+   paths. Independent group/sample provenance prevents staggered or null
+   observations from being relabelled as current; raw observer-baseline energy
+   is never substituted for unavailable dynamic energy;
 3. generic Time, Thermodynamics, Dispersion, P1 Observatory, and Knots surfaces
    need explicit `empty` applicability states;
 4. Scale 0 labels such as `Particle Count`, `Particle Display`, `void`, and

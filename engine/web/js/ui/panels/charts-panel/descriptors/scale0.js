@@ -8,6 +8,7 @@ export const charts = [
     {
         id: 'flux-energy',
         title: 'Flux & Energy',
+        telemetryGroups: ['diagnostics', 'audit'],
         xLabel: 'tick',
         yLabel: 'E*',
         defaultActive: true,
@@ -19,6 +20,7 @@ export const charts = [
     {
         id: 'particles',
         title: 'Particle Count',
+        telemetryGroup: 'diagnostics',
         xLabel: 'tick',
         yLabel: 'ct',
         defaultActive: true,
@@ -31,6 +33,7 @@ export const charts = [
     {
         id: 'charge',
         title: 'Charge Balance',
+        telemetryGroup: 'diagnostics',
         xLabel: 'tick',
         yLabel: 'pos − neg',
         defaultActive: true,
@@ -41,6 +44,7 @@ export const charts = [
     {
         id: 'eb-energy',
         title: 'E vs B Field Energy',
+        telemetryGroup: 'audit',
         xLabel: 'tick',
         yLabel: 'E* (E − B)',
         defaultActive: false,
@@ -51,6 +55,7 @@ export const charts = [
     {
         id: 'gauss',
         title: 'Gauss Violation',
+        telemetryGroup: 'audit',
         xLabel: 'tick',
         yLabel: 'E*²',
         defaultActive: false,
@@ -61,6 +66,7 @@ export const charts = [
     {
         id: 'entropy',
         title: 'Entropy',
+        telemetryGroup: 'diagnostics',
         xLabel: 'tick',
         yLabel: 'nat',
         defaultActive: true,

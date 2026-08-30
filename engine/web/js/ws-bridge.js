@@ -837,19 +837,15 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
 
     _acceptEnergyAudit(audit) {
         this._lastAudit = audit;
-        if (this._lastDiag && Number.isFinite(audit?.dynamicEnergy)) {
-            this._lastDiag.vacuumBaselineEnergy = this._lastDiag.totalEnergy;
-            this._lastDiag.dynamicEnergy = audit.dynamicEnergy;
-            this._lastDiag.accountedEnergy = audit.totalEnergy;
-            this._lastDiag.restEnergy = audit.particleRestEnergy;
-            this._lastDiag.totalEnergy = audit.dynamicEnergy;
-        }
     }
 
     _normalizeTelemetryGroupMeta(snapshot, group, value, fallbackVersion) {
         const meta = snapshot?.groupMeta?.[group] || {};
-        const numberOrNull = candidate => Number.isFinite(Number(candidate))
-            ? Number(candidate) : null;
+        const numberOrNull = candidate => {
+            if (candidate === null || candidate === undefined || candidate === '') return null;
+            const value = Number(candidate);
+            return Number.isFinite(value) ? value : null;
+        };
         const suppliedSnapshotVersion = numberOrNull(
             meta.snapshotVersion ?? snapshot?.snapshotVersion,
         );

@@ -17,7 +17,7 @@ const CONTRIB_TRACES = [
 // Reader-friendly number: 27517 → "27.5k", 2.43e6 → "2.4M", 218 → "218", 1.2 → "1.2".
 // Replaces raw counts + scientific notation in the panel.
 function fmtNum(v) {
-    v = +v || 0;
+    if (typeof v !== 'number' || !Number.isFinite(v)) return '—';
     const a = Math.abs(v);
     if (a >= 1e9) return (v / 1e9).toFixed(a >= 1e10 ? 0 : 1) + 'B';
     if (a >= 1e6) return (v / 1e6).toFixed(a >= 1e7 ? 0 : 1) + 'M';
@@ -90,10 +90,14 @@ function drawEnergyLines(canvas, traces) {
         const c = t.rb.count;
         if (c < 2) continue;
         ctx.beginPath();
+        let drawing = false;
         for (let i = 0; i < c; i++) {
+            const value = t.rb.get(i);
+            if (!Number.isFinite(value)) { drawing = false; continue; }
             const x = (i / (c - 1)) * w;
-            const y = h - (t.rb.get(i) / maxV) * (h - 2) - 1;
-            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            const y = h - (value / maxV) * (h - 2) - 1;
+            if (!drawing) { ctx.moveTo(x, y); drawing = true; }
+            else ctx.lineTo(x, y);
         }
         ctx.strokeStyle = t.color; ctx.lineWidth = t.width || 1.2; ctx.stroke();
     }
@@ -294,6 +298,8 @@ export function mountKnotsPanel(host) {
     // Scenario EM-energy history (sampled at the panel's 4 Hz from the engine's
     // energy audit). emTotal = ½(E²+B²); E/B/wave are the components.
     const emHub = { emTotal: new RingBuffer(240), eField: new RingBuffer(240), bField: new RingBuffer(240), wave: new RingBuffer(240) };
+    let emResetVersion = -1;
+    let lastAuditStamp = null;
 
     // Shared hover tooltip for all charts (value-at-cursor). The static charts are
     // bound once here; the per-knot history chart (rebuilt each paint) binds in update().
@@ -404,18 +410,41 @@ export function mountKnotsPanel(host) {
 
         // ── Scenario EM energy: total + electric/magnetic breakdown over time ──
         // From the engine's energy audit; EM field energy U = ½(E²+B²).
-        const audit = telemetryHub.s0?.audit;
+        const nextResetVersion = telemetryHub.getResetVersion?.(0) ?? 0;
+        if (nextResetVersion !== emResetVersion) {
+            emResetVersion = nextResetVersion;
+            lastAuditStamp = null;
+            for (const buffer of Object.values(emHub)) buffer.clear();
+        }
+        const auditMeta = telemetryHub.getScale0TelemetryMeta?.('audit') ?? null;
+        const audit = auditMeta && !auditMeta.stale ? telemetryHub.s0?.audit : null;
+        const emRoot = el('kp-em');
+        emRoot.dataset.telemetryState = audit ? 'current' : 'stale';
         if (audit) {
-            const eEn = audit.EFieldEnergy || 0, bEn = audit.BFieldEnergy || 0, wv = audit.waveEnergy || 0;
-            const U = eEn + bEn;
-            emHub.emTotal.push(U); emHub.eField.push(eEn); emHub.bField.push(bEn); emHub.wave.push(wv);
-            el('kp-em-totals').innerHTML = `<b>${fmtNum(U)}</b> total · electric ${pct(U > 0 ? eEn / U : 0)} · magnetic ${pct(U > 0 ? bEn / U : 0)}`;
+            const eEn = audit.EFieldEnergy ?? audit.eFieldEnergy;
+            const bEn = audit.BFieldEnergy ?? audit.bFieldEnergy;
+            const wv = audit.waveEnergy;
+            const U = [eEn, bEn].every(Number.isFinite) ? eEn + bEn : Number.NaN;
+            const stamp = `${auditMeta.sourceEpoch ?? auditMeta.epoch ?? 'local'}:`
+                + `${auditMeta.stateVersion ?? auditMeta.tick ?? auditMeta.snapshotVersion}`;
+            if (stamp !== lastAuditStamp) {
+                lastAuditStamp = stamp;
+                emHub.emTotal.push(U);
+                emHub.eField.push(eEn);
+                emHub.bField.push(bEn);
+                emHub.wave.push(wv);
+            }
+            el('kp-em-totals').innerHTML = Number.isFinite(U)
+                ? `<b>${fmtNum(U)}</b> total · electric ${pct(U > 0 ? eEn / U : 0)} · magnetic ${pct(U > 0 ? bEn / U : 0)}`
+                : '<b>—</b> total · one or more audit channels unavailable';
             drawEnergyLines(el('kp-em-chart'), [
                 { rb: emHub.emTotal, color: '#f6c453', width: 1.7, label: 'total (E+B)' },
                 { rb: emHub.eField, color: '#5ad2e0', label: 'electric' },
                 { rb: emHub.bField, color: '#f08bb0', label: 'magnetic' },
                 { rb: emHub.wave, color: '#9be08b', label: 'wave' },
             ]);
+        } else {
+            el('kp-em-totals').innerHTML = '<b>—</b> awaiting a current energy-audit snapshot';
         }
         // per-knot quantization bars — both E and B families merged
         drawKnotBars(el('kp-em-bars'), mergeContrib(eC, bC, jC));

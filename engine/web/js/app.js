@@ -16,7 +16,7 @@ import { getCategories, getMoleculesByCategory } from './molecules.js';
 import { debugLog } from './core/log.js';
 
 // ── Scale Controllers (extracted from inline code) ─────────────────
-import * as Scale0Controller from './scales/scale0/controller.js?v=27';
+import * as Scale0Controller from './scales/scale0/controller.js?v=28';
 import * as Scale1Controller from './scales/scale1/controller.js';
 import * as Scale2Controller from './scales/scale2/controller.js';
 import * as Scale3Controller from './scales/scale3/controller.js';
@@ -46,7 +46,7 @@ import { initConservationMicropanel } from './scales/scale0/ui/overlays/conserva
 import { initSpectrumPanel } from './scales/scale0/ui/overlays/spectrum-panel.js';
 import { initGravityPanel } from './scales/scale0/ui/overlays/gravity-panel.js';
 import { initTimePanel } from './scales/scale0/ui/overlays/time-panel.js';
-import { initThermoPanel } from './scales/scale0/ui/overlays/thermo-panel.js?v=2';
+import { initThermoPanel } from './scales/scale0/ui/overlays/thermo-panel.js?v=3';
 import { initDispersionPanel } from './scales/scale0/ui/overlays/dispersion-panel.js';
 import { initKnotsPanel } from './scales/scale0/ui/overlays/knots-panel.js';
 import { initScaleContextPanel } from './scales/scale0/ui/overlays/scale-context-panel.js';

@@ -34,6 +34,7 @@ import { FTD0252_PROVENANCE, DILATION_VS_V, IR_CONVERGENCE } from '../../data/ft
 import { resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 import { readScale0DiagAudit } from '../../../../telemetry/scale0-read.js';
+import { telemetryHub } from '../../../../telemetry-hub.js';
 import { C_SPEED } from '../../../../constants.js';
 
 const PANEL_ID = 'time-panel';
@@ -41,6 +42,17 @@ const HZ = 2;
 const STRIDE = 2;            // latency sampling stride
 const SPARK_MAX = 60;       // Δτ trace rolling-window length
 const RADIAL_BINS = 12;
+
+function timeSourceBoundary(hub = telemetryHub) {
+    const expected = hub?.s0?.meta?.expectedSourceEpoch;
+    if (expected !== null && expected !== undefined && expected !== '') {
+        return `${hub?.s0?.meta?.expectedSource ?? 'unknown'}:${String(expected)}`;
+    }
+    const meta = hub?.getScale0TelemetryMeta?.('diagnostics') ?? null;
+    const epoch = meta?.sourceEpoch ?? meta?.epoch;
+    if (epoch === null || epoch === undefined || epoch === '') return null;
+    return `${meta?.source ?? 'unknown'}:${String(epoch)}`;
+}
 
 // Inject the panel stylesheet via a JS-injected (async, NON-render-blocking)
 // link instead of a <head> <link>, and only on first show — same rationale as
@@ -364,6 +376,8 @@ export function mountTimePanel(host, getBridge) {
 
     let lastMetrics = null;     // { physicalTime, fMin, dtauMin, gammaMax }
     let bridgeId = null;
+    let resetVersion = -1;
+    let sourceBoundary = null;
     let vImposed = 0.30;        // [IMPOSED] slider state
     // twin-clock accumulators
     let twin = { tauDeep: 0, tauFar: 0, history: [], lDeep: 0, lFar: 0, active: false };
@@ -416,8 +430,19 @@ export function mountTimePanel(host, getBridge) {
         const b = getBridge?.();
         const caps = b?.capabilities?.scale0 || null;
         if (!caps) return;
-        // Reset all history if the bridge identity changed (scenario / scale switch).
-        if (b !== bridgeId) { bridgeId = b; resetTwin(); }
+        // Scenario reloads can retain the same worker owner. Reset accumulated
+        // proper time on the hub reset/source boundary as well as bridge identity
+        // so two distinct scientific runs are never joined into one twin trace.
+        const nextResetVersion = telemetryHub.getResetVersion?.(0) ?? 0;
+        const nextSourceBoundary = timeSourceBoundary();
+        const sourceChanged = sourceBoundary !== null && nextSourceBoundary !== null
+            && sourceBoundary !== nextSourceBoundary;
+        if (b !== bridgeId || nextResetVersion !== resetVersion || sourceChanged) {
+            bridgeId = b;
+            resetVersion = nextResetVersion;
+            resetTwin();
+        }
+        if (nextSourceBoundary !== null) sourceBoundary = nextSourceBoundary;
         // Gate the heavy work (latency sampler + radial bins) on visibility —
         // the established panel pattern (isPanelLive); idle when the tab is hidden.
         if (!isPanelLive(host)) {
@@ -426,22 +451,41 @@ export function mountTimePanel(host, getBridge) {
         }
         getBridge?.()?.replaceSamplerWants?.('time-panel', [`latency@${STRIDE}`]);
 
+        const diagMeta = telemetryHub.getScale0TelemetryMeta?.('diagnostics') ?? null;
         const { diag: hubDiag } = readScale0DiagAudit(b);
-        const diag = hubDiag || caps.getScale0Diagnostics?.() || {};
-        const physicalTime = (diag.physicalTime !== undefined && diag.physicalTime !== null)
-            ? diag.physicalTime : (diag.tick || 0);
-        const dt = (diag.dt !== undefined && diag.dt !== null && diag.dt > 0) ? diag.dt : 1;
-        const tick = diag.tick | 0;
+        const diag = diagMeta && diagMeta.stale !== true && Number.isFinite(diagMeta.tick)
+            ? hubDiag : null;
+        const tick = Number.isFinite(diag?.tick) ? diag.tick : null;
+        const physicalTime = Number.isFinite(diag?.physicalTime)
+            ? diag.physicalTime : tick;
+        const dt = Number.isFinite(diag?.dt) && diag.dt > 0 ? diag.dt : null;
+        if (!diag || tick === null || !Number.isFinite(physicalTime)) {
+            const unavailable = '<div class="time-empty">Current Scale-0 telemetry is unavailable; no zero baseline has been synthesized.</div>';
+            cardA.innerHTML = unavailable;
+            cardB.innerHTML = unavailable;
+            cardC.innerHTML = unavailable;
+            lastMetrics = null;
+            renderD();
+            renderCardE(cardE, {
+                hasData: false, active: false, omega0: Number.NaN,
+                phase: Number.NaN, speed: Number.NaN, latency: Number.NaN,
+                clockRate: Number.NaN,
+            });
+            return;
+        }
 
         const agg = caps.getScale0GravityMetricAgg?.() || null;
         const { prof, lDeep, lFar, hasField } = sampleField(caps);
 
         // Card A metrics: deepest latency over the profile drives f_min / dτ/dt.
-        let lMax = 0;
-        for (const p of prof) if (p.L > lMax) lMax = p.L;
-        const fMin = lapse(lMax);
-        const dtauMin = clockRate(lMax);
-        const gammaMax = ftdGamma(lMax, 0);   // = 1/√f at v=0
+        let lMax = Number.NaN;
+        if (hasField) {
+            lMax = 0;
+            for (const p of prof) if (p.L > lMax) lMax = p.L;
+        }
+        const fMin = hasField ? lapse(lMax) : Number.NaN;
+        const dtauMin = hasField ? clockRate(lMax) : Number.NaN;
+        const gammaMax = hasField ? ftdGamma(lMax, 0) : Number.NaN;   // = 1/√f at v=0
         lastMetrics = { physicalTime, fMin, dtauMin, gammaMax };
         renderCardA(cardA, lastMetrics, agg);
 
@@ -452,7 +496,7 @@ export function mountTimePanel(host, getBridge) {
         if (hasField) {
             if (tick !== lastTick) {
                 // On the first valid tick just latch; thereafter accumulate.
-                if (lastTick >= 0) {
+                if (lastTick >= 0 && Number.isFinite(dt)) {
                     twin.tauDeep += properTimeStep(lDeep, dt);
                     twin.tauFar += properTimeStep(lFar, dt);
                     twin.history.push(twin.tauFar - twin.tauDeep);
@@ -475,17 +519,19 @@ export function mountTimePanel(host, getBridge) {
         const omega0 = (typeof b.getOmega0 === 'function') ? b.getOmega0() : 1.0;
         let phase = 0, speed = 0, latency = 0, hasPhase = false;
         if (typeof b.inspectVoxel === 'function') {
-            const L = caps.latticeSize || diag.latticeSize || 33;
-            const mc = Math.round((L - 1) / 2);
-            const vox = b.inspectVoxel(mc, mc, mc);
+            const L = Number.isFinite(caps.latticeSize) ? caps.latticeSize
+                : (Number.isFinite(diag.latticeSize) ? diag.latticeSize : null);
+            const mc = Number.isFinite(L) ? Math.round((L - 1) / 2) : null;
+            const vox = mc === null ? null : b.inspectVoxel(mc, mc, mc);
             if (vox && vox.phase !== undefined) {
-                phase = vox.phase || 0;
-                speed = vox.speed || 0;
-                latency = vox.latency || 0;
-                hasPhase = true;
+                phase = Number.isFinite(vox.phase) ? vox.phase : Number.NaN;
+                speed = Number.isFinite(vox.speed) ? vox.speed : Number.NaN;
+                latency = Number.isFinite(vox.latency) ? vox.latency : Number.NaN;
+                hasPhase = [phase, speed, latency].every(Number.isFinite);
             }
         }
-        const clockRateNow = omega0 * clockRate(latency, speed);
+        const clockRateNow = hasPhase && Number.isFinite(omega0)
+            ? omega0 * clockRate(latency, speed) : Number.NaN;
         renderCardE(cardE, {
             hasData: dbActive || (hasPhase && phase !== 0),
             active: dbActive, omega0, phase, speed, latency, clockRate: clockRateNow,
@@ -510,6 +556,7 @@ export function mountTimePanel(host, getBridge) {
         get lastMetrics() { return lastMetrics; },
         get historyLength() { return twin.history.length; },
         get twin() { return twin; },
+        get sourceBoundary() { return sourceBoundary; },
         setImposedV: (v) => { vImposed = Math.max(0, Math.min(0.95, +v || 0)); renderD(); },
         dispose: () => {
             armSub.unsubscribe();

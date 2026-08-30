@@ -37,6 +37,42 @@ function telemetryNow() {
         ? performance.now() : Date.now();
 }
 
+// Availability is part of the scientific value, not a rendering concern.
+// Keep exact numeric zero intact, but represent every absent/non-finite sample
+// as NaN so tables can render an em dash and uPlot can leave a visible gap.
+const unavailableSample = () => Number.NaN;
+const finiteSample = (value) => (
+    typeof value === 'number' && Number.isFinite(value) ? value : unavailableSample()
+);
+const firstFiniteSample = (...values) => {
+    for (const value of values) {
+        if (typeof value === 'number' && Number.isFinite(value)) return value;
+    }
+    return unavailableSample();
+};
+const finiteAbsSample = (value) => {
+    const sample = finiteSample(value);
+    return Number.isFinite(sample) ? Math.abs(sample) : unavailableSample();
+};
+const finiteDifference = (left, right) => (
+    Number.isFinite(left) && Number.isFinite(right)
+        ? left - right : unavailableSample()
+);
+const finiteMagnitude = (...components) => (
+    components.length > 0 && components.every(Number.isFinite)
+        ? Math.hypot(...components) : unavailableSample()
+);
+
+function scale0SampleStamp(meta) {
+    const identity = meta?.stateVersion ?? meta?.tick ?? meta?.snapshotVersion;
+    if (identity === null || identity === undefined) return null;
+    return [
+        meta?.source ?? 'unknown',
+        meta?.sourceEpoch ?? meta?.epoch ?? 'local',
+        identity,
+    ].join(':');
+}
+
 function freshScale0State() {
     return {
         diag: null,
@@ -55,6 +91,7 @@ function freshScale0State() {
             // reduced; the comparison is what makes retained values stale
             // rather than silently relabelling them as fresh.
             expectedSourceEpoch: null,
+            expectedSource: null,
             snapshotVersion: null,
             tick: null,
             stale: true,
@@ -78,19 +115,19 @@ export class RingBuffer {
     }
 
     push(value) {
-        this.data[this.head] = isFinite(value) ? value : 0;
+        this.data[this.head] = finiteSample(value);
         this.head = (this.head + 1) % this.size;
         if (this.count < this.size) this.count++;
         this.total++;
     }
 
     get(i) {
-        if (i >= this.count) return 0;
+        if (i < 0 || i >= this.count) return unavailableSample();
         return this.data[(this.head - this.count + i + this.size) % this.size];
     }
 
     last() {
-        if (this.count === 0) return 0;
+        if (this.count === 0) return unavailableSample();
         return this.data[(this.head - 1 + this.size) % this.size];
     }
 
@@ -149,13 +186,10 @@ export class MultiRingBuffer {
     push(frame) {
         for (let i = 0; i < this.numChannels; i++) {
             const val = frame[this.channels[i]];
-            // An explicit NaN is a meaningful "measurement unavailable"
-            // sample (for example, drift under non-conservative dynamics).
-            // Preserve it so tables render an em dash and charts show a gap;
-            // continue normalizing absent/invalid producer values to zero.
-            this.data[(i * this.size) + this.head] = Number.isNaN(val)
-                ? Number.NaN
-                : (Number.isFinite(val) ? val : 0);
+            // Missing, NaN, and infinity all mean "measurement unavailable".
+            // Exact numeric zero remains zero. This is deliberately the same
+            // contract as RingBuffer.push() and RingBufferView.setLast().
+            this.data[(i * this.size) + this.head] = finiteSample(val);
         }
         this.head = (this.head + 1) % this.size;
         if (this.count < this.size) this.count++;
@@ -190,14 +224,14 @@ export class RingBufferView {
     get size() { return this.parent.size; }
 
     get(i) {
-        if (i >= this.parent.count) return 0;
+        if (i < 0 || i >= this.parent.count) return unavailableSample();
         const pSize = this.parent.size;
         const idx = (this.parent.head - this.parent.count + i + pSize) % pSize;
         return this.parent.data[this.offset + idx];
     }
     
     last() {
-        if (this.parent.count === 0) return 0;
+        if (this.parent.count === 0) return unavailableSample();
         const pSize = this.parent.size;
         const idx = (this.parent.head - 1 + pSize) % pSize;
         return this.parent.data[this.offset + idx];
@@ -214,9 +248,7 @@ export class RingBufferView {
         if (this.parent.count === 0) return;
         const pSize = this.parent.size;
         const idx = (this.parent.head - 1 + pSize) % pSize;
-        this.parent.data[this.offset + idx] = Number.isNaN(value)
-            ? Number.NaN
-            : (Number.isFinite(value) ? value : 0);
+        this.parent.data[this.offset + idx] = finiteSample(value);
     }
 
     max() {
@@ -322,7 +354,7 @@ export class TelemetryHub {
         this.gauss = new RingBuffer(500);
 
         // Per-audit-field trend buffers (500-sample) — drive panel-row sparklines.
-                this._s0_aud = new MultiRingBuffer(500, ['fieldEnergy', 'waveEnergy', 'particleKE', 'coulombPE', 'eFieldEnergy', 'bFieldEnergy', 'poyntingMag', 'maxGaussError', 'selfFieldInjection', 'eLeftEnergy', 'eRightEnergy', 'chirality', 'waveLeft', 'waveRight', 'energyDrift']);
+                this._s0_aud = new MultiRingBuffer(500, ['dynamicEnergy', 'fieldEnergy', 'waveEnergy', 'particleKE', 'coulombPE', 'eFieldEnergy', 'bFieldEnergy', 'poyntingMag', 'maxGaussError', 'selfFieldInjection', 'eLeftEnergy', 'eRightEnergy', 'chirality', 'waveLeft', 'waveRight', 'energyDrift']);
         this.aud = this._s0_aud.views;
 
         // Sparkline-resolution (80-sample) — legacy PE canvas sparklines + hub history
@@ -384,21 +416,55 @@ export class TelemetryHub {
 
     // ── Scale 0 collection ──────────────────────────────────────────────────
 
-    _directScale0Meta(group, value, source = 'direct') {
+    _directScale0Meta(group, value, source = 'direct', owner = null) {
+        const external = owner?.getScale0TelemetryGroupMeta?.(group)
+            ?? owner?.capabilities?.scale0?.getScale0TelemetryGroupMeta?.(group)
+            ?? null;
+        if (external) {
+            const externalTick = external.sampleTick ?? external.tick ?? value?.tick ?? null;
+            const hasValue = !!value && typeof value === 'object';
+            const status = hasValue
+                ? (external.status ?? (external.stale ? 'stale' : 'available'))
+                : 'unavailable';
+            const result = {
+                source: external.backend ?? source,
+                epoch: external.epoch ?? null,
+                sourceEpoch: external.sourceEpoch ?? null,
+                stateVersion: Number.isFinite(external.stateVersion)
+                    ? external.stateVersion : null,
+                snapshotVersion: Number.isFinite(external.snapshotVersion)
+                    ? external.snapshotVersion : (Number.isFinite(external.stateVersion)
+                        ? external.stateVersion : ++this._s0LocalSampleSequence),
+                tick: Number.isFinite(externalTick) ? externalTick : null,
+                sampleTick: Number.isFinite(externalTick) ? externalTick : null,
+                stale: !hasValue || external.stale === true || status !== 'available',
+                status,
+                sampledAt: Number.isFinite(external.sampledAt) ? external.sampledAt : null,
+                receivedAt: Number.isFinite(external.receivedAt)
+                    ? external.receivedAt : telemetryNow(),
+            };
+            this._observeScale0SourceEpoch(result, result.source);
+            return result;
+        }
         const tick = Number.isFinite(value?.tick)
             ? value.tick
             : (Number.isFinite(this.s0.diag?.tick) ? this.s0.diag.tick : null);
         const stateVersion = tick ?? ++this._s0LocalSampleSequence;
-        return {
+        const hasValue = !!value && typeof value === 'object';
+        const result = {
             source,
             epoch: null,
             sourceEpoch: null,
             stateVersion,
             snapshotVersion: ++this._s0LocalSampleSequence,
             tick,
-            stale: false,
+            sampleTick: tick,
+            stale: !hasValue,
+            status: hasValue ? 'available' : 'unavailable',
+            sampledAt: null,
             receivedAt: telemetryNow(),
         };
+        return result;
     }
 
     _normalizeScale0GroupMeta(snapshot, rawMeta, value, source = 'native') {
@@ -417,7 +483,10 @@ export class TelemetryHub {
             snapshotVersion: Number.isFinite(snapshotVersion)
                 ? snapshotVersion : ++this._s0LocalSampleSequence,
             tick: Number.isFinite(tick) ? tick : null,
+            sampleTick: Number.isFinite(meta.sampleTick ?? tick)
+                ? (meta.sampleTick ?? tick) : null,
             stale: !!(meta.stale || snapshot?.stale),
+            sampledAt: Number.isFinite(meta.sampledAt) ? meta.sampledAt : null,
             // Preserve bridge receipt time so a temporarily busy UI still
             // reports the source sample's age rather than its next paint.
             receivedAt: Number.isFinite(meta.receivedAt)
@@ -477,6 +546,16 @@ export class TelemetryHub {
             && meta.tick === current.tick) {
             return true;
         }
+        // A transient getter failure may mark an otherwise unchanged direct
+        // state unavailable. Accept its recovery at the same source identity;
+        // scientific history remains deduplicated by the unchanged stamp.
+        if (!meta.stale && current?.stale
+            && meta.source === current.source && meta.epoch === current.epoch
+            && meta.sourceEpoch === current.sourceEpoch
+            && meta.stateVersion === current.stateVersion
+            && meta.tick === current.tick) {
+            return true;
+        }
         const order = this._compareScale0GroupMeta(meta, current);
         if (order <= 0) return false;
         // A response explicitly marked stale must not replace a newer live
@@ -499,18 +578,32 @@ export class TelemetryHub {
         this.s0.meta.stale = meta.stale;
     }
 
+    _markScale0GroupUnavailable(group, meta) {
+        if (!meta || meta.stale !== true) return false;
+        const current = this.s0.meta.groups[group];
+        if (current && this._compareScale0GroupMeta(meta, current) < 0) return false;
+        this._setScale0GroupMeta(group, meta);
+        return true;
+    }
+
     _observeScale0SourceEpoch(snapshot, source) {
-        if (source !== 'native') return;
         const epoch = Number(snapshot?.sourceEpoch);
         if (!Number.isFinite(epoch)) return;
         const current = this.s0.meta.expectedSourceEpoch;
-        if (current !== null && epoch < current) return;
+        const currentSource = this.s0.meta.expectedSource;
+        if (currentSource === source && current !== null && epoch < current) return;
+        const boundaryChanged = currentSource !== source || current === null || epoch > current;
+        this.s0.meta.expectedSource = source;
         this.s0.meta.expectedSourceEpoch = epoch;
-        if (current === null || epoch > current) {
+        if (boundaryChanged) {
             // Do not overwrite the old per-group stamps. They are useful
             // provenance; getScale0TelemetryMeta will label them stale until
             // a fresh group at this source epoch arrives.
             this.s0.meta.stale = true;
+            // A source/configuration mutation is an intervention boundary, not
+            // conservation drift. The next finite non-zero audit establishes
+            // its own reference baseline.
+            this._initialEnergy = null;
         }
     }
 
@@ -518,79 +611,109 @@ export class TelemetryHub {
         this.s0.diag = diag;
         this._setScale0GroupMeta('diagnostics', meta);
 
-        const currentTick = meta.tick ?? diag.tick ?? 0;
-        if (currentTick !== this._lastTick0) {
-            this._lastTick0 = currentTick;
+        const sampleStamp = scale0SampleStamp(meta);
+        if (!meta.stale && sampleStamp !== null && sampleStamp !== this._lastTick0) {
+            this._lastTick0 = sampleStamp;
+
+            const positive = finiteSample(diag.positive);
+            const negative = finiteSample(diag.negative);
+            const chargeBalance = firstFiniteSample(
+                diag.chargeBalance,
+                finiteDifference(positive, negative),
+            );
+            const fieldSpin = finiteMagnitude(
+                finiteSample(diag.fieldSpinX),
+                finiteSample(diag.fieldSpinY),
+                finiteSample(diag.fieldSpinZ),
+            );
+            // Dynamic energy is an audit-derived channel. Some direct bridges
+            // join an exact same-state audit into Diagnostics as a convenience,
+            // but the observer-baseline total must never be substituted here.
+            const dynamicEnergy = finiteSample(diag.dynamicEnergy);
 
             // 500-sample buffers for charts
             this._s0_core.push({
-                flux: diag.totalFlux || 0,
-                energy: diag.totalEnergy || 0,
-                manifested: diag.manifested || 0,
-                entropy: diag.entropy || 0,
-                positive: diag.positive || 0,
-                negative: diag.negative || 0,
-                charges: (diag.positive || 0) - (diag.negative || 0),
-                fieldSpin: Math.hypot(diag.fieldSpinX || 0, diag.fieldSpinY || 0, diag.fieldSpinZ || 0),
-                fieldHelicity: diag.fieldHelicity || 0,
+                flux: finiteSample(diag.totalFlux),
+                energy: dynamicEnergy,
+                manifested: finiteSample(diag.manifested),
+                entropy: finiteSample(diag.entropy),
+                positive,
+                negative,
+                charges: chargeBalance,
+                fieldSpin,
+                fieldHelicity: finiteSample(diag.fieldHelicity),
             });
 
             // 80-sample sparkline buffers
             this._s0_sp.push({
-                manifested: diag.manifested || 0,
-                charges: (diag.positive || 0) - (diag.negative || 0),
-                flux: diag.totalFlux || 0,
-                energy: diag.totalEnergy || 0,
-                entropy: diag.entropy || 0,
+                manifested: finiteSample(diag.manifested),
+                charges: chargeBalance,
+                flux: finiteSample(diag.totalFlux),
+                energy: dynamicEnergy,
+                entropy: finiteSample(diag.entropy),
             });
         }
         return diag;
     }
 
     _publishScale0Audit(audit, meta) {
-        const eF  = audit.EFieldEnergy || audit.eFieldEnergy || 0;
-        const bF  = audit.BFieldEnergy || audit.bFieldEnergy || 0;
-        const px  = audit.totalPoynting?.x ?? audit.poyntingX ?? 0;
-        const py  = audit.totalPoynting?.y ?? audit.poyntingY ?? 0;
-        const pz  = audit.totalPoynting?.z ?? audit.poyntingZ ?? 0;
-        const pMag = Math.sqrt(px * px + py * py + pz * pz);
+        const eF = firstFiniteSample(audit.EFieldEnergy, audit.eFieldEnergy);
+        const bF = firstFiniteSample(audit.BFieldEnergy, audit.bFieldEnergy);
+        const px = firstFiniteSample(audit.totalPoynting?.x, audit.poyntingX);
+        const py = firstFiniteSample(audit.totalPoynting?.y, audit.poyntingY);
+        const pz = firstFiniteSample(audit.totalPoynting?.z, audit.poyntingZ);
+        const pMag = finiteMagnitude(px, py, pz);
 
         // Energy drift calculation
-        const currentH = audit.dynamicEnergy ?? audit.totalEnergy ?? 0;
-        if (this._initialEnergy === undefined || this._initialEnergy === null) {
-            if (currentH > 1e-12) this._initialEnergy = currentH;
-        }
-        let drift = 0;
-        if (this._initialEnergy) {
-            drift = ((currentH - this._initialEnergy) / this._initialEnergy) * 100;
+        const currentH = firstFiniteSample(audit.dynamicEnergy, audit.totalEnergy);
+        let drift = unavailableSample();
+        if (!meta.stale && Number.isFinite(currentH)) {
+            if (Number.isFinite(this._initialEnergy) && Math.abs(this._initialEnergy) > 1e-12) {
+                drift = ((currentH - this._initialEnergy) / this._initialEnergy) * 100;
+            } else if (Math.abs(currentH) > 1e-12) {
+                this._initialEnergy = currentH;
+                drift = 0;
+            }
         }
         const enriched = { ...audit, energyDrift: drift };
         this.s0.audit = enriched;
         this._setScale0GroupMeta('audit', meta);
 
-        const currentTick = meta.tick ?? this.s0.diag?.tick ?? 0;
-        if (currentTick !== this._lastAuditTick) {
-            this._lastAuditTick = currentTick;
+        const sampleStamp = scale0SampleStamp(meta);
+        if (!meta.stale && sampleStamp !== null && sampleStamp !== this._lastAuditTick) {
+            this._lastAuditTick = sampleStamp;
 
-            this.ebDiff.push(eF - bF);
-            this.gauss.push(audit.gaussViolation || 0);
+            this.ebDiff.push(finiteDifference(eF, bF));
+            this.gauss.push(finiteSample(audit.gaussViolation));
+
+            // Native diagnostics and audit are immutable independent groups.
+            // Join only the same completed tick into the already-created core
+            // row; never mutate the diagnostics object or relabel audit data.
+            const diagMeta = this.getScale0TelemetryMeta('diagnostics');
+            if (Number.isFinite(currentH) && this.energy.count > 0
+                && !diagMeta?.stale && Number.isFinite(meta.tick)
+                && meta.tick === diagMeta?.tick) {
+                this.energy.setLast(currentH);
+                this.sp.energy.setLast(currentH);
+            }
 
             // Per-field trend buffers (drive diagnostics table sparklines)
             this._s0_aud.push({
-                fieldEnergy: audit.fieldEnergy || 0,
-                waveEnergy: audit.waveEnergy || 0,
-                particleKE: audit.particleKE || 0,
-                coulombPE: audit.coulombPE || 0,
+                dynamicEnergy: currentH,
+                fieldEnergy: finiteSample(audit.fieldEnergy),
+                waveEnergy: finiteSample(audit.waveEnergy),
+                particleKE: finiteSample(audit.particleKE),
+                coulombPE: finiteSample(audit.coulombPE),
                 eFieldEnergy: eF,
                 bFieldEnergy: bF,
                 poyntingMag: pMag,
-                maxGaussError: audit.maxGaussError || 0,
-                selfFieldInjection: audit.selfFieldInjection || 0,
-                eLeftEnergy: audit.ELTotal || audit.eLTotal || 0,
-                eRightEnergy: audit.ERTotal || audit.eRTotal || 0,
-                chirality: audit.chiralityTotal || 0,
-                waveLeft: audit.wvLTotal || 0,
-                waveRight: audit.wvRTotal || 0,
+                maxGaussError: finiteSample(audit.maxGaussError),
+                selfFieldInjection: finiteSample(audit.selfFieldInjection),
+                eLeftEnergy: firstFiniteSample(audit.ELTotal, audit.eLTotal),
+                eRightEnergy: firstFiniteSample(audit.ERTotal, audit.eRTotal),
+                chirality: finiteSample(audit.chiralityTotal),
+                waveLeft: firstFiniteSample(audit.wvLTotal, audit.waveLTotal),
+                waveRight: firstFiniteSample(audit.wvRTotal, audit.waveRTotal),
                 energyDrift: drift,
             });
         }
@@ -601,21 +724,24 @@ export class TelemetryHub {
         this.s0.lagrangian = lag;
         this._setScale0GroupMeta('lagrangian', meta);
 
-        const currentTick = meta.tick ?? this.s0.diag?.tick ?? 0;
-        if (currentTick !== this._lastLagTick) {
-            this._lastLagTick = currentTick;
+        const sampleStamp = scale0SampleStamp(meta);
+        if (!meta.stale && sampleStamp !== null && sampleStamp !== this._lastLagTick) {
+            this._lastLagTick = sampleStamp;
 
             this._s0_lag.push({
-                fieldKinetic: Math.abs(lag.fieldKinetic || 0),
-                fieldGradient: Math.abs(lag.fieldGradient || 0),
-                bornInfeld: Math.abs(lag.bornInfeld || 0),
-                coupling: Math.abs(lag.coupling || 0),
-                velocity: Math.abs(lag.velocity || 0),
-                gauss: Math.abs(lag.gauss || 0),
-                dissipation: Math.abs(lag.dissipation || 0),
-                total: lag.total || 0,
-                hamiltonian: lag.hamiltonian || 0,
-                action: lag.totalAction || 0,
+                // Charts must agree with the signed raw table. Magnitudes are
+                // computed only in getLagrangianDecomposition(), where the UI
+                // explicitly asks for fractional contribution sizes.
+                fieldKinetic: finiteSample(lag.fieldKinetic),
+                fieldGradient: finiteSample(lag.fieldGradient),
+                bornInfeld: finiteSample(lag.bornInfeld),
+                coupling: finiteSample(lag.coupling),
+                velocity: finiteSample(lag.velocity),
+                gauss: finiteSample(lag.gauss),
+                dissipation: finiteSample(lag.dissipation),
+                total: finiteSample(lag.total),
+                hamiltonian: finiteSample(lag.hamiltonian),
+                action: finiteSample(lag.totalAction),
             });
         }
         return lag;
@@ -677,14 +803,17 @@ export class TelemetryHub {
         const meta = this.s0.meta.groups[group];
         if (!meta) return null;
         const expectedEpoch = this.s0.meta.expectedSourceEpoch;
+        const expectedSource = this.s0.meta.expectedSource;
         const groupEpoch = Number(meta.sourceEpoch);
-        const staleBySourceBoundary = meta.source === 'native'
+        const staleBySourceBoundary = expectedSource !== null
             && Number.isFinite(expectedEpoch)
-            && (!Number.isFinite(groupEpoch) || groupEpoch < expectedEpoch);
+            && (meta.source !== expectedSource
+                || !Number.isFinite(groupEpoch) || groupEpoch < expectedEpoch);
+        const receivedAt = Number.isFinite(meta.receivedAt) ? meta.receivedAt : telemetryNow();
         return {
             ...meta,
             stale: !!meta.stale || staleBySourceBoundary,
-            ageMs: Math.max(0, telemetryNow() - (meta.receivedAt || telemetryNow())),
+            ageMs: Math.max(0, telemetryNow() - receivedAt),
         };
     }
 
@@ -710,11 +839,18 @@ export class TelemetryHub {
             if (!wasmDiagRead) { wasmDiag = mainCaps.getScale0Diagnostics(); wasmDiagRead = true; }
             return wasmDiag;
         };
-        const diag = (mockCaps ? mockCaps.getScale0Diagnostics() : null) || readWasmDiag();
-        if (!diag) return null;
+        const owner = mockCaps ? fluxMock : bridge;
+        const source = mockCaps ? 'mock' : 'wasm';
+        const diag = mockCaps ? mockCaps.getScale0Diagnostics() : readWasmDiag();
+        if (!diag) {
+            this._markScale0GroupUnavailable(
+                'diagnostics', this._directScale0Meta('diagnostics', null, source, owner),
+            );
+            return null;
+        }
         return this._publishScale0Diagnostics(
             diag,
-            this._directScale0Meta('diagnostics', diag, mockCaps ? 'mock' : 'wasm'),
+            this._directScale0Meta('diagnostics', diag, source, owner),
         );
     }
 
@@ -727,10 +863,17 @@ export class TelemetryHub {
         const audit = mockCaps
             ? mockCaps.getScale0EnergyAudit()
             : mainCaps.getScale0EnergyAudit();
-        if (!audit) return null;
+        const owner = mockCaps ? fluxMock : bridge;
+        const source = mockCaps ? 'mock' : 'wasm';
+        if (!audit) {
+            this._markScale0GroupUnavailable(
+                'audit', this._directScale0Meta('audit', null, source, owner),
+            );
+            return null;
+        }
         return this._publishScale0Audit(
             audit,
-            this._directScale0Meta('audit', audit, mockCaps ? 'mock' : 'wasm'),
+            this._directScale0Meta('audit', audit, source, owner),
         );
     }
 
@@ -743,10 +886,17 @@ export class TelemetryHub {
         const lag = mockCaps
             ? mockCaps.getScale0Lagrangian()
             : mainCaps.getScale0Lagrangian();
-        if (!lag) return null;
+        const owner = mockCaps ? fluxMock : bridge;
+        const source = mockCaps ? 'mock' : 'wasm';
+        if (!lag) {
+            this._markScale0GroupUnavailable(
+                'lagrangian', this._directScale0Meta('lagrangian', null, source, owner),
+            );
+            return null;
+        }
         return this._publishScale0Lagrangian(
             lag,
-            this._directScale0Meta('lagrangian', lag, mockCaps ? 'mock' : 'wasm'),
+            this._directScale0Meta('lagrangian', lag, source, owner),
         );
     }
 
@@ -1140,29 +1290,48 @@ export class TelemetryHub {
     /** Scale 0: particle composition ratios */
     getScale0Derived() {
         const d = this.s0.diag;
-        if (!d || !d.manifested) return { chiralityRatio: 1, colorFraction: 0, spinAsymmetry: 0 };
-        const n = d.manifested;
+        const meta = this.getScale0TelemetryMeta('diagnostics');
+        const n = finiteSample(d?.manifested);
+        if (!d || meta?.stale || !Number.isFinite(n) || n <= 0) return null;
+        const positive = finiteSample(d.positive);
+        const negative = finiteSample(d.negative);
+        const red = finiteSample(d.colorRed);
+        const green = finiteSample(d.colorGreen);
+        const blue = finiteSample(d.colorBlue);
+        const spinUp = finiteSample(d.spinUp);
+        const spinDown = finiteSample(d.spinDown);
+        const colorless = finiteSample(d.colorless);
         return {
-            chiralityRatio:  d.positive && d.negative ? d.positive / d.negative : 1,
-            chargeImbalance: Math.abs((d.positive || 0) - (d.negative || 0)),
-            colorFraction:   ((d.colorRed || 0) + (d.colorGreen || 0) + (d.colorBlue || 0)) / n,
-            spinAsymmetry:   Math.abs((d.spinUp || 0) - (d.spinDown || 0)) / n,
-            colorlessRatio:  (d.colorless || 0) / n,
+            chiralityRatio: Number.isFinite(positive) && Number.isFinite(negative) && negative !== 0
+                ? positive / negative : unavailableSample(),
+            chargeImbalance: Number.isFinite(positive) && Number.isFinite(negative)
+                ? Math.abs(positive - negative) : unavailableSample(),
+            colorFraction: [red, green, blue].every(Number.isFinite)
+                ? (red + green + blue) / n : unavailableSample(),
+            spinAsymmetry: [spinUp, spinDown].every(Number.isFinite)
+                ? Math.abs(spinUp - spinDown) / n : unavailableSample(),
+            colorlessRatio: Number.isFinite(colorless)
+                ? colorless / n : unavailableSample(),
         };
     }
 
     /** Scale 0: constraint violation status */
     getConservationStatus() {
         const a = this.s0.audit;
-        if (!a) return { ok: true, gaussViolation: 0, maxGaussError: 0 };
-        const gv = a.gaussViolation || 0;
+        const meta = this.getScale0TelemetryMeta('audit');
+        if (!a || meta?.stale) return null;
+        const gv = finiteSample(a.gaussViolation);
+        const maxGaussError = finiteSample(a.maxGaussError);
+        const selfFieldInjection = finiteSample(a.selfFieldInjection);
+        const totalEnergy = finiteSample(a.totalEnergy);
         return {
-            ok:             gv < 1e-4,
+            ok:             Number.isFinite(gv) ? gv < 1e-4 : null,
             gaussViolation: gv,
-            maxGaussError:  a.maxGaussError || 0,
-            selfFieldRatio: a.selfFieldInjection && a.totalEnergy
-                ? Math.abs(a.selfFieldInjection) / Math.max(a.totalEnergy, 1e-12)
-                : 0,
+            maxGaussError,
+            selfFieldRatio: Number.isFinite(selfFieldInjection)
+                && Number.isFinite(totalEnergy) && Math.abs(totalEnergy) > 1e-12
+                ? Math.abs(selfFieldInjection) / Math.abs(totalEnergy)
+                : unavailableSample(),
         };
     }
 
@@ -1201,13 +1370,19 @@ export class TelemetryHub {
     /** Scale 0: Lagrangian field/particle/constraint decomposition */
     getLagrangianDecomposition() {
         const lag = this.s0.lagrangian;
-        if (!lag) return null;
-        const field      = Math.abs(lag.fieldKinetic || 0) + Math.abs(lag.fieldGradient || 0);
-        const particle   = Math.abs(lag.bornInfeld   || 0);
-        const interaction = Math.abs(lag.coupling    || 0) + Math.abs(lag.velocity || 0);
-        const constraint  = Math.abs(lag.gauss       || 0);
-        const dissipation = Math.abs(lag.dissipation || 0);
-        const total       = field + particle + interaction + constraint + dissipation || 1;
+        const meta = this.getScale0TelemetryMeta('lagrangian');
+        if (!lag || meta?.stale) return null;
+        const samples = [
+            lag.fieldKinetic, lag.fieldGradient, lag.bornInfeld,
+            lag.coupling, lag.velocity, lag.gauss, lag.dissipation,
+        ].map(finiteAbsSample);
+        if (!samples.every(Number.isFinite)) return null;
+        const [fieldKinetic, fieldGradient, particle, coupling, velocity, constraint, dissipation]
+            = samples;
+        const field = fieldKinetic + fieldGradient;
+        const interaction = coupling + velocity;
+        const total = field + particle + interaction + constraint + dissipation;
+        if (!(total > 0)) return null;
         return {
             fieldFraction:       field       / total,
             particleFraction:    particle    / total,

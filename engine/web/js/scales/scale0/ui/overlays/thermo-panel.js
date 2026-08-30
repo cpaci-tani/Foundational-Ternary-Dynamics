@@ -25,11 +25,13 @@ import { paintSliceToCanvas } from './slice-render.js';
 import { rampEmEnergy } from '../../../../viewport/color-ramps.js';
 import { C_SPEED } from '../../../../constants.js';
 import {
+    isCurrentScale0TelemetryMeta,
     readScale0DiagAudit,
     readScale0TotalEnergy,
     readScale0WaveEnergy,
     readScale0FieldEnergy,
 } from '../../../../telemetry/scale0-read.js';
+import { telemetryHub } from '../../../../telemetry-hub.js';
 
 const PANEL_ID = 'thermo-panel';
 const HZ = 4;
@@ -123,6 +125,21 @@ function sparkPath(values, w = 240, h = 34) {
     return d;
 }
 
+function currentScale0Meta(group) {
+    const meta = telemetryHub.getScale0TelemetryMeta?.(group) ?? null;
+    return isCurrentScale0TelemetryMeta(meta) ? meta : null;
+}
+
+function telemetryStamp(meta) {
+    if (!meta) return 'waiting';
+    return [
+        meta.source ?? 'unknown',
+        meta.sourceEpoch ?? meta.epoch ?? 'local',
+        meta.stateVersion ?? meta.snapshotVersion ?? 'unversioned',
+        meta.tick,
+    ].join(':');
+}
+
 export function mountThermoPanel(host, getBridge) {
     if (!host) return null;
     ensureCss();
@@ -136,6 +153,10 @@ export function mountThermoPanel(host, getBridge) {
     const rowsEl = el('rows'), heat = el('heat'), hmaxEl = el('hmax'), sparkEl = el('spark');
     const mHist = [];
     let bridgeId = null;
+    let resetVersion = -1;
+    let lastHistoryStamp = null;
+    let lastRenderStamp = null;
+    let renderCount = 0;
     let tempFrame = null;
     let pendingTemp = null;
 
@@ -207,55 +228,115 @@ export function mountThermoPanel(host, getBridge) {
     function update() {
         const b = getBridge?.();
         if (!b) return;
-        if (b !== bridgeId) { bridgeId = b; mHist.length = 0; }
+        const nextResetVersion = telemetryHub.getResetVersion?.(0) ?? 0;
+        if (b !== bridgeId || nextResetVersion !== resetVersion) {
+            bridgeId = b;
+            resetVersion = nextResetVersion;
+            lastHistoryStamp = null;
+            lastRenderStamp = null;
+            mHist.length = 0;
+        }
         if (!isPanelLive(host)) return;
 
-        const { diag, audit } = readScale0DiagAudit(b);
-        const L = b.latticeSize || 33;
-        const Nvox = L * L * L;
-        const N = diag?.manifested || 0;
-        const m = Math.min(1, N / Nvox);
+        // A finite group tick is part of the measurement contract. Retained
+        // objects without one are awaiting provenance, not a current zero-valued
+        // thermodynamic state.
+        const diagMeta = currentScale0Meta('diagnostics');
+        const auditMeta = currentScale0Meta('audit');
+        const snapshots = readScale0DiagAudit(b);
+        const diag = diagMeta ? snapshots.diag : null;
+        const audit = auditMeta ? snapshots.audit : null;
+        const L = Number.isFinite(b.latticeSize) && b.latticeSize > 0
+            ? b.latticeSize : null;
+        const Nvox = Number.isFinite(L) ? L * L * L : null;
+        const N = Number.isFinite(diag?.manifested) ? diag.manifested : null;
+        const m = Number.isFinite(N) && Number.isFinite(Nvox)
+            ? Math.min(1, N / Nvox) : null;
         const waveE = readScale0WaveEnergy(diag, audit);
         const fieldE = readScale0FieldEnergy(audit);
-        const totalE = readScale0TotalEnergy(diag, audit);
-        const tKin = waveE / (1.5 * Nvox);
+        const totalE = readScale0TotalEnergy(diag, audit, { diagMeta, auditMeta });
+        const tKin = Number.isFinite(waveE) && Number.isFinite(Nvox)
+            ? waveE / (1.5 * Nvox) : null;
+        const fmt = (value, digits) => Number.isFinite(value) ? value.toFixed(digits) : '—';
         // Actual bath temperature from the engine (falls back to the slider).
-        const Tset = (typeof b.getLangevinTemp === 'function') ? b.getLangevinTemp()
-                                                               : parseFloat(slider.value);
+        const bathReadback = (typeof b.getLangevinTemp === 'function')
+            ? b.getLangevinTemp() : Number.NaN;
+        const imposedBath = parseFloat(slider.value);
+        const Tset = Number.isFinite(bathReadback)
+            ? bathReadback : (Number.isFinite(imposedBath) ? imposedBath : null);
+
+        const freshnessState = diagMeta && auditMeta
+            ? (diagMeta.tick === auditMeta.tick ? 'current' : 'mixed')
+            : (diagMeta || auditMeta ? 'mixed-waiting' : 'waiting');
+        const renderStamp = [
+            resetVersion,
+            telemetryStamp(diagMeta),
+            telemetryStamp(auditMeta),
+            Number.isFinite(L) ? L : 'no-lattice',
+            Number.isFinite(Tset) ? Tset : 'no-temperature',
+        ].join('|');
+        if (panel.dataset.telemetryState !== freshnessState) {
+            panel.dataset.telemetryState = freshnessState;
+        }
+        if (renderStamp === lastRenderStamp) return;
+        lastRenderStamp = renderStamp;
+        renderCount++;
 
         // phase + bar
-        let label = 'VACUUM', color = 'var(--text-secondary,#aaa)';
-        if (m > 0.9) { label = 'CONDENSED'; color = 'var(--accent,#e8b04b)'; }
-        else if (m > 0.05) { label = 'IGNITING'; color = '#e87a4b'; }
+        let label = 'UNAVAILABLE', color = 'var(--warning-text,#e8b04b)';
+        if (Number.isFinite(m)) {
+            label = 'VACUUM'; color = 'var(--text-secondary,#aaa)';
+            if (m > 0.9) { label = 'CONDENSED'; color = 'var(--accent,#e8b04b)'; }
+            else if (m > 0.05) { label = 'IGNITING'; color = '#e87a4b'; }
+        }
         phaseEl.textContent = label; phaseEl.style.color = color;
-        barEl.style.width = (m * 100).toFixed(1) + '%';
-        mpctEl.textContent = (m * 100).toFixed(0) + '%';
+        barEl.style.width = Number.isFinite(m) ? `${(m * 100).toFixed(1)}%` : '0%';
+        mpctEl.textContent = Number.isFinite(m) ? `${(m * 100).toFixed(0)}%` : '—';
 
         // telemetry rows
         rowsEl.innerHTML =
-            rowHTML('T (bath)', `${Tset.toFixed(3)}  (${(Tset / C2).toFixed(2)} c²)`, 'Langevin bath temperature langevin_T (lattice units; c²=1/3).') +
-            rowHTML('T_kin', tKin.toFixed(4), 'Kinetic temperature ⟨½|wave_vel|²⟩/(3/2) (equipartition, k_B≡1).') +
-            rowHTML('m (condensate)', m.toFixed(4), 'Manifestation fraction N/L³ — the condensate order parameter.') +
-            rowHTML('N voxels', `${N} / ${Nvox}`, 'Manifested voxels (the condensate "particles") out of L³.') +
-            rowHTML('E field ½Σ|J|²', fieldE.toFixed(3), 'Flux field energy.') +
-            rowHTML('E wave ½Σ|ẇ|²', waveE.toFixed(3), 'Wave (kinetic) energy — sources T_kin.') +
-            rowHTML('E total', totalE.toFixed(3), 'field + wave + particle KE.');
+            rowHTML('T (bath)', Number.isFinite(Tset)
+                ? `${Tset.toFixed(3)}  (${(Tset / C2).toFixed(2)} c²)` : '—', 'Langevin bath temperature langevin_T (lattice units; c²=1/3).') +
+            rowHTML('T_kin', fmt(tKin, 4), 'Kinetic temperature ⟨½|wave_vel|²⟩/(3/2) (equipartition, k_B≡1).') +
+            rowHTML('m (condensate)', fmt(m, 4), 'Manifestation fraction N/L³ — the condensate order parameter.') +
+            rowHTML('N voxels', Number.isFinite(N) && Number.isFinite(Nvox)
+                ? `${N} / ${Nvox}` : `— / ${Number.isFinite(Nvox) ? Nvox : '—'}`, 'Manifested voxels (the condensate "particles") out of L³.') +
+            rowHTML('E field ½Σ|J|²', fmt(fieldE, 3), 'Flux field energy.') +
+            rowHTML('E wave ½Σ|ẇ|²', fmt(waveE, 3), 'Wave (kinetic) energy — sources T_kin.') +
+            rowHTML('E total', fmt(totalE, 3), 'Current dynamic energy: field + wave + particle KE. Observer/vacuum baseline energy is excluded.');
 
         // flux |J| heat map (z mid-slice)
+        let paintedSlice = false;
         try {
             const mid = (L / 2) | 0;
-            const s = (typeof b.getFluxSlice === 'function') ? b.getFluxSlice(2, mid) : null;
+            const s = diagMeta && Number.isFinite(L) && typeof b.getFluxSlice === 'function'
+                ? b.getFluxSlice(2, mid) : null;
             if (s && s.length >= L * L) {
-                let vmax = 1e-9;
-                for (let i = 0; i < s.length; i++) if (s[i] > vmax) vmax = s[i];
+                let measuredMax = 0;
+                for (let i = 0; i < s.length; i++) {
+                    if (Number.isFinite(s[i]) && s[i] > measuredMax) measuredMax = s[i];
+                }
                 if (heat.width !== L) { heat.width = L; heat.height = L; }
-                paintSliceToCanvas(heat, s, L, { ramp: rampEmEnergy, norm: vmax });
-                hmaxEl.textContent = `|J|max ${vmax.toFixed(2)}`;
+                paintSliceToCanvas(heat, s, L, {
+                    ramp: rampEmEnergy,
+                    norm: Math.max(measuredMax, 1e-9),
+                });
+                hmaxEl.textContent = `|J|max ${measuredMax.toFixed(2)}`;
+                paintedSlice = true;
             }
         } catch (e) { /* slice unavailable on this bridge */ }
+        if (!paintedSlice) {
+            heat.getContext('2d')?.clearRect(0, 0, heat.width, heat.height);
+            hmaxEl.textContent = '—';
+        }
 
         // m sparkline
-        mHist.push(m); if (mHist.length > SPARK_MAX) mHist.shift();
+        const tick = Number.isFinite(diag?.tick) ? diag.tick : null;
+        const historyStamp = diagMeta ? telemetryStamp(diagMeta) : null;
+        if (Number.isFinite(m) && tick !== null && historyStamp !== lastHistoryStamp) {
+            lastHistoryStamp = historyStamp;
+            mHist.push(m); if (mHist.length > SPARK_MAX) mHist.shift();
+        }
         const d = sparkPath(mHist);
         sparkEl.innerHTML = d
             ? `<path d="${d}" fill="none" stroke="var(--accent,#e8b04b)" stroke-width="1.4"/>`
@@ -273,6 +354,8 @@ export function mountThermoPanel(host, getBridge) {
     const api = {
         update,
         element: panel,
+        get renderCount() { return renderCount; },
+        get historyLength() { return mHist.length; },
         setTemp: (T) => {
             slider.value = String(T);
             tvalEl.textContent = (+T).toFixed(3);

@@ -1,6 +1,6 @@
 import { runScale0PhysicsTicks } from './tick.js';
 import { getPhysicsHarness } from '../../../physics/index.js';
-import { WasmBridgeProxy } from '../../../bridge/wasm-bridge-proxy.js?v=2';
+import { WasmBridgeProxy } from '../../../bridge/wasm-bridge-proxy.js?v=3';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../../constants.js';
 import {

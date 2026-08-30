@@ -101,9 +101,16 @@ test('distinguishes an unresolved Diagnostics source from a measured exact zero'
     test.setTimeout(120_000);
     await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
     const result = await page.evaluate(async () => {
-        const [{ DiagnosticsTable }, { formatValue }] = await Promise.all([
+        const [
+            { DiagnosticsTable },
+            { formatValue },
+            { sections: scale0Sections },
+            { resolveChartTelemetryGroups, getChartFreshnessPresentation },
+        ] = await Promise.all([
             import('/js/ui/panels/diagnostics-panel/table.js'),
             import('/js/ui/panels/diagnostics-panel/formatters.js'),
+            import('/js/ui/panels/diagnostics-panel/descriptors/scale0.js'),
+            import('/js/ui/panels/charts-panel/chart-card.js'),
         ]);
         const hub = { measured: { exactZero: 0 }, unavailable: {} };
         const table = new DiagnosticsTable({
@@ -120,6 +127,52 @@ test('distinguishes an unresolved Diagnostics source from a measured exact zero'
         const values = Object.fromEntries([...table.el.querySelectorAll('.diag-data-row')]
             .map((row) => [row.dataset.row, row.querySelector('.diag-value')?.textContent]));
         table.destroy();
+
+        const groupMeta = {
+            diagnostics: { source: 'test', sourceEpoch: 1, tick: null, stale: false },
+            audit: { source: 'test', sourceEpoch: 1, tick: 7, stale: false },
+        };
+        const provenanceHub = {
+            s0: {
+                diag: { tick: 7, manifested: 0 },
+                audit: { ELTotal: 0, ERTotal: 0 },
+            },
+            getResetVersion: () => 0,
+            getScale0TelemetryMeta: (group) => groupMeta[group] ?? null,
+        };
+        const particle = scale0Sections.find((section) => section.id === 'particle-state');
+        const particleTable = new DiagnosticsTable(particle, provenanceHub, { resetScope: 0 });
+        document.body.appendChild(particleTable.el);
+        particleTable.update();
+        const unresolvedTick = particleTable.el
+            .querySelector('[data-row="manifested"] .diag-value')?.textContent;
+        groupMeta.diagnostics = { ...groupMeta.diagnostics, tick: 7 };
+        particleTable.update();
+        const measuredTickZero = particleTable.el
+            .querySelector('[data-row="manifested"] .diag-value')?.textContent;
+        particleTable.destroy();
+
+        const dual = scale0Sections.find((section) => section.id === 'dual-substrate');
+        const dualTable = new DiagnosticsTable(dual, provenanceHub, { resetScope: 0 });
+        document.body.appendChild(dualTable.el);
+        dualTable.update();
+        const currentAuditZero = dualTable.el
+            .querySelector('[data-row="e-left"] .diag-value')?.textContent;
+        groupMeta.audit = { ...groupMeta.audit, tick: null };
+        dualTable.update();
+        const unresolvedAudit = dualTable.el
+            .querySelector('[data-row="e-left"] .diag-value')?.textContent;
+        dualTable.destroy();
+
+        const singletonGroups = resolveChartTelemetryGroups({ telemetryGroup: 'audit' });
+        const mixedGroups = resolveChartTelemetryGroups({
+            telemetryGroups: ['diagnostics', 'audit', 'diagnostics'],
+        });
+        const chartWaiting = getChartFreshnessPresentation(provenanceHub, mixedGroups);
+        groupMeta.audit = { ...groupMeta.audit, tick: 5 };
+        const chartMixed = getChartFreshnessPresentation(provenanceHub, mixedGroups);
+        groupMeta.audit = { ...groupMeta.audit, tick: 7 };
+        const chartCurrent = getChartFreshnessPresentation(provenanceHub, mixedGroups);
         return {
             values,
             scalarMissing: formatValue(undefined),
@@ -128,6 +181,15 @@ test('distinguishes an unresolved Diagnostics source from a measured exact zero'
             pair: formatValue([undefined, 0], { kind: 'pair' }),
             booleanMissing: formatValue(undefined, { kind: 'boolean' }),
             booleanFalse: formatValue(false, { kind: 'boolean' }),
+            unresolvedTick,
+            measuredTickZero,
+            currentAuditZero,
+            unresolvedAudit,
+            singletonGroups,
+            mixedGroups,
+            chartWaiting,
+            chartMixed,
+            chartCurrent,
         };
     });
 
@@ -139,6 +201,24 @@ test('distinguishes an unresolved Diagnostics source from a measured exact zero'
         pair: '— / 0',
         booleanMissing: '—',
         booleanFalse: 'off',
+        unresolvedTick: '—',
+        measuredTickZero: '0',
+        currentAuditZero: '0',
+        unresolvedAudit: '—',
+        singletonGroups: ['audit'],
+        mixedGroups: ['diagnostics', 'audit'],
+        chartWaiting: {
+            state: 'mixed-waiting',
+            text: 'state t7 · audit waiting',
+        },
+        chartMixed: {
+            state: 'mixed',
+            text: 'state t7 · audit t5',
+        },
+        chartCurrent: {
+            state: 'current',
+            text: 'state t7 · audit t7',
+        },
     });
 });
 
@@ -469,12 +549,12 @@ test('all 17 visible panels sustain 60 Hz at empty L=97 and stop panel work when
                     const { telemetryHub } = hubModule;
                     const { getScale0State } = stateModule;
                     const missing = interpretEmptyObserverBaseline(null, {
-                        scenarioId: 'empty', telemetryMeta: { stale: false },
+                        scenarioId: 'empty', telemetryMeta: { stale: false, tick: 0 },
                     });
                     const exactZero = interpretEmptyObserverBaseline({
                         bornInfeld: 0, total: 0,
                     }, {
-                        scenarioId: 'empty', telemetryMeta: { stale: false },
+                        scenarioId: 'empty', telemetryMeta: { stale: false, tick: 0 },
                     });
                     const actual = interpretEmptyObserverBaseline(
                         telemetryHub.s0?.lagrangian,

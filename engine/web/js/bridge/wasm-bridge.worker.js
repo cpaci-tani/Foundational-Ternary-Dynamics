@@ -345,13 +345,30 @@ let wantAudit = true;
 let wantLag = true;
 
 // Energy-audit cadence cache — see postFrame(). getEnergyAudit is a full O(N^3)
-// pass whose result the frame's energy decomposition is derived from, so it
-// cannot be skipped outright (a skip reverts diag.totalEnergy to the vacuum
-// baseline). Instead it runs every `auditEvery` frames and the last result is
-// reused in between. Reset on every rebuild (buildBridge) so a new scenario /
-// lattice never reuses a stale-N audit.
+// pass, so large lattices sample it less often. The cached audit is published
+// with its original sample tick/version between samples; it must never be
+// relabelled as a current diagnostic observation. Reset on every rebuild so a
+// new scenario/lattice never reuses a stale-N audit.
 let lastAudit = null;
 let auditFrameCounter = 0;
+let diagnosticsStateVersion = 0;
+let auditStateVersion = 0;
+let lagrangianStateVersion = 0;
+let lastAuditMeta = null;
+let lastLagrangianMeta = null;
+
+function telemetryGroupMeta({ stateVersion, tick, stale = false, status = 'available' }) {
+  return {
+    backend: 'wasm-worker',
+    sourceEpoch: activeConfigurationToken,
+    stateVersion,
+    sampleTick: Number.isFinite(tick) ? tick : null,
+    tick: Number.isFinite(tick) ? tick : null,
+    sampledAt: performance.now(),
+    stale,
+    status,
+  };
+}
 
 function readEngineToggles() {
   if (!mod || !bridge || typeof mod.getToggle !== 'function') return null;
@@ -400,6 +417,8 @@ function buildBridge(n, scen, configurationToken = 0) {
   enforceToggleInvariants();
   engineTogglesDirty = true;   // the C++ body just replaced the whole profile
   lastAudit = null; auditFrameCounter = 0;   // force a fresh audit for the new N/profile
+  lastAuditMeta = null;
+  lastLagrangianMeta = null;
   scenarioId = scen;
   // O(N^3), so capture once per newly built scenario and thereafter only on
   // an explicit `captureDigest` request. Never put digest work in the 60 Hz
@@ -439,23 +458,27 @@ function postFrame(fieldChanged = false) {
   }
   const tick = bridge.currentTick ? bridge.currentTick() : 0;
   let diag = null, parts = null, audit = null, lag = null;
-  try { diag = mod.getDiagnostics(bridge); } catch (e) { /* ignore */ }
+  let diagMeta = null;
+  try {
+    diag = mod.getDiagnostics(bridge);
+    diagMeta = telemetryGroupMeta({
+      stateVersion: ++diagnosticsStateVersion, tick,
+      stale: !diag,
+      status: diag ? 'available' : 'unavailable',
+    });
+  } catch (e) {
+    diagMeta = telemetryGroupMeta({
+      stateVersion: ++diagnosticsStateVersion, tick, stale: true, status: 'error',
+    });
+  }
   // getEnergyAudit is a full O(N^3) pass and, alongside the tick itself, the
-  // dominant per-frame cost on large lattices. It is NOT merely a panel feed:
-  // the block below rewrites diag.totalEnergy / fieldEnergy / waveEnergy /
-  // particleKE / dynamicEnergy / restEnergy / accountedEnergy from it, so it
-  // cannot simply be skipped -- a skip leaves diag.totalEnergy at the raw
-  // K_B*N^3 vacuum baseline (~18363.8 at L=33) that swamps the scenario energy
-  // (the 2026-06-05 health audit A.2 defect; a naive gate broke four specs on
-  // 2026-07-26, including "all vacuum scenarios report moving physical energy,
-  // not the fixed vacuum baseline").
-  //
-  // So instead of skipping, run it at a reduced cadence for large N and REUSE
-  // the last result on the in-between frames. diag.totalEnergy then holds the
-  // last dynamic energy -- still moving physical energy, refreshed every few
-  // frames -- and never reverts to the baseline. Small N (<=48, where the
-  // energy specs run) stays every-frame, so their behavior is bit-unchanged.
+  // dominant per-frame cost on large lattices. Run it at a reduced cadence for
+  // large N and publish the last successful observation unchanged between
+  // samples. A reused observation remains explicitly tied to its original
+  // sample tick/version; it is not copied into a newly-current diagnostics
+  // packet. Small N (<=48) remains every-frame.
   const auditEvery = N > 96 ? 8 : (N > 48 ? 4 : 1);
+  let auditSampledThisFrame = false;
   if (auditFrameCounter <= 0 || !lastAudit) {
     try {
       const a = mod.getEnergyAudit(bridge);
@@ -465,16 +488,59 @@ function postFrame(fieldChanged = false) {
           particleRestEnergy: a.particleRestEnergy, fieldEnergy: a.fieldEnergy,
           waveEnergy: a.waveEnergy, particleKE: a.particleKE,
         };
+        lastAuditMeta = telemetryGroupMeta({
+          stateVersion: ++auditStateVersion, tick,
+        });
+        auditSampledThisFrame = true;
+      } else {
+        // Fail closed: an unavailable/non-finite attempt supersedes the prior
+        // observation. Keeping lastAudit here would pair retained values with
+        // the new failure metadata and leak them into diagnostics/consumers.
+        lastAudit = null;
+        lastAuditMeta = telemetryGroupMeta({
+          stateVersion: ++auditStateVersion, tick, stale: true,
+          status: a ? 'nonfinite' : 'unavailable',
+        });
       }
-    } catch (e) { /* ignore */ }
+    } catch (e) {
+      lastAudit = null;
+      lastAuditMeta = telemetryGroupMeta({
+        stateVersion: ++auditStateVersion, tick, stale: true, status: 'error',
+      });
+    }
     auditFrameCounter = auditEvery;
   }
   auditFrameCounter--;
   audit = lastAudit;
   // The Lagrangian genuinely has no consumer beyond its panels, so it IS gated.
-  if (wantLag) { try { lag = mod.getLagrangian(bridge); } catch (e) { /* ignore */ } }
+  if (wantLag) {
+    try {
+      lag = mod.getLagrangian(bridge);
+      lastLagrangianMeta = telemetryGroupMeta({
+        stateVersion: ++lagrangianStateVersion, tick,
+        stale: !lag,
+        status: lag ? 'available' : 'unavailable',
+      });
+    } catch (e) {
+      lastLagrangianMeta = telemetryGroupMeta({
+        stateVersion: ++lagrangianStateVersion, tick, stale: true, status: 'error',
+      });
+    }
+  } else if (lastLagrangianMeta) {
+    lastLagrangianMeta = {
+      ...lastLagrangianMeta,
+      stale: true,
+      status: 'inactive',
+    };
+  }
 
-  if (diag && audit && Number.isFinite(audit.dynamicEnergy)) {
+  // Audit-derived diagnostics are valid only when both observations describe
+  // this exact tick. Reused/staggered audit samples remain separate telemetry
+  // and must not be promoted to the diagnostics packet's newer provenance.
+  if (diag && auditSampledThisFrame && audit
+      && lastAuditMeta?.status === 'available' && lastAuditMeta.stale !== true
+      && lastAuditMeta.sampleTick === tick
+      && Number.isFinite(audit.dynamicEnergy)) {
     diag.vacuumBaselineEnergy = diag.totalEnergy;
     diag.dynamicEnergy = audit.dynamicEnergy;
     diag.accountedEnergy = audit.totalEnergy;
@@ -546,7 +612,10 @@ function postFrame(fieldChanged = false) {
   const digestMsg = publishDynamicalStateDigest ? lastDynamicalStateDigest : undefined;
   publishDynamicalStateDigest = false;
   self.postMessage({ type: 'frame', configurationToken: activeConfigurationToken,
-                     tick: tick | 0, diag, parts, audit, lag, samplers, knot, knotEvents, knotAgg,
+                     tick: tick | 0, diag, diagMeta, parts,
+                     audit, auditMeta: lastAuditMeta,
+                     lag, lagMeta: lastLagrangianMeta,
+                     samplers, knot, knotEvents, knotAgg,
                      inspect: lastInspect, forceAt: lastForceAt,
                      ...(digestMsg !== undefined ? { dynamicalStateDigest: digestMsg } : {}),
                      ...(engineTogglesMsg ? { engineToggles: engineTogglesMsg } : {}) });
@@ -600,7 +669,7 @@ self.onmessage = (e) => {
         break;
       case 'command': {
         if (!mod || !bridge) break;
-        lastAudit = null; auditFrameCounter = 0;
+        lastAudit = null; lastAuditMeta = null; auditFrameCounter = 0;
         applyCommand(msg.method, msg.args || []);
         engineTogglesDirty = true;
         postFrame(true);
@@ -608,7 +677,7 @@ self.onmessage = (e) => {
       }
       case 'batchCommand': {
         if (!mod || !bridge) break;
-        lastAudit = null; auditFrameCounter = 0;
+        lastAudit = null; lastAuditMeta = null; auditFrameCounter = 0;
         const errors = [];
         const expectedToggles = new Map();
         let expectedFluxBoundaryMode = null;

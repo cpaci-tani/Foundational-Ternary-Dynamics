@@ -78,6 +78,21 @@
     max-height: 380px;
 }
 
+.lag-telemetry-status {
+    margin: 0 0 var(--sp-sm);
+    color: var(--text-muted);
+    font-size: var(--fs-sm);
+    font-variant-numeric: tabular-nums;
+}
+
+.lag-telemetry-stale .lag-telemetry-status {
+    color: var(--warning-text);
+}
+
+.lag-telemetry-stale .lag-term-card .chart-card-plot {
+    opacity: 0.38;
+}
+
 /* Landscape phones (667×375 / 844×390): the 240px chart min-height plus the
  * term-toggle row overruns the viewport. Cap the plot and the legacy fixed
  * canvas so the chart + toggles fit a short landscape viewport. */

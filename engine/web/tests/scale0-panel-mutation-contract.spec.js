@@ -71,6 +71,10 @@ test.describe.serial('Scale 0 scientific panel mutation contract', () => {
             const before = store.getScale0QualificationState().mutationEpoch;
             const accepted = api.setTemp(0.02);
             const afterAccepted = store.getScale0QualificationState();
+            api.update();
+            const renderCountAfterSample = api.renderCount;
+            api.update();
+            const renderCountAfterRepeat = api.renderCount;
             const originalSetTemp = owner.setLangevinTemp;
             const burstCalls = [];
             owner.setLangevinTemp = (value) => burstCalls.push(value);
@@ -107,6 +111,8 @@ test.describe.serial('Scale 0 scientific panel mutation contract', () => {
                 staleCalls,
                 before,
                 acceptedEpoch: afterAccepted.mutationEpoch,
+                renderCountAfterSample,
+                renderCountAfterRepeat,
                 burstEpoch: afterBurst.mutationEpoch,
                 burstBefore,
                 burstCalls,
@@ -119,6 +125,7 @@ test.describe.serial('Scale 0 scientific panel mutation contract', () => {
 
         expect(result.accepted).toBe(true);
         expect(result.acceptedEpoch - result.before).toBe(1);
+        expect(result.renderCountAfterRepeat).toBe(result.renderCountAfterSample);
         expect(result.burstEpoch - result.burstBefore).toBe(1);
         expect(result.supersedeEpoch - result.supersedeBefore).toBe(1);
         expect(result.burstCalls).toEqual([0.025, 0.07]);

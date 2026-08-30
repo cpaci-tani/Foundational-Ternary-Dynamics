@@ -159,6 +159,13 @@ export class WasmBridge {
         this.artifactIdentityReady = Promise.resolve(null);
         this._lastScale0Audit = null;
         this._lastScale0AuditTick = -1;
+        // Direct-WASM telemetry needs a state identity independent of the
+        // engine tick: paused scientific writes can change the record without
+        // advancing currentTick(). Group receipt times are cached per identity
+        // so repeated panel reads cannot make an old sample appear newly born.
+        this._scale0TelemetrySourceEpoch = 0;
+        this._scale0TelemetryStateVersion = 0;
+        this._scale0TelemetryGroupMeta = new Map();
         // Scale-1 PE: native C++/WASM ParticleEngine via embind adapter.
         // The native kernel uses G_PE = G_DERIVED (FTD-0131) — the old
         // "stale G_N binary" concern that once justified a JS engine no
@@ -219,6 +226,7 @@ export class WasmBridge {
                 throw err;
             }
             this.ready = true;
+            this._markScale0StateChanged(true);
             this.wasmLoadState = 'ready';
             debugLog('FTD WASM engine loaded successfully');
             return true;
@@ -232,8 +240,16 @@ export class WasmBridge {
         }
     }
 
-    tick() { if (this._bridge) this._bridge.tick(); }
-    run(n) { if (this._bridge) this._bridge.run(n); }
+    tick() {
+        if (!this._bridge) return;
+        this._bridge.tick();
+        this._markScale0StateChanged();
+    }
+    run(n) {
+        if (!this._bridge) return;
+        this._bridge.run(n);
+        this._markScale0StateChanged();
+    }
     currentTick() { return this._bridge ? this._bridge.currentTick() : 0; }
 
     /**
@@ -255,7 +271,10 @@ export class WasmBridge {
     getWasmArtifactIdentity() { return this.artifactIdentity; }
 
     setDt(dt) {
-        if (this._module && this._bridge) this._module.setDt(this._bridge, dt);
+        if (this._module && this._bridge) {
+            this._module.setDt(this._bridge, dt);
+            this._markScale0StateChanged();
+        }
     }
     getDt() {
         if (this._module && this._bridge) return this._module.getDt(this._bridge);
@@ -267,8 +286,10 @@ export class WasmBridge {
     }
     // FTD-0271: de Broglie internal-clock frequency omega0 (KG mass term).
     setOmega0(w) {
-        if (this._module && this._bridge && typeof this._module.setOmega0 === 'function')
+        if (this._module && this._bridge && typeof this._module.setOmega0 === 'function') {
             this._module.setOmega0(this._bridge, w);
+            this._markScale0StateChanged();
+        }
     }
     getOmega0() {
         if (this._module && this._bridge && typeof this._module.getOmega0 === 'function')
@@ -277,16 +298,20 @@ export class WasmBridge {
     }
     // FTD-0274: live Langevin bath temperature (thermal-ignition panel).
     setLangevinTemp(t) {
-        if (this._module && this._bridge && typeof this._module.setLangevinTemp === 'function')
+        if (this._module && this._bridge && typeof this._module.setLangevinTemp === 'function') {
             this._module.setLangevinTemp(this._bridge, t);
+            this._markScale0StateChanged();
+        }
     }
     getLangevinTemp() {
         if (this._module && this._bridge && typeof this._module.getLangevinTemp === 'function')
             return this._module.getLangevinTemp(this._bridge);
     }
     setLangevinGamma(g) {
-        if (this._module && this._bridge && typeof this._module.setLangevinGamma === 'function')
+        if (this._module && this._bridge && typeof this._module.setLangevinGamma === 'function') {
             this._module.setLangevinGamma(this._bridge, g);
+            this._markScale0StateChanged();
+        }
     }
     getLangevinGamma() {
         if (this._module && this._bridge && typeof this._module.getLangevinGamma === 'function')
@@ -341,6 +366,7 @@ export class WasmBridge {
                 throw err;
             }
             debugLog('[WasmBridge] reset() - RenderBridge constructed successfully.');
+            this._markScale0StateChanged(true);
         }
     }
 
@@ -362,6 +388,7 @@ export class WasmBridge {
         }
         delete this.__ftdPhysicsHarness__;
         this.ready = false;
+        this._markScale0StateChanged(true);
     }
 
     // Revision 2.7: every injection method carries the same try-catch guard
@@ -389,6 +416,7 @@ export class WasmBridge {
         if (!(this._module && this._bridge && typeof this._module.injectWaveVel === 'function')) return;
         try {
             this._module.injectWaveVel(this._bridge, x, y, z, vx, vy, vz);
+            this._invalidateScale0AuditCache();
         } catch (e) {
             console.error('WASM injectWaveVel failed:', e);
         }
@@ -438,18 +466,24 @@ export class WasmBridge {
     }
 
     clearField() {
-        if (this._module && this._bridge && typeof this._module.clearField === 'function')
+        if (this._module && this._bridge && typeof this._module.clearField === 'function') {
             this._module.clearField(this._bridge);
+            this._invalidateScale0AuditCache();
+        }
     }
 
     seedRandomFlux() {
-        if (this._module && this._bridge && typeof this._module.seedRandomFlux === 'function')
+        if (this._module && this._bridge && typeof this._module.seedRandomFlux === 'function') {
             this._module.seedRandomFlux(this._bridge);
+            this._invalidateScale0AuditCache();
+        }
     }
 
     setToggle(name, value) {
-        if (this._module && this._bridge)
+        if (this._module && this._bridge) {
             this._module.setToggle(this._bridge, name, value);
+            this._invalidateScale0AuditCache();
+        }
     }
 
     getToggle(name) {
@@ -540,16 +574,7 @@ export class WasmBridge {
     }
 
     getDiagnostics() {
-        if (!this._module || !this._bridge)
-            return {
-                tick: 0, manifested: 0, positive: 0, negative: 0, totalFlux: 0, totalEnergy: 0,
-                maxBandwidth: 0, avgDrag: 0, entropy: 0, chargeBalance: 0,
-                maxCausalBudget: 0, causalProjectionEvents: 0,
-                spinUp: 0, spinDown: 0, colorless: 0, colorRed: 0, colorGreen: 0, colorBlue: 0,
-                angMomX: 0, angMomY: 0, angMomZ: 0,
-                fieldSpinX: 0, fieldSpinY: 0, fieldSpinZ: 0, fieldHelicity: 0,
-                centerClockPhase: 0, centerClockSpeed: 0, centerClockLatency: 0
-            };
+        if (!this._module || !this._bridge) return null;
         let d;
         if (typeof this._module.getDiagnosticsView === 'function') {
             const arr = this._module.getDiagnosticsView(this._bridge);
@@ -575,17 +600,11 @@ export class WasmBridge {
                 angMomX: arr[18],
                 angMomY: arr[19],
                 angMomZ: arr[20],
-                maxCausalBudget: arr[21] ?? 0,
-                causalProjectionEvents: arr[22] ?? 0,
-                // Field circulation ledger (2026-07-28): S = Σ J×W (conserved
-                // by the free wave sector), H = Σ J·curl J (static twist).
-                fieldSpinX: arr[23] ?? 0,
-                fieldSpinY: arr[24] ?? 0,
-                fieldSpinZ: arr[25] ?? 0,
-                fieldHelicity: arr[26] ?? 0,
-                centerClockPhase: arr[27] ?? 0,
-                centerClockSpeed: arr[28] ?? 0,
-                centerClockLatency: arr[29] ?? 0
+                maxCausalBudget: arr[21],
+                causalProjectionEvents: arr[22],
+                // The compact ABI currently ends at lane 22. Field-spin and
+                // center-clock values are intentionally absent until C++ and
+                // JS extend the view atomically; they must not appear as zeros.
             };
         } else {
             d = this._module.getDiagnostics(this._bridge);
@@ -609,20 +628,7 @@ export class WasmBridge {
     }
 
     getEnergyAudit() {
-        if (!this._module || !this._bridge)
-            return {
-                fieldEnergy: 0, waveEnergy: 0, particleKE: 0, totalEnergy: 0,
-                particleRestEnergy: 0, particleEnergy: 0, dynamicEnergy: 0,
-                particleMomentum: { x: 0, y: 0, z: 0 },
-                cellVolume: VOXEL_VOLUME,
-                fieldEnergyDensitySum: 0, waveEnergyDensitySum: 0,
-                EFieldEnergy: 0, BFieldEnergy: 0,
-                totalPoynting: { x: 0, y: 0, z: 0 },
-                gaussViolation: 0, maxGaussError: 0, selfFieldInjection: 0,
-                coulombPE: 0, chargeTotal: 0, manifested: 0,
-                strongEnergy: 0, weakEnergy: 0,
-                ELTotal: 0, ERTotal: 0, chiralityTotal: 0, wvLTotal: 0, wvRTotal: 0,
-            };
+        if (!this._module || !this._bridge) return null;
         return this._getScale0AuditForTick(this.currentTick());
     }
 
@@ -658,16 +664,17 @@ export class WasmBridge {
                 wvLTotal: arr[16],
                 wvRTotal: arr[17],
                 chargeTotal: arr[18],
-                particleRestEnergy: arr[19] ?? 0,
-                particleEnergy: arr[20] ?? 0,
-                particleMomentum: { x: arr[21] ?? 0, y: arr[22] ?? 0, z: arr[23] ?? 0 },
-                dynamicEnergy: arr[24] ?? arr[3],
+                particleRestEnergy: arr[19],
+                particleEnergy: arr[20],
+                particleMomentum: arr.length > 23
+                    ? { x: arr[21], y: arr[22], z: arr[23] } : undefined,
+                dynamicEnergy: arr[24],
                 cellVolume: arr[25] ?? VOXEL_VOLUME,
-                fieldEnergyDensitySum: arr[26] ?? arr[0],
-                waveEnergyDensitySum: arr[27] ?? arr[1],
-                manifested: arr[28] ?? 0,
-                strongEnergy: arr[29] ?? 0,
-                weakEnergy: arr[30] ?? 0,
+                fieldEnergyDensitySum: arr[26],
+                waveEnergyDensitySum: arr[27],
+                manifested: arr[28],
+                strongEnergy: arr[29],
+                weakEnergy: arr[30],
             };
         } else {
             audit = this._module.getEnergyAudit(this._bridge);
@@ -677,20 +684,58 @@ export class WasmBridge {
         return audit;
     }
 
-    _invalidateScale0AuditCache() {
+    _markScale0StateChanged(sourceBoundary = false) {
         this._lastScale0Audit = null;
         this._lastScale0AuditTick = -1;
+        if (sourceBoundary) {
+            this._scale0TelemetrySourceEpoch = Number.isFinite(this._scale0TelemetrySourceEpoch)
+                ? this._scale0TelemetrySourceEpoch + 1 : 1;
+        }
+        this._scale0TelemetryStateVersion = Number.isFinite(this._scale0TelemetryStateVersion)
+            ? this._scale0TelemetryStateVersion + 1 : 1;
+        if (!(this._scale0TelemetryGroupMeta instanceof Map)) {
+            this._scale0TelemetryGroupMeta = new Map();
+        } else {
+            this._scale0TelemetryGroupMeta.clear();
+        }
+    }
+
+    _invalidateScale0AuditCache() {
+        this._markScale0StateChanged();
+    }
+
+    getScale0TelemetryGroupMeta(group) {
+        if (!(this._scale0TelemetryGroupMeta instanceof Map)) {
+            this._scale0TelemetryGroupMeta = new Map();
+        }
+        const sourceEpoch = Number.isFinite(this._scale0TelemetrySourceEpoch)
+            ? this._scale0TelemetrySourceEpoch : 0;
+        const stateVersion = Number.isFinite(this._scale0TelemetryStateVersion)
+            ? this._scale0TelemetryStateVersion : 0;
+        const available = !!(this._module && this._bridge && this.ready !== false);
+        const status = available ? 'available' : 'unavailable';
+        let meta = this._scale0TelemetryGroupMeta.get(group);
+        if (!meta || meta.sourceEpoch !== sourceEpoch
+            || meta.stateVersion !== stateVersion || meta.status !== status) {
+            meta = {
+                backend: 'wasm-main',
+                sourceEpoch,
+                stateVersion,
+                snapshotVersion: stateVersion,
+                sampleTick: available ? this.currentTick() : null,
+                tick: available ? this.currentTick() : null,
+                status,
+                stale: !available,
+                receivedAt: (typeof performance !== 'undefined'
+                    && typeof performance.now === 'function') ? performance.now() : Date.now(),
+            };
+            this._scale0TelemetryGroupMeta.set(group, meta);
+        }
+        return { ...meta };
     }
 
     getLagrangian() {
-        if (!this._module || !this._bridge)
-            return {
-                fieldKinetic: 0, fieldGradient: 0,
-                bornInfeld: 0, coupling: 0, velocity: 0, gauss: 0, dissipation: 0,
-                total: 0, hamiltonian: 0, totalAction: 0, gaussViolation: 0, maxGaussError: 0,
-                totalFluxMag: 0, totalWaveEnergy: 0, manifested: 0, locked: 0,
-                cellVolume: VOXEL_VOLUME
-            };
+        if (!this._module || !this._bridge) return null;
         if (typeof this._module.getLagrangianView === 'function') {
             const arr = this._module.getLagrangianView(this._bridge);
             return {
@@ -742,6 +787,7 @@ export class WasmBridge {
             const result = this._module.setupScenario(this._bridge, name);
             this._enforceToggleInvariants();
             if (result === false) return false;
+            this._markScale0StateChanged();
             return true;
         }
         return false;
@@ -959,8 +1005,10 @@ export class WasmBridge {
     // 0 = Periodic, 1 = Reflective, 2 = Dispersal
     setFluxBoundaryMode(mode) {
         this._fluxBoundaryMode = mode;
-        if (this._module && this._bridge && typeof this._module.setFluxBoundary === 'function')
+        if (this._module && this._bridge && typeof this._module.setFluxBoundary === 'function') {
             this._module.setFluxBoundary(this._bridge, mode);
+            this._markScale0StateChanged();
+        }
     }
 
     setReflectiveBoundary(on) {

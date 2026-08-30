@@ -15,7 +15,7 @@ function formatScalar(v) {
     // Missing / not-yet-published is not a scientific zero. Keep the absence
     // visible so an unresolved descriptor cannot masquerade as a measurement.
     if (v === null || v === undefined) return DASH;
-    if (typeof v !== 'number' || Number.isNaN(v)) return DASH;
+    if (typeof v !== 'number' || !Number.isFinite(v)) return DASH;
     if (v === 0) return '0';
     if (Number.isInteger(v) && Math.abs(v) < 1e6) return String(v);
     const abs = Math.abs(v);

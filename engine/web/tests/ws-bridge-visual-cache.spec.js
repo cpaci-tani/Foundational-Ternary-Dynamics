@@ -2012,11 +2012,13 @@ test('native telemetry getters are cache-only and merge unsolicited group deltas
     expect(result.commands).toContain('set_telemetry_demand');
     expect(result.commands.filter(cmd => cmd === 'get_telemetry')).toHaveLength(1);
     expect(result.commandsAfterCachedReads).toBe(result.beforeCachedReads);
-    expect(result.cachedDiagnostics).toMatchObject({ tick: 12, totalEnergy: 18 });
+    // Independently published groups remain immutable: the newer audit sample
+    // must not rewrite the older diagnostics sample or its provenance.
+    expect(result.cachedDiagnostics).toMatchObject({ tick: 12, totalEnergy: 42 });
     expect(result.cachedAudit).toMatchObject({ tick: 13, totalEnergy: 19, dynamicEnergy: 18 });
     expect(result.cachedGravity).toBeNull();
     expect(result.cachedLagrangian).toBeNull();
-    expect(result.snapshot.diagnostics).toMatchObject({ tick: 12, totalEnergy: 18 });
+    expect(result.snapshot.diagnostics).toMatchObject({ tick: 12, totalEnergy: 42 });
     expect(result.snapshot.audit).toMatchObject({ tick: 13, dynamicEnergy: 18 });
     expect(result.snapshot.groupMeta.diagnostics).toMatchObject({
         epoch: 7, stateVersion: 7, tick: 12, stale: false,
@@ -2206,7 +2208,7 @@ test('telemetry demand falls back to the v1 batched cache without reviving scala
     expect(result.commands).toEqual(['set_telemetry_demand', 'get_telemetry']);
     expect(result.mode).toBe('legacy-batch');
     expect(result.afterGetters).toBe(result.beforeGetters);
-    expect(result.diagnostics).toMatchObject({ tick: 4, totalEnergy: 11 });
+    expect(result.diagnostics).toMatchObject({ tick: 4, totalEnergy: 12 });
     expect(result.audit).toMatchObject({ tick: 4, totalEnergy: 13, dynamicEnergy: 11 });
 });
 

@@ -36,7 +36,7 @@ import {
     syncComboSliders,
     syncScale0ToggleUiFromEngine,
     stepScale0,
-} from './runtime/scenario-loader.js?v=11';
+} from './runtime/scenario-loader.js?v=12';
 import { bindScale0UI, handleScale0ShortcutKey } from './ui/bindings.js?v=10';
 import { getSelectedScenarioId } from './ui/dom.js';
 import { syncScale0LatticeSizeAvailability } from './ui/toolbar/limits.js';
@@ -62,7 +62,7 @@ import { initSpectrumPanel } from './ui/overlays/spectrum-panel.js';
 import { initGravityPanel } from './ui/overlays/gravity-panel.js';
 import { appRegistry } from '../../core/registry.js';
 import { initTimePanel } from './ui/overlays/time-panel.js';
-import { initThermoPanel } from './ui/overlays/thermo-panel.js?v=2';
+import { initThermoPanel } from './ui/overlays/thermo-panel.js?v=3';
 import { initDispersionPanel } from './ui/overlays/dispersion-panel.js';
 import { initKnotsPanel } from './ui/overlays/knots-panel.js';
 import { initScaleContextPanel } from './ui/overlays/scale-context-panel.js';

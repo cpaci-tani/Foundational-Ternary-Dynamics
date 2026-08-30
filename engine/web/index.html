@@ -76,11 +76,11 @@
             { href: 'css/ui/scales/scale23/toolbar.css' },
             { href: 'css/ui/scales/scale4/overlays.css?v=2' },
             { href: 'css/ui/primitives/toast.css' },
-            { href: 'css/ui/panels/diagnostics-panel.css?v=7' },
-            { href: 'css/ui/panels/charts-panel.css?v=9' },
-            { href: 'css/ui/panels/telemetry-grid.css' },
+            { href: 'css/ui/panels/diagnostics-panel.css?v=8' },
+            { href: 'css/ui/panels/charts-panel.css?v=10' },
+            { href: 'css/ui/panels/telemetry-grid.css?v=2' },
             { href: 'css/ui/panels/inspector-panel.css?v=3' },
-            { href: 'css/ui/panels/lagrangian-panel.css?v=5' },
+            { href: 'css/ui/panels/lagrangian-panel.css?v=6' },
             { href: 'css/ui/panels/zoo-panel.css?v=2' },
             { href: 'css/ui/panels/scene-panel.css?v=2' },
             { href: 'css/ui/panels/aggregation-bridge.css' },
@@ -115,7 +115,25 @@
         "imports": {
             "three": "./js/vendor/three/build/three.module.js",
             "three/addons/": "./js/vendor/three/examples/jsm/",
-            "./js/scales/scale0/state/store.js": "./js/scales/scale0/state/store.js?v=2"
+            "./js/telemetry-hub.js": "./js/telemetry-hub.js?v=2",
+            "./js/bridge/wasm-bridge.js": "./js/bridge/wasm-bridge.js?v=2",
+            "./js/physics/physics-harness.js": "./js/physics/physics-harness.js?v=2",
+            "./js/scales/scale0/runtime/diagnostics.js": "./js/scales/scale0/runtime/diagnostics.js?v=2",
+            "./js/scales/scale0/state/store.js": "./js/scales/scale0/state/store.js?v=2",
+            "./js/scales/scale0/ui/overlays/conservation-micropanel.js": "./js/scales/scale0/ui/overlays/conservation-micropanel.js?v=2",
+            "./js/scales/scale0/ui/overlays/knots-panel.js": "./js/scales/scale0/ui/overlays/knots-panel.js?v=2",
+            "./js/scales/scale0/ui/overlays/time-panel.js": "./js/scales/scale0/ui/overlays/time-panel.js?v=2",
+            "./js/telemetry/registry/scale0-grid-channels.js": "./js/telemetry/registry/scale0-grid-channels.js?v=2",
+            "./js/telemetry/scale0-read.js": "./js/telemetry/scale0-read.js?v=2",
+            "./js/ui/charts/uplot-chart.js": "./js/ui/charts/uplot-chart.js?v=2",
+            "./js/ui/panels/charts-panel/chart-card.js": "./js/ui/panels/charts-panel/chart-card.js?v=2",
+            "./js/ui/panels/charts-panel/descriptors/scale0.js": "./js/ui/panels/charts-panel/descriptors/scale0.js?v=2",
+            "./js/ui/panels/diagnostics-panel/descriptors/scale0.js": "./js/ui/panels/diagnostics-panel/descriptors/scale0.js?v=2",
+            "./js/ui/panels/diagnostics-panel/formatters.js": "./js/ui/panels/diagnostics-panel/formatters.js?v=2",
+            "./js/ui/panels/diagnostics-panel/table.js": "./js/ui/panels/diagnostics-panel/table.js?v=2",
+            "./js/ui/panels/lagrangian-panel/component.js": "./js/ui/panels/lagrangian-panel/component.js?v=2",
+            "./js/ui/panels/lagrangian-panel/template.js": "./js/ui/panels/lagrangian-panel/template.js?v=2",
+            "./js/ui/panels/telemetry-grid/component.js": "./js/ui/panels/telemetry-grid/component.js?v=2"
         }
     }
     </script>
@@ -334,7 +352,7 @@
     </div>
 
     <!-- ── Application Scripts ──────────────────────── -->
-    <script type="module" src="js/app.js?v=49"></script>
+    <script type="module" src="js/app.js?v=50"></script>
 </body>
 
 </html>

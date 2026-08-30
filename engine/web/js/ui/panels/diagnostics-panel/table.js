@@ -40,6 +40,27 @@ function readSource(hub, row) {
     return resolvePath(hub, src);
 }
 
+function telemetryGroupForRow(row) {
+    if (row.telemetryGroup) return row.telemetryGroup;
+    const sources = Array.isArray(row.source) ? row.source : [row.source];
+    for (const source of sources) {
+        if (typeof source !== 'string') continue;
+        if (source.startsWith('s0.diag.')) return 'diagnostics';
+        if (source.startsWith('s0.audit.')) return 'audit';
+        if (source.startsWith('s0.lagrangian.')) return 'lagrangian';
+        if (source.startsWith('s0.gravity.')) return 'gravity';
+    }
+    return null;
+}
+
+function rowTelemetryIsCurrent(hub, row, resetScope) {
+    if (resetScope !== 0 || typeof hub.getScale0TelemetryMeta !== 'function') return true;
+    const group = telemetryGroupForRow(row);
+    if (!group) return true;
+    const meta = hub.getScale0TelemetryMeta(group);
+    return !!meta && meta.stale !== true && Number.isFinite(meta.tick);
+}
+
 function resolveBuffer(hub, trend) {
     if (!trend) return null;
     return resolvePath(hub, trend);
@@ -269,9 +290,14 @@ export class DiagnosticsTable {
         this.updateFreshness();
 
         for (const row of this.section.rows) {
-            const raw = readSource(this.hub, row);
+            // A retained native value is useful provenance, but it is not a
+            // current measurement after invalidation. Suppress it per row so
+            // mixed state/audit sections can keep fresh channels visible.
+            const current = rowTelemetryIsCurrent(this.hub, row, this.resetScope);
+            const raw = current ? readSource(this.hub, row) : undefined;
             const formatted = formatValue(raw, { kind: row.format || 'scalar' });
             const cell = this.cells.get(row.id);
+            cell.closest('tr')?.classList.toggle('diag-row-telemetry-stale', !current);
             if (cell.textContent !== formatted) {
                 cell.textContent = formatted;
                 if (this.pulseTokens.get(row.id) !== undefined) {
@@ -326,8 +352,10 @@ export class DiagnosticsTable {
     /**
      * Native GPU telemetry is deliberately sampled per group. This compact
      * section header is provenance, not a scheduling control: it tells the
-     * reader exactly which completed tick (and receipt age) produced the
-     * values below, including mixed state/audit sections.
+     * reader exactly which completed tick produced the values below,
+     * including mixed state/audit sections. Receipt age belongs in a tooltip
+     * or low-rate inspector; putting it in live text causes a DOM mutation on
+     * every render frame even when no scientific sample advanced.
      */
     updateFreshness() {
         if (!this.freshnessEl || !this.telemetryGroups?.length
@@ -338,10 +366,9 @@ export class DiagnosticsTable {
             if (!meta || meta.stale || !Number.isFinite(meta.tick)) {
                 return { label, text: `${label}: waiting`, stale: true };
             }
-            const age = Number.isFinite(meta.ageMs) ? Math.max(0, Math.round(meta.ageMs)) : null;
             return {
                 label,
-                text: `${label} t${meta.tick}${age === null ? '' : ` · ${age} ms`}`,
+                text: `${label} t${meta.tick}`,
                 stale: false,
             };
         });

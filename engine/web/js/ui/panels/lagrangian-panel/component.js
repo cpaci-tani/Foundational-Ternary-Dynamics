@@ -35,7 +35,8 @@ export function interpretEmptyObserverBaseline(lagrangian, {
     if (scenarioId !== EMPTY_SCENARIO_ID) {
         return { status: 'not-applicable', observerBaseline: null, excitation: null };
     }
-    if (!telemetryMeta || telemetryMeta.stale === true || !lagrangian) {
+    if (!telemetryMeta || telemetryMeta.stale === true
+        || !Number.isFinite(telemetryMeta.tick) || !lagrangian) {
         return { status: 'unavailable', observerBaseline: null, excitation: null };
     }
     const observerBaseline = finiteNumber(lagrangian.bornInfeld);
@@ -73,6 +74,17 @@ export class LagrangianPanelComponent {
         this.el = panelEl;
         this.tables = [];
         this.cards = new Map(); // term.key → { term, card, chart }
+        this._telemetryStatusStamp = '';
+        this.cardObserver = typeof IntersectionObserver === 'function'
+            ? new IntersectionObserver((entries) => {
+                for (const observed of entries) {
+                    const entry = [...this.cards.values()].find(
+                        candidate => candidate.card === observed.target,
+                    );
+                    if (entry) entry.onScreen = observed.isIntersecting;
+                }
+            }, { root: null, rootMargin: '150px 0px', threshold: 0 })
+            : null;
     }
 
     init() {
@@ -85,6 +97,7 @@ export class LagrangianPanelComponent {
 
         this.hidden = loadHidden();
         this.grid = this.el.querySelector('.lag-charts-grid');
+        this.telemetryStatus = this.el.querySelector('.lag-telemetry-status');
         this.observerCard = this.el.querySelector('.lag-observer-baseline');
         this.observerValue = this.el.querySelector('[data-lag-observer-value]');
         this.excitationValue = this.el.querySelector('[data-lag-excitation-value]');
@@ -113,7 +126,10 @@ export class LagrangianPanelComponent {
         hubView.consts = consts;
         const dataCol = this.el.querySelector('.lag-data-col');
         const actionTable = new DiagnosticsTable(
-            { id: 'lag-action', title: 'Action & Constraints', rows: actionRows },
+            {
+                id: 'lag-action', title: 'Action & Constraints', rows: actionRows,
+                telemetryGroups: ['lagrangian', 'audit', 'diagnostics'],
+            },
             hubView,
             { resetScope: 0 }
         );
@@ -162,7 +178,7 @@ export class LagrangianPanelComponent {
             hub:    telemetryHub.lag,
         });
         requestAnimationFrame(() => card.classList.add('is-mounted'));
-        return { term, card, chart };
+        return { term, card, chart, onScreen: true };
     }
 
     /** Reconcile rendered cards with the non-hidden term set. */
@@ -171,6 +187,7 @@ export class LagrangianPanelComponent {
         for (const [key, entry] of this.cards) {
             if (this.hidden.has(key)) {
                 entry.chart.destroy();
+                this.cardObserver?.unobserve(entry.card);
                 entry.card.remove();
                 this.cards.delete(key);
             }
@@ -181,6 +198,7 @@ export class LagrangianPanelComponent {
             const entry = this._makeTermCard(term);
             this.grid.appendChild(entry.card);
             this.cards.set(term.key, entry);
+            this.cardObserver?.observe(entry.card);
         }
     }
 
@@ -223,12 +241,25 @@ export class LagrangianPanelComponent {
         // V2: live when the active tab OR a non-collapsed floated window (fixes
         // the Lagrangian panel freezing while floated). Legacy: active tab only.
         if (PerfFlags.panelRenderV2 ? !isPanelLive(this.el) : !this.el.classList.contains('active')) return;
-        for (const entry of this.cards.values()) entry.chart.update();
+        const meta = telemetryHub.getScale0TelemetryMeta?.('lagrangian') ?? null;
+        const stale = !meta || meta.stale || !Number.isFinite(meta.tick);
+        const status = stale ? 'Lagrangian telemetry · waiting'
+            : `Lagrangian telemetry · t${meta.tick}`;
+        const statusStamp = `${stale ? 'stale' : 'current'}|${status}`;
+        if (statusStamp !== this._telemetryStatusStamp) {
+            this._telemetryStatusStamp = statusStamp;
+            setTextIfChanged(this.telemetryStatus, status);
+            this.el.classList.toggle('lag-telemetry-stale', stale);
+        }
+        for (const entry of this.cards.values()) {
+            if (entry.onScreen) entry.chart.update();
+        }
         for (const t of this.tables) t.update();
         this._updateObserverBaseline();
     }
 
     cleanup() {
+        this.cardObserver?.disconnect();
         for (const entry of this.cards.values()) entry.chart.destroy();
         this.cards.clear();
         for (const t of this.tables) t.destroy();

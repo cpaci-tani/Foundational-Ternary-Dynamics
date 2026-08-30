@@ -4,6 +4,7 @@ export function getLagrangianPanelTemplate() {
         <div class="mode-unavailable scale-ae">Lagrangian diagnostics available in Scale 0 only.</div>
         <div class="scale0-only lag-layout">
             <div class="lag-chart-col">
+                <div class="lag-telemetry-status" aria-live="polite">Lagrangian telemetry · waiting</div>
                 <div class="lag-charts-grid"></div>
                 <div class="lag-term-row-host"></div>
             </div>
