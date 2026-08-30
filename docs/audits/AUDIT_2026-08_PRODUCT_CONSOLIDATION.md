@@ -48,6 +48,9 @@ Removed as redundant/reproducible: `build_cleanup_default`,
   archive manifest.
 - Relocated tracked experiment JSON from the repository root to
   `scripts/experiments/recorded_results/` and updated the producing runners.
+- **2026-08-30 follow-up:** consolidated the remaining loose engine CSV into
+  `engine/results/ftd_0434/` with its unregistered, verdict-excluded provenance
+  recorded in the manifest.
 - Removed ignored `scratch/` content and Playwright `test-results/` trees as
   reproducible local output.
 - Retained `tools/`: its small runner set is cited by locked pre-registrations,

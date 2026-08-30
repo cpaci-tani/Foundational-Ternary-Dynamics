@@ -116,9 +116,6 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         this._lastDiag = null;
         this._lastAudit = null;
 
-        // Visual settings placeholder
-        this._visualSettings = null;
-
         // Scientific telemetry is one coherent native snapshot.  Individual
         // panel getters only add their desired group to this request; they do
         // not each enqueue a competing CUDA reduction on the single socket.
@@ -2777,10 +2774,8 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         this._reflectiveBoundary = !!on;
         this.setToggle('reflective_boundary', this._reflectiveBoundary);
     }
-    // Stubs for compatibility with MockBridge API
+    // Scale-0 tick readback.
     currentTick() { return this._lastDiag?.tick ?? 0; }
-    setVisualSettings(vs) { this._visualSettings = vs; }
-    loadScenario() {}
 }
 
 /**

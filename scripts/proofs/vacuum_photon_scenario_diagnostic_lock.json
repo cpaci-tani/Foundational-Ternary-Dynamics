@@ -2,7 +2,7 @@
   "identifier": "FTD-0434",
   "revision": 2,
   "locked_before_diagnostic_execution": true,
-  "preregistration": "docs/theory/10_eft_program/preregistrations/PREREG_VACUUM_PHOTON_SCENARIO_DIAGNOSTIC_v2.md",
+  "preregistration": "docs/theory/10_eft_program/preregistrations/common_action_mechanics_reciprocity/PREREG_VACUUM_PHOTON_SCENARIO_DIAGNOSTIC_v2.md",
   "preregistration_sha256": "e08a13a76bc6bddf1f2da1c36666993817e2842e1ab0c4981536776bd4c64f95",
   "sources": {
     "engine/tests/campaign_vacuum_photon_scenario_diagnostic.cpp": "57a9ac504a3b2d8c4240fd7870be03418d5e09681f1aefcb07483ff446e5402d",

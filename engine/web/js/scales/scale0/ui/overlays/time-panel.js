@@ -4,7 +4,7 @@
  * Four cards:
  *   A — Lab clock & summary: physical time + peak dτ/dt, f_min, FTD γ_max.
  *       Shows a [C++] sub-block from getScale0GravityMetricAgg() when the real
- *       Poisson latency field is live (agg.active); else the MockBridge |J|²
+ *       Poisson latency field is live (agg.active); else the derived |J|²
  *       proxy ([~M]).
  *   B — Radial dilation profile: measured dτ/dt(r) across a gravity well (solid
  *       [~M]/[M]) vs a dashed [D] prediction curve, with a residual % row.
@@ -14,7 +14,8 @@
  *       FTD-0252 measured points [M] (offline campaign); imposed-v slider
  *       [IMPOSED]; an IR-convergence mini-chart (resid → L⁻²).
  *
- * Gravitational dτ/dt on the MockBridge is the |J|² *proxy* latency → [~M].
+ * Gravitational dτ/dt outside the live Poisson readout is the |J|² *proxy*
+ * latency → [~M].
  * It becomes [C++]/[M] only when WASM's Poisson γ_ftd is live (agg.active).
  * The kinematic card's measured points are genuine engine output (FTD-0252) but
  * OFFLINE/pre-computed → [M] "campaign". The velocity is [IMPOSED] (rigid
@@ -145,7 +146,7 @@ function dualCurveChart(series, { w = 240, h = 110, xMin, xMax, yMin, yMax, mark
 function renderClockBlock(agg) {
     const head = `<div class="time-cpp-head" title="The genuine voxel.latency from the engine's Poisson solver (∇²L=4πGρ), ρ from real rest mass — an [IMPOSED] engine model. Distinct from the |J|² proxy.">Real C++ latency field (Poisson) ⓘ</div>`;
     if (!agg || !agg.active)
-        return head + `<div class="time-cpp-inactive">${tagBadge('~M')}proxy only — MockBridge |J|² latency (no real Poisson source)</div>`;
+        return head + `<div class="time-cpp-inactive">${tagBadge('~M')}proxy only — derived |J|² latency (no real Poisson source)</div>`;
     let html = head;
     html += row('Lapse f_min', formatFixed(agg.fMin, 5), 'M', undefined, 'Min lapse f = 1 − L_max² (deepest real time dilation), [C++].');
     html += row('dτ/dt (min)', formatFixed(Math.sqrt(Math.max(0, agg.fMin)), 5), 'M', undefined, 'Slowest clock rate √f_min from the real latency field, [C++].');
@@ -330,7 +331,7 @@ function buildPanel() {
     root.id = PANEL_ID;
     root.className = 'scale0-only time-panel';
     const SECTION_HELP = {
-        a: 'Lab-frame physical time + the slowest clock rate dτ/dt, minimum lapse f, and FTD γ over the sampled latency field. The [C++] block is the genuine Poisson latency readout (only when the WASM engine sources it); otherwise the rows are the MockBridge |J|² proxy [~M].',
+        a: 'Lab-frame physical time + the slowest clock rate dτ/dt, minimum lapse f, and FTD γ over the sampled latency field. The [C++] block is the genuine Poisson latency readout (only when the engine sources it); otherwise the rows are the derived |J|² proxy [~M].',
         b: 'Measured proper-time rate dτ/dt as a function of radius from the mass center (solid [~M]) vs a weak-field prediction curve (dashed [D]), with a residual. Clocks slow toward the well.',
         c: 'Two fixed probes — deep (near the mass) and far (near the box edge) — each accumulate proper time τ = Σ√f·dt. The far clock outruns the deep clock; Δτ is the live twin/GPS offset.',
         d: 'Kinematic time dilation. The √(1−v²) [T] and FTD γ(v) [D] curves vs this session’s baked FTD-0252 measured points [M] (offline campaign). The velocity is [IMPOSED] (rigid translation is [BOUNDARY-blocked]). Inset: the departure from exact γ vanishes as L⁻² — γ emerges in the IR.',
@@ -339,7 +340,7 @@ function buildPanel() {
     root.innerHTML = `
         <header class="time-header">
             <span class="time-title">Time Observatory</span>
-            <span class="time-mode" id="${PANEL_ID}-mode" title="Gravitational dτ/dt on the MockBridge is the |J|² proxy; kinematic points are baked FTD-0252 (offline). Honest tags per card.">proxy + [M] baked</span>
+            <span class="time-mode" id="${PANEL_ID}-mode" title="Gravitational dτ/dt outside the live Poisson readout is the |J|² proxy; kinematic points are baked FTD-0252 (offline). Honest tags per card.">proxy + [M] baked</span>
         </header>
         <section style="${cardStyle(150)}">
             <div style="${titleStyle()}" title="${SECTION_HELP.a}">A · Lab clock &amp; summary ⓘ</div>
@@ -514,7 +515,8 @@ export function mountTimePanel(host, getBridge) {
         // Card E — de Broglie internal clock (FTD-0271). Read the toggle + ω₀
         // off the bridge, and sample the centre voxel for the clock phase φ and
         // cluster speed (clock rate dφ/dt = ω₀·√(1−β²−L²)). Only the WASM engine
-        // exposes voxel.phase; the MockBridge has no per-voxel clock phase.
+        // exposes voxel.phase; bridges without that inspection surface cannot
+        // provide a per-voxel clock phase.
         const dbActive = (typeof b.getToggle === 'function') ? !!b.getToggle('de_broglie_clock') : false;
         const omega0 = (typeof b.getOmega0 === 'function') ? b.getOmega0() : 1.0;
         let phase = 0, speed = 0, latency = 0, hasPhase = false;

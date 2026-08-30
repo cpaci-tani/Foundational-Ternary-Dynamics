@@ -182,12 +182,18 @@ If a user flips any of these on in CPU mode, the engine runs as if they were off
 
 **Recommendation:** Option 1 now (5 minutes), Option 2 later per-toggle when a benchmark needs them in CPU mode.
 
-**RESOLVED at `b4f1dcf`:** Option 1 (warning) **AND** Option 2 (CPU port) both landed:
+**Initial resolution at `b4f1dcf`:** Option 1 (warning) and the first half of
+Option 2 (CPU ports) landed:
 
 - **CPU ports** for `pair_production` and `triad_binding` shipped: `engine/src/render_bridge.cpp:407-408` gates `pair_production_cpu()` and `:445-446` gates `triad_binding_cpu()`; thin dispatchers at `:471-472` route into `engine/src/render_bridge_phases/transmutation_phases.cpp` implementations.
-- **Runtime warnings** for the still-GPU-only toggles `strong_force` and `exchange_force` are emitted by `cpu_runtime_warnings()` (declared in `engine/include/ftd/term_toggles.h:242`) and printed by `engine/src/render_bridge.cpp:386-395` once per RenderBridge instance via the `cpu_warnings_emitted_` flag (`engine/include/ftd/render_bridge.h:367`). Per-toggle warning strings live in the `TOGGLE_SPECS[]` table at `term_toggles.h:135-138`.
+- **At that revision**, runtime warnings diagnosed the still-GPU-only
+  `strong_force` and `exchange_force` terms.
 
-The "highest-severity finding in this audit" line in the original entry no longer applies: both pair_production and triad_binding have CPU implementations, and the remaining GPU-only toggles surface a discoverable warning instead of silently no-op-ing.
+**Reconciled 2026-08-30:** `strong_force` and `exchange_force` now share their
+pairwise laws with live CPU implementations. All four F2 terms therefore have
+CPU implementations. The empty warning metadata, one-shot warning state, and
+runtime warning helper were retired; `ToggleSpec::backends` plus
+`validate_backend()` now own backend eligibility.
 
 ### F3 · GPU path skips `toggles.validate()` (consistency gap)
 

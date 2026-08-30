@@ -65,8 +65,9 @@ runtime/tick.js::advanceSimulation(ctx, state)            [worker path]
            -> postFrame() -> main-thread overlay/render refresh on frameCounter
 ```
 
-The legacy JS MockBridge (`useFluxMock` without a worker) is a dashboard
-fallback/overlay source and is not the canonical C++ physics path.
+The legacy Scale-0 JS MockBridge is retired. The historical `fluxMock` and
+`useFluxMock` names now select a threaded `WasmBridgeProxy`; both Scale-0
+browser routes execute the canonical C++ physics engine.
 
 ### 1.2 WASM Binding Surface
 
@@ -229,7 +230,6 @@ RenderBridge::tick()
   -> sync_ternary_from_voxels_if_needed()
   -> if GPU backend active: GpuBackend::tick() path, then return
        (incl. knot_tracking record + proper-time + ledger; see 3.2)
-  -> cpu_runtime_warnings() once per instance for CPU no-op/GPU-only toggles
   -> ew_background_sweep flux drive       [ew_background_sweep]
   -> solve_coulomb_poisson()              [db_clock_coulomb]   (pre-read V(r))
   -> phase_read()                  [wave_propagation || coupling || de_broglie_clock]
@@ -299,8 +299,6 @@ RenderBridge::tick()
         -> enabled toggle conflicts checks (mutex pair, OFF-by-default side declares)
      -> Pass 2: hand-coded cross-cutting checks for non-boolean config fields
         (e.g. bcc_stencil != FULL vs dual_substrate)
-  -> TermToggles::cpu_runtime_warnings()
-     -> scan TOGGLE_SPECS[] gpu_only_warning for CPU no-op / GPU-only gaps
 ```
 
 Primary data:
@@ -308,9 +306,9 @@ Primary data:
 - `engine/include/ftd/term_toggles.h::TOGGLE_SPECS[]`
 - `RenderBridge::toggles`
 
-`TOGGLE_SPECS[]` currently holds 38 boolean-toggle rows (each `{name, field,
-default, bulk_managed, requires, conflicts, gpu_only_warning, backends,
-description}`). Beyond the core physics toggles (`wave_propagation`,
+`TOGGLE_SPECS[]` currently holds 44 boolean-toggle rows (each `{name, field,
+default, bulk_managed, requires, conflicts, backends, description}`). Beyond
+the core physics toggles (`wave_propagation`,
 `coupling`, `damping`, `genesis`, `gauss_projection`, `forces`, `gravity`,
 `poisson_coulomb`, `movement`, `lorentz_force`, `selective_damping`,
 `dual_substrate`, `color_forces`, `weak_transmutation`, `triad_binding`,
@@ -318,17 +316,17 @@ description}`). Beyond the core physics toggles (`wave_propagation`,
 
 - `evaporation` - phase_write evaporation alone (OR'd with genesis; test isolation)
 - `larmor_radiation` - requires `damping`, conflicts `langevin`
-- `strong_force` / `exchange_force` - CPU no-op (`gpu_only_warning` set)
+- `strong_force` / `exchange_force` - live CPU and native CUDA pairwise channels
 - `exact_dual_gauss` - exact dual-cell face-flux Gauss projection (non-bulk)
 - `emergent_forces` - EFT force-from-gradient; conflicts `poisson_coulomb`
-- `langevin` - stochastic OU thermostat (CPU only at runtime, non-bulk)
+- `langevin` - stochastic OU thermostat (native CPU + CUDA, non-bulk)
 - `symplectic_leapfrog`, `symmetric_movement_order`
 - `su2_gauge` / `su3_gauge` - `[IMPOSED]` per-tick Wilson staple relaxation of the SU(2)/SU(3) link variables (CPU tick Rule 7b, GPU Phase 7b; revision 0.9 option a). Links are WRITE-ONLY w.r.t. the substrate (nothing consumes them; `color_forces` uses color labels) — gauge golden profile + write-only guarantee pinned in `test_gauge_links`; CPU/GPU parity in `test_gauge_gpu_parity`. Link buffers lazily allocated (528 B/site, revision 4.1b)
 - `absorbing_boundary`, `reflective_boundary`
 - `field_energy_gravity` - `[IMPOSED]` latency Poisson sources from 1/2|J|^2
-- `cluster_inertia` - `[IMPOSED]` rigid-body cluster a_COM = F_cluster/(N*M_REST); requires `forces` (non-bulk)
-- `de_broglie_clock` - `[IMPOSED]` KG mass term -omega0^2*J at manifested voxels (CPU-only backend; FTD-0271)
-- `db_clock_coulomb` - `[IMPOSED diagnostic]` live Coulomb clock; requires `wave_propagation,de_broglie_clock,poisson_coulomb`, conflicts `forces` (CPU-only; FTD-0281)
+- `cluster_inertia` - `[IMPOSED]` rigid-body cluster a_COM = F_cluster/(N*M_REST); requires at least one force channel (non-bulk)
+- `de_broglie_clock` - `[IMPOSED]` KG mass term -omega0^2*J at manifested voxels (native CPU + CUDA; FTD-0271)
+- `db_clock_coulomb` - `[IMPOSED diagnostic]` live Coulomb clock; requires `wave_propagation,de_broglie_clock,poisson_coulomb`, conflicts `forces` (native CPU + CUDA; FTD-0281)
 - `confinement` - [SELECTION] linear colour string F=SIGMA_STRING·cf at r>=8; requires `color_forces`; default OFF
 - `knot_tracking` - `[OBSERVATION-ONLY]` per-knot telemetry at end of tick (golden-neutral)
 - `strict_validation` - throw on `validate()` failure vs. stderr warn

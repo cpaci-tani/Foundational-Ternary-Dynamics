@@ -464,10 +464,10 @@ export function initConservationMicropanel() {
     if (typeof document === 'undefined') return null;
     const host = document.getElementById('app');
     if (!host) return null;
-    // Bridge accessor: use the active physics owner. flux-* scenarios are
-    // ticked by the JS MockBridge/worker, while ctx.bridge can remain an idle
-    // WASM bridge; sampling that idle bridge makes the conservation energy look
-    // frozen even though the pulse itself is evolving.
+    // Bridge accessor: use the active physics owner. Threaded Scale-0 scenarios
+    // are ticked by the worker-owned WASM bridge while ctx.bridge can remain an
+    // idle in-thread bridge; sampling that idle bridge makes conservation
+    // energy look frozen even though the pulse itself is evolving.
     const getBridge = () => resolveActiveScale0BridgeFromWindow();
     if (typeof window !== 'undefined' && window.__ftdConservationPanel) {
         return window.__ftdConservationPanel;

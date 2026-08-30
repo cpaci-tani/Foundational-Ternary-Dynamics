@@ -126,10 +126,14 @@ exit /b %ERRORLEVEL%
 if not exist "%BUILD_DIR%\CMakeCache.txt" (
     echo === Configure engine/build ^(preset native: Ninja Multi-Config, MSVC %VCToolsVersion%^) ===
     cmake --preset native
+    REM Windows tools can surface 0xFFFFFFFF as signed -1; catch both signs.
+    if not errorlevel 0 ( echo [build_native] configure FAILED & exit /b 1 )
     if errorlevel 1 ( echo [build_native] configure FAILED & exit /b 1 )
 )
 echo === Build Release ^(preset native-release, -j 32^) ===
 cmake --build --preset native-release %ARGS%
+REM LNK1104 and similar launcher failures can return signed negative codes.
+if not errorlevel 0 ( echo [build_native] build FAILED & exit /b 1 )
 if errorlevel 1 ( echo [build_native] build FAILED & exit /b 1 )
 echo [build_native] OK -- engine\build Release up to date ^(MSVC %VCToolsVersion%^)
 exit /b 0

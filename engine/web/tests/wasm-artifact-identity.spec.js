@@ -8,6 +8,7 @@ import { gotoAndReady, selectScale0Scenario } from './_helpers.js';
 
 const webRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const wasmRoot = path.join(webRoot, 'wasm');
+const repoRoot = path.resolve(webRoot, '..', '..');
 
 function sha256(buffer) {
     return crypto.createHash('sha256').update(buffer).digest('hex');
@@ -27,6 +28,11 @@ function verifyIdentityShape(identity, variantId) {
         expect(artifact.sizeBytes).toBeGreaterThan(1024);
     }
 }
+
+test('generated WASM loaders bypass Git text normalization', () => {
+    const attributes = fs.readFileSync(path.join(repoRoot, '.gitattributes'), 'utf8');
+    expect(attributes).toMatch(/^engine\/web\/wasm\/\*\.js\s+binary\s*$/m);
+});
 
 test('deterministic manifest exactly identifies all six checked-in artifacts', () => {
     const manifestPath = path.join(wasmRoot, 'build_info.json');

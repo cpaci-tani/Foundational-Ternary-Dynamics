@@ -57,7 +57,7 @@ needed to make those claims auditable.
 |---|---|---|---|
 | TEST-001 |  | Determinism regression (4/4 protocols, single-thread CPU) | [test_determinism.cpp](tests/test_determinism.cpp) |
 | TEST-002 |  | Closed-negative regression guards (FTD-0061/73 mode-erasure, FTD-0074 flux separable) | [test_closed_negatives.cpp](tests/test_closed_negatives.cpp) |
-| TEST-003 |  | CPU-only warning capture (strong_force, exchange_force) | [test_cpu_warnings.cpp](tests/test_cpu_warnings.cpp) |
+| TEST-003 |  | CPU Yukawa/exchange channels alter state; the superseded GPU-only warning contract was retired after both CPU ports landed | [test_cpu_pairwise_force_channels.cpp](tests/test_cpu_pairwise_force_channels.cpp) |
 | TEST-004 |  | OMP multi-threaded determinism | **CLOSED 2026-04-25.** ARCH-7 fixed particle-ID race; ARCH-7b fixed genesis flux read/write race via pre-write snapshot. Determinism test 4/4 PASS at 32 threads (system default). |
 | TEST-005 |  | Toggle pairwise smoke matrix: 78 (i,j) pairs of 13 OFF-default toggles, 5 ticks each, no crash / no NaN / validator rejects cleanly. 78/78 pass. (done 2026-04-25, [test_toggle_matrix.cpp](tests/test_toggle_matrix.cpp)) |
 | TEST-006 | ☐ | L-scaling sweeps in core physics tests (Coulomb/Wilson/Born) | Most tests pin a single L; bulk-leakage artifacts invisible. Add slope test across L ∈ {8,16,32,64}. |
@@ -81,7 +81,7 @@ needed to make those claims auditable.
 | RF-6 | ☐ | Split test files >500 LOC: `test_gpu_physics.cpp` (2618), `test_gpu_experiments.cpp` (1676), `campaign_dark_sector.cpp` (1762), `test_constructors.cpp` (1354) | 0 net, faster CTest parallelism | Mechanical split by section. |
 | RF-7 | ☐ | Trim `render_bridge.h` public API surface (40+ methods) | −60 LOC header, faster TU rebuild for ~140 includers | Move 8 inline operator delegators to .cpp; PIMPL the RNG/Langevin internals. |
 | RF-8 |  | Added `BANDWIDTH_FLOOR` constant in `constants.h`; replaced 3 bare `1e-6` literals at [render_bridge.cpp:822,828](src/render_bridge.cpp). (done 2026-04-25) |
-| RF-9 |  | PIMPL'd RNG state via `BridgeRng` (forward-declared in `bridge_rng.h`, full impl in `bridge_rng.cpp`). `<random>` dropped from `render_bridge.h`; replaced 3 RNG members with `std::unique_ptr<BridgeRng>`. Migrated 9 call sites in render_bridge.cpp + 2 in transmutation_phases.cpp to PIMPL'd accessors (`sample_uniform`, `thread_uniform`, `thread_normal`, `reseed_thread_pool`). 1 test (`test_benchmark.cpp`) needed explicit `<random>`. RF-9 regression suite 8/8 PASS (determinism, strict_validation, cpu_warnings, toggle_matrix, closed_negatives, open5, phase_h_regression, eft_phase_h_coupling). CPU langevin parity 100%. (done 2026-04-25) | [bridge_rng.h](include/ftd/bridge_rng.h), [bridge_rng.cpp](src/bridge_rng.cpp), [render_bridge.h:14-29,479-484](include/ftd/render_bridge.h) |
+| RF-9 |  | PIMPL'd RNG state via `BridgeRng` (forward-declared in `bridge_rng.h`, full impl in `bridge_rng.cpp`). `<random>` dropped from `render_bridge.h`; replaced 3 RNG members with `std::unique_ptr<BridgeRng>`. Migrated 9 call sites in render_bridge.cpp + 2 in transmutation_phases.cpp to PIMPL'd accessors (`sample_uniform`, `thread_uniform`, `thread_normal`, `reseed_thread_pool`). 1 test (`test_benchmark.cpp`) needed explicit `<random>`. RF-9 regression suite 8/8 PASS (determinism, strict_validation, the former CPU warning contract, toggle_matrix, closed_negatives, open5, phase_h_regression, eft_phase_h_coupling). CPU langevin parity 100%. (done 2026-04-25) | [bridge_rng.h](include/ftd/bridge_rng.h), [bridge_rng.cpp](src/bridge_rng.cpp), [render_bridge.h:14-29,479-484](include/ftd/render_bridge.h) |
 
 ---
 
@@ -105,7 +105,7 @@ needed to make those claims auditable.
 GPU is the default backend whenever CUDA is available (see `RenderBridge` constructor at [render_bridge.cpp:73-77](src/render_bridge.cpp:73)). The 11 tests that call `force_cpu()` fall into two categories:
 
 **Justified (testing CPU/GPU parity or CPU-only benchmarks):**
-- `test_cpu_warnings.cpp` — explicitly tests CPU-only warning emission
+- `test_cpu_pairwise_force_channels.cpp` — pins live CPU Yukawa/exchange effects
 - `test_determinism.cpp` — pinned to CPU due to known OMP non-determinism (TEST-004)
 - `test_gpu_parity.cpp`, `test_gpu_parity_complete.cpp` — need both backends
 - `benchmark_langevin_gpu.cpp` — measures CPU vs GPU performance
@@ -194,7 +194,7 @@ The Injector encapsulates the BUG-001 atomic semantics behind named methods; fut
 
 **Phase D (delegator removal):** ⊘ DEFERRED. The 8 inline discrete-operator delegators are used by **29 test/source files**. Mass-migrating them without per-call-site verification is high-risk. Documented the deprecation intent inline in render_bridge.h; new code should prefer `::ftd::laplacian_flux_op(...)` etc. directly. Mechanical migration tracked as future work.
 
-**Phase E (verify):**  17/17 regression tests pass: determinism, closed_negatives, cpu_warnings, smallest_particle_emergence, genesis, baryogenesis, annihilation × 2, gpu_parity_complete, master_quadratic × 2, ladder_walk_from_oh, gpu_continuity_ledger, color_binding, voxel_properties, plaquette_bivector, clifford_multigrade.
+**Phase E (verify):**  17/17 regression tests pass: determinism, closed_negatives, the former CPU warning contract, smallest_particle_emergence, genesis, baryogenesis, annihilation × 2, gpu_parity_complete, master_quadratic × 2, ladder_walk_from_oh, gpu_continuity_ledger, color_binding, voxel_properties, plaquette_bivector, clifford_multigrade.
 
 **LOC summary:**
 - `render_bridge.h`: 428 → 445 (+17, due to Injector accessor + Phase D deprecation comment)
@@ -217,7 +217,7 @@ The Injector encapsulates the BUG-001 atomic semantics behind named methods; fut
 
 **Phase D — Public accessors:**  Added `Backend& backend()`, `const Backend& backend() const`, and `Backend::Kind backend_kind() const` to RenderBridge so tests can assert which backend is actually executing.
 
-**Phase E — Verify:**  14/14 regression tests pass on GPU default (determinism, closed_negatives, cpu_warnings, smallest_particle_emergence, genesis, baryogenesis, annihilation × 2, gpu_parity_complete, master_quadratic_identities/uniqueness, ladder_walk_from_oh, gpu_continuity_ledger, color_binding_and_structure).
+**Phase E — Verify:**  14/14 regression tests pass on GPU default (determinism, closed_negatives, the former CPU warning contract, smallest_particle_emergence, genesis, baryogenesis, annihilation × 2, gpu_parity_complete, master_quadratic_identities/uniqueness, ladder_walk_from_oh, gpu_continuity_ledger, color_binding_and_structure).
 
 **LOC summary:**
 - `backend.h`: NEW (+90 LOC)
@@ -443,10 +443,10 @@ three of six candidates turned out to be load-bearing.
 | Candidate | Verdict | Evidence |
 |---|---|---|
 | `Voxel::flavor` | **ALIVE — do not remove or repurpose** | Read by `engine/src/vtk_export.cpp:261,376` (particle scalar export), marshalled to/from GPU (`gpu_buffers.cu:380,662`), written by `gpu_engine.cu:629`, and **gates GPU weak-field activation** (`gpu_engine.cu:746` `v.flavor != 0`). The explorer claim "never read" was false. NOT in any golden fold (state/flux/wave_vel/velocity + ext dual/latency only). Plan ticket 4.2 downgraded to comment-only documentation of these consumers. |
-| `_repro_gpu_empty_bridge.cpp` | **DEAD (unregistered)** | Zero references in `engine/CMakeLists.txt`; carries a "Local repro — do not commit" marker; the `CTestCostData.txt` entry is stale local build-dir residue. Disposition per ticket 5.1: `git mv` to `engine/tests/archive/` with provenance note after confirming `campaign_beta_measurement.cpp` covers the measure_kt_on_bg scenario. |
+| `_repro_gpu_empty_bridge.cpp` | **REMOVED 2026-08-30** | The ignored, unregistered local repro carried a "do not commit" marker. `campaign_beta_measurement.cpp` and `test_manifestation_background.cpp` cover its background-copy and `measure_kt_on_bg` path, so the local file and stale build residue were removed. |
 | `cognitive_lattice` (src+header) | **REMOVED 2026-08-28** | The owner narrowed the maintained products to the native desktop and web engine; the quarantined cognition sidecar and its tests were removed. Provenance remains in Git history through `21566b63`. |
 | Legacy WASM scenario branches (`bindings_render_bridge.cpp` "L52-114") | **ALREADY CLEAN** | Only 2 `name ==` occurrences remain in the file; the claimed legacy block no longer exists. No action. |
-| `Scale1LifecycleController` stub | **DEAD candidate (web)** | Sole reference is its own definition in `engine/web/js/scales/scale1/controller.js`; no test/spec/selector references found. Eligible for ticket 2.x safe-subset removal after a Playwright selector grep in the same commit. |
+| `Scale1LifecycleController` | **ALIVE — do not remove** | Current `mount`, `destroy`, and `resetScale1` exports delegate through the instance; its `destroy` override adds `_resetScale1Internal(ctx)` after the shared lifecycle teardown. The older sole-definition finding is stale. |
 | `cosmic-inspector-content` DOM block | **ALIVE** | Bound by `engine/web/js/inspector/dom-bindings.js`; the 2026-05-27 audit claim is stale. Do not remove. |
 | SU(2)/SU(3) gauge sector | **ALIVE — WIRED (revision 0.9 option a, 2026-07-02)** | Superseded disposition (was QUARANTINE): the sector is wired into the tick on both backends behind `su2_gauge`/`su3_gauge` (CPU Rule 7b / GPU Phase 7b), Jacobi race fixed, link buffers lazy per ticket 4.1b (DONE). Gauge golden `GAUGE_GOLDEN_HASH=0xa4dec20d1dd94ec8` + write-only-substrate guarantee in `test_gauge_links.cpp`; CPU/GPU parity in `test_gauge_gpu_parity.cpp`. [IMPOSED] measurement infrastructure; links still have zero downstream consumers. |
 

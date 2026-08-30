@@ -2690,12 +2690,11 @@ ftd_add_test(test_ternary_block_bipole_peierls_scaling
              CTEST_NAME ternary_block_bipole_peierls_scaling TIMEOUT 120
              LABELS unit eft observer spectrum)
 
-# CPU-only warning contract. Verifies that GPU-only toggles (strong_force,
-# exchange_force) emit stderr warnings on CPU builds AND are genuine no-ops
-# (voxel state byte-identical to baseline).
-ftd_add_test(test_cpu_warnings
-             tests/test_cpu_warnings.cpp
-             CTEST_NAME cpu_warnings TIMEOUT 60 LABELS unit fast)
+# CPU pairwise-force contract. Verifies that the Yukawa and exchange channels
+# both change the CPU voxel state relative to their disabled baselines.
+ftd_add_test(test_cpu_pairwise_force_channels
+             tests/test_cpu_pairwise_force_channels.cpp
+             CTEST_NAME cpu_pairwise_force_channels TIMEOUT 60 LABELS unit fast)
 
 # ARCH-3: strict-validation contract for TermToggles. Verifies that:
 #   (a) permissive mode (default) dedups warnings to one per unique string;

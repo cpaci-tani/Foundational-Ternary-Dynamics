@@ -894,17 +894,6 @@ void RenderBridge::tick() {
     return;
   }
 
-  // F2 (callstack audit 2026-04-17): CPU-only warning for GPU-only toggles.
-  // Printed once per RenderBridge instance on the first tick where such a
-  // toggle is set, so it's discoverable but doesn't spam.
-  if (!cpu_warnings_emitted_) {
-    std::string gpu_only_msg = toggles.cpu_runtime_warnings();
-    if (!gpu_only_msg.empty()) {
-      std::cerr << "[TermToggles] CPU-build warning:\n" << gpu_only_msg;
-      cpu_warnings_emitted_ = true;
-    }
-  }
-
   // Rule 1: Wave propagation + state-flux coupling
   // FTD-0271: the de Broglie clock's KG mass term -omega0^2*J is computed in
   // phase_read (it writes delta_j), so phase_read must run when the clock is on

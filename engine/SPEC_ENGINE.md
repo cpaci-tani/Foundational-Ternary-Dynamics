@@ -340,7 +340,8 @@ Canonical navigation:
   rendering.
 - `docs/ENGINE_CODE_MAP.md` maps the major subsystems and extracted modules.
 - `CALLSTACKS.md` traces feature-level runtime paths through the engine.
-- `web/js/bridge/wasm-bridge.js` is the browser WASM/mock bridge implementation.
+- `web/js/bridge/wasm-bridge.js` is the browser WASM bridge. It also owns the
+  intentional Scale-2/3 JS AtomEngine facade pending a unit-conversion shim.
 
 Historical components remain preserved through `archive/README.md` and the
 archive paths it indexes. They are provenance, not part of the active
@@ -699,12 +700,11 @@ Forces are computed in `phase_forces()` as **field-mediated** interactions. No p
 ## 8. TermToggles
 
 The `TermToggles` struct is a table-driven Scale 0 runtime registry. It contains
-**43 boolean toggles** in `TOGGLE_SPECS[]` plus typed configuration fields that
+**44 boolean toggles** in `TOGGLE_SPECS[]` plus typed configuration fields that
 are intentionally kept outside the boolean table.
 
 Adding a new boolean toggle requires a struct field and one registry row; the
-helper methods (`validate`, `enable_all`, `disable_all`,
-`cpu_runtime_warnings`) consume the table.
+helper methods (`validate`, `enable_all`, `disable_all`) consume the table.
 
 ### 8.1 Boolean toggle groups
 
@@ -2561,19 +2561,6 @@ Key changes from v2.11:
   4. *Actions*: `● Render` button and a settings kebab.
 - **Overlay panel** (visualization toggles) has a chevron collapse affordance in its header that persists per-scale in localStorage (`ftd.overlay.scale0.collapsed`, etc.).
 - **Panel dock** (bottom tabs) supports `data-panel-mount="bottom|left|right"` and `data-panel-width="narrow|normal|wide"` via the pre-paint hydration script in `<body>`.
-
-### Playback Timeline (working-memory + render mode)
-
-The scrub bar is backed by two capture strategies that share a single `TimelineBuffer` primitive (`js/scales/scale0/timeline/`):
-
-- **MemoryRecorder** — live rolling window with LOD-tiered age decay. Snapshots enter at LOD 0 and are progressively block-averaged to LOD 1 (2× downsample) / LOD 2 (4×) / LOD 3 (audit-only) as they age across tier boundaries. Tier schedule auto-derives from a user-configurable byte budget (default 30 MB, ≈ 27 s of window at a 32³ lattice).
-- **RenderController** — offline dense capture. User clicks the Render button; the controller runs ticks in ≤ 12 ms idle slices (`setTimeout(0)`) while sampling every `sampleEveryTicks = 4` ticks (15 fps @ 60 TPS). A budget-aware LOD picker selects the coarsest LOD (0 / 1 / 2) whose byte-cost × sample-count fits the render budget, then the whole clip is captured at that LOD — guaranteeing a dense, uniformly-sampled buffer for smooth forward and backward scrubbing. Emits `start / progress / done / cancel / error`. Cancellation restores the original engine state; partial clips are discarded.
-
-Hydration uses two Scale 0 bridge capabilities:
-- `getScale0Snapshot()` → `{ tick, lod, lattice, flux, wave, particles, audit }` (copies of MockBridge's `_stateGrid`, `_fluxJ`, `_fluxWV`, `_particles`).
-- `loadScale0Snapshot(s)` — writes arrays back into the engine buffers. Accepts **any LOD**; LOD 1/2 inputs are upsampled nearest-neighbor to N³ before write (the JS-side `timeline/lod.js#upsampleScalar / upsampleVec3` helpers are published on `window.__ftdTimelineLod`). LOD 3 is telemetry-only and rejected.
-
-Scrubbing is a pure "load, don't re-simulate" operation: `hydrateToTick(tick)` picks the nearest snapshot by tick from the render buffer (if an active clip exists) else the memory buffer, and loads it directly. No fast-forward ticks run during a drag, so the cost per scrub frame is one upsample + one buffer write — latency is independent of scrub distance. Pointer moves are coalesced to one hydrate per animation frame via `requestAnimationFrame`, so 240 Hz trackpads cannot saturate the loader. Live simulation resumes on pointerup (`onScrubEnd`).
 
 ### Panels
 

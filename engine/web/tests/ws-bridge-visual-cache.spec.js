@@ -726,7 +726,7 @@ test('typed native visual errors release retry flags instead of freezing readbac
     });
 });
 
-test('native-only constants and intent-only confinement are not presented as writable physics', async ({ page }) => {
+test('native-only constants stay read-only while native confinement remains writable', async ({ page }) => {
     await page.goto('/js/ws-bridge.js', { waitUntil: 'domcontentloaded' });
     const result = await page.evaluate(async () => {
         const { createSubstrateControlsCard } = await import(
@@ -777,9 +777,9 @@ test('native-only constants and intent-only confinement are not presented as wri
     expect(result.values.map(Number)).toEqual([0.5123, 0.0123, 0.008765]);
     expect(result.displays).toEqual(['0.512', '0.012', '0.0088']);
     expect(result.badges).toBe(3);
-    expect(result.confinementDisabled).toBe(true);
+    expect(result.confinementDisabled).toBe(false);
     expect(result.confinementChecked).toBe(false);
-    expect(result.confinementLabel).toContain('visual proxy only');
+    expect(result.confinementLabel).toBe('Confinement');
 });
 
 test('scenario-local visibility tuning restores user volume controls on the next load', async ({ page }) => {

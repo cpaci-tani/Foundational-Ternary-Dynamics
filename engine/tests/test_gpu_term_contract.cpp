@@ -3,7 +3,7 @@
  *
  * Pins live implementation class for every TOGGLE_SPECS row against the
  * declared ToggleBackend mask. Fails closed when ANY (or GPU) is claimed
- * for a CPU-only, intent-flag, or host-mirror term, and when a NativeCuda
+ * for a CPU-only or host-mirror term, and when a NativeCuda
  * row drops the GPU bit.
  *
  * This is characterization + contract, not a derivation. Ports update
@@ -51,8 +51,6 @@ int main() {
     bool backends_match = true;
     int native_without_gpu = 0;
     int cpu_with_gpu = 0;
-    int gpu_only_without_warning = 0;
-    int intent_flags = 0;
 
     const std::size_t n = toggle_spec_count();
     const std::size_t m = gpu_term_contract_count();
@@ -65,9 +63,7 @@ int main() {
 
         const auto impl = GPU_TERM_CONTRACT[i].impl;
         const auto backends = GPU_TERM_CONTRACT[i].declared_backends;
-        if ((impl == GpuTermImpl::NativeCuda
-             || impl == GpuTermImpl::GpuOnlyNoCpu)
-            && !declares_gpu(backends)) {
+        if (impl == GpuTermImpl::NativeCuda && !declares_gpu(backends)) {
             ++native_without_gpu;
         }
         if ((impl == GpuTermImpl::CpuOnly
@@ -75,24 +71,15 @@ int main() {
             && declares_gpu(backends)) {
             ++cpu_with_gpu;
         }
-        if (impl == GpuTermImpl::GpuOnlyNoCpu) {
-            const char* warning = TOGGLE_SPECS[i].gpu_only_warning;
-            if (!warning || !*warning) ++gpu_only_without_warning;
-        }
-        if (impl == GpuTermImpl::IntentFlag) ++intent_flags;
     }
 
     check("contract names match TOGGLE_SPECS in order", names_match);
     check("contract declared_backends match TOGGLE_SPECS.backends",
           backends_match);
-    check("NativeCuda / GpuOnlyNoCpu rows declare the GPU bit",
+    check("NativeCuda rows declare the GPU bit",
           native_without_gpu == 0);
     check("CpuOnly / CpuFallbackSync rows do not declare the GPU bit",
           cpu_with_gpu == 0);
-    check("GpuOnlyNoCpu rows carry a gpu_only_warning",
-          gpu_only_without_warning == 0);
-    check("no IntentFlag rows remain", intent_flags == 0);
-
     const auto* langevin = ftd::find_gpu_term_contract("langevin");
     check("langevin is classified NativeCuda",
           langevin && langevin->impl == GpuTermImpl::NativeCuda);

@@ -206,21 +206,6 @@ function wirePhysicsToggles(ctx, api) {
     for (const [toggleKey, , elId] of SCALE0_TOGGLES) {
         const el = getEl(elId);
         if (!el) continue;
-        if (ctx.bridge?.isNativeGPU && toggleKey === 'confinement') {
-            // TermToggles carries this as an intent flag for serialization,
-            // but no native C++ phase consumes it. Do not present a writable
-            // checkbox that implies string-tension physics is executing. The
-            // separate viewport `toggle-confinement` remains a visual proxy.
-            el.checked = false;
-            el.disabled = true;
-            el.setAttribute('aria-disabled', 'true');
-            const label = el.closest('.toggle-row')?.querySelector('label');
-            if (label) {
-                label.textContent = 'Confinement (visual proxy only)';
-                label.title = 'Native engine term is not implemented. Use the Confinement viewport overlay for visualization only.';
-            }
-            continue;
-        }
         el.addEventListener('change', () => {
             const accepted = setActiveToggle(toggleKey, el.checked);
             if (!accepted) {

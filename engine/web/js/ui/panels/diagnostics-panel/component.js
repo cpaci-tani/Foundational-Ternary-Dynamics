@@ -12,19 +12,11 @@ import { telemetryHub } from '../../../telemetry-hub.js';
 import { PerfFlags } from '../../../config/perf-flags.js';
 import { isPanelLive } from '../panel-visibility.js';
 
-// Diagnostics is a numerical instrument, not an animation surface. The hub
-// continues collecting at the engine cadence; the table consumes the newest
-// coherent snapshot at 5 Hz. This bounds DOM/stat/spark work without dropping
-// history samples or making the displayed values stale by more than 200 ms.
-const DIAGNOSTICS_UPDATE_INTERVAL_MS = 200;
-
 export class DiagnosticsPanelComponent {
     constructor(panelEl) {
         this.el = panelEl;
         this.tables = [];
         this.tablesByScale = { '0': [], '1': [], ae: [] };
-        this._lastUpdateAt = Number.NEGATIVE_INFINITY;
-        this._activeGroup = null;
     }
 
     init() {
@@ -80,24 +72,19 @@ export class DiagnosticsPanelComponent {
             return;
         }
         const scale = document.getElementById('app')?.dataset.activeScale || '0';
-        const groupId = scale === '1'
-            ? '1'
-            : (scale === '2' || scale === '3')
-                ? 'ae'
-                : (scale === '0' ? '0' : null);
+        const groupId = scale === '1' ? '1'
+            : ((scale === '2' || scale === '3') ? 'ae'
+                : (scale === '0' ? '0' : null));
         const group = groupId === '1'
             ? this.tablesByScale['1']
             : groupId === 'ae'
                 ? this.tablesByScale.ae
                 : (groupId === '0' ? this.tablesByScale['0'] : null);
         if (!group) return;
-        const now = performance.now();
-        if (groupId !== this._activeGroup) {
-            this._activeGroup = groupId;
-            this._lastUpdateAt = Number.NEGATIVE_INFINITY;
-        }
-        if (now - this._lastUpdateAt < DIAGNOSTICS_UPDATE_INTERVAL_MS) return;
-        this._lastUpdateAt = now;
+        // Consume the same coherent source samples as the other chart panels.
+        // DiagnosticsTable independently stamps every row and spark buffer, so
+        // this does not append duplicate measurements or redraw unchanged
+        // canvases; it only removes the former extra 200 ms presentation gate.
         for (const t of group) t.update();
     }
 
@@ -107,8 +94,6 @@ export class DiagnosticsPanelComponent {
         this.tablesByScale['0'].length = 0;
         this.tablesByScale['1'].length = 0;
         this.tablesByScale.ae.length = 0;
-        this._activeGroup = null;
-        this._lastUpdateAt = Number.NEGATIVE_INFINITY;
     }
 }
 

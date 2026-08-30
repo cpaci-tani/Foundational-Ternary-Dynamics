@@ -626,7 +626,6 @@ private:
     std::vector<SU3Link> su3_links_scratch_y_;
     std::vector<SU3Link> su3_links_scratch_z_;
     EnergyLedger energy_ledger_;  // per-tick conservation drift, populated by update_energy_ledger()
-    mutable bool cpu_warnings_emitted_ = false;  // F2 callstack audit: GPU-only-toggle warning emitted flag
     std::string last_validation_warn_;  // ARCH-3: dedup repeated validate() warnings to one per unique string
     bool interactive_gpu_mode_ = false;
     std::vector<uint8_t> moved_; // Per-tick flag: prevent double-processing in phase_movement

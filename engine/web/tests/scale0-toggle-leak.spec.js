@@ -50,18 +50,13 @@ async function readLangevin(page) {
             const caps = b.capabilities && b.capabilities.scale0;
             if (caps && typeof caps.getToggle === 'function') return !!caps.getToggle('langevin');
             if (typeof b.getToggle === 'function') return !!b.getToggle('langevin');
-            const t = b._toggles || b.toggles;
-            return t ? !!t.langevin : null;
+            return null;
         };
         return {
             scenario: st.currentScenarioId,
             useFluxMock: !!st.useFluxMock,
             langevinMain: rd(ctx.bridge),
             langevinMock: rd(st.fluxMock),
-            localLangevinMain: !!ctx.bridge?._toggles
-                && Object.prototype.hasOwnProperty.call(ctx.bridge._toggles, 'langevin'),
-            localLangevinMock: !!st.fluxMock?._toggles
-                && Object.prototype.hasOwnProperty.call(st.fluxMock._toggles, 'langevin'),
         };
     });
 }
@@ -75,12 +70,6 @@ test.describe('Scale-0 langevin toggle-leak (B3)', () => {
         await selectScenario(page, 's0-seed-emergent-ic1');
         const emergent = await readLangevin(page);
         const activeLangevin = emergent.useFluxMock ? emergent.langevinMock : emergent.langevinMain;
-        const activeLocalHadLangevin = emergent.useFluxMock
-            ? emergent.localLangevinMock
-            : emergent.localLangevinMain;
-        expect(activeLocalHadLangevin,
-            'langevin must be learned from C++ setup, not echoed from a pre-setup JS write cache')
-            .toBe(false);
         expect(activeLangevin,
             `emergent-ic1 should run with langevin ON on its active bridge ` +
             `(useFluxMock=${emergent.useFluxMock}, main=${emergent.langevinMain}, mock=${emergent.langevinMock})`)

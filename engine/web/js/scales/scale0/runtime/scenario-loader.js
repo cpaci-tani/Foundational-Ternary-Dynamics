@@ -564,12 +564,7 @@ export function syncScale0ToggleUiFromEngine(ctx, viewportAdapter, scenarioId) {
     const generation = String(ctx._loadGeneration || 0);
     const captureBaseline = String(ctx._scale0ToggleBaselineGeneration ?? '') !== generation;
     for (const [key, , elId] of PHYSICS_UI_TOGGLES) {
-        // The native `confinement` field is serialization intent only; no C++
-        // phase consumes it. Keep the physics card false/disabled and leave the
-        // separate viewport confinement overlay as the explicit visual proxy.
-        const value = bridge.isNativeGPU && key === 'confinement'
-            ? false
-            : !!bridge.getToggle(key);
+        const value = !!bridge.getToggle(key);
         terms[key] = value;
         setCheckboxValue(elId, value);
         const el = getEl(elId);

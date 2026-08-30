@@ -41,15 +41,12 @@
  *   │ Chirality            │ `dual_substrate` on AND L/R asymmetric  │
  *   └──────────────────────┴─────────────────────────────────────────┘
  *
- * On the WasmBridge path, all metrics flow from
- * `compute_energy_audit` in `engine/src/diagnostics_compute.cpp` → the
- * `get_energy_audit` binding in `engine/wasm/ftd_wasm.cpp`. On the
- * MockBridge path (when `useFluxMock` is true for flux-* / s0-seed-* /
- * s0-field-* scenarios), `getEnergyAudit` in
- * `engine/web/js/bridge/mock-diagnostics.js` returns a partial-audit
- * fallback (field/wave energies populated; particle, EM, Gauss, and
- * dual-substrate metrics hardcoded to 0). For the MockBridge path,
- * a flat metric is expected behavior, not drift.
+ * For both in-thread and worker-owned WASM routes, all metrics flow from
+ * `compute_energy_audit` in `engine/src/diagnostics_compute.cpp` through the
+ * `get_energy_audit` binding in `engine/wasm/ftd_wasm.cpp`. The native
+ * WebSocket route receives the corresponding server telemetry. `useFluxMock`
+ * is a historical route name for `WasmBridgeProxy`; it does not select a JS
+ * diagnostics fallback.
  */
 
 export const sections = [

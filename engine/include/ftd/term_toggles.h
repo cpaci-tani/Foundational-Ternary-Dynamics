@@ -3,9 +3,8 @@
 // 44 boolean toggles plus typed non-bool configuration fields.
 //
 // Phase 6 (2026-04-27): redesign as a TABLE-DRIVEN registry. Adding a new
-// boolean toggle now requires ONE edit (a row in TOGGLE_SPECS[]) instead
-// of the legacy four edits (struct field + validate() case + enable_all()
-// + disable_all() + cpu_runtime_warnings()).
+// boolean toggle now requires its storage field plus one TOGGLE_SPECS[] row,
+// instead of separate validate(), enable_all(), and disable_all() edits.
 //
 // The struct fields themselves are preserved verbatim so every existing
 // consumer (`toggles.wave_propagation = true`, `rb.toggles.langevin_T`,
@@ -181,7 +180,6 @@ struct TermToggles {
     bool validate_backend(uint8_t backend,
                           bool require_device_resident = false,
                           std::string* err = nullptr) const;
-    std::string cpu_runtime_warnings() const;
     void enable_all();
     void disable_all();
 };
@@ -189,7 +187,7 @@ struct TermToggles {
 // ─────────────────────────────────────────────────────────────────────
 // ToggleSpec — one row per boolean toggle. Adding a toggle = one new
 // row here (and one new field in TermToggles above). The helpers below
-// (validate, enable_all, disable_all, cpu_runtime_warnings) consume this
+// (validate, enable_all, disable_all) consume this
 // table, so no other edit is required.
 // ─────────────────────────────────────────────────────────────────────
 struct ToggleSpec {
@@ -199,57 +197,56 @@ struct ToggleSpec {
     bool bulk_managed;                 // included in enable_all() / disable_all()
     const char* requires_;             // empty or comma-separated dependency names
     const char* conflicts;             // empty or single conflict name
-    const char* gpu_only_warning;      // empty or warning string for cpu_runtime_warnings()
     uint8_t backends;                  // bitmask: CPU=1, GPU=2, JS=4
     const char* description;
 };
 
 inline constexpr ToggleSpec TOGGLE_SPECS[] = {
-    // {name, field, default, bulk_managed, requires, conflicts, gpu_only_warning, backends, description}
-    {"wave_propagation",   &TermToggles::wave_propagation,   true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-read 18-pt Laplacian wave equation"},
-    {"coupling",           &TermToggles::coupling,           true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-read state-flux coupling -g_c*grad(s)"},
-    {"damping",            &TermToggles::damping,            true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-write exponential flux decay at rate alpha"},
-    {"genesis",            &TermToggles::genesis,            true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-write manifestation + evaporation (master)"},
-    {"evaporation",        &TermToggles::evaporation,        false, true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-write evaporation alone (OR'd with genesis; test isolation)"},
-    {"gauss_projection",   &TermToggles::gauss_projection,   true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Enforce div(J) = s constraint via SOR Poisson"},
-    {"forces",             &TermToggles::forces,             true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-forces master toggle (EM + gravity)"},
-    {"gravity",            &TermToggles::gravity,            true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Gravitational force F = G_N*grad(rho)"},
-    {"poisson_coulomb",    &TermToggles::poisson_coulomb,    true,  true,  "",                 "emergent_forces",  "", ToggleBackend::ANY, "Solve Poisson for Coulomb potential phi"},
-    {"movement",           &TermToggles::movement,           true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Particle position integration"},
-    {"lorentz_force",      &TermToggles::lorentz_force,      true,  true,  "forces",           "",                 "", ToggleBackend::ANY, "Magnetic Lorentz force F = alpha*s*(v x B)"},
-    {"selective_damping",  &TermToggles::selective_damping,  true,  true,  "damping",          "",                 "", ToggleBackend::ANY, "Damp only near manifested particles"},
-    {"larmor_radiation",   &TermToggles::larmor_radiation,   false, true,  "damping",          "langevin",         "", ToggleBackend::ANY, "Acceleration-squared radiation damping"},
-    {"dual_substrate",     &TermToggles::dual_substrate,     true,  true,  "",                 "",                 "", ToggleBackend::ANY, "J_L / J_R chirality split"},
-    {"color_forces",       &TermToggles::color_forces,       false, true,  "",                 "",                 "", ToggleBackend::ANY, "SU(3)-inspired color coupling"},
-    {"strong_stress_energy", &TermToggles::strong_stress_energy, false, false, "color_forces", "",                 "", ToggleBackend::ANY, "[FTD-0406 SELECTED] Collision-free strong Hamiltonian projection plus local string stress-energy; native CUDA + CPU"},
-    {"weak_transmutation", &TermToggles::weak_transmutation, true,  true,  "dual_substrate",   "",                 "", ToggleBackend::ANY, "Chirality flip flavor-changing weak"},
-    {"strong_force",       &TermToggles::strong_force,       false, true,  "",                 "",                 "", ToggleBackend::ANY, "Yukawa short-range nuclear force"},
-    {"triad_binding",      &TermToggles::triad_binding,      false, true,  "color_forces",     "",                 "", ToggleBackend::ANY, "Color-singlet triad binding (locked=true)"},
-    {"pair_production",    &TermToggles::pair_production,    false, true,  "",                 "",                 "", ToggleBackend::ANY, "Correlated +1/-1 pair manifestation (independent code path; F11.A-5 audit removed artificial 'requires genesis' — pair_production_cpu / GPU pair-production kernel are SEPARATE phases from phase_write::genesis and operate on their own state==0 + jmag>K_GENESIS check)"},
-    {"exchange_force",     &TermToggles::exchange_force,     false, true,  "poisson_coulomb",  "",                 "", ToggleBackend::ANY, "Pauli exclusion repulsion (same-spin)"},
-    {"latency_field",      &TermToggles::latency_field,      false, true,  "gravity",          "",                 "", ToggleBackend::ANY, "Poisson-based latency field (gravity proxy)"},
-    {"exact_dual_gauss",   &TermToggles::exact_dual_gauss,   false, false, "",                 "",                 "", ToggleBackend::ANY, "Exact dual-cell face-flux Gauss projection"},
-    {"matched_gauss_dynamics", &TermToggles::matched_gauss_dynamics, false, false, "",          "",                 "", ToggleBackend::ANY, "[FTD-0428 SELECTED ENGINE EXTENSION] Projection-free oriented-face Maxwell/Gauss evolution with event-routed conservative current; isolated native CUDA + CPU"},
-    {"emergent_forces",    &TermToggles::emergent_forces,    false, false, "",                 "poisson_coulomb",  "", ToggleBackend::ANY, "EFT mode: force from flux gradient (no Poisson)"},
-    {"langevin",           &TermToggles::langevin,           false, false, "",                 "larmor_radiation", "", ToggleBackend::ANY, "Stochastic OU thermostat (native CUDA + CPU; SplitMix64 per-voxel noise, default OFF => golden-neutral)"},
-    {"symplectic_leapfrog", &TermToggles::symplectic_leapfrog, false, true,  "wave_propagation", "",                 "", ToggleBackend::ANY, "Symplectic leapfrog wave integration"},
-    {"verlet_wave_integrator", &TermToggles::verlet_wave_integrator, false, false, "wave_propagation", "symplectic_leapfrog", "", ToggleBackend::ANY, "[E1/FTD-0337] Velocity-Verlet (KDK) bare-wave integrator: half-kick + drift in phase_write, second half-kick after a post-drift phase_read. Native CUDA + CPU; honors dt<1. Default OFF => golden-neutral"},
-    {"lorentz_period2_floquet", &TermToggles::lorentz_period2_floquet, false, false, "wave_propagation", "verlet_wave_integrator", "", ToggleBackend::ANY, "[FTD-0408 SELECTED PROTOTYPE] P4-preserving period-two free-wave kicks +3/13 and -1/13. Cancels the q^4 Floquet-pole term; native CUDA + CPU, unit-step, default OFF"},
-    {"lorentz_bcc_time_floquet", &TermToggles::lorentz_bcc_time_floquet, false, false, "wave_propagation", "lorentz_period2_floquet", "", ToggleBackend::ANY, "[FTD-0411 SELECTED IR PROTOTYPE] Stable P4-local period-two surrogate for the BCC temporal kernel, with c^2=1/7 and exact q^4 cancellation; differs from literal BCC time at q^6; native CUDA + CPU, unit-step, default OFF"},
-    {"su2_gauge",           &TermToggles::su2_gauge,           false, true,  "",                 "",                 "", ToggleBackend::ANY, "SU(2) link staple relaxation each tick ([IMPOSED] lattice-gauge import; links are observables only — no feedback into the substrate)"},
-    {"su3_gauge",           &TermToggles::su3_gauge,           false, true,  "",                 "",                 "", ToggleBackend::ANY, "SU(3) link staple relaxation each tick ([IMPOSED] lattice-gauge import; links are observables only — no feedback into the substrate)"},
-    {"symmetric_movement_order", &TermToggles::symmetric_movement_order, false, true,  "movement",         "",                 "", ToggleBackend::ANY, "Coordinate-independent update traversal & axis ordering (native CUDA + CPU; SplitMix64 Fisher-Yates)"},
-    {"absorbing_boundary", &TermToggles::absorbing_boundary, false, true,  "wave_propagation", "",                 "", ToggleBackend::ANY, "Imposed D-deep quadratic damping sponge at lattice faces"},
-    {"reflective_boundary", &TermToggles::reflective_boundary, false, true, "movement",         "",                 "", ToggleBackend::ANY, "Mirror-bounce particles at lattice faces; when off they exhaust into the void (no toroidal wrap)"},
-    {"field_energy_gravity", &TermToggles::field_energy_gravity, false, true, "latency_field",    "",                 "", ToggleBackend::ANY, "[IMPOSED] Latency Poisson sources from field-energy density (½|J|²) so flux configs gravitate"},
-    {"cluster_inertia",    &TermToggles::cluster_inertia,    false, false, "",                 "",                 "", ToggleBackend::ANY, "[IMPOSED] Rigid-body cluster inertia: locked clusters integrate a_COM = F_cluster/(N*M_INERTIAL); requires a force channel"},
-    {"geometric_gravity",  &TermToggles::geometric_gravity,  false, true,  "gravity,forces",   "",                 "", ToggleBackend::ANY, "[FTD-1016 SELECTED ENGINE EXTENSION] Replace F=G_N∇|J| with F=M_INERTIAL C² ℒ ∇ℒ from voxel.latency; native CUDA + CPU; default OFF => golden-neutral"},
-    {"de_broglie_clock",   &TermToggles::de_broglie_clock,   false, false, "",                 "",                 "", ToggleBackend::ANY, "[IMPOSED] de Broglie internal clock: Klein-Gordon mass term -omega0^2*J at manifested voxels (FTD-0271). GPU-ported 2026-06-20: the CUDA phase_read kernel applies the same -omega0^2*J KG term, gated by the toggle (default OFF => golden-neutral). Independent of wave_propagation: with the wave term the full KG dispersion omega^2=c^2 k^2 + omega0^2 acts; alone, each manifested voxel is the k=0 rest-frame clock oscillating at omega0."},
-    {"db_clock_coulomb",   &TermToggles::db_clock_coulomb,   false, false, "wave_propagation,de_broglie_clock,poisson_coulomb", "forces", "", ToggleBackend::ANY, "[IMPOSED diagnostic] FTD-0281 live Coulomb clock: pre-read phi_C solve plus all-site KG potential omega_eff^2=omega0^2+2*omega0*V, V=-phi_C. GPU-ported 2026-06-20 (CUDA gpu_phase_read pre-solves d_phi_coulomb via FFT then applies the same all-site KG term). forces must stay off to avoid a second same-tick Coulomb solve."},
-    {"confinement",        &TermToggles::confinement,        false, false, "color_forces",     "",                 "", ToggleBackend::ANY, "[SELECTION] Linear colour string F=SIGMA_STRING·cf at r>=8; not FTD-0025. Native CUDA + CPU; default OFF"},
-    {"knot_tracking",      &TermToggles::knot_tracking,      false, false, "",                 "",                 "", ToggleBackend::ANY, "[OBSERVATION-ONLY] Record per-knot telemetry at end of tick (golden-neutral)"},
-    {"strict_validation",  &TermToggles::strict_validation,  false, false, "",                 "",                 "", ToggleBackend::ANY, "Throw on validate() failure (vs. stderr warn)"},
-    {"ew_background_sweep",&TermToggles::ew_background_sweep,false, false, "",                 "",                 "", ToggleBackend::ANY, "Sinusoidal uniform +x flux drive for EW phase-transition hysteresis (D=(sin(tick*0.01)+1)/2*0.05 per tick before phase_read)"},
+    // {name, field, default, bulk_managed, requires, conflicts, backends, description}
+    {"wave_propagation",   &TermToggles::wave_propagation,   true,  true,  "",                 "",                 ToggleBackend::ANY, "Phase-read 18-pt Laplacian wave equation"},
+    {"coupling",           &TermToggles::coupling,           true,  true,  "",                 "",                 ToggleBackend::ANY, "Phase-read state-flux coupling -g_c*grad(s)"},
+    {"damping",            &TermToggles::damping,            true,  true,  "",                 "",                 ToggleBackend::ANY, "Phase-write exponential flux decay at rate alpha"},
+    {"genesis",            &TermToggles::genesis,            true,  true,  "",                 "",                 ToggleBackend::ANY, "Phase-write manifestation + evaporation (master)"},
+    {"evaporation",        &TermToggles::evaporation,        false, true,  "",                 "",                 ToggleBackend::ANY, "Phase-write evaporation alone (OR'd with genesis; test isolation)"},
+    {"gauss_projection",   &TermToggles::gauss_projection,   true,  true,  "",                 "",                 ToggleBackend::ANY, "Enforce div(J) = s constraint via SOR Poisson"},
+    {"forces",             &TermToggles::forces,             true,  true,  "",                 "",                 ToggleBackend::ANY, "Phase-forces master toggle (EM + gravity)"},
+    {"gravity",            &TermToggles::gravity,            true,  true,  "",                 "",                 ToggleBackend::ANY, "Gravitational force F = G_N*grad(rho)"},
+    {"poisson_coulomb",    &TermToggles::poisson_coulomb,    true,  true,  "",                 "emergent_forces",  ToggleBackend::ANY, "Solve Poisson for Coulomb potential phi"},
+    {"movement",           &TermToggles::movement,           true,  true,  "",                 "",                 ToggleBackend::ANY, "Particle position integration"},
+    {"lorentz_force",      &TermToggles::lorentz_force,      true,  true,  "forces",           "",                 ToggleBackend::ANY, "Magnetic Lorentz force F = alpha*s*(v x B)"},
+    {"selective_damping",  &TermToggles::selective_damping,  true,  true,  "damping",          "",                 ToggleBackend::ANY, "Damp only near manifested particles"},
+    {"larmor_radiation",   &TermToggles::larmor_radiation,   false, true,  "damping",          "langevin",         ToggleBackend::ANY, "Acceleration-squared radiation damping"},
+    {"dual_substrate",     &TermToggles::dual_substrate,     true,  true,  "",                 "",                 ToggleBackend::ANY, "J_L / J_R chirality split"},
+    {"color_forces",       &TermToggles::color_forces,       false, true,  "",                 "",                 ToggleBackend::ANY, "SU(3)-inspired color coupling"},
+    {"strong_stress_energy", &TermToggles::strong_stress_energy, false, false, "color_forces", "",                 ToggleBackend::ANY, "[FTD-0406 SELECTED] Collision-free strong Hamiltonian projection plus local string stress-energy; native CUDA + CPU"},
+    {"weak_transmutation", &TermToggles::weak_transmutation, true,  true,  "dual_substrate",   "",                 ToggleBackend::ANY, "Chirality flip flavor-changing weak"},
+    {"strong_force",       &TermToggles::strong_force,       false, true,  "",                 "",                 ToggleBackend::ANY, "Yukawa short-range nuclear force"},
+    {"triad_binding",      &TermToggles::triad_binding,      false, true,  "color_forces",     "",                 ToggleBackend::ANY, "Color-singlet triad binding (locked=true)"},
+    {"pair_production",    &TermToggles::pair_production,    false, true,  "",                 "",                 ToggleBackend::ANY, "Correlated +1/-1 pair manifestation (independent code path; F11.A-5 audit removed artificial 'requires genesis' — pair_production_cpu / GPU pair-production kernel are SEPARATE phases from phase_write::genesis and operate on their own state==0 + jmag>K_GENESIS check)"},
+    {"exchange_force",     &TermToggles::exchange_force,     false, true,  "poisson_coulomb",  "",                 ToggleBackend::ANY, "Pauli exclusion repulsion (same-spin)"},
+    {"latency_field",      &TermToggles::latency_field,      false, true,  "gravity",          "",                 ToggleBackend::ANY, "Poisson-based latency field (gravity proxy)"},
+    {"exact_dual_gauss",   &TermToggles::exact_dual_gauss,   false, false, "",                 "",                 ToggleBackend::ANY, "Exact dual-cell face-flux Gauss projection"},
+    {"matched_gauss_dynamics", &TermToggles::matched_gauss_dynamics, false, false, "",          "",                 ToggleBackend::ANY, "[FTD-0428 SELECTED ENGINE EXTENSION] Projection-free oriented-face Maxwell/Gauss evolution with event-routed conservative current; isolated native CUDA + CPU"},
+    {"emergent_forces",    &TermToggles::emergent_forces,    false, false, "",                 "poisson_coulomb",  ToggleBackend::ANY, "EFT mode: force from flux gradient (no Poisson)"},
+    {"langevin",           &TermToggles::langevin,           false, false, "",                 "larmor_radiation", ToggleBackend::ANY, "Stochastic OU thermostat (native CUDA + CPU; SplitMix64 per-voxel noise, default OFF => golden-neutral)"},
+    {"symplectic_leapfrog", &TermToggles::symplectic_leapfrog, false, true,  "wave_propagation", "",                 ToggleBackend::ANY, "Symplectic leapfrog wave integration"},
+    {"verlet_wave_integrator", &TermToggles::verlet_wave_integrator, false, false, "wave_propagation", "symplectic_leapfrog", ToggleBackend::ANY, "[E1/FTD-0337] Velocity-Verlet (KDK) bare-wave integrator: half-kick + drift in phase_write, second half-kick after a post-drift phase_read. Native CUDA + CPU; honors dt<1. Default OFF => golden-neutral"},
+    {"lorentz_period2_floquet", &TermToggles::lorentz_period2_floquet, false, false, "wave_propagation", "verlet_wave_integrator", ToggleBackend::ANY, "[FTD-0408 SELECTED PROTOTYPE] P4-preserving period-two free-wave kicks +3/13 and -1/13. Cancels the q^4 Floquet-pole term; native CUDA + CPU, unit-step, default OFF"},
+    {"lorentz_bcc_time_floquet", &TermToggles::lorentz_bcc_time_floquet, false, false, "wave_propagation", "lorentz_period2_floquet", ToggleBackend::ANY, "[FTD-0411 SELECTED IR PROTOTYPE] Stable P4-local period-two surrogate for the BCC temporal kernel, with c^2=1/7 and exact q^4 cancellation; differs from literal BCC time at q^6; native CUDA + CPU, unit-step, default OFF"},
+    {"su2_gauge",           &TermToggles::su2_gauge,           false, true,  "",                 "",                 ToggleBackend::ANY, "SU(2) link staple relaxation each tick ([IMPOSED] lattice-gauge import; links are observables only — no feedback into the substrate)"},
+    {"su3_gauge",           &TermToggles::su3_gauge,           false, true,  "",                 "",                 ToggleBackend::ANY, "SU(3) link staple relaxation each tick ([IMPOSED] lattice-gauge import; links are observables only — no feedback into the substrate)"},
+    {"symmetric_movement_order", &TermToggles::symmetric_movement_order, false, true,  "movement",         "",                 ToggleBackend::ANY, "Coordinate-independent update traversal & axis ordering (native CUDA + CPU; SplitMix64 Fisher-Yates)"},
+    {"absorbing_boundary", &TermToggles::absorbing_boundary, false, true,  "wave_propagation", "",                 ToggleBackend::ANY, "Imposed D-deep quadratic damping sponge at lattice faces"},
+    {"reflective_boundary", &TermToggles::reflective_boundary, false, true, "movement",         "",                 ToggleBackend::ANY, "Mirror-bounce particles at lattice faces; when off they exhaust into the void (no toroidal wrap)"},
+    {"field_energy_gravity", &TermToggles::field_energy_gravity, false, true, "latency_field",    "",                 ToggleBackend::ANY, "[IMPOSED] Latency Poisson sources from field-energy density (½|J|²) so flux configs gravitate"},
+    {"cluster_inertia",    &TermToggles::cluster_inertia,    false, false, "",                 "",                 ToggleBackend::ANY, "[IMPOSED] Rigid-body cluster inertia: locked clusters integrate a_COM = F_cluster/(N*M_INERTIAL); requires a force channel"},
+    {"geometric_gravity",  &TermToggles::geometric_gravity,  false, true,  "gravity,forces",   "",                 ToggleBackend::ANY, "[FTD-1016 SELECTED ENGINE EXTENSION] Replace F=G_N∇|J| with F=M_INERTIAL C² ℒ ∇ℒ from voxel.latency; native CUDA + CPU; default OFF => golden-neutral"},
+    {"de_broglie_clock",   &TermToggles::de_broglie_clock,   false, false, "",                 "",                 ToggleBackend::ANY, "[IMPOSED] de Broglie internal clock: Klein-Gordon mass term -omega0^2*J at manifested voxels (FTD-0271). GPU-ported 2026-06-20: the CUDA phase_read kernel applies the same -omega0^2*J KG term, gated by the toggle (default OFF => golden-neutral). Independent of wave_propagation: with the wave term the full KG dispersion omega^2=c^2 k^2 + omega0^2 acts; alone, each manifested voxel is the k=0 rest-frame clock oscillating at omega0."},
+    {"db_clock_coulomb",   &TermToggles::db_clock_coulomb,   false, false, "wave_propagation,de_broglie_clock,poisson_coulomb", "forces", ToggleBackend::ANY, "[IMPOSED diagnostic] FTD-0281 live Coulomb clock: pre-read phi_C solve plus all-site KG potential omega_eff^2=omega0^2+2*omega0*V, V=-phi_C. GPU-ported 2026-06-20 (CUDA gpu_phase_read pre-solves d_phi_coulomb via FFT then applies the same all-site KG term). forces must stay off to avoid a second same-tick Coulomb solve."},
+    {"confinement",        &TermToggles::confinement,        false, false, "color_forces",     "",                 ToggleBackend::ANY, "[SELECTION] Linear colour string F=SIGMA_STRING·cf at r>=8; not FTD-0025. Native CUDA + CPU; default OFF"},
+    {"knot_tracking",      &TermToggles::knot_tracking,      false, false, "",                 "",                 ToggleBackend::ANY, "[OBSERVATION-ONLY] Record per-knot telemetry at end of tick (golden-neutral)"},
+    {"strict_validation",  &TermToggles::strict_validation,  false, false, "",                 "",                 ToggleBackend::ANY, "Throw on validate() failure (vs. stderr warn)"},
+    {"ew_background_sweep",&TermToggles::ew_background_sweep,false, false, "",                 "",                 ToggleBackend::ANY, "Sinusoidal uniform +x flux drive for EW phase-transition hysteresis (D=(sin(tick*0.01)+1)/2*0.05 per tick before phase_read)"},
 };
 
 // ─────────────────────────────────────────────────────────────────────
@@ -428,20 +425,6 @@ inline bool TermToggles::validate_backend(uint8_t backend,
 
     if (err) *err = msg;
     return msg.empty();
-}
-
-// F2 (callstack audit 2026-04-17): warn about toggles whose
-// implementation lives only on the GPU path. Generated from
-// ToggleSpec::gpu_only_warning entries in the table.
-inline std::string TermToggles::cpu_runtime_warnings() const {
-    std::string msg;
-    for (const auto& spec : TOGGLE_SPECS) {
-        if (!(this->*(spec.field))) continue;
-        if (spec.gpu_only_warning && *spec.gpu_only_warning) {
-            msg += spec.gpu_only_warning;
-        }
-    }
-    return msg;
 }
 
 // enable_all() — restore the recommended profile (= each toggle's
