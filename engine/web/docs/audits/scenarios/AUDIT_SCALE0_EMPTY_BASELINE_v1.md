@@ -140,14 +140,65 @@ artifacts. These checks establish loaded-byte consistency with the checked-in
 manifest, not independent publisher authenticity; Git commit and deployment
 trust remain the authenticity boundary.
 
-The final focused browser evidence against the second build is: artifact
-identity `4/4` passed; `wasm-dynamical-state-digest.spec.js` passed `4/4`;
-`scale0-worker.spec.js` passed `4/4`; and the Scenario 1 qualification passed
-`5` with `1` genuine hidden-tab skip. The
-largest qualified WASM-worker lattice (`L = 97`) recorded 60.00 FPS with
-median/p95/p99/max frame interval 16.67 ms. The execution path is pinned
-explicitly, so an available native WebSocket server cannot silently replace a
-claimed WASM run.
+The focused browser evidence against the second build includes artifact
+identity `4/4`, the canonical digest and worker-configuration barrier `5/5`,
+the worker bridge contract `4/4`, and the Scenario 1 qualification `5` passed
+with `1` genuine hidden-tab skip. The fresh, explicitly worker-pinned absolute
+panel campaign passed `5/5`: the largest qualified WASM-worker lattice
+(`L = 97`) recorded 60.00 FPS for all 17 panels with p95/p99 frame intervals
+of 16.67 ms, and every collapsed panel recorded zero DOM and canvas work. An
+available native WebSocket server therefore cannot silently replace a claimed
+WASM-worker run.
+
+### Live scientific-mutation provenance
+
+The dashboard now maintains a monotonic Scale 0 `mutationEpoch` independently
+of scenario-load generations. An authoritative load is `pending` until the
+same owner, scenario, and load generation passes a backend-specific engine
+barrier. In-thread WASM qualifies from synchronous engine readback. The worker
+uses a monotonic configuration token and a FIFO batch barrier, including an
+empty batch: every queued command must report success and the final engine
+readbacks for queued post-setup toggles and flux-boundary policy must match;
+the complete final engine toggle registry is then published and reconciled
+before the proxy emits `configurationApplied`. Native qualification requires an explicitly
+load-generation-stamped acknowledgement whose scenario, staged toggles, and
+flux boundary match, which reports a positive integer authoritative lattice
+size used to resynchronize the UI, and which includes the server parameter
+record. Missing or mismatched required fields reject the load. Older-token
+worker frames and older/wrong-scenario
+acknowledgements cannot qualify or overwrite a newer record.
+
+Accepted dashboard scientific-write intents record reason, source, owner tick
+when available, load generation, and transport dispatch status, and suspend the
+live qualification exactly once. This includes injection, clear/random field
+actions, physics terms, the engine flux-boundary law, Thermodynamics and P1
+writes, Wave Lab reseeding, and Genesis experiments. Fire-and-forget transports
+remain explicitly unacknowledged; the UI does not claim that the engine applied
+the write. Visual-only boundary shape, overlay, renderer, selection, camera,
+and presentation changes do not increment the mutation epoch. Reloading restores
+qualification only after the matching authoritative setup barrier succeeds.
+
+Queued Wave Lab work captures generation and owner and is cancelled when its
+scenario loses applicability. Thermodynamics slider work is coalesced and a
+preset cancels queued input. On the qualified WASM path, Genesis pauses the
+canonical transport, uses a turnover token around every asynchronous tick, and
+never restores captured playback state into a newer scenario. Its Fire/Sweep
+controls are explicitly unavailable on native WebSocket because reset,
+injection, and deterministic stepping do not yet share one acknowledged native
+transaction. Native resize requests are serialized and
+last-intent-wins. A post-dispatch/commit-uncertain resize failure remains
+suspended rather than assuming the old size, while a successful acknowledgement
+synchronizes every size-dependent control before qualification.
+
+Fresh focused browser evidence after cache-versioning the complete changed
+module graph: the core scientific-mutation contract passes `8/8`; the panel
+mutation/race contract passes `4/4`; the worker digest/configuration barrier
+passes `5/5`; Genesis Burst passes `5/5`; the explicitly worker-pinned substrate
+and direct-read suites pass `3/3` and `4/4`; the strict native profile,
+rejection, acknowledgement, coalescing, and prepared-resize set passes `7/7`;
+and the explicitly worker-pinned Empty panel/performance file passes `5/5`.
+The native coalescing case verifies that only the first and final requests
+publish their own exact client load-generation tokens.
 
 Required checks:
 
@@ -200,16 +251,20 @@ qualification but does not rewrite a scientific zero/nonzero result.
 | 3. Numerical validity | in-progress | `empty_scenario_qualification` passes the native CPU product-size short matrix at `L=9,17,33,65,97`, all three flux boundaries, and checkpoints `0,1,2,8,16`; its preregistered long matrix passes `L=9,17` through ticks `256,4096` and `L=33` through tick `256` with invariant fieldwise digests; the WSL2 CUDA sibling passes ordinary/interactive modes and all three boundaries through tick 64 with exact CPU/GPU populated-state hash parity, 32-byte result transfer, and zero full-mirror calls; two sequential clean builds on the same pinned host/toolchain from `a351fd49772ca1e365285295f974608dd278fbfe` were observed byte-identical across all six WASM modules plus the deterministic manifest; direct/worker loaders reject unverified selected bytes before instantiation and publish the actual verified variant; the source-stamped WASM worker passes lifecycle/null checks at product sizes through `L=97`; worker and main-thread WASM publish identical canonical hashes for the same Empty record, and the main path remains invariant through 16 synchronous ticks; the native CUDA WebSocket smoke passes Empty digest publication at ticks 0 and 1 with invariant lanes and no full mirror | independent controls and the remaining declared browser/lifecycle campaigns remain open |
 | 4. Scientific validity | not-started | null claim and falsifiers frozen | run controls without post-hoc tuning |
 | 5. Scale appropriateness | in-progress | the imposed finite lattice record belongs to Scale 0; exact-ID gating correctly excludes Standard Model overlays | replace unqualified particle/void nouns, remove stale Scale-up implications, and verify all generic panel applicability states |
-| 6. UI and interpretive truth | in-progress | focused browser test passes picker/current-state truth, unsupported-latency distinction, finite observer baseline, collapsed overlay demand, WASM-main/worker origin distinction, and actual verified WASM artifact identity; the knowledge entry now states the imposed null-control and non-vacuum boundary; Diagnostics renders unresolved values as `—` while retaining exact measured zero; Lagrangian exposes the state-independent observer reference, baseline-subtracted `Δℒ`, stale/unavailable states, and an explicit non-vacuum/non-zero-point limitation; Flux Slice, Spectrum, and Gravity declare `empty` inapplicable and stop their scientific sampling/coordinator paths | live mutation does not yet suspend the displayed qualification; upstream telemetry still erases some unavailable diagnostics/audit/Lagrangian values into zero before formatting; remaining panel applicability, export metadata, and native-WebSocket presentation paths remain open |
-| 7. Performance and operational safety | in-progress | the final full WASM-worker coexistence campaign passes all 17 visible panels at `L=97`: every panel records 60.00 FPS with p95/p99 16.67 ms, all absolute fixed-work/callback budgets pass, no long tasks occur, and every collapsed panel records zero DOM/canvas work; Diagnostics passes with 5 mounted canvases/about 95 mutations; Lagrangian passes with 7 mounted canvases and on-demand action trends; Flux Slice, Spectrum, and Gravity perform zero periodic work for `empty`; rapid generation/reset/resize and five-reset lifecycle probes pass; the second clean reproducible bundle repeats the focused `L=97` pacing result at 60.00 FPS with median/p95/p99/max 16.67 ms | genuine hidden-tab evidence is unsupported in the current headless browser and was skipped rather than fabricated; longer foreground campaign and native-WebSocket browser evidence remain open |
+| 6. UI and interpretive truth | in-progress | focused browser test passes picker/current-state truth, unsupported-latency distinction, finite observer baseline, collapsed overlay demand, WASM-main/worker origin distinction, and actual verified WASM artifact identity; the knowledge entry now states the imposed null-control and non-vacuum boundary; Diagnostics renders unresolved values as `—` while retaining exact measured zero; Lagrangian exposes the state-independent observer reference, baseline-subtracted `Δℒ`, stale/unavailable states, and an explicit non-vacuum/non-zero-point limitation; Flux Slice, Spectrum, and Gravity declare `empty` inapplicable and stop their scientific sampling/coordinator paths; a monotonic scientific-mutation epoch now suspends qualification for every audited live write, while backend-specific, matching-generation engine barriers are required to establish a new baseline and visual-only work remains non-mutating | upstream telemetry still erases some unavailable diagnostics/audit/Lagrangian values into zero before formatting; remaining panel applicability, export metadata, and native-WebSocket presentation paths remain open |
+| 7. Performance and operational safety | in-progress | the fresh, explicitly worker-pinned full campaign passes all 17 visible panels at `L=97`: every panel records 60.00 FPS with p95/p99 16.67 ms, all absolute fixed-work/callback budgets pass, no long tasks occur, and every collapsed panel records zero DOM/canvas work; Diagnostics passes with 5 mounted canvases and 90 mutations; Lagrangian passes with 7 mounted canvases and on-demand action trends; Flux Slice, Spectrum, and Gravity perform zero periodic work for `empty`; rapid generation/reset/resize and five-reset lifecycle probes pass | genuine hidden-tab evidence is unsupported in the current headless browser and was skipped rather than fabricated; longer foreground campaign and native-WebSocket browser evidence remain open |
 
 ## 5. UI trace blockers
 
 The Scale 0 UI audit found the following qualification blockers. These are
 recorded here so later interface work cannot silently erase or bypass them:
 
-1. injecting, randomizing, or field-editing the live lattice does not suspend
-   the displayed `empty` qualification even though toggle edits do;
+1. **[RESOLVED 2026-08-29]** Injection, randomization, clear/field edits,
+   term and boundary changes, panel parameter writes, Wave Lab reseeds, and
+   Genesis experiments now enter the centralized mutation contract and suspend
+   the displayed qualification exactly once. Matching-generation authoritative
+   reload readback is required to restore it; visual-only controls do not
+   suspend it;
 2. Diagnostics now preserves unresolved values as unavailable, but upstream
    telemetry paths still convert some unavailable, stale, or nonfinite data
    into numeric zero before the panel receives them;

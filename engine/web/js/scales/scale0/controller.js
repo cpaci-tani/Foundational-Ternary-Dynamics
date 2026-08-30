@@ -20,6 +20,8 @@ import {
     markFieldDirty,
     getPrimeTickOnLoad,
     setPrimeTickOnLoad,
+    completeScale0AuthoritativeLoad,
+    failScale0AuthoritativeLoad,
 } from './state/store.js';
 import { advanceSimulation } from './runtime/tick.js';
 import { syncRenderableData } from './runtime/frame-sync.js';
@@ -34,8 +36,8 @@ import {
     syncComboSliders,
     syncScale0ToggleUiFromEngine,
     stepScale0,
-} from './runtime/scenario-loader.js?v=10';
-import { bindScale0UI, handleScale0ShortcutKey } from './ui/bindings.js?v=9';
+} from './runtime/scenario-loader.js?v=11';
+import { bindScale0UI, handleScale0ShortcutKey } from './ui/bindings.js?v=10';
 import { getSelectedScenarioId } from './ui/dom.js';
 import { syncScale0LatticeSizeAvailability } from './ui/toolbar/limits.js';
 import { Scale0ControlsComponent } from './ui/controls/component.js?v=5';
@@ -43,7 +45,7 @@ import {
     syncScale0FlowLineControls,
     syncScale0ParticleDisplay,
     wireScale0Controls,
-} from './ui/controls/wire.js?v=12';
+} from './ui/controls/wire.js?v=13';
 import { mountSymmetryPanel } from './ui/overlays/symmetry-panel.js';
 // The Scale-0 overlay panels are first created by app.js at boot
 // ("Creating panels…", one-time). The controller ALSO drives their
@@ -53,14 +55,14 @@ import { mountSymmetryPanel } from './ui/overlays/symmetry-panel.js';
 // when present, so the boot-time calls and the mount() calls do not
 // double-mount.
 import { initFluxSlicePanel } from './ui/overlays/flux-slice-panel.js';
-import { initWaveLabPanel } from './ui/overlays/wave-lab-panel.js';
-import { initP1ObservablesPanel } from './ui/overlays/p1-observables-panel.js';
+import { initWaveLabPanel } from './ui/overlays/wave-lab-panel.js?v=2';
+import { initP1ObservablesPanel } from './ui/overlays/p1-observables-panel.js?v=2';
 import { initConservationMicropanel } from './ui/overlays/conservation-micropanel.js';
 import { initSpectrumPanel } from './ui/overlays/spectrum-panel.js';
 import { initGravityPanel } from './ui/overlays/gravity-panel.js';
 import { appRegistry } from '../../core/registry.js';
 import { initTimePanel } from './ui/overlays/time-panel.js';
-import { initThermoPanel } from './ui/overlays/thermo-panel.js';
+import { initThermoPanel } from './ui/overlays/thermo-panel.js?v=2';
 import { initDispersionPanel } from './ui/overlays/dispersion-panel.js';
 import { initKnotsPanel } from './ui/overlays/knots-panel.js';
 import { initScaleContextPanel } from './ui/overlays/scale-context-panel.js';
@@ -71,6 +73,22 @@ const state = getScale0State();
 let _playBar = null;
 let _lastScenarioRequestBridge = null;
 let _lastScenarioRequestId = null;
+
+/** Synchronize every size-dependent Scale-0 UI surface from an engine ACK. */
+export function syncScale0AuthoritativeLatticeSize(ctx, acknowledgedLatticeSize) {
+    const size = Number(acknowledgedLatticeSize ?? ctx?.bridge?.latticeSize);
+    if (!Number.isInteger(size) || size < 1) return false;
+    const select = document.getElementById('lattice-size');
+    if (select) select.value = String(size);
+    ctx?.syncScale0InjectionBounds?.(size);
+    ctx?.syncScale0SelectionBounds?.(size);
+    ctx?.syncScale0FlowLineControls?.(size);
+    if (ctx?.viewport?.setLatticeSize
+        && Number(ctx.viewport.latticeSize) !== size) {
+        ctx.viewport.setLatticeSize(size);
+    }
+    return true;
+}
 
 // ── Render mode ──────────────────────────────────────────────────────
 // Removed as part of simplifying UI and removing the render system.
@@ -225,17 +243,75 @@ export function bindUI(ctx) {
     // the whole TermToggles candidate. Repaint from the acknowledgement (or
     // rollback snapshot) so dependency/conflict rejection cannot leave the
     // checkbox card or boundary selector claiming physics the engine refused.
-    ctx.onBridgeProfileUpdate = ({ fluxBoundaryMode } = {}) => {
+    ctx.onBridgeProfileUpdate = ({
+        fluxBoundaryMode,
+        latticeSize: acknowledgedLatticeSize = null,
+        authoritativeScenarioAck = false,
+        scenarioId: acknowledgedScenarioId = null,
+        loadGeneration: acknowledgedLoadGeneration = null,
+        error = null,
+    } = {}) => {
         if (ctx.engineMode && ctx.engineMode !== 'lattice') return;   // late native profile ack after a scale switch
         const scenarioId = state.currentScenarioId || 'flux-pulse';
+        const loadGeneration = Number(ctx._loadGeneration || 0);
+        if (authoritativeScenarioAck
+            && (acknowledgedScenarioId !== scenarioId
+                || Number(acknowledgedLoadGeneration) !== loadGeneration)) {
+            return;
+        }
+        const syncAcknowledgedLatticeSize = () => syncScale0AuthoritativeLatticeSize(
+            ctx,
+            acknowledgedLatticeSize,
+        );
+        if (authoritativeScenarioAck && error) {
+            // WebSocketBridge has rolled its optimistic staged profile back to
+            // the last server-confirmed mirror (or an authoritative rejection
+            // snapshot). Repaint that truth before surfacing the failed load.
+            syncComboSliders(ctx, state);
+            syncScale0ToggleUiFromEngine(ctx, viewportAdapter(ctx), scenarioId);
+            if (Number.isInteger(fluxBoundaryMode)) {
+                const select = document.getElementById('flux-boundary-mode');
+                if (select) select.value = String(fluxBoundaryMode);
+            }
+            syncAcknowledgedLatticeSize();
+            setLatticeNeedsUpload();
+            markFieldDirty();
+            failScale0AuthoritativeLoad({
+                scenarioId,
+                loadGeneration,
+                reason: error,
+            });
+            return;
+        }
         // Native scenario/profile acknowledgements carry the authoritative
         // constant values. Refresh the disabled K_B/G_N/damping controls from
         // that echo rather than leaving a cosmetic pre-ack value behind.
         syncComboSliders(ctx, state);
-        syncScale0ToggleUiFromEngine(ctx, viewportAdapter(ctx), scenarioId);
+        const profileSynchronized = syncScale0ToggleUiFromEngine(
+            ctx,
+            viewportAdapter(ctx),
+            scenarioId,
+        );
         if (Number.isInteger(fluxBoundaryMode)) {
             const select = document.getElementById('flux-boundary-mode');
             if (select) select.value = String(fluxBoundaryMode);
+        }
+        if (profileSynchronized && authoritativeScenarioAck) {
+            // A previous resize transport failure is commit-uncertain. The
+            // profile ACK's authoritative N must reach every size-dependent UI
+            // surface before qualification is restored.
+            syncAcknowledgedLatticeSize();
+            let tick = null;
+            try {
+                const reportedTick = Number(ctx.bridge?.getDiagnostics?.()?.tick);
+                if (Number.isFinite(reportedTick)) tick = reportedTick;
+            } catch { /* acknowledgement remains valid without a reported tick */ }
+            completeScale0AuthoritativeLoad({
+                scenarioId,
+                loadGeneration,
+                tick,
+                source: 'native-profile-ack',
+            });
         }
         setLatticeNeedsUpload();
         markFieldDirty();

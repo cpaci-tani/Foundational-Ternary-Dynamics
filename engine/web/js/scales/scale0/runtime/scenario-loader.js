@@ -1,6 +1,6 @@
 import { runScale0PhysicsTicks } from './tick.js';
 import { getPhysicsHarness } from '../../../physics/index.js';
-import { WasmBridgeProxy } from '../../../bridge/wasm-bridge-proxy.js';
+import { WasmBridgeProxy } from '../../../bridge/wasm-bridge-proxy.js?v=2';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../../constants.js';
 import {
@@ -14,7 +14,7 @@ import {
     SCALE0_SCENARIO_RESEARCH_TERMS,
 } from '../../../config/toggles.js';
 import { getScale0Scenario } from '../scenario-registry.js';
-import { mountGenesisBurstPanel } from '../ui/overlays/genesis-burst-panel.js';
+import { mountGenesisBurstPanel } from '../ui/overlays/genesis-burst-panel.js?v=2';
 import { forEachKnotTracker } from './field-line-knots.js';
 import {
     clearFluxMock,
@@ -29,6 +29,9 @@ import {
     setScalarRenderMode,
     getActiveScale0Bridge,
     getScale0State,
+    beginScale0AuthoritativeLoad,
+    completeScale0AuthoritativeLoad,
+    failScale0AuthoritativeLoad,
 } from '../state/store.js';
 import {
     FIELD_TOGGLE_BINDINGS,
@@ -82,6 +85,15 @@ function reportScenarioSetupFailure(msg) {
     console.error('[Scale0]', msg);
     if (typeof window !== 'undefined' && typeof window.showToast === 'function') {
         window.showToast(msg, 'error');
+    }
+}
+
+function readAuthoritativeTick(bridge) {
+    try {
+        const tick = Number(bridge?.getDiagnostics?.()?.tick);
+        return Number.isFinite(tick) ? tick : null;
+    } catch {
+        return null;
     }
 }
 // Round-trip the user's overlay preferences across scenario switches. Both maps
@@ -536,7 +548,7 @@ function applyToggleDefaults(mainScale0, mockScale0, scenarioName) {
  *
  * Returns false when the active bridge cannot answer authoritatively yet: the
  * worker publishes its readback asynchronously, so the proxy re-invokes this
- * from its `onEngineToggles` callback once the first real frame lands.
+ * from its frame callback and again at the explicit post-configuration barrier.
  */
 export function syncScale0ToggleUiFromEngine(ctx, viewportAdapter, scenarioId) {
     // Legacy state fields: useFluxMock / fluxMock hold the WASM worker proxy.
@@ -726,21 +738,36 @@ function fallbackToInThreadEngine(ctx, state, viewportAdapter, scenarioId, param
 }
 
 export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, params = {}, opts = {}) {
-    const { resetSpeed = true, resetTickAccumulator = false } = opts;
+    const { resetSpeed = true, resetTickAccumulator = false, loadGeneration = null } = opts;
     const scenario = getScale0Scenario(scenarioId);
     const previousScenarioId = getScale0State().currentScenarioId;
     telemetryHub.resetScale(0);
 
     // Monotonic load generation: ignore late worker callbacks from a superseded load.
-    ctx._loadGeneration = (ctx._loadGeneration || 0) + 1;
-    const loadGen = ctx._loadGeneration;
+    const suppliedGeneration = Number(loadGeneration);
+    let loadGen;
+    if (loadGeneration !== null && loadGeneration !== undefined) {
+        if (!Number.isInteger(suppliedGeneration)
+            || suppliedGeneration < 0
+            || suppliedGeneration !== Number(ctx._loadGeneration || 0)) {
+            return false;
+        }
+        loadGen = suppliedGeneration;
+    } else {
+        ctx._loadGeneration = (ctx._loadGeneration || 0) + 1;
+        loadGen = ctx._loadGeneration;
+    }
     ctx._scale0ToggleBaselineGeneration = -1;
     ctx._scale0ToggleUserEditGeneration = -1;
     setPhysicsToggleCardPending(true);
-    // Publish the intended id BEFORE async worker create so onEngineToggles /
-    // onSetupFailure can gate against the current selection immediately.
+    // Publish the intended id BEFORE async worker create so worker callbacks
+    // can gate against the current selection immediately.
     setCurrentScenarioId(scenario.id);
     setSelectedScenarioId(scenario.id);
+    beginScale0AuthoritativeLoad({
+        scenarioId: scenario.id,
+        loadGeneration: loadGen,
+    });
 
     // Preserve the user's current overlay-toggle preferences across the reset.
     // ctx.resetAllVisualState() → resetScale0VisualState() wipes every field
@@ -767,14 +794,48 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
             },
             onSetupFailure: (msg) => {
                 if (ctx._loadGeneration !== loadGen) return;
+                failScale0AuthoritativeLoad({
+                    scenarioId: scenario.id,
+                    loadGeneration: loadGen,
+                    reason: msg || 'worker-setup-failed',
+                });
                 reportScenarioSetupFailure(msg || `Scenario setup failed: ${scenario.id}`);
             },
-            // The worker owns the truth about which terms the C++ body left live.
-            // Reconcile the UI to it whenever it republishes, against THIS load.
+            // Frames may reconcile UI truth, but the first frame is published
+            // before post-setup loader commands have crossed the worker FIFO.
+            // It must never qualify the scenario.
             onEngineToggles: () => {
                 if (ctx._loadGeneration !== loadGen) return;
                 const activeId = getScale0State().currentScenarioId;
-                if (activeId) syncScale0ToggleUiFromEngine(ctx, viewportAdapter, activeId);
+                if (!activeId || activeId !== scenario.id) return;
+                syncScale0ToggleUiFromEngine(ctx, viewportAdapter, activeId);
+            },
+            // This acknowledgement is emitted only after the worker applies
+            // the complete queued post-setup batch and publishes final truth.
+            onConfigurationApplied: (acknowledgement) => {
+                if (ctx._loadGeneration !== loadGen) return;
+                const activeId = getScale0State().currentScenarioId;
+                if (!activeId || activeId !== scenario.id) return;
+                if (!acknowledgement?.ok) {
+                    const details = Array.isArray(acknowledgement?.errors)
+                        ? acknowledgement.errors.join('; ')
+                        : 'worker configuration was not acknowledged';
+                    failScale0AuthoritativeLoad({
+                        scenarioId: activeId,
+                        loadGeneration: loadGen,
+                        reason: details,
+                    });
+                    reportScenarioSetupFailure(`Scenario configuration failed: ${details}`);
+                    return;
+                }
+                if (syncScale0ToggleUiFromEngine(ctx, viewportAdapter, activeId)) {
+                    completeScale0AuthoritativeLoad({
+                        scenarioId: activeId,
+                        loadGeneration: loadGen,
+                        tick: readAuthoritativeTick(wasmWorker),
+                        source: 'worker-configuration-applied',
+                    });
+                }
             },
         });
         useWasmWorker = true;
@@ -789,7 +850,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     const nativeScenarioTransaction = !!ctx.bridge?.isNativeGPU
         && typeof ctx.bridge.beginScenarioConfiguration === 'function'
         && typeof ctx.bridge.commitScenarioConfiguration === 'function';
-    if (nativeScenarioTransaction) ctx.bridge.beginScenarioConfiguration(scenario.id);
+    if (nativeScenarioTransaction) ctx.bridge.beginScenarioConfiguration(scenario.id, loadGen);
 
     // Apply the in-memory scenario profile (defaults + overrides + research terms).
     // Do NOT re-read DOM checkboxes onto the worker — that re-coupled physics to
@@ -812,6 +873,11 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // create asynchronously; in-thread returns bool for unknown ids.
     const setupOk = scenario.load(harness);
     if (setupOk === false) {
+        failScale0AuthoritativeLoad({
+            scenarioId: scenario.id,
+            loadGeneration: loadGen,
+            reason: 'scenario-setup-rejected',
+        });
         reportScenarioSetupFailure(`Unknown or unhandled scenario: ${scenario.id}`);
     }
 
@@ -865,8 +931,10 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     applyScenarioVisualProfile(ctx, state, viewportAdapter, scenario.id, overlayPrefs);
     // Prefer engine truth. The in-thread bridge answers synchronously here; the
     // worker path cannot yet, so it falls back to the JS model for this frame and
-    // the proxy's onEngineToggles callback corrects both card and mask on arrival.
-    if (!syncScale0ToggleUiFromEngine(ctx, viewportAdapter, scenario.id)) {
+    // worker callbacks correct both card and mask as authoritative readbacks arrive.
+    const canSynchronouslyAcknowledge = !useWasmWorker && !activeBridge?.isNativeGPU;
+    if (!canSynchronouslyAcknowledge
+        || !syncScale0ToggleUiFromEngine(ctx, viewportAdapter, scenario.id)) {
         applyScale0OverlayApplicability(scenario.id, viewportAdapter);
     }
 
@@ -926,16 +994,55 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     }
 
     if (resetTickAccumulator) state.tickAccumulator.reset();
+    if (setupOk !== false && canSynchronouslyAcknowledge) {
+        completeScale0AuthoritativeLoad({
+            scenarioId: scenario.id,
+            loadGeneration: loadGen,
+            tick: readAuthoritativeTick(activeBridge),
+            source: 'in-thread-engine-readback',
+        });
+    }
+    return setupOk !== false;
 }
 
-export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) {
-    const scenarioId = state.currentScenarioId || readInputValue('scenario-select', 'flux-pulse');
+async function performScale0LatticeResize(
+    ctx,
+    state,
+    viewportAdapter,
+    newSize,
+    scenarioId,
+    loadGen,
+    resizeIntent,
+) {
     const bridge = ctx.bridge;
     const previousSize = bridge?.latticeSize || 33;
+    const recoverCurrentBaseline = (reason) => {
+        const stillCurrent = (!ctx.engineMode || ctx.engineMode === 'lattice')
+            && (ctx._loadGeneration || 0) === loadGen
+            && (ctx._scale0ResizeIntentGeneration || 0) === resizeIntent;
+        if (!stillCurrent) return false;
+        const actualSize = bridge?.latticeSize || previousSize;
+        setInputValue('lattice-size', actualSize);
+        const restored = loadScale0Scenario(
+            ctx,
+            state,
+            viewportAdapter,
+            scenarioId,
+            { id: scenarioId },
+            {
+                resetSpeed: false,
+                resetTickAccumulator: true,
+                loadGeneration: loadGen,
+            },
+        );
+        if (!restored) {
+            failScale0AuthoritativeLoad({ scenarioId, loadGeneration: loadGen, reason });
+        }
+        return false;
+    };
     // Snapshot the load generation + engine mode. The native/worker resize below
     // awaits a round-trip (seconds on ws_server); if the user changes scenario or
     // switches scale meanwhile, the post-await load MUST NOT clobber it.
-    const resizeGen = ctx._loadGeneration || 0;
     const wasEngineMode = ctx.engineMode;
     const nativeCombinedResize = !!bridge?.isNativeGPU
         && typeof bridge.resizeScenario === 'function';
@@ -955,7 +1062,7 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
         if (typeof window.showToast === 'function') window.showToast(msg, 'error');
         else console.warn('[Scale0] ' + msg);
         setInputValue('lattice-size', previousSize);
-        return;
+        return recoverCurrentBaseline('wasm-size-limit');
     }
 
     if (!nativeCombinedResize && projectedBytes >= maxBytes) {
@@ -964,7 +1071,7 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
         if (typeof window.showToast === 'function') window.showToast(msg, 'error');
         else console.warn('[Scale0] ' + msg);
         setInputValue('lattice-size', bridge.latticeSize || 33);
-        return;
+        return recoverCurrentBaseline('wasm-memory-limit');
     }
 
     // Native CUDA combines resize + scenario construction in one transaction,
@@ -975,14 +1082,31 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
             if (typeof window.showToast === 'function') {
                 window.showToast(`Preparing L=${newSize} on CUDA...`, 'info');
             }
-            await bridge.resizeScenario(newSize, scenarioId);
+            await bridge.resizeScenario(newSize, scenarioId, loadGen, () => (
+                ctx.engineMode === wasEngineMode
+                && Number(ctx._loadGeneration || 0) === loadGen
+                && Number(ctx._scale0ResizeIntentGeneration || 0) === resizeIntent
+            ));
         } catch (e) {
+            if (e?.resizeSuperseded) return false;
             console.error('[Scale0] Failed to resize native CUDA lattice:', e);
+            const commitUncertain = e?.resizeFailurePhase !== 'preflight';
             if (typeof window.showToast === 'function') {
-                window.showToast(`Lattice resize failed: ${e.message}`, 'error');
+                const suffix = commitUncertain
+                    ? ' Authoritative size is unconfirmed; scientific mutations remain suspended.'
+                    : '';
+                window.showToast(`Lattice resize failed: ${e.message}.${suffix}`, 'error');
             }
             setInputValue('lattice-size', previousSize);
-            return;
+            if (commitUncertain) {
+                failScale0AuthoritativeLoad({
+                    scenarioId,
+                    loadGeneration: loadGen,
+                    reason: 'native-resize-commit-uncertain',
+                });
+                return false;
+            }
+            return recoverCurrentBaseline('native-resize-failed');
         }
     } else if (!useWasmWorker && bridge && typeof bridge.resize === 'function') {
         try {
@@ -993,14 +1117,17 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
                 window.showToast(`Lattice resize failed: ${e.message}`, 'error');
             }
             setInputValue('lattice-size', previousSize);
-            return;
+            return recoverCurrentBaseline('wasm-resize-failed');
         }
     }
     // If an async resize round-trip above was overtaken by a scenario change or
     // a scale switch (see snapshot at entry), bail — otherwise we reload the
     // stale scenario or run a Scale-0 load while another scale is active.
-    if (ctx.engineMode !== wasEngineMode || (ctx._loadGeneration || 0) !== resizeGen) {
-        return;
+    if (ctx.engineMode !== wasEngineMode
+        || (ctx._loadGeneration || 0) !== loadGen
+        || (ctx._scale0ResizeIntentGeneration || 0) !== resizeIntent) {
+        bridge?.discardPreparedScenario?.(scenarioId, loadGen);
+        return false;
     }
 
     // Point the app-level bridge at the new N so the canonical load path
@@ -1013,8 +1140,46 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
     loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, { id: scenarioId }, {
         resetSpeed: false,
         resetTickAccumulator: true,
+        loadGeneration: loadGen,
     });
     setInputValue('lattice-size', getActiveScale0Bridge(ctx, state)?.latticeSize || newSize);
+    return true;
+}
+
+export function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) {
+    const scenarioId = state.currentScenarioId || readInputValue('scenario-select', 'flux-pulse');
+    const resizeIntent = (ctx._scale0ResizeIntentGeneration || 0) + 1;
+    ctx._scale0ResizeIntentGeneration = resizeIntent;
+    ctx._loadGeneration = (ctx._loadGeneration || 0) + 1;
+    const loadGen = ctx._loadGeneration;
+    setPhysicsToggleCardPending(true);
+    beginScale0AuthoritativeLoad({ scenarioId, loadGeneration: loadGen });
+
+    // Serialize native/WASM resize transactions. A second size choice supersedes
+    // the first before dispatch when possible; if the first is already in flight,
+    // the latest request runs only after it settles so the backend's final N is
+    // guaranteed to match the last accepted UI intent.
+    const prior = ctx._scale0ResizeQueue || Promise.resolve();
+    const queued = Promise.resolve(prior)
+        .catch(() => false)
+        .then(() => {
+            if ((ctx._scale0ResizeIntentGeneration || 0) !== resizeIntent
+                || (ctx._loadGeneration || 0) !== loadGen
+                || (ctx.engineMode && ctx.engineMode !== 'lattice')) {
+                return false;
+            }
+            return performScale0LatticeResize(
+                ctx,
+                state,
+                viewportAdapter,
+                newSize,
+                scenarioId,
+                loadGen,
+                resizeIntent,
+            );
+        });
+    ctx._scale0ResizeQueue = queued;
+    return queued;
 }
 
 export function stepScale0(ctx, state, tickCount = 1) {

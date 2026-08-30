@@ -6,7 +6,7 @@ test.describe('Scale 0 substrate-controls card audit gate', () => {
     test.beforeEach(async ({ page }, testInfo) => {
         testInfo.setTimeout(120_000);
         page.setDefaultTimeout(30_000);
-        await gotoAndReady(page);
+        await gotoAndReady(page, { path: '/?engine=wasm' });
         await page.waitForFunction(() => {
             const stateReady = !!window.__ftdCtx?.fluxMock?.ready;
             return document.getElementById('app')?.dataset.shellReady === 'true'
@@ -92,7 +92,13 @@ test.describe('Scale 0 substrate-controls card audit gate', () => {
     test('all inject and field actions dispatch once to the active owner with bounded coordinates', async ({ page }) => {
         const consoleErrors = attachConsoleWatcher(page);
         const result = await page.evaluate(async () => {
-            const { getScale0State, getActiveScale0Bridge, setLatticeNeedsUpload } = await import(
+            const {
+                getScale0State,
+                getActiveScale0Bridge,
+                getScale0QualificationState,
+                setLatticeNeedsUpload,
+                subscribeScale0Qualification,
+            } = await import(
                 '/js/scales/scale0/state/store.js'
             );
             const { rafCoordinator } = await import('/js/lib/raf-coordinator.js');
@@ -137,6 +143,15 @@ test.describe('Scale 0 substrate-controls card audit gate', () => {
                 }
             });
             mutationObserver.observe(card, { subtree: true, attributes: true, childList: true });
+            const startEpoch = getScale0QualificationState().mutationEpoch;
+            const scientificMutations = [];
+            let lastObservedEpoch = startEpoch;
+            const unsubscribeQualification = subscribeScale0Qualification((snapshot) => {
+                const epoch = snapshot.lastMutation?.mutationEpoch;
+                if (!Number.isInteger(epoch) || epoch <= lastObservedEpoch) return;
+                lastObservedEpoch = epoch;
+                scientificMutations.push({ ...snapshot.lastMutation });
+            });
             setLatticeNeedsUpload(false);
             try {
                 const x = /** @type {HTMLInputElement} */ (document.getElementById('inj-x'));
@@ -174,6 +189,8 @@ test.describe('Scale 0 substrate-controls card audit gate', () => {
                     viewportResizes,
                     mutations,
                     uploadDirtyImmediate,
+                    mutationEpochDelta: getScale0QualificationState().mutationEpoch - startEpoch,
+                    scientificMutations,
                     before,
                     after: {
                         nodes: card.querySelectorAll('*').length,
@@ -189,6 +206,7 @@ test.describe('Scale 0 substrate-controls card audit gate', () => {
                 }
                 ctx.clearCharts = originalClearCharts;
                 ctx.viewport.setLatticeSize = originalViewportResize;
+                unsubscribeQualification();
                 mutationObserver.disconnect();
             }
         });
@@ -213,6 +231,27 @@ test.describe('Scale 0 substrate-controls card audit gate', () => {
             },
         });
         expect(result.uploadDirtyImmediate).toBe(true);
+        expect(result.mutationEpochDelta).toBe(27);
+        expect(result.scientificMutations).toHaveLength(27);
+        expect(result.scientificMutations.every((mutation) => (
+            mutation.source === 'controls.substrate'
+            && mutation.dispatchStatus === 'unknown'
+        ))).toBe(true);
+        const reasonCounts = Object.fromEntries(
+            ['inject-particle', 'inject-wavepacket', 'inject-flux', 'inject-pair', 'clear-field', 'random-flux']
+                .map((reason) => [
+                    reason,
+                    result.scientificMutations.filter((mutation) => mutation.reason === reason).length,
+                ]),
+        );
+        expect(reasonCounts).toEqual({
+            'inject-particle': 1,
+            'inject-wavepacket': 12,
+            'inject-flux': 1,
+            'inject-pair': 1,
+            'clear-field': 1,
+            'random-flux': 11,
+        });
         expect(result.after).toEqual(result.before);
         expect(realErrors(consoleErrors)).toEqual([]);
     });

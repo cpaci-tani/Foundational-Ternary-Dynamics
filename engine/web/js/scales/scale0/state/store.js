@@ -93,6 +93,35 @@ export const FLOW_LINE_SETTING_LIMITS = Object.freeze({
 });
 const FLOW_LINE_PREF_KEY = 'ftd.scale0.flowLines';
 
+export const SCALE0_MUTATION_REASONS = Object.freeze({
+    INJECT_PARTICLE: 'inject-particle',
+    INJECT_WAVEPACKET: 'inject-wavepacket',
+    INJECT_FLUX: 'inject-flux',
+    INJECT_PAIR: 'inject-pair',
+    CLEAR_FIELD: 'clear-field',
+    RANDOM_FLUX: 'random-flux',
+    PHYSICS_TOGGLE: 'physics-toggle',
+    PARAMETER_CHANGE: 'parameter-change',
+    FLUX_BOUNDARY: 'flux-boundary',
+    WAVE_LAB_RESEED: 'wave-lab-reseed',
+    GENESIS_EXPERIMENT: 'genesis-experiment',
+});
+
+export const SCALE0_MUTATION_SOURCES = Object.freeze({
+    SUBSTRATE_CONTROLS: 'controls.substrate',
+    PHYSICS_TOGGLES: 'controls.physics-toggles',
+    TOOLBAR_BOUNDARY: 'toolbar.boundary',
+    THERMODYNAMICS: 'panel.thermodynamics',
+    P1_FINE_STRUCTURE: 'panel.p1.fine-structure',
+    P1_THOMSON: 'panel.p1.thomson',
+    WAVE_LAB: 'panel.wave-lab',
+    GENESIS_BURST: 'panel.genesis-burst',
+});
+
+const SCALE0_MUTATION_REASON_SET = new Set(Object.values(SCALE0_MUTATION_REASONS));
+const SCALE0_MUTATION_SOURCE_SET = new Set(Object.values(SCALE0_MUTATION_SOURCES));
+const qualificationListeners = new Set();
+
 function clampFlowLineSetting(key, value) {
     const range = FLOW_LINE_SETTING_LIMITS[key];
     if (!range) return null;
@@ -118,6 +147,13 @@ function readFlowLineSettings() {
 
 const state = {
     currentScenarioId: 'flux-pulse',
+    // Monotonic provenance for user/experiment scientific write intents. It is
+    // deliberately never reset by scenario loads; a successful authoritative
+    // load moves the qualification anchor to the current epoch instead.
+    mutationEpoch: 0,
+    qualificationAnchor: null,
+    authoritativeLoad: null,
+    lastScientificMutation: null,
     fieldFlags: createFieldFlags(),
     // Field-line knot tracking is NOT a visual overlay flag (it does not map to a
     // renderer toggle and must not count toward anyFieldActive), so it lives
@@ -163,6 +199,220 @@ const state = {
 
 export function getScale0State() {
     return state;
+}
+
+function finiteTick(value) {
+    const tick = Number(value);
+    return Number.isFinite(tick) ? tick : null;
+}
+
+function ownerTick(owner) {
+    try {
+        return finiteTick(owner?.getDiagnostics?.()?.tick);
+    } catch {
+        return null;
+    }
+}
+
+function cloneRecord(record) {
+    return record ? { ...record } : null;
+}
+
+export function getScale0QualificationState() {
+    const anchor = state.qualificationAnchor;
+    const load = state.authoritativeLoad;
+    const anchorMatches = !!anchor
+        && anchor.mutationEpoch === state.mutationEpoch
+        && anchor.scenarioId === state.currentScenarioId;
+    let status = 'suspended';
+    if (load?.status === 'pending') status = 'pending';
+    else if (!load && anchorMatches) status = 'within-contract';
+    return Object.freeze({
+        status,
+        suspended: status !== 'within-contract',
+        scenarioId: state.currentScenarioId,
+        mutationEpoch: state.mutationEpoch,
+        qualificationBaselineEpoch: anchor?.mutationEpoch ?? null,
+        anchor: cloneRecord(anchor),
+        authoritativeLoad: cloneRecord(load),
+        lastMutation: cloneRecord(state.lastScientificMutation),
+    });
+}
+
+function publishQualificationState() {
+    const snapshot = getScale0QualificationState();
+    for (const listener of qualificationListeners) {
+        try { listener(snapshot); } catch (error) {
+            console.error('[Scale0] qualification listener failed:', error);
+        }
+    }
+    return snapshot;
+}
+
+export function subscribeScale0Qualification(listener) {
+    if (typeof listener !== 'function') return () => {};
+    qualificationListeners.add(listener);
+    try { listener(getScale0QualificationState()); } catch (error) {
+        console.error('[Scale0] qualification listener failed:', error);
+    }
+    return () => qualificationListeners.delete(listener);
+}
+
+export function beginScale0AuthoritativeLoad({ scenarioId, loadGeneration, tick = null } = {}) {
+    const generation = Number(loadGeneration);
+    if (!Number.isInteger(generation) || generation < 0) {
+        throw new TypeError('Scale 0 authoritative load requires a non-negative integer generation');
+    }
+    state.authoritativeLoad = Object.freeze({
+        status: 'pending',
+        scenarioId: String(scenarioId || state.currentScenarioId),
+        loadGeneration: generation,
+        mutationEpochAtStart: state.mutationEpoch,
+        tick: finiteTick(tick),
+    });
+    return publishQualificationState();
+}
+
+export function completeScale0AuthoritativeLoad({
+    scenarioId,
+    loadGeneration,
+    tick = null,
+    source = 'scenario-loader',
+} = {}) {
+    const pending = state.authoritativeLoad;
+    const id = String(scenarioId || state.currentScenarioId);
+    const generation = Number(loadGeneration);
+    if (!pending || pending.status !== 'pending'
+        || pending.scenarioId !== id
+        || pending.loadGeneration !== generation
+        || state.currentScenarioId !== id
+        || state.mutationEpoch !== pending.mutationEpochAtStart) {
+        return false;
+    }
+    state.qualificationAnchor = Object.freeze({
+        scenarioId: id,
+        loadGeneration: generation,
+        mutationEpoch: state.mutationEpoch,
+        tick: finiteTick(tick),
+        source: String(source || 'scenario-loader'),
+    });
+    state.authoritativeLoad = null;
+    publishQualificationState();
+    return true;
+}
+
+export function failScale0AuthoritativeLoad({ scenarioId, loadGeneration, reason = 'setup-failed' } = {}) {
+    const pending = state.authoritativeLoad;
+    const id = String(scenarioId || state.currentScenarioId);
+    const generation = Number(loadGeneration);
+    if (!pending || pending.scenarioId !== id || pending.loadGeneration !== generation) return false;
+    state.authoritativeLoad = Object.freeze({
+        ...pending,
+        status: 'failed',
+        failureReason: String(reason || 'setup-failed'),
+    });
+    publishQualificationState();
+    return true;
+}
+
+export function recordScale0ScientificMutation({
+    reason,
+    source,
+    tick = null,
+    loadGeneration,
+    dispatchStatus = 'unknown',
+} = {}) {
+    if (!SCALE0_MUTATION_REASON_SET.has(reason)) {
+        throw new TypeError(`Unknown Scale 0 scientific mutation reason: ${reason}`);
+    }
+    if (!SCALE0_MUTATION_SOURCE_SET.has(source)) {
+        throw new TypeError(`Unknown Scale 0 scientific mutation source: ${source}`);
+    }
+    const generation = Number(loadGeneration);
+    if (!Number.isInteger(generation) || generation < 0) {
+        throw new TypeError('Scale 0 scientific mutation requires a non-negative integer generation');
+    }
+    state.mutationEpoch += 1;
+    state.lastScientificMutation = Object.freeze({
+        mutationEpoch: state.mutationEpoch,
+        reason,
+        source,
+        tick: finiteTick(tick),
+        loadGeneration: generation,
+        // Dashboard dispatch is fire-and-forget on several transports. Never
+        // relabel an accepted UI intent as an acknowledged engine mutation.
+        dispatchStatus: ['dispatched', 'rejected', 'unknown'].includes(dispatchStatus)
+            ? dispatchStatus
+            : 'unknown',
+    });
+    if (state.authoritativeLoad?.status === 'pending') {
+        state.authoritativeLoad = Object.freeze({
+            ...state.authoritativeLoad,
+            status: 'invalidated',
+            invalidatedByMutationEpoch: state.mutationEpoch,
+        });
+    }
+    return publishQualificationState();
+}
+
+/**
+ * Dashboard gateway for a manual/experiment scientific write intent.
+ *
+ * A stale generation, inactive scale, or stale owner is rejected before the
+ * callback runs and therefore cannot suspend the current record. An accepted
+ * callback increments the monotonic epoch exactly once even for an idempotent
+ * engine operation such as clearField() on an already-null lattice. Because
+ * bridge writes are not uniformly acknowledged, the provenance records the
+ * dispatch status rather than claiming that the engine applied the write.
+ */
+export function commitScale0ScientificMutation(ctx, {
+    reason,
+    source,
+    loadGeneration = ctx?._loadGeneration,
+    owner = null,
+    dispatchStatus = 'unknown',
+} = {}, mutate) {
+    const generation = Number(loadGeneration);
+    const currentGeneration = Number(ctx?._loadGeneration || 0);
+    const activeOwner = getActiveScale0Bridge(ctx, state);
+    if ((ctx?.engineMode && ctx.engineMode !== 'lattice')
+        || !SCALE0_MUTATION_REASON_SET.has(reason)
+        || !SCALE0_MUTATION_SOURCE_SET.has(source)
+        || !Number.isInteger(generation)
+        || generation < 0
+        || generation !== currentGeneration
+        || !activeOwner
+        || (owner && owner !== activeOwner)
+        || typeof mutate !== 'function') {
+        return Object.freeze({ accepted: false, dispatchStatus: 'rejected' });
+    }
+
+    const normalizedDispatchStatus = ['dispatched', 'rejected', 'unknown'].includes(dispatchStatus)
+        ? dispatchStatus
+        : 'unknown';
+
+    let result;
+    let thrown = null;
+    try {
+        result = mutate(activeOwner);
+    } catch (error) {
+        thrown = error;
+    } finally {
+        recordScale0ScientificMutation({
+            reason,
+            source,
+            tick: ownerTick(activeOwner),
+            loadGeneration: generation,
+            dispatchStatus: thrown ? 'unknown' : normalizedDispatchStatus,
+        });
+    }
+    if (thrown) throw thrown;
+    return Object.freeze({
+        accepted: true,
+        dispatchStatus: normalizedDispatchStatus,
+        result,
+        qualification: getScale0QualificationState(),
+    });
 }
 
 export function recomputeAnyFieldActive() {

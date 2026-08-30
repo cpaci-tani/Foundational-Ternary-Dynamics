@@ -99,7 +99,7 @@ function callbackWorst(report, key) {
 
 test('distinguishes an unresolved Diagnostics source from a measured exact zero', async ({ page }) => {
     test.setTimeout(120_000);
-    await gotoAndReady(page, { timeout: 90_000 });
+    await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
     const result = await page.evaluate(async () => {
         const [{ DiagnosticsTable }, { formatValue }] = await Promise.all([
             import('/js/ui/panels/diagnostics-panel/table.js'),
@@ -146,7 +146,7 @@ test('Flux Slice restores its nonempty domain and rejects rapid stale-generation
     test.skip(!CAMPAIGN_PANELS.includes('flux-slice'), 'Flux Slice is outside this focused run');
     test.setTimeout(120_000);
     const consoleErrors = attachConsoleWatcher(page);
-    await gotoAndReady(page, { timeout: 90_000 });
+    await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
 
     const readPanel = () => page.evaluate(() => {
         const root = document.getElementById('panel-flux-slice');
@@ -195,7 +195,7 @@ test('Spectrum restores live nonempty analysis and rejects rapid stale-generatio
     test.skip(!CAMPAIGN_PANELS.includes('spectrum'), 'Spectrum is outside this focused run');
     test.setTimeout(120_000);
     const consoleErrors = attachConsoleWatcher(page);
-    await gotoAndReady(page, { timeout: 90_000 });
+    await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
 
     const readPanel = () => page.evaluate(() => {
         const root = document.getElementById('spectrum-panel');
@@ -260,7 +260,7 @@ test('Gravity restores nonempty analysis and rejects rapid stale-generation reac
     test.skip(!CAMPAIGN_PANELS.includes('gravity'), 'Gravity is outside this focused run');
     test.setTimeout(120_000);
     const consoleErrors = attachConsoleWatcher(page);
-    await gotoAndReady(page, { timeout: 90_000 });
+    await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
 
     const readPanel = () => page.evaluate(() => {
         const root = document.getElementById('gravity-panel');
@@ -328,7 +328,7 @@ test('Gravity restores nonempty analysis and rejects rapid stale-generation reac
 test('all 17 visible panels sustain 60 Hz at empty L=97 and stop panel work when collapsed', async ({ page }, testInfo) => {
     test.setTimeout(600_000);
     const consoleErrors = attachConsoleWatcher(page);
-    await gotoAndReady(page, { timeout: 90_000 });
+    await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
 
     const nonemptyFluxSlice = CAMPAIGN_PANELS.includes('flux-slice')
         ? await page.evaluate(() => {

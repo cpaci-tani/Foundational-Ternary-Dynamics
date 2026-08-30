@@ -1316,6 +1316,7 @@ test('native scenario profile is serialized atomically after all loader mutation
             return {
                 ok: true,
                 scenario: message.name,
+                latticeSize: bridge.latticeSize,
                 fluxBoundaryMode: message.fluxBoundaryMode,
                 toggles: {
                     wave_propagation: message.toggle_wave_propagation,
@@ -1326,6 +1327,7 @@ test('native scenario profile is serialized atomically after all loader mutation
                     // bootstrap cache. Engine truth must still surface it.
                     cluster_inertia: true,
                 },
+                params: {},
             };
         };
 
@@ -1371,6 +1373,122 @@ test('native scenario profile is serialized atomically after all loader mutation
     expect(result.staleAfterAck).toBe(false);
 });
 
+test('rejected native scenario profile restores authoritative toggles, boundary, and params', async ({ page }) => {
+    await page.goto('/js/ws-bridge.js', { waitUntil: 'domcontentloaded' });
+
+    const result = await page.evaluate(async () => {
+        const { WebSocketBridge } = await import('/js/ws-bridge.js?scenario-rejection-test=1');
+        const bridge = new WebSocketBridge('ws://scenario-rejection-test');
+        const callbacks = [];
+        bridge._connected = true;
+        bridge.ready = true;
+        bridge._ws = { send() {} };
+        bridge._toggles = { wave_propagation: true, damping: false };
+        bridge._confirmedToggles = { ...bridge._toggles };
+        bridge._fluxBoundaryMode = 0;
+        bridge._confirmedFluxBoundaryMode = 0;
+        bridge._params = { dt: 0.25, omega0: 0.1 };
+        bridge._confirmedParams = { ...bridge._params };
+        window.__ftdCtx = {
+            bridge,
+            onBridgeProfileUpdate(profile) { callbacks.push(profile); },
+        };
+        bridge._sendJSON = async () => ({
+            ok: false,
+            error: 'profile dependency rejected',
+            scenario: 'empty',
+            latticeSize: 65,
+            fluxBoundaryMode: 0,
+            toggles: { wave_propagation: true, damping: false },
+            params: { dt: 0.25, omega0: 0.1 },
+        });
+
+        bridge.beginScenarioConfiguration('empty', 91);
+        bridge.setToggle('wave_propagation', false);
+        bridge.setToggle('damping', true);
+        bridge.setFluxBoundaryMode(2);
+        bridge._params = { dt: 0.9, omega0: 0.8 };
+        bridge.setupScenario('empty');
+        bridge.commitScenarioConfiguration('empty');
+        await new Promise(resolve => setTimeout(resolve, 80));
+
+        delete window.__ftdCtx;
+        return {
+            toggles: { ...bridge._toggles },
+            confirmedToggles: { ...bridge._confirmedToggles },
+            boundary: bridge._fluxBoundaryMode,
+            confirmedBoundary: bridge._confirmedFluxBoundaryMode,
+            params: { ...bridge._params },
+            confirmedParams: { ...bridge._confirmedParams },
+            latticeSize: bridge.latticeSize,
+            callback: callbacks.at(-1),
+        };
+    });
+
+    expect(result.toggles).toEqual({ wave_propagation: true, damping: false });
+    expect(result.confirmedToggles).toEqual(result.toggles);
+    expect(result.boundary).toBe(0);
+    expect(result.confirmedBoundary).toBe(0);
+    expect(result.params).toEqual({ dt: 0.25, omega0: 0.1 });
+    expect(result.confirmedParams).toEqual(result.params);
+    expect(result.latticeSize).toBe(65);
+    expect(result.callback).toMatchObject({
+        error: 'profile dependency rejected',
+        authoritativeScenarioAck: true,
+        scenarioId: 'empty',
+        loadGeneration: 91,
+        latticeSize: 65,
+        toggles: { wave_propagation: true, damping: false },
+        fluxBoundaryMode: 0,
+    });
+});
+
+test('native scenario acknowledgement mismatch is rejected before qualification callback', async ({ page }) => {
+    await page.goto('/js/ws-bridge.js', { waitUntil: 'domcontentloaded' });
+
+    const result = await page.evaluate(async () => {
+        const { WebSocketBridge } = await import('/js/ws-bridge.js?scenario-mismatch-test=1');
+        const bridge = new WebSocketBridge('ws://scenario-mismatch-test');
+        const callbacks = [];
+        bridge._connected = true;
+        bridge.ready = true;
+        bridge._ws = { send() {} };
+        window.__ftdCtx = {
+            bridge,
+            onBridgeProfileUpdate(profile) { callbacks.push(profile); },
+        };
+        bridge._sendJSON = async message => ({
+            ok: true,
+            scenario: 'flux-pulse',
+            latticeSize: 33,
+            fluxBoundaryMode: message.fluxBoundaryMode,
+            toggles: { wave_propagation: message.toggle_wave_propagation },
+            params: {},
+        });
+
+        bridge.beginScenarioConfiguration('empty', 92);
+        bridge.setToggle('wave_propagation', false);
+        bridge.setupScenario('empty');
+        bridge.commitScenarioConfiguration('empty');
+        await new Promise(resolve => setTimeout(resolve, 80));
+
+        delete window.__ftdCtx;
+        return {
+            activeScenario: bridge._activeScenario,
+            callback: callbacks.at(-1),
+        };
+    });
+
+    expect(result.activeScenario).toBeNull();
+    expect(result.callback).toMatchObject({
+        authoritativeScenarioAck: true,
+        scenarioId: 'empty',
+        loadGeneration: 92,
+    });
+    expect(result.callback.error).toContain('Scenario acknowledgement mismatch');
+    expect(result.callback.error).toContain('scenario echo flux-pulse != empty');
+});
+
 test('rapid native scenario changes coalesce to the latest pending allocation', async ({ page }) => {
     await page.goto('/js/ws-bridge.js', { waitUntil: 'domcontentloaded' });
 
@@ -1379,35 +1497,53 @@ test('rapid native scenario changes coalesce to the latest pending allocation', 
         const bridge = new WebSocketBridge('ws://scenario-coalesce-test');
         const sent = [];
         const resolvers = [];
+        const callbacks = [];
         bridge._connected = true;
         bridge.ready = true;
         bridge._ws = { send() {} };
+        window.__ftdCtx = {
+            bridge,
+            onBridgeProfileUpdate(profile) { callbacks.push(profile); },
+        };
         bridge._sendJSON = (message) => {
             sent.push(message);
-            return new Promise(resolve => resolvers.push(() => resolve({ ok: true, scenario: message.name })));
+            return new Promise(resolve => resolvers.push(() => resolve({
+                ok: true,
+                scenario: message.name,
+                latticeSize: bridge.latticeSize,
+                fluxBoundaryMode: message.fluxBoundaryMode,
+                toggles: { wave_propagation: message.toggle_wave_propagation },
+                params: {},
+            })));
         };
 
-        const stage = (name) => {
-            bridge.beginScenarioConfiguration(name);
+        const stage = (name, loadGeneration) => {
+            bridge.beginScenarioConfiguration(name, loadGeneration);
             bridge.setToggle('wave_propagation', true);
             bridge.setupScenario(name);
             bridge.commitScenarioConfiguration(name);
         };
 
-        stage('flux-pulse');
+        stage('flux-pulse', 11);
         await new Promise(resolve => setTimeout(resolve, 70)); // first allocation is now in flight
-        stage('flux-dipole');
-        stage('flux-vortex');
-        stage('flux-standing');
+        stage('flux-dipole', 12);
+        stage('flux-vortex', 13);
+        stage('flux-standing', 14);
         resolvers.shift()();
         await new Promise(resolve => setTimeout(resolve, 25));
         resolvers.shift()();
         await new Promise(resolve => setTimeout(resolve, 0));
 
+        delete window.__ftdCtx;
         return {
             commands: sent.map(({ cmd, name }) => ({ cmd, name })),
             activeScenario: bridge._activeScenario,
             inFlight: bridge._scenarioRequestInFlight,
+            acknowledgements: callbacks.map((profile) => ({
+                authoritativeScenarioAck: profile.authoritativeScenarioAck,
+                scenarioId: profile.scenarioId,
+                loadGeneration: profile.loadGeneration,
+            })),
         };
     });
 
@@ -1417,6 +1553,10 @@ test('rapid native scenario changes coalesce to the latest pending allocation', 
     ]);
     expect(result.activeScenario).toBe('flux-standing');
     expect(result.inFlight).toBe(false);
+    expect(result.acknowledgements).toEqual([
+        { authoritativeScenarioAck: true, scenarioId: 'flux-pulse', loadGeneration: 11 },
+        { authoritativeScenarioAck: true, scenarioId: 'flux-standing', loadGeneration: 14 },
+    ]);
 });
 
 test('prepared native resize applies its profile without rebuilding the lattice again', async ({ page }) => {
@@ -1429,13 +1569,20 @@ test('prepared native resize applies its profile without rebuilding the lattice 
         bridge._connected = true;
         bridge.ready = true;
         bridge._ws = { send() {} };
-        bridge._preparedScenario = 'flux-pulse';
+        bridge._preparedScenario = { name: 'flux-pulse', clientLoadGeneration: 71 };
         bridge._sendJSON = async message => {
             sent.push(message);
-            return { ok: true, scenario: message.name };
+            return {
+                ok: true,
+                scenario: message.name,
+                latticeSize: bridge.latticeSize,
+                fluxBoundaryMode: message.fluxBoundaryMode,
+                toggles: { wave_propagation: message.toggle_wave_propagation },
+                params: {},
+            };
         };
 
-        bridge.beginScenarioConfiguration('flux-pulse');
+        bridge.beginScenarioConfiguration('flux-pulse', 71);
         bridge.setToggle('wave_propagation', true);
         bridge.setupScenario('flux-pulse');
         bridge.commitScenarioConfiguration('flux-pulse');
@@ -1449,6 +1596,84 @@ test('prepared native resize applies its profile without rebuilding the lattice 
         name: 'flux-pulse',
         toggle_wave_propagation: true,
     });
+});
+
+test('stale prepared native resize cannot survive scenario-generation turnover', async ({ page }) => {
+    await page.goto('/js/ws-bridge.js', { waitUntil: 'domcontentloaded' });
+
+    const result = await page.evaluate(async () => {
+        const { WebSocketBridge } = await import('/js/ws-bridge.js?prepared-turnover-test=1');
+        const bridge = new WebSocketBridge('ws://prepared-turnover-test');
+        const sent = [];
+        bridge._connected = true;
+        bridge.ready = true;
+        bridge._ws = { send() {} };
+        bridge._sendJSON = async message => {
+            sent.push(message);
+            return {
+                ok: true,
+                scenario: message.name,
+                latticeSize: bridge.latticeSize,
+                fluxBoundaryMode: message.fluxBoundaryMode,
+                toggles: { wave_propagation: message.toggle_wave_propagation },
+                params: {},
+            };
+        };
+
+        // Models a resize ACK arriving after generation 80 was superseded.
+        bridge._preparedScenario = { name: 'flux-pulse', clientLoadGeneration: 80 };
+        bridge.beginScenarioConfiguration('flux-pulse', 82);
+        bridge.setToggle('wave_propagation', true);
+        bridge.setupScenario('flux-pulse');
+        bridge.commitScenarioConfiguration('flux-pulse');
+        await new Promise(resolve => setTimeout(resolve, 80));
+        return {
+            commands: sent.map(({ cmd, name }) => ({ cmd, name })),
+            preparedScenario: bridge._preparedScenario,
+        };
+    });
+
+    expect(result.commands).toEqual([{ cmd: 'setup_scenario', name: 'flux-pulse' }]);
+    expect(result.preparedScenario).toBeNull();
+});
+
+test('superseded native resize stops after preflight before dispatch', async ({ page }) => {
+    await page.goto('/js/ws-bridge.js', { waitUntil: 'domcontentloaded' });
+
+    const result = await page.evaluate(async () => {
+        const { WebSocketBridge } = await import('/js/ws-bridge.js?resize-preflight-turnover-test=1');
+        const bridge = new WebSocketBridge('ws://resize-preflight-turnover-test');
+        const sent = [];
+        let current = true;
+        let releasePreflight;
+        bridge._connected = true;
+        bridge.ready = true;
+        bridge._ws = { send() {} };
+        bridge.preflightResize = () => new Promise(resolve => { releasePreflight = resolve; });
+        bridge._sendOperationWithRetry = async command => {
+            sent.push(command);
+            return { ok: true, latticeSize: command.size };
+        };
+        const pending = bridge.resizeScenario(49, 'flux-pulse', 90, () => current)
+            .then(() => ({ resolved: true }))
+            .catch(error => ({
+                resolved: false,
+                superseded: !!error.resizeSuperseded,
+                phase: error.resizeFailurePhase,
+            }));
+        current = false;
+        releasePreflight({ ok: true, size: 49 });
+        const outcome = await pending;
+        return { outcome, sent, preparedScenario: bridge._preparedScenario };
+    });
+
+    expect(result.outcome).toEqual({
+        resolved: false,
+        superseded: true,
+        phase: 'preflight',
+    });
+    expect(result.sent).toEqual([]);
+    expect(result.preparedScenario).toBeNull();
 });
 
 test('native FTS1 field samples are deduplicated, decoded, and refreshed by epoch', async ({ page }) => {

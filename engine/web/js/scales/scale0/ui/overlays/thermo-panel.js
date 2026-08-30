@@ -15,7 +15,12 @@
 
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
-import { resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
+import {
+    commitScale0ScientificMutation,
+    resolveActiveScale0BridgeFromWindow,
+    SCALE0_MUTATION_REASONS,
+    SCALE0_MUTATION_SOURCES,
+} from '../../state/store.js';
 import { paintSliceToCanvas } from './slice-render.js';
 import { rampEmEnergy } from '../../../../viewport/color-ramps.js';
 import { C_SPEED } from '../../../../constants.js';
@@ -131,15 +136,66 @@ export function mountThermoPanel(host, getBridge) {
     const rowsEl = el('rows'), heat = el('heat'), hmaxEl = el('hmax'), sparkEl = el('spark');
     const mHist = [];
     let bridgeId = null;
+    let tempFrame = null;
+    let pendingTemp = null;
+
+    function commitTemp(T, ctx, owner, loadGeneration) {
+        if (!ctx || !owner || typeof owner.setLangevinTemp !== 'function') return false;
+        try {
+            return commitScale0ScientificMutation(ctx, {
+                reason: SCALE0_MUTATION_REASONS.PARAMETER_CHANGE,
+                source: SCALE0_MUTATION_SOURCES.THERMODYNAMICS,
+                loadGeneration,
+                owner,
+            }, (activeOwner) => activeOwner.setLangevinTemp(T)).accepted;
+        } catch (e) {
+            return false;
+        }
+    }
 
     function setTemp(T) {
-        const b = getBridge?.();
-        try { if (b && typeof b.setLangevinTemp === 'function') b.setLangevinTemp(T); } catch (e) { /* noop */ }
+        // Presets and imperative API calls are newer explicit intents than any
+        // high-frequency slider sample queued for the next animation frame.
+        cancelScheduledTemp();
+        const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
+        return commitTemp(T, ctx, getBridge?.(), Number(ctx?._loadGeneration));
     }
+
+    function scheduleTemp(T) {
+        const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
+        pendingTemp = {
+            T,
+            ctx,
+            owner: getBridge?.(),
+            loadGeneration: Number(ctx?._loadGeneration),
+        };
+        if (tempFrame) return;
+        const flush = () => {
+            const job = pendingTemp;
+            pendingTemp = null;
+            tempFrame = null;
+            if (!job || job.ctx !== ((typeof window !== 'undefined') ? window.__ftdCtx : null)) return;
+            commitTemp(job.T, job.ctx, job.owner, job.loadGeneration);
+        };
+        tempFrame = (typeof requestAnimationFrame === 'function')
+            ? { kind: 'raf', id: requestAnimationFrame(flush) }
+            : { kind: 'timeout', id: setTimeout(flush, 0) };
+    }
+
+    function cancelScheduledTemp() {
+        if (tempFrame?.kind === 'raf' && typeof cancelAnimationFrame === 'function') {
+            cancelAnimationFrame(tempFrame.id);
+        } else if (tempFrame?.kind === 'timeout') {
+            clearTimeout(tempFrame.id);
+        }
+        tempFrame = null;
+        pendingTemp = null;
+    }
+
     slider.addEventListener('input', () => {
         const T = parseFloat(slider.value);
         tvalEl.textContent = T.toFixed(3);
-        setTemp(T);
+        scheduleTemp(T);
     });
     panel.querySelectorAll('.tp-presets button').forEach((btn) => {
         btn.addEventListener('click', () => {
@@ -217,8 +273,13 @@ export function mountThermoPanel(host, getBridge) {
     const api = {
         update,
         element: panel,
-        setTemp: (T) => { slider.value = String(T); tvalEl.textContent = (+T).toFixed(3); setTemp(+T); },
+        setTemp: (T) => {
+            slider.value = String(T);
+            tvalEl.textContent = (+T).toFixed(3);
+            return setTemp(+T);
+        },
         dispose: () => {
+            cancelScheduledTemp();
             armSub.unsubscribe();
             liveSub?.unsubscribe();
             if (typeof window !== 'undefined' && window.__ftdThermoPanel === api) window.__ftdThermoPanel = null;

@@ -16,7 +16,7 @@ import { getCategories, getMoleculesByCategory } from './molecules.js';
 import { debugLog } from './core/log.js';
 
 // ── Scale Controllers (extracted from inline code) ─────────────────
-import * as Scale0Controller from './scales/scale0/controller.js?v=26';
+import * as Scale0Controller from './scales/scale0/controller.js?v=27';
 import * as Scale1Controller from './scales/scale1/controller.js';
 import * as Scale2Controller from './scales/scale2/controller.js';
 import * as Scale3Controller from './scales/scale3/controller.js';
@@ -40,13 +40,13 @@ import { AppShell } from './ui/shell/app-shell.js?v=2';
 import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initScenePanel, initTelemetryGridPanel } from './ui/panels/index.js';
 import { floatingWindowManager } from './ui/components/floating-window/component.js';
 import { initFluxSlicePanel } from './scales/scale0/ui/overlays/flux-slice-panel.js';
-import { initWaveLabPanel } from './scales/scale0/ui/overlays/wave-lab-panel.js';
-import { initP1ObservablesPanel } from './scales/scale0/ui/overlays/p1-observables-panel.js';
+import { initWaveLabPanel } from './scales/scale0/ui/overlays/wave-lab-panel.js?v=2';
+import { initP1ObservablesPanel } from './scales/scale0/ui/overlays/p1-observables-panel.js?v=2';
 import { initConservationMicropanel } from './scales/scale0/ui/overlays/conservation-micropanel.js';
 import { initSpectrumPanel } from './scales/scale0/ui/overlays/spectrum-panel.js';
 import { initGravityPanel } from './scales/scale0/ui/overlays/gravity-panel.js';
 import { initTimePanel } from './scales/scale0/ui/overlays/time-panel.js';
-import { initThermoPanel } from './scales/scale0/ui/overlays/thermo-panel.js';
+import { initThermoPanel } from './scales/scale0/ui/overlays/thermo-panel.js?v=2';
 import { initDispersionPanel } from './scales/scale0/ui/overlays/dispersion-panel.js';
 import { initKnotsPanel } from './scales/scale0/ui/overlays/knots-panel.js';
 import { initScaleContextPanel } from './scales/scale0/ui/overlays/scale-context-panel.js';
@@ -54,7 +54,7 @@ import { initSettingsModal } from './ui/components/settings-modal/component.js?v
 // Wire / boot helpers extracted per refactoring-analyst RF-9 (partial).
 import { wireKeyboard as wireKeyboardExternal } from './app-wire/keyboard.js';
 import { showToast, loadProgress as _loadProgress } from './app-wire/status.js';
-import { bootBridge } from './app-wire/bridge-boot.js';
+import { bootBridge } from './app-wire/bridge-boot.js?v=2';
 import { sliderValueToSpeed, speedLabel } from './ui/components/play-bar/speed-scale.js';
 
 debugLog('[FTD] App version 20260318a loaded (cache-busted)');
@@ -228,9 +228,10 @@ function applyBoundaryShape(shape) {
     const boundarySelect = document.getElementById('boundary-select');
     if (boundarySelect) boundarySelect.value = shape;
     viewport?.setBoundaryShape?.(shape);
-    if (bridge?.setBoundaryShape) bridge.setBoundaryShape(shape);
-    const fm = Scale0Controller.getFluxMock();
-    if (fm?.setBoundaryShape) fm.setBoundaryShape(shape);
+    // Exactly one bridge owns live Scale-0 physics. Mirroring this write to the
+    // idle main-thread bridge and worker created split state during fallback.
+    const owner = Scale0Controller.getActivePhysicsOwner(_makeCtx());
+    owner?.setBoundaryShape?.(shape);
     Scale0Controller.setLatticeNeedsUpload();
 }
 

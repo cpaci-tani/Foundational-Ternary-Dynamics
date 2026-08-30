@@ -14,6 +14,11 @@ import {
     X_PLUS_PRECISION,
 } from '../../../../../constants.js';
 import { cardStyle, titleStyle, tagBadge, formatExp } from '../_card-helpers.js';
+import {
+    commitScale0ScientificMutation,
+    SCALE0_MUTATION_REASONS,
+    SCALE0_MUTATION_SOURCES,
+} from '../../../state/store.js';
 
 const SCENARIO_IDS = new Set([
     's0-field-thomson-scattering',
@@ -59,14 +64,19 @@ export class FineStructureComponent extends BaseComponent {
             const input = e.target.closest('[data-alpha-toggle]');
             if (!input || !this.bridgeRef?.setToggle) return;
             const key = input.dataset.alphaToggle;
-            this.bridgeRef.setToggle(key, input.checked);
-            this._syncGlobalToggleCheckbox(key, input.checked);
+            const previous = !!this.bridgeRef.getToggle?.(key);
+            if (this._setToggle(key, input.checked)) {
+                this._syncGlobalToggleCheckbox(key, input.checked);
+            } else {
+                input.checked = previous;
+            }
         });
     }
 
     update(bridge, scenarioId) {
         if (!SCENARIO_IDS.has(scenarioId)) {
             this.refs.root.style.display = 'none';
+            this.bridgeRef = null;
             return;
         }
         this.refs.root.style.display = '';
@@ -139,5 +149,17 @@ export class FineStructureComponent extends BaseComponent {
             el.checked = !!checked;
             el.closest('.toggle-row')?.classList.remove('scenario-override');
         }
+    }
+
+    _setToggle(key, checked) {
+        const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
+        const owner = this.bridgeRef;
+        if (!ctx || !owner) return false;
+        return commitScale0ScientificMutation(ctx, {
+            reason: SCALE0_MUTATION_REASONS.PHYSICS_TOGGLE,
+            source: SCALE0_MUTATION_SOURCES.P1_FINE_STRUCTURE,
+            loadGeneration: ctx._loadGeneration,
+            owner,
+        }, (activeOwner) => activeOwner.setToggle(key, !!checked)).accepted;
     }
 }

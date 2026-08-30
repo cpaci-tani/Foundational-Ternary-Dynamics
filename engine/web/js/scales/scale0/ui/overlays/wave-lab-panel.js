@@ -5,7 +5,7 @@
 
 import { getScale0State, resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
-import { WaveInfoComponent } from './wave-lab/wave-info.js';
+import { WaveInfoComponent } from './wave-lab/wave-info.js?v=2';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 
 const PANEL_ID = 'wave-lab-panel';

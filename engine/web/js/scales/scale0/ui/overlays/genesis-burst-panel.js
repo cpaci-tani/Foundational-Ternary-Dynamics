@@ -9,13 +9,21 @@
 // a universal broken-power law or a geometrically forced knee.
 //
 // The fire panel drives the active physics owner (flux mock for cluster-law):
-// pauses the main tick loop (ctx.running), resets the lattice, injects, ticks
+// pauses the canonical transport, resets the lattice, injects, ticks
 // ~220 steps, reads N, then restores. The 3D cluster itself is best viewed via
 // the fixed-A `*-subknee/-knee/-superknee` answer-key scenarios (clean T=0 view).
 
 import { BaseComponent } from '../../../../core/component.js';
 import { K_GENESIS } from '../../../../constants.js';
 import { configureGenesisClusterTerms } from '../../runtime/genesis-cluster-profile.js';
+import {
+    commitScale0ScientificMutation,
+    getScale0State,
+    resolveActiveScale0BridgeFromWindow,
+    setScale0PlaybackRunning,
+    SCALE0_MUTATION_REASONS,
+    SCALE0_MUTATION_SOURCES,
+} from '../../state/store.js';
 
 const PANEL_ID = 'genesis-burst-panel';
 const SCENARIO_ID = 's0-seed-cluster-law';
@@ -71,13 +79,50 @@ export function mountGenesisBurstPanel(harness) {
     const ctx2d = canvas.getContext('2d');
     const points = [];   // [{ A, N }]
     let busy = false;
+    let disposed = false;
+    let activeToken = null;
+
+    const nativeUnavailableMessage = 'Live N(A) is unavailable on the native backend until reset, injection, and stepping have one acknowledged transaction. Switch to WASM for this experiment.';
+    const nativeExperimentUnavailable = () => {
+        const owner = resolveActiveScale0BridgeFromWindow();
+        return !!(owner?.isNativeGPU || harness.bridge?.isNativeGPU);
+    };
+    const renderBackendSupport = () => {
+        const unavailable = nativeExperimentUnavailable();
+        const nextStatus = unavailable
+            ? 'unavailable-native-unacknowledged'
+            : 'available';
+        if (panel.dataset.liveExperimentStatus === nextStatus) return !unavailable;
+        const previousStatus = panel.dataset.liveExperimentStatus;
+        panel.dataset.liveExperimentStatus = nextStatus;
+        for (const button of [comp.refs.fire, comp.refs.sweep]) {
+            button.disabled = unavailable;
+            button.setAttribute('aria-disabled', unavailable ? 'true' : 'false');
+            button.title = unavailable ? nativeUnavailableMessage : '';
+        }
+        if (unavailable) status.textContent = nativeUnavailableMessage;
+        else if (previousStatus === 'unavailable-native-unacknowledged') status.textContent = 'ready';
+        return !unavailable;
+    };
 
     slider.addEventListener('input', () => { aval.textContent = slider.value; });
     comp.refs.fire.addEventListener('click', () => fire(parseInt(slider.value, 10)));
     comp.refs.sweep.addEventListener('click', () => sweep());
     comp.refs.clear.addEventListener('click', () => { points.length = 0; draw(); status.textContent = 'cleared'; });
 
-    function resetAndInject(A) {
+    function tokenIsCurrent(token) {
+        const liveCtx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
+        return !disposed
+            && !!token
+            && !token.cancelled
+            && liveCtx === token.ctx
+            && Number(liveCtx?._loadGeneration) === token.loadGeneration
+            && getScale0State().currentScenarioId === SCENARIO_ID
+            && resolveActiveScale0BridgeFromWindow() === token.owner;
+    }
+
+    function resetAndInject(A, token) {
+        if (!tokenIsCurrent(token)) return false;
         try { harness.setupScenario('empty'); } catch (e) { /* noop */ }
         try {
             configureGenesisClusterTerms(harness, 0.005, 0.02);
@@ -85,54 +130,110 @@ export function mountGenesisBurstPanel(harness) {
         const L = harness.getLatticeSize?.() ?? 32;
         const mc = Math.round((L - 1) / 2);
         harness.injectFlux(mc, mc, mc, A * K_GENESIS, 0, 0);
+        return true;
     }
 
-    async function fire(A) {
-        if (busy) return null;
-        busy = true;
-        const c = (typeof window !== 'undefined') ? window.__ftdCtx : null;
-        const wasRunning = !!(c && c.running);
-        if (c) c.running = false;
-        try {
-            resetAndInject(A);
-            for (let t = 0; t < SETTLE_TICKS; t++) {
-                harness.tickScale0?.();
-                if (t % 20 === 0) {
-                    status.textContent = `firing A=${A}… (tick ${t}/${SETTLE_TICKS})`;
-                    await new Promise((r) => setTimeout(r, 0));
-                }
+    async function runFire(A, token) {
+        if (!resetAndInject(A, token)) return null;
+        for (let t = 0; t < SETTLE_TICKS; t++) {
+            if (!tokenIsCurrent(token)) return null;
+            harness.tickScale0?.();
+            if (t % 20 === 0) {
+                status.textContent = `firing A=${A}… (tick ${t}/${SETTLE_TICKS})`;
+                await new Promise((r) => setTimeout(r, 0));
+                if (!tokenIsCurrent(token)) return null;
             }
-            // Worker-backed steps are asynchronous. setupScenario('empty')
-            // resets the worker tick to zero and PhysicsHarness routes each
-            // step through tickOnce(); wait for the posted diagnostics instead
-            // of reading the stale pre-batch frame as N=0.
-            if (harness.bridge?.isWorker) {
-                const deadline = performance.now() + 30_000;
-                while (harness.getTick() < SETTLE_TICKS) {
-                    if (performance.now() > deadline) {
-                        throw new Error(`genesis response worker stopped at tick ${harness.getTick()}/${SETTLE_TICKS}`);
+        }
+        // Worker-backed steps are asynchronous. setupScenario('empty')
+        // resets the worker tick to zero and PhysicsHarness routes each
+        // step through tickOnce(); wait for the posted diagnostics instead
+        // of reading the stale pre-batch frame as N=0.
+        if (harness.bridge?.isWorker) {
+            const deadline = performance.now() + 30_000;
+            while (harness.getTick() < SETTLE_TICKS) {
+                if (!tokenIsCurrent(token)) return null;
+                if (performance.now() > deadline) {
+                    throw new Error(`genesis response worker stopped at tick ${harness.getTick()}/${SETTLE_TICKS}`);
+                }
+                await new Promise((r) => setTimeout(r, 10));
+            }
+        }
+        if (!tokenIsCurrent(token)) return null;
+        const N = harness.getDiagnostics?.()?.manifested ?? 0;
+        points.push({ A, N });
+        draw();
+        status.textContent = `A=${A} → N=${N}  (k=${(N / (A * A)).toFixed(3)})`;
+        return N;
+    }
+
+    function startExperiment(work) {
+        if (busy || disposed) return Promise.resolve(null);
+        if (!renderBackendSupport()) return Promise.resolve(null);
+        const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
+        const owner = resolveActiveScale0BridgeFromWindow();
+        const loadGeneration = Number(ctx?._loadGeneration);
+        if (!ctx || !owner || harness.bridge !== owner || !Number.isInteger(loadGeneration)) {
+            return Promise.resolve(null);
+        }
+        const token = {
+            cancelled: false,
+            ctx,
+            owner,
+            loadGeneration,
+        };
+        const committed = commitScale0ScientificMutation(ctx, {
+            reason: SCALE0_MUTATION_REASONS.GENESIS_EXPERIMENT,
+            source: SCALE0_MUTATION_SOURCES.GENESIS_BURST,
+            loadGeneration,
+            owner,
+        }, () => {
+            busy = true;
+            activeToken = token;
+            const wasRunning = !!ctx.running;
+            // Pause through the canonical transport boundary: this cancels
+            // queued native ticks and synchronously publishes worker RUNNING=0.
+            // Merely flipping ctx.running waits until a later app rAF and lets
+            // autonomous ticks interleave with the deterministic experiment.
+            if (typeof ctx.pauseSimulation === 'function') ctx.pauseSimulation();
+            else {
+                ctx.running = false;
+                setScale0PlaybackRunning(ctx, false, getScale0State());
+            }
+            return (async () => {
+                try {
+                    return await work(token);
+                } finally {
+                    // A newer scenario owns running state after generation or
+                    // owner turnover. Never restore the pre-experiment value
+                    // into that newer record.
+                    if (tokenIsCurrent(token)) {
+                        ctx.running = wasRunning;
+                        setScale0PlaybackRunning(ctx, wasRunning, getScale0State());
+                        ctx.updatePlayButton?.();
                     }
-                    await new Promise((r) => setTimeout(r, 10));
+                    if (activeToken === token) activeToken = null;
+                    busy = false;
                 }
-            }
-            const N = harness.getDiagnostics?.()?.manifested ?? 0;
-            points.push({ A, N });
-            draw();
-            status.textContent = `A=${A} → N=${N}  (k=${(N / (A * A)).toFixed(3)})`;
-            return N;
-        } finally {
-            if (c) c.running = wasRunning;
-            busy = false;
-        }
+            })();
+        });
+        return committed.accepted ? committed.result : Promise.resolve(null);
     }
 
-    async function sweep() {
-        if (busy) return;
-        for (const A of SWEEP_GRID) {
-            slider.value = String(A); aval.textContent = String(A);
-            await fire(A);
-        }
-        status.textContent = 'sweep complete';
+    function fire(A) {
+        return startExperiment((token) => runFire(A, token));
+    }
+
+    function sweep() {
+        return startExperiment(async (token) => {
+            for (const A of SWEEP_GRID) {
+                if (!tokenIsCurrent(token)) return null;
+                slider.value = String(A); aval.textContent = String(A);
+                const result = await runFire(A, token);
+                if (result === null || !tokenIsCurrent(token)) return null;
+            }
+            status.textContent = 'sweep complete';
+            return points.map((p) => ({ ...p }));
+        });
     }
 
     // ---- bespoke log-log N(A) plotter -------------------------------------
@@ -177,18 +278,23 @@ export function mountGenesisBurstPanel(harness) {
         for (const p of sorted) { ctx2d.beginPath(); ctx2d.arc(px(p.A), py(p.N), 3.2, 0, 6.2832); ctx2d.fill(); }
     }
     draw();
+    renderBackendSupport();
 
     // ---- scenario-switch disposal guard -----------------------------------
     const guard = setInterval(() => {
         const sel = document.getElementById('scenario-select');
         if (sel && sel.value !== SCENARIO_ID) api.dispose();
+        else renderBackendSupport();
     }, 500);
 
     const api = {
         element: panel,
         fire,
         getPoints: () => points.map((p) => ({ ...p })),
+        getSupportStatus: () => panel.dataset.liveExperimentStatus,
         dispose: () => {
+            disposed = true;
+            if (activeToken) activeToken.cancelled = true;
             clearInterval(guard);
             if (typeof window !== 'undefined' && window.__ftdGenesisBurstPanel === api) window.__ftdGenesisBurstPanel = null;
             panel.remove();

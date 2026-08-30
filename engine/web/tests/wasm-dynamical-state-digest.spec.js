@@ -110,7 +110,10 @@ test('worker proxy caches initial publication and captures fresh digest on deman
                 if (message.type !== 'captureDigest') return;
                 const fresh = { ...expected, tick: 17, stateVersion: 17 };
                 queueMicrotask(() => this.onmessage?.({
-                    data: { type: 'digestResult', reqId: message.reqId, digest: fresh },
+                    data: {
+                        type: 'digestResult', reqId: message.reqId, digest: fresh,
+                        configurationToken: message.configurationToken,
+                    },
                 }));
             }
             terminate() {}
@@ -123,6 +126,7 @@ test('worker proxy caches initial publication and captures fresh digest on deman
             proxy._ready = true;
             proxy._onMessage({
                 type: 'frame',
+                configurationToken: 0,
                 diag: { tick: 0 },
                 dynamicalStateDigest: { ...expected },
             });
@@ -148,6 +152,131 @@ test('worker proxy caches initial publication and captures fresh digest on deman
     expect(result.cached).toEqual(result.fresh);
     expect(result.capabilityFresh).toEqual(result.fresh);
     expect(result.laneTypes).toEqual(['string', 'string']);
+});
+
+test('worker qualification callback waits for a successful configuration barrier', async ({ page }) => {
+    await page.goto('/');
+    const result = await page.evaluate(async () => {
+        const OriginalWorker = globalThis.Worker;
+        const posted = [];
+        class FakeWorker {
+            constructor() { this.onmessage = null; this.onerror = null; }
+            postMessage(message) { posted.push(message); }
+            terminate() {}
+        }
+        globalThis.Worker = FakeWorker;
+
+        const engineReadbacks = [];
+        const acknowledgements = [];
+        const { WasmBridgeProxy } = await import('/js/bridge/wasm-bridge-proxy.js');
+        const proxy = new WasmBridgeProxy(9, {
+            onEngineToggles: (toggles) => engineReadbacks.push({ ...toggles }),
+            onConfigurationApplied: (ack) => acknowledgements.push({
+                ok: ack.ok,
+                errors: [...ack.errors],
+            }),
+        });
+        try {
+            proxy.setupScenario('empty');
+            proxy.setFluxBoundaryMode(0);
+            const create = posted.find((message) => message.type === 'create');
+            const ctrl = new SharedArrayBuffer(8 * 4);
+            const heap = new ArrayBuffer(9 ** 3 * 8);
+            proxy._onMessage({
+                type: 'ready',
+                N: 9,
+                ctrl,
+                heap,
+                fluxPtr: 0,
+                fluxLen: 9 ** 3,
+                setupOk: true,
+                configurationToken: create.configurationToken,
+                artifactIdentity: { variant: { id: 'wasm32-threads' } },
+            });
+            const batch = posted.find((message) => message.type === 'batchCommand');
+
+            // This is the real worker ordering: initial/final readback frames
+            // are queued before the explicit configurationApplied message.
+            proxy._onMessage({
+                type: 'frame',
+                configurationToken: batch.configurationToken,
+                diag: { tick: 0 },
+                engineToggles: { wave_propagation: false },
+            });
+            const readbacksBeforeBarrier = engineReadbacks.length;
+            proxy._onMessage({
+                type: 'configurationApplied',
+                configurationToken: batch.configurationToken,
+                ok: true,
+                errors: [],
+                engineToggles: { wave_propagation: false },
+                fluxBoundaryMode: 0,
+            });
+            proxy._onMessage({
+                type: 'frame',
+                configurationToken: batch.configurationToken,
+                diag: { tick: 1 },
+                engineToggles: { wave_propagation: false },
+            });
+
+            proxy.setupScenario('empty');
+            const rejectedCreate = posted.filter((message) => message.type === 'create').at(-1);
+            proxy._onMessage({
+                type: 'frame',
+                configurationToken: batch.configurationToken,
+                diag: { tick: 99 },
+                engineToggles: { wave_propagation: true },
+            });
+            const staleFrameAccepted = proxy._lastDiag !== null;
+            proxy._onMessage({
+                type: 'ready',
+                N: 9,
+                ctrl,
+                heap,
+                fluxPtr: 0,
+                fluxLen: 9 ** 3,
+                setupOk: true,
+                configurationToken: rejectedCreate.configurationToken,
+                artifactIdentity: { variant: { id: 'wasm32-threads' } },
+            });
+            const rejectedBatch = posted.filter((message) => message.type === 'batchCommand').at(-1);
+            proxy._onMessage({
+                type: 'configurationApplied',
+                configurationToken: rejectedBatch.configurationToken,
+                ok: false,
+                errors: ['setFluxBoundary failed'],
+                engineToggles: { wave_propagation: false },
+                fluxBoundaryMode: 0,
+            });
+            proxy._onMessage({
+                type: 'frame',
+                configurationToken: rejectedBatch.configurationToken,
+                diag: { tick: 2 },
+                engineToggles: { wave_propagation: false },
+            });
+
+            return {
+                batchMethods: batch.commands.map((command) => command.method),
+                readbacksBeforeBarrier,
+                readbacksAfterAcceptedBarrier: 1,
+                readbacksAfterRejectedBarrier: engineReadbacks.length,
+                staleFrameAccepted,
+                acknowledgements,
+            };
+        } finally {
+            proxy.terminate();
+            globalThis.Worker = OriginalWorker;
+        }
+    });
+
+    expect(result.batchMethods).toContain('setFluxBoundary');
+    expect(result.readbacksBeforeBarrier).toBe(0);
+    expect(result.staleFrameAccepted).toBe(false);
+    expect(result.readbacksAfterRejectedBarrier).toBe(result.readbacksAfterAcceptedBarrier);
+    expect(result.acknowledgements).toEqual([
+        { ok: true, errors: [] },
+        { ok: false, errors: ['setFluxBoundary failed'] },
+    ]);
 });
 
 test('worker hashes once on build and only on explicit capture thereafter', () => {

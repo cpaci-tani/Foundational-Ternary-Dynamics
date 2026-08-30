@@ -33,6 +33,7 @@ const TARGET_DT = 1000 / 60;
 let mod = null, bridge = null;
 let artifactIdentity = null, verifiedGlueBlobUrl = null;
 let N = 33, scenarioId = 'flux-pulse', toggles = {}, toggleNames = [];
+let activeConfigurationToken = 0;
 let poolThreads = 8;       // MUST equal -sPTHREAD_POOL_SIZE in engine/wasm/CMakeLists.txt
                            // (pre-spawned pthread pool; proxy may clamp below this).
 let ctrlSab = null, ctrl = null;
@@ -56,7 +57,10 @@ function publishFlux(vol) {
       fluxPubSab = new SharedArrayBuffer(need);
       fluxPubN = n;
       Atomics.store(new Int32Array(fluxPubSab, 0, 1), 0, 0);
-      self.postMessage({ type: 'fluxRebind', fluxSab: fluxPubSab, fluxLen: n, doubleBuffered: true });
+      self.postMessage({
+        type: 'fluxRebind', fluxSab: fluxPubSab, fluxLen: n, doubleBuffered: true,
+        configurationToken: activeConfigurationToken,
+      });
     }
     const slot = 1 - Atomics.load(new Int32Array(fluxPubSab, 0, 1), 0);
     new Float64Array(fluxPubSab, header + slot * bytes, n).set(vol);
@@ -115,13 +119,52 @@ function cloneAudit(a) {
 }
 
 function applyCommand(method, args = []) {
-  if (method === 'tickScale0') { bridge.tick(); return; }
-  if (!WORKER_COMMAND_ALLOWLIST.has(method)) {
-    console.error('[WasmWorker] rejected command:', method);
-    return;
+  if (method === 'tickScale0') {
+    try {
+      bridge.tick();
+      return { ok: true };
+    } catch (e) {
+      const error = 'tickScale0 failed: ' + String(e && e.message || e);
+      console.error('[WasmWorker] ' + error);
+      return { ok: false, error };
+    }
   }
-  if (typeof mod[method] === 'function') { try { mod[method](bridge, ...args); } catch (e) { console.error('[WasmWorker] command ' + method + ' failed:', e); } }
-  else if (typeof bridge[method] === 'function') { try { bridge[method](...args); } catch (e) { console.error('[WasmWorker] command ' + method + ' failed:', e); } }
+  if (!WORKER_COMMAND_ALLOWLIST.has(method)) {
+    const error = 'rejected command: ' + method;
+    console.error('[WasmWorker] ' + error);
+    return { ok: false, error };
+  }
+  const fn = typeof mod[method] === 'function'
+    ? () => mod[method](bridge, ...args)
+    : (typeof bridge[method] === 'function' ? () => bridge[method](...args) : null);
+  if (!fn) {
+    const error = 'command handler unavailable: ' + method;
+    console.error('[WasmWorker] ' + error);
+    return { ok: false, error };
+  }
+  try {
+    const result = fn();
+    if (result === false) {
+      const error = 'command returned false: ' + method;
+      console.error('[WasmWorker] ' + error);
+      return { ok: false, error };
+    }
+    return { ok: true };
+  } catch (e) {
+    const error = 'command ' + method + ' failed: ' + String(e && e.message || e);
+    console.error('[WasmWorker] ' + error);
+    return { ok: false, error };
+  }
+}
+
+function readFluxBoundaryMode() {
+  if (!mod || !bridge || typeof mod.getFluxBoundary !== 'function') return null;
+  try {
+    const mode = Number(mod.getFluxBoundary(bridge));
+    return Number.isInteger(mode) ? mode : null;
+  } catch (e) {
+    return null;
+  }
 }
 
 function copyKnotTelemetry(r) {
@@ -325,7 +368,8 @@ function readEngineToggles() {
   return out;
 }
 
-function buildBridge(n, scen) {
+function buildBridge(n, scen, configurationToken = 0) {
+  activeConfigurationToken = Number(configurationToken) || 0;
   if (bridge) { try { bridge.delete(); } catch (e) { /* ignore */ } bridge = null; }
   N = n | 0;
   bridge = new mod.RenderBridge(N);
@@ -374,7 +418,7 @@ function buildBridge(n, scen) {
   const doubled = publishFlux(vol);
   self.postMessage({
     type: 'ready', N, ctrl: ctrlSab, heap: vol.buffer, fluxPtr: vol.byteOffset, fluxLen: vol.length,
-    setupOk, setupError, artifactIdentity,
+    setupOk, setupError, artifactIdentity, configurationToken,
     ...(doubled ? { fluxSab: fluxPubSab, doubleBuffered: true } : {}),
   });
   postFrame(true);
@@ -388,7 +432,10 @@ function postFrame(fieldChanged = false) {
     lastFluxHeap = vol.buffer;
     lastFluxPtr = vol.byteOffset;
     lastFluxLen = vol.length;
-    self.postMessage({ type: 'fluxRebind', heap: vol.buffer, fluxPtr: vol.byteOffset, fluxLen: vol.length });
+    self.postMessage({
+      type: 'fluxRebind', heap: vol.buffer, fluxPtr: vol.byteOffset, fluxLen: vol.length,
+      configurationToken: activeConfigurationToken,
+    });
   }
   const tick = bridge.currentTick ? bridge.currentTick() : 0;
   let diag = null, parts = null, audit = null, lag = null;
@@ -498,7 +545,8 @@ function postFrame(fieldChanged = false) {
   const engineTogglesMsg = engineTogglesDirty ? readEngineToggles() : null;
   const digestMsg = publishDynamicalStateDigest ? lastDynamicalStateDigest : undefined;
   publishDynamicalStateDigest = false;
-  self.postMessage({ type: 'frame', tick: tick | 0, diag, parts, audit, lag, samplers, knot, knotEvents, knotAgg,
+  self.postMessage({ type: 'frame', configurationToken: activeConfigurationToken,
+                     tick: tick | 0, diag, parts, audit, lag, samplers, knot, knotEvents, knotAgg,
                      inspect: lastInspect, forceAt: lastForceAt,
                      ...(digestMsg !== undefined ? { dynamicalStateDigest: digestMsg } : {}),
                      ...(engineTogglesMsg ? { engineToggles: engineTogglesMsg } : {}) });
@@ -534,7 +582,7 @@ self.onmessage = (e) => {
         if (typeof msg.pool === 'number' && msg.pool >= 1) poolThreads = msg.pool | 0;
         pendingCreate = msg;
         if (mod) {
-          buildBridge(msg.N, msg.scenarioId || scenarioId);
+          buildBridge(msg.N, msg.scenarioId || scenarioId, msg.configurationToken);
           if (!timer) loop();
         } else if (!initInFlight) {
           initInFlight = true;
@@ -542,7 +590,7 @@ self.onmessage = (e) => {
             initInFlight = false;
             const m = pendingCreate;
             pendingCreate = null;
-            if (m) buildBridge(m.N, m.scenarioId || scenarioId);
+            if (m) buildBridge(m.N, m.scenarioId || scenarioId, m.configurationToken);
             if (!timer) loop();
           });
         }
@@ -561,11 +609,38 @@ self.onmessage = (e) => {
       case 'batchCommand': {
         if (!mod || !bridge) break;
         lastAudit = null; auditFrameCounter = 0;
+        const errors = [];
+        const expectedToggles = new Map();
+        let expectedFluxBoundaryMode = null;
         for (const { method, args = [] } of (msg.commands || [])) {
-          applyCommand(method, args);
+          const result = applyCommand(method, args);
+          if (!result?.ok) errors.push(result?.error || `command failed: ${method}`);
+          if (method === 'setToggle' && typeof args[0] === 'string') {
+            expectedToggles.set(args[0], !!args[1]);
+          } else if (method === 'setFluxBoundary' && Number.isInteger(Number(args[0]))) {
+            expectedFluxBoundaryMode = Number(args[0]);
+          }
         }
+        enforceToggleInvariants();
         engineTogglesDirty = true;
         postFrame(true);
+        for (const [name, expected] of expectedToggles) {
+          if (!(name in engineToggles) || engineToggles[name] !== expected) {
+            errors.push(`toggle readback mismatch: ${name} expected ${expected}`);
+          }
+        }
+        const fluxBoundaryMode = readFluxBoundaryMode();
+        if (expectedFluxBoundaryMode !== null && fluxBoundaryMode !== expectedFluxBoundaryMode) {
+          errors.push(`flux boundary readback mismatch: expected ${expectedFluxBoundaryMode}, got ${fluxBoundaryMode}`);
+        }
+        self.postMessage({
+          type: 'configurationApplied',
+          configurationToken: msg.configurationToken,
+          ok: errors.length === 0,
+          errors,
+          engineToggles: { ...engineToggles },
+          fluxBoundaryMode,
+        });
         break;
       }
       case 'inspectVoxel': {
@@ -575,7 +650,10 @@ self.onmessage = (e) => {
             lastInspect = { x: msg.x | 0, y: msg.y | 0, z: msg.z | 0, voxel: mod.inspectVoxel(bridge, msg.x, msg.y, msg.z) };
           } catch { lastInspect = null; }
         }
-        self.postMessage({ type: 'inspectResult', inspect: lastInspect });
+        self.postMessage({
+          type: 'inspectResult', inspect: lastInspect,
+          configurationToken: msg.configurationToken,
+        });
         break;
       }
       case 'getForceAt': {
@@ -585,7 +663,10 @@ self.onmessage = (e) => {
             lastForceAt = { x: msg.x | 0, y: msg.y | 0, z: msg.z | 0, force: mod.getForceAt(bridge, msg.x, msg.y, msg.z) };
           } catch { lastForceAt = null; }
         }
-        self.postMessage({ type: 'forceAtResult', forceAt: lastForceAt });
+        self.postMessage({
+          type: 'forceAtResult', forceAt: lastForceAt,
+          configurationToken: msg.configurationToken,
+        });
         break;
       }
       case 'coarsen': {
@@ -597,7 +678,10 @@ self.onmessage = (e) => {
         if (mod && bridge && typeof mod.coarsenToParticles === 'function') {
           try { data = mod.coarsenToParticles(bridge); } catch (e) { data = null; }
         }
-        self.postMessage({ type: 'coarsenResult', reqId: msg.reqId, data });
+        self.postMessage({
+          type: 'coarsenResult', reqId: msg.reqId, data,
+          configurationToken: msg.configurationToken,
+        });
         break;
       }
       case 'captureDigest': {
@@ -610,6 +694,7 @@ self.onmessage = (e) => {
           type: 'digestResult',
           reqId: msg.reqId,
           digest: lastDynamicalStateDigest,
+          configurationToken: msg.configurationToken,
         });
         break;
       }

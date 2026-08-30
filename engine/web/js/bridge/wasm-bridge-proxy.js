@@ -22,6 +22,10 @@ const CTRL = { FRAME: 0, N: 1, TICK: 2, RUNNING: 3, PCOUNT: 4, TICKS_PER_FRAME: 
 const EMPTY_PARTS = () => ({ positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0), spin: new Float32Array(0), colorCharge: new Float32Array(0), locked: new Uint8Array(0), count: 0 });
 const EMPTY_VEC = () => ({ positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 });
 const EMPTY_VAL = () => ({ positions: new Float32Array(0), values: new Float32Array(0), count: 0 });
+const SCENARIO_SCOPED_MESSAGE_TYPES = new Set([
+    'frame', 'fluxRebind', 'inspectResult', 'forceAtResult',
+    'coarsenResult', 'digestResult',
+]);
 
 // Complete boolean TermToggles registry, in the same order as
 // engine/include/ftd/term_toggles.h::TOGGLE_SPECS.  The worker must read back
@@ -122,10 +126,21 @@ export class WasmBridgeProxy {
         // physics-toggles card and recompute overlay applicability from what the
         // engine is ACTUALLY running rather than from the JS model of it.
         this._onEngineToggles = (opts && typeof opts.onEngineToggles === 'function') ? opts.onEngineToggles : null;
+        // A frame/readback can precede post-setup commands queued by the loader.
+        // Qualification must wait for this explicit FIFO barrier instead of
+        // treating the worker's initial frame as the final scenario profile.
+        this._onConfigurationApplied = (opts && typeof opts.onConfigurationApplied === 'function')
+            ? opts.onConfigurationApplied
+            : null;
         this.latticeSize = (latticeSize % 2 === 0) ? latticeSize + 1 : latticeSize;
         this._scenarioId = 'flux-pulse';
         this._toggles = {};
         this._engineToggles = null;     // null until the worker's first readback
+        this._configurationSeq = 0;
+        this._pendingConfigurationToken = 0;
+        this._appliedConfigurationToken = 0;
+        this._requestedFluxBoundaryMode = null;
+        this._engineFluxBoundaryMode = null;
         this._wantAudit = true;         // telemetry demand mask (mirrors worker)
         this._wantLag = true;
         this._ready = false;
@@ -182,7 +197,7 @@ export class WasmBridgeProxy {
         this._digestReq = 0;
 
         // CLASSIC worker (Emscripten module via importScripts). No { type: 'module' }.
-        this._worker = new Worker(new URL('./wasm-bridge.worker.js', import.meta.url));
+        this._worker = new Worker(new URL('./wasm-bridge.worker.js?v=2', import.meta.url));
         this._worker.onmessage = (e) => this._onMessage(e.data);
         // A worker-level error (e.g. importScripts NetworkError loading the
         // -pthread MT glue) surfaces here. If it happens before the worker has
@@ -262,7 +277,10 @@ export class WasmBridgeProxy {
         // queued on the main-thread event loop; without this guard those would
         // still mutate UI / postFrame callbacks for a dead owner.
         if (this._terminated || this._initFailed) return;
+        if (SCENARIO_SCOPED_MESSAGE_TYPES.has(m.type)
+            && Number(m.configurationToken) !== this._pendingConfigurationToken) return;
         if (m.type === 'ready') {
+            if (Number(m.configurationToken) !== this._pendingConfigurationToken) return;
             if (!m.artifactIdentity
                 || m.artifactIdentity.variant?.id !== 'wasm32-threads') {
                 this.artifactIdentityState = 'failed';
@@ -289,23 +307,26 @@ export class WasmBridgeProxy {
             if (this._pendingTPF !== undefined) {
                 Atomics.store(this._ctrl, CTRL.TICKS_PER_FRAME, Math.round(this._pendingTPF * 1000));
             }
-            // Replay commands that arrived while the worker was initialising.
-            // Sent as a single batchCommand so the worker calls postFrame() only once
-            // at the end rather than once per individual seed voxel.
-            if (this._pendingCommands.length > 0) {
-                this._worker.postMessage({ type: 'batchCommand', commands: this._pendingCommands });
-                this._pendingCommands = [];
-            }
-            if (this._running === true) {
-                this._worker.postMessage({ type: 'setRunning', value: true, seq: this._runCommandSeq });
-                if (this._ctrl) Atomics.store(this._ctrl, CTRL.RUNNING, 1);
-            }
             if (m.setupOk === false) {
                 const msg = m.setupError || (`Unknown or unhandled scenario: ${this._scenarioId}`);
                 console.error('[WasmWorker] setupScenario failed:', msg);
                 try { this._onSetupFailure?.(msg); } catch (e) {
                     console.error('[WasmWorker] onSetupFailure handler threw:', e);
                 }
+                return;
+            }
+            // Replay every post-setup command as one FIFO transaction. Send an
+            // empty batch too: configurationApplied is the explicit barrier
+            // proving the final profile, not merely proof that `create` ran.
+            this._worker.postMessage({
+                type: 'batchCommand',
+                commands: this._pendingCommands,
+                configurationToken: this._pendingConfigurationToken,
+            });
+            this._pendingCommands = [];
+            if (this._running === true) {
+                this._worker.postMessage({ type: 'setRunning', value: true, seq: this._runCommandSeq });
+                if (this._ctrl) Atomics.store(this._ctrl, CTRL.RUNNING, 1);
             }
         } else if (m.type === 'frame') {
             // Reset the dead-worker watchdog only on TICK PROGRESS. A worker can
@@ -326,7 +347,9 @@ export class WasmBridgeProxy {
             if (m.lag)   this._lastLag   = m.lag;
             if (m.engineToggles) {
                 this._engineToggles = m.engineToggles;
-                try { this._onEngineToggles?.(m.engineToggles); } catch (e) { /* UI callback must not kill the frame */ }
+                if (this._appliedConfigurationToken === this._pendingConfigurationToken) {
+                    try { this._onEngineToggles?.(m.engineToggles); } catch (e) { /* UI callback must not kill the frame */ }
+                }
             }
             if (m.knot) this._lastKnot = m.knot;
             if (m.knotEvents) this._lastKnotEvents = m.knotEvents;
@@ -341,6 +364,20 @@ export class WasmBridgeProxy {
 
             if (typeof window !== 'undefined' && window.__ftdCtx && typeof window.__ftdCtx.onBridgePostFrame === 'function') {
                 window.__ftdCtx.onBridgePostFrame(hadSamplers);
+            }
+        } else if (m.type === 'configurationApplied') {
+            if (Number(m.configurationToken) !== this._pendingConfigurationToken) return;
+            if (m.engineToggles) this._engineToggles = m.engineToggles;
+            if (Number.isInteger(m.fluxBoundaryMode)) this._engineFluxBoundaryMode = m.fluxBoundaryMode;
+            const errors = Array.isArray(m.errors) ? [...m.errors] : [];
+            if (this._requestedFluxBoundaryMode !== null
+                && this._engineFluxBoundaryMode !== this._requestedFluxBoundaryMode) {
+                errors.push(`flux boundary acknowledgement mismatch: expected ${this._requestedFluxBoundaryMode}, got ${this._engineFluxBoundaryMode}`);
+            }
+            const acknowledgement = { ...m, ok: m.ok !== false && errors.length === 0, errors };
+            if (acknowledgement.ok) this._appliedConfigurationToken = this._pendingConfigurationToken;
+            try { this._onConfigurationApplied?.(acknowledgement); } catch (e) {
+                console.error('[WasmWorker] configuration acknowledgement handler threw:', e);
             }
         } else if (m.type === 'fluxRebind') {
             this._bindFlux(m);
@@ -421,6 +458,7 @@ export class WasmBridgeProxy {
         if (this._engineToggles && name in this._engineToggles) return !!this._engineToggles[name];
         return null;
     }
+    getEngineTruthFluxBoundaryMode() { return this._engineFluxBoundaryMode; }
 
     _buildCaps() {
         // The capability factory just delegates to bridge methods, so wrap `this`.
@@ -453,7 +491,10 @@ export class WasmBridgeProxy {
         const reqId = ++this._coarsenReq;
         return new Promise((resolve) => {
             this._coarsenPending.set(reqId, resolve);
-            this._worker.postMessage({ type: 'coarsen', reqId });
+            this._worker.postMessage({
+                type: 'coarsen', reqId,
+                configurationToken: this._pendingConfigurationToken,
+            });
             setTimeout(() => {
                 if (this._coarsenPending.has(reqId)) {
                     this._coarsenPending.delete(reqId);
@@ -474,7 +515,10 @@ export class WasmBridgeProxy {
         const reqId = ++this._digestReq;
         return new Promise((resolve) => {
             this._digestPending.set(reqId, resolve);
-            this._worker.postMessage({ type: 'captureDigest', reqId });
+            this._worker.postMessage({
+                type: 'captureDigest', reqId,
+                configurationToken: this._pendingConfigurationToken,
+            });
             setTimeout(() => {
                 if (this._digestPending.has(reqId)) {
                     this._digestPending.delete(reqId);
@@ -650,7 +694,11 @@ export class WasmBridgeProxy {
     getLatencyVolume() { return new Float64Array(0); }  // full volume not supported on worker path
     setBoundaryShape() {}
     setReflectiveBoundary() {}
-    setFluxBoundaryMode(mode) { this._cmd('setFluxBoundary', mode); }
+    setFluxBoundaryMode(mode) {
+        const normalized = Math.max(0, Math.min(2, Math.trunc(Number(mode) || 0)));
+        this._requestedFluxBoundaryMode = normalized;
+        this._cmd('setFluxBoundary', normalized);
+    }
 
     // ── Single-point inspect reads (parity with direct WasmBridge) ──────────
     // A synchronous worker round-trip is impossible, and the worker hosts a
@@ -661,13 +709,19 @@ export class WasmBridgeProxy {
     // TODO (Phase 2): true worker-backed inspect via a request/response channel
     // into the worker's RenderBridge.
     inspectVoxel(x, y, z) {
-        this._worker.postMessage({ type: 'inspectVoxel', x, y, z });
+        this._worker.postMessage({
+            type: 'inspectVoxel', x, y, z,
+            configurationToken: this._pendingConfigurationToken,
+        });
         const c = this._lastInspect;
         if (c && c.x === x && c.y === y && c.z === z) return c.voxel;
         return c?.voxel ?? null;
     }
     getForceAt(x, y, z) {
-        this._worker.postMessage({ type: 'getForceAt', x, y, z });
+        this._worker.postMessage({
+            type: 'getForceAt', x, y, z,
+            configurationToken: this._pendingConfigurationToken,
+        });
         const c = this._lastForceAt;
         if (c && c.x === x && c.y === y && c.z === z) return c.force;
         return c?.force ?? null;
@@ -690,16 +744,38 @@ export class WasmBridgeProxy {
         // new `create` completes. Clear them so exact-step observatories do not
         // mistake an old high tick count for completion of a newly reset run.
         this._lastDiag = null;
+        this._lastParts = null;
+        this._lastAudit = null;
+        this._lastLag = null;
+        this._lastKnot = null;
+        this._lastKnotEvents = null;
+        this._lastKnotAgg = null;
+        this._lastInspect = null;
+        this._lastForceAt = null;
         this._lastDynamicalStateDigest = null;
         this._lastTick = -1;
+        this._appliedConfigurationToken = 0;
+        this._requestedFluxBoundaryMode = null;
+        this._engineFluxBoundaryMode = null;
         this._clearFrameWatchdog();   // old-scenario watchdog is stale; re-arms on next 'ready'/setRunning
         this._samplerCache = {};   // stale; worker will repopulate on first frame of new scenario
         this._pendingCommands = []; // discard any commands queued for the previous scenario
+        for (const resolve of this._coarsenPending.values()) {
+            try { resolve(null); } catch { /* ignore */ }
+        }
+        this._coarsenPending.clear();
+        for (const resolve of this._digestPending.values()) {
+            try { resolve(null); } catch { /* ignore */ }
+        }
+        this._digestPending.clear();
+        const configurationToken = ++this._configurationSeq;
+        this._pendingConfigurationToken = configurationToken;
         this._worker.postMessage({
             type: 'create', N: this.latticeSize, scenarioId: this._scenarioId,
             toggles: this._toggles,
             toggleNames: SCALE0_ENGINE_TOGGLE_NAMES,
             pool: workerPoolSize(),
+            configurationToken,
         });
         return true;
     }
@@ -789,6 +865,7 @@ export class WasmBridgeProxy {
         // Drop callbacks so a late queued message cannot reach the dashboard
         // even if _onMessage's terminated guard is somehow bypassed.
         this._onEngineToggles = null;
+        this._onConfigurationApplied = null;
         this._onInitFailure = null;
         this._onSetupFailure = null;
         for (const resolve of this._digestPending.values()) {

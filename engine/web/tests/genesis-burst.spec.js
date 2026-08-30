@@ -21,42 +21,45 @@ const SETTLE = 200;
 async function loadAndSettle(page, id, ticks) {
     // 1. Pause the loop first so no background ticking can happen during load
     await page.evaluate(() => {
-        if (window.__ftdCtx) {
-            window.__ftdCtx.running = false;
-        }
+        window.__ftdCtx?.pauseSimulation?.();
     });
     // 2. Load the hidden research scenario through the production UI path.
     await selectScale0Scenario(page, id);
-    // 4. Tick exactly `n` times from the initial scenario state
+    await expect.poll(() => page.evaluate(async () => {
+        const { getScale0QualificationState } = await import('/js/scales/scale0/state/store.js');
+        return getScale0QualificationState().status;
+    }), { timeout: 30_000 }).toBe('within-contract');
+    // 3. Tick exactly `n` times, then await the worker's authoritative tick.
     const result = await page.evaluate(async (n) => {
         const { getScale0State, resolveActiveScale0BridgeFromWindow } =
             await import('/js/scales/scale0/state/store.js');
         const { runScale0PhysicsTicks } = await import('/js/scales/scale0/runtime/tick.js');
         const state = getScale0State();
         const b = resolveActiveScale0BridgeFromWindow();
-        if (!b) return { manifested: -1, peak: -1, history: [] };
-        window.__ftdCtx.running = false;
-        let peak = 0;
-        const history = [];
-        for (let i = 0; i < n; i++) {
-            runScale0PhysicsTicks(window.__ftdCtx, state, 1);
-            const sc = b.capabilities?.scale0;
-            const current = Number(sc?.getScale0Diagnostics?.()?.manifested
-                ?? sc?.getScale0EnergyAudit?.()?.manifested ?? 0);
-            if (current > peak) peak = current;
-            if (i % 20 === 0 || i === n - 1) {
-                history.push(`t=${i}:${current}`);
+        if (!b) return { manifested: -1, startTick: -1, finalTick: -1 };
+        window.__ftdCtx.pauseSimulation?.();
+        const sc = b.capabilities?.scale0;
+        const startTick = Number(sc?.getScale0Diagnostics?.()?.tick ?? 0);
+        runScale0PhysicsTicks(window.__ftdCtx, state, n);
+        if (b.isWorker) {
+            const targetTick = startTick + n;
+            const deadline = performance.now() + 45_000;
+            while (Number(sc?.getScale0Diagnostics?.()?.tick ?? -1) < targetTick) {
+                if (performance.now() > deadline) {
+                    throw new Error(`worker stopped before deterministic target ${targetTick}`);
+                }
+                await new Promise(resolve => setTimeout(resolve, 10));
             }
         }
         return {
-            manifested: Number(b.capabilities?.scale0?.getScale0Diagnostics?.()?.manifested
-                ?? b.capabilities?.scale0?.getScale0EnergyAudit?.()?.manifested ?? 0),
-            peak,
-            history
+            manifested: Number(sc?.getScale0Diagnostics?.()?.manifested
+                ?? sc?.getScale0EnergyAudit?.()?.manifested ?? 0),
+            startTick,
+            finalTick: Number(sc?.getScale0Diagnostics?.()?.tick ?? -1),
         };
     }, ticks);
-    console.log(`History for ${id}:`, result.history.join(', '), `(peak: ${result.peak})`);
-    return result.peak;
+    console.log(`Settled ${id}: N=${result.manifested}, tick ${result.startTick}→${result.finalTick}`);
+    return result.manifested;
 }
 
 test.describe('Selected genesis amplitude response (FTD-0269 provenance)', () => {
@@ -69,7 +72,7 @@ test.describe('Selected genesis amplitude response (FTD-0269 provenance)', () =>
         context = await browser.newContext({ baseURL });
         page = await context.newPage();
         page.setDefaultTimeout(60_000);
-        await gotoAndReady(page);
+        await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
         await expect.poll(() => page.evaluate(() => !!(window.__ftdCtx?.bridge)), { timeout: 20_000 }).toBe(true);
     });
 
@@ -104,14 +107,111 @@ test.describe('Selected genesis amplitude response (FTD-0269 provenance)', () =>
             `genesis-burst must run on a real WASM owner, got ${owner.name}`).toBe(true);
 
         // drive the panel's fire() and confirm a live (A,N) point is recorded
-        const pts = await page.evaluate(async () => {
+        const result = await page.evaluate(async () => {
+            const { getScale0QualificationState } = await import('/js/scales/scale0/state/store.js');
+            const before = getScale0QualificationState().mutationEpoch;
             await window.__ftdGenesisBurstPanel.fire(16);
-            return window.__ftdGenesisBurstPanel.getPoints();
+            const qualification = getScale0QualificationState();
+            return {
+                pts: window.__ftdGenesisBurstPanel.getPoints(),
+                before,
+                after: qualification.mutationEpoch,
+                mutation: qualification.lastMutation,
+            };
         });
+        const pts = result.pts;
         expect(pts.length).toBe(1);
         expect(pts[0].A).toBe(16);
         expect(Number.isFinite(pts[0].N)).toBe(true);
         expect(pts[0].N, 'interactive A=16 firing should produce a nonzero native response').toBeGreaterThan(0);
+        expect(result.after - result.before, 'one Fire intent must create exactly one mutation epoch').toBe(1);
+        expect(result.mutation?.reason).toBe('genesis-experiment');
+        expect(result.mutation?.source).toBe('panel.genesis-burst');
+    });
+
+    test('Fire pauses active playback at the transport before deterministic stepping', async () => {
+        await selectScale0Scenario(page, 's0-seed-cluster-law');
+        await expect.poll(() => page.evaluate(() => !!window.__ftdGenesisBurstPanel), { timeout: 10_000 }).toBe(true);
+        await page.evaluate(() => {
+            if (!window.__ftdCtx.running) document.getElementById('btn-play')?.click();
+        });
+        await expect.poll(() => page.evaluate(() => !!window.__ftdCtx?.running)).toBe(true);
+
+        const result = await page.evaluate(async () => {
+            const { resolveActiveScale0BridgeFromWindow } = await import('/js/scales/scale0/state/store.js');
+            const ctx = window.__ftdCtx;
+            const owner = resolveActiveScale0BridgeFromWindow();
+            const originalPause = ctx.pauseSimulation;
+            const originalSetRunning = owner.setRunning?.bind(owner);
+            let pauseCalls = 0;
+            const transitions = [];
+            ctx.pauseSimulation = () => {
+                pauseCalls += 1;
+                return originalPause();
+            };
+            if (originalSetRunning) {
+                owner.setRunning = (value) => {
+                    transitions.push(!!value);
+                    return originalSetRunning(value);
+                };
+            }
+            try {
+                const value = await window.__ftdGenesisBurstPanel.fire(12);
+                return {
+                    value,
+                    pauseCalls,
+                    transitions,
+                    restoredRunning: ctx.running,
+                    points: window.__ftdGenesisBurstPanel.getPoints(),
+                };
+            } finally {
+                ctx.pauseSimulation = originalPause;
+                if (originalSetRunning) owner.setRunning = originalSetRunning;
+                originalPause();
+            }
+        });
+
+        expect(result.pauseCalls).toBe(1);
+        expect(result.transitions[0]).toBe(false);
+        expect(result.transitions.at(-1)).toBe(true);
+        expect(result.restoredRunning).toBe(true);
+        expect(result.points).toHaveLength(1);
+        expect(Number.isFinite(result.value)).toBe(true);
+    });
+
+    test('generation turnover aborts an in-flight fire without restoring stale running state', async () => {
+        await selectScale0Scenario(page, 's0-seed-cluster-law');
+        await expect.poll(() => page.evaluate(() => !!window.__ftdGenesisBurstPanel), { timeout: 10_000 }).toBe(true);
+
+        const result = await page.evaluate(async () => {
+            const { getScale0QualificationState } = await import('/js/scales/scale0/state/store.js');
+            const api = window.__ftdGenesisBurstPanel;
+            const ctx = window.__ftdCtx;
+            const before = getScale0QualificationState().mutationEpoch;
+            ctx.running = false;
+            const pending = api.fire(90);
+            // fire() yields after its first tick. Turn the dashboard generation
+            // over before that continuation can post the remaining 219 ticks.
+            ctx._loadGeneration += 1;
+            ctx.running = true;
+            const value = await pending;
+            const qualification = getScale0QualificationState();
+            return {
+                value,
+                running: ctx.running,
+                points: api.getPoints(),
+                epochDelta: qualification.mutationEpoch - before,
+            };
+        });
+
+        expect(result.value).toBeNull();
+        expect(result.points).toHaveLength(0);
+        expect(result.running, 'a stale experiment must not restore its captured paused state').toBe(true);
+        expect(result.epochDelta, 'the accepted Fire intent is recorded once even when later aborted').toBe(1);
+
+        // Repair the deliberately advanced test generation through the normal
+        // authoritative loader before the next case.
+        await selectScale0Scenario(page, 's0-seed-cluster-law');
     });
 
     test('panel is disposed when switching away from the scenario', async () => {

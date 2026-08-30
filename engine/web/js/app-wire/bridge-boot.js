@@ -3,8 +3,8 @@
  * Extracted from app.js init() (behavior-preserving).
  */
 
-import { createBridge } from '../bridge-init.js';
-import { tryNativeBridge } from '../ws-bridge.js';
+import { createBridge } from '../bridge-init.js?v=2';
+import { tryNativeBridge } from '../ws-bridge.js?v=2';
 import { parseNativeWsPort } from '../lib/origin-policy.js';
 import { debugLog } from '../core/log.js';
 
