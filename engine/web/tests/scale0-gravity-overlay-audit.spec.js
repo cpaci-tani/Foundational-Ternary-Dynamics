@@ -680,19 +680,30 @@ test.describe('Scale 0 discrete gravity overlay audit gate', () => {
         testInfo.setTimeout(900_000);
         const consoleErrors = attachConsoleWatcher(page);
         const requestedBackend = process.env.FTD_GRAVITY_PERF_BACKEND || 'auto';
+        const requireHardwareWebgl = process.env.FTD_HARDWARE_WEBGL === '1';
         const backend = await page.evaluate(async () => {
             const store = await import('/js/scales/scale0/state/store.js');
             const ctx = window.__ftdCtx;
             const active = store.getActiveScale0Bridge(ctx, store.getScale0State());
+            const gl = ctx?.viewport?.renderer?.getContext?.() || null;
+            const rendererInfo = gl?.getExtension?.('WEBGL_debug_renderer_info') || null;
             return {
                 isWorker: active?.isWorker === true,
                 isNativeGPU: active?.isNativeGPU === true,
                 isDirectWasm: active?.isWasm === true && active?.isWorker !== true,
+                webglRenderer: rendererInfo
+                    ? String(gl.getParameter(rendererInfo.UNMASKED_RENDERER_WEBGL) || '')
+                    : '',
             };
         });
         if (requestedBackend === 'native') expect(backend.isNativeGPU).toBe(true);
         if (requestedBackend === 'wasm') expect(backend.isWorker).toBe(true);
         if (requestedBackend === 'direct-wasm') expect(backend.isDirectWasm).toBe(true);
+        if (requireHardwareWebgl) {
+            expect(backend.webglRenderer, 'release matrix exposes a WebGL renderer').not.toBe('');
+            expect(backend.webglRenderer, 'release matrix does not certify SwiftShader/software WebGL')
+                .not.toMatch(/swiftshader|software/i);
+        }
         await selectScale0Scenario(page, 's0-seed-massive-body', { settleMs: 250 });
         const backendDefaultSizes = requestedBackend === 'native' || backend.isNativeGPU
             ? LATTICE_SIZES
@@ -703,7 +714,7 @@ test.describe('Scale 0 discrete gravity overlay audit gate', () => {
             .split(',').map(Number).filter(Number.isFinite);
         const requestedStyles = (process.env.FTD_GRAVITY_PERF_STYLES || 'arrows,heatmap,flow,glyphs')
             .split(',').map((value) => value.trim()).filter(Boolean);
-        const reports = await page.evaluate(async ({ sizes, styles }) => {
+        const reports = await page.evaluate(async ({ sizes, styles, webglRenderer }) => {
             const controller = await import('/js/scales/scale0/controller.js');
             const store = await import('/js/scales/scale0/state/store.js');
             const { runScale0PhysicsTicks } = await import('/js/scales/scale0/runtime/tick.js');
@@ -840,6 +851,7 @@ test.describe('Scale 0 discrete gravity overlay audit gate', () => {
                             backend: active?.constructor?.name || 'unknown',
                             isWorker: active?.isWorker === true,
                             isNativeGPU: active?.isNativeGPU === true,
+                            webglRenderer,
                             drawCount: style === 'arrows'
                                 ? field._gravityField?.geometry.drawRange.count
                                 : style === 'heatmap'
@@ -858,8 +870,7 @@ test.describe('Scale 0 discrete gravity overlay audit gate', () => {
                 }
             }
             return out;
-        }, { sizes: requestedSizes, styles: requestedStyles });
-
+        }, { sizes: requestedSizes, styles: requestedStyles, webglRenderer: backend.webglRenderer });
         await testInfo.attach('gravity-performance-report.json', {
             body: Buffer.from(JSON.stringify(reports, null, 2)),
             contentType: 'application/json',
@@ -886,6 +897,10 @@ test.describe('Scale 0 discrete gravity overlay audit gate', () => {
             } else if (requestedBackend === 'direct-wasm') {
                 expect(report.debug.isWorker, `${label} is not a worker`).toBe(false);
                 expect(report.debug.isNativeGPU, `${label} is not native`).toBe(false);
+            }
+            if (requireHardwareWebgl) {
+                expect(report.debug.webglRenderer, `${label} hardware WebGL owner`)
+                    .not.toMatch(/swiftshader|software/i);
             }
             if (report.N > 97) {
                 expect(report.debug.isNativeGPU, `${label} native-only size owner`).toBe(true);

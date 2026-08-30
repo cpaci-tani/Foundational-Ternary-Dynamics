@@ -305,10 +305,15 @@ worker or native GPU, and `L>97` requires native GPU. A focused test invokes the
 production worker-init fallback path from a healthy L49 worker: it clamps and
 reloads direct WASM at L33, re-disables every larger menu option, and refuses a
 later L49 resize. Actual worker-init fault injection remains separate. The final
-warmed matrix uses an explicit native-GPU owner for all ten registered sizes
-(`L=9...181`) and all four force styles for 40 combinations: minimum 60.00 FPS,
-p95 no more than 17 ms, and worst p99 16.67 ms. Edge was used for appearance,
-force-branch truth, tooltips, and
+warmed matrix uses an explicit native-GPU physics owner and a hardware-backed
+ANGLE WebGL renderer for all ten registered sizes (`L=9...181`) and all four
+force styles for 40 combinations: minimum 60.00 FPS, p95 no more than 17 ms,
+and worst p99 16.67 ms. The release harness records the unmasked WebGL renderer
+and refuses to certify SwiftShader/software rendering. A diagnostic SwiftShader
+run reproduced a compositor-limited `L=65` flow miss despite sub-millisecond
+page rendering, which is why renderer provenance is part of the gate rather
+than an environmental assumption. Edge was used for appearance, force-branch
+truth, tooltips, and
 collapse/restore only; its extension automation footer was throttled and was
 not treated as performance evidence. This closes the Gravity interface gate,
 not Scenario 1 or the all-scenario qualification campaign.
