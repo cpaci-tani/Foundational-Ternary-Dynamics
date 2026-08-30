@@ -45,6 +45,16 @@ const ftd::TelemetryGroupMeta& telemetry_group_meta(
     }
 }
 
+// RFC 8259 JSON has no NaN or Infinity literals. Preserve the channel's
+// unavailability as JSON null so one unstable reduction cannot make the
+// browser reject the entire telemetry frame (or be mistaken for zero).
+std::string finite_json(double value, int precision = 17) {
+    if (!std::isfinite(value)) return "null";
+    std::ostringstream ss;
+    ss << std::setprecision(precision) << value;
+    return ss.str();
+}
+
 // All serializers below take immutable publisher values.  In particular, no
 // function in this section accepts RenderBridge: `get_telemetry` and the
 // legacy scalar commands must never turn a panel refresh into a CUDA reduction.
@@ -55,18 +65,18 @@ std::string json_diagnostics_value(
     ss << std::setprecision(10);
     ss << "{";
     ss << "\"tick\":"          << d.tick;
-    ss << ",\"physicalTime\":" << meta.physical_time;
-    ss << ",\"dt\":"           << meta.dt;
+    ss << ",\"physicalTime\":" << finite_json(meta.physical_time, 10);
+    ss << ",\"dt\":"           << finite_json(meta.dt, 10);
     ss << ",\"manifested\":"   << d.manifested_count;
     ss << ",\"positive\":"     << d.positive_count;
     ss << ",\"negative\":"     << d.negative_count;
-    ss << ",\"totalFlux\":"    << d.total_flux;
-    ss << ",\"totalEnergy\":"  << d.total_energy;
-    ss << ",\"maxBandwidth\":" << d.max_bandwidth;
+    ss << ",\"totalFlux\":"    << finite_json(d.total_flux, 10);
+    ss << ",\"totalEnergy\":"  << finite_json(d.total_energy, 10);
+    ss << ",\"maxBandwidth\":" << finite_json(d.max_bandwidth, 10);
     ss << ",\"maxCausalBudget\":" << d.max_causal_budget;
     ss << ",\"causalProjectionEvents\":" << d.causal_projection_events;
-    ss << ",\"avgDrag\":"      << d.avg_drag;
-    ss << ",\"entropy\":"      << d.total_entropy;
+    ss << ",\"avgDrag\":"      << finite_json(d.avg_drag, 10);
+    ss << ",\"entropy\":"      << finite_json(d.total_entropy, 10);
     ss << ",\"chargeBalance\":" << (d.positive_count - d.negative_count);
     ss << ",\"spinUp\":"       << d.spin_up_count;
     ss << ",\"spinDown\":"     << d.spin_down_count;
@@ -74,9 +84,9 @@ std::string json_diagnostics_value(
     ss << ",\"colorRed\":"     << d.color_count[1];
     ss << ",\"colorGreen\":"   << d.color_count[2];
     ss << ",\"colorBlue\":"    << d.color_count[3];
-    ss << ",\"angMomX\":"      << d.total_angular_momentum.x;
-    ss << ",\"angMomY\":"      << d.total_angular_momentum.y;
-    ss << ",\"angMomZ\":"      << d.total_angular_momentum.z;
+    ss << ",\"angMomX\":"      << finite_json(d.total_angular_momentum.x, 10);
+    ss << ",\"angMomY\":"      << finite_json(d.total_angular_momentum.y, 10);
+    ss << ",\"angMomZ\":"      << finite_json(d.total_angular_momentum.z, 10);
     ss << "}";
     return ss.str();
 }
@@ -89,41 +99,41 @@ std::string json_energy_audit_value(const ftd::EnergyAudit& ea) {
     // ½Σ|J|² (NOT E-field energy); EFieldEnergy below is byte-identical to
     // waveEnergy by construction (E = -wave_vel), and BFieldEnergy carries the
     // (c²/2) weight. Do not read "fieldEnergy vs BFieldEnergy" as "|E|² vs |B|²".
-    ss << "\"fieldEnergy\":"        << ea.field_energy;
-    ss << ",\"waveEnergy\":"        << ea.wave_energy;
-    ss << ",\"particleKE\":"        << ea.particle_ke;
-    ss << ",\"totalEnergy\":"       << ea.total_energy;
-    ss << ",\"gaussViolation\":"    << ea.gauss_violation;
-    ss << ",\"maxGaussError\":"     << ea.max_gauss_error;
-    ss << ",\"selfFieldInjection\":" << ea.self_field_injection;
-    ss << ",\"coulombPE\":"         << ea.coulomb_pe;
-    ss << ",\"EFieldEnergy\":"      << ea.E_field_energy;
-    ss << ",\"BFieldEnergy\":"      << ea.B_field_energy;
+    ss << "\"fieldEnergy\":"        << finite_json(ea.field_energy, 10);
+    ss << ",\"waveEnergy\":"        << finite_json(ea.wave_energy, 10);
+    ss << ",\"particleKE\":"        << finite_json(ea.particle_ke, 10);
+    ss << ",\"totalEnergy\":"       << finite_json(ea.total_energy, 10);
+    ss << ",\"gaussViolation\":"    << finite_json(ea.gauss_violation, 10);
+    ss << ",\"maxGaussError\":"     << finite_json(ea.max_gauss_error, 10);
+    ss << ",\"selfFieldInjection\":" << finite_json(ea.self_field_injection, 10);
+    ss << ",\"coulombPE\":"         << finite_json(ea.coulomb_pe, 10);
+    ss << ",\"EFieldEnergy\":"      << finite_json(ea.E_field_energy, 10);
+    ss << ",\"BFieldEnergy\":"      << finite_json(ea.B_field_energy, 10);
     ss << ",\"chargeTotal\":"       << ea.charge_total;
     ss << ",\"manifested\":"        << ea.manifested_count;
-    ss << ",\"particleRestEnergy\":" << ea.particle_rest_energy;
-    ss << ",\"particleEnergy\":"     << ea.particle_energy;
-    ss << ",\"dynamicEnergy\":"      << ea.dynamic_energy;
-    ss << ",\"particleMomentumX\":"  << ea.particle_momentum.x;
-    ss << ",\"particleMomentumY\":"  << ea.particle_momentum.y;
-    ss << ",\"particleMomentumZ\":"  << ea.particle_momentum.z;
-    ss << ",\"poyntingX\":"         << ea.total_poynting.x;
-    ss << ",\"poyntingY\":"         << ea.total_poynting.y;
-    ss << ",\"poyntingZ\":"         << ea.total_poynting.z;
-    ss << ",\"ELTotal\":"           << ea.E_L_total;
-    ss << ",\"ERTotal\":"           << ea.E_R_total;
-    ss << ",\"waveLTotal\":"        << ea.wv_L_total;
-    ss << ",\"waveRTotal\":"        << ea.wv_R_total;
-    ss << ",\"chiralityTotal\":"    << ea.chirality_total;
-    ss << ",\"strongEnergy\":"      << ea.strong_energy;
-    ss << ",\"weakEnergy\":"        << ea.weak_energy;
-    ss << ",\"cellVolume\":"        << ea.cell_volume;
-    ss << ",\"fieldEnergyDensitySum\":" << ea.field_energy_density_sum;
-    ss << ",\"waveEnergyDensitySum\":" << ea.wave_energy_density_sum;
-    ss << ",\"strongPotentialEnergy\":" << ea.strong_potential_energy;
-    ss << ",\"strongGravitationalMass\":" << ea.strong_gravitational_mass;
-    ss << ",\"strongProjectionResidual\":" << ea.strong_projection_residual;
-    ss << ",\"strongProjectionLambda\":" << ea.strong_projection_lambda;
+    ss << ",\"particleRestEnergy\":" << finite_json(ea.particle_rest_energy, 10);
+    ss << ",\"particleEnergy\":"     << finite_json(ea.particle_energy, 10);
+    ss << ",\"dynamicEnergy\":"      << finite_json(ea.dynamic_energy, 10);
+    ss << ",\"particleMomentumX\":"  << finite_json(ea.particle_momentum.x, 10);
+    ss << ",\"particleMomentumY\":"  << finite_json(ea.particle_momentum.y, 10);
+    ss << ",\"particleMomentumZ\":"  << finite_json(ea.particle_momentum.z, 10);
+    ss << ",\"poyntingX\":"         << finite_json(ea.total_poynting.x, 10);
+    ss << ",\"poyntingY\":"         << finite_json(ea.total_poynting.y, 10);
+    ss << ",\"poyntingZ\":"         << finite_json(ea.total_poynting.z, 10);
+    ss << ",\"ELTotal\":"           << finite_json(ea.E_L_total, 10);
+    ss << ",\"ERTotal\":"           << finite_json(ea.E_R_total, 10);
+    ss << ",\"waveLTotal\":"        << finite_json(ea.wv_L_total, 10);
+    ss << ",\"waveRTotal\":"        << finite_json(ea.wv_R_total, 10);
+    ss << ",\"chiralityTotal\":"    << finite_json(ea.chirality_total, 10);
+    ss << ",\"strongEnergy\":"      << finite_json(ea.strong_energy, 10);
+    ss << ",\"weakEnergy\":"        << finite_json(ea.weak_energy, 10);
+    ss << ",\"cellVolume\":"        << finite_json(ea.cell_volume, 10);
+    ss << ",\"fieldEnergyDensitySum\":" << finite_json(ea.field_energy_density_sum, 10);
+    ss << ",\"waveEnergyDensitySum\":" << finite_json(ea.wave_energy_density_sum, 10);
+    ss << ",\"strongPotentialEnergy\":" << finite_json(ea.strong_potential_energy, 10);
+    ss << ",\"strongGravitationalMass\":" << finite_json(ea.strong_gravitational_mass, 10);
+    ss << ",\"strongProjectionResidual\":" << finite_json(ea.strong_projection_residual, 10);
+    ss << ",\"strongProjectionLambda\":" << finite_json(ea.strong_projection_lambda, 10);
     ss << ",\"strongProjectionEvents\":" << ea.strong_projection_events;
     ss << ",\"strongProjectionFailures\":" << ea.strong_projection_failures;
     ss << ",\"strongTopologyFailures\":" << ea.strong_topology_failures;
@@ -136,11 +146,11 @@ std::string json_gravity_metric_value(const ftd::GravityMetricAgg& a) {
     ss << std::setprecision(17)
        << "{\"active\":" << (a.active ? "true" : "false")
        << ",\"requested\":" << (a.requested ? "true" : "false")
-       << ",\"latencyMax\":" << a.latency_max
-       << ",\"latencyMean\":" << a.latency_mean
-       << ",\"fMin\":" << a.f_min
-       << ",\"gammaMax\":" << a.gamma_max
-       << ",\"dilationMaxPct\":" << a.dilation_max_pct
+       << ",\"latencyMax\":" << finite_json(a.latency_max)
+       << ",\"latencyMean\":" << finite_json(a.latency_mean)
+       << ",\"fMin\":" << finite_json(a.f_min)
+       << ",\"gammaMax\":" << finite_json(a.gamma_max)
+       << ",\"dilationMaxPct\":" << finite_json(a.dilation_max_pct)
        << ",\"voxelCount\":" << a.voxel_count << "}";
     return ss.str();
 }
@@ -148,23 +158,23 @@ std::string json_gravity_metric_value(const ftd::GravityMetricAgg& a) {
 std::string json_lagrangian_value(const ftd::TelemetryLagrangian& lag) {
     std::ostringstream ss;
     ss << std::setprecision(17)
-       << "{\"fieldKinetic\":" << lag.field_kinetic_sum
-       << ",\"fieldGradient\":" << lag.field_gradient_sum
-       << ",\"bornInfeld\":" << lag.born_infeld_sum
-       << ",\"coupling\":" << lag.coupling_sum
-       << ",\"velocity\":" << lag.velocity_coupling_sum
-       << ",\"gauss\":" << lag.gauss_sum
-       << ",\"dissipation\":" << lag.dissipation_sum
-       << ",\"total\":" << lag.total_lagrangian
-       << ",\"hamiltonian\":" << lag.total_hamiltonian
-       << ",\"totalAction\":" << lag.total_action
-       << ",\"gaussViolation\":" << lag.gauss_violation
-       << ",\"maxGaussError\":" << lag.max_gauss_error
-       << ",\"totalFluxMag\":" << lag.total_flux_mag
-       << ",\"totalWaveEnergy\":" << lag.total_wave_energy
+       << "{\"fieldKinetic\":" << finite_json(lag.field_kinetic_sum)
+       << ",\"fieldGradient\":" << finite_json(lag.field_gradient_sum)
+       << ",\"bornInfeld\":" << finite_json(lag.born_infeld_sum)
+       << ",\"coupling\":" << finite_json(lag.coupling_sum)
+       << ",\"velocity\":" << finite_json(lag.velocity_coupling_sum)
+       << ",\"gauss\":" << finite_json(lag.gauss_sum)
+       << ",\"dissipation\":" << finite_json(lag.dissipation_sum)
+       << ",\"total\":" << finite_json(lag.total_lagrangian)
+       << ",\"hamiltonian\":" << finite_json(lag.total_hamiltonian)
+       << ",\"totalAction\":" << finite_json(lag.total_action)
+       << ",\"gaussViolation\":" << finite_json(lag.gauss_violation)
+       << ",\"maxGaussError\":" << finite_json(lag.max_gauss_error)
+       << ",\"totalFluxMag\":" << finite_json(lag.total_flux_mag)
+       << ",\"totalWaveEnergy\":" << finite_json(lag.total_wave_energy)
        << ",\"manifested\":" << lag.manifested_count
        << ",\"locked\":" << lag.locked_count
-       << ",\"cellVolume\":" << lag.cell_volume << "}";
+       << ",\"cellVolume\":" << finite_json(lag.cell_volume) << "}";
     return ss.str();
 }
 

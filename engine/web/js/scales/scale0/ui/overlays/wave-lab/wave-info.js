@@ -15,7 +15,14 @@ import {
     SOUND_LATTICE_WAVE_SCENARIO_ID,
     SOUND_COLLISION_SCENARIO_ID,
 } from '../../../analysis/wave-spectrum.js';
-import { markFieldDirty, setLatticeNeedsUpload } from '../../../state/store.js';
+import {
+    commitScale0ScientificMutation,
+    getScale0State,
+    markFieldDirty,
+    SCALE0_MUTATION_REASONS,
+    SCALE0_MUTATION_SOURCES,
+    setLatticeNeedsUpload,
+} from '../../../state/store.js';
 import { cardStyle, titleStyle, tagBadge, formatExp, formatFixed } from '../_card-helpers.js';
 import { LatticeSynth } from '../../../../../audio/lattice-synth.js';
 import { Sparkline } from '../../../../../ui/charts/sparkline.js';
@@ -284,7 +291,8 @@ export class WaveInfoComponent extends BaseComponent {
         this.bridgeRef = null;
         this.scenarioId = '';
         this.controlKey = '';
-        this.reseedHandle = 0;
+        this.reseedHandle = null;
+        this.queuedReseed = null;
         this.synth = new LatticeSynth();
         this.history = {
             energy: new RingBuffer(150),
@@ -303,7 +311,11 @@ export class WaveInfoComponent extends BaseComponent {
 
     update(bridge, scenarioId) {
         const scenario = getScale0Scenario(scenarioId);
+        if (scenarioId !== this.scenarioId) this._cancelScheduledReseed();
         if (!scenario?.tags?.includes('wave-lab')) {
+            this.bridgeRef = null;
+            this.scenarioId = '';
+            this.controlKey = '';
             this.refs.title.textContent = 'Wave Lab';
             this.refs.info.innerHTML = infoCenter(null, null);
             this.refs.controls.innerHTML = '';
@@ -525,31 +537,73 @@ export class WaveInfoComponent extends BaseComponent {
 
     _scheduleReseed() {
         if (this.reseedHandle) return;
+        const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
+        const owner = this.bridgeRef;
+        const loadGeneration = Number(ctx?._loadGeneration);
+        if (!ctx || !owner || !Number.isInteger(loadGeneration)) return;
+        this.queuedReseed = Object.freeze({
+            ctx,
+            owner,
+            loadGeneration,
+            scenarioId: this.scenarioId,
+        });
         const run = () => {
-            this.reseedHandle = 0;
-            this._reseedCurrent();
+            const queued = this.queuedReseed;
+            this.reseedHandle = null;
+            this.queuedReseed = null;
+            this._reseedCurrent(queued);
         };
         if (typeof requestAnimationFrame === 'function') {
-            this.reseedHandle = requestAnimationFrame(run);
+            this.reseedHandle = { kind: 'raf', id: requestAnimationFrame(run) };
         } else {
-            this.reseedHandle = setTimeout(run, 0);
+            this.reseedHandle = { kind: 'timeout', id: setTimeout(run, 0) };
         }
     }
 
-    _reseedCurrent() {
-        const bridge = this.bridgeRef;
-        const scenarioId = this.scenarioId;
-        if (!bridge || !isSingleWaveScenario(scenarioId)) return;
+    _cancelScheduledReseed() {
+        const handle = this.reseedHandle;
+        if (handle?.kind === 'raf' && typeof cancelAnimationFrame === 'function') {
+            cancelAnimationFrame(handle.id);
+        } else if (handle?.kind === 'timeout') {
+            clearTimeout(handle.id);
+        }
+        this.reseedHandle = null;
+        this.queuedReseed = null;
+    }
+
+    _reseedCurrent(queued) {
+        const state = getScale0State();
+        if (!queued
+            || queued.ctx !== ((typeof window !== 'undefined') ? window.__ftdCtx : null)
+            || queued.owner !== this.bridgeRef
+            || queued.scenarioId !== this.scenarioId
+            || state.currentScenarioId !== queued.scenarioId
+            || !isSingleWaveScenario(queued.scenarioId)) return;
         // Harness-only reseed of the active owner (same setupScenario → reset
         // contract as the catalog loader). Deliberately does NOT call
         // loadScale0Scenario — that would tear down/rebuild the worker and
         // wipe Wave Lab UI state; this only re-seeds the lattice for the
         // current scenario id after slider changes.
-        const harness = getPhysicsHarness(bridge);
-        if (typeof harness.setupScenario === 'function') harness.setupScenario(scenarioId);
-        else if (typeof bridge.setupScenario === 'function') bridge.setupScenario(scenarioId);
-        else bridge.capabilities?.scale0?.setupScenario?.(scenarioId);
-        setLatticeNeedsUpload(true);
-        markFieldDirty();
+        commitScale0ScientificMutation(queued.ctx, {
+            reason: SCALE0_MUTATION_REASONS.WAVE_LAB_RESEED,
+            source: SCALE0_MUTATION_SOURCES.WAVE_LAB,
+            loadGeneration: queued.loadGeneration,
+            owner: queued.owner,
+        }, (activeOwner) => {
+            const harness = getPhysicsHarness(activeOwner);
+            if (typeof harness.setupScenario === 'function') harness.setupScenario(queued.scenarioId);
+            else if (typeof activeOwner.setupScenario === 'function') activeOwner.setupScenario(queued.scenarioId);
+            else activeOwner.capabilities?.scale0?.setupScenario?.(queued.scenarioId);
+            setLatticeNeedsUpload(true);
+            markFieldDirty();
+        });
+    }
+
+    onUnmount() {
+        this._cancelScheduledReseed();
+        this.bridgeRef = null;
+        this.scenarioId = '';
+        this.synth.stop();
+        this._updateTrendlines(null, null);
     }
 }

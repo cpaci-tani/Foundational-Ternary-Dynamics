@@ -6,7 +6,7 @@ test.describe('Scale 0 lattice-size and boundary toolbar audit gate', () => {
     test.beforeEach(async ({ page }, testInfo) => {
         testInfo.setTimeout(120_000);
         page.setDefaultTimeout(30_000);
-        await gotoAndReady(page);
+        await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
         await page.waitForFunction(() => document.getElementById('app')?.dataset.shellReady === 'true');
     });
 
@@ -62,16 +62,100 @@ test.describe('Scale 0 lattice-size and boundary toolbar audit gate', () => {
         expect(realErrors(consoleErrors)).toEqual([]);
     });
 
+    test('worker-init recovery clamps to direct L33, disables larger sizes, reloads, and refuses a later L49 resize', async ({ page }) => {
+        const consoleErrors = attachConsoleWatcher(page);
+        test.skip(!(await page.evaluate(() => globalThis.crossOriginIsolated === true)),
+            'requires the COOP/COEP Scale 0 worker path');
+        const result = await page.evaluate(async () => {
+            const controller = await import('/js/scales/scale0/controller.js');
+            const scenarioLoader = await import('/js/scales/scale0/runtime/scenario-loader.js');
+            const store = await import('/js/scales/scale0/state/store.js');
+            const { createScale0ViewportAdapter } = await import('/js/scales/scale0/viewport-adapter.js');
+            const ctx = window.__ftdCtx;
+            const state = store.getScale0State();
+            await controller.resize(ctx, 49);
+            const deadline = performance.now() + 30_000;
+            while (performance.now() < deadline) {
+                const owner = store.getActiveScale0Bridge(ctx, state);
+                if (owner?.isWorker === true && owner.ready === true
+                    && owner.latticeSize === 49
+                    && store.isScale0AuthoritativeGenerationReady(state)) break;
+                await new Promise((resolve) => setTimeout(resolve, 25));
+            }
+            const workerBefore = store.getActiveScale0Bridge(ctx, state);
+            const viewportAdapter = createScale0ViewportAdapter(ctx.viewport);
+            await scenarioLoader.fallbackToInThreadEngine(
+                ctx,
+                state,
+                viewportAdapter,
+                state.currentScenarioId,
+                { id: state.currentScenarioId },
+            );
+            const select = document.getElementById('lattice-size');
+            const afterFallback = {
+                workerBefore: workerBefore?.isWorker === true,
+                workerDisabled: ctx._wasmWorkerDisabled === true,
+                useFluxMock: state.useFluxMock,
+                selected: Number(select.value),
+                bridgeSize: Number(ctx.bridge?.latticeSize),
+                qualification: store.getScale0QualificationState().status,
+                options: [...select.options].map((option) => ({
+                    value: Number(option.value),
+                    disabled: option.disabled,
+                    label: option.textContent?.trim(),
+                })),
+            };
+            const laterResizeAccepted = await scenarioLoader.resizeScale0Lattice(
+                ctx, state, viewportAdapter, 49,
+            );
+            return {
+                afterFallback,
+                laterResizeAccepted,
+                afterRefusal: {
+                    selected: Number(select.value),
+                    bridgeSize: Number(ctx.bridge?.latticeSize),
+                    useFluxMock: state.useFluxMock,
+                },
+            };
+        });
+
+        expect(result.afterFallback.workerBefore).toBe(true);
+        expect(result.afterFallback.workerDisabled).toBe(true);
+        expect(result.afterFallback.useFluxMock).toBe(false);
+        expect(result.afterFallback.selected).toBe(33);
+        expect(result.afterFallback.bridgeSize).toBe(33);
+        expect(result.afterFallback.qualification).toBe('within-contract');
+        expect(result.afterFallback.options.filter((option) => option.value > 33)
+            .every((option) => option.disabled)).toBe(true);
+        expect(result.afterFallback.options.find((option) => option.value === 49)?.label)
+            .toContain('WASM worker / Native GPU');
+        expect(result.laterResizeAccepted).toBe(false);
+        expect(result.afterRefusal).toEqual({
+            selected: 33,
+            bridgeSize: 33,
+            useFluxMock: false,
+        });
+        expect(realErrors(consoleErrors)).toEqual([]);
+    });
+
     test('each boundary input updates the active owner and viewport exactly once', async ({ page }) => {
         const consoleErrors = attachConsoleWatcher(page);
         await page.waitForFunction(async () => {
-            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
-            return getScale0State().fluxMock?.ready === true;
+            const { getScale0State, getScale0QualificationState } =
+                await import('/js/scales/scale0/state/store.js');
+            const owner = getScale0State().fluxMock;
+            const lifecycle = owner?.lifecycleDebug;
+            const qualification = getScale0QualificationState();
+            return owner?.ready === true
+                && !!lifecycle?.workerRuntimeId
+                && lifecycle.appliedConfigurationToken === lifecycle.configurationToken
+                && qualification.status === 'within-contract';
         });
 
         const result = await page.evaluate(async () => {
             const controller = await import('/js/scales/scale0/controller.js');
-            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            const { getScale0State, getScale0QualificationState } =
+                await import('/js/scales/scale0/state/store.js');
             const ctx = window.__ftdCtx;
             const active = controller.getActivePhysicsOwner(ctx);
             const main = ctx.bridge;
@@ -145,19 +229,39 @@ test.describe('Scale 0 lattice-size and boundary toolbar audit gate', () => {
         test.skip(!(await page.evaluate(() => globalThis.crossOriginIsolated === true)),
             'requires the COOP/COEP Scale 0 worker path');
         await page.waitForFunction(async () => {
-            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
-            return getScale0State().fluxMock?.ready === true;
+            const { getScale0State, getScale0QualificationState } =
+                await import('/js/scales/scale0/state/store.js');
+            const owner = getScale0State().fluxMock;
+            const lifecycle = owner?.lifecycleDebug;
+            const qualification = getScale0QualificationState();
+            return owner?.ready === true
+                && !!lifecycle?.workerRuntimeId
+                && lifecycle.appliedConfigurationToken === lifecycle.configurationToken
+                && qualification.status === 'within-contract';
         });
 
         const result = await page.evaluate(async () => {
-            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            const { getScale0State, getScale0QualificationState } =
+                await import('/js/scales/scale0/state/store.js');
             const { rafCoordinator } = await import('/js/lib/raf-coordinator.js');
             const ctx = window.__ftdCtx;
-            const state = getScale0State();
+            const baselineDeadline = performance.now() + 20_000;
+            let state;
+            while (performance.now() < baselineDeadline) {
+                state = getScale0State();
+                const lifecycle = state.fluxMock?.lifecycleDebug;
+                const qualification = getScale0QualificationState();
+                if (state.fluxMock?.ready === true
+                    && !!lifecycle?.workerRuntimeId
+                    && lifecycle.appliedConfigurationToken === lifecycle.configurationToken
+                    && qualification.status === 'within-contract') break;
+                await new Promise((resolve) => setTimeout(resolve, 50));
+            }
             const select = document.getElementById('lattice-size');
             const sizes = [17, 25, 33, 17, 25, 33, 17, 25, 17, 33];
             const before = {
                 workers: window.__ftdWasmWorkers(),
+                lifecycle: state.fluxMock?.lifecycleDebug ?? null,
                 generation: ctx._loadGeneration || 0,
                 subscribers: rafCoordinator.size(),
                 scenario: state.currentScenarioId,
@@ -171,12 +275,20 @@ test.describe('Scale 0 lattice-size and boundary toolbar audit gate', () => {
             const finalSize = sizes.at(-1);
             const deadline = performance.now() + 20_000;
             while (performance.now() < deadline) {
+                state = getScale0State();
+                const lifecycle = state.fluxMock?.lifecycleDebug;
+                const qualification = getScale0QualificationState();
                 if (state.fluxMock?.ready === true
                     && state.fluxMock?.latticeSize === finalSize
-                    && ctx.viewport?.latticeSize === finalSize) break;
+                    && ctx.viewport?.latticeSize === finalSize
+                    && lifecycle?.appliedConfigurationToken === lifecycle?.configurationToken
+                    && qualification.status === 'within-contract'
+                    && qualification.anchor?.scenarioId === state.currentScenarioId
+                    && qualification.anchor?.loadGeneration === ctx._loadGeneration) break;
                 await new Promise((resolve) => setTimeout(resolve, 50));
             }
-            await new Promise((resolve) => setTimeout(resolve, 300));
+            state = getScale0State();
+            const qualification = getScale0QualificationState();
 
             return {
                 inputCount: sizes.length,
@@ -189,18 +301,31 @@ test.describe('Scale 0 lattice-size and boundary toolbar audit gate', () => {
                 scenario: state.currentScenarioId,
                 before,
                 afterWorkers: window.__ftdWasmWorkers(),
+                afterLifecycle: state.fluxMock?.lifecycleDebug ?? null,
+                qualification,
                 afterGeneration: ctx._loadGeneration || 0,
                 afterSubscribers: rafCoordinator.size(),
             };
         });
 
         expect(result.afterGeneration - result.before.generation).toBe(result.inputCount);
-        expect(result.afterWorkers.created - result.before.workers.created).toBe(result.inputCount);
-        expect(result.afterWorkers.terminated - result.before.workers.terminated).toBe(result.inputCount);
+        expect(result.afterWorkers.created - result.before.workers.created).toBe(0);
+        expect(result.afterWorkers.terminated - result.before.workers.terminated).toBe(0);
         expect(result.afterWorkers.created).toBe(
             result.afterWorkers.terminated + result.afterWorkers.live,
         );
         expect(result.afterWorkers.live).toBe(1);
+        expect(result.before.lifecycle.workerRuntimeId).toBeTruthy();
+        expect(result.afterLifecycle.workerRuntimeId).toBe(result.before.lifecycle.workerRuntimeId);
+        expect(result.afterLifecycle.moduleInitCount).toBe(1);
+        expect(result.afterLifecycle.renderBridgeGeneration
+            - result.before.lifecycle.renderBridgeGeneration).toBe(1);
+        expect(result.afterLifecycle.appliedConfigurationToken)
+            .toBe(result.afterLifecycle.configurationToken);
+        expect(result.qualification.status).toBe('within-contract');
+        expect(result.qualification.anchor.scenarioId).toBe(result.scenario);
+        expect(result.qualification.anchor.loadGeneration).toBe(result.afterGeneration);
+        expect(result.qualification.anchor.source).toBe('worker-configuration-applied');
         expect(result.afterSubscribers).toBe(result.before.subscribers);
         expect(result.selected).toBe(result.finalSize);
         expect(result.mainSize).toBe(result.finalSize);
@@ -277,10 +402,12 @@ test.describe('Scale 0 lattice-size and boundary toolbar audit gate', () => {
             window.showToast = () => {};
             try {
                 const resizePromise = resizeScale0Lattice(ctx, state, {}, 49);
-                await Promise.resolve();
+                while (resizeCalls === 0) {
+                    await new Promise((resolve) => setTimeout(resolve, 0));
+                }
                 // A newer scenario/resize request wins while the native server
                 // is still preparing the old allocation.
-                ctx._loadGeneration = 42;
+                ctx._loadGeneration += 1;
                 releaseResize();
                 await resizePromise;
                 return {
@@ -295,7 +422,7 @@ test.describe('Scale 0 lattice-size and boundary toolbar audit gate', () => {
 
         expect(result.resizeCalls).toBe(1);
         expect(result.bridgeSize).toBe(33);
-        expect(result.generation).toBe(42);
+        expect(result.generation).toBe(43);
         expect(realErrors(consoleErrors)).toEqual([]);
     });
 });

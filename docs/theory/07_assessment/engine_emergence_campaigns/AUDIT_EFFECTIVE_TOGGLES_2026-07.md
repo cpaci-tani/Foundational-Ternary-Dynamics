@@ -39,7 +39,13 @@ Independent confirmation that the Program-F / vertex runs used GPU:
 - `DERIV_BIVECTOR_ALGEBRA_PROGRAM_F.md:273` "[MEASURED] on GPU"; `:396` "the engine's GPU implementation"; `:591` lists the CONFIG-N set as the FTD-0088 config; `test_clifford_multigrade.cpp` is tagged "GPU test" (`:528`, `:773`).
 - `ANALYSIS_VERTEX_DK_CLOSURE_v1.md:123` "runs executed on the Windows-native CUDA backend (`[RenderBridge] GPU backend active`)".
 
-**This flips the F2 finding.** The known F2 result — `strong_force` / `exchange_force` have no CPU implementation and are no-ops on CPU — is encoded as GPU-only warnings (`term_toggles.h:203,206`) that print via `cpu_runtime_warnings()` **only on the CPU path** (`render_bridge.cpp:592-598`, *after* the GPU dispatch has already returned at `:586`). On the GPU backend those phases **do** have kernels (`kernels_forces.cu:959-983`) and the GPU-only warnings are never printed — consistent with §1.4 reporting only the three `validate()` messages and none of the F2 CPU warnings. **INERT-no-op-platform therefore does not apply to the campaigns as run; it would apply only to a hypothetical CPU-only rebuild.**
+**At the time of this audit, this flipped the F2 finding.** `strong_force` /
+`exchange_force` had no CPU implementation but did have active GPU kernels, so
+**INERT-no-op-platform did not apply to the GPU campaigns as run**.
+
+**Reconciled 2026-08-30:** both terms now have CPU ports sharing the pairwise
+laws used by CUDA. The former CPU-warning infrastructure has been retired; the
+historical backend argument above remains valid for these campaign records.
 
 ---
 

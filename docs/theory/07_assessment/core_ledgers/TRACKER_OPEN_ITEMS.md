@@ -3567,16 +3567,23 @@ No prime may be wired into engine evolution merely because the arithmetic
 operator has an inert quarter-turn. A physical bridge must be a native state
 functional and must not read prime or `G*` targets.
 
-### 1.10 CPU-only no-op toggles —  CLOSED 2026-04-17 (callstack audit fixes)
+### 1.10 CPU-only no-op toggles — CLOSED 2026-08-30
 
-Resolved in two steps:
+Resolved in three steps:
 
 **Ported to CPU:**
 - `pair_production` → `RenderBridge::pair_production_cpu()` (Rule 2b in the tick cycle). Correlated ±1 pairs from high-|J| void, matching the GPU algorithm.
 - `triad_binding` → `RenderBridge::triad_binding_cpu()` (Rule 7). Locks compact same-sign triads via pairwise-distance + near-equilateral check.
 
-**Still GPU-only, now diagnosed:**
-- `strong_force` + `exchange_force` — kernels non-trivial; not ported. `TermToggles::cpu_runtime_warnings()` emits a one-shot stderr diagnostic when either is set on a CPU build (via `RenderBridge::tick()` first pass, gated by `cpu_warnings_emitted_`).
+**Subsequently ported to CPU:**
+- `strong_force` + `exchange_force` now use the same Yukawa/exchange pairwise
+  laws as the CUDA kernels. `test_cpu_pairwise_force_channels` pins that each
+  toggle changes CPU voxel state relative to its disabled baseline.
+
+**Retired after CPU completeness:**
+- The empty per-toggle GPU-only warning column, one-shot warning state, and
+  runtime warning helper were removed. Unsupported backend combinations remain
+  fail-closed through `ToggleSpec::backends` and `validate_backend()`.
 
 **Verification:** `tests/test_callstack_audit_fixes.cpp` exercises both CPU ports:
 - pair_production: 2 particles manifest with perfect +/− balance after 20 ticks.

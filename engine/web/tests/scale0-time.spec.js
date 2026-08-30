@@ -29,8 +29,12 @@ test.describe('Scale-0 Time Observatory', () => {
         // Card A — the lab clock advances (physical time ticks up).
         await expect.poll(async () => page.evaluate(() => {
             const m = window.__ftdTimePanel?.lastMetrics;
-            return m ? m.physicalTime : 0;
-        }), { timeout: 15_000, message: 'physical time should advance on a Time scenario' }).toBeGreaterThan(0);
+            return m && [m.physicalTime, m.fMin, m.dtauMin, m.gammaMax].every(Number.isFinite)
+                ? m.physicalTime : 0;
+        }), {
+            timeout: 15_000,
+            message: 'physical time and the latency-derived metric tuple should become current',
+        }).toBeGreaterThan(0);
 
         const a = await page.evaluate(() => {
             const m = window.__ftdTimePanel.lastMetrics;
@@ -95,5 +99,24 @@ test.describe('Scale-0 Time Observatory', () => {
         const charts = await page.evaluate(() =>
             document.querySelectorAll('#panel-time .time-chart').length);
         expect(charts, 'kinematic + IR + radial charts present').toBeGreaterThanOrEqual(2);
+
+        // A scenario/reset boundary can retain the same worker owner. The hub
+        // reset version must still cut the accumulated proper-time history.
+        const reset = await page.evaluate(async () => {
+            const before = window.__ftdTimePanel.historyLength;
+            const owner = window.__ftdCtx?.fluxMock ?? window.__ftdCtx?.bridge;
+            const { telemetryHub } = await import('/js/telemetry-hub.js');
+            telemetryHub.resetScale(0);
+            window.__ftdTimePanel.update();
+            const ownerAfter = window.__ftdCtx?.fluxMock ?? window.__ftdCtx?.bridge;
+            return {
+                before,
+                after: window.__ftdTimePanel.historyLength,
+                sameOwner: owner === ownerAfter,
+            };
+        });
+        expect(reset.before).toBeGreaterThan(0);
+        expect(reset.sameOwner).toBe(true);
+        expect(reset.after).toBe(0);
     });
 });

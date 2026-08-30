@@ -6,6 +6,9 @@
 #include "ws_server_internal.h"
 
 #include "ftd/constants.h"
+#ifdef FTD_ENABLE_CUDA
+#include "ftd/gpu_buffers.h"
+#endif
 #include "ftd/lagrangian.h"
 #include "ftd/scenarios.h"
 
@@ -351,6 +354,58 @@ std::string json_profile_ack(const ftd::RenderBridge& rb,
     return ss.str();
 }
 
+std::string json_dynamical_state_digest(
+    ftd::RenderBridge& rb,
+    const ftd::NativeTelemetryScheduler& telemetry) {
+#ifdef FTD_ENABLE_CUDA
+    const auto full_mirror_calls_before =
+        ftd::gpu::g_gpu_full_voxel_download_calls;
+#endif
+    ftd::DynamicalStateDigest digest{};
+    if (!rb.capture_dynamical_state_digest(digest)) return {};
+#ifdef FTD_ENABLE_CUDA
+    const auto full_mirror_calls =
+        ftd::gpu::g_gpu_full_voxel_download_calls - full_mirror_calls_before;
+#else
+    constexpr std::uint64_t full_mirror_calls = 0;
+#endif
+
+    // The hash lanes are exact unsigned 64-bit values. JSON numbers cannot
+    // represent every such value, so publish fixed-width lowercase hex rather
+    // than silently rounding them in JavaScript. Operational counts remain
+    // exact numbers throughout the supported lattice-size range.
+    std::ostringstream hash_lo;
+    std::ostringstream hash_hi;
+    hash_lo << std::hex << std::nouppercase << std::setfill('0')
+            << std::setw(16) << digest.hash_lo;
+    hash_hi << std::hex << std::nouppercase << std::setfill('0')
+            << std::setw(16) << digest.hash_hi;
+
+    const bool gpu = rb.backend_kind() == ftd::Backend::Kind::Gpu;
+    std::ostringstream ss;
+    ss << "{\"type\":\"dynamical_state_digest\""
+       << ",\"schemaVersion\":" << digest.schema_version
+       << ",\"latticeSize\":" << digest.lattice_size
+       << ",\"siteCount\":" << digest.site_count
+       << ",\"tick\":" << digest.tick
+       << ",\"stateVersion\":" << digest.state_version
+       << ",\"sourceEpoch\":" << telemetry.source_epoch()
+       << ",\"telemetrySourceEpoch\":" << telemetry.source_epoch()
+       << ",\"hashLo\":\"" << hash_lo.str() << "\""
+       << ",\"hashHi\":\"" << hash_hi.str() << "\""
+       << ",\"nonfiniteValueCount\":" << digest.nonfinite_value_count
+       << ",\"nondefaultValueCount\":" << digest.nondefault_value_count
+       << ",\"deviceToHostBytes\":" << digest.device_to_host_bytes
+       << ",\"fullMirrorCalls\":" << full_mirror_calls
+       << ",\"exactDefaultRecord\":"
+       << (digest.exact_default_record() ? "true" : "false")
+       << ",\"compute\":\"" << (gpu ? "GPU" : "CPU") << "\""
+       << ",\"runtime\":\"native\""
+       << ",\"transport\":\"websocket\"}"
+       ;
+    return ss.str();
+}
+
 std::unique_ptr<ftd::RenderBridge> make_interactive_bridge(int lattice_size) {
     auto bridge = std::make_unique<ftd::RenderBridge>(lattice_size);
     bridge->set_interactive_gpu_mode(true);
@@ -559,6 +614,15 @@ bool handle_command(const std::string& json, SOCKET client,
             return send_json_response(client, json_error(
                 "diagnostics snapshot unavailable; configure telemetry demand and await telemetry_snapshot",
                 cmd), request_id);
+        }
+        return send_json_response(client, response, request_id);
+    }
+    else if (cmd == "get_dynamical_state_digest") {
+        const auto response = json_dynamical_state_digest(*rb, telemetry);
+        if (response.empty()) {
+            return send_json_response(client, json_error(
+                "canonical dynamical-state digest is unavailable", cmd),
+                request_id);
         }
         return send_json_response(client, response, request_id);
     }

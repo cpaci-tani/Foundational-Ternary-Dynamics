@@ -41,29 +41,32 @@ import { FLUX_VOL_VERT, PARTICLE_FRAG, PARTICLE_SHADER_UNIFORMS } from './shader
 // buffers size from lattice³, not the field-grid cap. Removed under D-6;
 // the canonical constant now lives in viewport/constants.js.)
 
-// Flux-volume sampling — adaptive point budget with a FRACTIONAL stride (2026-06-04).
-// The draw loop emits a fixed `samples`-per-axis grid spread evenly across the lattice
-// (stride = N/samples ≥ 1), so the rendered cloud has ~constant density at EVERY size.
-// This replaces the earlier integer-step (1/2/4) subsample, whose tier boundaries left
-// awkwardly sparse sizes — e.g. N=65 dropped to ⅛ density just past the step 1→2 jump.
-// For N ≤ FLUX_MAX_AXIS_POINTS every voxel is drawn (stride exactly 1, no regression at
-// small L); above it `samples` saturates and the stride grows continuously. Worst-case
-// drawn/buffer count is samples³ ≤ FLUX_MAX_AXIS_POINTS³ ≈ 149K. Used by BOTH
-// _buildFluxVolume (buffer sizing) and updateFluxVolume (scan + write) — they MUST
-// share this or the write loop would over/under-run the geometry buffer.
-// Raise FLUX_MAX_AXIS_POINTS for a denser cloud (and a larger geometry buffer).
-const FLUX_MAX_AXIS_POINTS = 53;   // 53³ ≈ 148.9K-point worst-case budget
+// Flux-volume presentation budget. This is renderer-only decimation: physics,
+// telemetry, panel samplers, and the shared dense/SAB volume remain untouched.
+// A 53³ translucent point cloud produced ~12 FPS under browser SwiftShader at
+// L=97 even while paused; 20³ retained the spatial envelope at 60 FPS. Native
+// FTV2 may still publish as many as 53 samples/axis, so source acceptance and
+// render density are deliberately separate constants. The 12³ ceiling keeps
+// robust headroom for the concurrently active sidepanel and base scene on the
+// software-renderer fallback as well as hardware WebGL.
+const FLUX_SOURCE_MAX_AXIS_POINTS = 53;
+const FLUX_RENDER_MAX_AXIS_POINTS = 12; // 12³ = 1,728 point-sprite ceiling
+const FLUX_RENDER_MAX_POINTS = FLUX_RENDER_MAX_AXIS_POINTS ** 3;
 function fluxVolumeAxisSamples(N) {
-    return Math.min(N, FLUX_MAX_AXIS_POINTS);
+    return Math.min(N, FLUX_RENDER_MAX_AXIS_POINTS);
 }
 
-// Dim-dot floor size, in units of the grid spacing (`stride`). The flux volume is a soft
+// Dim-dot floor size, in units of the bounded visual footprint stride. The flux volume is a soft
 // round point cloud; if the dimmest dots are smaller than the inter-sample spacing the
 // regular grid shows through as a "lattice of cubes". A floor of a few spacings makes even
 // low-flux dots overlap into a continuous haze (high-flux dots grow on top, up to the
 // fluxPointScale·10 ceiling). Tunable: raise for a smoother/denser cloud, lower for crisper
 // individual dots.
 const FLUX_DOT_MIN = 2.4;
+// Decimation increases physical spacing between retained samples. Scaling the
+// sprite footprint by that full spacing negates the point-count win through
+// translucent fragment overdraw, so cap the visual footprint independently.
+const FLUX_POINT_FOOTPRINT_MAX_STRIDE = 1.5;
 
 // Flux-volume glow presets, toggled by setFluxGlow(). ON = additive bloom (weakened
 // from the original — it was too strong); OFF = flat normal-blended translucent dots.
@@ -118,6 +121,15 @@ export class ViewportFluxRenderer {
         // re-hit), so a decaying field visibly fades over ~seconds instead of
         // snapping back to full saturation every frame.
         this._fluxMaxDecay = 0;
+
+        // Reused one-maximum-per-spatial-stratum pool. The source-volume scan
+        // is O(source voxels), while every allocation and every GPU write stays
+        // bounded by FLUX_RENDER_MAX_POINTS (1,728).
+        this._fluxPoolMagnitude = new Float64Array(FLUX_RENDER_MAX_POINTS);
+        this._fluxPoolSourceIndex = new Int32Array(FLUX_RENDER_MAX_POINTS);
+        this._fluxPoolAxisMap = null;
+        this._fluxPoolAxisMapSourceN = 0;
+        this._fluxPoolAxisMapSamples = 0;
     }
 
     // Peak-hold-with-decay update, instance-local (see the constructor
@@ -131,6 +143,11 @@ export class ViewportFluxRenderer {
         return next;
     }
 
+    /** Reset visual normalization at an authoritative scenario/resize boundary. */
+    resetFluxNormalization() {
+        this._fluxMaxDecay = 0;
+    }
+
     setBoundaryShape(shape) {
         this._boundaryShape = shape;
     }
@@ -138,6 +155,7 @@ export class ViewportFluxRenderer {
     onLatticeSizeChanged(size, halfN) {
         this._latticeSize = size;
         this._halfN = halfN;
+        this.resetFluxNormalization();
         // Rebuild flux volume for new size (mirrors viewport.js setLatticeSize behaviour).
         if (this._fluxVolume) {
             this._scene.remove(this._fluxVolume);
@@ -156,17 +174,15 @@ export class ViewportFluxRenderer {
     // ── Flux Volume Rendering (Scale 0 -- substrate mode) ──────────────
     // Renders the continuous flux field J as sparse point cloud.
     // Each voxel above threshold emits a colored dot sized by magnitude.
-    // Sampling: a fixed fractional-stride grid (fluxVolumeAxisSamples per axis) so the
-    // cloud has ~constant density at every L — full detail up to FLUX_MAX_AXIS_POINTS.
+    // Sampling: one maximum representative per bounded uniform 3D stratum.
     // Boundary clipping uses _insideBoundary() for non-cube shapes.
 
     _buildFluxVolume(latticeSize) {
-        // Buffer capacity = the fractional-stride sample grid (samples per axis), via
-        // the shared fluxVolumeAxisSamples() helper so it matches exactly what the
-        // updateFluxVolume write loop will emit (≤ samples³ points).
+        // Buffer capacity matches the bounded stratum grid exactly.
         const sampledN = fluxVolumeAxisSamples(latticeSize);
         const maxPts = sampledN * sampledN * sampledN;
         const positions = new Float32Array(maxPts * 3);
+        const sourcePositions = new Float32Array(maxPts * 3);
         const colors = new Float32Array(maxPts * 3);
         const sizes = new Float32Array(maxPts);
         const manifestPhases = new Float32Array(maxPts);
@@ -174,16 +190,22 @@ export class ViewportFluxRenderer {
 
         const geo = new THREE.BufferGeometry();
         const posAttr = new THREE.Float32BufferAttribute(positions, 3);
+        const sourcePosAttr = new THREE.Float32BufferAttribute(sourcePositions, 3);
         const colAttr = new THREE.Float32BufferAttribute(colors, 3);
         const sizeAttr = new THREE.Float32BufferAttribute(sizes, 1);
         const phaseAttr = new THREE.Float32BufferAttribute(manifestPhases, 1);
         const rateAttr = new THREE.Float32BufferAttribute(manifestRates, 1);
         posAttr.setUsage(THREE.DynamicDrawUsage);
+        sourcePosAttr.setUsage(THREE.DynamicDrawUsage);
         colAttr.setUsage(THREE.DynamicDrawUsage);
         sizeAttr.setUsage(THREE.DynamicDrawUsage);
         phaseAttr.setUsage(THREE.DynamicDrawUsage);
         rateAttr.setUsage(THREE.DynamicDrawUsage);
         geo.setAttribute('position', posAttr);
+        // Scientific coordinate of the maximum-magnitude source sample chosen
+        // for each stratum. `position` may be presentation-jittered in Organic
+        // mode; sourcePosition always retains the physical sample coordinate.
+        geo.setAttribute('sourcePosition', sourcePosAttr);
         geo.setAttribute('particleColor', colAttr);
         geo.setAttribute('size', sizeAttr);
         geo.setAttribute('manifestPhase', phaseAttr);
@@ -247,6 +269,7 @@ export class ViewportFluxRenderer {
         }
 
         const posAttr = this._fluxVolume.geometry.getAttribute('position');
+        const sourcePosAttr = this._fluxVolume.geometry.getAttribute('sourcePosition');
         const colAttr = this._fluxVolume.geometry.getAttribute('particleColor');
         const sizeAttr = this._fluxVolume.geometry.getAttribute('size');
         const N = latticeSize;
@@ -262,21 +285,27 @@ export class ViewportFluxRenderer {
         }
 
         let samples;
-        let stride;
+        let renderSpacing;
         let sourceN;
+        let compactSpacing = 1;
+        let compactOrigin = 0;
         if (compact) {
-            samples = Math.trunc(Number(compact.axisCount));
-            stride = Number(compact.stride);
-            sourceN = samples;
-            const compactCount = samples * samples * samples;
+            sourceN = Math.trunc(Number(compact.axisCount));
+            compactSpacing = Number(compact.stride);
+            compactOrigin = Number.isFinite(Number(compact.origin))
+                ? Number(compact.origin)
+                : 0;
+            const compactCount = sourceN * sourceN * sourceN;
             if (Math.trunc(Number(compact.latticeSize)) !== N
-                || samples < 1 || samples > FLUX_MAX_AXIS_POINTS
-                || !Number.isFinite(stride) || stride < 1
+                || sourceN < 1 || sourceN > FLUX_SOURCE_MAX_AXIS_POINTS
+                || !Number.isFinite(compactSpacing) || compactSpacing < 1
                 || density.length !== compactCount) {
                 // Async resize transition or malformed descriptor: retain the
                 // previous valid draw until the matching cache arrives.
                 return;
             }
+            samples = fluxVolumeAxisSamples(sourceN);
+            renderSpacing = compactSpacing * (sourceN / samples);
         } else {
             const total = N * N * N;
             if (density.length !== total) {
@@ -284,45 +313,75 @@ export class ViewportFluxRenderer {
                 return;
             }
             samples = fluxVolumeAxisSamples(N);
-            stride = N / samples;   // fractional renderer-only resampling
             sourceN = N;
+            renderSpacing = N / samples;
         }
 
-        // vox[] maps a rendered axis sample to the source-buffer coordinate.
-        // renderCoord[] retains physical lattice coordinates independently:
-        // dense frames use even strata, while compact frames use the exact
-        // integer-stride voxel centres sampled by the native engine.
-        if (!this._fluxVox || this._fluxVox.length < samples) {
-            this._fluxVox = new Int32Array(FLUX_MAX_AXIS_POINTS);
-        }
-        if (!this._fluxRenderCoord || this._fluxRenderCoord.length < samples) {
-            this._fluxRenderCoord = new Float32Array(FLUX_MAX_AXIS_POINTS);
-        }
-        const vox = this._fluxVox;
-        const renderCoord = this._fluxRenderCoord;
-        for (let i = 0; i < samples; i++) {
-            if (compact) {
-                vox[i] = i;
-                const origin = Number.isFinite(Number(compact.origin))
-                    ? Number(compact.origin)
-                    : 0;
-                renderCoord[i] = Math.min(origin + i * stride, N - 1) + 0.5;
-            } else {
-                const v = ((i + 0.5) * stride) | 0;
-                vox[i] = v < N ? v : N - 1;
-                renderCoord[i] = (i + 0.5) * stride;
+        // Uniformly partition all source samples into at most 12³ spatial
+        // strata, retaining exactly the maximum-magnitude source sample from
+        // each. Unlike nearest-stride sampling, this cannot miss a localized
+        // center or off-stride feature. The pool and GPU write remain bounded
+        // at 1,728 representatives for both dense and compact inputs.
+        if (!this._fluxPoolAxisMap
+            || this._fluxPoolAxisMapSourceN !== sourceN
+            || this._fluxPoolAxisMapSamples !== samples) {
+            this._fluxPoolAxisMap = new Uint8Array(sourceN);
+            this._fluxPoolAxisMapSourceN = sourceN;
+            this._fluxPoolAxisMapSamples = samples;
+            for (let i = 0; i < sourceN; i++) {
+                this._fluxPoolAxisMap[i] = Math.min(
+                    samples - 1,
+                    Math.floor((i * samples) / sourceN),
+                );
             }
         }
+        const axisMap = this._fluxPoolAxisMap;
+        const poolMagnitude = this._fluxPoolMagnitude;
+        const poolSourceIndex = this._fluxPoolSourceIndex;
+        const samplePlane = samples * samples;
+        const poolCount = samplePlane * samples;
+        poolMagnitude.fill(0, 0, poolCount);
+        poolSourceIndex.fill(-1, 0, poolCount);
 
-        // Find max for normalization over the sampled grid.
+        // For shaped boundaries, pool only scientifically drawable source
+        // samples. Otherwise a larger out-of-bound value could win a stratum,
+        // be clipped later, and erase a smaller in-bound localized feature.
+        const _bs = this._boundaryShape;
+        const needsClip = !(_bs === 'cube' || _bs === 'none' || _bs === undefined);
+        const boundaryCenter = N / 2;
+        const boundaryRadius = N / 2;
+        const compactCoord = (axisIndex) => Math.max(
+            0,
+            Math.min(compactOrigin + axisIndex * compactSpacing, N - 1),
+        ) + 0.5;
+
         let instantMaxFlux = 0;
-        for (let iz = 0; iz < samples; iz++) {
-            const zNN = vox[iz] * sourceN * sourceN;
-            for (let iy = 0; iy < samples; iy++) {
-                const zNNyN = zNN + vox[iy] * sourceN;
-                for (let ix = 0; ix < samples; ix++) {
-                    const m = density[zNNyN + vox[ix]];
-                    if (m > instantMaxFlux) instantMaxFlux = m;
+        let sourceIndex = 0;
+        for (let z = 0; z < sourceN; z++) {
+            const poolZ = axisMap[z] * samplePlane;
+            for (let y = 0; y < sourceN; y++) {
+                const poolZY = poolZ + axisMap[y] * samples;
+                for (let x = 0; x < sourceN; x++, sourceIndex++) {
+                    const mag = density[sourceIndex];
+                    // Flux volume is a magnitude channel: ignore invalid and
+                    // non-positive samples rather than poisoning normalization.
+                    if (!(mag > 0 && mag < Infinity)) continue;
+                    if (needsClip) {
+                        const physicalX = compact ? compactCoord(x) : x + 0.5;
+                        const physicalY = compact ? compactCoord(y) : y + 0.5;
+                        const physicalZ = compact ? compactCoord(z) : z + 0.5;
+                        if (!this._insideBoundary(
+                            (physicalX - boundaryCenter) / boundaryRadius,
+                            (physicalY - boundaryCenter) / boundaryRadius,
+                            (physicalZ - boundaryCenter) / boundaryRadius,
+                        )) continue;
+                    }
+                    const poolIndex = poolZY + axisMap[x];
+                    if (mag > poolMagnitude[poolIndex]) {
+                        poolMagnitude[poolIndex] = mag;
+                        poolSourceIndex[poolIndex] = sourceIndex;
+                    }
+                    if (mag > instantMaxFlux) instantMaxFlux = mag;
                 }
             }
         }
@@ -346,92 +405,83 @@ export class ViewportFluxRenderer {
         const maxPts = posAttr.array.length / 3;
         const MAX_SIZE = (this._fluxPointScale || 1.0) * 10.0;
         const FLUX_THRESHOLD = this._fluxThreshold !== undefined ? this._fluxThreshold : 0.005;
-        // The write loop draws dots at evenly-spaced render positions ((i+0.5)·stride),
-        // each reading the nearest voxel (vox[], same as the scan) — uniform, no beat.
-
-        // PERF: hoist boundary-shape check OUT of the per-voxel loop. For the
-        // default 'cube'/'none' boundary _insideBoundary() always returns
-        // true, but the function-call overhead alone costs ~100K calls per
-        // upload at L=64. Skip the call (and the nx/ny/nz division) entirely
-        // when no clipping is needed.
-        const _bs = this._boundaryShape;
-        const needsClip = !(_bs === 'cube' || _bs === 'none' || _bs === undefined);
+        // The write loop emits each stratum's maximum representative. Organic
+        // mode may jitter the presentation position, while sourcePosition keeps
+        // the exact winning physical coordinate.
 
         // PERF: cache geometry attribute backing arrays as locals so the JIT
         // can keep them in registers. posArr/colArr/sizeArr writes dominate
         // the hot loop.
         const posArr = posAttr.array;
+        const sourcePosArr = sourcePosAttr.array;
         const colArr = colAttr.array;
         const sizeArr = sizeAttr.array;
 
-        // Jitter amplitude: when Organic is on, scatter each dot inside its stride-wide
-        // cell (full ±0.5·stride — so it works at EVERY size, incl. stride 1 / N≤53);
+        // Jitter amplitude: when Organic is on, scatter each dot inside its render cell;
         // when off, 0 → exact grid. The 3D hash per (ix,iy,iz) breaks ALL planar alignment
         // (the additive-blend moiré / blocks) — unlike a per-axis jitter, which leaves
         // shared sheets and reads as plaid — and is deterministic (no per-frame shimmer).
-        const jamp = this._fluxOrganic ? stride : 0;
-        for (let iz = 0; iz < samples && count < maxPts; iz++) {
-            const zNN = vox[iz] * sourceN * sourceN;
-            const ze = renderCoord[iz];
-            for (let iy = 0; iy < samples && count < maxPts; iy++) {
-                const zNNyN = zNN + vox[iy] * sourceN;
-                const ye = renderCoord[iy];
-                for (let ix = 0; ix < samples && count < maxPts; ix++) {
-                    const mag = density[zNNyN + vox[ix]];
+        const jamp = this._fluxOrganic ? renderSpacing : 0;
+        const footprintStride = Math.min(
+            renderSpacing,
+            FLUX_POINT_FOOTPRINT_MAX_STRIDE,
+        );
+        const sourcePlane = sourceN * sourceN;
+        for (let poolIndex = 0; poolIndex < poolCount && count < maxPts; poolIndex++) {
+            const mag = poolMagnitude[poolIndex];
+            const retainedSourceIndex = poolSourceIndex[poolIndex];
+            if (retainedSourceIndex < 0 || mag < FLUX_THRESHOLD) continue;
 
-                    // Skip inactive voxels before writing any attributes,
-                    // otherwise stale color/size from a prior frame leak through
-                    if (mag < FLUX_THRESHOLD) continue;
+            const sourceZ = Math.floor(retainedSourceIndex / sourcePlane);
+            const sourceRem = retainedSourceIndex - sourceZ * sourcePlane;
+            const sourceY = Math.floor(sourceRem / sourceN);
+            const sourceX = sourceRem - sourceY * sourceN;
+            const physicalX = compact ? compactCoord(sourceX) : sourceX + 0.5;
+            const physicalY = compact ? compactCoord(sourceY) : sourceY + 0.5;
+            const physicalZ = compact ? compactCoord(sourceZ) : sourceZ + 0.5;
 
-                    // Stable 3D sub-cell offsets in [-0.5,0.5)·jamp → organic scatter.
-                    let h = (ix * 92837111) ^ (iy * 689287499) ^ (iz * 283923481);
-                    h = (h ^ (h >>> 15)) >>> 0;
-                    const xr = Math.max(0.5, Math.min(
-                        N - 0.5,
-                        renderCoord[ix] + ((h & 1023) / 1024 - 0.5) * jamp,
-                    ));
-                    const yr = Math.max(0.5, Math.min(
-                        N - 0.5,
-                        ye + (((h >>> 10) & 1023) / 1024 - 0.5) * jamp,
-                    ));
-                    const zr = Math.max(0.5, Math.min(
-                        N - 0.5,
-                        ze + (((h >>> 20) & 1023) / 1024 - 0.5) * jamp,
-                    ));
+            const stratumZ = Math.floor(poolIndex / samplePlane);
+            const stratumRem = poolIndex - stratumZ * samplePlane;
+            const stratumY = Math.floor(stratumRem / samples);
+            const stratumX = stratumRem - stratumY * samples;
+            let h = (stratumX * 92837111)
+                ^ (stratumY * 689287499)
+                ^ (stratumZ * 283923481);
+            h = (h ^ (h >>> 15)) >>> 0;
+            const xr = Math.max(0.5, Math.min(
+                N - 0.5,
+                physicalX + ((h & 1023) / 1024 - 0.5) * jamp,
+            ));
+            const yr = Math.max(0.5, Math.min(
+                N - 0.5,
+                physicalY + (((h >>> 10) & 1023) / 1024 - 0.5) * jamp,
+            ));
+            const zr = Math.max(0.5, Math.min(
+                N - 0.5,
+                physicalZ + (((h >>> 20) & 1023) / 1024 - 0.5) * jamp,
+            ));
 
-                    if (needsClip) {
-                        const center = N / 2;
-                        const radius = N / 2;
-                        const nx = (xr - center) / radius;
-                        const ny = (yr - center) / radius;
-                        const nz = (zr - center) / radius;
-                        if (!this._insideBoundary(nx, ny, nz)) continue;
-                    }
+            const c3 = count * 3;
+            posArr[c3] = xr;
+            posArr[c3 + 1] = yr;
+            posArr[c3 + 2] = zr;
+            sourcePosArr[c3] = physicalX;
+            sourcePosArr[c3 + 1] = physicalY;
+            sourcePosArr[c3 + 2] = physicalZ;
 
-                    const c3 = count * 3;
-                    // Jittered render position — organic scatter, no grid/moiré. Field
-                    // value (mag/color) comes from the nearest even-grid voxel (vox[]).
-                    posArr[c3]     = xr;
-                    posArr[c3 + 1] = yr;
-                    posArr[c3 + 2] = zr;
+            // PERF: in-place colormap write. Pre-fix this allocated a fresh
+            // [r,g,b] array per voxel.
+            fluxToColorInto(colArr, c3, mag, maxFlux);
 
-                    // PERF: in-place colormap write. Pre-fix this allocated a
-                    // fresh [r,g,b] array per voxel -- ~1.8M allocs/sec at L=32.
-                    fluxToColorInto(colArr, c3, mag, maxFlux);
-
-                    const t = mag / (maxFlux + 1e-20);
-                    // Floor the dim dots at FLUX_DOT_MIN·stride so they tile the grid
-                    // spacing (no visible lattice); high-flux dots grow up to MAX_SIZE·stride.
-                    const lo = FLUX_DOT_MIN * stride;
-                    const hi = Math.max(MAX_SIZE, FLUX_DOT_MIN) * stride;
-                    sizeArr[count] = lo + (hi - lo) * t;
-
-                    count++;
-                }
-            }
+            const t = mag / (maxFlux + 1e-20);
+            const lo = FLUX_DOT_MIN * footprintStride;
+            const hi = Math.max(MAX_SIZE, FLUX_DOT_MIN) * footprintStride;
+            sizeArr[count] = lo + (hi - lo) * t;
+            count++;
         }
 
         posAttr.needsUpdate = true;
+        sourcePosAttr.needsUpdate = true;
         colAttr.needsUpdate = true;
         sizeAttr.needsUpdate = true;
         this._fluxVolume.geometry.setDrawRange(0, count);

@@ -476,8 +476,8 @@ set_property(TEST
 # ============================================================================
 #
 # Tests marked with the "gpu" label need a dedicated CUDA device and should
-# be dispatched serially by the test runner's SmartDispatcher. All other
-# tests can run in parallel on CPU workers.
+# be serialized by GPU-aware orchestration. All other tests can run in
+# parallel on CPU workers.
 #
 # Uses set_property(... APPEND ...) so labels stack cleanly with the earlier
 # "unit" / "campaign" / "foundation" labels.

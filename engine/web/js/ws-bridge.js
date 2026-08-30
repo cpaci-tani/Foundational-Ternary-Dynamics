@@ -116,9 +116,6 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         this._lastDiag = null;
         this._lastAudit = null;
 
-        // Visual settings placeholder
-        this._visualSettings = null;
-
         // Scientific telemetry is one coherent native snapshot.  Individual
         // panel getters only add their desired group to this request; they do
         // not each enqueue a competing CUDA reduction on the single socket.
@@ -163,6 +160,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         this._volumeRequestInFlight = false;
         this._sliceRequestsInFlight = new Set();
         this._fieldSampleCache = new Map();
+        this._fieldSampleCacheEpoch = new Map();
         this._fieldSampleRequestEpoch = new Map();
         this._fieldSampleRequestTokenByKey = new Map();
         this._fieldSampleRequestsByToken = new Map();
@@ -197,6 +195,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         // back instead of leaving getToggle()/the checkbox card lying.
         this._confirmedToggles = { ...this._toggles };
         this._confirmedFluxBoundaryMode = this._fluxBoundaryMode;
+        this._confirmedParams = { ...this._params };
         this._liveProfileQueued = null;
         this._liveProfileInFlight = false;
         this._liveProfileDispatchTimer = null;
@@ -836,19 +835,15 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
 
     _acceptEnergyAudit(audit) {
         this._lastAudit = audit;
-        if (this._lastDiag && Number.isFinite(audit?.dynamicEnergy)) {
-            this._lastDiag.vacuumBaselineEnergy = this._lastDiag.totalEnergy;
-            this._lastDiag.dynamicEnergy = audit.dynamicEnergy;
-            this._lastDiag.accountedEnergy = audit.totalEnergy;
-            this._lastDiag.restEnergy = audit.particleRestEnergy;
-            this._lastDiag.totalEnergy = audit.dynamicEnergy;
-        }
     }
 
     _normalizeTelemetryGroupMeta(snapshot, group, value, fallbackVersion) {
         const meta = snapshot?.groupMeta?.[group] || {};
-        const numberOrNull = candidate => Number.isFinite(Number(candidate))
-            ? Number(candidate) : null;
+        const numberOrNull = candidate => {
+            if (candidate === null || candidate === undefined || candidate === '') return null;
+            const value = Number(candidate);
+            return Number.isFinite(value) ? value : null;
+        };
         const suppliedSnapshotVersion = numberOrNull(
             meta.snapshotVersion ?? snapshot?.snapshotVersion,
         );
@@ -1482,6 +1477,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             this._volumeCache = null;
             this._sliceCache = new Map();
             this._fieldSampleCache.clear();
+            this._fieldSampleCacheEpoch.clear();
             this._voxelCache.clear();
             this._forceAtCache.clear();
             this._lastDiag = null;
@@ -1523,14 +1519,16 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             || this._scenarioRequestInFlight || this._scenarioDispatchTimer);
     }
 
-    _notifyProfileState(error = null) {
+    _notifyProfileState(error = null, metadata = {}) {
         const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
         if (ctx?.bridge !== this || typeof ctx.onBridgeProfileUpdate !== 'function') return;
         try {
             ctx.onBridgeProfileUpdate({
                 toggles: { ...this._toggles },
                 fluxBoundaryMode: this._fluxBoundaryMode,
+                latticeSize: this.latticeSize,
                 error,
+                ...metadata,
             });
         } catch (e) {
             debugLog('[ws-bridge] Profile refresh callback failed:', e?.message || e);
@@ -1677,31 +1675,55 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
     }
 
     _acceptScenarioResponse(response, profile) {
-        if (response?.error || response?.ok === false) {
-            const error = new Error(response?.error || `Scenario setup rejected: ${profile.name}`);
+        const reject = (message) => {
+            const error = new Error(message || `Scenario setup rejected: ${profile.name}`);
             error.scenarioRejected = true;
+            error.scenarioResponse = response;
             throw error;
+        };
+        if (response?.error || response?.ok === false) {
+            reject(response?.error || `Scenario setup rejected: ${profile.name}`);
         }
-        if (response?.toggles && typeof response.toggles === 'object') {
-            // The echoed object is the complete engine TermToggles registry.
-            // Replace the mirror rather than merging it so a stale client-only
-            // value cannot survive, and native-enabled terms that were absent
-            // from the pre-setup cache become immediately queryable.
-            this._toggles = Object.fromEntries(
-                Object.entries(response.toggles).map(([name, value]) => [name, !!value]),
-            );
+        const profileErrors = [];
+        if (response?.scenario !== profile.name) {
+            profileErrors.push(`scenario echo ${response?.scenario ?? 'missing'} != ${profile.name}`);
+        }
+        if (!Number.isInteger(response?.latticeSize) || response.latticeSize < 1) {
+            profileErrors.push('lattice-size echo missing');
+        }
+        if (!Number.isInteger(response?.fluxBoundaryMode)
+            || response.fluxBoundaryMode !== profile.fluxBoundaryMode) {
+            profileErrors.push(`flux-boundary echo ${response?.fluxBoundaryMode ?? 'missing'} != ${profile.fluxBoundaryMode}`);
+        }
+        if (!response?.toggles || typeof response.toggles !== 'object') {
+            profileErrors.push('complete toggle echo missing');
         } else {
-            // Current native profile commands apply this exact staged map. Keep
-            // the mirror authoritative even during a rolling server upgrade
-            // whose acknowledgement predates the echoed toggle object.
-            Object.assign(this._toggles, profile.toggles);
+            for (const [name, expected] of Object.entries(profile.toggles || {})) {
+                if (!(name in response.toggles) || !!response.toggles[name] !== !!expected) {
+                    profileErrors.push(`toggle echo ${name} != ${!!expected}`);
+                }
+            }
         }
+        if (!response?.params || typeof response.params !== 'object') {
+            profileErrors.push('parameter echo missing');
+        }
+        if (profileErrors.length) {
+            reject(`Scenario acknowledgement mismatch: ${profileErrors.join('; ')}`);
+        }
+        // The echoed object is the complete engine TermToggles registry.
+        // Replace the mirror rather than merging it so a stale client-only
+        // value cannot survive, and native-enabled terms that were absent
+        // from the pre-setup cache become immediately queryable.
+        this._toggles = Object.fromEntries(
+            Object.entries(response.toggles).map(([name, value]) => [name, !!value]),
+        );
         this._confirmedToggles = { ...this._toggles };
         if (response?.params && typeof response.params === 'object') {
             for (const [name, value] of Object.entries(response.params)) {
                 if (Number.isFinite(Number(value))) this._params[name] = Number(value);
             }
         }
+        this._confirmedParams = { ...this._params };
         if (Number.isInteger(response?.latticeSize) && response.latticeSize > 0) {
             this.latticeSize = response.latticeSize;
         }
@@ -1716,7 +1738,11 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         // the replacement RenderBridge on the server.
         this._observeTelemetrySourceEpoch(response?.telemetrySourceEpoch);
         this._notifyVisualDataReady(false, true);
-        this._notifyProfileState();
+        this._notifyProfileState(null, {
+            authoritativeScenarioAck: true,
+            scenarioId: this._activeScenario,
+            loadGeneration: profile.clientLoadGeneration,
+        });
     }
 
     _dispatchQueuedScenarioProfile() {
@@ -1749,7 +1775,37 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                 if (!err?.scenarioRejected && !this._queuedScenarioProfile) {
                     this._queuedScenarioProfile = profile;
                 }
-                if (err?.scenarioRejected) this._queuedSimulationTicks = 0;
+                if (err?.scenarioRejected) {
+                    this._queuedSimulationTicks = 0;
+                    const response = err.scenarioResponse;
+                    if (response?.toggles && typeof response.toggles === 'object') {
+                        this._confirmedToggles = Object.fromEntries(
+                            Object.entries(response.toggles)
+                                .map(([name, enabled]) => [name, !!enabled]),
+                        );
+                    }
+                    this._toggles = { ...this._confirmedToggles };
+                    if (Number.isInteger(response?.fluxBoundaryMode)) {
+                        this._confirmedFluxBoundaryMode = response.fluxBoundaryMode;
+                    }
+                    this._fluxBoundaryMode = this._confirmedFluxBoundaryMode;
+                    if (response?.params && typeof response.params === 'object') {
+                        this._confirmedParams = Object.fromEntries(
+                            Object.entries(response.params)
+                                .filter(([, value]) => Number.isFinite(Number(value)))
+                                .map(([name, value]) => [name, Number(value)]),
+                        );
+                    }
+                    this._params = { ...this._confirmedParams };
+                    if (Number.isInteger(response?.latticeSize) && response.latticeSize > 0) {
+                        this.latticeSize = response.latticeSize;
+                    }
+                    this._notifyProfileState(err?.message || String(err), {
+                        authoritativeScenarioAck: true,
+                        scenarioId: profile.name,
+                        loadGeneration: profile.clientLoadGeneration,
+                    });
+                }
             })
             .finally(() => {
                 this._scenarioRequestInFlight = false;
@@ -1800,6 +1856,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         }
         if (Number.isInteger(origin) && origin >= 0) sample.origin = origin;
         this._fieldSampleCache.set(key, sample);
+        this._fieldSampleCacheEpoch.set(key, pending.epoch);
         this._drainFieldSampleRequests();
         this._notifyVisualDataReady(true, false);
         return true;
@@ -2016,7 +2073,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
 
     // ── Public API (matches MockBridge/WasmBridge) ───────────────────
 
-    beginScenarioConfiguration(name) {
+    beginScenarioConfiguration(name, clientLoadGeneration = null) {
         // A newer selection supersedes any draft that never committed. Once a
         // native allocation has begun it cannot be cancelled safely, but the
         // queued slot below remains last-write-wins.
@@ -2029,12 +2086,23 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         // reached the engine. An already in-flight edit is generation-gated;
         // the subsequent setup command wins on the serialized socket.
         this._liveProfileQueued = null;
+        const normalizedLoadGeneration = Number.isInteger(Number(clientLoadGeneration))
+            ? Number(clientLoadGeneration)
+            : null;
+        const prepared = !!this._preparedScenario
+            && this._preparedScenario.name === name
+            && this._preparedScenario.clientLoadGeneration === normalizedLoadGeneration;
+        // Every canonical scenario transaction consumes or retires the marker.
+        // A late resize acknowledgement is generation-bound and therefore
+        // cannot be reused by a later selection of the same scenario name.
+        this._preparedScenario = null;
         this._scenarioDraft = {
             name,
+            clientLoadGeneration: normalizedLoadGeneration,
             toggles: {},
             fluxBoundaryMode: this._fluxBoundaryMode,
             setupRequested: false,
-            prepared: false,
+            prepared,
         };
         // Scalar readback belongs to the old RenderBridge until the atomic
         // setup acknowledgement supplies the new scenario's full params.
@@ -2054,10 +2122,6 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         if (name) draft.name = name;
         if (!draft.setupRequested) {
             console.warn(`[ws-bridge] Scenario profile committed without setupScenario(): ${draft.name}`);
-        }
-        if (this._preparedScenario === draft.name) {
-            draft.prepared = true;
-            this._preparedScenario = null;
         }
         this._queuedScenarioProfile = draft;
         this._markVisualDataDirty(true);
@@ -2198,6 +2262,23 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         return this._isTelemetryGroupCurrent('audit') ? (this._lastAudit || null) : null;
     }
 
+    /**
+     * Capture the canonical Scale-0 dynamical-state digest on demand.
+     *
+     * This is intentionally an explicit asynchronous qualification operation,
+     * never a render-loop read: the digest visits all L^3 sites. Hash lanes
+     * remain fixed-width hexadecimal strings so JavaScript cannot round the
+     * native uint64 values.
+     */
+    async getDynamicalStateDigest() {
+        const response = await this._sendJSON(
+            { cmd: 'get_dynamical_state_digest' },
+            DIAGNOSTIC_COMMAND_TIMEOUT_MS,
+        );
+        if (response?.error) throw new Error(response.error);
+        return response;
+    }
+
     setToggle(name, value) {
         const normalized = !!value;
         if (this._scenarioDraft) {
@@ -2317,22 +2398,64 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         return response;
     }
 
-    async resizeScenario(size, name) {
-        const preflight = await this.preflightResize(size);
+    discardPreparedScenario(name, clientLoadGeneration = null) {
+        const generation = Number.isInteger(Number(clientLoadGeneration))
+            ? Number(clientLoadGeneration)
+            : null;
+        if (!this._preparedScenario
+            || this._preparedScenario.name !== name
+            || this._preparedScenario.clientLoadGeneration !== generation) {
+            return false;
+        }
+        this._preparedScenario = null;
+        return true;
+    }
+
+    async resizeScenario(size, name, clientLoadGeneration = null, isCurrent = null) {
+        let preflight;
+        try {
+            preflight = await this.preflightResize(size);
+        } catch (error) {
+            // Preflight is read-only: even a lost response cannot have changed
+            // the authoritative lattice, so the last confirmed baseline remains
+            // safe to restore in the UI.
+            error.resizeFailurePhase = 'preflight';
+            throw error;
+        }
+        if (typeof isCurrent === 'function' && !isCurrent()) {
+            const error = new Error('Native resize was superseded before dispatch');
+            error.resizeFailurePhase = 'preflight';
+            error.resizeSuperseded = true;
+            throw error;
+        }
         const acceptedSize = Number(preflight.size);
-        const response = this._requireSuccessfulResponse(
-            await this._sendOperationWithRetry(
-                { cmd: 'resize_scenario', size: acceptedSize, name },
-                LONG_OPERATION_TIMEOUT_MS,
+        let response;
+        try {
+            response = this._requireSuccessfulResponse(
+                await this._sendOperationWithRetry(
+                    { cmd: 'resize_scenario', size: acceptedSize, name },
+                    LONG_OPERATION_TIMEOUT_MS,
+                    'resize and scenario setup',
+                ),
                 'resize and scenario setup',
-            ),
-            'resize and scenario setup',
-        );
+            );
+        } catch (error) {
+            // After dispatch, a timeout/socket loss is commit-uncertain: the
+            // server may have installed the new RenderBridge even if its ACK
+            // never reached this page. Never re-qualify an assumed old size.
+            error.resizeFailurePhase = 'commit-uncertain';
+            throw error;
+        }
         this.latticeSize = Number(response.latticeSize) || acceptedSize;
         // loadScale0Scenario still executes the canonical UI/toggle path. Its
         // scenario.load() call consumes this marker instead of rebuilding the
         // just-prepared native bridge a second time.
-        this._preparedScenario = name;
+        this._preparedScenario = {
+            name,
+            clientLoadGeneration: Number.isInteger(Number(clientLoadGeneration))
+                ? Number(clientLoadGeneration)
+                : null,
+        };
         this._markVisualDataDirty(true);
         this._observeTelemetrySourceEpoch(response?.telemetrySourceEpoch);
         return response;
@@ -2355,12 +2478,14 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
     setupScenario(name) {
         this._markVisualDataDirty(true);
         if (this._scenarioDraft) {
+            if (this._scenarioDraft.name !== name) this._scenarioDraft.prepared = false;
             this._scenarioDraft.name = name;
             this._scenarioDraft.setupRequested = true;
-            if (this._preparedScenario === name) this._scenarioDraft.prepared = true;
             return true;
         }
-        const prepared = this._preparedScenario === name;
+        const prepared = !!this._preparedScenario
+            && this._preparedScenario.name === name
+            && this._preparedScenario.clientLoadGeneration === null;
         this._preparedScenario = null;
         this._queuedScenarioProfile = {
             name,
@@ -2579,8 +2704,9 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
     getHelicitySampled(stride = 2) { return this._getFieldSample('helicity', stride, EMPTY_SCALAR_SAMPLE); }
     getKretschmannSampled(stride = 2) { return this._getFieldSample('kretschmann', stride, EMPTY_SCALAR_SAMPLE); }
     getLatencySampled(stride = 2) { return this._getFieldSample('latency', stride, EMPTY_SCALAR_SAMPLE); }
-    // Real latency-Poisson solution (voxel.latency / CUDA d_latency). Keep the
-    // legacy `latency` sampler above as its normalized |J|^2 visual proxy.
+    // Engine Poisson-derived [IMPOSED] latency mapping (voxel.latency / CUDA
+    // d_latency), not a recovered physical metric. Keep the legacy `latency`
+    // sampler above as its normalized |J|^2 visual proxy.
     getPoissonLatencySampled(stride = 2) { return this._getFieldSample('poissonLatency', stride, EMPTY_SCALAR_SAMPLE); }
     getFisherSampled(stride = 2) { return this._getFieldSample('fisher', stride, EMPTY_SCALAR_SAMPLE); }
     getCoherenceSampled(stride = 2) { return this._getFieldSample('coherence', stride, EMPTY_SCALAR_SAMPLE); }
@@ -2593,6 +2719,25 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
     getStrongForceField(stride = 2) { return this._getFieldSample('strong', stride, EMPTY_FIELD_SAMPLE); }
     /** Kind-dispatched Scale-0 field sampler; see bridge-contract.js samplerOr. */
     getSamplerOr(kind, stride = 2, fallback) { return samplerOr(this, kind, stride, fallback); }
+    hasSamplerSnapshot(kind, stride = 2) {
+        if (kind === 'gravityMetricAgg') {
+            return this._lastGravityMetric != null && this._isTelemetryGroupCurrent('gravity');
+        }
+        const normalizedStride = Math.max(1, Math.min(64, Math.trunc(Number(stride) || 1)));
+        const key = `${kind}@${normalizedStride}`;
+        return this._fieldSampleCache.has(key) && this._fieldSampleCacheEpoch.has(key);
+    }
+    getSamplerSnapshotVersion(kind, stride = 2) {
+        if (kind === 'gravityMetricAgg') {
+            const meta = this._telemetryGroupCache?.gravity?.meta;
+            return Number.isFinite(Number(meta?.stateVersion)) ? Number(meta.stateVersion) : null;
+        }
+        const normalizedStride = Math.max(1, Math.min(64, Math.trunc(Number(stride) || 1)));
+        const key = `${kind}@${normalizedStride}`;
+        return this._fieldSampleCacheEpoch.has(key)
+            ? Number(this._fieldSampleCacheEpoch.get(key))
+            : null;
+    }
     replaceSamplerWants() {}
     unwantSampler() {}
 
@@ -2629,10 +2774,8 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         this._reflectiveBoundary = !!on;
         this.setToggle('reflective_boundary', this._reflectiveBoundary);
     }
-    // Stubs for compatibility with MockBridge API
+    // Scale-0 tick readback.
     currentTick() { return this._lastDiag?.tick ?? 0; }
-    setVisualSettings(vs) { this._visualSettings = vs; }
-    loadScenario() {}
 }
 
 /**

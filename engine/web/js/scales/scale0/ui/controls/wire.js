@@ -21,15 +21,20 @@ import {
 import { K_B } from '../../../../constants.js';
 import { getPhysicsHarness } from '../../../../physics/index.js';
 import { getEl, markScenarioOverrideRows } from '../dom.js?v=3';
-import { updateScenarioMetadata } from '../bindings.js?v=3';
+import { updateScenarioMetadata } from '../bindings.js?v=10';
 import {
     DEFAULT_FLOW_LINE_SETTINGS,
+    SCALE0_MUTATION_REASONS,
+    SCALE0_MUTATION_SOURCES,
+    commitScale0ScientificMutation,
     getScale0State,
+    getScale0QualificationState,
     getActiveLatticeSize,
     getActiveScale0Bridge,
     getFlowLineSettings,
     resetFlowLineSettings,
     setFlowLineSetting,
+    subscribeScale0Qualification,
 } from '../../state/store.js';
 import { computeStreamlineParams } from '../../runtime/streamline-integrator.js';
 
@@ -39,15 +44,21 @@ function latticeN(ctx) {
     return getActiveLatticeSize(ctx, getScale0State());
 }
 
-/** Execute a substrate command on the one bridge that owns live Scale-0 state. */
-function activeHarness(ctx, fn) {
+/** Execute one provenance-recorded scientific write on the live Scale-0 owner. */
+function scientificHarness(ctx, reason, source, fn) {
     const owner = getActiveScale0Bridge(ctx, getScale0State());
     if (!owner) {
         console.error('[Scale0] substrate control has no active physics owner');
         return false;
     }
-    fn(getPhysicsHarness(owner));
-    return true;
+    const result = commitScale0ScientificMutation(ctx, {
+        reason,
+        source,
+        loadGeneration: ctx._loadGeneration || 0,
+        owner,
+        dispatchStatus: 'unknown',
+    }, activeOwner => fn(getPhysicsHarness(activeOwner)));
+    return result.accepted;
 }
 
 function setDisplayText(display, text) {
@@ -112,6 +123,7 @@ function wirePhysicsToggles(ctx, api) {
             ...SCALE0_ADVANCED_TOGGLES.map(([key, expected]) => [key, !!expected]),
         ]);
         return physicsUiToggles.some(([key, , elId]) => {
+            if (key === 'knot_tracking') return false; // observation-only
             const el = getEl(elId);
             if (!el) return false;
             const baseline = el.dataset.scale0ProfileValue;
@@ -119,13 +131,43 @@ function wirePhysicsToggles(ctx, api) {
             return el.checked !== !!expected;
         });
     };
+    let qualificationState = getScale0QualificationState();
     const renderProfileStatus = (modified = profileIsModified()) => {
         const warning = getEl('physics-profile-warning');
-        if (warning && warning.hidden === modified) warning.hidden = !modified;
+        const pending = qualificationState.status === 'pending';
+        const suspended = qualificationState.status === 'suspended';
+        if (warning) {
+            const show = pending || suspended || modified;
+            warning.hidden = !show;
+            warning.textContent = pending
+                ? 'Authoritative scenario load pending — qualification suspended.'
+                : (suspended
+                    ? (qualificationState.authoritativeLoad?.status === 'failed'
+                        ? 'Authoritative scenario load failed — qualification suspended.'
+                        : 'Live scientific record modified — qualification suspended.')
+                    : 'Modified physics profile — qualification suspended.');
+        }
+        const card = warning?.closest('.card');
+        if (card) {
+            card.setAttribute('aria-busy', pending ? 'true' : 'false');
+            for (const input of card.querySelectorAll('input[type="checkbox"]')) {
+                if (pending && !input.disabled) {
+                    input.disabled = true;
+                    input.dataset.scale0PendingDisabled = '1';
+                } else if (!pending && input.dataset.scale0PendingDisabled === '1') {
+                    input.disabled = false;
+                    delete input.dataset.scale0PendingDisabled;
+                }
+            }
+        }
         updateScenarioMetadata(currentScenarioId(), {
             profileModified: modified,
             preserveDisclosure: true,
+            qualificationState,
         });
+    };
+    const markUserEdit = () => {
+        ctx._scale0ToggleUserEditGeneration = ctx._loadGeneration || 0;
     };
     const setActiveToggle = (toggleKey, value) => {
         const owner = getActiveScale0Bridge(ctx, getScale0State());
@@ -133,43 +175,47 @@ function wirePhysicsToggles(ctx, api) {
             console.error(`[Scale0] physics toggle owner missing setToggle (${toggleKey})`);
             return false;
         }
-        owner.setToggle(toggleKey, value);
-        return true;
-    };
-    const markUserEdit = () => {
-        ctx._scale0ToggleUserEditGeneration = ctx._loadGeneration || 0;
+        if (toggleKey === 'knot_tracking') {
+            owner.setToggle(toggleKey, value);
+            markUserEdit();
+            renderProfileStatus();
+            return true;
+        }
+        return commitScale0ScientificMutation(ctx, {
+            reason: SCALE0_MUTATION_REASONS.PHYSICS_TOGGLE,
+            source: SCALE0_MUTATION_SOURCES.PHYSICS_TOGGLES,
+            loadGeneration: ctx._loadGeneration || 0,
+            owner,
+            dispatchStatus: 'unknown',
+        }, activeOwner => {
+            // Set before mutation publication so the one subscription render
+            // observes the final user-edited profile state.
+            markUserEdit();
+            return activeOwner.setToggle(toggleKey, value);
+        }).accepted;
     };
 
     // Engine readback calls this after repainting the checkboxes. Keeping the
     // status computation here avoids a second ownership model in the loader.
     ctx.onScale0ToggleProfileSynced = () => renderProfileStatus();
+    subscribeScale0Qualification(snapshot => {
+        qualificationState = snapshot;
+        renderProfileStatus();
+    });
 
     for (const [toggleKey, , elId] of SCALE0_TOGGLES) {
         const el = getEl(elId);
         if (!el) continue;
-        if (ctx.bridge?.isNativeGPU && toggleKey === 'confinement') {
-            // TermToggles carries this as an intent flag for serialization,
-            // but no native C++ phase consumes it. Do not present a writable
-            // checkbox that implies string-tension physics is executing. The
-            // separate viewport `toggle-confinement` remains a visual proxy.
-            el.checked = false;
-            el.disabled = true;
-            el.setAttribute('aria-disabled', 'true');
-            const label = el.closest('.toggle-row')?.querySelector('label');
-            if (label) {
-                label.textContent = 'Confinement (visual proxy only)';
-                label.title = 'Native engine term is not implemented. Use the Confinement viewport overlay for visualization only.';
-            }
-            continue;
-        }
         el.addEventListener('change', () => {
-            markUserEdit();
-            setActiveToggle(toggleKey, el.checked);
+            const accepted = setActiveToggle(toggleKey, el.checked);
+            if (!accepted) {
+                el.checked = !el.checked;
+                return;
+            }
             const row = el.closest('.toggle-row');
             if (row?.classList.contains('scenario-override')) {
                 row.classList.remove('scenario-override');
             }
-            renderProfileStatus();
         });
     }
 
@@ -186,9 +232,11 @@ function wirePhysicsToggles(ctx, api) {
         const el = getEl(elId);
         if (!el) continue;
         el.addEventListener('change', () => {
-            markUserEdit();
-            setActiveToggle(toggleKey, el.checked);
-            renderProfileStatus();
+            const accepted = setActiveToggle(toggleKey, el.checked);
+            if (!accepted) {
+                el.checked = !el.checked;
+                return;
+            }
         });
     }
 
@@ -312,36 +360,56 @@ function wireInjection(ctx, api) {
         const y = getEl('inj-y'); if (y) y.value = rand();
         const z = getEl('inj-z'); if (z) z.value = rand();
         const { x: px, y: py, z: pz, state } = getInjPos();
-        activeHarness(ctx, (h) => h.injectWavepacket(px, py, pz, state));
-        api.setLatticeNeedsUpload();
+        if (scientificHarness(
+            ctx,
+            SCALE0_MUTATION_REASONS.INJECT_WAVEPACKET,
+            SCALE0_MUTATION_SOURCES.SUBSTRATE_CONTROLS,
+            h => h.injectWavepacket(px, py, pz, state),
+        )) api.setLatticeNeedsUpload();
     });
 
     getEl('btn-inject')?.addEventListener('click', () => {
         const { x, y, z, state } = getInjPos();
-        activeHarness(ctx, (h) => h.injectParticle(x, y, z, state));
-        api.setLatticeNeedsUpload();
+        if (scientificHarness(
+            ctx,
+            SCALE0_MUTATION_REASONS.INJECT_PARTICLE,
+            SCALE0_MUTATION_SOURCES.SUBSTRATE_CONTROLS,
+            h => h.injectParticle(x, y, z, state),
+        )) api.setLatticeNeedsUpload();
     });
 
     getEl('btn-inject-wave')?.addEventListener('click', () => {
         const { x, y, z, state } = getInjPos();
-        activeHarness(ctx, (h) => h.injectWavepacket(x, y, z, state));
-        api.setLatticeNeedsUpload();
+        if (scientificHarness(
+            ctx,
+            SCALE0_MUTATION_REASONS.INJECT_WAVEPACKET,
+            SCALE0_MUTATION_SOURCES.SUBSTRATE_CONTROLS,
+            h => h.injectWavepacket(x, y, z, state),
+        )) api.setLatticeNeedsUpload();
     });
 
     getEl('btn-inject-flux')?.addEventListener('click', () => {
         const { x, y, z } = getInjPos();
         const active = getActiveScale0Bridge(ctx, getScale0State()) ?? ctx.bridge;
         const kb = getPhysicsHarness(active).getParam?.('kb') || K_B;
-        activeHarness(ctx, (h) => h.injectFlux(x, y, z, kb * 0.8, 0, 0));
-        api.setLatticeNeedsUpload();
+        if (scientificHarness(
+            ctx,
+            SCALE0_MUTATION_REASONS.INJECT_FLUX,
+            SCALE0_MUTATION_SOURCES.SUBSTRATE_CONTROLS,
+            h => h.injectFlux(x, y, z, kb * 0.8, 0, 0),
+        )) api.setLatticeNeedsUpload();
     });
 
     getEl('btn-inject-pair')?.addEventListener('click', () => {
         const { x, y, z } = getInjPos();
         const active = getActiveScale0Bridge(ctx, getScale0State()) ?? ctx.bridge;
         const kb = getPhysicsHarness(active).getParam?.('kb') || K_B;
-        activeHarness(ctx, (h) => h.createEntangledPair(x, y, z, kb, 0, 0));
-        api.setLatticeNeedsUpload();
+        if (scientificHarness(
+            ctx,
+            SCALE0_MUTATION_REASONS.INJECT_PAIR,
+            SCALE0_MUTATION_SOURCES.SUBSTRATE_CONTROLS,
+            h => h.createEntangledPair(x, y, z, kb, 0, 0),
+        )) api.setLatticeNeedsUpload();
     });
 }
 
@@ -370,22 +438,29 @@ function wireParameterSliders(ctx) {
 
 function wireFieldActions(ctx, api) {
     getEl('btn-clear-field')?.addEventListener('click', () => {
-        activeHarness(ctx, (h) => {
+        const accepted = scientificHarness(
+            ctx,
+            SCALE0_MUTATION_REASONS.CLEAR_FIELD,
+            SCALE0_MUTATION_SOURCES.SUBSTRATE_CONTROLS,
+            h => {
             if (typeof h.clearField === 'function') {
                 h.clearField();
             } else {
                 h.reset();
             }
         });
+        if (!accepted) return;
         ctx.clearCharts?.();
         api.setLatticeNeedsUpload();
     });
 
     getEl('btn-random-flux')?.addEventListener('click', () => {
-        activeHarness(ctx, (h) => {
-            h.seedRandomFlux?.();
-        });
-        api.setLatticeNeedsUpload();
+        if (scientificHarness(
+            ctx,
+            SCALE0_MUTATION_REASONS.RANDOM_FLUX,
+            SCALE0_MUTATION_SOURCES.SUBSTRATE_CONTROLS,
+            h => h.seedRandomFlux?.(),
+        )) api.setLatticeNeedsUpload();
     });
 }
 

@@ -24,6 +24,12 @@
     "bytes": 13862,
     "reason": "Revision-1 dashboard arm used fresh native defaults rather than the browser Scale-0 reset profile. The wave-only arm was valid but the whole file is excluded from the revision-2 verdict."
   },
+  "unregistered_provenance": {
+    "path": "engine/results/ftd_0434/unregistered_legacy_root_output.csv",
+    "sha256": "2afcae388042de076896bc16b7184d8ac7428aa97726bc0d12e3f0d57133a982",
+    "bytes": 13933,
+    "reason": "Legacy loose-root output with no run manifest. Its dashboard arm records execution_valid=0, so it is retained only as provenance and is excluded from the revision-2 verdict."
+  },
   "locked_outcomes": {
     "dashboard": {
       "execution_valid": true,

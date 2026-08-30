@@ -8,6 +8,7 @@
  */
 
 #include "voxel.h"
+#include "ftd/dynamical_state_digest.h"
 #include "ftd/visual_snapshot.h"
 #include "ftd/interop_particle_record.h"
 #include <cstddef>   // std::size_t
@@ -54,6 +55,10 @@ extern std::size_t g_gpu_visual_snapshot_launches;
 // repeat that synchronization after the high-water marks are current.
 extern std::size_t g_gpu_identity_counter_download_bytes;
 extern std::size_t g_gpu_identity_counter_download_calls;
+// Canonical dynamical-state digest requests copy one fixed accumulator to the
+// host. These counters exclude every lattice-sized mirror/readback.
+extern std::size_t g_gpu_dynamical_digest_download_bytes;
+extern std::size_t g_gpu_dynamical_digest_download_calls;
 
 struct GpuBuffers {
     GpuBuffers() = default;
@@ -230,6 +235,11 @@ struct GpuBuffers {
     static constexpr int COMPACT_DIAGNOSTIC_SCALARS = 64;
     double*    d_compact_diagnostics = nullptr;
     long long* d_compact_charge_sum  = nullptr;
+
+    // Fixed-size output of the canonical device-resident state reduction.
+    // One accumulator is reused for ordinary and interactive GPU requests;
+    // the synchronous public call serializes through `stream`.
+    DynamicalStateDigestAccumulator* d_dynamical_state_digest = nullptr;
 
     // Snapshot-specific scratch remains independent from the legacy compact
     // getter scratch above. This is essential because a telemetry publisher
@@ -480,6 +490,11 @@ struct GpuBuffers {
     void download_flux_magnitude(std::vector<float>& out);
     void download_flux_magnitude_plane(int axis, int index,
                                        std::vector<float>& out);
+
+    // Canonical named-field reduction. Only sizeof(accumulator) bytes cross
+    // PCIe; no AoS voxel mirror is materialized.
+    DynamicalStateDigest dynamical_state_digest(
+        std::int64_t tick, std::uint64_t state_version) const;
 
     // Download phi_latency from device (Wave 5: GPU latency Poisson)
     void download_phi_latency(std::vector<double>& out) const;

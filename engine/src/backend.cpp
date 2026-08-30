@@ -256,6 +256,18 @@ bool CpuBackend::poll_visual_snapshot(VisualSnapshot& out) {
     return true;
 }
 
+bool CpuBackend::capture_dynamical_state_digest(
+    DynamicalStateDigest& out) {
+    const auto accumulator = accumulate_dynamical_state_host(
+        bridge_.voxels_, bridge_.dJ_, bridge_.phi_coulomb_,
+        bridge_.phi_latency_);
+    out = digest_detail::finalize(
+        accumulator, bridge_.lattice_.size(),
+        static_cast<std::uint64_t>(bridge_.voxels_.size()),
+        bridge_.tick_, 0, 0);
+    return true;
+}
+
 // ─── GpuBackend ───────────────────────────────────────────────────────────
 
 #ifdef FTD_ENABLE_CUDA
@@ -534,6 +546,16 @@ bool GpuBackend::copy_compact_voxel(int index, VoxelInspection& out) {
 bool GpuBackend::copy_compact_force(int index, ForceDiag& out) {
     if (!engine_ || !bridge_.interactive_gpu_mode_) return false;
     engine_->inspect_force(index, out);
+    return true;
+}
+
+bool GpuBackend::capture_dynamical_state_digest(
+    DynamicalStateDigest& out) {
+    if (!engine_) return false;
+    // Commit direct scenario/editor writes first. Unlike sync_to_host(), this
+    // preserves the device-resident path and performs no lattice-sized D2H.
+    flush_host_mutations();
+    out = engine_->dynamical_state_digest();
     return true;
 }
 

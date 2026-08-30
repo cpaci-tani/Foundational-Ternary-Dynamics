@@ -33,6 +33,10 @@ export class UPlotChart {
         this._destroyed = false;
         this._hoverActive = false;
         this._lastData = null;
+        this._bufferStamps = this.series.map(() => ({
+            buffer: null, total: -1, count: -1, last: Number.NaN,
+        }));
+        this._emptyPublished = true;
 
         const theme = getChartTheme();
         const bufSize = this._maxBufferSize();
@@ -137,10 +141,34 @@ export class UPlotChart {
         const n = Math.min(firstBuf?.count || 0, this.visibleSamples);
         if (n < 2) {
             this._lastData = null;
-            this.uplot.setData(this._emptyData(), true);
+            if (!this._emptyPublished) {
+                this.uplot.setData(this._emptyData(), true);
+                this._emptyPublished = true;
+            }
+            for (const stamp of this._bufferStamps) {
+                stamp.buffer = null; stamp.total = -1; stamp.count = -1; stamp.last = Number.NaN;
+            }
             if (this._hoverActive) this.tooltip.hide();
             return;
         }
+
+        let dirty = false;
+        for (let i = 0; i < this.series.length; i++) {
+            const buf = this.hub[this.series[i].buffer];
+            const total = buf?.total ?? -1;
+            const count = buf?.count ?? -1;
+            const last = count > 0 ? buf.last() : Number.NaN;
+            const stamp = this._bufferStamps[i];
+            if (stamp.buffer !== buf || stamp.total !== total || stamp.count !== count
+                || !Object.is(stamp.last, last)) {
+                stamp.buffer = buf;
+                stamp.total = total;
+                stamp.count = count;
+                stamp.last = last;
+                dirty = true;
+            }
+        }
+        if (!dirty) return;
 
         const xs = this.xs.subarray(0, n);
         const xStart = Math.max(0, (firstBuf.total ?? firstBuf.count ?? n) - n);
@@ -162,6 +190,7 @@ export class UPlotChart {
         // buffers the range changes constantly and skipping this leaves the
         // chart blank.
         this.uplot.setData([xs, ...yColumns], true);
+        this._emptyPublished = false;
         this._lastData = { xs, yColumns, n };
         if (this._hoverActive) this._renderHoverTooltip();
     }

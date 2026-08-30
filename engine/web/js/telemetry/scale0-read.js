@@ -10,28 +10,66 @@ import { telemetryHub } from '../telemetry-hub.js';
  * @returns {{ diag: object|null, audit: object|null }}
  */
 export function readScale0DiagAudit(bridge = null) {
-    const diag = telemetryHub.s0?.diag
-        ?? bridge?.getDiagnostics?.()
-        ?? null;
-    const audit = telemetryHub.s0?.audit
-        ?? bridge?.getEnergyAudit?.()
-        ?? null;
+    const diagMeta = telemetryHub.getScale0TelemetryMeta?.('diagnostics') ?? null;
+    const auditMeta = telemetryHub.getScale0TelemetryMeta?.('audit') ?? null;
+    const diag = diagMeta
+        ? (diagMeta.stale ? null : telemetryHub.s0?.diag ?? null)
+        : (telemetryHub.s0?.diag ?? bridge?.getDiagnostics?.() ?? null);
+    const audit = auditMeta
+        ? (auditMeta.stale ? null : telemetryHub.s0?.audit ?? null)
+        : (telemetryHub.s0?.audit ?? bridge?.getEnergyAudit?.() ?? null);
     return { diag, audit };
 }
 
-/** Rest-offset-free accounted dynamic energy used by conservation charts. */
-export function readScale0TotalEnergy(diag, audit) {
-    if (audit != null && Number.isFinite(audit.dynamicEnergy)) return audit.dynamicEnergy;
-    return diag?.dynamicEnergy ?? diag?.totalEnergy ?? 0;
+/** A group is usable as a current scientific observation only with provenance. */
+export function isCurrentScale0TelemetryMeta(meta) {
+    return !!meta
+        && meta.stale !== true
+        && (meta.status == null || meta.status === 'available')
+        && Number.isFinite(meta.tick);
+}
+
+/**
+ * Audit energy may accompany current diagnostics only when both observations
+ * name the same engine tick. A current audit remains independently usable when
+ * diagnostics are unavailable.
+ */
+export function isCurrentScale0AuditEnergy(diagMeta, auditMeta) {
+    if (!isCurrentScale0TelemetryMeta(auditMeta)) return false;
+    if (!isCurrentScale0TelemetryMeta(diagMeta)) return true;
+    return auditMeta.tick === diagMeta.tick;
+}
+
+/**
+ * Rest-offset-free accounted dynamic energy.
+ *
+ * `diag.totalEnergy` is intentionally excluded: compact/native diagnostics can
+ * use it for the observer/vacuum baseline, so interpreting it as excitation
+ * energy fabricates a current dynamic measurement. Exact numeric zero remains
+ * valid when published by a current dynamic channel.
+ */
+export function readScale0TotalEnergy(diag, audit, {
+    diagMeta = null,
+    auditMeta = null,
+} = {}) {
+    if (isCurrentScale0AuditEnergy(diagMeta, auditMeta)
+        && Number.isFinite(audit?.dynamicEnergy)) {
+        return audit.dynamicEnergy;
+    }
+    if (isCurrentScale0TelemetryMeta(diagMeta)
+        && Number.isFinite(diag?.dynamicEnergy)) {
+        return diag.dynamicEnergy;
+    }
+    return null;
 }
 
 /** Wave (kinetic) energy — ½Σ|wave_vel|². */
 export function readScale0WaveEnergy(diag, audit) {
     if (audit != null && Number.isFinite(audit.waveEnergy)) return audit.waveEnergy;
-    return diag?.totalWaveEnergy ?? 0;
+    return Number.isFinite(diag?.totalWaveEnergy) ? diag.totalWaveEnergy : null;
 }
 
 /** Field energy — ½Σ|J|². */
 export function readScale0FieldEnergy(audit) {
-    return audit?.fieldEnergy ?? 0;
+    return Number.isFinite(audit?.fieldEnergy) ? audit.fieldEnergy : null;
 }

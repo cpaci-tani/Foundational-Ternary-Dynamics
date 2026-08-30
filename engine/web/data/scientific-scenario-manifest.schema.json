@@ -1,0 +1,293 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cpaci-tani.github.io/Foundational-Ternary-Dynamics/data/scientific-scenario-manifest.schema.json",
+  "title": "FTD scientific scenario manifest",
+  "description": "Model, claim, execution, presentation, and qualification contracts. Schema validity establishes no physical claim.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "contract_version", "frozen_at_commit", "inventory_date", "scales", "scenarios", "aliases"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "contract_version": { "$ref": "#/$defs/nonEmptyString" },
+    "frozen_at_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "inventory_date": { "type": "string", "format": "date" },
+    "scales": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/scale" } },
+    "scenarios": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/scenario" } },
+    "aliases": { "type": "array", "items": { "$ref": "#/$defs/alias" } }
+  },
+  "$defs": {
+    "nonEmptyString": { "type": "string", "minLength": 1 },
+    "stringList": { "type": "array", "items": { "$ref": "#/$defs/nonEmptyString" } },
+    "gateId": {
+      "enum": [
+        "static-trace",
+        "mathematical-well-posedness",
+        "numerical-validity",
+        "scientific-validity",
+        "scale-appropriateness",
+        "ui-interpretive-truth",
+        "performance-operational-safety"
+      ]
+    },
+    "epistemicTag": {
+      "enum": [
+        "AXIOM", "THEOREM", "SELECTION", "CONJECTURE", "IMPOSED", "EMERGENT",
+        "OPEN", "PARAMETRIC", "CLOSED NEGATIVE", "RETRACTED", "CLOSED RESOLVED", "REFERENCE"
+      ]
+    },
+    "sourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "role"],
+      "properties": {
+        "path": { "$ref": "#/$defs/nonEmptyString" },
+        "role": {
+          "enum": ["registry", "initializer", "loader", "backend", "parameter", "observable", "test", "ui", "documentation", "evidence"]
+        },
+        "symbol": { "type": ["string", "null"] },
+        "line_start": { "type": ["integer", "null"], "minimum": 1 },
+        "line_end": { "type": ["integer", "null"], "minimum": 1 }
+      }
+    },
+    "evidenceArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "path_or_uri", "commit", "digest", "result", "date"],
+      "properties": {
+        "kind": { "enum": ["test", "result-bundle", "proof", "derivation", "audit", "external-reference"] },
+        "path_or_uri": { "$ref": "#/$defs/nonEmptyString" },
+        "commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "symbol": { "type": ["string", "null"] },
+        "line_start": { "type": ["integer", "null"], "minimum": 1 },
+        "line_end": { "type": ["integer", "null"], "minimum": 1 },
+        "test_command": { "type": ["string", "null"] },
+        "result": { "$ref": "#/$defs/nonEmptyString" },
+        "date": { "type": "string", "format": "date" }
+      }
+    },
+    "scale": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "mode_id", "display_name", "visibility", "contract_status", "may_represent", "must_not_imply", "source_refs"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^scale[0-9]+(?:-[a-z0-9-]+)?$" },
+        "mode_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "display_name": { "$ref": "#/$defs/nonEmptyString" },
+        "visibility": { "enum": ["visible", "hidden-unfinished", "unregistered"] },
+        "contract_status": { "enum": ["open", "frozen", "qualified", "superseded"] },
+        "may_represent": { "$ref": "#/$defs/stringList" },
+        "must_not_imply": { "$ref": "#/$defs/stringList" },
+        "source_refs": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/sourceRef" } }
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "value_or_domain", "provenance", "source_refs"],
+      "properties": {
+        "name": { "$ref": "#/$defs/nonEmptyString" },
+        "value_or_domain": {},
+        "provenance": { "$ref": "#/$defs/epistemicTag" },
+        "source_refs": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/sourceRef" } }
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_id", "wording", "scope", "epistemic_tag", "evidence", "supporting_gates", "limitations", "disposition"],
+      "properties": {
+        "claim_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "wording": { "$ref": "#/$defs/nonEmptyString" },
+        "scope": { "$ref": "#/$defs/nonEmptyString" },
+        "epistemic_tag": { "$ref": "#/$defs/epistemicTag" },
+        "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidenceArtifact" } },
+        "supporting_gates": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/gateId" } },
+        "limitations": { "$ref": "#/$defs/stringList" },
+        "disposition": { "enum": ["proposed", "accepted-within-scope", "prohibited", "failed", "retracted", "resolved"] }
+      }
+    },
+    "observable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "implementation", "source_fields", "units", "role", "expected_domain", "comparator", "backend_availability", "allowed_interpretation"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "implementation": { "$ref": "#/$defs/sourceRef" },
+        "source_fields": { "$ref": "#/$defs/stringList" },
+        "units": { "$ref": "#/$defs/nonEmptyString" },
+        "role": { "enum": ["primary", "derived", "independent-oracle", "redundant-integrity", "presentation-only"] },
+        "expected_domain": { "$ref": "#/$defs/nonEmptyString" },
+        "comparator": { "$ref": "#/$defs/nonEmptyString" },
+        "backend_availability": { "$ref": "#/$defs/stringList" },
+        "allowed_interpretation": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "backendSupport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["compute_backend", "runtime", "transport", "build_id", "availability", "semantic_parity_class", "tested_configurations", "limitations", "evidence"],
+      "properties": {
+        "compute_backend": { "enum": ["cpu", "gpu", "none"] },
+        "runtime": { "enum": ["native", "wasm-main", "wasm-worker", "javascript-model", "none"] },
+        "transport": { "enum": ["in-process", "web-worker", "websocket", "none"] },
+        "build_id": { "$ref": "#/$defs/nonEmptyString" },
+        "availability": { "enum": ["supported", "partial", "unsupported", "unknown"] },
+        "semantic_parity_class": { "$ref": "#/$defs/nonEmptyString" },
+        "tested_configurations": { "$ref": "#/$defs/stringList" },
+        "limitations": { "$ref": "#/$defs/stringList" },
+        "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidenceArtifact" } }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "availability": { "const": "supported" } } },
+          "then": { "properties": { "evidence": { "minItems": 1 } } }
+        }
+      ]
+    },
+    "backendTolerance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["backend_pair", "observable_id", "norm", "absolute_tolerance", "relative_tolerance", "exact_bit", "applicability_domain", "rationale"],
+      "properties": {
+        "backend_pair": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "$ref": "#/$defs/nonEmptyString" } },
+        "observable_id": { "$ref": "#/$defs/nonEmptyString" },
+        "norm": { "$ref": "#/$defs/nonEmptyString" },
+        "absolute_tolerance": { "type": "number", "minimum": 0 },
+        "relative_tolerance": { "type": "number", "minimum": 0 },
+        "exact_bit": { "type": "boolean" },
+        "applicability_domain": { "$ref": "#/$defs/nonEmptyString" },
+        "rationale": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "gateState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "evidence", "blocking_findings"],
+      "properties": {
+        "status": { "enum": ["not-started", "in-progress", "pass", "fail", "blocked"] },
+        "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidenceArtifact" } },
+        "blocking_findings": { "$ref": "#/$defs/stringList" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "pass" } } },
+          "then": { "properties": { "evidence": { "minItems": 1 } } }
+        }
+      ]
+    },
+    "gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["static-trace", "mathematical-well-posedness", "numerical-validity", "scientific-validity", "scale-appropriateness", "ui-interpretive-truth", "performance-operational-safety"],
+      "properties": {
+        "static-trace": { "$ref": "#/$defs/gateState" },
+        "mathematical-well-posedness": { "$ref": "#/$defs/gateState" },
+        "numerical-validity": { "$ref": "#/$defs/gateState" },
+        "scientific-validity": { "$ref": "#/$defs/gateState" },
+        "scale-appropriateness": { "$ref": "#/$defs/gateState" },
+        "ui-interpretive-truth": { "$ref": "#/$defs/gateState" },
+        "performance-operational-safety": { "$ref": "#/$defs/gateState" }
+      }
+    },
+    "overlay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "applicability", "source_observable", "role", "backend_availability", "cadence_policy", "prohibited_interpretation"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "applicability": { "$ref": "#/$defs/nonEmptyString" },
+        "source_observable": { "type": ["string", "null"] },
+        "role": { "enum": ["scientific", "derived", "presentation-only", "reference-only"] },
+        "backend_availability": { "$ref": "#/$defs/stringList" },
+        "cadence_policy": { "$ref": "#/$defs/nonEmptyString" },
+        "prohibited_interpretation": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "visualDefaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["overlays", "prohibited_overlays"],
+      "properties": {
+        "overlays": { "type": "array", "items": { "$ref": "#/$defs/overlay" } },
+        "prohibited_overlays": { "$ref": "#/$defs/stringList" }
+      }
+    },
+    "performanceBudget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reference_frame_ms", "simulation_cadence_policy", "rendering_cadence_policy", "hidden_ui_policy", "reference_profile"],
+      "properties": {
+        "reference_frame_ms": { "type": "number", "exclusiveMinimum": 0 },
+        "simulation_cadence_policy": { "$ref": "#/$defs/nonEmptyString" },
+        "rendering_cadence_policy": { "$ref": "#/$defs/nonEmptyString" },
+        "hidden_ui_policy": { "$ref": "#/$defs/nonEmptyString" },
+        "reference_profile": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "scenario": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "display_name", "scale", "model_relation", "experimental_roles", "record_lifecycle",
+        "mathematical_model", "state_space", "initial_conditions", "boundary_conditions", "enabled_terms",
+        "parameter_provenance", "native_units", "physical_calibration", "observables", "accepted_claims",
+        "prohibited_claims", "validation_protocol", "acceptance_gates", "falsification_gates",
+        "known_limitations", "backend_support", "backend_tolerances", "resolution_domain", "cross_scale_inputs",
+        "visual_defaults", "performance_budget", "evidence_links", "contract_version", "qualification_state", "source_refs"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "display_name": { "$ref": "#/$defs/nonEmptyString" },
+        "scale": { "type": "string", "pattern": "^scale[0-9]+(?:-[a-z0-9-]+)?$" },
+        "model_relation": { "enum": ["native-operator", "selected-extension", "imported-effective", "pedagogical", "reference-only"] },
+        "experimental_roles": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["candidate", "null-control", "mirror-control", "calibration", "benchmark", "regression", "demonstration", "reference"] }
+        },
+        "record_lifecycle": { "enum": ["open", "closed-negative", "resolved", "retracted", "superseded"] },
+        "mathematical_model": { "$ref": "#/$defs/nonEmptyString" },
+        "state_space": { "$ref": "#/$defs/nonEmptyString" },
+        "initial_conditions": { "$ref": "#/$defs/nonEmptyString" },
+        "boundary_conditions": { "$ref": "#/$defs/nonEmptyString" },
+        "enabled_terms": { "$ref": "#/$defs/stringList" },
+        "parameter_provenance": { "type": "array", "items": { "$ref": "#/$defs/parameter" } },
+        "native_units": { "$ref": "#/$defs/nonEmptyString" },
+        "physical_calibration": { "$ref": "#/$defs/nonEmptyString" },
+        "observables": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/observable" } },
+        "accepted_claims": { "type": "array", "items": { "$ref": "#/$defs/claim" } },
+        "prohibited_claims": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/claim" } },
+        "validation_protocol": { "$ref": "#/$defs/nonEmptyString" },
+        "acceptance_gates": { "$ref": "#/$defs/gates" },
+        "falsification_gates": { "$ref": "#/$defs/stringList" },
+        "known_limitations": { "$ref": "#/$defs/stringList" },
+        "backend_support": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/backendSupport" } },
+        "backend_tolerances": { "type": "array", "items": { "$ref": "#/$defs/backendTolerance" } },
+        "resolution_domain": { "$ref": "#/$defs/nonEmptyString" },
+        "cross_scale_inputs": { "$ref": "#/$defs/stringList" },
+        "visual_defaults": { "$ref": "#/$defs/visualDefaults" },
+        "performance_budget": { "$ref": "#/$defs/performanceBudget" },
+        "evidence_links": { "type": "array", "items": { "$ref": "#/$defs/evidenceArtifact" } },
+        "contract_version": { "$ref": "#/$defs/nonEmptyString" },
+        "qualification_state": {
+          "enum": ["inventory-only", "not-started", "in-progress", "qualified-within-contract", "qualified-parametric", "pedagogical-only", "candidate-open", "blocked", "closed-negative", "reference-only"]
+        },
+        "source_refs": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/sourceRef" } }
+      }
+    },
+    "alias": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["alias", "canonical_id", "support", "scientific_equivalence", "source_refs"],
+      "properties": {
+        "alias": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "canonical_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "support": { "enum": ["supported", "deprecated", "broken", "removed"] },
+        "scientific_equivalence": { "type": "boolean" },
+        "source_refs": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/sourceRef" } }
+      }
+    }
+  }
+}

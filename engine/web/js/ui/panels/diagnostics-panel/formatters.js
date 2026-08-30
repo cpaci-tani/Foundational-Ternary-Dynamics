@@ -12,9 +12,10 @@
 const DASH = '\u2014';
 
 function formatScalar(v) {
-    // Missing / not-yet-populated → render as 0 so the row is always "wired"
-    if (v === null || v === undefined) return '0';
-    if (typeof v !== 'number' || Number.isNaN(v)) return DASH;
+    // Missing / not-yet-published is not a scientific zero. Keep the absence
+    // visible so an unresolved descriptor cannot masquerade as a measurement.
+    if (v === null || v === undefined) return DASH;
+    if (typeof v !== 'number' || !Number.isFinite(v)) return DASH;
     if (v === 0) return '0';
     if (Number.isInteger(v) && Math.abs(v) < 1e6) return String(v);
     const abs = Math.abs(v);
@@ -33,7 +34,10 @@ export function formatValue(value, opts = {}) {
         if (value === null || value === undefined || value === '') return DASH;
         return String(value);
     }
-    if (kind === 'boolean') return value ? 'on' : 'off';
+    if (kind === 'boolean') {
+        if (value === null || value === undefined) return DASH;
+        return value ? 'on' : 'off';
+    }
     if (kind === 'scalar') return formatScalar(value);
     if (!Array.isArray(value)) return DASH;
     if (kind === 'vector') return value.map(formatScalar).join(', ');

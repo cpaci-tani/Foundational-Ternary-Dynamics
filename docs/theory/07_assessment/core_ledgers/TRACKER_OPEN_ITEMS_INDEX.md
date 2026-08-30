@@ -1,16 +1,16 @@
 # Open Items Tracker — Index
 
-Generated companion to `TRACKER_OPEN_ITEMS.md` (85 item headings). **Do not edit by hand** — regenerate with `python scripts/theory/build_open_items_index.py`.
+Generated companion to `TRACKER_OPEN_ITEMS.md` (84 item headings). **Do not edit by hand** — regenerate with `python scripts/theory/build_open_items_index.py`.
 
 This is a *navigation aid*, not a source of truth. `TRACKER_OPEN_ITEMS.md` remains canonical; open/closed status here is read mechanically from each item's own heading text (a `CLOSED`/`RETRACTED`/`not counted as open` marker), not reclassified. Where this index and the tracker's prose disagree, the tracker wins.
 
-**42 open, 43 closed/retired** (of 85 item headings).
+**41 open, 43 closed/retired** (of 84 item headings).
 
 ---
 
 ## §1 Engine code
 
-**10 open / 20 total.**
+**9 open / 19 total.**
 
 | # | Item | Status | Open? |
 |---|---|---|---|

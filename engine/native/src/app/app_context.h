@@ -114,7 +114,6 @@ struct AppContext {
     ftd::TermToggles live_toggles;
     ftd::native::BridgeKnobs live_knobs;
     bool have_live = false;
-    bool backend_cpu = false;  // drives the CPU-only gpu-warning surfacing
     // Titles of the toggle categories the user has expanded (scenario-picker
     // pattern: only an expanded category builds its item rows).
     std::vector<std::string> tog_expanded_groups;

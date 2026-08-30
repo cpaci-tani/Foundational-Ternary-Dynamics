@@ -8,8 +8,55 @@ import { telemetryHub } from '../../../telemetry-hub.js';
 import * as consts from '../../../constants.js';
 import { PerfFlags } from '../../../config/perf-flags.js';
 import { isPanelLive } from '../panel-visibility.js';
+import { formatValue } from '../diagnostics-panel/formatters.js';
+import { getScale0State } from '../../../scales/scale0/state/store.js';
 
 const LS_HIDDEN = 'ftd.chart.lagrangian.hidden';
+const EMPTY_SCENARIO_ID = 'empty';
+
+function finiteNumber(value) {
+    return typeof value === 'number' && Number.isFinite(value) ? value : null;
+}
+
+function normalizeExactZero(value) {
+    return Object.is(value, -0) ? 0 : value;
+}
+
+/**
+ * Interpret only the qualified Scenario-1 null control. The Born-Infeld term
+ * is state-independent there, so subtracting it from the reported total
+ * exposes the measured excitation above the observer/functional baseline.
+ * No value is synthesized when the current telemetry group is absent/stale.
+ */
+export function interpretEmptyObserverBaseline(lagrangian, {
+    scenarioId = '',
+    telemetryMeta = null,
+} = {}) {
+    if (scenarioId !== EMPTY_SCENARIO_ID) {
+        return { status: 'not-applicable', observerBaseline: null, excitation: null };
+    }
+    if (!telemetryMeta || telemetryMeta.stale === true
+        || !Number.isFinite(telemetryMeta.tick) || !lagrangian) {
+        return { status: 'unavailable', observerBaseline: null, excitation: null };
+    }
+    const observerBaseline = finiteNumber(lagrangian.bornInfeld);
+    const total = finiteNumber(lagrangian.total);
+    if (observerBaseline === null) {
+        return { status: 'unavailable', observerBaseline: null, excitation: null };
+    }
+    if (total === null) {
+        return { status: 'baseline-only', observerBaseline, excitation: null };
+    }
+    return {
+        status: 'supported-null-control',
+        observerBaseline,
+        excitation: normalizeExactZero(total - observerBaseline),
+    };
+}
+
+function setTextIfChanged(element, text) {
+    if (element && element.textContent !== text) element.textContent = text;
+}
 
 function loadHidden() {
     try {
@@ -27,6 +74,17 @@ export class LagrangianPanelComponent {
         this.el = panelEl;
         this.tables = [];
         this.cards = new Map(); // term.key → { term, card, chart }
+        this._telemetryStatusStamp = '';
+        this.cardObserver = typeof IntersectionObserver === 'function'
+            ? new IntersectionObserver((entries) => {
+                for (const observed of entries) {
+                    const entry = [...this.cards.values()].find(
+                        candidate => candidate.card === observed.target,
+                    );
+                    if (entry) entry.onScreen = observed.isIntersecting;
+                }
+            }, { root: null, rootMargin: '150px 0px', threshold: 0 })
+            : null;
     }
 
     init() {
@@ -39,6 +97,11 @@ export class LagrangianPanelComponent {
 
         this.hidden = loadHidden();
         this.grid = this.el.querySelector('.lag-charts-grid');
+        this.telemetryStatus = this.el.querySelector('.lag-telemetry-status');
+        this.observerCard = this.el.querySelector('.lag-observer-baseline');
+        this.observerValue = this.el.querySelector('[data-lag-observer-value]');
+        this.excitationValue = this.el.querySelector('[data-lag-excitation-value]');
+        this.observerStatusText = this.el.querySelector('[data-lag-observer-status-text]');
 
         // Per-term small multiples (stacked vertically, each with its own
         // y-scale) replace the single overlapping stacked-area chart, so every
@@ -63,7 +126,10 @@ export class LagrangianPanelComponent {
         hubView.consts = consts;
         const dataCol = this.el.querySelector('.lag-data-col');
         const actionTable = new DiagnosticsTable(
-            { id: 'lag-action', title: 'Action & Constraints', rows: actionRows },
+            {
+                id: 'lag-action', title: 'Action & Constraints', rows: actionRows,
+                telemetryGroups: ['lagrangian', 'audit', 'diagnostics'],
+            },
             hubView,
             { resetScope: 0 }
         );
@@ -77,6 +143,7 @@ export class LagrangianPanelComponent {
 
         // Initial render so cells show 0 / constants immediately.
         for (const t of this.tables) t.update();
+        this._updateObserverBaseline();
 
         return this;
     }
@@ -111,7 +178,7 @@ export class LagrangianPanelComponent {
             hub:    telemetryHub.lag,
         });
         requestAnimationFrame(() => card.classList.add('is-mounted'));
-        return { term, card, chart };
+        return { term, card, chart, onScreen: true };
     }
 
     /** Reconcile rendered cards with the non-hidden term set. */
@@ -120,6 +187,7 @@ export class LagrangianPanelComponent {
         for (const [key, entry] of this.cards) {
             if (this.hidden.has(key)) {
                 entry.chart.destroy();
+                this.cardObserver?.unobserve(entry.card);
                 entry.card.remove();
                 this.cards.delete(key);
             }
@@ -130,18 +198,68 @@ export class LagrangianPanelComponent {
             const entry = this._makeTermCard(term);
             this.grid.appendChild(entry.card);
             this.cards.set(term.key, entry);
+            this.cardObserver?.observe(entry.card);
         }
+    }
+
+    _updateObserverBaseline() {
+        if (!this.observerCard) return;
+        const interpretation = interpretEmptyObserverBaseline(
+            telemetryHub.s0?.lagrangian,
+            {
+                scenarioId: getScale0State().currentScenarioId,
+                telemetryMeta: telemetryHub.getScale0TelemetryMeta?.('lagrangian') ?? null,
+            },
+        );
+        if (this.observerCard.dataset.lagObserverStatus !== interpretation.status) {
+            this.observerCard.dataset.lagObserverStatus = interpretation.status;
+        }
+
+        const baselineText = interpretation.observerBaseline === null
+            ? '—' : formatValue(interpretation.observerBaseline);
+        const excitationText = interpretation.excitation === null
+            ? '—' : formatValue(interpretation.excitation);
+        setTextIfChanged(this.observerValue, baselineText);
+        setTextIfChanged(this.excitationValue, excitationText);
+        if (this.observerValue?.dataset.value !== baselineText) {
+            this.observerValue.dataset.value = baselineText;
+        }
+        if (this.excitationValue?.dataset.value !== excitationText) {
+            this.excitationValue.dataset.value = excitationText;
+        }
+
+        const statusText = {
+            'not-applicable': 'Baseline subtraction is shown only for Scenario 1 · Empty.',
+            unavailable: 'Awaiting a current empty-scenario Lagrangian sample. Unavailable is not zero.',
+            'baseline-only': 'Observer baseline published; total Lagrangian is unavailable, so Δℒ is not reported.',
+            'supported-null-control': 'Current empty-control sample; Δℒ is baseline-subtracted excitation.',
+        }[interpretation.status];
+        setTextIfChanged(this.observerStatusText, statusText);
     }
 
     update() {
         // V2: live when the active tab OR a non-collapsed floated window (fixes
         // the Lagrangian panel freezing while floated). Legacy: active tab only.
         if (PerfFlags.panelRenderV2 ? !isPanelLive(this.el) : !this.el.classList.contains('active')) return;
-        for (const entry of this.cards.values()) entry.chart.update();
+        const meta = telemetryHub.getScale0TelemetryMeta?.('lagrangian') ?? null;
+        const stale = !meta || meta.stale || !Number.isFinite(meta.tick);
+        const status = stale ? 'Lagrangian telemetry · waiting'
+            : `Lagrangian telemetry · t${meta.tick}`;
+        const statusStamp = `${stale ? 'stale' : 'current'}|${status}`;
+        if (statusStamp !== this._telemetryStatusStamp) {
+            this._telemetryStatusStamp = statusStamp;
+            setTextIfChanged(this.telemetryStatus, status);
+            this.el.classList.toggle('lag-telemetry-stale', stale);
+        }
+        for (const entry of this.cards.values()) {
+            if (entry.onScreen) entry.chart.update();
+        }
         for (const t of this.tables) t.update();
+        this._updateObserverBaseline();
     }
 
     cleanup() {
+        this.cardObserver?.disconnect();
         for (const entry of this.cards.values()) entry.chart.destroy();
         this.cards.clear();
         for (const t of this.tables) t.destroy();

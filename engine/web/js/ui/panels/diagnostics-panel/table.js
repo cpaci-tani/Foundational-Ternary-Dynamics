@@ -40,6 +40,27 @@ function readSource(hub, row) {
     return resolvePath(hub, src);
 }
 
+function telemetryGroupForRow(row) {
+    if (row.telemetryGroup) return row.telemetryGroup;
+    const sources = Array.isArray(row.source) ? row.source : [row.source];
+    for (const source of sources) {
+        if (typeof source !== 'string') continue;
+        if (source.startsWith('s0.diag.')) return 'diagnostics';
+        if (source.startsWith('s0.audit.')) return 'audit';
+        if (source.startsWith('s0.lagrangian.')) return 'lagrangian';
+        if (source.startsWith('s0.gravity.')) return 'gravity';
+    }
+    return null;
+}
+
+function rowTelemetryIsCurrent(hub, row, resetScope) {
+    if (resetScope !== 0 || typeof hub.getScale0TelemetryMeta !== 'function') return true;
+    const group = telemetryGroupForRow(row);
+    if (!group) return true;
+    const meta = hub.getScale0TelemetryMeta(group);
+    return !!meta && meta.stale !== true && Number.isFinite(meta.tick);
+}
+
 function resolveBuffer(hub, trend) {
     if (!trend) return null;
     return resolvePath(hub, trend);
@@ -67,6 +88,10 @@ function scopeTick(hub, scope) {
     if (scope === 2 || scope === 3) return hub.s2?.diag?.tick ?? null;
     if (scope === 5) return hub.s5?.diag?.tick ?? null;
     return null;
+}
+
+function setTextIfChanged(el, text) {
+    if (el && el.textContent !== text) el.textContent = text;
 }
 
 class RunningStats {
@@ -150,9 +175,20 @@ export class DiagnosticsTable {
         this.cells = new Map();
         this.stats = new Map();
         this.pulseTokens = new Map();
-        this.sparks = [];
+        this.sparkEntries = [];
+        this.sparkEntriesByHost = new Map();
         this.trendBuffers = new Map();
         this.sampleStamps = new Map();
+        this.sparkObserver = typeof IntersectionObserver === 'function'
+            ? new IntersectionObserver((entries) => {
+                for (const observed of entries) {
+                    const entry = this.sparkEntriesByHost.get(observed.target);
+                    if (!entry) continue;
+                    if (observed.isIntersecting) this.mountSpark(entry);
+                    else this.unmountSpark(entry);
+                }
+            })
+            : null;
 
         section.rows.forEach((row, idx) => {
             const tr = document.createElement('tr');
@@ -218,13 +254,14 @@ export class DiagnosticsTable {
                     trendCell.appendChild(sparkHost);
                     const buf = resolveBuffer(hub, row.trend);
                     if (buf && typeof buf.get === 'function') {
-                        const spark = new Sparkline(sparkHost, {
-                            buffer: buf,
-                            color:  'var(--accent)',
-                            height: 22,
-                            visibleSamples: TABLE_SPARK_VISIBLE_SAMPLES,
-                        });
-                        this.sparks.push(spark);
+                        const entry = { host: sparkHost, buffer: buf, spark: null, stamp: '' };
+                        this.sparkEntries.push(entry);
+                        this.sparkEntriesByHost.set(sparkHost, entry);
+                        if (this.sparkObserver) this.sparkObserver.observe(sparkHost);
+                        // IntersectionObserver is unavailable only on legacy
+                        // browsers. Preserve the trend there rather than
+                        // silently dropping a visible scientific channel.
+                        else this.mountSpark(entry);
                         this.trendBuffers.set(row.id, buf);
                     }
                     trendRow.appendChild(trendCell);
@@ -253,9 +290,14 @@ export class DiagnosticsTable {
         this.updateFreshness();
 
         for (const row of this.section.rows) {
-            const raw = readSource(this.hub, row);
+            // A retained native value is useful provenance, but it is not a
+            // current measurement after invalidation. Suppress it per row so
+            // mixed state/audit sections can keep fresh channels visible.
+            const current = rowTelemetryIsCurrent(this.hub, row, this.resetScope);
+            const raw = current ? readSource(this.hub, row) : undefined;
             const formatted = formatValue(raw, { kind: row.format || 'scalar' });
             const cell = this.cells.get(row.id);
+            cell.closest('tr')?.classList.toggle('diag-row-telemetry-stale', !current);
             if (cell.textContent !== formatted) {
                 cell.textContent = formatted;
                 if (this.pulseTokens.get(row.id) !== undefined) {
@@ -276,14 +318,44 @@ export class DiagnosticsTable {
                 }
             }
         }
-        for (const spark of this.sparks) spark.update();
+        for (const entry of this.sparkEntries) {
+            if (!entry.spark) continue;
+            const stamp = bufferStamp(entry.buffer);
+            if (stamp === entry.stamp) continue;
+            entry.stamp = stamp;
+            entry.spark.update();
+        }
+    }
+
+    mountSpark(entry) {
+        if (entry.spark) return;
+        entry.spark = new Sparkline(entry.host, {
+            buffer: entry.buffer,
+            color: 'var(--accent)',
+            height: 22,
+            visibleSamples: TABLE_SPARK_VISIBLE_SAMPLES,
+        });
+        entry.stamp = bufferStamp(entry.buffer);
+        entry.spark.update();
+    }
+
+    unmountSpark(entry) {
+        if (!entry.spark) return;
+        entry.spark.destroy();
+        entry.spark = null;
+        entry.stamp = '';
+        // uPlot currently removes its root in destroy(); keep the lifecycle
+        // contract explicit in case that implementation changes.
+        entry.host.replaceChildren();
     }
 
     /**
      * Native GPU telemetry is deliberately sampled per group. This compact
      * section header is provenance, not a scheduling control: it tells the
-     * reader exactly which completed tick (and receipt age) produced the
-     * values below, including mixed state/audit sections.
+     * reader exactly which completed tick produced the values below,
+     * including mixed state/audit sections. Receipt age belongs in a tooltip
+     * or low-rate inspector; putting it in live text causes a DOM mutation on
+     * every render frame even when no scientific sample advanced.
      */
     updateFreshness() {
         if (!this.freshnessEl || !this.telemetryGroups?.length
@@ -294,10 +366,9 @@ export class DiagnosticsTable {
             if (!meta || meta.stale || !Number.isFinite(meta.tick)) {
                 return { label, text: `${label}: waiting`, stale: true };
             }
-            const age = Number.isFinite(meta.ageMs) ? Math.max(0, Math.round(meta.ageMs)) : null;
             return {
                 label,
-                text: `${label} t${meta.tick}${age === null ? '' : ` · ${age} ms`}`,
+                text: `${label} t${meta.tick}`,
                 stale: false,
             };
         });
@@ -305,9 +376,10 @@ export class DiagnosticsTable {
         if (this.freshnessEl.textContent !== text) this.freshnessEl.textContent = text;
         const stale = entries.some(entry => entry.stale);
         this.el.classList.toggle('diag-telemetry-stale', stale);
-        this.freshnessEl.title = stale
+        const title = stale
             ? 'Waiting for a settled native GPU telemetry snapshot.'
             : 'Each group is sampled independently by the native GPU scheduler.';
+        if (this.freshnessEl.title !== title) this.freshnessEl.title = title;
     }
 
     resetStats() {
@@ -330,19 +402,21 @@ export class DiagnosticsTable {
         const avgCell = this.cells.get(`${rowId}:avg`);
         if (!stats || !minCell || !maxCell || !avgCell) return;
         if (stats.count === 0) {
-            minCell.textContent = DASH;
-            maxCell.textContent = DASH;
-            avgCell.textContent = DASH;
+            setTextIfChanged(minCell, DASH);
+            setTextIfChanged(maxCell, DASH);
+            setTextIfChanged(avgCell, DASH);
             return;
         }
-        minCell.textContent = formatValue(stats.min, { kind: 'scalar' });
-        maxCell.textContent = formatValue(stats.max, { kind: 'scalar' });
-        avgCell.textContent = formatValue(stats.avg, { kind: 'scalar' });
+        setTextIfChanged(minCell, formatValue(stats.min, { kind: 'scalar' }));
+        setTextIfChanged(maxCell, formatValue(stats.max, { kind: 'scalar' }));
+        setTextIfChanged(avgCell, formatValue(stats.avg, { kind: 'scalar' }));
     }
 
     destroy() {
-        for (const s of this.sparks) s.destroy();
-        this.sparks.length = 0;
+        this.sparkObserver?.disconnect();
+        for (const entry of this.sparkEntries) this.unmountSpark(entry);
+        this.sparkEntries.length = 0;
+        this.sparkEntriesByHost.clear();
         this.cells.clear();
         this.stats.clear();
         this.trendBuffers.clear();

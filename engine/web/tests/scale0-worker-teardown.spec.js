@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * Scale-0 WASM worker-teardown regression (Phase 1 lifecycle).
+ * Scale-0 WASM worker reuse + acknowledged teardown regression.
  *
  * `scale0-worker.spec.js` proves a WasmBridgeProxy spins up for flux-*
  * scenarios and that switching to a direct-WASM scenario flips `useFluxMock`
@@ -9,9 +9,9 @@
  * most likely to leak workers since the WASM worker became the default deployed
  * path.
  *
- * This spec asserts conservation of live WasmBridgeProxy workers across all
- * three teardown paths (scenario churn, resize, scale switch) via the
- * `window.__ftdWasmWorkers()` debug counter (wasm-bridge-proxy.js):
+ * This spec asserts one healthy worker/module/pthread pool is reused across
+ * scenario and size changes, while leaving Scale 0 performs an acknowledged
+ * final teardown. The `window.__ftdWasmWorkers()` debug counter preserves:
  *   created === terminated + live   at every step, and   live ≤ 1   always.
  *
  * Requires COOP/COEP (SharedArrayBuffer) — SKIPs on a non-isolated server.
@@ -29,7 +29,12 @@ const workers = (page) => page.evaluate(() =>
 const fmReady = (page) => page.evaluate(async () => {
     const st = (await import('/js/scales/scale0/state/store.js')).getScale0State?.();
     const fm = st?.fluxMock;
-    return { isWorker: !!fm?.isWorker, ready: !!fm?.ready, useFluxMock: !!st?.useFluxMock };
+    return {
+        isWorker: !!fm?.isWorker,
+        ready: !!fm?.ready,
+        useFluxMock: !!st?.useFluxMock,
+        debug: fm?.lifecycleDebug ?? null,
+    };
 });
 
 // Resize to a DIFFERENT existing dropdown option (whatever sizes the build offers)
@@ -48,10 +53,13 @@ const resizeToOther = (page) => page.evaluate(() => {
 
 test.beforeEach(async ({ page }) => { page.setDefaultTimeout(30_000); });
 
-test.describe('Scale-0 WASM worker teardown — no orphaned workers', () => {
-    test('WASM workers are conserved across scenario churn, resize, and scale switch', async ({ page }) => {
+test.describe('Scale-0 WASM worker reuse and teardown', () => {
+    test('one module survives reconfiguration and final exit is acknowledged', async ({ page }) => {
         test.setTimeout(120_000);
-        await gotoAndReady(page);
+        // This is specifically a WasmBridgeProxy lifecycle contract. A local
+        // ws_server may be running during development, so force the worker
+        // backend instead of accidentally validating (or waiting on) native.
+        await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
         test.skip(!(await coiReady(page)), 'requires cross-origin isolation (serve.py --cache COOP/COEP)');
 
         // Debug counter must be installed (wasm-bridge-proxy.js installs it at module load).
@@ -73,18 +81,28 @@ test.describe('Scale-0 WASM worker teardown — no orphaned workers', () => {
         };
 
         const w0 = await invariant('baseline');
+        const fm0 = await fmReady(page);
         expect(w0.live, 'one live WASM worker after flux-pulse boot').toBe(1);
+        expect(fm0.debug?.moduleInitCount, 'threaded module initialized exactly once').toBe(1);
+        expect(fm0.debug?.workerRuntimeId, 'worker exposes a stable runtime identity').toBeTruthy();
 
-        // ── (1) Lattice resize — rebuilds the WasmBridgeProxy; old worker must terminate ──
+        // ── (1) Lattice resize — rebuild RenderBridge inside the same worker/module ──
         const targetSize = await resizeToOther(page);
         expect(targetSize, 'a second lattice-size option exists to resize to').not.toBeNull();
         await expect.poll(async () => (await fmReady(page)).ready,
             { timeout: 20_000, message: 'WASM worker did not re-ready after resize' }).toBe(true);
+        await expect.poll(async () => (await fmReady(page)).debug?.renderBridgeGeneration ?? 0,
+            { timeout: 20_000, message: 'RenderBridge generation did not advance after resize' })
+            .toBeGreaterThan(fm0.debug.renderBridgeGeneration);
         const wResize = await invariant('after resize');
-        expect(wResize.terminated, 'resize terminated the prior WASM worker').toBeGreaterThanOrEqual(w0.terminated + 1);
+        const fmResize = await fmReady(page);
+        expect(wResize.created, 'resize creates no replacement Worker').toBe(w0.created);
+        expect(wResize.terminated, 'resize terminates no Worker').toBe(w0.terminated);
         expect(wResize.live, 'still exactly one live WASM worker after resize').toBe(1);
+        expect(fmResize.debug.workerRuntimeId, 'resize reuses worker runtime').toBe(fm0.debug.workerRuntimeId);
+        expect(fmResize.debug.moduleInitCount, 'resize reuses the module/pthread pool').toBe(1);
 
-        // ── (2) Scenario churn — switch to another worker scenario if available ──
+        // ── (2) Scenario churn — another RenderBridge generation, same runtime ──
         const altScenario = await page.evaluate(() => {
             const sel = document.getElementById('scenario-select');
             if (!sel) return null;
@@ -101,17 +119,28 @@ test.describe('Scale-0 WASM worker teardown — no orphaned workers', () => {
                 sel.value = v; sel.dispatchEvent(new Event('change', { bubbles: true }));
             }, altScenario);
             await expect.poll(async () => (await fmReady(page)).ready, { timeout: 20_000 }).toBe(true);
+            await expect.poll(async () => (await fmReady(page)).debug?.renderBridgeGeneration ?? 0,
+                { timeout: 20_000 }).toBeGreaterThan(fmResize.debug.renderBridgeGeneration);
             const wChurn = await invariant(`after churn → ${altScenario}`);
-            expect(wChurn.terminated, 'scenario churn terminated the prior WASM worker')
-                .toBeGreaterThanOrEqual(before.terminated + 1);
+            const fmChurn = await fmReady(page);
+            expect(wChurn.created, 'scenario churn creates no replacement Worker').toBe(before.created);
+            expect(wChurn.terminated, 'scenario churn terminates no Worker').toBe(before.terminated);
             expect(wChurn.live, 'still exactly one live WASM worker after churn').toBe(1);
+            expect(fmChurn.debug.workerRuntimeId).toBe(fm0.debug.workerRuntimeId);
+            expect(fmChurn.debug.moduleInitCount).toBe(1);
         }
 
-        // ── (3) Scale switch away from lattice — proxy cleared, worker terminated ──
+        // ── (3) Scale switch away — final worker teardown must acknowledge ──
+        const beforeExit = await workers(page);
         await switchMode(page, 'particles');
-        await page.waitForTimeout(500);
+        await expect.poll(async () => (await workers(page))?.live,
+            { timeout: 5_000, message: 'worker did not acknowledge final disposal' }).toBe(0);
         const wAway = await invariant('after leaving Scale 0');
         expect(wAway.live, 'no live WASM worker once Scale 0 is exited').toBe(0);
+        expect(wAway.disposeAcknowledged, 'exit observed a worker disposal acknowledgement')
+            .toBe(beforeExit.disposeAcknowledged + 1);
+        expect(wAway.hardTerminated, 'healthy exit did not need hard-timeout termination')
+            .toBe(beforeExit.hardTerminated);
 
         // ── Return to lattice — a fresh WASM worker comes up, still conserved ──
         await switchMode(page, 'lattice');
@@ -119,5 +148,6 @@ test.describe('Scale-0 WASM worker teardown — no orphaned workers', () => {
             { timeout: 20_000, message: 'WASM worker did not come back on Scale-0 re-entry' }).toBe(true);
         const wBack = await invariant('after Scale-0 re-entry');
         expect(wBack.live, 'one live WASM worker after re-entry').toBe(1);
+        expect(wBack.created, 're-entry creates exactly one new worker').toBe(wAway.created + 1);
     });
 });

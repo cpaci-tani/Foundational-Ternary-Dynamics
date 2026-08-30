@@ -11605,12 +11605,12 @@
       ]
     },
     {
-      "path": "engine/tests/test_cpu_warnings.cpp",
+      "path": "engine/tests/test_cpu_pairwise_force_channels.cpp",
       "lang": "cpp",
-      "loc": 111,
+      "loc": 73,
       "subsystem": "tests",
       "primary": false,
-      "purpose": "@file test_cpu_warnings.cpp @brief CPU Yukawa / exchange are live pairwise channels, not GPU-only no-ops.",
+      "purpose": "@file test_cpu_pairwise_force_channels.cpp @brief CPU Yukawa / exchange are live pairwise channels, not GPU-only no-ops.",
       "symbols": []
     },
     {

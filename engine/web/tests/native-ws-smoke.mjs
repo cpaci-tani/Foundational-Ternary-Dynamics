@@ -81,6 +81,28 @@ function u32(view, byteOffset) {
     return view.getUint32(byteOffset, true);
 }
 
+function assertCanonicalDigestShape(digest, expected = {}) {
+    assert.equal(digest.type, 'dynamical_state_digest');
+    assert.equal(digest.schemaVersion, 1);
+    assert.equal(digest.latticeSize, expected.latticeSize);
+    assert.equal(digest.siteCount, expected.latticeSize ** 3);
+    assert(Number.isSafeInteger(digest.tick));
+    assert(Number.isSafeInteger(digest.stateVersion));
+    assert(Number.isSafeInteger(digest.sourceEpoch));
+    assert.equal(digest.telemetrySourceEpoch, digest.sourceEpoch);
+    assert.match(digest.hashLo, /^[0-9a-f]{16}$/);
+    assert.match(digest.hashHi, /^[0-9a-f]{16}$/);
+    assert(Number.isSafeInteger(digest.nonfiniteValueCount));
+    assert(Number.isSafeInteger(digest.nondefaultValueCount));
+    assert.equal(digest.deviceToHostBytes, 32,
+        'native CUDA digest must copy only the fixed accumulator');
+    assert.equal(digest.fullMirrorCalls, 0,
+        'canonical digest must not materialize the full CUDA voxel mirror');
+    assert.equal(digest.compute, 'GPU');
+    assert.equal(digest.runtime, 'native');
+    assert.equal(digest.transport, 'websocket');
+}
+
 const FTV2 = Object.freeze({
     MAGIC: 0x32565446,
     HEADER_BYTES: 20,
@@ -154,6 +176,41 @@ try {
     assert.equal(inbox.some((message) => message.type === 'json'
         && message.value.type === 'telemetry_snapshot'), false,
     'a reconnect must not receive stale telemetry before it establishes demand');
+
+    const empty = await request({
+        cmd: 'setup_scenario',
+        name: 'empty',
+    }, 30000);
+    assert.equal(empty.ok, true);
+    assert.equal(empty.scenario, 'empty');
+
+    const emptyDigest0 = await request({ cmd: 'get_dynamical_state_digest' }, 30000);
+    assertCanonicalDigestShape(emptyDigest0, { latticeSize: 16 });
+    assert.equal(emptyDigest0.tick, 0);
+    assert.equal(emptyDigest0.sourceEpoch, empty.sourceEpoch);
+    assert.equal(emptyDigest0.nonfiniteValueCount, 0);
+    assert.equal(emptyDigest0.nondefaultValueCount, 0);
+    assert.equal(emptyDigest0.exactDefaultRecord, true);
+
+    socket.send(JSON.stringify({ cmd: 'tick' }));
+    const emptyTick = await waitFor(
+        (message) => message.type === 'json'
+            && message.value.type === 'tick_complete'
+            && message.value.tick === 1,
+        'empty tick completion', 30000);
+    assert.equal(emptyTick.value.tick, 1);
+
+    const emptyDigest1 = await request({ cmd: 'get_dynamical_state_digest' }, 30000);
+    assertCanonicalDigestShape(emptyDigest1, { latticeSize: 16 });
+    assert.equal(emptyDigest1.tick, 1);
+    assert(emptyDigest1.stateVersion > emptyDigest0.stateVersion);
+    assert.equal(emptyDigest1.hashLo, emptyDigest0.hashLo,
+        'empty canonical hash low lane must ignore clocks');
+    assert.equal(emptyDigest1.hashHi, emptyDigest0.hashHi,
+        'empty canonical hash high lane must ignore clocks');
+    assert.equal(emptyDigest1.nonfiniteValueCount, 0);
+    assert.equal(emptyDigest1.nondefaultValueCount, 0);
+    assert.equal(emptyDigest1.exactDefaultRecord, true);
 
     const oversizedRun = await request({ cmd: 'run', n: 9 });
     assert.equal(oversizedRun.operation, 'run');

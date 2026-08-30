@@ -13,6 +13,7 @@ import {
     getActiveLatticeSize,
     getActiveScale0Bridge,
     getFlowLineSettings,
+    isKnotTrackingActive,
 } from '../state/store.js';
 import { getFieldLineKnotTracker } from './field-line-knots.js';
 import {
@@ -299,9 +300,10 @@ export function buildDerivedSubstrateData(state, sampled, fieldCapability, N) {
         const e = getFieldLineKnotTracker('e').getKnotZones();
         const b = getFieldLineKnotTracker('b').getKnotZones();
         const flux = getFieldLineKnotTracker('flux').getKnotZones();
-        if ((e && e.count) || (b && b.count) || (flux && flux.count)) {
-            frame.knotZones = { e, b, flux };
-        }
+        // Always publish the effective overlay's current detector frame. The
+        // all-empty frame is semantically meaningful: it clears the renderer's
+        // previous draw range when the last detected clump disappears.
+        frame.knotZones = { e, b, flux };
     }
 
     if (state.fieldFlags.showDualSubstrate && sampled.fluxVector?.count > 0) {
@@ -690,6 +692,7 @@ function applyDerivedJob(frame, viewportAdapter) {
 function runJob(sched, slot) {
     const { ctx, state, viewportAdapter, latticeSize, params, sampled, sampleCache } = sched;
     const { stride } = params;
+    const knotTrackingActive = isKnotTrackingActive(state);
     switch (slot.kind) {
         case JOB_EFIELD: {
             if (slot.phase === 0) {
@@ -727,7 +730,7 @@ function runJob(sched, slot) {
             // Recording BEFORE the apply lets us color each flowline by the knot it
             // belongs to (matching the panel rows + boxes) when per-knot colors is on.
             let knotColoring = null;
-            if (state.knotTracking) {
+            if (knotTrackingActive) {
                 const tr = getFieldLineKnotTracker('e');
                 tr.record(lines, sampled.eField, slot.sampleTick, latticeSize);
                 if (tr.getPerKnotColor()) {
@@ -782,7 +785,7 @@ function runJob(sched, slot) {
             // B-field-line knots — the orthogonal magnetic partner to E. Same pipeline,
             // its own tracker; detected from the B streamlines, colored per B-knot.
             let knotColoring = null;
-            if (state.knotTracking) {
+            if (knotTrackingActive) {
                 const tr = getFieldLineKnotTracker('b');
                 tr.record(lines, sampled.bField, slot.sampleTick, latticeSize);
                 if (tr.getPerKnotColor()) {
@@ -830,7 +833,7 @@ function runJob(sched, slot) {
                 return true;
             }
             const fs = slot.workerResult;
-            if (state.knotTracking) {
+            if (knotTrackingActive) {
                 const tr = getFieldLineKnotTracker('flux');
                 tr.record(fs.lines, sampled.fluxVector, slot.sampleTick, latticeSize);
                 if (tr.isContribEnabled()) {
@@ -941,6 +944,7 @@ function buildOverlayJobs(ctx, state, sched, viewportAdapter, latticeSize, param
     const fieldCapability = getActiveScale0Bridge(ctx, state)?.capabilities?.scale0
         ?? ctx.bridge.capabilities.scale0;
     const flags = state.fieldFlags;
+    const knotTrackingActive = isKnotTrackingActive(state);
     const acScale0 = emActiveScale0(ctx, state);
 
     // Stash the sweep context the closure-free dispatcher reads (replaces the
@@ -969,13 +973,13 @@ function buildOverlayJobs(ctx, state, sched, viewportAdapter, latticeSize, param
     // Job planning: visual flags OR knot tracking. Tracking rebuilds E/B/flux
     // streamlines so clumps can be recorded without drawing the lines.
     // Each job still applies to the viewport only when its visual flag is on.
-    if (wantsStreamlineJob(flags, state.knotTracking, 'e')) {
+    if (wantsStreamlineJob(flags, knotTrackingActive, 'e')) {
         const slot = jobSlot(sched, n++); slot.kind = JOB_EFIELD; slot.cost = COST_STREAMLINE; slot.phase = 0;
     }
-    if (wantsStreamlineJob(flags, state.knotTracking, 'b')) {
+    if (wantsStreamlineJob(flags, knotTrackingActive, 'b')) {
         const slot = jobSlot(sched, n++); slot.kind = JOB_BFIELD; slot.cost = COST_STREAMLINE; slot.phase = 0;
     }
-    if (wantsStreamlineJob(flags, state.knotTracking, 'flux')) {
+    if (wantsStreamlineJob(flags, knotTrackingActive, 'flux')) {
         const slot = jobSlot(sched, n++); slot.kind = JOB_FLUX; slot.cost = COST_STREAMLINE; slot.phase = 0; slot.workerResult = null;
     }
     // Poynting / divergence are zero-cost passthroughs (forward a sampled
@@ -1064,8 +1068,9 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
     const latticeSize = getActiveLatticeSize(ctx, state);
     const fieldThrottle = latticeSize > 96 ? 12 : (latticeSize > 48 ? 6 : 3);
     const sched = ensureOverlaySched(state);
+    const knotTrackingActive = isKnotTrackingActive(state);
 
-    if (!overlayWorkActive(state.anyFieldActive, state.knotTracking)) {
+    if (!overlayWorkActive(state.anyFieldActive, knotTrackingActive)) {
         // No visual overlays and no knot tracking — abandon any half-finished
         // sweep so a later re-activation starts clean rather than resuming
         // stale jobs. The job pool itself persists (its slots are reused next
@@ -1159,7 +1164,7 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
         );
         sched.forceCache = createForceFieldCache(fieldCapability);
         sched.sampled = sched.sampleCache.sampled;
-        if (state.fieldFlags.showEField || state.fieldFlags.showBField || state.knotTracking) {
+        if (state.fieldFlags.showEField || state.fieldFlags.showBField || knotTrackingActive) {
             sched.sampleCache.ensureParticleData();
         }
         sched.running = !!ctx.running;

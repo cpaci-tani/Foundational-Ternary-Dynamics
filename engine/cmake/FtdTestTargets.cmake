@@ -26,6 +26,7 @@ set_property(GLOBAL APPEND PROPERTY FTD_CONDITIONAL_TEST_SOURCES
     tests/test_gpu_continuity_ledger.cpp
     tests/test_gpu_delta_upload.cpp
     tests/test_gpu_dissipation_source.cpp
+    tests/test_empty_scenario_qualification_gpu.cpp
     tests/test_gpu_eft_parity.cpp
     tests/test_gpu_energy_ledger_parity.cpp
     tests/test_gpu_experiments.cpp
@@ -484,6 +485,17 @@ target_link_libraries(test_scenario_velocity_wiring ftd_core)
 
 ftd_add_test(test_scenario_behavior tests/test_scenario_behavior.cpp
              CTEST_NAME scenario_behavior TIMEOUT 180)
+ftd_add_test(test_empty_scenario_qualification
+             tests/test_empty_scenario_qualification.cpp
+             CTEST_NAME empty_scenario_qualification TIMEOUT 300
+             LABELS scenario qualification scale0)
+if(FTD_ENABLE_CUDA)
+    ftd_add_test(test_empty_scenario_qualification_gpu
+                 tests/test_empty_scenario_qualification_gpu.cpp
+                 CTEST_NAME empty_scenario_qualification_gpu
+                 GPU_HEAVY TIMEOUT 300
+                 LABELS scenario qualification scale0)
+endif()
 ftd_add_test(test_scenario_meta tests/test_scenario_meta.cpp
              CTEST_NAME scenario_meta)
 
@@ -2678,12 +2690,11 @@ ftd_add_test(test_ternary_block_bipole_peierls_scaling
              CTEST_NAME ternary_block_bipole_peierls_scaling TIMEOUT 120
              LABELS unit eft observer spectrum)
 
-# CPU-only warning contract. Verifies that GPU-only toggles (strong_force,
-# exchange_force) emit stderr warnings on CPU builds AND are genuine no-ops
-# (voxel state byte-identical to baseline).
-ftd_add_test(test_cpu_warnings
-             tests/test_cpu_warnings.cpp
-             CTEST_NAME cpu_warnings TIMEOUT 60 LABELS unit fast)
+# CPU pairwise-force contract. Verifies that the Yukawa and exchange channels
+# both change the CPU voxel state relative to their disabled baselines.
+ftd_add_test(test_cpu_pairwise_force_channels
+             tests/test_cpu_pairwise_force_channels.cpp
+             CTEST_NAME cpu_pairwise_force_channels TIMEOUT 60 LABELS unit fast)
 
 # ARCH-3: strict-validation contract for TermToggles. Verifies that:
 #   (a) permissive mode (default) dedups warnings to one per unique string;

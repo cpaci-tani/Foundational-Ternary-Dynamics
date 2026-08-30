@@ -34,9 +34,35 @@ import { createNativeParticleEngine } from './native-particle-engine.js';
 import { createAtomEngine } from './mock-atom-engine.js';
 import { reflectIntoBoundary } from './boundary.js';
 import { samplerOr, particleDataToList, TOGGLE_REQUIRES } from './bridge-contract.js';
+import { loadVerifiedWasmVariant } from './wasm-artifact-identity.js';
 
 // ── WASM Bridge ────────────────────────────────────────────────────
 let _wasmLoadPromise = null; // singleton to prevent duplicate script injection
+
+async function installVerifiedFactory(variantId, factoryName) {
+    const verified = await loadVerifiedWasmVariant(variantId);
+    const scriptUrl = URL.createObjectURL(new Blob(
+        [verified.loaderText], { type: 'text/javascript' },
+    ));
+    try {
+        await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = scriptUrl;
+            script.onload = () => { script.remove(); resolve(); };
+            script.onerror = () => {
+                script.remove();
+                reject(new Error(`Verified WASM loader execution failed: ${variantId}`));
+            };
+            document.head.appendChild(script);
+        });
+    } finally {
+        URL.revokeObjectURL(scriptUrl);
+    }
+    if (typeof globalThis[factoryName] !== 'function') {
+        throw new Error(`Verified WASM loader did not publish ${factoryName}`);
+    }
+    return verified;
+}
 
 // Memory64 (wasm64) feature-detection, computed once per session. When
 // supported we load the 8 GB `ftd_core64` build (lifts the in-browser lattice
@@ -94,6 +120,31 @@ function _wasmCallOr(bridge, methodName, fallback, fn) {
     return fn(bridge._module, bridge._bridge);
 }
 
+function normalizeDynamicalStateDigest(raw, transport = 'direct') {
+    if (!raw) return null;
+    return {
+        schemaVersion: raw.schema_version,
+        latticeSize: raw.lattice_size,
+        siteCount: raw.site_count,
+        tick: raw.tick,
+        stateVersion: raw.state_version,
+        // Native WebSocket owns a telemetry source epoch; standalone WASM
+        // does not. Preserve the shared field explicitly as unavailable.
+        sourceEpoch: null,
+        telemetrySourceEpoch: null,
+        hashLo: raw.hash_lo,
+        hashHi: raw.hash_hi,
+        nonfiniteValueCount: raw.nonfinite_value_count,
+        nondefaultValueCount: raw.nondefault_value_count,
+        deviceToHostBytes: raw.device_to_host_bytes,
+        fullMirrorCalls: raw.full_mirror_calls,
+        exactDefaultRecord: raw.exact_default_record,
+        compute: 'CPU',
+        runtime: 'wasm',
+        transport,
+    };
+}
+
 /** @implements {import('./bridge/bridge-contract.js').ScaleBridge} */
 export class WasmBridge {
     constructor() {
@@ -103,8 +154,18 @@ export class WasmBridge {
         this.ready = false;
         this.isWasm = true;
         this.isWasm64 = false;   // set true in init() when the Memory64 build loads
+        this.artifactIdentity = null;
+        this.artifactIdentityState = 'not-loaded';
+        this.artifactIdentityReady = Promise.resolve(null);
         this._lastScale0Audit = null;
         this._lastScale0AuditTick = -1;
+        // Direct-WASM telemetry needs a state identity independent of the
+        // engine tick: paused scientific writes can change the record without
+        // advancing currentTick(). Group receipt times are cached per identity
+        // so repeated panel reads cannot make an old sample appear newly born.
+        this._scale0TelemetrySourceEpoch = 0;
+        this._scale0TelemetryStateVersion = 0;
+        this._scale0TelemetryGroupMeta = new Map();
         // Scale-1 PE: native C++/WASM ParticleEngine via embind adapter.
         // The native kernel uses G_PE = G_DERIVED (FTD-0131) — the old
         // "stale G_N binary" concern that once justified a JS engine no
@@ -133,25 +194,26 @@ export class WasmBridge {
             // browser), so the single _wasmLoadPromise is safe with a dynamic src.
             const use64 = supportsMemory64();
             this.isWasm64 = use64;
-            const scriptSrc = use64 ? 'wasm/ftd_core64.js' : 'wasm/ftd_core.js';
             const factoryName = use64 ? 'createFTDModule64' : 'createFTDModule';
-            if (typeof globalThis[factoryName] === 'undefined') {
-                if (!_wasmLoadPromise) {
-                    _wasmLoadPromise = new Promise((resolve, reject) => {
-                        const script = document.createElement('script');
-                        script.src = scriptSrc;
-                        script.onload = resolve;
-                        script.onerror = () => {
-                            _wasmLoadPromise = null; // allow retry
-                            reject(new Error('Failed to load ' + scriptSrc));
-                        };
-                        document.head.appendChild(script);
+            const variantId = use64 ? 'wasm64' : 'wasm32';
+            this.artifactIdentityState = 'loading';
+            if (!_wasmLoadPromise) {
+                _wasmLoadPromise = installVerifiedFactory(variantId, factoryName)
+                    .catch((error) => {
+                        _wasmLoadPromise = null;
+                        throw error;
                     });
-                }
-                await _wasmLoadPromise;
             }
+            const verified = await _wasmLoadPromise;
+            if (verified.identity.variant.id !== variantId) {
+                throw new Error('Cached WASM factory variant does not match the selected ABI');
+            }
+            this.artifactIdentity = verified.identity;
+            this.artifactIdentityState = 'ready';
+            this.artifactIdentityReady = Promise.resolve(verified.identity);
             this._module = await globalThis[factoryName]({
-                locateFile: (path) => 'wasm/' + path
+                wasmBinary: verified.moduleBytes,
+                locateFile: (path) => 'wasm/' + path,
             });
             debugLog('[WasmBridge] loaded ' + (use64 ? 'wasm64 (Memory64, 8 GB heap)' : 'wasm32 (2 GB heap)'));
             // Every module-level scenario/injection function takes a
@@ -164,22 +226,55 @@ export class WasmBridge {
                 throw err;
             }
             this.ready = true;
+            this._markScale0StateChanged(true);
             this.wasmLoadState = 'ready';
             debugLog('FTD WASM engine loaded successfully');
             return true;
         } catch (e) {
             this.wasmLoadState = 'failed';
+            this.artifactIdentity = null;
+            this.artifactIdentityState = 'failed';
+            this.artifactIdentityReady = Promise.resolve(null);
             console.warn('WASM module not available:', e.message);
             return false;
         }
     }
 
-    tick() { if (this._bridge) this._bridge.tick(); }
-    run(n) { if (this._bridge) this._bridge.run(n); }
+    tick() {
+        if (!this._bridge) return;
+        this._bridge.tick();
+        this._markScale0StateChanged();
+    }
+    run(n) {
+        if (!this._bridge) return;
+        this._bridge.run(n);
+        this._markScale0StateChanged();
+    }
     currentTick() { return this._bridge ? this._bridge.currentTick() : 0; }
 
+    /**
+     * Capture the canonical schema-versioned Scale-0 dynamical-state digest.
+     *
+     * Direct WASM is synchronous because the RenderBridge lives on this
+     * thread. The uint64 hash lanes are already fixed-width lowercase hex
+     * strings at the Embind boundary; JavaScript must never coerce them to
+     * Number. This is an observer/provenance surface, not a claim that the
+     * imposed `empty` null control is a physical vacuum.
+     */
+    captureDynamicalStateDigest() {
+        const raw = _wasmCallOr(this, 'captureDynamicalStateDigest', null,
+            (m, b) => m.captureDynamicalStateDigest(b));
+        return normalizeDynamicalStateDigest(raw, 'direct');
+    }
+    getDynamicalStateDigest() { return this.captureDynamicalStateDigest(); }
+    getScale0DynamicalStateDigest() { return this.getDynamicalStateDigest(); }
+    getWasmArtifactIdentity() { return this.artifactIdentity; }
+
     setDt(dt) {
-        if (this._module && this._bridge) this._module.setDt(this._bridge, dt);
+        if (this._module && this._bridge) {
+            this._module.setDt(this._bridge, dt);
+            this._markScale0StateChanged();
+        }
     }
     getDt() {
         if (this._module && this._bridge) return this._module.getDt(this._bridge);
@@ -191,8 +286,10 @@ export class WasmBridge {
     }
     // FTD-0271: de Broglie internal-clock frequency omega0 (KG mass term).
     setOmega0(w) {
-        if (this._module && this._bridge && typeof this._module.setOmega0 === 'function')
+        if (this._module && this._bridge && typeof this._module.setOmega0 === 'function') {
             this._module.setOmega0(this._bridge, w);
+            this._markScale0StateChanged();
+        }
     }
     getOmega0() {
         if (this._module && this._bridge && typeof this._module.getOmega0 === 'function')
@@ -201,16 +298,20 @@ export class WasmBridge {
     }
     // FTD-0274: live Langevin bath temperature (thermal-ignition panel).
     setLangevinTemp(t) {
-        if (this._module && this._bridge && typeof this._module.setLangevinTemp === 'function')
+        if (this._module && this._bridge && typeof this._module.setLangevinTemp === 'function') {
             this._module.setLangevinTemp(this._bridge, t);
+            this._markScale0StateChanged();
+        }
     }
     getLangevinTemp() {
         if (this._module && this._bridge && typeof this._module.getLangevinTemp === 'function')
             return this._module.getLangevinTemp(this._bridge);
     }
     setLangevinGamma(g) {
-        if (this._module && this._bridge && typeof this._module.setLangevinGamma === 'function')
+        if (this._module && this._bridge && typeof this._module.setLangevinGamma === 'function') {
             this._module.setLangevinGamma(this._bridge, g);
+            this._markScale0StateChanged();
+        }
     }
     getLangevinGamma() {
         if (this._module && this._bridge && typeof this._module.getLangevinGamma === 'function')
@@ -265,6 +366,7 @@ export class WasmBridge {
                 throw err;
             }
             debugLog('[WasmBridge] reset() - RenderBridge constructed successfully.');
+            this._markScale0StateChanged(true);
         }
     }
 
@@ -286,6 +388,7 @@ export class WasmBridge {
         }
         delete this.__ftdPhysicsHarness__;
         this.ready = false;
+        this._markScale0StateChanged(true);
     }
 
     // Revision 2.7: every injection method carries the same try-catch guard
@@ -313,6 +416,7 @@ export class WasmBridge {
         if (!(this._module && this._bridge && typeof this._module.injectWaveVel === 'function')) return;
         try {
             this._module.injectWaveVel(this._bridge, x, y, z, vx, vy, vz);
+            this._invalidateScale0AuditCache();
         } catch (e) {
             console.error('WASM injectWaveVel failed:', e);
         }
@@ -362,18 +466,24 @@ export class WasmBridge {
     }
 
     clearField() {
-        if (this._module && this._bridge && typeof this._module.clearField === 'function')
+        if (this._module && this._bridge && typeof this._module.clearField === 'function') {
             this._module.clearField(this._bridge);
+            this._invalidateScale0AuditCache();
+        }
     }
 
     seedRandomFlux() {
-        if (this._module && this._bridge && typeof this._module.seedRandomFlux === 'function')
+        if (this._module && this._bridge && typeof this._module.seedRandomFlux === 'function') {
             this._module.seedRandomFlux(this._bridge);
+            this._invalidateScale0AuditCache();
+        }
     }
 
     setToggle(name, value) {
-        if (this._module && this._bridge)
+        if (this._module && this._bridge) {
             this._module.setToggle(this._bridge, name, value);
+            this._invalidateScale0AuditCache();
+        }
     }
 
     getToggle(name) {
@@ -464,16 +574,7 @@ export class WasmBridge {
     }
 
     getDiagnostics() {
-        if (!this._module || !this._bridge)
-            return {
-                tick: 0, manifested: 0, positive: 0, negative: 0, totalFlux: 0, totalEnergy: 0,
-                maxBandwidth: 0, avgDrag: 0, entropy: 0, chargeBalance: 0,
-                maxCausalBudget: 0, causalProjectionEvents: 0,
-                spinUp: 0, spinDown: 0, colorless: 0, colorRed: 0, colorGreen: 0, colorBlue: 0,
-                angMomX: 0, angMomY: 0, angMomZ: 0,
-                fieldSpinX: 0, fieldSpinY: 0, fieldSpinZ: 0, fieldHelicity: 0,
-                centerClockPhase: 0, centerClockSpeed: 0, centerClockLatency: 0
-            };
+        if (!this._module || !this._bridge) return null;
         let d;
         if (typeof this._module.getDiagnosticsView === 'function') {
             const arr = this._module.getDiagnosticsView(this._bridge);
@@ -499,17 +600,11 @@ export class WasmBridge {
                 angMomX: arr[18],
                 angMomY: arr[19],
                 angMomZ: arr[20],
-                maxCausalBudget: arr[21] ?? 0,
-                causalProjectionEvents: arr[22] ?? 0,
-                // Field circulation ledger (2026-07-28): S = Σ J×W (conserved
-                // by the free wave sector), H = Σ J·curl J (static twist).
-                fieldSpinX: arr[23] ?? 0,
-                fieldSpinY: arr[24] ?? 0,
-                fieldSpinZ: arr[25] ?? 0,
-                fieldHelicity: arr[26] ?? 0,
-                centerClockPhase: arr[27] ?? 0,
-                centerClockSpeed: arr[28] ?? 0,
-                centerClockLatency: arr[29] ?? 0
+                maxCausalBudget: arr[21],
+                causalProjectionEvents: arr[22],
+                // The compact ABI currently ends at lane 22. Field-spin and
+                // center-clock values are intentionally absent until C++ and
+                // JS extend the view atomically; they must not appear as zeros.
             };
         } else {
             d = this._module.getDiagnostics(this._bridge);
@@ -533,20 +628,7 @@ export class WasmBridge {
     }
 
     getEnergyAudit() {
-        if (!this._module || !this._bridge)
-            return {
-                fieldEnergy: 0, waveEnergy: 0, particleKE: 0, totalEnergy: 0,
-                particleRestEnergy: 0, particleEnergy: 0, dynamicEnergy: 0,
-                particleMomentum: { x: 0, y: 0, z: 0 },
-                cellVolume: VOXEL_VOLUME,
-                fieldEnergyDensitySum: 0, waveEnergyDensitySum: 0,
-                EFieldEnergy: 0, BFieldEnergy: 0,
-                totalPoynting: { x: 0, y: 0, z: 0 },
-                gaussViolation: 0, maxGaussError: 0, selfFieldInjection: 0,
-                coulombPE: 0, chargeTotal: 0, manifested: 0,
-                strongEnergy: 0, weakEnergy: 0,
-                ELTotal: 0, ERTotal: 0, chiralityTotal: 0, wvLTotal: 0, wvRTotal: 0,
-            };
+        if (!this._module || !this._bridge) return null;
         return this._getScale0AuditForTick(this.currentTick());
     }
 
@@ -582,16 +664,17 @@ export class WasmBridge {
                 wvLTotal: arr[16],
                 wvRTotal: arr[17],
                 chargeTotal: arr[18],
-                particleRestEnergy: arr[19] ?? 0,
-                particleEnergy: arr[20] ?? 0,
-                particleMomentum: { x: arr[21] ?? 0, y: arr[22] ?? 0, z: arr[23] ?? 0 },
-                dynamicEnergy: arr[24] ?? arr[3],
+                particleRestEnergy: arr[19],
+                particleEnergy: arr[20],
+                particleMomentum: arr.length > 23
+                    ? { x: arr[21], y: arr[22], z: arr[23] } : undefined,
+                dynamicEnergy: arr[24],
                 cellVolume: arr[25] ?? VOXEL_VOLUME,
-                fieldEnergyDensitySum: arr[26] ?? arr[0],
-                waveEnergyDensitySum: arr[27] ?? arr[1],
-                manifested: arr[28] ?? 0,
-                strongEnergy: arr[29] ?? 0,
-                weakEnergy: arr[30] ?? 0,
+                fieldEnergyDensitySum: arr[26],
+                waveEnergyDensitySum: arr[27],
+                manifested: arr[28],
+                strongEnergy: arr[29],
+                weakEnergy: arr[30],
             };
         } else {
             audit = this._module.getEnergyAudit(this._bridge);
@@ -601,20 +684,58 @@ export class WasmBridge {
         return audit;
     }
 
-    _invalidateScale0AuditCache() {
+    _markScale0StateChanged(sourceBoundary = false) {
         this._lastScale0Audit = null;
         this._lastScale0AuditTick = -1;
+        if (sourceBoundary) {
+            this._scale0TelemetrySourceEpoch = Number.isFinite(this._scale0TelemetrySourceEpoch)
+                ? this._scale0TelemetrySourceEpoch + 1 : 1;
+        }
+        this._scale0TelemetryStateVersion = Number.isFinite(this._scale0TelemetryStateVersion)
+            ? this._scale0TelemetryStateVersion + 1 : 1;
+        if (!(this._scale0TelemetryGroupMeta instanceof Map)) {
+            this._scale0TelemetryGroupMeta = new Map();
+        } else {
+            this._scale0TelemetryGroupMeta.clear();
+        }
+    }
+
+    _invalidateScale0AuditCache() {
+        this._markScale0StateChanged();
+    }
+
+    getScale0TelemetryGroupMeta(group) {
+        if (!(this._scale0TelemetryGroupMeta instanceof Map)) {
+            this._scale0TelemetryGroupMeta = new Map();
+        }
+        const sourceEpoch = Number.isFinite(this._scale0TelemetrySourceEpoch)
+            ? this._scale0TelemetrySourceEpoch : 0;
+        const stateVersion = Number.isFinite(this._scale0TelemetryStateVersion)
+            ? this._scale0TelemetryStateVersion : 0;
+        const available = !!(this._module && this._bridge && this.ready !== false);
+        const status = available ? 'available' : 'unavailable';
+        let meta = this._scale0TelemetryGroupMeta.get(group);
+        if (!meta || meta.sourceEpoch !== sourceEpoch
+            || meta.stateVersion !== stateVersion || meta.status !== status) {
+            meta = {
+                backend: 'wasm-main',
+                sourceEpoch,
+                stateVersion,
+                snapshotVersion: stateVersion,
+                sampleTick: available ? this.currentTick() : null,
+                tick: available ? this.currentTick() : null,
+                status,
+                stale: !available,
+                receivedAt: (typeof performance !== 'undefined'
+                    && typeof performance.now === 'function') ? performance.now() : Date.now(),
+            };
+            this._scale0TelemetryGroupMeta.set(group, meta);
+        }
+        return { ...meta };
     }
 
     getLagrangian() {
-        if (!this._module || !this._bridge)
-            return {
-                fieldKinetic: 0, fieldGradient: 0,
-                bornInfeld: 0, coupling: 0, velocity: 0, gauss: 0, dissipation: 0,
-                total: 0, hamiltonian: 0, totalAction: 0, gaussViolation: 0, maxGaussError: 0,
-                totalFluxMag: 0, totalWaveEnergy: 0, manifested: 0, locked: 0,
-                cellVolume: VOXEL_VOLUME
-            };
+        if (!this._module || !this._bridge) return null;
         if (typeof this._module.getLagrangianView === 'function') {
             const arr = this._module.getLagrangianView(this._bridge);
             return {
@@ -666,6 +787,7 @@ export class WasmBridge {
             const result = this._module.setupScenario(this._bridge, name);
             this._enforceToggleInvariants();
             if (result === false) return false;
+            this._markScale0StateChanged();
             return true;
         }
         return false;
@@ -704,10 +826,11 @@ export class WasmBridge {
             (m, b) => m.getFluxVolume(b));
     }
 
-    // Phase 2 gravity panel: REAL C++ latency field (voxel.latency), not the |J|² proxy.
+    // Phase 2 gravity panel: engine Poisson-derived [IMPOSED] voxel.latency
+    // mapping, not the |J|² proxy or a recovered physical spacetime metric.
     getGravityMetricAgg() {
         return _wasmCallOr(this, 'getGravityMetricAgg',
-            { active: false, latencyMax: 0, latencyMean: 0, fMin: 1, gammaMax: 1, dilationMaxPct: 0, voxelCount: 0 },
+            { active: false, requested: null, latencyMax: 0, latencyMean: 0, fMin: 1, gammaMax: 1, dilationMaxPct: 0, voxelCount: 0 },
             (m, b) => m.getGravityMetricAgg(b));
     }
 
@@ -811,6 +934,10 @@ export class WasmBridge {
     }
     /** Kind-dispatched Scale-0 field sampler; see bridge-contract.js samplerOr. */
     getSamplerOr(kind, stride = 2, fallback) { return samplerOr(this, kind, stride, fallback); }
+    // Direct WASM samplers are synchronous: an empty record is a completed
+    // scientific zero/unavailable result, never a lazy transport placeholder.
+    hasSamplerSnapshot() { return true; }
+    getSamplerSnapshotVersion() { return null; }
     replaceSamplerWants() {}
     unwantSampler() {}
 
@@ -883,8 +1010,10 @@ export class WasmBridge {
     // 0 = Periodic, 1 = Reflective, 2 = Dispersal
     setFluxBoundaryMode(mode) {
         this._fluxBoundaryMode = mode;
-        if (this._module && this._bridge && typeof this._module.setFluxBoundary === 'function')
+        if (this._module && this._bridge && typeof this._module.setFluxBoundary === 'function') {
             this._module.setFluxBoundary(this._bridge, mode);
+            this._markScale0StateChanged();
+        }
     }
 
     setReflectiveBoundary(on) {

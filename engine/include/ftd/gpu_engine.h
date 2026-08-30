@@ -11,6 +11,7 @@
  */
 
 #include "voxel.h"
+#include "ftd/dynamical_state_digest.h"
 #include "render_bridge.h"  // for Diagnostics, EnergyAudit, TermToggles
 #include "gpu_buffers.h"
 #include "ftd/telemetry_snapshot.h"
@@ -51,6 +52,9 @@ public:
     Diagnostics diagnostics();
     EnergyAudit energy_audit();
     GravityMetricAgg gravity_metric_agg();
+    // Synchronous on-demand device reduction. Transfers one fixed 32-byte
+    // accumulator and never materializes the AoS host voxel mirror.
+    DynamicalStateDigest dynamical_state_digest() const;
     void lagrangian_diagnostics(LagrangianDiag& out);
     void inspect_voxel(int index, VoxelInspection& out);
     void inspect_force(int index, ForceDiag& out);
@@ -125,6 +129,7 @@ public:
     const GpuBuffers& bufs() const { return bufs_; }
     int lattice_size() const { return size_; }
     int current_tick() const { return tick_; }
+    std::uint64_t state_version() const { return state_version_; }
     // Device mirror of current_tick(). Blocking 4-byte D2H — diagnostics and
     // tests only, never the tick path.
     int device_tick() const;

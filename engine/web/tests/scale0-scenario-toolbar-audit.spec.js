@@ -6,7 +6,7 @@ test.describe('Scale 0 scenario toolbar and epistemic disclosure audit gate', ()
     test.beforeEach(async ({ page }, testInfo) => {
         testInfo.setTimeout(120_000);
         page.setDefaultTimeout(30_000);
-        await gotoAndReady(page);
+        await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
         await page.waitForFunction(() => document.getElementById('app')?.dataset.shellReady === 'true');
     });
 
@@ -103,13 +103,21 @@ test.describe('Scale 0 scenario toolbar and epistemic disclosure audit gate', ()
             'requires the COOP/COEP Scale 0 worker path');
 
         await page.waitForFunction(async () => {
-            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
-            return getScale0State().fluxMock?.ready === true;
+            const { getScale0State, getScale0QualificationState } =
+                await import('/js/scales/scale0/state/store.js');
+            const owner = getScale0State().fluxMock;
+            const lifecycle = owner?.lifecycleDebug;
+            const qualification = getScale0QualificationState();
+            return owner?.ready === true
+                && !!lifecycle?.workerRuntimeId
+                && lifecycle.appliedConfigurationToken === lifecycle.configurationToken
+                && qualification.status === 'within-contract';
         });
 
         const result = await page.evaluate(async () => {
             const registry = await import('/js/scales/scale0/scenario-registry.js');
-            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            const { getScale0State, getScale0QualificationState } =
+                await import('/js/scales/scale0/state/store.js');
             const select = document.getElementById('scenario-select');
             const ctx = window.__ftdCtx;
             const initialId = select.value;
@@ -118,7 +126,20 @@ test.describe('Scale 0 scenario toolbar and epistemic disclosure audit gate', ()
                 .filter((id) => id !== initialId)
                 .slice(0, 9);
             const ids = [...candidates, initialId];
+            const baselineDeadline = performance.now() + 20_000;
+            let baselineState;
+            while (performance.now() < baselineDeadline) {
+                baselineState = getScale0State();
+                const lifecycle = baselineState.fluxMock?.lifecycleDebug;
+                const qualification = getScale0QualificationState();
+                if (baselineState.fluxMock?.ready === true
+                    && !!lifecycle?.workerRuntimeId
+                    && lifecycle.appliedConfigurationToken === lifecycle.configurationToken
+                    && qualification.status === 'within-contract') break;
+                await new Promise((resolve) => setTimeout(resolve, 50));
+            }
             const beforeWorkers = window.__ftdWasmWorkers();
+            const beforeLifecycle = baselineState?.fluxMock?.lifecycleDebug ?? null;
             const beforeGeneration = ctx._loadGeneration || 0;
             const originalPause = ctx.pauseSimulation;
             let pauseCalls = 0;
@@ -139,23 +160,31 @@ test.describe('Scale 0 scenario toolbar and epistemic disclosure audit gate', ()
             const deadline = performance.now() + 20_000;
             while (performance.now() < deadline) {
                 const state = getScale0State();
+                const lifecycle = state.fluxMock?.lifecycleDebug;
+                const qualification = getScale0QualificationState();
                 if (state.currentScenarioId === finalId
                     && state.fluxMock?.ready === true
-                    && state.fluxMock?._scenarioId === finalId) break;
+                    && state.fluxMock?._scenarioId === finalId
+                    && lifecycle?.appliedConfigurationToken === lifecycle?.configurationToken
+                    && qualification.status === 'within-contract'
+                    && qualification.anchor?.scenarioId === finalId
+                    && qualification.anchor?.loadGeneration === ctx._loadGeneration) break;
                 await new Promise((resolve) => setTimeout(resolve, 50));
             }
-            // Give any superseded worker callback an opportunity to arrive; the
-            // generation guard must keep it from repainting stale state.
-            await new Promise((resolve) => setTimeout(resolve, 500));
 
             const state = getScale0State();
+            const qualification = getScale0QualificationState();
             const finalScenario = registry.getScale0Scenario(finalId);
             return {
                 inputCount: ids.length,
                 pauseCalls,
                 generationDelta: (ctx._loadGeneration || 0) - beforeGeneration,
+                finalGeneration: ctx._loadGeneration || 0,
                 workersBefore: beforeWorkers,
                 workersAfter: window.__ftdWasmWorkers(),
+                lifecycleBefore: beforeLifecycle,
+                lifecycleAfter: state.fluxMock?.lifecycleDebug ?? null,
+                qualification,
                 finalId,
                 selectedId: select.value,
                 stateId: state.currentScenarioId,
@@ -169,12 +198,23 @@ test.describe('Scale 0 scenario toolbar and epistemic disclosure audit gate', ()
 
         expect(result.pauseCalls).toBe(result.inputCount);
         expect(result.generationDelta).toBe(result.inputCount);
-        expect(result.workersAfter.created - result.workersBefore.created).toBe(result.inputCount);
-        expect(result.workersAfter.terminated - result.workersBefore.terminated).toBe(result.inputCount);
+        expect(result.workersAfter.created - result.workersBefore.created).toBe(0);
+        expect(result.workersAfter.terminated - result.workersBefore.terminated).toBe(0);
         expect(result.workersAfter.created).toBe(
             result.workersAfter.terminated + result.workersAfter.live,
         );
         expect(result.workersAfter.live).toBe(1);
+        expect(result.lifecycleBefore.workerRuntimeId).toBeTruthy();
+        expect(result.lifecycleAfter.workerRuntimeId).toBe(result.lifecycleBefore.workerRuntimeId);
+        expect(result.lifecycleAfter.moduleInitCount).toBe(1);
+        expect(result.lifecycleAfter.renderBridgeGeneration
+            - result.lifecycleBefore.renderBridgeGeneration).toBe(1);
+        expect(result.lifecycleAfter.appliedConfigurationToken)
+            .toBe(result.lifecycleAfter.configurationToken);
+        expect(result.qualification.status).toBe('within-contract');
+        expect(result.qualification.anchor.scenarioId).toBe(result.finalId);
+        expect(result.qualification.anchor.loadGeneration).toBe(result.finalGeneration);
+        expect(result.qualification.anchor.source).toBe('worker-configuration-applied');
         expect(result.selectedId).toBe(result.finalId);
         expect(result.stateId).toBe(result.finalId);
         expect(result.ownerId).toBe(result.finalId);

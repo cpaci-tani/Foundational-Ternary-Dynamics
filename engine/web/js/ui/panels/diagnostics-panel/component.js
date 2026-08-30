@@ -72,12 +72,19 @@ export class DiagnosticsPanelComponent {
             return;
         }
         const scale = document.getElementById('app')?.dataset.activeScale || '0';
-        const group = scale === '1'
+        const groupId = scale === '1' ? '1'
+            : ((scale === '2' || scale === '3') ? 'ae'
+                : (scale === '0' ? '0' : null));
+        const group = groupId === '1'
             ? this.tablesByScale['1']
-            : (scale === '2' || scale === '3')
+            : groupId === 'ae'
                 ? this.tablesByScale.ae
-                : (scale === '0' ? this.tablesByScale['0'] : null);
+                : (groupId === '0' ? this.tablesByScale['0'] : null);
         if (!group) return;
+        // Consume the same coherent source samples as the other chart panels.
+        // DiagnosticsTable independently stamps every row and spark buffer, so
+        // this does not append duplicate measurements or redraw unchanged
+        // canvases; it only removes the former extra 200 ms presentation gate.
         for (const t of group) t.update();
     }
 

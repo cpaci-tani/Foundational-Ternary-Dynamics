@@ -30,7 +30,7 @@ test.beforeEach(async ({ page }) => { page.setDefaultTimeout(30_000); });
 test.describe('Scale-0 physics Web Worker', () => {
 
     test('flux-pulse runs on WasmBridgeProxy, self-ticks, and populates the shared field', async ({ page }) => {
-        await gotoAndReady(page);
+        await gotoAndReady(page, { path: '/?engine=wasm' });
         test.skip(!(await coiReady(page)), 'requires cross-origin isolation (serve.py --cache COOP/COEP)');
 
         await expect.poll(async () => (await fluxMockInfo(page)).ready,
@@ -58,7 +58,7 @@ test.describe('Scale-0 physics Web Worker', () => {
     });
 
     test('switching to empty retains the WASM worker and publishes an empty particle frame', async ({ page }) => {
-        await gotoAndReady(page);
+        await gotoAndReady(page, { path: '/?engine=wasm' });
         test.skip(!(await coiReady(page)), 'requires cross-origin isolation');
 
         await expect.poll(async () => (await fluxMockInfo(page)).ready, { timeout: 20_000 }).toBe(true);
@@ -91,7 +91,7 @@ test.describe('Scale-0 physics Web Worker', () => {
     // shadow + ships a worker-sourced particle list.
 
     test('worker-proxy direct field-sampler reads match the capability path (flux-slice wiring)', async ({ page }) => {
-        await gotoAndReady(page);
+        await gotoAndReady(page, { path: '/?engine=wasm' });
         test.skip(!(await coiReady(page)), 'requires cross-origin isolation (serve.py --cache COOP/COEP)');
 
         await expect.poll(async () => (await fluxMockInfo(page)).ready,
@@ -144,7 +144,7 @@ test.describe('Scale-0 physics Web Worker', () => {
     });
 
     test('WasmBridgeProxy answers every canonical direct-read (anti-drift contract)', async ({ page }) => {
-        await gotoAndReady(page);
+        await gotoAndReady(page, { path: '/?engine=wasm' });
         test.skip(!(await coiReady(page)), 'requires cross-origin isolation (serve.py --cache COOP/COEP)');
 
         await expect.poll(async () => (await fluxMockInfo(page)).ready,

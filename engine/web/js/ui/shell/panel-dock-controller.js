@@ -1,6 +1,7 @@
 import { readStoredBoolean, writeStoredBoolean } from './layout-state.js';
-import { floatingWindowManager } from '../components/floating-window/component.js';
+import { floatingWindowManager } from '../components/floating-window/component.js?v=2';
 import { applyPanelMountClasses, updateSafeEdges } from '../components/panel-dock/mount-toggle.js';
+import { notifyPanelVisibilityChange } from '../panels/panel-visibility.js?v=2';
 
 const PANEL_WIDTH_STORAGE_KEY = 'ftd.panel.side-width';
 const RAIL_WIDTH_STORAGE_KEY = 'ftd.panel.rail-width';
@@ -139,6 +140,11 @@ export class PanelDockController {
         this._syncCompactSelect(nextTab.dataset.panel);
 
         if (emit && this.onTabActivated) this.onTabActivated(nextTab.dataset.panel);
+        notifyPanelVisibilityChange({
+            reason: 'dock-activate',
+            activePanel: nextTab.dataset.panel,
+            collapsed: !!this.app?.classList?.contains('panels-collapsed'),
+        });
     }
 
     applyScaleFilter(scaleIndex, fallbackPanel = 'controls') {
@@ -179,6 +185,11 @@ export class PanelDockController {
             btn.setAttribute('aria-label', action);
         }
         writeStoredBoolean(this.storageKey, !!collapsed);
+        notifyPanelVisibilityChange({
+            reason: 'dock-collapse',
+            activePanel: this._getTabs().find((tab) => tab.classList.contains('active'))?.dataset.panel || null,
+            collapsed: !!collapsed,
+        });
         this._notifyViewportResize();
     }
 

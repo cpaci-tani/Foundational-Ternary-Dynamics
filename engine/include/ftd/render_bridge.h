@@ -177,9 +177,10 @@ public:
     Vec3 flux_at(int idx) const;
     Vec3 wave_vel_at(int idx) const;
     double density_at(int idx) const;
-    // Phase 2 gravity panel: reduced stats of the real C++ latency field
-    // (voxel.latency, distinct from the |J|² web proxy). The dense latency
-    // volume itself is exported (layout-transposed) directly in the WASM binding.
+    // Phase 2 gravity panel: reduced stats of the engine's Poisson-derived,
+    // [IMPOSED] voxel.latency mapping (distinct from the |J|² web proxy).
+    // The dense latency volume itself is exported (layout-transposed) directly
+    // in the WASM binding; these stats are not a validated spacetime metric.
     GravityMetricAgg gravity_metric_agg() const; // reduced L/f/γ/dilation stats
     const EngineState& engine_state() const {
         sync_ternary_from_voxels_if_needed();
@@ -410,6 +411,12 @@ public:
     // Compute diagnostics for current state
     Diagnostics diagnostics() const;
 
+    // Canonical schema-versioned named-field state digest. CUDA reduces the
+    // resident SoA state and returns one fixed accumulator; CPU folds the same
+    // field contract in-place. Returns false only when a backend cannot serve
+    // the contract.
+    bool capture_dynamical_state_digest(DynamicalStateDigest& out);
+
     // Rigorous energy breakdown + Gauss constraint audit
     EnergyAudit energy_audit() const;
     // Native telemetry publisher contract. GPU begins a fence-backed compact
@@ -619,7 +626,6 @@ private:
     std::vector<SU3Link> su3_links_scratch_y_;
     std::vector<SU3Link> su3_links_scratch_z_;
     EnergyLedger energy_ledger_;  // per-tick conservation drift, populated by update_energy_ledger()
-    mutable bool cpu_warnings_emitted_ = false;  // F2 callstack audit: GPU-only-toggle warning emitted flag
     std::string last_validation_warn_;  // ARCH-3: dedup repeated validate() warnings to one per unique string
     bool interactive_gpu_mode_ = false;
     std::vector<uint8_t> moved_; // Per-tick flag: prevent double-processing in phase_movement

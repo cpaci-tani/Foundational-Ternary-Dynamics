@@ -1207,9 +1207,10 @@ val get_latency_sampled(ftd::RenderBridge& rb, int stride) {
         });
 }
 
-// Real latency-Poisson well depth stored in voxel.latency.  This is distinct
-// from get_latency_sampled's historical normalized-|J|^2 display proxy and
-// mirrors native FTS2 kind poissonLatency exactly.
+// Engine Poisson-derived [IMPOSED] latency mapping stored in voxel.latency.
+// This is distinct from get_latency_sampled's historical normalized-|J|^2
+// display proxy and mirrors native FTS2 kind poissonLatency exactly; it is not
+// identified here as a recovered physical metric or clock field.
 val get_poisson_latency_sampled(ftd::RenderBridge& rb, int stride) {
     const auto& voxels = rb.voxels();
     return sample_scalar_overlay(rb, stride, /*interior=*/false,

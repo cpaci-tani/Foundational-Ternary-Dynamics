@@ -46,11 +46,17 @@
  * quantity (e.g. eField feeding |E|, emEnergy, ePressure, and ℒ(x)) still
  * fetch it once per sweep. "Show all" remains available as an explicit
  * diagnostic action, rather than becoming background work every scenario
- * inherits merely by opening this tab.
+ * inherits merely by opening this tab. Scenario 1 (`empty`) is explicitly
+ * inapplicable: its rows/canvases are detached and its sampler/rAF ownership
+ * is released rather than rendering black tiles as putative vacuum evidence.
  */
 
 import { rampViridis } from '../../../../viewport/color-ramps.js';
-import { getFieldStateSnapshot, resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
+import {
+    getFieldStateSnapshot,
+    getScale0State,
+    resolveActiveScale0BridgeFromWindow,
+} from '../../state/store.js';
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 import {
@@ -86,6 +92,16 @@ export function effectiveFluxSliceUpdateEvery(bridge, configured = 2) {
 }
 
 const FLUX_SLICE_DRIVER_HZ = 24;
+const EMPTY_SCENARIO_ID = 'empty';
+const SCENARIO_SYNC_MAX_FRAMES = 120;
+
+function setTextIfChanged(element, text) {
+    if (element && element.textContent !== text) element.textContent = text;
+}
+
+function setTitleIfChanged(element, title) {
+    if (element && element.title !== title) element.title = title;
+}
 
 
 // ── FluxSlicePanel class ────────────────────────────────────────────
@@ -126,6 +142,15 @@ export class FluxSlicePanel {
         this._chip = null;
         this._rowsContainer = null;
         this._resetMirrorBtn = null;
+        this._rowFragment = null;
+        this._emptyMessage = null;
+        this._emptyInapplicable = false;
+        this._scenarioSelect = null;
+        this._scenarioSyncRaf = 0;
+        this._scenarioSyncToken = 0;
+        this._onScenarioChange = (event) => {
+            this._handleScenarioIntent(String(event.currentTarget?.value || ''));
+        };
 
         // Per-axis (xy/xz/yz) visibility — applies globally across all rows.
         this._axisVisible = { xy: true, xz: true, yz: true };
@@ -265,7 +290,6 @@ export class FluxSlicePanel {
             panel.querySelector('.flux-slice-expand')
                 ?.addEventListener('click', () => this.toggleExpanded());
             this._setupResizeObserver();
-            this._startSelfDrive();
         }
 
         // Header axis toggles — independent xy/xz/yz visibility, applies
@@ -284,8 +308,126 @@ export class FluxSlicePanel {
         // Initial chip-label refresh + reconcile.
         for (const drv of FIELD_DRIVERS) this._refreshChip(drv.key);
         this._refreshResetButton();
+        this._bindScenarioApplicability();
+        if (this.visible && !this._emptyInapplicable) this._startSelfDrive();
 
         return panel;
+    }
+
+    _createEmptyMessage() {
+        if (this._emptyMessage) return this._emptyMessage;
+        const message = document.createElement('section');
+        message.className = 'mode-unavailable flux-slice-inapplicable';
+        message.dataset.applicability = 'inapplicable';
+        message.setAttribute('role', 'status');
+        message.innerHTML = `
+            <strong>Not applicable — imposed null control</strong>
+            <p>Scenario 1 · Empty does not define a field-slice domain. No field
+               slice is extracted or rendered for this state.</p>
+            <p>A blank heatmap would be misleading: this control is not a
+               measurement of physical vacuum or zero-point fields.</p>
+        `;
+        this._emptyMessage = message;
+        return message;
+    }
+
+    _bindScenarioApplicability() {
+        const select = document.getElementById('scenario-select');
+        if (select !== this._scenarioSelect) {
+            this._scenarioSelect?.removeEventListener('change', this._onScenarioChange);
+            this._scenarioSelect = select;
+            this._scenarioSelect?.addEventListener('change', this._onScenarioChange);
+        }
+        const intendedId = String(select?.value || getScale0State().currentScenarioId || '');
+        this._handleScenarioIntent(intendedId);
+    }
+
+    _handleScenarioIntent(scenarioId) {
+        const token = ++this._scenarioSyncToken;
+        if (this._scenarioSyncRaf) cancelAnimationFrame(this._scenarioSyncRaf);
+        this._scenarioSyncRaf = 0;
+
+        // Suspend immediately on the user's empty request. This occurs before
+        // the asynchronous worker replacement can publish any transitional
+        // field sample, so a superseded nonempty generation is never painted
+        // as evidence about the null control.
+        if (scenarioId === EMPTY_SCENARIO_ID) {
+            this._setEmptyApplicability(true);
+            return;
+        }
+
+        // Resume only after canonical state agrees with the requested
+        // nonempty scenario. The bounded transition watcher never runs while
+        // `empty` is active and is generation-cancelled by a newer request.
+        let remaining = SCENARIO_SYNC_MAX_FRAMES;
+        const reconcile = () => {
+            this._scenarioSyncRaf = 0;
+            if (this._disposed || token !== this._scenarioSyncToken) return;
+            if (getScale0State().currentScenarioId === scenarioId) {
+                this._setEmptyApplicability(false);
+                return;
+            }
+            remaining--;
+            if (remaining > 0) this._scenarioSyncRaf = requestAnimationFrame(reconcile);
+        };
+        reconcile();
+    }
+
+    _setEmptyApplicability(inapplicable) {
+        const next = !!inapplicable;
+        if (next === this._emptyInapplicable) {
+            if (next) {
+                this._stopSelfDrive();
+                this._releaseAllWantedSamplers();
+            }
+            return;
+        }
+        this._emptyInapplicable = next;
+        this._panel?.classList.toggle('is-inapplicable', next);
+        if (this._panel) {
+            this._panel.dataset.applicability = next ? 'inapplicable-empty' : 'applicable';
+        }
+
+        this._panel?.querySelectorAll('.flux-slice-axis-btn, .flux-slice-expand')
+            .forEach((control) => {
+                control.disabled = next;
+                control.setAttribute('aria-disabled', next ? 'true' : 'false');
+            });
+
+        if (next) {
+            this._stopSelfDrive();
+            this._releaseAllWantedSamplers();
+            if (!this._rowFragment) this._rowFragment = document.createDocumentFragment();
+            for (const drv of FIELD_DRIVERS) {
+                const field = this._fields[drv.key];
+                if (field?.row.parentNode === this._rowsContainer) {
+                    this._rowFragment.appendChild(field.row);
+                }
+                for (const axis of FluxSlicePanel.AXES) {
+                    const slot = field?.slots[axis];
+                    if (!slot) continue;
+                    slot.imgData = null;
+                    slot.currentN = 0;
+                    slot.rgbaBuf = null;
+                    slot.tmpCanvas = null;
+                    slot.tmpCtx = null;
+                }
+                this._fieldGlobalMax[drv.key] = 0;
+            }
+            this._rowsContainer?.replaceChildren(this._createEmptyMessage());
+            this._lastN = 0;
+            this._lastSimTick = 0;
+            this.frameCount = 0;
+        } else {
+            this._rowsContainer?.replaceChildren();
+            for (const drv of FIELD_DRIVERS) {
+                const row = this._fields[drv.key]?.row;
+                if (row) this._rowsContainer?.appendChild(row);
+            }
+            this.frameCount = 0;
+            if (this.visible) this._startSelfDrive();
+        }
+        this._refreshResetButton();
     }
 
     _rowHTML(drv) {
@@ -376,7 +518,7 @@ export class FluxSlicePanel {
     }
 
     _startSelfDrive() {
-        if (this._sub) return;
+        if (this._sub || this._emptyInapplicable || this._disposed) return;
         this._sub = rafCoordinator.subscribe('flux-slice-panel', {
             hz: FLUX_SLICE_DRIVER_HZ,
             cb: () => {
@@ -461,32 +603,40 @@ export class FluxSlicePanel {
         const ov = this._fieldOverride[fieldKey];
         const drv = DRIVER_BY_KEY[fieldKey];
         const mirrorOn = !!this._mirroredFlags?.[drv?.vizFlagKey];
-        slot.chip.classList.remove('override-on', 'override-off');
+        slot.chip.classList.toggle('override-on', ov === 'on');
+        slot.chip.classList.toggle('override-off', ov === 'off');
         if (ov === 'on') {
-            slot.chip.textContent = 'force on';
-            slot.chip.classList.add('override-on');
-            slot.chip.title = `Forced visible. Click to force-off.`;
+            setTextIfChanged(slot.chip, 'force on');
+            setTitleIfChanged(slot.chip, 'Forced visible. Click to force-off.');
         } else if (ov === 'off') {
-            slot.chip.textContent = 'force off';
-            slot.chip.classList.add('override-off');
-            slot.chip.title = `Forced hidden. Click to return to mirror.`;
+            setTextIfChanged(slot.chip, 'force off');
+            setTitleIfChanged(slot.chip, 'Forced hidden. Click to return to mirror.');
         } else {
-            slot.chip.textContent = 'mirror';
-            slot.chip.title =
+            setTextIfChanged(slot.chip, 'mirror');
+            setTitleIfChanged(slot.chip,
                 `Following viz toggle (currently ${mirrorOn ? 'on' : 'off'}). ` +
-                `Click to force-on.`;
+                'Click to force-on.');
         }
     }
 
     _refreshResetButton() {
         if (!this._resetMirrorBtn) return;
         const anyOverride = Object.values(this._fieldOverride).some(v => v !== null);
-        this._resetMirrorBtn.disabled = !anyOverride;
+        this._resetMirrorBtn.disabled = this._emptyInapplicable || !anyOverride;
     }
 
     // ── Per-frame update ──────────────────────────────────────────────
 
     update() {
+        // Scenario 1 is an imposed null control, not a field-domain
+        // measurement. The event-driven transition normally stops this loop
+        // before it can run; this guard also makes direct/manual update calls
+        // scientifically inert while canonical state is empty.
+        if (this._emptyInapplicable
+            || getScale0State().currentScenarioId === EMPTY_SCENARIO_ID) {
+            if (!this._emptyInapplicable) this._setEmptyApplicability(true);
+            return;
+        }
         // isPanelLive checks whether ITS ARGUMENT carries the `.active` class
         // (or sits inside a non-collapsed `.floating-window`) — see every other
         // Scale-0 panel (dispersion-panel.js, gravity-panel.js, thermo-panel.js,
@@ -799,7 +949,7 @@ export class FluxSlicePanel {
             const c = slot.ctx;
             c.fillStyle = '#0a0d14';
             c.fillRect(0, 0, slot.canvas.width, slot.canvas.height);
-            slot.readout.textContent = `t=${simTick} · max —`;
+            setTextIfChanged(slot.readout, `t=${simTick} · max —`);
             return;
         }
 
@@ -880,8 +1030,8 @@ export class FluxSlicePanel {
         c.drawImage(slot.tmpCanvas, 0, 0, N, N, 0, 0, W, H);
 
         const pausedTag = isRunning ? '' : ' ⏸';
-        slot.readout.textContent =
-            `t=${simTick}${pausedTag} · max ${this._fmt(axisFrameMax)}`;
+        setTextIfChanged(slot.readout,
+            `t=${simTick}${pausedTag} · max ${this._fmt(axisFrameMax)}`);
     }
 
     _fmt(v) {
@@ -1041,6 +1191,11 @@ export class FluxSlicePanel {
         this._disposed = true;     // self-drive guard (Audit pass 2 FLUX-2)
         this._stopSelfDrive();
         this._releaseAllWantedSamplers();
+        if (this._scenarioSyncRaf) cancelAnimationFrame(this._scenarioSyncRaf);
+        this._scenarioSyncRaf = 0;
+        this._scenarioSyncToken++;
+        this._scenarioSelect?.removeEventListener('change', this._onScenarioChange);
+        this._scenarioSelect = null;
         if (this._expanded) this._collapse();
         this._resizeObs?.disconnect();
         this._resizeObs = null;
@@ -1051,6 +1206,8 @@ export class FluxSlicePanel {
         this._fields = {};
         this._rowsContainer = null;
         this._resetMirrorBtn = null;
+        this._rowFragment = null;
+        this._emptyMessage = null;
         this._dockHost = null;
         // Clear the window-singleton ref so the detached panel subtree
         // is GC-eligible. (Audit pass 2: cross-cutting __ftd*Panel
@@ -1096,6 +1253,7 @@ export function initFluxSlicePanel() {
     if (typeof window !== 'undefined' && window.__ftdFluxSlicePanel) {
         const existing = window.__ftdFluxSlicePanel;
         existing.getBridge = getBridge;
+        existing._bindScenarioApplicability?.();
         // If a prior overlay-mode panel exists, leave it alone — the dock
         // slot is empty in that case (user has the legacy chip).
         return existing;

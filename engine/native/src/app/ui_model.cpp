@@ -103,10 +103,6 @@ Rml::String toggle_req_text(const ftd::ToggleSpec& spec) {
         out += "conflicts ";
         out += spec.conflicts;
     }
-    if (spec.gpu_only_warning && *spec.gpu_only_warning) {
-        if (!out.empty()) out += " · ";
-        out += "GPU-only";
-    }
     return Rml::String(out);
 }
 

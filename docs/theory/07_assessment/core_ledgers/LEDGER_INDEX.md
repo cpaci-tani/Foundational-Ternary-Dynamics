@@ -1,6 +1,6 @@
 # LEDGER index — categorised claim map
 
-**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (942 claim rows). **Do not edit by hand** — regenerate instead.
+**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (943 claim rows). **Do not edit by hand** — regenerate instead.
 
 This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the single source of truth for claim status; where this index and the ledger disagree, **the ledger wins**.
 
@@ -18,7 +18,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | [Framework — postulates & constitution](#framework-postulates-constitution) | 15 | P1-P5, the Framework Commitments (FC-0/1/2/3/W), the axiom register, calibrations, adoption-pricing rules. |
 | [Framework — boundary, imports, consumption](#framework-boundary-imports-consumption) | 55 | The modulus/argument frontier, type-priority, the priced-import ledger, the consumption programme, act-counts, what the ontology cannot self-set. |
 | [Framework — audits, red-teams, reconciliation](#framework-audits-red-teams-reconciliation) | 25 | Adversarial audits, red-team remediation, retractions, tag-honesty and corpus-wide reconciliation passes, rigidity / look-elsewhere audits. |
-| [Quantum foundations](#quantum-foundations) | 19 | Born rule, measurement and the declined map M, CHSH/Bell, Spekkens, the deviation-prediction ledger, frame-relative projection. |
+| [Quantum foundations](#quantum-foundations) | 20 | Born rule, measurement and the declined map M, CHSH/Bell, Spekkens, the deviation-prediction ledger, frame-relative projection. |
 | [SM constants — mass & flavour](#sm-constants-mass-flavour) | 33 | m_e, m_p/m_e, Higgs mass, mixing angles, PMNS/CKM, Yukawa prefactors, the cluster-size-mass identification and its N(A) law. |
 | [Alpha readout programme (MC-T4.3)](#alpha-readout-programme-mc-t4-3) | 33 | The alpha-readout contract, the ARC-A/B/C campaigns, observable selection, FC-W and the carrier-narrowing theorem, engine alpha probes. |
 | [QCD, colour & electroweak](#qcd-colour-electroweak) | 15 | Confinement, colour charge and singlets, SU(3)/Z3 structure, hadrodynamics, electroweak rank, generations, no-4th-generation. |
@@ -272,7 +272,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *Born rule, measurement and the declined map M, CHSH/Bell, Spekkens, the deviation-prediction ledger, frame-relative projection.*
 
-**19 claims.**
+**20 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -295,6 +295,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0807` | IMPOSED, CORRECTION, OPEN | Which weighting do threshold upcrossings follow — amplitude, occupation (Born), or energy? | L969 |
 | `FTD-0809` | MEASURED, OPEN | Does the mechanism-level Born regime carry into the engine, and is the latency sector a viable slow gate? | L971 |
 | `FTD-0825` | AXIOM, SELECTION, THEOREM, OPEN | Does the contextual-actualization successor close the Bell/Born/time ambiguity at reference-model level without rewriting v1? | L987 |
+| `FTD-1024` | THEOREM, FOUNDATION, CLOSED_NEGATIVE, OPEN | Why finite independent systems compose by tensor product rather than direct sum | L1163 |
 
 ---
 
@@ -1255,9 +1256,9 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 
 | Tag | Rows |
 |---|---:|
-| THEOREM | 433 |
-| CLOSED_NEGATIVE | 244 |
-| OPEN | 243 |
+| THEOREM | 434 |
+| CLOSED_NEGATIVE | 245 |
+| OPEN | 244 |
 | MEASURED | 185 |
 | SELECTION | 111 |
 | DERIVED | 102 |

@@ -1,5 +1,18 @@
 import { formatS0SeedMetadata } from '../../../config/scenarios.js';
-import { FORCE_FIELD_KEYS, getFieldStateSnapshot, setFieldToggle, setForceStyle, getScalarRenderMode, setScalarRenderMode } from '../state/store.js';
+import {
+    FORCE_FIELD_KEYS,
+    SCALE0_MUTATION_REASONS,
+    SCALE0_MUTATION_SOURCES,
+    commitScale0ScientificMutation,
+    getActiveScale0Bridge,
+    getFieldStateSnapshot,
+    getScalarRenderMode,
+    getScale0QualificationState,
+    getScale0State,
+    setFieldToggle,
+    setForceStyle,
+    setScalarRenderMode,
+} from '../state/store.js';
 import { getScale0Scenario, populateScale0ScenarioSelect } from '../scenario-registry.js';
 import {
     FIELD_TOGGLE_BINDINGS,
@@ -20,7 +33,7 @@ import {
     refreshOverlayPanelShell,
     scheduleOverlayPanelShellRefresh,
 } from './overlays/panel-shell.js?v=6';
-import { syncScale0LatticeSizeAvailability } from './toolbar/limits.js';
+import { syncScale0LatticeSizeAvailability } from './toolbar/limits.js?v=2';
 import {
     setScale0StandardModelReferenceVisible,
 } from './overlays/standard-model.js?v=2';
@@ -64,10 +77,51 @@ function createLatestInputFrame(ctx) {
 
 export function updateScenarioMetadata(
     scenarioId,
-    { profileModified = false, preserveDisclosure = false } = {},
+    {
+        profileModified = false,
+        preserveDisclosure = false,
+        qualificationState = getScale0QualificationState(),
+    } = {},
 ) {
     const scenario = getScale0Scenario(scenarioId);
     const sections = [];
+    if (qualificationState?.status === 'pending') {
+        const pending = qualificationState.authoritativeLoad;
+        sections.push(
+            'AUTHORITATIVE SCENARIO LOAD PENDING — QUALIFICATION SUSPENDED',
+            `Scenario: ${pending?.scenarioId || scenario.id}`,
+            `Load generation: ${pending?.loadGeneration ?? 'unavailable'}`,
+            'The registered claim is shown below, but this live record is not citable until the matching engine setup acknowledgement arrives.',
+            '',
+        );
+    } else if (qualificationState?.status === 'suspended'
+        && qualificationState.authoritativeLoad?.status === 'failed') {
+        const failed = qualificationState.authoritativeLoad;
+        sections.push(
+            'AUTHORITATIVE SCENARIO LOAD FAILED — QUALIFICATION SUSPENDED',
+            `Scenario: ${failed.scenarioId}; load generation: ${failed.loadGeneration}`,
+            `Failure: ${failed.failureReason || 'setup failed without a reported reason'}`,
+            'Any earlier qualified anchor is retained only as provenance; it is not applied to the partially replaced or unresolved live engine state.',
+            'Reload the scenario and wait for a matching successful engine acknowledgement before citing its validation.',
+            '',
+        );
+    } else if (qualificationState?.status === 'suspended') {
+        const mutation = qualificationState.lastMutation;
+        sections.push(
+            'LIVE SCIENTIFIC RECORD MODIFIED — QUALIFICATION SUSPENDED',
+            mutation
+                ? `Reason: ${mutation.reason}; source: ${mutation.source}`
+                : 'No authoritative scenario baseline has been acknowledged for this live record.',
+            mutation
+                ? `Mutation epoch: ${mutation.mutationEpoch}; observed dispatch tick: ${mutation.tick ?? 'unavailable'}; load generation: ${mutation.loadGeneration}`
+                : `Mutation epoch: ${qualificationState.mutationEpoch}`,
+            mutation?.dispatchStatus === 'unknown'
+                ? 'Dashboard write intent was accepted; engine application is not acknowledged by this transport.'
+                : (mutation ? `Dispatch status: ${mutation.dispatchStatus}` : ''),
+            'Reload the scenario and wait for its matching engine acknowledgement before citing its validation.',
+            '',
+        );
+    }
     if (profileModified) {
         sections.push(
             'MODIFIED PHYSICS PROFILE — QUALIFICATION SUSPENDED',
@@ -123,6 +177,9 @@ export function bindScale0UI(ctx, api) {
     const boundarySelect = getEl('boundary-select');
     if (boundarySelect) {
         boundarySelect.addEventListener('change', () => {
+            // Presentation geometry only. The discrete engine's scientific
+            // boundary law is fluxBoundaryMode below; boundary shape is not
+            // applied by any Scale-0 backend and must not suspend qualification.
             ctx.applyBoundaryShape(boundarySelect.value);
         });
     }
@@ -130,7 +187,14 @@ export function bindScale0UI(ctx, api) {
     const fluxBoundaryMode = getEl('flux-boundary-mode');
     if (fluxBoundaryMode) {
         fluxBoundaryMode.addEventListener('change', () => {
-            ctx.applyFluxBoundaryMode(parseInt(fluxBoundaryMode.value, 10));
+            const owner = getActiveScale0Bridge(ctx, getScale0State());
+            commitScale0ScientificMutation(ctx, {
+                reason: SCALE0_MUTATION_REASONS.FLUX_BOUNDARY,
+                source: SCALE0_MUTATION_SOURCES.TOOLBAR_BOUNDARY,
+                loadGeneration: ctx._loadGeneration || 0,
+                owner,
+                dispatchStatus: 'unknown',
+            }, () => ctx.applyFluxBoundaryMode(parseInt(fluxBoundaryMode.value, 10)));
         });
     }
 

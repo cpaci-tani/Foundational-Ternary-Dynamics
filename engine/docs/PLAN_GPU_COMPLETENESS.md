@@ -30,15 +30,14 @@ implementation, not by the `ToggleBackend` mask’s marketing.
 | Class | Meaning |
 |---|---|
 | `NativeCuda` | Device kernel; no host fallback required |
-| `GpuOnlyNoCpu` | CUDA kernel; CPU is an advertised no-op |
 | `CpuOnly` | Forces CPU backend when enabled |
 | `CpuFallbackSync` | CUDA acknowledges the term by syncing to CPU |
 | `HostMirrorHybrid` | GPU tick then full AoS mirror |
-| `IntentFlag` | No physics branch (none remaining after `confinement` was wired) |
 | `ControlOnly` | Validator / diagnostics, not a field term |
 
-**Fail closed:** `ToggleBackend::ANY` on an intent flag, a CPU-only
-integrator, or a GPU-only no-op is a lie. The oracle CTest
+**Fail closed:** `ToggleBackend::ANY` on a CPU-only integrator or a
+host-mirror term is a lie. No physics toggle may advertise a backend where it
+is an intent-only or no-op acknowledgment. The oracle CTest
 (`gpu_term_contract`) pins the table; ports update the row in the same
 change as the kernel.
 

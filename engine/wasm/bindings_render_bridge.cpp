@@ -19,9 +19,12 @@
 #include <emscripten/val.h>
 #include <algorithm>
 #include <cmath>
+#include <iomanip>
 #include <random>
+#include <sstream>
 #include <string>
 #include <unordered_map>
+#include "ftd/dynamical_state_digest.h"
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
 #include "ftd/scenarios.h"  // ftd::dispatch_scenario — ported JS scenario library
@@ -146,8 +149,48 @@ static val get_energy_ledger(ftd::RenderBridge& rb) {
     return result;
 }
 
-// ── Gravity panel (Phase 2): REAL C++ latency field ──────────────────
-// Distinct from the |J|² web proxy: voxel.latency from the Poisson solver.
+// ── Canonical Scale-0 dynamical-state digest ───────────────────────
+// Hash lanes cross the JS boundary as fixed-width hexadecimal strings. An
+// IEEE double cannot represent an arbitrary uint64_t exactly, so publishing
+// either lane as a JS Number would silently weaken the scientific parity
+// contract. Metadata and exact counters stay numeric: browser lattice sizes
+// bound all of them well below Number.MAX_SAFE_INTEGER on this WASM backend.
+static std::string uint64_hex(std::uint64_t value) {
+    std::ostringstream stream;
+    stream << std::hex << std::nouppercase << std::setfill('0')
+           << std::setw(16) << value;
+    return stream.str();
+}
+
+static val capture_dynamical_state_digest(ftd::RenderBridge& rb) {
+    ftd::DynamicalStateDigest digest{};
+    if (!rb.capture_dynamical_state_digest(digest)) return val::null();
+
+    val result = val::object();
+    result.set("schema_version", digest.schema_version);
+    result.set("lattice_size", digest.lattice_size);
+    result.set("site_count", static_cast<double>(digest.site_count));
+    result.set("tick", static_cast<double>(digest.tick));
+    result.set("state_version", static_cast<double>(digest.state_version));
+    result.set("hash_lo", uint64_hex(digest.hash_lo));
+    result.set("hash_hi", uint64_hex(digest.hash_hi));
+    result.set("nonfinite_value_count",
+               static_cast<double>(digest.nonfinite_value_count));
+    result.set("nondefault_value_count",
+               static_cast<double>(digest.nondefault_value_count));
+    result.set("device_to_host_bytes",
+               static_cast<double>(digest.device_to_host_bytes));
+    // Browser WASM is a CPU-resident backend. The canonical capture does not
+    // and cannot materialize a CUDA voxel mirror, so this instrumentation is
+    // exactly zero rather than omitted or inferred by JavaScript.
+    result.set("full_mirror_calls", 0);
+    result.set("exact_default_record", digest.exact_default_record());
+    return result;
+}
+
+// ── Gravity panel (Phase 2): engine Poisson-latency mapping ───────────
+// [IMPOSED] voxel.latency record, distinct from the |J|² web proxy; this
+// binding does not identify it as a recovered physical metric or clock field.
 static val get_gravity_metric_agg(ftd::RenderBridge& rb) {
     const ftd::GravityMetricAgg a = rb.gravity_metric_agg();
     val r = val::object();
@@ -157,6 +200,7 @@ static val get_gravity_metric_agg(ftd::RenderBridge& rb) {
     r.set("gammaMax",       a.gamma_max);
     r.set("dilationMaxPct", a.dilation_max_pct);
     r.set("voxelCount",     a.voxel_count);
+    r.set("requested",      a.requested);
     r.set("active",         a.active);
     return r;
 }
@@ -343,6 +387,7 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     function("getLagrangian",      &get_lagrangian);
     function("getLagrangianView",  &get_lagrangian_view);
     function("getEnergyLedger",    &get_energy_ledger);
+    function("captureDynamicalStateDigest", &capture_dynamical_state_digest);
     function("getConstants",       &get_constants);
     function("getLatticeSize",     &get_lattice_size);
 

@@ -115,7 +115,7 @@ export class PhysicsHarness {
      * Aggregated conservation totals — single canonical source for
      * the conservation panel and any sweep-time invariant checks.
      *
-     * Momentum (Poynting) is audit-only. Do NOT fall back to
+     * Dynamic energy and momentum (Poynting) are audit-only. Do NOT fall back to
      * bridge.getEnergyAudit() — that recomputes the O(N³) pass on the
      * in-thread WASM path and would pin audit even when demand-gating is on.
      * When the hub has no live audit, pAvailable is false and callers must
@@ -124,29 +124,91 @@ export class PhysicsHarness {
     getConservationTotals() {
         const hubDiag = this.telemetry?.s0?.diag;
         const hubAudit = this.telemetry?.s0?.audit;
-        const d = hubDiag ?? this.bridge?.getDiagnostics?.() ?? null;
-        const a = hubAudit ?? null;
+        const diagMeta = this.telemetry?.getScale0TelemetryMeta?.('diagnostics') ?? null;
+        const auditMeta = this.telemetry?.getScale0TelemetryMeta?.('audit') ?? null;
+        const finite = (value) => typeof value === 'number' && Number.isFinite(value)
+            ? value : Number.NaN;
+        const finiteMetaNumber = (value) => (
+            typeof value === 'number' && Number.isFinite(value) ? value : null
+        );
+        const provenance = (meta) => {
+            const sampleTick = finiteMetaNumber(meta?.sampleTick ?? meta?.tick);
+            const stateVersion = finiteMetaNumber(meta?.stateVersion);
+            const snapshotVersion = finiteMetaNumber(meta?.snapshotVersion);
+            const source = meta?.source ?? null;
+            const sourceEpoch = meta?.sourceEpoch ?? meta?.epoch ?? null;
+            const identity = Number.isFinite(stateVersion)
+                ? stateVersion
+                : (Number.isFinite(snapshotVersion) ? snapshotVersion : sampleTick);
+            return {
+                sampleTick,
+                stateVersion,
+                snapshotVersion,
+                source,
+                sourceEpoch,
+                stamp: source !== null && Number.isFinite(sampleTick)
+                    ? `${source}:${sourceEpoch ?? 'local'}:${identity}:${sampleTick}`
+                    : null,
+            };
+        };
+        const diagProvenance = provenance(diagMeta);
+        const auditProvenance = provenance(auditMeta);
+        const diagCurrent = !!hubDiag
+            && !!diagMeta
+            && diagMeta.stale !== true
+            && Number.isFinite(diagProvenance.sampleTick);
+        const auditCurrent = !!hubAudit
+            && !!auditMeta
+            && auditMeta.stale !== true
+            && Number.isFinite(auditProvenance.sampleTick);
+        const d = diagCurrent ? hubDiag : null;
+        const a = auditCurrent ? hubAudit : null;
         if (!d) return null;
-        const diagTick = Number(d.tick);
-        const auditMeta = this.telemetry?.getScale0TelemetryMeta?.('audit');
-        const auditTick = Number(auditMeta?.tick ?? a?.tick);
-        const tickSlack = 16;
-        const pAvailable = !!a
-            && !auditMeta?.stale
-            && Number.isFinite(diagTick)
-            && Number.isFinite(auditTick)
-            && Math.abs(diagTick - auditTick) <= tickSlack;
+
+        // Energy and momentum are audit reductions. Diagnostics.totalEnergy is
+        // intentionally not a substitute: on a staggered worker it can be a
+        // retained or differently-defined value without the audit observation's
+        // sample tick/state version.
+        const energy = finite(a?.dynamicEnergy);
+        const px = finite(a?.totalPoynting?.x ?? a?.poyntingX);
+        const py = finite(a?.totalPoynting?.y ?? a?.poyntingY);
+        const pz = finite(a?.totalPoynting?.z ?? a?.poyntingZ);
+        const energyAvailable = auditCurrent && Number.isFinite(energy);
+        const pAvailable = auditCurrent && [px, py, pz].every(Number.isFinite);
+        const Lx = finite(d.angMomX);
+        const Ly = finite(d.angMomY);
+        const Lz = finite(d.angMomZ);
+        const charge = finite(d.chargeBalance);
+        const energyObservation = {
+            ...auditProvenance,
+            available: energyAvailable,
+            stamp: energyAvailable ? auditProvenance.stamp : null,
+            value: energy,
+        };
+        const momentumObservation = {
+            ...auditProvenance,
+            available: pAvailable,
+            stamp: pAvailable ? auditProvenance.stamp : null,
+            x: px,
+            y: py,
+            z: pz,
+        };
         return {
-            tick:    d.tick ?? 0,
-            E:       a?.dynamicEnergy ?? d?.dynamicEnergy ?? d?.totalEnergy ?? 0,
-            px:      pAvailable ? (a?.totalPoynting?.x ?? a?.poyntingX ?? 0) : 0,
-            py:      pAvailable ? (a?.totalPoynting?.y ?? a?.poyntingY ?? 0) : 0,
-            pz:      pAvailable ? (a?.totalPoynting?.z ?? a?.poyntingZ ?? 0) : 0,
+            tick: diagProvenance.sampleTick,
+            diagnosticsObservation: {
+                ...diagProvenance,
+                available: true,
+            },
+            energyObservation,
+            momentumObservation,
+            E: energy,
+            EAvailable: energyAvailable,
+            px, py, pz,
             pAvailable,
-            Lx:      d.angMomX ?? 0,
-            Ly:      d.angMomY ?? 0,
-            Lz:      d.angMomZ ?? 0,
-            Q:       d.chargeBalance ?? a?.chargeTotal ?? 0,
+            Lx, Ly, Lz,
+            LAvailable: [Lx, Ly, Lz].every(Number.isFinite),
+            Q:       charge ?? Number.NaN,
+            QAvailable: Number.isFinite(charge),
         };
     }
 

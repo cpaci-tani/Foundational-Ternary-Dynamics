@@ -1,6 +1,8 @@
 // @ts-check
 import { defineConfig, devices } from '@playwright/test';
 
+const hardwareWebgl = process.env.FTD_HARDWARE_WEBGL === '1';
+
 /**
  * Playwright config for the FTD web dashboard smoke suite.
  *
@@ -29,6 +31,11 @@ export default defineConfig({
     // Give the WASM + Three.js stack time to initialize on slower machines
     actionTimeout: 30_000,
     navigationTimeout: 45_000,
+    // Headless Chromium otherwise selects SwiftShader on Windows even when a
+    // discrete GPU is available. Release performance runs opt into the normal
+    // ANGLE backend and independently assert that the resulting renderer is
+    // hardware-backed before making a 60 FPS claim.
+    launchOptions: hardwareWebgl ? { args: ['--use-angle=default'] } : undefined,
   },
 
   projects: [

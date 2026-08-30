@@ -1554,6 +1554,11 @@ Diagnostics GpuEngine::diagnostics() {
     return d;
 }
 
+DynamicalStateDigest GpuEngine::dynamical_state_digest() const {
+    return bufs_.dynamical_state_digest(
+        static_cast<std::int64_t>(tick_), state_version_);
+}
+
 // ──────────────────────────────────────────────────────────────────
 // ENERGY-LEDGER PERFORMANCE NOTE (TRACKER §1.7 closed 2026-04-17)
 // ──────────────────────────────────────────────────────────────────

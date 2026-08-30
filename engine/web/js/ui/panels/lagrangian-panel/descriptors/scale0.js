@@ -8,7 +8,7 @@
 export const terms = [
     { key: 'fieldKinetic',  label: 'Field KE',    color: 'var(--legend-field-kinetic,  #66bb6a)', buffer: 'fieldKinetic',  unit: 'E*',  includeByDefault: true },
     { key: 'fieldGradient', label: 'Gradient',    color: 'var(--legend-field-gradient, #26a69a)', buffer: 'fieldGradient', unit: 'E*',  includeByDefault: true },
-    { key: 'bornInfeld',    label: 'Born-Infeld', color: 'var(--legend-bi,             #ef5350)', buffer: 'bornInfeld',    unit: 'E*',  includeByDefault: true },
+    { key: 'bornInfeld',    label: 'Born-Infeld (observer baseline in empty control)', color: 'var(--legend-bi, #ef5350)', buffer: 'bornInfeld', unit: 'E*', includeByDefault: true },
     { key: 'coupling',      label: 'Coupling',    color: 'var(--legend-coupling,       #fb8c00)', buffer: 'coupling',      unit: 'E*',  includeByDefault: true },
     { key: 'velocity',      label: 'Velocity',    color: 'var(--legend-velocity,       #fdd835)', buffer: 'velocity',      unit: 'E*',  includeByDefault: true },
     { key: 'gauss',         label: 'Gauss',       color: 'var(--legend-gauss,          #42a5f5)', buffer: 'gauss',         unit: 'E*²', includeByDefault: true },
@@ -16,9 +16,9 @@ export const terms = [
 ];
 
 export const actionRows = [
-    { id: 'action',     label: 'Action S',              unit: 'ℏ',    source: 's0.lagrangian.totalAction', trend: 'lag.action' },
-    { id: 'total',      label: 'ℒ total',               unit: 'E*',   source: 's0.lagrangian.total',       trend: 'lag.total' },
-    { id: 'hamiltonian',label: 'Hamiltonian H',         unit: 'E*',   source: 's0.lagrangian.hamiltonian', trend: 'lag.hamiltonian' },
+    { id: 'action',     label: 'Action S (observer baseline included)',      unit: 'ℏ',  source: 's0.lagrangian.totalAction', trend: 'lag.action' },
+    { id: 'total',      label: 'ℒ total (observer baseline included)',       unit: 'E*', source: 's0.lagrangian.total',       trend: 'lag.total' },
+    { id: 'hamiltonian',label: 'Hamiltonian H (observer baseline included)', unit: 'E*', source: 's0.lagrangian.hamiltonian', trend: 'lag.hamiltonian' },
     { id: 'gauss',      label: 'Gauss ‖div J−s‖',       unit: 'E*²',  source: 's0.lagrangian.gauss',       trend: 'lag.gauss' },
     { id: 'max-gauss',  label: 'Max Gauss err',         unit: 'E*',   source: 's0.audit.maxGaussError',    trend: 'aud.maxGaussError' },
     { id: 'flux-mag',   label: 'Total |J|',             unit: '|J|',  source: 's0.diag.totalFlux',         trend: 'flux' },

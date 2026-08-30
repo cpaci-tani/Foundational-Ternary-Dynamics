@@ -6,6 +6,11 @@
 import { BaseComponent } from '../../../../../core/component.js';
 import { cardStyle, titleStyle, tagBadge, formatExp } from '../_card-helpers.js';
 import { getScale0Scenario } from '../../../scenario-registry.js';
+import {
+    commitScale0ScientificMutation,
+    SCALE0_MUTATION_REASONS,
+    SCALE0_MUTATION_SOURCES,
+} from '../../../state/store.js';
 
 
 const SCENARIO_IDS = new Set([
@@ -58,6 +63,7 @@ export class ThomsonComponent extends BaseComponent {
         const scenario = getScale0Scenario(scenarioId);
         if (!SCENARIO_IDS.has(scenarioId)) {
             this.refs.root.style.display = 'none';
+            this.bridgeRef = null;
             return;
         }
         this.refs.root.style.display = '';
@@ -152,11 +158,26 @@ export class ThomsonComponent extends BaseComponent {
     }
 
     _setFluxUnlocked(checked) {
-        this.bridgeRef?.setToggle?.('wave_propagation', !!checked);
+        const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
+        const owner = this.bridgeRef;
+        const previous = !!owner?.getToggle?.('wave_propagation');
+        if (!ctx || !owner?.setToggle) return false;
+        const accepted = commitScale0ScientificMutation(ctx, {
+            reason: SCALE0_MUTATION_REASONS.PHYSICS_TOGGLE,
+            source: SCALE0_MUTATION_SOURCES.P1_THOMSON,
+            loadGeneration: ctx._loadGeneration,
+            owner,
+        }, (activeOwner) => activeOwner.setToggle('wave_propagation', !!checked)).accepted;
+        if (!accepted) {
+            const localToggle = this.element.querySelector('[data-thomson-flux-unlocked]');
+            if (localToggle) localToggle.checked = previous;
+            return false;
+        }
         const globalToggle = document.getElementById('t-wave');
         if (globalToggle) {
             globalToggle.checked = !!checked;
             globalToggle.closest('.toggle-row')?.classList.remove('scenario-override');
         }
+        return true;
     }
 }

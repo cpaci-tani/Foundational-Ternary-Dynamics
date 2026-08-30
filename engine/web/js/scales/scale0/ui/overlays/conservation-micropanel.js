@@ -23,6 +23,7 @@ import { attachFullscreen } from '../../../../ui/charts/chart-fullscreen.js';
 import { getPhysicsHarness } from '../../../../physics/index.js';
 import { resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
+import { telemetryHub } from '../../../../telemetry-hub.js';
 
 const PANEL_ID = 'conservation-micropanel';
 const HZ = 4;                                // sample rate
@@ -37,6 +38,27 @@ const HEADLINE_WINDOW_TICKS = 100;           // shorter window for the headline 
 function sampleTotals(bridge) {
     const harness = getPhysicsHarness(bridge);
     return harness ? harness.getConservationTotals() : null;
+}
+
+function groupSourceBoundary(meta) {
+    if (!meta) return null;
+    const epoch = meta.sourceEpoch ?? meta.epoch;
+    if (epoch === null || epoch === undefined || epoch === '') return null;
+    return `${meta.source ?? 'unknown'}:${String(epoch)}`;
+}
+
+/** Scientific-history boundary shared by the panel and focused tests. */
+export function getConservationSourceBoundary(hub = telemetryHub) {
+    const expected = hub?.s0?.meta?.expectedSourceEpoch;
+    if (expected !== null && expected !== undefined && expected !== '') {
+        return `${hub?.s0?.meta?.expectedSource ?? 'unknown'}:${String(expected)}`;
+    }
+    const diagnostics = hub?.getScale0TelemetryMeta?.('diagnostics') ?? null;
+    const audit = hub?.getScale0TelemetryMeta?.('audit') ?? null;
+    const diagBoundary = groupSourceBoundary(diagnostics);
+    const auditBoundary = groupSourceBoundary(audit);
+    if (diagBoundary === null && auditBoundary === null) return null;
+    return `diagnostics=${diagBoundary ?? 'none'}|audit=${auditBoundary ?? 'none'}`;
 }
 
 function l2(x, y, z) {
@@ -65,10 +87,10 @@ export class ConservationMicropanelComponent extends BaseComponent {
     }
 }
 
-function renderRow(label, value, color, { missing = false, key = '' } = {}) {
+function renderRow(label, value, color, { missing = false, key = '', reason = '' } = {}) {
     const val = missing ? '        —' : formatExp(value);
     const title = missing
-        ? 'Poynting (momentum) needs a live energy-audit snapshot — open Diagnostics, Lagrangian, Grid, Knots, or an E vs B / Gauss chart'
+        ? (reason || 'Collecting a current source snapshot and the full lookback window.')
         : '';
     const titleAttr = title ? ` title="${title}"` : '';
     const keyAttr = key ? ` data-cons="${key}"` : '';
@@ -80,7 +102,7 @@ function renderRow(label, value, color, { missing = false, key = '' } = {}) {
     `;
 }
 
-export function mountConservationMicropanel(host, getBridge) {
+export function mountConservationMicropanel(host, getBridge, hub = telemetryHub) {
     if (!host) return null;
     const existing = document.getElementById(PANEL_ID);
     if (existing) existing.remove();
@@ -101,70 +123,117 @@ export function mountConservationMicropanel(host, getBridge) {
         Q:  createHysteresis(),
     };
 
-    // Rolling-window baseline: keep totals from WINDOW_TICKS ago for the
-    // full history (used by the fullscreen modal); compute headline deltas
-    // against the most-recent HEADLINE_WINDOW_TICKS samples for the dock view.
-    const history = [];                     // [{tick, totals}, ...]
+    // Diagnostics and audit reductions have independent clocks. Never append a
+    // retained audit reduction under a newer diagnostics tick: each quantity's
+    // history is keyed by its own source observation.
+    const diagnosticHistory = [];           // [{tick, totals, stamp}, ...]
+    const energyHistory = [];               // [{tick, value, stamp}, ...]
+    const momentumHistory = [];             // [{tick, x, y, z, stamp}, ...]
     let lastBridge = null;
+    let lastResetVersion = -1;
+    let lastSourceBoundary = null;
+    let lastDiagnosticStamp = null;
+    let lastEnergyStamp = null;
+    let lastMomentumStamp = null;
+    let lastRenderState = '';
 
-    /** Locate the nearest history entry that's at least lookback ticks behind. */
-    function findBaseline(currentTick, lookback) {
-        for (let i = 0; i < history.length; i++) {
-            if (currentTick - history[i].tick <= lookback) return history[i];
-        }
-        return history[0];
+    function renderWaiting(status = 'waiting') {
+        if (lastRenderState === status) return;
+        lastRenderState = status;
+        const muted = 'var(--text-muted)';
+        rowsEl.innerHTML = [
+            renderRow('ΔE', Number.NaN, muted, { key: 'E', missing: true }),
+            renderRow('Δp', Number.NaN, muted, { key: 'p', missing: true }),
+            renderRow('ΔL', Number.NaN, muted, { key: 'L', missing: true }),
+            renderRow('ΔQ', Number.NaN, muted, { key: 'Q', missing: true }),
+        ].join('');
+        statusEl.textContent = status;
+        if (panel._ftdCard?._isFullscreen) renderHistorySparklines();
     }
 
-    /** Same window as findBaseline, but only among samples with live Poynting. */
-    function findPBaseline(currentTick, lookback) {
-        let fallback = null;
-        for (let i = 0; i < history.length; i++) {
-            if (!history[i].totals.pAvailable) continue;
-            if (!fallback) fallback = history[i];
-            if (currentTick - history[i].tick <= lookback) return history[i];
+    function resetHistory(status = 'collecting') {
+        diagnosticHistory.length = 0;
+        energyHistory.length = 0;
+        momentumHistory.length = 0;
+        lastDiagnosticStamp = null;
+        lastEnergyStamp = null;
+        lastMomentumStamp = null;
+        renderWaiting(status);
+    }
+
+    /** Locate the nearest history entry that's at least lookback ticks behind. */
+    function findBaseline(history, currentTick, lookback) {
+        const targetTick = currentTick - lookback;
+        let baseline = null;
+        for (const entry of history) {
+            if (entry.tick > targetTick) break;
+            baseline = entry;
         }
-        return fallback;
+        return baseline;
+    }
+
+    function trimHistory(history, currentTick) {
+        while (history.length > 0 && currentTick - history[0].tick > WINDOW_TICKS) {
+            history.shift();
+        }
     }
 
     /** Render the 4 SVG sparklines used in the fullscreen modal. */
     function renderHistorySparklines() {
-        if (!history.length) {
+        const allHistories = [energyHistory, momentumHistory, diagnosticHistory];
+        if (!allHistories.some(history => history.length)) {
             historyEl.innerHTML = '<div class="cons-history-empty">Collecting history…</div>';
             return;
         }
-        const tBase = history[0].tick;
         const series = [
-            { label: 'ΔE', extract: (h) => h.totals.E - history[0].totals.E },
-            { label: 'Δp', extract: (h) => l2(h.totals.px - history[0].totals.px, h.totals.py - history[0].totals.py, h.totals.pz - history[0].totals.pz) },
-            { label: 'ΔL', extract: (h) => l2(h.totals.Lx - history[0].totals.Lx, h.totals.Ly - history[0].totals.Ly, h.totals.Lz - history[0].totals.Lz) },
-            { label: 'ΔQ', extract: (h) => h.totals.Q - history[0].totals.Q },
+            { label: 'ΔE', history: energyHistory,
+              extract: (h, first) => h.value - first.value },
+            { label: 'Δp', history: momentumHistory,
+              extract: (h, first) => l2(h.x - first.x, h.y - first.y, h.z - first.z) },
+            { label: 'ΔL', history: diagnosticHistory,
+              extract: (h, first) => h.totals.LAvailable && first.totals.LAvailable
+                  ? l2(h.totals.Lx - first.totals.Lx, h.totals.Ly - first.totals.Ly, h.totals.Lz - first.totals.Lz)
+                  : Number.NaN },
+            { label: 'ΔQ', history: diagnosticHistory,
+              extract: (h, first) => h.totals.QAvailable && first.totals.QAvailable
+                  ? h.totals.Q - first.totals.Q : Number.NaN },
         ];
+        const firstTicks = allHistories.filter(history => history.length).map(history => history[0].tick);
+        const lastTicks = allHistories.filter(history => history.length).map(history => history.at(-1).tick);
+        const tBase = Math.min(...firstTicks);
+        const tLast = Math.max(...lastTicks);
         const W = 720, ROW_H = 90;
         let html = `<div class="cons-history-container">`;
-        html += `<div class="cons-history-title">Conservation drift — last ${history[history.length-1].tick - tBase} ticks (window ${WINDOW_TICKS})</div>`;
+        html += `<div class="cons-history-title">Conservation drift — last ${tLast - tBase} ticks (window ${WINDOW_TICKS})</div>`;
         for (const s of series) {
-            const values = history.map(s.extract);
-            const absVals = values.map(Math.abs);
-            const peakAbs = Math.max(...absVals, 1e-30);
-            const status = statusToken(peakAbs);
+            const first = s.history[0] ?? null;
+            const values = first ? s.history.map(entry => s.extract(entry, first)) : [];
+            const finiteValues = values.filter(Number.isFinite);
+            const peakAbs = finiteValues.reduce(
+                (peak, value) => Math.max(peak, Math.abs(value)), 1e-30,
+            );
+            const status = finiteValues.length ? statusToken(peakAbs) : 'var(--text-muted)';
             const margin = { left: 90, right: 60, top: 14, bottom: 18 };
             const innerW = W - margin.left - margin.right;
             const innerH = ROW_H - margin.top - margin.bottom;
-            const minV = Math.min(...values);
-            const maxV = Math.max(...values);
+            const minV = finiteValues.length ? Math.min(...finiteValues) : 0;
+            const maxV = finiteValues.length ? Math.max(...finiteValues) : 0;
             const span = (maxV - minV) || (peakAbs * 2 || 1e-12);
             let path = '';
             for (let i = 0; i < values.length; i++) {
                 const fx = i / Math.max(1, values.length - 1);
+                if (!Number.isFinite(values[i])) { path += ' '; continue; }
                 const fy = 1 - (values[i] - minV) / span;
                 const x = (margin.left + fx * innerW).toFixed(1);
                 const y = (margin.top + fy * innerH).toFixed(1);
-                path += (i === 0 ? 'M' : 'L') + x + ',' + y;
+                const previousFinite = i > 0 && Number.isFinite(values[i - 1]);
+                path += (previousFinite ? 'L' : 'M') + x + ',' + y;
             }
             html += `<svg viewBox="0 0 ${W} ${ROW_H}" class="cons-history-svg">`;
             html += `<rect x="${margin.left}" y="${margin.top}" width="${innerW}" height="${innerH}" fill="rgba(255,255,255,0.02)" stroke="var(--border-light, rgba(255,255,255,0.08))" stroke-width="0.5"/>`;
             html += `<text x="8" y="${margin.top + innerH/2 + 4}" fill="var(--text-muted)" font-size="16" font-weight="600">${s.label}</text>`;
-            html += `<text x="${margin.left + innerW + 8}" y="${margin.top + 8}" fill="${status}" font-size="16" font-family="var(--font-mono)">${formatExp(peakAbs)}</text>`;
+            const peakLabel = finiteValues.length ? formatExp(peakAbs) : '—';
+            html += `<text x="${margin.left + innerW + 8}" y="${margin.top + 8}" fill="${status}" font-size="16" font-family="var(--font-mono)">${peakLabel}</text>`;
             html += `<text x="${margin.left + innerW + 8}" y="${margin.top + innerH}" fill="var(--text-muted)" font-size="16" opacity="0.7">peak |Δ|</text>`;
             html += `<path d="${path}" stroke="${status}" stroke-width="1.2" fill="none"/>`;
             html += `</svg>`;
@@ -206,46 +275,129 @@ export function mountConservationMicropanel(host, getBridge) {
         if (!panelIsLive()) return;
         const bridge = getBridge?.();
         if (!bridge) return;
-        const totals = sampleTotals(bridge);
-        if (!totals) return;
 
-        // Reset history if bridge identity changed (scale switch / scenario reload).
-        if (bridge !== lastBridge) {
-            history.length = 0;
+        // Reset before sampling on bridge, scenario/reset, or telemetry-source
+        // turnover. Native mutation invalidation advances sourceEpoch without
+        // replacing the bridge or calling resetScale(0); preserving the old
+        // conservation baseline across that intervention would turn a deliberate
+        // write into apparent drift.
+        const resetVersion = hub.getResetVersion?.(0) ?? 0;
+        const sourceBoundary = getConservationSourceBoundary(hub);
+        const sourceChanged = lastSourceBoundary !== null && sourceBoundary !== null
+            && sourceBoundary !== lastSourceBoundary;
+        if (bridge !== lastBridge || resetVersion !== lastResetVersion || sourceChanged) {
+            resetHistory(sourceChanged ? 'source changed · collecting' : 'collecting');
             lastBridge = bridge;
+            lastResetVersion = resetVersion;
+        }
+        if (sourceBoundary !== null) lastSourceBoundary = sourceBoundary;
+
+        const diagMeta = hub.getScale0TelemetryMeta?.('diagnostics') ?? null;
+        if (!diagMeta || diagMeta.stale === true || !Number.isFinite(diagMeta.tick)) {
+            renderWaiting('waiting');
+            return;
+        }
+        const totals = sampleTotals(bridge);
+        if (!totals || !Number.isFinite(totals.tick)) {
+            renderWaiting('waiting');
+            return;
         }
 
-        // Append + trim to window
-        history.push({ tick: totals.tick, totals });
-        // Drop entries older than WINDOW_TICKS
-        while (history.length > 0 && (totals.tick - history[0].tick) > WINDOW_TICKS) {
-            history.shift();
+        const boundary = sourceBoundary ?? 'local';
+        const diagnosticsObservation = totals.diagnosticsObservation;
+        const energyObservation = totals.energyObservation;
+        const momentumObservation = totals.momentumObservation;
+        const diagnosticStamp = diagnosticsObservation?.stamp
+            ? `${boundary}|${diagnosticsObservation.stamp}` : null;
+        const energyStamp = energyObservation?.available && energyObservation.stamp
+            ? `${boundary}|${energyObservation.stamp}` : null;
+        const momentumStamp = momentumObservation?.available && momentumObservation.stamp
+            ? `${boundary}|${momentumObservation.stamp}` : null;
+
+        // Each history follows its producer's observation identity. A worker
+        // may publish diagnostics eight times while reusing one audit reduction;
+        // that is one energy/momentum sample, not eight samples at newer ticks.
+        if (diagnosticStamp && diagnosticStamp !== lastDiagnosticStamp) {
+            lastDiagnosticStamp = diagnosticStamp;
+            diagnosticHistory.push({ tick: totals.tick, totals, stamp: diagnosticStamp });
+            trimHistory(diagnosticHistory, totals.tick);
+        }
+        if (energyStamp && energyStamp !== lastEnergyStamp) {
+            lastEnergyStamp = energyStamp;
+            energyHistory.push({
+                tick: energyObservation.sampleTick,
+                value: energyObservation.value,
+                stamp: energyStamp,
+            });
+            trimHistory(energyHistory, energyObservation.sampleTick);
+        }
+        if (momentumStamp && momentumStamp !== lastMomentumStamp) {
+            lastMomentumStamp = momentumStamp;
+            momentumHistory.push({
+                tick: momentumObservation.sampleTick,
+                x: momentumObservation.x,
+                y: momentumObservation.y,
+                z: momentumObservation.z,
+                stamp: momentumStamp,
+            });
+            trimHistory(momentumHistory, momentumObservation.sampleTick);
         }
 
-        // Compute headline deltas vs HEADLINE_WINDOW_TICKS-ago snapshot
-        const start = findBaseline(totals.tick, HEADLINE_WINDOW_TICKS).totals;
-        const dE = totals.E - start.E;
-        const pLive = !!totals.pAvailable;
-        const pBase = pLive ? findPBaseline(totals.tick, HEADLINE_WINDOW_TICKS) : null;
-        const dp = pBase
-            ? l2(totals.px - pBase.totals.px, totals.py - pBase.totals.py, totals.pz - pBase.totals.pz)
-            : NaN;
-        const dL = l2(totals.Lx - start.Lx, totals.Ly - start.Ly, totals.Lz - start.Lz);
-        const dQ = totals.Q - start.Q;
+        const renderStamp = [diagnosticStamp, energyStamp ?? 'energy-waiting',
+            momentumStamp ?? 'momentum-waiting'].join('|');
+        if (renderStamp === lastRenderState) return;
 
-        const colE = hyst.E.update(statusToken(dE));
-        const colP = pBase ? hyst.p.update(statusToken(dp)) : 'var(--text-muted)';
-        const colL = hyst.L.update(statusToken(dL));
-        const colQ = hyst.Q.update(statusToken(dQ));
+        // Compute each headline against a baseline from the same producer.
+        const energyBase = energyObservation?.available
+            ? findBaseline(energyHistory, energyObservation.sampleTick, HEADLINE_WINDOW_TICKS)
+            : null;
+        const momentumBase = momentumObservation?.available
+            ? findBaseline(momentumHistory, momentumObservation.sampleTick, HEADLINE_WINDOW_TICKS)
+            : null;
+        const diagnosticBaseEntry = findBaseline(
+            diagnosticHistory, totals.tick, HEADLINE_WINDOW_TICKS,
+        );
+        const diagnosticBase = diagnosticBaseEntry?.totals ?? null;
+        const eLive = !!energyBase && energyObservation?.available;
+        const dE = eLive ? energyObservation.value - energyBase.value : Number.NaN;
+        const pLive = !!momentumBase && momentumObservation?.available;
+        const dp = pLive
+            ? l2(momentumObservation.x - momentumBase.x,
+                momentumObservation.y - momentumBase.y,
+                momentumObservation.z - momentumBase.z)
+            : Number.NaN;
+        const lLive = !!diagnosticBase && totals.LAvailable && diagnosticBase.LAvailable;
+        const qLive = !!diagnosticBase && totals.QAvailable && diagnosticBase.QAvailable;
+        const dL = lLive
+            ? l2(totals.Lx - diagnosticBase.Lx, totals.Ly - diagnosticBase.Ly,
+                totals.Lz - diagnosticBase.Lz)
+            : Number.NaN;
+        const dQ = qLive ? totals.Q - diagnosticBase.Q : Number.NaN;
+
+        const colE = eLive ? hyst.E.update(statusToken(dE)) : 'var(--text-muted)';
+        const colP = pLive ? hyst.p.update(statusToken(dp)) : 'var(--text-muted)';
+        const colL = lLive ? hyst.L.update(statusToken(dL)) : 'var(--text-muted)';
+        const colQ = qLive ? hyst.Q.update(statusToken(dQ)) : 'var(--text-muted)';
 
         rowsEl.innerHTML = [
-            renderRow('ΔE', dE, colE, { key: 'E' }),
-            renderRow('Δp', dp, colP, { key: 'p', missing: !pBase }),
-            renderRow('ΔL', dL, colL, { key: 'L' }),
-            renderRow('ΔQ', dQ, colQ, { key: 'Q' }),
+            renderRow('ΔE', dE, colE, { key: 'E', missing: !eLive,
+                reason: energyObservation?.available
+                    ? 'Collecting the full 100-tick audit-energy lookback.'
+                    : 'Dynamic energy needs a current energy-audit snapshot.' }),
+            renderRow('Δp', dp, colP, { key: 'p', missing: !pLive,
+                reason: momentumObservation?.available
+                    ? 'Collecting the full 100-tick Poynting lookback.'
+                    : 'Poynting needs a current energy-audit snapshot.' }),
+            renderRow('ΔL', dL, colL, { key: 'L', missing: !lLive }),
+            renderRow('ΔQ', dQ, colQ, { key: 'Q', missing: !qLive }),
         ].join('');
 
-        statusEl.textContent = `t=${totals.tick}`;
+        const energyClock = energyObservation?.available
+            ? `t=${energyObservation.sampleTick}` : 'waiting';
+        const momentumClock = momentumObservation?.available
+            ? `t=${momentumObservation.sampleTick}` : 'waiting';
+        statusEl.textContent = `state t=${totals.tick} · E ${energyClock} · p ${momentumClock}`;
+        lastRenderState = renderStamp;
 
         // If currently fullscreen, refresh the modal sparklines too
         if (panel._ftdCard?._isFullscreen) {
@@ -280,6 +432,14 @@ export function mountConservationMicropanel(host, getBridge) {
     const api = {
         update,
         element: panel,
+        get historyLength() { return diagnosticHistory.length; },
+        get diagnosticHistoryLength() { return diagnosticHistory.length; },
+        get energyHistoryLength() { return energyHistory.length; },
+        get momentumHistoryLength() { return momentumHistory.length; },
+        get sourceBoundary() { return lastSourceBoundary; },
+        get lastSampleStamp() { return lastDiagnosticStamp; },
+        get lastEnergyStamp() { return lastEnergyStamp; },
+        get lastMomentumStamp() { return lastMomentumStamp; },
         dispose: () => {
             sub.unsubscribe();
             // Clear the window-singleton ref so the detached api +
@@ -304,10 +464,10 @@ export function initConservationMicropanel() {
     if (typeof document === 'undefined') return null;
     const host = document.getElementById('app');
     if (!host) return null;
-    // Bridge accessor: use the active physics owner. flux-* scenarios are
-    // ticked by the JS MockBridge/worker, while ctx.bridge can remain an idle
-    // WASM bridge; sampling that idle bridge makes the conservation energy look
-    // frozen even though the pulse itself is evolving.
+    // Bridge accessor: use the active physics owner. Threaded Scale-0 scenarios
+    // are ticked by the worker-owned WASM bridge while ctx.bridge can remain an
+    // idle in-thread bridge; sampling that idle bridge makes conservation
+    // energy look frozen even though the pulse itself is evolving.
     const getBridge = () => resolveActiveScale0BridgeFromWindow();
     if (typeof window !== 'undefined' && window.__ftdConservationPanel) {
         return window.__ftdConservationPanel;

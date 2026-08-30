@@ -79,7 +79,7 @@ import { TopologySheetRenderer } from './viewport/topology-sheet-renderer.js?v=3
 // decomposition. Viewport composes a ViewportFluxRenderer and forwards
 // every flux-volume/streamline method through a thin wrapper. See
 // viewport/REFACTOR_MAP.md.
-import { ViewportFluxRenderer } from './viewport/flux-renderer.js?v=4';
+import { ViewportFluxRenderer } from './viewport/flux-renderer.js?v=5';
 // Particle Points mesh + trails + velocity-vectors + per-particle force arrows
 // extracted as Phase 3d. Viewport composes a ViewportParticleRenderer and
 // forwards every particle-mesh method through a thin wrapper. Atom/bond/
@@ -577,6 +577,8 @@ export class Viewport {
     updateFluxVolume(volumeData, latticeSize) {
         this._fluxRenderer.updateFluxVolume(volumeData, latticeSize);
     }
+
+    resetFluxNormalization() { this._fluxRenderer?.resetFluxNormalization(); }
 
     /**
      * Update the flux slice overlay from one or more 2D planes of flux

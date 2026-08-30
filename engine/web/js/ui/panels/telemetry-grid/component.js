@@ -9,6 +9,7 @@ const PANEL_MIN_INTERVAL_MS = 33;   // ~30 Hz ceiling; Scale 0 redraws only when
 const GRID_VISIBLE_SAMPLES = 120;   // display window; source ring buffers still retain their full history
 const MAX_SPARK = GRID_VISIBLE_SAMPLES;
 const COUNT_FORMAT = new Intl.NumberFormat();
+const DASH = '\u2014';
 
 // ── Telemetry Channel Definitions per Active Scale ──────────────────────────
 const CHANNELS = {
@@ -368,13 +369,27 @@ export class TelemetryGridPanelComponent {
     // Numeric card values are cheap and must not wait for IntersectionObserver
     // to allocate the heavier uPlot. This keeps the first visible paint live.
     _refreshValue(entry, buf) {
-        if (!buf || buf.count === 0) return;
-        const latestValue = buf.last();
-        if (Object.is(entry.lastDisplayValue, latestValue)) return;
-        entry.lastDisplayValue = latestValue;
-        if (entry.valueEl) {
-            entry.valueEl.textContent = this.formatValue(latestValue, entry.chan.unit);
+        const meta = this.activeScale === '0' && entry.chan.telemetryGroup
+            ? telemetryHub.getScale0TelemetryMeta?.(entry.chan.telemetryGroup)
+            : null;
+        const latestValue = buf?.count > 0 ? buf.last() : Number.NaN;
+        const state = this.activeScale === '0' && entry.chan.telemetryGroup
+            ? (!meta || !Number.isFinite(meta.tick) ? 'waiting' : (meta.stale ? 'stale'
+                : (Number.isFinite(latestValue) ? 'current' : 'unavailable')))
+            : (Number.isFinite(latestValue) ? 'current' : 'unavailable');
+        if (entry.card.dataset.telemetryState !== state) {
+            entry.card.dataset.telemetryState = state;
+            entry.card.title = state === 'stale'
+                ? 'Retained history; awaiting a current source snapshot.'
+                : (state === 'waiting' || state === 'unavailable'
+                    ? 'Measurement unavailable; no zero has been synthesized.' : '');
         }
+        const displayValue = state === 'current'
+            ? this.formatValue(latestValue, entry.chan.unit) : DASH;
+        if (Object.is(entry.lastDisplayValue, latestValue)
+            && entry.valueEl?.textContent === displayValue) return;
+        entry.lastDisplayValue = latestValue;
+        if (entry.valueEl) entry.valueEl.textContent = displayValue;
     }
 
     // Pull the latest window from this channel's ring buffer into its sparkline.
@@ -386,8 +401,18 @@ export class TelemetryGridPanelComponent {
         const chan = entry.chan;
         const buf = this._resolveBuffer(entry);
 
-        if (!buf || buf.count === 0) return;
         this._refreshValue(entry, buf);
+        if (!buf || buf.count === 0) {
+            if (entry.lastN !== 0 || entry.lastBuffer !== buf) {
+                entry.u.setData([[], []], true);
+                entry.lastN = 0;
+                entry.lastBuffer = buf ?? null;
+                entry.lastTotal = 0;
+                entry.lastValue = Number.NaN;
+                entry.plotData = null;
+            }
+            return;
+        }
 
         const total = buf.total ?? buf.count;
         const latestValue = buf.last();
@@ -443,7 +468,7 @@ export class TelemetryGridPanelComponent {
     }
 
     formatValue(val, unit) {
-        if (val === undefined || val === null || isNaN(val)) return '--';
+        if (typeof val !== 'number' || !Number.isFinite(val)) return DASH;
         if (unit === 'ct' || unit === 'b') {
             return COUNT_FORMAT.format(Math.round(val));
         }

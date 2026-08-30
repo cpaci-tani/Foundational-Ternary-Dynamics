@@ -739,7 +739,6 @@
 | [`test_reciprocal_moving_source_scenario.cpp`](../../engine/tests/test_reciprocal_moving_source_scenario.cpp) | 113 | @file test_reciprocal_moving_source_scenario.cpp @brief Mechanical admission gate for the FTD-0477 dashboard scenario. |
 | [`test_native_response_flow.cpp`](../../engine/tests/test_native_response_flow.cpp) | 112 | Native C_L and g_sJ b=2 flow audit. |
 | [`test_render_bridge_golden_default.cpp`](../../engine/tests/test_render_bridge_golden_default.cpp) | 112 | ============================================================================ test_render_bridge_golden_default.cpp — DEFAULT-PROFILE golden gate (revision 0.5b; ADR-0012 amendment). |
-| [`test_cpu_warnings.cpp`](../../engine/tests/test_cpu_warnings.cpp) | 111 | @file test_cpu_warnings.cpp @brief CPU Yukawa / exchange are live pairwise channels, not GPU-only no-ops. |
 | [`test_ui_observer_neutrality_gpu.cpp`](../../engine/tests/test_ui_observer_neutrality_gpu.cpp) | 111 |  |
 | [`benchmark_nucleon_mass_gpu.cpp`](../../engine/tests/benchmark_nucleon_mass_gpu.cpp) | 110 | @file benchmark_nucleon_mass_gpu.cpp @brief GPU Dynamical Nucleon Mass Benchmark Tests the triad (nucleon analog) binding energy under physical fine-structure coupling limits using the CUDA engine. |
 | [`campaign_native_scale_flow.cpp`](../../engine/tests/campaign_native_scale_flow.cpp) | 109 |  |
@@ -800,6 +799,7 @@
 | [`test_native_hop_dressing_obstruction.cpp`](../../engine/tests/test_native_hop_dressing_obstruction.cpp) | 75 | FTD-0560: periodic point-hop co-moving dressing obstruction. |
 | [`test_volumetric_measure.cpp`](../../engine/tests/test_volumetric_measure.cpp) | 75 | FTD-0404: cubic cell measure and density/integral separation. |
 | [`test_ten_source_orbit_coherence.cpp`](../../engine/tests/test_ten_source_orbit_coherence.cpp) | 74 |  |
+| [`test_cpu_pairwise_force_channels.cpp`](../../engine/tests/test_cpu_pairwise_force_channels.cpp) | 73 | @file test_cpu_pairwise_force_channels.cpp @brief CPU Yukawa / exchange are live pairwise channels, not GPU-only no-ops. |
 | [`test_eight_source_orbit_coherence.cpp`](../../engine/tests/test_eight_source_orbit_coherence.cpp) | 73 |  |
 | [`test_gf3_codes.cpp`](../../engine/tests/test_gf3_codes.cpp) | 73 |  |
 | [`test_ternary_field.cpp`](../../engine/tests/test_ternary_field.cpp) | 73 |  |
@@ -2826,4 +2826,3 @@
 | [`template.js`](../../engine/web/js/scales/scale23/ui/toolbar/template.js) | 36 | _symbols:_ getScale23VisualToolbarTemplate(), getScale23ForceToolbarTemplate() |
 | [`register-scale23-ui.js`](../../engine/web/js/scales/scale23/ui/register-scale23-ui.js) | 19 | _symbols:_ registerScale23ToolbarUI() |
 | [`component.js`](../../engine/web/js/scales/scale23/ui/toolbar/component.js) | 15 | _symbols:_ createScale23VisualToolbarGroup(), createScale23ForceToolbarGroup() |
-

@@ -4,7 +4,7 @@
 // The ToggleBackend bitmask is what the engine *claims*. This table is
 // what the engine *does*. test_gpu_term_contract.cpp fails closed when
 // the two disagree. Ports update the matching row in the same change as
-// the kernel — never leave ANY on a CPU-only, intent-flag, or no-op term.
+// the kernel — never leave ANY on a CPU-only or host-mirror term.
 //
 // This is a completeness contract, not a derivation. Selected/imposed
 // CUDA ports stay at their LEDGER tags.
@@ -19,11 +19,9 @@ namespace ftd {
 
 enum class GpuTermImpl : std::uint8_t {
     NativeCuda,          // device kernel; no host fallback required
-    GpuOnlyNoCpu,        // CUDA kernel; CPU is an advertised no-op
     CpuOnly,             // forces CPU backend when enabled
     CpuFallbackSync,     // CUDA acknowledges the term by syncing to CPU
     HostMirrorHybrid,    // GPU tick then full AoS host mirror
-    IntentFlag,          // no physics branch (unused; confinement is now NativeCuda)
     ControlOnly,         // validator / diagnostics, not a field term
 };
 

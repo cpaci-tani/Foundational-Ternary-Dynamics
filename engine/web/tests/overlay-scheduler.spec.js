@@ -609,4 +609,153 @@ test.describe('Scale-0 overlay scheduler invariants', () => {
         const real = realErrors(errors);
         expect(real, `console errors:\n  ${real.join('\n  ')}`).toHaveLength(0);
     });
+
+    test('scenario applicability suppresses knot jobs without erasing the tracking preference', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+        await gotoAndReady(page);
+        await waitForScale0Ctx(page);
+
+        await page.evaluate(async () => {
+            const {
+                resetFieldFlags,
+                setKnotTracking,
+                setKnotTrackingApplicability,
+            } = await import('./js/scales/scale0/state/store.js');
+            window.__ftdCtx.running = false;
+            resetFieldFlags();
+            setKnotTracking(true);
+            setKnotTrackingApplicability(false);
+        });
+
+        await expect.poll(
+            () => page.evaluate(async () => {
+                const { getScale0State, isKnotTrackingActive } = await import('./js/scales/scale0/state/store.js');
+                const state = getScale0State();
+                const sched = state.overlaySched;
+                return {
+                    preference: state.knotTracking,
+                    applicable: state.knotTrackingApplicable,
+                    effective: isKnotTrackingActive(state),
+                    schedulerActive: !!sched?.active,
+                };
+            }),
+            { timeout: 12_000, message: 'inapplicable tracking did not quiesce the overlay scheduler' },
+        ).toEqual({
+            preference: true,
+            applicable: false,
+            effective: false,
+            schedulerActive: false,
+        });
+
+        await page.evaluate(async () => {
+            const { setKnotTrackingApplicability } = await import('./js/scales/scale0/state/store.js');
+            setKnotTrackingApplicability(true);
+        });
+        await expect.poll(
+            () => page.evaluate(async () => {
+                const { getScale0State, isKnotTrackingActive } = await import('./js/scales/scale0/state/store.js');
+                const state = getScale0State();
+                const sched = state.overlaySched;
+                const kinds = [];
+                for (let i = 0; sched && i < sched.jobCount; i++) kinds.push(sched.jobs[i].kind);
+                return {
+                    preference: state.knotTracking,
+                    applicable: state.knotTrackingApplicable,
+                    effective: isKnotTrackingActive(state),
+                    kinds,
+                };
+            }),
+            { timeout: 12_000, message: 'restored applicability did not resume the retained tracking preference' },
+        ).toEqual({
+            preference: true,
+            applicable: true,
+            effective: true,
+            kinds: [0, 1, 2],
+        });
+
+        const real = realErrors(errors);
+        expect(real, `console errors:\n  ${real.join('\n  ')}`).toHaveLength(0);
+    });
+
+    test('an all-empty knot frame clears the last rendered knot boxes', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+        await gotoAndReady(page);
+        await waitForScale0Ctx(page);
+
+        const result = await page.evaluate(async () => {
+            const [
+                {
+                    getScale0State,
+                    resetFieldFlags,
+                    setCurrentScenarioId,
+                    setKnotTracking,
+                    setKnotZonesRequested,
+                },
+                { buildDerivedSubstrateData },
+                { forEachKnotTracker },
+            ] = await Promise.all([
+                import('./js/scales/scale0/state/store.js'),
+                import('./js/scales/scale0/runtime/field-overlays.js'),
+                import('./js/scales/scale0/runtime/field-line-knots.js'),
+            ]);
+            const viewport = window.__ftdCtx?.viewport;
+            if (!viewport?._fieldRenderer) throw new Error('Scale-0 field renderer unavailable');
+
+            setCurrentScenarioId('flux-pulse');
+            resetFieldFlags();
+            setKnotTracking(true);
+            setKnotZonesRequested(true);
+            const state = getScale0State();
+            const N = 33;
+            const empty = {
+                count: 0,
+                centroids: new Float32Array(0),
+                extents: new Float32Array(0),
+                ids: new Int32Array(0),
+                latticeSize: N,
+            };
+            const one = {
+                count: 1,
+                centroids: new Float32Array([16, 16, 16]),
+                extents: new Float32Array([2, 2, 2]),
+                ids: new Int32Array([1]),
+                latticeSize: N,
+            };
+
+            viewport.toggleKnotZones(true);
+            viewport.updateKnotZones({ e: one, b: empty, flux: empty }, N);
+            const mesh = viewport._fieldRenderer._knotZones;
+            const before = {
+                visible: mesh.visible,
+                drawCount: mesh.geometry.drawRange.count,
+            };
+
+            forEachKnotTracker((tracker) => tracker.reset());
+            const frame = buildDerivedSubstrateData(state, {}, {}, N);
+            if (frame.knotZones) viewport.updateKnotZones(frame.knotZones, N);
+            const after = {
+                visible: mesh.visible,
+                drawCount: mesh.geometry.drawRange.count,
+            };
+
+            setKnotZonesRequested(false);
+            setKnotTracking(false);
+            viewport.toggleKnotZones(false);
+            return {
+                before,
+                framePresent: Object.prototype.hasOwnProperty.call(frame, 'knotZones'),
+                familyCounts: frame.knotZones
+                    ? [frame.knotZones.e.count, frame.knotZones.b.count, frame.knotZones.flux.count]
+                    : null,
+                after,
+            };
+        });
+
+        expect(result.before.visible).toBe(true);
+        expect(result.before.drawCount).toBeGreaterThan(0);
+        expect(result.framePresent).toBe(true);
+        expect(result.familyCounts).toEqual([0, 0, 0]);
+        expect(result.after).toEqual({ visible: true, drawCount: 0 });
+        expect(realErrors(errors)).toEqual([]);
+    });
 });

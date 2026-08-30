@@ -430,7 +430,6 @@ int run_app_impl(const std::vector<std::string>& args) {
     app.run_config.lattice_size = host.lattice_size();
     app.run_config.force_cpu = engine_opts.force_cpu;
     app.run_config.flux_boundary = engine_opts.flux_boundary;
-    app.backend_cpu = engine_opts.force_cpu;
 
     // Seed the scroll-wheel height target to the last active sheet (if any), so
     // Shift+wheel over the scene is tactile from frame 0 in headless captures.
@@ -1228,7 +1227,6 @@ int run_app_impl(const std::vector<std::string>& args) {
                 app.live_toggles = s0->term_toggles;
                 app.live_knobs = s0->knobs;
                 app.have_live = true;
-                app.backend_cpu = (s0->env.backend == ftd::native::BackendKindUi::Cpu);
             }
         }
         // --open-physics: open the section (categories collapsed by default — 4
@@ -1797,7 +1795,6 @@ int run_app_impl(const std::vector<std::string>& args) {
             app.live_toggles = s0->term_toggles;
             app.live_knobs = s0->knobs;
             app.have_live = true;
-            app.backend_cpu = (s0->env.backend == ftd::native::BackendKindUi::Cpu);
 
             bool toggles_changed = false;
             for (ToggleGroupRow& g : data.toggle_groups)
@@ -1808,18 +1805,11 @@ int run_app_impl(const std::vector<std::string>& args) {
             if (refresh_config_rows(&data, s0->term_toggles, s0->knobs))
                 model.DirtyVariable("config_rows");
 
-            // Live validation banner: the engine's own validate() (+ CPU runtime
-            // warnings), so an invalid combo the user builds is surfaced rather
-            // than silently stderr-warned. Change-guarded (rarely non-empty).
+            // Live validation banner: the engine's own validate(), so an invalid
+            // combo the user builds is surfaced rather than silently
+            // stderr-warned. Change-guarded (rarely non-empty).
             std::string verr;
             s0->term_toggles.validate(&verr);
-            if (app.backend_cpu) {
-                const std::string warn = s0->term_toggles.cpu_runtime_warnings();
-                if (!warn.empty()) {
-                    if (!verr.empty()) verr += "\n";
-                    verr += warn;
-                }
-            }
             // Surface just the first line (the banner is one row).
             std::string vfirst = verr.substr(0, verr.find('\n'));
             const bool has_v = !vfirst.empty();

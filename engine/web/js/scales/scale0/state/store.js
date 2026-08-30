@@ -93,6 +93,35 @@ export const FLOW_LINE_SETTING_LIMITS = Object.freeze({
 });
 const FLOW_LINE_PREF_KEY = 'ftd.scale0.flowLines';
 
+export const SCALE0_MUTATION_REASONS = Object.freeze({
+    INJECT_PARTICLE: 'inject-particle',
+    INJECT_WAVEPACKET: 'inject-wavepacket',
+    INJECT_FLUX: 'inject-flux',
+    INJECT_PAIR: 'inject-pair',
+    CLEAR_FIELD: 'clear-field',
+    RANDOM_FLUX: 'random-flux',
+    PHYSICS_TOGGLE: 'physics-toggle',
+    PARAMETER_CHANGE: 'parameter-change',
+    FLUX_BOUNDARY: 'flux-boundary',
+    WAVE_LAB_RESEED: 'wave-lab-reseed',
+    GENESIS_EXPERIMENT: 'genesis-experiment',
+});
+
+export const SCALE0_MUTATION_SOURCES = Object.freeze({
+    SUBSTRATE_CONTROLS: 'controls.substrate',
+    PHYSICS_TOGGLES: 'controls.physics-toggles',
+    TOOLBAR_BOUNDARY: 'toolbar.boundary',
+    THERMODYNAMICS: 'panel.thermodynamics',
+    P1_FINE_STRUCTURE: 'panel.p1.fine-structure',
+    P1_THOMSON: 'panel.p1.thomson',
+    WAVE_LAB: 'panel.wave-lab',
+    GENESIS_BURST: 'panel.genesis-burst',
+});
+
+const SCALE0_MUTATION_REASON_SET = new Set(Object.values(SCALE0_MUTATION_REASONS));
+const SCALE0_MUTATION_SOURCE_SET = new Set(Object.values(SCALE0_MUTATION_SOURCES));
+const qualificationListeners = new Set();
+
 function clampFlowLineSetting(key, value) {
     const range = FLOW_LINE_SETTING_LIMITS[key];
     if (!range) return null;
@@ -118,13 +147,29 @@ function readFlowLineSettings() {
 
 const state = {
     currentScenarioId: 'flux-pulse',
+    // Monotonic provenance for user/experiment scientific write intents. It is
+    // deliberately never reset by scenario loads; a successful authoritative
+    // load moves the qualification anchor to the current epoch instead.
+    mutationEpoch: 0,
+    qualificationAnchor: null,
+    authoritativeLoad: null,
+    lastScientificMutation: null,
     fieldFlags: createFieldFlags(),
     // Field-line knot tracking is NOT a visual overlay flag (it does not map to a
     // renderer toggle and must not count toward anyFieldActive), so it lives
-    // outside fieldFlags. It gates FieldLineKnotTracker.record() and schedules
-    // E/B/flux streamline jobs even when those overlays are off. Survives
-    // resetFieldFlags() (scenario change).
+    // outside fieldFlags. `knotTracking` is the retained user preference;
+    // `knotTrackingApplicable` is the scenario/runtime gate. The effective
+    // conjunction gates FieldLineKnotTracker.record() and E/B/flux streamline
+    // jobs. This preserves the preference across an inapplicable scenario
+    // without spending work or manufacturing an observation there.
     knotTracking: false,
+    knotTrackingApplicable: true,
+    // Knot-zone boxes have a retained user preference and a separate effective
+    // renderer flag. An inapplicable/pending scenario must hide the boxes
+    // without erasing what the user asked to see when a qualified scenario is
+    // restored. `fieldFlags.showKnotZones` is always the effective value.
+    knotZonesRequested: false,
+    knotZonesApplicable: true,
     fieldFrame: 0,
     fieldNeedsUpdate: false,
     // Monotonic field-data version. Bumped once per real physics tick (tick.js);
@@ -165,6 +210,238 @@ export function getScale0State() {
     return state;
 }
 
+function finiteTick(value) {
+    const tick = Number(value);
+    return Number.isFinite(tick) ? tick : null;
+}
+
+function ownerTick(owner) {
+    try {
+        return finiteTick(owner?.getDiagnostics?.()?.tick);
+    } catch {
+        return null;
+    }
+}
+
+function cloneRecord(record) {
+    return record ? { ...record } : null;
+}
+
+export function getScale0QualificationState() {
+    const anchor = state.qualificationAnchor;
+    const load = state.authoritativeLoad;
+    const anchorMatches = !!anchor
+        && anchor.mutationEpoch === state.mutationEpoch
+        && anchor.scenarioId === state.currentScenarioId;
+    let status = 'suspended';
+    if (load?.status === 'pending') status = 'pending';
+    else if (!load && anchorMatches) status = 'within-contract';
+    return Object.freeze({
+        status,
+        suspended: status !== 'within-contract',
+        scenarioId: state.currentScenarioId,
+        mutationEpoch: state.mutationEpoch,
+        qualificationBaselineEpoch: anchor?.mutationEpoch ?? null,
+        anchor: cloneRecord(anchor),
+        authoritativeLoad: cloneRecord(load),
+        lastMutation: cloneRecord(state.lastScientificMutation),
+    });
+}
+
+/**
+ * Whether the current scenario generation has crossed its authoritative load
+ * barrier. This is deliberately narrower than full run qualification: a later
+ * manual scientific mutation may suspend the qualification claim without
+ * reopening a scenario setup transaction, so live instruments may continue to
+ * observe it. Pending/failed/invalidated setup generations remain fail-closed.
+ * Accepts either the mutable Scale-0 store or a qualification snapshot.
+ */
+export function isScale0AuthoritativeGenerationReady(snapshot = state) {
+    const scenarioId = snapshot?.currentScenarioId ?? snapshot?.scenarioId;
+    const anchor = snapshot?.qualificationAnchor ?? snapshot?.anchor;
+    return !!scenarioId
+        && snapshot?.authoritativeLoad == null
+        && anchor?.scenarioId === scenarioId
+        && Number.isInteger(Number(anchor?.loadGeneration))
+        && Number(anchor.loadGeneration) >= 0;
+}
+
+function publishQualificationState() {
+    const snapshot = getScale0QualificationState();
+    for (const listener of qualificationListeners) {
+        try { listener(snapshot); } catch (error) {
+            console.error('[Scale0] qualification listener failed:', error);
+        }
+    }
+    return snapshot;
+}
+
+export function subscribeScale0Qualification(listener) {
+    if (typeof listener !== 'function') return () => {};
+    qualificationListeners.add(listener);
+    try { listener(getScale0QualificationState()); } catch (error) {
+        console.error('[Scale0] qualification listener failed:', error);
+    }
+    return () => qualificationListeners.delete(listener);
+}
+
+export function beginScale0AuthoritativeLoad({ scenarioId, loadGeneration, tick = null } = {}) {
+    const generation = Number(loadGeneration);
+    if (!Number.isInteger(generation) || generation < 0) {
+        throw new TypeError('Scale 0 authoritative load requires a non-negative integer generation');
+    }
+    state.authoritativeLoad = Object.freeze({
+        status: 'pending',
+        scenarioId: String(scenarioId || state.currentScenarioId),
+        loadGeneration: generation,
+        mutationEpochAtStart: state.mutationEpoch,
+        tick: finiteTick(tick),
+    });
+    return publishQualificationState();
+}
+
+export function completeScale0AuthoritativeLoad({
+    scenarioId,
+    loadGeneration,
+    tick = null,
+    source = 'scenario-loader',
+} = {}) {
+    const pending = state.authoritativeLoad;
+    const id = String(scenarioId || state.currentScenarioId);
+    const generation = Number(loadGeneration);
+    if (!pending || pending.status !== 'pending'
+        || pending.scenarioId !== id
+        || pending.loadGeneration !== generation
+        || state.currentScenarioId !== id
+        || state.mutationEpoch !== pending.mutationEpochAtStart) {
+        return false;
+    }
+    state.qualificationAnchor = Object.freeze({
+        scenarioId: id,
+        loadGeneration: generation,
+        mutationEpoch: state.mutationEpoch,
+        tick: finiteTick(tick),
+        source: String(source || 'scenario-loader'),
+    });
+    state.authoritativeLoad = null;
+    publishQualificationState();
+    return true;
+}
+
+export function failScale0AuthoritativeLoad({ scenarioId, loadGeneration, reason = 'setup-failed' } = {}) {
+    const pending = state.authoritativeLoad;
+    const id = String(scenarioId || state.currentScenarioId);
+    const generation = Number(loadGeneration);
+    if (!pending || pending.scenarioId !== id || pending.loadGeneration !== generation) return false;
+    state.authoritativeLoad = Object.freeze({
+        ...pending,
+        status: 'failed',
+        failureReason: String(reason || 'setup-failed'),
+    });
+    publishQualificationState();
+    return true;
+}
+
+export function recordScale0ScientificMutation({
+    reason,
+    source,
+    tick = null,
+    loadGeneration,
+    dispatchStatus = 'unknown',
+} = {}) {
+    if (!SCALE0_MUTATION_REASON_SET.has(reason)) {
+        throw new TypeError(`Unknown Scale 0 scientific mutation reason: ${reason}`);
+    }
+    if (!SCALE0_MUTATION_SOURCE_SET.has(source)) {
+        throw new TypeError(`Unknown Scale 0 scientific mutation source: ${source}`);
+    }
+    const generation = Number(loadGeneration);
+    if (!Number.isInteger(generation) || generation < 0) {
+        throw new TypeError('Scale 0 scientific mutation requires a non-negative integer generation');
+    }
+    state.mutationEpoch += 1;
+    state.lastScientificMutation = Object.freeze({
+        mutationEpoch: state.mutationEpoch,
+        reason,
+        source,
+        tick: finiteTick(tick),
+        loadGeneration: generation,
+        // Dashboard dispatch is fire-and-forget on several transports. Never
+        // relabel an accepted UI intent as an acknowledged engine mutation.
+        dispatchStatus: ['dispatched', 'rejected', 'unknown'].includes(dispatchStatus)
+            ? dispatchStatus
+            : 'unknown',
+    });
+    if (state.authoritativeLoad?.status === 'pending') {
+        state.authoritativeLoad = Object.freeze({
+            ...state.authoritativeLoad,
+            status: 'invalidated',
+            invalidatedByMutationEpoch: state.mutationEpoch,
+        });
+    }
+    return publishQualificationState();
+}
+
+/**
+ * Dashboard gateway for a manual/experiment scientific write intent.
+ *
+ * A stale generation, inactive scale, or stale owner is rejected before the
+ * callback runs and therefore cannot suspend the current record. An accepted
+ * callback increments the monotonic epoch exactly once even for an idempotent
+ * engine operation such as clearField() on an already-null lattice. Because
+ * bridge writes are not uniformly acknowledged, the provenance records the
+ * dispatch status rather than claiming that the engine applied the write.
+ */
+export function commitScale0ScientificMutation(ctx, {
+    reason,
+    source,
+    loadGeneration = ctx?._loadGeneration,
+    owner = null,
+    dispatchStatus = 'unknown',
+} = {}, mutate) {
+    const generation = Number(loadGeneration);
+    const currentGeneration = Number(ctx?._loadGeneration || 0);
+    const activeOwner = getActiveScale0Bridge(ctx, state);
+    if ((ctx?.engineMode && ctx.engineMode !== 'lattice')
+        || !SCALE0_MUTATION_REASON_SET.has(reason)
+        || !SCALE0_MUTATION_SOURCE_SET.has(source)
+        || !Number.isInteger(generation)
+        || generation < 0
+        || generation !== currentGeneration
+        || !activeOwner
+        || (owner && owner !== activeOwner)
+        || typeof mutate !== 'function') {
+        return Object.freeze({ accepted: false, dispatchStatus: 'rejected' });
+    }
+
+    const normalizedDispatchStatus = ['dispatched', 'rejected', 'unknown'].includes(dispatchStatus)
+        ? dispatchStatus
+        : 'unknown';
+
+    let result;
+    let thrown = null;
+    try {
+        result = mutate(activeOwner);
+    } catch (error) {
+        thrown = error;
+    } finally {
+        recordScale0ScientificMutation({
+            reason,
+            source,
+            tick: ownerTick(activeOwner),
+            loadGeneration: generation,
+            dispatchStatus: thrown ? 'unknown' : normalizedDispatchStatus,
+        });
+    }
+    if (thrown) throw thrown;
+    return Object.freeze({
+        accepted: true,
+        dispatchStatus: normalizedDispatchStatus,
+        result,
+        qualification: getScale0QualificationState(),
+    });
+}
+
 export function recomputeAnyFieldActive() {
     state.anyFieldActive = FIELD_TOGGLE_KEYS.some((key) => !!state.fieldFlags[key]);
     return state.anyFieldActive;
@@ -173,11 +450,20 @@ export function recomputeAnyFieldActive() {
 export function resetFieldFlags() {
     state.fieldFlags = createFieldFlags();
     state.fieldNeedsUpdate = false;
-    recomputeAnyFieldActive();
+    // Re-establish retained/effective invariants after replacing the flag bag.
+    // This is intentionally store-owned: scenario loads and headless runs must
+    // not depend on a mounted Knots panel to restore a qualified user request.
+    syncKnotZonesEffective();
 }
 
 export function setFieldToggle(key, value) {
     if (!Object.prototype.hasOwnProperty.call(state.fieldFlags, key)) return;
+    // Keep every knot-zone write on the desired/effective path. This prevents a
+    // future generic caller from bypassing Empty/pending applicability.
+    if (key === 'showKnotZones') {
+        setKnotZonesRequested(value);
+        return;
+    }
     const prev = state.fieldFlags[key];
     const next = !!value;
     state.fieldFlags[key] = next;
@@ -210,6 +496,52 @@ export function getFieldStateSnapshot() {
 export function setKnotTracking(on) {
     state.knotTracking = !!on;
     state.fieldNeedsUpdate = true;
+    return syncKnotZonesEffective();
+}
+
+export function setKnotTrackingApplicability(on) {
+    const next = !!on;
+    if (state.knotTrackingApplicable !== next) {
+        state.knotTrackingApplicable = next;
+        state.fieldNeedsUpdate = true;
+    }
+    return syncKnotZonesEffective();
+}
+
+export function isKnotTrackingActive(snapshot = state) {
+    // Scientific applicability must fail closed in the runtime, not depend on
+    // the optional Knots UI being mounted to flip a flag. This also covers
+    // headless runs and the short interval between scenario commit and panel
+    // reconciliation.
+    return snapshot?.currentScenarioId !== 'empty'
+        && !!snapshot?.knotTracking
+        && snapshot?.knotTrackingApplicable !== false;
+}
+
+export function isKnotZonesActive(snapshot = state) {
+    return snapshot?.currentScenarioId !== 'empty'
+        && isKnotTrackingActive(snapshot)
+        && !!snapshot?.knotZonesRequested
+        && snapshot?.knotZonesApplicable !== false;
+}
+
+function syncKnotZonesEffective() {
+    const prev = !!state.fieldFlags.showKnotZones;
+    const next = isKnotZonesActive(state);
+    state.fieldFlags.showKnotZones = next;
+    if (prev !== next) state.fieldNeedsUpdate = true;
+    recomputeAnyFieldActive();
+    return next;
+}
+
+export function setKnotZonesRequested(on) {
+    state.knotZonesRequested = !!on;
+    return syncKnotZonesEffective();
+}
+
+export function setKnotZonesApplicability(on) {
+    state.knotZonesApplicable = !!on;
+    return syncKnotZonesEffective();
 }
 
 export function setForceStyle(style) {
@@ -343,6 +675,10 @@ export function resetFrameState() {
 
 export function setCurrentScenarioId(id) {
     state.currentScenarioId = id || 'flux-pulse';
+    // The store, rather than an optional mounted panel, owns the final Empty
+    // fail-closed boundary. On a committed nonempty load this also restores a
+    // retained request once the panel/runtime applicability gate is open.
+    syncKnotZonesEffective();
 }
 
 /** Bridge that owns live Scale-0 physics (WASM worker when useFluxMock). */

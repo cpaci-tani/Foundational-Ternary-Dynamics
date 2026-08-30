@@ -5,9 +5,8 @@
 # Purpose:
 #   Replace the add_executable / target_link_libraries / add_test triple that
 #   repeats ~200 times in engine/CMakeLists.txt with a single call. Also
-#   classifies tests as CPU or GPU so the FTD test runner (engine/tools/
-#   test_runner/) can apply a smart dispatcher: serial GPU queue, parallel
-#   CPU queue.
+#   classifies tests as CPU or GPU so CTest and the maintained runner scripts
+#   can select the appropriate execution lane.
 #
 # Usage:
 #
@@ -22,7 +21,7 @@
 #   #   → add_test(NAME campaign_dispersion COMMAND ftd_dispersion)
 #
 #   # GPU-heavy test. Links ftd_cuda when CUDA is enabled, applies the "gpu"
-#   # CTest label so SmartDispatcher serializes it.
+#   # CTest label so GPU-aware orchestration can serialize it.
 #   ftd_add_test(test_gpu_physics tests/test_gpu_physics.cpp GPU_HEAVY)
 #
 #   # Explicit ctest name override (when the derivation rule doesn't fit).

@@ -91,3 +91,8 @@ structure, or a common Lorentz cone.
 The revision-1 dashboard arm used native defaults rather than browser defaults
 and is excluded. Its file is retained as provenance at
 `engine/results/ftd_0434/invalid_v1_native_defaults_L33.csv`.
+
+An additional loose-root output was consolidated on 2026-08-30 at
+`engine/results/ftd_0434/unregistered_legacy_root_output.csv`. It has no run
+manifest and its dashboard arm records `execution_valid=0`; it is retained as
+unregistered provenance and does not enter the revision-2 verdict.

@@ -160,6 +160,21 @@
     margin: 0;
 }
 
+.chart-card-freshness {
+    margin-left: auto;
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+    font-variant-numeric: tabular-nums;
+}
+
+.chart-card-telemetry-stale .chart-card-freshness {
+    color: var(--warning-text);
+}
+
+.chart-card-telemetry-stale .chart-card-plot {
+    opacity: 0.38;
+}
+
 .chart-card-plot {
     width: 100%;
     aspect-ratio: 16 / 9;

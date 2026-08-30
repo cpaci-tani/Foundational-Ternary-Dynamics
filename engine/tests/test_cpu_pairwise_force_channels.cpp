@@ -1,5 +1,5 @@
 /**
- * @file test_cpu_warnings.cpp
+ * @file test_cpu_pairwise_force_channels.cpp
  * @brief CPU Yukawa / exchange are live pairwise channels, not GPU-only no-ops.
  *
  * Historically these toggles were CUDA-only and this file pinned the
@@ -9,8 +9,6 @@
 
 #include <cstdio>
 #include <cstring>
-#include <iostream>
-#include <string>
 #include <vector>
 
 #ifdef _OPENMP
@@ -18,8 +16,6 @@
 #endif
 
 #include "ftd/render_bridge.h"
-#include "ftd/constants.h"
-#include "ftd/term_toggles.h"
 
 namespace {
 
@@ -60,27 +56,6 @@ int main() {
 
     const int L = 8;
     int failures = 0;
-
-    ftd::TermToggles strong_on;
-    strong_on.disable_all();
-    strong_on.strong_force = true;
-    if (!strong_on.cpu_runtime_warnings().empty()) {
-        std::printf("  FAIL: strong_force still carries a gpu_only_warning\n");
-        ++failures;
-    } else {
-        std::printf("  PASS: strong_force has no GPU-only warning\n");
-    }
-
-    ftd::TermToggles exchange_on;
-    exchange_on.disable_all();
-    exchange_on.poisson_coulomb = true;
-    exchange_on.exchange_force = true;
-    if (!exchange_on.cpu_runtime_warnings().empty()) {
-        std::printf("  FAIL: exchange_force still carries a gpu_only_warning\n");
-        ++failures;
-    } else {
-        std::printf("  PASS: exchange_force has no GPU-only warning\n");
-    }
 
     auto baseline = run_pair(L, false, false, 0);
     auto with_strong = run_pair(L, true, false, 0);

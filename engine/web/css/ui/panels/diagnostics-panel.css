@@ -234,6 +234,11 @@
     color: var(--warning-text);
 }
 
+.diag-row-telemetry-stale .diag-value,
+.diag-row-telemetry-stale .diag-stat {
+    color: var(--warning-text);
+}
+
 .diag-table {
     width: 100%;
     /* Fixed layout so a value changing from "0" to "4173.09" can't

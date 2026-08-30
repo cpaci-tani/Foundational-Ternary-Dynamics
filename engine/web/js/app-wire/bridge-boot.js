@@ -3,8 +3,8 @@
  * Extracted from app.js init() (behavior-preserving).
  */
 
-import { createBridge } from '../bridge-init.js';
-import { tryNativeBridge } from '../ws-bridge.js';
+import { createBridge } from '../bridge-init.js?v=3';
+import { tryNativeBridge } from '../ws-bridge.js?v=4';
 import { parseNativeWsPort } from '../lib/origin-policy.js';
 import { debugLog } from '../core/log.js';
 
@@ -24,10 +24,11 @@ export async function bootBridge(latticeSize, ui) {
 
     const urlParams = new URLSearchParams(window.location.search);
     const forceNative = urlParams.get('engine') === 'native';
+    const forceWasm = urlParams.get('engine') === 'wasm';
     const isLiveServerPort = /^55\d{2}$/.test(window.location.port);
 
     let bridge = null;
-    if (forceNative || !isLiveServerPort) {
+    if (!forceWasm && (forceNative || !isLiveServerPort)) {
         const requestedWsPort = parseNativeWsPort(urlParams, window.location.href, 9100);
         debugLog(`[init] Trying native GPU engine on ws://127.0.0.1:${requestedWsPort}...`);
         try {
@@ -36,6 +37,9 @@ export async function bootBridge(latticeSize, ui) {
             console.warn('[init] Native GPU bridge error:', e);
             bridge = null;
         }
+    } else if (forceWasm) {
+        debugLog('[init] Native GPU bypassed by explicit ?engine=wasm execution contract');
+        bridge = null;
     } else {
         debugLog('[init] Skipping native GPU: static dev server (use ?engine=native for ws_server)');
         bridge = null;
