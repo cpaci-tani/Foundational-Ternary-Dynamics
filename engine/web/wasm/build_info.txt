@@ -1,5 +1,5 @@
-sha=a351fd49772ca1e365285295f974608dd278fbfe
-built=Sat 08/29/2026 17:08:59.87
+sha=7bf80dd6a26759308d0070bd30acf91874c52477
+built=Sun 08/30/2026  4:23:46.41
 variants=wasm32,wasm64,wasm32-threads
 source_scope=engine/** excluding generated engine/web/wasm{,.next,.previous}/**
 emcc=emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 5.0.2 (dc80f645ee70178c11666de0c3860d9e064d50e4)
@@ -9,9 +9,9 @@ cmake_flags.wasm32=-DCMAKE_BUILD_TYPE=Release -DFTD_MEMORY64=OFF -DFTD_WASM_THRE
 cmake_flags.wasm64=-DCMAKE_BUILD_TYPE=Release -DFTD_MEMORY64=ON -DFTD_WASM_THREADS=OFF
 cmake_flags.wasm32-threads=-DCMAKE_BUILD_TYPE=Release -DFTD_MEMORY64=OFF -DFTD_WASM_THREADS=ON
 sha256.ftd_core.js=26198e88a7199479555b2f111c10332505298bc43dc45dfbc0d7e991afd05211
-sha256.ftd_core.wasm=f8ef261e28df2e50411a6f1668d6674fcc783a18e278809674dd820a58150d33
+sha256.ftd_core.wasm=65e265f62369fdd363129f9003997c544862c2a038733a2ce02c1e967af89fad
 sha256.ftd_core64.js=9484aefe160697b64e10454a998802e772d2e40d7fd034b78b6c422352098638
-sha256.ftd_core64.wasm=5a4ad2d726a150942d9702a7db969caf10e8dd3263d8c86dae6161ff44a87964
+sha256.ftd_core64.wasm=51342858b5a1cf8c120779cec1dd3581af546bef4d8c2573b60fc65de6ee8bdc
 sha256.ftd_core_mt.js=72051e08a6a69f533e8cfdc3a3ee37d99fbeb965fde0c10608b1c7096c3dc537
-sha256.ftd_core_mt.wasm=6a64f0f1cc60d9b6b6582b73201814c0e58dd06b8744ff32cf89962335454209
-sha256.build_info.json=e29c75af11fba88bd817f77db403865ad0fc041e306675f5ff6bd09d8ea90dd2
+sha256.ftd_core_mt.wasm=b01f6e9992be4f642f269984068a616d9a89060511e931b46fdfdfc9767f33f6
+sha256.build_info.json=9fd0a9987bc0e02c2cbd2b878fc18d37bdd0aa674f35e0b4acb4279d347c1bc9
