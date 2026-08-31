@@ -159,6 +159,87 @@ test.describe('Scale-0 Visualization accordion', () => {
         expect(responsive).toEqual({ width: 326, bounded: true, bodyOverflow: 'auto' });
     });
 
+    test('keeps every expanded toggle contained and reachable through panel scrolling', async ({ page }) => {
+        await page.setViewportSize({ width: 1024, height: 768 });
+        await gotoAndReady(page);
+        await page.waitForTimeout(500);
+        await expand(page);
+
+        await page.evaluate(async () => {
+            for (const col of document.querySelectorAll('#viewport-overlay .s0-overlay-col')) {
+                if (getComputedStyle(col).display === 'none') continue;
+                const head = col.querySelector('.s0-overlay-col-head');
+                if (head?.getAttribute('aria-expanded') === 'false') head.click();
+            }
+            await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+            document.querySelector('#viewport-overlay .s0-overlay-body').scrollTop = 0;
+        });
+
+        const initial = await page.evaluate(() => {
+            const panel = document.getElementById('viewport-overlay');
+            const viewport = document.getElementById('viewport');
+            const body = panel.querySelector('.s0-overlay-body');
+            const panelRect = panel.getBoundingClientRect();
+            const viewportRect = viewport.getBoundingClientRect();
+            const bodyRect = body.getBoundingClientRect();
+            const columns = [...panel.querySelectorAll('.s0-overlay-col')]
+                .filter((col) => getComputedStyle(col).display !== 'none');
+            const toggles = [...panel.querySelectorAll('.s0-overlay-body .view-toggle')]
+                .filter((button) => {
+                    const style = getComputedStyle(button);
+                    const rect = button.getBoundingClientRect();
+                    return style.display !== 'none' && style.visibility !== 'hidden'
+                        && rect.width > 0 && rect.height > 0;
+                });
+
+            return {
+                bounded: panelRect.left >= viewportRect.left
+                    && panelRect.right <= viewportRect.right
+                    && panelRect.top >= viewportRect.top
+                    && panelRect.bottom <= viewportRect.bottom,
+                bodyOverflow: getComputedStyle(body).overflowY,
+                bodyScrollable: body.scrollHeight > body.clientHeight,
+                internallyClippedColumns: columns
+                    .filter((col) => col.scrollHeight > col.clientHeight + 1)
+                    .map((col) => col.dataset.col),
+                horizontallyOverflowingToggles: toggles
+                    .filter((button) => {
+                        const rect = button.getBoundingClientRect();
+                        return rect.left < bodyRect.left - 0.5 || rect.right > bodyRect.right + 0.5;
+                    })
+                    .map((button) => button.id),
+                lastToggleId: toggles.at(-1)?.id,
+            };
+        });
+
+        expect(initial.bounded, 'the complete panel stays inside the viewport').toBe(true);
+        expect(initial.bodyOverflow).toBe('auto');
+        expect(initial.bodyScrollable, 'expanded cards create body scroll range').toBe(true);
+        expect(initial.internallyClippedColumns, 'cards retain natural height instead of hiding toggles').toEqual([]);
+        expect(initial.horizontallyOverflowingToggles, 'toggle buttons stay within the panel width').toEqual([]);
+        expect(initial.lastToggleId).toBeTruthy();
+
+        await page.evaluate(() => {
+            const body = document.querySelector('#viewport-overlay .s0-overlay-body');
+            body.scrollTop = body.scrollHeight;
+        });
+        await page.waitForTimeout(100);
+
+        const reachedBottom = await page.evaluate((lastToggleId) => {
+            const body = document.querySelector('#viewport-overlay .s0-overlay-body');
+            const last = document.getElementById(lastToggleId);
+            const bodyRect = body.getBoundingClientRect();
+            const lastRect = last.getBoundingClientRect();
+            return {
+                scrollTop: body.scrollTop,
+                fullyVisible: lastRect.top >= bodyRect.top - 0.5
+                    && lastRect.bottom <= bodyRect.bottom + 0.5,
+            };
+        }, initial.lastToggleId);
+        expect(reachedBottom.scrollTop).toBeGreaterThan(0);
+        expect(reachedBottom.fullyVisible, 'the final visible toggle is reachable at the bottom').toBe(true);
+    });
+
     test('clicking a category header toggles it independently (not mutually exclusive)', async ({ page }) => {
         await gotoAndReady(page);
         await page.waitForTimeout(1500);

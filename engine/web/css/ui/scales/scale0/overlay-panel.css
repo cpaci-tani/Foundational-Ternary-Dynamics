@@ -430,6 +430,8 @@
     padding: 0 8px 9px;
     overflow-x: hidden;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
     scrollbar-width: thin;
     scrollbar-color: color-mix(in oklch, var(--accent) 45%, transparent) transparent;
 }
@@ -443,6 +445,10 @@
 #viewport-overlay .s0-overlay-col {
     --s0-col: #94a3b8;
     display: grid;
+    /* This column lives in the panel's vertical flex scroller. It must retain
+       its natural grid height so the body gains scroll range; allowing the
+       default flex-shrink clips child toggles behind this card's overflow. */
+    flex: 0 0 auto;
     grid-template-columns: minmax(0, 1fr);
     gap: 5px;
     min-width: 0;
