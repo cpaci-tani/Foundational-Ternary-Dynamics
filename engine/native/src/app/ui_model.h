@@ -50,9 +50,17 @@ Rml::String bcc_label(int v);
 Rml::String site_label(int v);
 Rml::String config_value_str(const ConfigSpec& s, double v);
 
-// One tick in physical seconds (electron-primary gauge: t_phys = t_P/sqrt(3), see
-// CLAUDE.md). Renders a human-facing "physical time" in the status bar only.
-inline constexpr double kTPhysSeconds = 3.11e-44;
+// Default electron-primary dimensional map (FTD-0137 §4.5). The length is the
+// conditional output (hbar/(m_e*c))*K*alpha^11, not the empirical CODATA value.
+// The selected c_lat=1/sqrt(3) then fixes one global tick to l_P^FTD/(sqrt(3)*c).
+// These render human-facing status-bar context only; engine dynamics remain
+// dimensionless and neither value is an ontic input.
+inline constexpr double kElectronPrimaryPlanckLengthMetres = 1.6131462631176174e-35;
+inline constexpr double kPhysicalSpeedOfLightMetresPerSecond = 2.99792458e8;
+inline constexpr double kSelectedLatticeLightSpeed = 0.57735026918962576451;
+inline constexpr double kTPhysSeconds =
+    kSelectedLatticeLightSpeed * kElectronPrimaryPlanckLengthMetres /
+    kPhysicalSpeedOfLightMetresPerSecond;
 
 // ── RmlUi data-model mirror of the shell (the bound C++ side). ──────────────
 // One physics toggle row. name/desc/req come from the TOGGLE_SPECS row (static);

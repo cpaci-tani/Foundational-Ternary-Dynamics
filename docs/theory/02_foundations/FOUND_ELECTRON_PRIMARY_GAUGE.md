@@ -3,7 +3,7 @@
 **Tag:** [SYNTHESIS] + [RECOMMENDATION]. A gauge *choice* under FTD-0137, not a theorem; it promotes nothing and moves no tag. The gravity-as-output step rides at its source tags ([DERIVED ~0.19%] for the mass ladder, [SELECTION] for the √(2π) factor, [SMC] for the α_G identification — FTD-0015/FTD-0131).
 **Program:** dimensional-boundary. **LEDGER:** maintenance-log line; content rides on FTD-0137 (gauge freedom), FTD-0015 (m_e/m_P ladder), FTD-0059/FTD-0096 (no-gos), FTD-0368 (grade-0 closure).
 **Verification:** numerics reproduced inline (mpmath); the gate map is `DERIV_DIMENSIONAL_GATE.md`.
-**Audience:** anyone choosing *how* FTD should enter absolute units — and why the current Planck-primary default is the wrong entry.
+**Audience:** anyone choosing *how* FTD should enter absolute units — and why the legacy Planck-primary default is the wrong entry.
 
 ---
 
@@ -21,9 +21,9 @@ with `q̂` the dimensionless FTD number (the gate of `DERIV_DIMENSIONAL_GATE.md`
 
 ---
 
-## §2 — Why the current Planck-primary default over-imports
+## §2 — Why the legacy Planck-primary default over-imports
 
-Planck-primary (the SPEC_FTD default, FTD-0041) fixes `a_phys ≡ ℓ_P` **and** `K_B = m_e`. Since `ℓ_P = √(ℏG/c³)`, importing `ℓ_P` (given `ℏ, c`) is equivalent to **importing `G`**. So beyond `{ℏ, c}`, Planck-primary imports **two** scales: `G` (via `ℓ_P`) and `m_e`.
+Legacy Planck-primary (the pre-2026-07-08 SPEC_FTD default, FTD-0041) fixes `a_phys ≡ ℓ_P` **and** `K_B = m_e`. Since `ℓ_P = √(ℏG/c³)`, importing `ℓ_P` (given `ℏ, c`) is equivalent to **importing `G`**. So beyond `{ℏ, c}`, Planck-primary imports **two** scales: `G` (via `ℓ_P`) and `m_e`.
 
 But those two are **not independent** — FTD predicts the dimensionless ratio
 $$\frac{m_e}{m_P} = \frac{m_e}{\sqrt{\hbar c/G}} = K\,\alpha^{11}, \qquad K \equiv \sqrt{2\pi}\cdot\tfrac{16}{3},$$
@@ -43,6 +43,8 @@ Import `m_e` (with `ℏ, c` universal). Then, in order:
 
 Steps 3–5 are the move: the scales Planck-primary *imports*, electron-primary *outputs*.
 
+With the shared precision `α` and measured electron anchor used by the engine/dashboard, the chain evaluates to `m_e/m_P = 4.17741175×10⁻²³`, `ℓ_P^FTD = 1.61314626×10⁻³⁵ m`, and `t_P^FTD = ℓ_P^FTD/c = 5.38087674×10⁻⁴⁴ s`. The selected `c_lat = 1/√3` then gives one global tick `t_phys = t_P^FTD/√3 = 3.10665063×10⁻⁴⁴ s`. These are conditional outputs at the source tags stated above; the CODATA references remain `1.616255×10⁻³⁵ m` and `5.391247×10⁻⁴⁴ s`.
+
 ---
 
 ## §4 — Gravity becomes a prediction (0.38%)
@@ -57,7 +59,7 @@ So electron-primary doesn't just remove the `G` import — it converts `G` into 
 
 ## §5 — The four properness tests
 
-| Test | Planck-primary (current default) | **Electron-primary (proper)** |
+| Test | Planck-primary (legacy default) | **Electron-primary (proper)** |
 |---|---|---|
 | **Minimal** | 2 scales beyond `{ℏ,c}` (`ℓ_P`, `m_e`) — redundant | **1** scale beyond `{ℏ,c}` (`m_e`) |
 | **Non-circular** | imports **G** (via `ℓ_P`) | **G derived** from the ladder |

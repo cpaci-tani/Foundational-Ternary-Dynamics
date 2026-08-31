@@ -227,6 +227,54 @@ export const SCALE0_ADVANCED_TOGGLES = [
     ['knot_tracking',            false, 't-knot-tracking'],
 ];
 
+// Maximal dependency-compatible Scale-0 physics profile for the controls-card
+// "Enable all physics" action. Order is intentional: prerequisites are enabled
+// before their dependents so direct/in-thread bridges never observe a transient
+// invalid combination. This is a curated physics profile, not every boolean:
+//
+//   - langevin: single-substrate alternate mode; conflicts with dual substrate
+//               and Larmor radiation.
+//   - absorbing_boundary: boundary-specific imposed sponge, not a universal
+//                         physics term and incompatible with pure boundary laws.
+//   - knot_tracking: observation-only telemetry, not physics.
+//   - de_broglie_clock: scenario-owned mass-term experiment.
+//
+// Every included key is surfaced in the card, backed by active CPU + CUDA code,
+// and compatible with every other included key under TermToggles::validate().
+export const SCALE0_ENABLE_ALL_PHYSICS_KEYS = Object.freeze([
+    'wave_propagation',
+    'coupling',
+    'damping',
+    'genesis',
+    'evaporation',
+    'gauss_projection',
+    'forces',
+    'gravity',
+    'movement',
+    'poisson_coulomb',
+    'dual_substrate',
+    'color_forces',
+    'strong_force',
+    'exchange_force',
+    'lorentz_force',
+    'selective_damping',
+    'larmor_radiation',
+    'weak_transmutation',
+    'confinement',
+    'pair_production',
+    'triad_binding',
+    'latency_field',
+    'exact_dual_gauss',
+    'symmetric_movement_order',
+]);
+
+export const SCALE0_ENABLE_ALL_PHYSICS_EXCLUDED_KEYS = Object.freeze([
+    'langevin',
+    'absorbing_boundary',
+    'knot_tracking',
+    'de_broglie_clock',
+]);
+
 // Scale 2/3 (Atoms/Molecules) — matching AtomToggles in atom_engine.h
 export const SCALE2_TOGGLES = [
     ['ae-ionic', true, 'aeSetIonic'],
@@ -500,7 +548,7 @@ export const SCALE0_SCENARIO_RESEARCH_TERMS = {
 // specific boundary. The loader applies these at load AND on resize.
 // Missing entry → dispersal (mode 2), NOT the live DOM boundary controls.
 // Any configure_* / body that sets Periodic MUST register mode: 0 here or
-// applyAuxiliaryDefaults will sponge the seed after load.
+// applyAuxiliaryDefaults will excise the seed's face records after load.
 //
 //   mode:       number  → 0 periodic, 1 reflective, 2 dispersal.
 //   periodicAxis:number  → orientation metadata: 0 X, 1 Y, 2 Z, 3 all axes.
@@ -571,7 +619,7 @@ export const SCALE0_SCENARIO_BOUNDARY = {
     's0-seed-cluster-law-superknee': { mode: 0 },
     's0-seed-de-broglie-clock': { mode: 0 },
     // Weak probe leaves flux_boundary at TermToggles default (Periodic);
-    // pin so applyAuxiliaryDefaults cannot sponge the stress packet.
+    // pin so applyAuxiliaryDefaults cannot excise the stress packet's faces.
     's0-seed-beta-decay': { mode: 0 },
     'empty': { mode: 0 },
     's0-seed-gravitational-wave': { mode: 0 },
@@ -623,9 +671,10 @@ export const SCALE0_SCENARIO_BOUNDARY = {
     's0-seed-spark-of-life': { mode: 0 },
 };
 
-// Explicit opt-in for the imposed absorbing sponge. No currently qualified
-// Scale-0 scenario depends on it; research setups may be added only with a
-// boundary-specific behavioral test.
+// Explicit opt-in for the imposed absorbing sponge. The engine ignores it when
+// Dispersal owns the boundary, so the deletion surface cannot silently regain
+// an interior damping band. No currently qualified Scale-0 scenario depends on
+// it; research setups may be added only with a boundary-specific behavioral test.
 //
 // @type {Set<ScenarioId>}
 export const SCALE0_ABSORBING_SCENARIOS = new Set([

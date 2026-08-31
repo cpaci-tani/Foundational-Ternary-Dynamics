@@ -21,7 +21,7 @@ function _firstFinite(...values) {
 
 /**
  * Live decomposition tooltip for the status-bar energy readout (whole-box
- * audit channels, sim units). Feeds the shared ui-tooltip system via
+ * per-tick ledger plus optional audit channels, sim units). Feeds the shared ui-tooltip system via
  * dataset.uiTooltip — hover text is read at hover time, so per-frame updates
  * are visible. Keeps the "Current total energy" prefix (asserted by
  * scales.spec.js tooltip coverage).
@@ -30,6 +30,10 @@ function _updateEnergyTooltip(el, {
     audit = null,
     auditCurrent = false,
     energyCurrent = false,
+    sampleHeld = false,
+    energySource = null,
+    sampleTick = null,
+    stateTick = null,
 } = {}) {
     if (!el) return;
     const parts = [];
@@ -50,8 +54,14 @@ function _updateEnergyTooltip(el, {
     const availability = energyCurrent
         ? ''
         : ' Current energy telemetry is unavailable; retained values are not presented as live.';
+    const provenance = sampleHeld
+        ? ` Latest completed audit sample t=${sampleTick} is held while state telemetry is t=${stateTick}; the value is not relabelled as a same-tick measurement.`
+        : (energySource === 'per-tick-ledger'
+            ? ' The live total is read from the engine per-tick energy ledger.'
+            : (energySource === 'same-tick-audit'
+                ? ' The live total is read from a completed same-tick energy audit.' : ''));
     const text = 'Current total energy: whole-box dynamic sum in engine sim '
-        + `units (rest mass excluded)${decomp}.${availability} MeV value is the `
+        + `units (rest mass excluded)${decomp}.${availability}${provenance} MeV value is the `
         + `electron-primary calibration (1 sim ≡ ${SIM_ENERGY_TO_MEV} MeV via `
         + 'E_REST = K_B·C² ≙ 0.511 MeV) [CALIBRATION], not a derived energy.';
     el.dataset.uiTooltip = text;
@@ -64,7 +74,11 @@ function _updateEnergyTooltip(el, {
 }
 
 export function updateDiagnosticsAndPanels(ctx, state) {
-    if (ctx.frameCount % 3 !== 0) return;
+    // Present cached worker/native telemetry at 30+ Hz on ordinary 60–75 Hz
+    // displays. The expensive audit itself remains demand/cadence gated; this
+    // only consumes completed samples and removes the visibly stepped 20–24 Hz
+    // chart path.
+    if (ctx.frameCount % 2 !== 0) return;
 
     // collectScale0 is cheap (status bar + primary history) — always runs.
     const diag = telemetryHub.collectScale0(ctx.bridge, state.fluxMock, state.useFluxMock);
@@ -116,13 +130,33 @@ export function updateDiagnosticsAndPanels(ctx, state) {
     const statusEnergy = readScale0TotalEnergy(diag, telemetryHub.s0?.audit, {
         diagMeta,
         auditMeta,
+        allowAuditSampleHold: true,
     });
+    const statusUsesDiagnosticEnergy = diagCurrent && Number.isFinite(diag?.dynamicEnergy);
+    const statusUsesAlignedAudit = auditCurrent
+        && Number.isFinite(telemetryHub.s0?.audit?.dynamicEnergy);
+    const sampleHeld = Number.isFinite(statusEnergy)
+        && !statusUsesDiagnosticEnergy
+        && !statusUsesAlignedAudit
+        && isCurrentScale0TelemetryMeta(auditMeta)
+        && Number.isFinite(telemetryHub.s0?.audit?.dynamicEnergy);
     ctx.dom.statusEnergy.textContent = Number.isFinite(statusEnergy)
         ? formatEnergySim(statusEnergy).text : '—';
+    ctx.dom.statusEnergy.dataset.sampleHeld = sampleHeld ? 'true' : 'false';
+    ctx.dom.statusEnergy.dataset.sampleTick = Number.isFinite(auditMeta?.tick)
+        ? String(auditMeta.tick) : '';
+    ctx.dom.statusEnergy.dataset.stateTick = Number.isFinite(diagMeta?.tick)
+        ? String(diagMeta.tick) : '';
     _updateEnergyTooltip(ctx.dom.statusEnergy, {
         audit: liveAudit,
         auditCurrent,
         energyCurrent: Number.isFinite(statusEnergy),
+        sampleHeld,
+        energySource: statusUsesDiagnosticEnergy
+            ? diag?.energySampleSource
+            : (statusUsesAlignedAudit ? 'same-tick-audit' : null),
+        sampleTick: auditMeta?.tick,
+        stateTick: diagMeta?.tick,
     });
 
     if (ctx.running) {

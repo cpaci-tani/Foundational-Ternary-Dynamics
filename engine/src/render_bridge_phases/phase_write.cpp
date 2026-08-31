@@ -484,34 +484,6 @@ static inline void copy_flux_fields(Voxel& dst, const Voxel& src) {
   dst.wave_vel_weak = src.wave_vel_weak;
 }
 
-// One-way first-order Sommerfeld trace for a field/pseudo-velocity pair.
-// The face cell is a ghost trace, not an evolved site.  For an outward normal
-// step h, (partial_t + C_WAVE partial_n)J=0 gives
-//     J_face = J_interior - h * wave_vel_interior / C_WAVE.
-// Reconstructing this trace from the strictly interior source before every
-// stencil read prevents the storage torus from supplying an incoming mode.
-static inline void copy_outflow_pair(Vec3& field_dst, Vec3& wave_dst,
-                                     const Vec3& field_src,
-                                     const Vec3& wave_src,
-                                     double normal_step) {
-  field_dst = field_src - wave_src * (normal_step / C_WAVE);
-  wave_dst = wave_src;
-}
-
-static inline void copy_outflow_fields(Voxel& dst, const Voxel& src,
-                                       double normal_step) {
-  copy_outflow_pair(dst.flux, dst.wave_vel,
-                    src.flux, src.wave_vel, normal_step);
-  copy_outflow_pair(dst.flux_L, dst.wave_vel_L,
-                    src.flux_L, src.wave_vel_L, normal_step);
-  copy_outflow_pair(dst.flux_R, dst.wave_vel_R,
-                    src.flux_R, src.wave_vel_R, normal_step);
-  copy_outflow_pair(dst.flux_strong, dst.wave_vel_strong,
-                    src.flux_strong, src.wave_vel_strong, normal_step);
-  copy_outflow_pair(dst.flux_weak, dst.wave_vel_weak,
-                    src.flux_weak, src.wave_vel_weak, normal_step);
-}
-
 // Visit every voxel of the one-layer boundary shell (all six faces) in
 // z-outer/y-mid/x-inner order — the traversal both one-layer passes share.
 template <typename Fn>
@@ -576,36 +548,27 @@ void prepare_flux_boundary(RenderBridge& rb) {
   if (rb.toggles.flux_boundary == FluxBoundaryMode::Reflective) {
     apply_reflective_flux_boundary(rb);
   } else if (rb.toggles.flux_boundary == FluxBoundaryMode::Dispersal) {
+    // The complete outer shell remains authoritative void even during the
+    // stencil phase. phase_read supplies its target-local one-way closure
+    // without materializing a shared face record, preventing both persisted
+    // edge energy and cross-target pseudo-velocity feedback.
     apply_dispersal_flux_boundary(rb);
   }
 }
 
-// Dispersal boundary — six-face one-way excision sink. The outer shell is not
-// an evolved region: every manifested record, motion register, warm-start
-// potential, and local diagnostic is reset to void. Transported fields receive
-// only a reconstructed outward Sommerfeld ghost trace from the strictly
-// interior source. No boundary value is read from the opposite face, no
-// incoming characteristic is supplied, and no size-dependent interior sponge
-// is part of this boundary mode.
+// Dispersal settled boundary — complete six-face excision sink. Every outermost
+// record, including every transported field pair, is reset to void. The
+// target-local one-way stencil closure is computed without writing this shell,
+// so the boundary cannot collect, display, or later re-emit energy. No strictly
+// interior cell is graded.
 void apply_dispersal_flux_boundary(RenderBridge& rb) {
   const Lattice& lat = rb.lattice_;
   if (lat.size() <= 0) return;
   for_each_shell_voxel(rb, [&](int x, int y, int z, int Nm1) {
     const int idx = lat.index(x, y, z);
-    const int ix = (x == 0) ? 1 : (x == Nm1 ? Nm1 - 1 : x);
-    const int iy = (y == 0) ? 1 : (y == Nm1 ? Nm1 - 1 : y);
-    const int iz = (z == 0) ? 1 : (z == Nm1 ? Nm1 - 1 : z);
-    const int face_count = (x == 0 || x == Nm1)
-                         + (y == 0 || y == Nm1)
-                         + (z == 0 || z == Nm1);
-    const Voxel source = lat.size() >= 3
-        ? rb.voxels_[lat.index(ix, iy, iz)] : Voxel{};
+    (void)Nm1;
     rb.set_state(idx, 0);
     rb.voxels_[idx] = Voxel{};
-    if (lat.size() >= 3) {
-      copy_outflow_fields(rb.voxels_[idx], source,
-                          std::sqrt(static_cast<double>(face_count)));
-    }
     rb.force_diag_[idx] = ForceDiag{};
     rb.delta_j_[idx] = {};
     rb.delta_j_L_[idx] = {};

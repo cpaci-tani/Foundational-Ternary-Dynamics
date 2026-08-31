@@ -282,6 +282,58 @@ int main() {
     }
 
     // ================================================================
+    // DS-RUNTIME-TOGGLE: live single <-> dual transitions preserve J/W
+    // ================================================================
+    std::cout << "\n=== DS-RUNTIME-TOGGLE ===\n";
+
+    {
+        RenderBridge bridge(16);
+        bridge.force_cpu();
+        bridge.toggles.disable_all();
+        bridge.toggles.wave_propagation = true;
+        bridge.inject_flux(8, 8, 8, Vec3(0.3, 0.1, -0.2));
+        bridge.inject_wave_vel_add(8, 8, 8, Vec3(-0.04, 0.02, 0.06));
+
+        const int center = bridge.lattice().index(8, 8, 8);
+        const Vec3 flux_before = bridge.voxels()[center].flux;
+        const Vec3 wave_before = bridge.voxels()[center].wave_vel;
+
+        bridge.set_dual_substrate(true);
+        auto& lifted = bridge.voxels()[center];
+        check("runtime enable sets dual_substrate", bridge.toggles.dual_substrate);
+        check_close("runtime enable preserves flux.x",
+                    (lifted.flux_L + lifted.flux_R).x, flux_before.x, 1e-15);
+        check_close("runtime enable preserves flux.y",
+                    (lifted.flux_L + lifted.flux_R).y, flux_before.y, 1e-15);
+        check_close("runtime enable preserves flux.z",
+                    (lifted.flux_L + lifted.flux_R).z, flux_before.z, 1e-15);
+        check_close("runtime enable preserves wave velocity.x",
+                    (lifted.wave_vel_L + lifted.wave_vel_R).x, wave_before.x, 1e-15);
+        check_close("runtime enable introduces zero relative flux",
+                    (lifted.flux_L - lifted.flux_R).mag2(), 0.0, 1e-15);
+
+        bridge.tick();
+        double dual_energy = 0.0;
+        for (const auto& v : bridge.voxels()) {
+            dual_energy += v.flux_L.mag2() + v.flux_R.mag2()
+                         + v.wave_vel_L.mag2() + v.wave_vel_R.mag2();
+        }
+        check("runtime-enabled dual field survives the next tick", dual_energy > 1e-6);
+
+        bridge.set_dual_substrate(false);
+        check("runtime disable clears dual_substrate", !bridge.toggles.dual_substrate);
+        double observable_energy = 0.0;
+        double dormant_energy = 0.0;
+        for (const auto& v : bridge.voxels()) {
+            observable_energy += v.flux.mag2() + v.wave_vel.mag2();
+            dormant_energy += v.flux_L.mag2() + v.flux_R.mag2()
+                            + v.wave_vel_L.mag2() + v.wave_vel_R.mag2();
+        }
+        check("runtime disable preserves the observable field", observable_energy > 1e-6);
+        check("runtime disable clears dormant dual registers", dormant_energy < 1e-20);
+    }
+
+    // ================================================================
     // DS-SWEEP: ew_background_sweep enters the dual registers
     // (EXPLR_DUAL_SUBSTRATE_STAGGERED_ENCODING §5.3 item 3, reconciled:
     // the sweep previously wrote the observable only, which dual-mode

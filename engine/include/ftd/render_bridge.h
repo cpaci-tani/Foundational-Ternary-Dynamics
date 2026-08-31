@@ -350,6 +350,13 @@ public:
     // Physics term toggles (pedagogy system)
     TermToggles toggles;
 
+    // Runtime-safe dual-substrate transition used by interactive frontends.
+    // Enabling splits the current observable J/W records symmetrically into
+    // L/R registers; disabling recombines them and clears the dormant registers.
+    // Direct scenario construction may still assign toggles.dual_substrate
+    // before seeding because no live field exists at that point.
+    void set_dual_substrate(bool enabled);
+
     // ── Research overrides for the genesis constants (single-substrate path) ──
     // Lets a campaign vary the genesis threshold and the manifestation ramp
     // scale at runtime, to test whether K_GENESIS = N_c·K_B and the

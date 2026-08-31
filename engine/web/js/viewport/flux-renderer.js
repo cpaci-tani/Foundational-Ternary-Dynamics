@@ -48,14 +48,14 @@ import { FLUX_VOL_VERT, PARTICLE_FRAG, PARTICLE_SHADER_UNIFORMS } from './shader
 // FTV2 may still publish as many as 53 samples/axis, so source acceptance and
 // render density are deliberately separate constants. The 12³ production
 // ceiling keeps robust headroom for the concurrently active sidepanel and base
-// scene. The explicit minimum-size/zero-threshold inspection state is the one
-// exception: its one-pixel sprites expose every available source sample.
+// scene. Threshold zero is the explicit inspection state and exposes every
+// available source sample. Point size changes presentation only; it must never
+// change which voxels are included.
 const FLUX_SOURCE_MAX_AXIS_POINTS = 53;
 const FLUX_RENDER_MAX_AXIS_POINTS = 12; // 12³ = 1,728 point-sprite ceiling
 const FLUX_RENDER_MAX_POINTS = FLUX_RENDER_MAX_AXIS_POINTS ** 3;
-const FLUX_LATTICE_INSPECTION_POINT_SCALE = 0.1;
 const FLUX_LATTICE_INSPECTION_THRESHOLD = 0;
-const FLUX_LATTICE_INSPECTION_POINT_SIZE = 1.0;
+const FLUX_LATTICE_INSPECTION_MIN_POINT_SIZE = 1.0;
 const FLUX_LATTICE_INSPECTION_COLOR_FLOOR = [0.16, 0.35, 0.55];
 function fluxVolumeAxisSamples(N) {
     return Math.min(N, FLUX_RENDER_MAX_AXIS_POINTS);
@@ -182,12 +182,12 @@ export class ViewportFluxRenderer {
     // Renders the continuous flux field J as a point cloud.
     // Each voxel above threshold emits a colored dot sized by magnitude.
     // Sampling: one maximum representative per bounded uniform 3D stratum,
-    // except at the two slider minima where every available sample is shown.
+    // except at threshold zero where every available sample is shown.
     // Boundary clipping uses _insideBoundary() for non-cube shapes.
 
     _buildFluxVolume(latticeSize, axisCapacity = fluxVolumeAxisSamples(latticeSize)) {
         // Normal rendering allocates only the bounded stratum grid. The explicit
-        // minimum-size/zero-threshold inspection state can request the full
+        // zero-threshold inspection state can request the full
         // source grid and releases that larger allocation when inspection ends.
         const sampledN = Math.max(1, Math.trunc(axisCapacity));
         const maxPts = sampledN * sampledN * sampledN;
@@ -276,8 +276,7 @@ export class ViewportFluxRenderer {
     }
 
     _isFullLatticeInspection() {
-        return this._fluxPointScale <= FLUX_LATTICE_INSPECTION_POINT_SCALE + 1e-9
-            && this._fluxThreshold <= FLUX_LATTICE_INSPECTION_THRESHOLD + 1e-12;
+        return this._fluxThreshold <= FLUX_LATTICE_INSPECTION_THRESHOLD + 1e-12;
     }
 
     /**
@@ -341,7 +340,7 @@ export class ViewportFluxRenderer {
             renderSpacing = N / samples;
         }
 
-        // At the two slider minima, every source sample is intentional output:
+        // At threshold zero, every source sample is intentional output:
         // dense WASM frames expose every lattice cell, while native FTV2 frames
         // expose every sample in their bounded published support grid.
         this._ensureFluxVolumeCapacity(latticeSize, samples);
@@ -442,7 +441,15 @@ export class ViewportFluxRenderer {
         let count = 0;
         const maxPts = posAttr.array.length / 3;
         const MAX_SIZE = (this._fluxPointScale || 1.0) * 10.0;
-        const FLUX_THRESHOLD = this._fluxThreshold !== undefined ? this._fluxThreshold : 0.005;
+        // The UI threshold is a dimensionless fraction of this frame's peak,
+        // ranging from 0 (show every available voxel) to 0.5 (show voxels at
+        // least half as strong as the current peak). It is intentionally not
+        // coupled to point size.
+        const thresholdFraction = Math.max(
+            0,
+            Math.min(0.5, this._fluxThreshold !== undefined ? this._fluxThreshold : 0.005),
+        );
+        const fluxThreshold = thresholdFraction * instantMaxFlux;
         // The write loop emits each stratum's maximum representative. Organic
         // mode may jitter the presentation position, while sourcePosition keeps
         // the exact winning physical coordinate.
@@ -468,7 +475,7 @@ export class ViewportFluxRenderer {
         for (let poolIndex = 0; poolIndex < poolCount && count < maxPts; poolIndex++) {
             const mag = poolMagnitude[poolIndex];
             const retainedSourceIndex = poolSourceIndex[poolIndex];
-            if (retainedSourceIndex < 0 || mag < FLUX_THRESHOLD) continue;
+            if (retainedSourceIndex < 0 || mag < fluxThreshold) continue;
 
             const sourceZ = Math.floor(retainedSourceIndex / sourcePlane);
             const sourceRem = retainedSourceIndex - sourceZ * sourcePlane;
@@ -523,7 +530,13 @@ export class ViewportFluxRenderer {
                     colArr[c3 + 2],
                     FLUX_LATTICE_INSPECTION_COLOR_FLOOR[2],
                 );
-                sizeArr[count] = FLUX_LATTICE_INSPECTION_POINT_SIZE;
+                // Threshold zero includes even zero-magnitude cells. Keep
+                // those cells at a visible one-pixel floor, then let actual
+                // flux grow continuously to the selected point-size ceiling.
+                const t = mag / (maxFlux + 1e-20);
+                const hi = Math.max(MAX_SIZE, FLUX_LATTICE_INSPECTION_MIN_POINT_SIZE);
+                sizeArr[count] = FLUX_LATTICE_INSPECTION_MIN_POINT_SIZE
+                    + (hi - FLUX_LATTICE_INSPECTION_MIN_POINT_SIZE) * t;
             } else {
                 const t = mag / (maxFlux + 1e-20);
                 const lo = FLUX_DOT_MIN * footprintStride;

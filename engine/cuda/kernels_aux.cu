@@ -92,19 +92,6 @@ __device__ __forceinline__ void copy_boundary_fields(
     weak_wave_x[dst] = weak_wave_x[src]; weak_wave_y[dst] = weak_wave_y[src]; weak_wave_z[dst] = weak_wave_z[src];
 }
 
-__device__ __forceinline__ void copy_outflow_boundary_pair(
-    int dst, int src, double normal_step,
-    double* field_x, double* field_y, double* field_z,
-    double* wave_x, double* wave_y, double* wave_z) {
-    const double scale = normal_step / C_WAVE;
-    field_x[dst] = field_x[src] - wave_x[src] * scale;
-    field_y[dst] = field_y[src] - wave_y[src] * scale;
-    field_z[dst] = field_z[src] - wave_z[src] * scale;
-    wave_x[dst] = wave_x[src];
-    wave_y[dst] = wave_y[src];
-    wave_z[dst] = wave_z[src];
-}
-
 }  // namespace
 
 // ============================================================================
@@ -198,9 +185,9 @@ __global__ void absorbing_boundary_kernel(
 }
 
 // mode: 0 = periodic, 1 = reflective, 2 = dispersal. Reflective refreshes
-// its Neumann ghost shell; Dispersal reconstructs an outward-only Sommerfeld
-// trace on the complete outer shell and excises every non-field face record.
-// Pre-read and post-writer calls intentionally apply the same operator.
+// its Neumann ghost shell. Dispersal keeps every outer-shell field exact zero;
+// its target-local one-way stencil closure lives in kernels_stencil_common.cuh.
+// Non-field face records are excised in both preparation and settlement.
 // Every mode owns all six faces. Periodic requires no kernel because the
 // lattice storage topology already identifies every opposite-face pair.
 __global__ void flux_boundary_kernel(
@@ -246,40 +233,19 @@ __global__ void flux_boundary_kernel(
     if (mode == 0) return;
     if (x > 0 && x < Nm1 && y > 0 && y < Nm1 && z > 0 && z < Nm1)
         return;
-    if (L < 3) {
-        scale_boundary_fields(
-            i, 0.0,
-            flux_x, flux_y, flux_z, wave_x, wave_y, wave_z,
-            flux_L_x, flux_L_y, flux_L_z, flux_R_x, flux_R_y, flux_R_z,
-            wave_L_x, wave_L_y, wave_L_z, wave_R_x, wave_R_y, wave_R_z,
-            strong_x, strong_y, strong_z,
-            strong_wave_x, strong_wave_y, strong_wave_z,
-            weak_x, weak_y, weak_z, weak_wave_x, weak_wave_y, weak_wave_z);
-        return;
-    }
-    const int sx = (x == 0) ? 1 : (x == Nm1 ? Nm1 - 1 : x);
-    const int sy = (y == 0) ? 1 : (y == Nm1 ? Nm1 - 1 : y);
-    const int sz = (z == 0) ? 1 : (z == Nm1 ? Nm1 - 1 : z);
-    const int src = sx * LL + sy * L + sz;
-    const int face_count = (x == 0 || x == Nm1)
-                         + (y == 0 || y == Nm1)
-                         + (z == 0 || z == Nm1);
-    const double normal_step = sqrt(static_cast<double>(face_count));
-    copy_outflow_boundary_pair(i, src, normal_step,
-        flux_x, flux_y, flux_z, wave_x, wave_y, wave_z);
-    copy_outflow_boundary_pair(i, src, normal_step,
-        flux_L_x, flux_L_y, flux_L_z, wave_L_x, wave_L_y, wave_L_z);
-    copy_outflow_boundary_pair(i, src, normal_step,
-        flux_R_x, flux_R_y, flux_R_z, wave_R_x, wave_R_y, wave_R_z);
-    copy_outflow_boundary_pair(i, src, normal_step,
+    scale_boundary_fields(
+        i, 0.0,
+        flux_x, flux_y, flux_z, wave_x, wave_y, wave_z,
+        flux_L_x, flux_L_y, flux_L_z, flux_R_x, flux_R_y, flux_R_z,
+        wave_L_x, wave_L_y, wave_L_z, wave_R_x, wave_R_y, wave_R_z,
         strong_x, strong_y, strong_z,
-        strong_wave_x, strong_wave_y, strong_wave_z);
-    copy_outflow_boundary_pair(i, src, normal_step,
+        strong_wave_x, strong_wave_y, strong_wave_z,
         weak_x, weak_y, weak_z, weak_wave_x, weak_wave_y, weak_wave_z);
 }
 
 // Dispersal clears every non-field dynamical register on the outer shell. The
-// field families are replaced by the one-way ghost trace in the same stream.
+// field shell is exact zero in both phases; the target-local one-way closure is
+// evaluated inside the stencil kernels without materializing a face record.
 __global__ void dispersal_record_excision_kernel(
     int8_t* state,
     double* velocity_x, double* velocity_y, double* velocity_z,

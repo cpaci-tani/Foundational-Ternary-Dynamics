@@ -19,7 +19,7 @@ export const SCALE0_SCENARIO_VALIDATION = Object.freeze({
         qualification: 'FINITE-BOX NATIVE BOUNDARY PROBE — computational boundary behavior, not ontology or electromagnetism',
         test: 'engine/tests/test_boundary_scenario_physics.cpp',
         target: 'boundary_scenario_physics',
-        assertion: 'The transverse packet stays inside the exact stencil cone, conserves the periodic discrete Hamiltonian, and reverses flux momentum under the Neumann ghost shell. Dispersal retires manifested face records and uses an outward-only first-order field trace without opposite-face reinjection or interior grading; the fixed probe keeps reverse momentum and residual norm below 1%, but this is not an exact all-angle transparent-boundary theorem.',
+        assertion: 'The transverse packet stays inside the exact stencil cone, conserves the periodic discrete Hamiltonian, and reverses flux momentum under the Neumann ghost shell. Dispersal retires manifested face records, keeps the outer shell exact void, and evaluates a normalized target-local one-way closure without opposite-face reinjection or interior grading; the fixed 90-tick probe keeps reverse momentum and residual norm below 1%, and the L=33 packet remains bounded with negligible residual through tick 4096, but this is not an exact all-angle transparent-boundary theorem.',
     }),
     'flux-genesis-between-gates': Object.freeze({
         level: 'behavioral',

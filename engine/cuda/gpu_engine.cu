@@ -32,6 +32,7 @@
 namespace ftd { namespace gpu { namespace kernels {
     void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
                             uint8_t bcc_stencil_mode,
+                            bool dispersal_boundary,
                             bool do_db_clock, bool do_db_clock_coulomb, double omega0,
                             bool period2_floquet, bool bcc_time_floquet);
     void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_damping,
@@ -75,6 +76,7 @@ namespace ftd { namespace gpu { namespace kernels {
     void launch_apply_flux_boundary(GpuBuffers& bufs, int mode);
     // Dual-substrate launchers
     void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
+                                bool dispersal_boundary,
                                 bool do_db_clock, bool do_db_clock_coulomb, double omega0,
                                 bool period2_floquet, bool bcc_time_floquet);
     void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_damping,
@@ -1021,9 +1023,12 @@ void GpuEngine::record_tick_body() {
     }
 
     // CPU parity: field boundaries run after the final ordinary flux writer
-    // (Gauss/forces/movement), so projection cannot refill the damped shell.
-    // The sponge and selected full-domain boundary are sequential and may coexist.
-    if (toggles.absorbing_boundary) {
+    // (Gauss/forces/movement), so projection cannot refill the settled shell.
+    // Dispersal exact-zeroes the complete outer shell here; its one-way closure
+    // is evaluated target-locally in phase_read. Never compose the legacy D-deep
+    // sponge with Dispersal, even if stale configuration enables both controls.
+    if (toggles.absorbing_boundary
+        && toggles.flux_boundary != FluxBoundaryMode::Dispersal) {
         kernels::launch_absorbing_boundary(bufs_);
     }
     if (toggles.flux_boundary != FluxBoundaryMode::Periodic) {
@@ -1338,6 +1343,7 @@ void GpuEngine::gpu_phase_read() {
         kernels::launch_phase_read_dual(bufs_,
                                         toggles.wave_propagation,
                                         toggles.coupling,
+                                        toggles.flux_boundary == FluxBoundaryMode::Dispersal,
                                         toggles.de_broglie_clock,
                                         toggles.db_clock_coulomb,
                                         toggles.omega0,
@@ -1348,6 +1354,7 @@ void GpuEngine::gpu_phase_read() {
                                    toggles.wave_propagation,
                                    toggles.coupling,
                                    static_cast<uint8_t>(toggles.bcc_stencil),
+                                   toggles.flux_boundary == FluxBoundaryMode::Dispersal,
                                    toggles.de_broglie_clock,
                                    toggles.db_clock_coulomb,
                                    toggles.omega0,

@@ -131,6 +131,22 @@ test.describe('Scale-0 flux slice — all axes + shared volume controls', () => 
         expect(restored.axes, 'xy restored ⇒ [0,1,2]').toEqual([0, 1, 2]);
         expect(restored.drawCount, 'three planes again ⇒ 3·N²').toBe(3 * restored.N * restored.N);
 
+        // A nonzero value is a fraction of the current plane peak, not an
+        // absolute |J| unit. At 0.5, the peak and exact-half sample remain;
+        // a 0.49 sample and all zero cells are filtered.
+        const relative = await page.evaluate(() => {
+            const v = window.__ftdCtx.viewport;
+            const N = window.__ftdCtx.bridge.latticeSize;
+            const data = new Float64Array(N * N);
+            data[0] = 0.49;
+            data[(N * N / 2) | 0] = 0.5;
+            data[data.length - 1] = 1;
+            v.setFluxSliceThreshold(0.5);
+            v.updateFluxSlices([{ axis: 2, data }], N, Math.floor(N / 2));
+            return v._fieldRenderer._fluxSliceMesh.geometry.drawRange.count;
+        });
+        expect(relative, 'relative threshold 0.5 keeps only ≥ 50% of current peak').toBe(2);
+
         const real = realErrors(errors);
         expect(real, `console errors:\n  ${real.join('\n  ')}`).toHaveLength(0);
     });

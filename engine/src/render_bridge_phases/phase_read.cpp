@@ -42,6 +42,109 @@
 
 namespace ftd {
 
+namespace {
+
+// Dispersal never stores a transported value on the outer shell. For a
+// strictly interior target whose stencil reaches that shell, substitute a
+// target-local Sommerfeld value instead:
+//     J_ghost = J_target - |offset| wave_target / (C_WAVE M_out).
+// Keeping the closure local to the target is important for the 18-point Moore
+// stencil. A single materialized face ghost is shared by tangentially adjacent
+// targets and feeds one target's pseudo-velocity into another; that nonlocal
+// feedback is the edge-growing mode caught by boundary_scenario_physics.
+template <Vec3 Voxel::*Field, Vec3 Voxel::*Wave>
+Vec3 dispersal_laplacian(const RenderBridge& rb, int x, int y, int z,
+                         BccStencilMode mode) {
+  const int L = rb.lattice().size();
+  const int Nm1 = L - 1;
+  if (x <= 0 || x >= Nm1 || y <= 0 || y >= Nm1 || z <= 0 || z >= Nm1) {
+    return {};
+  }
+
+  static constexpr int faces[6][3] = {
+      {1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}};
+  static constexpr int edges[12][3] = {
+      {1,1,0},{1,-1,0},{-1,1,0},{-1,-1,0},
+      {1,0,1},{1,0,-1},{-1,0,1},{-1,0,-1},
+      {0,1,1},{0,1,-1},{0,-1,1},{0,-1,-1}};
+  static constexpr int corners[8][3] = {
+      {1,1,1},{1,1,-1},{1,-1,1},{1,-1,-1},
+      {-1,1,1},{-1,1,-1},{-1,-1,1},{-1,-1,-1}};
+
+  const Lattice& lat = rb.lattice();
+  const Voxel& target = rb.voxels()[static_cast<std::size_t>(
+      lat.index(x, y, z))];
+  const Vec3& field = target.*Field;
+  const Vec3& wave = target.*Wave;
+  const auto reaches_shell = [&](const int offset[3]) {
+    const int nx = x + offset[0];
+    const int ny = y + offset[1];
+    const int nz = z + offset[2];
+    return nx == 0 || nx == Nm1 || ny == 0 || ny == Nm1
+        || nz == 0 || nz == Nm1;
+  };
+
+  // Normalize the impedance over the active outward part of the selected
+  // stencil. Without this, a corner receives nearly three face-normal damping
+  // impulses in one kick and the explicit map develops a growing corner mode.
+  double outward_measure = 0.0;
+  if (mode == BccStencilMode::SC || mode == BccStencilMode::FULL) {
+    const double weight = mode == BccStencilMode::SC ? W_SC_FACE : 1.0 / 3.0;
+    for (const auto& offset : faces) {
+      if (reaches_shell(offset)) outward_measure += weight;
+    }
+  }
+  if (mode == BccStencilMode::FCC || mode == BccStencilMode::FULL) {
+    const double weight = mode == BccStencilMode::FCC ? W_FCC_EDGE : 1.0 / 6.0;
+    for (const auto& offset : edges) {
+      if (reaches_shell(offset)) outward_measure += weight * std::sqrt(2.0);
+    }
+  }
+  if (mode == BccStencilMode::BCC) {
+    for (const auto& offset : corners) {
+      if (reaches_shell(offset)) {
+        outward_measure += W_BCC_CORNER * std::sqrt(3.0);
+      }
+    }
+  }
+  const double inverse_measure = outward_measure > 0.0
+      ? 1.0 / outward_measure : 0.0;
+  const auto sample = [&](const int offset[3]) {
+    const int nx = x + offset[0];
+    const int ny = y + offset[1];
+    const int nz = z + offset[2];
+    if (nx == 0 || nx == Nm1 || ny == 0 || ny == Nm1
+        || nz == 0 || nz == Nm1) {
+      const double step = std::sqrt(static_cast<double>(
+          offset[0] * offset[0] + offset[1] * offset[1]
+          + offset[2] * offset[2]));
+      return field - wave * (step * inverse_measure / C_WAVE);
+    }
+    return rb.voxels()[static_cast<std::size_t>(lat.index(nx, ny, nz))].*Field;
+  };
+
+  Vec3 sum;
+  if (mode == BccStencilMode::SC) {
+    for (const auto& offset : faces) sum += sample(offset);
+    return sum * W_SC_FACE - field;
+  }
+  if (mode == BccStencilMode::FCC) {
+    for (const auto& offset : edges) sum += sample(offset);
+    return sum * W_FCC_EDGE - field;
+  }
+  if (mode == BccStencilMode::BCC) {
+    for (const auto& offset : corners) sum += sample(offset);
+    return sum * W_BCC_CORNER - field;
+  }
+  Vec3 face_sum;
+  Vec3 edge_sum;
+  for (const auto& offset : faces) face_sum += sample(offset);
+  for (const auto& offset : edges) edge_sum += sample(offset);
+  return face_sum * (1.0 / 3.0) + edge_sum * (1.0 / 6.0) - field * 4.0;
+}
+
+}  // namespace
+
 void phase_read_main_loop(RenderBridge& rb) {
   const int N = static_cast<int>(rb.lattice_.total_sites());
   const int L = rb.lattice_.size();
@@ -102,7 +205,17 @@ void phase_read_main_loop(RenderBridge& rb) {
 
           if (do_wave) {
             Vec3 lap_L, lap_R;
-            if (iz > 0 && iz < Nm1 && iy > 0 && iy < Nm1 && ix > 0 && ix < Nm1) {
+            const bool dispersal_near_shell =
+                rb.toggles.flux_boundary == FluxBoundaryMode::Dispersal
+                && (ix <= 1 || ix >= Nm1 - 1
+                    || iy <= 1 || iy >= Nm1 - 1
+                    || iz <= 1 || iz >= Nm1 - 1);
+            if (dispersal_near_shell) {
+              lap_L = dispersal_laplacian<&Voxel::flux_L, &Voxel::wave_vel_L>(
+                  rb, ix, iy, iz, BccStencilMode::FULL);
+              lap_R = dispersal_laplacian<&Voxel::flux_R, &Voxel::wave_vel_R>(
+                  rb, ix, iy, iz, BccStencilMode::FULL);
+            } else if (iz > 0 && iz < Nm1 && iy > 0 && iy < Nm1 && ix > 0 && ix < Nm1) {
               // Interior fast path: precomputed offsets, zero modulo operations.
               // Neighbor offsets: ±1=±z, ±L=±y, ±LL=±x (matches lattice coord convention).
               const Vec3 fL = (rb.voxels_[i+1].flux_L  + rb.voxels_[i-1].flux_L
@@ -180,7 +293,15 @@ void phase_read_main_loop(RenderBridge& rb) {
 
           if (do_wave) {
             Vec3 lap;
-            if (stencil_mode == BccStencilMode::FULL) {
+            const bool dispersal_near_shell =
+                rb.toggles.flux_boundary == FluxBoundaryMode::Dispersal
+                && (ix <= 1 || ix >= Nm1 - 1
+                    || iy <= 1 || iy >= Nm1 - 1
+                    || iz <= 1 || iz >= Nm1 - 1);
+            if (dispersal_near_shell) {
+              lap = dispersal_laplacian<&Voxel::flux, &Voxel::wave_vel>(
+                  rb, ix, iy, iz, stencil_mode);
+            } else if (stencil_mode == BccStencilMode::FULL) {
               if (iz > 0 && iz < Nm1 && iy > 0 && iy < Nm1 && ix > 0 && ix < Nm1) {
                 // Interior fast path (FULL stencil only)
                 const Vec3 f = (rb.voxels_[i+1].flux  + rb.voxels_[i-1].flux

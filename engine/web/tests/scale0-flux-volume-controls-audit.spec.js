@@ -39,6 +39,12 @@ test.describe('Scale 0 Flux Volume controls-card audit gate', () => {
                     spacing: value('flux-lattice-spacing'),
                     brightness: value('wireframe-brightness'),
                 },
+                thresholdRange: {
+                    min: Number(document.getElementById('flux-threshold')?.min),
+                    max: Number(document.getElementById('flux-threshold')?.max),
+                    step: Number(document.getElementById('flux-threshold')?.step),
+                    ariaLabel: document.getElementById('flux-threshold')?.getAttribute('aria-label'),
+                },
                 displays: {
                     opacity: document.getElementById('flux-opacity-val')?.textContent,
                     pointScale: document.getElementById('flux-point-scale-val')?.textContent,
@@ -72,6 +78,12 @@ test.describe('Scale 0 Flux Volume controls-card audit gate', () => {
         expect(result.title).toBe('Flux Volume');
         expect(result.nodes).toBeGreaterThan(20);
         expect(result.inputs).toBe(7);
+        expect(result.thresholdRange).toEqual({
+            min: 0,
+            max: 0.5,
+            step: 0.0001,
+            ariaLabel: 'Relative flux threshold',
+        });
         expect(result.renderer).toEqual({
             volumeShape: result.values.shape,
             sliceShape: result.values.shape,

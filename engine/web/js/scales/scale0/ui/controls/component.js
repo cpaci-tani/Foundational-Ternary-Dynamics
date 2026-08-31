@@ -3,7 +3,7 @@
  * Mounts all Scale 0 control cards into the controls panel
  */
 
-import { createPhysicsTogglesCard } from './physics-toggles.js?v=2';
+import { createPhysicsTogglesCard } from './physics-toggles.js?v=3';
 import { createSubstrateControlsCard } from './substrate-controls.js?v=2';
 import { createFluxVolumeCard, createParticleDisplayCard, createSelectionCard } from './flux-volume.js?v=2';
 import { createFlowLinesCard } from './flow-lines.js?v=1';

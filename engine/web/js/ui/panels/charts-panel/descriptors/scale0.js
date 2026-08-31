@@ -8,7 +8,11 @@ export const charts = [
     {
         id: 'flux-energy',
         title: 'Flux & Energy',
-        telemetryGroups: ['diagnostics', 'audit'],
+        // Both series now come from the per-tick diagnostics packet: flux is
+        // compact diagnostics and energy is the engine's cached EnergyLedger.
+        // Requiring a full audit here made the card look stale and needlessly
+        // coupled the default chart to a slower independent sample stream.
+        telemetryGroups: ['diagnostics'],
         xLabel: 'tick',
         yLabel: 'E*',
         defaultActive: true,

@@ -7,7 +7,7 @@
 
 # FTD Dimensionless ↔ Dimensional Map
 
-**Schema:** v1 · **Scope:** algebraic-spine + calibration · **FTD version:** 5.34 · **Generated:** 2026-07-12
+**Schema:** v1 · **Scope:** algebraic-spine + calibration · **FTD version:** 5.34 · **Generated:** 2026-08-31
 
 > Spine + calibration only. Covers the 7 algebraic-spine theorems, 4 dimensionless physical identifications, the 3 calibration declarations theorem-enforced by FTD-0059 + FTD-0096, and 1 worked dimensional application (m_e in MeV). Full SM-quantity coverage lives in CATALOG_PARAMETRIC_INSERTIONS.md. The 3 calibrations are priced as import currency IMP-K1/K2/K3 in the priced-import ledger (SPEC_IMPORT_LEDGER.md, FTD-0371); their non-derivability is the grade-0-closure theorem (FOUND_DIMENSIONAL_GRADE_CLOSURE.md, FTD-0368 program).
 
@@ -153,29 +153,30 @@ Two SI-dimensional calibrations are theorem-enforced as the irreducible minimum 
 
 | ID | Anchor | Formula | Value | Tag | LEDGER |
 |---|---|---|---|---|---|
-| `a_phys_planck` | a_phys ≡ ℓ_P (length anchor) | DECLARED: 1 voxel ≡ 1 Planck length ℓ_P | 1.616255e-35 m | CALIBRATION | [FTD-0030](../07_assessment/core_ledgers/LEDGER.md#ftd-0030), [FTD-0041](../07_assessment/core_ledgers/LEDGER.md#ftd-0041), [FTD-0059](../07_assessment/core_ledgers/LEDGER.md#ftd-0059) |
-| `t_phys_lattice_tick` | t_phys (one tick in seconds) | t_phys = ℓ_P / (√3 · c) = t_P/√3 (from selected c_lat = 1/√3 + a_phys ≡ ℓ_P + c_phys = 2.998 × 10⁸ m/s: physical c = c_lat·a_phys/t_phys) | 3.11e-44 s | CALIBRATION | [FTD-0041](../07_assessment/core_ledgers/LEDGER.md#ftd-0041) |
+| `a_phys_planck` | a_phys = ℓ_P (default electron-primary map) | DEFAULT electron-primary: 1 voxel ↔ ℓ_P^FTD = (ℏ/(m_e c))·Kα¹¹, K = √(2π)·16/3; legacy Planck-primary declares 1 voxel ≡ CODATA ℓ_P | 1.613146263e-35 m | CALIBRATION | [FTD-0030](../07_assessment/core_ledgers/LEDGER.md#ftd-0030), [FTD-0041](../07_assessment/core_ledgers/LEDGER.md#ftd-0041), [FTD-0059](../07_assessment/core_ledgers/LEDGER.md#ftd-0059) |
+| `t_phys_lattice_tick` | t_phys (one tick in seconds) | t_phys = ℓ_P / (√3 · c) = t_P/√3 (from selected c_lat = 1/√3 + a_phys ≡ ℓ_P + c_phys = 2.998 × 10⁸ m/s: physical c = c_lat·a_phys/t_phys) | 3.106650632e-44 s | CALIBRATION | [FTD-0041](../07_assessment/core_ledgers/LEDGER.md#ftd-0041) |
 | `mass_unit_anchor` | K_B = m_e (mass-unit anchor) | DECLARED: lattice manifestation threshold K_B = 0.511 in lattice units corresponds to m_e in physical units. Mass-unit ≡ m_e/K_B = 1 MeV/c². | 0.5109989507 MeV/c² | IMPOSED | [FTD-0041](../07_assessment/core_ledgers/LEDGER.md#ftd-0041), [FTD-0096](../07_assessment/core_ledgers/LEDGER.md#ftd-0096) |
 
-### a_phys ≡ ℓ_P (length anchor) (`a_phys_planck`)
+### a_phys = ℓ_P (default electron-primary map) (`a_phys_planck`)
 
-- **Formula:** DECLARED: 1 voxel ≡ 1 Planck length ℓ_P
-- **Value:** 1.616255e-35 m
+- **Formula:** DEFAULT electron-primary: 1 voxel ↔ ℓ_P^FTD = (ℏ/(m_e c))·Kα¹¹, K = √(2π)·16/3; legacy Planck-primary declares 1 voxel ≡ CODATA ℓ_P
+- **Value:** 1.613146263e-35 m
 - **Tag:** `CALIBRATION`
+- **Depends on:** `alpha_inverse`, `mass_unit_anchor`
 - **LEDGER:** [FTD-0030](../07_assessment/core_ledgers/LEDGER.md#ftd-0030), [FTD-0041](../07_assessment/core_ledgers/LEDGER.md#ftd-0041), [FTD-0059](../07_assessment/core_ledgers/LEDGER.md#ftd-0059)
 - **Sources:** `docs/SPEC_FTD.md`; `docs/theory/10_eft_program/derivations/framework_postulates_constitution/THEOREM_A_PHYS_NO_GO.md`; `docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md`; `docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md`
-- **Calibration note:** Under the DEFAULT electron-primary gauge (FTD-0137 §4.5, FOUND_ELECTRON_PRIMARY_GAUGE.md), a_phys = ℓ_P is DERIVED: ℓ_P = ƛ_C·Kα¹¹ via the FTD-0015 m_e/m_P ladder, ≈1.616255×10⁻³⁵ m to 0.19% ([DERIVED ~0.19%]). Legacy Planck-primary instead declares it exactly. FTD-0059 forbids deriving a length from Axiom-Zero invariants ALONE (Mechanisms α/β/γ/δ all closed negative); electron-primary derives it from the imported {ℏ,c,m_e}, not Axiom Zero. ℓ_P reference value from CODATA 2022.
-- **Notes:** First of two SI-dimensional calibrations theorem-enforced by FTD-0096.
+- **Calibration note:** Under the DEFAULT electron-primary gauge (FTD-0137 §4.5, FOUND_ELECTRON_PRIMARY_GAUGE.md), a_phys = ℓ_P is derived conditionally: ℓ_P^FTD = ƛ_C·Kα¹¹ via the FTD-0015 m_e/m_P ladder = 1.613146263×10⁻³⁵ m, −0.192% relative to the CODATA 2022 reference 1.616255×10⁻³⁵ m ([DERIVED ~0.19%], inheriting [SMC]/[SELECTION]). Its associated Planck time is t_P^FTD = ℓ_P^FTD/c = 5.380876737×10⁻⁴⁴ s. Legacy Planck-primary instead declares the CODATA length exactly. FTD-0059 forbids deriving a length from Axiom-Zero invariants ALONE; electron-primary derives it from the imported {ℏ,c,m_e}, not Axiom Zero.
+- **Notes:** Default electron-primary consumes the mass anchor plus the dimensionless α ladder; legacy Planck-primary remains a valid declared calibration gauge.
 
 ### t_phys (one tick in seconds) (`t_phys_lattice_tick`)
 
 - **Formula:** t_phys = ℓ_P / (√3 · c) = t_P/√3 (from selected c_lat = 1/√3 + a_phys ≡ ℓ_P + c_phys = 2.998 × 10⁸ m/s: physical c = c_lat·a_phys/t_phys)
-- **Value:** 3.11e-44 s
+- **Value:** 3.106650632e-44 s
 - **Tag:** `CALIBRATION`
 - **Depends on:** `a_phys_planck`
 - **LEDGER:** [FTD-0041](../07_assessment/core_ledgers/LEDGER.md#ftd-0041)
 - **Sources:** `docs/SPEC_FTD.md`
-- **Calibration note:** Derived (not declared) from a_phys ≡ ℓ_P and the selected c_lat = 1/√3: physical c = c_lat·(a_phys/t_phys) forces t_phys = ℓ_P/(√3·c). The exact production-stencil CFL ceiling is instead c_lat²≤3/4 (FTD-0407). Numerically t_phys ≈ 3.11 × 10⁻⁴⁴ s. Corrected 2026-07-08 from √3·ℓ_P/c ≈ 9.34e-44, which placed √3 in the numerator and was inconsistent with the selected c_lat=1/√3 by a factor of 3; see DERIV_DIMENSIONAL_GATE.md.
+- **Calibration note:** Derived (not declared) from the default electron-primary ℓ_P^FTD and the selected c_lat = 1/√3: physical c = c_lat·(a_phys/t_phys) forces t_phys = ℓ_P^FTD/(√3·c) = t_P^FTD/√3 = 3.106650632×10⁻⁴⁴ s, where t_P^FTD = 5.380876737×10⁻⁴⁴ s. The exact production-stencil CFL ceiling is instead c_lat²≤3/4 (FTD-0407). Corrected 2026-07-08 from √3·ℓ_P/c, which placed √3 in the numerator; the 2026-08-31 numeric refresh now evaluates the electron-primary length rather than silently substituting the CODATA endpoint.
 - **Notes:** Once a_phys is fixed, t_phys is fully determined. No additional calibration freedom.
 
 ### K_B = m_e (mass-unit anchor) (`mass_unit_anchor`)

@@ -32,6 +32,9 @@ export class UPlotChart {
         this.visibleSamples = Math.max(2, opts.visibleSamples || DEFAULT_VISIBLE_SAMPLES);
         this._destroyed = false;
         this._hoverActive = false;
+        this._resizeFrame = 0;
+        this._lastWidth = Math.max(1, Math.round(container.clientWidth || 320));
+        this._lastHeight = Math.max(1, Math.round(container.clientHeight || 180));
         this._lastData = null;
         this._bufferStamps = this.series.map(() => ({
             buffer: null, total: -1, count: -1, last: Number.NaN,
@@ -46,8 +49,8 @@ export class UPlotChart {
         const hiddenKeys = this._loadHiddenKeys();
 
         const uopts = {
-            width:  container.clientWidth  || 320,
-            height: container.clientHeight || 180,
+            width:  this._lastWidth,
+            height: this._lastHeight,
             title:  opts.title,
             scales: { x: { time: false } },
             axes: [
@@ -93,9 +96,9 @@ export class UPlotChart {
         this._hoverTarget.addEventListener('mouseenter', this._onPointerEnter);
         this._hoverTarget.addEventListener('mouseleave', this._onPointerLeave);
 
-        this._ro = new ResizeObserver(() => this._onResize());
+        this._ro = new ResizeObserver(() => this._scheduleResize());
         this._ro.observe(container);
-        container._ftdResize = () => this._onResize();
+        container._ftdResize = () => this._scheduleResize();
     }
 
     _maxBufferSize() {
@@ -128,11 +131,19 @@ export class UPlotChart {
         }
     }
 
-    _onResize() {
-        if (this._destroyed) return;
-        const w = this.container.clientWidth;
-        const h = this.container.clientHeight;
-        if (w > 0 && h > 0) this.uplot.setSize({ width: w, height: h });
+    _scheduleResize() {
+        if (this._destroyed || this._resizeFrame) return;
+        this._resizeFrame = requestAnimationFrame(() => {
+            this._resizeFrame = 0;
+            if (this._destroyed) return;
+            const width = Math.round(this.container.clientWidth);
+            const height = Math.round(this.container.clientHeight);
+            if (width <= 0 || height <= 0
+                || (width === this._lastWidth && height === this._lastHeight)) return;
+            this._lastWidth = width;
+            this._lastHeight = height;
+            this.uplot.setSize({ width, height });
+        });
     }
 
     update() {
@@ -224,12 +235,15 @@ export class UPlotChart {
     destroy() {
         if (this._destroyed) return;
         this._destroyed = true;
+        if (this._resizeFrame) cancelAnimationFrame(this._resizeFrame);
+        this._resizeFrame = 0;
         this._hoverTarget?.removeEventListener('pointerenter', this._onPointerEnter);
         this._hoverTarget?.removeEventListener('pointerleave', this._onPointerLeave);
         this._hoverTarget?.removeEventListener('mouseenter', this._onPointerEnter);
         this._hoverTarget?.removeEventListener('mouseleave', this._onPointerLeave);
         this.tooltip?.destroy();
         this._ro.disconnect();
+        if (this.container?._ftdResize) delete this.container._ftdResize;
         this.uplot.destroy();
         this.uplot = null;
     }

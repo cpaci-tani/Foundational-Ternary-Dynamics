@@ -55,7 +55,7 @@ const SELECTOR_TOOLTIPS = [
     ['#toggle-grid', 'Show or hide the global reference grid beneath the simulation.'],
     ['#toggle-boundary-orientation', 'Show or hide the six external Scale 0 boundary-orientation arrows.'],
     ['#toggle-global-clock', 'Show or hide the external Scale 0 ordinal-clock face. The tick readout remains visible.'],
-    ['#flux-boundary-mode', 'Complete six-face transport boundary: Dispersal removes manifested face records and reconstructs an outward-only field trace without damping the strict interior; Reflective mirrors audited local transported state; Periodic identifies all opposite-face pairs.'],
+    ['#flux-boundary-mode', 'Complete six-face transport boundary: Dispersal keeps every face record exact void and evaluates a normalized target-local one-way stencil closure, so no edge energy is stored; Reflective mirrors audited local transported state; Periodic identifies all opposite-face pairs.'],
     ['.status-scene-label, .status-select-label', 'Status-bar Scene controls for shared view, camera, environment, and boundary settings.'],
     ['#status-state', 'Current run-state indicator for the simulation loop.'],
     ['#status-ptime', 'Current physical or presentation time reported by the active scale.'],

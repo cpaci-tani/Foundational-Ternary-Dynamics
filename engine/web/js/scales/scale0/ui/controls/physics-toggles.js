@@ -51,11 +51,17 @@ export function createPhysicsTogglesCard() {
       <div class="toggle-row"><input type="checkbox" id="t-knot-tracking"><label for="t-knot-tracking" title="Record per-knot telemetry at tick end (observation-only, golden-neutral).">Knot Tracking</label></div>
     </details>
 
-    <div class="ctrl-footnote">
-      <button class="ctrl-reset-btn" id="btn-reset-physics-toggles" type="button"
-          title="Reload the active scenario so its C++ isolation profile and seed are restored.">
-        &#8634; Restore scenario profile
-      </button>
+    <div class="ctrl-footnote ctrl-footnote-stack">
+      <div class="ctrl-physics-actions">
+        <button class="ctrl-reset-btn ctrl-enable-all-btn" id="btn-enable-all-physics" type="button"
+            title="Enable the 24 validated, mutually compatible Scale-0 physics terms. Excludes the conflicting Langevin alternate mode, boundary-specific absorbing sponge, observation-only knot tracking, and scenario-owned de Broglie clock.">
+          &#9889; Enable all physics
+        </button>
+        <button class="ctrl-reset-btn" id="btn-reset-physics-toggles" type="button"
+            title="Reload the active scenario so its C++ isolation profile and seed are restored.">
+          &#8634; Restore scenario profile
+        </button>
+      </div>
       <span class="ctrl-footnote-text">Field visualization: viewport buttons (top-right) &#8593;</span>
     </div>
   `;

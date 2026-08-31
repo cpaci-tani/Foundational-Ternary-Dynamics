@@ -26,7 +26,7 @@ import {
 import { advanceSimulation } from './runtime/tick.js';
 import { syncRenderableData } from './runtime/frame-sync.js';
 import { disposeFieldOverlayRuntime, updateFieldOverlays } from './runtime/field-overlays.js?v=17';
-import { updateDiagnosticsAndPanels } from './runtime/diagnostics.js?v=2';
+import { updateDiagnosticsAndPanels } from './runtime/diagnostics.js?v=3';
 import {
     exitScale0,
     loadScale0Scenario,
@@ -36,16 +36,16 @@ import {
     syncComboSliders,
     syncScale0ToggleUiFromEngine,
     stepScale0,
-} from './runtime/scenario-loader.js?v=18';
+} from './runtime/scenario-loader.js?v=21';
 import { bindScale0UI, handleScale0ShortcutKey } from './ui/bindings.js?v=11';
 import { getSelectedScenarioId } from './ui/dom.js';
 import { syncScale0LatticeSizeAvailability } from './ui/toolbar/limits.js?v=2';
-import { Scale0ControlsComponent } from './ui/controls/component.js?v=5';
+import { Scale0ControlsComponent } from './ui/controls/component.js?v=6';
 import {
     syncScale0FlowLineControls,
     syncScale0ParticleDisplay,
     wireScale0Controls,
-} from './ui/controls/wire.js?v=13';
+} from './ui/controls/wire.js?v=14';
 import { mountSymmetryPanel } from './ui/overlays/symmetry-panel.js';
 // The Scale-0 overlay panels are first created by app.js at boot
 // ("Creating panels…", one-time). The controller ALSO drives their
@@ -65,7 +65,10 @@ import { initTimePanel } from './ui/overlays/time-panel.js';
 import { initThermoPanel } from './ui/overlays/thermo-panel.js?v=3';
 import { initDispersionPanel } from './ui/overlays/dispersion-panel.js';
 import { initKnotsPanel } from './ui/overlays/knots-panel.js';
-import { initScaleContextPanel } from './ui/overlays/scale-context-panel.js';
+import {
+    initScaleContextPanel,
+    SCALE0_LATTICE_SIZE_ACK_EVENT,
+} from './ui/overlays/scale-context-panel.js?v=3';
 import { PlayBarComponent } from '../../ui/components/play-bar/component.js';
 
 const state = getScale0State();
@@ -86,6 +89,11 @@ export function syncScale0AuthoritativeLatticeSize(ctx, acknowledgedLatticeSize)
     if (ctx?.viewport?.setLatticeSize
         && Number(ctx.viewport.latticeSize) !== size) {
         ctx.viewport.setLatticeSize(size);
+    }
+    if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent(SCALE0_LATTICE_SIZE_ACK_EVENT, {
+            detail: { size, source: 'engine-acknowledgement' },
+        }));
     }
     return true;
 }
@@ -124,6 +132,14 @@ function renderFrame(ctx) {
 }
 
 export function bindUI(ctx) {
+    // Scenario-loader owns worker/in-thread acknowledgement timing; expose one
+    // controller callback so every accepted size reaches the same UI sync path.
+    ctx.syncScale0AuthoritativeLatticeSize = (size) => (
+        syncScale0AuthoritativeLatticeSize(ctx, size)
+    );
+    // bootBridge has already constructed/accepted the initial engine lattice
+    // before bindUI runs, so publish that first acknowledgement immediately.
+    ctx.syncScale0AuthoritativeLatticeSize(ctx.bridge?.latticeSize);
     // Initialize Scale 0 control cards in the controls panel
     const controlsPanel = document.getElementById('panel-controls');
     if (controlsPanel) {

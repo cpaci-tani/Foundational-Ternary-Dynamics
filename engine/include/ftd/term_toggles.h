@@ -22,8 +22,8 @@ namespace ftd {
 // faces of the cubic domain; axis metadata never changes the face operator.
 //   Periodic   — identify every pair of opposite faces (three-axis torus)
 //   Reflective — copied Neumann ghost shell + elastic manifested-site bounce
-//   Dispersal  — outward-only field ghost trace + manifested-site removal; no
-//                opposite-face input or size-dependent interior damping
+//   Dispersal  — exact-zero outer shell plus a target-local one-way stencil
+//                closure; no opposite-face input, stored edge energy, or sponge
 enum class FluxBoundaryMode : int { Periodic = 0, Reflective = 1, Dispersal = 2 };
 
 // Simulation orientation metadata. The historical PeriodicAxis name is kept
@@ -99,7 +99,7 @@ struct TermToggles {
     bool su2_gauge = false;         // tick Rule 7b: per-tick SU(2) link staple relaxation ([IMPOSED] Wilson-action import; links are write-only — no substrate feedback, see test_gauge_links G1)
     bool su3_gauge = false;         // tick Rule 7b: per-tick SU(3) link staple relaxation ([IMPOSED] Wilson-action import; links are write-only — no substrate feedback, see test_gauge_links G1)
     bool symmetric_movement_order = false; // CPU/CUDA phase_movement: coordinate-independent update traversal & axis ordering
-    bool absorbing_boundary = false; // tick: imposed D-deep quadratic damping sponge; reflection performance is not guaranteed by the operator definition
+    bool absorbing_boundary = false; // tick: imposed D-deep quadratic damping sponge; ignored when flux_boundary=Dispersal so the deletion surface never gains an interior sponge
     bool reflective_boundary = false; // legacy movement-only mirror override; new profiles use flux_boundary as the authoritative field+particle law
     bool field_energy_gravity = false; // [IMPOSED] latency Poisson also sources from field-energy density ½(|J|²+|wave_vel|²), not only particle rest mass, so flux-only configs (gravity waves) carry a real potential. Requires latency_field.
     bool cluster_inertia = false;   // [IMPOSED] phase_forces: rigid-body integrate LOCKED clusters at inertial mass N·M_INERTIAL. Additive; needs a force channel.

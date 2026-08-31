@@ -201,7 +201,7 @@ export class DiagnosticsTable {
                     if (observed.isIntersecting) this.mountSpark(entry);
                     else this.unmountSpark(entry);
                 }
-            })
+            }, { rootMargin: '96px 0px' })
             : null;
 
         section.rows.forEach((row, idx) => {
@@ -315,9 +315,17 @@ export class DiagnosticsTable {
             if (cell.textContent !== formatted) {
                 cell.textContent = formatted;
                 if (this.pulseTokens.get(row.id) !== undefined) {
-                    cell.classList.remove('is-pulsing');
-                    void cell.offsetWidth;
-                    cell.classList.add('is-pulsing');
+                    // Never force a synchronous layout merely to restart a
+                    // decorative pulse. At L=65 this old offsetWidth read ran
+                    // hundreds of times per second across the visible table.
+                    // Let one pulse finish, then a later scientific sample may
+                    // start the next one without blocking chart presentation.
+                    if (!cell.classList.contains('is-pulsing')) {
+                        cell.classList.add('is-pulsing');
+                        cell.addEventListener('animationend', () => {
+                            cell.classList.remove('is-pulsing');
+                        }, { once: true });
+                    }
                 }
                 this.pulseTokens.set(row.id, formatted);
             }

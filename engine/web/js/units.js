@@ -5,7 +5,8 @@
  * strings with proper physical unit labels.
  *
  * Three unit regimes coexist:
- *   Scale 0 (Lattice):   Planck units  (1 voxel = l_P, 1 tick = t_P)
+ *   Scale 0 (Lattice):   electron-primary Planck map (1 voxel = l_P^FTD,
+ *                        1 tick = t_P^FTD/sqrt(3))
  *   Scale 1 (Particle):  Planck units  (continuous positions, mass in MeV)
  *   Scale 2 (Atom):      Bohr-scaled   (positions ~ Bohr radii, mass in AMU)
  *
@@ -34,6 +35,8 @@ import {
     PLANCK_FORCE_N as _PLANCK_FORCE_N,
     J_PER_EV as _J_PER_EV,
     C_MS as _C_MS,
+    FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M as _FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M,
+    FTD_ELECTRON_PRIMARY_PLANCK_TIME_S as _FTD_ELECTRON_PRIMARY_PLANCK_TIME_S,
     FTD_TICK_S as _FTD_TICK_S,
     BOHR_LATTICE_TO_M as _BOHR_LATTICE_TO_M,
     AMU_MEV as _AMU_MEV,
@@ -45,16 +48,15 @@ import {
 
 // Planck units -> SI
 //
-// Note: PLANCK_TIME_S (≈ 5.391247e-44 s) is the SI Planck time t_P, used
-// for naive lattice-tick→seconds conversion when one tick is taken as
-// one Planck time. FTD_TICK_S (= t_P/√3) is the project-canonical tick
-// duration: physical c = c_lattice·(a_phys/t_phys) with the [SELECTION]
-// lattice speed c_lattice = 1/√3 (FTD-0407 — not CFL-forced) and
-// a_phys ≡ ℓ_P forces t_phys = ℓ_P/(√3·c).
-// Use FTD_TICK_S for any FTD-internal time conversion;
-// PLANCK_TIME_S is exposed only for SI-Planck reporting.
+// PLANCK_LENGTH_M / PLANCK_TIME_S are empirical CODATA references.
+// FTD_ELECTRON_PRIMARY_PLANCK_* are the conditional outputs of the default
+// electron-primary map. FTD_TICK_S is t_P^FTD/√3 from selected c_lat=1/√3.
+// Use the FTD-prefixed values for substrate↔SI conversion; use the unprefixed
+// values only for reference/comparison reporting.
 export const PLANCK_LENGTH_M   = _PLANCK_LENGTH_M;
 export const PLANCK_TIME_S     = _PLANCK_TIME_S;
+export const FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M = _FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M;
+export const FTD_ELECTRON_PRIMARY_PLANCK_TIME_S = _FTD_ELECTRON_PRIMARY_PLANCK_TIME_S;
 export const FTD_TICK_S        = _FTD_TICK_S;
 export const PLANCK_ENERGY_GEV = M_PLANCK_GEV;        // single source vs old 1.22089e19 dup
 export const PLANCK_ENERGY_MEV = M_PLANCK_GEV * 1e3;  // GeV → MeV

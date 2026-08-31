@@ -7,11 +7,13 @@
  *   EP-4  exact_dual_gauss corrects manifested sites and preserves J=L+R.
  *   EP-5  pairwise/triad capacity overflow fails closed (never truncates);
  *         the sticky device flag surfaces at the next sync boundary.
+ *   EP-6  Dispersal remains bounded and clears the L=33 packet at tick 4096.
  */
 
 #include "ftd/constants.h"
 #include "ftd/gpu_engine.h"
 #include "ftd/render_bridge.h"
+#include "ftd/scenarios.h"
 
 #include <algorithm>
 #include <cmath>
@@ -70,6 +72,23 @@ double max_field_error(const std::vector<Voxel>& a,
     return result;
 }
 
+double field_norm(const std::vector<Voxel>& values) {
+    double result = 0.0;
+    for (const auto& v : values) {
+        result += v.flux.mag2() + v.wave_vel.mag2();
+    }
+    return result;
+}
+
+double maximum_field_amplitude(const std::vector<Voxel>& values) {
+    double result = 0.0;
+    for (const auto& v : values) {
+        result = std::max(result, v.flux.mag());
+        result = std::max(result, v.wave_vel.mag());
+    }
+    return result;
+}
+
 void scale_fields(Voxel& v, double scale) {
     v.flux *= scale;
     v.wave_vel *= scale;
@@ -77,22 +96,6 @@ void scale_fields(Voxel& v, double scale) {
     v.flux_R *= scale;
     v.wave_vel_L *= scale;
     v.wave_vel_R *= scale;
-}
-
-void copy_outflow_pair(Vec3& field_dst, Vec3& wave_dst,
-                       const Vec3& field_src, const Vec3& wave_src,
-                       double normal_step) {
-    field_dst = field_src - wave_src * (normal_step / ftd::C_WAVE);
-    wave_dst = wave_src;
-}
-
-void copy_outflow_fields(Voxel& dst, const Voxel& src, double normal_step) {
-    copy_outflow_pair(dst.flux, dst.wave_vel,
-                      src.flux, src.wave_vel, normal_step);
-    copy_outflow_pair(dst.flux_L, dst.wave_vel_L,
-                      src.flux_L, src.wave_vel_L, normal_step);
-    copy_outflow_pair(dst.flux_R, dst.wave_vel_R,
-                      src.flux_R, src.wave_vel_R, normal_step);
 }
 
 double terminal_boundary_law_error(const std::vector<Voxel>& values,
@@ -113,12 +116,7 @@ double terminal_boundary_law_error(const std::vector<Voxel>& values,
         if (mode == FluxBoundaryMode::Reflective) {
             expected[i] = source;
         } else {
-            const int face_count = (x == 0 || x == Nm1)
-                                 + (y == 0 || y == Nm1)
-                                 + (z == 0 || z == Nm1);
             expected[i] = Voxel{};
-            copy_outflow_fields(expected[i], source,
-                                std::sqrt(static_cast<double>(face_count)));
         }
     }
     return max_field_error(values, expected);
@@ -240,6 +238,9 @@ void test_field_boundaries() {
         {"dispersal", [](TermToggles& t) {
              t.wave_propagation = true;
              t.flux_boundary = FluxBoundaryMode::Dispersal;
+             // A stale legacy toggle must not compose its D-deep sponge with
+             // the complete Dispersal deletion-surface contract.
+             t.absorbing_boundary = true;
          }, 2},
     };
 
@@ -265,10 +266,10 @@ void test_field_boundaries() {
             cpu_law_error = max_field_error(cpu.voxels, expected);
             gpu_law_error = max_field_error(gpu.voxels, expected);
         } else {
-            // Reflective and Dispersal both prepare their ghost shells before
-            // propagation, so a Periodic evolution is not their oracle. Check
-            // the final Neumann mirror / one-way Sommerfeld trace directly
-            // against each backend's own strictly interior source layer.
+            // Reflective prepares a ghost shell and Dispersal changes the
+            // boundary-adjacent stencil, so Periodic evolution is not their oracle. Check
+            // the final Neumann mirror or exact-zero Dispersal settlement
+            // directly against each backend's own result.
             const auto boundary_mode = mode.kind == 1
                 ? FluxBoundaryMode::Reflective : FluxBoundaryMode::Dispersal;
             cpu_law_error = terminal_boundary_law_error(cpu.voxels, L, boundary_mode);
@@ -414,6 +415,37 @@ void test_particle_capacity_fails_closed() {
           threw && message.find("refusing to report partial") != std::string::npos);
 }
 
+void test_dispersal_long_horizon() {
+    std::printf("\nEP-6: Dispersal long-horizon CUDA stability\n");
+    constexpr int L = 33;
+    constexpr int ticks = 4096;
+    RenderBridge initial(L);
+    initial.force_cpu();
+    const bool dispatched = ftd::dispatch_scenario(initial, "flux-pulse");
+    initial.toggles.flux_boundary = FluxBoundaryMode::Dispersal;
+    const std::vector<Voxel> seed = initial.voxels();
+    const double norm_0 = field_norm(seed);
+    const double amplitude_0 = maximum_field_amplitude(seed);
+
+    ftd::gpu::GpuEngine engine(L);
+    engine.toggles = initial.toggles;
+    engine.upload_from_host(seed);
+    for (int tick = 0; tick < ticks; ++tick) engine.tick();
+    std::vector<Voxel> settled;
+    engine.sync_to_host(settled);
+    const double norm_final = field_norm(settled);
+    const double amplitude_final = maximum_field_amplitude(settled);
+    std::printf("    norm0=%.9e final=%.9e amplitude0=%.9e final=%.9e\n",
+                norm_0, norm_final, amplitude_0, amplitude_final);
+    check("Dispersal long-horizon scenario dispatches", dispatched);
+    check("CUDA Dispersal remains finite through tick 4096",
+          std::isfinite(norm_final) && std::isfinite(amplitude_final)
+          && norm_final <= 4.0 * norm_0
+          && amplitude_final <= 4.0 * amplitude_0);
+    check("CUDA Dispersal leaves no long-horizon residual field",
+          norm_final <= 0.01 * norm_0);
+}
+
 }  // namespace
 
 int main() {
@@ -423,6 +455,7 @@ int main() {
     test_field_energy_gravity();
     test_exact_dual_gauss();
     test_particle_capacity_fails_closed();
+    test_dispersal_long_horizon();
     std::printf("\n=== %d passed, %d failed ===\n", passed, failed);
     return failed == 0 ? 0 : 1;
 }

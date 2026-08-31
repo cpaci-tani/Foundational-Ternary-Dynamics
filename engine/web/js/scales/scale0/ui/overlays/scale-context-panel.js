@@ -1,227 +1,350 @@
-// Scale Context — docked Scale-0 side panel (FTD-0306).
+// Scale Context — docked Scale-0 instrument (FTD-0306).
 //
-// Mounts into #panel-scale-context (registry id 'scale-context'). NOT a floating overlay.
-// Answers "where does this lattice sit, and what can it reach vs CERN?":
-//   · a log-scale length ruler with a live "you are here" bracket (1 → L voxels at
-//     a_phys ≡ ℓ_P) and the LHC-reach marker far to the right (≈ 8.98×10¹⁴ voxels);
-//   · length/time + CERN-gap readouts; UV cutoff + the manifestation threshold;
-//   · live energy readouts (total manifested ≈ N·K_B; largest cluster ≈ N·K_B when
-//     knot tracking is on) — labelled with the IDENT-NULL caveat (FTD-0262): never
-//     a named SM particle;
-//   · the no-linear-Lorentz-violation dispersion line (pointer to the Dispersion panel).
-//
-// Every number mirrors scripts/exploration/energy_scales_2026.py (the canonical
-// hash-locked artifact) and is computed from constants.js. Honest tags throughout:
-// scales are [CALIBRATION]-conditional; cluster→MeV is [SMC]; dispersion [MEASURED].
+// The panel separates engine-acknowledged geometry, live telemetry, and
+// conditional physical calibration. Size changes arrive only after the active
+// engine accepts a configuration. The low-rate telemetry loop updates values;
+// it never rebuilds the ruler, cards, or lattice-size rail.
 
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 import { resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 import {
-    PLANCK_LENGTH_M, FTD_TICK_S, HBAR_C_MEV_M, M_PLANCK_GEV,
-    K_B, K_GENESIS, M_E_PHYS, C_WAVE,
+    PLANCK_LENGTH_M, PLANCK_TIME_S,
+    FTD_ELECTRON_PLANCK_RATIO, FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M,
+    FTD_ELECTRON_PRIMARY_PLANCK_TIME_S, FTD_PLANCK_LENGTH_RELATIVE_ERROR,
+    FTD_TICK_S, HBAR_C_MEV_M, M_PLANCK_GEV, K_B, K_GENESIS, M_E_PHYS, C_WAVE,
 } from '../../../../constants.js';
 
 const PANEL_ID = 'scale-context-panel';
+export const SCALE0_LATTICE_SIZE_ACK_EVENT = 'ftd:scale0-lattice-size-ack';
 
-// ── Calibration-derived scale anchors (mirror energy_scales_2026.py) ──────────
-const E_LHC_GEV   = 13600.0;                              // 13.6 TeV (LHC Run 3)
-const LHC_LEN_M   = HBAR_C_MEV_M / (E_LHC_GEV * 1000.0);  // ℏc/E ≈ 1.45×10⁻²⁰ m
-const LHC_VOXELS  = LHC_LEN_M / PLANCK_LENGTH_M;          // ≈ 8.98×10¹⁴
-const OMEGA_MAX   = 2 * C_WAVE;                           // 2/√3 zone-edge frequency
-const PAIR_MEV    = 2 * M_E_PHYS;                         // QED pair-production threshold
-const GRB_E_GEV   = 10.0;                                 // representative GRB photon
+const E_LHC_GEV = 13600.0;
+const LHC_LEN_M = HBAR_C_MEV_M / (E_LHC_GEV * 1000.0);
+const OMEGA_MAX = 2 * C_WAVE;
+const PAIR_MEV = 2 * M_E_PHYS;
+const GRB_E_GEV = 10.0;
+const LOG_MIN = Math.log10(FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M);
+const LOG_MAX = -9;
+const INTEGER_FORMAT = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
 
-// Reference length markers for the ruler (metres → label). `anchor` keeps the
-// extreme labels from clipping the viewBox edges (start at left, end at right).
-const MARKERS = [
-    { m: PLANCK_LENGTH_M, label: 'Planck / voxel', sub: '10⁻³⁵', anchor: 'start' },
-    { m: 1e-15,           label: 'nuclear',        sub: '10⁻¹⁵', anchor: 'middle' },
-    { m: 1e-10,           label: 'atom',           sub: '10⁻¹⁰', anchor: 'end' },
-];
-
-const LOG_MIN = -35, LOG_MAX = -9;   // ruler spans ℓ_P → atomic (log₁₀ metres)
-
-function sci(x, d = 2) {
-    if (!isFinite(x) || x === 0) return '0';
-    const s = x.toExponential(d);                 // "1.62e-35"
-    const [mant, exp] = s.split('e');
-    if (Number(exp) === 0) return mant;           // order-1 value → mantissa only (no bare ×10⁰)
-    const sup = String(Number(exp)).replace('-', '⁻').replace(/\d/g, (c) => '⁰¹²³⁴⁵⁶⁷⁸⁹'[c]);
-    return `${mant}×10${sup}`;
+function normalizeSize(value) {
+    const size = Number(value);
+    return Number.isInteger(size) && size > 0 ? size : null;
 }
 
-function ensureCss() {
-    if (typeof document === 'undefined' || document.getElementById(`${PANEL_ID}-css`)) return;
-    const s = document.createElement('style');
-    s.id = `${PANEL_ID}-css`;
-    s.textContent = `
-    #${PANEL_ID}{font-family:var(--font-sans,sans-serif);font-size:16px;color:var(--text-primary,#eee);padding:2px}
-    #${PANEL_ID} .sc-title{font-weight:600;margin:2px 0 6px}
-    #${PANEL_ID} .sc-title small{color:var(--text-muted,#888);font-weight:400}
-    #${PANEL_ID} svg.sc-ruler{width:100%;display:block;background:#0c0c11;border-radius:6px}
-    #${PANEL_ID} .sc-legend{display:flex;align-items:center;gap:5px;font-size:16px;color:var(--text-muted,#888);margin:3px 1px 0}
-    #${PANEL_ID} .sc-legend i{width:7px;height:7px;border-radius:50%;background:#7CFC8C;display:inline-block;flex:0 0 auto}
-    #${PANEL_ID} .sc-sec{display:flex;justify-content:space-between;align-items:baseline;font-size:16px;letter-spacing:.04em;text-transform:uppercase;color:var(--text-muted,#888);margin:9px 0 2px}
-    #${PANEL_ID} .sc-rows{margin:2px 0}
-    #${PANEL_ID} .sc-row{display:flex;justify-content:space-between;gap:10px;padding:2px 0;border-bottom:0.5px solid var(--border-light,rgba(255,255,255,0.06))}
-    #${PANEL_ID} .sc-row span:last-child{font-variant-numeric:tabular-nums;color:var(--text-secondary,#ccc);text-align:right;white-space:nowrap}
-    #${PANEL_ID} .sc-row span:first-child{color:var(--text-secondary,#ccc)}
-    #${PANEL_ID} .sc-row.sc-live span:last-child{color:#7CFC8C}
-    #${PANEL_ID} .sc-tag{color:var(--text-muted,#888);font-size:16px}
-    #${PANEL_ID} .sc-foot{margin-top:9px;padding-top:7px;border-top:0.5px solid var(--border-light,rgba(255,255,255,0.12));font-size:16px;color:var(--text-muted,#888);line-height:1.5}
-    #${PANEL_ID} .sc-foot b{color:var(--text-secondary,#aaa)}`;
-    document.head.appendChild(s);
+function sci(x, digits = 2) {
+    if (!Number.isFinite(x) || x === 0) return '0';
+    const [mantissa, exponentText] = x.toExponential(digits).split('e');
+    const exponent = Number(exponentText);
+    if (exponent === 0) return mantissa;
+    const superscript = String(exponent)
+        .replace('-', '⁻')
+        .replace(/\d/g, (digit) => '⁰¹²³⁴⁵⁶⁷⁸⁹'[digit]);
+    return `${mantissa}×10${superscript}`;
+}
+
+function row(label, ref, tip, { live = false } = {}) {
+    return `<div class="sc-row${live ? ' sc-row--live' : ''}">
+        <dt title="${tip}">${label}</dt>
+        <dd data-sc-ref="${ref}">—</dd>
+    </div>`;
 }
 
 function buildPanel() {
-    const root = document.createElement('div');
+    const root = document.createElement('section');
     root.id = PANEL_ID;
+    root.className = 'scale-context-shell';
+    root.setAttribute('role', 'region');
+    root.setAttribute('aria-labelledby', `${PANEL_ID}-title`);
     root.innerHTML = `
-        <div class="sc-title">Scale Context <small>· Planck-scale instrument · FTD-0306</small></div>
-        <svg class="sc-ruler" id="${PANEL_ID}-ruler" viewBox="0 0 360 150" preserveAspectRatio="xMidYMid meet"></svg>
-        <div class="sc-legend"><i></i> live — tracks the running lattice (L, manifested voxels, clusters)</div>
-        <div class="sc-sec"><span>Length &amp; time</span> <span class="sc-tag">[CALIBRATION]</span></div>
-        <div class="sc-rows" id="${PANEL_ID}-len"></div>
-        <div class="sc-sec"><span>Energy</span> <span class="sc-tag">[IMPOSED · SMC]</span></div>
-        <div class="sc-rows" id="${PANEL_ID}-energy"></div>
-        <div class="sc-foot" id="${PANEL_ID}-foot"></div>`;
+        <header class="sc-header">
+            <div>
+                <div class="sc-kicker">Scale 0 · live instrument</div>
+                <h2 class="sc-title" id="${PANEL_ID}-title">Scale Context</h2>
+                <p class="sc-copy">Computational extent and the default electron-primary SI mapping for the running lattice.</p>
+            </div>
+            <output class="sc-ack" data-sc-ref="ack" aria-live="polite" title="This value changes only after the active engine acknowledges a lattice configuration.">
+                <span class="sc-ack-dot" aria-hidden="true"></span>
+                <span><strong data-sc-ref="badge">L=—</strong><small>engine acknowledged</small></span>
+            </output>
+        </header>
+
+        <section class="sc-hero" aria-labelledby="${PANEL_ID}-window-title">
+            <div class="sc-section-heading">
+                <div><span class="sc-eyebrow">Computational window</span><h3 id="${PANEL_ID}-window-title">Current lattice</h3></div>
+                <span class="sc-tag">LIVE</span>
+            </div>
+            <div class="sc-dimension" data-sc-ref="dimension">— × — × —</div>
+            <div class="sc-site-count" data-sc-ref="sites">Waiting for engine acknowledgement</div>
+            <div class="sc-hero-metrics">
+                <div><span>Edge calibration</span><strong data-sc-ref="edge-span">—</strong></div>
+                <div><span>Size class</span><strong data-sc-ref="size-class">—</strong></div>
+            </div>
+        </section>
+
+        <section class="sc-size-panel" aria-labelledby="${PANEL_ID}-sizes-title">
+            <div class="sc-section-heading">
+                <div><span class="sc-eyebrow">Supported profiles</span><h3 id="${PANEL_ID}-sizes-title">Lattice-size rail</h3></div>
+                <span class="sc-tag sc-tag--muted">WASM → NATIVE</span>
+            </div>
+            <div class="sc-size-track" data-sc-ref="size-track" role="img" aria-label="Supported lattice sizes">
+                <div class="sc-size-track-line" aria-hidden="true"><i></i></div>
+                <ol class="sc-size-marks" data-sc-ref="size-marks"></ol>
+            </div>
+            <p class="sc-caption"><span class="sc-key sc-key--wasm"></span>browser-capable <span class="sc-key sc-key--native"></span>native-only ceiling</p>
+        </section>
+
+        <section class="sc-physical" aria-labelledby="${PANEL_ID}-physical-title">
+            <div class="sc-section-heading">
+                <div><span class="sc-eyebrow">Physical context</span><h3 id="${PANEL_ID}-physical-title">Log-length position</h3></div>
+                <span class="sc-tag sc-tag--calibration">[SMC · ELECTRON-PRIMARY]</span>
+            </div>
+            <svg class="sc-ruler" data-sc-ref="ruler" viewBox="0 0 100 18" preserveAspectRatio="none" role="img"></svg>
+            <div class="sc-ruler-legend" aria-hidden="true">
+                <span><i class="sc-ruler-key sc-ruler-key--live"></i>lattice</span>
+                <span><i class="sc-ruler-key sc-ruler-key--lhc"></i>LHC</span>
+                <span><i></i>nuclear</span>
+                <span><i></i>atomic</span>
+            </div>
+        </section>
+
+        <div class="sc-card-grid">
+            <section class="sc-card" aria-labelledby="${PANEL_ID}-geometry-title">
+                <div class="sc-card-title"><h3 id="${PANEL_ID}-geometry-title">Geometry &amp; dimensional map</h3><span class="sc-tag">[SMC · DEFAULT GAUGE]</span></div>
+                <dl>
+                    ${row('Dimensionless mₑ/mP', 'electron-planck-ratio', 'Kα¹¹ with K = √(2π)·16/3. [SMC], with the K factor carrying [SELECTION].')}
+                    ${row('FTD ℓP · 1 voxel', 'voxel-length', 'Electron-primary output: (ℏ/mₑc)·Kα¹¹. Conditional on the [SMC] mass ladder; not the CODATA input.')}
+                    ${row('CODATA ℓP reference', 'codata-length', 'Empirical reference only. The signed percentage is (FTD/CODATA − 1)×100.')}
+                    ${row('FTD tP = ℓP/c', 'planck-time', 'Electron-primary Planck time derived from the FTD length output and imported c.')}
+                    ${row('CODATA tP reference', 'codata-time', 'Empirical Planck-time reference only; it is not used to compute the FTD global tick.')}
+                    ${row('1 global tick', 'tick-time', 't_phys = ℓP/(√3·c) = tP^FTD/√3, using selected c_lat = 1/√3.')}
+                    ${row('LHC resolves', 'lhc-length', 'ℏc / 13.6 TeV — one resolution element.')}
+                    ${row('LHC element / lattice', 'lhc-gap', 'How many current lattice edge lengths fit into one LHC resolution element.', { live: true })}
+                </dl>
+            </section>
+
+            <section class="sc-card" aria-labelledby="${PANEL_ID}-live-title">
+                <div class="sc-card-title"><h3 id="${PANEL_ID}-live-title">Live occupancy</h3><span class="sc-tag sc-tag--live">LIVE</span></div>
+                <dl>
+                    ${row('Manifested sites', 'manifested-sites', 'Current engine diagnostic count of manifested lattice sites.', { live: true })}
+                    ${row('Manifested energy', 'manifested-energy', 'Σ manifested sites × K_B — an engine aggregate. The mapping is [IMPOSED], not a particle identification.', { live: true })}
+                    ${row('Largest tracked cluster', 'largest-cluster', 'N·K_B [SMC] — IDENT-NULL (FTD-0262): an energy context, not a named Standard Model particle.', { live: true })}
+                </dl>
+            </section>
+
+            <section class="sc-card" aria-labelledby="${PANEL_ID}-energy-title">
+                <div class="sc-card-title"><h3 id="${PANEL_ID}-energy-title">Energy context</h3><span class="sc-tag">[IMPOSED · SMC]</span></div>
+                <dl>
+                    ${row('UV cutoff ωmax', 'uv-cutoff', 'Zone edge 2/√3; physically approximately Planck scale under the calibration.')}
+                    ${row('Manifestation K_GENESIS', 'genesis', '= 3·K_MANIFEST = 3·W_SC [SELECTION — ADOPTED, FTD-0388].')}
+                    ${row('QED pair threshold 2mₑ', 'pair-threshold', 'Standard QED pair threshold, shown only as context; the 3-versus-2 difference is not claimed as a derivation.')}
+                    ${row('Δv/c at 10 GeV', 'lv-delta', '(E/E_P)²/8 — no linear term [MEASURED structure, FTD-0299]; continued null results are the prediction (FP-3).')}
+                </dl>
+            </section>
+        </div>
+
+        <aside class="sc-note">
+            <strong>Interpretation boundary.</strong> The engine simulates dimensionless substrate structure. The displayed length and time use the default electron-primary gauge and inherit its <b>[SMC]</b>/<b>[SELECTION]</b> status. CODATA values are references, not substituted FTD outputs; legacy Planck-primary remains an allowed alternative gauge. Cluster→MeV context remains <b>[SMC] / IDENT-NULL</b>, not a named-particle identification.
+        </aside>`;
     return root;
 }
 
-function renderRuler(svg, L) {
-    const W = 360, H = 150, m = { top: 30, right: 18, bottom: 34, left: 28 };
-    const iW = W - m.left - m.right;
-    const axisY = H - m.bottom - 26;
-    const X = (metres) => m.left + ((Math.log10(metres) - LOG_MIN) / (LOG_MAX - LOG_MIN)) * iW;
-    const latM = Math.max(1, L) * PLANCK_LENGTH_M;        // lattice span (m)
-    const xP = X(PLANCK_LENGTH_M);
-
-    // N2 — screen-reader text alternative (the ruler is otherwise opaque).
-    const aria = `Log-scale length ruler. This lattice spans 1 to ${L} voxels (${sci(latM, 2)} m) at the `
-        + `Planck end; CERN / LHC resolves ${sci(LHC_LEN_M, 2)} m, about ${sci(LHC_VOXELS, 2)} voxels.`;
-    let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${aria}">`;
-    s += `<title>${aria}</title>`;
-
-    // baseline axis
-    s += `<line x1="${m.left}" y1="${axisY}" x2="${W - m.right}" y2="${axisY}" stroke="var(--border-light,#555)" stroke-width="1"/>`;
-
-    // N1 — faint voxel-decade reference ticks (10³, 10⁶ voxels) the live bracket grows against.
-    for (const dec of [3, 6]) {
-        const x = X(Math.pow(10, dec) * PLANCK_LENGTH_M);
-        s += `<line x1="${x.toFixed(1)}" y1="${axisY - 5}" x2="${x.toFixed(1)}" y2="${axisY + 4}" stroke="var(--accent,#4bb7e8)" stroke-width="0.6" opacity="0.3"/>`;
-    }
-    s += `<text x="${X(1e6 * PLANCK_LENGTH_M).toFixed(1)}" y="${axisY + 24}" text-anchor="middle" font-size="16" fill="var(--text-muted,#999)" opacity="0.6">10⁶ vox</text>`;
-
-    // the live lattice bracket: 1 voxel → L voxels (drawn first so the Planck tick sits on top).
-    const x1 = Math.max(X(latM), xP + 2);
-    s += `<rect x="${xP.toFixed(1)}" y="${axisY - 5}" width="${(x1 - xP).toFixed(1)}" height="10" fill="var(--accent,#4bb7e8)" opacity="0.85" rx="1.5"/>`;
-    const xc = (xP + x1) / 2;
-    s += `<line x1="${xc.toFixed(1)}" y1="${axisY - 6}" x2="${xc.toFixed(1)}" y2="${m.top + 4}" stroke="var(--accent,#4bb7e8)" stroke-width="0.7" opacity="0.7"/>`;
-    s += `<text x="${xP.toFixed(1)}" y="${m.top}" text-anchor="start" font-size="16" fill="var(--accent,#7fd0ff)">▼ your lattice (L=${L})</text>`;
-    s += `<text x="${xP.toFixed(1)}" y="${m.top + 10}" text-anchor="start" font-size="16" fill="var(--text-muted,#9bd)">1 → ${L} voxels · ${sci(latM, 2)} m</text>`;
-
-    // reference markers (ticks + labels) — on top of the bracket; anchored to avoid edge clipping.
-    for (const mk of MARKERS) {
-        const x = X(mk.m);
-        const anchor = mk.anchor || 'middle';
-        s += `<line x1="${x.toFixed(1)}" y1="${axisY - 4}" x2="${x.toFixed(1)}" y2="${axisY + 4}" stroke="var(--text-muted,#888)" stroke-width="0.8"/>`;
-        s += `<text x="${x.toFixed(1)}" y="${axisY + 15}" text-anchor="${anchor}" font-size="16" fill="var(--text-muted,#999)">${mk.label}</text>`;
-        s += `<text x="${x.toFixed(1)}" y="${axisY + 24}" text-anchor="${anchor}" font-size="16" fill="var(--text-muted,#999)">${mk.sub} m</text>`;
-    }
-
-    // LHC reach marker (CERN, far right of the lattice)
-    const xLhc = X(LHC_LEN_M);
-    s += `<line x1="${xLhc.toFixed(1)}" y1="${m.top - 6}" x2="${xLhc.toFixed(1)}" y2="${axisY + 4}" stroke="#e8b04b" stroke-width="0.9" stroke-dasharray="2,3" opacity="0.85"/>`;
-    s += `<text x="${xLhc.toFixed(1)}" y="${m.top - 9}" text-anchor="middle" font-size="16" fill="#e8b04b">CERN / LHC ▲</text>`;
-    s += `<text x="${xLhc.toFixed(1)}" y="${axisY - 8}" text-anchor="middle" font-size="16" fill="#e8b04b">≈ ${sci(LHC_VOXELS, 2)} voxels</text>`;
-
-    s += `</svg>`;
-    svg.outerHTML = s.replace('<svg ', `<svg class="sc-ruler" id="${PANEL_ID}-ruler" `);
+function setText(panel, ref, value) {
+    const node = panel.querySelector(`[data-sc-ref="${ref}"]`);
+    if (node && node.textContent !== value) node.textContent = value;
 }
 
-function row(label, value, live = false, tip = '') {
-    return `<div class="sc-row${live ? ' sc-live' : ''}"><span${tip ? ` title="${tip}"` : ''}>${label}</span><span>${value}</span></div>`;
+function collectSizeProfiles(L) {
+    const select = document.getElementById('lattice-size');
+    const profiles = select
+        ? [...select.options].map((option) => ({
+            size: normalizeSize(option.value),
+            nativeOnly: option.hasAttribute('data-native-only'),
+            available: !option.disabled,
+        })).filter((profile) => profile.size !== null)
+        : [];
+    if (L && !profiles.some((profile) => profile.size === L)) {
+        profiles.push({ size: L, nativeOnly: L > 97, available: true });
+        profiles.sort((a, b) => a.size - b.size);
+    }
+    return profiles;
+}
+
+function paintSizeRail(panel, L) {
+    const profiles = collectSizeProfiles(L);
+    const marks = panel.querySelector('[data-sc-ref="size-marks"]');
+    const track = panel.querySelector('[data-sc-ref="size-track"]');
+    if (!marks || !track || profiles.length === 0) return;
+
+    const foundIndex = profiles.findIndex((profile) => profile.size === L);
+    const activeIndex = Math.max(0, foundIndex);
+    const progress = profiles.length > 1 ? activeIndex / (profiles.length - 1) : 0;
+    track.style.setProperty('--sc-size-progress', `${(progress * 100).toFixed(2)}%`);
+    track.dataset.activeIndex = String(activeIndex);
+    track.setAttribute('aria-label', `Current lattice L=${L}. Supported profiles: ${profiles.map((p) => `L=${p.size}${p.nativeOnly ? ' native-only' : ''}`).join(', ')}.`);
+    marks.replaceChildren(...profiles.map((profile) => {
+        const item = document.createElement('li');
+        item.className = 'sc-size-mark';
+        item.classList.toggle('is-active', profile.size === L);
+        item.classList.toggle('is-native', profile.nativeOnly);
+        item.classList.toggle('is-unavailable', !profile.available);
+        item.dataset.size = String(profile.size);
+        item.setAttribute('aria-current', profile.size === L ? 'true' : 'false');
+        item.title = profile.nativeOnly
+            ? `L=${profile.size}: native GPU profile.`
+            : `L=${profile.size}: browser-capable profile.`;
+        item.innerHTML = `<i aria-hidden="true"></i><span>${profile.size}</span>`;
+        return item;
+    }));
+}
+
+function logPosition(metres) {
+    return Math.max(0, Math.min(100,
+        ((Math.log10(metres) - LOG_MIN) / (LOG_MAX - LOG_MIN)) * 100));
+}
+
+function paintPhysicalRuler(panel, L) {
+    const svg = panel.querySelector('[data-sc-ref="ruler"]');
+    if (!svg) return;
+    const latticeM = L * FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M;
+    const points = [
+        { x: logPosition(latticeM), className: 'live', label: `current lattice L=${L}` },
+        { x: logPosition(LHC_LEN_M), className: 'lhc', label: 'LHC resolution' },
+        { x: logPosition(1e-15), className: 'reference', label: 'nuclear scale' },
+        { x: logPosition(1e-10), className: 'reference', label: 'atomic scale' },
+    ];
+    const aria = `Log length context from one Planck length to atomic scale. The current L=${L} lattice spans ${sci(latticeM)} metres. LHC resolution is ${sci(LHC_LEN_M)} metres.`;
+    svg.setAttribute('aria-label', aria);
+    svg.replaceChildren();
+    const namespace = 'http://www.w3.org/2000/svg';
+    const axis = document.createElementNS(namespace, 'line');
+    axis.setAttribute('x1', '1'); axis.setAttribute('y1', '9');
+    axis.setAttribute('x2', '99'); axis.setAttribute('y2', '9');
+    axis.setAttribute('class', 'sc-ruler-axis');
+    svg.appendChild(axis);
+    for (const point of points) {
+        const marker = document.createElementNS(namespace, 'circle');
+        marker.setAttribute('cx', String(Math.max(1, Math.min(99, point.x))));
+        marker.setAttribute('cy', '9');
+        marker.setAttribute('r', point.className === 'live' ? '2.2' : '1.45');
+        marker.setAttribute('class', `sc-ruler-point sc-ruler-point--${point.className}`);
+        const title = document.createElementNS(namespace, 'title');
+        title.textContent = point.label;
+        marker.appendChild(title);
+        svg.appendChild(marker);
+    }
+}
+
+function readTelemetry(getBridge) {
+    const bridge = getBridge?.();
+    const capability = bridge?.capabilities?.scale0 ?? null;
+    let manifested = null;
+    let maxClusterSize = 0;
+    let knotTelemetryAvailable = false;
+    try {
+        const diagnostics = capability?.getScale0Diagnostics?.();
+        if (Number.isFinite(diagnostics?.manifested)) manifested = diagnostics.manifested;
+        const knot = capability?.getScale0KnotTelemetry?.();
+        if (knot && knot.count && knot.size) {
+            knotTelemetryAvailable = true;
+            for (let index = 0; index < knot.count; index += 1) {
+                maxClusterSize = Math.max(maxClusterSize, Number(knot.size[index]) || 0);
+            }
+        }
+    } catch { /* bridge can be between configurations */ }
+    return { manifested, maxClusterSize, knotTelemetryAvailable };
 }
 
 export function mountScaleContextPanel(host, getBridge) {
     if (!host) return null;
-    ensureCss();
     document.getElementById(PANEL_ID)?.remove();
     const panel = buildPanel();
     host.appendChild(panel);
-    const el = (id) => panel.querySelector(`#${PANEL_ID}-${id}`);
+    let acknowledgedSize = null;
+    let telemetrySignature = '';
 
-    function readLive() {
-        const b = getBridge?.();
-        const L = b?.latticeSize ?? 33;
-        const cap = b?.capabilities?.scale0 ?? null;
-        let manifested = null, maxN = 0, knotLive = false;
-        try {
-            const diag = cap?.getScale0Diagnostics?.();
-            if (diag && typeof diag.manifested === 'number') manifested = diag.manifested;
-            const knot = cap?.getScale0KnotTelemetry?.();
-            if (knot && knot.count && knot.size) {
-                knotLive = true;
-                for (let k = 0; k < knot.count; k++) if (knot.size[k] > maxN) maxN = knot.size[k];
-            }
-        } catch { /* mock/proxy not ready — degrade gracefully */ }
-        return { L, manifested, maxN, knotLive };
+    function paintStatic(nextSize) {
+        const L = normalizeSize(nextSize);
+        if (!L || L === acknowledgedSize) return false;
+        acknowledgedSize = L;
+        panel.dataset.latticeSize = String(L);
+        setText(panel, 'badge', `L=${L}`);
+        setText(panel, 'dimension', `${L} × ${L} × ${L}`);
+        setText(panel, 'sites', `${INTEGER_FORMAT.format(L ** 3)} sites · ${L - 1} intervals per edge`);
+        setText(panel, 'edge-span', `${sci(L * FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M)} m`);
+        setText(panel, 'size-class', L > 97 ? 'native GPU profile' : 'browser-capable profile');
+        setText(panel, 'electron-planck-ratio', sci(FTD_ELECTRON_PLANCK_RATIO, 3));
+        setText(panel, 'voxel-length', `${sci(FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M, 4)} m`);
+        setText(panel, 'codata-length', `${sci(PLANCK_LENGTH_M, 4)} m · ${FTD_PLANCK_LENGTH_RELATIVE_ERROR >= 0 ? '+' : ''}${(FTD_PLANCK_LENGTH_RELATIVE_ERROR * 100).toFixed(3)}%`);
+        setText(panel, 'planck-time', `${sci(FTD_ELECTRON_PRIMARY_PLANCK_TIME_S, 4)} s`);
+        setText(panel, 'codata-time', `${sci(PLANCK_TIME_S, 4)} s · reference`);
+        setText(panel, 'tick-time', `${sci(FTD_TICK_S, 4)} s`);
+        setText(panel, 'lhc-length', `${sci(LHC_LEN_M)} m`);
+        setText(panel, 'lhc-gap', `${sci(LHC_LEN_M / (L * FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M))}× longer`);
+        setText(panel, 'uv-cutoff', `${OMEGA_MAX.toFixed(3)} rad/tick`);
+        setText(panel, 'genesis', `${K_GENESIS.toFixed(3)} MeV`);
+        setText(panel, 'pair-threshold', `${PAIR_MEV.toFixed(3)} MeV`);
+        const deltaV = Math.pow(GRB_E_GEV / M_PLANCK_GEV, 2) / 8;
+        setText(panel, 'lv-delta', sci(deltaV, 1));
+        paintSizeRail(panel, L);
+        paintPhysicalRuler(panel, L);
+        return true;
     }
 
-    function paint() {
-        const { L, manifested, maxN, knotLive } = readLive();
-
-        const svg = el('ruler');
-        if (svg) renderRuler(svg, L);
-
-        const latM = L * PLANCK_LENGTH_M;
-        const gap = latM / LHC_LEN_M;     // lattice span ÷ one LHC resolution element
-        el('len').innerHTML =
-            row('1 voxel = ℓ_P', `${sci(PLANCK_LENGTH_M)} m`, false, 'a_phys ≡ ℓ_P [CALIBRATION] (FTD-0059 no-go).') +
-            row('1 tick', `${sci(FTD_TICK_S)} s`, false, 't_phys = ℓ_P/(√3·c) = t_P/√3 [CALIBRATION].') +
-            row(`this lattice (L=${L})`, `${sci(latM)} m · ${L}³ voxels`, true, 'Span = L·ℓ_P; updates with the lattice-size control.') +
-            row('LHC resolves', `${sci(LHC_LEN_M)} m`, false, 'ℏc / 13.6 TeV — one resolution element.') +
-            row('… in voxels', `${sci(LHC_VOXELS)}`, false, 'A CERN-probed structure spans ~10¹⁵ voxels — infeasible to simulate.') +
-            row('lattice vs that', `${sci(gap)}× shorter`, true, 'The largest practical lattice is far shorter than one LHC resolution element.');
-
-        const manifMev = manifested != null ? manifested * K_B : null;
-        const clusterMev = maxN > 0 ? maxN * K_B : null;
-        const dvc = Math.pow(GRB_E_GEV / M_PLANCK_GEV, 2) / 8;
-        el('energy').innerHTML =
-            row('UV cutoff ω_max', `${OMEGA_MAX.toFixed(3)} rad/tick`, false, 'Zone edge 2/√3; physically ≈ Planck-scale (E_P ≈ 1.22×10¹⁹ GeV).') +
-            row('manifestation K_GENESIS', `${K_GENESIS.toFixed(3)} MeV`, false, '= 3·K_MANIFEST = 3·W_SC [SELECTION — ADOPTED, FTD-0388]; vs QED pair threshold below.') +
-            row('QED pair threshold 2mₑ', `${PAIR_MEV.toFixed(3)} MeV`, false, '2·mₑ — the factor 3-vs-2 is flagged, not claimed.') +
-            row('manifested energy', manifMev != null ? `≈ ${manifMev.toFixed(1)} MeV` : '— (start the sim)', true, 'Σ manifested voxels × K_B — engine-level aggregate; mass = N·K_B is [IMPOSED] (FTD-0250). Not a particle identification.') +
-            row('largest cluster',
-                clusterMev != null ? `≈ ${maxN} vox · ${clusterMev.toFixed(1)} MeV`
-                                   : (knotLive ? 'none yet' : '— (enable Knots tracking)'),
-                true, 'N·K_B [SMC] — IDENT-NULL (FTD-0262): an energy, NOT a named SM particle.') +
-            row('Δv/c at 10 GeV (LV)', `${sci(dvc, 1)}`, false, '(E/E_P)²/8 — no linear term [MEASURED structure, FTD-0299]; continued lab nulls are the [PREDICTION] (FP-3).');
-
-        el('foot').innerHTML = `<b>You are at the Planck substrate.</b> CERN sits ~10¹⁵ voxels "up" — so the
-        engine's genuine content is dimensionless structure, UV-suppressed deviations and structural nulls,
-        <i>not</i> collision dynamics. Absolute scales are <b>[CALIBRATION]</b>-conditional; cluster→MeV is
-        <b>[SMC]</b> / IDENT-NULL. See <b>SPEC_ENERGY_SCALES_AND_DETECTABILITY</b> (FTD-0306).`;
+    function paintTelemetry(force = false) {
+        const { manifested, maxClusterSize, knotTelemetryAvailable } = readTelemetry(getBridge);
+        const signature = `${manifested ?? 'null'}:${maxClusterSize}:${knotTelemetryAvailable}`;
+        if (!force && signature === telemetrySignature) return false;
+        telemetrySignature = signature;
+        const manifestedSites = manifested === null ? '—' : INTEGER_FORMAT.format(manifested);
+        const manifestedEnergy = manifested === null ? '— (start the sim)' : `≈ ${(manifested * K_B).toFixed(1)} MeV`;
+        const cluster = maxClusterSize > 0
+            ? `${INTEGER_FORMAT.format(maxClusterSize)} sites · ≈ ${(maxClusterSize * K_B).toFixed(1)} MeV`
+            : (knotTelemetryAvailable ? 'none yet' : '— (enable Knots tracking)');
+        setText(panel, 'manifested-sites', manifestedSites);
+        setText(panel, 'manifested-energy', manifestedEnergy);
+        setText(panel, 'largest-cluster', cluster);
+        return true;
     }
 
-    paint();
+    function update() {
+        const bridgeSize = normalizeSize(getBridge?.()?.latticeSize);
+        if (bridgeSize) paintStatic(bridgeSize);
+        paintTelemetry(true);
+    }
 
-    const sub = rafCoordinator.subscribe(`${PANEL_ID}-loop`, { hz: 2, cb: () => {
+    function onSizeAcknowledged(event) {
+        const eventSize = normalizeSize(event?.detail?.size);
+        const activeSize = normalizeSize(getBridge?.()?.latticeSize);
+        // A worker replacement can overlap the final callback from the bridge
+        // it superseded. Never let that late acknowledgement repaint the panel
+        // away from the bridge that currently owns Scale-0 physics.
+        if (!eventSize || (activeSize && eventSize !== activeSize)) return;
+        paintStatic(eventSize);
+    }
+
+    const initialSize = normalizeSize(getBridge?.()?.latticeSize);
+    if (initialSize) paintStatic(initialSize);
+    paintTelemetry(true);
+    window.addEventListener(SCALE0_LATTICE_SIZE_ACK_EVENT, onSizeAcknowledged);
+
+    const subscription = rafCoordinator.subscribe(`${PANEL_ID}-loop`, { hz: 2, cb: () => {
         if (!isPanelLive(host)) return;
-        paint();
+        paintTelemetry();
     } });
 
     const api = {
-        update: paint,
+        update,
         element: panel,
+        get acknowledgedLatticeSize() { return acknowledgedSize; },
         dispose: () => {
-            sub.unsubscribe();
-            if (typeof window !== 'undefined' && window.__ftdScaleContextPanel === api) window.__ftdScaleContextPanel = null;
+            subscription.unsubscribe();
+            window.removeEventListener(SCALE0_LATTICE_SIZE_ACK_EVENT, onSizeAcknowledged);
+            if (window.__ftdScaleContextPanel === api) window.__ftdScaleContextPanel = null;
             panel.remove();
         },
     };
-    if (typeof window !== 'undefined') window.__ftdScaleContextPanel = api;
+    window.__ftdScaleContextPanel = api;
     return api;
 }
 

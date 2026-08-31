@@ -214,7 +214,7 @@ test('Diagnostics sparklines keep redrawing after a shared ring reaches capacity
             import('/js/telemetry-hub.js'),
             import('/js/ui/panels/diagnostics-panel/table.js'),
         ]);
-        const ring = new MultiRingBuffer(2, ['value']);
+        const ring = new MultiRingBuffer(500, ['value']);
         const hub = {
             sample: { value: 0 },
             trend: ring.views.value,
@@ -241,7 +241,7 @@ test('Diagnostics sparklines keep redrawing after a shared ring reaches capacity
             originalUpdate();
         };
 
-        for (const value of [1, 2, 3]) {
+        for (let value = 1; value <= 525; value++) {
             ring.push({ value });
             hub.sample.value = value;
             table.update();
@@ -251,8 +251,8 @@ test('Diagnostics sparklines keep redrawing after a shared ring reaches capacity
 
         // Audit collection can refine the newest shared row without pushing a
         // second sample. It must repaint but must not count as another sample.
-        ring.views.value.setLast(4);
-        hub.sample.value = 4;
+        ring.views.value.setLast(526);
+        hub.sample.value = 526;
         table.update();
         const lastY = entry.spark.ys[Math.min(ring.count, entry.spark.visibleSamples) - 1];
         const statsCount = table.stats.get('value').count;
@@ -270,12 +270,12 @@ test('Diagnostics sparklines keep redrawing after a shared ring reaches capacity
     });
 
     expect(result).toEqual({
-        redrawsAfterRollover: 3,
-        redrawsAfterPatch: 4,
-        ringCount: 2,
-        ringTotal: 3,
-        statsCount: 3,
-        lastY: 4,
+        redrawsAfterRollover: 525,
+        redrawsAfterPatch: 526,
+        ringCount: 500,
+        ringTotal: 525,
+        statsCount: 525,
+        lastY: 526,
         stampChangedOnPatch: true,
     });
 });
@@ -568,6 +568,7 @@ test('real L=97 worker cadence keeps the audit sample tick/version stable while 
                     observedAt: performance.now(),
                     diagTick: diag.tick,
                     diagHasDynamicEnergy: Object.hasOwn(diag, 'dynamicEnergy'),
+                    energySampleSource: diag.energySampleSource,
                     diagnosticsVersion: diagnosticsMeta.stateVersion,
                     diagnosticsTick: diagnosticsMeta.tick,
                     auditVersion: auditMeta.stateVersion,
@@ -594,8 +595,8 @@ test('real L=97 worker cadence keeps the audit sample tick/version stable while 
     expect(result.every(row => row.auditTick === row.auditSampleTick)).toBe(true);
     expect(result.every(row => row.auditStale === false)).toBe(true);
     expect(result.every(row => Number.isFinite(row.auditReceivedAt))).toBe(true);
-    expect(result.every(row => !row.diagHasDynamicEnergy
-        || row.diagnosticsTick === row.auditSampleTick)).toBe(true);
+    expect(result.every(row => row.diagHasDynamicEnergy)).toBe(true);
+    expect(result.every(row => row.energySampleSource === 'per-tick-ledger')).toBe(true);
     const groups = new Map();
     for (const row of result) {
         const group = groups.get(row.auditVersion) || [];
@@ -611,7 +612,7 @@ test('real L=97 worker cadence keeps the audit sample tick/version stable while 
     expect(new Set(reused.map(row => row.auditReceivedAt)).size).toBe(1);
     expect(new Set(reused.map(row => row.diagnosticsVersion)).size).toBeGreaterThan(1);
     expect(reused.filter(row => row.diagnosticsTick !== row.auditSampleTick)
-        .every(row => row.diagHasDynamicEnergy === false)).toBe(true);
+        .every(row => row.diagHasDynamicEnergy === true)).toBe(true);
     const ordered = [...reused].sort((a, b) => a.observedAt - b.observedAt);
     expect(ordered.at(-1).observedAt - ordered.at(-1).auditReceivedAt)
         .toBeGreaterThanOrEqual(ordered[0].observedAt - ordered[0].auditReceivedAt);

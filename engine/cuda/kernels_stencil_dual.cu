@@ -85,11 +85,13 @@ __global__ void compute_near_particle_kernel(
 __global__ void phase_read_dual_kernel(
     const double* __restrict__ fL_x, const double* __restrict__ fL_y, const double* __restrict__ fL_z,
     const double* __restrict__ fR_x, const double* __restrict__ fR_y, const double* __restrict__ fR_z,
+    const double* __restrict__ wL_x, const double* __restrict__ wL_y, const double* __restrict__ wL_z,
+    const double* __restrict__ wR_x, const double* __restrict__ wR_y, const double* __restrict__ wR_z,
     const int8_t* __restrict__ state,
     const double* __restrict__ vel_x, const double* __restrict__ vel_y, const double* __restrict__ vel_z,
     double* __restrict__ djL_x, double* __restrict__ djL_y, double* __restrict__ djL_z,
     double* __restrict__ djR_x, double* __restrict__ djR_y, double* __restrict__ djR_z,
-    int L, bool do_wave, bool do_coupling,
+    int L, bool do_wave, bool do_coupling, bool dispersal_boundary,
     // FTD-0271/0281 de Broglie clock (GPU port, 2026-06-20). Mirrors the CPU
     // dual branch in engine/src/render_bridge_phases/phase_read.cpp:133-140.
     bool do_db_clock, bool do_db_clock_coulomb, double omega0,
@@ -106,7 +108,26 @@ __global__ void phase_read_dual_kernel(
     double dLx = 0, dLy = 0, dLz = 0;
     double dRx = 0, dRy = 0, dRz = 0;
 
-    if (do_wave) {
+    const bool dispersal_near_shell = dispersal_boundary
+        && (x <= 1 || x >= L - 2 || y <= 1 || y >= L - 2
+            || z <= 1 || z >= L - 2);
+    if (do_wave && dispersal_near_shell) {
+        const int tick = *tick_ptr;
+        const double cw2 = wave_kick_cw2(
+            tick, period2_floquet, bcc_time_floquet);
+        dLx += cw2 * dispersal_laplacian_component(
+            fL_x, wL_x, i, x, y, z, L, 0u);
+        dLy += cw2 * dispersal_laplacian_component(
+            fL_y, wL_y, i, x, y, z, L, 0u);
+        dLz += cw2 * dispersal_laplacian_component(
+            fL_z, wL_z, i, x, y, z, L, 0u);
+        dRx += cw2 * dispersal_laplacian_component(
+            fR_x, wR_x, i, x, y, z, L, 0u);
+        dRy += cw2 * dispersal_laplacian_component(
+            fR_y, wR_y, i, x, y, z, L, 0u);
+        dRz += cw2 * dispersal_laplacian_component(
+            fR_z, wR_z, i, x, y, z, L, 0u);
+    } else if (do_wave) {
         // Isotropic 18-point Laplacian on each substrate independently
         int xp = idx3d(x+1,y,z,L), xm = idx3d(x-1,y,z,L);
         int yp = idx3d(x,y+1,z,L), ym = idx3d(x,y-1,z,L);
@@ -481,6 +502,7 @@ __global__ void genesis_dual_kernel(
 // ---------- Dual-Substrate Launchers ----------
 
 void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
+                            bool dispersal_boundary,
                             bool do_db_clock, bool do_db_clock_coulomb, double omega0,
                             bool period2_floquet, bool bcc_time_floquet) {
     const cudaStream_t stream = bufs.stream;
@@ -491,11 +513,13 @@ void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupli
     phase_read_dual_kernel<<<grid, block, 0, stream>>>(
         bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
         bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
+        bufs.d_wave_vel_L_x, bufs.d_wave_vel_L_y, bufs.d_wave_vel_L_z,
+        bufs.d_wave_vel_R_x, bufs.d_wave_vel_R_y, bufs.d_wave_vel_R_z,
         bufs.d_state,
         bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
         bufs.d_delta_j_L_x, bufs.d_delta_j_L_y, bufs.d_delta_j_L_z,
         bufs.d_delta_j_R_x, bufs.d_delta_j_R_y, bufs.d_delta_j_R_z,
-        L, do_wave, do_coupling,
+        L, do_wave, do_coupling, dispersal_boundary,
         do_db_clock, do_db_clock_coulomb, omega0, bufs.d_phi_coulomb,
         period2_floquet, bcc_time_floquet, bufs.d_tick
     );

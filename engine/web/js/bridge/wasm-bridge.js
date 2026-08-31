@@ -486,6 +486,17 @@ export class WasmBridge {
         }
     }
 
+    /** Apply a dependency-ordered toggle profile with one cache invalidation. */
+    setToggles(entries) {
+        if (!this._module || !this._bridge || !Array.isArray(entries)) return;
+        for (const entry of entries) {
+            if (!Array.isArray(entry) || typeof entry[0] !== 'string') continue;
+            this._module.setToggle(this._bridge, entry[0], !!entry[1]);
+        }
+        this._enforceToggleInvariants?.();
+        this._invalidateScale0AuditCache();
+    }
+
     getToggle(name) {
         if (this._module && this._bridge)
             return this._module.getToggle(this._bridge, name);
@@ -609,15 +620,27 @@ export class WasmBridge {
         } else {
             d = this._module.getDiagnostics(this._bridge);
         }
+        // The engine's EnergyLedger is updated once per completed tick and its
+        // E_curr channel is exactly the rest-offset-free dynamic sum used by
+        // the status bar/core chart. Reading the cached scalar avoids coupling
+        // these always-on surfaces to the full O(N^3) EnergyAudit.
+        const ledger = typeof this._module.getEnergyLedger === 'function'
+            ? this._module.getEnergyLedger(this._bridge) : null;
+        if (d && Number.isFinite(ledger?.ECurr)) {
+            if (!Object.hasOwn(d, 'vacuumBaselineEnergy')) {
+                d.vacuumBaselineEnergy = d.totalEnergy;
+            }
+            d.dynamicEnergy = ledger.ECurr;
+            d.totalEnergy = ledger.ECurr;
+            d.energySampleSource = 'per-tick-ledger';
+        }
         const audit = this._getScale0AuditForTick(d?.tick ?? this.currentTick());
         if (audit && Number.isFinite(audit.dynamicEnergy)) {
             // Conservation charts use the rest-offset-free accounted channel.
             // Keep rest and total accounted energy visible as separate fields.
             d.vacuumBaselineEnergy = d.totalEnergy;
-            d.dynamicEnergy = audit.dynamicEnergy;
             d.accountedEnergy = audit.totalEnergy;
             d.restEnergy = audit.particleRestEnergy;
-            d.totalEnergy = audit.dynamicEnergy;
             // Status-bar decomposition (whole-box channels, sim units) —
             // mirrors wasm-bridge.worker.js postFrame().
             d.fieldEnergy = audit.fieldEnergy;

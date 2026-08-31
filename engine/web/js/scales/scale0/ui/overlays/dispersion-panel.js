@@ -18,7 +18,9 @@
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 import { resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
-import { C_SPEED } from '../../../../constants.js';
+import {
+    C_SPEED, C_MS, FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M,
+} from '../../../../constants.js';
 
 const PANEL_ID = 'dispersion-panel';
 const C = C_SPEED;                 // 1/√3
@@ -37,9 +39,11 @@ const ATLAS = Object.freeze({
 });
 const DIR_COLOR = { '100': 'var(--accent,#e8b04b)', '110': '#4bb7e8', '111': '#e87a4b' };
 
-// Calibration (FTD-0298 / dimensional_map.json): voxel ≡ ℓ_P, so the zone edge is a
-// 2-voxel wavelength; every lab frequency sits at k/k_zone = 2ℓ_P/λ ≲ 1e-28.
-const L_P = 1.616255e-35, C_PHYS = 299792458.0;
+// Default electron-primary mapping (FTD-0137 §4.5): one voxel maps to the
+// conditional FTD Planck length, so the zone edge is a 2-voxel wavelength.
+// Every lab frequency still sits at k/k_zone ≲ 1e-28. The CODATA Planck
+// length remains a reference and is intentionally not substituted here.
+const L_P = FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M, C_PHYS = C_MS;
 function kOverKzone(fHz) { return (2 * L_P) / (C_PHYS / fHz); }   // dimensionless
 
 function ensureCss() {

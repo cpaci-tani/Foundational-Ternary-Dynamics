@@ -304,6 +304,7 @@ test('worker audit demand gate is zero-work while hidden and hydrates once when 
         'utf8',
     );
     expect(worker).toContain('advanceDemandFrameCadence(');
+    expect(worker).toContain('mod.getEnergyLedger(bridge)');
     expect(worker).toMatch(/if \(auditGate\.sample\)[\s\S]+mod\.getEnergyAudit\(bridge\)/);
     expect(worker).toContain("status: 'inactive'");
     expect(worker).toMatch(/auditChanged[\s\S]+postFrame\(false, gravityBecameWanted\)/);
@@ -364,7 +365,7 @@ test('worker sampler batch protocol has a matching cache-busted client and handl
         path.join(webRoot, 'js', 'bridge', 'wasm-bridge.worker.js'),
         'utf8',
     );
-    expect(proxy).toContain("wasm-bridge.worker.js?v=7");
+    expect(proxy).toContain("wasm-bridge.worker.js?v=9");
     expect(proxy).toContain("type: 'replaceSamplerWants'");
     expect(proxy).toContain('wantGravity: g');
     expect(proxy).toContain("owner === 'gravity-panel' || owner === 'time-panel'");

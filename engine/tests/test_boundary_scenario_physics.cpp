@@ -4,10 +4,10 @@
  * The engine has three computational flux boundary laws:
  *   Periodic   — all three opposite-face pairs are identified; axis is orientation metadata.
  *   Reflective — one ghost-cell Neumann shell copied from the first interior layer.
- *   Dispersal  — non-field face records excised; outward-only field ghost trace.
+ *   Dispersal  — exact-zero shell plus target-local one-way stencil samples.
  *
  * These names describe algorithms. A finite simulation face is not interpreted
- * as an ontological edge of space. The one-way trace suppresses incoming
+ * as an ontological edge of space. The one-way closure suppresses incoming
  * storage modes; it is not called a derived exact radiation condition.
  */
 
@@ -87,6 +87,15 @@ double modified_hamiltonian(const ftd::RenderBridge& rb, bool reflective) {
 double field_norm(const ftd::RenderBridge& rb) {
     double out = 0.0;
     for (const auto& v : rb.voxels()) out += v.flux.mag2() + v.wave_vel.mag2();
+    return out;
+}
+
+double maximum_field_amplitude(const ftd::RenderBridge& rb) {
+    double out = 0.0;
+    for (const auto& v : rb.voxels()) {
+        out = std::max(out, std::sqrt(v.flux.mag2()));
+        out = std::max(out, std::sqrt(v.wave_vel.mag2()));
+    }
     return out;
 }
 
@@ -232,34 +241,6 @@ bool transport_scaled(const ftd::Voxel& v, const TransportFields& original,
         && vec_scaled(v.wave_vel_weak, original.wave_vel_weak, scale);
 }
 
-bool pair_is_outflow_trace(const ftd::Vec3& actual_field,
-                           const ftd::Vec3& actual_wave,
-                           const ftd::Vec3& source_field,
-                           const ftd::Vec3& source_wave,
-                           double normal_step) {
-    const ftd::Vec3 expected = source_field
-        - source_wave * (normal_step / ftd::C_WAVE);
-    return (actual_field - expected).mag2() < 1e-28
-        && (actual_wave - source_wave).mag2() < 1e-28;
-}
-
-bool transport_is_outflow_trace(const ftd::Voxel& v,
-                                const TransportFields& source,
-                                double normal_step) {
-    return pair_is_outflow_trace(v.flux, v.wave_vel,
-                                 source.flux, source.wave_vel, normal_step)
-        && pair_is_outflow_trace(v.flux_L, v.wave_vel_L,
-                                 source.flux_L, source.wave_vel_L, normal_step)
-        && pair_is_outflow_trace(v.flux_R, v.wave_vel_R,
-                                 source.flux_R, source.wave_vel_R, normal_step)
-        && pair_is_outflow_trace(v.flux_strong, v.wave_vel_strong,
-                                 source.flux_strong, source.wave_vel_strong,
-                                 normal_step)
-        && pair_is_outflow_trace(v.flux_weak, v.wave_vel_weak,
-                                 source.flux_weak, source.wave_vel_weak,
-                                 normal_step);
-}
-
 bool has_void_non_transport_record(const ftd::Voxel& v) {
     return v.state == 0
         && v.velocity.mag2() == 0.0
@@ -331,19 +312,42 @@ void test_boundary_operator_definitions() {
     const TransportFields sink_inner_shell = snapshot(sink.voxel_at(2, y, z));
     const TransportFields sink_core = snapshot(sink.voxel_at(3, y, z));
     ftd::apply_dispersal_flux_boundary(sink);
-    bool dispersal_all_faces = true;
+    bool dispersal_settled_faces = true;
     for (std::size_t i = 0; i < shell.size(); ++i) {
         const auto& face = shell[i];
         const auto& v = sink.voxel_at(face[0], face[1], face[2]);
-        dispersal_all_faces = dispersal_all_faces
+        dispersal_settled_faces = dispersal_settled_faces
             && has_void_non_transport_record(v)
-            && transport_is_outflow_trace(v, sink_sources[i], 1.0);
+            && transport_scaled(v, sink_sources[i], 0.0);
     }
-    check("dispersal excises face records and reconstructs six outward traces",
-          dispersal_all_faces
+    check("dispersal settled pass exact-zeroes every record on all six faces",
+          dispersal_settled_faces
           && transport_scaled(sink.voxel_at(1, y, z), sink_sources[0], 1.0)
           && transport_scaled(sink.voxel_at(2, y, z), sink_inner_shell, 1.0)
           && transport_scaled(sink.voxel_at(3, y, z), sink_core, 1.0));
+
+    sink.toggles.flux_boundary = ftd::FluxBoundaryMode::Dispersal;
+    ftd::prepare_flux_boundary(sink);
+    bool dispersal_prepared_faces = true;
+    for (std::size_t i = 0; i < shell.size(); ++i) {
+        const auto& face = shell[i];
+        const auto& v = sink.voxel_at(face[0], face[1], face[2]);
+        dispersal_prepared_faces = dispersal_prepared_faces
+            && has_void_non_transport_record(v)
+            && transport_scaled(v, sink_sources[i], 0.0);
+    }
+    check("dispersal keeps every face exact void during stencil preparation",
+          dispersal_prepared_faces);
+    ftd::apply_dispersal_flux_boundary(sink);
+    bool dispersal_recleared_faces = true;
+    for (std::size_t i = 0; i < shell.size(); ++i) {
+        const auto& face = shell[i];
+        dispersal_recleared_faces = dispersal_recleared_faces
+            && transport_scaled(sink.voxel_at(face[0], face[1], face[2]),
+                                sink_sources[i], 0.0);
+    }
+    check("dispersal reasserts the exact-zero shell after local writers",
+          dispersal_recleared_faces);
 
     ftd::RenderBridge directional(L);
     directional.force_cpu();
@@ -497,7 +501,7 @@ void test_boundary_probe() {
           p_periodic_0 > 0.0 && p_periodic_90 > 0.1 * p_periodic_0);
     // Post-implementation regression characterization, not a theorem: this
     // fixed packet catches the old zero-shell wall, whose reverse momentum was
-    // 77% of the launch momentum. The one-way trace keeps the entire 90-tick
+    // 77% of the launch momentum. The one-way closure keeps the entire 90-tick
     // reverse excursion and residual norm below 1% for this probe.
     check("dispersal probe has no macroscopic reverse-momentum reverb",
           minimum_sink_momentum > -0.01 * p_sink_0
@@ -508,6 +512,46 @@ void test_boundary_probe() {
           && manifested_count(sink) == 0);
 }
 
+void test_dispersal_long_horizon_stability() {
+    // Fixed browser-reproduction gate: the default L=33 packet was observed to
+    // grow to ~1e91 at the first interior edges by tick 4071 even though the
+    // settled outer shell was zero. This is a long-horizon stability test, not
+    // a parameter scan or a claim of an exact transparent boundary.
+    constexpr int L = 33;
+    constexpr int ticks = 4096;
+    ftd::RenderBridge sink(L);
+    sink.force_cpu();
+    check("long-horizon Dispersal probe dispatches",
+          ftd::dispatch_scenario(sink, "flux-pulse"));
+    sink.toggles.flux_boundary = ftd::FluxBoundaryMode::Dispersal;
+    sink.toggles.strict_validation = true;
+
+    const double norm_0 = field_norm(sink);
+    const double amplitude_0 = maximum_field_amplitude(sink);
+    double maximum_norm = norm_0;
+    double maximum_amplitude = amplitude_0;
+    for (int tick = 0; tick < ticks; ++tick) {
+        sink.tick();
+        maximum_norm = std::max(maximum_norm, field_norm(sink));
+        maximum_amplitude = std::max(
+            maximum_amplitude, maximum_field_amplitude(sink));
+    }
+    const double norm_final = field_norm(sink);
+    std::cout << "    long_horizon_norm0=" << norm_0
+              << " max_norm=" << maximum_norm
+              << " final_norm=" << norm_final
+              << " amplitude0=" << amplitude_0
+              << " max_amplitude=" << maximum_amplitude << '\n';
+
+    check("Dispersal remains finite and bounded through tick 4096",
+          std::isfinite(maximum_norm)
+          && std::isfinite(maximum_amplitude)
+          && maximum_norm <= 4.0 * std::max(1e-30, norm_0)
+          && maximum_amplitude <= 4.0 * std::max(1e-30, amplitude_0));
+    check("Dispersal leaves no long-horizon residual field",
+          norm_final <= 0.01 * std::max(1e-30, norm_0));
+}
+
 }  // namespace
 
 int main() {
@@ -515,6 +559,7 @@ int main() {
     test_boundary_operator_definitions();
     test_storage_wrap_is_gated_by_boundary_contract();
     test_boundary_probe();
+    test_dispersal_long_horizon_stability();
     std::cout << "=== " << (failures == 0 ? "ALL PASS" : "FAILURES")
               << " (" << failures << ") ===\n";
     return failures == 0 ? 0 : 1;

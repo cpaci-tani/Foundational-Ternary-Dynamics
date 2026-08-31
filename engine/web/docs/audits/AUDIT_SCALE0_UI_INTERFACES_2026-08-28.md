@@ -394,28 +394,46 @@ gating, ten-cycle lifecycle stability, and foreground frame cost.
 7. The live browser initially mixed a cached pre-fix listener with current
    modules. Explicit app/controller/Scale 0 control-runtime module versions now
    make the ownership and readback changes atomic under cached deployment.
+8. The card now exposes one **Enable all physics** action backed by an explicit
+   24-term compatibility profile. It clears Langevin, Absorbing Boundary, Knot
+   Tracking, and the scenario-owned de Broglie clock before enabling terms in
+   dependency order. The worker receives one transaction, performs one invariant
+   pass, and publishes one authoritative readback; ten immediate clicks collapse
+   to one accepted action and zero idle-owner writes.
+9. Enabling Dual Substrate after a single-substrate scenario had already seeded
+   its field activated empty `J_L/J_R` and velocity registers; the next tick
+   therefore replaced a nonzero live field with exact zero. The runtime
+   transition now splits the authoritative observable field symmetrically on
+   enable, recombines it on disable, clears dormant registers, and preserves the
+   live field across both transitions.
 
 ### Automated verification
 
 ```text
 cd engine/web/tests
 npx playwright test scale0-physics-toggles-audit.spec.js --reporter=list
-# 4 passed
+# 6 passed
 
 npx playwright test scale0-toggle-engine-parity.spec.js \
   scale0-dynamical-flux-dressing.spec.js \
   scale0-persisted-scenario-boot.spec.js toggle-coverage.spec.js --reporter=list
-# 10 passed
+# 9 passed, 1 failed: stale showKnotZones state-only flip contract
 ```
 
 The focused gate proves exact configured-control inventory, full standard and
-research engine parity, 40 edits routed only to the active owner with stable
-resources, blocked edits during scenario handoff, authoritative Pair Production
-readback, and one reload/worker replacement for a ten-click Restore burst. The
+research engine parity, a single 24-term compatible bulk transaction, explicit
+alternate/diagnostic exclusions, dependency satisfaction, 40 individual edits
+routed only to the active owner with stable resources, blocked edits during
+scenario handoff, authoritative Pair Production readback, and one reload/worker
+replacement for a ten-click Restore burst. It also proves that enabling and
+disabling Dual Substrate at runtime preserves a nonzero live field through the
+following simulation tick. The
 compatibility sweep preserves dynamical flux-dressing restore, persisted selection
-and reconnect replay, massive-body/octahedron engine profiles, gravity-only
-applicability, and the complete field-toggle coverage contract. Syntax checks and
-`git diff --check` passed.
+and reconnect replay, massive-body/octahedron engine profiles, and gravity-only
+applicability. Its remaining failure is an older `showKnotZones` assertion that
+expects `setFieldToggle` to flip an inapplicable state-only gate; the current
+effective-gate contract correctly keeps it off without Knot Tracking. Syntax
+checks and `git diff --check` passed.
 
 ### Foreground Edge certification
 

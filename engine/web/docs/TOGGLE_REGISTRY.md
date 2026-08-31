@@ -12,7 +12,7 @@
 | Scale | Toggle family | Count | Wired? |
 |------|----------------|-------|--------|
 | Scale 0 (Lattice) | **Field/overlay** toggles (`fieldFlags`, render-side) | **32** | All 32 verified by live click test |
-| Scale 0 (Lattice) | **Physics-term** toggles (`bridge.setToggle`, sim-side) | 18 (+scenario overrides) | Wired via `SCALE0_TOGGLES` → bridge |
+| Scale 0 (Lattice) | **Physics-term** toggles (`bridge.setToggle`, sim-side) | 27 visible (19 standard + 8 advanced) | Wired via the canonical config tables → active bridge |
 | Scale 0 (Lattice) | Viewport volume/slice (not in `fieldFlags`) | 2 | Wired via `bindings.js` (`setFluxVolumeVisible` / `setFluxSliceVisible`) |
 | Scale 2/3 (Atoms/Molecules) | Atom-engine physics toggles | 11 | Wired via `SCALE2_TOGGLES` → bridge |
 
@@ -26,7 +26,12 @@ Web toggle state-of-truth is currently split across **three files** with **three
 
 ### Source 1 — physics-term toggles → the engine bridge
 **File:** [`engine/web/js/config/toggles.js`](../js/config/toggles.js)
-`SCALE0_TOGGLES`, `SCALE2_TOGGLES`, and the `*_SCENARIO_OVERRIDES` tables. Each row is `[toggleKey, defaultValue, domElementId]`. These drive `bridge.setToggle(key, value)` — they change the **simulation** (which physics terms run). They mirror the C++ `TermToggles` struct field names. DOM ids here use the `t-*` prefix (e.g. `t-wave`, `t-gravity`) and live in the physics-toggles control card, not the overlay panel.
+`SCALE0_TOGGLES`, `SCALE0_ADVANCED_TOGGLES`, `SCALE2_TOGGLES`, and the
+`*_SCENARIO_OVERRIDES` tables. Each row is `[toggleKey, defaultValue,
+domElementId]`. These drive the active bridge's toggle mutators — they change
+the **simulation** (which physics terms run). They mirror the C++ `TermToggles`
+struct field names. DOM ids here use the `t-*` prefix (e.g. `t-wave`,
+`t-gravity`) and live in the physics-toggles control card, not the overlay panel.
 
 ### Source 2 — field/overlay state store (the render-side flags)
 **File:** [`engine/web/js/scales/scale0/state/store.js`](../js/scales/scale0/state/store.js)
@@ -37,7 +42,14 @@ Web toggle state-of-truth is currently split across **three files** with **three
 Builds a `<div id="viewport-overlay">` via `document.createElement` and an HTML string containing **34 `<button class="view-toggle ...">` elements** (32 `field-toggle` + 2 volume/slice). **This is the audit's blind spot:** these buttons exist only after this template runs at Scale-0 boot — `index.html` contains none of them.
 The **DOM-id  state-key mapping** is declared in [`engine/web/js/scales/scale0/ui/dom.js`](../js/scales/scale0/ui/dom.js) as `FIELD_TOGGLE_BINDINGS` (32 `[buttonId, fieldKey]` pairs). The **click wiring** is in [`engine/web/js/scales/scale0/ui/bindings.js`](../js/scales/scale0/ui/bindings.js): for each `[buttonId, fieldKey]` it attaches a click handler that calls `setToggleState(buttonId, fieldKey, on)`, which `setButtonActive(...)` + `setFieldToggle(fieldKey, on)` + syncs viewport overlay visibility. The `on` value is `!readButtonActive(buttonId)` — i.e. the click flips relative to the button's current `.active` class.
 
-> **Cross-reference (not duplicated here): the C++ side.** The simulation's authoritative toggle table is `TOGGLE_SPECS[]` in [`engine/include/ftd/term_toggles.h`](../../include/ftd/term_toggles.h) (27 boolean toggles + 5 non-bool config fields, table-driven per ADR-0013). Source 1 (`SCALE0_TOGGLES`) is the **JS whitelist subset** of that table that the dashboard surfaces; `config/toggles.js` documents in-line which `TermToggles` fields are deliberately omitted (research controls: `triad_binding`, `pair_production`, `latency_field`, `exact_dual_gauss`, `emergent_forces`, `langevin`, `langevin_site_filter`, `bcc_stencil`, `strict_validation`). This doc maps the **web** surface; for the engine-truth table read `term_toggles.h`.
+> **Cross-reference (not duplicated here): the C++ side.** The simulation's
+> authoritative toggle table is `TOGGLE_SPECS[]` in
+> [`engine/include/ftd/term_toggles.h`](../../include/ftd/term_toggles.h).
+> `SCALE0_TOGGLES` is the scenario-reset whitelist, while
+> `SCALE0_ADVANCED_TOGGLES` is the curated visible research subset that remains
+> user-owned across ordinary scenario loads. `config/toggles.js` documents which
+> prototypes, conflicting replacement modes, diagnostics, guards, and non-bool
+> fields remain deliberately absent from the card.
 
 ### Recommendation (documentation only — do **not** implement here)
 The field/overlay family is already in good shape: `FIELD_TOGGLE_KEYS` (store) and `FIELD_TOGGLE_BINDINGS` (dom) are kept in **exact 1:1 lockstep** (verified: 32 = 32, no orphan either way). The remaining fragmentation is the **three-prefix / three-dispatch** split:
@@ -99,6 +111,7 @@ These are render-independent: they switch which physics terms the engine integra
 | `t-coupling` | `coupling` | on | `coupling` |
 | `t-damping` | `damping` | on | `damping` |
 | `t-genesis` | `genesis` | on | `genesis` |
+| `t-evaporation` | `evaporation` | **off** | `evaporation` |
 | `t-gauss` | `gauss_projection` | on | `gauss_projection` |
 | `t-forces` | `forces` | on | `forces` |
 | `t-gravity` | `gravity` | **off** | `gravity` |
@@ -110,9 +123,44 @@ These are render-independent: they switch which physics terms the engine integra
 | `t-dual` | `dual_substrate` | **off** | `dual_substrate` |
 | `t-confinement` | `confinement` | **off** | `confinement` (linear colour string; requires `color_forces`) |
 | `t-color-forces` | `color_forces` | **off** | `color_forces` |
-| `t-strong-force` | `strong_force` | **off** | `strong_force` (GPU-only) |
-| `t-exchange` | `exchange_force` | **off** | `exchange_force` (GPU-only) |
+| `t-strong-force` | `strong_force` | **off** | `strong_force` |
+| `t-exchange` | `exchange_force` | **off** | `exchange_force` |
 | `t-weak` | `weak_transmutation` | **off** | `weak_transmutation` |
+
+Dual Substrate is safe to change after a scenario has started. Enabling it
+splits the current observable flux and wave velocity evenly into left/right
+registers, preserving total `J` with zero introduced chirality. Disabling it
+recombines those registers and clears the dormant dual state, so neither
+transition erases or resurrects field energy.
+
+The **Enable all physics** action is a named, maximal compatible profile, not a
+blind sweep of every engine boolean. It explicitly enables 24 visible physics
+terms in prerequisite-first order and applies them as one bridge transaction.
+It explicitly clears four non-members so a pre-existing alternate profile
+cannot leave an invalid combination:
+
+- `langevin`: single-substrate alternate mode; conflicts with dual-substrate
+  Larmor operation.
+- `absorbing_boundary`: boundary-specific imposed sponge, not universal physics.
+- `knot_tracking`: observation-only telemetry.
+- `de_broglie_clock`: scenario-owned mass-term experiment with no card checkbox.
+
+The worker performs one invariant pass and one authoritative toggle readback for
+the whole action. The action suspends scenario qualification; **Restore scenario
+profile** reruns the scenario's canonical C++ isolation and seed path.
+
+### Visible advanced/research terms
+
+| DOM id | Toggle key | Enable-all profile |
+|--------|------------|--------------------|
+| `t-pair-production` | `pair_production` | on |
+| `t-langevin` | `langevin` | excluded/off |
+| `t-triad` | `triad_binding` | on |
+| `t-latency-field` | `latency_field` | on |
+| `t-exact-dual-gauss` | `exact_dual_gauss` | on |
+| `t-symmetric-move` | `symmetric_movement_order` | on |
+| `t-absorbing` | `absorbing_boundary` | excluded/off |
+| `t-knot-tracking` | `knot_tracking` | excluded/off |
 
 ---
 
@@ -128,7 +176,7 @@ Buttons in the overlay panel (`template.js`) that are **not** `fieldFlags` keys 
 | `#flux-slice-axis-xz` | enable/disable the xz mid-plane (y=L/2) of the slice | `bindings.js` → `viewportAdapter.setFluxSliceAxisEnabled(1, on)` |
 | `#flux-slice-axis-yz` | enable/disable the yz mid-plane (x=L/2) of the slice | `bindings.js` → `viewportAdapter.setFluxSliceAxisEnabled(0, on)` |
 
-`#toggle-flux-volume` / `#toggle-flux-slice` participate in the `volume` column's clear-button / badge accounting (`COL_TO_TOGGLES.volume`) but use button `.active` class as their only state (no store key). The three `#flux-slice-axis-*` buttons are sub-modifiers of the slice (default all-on) and are deliberately **excluded** from `COL_TO_TOGGLES` so they neither inflate the column badge nor get swept by the column clear. The Flux Volume card's Opacity / Shape / Point Size / Threshold controls (`wire.js::wireFluxVolume`) fan out to the slice mesh too (`viewport.setFluxSlice{Opacity,Shape,PointScale,Threshold}`). The W3-2 test scopes to `fieldFlags`-backed toggles and so does not assert these; `flux-slice-axes.spec.js` covers the slice + axis buttons + shared controls.
+`#toggle-flux-volume` / `#toggle-flux-slice` participate in the `volume` column's clear-button / badge accounting (`COL_TO_TOGGLES.volume`) but use button `.active` class as their only state (no store key). The three `#flux-slice-axis-*` buttons are sub-modifiers of the slice (default all-on) and are deliberately **excluded** from `COL_TO_TOGGLES` so they neither inflate the column badge nor get swept by the column clear. The Flux Volume card's Opacity / Shape / Point Size / Threshold controls (`wire.js::wireFluxVolume`) fan out to the slice mesh too (`viewport.setFluxSlice{Opacity,Shape,PointScale,Threshold}`). Threshold is a relative current-peak fraction in `[0, 0.5]`; zero includes every available voxel independently of Point Size. The W3-2 test scopes to `fieldFlags`-backed toggles and so does not assert these; `flux-slice-axes.spec.js` covers the slice + axis buttons + shared controls.
 
 ---
 

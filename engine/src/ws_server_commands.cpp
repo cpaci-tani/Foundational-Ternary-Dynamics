@@ -767,7 +767,8 @@ bool handle_command(const std::string& json, SOCKET client,
                 client, json_error("unsupported toggle update: " + valid_error, cmd),
                 request_id);
         }
-        rb->toggles = staged;
+        if (name == "dual_substrate") rb->set_dual_substrate(value);
+        else rb->toggles = staged;
         telemetry.on_state_mutated(*rb);
         return true;  // Fire-and-forget
     }

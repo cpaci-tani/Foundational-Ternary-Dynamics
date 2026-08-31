@@ -207,6 +207,19 @@ The controls panel (bottom-right by default) exposes ~20 physics toggles. Each c
 | **exchange_force** | Pauli-exclusion repulsion between same-spin particles | OFF |
 | **latency_field** | Poisson-based gravity potential ∇²L = 4πGρ | OFF |
 
+Dual Substrate may be switched while a scenario is live. Turning it on divides
+the current observable field symmetrically between the left/right registers;
+turning it off recombines them. Both transitions preserve the displayed field
+rather than restarting or clearing it.
+
+**Enable all physics:** The button at the bottom of the Physics Toggles card
+applies one maximal compatible 24-term profile. It enables prerequisites before
+dependents and intentionally leaves out the conflicting single-substrate
+Langevin mode, the boundary-specific absorbing sponge, observation-only knot
+tracking, and the scenario-owned de Broglie clock. Because this changes the
+scenario's scientific record, qualification is suspended until **Restore
+scenario profile** reloads the canonical scenario setup and seed.
+
 **Pro tip:** For most pedagogy, disable `damping` and enable `genesis` — this lets the energy sit there and form structure. For physics-accurate simulations, leave defaults.
 
 **Scenario overrides:** Some scenarios (e.g. `quantum-casimir` disables `genesis`, `s0-seed-beta-decay` enables `weak_transmutation` + `dual_substrate`). After loading a scenario, check the toggles panel to see what got flipped.

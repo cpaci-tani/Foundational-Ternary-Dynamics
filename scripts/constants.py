@@ -368,6 +368,23 @@ M_PLANCK = 1.220890e19  # GeV
 # Electron mass derivation
 M_ELECTRON_DERIVED = M_PLANCK * np.sqrt(2*np.pi) * (N_base**2/N_c) * ALPHA**11
 
+# Default electron-primary dimensional map (FTD-0137 §4.5).
+# These are conditional SI outputs of the [SMC] mass ladder, not CODATA
+# replacements and not ontic inputs to the dimensionless engine.
+M_ELECTRON_PHYS_MEV = 0.51099895
+HBAR_C_MEV_M = 197.3269804e-15
+C_PHYS_M_S = 2.99792458e8
+FTD_ELECTRON_MASS_LADDER_K = np.sqrt(2*np.pi) * (N_base**2/N_c)
+FTD_ELECTRON_PLANCK_RATIO = FTD_ELECTRON_MASS_LADDER_K * ALPHA**11
+ELECTRON_REDUCED_COMPTON_M = HBAR_C_MEV_M / M_ELECTRON_PHYS_MEV
+FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M = (
+    ELECTRON_REDUCED_COMPTON_M * FTD_ELECTRON_PLANCK_RATIO
+)
+FTD_ELECTRON_PRIMARY_PLANCK_TIME_S = (
+    FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M / C_PHYS_M_S
+)
+FTD_TICK_S = FTD_ELECTRON_PRIMARY_PLANCK_TIME_S / np.sqrt(3.0)
+
 # Conversion factor
 MEV_PER_GEV = 1000
 

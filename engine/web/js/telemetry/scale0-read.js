@@ -51,6 +51,7 @@ export function isCurrentScale0AuditEnergy(diagMeta, auditMeta) {
 export function readScale0TotalEnergy(diag, audit, {
     diagMeta = null,
     auditMeta = null,
+    allowAuditSampleHold = false,
 } = {}) {
     if (isCurrentScale0AuditEnergy(diagMeta, auditMeta)
         && Number.isFinite(audit?.dynamicEnergy)) {
@@ -59,6 +60,15 @@ export function readScale0TotalEnergy(diag, audit, {
     if (isCurrentScale0TelemetryMeta(diagMeta)
         && Number.isFinite(diag?.dynamicEnergy)) {
         return diag.dynamicEnergy;
+    }
+    // Status/readout surfaces may retain the newest independently current
+    // audit observation between expensive audit reductions. This is a
+    // zero-order sample hold, not a relabelling: callers opting in must expose
+    // the audit sample tick separately from the faster diagnostics tick.
+    if (allowAuditSampleHold
+        && isCurrentScale0TelemetryMeta(auditMeta)
+        && Number.isFinite(audit?.dynamicEnergy)) {
+        return audit.dynamicEnergy;
     }
     return null;
 }

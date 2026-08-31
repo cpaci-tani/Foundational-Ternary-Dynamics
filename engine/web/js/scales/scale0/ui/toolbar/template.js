@@ -28,7 +28,7 @@ export function getScale0LatticeSizeToolbarTemplate() {
                 <option value="181" data-native-only disabled>181 · Native GPU</option>
             </select>
             <label class="tb-label" for="flux-boundary-mode" style="margin-left:6px">Boundary</label>
-            <select class="tb-select" id="flux-boundary-mode" title="Complete six-face transported-dynamics boundary: Dispersal removes manifested face records and supplies an outward-only field trace without damping the strict interior; Reflective uses a Neumann field mirror and elastic particle bounce; Periodic identifies every pair of opposite faces.">
+            <select class="tb-select" id="flux-boundary-mode" title="Complete six-face transported-dynamics boundary: Dispersal keeps every face record exact void and uses a normalized target-local one-way stencil closure, so nothing is stored or rendered at the edge; Reflective uses a Neumann field mirror and elastic particle bounce; Periodic identifies every pair of opposite faces.">
                 <option value="2" selected>Dispersal</option>
                 <option value="1">Reflective</option>
                 <option value="0">Periodic</option>

@@ -52,7 +52,7 @@ test('status and Thermo never reinterpret diagnostics.totalEnergy as dynamic ene
             const makeEl = (tag = 'span') => document.createElement(tag);
             const statusEnergy = makeEl();
             updateDiagnosticsAndPanels({
-                frameCount: 3,
+                frameCount: 2,
                 bridge: { latticeSize: 3 },
                 activeTab: 'none',
                 isPanelVisible: () => false,
@@ -84,7 +84,14 @@ test('status and Thermo never reinterpret diagnostics.totalEnergy as dynamic ene
             const thermoTotal = totalRow?.querySelector('span:last-child')?.textContent ?? null;
             api.dispose();
             host.remove();
-            return { status: statusEnergy.textContent, thermo: thermoTotal };
+            return {
+                status: statusEnergy.textContent,
+                thermo: thermoTotal,
+                sampleHeld: statusEnergy.dataset.sampleHeld,
+                sampleTick: statusEnergy.dataset.sampleTick,
+                stateTick: statusEnergy.dataset.stateTick,
+                tooltip: statusEnergy.dataset.uiTooltip,
+            };
         }
 
         try {
@@ -137,7 +144,6 @@ test('status and Thermo never reinterpret diagnostics.totalEnergy as dynamic ene
     for (const unavailable of [
         result.baselineOnly,
         result.nonfiniteDynamic,
-        result.olderAudit,
     ]) {
         expect(unavailable.status).toBe('—');
         expect(unavailable.thermo).toBe('—');
@@ -146,8 +152,16 @@ test('status and Thermo never reinterpret diagnostics.totalEnergy as dynamic ene
         expect(unavailable.thermo).not.toContain('321');
         expect(unavailable.thermo).not.toContain('654');
     }
+    expect(result.olderAudit.status).toContain('654');
+    expect(result.olderAudit.thermo).toBe('—');
+    expect(result.olderAudit.sampleHeld).toBe('true');
+    expect(result.olderAudit.sampleTick).toBe('9');
+    expect(result.olderAudit.stateTick).toBe('10');
+    expect(result.olderAudit.tooltip).toContain('audit sample t=9 is held');
     expect(result.exactDiagZero.status).toContain('0 sim');
     expect(result.exactDiagZero.thermo).toBe('0.000');
+    expect(result.exactDiagZero.sampleHeld).toBe('false');
     expect(result.exactAuditZero.status).toContain('0 sim');
     expect(result.exactAuditZero.thermo).toBe('0.000');
+    expect(result.exactAuditZero.sampleHeld).toBe('false');
 });

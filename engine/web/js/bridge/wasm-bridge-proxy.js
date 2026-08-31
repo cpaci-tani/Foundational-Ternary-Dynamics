@@ -245,7 +245,7 @@ export class WasmBridgeProxy {
         this._digestReq = 0;
 
         // CLASSIC worker (Emscripten module via importScripts). No { type: 'module' }.
-        this._worker = new Worker(new URL('./wasm-bridge.worker.js?v=7', import.meta.url));
+        this._worker = new Worker(new URL('./wasm-bridge.worker.js?v=9', import.meta.url));
         this._worker.onmessage = (e) => this._onMessage(e.data);
         // A worker-level error (e.g. importScripts NetworkError loading the
         // -pthread MT glue) surfaces here. If it happens before the worker has
@@ -1196,6 +1196,30 @@ export class WasmBridgeProxy {
 
     // ── Mutators (the inject UI / param sliders call these on the bridge) ────
     setToggle(k, v) { this._toggles[k] = v; this._cmd('setToggle', k, v); }
+    /**
+     * Apply a dependency-ordered toggle profile in one worker transaction.
+     * The ready path yields one invariant pass and one authoritative readback;
+     * pre-ready/configuration-barrier paths retain the established FIFO queue.
+     */
+    setToggles(entries) {
+        const normalized = Array.isArray(entries)
+            ? entries
+                .filter((entry) => Array.isArray(entry) && typeof entry[0] === 'string')
+                .map(([key, value]) => [key, !!value])
+            : [];
+        if (!normalized.length) return;
+        for (const [key, value] of normalized) this._toggles[key] = value;
+        if (!this._ready || this._terminated || this._disposing
+            || this._appliedConfigurationToken !== this._pendingConfigurationToken) {
+            for (const [key, value] of normalized) this._cmd('setToggle', key, value);
+            return;
+        }
+        this._worker.postMessage({
+            type: 'toggleBatch',
+            entries: normalized,
+            configurationToken: this._pendingConfigurationToken,
+        });
+    }
     setDt(...a) { this._cmd('setDt', ...a); }
     // setOmega0/setLangevinTemp are fire-and-forget commands to the worker's
     // RenderBridge (no synchronous round trip is possible). getOmega0/

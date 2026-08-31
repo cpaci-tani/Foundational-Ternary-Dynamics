@@ -208,7 +208,7 @@ const SCALE0_SPECIFIC_GUIDES = Object.freeze({
         summary: 'A transverse native-wave packet for testing finite-box boundary algorithms.',
         body: [
             'This scenario isolates the production wave map: no matter creation, forces, damping, Gauss projection, or research extensions are active. The seed is a compact, divergence-free discrete curl traveling in +x.',
-            'Periodic evolution conserves the exact kick-drift Hamiltonian. The copied ghost shell reverses flux momentum and conserves its interior modified Hamiltonian. Dispersal retires manifested records on first face contact and reconstructs each face field from its corresponding strict-interior value with an outward-only first-order characteristic trace; it never reads or re-injects an opposite face and does not grade the interior. The fixed packet keeps reverse momentum and residual field norm below 1%, but this local closure is not an exact all-angle transparent-boundary theorem.',
+            'Periodic evolution conserves the exact kick-drift Hamiltonian. The copied ghost shell reverses flux momentum and conserves its interior modified Hamiltonian. Dispersal retires manifested records on first face contact, keeps every outer-face record exact void, and evaluates a normalized target-local one-way stencil closure; it never reads or re-injects an opposite face and does not grade the interior. The fixed packet keeps reverse momentum and residual field norm below 1% at tick 90 and remains bounded with negligible residual through tick 4096, but this local closure is not an exact all-angle transparent-boundary theorem.',
         ],
         notation: ['J = ∇_h×(ψ e_x)', 'H_h (kick–drift)', 'P_x', 'c = 1/√3'],
     },

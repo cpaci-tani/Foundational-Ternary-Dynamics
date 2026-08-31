@@ -54,6 +54,9 @@ __global__ void phase_read_kernel(
     const double* __restrict__ flux_x,
     const double* __restrict__ flux_y,
     const double* __restrict__ flux_z,
+    const double* __restrict__ wave_x,
+    const double* __restrict__ wave_y,
+    const double* __restrict__ wave_z,
     const int8_t* __restrict__ state,
     const double* __restrict__ vel_x,
     const double* __restrict__ vel_y,
@@ -65,6 +68,7 @@ __global__ void phase_read_kernel(
     bool do_wave,
     bool do_coupling,
     uint8_t bcc_stencil_mode,   // Cluster A FTD-0093: 0=FULL, 1=SC, 2=FCC, 3=BCC
+    bool dispersal_boundary,
     // FTD-0271/0281 de Broglie clock (GPU port, 2026-06-20). Mirrors the CPU
     // branch in engine/src/render_bridge_phases/phase_read.cpp:193-200.
     bool do_db_clock,
@@ -93,7 +97,17 @@ __global__ void phase_read_kernel(
         // See engine/include/ftd/sublattice.h for the closed-form weights and
         // Watson-integral pedigree (I_1_BCC = G*²/(2π)).
         double lap_x = 0.0, lap_y = 0.0, lap_z = 0.0;
-        if (bcc_stencil_mode == 0u) {
+        const bool dispersal_near_shell = dispersal_boundary
+            && (x <= 1 || x >= L - 2 || y <= 1 || y >= L - 2
+                || z <= 1 || z >= L - 2);
+        if (dispersal_near_shell) {
+            lap_x = dispersal_laplacian_component(
+                flux_x, wave_x, i, x, y, z, L, bcc_stencil_mode);
+            lap_y = dispersal_laplacian_component(
+                flux_y, wave_y, i, x, y, z, L, bcc_stencil_mode);
+            lap_z = dispersal_laplacian_component(
+                flux_z, wave_z, i, x, y, z, L, bcc_stencil_mode);
+        } else if (bcc_stencil_mode == 0u) {
             // FULL (legacy fast path)
             int xp = idx3d(x+1, y, z, L);
             int xm = idx3d(x-1, y, z, L);
@@ -608,6 +622,7 @@ __global__ void evaporation_kernel(
 
 void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
                         uint8_t bcc_stencil_mode,
+                        bool dispersal_boundary,
                         bool do_db_clock, bool do_db_clock_coulomb, double omega0,
                         bool period2_floquet, bool bcc_time_floquet) {
     const cudaStream_t stream = bufs.stream;
@@ -617,10 +632,11 @@ void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
 
     phase_read_kernel<<<grid, block, 0, stream>>>(
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+        bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
         bufs.d_state,
         bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
         bufs.d_delta_j_x, bufs.d_delta_j_y, bufs.d_delta_j_z,
-        L, do_wave, do_coupling, bcc_stencil_mode,
+        L, do_wave, do_coupling, bcc_stencil_mode, dispersal_boundary,
         do_db_clock, do_db_clock_coulomb, omega0, bufs.d_phi_coulomb,
         period2_floquet, bcc_time_floquet, bufs.d_tick
     );

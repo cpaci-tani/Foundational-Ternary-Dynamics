@@ -109,13 +109,21 @@ static void configure_reflective_move(RenderBridge& rb) {
 // fold is byte-identical either way -- the TRAJECTORY did not move. See the
 // pin history in test_render_bridge_golden.cpp for the full decomposition.
 static constexpr std::uint64_t GOLDEN_REFLECTIVE_FLUX  = 0x9fc68a69b18104bbULL;
-// RE-PINNED 2026-08-30 -- Dispersal is a one-way six-face outflow boundary.
+// RE-PINNED 2026-08-30 -- Dispersal is an exact-zero-shell boundary with a
+// normalized target-local one-way stencil closure.
 // The retired D=min(6,max(2,L/4)) ramp incorrectly damped computed interior;
 // the intermediate exact-zero shell behaved as a Dirichlet wall and reversed
-// 77% of the fixed probe momentum. Dispersal now reconstructs a first-order
-// outward field trace from strict-interior values and excises non-field face
-// records. The separate absorbing_boundary profile retains the optional sponge.
-static constexpr std::uint64_t GOLDEN_DISPERSAL_FLUX   = 0xcd939857a0119c1fULL;
+// 77% of the fixed probe momentum. A later shared transient ghost passed the
+// 90-tick probe but grew to ~1e92 by tick 4096. The current operator leaves the
+// shell exact void and computes virtual samples per target, normalized over its
+// outward Moore-stencil measure. CPU/CUDA both finish the fixed L=33 tick-4096
+// probe at norm 1.85e-8 from 5.52 initially. The separate absorbing_boundary
+// retains the optional sponge. Only the shell and its first interior layer use
+// the closure; the strict core stays on the byte-identical fast stencil path.
+// Previous settled-zero/shared-ghost pin: 0x282494fddc000540. Intermediate
+// all-sites generic-loop pin before restoring the strict-core fast path:
+// 0xcd611cb8fce1df15.
+static constexpr std::uint64_t GOLDEN_DISPERSAL_FLUX   = 0xd3e4311fb316bddeULL;
 static constexpr std::uint64_t GOLDEN_ABSORBING        = 0xe43c4afbf65dc949ULL;
 static constexpr std::uint64_t GOLDEN_REFLECTIVE_MOVE  = 0x6762d0e814750b99ULL;
 
@@ -134,6 +142,13 @@ void test_boundary_mode_goldens() {
          GOLDEN_REFLECTIVE_FLUX},
         {"flux_boundary=Dispersal",
          [](RenderBridge& rb) { rb.toggles.flux_boundary = FluxBoundaryMode::Dispersal; },
+         nullptr,
+         GOLDEN_DISPERSAL_FLUX},
+        {"Dispersal ignores absorbing_boundary sponge",
+         [](RenderBridge& rb) {
+             rb.toggles.flux_boundary = FluxBoundaryMode::Dispersal;
+             rb.toggles.absorbing_boundary = true;
+         },
          nullptr,
          GOLDEN_DISPERSAL_FLUX},
         {"absorbing_boundary=true",

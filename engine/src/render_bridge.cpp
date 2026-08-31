@@ -599,6 +599,40 @@ void RenderBridge::sync_observable() {
   mark_fields_dirty_from_voxels();
 }
 
+void RenderBridge::set_dual_substrate(bool enabled) {
+  assert_sim_thread();
+  if (toggles.dual_substrate == enabled) return;
+
+  // Materialize the authoritative backend before changing its register model.
+  // The mutable accessor also marks the host record dirty so a GPU backend
+  // uploads this migration before its next tick.
+  auto& records = voxels();
+  if (enabled) {
+    // The unique observation-preserving neutral lift is the symmetric split:
+    // J_L = J_R = J/2 and W_L = W_R = W/2. It introduces no artificial
+    // chirality or relative-mode energy while preserving both observables.
+    for (auto& v : records) {
+      v.flux_L = v.flux * 0.5;
+      v.flux_R = v.flux * 0.5;
+      v.wave_vel_L = v.wave_vel * 0.5;
+      v.wave_vel_R = v.wave_vel * 0.5;
+    }
+  } else {
+    // Preserve the settled dual observables and erase dormant registers so a
+    // later re-enable lifts the then-current single field, never stale history.
+    for (auto& v : records) {
+      v.flux = v.flux_L + v.flux_R;
+      v.wave_vel = v.wave_vel_L + v.wave_vel_R;
+      v.flux_L = {};
+      v.flux_R = {};
+      v.wave_vel_L = {};
+      v.wave_vel_R = {};
+    }
+  }
+  toggles.dual_substrate = enabled;
+  mark_fields_dirty_from_voxels();
+}
+
 void RenderBridge::create_entangled_pair(int x, int y, int z, const Vec3& flux_val) {
   ::ftd::create_entangled_pair_cpu(*this, x, y, z, flux_val);
 }
@@ -931,9 +965,9 @@ void RenderBridge::tick() {
   }
 
   // Boundary preparation precedes every stencil read. Reflective mode refreshes
-  // the Neumann ghost shell; Dispersal reconstructs an outward-only ghost trace
-  // from the corresponding strict-interior values. Neither mode reads an
-  // opposite face, and neither changes a strictly interior voxel.
+  // the Neumann ghost shell; Dispersal keeps the shell exact void while
+  // phase_read evaluates a target-local outward closure. Neither mode reads an
+  // opposite face, and neither grades a strictly interior voxel.
   prepare_flux_boundary(*this);
 
   if (toggles.db_clock_coulomb)
@@ -1061,16 +1095,18 @@ void RenderBridge::tick() {
   if (toggles.strong_stress_energy && toggles.movement)
     complete_strong_energy_step(*this);
 
-  // Rule 5b: Absorbing-boundary sponge — disperse outgoing waves into the void
-  // at the lattice faces. Runs AFTER gauss/forces/movement (the last flux
-  // writers) so the damped edge shell is NOT refilled by the Gauss projection.
-  // Gated; default off → golden-tick hash + conservation tests unchanged.
-  if (toggles.absorbing_boundary)
+  // Rule 5b: Optional legacy absorbing sponge. Dispersal is a mutually
+  // exclusive complete-boundary contract: it must never inherit this D-deep
+  // interior damping profile, even if stale configuration leaves both controls
+  // enabled. Other boundary modes retain the independently gated sponge.
+  if (toggles.absorbing_boundary
+      && toggles.flux_boundary != FluxBoundaryMode::Dispersal)
     apply_absorbing_boundary(*this);
 
-  // Rule 5c: authoritative transported-dynamics boundary law across all six
-  // faces. Periodic is handled by the lattice neighbour tables. Reflective /
-  // Dispersal re-impose their mirror/outflow ghost shells after local writers.
+  // Rule 5c: authoritative settled boundary law across all six faces. Periodic
+  // is handled by the lattice neighbour tables. Reflective re-imposes its mirror
+  // shell; Dispersal deletes the complete outer shell. Its target-local virtual
+  // samples are never stored, rendered, or available to re-emit energy.
   // periodic_axis is orientation metadata only, so it never changes this pass.
   if (toggles.flux_boundary == FluxBoundaryMode::Reflective)
     apply_reflective_flux_boundary(*this);

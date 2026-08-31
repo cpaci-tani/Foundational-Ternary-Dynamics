@@ -55,6 +55,10 @@ static const std::unordered_map<std::string, RbBoolPTM>& rb_toggle_map() {
 }
 
 static void set_toggle(ftd::RenderBridge& rb, const std::string& name, bool value) {
+    if (name == "dual_substrate") {
+        rb.set_dual_substrate(value);
+        return;
+    }
     auto it = rb_toggle_map().find(name);
     if (it != rb_toggle_map().end()) rb.toggles.*(it->second) = value;
 }
@@ -244,8 +248,8 @@ static double get_langevin_gamma(ftd::RenderBridge& rb) { return rb.toggles.lang
 static double get_physical_time(ftd::RenderBridge& rb) { return rb.physical_time(); }
 
 // Transport boundary mode: 0=Periodic, 1=Reflective (Neumann field shell plus
-// elastic manifested-site bounce), 2=Dispersal (one-way field trace plus
-// manifested/non-field face-record excision).
+// elastic manifested-site bounce), 2=Dispersal (exact-zero face records plus
+// a normalized target-local one-way closure during stencil evaluation).
 static void set_flux_boundary(ftd::RenderBridge& rb, int mode) {
     if (mode < 0 || mode > 2) return;
     rb.toggles.flux_boundary = static_cast<ftd::FluxBoundaryMode>(mode);

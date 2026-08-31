@@ -24,9 +24,27 @@ test.describe('Scale 0 lattice-size and boundary toolbar audit gate', () => {
             limits.syncScale0LatticeSizeAvailability(true);
             const nativeSizes = snapshotSizes();
             limits.syncScale0LatticeSizeAvailability(false);
+            const core = window.__ftdCtx?.viewport?._sceneCore;
+            const boundaryExtents = {
+                min: [Infinity, Infinity, Infinity],
+                max: [-Infinity, -Infinity, -Infinity],
+            };
+            core?.wireframe?.traverse?.((child) => {
+                const positions = child.geometry?.getAttribute?.('position');
+                if (!positions) return;
+                for (let i = 0; i < positions.count; i++) {
+                    for (let axis = 0; axis < 3; axis++) {
+                        const value = positions.getComponent(i, axis);
+                        boundaryExtents.min[axis] = Math.min(boundaryExtents.min[axis], value);
+                        boundaryExtents.max[axis] = Math.max(boundaryExtents.max[axis], value);
+                    }
+                }
+            });
             return {
                 wasmSizes,
                 nativeSizes,
+                latticeSize: core?._latticeSize,
+                boundaryExtents,
                 boundaries: [...document.querySelectorAll('#flux-boundary-mode option')].map((option) => ({
                     value: Number(option.value),
                     label: option.textContent?.trim(),
@@ -64,6 +82,12 @@ test.describe('Scale 0 lattice-size and boundary toolbar audit gate', () => {
             { value: 113, label: '113', disabled: false },
             { value: 145, label: '145', disabled: false },
             { value: 181, label: '181', disabled: false },
+        ]);
+        expect(result.boundaryExtents.min).toEqual([0, 0, 0]);
+        expect(result.boundaryExtents.max).toEqual([
+            result.latticeSize,
+            result.latticeSize,
+            result.latticeSize,
         ]);
         expect(result.boundaries).toEqual([
             { value: 2, label: 'Dispersal' },
@@ -773,6 +797,74 @@ test.describe('Scale 0 lattice-size and boundary toolbar audit gate', () => {
         expect(result.resizeCalls).toBe(1);
         expect(result.bridgeSize).toBe(33);
         expect(result.generation).toBe(43);
+        expect(realErrors(consoleErrors)).toEqual([]);
+    });
+});
+
+test.describe('Scale 0 Dispersal long-horizon browser gate', () => {
+    test.beforeEach(async ({ page }, testInfo) => {
+        testInfo.setTimeout(180_000);
+        page.setDefaultTimeout(30_000);
+        await page.addInitScript(() => {
+            // This regression needs synchronous deterministic stepping and a
+            // same-turn sampler read, so exercise the deployed main-thread
+            // WASM bridge rather than the self-ticking worker proxy.
+            window.__ftdWasmWorker = false;
+            window.__ftdTelemetryOnDemand = false;
+        });
+        await gotoAndReady(page, { path: '/?engine=wasm', timeout: 90_000 });
+    });
+
+    test('Dispersal clears the L=33 packet without an edge-growing mode at tick 4096', async ({ page }) => {
+        const consoleErrors = attachConsoleWatcher(page);
+        const result = await page.evaluate(() => {
+            const bridge = window._ftdBridge;
+            if (!bridge?.setupScenario || !bridge?.setFluxBoundaryMode
+                || !bridge?.getFluxVolume || !bridge?.tick) {
+                throw new Error('direct WASM Scale-0 bridge surface unavailable');
+            }
+            bridge.setupScenario('flux-pulse');
+            bridge.setFluxBoundaryMode(2);
+            const L = bridge.latticeSize;
+            if (L !== 33) throw new Error(`expected L=33, got ${L}`);
+            const initial = Array.from(bridge.getFluxVolume());
+            for (let tick = 0; tick < 4096; tick++) bridge.tick();
+            const settled = Array.from(bridge.getFluxVolume());
+            const maximum = (values) => values.reduce(
+                (out, value) => Math.max(out, Math.abs(value)), 0,
+            );
+            let shellMax = 0;
+            let shellNonzero = 0;
+            for (let z = 0; z < L; z++) {
+                for (let y = 0; y < L; y++) {
+                    for (let x = 0; x < L; x++) {
+                        if (x !== 0 && x !== L - 1 && y !== 0 && y !== L - 1
+                            && z !== 0 && z !== L - 1) continue;
+                        // getFluxVolume is transposed for JS: z-major, then y, x.
+                        const value = Math.abs(settled[z * L * L + y * L + x]);
+                        shellMax = Math.max(shellMax, value);
+                        if (value !== 0) shellNonzero += 1;
+                    }
+                }
+            }
+            return {
+                latticeSize: L,
+                initialMax: maximum(initial),
+                finalMax: maximum(settled),
+                shellMax,
+                shellNonzero,
+                tick: bridge.getDiagnostics?.()?.tick,
+            };
+        });
+
+        expect(result.latticeSize).toBe(33);
+        expect(result.tick).toBe(4096);
+        expect(result.initialMax).toBeGreaterThan(0.1);
+        expect(Number.isFinite(result.finalMax)).toBe(true);
+        expect(result.finalMax).toBeLessThan(1e-4);
+        expect(result.finalMax).toBeLessThan(result.initialMax);
+        expect(result.shellMax).toBe(0);
+        expect(result.shellNonzero).toBe(0);
         expect(realErrors(consoleErrors)).toEqual([]);
     });
 });

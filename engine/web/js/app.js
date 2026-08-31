@@ -16,7 +16,7 @@ import { getCategories, getMoleculesByCategory } from './molecules.js';
 import { debugLog } from './core/log.js';
 
 // ── Scale Controllers (extracted from inline code) ─────────────────
-import * as Scale0Controller from './scales/scale0/controller.js?v=37';
+import * as Scale0Controller from './scales/scale0/controller.js?v=44';
 import * as Scale1Controller from './scales/scale1/controller.js';
 import * as Scale2Controller from './scales/scale2/controller.js';
 import * as Scale3Controller from './scales/scale3/controller.js';
@@ -49,7 +49,7 @@ import { initTimePanel } from './scales/scale0/ui/overlays/time-panel.js';
 import { initThermoPanel } from './scales/scale0/ui/overlays/thermo-panel.js?v=3';
 import { initDispersionPanel } from './scales/scale0/ui/overlays/dispersion-panel.js';
 import { initKnotsPanel } from './scales/scale0/ui/overlays/knots-panel.js';
-import { initScaleContextPanel } from './scales/scale0/ui/overlays/scale-context-panel.js';
+import { initScaleContextPanel } from './scales/scale0/ui/overlays/scale-context-panel.js?v=3';
 import { initSettingsModal } from './ui/components/settings-modal/component.js?v=2';
 // Wire / boot helpers extracted per refactoring-analyst RF-9 (partial).
 import { wireKeyboard as wireKeyboardExternal } from './app-wire/keyboard.js';
@@ -745,8 +745,12 @@ function animate(now) {
 }
 
 const _panelUpdateIntervalMs = Object.freeze({
-    diagnostics: 100,
-    charts: 100,
+    // Components are source-stamp dirty-gated, so a 30 Hz presentation pass
+    // does not redraw unchanged telemetry. It does ensure floated panels and
+    // Scales 1–3 consume a newly completed sample within one display frame
+    // instead of waiting behind the former 100 ms (10 Hz) cap.
+    diagnostics: 33,
+    charts: 33,
     // The grid's visible sparklines must consume every published telemetry
     // sample. 125 ms made them redraw at ~8 Hz while Scale 0 publishes at
     // display-refresh / 3 (~20-24 Hz), producing the visibly stepped motion

@@ -352,13 +352,6 @@ export const LATTICE_TO_SOLAR_MASS = 50.0;
 // the Keplerian G in heliocentric units. mock-scale4.js: use this
 // when running orbital-period-faithful demos.
 export const G_HELIOCENTRIC = 4.0 * Math.PI * Math.PI;
-// FTD tick in seconds: 1 tick = ℓ_P/(√3·c) = t_P/√3. From the [SELECTION]
-// lattice speed c_lat = 1/√3 (FTD-0407 — not CFL-forced; the production
-// stencil's true ceiling is c ≤ √3/2) and a_phys ≡ ℓ_P: physical
-// c = c_lat·(a_phys/t_phys)
-// forces t_phys = ℓ_P/(√3·c). Distinct from PLANCK_TIME_S = ℓ_P/c = t_P.
-// Use this when converting tick counts to physical seconds.
-export const FTD_TICK_S = 5.391247e-44 / Math.sqrt(3.0);
 // Bohr-radius conversion: voxels-per-Bohr divided by Bohr-meters-per-Bohr.
 // Multiply lattice positions by this to get meters in Bohr-radius units.
 // R_BOHR is the FTD-natural Bohr radius (lattice voxels); BOHR_RADIUS_M
@@ -379,6 +372,26 @@ export const J_PER_EV         = 1.602176634e-19; // joules per electron-volt
 export const C_MS             = 2.99792458e8;    // speed of light (m/s)
 export const HBAR_C_MEV_M     = HBAR_C_MEV_FM * 1e-15; // hbar*c (MeV*m) = 197.327 MeV*fm, CODATA 2022
 export const GYR_S            = 3.15576e16;      // 1 Gyr in seconds (Julian) — for GRB time-of-flight
+
+// ── Electron-primary dimensional map (FTD-0137 §4.5) ───────────────
+// The default FTD gauge imports {ℏ, c, m_e} and applies the dimensionless
+// ladder m_e/m_P = K·α^11, K = √(2π)·16/3. The resulting Planck length/time
+// are CONDITIONAL FTD outputs ([SMC] with a [SELECTION] in K), not replacements
+// for the empirical CODATA references PLANCK_LENGTH_M / PLANCK_TIME_S above.
+// Keeping both sets named prevents the former bug where the dashboard silently
+// used the CODATA endpoint while labelling it the electron-primary prediction.
+export const FTD_ELECTRON_MASS_LADDER_K = Math.sqrt(2.0 * Math.PI) * (N_BASE * N_BASE / N_C);
+export const FTD_ELECTRON_PLANCK_RATIO = FTD_ELECTRON_MASS_LADDER_K * Math.pow(ALPHA, 11);
+export const ELECTRON_REDUCED_COMPTON_M = HBAR_C_MEV_M / M_E_PHYS;
+export const FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M =
+    ELECTRON_REDUCED_COMPTON_M * FTD_ELECTRON_PLANCK_RATIO;
+export const FTD_ELECTRON_PRIMARY_PLANCK_TIME_S =
+    FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M / C_MS;
+// Selected c_lat = 1/√3 and physical c = c_lat·a_phys/t_phys imply
+// one global tick = a_phys/(√3·c) = t_P^FTD/√3 (FTD-0407).
+export const FTD_TICK_S = FTD_ELECTRON_PRIMARY_PLANCK_TIME_S / Math.sqrt(3.0);
+export const FTD_PLANCK_LENGTH_RELATIVE_ERROR =
+    FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M / PLANCK_LENGTH_M - 1.0;
 
 // ── Coulomb prefactor canonical exports ─────────────────────────────
 // FTD has THREE distinct Coulomb conventions in production paths;

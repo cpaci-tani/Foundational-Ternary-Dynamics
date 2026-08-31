@@ -1,6 +1,6 @@
 import { runScale0PhysicsTicks } from './tick.js';
 import { getPhysicsHarness } from '../../../physics/index.js';
-import { WasmBridgeProxy } from '../../../bridge/wasm-bridge-proxy.js?v=5';
+import { WasmBridgeProxy } from '../../../bridge/wasm-bridge-proxy.js?v=7';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../../constants.js';
 import {
@@ -880,6 +880,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
                     return;
                 }
                 if (syncScale0ToggleUiFromEngine(ctx, viewportAdapter, activeId)) {
+                    ctx.syncScale0AuthoritativeLatticeSize?.(wasmWorker.latticeSize);
                     completeScale0AuthoritativeLoad({
                         scenarioId: activeId,
                         loadGeneration: loadGen,
@@ -1060,6 +1061,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
 
     if (resetTickAccumulator) state.tickAccumulator.reset();
     if (setupOk !== false && canSynchronouslyAcknowledge) {
+        ctx.syncScale0AuthoritativeLatticeSize?.(activeN);
         completeScale0AuthoritativeLoad({
             scenarioId: scenario.id,
             loadGeneration: loadGen,

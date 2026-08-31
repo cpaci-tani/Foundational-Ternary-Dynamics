@@ -115,14 +115,14 @@ test('uniform max pooling retains dense and compact off-stride source coordinate
     expect(result.compact.count).toBeLessThanOrEqual(1728);
 });
 
-test('minimum point size plus zero threshold reveals every available lattice sample', async ({ page }) => {
+test('zero threshold reveals every available lattice sample at every point size', async ({ page }) => {
     await installImportMap(page);
     const result = await page.evaluate(async () => {
         const THREE = await import('three');
         const { ViewportFluxRenderer } = await import(
             '/js/viewport/flux-renderer.js?full-lattice-inspection-test=1'
         );
-        const makeRenderer = (N) => {
+        const makeRenderer = (N, pointScale = 1) => {
             const renderer = new ViewportFluxRenderer({
                 scene: new THREE.Scene(),
                 latticeSize: N,
@@ -134,7 +134,7 @@ test('minimum point size plus zero threshold reveals every available lattice sam
                 writeStreamlinesIntoMesh: () => {},
             });
             renderer.setFluxOrganic(false);
-            renderer.setFluxPointScale(0.1);
+            renderer.setFluxPointScale(pointScale);
             renderer.setFluxThreshold(0);
             return renderer;
         };
@@ -152,21 +152,37 @@ test('minimum point size plus zero threshold reveals every available lattice sam
                 firstColor: Array.from(colors.slice(0, 3)),
                 firstSize: sizes[0],
                 lastSize: sizes[count - 1],
+                minSize: Math.min(...sizes.slice(0, count)),
+                maxSize: Math.max(...sizes.slice(0, count)),
             };
         };
 
         const denseN = 33;
-        const denseRenderer = makeRenderer(denseN);
-        denseRenderer.updateFluxVolume(new Float32Array(denseN ** 3), denseN);
-        const denseInspection = snapshot(denseRenderer);
+        const dense = new Float32Array(denseN ** 3);
+        dense[16 * denseN * denseN + 16 * denseN + 16] = 1;
+        const denseInspections = {};
+        for (const pointScale of [0.1, 1, 3]) {
+            const renderer = makeRenderer(denseN, pointScale);
+            renderer.updateFluxVolume(dense, denseN);
+            denseInspections[String(pointScale)] = snapshot(renderer);
+        }
 
-        // Moving either slider away from its minimum restores the bounded
-        // production path and does not make zero-flux samples visible.
-        denseRenderer.setFluxThreshold(0.0001);
-        denseRenderer.updateFluxVolume(new Float32Array(denseN ** 3), denseN);
-        const normal = {
-            count: denseRenderer._fluxVolume.geometry.drawRange.count,
-            capacity: denseRenderer._fluxVolume.geometry.getAttribute('position').count,
+        // Above zero, threshold is relative to the current peak and the normal
+        // bounded production path resumes. Values exactly at the cutoff stay.
+        const relativeRenderer = makeRenderer(denseN, 1);
+        relativeRenderer.setFluxThreshold(0.5);
+        const relative = new Float32Array(denseN ** 3);
+        relative[0] = 0.49;
+        relative[16 * denseN * denseN + 16 * denseN + 16] = 0.5;
+        relative[relative.length - 1] = 1;
+        relativeRenderer.updateFluxVolume(relative, denseN);
+        const relativeSnapshot = {
+            count: relativeRenderer._fluxVolume.geometry.drawRange.count,
+            capacity: relativeRenderer._fluxVolume.geometry.getAttribute('position').count,
+            sources: Array.from(
+                relativeRenderer._fluxVolume.geometry.getAttribute('sourcePosition').array
+                    .slice(0, relativeRenderer._fluxVolume.geometry.drawRange.count * 3),
+            ),
         };
 
         const compactN = 97;
@@ -181,24 +197,35 @@ test('minimum point size plus zero threshold reveals every available lattice sam
         }, compactN);
 
         return {
-            denseInspection,
-            normal,
+            denseInspections,
+            relativeSnapshot,
             compactInspection: snapshot(compactRenderer),
         };
     });
 
-    expect(result.denseInspection.count).toBe(33 ** 3);
-    expect(result.denseInspection.capacity).toBe(33 ** 3);
-    expect(result.denseInspection.firstSource).toEqual([0.5, 0.5, 0.5]);
-    expect(result.denseInspection.lastSource).toEqual([32.5, 32.5, 32.5]);
-    expect(result.denseInspection.firstColor[0]).toBeGreaterThanOrEqual(0.159);
-    expect(result.denseInspection.firstColor[1]).toBeGreaterThanOrEqual(0.349);
-    expect(result.denseInspection.firstColor[2]).toBeGreaterThanOrEqual(0.549);
-    expect(result.denseInspection.firstSize).toBe(1);
-    expect(result.denseInspection.lastSize).toBe(1);
+    for (const pointScale of ['0.1', '1', '3']) {
+        const inspection = result.denseInspections[pointScale];
+        expect(inspection.count).toBe(33 ** 3);
+        expect(inspection.capacity).toBe(33 ** 3);
+        expect(inspection.firstSource).toEqual([0.5, 0.5, 0.5]);
+        expect(inspection.lastSource).toEqual([32.5, 32.5, 32.5]);
+        expect(inspection.firstColor[0]).toBeGreaterThanOrEqual(0.159);
+        expect(inspection.firstColor[1]).toBeGreaterThanOrEqual(0.349);
+        expect(inspection.firstColor[2]).toBeGreaterThanOrEqual(0.549);
+        expect(inspection.firstSize).toBe(1);
+        expect(inspection.lastSize).toBe(1);
+        expect(inspection.minSize).toBe(1);
+    }
+    expect(result.denseInspections['0.1'].maxSize).toBe(1);
+    expect(result.denseInspections['1'].maxSize).toBe(10);
+    expect(result.denseInspections['3'].maxSize).toBe(30);
 
-    expect(result.normal.count).toBe(0);
-    expect(result.normal.capacity).toBe(12 ** 3);
+    expect(result.relativeSnapshot.count).toBe(2);
+    expect(result.relativeSnapshot.capacity).toBe(12 ** 3);
+    expect(result.relativeSnapshot.sources).toEqual([
+        16.5, 16.5, 16.5,
+        32.5, 32.5, 32.5,
+    ]);
 
     expect(result.compactInspection.count).toBe(5 ** 3);
     expect(result.compactInspection.capacity).toBe(5 ** 3);

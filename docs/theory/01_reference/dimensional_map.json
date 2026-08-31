@@ -4,8 +4,8 @@
   "ftd_version": "5.34",
   "build_stamp": {
     "generated_by": "scripts/proofs/build_dimensional_map.py",
-    "date": "2026-07-12",
-    "note": "Canonical data file — single source of truth. Edit this; then re-run the renderer to regenerate SPEC_DIMENSIONAL_MAP.md. (2026-07-12: date stamp refreshed to match post-April content revisions — content unchanged this pass.)"
+    "date": "2026-08-31",
+    "note": "Canonical data file — single source of truth. Edit this; then re-run the renderer to regenerate SPEC_DIMENSIONAL_MAP.md. (2026-08-31: electron-primary Planck length, Planck time, and global-tick numerics evaluated from the active dimensionless ladder; CODATA values retained as references.)"
   },
 
   "scope_note": "Spine + calibration only. Covers the 7 algebraic-spine theorems, 4 dimensionless physical identifications, the 3 calibration declarations theorem-enforced by FTD-0059 + FTD-0096, and 1 worked dimensional application (m_e in MeV). Full SM-quantity coverage lives in CATALOG_PARAMETRIC_INSERTIONS.md. The 3 calibrations are priced as import currency IMP-K1/K2/K3 in the priced-import ledger (SPEC_IMPORT_LEDGER.md, FTD-0371); their non-derivability is the grade-0-closure theorem (FOUND_DIMENSIONAL_GRADE_CLOSURE.md, FTD-0368 program).",
@@ -319,13 +319,13 @@
     {
       "id": "a_phys_planck",
       "category": "calibration_declaration",
-      "label": "a_phys ≡ ℓ_P (length anchor)",
+      "label": "a_phys = ℓ_P (default electron-primary map)",
       "is_dimensionless": false,
       "calibration_required": true,
-      "ftd_formula": "DECLARED: 1 voxel ≡ 1 Planck length ℓ_P",
-      "ftd_value": 1.616255e-35,
+      "ftd_formula": "DEFAULT electron-primary: 1 voxel ↔ ℓ_P^FTD = (ℏ/(m_e c))·Kα¹¹, K = √(2π)·16/3; legacy Planck-primary declares 1 voxel ≡ CODATA ℓ_P",
+      "ftd_value": 1.6131462631176174e-35,
       "ftd_value_units": "m",
-      "depends_on": [],
+      "depends_on": ["alpha_inverse", "mass_unit_anchor"],
       "epistemic_tag": "CALIBRATION",
       "ledger_ids": ["FTD-0030", "FTD-0041", "FTD-0059"],
       "source_files": [
@@ -334,11 +334,11 @@
         "docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md",
         "docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md"
       ],
-      "constants_py_ref": null,
+      "constants_py_ref": "FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M",
       "lab_measurement": null,
       "comparison": null,
-      "calibration_note": "Under the DEFAULT electron-primary gauge (FTD-0137 §4.5, FOUND_ELECTRON_PRIMARY_GAUGE.md), a_phys = ℓ_P is DERIVED: ℓ_P = ƛ_C·Kα¹¹ via the FTD-0015 m_e/m_P ladder, ≈1.616255×10⁻³⁵ m to 0.19% ([DERIVED ~0.19%]). Legacy Planck-primary instead declares it exactly. FTD-0059 forbids deriving a length from Axiom-Zero invariants ALONE (Mechanisms α/β/γ/δ all closed negative); electron-primary derives it from the imported {ℏ,c,m_e}, not Axiom Zero. ℓ_P reference value from CODATA 2022.",
-      "notes": "First of two SI-dimensional calibrations theorem-enforced by FTD-0096."
+      "calibration_note": "Under the DEFAULT electron-primary gauge (FTD-0137 §4.5, FOUND_ELECTRON_PRIMARY_GAUGE.md), a_phys = ℓ_P is derived conditionally: ℓ_P^FTD = ƛ_C·Kα¹¹ via the FTD-0015 m_e/m_P ladder = 1.613146263×10⁻³⁵ m, −0.192% relative to the CODATA 2022 reference 1.616255×10⁻³⁵ m ([DERIVED ~0.19%], inheriting [SMC]/[SELECTION]). Its associated Planck time is t_P^FTD = ℓ_P^FTD/c = 5.380876737×10⁻⁴⁴ s. Legacy Planck-primary instead declares the CODATA length exactly. FTD-0059 forbids deriving a length from Axiom-Zero invariants ALONE; electron-primary derives it from the imported {ℏ,c,m_e}, not Axiom Zero.",
+      "notes": "Default electron-primary consumes the mass anchor plus the dimensionless α ladder; legacy Planck-primary remains a valid declared calibration gauge."
     },
 
     {
@@ -348,7 +348,7 @@
       "is_dimensionless": false,
       "calibration_required": true,
       "ftd_formula": "t_phys = ℓ_P / (√3 · c) = t_P/√3 (from selected c_lat = 1/√3 + a_phys ≡ ℓ_P + c_phys = 2.998 × 10⁸ m/s: physical c = c_lat·a_phys/t_phys)",
-      "ftd_value": 3.11e-44,
+      "ftd_value": 3.1066506324625263e-44,
       "ftd_value_units": "s",
       "depends_on": ["a_phys_planck"],
       "epistemic_tag": "CALIBRATION",
@@ -356,10 +356,10 @@
       "source_files": [
         "docs/SPEC_FTD.md"
       ],
-      "constants_py_ref": null,
+      "constants_py_ref": "FTD_TICK_S",
       "lab_measurement": null,
       "comparison": null,
-      "calibration_note": "Derived (not declared) from a_phys ≡ ℓ_P and the selected c_lat = 1/√3: physical c = c_lat·(a_phys/t_phys) forces t_phys = ℓ_P/(√3·c). The exact production-stencil CFL ceiling is instead c_lat²≤3/4 (FTD-0407). Numerically t_phys ≈ 3.11 × 10⁻⁴⁴ s. Corrected 2026-07-08 from √3·ℓ_P/c ≈ 9.34e-44, which placed √3 in the numerator and was inconsistent with the selected c_lat=1/√3 by a factor of 3; see DERIV_DIMENSIONAL_GATE.md.",
+      "calibration_note": "Derived (not declared) from the default electron-primary ℓ_P^FTD and the selected c_lat = 1/√3: physical c = c_lat·(a_phys/t_phys) forces t_phys = ℓ_P^FTD/(√3·c) = t_P^FTD/√3 = 3.106650632×10⁻⁴⁴ s, where t_P^FTD = 5.380876737×10⁻⁴⁴ s. The exact production-stencil CFL ceiling is instead c_lat²≤3/4 (FTD-0407). Corrected 2026-07-08 from √3·ℓ_P/c, which placed √3 in the numerator; the 2026-08-31 numeric refresh now evaluates the electron-primary length rather than silently substituting the CODATA endpoint.",
       "notes": "Once a_phys is fixed, t_phys is fully determined. No additional calibration freedom."
     },
 

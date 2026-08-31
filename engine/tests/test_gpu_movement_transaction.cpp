@@ -483,7 +483,7 @@ void test_flux_boundary_cpu_gpu_parity() {
     dispersal[index_of(L, L - 1, c, c)].flux_weak = {0.25, 0.15, -0.35};
     dispersal[index_of(L, L - 1, c, c)].wave_vel_weak = {-0.1, -0.2, 0.4};
     dispersal[index_of(L, L - 2, c, c)].wave_vel = {-0.1, 0.2, 0.05};
-    compare("dispersal outflow-trace CPU/GPU parity", dispersal,
+    compare("dispersal exact-zero settled shell CPU/GPU parity", dispersal,
             ftd::FluxBoundaryMode::Dispersal, ftd::PeriodicAxis::All);
 
     std::vector<Voxel> periodic_z(L * L * L);

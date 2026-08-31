@@ -281,6 +281,15 @@
 .ctrl-footnote-text {
     opacity: 0.6;
 }
+.ctrl-footnote-stack {
+    align-items: stretch;
+    flex-direction: column;
+}
+.ctrl-physics-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-xs);
+}
 /* "Reset to defaults" style — subtle pill inside the footnote row. */
 .ctrl-reset-btn {
     background: transparent;
@@ -296,6 +305,19 @@
 .ctrl-reset-btn:hover {
     color: var(--text-primary, #d0d8f0);
     border-color: rgba(120, 140, 200, 0.45);
+}
+.ctrl-reset-btn:disabled {
+    cursor: wait;
+    opacity: 0.55;
+}
+.ctrl-enable-all-btn {
+    color: rgba(185, 238, 205, 0.95);
+    border-color: rgba(95, 205, 135, 0.5);
+}
+.ctrl-enable-all-btn:hover:not(:disabled) {
+    color: rgba(220, 255, 232, 1);
+    border-color: rgba(95, 205, 135, 0.8);
+    background: rgba(70, 175, 110, 0.12);
 }
 
 /* Touch target — the reset pill reaches the tap floor on phones. */

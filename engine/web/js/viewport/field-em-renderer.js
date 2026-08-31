@@ -142,7 +142,14 @@ export const fieldEmMethods = {
         }
 
         const _needsClip = this._clipActive();
-        const threshold = this._fluxSliceThreshold || 0;
+        // Shared Flux Volume threshold is a relative fraction of the current
+        // frame peak, not an absolute |J| unit. Zero therefore includes every
+        // cell on each enabled plane at every point size.
+        const thresholdFraction = Math.max(
+            0,
+            Math.min(0.5, this._fluxSliceThreshold || 0),
+        );
+        const threshold = thresholdFraction * maxFlux;
         const pointScale = this._fluxSlicePointScale || 1.0;
         const posArr = posAttr.array;
         const colArr = colAttr.array;

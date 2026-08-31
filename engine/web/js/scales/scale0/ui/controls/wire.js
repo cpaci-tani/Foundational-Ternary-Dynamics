@@ -16,8 +16,10 @@
 import {
     SCALE0_TOGGLES,
     SCALE0_ADVANCED_TOGGLES,
+    SCALE0_ENABLE_ALL_PHYSICS_KEYS,
+    SCALE0_ENABLE_ALL_PHYSICS_EXCLUDED_KEYS,
     getScale0ScenarioToggleProfile,
-} from '../../../../config/toggles.js';
+} from '../../../../config/toggles.js?v=4';
 import { K_B } from '../../../../constants.js';
 import { getPhysicsHarness } from '../../../../physics/index.js';
 import { getEl, markScenarioOverrideRows } from '../dom.js?v=3';
@@ -150,13 +152,17 @@ function wirePhysicsToggles(ctx, api) {
         const card = warning?.closest('.card');
         if (card) {
             card.setAttribute('aria-busy', pending ? 'true' : 'false');
-            for (const input of card.querySelectorAll('input[type="checkbox"]')) {
-                if (pending && !input.disabled) {
-                    input.disabled = true;
-                    input.dataset.scale0PendingDisabled = '1';
-                } else if (!pending && input.dataset.scale0PendingDisabled === '1') {
-                    input.disabled = false;
-                    delete input.dataset.scale0PendingDisabled;
+            const pendingControls = [
+                ...card.querySelectorAll('input[type="checkbox"]'),
+                getEl('btn-enable-all-physics'),
+            ].filter(Boolean);
+            for (const control of pendingControls) {
+                if (pending && !control.disabled) {
+                    control.disabled = true;
+                    control.dataset.scale0PendingDisabled = '1';
+                } else if (!pending && control.dataset.scale0PendingDisabled === '1') {
+                    control.disabled = false;
+                    delete control.dataset.scale0PendingDisabled;
                 }
             }
         }
@@ -192,6 +198,29 @@ function wirePhysicsToggles(ctx, api) {
             // observes the final user-edited profile state.
             markUserEdit();
             return activeOwner.setToggle(toggleKey, value);
+        }).accepted;
+    };
+
+    const setActiveToggleProfile = (entries) => {
+        const owner = getActiveScale0Bridge(ctx, getScale0State());
+        if (!owner || (typeof owner.setToggles !== 'function'
+            && typeof owner.setToggle !== 'function')) {
+            console.error('[Scale0] physics toggle owner missing toggle mutation methods');
+            return false;
+        }
+        return commitScale0ScientificMutation(ctx, {
+            reason: SCALE0_MUTATION_REASONS.PHYSICS_TOGGLE,
+            source: SCALE0_MUTATION_SOURCES.PHYSICS_TOGGLES,
+            loadGeneration: ctx._loadGeneration || 0,
+            owner,
+            dispatchStatus: 'unknown',
+        }, activeOwner => {
+            markUserEdit();
+            if (typeof activeOwner.setToggles === 'function') {
+                return activeOwner.setToggles(entries);
+            }
+            for (const [key, value] of entries) activeOwner.setToggle(key, value);
+            return undefined;
         }).accepted;
     };
 
@@ -237,6 +266,42 @@ function wirePhysicsToggles(ctx, api) {
                 el.checked = !el.checked;
                 return;
             }
+        });
+    }
+
+    // Apply one explicit, dependency-safe profile rather than firing 24 change
+    // events. Conflicting/alternate modes are cleared first, prerequisites are
+    // then enabled before dependents, and the worker publishes one readback.
+    const enableAllBtn = getEl('btn-enable-all-physics');
+    const toggleUiByKey = new Map(physicsUiToggles.map(([key, , elId]) => [key, elId]));
+    const enableAllEntries = [
+        ...SCALE0_ENABLE_ALL_PHYSICS_EXCLUDED_KEYS.map((key) => [key, false]),
+        ...SCALE0_ENABLE_ALL_PHYSICS_KEYS.map((key) => [key, true]),
+    ];
+    let enableAllFlashTimer = 0;
+    if (enableAllBtn) {
+        enableAllBtn.addEventListener('click', () => {
+            if (enableAllBtn.disabled) return;
+            enableAllBtn.disabled = true;
+            const accepted = setActiveToggleProfile(enableAllEntries);
+            if (!accepted) {
+                enableAllBtn.disabled = false;
+                return;
+            }
+            for (const [key, value] of enableAllEntries) {
+                const input = getEl(toggleUiByKey.get(key));
+                if (!input) continue;
+                input.checked = value;
+                input.closest('.toggle-row')?.classList.remove('scenario-override');
+            }
+            renderProfileStatus(true);
+            enableAllBtn.classList.add('ctrl-reset-flash');
+            clearTimeout(enableAllFlashTimer);
+            enableAllFlashTimer = setTimeout(() => {
+                enableAllBtn.classList.remove('ctrl-reset-flash');
+                enableAllBtn.disabled = false;
+                enableAllFlashTimer = 0;
+            }, 320);
         });
     }
 

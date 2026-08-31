@@ -511,6 +511,18 @@ function postFrame(
   let diagMeta = null;
   try {
     diag = mod.getDiagnostics(bridge);
+    // The engine already updates its rest-offset-free EnergyLedger at the end
+    // of every tick. Reuse that cached O(1) observation for the always-visible
+    // status readout and core energy chart instead of making either surface
+    // depend on the much heavier full EnergyAudit reduction.
+    const ledger = typeof mod.getEnergyLedger === 'function'
+      ? mod.getEnergyLedger(bridge) : null;
+    if (diag && Number.isFinite(ledger?.ECurr)) {
+      diag.vacuumBaselineEnergy = diag.totalEnergy;
+      diag.dynamicEnergy = ledger.ECurr;
+      diag.totalEnergy = ledger.ECurr;
+      diag.energySampleSource = 'per-tick-ledger';
+    }
     diagMeta = telemetryGroupMeta({
       stateVersion: ++diagnosticsStateVersion, tick,
       stale: !diag,
@@ -596,18 +608,19 @@ function postFrame(
     };
   }
 
-  // Audit-derived diagnostics are valid only when both observations describe
+  // Audit-derived decomposition is valid only when both observations describe
   // this exact tick. Reused/staggered audit samples remain separate telemetry
   // and must not be promoted to the diagnostics packet's newer provenance.
+  // dynamicEnergy itself remains sourced from the engine's per-tick ledger.
   if (diag && auditSampledThisFrame && audit
       && lastAuditMeta?.status === 'available' && lastAuditMeta.stale !== true
       && lastAuditMeta.sampleTick === tick
       && Number.isFinite(audit.dynamicEnergy)) {
-    diag.vacuumBaselineEnergy = diag.totalEnergy;
-    diag.dynamicEnergy = audit.dynamicEnergy;
+    if (!Object.hasOwn(diag, 'vacuumBaselineEnergy')) {
+      diag.vacuumBaselineEnergy = diag.totalEnergy;
+    }
     diag.accountedEnergy = audit.totalEnergy;
     diag.restEnergy = audit.particleRestEnergy;
-    diag.totalEnergy = audit.dynamicEnergy;
     // Status-bar decomposition (whole-box channels, sim units): lets the UI
     // show field/wave/KE without a second audit fetch.
     diag.fieldEnergy = audit.fieldEnergy;
@@ -755,6 +768,42 @@ self.onmessage = (e) => {
         applyCommand(msg.method, msg.args || []);
         engineTogglesDirty = true;
         postFrame(true);
+        break;
+      }
+      case 'toggleBatch': {
+        if (!mod || !bridge
+            || Number(msg.configurationToken) !== activeConfigurationToken) break;
+        lastAudit = null; lastAuditMeta = null; auditFrameCounter = 0;
+        const errors = [];
+        const expectedToggles = new Map();
+        for (const entry of (msg.entries || [])) {
+          if (!Array.isArray(entry) || typeof entry[0] !== 'string') {
+            errors.push('invalid toggle batch entry');
+            continue;
+          }
+          const name = entry[0];
+          const expected = !!entry[1];
+          const result = applyCommand('setToggle', [name, expected]);
+          if (!result?.ok) errors.push(result?.error || `toggle failed: ${name}`);
+          expectedToggles.set(name, expected);
+        }
+        enforceToggleInvariants();
+        engineTogglesDirty = true;
+        // One forced publication repaints every checkbox from engine truth.
+        postFrame(true);
+        for (const [name, expected] of expectedToggles) {
+          if (!(name in engineToggles) || engineToggles[name] !== expected) {
+            errors.push(`toggle readback mismatch: ${name} expected ${expected}`);
+          }
+        }
+        if (errors.length) {
+          self.postMessage({
+            type: 'error',
+            where: 'toggleBatch',
+            msg: errors.slice(0, 8).join('; '),
+            configurationToken: activeConfigurationToken,
+          });
+        }
         break;
       }
       case 'batchCommand': {

@@ -150,9 +150,9 @@ export function createFluxVolumeCard() {
       <span class="pe-ctrl-value" id="flux-scenario-scale-val">1.0</span>
     </div>
 
-    <div class="combo-section-label">Threshold</div>
+    <div class="combo-section-label" title="Relative fraction of the current peak |J|. Zero shows every available flux voxel; 0.5 keeps voxels at least half as strong as the peak.">Threshold</div>
     <div class="ctrl-slider-row">
-      <input type="range" class="pe-slider" id="flux-threshold" min="0.0" max="0.1" step="0.0001" value="0.005">
+      <input type="range" class="pe-slider" id="flux-threshold" min="0.0" max="0.5" step="0.0001" value="0.005" aria-label="Relative flux threshold">
       <span class="pe-ctrl-value" id="flux-threshold-val">0.005</span>
     </div>
 

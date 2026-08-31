@@ -626,10 +626,24 @@ export class TelemetryHub {
                 finiteSample(diag.fieldSpinY),
                 finiteSample(diag.fieldSpinZ),
             );
-            // Dynamic energy is an audit-derived channel. Some direct bridges
-            // join an exact same-state audit into Diagnostics as a convenience,
-            // but the observer-baseline total must never be substituted here.
-            const dynamicEnergy = finiteSample(diag.dynamicEnergy);
+            // Dynamic energy normally arrives from the engine's cached
+            // per-tick EnergyLedger. Older/direct transports may instead join
+            // an exact same-state audit into Diagnostics; the observer-baseline
+            // total must never be substituted here.
+            const auditMeta = this.getScale0TelemetryMeta('audit');
+            const retainedAuditEnergy = auditMeta
+                && auditMeta.stale !== true
+                && (auditMeta.status == null || auditMeta.status === 'available')
+                ? this.s0.audit?.dynamicEnergy : undefined;
+            // Diagnostics is intentionally cheaper and advances between full
+            // audit reductions. Keep the chart's aligned core row continuous
+            // with an explicitly sampled zero-order hold of the latest valid
+            // audit energy; a fresh same-tick audit still refines this row via
+            // setLast() below. Source-boundary invalidation makes auditMeta
+            // stale, so old energy never leaks into a new scenario/profile.
+            const dynamicEnergy = Number.isFinite(diag.dynamicEnergy)
+                ? diag.dynamicEnergy
+                : finiteSample(retainedAuditEnergy);
 
             // 500-sample buffers for charts
             this._s0_core.push({

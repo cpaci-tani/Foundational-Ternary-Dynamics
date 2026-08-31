@@ -96,6 +96,235 @@ test.describe('Scale 0 physics-toggles controls-card audit gate', () => {
         expect(realErrors(consoleErrors)).toEqual([]);
     });
 
+    test('enable all applies one compatible 24-term engine profile', async ({ page }) => {
+        const consoleErrors = attachConsoleWatcher(page);
+        const button = page.getByRole('button', { name: 'Enable all physics' });
+        await expect(button).toHaveCount(1);
+        await expect(button).toBeEnabled();
+
+        const prepared = await page.evaluate(async () => {
+            const { getActiveScale0Bridge, getScale0State } =
+                await import('/js/scales/scale0/state/store.js');
+            const ctx = window.__ftdCtx;
+            const state = getScale0State();
+            const owner = getActiveScale0Bridge(ctx, state);
+            const idle = ctx.bridge;
+            const audit = {
+                ownerBatchCalls: [],
+                ownerSingleCalls: [],
+                idleBatchCalls: [],
+                idleSingleCalls: [],
+                owner,
+                idle,
+                ownerSetToggles: owner.setToggles,
+                ownerSetToggle: owner.setToggle,
+                idleSetToggles: idle?.setToggles,
+                idleSetToggle: idle?.setToggle,
+            };
+            owner.setToggles = function (entries) {
+                audit.ownerBatchCalls.push(entries.map(([key, value]) => [key, value]));
+                return audit.ownerSetToggles.call(this, entries);
+            };
+            owner.setToggle = function (key, value) {
+                audit.ownerSingleCalls.push([key, value]);
+                return audit.ownerSetToggle.call(this, key, value);
+            };
+            if (idle && idle !== owner) {
+                idle.setToggles = function (entries) {
+                    audit.idleBatchCalls.push(entries.map(([key, value]) => [key, value]));
+                    return audit.idleSetToggles.call(this, entries);
+                };
+                idle.setToggle = function (key, value) {
+                    audit.idleSingleCalls.push([key, value]);
+                    return audit.idleSetToggle.call(this, key, value);
+                };
+            }
+            window.__enableAllPhysicsAudit = audit;
+            return { activeIsWorker: owner === state.fluxMock, idleIsDistinct: idle !== owner };
+        });
+
+        let result;
+        try {
+            // Ten same-turn activations must collapse to the first accepted action.
+            const immediate = await page.evaluate(() => {
+                const action = document.getElementById('btn-enable-all-physics');
+                for (let i = 0; i < 10; i++) action.click();
+                return { disabled: action.disabled };
+            });
+            expect(immediate.disabled).toBe(true);
+
+            await page.waitForFunction(async () => {
+                const {
+                    SCALE0_ENABLE_ALL_PHYSICS_KEYS,
+                    SCALE0_ENABLE_ALL_PHYSICS_EXCLUDED_KEYS,
+                } = await import('/js/config/toggles.js');
+                const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+                const owner = getScale0State().fluxMock;
+                return document.getElementById('btn-enable-all-physics')?.disabled === false
+                    && SCALE0_ENABLE_ALL_PHYSICS_KEYS.every((key) => owner.getToggle(key) === true)
+                    && SCALE0_ENABLE_ALL_PHYSICS_EXCLUDED_KEYS
+                        .every((key) => owner.getToggle(key) === false);
+            });
+
+            result = await page.evaluate(async () => {
+                const {
+                    SCALE0_TOGGLES,
+                    SCALE0_ADVANCED_TOGGLES,
+                    SCALE0_ENABLE_ALL_PHYSICS_KEYS,
+                    SCALE0_ENABLE_ALL_PHYSICS_EXCLUDED_KEYS,
+                } = await import('/js/config/toggles.js');
+                const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+                const audit = window.__enableAllPhysicsAudit;
+                const owner = getScale0State().fluxMock;
+                const ids = new Map(
+                    [...SCALE0_TOGGLES, ...SCALE0_ADVANCED_TOGGLES]
+                        .map(([key, , id]) => [key, id]),
+                );
+                const expectedBatch = [
+                    ...SCALE0_ENABLE_ALL_PHYSICS_EXCLUDED_KEYS.map((key) => [key, false]),
+                    ...SCALE0_ENABLE_ALL_PHYSICS_KEYS.map((key) => [key, true]),
+                ];
+                const requirements = {
+                    lorentz_force: 'forces',
+                    selective_damping: 'damping',
+                    larmor_radiation: 'damping',
+                    weak_transmutation: 'dual_substrate',
+                    triad_binding: 'color_forces',
+                    exchange_force: 'poisson_coulomb',
+                    latency_field: 'gravity',
+                    symmetric_movement_order: 'movement',
+                    confinement: 'color_forces',
+                };
+                return {
+                    expectedBatch,
+                    ownerBatchCalls: audit.ownerBatchCalls,
+                    ownerSingleCalls: audit.ownerSingleCalls,
+                    idleBatchCalls: audit.idleBatchCalls,
+                    idleSingleCalls: audit.idleSingleCalls,
+                    enabledCount: SCALE0_ENABLE_ALL_PHYSICS_KEYS.length,
+                    excludedCount: SCALE0_ENABLE_ALL_PHYSICS_EXCLUDED_KEYS.length,
+                    engineEnabled: SCALE0_ENABLE_ALL_PHYSICS_KEYS
+                        .map((key) => [key, owner.getToggle(key)]),
+                    engineExcluded: SCALE0_ENABLE_ALL_PHYSICS_EXCLUDED_KEYS
+                        .map((key) => [key, owner.getToggle(key)]),
+                    uiParity: expectedBatch.flatMap(([key, expected]) => {
+                        const input = document.getElementById(ids.get(key));
+                        return input instanceof HTMLInputElement
+                            ? [[key, expected, input.checked]]
+                            : [];
+                    }),
+                    requirementsSatisfied: Object.entries(requirements)
+                        .every(([term, prerequisite]) => (
+                            !owner.getToggle(term) || owner.getToggle(prerequisite)
+                        )),
+                    warning: document.getElementById('physics-profile-warning')?.textContent,
+                    warningHidden: document.getElementById('physics-profile-warning')?.hidden,
+                    buttonText: document.getElementById('btn-enable-all-physics')?.textContent
+                        ?.replace(/\s+/g, ' ').trim(),
+                };
+            });
+        } finally {
+            await page.evaluate(() => {
+                const audit = window.__enableAllPhysicsAudit;
+                if (!audit) return;
+                audit.owner.setToggles = audit.ownerSetToggles;
+                audit.owner.setToggle = audit.ownerSetToggle;
+                if (audit.idle && audit.idle !== audit.owner) {
+                    audit.idle.setToggles = audit.idleSetToggles;
+                    audit.idle.setToggle = audit.idleSetToggle;
+                }
+                delete window.__enableAllPhysicsAudit;
+            });
+        }
+
+        expect(prepared.activeIsWorker).toBe(true);
+        expect(prepared.idleIsDistinct).toBe(true);
+        expect(result.enabledCount).toBe(24);
+        expect(result.excludedCount).toBe(4);
+        expect(result.ownerBatchCalls).toEqual([result.expectedBatch]);
+        expect(result.ownerSingleCalls).toEqual([]);
+        expect(result.idleBatchCalls).toEqual([]);
+        expect(result.idleSingleCalls).toEqual([]);
+        expect(result.engineEnabled.every(([, value]) => value === true)).toBe(true);
+        expect(result.engineExcluded.every(([, value]) => value === false)).toBe(true);
+        expect(result.uiParity.every(([, expected, actual]) => expected === actual)).toBe(true);
+        expect(result.requirementsSatisfied).toBe(true);
+        expect(result.warningHidden).toBe(false);
+        expect(result.warning).toContain('modified');
+        expect(result.buttonText).toContain('Enable all physics');
+        expect(realErrors(consoleErrors)).toEqual([]);
+    });
+
+    test('runtime dual-substrate transitions preserve the live field', async ({ page }) => {
+        const consoleErrors = attachConsoleWatcher(page);
+        const dual = page.getByRole('checkbox', { name: 'Dual Substrate' });
+        const step = page.getByRole('button', { name: 'Step', exact: true });
+        const readState = () => page.evaluate(async () => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            const owner = getScale0State().fluxMock;
+            return {
+                engine: owner.getToggle('dual_substrate'),
+                ui: document.getElementById('t-dual')?.checked,
+                magnitude: Array.from(owner.getFluxVolume())
+                    .reduce((sum, component) => sum + Math.abs(component), 0),
+                tick: owner.currentTick(),
+            };
+        });
+
+        if (await dual.isChecked()) await dual.click();
+        await expect(dual).not.toBeChecked();
+        await page.waitForFunction(async () => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            return getScale0State().fluxMock?.getToggle('dual_substrate') === false;
+        });
+        // Seed through the production worker API so this test never depends on
+        // when the first scenario volume frame happens to arrive.
+        await page.evaluate(async () => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            const owner = getScale0State().fluxMock;
+            const midpoint = Math.floor(owner.N / 2);
+            owner.injectFlux(midpoint, midpoint, midpoint, 3, 0, 0);
+        });
+        await expect.poll(async () => (await readState()).magnitude).toBeGreaterThan(0);
+        const before = await readState();
+
+        await dual.click();
+        await expect(dual).toBeChecked();
+        await page.waitForFunction(async () => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            return getScale0State().fluxMock?.getToggle('dual_substrate') === true;
+        });
+        const enabled = await readState();
+        await step.click();
+        await page.waitForFunction(async (priorTick) => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            return getScale0State().fluxMock?.currentTick() > priorTick;
+        }, enabled.tick);
+        const afterEnable = await readState();
+
+        await dual.click();
+        await expect(dual).not.toBeChecked();
+        await page.waitForFunction(async () => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            return getScale0State().fluxMock?.getToggle('dual_substrate') === false;
+        });
+        const disabled = await readState();
+        await step.click();
+        await page.waitForFunction(async (priorTick) => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            return getScale0State().fluxMock?.currentTick() > priorTick;
+        }, disabled.tick);
+        const afterDisable = await readState();
+
+        const evidence = JSON.stringify({ before, enabled, afterEnable, disabled, afterDisable });
+        expect(before.magnitude, evidence).toBeGreaterThan(0);
+        expect(afterEnable.magnitude).toBeGreaterThan(before.magnitude * 1e-6);
+        expect(afterDisable.magnitude).toBeGreaterThan(before.magnitude * 1e-6);
+        expect(enabled).toMatchObject({ engine: true, ui: true });
+        expect(disabled).toMatchObject({ engine: false, ui: false });
+        expect(realErrors(consoleErrors)).toEqual([]);
+    });
+
     test('twenty standard and research toggle cycles dispatch only to the active owner', async ({ page }) => {
         const consoleErrors = attachConsoleWatcher(page);
         // Pin a fresh, explicit scenario generation. The worker can legitimately

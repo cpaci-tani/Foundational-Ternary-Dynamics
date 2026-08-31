@@ -17,13 +17,15 @@ export class Sparkline {
         this.height    = opts.height || 24;
         this.visibleSamples = Math.max(2, opts.visibleSamples || this.buffer?.size || 80);
         this._destroyed = false;
+        this._resizeFrame = 0;
+        this._lastWidth = Math.max(1, Math.round(container.clientWidth || 80));
 
         const size = Math.min(this.buffer?.size || 80, this.visibleSamples);
         this.xs = new Float64Array(size);
         this.ys = new Float64Array(size);
 
         const uopts = {
-            width:  container.clientWidth || 80,
+            width:  this._lastWidth,
             height: this.height,
             padding: [2, 2, 2, 2],
             scales: { x: { time: false } },
@@ -39,12 +41,20 @@ export class Sparkline {
         // eslint-disable-next-line no-undef
         this.uplot = new uPlot(uopts, [new Float64Array(0), new Float64Array(0)], container);
 
-        this._ro = new ResizeObserver(() => {
-            if (this._destroyed) return;
-            const w = container.clientWidth;
-            if (w > 0) this.uplot.setSize({ width: w, height: this.height });
-        });
+        this._ro = new ResizeObserver(() => this._scheduleResize());
         this._ro.observe(container);
+    }
+
+    _scheduleResize() {
+        if (this._destroyed || this._resizeFrame) return;
+        this._resizeFrame = requestAnimationFrame(() => {
+            this._resizeFrame = 0;
+            if (this._destroyed) return;
+            const width = Math.round(this.container.clientWidth);
+            if (width <= 0 || width === this._lastWidth) return;
+            this._lastWidth = width;
+            this.uplot.setSize({ width, height: this.height });
+        });
     }
 
     update() {
@@ -64,6 +74,8 @@ export class Sparkline {
     destroy() {
         if (this._destroyed) return;
         this._destroyed = true;
+        if (this._resizeFrame) cancelAnimationFrame(this._resizeFrame);
+        this._resizeFrame = 0;
         this._ro.disconnect();
         this.uplot.destroy();
         this.uplot = null;

@@ -19,6 +19,7 @@
 #include "ftd/constants.h"
 #include "ftd/lorentz_period2.h"
 #include "ftd/lorentz_bcc_time.h"
+#include "ftd/sublattice.h"
 #include "../cuda/cuda_index.cuh"   // ::ftd::wrap, ::ftd::idx3d (X-major)
 #include <cstdint>
 #include <cmath>
@@ -91,6 +92,120 @@ double wave_kick_cw2(int tick, bool period2, bool bcc_time) {
             ? ::ftd::LORENTZ_PERIOD2_KAPPA_EVEN
             : ::ftd::LORENTZ_PERIOD2_KAPPA_ODD;
     return C_WAVE * C_WAVE;
+}
+
+// Target-local one-way closure for Dispersal. The outer shell stays exact
+// void; a boundary-adjacent stencil target receives a virtual Sommerfeld
+// sample derived only from its own field/pseudo-velocity. The impedance is
+// normalized over the active outward stencil measure so faces, edges, and
+// corners get the same damping impulse.
+__device__ __forceinline__
+double dispersal_laplacian_component(
+        const double* __restrict__ field,
+        const double* __restrict__ wave,
+        int i, int x, int y, int z, int L, uint8_t stencil_mode) {
+    const int Nm1 = L - 1;
+    if (x <= 0 || x >= Nm1 || y <= 0 || y >= Nm1
+        || z <= 0 || z >= Nm1) {
+        return 0.0;
+    }
+
+    constexpr int faces[6][3] = {
+        {1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}};
+    constexpr int edges[12][3] = {
+        {1,1,0},{1,-1,0},{-1,1,0},{-1,-1,0},
+        {1,0,1},{1,0,-1},{-1,0,1},{-1,0,-1},
+        {0,1,1},{0,1,-1},{0,-1,1},{0,-1,-1}};
+    constexpr int corners[8][3] = {
+        {1,1,1},{1,1,-1},{1,-1,1},{1,-1,-1},
+        {-1,1,1},{-1,1,-1},{-1,-1,1},{-1,-1,-1}};
+
+    const double face_weight = stencil_mode == 1u ? W_SC_FACE : 1.0 / 3.0;
+    const double edge_weight = stencil_mode == 2u ? W_FCC_EDGE : 1.0 / 6.0;
+    double outward_measure = 0.0;
+    if (stencil_mode == 0u || stencil_mode == 1u) {
+        for (int n = 0; n < 6; ++n) {
+            const int nx = x + faces[n][0];
+            const int ny = y + faces[n][1];
+            const int nz = z + faces[n][2];
+            if (nx == 0 || nx == Nm1 || ny == 0 || ny == Nm1
+                || nz == 0 || nz == Nm1) {
+                outward_measure += face_weight;
+            }
+        }
+    }
+    if (stencil_mode == 0u || stencil_mode == 2u) {
+        for (int n = 0; n < 12; ++n) {
+            const int nx = x + edges[n][0];
+            const int ny = y + edges[n][1];
+            const int nz = z + edges[n][2];
+            if (nx == 0 || nx == Nm1 || ny == 0 || ny == Nm1
+                || nz == 0 || nz == Nm1) {
+                outward_measure += edge_weight * sqrt(2.0);
+            }
+        }
+    }
+    if (stencil_mode == 3u) {
+        for (int n = 0; n < 8; ++n) {
+            const int nx = x + corners[n][0];
+            const int ny = y + corners[n][1];
+            const int nz = z + corners[n][2];
+            if (nx == 0 || nx == Nm1 || ny == 0 || ny == Nm1
+                || nz == 0 || nz == Nm1) {
+                outward_measure += W_BCC_CORNER * sqrt(3.0);
+            }
+        }
+    }
+    const double inverse_measure = outward_measure > 0.0
+        ? 1.0 / outward_measure : 0.0;
+    const double center = field[i];
+    const double velocity = wave[i];
+    double face_sum = 0.0;
+    double edge_sum = 0.0;
+    double corner_sum = 0.0;
+
+    if (stencil_mode == 0u || stencil_mode == 1u) {
+        for (int n = 0; n < 6; ++n) {
+            const int nx = x + faces[n][0];
+            const int ny = y + faces[n][1];
+            const int nz = z + faces[n][2];
+            const bool shell = nx == 0 || nx == Nm1 || ny == 0 || ny == Nm1
+                            || nz == 0 || nz == Nm1;
+            face_sum += shell
+                ? center - velocity * (inverse_measure / C_WAVE)
+                : field[nx * L * L + ny * L + nz];
+        }
+    }
+    if (stencil_mode == 0u || stencil_mode == 2u) {
+        for (int n = 0; n < 12; ++n) {
+            const int nx = x + edges[n][0];
+            const int ny = y + edges[n][1];
+            const int nz = z + edges[n][2];
+            const bool shell = nx == 0 || nx == Nm1 || ny == 0 || ny == Nm1
+                            || nz == 0 || nz == Nm1;
+            edge_sum += shell
+                ? center - velocity * (sqrt(2.0) * inverse_measure / C_WAVE)
+                : field[nx * L * L + ny * L + nz];
+        }
+    }
+    if (stencil_mode == 3u) {
+        for (int n = 0; n < 8; ++n) {
+            const int nx = x + corners[n][0];
+            const int ny = y + corners[n][1];
+            const int nz = z + corners[n][2];
+            const bool shell = nx == 0 || nx == Nm1 || ny == 0 || ny == Nm1
+                            || nz == 0 || nz == Nm1;
+            corner_sum += shell
+                ? center - velocity * (sqrt(3.0) * inverse_measure / C_WAVE)
+                : field[nx * L * L + ny * L + nz];
+        }
+    }
+
+    if (stencil_mode == 1u) return W_SC_FACE * face_sum - center;
+    if (stencil_mode == 2u) return W_FCC_EDGE * edge_sum - center;
+    if (stencil_mode == 3u) return W_BCC_CORNER * corner_sum - center;
+    return face_sum * (1.0 / 3.0) + edge_sum * (1.0 / 6.0)
+         - 4.0 * center;
 }
 
 } // namespace kernels

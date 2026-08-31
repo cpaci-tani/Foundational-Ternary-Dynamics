@@ -241,7 +241,7 @@ RenderBridge::tick()
   -> phase_forces()                [forces]
        -> phase_forces_integrate_clusters()   [cluster_inertia] (inside phase_forces)
   -> phase_movement()              [movement]
-  -> apply_absorbing_boundary()    [absorbing_boundary]
+  -> apply_absorbing_boundary()    [absorbing_boundary && flux_boundary != Dispersal]
   -> apply_reflective_flux_boundary() / apply_dispersal_flux_boundary()
                                    [flux_boundary]
   -> weak_transmutation_cpu()      [weak_transmutation]
@@ -684,10 +684,10 @@ GpuEngine::gpu_phase_movement()
 RenderBridge::tick()
   -> prepare_flux_boundary(*this) [before every stencil read]
      -> Reflective: copy first interior layer into the ghost shell
-     -> Dispersal: reconstruct outward-only field traces from strict interior;
-                   excise every non-field face record
+     -> Dispersal: exact-zero complete face records; phase_read evaluates
+                   normalized target-local one-way virtual samples
      -> Periodic: no pass; the lattice neighbour tables wrap all three axes
-  -> apply_absorbing_boundary(*this) [absorbing_boundary]
+  -> apply_absorbing_boundary(*this) [absorbing_boundary && flux_boundary != Dispersal]
      -> phase_write.cpp::apply_absorbing_boundary(rb)
         -> scan lattice faces
         -> compute quadratic sponge factor by distance to nearest face
@@ -701,8 +701,8 @@ RenderBridge::tick()
               (Neumann mirror cavity)
      -> FluxBoundaryMode::Dispersal:
         -> phase_write.cpp::apply_dispersal_flux_boundary(rb)
-           -> non-field record excision plus a one-way Sommerfeld field trace
-              on all six faces; strictly interior cells remain untouched
+           -> exact-zero the complete record on all six faces before reads and
+              after writers; no virtual sample reaches publication/rendering
 ```
 
 The settled pass covers observable, dual, strong, and weak transported fields
