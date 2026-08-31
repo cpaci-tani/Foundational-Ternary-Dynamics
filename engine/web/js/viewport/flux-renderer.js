@@ -46,12 +46,17 @@ import { FLUX_VOL_VERT, PARTICLE_FRAG, PARTICLE_SHADER_UNIFORMS } from './shader
 // A 53³ translucent point cloud produced ~12 FPS under browser SwiftShader at
 // L=97 even while paused; 20³ retained the spatial envelope at 60 FPS. Native
 // FTV2 may still publish as many as 53 samples/axis, so source acceptance and
-// render density are deliberately separate constants. The 12³ ceiling keeps
-// robust headroom for the concurrently active sidepanel and base scene on the
-// software-renderer fallback as well as hardware WebGL.
+// render density are deliberately separate constants. The 12³ production
+// ceiling keeps robust headroom for the concurrently active sidepanel and base
+// scene. The explicit minimum-size/zero-threshold inspection state is the one
+// exception: its one-pixel sprites expose every available source sample.
 const FLUX_SOURCE_MAX_AXIS_POINTS = 53;
 const FLUX_RENDER_MAX_AXIS_POINTS = 12; // 12³ = 1,728 point-sprite ceiling
 const FLUX_RENDER_MAX_POINTS = FLUX_RENDER_MAX_AXIS_POINTS ** 3;
+const FLUX_LATTICE_INSPECTION_POINT_SCALE = 0.1;
+const FLUX_LATTICE_INSPECTION_THRESHOLD = 0;
+const FLUX_LATTICE_INSPECTION_POINT_SIZE = 1.0;
+const FLUX_LATTICE_INSPECTION_COLOR_FLOOR = [0.16, 0.35, 0.55];
 function fluxVolumeAxisSamples(N) {
     return Math.min(N, FLUX_RENDER_MAX_AXIS_POINTS);
 }
@@ -98,6 +103,7 @@ export class ViewportFluxRenderer {
         // State owned by FluxRenderer (moved from Viewport's constructor)
         this._fluxVolume = null;
         this._fluxVolumeSize = 0;
+        this._fluxVolumeAxisCapacity = 0;
         this._fluxStreamlines = null;
         this._fluxStreamlinesRequested = false;
         this._flowLineOpacity = 0.7;
@@ -106,7 +112,7 @@ export class ViewportFluxRenderer {
         this._scenarioScale = 1.0;
         this._fluxLatticeSpacing = 1.0;
         this.showFlux = true;      // flux volume ON by default
-        this._fluxOrganic = true;  // organic (3D-jittered scatter) vs regular lattice grid
+        this._fluxOrganic = false; // regular lattice by default; Organic explicitly enables jitter
         this._fluxGlow = true;     // additive glow bloom (weakened) vs flat translucent dots
         this._fluxOpacity = null;  // user opacity override (null = use the glow-mode default)
         this._fluxShape = 0;       // point shape (0 = circle)
@@ -122,9 +128,9 @@ export class ViewportFluxRenderer {
         // snapping back to full saturation every frame.
         this._fluxMaxDecay = 0;
 
-        // Reused one-maximum-per-spatial-stratum pool. The source-volume scan
-        // is O(source voxels), while every allocation and every GPU write stays
-        // bounded by FLUX_RENDER_MAX_POINTS (1,728).
+        // Reused one-maximum-per-spatial-stratum production pool. Outside the
+        // explicit full-lattice inspection state, the source-volume scan is
+        // O(source voxels) while pool and GPU writes stay bounded at 1,728.
         this._fluxPoolMagnitude = new Float64Array(FLUX_RENDER_MAX_POINTS);
         this._fluxPoolSourceIndex = new Int32Array(FLUX_RENDER_MAX_POINTS);
         this._fluxPoolAxisMap = null;
@@ -163,6 +169,7 @@ export class ViewportFluxRenderer {
             this._fluxVolume.material.dispose();
             this._fluxVolume = null;
             this._fluxVolumeSize = 0;
+            this._fluxVolumeAxisCapacity = 0;
         }
         // Clear stale flux-streamlines draw range so old-L data doesn't persist.
         if (this._fluxStreamlines && this._fluxStreamlines.geometry) {
@@ -172,14 +179,17 @@ export class ViewportFluxRenderer {
     }
 
     // ── Flux Volume Rendering (Scale 0 -- substrate mode) ──────────────
-    // Renders the continuous flux field J as sparse point cloud.
+    // Renders the continuous flux field J as a point cloud.
     // Each voxel above threshold emits a colored dot sized by magnitude.
-    // Sampling: one maximum representative per bounded uniform 3D stratum.
+    // Sampling: one maximum representative per bounded uniform 3D stratum,
+    // except at the two slider minima where every available sample is shown.
     // Boundary clipping uses _insideBoundary() for non-cube shapes.
 
-    _buildFluxVolume(latticeSize) {
-        // Buffer capacity matches the bounded stratum grid exactly.
-        const sampledN = fluxVolumeAxisSamples(latticeSize);
+    _buildFluxVolume(latticeSize, axisCapacity = fluxVolumeAxisSamples(latticeSize)) {
+        // Normal rendering allocates only the bounded stratum grid. The explicit
+        // minimum-size/zero-threshold inspection state can request the full
+        // source grid and releases that larger allocation when inspection ends.
+        const sampledN = Math.max(1, Math.trunc(axisCapacity));
         const maxPts = sampledN * sampledN * sampledN;
         const positions = new Float32Array(maxPts * 3);
         const sourcePositions = new Float32Array(maxPts * 3);
@@ -236,13 +246,38 @@ export class ViewportFluxRenderer {
         this._fluxVolume.frustumCulled = false; // skip bounding sphere recompute for dynamic geometry
         this._fluxVolume.renderOrder = 10; // render after background stars (order 0)
         this._fluxVolumeSize = latticeSize;
+        this._fluxVolumeAxisCapacity = sampledN;
         this._scene.add(this._fluxVolume);
         // Re-apply every persisted setting so a rebuild (resize / scenario / toggle) keeps
         // the user's flux-volume settings continuous instead of resetting them to the
         // freshly-built material/mesh defaults.
         this._fluxVolume.visible = this.showFlux;
         this._applyFluxMaterialState();                       // glow + opacity + shape
-        if (this._fluxLatticeSpacing !== 1.0) this.setFluxLatticeSpacing(this._fluxLatticeSpacing);
+        if (this._fluxLatticeSpacing !== 1.0) {
+            const spacing = this._fluxLatticeSpacing;
+            const offset = (1 - spacing) * latticeSize / 2;
+            this._fluxVolume.scale.setScalar(spacing);
+            this._fluxVolume.position.set(offset, offset, offset);
+        }
+    }
+
+    _ensureFluxVolumeCapacity(latticeSize, axisCapacity = fluxVolumeAxisSamples(latticeSize)) {
+        const nextAxisCapacity = Math.max(1, Math.trunc(axisCapacity));
+        if (this._fluxVolume
+            && this._fluxVolumeSize === latticeSize
+            && this._fluxVolumeAxisCapacity === nextAxisCapacity) return;
+        if (this._fluxVolume) {
+            this._scene.remove(this._fluxVolume);
+            this._fluxVolume.geometry.dispose();
+            this._fluxVolume.material.dispose();
+            this._fluxVolume = null;
+        }
+        this._buildFluxVolume(latticeSize, nextAxisCapacity);
+    }
+
+    _isFullLatticeInspection() {
+        return this._fluxPointScale <= FLUX_LATTICE_INSPECTION_POINT_SCALE + 1e-9
+            && this._fluxThreshold <= FLUX_LATTICE_INSPECTION_THRESHOLD + 1e-12;
     }
 
     /**
@@ -255,23 +290,11 @@ export class ViewportFluxRenderer {
      * @param {number} latticeSize — side length N
      */
     updateFluxVolume(volumeData, latticeSize) {
-        // Rebuild if missing or if lattice size changed (buffer capacity depends on L)
+        // Start with the normal bounded capacity. The exact inspection state
+        // below expands this only after the source layout has been validated.
         if (!this._fluxVolume || this._fluxVolumeSize !== latticeSize) {
-            if (this._fluxVolume) {
-                this._scene.remove(this._fluxVolume);
-                this._fluxVolume.geometry.dispose();
-                this._fluxVolume.material.dispose();
-                this._fluxVolume = null;
-            }
-            this._buildFluxVolume(latticeSize);
-            // _buildFluxVolume now restores visible + re-applies every persisted material
-            // and spacing setting at its tail, so nothing extra is needed here.
+            this._ensureFluxVolumeCapacity(latticeSize);
         }
-
-        const posAttr = this._fluxVolume.geometry.getAttribute('position');
-        const sourcePosAttr = this._fluxVolume.geometry.getAttribute('sourcePosition');
-        const colAttr = this._fluxVolume.geometry.getAttribute('particleColor');
-        const sizeAttr = this._fluxVolume.geometry.getAttribute('size');
         const N = latticeSize;
 
         const compact = volumeData && !ArrayBuffer.isView(volumeData)
@@ -284,6 +307,7 @@ export class ViewportFluxRenderer {
             return;
         }
 
+        const fullLatticeInspection = this._isFullLatticeInspection();
         let samples;
         let renderSpacing;
         let sourceN;
@@ -304,7 +328,7 @@ export class ViewportFluxRenderer {
                 // previous valid draw until the matching cache arrives.
                 return;
             }
-            samples = fluxVolumeAxisSamples(sourceN);
+            samples = fullLatticeInspection ? sourceN : fluxVolumeAxisSamples(sourceN);
             renderSpacing = compactSpacing * (sourceN / samples);
         } else {
             const total = N * N * N;
@@ -312,16 +336,33 @@ export class ViewportFluxRenderer {
                 // Size mismatch during an async resize/startup transition.
                 return;
             }
-            samples = fluxVolumeAxisSamples(N);
             sourceN = N;
+            samples = fullLatticeInspection ? sourceN : fluxVolumeAxisSamples(N);
             renderSpacing = N / samples;
         }
 
-        // Uniformly partition all source samples into at most 12³ spatial
-        // strata, retaining exactly the maximum-magnitude source sample from
-        // each. Unlike nearest-stride sampling, this cannot miss a localized
-        // center or off-stride feature. The pool and GPU write remain bounded
-        // at 1,728 representatives for both dense and compact inputs.
+        // At the two slider minima, every source sample is intentional output:
+        // dense WASM frames expose every lattice cell, while native FTV2 frames
+        // expose every sample in their bounded published support grid.
+        this._ensureFluxVolumeCapacity(latticeSize, samples);
+        const posAttr = this._fluxVolume.geometry.getAttribute('position');
+        const sourcePosAttr = this._fluxVolume.geometry.getAttribute('sourcePosition');
+        const colAttr = this._fluxVolume.geometry.getAttribute('particleColor');
+        const sizeAttr = this._fluxVolume.geometry.getAttribute('size');
+
+        const _bs = this._boundaryShape;
+        const needsClip = !(_bs === 'cube' || _bs === 'none' || _bs === undefined);
+        const boundaryCenter = N / 2;
+        const boundaryRadius = N / 2;
+        const compactCoord = (axisIndex) => Math.max(
+            0,
+            Math.min(compactOrigin + axisIndex * compactSpacing, N - 1),
+        ) + 0.5;
+
+        // Normally partition the source into at most 12³ spatial strata and
+        // retain one maximum-magnitude sample from each. In inspection mode
+        // samples === sourceN, so this same path becomes a one-cell-per-stratum
+        // identity map and publishes the complete available source grid.
         if (!this._fluxPoolAxisMap
             || this._fluxPoolAxisMapSourceN !== sourceN
             || this._fluxPoolAxisMapSamples !== samples) {
@@ -336,25 +377,20 @@ export class ViewportFluxRenderer {
             }
         }
         const axisMap = this._fluxPoolAxisMap;
-        const poolMagnitude = this._fluxPoolMagnitude;
-        const poolSourceIndex = this._fluxPoolSourceIndex;
         const samplePlane = samples * samples;
         const poolCount = samplePlane * samples;
+        if (this._fluxPoolMagnitude.length !== poolCount) {
+            this._fluxPoolMagnitude = new Float64Array(poolCount);
+            this._fluxPoolSourceIndex = new Int32Array(poolCount);
+        }
+        const poolMagnitude = this._fluxPoolMagnitude;
+        const poolSourceIndex = this._fluxPoolSourceIndex;
         poolMagnitude.fill(0, 0, poolCount);
         poolSourceIndex.fill(-1, 0, poolCount);
 
         // For shaped boundaries, pool only scientifically drawable source
         // samples. Otherwise a larger out-of-bound value could win a stratum,
         // be clipped later, and erase a smaller in-bound localized feature.
-        const _bs = this._boundaryShape;
-        const needsClip = !(_bs === 'cube' || _bs === 'none' || _bs === undefined);
-        const boundaryCenter = N / 2;
-        const boundaryRadius = N / 2;
-        const compactCoord = (axisIndex) => Math.max(
-            0,
-            Math.min(compactOrigin + axisIndex * compactSpacing, N - 1),
-        ) + 0.5;
-
         let instantMaxFlux = 0;
         let sourceIndex = 0;
         for (let z = 0; z < sourceN; z++) {
@@ -363,9 +399,11 @@ export class ViewportFluxRenderer {
                 const poolZY = poolZ + axisMap[y] * samples;
                 for (let x = 0; x < sourceN; x++, sourceIndex++) {
                     const mag = density[sourceIndex];
-                    // Flux volume is a magnitude channel: ignore invalid and
-                    // non-positive samples rather than poisoning normalization.
-                    if (!(mag > 0 && mag < Infinity)) continue;
+                    // Flux volume is a magnitude channel. The production view
+                    // skips zeros; inspection deliberately retains them so the
+                    // complete lattice remains visible at threshold zero.
+                    if (!(mag >= 0 && mag < Infinity)
+                        || (!fullLatticeInspection && mag === 0)) continue;
                     if (needsClip) {
                         const physicalX = compact ? compactCoord(x) : x + 0.5;
                         const physicalY = compact ? compactCoord(y) : y + 0.5;
@@ -377,7 +415,7 @@ export class ViewportFluxRenderer {
                         )) continue;
                     }
                     const poolIndex = poolZY + axisMap[x];
-                    if (mag > poolMagnitude[poolIndex]) {
+                    if (poolSourceIndex[poolIndex] < 0 || mag > poolMagnitude[poolIndex]) {
                         poolMagnitude[poolIndex] = mag;
                         poolSourceIndex[poolIndex] = sourceIndex;
                     }
@@ -389,7 +427,7 @@ export class ViewportFluxRenderer {
         // Skip the write loop if the field is essentially zero THIS FRAME (an
         // elevated held peak from earlier should not force an empty field to
         // keep drawing dots — nothing would pass FLUX_THRESHOLD below anyway).
-        if (instantMaxFlux < 1e-20) {
+        if (!fullLatticeInspection && instantMaxFlux < 1e-20) {
             this._fluxVolume.geometry.setDrawRange(0, 0);
             return;
         }
@@ -472,11 +510,26 @@ export class ViewportFluxRenderer {
             // PERF: in-place colormap write. Pre-fix this allocated a fresh
             // [r,g,b] array per voxel.
             fluxToColorInto(colArr, c3, mag, maxFlux);
-
-            const t = mag / (maxFlux + 1e-20);
-            const lo = FLUX_DOT_MIN * footprintStride;
-            const hi = Math.max(MAX_SIZE, FLUX_DOT_MIN) * footprintStride;
-            sizeArr[count] = lo + (hi - lo) * t;
+            if (fullLatticeInspection) {
+                colArr[c3] = Math.max(
+                    colArr[c3],
+                    FLUX_LATTICE_INSPECTION_COLOR_FLOOR[0],
+                );
+                colArr[c3 + 1] = Math.max(
+                    colArr[c3 + 1],
+                    FLUX_LATTICE_INSPECTION_COLOR_FLOOR[1],
+                );
+                colArr[c3 + 2] = Math.max(
+                    colArr[c3 + 2],
+                    FLUX_LATTICE_INSPECTION_COLOR_FLOOR[2],
+                );
+                sizeArr[count] = FLUX_LATTICE_INSPECTION_POINT_SIZE;
+            } else {
+                const t = mag / (maxFlux + 1e-20);
+                const lo = FLUX_DOT_MIN * footprintStride;
+                const hi = Math.max(MAX_SIZE, FLUX_DOT_MIN) * footprintStride;
+                sizeArr[count] = lo + (hi - lo) * t;
+            }
             count++;
         }
 
@@ -648,6 +701,7 @@ export class ViewportFluxRenderer {
             if (this._fluxVolume.material) this._fluxVolume.material.dispose();
             this._fluxVolume = null;
             this._fluxVolumeSize = 0;
+            this._fluxVolumeAxisCapacity = 0;
         }
         if (this._fluxStreamlines) {
             this._scene.remove(this._fluxStreamlines);

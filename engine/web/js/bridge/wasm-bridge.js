@@ -1009,16 +1009,37 @@ export class WasmBridge {
 
     // 0 = Periodic, 1 = Reflective, 2 = Dispersal
     setFluxBoundaryMode(mode) {
-        this._fluxBoundaryMode = mode;
+        const normalized = Math.max(0, Math.min(2, Math.trunc(Number(mode) || 0)));
+        this._fluxBoundaryMode = normalized;
         if (this._module && this._bridge && typeof this._module.setFluxBoundary === 'function') {
-            this._module.setFluxBoundary(this._bridge, mode);
+            this._module.setFluxBoundary(this._bridge, normalized);
             this._markScale0StateChanged();
         }
     }
 
+    // Orientation metadata: 0=X/lateral, 1=Y/vertical, 2=Z/forward-aft,
+    // 3=show all axes. Boundary coverage is always controlled by the mode.
+    setFluxPeriodicAxis(axis) {
+        const normalized = Math.max(0, Math.min(3, Math.trunc(Number(axis) || 0)));
+        this._fluxPeriodicAxis = normalized;
+        if (this._module && this._bridge
+            && typeof this._module.setFluxPeriodicAxis === 'function') {
+            this._module.setFluxPeriodicAxis(this._bridge, normalized);
+            this._markScale0StateChanged();
+        }
+    }
+
+    getFluxPeriodicAxis() {
+        if (this._module && this._bridge
+            && typeof this._module.getFluxPeriodicAxis === 'function') {
+            return this._module.getFluxPeriodicAxis(this._bridge);
+        }
+        return this._fluxPeriodicAxis ?? 2;
+    }
+
     setReflectiveBoundary(on) {
         // Legacy path: map bool → flux boundary mode
-        this.setFluxBoundaryMode(on ? 1 : 0);
+        this.setFluxBoundaryMode(on ? 1 : 2);
         if (this._aeStub) this._aeStub._reflectiveBoundary = on;
     }
 

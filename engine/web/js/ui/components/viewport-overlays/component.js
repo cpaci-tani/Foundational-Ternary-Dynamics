@@ -7,7 +7,7 @@
  * - Bottom status-bar scene/environment controls
  */
 
-import { getScale0OverlayTemplate } from '../../../scales/scale0/ui/overlays/template.js?v=4';
+import { getScale0OverlayTemplate } from '../../../scales/scale0/ui/overlays/template.js?v=5';
 import { getScale0StandardModelHudTemplate } from '../../../scales/scale0/ui/overlays/standard-model.js?v=2';
 import { getScale1OverlayTemplate } from '../../../scales/scale1/ui/overlays/template.js';
 import { getScale2OverlayTemplate } from '../../../scales/scale2/ui/overlays/template.js';
@@ -106,9 +106,15 @@ export class ViewportOverlaysComponent {
 
       <details class="status-menu">
         <summary class="status-menu-trigger">View</summary>
-        <div class="status-menu-panel status-menu-grid" role="group" aria-label="Scene view toggles">
-          <button class="view-toggle active scale4-hide" id="toggle-axes" type="button" title="XYZ axis indicator">Axes</button>
-          <button class="view-toggle active scale4-hide" id="toggle-grid" type="button" title="Reference grid (XZ plane)">Grid</button>
+        <div class="status-menu-panel status-menu-grid status-menu-grid-2" role="group" aria-label="Scene view toggles">
+          <button class="view-toggle active scale4-hide" id="toggle-axes" type="button" aria-pressed="true" title="XYZ axis indicator">Axes</button>
+          <button class="view-toggle active scale4-hide" id="toggle-grid" type="button" aria-pressed="true" title="Reference grid (XZ plane)">Grid</button>
+          <button class="view-toggle active scale0-only" id="toggle-boundary-orientation" type="button" aria-pressed="true" title="External boundary-orientation arrows">Arrows</button>
+          <button class="view-toggle active scale0-only" id="toggle-global-clock" type="button" aria-pressed="true" title="Global ordinal tick, ordered transaction pulse, and selected causal-rate color">Clock</button>
+          <button class="view-toggle scale0-only status-scene-flow" id="scene-force-flow" type="button"
+              data-style="flow" aria-pressed="false" title="Render active force overlays as animated streamlines">
+            <span class="status-scene-flow-icon" aria-hidden="true">&#8767;</span> Flow
+          </button>
         </div>
       </details>
 

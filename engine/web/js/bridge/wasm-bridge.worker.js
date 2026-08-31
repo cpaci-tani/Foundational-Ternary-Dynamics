@@ -103,7 +103,7 @@ const gravitySamplerCadence = createBoundedSamplerCadence(GRAVITY_SAMPLER_INTERV
 // payload crosses the postMessage boundary back to the main thread.
 const WORKER_COMMAND_ALLOWLIST = new Set([
   'tickScale0', 'setToggle', 'setDt', 'setOmega0',
-  'setLangevinTemp', 'setLangevinGamma', 'setFluxBoundary',
+  'setLangevinTemp', 'setLangevinGamma', 'setFluxBoundary', 'setFluxPeriodicAxis',
   'injectParticle', 'injectFlux', 'injectWavepacket', 'injectWaveVel',
   'createEntangledPair', 'clearField', 'seedRandomFlux',
 ]);
@@ -175,6 +175,16 @@ function readFluxBoundaryMode() {
   try {
     const mode = Number(mod.getFluxBoundary(bridge));
     return Number.isInteger(mode) ? mode : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function readFluxPeriodicAxis() {
+  if (!mod || !bridge || typeof mod.getFluxPeriodicAxis !== 'function') return null;
+  try {
+    const axis = Number(mod.getFluxPeriodicAxis(bridge));
+    return Number.isInteger(axis) ? axis : null;
   } catch (e) {
     return null;
   }
@@ -754,6 +764,7 @@ self.onmessage = (e) => {
         const errors = [];
         const expectedToggles = new Map();
         let expectedFluxBoundaryMode = null;
+        let expectedFluxPeriodicAxis = null;
         for (const { method, args = [] } of (msg.commands || [])) {
           const result = applyCommand(method, args);
           if (!result?.ok) errors.push(result?.error || `command failed: ${method}`);
@@ -761,6 +772,8 @@ self.onmessage = (e) => {
             expectedToggles.set(args[0], !!args[1]);
           } else if (method === 'setFluxBoundary' && Number.isInteger(Number(args[0]))) {
             expectedFluxBoundaryMode = Number(args[0]);
+          } else if (method === 'setFluxPeriodicAxis' && Number.isInteger(Number(args[0]))) {
+            expectedFluxPeriodicAxis = Number(args[0]);
           }
         }
         enforceToggleInvariants();
@@ -775,6 +788,10 @@ self.onmessage = (e) => {
         if (expectedFluxBoundaryMode !== null && fluxBoundaryMode !== expectedFluxBoundaryMode) {
           errors.push(`flux boundary readback mismatch: expected ${expectedFluxBoundaryMode}, got ${fluxBoundaryMode}`);
         }
+        const fluxPeriodicAxis = readFluxPeriodicAxis();
+        if (expectedFluxPeriodicAxis !== null && fluxPeriodicAxis !== expectedFluxPeriodicAxis) {
+          errors.push(`periodic axis readback mismatch: expected ${expectedFluxPeriodicAxis}, got ${fluxPeriodicAxis}`);
+        }
         self.postMessage({
           type: 'configurationApplied',
           configurationToken: msg.configurationToken,
@@ -782,6 +799,7 @@ self.onmessage = (e) => {
           errors,
           engineToggles: { ...engineToggles },
           fluxBoundaryMode,
+          fluxPeriodicAxis,
         });
         break;
       }

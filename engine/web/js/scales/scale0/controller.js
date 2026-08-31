@@ -26,7 +26,7 @@ import {
 import { advanceSimulation } from './runtime/tick.js';
 import { syncRenderableData } from './runtime/frame-sync.js';
 import { disposeFieldOverlayRuntime, updateFieldOverlays } from './runtime/field-overlays.js?v=17';
-import { updateDiagnosticsAndPanels } from './runtime/diagnostics.js';
+import { updateDiagnosticsAndPanels } from './runtime/diagnostics.js?v=2';
 import {
     exitScale0,
     loadScale0Scenario,
@@ -36,7 +36,7 @@ import {
     syncComboSliders,
     syncScale0ToggleUiFromEngine,
     stepScale0,
-} from './runtime/scenario-loader.js?v=17';
+} from './runtime/scenario-loader.js?v=18';
 import { bindScale0UI, handleScale0ShortcutKey } from './ui/bindings.js?v=11';
 import { getSelectedScenarioId } from './ui/dom.js';
 import { syncScale0LatticeSizeAvailability } from './ui/toolbar/limits.js?v=2';
@@ -245,6 +245,7 @@ export function bindUI(ctx) {
     // checkbox card or boundary selector claiming physics the engine refused.
     ctx.onBridgeProfileUpdate = ({
         fluxBoundaryMode,
+        fluxPeriodicAxis,
         latticeSize: acknowledgedLatticeSize = null,
         authoritativeScenarioAck = false,
         scenarioId: acknowledgedScenarioId = null,
@@ -263,16 +264,30 @@ export function bindUI(ctx) {
             ctx,
             acknowledgedLatticeSize,
         );
+        const syncBoundaryUi = () => {
+            if (Number.isInteger(fluxBoundaryMode)) {
+                const select = document.getElementById('flux-boundary-mode');
+                if (select) select.value = String(fluxBoundaryMode);
+            }
+            if (Number.isInteger(fluxPeriodicAxis)) {
+                const axisSelect = document.getElementById('flux-periodic-axis');
+                if (axisSelect) {
+                    axisSelect.value = String(fluxPeriodicAxis);
+                    axisSelect.disabled = false;
+                }
+            }
+            ctx.viewport?.setBoundaryDynamics?.(
+                Number.isInteger(fluxBoundaryMode) ? fluxBoundaryMode : 2,
+                Number.isInteger(fluxPeriodicAxis) ? fluxPeriodicAxis : 2,
+            );
+        };
         if (authoritativeScenarioAck && error) {
             // WebSocketBridge has rolled its optimistic staged profile back to
             // the last server-confirmed mirror (or an authoritative rejection
             // snapshot). Repaint that truth before surfacing the failed load.
             syncComboSliders(ctx, state);
             syncScale0ToggleUiFromEngine(ctx, viewportAdapter(ctx), scenarioId);
-            if (Number.isInteger(fluxBoundaryMode)) {
-                const select = document.getElementById('flux-boundary-mode');
-                if (select) select.value = String(fluxBoundaryMode);
-            }
+            syncBoundaryUi();
             syncAcknowledgedLatticeSize();
             setLatticeNeedsUpload();
             markFieldDirty();
@@ -292,10 +307,7 @@ export function bindUI(ctx) {
             viewportAdapter(ctx),
             scenarioId,
         );
-        if (Number.isInteger(fluxBoundaryMode)) {
-            const select = document.getElementById('flux-boundary-mode');
-            if (select) select.value = String(fluxBoundaryMode);
-        }
+        syncBoundaryUi();
         if (profileSynchronized && authoritativeScenarioAck) {
             // A previous resize transport failure is commit-uncertain. The
             // profile ACK's authoritative N must reach every size-dependent UI

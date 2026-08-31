@@ -28,11 +28,21 @@ export function getScale0LatticeSizeToolbarTemplate() {
                 <option value="181" data-native-only disabled>181 · Native GPU</option>
             </select>
             <label class="tb-label" for="flux-boundary-mode" style="margin-left:6px">Boundary</label>
-            <select class="tb-select" id="flux-boundary-mode" title="Flux field boundary: Dispersal = energy exits the box and is removed; Reflective = perfect cavity mirror (∂J/∂n=0); Periodic = toroidal wrap (default physics)">
+            <select class="tb-select" id="flux-boundary-mode" title="Complete six-face transported-dynamics boundary: Dispersal removes manifested face records and supplies an outward-only field trace without damping the strict interior; Reflective uses a Neumann field mirror and elastic particle bounce; Periodic identifies every pair of opposite faces.">
                 <option value="2" selected>Dispersal</option>
                 <option value="1">Reflective</option>
                 <option value="0">Periodic</option>
             </select>
+            <span class="boundary-axis-control">
+                <label class="tb-label" for="flux-periodic-axis">Orientation</label>
+                <select class="tb-select" id="flux-periodic-axis" title="Orient the simulation axes without changing boundary coverage. X is lateral, Y is vertical, Z is forward/aft; XYZ highlights all directions.">
+                    <option value="2" selected>Z · forward/aft</option>
+                    <option value="0">X · lateral</option>
+                    <option value="1">Y · vertical</option>
+                    <option value="3">XYZ · all axes</option>
+                </select>
+            </span>
+            <output id="global-clock-readout" class="global-clock-readout" title="Global ordinal tick [AXIOM]. Color reports the engine's selected/imposed mapped causal-rate budget when current telemetry is available; it is not recovered spacetime.">tick 0</output>
         </div>
     `;
 }

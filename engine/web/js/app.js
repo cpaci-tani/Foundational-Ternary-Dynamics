@@ -7,7 +7,7 @@
  */
 
 import { appRegistry } from './core/registry.js';
-import { Viewport } from './viewport.js?v=9';
+import { Viewport } from './viewport.js?v=14';
 import { FluxEnergyChart, ParticleChart } from './charts.js';
 import { telemetryHub } from './telemetry-hub.js';
 import { createInspectorAppRuntime } from './inspector/app-runtime.js?v=2';
@@ -16,7 +16,7 @@ import { getCategories, getMoleculesByCategory } from './molecules.js';
 import { debugLog } from './core/log.js';
 
 // ── Scale Controllers (extracted from inline code) ─────────────────
-import * as Scale0Controller from './scales/scale0/controller.js?v=35';
+import * as Scale0Controller from './scales/scale0/controller.js?v=37';
 import * as Scale1Controller from './scales/scale1/controller.js';
 import * as Scale2Controller from './scales/scale2/controller.js';
 import * as Scale3Controller from './scales/scale3/controller.js';
@@ -36,7 +36,7 @@ import { K_B } from './constants.js';
 import { AggregateDetector, EmergenceMonitor } from './aggregation-bridge.js';
 import { createOnticPanel } from './ui/app-ontic.js';
 import { BackgroundManager } from './backgrounds.js';
-import { AppShell } from './ui/shell/app-shell.js?v=4';
+import { AppShell } from './ui/shell/app-shell.js?v=6';
 import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initScenePanel, initTelemetryGridPanel } from './ui/panels/index.js';
 import { floatingWindowManager } from './ui/components/floating-window/component.js?v=2';
 import { initFluxSlicePanel } from './scales/scale0/ui/overlays/flux-slice-panel.js';
@@ -196,6 +196,7 @@ function _makeCtx() {
         applyBoundaryShape,
         applyReflectiveBoundary,
         applyFluxBoundaryMode,
+        applyFluxPeriodicAxis,
         clearCharts,
     };
     return _ctxSingleton;
@@ -235,7 +236,8 @@ function applyBoundaryShape(shape) {
     Scale0Controller.setLatticeNeedsUpload();
 }
 
-// 0 = Periodic (toroidal wrap), 1 = Reflective (perfect cavity mirror), 2 = Dispersal (energy exits)
+// 0 = Periodic, 1 = Reflective, 2 = Dispersal. Every law owns all six faces;
+// the orientation axis is metadata for forward/lateral/vertical presentation.
 function applyFluxBoundaryMode(mode) {
     const normalized = Number.isInteger(Number(mode)) && Number(mode) >= 0 && Number(mode) <= 2
         ? Number(mode)
@@ -247,9 +249,25 @@ function applyFluxBoundaryMode(mode) {
     // mirroring every UI input into it only created split ownership.
     const owner = Scale0Controller.getActivePhysicsOwner(_makeCtx());
     owner?.setFluxBoundaryMode?.(normalized);
+    const axisSelect = document.getElementById('flux-periodic-axis');
+    const periodicAxis = Math.max(0, Math.min(3,
+        Math.trunc(Number(axisSelect?.value ?? 2))));
     // The viewport's legacy particle-wall flag must describe reflective mode
     // for direct user changes as well as scenario defaults.
     viewport?.setReflectiveBoundary?.(normalized === 1);
+    viewport?.setBoundaryDynamics?.(normalized, periodicAxis);
+    Scale0Controller.setLatticeNeedsUpload();
+}
+
+function applyFluxPeriodicAxis(axis) {
+    const normalized = Math.max(0, Math.min(3, Math.trunc(Number(axis) || 0)));
+    const sel = document.getElementById('flux-periodic-axis');
+    if (sel) sel.value = String(normalized);
+    const owner = Scale0Controller.getActivePhysicsOwner(_makeCtx());
+    owner?.setFluxPeriodicAxis?.(normalized);
+    const mode = Math.max(0, Math.min(2,
+        Math.trunc(Number(document.getElementById('flux-boundary-mode')?.value ?? 2))));
+    viewport?.setBoundaryDynamics?.(mode, normalized);
     Scale0Controller.setLatticeNeedsUpload();
 }
 
@@ -1178,22 +1196,46 @@ function wireControls() {
 
 // ── Viewport Toggle Wiring ───────────────────────────────────────────
 function wireViewportToggles() {
+    const setToggleState = (button, on) => {
+        button.classList.toggle('active', on);
+        button.setAttribute('aria-pressed', on ? 'true' : 'false');
+    };
+
     // Universal toggles (visible on all scales)
     const axesBtn = document.getElementById('toggle-axes');
     if (axesBtn) {
         axesBtn.addEventListener('click', () => {
-            axesBtn.classList.toggle('active');
-            viewport.toggleAxes(axesBtn.classList.contains('active'));
+            const on = !axesBtn.classList.contains('active');
+            setToggleState(axesBtn, on);
+            viewport.toggleAxes(on);
         });
     }
     // Grid button also controls the wireframe (lattice boundary box) at Scale 0
     const gridBtn = document.getElementById('toggle-grid');
     if (gridBtn) {
         gridBtn.addEventListener('click', () => {
-            gridBtn.classList.toggle('active');
-            const on = gridBtn.classList.contains('active');
+            const on = !gridBtn.classList.contains('active');
+            setToggleState(gridBtn, on);
             viewport.toggleGrid(on);
             viewport.toggleWireframe(on);
+        });
+    }
+
+    const orientationBtn = document.getElementById('toggle-boundary-orientation');
+    if (orientationBtn) {
+        orientationBtn.addEventListener('click', () => {
+            const on = !orientationBtn.classList.contains('active');
+            setToggleState(orientationBtn, on);
+            viewport.toggleBoundaryOrientation(on);
+        });
+    }
+
+    const clockBtn = document.getElementById('toggle-global-clock');
+    if (clockBtn) {
+        clockBtn.addEventListener('click', () => {
+            const on = !clockBtn.classList.contains('active');
+            setToggleState(clockBtn, on);
+            viewport.toggleGlobalClock(on);
         });
     }
 

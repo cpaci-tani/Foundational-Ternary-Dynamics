@@ -470,6 +470,72 @@
     z-index: var(--z-scale0-tooltip);
 }
 
+/* World-space clock hover legend. Positioned inside #viewport by the
+   clock-only raycaster; pointer-events stay disabled so orbit/inspection
+   controls continue to receive the original pointer stream. */
+.scale0-clock-hover {
+    position: absolute;
+    width: min(310px, calc(100% - 20px));
+    padding: 10px 12px;
+    border: 1px solid var(--tooltip-border, rgba(125, 211, 252, 0.42));
+    border-radius: 12px;
+    background: var(--tooltip-bg, rgba(8, 18, 34, 0.94));
+    color: var(--tooltip-text, var(--text-primary));
+    box-shadow: var(--tooltip-shadow, 0 12px 30px rgba(0, 0, 0, 0.46));
+    backdrop-filter: var(--tooltip-backdrop, blur(14px));
+    z-index: var(--z-scale0-tooltip);
+    pointer-events: none;
+    font-size: var(--fs-xs);
+    line-height: 1.42;
+}
+
+.scale0-clock-hover[hidden] {
+    display: none;
+}
+
+.scale0-clock-hover-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 3px;
+}
+
+.scale0-clock-hover-swatch {
+    flex: 0 0 auto;
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    box-shadow: 0 0 8px currentColor;
+}
+
+.scale0-clock-hover-title {
+    color: var(--text-primary);
+    font-size: var(--fs-sm);
+    font-weight: 650;
+    letter-spacing: 0.015em;
+}
+
+.scale0-clock-hover-status {
+    margin-bottom: 5px;
+    color: var(--accent, #7dd3fc);
+    font-family: var(--font-mono, monospace);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+}
+
+.scale0-clock-hover-description {
+    color: var(--text-secondary, #cbd5e1);
+}
+
+.scale0-clock-hover-live {
+    margin-top: 7px;
+    padding-top: 6px;
+    border-top: 1px solid color-mix(in srgb, var(--accent, #7dd3fc) 18%, transparent);
+    color: var(--text-primary);
+    font-family: var(--font-mono, monospace);
+    font-size: 0.72rem;
+}
+
 /* ── Scale 0 Field Overlay Swatches ────────────────────── */
 /* These colors match the 3D renderer shader constants. */
 .field-swatch-e-field      { background: #4dd0e1; }

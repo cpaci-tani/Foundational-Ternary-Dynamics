@@ -212,7 +212,7 @@ export const SCALE0_SCENARIO_CATALOG = [
      * Physical purpose: Measures a divergence-free packet against the implemented finite-box boundary operators.
      * Parameters: None.
      * Expected behavior: Periodic Hamiltonian conservation and Neumann-shell momentum reversal.
-     * Discrepancy: The lossy shell retained 52.9% of field norm at tick 90, failing the preregistered 75%-removal gate. These are computational finite-box laws, not physical boundaries of the ontology.
+     * Qualification: Dispersal retires manifested face records and reconstructs an outward-only field trace without opposite-face reinjection or interior grading. This computational finite-box law is not an exact all-angle radiation theorem or a physical boundary of the ontology.
      */
     makeScenario('1. Validated Native Dynamics', 'flux-pulse', 'Transverse Packet — Finite-Box Boundary Test', ['flux', 'wave'], '[EMERGENT] under [IMPOSED] computational boundary laws'),
     /*

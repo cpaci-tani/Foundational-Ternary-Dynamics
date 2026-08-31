@@ -72,8 +72,22 @@ function numericSample(row, raw) {
     return (typeof raw === 'number' && Number.isFinite(raw)) ? raw : null;
 }
 
-function bufferStamp(buf) {
-    return buf ? `${buf.head}:${buf.count}` : '';
+function bufferSampleStamp(buf) {
+    if (!buf) return '';
+    // RingBufferView deliberately exposes the parent's monotonic `total`, but
+    // not its wrapping `head`.  Using head made every Diagnostics sparkline
+    // backed by a MultiRingBuffer view stop updating as soon as count reached
+    // capacity: the old stamp collapsed to `undefined:<capacity>` forever.
+    return `${buf.total ?? buf.head ?? 0}:${buf.count ?? 0}`;
+}
+
+function bufferRenderStamp(buf) {
+    if (!buf) return '';
+    // `setLast()` can refine the current logical sample without advancing the
+    // ring. Include the live tail value for redraws, while the stats stamp
+    // above remains sample-counted and therefore does not double-count it.
+    const last = typeof buf.last === 'function' ? buf.last() : undefined;
+    return `${bufferSampleStamp(buf)}:${String(last)}`;
 }
 
 function resetVersion(hub, scope) {
@@ -311,7 +325,7 @@ export class DiagnosticsTable {
             const sample = numericSample(row, raw);
             if (sample !== null) {
                 const buf = this.trendBuffers.get(row.id);
-                const stamp = buf ? bufferStamp(buf) : String(tick ?? formatted);
+                const stamp = buf ? bufferSampleStamp(buf) : String(tick ?? formatted);
                 if (stamp !== this.sampleStamps.get(row.id)) {
                     this.sampleStamps.set(row.id, stamp);
                     this.updateStats(row.id, sample);
@@ -320,7 +334,7 @@ export class DiagnosticsTable {
         }
         for (const entry of this.sparkEntries) {
             if (!entry.spark) continue;
-            const stamp = bufferStamp(entry.buffer);
+            const stamp = bufferRenderStamp(entry.buffer);
             if (stamp === entry.stamp) continue;
             entry.stamp = stamp;
             entry.spark.update();
@@ -335,7 +349,7 @@ export class DiagnosticsTable {
             height: 22,
             visibleSamples: TABLE_SPARK_VISIBLE_SAMPLES,
         });
-        entry.stamp = bufferStamp(entry.buffer);
+        entry.stamp = bufferRenderStamp(entry.buffer);
         entry.spark.update();
     }
 

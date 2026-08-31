@@ -83,8 +83,11 @@ export function setSelectedScenarioId(id) {
 
 export function setForceStyleButtons(style) {
     const row = getEl('force-style-row');
-    if (!row) return;
-    for (const btn of row.querySelectorAll('.style-btn')) {
+    const buttons = [
+        ...(row?.querySelectorAll('.style-btn') ?? []),
+        getEl('scene-force-flow'),
+    ].filter(Boolean);
+    for (const btn of buttons) {
         const active = btn.dataset.style === style;
         btn.classList.toggle('active', active);
         btn.setAttribute('aria-pressed', active ? 'true' : 'false');

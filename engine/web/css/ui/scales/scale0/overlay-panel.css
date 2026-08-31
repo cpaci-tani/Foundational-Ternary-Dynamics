@@ -443,7 +443,7 @@
 #viewport-overlay .s0-overlay-col {
     --s0-col: #94a3b8;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 5px;
     min-width: 0;
     padding: 0 7px 7px;
@@ -632,13 +632,20 @@
     box-shadow: none;
 }
 #viewport-overlay .s0-overlay-col-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    flex: 0 0 auto;
     min-width: 17px;
     height: 17px;
-    padding: 0 5px;
+    padding: 0 4px;
     color: var(--text-secondary);
     font-family: var(--font-mono, monospace);
-    font-size: 16px;
+    font-size: 10px;
     font-weight: 700;
+    line-height: 1;
+    text-align: center;
     border: 1px solid var(--border);
     border-radius: 999px;
     background: var(--bg-input);
@@ -704,16 +711,18 @@
 #viewport-overlay .s0-overlay-col > .view-toggle,
 #viewport-overlay .s0-overlay-group > .view-toggle {
     position: relative;
+    display: flex;
+    align-items: center;
     width: 100%;
     min-width: 0;
     min-height: 29px;
     padding: 5px 7px;
-    justify-content: flex-start;
+    justify-content: center;
     color: var(--text-secondary);
     font-size: 16px;
     font-weight: 500;
     line-height: 1.2;
-    text-align: left;
+    text-align: center;
     white-space: normal;
     overflow: hidden;
     border: 1px solid var(--border);
@@ -723,6 +732,17 @@
     backdrop-filter: none;
     transform: none;
     transition: color 100ms, border-color 100ms, background 100ms;
+}
+
+#viewport-overlay .s0-toggle-content {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    max-width: 100%;
+    text-align: center;
+    transform: scale(0.95);
+    transform-origin: center;
 }
 #viewport-overlay .s0-overlay-col > .view-toggle:hover,
 #viewport-overlay .s0-overlay-group > .view-toggle:hover {
@@ -748,13 +768,6 @@
     border-radius: 999px;
     box-shadow: none;
 }
-
-/* Restore deliberate full-width rows after the legacy grid rules. */
-#viewport-overlay.s0-overlay-panel #toggle-state-field,
-#viewport-overlay.s0-overlay-panel #toggle-e-field {
-    grid-column: 1 / -1;
-}
-#viewport-overlay.s0-overlay-panel #toggle-poynting { grid-column: auto; }
 
 /* Context controls appear only with their owning layer. Search can expose the
    volume/slice detail buttons so queries such as "glow" remain actionable. */

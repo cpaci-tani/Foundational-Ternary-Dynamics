@@ -19,6 +19,90 @@ const expand = (page) => page.evaluate(() => {
 });
 
 test.describe('Scale-0 Visualization accordion', () => {
+    test('uses a centered one-column list, starts Organic off, and owns Flow from Scene', async ({ page }) => {
+        await gotoAndReady(page);
+        await page.waitForTimeout(500);
+        await expand(page);
+
+        const result = await page.evaluate(async () => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            const panel = document.getElementById('viewport-overlay');
+            const volume = panel.querySelector('[data-col="volume"]');
+            const fields = panel.querySelector('[data-col="fields"]');
+            if (fields.classList.contains('is-collapsed')) {
+                fields.querySelector('.s0-overlay-col-head').click();
+            }
+            const layerButton = document.getElementById('toggle-e-field');
+            const content = layerButton.querySelector('.s0-toggle-content');
+            const swatch = layerButton.querySelector('.field-swatch');
+            const organic = document.getElementById('toggle-flux-organic');
+            const sceneFlow = document.getElementById('scene-force-flow');
+            const forceRowFlow = document.querySelector('#force-style-row [data-style="flow"]');
+            const before = {
+                organicActive: organic.classList.contains('active'),
+                organicPressed: organic.getAttribute('aria-pressed'),
+                rendererOrganic: window.__ftdCtx.viewport._fluxRenderer._fluxOrganic,
+                forceRowFlow: !!forceRowFlow,
+                sceneFlow: !!sceneFlow,
+                columns: getComputedStyle(volume).gridTemplateColumns.split(/\s+/).filter(Boolean).length,
+                button: {
+                    display: getComputedStyle(layerButton).display,
+                    align: getComputedStyle(layerButton).alignItems,
+                    justify: getComputedStyle(layerButton).justifyContent,
+                    text: getComputedStyle(layerButton).textAlign,
+                },
+                contentTransform: getComputedStyle(content).transform,
+                swatchBackground: getComputedStyle(swatch).backgroundImage !== 'none'
+                    ? getComputedStyle(swatch).backgroundImage
+                    : getComputedStyle(swatch).backgroundColor,
+            };
+
+            organic.click();
+            const afterOrganic = {
+                active: organic.classList.contains('active'),
+                pressed: organic.getAttribute('aria-pressed'),
+                rendererOrganic: window.__ftdCtx.viewport._fluxRenderer._fluxOrganic,
+            };
+
+            sceneFlow.click();
+            const afterFlow = {
+                style: getScale0State().forceStyle,
+                active: sceneFlow.classList.contains('active'),
+                pressed: sceneFlow.getAttribute('aria-pressed'),
+                panelActive: [...document.querySelectorAll('#force-style-row .style-btn.active')]
+                    .map((button) => button.dataset.style),
+            };
+            document.querySelector('#force-style-row [data-style="arrows"]').click();
+            const afterArrows = {
+                style: getScale0State().forceStyle,
+                sceneActive: sceneFlow.classList.contains('active'),
+                scenePressed: sceneFlow.getAttribute('aria-pressed'),
+            };
+            return { before, afterOrganic, afterFlow, afterArrows };
+        });
+
+        expect(result.before).toMatchObject({
+            organicActive: false,
+            organicPressed: 'false',
+            rendererOrganic: false,
+            forceRowFlow: false,
+            sceneFlow: true,
+            columns: 1,
+            button: { display: 'flex', align: 'center', justify: 'center', text: 'center' },
+        });
+        expect(result.before.contentTransform).toContain('0.95');
+        expect(result.before.swatchBackground).not.toBe('none');
+        expect(result.afterOrganic).toEqual({
+            active: true, pressed: 'true', rendererOrganic: true,
+        });
+        expect(result.afterFlow).toEqual({
+            style: 'flow', active: true, pressed: 'true', panelActive: [],
+        });
+        expect(result.afterArrows).toEqual({
+            style: 'arrows', sceneActive: false, scenePressed: 'false',
+        });
+    });
+
     test('mounts the compact layer-inspector hierarchy without reserved dead space', async ({ page }) => {
         await gotoAndReady(page);
         await page.waitForTimeout(1500);
@@ -266,6 +350,7 @@ test.describe('Scale-0 Visualization accordion', () => {
             return stopScale0UiAuditProbe();
         });
 
+        console.log('scale0 overlay interaction budget', JSON.stringify(report));
         expect(report.frames.effectiveFps).toBeGreaterThanOrEqual(58);
         expect(report.frames.p99Ms).toBeLessThanOrEqual(20);
         expect(report.frames.intervalsOver33_4ms).toBe(0);

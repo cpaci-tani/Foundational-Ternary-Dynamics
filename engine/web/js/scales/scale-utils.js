@@ -125,9 +125,15 @@ export function syncUniversalGridAxes(viewport, on, opts = {}) {
     viewport.toggleAxes(on);
     if (opts.syncWireframe) viewport.toggleWireframe(on);
     const gridBtn = document.getElementById('toggle-grid');
-    if (gridBtn) gridBtn.classList.toggle('active', on);
+    if (gridBtn) {
+        gridBtn.classList.toggle('active', on);
+        gridBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
     const axesBtn = document.getElementById('toggle-axes');
-    if (axesBtn) axesBtn.classList.toggle('active', on);
+    if (axesBtn) {
+        axesBtn.classList.toggle('active', on);
+        axesBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
 }
 
 /**
@@ -250,4 +256,3 @@ export function restoreScaleCameraState(controller, viewport) {
         controller._savedControls = null;
     }
 }
-

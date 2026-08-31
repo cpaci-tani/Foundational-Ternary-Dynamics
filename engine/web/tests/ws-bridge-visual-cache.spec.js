@@ -442,7 +442,21 @@ test('native ticks are backpressured and Scale 0 never creates the WASM fallback
         bridge._connected = true;
         bridge.ready = true;
         bridge._ws = { send(payload) { sent.push(JSON.parse(payload)); } };
-        bridge._sendJSON = async () => ({ ok: true, tick: 0 });
+        bridge._sendJSON = async (message) => {
+            if (message?.cmd === 'setup_scenario' || message?.cmd === 'apply_profile') {
+                return {
+                    ok: true,
+                    tick: 0,
+                    scenario: message.name,
+                    latticeSize: bridge.latticeSize,
+                    fluxBoundaryMode: message.fluxBoundaryMode,
+                    fluxPeriodicAxis: message.fluxPeriodicAxis,
+                    toggles: {},
+                    params: {},
+                };
+            }
+            return { ok: true, tick: 0 };
+        };
         window.__ftdCtx = {
             bridge,
             running: true,
@@ -820,7 +834,11 @@ test('scenario-local visibility tuning restores user volume controls on the next
             syncScalarRenderMode() {},
         };
         const ctx = { viewport };
-        const state = { forceStyle: 'arrows', latticeNeedsUpload: false };
+        const state = {
+            forceStyle: 'arrows',
+            latticeNeedsUpload: false,
+            fieldFlags: { showKnotZones: false },
+        };
         const initial = captureOverlayPreferences(state, ctx);
 
         applyScenarioVisualProfile(
@@ -1084,7 +1102,9 @@ test('compact FTV2 descriptor renders at native sampled lattice coordinates with
 
     expect(result.drawCount).toBe(2);
     expect(result.positions).toEqual([0.5, 0.5, 0.5, 8.5, 8.5, 8.5]);
-    expect(result.capacity).toBe(9 ** 3);
+    // FTV2 is already a bounded published support grid. Rendering without
+    // expansion allocates that 3^3 support, not the unobserved 9^3 lattice.
+    expect(result.capacity).toBe(3 ** 3);
 });
 
 test('FTV2 remains live for derived topology and gravity consumers', async ({ page }) => {
@@ -1318,6 +1338,7 @@ test('native scenario profile is serialized atomically after all loader mutation
                 scenario: message.name,
                 latticeSize: bridge.latticeSize,
                 fluxBoundaryMode: message.fluxBoundaryMode,
+                fluxPeriodicAxis: message.fluxPeriodicAxis,
                 toggles: {
                     wave_propagation: message.toggle_wave_propagation,
                     damping: message.toggle_damping,
@@ -1337,6 +1358,7 @@ test('native scenario profile is serialized atomically after all loader mutation
         bridge.setToggle('selective_damping', false);
         bridge.setupScenario('s0-seed-massive-body');
         bridge.setFluxBoundaryMode(1);
+        bridge.setFluxPeriodicAxis(2);
         bridge.setToggle('latency_field', true);
         bridge.commitScenarioConfiguration('s0-seed-massive-body');
         await new Promise(resolve => setTimeout(resolve, 80));
@@ -1346,6 +1368,7 @@ test('native scenario profile is serialized atomically after all loader mutation
             fireAndForget,
             activeScenario: bridge._activeScenario,
             boundary: bridge._fluxBoundaryMode,
+            periodicAxis: bridge._fluxPeriodicAxis,
             latency: bridge.getToggle('latency_field'),
             clusterPresentBeforeAck,
             clusterAfterAck: bridge.getToggle('cluster_inertia'),
@@ -1360,6 +1383,7 @@ test('native scenario profile is serialized atomically after all loader mutation
         name: 's0-seed-massive-body',
         applyProfile: true,
         fluxBoundaryMode: 1,
+        fluxPeriodicAxis: 2,
         toggle_wave_propagation: false,
         toggle_damping: false,
         toggle_selective_damping: false,
@@ -1367,6 +1391,7 @@ test('native scenario profile is serialized atomically after all loader mutation
     });
     expect(result.activeScenario).toBe('s0-seed-massive-body');
     expect(result.boundary).toBe(1);
+    expect(result.periodicAxis).toBe(2);
     expect(result.latency).toBe(true);
     expect(result.clusterPresentBeforeAck).toBe(false);
     expect(result.clusterAfterAck).toBe(true);
@@ -1462,6 +1487,7 @@ test('native scenario acknowledgement mismatch is rejected before qualification 
             scenario: 'flux-pulse',
             latticeSize: 33,
             fluxBoundaryMode: message.fluxBoundaryMode,
+            fluxPeriodicAxis: message.fluxPeriodicAxis,
             toggles: { wave_propagation: message.toggle_wave_propagation },
             params: {},
         });
@@ -1512,6 +1538,7 @@ test('rapid native scenario changes coalesce to the latest pending allocation', 
                 scenario: message.name,
                 latticeSize: bridge.latticeSize,
                 fluxBoundaryMode: message.fluxBoundaryMode,
+                fluxPeriodicAxis: message.fluxPeriodicAxis,
                 toggles: { wave_propagation: message.toggle_wave_propagation },
                 params: {},
             })));
@@ -1577,6 +1604,7 @@ test('prepared native resize applies its profile without rebuilding the lattice 
                 scenario: message.name,
                 latticeSize: bridge.latticeSize,
                 fluxBoundaryMode: message.fluxBoundaryMode,
+                fluxPeriodicAxis: message.fluxPeriodicAxis,
                 toggles: { wave_propagation: message.toggle_wave_propagation },
                 params: {},
             };
@@ -1615,6 +1643,7 @@ test('stale prepared native resize cannot survive scenario-generation turnover',
                 scenario: message.name,
                 latticeSize: bridge.latticeSize,
                 fluxBoundaryMode: message.fluxBoundaryMode,
+                fluxPeriodicAxis: message.fluxPeriodicAxis,
                 toggles: { wave_propagation: message.toggle_wave_propagation },
                 params: {},
             };

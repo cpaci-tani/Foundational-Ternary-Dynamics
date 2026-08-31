@@ -7,7 +7,9 @@ test.describe('Scale 0 Visualization overlay audit gate', () => {
         testInfo.setTimeout(120_000);
         page.setDefaultTimeout(30_000);
         await gotoAndReady(page);
-        await page.waitForFunction(() => window.__ftdCtx?.fluxMock?.ready === true);
+        if (testInfo.title !== 'category enabled counters are accurate, compact, and centered') {
+            await page.waitForFunction(() => window.__ftdCtx?.fluxMock?.ready === true);
+        }
     });
 
     test('visual shell uses the canonical dashboard surfaces and interaction states', async ({ page }) => {
@@ -63,6 +65,47 @@ test.describe('Scale 0 Visualization overlay audit gate', () => {
         expect(result.activeRenderMode.background).toBe(result.canonicalActive.background);
         expect(result.activeRenderMode.border).toBe(result.canonicalActive.border);
         expect(result.categoryColorCount).toBe(8);
+        expect(realErrors(consoleErrors)).toEqual([]);
+    });
+
+    test('category enabled counters are accurate, compact, and centered', async ({ page }) => {
+        const consoleErrors = attachConsoleWatcher(page);
+        const counters = await page.evaluate(async () => {
+            const { COL_TO_TOGGLES } = await import('/js/scales/scale0/ui/overlays/presets.js');
+            return Object.entries(COL_TO_TOGGLES).map(([column, toggleIds]) => {
+                const badge = document.querySelector(`[data-count-for="${column}"]`);
+                const style = getComputedStyle(badge);
+                const expected = toggleIds.filter((id) => {
+                    const button = document.getElementById(id);
+                    return button?.classList.contains('active')
+                        && !button.classList.contains('is-inapplicable');
+                }).length;
+                return {
+                    column,
+                    expected,
+                    actual: Number(badge.textContent),
+                    display: style.display,
+                    alignItems: style.alignItems,
+                    justifyContent: style.justifyContent,
+                    fontSize: style.fontSize,
+                    lineHeight: style.lineHeight,
+                    textAlign: style.textAlign,
+                };
+            });
+        });
+
+        expect(counters).toHaveLength(8);
+        for (const counter of counters) {
+            expect(counter.actual, `${counter.column} enabled count`).toBe(counter.expected);
+            expect(counter).toMatchObject({
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '10px',
+                lineHeight: '10px',
+                textAlign: 'center',
+            });
+        }
         expect(realErrors(consoleErrors)).toEqual([]);
     });
 
@@ -207,6 +250,7 @@ test.describe('Scale 0 Visualization overlay audit gate', () => {
                     fieldBindings: FIELD_TOGGLE_BINDINGS.length,
                     sheetSliders: panel.querySelectorAll('.s0-sheet-height-slider').length,
                     forceStyles: panel.querySelectorAll('#force-style-row .style-btn').length,
+                    sceneFlowButtons: document.querySelectorAll('#status-scene-controls #scene-force-flow').length,
                     scalarStyles: panel.querySelectorAll('#scalar-render-row .style-btn').length,
                     axes: panel.querySelectorAll('[id^="flux-slice-axis-"]').length,
                     fluxStyles: panel.querySelectorAll('#toggle-flux-organic, #toggle-flux-glow').length,
@@ -231,7 +275,7 @@ test.describe('Scale 0 Visualization overlay audit gate', () => {
 
         expect(result.panel).toEqual({
             columns: 8, primaryButtons: 33, uniquePrimary: 33, allViewButtons: 38,
-            fieldBindings: 30, sheetSliders: 6, forceStyles: 4, scalarStyles: 2,
+            fieldBindings: 30, sheetSliders: 6, forceStyles: 3, sceneFlowButtons: 1, scalarStyles: 2,
             axes: 3, fluxStyles: 2, clearButtons: 8, missingPrimary: [],
             ungroupedBindings: [], nonStoreBindings: [],
             standalonePrimary: ['toggle-sm-reference', 'toggle-flux-volume', 'toggle-flux-slice'],
@@ -526,6 +570,18 @@ test.describe('Scale 0 Visualization overlay audit gate', () => {
                 if ((message?.type === 'wantSampler' || message?.type === 'unwantSampler')
                     && ['e', 'b', 'poynting'].includes(message.kind)) {
                     window.__gate10SamplerTrace.push({ type: message.type, kind: message.kind, stride: message.stride });
+                } else if (message?.type === 'replaceSamplerWants') {
+                    // The proxy publishes owner-union changes atomically. Trace
+                    // the normalized semantic operations so this contract
+                    // remains independent of single versus batched transport.
+                    for (const change of message.changes || []) {
+                        if (!['e', 'b', 'poynting'].includes(change.kind)) continue;
+                        window.__gate10SamplerTrace.push({
+                            type: change.op === 'want' ? 'wantSampler' : 'unwantSampler',
+                            kind: change.kind,
+                            stride: change.stride,
+                        });
+                    }
                 }
                 return window.__gate10OriginalPostMessage.apply(this, args);
             };

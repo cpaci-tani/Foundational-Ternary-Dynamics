@@ -470,8 +470,12 @@ function applyAuxiliaryDefaults(ctx, viewportAdapter, scenarioId, { resetSpeed =
     // (after scenario.load) sponges the seed.
     const bnd = SCALE0_SCENARIO_BOUNDARY[scenarioId] || {};
     const mode = bnd.mode ?? (bnd.reflective === true ? 1 : 2);
+    // Boundary coverage is always the complete cube. The axis is orientation
+    // metadata only; scenarios default to Z as forward/aft.
+    const periodicAxis = bnd.periodicAxis ?? 2;
     ctx.applyBoundaryShape(bnd.shape ?? 'cube');
     ctx.applyFluxBoundaryMode(mode);
+    ctx.applyFluxPeriodicAxis(periodicAxis);
     viewportAdapter.setFluxVolumeVisible(true);
     viewportAdapter.setFluxSliceVisible(false);
     setButtonActive('toggle-flux-volume', true);

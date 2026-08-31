@@ -9,7 +9,7 @@
 
 // ── Bridge classes ───────────────────────────────────────────────────
 import { WasmBridge } from './bridge/wasm-bridge.js';
-import { WebSocketBridge } from './ws-bridge.js?v=4';
+import { WebSocketBridge } from './ws-bridge.js?v=5';
 
 // ── Capability factories — installs the lazy `bridge.capabilities` getter
 //    so consumers see the symmetric Scale 0/1/2 surface (CONTRACTS.md §2).

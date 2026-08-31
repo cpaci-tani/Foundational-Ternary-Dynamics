@@ -70,7 +70,7 @@ import { insideBoundary } from './viewport/boundary-geometry.js';
 // viewport decomposition. Viewport composes a ViewportSceneCore and
 // forwards every scene-decoration method through a thin wrapper. See
 // viewport/REFACTOR_MAP.md §3a.
-import { ViewportSceneCore } from './viewport/scene-core.js?v=3';
+import { ViewportSceneCore } from './viewport/scene-core.js?v=8';
 // Rubber-sheet visualizations (gravitational potential + 10 topology fields).
 // Extracted per refactoring-analyst RF-1. Viewport holds the instance as
 // this._topoRenderer and forwards via thin delegators.
@@ -289,6 +289,10 @@ export class Viewport {
         this._onResize();
         this._resizeObserver = new ResizeObserver(() => this._onResize());
         this._resizeObserver.observe(container);
+
+        // One-time shader preparation belongs to boot, not the first user
+        // interaction. The flux-slice mesh remains hidden after compilation.
+        this._fieldRenderer.prewarmFluxSlice(this.renderer);
     }
 
     // _initParticles extracted to ViewportParticleRenderer (Phase 3d).
@@ -318,6 +322,18 @@ export class Viewport {
 
     setReflectiveBoundary(on) {
         this._reflectiveBoundary = !!on;
+    }
+
+    setBoundaryDynamics(mode, periodicAxis) {
+        this._sceneCore?.setBoundaryDynamics(mode, periodicAxis);
+    }
+
+    setGlobalClockTick(tick) {
+        this._sceneCore?.setGlobalClockTick(tick);
+    }
+
+    setGlobalClockState(state) {
+        this._sceneCore?.setGlobalClockState(state);
     }
 
     /**
@@ -386,9 +402,7 @@ export class Viewport {
     //   'front' — looking along -Z (standard "face-on" view)
     //   'side'  — looking along -X
     //   'top'   — looking along -Y (birds-eye)
-    //   'iso'   — default isometric (matches boot / resize position)
-    //   'moore' — zoomed-in iso that frames a 3×3×3 Moore neighbourhood
-    //             around the lattice centre (useful for seed scenarios)
+    // The front preset is the canonical boot/resize default.
     setCameraPreset(which) { return this._sceneCore?.setCameraPreset(which) ?? false; }
 
     // Frame the camera so the lattice / active boundary fills the view.
@@ -458,6 +472,10 @@ export class Viewport {
     setWireframeBrightness(val) { this._sceneCore?.setWireframeBrightness(val); }
 
     toggleAxes(on) { this._sceneCore?.toggleAxes(on); }
+
+    toggleBoundaryOrientation(on) { this._sceneCore?.toggleBoundaryOrientation(on); }
+
+    toggleGlobalClock(on) { this._sceneCore?.toggleGlobalClock(on); }
 
     setVoxelHighlight(x, y, z, active) { this._sceneCore?.setVoxelHighlight(x, y, z, active); }
 
@@ -1002,12 +1020,9 @@ export class Viewport {
             if (this._fluxVolume) this._fluxVolume.visible = this.showFlux;
             if (this._fluxSlice) this._fluxSlice.visible = this.showSlice ?? false;
 
-            // Recenter at lattice center
-            const center = this.latticeSize / 2;
-            const dist = this.latticeSize * 1.6;
-            this.controls.target.set(center, center, center);
-            this.camera.position.set(center + dist * 0.25, center + dist * 0.15, center + dist);
-            this.controls.update();
+            // Returning to Scale 0 is another default-camera boundary: restore
+            // the canonical face-on framing rather than the former isometric.
+            this.setCameraPreset('front');
         }
         if (this._applyScenarioScale) this._applyScenarioScale();
     }
@@ -1293,7 +1308,7 @@ export class Viewport {
     get _showGrid() { return this._sceneCore?._showGrid ?? true; }
     set _showGrid(v) { if (this._sceneCore) this._sceneCore._showGrid = v; }
     get _engineMode() { return this._sceneCore?._engineMode ?? 'lattice'; }
-    set _engineMode(v) { if (this._sceneCore) this._sceneCore._engineMode = v; }
+    set _engineMode(v) { this._sceneCore?.setEngineMode(v); }
     get _boundaryShape() { return this._sceneCore?._boundaryShape ?? 'cube'; }
     set _boundaryShape(v) { if (this._sceneCore) this._sceneCore._boundaryShape = v; }
     get _boundaryMode() { return this._sceneCore?._boundaryMode ?? 'lattice'; }

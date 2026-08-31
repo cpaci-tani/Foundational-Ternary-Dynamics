@@ -63,6 +63,7 @@ export function createScale0Capabilities(bridge) {
         setBoundaryShape: (shape) => bridge.setBoundaryShape?.(shape),
         setReflectiveBoundary: (on) => bridge.setReflectiveBoundary?.(on),
         setFluxBoundaryMode: (mode) => bridge.setFluxBoundaryMode?.(mode),
+        setFluxPeriodicAxis: (axis) => bridge.setFluxPeriodicAxis?.(axis),
         setupScenario: (name) => bridge.setupScenario(name),
         setToggle: (key, value) => bridge.setToggle?.(key, value),
         // Phase 2 gravity panel: engine Poisson-derived [IMPOSED]

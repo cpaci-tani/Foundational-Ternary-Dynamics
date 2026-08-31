@@ -124,6 +124,8 @@
     overflow: auto;
     position: relative;
     padding: var(--sp-md, 10px);
+    container-name: floating-sidepanel;
+    container-type: inline-size;
 }
 
 .floating-window-body > .panel {
@@ -140,6 +142,56 @@
     transform: none !important;
     visibility: visible !important;
     pointer-events: auto !important;
+}
+
+/* ── Detached side-panel column contract ────────────────────────────────────
+   Docked panels can use the full dock/viewport width, but a detached panel is
+   only 420px wide by default. Viewport media queries therefore cannot decide
+   its internal card count: on a large monitor they previously left three
+   desktop columns squeezed into the small floating window.
+
+   Use the floating body's own content width instead:
+     < 720 CSS px  -> one vertically stacked structural column
+     >= 720 CSS px -> at most two structural columns
+
+   The list is intentionally limited to panel/card composition grids. Compact
+   label/input/value rows (for example Scene sliders) retain their own layout. */
+.floating-window :is(
+    .panel-grid,
+    .panel-resource-grid,
+    .charts-row,
+    .charts-grid,
+    .diag-scale0-root,
+    .diag-scale1-root,
+    .diag-s0-grid,
+    .telemetry-grid-container,
+    .lag-layout,
+    .lag-charts-grid,
+    .flux-slice-row-tiles,
+    .grav-slice-tiles,
+    .p1-gravity-grid
+) {
+    grid-template-columns: minmax(0, 1fr) !important;
+}
+
+@container floating-sidepanel (min-width: 720px) {
+    .floating-window :is(
+        .panel-grid,
+        .panel-resource-grid,
+        .charts-row,
+        .charts-grid,
+        .diag-scale0-root,
+        .diag-scale1-root,
+        .diag-s0-grid,
+        .telemetry-grid-container,
+        .lag-layout,
+        .lag-charts-grid,
+        .flux-slice-row-tiles,
+        .grav-slice-tiles,
+        .p1-gravity-grid
+    ) {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
 }
 
 /* Hide tab when floated */

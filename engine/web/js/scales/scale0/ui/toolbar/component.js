@@ -1,5 +1,5 @@
 import { populateScale0ScenarioSelect } from '../../scenario-registry.js';
-import { getScale0ScenarioToolbarTemplate, getScale0LatticeSizeToolbarTemplate } from './template.js';
+import { getScale0ScenarioToolbarTemplate, getScale0LatticeSizeToolbarTemplate } from './template.js?v=2';
 
 function htmlToElement(markup) {
     const template = document.createElement('template');

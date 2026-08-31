@@ -208,6 +208,78 @@ test('suppresses stale values and stats, then displays a fresh measured zero', a
     });
 });
 
+test('Diagnostics sparklines keep redrawing after a shared ring reaches capacity', async ({ page }) => {
+    const result = await page.evaluate(async () => {
+        const [{ MultiRingBuffer }, { DiagnosticsTable }] = await Promise.all([
+            import('/js/telemetry-hub.js'),
+            import('/js/ui/panels/diagnostics-panel/table.js'),
+        ]);
+        const ring = new MultiRingBuffer(2, ['value']);
+        const hub = {
+            sample: { value: 0 },
+            trend: ring.views.value,
+            getResetVersion: () => 0,
+        };
+        const table = new DiagnosticsTable({
+            id: 'ring-rollover',
+            title: 'Ring Rollover',
+            rows: [{
+                id: 'value', label: 'Value', source: 'sample.value', trend: 'trend',
+            }],
+        }, hub);
+        document.body.appendChild(table.el);
+
+        // Make this a deterministic lifecycle test; viewport intersection is
+        // covered separately by the panel virtualization campaign.
+        table.sparkObserver?.disconnect();
+        const entry = table.sparkEntries[0];
+        table.mountSpark(entry);
+        let redraws = 0;
+        const originalUpdate = entry.spark.update.bind(entry.spark);
+        entry.spark.update = () => {
+            redraws++;
+            originalUpdate();
+        };
+
+        for (const value of [1, 2, 3]) {
+            ring.push({ value });
+            hub.sample.value = value;
+            table.update();
+        }
+        const redrawsAfterRollover = redraws;
+        const stampAfterRollover = entry.stamp;
+
+        // Audit collection can refine the newest shared row without pushing a
+        // second sample. It must repaint but must not count as another sample.
+        ring.views.value.setLast(4);
+        hub.sample.value = 4;
+        table.update();
+        const lastY = entry.spark.ys[Math.min(ring.count, entry.spark.visibleSamples) - 1];
+        const statsCount = table.stats.get('value').count;
+        const stampAfterPatch = entry.stamp;
+        table.destroy();
+        return {
+            redrawsAfterRollover,
+            redrawsAfterPatch: redraws,
+            ringCount: ring.count,
+            ringTotal: ring.total,
+            statsCount,
+            lastY,
+            stampChangedOnPatch: stampAfterPatch !== stampAfterRollover,
+        };
+    });
+
+    expect(result).toEqual({
+        redrawsAfterRollover: 3,
+        redrawsAfterPatch: 4,
+        ringCount: 2,
+        ringTotal: 3,
+        statsCount: 3,
+        lastY: 4,
+        stampChangedOnPatch: true,
+    });
+});
+
 test('deduplicates reused worker-group provenance and clears a reset Telemetry Grid trace', async ({ page }) => {
     const result = await page.evaluate(async () => {
         const [{ TelemetryHub, telemetryHub }, { TelemetryGridPanelComponent }] = await Promise.all([
@@ -458,12 +530,26 @@ test('real L=97 worker cadence keeps the audit sample tick/version stable while 
             && state.fluxMock?.latticeSize === 97;
     }), { timeout: 90_000 }).toBe(true);
 
-    const result = await page.evaluate(async () => {
-        const { getScale0State } = await import('/js/scales/scale0/state/store.js');
-        const owner = getScale0State().fluxMock;
+    // Opening Diagnostics changes worker telemetry demand asynchronously. The
+    // worker deliberately publishes one fail-closed `inactive` observation
+    // until that demand reaches it, so establish the first available audit as
+    // the cadence-test barrier instead of racing that transition.
+    await page.evaluate(() => {
         document.querySelector('#tab-bar .tab[data-panel="diagnostics"]')?.click();
         const play = document.getElementById('btn-play');
         if (play?.getAttribute('data-paused') === 'true') play.click();
+    });
+    await expect.poll(async () => page.evaluate(async () => {
+        const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+        const meta = getScale0State().fluxMock?.getScale0TelemetryGroupMeta?.('audit');
+        return meta?.status === 'available'
+            && meta.stale === false
+            && Number.isFinite(meta.receivedAt);
+    }), { timeout: 30_000 }).toBe(true);
+
+    const result = await page.evaluate(async () => {
+        const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+        const owner = getScale0State().fluxMock;
 
         const rows = [];
         let lastFrame = -1;

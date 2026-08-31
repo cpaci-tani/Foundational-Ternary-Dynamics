@@ -81,6 +81,95 @@ test.describe('Scale 0 panel shell audit gate', () => {
         expect(realErrors(consoleErrors)).toEqual([]);
     });
 
+    test('floating sidepanels stack by panel width and never exceed two columns', async ({ page }) => {
+        const consoleErrors = attachConsoleWatcher(page);
+        const result = await page.evaluate(async () => {
+            const { floatingWindowManager } = await import('/js/ui/components/floating-window/component.js');
+            const dock = window.__ftdCtx?.appShell?.panelDock;
+            if (!dock) throw new Error('Panel dock controller unavailable');
+
+            const nextLayout = () => new Promise((resolve) => {
+                requestAnimationFrame(() => requestAnimationFrame(resolve));
+            });
+            const columnCount = (element) => {
+                const tracks = getComputedStyle(element).gridTemplateColumns.trim();
+                return tracks && tracks !== 'none' ? tracks.split(/\s+/).length : 0;
+            };
+            const setWidthAndRead = async (win, width, elements) => {
+                win.el.style.width = `${width}px`;
+                await nextLayout();
+                return elements.map(columnCount);
+            };
+
+            // Exercise the real Controls panel shown in the reported failure.
+            floatingWindowManager.getWindow('controls')?.dock();
+            const controls = dock.floatPanel('controls', 220, 90);
+            const controlsGrid = document.getElementById('panel-controls-grid');
+            const realControls = {
+                narrow: (await setWidthAndRead(controls, 420, [controlsGrid]))[0],
+                wide: (await setWidthAndRead(controls, 780, [controlsGrid]))[0],
+                ultra: (await setWidthAndRead(controls, 1100, [controlsGrid]))[0],
+                containerName: getComputedStyle(controls.body).containerName,
+            };
+            controls.dock();
+
+            // Cover every canonical structural-grid family used by sidepanels.
+            const fixture = document.createElement('section');
+            fixture.className = 'panel';
+            const layoutClasses = [
+                'panel-grid panel-grid-3',
+                'panel-resource-grid panel-resource-grid-3',
+                'charts-row',
+                'charts-grid',
+                'diag-scale0-root',
+                'diag-scale1-root',
+                'diag-s0-grid',
+                'telemetry-grid-container',
+                'lag-layout',
+                'lag-charts-grid',
+                'flux-slice-row-tiles',
+                'grav-slice-tiles',
+                'p1-gravity-grid',
+            ];
+            const grids = layoutClasses.map((className) => {
+                const grid = document.createElement('div');
+                grid.className = className;
+                grid.style.display = 'grid';
+                grid.replaceChildren(
+                    document.createElement('div'),
+                    document.createElement('div'),
+                    document.createElement('div'),
+                );
+                fixture.appendChild(grid);
+                return grid;
+            });
+            const audit = floatingWindowManager.floatPanel(
+                'floating-column-audit', 'Floating column audit', 'A', fixture,
+                { x: 40, y: 40 }, () => {},
+            );
+            const structural = {
+                narrow: await setWidthAndRead(audit, 420, grids),
+                wide: await setWidthAndRead(audit, 780, grids),
+                ultra: await setWidthAndRead(audit, 1100, grids),
+            };
+            audit.destroy();
+            fixture.remove();
+            return { realControls, structural, familyCount: layoutClasses.length };
+        });
+
+        expect(result.realControls).toEqual({
+            narrow: 1,
+            wide: 2,
+            ultra: 2,
+            containerName: 'floating-sidepanel',
+        });
+        expect(result.familyCount).toBe(13);
+        expect(new Set(result.structural.narrow)).toEqual(new Set([1]));
+        expect(new Set(result.structural.wide)).toEqual(new Set([2]));
+        expect(new Set(result.structural.ultra)).toEqual(new Set([2]));
+        expect(realErrors(consoleErrors)).toEqual([]);
+    });
+
     test('ten float, drag, collapse, and dock cycles return to baseline', async ({ page }) => {
         const consoleErrors = attachConsoleWatcher(page);
         const report = await page.evaluate(async () => {

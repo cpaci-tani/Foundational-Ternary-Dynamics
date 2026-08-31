@@ -115,6 +115,99 @@ test('uniform max pooling retains dense and compact off-stride source coordinate
     expect(result.compact.count).toBeLessThanOrEqual(1728);
 });
 
+test('minimum point size plus zero threshold reveals every available lattice sample', async ({ page }) => {
+    await installImportMap(page);
+    const result = await page.evaluate(async () => {
+        const THREE = await import('three');
+        const { ViewportFluxRenderer } = await import(
+            '/js/viewport/flux-renderer.js?full-lattice-inspection-test=1'
+        );
+        const makeRenderer = (N) => {
+            const renderer = new ViewportFluxRenderer({
+                scene: new THREE.Scene(),
+                latticeSize: N,
+                halfN: N / 2,
+                boundaryShape: 'cube',
+                insideBoundary: () => true,
+                applyScenarioScale: () => {},
+                buildStreamlineMesh: () => null,
+                writeStreamlinesIntoMesh: () => {},
+            });
+            renderer.setFluxOrganic(false);
+            renderer.setFluxPointScale(0.1);
+            renderer.setFluxThreshold(0);
+            return renderer;
+        };
+        const snapshot = (renderer) => {
+            const geometry = renderer._fluxVolume.geometry;
+            const count = geometry.drawRange.count;
+            const source = geometry.getAttribute('sourcePosition').array;
+            const colors = geometry.getAttribute('particleColor').array;
+            const sizes = geometry.getAttribute('size').array;
+            return {
+                count,
+                capacity: geometry.getAttribute('position').count,
+                firstSource: Array.from(source.slice(0, 3)),
+                lastSource: Array.from(source.slice((count - 1) * 3, count * 3)),
+                firstColor: Array.from(colors.slice(0, 3)),
+                firstSize: sizes[0],
+                lastSize: sizes[count - 1],
+            };
+        };
+
+        const denseN = 33;
+        const denseRenderer = makeRenderer(denseN);
+        denseRenderer.updateFluxVolume(new Float32Array(denseN ** 3), denseN);
+        const denseInspection = snapshot(denseRenderer);
+
+        // Moving either slider away from its minimum restores the bounded
+        // production path and does not make zero-flux samples visible.
+        denseRenderer.setFluxThreshold(0.0001);
+        denseRenderer.updateFluxVolume(new Float32Array(denseN ** 3), denseN);
+        const normal = {
+            count: denseRenderer._fluxVolume.geometry.drawRange.count,
+            capacity: denseRenderer._fluxVolume.geometry.getAttribute('position').count,
+        };
+
+        const compactN = 97;
+        const axisCount = 5;
+        const compactRenderer = makeRenderer(compactN);
+        compactRenderer.updateFluxVolume({
+            data: new Float32Array(axisCount ** 3),
+            latticeSize: compactN,
+            stride: 24,
+            axisCount,
+            origin: 0,
+        }, compactN);
+
+        return {
+            denseInspection,
+            normal,
+            compactInspection: snapshot(compactRenderer),
+        };
+    });
+
+    expect(result.denseInspection.count).toBe(33 ** 3);
+    expect(result.denseInspection.capacity).toBe(33 ** 3);
+    expect(result.denseInspection.firstSource).toEqual([0.5, 0.5, 0.5]);
+    expect(result.denseInspection.lastSource).toEqual([32.5, 32.5, 32.5]);
+    expect(result.denseInspection.firstColor[0]).toBeGreaterThanOrEqual(0.159);
+    expect(result.denseInspection.firstColor[1]).toBeGreaterThanOrEqual(0.349);
+    expect(result.denseInspection.firstColor[2]).toBeGreaterThanOrEqual(0.549);
+    expect(result.denseInspection.firstSize).toBe(1);
+    expect(result.denseInspection.lastSize).toBe(1);
+
+    expect(result.normal.count).toBe(0);
+    expect(result.normal.capacity).toBe(12 ** 3);
+
+    expect(result.compactInspection.count).toBe(5 ** 3);
+    expect(result.compactInspection.capacity).toBe(5 ** 3);
+    expect(result.compactInspection.firstSource).toEqual([0.5, 0.5, 0.5]);
+    expect(result.compactInspection.lastSource).toEqual([96.5, 96.5, 96.5]);
+    expect(result.compactInspection.firstSize).toBe(1);
+    expect(result.compactInspection.lastSize).toBe(1);
+});
+
 test('zero frames retain peak history while an authoritative visual reset clears it', async ({ page }) => {
     await installImportMap(page);
     const result = await page.evaluate(async () => {

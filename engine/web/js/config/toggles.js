@@ -503,10 +503,12 @@ export const SCALE0_SCENARIO_RESEARCH_TERMS = {
 // applyAuxiliaryDefaults will sponge the seed after load.
 //
 //   mode:       number  → 0 periodic, 1 reflective, 2 dispersal.
+//   periodicAxis:number  → orientation metadata: 0 X, 1 Y, 2 Z, 3 all axes.
+//                          It never changes which faces receive the mode.
 //   reflective: boolean → legacy alias for mode 1/2.
 //   shape:      string  → optional 'boundary-select' value (e.g. 'cube').
 //
-// @type {Partial<Record<ScenarioId, { mode?: number, reflective?: boolean, shape?: string }>>}
+// @type {Partial<Record<ScenarioId, { mode?: number, periodicAxis?: number, reflective?: boolean, shape?: string }>>}
 export const SCALE0_SCENARIO_BOUNDARY = {
     // configure_free_wave_terms leaves the freshly constructed engine's
     // canonical Periodic boundary intact. The dashboard fallback used to
@@ -517,7 +519,7 @@ export const SCALE0_SCENARIO_BOUNDARY = {
     's0-seed-moving-source-reciprocity': { mode: 0 },
 
     // These initial conditions are uniform across at least one transverse
-    // face or are defined as periodic harmonics. A dispersal sponge edits the
+    // face or are defined as periodic harmonics. Dispersal face excision edits the
     // seed at tick one and injects a false longitudinal/transverse distortion.
     'flux-standing': { mode: 0 },
     'flux-dipole': { mode: 0 },

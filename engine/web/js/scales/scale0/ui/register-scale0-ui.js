@@ -1,4 +1,4 @@
-import { createScale0ScenarioToolbarGroup, createScale0LatticeSizeToolbarGroup } from './toolbar/component.js';
+import { createScale0ScenarioToolbarGroup, createScale0LatticeSizeToolbarGroup } from './toolbar/component.js?v=2';
 
 export function registerScale0ToolbarUI(toolbarRegistry) {
     toolbarRegistry.registerFactory({

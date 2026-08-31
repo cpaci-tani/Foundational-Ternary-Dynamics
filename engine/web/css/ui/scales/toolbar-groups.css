@@ -52,6 +52,32 @@
     margin-left: 8px;
 }
 
+.boundary-axis-control {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: opacity 120ms ease;
+}
+
+.global-clock-readout {
+    min-width: 152px;
+    padding: 4px 8px;
+    border: 1px solid color-mix(in srgb, var(--clock-rate-color, var(--accent, #60a5fa)) 58%, transparent);
+    border-radius: 999px;
+    color: color-mix(in srgb, var(--clock-rate-color, var(--text-muted)) 78%, white);
+    background: color-mix(in srgb, var(--clock-rate-color, #60a5fa) 8%, transparent);
+    font-variant-numeric: tabular-nums;
+    font-size: var(--fs-xs);
+    text-align: center;
+    white-space: nowrap;
+    transition: color 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.global-clock-readout[data-causal-projection="true"] {
+    box-shadow: 0 0 0 1px color-mix(in srgb, #fb7185 46%, transparent),
+                0 0 12px color-mix(in srgb, #fb7185 24%, transparent);
+}
+
 .tb-detail-inline {
     max-width: 240px;
 }

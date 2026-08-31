@@ -5,6 +5,8 @@ import {
     SCALE0_MUTATION_SOURCES,
     commitScale0ScientificMutation,
     getActiveScale0Bridge,
+    getActiveScale0Capability,
+    getActiveLatticeSize,
     getFieldStateSnapshot,
     getScalarRenderMode,
     getScale0QualificationState,
@@ -39,6 +41,21 @@ import {
 } from './overlays/standard-model.js?v=2';
 
 let _bound = false;
+
+function refreshFluxSliceOnly(ctx, api) {
+    const adapter = api.viewportAdapter(ctx);
+    const scale0 = getActiveScale0Capability(ctx);
+    if (!adapter || !scale0) return;
+
+    const latticeSize = getActiveLatticeSize(ctx);
+    const sliceIndex = Math.floor(latticeSize / 2);
+    const planes = [];
+    for (const axis of adapter.getEnabledFluxSliceAxes()) {
+        const data = scale0.getScale0FluxSlice(axis, sliceIndex);
+        if (data?.length > 0) planes.push({ axis, data });
+    }
+    if (planes.length > 0) adapter.applyFluxSlices(planes, latticeSize, sliceIndex);
+}
 
 function setDisplayText(display, text) {
     if (!display || display.textContent === text) return;
@@ -198,6 +215,20 @@ export function bindScale0UI(ctx, api) {
         });
     }
 
+    const fluxPeriodicAxis = getEl('flux-periodic-axis');
+    if (fluxPeriodicAxis) {
+        fluxPeriodicAxis.addEventListener('change', () => {
+            const owner = getActiveScale0Bridge(ctx, getScale0State());
+            commitScale0ScientificMutation(ctx, {
+                reason: SCALE0_MUTATION_REASONS.FLUX_BOUNDARY,
+                source: SCALE0_MUTATION_SOURCES.TOOLBAR_BOUNDARY,
+                loadGeneration: ctx._loadGeneration || 0,
+                owner,
+                dispatchStatus: 'unknown',
+            }, () => ctx.applyFluxPeriodicAxis(parseInt(fluxPeriodicAxis.value, 10)));
+        });
+    }
+
     const scenarioSelect = getEl('scenario-select');
     if (scenarioSelect) {
         scenarioSelect.addEventListener('change', () => {
@@ -236,7 +267,11 @@ export function bindScale0UI(ctx, api) {
             const on = !readButtonActive('toggle-flux-slice');
             setButtonActive('toggle-flux-slice', on);
             api.viewportAdapter(ctx).setFluxSliceVisible(on);
-            api.setLatticeNeedsUpload();
+            // A slice toggle must not schedule the generic lattice upload: that
+            // also rebuilds particles and the full flux volume. Refresh only
+            // the three requested planes so paused simulations show current
+            // data without introducing a frame hitch.
+            if (on) refreshFluxSliceOnly(ctx, api);
         });
     }
 
@@ -372,19 +407,21 @@ export function bindScale0UI(ctx, api) {
         });
     }
 
+    const applyForceStyle = (style) => {
+        if (!FORCE_STYLE_VALUES.includes(style) || style === api.getForceStyle()) return;
+        setForceStyle(style);
+        setForceStyleButtons(style);
+        api.viewportAdapter(ctx).syncForceStyle(style, getFieldStateSnapshot());
+        api.setLatticeNeedsUpload();
+    };
     const styleRow = getEl('force-style-row');
-    if (styleRow) {
-        for (const btn of styleRow.querySelectorAll('.style-btn')) {
-            btn.addEventListener('click', () => {
-                const style = btn.dataset.style;
-                if (!FORCE_STYLE_VALUES.includes(style) || style === api.getForceStyle()) return;
-                setForceStyle(style);
-                setForceStyleButtons(style);
-                api.viewportAdapter(ctx).syncForceStyle(style, getFieldStateSnapshot());
-                api.setLatticeNeedsUpload();
-            });
-        }
+    for (const btn of styleRow?.querySelectorAll('.style-btn') ?? []) {
+        btn.addEventListener('click', () => applyForceStyle(btn.dataset.style));
     }
+    getEl('scene-force-flow')?.addEventListener('click', (event) => {
+        applyForceStyle(event.currentTarget.dataset.style);
+    });
+    setForceStyleButtons(api.getForceStyle());
 
     // Volumetric-scalar render-mode meta-toggle (Default / Heat Map). Flips every
     // active scalar overlay between its native sheet/cloud and a thermal glow cloud.

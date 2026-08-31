@@ -179,6 +179,8 @@ test('worker qualification callback waits for a successful configuration barrier
         try {
             proxy.setupScenario('empty');
             proxy.setFluxBoundaryMode(0);
+            proxy.setFluxPeriodicAxis(2);
+            await Promise.resolve();
             const create = posted.find((message) => message.type === 'create');
             const ctrl = new SharedArrayBuffer(8 * 4);
             const heap = new ArrayBuffer(9 ** 3 * 8);
@@ -211,6 +213,7 @@ test('worker qualification callback waits for a successful configuration barrier
                 errors: [],
                 engineToggles: { wave_propagation: false },
                 fluxBoundaryMode: 0,
+                fluxPeriodicAxis: 2,
             });
             proxy._onMessage({
                 type: 'frame',
@@ -218,8 +221,10 @@ test('worker qualification callback waits for a successful configuration barrier
                 diag: { tick: 1 },
                 engineToggles: { wave_propagation: false },
             });
+            const readbacksAfterAcceptedBarrier = engineReadbacks.length;
 
             proxy.setupScenario('empty');
+            await Promise.resolve();
             const rejectedCreate = posted.filter((message) => message.type === 'create').at(-1);
             proxy._onMessage({
                 type: 'frame',
@@ -258,7 +263,7 @@ test('worker qualification callback waits for a successful configuration barrier
             return {
                 batchMethods: batch.commands.map((command) => command.method),
                 readbacksBeforeBarrier,
-                readbacksAfterAcceptedBarrier: 1,
+                readbacksAfterAcceptedBarrier,
                 readbacksAfterRejectedBarrier: engineReadbacks.length,
                 staleFrameAccepted,
                 acknowledgements,
@@ -270,6 +275,7 @@ test('worker qualification callback waits for a successful configuration barrier
     });
 
     expect(result.batchMethods).toContain('setFluxBoundary');
+    expect(result.batchMethods).toContain('setFluxPeriodicAxis');
     expect(result.readbacksBeforeBarrier).toBe(0);
     expect(result.staleFrameAccepted).toBe(false);
     expect(result.readbacksAfterRejectedBarrier).toBe(result.readbacksAfterAcceptedBarrier);

@@ -4,7 +4,7 @@
  */
 
 import { createBridge } from '../bridge-init.js?v=3';
-import { tryNativeBridge } from '../ws-bridge.js?v=4';
+import { tryNativeBridge } from '../ws-bridge.js?v=5';
 import { parseNativeWsPort } from '../lib/origin-policy.js';
 import { debugLog } from '../core/log.js';
 

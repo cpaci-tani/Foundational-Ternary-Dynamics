@@ -199,6 +199,31 @@ export const fieldEmMethods = {
     updateFluxSlice(sliceData, latticeSize, axis, index) {
         this.updateFluxSlices([{ axis, data: sliceData }], latticeSize, index);
     },
+    prewarmFluxSlice(renderer) {
+        if (!renderer?.render) return;
+        if (!this._fluxSliceMesh) this._buildFluxSliceMesh(this._latticeSize);
+        const wasVisible = this._fluxSliceMesh.visible;
+        const geometry = this._fluxSliceMesh.geometry;
+        const oldStart = geometry.drawRange.start;
+        const oldCount = geometry.drawRange.count;
+        const opacity = this._fluxSliceMesh.material.uniforms.uOpacity;
+        const oldOpacity = opacity.value;
+        this._fluxSliceMesh.visible = true;
+        geometry.setDrawRange(0, 1);
+        opacity.value = 0;
+        try {
+            // Compile the program and allocate its attributes on the GPU during
+            // viewport initialization. A transparent one-point draw is enough
+            // to make the later interactive upload a buffer update instead of
+            // first-use allocation on a foreground frame.
+            renderer.compile?.(this._scene, this._camera);
+            renderer.render(this._scene, this._camera);
+        } finally {
+            opacity.value = oldOpacity;
+            geometry.setDrawRange(oldStart, oldCount);
+            this._fluxSliceMesh.visible = wasVisible;
+        }
+    },
     toggleFluxSlice(on) {
         const next = !!on;
         this.showHeatmap = next;

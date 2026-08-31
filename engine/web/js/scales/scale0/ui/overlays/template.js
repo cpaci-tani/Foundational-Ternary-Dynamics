@@ -77,7 +77,6 @@ export function getScale0OverlayTemplate() {
             aria-label="Vector force rendering" title="Render style for force-field overlays">
           <button class="style-btn active" type="button" data-style="arrows" aria-pressed="true" title="Vector arrows">Arrows</button>
           <button class="style-btn" type="button" data-style="heatmap" aria-pressed="false" title="Gaussian heatmap">Heat</button>
-          <button class="style-btn" type="button" data-style="flow" aria-pressed="false" title="Animated streamlines">Flow</button>
           <button class="style-btn" type="button" data-style="glyphs" aria-pressed="false" title="Oriented glyph field">Glyphs</button>
         </div>
       </div>
@@ -121,8 +120,8 @@ export function getScale0OverlayTemplate() {
         <button class="view-toggle active" id="toggle-flux-volume"
             title="Volumetric point cloud of |J| (flux magnitude). Every voxel up to L=53; above that an even-stride subsample. Voxels below the |J| threshold slider are hidden.">Flux Volume</button>
         <div class="flux-slice-axis-row" role="group" aria-label="Flux volume style">
-          <button class="view-toggle flux-slice-axis-mini active" id="toggle-flux-organic"
-              title="Organic scatter jitter (±½ cell), independent of lattice size.">Organic</button>
+          <button class="view-toggle flux-slice-axis-mini" id="toggle-flux-organic"
+              aria-pressed="false" title="Organic scatter jitter (±½ cell), independent of lattice size. Off by default so the exact lattice remains visible.">Organic</button>
           <button class="view-toggle flux-slice-axis-mini active" id="toggle-flux-glow"
               title="Additive glow bloom on the flux volume">Glow</button>
         </div>
@@ -364,5 +363,15 @@ export function getScale0OverlayTemplate() {
     </div>
     </div>
   `;
+  // Keep every layer row visually consistent without hand-wrapping dozens of
+  // semantic labels. The wrapper preserves each existing swatch/icon and lets
+  // CSS center and subtly reduce the content while retaining the full button
+  // hit target and the project-wide 16 px computed font floor.
+  for (const button of container.querySelectorAll('.s0-overlay-body .view-toggle')) {
+    const content = document.createElement('span');
+    content.className = 's0-toggle-content';
+    while (button.firstChild) content.appendChild(button.firstChild);
+    button.appendChild(content);
+  }
   return container;
 }

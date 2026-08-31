@@ -7,7 +7,7 @@ import { TopbarComponent } from '../components/topbar/component.js';
 import { WorkspaceTabsComponent } from '../components/workspace-tabs/component.js';
 import { PanelDockComponent } from '../components/panel-dock/component.js';
 import { ViewportFrameComponent } from '../components/viewport-frame/component.js';
-import { ViewportOverlaysComponent } from '../components/viewport-overlays/component.js?v=4';
+import { ViewportOverlaysComponent } from '../components/viewport-overlays/component.js?v=7';
 import { TooltipComponent } from '../components/tooltips/component.js';
 import { KnowledgeBaseComponent } from '../components/knowledge-base/component.js';
 import { FaqComponent } from '../components/faq/component.js';
@@ -16,7 +16,7 @@ import { ensurePanelResources } from '../components/panel-resources/component.js
 import { annotatePanelElements, getPanelLabel, getPanelRegistry, validatePanelRegistry } from '../scale-registry/panel-registry.js';
 import { createScaleUiRegistry } from '../scale-registry/register-scale-ui.js';
 import { registerLegacyToolbarUi } from './register-legacy-toolbar-ui.js';
-import { registerScale0ToolbarUI } from '../../scales/scale0/ui/register-scale0-ui.js';
+import { registerScale0ToolbarUI } from '../../scales/scale0/ui/register-scale0-ui.js?v=2';
 import { registerScale1ToolbarUI } from '../../scales/scale1/ui/register-scale1-ui.js';
 import { registerScale2ToolbarUI } from '../../scales/scale2/ui/register-scale2-ui.js';
 import { registerScale3ToolbarUI } from '../../scales/scale3/ui/register-scale3-ui.js';

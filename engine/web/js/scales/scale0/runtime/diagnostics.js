@@ -97,6 +97,14 @@ export function updateDiagnosticsAndPanels(ctx, state) {
     const liveAudit = auditCurrent ? telemetryHub.s0.audit : null;
     const physicalTime = diagCurrent
         ? _firstFinite(diag.physicalTime, diag.tick) : undefined;
+    ctx.viewport?.setGlobalClockState?.({
+        tick: diagCurrent && Number.isFinite(diag.tick) ? diag.tick : 0,
+        running: Boolean(ctx.running),
+        maxCausalBudget: diagCurrent && Number.isFinite(diag.maxCausalBudget)
+            ? diag.maxCausalBudget : null,
+        causalProjectionEvents: diagCurrent && Number.isFinite(diag.causalProjectionEvents)
+            ? diag.causalProjectionEvents : 0,
+    });
     ctx.dom.statusPtime.textContent = Number.isFinite(physicalTime)
         ? formatSI(Math.round(physicalTime)) : '—';
     ctx.dom.statusParticles.textContent = diagCurrent && Number.isFinite(diag.manifested)

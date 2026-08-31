@@ -175,6 +175,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         this._boundaryShape = 'cube';
         this._reflectiveBoundary = false;
         this._fluxBoundaryMode = 2;
+        this._fluxPeriodicAxis = 2;
         this._preparedScenario = null;
         // Scenario selection is a transaction, not a stream of mutations.
         // The loader stages its toggle/boundary profile here, setupScenario()
@@ -195,6 +196,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         // back instead of leaving getToggle()/the checkbox card lying.
         this._confirmedToggles = { ...this._toggles };
         this._confirmedFluxBoundaryMode = this._fluxBoundaryMode;
+        this._confirmedFluxPeriodicAxis = this._fluxPeriodicAxis;
         this._confirmedParams = { ...this._params };
         this._liveProfileQueued = null;
         this._liveProfileInFlight = false;
@@ -1526,6 +1528,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             ctx.onBridgeProfileUpdate({
                 toggles: { ...this._toggles },
                 fluxBoundaryMode: this._fluxBoundaryMode,
+                fluxPeriodicAxis: this._fluxPeriodicAxis,
                 latticeSize: this.latticeSize,
                 error,
                 ...metadata,
@@ -1535,9 +1538,12 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         }
     }
 
-    _queueLiveProfileMutation({ toggleName, value, fluxBoundaryMode } = {}) {
+    _queueLiveProfileMutation({ toggleName, value, fluxBoundaryMode, fluxPeriodicAxis } = {}) {
         if (!this._liveProfileQueued) {
-            this._liveProfileQueued = { toggles: {}, hasBoundary: false, fluxBoundaryMode: 0 };
+            this._liveProfileQueued = {
+                toggles: {}, hasBoundary: false, fluxBoundaryMode: 0,
+                hasPeriodicAxis: false, fluxPeriodicAxis: 2,
+            };
         }
         if (typeof toggleName === 'string') {
             this._liveProfileQueued.toggles[toggleName] = !!value;
@@ -1545,6 +1551,10 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         if (fluxBoundaryMode !== undefined) {
             this._liveProfileQueued.hasBoundary = true;
             this._liveProfileQueued.fluxBoundaryMode = fluxBoundaryMode;
+        }
+        if (fluxPeriodicAxis !== undefined) {
+            this._liveProfileQueued.hasPeriodicAxis = true;
+            this._liveProfileQueued.fluxPeriodicAxis = fluxPeriodicAxis;
         }
         this._scheduleLiveProfileDispatch();
     }
@@ -1572,6 +1582,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             applyProfile: true,
         };
         if (patch.hasBoundary) command.fluxBoundaryMode = patch.fluxBoundaryMode;
+        if (patch.hasPeriodicAxis) command.fluxPeriodicAxis = patch.fluxPeriodicAxis;
         for (const [name, enabled] of Object.entries(patch.toggles)) {
             if (/^[a-z0-9_]+$/.test(name)) command[`toggle_${name}`] = !!enabled;
         }
@@ -1594,6 +1605,10 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                     this._confirmedFluxBoundaryMode = response.fluxBoundaryMode;
                     this._fluxBoundaryMode = response.fluxBoundaryMode;
                 }
+                if (Number.isInteger(response?.fluxPeriodicAxis)) {
+                    this._confirmedFluxPeriodicAxis = response.fluxPeriodicAxis;
+                    this._fluxPeriodicAxis = response.fluxPeriodicAxis;
+                }
                 this._observeTelemetrySourceEpoch(response?.telemetrySourceEpoch);
                 // A newer local edit may have arrived while this ack was in
                 // flight. Preserve its optimistic value until its own ack.
@@ -1601,6 +1616,9 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                     Object.assign(this._toggles, this._liveProfileQueued.toggles);
                     if (this._liveProfileQueued.hasBoundary) {
                         this._fluxBoundaryMode = this._liveProfileQueued.fluxBoundaryMode;
+                    }
+                    if (this._liveProfileQueued.hasPeriodicAxis) {
+                        this._fluxPeriodicAxis = this._liveProfileQueued.fluxPeriodicAxis;
                     }
                 }
                 this._notifyProfileState();
@@ -1618,6 +1636,10 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                         fluxBoundaryMode: newer?.hasBoundary
                             ? newer.fluxBoundaryMode
                             : patch.fluxBoundaryMode,
+                        hasPeriodicAxis: newer?.hasPeriodicAxis || patch.hasPeriodicAxis,
+                        fluxPeriodicAxis: newer?.hasPeriodicAxis
+                            ? newer.fluxPeriodicAxis
+                            : patch.fluxPeriodicAxis,
                     };
                 } else {
                     // Logical rejection means the engine kept its old profile.
@@ -1629,6 +1651,9 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                     }
                     if (patch.hasBoundary && !this._liveProfileQueued?.hasBoundary) {
                         this._fluxBoundaryMode = this._confirmedFluxBoundaryMode;
+                    }
+                    if (patch.hasPeriodicAxis && !this._liveProfileQueued?.hasPeriodicAxis) {
+                        this._fluxPeriodicAxis = this._confirmedFluxPeriodicAxis;
                     }
                     this._notifyProfileState(error.message);
                     if (typeof window !== 'undefined') {
@@ -1665,6 +1690,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             name: profile.name,
             applyProfile: true,
             fluxBoundaryMode: profile.fluxBoundaryMode,
+            fluxPeriodicAxis: profile.fluxPeriodicAxis,
         };
         for (const [name, value] of Object.entries(profile.toggles || {})) {
             // Term names are a closed snake_case registry. Filtering here keeps
@@ -1694,6 +1720,10 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         if (!Number.isInteger(response?.fluxBoundaryMode)
             || response.fluxBoundaryMode !== profile.fluxBoundaryMode) {
             profileErrors.push(`flux-boundary echo ${response?.fluxBoundaryMode ?? 'missing'} != ${profile.fluxBoundaryMode}`);
+        }
+        if (!Number.isInteger(response?.fluxPeriodicAxis)
+            || response.fluxPeriodicAxis !== profile.fluxPeriodicAxis) {
+            profileErrors.push(`periodic-axis echo ${response?.fluxPeriodicAxis ?? 'missing'} != ${profile.fluxPeriodicAxis}`);
         }
         if (!response?.toggles || typeof response.toggles !== 'object') {
             profileErrors.push('complete toggle echo missing');
@@ -1731,6 +1761,10 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             this._fluxBoundaryMode = response.fluxBoundaryMode;
         }
         this._confirmedFluxBoundaryMode = this._fluxBoundaryMode;
+        if (Number.isInteger(response?.fluxPeriodicAxis)) {
+            this._fluxPeriodicAxis = response.fluxPeriodicAxis;
+        }
+        this._confirmedFluxPeriodicAxis = this._fluxPeriodicAxis;
         this._activeScenario = response?.scenario || profile.name;
         this._markVisualDataDirty(true);
         // `_markVisualDataDirty(true)` retires the old cache/source token.
@@ -1789,6 +1823,10 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                         this._confirmedFluxBoundaryMode = response.fluxBoundaryMode;
                     }
                     this._fluxBoundaryMode = this._confirmedFluxBoundaryMode;
+                    if (Number.isInteger(response?.fluxPeriodicAxis)) {
+                        this._confirmedFluxPeriodicAxis = response.fluxPeriodicAxis;
+                    }
+                    this._fluxPeriodicAxis = this._confirmedFluxPeriodicAxis;
                     if (response?.params && typeof response.params === 'object') {
                         this._confirmedParams = Object.fromEntries(
                             Object.entries(response.params)
@@ -2101,6 +2139,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             clientLoadGeneration: normalizedLoadGeneration,
             toggles: {},
             fluxBoundaryMode: this._fluxBoundaryMode,
+            fluxPeriodicAxis: this._fluxPeriodicAxis,
             setupRequested: false,
             prepared,
         };
@@ -2491,6 +2530,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             name,
             toggles: {},
             fluxBoundaryMode: this._fluxBoundaryMode,
+            fluxPeriodicAxis: this._fluxPeriodicAxis,
             setupRequested: true,
             prepared,
         };
@@ -2770,9 +2810,20 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         this._fluxBoundaryMode = normalized;
         this._queueLiveProfileMutation({ fluxBoundaryMode: normalized });
     }
+    setFluxPeriodicAxis(axis) {
+        const normalized = Math.max(0, Math.min(3, Math.trunc(Number(axis) || 0)));
+        if (this._scenarioDraft) {
+            this._fluxPeriodicAxis = normalized;
+            this._scenarioDraft.fluxPeriodicAxis = normalized;
+            return;
+        }
+        if (this._fluxPeriodicAxis === normalized) return;
+        this._fluxPeriodicAxis = normalized;
+        this._queueLiveProfileMutation({ fluxPeriodicAxis: normalized });
+    }
     setReflectiveBoundary(on) {
         this._reflectiveBoundary = !!on;
-        this.setToggle('reflective_boundary', this._reflectiveBoundary);
+        this.setFluxBoundaryMode(this._reflectiveBoundary ? 1 : 2);
     }
     // Scale-0 tick readback.
     currentTick() { return this._lastDiag?.tick ?? 0; }

@@ -166,6 +166,8 @@ export class WasmBridgeProxy {
         this._setupFailureToken = 0;
         this._requestedFluxBoundaryMode = null;
         this._engineFluxBoundaryMode = null;
+        this._requestedFluxPeriodicAxis = null;
+        this._engineFluxPeriodicAxis = null;
         this._wantAudit = false;        // telemetry demand mask (mirrors worker)
         this._wantLag = true;
         this._wantGravity = false;
@@ -334,6 +336,8 @@ export class WasmBridgeProxy {
         this._appliedConfigurationToken = 0;
         this._requestedFluxBoundaryMode = null;
         this._engineFluxBoundaryMode = null;
+        this._requestedFluxPeriodicAxis = null;
+        this._engineFluxPeriodicAxis = null;
         this._samplerCache = {};
         this._samplerCacheVersion = {};
         this._pendingCommands = [];
@@ -646,10 +650,15 @@ export class WasmBridgeProxy {
             }
             if (m.engineToggles) this._engineToggles = m.engineToggles;
             if (Number.isInteger(m.fluxBoundaryMode)) this._engineFluxBoundaryMode = m.fluxBoundaryMode;
+            if (Number.isInteger(m.fluxPeriodicAxis)) this._engineFluxPeriodicAxis = m.fluxPeriodicAxis;
             const errors = Array.isArray(m.errors) ? [...m.errors] : [];
             if (this._requestedFluxBoundaryMode !== null
                 && this._engineFluxBoundaryMode !== this._requestedFluxBoundaryMode) {
                 errors.push(`flux boundary acknowledgement mismatch: expected ${this._requestedFluxBoundaryMode}, got ${this._engineFluxBoundaryMode}`);
+            }
+            if (this._requestedFluxPeriodicAxis !== null
+                && this._engineFluxPeriodicAxis !== this._requestedFluxPeriodicAxis) {
+                errors.push(`periodic axis acknowledgement mismatch: expected ${this._requestedFluxPeriodicAxis}, got ${this._engineFluxPeriodicAxis}`);
             }
             const acknowledgement = { ...m, ok: m.ok !== false && errors.length === 0, errors };
             if (acknowledgement.ok) {
@@ -778,6 +787,7 @@ export class WasmBridgeProxy {
         return null;
     }
     getEngineTruthFluxBoundaryMode() { return this._engineFluxBoundaryMode; }
+    getEngineTruthFluxPeriodicAxis() { return this._engineFluxPeriodicAxis; }
 
     _buildCaps() {
         // The capability factory just delegates to bridge methods, so wrap `this`.
@@ -1049,6 +1059,11 @@ export class WasmBridgeProxy {
         const normalized = Math.max(0, Math.min(2, Math.trunc(Number(mode) || 0)));
         this._requestedFluxBoundaryMode = normalized;
         this._cmd('setFluxBoundary', normalized);
+    }
+    setFluxPeriodicAxis(axis) {
+        const normalized = Math.max(0, Math.min(3, Math.trunc(Number(axis) || 0)));
+        this._requestedFluxPeriodicAxis = normalized;
+        this._cmd('setFluxPeriodicAxis', normalized);
     }
 
     // ── Single-point inspect reads (parity with direct WasmBridge) ──────────
