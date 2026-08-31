@@ -930,6 +930,12 @@ void RenderBridge::tick() {
       }
   }
 
+  // Boundary preparation precedes every stencil read. Reflective mode refreshes
+  // the Neumann ghost shell; Dispersal reconstructs an outward-only ghost trace
+  // from the corresponding strict-interior values. Neither mode reads an
+  // opposite face, and neither changes a strictly interior voxel.
+  prepare_flux_boundary(*this);
+
   if (toggles.db_clock_coulomb)
     solve_coulomb_poisson();
 
@@ -955,6 +961,7 @@ void RenderBridge::tick() {
   // synchronous ternary update, so the coupling source −g_c·∇s is current.
   // Default OFF ⇒ dead branch ⇒ golden hash 0xb604d81a3d79366e untouched.
   if (toggles.verlet_wave_integrator) {
+    prepare_flux_boundary(*this);
     phase_read();
     const int Nv = static_cast<int>(lattice_.total_sites());
     const double half_dt = 0.5 * dt_;
@@ -1061,11 +1068,10 @@ void RenderBridge::tick() {
   if (toggles.absorbing_boundary)
     apply_absorbing_boundary(*this);
 
-  // Rule 5c: flux-field boundary law. Periodic (toroidal wrap) is the default
-  // and is handled by the lattice neighbour tables — no pass needed. The
-  // Reflective / Dispersal passes re-impose their boundary on the shell AFTER
-  // the last flux writers (same placement rationale as the sponge above).
-  // Default Periodic → neither pass runs → golden-tick hash unchanged.
+  // Rule 5c: authoritative transported-dynamics boundary law across all six
+  // faces. Periodic is handled by the lattice neighbour tables. Reflective /
+  // Dispersal re-impose their mirror/outflow ghost shells after local writers.
+  // periodic_axis is orientation metadata only, so it never changes this pass.
   if (toggles.flux_boundary == FluxBoundaryMode::Reflective)
     apply_reflective_flux_boundary(*this);
   else if (toggles.flux_boundary == FluxBoundaryMode::Dispersal)

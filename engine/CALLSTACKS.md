@@ -231,6 +231,7 @@ RenderBridge::tick()
   -> if GPU backend active: GpuBackend::tick() path, then return
        (incl. knot_tracking record + proper-time + ledger; see 3.2)
   -> ew_background_sweep flux drive       [ew_background_sweep]
+  -> prepare_flux_boundary()              [Reflective / Dispersal]
   -> solve_coulomb_poisson()              [db_clock_coulomb]   (pre-read V(r))
   -> phase_read()                  [wave_propagation || coupling || de_broglie_clock]
   -> phase_write()                 [always]
@@ -242,7 +243,7 @@ RenderBridge::tick()
   -> phase_movement()              [movement]
   -> apply_absorbing_boundary()    [absorbing_boundary]
   -> apply_reflective_flux_boundary() / apply_dispersal_flux_boundary()
-                                   [flux_boundary == Reflective / Dispersal]
+                                   [flux_boundary]
   -> weak_transmutation_cpu()      [weak_transmutation]
   -> triad_binding_cpu()           [triad_binding]
   -> relax_su2_links_cpu()         [su2_gauge]   (Rule 7b — links only, no substrate writes)
@@ -681,22 +682,36 @@ GpuEngine::gpu_phase_movement()
 
 ```text
 RenderBridge::tick()
+  -> prepare_flux_boundary(*this) [before every stencil read]
+     -> Reflective: copy first interior layer into the ghost shell
+     -> Dispersal: reconstruct outward-only field traces from strict interior;
+                   excise every non-field face record
+     -> Periodic: no pass; the lattice neighbour tables wrap all three axes
   -> apply_absorbing_boundary(*this) [absorbing_boundary]
      -> phase_write.cpp::apply_absorbing_boundary(rb)
         -> scan lattice faces
         -> compute quadratic sponge factor by distance to nearest face
         -> damp flux, wave_vel, flux_L/R, wave_vel_L/R
-  -> flux_boundary law (default Periodic = toroidal wrap, no pass):
+  -> authoritative flux_boundary law:
+     -> FluxBoundaryMode::Periodic:
+        -> all three opposite face pairs identify (storage wrap; no boundary pass)
      -> FluxBoundaryMode::Reflective:
         -> phase_write.cpp::apply_reflective_flux_boundary(rb)
-           -> copy first interior layer into the boundary shell (Neumann mirror cavity)
+           -> copy the first interior layer into all six boundary faces
+              (Neumann mirror cavity)
      -> FluxBoundaryMode::Dispersal:
         -> phase_write.cpp::apply_dispersal_flux_boundary(rb)
-           -> scale outer shell by (1 - C_SPEED) (single-cell radiating sink)
+           -> non-field record excision plus a one-way Sommerfeld field trace
+              on all six faces; strictly interior cells remain untouched
 ```
 
-The sponge and the Reflective/Dispersal passes all run after Gauss/forces/movement
-(the last flux writers) so projection does not refill the edge shell in the same tick.
+The settled pass covers observable, dual, strong, and weak transported fields
+and runs after Gauss/forces/movement (the last local writers). Particle crossings
+use the same six-face boundary mode: exhaust, normal-component mirror, or wrap.
+`periodic_axis` is retained as orientation/provenance metadata and cannot change
+the physical boundary operator. Constraint potentials and gauge-link relaxation retain
+their separately documented solver topology; they are not silently certified by
+this transported-field boundary contract.
 
 ### 4.12 Weak Transmutation
 

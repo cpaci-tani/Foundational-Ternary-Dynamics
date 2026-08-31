@@ -509,7 +509,7 @@ __global__ void phase_movement_commit_crossings_kernel(
     double* __restrict__ rem_x,
     double* __restrict__ rem_y,
     double* __restrict__ rem_z,
-    const double* __restrict__ latency,
+    double* __restrict__ latency,
     double* __restrict__ flux_x,
     double* __restrict__ flux_y,
     double* __restrict__ flux_z,
@@ -517,8 +517,11 @@ __global__ void phase_movement_commit_crossings_kernel(
     int32_t* __restrict__ particle_id,
     int8_t* __restrict__ spin,
     int8_t* __restrict__ color,
+    int8_t* __restrict__ flavor,
     int32_t* __restrict__ pair_id,
     double* __restrict__ accel_mag,
+    double* __restrict__ tau,
+    double* __restrict__ phase,
     int* __restrict__ ledger_reaction,
     double* __restrict__ ledger_current_x,
     double* __restrict__ ledger_current_y,
@@ -538,6 +541,7 @@ __global__ void phase_movement_commit_crossings_kernel(
     int L,
     int N,
     int movement_blocks,
+    int boundary_mode,
     bool reflective_boundary,
     bool symmetric,
     unsigned long long seed,
@@ -577,19 +581,17 @@ __global__ void phase_movement_commit_crossings_kernel(
         const int nx = x + dx;
         const int ny = y + dy;
         const int nz = z + dz;
-        const bool crosses = nx < 0 || nx >= L || ny < 0 || ny >= L
-                          || nz < 0 || nz >= L;
-        if (crosses) {
-            if (reflective_boundary) {
-                if (dx != 0) vel_x[i] = -vel_x[i];
-                if (dy != 0) vel_y[i] = -vel_y[i];
-                if (dz != 0) vel_z[i] = -vel_z[i];
-                rem_x[i] = 0.0; rem_y[i] = 0.0; rem_z[i] = 0.0;
-                return;
-            }
-
-            // Open particle boundary: exhaust into the void. accel_mag is
-            // intentionally left untouched, matching CPU handle_face_crossing.
+        const bool crosses_x = nx < 0 || nx >= L;
+        const bool crosses_y = ny < 0 || ny >= L;
+        const bool crosses_z = nz < 0 || nz >= L;
+        const bool crosses = crosses_x || crosses_y || crosses_z;
+        const bool hits_dispersal_face = boundary_mode == 2
+            && (crosses || nx == 0 || nx == L - 1
+                        || ny == 0 || ny == L - 1
+                        || nz == 0 || nz == L - 1);
+        if (hits_dispersal_face && !reflective_boundary) {
+            // The six-face shell is the void boundary itself. Retire the
+            // complete manifested record as soon as its hop reaches a face.
             state[i] = 0;
             vel_x[i] = 0.0; vel_y[i] = 0.0; vel_z[i] = 0.0;
             rem_x[i] = 0.0; rem_y[i] = 0.0; rem_z[i] = 0.0;
@@ -597,6 +599,11 @@ __global__ void phase_movement_commit_crossings_kernel(
             pair_id[i] = -1;
             spin[i] = 0;
             color[i] = 0;
+            flavor[i] = 0;
+            accel_mag[i] = 0.0;
+            latency[i] = 0.0;
+            tau[i] = 0.0;
+            phase[i] = 0.0;
             flux_x[i] = 0.0; flux_y[i] = 0.0; flux_z[i] = 0.0;
             if (dual_substrate) {
                 fL_x[i] = 0.0; fL_y[i] = 0.0; fL_z[i] = 0.0;
@@ -604,8 +611,44 @@ __global__ void phase_movement_commit_crossings_kernel(
             }
             return;
         }
+        if (crosses) {
+            const bool periodic_crossing = boundary_mode == 0 && !reflective_boundary;
+            if (!periodic_crossing && (boundary_mode == 1 || reflective_boundary)) {
+                if (dx != 0) vel_x[i] = -vel_x[i];
+                if (dy != 0) vel_y[i] = -vel_y[i];
+                if (dz != 0) vel_z[i] = -vel_z[i];
+                rem_x[i] = 0.0; rem_y[i] = 0.0; rem_z[i] = 0.0;
+                return;
+            }
 
-        const int target = nx * L * L + ny * L + nz;
+            if (!periodic_crossing) {
+                // Open particle boundary: exhaust the complete manifested
+                // record into the void, matching CPU handle_face_crossing.
+                state[i] = 0;
+                vel_x[i] = 0.0; vel_y[i] = 0.0; vel_z[i] = 0.0;
+                rem_x[i] = 0.0; rem_y[i] = 0.0; rem_z[i] = 0.0;
+                particle_id[i] = -1;
+                pair_id[i] = -1;
+                spin[i] = 0;
+                color[i] = 0;
+                flavor[i] = 0;
+                accel_mag[i] = 0.0;
+                latency[i] = 0.0;
+                tau[i] = 0.0;
+                phase[i] = 0.0;
+                flux_x[i] = 0.0; flux_y[i] = 0.0; flux_z[i] = 0.0;
+                if (dual_substrate) {
+                    fL_x[i] = 0.0; fL_y[i] = 0.0; fL_z[i] = 0.0;
+                    fR_x[i] = 0.0; fR_y[i] = 0.0; fR_z[i] = 0.0;
+                }
+                return;
+            }
+        }
+
+        const int tx = (nx < 0) ? nx + L : (nx >= L ? nx - L : nx);
+        const int ty = (ny < 0) ? ny + L : (ny >= L ? ny - L : ny);
+        const int tz = (nz < 0) ? nz + L : (nz >= L ? nz - L : nz);
+        const int target = tx * L * L + ty * L + tz;
         if (state[target] == 0) {
             ledger_route_moore_current(ledger_current_x, ledger_current_y,
                                        ledger_current_z, L,
@@ -1426,7 +1469,8 @@ __global__ void movement_shuffle_order_kernel(
     for (int k = 0; k < N; ++k) rank[order[k]] = k;
 }
 
-void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary,
+void launch_phase_movement(GpuBuffers& bufs, double dt, int boundary_mode,
+                           bool reflective_boundary,
                            bool dual_substrate, bool symmetric_movement_order,
                            unsigned long long langevin_seed) {
     const cudaStream_t stream = bufs.stream;
@@ -1473,8 +1517,8 @@ void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary
         bufs.d_latency,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         bufs.d_locked,
-        bufs.d_particle_id, bufs.d_spin, bufs.d_color,
-        bufs.d_pair_id, bufs.d_accel_mag,
+        bufs.d_particle_id, bufs.d_spin, bufs.d_color, bufs.d_flavor,
+        bufs.d_pair_id, bufs.d_accel_mag, bufs.d_tau, bufs.d_phase,
         bufs.d_ledger_reaction,
         bufs.d_ledger_current_x, bufs.d_ledger_current_y, bufs.d_ledger_current_z,
         bufs.d_causal_projection_events,
@@ -1484,7 +1528,7 @@ void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary
         bufs.d_pair_candidate_flags,
         movement_block_flags,
         bufs.d_movement_moved,
-        dt, L, bufs.N, grid, reflective_boundary,
+        dt, L, bufs.N, grid, boundary_mode, reflective_boundary,
         symmetric_movement_order, langevin_seed, bufs.d_tick,
         symmetric_movement_order ? bufs.d_movement_order : nullptr,
         symmetric_movement_order ? bufs.d_movement_rank : nullptr

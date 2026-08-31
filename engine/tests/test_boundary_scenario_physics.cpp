@@ -2,13 +2,13 @@
  * Quantitative certification for the public Scale-0 finite-box boundary probe.
  *
  * The engine has three computational flux boundary laws:
- *   Periodic   — toroidal neighbor table; closed translation-invariant system.
+ *   Periodic   — all three opposite-face pairs are identified; axis is orientation metadata.
  *   Reflective — one ghost-cell Neumann shell copied from the first interior layer.
- *   Dispersal  — outer-shell multiplicative sink with keep=1-C_SPEED.
+ *   Dispersal  — non-field face records excised; outward-only field ghost trace.
  *
  * These names describe algorithms. A finite simulation face is not interpreted
- * as an ontological edge of space, and the shell sink is not called a derived
- * Sommerfeld/radiation condition.
+ * as an ontological edge of space. The one-way trace suppresses incoming
+ * storage modes; it is not called a derived exact radiation condition.
  */
 
 #include "ftd/constants.h"
@@ -17,6 +17,7 @@
 #include "ftd/scenarios.h"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <iostream>
 #include <string>
@@ -188,22 +189,28 @@ void tick_n(ftd::RenderBridge& rb, int n) {
     for (int i = 0; i < n; ++i) rb.tick();
 }
 
-struct SixFields {
+struct TransportFields {
     ftd::Vec3 flux, wave_vel, flux_L, flux_R, wave_vel_L, wave_vel_R;
+    ftd::Vec3 flux_strong, wave_vel_strong, flux_weak, wave_vel_weak;
 };
 
-SixFields snapshot(const ftd::Voxel& v) {
+TransportFields snapshot(const ftd::Voxel& v) {
     return {v.flux, v.wave_vel, v.flux_L, v.flux_R,
-            v.wave_vel_L, v.wave_vel_R};
+            v.wave_vel_L, v.wave_vel_R, v.flux_strong,
+            v.wave_vel_strong, v.flux_weak, v.wave_vel_weak};
 }
 
-void seed_six_fields(ftd::Voxel& v, double a) {
+void seed_transport_fields(ftd::Voxel& v, double a) {
     v.flux       = ftd::Vec3(a, 2*a, 3*a);
     v.wave_vel   = ftd::Vec3(4*a, 5*a, 6*a);
     v.flux_L     = ftd::Vec3(7*a, 8*a, 9*a);
     v.flux_R     = ftd::Vec3(10*a, 11*a, 12*a);
     v.wave_vel_L = ftd::Vec3(13*a, 14*a, 15*a);
     v.wave_vel_R = ftd::Vec3(16*a, 17*a, 18*a);
+    v.flux_strong = ftd::Vec3(19*a, 20*a, 21*a);
+    v.wave_vel_strong = ftd::Vec3(22*a, 23*a, 24*a);
+    v.flux_weak = ftd::Vec3(25*a, 26*a, 27*a);
+    v.wave_vel_weak = ftd::Vec3(28*a, 29*a, 30*a);
 }
 
 bool vec_scaled(const ftd::Vec3& actual, const ftd::Vec3& original,
@@ -211,61 +218,208 @@ bool vec_scaled(const ftd::Vec3& actual, const ftd::Vec3& original,
     return (actual - original * scale).mag2() < 1e-28;
 }
 
-bool six_scaled(const ftd::Voxel& v, const SixFields& original, double scale) {
+bool transport_scaled(const ftd::Voxel& v, const TransportFields& original,
+                      double scale) {
     return vec_scaled(v.flux, original.flux, scale)
         && vec_scaled(v.wave_vel, original.wave_vel, scale)
         && vec_scaled(v.flux_L, original.flux_L, scale)
         && vec_scaled(v.flux_R, original.flux_R, scale)
         && vec_scaled(v.wave_vel_L, original.wave_vel_L, scale)
-        && vec_scaled(v.wave_vel_R, original.wave_vel_R, scale);
+        && vec_scaled(v.wave_vel_R, original.wave_vel_R, scale)
+        && vec_scaled(v.flux_strong, original.flux_strong, scale)
+        && vec_scaled(v.wave_vel_strong, original.wave_vel_strong, scale)
+        && vec_scaled(v.flux_weak, original.flux_weak, scale)
+        && vec_scaled(v.wave_vel_weak, original.wave_vel_weak, scale);
+}
+
+bool pair_is_outflow_trace(const ftd::Vec3& actual_field,
+                           const ftd::Vec3& actual_wave,
+                           const ftd::Vec3& source_field,
+                           const ftd::Vec3& source_wave,
+                           double normal_step) {
+    const ftd::Vec3 expected = source_field
+        - source_wave * (normal_step / ftd::C_WAVE);
+    return (actual_field - expected).mag2() < 1e-28
+        && (actual_wave - source_wave).mag2() < 1e-28;
+}
+
+bool transport_is_outflow_trace(const ftd::Voxel& v,
+                                const TransportFields& source,
+                                double normal_step) {
+    return pair_is_outflow_trace(v.flux, v.wave_vel,
+                                 source.flux, source.wave_vel, normal_step)
+        && pair_is_outflow_trace(v.flux_L, v.wave_vel_L,
+                                 source.flux_L, source.wave_vel_L, normal_step)
+        && pair_is_outflow_trace(v.flux_R, v.wave_vel_R,
+                                 source.flux_R, source.wave_vel_R, normal_step)
+        && pair_is_outflow_trace(v.flux_strong, v.wave_vel_strong,
+                                 source.flux_strong, source.wave_vel_strong,
+                                 normal_step)
+        && pair_is_outflow_trace(v.flux_weak, v.wave_vel_weak,
+                                 source.flux_weak, source.wave_vel_weak,
+                                 normal_step);
+}
+
+bool has_void_non_transport_record(const ftd::Voxel& v) {
+    return v.state == 0
+        && v.velocity.mag2() == 0.0
+        && v.remainder.mag2() == 0.0
+        && v.latency == 0.0 && v.tau == 0.0 && v.phase == 0.0
+        && !v.locked && v.particle_id == -1 && v.pair_id == -1
+        && v.spin == 0 && v.color == 0 && v.flavor == 0
+        && v.accel_mag == 0.0;
 }
 
 void test_boundary_operator_definitions() {
     constexpr int L = 12;
     constexpr int y = 6;
     constexpr int z = 6;
+    const std::array<std::array<int, 3>, 6> shell{{
+        {{0, y, z}}, {{L - 1, y, z}},
+        {{y, 0, z}}, {{y, L - 1, z}},
+        {{y, z, 0}}, {{y, z, L - 1}},
+    }};
+    const std::array<std::array<int, 3>, 6> interior{{
+        {{1, y, z}}, {{L - 2, y, z}},
+        {{y, 1, z}}, {{y, L - 2, z}},
+        {{y, z, 1}}, {{y, z, L - 2}},
+    }};
 
     ftd::RenderBridge reflective(L);
     reflective.force_cpu();
-    seed_six_fields(reflective.voxel_at(1, y, z), 0.25);
-    seed_six_fields(reflective.voxel_at(0, y, z), 9.0);
-    const SixFields reflected_source = snapshot(reflective.voxel_at(1, y, z));
+    std::array<TransportFields, 6> reflected_sources;
+    for (std::size_t i = 0; i < shell.size(); ++i) {
+        seed_transport_fields(reflective.voxel_at(
+            interior[i][0], interior[i][1], interior[i][2]), 0.25 + 0.1 * i);
+        seed_transport_fields(reflective.voxel_at(
+            shell[i][0], shell[i][1], shell[i][2]), 9.0 + i);
+        reflected_sources[i] = snapshot(reflective.voxel_at(
+            interior[i][0], interior[i][1], interior[i][2]));
+    }
     ftd::apply_reflective_flux_boundary(reflective);
-    check("reflective operator copies all six fields from the clamped interior cell",
-          six_scaled(reflective.voxel_at(0, y, z), reflected_source, 1.0));
+    bool reflected_all_faces = true;
+    for (std::size_t i = 0; i < shell.size(); ++i) {
+        reflected_all_faces = reflected_all_faces && transport_scaled(
+            reflective.voxel_at(shell[i][0], shell[i][1], shell[i][2]),
+            reflected_sources[i], 1.0);
+    }
+    check("reflective operator mirrors every transported field on all six faces",
+          reflected_all_faces);
 
     ftd::RenderBridge sink(L);
     sink.force_cpu();
-    seed_six_fields(sink.voxel_at(0, y, z), 0.5);
-    seed_six_fields(sink.voxel_at(1, y, z), 0.75);
-    const SixFields sink_shell = snapshot(sink.voxel_at(0, y, z));
-    const SixFields sink_interior = snapshot(sink.voxel_at(1, y, z));
+    std::array<TransportFields, 6> sink_sources;
+    for (std::size_t i = 0; i < shell.size(); ++i) {
+        seed_transport_fields(sink.voxel_at(
+            interior[i][0], interior[i][1], interior[i][2]), 0.75 + 0.1 * i);
+        seed_transport_fields(sink.voxel_at(
+            shell[i][0], shell[i][1], shell[i][2]), 2.0 + i);
+        sink_sources[i] = snapshot(sink.voxel_at(
+            interior[i][0], interior[i][1], interior[i][2]));
+    }
+    seed_transport_fields(sink.voxel_at(2, y, z), 1.0);
+    seed_transport_fields(sink.voxel_at(3, y, z), 1.25);
+    for (const auto& face : shell) {
+        auto& v = sink.voxel_at(face[0], face[1], face[2]);
+        sink.set_state(face[0], face[1], face[2], +1);
+        v.velocity = {0.1, -0.2, 0.3};
+        v.remainder = {0.4, 0.5, -0.6};
+        v.latency = 0.2; v.tau = 3.0; v.phase = 0.7;
+        v.locked = true; v.particle_id = 91; v.pair_id = 92;
+        v.spin = 1; v.color = 2; v.flavor = 3; v.accel_mag = 0.8;
+    }
+    const TransportFields sink_inner_shell = snapshot(sink.voxel_at(2, y, z));
+    const TransportFields sink_core = snapshot(sink.voxel_at(3, y, z));
     ftd::apply_dispersal_flux_boundary(sink);
-    check("dispersal operator is exactly the declared one-shell multiplier",
-          six_scaled(sink.voxel_at(0, y, z), sink_shell, 1.0 - ftd::C_SPEED)
-          && six_scaled(sink.voxel_at(1, y, z), sink_interior, 1.0));
+    bool dispersal_all_faces = true;
+    for (std::size_t i = 0; i < shell.size(); ++i) {
+        const auto& face = shell[i];
+        const auto& v = sink.voxel_at(face[0], face[1], face[2]);
+        dispersal_all_faces = dispersal_all_faces
+            && has_void_non_transport_record(v)
+            && transport_is_outflow_trace(v, sink_sources[i], 1.0);
+    }
+    check("dispersal excises face records and reconstructs six outward traces",
+          dispersal_all_faces
+          && transport_scaled(sink.voxel_at(1, y, z), sink_sources[0], 1.0)
+          && transport_scaled(sink.voxel_at(2, y, z), sink_inner_shell, 1.0)
+          && transport_scaled(sink.voxel_at(3, y, z), sink_core, 1.0));
+
+    ftd::RenderBridge directional(L);
+    directional.force_cpu();
+    directional.toggles.flux_boundary = ftd::FluxBoundaryMode::Periodic;
+    directional.toggles.periodic_axis = ftd::PeriodicAxis::Z;
+    seed_transport_fields(directional.voxel_at(0, y, z), 0.4);
+    seed_transport_fields(directional.voxel_at(y, y, 0), 0.6);
+    const TransportFields lateral_seam = snapshot(directional.voxel_at(0, y, z));
+    const TransportFields selected_seam = snapshot(directional.voxel_at(y, y, 0));
+    ftd::prepare_flux_boundary(directional);
+    check("periodic preparation leaves all six faces intact regardless of orientation",
+          transport_scaled(directional.voxel_at(0, y, z), lateral_seam, 1.0)
+          && transport_scaled(directional.voxel_at(y, y, 0), selected_seam, 1.0));
 
     ftd::RenderBridge sponge(L);
     sponge.force_cpu();
-    SixFields before[4];
+    TransportFields before[4];
     for (int x = 0; x < 4; ++x) {
-        seed_six_fields(sponge.voxel_at(x, y, z), 0.2 * (x + 1));
+        seed_transport_fields(sponge.voxel_at(x, y, z), 0.2 * (x + 1));
         before[x] = snapshot(sponge.voxel_at(x, y, z));
     }
     ftd::apply_absorbing_boundary(sponge);
     // L=12 gives D=min(6,max(2,L/4))=3 and f(d)=(d/3)^2.
     check("absorbing operator is exactly the declared D-deep quadratic sponge",
-          six_scaled(sponge.voxel_at(0, y, z), before[0], 0.0)
-          && six_scaled(sponge.voxel_at(1, y, z), before[1], 1.0 / 9.0)
-          && six_scaled(sponge.voxel_at(2, y, z), before[2], 4.0 / 9.0)
-          && six_scaled(sponge.voxel_at(3, y, z), before[3], 1.0));
+          transport_scaled(sponge.voxel_at(0, y, z), before[0], 0.0)
+          && transport_scaled(sponge.voxel_at(1, y, z), before[1], 1.0 / 9.0)
+          && transport_scaled(sponge.voxel_at(2, y, z), before[2], 4.0 / 9.0)
+          && transport_scaled(sponge.voxel_at(3, y, z), before[3], 1.0));
+}
+
+void configure_isolated_wave(ftd::RenderBridge& rb,
+                             ftd::FluxBoundaryMode mode,
+                             ftd::PeriodicAxis axis) {
+    rb.toggles.disable_all();
+    rb.toggles.wave_propagation = true;
+    rb.toggles.flux_boundary = mode;
+    rb.toggles.periodic_axis = axis;
+    rb.force_cpu();
+}
+
+void test_storage_wrap_is_gated_by_boundary_contract() {
+    constexpr int L = 12;
+    constexpr int c = 6;
+
+    ftd::RenderBridge periodic_z(L);
+    configure_isolated_wave(periodic_z, ftd::FluxBoundaryMode::Periodic,
+                            ftd::PeriodicAxis::Z);
+    periodic_z.voxel_at(c, c, L - 1).flux = {1.0, 0.0, 0.0};
+    periodic_z.tick();
+    check("periodic Z field couples across the selected forward/aft seam",
+          periodic_z.voxel_at(c, c, 0).flux.mag2() > 0.0
+          || periodic_z.voxel_at(c, c, 0).wave_vel.mag2() > 0.0);
+
+    ftd::RenderBridge periodic_x(L);
+    configure_isolated_wave(periodic_x, ftd::FluxBoundaryMode::Periodic,
+                            ftd::PeriodicAxis::Z);
+    periodic_x.voxel_at(L - 1, c, c).flux = {1.0, 0.0, 0.0};
+    periodic_x.tick();
+    check("periodic field crosses the lateral seam despite Z orientation metadata",
+          periodic_x.voxel_at(0, c, c).flux.mag2() > 0.0
+          || periodic_x.voxel_at(0, c, c).wave_vel.mag2() > 0.0);
+
+    ftd::RenderBridge dispersal(L);
+    configure_isolated_wave(dispersal, ftd::FluxBoundaryMode::Dispersal,
+                            ftd::PeriodicAxis::Z);
+    dispersal.voxel_at(L - 1, c, c).flux = {1.0, 0.0, 0.0};
+    dispersal.tick();
+    check("dispersal field cannot contaminate the opposite storage face",
+          dispersal.voxel_at(0, c, c).flux.mag2() == 0.0
+          && dispersal.voxel_at(0, c, c).wave_vel.mag2() == 0.0);
 }
 
 void test_boundary_probe() {
-    // One fixed geometry, no scan: L=48, observation at tick 90. The first run
-    // retained 52.9% of field norm in the one-shell sink, falsifying the prior
-    // <25% absorption gate. The surviving qualification is deliberately weaker:
-    // exact operator identity plus attenuation relative to the periodic control.
+    // One fixed geometry, no scan: L=48, observation at tick 90. The qualification
+    // is deliberately limited to exact operator identity plus attenuation relative
+    // to the periodic control; it does not assert a perfect radiation condition.
     constexpr int L = 48;
     ftd::RenderBridge periodic(L);
     ftd::RenderBridge reflective(L);
@@ -294,6 +448,7 @@ void test_boundary_probe() {
     const double norm_sink_0 = field_norm(sink);
     const double p_reflective_0 = x_flux_momentum(reflective, true);
     const double p_periodic_0 = x_flux_momentum(periodic, false);
+    const double p_sink_0 = x_flux_momentum(sink, false);
 
     // Expand the actual initialized support by the exact 18-neighbor stencil.
     // This tests the native causal graph without making the false assumption
@@ -305,7 +460,12 @@ void test_boundary_probe() {
 
     tick_n(periodic, 78);  // total 90
     tick_n(reflective, 90);
-    tick_n(sink, 90);
+    double minimum_sink_momentum = p_sink_0;
+    for (int tick = 0; tick < 90; ++tick) {
+        sink.tick();
+        minimum_sink_momentum = std::min(
+            minimum_sink_momentum, x_flux_momentum(sink, false));
+    }
 
     const double h_periodic_90 = modified_hamiltonian(periodic, false);
     const double h_reflective_90 = modified_hamiltonian(reflective, true);
@@ -315,6 +475,7 @@ void test_boundary_probe() {
                                   / std::max(1e-30, std::fabs(h_reflective_0));
     const double p_reflective_90 = x_flux_momentum(reflective, true);
     const double p_periodic_90 = x_flux_momentum(periodic, false);
+    const double p_sink_90 = x_flux_momentum(sink, false);
     const double sink_ratio = field_norm(sink) / std::max(1e-30, norm_sink_0);
 
     std::cout << "    H_periodic_drift=" << periodic_drift
@@ -322,6 +483,8 @@ void test_boundary_probe() {
               << " P0=" << p_reflective_0
               << " P_reflective_90=" << p_reflective_90
               << " P_periodic_90=" << p_periodic_90
+              << " P_dispersal_90=" << p_sink_90
+              << " P_dispersal_min=" << minimum_sink_momentum
               << " sink_norm_ratio=" << sink_ratio << '\n';
 
     check("periodic arm conserves the exact kick-drift Hamiltonian",
@@ -332,10 +495,13 @@ void test_boundary_probe() {
           p_reflective_0 > 0.0 && p_reflective_90 < -0.1 * p_reflective_0);
     check("periodic control retains the original momentum sign",
           p_periodic_0 > 0.0 && p_periodic_90 > 0.1 * p_periodic_0);
-    check("single-shell sink attenuates the packet relative to the periodic arm",
-          sink_ratio < 1.0);
-    check("rejected 75% absorption claim remains closed negative",
-          sink_ratio >= 0.25);
+    // Post-implementation regression characterization, not a theorem: this
+    // fixed packet catches the old zero-shell wall, whose reverse momentum was
+    // 77% of the launch momentum. The one-way trace keeps the entire 90-tick
+    // reverse excursion and residual norm below 1% for this probe.
+    check("dispersal probe has no macroscopic reverse-momentum reverb",
+          minimum_sink_momentum > -0.01 * p_sink_0
+          && sink_ratio < 0.01);
     check("all boundary arms remain unmanifested",
           manifested_count(periodic) == 0
           && manifested_count(reflective) == 0
@@ -347,6 +513,7 @@ void test_boundary_probe() {
 int main() {
     std::cout << "=== Scale-0 finite-box boundary scenario certification ===\n";
     test_boundary_operator_definitions();
+    test_storage_wrap_is_gated_by_boundary_contract();
     test_boundary_probe();
     std::cout << "=== " << (failures == 0 ? "ALL PASS" : "FAILURES")
               << " (" << failures << ") ===\n";

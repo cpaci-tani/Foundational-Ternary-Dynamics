@@ -54,8 +54,15 @@ bool same_movement_voxel(const Voxel& a, const Voxel& b,
         && close(a.velocity, b.velocity, tol)
         && close(a.remainder, b.remainder, tol)
         && close(a.flux, b.flux, tol)
+        && close(a.wave_vel, b.wave_vel, tol)
         && close(a.flux_L, b.flux_L, tol)
         && close(a.flux_R, b.flux_R, tol)
+        && close(a.wave_vel_L, b.wave_vel_L, tol)
+        && close(a.wave_vel_R, b.wave_vel_R, tol)
+        && close(a.flux_strong, b.flux_strong, tol)
+        && close(a.wave_vel_strong, b.wave_vel_strong, tol)
+        && close(a.flux_weak, b.flux_weak, tol)
+        && close(a.wave_vel_weak, b.wave_vel_weak, tol)
         && a.locked == b.locked
         && a.particle_id == b.particle_id
         && a.pair_id == b.pair_id
@@ -94,8 +101,20 @@ bool exactly_same_movement_image(const std::vector<Voxel>& a,
             || x.flux.z != y.flux.z
             || x.flux_L.x != y.flux_L.x || x.flux_L.y != y.flux_L.y
             || x.flux_L.z != y.flux_L.z
-            || x.flux_R.x != y.flux_R.x || x.flux_R.y != y.flux_R.y
-            || x.flux_R.z != y.flux_R.z) return false;
+             || x.flux_R.x != y.flux_R.x || x.flux_R.y != y.flux_R.y
+             || x.flux_R.z != y.flux_R.z
+             || x.flux_strong.x != y.flux_strong.x
+             || x.flux_strong.y != y.flux_strong.y
+             || x.flux_strong.z != y.flux_strong.z
+             || x.wave_vel_strong.x != y.wave_vel_strong.x
+             || x.wave_vel_strong.y != y.wave_vel_strong.y
+             || x.wave_vel_strong.z != y.wave_vel_strong.z
+             || x.flux_weak.x != y.flux_weak.x
+             || x.flux_weak.y != y.flux_weak.y
+             || x.flux_weak.z != y.flux_weak.z
+             || x.wave_vel_weak.x != y.wave_vel_weak.x
+             || x.wave_vel_weak.y != y.wave_vel_weak.y
+             || x.wave_vel_weak.z != y.wave_vel_weak.z) return false;
     }
     return true;
 }
@@ -107,7 +126,10 @@ struct Snapshot {
 };
 
 Snapshot run_cpu(int L, const std::vector<Voxel>& seed,
-                 bool dual = false, bool reflective = false) {
+                  bool dual = false, bool reflective = false,
+                  ftd::FluxBoundaryMode mode = ftd::FluxBoundaryMode::Dispersal,
+                  ftd::PeriodicAxis axis = ftd::PeriodicAxis::All,
+                  bool wave = false) {
     std::vector<int> before(seed.size(), 0);
     for (std::size_t i = 0; i < seed.size(); ++i)
         before[i] = static_cast<int>(seed[i].state);
@@ -115,8 +137,11 @@ Snapshot run_cpu(int L, const std::vector<Voxel>& seed,
     bridge.force_cpu();
     bridge.toggles.disable_all();
     bridge.toggles.movement = true;
+    bridge.toggles.wave_propagation = wave;
     bridge.toggles.dual_substrate = dual;
     bridge.toggles.reflective_boundary = reflective;
+    bridge.toggles.flux_boundary = mode;
+    bridge.toggles.periodic_axis = axis;
     bridge.voxels() = seed;
     bridge.tick();
     Snapshot out;
@@ -132,12 +157,18 @@ Snapshot run_cpu(int L, const std::vector<Voxel>& seed,
 }
 
 Snapshot run_gpu(int L, const std::vector<Voxel>& seed,
-                 bool dual = false, bool reflective = false) {
+                  bool dual = false, bool reflective = false,
+                  ftd::FluxBoundaryMode mode = ftd::FluxBoundaryMode::Dispersal,
+                  ftd::PeriodicAxis axis = ftd::PeriodicAxis::All,
+                  bool wave = false) {
     ftd::gpu::GpuEngine engine(L);
     engine.toggles.disable_all();
     engine.toggles.movement = true;
+    engine.toggles.wave_propagation = wave;
     engine.toggles.dual_substrate = dual;
     engine.toggles.reflective_boundary = reflective;
+    engine.toggles.flux_boundary = mode;
+    engine.toggles.periodic_axis = axis;
     engine.upload_from_host(seed);
     engine.tick();
     Snapshot out;
@@ -358,8 +389,10 @@ void test_projection_and_particle_boundaries() {
     seed_particle(edge[e], -1, 701, 7,
                   {-0.30, 0.0, 0.0}, {-0.80, 0.0, 0.0});
     edge[e].flux = {0.2, 0.1, 0.0};
-    const Snapshot cpu_reflect = run_cpu(L, edge, false, true);
-    const Snapshot gpu_reflect = run_gpu(L, edge, false, true);
+    const Snapshot cpu_reflect = run_cpu(
+        L, edge, false, false, ftd::FluxBoundaryMode::Reflective);
+    const Snapshot gpu_reflect = run_gpu(
+        L, edge, false, false, ftd::FluxBoundaryMode::Reflective);
     check("reflective face handling CPU/GPU parity",
           same_movement_image(cpu_reflect.voxels, gpu_reflect.voxels)
           && gpu_reflect.voxels[e].state == -1
@@ -373,10 +406,95 @@ void test_projection_and_particle_boundaries() {
           && gpu_open.voxels[e].state == 0
           && gpu_open.voxels[e].particle_id == -1
           && close(gpu_open.voxels[e].flux, Vec3{}));
+
+    std::vector<Voxel> face_hit(L * L * L);
+    const int face_hit_source = index_of(L, 1, 3, 3);
+    const int face_shell = index_of(L, 0, 3, 3);
+    seed_particle(face_hit[face_hit_source], -1, 702, 8,
+                  {-0.30, 0.0, 0.0}, {-0.80, 0.0, 0.0});
+    face_hit[face_hit_source].flux = {0.2, 0.1, 0.0};
+    face_hit[face_hit_source].accel_mag = 0.75;
+    const Snapshot cpu_face_hit = run_cpu(L, face_hit);
+    const Snapshot gpu_face_hit = run_gpu(L, face_hit);
+    check("dispersal first-contact excision CPU/GPU parity",
+          same_movement_image(cpu_face_hit.voxels, gpu_face_hit.voxels)
+          && gpu_face_hit.voxels[face_hit_source].state == 0
+          && gpu_face_hit.voxels[face_hit_source].particle_id == -1
+          && close(gpu_face_hit.voxels[face_hit_source].flux, Vec3{})
+          && close(gpu_face_hit.voxels[face_hit_source].accel_mag, 0.0)
+          && gpu_face_hit.voxels[face_shell].state == 0);
+
+    std::vector<Voxel> forward(L * L * L);
+    const int forward_source = index_of(L, 3, 3, L - 1);
+    const int aft_target = index_of(L, 3, 3, 0);
+    seed_particle(forward[forward_source], +1, 711, 17,
+                  {0.0, 0.0, 0.30}, {0.0, 0.0, 0.80});
+    const Snapshot cpu_periodic_z = run_cpu(
+        L, forward, false, false, ftd::FluxBoundaryMode::Periodic,
+        ftd::PeriodicAxis::Z);
+    const Snapshot gpu_periodic_z = run_gpu(
+        L, forward, false, false, ftd::FluxBoundaryMode::Periodic,
+        ftd::PeriodicAxis::Z);
+    check("periodic forward crossing wraps with CPU/GPU parity",
+          same_movement_image(cpu_periodic_z.voxels, gpu_periodic_z.voxels)
+          && gpu_periodic_z.voxels[forward_source].state == 0
+          && gpu_periodic_z.voxels[aft_target].particle_id == 711);
+
+    std::vector<Voxel> lateral(L * L * L);
+    const int lateral_source = index_of(L, L - 1, 3, 3);
+    seed_particle(lateral[lateral_source], +1, 712, 18,
+                  {0.30, 0.0, 0.0}, {0.80, 0.0, 0.0});
+    const Snapshot cpu_periodic_z_lateral = run_cpu(
+        L, lateral, false, false, ftd::FluxBoundaryMode::Periodic,
+        ftd::PeriodicAxis::Z);
+    const Snapshot gpu_periodic_z_lateral = run_gpu(
+        L, lateral, false, false, ftd::FluxBoundaryMode::Periodic,
+        ftd::PeriodicAxis::Z);
+    check("periodic lateral face wraps despite Z orientation metadata",
+          same_movement_image(cpu_periodic_z_lateral.voxels,
+                              gpu_periodic_z_lateral.voxels)
+          && gpu_periodic_z_lateral.voxels[lateral_source].state == 0
+          && gpu_periodic_z_lateral.voxels[index_of(L, 0, 3, 3)].particle_id == 712);
+}
+
+void test_flux_boundary_cpu_gpu_parity() {
+    std::printf("\nGMT-6: reflective, dispersal, and full-domain periodic fields\n");
+    constexpr int L = 8;
+    constexpr int c = 4;
+
+    const auto compare = [&](const char* name, std::vector<Voxel> seed,
+                             ftd::FluxBoundaryMode mode,
+                             ftd::PeriodicAxis axis) {
+        const Snapshot cpu = run_cpu(L, seed, false, false, mode, axis, true);
+        const Snapshot gpu = run_gpu(L, seed, false, false, mode, axis, true);
+        check(name, same_movement_image(cpu.voxels, gpu.voxels, 3e-12));
+    };
+
+    std::vector<Voxel> reflective(L * L * L);
+    reflective[index_of(L, 1, c, c)].flux = {0.5, -0.2, 0.1};
+    reflective[index_of(L, 1, c, c)].wave_vel = {0.1, 0.05, -0.03};
+    compare("reflective field shell CPU/GPU parity", reflective,
+            ftd::FluxBoundaryMode::Reflective, ftd::PeriodicAxis::All);
+
+    std::vector<Voxel> dispersal(L * L * L);
+    dispersal[index_of(L, L - 1, c, c)].flux = {0.7, 0.1, -0.2};
+    dispersal[index_of(L, L - 1, c, c)].flux_strong = {0.4, -0.3, 0.2};
+    dispersal[index_of(L, L - 1, c, c)].wave_vel_strong = {-0.2, 0.1, 0.3};
+    dispersal[index_of(L, L - 1, c, c)].flux_weak = {0.25, 0.15, -0.35};
+    dispersal[index_of(L, L - 1, c, c)].wave_vel_weak = {-0.1, -0.2, 0.4};
+    dispersal[index_of(L, L - 2, c, c)].wave_vel = {-0.1, 0.2, 0.05};
+    compare("dispersal outflow-trace CPU/GPU parity", dispersal,
+            ftd::FluxBoundaryMode::Dispersal, ftd::PeriodicAxis::All);
+
+    std::vector<Voxel> periodic_z(L * L * L);
+    periodic_z[index_of(L, c, c, L - 1)].flux = {0.6, -0.1, 0.2};
+    periodic_z[index_of(L, L - 1, c, c)].flux = {0.9, 0.0, 0.0};
+    compare("full-domain periodic field CPU/GPU parity with Z orientation", periodic_z,
+            ftd::FluxBoundaryMode::Periodic, ftd::PeriodicAxis::Z);
 }
 
 void test_deterministic_repeatability() {
-    std::printf("\nGMT-6: deterministic repeatability under contention\n");
+    std::printf("\nGMT-7: deterministic repeatability under contention\n");
     constexpr int L = 8;
     std::vector<Voxel> seed(L * L * L);
     int pid = 800;
@@ -433,6 +551,7 @@ int main() {
     test_metadata_and_dual_flux_transport();
     test_annihilation_cleanup_and_scatter();
     test_projection_and_particle_boundaries();
+    test_flux_boundary_cpu_gpu_parity();
     test_deterministic_repeatability();
     std::printf("\n=== %d passed, %d failed ===\n", passed, failed);
     return failed == 0 ? 0 : 1;

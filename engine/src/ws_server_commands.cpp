@@ -300,6 +300,17 @@ bool apply_profile_fields(const std::string& json,
             return false;
         }
         staged.flux_boundary = static_cast<ftd::FluxBoundaryMode>(mode);
+        staged.reflective_boundary = false;
+    }
+
+    if (ftd::json_has_key(json, "fluxPeriodicAxis")) {
+        const int axis = static_cast<int>(ftd::json_number(json, "fluxPeriodicAxis"));
+        if (axis < static_cast<int>(ftd::PeriodicAxis::X)
+            || axis > static_cast<int>(ftd::PeriodicAxis::All)) {
+            error = "fluxPeriodicAxis must be 0 (X), 1 (Y), 2 (Z), or 3 (XYZ)";
+            return false;
+        }
+        staged.periodic_axis = static_cast<ftd::PeriodicAxis>(axis);
     }
 
     if (!staged.validate(&error)) return false;
@@ -331,6 +342,8 @@ std::string json_profile_ack(const ftd::RenderBridge& rb,
     if (!scenario.empty()) ss << ",\"scenario\":\"" << scenario << "\"";
     ss << ",\"fluxBoundaryMode\":"
        << static_cast<int>(rb.toggles.flux_boundary)
+       << ",\"fluxPeriodicAxis\":"
+       << static_cast<int>(rb.toggles.periodic_axis)
        << ",\"toggles\":{";
     bool first = true;
     for (const auto& spec : ftd::TOGGLE_SPECS) {
@@ -767,6 +780,7 @@ bool handle_command(const std::string& json, SOCKET client,
         }
         ftd::TermToggles staged = rb->toggles;
         staged.flux_boundary = static_cast<ftd::FluxBoundaryMode>(mode);
+        staged.reflective_boundary = false;
         std::string valid_error;
         if (!staged.validate(&valid_error)
             || !validate_profile_for_bridge(*rb, staged, valid_error)) {
@@ -774,6 +788,25 @@ bool handle_command(const std::string& json, SOCKET client,
                       << valid_error;
             return send_json_response(
                 client, json_error("invalid flux boundary update: " + valid_error, cmd),
+                request_id);
+        }
+        rb->toggles = staged;
+        telemetry.on_state_mutated(*rb);
+        return true;
+    }
+    else if (cmd == "set_flux_periodic_axis") {
+        const int axis = static_cast<int>(ftd::json_number(json, "axis"));
+        if (axis < 0 || axis > 3) {
+            return send_json_response(
+                client, json_error("invalid orientation axis", cmd), request_id);
+        }
+        ftd::TermToggles staged = rb->toggles;
+        staged.periodic_axis = static_cast<ftd::PeriodicAxis>(axis);
+        std::string valid_error;
+        if (!staged.validate(&valid_error)
+            || !validate_profile_for_bridge(*rb, staged, valid_error)) {
+            return send_json_response(
+                client, json_error("invalid orientation axis update: " + valid_error, cmd),
                 request_id);
         }
         rb->toggles = staged;

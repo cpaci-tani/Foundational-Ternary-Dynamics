@@ -42,8 +42,8 @@ namespace kernels {
 
 namespace {
 
-// Apply a scalar to the six vector fields mutated by the CPU boundary passes:
-// observable J/W plus both dual-substrate J/W registers.
+// Apply a scalar to every transported field register mutated by the CPU pass:
+// observable, dual-substrate, strong-substrate, and weak-substrate J/W.
 __device__ __forceinline__ void scale_boundary_fields(
     int i, double scale,
     double* flux_x, double* flux_y, double* flux_z,
@@ -51,13 +51,21 @@ __device__ __forceinline__ void scale_boundary_fields(
     double* flux_L_x, double* flux_L_y, double* flux_L_z,
     double* flux_R_x, double* flux_R_y, double* flux_R_z,
     double* wave_L_x, double* wave_L_y, double* wave_L_z,
-    double* wave_R_x, double* wave_R_y, double* wave_R_z) {
+    double* wave_R_x, double* wave_R_y, double* wave_R_z,
+    double* strong_x, double* strong_y, double* strong_z,
+    double* strong_wave_x, double* strong_wave_y, double* strong_wave_z,
+    double* weak_x, double* weak_y, double* weak_z,
+    double* weak_wave_x, double* weak_wave_y, double* weak_wave_z) {
     flux_x[i] *= scale; flux_y[i] *= scale; flux_z[i] *= scale;
     wave_x[i] *= scale; wave_y[i] *= scale; wave_z[i] *= scale;
     flux_L_x[i] *= scale; flux_L_y[i] *= scale; flux_L_z[i] *= scale;
     flux_R_x[i] *= scale; flux_R_y[i] *= scale; flux_R_z[i] *= scale;
     wave_L_x[i] *= scale; wave_L_y[i] *= scale; wave_L_z[i] *= scale;
     wave_R_x[i] *= scale; wave_R_y[i] *= scale; wave_R_z[i] *= scale;
+    strong_x[i] *= scale; strong_y[i] *= scale; strong_z[i] *= scale;
+    strong_wave_x[i] *= scale; strong_wave_y[i] *= scale; strong_wave_z[i] *= scale;
+    weak_x[i] *= scale; weak_y[i] *= scale; weak_z[i] *= scale;
+    weak_wave_x[i] *= scale; weak_wave_y[i] *= scale; weak_wave_z[i] *= scale;
 }
 
 __device__ __forceinline__ void copy_boundary_fields(
@@ -67,13 +75,34 @@ __device__ __forceinline__ void copy_boundary_fields(
     double* flux_L_x, double* flux_L_y, double* flux_L_z,
     double* flux_R_x, double* flux_R_y, double* flux_R_z,
     double* wave_L_x, double* wave_L_y, double* wave_L_z,
-    double* wave_R_x, double* wave_R_y, double* wave_R_z) {
+    double* wave_R_x, double* wave_R_y, double* wave_R_z,
+    double* strong_x, double* strong_y, double* strong_z,
+    double* strong_wave_x, double* strong_wave_y, double* strong_wave_z,
+    double* weak_x, double* weak_y, double* weak_z,
+    double* weak_wave_x, double* weak_wave_y, double* weak_wave_z) {
     flux_x[dst] = flux_x[src]; flux_y[dst] = flux_y[src]; flux_z[dst] = flux_z[src];
     wave_x[dst] = wave_x[src]; wave_y[dst] = wave_y[src]; wave_z[dst] = wave_z[src];
     flux_L_x[dst] = flux_L_x[src]; flux_L_y[dst] = flux_L_y[src]; flux_L_z[dst] = flux_L_z[src];
     flux_R_x[dst] = flux_R_x[src]; flux_R_y[dst] = flux_R_y[src]; flux_R_z[dst] = flux_R_z[src];
     wave_L_x[dst] = wave_L_x[src]; wave_L_y[dst] = wave_L_y[src]; wave_L_z[dst] = wave_L_z[src];
     wave_R_x[dst] = wave_R_x[src]; wave_R_y[dst] = wave_R_y[src]; wave_R_z[dst] = wave_R_z[src];
+    strong_x[dst] = strong_x[src]; strong_y[dst] = strong_y[src]; strong_z[dst] = strong_z[src];
+    strong_wave_x[dst] = strong_wave_x[src]; strong_wave_y[dst] = strong_wave_y[src]; strong_wave_z[dst] = strong_wave_z[src];
+    weak_x[dst] = weak_x[src]; weak_y[dst] = weak_y[src]; weak_z[dst] = weak_z[src];
+    weak_wave_x[dst] = weak_wave_x[src]; weak_wave_y[dst] = weak_wave_y[src]; weak_wave_z[dst] = weak_wave_z[src];
+}
+
+__device__ __forceinline__ void copy_outflow_boundary_pair(
+    int dst, int src, double normal_step,
+    double* field_x, double* field_y, double* field_z,
+    double* wave_x, double* wave_y, double* wave_z) {
+    const double scale = normal_step / C_WAVE;
+    field_x[dst] = field_x[src] - wave_x[src] * scale;
+    field_y[dst] = field_y[src] - wave_y[src] * scale;
+    field_z[dst] = field_z[src] - wave_z[src] * scale;
+    wave_x[dst] = wave_x[src];
+    wave_y[dst] = wave_y[src];
+    wave_z[dst] = wave_z[src];
 }
 
 }  // namespace
@@ -139,6 +168,10 @@ __global__ void absorbing_boundary_kernel(
     double* flux_R_x, double* flux_R_y, double* flux_R_z,
     double* wave_L_x, double* wave_L_y, double* wave_L_z,
     double* wave_R_x, double* wave_R_y, double* wave_R_z,
+    double* strong_x, double* strong_y, double* strong_z,
+    double* strong_wave_x, double* strong_wave_y, double* strong_wave_z,
+    double* weak_x, double* weak_y, double* weak_z,
+    double* weak_wave_x, double* weak_wave_y, double* weak_wave_z,
     int L, int N) {
     const int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= N) return;
@@ -158,10 +191,18 @@ __global__ void absorbing_boundary_kernel(
         i, r * r,
         flux_x, flux_y, flux_z, wave_x, wave_y, wave_z,
         flux_L_x, flux_L_y, flux_L_z, flux_R_x, flux_R_y, flux_R_z,
-        wave_L_x, wave_L_y, wave_L_z, wave_R_x, wave_R_y, wave_R_z);
+        wave_L_x, wave_L_y, wave_L_z, wave_R_x, wave_R_y, wave_R_z,
+        strong_x, strong_y, strong_z,
+        strong_wave_x, strong_wave_y, strong_wave_z,
+        weak_x, weak_y, weak_z, weak_wave_x, weak_wave_y, weak_wave_z);
 }
 
-// mode: 1 = reflective copy, 2 = dispersal attenuation. Periodic never launches.
+// mode: 0 = periodic, 1 = reflective, 2 = dispersal. Reflective refreshes
+// its Neumann ghost shell; Dispersal reconstructs an outward-only Sommerfeld
+// trace on the complete outer shell and excises every non-field face record.
+// Pre-read and post-writer calls intentionally apply the same operator.
+// Every mode owns all six faces. Periodic requires no kernel because the
+// lattice storage topology already identifies every opposite-face pair.
 __global__ void flux_boundary_kernel(
     double* flux_x, double* flux_y, double* flux_z,
     double* wave_x, double* wave_y, double* wave_z,
@@ -169,6 +210,10 @@ __global__ void flux_boundary_kernel(
     double* flux_R_x, double* flux_R_y, double* flux_R_z,
     double* wave_L_x, double* wave_L_y, double* wave_L_z,
     double* wave_R_x, double* wave_R_y, double* wave_R_z,
+    double* strong_x, double* strong_y, double* strong_z,
+    double* strong_wave_x, double* strong_wave_y, double* strong_wave_z,
+    double* weak_x, double* weak_y, double* weak_z,
+    double* weak_wave_x, double* weak_wave_y, double* weak_wave_z,
     int mode, int L, int N) {
     const int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= N) return;
@@ -177,10 +222,9 @@ __global__ void flux_boundary_kernel(
     const int y = (i / L) % L;
     const int z = i % L;
     const int Nm1 = L - 1;
-    if (x > 0 && x < Nm1 && y > 0 && y < Nm1 && z > 0 && z < Nm1)
-        return;
-
     if (mode == 1) {
+        if (x > 0 && x < Nm1 && y > 0 && y < Nm1 && z > 0 && z < Nm1)
+            return;
         if (L < 3) return;
         // Every source coordinate is strictly interior, including faces,
         // edges, and corners. No thread writes a source read by another.
@@ -192,14 +236,97 @@ __global__ void flux_boundary_kernel(
             i, src,
             flux_x, flux_y, flux_z, wave_x, wave_y, wave_z,
             flux_L_x, flux_L_y, flux_L_z, flux_R_x, flux_R_y, flux_R_z,
-            wave_L_x, wave_L_y, wave_L_z, wave_R_x, wave_R_y, wave_R_z);
-    } else {
+            wave_L_x, wave_L_y, wave_L_z, wave_R_x, wave_R_y, wave_R_z,
+            strong_x, strong_y, strong_z,
+            strong_wave_x, strong_wave_y, strong_wave_z,
+            weak_x, weak_y, weak_z, weak_wave_x, weak_wave_y, weak_wave_z);
+        return;
+    }
+
+    if (mode == 0) return;
+    if (x > 0 && x < Nm1 && y > 0 && y < Nm1 && z > 0 && z < Nm1)
+        return;
+    if (L < 3) {
         scale_boundary_fields(
-            i, 1.0 - C_SPEED,
+            i, 0.0,
             flux_x, flux_y, flux_z, wave_x, wave_y, wave_z,
             flux_L_x, flux_L_y, flux_L_z, flux_R_x, flux_R_y, flux_R_z,
-            wave_L_x, wave_L_y, wave_L_z, wave_R_x, wave_R_y, wave_R_z);
+            wave_L_x, wave_L_y, wave_L_z, wave_R_x, wave_R_y, wave_R_z,
+            strong_x, strong_y, strong_z,
+            strong_wave_x, strong_wave_y, strong_wave_z,
+            weak_x, weak_y, weak_z, weak_wave_x, weak_wave_y, weak_wave_z);
+        return;
     }
+    const int sx = (x == 0) ? 1 : (x == Nm1 ? Nm1 - 1 : x);
+    const int sy = (y == 0) ? 1 : (y == Nm1 ? Nm1 - 1 : y);
+    const int sz = (z == 0) ? 1 : (z == Nm1 ? Nm1 - 1 : z);
+    const int src = sx * LL + sy * L + sz;
+    const int face_count = (x == 0 || x == Nm1)
+                         + (y == 0 || y == Nm1)
+                         + (z == 0 || z == Nm1);
+    const double normal_step = sqrt(static_cast<double>(face_count));
+    copy_outflow_boundary_pair(i, src, normal_step,
+        flux_x, flux_y, flux_z, wave_x, wave_y, wave_z);
+    copy_outflow_boundary_pair(i, src, normal_step,
+        flux_L_x, flux_L_y, flux_L_z, wave_L_x, wave_L_y, wave_L_z);
+    copy_outflow_boundary_pair(i, src, normal_step,
+        flux_R_x, flux_R_y, flux_R_z, wave_R_x, wave_R_y, wave_R_z);
+    copy_outflow_boundary_pair(i, src, normal_step,
+        strong_x, strong_y, strong_z,
+        strong_wave_x, strong_wave_y, strong_wave_z);
+    copy_outflow_boundary_pair(i, src, normal_step,
+        weak_x, weak_y, weak_z, weak_wave_x, weak_wave_y, weak_wave_z);
+}
+
+// Dispersal clears every non-field dynamical register on the outer shell. The
+// field families are replaced by the one-way ghost trace in the same stream.
+__global__ void dispersal_record_excision_kernel(
+    int8_t* state,
+    double* velocity_x, double* velocity_y, double* velocity_z,
+    double* remainder_x, double* remainder_y, double* remainder_z,
+    uint8_t* locked, int32_t* particle_id, int32_t* pair_id,
+    int8_t* spin, int8_t* color, int8_t* flavor,
+    double* accel_mag, double* latency, double* tau, double* phase,
+    double* phi, double* phi_coulomb, double* phi_latency,
+    double* delta_x, double* delta_y, double* delta_z,
+    double* delta_L_x, double* delta_L_y, double* delta_L_z,
+    double* delta_R_x, double* delta_R_y, double* delta_R_z,
+    uint8_t* near_particle, double* near_accel,
+    double* fd_coulomb_x, double* fd_coulomb_y, double* fd_coulomb_z,
+    double* fd_strong_x, double* fd_strong_y, double* fd_strong_z,
+    double* fd_magnetic_x, double* fd_magnetic_y, double* fd_magnetic_z,
+    double* fd_gravity_x, double* fd_gravity_y, double* fd_gravity_z,
+    double* fd_exchange_x, double* fd_exchange_y, double* fd_exchange_z,
+    int L, int N) {
+    const int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= N) return;
+    const int LL = L * L;
+    const int x = i / LL;
+    const int y = (i / L) % L;
+    const int z = i % L;
+    const int Nm1 = L - 1;
+    if (x > 0 && x < Nm1 && y > 0 && y < Nm1 && z > 0 && z < Nm1)
+        return;
+
+    state[i] = 0;
+    velocity_x[i] = velocity_y[i] = velocity_z[i] = 0.0;
+    remainder_x[i] = remainder_y[i] = remainder_z[i] = 0.0;
+    locked[i] = 0;
+    particle_id[i] = -1;
+    pair_id[i] = -1;
+    spin[i] = color[i] = flavor[i] = 0;
+    accel_mag[i] = latency[i] = tau[i] = phase[i] = 0.0;
+    phi[i] = phi_coulomb[i] = phi_latency[i] = 0.0;
+    delta_x[i] = delta_y[i] = delta_z[i] = 0.0;
+    delta_L_x[i] = delta_L_y[i] = delta_L_z[i] = 0.0;
+    delta_R_x[i] = delta_R_y[i] = delta_R_z[i] = 0.0;
+    near_particle[i] = 0;
+    near_accel[i] = 0.0;
+    fd_coulomb_x[i] = fd_coulomb_y[i] = fd_coulomb_z[i] = 0.0;
+    fd_strong_x[i] = fd_strong_y[i] = fd_strong_z[i] = 0.0;
+    fd_magnetic_x[i] = fd_magnetic_y[i] = fd_magnetic_z[i] = 0.0;
+    fd_gravity_x[i] = fd_gravity_y[i] = fd_gravity_z[i] = 0.0;
+    fd_exchange_x[i] = fd_exchange_y[i] = fd_exchange_z[i] = 0.0;
 }
 
 namespace {
@@ -216,6 +343,10 @@ void launch_boundary_kernel(GpuBuffers& bufs, bool absorbing, int flux_mode) {
             bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
             bufs.d_wave_vel_L_x, bufs.d_wave_vel_L_y, bufs.d_wave_vel_L_z,
             bufs.d_wave_vel_R_x, bufs.d_wave_vel_R_y, bufs.d_wave_vel_R_z,
+            bufs.d_flux_strong_x, bufs.d_flux_strong_y, bufs.d_flux_strong_z,
+            bufs.d_wave_vel_strong_x, bufs.d_wave_vel_strong_y, bufs.d_wave_vel_strong_z,
+            bufs.d_flux_weak_x, bufs.d_flux_weak_y, bufs.d_flux_weak_z,
+            bufs.d_wave_vel_weak_x, bufs.d_wave_vel_weak_y, bufs.d_wave_vel_weak_z,
             bufs.L, bufs.N);
     } else {
         flux_boundary_kernel<<<blocks, threads, 0, stream>>>(
@@ -225,7 +356,31 @@ void launch_boundary_kernel(GpuBuffers& bufs, bool absorbing, int flux_mode) {
             bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
             bufs.d_wave_vel_L_x, bufs.d_wave_vel_L_y, bufs.d_wave_vel_L_z,
             bufs.d_wave_vel_R_x, bufs.d_wave_vel_R_y, bufs.d_wave_vel_R_z,
+            bufs.d_flux_strong_x, bufs.d_flux_strong_y, bufs.d_flux_strong_z,
+            bufs.d_wave_vel_strong_x, bufs.d_wave_vel_strong_y, bufs.d_wave_vel_strong_z,
+            bufs.d_flux_weak_x, bufs.d_flux_weak_y, bufs.d_flux_weak_z,
+            bufs.d_wave_vel_weak_x, bufs.d_wave_vel_weak_y, bufs.d_wave_vel_weak_z,
             flux_mode, bufs.L, bufs.N);
+        if (flux_mode == 2) {
+            dispersal_record_excision_kernel<<<blocks, threads, 0, stream>>>(
+                bufs.d_state,
+                bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
+                bufs.d_remainder_x, bufs.d_remainder_y, bufs.d_remainder_z,
+                bufs.d_locked, bufs.d_particle_id, bufs.d_pair_id,
+                bufs.d_spin, bufs.d_color, bufs.d_flavor,
+                bufs.d_accel_mag, bufs.d_latency, bufs.d_tau, bufs.d_phase,
+                bufs.d_phi, bufs.d_phi_coulomb, bufs.d_phi_latency,
+                bufs.d_delta_j_x, bufs.d_delta_j_y, bufs.d_delta_j_z,
+                bufs.d_delta_j_L_x, bufs.d_delta_j_L_y, bufs.d_delta_j_L_z,
+                bufs.d_delta_j_R_x, bufs.d_delta_j_R_y, bufs.d_delta_j_R_z,
+                bufs.d_near_particle, bufs.d_near_accel,
+                bufs.d_fd_coulomb_x, bufs.d_fd_coulomb_y, bufs.d_fd_coulomb_z,
+                bufs.d_fd_strong_x, bufs.d_fd_strong_y, bufs.d_fd_strong_z,
+                bufs.d_fd_magnetic_x, bufs.d_fd_magnetic_y, bufs.d_fd_magnetic_z,
+                bufs.d_fd_gravity_x, bufs.d_fd_gravity_y, bufs.d_fd_gravity_z,
+                bufs.d_fd_exchange_x, bufs.d_fd_exchange_y, bufs.d_fd_exchange_z,
+                bufs.L, bufs.N);
+        }
     }
     CUDA_CHECK(cudaGetLastError());
 }
@@ -236,12 +391,12 @@ void launch_absorbing_boundary(GpuBuffers& bufs) {
     launch_boundary_kernel(bufs, true, 0);
 }
 
-void launch_reflective_flux_boundary(GpuBuffers& bufs) {
-    launch_boundary_kernel(bufs, false, 1);
+void launch_prepare_flux_boundary(GpuBuffers& bufs, int mode) {
+    launch_boundary_kernel(bufs, false, mode);
 }
 
-void launch_dispersal_flux_boundary(GpuBuffers& bufs) {
-    launch_boundary_kernel(bufs, false, 2);
+void launch_apply_flux_boundary(GpuBuffers& bufs, int mode) {
+    launch_boundary_kernel(bufs, false, mode);
 }
 
 // ============================================================================

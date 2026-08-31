@@ -391,8 +391,9 @@ RenderBridge::tick()
   0.   normalize/validate toggles; select CPU backend where required
   0b.  sync_ternary_from_voxels_if_needed()
   1.   apply EW background drive      [ew_background_sweep; before read]
-  1a.  solve_coulomb_poisson()        [db_clock_coulomb; before read]
-  1b.  phase_read()                   [wave_propagation || coupling || de_broglie_clock]
+  1a.  prepare_flux_boundary()        [non-XYZ-periodic boundary; before stencil reads]
+  1b.  solve_coulomb_poisson()        [db_clock_coulomb; before read]
+  1c.  phase_read()                   [wave_propagation || coupling || de_broglie_clock]
   2.   phase_write()                  [skipped by matched_gauss_dynamics]
   2a.  phase_read() + second half-kick [verlet_wave_integrator]
   2b.  pair_production_cpu()          [pair_production]
@@ -401,7 +402,7 @@ RenderBridge::tick()
   3b.  solve_latency_poisson()        [latency_field]
   4.   phase_forces()                 [forces]
   4b.  snapshot matched state         [matched_gauss_dynamics]
-  5.   phase_movement()               [movement; reflective_boundary controls face exits]
+  5.   phase_movement()               [movement; flux_boundary controls face exits]
   5a.  extract current + advance/sync [matched_gauss_dynamics; after movement]
   5b.  complete_strong_energy_step()  [strong_stress_energy && movement]
   5c.  absorbing/flux boundary passes [absorbing_boundary / flux_boundary]
@@ -425,10 +426,10 @@ RenderBridge::tick()
 | `gauss_project` | `gauss_projection`, `exact_dual_gauss` | Builds `source = div(J) - coulomb_charge_coupling * state`, solves a warm-started SOR Poisson problem, then subtracts `grad(phi)` from flux. Ordinary mode skips manifested sites during correction; exact dual mode synchronizes the split L/R fields. |
 | `solve_latency_poisson` | `latency_field`, `field_energy_gravity` | Builds a mass/field-energy source, solves a latency potential, and stores bounded `latency` values for time dilation and bandwidth accounting. |
 | `phase_forces` | `forces`, `poisson_coulomb`, `emergent_forces`, `gravity`, `lorentz_force`, `color_forces`, `strong_force`, `exchange_force`, `cluster_inertia` | Iterates manifested sites. EM/gravity/Lorentz stay gated on `forces`. Colour, Yukawa (`strong_force`), and exchange share host/device helpers with the CUDA kernels. Writes `ForceDiag` and integrates velocity with the `gamma_FTD` bandwidth budget; `cluster_inertia` then integrates locked Moore clusters, including exchange in `F_cluster`. |
-| `phase_movement` | `movement`, `symmetric_movement_order`, `reflective_boundary` | Sequential guarded mutation. Accumulates sub-lattice remainders, moves into void targets, bounces same-sign collisions, annihilates opposite signs, carries self-field to moved particles, and bursts field energy on annihilation. An attempted lattice-face crossing mirror-bounces the crossed velocity components and clears the remainder when `reflective_boundary` is on; when it is off, the particle and its local fields/labels are cleared so they exhaust into the void rather than wrapping periodically. |
+| `phase_movement` | `movement`, `symmetric_movement_order`, `flux_boundary` | Sequential guarded mutation. Accumulates sub-lattice remainders, moves into void targets, bounces same-sign collisions, annihilates opposite signs, carries self-field to moved particles, and bursts field energy on annihilation. Every boundary law covers all six faces: `Dispersal` retires a manifested site at any face, `Reflective` reverses only the crossed normal velocity components, and `Periodic` wraps every crossing to the opposite face. `reflective_boundary` remains a legacy movement-only override for old native profiles. |
 | matched-Gauss current/advance | `matched_gauss_dynamics` | Snapshots ternary state before movement, extracts the conservative routed current from the post-movement difference, advances the oriented face/edge state, and synchronizes it back to voxels. |
 | `apply_absorbing_boundary` | `absorbing_boundary` | Applies an imposed D-deep quadratic damping sponge after movement. It is not a derived reflection-free radiation condition. |
-| flux-boundary pass | `flux_boundary` | `Periodic` leaves the toroidal wave map unchanged; `Reflective` copies an interior Neumann ghost shell; `Dispersal` multiplies the outer shell by `1-C_SPEED`. These are computational finite-box laws, not ontological boundaries. |
+| boundary preparation / settled pass | `flux_boundary` | Before stencil reads and after the last local field writers, `Dispersal` resets manifested and non-field records on all six face cells and reconstructs each transported field pair from the corresponding strictly interior record with the first-order outward condition `J_face = J_interior - h*wave_vel_interior/C_WAVE`, `wave_vel_face = wave_vel_interior`; no opposite-face value is read and no strictly interior cell is graded. A manifested record is retired on its first attempted hop into a face. `Reflective` refreshes its six-face interior Neumann mirror shell, and `Periodic` identifies all three opposite face pairs through the lattice neighbour tables without a boundary pass. The pass covers observable, dual, strong, and weak transported fields plus manifested, identity, motion, potential, and diagnostic records. `periodic_axis` is orientation/provenance metadata only. These are imposed computational finite-box laws, not ontological boundaries or an exact all-angle transparent-boundary theorem. |
 | `weak_transmutation_cpu` | `weak_transmutation` | Stress-threshold stochastic polarity flips. In dual-substrate mode the L/R fluxes are swapped with the flip. |
 | `triad_binding_cpu` | `triad_binding` | Detects compact same-sign triples and locks them as bound structures. |
 | `relax_su2/su3_links_cpu` | `su2_gauge`, `su3_gauge` | One Jacobi double-buffered Wilson staple sweep per tick over the SU(2)/SU(3) edge links ([IMPOSED] lattice-gauge import; see §8.1). Write-only w.r.t. the substrate — links feed nothing downstream. Buffers lazily allocated on first use. |
@@ -447,6 +448,7 @@ order:
 
 ```
 launch_ew_background_sweep() [ew_background_sweep; before phase_read]
+prepare flux boundary        [non-XYZ-periodic boundary; before phase_read]
 gpu_phase_read()/write()     [skipped by matched_gauss_dynamics]
 gpu_phase_read() + launch_verlet_second_half_kick()  [verlet_wave_integrator]
 gpu_pair_production()        [pair_production]
@@ -459,7 +461,7 @@ gpu_build_particle_list()    [color/strong/exchange]
 gpu_particle_forces()        [color/strong/exchange; remainder colour if FTD-0406]
 launch_integrate_forces()    [any force channel]
 launch_cluster_inertia()     [cluster_inertia; after integrate, before movement]
-gpu_phase_movement()         [movement; reflective particle-face behavior]
+gpu_phase_movement()         [movement; authoritative boundary mode/axis]
 launch_matched_gauss_advance() [matched_gauss_dynamics]
 launch_complete_strong_energy() / launch_strong_t00()  [strong_stress_energy]
 absorbing/flux boundaries    [absorbing_boundary / flux_boundary]
@@ -470,8 +472,10 @@ accumulate_proper_time()     [latency_field || de_broglie_clock; phase optional]
 advance device tick
 ```
 
-The absorbing sponge and reflective/dispersal flux-boundary passes are native
-CUDA kernels and run after movement. Gauge relaxation runs only after
+Boundary preparation and the settled absorbing/reflective/dispersal passes are
+native CUDA kernels. Periodic wrapping is supplied by the lattice neighbour
+tables on all three axes. The preparation runs before stencil reads and
+the settled pass runs after movement and other local field writers. Gauge relaxation runs only after
 `GpuBackend` has primed the lazily allocated link buffers; driving `GpuEngine`
 directly without that priming skips the phase. Proper time and optional
 de Broglie phase advance on-device exactly once per tick.
@@ -2364,7 +2368,7 @@ Several former CUDA gaps are now closed in live source:
 |---|---|---|
 | `field_energy_gravity` | `compute_latency_rhs` includes local flux/wave energy | Uses the CUDA FFT latency solver rather than CPU SOR |
 | `exact_dual_gauss` | `gauss_correction_kernel` corrects manifested sites when enabled | The remaining Gauss limitation is the documented stencil-mismatch floor |
-| `absorbing_boundary`, `flux_boundary` | Native post-movement absorbing and reflective/dispersal kernels | No longer degrade silently to periodic |
+| `absorbing_boundary`, `flux_boundary` | Native pre-read ghost/exterior preparation plus post-writer absorbing, reflective, and dispersal kernels; periodic fields and particles wrap at every face | Covers observable, dual, strong, and weak transported fields; `periodic_axis` is orientation/provenance metadata only |
 | `ew_background_sweep` | Native pre-read drive | Deliberately graph-ineligible |
 | `verlet_wave_integrator` | Native KDK: half-kick + drift in `phase_write`, post-drift `phase_read`, second half-kick | Honors `dt<1`; default OFF; golden-neutral |
 | `lorentz_period2_floquet`, `lorentz_bcc_time_floquet` | Native period-two wave kick from live `d_tick` | Unit tick; default OFF; golden-neutral |

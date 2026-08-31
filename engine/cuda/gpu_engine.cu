@@ -65,13 +65,14 @@ namespace ftd { namespace gpu { namespace kernels {
                              bool lorentz_force, double dt);
     void launch_integrate_forces(GpuBuffers& bufs, double dt);
     void launch_cluster_inertia(GpuBuffers& bufs, double dt);
-    void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary,
+    void launch_phase_movement(GpuBuffers& bufs, double dt, int boundary_mode,
+                               bool reflective_boundary,
                                bool dual_substrate, bool symmetric_movement_order,
                                unsigned long long langevin_seed);
     void launch_ew_background_sweep(GpuBuffers& bufs, bool dual_substrate);
     void launch_absorbing_boundary(GpuBuffers& bufs);
-    void launch_reflective_flux_boundary(GpuBuffers& bufs);
-    void launch_dispersal_flux_boundary(GpuBuffers& bufs);
+    void launch_prepare_flux_boundary(GpuBuffers& bufs, int mode);
+    void launch_apply_flux_boundary(GpuBuffers& bufs, int mode);
     // Dual-substrate launchers
     void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
                                 bool do_db_clock, bool do_db_clock_coulomb, double omega0,
@@ -901,6 +902,11 @@ void GpuEngine::record_tick_body() {
         kernels::launch_ew_background_sweep(bufs_, toggles.dual_substrate);
     }
 
+    const int boundary_mode = static_cast<int>(toggles.flux_boundary);
+    if (toggles.flux_boundary != FluxBoundaryMode::Periodic) {
+        kernels::launch_prepare_flux_boundary(bufs_, boundary_mode);
+    }
+
     // Phase 1+2: Wave update (Laplacian + coupling + leapfrog + damping + genesis/evaporation)
     // NOTE: Fusion of phase_read + phase_write into a single kernel (wave_update_kernel)
     // was attempted but has a race condition: thread i reads flux[neighbor_j] while thread j
@@ -922,6 +928,9 @@ void GpuEngine::record_tick_body() {
     // E1 / FTD-0337: KDK second half-kick at the post-drift field, before
     // pair production and Gauss — same operator split as RenderBridge::tick.
     if (toggles.verlet_wave_integrator) {
+        if (toggles.flux_boundary != FluxBoundaryMode::Periodic) {
+            kernels::launch_prepare_flux_boundary(bufs_, boundary_mode);
+        }
         gpu_phase_read();
         kernels::launch_verlet_second_half_kick(
             bufs_, dt_, toggles.dual_substrate);
@@ -954,7 +963,8 @@ void GpuEngine::record_tick_body() {
             && !toggles.latency_field && !toggles.lorentz_force
             && !toggles.strong_force && !toggles.exchange_force
             && !toggles.weak_transmutation && !toggles.triad_binding
-            && !toggles.absorbing_boundary && !toggles.reflective_boundary;
+            && !toggles.absorbing_boundary && !toggles.reflective_boundary
+            && toggles.flux_boundary == FluxBoundaryMode::Periodic;
         kernels::launch_begin_strong_energy(
             bufs_, toggles.movement, projection_ok);
     }
@@ -1012,14 +1022,12 @@ void GpuEngine::record_tick_body() {
 
     // CPU parity: field boundaries run after the final ordinary flux writer
     // (Gauss/forces/movement), so projection cannot refill the damped shell.
-    // The sponge and selected flux boundary are sequential and may coexist.
+    // The sponge and selected full-domain boundary are sequential and may coexist.
     if (toggles.absorbing_boundary) {
         kernels::launch_absorbing_boundary(bufs_);
     }
-    if (toggles.flux_boundary == FluxBoundaryMode::Reflective) {
-        kernels::launch_reflective_flux_boundary(bufs_);
-    } else if (toggles.flux_boundary == FluxBoundaryMode::Dispersal) {
-        kernels::launch_dispersal_flux_boundary(bufs_);
+    if (toggles.flux_boundary != FluxBoundaryMode::Periodic) {
+        kernels::launch_apply_flux_boundary(bufs_, boundary_mode);
     }
 
     // Phase 6: Weak transmutation (stress-threshold polarity flip)
@@ -1465,7 +1473,9 @@ void GpuEngine::gpu_phase_forces() {
 }
 
 void GpuEngine::gpu_phase_movement() {
-    kernels::launch_phase_movement(bufs_, dt_, toggles.reflective_boundary,
+    kernels::launch_phase_movement(bufs_, dt_,
+                                   static_cast<int>(toggles.flux_boundary),
+                                   toggles.reflective_boundary,
                                    toggles.dual_substrate,
                                    toggles.symmetric_movement_order,
                                    static_cast<unsigned long long>(toggles.langevin_seed));

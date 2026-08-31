@@ -18,15 +18,19 @@
 
 namespace ftd {
 
-// Flux-field boundary law (non-bool config; like bcc_stencil it lives outside
-// TOGGLE_SPECS[]). Default Periodic preserves the toroidal wrap that every
-// existing test + the golden-tick hash were written against — so adding this
-// field is golden-neutral. The web dashboard defaults its selector to Dispersal.
-//   Periodic   — toroidal wrap (closed, translation-invariant finite lattice)
-//   Reflective — one copied ghost shell imposing a discrete Neumann condition
-//   Dispersal  — outer-shell multiplier keep=1-C_SPEED (an imposed lossy shell,
-//                not a Mur/Sommerfeld radiation condition)
+// Authoritative transported-dynamics boundary law. Every mode covers all six
+// faces of the cubic domain; axis metadata never changes the face operator.
+//   Periodic   — identify every pair of opposite faces (three-axis torus)
+//   Reflective — copied Neumann ghost shell + elastic manifested-site bounce
+//   Dispersal  — outward-only field ghost trace + manifested-site removal; no
+//                opposite-face input or size-dependent interior damping
 enum class FluxBoundaryMode : int { Periodic = 0, Reflective = 1, Dispersal = 2 };
+
+// Simulation orientation metadata. The historical PeriodicAxis name is kept
+// for native/WASM/WebSocket profile compatibility, but X/Y/Z/All affect only
+// the declared forward/lateral/vertical orientation and viewport arrows. They
+// do not select boundary faces or alter dynamics.
+enum class PeriodicAxis : int { X = 0, Y = 1, Z = 2, All = 3 };
 
 // Backend bitmask used by ToggleSpec::backends. CPU = 0b001, GPU = 0b010,
 // JS  = 0b100, ANY = 0b111. The native WebSocket binding enforces this table
@@ -96,7 +100,7 @@ struct TermToggles {
     bool su3_gauge = false;         // tick Rule 7b: per-tick SU(3) link staple relaxation ([IMPOSED] Wilson-action import; links are write-only — no substrate feedback, see test_gauge_links G1)
     bool symmetric_movement_order = false; // CPU/CUDA phase_movement: coordinate-independent update traversal & axis ordering
     bool absorbing_boundary = false; // tick: imposed D-deep quadratic damping sponge; reflection performance is not guaranteed by the operator definition
-    bool reflective_boundary = false; // phase_movement: mirror-bounce at faces when on; particles exhaust into the void when off (no periodic wrap)
+    bool reflective_boundary = false; // legacy movement-only mirror override; new profiles use flux_boundary as the authoritative field+particle law
     bool field_energy_gravity = false; // [IMPOSED] latency Poisson also sources from field-energy density ½(|J|²+|wave_vel|²), not only particle rest mass, so flux-only configs (gravity waves) carry a real potential. Requires latency_field.
     bool cluster_inertia = false;   // [IMPOSED] phase_forces: rigid-body integrate LOCKED clusters at inertial mass N·M_INERTIAL. Additive; needs a force channel.
     bool geometric_gravity = false; // [FTD-1016 SELECTED] phase_forces: replace F=G_N∇|J| with F=M_INERTIAL C² ℒ ∇ℒ from voxel.latency. Native CUDA + CPU; default OFF ⇒ golden-neutral.
@@ -127,6 +131,10 @@ struct TermToggles {
     // Flux-field boundary law (see FluxBoundaryMode above). Default Periodic
     // (toroidal wrap) ⇒ golden-neutral. Non-bool config, like bcc_stencil.
     FluxBoundaryMode flux_boundary = FluxBoundaryMode::Periodic;
+
+    // Orientation metadata; retained under its historical profile-field name.
+    // Boundary modes themselves always cover the complete six-face domain.
+    PeriodicAxis periodic_axis = PeriodicAxis::Z;
 
     // Cluster A (FTD-0093 / Mechanism C): sublattice stencil mode for phase_read.
     BccStencilMode bcc_stencil = BccStencilMode::FULL;
@@ -237,7 +245,7 @@ inline constexpr ToggleSpec TOGGLE_SPECS[] = {
     {"su3_gauge",           &TermToggles::su3_gauge,           false, true,  "",                 "",                 ToggleBackend::ANY, "SU(3) link staple relaxation each tick ([IMPOSED] lattice-gauge import; links are observables only — no feedback into the substrate)"},
     {"symmetric_movement_order", &TermToggles::symmetric_movement_order, false, true,  "movement",         "",                 ToggleBackend::ANY, "Coordinate-independent update traversal & axis ordering (native CUDA + CPU; SplitMix64 Fisher-Yates)"},
     {"absorbing_boundary", &TermToggles::absorbing_boundary, false, true,  "wave_propagation", "",                 ToggleBackend::ANY, "Imposed D-deep quadratic damping sponge at lattice faces"},
-    {"reflective_boundary", &TermToggles::reflective_boundary, false, true, "movement",         "",                 ToggleBackend::ANY, "Mirror-bounce particles at lattice faces; when off they exhaust into the void (no toroidal wrap)"},
+    {"reflective_boundary", &TermToggles::reflective_boundary, false, true, "movement",         "",                 ToggleBackend::ANY, "Legacy movement-only mirror override; use flux_boundary=Reflective for unified field and particle behavior"},
     {"field_energy_gravity", &TermToggles::field_energy_gravity, false, true, "latency_field",    "",                 ToggleBackend::ANY, "[IMPOSED] Latency Poisson sources from field-energy density (½|J|²) so flux configs gravitate"},
     {"cluster_inertia",    &TermToggles::cluster_inertia,    false, false, "",                 "",                 ToggleBackend::ANY, "[IMPOSED] Rigid-body cluster inertia: locked clusters integrate a_COM = F_cluster/(N*M_INERTIAL); requires a force channel"},
     {"geometric_gravity",  &TermToggles::geometric_gravity,  false, true,  "gravity,forces",   "",                 ToggleBackend::ANY, "[FTD-1016 SELECTED ENGINE EXTENSION] Replace F=G_N∇|J| with F=M_INERTIAL C² ℒ ∇ℒ from voxel.latency; native CUDA + CPU; default OFF => golden-neutral"},
@@ -331,6 +339,14 @@ inline bool TermToggles::validate(std::string* err) const {
     // Cluster A: a non-default Langevin site filter requires Langevin to be on.
     if (langevin_site_filter != SiteClass::ALL_SITES && !langevin)
         msg += "langevin_site_filter != ALL_SITES requires langevin=true\n";
+    const int boundary_mode_value = static_cast<int>(flux_boundary);
+    if (boundary_mode_value < static_cast<int>(FluxBoundaryMode::Periodic)
+        || boundary_mode_value > static_cast<int>(FluxBoundaryMode::Dispersal))
+        msg += "flux_boundary is outside the declared boundary-mode domain\n";
+    const int periodic_axis_value = static_cast<int>(periodic_axis);
+    if (periodic_axis_value < static_cast<int>(PeriodicAxis::X)
+        || periodic_axis_value > static_cast<int>(PeriodicAxis::All))
+        msg += "periodic_axis must be X, Y, Z, or All\n";
     // Note: selective_damping->damping requirement is encoded in TOGGLE_SPECS;
     // legacy phrasing was "has no effect with damping=false" but the table
     // generates "selective_damping requires damping" (semantically equivalent;
@@ -440,6 +456,8 @@ inline void TermToggles::enable_all() {
     }
     bcc_stencil = BccStencilMode::FULL;
     langevin_site_filter = SiteClass::ALL_SITES;
+    flux_boundary = FluxBoundaryMode::Periodic;
+    periodic_axis = PeriodicAxis::Z;
 }
 
 // disable_all() — clear every bulk_managed toggle to false. Non-bulk
@@ -451,6 +469,8 @@ inline void TermToggles::disable_all() {
     }
     bcc_stencil = BccStencilMode::FULL;
     langevin_site_filter = SiteClass::ALL_SITES;
+    flux_boundary = FluxBoundaryMode::Periodic;
+    periodic_axis = PeriodicAxis::Z;
 }
 
 }  // namespace ftd

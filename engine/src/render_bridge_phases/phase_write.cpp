@@ -464,18 +464,52 @@ void phase_write_assign_pending_ids(RenderBridge& rb) {
 // blocks exactly (bit-identical requirement — pinned by
 // test_boundary_modes_golden).
 
-// Scale all six flux fields of one voxel by s.
+// Scale every transported field register of one voxel by s.
 static inline void scale_flux_fields(Voxel& v, double s) {
   v.flux *= s; v.wave_vel *= s;
   v.flux_L *= s; v.flux_R *= s;
   v.wave_vel_L *= s; v.wave_vel_R *= s;
+  v.flux_strong *= s; v.wave_vel_strong *= s;
+  v.flux_weak *= s; v.wave_vel_weak *= s;
 }
 
-// Copy all six flux fields from src into dst.
+// Copy every transported field register from src into dst.
 static inline void copy_flux_fields(Voxel& dst, const Voxel& src) {
   dst.flux = src.flux;             dst.wave_vel = src.wave_vel;
   dst.flux_L = src.flux_L;         dst.flux_R = src.flux_R;
   dst.wave_vel_L = src.wave_vel_L; dst.wave_vel_R = src.wave_vel_R;
+  dst.flux_strong = src.flux_strong;
+  dst.wave_vel_strong = src.wave_vel_strong;
+  dst.flux_weak = src.flux_weak;
+  dst.wave_vel_weak = src.wave_vel_weak;
+}
+
+// One-way first-order Sommerfeld trace for a field/pseudo-velocity pair.
+// The face cell is a ghost trace, not an evolved site.  For an outward normal
+// step h, (partial_t + C_WAVE partial_n)J=0 gives
+//     J_face = J_interior - h * wave_vel_interior / C_WAVE.
+// Reconstructing this trace from the strictly interior source before every
+// stencil read prevents the storage torus from supplying an incoming mode.
+static inline void copy_outflow_pair(Vec3& field_dst, Vec3& wave_dst,
+                                     const Vec3& field_src,
+                                     const Vec3& wave_src,
+                                     double normal_step) {
+  field_dst = field_src - wave_src * (normal_step / C_WAVE);
+  wave_dst = wave_src;
+}
+
+static inline void copy_outflow_fields(Voxel& dst, const Voxel& src,
+                                       double normal_step) {
+  copy_outflow_pair(dst.flux, dst.wave_vel,
+                    src.flux, src.wave_vel, normal_step);
+  copy_outflow_pair(dst.flux_L, dst.wave_vel_L,
+                    src.flux_L, src.wave_vel_L, normal_step);
+  copy_outflow_pair(dst.flux_R, dst.wave_vel_R,
+                    src.flux_R, src.wave_vel_R, normal_step);
+  copy_outflow_pair(dst.flux_strong, dst.wave_vel_strong,
+                    src.flux_strong, src.wave_vel_strong, normal_step);
+  copy_outflow_pair(dst.flux_weak, dst.wave_vel_weak,
+                    src.flux_weak, src.wave_vel_weak, normal_step);
 }
 
 // Visit every voxel of the one-layer boundary shell (all six faces) in
@@ -538,18 +572,55 @@ void apply_reflective_flux_boundary(RenderBridge& rb) {
   });
 }
 
-// Dispersal flux boundary (FluxBoundaryMode::Dispersal) — single-cell lossy
-// shell. The outermost layer is multiplied by keep=1-C_SPEED each tick. This is
-// ONE sharp cell, NOT the graduated quadratic sponge and NOT a derived
-// Mur/Sommerfeld outgoing-wave condition. Applied AFTER the last flux writers.
-// Gated → golden-neutral.
+void prepare_flux_boundary(RenderBridge& rb) {
+  if (rb.toggles.flux_boundary == FluxBoundaryMode::Reflective) {
+    apply_reflective_flux_boundary(rb);
+  } else if (rb.toggles.flux_boundary == FluxBoundaryMode::Dispersal) {
+    apply_dispersal_flux_boundary(rb);
+  }
+}
+
+// Dispersal boundary — six-face one-way excision sink. The outer shell is not
+// an evolved region: every manifested record, motion register, warm-start
+// potential, and local diagnostic is reset to void. Transported fields receive
+// only a reconstructed outward Sommerfeld ghost trace from the strictly
+// interior source. No boundary value is read from the opposite face, no
+// incoming characteristic is supplied, and no size-dependent interior sponge
+// is part of this boundary mode.
 void apply_dispersal_flux_boundary(RenderBridge& rb) {
   const Lattice& lat = rb.lattice_;
-  // Selected per-tick attenuation of the outer layer.
-  const double keep = 1.0 - C_SPEED;
-  for_each_shell_voxel(rb, [&](int x, int y, int z, int) {
-    scale_flux_fields(rb.voxels_[lat.index(x, y, z)], keep);
+  if (lat.size() <= 0) return;
+  for_each_shell_voxel(rb, [&](int x, int y, int z, int Nm1) {
+    const int idx = lat.index(x, y, z);
+    const int ix = (x == 0) ? 1 : (x == Nm1 ? Nm1 - 1 : x);
+    const int iy = (y == 0) ? 1 : (y == Nm1 ? Nm1 - 1 : y);
+    const int iz = (z == 0) ? 1 : (z == Nm1 ? Nm1 - 1 : z);
+    const int face_count = (x == 0 || x == Nm1)
+                         + (y == 0 || y == Nm1)
+                         + (z == 0 || z == Nm1);
+    const Voxel source = lat.size() >= 3
+        ? rb.voxels_[lat.index(ix, iy, iz)] : Voxel{};
+    rb.set_state(idx, 0);
+    rb.voxels_[idx] = Voxel{};
+    if (lat.size() >= 3) {
+      copy_outflow_fields(rb.voxels_[idx], source,
+                          std::sqrt(static_cast<double>(face_count)));
+    }
+    rb.force_diag_[idx] = ForceDiag{};
+    rb.delta_j_[idx] = {};
+    rb.delta_j_L_[idx] = {};
+    rb.delta_j_R_[idx] = {};
+    rb.dJ_[idx] = {};
+    rb.phi_[idx] = 0.0;
+    rb.phi_coulomb_[idx] = 0.0;
+    rb.phi_latency_[idx] = 0.0;
+    if (static_cast<std::size_t>(idx) < rb.near_particle_.size())
+      rb.near_particle_[idx] = 0;
+    if (static_cast<std::size_t>(idx) < rb.near_accel_.size())
+      rb.near_accel_[idx] = 0.0;
+    rb.sor_source_[idx] = 0.0;
   });
+  rb.mark_fields_dirty_from_voxels();
 }
 
 }  // namespace ftd

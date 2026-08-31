@@ -109,7 +109,13 @@ static void configure_reflective_move(RenderBridge& rb) {
 // fold is byte-identical either way -- the TRAJECTORY did not move. See the
 // pin history in test_render_bridge_golden.cpp for the full decomposition.
 static constexpr std::uint64_t GOLDEN_REFLECTIVE_FLUX  = 0x9fc68a69b18104bbULL;
-static constexpr std::uint64_t GOLDEN_DISPERSAL_FLUX   = 0x5211360fca612ebdULL;
+// RE-PINNED 2026-08-30 -- Dispersal is a one-way six-face outflow boundary.
+// The retired D=min(6,max(2,L/4)) ramp incorrectly damped computed interior;
+// the intermediate exact-zero shell behaved as a Dirichlet wall and reversed
+// 77% of the fixed probe momentum. Dispersal now reconstructs a first-order
+// outward field trace from strict-interior values and excises non-field face
+// records. The separate absorbing_boundary profile retains the optional sponge.
+static constexpr std::uint64_t GOLDEN_DISPERSAL_FLUX   = 0xcd939857a0119c1fULL;
 static constexpr std::uint64_t GOLDEN_ABSORBING        = 0xe43c4afbf65dc949ULL;
 static constexpr std::uint64_t GOLDEN_REFLECTIVE_MOVE  = 0x6762d0e814750b99ULL;
 

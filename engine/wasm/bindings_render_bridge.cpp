@@ -243,14 +243,23 @@ static void set_langevin_gamma(ftd::RenderBridge& rb, double g) { rb.toggles.lan
 static double get_langevin_gamma(ftd::RenderBridge& rb) { return rb.toggles.langevin_gamma; }
 static double get_physical_time(ftd::RenderBridge& rb) { return rb.physical_time(); }
 
-// Flux boundary mode: 0=Periodic (toroidal wrap), 1=Reflective (Neumann
-// mirror, ∂_n J=0), 2=Dispersal (first-order radiating sink, outer layer
-// scales by 1-C_SPEED per tick). Defaults to Periodic (golden-neutral).
+// Transport boundary mode: 0=Periodic, 1=Reflective (Neumann field shell plus
+// elastic manifested-site bounce), 2=Dispersal (one-way field trace plus
+// manifested/non-field face-record excision).
 static void set_flux_boundary(ftd::RenderBridge& rb, int mode) {
+    if (mode < 0 || mode > 2) return;
     rb.toggles.flux_boundary = static_cast<ftd::FluxBoundaryMode>(mode);
+    rb.toggles.reflective_boundary = false;
 }
 static int get_flux_boundary(ftd::RenderBridge& rb) {
     return static_cast<int>(rb.toggles.flux_boundary);
+}
+static void set_flux_periodic_axis(ftd::RenderBridge& rb, int axis) {
+    if (axis < 0 || axis > 3) return;
+    rb.toggles.periodic_axis = static_cast<ftd::PeriodicAxis>(axis);
+}
+static int get_flux_periodic_axis(ftd::RenderBridge& rb) {
+    return static_cast<int>(rb.toggles.periodic_axis);
 }
 
 // ── Scenario setup ───────────────────────────────────────────────────
@@ -467,6 +476,8 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     function("getLangevinGamma",   &get_langevin_gamma);
     function("setFluxBoundary",   &set_flux_boundary);
     function("getFluxBoundary",   &get_flux_boundary);
+    function("setFluxPeriodicAxis", &set_flux_periodic_axis);
+    function("getFluxPeriodicAxis", &get_flux_periodic_axis);
     function("setOmega0",          &set_omega0);
     function("getOmega0",          &get_omega0);
     function("getPhysicalTime",    &get_physical_time);

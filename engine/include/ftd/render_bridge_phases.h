@@ -67,6 +67,11 @@ void phase_write_assign_pending_ids(RenderBridge& rb);
 /// conservation tests unchanged).
 void apply_absorbing_boundary(RenderBridge& rb);
 
+/// Prepare the selected boundary before any stencil reads. Reflective mode
+/// refreshes its Neumann ghost shell; open faces are forced to exact zero so
+/// the lattice's storage-level periodic indexing cannot feed an opposite face.
+void prepare_flux_boundary(RenderBridge& rb);
+
 /// Reflective flux boundary (FluxBoundaryMode::Reflective): Neumann mirror —
 /// copies the first interior layer into the boundary shell each tick. On the
 /// frozen linear wave map this is a discrete Neumann ghost shell; the associated
@@ -75,11 +80,12 @@ void apply_absorbing_boundary(RenderBridge& rb);
 /// Invoked from tick() only when toggles.flux_boundary == Reflective.
 void apply_reflective_flux_boundary(RenderBridge& rb);
 
-/// Dispersal flux boundary (FluxBoundaryMode::Dispersal): single-cell lossy
-/// shell. Every tick it multiplies all six outer-shell flux fields by
-/// keep=1-C_SPEED. It is NOT a Mur/Sommerfeld condition and has no derived
-/// outgoing-wave or reflection-efficiency guarantee. Invoked from tick()
-/// only when toggles.flux_boundary == Dispersal.
+/// Dispersal boundary (FluxBoundaryMode::Dispersal): excise manifested and
+/// non-field records on the complete six-face shell. Transported fields use a
+/// first-order outward Sommerfeld ghost trace reconstructed only from the
+/// corresponding strictly interior record; no opposite-face value is read.
+/// The computed interior is not graded or damped. This is a local imposed
+/// outflow closure, not an exact all-angle transparent-boundary theorem.
 void apply_dispersal_flux_boundary(RenderBridge& rb);
 
 // =============================================================================

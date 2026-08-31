@@ -63,9 +63,11 @@ bool project_for_movement(Voxel& v) {
   return true;
 }
 
-// When reflective_boundary is OFF, a particle that would cross a face is
-// removed (energy exhausts into the void — no toroidal wrap). When ON, it
-// mirror-bounces at the face like an elastic wall collision.
+// The flux boundary selector is authoritative for manifested transport too.
+// Every selected law covers all six faces: Periodic wraps every crossing,
+// Reflective mirror-bounces, and Dispersal exhausts into the void.
+// periodic_axis is orientation metadata only. reflective_boundary remains a
+// legacy alias for direct native profiles that predate FluxBoundaryMode.
 BoundaryOutcome handle_face_crossing(RenderBridge& rb, Voxel& v, int dx, int dy, int dz, int i) {
   auto c = rb.lattice().coord(i);
   const int nx = c.x + dx;
@@ -73,10 +75,26 @@ BoundaryOutcome handle_face_crossing(RenderBridge& rb, Voxel& v, int dx, int dy,
   const int nz = c.z + dz;
   const int L = rb.lattice().size();
 
-  const bool crosses = (nx < 0 || nx >= L || ny < 0 || ny >= L || nz < 0 || nz >= L);
-  if (!crosses) return BoundaryOutcome::Proceed;
+  const bool crosses_x = nx < 0 || nx >= L;
+  const bool crosses_y = ny < 0 || ny >= L;
+  const bool crosses_z = nz < 0 || nz >= L;
+  const bool crosses = crosses_x || crosses_y || crosses_z;
+  const auto mode = rb.toggles.flux_boundary;
+  // Dispersal's outer shell is the void boundary itself, not another evolved
+  // lattice layer. A manifested record is exhausted as soon as its proposed
+  // hop reaches any face; it never occupies the shell and waits for a later
+  // out-of-range crossing.
+  const bool hits_dispersal_face = mode == FluxBoundaryMode::Dispersal
+      && (crosses || nx == 0 || nx == L - 1
+                  || ny == 0 || ny == L - 1
+                  || nz == 0 || nz == L - 1);
+  if (!crosses && !hits_dispersal_face) return BoundaryOutcome::Proceed;
 
-  if (rb.toggles.reflective_boundary) {
+  if (mode == FluxBoundaryMode::Periodic && !rb.toggles.reflective_boundary) {
+    return BoundaryOutcome::Proceed;
+  }
+
+  if (mode == FluxBoundaryMode::Reflective || rb.toggles.reflective_boundary) {
     if (dx != 0) v.velocity.x *= -1.0;
     if (dy != 0) v.velocity.y *= -1.0;
     if (dz != 0) v.velocity.z *= -1.0;
@@ -85,17 +103,7 @@ BoundaryOutcome handle_face_crossing(RenderBridge& rb, Voxel& v, int dx, int dy,
   }
 
   rb.set_state(i, 0);
-  v.velocity = {};
-  v.remainder = {};
-  v.pair_id = -1;
-  v.particle_id = -1;
-  v.spin = 0;
-  v.color = 0;
-  v.flux = {};
-  if (rb.toggles.dual_substrate) {
-    v.flux_L = {};
-    v.flux_R = {};
-  }
+  v = Voxel{};
   return BoundaryOutcome::Handled;
 }
 

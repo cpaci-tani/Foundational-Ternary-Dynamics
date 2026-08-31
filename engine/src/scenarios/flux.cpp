@@ -37,9 +37,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         // Physical Purpose: Boundary-response probe for the frozen native wave
         // map. This is a transverse field packet, not a particle or EM claim.
         // Initial Condition: finite discrete-curl packet traveling +x from L/3.
-        // Expected Behaviour: periodic propagation or Neumann-shell reflection.
-        // The selected one-shell loss mode is only an imposed attenuation law;
-        // it failed the 75%-removal qualification and is not an absorber claim.
+        // Expected Behaviour: periodic propagation, Neumann-shell reflection,
+        // or complete face-record excision under Dispersal. The last law has
+        // exact storage-level no-return semantics; it is not an all-angle
+        // reflection-free radiation theorem.
         configure_free_wave_terms(rb, false);
         const double sx = std::max(3.0, N / 16.0);
         inject_transverse_packet_x(rb, N / 3.0, midF, midF,
