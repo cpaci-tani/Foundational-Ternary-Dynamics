@@ -29,7 +29,8 @@ import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 
 const PANEL_ID = 'spectrum-panel';
 const HZ = 2;                 // exploratory data — slower cadence
-const M_LIVE = 32;            // live FFT grid (band-limited)
+const M_LIVE = 32;            // default live FFT grid (band-limited)
+const M_LIVE_LARGE = 8;       // large-lattice live grid; Deep Measure remains 64³
 const M_DEEP = 64;            // Deep Measure FFT grid (full band)
 const EMPTY_SCENARIO_ID = 'empty';
 const SCENARIO_SYNC_MAX_FRAMES = 120;
@@ -49,7 +50,13 @@ const SECTION_HELP = {
     energy: 'How the field energy partitions across channels (E-field / B-field / wave / total), the net Poynting flux |S|, and the energy drift since the run started.',
 };
 
-function liveStride(L) { return Math.max(1, Math.min(6, Math.round(L / 40))); }
+function liveStride(L) {
+    if (L <= 33) return 1;
+    if (L <= 49) return 2;
+    return Math.max(3, Math.min(8, Math.ceil(L / 16)));
+}
+
+function liveGridSize(L) { return L >= 65 ? M_LIVE_LARGE : M_LIVE; }
 
 // ── Compute ──────────────────────────────────────────────────────────────────
 
@@ -351,14 +358,14 @@ export function mountSpectrumPanel(host, getBridge) {
         // ① hero — only when live (deep freezes the snapshot)
         let sp;
         if (mode === 'live') {
-            sp = renderHero(caps, L, liveStride(L), M_LIVE, false);
+            sp = renderHero(caps, L, stride, liveGridSize(L), false);
         } else {
             // still need a magnitude grid for topology while frozen — cheap live one
-            sp = computeSpectrum(caps, L, liveStride(L), M_LIVE);
+            sp = computeSpectrum(caps, L, stride, liveGridSize(L));
         }
         // ②③④ always live
         renderTopology(topoBody, computeTopology(caps, sp, audit));
-        renderMetrics(metBody, computeMetrics(caps, liveStride(L)));
+        renderMetrics(metBody, computeMetrics(caps, stride));
         renderEnergy(enBody, audit, diag?.entropy);
     }
 

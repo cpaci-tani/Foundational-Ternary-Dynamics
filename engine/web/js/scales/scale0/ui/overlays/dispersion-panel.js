@@ -71,6 +71,7 @@ function ensureCss() {
 function buildPanel() {
     const root = document.createElement('div');
     root.id = PANEL_ID;
+    root.dataset.applicability = 'reference-atlas';
     root.innerHTML = `
         <div class="dp-title">Dispersion ω(k) <small>· light = radio · FTD-0298/0299</small></div>
         <svg class="dp-plot" id="${PANEL_ID}-plot" viewBox="0 0 360 220" preserveAspectRatio="xMidYMid meet"></svg>
@@ -162,7 +163,7 @@ export function mountDispersionPanel(host, getBridge) {
     }
 
     function measureLive() {
-        el('status').textContent = 'Live measurement not available on WASM engine — see atlas above.';
+        el('status').textContent = 'Live remeasurement is not implemented on this dashboard path — the displayed points are the canonical FTD-0299 engine atlas.';
     }
 
     el('measure').addEventListener('click', measureLive);
@@ -179,6 +180,8 @@ export function mountDispersionPanel(host, getBridge) {
         update: paint,
         element: panel,
         measureLive,
+        get applicability() { return panel.dataset.applicability; },
+        get armCoordinatorActive() { return rafCoordinator._subs.has(`${PANEL_ID}-arm`); },
         dispose: () => {
             armSub.unsubscribe();
             if (typeof window !== 'undefined' && window.__ftdDispersionPanel === api) window.__ftdDispersionPanel = null;

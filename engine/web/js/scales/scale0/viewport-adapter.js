@@ -176,8 +176,8 @@ export function createScale0ViewportAdapter(viewport) {
         applyParticleFrame(frame) {
             viewport?.updateParticles?.(frame);
         },
-        applyFluxVolume(volume, latticeSize) {
-            viewport?.updateFluxVolume?.(volume, latticeSize);
+        applyFluxVolume(volume, latticeSize, particleData = null) {
+            viewport?.updateFluxVolume?.(volume, latticeSize, particleData);
         },
         applyFluxSlice(slice, latticeSize, axis, index) {
             viewport?.updateFluxSlice?.(slice, latticeSize, axis, index);

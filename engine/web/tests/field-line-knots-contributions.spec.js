@@ -87,6 +87,24 @@ test('flux: compact FTV2 grid is integrated with physical cell-volume weights', 
     expect(c.captured.fluxFrac).toBeLessThanOrEqual(1);
 });
 
+test('live sparse vector samples use terminal-cell volume weights without a dense flux read', () => {
+    const { tr } = twoKnots();
+    const N = 10;
+    const stride = 4;
+    const fluxField = {
+        count: 3,
+        effectiveStride: stride,
+        positions: new Float32Array([0, 0, 0, 4, 4, 4, 8, 8, 8]),
+        vectors: new Float32Array([1, 0, 0, 1, 0, 0, 1, 0, 0]),
+    };
+    const c = tr.measureContributions({ fluxField, latticeSize: N, sampleStride: stride });
+    // Represented cells are 4³, 4³, and the shorter terminal 2³ cell.
+    expect(c.totals.flux).toBe(64 + 64 + 8);
+    expect(c.sampling.fluxMode).toBe('sampled-vector');
+    expect(c.sampling.fluxStride).toBe(stride);
+    expect(c.sampling.approximate).toBe(true);
+});
+
 test('charge: per-knot |∇·J| over the box + fractions', () => {
     const { tr, z } = twoKnots();
     const c0 = [z.centroids[0], z.centroids[1], z.centroids[2]];

@@ -1,8 +1,8 @@
 /**
  * Conservation-law audit micropanel.
  *
- * Always-on small overlay at the top-LEFT of the lattice viewport (top-right
- * is occupied by viewport-overlay + symmetry-panel — Auditor #1).
+ * Always-on small overlay at the top-left of the lattice viewport; the
+ * visualization inspector occupies the opposite side.
  *
  * Shows ΔE, Δp, ΔL, ΔQ over a rolling 100-tick window. Each value is
  * color-coded with hysteresis to prevent 4-Hz flicker. Clicking the panel
@@ -105,7 +105,12 @@ function renderRow(label, value, color, { missing = false, key = '', reason = ''
 export function mountConservationMicropanel(host, getBridge, hub = telemetryHub) {
     if (!host) return null;
     const existing = document.getElementById(PANEL_ID);
-    if (existing) existing.remove();
+    if (existing) {
+        const existingApi = typeof window !== 'undefined'
+            ? window.__ftdConservationPanel : null;
+        if (existingApi?.element === existing) existingApi.dispose?.();
+        else existing.remove();
+    }
 
     const comp = new ConservationMicropanelComponent();
     comp.mount(host);
@@ -441,6 +446,10 @@ export function mountConservationMicropanel(host, getBridge, hub = telemetryHub)
         get lastEnergyStamp() { return lastEnergyStamp; },
         get lastMomentumStamp() { return lastMomentumStamp; },
         dispose: () => {
+            // Return the card from the shared fullscreen portal before removing
+            // it so the singleton overlay cannot remain open with a stale
+            // active-card reference across a scale switch or remount.
+            if (panel._ftdCard?._isFullscreen) panel._ftdCard._exitFullscreen();
             sub.unsubscribe();
             // Clear the window-singleton ref so the detached api +
             // panel subtree are GC-eligible. (Audit pass 2:

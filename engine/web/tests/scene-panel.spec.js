@@ -35,6 +35,62 @@ test.describe('Scene panel', () => {
         expect(sections).toBe(4);
     });
 
+    test('initializer is idempotent and repeated direct lifecycles balance the global listener', async ({ page }) => {
+        const result = await page.evaluate(async () => {
+            const { initScenePanel, ScenePanelComponent } = await import('/js/ui/panels/scene-panel/component.js');
+            const panelArea = document.getElementById('panel-area');
+            const viewport = window.__ftdCtx?.viewport;
+            const host = document.getElementById('panel-scene');
+            const owner = host?._ftdScenePanel;
+            const identities = Array.from({ length: 10 }, () => (
+                initScenePanel({ panelArea, viewport })
+            ));
+
+            const backgroundSelect = document.getElementById('bg-select');
+            const originalAdd = backgroundSelect.addEventListener.bind(backgroundSelect);
+            const originalRemove = backgroundSelect.removeEventListener.bind(backgroundSelect);
+            let added = 0;
+            let removed = 0;
+            backgroundSelect.addEventListener = function (type, listener, options) {
+                if (type === 'change') added += 1;
+                return originalAdd(type, listener, options);
+            };
+            backgroundSelect.removeEventListener = function (type, listener, options) {
+                if (type === 'change') removed += 1;
+                return originalRemove(type, listener, options);
+            };
+
+            const fixture = document.createElement('div');
+            document.body.appendChild(fixture);
+            const counts = [];
+            for (let i = 0; i < 10; i += 1) {
+                const component = new ScenePanelComponent({ panelArea: fixture, viewport }).init();
+                counts.push(component.panelEl.querySelectorAll('[data-scene-control]').length);
+                component.cleanup();
+            }
+            backgroundSelect.addEventListener = originalAdd;
+            backgroundSelect.removeEventListener = originalRemove;
+            const fixtureChildren = fixture.children.length;
+            fixture.remove();
+
+            return {
+                singleton: identities.every((value) => value === owner),
+                liveControls: host.querySelectorAll('[data-scene-control]').length,
+                counts,
+                added,
+                removed,
+                fixtureChildren,
+            };
+        });
+
+        expect(result.singleton).toBe(true);
+        expect(result.liveControls).toBe(14);
+        expect(result.counts).toEqual(Array(10).fill(14));
+        expect(result.added).toBe(10);
+        expect(result.removed).toBe(10);
+        expect(result.fixtureChildren).toBe(1);
+    });
+
     test('moving the FOV slider updates viewport.camera.fov', async ({ page }) => {
         await openScene(page);
         // Programmatically set the slider and fire input so the binding runs.

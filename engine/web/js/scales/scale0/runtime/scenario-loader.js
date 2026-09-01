@@ -17,6 +17,11 @@ import { getScale0Scenario } from '../scenario-registry.js';
 import { mountGenesisBurstPanel } from '../ui/overlays/genesis-burst-panel.js?v=2';
 import { forEachKnotTracker } from './field-line-knots.js';
 import {
+    fluxThresholdToSliderPosition,
+    formatFluxThreshold,
+    sliderPositionToFluxThreshold,
+} from '../../../viewport/flux-threshold.js';
+import {
     clearFluxMock,
     markFieldDirty,
     recomputeAnyFieldActive,
@@ -323,10 +328,6 @@ function setDisplayText(id, text) {
     if (el) el.textContent = text;
 }
 
-function formatFluxThreshold(value) {
-    return value < 0.001 ? value.toFixed(4) : value.toFixed(3);
-}
-
 export function applyScenarioVisualProfile(ctx, state, viewportAdapter, scenarioId, prefs) {
     const profile = SCALE0_SCENARIO_VISUAL_PROFILES[scenarioId];
     if (!profile || !ctx?.viewport) return;
@@ -370,8 +371,12 @@ export function applyScenarioVisualProfile(ctx, state, viewportAdapter, scenario
         rememberParameterPreference('fluxThreshold');
         ctx.viewport.setFluxThreshold(profile.fluxThreshold);
         ctx.viewport.setFluxSliceThreshold?.(profile.fluxThreshold);
-        setInputValue('flux-threshold', profile.fluxThreshold);
+        setInputValue('flux-threshold', fluxThresholdToSliderPosition(profile.fluxThreshold));
         setDisplayText('flux-threshold-val', formatFluxThreshold(profile.fluxThreshold));
+        getEl('flux-threshold')?.setAttribute(
+            'aria-valuetext',
+            formatFluxThreshold(profile.fluxThreshold),
+        );
     }
     if (typeof profile.fluxOpacity === 'number') {
         rememberParameterPreference('fluxOpacity');
@@ -612,7 +617,10 @@ export function captureOverlayPreferences(state, ctx = null) {
             : Number(readInputValue('flux-point-scale', 1.0)),
         fluxThreshold: Number.isFinite(forcedParameters.fluxThreshold)
             ? forcedParameters.fluxThreshold
-            : Number(readInputValue('flux-threshold', 0.005)),
+            : sliderPositionToFluxThreshold(readInputValue(
+                'flux-threshold',
+                fluxThresholdToSliderPosition(0.005),
+            )),
         fluxOpacity: Number.isFinite(forcedParameters.fluxOpacity)
             ? forcedParameters.fluxOpacity
             : Number(readInputValue('flux-opacity', 0.70)),
@@ -650,8 +658,12 @@ export function restoreOverlayPreferences(prefs, state, viewportAdapter, getForc
     if (Number.isFinite(prefs.fluxThreshold)) {
         viewportAdapter.raw?.setFluxThreshold?.(prefs.fluxThreshold);
         viewportAdapter.raw?.setFluxSliceThreshold?.(prefs.fluxThreshold);
-        setInputValue('flux-threshold', prefs.fluxThreshold);
+        setInputValue('flux-threshold', fluxThresholdToSliderPosition(prefs.fluxThreshold));
         setDisplayText('flux-threshold-val', formatFluxThreshold(prefs.fluxThreshold));
+        getEl('flux-threshold')?.setAttribute(
+            'aria-valuetext',
+            formatFluxThreshold(prefs.fluxThreshold),
+        );
     }
     if (Number.isFinite(prefs.fluxOpacity)) {
         viewportAdapter.raw?.setFluxOpacity?.(prefs.fluxOpacity);

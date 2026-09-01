@@ -715,8 +715,6 @@ function animate(now) {
     // Animate environment background
     if (bgManager) bgManager.update(1 / 60);
 
-    inspectorRuntime?.updateFloatingPanels();
-
     // Update active docked panels or floated windows in real-time. Scale 0
     // owns its active telemetry panel updates on the same cadence as its
     // telemetry collection; app.js still services floated panels and panels in

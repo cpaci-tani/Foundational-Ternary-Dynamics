@@ -304,7 +304,6 @@ Use this table when writing or reviewing a component. Left column is the element
 | `.ae-legend-swatch-*` | hardcoded hex | — | nuclear / orbital data colors |
 | `.cs-overlay-status` | — | `--reference frame context-primary` | — |
 | `.scale4-overlay-status` | — | `--text-secondary` | — |
-| `.sym-panel` (Scale 0 floating) | `--bg-surface` | inherit | border `--positive` |
 
 Hardcoded data colors (field swatches, element legend) are intentional — they match 3D renderer shader constants and remain stable across themes.
 

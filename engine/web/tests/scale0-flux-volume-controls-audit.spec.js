@@ -12,7 +12,11 @@ test.describe('Scale 0 Flux Volume controls-card audit gate', () => {
 
     test('inventory and displayed values match both volume and slice renderer truth', async ({ page }) => {
         const consoleErrors = attachConsoleWatcher(page);
-        const result = await page.evaluate(() => {
+        const result = await page.evaluate(async () => {
+            const {
+                formatFluxThreshold,
+                sliderPositionToFluxThreshold,
+            } = await import('/js/viewport/flux-threshold.js?gate7-inventory=1');
             const ids = [
                 'flux-shape-select', 'flux-opacity', 'flux-opacity-val',
                 'flux-point-scale', 'flux-point-scale-val',
@@ -26,6 +30,8 @@ test.describe('Scale 0 Flux Volume controls-card audit gate', () => {
             const slice = ctx.viewport._fieldRenderer;
             const card = document.getElementById('flux-shape-select')?.closest('.card');
             const value = (id) => Number(document.getElementById(id)?.value);
+            const thresholdPosition = value('flux-threshold');
+            const threshold = sliderPositionToFluxThreshold(thresholdPosition);
             return {
                 missing: ids.filter((id) => !document.getElementById(id)),
                 duplicates: ids.filter((id) => document.querySelectorAll(`#${id}`).length !== 1),
@@ -35,7 +41,8 @@ test.describe('Scale 0 Flux Volume controls-card audit gate', () => {
                     opacity: value('flux-opacity'),
                     pointScale: value('flux-point-scale'),
                     scenarioScale: value('flux-scenario-scale'),
-                    threshold: value('flux-threshold'),
+                    thresholdPosition,
+                    threshold,
                     spacing: value('flux-lattice-spacing'),
                     brightness: value('wireframe-brightness'),
                 },
@@ -44,6 +51,7 @@ test.describe('Scale 0 Flux Volume controls-card audit gate', () => {
                     max: Number(document.getElementById('flux-threshold')?.max),
                     step: Number(document.getElementById('flux-threshold')?.step),
                     ariaLabel: document.getElementById('flux-threshold')?.getAttribute('aria-label'),
+                    ariaValueText: document.getElementById('flux-threshold')?.getAttribute('aria-valuetext'),
                 },
                 displays: {
                     opacity: document.getElementById('flux-opacity-val')?.textContent,
@@ -70,6 +78,7 @@ test.describe('Scale 0 Flux Volume controls-card audit gate', () => {
                 },
                 nodes: card?.querySelectorAll('*').length,
                 inputs: card?.querySelectorAll('input,select').length,
+                expectedThresholdText: formatFluxThreshold(threshold),
             };
         });
 
@@ -82,8 +91,11 @@ test.describe('Scale 0 Flux Volume controls-card audit gate', () => {
             min: 0,
             max: 0.5,
             step: 0.0001,
-            ariaLabel: 'Relative flux threshold',
+            ariaLabel: 'Relative local activation-energy threshold',
+            ariaValueText: result.expectedThresholdText,
         });
+        expect(result.values.thresholdPosition).toBeCloseTo(0.05, 8);
+        expect(result.values.threshold).toBeCloseTo(0.005, 8);
         expect(result.renderer).toEqual({
             volumeShape: result.values.shape,
             sliceShape: result.values.shape,
@@ -103,9 +115,7 @@ test.describe('Scale 0 Flux Volume controls-card audit gate', () => {
             opacity: result.values.opacity.toFixed(2),
             pointScale: result.values.pointScale.toFixed(1),
             scenarioScale: result.values.scenarioScale.toFixed(1),
-            threshold: result.values.threshold < 0.001
-                ? result.values.threshold.toFixed(4)
-                : result.values.threshold.toFixed(3),
+            threshold: result.expectedThresholdText,
             spacing: result.values.spacing.toFixed(2),
             brightness: result.values.brightness.toFixed(2),
         });
@@ -121,6 +131,12 @@ test.describe('Scale 0 Flux Volume controls-card audit gate', () => {
             );
             const { wireScale0Controls } = await import(
                 '/js/scales/scale0/ui/controls/wire.js?gate7-batch-wire=1'
+            );
+            const {
+                fluxThresholdToSliderPosition,
+                sliderPositionToFluxThreshold,
+            } = await import(
+                '/js/viewport/flux-threshold.js?gate7-batch-threshold=1'
             );
             const host = document.createElement('div');
             host.id = 'panel-controls';
@@ -166,7 +182,7 @@ test.describe('Scale 0 Flux Volume controls-card audit gate', () => {
             const finalValues = {
                 'flux-opacity': 0.42,
                 'flux-point-scale': 2.3,
-                'flux-threshold': 0.0077,
+                'flux-threshold': fluxThresholdToSliderPosition(0.0077),
                 'flux-scenario-scale': 1.7,
                 'flux-lattice-spacing': 1.55,
                 'wireframe-brightness': 0.33,
@@ -181,6 +197,9 @@ test.describe('Scale 0 Flux Volume controls-card audit gate', () => {
             const immediate = { calls: [...calls], uploads };
             await new Promise((resolve) => requestAnimationFrame(() => resolve()));
             const afterFrame = { calls: [...calls], uploads };
+            const expectedThreshold = sliderPositionToFluxThreshold(Number(
+                document.getElementById('flux-threshold').value,
+            ));
             await new Promise((resolve) => requestAnimationFrame(() => resolve()));
             const afterSecondFrame = { calls: [...calls], uploads };
 
@@ -204,6 +223,7 @@ test.describe('Scale 0 Flux Volume controls-card audit gate', () => {
                 staleCalls,
                 mutations,
                 uploads,
+                expectedThreshold,
                 displays: {
                     opacity: document.getElementById('flux-opacity-val').textContent,
                     point: document.getElementById('flux-point-scale-val').textContent,
@@ -212,6 +232,8 @@ test.describe('Scale 0 Flux Volume controls-card audit gate', () => {
                     spacing: document.getElementById('flux-lattice-spacing-val').textContent,
                     brightness: document.getElementById('wireframe-brightness-val').textContent,
                 },
+                thresholdAriaValueText: document.getElementById('flux-threshold')
+                    .getAttribute('aria-valuetext'),
             };
         });
 
@@ -223,14 +245,14 @@ test.describe('Scale 0 Flux Volume controls-card audit gate', () => {
             ['shape', 4], ['sliceShape', 4],
             ['opacity', 0.42], ['sliceOpacity', 0.42],
             ['point', 2.3], ['slicePoint', 2.3],
-            ['threshold', 0.0077], ['sliceThreshold', 0.0077],
+            ['threshold', result.expectedThreshold], ['sliceThreshold', result.expectedThreshold],
             ['scenarioScale', 1.7], ['spacing', 1.55], ['brightness', 0.33],
         ]);
         expect(result.afterFrame.uploads).toBe(1);
         expect(result.afterSecondFrame).toEqual(result.afterFrame);
         expect(result.staleCalls).toEqual([]);
         expect(result.mutations).toEqual({
-            records: 6,
+            records: 7,
             characterData: 6,
             added: 0,
             removed: 0,
@@ -240,6 +262,7 @@ test.describe('Scale 0 Flux Volume controls-card audit gate', () => {
             opacity: '0.42', point: '2.3', threshold: '0.008',
             scenario: '1.7', spacing: '1.55', brightness: '0.33',
         });
+        expect(result.thresholdAriaValueText).toBe('0.008');
         expect(result.after).toEqual(result.before);
         expect(realErrors(consoleErrors)).toEqual([]);
     });

@@ -4,7 +4,7 @@
  *
  * Scope: the supported browser WasmBridgeProxy path at L=97. Every Scale-0
  * panel that is visible in the canonical panel registry is warmed, measured
- * for at least 240 foreground rAF intervals, then measured again after the
+ * for at least 600 foreground rAF intervals, then measured again after the
  * shared dock is collapsed. Native GPU and WebSocket backends are not
  * connected by this harness and are not represented as parity evidence.
  */
@@ -52,7 +52,7 @@ const CAMPAIGN_PANELS = REQUESTED_PANELS.length ? REQUESTED_PANELS : PANELS;
 // These gates are deliberately absolute, not relative to a baseline run.
 // Do not loosen them in response to a failing panel; a failure is evidence.
 const GATES = Object.freeze({
-    visibleFrames: 240,
+    visibleFrames: 600,
     collapsedFrames: 180,
     minFps: 59.5,
     p95Ms: 16.9,
@@ -60,8 +60,11 @@ const GATES = Object.freeze({
     maxRootDomNodes: 2_500,
     maxRootCanvases: 12,
     maxCoordinatorSubscribers: 32,
-    maxVisibleMutations: 2_000,
-    maxVisibleCanvasDraws: 5_000,
+    // These are cumulative-work ceilings. The original 240-frame campaign
+    // used 2,000 / 5,000; scale them by 600/240 so the permitted work rate is
+    // unchanged while the statistical sample now meets the release minimum.
+    maxVisibleMutations: 5_000,
+    maxVisibleCanvasDraws: 12_500,
     maxCallbackP99Ms: 4,
     maxCollapsedCallbackMs: 1,
     maxHeapGrowthBytes: 64 * 1024 * 1024,
@@ -1592,6 +1595,11 @@ test('all 17 visible panels sustain 60 Hz at empty L=97 and stop panel work when
             heapObserved: Number(performance.memory?.usedJSHeapSize) > 0,
         });
 
+        const gl = window.__ftdCtx?.viewport?.renderer?.getContext?.() || null;
+        const rendererInfo = gl?.getExtension?.('WEBGL_debug_renderer_info') || null;
+        const webglRenderer = rendererInfo
+            ? String(gl.getParameter(rendererInfo.UNMASKED_RENDERER_WEBGL) || '')
+            : '';
         const registryIds = getPanelsForScale(0).map((panel) => panel.id);
         const visibleTabIds = [...document.querySelectorAll('#tab-bar .tab[data-panel]')]
             .filter((tab) => getComputedStyle(tab).display !== 'none')
@@ -1865,7 +1873,7 @@ test('all 17 visible panels sustain 60 Hz at empty L=97 and stop panel work when
                     ]);
                 }
                 // One extra rAF allows the probe loop to establish its first
-                // timestamp while still leaving >=240 measured intervals.
+                // timestamp while still leaving >=600 measured intervals.
                 await waitFrames(gates.visibleFrames + 2);
                 const active = await probe.stopScale0UiAuditProbe();
                 probeRunning = false;
@@ -1896,7 +1904,7 @@ test('all 17 visible panels sustain 60 Hz at empty L=97 and stop panel work when
             }
             results.push(result);
         }
-        return { registryIds, visibleTabIds, results };
+        return { registryIds, visibleTabIds, webglRenderer, results };
     }, { panelIds: CAMPAIGN_PANELS, gates: GATES });
 
     await testInfo.attach('scale0-empty-panel-performance-L97.json', {
@@ -1910,6 +1918,11 @@ test('all 17 visible panels sustain 60 Hz at empty L=97 and stop panel work when
     expect(CAMPAIGN_PANELS.every((panel) => PANELS.includes(panel)),
         `unknown FTD_PANEL_PERF_ONLY panel: ${CAMPAIGN_PANELS.join(',')}`).toBe(true);
     expect(campaign.results).toHaveLength(CAMPAIGN_PANELS.length);
+    if (process.env.FTD_HARDWARE_WEBGL === '1') {
+        expect(campaign.webglRenderer, 'integrated gate exposes a WebGL renderer').not.toBe('');
+        expect(campaign.webglRenderer, 'integrated gate does not certify SwiftShader/software WebGL')
+            .not.toMatch(/swiftshader|software/i);
+    }
 
     if (nonemptyFluxSlice) {
         expect(nonemptyFluxSlice.scenarioId,

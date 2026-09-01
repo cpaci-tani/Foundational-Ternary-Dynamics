@@ -146,7 +146,9 @@ export class ScenePanelComponent {
         // since background-color and hdri-intensity depend on it.
         const bgSel = document.getElementById('bg-select');
         if (bgSel) {
-            bgSel.addEventListener('change', () => this._refreshConditionalVisibility());
+            this._backgroundSelect = bgSel;
+            this._backgroundChangeHandler = () => this._refreshConditionalVisibility();
+            bgSel.addEventListener('change', this._backgroundChangeHandler);
         }
     }
 
@@ -225,10 +227,26 @@ export class ScenePanelComponent {
         this._refreshAllReadouts();
         this._refreshConditionalVisibility();
     }
+
+    cleanup() {
+        if (this._backgroundSelect && this._backgroundChangeHandler) {
+            this._backgroundSelect.removeEventListener('change', this._backgroundChangeHandler);
+        }
+        this._backgroundSelect = null;
+        this._backgroundChangeHandler = null;
+        if (this.panelEl) {
+            this.panelEl.innerHTML = '';
+            this.panelEl.classList.remove('scene-panel');
+            if (this.panelEl._ftdScenePanel === this) this.panelEl._ftdScenePanel = null;
+        }
+    }
 }
 
 export function initScenePanel({ panelArea, viewport, backgroundManager = null } = {}) {
+    const existing = panelArea?.querySelector?.('#panel-scene');
+    if (existing?._ftdScenePanel) return existing._ftdScenePanel;
     const component = new ScenePanelComponent({ panelArea, viewport, backgroundManager });
     component.init();
+    component.panelEl._ftdScenePanel = component;
     return component;
 }

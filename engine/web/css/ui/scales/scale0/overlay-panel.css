@@ -16,7 +16,15 @@
     gap: 0;
     width: 348px;
     max-width: calc(100vw - 24px);
-    max-height: calc(100% - 16px);
+    /* Share the side-panel bottom boundary instead of extending behind the
+       status bar. `top: 8px` is owned by viewport-overlays.css, so subtract it
+       as well when converting the shared bottom inset into panel height. */
+    --s0-overlay-available-height: calc(100% - 8px - var(
+        --panel-mount-bottom-offset,
+        calc(var(--status-bar-offset, calc(28px * var(--ui-scale))) + 12px)
+    ));
+    height: var(--s0-overlay-available-height);
+    max-height: var(--s0-overlay-available-height);
     padding: 0;
     overflow: hidden;
     color: var(--text-primary);
@@ -861,6 +869,7 @@
 /* ── Whole-panel collapse ─────────────────────────────── */
 #viewport-overlay.s0-overlay-panel.is-collapsed {
     width: 224px;
+    height: auto;
 }
 #viewport-overlay.s0-overlay-panel.is-collapsed .s0-overlay-header {
     border-bottom: 0;

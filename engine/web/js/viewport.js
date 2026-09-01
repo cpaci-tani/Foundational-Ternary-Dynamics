@@ -479,10 +479,6 @@ export class Viewport {
 
     setVoxelHighlight(x, y, z, active) { this._sceneCore?.setVoxelHighlight(x, y, z, active); }
 
-    setSymmetryHighlights(x, y, z, u1, su2, su3) {
-        this._sceneCore?.setSymmetryHighlights(x, y, z, u1, su2, su3);
-    }
-
     toggleGrid(on) { this._sceneCore?.toggleGrid(on); }
 
     // ── Velocity Vectors / Trails ───────────────────────────────────────
@@ -592,8 +588,8 @@ export class Viewport {
     // This class keeps thin delegators for backward compatibility.
     _buildFluxVolume(latticeSize) { this._fluxRenderer._buildFluxVolume(latticeSize); }
 
-    updateFluxVolume(volumeData, latticeSize) {
-        this._fluxRenderer.updateFluxVolume(volumeData, latticeSize);
+    updateFluxVolume(volumeData, latticeSize, particleData = null) {
+        this._fluxRenderer.updateFluxVolume(volumeData, latticeSize, particleData);
     }
 
     resetFluxNormalization() { this._fluxRenderer?.resetFluxNormalization(); }
@@ -1173,7 +1169,7 @@ export class Viewport {
         disposeMesh(this._voidBox);
 
         // Phase 3a: SceneCore disposes wireframe, axes, peAxes, peGrid,
-        // _voxelHighlight, _symHighlights, post-processing composer/bloom.
+        // _voxelHighlight and post-processing composer/bloom.
         this._sceneCore?.dispose();
 
         // Renderer last (after every sub-renderer has freed its GPU resources).
@@ -1315,8 +1311,6 @@ export class Viewport {
     set _boundaryMode(v) { if (this._sceneCore) this._sceneCore._boundaryMode = v; }
     get _voxelHighlight() { return this._sceneCore?._voxelHighlight ?? null; }
     set _voxelHighlight(v) { if (this._sceneCore) this._sceneCore._voxelHighlight = v; }
-    get _symHighlights() { return this._sceneCore?._symHighlights ?? null; }
-    set _symHighlights(v) { if (this._sceneCore) this._sceneCore._symHighlights = v; }
     get _composer() { return this._sceneCore?._composer ?? null; }
     set _composer(v) { if (this._sceneCore) this._sceneCore._composer = v; }
     get _bloomPass() { return this._sceneCore?._bloomPass ?? null; }

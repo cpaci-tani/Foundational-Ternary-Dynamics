@@ -118,7 +118,7 @@ export function getScale0OverlayTemplate() {
       </div>
       <div class="s0-overlay-group">
         <button class="view-toggle active" id="toggle-flux-volume"
-            title="Volumetric point cloud of |J| (flux magnitude). At relative threshold 0, every available voxel is shown regardless of point size; above 0, the renderer keeps voxels whose |J| clears that fraction of the current peak (up to 0.5). Native large-L frames may provide an even-stride source grid.">Flux Volume</button>
+            title="[PROXY — visualization] Volumetric activation cloud. Each voxel combines its own 1/2|J|², the mean energy of its surrounding 26 Moore neighbours, and |s|E_REST. Every available source voxel is evaluated at a fixed coordinate; threshold only hides voxels below the selected relative energy cutoff. Stronger energy makes the point larger and advances its blue→cyan→yellow→red colour phase. At threshold 0 every available voxel is shown. Native large-L frames may provide an even-stride source grid while the engine continues computing the full lattice.">Flux Volume</button>
         <div class="flux-slice-axis-row" role="group" aria-label="Flux volume style">
           <button class="view-toggle flux-slice-axis-mini" id="toggle-flux-organic"
               aria-pressed="false" title="Organic scatter jitter (±½ cell), independent of lattice size. Off by default so the exact lattice remains visible.">Organic</button>

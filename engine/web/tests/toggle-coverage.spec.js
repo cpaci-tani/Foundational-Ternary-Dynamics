@@ -21,8 +21,10 @@
  *     - id ↔ key map    ← FIELD_TOGGLE_BINDINGS         (dom.js, authoritative)
  *   A toggle WITH a DOM button (id present in FIELD_TOGGLE_BINDINGS and the
  *   element exists) is exercised via a real button click. A toggle WITHOUT a
- *   button (state-only — currently none; the set is ∅) is exercised via
- *   setFieldToggle directly. The split is computed live, not assumed.
+ *   button (state-only) is exercised via setFieldToggle directly. The split
+ *   is computed live, not assumed. `showKnotZones` is intentionally state-only
+ *   and has a requested/applicable/effective contract, so its coverage also
+ *   proves retained requests restore when Knot Tracking becomes active.
  *
  * ROBUSTNESS (mirrors reconcile-claims.spec.js, which already proves
  * #toggle-e-field exists + clicks on a default boot):
@@ -236,31 +238,55 @@ test.describe('Scale-0 field toggle coverage', () => {
 
     // ────────────────────────────────────────────────────────────────────
     // 2. State-only field flags (no DOM button) — exercised via
-    //    setFieldToggle directly. At authoring time this set is EMPTY
-    //    (every key has a button), so this test is a no-op guard that
-    //    activates automatically if a buttonless key is ever added.
+    //    setFieldToggle directly. Generic flags flip immediately;
+    //    showKnotZones retains its request while inapplicable and becomes
+    //    effective when Knot Tracking is restored.
     // ────────────────────────────────────────────────────────────────────
     test('state-only field flags (if any) flip via setFieldToggle', async ({ page }) => {
         await gotoAndReady(page);
         const inv = await buildInventory(page);
 
-        if (inv.stateOnly.length === 0) {
-            // Document the current reality explicitly: the map has no
-            // buttonless field flags. This keeps the test meaningful (it
-            // asserts the *expected* empty set) rather than vacuously passing.
-            expect(inv.stateOnly).toEqual([]);
-            test.info().annotations.push({
-                type: 'note',
-                description: 'No state-only field flags — all 32 keys are button-backed; nothing to exercise here.',
-            });
-            return;
-        }
-
         /** @type {string[]} */
         const broken = [];
         for (const key of inv.stateOnly) {
             const result = await page.evaluate(async (fieldKey) => {
-                const { getScale0State, setFieldToggle } = await import('./js/scales/scale0/state/store.js');
+                const {
+                    getScale0State,
+                    setFieldToggle,
+                    setKnotTracking,
+                    setKnotTrackingApplicability,
+                    setKnotZonesRequested,
+                } = await import('./js/scales/scale0/state/store.js');
+
+                if (fieldKey === 'showKnotZones') {
+                    const initial = getScale0State();
+                    const restore = {
+                        tracking: !!initial.knotTracking,
+                        trackingApplicable: initial.knotTrackingApplicable !== false,
+                        requested: !!initial.knotZonesRequested,
+                    };
+
+                    setKnotTrackingApplicability(true);
+                    setKnotTracking(false);
+                    setFieldToggle(fieldKey, true);
+                    const suppressed = getScale0State();
+                    const requestRetained = !!suppressed.knotZonesRequested;
+                    const effectiveWhileSuppressed = !!suppressed.fieldFlags.showKnotZones;
+
+                    setKnotTracking(true);
+                    const effectiveAfterRestore = !!getScale0State().fieldFlags.showKnotZones;
+
+                    setKnotZonesRequested(restore.requested);
+                    setKnotTracking(restore.tracking);
+                    setKnotTrackingApplicability(restore.trackingApplicable);
+                    return {
+                        fieldKey,
+                        requestRetained,
+                        effectiveWhileSuppressed,
+                        effectiveAfterRestore,
+                    };
+                }
+
                 const before = !!getScale0State().fieldFlags[fieldKey];
                 setFieldToggle(fieldKey, !before);
                 const afterToggle = !!getScale0State().fieldFlags[fieldKey];
@@ -268,6 +294,12 @@ test.describe('Scale-0 field toggle coverage', () => {
                 const afterRestore = !!getScale0State().fieldFlags[fieldKey];
                 return { fieldKey, before, afterToggle, afterRestore };
             }, key);
+            if (result.fieldKey === 'showKnotZones') {
+                if (!result.requestRetained) broken.push(`${result.fieldKey}: request was not retained`);
+                if (result.effectiveWhileSuppressed) broken.push(`${result.fieldKey}: became effective while Knot Tracking was off`);
+                if (!result.effectiveAfterRestore) broken.push(`${result.fieldKey}: did not restore when Knot Tracking became active`);
+                continue;
+            }
             if (result.afterToggle === result.before) broken.push(`${result.fieldKey}: setFieldToggle did not flip`);
             if (result.afterRestore !== result.before) broken.push(`${result.fieldKey}: restore failed`);
         }

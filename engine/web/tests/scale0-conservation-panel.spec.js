@@ -8,7 +8,12 @@
  * evolves.
  */
 import { test, expect } from '@playwright/test';
-import { gotoAndReady, selectScale0Scenario } from './_helpers.js';
+import {
+    attachConsoleWatcher,
+    gotoAndReady,
+    realErrors,
+    selectScale0Scenario,
+} from './_helpers.js';
 
 test.describe('Conservation panel and WASM diagnostics', () => {
     /** @type {import('@playwright/test').BrowserContext|undefined} */
@@ -295,5 +300,145 @@ test.describe('Conservation panel and WASM diagnostics', () => {
         expect(snap.e0).not.toBe(snap.e20);
         expect(snap.baseline0).toBeGreaterThan(1000);
         expect(snap.baseline20).toBe(snap.baseline0);
+    });
+
+    test('remount and fullscreen teardown conserve one panel and one rAF subscriber', async () => {
+        const consoleErrors = attachConsoleWatcher(page);
+        const result = await page.evaluate(async () => {
+            const [{ initConservationMicropanel }, { rafCoordinator }] = await Promise.all([
+                import('/js/scales/scale0/ui/overlays/conservation-micropanel.js'),
+                import('/js/lib/raf-coordinator.js'),
+            ]);
+            const subscriberId = 'conservation-micropanel';
+            const initial = window.__ftdConservationPanel;
+            const initialRafCount = rafCoordinator.size();
+            const first = initConservationMicropanel();
+            const second = initConservationMicropanel();
+            first.element._ftdCard._enterFullscreen();
+            const opened = {
+                sameApi: first === initial && second === first,
+                panelCount: document.querySelectorAll('#conservation-micropanel').length,
+                subscriber: rafCoordinator._subs.has(subscriberId),
+                overlayOpen: document.getElementById('chart-fullscreen-overlay')?.classList.contains('is-open'),
+                overlayOwnsPanel: !!document.querySelector('#chart-fullscreen-overlay #conservation-micropanel'),
+            };
+
+            first.dispose();
+            await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+            const disposed = {
+                panelCount: document.querySelectorAll('#conservation-micropanel').length,
+                subscriber: rafCoordinator._subs.has(subscriberId),
+                overlayOpen: document.getElementById('chart-fullscreen-overlay')?.classList.contains('is-open'),
+                overlayOwnsPanel: !!document.querySelector('#chart-fullscreen-overlay #conservation-micropanel'),
+                singletonNull: window.__ftdConservationPanel === null,
+                rafCount: rafCoordinator.size(),
+            };
+
+            const cycles = [];
+            for (let i = 0; i < 10; i++) {
+                const api = initConservationMicropanel();
+                cycles.push({
+                    panelCount: document.querySelectorAll('#conservation-micropanel').length,
+                    subscriber: rafCoordinator._subs.has(subscriberId),
+                    rafCount: rafCoordinator.size(),
+                });
+                api.dispose();
+            }
+            const final = initConservationMicropanel();
+            return {
+                initialRafCount,
+                opened,
+                disposed,
+                cycles,
+                final: {
+                    panelCount: document.querySelectorAll('#conservation-micropanel').length,
+                    subscriber: rafCoordinator._subs.has(subscriberId),
+                    rafCount: rafCoordinator.size(),
+                    singleton: window.__ftdConservationPanel === final,
+                },
+            };
+        });
+
+        expect(result.opened).toEqual({
+            sameApi: true,
+            panelCount: 1,
+            subscriber: true,
+            overlayOpen: true,
+            overlayOwnsPanel: true,
+        });
+        expect(result.disposed).toEqual({
+            panelCount: 0,
+            subscriber: false,
+            overlayOpen: false,
+            overlayOwnsPanel: false,
+            singletonNull: true,
+            rafCount: result.initialRafCount - 1,
+        });
+        expect(result.cycles).toHaveLength(10);
+        for (const cycle of result.cycles) {
+            expect(cycle).toEqual({
+                panelCount: 1,
+                subscriber: true,
+                rafCount: result.initialRafCount,
+            });
+        }
+        expect(result.final).toEqual({
+            panelCount: 1,
+            subscriber: true,
+            rafCount: result.initialRafCount,
+            singleton: true,
+        });
+        expect(realErrors(consoleErrors)).toEqual([]);
+    });
+
+    test('visible conservation sampling sustains the formal hardware frame budget', async ({}, testInfo) => {
+        testInfo.setTimeout(120_000);
+        const consoleErrors = attachConsoleWatcher(page);
+        await selectScale0Scenario(page, 'flux-pulse', { settleMs: 250 });
+        await page.evaluate(() => {
+            const play = document.getElementById('btn-play');
+            if (play?.getAttribute('data-paused') === 'true') play.click();
+        });
+        await page.waitForTimeout(3_000);
+
+        const report = await page.evaluate(async () => {
+            const probe = await import('/tests/scale0-ui-audit-probe.js');
+            const gl = window.__ftdCtx?.viewport?.renderer?.getContext?.() || null;
+            const rendererInfo = gl?.getExtension?.('WEBGL_debug_renderer_info') || null;
+            const webglRenderer = rendererInfo
+                ? String(gl.getParameter(rendererInfo.UNMASKED_RENDERER_WEBGL) || '')
+                : '';
+            probe.startScale0UiAuditProbe({
+                rootSelector: '#conservation-micropanel',
+                subscriberIds: ['conservation-micropanel'],
+            });
+            await new Promise((resolve) => setTimeout(resolve, 12_000));
+            return { ...await probe.stopScale0UiAuditProbe(), webglRenderer };
+        });
+        await testInfo.attach('scale0-conservation-performance-report.json', {
+            body: Buffer.from(JSON.stringify(report, null, 2)),
+            contentType: 'application/json',
+        });
+        console.log('scale0 conservation performance', JSON.stringify(report));
+
+        if (process.env.FTD_HARDWARE_WEBGL === '1') {
+            expect(report.webglRenderer, 'release gate exposes a WebGL renderer').not.toBe('');
+            expect(report.webglRenderer, 'release gate does not certify SwiftShader/software WebGL')
+                .not.toMatch(/swiftshader|software/i);
+        }
+        expect(report.frames.count).toBeGreaterThanOrEqual(600);
+        expect(report.frames.effectiveFps).toBeGreaterThanOrEqual(59.5);
+        expect(report.frames.p95Ms).toBeLessThanOrEqual(17);
+        expect(report.frames.p99Ms).toBeLessThanOrEqual(20);
+        expect(report.frames.intervalsOver33_4ms).toBe(0);
+        expect(report.longTasks).toEqual([]);
+        expect(report.callbacks['conservation-micropanel']?.count).toBeGreaterThanOrEqual(40);
+        expect(report.callbacks['conservation-micropanel']?.p95Ms).toBeLessThanOrEqual(2);
+        expect(report.callbacks['conservation-micropanel']?.maxMs).toBeLessThanOrEqual(8);
+        expect(report.resourceDelta.rafSubscribers).toBe(0);
+        expect(report.resourceDelta.domNodes).toBe(0);
+        expect(report.resourceDelta.canvases).toBe(0);
+        expect(report.errors).toEqual([]);
+        expect(realErrors(consoleErrors)).toEqual([]);
     });
 });

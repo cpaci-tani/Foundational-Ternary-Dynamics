@@ -164,6 +164,12 @@ test.describe('Scale-0 flux slice — all axes + shared volume controls', () => 
         });
 
         const res = await page.evaluate(async () => {
+            const {
+                fluxThresholdToSliderPosition,
+                sliderPositionToFluxThreshold,
+            } = await import(
+                '/js/viewport/flux-threshold.js?flux-slice-controls=1'
+            );
             const setSlider = (id, val) => {
                 const s = document.getElementById(id);
                 s.value = String(val);
@@ -176,7 +182,7 @@ test.describe('Scale-0 flux slice — all axes + shared volume controls', () => 
             };
             setSlider('flux-opacity', 0.42);
             setSelect('flux-shape-select', 4);   // Triangle
-            setSlider('flux-threshold', 0.077);
+            setSlider('flux-threshold', fluxThresholdToSliderPosition(0.077));
             setSlider('flux-point-scale', 2.3);
             // Flux Volume card inputs are committed as one latest-value batch
             // per animation frame so a pointer-drag burst cannot fan out into
@@ -188,13 +194,17 @@ test.describe('Scale-0 flux slice — all axes + shared volume controls', () => 
                 opacity: m?.material?.uniforms?.uOpacity?.value ?? null,
                 shape: m?.material?.uniforms?.shapeType?.value ?? null,
                 threshold: fr._fluxSliceThreshold,
+                expectedThreshold: sliderPositionToFluxThreshold(Number(
+                    document.getElementById('flux-threshold').value,
+                )),
                 pointScale: fr._fluxSlicePointScale,
             };
         });
 
         expect(res.opacity, 'flux-opacity slider must drive the slice uOpacity uniform').toBeCloseTo(0.42, 5);
         expect(res.shape, 'flux-shape-select must drive the slice shapeType uniform').toBe(4);
-        expect(res.threshold, 'flux-threshold slider must drive the slice threshold').toBeCloseTo(0.077, 5);
+        expect(res.threshold, 'flux-threshold slider must drive the slice threshold')
+            .toBeCloseTo(res.expectedThreshold, 10);
         expect(res.pointScale, 'flux-point-scale slider must drive the slice point scale').toBeCloseTo(2.3, 5);
 
         const real = realErrors(errors);

@@ -46,7 +46,6 @@ import {
     syncScale0ParticleDisplay,
     wireScale0Controls,
 } from './ui/controls/wire.js?v=14';
-import { mountSymmetryPanel } from './ui/overlays/symmetry-panel.js';
 // The Scale-0 overlay panels are first created by app.js at boot
 // ("Creating panels…", one-time). The controller ALSO drives their
 // lifecycle on engineMode switch: dispose() on destroy() (audit P1-4)
@@ -145,9 +144,6 @@ export function bindUI(ctx) {
     if (controlsPanel) {
         new Scale0ControlsComponent(controlsPanel).init();
     }
-
-    // Mount floating symmetry panel
-    mountSymmetryPanel(document.getElementById('app'));
 
     // Flux-slice, Wave Lab, and P1-observables panels are mounted by
     // app.js into the side-panel tab system (#panel-flux-slice and
@@ -413,7 +409,10 @@ class Scale0LifecycleController extends BaseLifecycleController {
         try { initFluxSlicePanel(); } catch (e) { /* ignore */ }
         try { initWaveLabPanel(); } catch (e) { /* ignore */ }
         try { initP1ObservablesPanel(); } catch (e) { /* ignore */ }
-        try { initConservationMicropanel(); } catch (e) { /* ignore */ }
+        try {
+            const conservationPanel = initConservationMicropanel();
+            if (conservationPanel) appRegistry.register('panel:conservation', conservationPanel);
+        } catch (e) { /* ignore */ }
         try { initSpectrumPanel(); } catch (e) { /* ignore */ }
         try {
             const gravityPanel = initGravityPanel();
@@ -453,6 +452,7 @@ class Scale0LifecycleController extends BaseLifecycleController {
         // and re-created on the next Scale-0 mount via its init*() call.
         appRegistry.unregister('scale0Ctx');
         appRegistry.unregister('panel:gravity');
+        appRegistry.unregister('panel:conservation');
         if (typeof window !== 'undefined') {
             try { window.__ftdConservationPanel?.dispose?.(); } catch (e) { /* ignore */ }
             try { window.__ftdWaveLabPanel?.dispose?.(); } catch (e) { /* ignore */ }

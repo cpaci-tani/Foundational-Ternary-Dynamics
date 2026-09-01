@@ -1,6 +1,6 @@
 # Audit — Scale 0 UI Interfaces (2026-08-28)
 
-**Status:** active; Gates 10A, 10B, 10C, and 16 passed by user-directed priority; Gate 10 remainder paused without verdict
+**Status:** complete; Gates 0–31 (including 10a–10c) passed
 **Plan:** `../PLAN_SCALE0_UI_INTERFACE_AUDIT_60FPS.md`
 **Progression rule:** only one interface is audited at a time; a failing gate blocks the next interface
 
@@ -417,7 +417,7 @@ npx playwright test scale0-physics-toggles-audit.spec.js --reporter=list
 npx playwright test scale0-toggle-engine-parity.spec.js \
   scale0-dynamical-flux-dressing.spec.js \
   scale0-persisted-scenario-boot.spec.js toggle-coverage.spec.js --reporter=list
-# 9 passed, 1 failed: stale showKnotZones state-only flip contract
+# 10 passed
 ```
 
 The focused gate proves exact configured-control inventory, full standard and
@@ -430,10 +430,10 @@ disabling Dual Substrate at runtime preserves a nonzero live field through the
 following simulation tick. The
 compatibility sweep preserves dynamical flux-dressing restore, persisted selection
 and reconnect replay, massive-body/octahedron engine profiles, and gravity-only
-applicability. Its remaining failure is an older `showKnotZones` assertion that
-expects `setFieldToggle` to flip an inapplicable state-only gate; the current
-effective-gate contract correctly keeps it off without Knot Tracking. Syntax
-checks and `git diff --check` passed.
+applicability. The state-only knot-zone check now asserts the full
+requested/applicable/effective contract: an inapplicable request remains retained,
+does not render while Knot Tracking is off, and becomes effective when tracking is
+restored. Syntax checks and `git diff --check` passed.
 
 ### Foreground Edge certification
 
@@ -880,16 +880,27 @@ reported no warnings or errors.
 
 ## Gate 10 — Visualization overlay
 
-**Verdict:** PAUSED — USER-DIRECTED PRIORITY CHANGE; NO PASS/FAIL VERDICT
+**Verdict:** PASS (resumed and completed 2026-08-31)
 
 Scope: all visualization toggles, applicability states, overlay style/axis/
 height controls, search and count behavior, clear/collapse interactions,
 runtime field-demand ownership, hidden-work gating, lifecycle stability, and
 foreground frame cost.
 
-The user redirected the active audit to the Telemetry Grid sidepanel before
-this gate was certified. Gate 10 is deliberately not marked as passed and must
-resume from its existing evidence before the normal sequence advances.
+The resumed parent gate passed 14/14 checks across the accordion and overlay
+audit suites. The live inventory contains 33 primary layer toggles and 38 total
+View buttons; every registered control, category count, style, slice axis,
+height/volume control, search path, clear path, collapse path, applicability
+state, and state owner is covered. The overlay shell reconciles incrementally,
+coalesces input bursts to one frame, preserves resident renderer identities, and
+does not grow rAF subscriptions, DOM nodes, canvases, or measured heap state.
+
+The release performance check now uses the formal three-second warm-up and a
+12-second capture rather than the earlier four-second smoke window. Hardware
+provenance was `ANGLE (NVIDIA GeForce RTX 5090, Direct3D11)`, not SwiftShader.
+The 12.20-second interaction capture recorded 731 frames at **60.00 FPS**,
+p95/p99 **16.67 ms**, zero intervals over 20 ms, zero Long Tasks, action-to-paint
+p95 **19.53 ms**, and zero rAF/DOM/canvas/heap growth.
 
 ## Gate 10A — Flux, electric, and magnetic flow lines
 
@@ -1146,6 +1157,125 @@ The browser was presenting at an effective 72 Hz during these captures. Both
 states therefore remained above the 60 FPS gate without a reproducible dropped
 frame or Long Task.
 
+## Gate 11 — Symmetry Aggregation overlay
+
+**Verdict:** PASS — RETIRED (2026-08-31)
+
+The live surface contained three disabled U(1)/SU(2)/SU(3) checkboxes and
+explicitly labeled itself pending. It had no engine, state, telemetry, or
+scenario owner; its only downstream code was dormant inspector highlighting
+that could never be enabled from the live UI. Retaining it would present a
+future scientific promise as a control while still performing one floating-
+panel lookup/projection path on every application frame.
+
+The pending module, Scale 0 mount, app-frame projection hook, inspector DOM
+listeners, viewport/SceneCore symmetry-highlight allocation and compatibility
+accessors, and dedicated CSS were removed together. The retirement guard scans
+every former live owner for the retired IDs and APIs, verifies the module is
+absent, boots Scale 0, and confirms no panel or console error. The modular
+inspector app-runtime check was also corrected to patch the same versioned
+browser module identity used by production. Both focused checks pass (2/2), and
+`rg` finds no live references outside the retirement guard itself.
+
+## Gate 12 — Conservation micropanel
+
+**Verdict:** PASS (2026-08-31)
+
+The panel follows the active worker owner, keeps diagnostics, energy, and
+momentum histories on their independent source observations, resets across
+source epochs, and renders unavailable audit values as unavailable rather than
+zero. It remains a cheap diagnostics consumer and does not pin the deeper audit
+stream while ordinary Controls are visible.
+
+Two lifecycle faults were repaired. Direct remount previously removed the old
+DOM node without unsubscribing its 4 Hz coordinator callback, and disposal while
+fullscreen could leave the shared portal open with a stale active-card pointer.
+Remount now disposes the prior API, fullscreen disposal exits the portal before
+removal, and the Scale 0 controller refreshes/unregisters the app-registry entry
+on re-entry/exit. Ten remount/fullscreen cycles conserve exactly one panel and
+one subscriber. The legacy unconditional telemetry path also now publishes the
+full worker audit/Lagrangian mask before reading the streams; the all-scenario
+wiring gate therefore passes instead of returning null audit data for every
+worker-owned scenario.
+
+Focused evidence: four conservation checks pass with one main-thread-only case
+honestly skipped under the active worker owner; the demand-gating check passes;
+and the full scenario-catalog audit/Lagrangian wiring check passes. The hardware-
+ANGLE RTX 5090 capture ran 12.00 seconds / 719 frames at **60.00 FPS**, p95/p99
+**16.67 ms**, with zero >20 ms intervals or Long Tasks. The 4 Hz panel callback
+ran 48 times at p95 **0.185 ms** / max **0.195 ms**, with zero rAF, DOM, canvas,
+or measured-heap growth.
+
+## Gate 13 — Genesis Burst scenario overlay
+
+**Verdict:** PASS (2026-08-31)
+
+The panel drives only the active authoritative owner through the physics
+harness, records one scientific-mutation epoch per accepted Fire intent, pauses
+through the canonical playback transport, and restores running state only while
+its captured owner/generation/scenario token remains current. Generation or
+scenario turnover cancels the asynchronous continuation without appending a
+point or restoring stale playback. The native backend remains explicitly
+disabled until reset/injection/stepping can be acknowledged as one transaction;
+that fail-closed path records no mutation.
+
+The existing scientific, mutation, playback, cancellation, scenario-disposal,
+and native-unavailable checks pass (6/6). A focused timer harness then remounted
+and disposed the panel ten times: each mount owned exactly one 500 ms scenario
+guard, every dispose returned the live interval count and panel count to zero,
+and the final mount retained one singleton panel.
+
+The hardware-ANGLE RTX 5090 performance capture included a live A=16 Fire
+transaction and ran 12.00 seconds / 720 frames at **60.00 FPS**, p95/p99
+**16.67 ms**, with zero >20 ms intervals or Long Tasks. Action-to-paint was
+**2.89 ms**; the transaction produced 17 canvas draws and no persistent rAF,
+DOM, canvas, or measured-heap growth.
+
+## Gate 14 — Controls sidepanel integration
+
+**Verdict:** PASS (2026-08-31)
+
+The live Controls surface now contains six cards: Physics, Substrate, Flux
+Volume, Flow Lines, Particle Display, and Selection. `Scale0ControlsComponent`
+previously appended all six on every `init()`, duplicating IDs/listeners and
+discarding retained state on a repeated bind. It now reconciles cards by six
+stable ownership keys; ten repeated initialization calls preserve every node
+identity, exactly one copy of each Scale 0 control ID, and the canonical order.
+
+The real floated Controls window resolves to one column at 420 px and two
+columns at 780/1100 px under the `floating-sidepanel` container. The combined
+performance burst exercised Physics, Substrate, Flux Volume, Flow Lines,
+Particle Display, and Selection inputs together for 40 action-to-paint cycles.
+The subsequent hardware-ANGLE RTX 5090 capture ran 12.66 seconds / 759 frames
+at **60.00 FPS**, p95/p99 **16.67 ms**, with zero >20 ms intervals or Long
+Tasks. Action p95 was **17.79 ms** and rAF, DOM, canvas, and measured heap counts
+returned exactly to baseline.
+
+## Gate 15 — Diagnostics sidepanel
+
+**Verdict:** PASS (2026-08-31)
+
+Repeated `initDiagnosticsPanel()` calls previously returned a fresh empty
+component whenever the DOM marker already existed. Any reinitialization path
+could therefore replace the live owner with an object containing no tables,
+which presents as frozen/blank sparklines. The panel now retains one component
+on its root and returns that owner idempotently. Cleanup disconnects every
+intersection observer and plot, removes all three scale roots and the mount
+marker, and supports a complete remount.
+
+The five Scale 0 descriptor sections and every declared row match the rendered
+table exactly. Active docked and expanded floated panels update all five tables;
+floated-collapsed and hidden docked panels perform zero table updates. A focused
+shared-ring regression proves sparklines continue redrawing after capacity
+wrap. The live cross-panel cadence check recorded Diagnostics at 47 chart
+commits for 47 source advances (100% coverage, ~33.3 ms median cadence).
+
+At L=97 on the worker owner, the hardware-ANGLE RTX 5090 capture ran 12.01
+seconds / 720 frames at **60.00 FPS**, p95/p99 **16.67 ms**, with zero >20 ms
+intervals or Long Tasks. Diagnostics completed 367 update calls at p95
+**0.58 ms** / max **1.32 ms**, and the audited sparkline committed all 174 of
+174 source advances with no rAF, DOM, canvas, or measured-heap growth.
+
 ## Gate 16 — Telemetry Grid sidepanel
 
 **Verdict:** PASS
@@ -1265,3 +1395,142 @@ at automation command boundaries, while the panel update maximum remained
 1.975 ms. Those tasks did not reproduce in the uninterrupted certification
 trace and are not attributed to Telemetry Grid; the clean trace is the gate of
 record.
+
+## Gates 17–21 — Charts, Lagrangian, Inspector, Scene, and Flux Slice
+
+**Verdict:** PASS (2026-08-31)
+
+Charts and Lagrangian now retain root-owned singleton components and fully
+destroy delayed timers, cards, tables, plots, and ownership markers. Charts
+rendered all 46 of 46 observed source advances in the focused cadence check.
+Inspector passed six bounded Moore-read, selection, live/float, and teardown
+checks. Scene now owns and removes its global background listener and remains
+idempotent across ten balanced lifecycles. Flux Slice passed its axes, three-
+plane, field-row, worker-sampler, control, and canvas-reuse checks.
+
+The common hardware-ANGLE RTX 5090 L=97 release probe recorded 60.00 FPS and
+16.67 ms p99 for all five panels. Panel callback p95 values were 0.195 ms
+(Charts), 0.345 ms (Lagrangian), 0.015 ms (Inspector), zero periodic work
+(Scene), and 1.195 ms (Flux Slice). No panel produced a Long Task or retained
+rAF subscribers, DOM nodes, or canvases.
+
+## Gate 22 — Wave Lab
+
+**Verdict:** PASS (2026-08-31)
+
+The first L=97 release run failed at 51 FPS with 36 Long Tasks because the live
+spectrum comparator allocated a `Map` and small array for every nonzero voxel,
+then scanned a dense hash domain. The comparator now reduces directly into
+typed-array lane accumulators. Large lattices use a center-preserving adaptive
+stride and physical stride-volume weights; the UI labels those results with
+`~M` and the actual stride. Exact small-lattice behavior remains stride 1.
+
+The mutation-owner contract passes. The post-fix hardware run captured 720
+frames at 60.00 FPS and 16.67 ms p99, with a 1.865 ms callback p95, zero Long
+Tasks, and stable resources.
+
+## Gates 23–25 — P1 Observables, Spectrum, and Dispersion
+
+**Verdict:** PASS (2026-08-31)
+
+P1 passed seven Empty-suspension, restoration, fine-structure epistemic-
+availability, and direct-owner mutation checks. Spectrum now owns audit demand
+while visible; its live L=97 path is explicitly approximate and band-limited,
+with adaptive stride/mode bounds, while the user-triggered Deep path remains
+the exact stride-1/M=64 measurement. The focused energy-partition and Deep
+checks pass.
+
+Dispersion is now explicit about its ownership boundary: the displayed 24
+points are the canonical FTD-0299 reference atlas, not a live remeasurement.
+Its test pins five rows, all 24 points, singleton lifecycle, one-shot arm
+subscription, and the no-fabricated-live-data disclosure.
+
+Hardware L=97 results were 60.00 FPS for 719 frames (P1, callback p95 0.815
+ms), 719 frames (Spectrum, 1.56 ms), and 720 frames (Dispersion, static zero
+periodic work). All three had 16.67 ms p99, zero Long Tasks, and no resource
+growth.
+
+## Gate 26 — Knots
+
+**Verdict:** PASS (2026-08-31)
+
+The first live-tracking run exposed repeated full 97³ flux-volume scans on the
+main thread: 8.81 FPS, 239–429 ms Long Tasks, and 333 ms p95 frame intervals.
+The live contribution path now shares the overlay sweep's sparse E/B/J/divJ
+samples and applies terminal-cell physical-volume weights. Dense N³ and compact
+FTV2 integrations remain available and separately tested. Because the live
+path is an estimate, the panel now labels it `≈` with its stride and no longer
+calls it an exact full-volume integral.
+
+High-cardinality rows are bounded to the four dominant knots per E/B/J family,
+with the total and omitted remainder retained. Structural DOM, event-feed, and
+canvas commits are coalesced onto animation frames and cancelled on teardown.
+All 38 detection, identity, contribution, attribution, color, seed, and
+telemetry checks pass. The final hardware run captured 720 frames at 60.00 FPS,
+16.67 ms p99, callback p95 1.02 ms, zero Long Tasks, and stable resources.
+
+## Gate 27 — Gravity
+
+**Verdict:** PASS (2026-08-30)
+
+Empty and pending generations fail closed; the selected radius-2 engine support
+field and Poisson-derived `[IMPOSED]` latency map remain separate from the
+labeled presentation proxies. Center-anchored FTV2 and direct-WASM reductions,
+sampler-revision coherence, demand/visibility teardown, worker recovery, and
+cache generations are pinned by 9/9 scientific/lifecycle checks plus 2/2 worker
+lifecycle checks. Direct main-thread WASM refuses L>33 after the measured forced
+L=97 path reached only 16.49 FPS live; the supported worker path qualifies L=97.
+
+The hardware-ANGLE/explicit-native matrix passed all 40 lattice/style
+combinations at a 60.00 FPS minimum, p95 at most 17 ms, and 16.67 ms worst p99.
+The harness records the unmasked renderer and refuses software-renderer
+certification. Full detail is retained in the Gate 27 plan row and its attached
+performance artifacts.
+
+## Gates 28–30 — Time, Thermodynamics, and Scale Context
+
+**Verdict:** PASS (2026-08-31)
+
+Time initially failed at 56.50 FPS with repeated 51–67 ms Long Tasks. Its live
+radial path was allocating and sorting about 117,000 sample objects every half-
+second and rebuilding static kinematic SVGs. A one-pass typed radial summary now
+retains the bins and deep/far extrema without materializing or sorting the
+voxel list. Large-lattice sampling adapts to about 25 points per axis, and the
+static card redraws only after slider input. The pure-math test, Time integration
+test, and 26 audit-contract tests pass.
+
+The final hardware results were:
+
+| Gate | Workload | Frames | FPS | p99 | Callback p95 |
+|---|---|---:|---:|---:|---:|
+| Time | twin clocks, L=97 | 719 | 60.00 | 16.67 ms | 1.295 ms |
+| Thermodynamics | thermalization, L=97 | 720 | 60.00 | 16.67 ms | 1.24 ms |
+| Scale Context | flux pulse, L=97 | 719 | 60.00 | 16.67 ms | 0.04 ms |
+
+Thermodynamics also passes the accepted/stale-owner mutation contract and the
+status/energy provenance contract. Scale Context passes three geometry,
+calibration, acknowledged-resize, and responsive-column checks. None of the
+three produced a Long Task or retained resources; Scale Context recorded zero
+steady-state DOM churn.
+
+## Gate 31 — Integrated all-interface regression
+
+**Verdict:** PASS (2026-08-31)
+
+Command:
+
+```text
+cd engine/web/tests
+$env:FTD_HARDWARE_WEBGL='1'
+npx playwright test scale0-empty-panel-performance.spec.js `
+  --grep "all 17 visible panels" --reporter=line
+```
+
+The final run used the worker-backed WASM owner at Empty L=97 and the unmasked
+hardware ANGLE renderer on the NVIDIA GeForce RTX 5090. Each of the 17
+canonical panels received 600 foreground frames plus a collapsed sample. Every
+panel recorded 60.00 FPS with p95/p99 16.67 ms and zero Long Tasks. Every
+collapsed panel recorded zero DOM mutations and zero canvas draws, and all
+rAF/DOM/canvas resource deltas were stable. The fresh full run passed in 4.6
+minutes. Cumulative DOM/canvas ceilings were duration-normalized from the old
+240-frame campaign without changing the permitted work rate.

@@ -804,6 +804,11 @@ test('scenario-local visibility tuning restores user volume controls on the next
             captureOverlayPreferences,
             restoreOverlayPreferences,
         } = await import('/js/scales/scale0/runtime/scenario-loader.js?visual-pref-restore-test=1');
+        const {
+            fluxThresholdToSliderPosition,
+            sliderPositionToFluxThreshold,
+        } = await import('/js/viewport/flux-threshold.js?visual-pref-restore-test=1');
+        const initialThresholdPosition = fluxThresholdToSliderPosition(0.007);
         document.body.innerHTML = `
             <button id="toggle-flux-volume" class="active"></button>
             <button id="toggle-flux-slice"></button>
@@ -811,7 +816,7 @@ test('scenario-local visibility tuning restores user volume controls on the next
             <button id="toggle-b-field"></button>
             <input id="flux-point-scale" type="range" min="0.1" max="3" step="0.05" value="2.2">
             <span id="flux-point-scale-val">2.2</span>
-            <input id="flux-threshold" type="range" min="0" max="0.1" step="0.0001" value="0.007">
+            <input id="flux-threshold" type="range" min="0" max="0.5" step="0.0001" value="${initialThresholdPosition}">
             <span id="flux-threshold-val">0.007</span>
             <input id="flux-opacity" type="range" min="0" max="1" step="0.01" value="0.42">
             <span id="flux-opacity-val">0.42</span>
@@ -846,7 +851,9 @@ test('scenario-local visibility tuning restores user volume controls on the next
         );
         const duringDipole = {
             point: document.getElementById('flux-point-scale').value,
-            threshold: document.getElementById('flux-threshold').value,
+            threshold: sliderPositionToFluxThreshold(
+                Number(document.getElementById('flux-threshold').value),
+            ),
             opacity: document.getElementById('flux-opacity').value,
         };
 
@@ -854,7 +861,9 @@ test('scenario-local visibility tuning restores user volume controls on the next
         restoreOverlayPreferences(nextScenarioPrefs, state, adapter);
         const afterRestore = {
             point: document.getElementById('flux-point-scale').value,
-            threshold: document.getElementById('flux-threshold').value,
+            threshold: sliderPositionToFluxThreshold(
+                Number(document.getElementById('flux-threshold').value),
+            ),
             opacity: document.getElementById('flux-opacity').value,
         };
 
@@ -885,17 +894,29 @@ test('scenario-local visibility tuning restores user volume controls on the next
         };
     });
 
-    expect(result.initial).toEqual({ point: 2.2, threshold: 0.007, opacity: 0.42, volume: true });
-    expect(result.duringDipole).toEqual({ point: '2.6', threshold: '0.0001', opacity: '0.85' });
-    expect(result.restoredPrefs).toEqual({ point: 2.2, threshold: 0.007, opacity: 0.42 });
-    expect(result.afterRestore).toEqual({ point: '2.2', threshold: '0.007', opacity: '0.42' });
+    expect(result.initial.point).toBe(2.2);
+    expect(result.initial.threshold).toBeCloseTo(0.007, 4);
+    expect(result.initial.opacity).toBe(0.42);
+    expect(result.initial.volume).toBe(true);
+    expect(result.duringDipole.point).toBe('2.6');
+    expect(result.duringDipole.threshold).toBeCloseTo(0.0001, 5);
+    expect(result.duringDipole.opacity).toBe('0.85');
+    expect(result.restoredPrefs.point).toBe(2.2);
+    expect(result.restoredPrefs.threshold).toBeCloseTo(0.007, 4);
+    expect(result.restoredPrefs.opacity).toBe(0.42);
+    expect(result.afterRestore.point).toBe('2.2');
+    expect(result.afterRestore.threshold).toBeCloseTo(0.007, 4);
+    expect(result.afterRestore.opacity).toBe('0.42');
     expect(result.uniformBActive).toBe(false);
     expect(result.volumeAfterUniformB).toBe(true);
     expect(result.calls).toEqual(expect.arrayContaining([
         ['threshold', 0.0001],
-        ['threshold', 0.007],
         ['volume', false],
     ]));
+    const restoredThresholdCall = result.calls.find(
+        ([name, value]) => name === 'threshold' && value > 0.001,
+    );
+    expect(restoredThresholdCall?.[1]).toBeCloseTo(0.007, 4);
 });
 
 test('compact center seeds receive one large-L camera focus without overriding later manual motion', async ({ page }) => {
@@ -1082,6 +1103,7 @@ test('compact FTV2 descriptor renders at native sampled lattice coordinates with
             writeStreamlinesIntoMesh: () => {},
         });
         renderer._fluxOrganic = false;
+        renderer.setFluxThreshold(0.2);
         const density = new Float32Array(27);
         density[0] = 1;
         density[26] = 2;
@@ -1092,15 +1114,23 @@ test('compact FTV2 descriptor renders at native sampled lattice coordinates with
             axisCount: 3,
         }, 9);
         const geometry = renderer._fluxVolume.geometry;
-        const positions = Array.from(geometry.getAttribute('position').array.slice(0, 6));
+        const positionArray = geometry.getAttribute('position').array;
+        const visibility = geometry.getAttribute('particleVisibility').array;
+        const positions = [];
+        for (let i = 0; i < geometry.drawRange.count; i++) {
+            if (visibility[i] < 0.5) continue;
+            positions.push(...positionArray.slice(i * 3, i * 3 + 3));
+        }
         return {
             drawCount: geometry.drawRange.count,
+            visibleCount: renderer._fluxVisibleCount,
             positions,
             capacity: geometry.getAttribute('position').count,
         };
     });
 
-    expect(result.drawCount).toBe(2);
+    expect(result.drawCount).toBe(3 ** 3);
+    expect(result.visibleCount).toBe(2);
     expect(result.positions).toEqual([0.5, 0.5, 0.5, 8.5, 8.5, 8.5]);
     // FTV2 is already a bounded published support grid. Rendering without
     // expansion allocates that 3^3 support, not the unobserved 9^3 lattice.

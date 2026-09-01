@@ -115,19 +115,6 @@ export class Inspector {
             this.clearSelectionBtn.addEventListener('click', () => this.clearSelection());
         }
 
-        // Setup Symmetry Panel toggle listeners
-        const symIds = ['sym-u1', 'sym-su2', 'sym-su3'];
-        symIds.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.addEventListener('change', () => {
-                if (this._selectedPos && this.viewport) {
-                    const u1 = document.getElementById('sym-u1').checked;
-                    const su2 = document.getElementById('sym-su2').checked;
-                    const su3 = document.getElementById('sym-su3').checked;
-                    this.viewport.setSymmetryHighlights(this._selectedPos.x, this._selectedPos.y, this._selectedPos.z, u1, su2, su3);
-                }
-            });
-        });
         // Coordinate manual adjustments
         ['x', 'y', 'z'].forEach(axis => {
             const el = document.getElementById(`insp-pos-${axis}`);

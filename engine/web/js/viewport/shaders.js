@@ -32,12 +32,14 @@ export const PARTICLE_VERT = `
     varying float vSize;
     varying float vManifestPhase;
     varying float vManifestRate;
+    varying float vVisibility;
 
     void main() {
         vColor = particleColor;
         vSize = size;
         vManifestPhase = manifestPhase;
         vManifestRate = manifestRate;
+        vVisibility = 1.0;
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
         gl_PointSize = size * (150.0 / -mvPosition.z);
         gl_PointSize = clamp(gl_PointSize, 1.0, 512.0);
@@ -57,16 +59,24 @@ export const FLUX_VOL_VERT = `
     attribute vec3 particleColor;
     attribute float manifestPhase;
     attribute float manifestRate;
+    attribute float particleVisibility;
     varying vec3 vColor;
     varying float vSize;
     varying float vManifestPhase;
     varying float vManifestRate;
+    varying float vVisibility;
 
     void main() {
         vColor = particleColor;
         vSize = size;
         vManifestPhase = manifestPhase;
         vManifestRate = manifestRate;
+        vVisibility = particleVisibility;
+        if (particleVisibility < 0.5) {
+            gl_PointSize = 0.0;
+            gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
+            return;
+        }
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
         float depth = max(-mvPosition.z, 0.1);
         gl_PointSize = size * sqrt(60.0 / depth);
@@ -86,6 +96,7 @@ export const PARTICLE_FRAG = `
     varying float vSize;
     varying float vManifestPhase;
     varying float vManifestRate;
+    varying float vVisibility;
 
     void main() {
         vec2 c = gl_PointCoord - vec2(0.5);
@@ -144,6 +155,6 @@ export const PARTICLE_FRAG = `
         }
 
         vec3 rgb = (vColor + glow) * bright;
-        gl_FragColor = vec4(rgb, alpha * alpha * uOpacity * bright);
+        gl_FragColor = vec4(rgb, alpha * alpha * uOpacity * bright * vVisibility);
     }
 `;

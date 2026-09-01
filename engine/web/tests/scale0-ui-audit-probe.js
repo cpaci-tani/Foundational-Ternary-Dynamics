@@ -211,8 +211,18 @@ export function trackScale0UiMethods(label, target, methodNames) {
         if (typeof original !== 'function') continue;
         const key = `${label}.${method}`;
         target[method] = function (...args) {
+            const startedAt = performance.now();
             probe.methodCounts.set(key, (probe.methodCounts.get(key) || 0) + 1);
-            return original.apply(this, args);
+            try {
+                return original.apply(this, args);
+            } finally {
+                let samples = probe.callbackSamples.get(`method:${key}`);
+                if (!samples) {
+                    samples = [];
+                    probe.callbackSamples.set(`method:${key}`, samples);
+                }
+                samples.push(performance.now() - startedAt);
+            }
         };
         probe.methodRestores.push(() => {
             if (target[method] !== original) target[method] = original;

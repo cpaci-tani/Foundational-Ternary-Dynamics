@@ -39,6 +39,10 @@ import {
     subscribeScale0Qualification,
 } from '../../state/store.js';
 import { computeStreamlineParams } from '../../runtime/streamline-integrator.js';
+import {
+    formatFluxThreshold,
+    sliderPositionToFluxThreshold,
+} from '../../../../viewport/flux-threshold.js';
 
 let _wired = false;
 
@@ -586,7 +590,9 @@ function wireFluxVolume(ctx, api) {
     if (threshSlider && threshVal) {
         threshSlider.addEventListener('input', () => {
             scheduleInput('threshold', threshSlider, threshVal,
-                v => (v < 0.001 ? v.toFixed(4) : v.toFixed(3)), (v) => {
+                raw => formatFluxThreshold(sliderPositionToFluxThreshold(raw)), (raw) => {
+                    const v = sliderPositionToFluxThreshold(raw);
+                    threshSlider.setAttribute('aria-valuetext', formatFluxThreshold(v));
                     if (ctx._scale0ForcedVisualParameterPreferences
                         && 'fluxThreshold' in ctx._scale0ForcedVisualParameterPreferences) {
                         ctx._scale0ForcedVisualParameterPreferences.fluxThreshold = v;

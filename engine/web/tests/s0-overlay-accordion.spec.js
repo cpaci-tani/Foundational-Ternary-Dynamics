@@ -377,7 +377,8 @@ test.describe('Scale-0 Visualization accordion', () => {
         expect(result.search).toEqual({ value: '', clearVisible: true, clearHidden: true });
     });
 
-    test('interaction burst sustains the foreground frame budget without resource growth', async ({ page }) => {
+    test('interaction burst sustains the foreground frame budget without resource growth', async ({ page }, testInfo) => {
+        testInfo.setTimeout(120_000);
         await gotoAndReady(page);
         await page.waitForTimeout(2500);
         await expand(page);
@@ -390,6 +391,11 @@ test.describe('Scale-0 Visualization accordion', () => {
             } = await import('/tests/scale0-ui-audit-probe.js');
             const paint = (label, action) => measureScale0UiActionToPaint(label, action);
             const click = (selector) => document.querySelector(selector).click();
+            const gl = window.__ftdCtx?.viewport?.renderer?.getContext?.() || null;
+            const rendererInfo = gl?.getExtension?.('WEBGL_debug_renderer_info') || null;
+            const webglRenderer = rendererInfo
+                ? String(gl.getParameter(rendererInfo.UNMASKED_RENDERER_WEBGL) || '')
+                : '';
 
             // Warm every measured path once so module parsing/JIT and first-time
             // renderer setup stay outside the steady interaction capture.
@@ -427,12 +433,24 @@ test.describe('Scale-0 Visualization accordion', () => {
             await paint('panel collapse', () => click('.s0-overlay-collapse'));
             await paint('panel expand', () => click('.s0-overlay-collapse'));
 
-            await new Promise((resolve) => setTimeout(resolve, 4000));
-            return stopScale0UiAuditProbe();
+            await new Promise((resolve) => setTimeout(resolve, 12_000));
+            const audit = await stopScale0UiAuditProbe();
+            return { ...audit, webglRenderer };
         });
 
         console.log('scale0 overlay interaction budget', JSON.stringify(report));
-        expect(report.frames.effectiveFps).toBeGreaterThanOrEqual(58);
+        await testInfo.attach('scale0-visualization-performance-report.json', {
+            body: Buffer.from(JSON.stringify(report, null, 2)),
+            contentType: 'application/json',
+        });
+        if (process.env.FTD_HARDWARE_WEBGL === '1') {
+            expect(report.webglRenderer, 'release gate exposes a WebGL renderer').not.toBe('');
+            expect(report.webglRenderer, 'release gate does not certify SwiftShader/software WebGL')
+                .not.toMatch(/swiftshader|software/i);
+        }
+        expect(report.frames.count).toBeGreaterThanOrEqual(600);
+        expect(report.frames.effectiveFps).toBeGreaterThanOrEqual(59.5);
+        expect(report.frames.p95Ms).toBeLessThanOrEqual(17);
         expect(report.frames.p99Ms).toBeLessThanOrEqual(20);
         expect(report.frames.intervalsOver33_4ms).toBe(0);
         expect(report.longTasks).toEqual([]);

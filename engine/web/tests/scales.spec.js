@@ -429,7 +429,10 @@ test('Inspector app runtime exposes a modular app-shell adapter', async ({ page 
 
     const result = await page.evaluate(async () => {
         const runtimeMod = await import('./js/inspector/app-runtime.js');
-        const inspectorMod = await import('./js/inspector.js');
+        // Match app-runtime's versioned module identity; an unversioned import
+        // is a different browser module and cannot patch the constructor used
+        // by createInspectorAppRuntime.
+        const inspectorMod = await import('./js/inspector.js?v=2');
 
         class FakeInspector {
             setEngineMode(mode) {
@@ -473,7 +476,7 @@ test('Inspector app runtime exposes a modular app-shell adapter', async ({ page 
             runtime.setBridge({ id: 'bridge-b' });
 
             return {
-                exportsOk: ['inspector', 'setBridge', 'syncMode', 'updateFloatingPanels']
+                exportsOk: ['inspector', 'setBridge', 'syncMode']
                     .every((name) => typeof runtime[name] === 'function' || (name === 'inspector' && !!runtime.inspector)),
                 inspectorHasGetter: typeof originalGetSelectedLatticePosition === 'function',
                 modeCalls: runtime.inspector.modeCalls || [],

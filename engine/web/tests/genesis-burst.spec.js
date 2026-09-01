@@ -1,6 +1,11 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
-import { gotoAndReady, selectScale0Scenario } from './_helpers.js';
+import {
+    attachConsoleWatcher,
+    gotoAndReady,
+    realErrors,
+    selectScale0Scenario,
+} from './_helpers.js';
 
 /**
  * Selected genesis amplitude-response scenarios (FTD-0269 provenance).
@@ -221,5 +226,120 @@ test.describe('Selected genesis amplitude response (FTD-0269 provenance)', () =>
         // the 500ms disposal guard removes the panel
         await expect.poll(() => page.evaluate(() => !!window.__ftdGenesisBurstPanel), { timeout: 5_000 }).toBe(false);
         expect(await page.evaluate(() => !!document.getElementById('genesis-burst-panel'))).toBe(false);
+    });
+
+    test('ten remount cycles conserve the scenario guard interval and singleton DOM', async () => {
+        await selectScale0Scenario(page, 's0-seed-cluster-law');
+        await expect.poll(() => page.evaluate(() => !!window.__ftdGenesisBurstPanel), { timeout: 10_000 }).toBe(true);
+        const consoleErrors = attachConsoleWatcher(page);
+        const result = await page.evaluate(async () => {
+            const [{ getPhysicsHarness }, { mountGenesisBurstPanel }, store] = await Promise.all([
+                import('/js/physics/index.js'),
+                import('/js/scales/scale0/ui/overlays/genesis-burst-panel.js?v=2'),
+                import('/js/scales/scale0/state/store.js'),
+            ]);
+            window.__ftdGenesisBurstPanel?.dispose?.();
+            const owner = store.resolveActiveScale0BridgeFromWindow();
+            const harness = getPhysicsHarness(owner);
+            const originalSetInterval = window.setInterval;
+            const originalClearInterval = window.clearInterval;
+            const liveIntervals = new Set();
+            window.setInterval = function (callback, delay, ...args) {
+                const id = originalSetInterval(callback, delay, ...args);
+                liveIntervals.add(id);
+                return id;
+            };
+            window.clearInterval = function (id) {
+                liveIntervals.delete(id);
+                return originalClearInterval(id);
+            };
+            const cycles = [];
+            try {
+                for (let i = 0; i < 10; i++) {
+                    const api = mountGenesisBurstPanel(harness);
+                    const mounted = {
+                        intervals: liveIntervals.size,
+                        panels: document.querySelectorAll('#genesis-burst-panel').length,
+                        singleton: window.__ftdGenesisBurstPanel === api,
+                    };
+                    api.dispose();
+                    cycles.push({
+                        mounted,
+                        disposedIntervals: liveIntervals.size,
+                        disposedPanels: document.querySelectorAll('#genesis-burst-panel').length,
+                        singletonNull: window.__ftdGenesisBurstPanel === null,
+                    });
+                }
+            } finally {
+                window.setInterval = originalSetInterval;
+                window.clearInterval = originalClearInterval;
+            }
+            const final = mountGenesisBurstPanel(harness);
+            return {
+                cycles,
+                final: {
+                    panels: document.querySelectorAll('#genesis-burst-panel').length,
+                    singleton: window.__ftdGenesisBurstPanel === final,
+                },
+            };
+        });
+
+        expect(result.cycles).toHaveLength(10);
+        for (const cycle of result.cycles) {
+            expect(cycle).toEqual({
+                mounted: { intervals: 1, panels: 1, singleton: true },
+                disposedIntervals: 0,
+                disposedPanels: 0,
+                singletonNull: true,
+            });
+        }
+        expect(result.final).toEqual({ panels: 1, singleton: true });
+        expect(realErrors(consoleErrors)).toEqual([]);
+    });
+
+    test('live Fire work sustains the formal hardware frame budget', async ({}, testInfo) => {
+        testInfo.setTimeout(120_000);
+        await selectScale0Scenario(page, 's0-seed-cluster-law');
+        await expect.poll(() => page.evaluate(() => !!window.__ftdGenesisBurstPanel), { timeout: 10_000 }).toBe(true);
+        const consoleErrors = attachConsoleWatcher(page);
+        await page.waitForTimeout(3_000);
+        const report = await page.evaluate(async () => {
+            const probe = await import('/tests/scale0-ui-audit-probe.js');
+            const gl = window.__ftdCtx?.viewport?.renderer?.getContext?.() || null;
+            const rendererInfo = gl?.getExtension?.('WEBGL_debug_renderer_info') || null;
+            const webglRenderer = rendererInfo
+                ? String(gl.getParameter(rendererInfo.UNMASKED_RENDERER_WEBGL) || '')
+                : '';
+            probe.startScale0UiAuditProbe({ rootSelector: '#genesis-burst-panel' });
+            const paintMs = await probe.measureScale0UiActionToPaint(
+                'fire A=16',
+                () => { void window.__ftdGenesisBurstPanel.fire(16); },
+            );
+            await new Promise((resolve) => setTimeout(resolve, 12_000));
+            return { ...await probe.stopScale0UiAuditProbe(), webglRenderer, paintMs };
+        });
+        await testInfo.attach('scale0-genesis-burst-performance-report.json', {
+            body: Buffer.from(JSON.stringify(report, null, 2)),
+            contentType: 'application/json',
+        });
+        console.log('scale0 genesis burst performance', JSON.stringify(report));
+
+        if (process.env.FTD_HARDWARE_WEBGL === '1') {
+            expect(report.webglRenderer, 'release gate exposes a WebGL renderer').not.toBe('');
+            expect(report.webglRenderer, 'release gate does not certify SwiftShader/software WebGL')
+                .not.toMatch(/swiftshader|software/i);
+        }
+        expect(report.frames.count).toBeGreaterThanOrEqual(600);
+        expect(report.frames.effectiveFps).toBeGreaterThanOrEqual(59.5);
+        expect(report.frames.p95Ms).toBeLessThanOrEqual(17);
+        expect(report.frames.p99Ms).toBeLessThanOrEqual(20);
+        expect(report.frames.intervalsOver33_4ms).toBe(0);
+        expect(report.longTasks).toEqual([]);
+        expect(report.paintMs).toBeLessThanOrEqual(50);
+        expect(report.resourceDelta.rafSubscribers).toBe(0);
+        expect(report.resourceDelta.domNodes).toBe(0);
+        expect(report.resourceDelta.canvases).toBe(0);
+        expect(report.errors).toEqual([]);
+        expect(realErrors(consoleErrors)).toEqual([]);
     });
 });

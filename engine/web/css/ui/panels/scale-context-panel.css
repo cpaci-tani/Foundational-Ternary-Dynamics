@@ -236,7 +236,7 @@
 
 #scale-context-panel .sc-size-mark i {
     position: relative;
-    z-index: 1;
+    z-index: var(--z-local-base);
     width: 9px;
     height: 9px;
     border: 2px solid var(--bg-card);

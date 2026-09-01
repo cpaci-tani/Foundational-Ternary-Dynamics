@@ -114,7 +114,6 @@ export class ViewportSceneCore {
 
         // Inspector highlight overlays
         this._voxelHighlight = null;
-        this._symHighlights = null;
         this._areaHighlight = null;
         this._areaHighlightRadius = null;
 
@@ -823,50 +822,6 @@ export class ViewportSceneCore {
         if (!this._areaHighlight.visible) this._areaHighlight.visible = true;
     }
 
-    setSymmetryHighlights(x, y, z, u1, su2, su3) {
-        if (!this._symHighlights) {
-            const geo = new THREE.BoxGeometry(1.0, 1.0, 1.0);
-            const edges = new THREE.EdgesGeometry(geo);
-            geo.dispose();   // EdgesGeometry copied what it needs; source is orphan
-            const mat = new THREE.LineBasicMaterial({ color: 0x4ade80, linewidth: 1, transparent: true, opacity: 0.6 });
-            this._symHighlights = new THREE.InstancedMesh(edges, mat, 26);
-            this._symHighlights.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-            this._scene.add(this._symHighlights);
-        }
-
-        let count = 0;
-        const dummy = new THREE.Object3D();
-
-        if (u1 || su2 || su3) {
-            for (let dx = -1; dx <= 1; dx++) {
-                for (let dy = -1; dy <= 1; dy++) {
-                    for (let dz = -1; dz <= 1; dz++) {
-                        if (dx === 0 && dy === 0 && dz === 0) continue;
-
-                        const norm = Math.abs(dx) + Math.abs(dy) + Math.abs(dz);
-                        let include = false;
-                        if (u1 && norm === 1) include = true;   // Face
-                        if (su2 && norm === 2) include = true;  // Edge
-                        if (su3 && norm === 3) include = true;  // Corner
-
-                        if (include) {
-                            // Same voxel-centre convention as setVoxelHighlight:
-                            // neighbour voxel (x+dx, y+dy, z+dz) is rendered at
-                            // world centre (x+dx+0.5, y+dy+0.5, z+dz+0.5).
-                            dummy.position.set(x + dx + 0.5, y + dy + 0.5, z + dz + 0.5);
-                            dummy.updateMatrix();
-                            this._symHighlights.setMatrixAt(count++, dummy.matrix);
-                        }
-                    }
-                }
-            }
-        }
-
-        this._symHighlights.count = count;
-        this._symHighlights.instanceMatrix.needsUpdate = true;
-        this._symHighlights.visible = count > 0;
-    }
-
     toggleGrid(on) {
         this._showGrid = on;
         const mode = this._engineMode || 'lattice';
@@ -1048,7 +1003,6 @@ export class ViewportSceneCore {
 
         // Inspector helpers
         disposeMesh(this._voxelHighlight); this._voxelHighlight = null;
-        disposeMesh(this._symHighlights);  this._symHighlights = null;
         disposeMesh(this._areaHighlight);  this._areaHighlight = null;
         this._areaHighlightRadius = null;
 

@@ -49,6 +49,10 @@ export function getScale0TelemetryDemand(ctx, state = null) {
     const wantAudit = visible('diagnostics')
         || scale0ChartsWantAudit(ctx, visible)
         || visible('lagrangian') || visible('telemetry-grid')
+        // Spectrum renders the E/B/wave/field partition and conservation
+        // drift from the audit stream. Without this explicit ownership its
+        // energy card races the demand gate and can remain permanently empty.
+        || visible('spectrum')
         || (visible('knots') && knotsApplicable && knotsTracking);
     // The Charts panel has no Lagrangian series; requesting the deepest
     // stencil reduction merely because ordinary energy charts are visible
@@ -159,6 +163,14 @@ export function collectScale0Unconditional(telemetryHub, ctx, state) {
         gravity: gravityReady,
         everyTicks: { diagnostics: 1, audit: 1, gravity: 1, lagrangian: 1 },
     };
+    // The rollback path must restore the worker transport mask as well as read
+    // the streams. Reading a proxy whose default mask remains false only
+    // returns null/stale audit state, which made "always collect" behave like
+    // demand gating for every worker-owned scenario.
+    const fm = state.useFluxMock ? state.fluxMock : null;
+    if (fm && typeof fm.setTelemetryMask === 'function') {
+        fm.setTelemetryMask(true, true, gravityReady);
+    }
     if (publishNativeTelemetryDemand(ctx, state, demand)) {
         telemetryHub.collectScale0(ctx.bridge, state.fluxMock, state.useFluxMock);
         return;

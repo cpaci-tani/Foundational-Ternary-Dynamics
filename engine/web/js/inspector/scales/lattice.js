@@ -169,14 +169,7 @@ export function showLatticeInspector(target) {
 
     if (target.viewport && target.viewport.setVoxelHighlight && target._selectedPos) {
         target.viewport.setVoxelHighlight(target._selectedPos.x, target._selectedPos.y, target._selectedPos.z, true);
-        const u1 = document.getElementById('sym-u1')?.checked || false;
-        const su2 = document.getElementById('sym-su2')?.checked || false;
-        const su3 = document.getElementById('sym-su3')?.checked || false;
-        target.viewport.setSymmetryHighlights(target._selectedPos.x, target._selectedPos.y, target._selectedPos.z, u1, su2, su3);
     }
-
-    const symPanel = document.getElementById('floating-symmetry-panel');
-    if (symPanel) symPanel.style.display = 'block';
     // Notify the selection card so sel-x/y/z stay in sync with click-to-select
     if (target._selectedPos) {
         document.dispatchEvent(new CustomEvent('ftd:voxel-selected', {
@@ -195,10 +188,7 @@ export function hideLatticeInspector(target) {
         // an empty viewport click, and a scale switch all mean that every
         // selection overlay must disappear together.
         target.viewport.setAreaHighlight?.(0, 0, 0, 1, false);
-        target.viewport.setSymmetryHighlights(0, 0, 0, false, false, false);
     }
-    const symPanel = document.getElementById('floating-symmetry-panel');
-    if (symPanel) symPanel.style.display = 'none';
     target._latticeInspectionCache = null;
     target._updateInspectorChrome();
     document.dispatchEvent(new CustomEvent('ftd:voxel-selection-cleared'));

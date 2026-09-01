@@ -283,31 +283,85 @@ export function seedSpectrumComparator(harness, ctx, scenarioId = RF_LATTICE_WAV
     }
 }
 
-// Keyed lookup for the sparse {positions, vectors, count} samples returned by
-// the live bridge's bulk field samplers (getFluxVectorSampled/getEFieldSampled).
-// Both samplers skip voxels below a 1e-15 magnitude/density threshold at the
-// WASM layer -- an omitted voxel contributes ~0 to every energy/peak sum below,
-// so treating a missing key as the zero vector reproduces the dense-loop math.
-function voxelKey(x, y, z, N) {
-    return (x * N + y) * N + z;
+// Reduce sparse vector samplers directly into the small lane accumulator set.
+// The former implementation allocated one Map entry plus one three-number
+// Array for every nonzero voxel, then scanned the lane volume and performed a
+// hash lookup at every coordinate. At L=97 that created hundreds of thousands
+// of short-lived objects every 250 ms. A single typed-array pass is exact for
+// the same sparse samples (omitted vectors are defined as zero by the WASM
+// sampler) and keeps the foreground panel update bounded.
+function reduceVectorSample(sample, laneRows, N, { wave = false, stride = 1 } = {}) {
+    if (!sample?.positions || !sample?.vectors) return;
+    const positions = sample.positions;
+    const vectors = sample.vectors;
+    const count = Math.min(
+        Math.max(0, Math.trunc(Number(sample.count) || 0)),
+        Math.floor(positions.length / 3),
+        Math.floor(vectors.length / 3),
+    );
+    const sign = wave ? -1 : 1;
+    const volumeWeight = stride * stride * stride;
+    const probeX = Math.round((N - 1) / 2);
+
+    for (let i = 0; i < count; i++) {
+        const offset = i * 3;
+        const x = Math.floor(positions[offset]);
+        const y = Math.floor(positions[offset + 1]);
+        const z = Math.floor(positions[offset + 2]);
+        const vx = sign * vectors[offset];
+        const vy = sign * vectors[offset + 1];
+        const vz = sign * vectors[offset + 2];
+        const rawEnergy = 0.5 * (vx * vx + vy * vy + vz * vz);
+        const vectorEnergy = rawEnergy * volumeWeight;
+        const magnitude = Math.sqrt(2 * rawEnergy);
+
+        for (const row of laneRows) {
+            if (Math.abs(y - row.y) > row._band || Math.abs(z - row.z) > row._band) continue;
+            const directional = row.componentIndex === 0 ? vx
+                : (row.componentIndex === 1 ? vy : vz);
+            if (wave) {
+                row.waveEnergy += vectorEnergy;
+                row.peakWaveVel = Math.max(row.peakWaveVel, magnitude);
+                row.peakDirectionalWaveVel = Math.max(
+                    row.peakDirectionalWaveVel,
+                    Math.abs(directional),
+                );
+                if (x === probeX && y === row.y && z === row.z) {
+                    row.sampleWaveVel = directional;
+                    row.sampleWy = vy;
+                }
+            } else {
+                row.fieldEnergy += vectorEnergy;
+                row.peakFlux = Math.max(row.peakFlux, magnitude);
+                row.peakDirectionalFlux = Math.max(row.peakDirectionalFlux, Math.abs(directional));
+                if (y === row.y && z === row.z && x >= 0 && x < N) {
+                    row._lineFlux[x] = directional;
+                }
+                if (x === probeX && y === row.y && z === row.z) {
+                    row.sampleFlux = directional;
+                    row.sampleJy = vy;
+                }
+            }
+            row.energy += vectorEnergy;
+            row._energyX += x * vectorEnergy;
+        }
+    }
 }
 
-function sampledVectorsToMap(sample, N, negate = false) {
-    const map = new Map();
-    if (!sample) return map;
-    const { positions, vectors, count } = sample;
-    const sign = negate ? -1 : 1;
-    for (let i = 0; i < count; i++) {
-        const x = Math.floor(positions[i * 3]);
-        const y = Math.floor(positions[i * 3 + 1]);
-        const z = Math.floor(positions[i * 3 + 2]);
-        map.set(voxelKey(x, y, z, N), [
-            sign * vectors[i * 3],
-            sign * vectors[i * 3 + 1],
-            sign * vectors[i * 3 + 2],
-        ]);
+function selectMetricStride(N) {
+    if (N <= 33) return 1;
+    const mid = Math.round((N - 1) / 2);
+    const target = Math.max(2, Math.ceil(N / 33));
+    // Prefer a stride that includes the exact center line used by probe and
+    // harmonic readouts. All supported lattice sizes are odd, so `mid` is an
+    // integer and a nearby divisor normally exists.
+    for (let stride = target; stride <= Math.min(8, mid); stride++) {
+        if (mid % stride === 0) return stride;
     }
-    return map;
+    for (let stride = target - 1; stride >= 2; stride--) {
+        if (mid % stride === 0) return stride;
+    }
+    return target;
 }
 
 export function getSpectrumComparatorMetrics(bridge, scenarioId = RF_LATTICE_WAVE_SCENARIO_ID) {
@@ -315,68 +369,13 @@ export function getSpectrumComparatorMetrics(bridge, scenarioId = RF_LATTICE_WAV
         return { active: false, reason: 'no field buffers' };
     }
     const N = bridge.latticeSize || 33;
+    const sampleStride = selectMetricStride(N);
     const lanes = spectrumComparatorLaneParams(N, (N - 1) / 2, scenarioId);
     if (lanes.length === 0) {
         return { active: false, reason: 'not a wave-family scenario' };
     }
-    // J = flux (live sample); W = wave_vel = -E (established convention, see
-    // diagnostics_compute.cpp) since there is no direct wave_vel sampler.
-    const J = sampledVectorsToMap(bridge.getFluxVectorSampled(1), N, false);
-    const WV = sampledVectorsToMap(bridge.getEFieldSampled(1), N, true);
-    const idxOf = (x, y, z) => voxelKey(x, y, z, N);
-    let totalLaneEnergy = 0;
-
     const laneRows = lanes.map((lane) => {
         const band = Math.max(1, Math.ceil(lane.sigma * 2.4));
-        let fieldEnergy = 0;
-        let waveEnergy = 0;
-        let peakFlux = 0;
-        let peakDirectionalFlux = 0;
-        let peakWaveVel = 0;
-        let peakDirectionalWaveVel = 0;
-        let sx = 0;
-        let energy = 0;
-        for (let z = Math.max(0, lane.z - band); z <= Math.min(N - 1, lane.z + band); z++)
-        for (let y = Math.max(0, lane.y - band); y <= Math.min(N - 1, lane.y + band); y++)
-        for (let x = 0; x < N; x++) {
-            const key = idxOf(x, y, z);
-            const jv = J.get(key);
-            const wv = WV.get(key);
-            const jx = jv ? jv[0] : 0, jy = jv ? jv[1] : 0, jz = jv ? jv[2] : 0;
-            const wx = wv ? wv[0] : 0, wy = wv ? wv[1] : 0, wz = wv ? wv[2] : 0;
-            const fE = 0.5 * (jx * jx + jy * jy + jz * jz);
-            const wE = 0.5 * (wx * wx + wy * wy + wz * wz);
-            const e = fE + wE;
-            fieldEnergy += fE;
-            waveEnergy += wE;
-            energy += e;
-            sx += x * e;
-            const dirJ = jv ? jv[lane.componentIndex] : 0;
-            const dirW = wv ? wv[lane.componentIndex] : 0;
-            peakFlux = Math.max(peakFlux, Math.sqrt(jx * jx + jy * jy + jz * jz));
-            peakDirectionalFlux = Math.max(peakDirectionalFlux, Math.abs(dirJ));
-            peakWaveVel = Math.max(peakWaveVel, Math.sqrt(wx * wx + wy * wy + wz * wz));
-            peakDirectionalWaveVel = Math.max(peakDirectionalWaveVel, Math.abs(dirW));
-        }
-        totalLaneEnergy += energy;
-        const probeVec = J.get(idxOf(Math.round((N - 1) / 2), lane.y, lane.z));
-        const probeWVec = WV.get(idxOf(Math.round((N - 1) / 2), lane.y, lane.z));
-
-        // 1D Spatial DFT for Additive Synthesis
-        const harmonics = [];
-        const numHarmonics = 8;
-        for (let m = 1; m <= numHarmonics; m++) {
-            let re = 0, im = 0;
-            const kMode = 2 * Math.PI * m / N;
-            for (let x = 0; x < N; x++) {
-                const jv = J.get(idxOf(x, lane.y, lane.z));
-                const val = jv ? jv[lane.componentIndex] : 0;
-                re += val * Math.cos(kMode * x);
-                im -= val * Math.sin(kMode * x);
-            }
-            harmonics.push(Math.sqrt(re * re + im * im) * 2 / N);
-        }
-
         return {
             id: lane.id,
             label: lane.label,
@@ -400,21 +399,59 @@ export function getSpectrumComparatorMetrics(bridge, scenarioId = RF_LATTICE_WAV
             groupVelocity: lane.groupVelocity,
             speedRatioToLight: lane.speedRatioToLight,
             proxy: !!lane.proxy,
-            fieldEnergy,
-            waveEnergy,
-            energy,
-            energyCentroidX: energy > 0 ? sx / energy : 0,
-            peakFlux,
-            peakDirectionalFlux,
-            peakWaveVel,
-            peakDirectionalWaveVel,
-            sampleFlux: probeVec ? probeVec[lane.componentIndex] : 0,
-            sampleWaveVel: probeWVec ? probeWVec[lane.componentIndex] : 0,
-            sampleJy: probeVec ? probeVec[1] : 0,
-            sampleWy: probeWVec ? probeWVec[1] : 0,
-            harmonics,
+            fieldEnergy: 0,
+            waveEnergy: 0,
+            energy: 0,
+            energyCentroidX: 0,
+            peakFlux: 0,
+            peakDirectionalFlux: 0,
+            peakWaveVel: 0,
+            peakDirectionalWaveVel: 0,
+            sampleFlux: 0,
+            sampleWaveVel: 0,
+            sampleJy: 0,
+            sampleWy: 0,
+            harmonics: [],
+            _band: band,
+            _energyX: 0,
+            _lineFlux: new Float64Array(N),
         };
     });
+
+    // J = flux (live sample); W = wave_vel = -E (established convention, see
+    // diagnostics_compute.cpp) since there is no direct wave_vel sampler.
+    reduceVectorSample(
+        bridge.getFluxVectorSampled(sampleStride),
+        laneRows,
+        N,
+        { stride: sampleStride },
+    );
+    reduceVectorSample(
+        bridge.getEFieldSampled(sampleStride),
+        laneRows,
+        N,
+        { wave: true, stride: sampleStride },
+    );
+
+    let totalLaneEnergy = 0;
+    for (const row of laneRows) {
+        row.energyCentroidX = row.energy > 0 ? row._energyX / row.energy : 0;
+        for (let m = 1; m <= 8; m++) {
+            let re = 0;
+            let im = 0;
+            const kMode = 2 * Math.PI * m / N;
+            for (let x = 0; x < N; x++) {
+                const val = row._lineFlux[x];
+                re += val * Math.cos(kMode * x);
+                im -= val * Math.sin(kMode * x);
+            }
+            row.harmonics.push(Math.sqrt(re * re + im * im) * 2 * sampleStride / N);
+        }
+        totalLaneEnergy += row.energy;
+        delete row._band;
+        delete row._energyX;
+        delete row._lineFlux;
+    }
 
     const sets = new Map();
     for (const lane of laneRows) {
@@ -444,6 +481,8 @@ export function getSpectrumComparatorMetrics(bridge, scenarioId = RF_LATTICE_WAV
         active: true,
         tick: bridge.currentTick?.() ?? 0,
         latticeSize: N,
+        sampleStride,
+        samplingMode: sampleStride === 1 ? 'exact' : 'stride-estimate',
         cSpeed: C_SPEED,
         scenarioId,
         singleScenario: lanes.length === 1,

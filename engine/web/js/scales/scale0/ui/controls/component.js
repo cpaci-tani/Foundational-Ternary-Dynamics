@@ -28,13 +28,23 @@ export class Scale0ControlsComponent {
       this.panel.appendChild(gridContainer);
     }
 
-    // Mount control cards
-    gridContainer.appendChild(createPhysicsTogglesCard());
-    gridContainer.appendChild(createSubstrateControlsCard());
-    gridContainer.appendChild(createFluxVolumeCard());
-    gridContainer.appendChild(createFlowLinesCard());
-    gridContainer.appendChild(createParticleDisplayCard());
-    gridContainer.appendChild(createSelectionCard());
+    // Reconcile the six Scale-0 cards by stable ownership key. bindUI can run
+    // again after an engine-mode round trip; replacing or appending cards on
+    // re-entry duplicated IDs/listeners and discarded retained control state.
+    const cards = [
+      ['physics', createPhysicsTogglesCard],
+      ['substrate', createSubstrateControlsCard],
+      ['flux-volume', createFluxVolumeCard],
+      ['flow-lines', createFlowLinesCard],
+      ['particle-display', createParticleDisplayCard],
+      ['selection', createSelectionCard],
+    ];
+    for (const [key, createCard] of cards) {
+      if (gridContainer.querySelector(`[data-scale0-control-card="${key}"]`)) continue;
+      const card = createCard();
+      card.dataset.scale0ControlCard = key;
+      gridContainer.appendChild(card);
+    }
 
     return this;
   }

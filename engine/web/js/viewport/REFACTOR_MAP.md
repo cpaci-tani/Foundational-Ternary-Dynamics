@@ -141,7 +141,6 @@ post-processing, dispose.
 - `setWireframeBrightness` 554-563
 - `toggleAxes` 564-574
 - `setVoxelHighlight` 575-595
-- `setSymmetryHighlights` 596-639
 - `toggleGrid` 640-654
 - `_buildPEAxes` 3617-3672
 - `enablePostProcessing` 3761-3782
@@ -153,7 +152,7 @@ post-processing, dispose.
 - `dispose` 3843-3952 (large; calls every sub-renderer's `dispose()`)
 
 **State owned:** `wireframe`, `_wireframeBrightness`, `_showAxes`, `_showGrid`,
-`axes`, `peAxes`, `peGrid`, `_voxelHighlight`, `_symHighlights`, `_composer`,
+`axes`, `peAxes`, `peGrid`, `_voxelHighlight`, `_composer`,
 `_bloomPass`, `_usePostProcessing`, `_resizeObserver`.
 
 **Constructor:** `new ViewportSceneCore({ scene, camera, renderer, controls, container, latticeSize, halfN, boundaryShape, boundaryMode, engineMode })`.

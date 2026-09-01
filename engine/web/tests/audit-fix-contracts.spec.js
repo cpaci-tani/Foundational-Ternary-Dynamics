@@ -351,7 +351,7 @@ test('Scale-0 Time/Gravity demand reaches the worker mask and Empty suppresses i
         path.join(webRoot, 'js', 'scales', 'scale0', 'ui', 'overlays', 'time-panel.js'),
         'utf8',
     );
-    expect(timePanel).toContain("replaceSamplerWants?.('time-panel', [`latency@${STRIDE}`])");
+    expect(timePanel).toContain("replaceSamplerWants?.('time-panel', [`latency@${sampleStride}`])");
     expect(timePanel).toContain('getScale0GravityMetricAgg?.()');
     expect(timePanel).not.toMatch(/replaceSamplerWants[^\n]+gravityMetricAgg/);
 });

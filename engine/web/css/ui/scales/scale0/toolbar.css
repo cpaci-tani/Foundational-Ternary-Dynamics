@@ -33,39 +33,6 @@
     box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
 }
 
-/* ── Floating Symmetry Panel ─────────────────────────────────────────────── */
-.sym-panel {
-    position: absolute;
-    display: none;
-    z-index: var(--z-sidebar);
-    background: var(--bg-surface);
-    border: 1px solid var(--positive);
-    padding: 12px;
-    border-radius: var(--radius-lg);
-    font-size: var(--fs-sm);
-    backdrop-filter: var(--glass-filter-low);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    pointer-events: auto;
-    /* Constrain the floating panel to the viewport so it never overflows on
-       narrow screens (it has no intrinsic width cap otherwise). */
-    max-width: min(400px, 95vw);
-    max-height: 85vh;
-    overflow-y: auto;
-}
-.sym-panel-title {
-    color: var(--positive-text);
-    font-weight: bold;
-    margin-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 4px;
-}
-.sym-panel-label {
-    display: block;
-    margin-bottom: 4px;
-    cursor: pointer;
-    color: var(--text-secondary);
-}
-
 /* ── Floating Flux-Slice Diagnostic Panel ────────────────────────────────── */
 /* Live xy / xz / yz heatmaps of |J|. Mounted as `scale0-only` so the
    scale-visibility rules auto-hide it on a scale switch. The chip is the

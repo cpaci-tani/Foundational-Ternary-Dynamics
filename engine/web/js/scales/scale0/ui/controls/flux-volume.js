@@ -2,6 +2,13 @@
  * Scale 0 Flux Volume Card
  */
 
+import {
+  fluxThresholdToSliderPosition,
+  formatFluxThreshold,
+} from '../../../../viewport/flux-threshold.js';
+
+const DEFAULT_FLUX_THRESHOLD = 0.005;
+
 export function createSelectionCard() {
   const card = document.createElement('div');
   card.className = 'card scale0-only';
@@ -117,6 +124,8 @@ export function createParticleDisplayCard() {
 export function createFluxVolumeCard() {
   const card = document.createElement('div');
   card.className = 'card scale0-only';
+  const thresholdPosition = fluxThresholdToSliderPosition(DEFAULT_FLUX_THRESHOLD);
+  const thresholdText = formatFluxThreshold(DEFAULT_FLUX_THRESHOLD);
   card.innerHTML = `
     <div class="card-title">Flux Volume</div>
 
@@ -150,10 +159,10 @@ export function createFluxVolumeCard() {
       <span class="pe-ctrl-value" id="flux-scenario-scale-val">1.0</span>
     </div>
 
-    <div class="combo-section-label" title="Relative fraction of the current peak |J|. Zero shows every available flux voxel; 0.5 keeps voxels at least half as strong as the peak.">Threshold</div>
+    <div class="combo-section-label" title="[PROXY — visualization] Relative local activation-energy cutoff. Each voxel combines its own 1/2|J|², the mean energy of its surrounding 26 Moore neighbours, and |s|E_REST. Every available voxel is evaluated; only voxels below this cutoff are hidden. Point size and colour phase increase with the same energy signal.">Threshold</div>
     <div class="ctrl-slider-row">
-      <input type="range" class="pe-slider" id="flux-threshold" min="0.0" max="0.5" step="0.0001" value="0.005" aria-label="Relative flux threshold">
-      <span class="pe-ctrl-value" id="flux-threshold-val">0.005</span>
+      <input type="range" class="pe-slider" id="flux-threshold" min="0.0" max="0.5" step="0.0001" value="${thresholdPosition}" aria-label="Relative local activation-energy threshold" aria-valuetext="${thresholdText}">
+      <span class="pe-ctrl-value" id="flux-threshold-val">${thresholdText}</span>
     </div>
 
     <div class="combo-section-label" title="Visual spacing multiplier between rendered lattice voxels (does not change the physics)">Lattice Spacing</div>
