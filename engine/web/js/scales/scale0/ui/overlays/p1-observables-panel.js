@@ -14,6 +14,7 @@ import { G2Component } from './p1-observables/g2.js';
 import { ThomsonComponent } from './p1-observables/thomson.js?v=2';
 import { FineStructureComponent } from './p1-observables/fine-structure.js?v=2';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
+import { TickHistoryControl } from '../../../../ui/charts/history-window.js';
 
 const PANEL_ID = 'p1-observables-panel';
 const UPDATE_INTERVAL_MS = 250;            // 4 Hz; observables are slow signals
@@ -180,6 +181,11 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
 
     const bodyEl = panel.querySelector(`#${PANEL_ID}-body`);
     const inapplicableMessage = panel.querySelector('.p1-inapplicable');
+    const historyControl = new TickHistoryControl(panel, {
+        id: 'p1-observables-panel',
+        defaultTicks: 120,
+        onChange: () => update(),
+    });
 
     let components = null;
     let inapplicable = false;
@@ -198,7 +204,7 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
             hydrogen: new HydrogenComponent(),
             bell: new BellComponent(),
             gravity: new GravityComponent(),
-            g2: new G2Component(),
+            g2: new G2Component(historyControl),
             thomson: new ThomsonComponent(),
             fineStructure: new FineStructureComponent(),
         };
@@ -249,7 +255,7 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
         components.hydrogen.update(bridge, scenarioId);
         components.bell.update(bridge, scenarioId);
         components.gravity.update(bridge, scenarioId, now);
-        components.g2.update(bridge, particles);
+        components.g2.update(bridge, particles, state.fieldDataVersion);
         components.thomson.update(bridge, scenarioId);
         components.fineStructure.update(bridge, scenarioId);
     }
@@ -350,6 +356,7 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
             if (expandBtnRef && expandClickHandler) {
                 expandBtnRef.removeEventListener('click', expandClickHandler);
             }
+            historyControl.destroy();
             if (typeof window !== 'undefined' && window.__ftdP1Panel === api) {
                 window.__ftdP1Panel = null;
             }

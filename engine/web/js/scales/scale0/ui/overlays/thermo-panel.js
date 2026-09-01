@@ -32,6 +32,7 @@ import {
     readScale0FieldEnergy,
 } from '../../../../telemetry/scale0-read.js';
 import { telemetryHub } from '../../../../telemetry-hub.js';
+import { TickHistoryControl } from '../../../../ui/charts/history-window.js';
 
 const PANEL_ID = 'thermo-panel';
 const HZ = 4;
@@ -152,6 +153,11 @@ export function mountThermoPanel(host, getBridge) {
     const phaseEl = el('phase'), barEl = el('bar'), mpctEl = el('mpct');
     const rowsEl = el('rows'), heat = el('heat'), hmaxEl = el('hmax'), sparkEl = el('spark');
     const mHist = [];
+    const historyControl = new TickHistoryControl(panel, {
+        id: 'thermo-panel',
+        defaultTicks: SPARK_MAX,
+        onChange: () => renderHistory(),
+    });
     let bridgeId = null;
     let resetVersion = -1;
     let lastHistoryStamp = null;
@@ -159,6 +165,14 @@ export function mountThermoPanel(host, getBridge) {
     let renderCount = 0;
     let tempFrame = null;
     let pendingTemp = null;
+
+    function renderHistory() {
+        const visible = historyControl.slice(mHist, entry => entry.tick);
+        const d = sparkPath(visible.map(entry => entry.value));
+        sparkEl.innerHTML = d
+            ? `<path d="${d}" fill="none" stroke="var(--accent,#e8b04b)" stroke-width="1.4"/>`
+            : '';
+    }
 
     function commitTemp(T, ctx, owner, loadGeneration) {
         if (!ctx || !owner || typeof owner.setLangevinTemp !== 'function') return false;
@@ -335,12 +349,9 @@ export function mountThermoPanel(host, getBridge) {
         const historyStamp = diagMeta ? telemetryStamp(diagMeta) : null;
         if (Number.isFinite(m) && tick !== null && historyStamp !== lastHistoryStamp) {
             lastHistoryStamp = historyStamp;
-            mHist.push(m); if (mHist.length > SPARK_MAX) mHist.shift();
+            mHist.push({ tick, value: m });
         }
-        const d = sparkPath(mHist);
-        sparkEl.innerHTML = d
-            ? `<path d="${d}" fill="none" stroke="var(--accent,#e8b04b)" stroke-width="1.4"/>`
-            : '';
+        renderHistory();
     }
 
     const armSub = rafCoordinator.subscribe(`${PANEL_ID}-arm`, { hz: 2, cb: () => {
@@ -365,6 +376,7 @@ export function mountThermoPanel(host, getBridge) {
             cancelScheduledTemp();
             armSub.unsubscribe();
             liveSub?.unsubscribe();
+            historyControl.destroy();
             if (typeof window !== 'undefined' && window.__ftdThermoPanel === api) window.__ftdThermoPanel = null;
             panel.remove();
         },

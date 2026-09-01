@@ -33,4 +33,11 @@ assert.equal(prof.length, 2);
 assert.ok(prof[0].r < prof[1].r);
 assert.ok(Math.abs(prof[0].dtau_dt - 1) < 1e-12);
 
+const summary = T.radialSummary(positions, values, c, 3, 4);
+assert.equal(summary.hasField, true);
+assert.ok(Math.abs(summary.lDeep - 0.5) < 1e-12);
+assert.ok(Math.abs(summary.lFar - 0.0) < 1e-12);
+assert.ok(summary.bins.length > 0);
+assert.ok(summary.bins.every((b) => b.dtau_dt >= 0 && b.dtau_dt <= 1));
+
 console.log('time-analysis OK');

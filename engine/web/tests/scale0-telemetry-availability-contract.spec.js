@@ -208,7 +208,7 @@ test('suppresses stale values and stats, then displays a fresh measured zero', a
     });
 });
 
-test('Diagnostics sparklines keep redrawing after a shared ring reaches capacity', async ({ page }) => {
+test('Diagnostics sparklines keep redrawing while shared history grows beyond its initial capacity', async ({ page }) => {
     const result = await page.evaluate(async () => {
         const [{ MultiRingBuffer }, { DiagnosticsTable }] = await Promise.all([
             import('/js/telemetry-hub.js'),
@@ -272,7 +272,7 @@ test('Diagnostics sparklines keep redrawing after a shared ring reaches capacity
     expect(result).toEqual({
         redrawsAfterRollover: 525,
         redrawsAfterPatch: 526,
-        ringCount: 500,
+        ringCount: 525,
         ringTotal: 525,
         statsCount: 525,
         lastY: 526,

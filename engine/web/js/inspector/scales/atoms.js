@@ -3,7 +3,7 @@ import { getElement, elementSymbol, cpkColor } from '../../elements.js';
 import { getMolecule } from '../../molecules.js';
 import { NEUTRON_PROTON_MASS_RATIO } from '../../constants.js';
 import { Sparkline } from '../../ui/charts/sparkline.js';
-import { RingBuffer } from '../../telemetry-hub.js';
+import { RingBuffer, telemetryHub } from '../../telemetry-hub.js';
 import {
     formatPosition,
     formatVec3,
@@ -30,6 +30,7 @@ export function handleAEClick(target, intersects) {
                 target._selectedAEAtomId = newId;
                 if (target._aeTelemetry) {
                     for (const b of Object.values(target._aeTelemetry.buffers)) b.clear();
+                    target._aeTelemetry.lastTick = null;
                 }
             }
             showAEInspector(target);
@@ -39,6 +40,7 @@ export function handleAEClick(target, intersects) {
     target._selectedAEAtomId = -1;
     if (target._aeTelemetry) {
         for (const b of Object.values(target._aeTelemetry.buffers)) b.clear();
+        target._aeTelemetry.lastTick = null;
     }
     hideAEInspector(target);
 }
@@ -121,7 +123,8 @@ export function updateAEFields(target) {
                 zeff: new RingBuffer(80),
                 q_frac: new RingBuffer(80)
             },
-            sparks: {}
+            sparks: {},
+            lastTick: null,
         };
         const colorAlpha = '#a855f7';
         const colorIon = '#ef4444';
@@ -130,21 +133,26 @@ export function updateAEFields(target) {
         const colorZeff = '#10b981';
         const colorQFrac = '#8b5cf6';
         
-        target._aeTelemetry.sparks.alpha_pol = new Sparkline(target.aeFields.alphaPolSpark, { buffer: target._aeTelemetry.buffers.alpha_pol, color: colorAlpha });
-        target._aeTelemetry.sparks.e_ion = new Sparkline(target.aeFields.eIonSpark, { buffer: target._aeTelemetry.buffers.e_ion, color: colorIon });
-        target._aeTelemetry.sparks.e_aff = new Sparkline(target.aeFields.eAffSpark, { buffer: target._aeTelemetry.buffers.e_aff, color: colorAff });
-        target._aeTelemetry.sparks.sigma_scatter = new Sparkline(target.aeFields.sigmaScatterSpark, { buffer: target._aeTelemetry.buffers.sigma_scatter, color: colorSigma });
-        target._aeTelemetry.sparks.zeff = new Sparkline(target.aeFields.zeffSpark, { buffer: target._aeTelemetry.buffers.zeff, color: colorZeff });
-        target._aeTelemetry.sparks.q_frac = new Sparkline(target.aeFields.qFracSpark, { buffer: target._aeTelemetry.buffers.q_frac, color: colorQFrac });
+        const historyControl = target.chartHistoryControl || null;
+        target._aeTelemetry.sparks.alpha_pol = new Sparkline(target.aeFields.alphaPolSpark, { buffer: target._aeTelemetry.buffers.alpha_pol, color: colorAlpha, historyControl });
+        target._aeTelemetry.sparks.e_ion = new Sparkline(target.aeFields.eIonSpark, { buffer: target._aeTelemetry.buffers.e_ion, color: colorIon, historyControl });
+        target._aeTelemetry.sparks.e_aff = new Sparkline(target.aeFields.eAffSpark, { buffer: target._aeTelemetry.buffers.e_aff, color: colorAff, historyControl });
+        target._aeTelemetry.sparks.sigma_scatter = new Sparkline(target.aeFields.sigmaScatterSpark, { buffer: target._aeTelemetry.buffers.sigma_scatter, color: colorSigma, historyControl });
+        target._aeTelemetry.sparks.zeff = new Sparkline(target.aeFields.zeffSpark, { buffer: target._aeTelemetry.buffers.zeff, color: colorZeff, historyControl });
+        target._aeTelemetry.sparks.q_frac = new Sparkline(target.aeFields.qFracSpark, { buffer: target._aeTelemetry.buffers.q_frac, color: colorQFrac, historyControl });
     }
 
     if (target._aeTelemetry) {
-        target._aeTelemetry.buffers.alpha_pol.push(data.alpha_pol || 0);
-        target._aeTelemetry.buffers.e_ion.push(data.e_ion || 0);
-        target._aeTelemetry.buffers.e_aff.push(data.e_aff || 0);
-        target._aeTelemetry.buffers.sigma_scatter.push(data.sigma_scatter || 0);
-        target._aeTelemetry.buffers.zeff.push(data.z_eff || 0);
-        target._aeTelemetry.buffers.q_frac.push(data.charge || 0);
+        const tick = Number(telemetryHub.s2?.diag?.tick);
+        if (Number.isFinite(tick) && tick !== target._aeTelemetry.lastTick) {
+            target._aeTelemetry.lastTick = tick;
+            target._aeTelemetry.buffers.alpha_pol.push(data.alpha_pol || 0, tick);
+            target._aeTelemetry.buffers.e_ion.push(data.e_ion || 0, tick);
+            target._aeTelemetry.buffers.e_aff.push(data.e_aff || 0, tick);
+            target._aeTelemetry.buffers.sigma_scatter.push(data.sigma_scatter || 0, tick);
+            target._aeTelemetry.buffers.zeff.push(data.z_eff || 0, tick);
+            target._aeTelemetry.buffers.q_frac.push(data.charge || 0, tick);
+        }
 
         for (const spark of Object.values(target._aeTelemetry.sparks)) spark.update();
 

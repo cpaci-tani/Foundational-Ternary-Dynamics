@@ -11,6 +11,7 @@ import { sections as scale2Sections } from './descriptors/scale2.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { PerfFlags } from '../../../config/perf-flags.js';
 import { isPanelLive } from '../panel-visibility.js';
+import { TickHistoryControl } from '../../charts/history-window.js';
 
 export class DiagnosticsPanelComponent {
     constructor(panelEl) {
@@ -21,11 +22,18 @@ export class DiagnosticsPanelComponent {
 
     init() {
         if (!this.el) return this;
+        this.historyControl = new TickHistoryControl(this.el, {
+            id: 'diagnostics-panel',
+            defaultTicks: 120,
+        });
         if (!this.el.dataset.panelRedesignMounted) {
             const scale0Root = document.createElement('div');
             scale0Root.className = 'scale0-only diag-scale0-root';
             for (const section of scale0Sections) {
-                const table = new DiagnosticsTable(section, telemetryHub, { resetScope: 0 });
+                const table = new DiagnosticsTable(section, telemetryHub, {
+                    resetScope: 0,
+                    historyControl: this.historyControl,
+                });
                 scale0Root.appendChild(table.el);
                 this.tables.push(table);
                 this.tablesByScale['0'].push(table);
@@ -35,7 +43,10 @@ export class DiagnosticsPanelComponent {
             const scale1Root = document.createElement('div');
             scale1Root.className = 'scale1-only diag-scale1-root';
             for (const section of scale1Sections) {
-                const table = new DiagnosticsTable(section, telemetryHub, { resetScope: 1 });
+                const table = new DiagnosticsTable(section, telemetryHub, {
+                    resetScope: 1,
+                    historyControl: this.historyControl,
+                });
                 scale1Root.appendChild(table.el);
                 this.tables.push(table);
                 this.tablesByScale['1'].push(table);
@@ -47,7 +58,10 @@ export class DiagnosticsPanelComponent {
             const aeRoot = document.createElement('div');
             aeRoot.className = 'scale-ae diag-ae-root';
             for (const section of scale2Sections) {
-                const table = new DiagnosticsTable(section, telemetryHub, { resetScope: 2 });
+                const table = new DiagnosticsTable(section, telemetryHub, {
+                    resetScope: 2,
+                    historyControl: this.historyControl,
+                });
                 aeRoot.appendChild(table.el);
                 this.tables.push(table);
                 this.tablesByScale.ae.push(table);
@@ -94,10 +108,20 @@ export class DiagnosticsPanelComponent {
         this.tablesByScale['0'].length = 0;
         this.tablesByScale['1'].length = 0;
         this.tablesByScale.ae.length = 0;
+        this.historyControl?.destroy();
+        this.historyControl = null;
+        this.el.querySelectorAll('.diag-scale0-root, .diag-scale1-root, .diag-ae-root')
+            .forEach((root) => root.remove());
+        delete this.el.dataset.panelRedesignMounted;
+        if (this.el._ftdDiagnosticsPanel === this) this.el._ftdDiagnosticsPanel = null;
     }
 }
 
 export function initDiagnosticsPanel() {
     const el = document.getElementById('panel-diagnostics');
-    return el ? new DiagnosticsPanelComponent(el).init() : null;
+    if (!el) return null;
+    if (el._ftdDiagnosticsPanel) return el._ftdDiagnosticsPanel;
+    const component = new DiagnosticsPanelComponent(el).init();
+    el._ftdDiagnosticsPanel = component;
+    return component;
 }

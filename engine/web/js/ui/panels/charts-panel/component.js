@@ -6,6 +6,7 @@ import { charts as scale2Charts } from './descriptors/scale2.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { PerfFlags } from '../../../config/perf-flags.js';
 import { isPanelLive } from '../panel-visibility.js';
+import { TickHistoryControl } from '../../charts/history-window.js';
 
 const LS_ACTIVE_LEGACY = 'ftd.charts.active';
 const LS_ACTIVE_PREFIX = 'ftd.charts.active.';
@@ -47,6 +48,7 @@ export class ChartsPanelComponent {
     constructor(panelEl) {
         this.el = panelEl;
         this.cards = new Map(); // chartId → ChartCard
+        this._destroyTimers = new Set();
         this.activeScale = '0';
         this.descriptors = scale0Charts;
     }
@@ -61,6 +63,10 @@ export class ChartsPanelComponent {
 
         this.chipStrip = this.el.querySelector('.charts-chip-strip');
         this.grid      = this.el.querySelector('.charts-grid');
+        this.historyControl = new TickHistoryControl(this.el, {
+            id: 'charts-panel',
+            defaultTicks: 160,
+        });
 
         const app = document.getElementById('app');
         this._setScale(app?.dataset.activeScale || '0', { force: true });
@@ -120,14 +126,18 @@ export class ChartsPanelComponent {
             if (!this.active.has(id)) {
                 card.el.classList.add('is-leaving');
                 const victim = card;
-                setTimeout(() => victim.destroy(), 140);
+                const timer = setTimeout(() => {
+                    this._destroyTimers.delete(timer);
+                    victim.destroy();
+                }, 140);
+                this._destroyTimers.add(timer);
                 this.cards.delete(id);
             }
         }
         // Create newly-active cards.
         for (const desc of this.descriptors) {
             if (!this.active.has(desc.id) || this.cards.has(desc.id)) continue;
-            const card = new ChartCard(desc, telemetryHub);
+            const card = new ChartCard(desc, telemetryHub, this.historyControl);
             this.grid.appendChild(card.el);
             this.cards.set(desc.id, card);
         }
@@ -143,12 +153,24 @@ export class ChartsPanelComponent {
     }
 
     cleanup() {
+        for (const timer of this._destroyTimers) clearTimeout(timer);
+        this._destroyTimers.clear();
         for (const card of this.cards.values()) card.destroy();
         this.cards.clear();
+        this.historyControl?.destroy();
+        this.historyControl = null;
+        this.el.innerHTML = '';
+        delete this.el.dataset.panelRedesignMounted;
+        delete this.el.dataset.component;
+        if (this.el._ftdChartsPanel === this) this.el._ftdChartsPanel = null;
     }
 }
 
 export function initChartsPanel() {
     const el = document.getElementById('panel-charts');
-    return el ? new ChartsPanelComponent(el).init() : null;
+    if (!el) return null;
+    if (el._ftdChartsPanel) return el._ftdChartsPanel;
+    const component = new ChartsPanelComponent(el).init();
+    el._ftdChartsPanel = component;
+    return component;
 }

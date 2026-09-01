@@ -52,3 +52,48 @@ export function radialBins(profile, nBins = 12) {
   }
   return bins;
 }
+
+// Allocation-bounded live-panel reduction. Unlike radialProfile()+radialBins(),
+// this never materializes or sorts one object per sampled voxel. Samples are
+// reduced directly into radial bins while retaining the extrema needed by the
+// twin-clock and lapse cards. `maxRadius` may be supplied from lattice geometry
+// to keep the reduction one-pass; otherwise the sampled maximum is used.
+export function radialSummary(positions, values, center, nBins = 12, maxRadius = null) {
+  const count = Math.min(values?.length || 0, Math.floor((positions?.length || 0) / 3));
+  if (!count || nBins < 1) {
+    return { bins: [], lDeep: 0, lFar: 0, lMax: 0, rAtMax: 0, hasField: false };
+  }
+  let rMax = Number.isFinite(maxRadius) && maxRadius > 0 ? maxRadius : 0;
+  if (!(rMax > 0)) {
+    for (let i = 0; i < count; i++) {
+      const dx = positions[i * 3] - center.x;
+      const dy = positions[i * 3 + 1] - center.y;
+      const dz = positions[i * 3 + 2] - center.z;
+      rMax = Math.max(rMax, Math.sqrt(dx * dx + dy * dy + dz * dz));
+    }
+  }
+  rMax ||= 1;
+  const sum = new Float64Array(nBins);
+  const binCount = new Uint32Array(nBins);
+  let lDeep = -Infinity, lFar = Infinity, rAtMax = 0;
+  for (let i = 0; i < count; i++) {
+    const dx = positions[i * 3] - center.x;
+    const dy = positions[i * 3 + 1] - center.y;
+    const dz = positions[i * 3 + 2] - center.z;
+    const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    const L = values[i];
+    if (L > lDeep) { lDeep = L; rAtMax = r; }
+    if (L < lFar) lFar = L;
+    const b = Math.min(nBins - 1, Math.floor((r / rMax) * nBins));
+    sum[b] += clockRate(L);
+    binCount[b]++;
+  }
+  const bins = [];
+  for (let b = 0; b < nBins; b++) {
+    if (binCount[b]) bins.push({
+      r: (b + 0.5) / nBins * rMax,
+      dtau_dt: sum[b] / binCount[b],
+    });
+  }
+  return { bins, lDeep, lFar, lMax: lDeep, rAtMax, hasField: true };
+}

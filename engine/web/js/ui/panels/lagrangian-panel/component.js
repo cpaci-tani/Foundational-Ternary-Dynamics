@@ -10,6 +10,7 @@ import { PerfFlags } from '../../../config/perf-flags.js';
 import { isPanelLive } from '../panel-visibility.js';
 import { formatValue } from '../diagnostics-panel/formatters.js';
 import { getScale0State } from '../../../scales/scale0/state/store.js';
+import { TickHistoryControl } from '../../charts/history-window.js';
 
 const LS_HIDDEN = 'ftd.chart.lagrangian.hidden';
 const EMPTY_SCENARIO_ID = 'empty';
@@ -98,6 +99,10 @@ export class LagrangianPanelComponent {
         this.hidden = loadHidden();
         this.grid = this.el.querySelector('.lag-charts-grid');
         this.telemetryStatus = this.el.querySelector('.lag-telemetry-status');
+        this.historyControl = new TickHistoryControl(this.el, {
+            id: 'lagrangian-panel',
+            defaultTicks: 240,
+        });
         this.observerCard = this.el.querySelector('.lag-observer-baseline');
         this.observerValue = this.el.querySelector('[data-lag-observer-value]');
         this.excitationValue = this.el.querySelector('[data-lag-excitation-value]');
@@ -176,6 +181,7 @@ export class LagrangianPanelComponent {
             series: [{ key: term.key, label: term.label, color: term.color, buffer: term.buffer, unit: term.unit }],
             xLabel: 'tick', yLabel: 'ℒ',
             hub:    telemetryHub.lag,
+            historyControl: this.historyControl,
         });
         requestAnimationFrame(() => card.classList.add('is-mounted'));
         return { term, card, chart, onScreen: true };
@@ -264,10 +270,20 @@ export class LagrangianPanelComponent {
         this.cards.clear();
         for (const t of this.tables) t.destroy();
         this.tables.length = 0;
+        this.historyControl?.destroy();
+        this.historyControl = null;
+        this.el.innerHTML = '';
+        delete this.el.dataset.panelRedesignMounted;
+        delete this.el.dataset.component;
+        if (this.el._ftdLagrangianPanel === this) this.el._ftdLagrangianPanel = null;
     }
 }
 
 export function initLagrangianPanel() {
     const el = document.getElementById('panel-lagrangian');
-    return el ? new LagrangianPanelComponent(el).init() : null;
+    if (!el) return null;
+    if (el._ftdLagrangianPanel) return el._ftdLagrangianPanel;
+    const component = new LagrangianPanelComponent(el).init();
+    el._ftdLagrangianPanel = component;
+    return component;
 }

@@ -4,6 +4,7 @@ import { ChartHoverTooltip, formatChartValue } from '../../charts/chart-hover-to
 import { resolveChartColor } from '../../charts/theme.js';
 import { PerfFlags } from '../../../config/perf-flags.js';
 import { isPanelLive } from '../panel-visibility.js';
+import { TickHistoryControl } from '../../charts/history-window.js';
 
 const PANEL_MIN_INTERVAL_MS = 33;   // ~30 Hz ceiling; Scale 0 redraws only when its ~20-24 Hz source advances
 const GRID_VISIBLE_SAMPLES = 120;   // display window; source ring buffers still retain their full history
@@ -99,6 +100,16 @@ export class TelemetryGridPanelComponent {
         `;
         this.container = this.el.querySelector('.telemetry-grid-container');
         this.el.dataset.component = 'telemetry-grid';
+        this.historyControl = new TickHistoryControl(this.el, {
+            id: 'telemetry-grid-panel',
+            defaultTicks: GRID_VISIBLE_SAMPLES,
+            onChange: () => {
+                for (const entry of this.charts.values()) {
+                    entry.lastTotal = -1;
+                    if (entry.u && entry.onScreen) this._drawEntry(entry);
+                }
+            },
+        });
 
         // Detect layout active scale and build cards
         const app = document.getElementById('app');
@@ -419,12 +430,13 @@ export class TelemetryGridPanelComponent {
         if (entry.lastBuffer === buf && entry.lastTotal === total
             && Object.is(entry.lastValue, latestValue)) return;
 
+        const n = this.historyControl.visibleCount(buf);
+        this._ensureEntryCapacity(entry, n);
         const { u, xs, ys } = entry;
-        const n = Math.min(buf.count, GRID_VISIBLE_SAMPLES);
         const start = Math.max(0, buf.count - n);
-        const xStart = Math.max(0, (buf.total ?? buf.count) - n);
         for (let i = 0; i < n; i++) {
-            xs[i] = xStart + i;
+            const tick = buf.getTick?.(start + i);
+            xs[i] = Number.isFinite(tick) ? tick : start + i;
             ys[i] = buf.get(start + i);
         }
         if (entry.lastN !== n || !entry.plotData) {
@@ -444,6 +456,15 @@ export class TelemetryGridPanelComponent {
         // off-screen charts entirely (update()), not skipping this scan.
         u.setData(entry.plotData, true);
         if (entry.hoverActive) this.renderTooltip(entry, chan);
+    }
+
+    _ensureEntryCapacity(entry, size) {
+        if (entry.xs.length >= size) return;
+        let capacity = Math.max(2, entry.xs.length || 2);
+        while (capacity < size) capacity *= 2;
+        entry.xs = new Float64Array(capacity);
+        entry.ys = new Float64Array(capacity);
+        entry.plotData = null;
     }
 
     renderTooltip(entry, chan) {
@@ -525,6 +546,8 @@ export class TelemetryGridPanelComponent {
         });
         this.charts.clear();
         this._wasLive = false;
+        this.historyControl?.destroy();
+        this.historyControl = null;
         if (this.el?._ftdResize) delete this.el._ftdResize;
     }
 }

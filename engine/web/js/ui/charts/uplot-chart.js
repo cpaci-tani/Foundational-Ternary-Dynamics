@@ -29,6 +29,7 @@ export class UPlotChart {
         this.id        = opts.id;
         this.hub       = opts.hub;
         this.series    = opts.series;
+        this.historyControl = opts.historyControl || null;
         this.visibleSamples = Math.max(2, opts.visibleSamples || DEFAULT_VISIBLE_SAMPLES);
         this._destroyed = false;
         this._hoverActive = false;
@@ -40,6 +41,12 @@ export class UPlotChart {
             buffer: null, total: -1, count: -1, last: Number.NaN,
         }));
         this._emptyPublished = true;
+        this._historyDirty = false;
+        this._unsubscribeHistory = this.historyControl?.subscribe?.(() => {
+            this._historyDirty = true;
+            for (const stamp of this._bufferStamps) stamp.total = -1;
+            this.update();
+        }) || null;
 
         const theme = getChartTheme();
         const bufSize = this._maxBufferSize();
@@ -103,7 +110,16 @@ export class UPlotChart {
 
     _maxBufferSize() {
         const maxBuffer = Math.max(...this.series.map((s) => this.hub[s.buffer]?.size || 500));
-        return Math.min(maxBuffer, this.visibleSamples);
+        return this.historyControl?.isAll ? Math.max(2, Math.min(maxBuffer, 512))
+            : Math.max(2, Math.min(maxBuffer, this.historyControl?.ticks || this.visibleSamples));
+    }
+
+    _ensureCapacity(size) {
+        if (this.xs.length >= size) return;
+        let capacity = Math.max(2, this.xs.length || 2);
+        while (capacity < size) capacity *= 2;
+        this.xs = new Float64Array(capacity);
+        this.ys = this.series.map(() => new Float64Array(capacity));
     }
 
     _emptyData() {
@@ -149,7 +165,9 @@ export class UPlotChart {
     update() {
         if (this._destroyed) return;
         const firstBuf = this.hub[this.series[0].buffer];
-        const n = Math.min(firstBuf?.count || 0, this.visibleSamples);
+        const n = this.historyControl
+            ? this.historyControl.visibleCount(firstBuf)
+            : Math.min(firstBuf?.count || 0, this.visibleSamples);
         if (n < 2) {
             this._lastData = null;
             if (!this._emptyPublished) {
@@ -163,7 +181,8 @@ export class UPlotChart {
             return;
         }
 
-        let dirty = false;
+        let dirty = this._historyDirty;
+        this._historyDirty = false;
         for (let i = 0; i < this.series.length; i++) {
             const buf = this.hub[this.series[i].buffer];
             const total = buf?.total ?? -1;
@@ -181,9 +200,15 @@ export class UPlotChart {
         }
         if (!dirty) return;
 
+        this._ensureCapacity(n);
+
         const xs = this.xs.subarray(0, n);
-        const xStart = Math.max(0, (firstBuf.total ?? firstBuf.count ?? n) - n);
-        for (let i = 0; i < n; i++) xs[i] = xStart + i;
+        if (typeof firstBuf?.flattenTicksInto === 'function') {
+            firstBuf.flattenTicksInto(xs, n);
+        } else {
+            const xStart = Math.max(0, (firstBuf?.total ?? firstBuf?.count ?? n) - n);
+            for (let i = 0; i < n; i++) xs[i] = xStart + i;
+        }
 
         const yColumns = this.series.map((s, idx) => {
             const buf = this.hub[s.buffer];
@@ -237,6 +262,8 @@ export class UPlotChart {
         this._destroyed = true;
         if (this._resizeFrame) cancelAnimationFrame(this._resizeFrame);
         this._resizeFrame = 0;
+        this._unsubscribeHistory?.();
+        this._unsubscribeHistory = null;
         this._hoverTarget?.removeEventListener('pointerenter', this._onPointerEnter);
         this._hoverTarget?.removeEventListener('pointerleave', this._onPointerLeave);
         this._hoverTarget?.removeEventListener('mouseenter', this._onPointerEnter);

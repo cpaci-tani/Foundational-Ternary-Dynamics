@@ -689,6 +689,20 @@ function applyDerivedJob(frame, viewportAdapter) {
 // closure captured is read from `sched` (set once per sweep). The body of each
 // case is the exact same build+apply the corresponding closure performed, in
 // the same order, so visual output is byte-identical.
+function measureKnotContributions(tr, sched) {
+    const { sampleCache, sampled, latticeSize, params, state } = sched;
+    sampleCache.ensureSamples(['eField', 'bField', 'fluxVector', 'divergence']);
+    tr.measureContributions({
+        eField: sampled.eField,
+        bField: sampled.bField,
+        fluxField: sampled.fluxVector,
+        divJ: sampled.divergence,
+        latticeSize,
+        sampleStride: params.stride,
+        tick: state.fieldDataVersion,
+    });
+}
+
 function runJob(sched, slot) {
     const { ctx, state, viewportAdapter, latticeSize, params, sampled, sampleCache } = sched;
     const { stride } = params;
@@ -740,11 +754,7 @@ function runJob(sched, slot) {
                 // (energy ½|E|²+½|B|², flux |J|, charge |∇·J|). Gated on the panel
                 // being live (extra field fetches), observation-only.
                 if (tr.isContribEnabled()) {
-                    const cap = sched.acScale0;
-                    const bField = cap?.getScale0FieldSamples?.({ kind: 'b', stride });
-                    const divJ = cap?.getScale0FieldSamples?.({ kind: 'divJ', stride });
-                    const fluxVolume = cap?.getScale0FluxVolume?.();
-                    tr.measureContributions({ eField: sampled.eField, bField, fluxVolume, divJ, latticeSize });
+                    measureKnotContributions(tr, sched);
                 }
             }
             if (wantsStreamlineApply(state.fieldFlags, 'e')) {
@@ -792,11 +802,7 @@ function runJob(sched, slot) {
                     knotColoring = { lineIds: tr.assignLinesToKnots(lines), selectedId: tr.getSelected(), perKnotColor: true };
                 }
                 if (tr.isContribEnabled()) {
-                    const cap = sched.acScale0;
-                    const eField = cap?.getScale0FieldSamples?.({ kind: 'e', stride });
-                    const divJ = cap?.getScale0FieldSamples?.({ kind: 'divJ', stride });
-                    const fluxVolume = cap?.getScale0FluxVolume?.();
-                    tr.measureContributions({ eField, bField: sampled.bField, fluxVolume, divJ, latticeSize });
+                    measureKnotContributions(tr, sched);
                 }
             }
             if (wantsStreamlineApply(state.fieldFlags, 'b')) {
@@ -837,12 +843,7 @@ function runJob(sched, slot) {
                 const tr = getFieldLineKnotTracker('flux');
                 tr.record(fs.lines, sampled.fluxVector, slot.sampleTick, latticeSize);
                 if (tr.isContribEnabled()) {
-                    const cap = sched.acScale0;
-                    const eField = cap?.getScale0FieldSamples?.({ kind: 'e', stride });
-                    const bField = cap?.getScale0FieldSamples?.({ kind: 'b', stride });
-                    const divJ = cap?.getScale0FieldSamples?.({ kind: 'divJ', stride });
-                    const fluxVolume = cap?.getScale0FluxVolume?.();
-                    tr.measureContributions({ eField, bField, fluxVolume, divJ, latticeSize });
+                    measureKnotContributions(tr, sched);
                 }
             }
             if (wantsStreamlineApply(state.fieldFlags, 'flux')) {

@@ -316,11 +316,13 @@ export class FieldLineKnotTracker {
 
     // ── Scientific contributions: each knot's share of the scenario field totals ──
     // GENUINE engine-field integrals over each knot's centroid±extent box (not the
-    // seeding-dependent geometric counts). Energy ½|E|²+½|B|² and charge |∇·J| come
-    // from the stride-subsampled samples; flux |J| from the dense N³ volume (exact).
+    // seeding-dependent geometric counts). Live measurement uses the overlay's
+    // stride-sampled E/B/J/divJ records with physical cell-volume weights, avoiding
+    // a full N³ main-thread read. Explicit dense/compact flux-volume callers retain
+    // their original exact/weighted integration paths.
     // Each sample/voxel is assigned to ONE knot (nearest containing box) so the
     // fractions never double-count and Σ frac == captured.
-    measureContributions({ eField, bField, fluxVolume, divJ, latticeSize }) {
+    measureContributions({ eField, bField, fluxField, fluxVolume, divJ, latticeSize, sampleStride = 1, tick = null }) {
         const K = this._zones.count;
         const cen = this._zones.centroids, ext = this._zones.extents, zids = this._zones.ids;
         const N = latticeSize | 0;
@@ -339,12 +341,23 @@ export class FieldLineKnotTracker {
             return best;
         };
 
-        const addVecEnergy = (samp) => {                   // ½|v|² per E/B vector sample
+        const strideFor = (samp) => Math.max(1,
+            Math.trunc(Number(samp?.effectiveStride) || Number(sampleStride) || 1));
+        const sampleWeight = (pos, i, stride) => {
+            if (stride <= 1 || N <= 0) return 1;
+            const x = Math.max(0, Math.min(N - 1, Math.round(pos[i * 3])));
+            const y = Math.max(0, Math.min(N - 1, Math.round(pos[i * 3 + 1])));
+            const z = Math.max(0, Math.min(N - 1, Math.round(pos[i * 3 + 2])));
+            return Math.min(stride, N - x) * Math.min(stride, N - y) * Math.min(stride, N - z);
+        };
+
+        const addVecEnergy = (samp) => {                   // ½|v|² times represented cell volume
             if (!samp || !samp.count || !samp.vectors) return;
             const pos = samp.positions, vec = samp.vectors, m = samp.count;
+            const sampStride = strideFor(samp);
             for (let i = 0; i < m; i++) {
                 const vx = vec[i * 3], vy = vec[i * 3 + 1], vz = vec[i * 3 + 2];
-                const e = 0.5 * (vx * vx + vy * vy + vz * vz);
+                const e = 0.5 * (vx * vx + vy * vy + vz * vz) * sampleWeight(pos, i, sampStride);
                 totE += e;
                 if (K) { const k = knotAt(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]); if (k >= 0) energy[k] += e; }
             }
@@ -353,8 +366,9 @@ export class FieldLineKnotTracker {
 
         if (divJ && divJ.count && divJ.values) {           // charge |∇·J|
             const pos = divJ.positions, val = divJ.values, m = divJ.count;
+            const divStride = strideFor(divJ);
             for (let i = 0; i < m; i++) {
-                const q = Math.abs(val[i]); totQ += q;
+                const q = Math.abs(val[i]) * sampleWeight(pos, i, divStride); totQ += q;
                 if (K) { const k = knotAt(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]); if (k >= 0) charge[k] += q; }
             }
         }
@@ -367,7 +381,19 @@ export class FieldLineKnotTracker {
             && Math.trunc(Number(compactFlux.latticeSize)) === N
             && compactAxis > 0
             && compactFlux.data.length === compactAxis * compactAxis * compactAxis;
-        if (compactValid) {
+        let fluxMode = 'none';
+        if (fluxField?.count && fluxField.positions && fluxField.vectors) {
+            fluxMode = 'sampled-vector';
+            const pos = fluxField.positions, vec = fluxField.vectors, m = fluxField.count;
+            const fluxStride = strideFor(fluxField);
+            for (let i = 0; i < m; i++) {
+                const vx = vec[i * 3], vy = vec[i * 3 + 1], vz = vec[i * 3 + 2];
+                const f = Math.hypot(vx, vy, vz) * sampleWeight(pos, i, fluxStride);
+                totF += f;
+                if (K) { const k = knotAt(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]); if (k >= 0) flux[k] += f; }
+            }
+        } else if (compactValid) {
+            fluxMode = 'compact-volume';
             // FTV2 represents each retained sample's integer-stride cell. Use
             // the covered cell volume as an integration weight, including the
             // shorter terminal cells when N is not divisible by the stride.
@@ -388,6 +414,7 @@ export class FieldLineKnotTracker {
                 }
             }
         } else if (fluxVolume && N > 0 && fluxVolume.length >= N * N * N && N <= FLUX_DENSE_MAX_N) {  // flux |J| exact
+            fluxMode = 'dense-volume';
             for (let z = 0; z < N; z++) for (let y = 0; y < N; y++) {
                 const base = (z * N + y) * N;
                 for (let x = 0; x < N; x++) {
@@ -414,6 +441,15 @@ export class FieldLineKnotTracker {
                 fluxFrac: totF > 0 ? capF / totF : 0,
                 chargeFrac: totQ > 0 ? capQ / totQ : 0,
             },
+            sampling: {
+                energyStride: Math.max(strideFor(eField), strideFor(bField)),
+                fluxStride: fluxMode === 'sampled-vector' ? strideFor(fluxField)
+                    : fluxMode === 'compact-volume' ? compactStride : 1,
+                chargeStride: strideFor(divJ),
+                fluxMode,
+                approximate: Math.max(strideFor(eField), strideFor(bField), strideFor(divJ),
+                    fluxMode === 'sampled-vector' ? strideFor(fluxField) : compactStride) > 1,
+            },
         };
 
         // accumulate per-knot history; prune knots that died
@@ -422,7 +458,9 @@ export class FieldLineKnotTracker {
             const id = ids[k]; alive.add(id);
             let h = this._contribHistory.get(id);
             if (!h) { h = { energyFrac: new RingBuffer(HIST_LEN), fluxFrac: new RingBuffer(HIST_LEN), chargeFrac: new RingBuffer(HIST_LEN) }; this._contribHistory.set(id, h); }
-            h.energyFrac.push(energyFrac[k]); h.fluxFrac.push(fluxFrac[k]); h.chargeFrac.push(chargeFrac[k]);
+            h.energyFrac.push(energyFrac[k], tick);
+            h.fluxFrac.push(fluxFrac[k], tick);
+            h.chargeFrac.push(chargeFrac[k], tick);
         }
         for (const id of this._contribHistory.keys()) if (!alive.has(id)) this._contribHistory.delete(id);
         return this._contrib;
@@ -432,11 +470,13 @@ export class FieldLineKnotTracker {
 
     getKnotHistory(id) {
         const h = this._contribHistory.get(id);
-        if (!h) return { n: 0, energyFrac: new Float32Array(0), fluxFrac: new Float32Array(0), chargeFrac: new Float32Array(0) };
+        if (!h) return { n: 0, ticks: new Float64Array(0), energyFrac: new Float32Array(0), fluxFrac: new Float32Array(0), chargeFrac: new Float32Array(0) };
         const n = h.energyFrac.count;
+        const ticks = new Float64Array(n);
         const ef = new Float32Array(n), ff = new Float32Array(n), cf = new Float32Array(n);
+        h.energyFrac.flattenTicksInto(ticks, n);
         h.energyFrac.flattenInto(ef, n); h.fluxFrac.flattenInto(ff, n); h.chargeFrac.flattenInto(cf, n);
-        return { n, energyFrac: ef, fluxFrac: ff, chargeFrac: cf };
+        return { n, ticks, energyFrac: ef, fluxFrac: ff, chargeFrac: cf };
     }
 
     setContribEnabled(on) { this._contribEnabled = !!on; }

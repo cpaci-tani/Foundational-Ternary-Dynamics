@@ -119,6 +119,7 @@ export function getInspectorPanelTemplate() {
                     </div>
                     <div class="panel-inspector-hit-help">Increase this when lattice selections feel too sparse or hard to grab.</div>
                 </div>
+                <div id="inspector-chart-history" class="scale-ae"></div>
                 <div class="inspector-empty scale0-only" id="inspector-empty">
                     Select a voxel or manifested particle to inspect its local state.
                 </div>

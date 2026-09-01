@@ -134,10 +134,11 @@ class RunningStats {
 }
 
 export class DiagnosticsTable {
-    constructor(section, hub, { resetScope = null } = {}) {
+    constructor(section, hub, { resetScope = null, historyControl = null } = {}) {
         this.section = section;
         this.hub     = hub;
         this.resetScope = resetScope;
+        this.historyControl = historyControl;
         this.resetVersion = resetVersion(hub, resetScope);
         this.visibleWhen = typeof section.visibleWhen === 'function' ? section.visibleWhen : null;
         this.el      = document.createElement('section');
@@ -356,6 +357,7 @@ export class DiagnosticsTable {
             color: 'var(--accent)',
             height: 22,
             visibleSamples: TABLE_SPARK_VISIBLE_SAMPLES,
+            historyControl: this.historyControl,
         });
         entry.stamp = bufferRenderStamp(entry.buffer);
         entry.spark.update();

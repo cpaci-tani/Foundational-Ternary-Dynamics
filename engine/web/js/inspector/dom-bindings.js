@@ -19,6 +19,7 @@ export function collectInspectorDom() {
         selectionSummaryEl: document.getElementById('insp-selection-summary'),
         clearSelectionBtn: document.getElementById('btn-clear-inspector'),
         focusSelectionBtn: document.getElementById('btn-focus-voxel'),
+        chartHistoryHost: document.getElementById('inspector-chart-history'),
         fields: {
             id:       document.getElementById('insp-id'),
             state:    document.getElementById('insp-state'),

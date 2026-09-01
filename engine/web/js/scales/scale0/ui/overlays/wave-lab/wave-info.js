@@ -26,27 +26,10 @@ import {
 import { cardStyle, titleStyle, tagBadge, formatExp, formatFixed } from '../_card-helpers.js';
 import { LatticeSynth } from '../../../../../audio/lattice-synth.js';
 import { Sparkline } from '../../../../../ui/charts/sparkline.js';
+import { TickHistoryControl } from '../../../../../ui/charts/history-window.js';
+import { RingBuffer } from '../../../../../telemetry-hub.js';
 import { getScale0Scenario } from '../../../scenario-registry.js';
 import { getPhysicsHarness } from '../../../../../physics/index.js';
-
-class RingBuffer {
-    constructor(size) {
-        this.size = size;
-        this.data = new Float64Array(size);
-        this.count = 0;
-    }
-    push(val) {
-        this.data[this.count % this.size] = val;
-        this.count++;
-    }
-    get(i) {
-        if (i < 0 || i >= this.count) return 0;
-        if (this.count <= this.size) return this.data[i];
-        const oldest = this.count - this.size;
-        if (i < oldest) return 0;
-        return this.data[i % this.size];
-    }
-}
 
 const SCENARIO_IDS = new Set([
     RF_LATTICE_WAVE_SCENARIO_ID,
@@ -258,8 +241,12 @@ function singleWaveBody(m, lane) {
         : lane.set === 'rf'
             ? 'RF proxy: long-wavelength transverse flux mode, one lattice-period across the box.'
             : 'Light proxy: shorter-wavelength transverse flux mode, not SI-calibrated color.';
+    const measurementTag = m.sampleStride > 1 ? '~M' : 'M';
     return `
         ${row('tick / lattice', `${m.tick} / L=${m.latticeSize}`)}
+        ${row('measurement sampling', m.sampleStride > 1
+        ? `stride ${m.sampleStride} volume estimate`
+        : 'exact nonzero field sample', measurementTag)}
         ${row('family', `${family} / ${carrierName(lane)}`, 'T')}
         ${row('component', `${jLabel}/${wLabel}`, 'T')}
         ${row('mode n', lane.modeN, 'T')}
@@ -272,12 +259,12 @@ function singleWaveBody(m, lane) {
         ${row('phase velocity', fmtRatio(lane.phaseVelocity ?? 0, 6), 'T')}
         ${row('group velocity', fmtRatio(lane.groupVelocity ?? 0, 6), 'T')}
         ${row('v / c', fmtRatio(lane.speedRatioToLight ?? 0, 3), 'T')}
-        ${row('lane energy', formatExp(lane.energy ?? 0))}
-        ${row('field / wave E', `${formatExp(lane.fieldEnergy ?? 0)} / ${formatExp(lane.waveEnergy ?? 0)}`)}
-        ${row(`peak |${jLabel}|`, formatExp(lane.peakDirectionalFlux ?? lane.peakFlux ?? 0))}
-        ${row(`peak |${wLabel}|`, formatExp(lane.peakDirectionalWaveVel ?? lane.peakWaveVel ?? 0))}
-        ${row(`sample ${jLabel}/${wLabel}`, `${formatExp(lane.sampleFlux ?? 0)} / ${formatExp(lane.sampleWaveVel ?? 0)}`)}
-        ${row('energy centroid x', fmtRatio(lane.energyCentroidX ?? 0, 3))}
+        ${row('lane energy', formatExp(lane.energy ?? 0), measurementTag)}
+        ${row('field / wave E', `${formatExp(lane.fieldEnergy ?? 0)} / ${formatExp(lane.waveEnergy ?? 0)}`, measurementTag)}
+        ${row(`peak |${jLabel}|`, formatExp(lane.peakDirectionalFlux ?? lane.peakFlux ?? 0), measurementTag)}
+        ${row(`peak |${wLabel}|`, formatExp(lane.peakDirectionalWaveVel ?? lane.peakWaveVel ?? 0), measurementTag)}
+        ${row(`sample ${jLabel}/${wLabel}`, `${formatExp(lane.sampleFlux ?? 0)} / ${formatExp(lane.sampleWaveVel ?? 0)}`, measurementTag)}
+        ${row('energy centroid x', fmtRatio(lane.energyCentroidX ?? 0, 3), measurementTag)}
         ${laneRows(m.lanes)}
         <div style="margin-top:8px;color:var(--text-muted);font-size:16px;line-height:1.35;">
             ${tagBadge(lane.proxy ? 'T' : 'M')}${note}
@@ -301,6 +288,11 @@ export class WaveInfoComponent extends BaseComponent {
             sampleJ: new RingBuffer(150),
             sampleW: new RingBuffer(150),
         };
+        this.lastHistoryTick = null;
+        this.historyControl = new TickHistoryControl(this.refs.root || this.element, {
+            id: 'wave-lab-panel',
+            defaultTicks: 150,
+        });
         this.sparks = {};
         this.element.addEventListener('input', (e) => this._handleControlInput(e));
         this.element.addEventListener('click', (e) => {
@@ -311,7 +303,11 @@ export class WaveInfoComponent extends BaseComponent {
 
     update(bridge, scenarioId) {
         const scenario = getScale0Scenario(scenarioId);
-        if (scenarioId !== this.scenarioId) this._cancelScheduledReseed();
+        if (scenarioId !== this.scenarioId) {
+            this._cancelScheduledReseed();
+            for (const buffer of Object.values(this.history)) buffer.clear();
+            this.lastHistoryTick = null;
+        }
         if (!scenario?.tags?.includes('wave-lab')) {
             this.bridgeRef = null;
             this.scenarioId = '';
@@ -374,12 +370,16 @@ export class WaveInfoComponent extends BaseComponent {
             return;
         }
 
-        // Push data into buffers
-        this.history.energy.push(lane.energy || 0);
-        this.history.peakJ.push(lane.peakDirectionalFlux || lane.peakFlux || 0);
-        this.history.peakW.push(lane.peakDirectionalWaveVel || lane.peakWaveVel || 0);
-        this.history.sampleJ.push(lane.sampleFlux || 0);
-        this.history.sampleW.push(lane.sampleWaveVel || 0);
+        // One history row per completed engine tick. Render cadence must not
+        // manufacture duplicate scientific samples.
+        if (m.tick !== this.lastHistoryTick) {
+            this.lastHistoryTick = m.tick;
+            this.history.energy.push(lane.energy || 0, m.tick);
+            this.history.peakJ.push(lane.peakDirectionalFlux || lane.peakFlux || 0, m.tick);
+            this.history.peakW.push(lane.peakDirectionalWaveVel || lane.peakWaveVel || 0, m.tick);
+            this.history.sampleJ.push(lane.sampleFlux || 0, m.tick);
+            this.history.sampleW.push(lane.sampleWaveVel || 0, m.tick);
+        }
 
         // Build DOM once
         if (Object.keys(this.sparks).length === 0) {
@@ -397,7 +397,12 @@ export class WaveInfoComponent extends BaseComponent {
             `;
             const initSpark = (id, buffer, color) => {
                 const el = this.refs.trendlines.querySelector(`[data-spark="${id}"]`);
-                if (el) this.sparks[id] = new Sparkline(el, { buffer, color, height: 26 });
+                if (el) this.sparks[id] = new Sparkline(el, {
+                    buffer,
+                    color,
+                    height: 26,
+                    historyControl: this.historyControl,
+                });
             };
             initSpark('spark-energy', this.history.energy, '#6366f1');
             initSpark('spark-peakJ', this.history.peakJ, '#f43f5e');
@@ -605,5 +610,7 @@ export class WaveInfoComponent extends BaseComponent {
         this.scenarioId = '';
         this.synth.stop();
         this._updateTrendlines(null, null);
+        this.historyControl?.destroy();
+        this.historyControl = null;
     }
 }

@@ -50,7 +50,7 @@ export function getChartFreshnessPresentation(hub, groups) {
 }
 
 export class ChartCard {
-    constructor(descriptor, hub) {
+    constructor(descriptor, hub, historyControl = null) {
         this.descriptor = descriptor;
         this.hub        = hub;
         this.telemetryGroups = resolveChartTelemetryGroups(descriptor);
@@ -84,6 +84,7 @@ export class ChartCard {
             xLabel: descriptor.xLabel,
             yLabel: descriptor.yLabel,
             hub,
+            historyControl,
         });
         requestAnimationFrame(() => this.el.classList.add('is-mounted'));
     }

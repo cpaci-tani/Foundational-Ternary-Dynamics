@@ -29,7 +29,7 @@ import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import { cardStyle, titleStyle, heroStyle, tagBadge, formatExp, formatFixed } from './_card-helpers.js';
 import {
     lapse, clockRate, ftdGamma, srDilation,
-    properTimeStep, radialProfile, radialBins,
+    properTimeStep, radialSummary,
 } from '../../analysis/time-analysis.js';
 import { FTD0252_PROVENANCE, DILATION_VS_V, IR_CONVERGENCE } from '../../data/ftd0252-reference.js';
 import { resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
@@ -37,10 +37,12 @@ import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 import { readScale0DiagAudit } from '../../../../telemetry/scale0-read.js';
 import { telemetryHub } from '../../../../telemetry-hub.js';
 import { C_SPEED } from '../../../../constants.js';
+import { TickHistoryControl } from '../../../../ui/charts/history-window.js';
 
 const PANEL_ID = 'time-panel';
 const HZ = 2;
-const STRIDE = 2;            // latency sampling stride
+const BASE_STRIDE = 2;
+const TARGET_AXIS_SAMPLES = 25;
 const SPARK_MAX = 60;       // Δτ trace rolling-window length
 const RADIAL_BINS = 12;
 
@@ -171,19 +173,19 @@ function renderCardA(container, metrics, agg) {
 // Predicted: a 1-parameter weak-field fit dτ/dt(r) = √(1 − L_max²·(r0/r)) using
 // the deepest sampled latency as the well depth — a [D] reference curve, not a
 // fit to the data point-by-point.
-function renderCardB(container, prof) {
-    if (!prof || !prof.length) {
+function renderCardB(container, summary) {
+    if (!summary?.hasField) {
         container.innerHTML = `<div class="time-empty">No latency field yet — load a gravity-well / Time scenario and press play.</div>`;
         return;
     }
-    const bins = radialBins(prof, RADIAL_BINS);
+    const bins = summary.bins;
     if (bins.length < 2) {
         container.innerHTML = `<div class="time-empty">Field too sparse for a radial profile — let it propagate a few ticks.</div>`;
         return;
     }
     // Deepest (min dτ/dt) sample drives the prediction well-depth.
-    let lMax = 0, rAtMax = bins[0].r;
-    for (const p of prof) if (p.L > lMax) { lMax = p.L; rAtMax = p.r || rAtMax; }
+    const lMax = summary.lMax;
+    const rAtMax = summary.rAtMax || bins[0].r;
     const r0 = Math.max(1e-6, rAtMax);
     // Predicted dτ/dt(r): weak-field 1/r falloff of the lapse deficit, clamped.
     const predAt = (r) => {
@@ -374,6 +376,11 @@ export function mountTimePanel(host, getBridge) {
 
     const el = (id) => panel.querySelector(`#${PANEL_ID}-${id}`);
     const cardA = el('card-a'), cardB = el('card-b'), cardC = el('card-c'), cardD = el('card-d'), cardE = el('card-e');
+    const historyControl = new TickHistoryControl(panel, {
+        id: 'time-panel',
+        defaultTicks: SPARK_MAX,
+        onChange: () => renderCardC(cardC, visibleTwin()),
+    });
 
     let lastMetrics = null;     // { physicalTime, fMin, dtauMin, gammaMax }
     let bridgeId = null;
@@ -381,12 +388,23 @@ export function mountTimePanel(host, getBridge) {
     let sourceBoundary = null;
     let vImposed = 0.30;        // [IMPOSED] slider state
     // twin-clock accumulators
-    let twin = { tauDeep: 0, tauFar: 0, history: [], lDeep: 0, lFar: 0, active: false };
+    let twin = { tauDeep: 0, tauFar: 0, history: [], historyTicks: [], lDeep: 0, lFar: 0, active: false };
     let lastTick = -1;
 
     function resetTwin() {
-        twin = { tauDeep: 0, tauFar: 0, history: [], lDeep: 0, lFar: 0, active: false };
+        twin = { tauDeep: 0, tauFar: 0, history: [], historyTicks: [], lDeep: 0, lFar: 0, active: false };
         lastTick = -1;
+    }
+
+    function visibleTwin() {
+        const entries = twin.history.map((value, index) => ({
+            value,
+            tick: twin.historyTicks[index] ?? index,
+        }));
+        return {
+            ...twin,
+            history: historyControl.slice(entries, entry => entry.tick).map(entry => entry.value),
+        };
     }
 
     // Card D is event-driven (slider) AND rAF-refreshed. Render once up-front so
@@ -409,22 +427,14 @@ export function mountTimePanel(host, getBridge) {
     // sampled point (lowest latency = fastest clock). Choosing by well depth
     // (rather than raw radius) makes Δτ = τ_far − τ_deep ≥ 0 for any well
     // geometry — the far/orbiting clock always outruns the deep/surface clock.
-    function sampleField(caps) {
-        const s = caps.getScale0FieldSamples?.({ kind: 'latency', stride: STRIDE })
+    function sampleField(caps, stride) {
+        const s = caps.getScale0FieldSamples?.({ kind: 'latency', stride })
             || { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
         const L = caps.latticeSize || 33;
         const c = (L - 1) / 2;
         const center = { x: c, y: c, z: c };
-        const prof = (s.values && s.values.length)
-            ? radialProfile(s.positions, s.values, center) : [];
-        let lDeep = 0, lFar = 0;
-        if (prof.length) {
-            let mx = -Infinity, mn = Infinity;
-            for (const p of prof) { if (p.L > mx) mx = p.L; if (p.L < mn) mn = p.L; }
-            lDeep = mx;   // well floor → slowest clock
-            lFar = mn;    // shallowest → fastest clock
-        }
-        return { prof, lDeep, lFar, hasField: prof.length > 0 };
+        const maxRadius = Math.sqrt(3) * Math.max(c, L - 1 - c);
+        return radialSummary(s.positions, s.values, center, RADIAL_BINS, maxRadius);
     }
 
     function update() {
@@ -450,7 +460,9 @@ export function mountTimePanel(host, getBridge) {
             getBridge?.()?.replaceSamplerWants?.('time-panel', []);
             return;
         }
-        getBridge?.()?.replaceSamplerWants?.('time-panel', [`latency@${STRIDE}`]);
+        const sampleStride = Math.max(BASE_STRIDE,
+            Math.ceil((Number(caps.latticeSize) || 33) / TARGET_AXIS_SAMPLES));
+        getBridge?.()?.replaceSamplerWants?.('time-panel', [`latency@${sampleStride}`]);
 
         const diagMeta = telemetryHub.getScale0TelemetryMeta?.('diagnostics') ?? null;
         const { diag: hubDiag } = readScale0DiagAudit(b);
@@ -476,14 +488,10 @@ export function mountTimePanel(host, getBridge) {
         }
 
         const agg = caps.getScale0GravityMetricAgg?.() || null;
-        const { prof, lDeep, lFar, hasField } = sampleField(caps);
+        const fieldSummary = sampleField(caps, sampleStride);
+        const { lDeep, lFar, lMax, hasField } = fieldSummary;
 
         // Card A metrics: deepest latency over the profile drives f_min / dτ/dt.
-        let lMax = Number.NaN;
-        if (hasField) {
-            lMax = 0;
-            for (const p of prof) if (p.L > lMax) lMax = p.L;
-        }
         const fMin = hasField ? lapse(lMax) : Number.NaN;
         const dtauMin = hasField ? clockRate(lMax) : Number.NaN;
         const gammaMax = hasField ? ftdGamma(lMax, 0) : Number.NaN;   // = 1/√f at v=0
@@ -491,7 +499,7 @@ export function mountTimePanel(host, getBridge) {
         renderCardA(cardA, lastMetrics, agg);
 
         // Card B: radial profile.
-        renderCardB(cardB, prof);
+        renderCardB(cardB, fieldSummary);
 
         // Card C: accumulate proper time at the two probes, once per NEW tick.
         if (hasField) {
@@ -501,16 +509,16 @@ export function mountTimePanel(host, getBridge) {
                     twin.tauDeep += properTimeStep(lDeep, dt);
                     twin.tauFar += properTimeStep(lFar, dt);
                     twin.history.push(twin.tauFar - twin.tauDeep);
-                    if (twin.history.length > SPARK_MAX) twin.history.shift();
+                    twin.historyTicks.push(tick);
                 }
                 twin.lDeep = lDeep; twin.lFar = lFar; twin.active = true;
                 lastTick = tick;
             }
         }
-        renderCardC(cardC, twin);
+        renderCardC(cardC, visibleTwin());
 
-        // Card D is slider/event-driven; keep it fresh too (cheap).
-        renderD();
+        // Card D is static between slider events; recreating both SVG curves
+        // here dominated the live panel's DOM work at large lattice sizes.
 
         // Card E — de Broglie internal clock (FTD-0271). Read the toggle + ω₀
         // off the bridge, and sample the centre voxel for the clock phase φ and
@@ -563,6 +571,7 @@ export function mountTimePanel(host, getBridge) {
         dispose: () => {
             armSub.unsubscribe();
             liveSub?.unsubscribe();
+            historyControl.destroy();
             if (typeof window !== 'undefined' && window.__ftdTimePanel === api) window.__ftdTimePanel = null;
             panel.remove();
         },

@@ -1,0 +1,112 @@
+.tick-history-control {
+    display: grid;
+    gap: 7px;
+    margin: 0 0 var(--sp-md, 12px);
+    padding: 9px 10px;
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+    border-radius: var(--radius, 8px);
+    background: color-mix(in oklch, var(--bg-surface, #222a38) 92%, transparent);
+    color: var(--text-secondary, #c7cfda);
+    font-size: var(--fs-xs, 12px);
+}
+
+.tick-history-control__label,
+.tick-history-control__body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.tick-history-control__label > span:first-child {
+    color: var(--text-primary, #eef3f8);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.tick-history-control__summary {
+    color: var(--accent-text, #8ed7e8);
+    font-family: var(--font-mono, monospace);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.tick-history-control__modes {
+    display: inline-grid;
+    grid-template-columns: repeat(2, minmax(52px, 1fr));
+    gap: 3px;
+    padding: 3px;
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+    border-radius: 7px;
+    background: var(--bg-base, rgba(0, 0, 0, 0.18));
+}
+
+.tick-history-control__modes button {
+    min-height: 28px;
+    padding: 3px 9px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--text-muted, #8b96a8);
+    font: inherit;
+    cursor: pointer;
+}
+
+.tick-history-control__modes button.active {
+    background: var(--accent-muted, rgba(101, 196, 217, 0.18));
+    color: var(--accent-text, #8ed7e8);
+    box-shadow: inset 0 0 0 1px var(--accent, #65c4d9);
+}
+
+.tick-history-control__ticks {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-muted, #8b96a8);
+}
+
+.tick-history-control__ticks input {
+    width: 84px;
+    min-height: 30px;
+    box-sizing: border-box;
+    padding: 4px 7px;
+    border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+    border-radius: 6px;
+    background: var(--bg-input, rgba(0, 0, 0, 0.18));
+    color: var(--text-primary, #eef3f8);
+    font-family: var(--font-mono, monospace);
+    font-size: inherit;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.tick-history-control__ticks input:disabled {
+    opacity: 0.42;
+}
+
+.tick-history-control__note {
+    color: var(--text-muted, #8b96a8);
+    line-height: 1.35;
+}
+
+.panel.panel-mount-left .tick-history-control__body,
+.panel.panel-mount-right .tick-history-control__body,
+#app[data-layout-mode^="compact"] .tick-history-control__body {
+    align-items: stretch;
+    flex-direction: column;
+}
+
+.panel.panel-mount-left .tick-history-control__ticks,
+.panel.panel-mount-right .tick-history-control__ticks,
+#app[data-layout-mode^="compact"] .tick-history-control__ticks {
+    justify-content: space-between;
+}
+
+@media (max-width: 479px) {
+    .tick-history-control__body {
+        align-items: stretch;
+        flex-direction: column;
+    }
+    .tick-history-control__ticks { justify-content: space-between; }
+}

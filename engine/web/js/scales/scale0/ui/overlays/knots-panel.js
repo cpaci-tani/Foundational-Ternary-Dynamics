@@ -16,6 +16,7 @@ import {
 import { getFieldLineKnotTracker, forEachKnotTracker, knotHue } from '../../runtime/field-line-knots.js';
 import { RingBuffer, telemetryHub } from '../../../../telemetry-hub.js';
 import { ChartHoverTooltip, formatChartValue } from '../../../../ui/charts/chart-hover-tooltip.js';
+import { TickHistoryControl } from '../../../../ui/charts/history-window.js';
 
 // Small fixed-range [0,1] multi-trace line chart for a knot's contribution history.
 // A generic streaming sparkline is single-trace and auto-ranged, so drawing the
@@ -41,12 +42,18 @@ function fmtNum(v) {
 }
 // "1 cell" / "2 cells" — singular reads cleaner for the single-voxel-knot case.
 function cells(n) { return `${n} cell${n === 1 ? '' : 's'}`; }
-function drawContribChart(canvas, hist) {
+function drawContribChart(canvas, hist, historyControl = null) {
     if (!canvas) return;
+    const tickBuffer = {
+        count: hist?.n || 0,
+        getTick: (index) => hist?.ticks?.[index] ?? index,
+    };
+    const visibleN = historyControl?.visibleCount(tickBuffer) ?? tickBuffer.count;
+    const start = Math.max(0, tickBuffer.count - visibleN);
     canvas._tip = (lx, _ly, w) => {
-        const m = hist?.n || 0; if (m < 1) return null;
-        const i = Math.max(0, Math.min(m - 1, Math.round((lx / w) * (m - 1))));
-        return { title: 'knot contribution', xLabel: 'sample', xValue: i, rows: [
+        const m = visibleN; if (m < 1) return null;
+        const i = start + Math.max(0, Math.min(m - 1, Math.round((lx / w) * (m - 1))));
+        return { title: 'knot contribution', xLabel: 'tick', xValue: hist?.ticks?.[i] ?? i, rows: [
             { color: '#f6c453', label: 'energy', value: `${Math.round((hist.energyFrac[i] || 0) * 100)}%` },
             { color: '#5ad2e0', label: 'flux', value: `${Math.round((hist.fluxFrac[i] || 0) * 100)}%` },
             { color: '#c98bf0', label: 'charge', value: `${Math.round((hist.chargeFrac[i] || 0) * 100)}%` },
@@ -58,7 +65,7 @@ function drawContribChart(canvas, hist) {
     if (!w || !h) return;
     if (canvas.width !== w * dpr || canvas.height !== h * dpr) { canvas.width = w * dpr; canvas.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
     ctx.clearRect(0, 0, w, h);
-    const n = hist?.n || 0;
+    const n = visibleN;
     // gridlines at 0/50/100%
     ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1;
     for (const f of [0, 0.5, 1]) { const y = h - f * (h - 2) - 1; ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
@@ -71,8 +78,9 @@ function drawContribChart(canvas, hist) {
         const arr = hist[t.key];
         ctx.beginPath();
         for (let i = 0; i < n; i++) {
+            const source = start + i;
             const x = (i / (n - 1)) * w;
-            const y = h - Math.max(0, Math.min(1, arr[i])) * (h - 2) - 1;   // fixed 0..1 range
+            const y = h - Math.max(0, Math.min(1, arr[source])) * (h - 2) - 1;   // fixed 0..1 range
             if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }
         ctx.strokeStyle = t.color; ctx.lineWidth = 1.3; ctx.stroke();
@@ -80,13 +88,21 @@ function drawContribChart(canvas, hist) {
 }
 
 // Multi-trace energy line chart (auto-ranged from 0). `traces` = [{rb:RingBuffer,color,width,label}].
-function drawEnergyLines(canvas, traces) {
+function drawEnergyLines(canvas, traces, historyControl = null) {
     if (!canvas) return;
+    const primary = traces[0]?.rb;
+    const visibleN = historyControl?.visibleCount(primary) ?? (primary?.count || 0);
+    const primaryStart = Math.max(0, (primary?.count || 0) - visibleN);
     canvas._tip = (lx, _ly, w) => {
-        let m = 0; for (const t of traces) m = Math.max(m, t.rb.count); if (m < 1) return null;
-        const i = Math.max(0, Math.min(m - 1, Math.round((lx / w) * (m - 1))));
-        return { title: 'EM energy', xLabel: 'sample', xValue: i,
-            rows: traces.map(t => ({ color: t.color, label: t.label || '', value: formatChartValue(t.rb.count > i ? t.rb.get(i) : null) })) };
+        if (visibleN < 1) return null;
+        const local = Math.max(0, Math.min(visibleN - 1, Math.round((lx / w) * (visibleN - 1))));
+        const tick = primary?.getTick?.(primaryStart + local) ?? primaryStart + local;
+        return { title: 'EM energy', xLabel: 'tick', xValue: tick,
+            rows: traces.map(t => {
+                const start = Math.max(0, t.rb.count - visibleN);
+                const index = start + local;
+                return { color: t.color, label: t.label || '', value: formatChartValue(t.rb.count > index ? t.rb.get(index) : null) };
+            }) };
     };
     const ctx = canvas.getContext('2d');
     const dpr = window.devicePixelRatio || 1;
@@ -94,17 +110,22 @@ function drawEnergyLines(canvas, traces) {
     if (!w || !h) return;
     if (canvas.width !== w * dpr || canvas.height !== h * dpr) { canvas.width = w * dpr; canvas.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
     ctx.clearRect(0, 0, w, h);
-    let n = 0, maxV = 0;
-    for (const t of traces) { const c = t.rb.count; if (c > n) n = c; for (let i = 0; i < c; i++) { const v = t.rb.get(i); if (v > maxV) maxV = v; } }
+    const n = visibleN;
+    let maxV = 0;
+    for (const t of traces) {
+        const start = Math.max(0, t.rb.count - n);
+        for (let i = start; i < t.rb.count; i++) { const v = t.rb.get(i); if (v > maxV) maxV = v; }
+    }
     ctx.strokeStyle = 'rgba(255,255,255,0.07)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, h - 1); ctx.lineTo(w, h - 1); ctx.stroke();
     if (n < 2 || maxV <= 0) return;
     for (const t of traces) {
-        const c = t.rb.count;
+        const c = Math.min(t.rb.count, n);
+        const start = Math.max(0, t.rb.count - c);
         if (c < 2) continue;
         ctx.beginPath();
         let drawing = false;
         for (let i = 0; i < c; i++) {
-            const value = t.rb.get(i);
+            const value = t.rb.get(start + i);
             if (!Number.isFinite(value)) { drawing = false; continue; }
             const x = (i / (c - 1)) * w;
             const y = h - (value / maxV) * (h - 2) - 1;
@@ -289,8 +310,9 @@ function buildPanel() {
         of the same substrate — tracking rebuilds them even with overlays off.
         Turn on <b>Radiative E</b>, <b>B Field</b>, or <b>Flux Lines</b> to <i>see</i> the lines.
         <b style="color:var(--accent-amber,#f6c453)">energy / flux / charge</b> = each knot's share of the
-        scenario's actual field over its region — <b>genuine measurements</b>
-        (flux exact from the dense |J| volume; energy ½(E²+B²) &amp; charge ∇·J sub-sampled).
+        scenario's actual field over its region — <b>genuine measurements</b>.
+        The live dashboard reports a <b>volume-weighted stride-sampled estimate</b>
+        of flux |J|, energy ½(E²+B²), and charge |∇·J|; it is marked ≈ and is not an exact full-volume integral.
         The <b>drawn field-line shape</b> (segments / crossings / legs / length) depends on how the lines are seeded —
         it's a Feynman-diagram <b>analogy</b>, <b>NOT</b> a physical amplitude. Ages are counted in whole ticks.
       </div>
@@ -314,6 +336,11 @@ export function mountKnotsPanel(host) {
     document.getElementById(PANEL_ID)?.remove();
     const panel = buildPanel();
     host.appendChild(panel);
+    const historyControl = new TickHistoryControl(panel, {
+        id: 'knots-panel',
+        defaultTicks: 240,
+        onChange: () => update(),
+    });
     const el = (id) => panel.querySelector(`#${id}`);
     const applicableContent = panel.querySelector('.knots-applicable-content');
     const inapplicableMessage = panel.querySelector('.knots-inapplicable');
@@ -399,14 +426,110 @@ export function mountKnotsPanel(host) {
     });
 
     let expandedKey = null;   // "<field>:<id>" of the expanded/selected knot row
+    let listStructureKey = '';
+    let listRows = new Map();
+    let listHeaders = new Map();
+    let listRenderRaf = 0;
+    let pendingListRender = null;
+    let lastFeedHtml = null;
+    let feedRenderRaf = 0;
+    let pendingFeedRender = null;
+    let chartRenderRaf = 0;
+    let pendingChartRender = null;
+
+    function setHtmlIfChanged(node, html) {
+        if (node.innerHTML !== html) node.innerHTML = html;
+    }
 
     function renderEmptyList(list, trackingOn) {
+        if (listRenderRaf) cancelAnimationFrame(listRenderRaf);
+        listRenderRaf = 0;
+        pendingListRender = null;
+        listStructureKey = '';
+        listRows.clear();
+        listHeaders.clear();
         if (!trackingOn) {
-            list.innerHTML = '<div class="kp-empty">tracking off — enable "Track field-line knots" to detect knots</div>';
+            setHtmlIfChanged(list, '<div class="kp-empty">tracking off — enable "Track field-line knots" to detect knots</div>');
         } else {
-            list.innerHTML = '<div class="kp-empty">0 knots — tracking is running a streamline sweep (overlays optional); '
-                + 'knots form where field-lines bunch (no particles needed)</div>';
+            setHtmlIfChanged(list, '<div class="kp-empty">0 knots — tracking is running a streamline sweep (overlays optional); '
+                + 'knots form where field-lines bunch (no particles needed)</div>');
         }
+    }
+
+    function commitListStructure(list, nextStructureKey, html) {
+        listStructureKey = nextStructureKey;
+        list.innerHTML = html;
+        listRows = new Map();
+        listHeaders = new Map();
+        list.querySelectorAll('[data-kp-field-head]').forEach((head) => {
+            listHeaders.set(head.dataset.kpFieldHead, head.querySelector('[data-kp-field-count]'));
+        });
+        list.querySelectorAll('.kp-row').forEach((r) => {
+            listRows.set(r.dataset.slot, {
+                row: r,
+                dot: r.querySelector('[data-kp-dot]'),
+                dotColor: null,
+                id: r.querySelector('[data-kp-id]'),
+                cells: r.querySelector('[data-kp-cells]'),
+                age: r.querySelector('[data-kp-age]'),
+                energy: r.querySelector('[data-kp-energy]'),
+                flux: r.querySelector('[data-kp-flux]'),
+                charge: r.querySelector('[data-kp-charge]'),
+            });
+            r.onclick = () => {
+                const fk = r.dataset.field, id = +r.dataset.id, selectedKey = `${fk}:${id}`;
+                expandedKey = (expandedKey === selectedKey ? null : selectedKey);
+                forEachKnotTracker((t, f) => t.setSelected((expandedKey && f === fk) ? id : -1));
+                markFieldDirty();
+                update();
+            };
+        });
+        list.querySelectorAll('canvas.kp-chart').forEach((cv) => bindCanvasTip(cv, chartTip, panel));
+    }
+
+    function scheduleListStructure(list, nextStructureKey, html) {
+        pendingListRender = { list, nextStructureKey, html };
+        if (listRenderRaf) return;
+        listRenderRaf = requestAnimationFrame(() => {
+            listRenderRaf = 0;
+            const pending = pendingListRender;
+            pendingListRender = null;
+            if (!pending || disposed || !panel.isConnected) return;
+            commitListStructure(pending.list, pending.nextStructureKey, pending.html);
+        });
+    }
+
+    function scheduleFeedRender(feed, html) {
+        pendingFeedRender = { feed, html };
+        if (feedRenderRaf) return;
+        feedRenderRaf = requestAnimationFrame(() => {
+            feedRenderRaf = 0;
+            const pending = pendingFeedRender;
+            pendingFeedRender = null;
+            if (!pending || disposed || !panel.isConnected) return;
+            pending.feed.innerHTML = pending.html;
+            lastFeedHtml = pending.html;
+        });
+    }
+
+    function scheduleChartRender(payload) {
+        pendingChartRender = payload;
+        if (chartRenderRaf) return;
+        chartRenderRaf = requestAnimationFrame(() => {
+            chartRenderRaf = 0;
+            const next = pendingChartRender;
+            pendingChartRender = null;
+            if (!next || disposed || !panel.isConnected) return;
+            if (next.drawEnergy) {
+                drawEnergyLines(el('kp-em-chart'), [
+                    { rb: emHub.emTotal, color: '#f6c453', width: 1.7, label: 'total (E+B)' },
+                    { rb: emHub.eField, color: '#5ad2e0', label: 'electric' },
+                    { rb: emHub.bField, color: '#f08bb0', label: 'magnetic' },
+                    { rb: emHub.wave, color: '#9be08b', label: 'wave' },
+                ], historyControl);
+            }
+            drawKnotBars(el('kp-em-bars'), mergeContrib(next.eC, next.bC, next.jC));
+        });
     }
 
     function update() {
@@ -429,7 +552,8 @@ export function mountKnotsPanel(host) {
             el('kp-contrib-sum').textContent = '';
             el('kp-em').style.display = 'none';
             renderEmptyList(el('kp-list'), false);
-            el('kp-feed').innerHTML = '';
+            setHtmlIfChanged(el('kp-feed'), '');
+            lastFeedHtml = '';
             return;
         }
         el('kp-em').style.display = '';
@@ -448,16 +572,19 @@ export function mountKnotsPanel(host) {
         // Header counts (plain words) + per-field "how much energy these knots hold".
         const eTel0 = E.getTelemetry(), bTel0 = B.getTelemetry(), jTel0 = J.getTelemetry();
         const dropped = (eTel0.dropped || 0) + (bTel0.dropped || 0) + (jTel0.dropped || 0);
-        el('kp-alive').innerHTML = `<b>${eTel0.count}</b> electric · <b>${bTel0.count}</b> magnetic · <b>${jTel0.count}</b> flux knots`
-            + (dropped ? ` <span class="kp-dim">(showing largest; ${dropped} more dropped)</span>` : '');
+        setHtmlIfChanged(el('kp-alive'), `<b>${eTel0.count}</b> electric · <b>${bTel0.count}</b> magnetic · <b>${jTel0.count}</b> flux knots`
+            + (dropped ? ` <span class="kp-dim">(showing largest; ${dropped} more dropped)</span>` : ''));
         el('kp-tally').textContent =
             `${(eAgg.births || 0) + (bAgg.births || 0) + (jAgg.births || 0)} born · ${(eAgg.deaths || 0) + (bAgg.deaths || 0) + (jAgg.deaths || 0)} died`
             + ` · ${(eAgg.fissions || 0) + (bAgg.fissions || 0) + (jAgg.fissions || 0)} split · ${(eAgg.fusions || 0) + (bAgg.fusions || 0) + (jAgg.fusions || 0)} merged`;
 
         const anyC = (eC.count && eC.totals.energy > 0) || (bC.count && bC.totals.energy > 0) || (jC.count && jC.totals.energy > 0);
-        el('kp-contrib-sum').innerHTML = anyC
-            ? `These knots hold <b>${pct(eC.captured.energyFrac)}</b> of the field energy (electric) and <b>${pct(bC.captured.energyFrac)}</b> (magnetic)`
-            : '<span style="opacity:.7">waiting for a streamline sweep to measure each knot\'s share</span>';
+        const sampleStride = Math.max(eC.sampling?.energyStride || 1, bC.sampling?.energyStride || 1,
+            jC.sampling?.fluxStride || 1);
+        const estimateTag = sampleStride > 1 ? `≈ stride ${sampleStride} estimate · ` : '';
+        setHtmlIfChanged(el('kp-contrib-sum'), anyC
+            ? `${estimateTag}These knots hold <b>${pct(eC.captured.energyFrac)}</b> of the field energy (electric) and <b>${pct(bC.captured.energyFrac)}</b> (magnetic)`
+            : '<span style="opacity:.7">waiting for a streamline sweep to measure each knot\'s share</span>');
 
         // ── Scenario EM energy: total + electric/magnetic breakdown over time ──
         // From the engine's energy audit; EM field energy U = ½(E²+B²).
@@ -480,30 +607,27 @@ export function mountKnotsPanel(host) {
                 + `${auditMeta.stateVersion ?? auditMeta.tick ?? auditMeta.snapshotVersion}`;
             if (stamp !== lastAuditStamp) {
                 lastAuditStamp = stamp;
-                emHub.emTotal.push(U);
-                emHub.eField.push(eEn);
-                emHub.bField.push(bEn);
-                emHub.wave.push(wv);
+                emHub.emTotal.push(U, auditMeta.tick);
+                emHub.eField.push(eEn, auditMeta.tick);
+                emHub.bField.push(bEn, auditMeta.tick);
+                emHub.wave.push(wv, auditMeta.tick);
             }
-            el('kp-em-totals').innerHTML = Number.isFinite(U)
+            setHtmlIfChanged(el('kp-em-totals'), Number.isFinite(U)
                 ? `<b>${fmtNum(U)}</b> total · electric ${pct(U > 0 ? eEn / U : 0)} · magnetic ${pct(U > 0 ? bEn / U : 0)}`
-                : '<b>—</b> total · one or more audit channels unavailable';
-            drawEnergyLines(el('kp-em-chart'), [
-                { rb: emHub.emTotal, color: '#f6c453', width: 1.7, label: 'total (E+B)' },
-                { rb: emHub.eField, color: '#5ad2e0', label: 'electric' },
-                { rb: emHub.bField, color: '#f08bb0', label: 'magnetic' },
-                { rb: emHub.wave, color: '#9be08b', label: 'wave' },
-            ]);
+                : '<b>—</b> total · one or more audit channels unavailable');
         } else {
-            el('kp-em-totals').innerHTML = '<b>—</b> awaiting a current energy-audit snapshot';
+            setHtmlIfChanged(el('kp-em-totals'), '<b>—</b> awaiting a current energy-audit snapshot');
         }
         // per-knot quantization bars — both E and B families merged
-        drawKnotBars(el('kp-em-bars'), mergeContrib(eC, bC, jC));
+        scheduleChartRender({ drawEnergy: !!audit, eC, bC, jC });
 
         // Per-knot list — E, then B, then flux, each row tagged + field-hued.
         // Decode stride 8: [0..2] cx,cy,cz · [3] segs · [4] crossings · [5] legs · [6] length · [7] |Φ|
         const list = el('kp-list');
         let html = '', anyKnots = false;
+        const structure = [];
+        const headerUpdates = [];
+        const rowUpdates = [];
         for (const fld of FIELDS) {
             const tel = fld.tr.getTelemetry();
             if (!tel.count) continue;
@@ -514,24 +638,34 @@ export function mountKnotsPanel(host) {
             const selectedId = fld.tr.getSelected();
             const perColor = fld.tr.getPerKnotColor();
             const f = tel.fields, S = tel.stride || 8;
-            const MAX_ROWS = 40;
+            // Keep the live list bounded independently of the detector's
+            // scientific maxKnots=40. The panel exposes the total count and
+            // explicitly reports the omitted remainder; the four dominant
+            // knots per field remain individually inspectable while the 4 Hz
+            // monitor stays inside its strict callback budget at L=97.
+            const MAX_ROWS = 4;
             const shown = Math.min(tel.count, MAX_ROWS);
             const headHue = Math.round(knotHue(0, fld.key) * 360);
-            html += `<div class="kp-field-h" style="color:hsl(${headHue},70%,62%)" title="Knots detected in the ${fld.name.toLowerCase()} field's streamlines. Each is a clump where the ${fld.tag}-field lines bunch and cross.">${fld.name}-field knots · ${tel.count}</div>`;
+            structure.push(`${fld.key}:${shown}`);
+            headerUpdates.push({ key: fld.key, count: String(tel.count) });
+            html += `<div class="kp-field-h" data-kp-field-head="${fld.key}" style="color:hsl(${headHue},70%,62%)" title="Knots detected in the ${fld.name.toLowerCase()} field's streamlines. Each is a clump where the ${fld.tag}-field lines bunch and cross.">${fld.name}-field knots · <span data-kp-field-count>${tel.count}</span></div>`;
             for (let k = 0; k < shown; k++) {
-                const id = tel.ids[k]; const key = `${fld.key}:${id}`;
+                const id = tel.ids[k]; const key = `${fld.key}:${id}`; const slotKey = `${fld.key}:${k}`;
                 const segs = f[k * S + 3] | 0, xings = f[k * S + 4] | 0, legs = f[k * S + 5] | 0;
                 const dotCol = (id === selectedId) ? '#ffffff'
                     : (perColor ? `hsl(${Math.round(knotHue(id, fld.key) * 360)},85%,62%)` : (fld.key === 'b' ? '#6fcf86' : fld.key === 'flux' ? '#f6c453' : '#3fd0e0'));
                 const ci = cIdx.get(id);
-                const meta = `<span class="kp-dim">${cells(tel.size[k])} · age ${tel.age[k]}t</span>`;
-                const body = (ci != null)
-                    ? `<span class="kp-cn">energy <b>${pct(contrib.energyFrac[ci])}</b> · flux <b>${pct(contrib.fluxFrac[ci])}</b> · charge <b>${pct(contrib.chargeFrac[ci])}</b></span> · ${meta}`
-                    : `${meta} <span class="kp-dim">· measuring…</span>`;
+                const meta = `<span class="kp-dim"><span data-kp-cells>${cells(tel.size[k])}</span> · age <span data-kp-age>${tel.age[k]}</span>t</span>`;
+                const body = `<span class="kp-cn">energy <b data-kp-energy>${ci != null ? pct(contrib.energyFrac[ci]) : '…'}</b> · flux <b data-kp-flux>${ci != null ? pct(contrib.fluxFrac[ci]) : '…'}</b> · charge <b data-kp-charge>${ci != null ? pct(contrib.chargeFrac[ci]) : '…'}</b></span> · ${meta}`;
                 const rowTitle = `${fld.name}-field knot #${id} — energy/flux/charge are this knot's share of the whole scenario's field (measured over its region). `
                     + `"cells" is the knot's size on the detection grid, "age" is how many ticks it has lived. Click to expand and highlight it in the 3-D view.`;
-                html += `<div class="kp-row" data-field="${fld.key}" data-id="${id}" title="${rowTitle}">`
-                     +  `<span style="color:${dotCol}">●</span> <b>#${id}</b> · ${body}`;
+                structure.push(`${slotKey}:${key === expandedKey ? 1 : 0}`);
+                rowUpdates.push({ slotKey, id, title: rowTitle, dotCol, cells: cells(tel.size[k]), age: String(tel.age[k]),
+                    energy: ci != null ? pct(contrib.energyFrac[ci]) : '…',
+                    flux: ci != null ? pct(contrib.fluxFrac[ci]) : '…',
+                    charge: ci != null ? pct(contrib.chargeFrac[ci]) : '…' });
+                html += `<div class="kp-row" data-slot="${slotKey}" data-field="${fld.key}" data-id="${id}" title="${rowTitle}">`
+                     +  `<span data-kp-dot style="color:${dotCol}">●</span> <b data-kp-id>#${id}</b> · ${body}`;
                 if (key === expandedKey) {
                     const cx = f[k * S].toFixed(0), cy = f[k * S + 1].toFixed(0), cz = f[k * S + 2].toFixed(0);
                     const ex = tel.extents[k * 3].toFixed(1), ey = tel.extents[k * 3 + 1].toFixed(1), ez = tel.extents[k * 3 + 2].toFixed(1);
@@ -558,22 +692,41 @@ export function mountKnotsPanel(host) {
         if (!anyKnots) {
             renderEmptyList(list, true);
         } else {
-            list.innerHTML = html;
-            list.querySelectorAll('canvas.kp-chart').forEach((cv) => {
-                const [fk, idStr] = cv.dataset.cid.split(':');
-                drawContribChart(cv, getFieldLineKnotTracker(fk).getKnotHistory(+idStr));
-                bindCanvasTip(cv, chartTip, panel);
-            });
-            list.querySelectorAll('.kp-row').forEach((r) => {
-                r.onclick = () => {
-                    const fk = r.dataset.field, id = +r.dataset.id, key = `${fk}:${id}`;
-                    expandedKey = (expandedKey === key ? null : key);
-                    // Single selection across both fields: select on this field, clear others.
-                    forEachKnotTracker((t, f) => t.setSelected((expandedKey && f === fk) ? id : -1));
-                    markFieldDirty();
-                    update();
-                };
-            });
+            const nextStructureKey = structure.join('|');
+            if (nextStructureKey !== listStructureKey) {
+                // Commit structural DOM outside the 4 Hz telemetry callback.
+                // The latest snapshot replaces any earlier pending one; frame
+                // timing remains the authoritative end-to-end performance gate.
+                scheduleListStructure(list, nextStructureKey, html);
+            }
+            for (const next of headerUpdates) {
+                const count = listHeaders.get(next.key);
+                if (count && count.textContent !== next.count) count.textContent = next.count;
+            }
+            for (const next of rowUpdates) {
+                const cached = listRows.get(next.slotKey);
+                if (!cached) continue;
+                const nextId = String(next.id);
+                if (cached.row.dataset.id !== nextId) cached.row.dataset.id = nextId;
+                if (cached.row.title !== next.title) cached.row.title = next.title;
+                const idLabel = `#${nextId}`;
+                if (cached.id.textContent !== idLabel) cached.id.textContent = idLabel;
+                if (cached.dotColor !== next.dotCol) {
+                    cached.dot.style.color = next.dotCol;
+                    cached.dotColor = next.dotCol;
+                }
+                if (cached.cells.textContent !== next.cells) cached.cells.textContent = next.cells;
+                if (cached.age.textContent !== next.age) cached.age.textContent = next.age;
+                if (cached.energy && cached.energy.textContent !== next.energy) cached.energy.textContent = next.energy;
+                if (cached.flux && cached.flux.textContent !== next.flux) cached.flux.textContent = next.flux;
+                if (cached.charge && cached.charge.textContent !== next.charge) cached.charge.textContent = next.charge;
+            }
+            if (expandedKey) {
+                list.querySelectorAll('canvas.kp-chart').forEach((cv) => {
+                    const [fk, idStr] = cv.dataset.cid.split(':');
+                    drawContribChart(cv, getFieldLineKnotTracker(fk).getKnotHistory(+idStr), historyControl);
+                });
+            }
         }
 
         // Event feed — E + B merged, newest first, tagged.
@@ -584,8 +737,9 @@ export function mountKnotsPanel(host) {
             for (let i = 0; i < (ev.count || 0); i++) merged.push({ tick: ev.tick[i], type: ev.type[i], np: ev.nparents[i], nc: ev.nchildren[i], tag: fld.tag });
         }
         merged.sort((a, b) => b.tick - a.tick);
+        let feedHtml;
         if (!merged.length) {
-            feed.innerHTML = '<div class="kp-empty">no events yet</div>';
+            feedHtml = '<div class="kp-empty">no events yet</div>';
         } else {
             let h = '';
             for (let i = 0; i < Math.min(12, merged.length); i++) {
@@ -596,7 +750,10 @@ export function mountKnotsPanel(host) {
                 const title = `${name} · tick ${e.tick} · ${fieldName} field. ${EVENT_DESC[e.type] ?? ''} (${before})`;
                 h += `<div title="${title}"><span class="kp-t">t${e.tick}</span> ${e.tag} ${EVENT_GLYPH[e.type] ?? '?'} ${name} <span class="kp-t">(${e.np}→${e.nc})</span></div>`;
             }
-            feed.innerHTML = h;
+            feedHtml = h;
+        }
+        if (feedHtml !== lastFeedHtml) {
+            scheduleFeedRender(feed, feedHtml);
         }
     }
 
@@ -605,6 +762,19 @@ export function mountKnotsPanel(host) {
         lastAuditStamp = null;
         for (const buffer of Object.values(emHub)) buffer.clear();
         expandedKey = null;
+        listStructureKey = '';
+        listRows.clear();
+        listHeaders.clear();
+        if (listRenderRaf) cancelAnimationFrame(listRenderRaf);
+        listRenderRaf = 0;
+        pendingListRender = null;
+        lastFeedHtml = null;
+        if (feedRenderRaf) cancelAnimationFrame(feedRenderRaf);
+        feedRenderRaf = 0;
+        pendingFeedRender = null;
+        if (chartRenderRaf) cancelAnimationFrame(chartRenderRaf);
+        chartRenderRaf = 0;
+        pendingChartRender = null;
         chartTip.hide();
         forEachKnotTracker((tracker) => tracker.reset());
     }
@@ -711,6 +881,15 @@ export function mountKnotsPanel(host) {
         const token = ++scenarioSyncToken;
         if (scenarioSyncRaf) cancelAnimationFrame(scenarioSyncRaf);
         scenarioSyncRaf = 0;
+        if (listRenderRaf) cancelAnimationFrame(listRenderRaf);
+        listRenderRaf = 0;
+        pendingListRender = null;
+        if (feedRenderRaf) cancelAnimationFrame(feedRenderRaf);
+        feedRenderRaf = 0;
+        pendingFeedRender = null;
+        if (chartRenderRaf) cancelAnimationFrame(chartRenderRaf);
+        chartRenderRaf = 0;
+        pendingChartRender = null;
 
         // Stop the old generation synchronously on selection intent. This is
         // required even for nonempty→nonempty loads because tracker histories
@@ -796,7 +975,8 @@ export function mountKnotsPanel(host) {
         scenarioSyncToken++;
         scenarioSelect?.removeEventListener('change', onScenarioChange);
         scenarioSelect = null;
-        window.removeEventListener(PANEL_VISIBILITY_CHANGE_EVENT, onPanelVisibilityChange);
+            window.removeEventListener(PANEL_VISIBILITY_CHANGE_EVENT, onPanelVisibilityChange);
+            historyControl.destroy();
         forEachKnotTracker((t) => t.setContribEnabled(false));
         panel.remove();
         if (typeof window !== 'undefined' && window.__ftdKnotsPanel === api) {

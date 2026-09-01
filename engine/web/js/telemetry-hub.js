@@ -108,14 +108,38 @@ function freshScale0State() {
 export class RingBuffer {
     constructor(size = 500) {
         this.data  = new Float32Array(size);
+        this.ticks = new Float64Array(size);
         this.size  = size;
         this.head  = 0;
         this.count = 0;
         this.total = 0;
     }
 
-    push(value) {
+    _grow() {
+        const oldData = this.data;
+        const oldTicks = this.ticks;
+        const oldSize = this.size;
+        const oldCount = this.count;
+        const oldHead = this.head;
+        const nextSize = Math.max(2, oldSize * 2);
+        const nextData = new Float32Array(nextSize);
+        const nextTicks = new Float64Array(nextSize);
+        const start = (oldHead - oldCount + oldSize) % oldSize;
+        for (let i = 0; i < oldCount; i++) {
+            const source = (start + i) % oldSize;
+            nextData[i] = oldData[source];
+            nextTicks[i] = oldTicks[source];
+        }
+        this.data = nextData;
+        this.ticks = nextTicks;
+        this.size = nextSize;
+        this.head = oldCount;
+    }
+
+    push(value, tick = this.total) {
+        if (this.count === this.size) this._grow();
         this.data[this.head] = finiteSample(value);
+        this.ticks[this.head] = Number.isFinite(Number(tick)) ? Number(tick) : this.total;
         this.head = (this.head + 1) % this.size;
         if (this.count < this.size) this.count++;
         this.total++;
@@ -129,6 +153,11 @@ export class RingBuffer {
     last() {
         if (this.count === 0) return unavailableSample();
         return this.data[(this.head - 1 + this.size) % this.size];
+    }
+
+    getTick(i) {
+        if (i < 0 || i >= this.count) return unavailableSample();
+        return this.ticks[(this.head - this.count + i + this.size) % this.size];
     }
 
     max() {
@@ -161,6 +190,21 @@ export class RingBuffer {
         return n;
     }
 
+    flattenTicksInto(targetArray, maxSamples) {
+        const n = Math.min(this.count, maxSamples || this.count, targetArray.length);
+        if (n === 0) return 0;
+        const start = (this.head - this.count + this.size) % this.size;
+        const actualStart = (start + this.count - n) % this.size;
+        if (actualStart + n <= this.size) {
+            targetArray.set(this.ticks.subarray(actualStart, actualStart + n), 0);
+        } else {
+            const tailLen = this.size - actualStart;
+            targetArray.set(this.ticks.subarray(actualStart, this.size), 0);
+            targetArray.set(this.ticks.subarray(0, n - tailLen), tailLen);
+        }
+        return n;
+    }
+
     clear() { this.head = 0; this.count = 0; this.total = 0; }
 }
 
@@ -173,17 +217,42 @@ export class MultiRingBuffer {
         this.channels = channelNames;
         this.numChannels = channelNames.length;
         this.data = new Float32Array(size * this.numChannels);
+        this.ticks = new Float64Array(size);
         this.head = 0;
         this.count = 0;
         this.total = 0;
         
         this.views = {};
         channelNames.forEach((name, i) => {
-            this.views[name] = new RingBufferView(this, i * size);
+            this.views[name] = new RingBufferView(this, i);
         });
     }
 
-    push(frame) {
+    _grow() {
+        const oldData = this.data;
+        const oldTicks = this.ticks;
+        const oldSize = this.size;
+        const oldCount = this.count;
+        const oldHead = this.head;
+        const nextSize = Math.max(2, oldSize * 2);
+        const nextData = new Float32Array(nextSize * this.numChannels);
+        const nextTicks = new Float64Array(nextSize);
+        const start = (oldHead - oldCount + oldSize) % oldSize;
+        for (let sample = 0; sample < oldCount; sample++) {
+            const source = (start + sample) % oldSize;
+            nextTicks[sample] = oldTicks[source];
+            for (let channel = 0; channel < this.numChannels; channel++) {
+                nextData[channel * nextSize + sample] = oldData[channel * oldSize + source];
+            }
+        }
+        this.data = nextData;
+        this.ticks = nextTicks;
+        this.size = nextSize;
+        this.head = oldCount;
+    }
+
+    push(frame, tick = this.total) {
+        if (this.count === this.size) this._grow();
         for (let i = 0; i < this.numChannels; i++) {
             const val = frame[this.channels[i]];
             // Missing, NaN, and infinity all mean "measurement unavailable".
@@ -191,16 +260,19 @@ export class MultiRingBuffer {
             // contract as RingBuffer.push() and RingBufferView.setLast().
             this.data[(i * this.size) + this.head] = finiteSample(val);
         }
+        this.ticks[this.head] = Number.isFinite(Number(tick)) ? Number(tick) : this.total;
         this.head = (this.head + 1) % this.size;
         if (this.count < this.size) this.count++;
         this.total++;
     }
 
-    pushArray(frameArray) {
+    pushArray(frameArray, tick = this.total) {
+        if (this.count === this.size) this._grow();
         // Zero-copy array push
         for (let i = 0; i < this.numChannels; i++) {
             this.data[(i * this.size) + this.head] = frameArray[i];
         }
+        this.ticks[this.head] = Number.isFinite(Number(tick)) ? Number(tick) : this.total;
         this.head = (this.head + 1) % this.size;
         if (this.count < this.size) this.count++;
         this.total++;
@@ -214,9 +286,9 @@ export class MultiRingBuffer {
 }
 
 export class RingBufferView {
-    constructor(parent, offset) {
+    constructor(parent, channelIndex) {
         this.parent = parent;
-        this.offset = offset;
+        this.channelIndex = channelIndex;
     }
     
     get count() { return this.parent.count; }
@@ -227,14 +299,21 @@ export class RingBufferView {
         if (i < 0 || i >= this.parent.count) return unavailableSample();
         const pSize = this.parent.size;
         const idx = (this.parent.head - this.parent.count + i + pSize) % pSize;
-        return this.parent.data[this.offset + idx];
+        return this.parent.data[this.channelIndex * pSize + idx];
     }
     
     last() {
         if (this.parent.count === 0) return unavailableSample();
         const pSize = this.parent.size;
         const idx = (this.parent.head - 1 + pSize) % pSize;
-        return this.parent.data[this.offset + idx];
+        return this.parent.data[this.channelIndex * pSize + idx];
+    }
+
+    getTick(i) {
+        if (i < 0 || i >= this.parent.count) return unavailableSample();
+        const pSize = this.parent.size;
+        const idx = (this.parent.head - this.parent.count + i + pSize) % pSize;
+        return this.parent.ticks[idx];
     }
 
     // Patches this channel's value into the row the parent MultiRingBuffer
@@ -248,7 +327,7 @@ export class RingBufferView {
         if (this.parent.count === 0) return;
         const pSize = this.parent.size;
         const idx = (this.parent.head - 1 + pSize) % pSize;
-        this.parent.data[this.offset + idx] = finiteSample(value);
+        this.parent.data[this.channelIndex * pSize + idx] = finiteSample(value);
     }
 
     max() {
@@ -273,7 +352,7 @@ export class RingBufferView {
         const actualStart = (start + pCount - n) % pSize;
         
         const data = this.parent.data;
-        const offset = this.offset;
+        const offset = this.channelIndex * pSize;
 
         if (actualStart + n <= pSize) {
             targetArray.set(data.subarray(offset + actualStart, offset + actualStart + n), 0);
@@ -281,6 +360,23 @@ export class RingBufferView {
             const tailLen = pSize - actualStart;
             targetArray.set(data.subarray(offset + actualStart, offset + pSize), 0);
             targetArray.set(data.subarray(offset, offset + n - tailLen), tailLen);
+        }
+        return n;
+    }
+
+    flattenTicksInto(targetArray, maxSamples) {
+        const pCount = this.parent.count;
+        const pSize = this.parent.size;
+        const n = Math.min(pCount, maxSamples || pCount, targetArray.length);
+        if (n === 0) return 0;
+        const start = (this.parent.head - pCount + pSize) % pSize;
+        const actualStart = (start + pCount - n) % pSize;
+        if (actualStart + n <= pSize) {
+            targetArray.set(this.parent.ticks.subarray(actualStart, actualStart + n), 0);
+        } else {
+            const tailLen = pSize - actualStart;
+            targetArray.set(this.parent.ticks.subarray(actualStart, pSize), 0);
+            targetArray.set(this.parent.ticks.subarray(0, n - tailLen), tailLen);
         }
         return n;
     }
@@ -656,7 +752,7 @@ export class TelemetryHub {
                 charges: chargeBalance,
                 fieldSpin,
                 fieldHelicity: finiteSample(diag.fieldHelicity),
-            });
+            }, meta.tick);
 
             // 80-sample sparkline buffers
             this._s0_sp.push({
@@ -665,7 +761,7 @@ export class TelemetryHub {
                 flux: finiteSample(diag.totalFlux),
                 energy: dynamicEnergy,
                 entropy: finiteSample(diag.entropy),
-            });
+            }, meta.tick);
         }
         return diag;
     }
@@ -697,8 +793,8 @@ export class TelemetryHub {
         if (!meta.stale && sampleStamp !== null && sampleStamp !== this._lastAuditTick) {
             this._lastAuditTick = sampleStamp;
 
-            this.ebDiff.push(finiteDifference(eF, bF));
-            this.gauss.push(finiteSample(audit.gaussViolation));
+            this.ebDiff.push(finiteDifference(eF, bF), meta.tick);
+            this.gauss.push(finiteSample(audit.gaussViolation), meta.tick);
 
             // Native diagnostics and audit are immutable independent groups.
             // Join only the same completed tick into the already-created core
@@ -729,7 +825,7 @@ export class TelemetryHub {
                 waveLeft: firstFiniteSample(audit.wvLTotal, audit.waveLTotal),
                 waveRight: firstFiniteSample(audit.wvRTotal, audit.waveRTotal),
                 energyDrift: drift,
-            });
+            }, meta.tick);
         }
         return enriched;
     }
@@ -756,7 +852,7 @@ export class TelemetryHub {
                 total: finiteSample(lag.total),
                 hamiltonian: finiteSample(lag.hamiltonian),
                 action: finiteSample(lag.totalAction),
-            });
+            }, meta.tick);
         }
         return lag;
     }
@@ -1006,7 +1102,7 @@ export class TelemetryHub {
                 pePosCount: this.pePosCount.last(),
                 peZeroCount: this.peZeroCount.last(),
                 peNegCount: this.peNegCount.last()
-            });
+            }, currentTick);
         }
         return diag;
     }
@@ -1172,7 +1268,7 @@ export class TelemetryHub {
                 aeMomentum: pMag,
                 aeAtomCount: diag.atomCount || 0,
                 aeDrift: energyDrift
-            });
+            }, currentTick);
         }
         return diag;
     }
@@ -1270,7 +1366,7 @@ export class TelemetryHub {
                 plMomentum: momentum,
                 plVirial: virial,
                 plSystemRadius: systemRadius,
-            });
+            }, currentTick);
         }
         return diag;
     }
@@ -1294,7 +1390,7 @@ export class TelemetryHub {
                 csBodies: diag.bodyCount || diag.count || 0,
                 csHubble: diag.hubbleParameter || diag.hubble || diag.hubbleParam || 0,
                 csDM: dmFraction,
-            });
+            }, currentTick);
         }
         return diag;
     }

@@ -40,6 +40,7 @@ import {
     PANEL_VISIBILITY_CHANGE_EVENT,
 } from '../../../../ui/panels/panel-visibility.js?v=2';
 import { rampViridis, rampEmEnergy, rampVorticity } from '../../../../viewport/color-ramps.js';
+import { TickHistoryControl } from '../../../../ui/charts/history-window.js';
 
 const PANEL_ID = 'gravity-panel';
 // This is an instrument panel, not a render surface. Four fresh snapshots per
@@ -501,6 +502,15 @@ export function mountGravityPanel(host, getBridge) {
     const pendingMessage = panel.querySelector('.gravity-pending');
     const pendingDetail = panel.querySelector('.gravity-pending-detail');
     const quantityButtons = [...panel.querySelectorAll('.grav-qbtn')];
+    const historyControl = new TickHistoryControl(applicableContent, {
+        id: 'gravity-panel',
+        defaultTicks: SPARK_MAX,
+        onChange: () => {
+            if (lastMetrics) {
+                renderDelta(deltaBody, historyControl.slice(history, entry => entry.ver), latched, lastMetrics);
+            }
+        },
+    });
 
     let activeKind = 'latency';
     let lastMetrics = null;
@@ -788,9 +798,8 @@ export function mountGravityPanel(host, getBridge) {
             latched = history.length ? history[history.length - 1] : null;   // previous accepted sample = baseline
             lastVer = ver;
             history.push({ ver, Lmax: m.L.max, Kmax: m.K.max, Fmean: m.F.mean, dil: m.dilationPct });
-            if (history.length > SPARK_MAX) history.shift();
         }
-        renderDelta(deltaBody, history, latched, m);
+        renderDelta(deltaBody, historyControl.slice(history, entry => entry.ver), latched, m);
         lastComputedVer = ver;
     }
 
@@ -1027,6 +1036,7 @@ export function mountGravityPanel(host, getBridge) {
             scenarioSelect?.removeEventListener('change', onScenarioChange);
             scenarioSelect = null;
             window.removeEventListener(PANEL_VISIBILITY_CHANGE_EVENT, onPanelVisibilityChange);
+            historyControl.destroy();
             if (typeof window !== 'undefined' && window.__ftdGravityPanel === api) window.__ftdGravityPanel = null;
             panel.remove();
         },

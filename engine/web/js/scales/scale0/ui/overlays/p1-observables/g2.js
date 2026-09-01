@@ -21,10 +21,11 @@ const TEMPLATE = `
 `;
 
 export class G2Component extends BaseComponent {
-    constructor() {
+    constructor(historyControl = null) {
         super(TEMPLATE);
         this.trackingState = null;
         this.bridgeRef = null;
+        this.historyControl = historyControl;
 
         this._renderG2Section(this.refs.stats);
 
@@ -40,7 +41,7 @@ export class G2Component extends BaseComponent {
         });
     }
 
-    update(bridge, particles = null) {
+    update(bridge, particles = null, tick = null) {
         this.bridgeRef = bridge;
         
         if (this.trackingState) {
@@ -61,9 +62,12 @@ export class G2Component extends BaseComponent {
                 // the honest tag until that physics exists (see the footer
                 // text below, which already states this).
                 this.trackingState.omegaMeasured = 0;
-                this.trackingState.omegaHistory.push(this.trackingState.omegaMeasured);
-                while (this.trackingState.omegaHistory.length > OMEGA_HISTORY_LEN) {
-                    this.trackingState.omegaHistory.shift();
+                const historyTick = Number.isFinite(tick)
+                    ? tick : this.trackingState.omegaHistory.length;
+                if (historyTick !== this.trackingState.lastHistoryTick) {
+                    this.trackingState.lastHistoryTick = historyTick;
+                    this.trackingState.omegaHistory.push(this.trackingState.omegaMeasured);
+                    this.trackingState.omegaHistoryTicks.push(historyTick);
                 }
             } else {
                 // Tracked particle disappeared — auto-untrack
@@ -105,6 +109,8 @@ export class G2Component extends BaseComponent {
             omegaPredicted,
             omegaMeasured: 0,
             omegaHistory: [],
+            omegaHistoryTicks: [],
+            lastHistoryTick: null,
             m_lepton_units: m_lep,
             q,
             spin: Number.isFinite(tracked.spin) ? tracked.spin : 1,
@@ -201,6 +207,15 @@ export class G2Component extends BaseComponent {
         }
 
         const { trackedId, position, bField, omegaPredicted, omegaMeasured, omegaHistory } = state;
+        const visibleHistory = this.historyControl
+            ? this.historyControl.slice(
+                omegaHistory.map((value, index) => ({
+                    value,
+                    tick: state.omegaHistoryTicks?.[index] ?? index,
+                })),
+                entry => entry.tick,
+            ).map(entry => entry.value)
+            : omegaHistory.slice(-OMEGA_HISTORY_LEN);
         const bMag = Math.sqrt(bField.x * bField.x + bField.y * bField.y + bField.z * bField.z);
         const residualPct = (omegaPredicted !== 0)
             ? Math.abs(omegaMeasured - omegaPredicted) / Math.abs(omegaPredicted) * 100
@@ -211,18 +226,18 @@ export class G2Component extends BaseComponent {
         const innerH = H - m.top - m.bottom;
         let sparkSvg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;">`;
         sparkSvg += `<rect x="${m.left}" y="${m.top}" width="${innerW}" height="${innerH}" fill="rgba(255,255,255,0.02)" stroke="var(--border-light, rgba(255,255,255,0.06))" stroke-width="0.5"/>`;
-        if (omegaHistory && omegaHistory.length > 1) {
-            const minV = Math.min(...omegaHistory, omegaPredicted);
-            const maxV = Math.max(...omegaHistory, omegaPredicted);
+        if (visibleHistory.length > 1) {
+            const minV = Math.min(...visibleHistory, omegaPredicted);
+            const maxV = Math.max(...visibleHistory, omegaPredicted);
             const span = (maxV - minV) || Math.abs(omegaPredicted) * 0.5 || 1e-9;
             const ypx = (v) => m.top + (1 - (v - minV) / span) * innerH;
             const yPred = ypx(omegaPredicted);
             sparkSvg += `<line x1="${m.left}" y1="${yPred.toFixed(1)}" x2="${m.left + innerW}" y2="${yPred.toFixed(1)}" stroke="var(--text-muted)" stroke-width="0.8" stroke-dasharray="3,3"/>`;
             let path = '';
-            for (let i = 0; i < omegaHistory.length; i++) {
-                const fx = i / Math.max(1, omegaHistory.length - 1);
+            for (let i = 0; i < visibleHistory.length; i++) {
+                const fx = i / Math.max(1, visibleHistory.length - 1);
                 const x = (m.left + fx * innerW).toFixed(1);
-                const y = ypx(omegaHistory[i]).toFixed(1);
+                const y = ypx(visibleHistory[i]).toFixed(1);
                 path += (i === 0 ? 'M' : 'L') + x + ',' + y;
             }
             sparkSvg += `<path d="${path}" stroke="var(--accent)" stroke-width="1.4" fill="none"/>`;

@@ -10,6 +10,7 @@
  */
 
 import * as THREE from 'three';
+import { TickHistoryControl } from './ui/charts/history-window.js';
 import { updateInspectorChrome, resetInspectorSelection } from './inspector/chrome.js';
 import { collectInspectorDom } from './inspector/dom-bindings.js';
 import { bindInspectorPointerControls } from './inspector/pointer-controller.js';
@@ -82,6 +83,18 @@ export class Inspector {
         this._cosmicRenderer = null;
         this._dragThresholdPx = 6;
         Object.assign(this, collectInspectorDom());
+        this.chartHistoryControl = this.chartHistoryHost
+            ? new TickHistoryControl(this.chartHistoryHost, {
+                id: 'inspector-panel',
+                defaultTicks: 80,
+                insert: 'append',
+                onChange: () => {
+                    for (const spark of Object.values(this._aeTelemetry?.sparks || {})) {
+                        spark.update();
+                    }
+                },
+            })
+            : null;
 
         // Focus Voxel button
         const btnFocus = this.focusSelectionBtn;
