@@ -475,7 +475,7 @@ export function animatePE(ctx) {
     }
 
     if (inspector) {
-        inspector.setPEContext(getCloudParticleMap(), cloud.count, typeMap);
+        inspector.setPEContext(getCloudParticleMap(), cloud.count, typeMap, peData);
     }
 
     // ── 3. Overlays ──────────────────────────────────────────────────

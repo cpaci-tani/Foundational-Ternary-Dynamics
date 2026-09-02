@@ -4,7 +4,7 @@
   "note": "Mechanical per-file catalog. Conceptual docs: engine/ARCHITECTURE.md, CALLSTACKS.md, SCENARIO_ARCHITECTURE.md, SPEC_ENGINE.md, engine/docs/ENGINE_CODE_MAP.md.",
   "totals": {
     "files": 2691,
-    "loc": 733365
+    "loc": 733478
   },
   "subsystems": {
     "tests": {
@@ -17,7 +17,7 @@
     },
     "web/js-toplevel": {
       "files": 51,
-      "loc": 76085
+      "loc": 76143
     },
     "src/core": {
       "files": 198,
@@ -29,7 +29,7 @@
     },
     "web/tests": {
       "files": 144,
-      "loc": 35452
+      "loc": 35501
     },
     "web/scale0": {
       "files": 68,
@@ -89,7 +89,7 @@
     },
     "web/inspector": {
       "files": 9,
-      "loc": 1323
+      "loc": 1329
     },
     "tools": {
       "files": 4,
@@ -24540,7 +24540,7 @@
     {
       "path": "engine/web/js/inspector.js",
       "lang": "js",
-      "loc": 502,
+      "loc": 560,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "Inspector Panel \u2014 click-to-inspect particle properties.",
@@ -24646,7 +24646,7 @@
     {
       "path": "engine/web/js/inspector/scales/particles.js",
       "lang": "js",
-      "loc": 131,
+      "loc": 137,
       "subsystem": "web/inspector",
       "primary": true,
       "purpose": "",
@@ -29077,7 +29077,7 @@
     {
       "path": "engine/web/tests/scale1-inspection-focus.spec.js",
       "lang": "js",
-      "loc": 116,
+      "loc": 165,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",

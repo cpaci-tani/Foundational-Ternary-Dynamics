@@ -25,6 +25,55 @@ async function enableOverlay(page, id) {
 }
 
 test.describe('Scale 1 focused inspection', () => {
+    test('spawned particles enter the hierarchy and retain a forgiving viewport hit target', async ({ page }) => {
+        page.setDefaultTimeout(20_000);
+        const errors = attachConsoleWatcher(page);
+        await gotoAndReady(page);
+        await switchMode(page, 'particles');
+        await selectScenario(page, 's1-empty-zoo');
+
+        const particleId = await page.evaluate(() => window._ftdBridge.peAddParticle(
+            'electron', -1, 0, 0, 0, 0, 0, 0, 0.511, 0.1));
+        expect(particleId).toBeGreaterThanOrEqual(0);
+        await expect.poll(() => page.evaluate(() =>
+            window._ftdBridge?.peGetParticleData?.()?.count || 0)).toBe(1);
+
+        await openHierarchy(page);
+        await expect(page.locator(`[data-inspect-particle="${particleId}"]`)).toBeVisible();
+        await page.evaluate(() => document
+            .querySelector('#tab-bar .tab[data-panel="inspector"]')?.click());
+        await expect(page.locator('#panel-inspector')).toHaveClass(/active/);
+
+        const clickPoint = await page.evaluate((id) => {
+            const ctx = window.__ftdCtx;
+            const data = ctx.bridge.peGetParticleData();
+            const index = Array.from(data.ids).findIndex(candidate => Number(candidate) === id);
+            if (index < 0) throw new Error(`spawned particle #${id} missing from live data`);
+            // Force the legacy point-cloud raycast to miss. The logical
+            // screen-space fallback must still accept this near-center click.
+            ctx.inspector.raycaster.params.Points.threshold = 0.0001;
+            const point = ctx.viewport.camera.position.clone().set(
+                data.positions[index * 3],
+                data.positions[index * 3 + 1],
+                data.positions[index * 3 + 2],
+            ).project(ctx.viewport.camera);
+            const rect = ctx.viewport.renderer.domElement.getBoundingClientRect();
+            return {
+                x: rect.left + (point.x + 1) * rect.width / 2 + 20,
+                y: rect.top + (1 - point.y) * rect.height / 2,
+            };
+        }, particleId);
+        await page.mouse.click(clickPoint.x, clickPoint.y);
+
+        await expect.poll(() => page.evaluate(() => {
+            const focus = window.__ftdCtx?.inspector?.getPEInspectionFocus?.();
+            return focus?.kind === 'particle' ? focus.particleId : -1;
+        })).toBe(particleId);
+        await expect(page.locator('#pe-inspector-content')).toBeVisible();
+        await expect(page.locator('#pe-insp-id')).toHaveText(String(particleId));
+        expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
+    });
+
     test('particle and cluster selections isolate overlays without changing overlay settings', async ({ page }) => {
         page.setDefaultTimeout(20_000);
         const errors = attachConsoleWatcher(page);

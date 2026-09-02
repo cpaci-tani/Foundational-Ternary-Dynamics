@@ -10,14 +10,14 @@ import { appRegistry } from './core/registry.js';
 import { Viewport } from './viewport.js?v=23';
 import { FluxEnergyChart, ParticleChart } from './charts.js';
 import { telemetryHub } from './telemetry-hub.js';
-import { createInspectorAppRuntime } from './inspector/app-runtime.js?v=4';
+import { createInspectorAppRuntime } from './inspector/app-runtime.js?v=5';
 import { initZoo, setEngineMode as setZooMode } from './zoo.js?v=3';
 import { getCategories, getMoleculesByCategory } from './molecules.js';
 import { debugLog } from './core/log.js';
 
 // ── Scale Controllers (extracted from inline code) ─────────────────
 import * as Scale0Controller from './scales/scale0/controller.js?v=44';
-import * as Scale1Controller from './scales/scale1/controller.js?v=29';
+import * as Scale1Controller from './scales/scale1/controller.js?v=30';
 import * as Scale2Controller from './scales/scale2/controller.js';
 import * as Scale3Controller from './scales/scale3/controller.js';
 // ── Phase 1-3: Ontic Observatory, Physics Fidelity, Aggregation Bridge

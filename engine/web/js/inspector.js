@@ -25,7 +25,7 @@ import {
     showPEInspector,
     hidePEInspector,
     updatePEFields,
-} from './inspector/scales/particles.js?v=3';
+} from './inspector/scales/particles.js?v=4';
 import {
     clusterInspectionFocus,
     particleInspectionFocus,
@@ -69,6 +69,8 @@ export class Inspector {
         this._cloudParticleMap = null; // Int32Array mapping cloud index → PE particle ID
         this._cloudCount = 0;
         this._peTypeMap = null;
+        this._peParticleData = null;
+        this._pePickProjection = new THREE.Vector3();
         this._selectedPEParticleId = -1;
         this._peInspectionFocus = null;
 
@@ -208,10 +210,66 @@ export class Inspector {
         this._updateInspectorChrome();
     }
 
-    setPEContext(cloudParticleMap, cloudCount, typeMap) {
+    setPEContext(cloudParticleMap, cloudCount, typeMap, particleData = null) {
         this._cloudParticleMap = cloudParticleMap;
         this._cloudCount = cloudCount;
         this._peTypeMap = typeMap;
+        this._peParticleData = particleData;
+    }
+
+    /**
+     * Select the nearest logical ParticleEngine record in screen space.
+     *
+     * Scale 1 renders each record as a stochastic cloud. Raycasting only those
+     * sample points leaves holes inside a visibly occupied cloud, especially
+     * for newly spawned low-mass particles. This fallback uses the native
+     * particle center and a stable CSS-pixel target without altering physics or
+     * rendered point size.
+     */
+    pickPEParticleAtClientPoint(clientX, clientY, pointerType = 'mouse') {
+        const data = this._peParticleData;
+        const camera = this.viewport?.camera;
+        const canvas = this.viewport?.renderer?.domElement;
+        if (this._engineMode !== 'particles' || !data?.positions || !data?.ids
+            || !camera || !canvas) return -1;
+
+        const rect = canvas.getBoundingClientRect();
+        if (!(rect.width > 0 && rect.height > 0)) return -1;
+        const x = Number.isFinite(Number(clientX))
+            ? Number(clientX) : rect.left + (this.mouse.x + 1) * rect.width / 2;
+        const y = Number.isFinite(Number(clientY))
+            ? Number(clientY) : rect.top + (1 - this.mouse.y) * rect.height / 2;
+        const hitRadiusPx = pointerType === 'touch' ? 36 : 28;
+        let bestDistance2 = hitRadiusPx * hitRadiusPx;
+        let bestDepth = Number.POSITIVE_INFINITY;
+        let bestId = -1;
+        const count = Math.max(0, Math.min(
+            Number(data.count) || 0,
+            Math.floor(data.positions.length / 3),
+            data.ids.length,
+        ));
+
+        for (let index = 0; index < count; index++) {
+            const i3 = index * 3;
+            const px = Number(data.positions[i3]);
+            const py = Number(data.positions[i3 + 1]);
+            const pz = Number(data.positions[i3 + 2]);
+            if (![px, py, pz].every(Number.isFinite)) continue;
+            const projected = this._pePickProjection.set(px, py, pz).project(camera);
+            if (!Number.isFinite(projected.x) || !Number.isFinite(projected.y)
+                || projected.z < -1 || projected.z > 1) continue;
+            const screenX = rect.left + (projected.x + 1) * rect.width / 2;
+            const screenY = rect.top + (1 - projected.y) * rect.height / 2;
+            const dx = screenX - x;
+            const dy = screenY - y;
+            const distance2 = dx * dx + dy * dy;
+            if (distance2 > bestDistance2
+                || (distance2 === bestDistance2 && projected.z >= bestDepth)) continue;
+            bestDistance2 = distance2;
+            bestDepth = projected.z;
+            bestId = Number(data.ids[index]);
+        }
+        return Number.isInteger(bestId) && bestId >= 0 ? bestId : -1;
     }
 
     getPEInspectionFocus() {
@@ -363,7 +421,7 @@ export class Inspector {
         } else if (this._engineMode === 'atoms' || this._engineMode === 'molecules') {
             handleAEClick(this, intersects);
         } else if (this._engineMode === 'particles') {
-            handlePEClick(this, intersects);
+            handlePEClick(this, intersects, e);
         } else if (this._engineMode === 'meta') {
             // Scale 6 binds its own canvas pointerdown inspector.
         } else if (this._engineMode === 'lattice') {
@@ -391,8 +449,8 @@ export class Inspector {
 
     // ── Scale 1 (Particles / PE) ──────────────────────────────────────
 
-    _onClickPE(intersects) {
-        handlePEClick(this, intersects);
+    _onClickPE(intersects, event = null) {
+        handlePEClick(this, intersects, event);
     }
 
     _showPEInspector() {

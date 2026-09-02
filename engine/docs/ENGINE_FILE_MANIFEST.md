@@ -4,7 +4,7 @@
 > Machine-readable source of truth: [`ENGINE_FILE_MANIFEST.json`](ENGINE_FILE_MANIFEST.json)  
 > Narrative map: [`ENGINE_CODE_MAP.md`](ENGINE_CODE_MAP.md)
 
-**2691 code files, 733,365 LOC** (tracked `.cpp/.cc/.h/.hpp/.cu/.cuh/.js/.mjs/.py` under `engine/`).
+**2691 code files, 733,478 LOC** (tracked `.cpp/.cc/.h/.hpp/.cu/.cuh/.js/.mjs/.py` under `engine/`).
 
 ## Subsystem rollup
 
@@ -12,10 +12,10 @@
 |---|--:|--:|
 | `tests` | 810 | 247,096 |
 | `other` | 806 | 163,140 |
-| `web/js-toplevel` | 51 | 76,085 |
+| `web/js-toplevel` | 51 | 76,143 |
 | `src/core` | 198 | 69,274 |
 | `include` | 300 | 38,954 |
-| `web/tests` | 144 | 35,452 |
+| `web/tests` | 144 | 35,501 |
 | `web/scale0` | 68 | 23,203 |
 | `cuda` | 30 | 18,527 |
 | `web/ui` | 86 | 12,753 |
@@ -30,7 +30,7 @@
 | `web/config` | 4 | 1,476 |
 | `vendor` | 12 | 1,425 |
 | `web/atlas` | 9 | 1,386 |
-| `web/inspector` | 9 | 1,323 |
+| `web/inspector` | 9 | 1,329 |
 | `tools` | 4 | 1,199 |
 | `src/atom` | 3 | 844 |
 | `web/backgrounds` | 7 | 781 |
@@ -1672,7 +1672,7 @@
 | [`XMLNodeHandler.cpp`](../../engine/thirdparty/rmlui/Source/Core/XMLNodeHandler.cpp) | 7 |  |
 | [`precompiled.h`](../../engine/thirdparty/rmlui/Source/Core/precompiled.h) | 3 |  |
 
-### `web/js-toplevel`  (51 files, 76,085 LOC)
+### `web/js-toplevel`  (51 files, 76,143 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
@@ -1689,7 +1689,7 @@
 | [`constants.js`](../../engine/web/js/constants.js) | 608 | @file constants.js @brief FTD Constants — single source of truth for the web dashboard. |
 | [`molecules.js`](../../engine/web/js/molecules.js) | 605 | Molecular Library — 25 molecules for Scale 2 (AtomEngine). |
 | [`physics-harness.js`](../../engine/web/js/physics/physics-harness.js) | 597 | PhysicsHarness — single canonical surface for reading and writing Scale-0 lattice physics state. |
-| [`inspector.js`](../../engine/web/js/inspector.js) | 502 | Inspector Panel — click-to-inspect particle properties. |
+| [`inspector.js`](../../engine/web/js/inspector.js) | 560 | Inspector Panel — click-to-inspect particle properties. |
 | [`RGBELoader.js`](../../engine/web/js/vendor/three/examples/jsm/loaders/RGBELoader.js) | 450 | default error routine. |
 | [`planetary-renderer.js`](../../engine/web/js/planetary-renderer.js) | 432 | F-7: build one of the two shared shader-program templates. |
 | [`fields.js`](../../engine/web/js/fields.js) | 428 | Force Field Sampling & Visualization Samples Coulomb/ionic potential and force vectors on a 2D grid (XZ plane) for rendering as a heatmap + arrow overlay. |
@@ -2236,7 +2236,7 @@
 | [`proper_time_rate.h`](../../engine/include/ftd/proper_time_rate.h) | 6 | Compatibility include. |
 | [`native_wave_energy.h`](../../engine/include/ftd/eft/native_wave_energy.h) | 3 | Compatibility name for the exact wave-energy observer used by FTD-0452. |
 
-### `web/tests`  (144 files, 35,452 LOC)
+### `web/tests`  (144 files, 35,501 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
@@ -2302,6 +2302,7 @@
 | [`scientific-scenario-inventory.spec.js`](../../engine/web/tests/scientific-scenario-inventory.spec.js) | 167 |  |
 | [`settings-glassmorphism.spec.js`](../../engine/web/tests/settings-glassmorphism.spec.js) | 167 | @ts-check |
 | [`color-ramps.spec.js`](../../engine/web/tests/color-ramps.spec.js) | 166 | @ts-check |
+| [`scale1-inspection-focus.spec.js`](../../engine/web/tests/scale1-inspection-focus.spec.js) | 165 | @ts-check |
 | [`theme-contrast.spec.js`](../../engine/web/tests/theme-contrast.spec.js) | 165 | @ts-check |
 | [`wasm-scenario-coverage.spec.js`](../../engine/web/tests/wasm-scenario-coverage.spec.js) | 163 | @ts-check |
 | [`field-line-knots-contributions.spec.js`](../../engine/web/tests/field-line-knots-contributions.spec.js) | 157 | engine/web/tests/field-line-knots-contributions.spec.js Per-knot scientific contributions: energy / flux / charge integrated over each knot's region, expressed as a share of the scenario total, + h... |
@@ -2329,7 +2330,6 @@
 | [`scale0-standard-model-overlay.spec.js`](../../engine/web/tests/scale0-standard-model-overlay.spec.js) | 118 | @ts-check |
 | [`scale1-particle-ledger.node.test.mjs`](../../engine/web/tests/scale1-particle-ledger.node.test.mjs) | 118 | Run: node engine/web/tests/scale1-particle-ledger.node.test.mjs |
 | [`verify_web_consistency.js`](../../engine/web/tests/verify_web_consistency.js) | 118 |  |
-| [`scale1-inspection-focus.spec.js`](../../engine/web/tests/scale1-inspection-focus.spec.js) | 116 | @ts-check |
 | [`scale0-gravity.spec.js`](../../engine/web/tests/scale0-gravity.spec.js) | 110 | @ts-check |
 | [`scale0-panel-render.spec.js`](../../engine/web/tests/scale0-panel-render.spec.js) | 108 | @ts-check |
 | [`scale0-direct-telemetry-provenance.spec.js`](../../engine/web/tests/scale0-direct-telemetry-provenance.spec.js) | 107 | @ts-check |
@@ -2777,14 +2777,14 @@
 | [`atlas-data.js`](../../engine/web/js/atlas/atlas-data.js) | 53 | Static analytic illustrative fields for the Ontology Atlas. |
 | [`atlas-chain.js`](../../engine/web/js/atlas/atlas-chain.js) | 33 | FTD Ontology Atlas — the causal chain the stepper walks (pure data). |
 
-### `web/inspector`  (9 files, 1,323 LOC)
+### `web/inspector`  (9 files, 1,329 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
 | [`lattice.js`](../../engine/web/js/inspector/scales/lattice.js) | 348 | _symbols:_ handleLatticeClick(), showLatticeInspector(), hideLatticeInspector(), updateLatticeFields() |
 | [`atoms.js`](../../engine/web/js/inspector/scales/atoms.js) | 303 | _symbols:_ handleAEClick(), showAEInspector(), hideAEInspector(), updateAEFields() |
 | [`dom-bindings.js`](../../engine/web/js/inspector/dom-bindings.js) | 178 | _symbols:_ collectInspectorDom() |
-| [`particles.js`](../../engine/web/js/inspector/scales/particles.js) | 131 | _symbols:_ handlePEClick(), showPEInspector(), hidePEInspector(), updatePEFields() |
+| [`particles.js`](../../engine/web/js/inspector/scales/particles.js) | 137 | _symbols:_ handlePEClick(), showPEInspector(), hidePEInspector(), updatePEFields() |
 | [`planetary.js`](../../engine/web/js/inspector/scales/planetary.js) | 109 | _symbols:_ classifyBiome(), handlePlanetaryClick(), showPlanetaryInspector(), hidePlanetaryInspector() |
 | [`cosmic.js`](../../engine/web/js/inspector/scales/cosmic.js) | 86 | _symbols:_ handleCosmicClick(), showCosmicInspector(), hideCosmicInspector(), updateCosmicFields() |
 | [`chrome.js`](../../engine/web/js/inspector/chrome.js) | 84 | _symbols:_ resetInspectorSelection(), hasInspectorSelection(), getInspectorModeCopy(), getInspectorSelectionSummary() |

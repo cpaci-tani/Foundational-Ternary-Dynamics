@@ -9,14 +9,20 @@ import {
     formatLength,
 } from '../../units.js';
 
-export function handlePEClick(target, intersects) {
+export function handlePEClick(target, intersects, pointerEvent = null) {
     if (intersects.length > 0 && target._cloudParticleMap) {
-        const cloudIdx = intersects[0].index;
-        if (cloudIdx < target._cloudCount) {
-            target.selectPEParticle?.(target._cloudParticleMap[cloudIdx]);
-            return;
+        for (const hit of intersects) {
+            const cloudIdx = hit.index;
+            if (cloudIdx < target._cloudCount
+                && target.selectPEParticle?.(target._cloudParticleMap[cloudIdx])) return;
         }
     }
+    const logicalId = target.pickPEParticleAtClientPoint?.(
+        pointerEvent?.clientX,
+        pointerEvent?.clientY,
+        pointerEvent?.pointerType,
+    );
+    if (logicalId >= 0 && target.selectPEParticle?.(logicalId)) return;
     target.clearPEInspection?.();
 }
 

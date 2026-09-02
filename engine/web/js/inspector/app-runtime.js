@@ -1,4 +1,4 @@
-import { Inspector } from '../inspector.js?v=4';
+import { Inspector } from '../inspector.js?v=5';
 
 export function createInspectorAppRuntime({ viewport, bridge, setZooMode }) {
     const inspector = new Inspector(viewport, bridge);
