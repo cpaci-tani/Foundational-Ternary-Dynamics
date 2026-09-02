@@ -17,7 +17,7 @@ import { debugLog } from './core/log.js';
 
 // ── Scale Controllers (extracted from inline code) ─────────────────
 import * as Scale0Controller from './scales/scale0/controller.js?v=44';
-import * as Scale1Controller from './scales/scale1/controller.js?v=27';
+import * as Scale1Controller from './scales/scale1/controller.js?v=29';
 import * as Scale2Controller from './scales/scale2/controller.js';
 import * as Scale3Controller from './scales/scale3/controller.js';
 // ── Phase 1-3: Ontic Observatory, Physics Fidelity, Aggregation Bridge
@@ -62,7 +62,7 @@ import { initSettingsModal } from './ui/components/settings-modal/component.js?v
 // Wire / boot helpers extracted per refactoring-analyst RF-9 (partial).
 import { wireKeyboard as wireKeyboardExternal } from './app-wire/keyboard.js';
 import { showToast, loadProgress as _loadProgress } from './app-wire/status.js';
-import { bootBridge } from './app-wire/bridge-boot.js?v=9';
+import { bootBridge } from './app-wire/bridge-boot.js?v=10';
 import { sliderValueToSpeed, speedLabel } from './ui/components/play-bar/speed-scale.js';
 import {
     captureScale1Checkpoint,

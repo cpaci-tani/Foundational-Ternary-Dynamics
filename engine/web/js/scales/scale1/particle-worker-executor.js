@@ -10,7 +10,7 @@
 export class Scale1ParticleWorkerExecutor {
     constructor({ workerFactory = null } = {}) {
         this.workerFactory = workerFactory || (() => new Worker(
-            new URL('./particle-engine.worker.js?v=1', import.meta.url),
+            new URL('./particle-engine.worker.js?v=2', import.meta.url),
         ));
         this.worker = null;
         this.state = 'idle';

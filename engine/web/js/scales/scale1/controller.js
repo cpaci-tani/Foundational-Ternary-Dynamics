@@ -41,7 +41,7 @@ import {
 import {
     getScale1Scenario, getScale1ScenarioPreset, DEFAULT_SCALE1_SCENARIO,
     installScale1ScenarioManifest, populateScale1ScenarioSelect,
-    scale1BehaviorPresentation, syncScale1ScenarioBehaviorUI,
+    syncScale1ScenarioBehaviorUI,
 } from './scenario-registry.js?v=15';
 import { scale1State, resetScale1State } from './state/store.js?v=7';
 import {
@@ -56,7 +56,7 @@ import {
     focusedSystemObservables,
 } from './inspection-focus.js?v=1';
 import { shouldRefreshScale1Observation } from './observation-cadence.js?v=1';
-import { scale1ParticleWorkerExecutor } from './particle-worker-executor.js?v=1';
+import { scale1ParticleWorkerExecutor } from './particle-worker-executor.js?v=2';
 
 
 // =====================================================================
@@ -802,10 +802,10 @@ export function loadPEScenario(ctx, name) {
     syncScale1ScenarioBehaviorUI(scenario, scale1State.m3ViewId);
     refreshScale1ScenarioContractCard();
 
-    // Put the declared observable in front of the user. Static, null, and
-    // replay cases otherwise look like failed dynamics even when correct.
-    const presentation = scale1BehaviorPresentation(scenario?.behavior);
-    ctx.appShell?.activatePanel?.(presentation.panel);
+    // syncScale1ScenarioBehaviorUI renders the declared observable as
+    // pedagogical metadata. Scenario changes, resets, and other UI-driven
+    // reloads intentionally do not activate its recommended panel: the user's
+    // current panel is retained, matching Scale 0.
 
     // Soft circles + shader manifestation (void slots stay as faint ghosts)
     if (viewport?.setParticleShape) viewport.setParticleShape(0);

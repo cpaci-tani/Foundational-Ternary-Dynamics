@@ -1141,14 +1141,35 @@ private:
     ftd::eft::FinitePortGaussBattery witness_;
 };
 
+// Keep production tick dispatch out of Embind's virtual member-function
+// invoker. Memory64 lowers a bound virtual method to a generic pointer-to-
+// member call_indirect; a stale member descriptor or object vtable then traps
+// before ParticleEngine::tick() begins ("table index is out of bounds").
+// These free entry points have a fixed signature and use an explicitly
+// qualified call, so the Scale-1 transaction reaches the concrete engine
+// without an indirect virtual dispatch.
+static void pe_tick_engine(ftd::ParticleEngine& pe) {
+    pe.ftd::ParticleEngine::tick();
+}
+
+static void pe_run_engine(ftd::ParticleEngine& pe, int num_ticks) {
+    for (int i = 0; i < num_ticks; ++i) {
+        pe.ftd::ParticleEngine::tick();
+    }
+}
+
+static int pe_current_tick(ftd::ParticleEngine& pe) {
+    return pe.ftd::ParticleEngine::current_tick();
+}
+
+static std::uint64_t pe_observation_revision(ftd::ParticleEngine& pe) {
+    return pe.observation_revision();
+}
+
 // ── Embind Registration ──────────────────────────────────────────────
 EMSCRIPTEN_BINDINGS(ftd_module_particle) {
     class_<ftd::ParticleEngine>("ParticleEngine")
         .constructor<>()
-        .function("tick", &ftd::ParticleEngine::tick)
-        .function("run",  &ftd::ParticleEngine::run)
-        .function("currentTick", &ftd::ParticleEngine::current_tick)
-        .function("observationRevision", &ftd::ParticleEngine::observation_revision)
         ;
     class_<Scale1FinitePortBatteryObserver>("Scale1FinitePortBatteryObserver")
         .constructor<int, int, double, double>()
@@ -1158,6 +1179,10 @@ EMSCRIPTEN_BINDINGS(ftd_module_particle) {
         ;
 
     function("getPEParticleData",   &get_pe_particle_data);
+    function("peTickEngine",        &pe_tick_engine);
+    function("peRunEngine",         &pe_run_engine);
+    function("peCurrentTick",       &pe_current_tick);
+    function("peObservationRevision", &pe_observation_revision);
     function("getPEDiagnostics",    &get_pe_diagnostics);
     function("getPESnapshot",       &get_pe_snapshot);
     function("getScale1Registry",   &get_scale1_registry);

@@ -11,6 +11,11 @@ async function selectPEScenario(page, id) {
     }, id);
 }
 
+async function openPanel(page, id) {
+    await page.locator(`#tab-bar .tab[data-panel="${id}"]`).click();
+    await expect(page.locator(`#panel-${id}`)).toHaveClass(/active/);
+}
+
 test.describe('Scale 1 native-engine scenarios and overlays', () => {
     test.beforeEach(async ({ page }) => {
         page.setDefaultTimeout(20_000);
@@ -82,7 +87,7 @@ test.describe('Scale 1 native-engine scenarios and overlays', () => {
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
     });
 
-    test('scenario behavior contract exposes M3 views, relevant panels, and A/B controls', async ({ page }) => {
+    test('scenario behavior contract exposes M3 views and A/B controls', async ({ page }) => {
         const errors = attachConsoleWatcher(page);
         await gotoAndReady(page);
         await switchMode(page, 'particles');
@@ -90,8 +95,8 @@ test.describe('Scale 1 native-engine scenarios and overlays', () => {
         await expect(page.locator('#pe-scenario-behavior')).toHaveText('READ-ONLY REPLAY');
         await expect(page.locator('#pe-m3-view-group')).toBeVisible();
         await expect(page.locator('#pe-m3-view-select option')).toHaveCount(6);
-        await expect(page.locator('#panel-diagnostics')).toHaveClass(/active/);
 
+        await openPanel(page, 'diagnostics');
         await page.locator('#pe-m3-view-select').selectOption('fields');
         await expect(page.locator('[data-section="pe-m3-fields"]')).toBeVisible();
         await expect(page.locator('[data-section="pe-m3-fields"]')).toContainText('actual');
@@ -102,7 +107,6 @@ test.describe('Scale 1 native-engine scenarios and overlays', () => {
         await selectPEScenario(page, 's1-qed-static-coulomb');
         await expect(page.locator('#pe-scenario-behavior')).toHaveText('STATIC FIELD');
         await expect(page.locator('#pe-m3-view-group')).toBeHidden();
-        await expect(page.locator('#panel-diagnostics')).toHaveClass(/active/);
         await expect(page.locator('#pe-scenario-contract')).toContainText(/Sources are intentionally locked/i);
 
         await selectPEScenario(page, 's1-quantum-exchange-spinless-control');
@@ -115,13 +119,43 @@ test.describe('Scale 1 native-engine scenarios and overlays', () => {
 
         await selectPEScenario(page, 's1-empty-zoo');
         await expect(page.locator('#pe-scenario-behavior')).toHaveText('WAITING FOR INJECTION');
-        await expect(page.locator('#panel-zoo')).toHaveClass(/active/);
         await expect(page.locator('#pe-scenario-contract')).toContainText(/intentionally empty/i);
 
         await selectPEScenario(page, 's1-mass-ladder');
         await expect(page.locator('#pe-scenario-behavior')).toHaveText('STATIC REFERENCE');
-        await expect(page.locator('#panel-diagnostics')).toHaveClass(/active/);
         await expect(page.locator('#pe-scenario-contract')).toContainText(/No interaction is expected/i);
+
+        expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
+    });
+
+    test('scenario and reset UI changes preserve the selected Scale 1 panel', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+        await gotoAndReady(page);
+        await switchMode(page, 'particles');
+        await openPanel(page, 'particle-log');
+
+        const expectParticleLogSelected = async () => {
+            await expect(page.locator('#panel-particle-log')).toHaveClass(/active/);
+            await expect(page.locator('#tab-bar .tab[data-panel="particle-log"]'))
+                .toHaveClass(/active/);
+            await expect(page.locator('#panel-diagnostics')).not.toHaveClass(/active/);
+        };
+
+        await selectPEScenario(page, 's1-qed-static-coulomb');
+        await expect(page.locator('#pe-scenario-behavior')).toHaveText('STATIC FIELD');
+        await expectParticleLogSelected();
+
+        await selectPEScenario(page, 's1-empty-zoo');
+        await expect(page.locator('#pe-scenario-behavior')).toHaveText('WAITING FOR INJECTION');
+        await expectParticleLogSelected();
+
+        await page.locator('#btn-reset').click();
+        await expect(page.locator('#pe-scenario-select')).toHaveValue('s1-empty-zoo');
+        await expectParticleLogSelected();
+
+        await page.evaluate(() => document.getElementById('btn-pe-clear')?.click());
+        await expect(page.locator('#pe-scenario-select')).toHaveValue('s1-empty-zoo');
+        await expectParticleLogSelected();
 
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
     });

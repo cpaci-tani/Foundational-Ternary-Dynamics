@@ -3,8 +3,8 @@
   "generated_by": "engine/tools/build_file_manifest.py",
   "note": "Mechanical per-file catalog. Conceptual docs: engine/ARCHITECTURE.md, CALLSTACKS.md, SCENARIO_ARCHITECTURE.md, SPEC_ENGINE.md, engine/docs/ENGINE_CODE_MAP.md.",
   "totals": {
-    "files": 2690,
-    "loc": 733157
+    "files": 2691,
+    "loc": 733365
   },
   "subsystems": {
     "tests": {
@@ -28,8 +28,8 @@
       "loc": 38954
     },
     "web/tests": {
-      "files": 143,
-      "loc": 35275
+      "files": 144,
+      "loc": 35452
     },
     "web/scale0": {
       "files": 68,
@@ -49,11 +49,11 @@
     },
     "web/bridge": {
       "files": 26,
-      "loc": 9523
+      "loc": 9528
     },
     "web/scale1": {
       "files": 20,
-      "loc": 4415
+      "loc": 4416
     },
     "src/scenarios": {
       "files": 8,
@@ -61,7 +61,7 @@
     },
     "wasm": {
       "files": 5,
-      "loc": 3559
+      "loc": 3584
     },
     "web/scale2": {
       "files": 12,
@@ -23588,7 +23588,7 @@
     {
       "path": "engine/wasm/bindings_particle.cpp",
       "lang": "cpp",
-      "loc": 1191,
+      "loc": 1216,
       "subsystem": "wasm",
       "primary": true,
       "purpose": "@file bindings_particle.cpp @brief Embind bindings for ParticleEngine (Scale 1).",
@@ -24140,7 +24140,7 @@
     {
       "path": "engine/web/js/bridge/native-particle-engine.js",
       "lang": "js",
-      "loc": 815,
+      "loc": 820,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Scale-1 Particle Engine \u2014 native C++/WASM adapter.",
@@ -25948,7 +25948,7 @@
     {
       "path": "engine/web/js/scales/scale1/particle-engine.worker.js",
       "lang": "js",
-      "loc": 71,
+      "loc": 72,
       "subsystem": "web/scale1",
       "primary": true,
       "purpose": "Dedicated single-owner Scale-1 tick worker.",
@@ -29122,7 +29122,7 @@
     {
       "path": "engine/web/tests/scale1-particle-overlays.spec.js",
       "lang": "js",
-      "loc": 1059,
+      "loc": 1093,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -29173,6 +29173,15 @@
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale1-wasm-tick-stress.spec.js",
+      "lang": "js",
+      "loc": 143,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
       "symbols": []
     },
     {

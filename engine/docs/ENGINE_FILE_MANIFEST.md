@@ -4,7 +4,7 @@
 > Machine-readable source of truth: [`ENGINE_FILE_MANIFEST.json`](ENGINE_FILE_MANIFEST.json)  
 > Narrative map: [`ENGINE_CODE_MAP.md`](ENGINE_CODE_MAP.md)
 
-**2690 code files, 733,157 LOC** (tracked `.cpp/.cc/.h/.hpp/.cu/.cuh/.js/.mjs/.py` under `engine/`).
+**2691 code files, 733,365 LOC** (tracked `.cpp/.cc/.h/.hpp/.cu/.cuh/.js/.mjs/.py` under `engine/`).
 
 ## Subsystem rollup
 
@@ -15,15 +15,15 @@
 | `web/js-toplevel` | 51 | 76,085 |
 | `src/core` | 198 | 69,274 |
 | `include` | 300 | 38,954 |
-| `web/tests` | 143 | 35,275 |
+| `web/tests` | 144 | 35,452 |
 | `web/scale0` | 68 | 23,203 |
 | `cuda` | 30 | 18,527 |
 | `web/ui` | 86 | 12,753 |
 | `web/viewport` | 22 | 10,603 |
-| `web/bridge` | 26 | 9,523 |
-| `web/scale1` | 20 | 4,415 |
+| `web/bridge` | 26 | 9,528 |
+| `web/scale1` | 20 | 4,416 |
 | `src/scenarios` | 8 | 3,795 |
-| `wasm` | 5 | 3,559 |
+| `wasm` | 5 | 3,584 |
 | `web/scale2` | 12 | 2,074 |
 | `sim` | 16 | 1,951 |
 | `src/phases` | 4 | 1,791 |
@@ -2236,13 +2236,13 @@
 | [`proper_time_rate.h`](../../engine/include/ftd/proper_time_rate.h) | 6 | Compatibility include. |
 | [`native_wave_energy.h`](../../engine/include/ftd/eft/native_wave_energy.h) | 3 | Compatibility name for the exact wave-energy observer used by FTD-0452. |
 
-### `web/tests`  (143 files, 35,275 LOC)
+### `web/tests`  (144 files, 35,452 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
 | [`ws-bridge-visual-cache.spec.js`](../../engine/web/tests/ws-bridge-visual-cache.spec.js) | 2697 | @ts-check |
 | [`scale0-empty-panel-performance.spec.js`](../../engine/web/tests/scale0-empty-panel-performance.spec.js) | 2222 | @ts-check |
-| [`scale1-particle-overlays.spec.js`](../../engine/web/tests/scale1-particle-overlays.spec.js) | 1059 | @ts-check |
+| [`scale1-particle-overlays.spec.js`](../../engine/web/tests/scale1-particle-overlays.spec.js) | 1093 | @ts-check |
 | [`scale0-gravity-overlay-audit.spec.js`](../../engine/web/tests/scale0-gravity-overlay-audit.spec.js) | 923 | @ts-check |
 | [`scale0-lattice-boundary-toolbar-audit.spec.js`](../../engine/web/tests/scale0-lattice-boundary-toolbar-audit.spec.js) | 870 | @ts-check |
 | [`overlay-scheduler.spec.js`](../../engine/web/tests/overlay-scheduler.spec.js) | 761 | @ts-check |
@@ -2311,6 +2311,7 @@
 | [`take_gallery_screenshots.spec.js`](../../engine/web/tests/take_gallery_screenshots.spec.js) | 152 | @ts-check |
 | [`animation-clock-freeze.spec.js`](../../engine/web/tests/animation-clock-freeze.spec.js) | 150 | @ts-check |
 | [`sitewide-font-floor.spec.js`](../../engine/web/tests/sitewide-font-floor.spec.js) | 148 | @ts-check |
+| [`scale1-wasm-tick-stress.spec.js`](../../engine/web/tests/scale1-wasm-tick-stress.spec.js) | 143 | @ts-check |
 | [`panel-mount-integration.spec.js`](../../engine/web/tests/panel-mount-integration.spec.js) | 142 | @ts-check |
 | [`scale1-scenario-health.spec.js`](../../engine/web/tests/scale1-scenario-health.spec.js) | 141 | @ts-check |
 | [`scale0-scalecontext.spec.js`](../../engine/web/tests/scale0-scalecontext.spec.js) | 137 | @ts-check |
@@ -2610,7 +2611,7 @@
 | [`constants.js`](../../engine/web/js/viewport/constants.js) | 41 | @file engine/web/js/viewport/constants.js @purpose Shared pre-allocated-buffer sizes for the viewport renderer cluster. |
 | [`flux-threshold.js`](../../engine/web/js/viewport/flux-threshold.js) | 36 | Shared Flux Volume threshold response. |
 
-### `web/bridge`  (26 files, 9,523 LOC)
+### `web/bridge`  (26 files, 9,528 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
@@ -2618,7 +2619,7 @@
 | [`wasm-bridge.js`](../../engine/web/js/bridge/wasm-bridge.js) | 1266 | @file engine/web/js/bridge/wasm-bridge.js @purpose Thin wrapper around the compiled C++/WASM physics engine (engine/wasm/ftd_wasm.cpp). |
 | [`mock-atom-engine.js`](../../engine/web/js/bridge/mock-atom-engine.js) | 1261 | Scale-2 Atom Engine (AE) — MockBridge side only. |
 | [`wasm-bridge.worker.js`](../../engine/web/js/bridge/wasm-bridge.worker.js) | 1031 | Scale-0 WASM physics Web Worker. |
-| [`native-particle-engine.js`](../../engine/web/js/bridge/native-particle-engine.js) | 815 | Scale-1 Particle Engine — native C++/WASM adapter. |
+| [`native-particle-engine.js`](../../engine/web/js/bridge/native-particle-engine.js) | 820 | Scale-1 Particle Engine — native C++/WASM adapter. |
 | [`cosmic-physics.js`](../../engine/web/js/bridge/cosmic-physics.js) | 563 | Cosmic scale-5 force kernel. |
 | [`galaxies.js`](../../engine/web/js/bridge/cosmic-scenarios/galaxies.js) | 539 | Cosmic scale-5 scenarios — galaxy-family. |
 | [`mock-scale5.js`](../../engine/web/js/bridge/mock-scale5.js) | 450 | CosmicMockBridge — JS-only N-body simulation for cosmic scale (Scale 5). |
@@ -2641,7 +2642,7 @@
 | [`sampler-registry.classic.js`](../../engine/web/js/bridge/sampler-registry.classic.js) | 33 | Classic-worker sampler + toggle-requires registry. |
 | [`scale2.js`](../../engine/web/js/bridge/capabilities/scale2.js) | 25 | @file engine/web/js/bridge/capabilities/scale2.js @purpose Scale-2 (atom engine) capability factory. |
 
-### `web/scale1`  (20 files, 4,415 LOC)
+### `web/scale1`  (20 files, 4,416 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
@@ -2657,7 +2658,7 @@
 | [`template.js`](../../engine/web/js/scales/scale1/ui/overlays/template.js) | 114 | Scale 1 Viewport Overlay — particle engine dynamics (grouped by physical role) |
 | [`store.js`](../../engine/web/js/scales/scale1/state/store.js) | 107 | Scale-1 state store. |
 | [`trail-settings.js`](../../engine/web/js/scales/scale1/trail-settings.js) | 78 | Presentation-only trajectory-history settings for Scale 1. |
-| [`particle-engine.worker.js`](../../engine/web/js/scales/scale1/particle-engine.worker.js) | 71 | Dedicated single-owner Scale-1 tick worker. |
+| [`particle-engine.worker.js`](../../engine/web/js/scales/scale1/particle-engine.worker.js) | 72 | Dedicated single-owner Scale-1 tick worker. |
 | [`overlay-billboards.js`](../../engine/web/js/scales/scale1/overlay-billboards.js) | 58 | engine/web/js/scales/scale1/overlay-billboards.js |
 | [`component.js`](../../engine/web/js/scales/scale1/ui/controls/component.js) | 41 | Scale 1 Controls Component Mounts the Scale 1 (Particle Engine) control card into the controls panel. |
 | [`component.js`](../../engine/web/js/scales/scale1/ui/toolbar/component.js) | 39 | _symbols:_ createScale1ScenarioToolbarGroup() |
@@ -2679,12 +2680,12 @@
 | [`quantum.cpp`](../../engine/src/scenarios/quantum.cpp) | 229 | ========================================================================== engine/src/scenarios/quantum.cpp Group: quantum-* (8 scenarios) Canonical seed implementation; the former JS mirror is arc... |
 | [`light.cpp`](../../engine/src/scenarios/light.cpp) | 116 | ========================================================================== engine/src/scenarios/light.cpp Group: light-* (4 scenarios) Canonical seed implementation; the former JS mirror is archived. |
 
-### `wasm`  (5 files, 3,559 LOC)
+### `wasm`  (5 files, 3,584 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
 | [`ftd_wasm.cpp`](../../engine/wasm/ftd_wasm.cpp) | 1449 | @file ftd_wasm.cpp @brief Emscripten Embind bindings for the FTD engine — shared helpers. |
-| [`bindings_particle.cpp`](../../engine/wasm/bindings_particle.cpp) | 1191 | @file bindings_particle.cpp @brief Embind bindings for ParticleEngine (Scale 1). |
+| [`bindings_particle.cpp`](../../engine/wasm/bindings_particle.cpp) | 1216 | @file bindings_particle.cpp @brief Embind bindings for ParticleEngine (Scale 1). |
 | [`bindings_render_bridge.cpp`](../../engine/wasm/bindings_render_bridge.cpp) | 481 | @file bindings_render_bridge.cpp @brief Embind bindings for RenderBridge (Scale 0 — voxel lattice engine). |
 | [`bindings_atom.cpp`](../../engine/wasm/bindings_atom.cpp) | 345 | @file bindings_atom.cpp @brief Embind bindings for AtomEngine (Scale 2). |
 | [`bindings_internal.h`](../../engine/wasm/bindings_internal.h) | 93 | @file bindings_internal.h @brief Shared helpers exposed across the split Embind binding TUs. |

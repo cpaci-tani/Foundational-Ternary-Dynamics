@@ -41,7 +41,8 @@ self.onmessage = async event => {
         if (!mod.restorePECheckpoint(engine, message.checkpoint.native)) {
             throw new Error('worker rejected the source checkpoint');
         }
-        engine.run(Math.max(0, Math.floor(Number(message.ticks) || 0)));
+        mod.peRunEngine(engine,
+            Math.max(0, Math.floor(Number(message.ticks) || 0)));
         const checkpoint = {
             ...message.checkpoint,
             capturedAt: new Date().toISOString(),

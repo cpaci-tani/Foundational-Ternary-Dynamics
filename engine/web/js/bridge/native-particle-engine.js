@@ -353,19 +353,24 @@ export function createNativeParticleEngine(bridge) {
     // ── Tick + reads ───────────────────────────────────────────────
 
     function peTick() {
-        if (viewMode !== 'native_matter' && _ensure()) _pe.tick();
+        const m = _module();
+        if (viewMode !== 'native_matter' && m && _ensure()) {
+            m.peTickEngine(_pe);
+        }
     }
 
     function peGetTick() {
         if (viewMode === 'native_matter') {
             return Number(peGetNativeMatterReplay()?.core?.tick ?? 0);
         }
-        return _ensure() ? Number(_pe.currentTick()) : 0;
+        const m = _module();
+        return (m && _ensure()) ? Number(m.peCurrentTick(_pe)) : 0;
     }
 
     function peGetObservationRevision() {
         if (viewMode === 'native_matter') return 0;
-        return _ensure() ? Number(_pe.observationRevision()) : 0;
+        const m = _module();
+        return (m && _ensure()) ? Number(m.peObservationRevision(_pe)) : 0;
     }
 
     function peGetParticleData() {

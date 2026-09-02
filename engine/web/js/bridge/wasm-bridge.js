@@ -30,7 +30,7 @@
 
 import { K_B, VOXEL_VOLUME } from '../constants.js';
 import { debugLog } from '../core/log.js';
-import { createNativeParticleEngine } from './native-particle-engine.js?v=6';
+import { createNativeParticleEngine } from './native-particle-engine.js?v=7';
 import { createAtomEngine } from './mock-atom-engine.js';
 import { reflectIntoBoundary } from './boundary.js';
 import { samplerOr, particleDataToList, TOGGLE_REQUIRES } from './bridge-contract.js';
