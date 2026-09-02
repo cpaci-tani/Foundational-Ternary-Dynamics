@@ -95,9 +95,8 @@ To eliminate structural bloat, the Scale 0 `tick()` pipeline is decomposed into 
 * **`phase_forces.cpp`**: Field-mediated forces pipeline. Evaluates electrostatic $F_{EM} = -\alpha s \nabla \phi_C$ (via warm-started SOR Poisson solver), gravitational $F_{grav} = G_N \nabla \rho$ (using tier-2 stencils), and magnetic Lorentz forces $F_{magnetic} = \alpha s (v \times B)$.
 * **`phase_movement.cpp`**: Updates remainder registers, translates particles across voxel bounds, checks periodic wrapping, and executes same-sign bouncing vs opposite-sign annihilation.
 
-#### 1.1.3 Core Engines & Bridges
+#### 1.1.3 Core Engines & Runtime Interfaces
 * **`render_bridge.cpp`**: Allocates the voxel lattice, triggers the current toggle-gated CPU tick ladder, updates `EnergyLedger`, manages WebSocket handshakes, and interfaces with execution backends.
-* **`scale_bridge.cpp`**: Handles cross-scale coarsening and refinement.
 * **`lagrangian.cpp`**: Evaluates the 4 active terms (wave kinetic, wave potential, interaction, mass gap) and Rayleigh dissipation.
 * **`ontic_audit.cpp`**: Self-checks the mathematical precision of the ontic cascade and validates CODATA tolerances.
 * **`csv_export.cpp`**: Handles data serialization (flux slices, state grids, timeseries logs).
@@ -296,17 +295,10 @@ The engine structures the physical layers of FTD into five distinct simulation s
 * **Scale 2 (Atom / `AtomEngine`):** Models composite atoms. Properties include mass, the simulation interaction radius (`Atom.radius`), covalent bonding capacity, Pauling electronegativity, and the separate shell-context readout `AtomicClosureContext` (`n_shell`, `Z_eff`, `R_cloud`, shell thickness, coherence/time ratios). Integrates ionic forces, Van der Waals interactions (Lennard-Jones 12-6), and harmonic covalent spring bonds. The shell-context cloud radius is diagnostic/readout-only and does not retune the LJ force scale.
 * **Scale 5 (Cosmic / `CosmicEngine`):** Macro-scale simulation. Implements comoving cosmological expansion under Friedmann equations. Combines gravity (N-body Barnes-Hut) with **Smoothed Particle Hydrodynamics (SPH)** for cosmic gas clouds. Models dark matter, dark energy, stellar evolution, black hole Bondi accretion, and relativistic jets.
 
-The transitions between scales are implemented in `scale_bridge.cpp`, utilizing two complementary paradigms: **Coarsening** (averaging microscopic states into microscopic parameters) and **Refinement** (decomposing macroscopic entities into structured microscopic components).
-
-* **Scale 0 (Voxel) $\leftrightarrow$ Scale 1 (Particle)**
-  * *Coarsening (`coarsen_to_particles`)*: Scans all voxels in `RenderBridge`. For every voxel where `state` $\neq 0$, it extracts the charge ($q = s$), mass ($m = \max(|J|, K_B)$), continuous position (integer voxel coordinate + sub-lattice `remainder`), velocity, spin, color, and entanglement `pair_id` to generate a continuous `Particle` struct.
-  * *Refinement (`refine_to_voxels`)*: Takes a continuous `Particle` and maps its continuous coordinates back to integer lattice coordinates. It invokes `inject_wavepacket()`, distributing a Gaussian flux envelope of amplitude $K_B$ and width $\sigma = 3.0$ around the target center. It then restores the sub-lattice remainder, velocity, spin, and color onto the newly generated manifested voxel.
-* **Scale 1 (Particle) $\leftrightarrow$ Scale 2 (Atom)**
-  * *Coarsening (`coarsen_to_atoms`)*: Evaluates particles in `ParticleEngine`. It clusters locked, positive protons ($q=+1$, `locked=true`) within a spatial clustering radius ($R \approx 5.0$) to form a composite atomic nucleus with atomic number $Z = \text{count}$. It then searches for nearby electrons ($q=-1$) to neutralize the net ionic charge.
-  * *Refinement (`refine_to_particles`)*: Decomposes an `Atom` into $Z$ locked protons at the atomic center, and orbits $Z - \text{charge}$ electrons stochastically distributed at the current simulation interaction radius. The physical shell-context readout is available separately as `AtomicClosureContext::r_cloud`.
-* **Scale 2 (Atom) $\leftrightarrow$ Scale 5 (Cosmic)**
-  * *Coarsening (`coarsen_to_cosmic`)*: Aggregates atomic clusters in `AtomEngine` into baryonic SPH gas particles. Total mass is computed as the sum of atomic masses, and the comoving position is assigned to the center of mass (centroid).
-  * *Refinement (`refine_to_atoms`)*: Decomposes a comoving SPH gas body of mass $M$ into structured hydrogen atoms distributed uniformly inside the SPH smoothing radius.
+The effective engines are independent runtime models. No coarsen/refine or
+state-transfer API connects Scale 0, 1, 2, or 5. Each scale starts from its own
+explicit scenario/reference inputs. Pedagogical comparison belongs to the
+Scale Context sidepanel and creates no simulation state.
 
 ---
 

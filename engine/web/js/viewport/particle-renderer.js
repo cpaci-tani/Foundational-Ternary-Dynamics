@@ -21,7 +21,12 @@ import * as THREE from 'three';
 import { getById } from '../particle-catalog.js';
 import { K_B, C_SPEED } from '../constants.js';
 import { makeRingTexture, makeTextTexture, makeBillboardSprite } from '../scales/scale1/overlay-billboards.js';
-import { compareClusterToVoxelMass } from '../scales/scale1/telemetry/mass-comparison.js';
+import {
+    DEFAULT_TRAIL_SETTINGS,
+    TRAIL_HISTORY_CAPACITY,
+    normalizeTrailSettings,
+    trailRetentionAlpha,
+} from '../scales/scale1/trail-settings.js?v=2';
 
 // Pre-allocated buffer size — centralized in viewport/constants.js (D-6).
 import { MAX_PARTICLES, PE_VIS_BOUNDARY_R } from './constants.js';
@@ -42,6 +47,32 @@ const COLOR_CHARGE_PALETTE = [
     [0.25, 0.85, 0.35], // 2: green
     [0.30, 0.45, 0.95], // 3: blue
 ];
+
+function writeEnergyHeatColor(target, offset, normalized, fade) {
+    const t = Math.max(0, Math.min(1, normalized));
+    let r;
+    let g;
+    let b;
+    if (t < 1 / 3) {
+        const u = t * 3;
+        r = 0.11 + (0.13 - 0.11) * u;
+        g = 0.30 + (0.83 - 0.30) * u;
+        b = 0.85 + (0.93 - 0.85) * u;
+    } else if (t < 2 / 3) {
+        const u = (t - 1 / 3) * 3;
+        r = 0.13 + (0.98 - 0.13) * u;
+        g = 0.83 + (0.80 - 0.83) * u;
+        b = 0.93 + (0.08 - 0.93) * u;
+    } else {
+        const u = (t - 2 / 3) * 3;
+        r = 0.98 + (0.94 - 0.98) * u;
+        g = 0.80 + (0.20 - 0.80) * u;
+        b = 0.08 + (0.18 - 0.08) * u;
+    }
+    target[offset] = r * fade;
+    target[offset + 1] = g * fade;
+    target[offset + 2] = b * fade;
+}
 
 
 export class ViewportParticleRenderer {
@@ -81,11 +112,11 @@ export class ViewportParticleRenderer {
         this.trails = null;
         this._particleForces = null;
         this._peSystem = null;
-        this._voxelDebug = null;      // Scale-1 promotion-source ghost layer
-        this._voxelDebugWarned = false;
-        this._admissibilityRings = null;  // Scale-1 promotion admissibility halo overlay
-        this._provenanceLabels = null;    // Scale-1 promotion cluster-id/N label overlay
-        this._massComparison = null;      // Scale-1 promotion voxel<->cluster mass-delta overlay
+        this._admissibilityRings = null;
+        this._provenanceLabels = null;
+        this._peScenarioVisual = null;
+        this._peInspectionFocus = null;
+        this._peInspectionIds = null;
         // CPU-only sign cache for the rendered slots. Size controls must remain
         // correct when the color-charge overlay replaces decorative sign colors.
         this._particleSigns = new Int8Array(MAX_PARTICLES);
@@ -94,6 +125,161 @@ export class ViewportParticleRenderer {
         // pre-extraction behaviour of `this._initParticles()` being called
         // from Viewport's constructor).
         this._initParticles();
+    }
+
+    setPEInspectionFocus(focus) {
+        this._peInspectionFocus = focus || null;
+        this._peInspectionIds = focus ? new Set(focus.particleIds || []) : null;
+        for (const mesh of [
+            this.velocityVectors, this.spinVectors, this.trails,
+            this._peForceCoulomb, this._peForceGravity, this._peForceLorentz,
+            this._peForceExchange, this._peForceStrong, this._peForceRadiation,
+            this._peForceMagneticDipole, this._peForceSpinOrbit, this._peForceNet,
+            this._peSystem,
+        ]) {
+            mesh?.geometry?.setDrawRange(0, 0);
+        }
+        if (this._admissibilityRings) {
+            while (this._admissibilityRings.children.length) {
+                const child = this._admissibilityRings.children[0];
+                child.material?.dispose();
+                this._admissibilityRings.remove(child);
+            }
+        }
+        if (this._provenanceLabels) {
+            while (this._provenanceLabels.children.length) {
+                const child = this._provenanceLabels.children[0];
+                child.material?.map?.dispose();
+                child.material?.dispose();
+                this._provenanceLabels.remove(child);
+            }
+        }
+    }
+
+    _matchesPEInspection(ids, index) {
+        if (!this._peInspectionIds) return true;
+        return !!ids && this._peInspectionIds.has(Number(ids[index]));
+    }
+
+    clearPEScenarioVisual() {
+        const root = this._peScenarioVisual;
+        if (!root) return;
+        root.traverse((object) => {
+            object.geometry?.dispose?.();
+            const materials = Array.isArray(object.material)
+                ? object.material : (object.material ? [object.material] : []);
+            for (const material of materials) {
+                material.map?.dispose?.();
+                material.dispose?.();
+            }
+        });
+        this._scene.remove(root);
+        this._peScenarioVisual = null;
+    }
+
+    /**
+     * Scenario-owned presentation geometry. This never contributes forces or
+     * energy; the actual source and probe records remain ParticleEngine data.
+     */
+    setPEScenarioVisual(spec = null) {
+        this.clearPEScenarioVisual();
+        if (spec?.type !== 'open-terminal-battery') return;
+
+        const length = Math.max(1, Number(spec.length) || 24);
+        const height = Math.max(1, Number(spec.height) || 9);
+        const depth = Math.max(1, Number(spec.depth) || 8);
+        const positiveEndX = Number(spec.positiveEndX) || -length / 2;
+        const negativeEndX = Number(spec.negativeEndX) || length / 2;
+        const portWidth = Math.min(depth * 0.72, Math.max(0.5, Number(spec.portWidth) || 2.7));
+        const portHeight = Math.min(height * 0.72, Math.max(0.5, Number(spec.portHeight) || 2.7));
+        const group = new THREE.Group();
+        group.name = 'pe-open-terminal-battery';
+        group.userData.scenarioVisualType = spec.type;
+        group.userData.presentationOnly = true;
+        group.userData.physicalConstraint = 'native-perfect-insulator';
+        group.userData.portCount = 2;
+
+        const wallMaterial = new THREE.MeshBasicMaterial({
+                color: 0x243147, transparent: true, opacity: 0.24,
+                depthWrite: false, side: THREE.DoubleSide,
+            });
+        const addWall = (name, dimensions, position) => {
+            const wall = new THREE.Mesh(new THREE.BoxGeometry(...dimensions), wallMaterial.clone());
+            wall.name = name;
+            wall.position.set(...position);
+            group.add(wall);
+        };
+        const wallThickness = 0.14;
+        addWall('battery-wall-top', [length, wallThickness, depth], [0, height / 2, 0]);
+        addWall('battery-wall-bottom', [length, wallThickness, depth], [0, -height / 2, 0]);
+        addWall('battery-wall-front', [length, height, wallThickness], [0, 0, depth / 2]);
+        addWall('battery-wall-back', [length, height, wallThickness], [0, 0, -depth / 2]);
+        wallMaterial.dispose();
+
+        const edgeSource = new THREE.BoxGeometry(length, height, depth);
+        const shellEdges = new THREE.LineSegments(
+            new THREE.EdgesGeometry(edgeSource),
+            new THREE.LineBasicMaterial({
+                color: 0x9fb5d2, transparent: true, opacity: 0.82,
+            }),
+        );
+        edgeSource.dispose();
+        shellEdges.name = 'battery-shell-edges';
+        group.add(shellEdges);
+
+        const addTerminal = (x, color, label, name, electronDirection) => {
+            const terminal = new THREE.Group();
+            terminal.name = name;
+            terminal.position.x = x;
+            terminal.userData.aperture = { width: portWidth, height: portHeight };
+            terminal.userData.carrier = 'electron';
+            terminal.userData.electronDirection = electronDirection;
+            const frameHeight = height * 0.9;
+            const frameDepth = depth * 0.9;
+            const barY = Math.max(0.1, (frameHeight - portHeight) / 2);
+            const barZ = Math.max(0.1, (frameDepth - portWidth) / 2);
+            const material = new THREE.MeshBasicMaterial({
+                color, transparent: true, opacity: 0.42, depthWrite: false,
+            });
+            const addBar = (barName, dimensions, y, z) => {
+                const geometry = new THREE.BoxGeometry(...dimensions);
+                const bar = new THREE.Mesh(geometry, material.clone());
+                bar.name = `${name}-${barName}`;
+                bar.position.set(0, y, z);
+                terminal.add(bar);
+                const rim = new THREE.LineSegments(
+                    new THREE.EdgesGeometry(geometry),
+                    new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.92 }),
+                );
+                rim.position.copy(bar.position);
+                rim.name = `${name}-${barName}-rim`;
+                terminal.add(rim);
+            };
+            addBar('top', [0.7, barY, frameDepth], portHeight / 2 + barY / 2, 0);
+            addBar('bottom', [0.7, barY, frameDepth], -(portHeight / 2 + barY / 2), 0);
+            addBar('front', [0.7, portHeight, barZ], 0, portWidth / 2 + barZ / 2);
+            addBar('back', [0.7, portHeight, barZ], 0, -(portWidth / 2 + barZ / 2));
+            material.dispose();
+            group.add(terminal);
+
+            const texture = makeTextTexture(label, {
+                color: `#${new THREE.Color(color).getHexString()}`, fontPx: 30,
+            });
+            const sprite = makeBillboardSprite(texture, 3.0);
+            sprite.scale.set(4.2, 1.05, 1);
+            sprite.position.set(x, height / 2 + 1.25, depth / 2 + 0.35);
+            sprite.name = `${name}-label`;
+            group.add(sprite);
+        };
+        addTerminal(positiveEndX, 0xff5d73, 'e⁻ IN · +', 'positive-terminal', 'in');
+        addTerminal(negativeEndX, 0x58d6ff, '− · e⁻ OUT', 'negative-terminal', 'out');
+
+        this._peScenarioVisual = group;
+        this._scene.add(group);
+    }
+
+    togglePEScenarioVisual(on) {
+        if (this._peScenarioVisual) this._peScenarioVisual.visible = !!on;
     }
 
     _initParticles() {
@@ -141,81 +327,10 @@ export class ViewportParticleRenderer {
         this._scene.add(this.particles);
     }
 
-    // ── Voxel debug ghost layer (Scale-1 promotion source view) ─────────
-    // A SEPARATE small Points mesh — never multiplexed onto the shared
-    // particle mesh, whose attributes updateParticles() owns. Shows the
-    // per-voxel coarsenToParticles snapshot behind the promoted cluster
-    // particles ([IMPOSED] display layer; static snapshot, no per-frame cost).
-    _buildVoxelDebugLayer() {
-        const MAX_VOXEL_GHOSTS = 50000;
-        const geo = new THREE.BufferGeometry();
-        const pos = new THREE.BufferAttribute(new Float32Array(MAX_VOXEL_GHOSTS * 3), 3);
-        const col = new THREE.BufferAttribute(new Float32Array(MAX_VOXEL_GHOSTS * 3), 3);
-        pos.setUsage(THREE.DynamicDrawUsage);
-        col.setUsage(THREE.DynamicDrawUsage);
-        geo.setAttribute('position', pos);
-        geo.setAttribute('color', col);
-        geo.setDrawRange(0, 0);
-        const mat = new THREE.PointsMaterial({
-            size: 1.4, vertexColors: true, transparent: true, opacity: 0.35,
-            depthWrite: false, sizeAttenuation: true,
-        });
-        this._voxelDebug = new THREE.Points(geo, mat);
-        this._voxelDebug.visible = false;
-        this._voxelDebug.frustumCulled = false;
-        this._scene.add(this._voxelDebug);
-        this._voxelDebugMax = MAX_VOXEL_GHOSTS;
-    }
-
-    /**
-     * Fill the ghost layer from a coarsenToParticles snapshot.
-     * Positions are lattice coords; mapped to the PE origin frame with the
-     * same center/scale the promotion mapping used.
-     */
-    updateVoxelDebugLayer(coarsen, latticeSize, displayScale = 1) {
-        if (!coarsen || !coarsen.count) { this.toggleVoxelDebugLayer(false); return; }
-        if (!this._voxelDebug) this._buildVoxelDebugLayer();
-        const geo = this._voxelDebug.geometry;
-        const pos = geo.getAttribute('position');
-        const col = geo.getAttribute('color');
-        const center = (latticeSize - 1) / 2;
-        let n = coarsen.count;
-        if (n > this._voxelDebugMax) {
-            if (!this._voxelDebugWarned) {
-                console.warn(`[Viewport] voxel debug layer clamped to ${this._voxelDebugMax}`
-                    + ` of ${n} voxel records`);
-                this._voxelDebugWarned = true;
-            }
-            n = this._voxelDebugMax;
-        }
-        for (let i = 0; i < n; i++) {
-            pos.array[i * 3] = (coarsen.positions[i * 3] - center) * displayScale;
-            pos.array[i * 3 + 1] = (coarsen.positions[i * 3 + 1] - center) * displayScale;
-            pos.array[i * 3 + 2] = (coarsen.positions[i * 3 + 2] - center) * displayScale;
-            if (coarsen.charges[i] > 0) {
-                col.array[i * 3] = 0.22; col.array[i * 3 + 1] = 0.55; col.array[i * 3 + 2] = 0.33;
-            } else {
-                col.array[i * 3] = 0.58; col.array[i * 3 + 1] = 0.28; col.array[i * 3 + 2] = 0.28;
-            }
-        }
-        pos.needsUpdate = true;
-        col.needsUpdate = true;
-        geo.setDrawRange(0, n);
-    }
-
-    toggleVoxelDebugLayer(on) {
-        if (!this._voxelDebug) {
-            if (!on) return;
-            this._buildVoxelDebugLayer();
-        }
-        this._voxelDebug.visible = !!on;
-    }
-
-    // ── Admissibility ring overlay (lattice-promotion) ──────────────────
-    // A THREE.Group of billboard sprites, one ring per live promoted
-    // particle found in scale1State.promotedSeedById. Rebuilt each call
-    // (promoted-particle counts are small — tens, not thousands — so a
-    // full rebuild is simpler and cheap next to per-particle pooling).
+    // ── Admissibility ring overlay ──────────────────────────────────────
+    // A THREE.Group of billboard sprites, one ring per qualified native
+    // record. Rebuilt each call; record counts are small, so a full rebuild
+    // is cheap next to particle pooling.
     _buildAdmissibilityRings() {
         this._admissibilityRings = new THREE.Group();
         this._admissibilityRings.visible = false;
@@ -226,7 +341,7 @@ export class ViewportParticleRenderer {
 
     /**
      * @param {{positions:Float32Array|Float64Array, count:number}} peData
-     * @param {Map<number, object>} seedById - scale1State.promotedSeedById
+     * @param {Map<number, object>} seedById - Scale-1 snapshot display records
      * @param {Int32Array|number[]} ids - peData-aligned native particle ids
      */
     updateAdmissibilityRings(peData, seedById, ids) {
@@ -239,6 +354,7 @@ export class ViewportParticleRenderer {
         }
         if (!seedById || seedById.size === 0) return;
         for (let i = 0; i < peData.count; i++) {
+            if (!this._matchesPEInspection(ids, i)) continue;
             const seed = seedById.get(ids[i]);
             if (!seed) continue;
             const tex = seed.admissible ? this._ringTexAdmissible : this._ringTexMarginal;
@@ -254,7 +370,7 @@ export class ViewportParticleRenderer {
         this._admissibilityRings.visible = on;
     }
 
-    // ── Provenance label overlay (lattice-promotion) ─────────────────────
+    // ── Native-record provenance label overlay ──────────────────────────
     // Unlike the admissibility rings (2 cached ring textures), provenance
     // labels are per-particle unique text — each sprite's texture is built
     // and disposed on every rebuild rather than cached/reused.
@@ -266,7 +382,7 @@ export class ViewportParticleRenderer {
 
     /**
      * @param {{positions:Float32Array|Float64Array, count:number}} peData
-     * @param {Map<number, object>} seedById - scale1State.promotedSeedById
+     * @param {Map<number, object>} seedById - Scale-1 snapshot display records
      * @param {Int32Array|number[]} ids - peData-aligned native particle ids
      */
     updateProvenanceLabels(peData, seedById, ids) {
@@ -280,9 +396,10 @@ export class ViewportParticleRenderer {
         }
         if (!seedById || seedById.size === 0) return;
         for (let i = 0; i < peData.count; i++) {
+            if (!this._matchesPEInspection(ids, i)) continue;
             const seed = seedById.get(ids[i]);
             if (!seed) continue;
-            const tex = makeTextTexture(`#${seed.clusterId} N=${seed.size}`);
+            const tex = makeTextTexture(seed.label || `#${seed.clusterId} N=${seed.size}`);
             const sprite = makeBillboardSprite(tex, 3.0);
             sprite.position.set(
                 peData.positions[i * 3],
@@ -295,71 +412,6 @@ export class ViewportParticleRenderer {
     toggleProvenanceLabels(on) {
         if (!this._provenanceLabels) this._buildProvenanceLabels();
         this._provenanceLabels.visible = on;
-    }
-
-    // ── Voxel<->cluster mass-comparison overlay (lattice-promotion) ──────
-    _buildMassComparison() {
-        this._massComparison = new THREE.Group();
-        this._massComparison.visible = false;
-        this._scene.add(this._massComparison);
-    }
-
-    /**
-     * @param {{positions:Float32Array|Float64Array, count:number, ids:Int32Array}} peData
-     * @param {Map<number, object>} seedById
-     * @param {{positions:Float64Array, masses:Float64Array}|null} voxelDebug - the
-     *   coarsenToParticles snapshot (scale1State.lastPromotion.voxelDebug)
-     * @param {number} latticeSize
-     * @param {number} displayScale
-     */
-    updateMassComparison(peData, seedById, voxelDebug, latticeSize, displayScale) {
-        if (!this._massComparison) this._buildMassComparison();
-        const group = this._massComparison;
-        while (group.children.length) {
-            const child = group.children[0];
-            if (child.material.map) child.material.map.dispose();
-            child.material.dispose();
-            child.geometry?.dispose?.();
-            group.remove(child);
-        }
-        if (!seedById || !voxelDebug || voxelDebug.count === 0) return;
-        const center = (latticeSize - 1) / 2;
-        const lineMat = new THREE.LineBasicMaterial({ color: 0x999999, transparent: true, opacity: 0.5 });
-
-        for (let i = 0; i < peData.count; i++) {
-            const seed = seedById.get(peData.ids[i]);
-            if (!seed || !seed.voxelMembers || seed.voxelMembers.length === 0) continue;
-
-            let vcx = 0, vcy = 0, vcz = 0;
-            const voxelMasses = [];
-            for (const vi of seed.voxelMembers) {
-                vcx += voxelDebug.positions[vi * 3];
-                vcy += voxelDebug.positions[vi * 3 + 1];
-                vcz += voxelDebug.positions[vi * 3 + 2];
-                voxelMasses.push(voxelDebug.masses[vi]);
-            }
-            const n = seed.voxelMembers.length;
-            vcx = (vcx / n - center) * displayScale;
-            vcy = (vcy / n - center) * displayScale;
-            vcz = (vcz / n - center) * displayScale;
-
-            const px = peData.positions[i * 3], py = peData.positions[i * 3 + 1], pz = peData.positions[i * 3 + 2];
-            const geo = new THREE.BufferGeometry().setFromPoints([
-                new THREE.Vector3(px, py, pz), new THREE.Vector3(vcx, vcy, vcz),
-            ]);
-            group.add(new THREE.Line(geo, lineMat));
-
-            const { delta } = compareClusterToVoxelMass(seed, voxelMasses);
-            const badgeTex = makeTextTexture(`Δm=${delta.toFixed(3)}`, { color: '#f472b6' });
-            const badge = makeBillboardSprite(badgeTex, 2.5);
-            badge.position.set((px + vcx) / 2, (py + vcy) / 2, (pz + vcz) / 2);
-            group.add(badge);
-        }
-    }
-
-    toggleMassComparison(on) {
-        if (!this._massComparison) this._buildMassComparison();
-        this._massComparison.visible = on;
     }
 
     // ── Velocity Vectors (PE mode overlay) ──────────────────────────────
@@ -380,7 +432,7 @@ export class ViewportParticleRenderer {
         this._scene.add(this.velocityVectors);
     }
 
-    updateVelocityVectors(positions, velocities, count) {
+    updateVelocityVectors(positions, velocities, count, ids = null) {
         if (!this.velocityVectors) this._buildVelocityVectors();
         if (!velocities) return;
 
@@ -390,18 +442,21 @@ export class ViewportParticleRenderer {
         const n = Math.min(count, maxLines);
         const scale = 40; // world-units per unit velocity (β-colored below)
 
+        let drawn = 0;
         for (let i = 0; i < n; i++) {
+            if (!this._matchesPEInspection(ids, i)) continue;
+            const line = drawn++;
             const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
             const vx = velocities[i * 3], vy = velocities[i * 3 + 1], vz = velocities[i * 3 + 2];
 
             // Start point (particle center)
-            posAttr.array[i * 6] = px;
-            posAttr.array[i * 6 + 1] = py;
-            posAttr.array[i * 6 + 2] = pz;
+            posAttr.array[line * 6] = px;
+            posAttr.array[line * 6 + 1] = py;
+            posAttr.array[line * 6 + 2] = pz;
             // End point (position + velocity * scale)
-            posAttr.array[i * 6 + 3] = px + vx * scale;
-            posAttr.array[i * 6 + 4] = py + vy * scale;
-            posAttr.array[i * 6 + 5] = pz + vz * scale;
+            posAttr.array[line * 6 + 3] = px + vx * scale;
+            posAttr.array[line * 6 + 4] = py + vy * scale;
+            posAttr.array[line * 6 + 5] = pz + vz * scale;
 
             // Color by causal saturation β = |v| / c_lattice (c = 1/√3). The
             // ternary lattice caps signal speed at C_SPEED, so the ramp reads
@@ -424,17 +479,17 @@ export class ViewportParticleRenderer {
                 r = 1.0; g = 0.90 * t; b = 0.90 * t;
             }
             // Tail dimmer, tip at full intensity → direction reads clearly.
-            colAttr.array[i * 6] = r * 0.5;
-            colAttr.array[i * 6 + 1] = g * 0.5;
-            colAttr.array[i * 6 + 2] = b * 0.5;
-            colAttr.array[i * 6 + 3] = r;
-            colAttr.array[i * 6 + 4] = g;
-            colAttr.array[i * 6 + 5] = b;
+            colAttr.array[line * 6] = r * 0.5;
+            colAttr.array[line * 6 + 1] = g * 0.5;
+            colAttr.array[line * 6 + 2] = b * 0.5;
+            colAttr.array[line * 6 + 3] = r;
+            colAttr.array[line * 6 + 4] = g;
+            colAttr.array[line * 6 + 5] = b;
         }
 
         posAttr.needsUpdate = true;
         colAttr.needsUpdate = true;
-        this.velocityVectors.geometry.setDrawRange(0, n * 2);
+        this.velocityVectors.geometry.setDrawRange(0, drawn * 2);
     }
 
     toggleVelocityVectors(on) {
@@ -461,7 +516,7 @@ export class ViewportParticleRenderer {
         this._scene.add(this.spinVectors);
     }
 
-    updateSpinVectors(positions, spinAxes, spins, count) {
+    updateSpinVectors(positions, spinAxes, spins, count, ids = null) {
         if (!this.spinVectors) this._buildSpinVectors();
         if (!spinAxes || !spins) return;
 
@@ -473,6 +528,7 @@ export class ViewportParticleRenderer {
         let drawn = 0;
 
         for (let i = 0; i < n; i++) {
+            if (!this._matchesPEInspection(ids, i)) continue;
             const s = spins[i];
             if (!s) continue;
             const i3 = i * 3;
@@ -526,81 +582,222 @@ export class ViewportParticleRenderer {
         if (!on) this.spinVectors.geometry.setDrawRange(0, 0);
     }
 
-    // ── Orbit Trails (PE mode overlay) ───────────────────────────────
-    _buildTrails() {
-        // Pre-allocate for up to 50 particles × 200 trail segments
-        const MAX_SEGMENTS = 50 * 200;
-        const vertices = new Float32Array(MAX_SEGMENTS * 2 * 3);
-        const colors = new Float32Array(MAX_SEGMENTS * 2 * 3);
+    // ── Trajectory history (PE mode overlay) ─────────────────────────
+    _buildTrails(renderMode = DEFAULT_TRAIL_SETTINGS.renderMode) {
+        const breadcrumbs = renderMode === 'breadcrumbs';
+        const initialUnits = 50 * 200;
+        const verticesPerUnit = breadcrumbs ? 1 : 2;
+        const vertices = new Float32Array(initialUnits * verticesPerUnit * 3);
+        const colors = new Float32Array(initialUnits * verticesPerUnit * 3);
         const geo = new THREE.BufferGeometry();
         geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
         geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
         geo.setDrawRange(0, 0);
-        const mat = new THREE.LineBasicMaterial({
-            vertexColors: true, transparent: true, opacity: 0.5,
-        });
-        this.trails = new THREE.LineSegments(geo, mat);
-        this.trails.frustumCulled = false; // dynamic geo — see _eFieldLines
+        const mat = breadcrumbs
+            ? new THREE.PointsMaterial({
+                vertexColors: true,
+                transparent: true,
+                opacity: DEFAULT_TRAIL_SETTINGS.opacity,
+                size: DEFAULT_TRAIL_SETTINGS.pointSize,
+                sizeAttenuation: true,
+                depthWrite: false,
+                blending: THREE.AdditiveBlending,
+            })
+            : new THREE.LineBasicMaterial({
+                vertexColors: true,
+                transparent: true,
+                opacity: DEFAULT_TRAIL_SETTINGS.opacity,
+                depthWrite: false,
+            });
+        this.trails = breadcrumbs ? new THREE.Points(geo, mat) : new THREE.LineSegments(geo, mat);
+        this.trails.userData.trailMode = renderMode;
+        this.trails.frustumCulled = false;
         this.trails.visible = false;
         this._scene.add(this.trails);
     }
 
-    updateTrails(trailHistory, typeMap) {
-        if (!this.trails) this._buildTrails();
-        if (!trailHistory || trailHistory.size === 0) {
-            this.trails.geometry.setDrawRange(0, 0);
+    _ensureTrailMode(renderMode) {
+        if (this.trails?.userData?.trailMode === renderMode) return;
+        const visible = this.trails?.visible ?? false;
+        if (this.trails) {
+            this._scene.remove(this.trails);
+            this.trails.geometry?.dispose();
+            this.trails.material?.dispose();
+        }
+        this.trails = null;
+        this._buildTrails(renderMode);
+        this.trails.visible = visible;
+    }
+
+    _ensureTrailCapacity(requiredUnits) {
+        const position = this.trails.geometry.getAttribute('position');
+        const verticesPerUnit = this.trails.isPoints ? 1 : 2;
+        const currentUnits = Math.floor(position.count / verticesPerUnit);
+        if (currentUnits >= requiredUnits) {
+            if (requiredUnits * 4 < currentUnits) {
+                this._trailLowUsageFrames = (this._trailLowUsageFrames || 0) + 1;
+                if (this._trailLowUsageFrames >= 120) {
+                    this._resizeTrailGeometry(Math.max(64, Math.ceil(requiredUnits * 1.6)));
+                    this._trailLowUsageFrames = 0;
+                }
+            } else {
+                this._trailLowUsageFrames = 0;
+            }
             return;
         }
+        this._trailLowUsageFrames = 0;
+        let capacity = Math.max(1, currentUnits);
+        while (capacity < requiredUnits) capacity = Math.ceil(capacity * 1.6);
+        this._resizeTrailGeometry(capacity);
+    }
+
+    _resizeTrailGeometry(capacity) {
+        const verticesPerUnit = this.trails.isPoints ? 1 : 2;
+        const vertexCount = capacity * verticesPerUnit;
+        this.trails.geometry.setAttribute(
+            'position', new THREE.Float32BufferAttribute(new Float32Array(vertexCount * 3), 3));
+        this.trails.geometry.setAttribute(
+            'color', new THREE.Float32BufferAttribute(new Float32Array(vertexCount * 3), 3));
+    }
+
+    updateTrails(trailHistory, typeMap, candidateSettings, currentTick) {
+        const settings = normalizeTrailSettings(candidateSettings);
+        this._ensureTrailMode(settings.renderMode);
+        const emptyStats = {
+            mode: settings.renderMode,
+            drawn: 0,
+            minEnergyDensity: 0,
+            maxEnergyDensity: 0,
+        };
+        if (!trailHistory || trailHistory.size === 0) {
+            this.trails.geometry.setDrawRange(0, 0);
+            return emptyStats;
+        }
+
+        const tick = Number.isFinite(Number(currentTick)) ? Number(currentTick) : 0;
+        const oldestTick = tick - settings.historyTicks;
+        this.trails.material.opacity = settings.opacity;
+        if (this.trails.isPoints) this.trails.material.size = settings.pointSize;
+
+        let requiredUnits = 0;
+        let minEnergyDensity = Number.POSITIVE_INFINITY;
+        let maxEnergyDensity = 0;
+        for (const [particleId, trail] of trailHistory) {
+            if (this._peInspectionIds && !this._peInspectionIds.has(Number(particleId))) continue;
+            const len = trail.length;
+            const capacity = trail.capacity || TRAIL_HISTORY_CAPACITY;
+            const start = len < capacity ? 0 : trail.head;
+            let visibleSamples = 0;
+            for (let j = 0; j < len; j++) {
+                const idx = (start + j) % capacity;
+                if (trail.ticks?.[idx] < oldestTick) continue;
+                visibleSamples++;
+                const density = Math.max(0, Number(trail.energyDensities?.[idx]) || 0);
+                minEnergyDensity = Math.min(minEnergyDensity, density);
+                maxEnergyDensity = Math.max(maxEnergyDensity, density);
+            }
+            requiredUnits += this.trails.isPoints
+                ? visibleSamples : Math.max(0, visibleSamples - 1);
+        }
+        this._ensureTrailCapacity(requiredUnits);
 
         const posAttr = this.trails.geometry.getAttribute('position');
         const colAttr = this.trails.geometry.getAttribute('color');
-        const maxSegments = posAttr.array.length / 6;
-        let seg = 0;
+        const maxUnits = Math.floor(posAttr.count / (this.trails.isPoints ? 1 : 2));
+        const minLogEnergy = Math.log1p(Number.isFinite(minEnergyDensity) ? minEnergyDensity : 0);
+        const maxLogEnergy = Math.log1p(maxEnergyDensity);
+        const logEnergySpan = Math.max(1e-12, maxLogEnergy - minLogEnergy);
+        let drawn = 0;
+
+        const sampleTick = (trail, idx, fallback) => trail.ticks
+            ? trail.ticks[idx] : fallback;
+        const ageFade = (sample) => {
+            const normalizedAge = Math.max(0, Math.min(
+                1, (sample - oldestTick) / Math.max(settings.historyTicks, 1)));
+            return 0.06 + 0.94 * Math.pow(normalizedAge, settings.fadeExponent);
+        };
 
         for (const [particleId, trail] of trailHistory) {
-            if (trail.length < 2) continue;
+            if (this._peInspectionIds && !this._peInspectionIds.has(Number(particleId))) continue;
+            if (trail.length < 1) continue;
 
-            // Determine trail color from catalog
             const catId = typeMap ? typeMap.get(particleId) : null;
             const cat = catId ? getById(catId) : null;
             const cr = cat ? cat.display_color[0] : 0.5;
             const cg = cat ? cat.display_color[1] : 0.5;
             const cb = cat ? cat.display_color[2] : 0.5;
-
             const len = trail.length;
-            const maxLen = 200;
-            const start = trail.length < maxLen ? 0 : trail.head;
-            const speeds = trail.speeds;
+            const capacity = trail.capacity || TRAIL_HISTORY_CAPACITY;
+            const start = len < capacity ? 0 : trail.head;
+            const retention = trailRetentionAlpha(trail, tick, settings);
+            if (retention <= 0) continue;
 
-            for (let j = 0; j < len - 1 && seg < maxSegments; j++) {
-                const idx0 = (start + j) % maxLen;
-                const idx1 = (start + j + 1) % maxLen;
+            if (this.trails.isPoints) {
+                for (let j = 0; j < len && drawn < maxUnits; j++) {
+                    const idx = (start + j) % capacity;
+                    const stamp = sampleTick(trail, idx, tick - (len - 1 - j));
+                    if (stamp < oldestTick) continue;
+                    posAttr.array[drawn * 3] = trail.positions[idx * 3];
+                    posAttr.array[drawn * 3 + 1] = trail.positions[idx * 3 + 1];
+                    posAttr.array[drawn * 3 + 2] = trail.positions[idx * 3 + 2];
+                    const speed = trail.speeds?.[idx] || 0;
+                    const speedBoost = 0.65 + 0.35 * Math.min(speed / C_SPEED, 1);
+                    const fade = ageFade(stamp) * retention * speedBoost;
+                    colAttr.array[drawn * 3] = cr * fade;
+                    colAttr.array[drawn * 3 + 1] = cg * fade;
+                    colAttr.array[drawn * 3 + 2] = cb * fade;
+                    drawn++;
+                }
+                continue;
+            }
 
-                posAttr.array[seg * 6] = trail.positions[idx0 * 3];
-                posAttr.array[seg * 6 + 1] = trail.positions[idx0 * 3 + 1];
-                posAttr.array[seg * 6 + 2] = trail.positions[idx0 * 3 + 2];
-                posAttr.array[seg * 6 + 3] = trail.positions[idx1 * 3];
-                posAttr.array[seg * 6 + 4] = trail.positions[idx1 * 3 + 1];
-                posAttr.array[seg * 6 + 5] = trail.positions[idx1 * 3 + 2];
-
-                const fade = (j + 1) / len;
-                const spd = speeds ? (speeds[idx1] || 0) : 0;
-                const beta = Math.min(spd / C_SPEED, 1.0);
-                const speedBoost = 0.65 + 0.35 * beta;
-                colAttr.array[seg * 6] = cr * fade * 0.7 * speedBoost;
-                colAttr.array[seg * 6 + 1] = cg * fade * 0.7 * speedBoost;
-                colAttr.array[seg * 6 + 2] = cb * fade * 0.7 * speedBoost;
-                colAttr.array[seg * 6 + 3] = cr * fade * speedBoost;
-                colAttr.array[seg * 6 + 4] = cg * fade * speedBoost;
-                colAttr.array[seg * 6 + 5] = cb * fade * speedBoost;
-
-                seg++;
+            for (let j = 1; j < len && drawn < maxUnits; j++) {
+                const idx0 = (start + j - 1) % capacity;
+                const idx1 = (start + j) % capacity;
+                const stamp0 = sampleTick(trail, idx0, tick - (len - j));
+                const stamp1 = sampleTick(trail, idx1, tick - (len - 1 - j));
+                if (stamp0 < oldestTick || stamp1 < oldestTick) continue;
+                const offset = drawn * 6;
+                posAttr.array[offset] = trail.positions[idx0 * 3];
+                posAttr.array[offset + 1] = trail.positions[idx0 * 3 + 1];
+                posAttr.array[offset + 2] = trail.positions[idx0 * 3 + 2];
+                posAttr.array[offset + 3] = trail.positions[idx1 * 3];
+                posAttr.array[offset + 4] = trail.positions[idx1 * 3 + 1];
+                posAttr.array[offset + 5] = trail.positions[idx1 * 3 + 2];
+                const fade0 = ageFade(stamp0) * retention;
+                const fade1 = ageFade(stamp1) * retention;
+                if (settings.renderMode === 'energy') {
+                    const density0 = Math.max(0, Number(trail.energyDensities?.[idx0]) || 0);
+                    const density1 = Math.max(0, Number(trail.energyDensities?.[idx1]) || 0);
+                    writeEnergyHeatColor(
+                        colAttr.array, offset,
+                        (Math.log1p(density0) - minLogEnergy) / logEnergySpan,
+                        fade0);
+                    writeEnergyHeatColor(
+                        colAttr.array, offset + 3,
+                        (Math.log1p(density1) - minLogEnergy) / logEnergySpan,
+                        fade1);
+                } else {
+                    colAttr.array[offset] = cr * fade0;
+                    colAttr.array[offset + 1] = cg * fade0;
+                    colAttr.array[offset + 2] = cb * fade0;
+                    colAttr.array[offset + 3] = cr * fade1;
+                    colAttr.array[offset + 4] = cg * fade1;
+                    colAttr.array[offset + 5] = cb * fade1;
+                }
+                drawn++;
             }
         }
 
         posAttr.needsUpdate = true;
         colAttr.needsUpdate = true;
-        this.trails.geometry.setDrawRange(0, seg * 2);
+        this.trails.geometry.setDrawRange(0, drawn * (this.trails.isPoints ? 1 : 2));
+        return {
+            mode: settings.renderMode,
+            drawn,
+            minEnergyDensity: Number.isFinite(minEnergyDensity) ? minEnergyDensity : 0,
+            maxEnergyDensity,
+        };
     }
 
     toggleTrails(on) {
@@ -615,7 +812,7 @@ export class ViewportParticleRenderer {
         }
     }
 
-    // ── Per-Particle Force Arrows (decomposed: Coulomb / gravity / strong / net) ──
+    // ── Per-Particle Force Arrows (all native decomposition channels) ──
     _buildPEForceArrows() {
         const MAX = 200;
         const makeSet = (color, dashed = false) => {
@@ -638,62 +835,84 @@ export class ViewportParticleRenderer {
         };
         this._peForceCoulomb = makeSet(0xff4444);
         this._peForceGravity = makeSet(0x94a3b8);
+        this._peForceLorentz = makeSet(0x22d3ee);
+        this._peForceExchange = makeSet(0xc084fc, /* dashed */ true);
         this._peForceStrong = makeSet(0xff1744, /* dashed */ true);
+        this._peForceRadiation = makeSet(0xfbbf24, /* dashed */ true);
+        this._peForceMagneticDipole = makeSet(0x60a5fa);
+        this._peForceSpinOrbit = makeSet(0xfb923c);
         this._peForceNet = makeSet(0x44cc66);
         // Legacy alias — net force layer
         this._particleForces = this._peForceNet;
     }
 
-    _updatePEForceArrowSet(lines, positions, forces, count, maxForce, visGain = 1.0) {
+    _updatePEForceArrowSet(lines, positions, forces, count, maxForce, visGain = 1.0, ids = null) {
         if (!lines) return;
         const posAttr = lines.geometry.getAttribute('position');
         const n = Math.min(count, 200);
         const arrowScale = 12.0;
+        let drawn = 0;
         for (let i = 0; i < n; i++) {
+            if (!this._matchesPEInspection(ids, i)) continue;
+            const line = drawn++;
             const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
             const fx = forces[i * 3] * visGain;
             const fy = forces[i * 3 + 1] * visGain;
             const fz = forces[i * 3 + 2] * visGain;
             const mag = Math.sqrt(fx * fx + fy * fy + fz * fz);
-            posAttr.array[i * 6] = px;
-            posAttr.array[i * 6 + 1] = py;
-            posAttr.array[i * 6 + 2] = pz;
+            posAttr.array[line * 6] = px;
+            posAttr.array[line * 6 + 1] = py;
+            posAttr.array[line * 6 + 2] = pz;
             const scale = mag > 1e-20 ? arrowScale * Math.log(1 + mag / (maxForce * visGain + 1e-20) * 10) : 0;
-            posAttr.array[i * 6 + 3] = px + (mag > 1e-20 ? fx / mag * scale : 0);
-            posAttr.array[i * 6 + 4] = py + (mag > 1e-20 ? fy / mag * scale : 0);
-            posAttr.array[i * 6 + 5] = pz + (mag > 1e-20 ? fz / mag * scale : 0);
+            posAttr.array[line * 6 + 3] = px + (mag > 1e-20 ? fx / mag * scale : 0);
+            posAttr.array[line * 6 + 4] = py + (mag > 1e-20 ? fy / mag * scale : 0);
+            posAttr.array[line * 6 + 5] = pz + (mag > 1e-20 ? fz / mag * scale : 0);
         }
         posAttr.needsUpdate = true;
         if (lines.material.isLineDashedMaterial) lines.computeLineDistances();
-        lines.geometry.setDrawRange(0, n * 2);
+        lines.geometry.setDrawRange(0, drawn * 2);
     }
 
-    updatePEForceDecomposition(decomp, gravityVisGain = 1.0) {
+    updatePEForceDecomposition(decomp, gravityVisGain = 1.0, ids = null) {
         if (!this._peForceCoulomb) this._buildPEForceArrows();
         if (!decomp || decomp.count === 0) {
-            for (const layer of [this._peForceCoulomb, this._peForceGravity, this._peForceStrong, this._peForceNet]) {
+            for (const layer of [
+                this._peForceCoulomb, this._peForceGravity, this._peForceLorentz,
+                this._peForceExchange, this._peForceStrong, this._peForceRadiation,
+                this._peForceMagneticDipole, this._peForceSpinOrbit, this._peForceNet,
+            ]) {
                 layer.geometry.setDrawRange(0, 0);
             }
             return;
         }
         const { positions, count } = decomp;
-        this._updatePEForceArrowSet(this._peForceCoulomb, positions, decomp.coulomb, count, decomp.maxCoulomb);
-        this._updatePEForceArrowSet(this._peForceGravity, positions, decomp.gravity, count, decomp.maxGravity, gravityVisGain);
-        this._updatePEForceArrowSet(this._peForceStrong, positions, decomp.strong, count, decomp.maxStrong);
-        this._updatePEForceArrowSet(this._peForceNet, positions, decomp.net, count, decomp.maxNet);
+        this._updatePEForceArrowSet(this._peForceCoulomb, positions, decomp.coulomb, count, decomp.maxCoulomb, 1.0, ids);
+        this._updatePEForceArrowSet(this._peForceGravity, positions, decomp.gravity, count, decomp.maxGravity, gravityVisGain, ids);
+        this._updatePEForceArrowSet(this._peForceLorentz, positions, decomp.lorentz, count, decomp.maxLorentz, 1.0, ids);
+        this._updatePEForceArrowSet(this._peForceExchange, positions, decomp.exchange, count, decomp.maxExchange, 1.0, ids);
+        this._updatePEForceArrowSet(this._peForceStrong, positions, decomp.strong, count, decomp.maxStrong, 1.0, ids);
+        this._updatePEForceArrowSet(this._peForceRadiation, positions, decomp.radiation, count, decomp.maxRadiation, 1.0, ids);
+        this._updatePEForceArrowSet(this._peForceMagneticDipole, positions, decomp.magnetic_dipole, count, decomp.maxMagneticDipole, 1.0, ids);
+        this._updatePEForceArrowSet(this._peForceSpinOrbit, positions, decomp.spin_orbit, count, decomp.maxSpinOrbit, 1.0, ids);
+        this._updatePEForceArrowSet(this._peForceNet, positions, decomp.net, count, decomp.maxNet, 1.0, ids);
     }
 
     togglePEForceCoulomb(on) { if (!this._peForceCoulomb) this._buildPEForceArrows(); this._peForceCoulomb.visible = on; if (!on) this._peForceCoulomb.geometry.setDrawRange(0, 0); }
     togglePEForceGravity(on) { if (!this._peForceGravity) this._buildPEForceArrows(); this._peForceGravity.visible = on; if (!on) this._peForceGravity.geometry.setDrawRange(0, 0); }
+    togglePEForceLorentz(on) { if (!this._peForceLorentz) this._buildPEForceArrows(); this._peForceLorentz.visible = on; if (!on) this._peForceLorentz.geometry.setDrawRange(0, 0); }
+    togglePEForceExchange(on) { if (!this._peForceExchange) this._buildPEForceArrows(); this._peForceExchange.visible = on; if (!on) this._peForceExchange.geometry.setDrawRange(0, 0); }
     togglePEForceStrong(on)  { if (!this._peForceStrong)  this._buildPEForceArrows(); this._peForceStrong.visible = on;  if (!on) this._peForceStrong.geometry.setDrawRange(0, 0); }
+    togglePEForceRadiation(on) { if (!this._peForceRadiation) this._buildPEForceArrows(); this._peForceRadiation.visible = on; if (!on) this._peForceRadiation.geometry.setDrawRange(0, 0); }
+    togglePEForceMagneticDipole(on) { if (!this._peForceMagneticDipole) this._buildPEForceArrows(); this._peForceMagneticDipole.visible = on; if (!on) this._peForceMagneticDipole.geometry.setDrawRange(0, 0); }
+    togglePEForceSpinOrbit(on) { if (!this._peForceSpinOrbit) this._buildPEForceArrows(); this._peForceSpinOrbit.visible = on; if (!on) this._peForceSpinOrbit.geometry.setDrawRange(0, 0); }
     togglePEForceNet(on)     { if (!this._peForceNet)     this._buildPEForceArrows(); this._peForceNet.visible = on;     if (!on) this._peForceNet.geometry.setDrawRange(0, 0); }
 
     // Legacy net-force API (delegates to F_net layer)
     _buildParticleForces() { this._buildPEForceArrows(); }
 
-    updateParticleForces(positions, forces, count, maxForce) {
+    updateParticleForces(positions, forces, count, maxForce, ids = null) {
         if (!this._peForceNet) this._buildPEForceArrows();
-        this._updatePEForceArrowSet(this._peForceNet, positions, forces, count, maxForce);
+        this._updatePEForceArrowSet(this._peForceNet, positions, forces, count, maxForce, 1.0, ids);
     }
 
     toggleParticleForces(on) { this.togglePEForceNet(on); }
@@ -962,6 +1181,7 @@ export class ViewportParticleRenderer {
     }
 
     dispose() {
+        this.clearPEScenarioVisual();
         const disposeMesh = (obj) => {
             if (!obj) return;
             this._scene.remove(obj);
@@ -976,17 +1196,22 @@ export class ViewportParticleRenderer {
         disposeMesh(this.velocityVectors);
         disposeMesh(this.spinVectors);
         disposeMesh(this.trails);
-        // Dispose all four PE force-arrow layers, not just _peForceNet (which
-        // _particleForces aliases) — the other three were leaking geometry +
-        // material and orphaning meshes on the scene graph on every teardown.
+        // Dispose every PE force-arrow layer, not just _peForceNet (which
+        // _particleForces aliases), so no geometry/material survives teardown.
         disposeMesh(this._peForceCoulomb);
         disposeMesh(this._peForceGravity);
+        disposeMesh(this._peForceLorentz);
+        disposeMesh(this._peForceExchange);
         disposeMesh(this._peForceStrong);
+        disposeMesh(this._peForceRadiation);
+        disposeMesh(this._peForceMagneticDipole);
+        disposeMesh(this._peForceSpinOrbit);
         disposeMesh(this._peForceNet);
-        this._peForceCoulomb = this._peForceGravity = this._peForceStrong = this._peForceNet = this._particleForces = null;
+        this._peForceCoulomb = this._peForceGravity = this._peForceLorentz = null;
+        this._peForceExchange = this._peForceStrong = this._peForceRadiation = null;
+        this._peForceMagneticDipole = this._peForceSpinOrbit = null;
+        this._peForceNet = this._particleForces = null;
         disposeMesh(this._peSystem);
-        disposeMesh(this._voxelDebug);
-
         if (this._admissibilityRings) {
             while (this._admissibilityRings.children.length) {
                 disposeMesh(this._admissibilityRings.children.pop());
@@ -1003,18 +1228,12 @@ export class ViewportParticleRenderer {
             this._scene.remove(this._provenanceLabels);
         }
 
-        if (this._massComparison) {
-            while (this._massComparison.children.length) {
-                disposeMesh(this._massComparison.children.pop());
-            }
-            this._scene.remove(this._massComparison);
-        }
-
         this.particles = null;
         this.velocityVectors = null;
         this.spinVectors = null;
         this.trails = null;
         this._particleForces = null;
         this._peSystem = null;
+        this._peScenarioVisual = null;
     }
 }

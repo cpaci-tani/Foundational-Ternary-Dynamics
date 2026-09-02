@@ -518,7 +518,7 @@ const PARTICLE_SCENARIO_GUIDES = Object.freeze({
     'pe-pionic-hydrogen': 'Pionic hydrogen is shown here as a Coulomb reduced-mass baseline. Hadronic level shifts are not active unless a short-range force term is explicitly enabled.',
     'pe-kaonic-hydrogen': 'Kaonic hydrogen is shown here as a heavier Coulomb reduced-mass baseline. Short-range kaon-nucleon physics is not implied by the default scenario.',
     'pe-sigma-plus-atom': 'This is a \\(\\Sigma^+\\)-electron bound-state thought experiment where the core has a different charge/mass identity from a proton while the mathematics still starts from a central attractive potential.',
-    'pe-antiprotonic-hydrogen': 'Protonium is a Coulomb matter-antimatter pair in this engine. The contact annihilation rule is geometric; detailed hadronic inelastic channels are not modeled.',
+    'pe-antiprotonic-hydrogen': 'This retired effective pair used opposite Coulomb charges. The optional geometric contact-removal selection is not annihilation or a hadronic inelastic model.',
     'pe-pion-orbit': 'Pionium is a mesonic analogue of positronium in this engine: an opposite-charge pair with pion masses. It is a softened Coulomb baseline, not a decay-channel model.',
     'pe-kaon-pair': 'Kaonium is the heavier cousin of pionium, useful for comparing how bound-state scale changes with constituent mass.',
     'pe-delta-system': '\\(\\Delta^{++}\\) plus two electrons is a high-charge many-body balance problem where attraction to the center competes with strong electron-electron repulsion.',

@@ -15,8 +15,8 @@ int main() {
         typename std::decay_t<decltype(ids)>::value_type,
         std::string_view>,
         "scale0_scenario_ids must expose non-owning string_view entries");
-    ftd::test::check("meta count is 130", ftd::scenario_meta_count() == 130);
-    ftd::test::check("id list count is 130", ids.size() == 130);
+    ftd::test::check("meta count is 142", ftd::scenario_meta_count() == 142);
+    ftd::test::check("id list count is 142", ids.size() == 142);
     ftd::test::check("meta count matches id list",
                      ftd::scenario_meta_count() == ids.size());
 

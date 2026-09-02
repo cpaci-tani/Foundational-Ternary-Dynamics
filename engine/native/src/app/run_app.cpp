@@ -149,7 +149,7 @@ int run_app_impl(const std::vector<std::string>& args) {
     // the ParticleEngine into its fallback cloud anyway, but naming a Scale-1 id
     // keeps the status/scenario readout honest.
     if (app_opts.scale == 1 && host_opts.scenario.rfind("s1-", 0) != 0)
-        host_opts.scenario = "s1-hydrogen-cloud";
+        host_opts.scenario = "s1-native-m3-replay";
     host_opts.run.lattice_size = engine_opts.lattice_size;
     host_opts.run.force_cpu = engine_opts.force_cpu;
     host_opts.run.flux_boundary = engine_opts.flux_boundary;

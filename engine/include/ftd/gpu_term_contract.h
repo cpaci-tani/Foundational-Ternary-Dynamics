@@ -8,6 +8,39 @@
 //
 // This is a completeness contract, not a derivation. Selected/imposed
 // CUDA ports stay at their LEDGER tags.
+//
+// HONEST LIMITS OF "WHAT THE ENGINE DOES" (both added 2026-09-02; neither
+// changes any row's classification below):
+//
+//   (1) NativeCuda does not mean "the same algorithm at the same precision
+//       as CPU." The three Poisson-based rows below (gauss_projection,
+//       poisson_coulomb, latency_field) run algorithmically DIFFERENT
+//       solvers on the two backends: CPU is a warm-started 18-point SOR
+//       sweep in DOUBLE precision (src/poisson_solvers.cpp); GPU is an
+//       EXACT spectral FFT solve in SINGLE precision
+//       (cuda/kernels_poisson.cu — the CUDA source's own comment calls
+//       float's ~7 decimal digits "more than sufficient" for the
+//       correction gradient). latency_field further differs in HOW the
+//       periodic solvability condition is met: CPU explicitly
+//       mean-subtracts the source/potential; GPU instead relies on the
+//       precomputed Green's function zeroing the DC Fourier mode. The two
+//       are equivalent in exact arithmetic, not bit-for-bit in float.
+//       Parity between backends on these three terms is therefore
+//       STATISTICAL BY DESIGN, not exact: the CPU/GPU parity test uses
+//       2-5% family tolerances, with its own comment noting that FFT and
+//       SOR will differ. Do not read a NativeCuda tag on these three rows
+//       as a claim of bit-identical (or even algorithmically identical)
+//       output to the CPU path.
+//
+//   (2) test_gpu_term_contract.cpp (the "oracle" above) does not exercise
+//       any of this. It includes no CUDA header, launches no kernel, and
+//       never compares CPU output against GPU output — it only checks this
+//       table's rows against TOGGLE_SPECS and the toggle validator. A row
+//       can therefore read NativeCuda while the kernel behind it is
+//       missing, wrong, or (as in (1) above) a different algorithm at a
+//       different precision, and this test still passes. Read this table
+//       as an audited CLAIM ledger, not as evidence that any claim here was
+//       checked against a running kernel.
 
 #include "term_toggles.h"
 
@@ -38,9 +71,13 @@ inline constexpr GpuTermContract GPU_TERM_CONTRACT[] = {
     {"damping", GpuTermImpl::NativeCuda, ToggleBackend::ANY},
     {"genesis", GpuTermImpl::NativeCuda, ToggleBackend::ANY},
     {"evaporation", GpuTermImpl::NativeCuda, ToggleBackend::ANY},
+    // See header note (1): CPU 18-pt SOR (double) vs. GPU spectral FFT
+    // (single) — statistical parity only, not the same algorithm.
     {"gauss_projection", GpuTermImpl::NativeCuda, ToggleBackend::ANY},
     {"forces", GpuTermImpl::NativeCuda, ToggleBackend::ANY},
     {"gravity", GpuTermImpl::NativeCuda, ToggleBackend::ANY},
+    // See header note (1): CPU 18-pt SOR (double) vs. GPU spectral FFT
+    // (single) — statistical parity only, not the same algorithm.
     {"poisson_coulomb", GpuTermImpl::NativeCuda, ToggleBackend::ANY},
     {"movement", GpuTermImpl::NativeCuda, ToggleBackend::ANY},
     {"lorentz_force", GpuTermImpl::NativeCuda, ToggleBackend::ANY},
@@ -54,6 +91,9 @@ inline constexpr GpuTermContract GPU_TERM_CONTRACT[] = {
     {"triad_binding", GpuTermImpl::NativeCuda, ToggleBackend::ANY},
     {"pair_production", GpuTermImpl::NativeCuda, ToggleBackend::ANY},
     {"exchange_force", GpuTermImpl::NativeCuda, ToggleBackend::ANY},
+    // See header note (1): CPU 18-pt SOR (double, explicit mean-subtract) vs.
+    // GPU spectral FFT (single, DC-mode zeroed by the Green's function) —
+    // equivalent in exact arithmetic only; statistical parity in float.
     {"latency_field", GpuTermImpl::NativeCuda, ToggleBackend::ANY},
     {"exact_dual_gauss", GpuTermImpl::NativeCuda, ToggleBackend::ANY},
     {"matched_gauss_dynamics", GpuTermImpl::NativeCuda, ToggleBackend::ANY},
@@ -77,6 +117,11 @@ inline constexpr GpuTermContract GPU_TERM_CONTRACT[] = {
     {"knot_tracking", GpuTermImpl::HostMirrorHybrid, ToggleBackend::ANY},
     {"strict_validation", GpuTermImpl::ControlOnly, ToggleBackend::ANY},
     {"ew_background_sweep", GpuTermImpl::NativeCuda, ToggleBackend::ANY},
+    // Flux-cell mechanisms (ftd/flux_cell.h): both edit / read the host
+    // mirror (pump: every pump tick; port: every tick once open), then the
+    // GPU tick uploads the dirty mirror. Same class as knot_tracking.
+    {"flux_pump", GpuTermImpl::HostMirrorHybrid, ToggleBackend::ANY},
+    {"flux_cell_port", GpuTermImpl::HostMirrorHybrid, ToggleBackend::ANY},
 };
 
 static_assert(

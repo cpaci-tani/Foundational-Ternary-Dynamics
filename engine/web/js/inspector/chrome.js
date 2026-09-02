@@ -5,7 +5,7 @@ export const INSPECTOR_MODE_COPY = Object.freeze({
     },
     particles: {
         label: 'Particles',
-        prompt: 'Single-click a particle in the viewport to inspect its identity and nearest interactions.',
+        prompt: 'Select a particle in the viewport or a dynamic cluster in Interaction Hierarchy to isolate its overlays.',
     },
     atoms: {
         label: 'Atoms & Molecules',
@@ -33,6 +33,7 @@ export function resetInspectorSelection(target) {
 export function hasInspectorSelection(target) {
     return !!(
         target._selectedPos ||
+        target._peInspectionFocus ||
         target._selectedPEParticleId >= 0 ||
         target._selectedAEAtomId >= 0 ||
         target._selectedPlanetaryId >= 0 ||
@@ -48,6 +49,13 @@ export function getInspectorSelectionSummary(target) {
     if (target._selectedPos) {
         const { x, y, z } = target._selectedPos;
         return `Selected voxel at (${x}, ${y}, ${z}).`;
+    }
+    if (target._peInspectionFocus?.kind === 'cluster') {
+        const focus = target._peInspectionFocus;
+        return `Focused ${focus.clusterId}: ${focus.particleIds.length} particles, energy anchor #${focus.anchorId}.`;
+    }
+    if (target._peInspectionFocus?.kind === 'particle') {
+        return `Focused particle #${target._peInspectionFocus.particleId}; unrelated overlays are suppressed.`;
     }
     if (target._selectedPEParticleId >= 0) return `Selected particle #${target._selectedPEParticleId}.`;
     if (target._selectedAEAtomId >= 0) return `Selected atom #${target._selectedAEAtomId}.`;

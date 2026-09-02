@@ -50,7 +50,7 @@ void request_reset(AppContext* app) {
 // make_scale_adapter(level), and reboots into the given per-scale seed id. The
 // app tracks the active scenario so Reset targets the newly active scale.
 void request_switch_scale(AppContext* app, int level) {
-    const char* scenario = (level == 1) ? "s1-hydrogen-cloud" : "s0-seed-hydrogen";
+    const char* scenario = (level == 1) ? "s1-native-m3-replay" : "s0-seed-hydrogen";
     push_core(app, ftd::native::SwitchScale{level, scenario});
     app->scenario_id = scenario;
 }

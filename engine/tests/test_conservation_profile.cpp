@@ -57,7 +57,7 @@
 //         solved phi cannot zero the 6-pt divergence: the residual saturates
 //         to ~0.342 sum-sq (~5.0e-3 RMS over N=13824), is within ~4e-8 of the
 //         floor by 50 iterations, and is BIT-IDENTICAL from 100 through 1000.
-//         (6 iters sits ~7.6% ABOVE that floor — close, but not yet pinned.)
+//         (6 iters sits ~6.4% ABOVE that floor — close, but not yet pinned.)
 //         The key fact: the floor is a fixed point of the wrong stencil, so
 //         raising iterations never drives it toward zero.
 //
@@ -294,14 +294,14 @@ void test_gauss_projection_is_limiting() {
 //
 // Measured curve (L=24 dipole, single tick):
 //   iters     gauss_violation
-//      6       3.681915347673e-01     (~7.6% above the floor)
+//      6       3.681915347673e-01     (~6.4% above the floor)
 //     30       3.421126673557e-01     (saturating)
 //     50       3.421153841364e-01     (within ~4e-8 of the floor)
 //    100       3.421153709442e-01  ┐  BIT-IDENTICAL (diff ~5e-15 = machine eps)
 //   1000       3.421153709442e-01  ┘  -> the floor
 // So the residual SATURATES: it is within ~4e-8 of the floor by 50 iters and
 // BIT-IDENTICAL from 100 through 1000. It never trends toward zero — it is a
-// fixed point of the wrong stencil. 6 iters sits ~7.6% above the floor (close,
+// fixed point of the wrong stencil. 6 iters sits ~6.4% above the floor (close,
 // but not pinned). The assertions below pin (a) the floor is bit-identical
 // across 100 vs 1000, (b) it has saturated to ~1e-7 by 50, and (c) it does NOT
 // collapse toward zero with more iterations.
@@ -381,12 +381,12 @@ void test_gauss_violation_floor_is_structural() {
                 gv50, gv100, 1e-6);
 
     // The floor is a HARD wall well above zero. Going from 6 -> 1000 iters moves
-    // gauss_violation by only ~7.6% and then it PINS — it never trends toward
+    // gauss_violation by only ~6.4% and then it PINS — it never trends toward
     // zero. (If the residual instead kept shrinking with iterations, the floor
     // would be a convergence artifact, contradicting the stencil-mismatch
     // analysis.) We bound the total 6->floor improvement well under 10%.
     const double improvement_6_to_floor = (gv6 - gv100) / gv100;
-    check("CP-3: 6 iters is already within ~10% of the saturated floor (measured ~7.6%)",
+    check("CP-3: 6 iters is already within ~10% of the saturated floor (measured 6.38%)",
           improvement_6_to_floor >= 0.0 && improvement_6_to_floor < 0.10,
           "The gauss_violation at 6 iters differs from the saturated floor by "
           "more than 10%; the residual is still converging substantially, "

@@ -232,10 +232,32 @@ val get_energy_audit(ftd::RenderBridge& rb) {
     momentum.set("y", ea.particle_momentum.y);
     momentum.set("z", ea.particle_momentum.z);
     result.set("particleMomentum", momentum);
+
+    // 2026-09-02 append-only flux-cell ledger (ftd/flux_cell.h). Regional
+    // channels are zero unless the active scenario registered a cell region;
+    // pump/port counters are always live.
+    result.set("cellSiteCount",        ea.cell_site_count);
+    result.set("cellUE",               ea.cell_U_E);
+    result.set("cellUB",               ea.cell_U_B);
+    result.set("cellUJ",               ea.cell_U_J);
+    result.set("cellHWave",            ea.cell_H_wave);
+    result.set("cellPLeak",            ea.cell_P_leak);
+    val cell_s = val::object();
+    cell_s.set("x", ea.cell_S_net.x);
+    cell_s.set("y", ea.cell_S_net.y);
+    cell_s.set("z", ea.cell_S_net.z);
+    result.set("cellSNet",             cell_s);
+    result.set("cellPumpWork",         ea.cell_pump_work);
+    result.set("cellPumpTicksApplied", ea.cell_pump_ticks_applied);
+    result.set("cellPumpTicksTotal",   ea.cell_pump_ticks_total);
+    result.set("cellPortOpen",         ea.cell_port_open);
+    result.set("cellPortWorkOut",      ea.cell_port_work_out);
+    // 2026-09-02 append-only Poynting cross-check (same port surface).
+    result.set("cellPortPoyntingOut",  ea.cell_port_poynting_out);
     return result;
 }
 
-static std::vector<double> s_audit_cache(31);
+static std::vector<double> s_audit_cache(46);
 val get_energy_audit_view(ftd::RenderBridge& rb) {
     auto ea = rb.energy_audit();
     s_audit_cache[0] = ea.field_energy;
@@ -272,7 +294,25 @@ val get_energy_audit_view(ftd::RenderBridge& rb) {
     s_audit_cache[28] = static_cast<double>(ea.manifested_count);
     s_audit_cache[29] = ea.strong_energy;
     s_audit_cache[30] = ea.weak_energy;
-    return val(typed_memory_view(31, s_audit_cache.data()));
+    // Append-only 2026-09-02 flux-cell ledger: indices 0..30 retain their meanings.
+    s_audit_cache[31] = static_cast<double>(ea.cell_site_count);
+    s_audit_cache[32] = ea.cell_U_E;
+    s_audit_cache[33] = ea.cell_U_B;
+    s_audit_cache[34] = ea.cell_U_J;
+    s_audit_cache[35] = ea.cell_H_wave;
+    s_audit_cache[36] = ea.cell_P_leak;
+    s_audit_cache[37] = ea.cell_S_net.x;
+    s_audit_cache[38] = ea.cell_S_net.y;
+    s_audit_cache[39] = ea.cell_S_net.z;
+    s_audit_cache[40] = ea.cell_pump_work;
+    s_audit_cache[41] = static_cast<double>(ea.cell_pump_ticks_applied);
+    s_audit_cache[42] = static_cast<double>(ea.cell_pump_ticks_total);
+    s_audit_cache[43] = static_cast<double>(ea.cell_port_open);
+    s_audit_cache[44] = ea.cell_port_work_out;
+    // Append-only 2026-09-02 Poynting cross-check: index 45 retains
+    // indices 0..44's meanings unchanged.
+    s_audit_cache[45] = ea.cell_port_poynting_out;
+    return val(typed_memory_view(46, s_audit_cache.data()));
 }
 
 // ── Lagrangian Extraction (full with constraints) ───────────────────

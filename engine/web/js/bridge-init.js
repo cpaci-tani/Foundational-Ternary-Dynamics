@@ -8,7 +8,7 @@
  */
 
 // ── Bridge classes ───────────────────────────────────────────────────
-import { WasmBridge } from './bridge/wasm-bridge.js';
+import { WasmBridge } from './bridge/wasm-bridge.js?v=7';
 import { WebSocketBridge } from './ws-bridge.js?v=5';
 
 // ── Capability factories — installs the lazy `bridge.capabilities` getter

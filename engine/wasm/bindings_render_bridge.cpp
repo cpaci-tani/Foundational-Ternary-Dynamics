@@ -28,9 +28,8 @@
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
 #include "ftd/scenarios.h"  // ftd::dispatch_scenario — ported JS scenario library
+#include "ftd/flux_cell.h"  // flux-cell region / pump / port controls
 #include "ftd/parallel.h"   // ftd::set_pool_threads (threaded build pool sizing)
-#include "ftd/scale.h"           // ftd::coarsen_to_particles (Scale 0 → 1 bridge)
-#include "ftd/particle_engine.h" // ftd::Particle definition for the export
 #include "bindings_internal.h"
 
 using namespace emscripten;
@@ -233,6 +232,42 @@ static double get_dt(ftd::RenderBridge& rb) { return rb.dt(); }
 // scalar setter lets the UI sweep omega0 (the KG mass term -omega0^2*J).
 static void set_omega0(ftd::RenderBridge& rb, double w) { rb.toggles.omega0 = w; }
 static double get_omega0(ftd::RenderBridge& rb) { return rb.toggles.omega0; }
+
+// ── Flux-cell mechanisms (ftd/flux_cell.h; 2026-09-02) ───────────────────
+// Region: makes getEnergyAudit carry the regional ledger (cell* fields).
+// Pump / port: configure the mechanism; the matching toggle (flux_pump /
+// flux_cell_port, via setToggle) arms it. Scenario bodies register their own.
+static void set_flux_cell_region(ftd::RenderBridge& rb, double cx, double cy,
+                                 double cz, double radius) {
+    rb.set_flux_cell_region(ftd::FluxCellRegion{cx, cy, cz, radius});
+}
+static void clear_flux_cell_region(ftd::RenderBridge& rb) { rb.clear_flux_cell_region(); }
+static void set_flux_pump(ftd::RenderBridge& rb, double cx, double cy, double cz,
+                          double major_radius, double tube_sigma, double amplitude,
+                          int circulation_sign, int sign_sectors, int ticks,
+                          int period) {
+    ftd::FluxCellTorusSpec spec;
+    spec.cx = cx; spec.cy = cy; spec.cz = cz;
+    spec.major_radius = major_radius;
+    spec.tube_sigma = tube_sigma;
+    spec.amplitude = amplitude;
+    spec.circulation_sign = circulation_sign;
+    spec.sign_sectors = sign_sectors;
+    rb.set_flux_pump(spec, ticks, period);
+}
+static void clear_flux_pump(ftd::RenderBridge& rb) { rb.clear_flux_pump(); }
+static void set_flux_cell_port(ftd::RenderBridge& rb, double cx, double cy, double cz,
+                               double nx, double ny, double nz, double radius,
+                               int open_tick, double surface_offset) {
+    ftd::FluxCellPortSpec port;
+    port.cx = cx; port.cy = cy; port.cz = cz;
+    port.nx = nx; port.ny = ny; port.nz = nz;
+    port.radius = radius;
+    port.surface_offset = surface_offset;
+    port.open_tick = open_tick;
+    rb.set_flux_cell_port(port);
+}
+static void clear_flux_cell_port(ftd::RenderBridge& rb) { rb.clear_flux_cell_port(); }
 // FTD-0274: live Langevin bath temperature. The thermal-ignition panel sweeps
 // langevin_T across the first-order condensation point T_up~0.05 to ignite the
 // lattice (void -> condensate); there is no maximum temperature (manifestation
@@ -331,58 +366,6 @@ static bool setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
     return false;
 }
 
-// ── Scale 0 → Scale 1 coarse-graining export ─────────────────────────
-// Binds the existing (tested, CTest-covered) ftd::coarsen_to_particles
-// verbatim: one manifested voxel → one Particle record. Observer-only —
-// reads lattice state, mutates nothing. Used by the Scale-1 voxel debug
-// view. NOTE the mass convention here is the scale-bridge's
-// max(density, K_B) ([IMPOSED] bridge convention, display only); the
-// physics-bearing cluster promotion path uses N·K_B instead.
-static val coarsen_to_particles_js(ftd::RenderBridge& rb) {
-    const auto ps = ftd::coarsen_to_particles(rb);
-    const int count = static_cast<int>(ps.size());
-
-    val ids        = val::global("Int32Array").new_(count);
-    val charges    = val::global("Int8Array").new_(count);
-    val masses     = val::global("Float64Array").new_(count);
-    val positions  = val::global("Float64Array").new_(count * 3);
-    val velocities = val::global("Float64Array").new_(count * 3);
-    val spins      = val::global("Int8Array").new_(count);
-    val colors     = val::global("Int8Array").new_(count);
-    val pair_ids   = val::global("Int32Array").new_(count);
-    val locked     = val::global("Uint8Array").new_(count);
-
-    for (int i = 0; i < count; ++i) {
-        const auto& p = ps[i];
-        ids.set(i, p.id);
-        charges.set(i, static_cast<int>(p.charge));
-        masses.set(i, p.mass);
-        positions.set(i * 3,     p.position.x);
-        positions.set(i * 3 + 1, p.position.y);
-        positions.set(i * 3 + 2, p.position.z);
-        velocities.set(i * 3,     p.velocity.x);
-        velocities.set(i * 3 + 1, p.velocity.y);
-        velocities.set(i * 3 + 2, p.velocity.z);
-        spins.set(i, static_cast<int>(p.spin));
-        colors.set(i, static_cast<int>(p.color));
-        pair_ids.set(i, p.pair_id);
-        locked.set(i, p.locked ? 1 : 0);
-    }
-
-    val result = val::object();
-    result.set("ids", ids);
-    result.set("charges", charges);
-    result.set("masses", masses);
-    result.set("positions", positions);
-    result.set("velocities", velocities);
-    result.set("spins", spins);
-    result.set("colors", colors);
-    result.set("pairIds", pair_ids);
-    result.set("locked", locked);
-    result.set("count", count);
-    return result;
-}
-
 // ── Embind Registration ──────────────────────────────────────────────
 // All RB-related helpers (data extraction, inspection, scenario setup,
 // toggles, injection, time step) register here. The RenderBridge class_<>
@@ -408,9 +391,6 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     function("getKnotTelemetry", &get_knot_telemetry);
     function("getKnotEvents",    &get_knot_events);
     function("getKnotAggregate", &get_knot_aggregate);
-
-    // Scale 0 → Scale 1 coarse-graining (observation-only, voxel debug view)
-    function("coarsenToParticles", &coarsen_to_particles_js);
 
     // Voxel inspection
     function("inspectVoxel",       &inspect_voxel);
@@ -484,6 +464,12 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     function("getFluxPeriodicAxis", &get_flux_periodic_axis);
     function("setOmega0",          &set_omega0);
     function("getOmega0",          &get_omega0);
+    function("setFluxCellRegion",  &set_flux_cell_region);
+    function("clearFluxCellRegion",&clear_flux_cell_region);
+    function("setFluxPump",        &set_flux_pump);
+    function("clearFluxPump",      &clear_flux_pump);
+    function("setFluxCellPort",    &set_flux_cell_port);
+    function("clearFluxCellPort",  &clear_flux_cell_port);
     function("getPhysicalTime",    &get_physical_time);
 
     // Scenarios

@@ -286,8 +286,8 @@ struct Bond {
 /**
  * @brief Represents an atom in Scale 2 simulation.
  * 
- * [AXIOM] Maps to the OnticEntity triple {Z, mass, radius} bridging discrete
- * lattice constants into the analytical atomic layer.
+ * [IMPOSED representation] Maps to the scale-local OnticEntity presentation
+ * summary {Z, mass, radius}. This does not bridge or transfer lattice state.
  */
 struct Atom {
     int32_t id = -1;
@@ -324,7 +324,7 @@ struct Atom {
     // For QEq tracking (continuous fractional charge transfer)
     double q_frac = 0.0;
 
-    // Convert to universal ternary triple
+    // Convert to the scale-local presentation summary
     OnticEntity as_ontic() const {
         return {Z, mass, radius};
     }

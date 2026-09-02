@@ -131,6 +131,69 @@ static inline double divergence_flux_at(const std::vector<Voxel>& voxels,
   return div;
 }
 
+// ============================================================================
+// GAUSS PROJECTION — SOLVABILITY (FREDHOLM) CONDITION AND ITS LIMITS
+// ============================================================================
+//
+// The projection enforces a constraint of the form
+//   div_centred(J) = charge_coupling * (s - s_bar)
+// where div_centred is the 6-point central-difference divergence used both
+// to build sor_source (below) and to define the correction J -= grad(phi).
+// On a periodic lattice this equation is solvable for phi — equivalently,
+// the correction can be found at all — ONLY if the source integrates to
+// zero against every function in div_centred's cokernel: its Fredholm
+// condition.
+//
+// div_centred's cokernel is exactly the set of functions constant on each
+// coset of 2*Z^3: the central difference only couples same-parity sites two
+// steps apart along each axis, so it factors the lattice into parity
+// classes that never communicate through this operator.
+//
+//   * ODD L: gcd(L,2)=1, so the 2*Z^3 quotient has a single coset and the
+//     cokernel is 1-DIMENSIONAL (the constants). The mean_charge
+//     subtraction immediately below IS exactly this one condition —
+//     charge_sum/N removed so the total source integrates to zero. This is
+//     FORCED, not an ad-hoc regularization: it is the unique solvability
+//     requirement for the 18-point SOR solve, whose own kernel is the
+//     constants (see sor_sweep_18pt above). The golden lattice (L=17) and
+//     the 33 scenario tests all sit here and are unaffected by what
+//     follows.
+//
+//   * EVEN L: the same coset decomposition has EIGHT classes — one per
+//     choice of (x mod 2, y mod 2, z mod 2), the eight parity sublattices.
+//     The Fredholm condition is then EIGHT independent equations: charge
+//     must be separately neutral on each of the eight sublattices, not
+//     merely on the box as a whole. A single point charge sits on ONE
+//     sublattice and violates the other SEVEN neutrality conditions
+//     outright, so NO flux field whatsoever satisfies the constraint.
+//     Subtracting the single scalar mean_charge removes only one of the
+//     eight obstructions and leaves the rest standing. This is NOT a
+//     solver-quality issue — more SOR sweeps, a different omega, or a
+//     better Poisson solver cannot close it, because the unsatisfied part
+//     of the source has no phi whose Laplacian reaches it under
+//     div_centred. The residual floors at an irreducible sum-of-squares of
+//     exactly 7/N (seven unsatisfiable sublattice conditions, N sites).
+//     Measured: repeated projection on a static point charge converges to
+//     6.4594e-4 at L=16 against the predicted sqrt(7)/N = 6.459e-4, while
+//     the same iteration at the neighbouring ODD L=15 drives the residual
+//     to 9e-6 and keeps falling. Campaigns run at L=32/64/128 are therefore
+//     enforcing an unsatisfiable constraint throughout — this is a hard
+//     mathematical limit of the centred-stencil formulation on even boxes,
+//     not a bug to be tuned away.
+//
+// A second, independent limit holds at BOTH parities: even where the
+// constraint IS solvable, one application of the correction below is not a
+// projection in the idempotent sense. See the comment at the correction
+// loop further down in this function for the mechanism and measured
+// numbers.
+//
+// See include/ftd/poisson_solvers.h for the declaration-level summary, and
+// the SOR_ITERATIONS comment in include/ftd/constants.h for a related but
+// DIFFERENT, already-documented effect — the 18-point-solved-vs-6-point-
+// measured stencil-mismatch floor, which is present even on odd lattices
+// (unlike the even-lattice-only obstruction above, which is exactly absent
+// on odd L in the idealized single-charge case).
+// ============================================================================
 void gauss_project_cpu(std::vector<Voxel>& voxels,
                        const TernaryField& state,
                        std::vector<double>& phi,
@@ -146,6 +209,12 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
   const int Nm1 = L - 1;
   constexpr double OMEGA = SOR_OMEGA;
 
+  // Fredholm condition for div_centred (full derivation in the block comment
+  // above this function): on ODD L this mean_charge subtraction is the
+  // complete, forced solvability condition. On EVEN L it removes only ONE
+  // of the EIGHT per-parity-sublattice neutrality conditions the operator's
+  // 8-dimensional cokernel actually demands — the other seven are left
+  // unsatisfied and floor the residual at 7/N regardless of what follows.
   const double charge_sum = static_cast<double>(state.charge_sum());
   const double mean_charge = charge_sum / N;
 
@@ -191,6 +260,28 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
   }
   });
 
+  // NOT AN IDEMPOTENT PROJECTION. J -= grad(phi) below drives the field
+  // toward the constraint but does not land on it in one application, at
+  // EITHER parity of L. After an exact solve of the equation above (the SOR
+  // equation residual itself converges cleanly to ~1e-18 by 500 sweeps),
+  // the per-Fourier-mode constraint residual that SURVIVES this correction
+  // carries a factor
+  //     1 - sigma_wide(k) / sigma_18(k)
+  // (sigma_18 the 18-point stencil symbol actually solved for phi;
+  // sigma_wide the different, wider symbol implicitly annihilated by one
+  // gradient-subtraction step). That factor reaches its maximum of 1.0
+  // exactly when every component of k is 0 or pi — and a point charge has a
+  // flat spectrum, driving every mode there. Consequently one application
+  // realises only ~40% of a point charge's target correction; applying this
+  // whole function a SECOND time moves the field by a FURTHER ~42% of the
+  // first application's change (measured at both even and odd L), and the
+  // constraint residual saturates near 1e-2 and stops improving after
+  // roughly six sweeps — even though the SOR equation residual above keeps
+  // converging the whole time. The correction is also not energy-neutral: a
+  // single application changed a random field's gradient energy by 18% in
+  // one measured case. None of this is a defect in the SOR solve itself; it
+  // is a property of representing a hard constraint as one
+  // gradient-subtraction step rather than an exact orthogonal projector.
   ftd::parallel_for(0, L, [&](int _lo, int _hi) {
   for (int ix = _lo; ix < _hi; ++ix) {
     for (int iy = 0; iy < L; ++iy) {

@@ -125,6 +125,17 @@ export class ViewportFieldRenderer {
         this._activeIdx = null;
     }
 
+    clearPEInspectionGeometry() {
+        for (const mesh of [
+            this._fieldHeatmap,
+            this._fieldVectors,
+            this._peStreamlines,
+            this._gravityVectors,
+        ]) {
+            mesh?.geometry?.setDrawRange(0, 0);
+        }
+    }
+
     // Grow-on-demand accessor for the shared active-index scratch (F-16).
     onLatticeSizeChanged(size, halfN) {
         this._latticeSize = size;

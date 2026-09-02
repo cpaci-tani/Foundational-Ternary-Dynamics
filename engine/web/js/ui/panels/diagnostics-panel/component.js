@@ -4,9 +4,9 @@
  * descriptor summary for per-particle/orbital drill-down.
  */
 
-import { DiagnosticsTable } from './table.js';
+import { DiagnosticsTable } from './table.js?v=2';
 import { sections as scale0Sections } from './descriptors/scale0.js';
-import { sections as scale1Sections } from './descriptors/scale1.js';
+import { sections as scale1Sections } from './descriptors/scale1.js?v=9';
 import { sections as scale2Sections } from './descriptors/scale2.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { PerfFlags } from '../../../config/perf-flags.js';

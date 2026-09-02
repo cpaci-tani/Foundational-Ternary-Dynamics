@@ -108,6 +108,18 @@ function setTextIfChanged(el, text) {
     if (el && el.textContent !== text) el.textContent = text;
 }
 
+function rowTooltip(section, row, isStatic) {
+    const meaning = row.tooltip || `${row.label} in ${section.title}.`;
+    const source = typeof row.compute === 'function'
+        ? 'Computed from the current coherent telemetry snapshot.'
+        : 'Read from the current coherent telemetry snapshot.';
+    if (isStatic) return `${meaning}\n${source}`;
+    const history = row.trend
+        ? 'Min, max, average, and the sparkline follow distinct samples in the selected tick-history window.'
+        : 'Min, max, and average follow distinct numeric samples in the selected tick-history window.';
+    return `${meaning}\n${source}\n${history}`;
+}
+
 class RunningStats {
     constructor() {
         this.reset();
@@ -212,6 +224,9 @@ export class DiagnosticsTable {
             tr.classList.add(idx % 2 === 0 ? 'diag-band-odd' : 'diag-band-even');
             if (!isStatic && row.trend) tr.classList.add('diag-has-trend');
             if (row.variant) tr.classList.add(`diag-row-${row.variant}`);
+            const tooltip = rowTooltip(section, row, isStatic);
+            tr.dataset.uiTooltip = tooltip;
+            tr.dataset.uiTooltipSource = 'diagnostics-descriptor';
 
             const metricCell = document.createElement('td');
             metricCell.className = 'diag-metric';
@@ -259,6 +274,8 @@ export class DiagnosticsTable {
                     trendRow.dataset.row = row.id;
                     trendRow.classList.add(idx % 2 === 0 ? 'diag-band-odd' : 'diag-band-even');
                     if (row.variant) trendRow.classList.add(`diag-row-${row.variant}`);
+                    trendRow.dataset.uiTooltip = tooltip;
+                    trendRow.dataset.uiTooltipSource = 'diagnostics-descriptor';
 
                     const trendCell = document.createElement('td');
                     trendCell.className = 'diag-trend-cell';

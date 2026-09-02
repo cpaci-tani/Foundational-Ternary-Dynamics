@@ -88,6 +88,35 @@ export const sections = [
         ],
     },
     {
+        id: 'flux-cell',
+        title: 'Flux Cell (registered region)',
+        // Regional storage ledger from engine/include/ftd/flux_cell.h. Every
+        // s0-cell-* scenario registers its cell region; the rows read zero
+        // elsewhere. Pump/port counters are live whenever those toggles act.
+        telemetryGroups: ['audit'],
+        rows: [
+            { id: 'cell-sites',      label: 'Region sites',           unit: 'ct', source: 's0.audit.cellSiteCount' },
+            { id: 'cell-ue',         label: 'Cell U_E ½|E|²',   unit: 'E*', source: 's0.audit.cellUE' },
+            { id: 'cell-ub',         label: 'Cell U_B (c²/2)|B|²', unit: 'E*', source: 's0.audit.cellUB' },
+            { id: 'cell-uj',         label: 'Cell U_J ½|J|²',   unit: 'E*', source: 's0.audit.cellUJ' },
+            { id: 'cell-h',          label: 'Cell H (kick-drift)',    unit: 'E*', source: 's0.audit.cellHWave' },
+            { id: 'cell-balance',    label: 'E–B balance',        unit: '',
+              compute: (hub) => {
+                  const a = hub.s0.audit; if (!a) return undefined;
+                  const ue = a.cellUE, ub = a.cellUB;
+                  if (!Number.isFinite(ue) || !Number.isFinite(ub) || ue + ub <= 0) return undefined;
+                  return (ue - ub) / (ue + ub);
+              },
+              telemetryGroup: 'audit' },
+            { id: 'cell-leak',       label: 'Leak P (region faces)',  unit: '|S|', source: 's0.audit.cellPLeak' },
+            { id: 'cell-pump-work',  label: 'Pump work W_in',         unit: 'E*', source: 's0.audit.cellPumpWork' },
+            { id: 'cell-pump-ticks', label: 'Pump ticks applied',     unit: 'ct', source: 's0.audit.cellPumpTicksApplied' },
+            { id: 'cell-port-open',  label: 'Port open',              unit: 'ct', source: 's0.audit.cellPortOpen' },
+            { id: 'cell-port-work',  label: 'Port work W_out',        unit: 'E*', source: 's0.audit.cellPortWorkOut' },
+            { id: 'cell-port-poynting', label: 'Port Poynting S·n̂ (cross-check)', unit: 'E*', source: 's0.audit.cellPortPoyntingOut' },
+        ],
+    },
+    {
         id: 'electromagnetic',
         title: 'Electromagnetic',
         telemetryGroups: ['diagnostics', 'audit'],

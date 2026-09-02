@@ -1,18 +1,86 @@
 /* Zoo Panel — styles owned by zoo-panel/component.js */
 
-/* Expanded scroll container: taller than the generic .panel-resource-table-wrap
-   so the two-line particle cards have more room. Width can never overflow
-   because cards lay out vertically with ellipsis on their flexible fields. */
+/* Full-height panel contract. The catalog viewport is the scroll owner: the
+   toolbar stays reachable, while docked and detached panels both contain the
+   complete catalog without allowing it to spill outside their body. */
+#panel-zoo {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+}
+
+/* Side-mounted panel-area has a definite inset height but its legacy dock body
+   otherwise shrink-wraps the active panel. Promote only the zoo mount path to
+   a flex column so the catalog receives the entire remaining dock height. */
+#panel-area:has(#panel-zoo.active) {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+}
+
+#panel-area:has(#panel-zoo.active) > .panel-dock-head {
+    flex: 0 0 auto;
+}
+
+#panel-area:has(#panel-zoo.active) > .panel-dock-body {
+    display: flex;
+    min-height: 0;
+    flex: 1 1 auto;
+}
+
+#panel-area:has(#panel-zoo.active) #panel-zoo.active {
+    min-height: 0;
+    flex: 1 1 auto;
+}
+
+#panel-zoo > .panel-resource-shell {
+    display: flex;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    flex-direction: column;
+}
+
+#panel-zoo .panel-resource-toolbar {
+    min-width: 0;
+    flex: 0 0 auto;
+}
+
 #zoo-table-container {
-    max-height: min(640px, calc(100vh - 170px));
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 160px;
+    max-height: none;
+    flex: 1 1 0;
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
 }
 
 /* Card list — two lines per particle (replaces the former 9-column table). */
 .zoo-cards {
     display: flex;
+    min-width: 0;
     flex-direction: column;
+}
+
+.zoo-group {
+    min-width: 0;
+    overflow: visible;
+}
+
+.zoo-group + .zoo-group {
+    border-top: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+}
+
+.zoo-group-content {
+    min-width: 0;
 }
 
 .zoo-card {
@@ -21,7 +89,8 @@
     gap: 3px;
     padding: 7px 6px;
     border-bottom: 1px solid var(--border);
-    overflow: hidden;
+    min-width: 0;
+    overflow: visible;
 }
 
 .zoo-card:hover {
@@ -45,18 +114,73 @@
     min-width: 0;
 }
 
-/* Category divider (now a div, was a sticky table header row) */
+/* Collapsible category/generation divider. */
 .zoo-cat-header {
     position: sticky;
     top: 0;
     z-index: var(--z-local-base); /* local stacking context */
+    display: grid;
+    min-width: 0;
+    min-height: 36px;
+    grid-template-columns: 14px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 7px;
     background: var(--bg-surface);
     font-weight: 600;
     font-size: var(--fs-xs);
     text-transform: uppercase;
     letter-spacing: 0.6px;
-    padding: 9px 6px 4px;
-    border-bottom: 2px solid;
+    padding: 7px 8px;
+    border-bottom: 2px solid var(--zoo-group-color);
+    color: var(--zoo-group-color);
+    cursor: pointer;
+    list-style: none;
+}
+
+.zoo-cat-header::-webkit-details-marker {
+    display: none;
+}
+
+.zoo-cat-header:hover,
+.zoo-cat-header:focus-visible {
+    background: color-mix(in srgb, var(--zoo-group-color) 9%, var(--bg-surface));
+}
+
+.zoo-cat-header:focus-visible {
+    outline: 2px solid var(--zoo-group-color);
+    outline-offset: -2px;
+}
+
+.zoo-group-chevron {
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(-45deg);
+    transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.zoo-group[open] > .zoo-cat-header .zoo-group-chevron {
+    transform: rotate(45deg) translate(-2px, -2px);
+}
+
+.zoo-group-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.zoo-group-count {
+    display: grid;
+    min-width: 24px;
+    min-height: 22px;
+    place-items: center;
+    padding: 1px 6px;
+    border: 1px solid color-mix(in srgb, var(--zoo-group-color) 48%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--zoo-group-color) 10%, transparent);
+    font-family: var(--font-mono);
+    font-size: var(--fs-2xs, 10px);
+    letter-spacing: 0;
 }
 
 .zoo-dot {
@@ -75,9 +199,7 @@
 .zoo-name {
     flex: 1 1 auto;
     min-width: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    overflow-wrap: anywhere;
     color: var(--text-secondary);
     font-size: var(--fs-sm);
 }
@@ -103,9 +225,15 @@
     font-family: var(--font-mono);
     font-size: var(--fs-xs);
     color: var(--text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    overflow-wrap: anywhere;
+}
+
+/* FloatingWindow gives the panel an explicit height. Keep that height through
+   the zoo shell so #zoo-table-container remains the contained scrollport. */
+.floating-window-body > #panel-zoo,
+.floating-window-body #panel-zoo > .panel-resource-shell {
+    height: 100% !important;
+    min-height: 0 !important;
 }
 
 .zoo-accuracy {

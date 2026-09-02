@@ -315,9 +315,10 @@ add_library(ftd_core
     src/native_telemetry_scheduler.cpp
     src/lagrangian.cpp
     src/particle_engine.cpp
+    src/scale1/domain.cpp
+    src/scale1/field_mediation_probe.cpp
     src/atom_engine.cpp
     src/cosmic_engine.cpp
-    src/scale_bridge.cpp
     src/ontic_audit.cpp    # RF-03: ontic_audit() body moved from ontic.h
     src/eft/qcd_one_loop_perturbative.cpp  # [IMPOSED] renamed from ontic_running_coupling.cpp
                                            # EFT Phase 0: reserves running_coupling.cpp
@@ -341,6 +342,8 @@ add_library(ftd_core
     src/scenarios/s0_seed.cpp        # 49 s0-seed-* scenarios (+ seed_lepton/dp/tri statics)
     src/scenarios/s0_field.cpp       # 8 s0-field-* scenarios
     src/scenarios/vacuum.cpp         # 15 s0-vacuum-* scenarios
+    src/scenarios/cell.cpp           # 7 s0-cell-* flux-cell scenarios
+    src/flux_cell.cpp                # flux-cell constructors + regional storage ledger
     # R1-R5 modular extraction from render_bridge.cpp (2026-04-18)
     src/poisson_solvers.cpp          # R1: sor_sweep_18pt + gauss/coulomb/latency solvers
     src/wilson_dirac.cpp             # Phase II.2: Wilson-Dirac matter sector (Branch-B)

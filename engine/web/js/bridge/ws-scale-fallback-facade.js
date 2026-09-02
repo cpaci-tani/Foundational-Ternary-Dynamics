@@ -49,6 +49,8 @@ export class WebSocketScaleFallbackFacade {
     }
     peGetForceDecomposition() { return this._ensureFallback().peGetForceDecomposition(); }
     peTick() { this._ensureFallback().peTick(); }
+    peGetTick() { return this._ensureFallback().peGetTick(); }
+    peGetObservationRevision() { return this._ensureFallback().peGetObservationRevision(); }
     peGetParticleData() { return this._ensureFallback().peGetParticleData(); }
     peGetDiagnostics() { return this._ensureFallback().peGetDiagnostics(); }
     peGetExtendedData() { return this._ensureFallback().peGetExtendedData(); }
@@ -72,6 +74,12 @@ export class WebSocketScaleFallbackFacade {
     peGetBackendCapabilities() { return this._ensureFallback().peGetBackendCapabilities(); }
     peParticleCount() { return this._ensureFallback().peParticleCount(); }
     peClear() { this._ensureFallback().peClear(); }
+    peExportCheckpoint() { return this._ensureFallback().peExportCheckpoint?.(); }
+    peRestoreCheckpoint(checkpoint) { return this._ensureFallback().peRestoreCheckpoint?.(checkpoint); }
+    peConfigureFinitePortBattery(size, capacity, chargeAmplitude, batteryAmplitude) { return this._ensureFallback().peConfigureFinitePortBattery?.(size, capacity, chargeAmplitude, batteryAmplitude); }
+    peStepFinitePortBattery() { return this._ensureFallback().peStepFinitePortBattery?.(); }
+    peReverseFinitePortBattery() { return this._ensureFallback().peReverseFinitePortBattery?.(); }
+    peGetFinitePortBatterySnapshot() { return this._ensureFallback().peGetFinitePortBatterySnapshot?.(); }
     peGetParticleTypes() { return this._ensureFallback().peGetParticleTypes(); }
     peInspectParticle(id) { return this._ensureFallback().peInspectParticle(id); }
 

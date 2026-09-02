@@ -4,7 +4,7 @@
  */
 
 import { SidebarLibraryComponent } from '../sidebar-library/component.js';
-import { getKnowledgeBaseSections, searchKnowledgeBase } from './data.js';
+import { getKnowledgeBaseSections, searchKnowledgeBase } from './data.js?v=2';
 import { renderKbReader, renderKbEntryChip } from './reader.js';
 
 export class KnowledgeBaseComponent {

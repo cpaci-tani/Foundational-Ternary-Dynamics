@@ -11,6 +11,12 @@
 
 namespace ftd {
 
+// Shannon entropy -sum(p*ln(p)) of the normalized flux-energy distribution
+// p_i = |flux_i|^2 / sum_j|flux_j|^2 over the lattice. This is an
+// information-theoretic measure of how spread out the flux energy is
+// across sites; it carries no thermodynamic content (no temperature, no
+// Boltzmann constant, no microstate count) and should not be read as a
+// physical/thermodynamic entropy.
 double compute_entropy_cpu(const RenderBridge& rb) {
   const auto& voxels = rb.voxels();
   const auto& lattice = rb.lattice();

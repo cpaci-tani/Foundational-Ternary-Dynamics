@@ -312,7 +312,7 @@ def main() -> None:
         md.append("")
 
     out_md = repo / "engine" / "docs" / "ENGINE_FILE_MANIFEST.md"
-    out_md.write_text("\n".join(md) + "\n", encoding="utf-8")
+    out_md.write_text("\n".join(md).rstrip() + "\n", encoding="utf-8")
 
     print(f"Wrote {out_json.relative_to(repo)}")
     print(f"Wrote {out_md.relative_to(repo)}")

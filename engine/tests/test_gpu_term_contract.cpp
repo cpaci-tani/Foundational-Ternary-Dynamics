@@ -101,7 +101,7 @@ int main() {
     check("GPU validator accepts confinement with color_forces",
           confinement_on.validate_backend(ftd::ToggleBackend::GPU, true, &error));
 
-    for (const char* name : {"knot_tracking"}) {
+    for (const char* name : {"knot_tracking", "flux_pump", "flux_cell_port"}) {
         const auto* row = ftd::find_gpu_term_contract(name);
         check((std::string(name) + " is HostMirrorHybrid").c_str(),
               row && row->impl == GpuTermImpl::HostMirrorHybrid);

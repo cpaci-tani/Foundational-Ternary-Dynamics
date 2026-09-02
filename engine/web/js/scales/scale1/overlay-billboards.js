@@ -1,7 +1,7 @@
 // engine/web/js/scales/scale1/overlay-billboards.js
 /**
- * Canvas-texture billboard-sprite factories for Scale-1's lattice-promotion
- * overlays (admissibility ring, provenance label, mass-comparison badge).
+ * Canvas-texture billboard-sprite factories for Scale-1 native-record
+ * overlays (admissibility ring and provenance label).
  * Generalizes the existing pattern in engine/web/js/cosmic/sprites.js
  * (CanvasTexture -> THREE.Sprite) rather than introducing a new rendering
  * technique (no CSS2DRenderer, no DOM-projection layer).

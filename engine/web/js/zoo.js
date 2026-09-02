@@ -24,6 +24,7 @@ let _engineMode = 'lattice';
 let _searchTerm = '';
 let _filterCat = 'all';
 let _groupBy = 'category';
+const _collapsedGroups = new Set();
 
 export function initZoo(bridge) {
     _bridge = bridge;
@@ -87,14 +88,33 @@ function renderParticleCard(p) {
     </div>`;
 }
 
+function renderZooGroup({ key, label, color = 'var(--accent)', particles }) {
+    const safeKey = escapeHtml(key);
+    const safeLabel = escapeHtml(label);
+    const open = _collapsedGroups.has(key) ? '' : ' open';
+    return `
+        <details class="zoo-group" data-zoo-group="${safeKey}"${open}
+                 style="--zoo-group-color:${escapeHtml(color)}">
+            <summary class="zoo-cat-header">
+                <span class="zoo-group-chevron" aria-hidden="true"></span>
+                <span class="zoo-group-title">${safeLabel}</span>
+                <span class="zoo-group-count">${particles.length}</span>
+            </summary>
+            <div class="zoo-group-content">
+                ${particles.map(renderParticleCard).join('')}
+            </div>
+        </details>
+    `;
+}
+
 function renderZoo() {
     const container = document.getElementById('zoo-table-container');
     if (!container) return;
 
     // Two-line cards (was a 9-column table). Each particle is an identity line
     // (dot · symbol · name · accuracy · inject) over a data line (mass · charge ·
-    // spin · FTD formula). Flexible fields ellipsis so nothing overflows the
-    // panel width at any mount size.
+    // spin · FTD formula). Flexible fields wrap inside the contained catalog
+    // viewport so no child content is silently clipped at narrow mount sizes.
     let html = '<div class="zoo-cards">';
 
     if (_groupBy === 'generation') {
@@ -105,8 +125,11 @@ function renderZoo() {
                 return bucket === genKey && matchesSearch(p);
             });
             if (particles.length === 0) continue;
-            html += `<div class="zoo-cat-header">${genMeta.label} (${particles.length})</div>`;
-            for (const p of particles) html += renderParticleCard(p);
+            html += renderZooGroup({
+                key: `generation:${genKey}`,
+                label: genMeta.label,
+                particles,
+            });
         }
     } else {
         const categories = getCategories();
@@ -118,9 +141,12 @@ function renderZoo() {
             const particles = getByCategory(catId).filter(matchesSearch);
             if (particles.length === 0) continue;
 
-            // Category divider
-            html += `<div class="zoo-cat-header" style="border-color:${catMeta.color};color:${catMeta.color}">${catMeta.label} (${particles.length})</div>`;
-            for (const p of particles) html += renderParticleCard(p);
+            html += renderZooGroup({
+                key: `category:${catId}`,
+                label: catMeta.label,
+                color: catMeta.color,
+                particles,
+            });
         }
     }
 
@@ -128,14 +154,26 @@ function renderZoo() {
     html += `<p class="zoo-note" style="font-size:16px;color:var(--text-muted);margin:6px 4px 0;line-height:1.4;">
         <strong>Catalog injection is a [PARAMETRIC] extra</strong>: these are PDG-mass
         catalog particles dropped into the continuous engine, NOT lattice-derived
-        objects — lattice genesis produces hybrid colored objects, not SM particles;
-        lattice-derived matter enters via "⤴ Scale up" (mass = N·K_B).
+        objects — lattice genesis produces hybrid colored objects, not SM particles.
+        Runtime scale handoff is retired; the Scale Context sidepanel provides pedagogical scale comparison without creating particle records.
         <strong>Mass</strong> is the measured (PDG) value (electron = FTD anchor m_e).
         <strong>FTD Formula</strong> + <strong>Acc.</strong> are FTD's <em>prediction</em> and its deviation —
         motivating matches, not derivations. Colour: <span style="color:var(--warning-text)">yellow</span> = [SELECTION]/strongly-motivated conjecture,
         grey = [PARAMETRIC]. No Standard-Model mass is currently [DERIVED].
     </p>`;
     container.innerHTML = html;
+
+    // Native <details> provides keyboard and screen-reader semantics. Keep
+    // collapse state keyed by grouping mode so search/filter re-renders and
+    // category/generation switches do not unexpectedly reopen a section.
+    container.querySelectorAll('.zoo-group').forEach(group => {
+        group.addEventListener('toggle', () => {
+            const key = group.dataset.zooGroup;
+            if (!key) return;
+            if (group.open) _collapsedGroups.delete(key);
+            else _collapsedGroups.add(key);
+        });
+    });
 
     // Bind inject buttons
     container.querySelectorAll('.zoo-inject-btn:not([disabled])').forEach(btn => {

@@ -27,6 +27,8 @@
  */
 
 #include "ftd/render_bridge.h"
+#include <utility>
+#include <algorithm>
 #include "ftd/poisson_solvers.h"
 #include "ftd/diagnostics_compute.h"
 #include "ftd/injection.h"
@@ -713,9 +715,19 @@ void RenderBridge::phase_read() {
 // (RF-4 dedup of the manifest body is the only structural change; the
 // state/spin/color assignments themselves are unchanged).
 void RenderBridge::phase_write() {
-  // ARCH-7b (2026-04-25): pre-write flux snapshot for genesis curl reads.
-  // Without it, sibling-thread voxel.flux writes race the curl reads —
-  // making multi-thread runs non-deterministic. Cost: one O(N) copy.
+  // ARCH-7b (2026-04-25): originally a PRE-write flux snapshot, taken so
+  // genesis curl reads could not race sibling-thread voxel.flux writes.
+  //
+  // AUDIT 2026-09-02: the snapshot is DEAD in every reachable path. Both this
+  // call and the overwrite in phase_write_main_loop are gated on the same
+  // genesis toggle, and the overwrite refills the whole buffer with
+  // post-leapfrog, post-damping flux before Loop 2's genesis reads it, so
+  // the values consumed for genesis spin (curl) and polarity (divergence) are
+  // POST-write, not pre-write. The race the snapshot was introduced to prevent
+  // is instead avoided by that overwrite happening in its own loop.
+  // Retained rather than removed: deleting an O(N) write is not obviously
+  // behaviour-neutral, and the buffer's contents are still consumed. See the
+  // matching notes in render_bridge_phases/phase_write.cpp.
   if (toggles.genesis) {
     snapshot_flux_pre_write(*this);
   }
@@ -897,6 +909,12 @@ void RenderBridge::tick() {
 #endif
   }
 
+  // Flux-cell mechanisms (ftd/flux_cell.h): the pump source and the scheduled
+  // port both edit the host mirror before this tick's dynamics, on every
+  // backend (GPU uploads the dirty mirror before its kernels run).
+  if (toggles.flux_pump) apply_flux_cell_pump();
+  if (toggles.flux_cell_port) apply_flux_cell_port();
+
   sync_ternary_from_voxels_if_needed();
 
   // ARCH-2-D: GPU dispatch via Backend. CpuBackend::tick() falls through to
@@ -920,10 +938,12 @@ void RenderBridge::tick() {
       // device-side energy_audit() reduction (a few scalars D2H, NOT the full
       // field transfer). CPU and non-interactive GPU keep the host-shadow
       // formula below (byte-identical to prior behavior).
+      if (toggles.flux_cell_port) accumulate_flux_cell_port_work();
       update_energy_ledger_from_audit();
       return;
     }
 #endif
+    if (toggles.flux_cell_port) accumulate_flux_cell_port_work();
     update_energy_ledger();
     return;
   }
@@ -1156,6 +1176,9 @@ void RenderBridge::tick() {
   sync_ternary_from_voxels_if_needed();
   mark_fields_dirty_from_voxels();
 
+  // Flux-cell port: integrate the aperture Poynting flux on the settled state.
+  if (toggles.flux_cell_port) accumulate_flux_cell_port_work();
+
   // ── Conservation bookkeeping (fills EnergyLedger) ────────────────────
   // Cheap: a few adds + divides; no loop over N. Tests assert on
   // `energy_ledger().residual` rather than re-deriving totals.
@@ -1235,12 +1258,158 @@ EnergyAudit RenderBridge::energy_audit() const {
     backend_->flush_host_mutations();
     if (backend_->copy_compact_energy_audit(a)) {
       a.self_field_injection = self_field_injection_;
+      fill_flux_cell_audit(a);
       return a;
     }
   }
   a = ::ftd::compute_energy_audit(*this);
   a.self_field_injection = self_field_injection_;  // private, stitched in here
+  fill_flux_cell_audit(a);
   return a;
+}
+
+// ── Flux-cell mechanisms (ftd/flux_cell.h) ───────────────────────────────
+
+void RenderBridge::set_flux_cell_region(const FluxCellRegion& region) {
+  flux_cell_region_ = region;
+}
+
+void RenderBridge::clear_flux_cell_region() { flux_cell_region_ = FluxCellRegion{}; }
+
+void RenderBridge::set_flux_pump(const FluxCellTorusSpec& spec, int ticks, int period) {
+  flux_pump_spec_ = spec;
+  flux_pump_ticks_ = std::max(1, ticks);
+  flux_pump_period_ = std::max(1, period);
+  flux_pump_next_tick_ = -1;
+  flux_pump_applied_ = 0;
+  flux_pump_work_ = 0.0;
+  flux_pump_configured_ = true;
+  flux_pump_profile_built_ = false;
+  flux_pump_profile_ = FluxCellPumpProfile{};
+}
+
+void RenderBridge::clear_flux_pump() {
+  flux_pump_configured_ = false;
+  flux_pump_profile_built_ = false;
+  flux_pump_profile_ = FluxCellPumpProfile{};
+  flux_pump_ticks_ = 0;
+  flux_pump_period_ = 1;
+  flux_pump_next_tick_ = -1;
+  flux_pump_applied_ = 0;
+  flux_pump_work_ = 0.0;
+}
+
+void RenderBridge::apply_flux_cell_pump() {
+  if (!flux_pump_configured_ || flux_pump_applied_ >= flux_pump_ticks_) return;
+  if (flux_pump_next_tick_ < 0) flux_pump_next_tick_ = tick_;
+  if (tick_ < flux_pump_next_tick_) return;
+  flux_pump_next_tick_ += flux_pump_period_;
+  if (!flux_pump_profile_built_) {
+    flux_pump_profile_ = build_flux_cell_pump_profile(*this, flux_pump_spec_,
+                                                      flux_pump_ticks_);
+    flux_pump_profile_built_ = true;
+  }
+  flux_pump_work_ += apply_flux_cell_pump_increment(*this, flux_pump_profile_);
+  ++flux_pump_applied_;
+}
+
+void RenderBridge::set_flux_cell_port(const FluxCellPortSpec& spec) {
+  flux_cell_port_spec_ = spec;
+  flux_cell_port_configured_ = true;
+  flux_cell_port_open_ = false;
+  flux_cell_port_work_out_ = 0.0;
+  flux_cell_port_poynting_out_ = 0.0;
+  flux_cell_port_sites_.clear();
+  flux_cell_port_surface_.clear();
+}
+
+void RenderBridge::clear_flux_cell_port() {
+  flux_cell_port_configured_ = false;
+  flux_cell_port_open_ = false;
+  flux_cell_port_work_out_ = 0.0;
+  flux_cell_port_poynting_out_ = 0.0;
+  flux_cell_port_sites_.clear();
+  flux_cell_port_surface_.clear();
+  flux_cell_port_spec_ = FluxCellPortSpec{};
+}
+
+void RenderBridge::apply_flux_cell_port() {
+  if (!flux_cell_port_configured_ || flux_cell_port_open_) return;
+  // open_tick counts completed ticks: the hole opens before the dynamics of
+  // the tick whose completion index equals open_tick, so current_tick() ==
+  // open_tick already reports an open port.
+  if (flux_cell_port_spec_.open_tick < 0 || tick_ + 1 != flux_cell_port_spec_.open_tick) return;
+  const int N = lattice_.size();
+  const double r2 = flux_cell_port_spec_.radius * flux_cell_port_spec_.radius;
+  Vec3 n(flux_cell_port_spec_.nx, flux_cell_port_spec_.ny, flux_cell_port_spec_.nz);
+  const double nm = n.mag();
+  if (nm > 0.0) n = n * (1.0 / nm);
+  auto pdelta = [N](double a, double b) {
+    double d = a - b;
+    while (d >  0.5 * N) d -= N;
+    while (d < -0.5 * N) d += N;
+    return d;
+  };
+  // Expire every locked manifested shell site inside the hole: state → 0 and
+  // identity cleared (the P5 expiry bookkeeping evaporation uses); the flux
+  // at those sites is left in place — opening a port removes the wall, not
+  // the field.
+  for (int z = 0; z < N; ++z)
+  for (int y = 0; y < N; ++y)
+  for (int x = 0; x < N; ++x) {
+    const double dx = pdelta(x, flux_cell_port_spec_.cx);
+    const double dy = pdelta(y, flux_cell_port_spec_.cy);
+    const double dz = pdelta(z, flux_cell_port_spec_.cz);
+    if (dx * dx + dy * dy + dz * dz > r2) continue;
+    const int idx = lattice_.index(x, y, z);
+    // Accounting surface: every site (wall or void) of the slab
+    // |d·n − surface_offset| ≤ ½ inside the hole. Summing S·n over the whole
+    // plug would count each streamline once per layer.
+    if (nm > 0.0 && std::fabs(dx * n.x + dy * n.y + dz * n.z
+                              - flux_cell_port_spec_.surface_offset) <= 0.5)
+      flux_cell_port_surface_.push_back(idx);
+    const Voxel& probe = std::as_const(*this).voxels()[static_cast<std::size_t>(idx)];
+    if (probe.state == 0 || !probe.locked) continue;
+    Voxel& v = voxel_at(x, y, z);
+    v.state = 0;
+    v.locked = false;
+    v.particle_id = -1;
+    v.pair_id = -1;
+    v.spin = 0;
+    v.color = 0;
+    flux_cell_port_sites_.push_back(idx);
+  }
+  flux_cell_port_open_ = true;
+}
+
+void RenderBridge::accumulate_flux_cell_port_work() {
+  if (!flux_cell_port_open_ || flux_cell_port_surface_.empty()) return;
+  Vec3 n(flux_cell_port_spec_.nx, flux_cell_port_spec_.ny, flux_cell_port_spec_.nz);
+  const double nm = n.mag();
+  if (nm <= 0.0) return;
+  n = n * (1.0 / nm);
+  flux_cell_port_work_out_ +=
+      flux_cell_site_hamiltonian_flux(*this, flux_cell_port_surface_, n) * dt_;
+  flux_cell_port_poynting_out_ +=
+      flux_cell_site_poynting_flux(*this, flux_cell_port_surface_, n) * dt_;
+}
+
+void RenderBridge::fill_flux_cell_audit(EnergyAudit& a) const {
+  a.cell_pump_work = flux_pump_work_;
+  a.cell_pump_ticks_applied = flux_pump_applied_;
+  a.cell_pump_ticks_total = flux_pump_configured_ ? flux_pump_ticks_ : 0;
+  a.cell_port_open = flux_cell_port_open_ ? 1 : 0;
+  a.cell_port_work_out = flux_cell_port_work_out_;
+  a.cell_port_poynting_out = flux_cell_port_poynting_out_;
+  if (flux_cell_region_.radius <= 0.0) return;
+  const FluxCellLedger ledger = compute_flux_cell_ledger(*this, flux_cell_region_);
+  a.cell_site_count = ledger.site_count;
+  a.cell_U_E = ledger.U_E;
+  a.cell_U_B = ledger.U_B;
+  a.cell_U_J = ledger.U_J;
+  a.cell_H_wave = ledger.H_wave;
+  a.cell_P_leak = ledger.P_leak;
+  a.cell_S_net = ledger.S_total;
 }
 
 bool RenderBridge::begin_telemetry_snapshot(

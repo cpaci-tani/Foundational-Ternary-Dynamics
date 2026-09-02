@@ -16,9 +16,18 @@ enum class VisualFieldKind : std::uint32_t {
     FluxVector = 4,
     Vorticity = 5,
     Helicity = 6,
+    // NOT the Kretschmann scalar R_abcd R^abcd -- there is no metric or
+    // curvature tensor computed here. Actually computes the square of the
+    // 18-point Laplacian of a normalized flux magnitude (see the
+    // Kretschmann case in copy_visual_field_sample). Historical misnomer;
+    // kept for wire compatibility (see the Latency/PoissonLatency note below
+    // for the same pattern).
     Kretschmann = 7,
     Latency = 8,
     Fisher = 9,
+    // NOT a coherence measure. Actually computes cos(angle) between the
+    // flux J and curl(J) -- a normalized helicity density. Historical
+    // misnomer; kept for wire compatibility.
     Coherence = 10,
     Curl = 11,
     State = 12,

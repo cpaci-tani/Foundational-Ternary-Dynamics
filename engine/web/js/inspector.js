@@ -11,8 +11,8 @@
 
 import * as THREE from 'three';
 import { TickHistoryControl } from './ui/charts/history-window.js';
-import { updateInspectorChrome, resetInspectorSelection } from './inspector/chrome.js';
-import { collectInspectorDom } from './inspector/dom-bindings.js';
+import { updateInspectorChrome, resetInspectorSelection } from './inspector/chrome.js?v=2';
+import { collectInspectorDom } from './inspector/dom-bindings.js?v=2';
 import { bindInspectorPointerControls } from './inspector/pointer-controller.js';
 import {
     handleLatticeClick,
@@ -25,7 +25,13 @@ import {
     showPEInspector,
     hidePEInspector,
     updatePEFields,
-} from './inspector/scales/particles.js';
+} from './inspector/scales/particles.js?v=3';
+import {
+    clusterInspectionFocus,
+    particleInspectionFocus,
+    reconcileInspectionFocus,
+    sameInspectionFocus,
+} from './scales/scale1/inspection-focus.js?v=1';
 import {
     handleAEClick,
     showAEInspector,
@@ -64,6 +70,7 @@ export class Inspector {
         this._cloudCount = 0;
         this._peTypeMap = null;
         this._selectedPEParticleId = -1;
+        this._peInspectionFocus = null;
 
         // AE mode state (Scale 2)
         this._selectedAEAtomId = -1;
@@ -170,6 +177,7 @@ export class Inspector {
     }
 
     clearSelection() {
+        this._setPEInspectionFocus(null);
         resetInspectorSelection(this);
         this._hideLatticeInspector();
         this._hidePEInspector();
@@ -183,6 +191,7 @@ export class Inspector {
     }
 
     setEngineMode(mode) {
+        this._setPEInspectionFocus(null);
         this._engineMode = mode;
         // Reset selection when switching modes
         resetInspectorSelection(this);
@@ -203,6 +212,72 @@ export class Inspector {
         this._cloudParticleMap = cloudParticleMap;
         this._cloudCount = cloudCount;
         this._peTypeMap = typeMap;
+    }
+
+    getPEInspectionFocus() {
+        return this._peInspectionFocus;
+    }
+
+    hasPEInspectionFocus() {
+        return !!this._peInspectionFocus;
+    }
+
+    _setPEInspectionFocus(focus, { announce = true } = {}) {
+        const sameScope = sameInspectionFocus(this._peInspectionFocus, focus);
+        this._peInspectionFocus = focus;
+        if (sameScope) {
+            this._updateInspectorChrome();
+            return false;
+        }
+        this.viewport?.setPEInspectionFocus?.(focus);
+        if (announce) {
+            document.dispatchEvent(new CustomEvent('ftd:scale1-inspection-change', {
+                detail: { focus },
+            }));
+        }
+        this._updateInspectorChrome();
+        return true;
+    }
+
+    selectPEParticle(particleId) {
+        if (this._engineMode !== 'particles') return false;
+        const focus = particleInspectionFocus(particleId);
+        if (!focus) return false;
+        this._selectedPEParticleId = focus.particleId;
+        this._setPEInspectionFocus(focus);
+        showPEInspector(this);
+        return this._selectedPEParticleId >= 0;
+    }
+
+    selectPECluster(cluster, energyBasis = 'dynamic_activity') {
+        if (this._engineMode !== 'particles') return false;
+        const focus = clusterInspectionFocus(cluster, energyBasis);
+        if (!focus) return false;
+        this._selectedPEParticleId = focus.anchorId;
+        this._setPEInspectionFocus(focus);
+        showPEInspector(this);
+        return this._selectedPEParticleId >= 0;
+    }
+
+    clearPEInspection() {
+        const hadFocus = !!this._peInspectionFocus || this._selectedPEParticleId >= 0;
+        this._setPEInspectionFocus(null);
+        this._selectedPEParticleId = -1;
+        hidePEInspector(this);
+        return hadFocus;
+    }
+
+    reconcilePEInspection(hierarchy) {
+        if (!this._peInspectionFocus) return false;
+        const reconciled = reconcileInspectionFocus(this._peInspectionFocus, hierarchy);
+        if (!reconciled) {
+            this.clearPEInspection();
+            return true;
+        }
+        this._selectedPEParticleId = reconciled.anchorId;
+        const changed = this._setPEInspectionFocus(reconciled);
+        if (changed) updatePEFields(this);
+        return changed;
     }
 
     setPlanetaryContext(bridge, renderer) {

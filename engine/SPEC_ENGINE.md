@@ -2055,13 +2055,14 @@ Automatic bond formation (r < 1.2 sigma_avg) and breaking (r > 2 r_eq). `compute
 
 Files: `atomic_closure_context.h`, `atom_engine.h`, `atom_engine.cpp`, `src/atom/atom_forces.cpp`, `web/js/atomic-props.js`, `web/js/bridge/mock-atom-engine.js` (production web backend).
 
-### Scale Bridge
+### Scale Separation
 
-`coarsen()` extracts particles from lattice voxels. `refine()` calls `inject_wavepacket()` to reconstruct lattice state. Round-trip fidelity: position error = 0, velocity exact, energy error ~7e-13%.
-
-`coarsen_to_atoms()` / `refine_to_particles()` for Scale 1 <-> 2.
-
-Files: `scale.h`, `scale_bridge.cpp`.
+There is no runtime coarsen/refine, promotion, projection, or state-transfer
+API between simulation scales. The former generic bridge utilities and the
+Scale-1/Scale-2 proximity initializer were retired on 2026-09-01. Each
+effective engine starts from its own explicit scenario/reference inputs. The
+Scale Context sidepanel owns pedagogical scale comparison without creating
+cross-scale state.
 
 ---
 
@@ -2128,11 +2129,11 @@ names in CMake at the date above.
 - `selffield_profile`, `wavepacket`, `campaign_bound_lifetime`
 
 **Multi-Scale (Phase 7):**
-- `particle_engine` (22 checks), `scale_bridge` (9), `campaign_hydrogen_spectrum`
-- `campaign_cross_scale`, `campaign_born_ensemble`
+- `particle_engine` (effective Scale-1 dynamics), `campaign_hydrogen_spectrum`
+- `campaign_born_ensemble`; runtime scale-transfer tests were retired with the feature
 
 **Atom Engine (Phase 8):**
-- `atom_engine` (properties, closure context, forces, bonding), `atom_scale_bridge`, `campaign_h2_molecule`
+- `atom_engine` (properties, closure context, forces, bonding), `campaign_h2_molecule`
 
 **Dual Substrate:**
 - `dual_substrate` -- Identity, chirality, conservation, backward compatibility

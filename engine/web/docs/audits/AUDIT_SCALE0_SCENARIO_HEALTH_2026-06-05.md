@@ -1,6 +1,6 @@
 # AUDIT — Scale-0 Scenario Health & Physics-Sense (2026-06-05)
 
-> **Historical baseline.** The current 130-scenario behavioral qualification
+> **Historical baseline.** The current 142-scenario behavioral qualification
 > and promotion plan is
 > [`AUDIT_SCALE0_SCENARIO_QUALIFICATION_2026-07-24.md`](AUDIT_SCALE0_SCENARIO_QUALIFICATION_2026-07-24.md).
 > In particular, its native tests supersede this audit's former claim that the

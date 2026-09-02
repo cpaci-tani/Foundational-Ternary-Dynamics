@@ -24,7 +24,7 @@ const EMPTY_VEC = () => ({ positions: new Float32Array(0), vectors: new Float32A
 const EMPTY_VAL = () => ({ positions: new Float32Array(0), values: new Float32Array(0), count: 0 });
 const SCENARIO_SCOPED_MESSAGE_TYPES = new Set([
     'ready', 'frame', 'configurationApplied', 'runningState', 'error',
-    'fluxRebind', 'inspectResult', 'forceAtResult', 'coarsenResult', 'digestResult',
+    'fluxRebind', 'inspectResult', 'forceAtResult', 'digestResult',
 ]);
 
 // Complete boolean TermToggles registry, in the same order as
@@ -46,7 +46,7 @@ export const SCALE0_ENGINE_TOGGLE_NAMES = Object.freeze([
     'symmetric_movement_order', 'absorbing_boundary', 'reflective_boundary',
     'field_energy_gravity', 'cluster_inertia', 'geometric_gravity', 'de_broglie_clock',
     'db_clock_coulomb', 'confinement', 'knot_tracking', 'strict_validation',
-    'ew_background_sweep',
+    'ew_background_sweep', 'flux_pump', 'flux_cell_port',
 ]);
 
 // Worker thread-pool size — Phase 2 (in-worker threading via ftd::parallel_for's
@@ -238,9 +238,6 @@ export class WasmBridgeProxy {
                 this._worker.postMessage({ type: 'replaceSamplerWants', changes });
             },
         );
-        // One-shot coarsen (Scale-0 → Scale-1) request/response bookkeeping.
-        this._coarsenPending = new Map();
-        this._coarsenReq = 0;
         this._digestPending = new Map();
         this._digestReq = 0;
 
@@ -344,10 +341,6 @@ export class WasmBridgeProxy {
         this._deferredCommandsAfterBarrier = [];
         this._pendingCreateMessage = null;
         this._clearFrameWatchdog();
-        for (const resolve of this._coarsenPending.values()) {
-            try { resolve(null); } catch { /* ignore */ }
-        }
-        this._coarsenPending.clear();
         for (const resolve of this._digestPending.values()) {
             try { resolve(null); } catch { /* ignore */ }
         }
@@ -698,12 +691,6 @@ export class WasmBridgeProxy {
             this._lastInspect = m.inspect || null;
         } else if (m.type === 'forceAtResult') {
             this._lastForceAt = m.forceAt || null;
-        } else if (m.type === 'coarsenResult') {
-            const resolve = this._coarsenPending.get(m.reqId);
-            if (resolve) {
-                this._coarsenPending.delete(m.reqId);
-                resolve(m.data ?? null);
-            }
         } else if (m.type === 'digestResult') {
             const resolve = this._digestPending.get(m.reqId);
             if (resolve) {
@@ -778,9 +765,8 @@ export class WasmBridgeProxy {
     /**
      * Engine-truth-only toggle readback: true/false when the worker has
      * published a real engine-state readback covering `name`, else null.
-     * Unlike getToggle there is NO optimistic default — callers that must
-     * not act on a guess (e.g. the promotion pipeline deciding whether to
-     * enable/restore knot_tracking) use this.
+     * Unlike getToggle there is NO optimistic default; callers that require
+     * authoritative configuration state use this.
      */
     getEngineTruthToggle(name) {
         if (this._engineToggles && name in this._engineToggles) return !!this._engineToggles[name];
@@ -803,35 +789,11 @@ export class WasmBridgeProxy {
         caps.getScale0KnotTelemetry = () => this._lastKnot ?? null;
         caps.getScale0KnotEvents = () => this._lastKnotEvents ?? null;
         caps.getScale0KnotAggregate = () => this._lastKnotAgg ?? null;
-        // Real single-step for the promotion pipeline: unlike tickScale0
-        // (deliberate no-op — the worker self-ticks), this forwards one
-        // explicit tick command; the worker ticks once and posts a frame,
-        // refreshing the knot-telemetry snapshot even while paused.
+        // Real single-step: unlike tickScale0 (deliberate no-op because the
+        // worker self-ticks), this forwards one explicit tick command and
+        // refreshes the telemetry snapshot even while paused.
         caps.stepScale0 = () => this._cmd('tickScale0');
         return caps;
-    }
-
-    /**
-     * One-shot Scale-0 → Scale-1 coarse-graining snapshot from the worker
-     * engine. Resolves with the coarsenToParticles typed-array bundle, or
-     * null if the worker/module can't serve it within the timeout.
-     */
-    coarsenToParticles(timeoutMs = 2000) {
-        if (!this._ready) return Promise.resolve(null);
-        const reqId = ++this._coarsenReq;
-        return new Promise((resolve) => {
-            this._coarsenPending.set(reqId, resolve);
-            this._worker.postMessage({
-                type: 'coarsen', reqId,
-                configurationToken: this._pendingConfigurationToken,
-            });
-            setTimeout(() => {
-                if (this._coarsenPending.has(reqId)) {
-                    this._coarsenPending.delete(reqId);
-                    resolve(null);
-                }
-            }, timeoutMs);
-        });
     }
 
     /**
@@ -1234,6 +1196,18 @@ export class WasmBridgeProxy {
     // before the first setter call matches the engine's own default.
     setOmega0(w) { this._omega0 = w; this._cmd('setOmega0', w); }
     getOmega0() { return this._omega0 ?? 1.0; }
+    // Flux-cell mechanisms (engine/include/ftd/flux_cell.h, 2026-09-02).
+    setFluxCellRegion(...a) { this._cmd('setFluxCellRegion', ...a); }
+    clearFluxCellRegion() { this._cmd('clearFluxCellRegion'); }
+    setFluxPump(cx, cy, cz, majorRadius, tubeSigma, amplitude, circulationSign = 1, signSectors = 0, ticks = 20, period = 1) {
+        this._cmd('setFluxPump', cx, cy, cz, majorRadius, tubeSigma, amplitude,
+            circulationSign | 0, signSectors | 0, ticks | 0, Math.max(1, period | 0));
+    }
+    clearFluxPump() { this._cmd('clearFluxPump'); }
+    setFluxCellPort(cx, cy, cz, nx, ny, nz, radius, openTick, surfaceOffset = 0) {
+        this._cmd('setFluxCellPort', cx, cy, cz, nx, ny, nz, radius, openTick | 0, +surfaceOffset);
+    }
+    clearFluxCellPort() { this._cmd('clearFluxCellPort'); }
     setLangevinTemp(t) { this._langevinTemp = t; this._cmd('setLangevinTemp', t); }
     getLangevinTemp() { return this._langevinTemp ?? 0.0; }
     setLangevinGamma(g) { this._langevinGamma = g; this._cmd('setLangevinGamma', g); }
@@ -1285,10 +1259,6 @@ export class WasmBridgeProxy {
         this._onConfigurationApplied = null;
         this._onInitFailure = null;
         this._onSetupFailure = null;
-        for (const resolve of this._coarsenPending.values()) {
-            try { resolve(null); } catch { /* ignore */ }
-        }
-        this._coarsenPending.clear();
         for (const resolve of this._digestPending.values()) {
             try { resolve(null); } catch { /* ignore */ }
         }
@@ -1309,10 +1279,6 @@ export class WasmBridgeProxy {
         this._onConfigurationApplied = null;
         this._onInitFailure = null;
         this._onSetupFailure = null;
-        for (const resolve of this._coarsenPending.values()) {
-            try { resolve(null); } catch { /* ignore */ }
-        }
-        this._coarsenPending.clear();
         for (const resolve of this._digestPending.values()) {
             try { resolve(null); } catch { /* ignore */ }
         }

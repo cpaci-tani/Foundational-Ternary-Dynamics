@@ -30,7 +30,7 @@ import { cardStyle, titleStyle, heroStyle, tagBadge, formatExp, formatFixed } fr
 import {
     lapse, clockRate, ftdGamma, srDilation,
     properTimeStep, radialSummary,
-} from '../../analysis/time-analysis.js';
+} from '../../analysis/time-analysis.js?v=3';
 import { FTD0252_PROVENANCE, DILATION_VS_V, IR_CONVERGENCE } from '../../data/ftd0252-reference.js';
 import { resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';

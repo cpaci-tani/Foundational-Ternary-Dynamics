@@ -24,14 +24,12 @@
  *     peInspectParticle) — computed from native data, never re-implementing
  *     the force law (peInspectParticle reads the native force buffer).
  *
- * Toggle baseline: initPE()/peClear() apply the historical JS defaults
- * (coulomb ON, everything else OFF) rather than the C++ constructor
- * defaults (coulomb+gravity+damping ON) so scenario presets keep their
- * long-standing meaning; presets then set toggles explicitly on top.
+ * Toggle baseline and claim metadata come from the native Scale-1 registry.
+ * The JS adapter never maintains a second physics applicability table.
  *
  * Behavior changes vs the retired JS engine (deliberate, see plan):
  *   - no r=35 boundary reflection (native engine is unbounded)
- *   - native annihilation / strong / exchange semantics are live
+ *   - selected contact-removal events are explicit and OFF by default
  *   - forces/decomposition come from the one native kernel — the audit's
  *     "second drifted re-implementation" class of defect is structurally gone.
  */
@@ -41,21 +39,6 @@ import { getById } from '../particle-catalog.js';
 import {
     catalogColorId, catalogSpin, initSpinAxis, resetColorWheel,
 } from './pe-catalog-map.js';
-
-// JS-parity toggle baseline applied on init/clear (see header).
-const TOGGLE_BASELINE = {
-    coulomb: true,
-    gravity: false,
-    damping: false,
-    lorentz: false,
-    exchange: false,
-    strong: false,
-    magnetic_dipole: false,
-    spin_orbit: false,
-    radiation: false,
-    relativistic: false,
-    relativistic_verlet: false,
-};
 
 const EMPTY_F32 = new Float32Array(0);
 const EMPTY_F64 = new Float64Array(0);
@@ -76,17 +59,87 @@ function emptyDiagnostics() {
     return {
         tick: 0, particleCount: 0, totalKE: 0, totalPE: 0, coulombPE: 0,
         gravityPE: 0, totalEnergy: 0, momentumX: 0, momentumY: 0, momentumZ: 0,
-        angMomX: 0, angMomY: 0, angMomZ: 0,
+        angMomX: 0, angMomY: 0, angMomZ: 0, centerX: 0, centerY: 0, centerZ: 0,
+        coveredMask: 0, missingMask: 0, nonconservativeMask: 0,
+        stateEnergyComplete: false, driftEligible: false,
+        cumulativeDampingSink: 0, cumulativeRadiationSink: 0,
+        cumulativeSpeedProjectionSink: 0, cumulativeContactDelta: 0,
+        contactEventCount: 0, speedProjectionCount: 0,
     };
 }
 
 function emptyDecomposition() {
     return {
         positions: EMPTY_F32, count: 0,
-        coulomb: EMPTY_F64, gravity: EMPTY_F64, strong: EMPTY_F64,
+        coulomb: EMPTY_F64, gravity: EMPTY_F64, lorentz: EMPTY_F64,
+        exchange: EMPTY_F64, strong: EMPTY_F64, radiation: EMPTY_F64,
         magnetic_dipole: EMPTY_F64, spin_orbit: EMPTY_F64, net: EMPTY_F64,
-        maxCoulomb: 0, maxGravity: 0, maxStrong: 0,
+        maxCoulomb: 0, maxGravity: 0, maxLorentz: 0,
+        maxExchange: 0, maxStrong: 0, maxRadiation: 0,
         maxMagneticDipole: 0, maxSpinOrbit: 0, maxNet: 0,
+    };
+}
+
+function snapshotParticleData(snapshot) {
+    const objects = Array.from(snapshot?.objects || []);
+    const count = objects.length;
+    const positions = new Float32Array(count * 3);
+    const velocities = new Float32Array(count * 3);
+    const colors = new Float32Array(count * 3);
+    const sizes = new Float32Array(count);
+    const masses = new Float64Array(count);
+    const rEff = new Float32Array(count);
+    const charges = new Int8Array(count);
+    const ids = new Int32Array(count);
+    const locked = new Uint8Array(count);
+    const spins = new Int8Array(count);
+    const colorIds = new Int8Array(count);
+    const spinAxes = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+        const object = objects[i];
+        positions.set([object.position.x, object.position.y, object.position.z], i * 3);
+        velocities.set([object.velocity.x, object.velocity.y, object.velocity.z], i * 3);
+        const state = object.effectiveState || 0;
+        colors.set(state > 0 ? [0.29, 0.87, 0.50]
+            : state < 0 ? [0.97, 0.44, 0.44] : [0.60, 0.60, 0.70], i * 3);
+        sizes[i] = object.constituent ? 9 : 7;
+        masses[i] = object.massAvailable ? object.mass : 0;
+        rEff[i] = object.effectiveRadius || 0.4;
+        charges[i] = state;
+        ids[i] = object.id;
+        locked[i] = object.locked ? 1 : 0;
+    }
+    return { positions, velocities, colors, sizes, masses, rEff, charges, ids,
+        locked, spins, colorIds, spinAxes, count };
+}
+
+function snapshotDiagnostics(snapshot) {
+    const c = snapshot?.conservation || {};
+    const p = c.totalMomentum || {};
+    const l = c.totalAngularMomentum || {};
+    const center = c.centerOfMass || {};
+    return {
+        tick: snapshot?.core?.tick ?? 0,
+        particleCount: snapshot?.objects?.length ?? 0,
+        totalKE: c.kineticEnergy ?? 0,
+        totalPE: c.potentialEnergy ?? 0,
+        coulombPE: c.coulombPotential ?? 0,
+        gravityPE: c.gravityPotential ?? 0,
+        totalEnergy: c.stateEnergy ?? 0,
+        momentumX: p.x ?? 0, momentumY: p.y ?? 0, momentumZ: p.z ?? 0,
+        angMomX: l.x ?? 0, angMomY: l.y ?? 0, angMomZ: l.z ?? 0,
+        centerX: center.x ?? 0, centerY: center.y ?? 0, centerZ: center.z ?? 0,
+        coveredMask: c.coveredMask ?? 0, missingMask: c.missingMask ?? 0,
+        nonconservativeMask: c.nonconservativeMask ?? 0,
+        stateEnergyComplete: !!c.stateEnergyComplete,
+        driftEligible: !!c.driftEligible,
+        cumulativeDampingSink: c.cumulativeDampingSink ?? 0,
+        cumulativeRadiationSink: c.cumulativeRadiationSink ?? 0,
+        cumulativeSpeedProjectionSink: c.cumulativeSpeedProjectionSink ?? 0,
+        cumulativeContactDelta: c.cumulativeContactDelta ?? 0,
+        contactEventCount: Array.from(snapshot?.events || [])
+            .filter(event => event.type === 'contact_removal').length,
+        speedProjectionCount: 0,
     };
 }
 
@@ -124,7 +177,13 @@ function defaultTangent(pos, center, preferred = [0, 1, 0]) {
  */
 export function createNativeParticleEngine(bridge) {
     let _pe = null;               // embind ParticleEngine instance
+    let _finitePortBattery = null; // isolated FTD-0884 reference observer
+    let finitePortBatteryConfig = null;
     const typeMap = new Map();    // engine id → catalogId
+    let registryCache = null;
+    let nativeReplayCache = null;
+    let nativeObservationCache = null;
+    let viewMode = 'native_matter';
 
     function _module() {
         return bridge._module || null;
@@ -135,26 +194,25 @@ export function createNativeParticleEngine(bridge) {
         if (!m || typeof m.ParticleEngine !== 'function') return null;
         if (!_pe) {
             _pe = new m.ParticleEngine();
-            _applyBaseline(m);
         }
         return _pe;
-    }
-
-    function _applyBaseline(m) {
-        for (const [name, value] of Object.entries(TOGGLE_BASELINE)) {
-            m.peSetToggle(_pe, name, value);
-        }
     }
 
     function initPE() {
         const m = _module();
         if (!m) return;
-        _ensure();
         if (_pe) {
-            m.peClear(_pe);
-            _applyBaseline(m);
+            try { _pe.delete(); } catch { /* module teardown */ }
+            _pe = null;
         }
+        if (_finitePortBattery) {
+            try { _finitePortBattery.delete(); } catch { /* module teardown */ }
+            _finitePortBattery = null;
+        }
+        finitePortBatteryConfig = null;
+        _ensure(); // C++ constructor applies the registry's verified profile.
         typeMap.clear();
+        nativeObservationCache = null;
         resetColorWheel();
     }
 
@@ -168,13 +226,20 @@ export function createNativeParticleEngine(bridge) {
             try { _pe.delete(); } catch { /* module already torn down */ }
             _pe = null;
         }
+        if (_finitePortBattery) {
+            try { _finitePortBattery.delete(); } catch { /* module teardown */ }
+            _finitePortBattery = null;
+        }
+        finitePortBatteryConfig = null;
         typeMap.clear();
+        nativeObservationCache = null;
     }
 
     // ── Injection ──────────────────────────────────────────────────
 
     function peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff) {
         const m = _module();
+        if (viewMode === 'native_matter') return -1;
         if (!m || !_ensure()) return -1;
         if (mass <= 0) {
             console.warn('NativePE: rejecting massless particle:', catalogId);
@@ -194,6 +259,7 @@ export function createNativeParticleEngine(bridge) {
     /** Pedagogical anchor only — prefer dynamic particles for genuine dynamics. */
     function peAddLockedParticle(catalogId, charge, x, y, z, mass, r_eff = 0.1) {
         const m = _module();
+        if (viewMode === 'native_matter') return -1;
         if (!m || !_ensure()) return -1;
         if (mass <= 0) {
             console.warn('NativePE: rejecting massless particle:', catalogId);
@@ -222,6 +288,7 @@ export function createNativeParticleEngine(bridge) {
 
     function peApplyEquilibriumOrbit(particleId, options = {}) {
         const m = _module();
+        if (viewMode === 'native_matter') return false;
         if (!m || !_ensure()) return false;
         // Zero the velocity FIRST (by id) so velocity-dependent terms
         // (Lorentz, spin-orbit, radiation, relativistic) vanish from the
@@ -272,6 +339,7 @@ export function createNativeParticleEngine(bridge) {
 
     function peScaleVelocity(particleId, scale) {
         const m = _module();
+        if (viewMode === 'native_matter') return false;
         if (!m || !_ensure() || scale === 1) return false;
         const { idx, data } = _findIndexById(m, particleId);
         if (idx < 0) return false;
@@ -285,11 +353,26 @@ export function createNativeParticleEngine(bridge) {
     // ── Tick + reads ───────────────────────────────────────────────
 
     function peTick() {
-        if (_ensure()) _pe.tick();
+        if (viewMode !== 'native_matter' && _ensure()) _pe.tick();
+    }
+
+    function peGetTick() {
+        if (viewMode === 'native_matter') {
+            return Number(peGetNativeMatterReplay()?.core?.tick ?? 0);
+        }
+        return _ensure() ? Number(_pe.currentTick()) : 0;
+    }
+
+    function peGetObservationRevision() {
+        if (viewMode === 'native_matter') return 0;
+        return _ensure() ? Number(_pe.observationRevision()) : 0;
     }
 
     function peGetParticleData() {
         const m = _module();
+        if (viewMode === 'native_matter') {
+            return snapshotParticleData(peGetNativeMatterReplay());
+        }
         if (!m || !_ensure()) return emptyParticleData();
         const data = m.getPEParticleData(_pe);
         // Visual parity with the retired JS engine: its point-size law was
@@ -304,6 +387,9 @@ export function createNativeParticleEngine(bridge) {
 
     function peGetFieldSources() {
         const m = _module();
+        if (viewMode === 'native_matter') {
+            return { positions: EMPTY_F32, charges: EMPTY_F32, masses: EMPTY_F32, count: 0 };
+        }
         if (!m || !_ensure()) {
             return { positions: EMPTY_F32, charges: EMPTY_F32, masses: EMPTY_F32, count: 0 };
         }
@@ -320,6 +406,9 @@ export function createNativeParticleEngine(bridge) {
 
     function peGetForces() {
         const m = _module();
+        if (viewMode === 'native_matter') {
+            return { positions: EMPTY_F32, forces: EMPTY_F64, count: 0, maxForce: 0 };
+        }
         if (!m || !_ensure()) {
             return { positions: EMPTY_F32, forces: EMPTY_F64, count: 0, maxForce: 0 };
         }
@@ -328,18 +417,100 @@ export function createNativeParticleEngine(bridge) {
 
     function peGetForceDecomposition() {
         const m = _module();
+        if (viewMode === 'native_matter') return emptyDecomposition();
         if (!m || !_ensure()) return emptyDecomposition();
         return m.getPEForceDecomposition(_pe);
     }
 
     function peGetDiagnostics() {
         const m = _module();
+        if (viewMode === 'native_matter') {
+            return snapshotDiagnostics(peGetNativeMatterReplay());
+        }
         if (!m || !_ensure()) return emptyDiagnostics();
         return m.getPEDiagnostics(_pe);
     }
 
+    function peGetSnapshot(scenario = '') {
+        const m = _module();
+        if (viewMode === 'native_matter') return peGetNativeMatterReplay();
+        if (!m || !_ensure() || typeof m.getPESnapshot !== 'function') return null;
+        return m.getPESnapshot(_pe, scenario);
+    }
+
+    function peGetNativeMatterReplay() {
+        const m = _module();
+        if (!m || typeof m.getScale1NativeMatterReplay !== 'function') return null;
+        if (nativeObservationCache) return nativeObservationCache;
+        if (!nativeReplayCache) nativeReplayCache = m.getScale1NativeMatterReplay();
+        return nativeReplayCache;
+    }
+
+    function peUseRegisteredM3Replay() {
+        nativeObservationCache = null;
+        return peGetNativeMatterReplay();
+    }
+
+    function peObserveSourceClusters(payload) {
+        const m = _module();
+        if (!m || typeof m.getScale1LiveClusterObservation !== 'function') return null;
+        const seeds = Array.from(payload?.seeds || []);
+        const count = seeds.length;
+        const ids = new Int32Array(count);
+        const supports = new Int32Array(count);
+        const signs = new Int32Array(count);
+        const centers = new Float64Array(count * 3);
+        const velocities = new Float64Array(count * 3);
+        const L = payload?.latticeSize || 1;
+        const scale = payload?.displayScale || 1;
+        const origin = (L - 1) * 0.5;
+        for (let i = 0; i < count; i++) {
+            const seed = seeds[i];
+            ids[i] = seed.clusterId ?? i;
+            supports[i] = seed.size ?? 0;
+            signs[i] = seed.stateSign ?? Math.sign(seed.charge || 0);
+            const center = seed.sourceCentroid || [
+                (seed.position?.[0] || 0) / scale + origin,
+                (seed.position?.[1] || 0) / scale + origin,
+                (seed.position?.[2] || 0) / scale + origin,
+            ];
+            const velocity = seed.sourceVelocity || seed.velocity || [0, 0, 0];
+            centers.set(center, i * 3);
+            velocities.set(velocity, i * 3);
+        }
+        nativeObservationCache = m.getScale1LiveClusterObservation(
+            ids, supports, signs, centers, velocities,
+            payload?.sourceTick ?? 0,
+            payload?.sourceScenario ?? 'no-capture',
+            payload?.sourceRevision ?? 'ephemeral-capture',
+            L, scale,
+        );
+        return nativeObservationCache;
+    }
+
+    function peGetPhysicsRegistry() {
+        const m = _module();
+        if (!m || typeof m.getScale1Registry !== 'function') return null;
+        if (!registryCache) registryCache = m.getScale1Registry();
+        return registryCache;
+    }
+
+    function peSetMode(mode) {
+        const supported = new Set([
+            'native_matter', 'effective_lab', 'catalog_reference',
+        ]);
+        viewMode = supported.has(mode) ? mode : 'effective_lab';
+        return viewMode;
+    }
+
     function peGetExtendedData() {
         const m = _module();
+        if (viewMode === 'native_matter') {
+            const data = peGetParticleData();
+            return { ...data, forces: new Float64Array(data.count * 3),
+                accelerations: new Float64Array(data.count * 3),
+                pairIds: new Int32Array(data.count).fill(-1) };
+        }
         if (!m || !_ensure()) return null;
         return m.getPEExtendedData(_pe);
     }
@@ -348,12 +519,36 @@ export function createNativeParticleEngine(bridge) {
 
     function _setToggle(name, value) {
         const m = _module();
-        if (m && _ensure()) m.peSetToggle(_pe, name, !!value);
+        if (viewMode === 'native_matter') return false;
+        return !!(m && _ensure() && m.peSetToggle(_pe, name, !!value));
     }
 
-    function peSetDt(dt) { const m = _module(); if (m && _ensure()) m.peSetDt(_pe, dt); }
+    function peSetDt(dt) { const m = _module(); if (viewMode !== 'native_matter' && m && _ensure()) m.peSetDt(_pe, dt); }
     function peGetDt() { const m = _module(); return (m && _ensure()) ? m.peGetDt(_pe) : 1.0; }
-    function peSetSoftening(s) { const m = _module(); if (m && _ensure()) m.peSetSoftening(_pe, s); }
+    function peSetSoftening(s) { const m = _module(); if (viewMode !== 'native_matter' && m && _ensure()) m.peSetSoftening(_pe, s); }
+
+    function peConfigureInsulatingBox(cx, cy, cz, hx, hy, hz) {
+        const m = _module();
+        if (viewMode === 'native_matter' || !m || !_ensure()) return false;
+        m.peConfigureInsulatingBox(_pe, cx, cy, cz, hx, hy, hz);
+        return true;
+    }
+
+    function peAddInsulatingPort(axis, side, centerU, centerV, halfU, halfV,
+                                 requiredChargeSign = 0, crossingDirection = 0) {
+        const m = _module();
+        if (viewMode === 'native_matter' || !m || !_ensure()) return false;
+        m.peAddInsulatingPort(_pe, axis, side, centerU, centerV, halfU, halfV,
+                              requiredChargeSign, crossingDirection);
+        return true;
+    }
+
+    function peClearInsulatingBox() {
+        const m = _module();
+        if (viewMode === 'native_matter' || !m || !_ensure()) return false;
+        m.peClearInsulatingBox(_pe);
+        return true;
+    }
 
     const peSetCoulomb = (e) => _setToggle('coulomb', e);
     const peSetDamping = (e) => _setToggle('damping', e);
@@ -366,9 +561,12 @@ export function createNativeParticleEngine(bridge) {
     const peSetRadiation = (e) => _setToggle('radiation', e);
     const peSetRelativistic = (e) => _setToggle('relativistic', e);
     const peSetRelativisticVerlet = (e) => _setToggle('relativistic_verlet', e);
+    const peSetContactEvents = (e) => _setToggle('contact_events', e);
+    const peSetToggle = (name, value) => _setToggle(name, value);
 
     function peSetSpinAxis(id, ax, ay, az) {
         const m = _module();
+        if (viewMode === 'native_matter') return false;
         if (!m || !_ensure()) return false;
         if (ax * ax + ay * ay + az * az < 1e-60) return false;
         m.peSetSpinAxis(_pe, id, ax, ay, az);
@@ -391,16 +589,108 @@ export function createNativeParticleEngine(bridge) {
             nativeExtended: true,
             nativeForces: true,
             advancedForces: true,
+            sharedScale1Schema: true,
+            nativeMatterReplay: true,
         };
     }
 
     function peParticleCount() {
         const m = _module();
+        if (viewMode === 'native_matter') {
+            return peGetNativeMatterReplay()?.objects?.length ?? 0;
+        }
         return (m && _ensure()) ? m.peParticleCount(_pe) : 0;
     }
 
     function peClear() {
+        if (viewMode === 'native_matter') return false;
         initPE();
+        return true;
+    }
+
+    function peExportCheckpoint() {
+        const m = _module();
+        if (viewMode === 'native_matter' || !m || !_ensure()
+            || typeof m.exportPECheckpoint !== 'function') return null;
+        return {
+            schema: 'ftd.scale1.dashboard-checkpoint',
+            schemaVersion: 1,
+            capturedAt: new Date().toISOString(),
+            native: m.exportPECheckpoint(_pe),
+            catalogTypes: Array.from(typeMap.entries()),
+            finitePortBattery: finitePortBatteryConfig
+                ? { ...finitePortBatteryConfig } : null,
+        };
+    }
+
+    function peRestoreCheckpoint(checkpoint) {
+        const m = _module();
+        if (!m || !_ensure() || typeof m.restorePECheckpoint !== 'function') return false;
+        if (!checkpoint || checkpoint.schema !== 'ftd.scale1.dashboard-checkpoint'
+            || checkpoint.schemaVersion !== 1 || !checkpoint.native) {
+            throw new TypeError('Unsupported Scale 1 dashboard checkpoint');
+        }
+        const restored = !!m.restorePECheckpoint(_pe, checkpoint.native);
+        if (!restored) return false;
+        typeMap.clear();
+        for (const row of Array.from(checkpoint.catalogTypes || [])) {
+            if (Array.isArray(row) && Number.isInteger(Number(row[0]))) {
+                typeMap.set(Number(row[0]), row[1] ?? null);
+            }
+        }
+        viewMode = 'effective_lab';
+        nativeObservationCache = null;
+        if (_finitePortBattery) {
+            try { _finitePortBattery.delete(); } catch { /* module teardown */ }
+            _finitePortBattery = null;
+        }
+        finitePortBatteryConfig = null;
+        const battery = checkpoint.finitePortBattery;
+        if (battery && typeof m.Scale1FinitePortBatteryObserver === 'function') {
+            _finitePortBattery = new m.Scale1FinitePortBatteryObserver(
+                battery.size, battery.capacity,
+                battery.chargeAmplitude, battery.batteryAmplitude,
+            );
+            finitePortBatteryConfig = { ...battery, steps: 0 };
+            for (let i = 0; i < Math.max(0, Number(battery.steps) || 0); i++) {
+                if (!_finitePortBattery.step()) break;
+                finitePortBatteryConfig.steps++;
+            }
+        }
+        return true;
+    }
+
+    function peConfigureFinitePortBattery(size = 6, capacity = 8,
+                                          chargeAmplitude = 1,
+                                          batteryAmplitude = 10) {
+        const m = _module();
+        if (!m || typeof m.Scale1FinitePortBatteryObserver !== 'function') return false;
+        if (_finitePortBattery) {
+            try { _finitePortBattery.delete(); } catch { /* module teardown */ }
+        }
+        _finitePortBattery = new m.Scale1FinitePortBatteryObserver(
+            size, capacity, chargeAmplitude, batteryAmplitude,
+        );
+        finitePortBatteryConfig = {
+            size, capacity, chargeAmplitude, batteryAmplitude, steps: 0,
+        };
+        return true;
+    }
+
+    function peStepFinitePortBattery() {
+        if (!_finitePortBattery || !_finitePortBattery.step()) return false;
+        finitePortBatteryConfig.steps++;
+        return true;
+    }
+
+    function peReverseFinitePortBattery() {
+        if (!_finitePortBattery || !_finitePortBattery.reverse()) return false;
+        finitePortBatteryConfig.steps = Math.max(0, finitePortBatteryConfig.steps - 1);
+        return true;
+    }
+
+    function peGetFinitePortBatterySnapshot() {
+        return _finitePortBattery ? _finitePortBattery.snapshot() : null;
     }
 
     function peGetParticleTypes() {
@@ -413,7 +703,29 @@ export function createNativeParticleEngine(bridge) {
     function peInspectParticle(id) {
         const m = _module();
         if (!m || !_ensure()) return null;
+        if (viewMode === 'native_matter') {
+            const object = Array.from(peGetNativeMatterReplay()?.objects || [])
+                .find(row => row.id === id);
+            if (!object) return null;
+            const momentum = object.momentum || { x: 0, y: 0, z: 0 };
+            return {
+                id, charge: object.effectiveState,
+                mass: object.massAvailable ? object.mass : null,
+                rEff: object.effectiveRadius || null,
+                spin: null, colorId: null, pairId: -1,
+                x: object.position.x, y: object.position.y, z: object.position.z,
+                vx: object.velocity.x, vy: object.velocity.y, vz: object.velocity.z,
+                speed: Math.hypot(object.velocity.x, object.velocity.y, object.velocity.z),
+                ke: object.kineticEnergyAvailable ? object.kineticEnergy : null,
+                momentum: Math.hypot(momentum.x, momentum.y, momentum.z),
+                acceleration: null, locked: !!object.locked,
+                nearestId: -1, nearestDist: Infinity, orbitalR: -1,
+                fCoulombNearest: null, fNetMag: null,
+                provenance: object.provenance,
+            };
+        }
         const data = m.getPEExtendedData(_pe);
+        const snapshot = m.getPESnapshot(_pe, '');
         let idx = -1;
         for (let i = 0; i < data.count; i++) {
             if (data.ids[i] === id) { idx = i; break; }
@@ -460,13 +772,17 @@ export function createNativeParticleEngine(bridge) {
             : 0;
 
         const pd = m.getPEParticleData(_pe);
+        const object = Array.from(snapshot.objects || []).find(row => row.id === id);
+        const pVec = object?.momentum || { x: mass * vx, y: mass * vy, z: mass * vz };
+        const pMag = Math.sqrt(pVec.x * pVec.x + pVec.y * pVec.y + pVec.z * pVec.z);
         return {
             id, charge, mass,
             rEff: pd.rEff[idx], spin: pd.spins[idx], colorId: pd.colorIds[idx],
             pairId: data.pairIds ? data.pairIds[idx] : -1,
             x: px, y: py, z: pz, vx, vy, vz,
-            speed, ke: 0.5 * mass * speed * speed,
-            momentum: mass * speed,
+            speed,
+            ke: object?.kineticEnergyAvailable ? object.kineticEnergy : null,
+            momentum: pMag,
             acceleration: mass > 0 ? fNetMag / mass : 0,
             locked: !!data.locked[idx],
             nearestId, nearestDist, orbitalR, fCoulombNearest, fNetMag,
@@ -477,16 +793,23 @@ export function createNativeParticleEngine(bridge) {
         initPE, resetPE, dispose,
         peAddParticle, peAddLockedParticle,
         peApplyEquilibriumOrbit, peApplyEquilibriumOrbitBatch, peScaleVelocity,
-        peTick,
+        peTick, peGetTick, peGetObservationRevision,
         peGetParticleData, peGetFieldSources, peGetForces,
         peGetForceDecomposition,
-        peGetDiagnostics, peGetExtendedData,
+        peGetDiagnostics, peGetExtendedData, peGetSnapshot,
+        peGetNativeMatterReplay, peUseRegisteredM3Replay, peObserveSourceClusters,
+        peGetPhysicsRegistry, peSetMode,
         peSetDt, peGetDt, peSetSoftening,
+        peConfigureInsulatingBox, peAddInsulatingPort, peClearInsulatingBox,
         peSetCoulomb, peSetDamping, peSetGravity, peSetLorentz,
         peSetExchange, peSetStrong, peSetMagneticDipole,
         peSetSpinOrbit, peSetSpinAxis, peSetRadiation, peSetRelativistic,
-        peSetRelativisticVerlet, peGetToggle, peGetBackendCapabilities,
+        peSetRelativisticVerlet, peSetContactEvents, peSetToggle,
+        peGetToggle, peGetBackendCapabilities,
         peParticleCount, peClear, peGetParticleTypes,
+        peExportCheckpoint, peRestoreCheckpoint,
+        peConfigureFinitePortBattery, peStepFinitePortBattery,
+        peReverseFinitePortBattery, peGetFinitePortBatterySnapshot,
         peInspectParticle,
     };
 }

@@ -8,7 +8,11 @@
  *
  * The original phase_write() was ~265 LOC mixing:
  *   - prologue: damping factor + selective-damping mask + larmor near-accel
- *   - flux pre-write snapshot for race-free genesis curl reads
+ *   - rb.flux_pre_write_ snapshot buffer (historical name) used for
+ *     race-free genesis curl/divergence reads. The initial copy taken
+ *     before the leapfrog step is overwritten below with the POST-leapfrog,
+ *     POST-damping flux before genesis ever reads it, so genesis always
+ *     sees post-write values despite the buffer's name.
  *   - per-thread RNG (Langevin) seeding
  *   - main parallel-for: leapfrog (dual or single) + damping/Langevin + genesis + evaporation
  *   - sequential post-pass: pending-particle-id assignment
@@ -55,9 +59,11 @@ namespace {
 // RF-4 dedup: shared manifest body. Caller has already determined polarity
 // via either chirality density (dual) or flux divergence (single) and
 // passed it in as `polarity_signal`. This helper assigns state, marks the
-// particle_id sentinel, derives spin from the pre-write flux curl, and
-// derives color from the dominant flux axis — byte-identical with the
-// original phase_write() inline blocks.
+// particle_id sentinel, derives spin from the curl of the `flux_pre` buffer
+// (by the time this runs it holds POST-write flux, not pre-write flux — see
+// the file header and the overwrite below), and derives color from the
+// dominant flux axis — byte-identical with the original phase_write()
+// inline blocks.
 inline void manifest_at(RenderBridge& rb,
                         Voxel& v,
                         double polarity_signal,
@@ -84,8 +90,11 @@ inline void manifest_at(RenderBridge& rb,
   // from an earlier occupant of the same voxel.
   v.pair_id = -1;
 
-  // ARCH-7b: spin from curl of the pre-write flux snapshot — sibling
-  // thread writes don't race the curl read.
+  // ARCH-7b: spin from curl of the flux_pre buffer (holds POST-write flux
+  // at this point in the tick, despite the name — see file header). Reading
+  // a stable snapshot rather than the live voxels_[].flux array is what
+  // makes this race-free: sibling-thread writes to voxels_[].flux don't
+  // race this curl read.
   Vec3 curl = ::ftd::curl_from_flux_array(flux_pre, lattice, i);
   double ax = std::abs(curl.x), ay = std::abs(curl.y), az = std::abs(curl.z);
   double mx = std::max({ax, ay, az});
@@ -98,7 +107,7 @@ inline void manifest_at(RenderBridge& rb,
                             static_cast<std::uint64_t>(VoxelRng::GenesisSpin)) < 0.5) ? 1 : -1;
   }
 
-  // Color from dominant flux axis (uses live flux, not pre-write snapshot).
+  // Color from dominant flux axis (uses live flux, not the flux_pre buffer).
   double fx = std::abs(v.flux.x), fy = std::abs(v.flux.y), fz = std::abs(v.flux.z);
   if (fx >= fy && fx >= fz) v.color = 1;
   else if (fy >= fx && fy >= fz) v.color = 2;
@@ -110,6 +119,16 @@ inline void manifest_at(RenderBridge& rb,
 // Public free-function entry points
 // =============================================================================
 
+// Copies the CURRENT (pre-leapfrog) flux into rb.flux_pre_write_. The
+// caller (RenderBridge::phase_write() in render_bridge.cpp) only invokes
+// this when toggles.genesis is set — and whenever genesis is on,
+// phase_write_main_loop below unconditionally overwrites rb.flux_pre_write_
+// with the POST-leapfrog, POST-damping flux (see the "post-write" copy
+// further down) before any genesis curl/divergence read ever runs. So this
+// copy's output is DEAD in every path that reaches it: no consumer sees the
+// values written here. Left in place (not removed) since deleting it could
+// change timing/behaviour this audit did not verify — do not rely on its
+// output.
 void snapshot_flux_pre_write(RenderBridge& rb) {
   const int N = static_cast<int>(rb.lattice_.total_sites());
   rb.flux_pre_write_.resize(N);
@@ -279,7 +298,10 @@ void phase_write_main_loop(RenderBridge& rb) {
   });
 
   // ---- Snapshot the updated flux field (post-write) to rb.flux_pre_write_ ----
-  // (which is now acting as post-write snapshot) to avoid cross-thread races.
+  // rb.flux_pre_write_ is a historical name: from this point on in the tick
+  // it holds POST-leapfrog, POST-damping flux, not pre-write flux. This
+  // stable copy (rather than the live voxels_[].flux array) is what avoids
+  // cross-thread races when genesis reads it below.
   if (do_genesis) {
     rb.flux_pre_write_.resize(N);
     ftd::parallel_for(0, N, [&](int _lo, int _hi) {

@@ -106,6 +106,9 @@ const WORKER_COMMAND_ALLOWLIST = new Set([
   'setLangevinTemp', 'setLangevinGamma', 'setFluxBoundary', 'setFluxPeriodicAxis',
   'injectParticle', 'injectFlux', 'injectWavepacket', 'injectWaveVel',
   'createEntangledPair', 'clearField', 'seedRandomFlux',
+  // Flux-cell mechanisms (engine/include/ftd/flux_cell.h, 2026-09-02).
+  'setFluxCellRegion', 'clearFluxCellRegion', 'setFluxPump', 'clearFluxPump',
+  'setFluxCellPort', 'clearFluxCellPort',
 ]);
 
 function cloneAudit(a) {
@@ -118,6 +121,10 @@ function cloneAudit(a) {
     'wvRTotal', 'chiralityTotal', 'strongEnergy', 'weakEnergy', 'particleRestEnergy',
     'particleEnergy', 'dynamicEnergy', 'cellVolume', 'fieldEnergyDensitySum',
     'waveEnergyDensitySum', 'particleMomentum',
+    // Append-only flux-cell ledger (2026-09-02).
+    'cellSiteCount', 'cellUE', 'cellUB', 'cellUJ', 'cellHWave', 'cellPLeak', 'cellSNet',
+    'cellPumpWork', 'cellPumpTicksApplied', 'cellPumpTicksTotal', 'cellPortOpen',
+    'cellPortWorkOut', 'cellPortPoyntingOut',
   ];
   for (const k of keys) {
     if (a[k] === undefined) continue;
@@ -876,22 +883,6 @@ self.onmessage = (e) => {
         }
         self.postMessage({
           type: 'forceAtResult', forceAt: lastForceAt,
-          configurationToken: msg.configurationToken,
-        });
-        break;
-      }
-      case 'coarsen': {
-        if (Number(msg.configurationToken) !== activeConfigurationToken) break;
-        // One-shot Scale-0 → Scale-1 coarse-graining snapshot (voxel debug
-        // view / promotion pipeline). The embind export builds plain typed
-        // arrays in this worker's JS context, so the result is structured-
-        // cloneable as-is.
-        let data = null;
-        if (mod && bridge && typeof mod.coarsenToParticles === 'function') {
-          try { data = mod.coarsenToParticles(bridge); } catch (e) { data = null; }
-        }
-        self.postMessage({
-          type: 'coarsenResult', reqId: msg.reqId, data,
           configurationToken: msg.configurationToken,
         });
         break;

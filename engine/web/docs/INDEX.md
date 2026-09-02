@@ -44,6 +44,7 @@ historical provenance, and where new cleanup or architecture notes should land.
 - [`TEMPLATE_SCIENTIFIC_SCENARIO_AUDIT.md`](TEMPLATE_SCIENTIFIC_SCENARIO_AUDIT.md) — required versioned record for each scenario's seven qualification gates and final disposition.
 - [`PLAN_CSS_MAINTAINABILITY_REFACTOR.md`](PLAN_CSS_MAINTAINABILITY_REFACTOR.md) — staged, test-gated CSS ownership and delivery roadmap.
 - [`PLAN_SCALE0_SCENARIO_MODULARIZATION.md`](PLAN_SCALE0_SCENARIO_MODULARIZATION.md) — scenario architecture cleanup roadmap.
+- [`PLAN_SCALE1_OVERLAY_VISUAL_LANGUAGE.md`](PLAN_SCALE1_OVERLAY_VISUAL_LANGUAGE.md) — staged replacement of generic Scale-1 line overlays with quantity-specific history, glyph, surface, streamlet, and qualification visuals.
 
 ## ADRs
 
@@ -60,7 +61,7 @@ historical provenance, and where new cleanup or architecture notes should land.
 - [`audits/AUDIT_TELEMETRY_ORGANIZATION.md`](audits/AUDIT_TELEMETRY_ORGANIZATION.md) — hub/demand/registry cleanup + energy semantics (2026-06-13)
 - [`audits/AUDIT_JS_ONTIC_PHYSICS.md`](audits/AUDIT_JS_ONTIC_PHYSICS.md) — full web/js ontic-physics + epistemic tag audit (2026-06-13)
 - [`audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md`](audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md)
-- [`audits/AUDIT_SCALE0_SCENARIO_QUALIFICATION_2026-07-24.md`](audits/AUDIT_SCALE0_SCENARIO_QUALIFICATION_2026-07-24.md) — current 130-scenario behavioral closure and physical-promotion plan
+- [`audits/AUDIT_SCALE0_SCENARIO_QUALIFICATION_2026-07-24.md`](audits/AUDIT_SCALE0_SCENARIO_QUALIFICATION_2026-07-24.md) — current 142-scenario behavioral closure and physical-promotion plan
 - [`audits/AUDIT_SCIENTIFIC_SCENARIO_INVENTORY_2026-08-29.md`](audits/AUDIT_SCIENTIFIC_SCENARIO_INVENTORY_2026-08-29.md) — frozen all-scale inventory, manifest gaps, cross-scale/UI blockers, and Scenario 1 selection.
 - [`audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md`](audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md)
 - [`audits/AUDIT_S0_OVERLAY_GROUNDING.md`](audits/AUDIT_S0_OVERLAY_GROUNDING.md)

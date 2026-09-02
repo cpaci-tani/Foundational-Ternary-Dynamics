@@ -7,17 +7,17 @@
  */
 
 import { appRegistry } from './core/registry.js';
-import { Viewport } from './viewport.js?v=14';
+import { Viewport } from './viewport.js?v=23';
 import { FluxEnergyChart, ParticleChart } from './charts.js';
 import { telemetryHub } from './telemetry-hub.js';
-import { createInspectorAppRuntime } from './inspector/app-runtime.js?v=2';
-import { initZoo, setEngineMode as setZooMode } from './zoo.js';
+import { createInspectorAppRuntime } from './inspector/app-runtime.js?v=4';
+import { initZoo, setEngineMode as setZooMode } from './zoo.js?v=3';
 import { getCategories, getMoleculesByCategory } from './molecules.js';
 import { debugLog } from './core/log.js';
 
 // ── Scale Controllers (extracted from inline code) ─────────────────
 import * as Scale0Controller from './scales/scale0/controller.js?v=44';
-import * as Scale1Controller from './scales/scale1/controller.js';
+import * as Scale1Controller from './scales/scale1/controller.js?v=27';
 import * as Scale2Controller from './scales/scale2/controller.js';
 import * as Scale3Controller from './scales/scale3/controller.js';
 // ── Phase 1-3: Ontic Observatory, Physics Fidelity, Aggregation Bridge
@@ -33,11 +33,19 @@ import { K_B } from './constants.js';
 // ALPHA, G_STAR, VARPI, X_PLUS, X_MINUS, TICK_PHASES, K_B,
 // K_GENESIS, C_SPEED, ONTIC_LAYERS, ONTIC_TOTAL_CONSTANTS
 // now imported directly by ui/app-ontic.js.
-import { AggregateDetector, EmergenceMonitor } from './aggregation-bridge.js';
+import { AggregateDetector, EmergenceMonitor } from './aggregation-bridge.js?v=2';
 import { createOnticPanel } from './ui/app-ontic.js';
 import { BackgroundManager } from './backgrounds.js';
-import { AppShell } from './ui/shell/app-shell.js?v=6';
-import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initScenePanel, initTelemetryGridPanel } from './ui/panels/index.js';
+import { AppShell } from './ui/shell/app-shell.js?v=25';
+import {
+    initChartsPanel,
+    initDiagnosticsPanel,
+    initInteractionHierarchyPanel,
+    initLagrangianPanel,
+    initParticleLogPanel,
+    initScenePanel,
+    initTelemetryGridPanel,
+} from './ui/panels/index.js?v=11';
 import { floatingWindowManager } from './ui/components/floating-window/component.js?v=2';
 import { initFluxSlicePanel } from './scales/scale0/ui/overlays/flux-slice-panel.js';
 import { initWaveLabPanel } from './scales/scale0/ui/overlays/wave-lab-panel.js?v=2';
@@ -54,8 +62,16 @@ import { initSettingsModal } from './ui/components/settings-modal/component.js?v
 // Wire / boot helpers extracted per refactoring-analyst RF-9 (partial).
 import { wireKeyboard as wireKeyboardExternal } from './app-wire/keyboard.js';
 import { showToast, loadProgress as _loadProgress } from './app-wire/status.js';
-import { bootBridge } from './app-wire/bridge-boot.js?v=3';
+import { bootBridge } from './app-wire/bridge-boot.js?v=9';
 import { sliderValueToSpeed, speedLabel } from './ui/components/play-bar/speed-scale.js';
+import {
+    captureScale1Checkpoint,
+    importScale1Checkpoint,
+    markScale1ReplayStart,
+    restoreSavedScale1Checkpoint,
+    serializeScale1Checkpoint,
+    verifyScale1Replay,
+} from './scales/scale1/checkpoint-replay.js?v=1';
 
 debugLog('[FTD] App version 20260318a loaded (cache-busted)');
 
@@ -72,6 +88,8 @@ let diagnosticsPanel = null;
 let chartsPanel = null;
 let telemetryGridPanel = null;
 let lagrangianPanel = null;
+let interactionHierarchyPanel = null;
+let particleLogPanel = null;
 // Legacy chart instances (scale1/scale2 still push into these ring buffers).
 let fluxEnergyChart = null;
 let particleChart = null;
@@ -318,11 +336,15 @@ function _resetAllVisualState() {
     // ── Scale 1: PE overlay buttons (delegated to Scale1Controller) ──
     Scale1Controller.resetScale1(_makeCtx());
     for (const id of [
-        'toggle-pe-efield', 'toggle-pe-potential',
+        'toggle-pe-efield', 'toggle-pe-potential', 'toggle-pe-field-battery',
         'toggle-pe-gravity-field',
-        'toggle-pe-force-coulomb', 'toggle-pe-force-gravity', 'toggle-pe-force-strong', 'toggle-pe-force-net',
+        'toggle-pe-force-coulomb', 'toggle-pe-force-gravity',
+        'toggle-pe-force-lorentz', 'toggle-pe-force-exchange',
+        'toggle-pe-force-strong', 'toggle-pe-force-radiation',
+        'toggle-pe-force-magnetic-dipole', 'toggle-pe-force-spin-orbit',
+        'toggle-pe-force-net',
         'toggle-pe-system',
-        'toggle-pe-admissibility', 'toggle-pe-provenance', 'toggle-pe-mass-comparison',
+        'toggle-pe-admissibility', 'toggle-pe-provenance',
         'toggle-velocities', 'toggle-trails',
     ]) {
         const btn = document.getElementById(id);
@@ -508,6 +530,8 @@ async function init() {
     chartsPanel = initChartsPanel();
     telemetryGridPanel = initTelemetryGridPanel();
     lagrangianPanel = initLagrangianPanel();
+    interactionHierarchyPanel = initInteractionHierarchyPanel();
+    particleLogPanel = initParticleLogPanel();
     initFluxSlicePanel();
     initWaveLabPanel();
     initP1ObservablesPanel();
@@ -554,6 +578,7 @@ async function init() {
     });
     inspectorRuntime = createInspectorAppRuntime({ viewport, bridge, setZooMode });
     inspector = inspectorRuntime.inspector;
+    interactionHierarchyPanel?.setInspector?.(inspector);
 
     // Build ontic-panel provider with live-state getters (Wave 2 ticket 7).
     // observatory/aggregateDetector/emergenceMonitor are created below; the
@@ -731,6 +756,12 @@ function animate(now) {
     if (_shouldAppUpdatePanel('lagrangian', now)) {
         lagrangianPanel?.update();
     }
+    if (_shouldAppUpdatePanel('particle-log', now)) {
+        particleLogPanel?.update();
+    }
+    if (_shouldAppUpdatePanel('interaction-hierarchy', now)) {
+        interactionHierarchyPanel?.update();
+    }
 
     // FPS counter
     frameCount++;
@@ -756,6 +787,8 @@ const _panelUpdateIntervalMs = Object.freeze({
     // remain bounded by the component's matching ~30 Hz render cap.
     'telemetry-grid': 33,
     lagrangian: 250,
+    'interaction-hierarchy': 100,
+    'particle-log': 100,
 });
 const _panelLastUpdateAt = new Map();
 
@@ -943,7 +976,6 @@ function wireToolbar() {
         updatePlayButton();
         loadPEScenario(e.target.value);
     });
-
     // AE scenario selector
     document.getElementById('ae-scenario-select').addEventListener('change', (e) => {
         running = false;
@@ -1102,28 +1134,22 @@ function wireTabs() {
 // js/scales/scale0/ui/controls/wire.js. This function now handles only
 // Scale 1 (PE) and Scale 2/3 (AE) controls.
 function wireControls() {
-    // PE controls — force & dynamics toggles
-    const peToggleMap = {
-        'pe-coulomb': (v) => bridge.peSetCoulomb(v),
-        'pe-gravity': (v) => bridge.peSetGravity(v),
-        'pe-damping': (v) => bridge.peSetDamping(v),
-        'pe-lorentz-p': (v) => bridge.peSetLorentz(v),
-        'pe-exchange': (v) => bridge.peSetExchange(v),
-        'pe-strong': (v) => bridge.peSetStrong(v),
-        'pe-magnetic-dipole': (v) => bridge.peSetMagneticDipole(v),
-        'pe-spin-orbit': (v) => bridge.peSetSpinOrbit(v),
-        'pe-radiation': (v) => bridge.peSetRadiation(v),
-        'pe-relativistic': (v) => bridge.peSetRelativistic(v),
-        'pe-relativistic-verlet': (v) => bridge.peSetRelativisticVerlet(v),
-        'pe-voxel-debug': (v) => Scale1Controller.setVoxelDebug(v, viewport),
-    };
-    for (const [elId, setter] of Object.entries(peToggleMap)) {
-        const el = document.getElementById(elId);
-        if (el) {
-            el.addEventListener('change', () => {
-                setter(el.checked);
-            });
-        }
+    // PE controls — every row carries the exact native registry toggle key.
+    // This avoids a second hand-maintained setter map in the browser.
+    for (const el of document.querySelectorAll('[data-pe-toggle]')) {
+        el.addEventListener('change', () => {
+            const accepted = bridge.peSetToggle?.(el.dataset.peToggle, el.checked);
+            if (accepted === false) {
+                el.checked = !!bridge.peGetToggle?.(el.dataset.peToggle);
+            }
+            Scale1Controller.markPhysicsProfileModified();
+        });
+    }
+
+    for (const button of document.querySelectorAll('[data-pe-profile]')) {
+        button.addEventListener('click', () => {
+            Scale1Controller.applyPhysicsProfile(bridge, button.dataset.peProfile);
+        });
     }
 
     // PE sliders
@@ -1134,6 +1160,7 @@ function wireControls() {
             const dt = parseFloat(dtSlider.value);
             dtValue.textContent = dt.toFixed(1);
             bridge.peSetDt(dt);
+            Scale1Controller.markObservationDirty();
         });
     }
 
@@ -1144,14 +1171,142 @@ function wireControls() {
             const s = parseFloat(softSlider.value);
             softValue.textContent = s.toFixed(2);
             bridge.peSetSoftening(s);
+            Scale1Controller.markObservationDirty();
             telemetryHub.setScale1Runtime({ softening: s });
         });
     }
+
+    // Trajectory history is presentation-only and tick-aligned. The generic
+    // data key keeps all visual history controls on one controller contract.
+    for (const input of document.querySelectorAll('[data-pe-trail-setting]')) {
+        input.addEventListener('input', () => {
+            Scale1Controller.setTrailSettings({
+                [input.dataset.peTrailSetting]: parseFloat(input.value),
+            });
+        });
+    }
+    for (const button of document.querySelectorAll('[data-pe-trail-mode]')) {
+        button.addEventListener('click', () => {
+            Scale1Controller.setTrailSettings({ renderMode: button.dataset.peTrailMode });
+        });
+    }
+    document.getElementById('btn-pe-trail-reset')?.addEventListener('click', () => {
+        Scale1Controller.resetTrailSettings();
+    });
 
     document.getElementById('btn-pe-clear').addEventListener('click', () => {
         running = false;
         updatePlayButton();
         loadPEScenario(document.getElementById('pe-scenario-select').value);
+    });
+
+    const checkpointStatus = document.getElementById('pe-checkpoint-status');
+    const setCheckpointStatus = (message, failed = false) => {
+        if (checkpointStatus) {
+            checkpointStatus.textContent = message;
+            checkpointStatus.dataset.status = failed ? 'error' : 'ready';
+        }
+    };
+    const afterCheckpointMutation = () => {
+        Scale1Controller.markObservationDirty();
+        telemetryHub.resetScale1?.();
+    };
+    document.getElementById('btn-pe-checkpoint-save')?.addEventListener('click', () => {
+        try {
+            const result = captureScale1Checkpoint(bridge);
+            setCheckpointStatus(`Captured tick ${result.tick} · ${result.digest}`);
+        } catch (error) {
+            setCheckpointStatus(error.message, true);
+        }
+    });
+    document.getElementById('btn-pe-checkpoint-restore')?.addEventListener('click', () => {
+        try {
+            running = false;
+            updatePlayButton();
+            const result = restoreSavedScale1Checkpoint(bridge);
+            afterCheckpointMutation();
+            setCheckpointStatus(`Restored tick ${result.tick} · ${result.digest}`);
+        } catch (error) {
+            setCheckpointStatus(error.message, true);
+        }
+    });
+    document.getElementById('btn-pe-checkpoint-export')?.addEventListener('click', () => {
+        try {
+            const captured = captureScale1Checkpoint(bridge);
+            const blob = new Blob([serializeScale1Checkpoint()], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const anchor = document.createElement('a');
+            anchor.href = url;
+            anchor.download = `ftd-scale1-tick-${captured.tick}.json`;
+            anchor.click();
+            setTimeout(() => URL.revokeObjectURL(url), 0);
+            setCheckpointStatus(`Exported tick ${captured.tick} · ${captured.digest}`);
+        } catch (error) {
+            setCheckpointStatus(error.message, true);
+        }
+    });
+    const checkpointFile = document.getElementById('pe-checkpoint-file');
+    document.getElementById('btn-pe-checkpoint-import')?.addEventListener('click', () => {
+        checkpointFile?.click();
+    });
+    checkpointFile?.addEventListener('change', async () => {
+        const file = checkpointFile.files?.[0];
+        if (!file) return;
+        try {
+            running = false;
+            updatePlayButton();
+            const result = importScale1Checkpoint(await file.text(), bridge);
+            afterCheckpointMutation();
+            setCheckpointStatus(`Imported tick ${result.tick} · ${result.digest}`);
+        } catch (error) {
+            setCheckpointStatus(error.message, true);
+        } finally {
+            checkpointFile.value = '';
+        }
+    });
+    document.getElementById('btn-pe-replay-mark')?.addEventListener('click', () => {
+        try {
+            const result = markScale1ReplayStart(bridge);
+            setCheckpointStatus(`Replay start marked at tick ${result.tick} · ${result.digest}`);
+        } catch (error) {
+            setCheckpointStatus(error.message, true);
+        }
+    });
+    document.getElementById('btn-pe-replay-verify')?.addEventListener('click', async () => {
+        try {
+            running = false;
+            updatePlayButton();
+            setCheckpointStatus('Replaying the marked segment…');
+            const result = await verifyScale1Replay(bridge);
+            afterCheckpointMutation();
+            setCheckpointStatus(result.match
+                ? `Replay matched ${result.ticks} ticks · ${result.actualDigest}`
+                : `Replay mismatch · expected ${result.expectedDigest}, got ${result.actualDigest}`,
+            !result.match);
+        } catch (error) {
+            setCheckpointStatus(error.message, true);
+        }
+    });
+    const updateFieldBatteryStatus = () => {
+        const snapshot = bridge.peGetFinitePortBatterySnapshot?.();
+        const status = document.getElementById('pe-field-battery-status');
+        if (status && snapshot) {
+            status.textContent = `Layer ${snapshot.acceptedLayers}/${snapshot.capacity} · `
+                + `E ${Number(snapshot.totalBookedEnergy).toPrecision(6)}`;
+        }
+        Scale1Controller.markObservationDirty();
+    };
+    document.getElementById('btn-pe-field-battery-step')?.addEventListener('click', () => {
+        if (!bridge.peStepFinitePortBattery?.()) {
+            showToast('Finite ready-port capacity is exhausted.', 'info');
+        }
+        updateFieldBatteryStatus();
+    });
+    document.getElementById('btn-pe-field-battery-reverse')?.addEventListener('click', () => {
+        if (!bridge.peReverseFinitePortBattery?.()) {
+            showToast('No accepted field layer is available to reverse.', 'info');
+        }
+        updateFieldBatteryStatus();
     });
 
     // AE controls — force & dynamics toggles
@@ -1268,6 +1423,7 @@ function wireViewportToggles() {
     if (velBtn) velBtn.addEventListener('click', () => {
         velBtn.classList.toggle('active');
         const on = velBtn.classList.contains('active');
+        velBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
         Scale1Controller.setVelocities(on);
         viewport.toggleVelocityVectors(on);
     });
@@ -1276,6 +1432,7 @@ function wireViewportToggles() {
     if (trailBtn) trailBtn.addEventListener('click', () => {
         trailBtn.classList.toggle('active');
         const trailOn = trailBtn.classList.contains('active');
+        trailBtn.setAttribute('aria-pressed', trailOn ? 'true' : 'false');
         Scale1Controller.setTrails(trailOn);
         viewport.toggleTrails(trailOn);
     });
@@ -1283,23 +1440,38 @@ function wireViewportToggles() {
     // PE field overlay toggles (delegated to Scale1Controller)
     const peFieldToggles = [
         ['toggle-pe-efield', (on) => { Scale1Controller.setPEEField(on); viewport.togglePEStreamlines(on); }],
-        ['toggle-pe-potential', (on) => { Scale1Controller.setPEPotential(on); viewport.toggleFieldHeatmap(on); viewport.toggleFieldVectors(on); }],
+        ['toggle-pe-potential', (on) => {
+            Scale1Controller.setPEPotential(on);
+            const active = Scale1Controller.isPEFieldSurfaceActive();
+            viewport.toggleFieldHeatmap(active); viewport.toggleFieldVectors(active);
+        }],
+        ['toggle-pe-field-battery', (on) => {
+            Scale1Controller.setPEFieldBattery(on);
+            const active = Scale1Controller.isPEFieldSurfaceActive();
+            viewport.toggleFieldHeatmap(active); viewport.toggleFieldVectors(active);
+        }],
         ['toggle-pe-gravity-field', (on) => { Scale1Controller.setPEGravField(on); viewport.toggleGravityVectors(on); }],
         ['toggle-pe-force-coulomb', (on) => { Scale1Controller.setPEForceCoulomb(on); viewport.togglePEForceCoulomb(on); }],
         ['toggle-pe-force-gravity', (on) => { Scale1Controller.setPEForceGravity(on); viewport.togglePEForceGravity(on); }],
+        ['toggle-pe-force-lorentz', (on) => { Scale1Controller.setPEForceLorentz(on); viewport.togglePEForceLorentz(on); }],
+        ['toggle-pe-force-exchange', (on) => { Scale1Controller.setPEForceExchange(on); viewport.togglePEForceExchange(on); }],
         ['toggle-pe-force-strong', (on) => { Scale1Controller.setPEForceStrong(on); viewport.togglePEForceStrong(on); }],
+        ['toggle-pe-force-radiation', (on) => { Scale1Controller.setPEForceRadiation(on); viewport.togglePEForceRadiation(on); }],
+        ['toggle-pe-force-magnetic-dipole', (on) => { Scale1Controller.setPEForceMagneticDipole(on); viewport.togglePEForceMagneticDipole(on); }],
+        ['toggle-pe-force-spin-orbit', (on) => { Scale1Controller.setPEForceSpinOrbit(on); viewport.togglePEForceSpinOrbit(on); }],
         ['toggle-pe-force-net', (on) => { Scale1Controller.setPEForceNet(on); viewport.togglePEForceNet(on); }],
         ['toggle-pe-system', (on) => { Scale1Controller.setPESystem(on); viewport.togglePESystem(on); }],
         ['toggle-pe-admissibility', (on) => { Scale1Controller.setAdmissibilityRing(on); viewport.toggleAdmissibilityRings(on); }],
         ['toggle-pe-provenance', (on) => { Scale1Controller.setProvenanceLabel(on); viewport.toggleProvenanceLabels(on); }],
-        ['toggle-pe-mass-comparison', (on) => { Scale1Controller.setMassComparison(on); viewport.toggleMassComparison(on); }],
     ];
     for (const [id, handler] of peFieldToggles) {
         const btn = document.getElementById(id);
         if (btn) {
             btn.addEventListener('click', () => {
                 btn.classList.toggle('active');
-                handler(btn.classList.contains('active'));
+                const on = btn.classList.contains('active');
+                btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+                handler(on);
             });
         }
     }
@@ -1763,7 +1935,7 @@ function switchEngineMode(mode) {
         const scenario = document.getElementById('scenario-select')?.value || 'flux-pulse';
         Scale0Controller.loadScenario(_makeCtx(), scenario);
     } else if (mode === 'particles') {
-        loadPEScenario(document.getElementById('pe-scenario-select')?.value || 's1-coulomb-orbit');
+        loadPEScenario(document.getElementById('pe-scenario-select')?.value || 's1-native-m3-replay');
     } else if (mode === 'atoms') {
         loadAEScenario(document.getElementById('ae-scenario-select')?.value || 'ae-hydrogen-atom');
     } else if (mode === 'molecules') {

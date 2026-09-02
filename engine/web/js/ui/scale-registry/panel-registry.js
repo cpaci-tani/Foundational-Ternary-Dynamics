@@ -14,6 +14,8 @@ export const PANEL_REGISTRY = Object.freeze([
     { id: 'inspector',        label: 'Inspector',       icon: '\u25CE',        scales: ['0', '1', '2', '3', '4', '5'] },
     { id: 'planetary',        label: 'System Explorer', icon: '\u2641',        scales: ['4'] },
     { id: 'zoo',              label: 'Particle Zoo',    icon: '\u229B',        scales: ['1'] },
+    { id: 'interaction-hierarchy', label: 'Interaction Hierarchy', icon: '\u21B3', scales: ['1'] },
+    { id: 'particle-log',     label: 'Particle Log',    icon: '\u2263',        scales: ['1'] },
     { id: 'physics',          label: 'Physics',         icon: '\u03A8',        scales: ['2', '3'] },
     { id: 'scene',            label: 'Scene',           icon: '\u{1F3AC}',     scales: ['0', '1', '2', '3'] },
     { id: 'flux-slice',       label: 'Flux Slice',      icon: '▦',        scales: ['0'] },

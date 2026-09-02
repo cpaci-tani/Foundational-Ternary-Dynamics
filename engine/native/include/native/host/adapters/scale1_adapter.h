@@ -77,6 +77,8 @@ private:
     int                                  box_ = 32;  // nominal render box → camera framing
     std::unique_ptr<ftd::ParticleEngine> engine_;
     Scale1Snapshot                       snapshot_;  // boundary accumulator
+    Scale1Snapshot                       native_replay_snapshot_;
+    bool                                 native_replay_ = true;
     std::uint32_t                        last_count_ = 0;
 };
 

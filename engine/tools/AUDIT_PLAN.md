@@ -214,7 +214,8 @@ This plan audits the FTD simulation engine across six phases, progressing from m
 - [x] **4.12** Water molecule: 104.5° bond angle, 8/8 checks PASS (H-bond, dipole, thermostat)
 - [x] **4.13** Triad binding: equilateral triangle stable PASS
 - [x] **4.14** campaign_hydrogen_spectrum, campaign_h2_molecule, campaign_ae_water — all PASS
-- [x] **4.15** test_triad, test_atom_scale_bridge — all PASS (22 checks combined)
+- [x] **4.15** test_triad passed; the former atom handoff test was retired with
+  the Scale-1/Scale-2 handoff on 2026-09-01.
 
 ### Particle Physics
 
@@ -481,7 +482,7 @@ Full CTest suite results after all fixes (151 tests):
 | campaign_aggregate_interaction | Pre-existing | 1048s runtime, timing-sensitive |
 | campaign_force_law | Pre-existing | Force exponent aspirational |
 | campaign_spontaneous | Pre-existing | Spontaneous genesis flaky |
-| campaign_multiscale_pipeline | Pre-existing | Multi-scale bridge test |
+| retired multi-scale pipeline | Removed 2026-09-01 | Depended on the retired Scale-1/Scale-2 proximity handoff |
 | campaign_confinement | Newly registered | Linear confinement not emergent (I-19) |
 | campaign_baryon_formation | Newly registered | Baryon formation not emergent |
 | campaign_weak_decay | Newly registered (timeout) | Needs >600s runtime |

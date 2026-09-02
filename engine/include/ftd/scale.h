@@ -1,13 +1,15 @@
 #pragma once
 /**
- * Multi-Scale Physics: OnticEntity and Scale definitions
+ * Multi-Scale Physics: effective entity projections and scale definitions
  *
- * Phase 7: The universal ternary triple {state, energy, boundary}
- * recurs at every scale of reality.
+ * Phase 7: The compact display projection {state, energy, boundary} recurs at
+ * each effective scale. It is a presentation interface, not a scale-navigation
+ * handoff and not a claim that three scalars are the state-complete primitive
+ * record of v3 FTD.
  *
  * | Component | Voxel (Scale 0) | Particle (Scale 1) | Atom (Scale 2) |
  * |-----------|-----------------|-------------------|-----------------|
- * | State     | s in {-1,0,+1}  | charge +/-1       | Z (atomic num)  |
+ * | State     | s in {-1,0,+1}  | effective signed q | Z (atomic num)  |
  * | Energy    | |J| (flux)      | mass = K_B        | binding energy  |
  * | Boundary  | 1 voxel         | r_eff = 2.48      | orbital radius  |
  *
@@ -15,18 +17,7 @@
  */
 
 #include <cstdint>
-#include <vector>
-
 namespace ftd {
-
-// Forward declarations for bridge functions
-class RenderBridge;
-struct Particle;
-class ParticleEngine;
-struct Atom;
-class AtomEngine;
-struct CosmicBody;
-class CosmicEngine;
 
 // Scale levels in the ontic hierarchy
 enum class ScaleLevel : int {
@@ -38,46 +29,13 @@ enum class ScaleLevel : int {
     COSMIC   = 5    // N-body + SPH cosmic simulation
 };
 
-// The universal ternary triple: {state, energy, boundary}
-// Every entity at every scale is fully characterized by these three numbers.
+// Scale-local presentation summary: {state, energy, boundary}.
+// The complete primitive record has additional finite fields and history; this
+// compact triple exists for presentation interoperability.
 struct OnticEntity {
     int state = 0;           // What it IS (charge, atomic number, ...)
     double energy = 0.0;     // What it CAN DO (mass, binding energy, ...)
     double boundary = 0.0;   // Where it ENDS (r_eff, orbital radius, ...)
 };
-
-// ============================================================================
-// Scale Bridge: coarsen/refine transitions between Scale 0 and Scale 1
-// ============================================================================
-
-// Scale 0 → Scale 1: extract particle descriptions from voxel simulation
-std::vector<Particle> coarsen_to_particles(const RenderBridge& rb);
-
-// Scale 1 → Scale 0: reconstruct voxel state from a particle
-void refine_to_voxels(const Particle& p, RenderBridge& rb);
-
-// ============================================================================
-// Scale Bridge: coarsen/refine transitions between Scale 1 and Scale 2
-// ============================================================================
-
-// Scale 1 → Scale 2: group particles into atoms by proximity
-// Locked proton clusters + nearby electrons → Atom with Z from proton count
-std::vector<Atom> coarsen_to_atoms(const ParticleEngine& pe);
-
-// Scale 2 → Scale 1: decompose atom into constituent particles
-// Returns Z locked protons at center + (Z - charge) electrons at radius
-std::vector<Particle> refine_to_particles(const Atom& a);
-
-// ============================================================================
-// Scale Bridge: coarsen/refine transitions between Scale 2 and Scale 5
-// ============================================================================
-
-// Scale 2 → Scale 5: group atoms into cosmic bodies
-// Large clusters become GAS, very dense clusters become STAR
-std::vector<CosmicBody> coarsen_to_cosmic(const AtomEngine& ae);
-
-// Scale 5 → Scale 2: decompose cosmic body into constituent atoms
-// Gas/star bodies → hydrogen/helium/metals at mass ratios 73:25:2
-std::vector<Atom> refine_to_atoms(const CosmicBody& cb);
 
 }  // namespace ftd

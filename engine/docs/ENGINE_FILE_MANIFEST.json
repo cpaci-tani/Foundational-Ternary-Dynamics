@@ -3,65 +3,65 @@
   "generated_by": "engine/tools/build_file_manifest.py",
   "note": "Mechanical per-file catalog. Conceptual docs: engine/ARCHITECTURE.md, CALLSTACKS.md, SCENARIO_ARCHITECTURE.md, SPEC_ENGINE.md, engine/docs/ENGINE_CODE_MAP.md.",
   "totals": {
-    "files": 2616,
-    "loc": 692518
+    "files": 2690,
+    "loc": 733157
   },
   "subsystems": {
     "tests": {
       "files": 810,
-      "loc": 245128
+      "loc": 247096
     },
     "other": {
       "files": 806,
-      "loc": 163084
+      "loc": 163140
     },
     "web/js-toplevel": {
       "files": 51,
-      "loc": 74989
+      "loc": 76085
     },
     "src/core": {
-      "files": 196,
-      "loc": 66956
+      "files": 198,
+      "loc": 69274
     },
     "include": {
-      "files": 296,
-      "loc": 37353
-    },
-    "cuda": {
-      "files": 29,
-      "loc": 17907
-    },
-    "web/scale0": {
-      "files": 65,
-      "loc": 17876
+      "files": 300,
+      "loc": 38954
     },
     "web/tests": {
-      "files": 93,
-      "loc": 17215
+      "files": 143,
+      "loc": 35275
+    },
+    "web/scale0": {
+      "files": 68,
+      "loc": 23203
+    },
+    "cuda": {
+      "files": 30,
+      "loc": 18527
     },
     "web/ui": {
-      "files": 84,
-      "loc": 10986
+      "files": 86,
+      "loc": 12753
     },
     "web/viewport": {
-      "files": 19,
-      "loc": 8653
+      "files": 22,
+      "loc": 10603
     },
     "web/bridge": {
-      "files": 24,
-      "loc": 7646
+      "files": 26,
+      "loc": 9523
+    },
+    "web/scale1": {
+      "files": 20,
+      "loc": 4415
     },
     "src/scenarios": {
-      "files": 7,
-      "loc": 3387
+      "files": 8,
+      "loc": 3795
     },
     "wasm": {
       "files": 5,
-      "loc": 2706
-    },
-    "web/scale1": {
-      "files": 14,
-      "loc": 2077
+      "loc": 3559
     },
     "web/scale2": {
       "files": 12,
@@ -73,7 +73,11 @@
     },
     "src/phases": {
       "files": 4,
-      "loc": 1606
+      "loc": 1791
+    },
+    "web/config": {
+      "files": 4,
+      "loc": 1476
     },
     "vendor": {
       "files": 12,
@@ -83,13 +87,9 @@
       "files": 9,
       "loc": 1386
     },
-    "web/config": {
-      "files": 4,
-      "loc": 1373
-    },
     "web/inspector": {
       "files": 9,
-      "loc": 1291
+      "loc": 1323
     },
     "tools": {
       "files": 4,
@@ -123,13 +123,13 @@
       "files": 6,
       "loc": 314
     },
-    "web/scales-shared": {
-      "files": 1,
-      "loc": 253
-    },
     "web/telemetry": {
       "files": 4,
-      "loc": 239
+      "loc": 314
+    },
+    "web/scales-shared": {
+      "files": 1,
+      "loc": 258
     },
     "web/scale6": {
       "files": 1,
@@ -373,9 +373,20 @@
       ]
     },
     {
+      "path": "engine/cuda/dynamical_state_digest.cu",
+      "lang": "cuda",
+      "loc": 251,
+      "subsystem": "cuda",
+      "primary": true,
+      "purpose": "@file dynamical_state_digest.cu @brief Device-resident canonical Scale-0 state reduction.",
+      "symbols": [
+        "DigestDeviceView"
+      ]
+    },
+    {
       "path": "engine/cuda/gpu_buffers.cu",
       "lang": "cuda",
-      "loc": 1484,
+      "loc": 1490,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "SoA device buffer management for FTD GPU engine.",
@@ -386,7 +397,7 @@
     {
       "path": "engine/cuda/gpu_engine.cu",
       "lang": "cuda",
-      "loc": 2222,
+      "loc": 2244,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "@file gpu_engine.cu @brief GPU-accelerated FTD tick engine.",
@@ -397,7 +408,7 @@
     {
       "path": "engine/cuda/kernels_aux.cu",
       "lang": "cuda",
-      "loc": 1015,
+      "loc": 1136,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "@file kernels_aux.cu @brief Auxiliary physics kernels (drives, boundaries, reactions).",
@@ -415,7 +426,7 @@
     {
       "path": "engine/cuda/kernels_forces.cu",
       "lang": "cuda",
-      "loc": 2057,
+      "loc": 2101,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "@file kernels_forces.cu @brief GPU kernels for Phase 4 (Forces) and Phase 5 (Movement).",
@@ -475,7 +486,7 @@
     {
       "path": "engine/cuda/kernels_stencil_common.cuh",
       "lang": "cuda-header",
-      "loc": 100,
+      "loc": 215,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "Shared device-side helpers for the stencil kernel TUs.",
@@ -484,7 +495,7 @@
     {
       "path": "engine/cuda/kernels_stencil_dual.cu",
       "lang": "cuda",
-      "loc": 643,
+      "loc": 667,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "@file kernels_stencil_dual.cu @brief Dual-substrate Phase Read / Phase Write kernels (FTD tick cycle).",
@@ -493,7 +504,7 @@
     {
       "path": "engine/cuda/kernels_stencil_single.cu",
       "lang": "cuda",
-      "loc": 750,
+      "loc": 766,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "@file kernels_stencil_single.cu @brief Single-substrate Phase Read / Phase Write kernels (FTD tick cycle).",
@@ -511,7 +522,7 @@
     {
       "path": "engine/cuda/visual_field_sample.cu",
       "lang": "cuda",
-      "loc": 418,
+      "loc": 439,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "",
@@ -575,7 +586,7 @@
     {
       "path": "engine/include/ftd/backend.h",
       "lang": "c-header",
-      "loc": 264,
+      "loc": 276,
       "subsystem": "include",
       "primary": true,
       "purpose": "@file backend.h @brief Backend abstraction \u2014 collapses #ifdef FTD_ENABLE_CUDA proliferation.",
@@ -690,7 +701,7 @@
     {
       "path": "engine/include/ftd/constants.h",
       "lang": "c-header",
-      "loc": 545,
+      "loc": 574,
       "subsystem": "include",
       "primary": true,
       "purpose": "FTD Render-Bridge Constants Engine-facing interface to the ontic constants registry.",
@@ -766,6 +777,18 @@
         "Diagnostics",
         "EnergyAudit",
         "EMFieldDiag"
+      ]
+    },
+    {
+      "path": "engine/include/ftd/dynamical_state_digest.h",
+      "lang": "c-header",
+      "loc": 293,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "@file dynamical_state_digest.h @brief Canonical, parallel-reducible digest of Scale-0 dynamical state.",
+      "symbols": [
+        "DynamicalStateDigestAccumulator",
+        "DynamicalStateDigest"
       ]
     },
     {
@@ -3395,6 +3418,23 @@
       "symbols": []
     },
     {
+      "path": "engine/include/ftd/flux_cell.h",
+      "lang": "c-header",
+      "loc": 244,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "========================================================================== engine/include/ftd/flux_cell.h Flux-cell (field reservoir) constructors, membrane / pump / port mechanisms, and the region...",
+      "symbols": [
+        "RenderBridge",
+        "FluxCellTorusSpec",
+        "FluxCellMembraneSpec",
+        "FluxCellPortSpec",
+        "FluxCellPumpProfile",
+        "FluxCellRegion",
+        "FluxCellLedger"
+      ]
+    },
+    {
       "path": "engine/include/ftd/gauge_field.h",
       "lang": "c-header",
       "loc": 54,
@@ -3436,7 +3476,7 @@
     {
       "path": "engine/include/ftd/gpu_buffers.h",
       "lang": "c-header",
-      "loc": 514,
+      "loc": 529,
       "subsystem": "include",
       "primary": true,
       "purpose": "SoA (Structure-of-Arrays) device buffers for GPU-accelerated FTD engine.",
@@ -3448,7 +3488,7 @@
     {
       "path": "engine/include/ftd/gpu_engine.h",
       "lang": "c-header",
-      "loc": 550,
+      "loc": 555,
       "subsystem": "include",
       "primary": true,
       "purpose": "GPU-Accelerated FTD Engine Drop-in alternative to RenderBridge that executes the tick cycle on NVIDIA GPU via CUDA.",
@@ -3476,7 +3516,7 @@
     {
       "path": "engine/include/ftd/gpu_term_contract.h",
       "lang": "c-header",
-      "loc": 104,
+      "loc": 147,
       "subsystem": "include",
       "primary": true,
       "purpose": "Live CUDA implementation class for every TOGGLE_SPECS row.",
@@ -3712,16 +3752,19 @@
     {
       "path": "engine/include/ftd/particle_engine.h",
       "lang": "c-header",
-      "loc": 409,
+      "loc": 611,
       "subsystem": "include",
       "primary": true,
-      "purpose": "ParticleEngine: Scale 1 simulation Phase 7: Lattice-free engine with continuous positions and analytical forces.",
+      "purpose": "ParticleEngine: Scale 1 simulation Phase 7: Effective, lattice-free engine with continuous positions and analytical forces.",
       "symbols": [
         "ParticleToggles",
         "ParticleToggleSpec",
         "ParticleForceDiag",
         "Particle",
+        "ParticleInsulatingPort",
+        "ParticleInsulatingBox",
         "ParticleDiagnostics",
+        "ParticleEngineCheckpoint",
         "OrbitalElements",
         "ParticleEngine",
         "GpuBackend"
@@ -3730,7 +3773,7 @@
     {
       "path": "engine/include/ftd/poisson_solvers.h",
       "lang": "c-header",
-      "loc": 76,
+      "loc": 98,
       "subsystem": "include",
       "primary": true,
       "purpose": "Poisson solvers \u2014 SOR sweep + top-level solvers.",
@@ -3748,7 +3791,7 @@
     {
       "path": "engine/include/ftd/render_bridge.h",
       "lang": "c-header",
-      "loc": 731,
+      "loc": 816,
       "subsystem": "include",
       "primary": true,
       "purpose": "Render-Bridge Tick Engine Implements the Scale-0 lattice tick dynamics with staged read/write loops and toggle-gated extension phases.",
@@ -3762,7 +3805,7 @@
     {
       "path": "engine/include/ftd/render_bridge_diagnostics.h",
       "lang": "c-header",
-      "loc": 282,
+      "loc": 342,
       "subsystem": "include",
       "primary": true,
       "purpose": "@file engine/include/ftd/render_bridge_diagnostics.h @purpose POD diagnostic structs returned by RenderBridge inspection methods.",
@@ -3780,7 +3823,7 @@
     {
       "path": "engine/include/ftd/render_bridge_phases.h",
       "lang": "c-header",
-      "loc": 167,
+      "loc": 173,
       "subsystem": "include",
       "primary": true,
       "purpose": "@file engine/include/ftd/render_bridge_phases.h @purpose Free-function declarations for the decomposed phase methods.",
@@ -3791,19 +3834,47 @@
     {
       "path": "engine/include/ftd/scale.h",
       "lang": "c-header",
-      "loc": 83,
+      "loc": 41,
       "subsystem": "include",
       "primary": true,
-      "purpose": "Multi-Scale Physics: OnticEntity and Scale definitions Phase 7: The universal ternary triple {state, energy, boundary} recurs at every scale of reality.",
+      "purpose": "Multi-Scale Physics: effective entity projections and scale definitions Phase 7: The compact display projection {state, energy, boundary} recurs at each effective scale.",
       "symbols": [
-        "RenderBridge",
-        "Particle",
-        "ParticleEngine",
-        "Atom",
-        "AtomEngine",
-        "CosmicBody",
-        "CosmicEngine",
         "OnticEntity"
+      ]
+    },
+    {
+      "path": "engine/include/ftd/scale1/domain.h",
+      "lang": "c-header",
+      "loc": 438,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "@file scale1/domain.h @brief Shared scientific contract for Scale 1.",
+      "symbols": [
+        "Scale1PhysicsSpec",
+        "Scale1CapabilitySpec",
+        "Scale1ObserverSpec",
+        "Scale1ScenarioSpec",
+        "Scale1Provenance",
+        "Scale1ObjectRecord",
+        "Scale1FieldRecord",
+        "Scale1ForceRecord",
+        "Scale1EventRecord",
+        "Scale1ConservationRecord",
+        "Scale1SnapshotCore",
+        "Scale1Snapshot"
+      ]
+    },
+    {
+      "path": "engine/include/ftd/scale1/field_mediation_probe.h",
+      "lang": "c-header",
+      "loc": 82,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "@file field_mediation_probe.h @brief Observer-only causal carrier ledger for Scale-1 research.",
+      "symbols": [
+        "FieldMediationDispatch",
+        "FieldMediationArrival",
+        "FieldMediationProbe"
       ]
     },
     {
@@ -3847,7 +3918,7 @@
     {
       "path": "engine/include/ftd/scenario_meta.h",
       "lang": "c-header",
-      "loc": 169,
+      "loc": 181,
       "subsystem": "include",
       "primary": true,
       "purpose": "Scale-0 scenario descriptors for the native shell.",
@@ -3867,7 +3938,7 @@
     {
       "path": "engine/include/ftd/scenarios.h",
       "lang": "c-header",
-      "loc": 80,
+      "loc": 83,
       "subsystem": "include",
       "primary": true,
       "purpose": "========================================================================== engine/include/ftd/scenarios.h C++ port of the Scale-0 scenario library that was previously JS-only on the MockBridge (eng...",
@@ -3936,7 +4007,7 @@
     {
       "path": "engine/include/ftd/term_toggles.h",
       "lang": "c-header",
-      "loc": 473,
+      "loc": 524,
       "subsystem": "include",
       "primary": true,
       "purpose": "Runtime toggles for the logic-first engine.",
@@ -3984,7 +4055,7 @@
     {
       "path": "engine/include/ftd/visual_field_sample.h",
       "lang": "c-header",
-      "loc": 87,
+      "loc": 96,
       "subsystem": "include",
       "primary": true,
       "purpose": "",
@@ -4031,7 +4102,7 @@
     {
       "path": "engine/include/ftd/voxel.h",
       "lang": "c-header",
-      "loc": 210,
+      "loc": 242,
       "subsystem": "include",
       "primary": true,
       "purpose": "Per-node state for the FTD render-bridge simulation.",
@@ -4228,7 +4299,7 @@
     {
       "path": "engine/native/include/native/host/adapters/scale1_adapter.h",
       "lang": "c-header",
-      "loc": 83,
+      "loc": 85,
       "subsystem": "other",
       "primary": true,
       "purpose": "host/adapters/scale1_adapter.h \u2014 Scale 1 (ParticleEngine) behind the ScaleAdapter seam (validation that the seam is scale-generic \u2014 a SECOND adapter with a structurally different engine).",
@@ -4361,12 +4432,11 @@
     {
       "path": "engine/native/include/native/model/snapshot.h",
       "lang": "c-header",
-      "loc": 80,
+      "loc": 63,
       "subsystem": "other",
       "primary": true,
       "purpose": "model/snapshot.h \u2014 the scale-generic published snapshot.",
       "symbols": [
-        "Scale1Snapshot",
         "HostSnapshot"
       ]
     },
@@ -4428,7 +4498,7 @@
     {
       "path": "engine/native/include/native/scenario_catalog.h",
       "lang": "c-header",
-      "loc": 183,
+      "loc": 195,
       "subsystem": "other",
       "primary": true,
       "purpose": "native/scenario_catalog.h \u2014 engine/native's OWN Scale-0 scenario catalog.",
@@ -4569,7 +4639,7 @@
     {
       "path": "engine/native/src/app/app_context.h",
       "lang": "c-header",
-      "loc": 167,
+      "loc": 166,
       "subsystem": "other",
       "primary": true,
       "purpose": "app/app_context.h \u2014 AppContext (the shared GUI-thread state every wnd_proc / RmlUi callback reaches) plus the command-emission helpers that translate UI actions into ScaleCommands on the bus.",
@@ -4685,7 +4755,7 @@
     {
       "path": "engine/native/src/app/run_app.cpp",
       "lang": "cpp",
-      "loc": 2614,
+      "loc": 2604,
       "subsystem": "other",
       "primary": true,
       "purpose": "native_app \u2014 the live windowed FTD native application (M-UI-1..M-UI-3 fused).",
@@ -4703,7 +4773,7 @@
     {
       "path": "engine/native/src/app/ui_model.cpp",
       "lang": "cpp",
-      "loc": 576,
+      "loc": 573,
       "subsystem": "other",
       "primary": true,
       "purpose": "app/ui_model.cpp \u2014 builders for the RmlUi data model (see app/ui_model.h).",
@@ -4714,7 +4784,7 @@
     {
       "path": "engine/native/src/app/ui_model.h",
       "lang": "c-header",
-      "loc": 452,
+      "loc": 460,
       "subsystem": "other",
       "primary": true,
       "purpose": "app/ui_model.h \u2014 the RmlUi data-model layer of native_app: the C++ mirror of the shell (ShellData + its row types) plus the config-knob spec table, split out of app/main.cpp for readability (behavi...",
@@ -4809,7 +4879,7 @@
     {
       "path": "engine/native/src/host/adapters/scale1_adapter.cpp",
       "lang": "cpp",
-      "loc": 193,
+      "loc": 258,
       "subsystem": "other",
       "primary": true,
       "purpose": "host/adapters/scale1_adapter.cpp \u2014 Scale 1 (ParticleEngine) behind the seam.",
@@ -5436,7 +5506,7 @@
     {
       "path": "engine/src/backend.cpp",
       "lang": "cpp",
-      "loc": 631,
+      "loc": 658,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "@file backend.cpp @brief Backend implementations \u2014 CpuBackend + GpuBackend.",
@@ -5573,7 +5643,7 @@
     {
       "path": "engine/src/diagnostics_compute.cpp",
       "lang": "cpp",
-      "loc": 257,
+      "loc": 263,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "Diagnostics \u2014 implementation.",
@@ -7166,6 +7236,15 @@
       "symbols": []
     },
     {
+      "path": "engine/src/flux_cell.cpp",
+      "lang": "cpp",
+      "loc": 378,
+      "subsystem": "src/core",
+      "primary": true,
+      "purpose": "========================================================================== engine/src/flux_cell.cpp Flux-cell constructors, membrane / pump / port helpers, and the regional storage ledger.",
+      "symbols": []
+    },
+    {
       "path": "engine/src/injection.cpp",
       "lang": "cpp",
       "loc": 358,
@@ -7204,18 +7283,20 @@
     {
       "path": "engine/src/particle_engine.cpp",
       "lang": "cpp",
-      "loc": 693,
+      "loc": 1454,
       "subsystem": "src/core",
       "primary": true,
-      "purpose": "ParticleEngine: Scale 1 simulation Phase 7: Lattice-free engine with continuous positions and analytical forces.",
+      "purpose": "ParticleEngine: Scale 1 simulation Phase 7: Effective, lattice-free engine with continuous positions and analytical forces, advanced once per discrete global tick.",
       "symbols": [
-        "ParticleEngine"
+        "ParticleEngine",
+        "InsulatingBoxHit",
+        "Candidate"
       ]
     },
     {
       "path": "engine/src/poisson_solvers.cpp",
       "lang": "cpp",
-      "loc": 354,
+      "loc": 445,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "Poisson solvers \u2014 implementation.",
@@ -7224,7 +7305,7 @@
     {
       "path": "engine/src/render_bridge.cpp",
       "lang": "cpp",
-      "loc": 1294,
+      "loc": 1500,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "Logic-First FTD Engine (v2.0) Built from axioms: {3D lattice, ternary states, flux field, local causality} Six rules, nothing else: 1.",
@@ -7242,7 +7323,7 @@
     {
       "path": "engine/src/render_bridge_phases/phase_movement.cpp",
       "lang": "cpp",
-      "loc": 410,
+      "loc": 418,
       "subsystem": "src/phases",
       "primary": true,
       "purpose": "@file engine/src/render_bridge_phases/phase_movement.cpp @purpose Implementation of phase_movement decomposition (Phase 4c, 2026-04-27).",
@@ -7251,7 +7332,7 @@
     {
       "path": "engine/src/render_bridge_phases/phase_read.cpp",
       "lang": "cpp",
-      "loc": 230,
+      "loc": 351,
       "subsystem": "src/phases",
       "primary": true,
       "purpose": "@file engine/src/render_bridge_phases/phase_read.cpp @purpose Implementation of phase_read decomposition (Phase 4c, 2026-04-27).",
@@ -7260,19 +7341,28 @@
     {
       "path": "engine/src/render_bridge_phases/phase_write.cpp",
       "lang": "cpp",
-      "loc": 555,
+      "loc": 611,
       "subsystem": "src/phases",
       "primary": true,
       "purpose": "@file engine/src/render_bridge_phases/phase_write.cpp @purpose Implementation of phase_write decomposition (Phase 4a, 2026-04-27).",
       "symbols": []
     },
     {
-      "path": "engine/src/scale_bridge.cpp",
+      "path": "engine/src/scale1/domain.cpp",
       "lang": "cpp",
-      "loc": 283,
+      "loc": 854,
       "subsystem": "src/core",
       "primary": true,
-      "purpose": "Scale Bridge: coarsen/refine between Scale 0 (voxels) and Scale 1 (particles) Phase 7 Stage 3.",
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/src/scale1/field_mediation_probe.cpp",
+      "lang": "cpp",
+      "loc": 99,
+      "subsystem": "src/core",
+      "primary": true,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -7287,7 +7377,7 @@
     {
       "path": "engine/src/scenarios.cpp",
       "lang": "cpp",
-      "loc": 251,
+      "loc": 271,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "========================================================================== engine/src/scenarios.cpp Thin router + shared RNG for the Scale-0 scenario library.",
@@ -7305,9 +7395,18 @@
       ]
     },
     {
+      "path": "engine/src/scenarios/cell.cpp",
+      "lang": "cpp",
+      "loc": 407,
+      "subsystem": "src/scenarios",
+      "primary": true,
+      "purpose": "========================================================================== engine/src/scenarios/cell.cpp s0-cell-* scenario group: flux cells (bounded field reservoirs).",
+      "symbols": []
+    },
+    {
       "path": "engine/src/scenarios/flux.cpp",
       "lang": "cpp",
-      "loc": 525,
+      "loc": 526,
       "subsystem": "src/scenarios",
       "primary": true,
       "purpose": "========================================================================== engine/src/scenarios/flux.cpp Group: flux-* (22 scenarios) Canonical seed implementation; the former JS mirror is archived.",
@@ -7384,7 +7483,7 @@
     {
       "path": "engine/src/visual_field_sample.cpp",
       "lang": "cpp",
-      "loc": 307,
+      "loc": 358,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -7442,7 +7541,7 @@
     {
       "path": "engine/src/ws_server_commands.cpp",
       "lang": "cpp",
-      "loc": 899,
+      "loc": 997,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "@file ws_server_commands.cpp @brief Resource policy, transactional bridge changes, and command dispatch.",
@@ -7471,7 +7570,7 @@
     {
       "path": "engine/src/ws_server_telemetry.cpp",
       "lang": "cpp",
-      "loc": 669,
+      "loc": 679,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "@file ws_server_telemetry.cpp @brief Telemetry, inspection, and scalar JSON serialization.",
@@ -7601,7 +7700,7 @@
     {
       "path": "engine/tests/benchmark_engine_theory.cpp",
       "lang": "cpp",
-      "loc": 1181,
+      "loc": 1180,
       "subsystem": "tests",
       "primary": false,
       "purpose": "ENGINE-THEORY BRIDGE BENCHMARK \u2014 COMPREHENSIVE Quantitative comparison of C++ engine output to FTD theory.",
@@ -8048,15 +8147,6 @@
       "symbols": [
         "Fixture"
       ]
-    },
-    {
-      "path": "engine/tests/campaign_cross_scale.cpp",
-      "lang": "cpp",
-      "loc": 234,
-      "subsystem": "tests",
-      "primary": false,
-      "purpose": "Phase 7 \u2014 Stage 4: Cross-Scale Validation (6 checks) Run the SAME two-body scenario at both Scale 0 (voxels) and Scale 1 (ParticleEngine).",
-      "symbols": []
     },
     {
       "path": "engine/tests/campaign_cubic_hop_work_response.cpp",
@@ -8962,15 +9052,6 @@
       "symbols": []
     },
     {
-      "path": "engine/tests/campaign_multiscale_pipeline.cpp",
-      "lang": "cpp",
-      "loc": 317,
-      "subsystem": "tests",
-      "primary": false,
-      "purpose": "Campaign: Multi-Scale Pipeline (12 checks across 4 phases) Phase 1: Full pipeline round-trip (Scale 0 \u2192 1 \u2192 2 \u2192 1 \u2192 0) Phase 2: Energy conservation across transitions Phase 3: Multi-atom pipeline (...",
-      "symbols": []
-    },
-    {
       "path": "engine/tests/campaign_native_dressed_evaporation_hazard.cpp",
       "lang": "cpp",
       "loc": 328,
@@ -9150,7 +9231,7 @@
     {
       "path": "engine/tests/campaign_pe_fine_structure.cpp",
       "lang": "cpp",
-      "loc": 235,
+      "loc": 223,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Campaign: PE Fine Structure Tests multiple Phase 2 forces working together: spin-orbit + relativistic corrections produce fine structure splitting.",
@@ -10169,15 +10250,6 @@
       "symbols": []
     },
     {
-      "path": "engine/tests/test_atom_scale_bridge.cpp",
-      "lang": "cpp",
-      "loc": 191,
-      "subsystem": "tests",
-      "primary": false,
-      "purpose": "Test: Atom Scale Bridge (Scale 1 \u2194 Scale 2) 6 checks covering coarsen_to_atoms and refine_to_particles.",
-      "symbols": []
-    },
-    {
       "path": "engine/tests/test_atom_toggles.cpp",
       "lang": "cpp",
       "loc": 195,
@@ -10407,7 +10479,7 @@
     {
       "path": "engine/tests/test_boundary_modes_golden.cpp",
       "lang": "cpp",
-      "loc": 186,
+      "loc": 207,
       "subsystem": "tests",
       "primary": false,
       "purpose": "============================================================================ test_boundary_modes_golden.cpp \u2014 boundary-mode characterization goldens (revision 0.6; ADR-0012 amendment / multi-profil...",
@@ -10418,21 +10490,23 @@
     {
       "path": "engine/tests/test_boundary_movement.cpp",
       "lang": "cpp",
-      "loc": 84,
+      "loc": 244,
       "subsystem": "tests",
       "primary": false,
-      "purpose": "test_boundary_movement.cpp Verifies phase_movement face handling with an in-budget raw velocity and accumulated movement remainder: reflective_boundary OFF \u2192 particle exhausts into the void (no tor...",
-      "symbols": []
+      "purpose": "test_boundary_movement.cpp Verifies phase_movement face handling with an in-budget raw velocity and accumulated movement remainder: Dispersal -> particle exhausts into the void Reflective -> normal...",
+      "symbols": [
+        "FaceCase"
+      ]
     },
     {
       "path": "engine/tests/test_boundary_scenario_physics.cpp",
       "lang": "cpp",
-      "loc": 354,
+      "loc": 566,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Quantitative certification for the public Scale-0 finite-box boundary probe.",
       "symbols": [
-        "SixFields"
+        "TransportFields"
       ]
     },
     {
@@ -11607,7 +11681,7 @@
     {
       "path": "engine/tests/test_cpu_pairwise_force_channels.cpp",
       "lang": "cpp",
-      "loc": 73,
+      "loc": 86,
       "subsystem": "tests",
       "primary": false,
       "purpose": "@file test_cpu_pairwise_force_channels.cpp @brief CPU Yukawa / exchange are live pairwise channels, not GPU-only no-ops.",
@@ -11884,7 +11958,7 @@
     {
       "path": "engine/tests/test_dual_substrate.cpp",
       "lang": "cpp",
-      "loc": 384,
+      "loc": 436,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Test: Dual-Substrate Engine Verifies the dual-substrate implementation from \"The Algebraic Identity of Two Substrates\" (Montanez & Claude, 2026).",
@@ -12028,6 +12102,26 @@
       "subsystem": "tests",
       "primary": false,
       "purpose": "Emergent Measurements \u2014 High-Fidelity Lattice Physics Verification Five quantitative tests using high SOR resolution to measure emergent quantities that arise from the six FTD update rules: EM1: Co...",
+      "symbols": []
+    },
+    {
+      "path": "engine/tests/test_empty_scenario_qualification.cpp",
+      "lang": "cpp",
+      "loc": 636,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "Native CPU qualification for the Scale-0 `empty` null control.",
+      "symbols": [
+        "BoundaryCase"
+      ]
+    },
+    {
+      "path": "engine/tests/test_empty_scenario_qualification_gpu.cpp",
+      "lang": "cpp",
+      "loc": 278,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "Focused CUDA qualification for the Scale-0 `empty` canonical digest hook.",
       "symbols": []
     },
     {
@@ -12222,10 +12316,10 @@
     {
       "path": "engine/tests/test_fine_structure_scale1.cpp",
       "lang": "cpp",
-      "loc": 146,
+      "loc": 113,
       "subsystem": "tests",
       "primary": false,
-      "purpose": "Fine Structure at Scale 1: Spin-Orbit Splitting FTD Multi-Scale: Scale 1 has spin-orbit and relativistic toggles already implemented.",
+      "purpose": "Scale-1 fine-structure claim boundary.",
       "symbols": []
     },
     {
@@ -12306,6 +12400,19 @@
       "primary": false,
       "purpose": "Test: Flavor Physics \u2014 CKM/PMNS from Lattice (Checklist #40) FTD derives PMNS neutrino mixing angles and CKM parameters from framework integers {3, 4, 7, 13}.",
       "symbols": []
+    },
+    {
+      "path": "engine/tests/test_flux_cell_scenario_physics.cpp",
+      "lang": "cpp",
+      "loc": 1037,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "Behavioral tests for the s0-cell-* flux-cell scenarios.",
+      "symbols": [
+        "MembraneTrace",
+        "HoldTrace",
+        "Probe"
+      ]
     },
     {
       "path": "engine/tests/test_flux_link_clifford.cpp",
@@ -12826,7 +12933,7 @@
     {
       "path": "engine/tests/test_gpu_movement_transaction.cpp",
       "lang": "cpp",
-      "loc": 439,
+      "loc": 558,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Exact greedy CUDA movement transaction regression.",
@@ -12837,7 +12944,7 @@
     {
       "path": "engine/tests/test_gpu_native_extension_parity.cpp",
       "lang": "cpp",
-      "loc": 382,
+      "loc": 461,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Focused CPU/CUDA parity gates for native Scale-0 extension phases that sit outside the historical six-phase CUDA core: EP-1 EW background drive executes before phase_read and enters L/R.",
@@ -12947,7 +13054,7 @@
     {
       "path": "engine/tests/test_gpu_term_contract.cpp",
       "lang": "cpp",
-      "loc": 230,
+      "loc": 217,
       "subsystem": "tests",
       "primary": false,
       "purpose": "GPU term-completeness oracle.",
@@ -12965,7 +13072,7 @@
     {
       "path": "engine/tests/test_gpu_visual_field_sample.cpp",
       "lang": "cpp",
-      "loc": 142,
+      "loc": 223,
       "subsystem": "tests",
       "primary": false,
       "purpose": "CUDA compact visual-field fidelity contract.",
@@ -13928,15 +14035,6 @@
       ]
     },
     {
-      "path": "engine/tests/test_multiscale_bridge.cpp",
-      "lang": "cpp",
-      "loc": 414,
-      "subsystem": "tests",
-      "primary": false,
-      "purpose": "Test: Multi-Scale Bridge (13 unit checks) Covers quantum number preservation, position round-trips, OnticEntity consistency, multi-nuclei clustering, edge cases, and energy budget across Scale 0 \u2194...",
-      "symbols": []
-    },
-    {
       "path": "engine/tests/test_native_active_mode_backreaction.cpp",
       "lang": "cpp",
       "loc": 81,
@@ -14480,10 +14578,10 @@
     {
       "path": "engine/tests/test_particle_engine.cpp",
       "lang": "cpp",
-      "loc": 270,
+      "loc": 641,
       "subsystem": "tests",
       "primary": false,
-      "purpose": "Phase 7 \u2014 Stage 2: ParticleEngine unit tests (12 checks) PE1: Particle injection (id assigned, charge correct) PE2: Free particle (constant velocity when alone, no damping) PE3: Opposite attract (f...",
+      "purpose": "Phase 7 \u2014 Stage 2: ParticleEngine unit tests (17 gates) PE1: Particle injection (id assigned, charge correct) PE2: Free particle (constant velocity when alone, no damping) PE3: Opposite attract (fo...",
       "symbols": []
     },
     {
@@ -14500,7 +14598,7 @@
     {
       "path": "engine/tests/test_particle_toggles.cpp",
       "lang": "cpp",
-      "loc": 203,
+      "loc": 206,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Test: ParticleToggles \u2014 Per-force toggle control for ParticleEngine Verifies that each toggle in ParticleToggles enables/disables its force, and that force_diag_ correctly decomposes forces by type.",
@@ -14509,10 +14607,10 @@
     {
       "path": "engine/tests/test_particle_toggles_table.cpp",
       "lang": "cpp",
-      "loc": 132,
+      "loc": 138,
       "subsystem": "tests",
       "primary": false,
-      "purpose": "Test: ParticleToggles characterization (ticket 3.3) Pins the EXACT post-construction toggle state, enable_all()/minimal() profiles, validate() verdicts, and the string get_toggle/set_toggle round-t...",
+      "purpose": "Test: ParticleToggles characterization (ticket 3.3) Pins the audited Scale-1 baseline, applicable enable_all()/verified() profiles, retirement behavior, validate() verdicts, and string access.",
       "symbols": []
     },
     {
@@ -14527,7 +14625,7 @@
     {
       "path": "engine/tests/test_pe_forces.cpp",
       "lang": "cpp",
-      "loc": 1139,
+      "loc": 1072,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Test: ParticleEngine force variants (consolidated suite) Merges 7 legacy test_pe_*.cpp files into a single ftd::test-instrumented suite using the Phase 2a NDJSON telemetry API: test_pe_exchange ->...",
@@ -15078,12 +15176,21 @@
       "symbols": []
     },
     {
-      "path": "engine/tests/test_scale_bridge.cpp",
+      "path": "engine/tests/test_scale1_domain.cpp",
       "lang": "cpp",
-      "loc": 205,
+      "loc": 295,
       "subsystem": "tests",
       "primary": false,
-      "purpose": "Phase 7 \u2014 Stage 3: Scale Bridge unit tests (8 checks) SB1: Coarsen charge matches voxel state SB2: Coarsen position matches coord + remainder SB3: Coarsen velocity preserved exactly SB4: Refine pla...",
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/tests/test_scale1_field_mediation_probe.cpp",
+      "lang": "cpp",
+      "loc": 53,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -15658,7 +15765,7 @@
     {
       "path": "engine/tests/test_toggle_matrix.cpp",
       "lang": "cpp",
-      "loc": 480,
+      "loc": 494,
       "subsystem": "tests",
       "primary": false,
       "purpose": "@file test_toggle_matrix.cpp @brief Pairwise toggle-combination smoke test.",
@@ -15783,7 +15890,7 @@
     {
       "path": "engine/tests/test_visual_field_sample.cpp",
       "lang": "cpp",
-      "loc": 185,
+      "loc": 248,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Compact Scale-0 visual-field readback contract.",
@@ -23472,7 +23579,7 @@
     {
       "path": "engine/wasm/bindings_internal.h",
       "lang": "c-header",
-      "loc": 92,
+      "loc": 93,
       "subsystem": "wasm",
       "primary": true,
       "purpose": "@file bindings_internal.h @brief Shared helpers exposed across the split Embind binding TUs.",
@@ -23481,16 +23588,18 @@
     {
       "path": "engine/wasm/bindings_particle.cpp",
       "lang": "cpp",
-      "loc": 461,
+      "loc": 1191,
       "subsystem": "wasm",
       "primary": true,
       "purpose": "@file bindings_particle.cpp @brief Embind bindings for ParticleEngine (Scale 1).",
-      "symbols": []
+      "symbols": [
+        "Scale1FinitePortBatteryObserver"
+      ]
     },
     {
       "path": "engine/wasm/bindings_render_bridge.cpp",
       "lang": "cpp",
-      "loc": 434,
+      "loc": 481,
       "subsystem": "wasm",
       "primary": true,
       "purpose": "@file bindings_render_bridge.cpp @brief Embind bindings for RenderBridge (Scale 0 \u2014 voxel lattice engine).",
@@ -23501,7 +23610,7 @@
     {
       "path": "engine/wasm/ftd_wasm.cpp",
       "lang": "cpp",
-      "loc": 1374,
+      "loc": 1449,
       "subsystem": "wasm",
       "primary": true,
       "purpose": "@file ftd_wasm.cpp @brief Emscripten Embind bindings for the FTD engine \u2014 shared helpers.",
@@ -23522,7 +23631,7 @@
     {
       "path": "engine/web/js/aggregation-bridge.js",
       "lang": "js",
-      "loc": 371,
+      "loc": 373,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "Aggregation Bridge Module \u2014 Appendix A of the FTD project (2026).",
@@ -23539,7 +23648,7 @@
     {
       "path": "engine/web/js/app-wire/bridge-boot.js",
       "lang": "js",
-      "loc": 83,
+      "loc": 87,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "app-wire/bridge-boot.js \u2014 boot-time bridge probe (native \u2192 WASM).",
@@ -23550,7 +23659,7 @@
     {
       "path": "engine/web/js/app-wire/keyboard.js",
       "lang": "js",
-      "loc": 66,
+      "loc": 62,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "app-wire/keyboard.js \u2014 keyboard-shortcut handler for the FTD dashboard.",
@@ -23573,7 +23682,7 @@
     {
       "path": "engine/web/js/app.js",
       "lang": "js",
-      "loc": 1744,
+      "loc": 2072,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "@file app.js @brief FTD Web Dashboard \u2014 Main Application Controller [EXTENDED] Initializes all subsystems, manages the frame loop, and wires up UI controls to the simulation bridge.",
@@ -23882,7 +23991,7 @@
     {
       "path": "engine/web/js/bridge/capabilities/scale0.js",
       "lang": "js",
-      "loc": 60,
+      "loc": 77,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "@file engine/web/js/bridge/capabilities/scale0.js @purpose Scale-0 (lattice/substrate) capability factory.",
@@ -24031,7 +24140,7 @@
     {
       "path": "engine/web/js/bridge/native-particle-engine.js",
       "lang": "js",
-      "loc": 492,
+      "loc": 815,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Scale-1 Particle Engine \u2014 native C++/WASM adapter.",
@@ -24055,6 +24164,15 @@
       ]
     },
     {
+      "path": "engine/web/js/bridge/sampler-cadence.classic.js",
+      "lang": "js",
+      "loc": 122,
+      "subsystem": "web/bridge",
+      "primary": true,
+      "purpose": "Shared classic-worker sampler scheduler.",
+      "symbols": []
+    },
+    {
       "path": "engine/web/js/bridge/sampler-registry.classic.js",
       "lang": "js",
       "loc": 33,
@@ -24066,7 +24184,7 @@
     {
       "path": "engine/web/js/bridge/sampler-want-set.js",
       "lang": "js",
-      "loc": 64,
+      "loc": 90,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Multi-owner sampler-want union for the WASM worker proxy.",
@@ -24075,9 +24193,21 @@
       ]
     },
     {
+      "path": "engine/web/js/bridge/wasm-artifact-identity.js",
+      "lang": "js",
+      "loc": 121,
+      "subsystem": "web/bridge",
+      "primary": true,
+      "purpose": "Fetch and verify the exact loader/module bytes before either can execute.",
+      "symbols": [
+        "selectWasmArtifactIdentity()",
+        "loadVerifiedWasmVariant()"
+      ]
+    },
+    {
       "path": "engine/web/js/bridge/wasm-bridge-proxy.js",
       "lang": "js",
-      "loc": 738,
+      "loc": 1304,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Main-thread proxy for the Scale-0 WASM physics Web Worker.",
@@ -24089,7 +24219,7 @@
     {
       "path": "engine/web/js/bridge/wasm-bridge.js",
       "lang": "js",
-      "loc": 1057,
+      "loc": 1266,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "@file engine/web/js/bridge/wasm-bridge.js @purpose Thin wrapper around the compiled C++/WASM physics engine (engine/wasm/ftd_wasm.cpp).",
@@ -24100,7 +24230,7 @@
     {
       "path": "engine/web/js/bridge/wasm-bridge.worker.js",
       "lang": "js",
-      "loc": 546,
+      "loc": 1031,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Scale-0 WASM physics Web Worker.",
@@ -24124,7 +24254,7 @@
     {
       "path": "engine/web/js/bridge/ws-scale-fallback-facade.js",
       "lang": "js",
-      "loc": 115,
+      "loc": 123,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "",
@@ -24182,7 +24312,7 @@
     {
       "path": "engine/web/js/config/toggles.js",
       "lang": "js",
-      "loc": 675,
+      "loc": 778,
       "subsystem": "web/config",
       "primary": true,
       "purpose": "Toggle Configuration \u2014 Single source of truth for all scale toggles.",
@@ -24190,20 +24320,21 @@
         "getScale0ScenarioToggleProfile()",
         "SCALE0_TOGGLES",
         "SCALE0_ADVANCED_TOGGLES",
+        "SCALE0_ENABLE_ALL_PHYSICS_KEYS",
+        "SCALE0_ENABLE_ALL_PHYSICS_EXCLUDED_KEYS",
         "SCALE2_TOGGLES",
         "SCALE0_PREPARED_COULOMB_TERMS",
         "SCALE0_SCENARIO_OVERRIDES",
         "SCALE0_SCENARIO_RESEARCH_TERMS",
         "SCALE0_SCENARIO_BOUNDARY",
         "SCALE0_ABSORBING_SCENARIOS",
-        "SCALE0_MASS_GRAVITY_SCENARIOS",
-        "LIGHT_SCENARIO_OVERRIDES"
+        "SCALE0_MASS_GRAVITY_SCENARIOS"
       ]
     },
     {
       "path": "engine/web/js/constants.js",
       "lang": "js",
-      "loc": 595,
+      "loc": 608,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "@file constants.js @brief FTD Constants \u2014 single source of truth for the web dashboard.",
@@ -24365,7 +24496,7 @@
     {
       "path": "engine/web/js/fieldlines.js",
       "lang": "js",
-      "loc": 1024,
+      "loc": 1101,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "\u2500\u2500 fieldlines.js \u2500\u2500 Streamline computation for 3D field visualization \u2500\u2500 RK4 integration through sampled vector fields.",
@@ -24376,12 +24507,12 @@
         "lookupField()",
         "rk4Step()",
         "computeStreamlines()",
+        "createStreamlineTaskState()",
+        "beginStreamlineTask()",
+        "cancelStreamlineTask()",
+        "advanceStreamlineTask()",
         "generateEFieldSeeds()",
-        "generateBFieldSeeds()",
-        "generateGridSeeds()",
-        "unionStreamlineSeeds()",
-        "generateImportanceSeeds()",
-        "generateBImportanceSeeds()"
+        "generateBFieldSeeds()"
       ]
     },
     {
@@ -24409,7 +24540,7 @@
     {
       "path": "engine/web/js/inspector.js",
       "lang": "js",
-      "loc": 412,
+      "loc": 502,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "Inspector Panel \u2014 click-to-inspect particle properties.",
@@ -24420,7 +24551,7 @@
     {
       "path": "engine/web/js/inspector/app-runtime.js",
       "lang": "js",
-      "loc": 51,
+      "loc": 21,
       "subsystem": "web/inspector",
       "primary": true,
       "purpose": "",
@@ -24431,7 +24562,7 @@
     {
       "path": "engine/web/js/inspector/chrome.js",
       "lang": "js",
-      "loc": 76,
+      "loc": 84,
       "subsystem": "web/inspector",
       "primary": true,
       "purpose": "",
@@ -24448,7 +24579,7 @@
     {
       "path": "engine/web/js/inspector/dom-bindings.js",
       "lang": "js",
-      "loc": 166,
+      "loc": 178,
       "subsystem": "web/inspector",
       "primary": true,
       "purpose": "",
@@ -24470,7 +24601,7 @@
     {
       "path": "engine/web/js/inspector/scales/atoms.js",
       "lang": "js",
-      "loc": 295,
+      "loc": 303,
       "subsystem": "web/inspector",
       "primary": true,
       "purpose": "",
@@ -24501,7 +24632,7 @@
     {
       "path": "engine/web/js/inspector/scales/lattice.js",
       "lang": "js",
-      "loc": 353,
+      "loc": 348,
       "subsystem": "web/inspector",
       "primary": true,
       "purpose": "",
@@ -24515,7 +24646,7 @@
     {
       "path": "engine/web/js/inspector/scales/particles.js",
       "lang": "js",
-      "loc": 92,
+      "loc": 131,
       "subsystem": "web/inspector",
       "primary": true,
       "purpose": "",
@@ -24748,7 +24879,7 @@
     {
       "path": "engine/web/js/physics/physics-harness.js",
       "lang": "js",
-      "loc": 535,
+      "loc": 597,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "PhysicsHarness \u2014 single canonical surface for reading and writing Scale-0 lattice physics state.",
@@ -24772,7 +24903,7 @@
     {
       "path": "engine/web/js/scales/scale-utils.js",
       "lang": "js",
-      "loc": 253,
+      "loc": 258,
       "subsystem": "web/scales-shared",
       "primary": true,
       "purpose": "Scale Utilities -- Shared helpers for scale controllers \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Common formatting, throttling, and DOM-update utilities extracted from a...",
@@ -24793,17 +24924,17 @@
     {
       "path": "engine/web/js/scales/scale0/analysis/gravity-analysis.js",
       "lang": "js",
-      "loc": 201,
+      "loc": 241,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Gravity analysis \u2014 pure, DOM-free scalar telemetry for the Gravity Observatory.",
       "symbols": [
-        "gravityPE()",
-        "gravityPEFromPositions()",
         "dilationPct()",
         "strainProxy()",
         "forceMagnitudes()",
         "maxRhoOf()",
+        "gravityVisualSampleGrid()",
+        "gravityProxySamplesFromVolume()",
         "gravitySlice()",
         "aggregateMetrics()"
       ]
@@ -24867,7 +24998,7 @@
     {
       "path": "engine/web/js/scales/scale0/analysis/time-analysis.js",
       "lang": "js",
-      "loc": 54,
+      "loc": 99,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Pure FTD causal-clock math.",
@@ -24875,6 +25006,7 @@
         "ftdGamma()",
         "radialProfile()",
         "radialBins()",
+        "radialSummary()",
         "lapse",
         "betaSquared",
         "causalBudget",
@@ -24888,7 +25020,7 @@
     {
       "path": "engine/web/js/scales/scale0/analysis/wave-spectrum.js",
       "lang": "js",
-      "loc": 462,
+      "loc": 501,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "",
@@ -24910,12 +25042,13 @@
     {
       "path": "engine/web/js/scales/scale0/controller.js",
       "lang": "js",
-      "loc": 457,
+      "loc": 596,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 (Lattice) Controller Refactored into a package-style module with explicit runtime phases, a viewport adapter, scenario registry, and UI bindings owned by Scale 0.",
       "symbols": [
         "Scale0LifecycleController",
+        "syncScale0AuthoritativeLatticeSize()",
         "bindUI()",
         "mountScale0PlaybackUI()",
         "enter()",
@@ -24925,8 +25058,7 @@
         "loadScenario()",
         "loadSelectedScenario()",
         "animate()",
-        "step()",
-        "reset()"
+        "step()"
       ]
     },
     {
@@ -24945,10 +25077,10 @@
     {
       "path": "engine/web/js/scales/scale0/runtime/diagnostics.js",
       "lang": "js",
-      "loc": 98,
+      "loc": 179,
       "subsystem": "web/scale0",
       "primary": true,
-      "purpose": "Live decomposition tooltip for the status-bar energy readout (whole-box audit channels, sim units).",
+      "purpose": "Live decomposition tooltip for the status-bar energy readout (whole-box per-tick ledger plus optional audit channels, sim units).",
       "symbols": [
         "updateDiagnosticsAndPanels()"
       ]
@@ -24956,7 +25088,7 @@
     {
       "path": "engine/web/js/scales/scale0/runtime/field-line-knots.js",
       "lang": "js",
-      "loc": 763,
+      "loc": 803,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "engine/web/js/scales/scale0/runtime/field-line-knots.js Field-line KNOT detection + quantification + identity tracking \u2014 JS-native.",
@@ -24970,7 +25102,7 @@
     {
       "path": "engine/web/js/scales/scale0/runtime/field-overlays.js",
       "lang": "js",
-      "loc": 1061,
+      "loc": 1244,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Native mass-gravity scenarios expose the actual latency-Poisson solution as FTS2 kind 17.",
@@ -24978,13 +25110,14 @@
         "scale0FieldKindOverrides()",
         "buildForceOverlayData()",
         "buildDerivedSubstrateData()",
+        "disposeFieldOverlayRuntime()",
         "updateFieldOverlays()"
       ]
     },
     {
       "path": "engine/web/js/scales/scale0/runtime/field-sample-cache.js",
       "lang": "js",
-      "loc": 157,
+      "loc": 161,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 Lazy field-sample cache \u2014 visual overlay layer only.",
@@ -24998,7 +25131,7 @@
     {
       "path": "engine/web/js/scales/scale0/runtime/frame-sync.js",
       "lang": "js",
-      "loc": 58,
+      "loc": 63,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "",
@@ -25058,7 +25191,7 @@
     {
       "path": "engine/web/js/scales/scale0/runtime/overlay-frames.js",
       "lang": "js",
-      "loc": 567,
+      "loc": 601,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 Overlay frame builders \u2014 one pure function per topology overlay.",
@@ -25080,7 +25213,7 @@
     {
       "path": "engine/web/js/scales/scale0/runtime/scenario-loader.js",
       "lang": "js",
-      "loc": 985,
+      "loc": 1363,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Frame a compact or bounded center-seeded structure once when its scenario is loaded.",
@@ -25092,17 +25225,17 @@
         "captureOverlayPreferences()",
         "restoreOverlayPreferences()",
         "resetScale0VisualState()",
+        "enforceDirectWasmInteractiveFallback()",
+        "fallbackToInThreadEngine()",
         "loadScale0Scenario()",
         "resizeScale0Lattice()",
-        "stepScale0()",
-        "resetScale0Scenario()",
-        "exitScale0()"
+        "stepScale0()"
       ]
     },
     {
       "path": "engine/web/js/scales/scale0/runtime/streamline-integrator.js",
       "lang": "js",
-      "loc": 53,
+      "loc": 88,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 Streamline parameter derivation + particle-buffer seeding helpers shared between the EM and force overlay builders.",
@@ -25112,9 +25245,18 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale0/runtime/streamline-worker.js",
+      "lang": "js",
+      "loc": 70,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/js/scales/scale0/runtime/tick.js",
       "lang": "js",
-      "loc": 65,
+      "loc": 69,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Advance Scale-0 physics by `tickCount` ticks on the active owner only.",
@@ -25126,10 +25268,10 @@
     {
       "path": "engine/web/js/scales/scale0/scenario-registry.js",
       "lang": "js",
-      "loc": 1099,
+      "loc": 1275,
       "subsystem": "web/scale0",
       "primary": true,
-      "purpose": "Scenario: empty (Empty Lattice) Physical purpose: Serves as the baseline state of the lattice with no initial particles or fields.",
+      "purpose": "Scenario: empty (Empty Lattice) Scientific purpose: Serves as an imposed null control with no initial particles or fields.",
       "symbols": [
         "getScale0Scenario()",
         "populateScale0ScenarioSelect()",
@@ -25142,7 +25284,7 @@
     {
       "path": "engine/web/js/scales/scale0/scenario-validation.js",
       "lang": "js",
-      "loc": 822,
+      "loc": 906,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Hard admission gate for the normal Scale-0 menu.",
@@ -25153,29 +25295,29 @@
     {
       "path": "engine/web/js/scales/scale0/state/store.js",
       "lang": "js",
-      "loc": 285,
+      "loc": 736,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "localStorage may be blocked (privacy mode) \u2014 fall through to default",
       "symbols": [
         "getScale0State()",
+        "getScale0QualificationState()",
+        "isScale0AuthoritativeGenerationReady()",
+        "subscribeScale0Qualification()",
+        "beginScale0AuthoritativeLoad()",
+        "completeScale0AuthoritativeLoad()",
+        "failScale0AuthoritativeLoad()",
+        "recordScale0ScientificMutation()",
+        "commitScale0ScientificMutation()",
         "recomputeAnyFieldActive()",
         "resetFieldFlags()",
-        "setFieldToggle()",
-        "getFieldStateSnapshot()",
-        "setKnotTracking()",
-        "setForceStyle()",
-        "getScalarRenderMode()",
-        "setScalarRenderMode()",
-        "getPrimeTickOnLoad()",
-        "setPrimeTickOnLoad()",
-        "setFluxMock()"
+        "setFieldToggle()"
       ]
     },
     {
       "path": "engine/web/js/scales/scale0/ui/bindings.js",
       "lang": "js",
-      "loc": 283,
+      "loc": 466,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "v=2: Tier 1 quantum overlay bindings added \u2014 see SPEC_S0_QUANTUM_OVERLAYS.md",
@@ -25188,7 +25330,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/controls/component.js",
       "lang": "js",
-      "loc": 39,
+      "loc": 51,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 Controls Component Mounts all Scale 0 control cards into the controls panel",
@@ -25197,9 +25339,20 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale0/ui/controls/flow-lines.js",
+      "lang": "js",
+      "loc": 44,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Shared Flux / electric / magnetic streamline presentation controls.",
+      "symbols": [
+        "createFlowLinesCard()"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale0/ui/controls/flux-volume.js",
       "lang": "js",
-      "loc": 174,
+      "loc": 181,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 Flux Volume Card",
@@ -25212,7 +25365,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/controls/physics-toggles.js",
       "lang": "js",
-      "loc": 62,
+      "loc": 69,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 Physics Toggles Card",
@@ -25223,7 +25376,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/controls/substrate-controls.js",
       "lang": "js",
-      "loc": 80,
+      "loc": 83,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 Substrate Controls Card",
@@ -25234,18 +25387,20 @@
     {
       "path": "engine/web/js/scales/scale0/ui/controls/wire.js",
       "lang": "js",
-      "loc": 546,
+      "loc": 1010,
       "subsystem": "web/scale0",
       "primary": true,
-      "purpose": "Scale 0 Controls Panel Wiring Binds event listeners for every control card mounted by Scale0ControlsComponent: - Physics toggles card (all 18 toggles from SCALE0_TOGGLES) - Substrate controls card...",
+      "purpose": "Scale 0 Controls Panel Wiring Binds event listeners for every control card mounted by Scale0ControlsComponent: - Physics toggles card (all visible standard and research toggles) - Substrate control...",
       "symbols": [
+        "syncScale0ParticleDisplay()",
+        "syncScale0FlowLineControls()",
         "wireScale0Controls()"
       ]
     },
     {
       "path": "engine/web/js/scales/scale0/ui/dom.js",
       "lang": "js",
-      "loc": 132,
+      "loc": 149,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "",
@@ -25267,7 +25422,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/_card-helpers.js",
       "lang": "js",
-      "loc": 195,
+      "loc": 194,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Shared card-rendering helpers for Scale 0 dock-mode panels.",
@@ -25286,7 +25441,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/applicability.js",
       "lang": "js",
-      "loc": 227,
+      "loc": 256,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scenario-aware availability for Scale-0 visualization overlays.",
@@ -25300,12 +25455,13 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/conservation-micropanel.js",
       "lang": "js",
-      "loc": 316,
+      "loc": 485,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Conservation-law audit micropanel.",
       "symbols": [
         "ConservationMicropanelComponent",
+        "getConservationSourceBoundary()",
         "mountConservationMicropanel()",
         "initConservationMicropanel()"
       ]
@@ -25313,7 +25469,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/dispersion-panel.js",
       "lang": "js",
-      "loc": 195,
+      "loc": 202,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Dispersion \u2014 docked Scale-0 side panel (FTD-0298 / FTD-0299).",
@@ -25347,7 +25503,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/flux-slice-panel.js",
       "lang": "js",
-      "loc": 1107,
+      "loc": 1265,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 \u2014 Live Multi-Field Flux Slice Panel The flagship |J| row is visible by default; every other field mirrors its 3D visualization toggle until the user explicitly enables that row.",
@@ -25360,7 +25516,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/genesis-burst-panel.js",
       "lang": "js",
-      "loc": 199,
+      "loc": 305,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Selected genesis response N(A) \u2014 interactive fire panel (FTD-0269 provenance).",
@@ -25372,11 +25528,13 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/gravity-panel.js",
       "lang": "js",
-      "loc": 390,
+      "loc": 1058,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Gravity Observatory \u2014 Scale-0 gravity-field instrument.",
       "symbols": [
+        "gravitySliceMidIndex()",
+        "samplerVersionsAdvanced()",
         "mountGravityPanel()",
         "initGravityPanel()"
       ]
@@ -25384,7 +25542,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/knots-panel.js",
       "lang": "js",
-      "loc": 547,
+      "loc": 996,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "",
@@ -25396,7 +25554,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/p1-observables-panel.js",
       "lang": "js",
-      "loc": 250,
+      "loc": 377,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/p1-observables-panel.js @purpose Orchestrator for the Scale 0 P1 Observables panel, composing sub-components.",
@@ -25443,7 +25601,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/p1-observables/fine-structure.js",
       "lang": "js",
-      "loc": 143,
+      "loc": 165,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/p1-observables/fine-structure.js @purpose Fine-structure constant instrument panel for flux-recoil scenarios.",
@@ -25454,7 +25612,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/p1-observables/g2.js",
       "lang": "js",
-      "loc": 255,
+      "loc": 270,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/p1-observables/g2.js @purpose Lepton g-2 (Schwinger) and live precession component.",
@@ -25487,7 +25645,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/p1-observables/thomson.js",
       "lang": "js",
-      "loc": 162,
+      "loc": 183,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/p1-observables/thomson.js @purpose Live readout for the locked-source null and native recoil probes.",
@@ -25498,19 +25656,20 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/panel-shell.js",
       "lang": "js",
-      "loc": 209,
+      "loc": 302,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale-0 Visualization panel shell \u2014 accordion + active strip + filter.",
       "symbols": [
         "initOverlayPanelShell()",
+        "scheduleOverlayPanelShellRefresh()",
         "refreshOverlayPanelShell()"
       ]
     },
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/presets.js",
       "lang": "js",
-      "loc": 21,
+      "loc": 22,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 Overlay column groupings.",
@@ -25521,13 +25680,14 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/scale-context-panel.js",
       "lang": "js",
-      "loc": 234,
+      "loc": 357,
       "subsystem": "web/scale0",
       "primary": true,
-      "purpose": "Scale Context \u2014 docked Scale-0 side panel (FTD-0306).",
+      "purpose": "Scale Context \u2014 docked Scale-0 instrument (FTD-0306).",
       "symbols": [
         "mountScaleContextPanel()",
-        "initScaleContextPanel()"
+        "initScaleContextPanel()",
+        "SCALE0_LATTICE_SIZE_ACK_EVENT"
       ]
     },
     {
@@ -25547,7 +25707,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/spectrum-panel.js",
       "lang": "js",
-      "loc": 355,
+      "loc": 550,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Lattice Spectroscopy \u2014 Scale-0 field-structure instrument.",
@@ -25557,24 +25717,29 @@
       ]
     },
     {
-      "path": "engine/web/js/scales/scale0/ui/overlays/symmetry-panel.js",
+      "path": "engine/web/js/scales/scale0/ui/overlays/standard-model.js",
       "lang": "js",
-      "loc": 24,
+      "loc": 201,
       "subsystem": "web/scale0",
       "primary": true,
-      "purpose": "",
+      "purpose": "Contextual Standard Model reference overlay for Scale 0.",
       "symbols": [
-        "SymmetryPanelComponent",
-        "mountSymmetryPanel()"
+        "getScale0StandardModelContext()",
+        "isScale0StandardModelScenario()",
+        "getScale0StandardModelHudTemplate()",
+        "updateScale0StandardModelContext()",
+        "setScale0StandardModelReferenceVisible()",
+        "initScale0StandardModelReferenceControl()",
+        "SCALE0_SM_PARTICLE_SCENARIOS"
       ]
     },
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/template.js",
       "lang": "js",
-      "loc": 318,
+      "loc": 377,
       "subsystem": "web/scale0",
       "primary": true,
-      "purpose": "Scale 0 Viewport Overlay \u2014 Field visualization controls A dense 2-up chip grid: a filter box + an active-overlays strip on top, then the toggles grouped into semantic categories (collapsible per-ca...",
+      "purpose": "Scale 0 Viewport Overlay \u2014 Field visualization controls A compact layer inspector: command header, filter, active-layer rail, shared presentation controls, then semantic accordion cards.",
       "symbols": [
         "getScale0OverlayTemplate()"
       ]
@@ -25582,7 +25747,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/thermo-panel.js",
       "lang": "js",
-      "loc": 239,
+      "loc": 395,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Thermodynamics \u2014 docked Scale-0 side panel (FTD-0274).",
@@ -25594,7 +25759,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/time-panel.js",
       "lang": "js",
-      "loc": 532,
+      "loc": 590,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Time Observatory \u2014 Scale-0 time-dilation instrument.",
@@ -25618,13 +25783,12 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/wave-lab/wave-info.js",
       "lang": "js",
-      "loc": 555,
+      "loc": 616,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/wave-lab/wave-info.js @purpose Live telemetry and controls for standalone RF/light/sound lattice waves.",
       "symbols": [
-        "WaveInfoComponent",
-        "RingBuffer"
+        "WaveInfoComponent"
       ]
     },
     {
@@ -25651,9 +25815,24 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale0/ui/toolbar/limits.js",
+      "lang": "js",
+      "loc": 56,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Browser/WASM sizes above L=97 allocate enough engine/readback state to produce multi-frame UI stalls on the target host.",
+      "symbols": [
+        "hasScale0WasmWorkerTransport()",
+        "scale0InteractiveLatticeLimit()",
+        "syncScale0LatticeSizeAvailability()",
+        "MAX_WASM_INTERACTIVE_LATTICE",
+        "MAX_DIRECT_WASM_INTERACTIVE_LATTICE"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale0/ui/toolbar/template.js",
       "lang": "js",
-      "loc": 38,
+      "loc": 48,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "",
@@ -25665,7 +25844,7 @@
     {
       "path": "engine/web/js/scales/scale0/viewport-adapter.js",
       "lang": "js",
-      "loc": 256,
+      "loc": 279,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "",
@@ -25685,9 +25864,28 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale1/checkpoint-replay.js",
+      "lang": "js",
+      "loc": 131,
+      "subsystem": "web/scale1",
+      "primary": true,
+      "purpose": "Versioned Scale-1 checkpoint and deterministic replay coordinator.",
+      "symbols": [
+        "checkpointDigest()",
+        "captureScale1Checkpoint()",
+        "restoreSavedScale1Checkpoint()",
+        "markScale1ReplayStart()",
+        "verifyScale1Replay()",
+        "serializeScale1Checkpoint()",
+        "importScale1Checkpoint()",
+        "clearScale1CheckpointSession()",
+        "getScale1CheckpointSession()"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale1/controller.js",
       "lang": "js",
-      "loc": 596,
+      "loc": 829,
       "subsystem": "web/scale1",
       "primary": true,
       "purpose": "Scale 1 (Particles) Controller \u2014 native-engine edition.",
@@ -25695,15 +25893,43 @@
         "Scale1LifecycleController",
         "setPEEField()",
         "setPEPotential()",
+        "setPEFieldBattery()",
+        "isPEFieldSurfaceActive()",
         "setPEGravField()",
         "setPEForceCoulomb()",
         "setPEForceGravity()",
+        "setPEForceLorentz()",
+        "setPEForceExchange()",
         "setPEForceStrong()",
-        "setPEForceNet()",
-        "setPESystem()",
-        "setVelocities()",
-        "setTrails()",
-        "setAdmissibilityRing()"
+        "setPEForceRadiation()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale1/inspection-focus.js",
+      "lang": "js",
+      "loc": 175,
+      "subsystem": "web/scale1",
+      "primary": true,
+      "purpose": "Scale 1 inspection-focus contract.",
+      "symbols": [
+        "particleInspectionFocus()",
+        "clusterInspectionFocus()",
+        "sameInspectionFocus()",
+        "reconcileInspectionFocus()",
+        "focusedFieldSources()",
+        "focusedSystemObservables()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale1/observation-cadence.js",
+      "lang": "js",
+      "loc": 29,
+      "subsystem": "web/scale1",
+      "primary": true,
+      "purpose": "Scale-1 presentation observation scheduler.",
+      "symbols": [
+        "scale1ObservationIntervalMs()",
+        "shouldRefreshScale1Observation()"
       ]
     },
     {
@@ -25720,9 +25946,30 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale1/particle-engine.worker.js",
+      "lang": "js",
+      "loc": 71,
+      "subsystem": "web/scale1",
+      "primary": true,
+      "purpose": "Dedicated single-owner Scale-1 tick worker.",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/js/scales/scale1/particle-worker-executor.js",
+      "lang": "js",
+      "loc": 143,
+      "subsystem": "web/scale1",
+      "primary": true,
+      "purpose": "Main-thread coordinator for state-complete Scale-1 worker tick batches.",
+      "symbols": [
+        "Scale1ParticleWorkerExecutor",
+        "scale1ParticleWorkerExecutor"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale1/pe-cloud-expander.js",
       "lang": "js",
-      "loc": 402,
+      "loc": 502,
       "subsystem": "web/scale1",
       "primary": true,
       "purpose": "Scale 1 \u2014 PE Cloud Expander \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Fixed-boundary point cloud per particle.",
@@ -25741,59 +25988,36 @@
       ]
     },
     {
-      "path": "engine/web/js/scales/scale1/promotion.js",
-      "lang": "js",
-      "loc": 346,
-      "subsystem": "web/scale1",
-      "primary": true,
-      "purpose": "Scale-0 \u2192 Scale-1 promotion pipeline (\"\u2934 Scale up\").",
-      "symbols": [
-        "clustersToSeeds()",
-        "voxelsToClusters()",
-        "captureLatticeClusters()",
-        "scaleUpToParticles()",
-        "takePromotionSeeds()",
-        "peekPromotionSeeds()",
-        "PROMOTION_SEEDS_TOKEN",
-        "PROMOTED_SCENARIO_ID"
-      ]
-    },
-    {
       "path": "engine/web/js/scales/scale1/scenario-registry.js",
       "lang": "js",
-      "loc": 249,
+      "loc": 648,
       "subsystem": "web/scale1",
       "primary": true,
-      "purpose": "Scale-1 scenario registry.",
+      "purpose": "Scale-1 scenario execution adapter.",
       "symbols": [
+        "scale1BehaviorPresentation()",
+        "syncScale1ScenarioBehaviorUI()",
+        "syncScale1ScenarioTooltip()",
+        "installScale1ScenarioManifest()",
         "getScale1Scenario()",
         "getScale1ScenarioPreset()",
         "populateScale1ScenarioSelect()",
-        "SCALE1_SCENARIOS",
+        "SCALE1_SCENARIO_TARGET_COUNT",
+        "SCALE1_M3_VIEWS",
+        "SCALE1_BEHAVIOR_PRESENTATION",
         "DEFAULT_SCALE1_SCENARIO"
       ]
     },
     {
       "path": "engine/web/js/scales/scale1/state/store.js",
       "lang": "js",
-      "loc": 75,
+      "loc": 107,
       "subsystem": "web/scale1",
       "primary": true,
       "purpose": "Scale-1 state store.",
       "symbols": [
         "resetScale1State()",
         "scale1State"
-      ]
-    },
-    {
-      "path": "engine/web/js/scales/scale1/telemetry/mass-comparison.js",
-      "lang": "js",
-      "loc": 29,
-      "subsystem": "web/scale1",
-      "primary": true,
-      "purpose": "Pairs a promoted cluster seed's mass (N\u00b7K_B, the physics-bearing convention `phase_forces_integrate_clusters` uses) against the sum of its constituent voxels' scale-bridge masses (max(density, K_B)...",
-      "symbols": [
-        "compareClusterToVoxelMass()"
       ]
     },
     {
@@ -25808,9 +26032,41 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale1/telemetry/particle-ledger.js",
+      "lang": "js",
+      "loc": 663,
+      "subsystem": "web/scale1",
+      "primary": true,
+      "purpose": "Scale-1 particle relationship and event ledger.",
+      "symbols": [
+        "Scale1ParticleLedger",
+        "UnionFind",
+        "buildParticleHierarchy()",
+        "PARTICLE_LOG_CATEGORIES",
+        "scale1ParticleLedger"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale1/trail-settings.js",
+      "lang": "js",
+      "loc": 78,
+      "subsystem": "web/scale1",
+      "primary": true,
+      "purpose": "Presentation-only trajectory-history settings for Scale 1.",
+      "symbols": [
+        "trailCapacityForPopulation()",
+        "normalizeTrailSettings()",
+        "trailRetentionAlpha()",
+        "TRAIL_HISTORY_CAPACITY",
+        "TRAIL_GLOBAL_SAMPLE_BUDGET",
+        "DEFAULT_TRAIL_SETTINGS",
+        "TRAIL_RENDER_MODES"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale1/ui/controls/component.js",
       "lang": "js",
-      "loc": 29,
+      "loc": 41,
       "subsystem": "web/scale1",
       "primary": true,
       "purpose": "Scale 1 Controls Component Mounts the Scale 1 (Particle Engine) control card into the controls panel.",
@@ -25821,24 +26077,45 @@
     {
       "path": "engine/web/js/scales/scale1/ui/controls/pe-controls.js",
       "lang": "js",
-      "loc": 124,
+      "loc": 378,
       "subsystem": "web/scale1",
       "primary": true,
       "purpose": "Scale 1 \u2014 Particle Engine Controls Card (native-engine edition).",
       "symbols": [
-        "refreshPromotionCard()",
-        "createPeControlsCard()"
+        "hydratePePhysicsControls()",
+        "refreshPePhysicsPanelSummary()",
+        "markPePhysicsProfileModified()",
+        "setPePhysicsProfileState()",
+        "syncPeTrailControls()",
+        "updatePeTrailEnergyLegend()",
+        "refreshScale1ScenarioContractCard()",
+        "createPeControlsCard()",
+        "createPePhysicsCard()"
       ]
     },
     {
       "path": "engine/web/js/scales/scale1/ui/overlays/template.js",
       "lang": "js",
-      "loc": 93,
+      "loc": 114,
       "subsystem": "web/scale1",
       "primary": true,
       "purpose": "Scale 1 Viewport Overlay \u2014 particle engine dynamics (grouped by physical role)",
       "symbols": [
         "getScale1OverlayTemplate()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale1/ui/particle-log/component.js",
+      "lang": "js",
+      "loc": 344,
+      "subsystem": "web/scale1",
+      "primary": true,
+      "purpose": "",
+      "symbols": [
+        "ParticleLogPanelComponent",
+        "InteractionHierarchyPanelComponent",
+        "initParticleLogPanel()",
+        "initInteractionHierarchyPanel()"
       ]
     },
     {
@@ -25855,7 +26132,7 @@
     {
       "path": "engine/web/js/scales/scale1/ui/toolbar/component.js",
       "lang": "js",
-      "loc": 17,
+      "loc": 39,
       "subsystem": "web/scale1",
       "primary": true,
       "purpose": "",
@@ -25866,7 +26143,7 @@
     {
       "path": "engine/web/js/scales/scale1/ui/toolbar/template.js",
       "lang": "js",
-      "loc": 21,
+      "loc": 27,
       "subsystem": "web/scale1",
       "primary": true,
       "purpose": "Scale-1 toolbar template.",
@@ -26289,7 +26566,7 @@
     {
       "path": "engine/web/js/telemetry-hub.js",
       "lang": "js",
-      "loc": 1294,
+      "loc": 1584,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "TelemetryHub \u2014 single source of truth for all FTD simulation telemetry.",
@@ -26304,7 +26581,7 @@
     {
       "path": "engine/web/js/telemetry/demand.js",
       "lang": "js",
-      "loc": 153,
+      "loc": 180,
       "subsystem": "web/telemetry",
       "primary": true,
       "purpose": "Scale-0 telemetry demand gating \u2014 decides which expensive hub collectors run.",
@@ -26337,12 +26614,14 @@
     {
       "path": "engine/web/js/telemetry/scale0-read.js",
       "lang": "js",
-      "loc": 37,
+      "loc": 85,
       "subsystem": "web/telemetry",
       "primary": true,
       "purpose": "Scale-0 telemetry read helpers \u2014 prefer hub snapshots, fall back to bridge.",
       "symbols": [
         "readScale0DiagAudit()",
+        "isCurrentScale0TelemetryMeta()",
+        "isCurrentScale0AuditEnergy()",
         "readScale0TotalEnergy()",
         "readScale0WaveEnergy()",
         "readScale0FieldEnergy()"
@@ -26384,9 +26663,20 @@
       ]
     },
     {
+      "path": "engine/web/js/ui/charts/history-window.js",
+      "lang": "js",
+      "loc": 186,
+      "subsystem": "web/ui",
+      "primary": true,
+      "purpose": "Shared tick-history viewport control for temporal side-panel charts.",
+      "symbols": [
+        "TickHistoryControl"
+      ]
+    },
+    {
       "path": "engine/web/js/ui/charts/sparkline.js",
       "lang": "js",
-      "loc": 71,
+      "loc": 106,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Sparkline \u2014 micro uPlot for table Trend cells and chart-chip previews.",
@@ -26421,7 +26711,7 @@
     {
       "path": "engine/web/js/ui/charts/uplot-chart.js",
       "lang": "js",
-      "loc": 207,
+      "loc": 277,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "UPlotChart \u2014 line/area chart primitive.",
@@ -26476,7 +26766,7 @@
     {
       "path": "engine/web/js/ui/components/floating-window/component.js",
       "lang": "js",
-      "loc": 227,
+      "loc": 272,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "FloatingWindow \u2014 high-performance draggable/resizable glassmorphic panel wrapper.",
@@ -26646,7 +26936,7 @@
     {
       "path": "engine/web/js/ui/components/panel-dock/component.js",
       "lang": "js",
-      "loc": 45,
+      "loc": 59,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -26657,12 +26947,13 @@
     {
       "path": "engine/web/js/ui/components/panel-dock/mount-toggle.js",
       "lang": "js",
-      "loc": 181,
+      "loc": 259,
       "subsystem": "web/ui",
       "primary": true,
-      "purpose": "Updates --viewport-safe-left / --viewport-safe-right on <html> so that any overlay consumers can inset themselves past the sidebar without hardcoding the sidebar width.",
+      "purpose": "Mirror the canonical html[data-panel-mount] value onto only the shell nodes whose layout actually depends on it.",
       "symbols": [
         "MountToggleComponent",
+        "applyPanelMountClasses()",
         "updateSafeEdges()"
       ]
     },
@@ -26680,7 +26971,7 @@
     {
       "path": "engine/web/js/ui/components/panel-resources/component.js",
       "lang": "js",
-      "loc": 54,
+      "loc": 58,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -26702,13 +26993,15 @@
     {
       "path": "engine/web/js/ui/components/panel-resources/template.js",
       "lang": "js",
-      "loc": 593,
+      "loc": 701,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
       "symbols": [
         "getScaleControlsBlocksTemplate()",
         "getZooPanelTemplate()",
+        "getParticleLogPanelTemplate()",
+        "getInteractionHierarchyPanelTemplate()",
         "getInspectorPanelTemplate()",
         "getPhysicsPanelTemplate()",
         "getPlanetaryPanelTemplate()",
@@ -26718,12 +27011,25 @@
     {
       "path": "engine/web/js/ui/components/play-bar/component.js",
       "lang": "js",
-      "loc": 229,
+      "loc": 260,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "PlayBarComponent \u2014 the floating transport + speed bar at the bottom of the viewport.",
       "symbols": [
         "PlayBarComponent"
+      ]
+    },
+    {
+      "path": "engine/web/js/ui/components/play-bar/speed-scale.js",
+      "lang": "js",
+      "loc": 25,
+      "subsystem": "web/ui",
+      "primary": true,
+      "purpose": "Shared logarithmic playback-speed scale used by the slider and presets.",
+      "symbols": [
+        "sliderValueToSpeed()",
+        "speedToSliderValue()",
+        "speedLabel()"
       ]
     },
     {
@@ -26752,7 +27058,7 @@
     {
       "path": "engine/web/js/ui/components/settings-modal/template.js",
       "lang": "js",
-      "loc": 109,
+      "loc": 133,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -26796,7 +27102,7 @@
     {
       "path": "engine/web/js/ui/components/tooltips/definitions.js",
       "lang": "js",
-      "loc": 434,
+      "loc": 438,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -26853,7 +27159,7 @@
     {
       "path": "engine/web/js/ui/components/viewport-overlays/component.js",
       "lang": "js",
-      "loc": 195,
+      "loc": 203,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Viewport Overlays Component \u2014 mounts scale-specific and universal overlay controls Orchestrates: - Scale-specific field/visualization toggles - Universal axes/grid controls - Bottom status-bar scen...",
@@ -26888,7 +27194,7 @@
     {
       "path": "engine/web/js/ui/components/workspace-tabs/template.js",
       "lang": "js",
-      "loc": 31,
+      "loc": 34,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -26910,18 +27216,20 @@
     {
       "path": "engine/web/js/ui/panels/charts-panel/chart-card.js",
       "lang": "js",
-      "loc": 55,
+      "loc": 114,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "ChartCard \u2014 wraps a chart descriptor entry in a .chart-card DOM node and owns the UPlotChart lifecycle.",
       "symbols": [
-        "ChartCard"
+        "ChartCard",
+        "resolveChartTelemetryGroups()",
+        "getChartFreshnessPresentation()"
       ]
     },
     {
       "path": "engine/web/js/ui/panels/charts-panel/component.js",
       "lang": "js",
-      "loc": 154,
+      "loc": 176,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -26933,7 +27241,7 @@
     {
       "path": "engine/web/js/ui/panels/charts-panel/descriptors/scale0.js",
       "lang": "js",
-      "loc": 71,
+      "loc": 81,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Scale 0 charts panel descriptor.",
@@ -26977,7 +27285,7 @@
     {
       "path": "engine/web/js/ui/panels/diagnostics-panel/component.js",
       "lang": "js",
-      "loc": 96,
+      "loc": 127,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "DiagnosticsPanelComponent \u2014 composes scale-specific diagnostics tables from descriptors.",
@@ -26989,7 +27297,7 @@
     {
       "path": "engine/web/js/ui/panels/diagnostics-panel/descriptors/scale0.js",
       "lang": "js",
-      "loc": 147,
+      "loc": 187,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Scale 0 diagnostics table descriptor.",
@@ -27000,7 +27308,7 @@
     {
       "path": "engine/web/js/ui/panels/diagnostics-panel/descriptors/scale1.js",
       "lang": "js",
-      "loc": 224,
+      "loc": 393,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Scale 1 diagnostics table descriptor.",
@@ -27022,7 +27330,7 @@
     {
       "path": "engine/web/js/ui/panels/diagnostics-panel/formatters.js",
       "lang": "js",
-      "loc": 43,
+      "loc": 47,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Value formatters for the diagnostics table.",
@@ -27033,7 +27341,7 @@
     {
       "path": "engine/web/js/ui/panels/diagnostics-panel/table.js",
       "lang": "js",
-      "loc": 352,
+      "loc": 467,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "DiagnosticsTable \u2014 renders one section's table + owns per-row cells, reset-scoped running stats, and per-row Sparkline instances.",
@@ -27045,7 +27353,7 @@
     {
       "path": "engine/web/js/ui/panels/index.js",
       "lang": "js",
-      "loc": 5,
+      "loc": 11,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -27054,12 +27362,13 @@
     {
       "path": "engine/web/js/ui/panels/lagrangian-panel/component.js",
       "lang": "js",
-      "loc": 155,
+      "loc": 289,
       "subsystem": "web/ui",
       "primary": true,
-      "purpose": "Build a small-multiple card for one Lagrangian term.",
+      "purpose": "Interpret only the qualified Scenario-1 null control.",
       "symbols": [
         "LagrangianPanelComponent",
+        "interpretEmptyObserverBaseline()",
         "initLagrangianPanel()"
       ]
     },
@@ -27079,7 +27388,7 @@
     {
       "path": "engine/web/js/ui/panels/lagrangian-panel/template.js",
       "lang": "js",
-      "loc": 13,
+      "loc": 56,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -27101,12 +27410,14 @@
     {
       "path": "engine/web/js/ui/panels/panel-visibility.js",
       "lang": "js",
-      "loc": 20,
+      "loc": 39,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Shared panel-visibility predicate \u2014 SPEC_SCALE0_PERF_TELEMETRY_PANELS \u00a76.4.",
       "symbols": [
-        "isPanelLive()"
+        "notifyPanelVisibilityChange()",
+        "isPanelLive()",
+        "PANEL_VISIBILITY_CHANGE_EVENT"
       ]
     },
     {
@@ -27123,7 +27434,7 @@
     {
       "path": "engine/web/js/ui/panels/scene-panel/component.js",
       "lang": "js",
-      "loc": 234,
+      "loc": 252,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "ScenePanelComponent \u2014 wires the Scene panel DOM to the SceneAdapter and manages localStorage-backed persistence.",
@@ -27146,7 +27457,7 @@
     {
       "path": "engine/web/js/ui/panels/telemetry-grid/component.js",
       "lang": "js",
-      "loc": 474,
+      "loc": 558,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -27169,7 +27480,7 @@
     {
       "path": "engine/web/js/ui/scale-registry/panel-registry.js",
       "lang": "js",
-      "loc": 78,
+      "loc": 80,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Shared shell panel registry.",
@@ -27247,7 +27558,7 @@
     {
       "path": "engine/web/js/ui/shell/mobile-panel.js",
       "lang": "js",
-      "loc": 134,
+      "loc": 152,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "MobilePanelController \u2014 touch swipe-to-dismiss and body scroll lock for the bottom-sheet panel on mobile (\u2264767px).",
@@ -27269,10 +27580,10 @@
     {
       "path": "engine/web/js/ui/shell/panel-dock-controller.js",
       "lang": "js",
-      "loc": 308,
+      "loc": 666,
       "subsystem": "web/ui",
       "primary": true,
-      "purpose": "",
+      "purpose": "synthetic event",
       "symbols": [
         "PanelDockController"
       ]
@@ -27320,7 +27631,7 @@
     {
       "path": "engine/web/js/units.js",
       "lang": "js",
-      "loc": 421,
+      "loc": 423,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "FTD Unit Conversion Layer Central module for converting raw simulation values to human-readable strings with proper physical unit labels.",
@@ -27499,7 +27810,7 @@
     {
       "path": "engine/web/js/viewport.js",
       "lang": "js",
-      "loc": 1302,
+      "loc": 1329,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "@file viewport.js @brief Three.js 3D Viewport \u2014 renders particles and fields from the simulation bridge.",
@@ -27517,6 +27828,19 @@
       "symbols": [
         "buildBoundary()",
         "insideBoundary()"
+      ]
+    },
+    {
+      "path": "engine/web/js/viewport/clock-hover.js",
+      "lang": "js",
+      "loc": 268,
+      "subsystem": "web/viewport",
+      "primary": true,
+      "purpose": "",
+      "symbols": [
+        "GlobalClockHoverController",
+        "tagClockHover()",
+        "GLOBAL_CLOCK_PHASES"
       ]
     },
     {
@@ -27558,7 +27882,7 @@
     {
       "path": "engine/web/js/viewport/field-em-renderer.js",
       "lang": "js",
-      "loc": 858,
+      "loc": 966,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "fieldEmMethods \u2014 ViewportFieldRenderer mixin (heatmap / EM / phase / state).",
@@ -27569,7 +27893,7 @@
     {
       "path": "engine/web/js/viewport/field-force-renderer.js",
       "lang": "js",
-      "loc": 558,
+      "loc": 675,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "fieldForceMethods \u2014 ViewportFieldRenderer mixin (EM/gravity/strong/weak force viz).",
@@ -27580,7 +27904,7 @@
     {
       "path": "engine/web/js/viewport/field-quantum-renderer.js",
       "lang": "js",
-      "loc": 525,
+      "loc": 542,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "fieldQuantumMethods \u2014 ViewportFieldRenderer mixin (dual / chirality / quantum / entropy).",
@@ -27618,7 +27942,7 @@
     {
       "path": "engine/web/js/viewport/field-renderer.js",
       "lang": "js",
-      "loc": 276,
+      "loc": 337,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "ViewportFieldRenderer \u2014 Scale-0 field overlay fa\u00e7ade.",
@@ -27629,7 +27953,7 @@
     {
       "path": "engine/web/js/viewport/field-topology-renderer.js",
       "lang": "js",
-      "loc": 487,
+      "loc": 497,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "fieldTopologyMethods \u2014 ViewportFieldRenderer mixin (halo / damping / genesis / strings).",
@@ -27638,14 +27962,42 @@
       ]
     },
     {
+      "path": "engine/web/js/viewport/flux-activation.js",
+      "lang": "js",
+      "loc": 260,
+      "subsystem": "web/viewport",
+      "primary": true,
+      "purpose": "Flux-volume activation proxy.",
+      "symbols": [
+        "createFluxActivationStepper()",
+        "computeFluxActivation()",
+        "STATE_REST_AMPLITUDE"
+      ]
+    },
+    {
       "path": "engine/web/js/viewport/flux-renderer.js",
       "lang": "js",
-      "loc": 576,
+      "loc": 859,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "@file engine/web/js/viewport/flux-renderer.js @purpose Owns flux volume, flux streamlines for the Scale-0 lattice dashboard.",
       "symbols": [
         "ViewportFluxRenderer"
+      ]
+    },
+    {
+      "path": "engine/web/js/viewport/flux-threshold.js",
+      "lang": "js",
+      "loc": 36,
+      "subsystem": "web/viewport",
+      "primary": true,
+      "purpose": "Shared Flux Volume threshold response.",
+      "symbols": [
+        "clampFluxThreshold()",
+        "sliderPositionToFluxThreshold()",
+        "fluxThresholdToSliderPosition()",
+        "formatFluxThreshold()",
+        "FLUX_THRESHOLD_MAX"
       ]
     },
     {
@@ -27674,7 +28026,7 @@
     {
       "path": "engine/web/js/viewport/particle-renderer.js",
       "lang": "js",
-      "loc": 1000,
+      "loc": 1239,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "@file engine/web/js/viewport/particle-renderer.js @purpose Owns particle positions, trails, velocity vectors, per-particle force vectors for the Scale-0 lattice dashboard.",
@@ -27685,7 +28037,7 @@
     {
       "path": "engine/web/js/viewport/scene-core.js",
       "lang": "js",
-      "loc": 531,
+      "loc": 1023,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "@file engine/web/js/viewport/scene-core.js @purpose Owns scene-level rendering infrastructure for the Scale-0 dashboard: boundary wireframe, axis indicators, post-processing pipeline (bloom), camer...",
@@ -27696,7 +28048,7 @@
     {
       "path": "engine/web/js/viewport/shaders.js",
       "lang": "js",
-      "loc": 149,
+      "loc": 160,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "Centralized Shaders for FTD Web Frontend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Houses shared GLSL shader strings to ensure DRY compliance and enable global shader opt...",
@@ -27721,7 +28073,7 @@
     {
       "path": "engine/web/js/viewport/topology-sheet-renderer.js",
       "lang": "js",
-      "loc": 592,
+      "loc": 613,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "viewport/topology-sheet-renderer.js \u2014 deformable rubber-sheet visualization Extracted from viewport.js as refactoring-analyst ticket RF-1 of the post-modularization cleanup (see engine/web/docs/IND...",
@@ -27732,7 +28084,7 @@
     {
       "path": "engine/web/js/ws-bridge.js",
       "lang": "js",
-      "loc": 2659,
+      "loc": 2853,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "WebSocket Bridge \u2014 connects web dashboard to native GPU engine.",
@@ -27744,7 +28096,7 @@
     {
       "path": "engine/web/js/zoo.js",
       "lang": "js",
-      "loc": 168,
+      "loc": 206,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "Particle Zoo \u2014 interactive table of all SM particles with FTD data.",
@@ -27827,7 +28179,7 @@
     {
       "path": "engine/web/tests/audit-fix-contracts.spec.js",
       "lang": "js",
-      "loc": 244,
+      "loc": 518,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -27846,6 +28198,15 @@
       "path": "engine/web/tests/color-ramps.spec.js",
       "lang": "js",
       "loc": 166,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/css-maintainability.spec.js",
+      "lang": "js",
+      "loc": 103,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -27890,7 +28251,7 @@
     {
       "path": "engine/web/tests/field-line-knots-contributions.spec.js",
       "lang": "js",
-      "loc": 139,
+      "loc": 157,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "engine/web/tests/field-line-knots-contributions.spec.js Per-knot scientific contributions: energy / flux / charge integrated over each knot's region, expressed as a share of the scenario total, + h...",
@@ -27926,7 +28287,7 @@
     {
       "path": "engine/web/tests/flux-slice-axes.spec.js",
       "lang": "js",
-      "loc": 183,
+      "loc": 213,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -27935,7 +28296,16 @@
     {
       "path": "engine/web/tests/flux-upload-microbench.spec.js",
       "lang": "js",
-      "loc": 113,
+      "loc": 208,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/flux-volume-stratified-pooling.spec.js",
+      "lang": "js",
+      "loc": 554,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -27953,7 +28323,7 @@
     {
       "path": "engine/web/tests/genesis-burst.spec.js",
       "lang": "js",
-      "loc": 125,
+      "loc": 345,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28052,7 +28422,7 @@
     {
       "path": "engine/web/tests/native-ws-smoke.mjs",
       "lang": "js",
-      "loc": 605,
+      "loc": 662,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -28061,7 +28431,7 @@
     {
       "path": "engine/web/tests/overlay-scheduler.spec.js",
       "lang": "js",
-      "loc": 613,
+      "loc": 761,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28124,7 +28494,7 @@
     {
       "path": "engine/web/tests/playwright.config.js",
       "lang": "js",
-      "loc": 51,
+      "loc": 58,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28160,7 +28530,16 @@
     {
       "path": "engine/web/tests/s0-overlay-accordion.spec.js",
       "lang": "js",
-      "loc": 112,
+      "loc": 463,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-charts-lagrangian-lifecycle.spec.js",
+      "lang": "js",
+      "loc": 71,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28169,7 +28548,43 @@
     {
       "path": "engine/web/tests/scale0-conservation-panel.spec.js",
       "lang": "js",
-      "loc": 103,
+      "loc": 444,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-controls-integration-audit.spec.js",
+      "lang": "js",
+      "loc": 125,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-diagnostics-integration-audit.spec.js",
+      "lang": "js",
+      "loc": 224,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-direct-telemetry-provenance.spec.js",
+      "lang": "js",
+      "loc": 107,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-dispersion-panel.spec.js",
+      "lang": "js",
+      "loc": 43,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28185,9 +28600,54 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale0-empty-panel-performance.spec.js",
+      "lang": "js",
+      "loc": 2222,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-empty-scenario-qualification.spec.js",
+      "lang": "js",
+      "loc": 681,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-flow-lines-audit.spec.js",
+      "lang": "js",
+      "loc": 278,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-flux-volume-controls-audit.spec.js",
+      "lang": "js",
+      "loc": 318,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-gravity-overlay-audit.spec.js",
+      "lang": "js",
+      "loc": 923,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-gravity.spec.js",
       "lang": "js",
-      "loc": 101,
+      "loc": 110,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28197,6 +28657,15 @@
       "path": "engine/web/tests/scale0-inject-paused.spec.js",
       "lang": "js",
       "loc": 59,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-lattice-boundary-toolbar-audit.spec.js",
+      "lang": "js",
+      "loc": 870,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28230,6 +28699,15 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale0-panel-mutation-contract.spec.js",
+      "lang": "js",
+      "loc": 229,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-panel-render.spec.js",
       "lang": "js",
       "loc": 108,
@@ -28248,6 +28726,15 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale0-panel-shell-audit.spec.js",
+      "lang": "js",
+      "loc": 370,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-panel-wiring.spec.js",
       "lang": "js",
       "loc": 124,
@@ -28257,9 +28744,36 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale0-particle-display-controls-audit.spec.js",
+      "lang": "js",
+      "loc": 318,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-persisted-scenario-boot.spec.js",
       "lang": "js",
       "loc": 103,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-physics-toggles-audit.spec.js",
+      "lang": "js",
+      "loc": 587,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-playback-controls-audit.spec.js",
+      "lang": "js",
+      "loc": 274,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28295,7 +28809,7 @@
     {
       "path": "engine/web/tests/scale0-scalecontext.spec.js",
       "lang": "js",
-      "loc": 63,
+      "loc": 137,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28320,6 +28834,42 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale0-scenario-toolbar-audit.spec.js",
+      "lang": "js",
+      "loc": 263,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-scientific-mutation-contract.spec.js",
+      "lang": "js",
+      "loc": 438,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-selection-controls-audit.spec.js",
+      "lang": "js",
+      "loc": 297,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-sidepanel-release-gate.spec.js",
+      "lang": "js",
+      "loc": 181,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-spectrum.spec.js",
       "lang": "js",
       "loc": 70,
@@ -28329,9 +28879,54 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale0-standard-model-overlay.spec.js",
+      "lang": "js",
+      "loc": 118,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-status-thermo-energy-contract.spec.js",
+      "lang": "js",
+      "loc": 167,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-substrate-controls-audit.spec.js",
+      "lang": "js",
+      "loc": 305,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-substrate-protocol-v2.spec.js",
       "lang": "js",
       "loc": 575,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-symmetry-retirement.spec.js",
+      "lang": "js",
+      "loc": 44,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-telemetry-availability-contract.spec.js",
+      "lang": "js",
+      "loc": 619,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28349,7 +28944,7 @@
     {
       "path": "engine/web/tests/scale0-time.spec.js",
       "lang": "js",
-      "loc": 99,
+      "loc": 122,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28367,7 +28962,7 @@
     {
       "path": "engine/web/tests/scale0-toggle-leak.spec.js",
       "lang": "js",
-      "loc": 115,
+      "loc": 104,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28383,9 +28978,61 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale0-ui-audit-harness.spec.js",
+      "lang": "js",
+      "loc": 83,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-ui-audit-probe.js",
+      "lang": "js",
+      "loc": 297,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": [
+        "startScale0UiAuditProbe()",
+        "trackScale0UiMethods()",
+        "measureScale0UiActionToPaint()",
+        "stopScale0UiAuditProbe()"
+      ]
+    },
+    {
+      "path": "engine/web/tests/scale0-visualization-overlay-audit.spec.js",
+      "lang": "js",
+      "loc": 625,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-visualization-panel-layout.spec.js",
+      "lang": "js",
+      "loc": 47,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-worker-lifecycle.node.test.mjs",
+      "lang": "js",
+      "loc": 228,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": [
+        "FakeWorker"
+      ]
+    },
+    {
       "path": "engine/web/tests/scale0-worker-teardown.spec.js",
       "lang": "js",
-      "loc": 123,
+      "loc": 153,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28410,12 +29057,48 @@
       "symbols": []
     },
     {
-      "path": "engine/web/tests/scale1-mass-comparison.node.test.mjs",
+      "path": "engine/web/tests/scale1-checkpoint-replay.node.test.mjs",
       "lang": "js",
-      "loc": 26,
+      "loc": 67,
       "subsystem": "web/tests",
       "primary": false,
-      "purpose": "engine/web/tests/scale1-mass-comparison.node.test.mjs Run: node engine/web/tests/scale1-mass-comparison.node.test.mjs",
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale1-inspection-focus.node.test.mjs",
+      "lang": "js",
+      "loc": 66,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale1-inspection-focus.spec.js",
+      "lang": "js",
+      "loc": 116,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale1-load-release-gate.spec.js",
+      "lang": "js",
+      "loc": 130,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale1-observation-cadence.node.test.mjs",
+      "lang": "js",
+      "loc": 50,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -28428,30 +29111,68 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale1-particle-ledger.node.test.mjs",
+      "lang": "js",
+      "loc": 118,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "Run: node engine/web/tests/scale1-particle-ledger.node.test.mjs",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale1-particle-overlays.spec.js",
       "lang": "js",
-      "loc": 191,
+      "loc": 1059,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
       "symbols": []
     },
     {
-      "path": "engine/web/tests/scale1-promotion.spec.js",
+      "path": "engine/web/tests/scale1-particle-worker-executor.node.test.mjs",
       "lang": "js",
-      "loc": 200,
+      "loc": 62,
       "subsystem": "web/tests",
       "primary": false,
-      "purpose": "@ts-check \"\u2934 Scale up\" promotion pipeline: live Scale-0 lattice clusters \u2192 Scale-1 continuous particles (mass = N\u00b7K_B, charge = sign\u00b7N).",
+      "purpose": "",
+      "symbols": [
+        "FakeWorker"
+      ]
+    },
+    {
+      "path": "engine/web/tests/scale1-scenario-health.spec.js",
+      "lang": "js",
+      "loc": 141,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
       "symbols": []
     },
     {
       "path": "engine/web/tests/scale1-side-panels.spec.js",
       "lang": "js",
-      "loc": 197,
+      "loc": 586,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale1-trail-controls.spec.js",
+      "lang": "js",
+      "loc": 98,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale1-trail-history.node.test.mjs",
+      "lang": "js",
+      "loc": 96,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -28493,7 +29214,7 @@
     {
       "path": "engine/web/tests/scales.spec.js",
       "lang": "js",
-      "loc": 711,
+      "loc": 713,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28511,7 +29232,7 @@
     {
       "path": "engine/web/tests/scenario-parity.spec.js",
       "lang": "js",
-      "loc": 675,
+      "loc": 690,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28529,7 +29250,52 @@
     {
       "path": "engine/web/tests/scene-panel.spec.js",
       "lang": "js",
-      "loc": 136,
+      "loc": 192,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scientific-scenario-inventory.spec.js",
+      "lang": "js",
+      "loc": 167,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scientific-scenario-manifest.spec.js",
+      "lang": "js",
+      "loc": 293,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/settings-glassmorphism.spec.js",
+      "lang": "js",
+      "loc": 167,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/sidepanel-chart-cadence.spec.js",
+      "lang": "js",
+      "loc": 97,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/sitewide-font-floor.spec.js",
+      "lang": "js",
+      "loc": 148,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28545,9 +29311,36 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/telemetry-sidepanel-audit.spec.js",
+      "lang": "js",
+      "loc": 416,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/theme-contrast.spec.js",
+      "lang": "js",
+      "loc": 165,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/tick-history-controls.spec.js",
+      "lang": "js",
+      "loc": 104,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/time-analysis.node.test.mjs",
       "lang": "js",
-      "loc": 36,
+      "loc": 43,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "Node unit test for the pure time-dilation math.",
@@ -28556,7 +29349,7 @@
     {
       "path": "engine/web/tests/toggle-coverage.spec.js",
       "lang": "js",
-      "loc": 309,
+      "loc": 341,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28578,6 +29371,24 @@
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/wasm-artifact-identity.spec.js",
+      "lang": "js",
+      "loc": 154,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/wasm-dynamical-state-digest.spec.js",
+      "lang": "js",
+      "loc": 301,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
       "symbols": []
     },
     {
@@ -28610,7 +29421,7 @@
     {
       "path": "engine/web/tests/ws-bridge-visual-cache.spec.js",
       "lang": "js",
-      "loc": 2411,
+      "loc": 2697,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",

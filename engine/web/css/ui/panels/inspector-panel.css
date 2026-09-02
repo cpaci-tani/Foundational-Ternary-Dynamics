@@ -79,6 +79,50 @@
     overflow-y: auto;
 }
 
+.pe-inspection-focus-card {
+    margin-bottom: var(--sp-md);
+    border-color: color-mix(in srgb, var(--accent-cyan) 55%, var(--border-subtle));
+    background: color-mix(in srgb, var(--accent-cyan) 7%, var(--panel-bg));
+}
+
+.pe-inspection-focus-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-sm);
+}
+
+.pe-inspection-focus-heading strong {
+    min-width: 0;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    overflow-wrap: anywhere;
+}
+
+.pe-inspection-focus-badge {
+    padding: 2px 7px;
+    border: 1px solid color-mix(in srgb, var(--accent-cyan) 60%, transparent);
+    border-radius: 999px;
+    color: var(--accent-cyan);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.pe-inspection-focus-card p {
+    margin: var(--sp-sm) 0 0;
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+    line-height: var(--lh-base);
+}
+
+.pe-inspection-cluster-fields {
+    margin-top: var(--sp-sm);
+    padding-top: var(--sp-sm);
+    border-top: 1px solid var(--border-subtle);
+}
+
 @media (max-width: 1023px) {
     .panel-inspector-hero {
         flex-direction: column;

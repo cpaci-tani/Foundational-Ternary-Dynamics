@@ -1,4 +1,4 @@
-import { applyUiTooltipDefinitions } from './definitions.js';
+import { applyUiTooltipDefinitions } from './definitions.js?v=4';
 import { renderMathInHtml } from '../../math-format/render.js';
 
 function escapeHtml(s) {

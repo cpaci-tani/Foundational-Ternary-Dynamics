@@ -1,6 +1,6 @@
 # FTD Simulation Engine
 
-The FTD engine is a multi-scale, logic-first discrete simulation system for Foundational Ternary Dynamics. Its fundamental Scale 0 model is a 3D cubic lattice. The engine provides a hierarchy of integrated macroscopic physics engines (Particles, Atoms, Molecules, Cosmic) derived from this fundamental substrate.
+The FTD engine is a multi-scale, logic-first discrete simulation system for Foundational Ternary Dynamics. Its fundamental Scale 0 model is a 3D cubic lattice. The engine also provides integrated effective/coarse-grained physics engines (Particles, Atoms, Molecules, Cosmic); their relationship to the substrate and their claim status are documented per scale rather than assumed to be derived.
 
 **Current Engine Version:** 2.18.0
 
@@ -13,6 +13,8 @@ Detailed references:
 - [VISUAL_GUIDE.md](VISUAL_GUIDE.md) - visual learner's guide to how the simulation works and why the discrete perspective matters.
 - [docs/ENGINE_CODE_MAP.md](docs/ENGINE_CODE_MAP.md) - file/subsystem navigation map: what code lives where, largest files, split status, doc gaps.
 - [docs/ENGINE_FILE_MANIFEST.md](docs/ENGINE_FILE_MANIFEST.md) - per-file catalog (every code file, one-line purpose); machine-readable mirror `ENGINE_FILE_MANIFEST.json`.
+- [docs/PLAN_SCALE1_PARTICLE_CONTEXT_V4.md](docs/PLAN_SCALE1_PARTICLE_CONTEXT_V4.md) - active Scale-1 particle-context contract: four live workspaces, 39 executable scenarios, native observation, quantum/QED references, and effective reference lab.
+- [docs/RETIRE_SCALE_HANDOFF_2026-09-01.md](docs/RETIRE_SCALE_HANDOFF_2026-09-01.md) - retirement record for all removed runtime scale-transfer paths; Scale Context now owns scale pedagogy.
 - [../docs/SPEC_FTD.md](../docs/SPEC_FTD.md) - project-level theory specification.
 - [../docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md](../docs/theory/07_assessment/quantum_foundations/AUDIT_EPISTEMIC_AUDIT.md) - claim-status and epistemic accounting.
 
@@ -71,7 +73,7 @@ All scale engines inherit from the `ScaleEngine` abstract base class, providing 
 |---|---|---|---|
 | **0** | `RenderBridge` | Production | Flat 3D voxel lattice, CPU tick ladder, SOR constraint solvers |
 | **0 (GPU)** | `GpuEngine` | Production | CUDA drop-in for RenderBridge; Device SoA mirror, lazy host/device synchronization |
-| **1** | `ParticleEngine` | Production | Continuous particles, Velocity Verlet, analytical forces (Coulomb, Gravity, Exchange, Strong, Lorentz, etc.) |
+| **1** | `NativeMatterObserver` + `ParticleEngine` | Effective / qualification in progress | Read-only registered relational-matter evidence is primary; the continuous analytical-force laboratory is explicitly separate. Runtime scale handoff is retired. |
 | **2** | `AtomEngine` | Production | Composite atoms, ionic/vdW forces, covalent auto-bonding, VSEPR angle strain |
 | **3** | `MoleculeEngine`| Production | Natively handled via `AtomEngine`; 25 molecular presets |
 | **5** | `CosmicEngine` | Production | N-body + SPH cosmic layer, 9 body types, Barnes-Hut octree gravity |
@@ -134,7 +136,7 @@ metadata and bulk enable/disable defaults, and the two must remain synchronized.
 may describe UI profiles rather than `TermToggles` construction.
 
 - **Scale 0 (43 toggles):** Wave propagation, coupling, damping, genesis, Gauss projection, gravity, Lorentz force, emergent forces, latency field, etc.
-- **Scale 1 (12 toggles):** Coulomb, gravity, damping, exchange, strong, magnetic dipole, spin-orbit, radiation reaction, relativistic corrections.
+- **Scale 1 (12 registry entries):** Coulomb, gravity, damping, Lorentz, exchange, strong, radiation reaction, spin-orbit, magnetic dipole, relativistic-momentum Verlet, selected contact events, and the retired isotropic relativistic rescale. The verified profile enables only Coulomb plus relativistic-momentum Verlet; selected/quarantined/retired entries remain distinct.
 - **Scale 2 (12 toggles):** Ionic, vdW, covalent bonds, auto-bonding, angle strain (VSEPR), H-bonds, thermostat.
 - **Scale 5 (14 toggles):** Gravity, SPH gas, Hubble expansion, dark energy, star formation, stellar evolution.
 

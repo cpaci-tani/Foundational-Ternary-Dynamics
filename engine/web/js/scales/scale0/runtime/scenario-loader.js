@@ -265,6 +265,85 @@ export const SCALE0_SCENARIO_VISUAL_PROFILES = {
         fluxThreshold: 0.001,
         fluxOpacity: 0.85,
     },
+    // -- s0-cell-* flux cells ---------------------------------------------
+    's0-cell-capacitor': {
+        // Locked plates plus the Gauss-built gap flux: show the plates, the
+        // J curves between them, and div(J) so the source law is visible.
+        fluxVolume: true,
+        fieldOverlays: ['toggle-flux-lines', 'toggle-state-field', 'toggle-div-field'],
+    },
+    's0-cell-torus': {
+        // Azimuthal ring of J with W=0 at tick 0: lead with J curves, the
+        // honest B=curl(J) view, and Poynting flow so the LC-like exchange is
+        // visible as it develops. E=-wave_vel starts at zero and is not the
+        // default channel.
+        fluxVolume: true,
+        fieldOverlays: ['toggle-flux-lines', 'toggle-b-field', 'toggle-poynting'],
+    },
+    's0-cell-torus-reverse': {
+        // Azimuthal ring of J with W=0 at tick 0: lead with J curves, the
+        // honest B=curl(J) view, and Poynting flow so the LC-like exchange is
+        // visible as it develops. E=-wave_vel starts at zero and is not the
+        // default channel.
+        fluxVolume: true,
+        fieldOverlays: ['toggle-flux-lines', 'toggle-b-field', 'toggle-poynting'],
+    },
+    's0-cell-torus-scrambled': {
+        // Azimuthal ring of J with W=0 at tick 0: lead with J curves, the
+        // honest B=curl(J) view, and Poynting flow so the LC-like exchange is
+        // visible as it develops. E=-wave_vel starts at zero and is not the
+        // default channel.
+        fluxVolume: true,
+        fieldOverlays: ['toggle-flux-lines', 'toggle-b-field', 'toggle-poynting'],
+    },
+    's0-cell-torus-open': {
+        // Azimuthal ring of J with W=0 at tick 0: lead with J curves, the
+        // honest B=curl(J) view, and Poynting flow so the LC-like exchange is
+        // visible as it develops. E=-wave_vel starts at zero and is not the
+        // default channel.
+        fluxVolume: true,
+        fieldOverlays: ['toggle-flux-lines', 'toggle-b-field', 'toggle-poynting'],
+    },
+    's0-cell-torus-walled': {
+        // Azimuthal ring of J with W=0 at tick 0: lead with J curves, the
+        // honest B=curl(J) view, and Poynting flow so the LC-like exchange is
+        // visible as it develops. E=-wave_vel starts at zero and is not the
+        // default channel.
+        fluxVolume: true,
+        fieldOverlays: ['toggle-flux-lines', 'toggle-b-field', 'toggle-poynting'],
+    },
+    's0-cell-triad': {
+        // Three standing arms with nonzero W at tick 0: J curves, B=curl(J),
+        // and Poynting flow (net zero by symmetry, locally nonzero).
+        fluxVolume: true,
+        fieldOverlays: ['toggle-flux-lines', 'toggle-b-field', 'toggle-poynting'],
+    },
+    's0-cell-torus-membrane': {
+        // Ring inside a locked clocked shell: show the shell (state field),
+        // the J curves, and the Poynting flow that the wall turns back.
+        fluxVolume: true,
+        fieldOverlays: ['toggle-state-field', 'toggle-flux-lines', 'toggle-poynting'],
+    },
+    's0-cell-torus-membrane-gated': {
+        // Same, plus the aperture that opens at tick 150 on the +x side.
+        fluxVolume: true,
+        fieldOverlays: ['toggle-state-field', 'toggle-flux-lines', 'toggle-poynting'],
+    },
+    's0-cell-membrane-pumped': {
+        // Starts empty: the pump fills the ring over the first 20 ticks.
+        fluxVolume: true,
+        fieldOverlays: ['toggle-state-field', 'toggle-flux-lines', 'toggle-poynting'],
+    },
+    's0-cell-membrane-pumped-resonant': {
+        // Same, with increments spaced by the cell period.
+        fluxVolume: true,
+        fieldOverlays: ['toggle-state-field', 'toggle-flux-lines', 'toggle-poynting'],
+    },
+    's0-cell-membrane-transfer': {
+        // Two tangent walls; the receiver on +x fills after the port opens.
+        fluxVolume: true,
+        fieldOverlays: ['toggle-state-field', 'toggle-flux-lines', 'toggle-poynting'],
+    },
 };
 
 // WASM-engine worker hosting (Phase 1): for WASM-OWNED scenarios (NOT flux-*/

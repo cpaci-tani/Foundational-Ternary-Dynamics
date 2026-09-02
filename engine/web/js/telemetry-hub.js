@@ -394,7 +394,7 @@ export class TelemetryHub {
             _overlayEfieldOn: false, _overlayPotentialOn: false, _overlayGravityFieldOn: false,
             _overlayForceOn: false, _orbitPeriod: null,
             _potentialMin: 0, _potentialMax: 0, _overlaySystemL: 0,
-            _overlayProvenanceOn: false, _overlayMassComparisonOn: false,
+            _overlayProvenanceOn: false,
         };
         this.s2  = { diag: null, runtime: null };  // also used for scale3
         this.s4  = { diag: null };
@@ -1039,11 +1039,10 @@ export class TelemetryHub {
             Math.sqrt((diag.angMomX || 0) ** 2 + (diag.angMomY || 0) ** 2 + (diag.angMomZ || 0) ** 2);
         const virial = diag.virialRatio ?? (pe !== 0 ? (2 * ke / Math.abs(pe)) : 0);
         const temperature = cnt > 0 ? (2 / 3) * ke / cnt : 0;
-        const toggleNames = [
-            'coulomb', 'gravity', 'damping', 'lorentz', 'exchange',
-            'strong', 'magnetic_dipole', 'spin_orbit', 'radiation',
-            'relativistic', 'relativistic_verlet',
-        ];
+        const registry = bridge.peGetPhysicsRegistry?.();
+        const toggleNames = Array.from(registry?.physics || [])
+            .filter(spec => spec.available)
+            .map(spec => spec.toggle);
         const toggles = {};
         for (const name of toggleNames) toggles[name] = !!bridge.peGetToggle?.(name);
 
@@ -1053,14 +1052,18 @@ export class TelemetryHub {
         // the old baseline is meaningless — re-latch instead of reporting a
         // fake integrator drift.
         const baselineFp = cnt + '|' + toggleNames.map(n => (toggles[n] ? 1 : 0)).join('');
-        if ((this._peInitialEnergy === null || this._peBaselineFp !== baselineFp)
+        const driftAvailable = diag.driftEligible === true;
+        if (!driftAvailable) {
+            this._peInitialEnergy = null;
+            this._peBaselineFp = null;
+        } else if ((this._peInitialEnergy === null || this._peBaselineFp !== baselineFp)
             && Math.abs(totalEnergy) > 1e-12) {
             this._peInitialEnergy = totalEnergy;
             this._peBaselineFp = baselineFp;
         }
-        const energyDrift = this._peInitialEnergy
+        const energyDrift = driftAvailable && this._peInitialEnergy
             ? ((totalEnergy - this._peInitialEnergy) / Math.abs(this._peInitialEnergy)) * 100
-            : 0;
+            : unavailableSample();
 
         // Runtime metadata is pushed by the controller (setScale1Runtime) —
         // the hub no longer reads the DOM (2026-07 audit fix).
@@ -1068,8 +1071,10 @@ export class TelemetryHub {
             scenario: this._s1Runtime.scenario,
             dt: bridge.peGetDt?.() ?? 0,
             softening: this._s1Runtime.softening,
+            mode: this._s1Runtime.mode,
             toggles,
             capabilities: bridge.peGetBackendCapabilities?.() ?? null,
+            registry,
         };
 
         const currentTick = diag.tick || 0;
@@ -1539,7 +1544,7 @@ export class TelemetryHub {
                     _overlayEfieldOn: false, _overlayPotentialOn: false, _overlayGravityFieldOn: false,
                     _overlayForceOn: false, _orbitPeriod: null,
                     _potentialMin: 0, _potentialMax: 0, _overlaySystemL: 0,
-                    _overlayProvenanceOn: false, _overlayMassComparisonOn: false,
+                    _overlayProvenanceOn: false,
                 };
                 this._s1SepHistory = [];
                 this._s1SepPairKey = null;

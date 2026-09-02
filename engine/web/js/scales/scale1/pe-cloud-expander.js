@@ -10,9 +10,15 @@
 import { getById } from '../../particle-catalog.js';
 import { K_B, C_SPEED } from '../../constants.js';
 import { PE_VIS_BOUNDARY_R } from '../../viewport/constants.js';
+import {
+    DEFAULT_TRAIL_SETTINGS,
+    TRAIL_HISTORY_CAPACITY,
+    trailCapacityForPopulation,
+    normalizeTrailSettings,
+} from './trail-settings.js?v=2';
 
 export const MAX_CLOUD_TOTAL = 100000;
-export const TRAIL_MAX_LENGTH = 200;
+export const TRAIL_MAX_LENGTH = TRAIL_HISTORY_CAPACITY;
 // Canonical value lives in viewport/constants.js; re-exported here so the
 // controller's existing import surface keeps working.
 export { MANIFEST_FILL } from '../../viewport/constants.js';
@@ -27,6 +33,7 @@ const _cloudParticleMap = new Int32Array(MAX_CLOUD_TOTAL);
 
 const _trailHistory = new Map();
 const _activeIdsSet = new Set();
+let _fallbackTrailTick = 0;
 
 // Manifestation spawn-flash: the first-seen-id diffing this module already
 // performs for trail history (the `!_trailHistory.has(id)` check), reused
@@ -205,7 +212,7 @@ export function buildPEManifestBlinkRate(peData, forceData, frameSec) {
             seenThisFrame.add(id);
             if (!_spawnTimes.has(id)) _spawnTimes.set(id, frameSec);
         }
-        // Prune ids no longer present (particle removed/annihilated) so the
+        // Prune ids no longer present (effective record removed) so the
         // map doesn't grow unboundedly across a long-running session.
         for (const id of _spawnTimes.keys()) {
             if (!seenThisFrame.has(id)) _spawnTimes.delete(id);
@@ -359,36 +366,128 @@ export function expandPEToCloud(peData, typeMap, opts = {}) {
     };
 }
 
-export function updateTrailHistory(peData) {
+function fallbackKineticEnergyDensity(peData, index) {
+    const mass = Math.max(0, Number(peData.masses?.[index]) || 0);
+    const vx = Number(peData.velocities?.[index * 3]) || 0;
+    const vy = Number(peData.velocities?.[index * 3 + 1]) || 0;
+    const vz = Number(peData.velocities?.[index * 3 + 2]) || 0;
+    const radius = Math.max(0.001, Number(peData.rEff?.[index]) || 0.4);
+    const kineticEnergy = 0.5 * mass * (vx * vx + vy * vy + vz * vz);
+    const effectiveVolume = (4 / 3) * Math.PI * radius * radius * radius;
+    return kineticEnergy / effectiveVolume;
+}
+
+function appendTrailSample(trail, peData, index, tick, kineticEnergyDensity) {
+    const h = trail.head;
+    trail.positions[h * 3] = peData.positions[index * 3];
+    trail.positions[h * 3 + 1] = peData.positions[index * 3 + 1];
+    trail.positions[h * 3 + 2] = peData.positions[index * 3 + 2];
+    if (peData.velocities) {
+        const vx = peData.velocities[index * 3];
+        const vy = peData.velocities[index * 3 + 1];
+        const vz = peData.velocities[index * 3 + 2];
+        trail.speeds[h] = Math.sqrt(vx * vx + vy * vy + vz * vz);
+    } else {
+        trail.speeds[h] = 0;
+    }
+    trail.ticks[h] = tick;
+    trail.energyDensities[h] = Math.max(0, Number(kineticEnergyDensity) || 0);
+    trail.head = (h + 1) % trail.capacity;
+    trail.length = Math.min(trail.length + 1, trail.capacity);
+    trail.lastSampleTick = tick;
+}
+
+function resizeTrail(trail, requestedCapacity) {
+    const capacity = Math.max(24, Math.floor(requestedCapacity));
+    if (trail.capacity === capacity) return trail;
+    const positions = new Float32Array(capacity * 3);
+    const speeds = new Float32Array(capacity);
+    const ticks = new Float64Array(capacity);
+    const energyDensities = new Float64Array(capacity);
+    const retained = Math.min(trail.length, capacity);
+    const oldest = (trail.head - retained + trail.capacity) % trail.capacity;
+    for (let i = 0; i < retained; i++) {
+        const source = (oldest + i) % trail.capacity;
+        positions.set(trail.positions.subarray(source * 3, source * 3 + 3), i * 3);
+        speeds[i] = trail.speeds[source];
+        ticks[i] = trail.ticks[source];
+        energyDensities[i] = trail.energyDensities[source];
+    }
+    trail.positions = positions;
+    trail.speeds = speeds;
+    trail.ticks = ticks;
+    trail.energyDensities = energyDensities;
+    trail.capacity = capacity;
+    trail.length = retained;
+    trail.head = retained % capacity;
+    return trail;
+}
+
+/**
+ * Capture tick-aligned trajectory history and retain despawned records long
+ * enough for their tails to fade. Sampling is intentionally keyed to PE
+ * ticks, not render frames, so 30/60/144 Hz displays show the same history.
+ */
+export function updateTrailHistory(
+    peData,
+    currentTick,
+    candidateSettings = DEFAULT_TRAIL_SETTINGS,
+    kineticEnergyDensityById = null,
+) {
+    const settings = normalizeTrailSettings(candidateSettings);
+    const tick = Number.isFinite(Number(currentTick))
+        ? Number(currentTick) : ++_fallbackTrailTick;
+    const targetCapacity = trailCapacityForPopulation(
+        Math.max(peData.count, _trailHistory.size));
     _activeIdsSet.clear();
     for (let i = 0; i < peData.count; i++) {
         const id = peData.ids[i];
         _activeIdsSet.add(id);
         if (!_trailHistory.has(id)) {
             _trailHistory.set(id, {
-                positions: new Float32Array(TRAIL_MAX_LENGTH * 3),
+                positions: new Float32Array(targetCapacity * 3),
                 head: 0,
                 length: 0,
-                speeds: new Float32Array(TRAIL_MAX_LENGTH),
+                capacity: targetCapacity,
+                speeds: new Float32Array(targetCapacity),
+                ticks: new Float64Array(targetCapacity),
+                energyDensities: new Float64Array(targetCapacity),
+                lastSampleTick: Number.NEGATIVE_INFINITY,
+                lastSeenTick: tick,
+                inactiveSinceTick: null,
             });
         }
         const trail = _trailHistory.get(id);
-        const h = trail.head;
-        trail.positions[h * 3] = peData.positions[i * 3];
-        trail.positions[h * 3 + 1] = peData.positions[i * 3 + 1];
-        trail.positions[h * 3 + 2] = peData.positions[i * 3 + 2];
-        if (peData.velocities) {
-            const vx = peData.velocities[i * 3];
-            const vy = peData.velocities[i * 3 + 1];
-            const vz = peData.velocities[i * 3 + 2];
-            trail.speeds[h] = Math.sqrt(vx * vx + vy * vy + vz * vz);
+        if (targetCapacity > trail.capacity || targetCapacity * 2 < trail.capacity) {
+            resizeTrail(trail, targetCapacity);
         }
-        trail.head = (h + 1) % TRAIL_MAX_LENGTH;
-        trail.length = Math.min(trail.length + 1, TRAIL_MAX_LENGTH);
+        if (tick < trail.lastSampleTick) {
+            trail.head = 0;
+            trail.length = 0;
+            trail.lastSampleTick = Number.NEGATIVE_INFINITY;
+        }
+        trail.lastSeenTick = tick;
+        trail.inactiveSinceTick = null;
+        if (tick - trail.lastSampleTick >= settings.sampleEveryTicks) {
+            const nativeDensity = kineticEnergyDensityById?.get?.(Number(id));
+            appendTrailSample(
+                trail,
+                peData,
+                i,
+                tick,
+                Number.isFinite(nativeDensity)
+                    ? nativeDensity : fallbackKineticEnergyDensity(peData, i),
+            );
+        }
     }
 
-    for (const [id] of _trailHistory) {
-        if (!_activeIdsSet.has(id)) _trailHistory.delete(id);
+    for (const [id, trail] of _trailHistory) {
+        if (_activeIdsSet.has(id)) continue;
+        if (!Number.isFinite(trail.inactiveSinceTick)) trail.inactiveSinceTick = tick;
+        if (settings.disappearDelayTicks === 0
+            || tick - trail.inactiveSinceTick > settings.disappearDelayTicks) {
+            _trailHistory.delete(id);
+        }
     }
 }
 
@@ -399,4 +498,5 @@ export function clearCloudAndTrails() {
     _unitTemplate = null;
     _trailHistory.clear();
     _spawnTimes.clear();
+    _fallbackTrailTick = 0;
 }

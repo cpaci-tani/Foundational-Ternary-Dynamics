@@ -228,6 +228,11 @@ void RenderBridge::copy_visual_field_sample(VisualFieldKind kind, int stride,
                         break;
                     }
                     case VisualFieldKind::Coherence: {
+                        // NOT a coherence measure: this is cos(angle) between
+                        // the flux J and curl(J) -- a normalized helicity
+                        // density (compare the unnormalized Helicity case
+                        // above). Historical misnomer; kept for wire
+                        // compatibility.
                         const Vec3 curl = curl_flux_op(fields_ref, lattice_, idx);
                         const double jm = j.mag();
                         const double cm = curl.mag();
@@ -257,6 +262,13 @@ void RenderBridge::copy_visual_field_sample(VisualFieldKind kind, int stride,
                         break;
                     }
                     case VisualFieldKind::Kretschmann: {
+                        // NOT the Kretschmann scalar R_abcd R^abcd -- there
+                        // is no metric or curvature tensor anywhere in this
+                        // computation. This is the square of the 18-point
+                        // Laplacian of latency_grid, itself the normalized
+                        // flux magnitude sqrt(|J|^2/max|J|^2) built above
+                        // (the same quantity the Latency case visualizes).
+                        // Historical misnomer; kept for wire compatibility.
                         const auto face = lattice_.neighbors_6(idx);
                         const auto edge = lattice_.neighbors_12(idx);
                         double lap = -4.0 * latency_grid[static_cast<std::size_t>(idx)];

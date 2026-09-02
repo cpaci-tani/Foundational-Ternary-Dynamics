@@ -12,7 +12,7 @@
 //    2. ftd::detail::urand() / ftd::detail::reset_scenario_rng() — the
 //       external-linkage bridge that lets the 5 stochastic scenarios in
 //       flux/quantum reach the shared RNG across TU boundaries.
-//    3. dispatch_scenario() — resets the RNG, then walks the 5 group
+//    3. dispatch_scenario() — resets the RNG, then walks the 7 group
 //       functions in prefix order (first match wins).
 // ==========================================================================
 
@@ -196,6 +196,19 @@ const std::vector<std::string_view>& scale0_scenario_ids() {
         "s0-vacuum-kaon-charged",
         "s0-seed-de-broglie-clock",
         "s0-seed-thermal-ignition",
+        // s0-cell-* flux cells (src/scenarios/cell.cpp, 2026-09-02)
+        "s0-cell-capacitor",
+        "s0-cell-torus",
+        "s0-cell-torus-reverse",
+        "s0-cell-torus-scrambled",
+        "s0-cell-torus-open",
+        "s0-cell-torus-walled",
+        "s0-cell-triad",
+        "s0-cell-torus-membrane",
+        "s0-cell-torus-membrane-gated",
+        "s0-cell-membrane-pumped",
+        "s0-cell-membrane-transfer",
+        "s0-cell-membrane-pumped-resonant",
     };
     return ids;
 }
@@ -209,6 +222,12 @@ bool dispatch_scenario(RenderBridge& rb, const std::string& name) {
     // state from a previous scenario (e.g. flux-random-genesis) would leak
     // into the next stochastic scenario called in the same process.
     detail::reset_scenario_rng();
+
+    // Flux-cell mechanisms are per-bridge state, not toggles: a body that
+    // wants them re-registers them; nothing leaks between scenarios.
+    rb.clear_flux_cell_region();
+    rb.clear_flux_pump();
+    rb.clear_flux_cell_port();
 
     const auto& registered = scale0_scenario_ids();
     if (std::find(registered.begin(), registered.end(), std::string_view(name))
@@ -245,6 +264,7 @@ bool dispatch_scenario(RenderBridge& rb, const std::string& name) {
     if (setup_vacuum_scenario(rb, name))   return accept_profile(true);
     if (setup_s0_seed_scenario(rb, name))  return accept_profile(true);
     if (setup_s0_field_scenario(rb, name)) return accept_profile(true);
+    if (setup_cell_scenario(rb, name))     return accept_profile(true);
     return false;
 }
 

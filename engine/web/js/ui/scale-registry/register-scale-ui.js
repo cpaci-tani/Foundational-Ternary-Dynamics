@@ -1,6 +1,6 @@
 import { createToolbarRegistry } from './toolbar-registry.js';
 import { createOverlayRegistry } from './overlay-registry.js';
-import { getPanelRegistry } from './panel-registry.js';
+import { getPanelRegistry } from './panel-registry.js?v=5';
 
 /**
  * Shared shell UI registry bundle.

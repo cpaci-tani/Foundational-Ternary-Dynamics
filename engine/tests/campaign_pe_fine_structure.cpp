@@ -44,7 +44,7 @@ int main() {
         pe_bare.run(500);
         auto d_bare = pe_bare.diagnostics();
 
-        // Coulomb + spin-orbit + relativistic
+        // Coulomb + imported spin-orbit toy; both arms use momentum-Verlet.
         ftd::ParticleEngine pe_fs;
         pe_fs.set_damping_enabled(false);
         pe_fs.set_dt(0.01);
@@ -55,7 +55,6 @@ int main() {
         pe_fs.toggles.coulomb = true;
         pe_fs.toggles.gravity = false;
         pe_fs.toggles.spin_orbit = true;
-        pe_fs.toggles.relativistic = true;
 
         pe_fs.run(500);
         auto d_fs = pe_fs.diagnostics();
@@ -105,8 +104,8 @@ int main() {
         check("FS2: spin-up and spin-down have different energies", splitting > 1e-15);
     }
 
-    // ---- FS3: Relativistic correction is small relative to Coulomb ----
-    std::cout << "\n--- FS3: Relativistic correction small vs Coulomb ---\n";
+    // ---- FS3: retired non-covariant force rescale is unavailable ----
+    std::cout << "\n--- FS3: Retired force rescale is unavailable ---\n";
     {
         ftd::ParticleEngine pe;
         pe.set_damping_enabled(false);
@@ -117,18 +116,10 @@ int main() {
         pe.toggles.coulomb = true;
         pe.toggles.gravity = false;
 
-        pe.toggles.relativistic = false;
-        ftd::Vec3 f_nr = pe.compute_force(1);
-
-        pe.toggles.relativistic = true;
-        ftd::Vec3 f_r = pe.compute_force(1);
-
-        double correction = (f_r - f_nr).mag();
-        double ratio = correction / f_nr.mag();
-        std::cout << "  |F_nr|=" << f_nr.mag() << " correction=" << correction
-                  << " ratio=" << ratio << "\n";
-        // Relativistic correction should be small (v << c)
-        check("FS3: relativistic correction < 10% of Coulomb", ratio < 0.1);
+        std::string error;
+        const bool accepted = pe.try_set_toggle("relativistic", true, &error);
+        check("FS3: retired force rescale activation rejected",
+              !accepted && !error.empty());
     }
 
     // ---- FS4: All Phase 2 forces together → system still stable ----
@@ -149,7 +140,6 @@ int main() {
         pe.toggles.magnetic_dipole = true;
         pe.toggles.spin_orbit = true;
         pe.toggles.radiation = true;
-        pe.toggles.relativistic = true;
 
         pe.run(1000);
 
@@ -177,7 +167,6 @@ int main() {
         pe.toggles.coulomb = true;
         pe.toggles.gravity = false;
         pe.toggles.spin_orbit = true;
-        pe.toggles.relativistic = true;
         pe.toggles.radiation = true;
         pe.toggles.magnetic_dipole = true;
 
@@ -189,10 +178,9 @@ int main() {
             int nonzero = 0;
             if (d.f_coulomb.mag() > 1e-30) nonzero++;
             if (d.f_spin_orbit.mag() > 1e-30) nonzero++;
-            if (d.f_relativistic.mag() > 1e-30) nonzero++;
             if (d.f_radiation.mag() > 1e-30) nonzero++;
             if (d.f_magnetic_dipole.mag() > 1e-30) nonzero++;
-            std::cout << "  nonzero force components: " << nonzero << "/5\n";
+            std::cout << "  nonzero force components: " << nonzero << "/4\n";
             check("FS5: at least 3 force components nonzero", nonzero >= 3);
         } else {
             check("FS5: at least 3 force components nonzero", false);

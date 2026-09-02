@@ -17,7 +17,7 @@ This is the running parity checklist: every capability the web dashboard (`engin
 | `ScaleEngine`-per-scale seam (replaces the 4-bridge web transport) | ✅ | `ScaleHost`/`ScaleAdapter`; host names no concrete scale type |
 | In-process (no bridge/worker/WASM/WebSocket) | ✅ | §12.1 collapse — done by construction |
 | Scale 0 Lattice — `RenderBridge`, in-process, CUDA↔D3D12 interop | ✅ | real engine, GPU device-resident particles |
-| Scale 1 Particle — `ParticleEngine` adapter | ◐ | adapter live; **CPU-only** (`gpu_particle_engine` CUDA backend not wired) |
+| Scale 1 Particle — observer + effective lab | ◐ | shared schema, read-only FTD-0760 Native Matter replay, effective lab, and deterministic projection/loss contract are implemented; native execution remains **CPU-only**, and live-source/CUDA/deployment qualification is still open |
 | Scale 2/3 Atom/Molecule — `AtomEngine` adapter | ▢ | native engine exists; needs the **Planck↔Bohr unit shim** + adapter + delete-mock |
 | Scale 4 Planetary | ▢ | **no native engine** — write new C++ N-body |
 | Scale 5 Cosmic — `CosmicEngine` adapter | ▢ | native engine compiled + CTest-covered but unwired |

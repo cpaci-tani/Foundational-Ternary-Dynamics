@@ -1,4 +1,4 @@
-import { createScale1ScenarioToolbarGroup } from './toolbar/component.js';
+import { createScale1ScenarioToolbarGroup } from './toolbar/component.js?v=10';
 
 export function registerScale1ToolbarUI(toolbarRegistry) {
     toolbarRegistry.registerFactory({

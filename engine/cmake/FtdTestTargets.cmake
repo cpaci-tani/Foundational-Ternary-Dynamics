@@ -503,6 +503,8 @@ ftd_add_test(test_boundary_scenario_physics tests/test_boundary_scenario_physics
              CTEST_NAME boundary_scenario_physics TIMEOUT 180)
 ftd_add_test(test_genesis_scenario_physics tests/test_genesis_scenario_physics.cpp
              CTEST_NAME genesis_scenario_physics TIMEOUT 180)
+ftd_add_test(test_flux_cell_scenario_physics tests/test_flux_cell_scenario_physics.cpp
+             CTEST_NAME flux_cell_scenario_physics TIMEOUT 300)
 ftd_add_test(test_reaction_scenario_physics tests/test_reaction_scenario_physics.cpp
              CTEST_NAME reaction_scenario_physics TIMEOUT 180)
 ftd_add_test(test_identity_lifecycle tests/test_identity_lifecycle.cpp
@@ -707,8 +709,10 @@ target_link_libraries(test_wavepacket ftd_core)
 add_executable(test_particle_engine tests/test_particle_engine.cpp)
 target_link_libraries(test_particle_engine ftd_core)
 
-add_executable(test_scale_bridge tests/test_scale_bridge.cpp)
-target_link_libraries(test_scale_bridge ftd_core)
+add_executable(test_scale1_domain tests/test_scale1_domain.cpp)
+target_link_libraries(test_scale1_domain ftd_core)
+add_executable(test_scale1_field_mediation_probe tests/test_scale1_field_mediation_probe.cpp)
+target_link_libraries(test_scale1_field_mediation_probe ftd_core)
 
 # Wave 4c.9: test_hydrogen_scale1 + test_hydrogen_em_only +
 # test_hydrogen_spectrum_scale1 + campaign_poisson_hydrogen merged
@@ -741,12 +745,6 @@ target_link_libraries(test_relativistic_verlet ftd_core)
 
 add_executable(test_molecular_dihedrals tests/test_molecular_dihedrals.cpp)
 target_link_libraries(test_molecular_dihedrals ftd_core)
-
-add_executable(test_atom_scale_bridge tests/test_atom_scale_bridge.cpp)
-target_link_libraries(test_atom_scale_bridge ftd_core)
-
-add_executable(test_multiscale_bridge tests/test_multiscale_bridge.cpp)
-target_link_libraries(test_multiscale_bridge ftd_core)
 
 add_executable(test_em_fields tests/test_em_fields.cpp)
 target_link_libraries(test_em_fields ftd_core)
@@ -1248,17 +1246,11 @@ target_link_libraries(ftd_bound_lifetime ftd_core)
 add_executable(ftd_spontaneous tests/campaign_spontaneous_structure.cpp)
 target_link_libraries(ftd_spontaneous ftd_core)
 
-add_executable(ftd_cross_scale tests/campaign_cross_scale.cpp)
-target_link_libraries(ftd_cross_scale ftd_core)
-
 add_executable(ftd_born_ensemble tests/campaign_born_ensemble.cpp)
 target_link_libraries(ftd_born_ensemble ftd_core)
 
 add_executable(ftd_h2_molecule tests/campaign_h2_molecule.cpp)
 target_link_libraries(ftd_h2_molecule ftd_core)
-
-add_executable(ftd_multiscale_pipeline tests/campaign_multiscale_pipeline.cpp)
-target_link_libraries(ftd_multiscale_pipeline ftd_core)
 
 # Phase 1: Measurement Infrastructure campaigns
 add_executable(ftd_statistical_convergence tests/campaign_statistical_convergence.cpp)

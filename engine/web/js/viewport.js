@@ -85,7 +85,7 @@ import { ViewportFluxRenderer } from './viewport/flux-renderer.js?v=5';
 // forwards every particle-mesh method through a thin wrapper. Atom/bond/
 // orbital rendering is owned by MolecularRenderer (see import above) and
 // remains delegated separately. See viewport/REFACTOR_MAP.md §3d.
-import { ViewportParticleRenderer } from './viewport/particle-renderer.js?v=3';
+import { ViewportParticleRenderer } from './viewport/particle-renderer.js?v=12';
 // Field overlays (E/B/Poynting/divergence/force volumes/dark matter/damping/
 // genesis/confinement/dual flux/chirality/light/horizon + quantum overlays)
 // extracted as Phase 3c — the largest viewport sub-renderer (66 methods, 27+
@@ -93,7 +93,7 @@ import { ViewportParticleRenderer } from './viewport/particle-renderer.js?v=3';
 // writeArrowFieldIntoMesh, writeStreamlinesIntoMesh) live HERE as the
 // canonical home; FluxRenderer + ParticleRenderer's constructor callbacks
 // route through bound methods on FieldRenderer. See viewport/REFACTOR_MAP.md §3c.
-import { ViewportFieldRenderer } from './viewport/field-renderer.js?v=6';
+import { ViewportFieldRenderer } from './viewport/field-renderer.js?v=7';
 
 // Pre-allocated buffer-size constants (MAX_PARTICLES / MAX_FIELD_GRID)
 // were centralized into viewport/constants.js (D-6). They were unused in
@@ -484,15 +484,17 @@ export class Viewport {
     // ── Velocity Vectors / Trails ───────────────────────────────────────
     // Phase 3d: extracted to viewport/particle-renderer.js. These thin
     // delegators preserve the public API for app.js and panel code.
-    updateVelocityVectors(positions, velocities, count) {
-        this._particleRenderer.updateVelocityVectors(positions, velocities, count);
+    updateVelocityVectors(positions, velocities, count, ids = null) {
+        this._particleRenderer.updateVelocityVectors(positions, velocities, count, ids);
     }
     toggleVelocityVectors(on) { this._particleRenderer.toggleVelocityVectors(on); }
-    updateSpinVectors(positions, spinAxes, spins, count) {
-        this._particleRenderer.updateSpinVectors(positions, spinAxes, spins, count);
+    updateSpinVectors(positions, spinAxes, spins, count, ids = null) {
+        this._particleRenderer.updateSpinVectors(positions, spinAxes, spins, count, ids);
     }
     toggleSpinVectors(on) { this._particleRenderer.toggleSpinVectors(on); }
-    updateTrails(trailHistory, typeMap) { this._particleRenderer.updateTrails(trailHistory, typeMap); }
+    updateTrails(trailHistory, typeMap, settings, currentTick) {
+        return this._particleRenderer.updateTrails(trailHistory, typeMap, settings, currentTick);
+    }
     toggleTrails(on) { this._particleRenderer.toggleTrails(on); }
     clearTrails() { this._particleRenderer.clearTrails(); }
 
@@ -543,45 +545,50 @@ export class Viewport {
 
     // ── Per-Particle Force Arrows ─────────────────────────────────────
     // Phase 3d: extracted to viewport/particle-renderer.js.
-    updateParticleForces(positions, forces, count, maxForce) {
-        this._particleRenderer.updateParticleForces(positions, forces, count, maxForce);
+    updateParticleForces(positions, forces, count, maxForce, ids = null) {
+        this._particleRenderer.updateParticleForces(positions, forces, count, maxForce, ids);
     }
     toggleParticleForces(on) { this._particleRenderer.toggleParticleForces(on); }
-    updatePEForceDecomposition(decomp, gravityVisGain) {
-        this._particleRenderer.updatePEForceDecomposition(decomp, gravityVisGain);
+    updatePEForceDecomposition(decomp, gravityVisGain, ids = null) {
+        this._particleRenderer.updatePEForceDecomposition(decomp, gravityVisGain, ids);
     }
     togglePEForceCoulomb(on) { this._particleRenderer.togglePEForceCoulomb(on); }
     togglePEForceGravity(on) { this._particleRenderer.togglePEForceGravity(on); }
+    togglePEForceLorentz(on) { this._particleRenderer.togglePEForceLorentz(on); }
+    togglePEForceExchange(on) { this._particleRenderer.togglePEForceExchange(on); }
     togglePEForceStrong(on)  { this._particleRenderer.togglePEForceStrong(on); }
+    togglePEForceRadiation(on) { this._particleRenderer.togglePEForceRadiation(on); }
+    togglePEForceMagneticDipole(on) { this._particleRenderer.togglePEForceMagneticDipole(on); }
+    togglePEForceSpinOrbit(on) { this._particleRenderer.togglePEForceSpinOrbit(on); }
     togglePEForceNet(on)     { this._particleRenderer.togglePEForceNet(on); }
 
     // ── System Observables (center of mass + momentum p + ang.-mom. L) ──
     updatePESystem(com, p, l) { this._particleRenderer.updatePESystem(com, p, l); }
     togglePESystem(on) { this._particleRenderer.togglePESystem(on); }
 
-    // ── Voxel debug ghost layer (Scale-1 promotion source view) ─────────
-    updateVoxelDebugLayer(coarsen, latticeSize, displayScale) {
-        this._particleRenderer.updateVoxelDebugLayer(coarsen, latticeSize, displayScale);
-    }
-    toggleVoxelDebugLayer(on) { this._particleRenderer.toggleVoxelDebugLayer(on); }
-
-    // ── Admissibility ring overlay (Scale-1 promotion) ──────────────────
+    // ── Native-record admissibility ring overlay ────────────────────────
     updateAdmissibilityRings(peData, seedById, ids) {
         this._particleRenderer.updateAdmissibilityRings(peData, seedById, ids);
     }
     toggleAdmissibilityRings(on) { this._particleRenderer.toggleAdmissibilityRings(on); }
 
-    // ── Provenance label overlay (Scale-1 promotion) ─────────────────────
+    // ── Native-record provenance label overlay ──────────────────────────
     updateProvenanceLabels(peData, seedById, ids) {
         this._particleRenderer.updateProvenanceLabels(peData, seedById, ids);
     }
     toggleProvenanceLabels(on) { this._particleRenderer.toggleProvenanceLabels(on); }
 
-    // ── Voxel<->cluster mass-comparison overlay (Scale-1 promotion) ─────
-    updateMassComparison(peData, seedById, voxelDebug, latticeSize, displayScale) {
-        this._particleRenderer.updateMassComparison(peData, seedById, voxelDebug, latticeSize, displayScale);
+    setPEInspectionFocus(focus) {
+        this._peInspectionFocus = focus || null;
+        this._particleRenderer.setPEInspectionFocus(focus);
+        this._fieldRenderer.clearPEInspectionGeometry();
     }
-    toggleMassComparison(on) { this._particleRenderer.toggleMassComparison(on); }
+
+    setPEScenarioVisual(spec) { this._particleRenderer.setPEScenarioVisual(spec); }
+    clearPEScenarioVisual() { this._particleRenderer.clearPEScenarioVisual(); }
+    togglePEScenarioVisual(on) { this._particleRenderer.togglePEScenarioVisual(on); }
+
+    getPEInspectionFocus() { return this._peInspectionFocus || null; }
 
     // ── Flux Volume Rendering (Scale 0 -- substrate mode) ──────────────
     // Phase 3b extracted into ViewportFluxRenderer (./viewport/flux-renderer.js).
@@ -932,6 +939,7 @@ export class Viewport {
             if (this.particles) this.particles.visible = false;
             if (this.velocityVectors) this.velocityVectors.visible = false;
             if (this.trails) this.trails.visible = false;
+            this._particleRenderer?.togglePEScenarioVisual(false);
             // Molecular renderer owns bondLines, bondCylinders, nucleusShells,
             // orbitalShells, orbitalLobes, element labels, and AE force arrows.
             this._molRenderer?.setAllVisible(false);
@@ -992,6 +1000,7 @@ export class Viewport {
             this.peAxes.visible = this._showAxes;
             if (this.peGrid) this.peGrid.visible = this._showGrid;
             this.particles.visible = true; // Particles point cloud used by Scale 1, 2, 3
+            this._particleRenderer?.togglePEScenarioVisual(mode === 'particles');
             if (this.wireframe) this.wireframe.visible = this.showWireframe;
 
             // Recenter camera at origin

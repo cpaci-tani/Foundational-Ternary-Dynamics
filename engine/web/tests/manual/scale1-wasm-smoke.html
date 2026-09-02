@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Scale 1 WASM smoke gate</title>
+    <style>
+        :root { color-scheme: dark; font-family: ui-monospace, Consolas, monospace; }
+        body { margin: 2rem; background: #101521; color: #dce8f5; }
+        #result { white-space: pre-wrap; line-height: 1.55; }
+        .pass { color: #90e3b0; }
+        .fail { color: #ff9d9d; }
+    </style>
+</head>
+<body>
+    <h1>Scale 1 WASM smoke gate</h1>
+    <pre id="result">RUNNING</pre>
+    <script src="../../wasm/ftd_core.js"></script>
+    <script type="module">
+        import { createNativeParticleEngine } from '../../js/bridge/native-particle-engine.js?v=smoke-1';
+        import { Scale1ParticleWorkerExecutor } from '../../js/scales/scale1/particle-worker-executor.js?v=smoke-1';
+        import {
+            SCALE1_SCENARIOS, SCALE1_SCENARIO_TARGET_COUNT,
+            getScale1ScenarioPreset, installScale1ScenarioManifest,
+        } from '../../js/scales/scale1/scenario-registry.js?v=smoke-1';
+
+        const output = document.getElementById('result');
+        const report = { ok: false, checks: {}, error: '' };
+        window.__scale1Smoke = report;
+
+        const waitFor = async (predicate, timeoutMs, label) => {
+            const deadline = performance.now() + timeoutMs;
+            while (performance.now() < deadline) {
+                const value = predicate();
+                if (value) return value;
+                await new Promise(resolve => setTimeout(resolve, 20));
+            }
+            throw new Error(`Timed out waiting for ${label}`);
+        };
+
+        try {
+            if (typeof window.createFTDModule !== 'function') {
+                throw new Error('createFTDModule was not exposed by the rebuilt WASM loader');
+            }
+            const module = await window.createFTDModule();
+            const engine = createNativeParticleEngine({ _module: module });
+            engine.initPE();
+            engine.peSetMode('effective_lab');
+            engine.peSetCoulomb(true);
+            const positiveId = engine.peAddParticle('proton', 1, -2, 0, 0, 0, 0.01, 0, 938.272, 0.25);
+            const negativeId = engine.peAddParticle('electron', -1, 2, 0, 0, 0, -0.01, 0, 0.511, 0.15);
+            report.checks.particleIds = positiveId >= 0 && negativeId >= 0;
+            report.checks.particleCount = engine.peParticleCount() === 2;
+
+            const checkpoint = engine.peExportCheckpoint();
+            const capturedTick = engine.peGetTick();
+            for (let i = 0; i < 5; i++) engine.peTick();
+            const advancedTick = engine.peGetTick();
+            report.checks.checkpointRestore = advancedTick === capturedTick + 5
+                && engine.peRestoreCheckpoint(checkpoint)
+                && engine.peGetTick() === capturedTick;
+
+            report.checks.finitePortConfigured = engine.peConfigureFinitePortBattery(6, 8, 1, 10);
+            report.checks.finitePortStep = engine.peStepFinitePortBattery();
+            const field = engine.peGetFinitePortBatterySnapshot();
+            report.checks.finitePortLedger = !!field && field.valid === true
+                && field.count === 216 && field.acceptedLayers === 1
+                && Number.isFinite(field.totalBookedEnergy)
+                && field.totalBookedEnergy > 0;
+            report.checks.finitePortFirewalls = field.productionCouplingSupplied === false
+                && field.movingSourceContinuitySupplied === false
+                && field.bornWeightsUsed === false;
+            report.checks.finitePortReverse = engine.peReverseFinitePortBattery()
+                && engine.peGetFinitePortBatterySnapshot().acceptedLayers === 0;
+
+            const registry = engine.peGetPhysicsRegistry();
+            installScale1ScenarioManifest(registry);
+            report.checks.scenarioRegistry = SCALE1_SCENARIOS.length === SCALE1_SCENARIO_TARGET_COUNT
+                && SCALE1_SCENARIOS.every(row => row.available === true);
+            const scenarioFailures = [];
+            for (const scenario of SCALE1_SCENARIOS) {
+                engine.initPE();
+                engine.peSetMode(scenario.mode || 'effective_lab');
+                const preset = getScale1ScenarioPreset(scenario.id, registry);
+                engine.peSetDt(preset.physics.dt ?? 1);
+                engine.peSetSoftening(preset.physics.softening ?? 0.1);
+                for (const physics of Array.from(registry.physics || [])) {
+                    engine.peSetToggle(physics.toggle, !!preset.physics[physics.toggle]);
+                }
+                scenario.setup?.({ bridge: engine, viewport: null });
+                const snapshot = engine.peGetSnapshot(scenario.id);
+                const objects = Array.from(snapshot?.objects || []);
+                const finite = objects.every(object => [
+                    object.position?.x, object.position?.y, object.position?.z,
+                    object.velocity?.x, object.velocity?.y, object.velocity?.z,
+                    object.mass,
+                ].every(Number.isFinite));
+                const emptyAllowed = scenario.id === 's1-empty-zoo';
+                if (!snapshot || !finite || (!emptyAllowed && objects.length < 1)) {
+                    scenarioFailures.push(scenario.id);
+                }
+                if (scenario.mode !== 'native_matter') {
+                    const before = engine.peGetTick();
+                    engine.peTick();
+                    if (engine.peGetTick() !== before + 1) scenarioFailures.push(`${scenario.id}:tick`);
+                }
+            }
+            report.checks.allScenarioHealth = scenarioFailures.length === 0;
+            report.scenarioFailures = scenarioFailures;
+
+            const worker = new Scale1ParticleWorkerExecutor();
+            worker.ensure();
+            await waitFor(() => worker.status().state === 'ready'
+                || worker.status().state === 'failed', 15000, 'worker readiness');
+            if (worker.status().state !== 'ready') {
+                throw new Error(`Worker failed: ${worker.status().error}`);
+            }
+            let workerApplied = false;
+            const workerStartTick = engine.peGetTick();
+            report.checks.workerAccepted = worker.request(engine, 7, () => { workerApplied = true; });
+            await waitFor(() => workerApplied || worker.status().state === 'failed', 15000, 'worker result');
+            report.checks.workerTickBatch = workerApplied
+                && engine.peGetTick() === workerStartTick + 7
+                && worker.status().state === 'ready';
+            worker.dispose();
+            engine.dispose();
+
+            report.ok = Object.values(report.checks).every(Boolean);
+            output.className = report.ok ? 'pass' : 'fail';
+            output.textContent = `${report.ok ? 'PASS' : 'FAIL'}\n${JSON.stringify(report, null, 2)}`;
+            document.title = report.ok ? 'PASS - Scale 1 WASM smoke gate' : 'FAIL - Scale 1 WASM smoke gate';
+        } catch (error) {
+            report.error = error?.stack || String(error);
+            output.className = 'fail';
+            output.textContent = `FAIL\n${JSON.stringify(report, null, 2)}`;
+            document.title = 'FAIL - Scale 1 WASM smoke gate';
+        }
+    </script>
+</body>
+</html>

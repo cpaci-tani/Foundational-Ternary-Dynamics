@@ -19,7 +19,7 @@ const DISABLED_TERMS = Object.freeze([
     'reflective_boundary', 'field_energy_gravity', 'cluster_inertia',
     'geometric_gravity', 'de_broglie_clock', 'db_clock_coulomb',
     'knot_tracking', 'confinement', 'strict_validation',
-    'ew_background_sweep',
+    'ew_background_sweep', 'flux_pump', 'flux_cell_port',
 ]);
 
 export function configureGenesisClusterTerms(harness, temperature, gamma = 0.02) {

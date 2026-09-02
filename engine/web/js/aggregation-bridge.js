@@ -1,9 +1,10 @@
 /**
  * Aggregation Bridge Module — Appendix A of the FTD project (2026).
  *
- * Implements the 4-level aggregation hierarchy and emergence monitoring.
- * The user (external observer) provides C_0; the system evolves via f.
- * Theorem A.1: Level 3 emergence requires |R|>>1 AND t>>1.
+ * Implements a legacy 4-level presentation hierarchy and an imposed
+ * aggregation diagnostic. The user (external observer) provides C_0; the
+ * system evolves via f. The finite thresholds below are display selections,
+ * not a theorem that establishes physical emergence.
  *
  * Three classes:
  *   AggregateDetector   — detect which aggregation levels are active
@@ -20,13 +21,13 @@ export const AGGREGATION_LEVELS = [
       description: 'Manifested states present (s ≠ 0)' },
     { level: 2, name: 'Configurational',  color: '#f1c40f',
       description: 'Bound structures detected (locked triads / bonds)' },
-    { level: 3, name: 'Emergent',         color: '#e74c3c',
-      description: 'Requires |R|>>1 AND t>>1 (Theorem A.1)' },
+    { level: 3, name: 'Aggregation gate', color: '#e74c3c',
+      description: 'Passes selected extent and persistence thresholds' },
 ];
 
-// Theorem A.1 thresholds
-const SPATIAL_THRESHOLD = 0.1;   // |R| / lattice_size > this for ">>1"
-const TEMPORAL_THRESHOLD = 10.0; // tick / relaxation_time > this for ">>1"
+// [IMPOSED] presentation thresholds; they do not prove emergence.
+const SPATIAL_THRESHOLD = 0.1;
+const TEMPORAL_THRESHOLD = 10.0;
 
 // ── AggregateDetector ────────────────────────────────────────────────
 
@@ -59,7 +60,7 @@ export class AggregateDetector {
             true,                                    // L0: always active
             particleCount > 0,                       // L1: manifested entities
             boundCount > 0,                          // L2: bound structures
-            spatialNorm > SPATIAL_THRESHOLD &&        // L3: Theorem A.1
+            spatialNorm > SPATIAL_THRESHOLD &&        // L3: selected display gate
                 temporalDepth > TEMPORAL_THRESHOLD
         ];
 
@@ -104,15 +105,16 @@ export class ScaleBridgeVisualizer {
               description: 'Scenario selection — observer provides C₀' },
             { level: 1, scale: 0,  label: 'Scale 0 — Lattice',
               description: 'Individual voxels with state {-1,0,+1}' },
-            { level: 2, scale: 1,  label: 'Scale 1 — Particles',
-              description: 'Continuous particle aggregates' },
+            { level: 2, scale: 1,  label: 'Scale 1 — Matter / effective records',
+              description: 'Read-only native observations or imposed effective particle records' },
             { level: 3, scale: 2,  label: 'Scale 2 — Atoms',
               description: 'Composite atoms, bonds, molecular structures' },
         ];
     }
 
     /**
-     * Get OnticEntity triple {state, energy, boundary} for any entity.
+     * Get the lossy OnticEntity presentation triple for an entity.
+     * This is not a state-complete or reversible cross-scale record.
      *
      * @param {number} scale - simulation scale (0, 1, 2)
      * @param {object} entity - entity data from that scale
@@ -126,8 +128,8 @@ export class ScaleBridgeVisualizer {
             };
             case 1: return {
                 state: entity.charge > 0 ? +1 : entity.charge < 0 ? -1 : 0,
-                energy: entity.mass || K_B,
-                boundary: entity.rEff || 0,
+                energy: entity.mass ?? null,
+                boundary: entity.rEff ?? null,
             };
             case 2: return {
                 state: entity.Z || 0,
@@ -148,9 +150,9 @@ export class ScaleBridgeVisualizer {
             ...info,
             entityCount: data.particleCount || 0,
             totalEnergy: data.totalEnergy || 0,
-            dominantForce: scale === 0 ? 'Flux coupling'
-                         : scale === 1 ? 'Coulomb + Gravity'
-                         : 'Ionic + vdW + Covalent',
+            dynamicsOwner: scale === 0 ? 'Scale-0 common-action diagnostics'
+                          : scale === 1 ? 'Mode/registry-defined owner'
+                          : 'Imported atom-engine model',
         };
     }
 }
@@ -196,7 +198,7 @@ export class EmergenceMonitor {
     }
 
     /**
-     * Check if Theorem A.1 conditions are currently satisfied.
+     * Check the legacy selected aggregation-display thresholds.
      */
     checkTheoremA1() {
         if (this._history.length === 0) return { satisfied: false };
@@ -267,7 +269,7 @@ export function renderAggregationTower(levels, details, container) {
         <div class="card-title">Aggregation Hierarchy (Appendix A)</div>
         <div class="agg-tower-container">${bars}</div>
         <div class="agg-footer">
-            Level 3 requires |R| > ${SPATIAL_THRESHOLD} AND t/τ > ${TEMPORAL_THRESHOLD} (Theorem A.1)
+            [IMPOSED] display gate: |R| > ${SPATIAL_THRESHOLD} AND t/τ > ${TEMPORAL_THRESHOLD}
         </div>`;
 }
 
@@ -292,19 +294,19 @@ export function renderScaleBridge(activeScale, data, container) {
             <div class="sb-col ${activeClass}">
                 <div class="sb-label">${s.label}</div>
                 <div class="sb-count">${s.entityCount}</div>
-                <div class="sb-force">${s.dominantForce}</div>
+                <div class="sb-force">${s.dynamicsOwner}</div>
             </div>`;
 
         if (i < 2) {
-            cols += `<div class="sb-arrow">⇄</div>`;
+            cols += `<div class="sb-arrow">→</div>`;
         }
     }
 
     container.innerHTML = `
-        <div class="card-title">Scale Bridge (OnticEntity mapping)</div>
+        <div class="card-title">Scale Bridge (lossy presentation projection)</div>
         <div class="sb-container">${cols}</div>
         <div class="agg-footer">
-            Each entity = {state, energy, boundary} — universal triple across all scales
+            {state, energy, boundary} is compact display data, not a universal complete record or reversible bridge.
         </div>`;
 }
 
@@ -361,11 +363,11 @@ export function renderEmergenceMonitor(trajectory, container) {
 
     const a1 = trajectory.length > 0 ? trajectory[trajectory.length - 1] : null;
     const status = a1 && a1.spatialExtent > SPATIAL_THRESHOLD && a1.temporalDepth > TEMPORAL_THRESHOLD
-        ? '<span class="em-status-ok">Theorem A.1 SATISFIED</span>'
-        : '<span class="em-status-pending">Theorem A.1 pending</span>';
+        ? '<span class="em-status-ok">Selected aggregation gate passed</span>'
+        : '<span class="em-status-pending">Selected aggregation gate pending</span>';
 
     container.innerHTML = `
-        <div class="card-title">Emergence Monitor (Theorem A.1)</div>
+        <div class="card-title">Aggregation Monitor [IMPOSED thresholds]</div>
         ${svg}
         <div class="em-footer">${status} — ${trajectory.length} frames recorded</div>`;
 }

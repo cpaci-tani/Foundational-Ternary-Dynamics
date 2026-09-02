@@ -32,7 +32,8 @@ int toggle_category(std::string_view n) {
         return 2;
     // Thermal / quantum / diagnostics.
     if (n == "larmor_radiation" || n == "langevin" || n == "de_broglie_clock"
-        || n == "db_clock_coulomb" || n == "knot_tracking" || n == "strict_validation")
+        || n == "db_clock_coulomb" || n == "knot_tracking" || n == "strict_validation"
+        || n == "flux_pump" || n == "flux_cell_port")
         return 3;
     // Everything else: core dynamics + integrators + gauss variants + EW sweep.
     return 0;

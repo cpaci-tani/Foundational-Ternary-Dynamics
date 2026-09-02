@@ -12,7 +12,7 @@ export function overlaySection(label, hint, contentHtml) {
     ? `<span class="scale-overlay-section-hint">${hint}</span>`
     : '';
   return `
-    <div class="scale-overlay-section">
+    <div class="scale-overlay-section" role="group" aria-label="${label}">
       <span class="scale-overlay-section-label">${label}</span>
       ${hintHtml}
       ${contentHtml}

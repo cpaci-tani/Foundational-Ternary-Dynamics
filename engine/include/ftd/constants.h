@@ -233,6 +233,18 @@ using ontic::C_WAVE;
 using ontic::DAMPING;
 using ontic::DRAG_PER_AXIS;
 
+// HONEST NOTE — the 18-point-stencil CFL bound is STRICT, not "<=" (measured
+// 2026-09-02). The fuller derivation (ontic/gauge_couplings.h, FTD-0407)
+// states the stability condition as c² <= 3/4; that inequality should be
+// read as c² < 3/4. At exact equality the (pi,pi,0) Fourier mode's leapfrog
+// update matrix becomes a JORDAN BLOCK (a repeated, defective eigenvalue),
+// so that mode grows LINEARLY in time instead of staying bounded — measured:
+// a 1e-3 perturbation in that mode grows to 0.80 over 400 steps at c²=3/4,
+// and c²=0.76 (just past the bound) diverges outright. The engine's
+// production value is c² = C_WAVE² = C_SPEED² = 1/3, a factor of 2.25 inside
+// the strict limit — comfortably stable, but the boundary value itself must
+// never be treated as reachable.
+
 // ============================================================================
 // Engine-specific constants (not part of ontic chain)
 // ============================================================================
@@ -326,7 +338,21 @@ inline constexpr double BINDING_ENERGY = K_B * PHI;
 // proportionality K_B→ω₀[rad/tick] is [SELECTION] (no ℏ in the substrate —
 // the lattice fixes the de Broglie *shape* λ∝1/v, never the absolute scale).
 // This is a reference value only; the engine reads toggles.omega0 at runtime.
-// Stability bound for the leapfrog integrator: ω₀·dt < 2.
+// Stability bound for the leapfrog integrator, ISOLATED clocked site
+// (dt=1, no spatial coupling into the Laplacian): ω₀ < 2.
+//
+// HONEST NOTE (added 2026-09-02) — on a FULLY MANIFESTED lattice the
+// Klein-Gordon mass term −ω₀²·J couples to the spatial Laplacian eigenvalue,
+// and the SUFFICIENT stability bound sharpens to
+//     ω₀² < 4 − 16·c²/3
+// i.e. ω₀ < 1.4907 at the production c² = C_WAVE² = 1/3 (the leapfrog
+// update matrix's trace must stay in [-2,2]; the 18-point Laplacian's most
+// negative eigenvalue is −16/3, so the mass term's contribution at that mode
+// must not push the trace past the bound). This bound is SHARP for a fully
+// manifested lattice — measured: ω₀=1.5 diverges to ~3e19 within 300 steps,
+// while ω₀=1.4 stays bounded. An isolated clocked site (the case above, no
+// Laplacian coupling) tolerates up to ω₀ < 2. The default below
+// (ω₀=K_B≈0.511) sits comfortably inside both bounds.
 inline constexpr double OMEGA0_COMPTON = K_B;  // imposed calibration, not a unified mass role
 
 // Exchange repulsion strength scale (Fermi pressure)
@@ -424,8 +450,11 @@ FTD_COLOR_HD double exchange_pair_force_mag(double r, double r2) {
 // via divergence_flux). The 18-pt-solved phi cannot zero the 6-pt divergence,
 // so the residual saturates and is BIT-IDENTICAL from ~100 iterations through
 // 1000 (it is within ~4e-8 of the floor already by 50). At the interactive
-// default of 6 iters the residual sits only ~7.6% ABOVE that saturated floor,
-// and going to 1000 iters closes that ~7.6% and then PINS — it never trends
+// default of 6 iters the residual sits only ~6.38% ABOVE that saturated floor
+// (corrected 2026-09-02: measured by the engine's own Gauss-law fidelity
+// test, engine/tests/test_gauss_law_fidelity.cpp; an earlier ~7.6% figure
+// stood here and did not match the current measurement),
+// and going to 1000 iters closes that gap and then PINS — it never trends
 // toward zero. Raising SOR_ITERATIONS therefore buys at most a few percent on
 // this metric and then NOTHING. See engine/include/ftd/eft/matched_poisson.h
 // lines 7-19 for the analysis, and engine/tests/test_conservation_profile.cpp

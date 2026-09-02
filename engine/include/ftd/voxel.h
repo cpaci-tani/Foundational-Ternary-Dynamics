@@ -72,14 +72,21 @@ struct Voxel {
   // Flux vector (continuous field)
   Vec3 flux;
 
-  // Wave velocity (for flux propagation)
+  // Momentum conjugate to flux: p = ∂J/∂t, the leapfrog momentum variable.
+  // lagrangian.h proves wave_vel is the field's Legendre momentum. The name
+  // "wave_vel" is historical and is retained; the field holds momentum, not
+  // a velocity.
   Vec3 wave_vel;
 
   // ---- Dual-substrate fields ----
   // Paper: "The Algebraic Identity of Two Substrates" (Montanez & Claude, 2026)
   // Active when TermToggles::dual_substrate = true.
   // Observable: flux = flux_L + flux_R (maintained automatically).
-  // Chirality: phi = flux_L - flux_R (encodes matter/antimatter).
+  // Chirality is NOT phi = flux_L - flux_R -- that difference is never
+  // computed anywhere in the engine. The actual chirality observable is
+  // chirality_density() below: a TRANSVERSE difference |psi_L|^2 - |psi_R|^2
+  // (projected perpendicular to the local velocity). No matter/antimatter
+  // reading of it is asserted in code.
   Vec3 flux_L;     // Left substrate flux
   Vec3 flux_R;     // Right substrate flux
   Vec3 wave_vel_L; // Left substrate wave velocity
@@ -115,8 +122,16 @@ struct Voxel {
   // Sub-lattice position remainder
   Vec3 remainder;
 
-  // Gravitational potential: L = sqrt(r_s/r) from Poisson equation ∇²L = 4πGρ.
-  // When latency_field toggle is ON, evolves via SOR Poisson solver.
+  // Gravitational well depth (NOT the potential itself). The SOR solver
+  // solves ∇²φ = 4πG(ρ−ρ̄) for φ (solve_latency_poisson_cpu in
+  // poisson_solvers.cpp), subtracts the box mean of φ, and sets
+  // latency = sqrt(max(−φ, 0)) — the square root of a mean-subtracted,
+  // box-relative well depth. latency does NOT itself satisfy that Poisson
+  // equation; φ does. Because of the mean subtraction, under-dense regions
+  // are pinned to exactly zero rather than a negative "anti-well". It enters
+  // the dynamics only as latency² (lapse f = 1−L², causal budget
+  // B = β²+L² in causal_kinematics.h); "latency" never denotes a time delay
+  // anywhere in the engine.
   // L ∈ [0, 0.999) — clamped below 1 to prevent horizon singularity.
   double latency = 0.0;
 
@@ -139,15 +154,25 @@ struct Voxel {
   // -1 = no particle.
   int32_t particle_id = -1;
 
-  // Entanglement pair ID (pair production partner tracking)
-  // Particles from the same pair production event share the same pair_id.
-  // -1 = no entanglement partner.
+  // Pair-production partner provenance bookkeeping. Particles born from the
+  // same pair-production event share the same pair_id; -1 = none. Written
+  // at injection, genesis, and movement (carried with the particle);
+  // nothing in Scale 0 dynamics branches on it. It is read only for
+  // provenance (CSV/VTK/telemetry export) and by Scale 1's particle-engine
+  // cleanup pass (drops a stale reference once its partner is gone) — not
+  // an entanglement link, since no Scale 0 physics reads or enforces any
+  // correlation between paired particles.
   int pair_id = -1;
 
   // Spin-statistics fields (from DERIV_SPIN_STATISTICS_BRIDGE)
-  // Spin: ℤ₂ from lemniscate topology (720° periodicity).
-  //   +1 = spin-up, -1 = spin-down, 0 = no spin (void/boson)
-  // Assigned at genesis from curl(J) dominant component.
+  // Spin: sign of the largest-magnitude component of curl(J) at genesis
+  // (manifest_at() in phase_write.cpp), with a coin-flip fallback when the
+  // curl is negligible. +1/-1 label the two curl-handedness classes, 0 = no
+  // spin (void/boson). Its only dynamical consumer is the same-spin Fermi
+  // exchange (Pauli) repulsion term in phase_forces.cpp: it never
+  // precesses, never couples to a magnetic field, and never enters angular
+  // momentum. (The earlier "ℤ₂ from lemniscate topology, 720° periodicity"
+  // description has no code correlate.)
   int8_t spin = 0;
 
   // Color charge: Z/3Z from Lemniscate-Alpha's 3-lobe structure.
@@ -169,7 +194,14 @@ struct Voxel {
   // activation redesign.
   int8_t flavor = 0;
 
-  // Larmor radiation: acceleration magnitude from previous tick
+  // Larmor radiation input: the RAW FORCE magnitude |F| (EM + gravity +
+  // Lorentz; colour excluded — see the BH-F3 note at the assignment site in
+  // phase_forces.cpp), recorded from the previous tick. This equals the
+  // acceleration magnitude only at mass = 1 (the engine's convention). Its
+  // sole consumer, the Larmor damping term in phase_write.cpp
+  // (K_LARMOR * accel_mag^2), is therefore really F^2 = (mass*a)^2, not a^2
+  // — it carries an extra factor of mass^2 relative to the true
+  // acceleration-squared it is meant to model.
   double accel_mag = 0.0;
 
   // ---- Strong Substrate Field ----

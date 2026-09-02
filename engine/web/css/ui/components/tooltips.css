@@ -15,7 +15,7 @@
     letter-spacing: 0.01em;
     z-index: calc(var(--z-modal) + 1);
     pointer-events: none;
-    white-space: normal;
+    white-space: pre-line;
 }
 
 .ui-tooltip[hidden] {

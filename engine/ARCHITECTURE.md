@@ -221,14 +221,10 @@ the production fundamental lattice engine. `ParticleEngine`, `AtomEngine`, and
 `CosmicEngine` model coarser analytical layers outside the Scale-0 production
 tick path.
 
-Cross-scale conversion lives in `scale_bridge.cpp`:
-
-- Coarsening scans manifested voxels into particle/atom/cosmic aggregate data.
-- Refinement injects wavepackets or structured components back into lower
-  scales.
-
-These bridges are engineering tools for moving between representations; they
-do not replace the Scale 0 manifestation lifecycle described above.
+There is no runtime cross-scale conversion or state-transfer path. Each
+effective engine is seeded from its own explicit scenario/reference inputs.
+The Scale Context sidepanel owns presentation-only scale pedagogy and does not
+mutate engine state.
 
 ## 7. Web And WASM Interface
 

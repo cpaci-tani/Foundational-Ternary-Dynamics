@@ -1107,47 +1107,12 @@ propagate_gw()      [gravitational_waves]
   -> cosmic_gravitational_waves.cpp
 ```
 
-## 9. Cross-Scale Conversion
+## 9. Scale Boundaries
 
-These are free functions in namespace `ftd` (declared in `engine/include/ftd/scale.h`,
-defined in `engine/src/scale_bridge.cpp`). Each coarsen/refine function RETURNS a
-vector of the target-scale type (or, for `refine_to_voxels`, mutates the
-`RenderBridge` in place); the caller is responsible for feeding the returned
-objects into the destination engine. They do not call the engines' `add_*`
-methods themselves.
-
-```text
-scale_bridge.cpp::coarsen_to_particles(const RenderBridge& rb) -> std::vector<Particle>
-  -> scan voxels with state != 0
-  -> extract charge (= state), mass (= max(density(), K_B)), r_eff (= R_EFF_DEFAULT),
-     position (coord + remainder), velocity, spin, color, pair_id, locked, particle_id
-  -> push_back Particle into result vector (returned; caller adds to ParticleEngine)
-
-scale_bridge.cpp::refine_to_voxels(const Particle& p, RenderBridge& rb) -> void
-  -> floor + wrap p.position to integer lattice site (ix, iy, iz)
-  -> rb.inject_wavepacket(ix, iy, iz, p.charge, 3.0, K_B)
-  -> restore remainder/velocity/spin/color/pair_id/locked/particle_id on the voxel
-
-coarsen_to_atoms(const ParticleEngine& pe) -> std::vector<Atom>
-  -> cluster locked charge=+1 particles within CLUSTER_RADIUS (5.0) into nuclei (Z = count)
-  -> count nearby charge=-1 particles as electrons (within 3*CLUSTER_RADIUS)
-  -> compute_atomic_properties(Z, Z) -> mass/radius/vdW/max_bonds/valence
-  -> push_back Atom into result vector (returned; caller adds to AtomEngine)
-
-refine_to_particles(const Atom& a) -> std::vector<Particle>
-  -> Z locked protons at a.position (mass = M_PROTON)
-  -> (Z - charge) electrons ringed at a.radius (mass = K_B)
-  -> push_back Particles into result vector (returned; caller adds to ParticleEngine)
-
-coarsen_to_cosmic(const AtomEngine& ae) -> std::vector<CosmicBody>
-  -> mass-weight atom centroid + sum masses into a single GAS body
-  -> push_back CosmicBody into result vector (returned; caller adds to CosmicEngine)
-
-refine_to_atoms(const CosmicBody& cb) -> std::vector<Atom>
-  -> decompose cb.mass into hydrogen atoms (m_H = M_PROTON + K_B), capped at 1000
-  -> distribute in a sphere of radius cb.radius
-  -> push_back Atoms into result vector (returned; caller adds to AtomEngine)
-```
+No runtime call stack converts, promotes, projects, or transfers state between
+simulation scales. Scale 0, Scale 1, Scale 2, and Scale 5 are seeded from their
+own explicit scenario/reference inputs. The Scale Context sidepanel compares
+their interpretation and relative extent without changing engine state.
 
 ## 10. Debugging Reading Order
 

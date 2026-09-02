@@ -27,14 +27,14 @@ int main() {
     std::cout << "================================================================\n";
 
     // ================================================================
-    // Section 1: Default toggles match legacy behavior
+    // Section 1: audited effective-lab baseline
     // ================================================================
     std::cout << "\n--- Section 1: Default Toggle State ---\n";
     {
         ftd::ParticleEngine pe;
         check("Default: coulomb ON", pe.toggles.coulomb == true);
-        check("Default: gravity ON", pe.toggles.gravity == true);
-        check("Default: damping ON", pe.toggles.damping == true);
+        check("Default: gravity OFF", pe.toggles.gravity == false);
+        check("Default: damping OFF", pe.toggles.damping == false);
         check("Default: lorentz OFF", pe.toggles.lorentz == false);
         check("Default: exchange OFF", pe.toggles.exchange == false);
         check("Default: strong OFF", pe.toggles.strong == false);
@@ -183,12 +183,15 @@ int main() {
         t.enable_all();
         check("enable_all: lorentz ON", t.lorentz == true);
         check("enable_all: strong ON", t.strong == true);
-        check("enable_all: relativistic ON", t.relativistic == true);
+        check("enable_all: retired relativistic key stays OFF", t.relativistic == false);
+        check("enable_all: contact events ON", t.contact_events == true);
 
         t.minimal();
         check("minimal: coulomb ON", t.coulomb == true);
         check("minimal: lorentz OFF", t.lorentz == false);
         check("minimal: exchange OFF", t.exchange == false);
+        check("minimal: gravity OFF", t.gravity == false);
+        check("minimal: damping OFF", t.damping == false);
     }
 
     std::cout << "\n================================================================\n";

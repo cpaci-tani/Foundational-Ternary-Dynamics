@@ -21,6 +21,7 @@ they are renamed `AUDIT_<YYYY-MM>_<slug>.md` and moved here.
 | Collection | Scope | Disposition |
 |---|---|---|
 | [FTD engine agent plans](engine_agent_plans/README.md) | Six graph/engine-overlay plans plus the former root Scale-0 work plan; Plans 01–03 remain at the collection root | Preserved as implementation provenance; no claim status changed by relocation |
+| [Scale-1 particle-context v4](../../engine/docs/PLAN_SCALE1_PARTICLE_CONTEXT_V4.md) | Native particle observatory, quantum/QED references, effective reference lab, and projection/loss contract | 39 executable scenarios across four live workspaces; disabled roadmap rows retired from the manifest |
 
 ---
 

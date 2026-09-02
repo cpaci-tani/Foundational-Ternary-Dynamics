@@ -74,7 +74,6 @@ loops live in their own translation units.
 | `src/atom/` | Scale-2 atom engine forces | `atom_forces.cpp` (632) |
 | `src/vtk_export.cpp` (636) | ParaView/CSV export (pure I/O, zero physics) | ← split candidate |
 | `src/particle_engine.cpp` (669) | Scale-1 macro engine (Barnes-Hut N-body) | — |
-| `src/scale_bridge.cpp` | Cross-scale coarsen/refine between engines | — |
 
 **Macro engines** (`ParticleEngine`, `AtomEngine`, `CosmicEngine`) implement the
 `ScaleEngine` interface but are coarser analytical layers, **separate from the

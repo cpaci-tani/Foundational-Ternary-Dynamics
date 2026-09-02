@@ -441,114 +441,49 @@ static void section_radiation() {
     }
 }
 
-// --- Section: relativistic  (from test_pe_relativistic.cpp) ---
+// --- Section: relativistic integration and retired compatibility path ---
 
 static void section_relativistic() {
-    // ---- RE1: High-speed -> reduced acceleration ----
+    // ---- RE1: registry identifies the old force rescale as retired ----
     {
-        ftd::ParticleEngine pe_slow;
-        pe_slow.set_damping_enabled(false);
-        pe_slow.add_particle(+1, {0, 0, 0});
-        pe_slow.add_particle(-1, {10, 0, 0});
-
-        pe_slow.toggles.coulomb = true;
-        pe_slow.toggles.gravity = false;
-        pe_slow.toggles.relativistic = true;
-
-        ftd::Vec3 f_slow = pe_slow.compute_force(0);
-
-        ftd::ParticleEngine pe_fast;
-        pe_fast.set_damping_enabled(false);
-        pe_fast.add_particle(+1, {0, 0, 0}, {0.5 * ftd::C_SPEED, 0, 0});
-        pe_fast.add_particle(-1, {10, 0, 0});
-
-        pe_fast.toggles.coulomb = true;
-        pe_fast.toggles.gravity = false;
-        pe_fast.toggles.relativistic = true;
-
-        ftd::Vec3 f_fast = pe_fast.compute_force(0);
-
-        ftd::test::check("RE1: fast particle has reduced net force",
-                         f_fast.mag() < f_slow.mag());
+        const auto* spec = ftd::find_scale1_physics_spec("relativistic");
+        ftd::test::check("RE1: isotropic force rescale is retired/unavailable",
+                         spec && !spec->available &&
+                         spec->tier == ftd::Scale1ModuleTier::Retired);
     }
 
-    // ---- RE2: v=0 -> no relativistic correction ----
-    {
-        ftd::ParticleEngine pe_on;
-        pe_on.set_damping_enabled(false);
-        pe_on.add_particle(+1, {0, 0, 0});
-        pe_on.add_particle(-1, {10, 0, 0});
-
-        pe_on.toggles.coulomb = true;
-        pe_on.toggles.gravity = false;
-        pe_on.toggles.relativistic = true;
-
-        ftd::Vec3 f_on = pe_on.compute_force(0);
-
-        ftd::ParticleEngine pe_off;
-        pe_off.set_damping_enabled(false);
-        pe_off.add_particle(+1, {0, 0, 0});
-        pe_off.add_particle(-1, {10, 0, 0});
-
-        pe_off.toggles.coulomb = true;
-        pe_off.toggles.gravity = false;
-        pe_off.toggles.relativistic = false;
-
-        ftd::Vec3 f_off = pe_off.compute_force(0);
-
-        double diff = (f_on - f_off).mag();
-        ftd::test::check("RE2: no correction at v=0", diff < 1e-20);
-    }
-
-    // ---- RE3: Toggle OFF -> same as non-relativistic ----
+    // ---- RE2: table-backed activation fails closed ----
     {
         ftd::ParticleEngine pe;
-        pe.set_damping_enabled(false);
-        pe.add_particle(+1, {0, 0, 0}, {0.3 * ftd::C_SPEED, 0, 0});
-        pe.add_particle(-1, {10, 0, 0});
-
-        pe.toggles.coulomb = true;
-        pe.toggles.gravity = false;
-
-        pe.toggles.relativistic = false;
-        ftd::Vec3 f_off = pe.compute_force(0);
-
-        pe.toggles.relativistic = true;
-        ftd::Vec3 f_on = pe.compute_force(0);
-
-        ftd::test::check("RE3: relativistic ON changes force at v>0",
-                         (f_on - f_off).mag() > 1e-15);
+        std::string error;
+        const bool accepted = pe.try_set_toggle("relativistic", true, &error);
+        ftd::test::check("RE2: retired force activation is rejected",
+                         !accepted && !error.empty() && !pe.toggles.relativistic);
     }
 
-    // ---- RE4: Gamma factor matches expected ----
+    // ---- RE3: direct legacy-field corruption is caught by validation ----
+    {
+        ftd::ParticleEngine pe;
+        pe.toggles.relativistic = true;
+        std::string error;
+        ftd::test::check("RE3: invalid direct retired flag is detected",
+                         !pe.toggles.validate(&error) && !error.empty());
+    }
+
+    // ---- RE4: momentum record uses p=gamma*m*v ----
     {
         double v = 0.5 * ftd::C_SPEED;
         double beta2 = (v * v) / (ftd::C_SPEED * ftd::C_SPEED);
         double gamma = 1.0 / std::sqrt(1.0 - beta2);
-
         ftd::ParticleEngine pe;
-        pe.set_damping_enabled(false);
-        pe.add_particle(+1, {0, 0, 0}, {v, 0, 0});
-        pe.add_particle(-1, {10, 0, 0});
-
-        pe.toggles.coulomb = true;
-        pe.toggles.gravity = false;
-
-        pe.toggles.relativistic = false;
-        double f_nr = pe.compute_force(0).mag();
-
-        pe.toggles.relativistic = true;
-        double f_r = pe.compute_force(0).mag();
-
-        double expected_ratio = 1.0 / gamma;
-        double actual_ratio = f_r / f_nr;
-        double err = std::abs(actual_ratio - expected_ratio) / expected_ratio;
-        std::cout << "  gamma=" << gamma << " expected_ratio=" << expected_ratio
-                  << " actual=" << actual_ratio << " err=" << err << "\n";
-        ftd::test::check("RE4: force ratio matches 1/gamma within 1%", err < 0.01);
+        pe.add_particle(0, {0, 0, 0}, {v, 0, 0});
+        const double expected = gamma * pe.particles()[0].mass * v;
+        const double relative = std::abs(pe.particles()[0].momentum.x - expected)
+                              / expected;
+        ftd::test::check("RE4: momentum matches gamma*m*v", relative < 1e-12);
     }
 
-    // ---- RE5: Speed limit still enforced ----
+    // ---- RE5: momentum-Verlet remains strictly inside the light cone ----
     {
         ftd::ParticleEngine pe;
         pe.set_damping_enabled(false);
@@ -558,13 +493,12 @@ static void section_relativistic() {
 
         pe.toggles.coulomb = true;
         pe.toggles.gravity = false;
-        pe.toggles.relativistic = true;
+        pe.toggles.relativistic_verlet = true;
 
         pe.run(100);
 
         double v_final = pe.particles()[0].velocity.mag();
-        ftd::test::check("RE5: speed <= C_SPEED",
-                         v_final <= ftd::C_SPEED * 1.001);
+        ftd::test::check("RE5: speed < C_SPEED", v_final < ftd::C_SPEED);
     }
 }
 
@@ -1066,7 +1000,6 @@ static void section_diagnostic_snapshot() {
     pe.toggles.spin_orbit = true;
     pe.toggles.lorentz = true;
     pe.toggles.radiation = true;
-    pe.toggles.relativistic = true;
 
     const ftd::Vec3 direct = pe.compute_force(0);
     const ftd::ParticleForceDiag first = pe.compute_force_diagnostic(0);
@@ -1080,8 +1013,8 @@ static void section_diagnostic_snapshot() {
     ftd::test::check("DS3: pairwise components populated",
                      first.f_coulomb.mag() > 0.0 && first.f_gravity.mag() > 0.0 &&
                      first.f_strong.mag() > 0.0);
-    ftd::test::check("DS4: post-processing components populated",
-                     first.f_radiation.mag() > 0.0 && first.f_relativistic.mag() > 0.0);
+    ftd::test::check("DS4: radiation populated and retired rescale absent",
+                     first.f_radiation.mag() > 0.0 && first.f_relativistic.mag() == 0.0);
 
     pe.toggles.coulomb = true;
     pe.set_softening(2.5);

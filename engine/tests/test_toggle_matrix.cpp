@@ -50,7 +50,7 @@ struct ToggleSpec {
 
 // 13 OFF-default toggles per term_toggles.h.
 const ToggleSpec specs[] = {
-    {"larmor_radiation",  [](ftd::TermToggles& t){ t.larmor_radiation  = true; t.damping = true; }},  // requires damping
+    {"larmor_radiation",  [](ftd::TermToggles& t){ t.larmor_radiation  = true; t.damping = true; t.selective_damping = true; }},  // requires damping, selective_damping
     {"color_forces",      [](ftd::TermToggles& t){ t.color_forces      = true; }},
     {"strong_force",      [](ftd::TermToggles& t){ t.strong_force      = true; }},
     {"triad_binding",     [](ftd::TermToggles& t){ t.triad_binding     = true; t.color_forces = true; }}, // requires color_forces
@@ -272,6 +272,20 @@ std::map<std::string_view, std::string> expected_scenario_profiles() {
         "wave_propagation,coupling,forces,movement,emergent_forces");
     add({"s0-seed-moving-source-reciprocity"},
         "wave_propagation,coupling,forces,movement,emergent_forces,strict_validation");
+    // s0-cell-* flux cells: the capacitor is Gauss-charged on the wave map;
+    // every ring/arm reservoir runs the bare wave map (boundary law differs).
+    add({"s0-cell-capacitor"}, "wave_propagation,gauss_projection");
+    add({
+        "s0-cell-torus", "s0-cell-torus-reverse", "s0-cell-torus-scrambled",
+        "s0-cell-torus-open", "s0-cell-torus-walled", "s0-cell-triad",
+    }, "wave_propagation");
+    // Membrane family: the [IMPOSED] de Broglie clock makes the locked shell a
+    // mass-gap wall; the gated and pumped variants add their research term.
+    add({"s0-cell-torus-membrane"}, "wave_propagation,de_broglie_clock");
+    add({"s0-cell-torus-membrane-gated"}, "wave_propagation,de_broglie_clock,flux_cell_port");
+    add({"s0-cell-membrane-pumped"}, "wave_propagation,de_broglie_clock,flux_pump");
+    add({"s0-cell-membrane-pumped-resonant"}, "wave_propagation,de_broglie_clock,flux_pump");
+    add({"s0-cell-membrane-transfer"}, "wave_propagation,de_broglie_clock,flux_cell_port");
 
     return expected;
 }
@@ -281,8 +295,8 @@ int audit_native_scenario_profiles() {
     const auto& ids = ftd::scale0_scenario_ids();
     std::set<std::string_view> unique(ids.begin(), ids.end());
     const auto expected = expected_scenario_profiles();
-    if (ids.size() != 130 || unique.size() != ids.size()) {
-        std::printf("  FAIL  native scenario registry: count=%zu unique=%zu (expected 130)\n",
+    if (ids.size() != 142 || unique.size() != ids.size()) {
+        std::printf("  FAIL  native scenario registry: count=%zu unique=%zu (expected 142)\n",
                     ids.size(), unique.size());
         ++failures;
     }

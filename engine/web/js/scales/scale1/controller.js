@@ -1,18 +1,12 @@
 /**
  * Scale 1 (Particles) Controller — native-engine edition.
  *
- * Scale 1 is a continuous particle system promoted from the discrete
- * lattice: the native C++/WASM ParticleEngine integrates (via the
- * bridge's pe* adapter surface), and particles arrive either from the
- * "⤴ Scale up" promotion pipeline (./promotion.js — one particle per
- * lattice cluster, mass = N·K_B) or from the declarative scenario
- * registry (./scenario-registry.js). The [PARAMETRIC] Zoo can inject
- * catalog particles on top.
+ * Scale 1 separates a read-only registered Native Matter observer from the
+ * continuous Effective Particle Lab. Catalog Reference keeps [PARAMETRIC]
+ * identities apart. Runtime scale handoff has been retired.
  *
  * State lives in ./state/store.js (scale1State) — no module-level lets.
- * Rendering goes through the shared viewport facade; the promotion
- * source voxels render on a separate ghost layer (never multiplexed
- * onto the main particle mesh).
+ * Rendering goes through the shared viewport facade.
  *
  * app.js contract (duck-typed; do not rename):
  *   mount(ctx) / destroy(ctx)      — mode switch lifecycle
@@ -34,49 +28,123 @@ import {
 } from '../../fieldlines.js';
 import { GRAVITY_VIS_GAIN } from '../../constants.js';
 import { formatSI } from '../scale-utils.js';
-import { Scale1ControlsComponent } from './ui/controls/component.js';
-import { refreshPromotionCard } from './ui/controls/pe-controls.js';
+import { Scale1ControlsComponent } from './ui/controls/component.js?v=13';
+import {
+    refreshScale1ScenarioContractCard, hydratePePhysicsControls,
+    markPePhysicsProfileModified, setPePhysicsProfileState, syncPeTrailControls,
+    updatePeTrailEnergyLegend,
+} from './ui/controls/pe-controls.js?v=16';
 import {
     expandPEToCloud, buildPEManifestBlinkRate, updateTrailHistory,
     getCloudParticleMap, getTrailHistory, clearCloudAndTrails, MANIFEST_FILL
-} from './pe-cloud-expander.js';
+} from './pe-cloud-expander.js?v=3';
 import {
     getScale1Scenario, getScale1ScenarioPreset, DEFAULT_SCALE1_SCENARIO,
-} from './scenario-registry.js';
-import { scale1State, resetScale1State } from './state/store.js';
+    installScale1ScenarioManifest, populateScale1ScenarioSelect,
+    scale1BehaviorPresentation, syncScale1ScenarioBehaviorUI,
+} from './scenario-registry.js?v=15';
+import { scale1State, resetScale1State } from './state/store.js?v=7';
+import {
+    DEFAULT_TRAIL_SETTINGS,
+    normalizeTrailSettings,
+} from './trail-settings.js?v=2';
 import { telemetryHub } from '../../telemetry-hub.js';
 import { estimateOrbitPeriod } from './telemetry/orbit-period.js';
+import { scale1ParticleLedger } from './telemetry/particle-ledger.js?v=2';
+import {
+    focusedFieldSources,
+    focusedSystemObservables,
+} from './inspection-focus.js?v=1';
+import { shouldRefreshScale1Observation } from './observation-cadence.js?v=1';
+import { scale1ParticleWorkerExecutor } from './particle-worker-executor.js?v=1';
 
 
 // =====================================================================
 // Exported: overlay toggle setters + cloud/trail accessors
 // =====================================================================
 
-export function setPEEField(on)       { scale1State.overlays.efield = on; }
-export function setPEPotential(on)    { scale1State.overlays.potential = on; }
-export function setPEGravField(on)    { scale1State.overlays.gravityField = on; }
-export function setPEForceCoulomb(on) { scale1State.overlays.forceCoulomb = on; }
-export function setPEForceGravity(on) { scale1State.overlays.forceGravity = on; }
-export function setPEForceStrong(on)  { scale1State.overlays.forceStrong = on; }
-export function setPEForceNet(on)     { scale1State.overlays.forceNet = on; }
-export function setPESystem(on)       { scale1State.overlays.system = on; }
-export function setVelocities(on)     { scale1State.overlays.velocities = on; }
-export function setTrails(on)         { scale1State.overlays.trails = on; }
-export function setAdmissibilityRing(on) { scale1State.overlays.admissibilityRing = on; }
-export function setProvenanceLabel(on) { scale1State.overlays.provenanceLabel = on; }
-export function setMassComparison(on) { scale1State.overlays.massComparison = on; }
+function updatePEOverlaySummary() {
+    const summary = document.getElementById('pe-overlay-summary');
+    if (!summary) return;
+    const active = Object.values(scale1State.overlays).filter(Boolean).length;
+    summary.textContent = `${active} active`;
+}
 
-/** Promotion-source ghost layer toggle (controls panel). */
-export function setVoxelDebug(on, viewport) {
-    scale1State.overlays.voxelDebug = !!on;
-    if (!viewport) return;
-    if (on && scale1State.lastPromotion?.voxelDebug) {
-        viewport.updateVoxelDebugLayer(
-            scale1State.lastPromotion.voxelDebug,
-            scale1State.lastPromotion.latticeSize,
-            scale1State.lastPromotion.displayScale);
+function setOverlay(key, on) {
+    const next = !!on;
+    if (scale1State.overlays[key] !== next) scale1State.observationDirty = true;
+    scale1State.overlays[key] = next;
+    updatePEOverlaySummary();
+}
+
+export function setPEEField(on)       { setOverlay('efield', on); }
+export function setPEPotential(on)    { setOverlay('potential', on); }
+export function setPEFieldBattery(on) { setOverlay('fieldBattery', on); }
+export function isPEFieldSurfaceActive() {
+    return !!(scale1State.overlays.potential || scale1State.overlays.fieldBattery);
+}
+export function setPEGravField(on)    { setOverlay('gravityField', on); }
+export function setPEForceCoulomb(on) { setOverlay('forceCoulomb', on); }
+export function setPEForceGravity(on) { setOverlay('forceGravity', on); }
+export function setPEForceLorentz(on) { setOverlay('forceLorentz', on); }
+export function setPEForceExchange(on) { setOverlay('forceExchange', on); }
+export function setPEForceStrong(on)  { setOverlay('forceStrong', on); }
+export function setPEForceRadiation(on) { setOverlay('forceRadiation', on); }
+export function setPEForceMagneticDipole(on) { setOverlay('forceMagneticDipole', on); }
+export function setPEForceSpinOrbit(on) { setOverlay('forceSpinOrbit', on); }
+export function setPEForceNet(on)     { setOverlay('forceNet', on); }
+export function setPESystem(on)       { setOverlay('system', on); }
+export function setVelocities(on)     { setOverlay('velocities', on); }
+export function setTrails(on)         { setOverlay('trails', on); }
+export function setAdmissibilityRing(on) { setOverlay('admissibilityRing', on); }
+export function setProvenanceLabel(on) { setOverlay('provenanceLabel', on); }
+export function markObservationDirty() { scale1State.observationDirty = true; }
+export function markPhysicsProfileModified() {
+    markPePhysicsProfileModified();
+    markObservationDirty();
+}
+
+export function setTrailSettings(patch = {}) {
+    scale1State.trailSettings = normalizeTrailSettings(patch, scale1State.trailSettings);
+    syncPeTrailControls(scale1State.trailSettings);
+    return { ...scale1State.trailSettings };
+}
+
+export function resetTrailSettings() {
+    scale1State.trailSettings = { ...DEFAULT_TRAIL_SETTINGS };
+    syncPeTrailControls(scale1State.trailSettings);
+    return { ...scale1State.trailSettings };
+}
+
+export function applyPhysicsProfile(bridge, profile) {
+    if (!bridge || scale1State.mode === 'native_matter') return false;
+    const specs = Array.from(scale1State.registry?.physics || []);
+    if (!specs.length) return false;
+
+    const scenarioPreset = profile === 'scenario'
+        ? getScale1ScenarioPreset(scale1State.currentScenarioId, scale1State.registry)
+        : null;
+    let accepted = true;
+    for (const spec of specs) {
+        let enabled = false;
+        if (profile === 'applicable') enabled = !!spec.available;
+        else if (profile === 'verified') enabled = !!spec.verifiedProfile;
+        else if (profile === 'scenario') enabled = !!scenarioPreset?.physics?.[spec.toggle];
+        else return false;
+
+        const result = bridge.peSetToggle?.(spec.toggle, enabled);
+        if (spec.available && result === false) accepted = false;
     }
-    viewport.toggleVoxelDebugLayer(!!on && !!scale1State.lastPromotion?.voxelDebug);
+
+    hydratePePhysicsControls(scale1State.registry, bridge);
+    const labels = {
+        scenario: 'Scenario profile',
+        verified: 'Verified profile',
+        applicable: 'All applicable',
+    };
+    setPePhysicsProfileState(labels[profile], profile !== 'scenario');
+    markObservationDirty();
+    return accepted;
 }
 
 // Re-export cloud/trail accessors so external consumers have a single
@@ -105,17 +173,9 @@ function setSliderValue(id, value, digits) {
 
 function applyPEPhysicsPreset(bridge, preset) {
     const p = preset.physics || {};
-    bridge.peSetCoulomb?.(!!p.coulomb);
-    bridge.peSetGravity?.(!!p.gravity);
-    bridge.peSetDamping?.(!!p.damping);
-    bridge.peSetLorentz?.(!!p.lorentz);
-    bridge.peSetExchange?.(!!p.exchange);
-    bridge.peSetStrong?.(!!p.strong);
-    bridge.peSetMagneticDipole?.(!!p.magnetic_dipole);
-    bridge.peSetSpinOrbit?.(!!p.spin_orbit);
-    bridge.peSetRadiation?.(!!p.radiation);
-    bridge.peSetRelativistic?.(!!p.relativistic);
-    bridge.peSetRelativisticVerlet?.(!!p.relativistic_verlet);
+    for (const spec of Array.from(scale1State.registry?.physics || [])) {
+        bridge.peSetToggle?.(spec.toggle, !!p[spec.toggle]);
+    }
 
     if (p.dt !== undefined) {
         bridge.peSetDt?.(p.dt);
@@ -125,6 +185,7 @@ function applyPEPhysicsPreset(bridge, preset) {
         bridge.peSetSoftening?.(p.softening);
         setSliderValue('pe-soft-slider', p.softening, 2);
     }
+    markObservationDirty();
 
     setCheckbox('pe-coulomb', p.coulomb);
     setCheckbox('pe-gravity', p.gravity);
@@ -135,8 +196,15 @@ function applyPEPhysicsPreset(bridge, preset) {
     setCheckbox('pe-magnetic-dipole', p.magnetic_dipole);
     setCheckbox('pe-spin-orbit', p.spin_orbit);
     setCheckbox('pe-radiation', p.radiation);
-    setCheckbox('pe-relativistic', p.relativistic);
     setCheckbox('pe-relativistic-verlet', p.relativistic_verlet);
+    setCheckbox('pe-contact-events', p.contact_events);
+}
+
+function inspectionFocusKey(focus) {
+    if (!focus) return '';
+    if (focus.kind === 'particle') return `particle:${focus.particleId}`;
+    if (focus.kind === 'cluster') return `cluster:${focus.key}`;
+    return String(focus.kind || 'focus');
 }
 
 function applyPEOverlayPreset(viewport, preset) {
@@ -146,48 +214,60 @@ function applyPEOverlayPreset(viewport, preset) {
     ov.trails = !!o.trails;
     ov.efield = !!o.efield;
     ov.potential = !!o.potential;
+    ov.fieldBattery = !!o.fieldBattery;
     ov.gravityField = !!o.gravityField;
     ov.forceCoulomb = !!(o.forceCoulomb ?? o.forces);
     ov.forceGravity = !!o.forceGravity;
+    ov.forceLorentz = !!o.forceLorentz;
+    ov.forceExchange = !!o.forceExchange;
     ov.forceStrong = !!o.forceStrong;
+    ov.forceRadiation = !!o.forceRadiation;
+    ov.forceMagneticDipole = !!o.forceMagneticDipole;
+    ov.forceSpinOrbit = !!o.forceSpinOrbit;
     ov.forceNet = !!(o.forceNet ?? o.forces);
     ov.system = !!o.system;
-    ov.voxelDebug = !!o.voxelDebug;
     ov.admissibilityRing = !!o.admissibilityRing;
     ov.provenanceLabel = !!o.provenanceLabel;
-    ov.massComparison = !!o.massComparison;
 
     setButtonActive('toggle-velocities', ov.velocities);
     setButtonActive('toggle-trails', ov.trails);
     setButtonActive('toggle-pe-efield', ov.efield);
     setButtonActive('toggle-pe-potential', ov.potential);
+    setButtonActive('toggle-pe-field-battery', ov.fieldBattery);
     setButtonActive('toggle-pe-gravity-field', ov.gravityField);
     setButtonActive('toggle-pe-force-coulomb', ov.forceCoulomb);
     setButtonActive('toggle-pe-force-gravity', ov.forceGravity);
+    setButtonActive('toggle-pe-force-lorentz', ov.forceLorentz);
+    setButtonActive('toggle-pe-force-exchange', ov.forceExchange);
     setButtonActive('toggle-pe-force-strong', ov.forceStrong);
+    setButtonActive('toggle-pe-force-radiation', ov.forceRadiation);
+    setButtonActive('toggle-pe-force-magnetic-dipole', ov.forceMagneticDipole);
+    setButtonActive('toggle-pe-force-spin-orbit', ov.forceSpinOrbit);
     setButtonActive('toggle-pe-force-net', ov.forceNet);
     setButtonActive('toggle-pe-system', ov.system);
-    setCheckbox('pe-voxel-debug', ov.voxelDebug);
     setButtonActive('toggle-pe-admissibility', ov.admissibilityRing);
     setButtonActive('toggle-pe-provenance', ov.provenanceLabel);
-    setButtonActive('toggle-pe-mass-comparison', ov.massComparison);
+    updatePEOverlaySummary();
 
     if (!viewport) return;
     viewport.toggleVelocityVectors(ov.velocities);
     viewport.toggleTrails(ov.trails);
     viewport.togglePEStreamlines(ov.efield);
-    viewport.toggleFieldHeatmap(ov.potential);
-    viewport.toggleFieldVectors(ov.potential);
+    viewport.toggleFieldHeatmap(ov.potential || ov.fieldBattery);
+    viewport.toggleFieldVectors(ov.potential || ov.fieldBattery);
     viewport.toggleGravityVectors(ov.gravityField);
     viewport.togglePEForceCoulomb(ov.forceCoulomb);
     viewport.togglePEForceGravity(ov.forceGravity);
+    viewport.togglePEForceLorentz(ov.forceLorentz);
+    viewport.togglePEForceExchange(ov.forceExchange);
     viewport.togglePEForceStrong(ov.forceStrong);
+    viewport.togglePEForceRadiation(ov.forceRadiation);
+    viewport.togglePEForceMagneticDipole(ov.forceMagneticDipole);
+    viewport.togglePEForceSpinOrbit(ov.forceSpinOrbit);
     viewport.togglePEForceNet(ov.forceNet);
     viewport.togglePESystem(ov.system);
-    setVoxelDebug(ov.voxelDebug, viewport);
     viewport.toggleAdmissibilityRings(ov.admissibilityRing);
     viewport.toggleProvenanceLabels(ov.provenanceLabel);
-    viewport.toggleMassComparison(ov.massComparison);
 }
 
 
@@ -206,6 +286,7 @@ const _lifecycleController = new Scale1LifecycleController();
 
 export function mount(ctx) {
     _lifecycleController.mount(ctx);
+    scale1ParticleWorkerExecutor.ensure();
 }
 
 export function destroy(ctx) {
@@ -217,10 +298,13 @@ export function resetScale1(ctx) {
 }
 
 function _resetScale1Internal(ctx) {
-    const { viewport } = ctx;
+    const { viewport, inspector } = ctx;
+
+    inspector?.clearPEInspection?.();
 
     clearCloudAndTrails();
     resetScale1State();
+    scale1ParticleWorkerExecutor.dispose();
 
     if (viewport) {
         viewport.togglePEStreamlines(false);
@@ -236,10 +320,8 @@ function _resetScale1Internal(ctx) {
         viewport.toggleVelocityVectors(false);
         viewport.toggleTrails(false);
         viewport.toggleSpinVectors?.(false);
-        viewport.toggleVoxelDebugLayer?.(false);
         viewport.toggleAdmissibilityRings?.(false);
         viewport.toggleProvenanceLabels?.(false);
-        viewport.toggleMassComparison?.(false);
         if (viewport.setPEManifestation) viewport.setPEManifestation(false, 0);
     }
 }
@@ -248,45 +330,6 @@ function _resetScale1Internal(ctx) {
 // =====================================================================
 // System observables helper
 // =====================================================================
-
-/**
- * Mass-weighted center of mass, total momentum p = Σ mᵢvᵢ, and angular
- * momentum about the CoM: L = Σ mᵢ (rᵢ−r_cm) × (vᵢ−v_cm). NOTE: the
- * diagnostics panel's L is about the ORIGIN (native engine convention);
- * this overlay's L is about the CoM and is labeled "L (CoM)".
- */
-function computeSystemVectors(peData) {
-    const { positions, velocities, masses, count } = peData;
-    let M = 0, cx = 0, cy = 0, cz = 0, px = 0, py = 0, pz = 0;
-    for (let i = 0; i < count; i++) {
-        const m = masses[i];
-        M += m;
-        cx += m * positions[i * 3];
-        cy += m * positions[i * 3 + 1];
-        cz += m * positions[i * 3 + 2];
-        px += m * velocities[i * 3];
-        py += m * velocities[i * 3 + 1];
-        pz += m * velocities[i * 3 + 2];
-    }
-    if (M <= 0) return { com: [0, 0, 0], p: [0, 0, 0], l: [0, 0, 0] };
-    cx /= M; cy /= M; cz /= M;
-    const vcx = px / M, vcy = py / M, vcz = pz / M;
-    let lx = 0, ly = 0, lz = 0;
-    for (let i = 0; i < count; i++) {
-        const m = masses[i];
-        const rx = positions[i * 3]     - cx;
-        const ry = positions[i * 3 + 1] - cy;
-        const rz = positions[i * 3 + 2] - cz;
-        const wx = velocities[i * 3]     - vcx;
-        const wy = velocities[i * 3 + 1] - vcy;
-        const wz = velocities[i * 3 + 2] - vcz;
-        lx += m * (ry * wz - rz * wy);
-        ly += m * (rz * wx - rx * wz);
-        lz += m * (rx * wy - ry * wx);
-    }
-    return { com: [cx, cy, cz], p: [px, py, pz], l: [lx, ly, lz] };
-}
-
 
 // =====================================================================
 // Exported: animatePE(ctx)
@@ -302,15 +345,118 @@ export function animatePE(ctx) {
     // ── 1. Tick the native engine while running ──────────────────────
     if (running) {
         const wholeTicks = scale1State.tickAcc.accumulate(ticksPerFrame);
-        for (let i = 0; i < wholeTicks; i++) {
-            bridge.peTick();
+        const workerHandled = scale1State.mode !== 'native_matter'
+            && scale1ParticleWorkerExecutor.request(bridge, wholeTicks, () => {
+                scale1State.observationDirty = true;
+            });
+        if (!workerHandled) {
+            for (let i = 0; i < wholeTicks; i++) bridge.peTick();
         }
+    } else if (scale1ParticleWorkerExecutor.status().busy) {
+        // Pause is an immediate ownership boundary. Any in-flight batch may
+        // finish inside the worker, but its generation is invalidated so no
+        // post-pause tick can be committed to the dashboard engine.
+        scale1ParticleWorkerExecutor.invalidate();
     }
 
-    // ── 2. Cloud expansion + manifestation blink ─────────────────────
-    const peData  = bridge.peGetParticleData();
+    // ── 2. Cloud expansion + shared observation snapshot ─────────────
+    // Positions remain frame-fresh. The expensive exact ledger, hierarchy,
+    // event, and force serialization work runs on one load-aware cadence and
+    // is completely idle when a paused state has not changed.
+    const peData = bridge.peGetParticleData();
+    const peTick = Number(bridge.peGetTick?.()
+        ?? scale1State.lastSnapshot?.core?.tick
+        ?? telemetryHub.s1.diag?.tick
+        ?? 0);
+    const observationRevision = Number(bridge.peGetObservationRevision?.() ?? peTick);
+    const nowMs = Number.isFinite(Number(now)) ? Number(now) : performance.now();
+    const observationDue = shouldRefreshScale1Observation({
+        dirty: scale1State.observationDirty,
+        hasSnapshot: !!scale1State.lastSnapshot,
+        tick: peTick,
+        count: peData.count,
+        lastTick: scale1State.lastObservationTick,
+        revision: observationRevision,
+        lastRevision: scale1State.lastObservationRevision,
+        lastCount: scale1State.lastObservationCount,
+        nowMs,
+        lastObservationMs: scale1State.lastObservationMs,
+    });
+
+    if (observationDue) {
+        if (scale1State.currentScenarioId === 's1-finite-port-field-battery') {
+            let battery = bridge.peGetFinitePortBatterySnapshot?.() ?? null;
+            const desiredLayers = Math.min(
+                Number(battery?.capacity || 0),
+                1 + Math.floor(peTick / 20),
+            );
+            while (battery && Number(battery.acceptedLayers || 0) < desiredLayers) {
+                if (!bridge.peStepFinitePortBattery?.()) break;
+                battery = bridge.peGetFinitePortBatterySnapshot?.() ?? battery;
+            }
+            scale1State.finitePortBatterySnapshot = battery;
+            const status = document.getElementById('pe-field-battery-status');
+            if (status && battery) {
+                status.textContent = `Layer ${battery.acceptedLayers}/${battery.capacity} · `
+                    + `E ${Number(battery.totalBookedEnergy).toPrecision(6)}`;
+            }
+        } else {
+            scale1State.finitePortBatterySnapshot = null;
+        }
+        scale1State.lastSnapshot = bridge.peGetSnapshot?.(
+            scale1State.currentScenarioId || '') ?? scale1State.lastSnapshot;
+        scale1State.lastForceData = bridge.peGetForces?.() ?? null;
+        scale1ParticleLedger.observe({
+            peData,
+            snapshot: scale1State.lastSnapshot,
+            forceData: scale1State.lastForceData,
+            scenarioId: scale1State.currentScenarioId || '',
+            scenarioLabel: getScale1Scenario(scale1State.currentScenarioId)?.label || '',
+            softening: scale1State.softening,
+        });
+        const ledgerView = scale1ParticleLedger.getView();
+        inspector?.reconcilePEInspection?.(ledgerView.hierarchy);
+        scale1State.trailEnergyDensityById.clear();
+        for (const particle of Array.from(ledgerView.hierarchy?.particles || [])) {
+            const radius = Math.max(0.001, Number(particle.effectiveRadius) || 0.4);
+            const effectiveVolume = (4 / 3) * Math.PI * radius * radius * radius;
+            scale1State.trailEnergyDensityById.set(
+                Number(particle.id),
+                Math.max(0, Number(particle.kineticEnergy) || 0) / effectiveVolume,
+            );
+        }
+        scale1State.visualRecordById.clear();
+        if (scale1State.mode === 'native_matter') {
+            for (const object of Array.from(scale1State.lastSnapshot?.objects || [])) {
+                scale1State.visualRecordById.set(object.id, {
+                    clusterId: object.provenance?.sourceObjectId ?? object.id,
+                    size: object.manifestationSupportCount || object.constituentCount || 0,
+                    admissible: object.provenance?.qualification === 'qualified_selected',
+                    label: `native #${object.provenance?.sourceObjectId ?? object.id} · c${object.id}`,
+                });
+            }
+        }
+        scale1State.lastObservationMs = nowMs;
+        scale1State.lastObservationTick = peTick;
+        scale1State.lastObservationRevision = observationRevision;
+        scale1State.lastObservationCount = peData.count;
+        scale1State.observationDirty = false;
+    }
     const typeMap = bridge.peGetParticleTypes();
-    const forceData = bridge.peGetForces?.() ?? null;
+    const forceData = scale1State.lastForceData;
+    const inspectionFocus = inspector?.getPEInspectionFocus?.() || null;
+    const focusKey = inspectionFocusKey(inspectionFocus);
+    const focusChanged = focusKey !== scale1State.lastInspectionFocusKey;
+    if (focusChanged) {
+        scale1State.lastInspectionFocusKey = focusKey;
+        scale1State.lastFieldSources = null;
+        scale1State.lastForceDecomposition = null;
+    }
+    const overlayRefreshDue = observationDue || focusChanged;
+    const fieldOverlayActive = ov.potential || ov.fieldBattery
+        || ov.efield || ov.gravityField;
+    const fieldRefreshDue = overlayRefreshDue
+        || (fieldOverlayActive && !scale1State.lastFieldSources);
     const frameSec = typeof now === 'number' ? now * 0.001 : performance.now() * 0.001;
     const blinkRate = buildPEManifestBlinkRate(peData, forceData, frameSec);
     const cloud = expandPEToCloud(peData, typeMap, { blinkRate, frameSec });
@@ -322,7 +468,7 @@ export function animatePE(ctx) {
 
     if (peData.spinAxes && peData.spins && peData.count > 0) {
         viewport.updateSpinVectors?.(
-            peData.positions, peData.spinAxes, peData.spins, peData.count);
+            peData.positions, peData.spinAxes, peData.spins, peData.count, peData.ids);
         viewport.toggleSpinVectors?.(true);
     } else {
         viewport.toggleSpinVectors?.(false);
@@ -334,30 +480,35 @@ export function animatePE(ctx) {
 
     // ── 3. Overlays ──────────────────────────────────────────────────
     if (ov.velocities && peData.count > 0) {
-        viewport.updateVelocityVectors(peData.positions, peData.velocities, peData.count);
+        viewport.updateVelocityVectors(peData.positions, peData.velocities, peData.count, peData.ids);
     }
     telemetryHub.s1._overlayVelocitiesOn = ov.velocities;
 
-    if (running && peData.count > 0) {
-        updateTrailHistory(peData);
+    if (running) {
+        updateTrailHistory(
+            peData,
+            peTick,
+            scale1State.trailSettings,
+            scale1State.trailEnergyDensityById,
+        );
     }
+    let trailStats = null;
     if (ov.trails) {
-        viewport.updateTrails(getTrailHistory(), typeMap);
+        trailStats = viewport.updateTrails(
+            getTrailHistory(), typeMap, scale1State.trailSettings, peTick);
     }
+    updatePeTrailEnergyLegend(trailStats, scale1State.trailSettings.renderMode);
     telemetryHub.s1._overlayTrailsOn = ov.trails;
     // Orbit-period estimate (2-body proxy): built from the hub's own
     // tick-gated peSeparation channel (collectScale1Extended), NOT from the
-    // visual trail cache (pe-cloud-expander.js getTrailHistory()) — that
-    // cache stores per-particle ring buffers of raw positions with no tick
-    // stamps, sampled once per rendered frame rather than once per engine
-    // tick, so it cannot supply the {tick, separation} series
-    // estimateOrbitPeriod expects. telemetryHub.s1.diag.tick / peSeparation
-    // are real engine-tick-aligned values already computed elsewhere in the
-    // hub; only new-tick samples are appended here (deduped against the
-    // last recorded tick) so the history stays real and doesn't repeat a
-    // stale sample across the ~3 unthrottled frames between hub collections.
+    // visual trail cache (pe-cloud-expander.js getTrailHistory()). Although
+    // that cache is now tick-stamped, it remains a presentation cache with a
+    // user-adjustable stride and history window, so it must not supply the
+    // invariant orbit-period diagnostic. The hub's separation channel is the
+    // registered tick-aligned telemetry source estimateOrbitPeriod expects;
+    // only new-tick separation samples are appended below.
     if (ov.trails && peData.count === 2) {
-        // A pair identity key (not just count===2) guards against annihilation
+        // A pair identity key (not just count===2) guards against selected removal
         // + re-injection silently swapping in a different pair while count
         // holds at 2 — without this, a stale sample from the old pairing
         // would anchor estimateOrbitPeriod's "start" reference and produce a
@@ -384,11 +535,37 @@ export function animatePE(ctx) {
         }
     }
 
-    if (ov.potential && peData.count > 0) {
+    let peFieldSources = scale1State.lastFieldSources;
+    if ((ov.potential || ov.efield || ov.gravityField) && peData.count > 0
+        && (fieldRefreshDue || !peFieldSources)) {
+        peFieldSources = focusedFieldSources(
+            {
+                positions: peData.positions,
+                charges: peData.charges,
+                masses: peData.masses,
+                count: peData.count,
+            },
+            peData.ids,
+            inspectionFocus,
+            scale1State.inspectionFieldSources,
+        );
+        scale1State.lastFieldSources = peFieldSources;
+    }
+
+    const finitePortField = scale1State.finitePortBatterySnapshot;
+    if (ov.fieldBattery && finitePortField?.count > 0 && fieldRefreshDue) {
+        viewport.updateFieldHeatmap(
+            finitePortField.positions, finitePortField.magnitudes,
+            finitePortField.count, finitePortField.maxMagnitude);
+        viewport.updateFieldVectors(
+            finitePortField.positions, finitePortField.vectors,
+            finitePortField.count, finitePortField.maxMagnitude, 5.0);
+        telemetryHub.s1._potentialMin = 0;
+        telemetryHub.s1._potentialMax = Number(finitePortField.maxMagnitude) || 0;
+    } else if (ov.potential && peFieldSources?.count > 0 && fieldRefreshDue) {
         if (!scale1State.fieldGrid) scale1State.fieldGrid = generateGridXZ(25, 20);
         const grid = scale1State.fieldGrid;
-        const src   = bridge.peGetFieldSources();
-        const field = samplePECoulombOnly(src, grid.positions, grid.count);
+        const field = samplePECoulombOnly(peFieldSources, grid.positions, grid.count);
         viewport.updateFieldHeatmap(
             grid.positions, field.potentials, grid.count, field.maxPotential);
         viewport.updateFieldVectors(
@@ -408,17 +585,16 @@ export function animatePE(ctx) {
     telemetryHub.s1._overlayPotentialOn = ov.potential;
 
     // Coulomb E-field streamlines (3D, throttled)
-    const refreshStreamlines = running ? frameCount % 5 === 0 : (frameCount % 30 === 0);
-    if (ov.efield && peData.count > 0 && refreshStreamlines) {
-        const src     = bridge.peGetFieldSources();
-        const fieldFn = makePECoulombFieldFn(src, 0.5);
+    const refreshStreamlines = fieldRefreshDue;
+    if (ov.efield && peFieldSources?.count > 0 && refreshStreamlines) {
+        const fieldFn = makePECoulombFieldFn(peFieldSources, 0.5);
         const buf = scale1State.srcParticlesBuf;
-        while (buf.length < src.count) buf.push({ x: 0, y: 0, z: 0 });
-        buf.length = src.count;
-        for (let i = 0; i < src.count; i++) {
-            buf[i].x = src.positions[i * 3];
-            buf[i].y = src.positions[i * 3 + 1];
-            buf[i].z = src.positions[i * 3 + 2];
+        while (buf.length < peFieldSources.count) buf.push({ x: 0, y: 0, z: 0 });
+        buf.length = peFieldSources.count;
+        for (let i = 0; i < peFieldSources.count; i++) {
+            buf[i].x = peFieldSources.positions[i * 3];
+            buf[i].y = peFieldSources.positions[i * 3 + 1];
+            buf[i].z = peFieldSources.positions[i * 3 + 2];
         }
         const seeds = generateEFieldSeeds(buf, 3, 100);
         const lines = computeStreamlines({ fieldFn }, seeds, {
@@ -428,11 +604,10 @@ export function animatePE(ctx) {
     }
     telemetryHub.s1._overlayEfieldOn = ov.efield;
 
-    if (ov.gravityField && peData.count > 0) {
+    if (ov.gravityField && peFieldSources?.count > 0 && fieldRefreshDue) {
         if (!scale1State.fieldGrid) scale1State.fieldGrid = generateGridXZ(25, 20);
         const grid = scale1State.fieldGrid;
-        const src   = bridge.peGetFieldSources();
-        const field = samplePEGravityField(src, grid.positions, grid.count);
+        const field = samplePEGravityField(peFieldSources, grid.positions, grid.count);
         viewport.updateGravityVectors(
             grid.positions, field.forces, grid.count, field.maxForce);
     }
@@ -440,70 +615,89 @@ export function animatePE(ctx) {
 
     // Per-particle decomposed force arrows (native Float64 decomposition —
     // `net` is the TRUE integrator force incl. every enabled term)
-    const anyPEForce = ov.forceCoulomb || ov.forceGravity || ov.forceStrong || ov.forceNet;
+    const anyPEForce = ov.forceCoulomb || ov.forceGravity || ov.forceLorentz
+        || ov.forceExchange || ov.forceStrong || ov.forceRadiation
+        || ov.forceMagneticDipole || ov.forceSpinOrbit || ov.forceNet;
     if (anyPEForce && peData.count > 0) {
-        const decomp = bridge.peGetForceDecomposition?.() ?? null;
+        if (overlayRefreshDue || !scale1State.lastForceDecomposition) {
+            scale1State.lastForceDecomposition =
+                bridge.peGetForceDecomposition?.() ?? null;
+        }
+        const decomp = scale1State.lastForceDecomposition;
         if (decomp) {
-            viewport.updatePEForceDecomposition(decomp, GRAVITY_VIS_GAIN);
+            viewport.updatePEForceDecomposition(decomp, GRAVITY_VIS_GAIN, peData.ids);
         }
     }
     telemetryHub.s1._overlayForceOn = anyPEForce;
 
     if (ov.system && peData.count > 0) {
-        const sys = computeSystemVectors(peData);
-        viewport.updatePESystem(sys.com, sys.p, sys.l);
-        // hub.peAngMom is the origin-frame L the native engine reports
-        // (particle_engine.cpp sums r x mv from raw, non-shifted positions).
-        // sys.l above is the true CoM-relative L computed here in JS; surface
-        // its magnitude so the "about CoM" telemetry row doesn't silently
-        // read the origin-frame channel under a false label.
-        telemetryHub.s1._overlaySystemL = Math.hypot(sys.l[0], sys.l[1], sys.l[2]);
+        const conservation = scale1State.lastSnapshot?.conservation;
+        const focusedSystem = focusedSystemObservables(peData, inspectionFocus);
+        if (focusedSystem) {
+            viewport.updatePESystem(
+                focusedSystem.center,
+                focusedSystem.momentum,
+                focusedSystem.angularMomentum,
+            );
+            telemetryHub.s1._overlaySystemL = Math.hypot(...focusedSystem.angularMomentum);
+        } else if (conservation) {
+            const c = conservation.centerOfMass;
+            const p = conservation.totalMomentum;
+            const l = conservation.totalAngularMomentum;
+            viewport.updatePESystem([c.x, c.y, c.z], [p.x, p.y, p.z], [l.x, l.y, l.z]);
+            telemetryHub.s1._overlaySystemL = Math.hypot(l.x, l.y, l.z);
+        }
     }
     telemetryHub.s1._overlaySystemOn = ov.system;
 
     if (ov.admissibilityRing && peData.count > 0) {
-        viewport.updateAdmissibilityRings(peData, scale1State.promotedSeedById, peData.ids);
+        viewport.updateAdmissibilityRings(peData, scale1State.visualRecordById, peData.ids);
     }
 
-    // Provenance labels rebuild a unique CanvasTexture (a GPU upload) per
-    // promoted particle every call — clusterId/size never change after
-    // capture, only position does, so refreshing at the same cadence as the
-    // E-field streamlines above (not every rAF frame) avoids needless
-    // per-frame texture churn; a few-frame lag in label position is
-    // imperceptible for slow-moving promoted clusters.
+    // Provenance labels rebuild a unique CanvasTexture per record, so refresh
+    // them at the same cadence as field streamlines rather than every frame.
     if (ov.provenanceLabel && peData.count > 0 && refreshStreamlines) {
-        viewport.updateProvenanceLabels(peData, scale1State.promotedSeedById, peData.ids);
+        viewport.updateProvenanceLabels(peData, scale1State.visualRecordById, peData.ids);
     }
     telemetryHub.s1._overlayProvenanceOn = ov.provenanceLabel;
-
-    // Mass-comparison badges rebuild a unique CanvasTexture per connector
-    // every call (same cost profile as the provenance labels above), so
-    // this overlay is throttled to the same refreshStreamlines cadence from
-    // the start rather than needing a follow-up fix.
-    if (ov.massComparison && peData.count > 0 && refreshStreamlines
-        && scale1State.lastPromotion?.voxelDebug) {
-        viewport.updateMassComparison(
-            peData, scale1State.promotedSeedById,
-            scale1State.lastPromotion.voxelDebug,
-            scale1State.lastPromotion.latticeSize,
-            scale1State.lastPromotion.displayScale);
-    }
-    telemetryHub.s1._overlayMassComparisonOn = ov.massComparison;
 
     // ── 4. Render ────────────────────────────────────────────────────
     viewport.render();
 
-    // ── 5. Telemetry + panels (throttled to every 3rd frame) ─────────
-    if (frameCount % 3 === 0) {
+    // Tick and state remain frame-fresh without forcing an exact energy pass.
+    const liveCache = scale1State.statusCache;
+    const liveTick = formatSI(peTick);
+    const liveCount = String(peData.count);
+    const liveState = scale1State.mode === 'native_matter'
+        ? 'Read-only' : (running ? 'Running' : 'Idle');
+    if (liveCache.tick !== liveTick) {
+        dom.statusPtime.textContent = liveTick;
+        liveCache.tick = liveTick;
+    }
+    if (liveCache.particles !== liveCount) {
+        dom.statusParticles.textContent = liveCount;
+        liveCache.particles = liveCount;
+    }
+    if (liveCache.state !== liveState) {
+        dom.statusState.textContent = liveState;
+        liveCache.state = liveState;
+        dom.statusDot.classList.toggle('idle', !running);
+    }
+
+    // ── 5. Exact telemetry + panels (shared observation cadence) ─────
+    if (observationDue) {
         const diag = telemetryHub.collectScale1(bridge);
-        const ext = telemetryHub.collectScale1Extended(bridge);
+        telemetryHub.collectScale1Extended(bridge);
 
         if (diag) {
             const cache = scale1State.statusCache;
             const sTick = formatSI(diag.tick);
             const sParticles = String(diag.particleCount);
-            const sEnergy = formatEnergy(diag.totalEnergy, 1).text;
-            const sState = running ? 'Running' : 'Idle';
+            const formattedEnergy = formatEnergy(diag.totalEnergy, 1).text;
+            const sEnergy = diag.stateEnergyComplete ? formattedEnergy
+                : `partial ${formattedEnergy}`;
+            const sState = scale1State.mode === 'native_matter'
+                ? 'Read-only' : (running ? 'Running' : 'Idle');
 
             if (cache.tick !== sTick) { dom.statusPtime.textContent = sTick; cache.tick = sTick; }
             if (cache.particles !== sParticles) { dom.statusParticles.textContent = sParticles; cache.particles = sParticles; }
@@ -538,11 +732,21 @@ export function animatePE(ctx) {
 // =====================================================================
 
 export function loadPEScenario(ctx, name) {
-    const { bridge, viewport } = ctx;
+    const { bridge, viewport, inspector } = ctx;
 
     if (!bridge.initPE) return;
-    const scenarioId = getScale1Scenario(name) ? name : DEFAULT_SCALE1_SCENARIO;
-    const preset = getScale1ScenarioPreset(scenarioId);
+    scale1ParticleWorkerExecutor.invalidate();
+    scale1ParticleWorkerExecutor.ensure();
+    scale1State.registry = bridge.peGetPhysicsRegistry?.() ?? null;
+    installScale1ScenarioManifest(scale1State.registry);
+    const requested = getScale1Scenario(name);
+    const scenarioId = requested?.available ? name : DEFAULT_SCALE1_SCENARIO;
+    const scenario = getScale1Scenario(scenarioId);
+    populateScale1ScenarioSelect(
+        document.getElementById('pe-scenario-select'), scenarioId);
+    const preset = getScale1ScenarioPreset(scenarioId, scale1State.registry);
+
+    inspector?.clearPEInspection?.();
 
     // Delegate to app.js master reset (clears charts, trails, field cache,
     // and resets all toggle buttons across all scales)
@@ -556,16 +760,35 @@ export function loadPEScenario(ctx, name) {
     telemetryHub.resetScale(1);
     scale1State.lastPushedTick = -1;
     scale1State.currentScenarioId = scenarioId;
+    scale1State.softening = preset.physics.softening ?? 0.1;
+
+    scale1State.mode = scenario?.mode || 'effective_lab';
+    bridge.peSetMode?.(scale1State.mode);
 
     applyPEPhysicsPreset(bridge, preset);
 
-    const scenario = getScale1Scenario(scenarioId);
+    viewport?.clearPEScenarioVisual?.();
     scenario?.setup?.({ bridge, viewport });
+    const fieldBatteryControls = document.getElementById('pe-field-battery-controls');
+    if (fieldBatteryControls) {
+        fieldBatteryControls.hidden = scenarioId !== 's1-finite-port-field-battery';
+    }
+    scale1State.finitePortBatterySnapshot =
+        bridge.peGetFinitePortBatterySnapshot?.() ?? null;
+    scale1State.lastSnapshot = bridge.peGetSnapshot?.(scenarioId) ?? null;
+    scale1ParticleLedger.beginScenario({
+        scenarioId,
+        label: scenario?.label ?? scenarioId,
+        tick: scale1State.lastSnapshot?.core?.tick ?? 0,
+    });
+    hydratePePhysicsControls(scale1State.registry, bridge);
+    syncPeTrailControls(scale1State.trailSettings);
 
     // Runtime metadata for the diagnostics panel (hub no longer reads DOM).
     telemetryHub.setScale1Runtime({
         scenario: scenario?.label ?? scenarioId,
         softening: preset.physics.softening ?? 0.1,
+        mode: scale1State.mode,
     });
 
     applyPEOverlayPreset(viewport, preset);
@@ -576,13 +799,23 @@ export function loadPEScenario(ctx, name) {
     const descWrap = document.getElementById('s1-scenario-desc');
     if (descWrap) descWrap.style.display = '';
 
-    // Promotion provenance card reflects any capture the scenario consumed.
-    refreshPromotionCard();
+    syncScale1ScenarioBehaviorUI(scenario, scale1State.m3ViewId);
+    refreshScale1ScenarioContractCard();
+
+    // Put the declared observable in front of the user. Static, null, and
+    // replay cases otherwise look like failed dynamics even when correct.
+    const presentation = scale1BehaviorPresentation(scenario?.behavior);
+    ctx.appShell?.activatePanel?.(presentation.panel);
 
     // Soft circles + shader manifestation (void slots stay as faint ghosts)
     if (viewport?.setParticleShape) viewport.setParticleShape(0);
     if (viewport?.setParticleGlow) viewport.setParticleGlow(0.28);
     if (viewport?.setPEManifestation) viewport.setPEManifestation(true, 0, MANIFEST_FILL);
+    viewport?.setCameraPreset?.('front');
+    // The registered M3 record is localized within one lattice unit, while
+    // effective-lab scenarios span tens of units. Give the evidence artifact
+    // an honest presentation zoom without changing its coordinates or radius.
+    viewport?.setZoomMagnitude?.(scenarioId === 's1-native-m3-replay' ? 2.6 : 1.0);
 }
 
 

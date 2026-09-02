@@ -47,6 +47,7 @@ function extractCppScenarios() {
     // scenarios.cpp but the `name == "..."` branches are spread across:
     //   scenarios/flux.cpp, light.cpp, quantum.cpp, s0_seed.cpp, s0_field.cpp,
     //   scenarios/vacuum.cpp (s0-vacuum-* group, added 2026-04-28)
+    //   scenarios/cell.cpp   (s0-cell-* flux cells, added 2026-09-02)
     const sources = [
         join(ENGINE_ROOT, 'src', 'scenarios.cpp'),
         join(ENGINE_ROOT, 'src', 'scenarios', 'flux.cpp'),
@@ -55,6 +56,7 @@ function extractCppScenarios() {
         join(ENGINE_ROOT, 'src', 'scenarios', 's0_seed.cpp'),
         join(ENGINE_ROOT, 'src', 'scenarios', 's0_field.cpp'),
         join(ENGINE_ROOT, 'src', 'scenarios', 'vacuum.cpp'),
+        join(ENGINE_ROOT, 'src', 'scenarios', 'cell.cpp'),     // s0-cell-* flux cells (2026-09-02)
     ];
     const names = new Set();
     const re = /name\s*==\s*"([^"]+)"/g;
@@ -69,19 +71,32 @@ function extractCppScenarios() {
 
 function extractCppLegacyScenarios() {
     // April 2026 post-audit cleanup (ticket W1): ftd_wasm.cpp was split.
-    // The legacy setup_scenario with backward-compat branches now lives in
-    // engine/wasm/bindings_render_bridge.cpp. Check both for forward compat.
+    // The legacy setup_scenario aliases now live in
+    // engine/wasm/bindings_render_bridge.cpp. Check both files for forward
+    // compatibility, but restrict branch matching to their scenario sections
+    // so an unrelated toggle comparison such as `name == "dual_substrate"`
+    // cannot be misclassified as a scenario.
     const sources = [
         join(ENGINE_ROOT, 'wasm', 'ftd_wasm.cpp'),
         join(ENGINE_ROOT, 'wasm', 'bindings_render_bridge.cpp'),
     ];
     const names = new Set();
-    const re = /name\s*==\s*"([^"]+)"/g;
     for (const path of sources) {
         let src;
         try { src = readFileSync(path, 'utf8'); } catch { continue; }
+        const sectionStart = src.indexOf('// ── Scenario setup');
+        const scenarioSrc = sectionStart >= 0 ? src.slice(sectionStart) : src;
+
+        const branchRe = /name\s*==\s*"([^"]+)"/g;
         let m;
-        while ((m = re.exec(src))) names.add(m[1]);
+        while ((m = branchRe.exec(scenarioSrc))) names.add(m[1]);
+
+        const aliases = scenarioSrc.match(
+            /kLegacyAliases\[\]\s*=\s*\{([\s\S]*?)\n\};/
+        );
+        if (!aliases) continue;
+        const aliasRe = /\{\s*"([^"]+)"\s*,\s*"[^"]+"\s*\}/g;
+        while ((m = aliasRe.exec(aliases[1]))) names.add(m[1]);
     }
     return names;
 }

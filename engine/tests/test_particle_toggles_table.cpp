@@ -1,9 +1,8 @@
 /**
  * Test: ParticleToggles characterization (ticket 3.3)
  *
- * Pins the EXACT post-construction toggle state, enable_all()/minimal()
- * profiles, validate() verdicts, and the string get_toggle/set_toggle
- * round-trip for ParticleEngine — BEFORE the ADR-0013 table-driven refactor.
+ * Pins the audited Scale-1 baseline, applicable enable_all()/verified()
+ * profiles, retirement behavior, validate() verdicts, and string access.
  *
  * This is a pure toggle-state characterization: it never computes a force or
  * touches physics, so it is independent of the pre-existing G_PE-scale
@@ -29,8 +28,8 @@ int main() {
     {
         ftd::ParticleToggles t;
         check("default coulomb=ON",             t.coulomb            == true);
-        check("default gravity=ON",             t.gravity            == true);
-        check("default damping=ON",             t.damping            == true);
+        check("default gravity=OFF",            t.gravity            == false);
+        check("default damping=OFF",            t.damping            == false);
         check("default lorentz=OFF",            t.lorentz            == false);
         check("default exchange=OFF",           t.exchange           == false);
         check("default strong=OFF",             t.strong             == false);
@@ -38,7 +37,8 @@ int main() {
         check("default spin_orbit=OFF",         t.spin_orbit         == false);
         check("default relativistic=OFF",       t.relativistic       == false);
         check("default magnetic_dipole=OFF",    t.magnetic_dipole    == false);
-        check("default relativistic_verlet=OFF", t.relativistic_verlet == false);
+        check("default relativistic_verlet=ON", t.relativistic_verlet == true);
+        check("default contact_events=OFF",     t.contact_events     == false);
     }
 
     // ---- Section B: enable_all() → every toggle ON ----
@@ -53,9 +53,10 @@ int main() {
         check("enable_all strong",              t.strong             == true);
         check("enable_all radiation",           t.radiation          == true);
         check("enable_all spin_orbit",          t.spin_orbit         == true);
-        check("enable_all relativistic",        t.relativistic       == true);
+        check("enable_all retired relativistic remains OFF", t.relativistic == false);
         check("enable_all magnetic_dipole",     t.magnetic_dipole    == true);
         check("enable_all relativistic_verlet", t.relativistic_verlet == true);
+        check("enable_all contact_events",      t.contact_events     == true);
     }
 
     // ---- Section C: minimal() profile (NOTE: relativistic_verlet=ON,
@@ -65,8 +66,8 @@ int main() {
         t.enable_all();   // dirty first so minimal() must clear the extras
         t.minimal();
         check("minimal coulomb=ON",              t.coulomb            == true);
-        check("minimal gravity=ON",              t.gravity            == true);
-        check("minimal damping=ON",              t.damping            == true);
+        check("minimal gravity=OFF",             t.gravity            == false);
+        check("minimal damping=OFF",             t.damping            == false);
         check("minimal relativistic_verlet=ON",  t.relativistic_verlet == true);
         check("minimal lorentz=OFF",             t.lorentz            == false);
         check("minimal exchange=OFF",            t.exchange           == false);
@@ -75,6 +76,7 @@ int main() {
         check("minimal spin_orbit=OFF",          t.spin_orbit         == false);
         check("minimal relativistic=OFF",        t.relativistic       == false);
         check("minimal magnetic_dipole=OFF",     t.magnetic_dipole    == false);
+        check("minimal contact_events=OFF",      t.contact_events     == false);
     }
 
     // ---- Section D: validate() verdicts (OR-dependency on coulomb|gravity) ----
@@ -100,8 +102,8 @@ int main() {
     {
         const char* names[] = {
             "coulomb", "gravity", "damping", "lorentz", "exchange", "strong",
-            "radiation", "spin_orbit", "relativistic", "magnetic_dipole",
-            "relativistic_verlet"
+            "radiation", "spin_orbit", "magnetic_dipole",
+            "relativistic_verlet", "contact_events"
         };
         ftd::ParticleEngine pe;
         // Defaults visible through get_toggle.
@@ -115,7 +117,11 @@ int main() {
             pe.set_toggle(n, false);
             if (pe.get_toggle(n) != false) roundtrip_ok = false;
         }
-        check("set/get round-trip all 11 names", roundtrip_ok);
+        check("set/get round-trip all applicable names", roundtrip_ok);
+        std::string retired_error;
+        check("retired relativistic key rejects activation",
+              !pe.try_set_toggle("relativistic", true, &retired_error) &&
+              !retired_error.empty() && !pe.get_toggle("relativistic"));
         // Unknown name is inert.
         check("unknown get_toggle → false", pe.get_toggle("does_not_exist") == false);
         pe.set_toggle("coulomb", true);

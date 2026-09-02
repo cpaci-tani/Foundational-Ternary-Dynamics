@@ -51,7 +51,8 @@ add_test(NAME logic_engine COMMAND test_logic_engine)
 add_test(NAME selffield_profile COMMAND test_selffield_profile)
 add_test(NAME wavepacket COMMAND test_wavepacket)
 add_test(NAME particle_engine COMMAND test_particle_engine)
-add_test(NAME scale_bridge COMMAND test_scale_bridge)
+add_test(NAME scale1_domain COMMAND test_scale1_domain)
+add_test(NAME scale1_field_mediation_probe COMMAND test_scale1_field_mediation_probe)
 # (hydrogen_scale1 + hydrogen_spectrum_scale1 merged into campaign_hydrogen_spectrum)
 add_test(NAME fine_structure_scale1 COMMAND test_fine_structure_scale1)
 add_test(NAME helium_scale1 COMMAND test_helium_scale1)
@@ -60,8 +61,6 @@ add_test(NAME atom_engine COMMAND test_atom_engine)
 add_test(NAME symplectic_wave COMMAND test_symplectic_wave)
 add_test(NAME relativistic_verlet COMMAND test_relativistic_verlet)
 add_test(NAME molecular_dihedrals COMMAND test_molecular_dihedrals)
-add_test(NAME atom_scale_bridge COMMAND test_atom_scale_bridge)
-add_test(NAME multiscale_bridge COMMAND test_multiscale_bridge)
 add_test(NAME em_fields COMMAND test_em_fields)
 # (gauss_convergence merged into gauss)
 # (lorentz_force merged into lorentz)
@@ -282,10 +281,8 @@ add_test(NAME campaign_spontaneous COMMAND ftd_spontaneous)
 add_test(NAME campaign_plato COMMAND ftd_plato)
 add_test(NAME campaign_einstein COMMAND ftd_einstein)
 add_test(NAME campaign_wigner COMMAND ftd_wigner)
-add_test(NAME campaign_cross_scale COMMAND ftd_cross_scale)
 add_test(NAME campaign_born_ensemble COMMAND ftd_born_ensemble)
 add_test(NAME campaign_h2_molecule COMMAND ftd_h2_molecule)
-add_test(NAME campaign_multiscale_pipeline COMMAND ftd_multiscale_pipeline)
 add_test(NAME campaign_statistical_convergence COMMAND ftd_statistical_convergence)
 # (campaign_dispersion_convergence merged into campaign_dispersion)
 # (campaign_coulomb_convergence merged)
@@ -349,10 +346,9 @@ set_tests_properties(
     particle_lifetime
     campaign_dispersion
     campaign_bound_lifetime
-    campaign_spontaneous campaign_cross_scale campaign_born_ensemble
-    particle_engine scale_bridge
-    atom_engine atom_scale_bridge multiscale_bridge campaign_h2_molecule
-    campaign_multiscale_pipeline
+    campaign_spontaneous campaign_born_ensemble
+    particle_engine
+    atom_engine campaign_h2_molecule
     selective_damping stress_energy
     em_energy_conservation continuity poynting larmor
     ensemble correlations spectral tracker
@@ -409,8 +405,8 @@ set_property(TEST
     dissipation portable_field particle_lifetime vortex voxel_properties
     lattice_operators discrete_operators bridge_dynamics maxwell csv_export
     logic_engine energy_conservation
-    selffield_profile wavepacket particle_engine scale_bridge
-    atom_engine atom_scale_bridge multiscale_bridge em_fields
+    selffield_profile wavepacket particle_engine
+    atom_engine em_fields
     selective_damping em_energy_conservation continuity poynting
     larmor dipole_radiation thomson_scattering light
     ensemble correlations spectral tracker benchmark latency_field
@@ -424,7 +420,7 @@ set_property(TEST
     sloop
     APPEND PROPERTY LABELS "unit")
 
-# Campaign tests (47 campaign_*.cpp files)
+# Campaign tests
 # APPEND is critical so campaign-level labels (scale1, scale2, gpu, etc.)
 # stack on top of these category labels rather than overwriting them.
 set_property(TEST
@@ -432,8 +428,8 @@ set_property(TEST
     campaign_free_dynamics
     campaign_coulomb_force_law
     campaign_bound_lifetime
-    campaign_spontaneous campaign_cross_scale campaign_born_ensemble
-    campaign_h2_molecule campaign_multiscale_pipeline
+    campaign_spontaneous campaign_born_ensemble
+    campaign_h2_molecule
     campaign_statistical_convergence campaign_wave_dynamics
     campaign_born_rule
     campaign_hydrogen_binding campaign_triad_energy campaign_inertial_mass
@@ -461,13 +457,13 @@ set_property(TEST
 # Scale 1: ParticleEngine tests
 # APPEND so pe_forces keeps both "unit" (from ftd_add_test) and "scale1".
 set_property(TEST
-    particle_engine pe_forces particle_toggles
+    particle_engine scale1_domain pe_forces particle_toggles
     campaign_pe_fine_structure
     APPEND PROPERTY LABELS "scale1")
 
 # Scale 2: AtomEngine tests
 set_property(TEST
-    atom_engine atom_scale_bridge atom_engine_forces
+    atom_engine atom_engine_forces
     atom_toggles
     APPEND PROPERTY LABELS "scale2")
 
@@ -541,8 +537,8 @@ set_property(TEST
     particle_lifetime
     campaign_free_dynamics
     campaign_bound_lifetime
-    campaign_spontaneous campaign_cross_scale campaign_born_ensemble
-    campaign_h2_molecule campaign_multiscale_pipeline
+    campaign_spontaneous campaign_born_ensemble
+    campaign_h2_molecule
     campaign_statistical_convergence campaign_wave_dynamics
     campaign_born_rule
     campaign_hydrogen_binding campaign_triad_energy campaign_inertial_mass
@@ -553,7 +549,7 @@ set_property(TEST
     campaign_cosmological_predictions campaign_dark_sector campaign_novel_predictions
     campaign_integer_sweep campaign_hydrogen_spectrum
     campaign_pe_fine_structure campaign_lorentz_measure
-    particle_engine scale_bridge atom_engine atom_scale_bridge multiscale_bridge
+    particle_engine atom_engine
     selective_damping stress_energy em_energy_conservation continuity
     poynting larmor ensemble correlations spectral tracker
     inflation dark_matter cosmological_constant consciousness sloop
@@ -654,7 +650,7 @@ set_property(TEST
 
 # Atomic / hydrogen domain
 set_property(TEST
-    atom_engine atom_scale_bridge atom_engine_forces
+    atom_engine atom_engine_forces
     helium_scale1 fine_structure_scale1
     radiative_decay_scale1
     campaign_hydrogen_spectrum campaign_hydrogen_binding

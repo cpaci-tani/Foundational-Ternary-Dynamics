@@ -1094,12 +1094,11 @@ void benchmark_spin_orbit() {
 }
 
 // ================================================================
-// B19: Relativistic correction (Scale 1)
-// Fix: use high initial velocity (0.4c) toward a locked charge
-// to build up speed. Compare peak velocity with/without gamma.
+// B19: Relativistic momentum integrator (Scale 1)
+// Compare the classical and momentum-Verlet effective integrators.
 // ================================================================
 void benchmark_relativistic() {
-    std::cerr << "  Relativistic correction:\n";
+    std::cerr << "  Relativistic momentum integrator:\n";
 
     double v_max_nr = 0, v_max_rel = 0;
 
@@ -1107,7 +1106,7 @@ void benchmark_relativistic() {
         ftd::ParticleEngine pe;
         pe.toggles.minimal();
         pe.toggles.damping = false;
-        if (test == 1) pe.toggles.relativistic = true;
+        pe.toggles.relativistic_verlet = (test == 1);
         pe.set_dt(0.5);  // Small dt for accuracy at high speed
 
         // Locked +1 at origin, fast -1 approaching at 0.4c
@@ -1129,7 +1128,7 @@ void benchmark_relativistic() {
         else v_max_rel = v_peak;
     }
 
-    // Relativistic correction should LIMIT peak velocity (γ suppresses acceleration)
+    // Momentum-Verlet should limit peak velocity smoothly inside the light cone.
     bool limited = (v_max_rel < v_max_nr - 1e-6);
     std::cout << "relativistic," << 0 << ","
               << (limited ? 1 : 0) << ",1,0,"

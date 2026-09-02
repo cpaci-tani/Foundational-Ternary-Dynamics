@@ -7,7 +7,7 @@ import {
     SCALE0_SCENARIOS,
 } from '../js/scales/scale0/scenario-registry.js';
 import {
-    SCALE1_SCENARIOS,
+    SCALE1_SCENARIOS, SCALE1_SCENARIO_TARGET_COUNT,
 } from '../js/scales/scale1/scenario-registry.js';
 import {
     AE_CURATED_SCENARIOS,
@@ -56,8 +56,11 @@ test('the frozen live inventory remains synchronized with the audit baseline', (
     expectUnique(scale4Ids, 'Scale 4');
     expectUnique(scale5Ids, 'Scale 5');
 
-    expect(scale0Ids).toHaveLength(130);
-    expect(scale1Ids).toHaveLength(6);
+    expect(scale0Ids).toHaveLength(142);
+    // Node sees the one-row pre-WASM bootstrap. The authoritative native
+    // registry hydrates the full particle-scale program in the browser.
+    expect(scale1Ids).toHaveLength(1);
+    expect(SCALE1_SCENARIO_TARGET_COUNT).toBe(36);
     expect(AE_CURATED_SCENARIOS).toHaveLength(22);
     expect(ELEMENT_COUNT).toBe(118);
     expect(scale2Count).toBe(139);
@@ -67,13 +70,15 @@ test('the frozen live inventory remains synchronized with the audit baseline', (
     expect(scale5Ids).toHaveLength(13);
 
     const totalPresentationEntries = scale0Ids.length
-        + scale1Ids.length
+        + SCALE1_SCENARIO_TARGET_COUNT
         + scale2Count
         + scale3Count
         + scale4Ids.length
         + scale5Ids.length
         + 1; // Scale 6 structural exhibit, not a physics scenario.
-    expect(totalPresentationEntries).toBe(324);
+    // Includes the Scale-1 open-terminal and finite-port batteries plus the
+    // Scale-0 membrane-transfer and resonant-cell scenarios added 2026-09-02.
+    expect(totalPresentationEntries).toBe(366);
 });
 
 test('the manifest schema contains every pinned scientific-contract field', () => {

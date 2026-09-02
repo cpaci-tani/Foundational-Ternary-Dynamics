@@ -2,7 +2,7 @@
 
 **Status:** complete for the frozen scenario catalog and production tick.
 
-**Scope:** all 130 Scale-0 scenario IDs in
+**Scope:** all 142 Scale-0 scenario IDs in
 `engine/web/js/scales/scale0/scenario-registry.js`, their C++ production
 implementations, JS fallback mirrors, browser mounting path, and evidence
 records. This supersedes the physics-sense conclusions of the 2026-06-05
@@ -30,12 +30,12 @@ This produces five honest menu classes:
 
 | Class | Count | Meaning |
 |---|---:|---|
-| Validated Native Dynamics | 92 | A measured property of the frozen native field/update map, including exact ansätze and null controls |
+| Validated Native Dynamics | 104 | A measured property of the frozen native field/update map, including exact ansätze and null controls |
 | Validated State Dynamics | 34 | A measured manifested-state or selected reaction response |
 | Qualified Selected Extensions | 1 | A measured toggle-gated extension whose surviving behavior and failed physical interpretation are both explicit |
 | Validated Initial Data | 2 | A prepared geometry whose construction, not physical identity, is certified |
 | Macroscopic Physics & Measurement | 1 | A bounded prepared-response probe with its macroscopic interpretation explicitly rejected where unsupported |
-| **Total** | **130** | **All catalog entries admitted with behavioral evidence** |
+| **Total** | **142** | **All catalog entries admitted with behavioral evidence** |
 
 The registry is the complete per-scenario run-of-record manifest. It contains
 one qualification, one test location, and one concrete assertion for every ID.
@@ -43,13 +43,13 @@ one qualification, one test location, and one concrete assertion for every ID.
 ## 2. Closure result
 
 - Menu, internal catalog, JS implementations, C++ implementations, and evidence
-  records are exactly 130/130/130/130/130.
+  records are exactly 142/142/142/142/142.
 - There are no hidden or mechanically smoke-only scenarios.
 - 121 scenarios cite `engine/tests/test_scenario_behavior.cpp`; the remaining
-  9 cite the focused boundary, genesis, reaction, dynamic-flux-dressing,
-  reciprocal-moving-source, velocity, and Thomson tests recorded in the
-  registry (8 distinct files).
-- Cumulative browser evidence has loaded all 130 production WASM scenarios.
+  21 cite the focused boundary, genesis, reaction, dynamic-flux-dressing,
+  reciprocal-moving-source, velocity, Thomson, and flux-cell tests recorded in
+  the registry (9 distinct files).
+- Cumulative browser evidence has loaded all 142 production WASM scenarios.
   The all-catalog campaign was rerun 2026-07-25 when the catalog reached 116
   (`npx playwright test scale0-scenario-health.spec.js`, 4/4, all entries on
   the `wasm-worker` owner); FTD-0477 then adds a focused production-WASM test
@@ -163,7 +163,7 @@ qualification unchanged.
 
 1. Add state-hash parity tests between C++ CPU, deployed WASM, and JS fallback
    for the deterministic subset; ID parity alone is not trajectory parity.
-2. Store the 130-row mechanical campaign as a versioned JSON artifact, including
+2. Store the 142-row mechanical campaign as a versioned JSON artifact, including
    source revision, lattice size, owner, first-frame latency, tick, energy, field
    peak, particle count, and errors.
 3. Add multi-volume and multi-seed campaigns only to scenarios whose claim
@@ -193,3 +193,60 @@ npx playwright test scale0-scenario-health.spec.js
 cd ../..
 .\build_native.bat golden
 ```
+
+## Addendum 2026-09-02 — `s0-cell-*` flux-cell group (12 ids, 130 → 142)
+
+Seven flux-cell scenarios were added under the same admission rule. A flux
+cell is a localized field configuration whose energy is meant to stay above
+vacuum after its pump is disconnected; the group implements the V0–V2 build
+order of the flux-battery programme (a Gauss-charged plate capacitor, an
+azimuthal ring reservoir with four controls, and a three-axis standing-arm
+cell). Every id seeds initial data on an isolated profile; storage, hold, and
+leakage are measured by `engine/tests/test_flux_cell_scenario_physics.cpp`
+through the regional ledger in `engine/include/ftd/flux_cell.h` (U_E, U_B,
+U_J, the kick-drift Hamiltonian, Poynting leak, ring circulation, disk flux,
+flux dyad, support radius). Measurements of record (L=33, 300-tick hold, CPU):
+
+| Id | Certified | Measured status |
+|---|---|---|
+| `s0-cell-capacitor` | Gauss projection charges the gap (U_J 0 → 11.76 in one tick), plates inert | Under the wave map the gap rings and relaxes to 0.315 of its tick-1 value; capacitor identity [OPEN] |
+| `s0-cell-torus` | H conserved to 5e-14; U_E reaches 0.714 of U_E+U_B; net Poynting < 6e-16; pump-off ledger closes (W_in = H_hold) | Ring region retains 0.363 = uniform-fill fraction 0.35: energy is held by the periodic box, not by the ring geometry |
+| `s0-cell-torus-reverse` | Exact mirror (Γ_J, Φ_B equal and opposite to 1e-12) | Control |
+| `s0-cell-torus-scrambled` | Identical pointwise \|J\|, Γ_J = 0, H 2.44× larger | **Closed negative** for “coherence aids retention”: retains 0.914 (2.52× the coherent ring) because zone-edge content has small lattice group velocity |
+| `s0-cell-torus-open` | Dispersal law: H retention 2.5e-7 | No-membrane control; the periodic hold is box recurrence |
+| `s0-cell-torus-walled` | Reflective law: interior H conserved to 2.5e-14 | Walls hold energy in the box, not in the ring (region retention 0.336) |
+| `s0-cell-triad` | Equal axial flux moments (1.4e-16), zero net flux and Poynting (1e-16), H conserved to 4.4e-14 | Off-diagonal overlap terms 0.019 of the trace; arm region disperses to uniform fill 0.155 |
+| `s0-cell-torus-membrane` | Clock-inclusive Hamiltonian conserved to 3.3e-14; inner ball retains 1.003 (uniform fill 0.199); transparent control (ω₀=0.05) falls to 0.223; thickness 1/2/3 retains 0.576/0.991/1.003 | The locked shell is a mass-gap wall only through the [IMPOSED] de Broglie clock; storage identity [OPEN] |
+| `s0-cell-torus-membrane-gated` | Zero port flux before tick 150; 79 shell sites expire on schedule; W_out=0.03808 through the plug’s outer face against a whole-cell Hamiltonian loss of 0.0457 (0.834 raw, 1.05 after subtracting the closed-phase wall leak of −0.58%) | Port ledger uses the wave-Hamiltonian current c²ΣE_a∇J_a; the Poynting integral (0.03390) is kept as a diagnostic |
+| `s0-cell-membrane-pumped` | Engine-booked pump work W_in=0.049280 equals the Hamiltonian at disconnection (1e-9); 20 increments then hard-off; hold drift 6e-14; retention 0.835 | Twenty time-shifted increments add incoherently (0.049 vs the 1.62 one-shot seed); the ledger books what was delivered |
+| `s0-cell-membrane-transfer` | L=49: receiver Hamiltonian exactly 0 and zero port flux until tick 100; then A loses 0.0530, B gains 0.0137 (0.0133 of A’s start), W_port=0.0195 across the contact plane | Two-way channel between two leaking cells; B keeps 0.70 of what crossed; no receiver identity |
+| `s0-cell-membrane-pumped-resonant` | Scan of W_in over spacings 1–24 ticks: constructive optimum at 8 (1.37× every-tick), destructive at 3–4 (0.10×); W_in=0.06742 = H at disconnection; count-scaling exponent 1.16 | Phase dependence of −2J·Lδ confirmed; far below coherent N² (leaky multi-mode reservoir) |
+
+The three membrane-family ids ride on three engine additions in
+`engine/include/ftd/flux_cell.h`, each with a stated mechanism: the membrane is
+the existing [IMPOSED] de Broglie clock term evaluated on an imposed locked shell
+(a Klein–Gordon mass gap, evanescent for ω < ω₀ exactly as a metal reflects
+light below its plasma frequency); the pump (`flux_pump`) is a time-gated source
+term whose work is booked exactly per tick from the bilinear change of the
+kick-drift Hamiltonian; the port (`flux_cell_port`) is a scheduled P5-style
+expiry of shell sites whose outgoing energy is integrated with the wave
+equation’s own energy current c²Σ_a E_a∇J_a (the EM-like c²E×B differs by a
+curl-type term and is kept as a diagnostic). Both toggles default OFF
+(golden-neutral) and are classified host-mirror hybrids on CUDA.
+
+The flux-cell ledger was also turned on the engine’s own electron seeds as the
+spec’s “electron as a self-confined flux cell” falsifier: `s0-vacuum-electron`
+(curl-free radial J, no wall, no clock) disperses to uniform fill (region
+Hamiltonian retention 0.073 vs fill 0.050) with net Poynting circulation and
+angular-flow moment at rounding level, and the clocked 7×7×7 block of
+`s0-seed-de-broglie-clock` radiates its k=0 oscillation away (0.046 vs 0.026).
+Both are **closed negatives** for a self-confined flux cell in the current
+engine; the measurement is recorded in `test_flux_cell_scenario_physics`.
+
+None of the twelve asserts a capacitor, inductor, battery, persistent current,
+matter clock, or particle identity. The phase-winding gate with packetized
+discharge (V3) and the charged-versus-empty inertia/gravity comparison (V4)
+are not scenarios: V3 needs a finite phase carrier and a gated transaction the
+engine does not have, V4 is a measurement campaign. Class-table effect:
+Validated Native Dynamics 92 → 104; the twelve cite the new test file (the
+`test_scenario_behavior.cpp` count stays 121).

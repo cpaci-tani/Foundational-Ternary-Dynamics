@@ -1,4 +1,4 @@
-import { setInspectorSectionVisibility } from '../chrome.js';
+import { setInspectorSectionVisibility } from '../chrome.js?v=2';
 import { getById, chargeLabel, formatMass } from '../../particle-catalog.js';
 import {
     formatPosition,
@@ -13,17 +13,55 @@ export function handlePEClick(target, intersects) {
     if (intersects.length > 0 && target._cloudParticleMap) {
         const cloudIdx = intersects[0].index;
         if (cloudIdx < target._cloudCount) {
-            target._selectedPEParticleId = target._cloudParticleMap[cloudIdx];
-            showPEInspector(target);
+            target.selectPEParticle?.(target._cloudParticleMap[cloudIdx]);
             return;
         }
     }
-    target._selectedPEParticleId = -1;
-    hidePEInspector(target);
+    target.clearPEInspection?.();
+}
+
+function fmtScalar(value, digits = 3) {
+    if (!Number.isFinite(Number(value))) return '--';
+    const number = Number(value);
+    const magnitude = Math.abs(number);
+    if ((magnitude > 0 && magnitude < 1e-3) || magnitude >= 1e5) {
+        return number.toExponential(2);
+    }
+    return number.toFixed(digits).replace(/(\.\d*?[1-9])0+$|\.0+$/, '$1');
+}
+
+function updatePEFocusPresentation(target) {
+    const focus = target._peInspectionFocus;
+    if (!focus) return;
+    const cluster = focus.kind === 'cluster';
+    if (target.peClusterFieldsEl) target.peClusterFieldsEl.hidden = !cluster;
+    if (target.peFields.identityTitle) {
+        target.peFields.identityTitle.textContent = cluster ? 'Energy anchor identity' : 'Identity';
+    }
+    if (target.peFields.focusKind) {
+        target.peFields.focusKind.textContent = cluster ? 'Dynamic cluster focus' : 'Particle focus';
+    }
+    if (target.peFields.focusScope) {
+        target.peFields.focusScope.textContent = cluster
+            ? `${focus.clusterId} · ${focus.particleIds.length} particle${focus.particleIds.length === 1 ? '' : 's'}`
+            : `#${focus.particleId}`;
+    }
+    if (target.peFields.focusDescription) {
+        target.peFields.focusDescription.textContent = cluster
+            ? 'Per-particle overlays and field sources are restricted to this live cluster. The identity cards below follow its current energy anchor.'
+            : 'Per-particle overlays and field sources are restricted to this record. Physics and overlay toggle settings are unchanged.';
+    }
+    if (!cluster) return;
+    target.peFields.clusterId.textContent = focus.clusterId;
+    target.peFields.clusterMembers.textContent = focus.particleIds.map(id => `#${id}`).join(', ');
+    target.peFields.clusterAnchor.textContent = `#${focus.anchorId}`;
+    target.peFields.clusterCenter.textContent = `(${fmtScalar(focus.center.x)}, ${fmtScalar(focus.center.y)}, ${fmtScalar(focus.center.z)}) lu`;
+    target.peFields.clusterEnergy.textContent = `${fmtScalar(focus.energy)} · ${focus.energyBasis === 'mass_fallback' ? 'dormant mass fallback' : 'dynamic activity'}`;
 }
 
 export function showPEInspector(target) {
     setInspectorSectionVisibility(target.peEmptyEl, target.peContentEl, true);
+    updatePEFocusPresentation(target);
     updatePEFields(target);
     target._updateInspectorChrome();
 }
@@ -38,10 +76,11 @@ export function updatePEFields(target) {
 
     const data = target.bridge.peInspectParticle(target._selectedPEParticleId);
     if (!data) {
-        target._selectedPEParticleId = -1;
-        hidePEInspector(target);
+        target.clearPEInspection?.();
         return;
     }
+
+    updatePEFocusPresentation(target);
 
     const catId = target._peTypeMap ? target._peTypeMap.get(data.id) : null;
     const cat = catId ? getById(catId) : null;

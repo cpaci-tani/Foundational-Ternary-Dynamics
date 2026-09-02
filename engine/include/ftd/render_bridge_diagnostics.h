@@ -36,6 +36,9 @@ struct Diagnostics {
     // Sum of |born_infeld_core| over all sites — NOT the accounted energy
     // budget (see EnergyAudit.dynamic_energy / total_energy).
     double total_energy = 0.0;
+    // Dead telemetry channel: no producer anywhere in the engine writes to
+    // this field, so it is a permanent zero exported to CSV, WebSocket, and
+    // WASM. Retained for schema compatibility only.
     double avg_drag = 0.0;
     double max_bandwidth = 0.0;
     double max_causal_budget = 0.0;
@@ -49,7 +52,10 @@ struct Diagnostics {
     int spin_down_count = 0;
     int color_count[4] = {0, 0, 0, 0};  // [0]=colorless, [1]=R, [2]=G, [3]=B
     // Angular momentum diagnostics
-    Vec3 total_angular_momentum;  // L = sum_i r_i x (m_i * v_i)
+    // Mass-free: engine/src/diagnostics_compute.cpp sums r x v with no mass
+    // factor, not r x (m*v); multiplying by the unit mass M_INERTIAL would
+    // be required to obtain a true angular momentum.
+    Vec3 total_angular_momentum;  // sum_i r_i x v_i
 };
 
 // Phase 6: Aggregate profile for spatially extended flux structures
@@ -89,9 +95,21 @@ struct EnergyAudit {
     double wave_energy = 0.0;      // sum [½|wave_vel|² · V_cell] over all sites
     double particle_ke = 0.0;      // sum (gamma_0-1)·E_REST
     double total_energy = 0.0;     // accounted total: field + wave + particle energy
-    double gauss_violation = 0.0;  // sum |div(J) - state|^2
-    double max_gauss_error = 0.0;  // max |div(J) - state|
-    double self_field_injection = 0.0;  // Energy injected by self-field floor this tick
+    // gauss_violation / max_gauss_error mirror the constraint gauss_project()
+    // actually enforces (see diagnostics_compute.cpp): restricted to vacuum
+    // (state==0) sites only, targeting charge_coupling·(s - mean_charge),
+    // i.e. err = div(J) - charge_coupling·(0 - mean_charge) at those sites.
+    // Manifested sites are excluded because the SOR projection never
+    // corrects them. Other Gauss-residual definitions exist elsewhere in
+    // the tree (e.g. the Lagrangian-diagnostics gauss_violation) with
+    // different conventions — do not assume they agree with this one.
+    double gauss_violation = 0.0;  // sum over vacuum sites of err^2
+    double max_gauss_error = 0.0;  // max over vacuum sites of |err|
+    // Self-field floor mechanism was REMOVED (render_bridge.cpp Rule 3b,
+    // Phase 4 — Energy Conservation); nothing writes to this any more, so
+    // the value is structurally zero. Retained only for telemetry-schema
+    // compatibility (CSV/WebSocket/WASM consumers still read this key).
+    double self_field_injection = 0.0;
     double coulomb_pe = 0.0;       // ½·sum α·s·φ_C (electrostatic PE; pair-PE convention)
     double E_field_energy = 0.0;   // sum ½·|E|^2 (electric field energy)
     double B_field_energy = 0.0;   // sum (c²/2)·|B|² (magnetic field energy)
@@ -135,14 +153,48 @@ struct EnergyAudit {
     int strong_projection_events = 0;
     int strong_projection_failures = 0;
     int strong_topology_failures = 0;
+
+    // 2026-09-02 append-only flux-cell ledger (ftd/flux_cell.h). The regional
+    // channels are populated only when RenderBridge has a registered cell
+    // region (cell_site_count > 0); the pump/port counters are always live.
+    // Same ½·|·|² convention as the whole-lattice channels above; cell_H_wave
+    // is the kick-drift Hamiltonian restricted to the region.
+    int    cell_site_count = 0;
+    double cell_U_E = 0.0;
+    double cell_U_B = 0.0;
+    double cell_U_J = 0.0;
+    double cell_H_wave = 0.0;
+    double cell_P_leak = 0.0;          // Σ over region faces of S(inside)·n̂
+    Vec3   cell_S_net;                 // Σ S over the region
+    double cell_pump_work = 0.0;       // Σ exact ΔH delivered by flux_pump
+    int    cell_pump_ticks_applied = 0;
+    int    cell_pump_ticks_total = 0;
+    int    cell_port_open = 0;         // 1 once flux_cell_port has opened
+    // cell_port_work_out is the wave-Hamiltonian energy current
+    // c²Σ_a E_a·∇J_a (flux_cell_site_hamiltonian_flux), NOT the Poynting
+    // vector S=c²(E×B) above — see ftd/flux_cell.h for why the two differ
+    // by a curl-type term.
+    double cell_port_work_out = 0.0;   // Σ_ticks Σ_{port sites} of the wave-Hamiltonian current after opening
+    // 2026-09-02 append-only observer-level cross-check: the EM-like
+    // Poynting integral S·n̂ over the same port surface, kept alongside
+    // cell_port_work_out for comparison (see flux_cell.h curl-type note
+    // above); not part of the accounted energy budget.
+    double cell_port_poynting_out = 0.0;  // Σ_ticks Σ_{port sites} S·n̂ after opening
 };
 
 /**
  * EnergyLedger — per-tick conservation bookkeeping.
  *
  * Tracks total energy tick-over-tick so tests can assert:
- *   - With damping OFF:  |ΔE / E| < epsilon           (strict conservation)
- *   - With damping ON:   |ΔE / E + γ| < epsilon       (expected dissipation rate)
+ *   - With damping OFF:  |ΔE / E| < epsilon                  (strict conservation)
+ *   - With damping ON:   |ΔE / E − (−2γ+γ²)| < epsilon       (expected quadratic
+ *                                                              dissipation rate; P3
+ *                                                              2026-07-26 — phase_write
+ *                                                              damps AMPLITUDES by
+ *                                                              (1−γ), so the energy-like
+ *                                                              functional decays by
+ *                                                              (1−γ)²−1 = −2γ+γ², not
+ *                                                              the old linear −γ)
  *
  * Populated by RenderBridge::update_energy_ledger() at the end of each
  * tick. Read via RenderBridge::energy_ledger(). Kept separate from
@@ -160,8 +212,15 @@ struct EnergyLedger {
     double E_curr    = 0.0;          // total energy at current tick
     double dE_dt     = 0.0;          // (E_curr − E_prev) / dt
     double drift_frac = 0.0;         // (E_curr − E_prev) / max(|E_prev|, ε)
-    double expected_rate = 0.0;      // −DAMPING when damping on, 0 otherwise
-    double residual  = 0.0;          // drift_frac − expected_rate (conservation violation)
+    double expected_rate = 0.0;      // quadratic rate −2·DAMPING+DAMPING² when damping on, 0 otherwise
+    // drift_frac − expected_rate. With selective_damping ON (the default),
+    // damping applies only to manifested sites plus their 6 face
+    // neighbours, so expected_rate (a single global scalar) is only an
+    // approximation of the true per-tick rate in that regime — do NOT read
+    // this residual as a conservation violation when selective_damping is
+    // on. It is a true conservation-violation residual only in the
+    // uniform-damping case (selective_damping off) or with damping off.
+    double residual  = 0.0;
 
     // Running accumulators over the whole sim (useful for test harnesses):
     double cumulative_injection = 0.0;  // self-field + manifestation input

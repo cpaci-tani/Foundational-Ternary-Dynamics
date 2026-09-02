@@ -37,6 +37,7 @@
 #include "ftd/strong_stress_energy.h"
 #include "ftd/visual_field_sample.h"
 #include "ftd/visual_snapshot.h"
+#include "ftd/flux_cell.h"
 #include "field_operators.h"
 #include "ftd/eft/dual_cell_continuity.h"
 #include "ftd/eft/matched_gauss_transport.h"
@@ -368,7 +369,54 @@ public:
     double manifest_scale_override    = -1.0;  // <=0 ⇒ use compile-time K_MANIFEST
     bool   manifest_use_temperature   = false; // true ⇒ ramp scale = toggles.langevin_T
 
-    // EL residual verification: exposes delta_j_ computed by phase_read()
+    // ── Flux-cell mechanisms (ftd/flux_cell.h; 2026-09-02) ─────────────
+    // A registered region makes energy_audit() carry the regional ledger
+    // (cell_* fields). The pump and port act only when their toggles are ON
+    // (toggles.flux_pump / toggles.flux_cell_port) and a spec is configured.
+    // dispatch_scenario() clears all three before every scenario body.
+    void set_flux_cell_region(const FluxCellRegion& region);
+    void clear_flux_cell_region();
+    const FluxCellRegion& flux_cell_region() const { return flux_cell_region_; }
+
+    // `period` spaces the increments: one every `period` ticks (1 = every
+    // tick). Spacing them by the cell's breathing period drives it
+    // resonantly, so the same increments deliver more work (see flux_cell.h).
+    void set_flux_pump(const FluxCellTorusSpec& spec, int ticks, int period = 1);
+    void clear_flux_pump();
+    bool flux_pump_configured() const { return flux_pump_configured_; }
+    int flux_pump_ticks_total() const { return flux_pump_ticks_; }
+    int flux_pump_period() const { return flux_pump_period_; }
+    int flux_pump_ticks_applied() const { return flux_pump_applied_; }
+    double flux_pump_work() const { return flux_pump_work_; }
+
+    void set_flux_cell_port(const FluxCellPortSpec& spec);
+    void clear_flux_cell_port();
+    bool flux_cell_port_configured() const { return flux_cell_port_configured_; }
+    const FluxCellPortSpec& flux_cell_port() const { return flux_cell_port_spec_; }
+    bool flux_cell_port_open() const { return flux_cell_port_open_; }
+    int flux_cell_port_site_count() const { return static_cast<int>(flux_cell_port_sites_.size()); }
+    // Sites of the opened plug within half a cell of the slab through the
+    // hole centre perpendicular to the port normal: the one-layer surface
+    // whose Poynting flux is integrated as W_out.
+    int flux_cell_port_surface_count() const { return static_cast<int>(flux_cell_port_surface_.size()); }
+    // W_out: wave-Hamiltonian energy current integrated through the port
+    // surface (the exact current of the component-wise wave map). The EM-like
+    // Poynting integral c^2 E x B through the same surface is kept alongside.
+    double flux_cell_port_work_out() const { return flux_cell_port_work_out_; }
+    double flux_cell_port_poynting_out() const { return flux_cell_port_poynting_out_; }
+
+    // EL residual verification: exposes delta_j_ computed by phase_read().
+    //
+    // HONEST NOTE (measured 2026-09-02) — BROKEN POST-TICK, cause
+    // UNDETERMINED: after any completed tick() the values read back through
+    // this accessor are IDENTICALLY ZERO across the whole lattice, so
+    // delta_j() cannot serve its stated Euler-Lagrange residual-verification
+    // purpose in that state. This is an observability gap only, not a
+    // dynamics bug — wave_vel evolves correctly during the tick regardless
+    // of what this accessor reports afterward. Callers must NOT rely on
+    // delta_j()/dJ() being meaningful after tick(); use prepare_delta_j()
+    // (below) immediately before reading them instead, which recomputes
+    // phase_read() without advancing the tick.
     const std::vector<Vec3>& delta_j() const { return delta_j_; }
     const std::vector<Vec3>& dJ() const { return dJ_; }
 
@@ -675,6 +723,29 @@ private:
 
     double self_field_injection_ = 0.0;  // Energy injected by self-field floor this tick
     int tick_ = 0;
+
+    // Flux-cell state (ftd/flux_cell.h). Inert unless configured + toggled.
+    FluxCellRegion flux_cell_region_;
+    FluxCellTorusSpec flux_pump_spec_;
+    FluxCellPumpProfile flux_pump_profile_;
+    bool flux_pump_configured_ = false;
+    bool flux_pump_profile_built_ = false;
+    int flux_pump_ticks_ = 0;
+    int flux_pump_period_ = 1;
+    int flux_pump_next_tick_ = -1;   // <0: first opportunity
+    int flux_pump_applied_ = 0;
+    double flux_pump_work_ = 0.0;
+    FluxCellPortSpec flux_cell_port_spec_;
+    bool flux_cell_port_configured_ = false;
+    bool flux_cell_port_open_ = false;
+    double flux_cell_port_work_out_ = 0.0;
+    double flux_cell_port_poynting_out_ = 0.0;
+    std::vector<int> flux_cell_port_sites_;
+    std::vector<int> flux_cell_port_surface_;
+    void apply_flux_cell_pump();
+    void apply_flux_cell_port();
+    void accumulate_flux_cell_port_work();
+    void fill_flux_cell_audit(EnergyAudit& audit) const;
     // FTD-0267 observation-only telemetry (see accessor docstring above).
     long long genesis_events_this_tick_ = 0;
     long long evaporation_events_this_tick_ = 0;

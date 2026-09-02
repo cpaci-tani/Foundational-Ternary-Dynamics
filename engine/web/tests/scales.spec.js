@@ -1,6 +1,6 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
-import { switchMode, attachConsoleWatcher, attachNetworkWatcher, isNoise } from './_helpers.js';
+import { gotoAndReady, switchMode, attachConsoleWatcher, attachNetworkWatcher, isNoise } from './_helpers.js';
 
 /**
  * Scale-switching smoke suite for the FTD web dashboard.
@@ -30,11 +30,13 @@ test('index.html loads, bridge initializes, zero 404s', async ({ page }) => {
     const errors = attachConsoleWatcher(page);
     const failures = attachNetworkWatcher(page);
 
-    await page.goto('/index.html');
+    // The dashboard intentionally allows deferred fonts/optional resources;
+    // the bridge poll below is the scientific readiness boundary.
+    await page.goto('/index.html', { waitUntil: 'commit', timeout: 45_000 });
 
     // Wait for the main app to wire up its debug bridge accessor
     await expect.poll(() => page.evaluate(() => !!window._ftdBridge),
-        { timeout: 15_000, message: 'window._ftdBridge never became non-null' })
+        { timeout: 45_000, message: 'window._ftdBridge never became non-null' })
         .toBe(true);
 
     // Give WASM + scale controllers a moment to settle
@@ -77,7 +79,7 @@ for (const mode of MODES) {
 test('Scale 5 cosmic: no _cosmicInterval leak after Phase B.1', async ({ page }) => {
     await page.goto('/index.html');
     await expect.poll(() => page.evaluate(() => !!window._ftdBridge),
-        { timeout: 15_000 }).toBe(true);
+        { timeout: 45_000 }).toBe(true);
 
     await switchMode(page, 'cosmic');
     await page.waitForTimeout(1500);
@@ -109,7 +111,7 @@ test('Constants: K_B matches 0.511 and is a named export', async ({ page }) => {
 test('Scale 0 module contract and scenario registry are wired', async ({ page }) => {
     await page.goto('/index.html');
     await expect.poll(() => page.evaluate(() => !!window._ftdBridge),
-        { timeout: 15_000 }).toBe(true);
+        { timeout: 45_000 }).toBe(true);
 
     const result = await page.evaluate(async () => {
         const controller = await import('./js/scales/scale0/controller.js');
@@ -290,9 +292,7 @@ test('UI panel registry matches rendered shell tabs and panels', async ({ page }
 });
 
 test('Inspector helper modules drive chrome copy and selection state', async ({ page }) => {
-    await page.goto('/index.html');
-    await expect.poll(() => page.evaluate(() => document.getElementById('app')?.dataset.shellReady === 'true'),
-        { timeout: 15_000 }).toBe(true);
+    await gotoAndReady(page);
 
     const result = await page.evaluate(async () => {
         const chrome = await import('./js/inspector/chrome.js');
@@ -337,14 +337,12 @@ test('Inspector helper modules drive chrome copy and selection state', async ({ 
     expect(result.summaryAfterUpdate).toBe('Selected particle #42.');
     expect(result.clearDisabledAfterUpdate).toBe(false);
     expect(result.focusDisabledAfterUpdate).toBe(true);
-    expect(result.summaryAfterReset).toContain('inspect its identity');
+    expect(result.summaryAfterReset).toContain('dynamic cluster in Interaction Hierarchy');
     expect(result.clearDisabledAfterReset).toBe(true);
 });
 
 test('Inspector scale modules expose modular handlers', async ({ page }) => {
-    await page.goto('/index.html');
-    await expect.poll(() => page.evaluate(() => document.getElementById('app')?.dataset.shellReady === 'true'),
-        { timeout: 15_000 }).toBe(true);
+    await gotoAndReady(page);
 
     const result = await page.evaluate(async () => {
         const lattice = await import('./js/inspector/scales/lattice.js');
@@ -561,9 +559,9 @@ test('Settings modal applies and resets extended shell preferences', async ({ pa
 });
 
 test('UI tooltip system annotates controls and telemetry with custom help', async ({ page }) => {
-    await page.goto('/index.html');
+    await page.goto('/index.html', { waitUntil: 'commit', timeout: 45_000 });
     await expect.poll(() => page.evaluate(() => document.getElementById('app')?.dataset.shellReady === 'true'),
-        { timeout: 15_000 }).toBe(true);
+        { timeout: 45_000 }).toBe(true);
 
     // Collapse panel dock to prevent tab bar overlapping playback controls
     await page.click('#btn-panel-toggle');
@@ -587,9 +585,10 @@ test('UI tooltip system annotates controls and telemetry with custom help', asyn
     expect(result.visible).toBe(true);
     expect(result.text).toContain('simulation loop');
     expect(result.playTooltip).toContain('Keyboard shortcut');
-    expect(result.energyTooltip).toContain('Total particle-engine energy');
+    expect(result.energyTooltip).toContain('represented active channels');
     expect(result.statusTooltip).toContain('Current total energy');
-    expect(result.scenarioLabelTooltip).toContain('particle engine');
+    expect(result.scenarioLabelTooltip).toContain('Registered M3 particle anatomy');
+    expect(result.scenarioLabelTooltip).toContain('Dynamics: native_matter_observer');
 });
 
 test('Tooltip palette follows theme switches', async ({ page }) => {

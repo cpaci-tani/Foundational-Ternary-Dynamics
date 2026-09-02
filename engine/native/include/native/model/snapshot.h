@@ -12,6 +12,7 @@
 #include "native/native_frame.h"
 #include "native/ui_result.h"     // LoopControl
 #include "native/ui_snapshot.h"   // the rich Scale-0 observation payload
+#include "ftd/scale1/domain.h"    // shared Scale-1 scientific contract
 
 #include <cstdint>
 #include <string>
@@ -22,27 +23,9 @@ namespace ftd::native {
 // The Scale-0 observation payload is exactly today's snapshot content.
 using Scale0Snapshot = UiSnapshot;
 
-// The Scale-1 (ParticleEngine) observation payload. Scale 1 needs no telemetry
-// scheduler: the adapter fills this directly from ParticleEngine::diagnostics()
-// each boundary. Deliberately small — it carries only what the status bar and a
-// future Scale-1 panel read.
-struct Scale1Snapshot {
-    int          particle_count = 0;
-    double       total_energy = 0.0;
-    double       total_ke = 0.0;
-    double       total_pe = 0.0;
-    std::string  status;
-
-    // Click-to-inspect readout (InspectParticle1). insp_present=false means
-    // nothing is currently picked; the adapter's observe() fills these from the
-    // selected particle each boundary the selection is re-issued (live data).
-    bool         insp_present = false;
-    int          insp_index = -1;
-    int          insp_charge = 0;
-    bool         insp_locked = false;
-    double       insp_pos[3] = {0.0, 0.0, 0.0};
-    double       insp_vel[3] = {0.0, 0.0, 0.0};
-};
+// Native and WASM consume the same versioned Scale-1 payload. Compatibility
+// fields used by the current RML surface are mirrors inside this shared type.
+using Scale1Snapshot = ftd::Scale1Snapshot;
 
 // Scale2Snapshot, Scale5Snapshot, … arrive as further alternatives below.
 using ScaleSnapshot = std::variant<std::monostate, Scale0Snapshot, Scale1Snapshot>;

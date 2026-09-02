@@ -140,6 +140,18 @@
  * 's0-seed-cluster-law-knee' |
  * 's0-seed-cluster-law-superknee' |
  * 's0-seed-thermal-ignition' |
+ * 's0-cell-capacitor' |
+ * 's0-cell-torus' |
+ * 's0-cell-torus-reverse' |
+ * 's0-cell-torus-scrambled' |
+ * 's0-cell-torus-open' |
+ * 's0-cell-torus-walled' |
+ * 's0-cell-triad' |
+ * 's0-cell-torus-membrane' |
+ * 's0-cell-torus-membrane-gated' |
+ * 's0-cell-membrane-pumped' |
+ * 's0-cell-membrane-transfer' |
+ * 's0-cell-membrane-pumped-resonant' |
  * 's0-seed-de-broglie-clock')} ScenarioId
  */
 
@@ -528,6 +540,25 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     'light-dipole': isolatedScale0Profile('wave_propagation', 'gauss_projection'),
     'light-two-slit': isolatedScale0Profile('wave_propagation', 'gauss_projection'),
     'light-photon-race': isolatedScale0Profile('wave_propagation', 'gauss_projection'),
+    // s0-cell-* flux cells mirror the isolated native profiles in
+    // engine/src/scenarios/cell.cpp: the capacitor is Gauss-charged on the
+    // wave map; every ring/arm reservoir runs the bare wave map and differs
+    // only in its boundary law (SCALE0_SCENARIO_BOUNDARY below).
+    's0-cell-capacitor': isolatedScale0Profile('wave_propagation', 'gauss_projection'),
+    's0-cell-torus': isolatedScale0Profile('wave_propagation'),
+    's0-cell-torus-reverse': isolatedScale0Profile('wave_propagation'),
+    's0-cell-torus-scrambled': isolatedScale0Profile('wave_propagation'),
+    's0-cell-torus-open': isolatedScale0Profile('wave_propagation'),
+    's0-cell-torus-walled': isolatedScale0Profile('wave_propagation'),
+    's0-cell-triad': isolatedScale0Profile('wave_propagation'),
+    // Membrane family: the [IMPOSED] de Broglie clock (a UI toggle) turns the
+    // locked shell into a mass-gap wall; flux_pump / flux_cell_port are
+    // research terms pinned in SCALE0_SCENARIO_RESEARCH_TERMS.
+    's0-cell-torus-membrane': isolatedScale0Profile('wave_propagation', 'de_broglie_clock'),
+    's0-cell-torus-membrane-gated': isolatedScale0Profile('wave_propagation', 'de_broglie_clock'),
+    's0-cell-membrane-pumped': isolatedScale0Profile('wave_propagation', 'de_broglie_clock'),
+    's0-cell-membrane-transfer': isolatedScale0Profile('wave_propagation', 'de_broglie_clock'),
+    's0-cell-membrane-pumped-resonant': isolatedScale0Profile('wave_propagation', 'de_broglie_clock'),
 };
 
 // Research / non-UI terms pinned per scenario. Keys here are NOT in
@@ -540,6 +571,12 @@ export const SCALE0_SCENARIO_RESEARCH_TERMS = {
     's0-seed-ew-phase-transition': { ew_background_sweep: true },
     's0-seed-quark-gluon-plasma': { langevin: true },
     's0-field-thomson-unlocked-recoil': { emergent_forces: true },
+    // Flux-cell mechanisms: the C++ bodies configure the pump/port specs;
+    // these pins keep the arming toggle ON across the loader's reset.
+    's0-cell-torus-membrane-gated': { flux_cell_port: true },
+    's0-cell-membrane-pumped': { flux_pump: true },
+    's0-cell-membrane-pumped-resonant': { flux_pump: true },
+    's0-cell-membrane-transfer': { flux_cell_port: true },
 };
 
 // ── Per-scenario BOUNDARY preference ────────────────────────────────
@@ -669,6 +706,21 @@ export const SCALE0_SCENARIO_BOUNDARY = {
     's0-seed-ew-phase-transition': { mode: 0 },
     's0-seed-quark-gluon-plasma': { mode: 0 },
     's0-seed-spark-of-life': { mode: 0 },
+    // s0-cell-* flux cells: the C++ bodies pin Periodic for the capacitor,
+    // the coherent/reverse/scrambled rings, and the triad; the two boundary
+    // controls pin Dispersal (open) and Reflective (walled) themselves.
+    's0-cell-capacitor': { mode: 0 },
+    's0-cell-torus': { mode: 0 },
+    's0-cell-torus-reverse': { mode: 0 },
+    's0-cell-torus-scrambled': { mode: 0 },
+    's0-cell-torus-open': { mode: 2 },
+    's0-cell-torus-walled': { mode: 1 },
+    's0-cell-triad': { mode: 0 },
+    's0-cell-torus-membrane': { mode: 0 },
+    's0-cell-torus-membrane-gated': { mode: 0 },
+    's0-cell-membrane-pumped': { mode: 0 },
+    's0-cell-membrane-transfer': { mode: 0 },
+    's0-cell-membrane-pumped-resonant': { mode: 0 },
 };
 
 // Explicit opt-in for the imposed absorbing sponge. The engine ignores it when

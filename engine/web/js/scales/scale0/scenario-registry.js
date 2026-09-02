@@ -141,6 +141,18 @@ const LAYMAN_NAMES = {
     's0-vacuum-kaon-charged': 'A Charged Kaon',
     's0-seed-de-broglie-clock': 'The Clock Inside a Particle',
     's0-seed-thermal-ignition': 'A Warm, Below-Threshold Bath',
+    's0-cell-capacitor': 'A Flux Capacitor',
+    's0-cell-torus': 'A Ring of Stored Field',
+    's0-cell-torus-reverse': 'A Ring of Stored Field, Reversed',
+    's0-cell-torus-scrambled': 'A Ring of Stored Field, Scrambled',
+    's0-cell-torus-open': 'A Ring of Stored Field, Open Box',
+    's0-cell-torus-walled': 'A Ring of Stored Field, Walled Box',
+    's0-cell-triad': 'Three Standing Arms of Field',
+    's0-cell-torus-membrane': 'A Ring of Stored Field, Walled by Matter',
+    's0-cell-torus-membrane-gated': 'A Walled Ring with a Discharge Port',
+    's0-cell-membrane-pumped': 'Charging a Walled Cell',
+    's0-cell-membrane-transfer': 'Two Walled Cells Sharing a Port',
+    's0-cell-membrane-pumped-resonant': 'Charging a Walled Cell in Rhythm',
 };
 
 function makeScenario(category, id, title, tags = [], epistemicStatus = '[OPEN]') {
@@ -206,7 +218,7 @@ export const SCALE0_SCENARIO_CATALOG = [
      * Discrepancy: this force was rejected as ordinary qE by FTD-0435, so the
      * scenario cannot establish electromagnetism or radiation by appearance.
      */
-    makeScenario('3. Qualified Selected Extensions', 's0-seed-moving-source-reciprocity', 'Driven Polarity — Sub-voxel Response', ['field', 'flux', 'polarity', 'response', 'reciprocity'], '[QUALIFIED NEGATIVE] 0.203598-cell response; no hop, wake, detached field, or closed reciprocity'),
+    makeScenario('3. Qualified Selected Extensions', 's0-seed-moving-source-reciprocity', 'Driven Polarity — Sub-voxel Response', ['field', 'flux', 'polarity', 'response', 'reciprocity'], '[QUALIFIED NEGATIVE] campaign-measured 0.203598-cell response (FTD-0477, uncited by the admission gate); no hop, wake, detached field, or closed reciprocity'),
     /*
      * Scenario: flux-pulse (Localized Transverse Boundary Probe)
      * Physical purpose: Measures a divergence-free packet against the implemented finite-box boundary operators.
@@ -1017,6 +1029,155 @@ export const SCALE0_SCENARIO_CATALOG = [
      * temperature sweep and thermodynamic-limit analysis remain separate work.
      */
     makeScenario('1. Validated Native Dynamics', 's0-seed-thermal-ignition', 'Below-Threshold Langevin/Genesis Bath', ['seed', 'langevin', 'genesis', 'null-test'], '[EMERGENT] finite native response; [CLOSED NEGATIVE] ignition at the qualified point'),
+    /*
+     * -- s0-cell-* flux cells (2026-09-02) ----------------------------------
+     * A flux cell is a localized field configuration whose energy is meant to
+     * stay above vacuum after its pump is disconnected. Every id below seeds
+     * initial data on an isolated profile; storage, hold, and leakage are
+     * measured by engine/tests/test_flux_cell_scenario_physics.cpp through the
+     * regional ledger in engine/include/ftd/flux_cell.h. None asserts a
+     * capacitor, inductor, battery, or particle identity.
+     */
+    /*
+     * Scenario: s0-cell-capacitor (Gauss-Charged Flux Gap)
+     * Physical purpose: V0 flux capacitor - two locked square plates of opposite
+     * polarity across a neutral gap with zero seeded field; the engine's own
+     * Gauss law div(J) = s builds the gap flux on the first projection.
+     * Parameters: plates at x = mc -/+ max(2, N/8), side 2*max(1, N/8)+1, locked.
+     * Expected behavior: zero gap energy before tick 1, positive U_J afterwards,
+     * plates inert; the gap flux vector points from + to -.
+     * Discrepancy: the stored channel is U_J (flux-potential), not |E|^2/2;
+     * C_eff = Q^2/(2 U_J) is a lattice observable, not a physical capacitance.
+     */
+    makeScenario('1. Validated Native Dynamics', 's0-cell-capacitor', 'Locked Plate Pair — Gauss-Charged Flux Gap', ['flux', 'cell', 'storage', 'gauss'], '[EMERGENT] gap flux built by the native Gauss law from [IMPOSED] locked plates; capacitor identity [OPEN]'),
+    /*
+     * Scenario: s0-cell-torus (Azimuthal Ring Reservoir)
+     * Physical purpose: V1 circulating-flux accumulator - a Gaussian-tube ring of
+     * azimuthal J with zero canonical momentum on the periodic free wave map;
+     * the pump is disconnected at tick 0 and the hold is measured.
+     * Parameters: R = max(3, N/4), sigma = max(1.25, N/16), peak |J| = 0.3.
+     * Expected behavior: conserved kick-drift Hamiltonian, U_E rising from zero
+     * as U_B falls (LC-like exchange), zero net Poynting flow by symmetry.
+     * Discrepancy: the bare wave map has no confinement term, so the ring
+     * disperses; region retention is a measured number, not a persistent
+     * current, an inductor, or a battery.
+     */
+    makeScenario('1. Validated Native Dynamics', 's0-cell-torus', 'Azimuthal Ring Reservoir — Periodic Free-Wave Hold', ['flux', 'cell', 'storage', 'wave'], '[EMERGENT] under the isolated periodic wave map from [IMPOSED] ring initial data; storage identity [OPEN]'),
+    /*
+     * Scenario: s0-cell-torus-reverse (Reversed Circulation Control)
+     * Physical purpose: opposite-winding control for s0-cell-torus.
+     * Expected behavior: identical Hamiltonian and U_J, equal and opposite ring
+     * circulation Gamma_J and disk flux Phi_B.
+     */
+    makeScenario('1. Validated Native Dynamics', 's0-cell-torus-reverse', 'Azimuthal Ring Reservoir — Reversed Circulation Control', ['flux', 'cell', 'storage', 'wave', 'control'], '[EMERGENT] mirror of s0-cell-torus under the isolated wave map; control'),
+    /*
+     * Scenario: s0-cell-torus-scrambled (Zero-Circulation Control)
+     * Physical purpose: phase-scrambled control - the sign of J_phi alternates
+     * between the four azimuthal quadrants, so pointwise |J| and U_J equal the
+     * coherent ring exactly while Gamma_J vanishes by symmetry.
+     * Expected behavior: same U_J, zero Gamma_J, larger gradient energy.
+     */
+    makeScenario('1. Validated Native Dynamics', 's0-cell-torus-scrambled', 'Sign-Scrambled Ring — Zero-Circulation Control', ['flux', 'cell', 'storage', 'wave', 'control'], '[EMERGENT] under the isolated wave map from [IMPOSED] sign-alternated ring data; control'),
+    /*
+     * Scenario: s0-cell-torus-open (Dispersal-Boundary Loss Control)
+     * Physical purpose: no-membrane control - the same ring under the Dispersal
+     * boundary law, so field reaching the box faces leaves and never returns.
+     * Expected behavior: the box Hamiltonian falls toward zero; a periodic hold
+     * cannot be credited to storage unless this control loses its energy.
+     */
+    makeScenario('1. Validated Native Dynamics', 's0-cell-torus-open', 'Azimuthal Ring Reservoir — Dispersal-Boundary Loss Control', ['flux', 'cell', 'storage', 'wave', 'boundary', 'control'], '[EMERGENT] under [IMPOSED] dispersal boundary law; no-membrane control'),
+    /*
+     * Scenario: s0-cell-torus-walled (Reflective-Box Hold)
+     * Physical purpose: walled-membrane hold - the same ring under the Reflective
+     * boundary law, the only closed boundary the engine provides (locked marker
+     * sheets are already a closed negative for confinement).
+     * Expected behavior: interior wave energy stays inside the box; the interior
+     * Hamiltonian retention is measured, not assumed.
+     */
+    makeScenario('1. Validated Native Dynamics', 's0-cell-torus-walled', 'Azimuthal Ring Reservoir — Reflective-Box Hold', ['flux', 'cell', 'storage', 'wave', 'boundary'], '[EMERGENT] under [IMPOSED] reflective boundary law; walled-membrane hold'),
+    /*
+     * Scenario: s0-cell-triad (Three-Axis Standing Arms)
+     * Physical purpose: V2 three-axis counter-propagating flux cell - one standing
+     * transverse arm per axis (each the co-located sum of a + and a - packet)
+     * crossing the centre, so every axis carries equal energy and zero net current.
+     * Parameters: sigma_along = max(3, N/6), sigma_t = max(1.5, N/20), peak 0.3,
+     * carrier wavelength max(6, N/5).
+     * Expected behavior: zero net Poynting flow and net flux vector, equal
+     * diagonal flux moments on the three axes, conserved Hamiltonian.
+     * Discrepancy: the arms overlap at the centre, so the flux dyad carries
+     * small off-diagonal overlap terms (1.9% of the trace at L=33); the dyad is
+     * an observer-level flux moment, not a stress-energy tensor; no matter-clock
+     * or particle identity.
+     */
+    makeScenario('1. Validated Native Dynamics', 's0-cell-triad', 'Three-Axis Standing Arms — Zero-Momentum Flux Cell', ['flux', 'cell', 'storage', 'wave', 'isotropy'], '[EMERGENT] under the isolated periodic wave map from [IMPOSED] standing-arm data; matter-clock identity not claimed'),
+    /*
+     * Scenario: s0-cell-torus-membrane (Clocked Shell Membrane)
+     * Physical purpose: walled ring reservoir. The ring sits inside a three-cell
+     * locked shell of alternating polarity; with the de Broglie clock on
+     * (omega0 = 1) the shell carries a Klein-Gordon mass gap, so every ring mode
+     * below the gap is evanescent inside the wall - the same physics by which a
+     * metal reflects light below its plasma frequency.
+     * Parameters: shell outer radius (N-1)/2 - 0.5, thickness 3; ring
+     * R = 0.45 r_in, sigma = 0.11 r_in, peak 0.3.
+     * Expected behavior: inner-ball retention far above the bare-map uniform-fill
+     * value; with omega0 -> 0 the same shell is transparent and retention falls
+     * back; retention rises with shell thickness.
+     * Discrepancy: an imposed shell under an [IMPOSED] clock term; no
+     * self-confinement, no particle or matter identity.
+     */
+    makeScenario('1. Validated Native Dynamics', 's0-cell-torus-membrane', 'Walled Ring Reservoir — Clocked Shell Membrane', ['flux', 'cell', 'storage', 'wave', 'membrane'], '[EMERGENT] retention under the [IMPOSED] de Broglie clock mass gap on an imposed locked shell; storage identity [OPEN]'),
+    /*
+     * Scenario: s0-cell-torus-membrane-gated (Scheduled Discharge Port)
+     * Physical purpose: Phase-4 discharge port. Same walled ring; at tick 150 the
+     * shell sites inside a radius-3 hole on the +x side expire (state -> 0,
+     * identity cleared, flux left in place) and the engine integrates the
+     * Poynting flux through the opened sites every tick.
+     * Expected behavior: no port flux before opening; afterwards the inner-ball
+     * energy falls and the integrated port flux W_out accounts for it up to the
+     * site-versus-face discretization of S.
+     * Discrepancy: an aperture in an imposed shell; the outgoing packet and the
+     * port ledger are measured, not asserted.
+     */
+    makeScenario('1. Validated Native Dynamics', 's0-cell-torus-membrane-gated', 'Walled Ring Reservoir — Scheduled Discharge Port', ['flux', 'cell', 'storage', 'wave', 'membrane', 'port'], '[EMERGENT] aperture discharge under the [IMPOSED] clock membrane; port ledger measured'),
+    /*
+     * Scenario: s0-cell-membrane-pumped (Flux-Pump Charge Cycle)
+     * Physical purpose: Phase-2 dynamical charging. The membrane starts empty;
+     * the flux pump adds 1/20 of the ring profile before each of the first 20
+     * ticks and then switches off. The injected work is booked exactly per tick
+     * from the bilinear change of the kick-drift Hamiltonian.
+     * Expected behavior: W_in equals the Hamiltonian at disconnection; the held
+     * energy is then constant and the inner-ball retention matches the walled
+     * ring.
+     * Discrepancy: the pump is an imposed source term; disconnection is a hard
+     * switch, not a self-regulating transducer.
+     */
+    makeScenario('1. Validated Native Dynamics', 's0-cell-membrane-pumped', 'Empty Membrane — Flux-Pump Charge Cycle', ['flux', 'cell', 'storage', 'wave', 'membrane', 'pump'], '[EMERGENT] charge/hold under an [IMPOSED] time-gated source; pump ledger exact by construction'),
+    /*
+     * Scenario: s0-cell-membrane-transfer (Port Transfer Ledger)
+     * Physical purpose: energy transfer between two cells. Two tangent clocked
+     * shells along x (source A holds the ring, receiver B is empty); at tick 100
+     * a radius-3 hole opens at the contact point through both walls and the
+     * engine integrates the wave-Hamiltonian current across the contact plane.
+     * Parameters: centres mid -/+ floor(N/4), outer radius floor(N/4) - 0.5,
+     * wall thickness min(3, r_out - 3.5), ring R = 0.45 r_in inside A.
+     * Expected behavior: B's clock-inclusive Hamiltonian is zero until the port
+     * opens and then rises; the port work books the transfer against A's loss.
+     * Discrepancy: an imposed channel between imposed walls; no receiver
+     * identity, work packet, or transducer is claimed.
+     */
+    makeScenario('1. Validated Native Dynamics', 's0-cell-membrane-transfer', 'Two Tangent Membranes — Port Transfer Ledger', ['flux', 'cell', 'storage', 'wave', 'membrane', 'port', 'transfer'], '[EMERGENT] transfer through an imposed aperture between imposed clocked walls; receiver ledger measured'),
+    /*
+     * Scenario: s0-cell-membrane-pumped-resonant (Resonant Flux-Pump Charge)
+     * Physical purpose: resonant charging. Same empty membrane and the same 20
+     * increments as s0-cell-membrane-pumped, spaced by the cell's breathing
+     * period so successive increments meet the field in phase (the -2 J.L(delta)
+     * term of the booked work): ordinary resonant driving of an LC-like reservoir.
+     * Expected behavior: the engine-booked W_in exceeds the every-tick pump's by a
+     * large factor; stored energy grows faster than linearly in the increment count.
+     * Discrepancy: an imposed periodic source; the period is a measured engine
+     * number, not a derived constant.
+     */
+    makeScenario('1. Validated Native Dynamics', 's0-cell-membrane-pumped-resonant', 'Empty Membrane — Resonant Flux-Pump Charge', ['flux', 'cell', 'storage', 'wave', 'membrane', 'pump', 'resonance'], '[EMERGENT] resonant charging under an [IMPOSED] periodic source; period is a measured engine number'),
 ];
 
 // Public/user-facing list: evidence-gated. The full catalog remains available

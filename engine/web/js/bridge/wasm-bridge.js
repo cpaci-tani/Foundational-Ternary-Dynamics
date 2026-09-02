@@ -30,7 +30,7 @@
 
 import { K_B, VOXEL_VOLUME } from '../constants.js';
 import { debugLog } from '../core/log.js';
-import { createNativeParticleEngine } from './native-particle-engine.js';
+import { createNativeParticleEngine } from './native-particle-engine.js?v=6';
 import { createAtomEngine } from './mock-atom-engine.js';
 import { reflectIntoBoundary } from './boundary.js';
 import { samplerOr, particleDataToList, TOGGLE_REQUIRES } from './bridge-contract.js';
@@ -296,6 +296,26 @@ export class WasmBridge {
             return this._module.getOmega0(this._bridge);
         return 1.0;
     }
+    // Flux-cell mechanisms (engine/include/ftd/flux_cell.h, 2026-09-02). A
+    // registered region makes getEnergyAudit carry the cell* ledger; the pump
+    // and port are armed by the flux_pump / flux_cell_port toggles.
+    _fluxCellCall(name, ...args) {
+        if (this._module && this._bridge && typeof this._module[name] === 'function') {
+            this._module[name](this._bridge, ...args);
+            this._markScale0StateChanged();
+        }
+    }
+    setFluxCellRegion(cx, cy, cz, radius) { this._fluxCellCall('setFluxCellRegion', cx, cy, cz, radius); }
+    clearFluxCellRegion() { this._fluxCellCall('clearFluxCellRegion'); }
+    setFluxPump(cx, cy, cz, majorRadius, tubeSigma, amplitude, circulationSign = 1, signSectors = 0, ticks = 20, period = 1) {
+        this._fluxCellCall('setFluxPump', cx, cy, cz, majorRadius, tubeSigma, amplitude,
+            circulationSign | 0, signSectors | 0, ticks | 0, Math.max(1, period | 0));
+    }
+    clearFluxPump() { this._fluxCellCall('clearFluxPump'); }
+    setFluxCellPort(cx, cy, cz, nx, ny, nz, radius, openTick, surfaceOffset = 0) {
+        this._fluxCellCall('setFluxCellPort', cx, cy, cz, nx, ny, nz, radius, openTick | 0, +surfaceOffset);
+    }
+    clearFluxCellPort() { this._fluxCellCall('clearFluxCellPort'); }
     // FTD-0274: live Langevin bath temperature (thermal-ignition panel).
     setLangevinTemp(t) {
         if (this._module && this._bridge && typeof this._module.setLangevinTemp === 'function') {
@@ -560,24 +580,6 @@ export class WasmBridge {
         return r || EMPTY_KNOT_AGG;
     }
 
-    /**
-     * One-shot Scale-0 → Scale-1 coarse-graining snapshot (voxel debug view /
-     * promotion pipeline): one manifested voxel → one particle record.
-     * Observer-only. Synchronous on this in-thread bridge; WasmBridgeProxy
-     * exposes the same name returning a Promise — call sites should
-     * `await Promise.resolve(bridge.coarsenToParticles?.())`.
-     */
-    coarsenToParticles() {
-        if (!(this._module && this._bridge)) return null;
-        if (typeof this._module.coarsenToParticles !== 'function') return null;
-        try {
-            return this._module.coarsenToParticles(this._bridge);
-        } catch (err) {
-            console.warn('[WasmBridge] coarsenToParticles failed:', err);
-            return null;
-        }
-    }
-
     getScale0ParticleList() {
         // Shared derivation (bridge-contract.js) so this and WasmBridgeProxy
         // cannot drift apart.
@@ -698,6 +700,21 @@ export class WasmBridge {
                 manifested: arr[28],
                 strongEnergy: arr[29],
                 weakEnergy: arr[30],
+                // Append-only flux-cell ledger (2026-09-02): indices 31..45.
+                cellSiteCount: arr.length > 44 ? arr[31] : undefined,
+                cellUE: arr.length > 44 ? arr[32] : undefined,
+                cellUB: arr.length > 44 ? arr[33] : undefined,
+                cellUJ: arr.length > 44 ? arr[34] : undefined,
+                cellHWave: arr.length > 44 ? arr[35] : undefined,
+                cellPLeak: arr.length > 44 ? arr[36] : undefined,
+                cellSNet: arr.length > 44 ? { x: arr[37], y: arr[38], z: arr[39] } : undefined,
+                cellPumpWork: arr.length > 44 ? arr[40] : undefined,
+                cellPumpTicksApplied: arr.length > 44 ? arr[41] : undefined,
+                cellPumpTicksTotal: arr.length > 44 ? arr[42] : undefined,
+                cellPortOpen: arr.length > 44 ? arr[43] : undefined,
+                cellPortWorkOut: arr.length > 44 ? arr[44] : undefined,
+                // Append-only 2026-09-02 Poynting cross-check.
+                cellPortPoyntingOut: arr.length > 45 ? arr[45] : undefined,
             };
         } else {
             audit = this._module.getEnergyAudit(this._bridge);
@@ -996,15 +1013,26 @@ export class WasmBridge {
     peApplyEquilibriumOrbitBatch(entries) { return this._peEngine.peApplyEquilibriumOrbitBatch?.(entries); }
     peScaleVelocity(particleId, scale) { return this._peEngine.peScaleVelocity(particleId, scale); }
     peTick()                                                         { return this._peEngine.peTick(); }
+    peGetTick()                                                      { return this._peEngine.peGetTick(); }
+    peGetObservationRevision()                                      { return this._peEngine.peGetObservationRevision(); }
     peGetParticleData()                                              { return this._peEngine.peGetParticleData(); }
     peGetFieldSources()                                              { return this._peEngine.peGetFieldSources(); }
     peGetForces()                                                    { return this._peEngine.peGetForces(); }
     peGetForceDecomposition()                                        { return this._peEngine.peGetForceDecomposition(); }
     peGetDiagnostics()                                               { return this._peEngine.peGetDiagnostics(); }
     peGetExtendedData()                                              { return this._peEngine.peGetExtendedData(); }
+    peGetSnapshot(scenario = '')                                     { return this._peEngine.peGetSnapshot(scenario); }
+    peGetNativeMatterReplay()                                        { return this._peEngine.peGetNativeMatterReplay(); }
+    peUseRegisteredM3Replay()                                        { return this._peEngine.peUseRegisteredM3Replay(); }
+    peObserveSourceClusters(payload)                                 { return this._peEngine.peObserveSourceClusters(payload); }
+    peGetPhysicsRegistry()                                           { return this._peEngine.peGetPhysicsRegistry(); }
+    peSetMode(mode)                                                   { return this._peEngine.peSetMode(mode); }
     peSetDt(dt)                                                      { return this._peEngine.peSetDt(dt); }
     peGetDt()                                                        { return this._peEngine.peGetDt(); }
     peSetSoftening(s)                                                { return this._peEngine.peSetSoftening(s); }
+    peConfigureInsulatingBox(cx, cy, cz, hx, hy, hz)                 { return this._peEngine.peConfigureInsulatingBox(cx, cy, cz, hx, hy, hz); }
+    peAddInsulatingPort(axis, side, centerU, centerV, halfU, halfV, requiredChargeSign = 0, crossingDirection = 0) { return this._peEngine.peAddInsulatingPort(axis, side, centerU, centerV, halfU, halfV, requiredChargeSign, crossingDirection); }
+    peClearInsulatingBox()                                           { return this._peEngine.peClearInsulatingBox(); }
     peSetCoulomb(e)                                                  { return this._peEngine.peSetCoulomb(e); }
     peSetDamping(e)                                                  { return this._peEngine.peSetDamping(e); }
     peSetGravity(e)                                                  { return this._peEngine.peSetGravity(e); }
@@ -1017,10 +1045,18 @@ export class WasmBridge {
     peSetRadiation(e)                                                { return this._peEngine.peSetRadiation(e); }
     peSetRelativistic(e)                                             { return this._peEngine.peSetRelativistic(e); }
     peSetRelativisticVerlet(e)                                       { return this._peEngine.peSetRelativisticVerlet(e); }
+    peSetContactEvents(e)                                            { return this._peEngine.peSetContactEvents(e); }
+    peSetToggle(name, value)                                         { return this._peEngine.peSetToggle(name, value); }
     peGetToggle(name)                                                { return this._peEngine.peGetToggle(name); }
     peGetBackendCapabilities()                                       { return this._peEngine.peGetBackendCapabilities(); }
     peParticleCount()                                                { return this._peEngine.peParticleCount(); }
     peClear()                                                        { return this._peEngine.peClear(); }
+    peExportCheckpoint()                                             { return this._peEngine.peExportCheckpoint?.(); }
+    peRestoreCheckpoint(checkpoint)                                  { return this._peEngine.peRestoreCheckpoint?.(checkpoint); }
+    peConfigureFinitePortBattery(size, capacity, chargeAmplitude, batteryAmplitude) { return this._peEngine.peConfigureFinitePortBattery?.(size, capacity, chargeAmplitude, batteryAmplitude); }
+    peStepFinitePortBattery()                                        { return this._peEngine.peStepFinitePortBattery?.(); }
+    peReverseFinitePortBattery()                                     { return this._peEngine.peReverseFinitePortBattery?.(); }
+    peGetFinitePortBatterySnapshot()                                 { return this._peEngine.peGetFinitePortBatterySnapshot?.(); }
     peGetParticleTypes()                                             { return this._peEngine.peGetParticleTypes(); }
     peInspectParticle(id)                                            { return this._peEngine.peInspectParticle(id); }
 

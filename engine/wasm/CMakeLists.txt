@@ -125,7 +125,11 @@ if(EMSCRIPTEN)
         -sMAXIMUM_MEMORY=${_FTD_WASM_MAX_MEM}
         -sSTACK_SIZE=1048576                # 1 MB stack (default 64 KB is risky)
         -sNO_EXIT_RUNTIME=1
-        -sENVIRONMENT=web
+        # The ordinary single-thread module also runs inside the dedicated
+        # Scale-1 tick worker.  It remains the same deterministic WASM artifact;
+        # `worker` only permits that host environment and does not enable
+        # pthreads (the separate ftd_core_mt target owns pthread execution).
+        -sENVIRONMENT=web,worker
     )
     # Memory64 link flags: 64-bit linear memory + BigInt marshalling of i64
     # across the JS boundary (Embind needs it for 64-bit pointers).

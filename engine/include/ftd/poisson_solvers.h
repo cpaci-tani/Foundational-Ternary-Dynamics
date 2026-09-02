@@ -31,13 +31,35 @@ void sor_sweep_18pt(std::vector<double>& phi,
                     const Lattice& lattice,
                     double omega);
 
-// Gauss projection: solve ∇²φ = ∇·J − charge_coupling · s, then J -= ∇φ at
-// void sites only. Manifested sites (state != 0) are skipped (transverse
-// flux preserved). When dual_substrate is true the correction is split
-// half-and-half between flux_L and flux_R. `charge_coupling` is the
-// Phase-H coupling constant in Gauss's law; default 1.0 preserves
-// geometric Coulomb (Phase G theorem). See
+// Gauss projection: solve the 18-point-stencil Laplacian ∇²_18 φ = ∇·J_6 −
+// charge_coupling · s (∇·J_6 is the 6-point CENTRAL-DIFFERENCE divergence —
+// a narrower, DIFFERENT operator from ∇²_18, not the same stencil written
+// twice), then J -= ∇_6 φ at void sites only. Manifested sites (state != 0)
+// are skipped (transverse flux preserved). When dual_substrate is true the
+// correction is split half-and-half between flux_L and flux_R.
+// `charge_coupling` is the Phase-H coupling constant in Gauss's law; default
+// 1.0 preserves geometric Coulomb (Phase G theorem). See
 // docs/theory/10_eft_program/DERIV_EMERGENT_COULOMB_GEOMETRIC.md Section 7.
+//
+// HONEST STATUS (full derivation + measured numbers in
+// src/poisson_solvers.cpp, above gauss_project_cpu): this drives the field
+// toward the constraint by a bounded, non-idempotent correction — it neither
+// exactly enforces the constraint nor cleanly removes "unphysical" modes.
+//   - On EVEN lattice size L, div_c's cokernel is 8-dimensional (one
+//     neutrality condition per parity sublattice, vs. the single ODD-L
+//     condition that mean-charge subtraction satisfies exactly). A point
+//     charge violates 7 of the 8 on even L, so NO flux field satisfies the
+//     constraint there and the residual floors at an irreducible 7/N,
+//     independent of iteration count or solver quality.
+//   - J -= ∇_6 φ is not idempotent: a second application moves the field by
+//     a further ~42% of the first application's change, at either parity
+//     of L, and the constraint residual saturates (stops improving) after
+//     roughly six sweeps even though the underlying SOR solve itself keeps
+//     converging.
+// The related 18-point-solved-vs-6-point-measured residual floor (present
+// even on odd L; a different effect from the even-lattice obstruction above)
+// is already documented at SOR_ITERATIONS in constants.h — see that comment
+// rather than duplicating it here.
 void gauss_project_cpu(std::vector<Voxel>& voxels,
                        const TernaryField& state,
                        std::vector<double>& phi,

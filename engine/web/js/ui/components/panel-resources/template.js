@@ -92,6 +92,92 @@ export function getZooPanelTemplate() {
     `;
 }
 
+export function getParticleLogPanelTemplate() {
+    return `
+        <div class="panel" id="panel-particle-log">
+            <div class="particle-log-shell">
+                <section class="card particle-log-hero">
+                    <div>
+                        <div class="card-title">Particle Event Log</div>
+                        <p class="particle-log-explainer">
+                            Chronological, observer-significant particle and environment events. Filters affect
+                            presentation only; retained events do not feed the force solver.
+                        </p>
+                    </div>
+                    <div class="particle-log-actions">
+                        <button type="button" class="ctrl-btn" id="particle-log-clear">Clear log</button>
+                    </div>
+                </section>
+
+                <section class="particle-log-summary" aria-label="Particle event log summary">
+                    <div class="particle-log-stat"><span>Tick</span><strong id="particle-log-tick">0</strong></div>
+                    <div class="particle-log-stat"><span>Retained</span><strong id="particle-log-events">0</strong></div>
+                    <div class="particle-log-stat"><span>Visible</span><strong id="particle-log-visible-events">0</strong></div>
+                </section>
+
+                <section class="card particle-log-filters" aria-label="Particle log category filters">
+                    <div class="particle-log-section-heading">
+                        <span>Visible log categories</span>
+                        <span class="particle-log-retention" id="particle-log-retention">0 / 4096 retained</span>
+                    </div>
+                    <div id="particle-log-category-toggles" class="particle-log-category-toggles"></div>
+                    <div class="particle-log-view-toggles">
+                        <label class="particle-log-filter-toggle" title="Keep the event list scrolled to the newest visible event.">
+                            <input type="checkbox" id="particle-log-follow" checked>
+                            <span>Follow latest</span>
+                        </label>
+                    </div>
+                </section>
+
+                <section id="particle-log-events-card" class="card particle-log-events-card">
+                    <div class="particle-log-section-heading">
+                        <span>Significant events</span>
+                        <span>oldest to newest</span>
+                    </div>
+                    <div id="particle-log-event-list" class="particle-log-event-list" role="log" aria-live="polite"></div>
+                </section>
+            </div>
+        </div>
+    `;
+}
+
+export function getInteractionHierarchyPanelTemplate() {
+    return `
+        <div class="panel" id="panel-interaction-hierarchy">
+            <div class="interaction-hierarchy-shell">
+                <section class="card particle-log-hero">
+                    <div>
+                        <div class="card-title">Interaction Hierarchy</div>
+                        <p class="particle-log-explainer">
+                            A live, energy-weighted view of clusters, system barycenter, and each particle's
+                            dynamic parent. These links are presentation observables and never alter dynamics.
+                        </p>
+                    </div>
+                    <div class="particle-log-actions">
+                        <button type="button" class="ctrl-btn" id="interaction-hierarchy-clear-focus" disabled>Clear focus</button>
+                        <button type="button" class="ctrl-btn" id="interaction-hierarchy-expand">Collapse</button>
+                    </div>
+                </section>
+
+                <section class="particle-log-summary" aria-label="Interaction hierarchy summary">
+                    <div class="particle-log-stat"><span>Tick</span><strong id="interaction-hierarchy-tick">0</strong></div>
+                    <div class="particle-log-stat"><span>Particles</span><strong id="interaction-hierarchy-particles">0</strong></div>
+                    <div class="particle-log-stat"><span>Clusters</span><strong id="interaction-hierarchy-clusters">0</strong></div>
+                    <div class="particle-log-stat"><span>Energy anchor</span><strong id="interaction-hierarchy-anchor">--</strong></div>
+                </section>
+
+                <section class="card particle-log-hierarchy-card">
+                    <div class="particle-log-section-heading">
+                        <span>Instantaneous interaction hierarchy</span>
+                        <span id="interaction-hierarchy-energy-basis" class="particle-log-basis">dynamic activity</span>
+                    </div>
+                    <div id="interaction-hierarchy-root" class="particle-log-hierarchy"></div>
+                </section>
+            </div>
+        </div>
+    `;
+}
+
 export function getInspectorPanelTemplate() {
     return `
         <div class="panel" id="panel-inspector">
@@ -190,12 +276,33 @@ export function getInspectorPanelTemplate() {
                     </div>
                 </div>
                 <div class="inspector-empty scale1-only" id="pe-inspector-empty" title="Viewport selection helper.">
-                    Select a particle in the viewport to inspect its trajectory and interactions.
+                    Select a particle in the viewport, or choose a dynamic cluster in Interaction Hierarchy.
                 </div>
                 <div id="pe-inspector-content" class="scale1-only panel-resource-hidden">
+                    <div class="card panel-resource-card pe-inspection-focus-card" id="pe-insp-focus-card">
+                        <div class="pe-inspection-focus-heading">
+                            <span class="pe-inspection-focus-badge" id="pe-insp-focus-kind">Particle focus</span>
+                            <strong id="pe-insp-focus-scope">--</strong>
+                        </div>
+                        <p id="pe-insp-focus-description">
+                            Visual overlays are isolated to the selected record. Physics and overlay toggle settings are unchanged.
+                        </p>
+                        <dl class="inspector-grid pe-inspection-cluster-fields" id="pe-insp-cluster-fields">
+                            <dt title="The live presentation cluster identifier. Cluster membership may change as the interaction graph evolves.">Cluster</dt>
+                            <dd id="pe-insp-cluster-id">--</dd>
+                            <dt title="The native particle records currently belonging to the focused interaction cluster.">Members</dt>
+                            <dd id="pe-insp-cluster-members">--</dd>
+                            <dt title="The member nearest the cluster's instantaneous energy-weighted center.">Energy anchor</dt>
+                            <dd id="pe-insp-cluster-anchor">--</dd>
+                            <dt title="The energy-weighted presentation center of the dynamic cluster, in lattice units.">Energy center</dt>
+                            <dd id="pe-insp-cluster-center">--</dd>
+                            <dt title="The sum of the cluster members' dynamic activity weights. This is an observer metric, not a new Hamiltonian term.">Activity E*</dt>
+                            <dd id="pe-insp-cluster-energy">--</dd>
+                        </dl>
+                    </div>
                     <div class="panel-resource-grid panel-resource-grid-3">
                         <div class="card panel-resource-card" title="Identifiers, category, mass, charge, spin, and color indices.">
-                            <div class="card-title">Identity</div>
+                            <div class="card-title" id="pe-insp-identity-title">Identity</div>
                             <div class="pe-insp-header">
                                 <span class="pe-insp-catalog-dot" id="pe-insp-dot"></span>
                                 <span class="pe-insp-name" id="pe-insp-name">--</span>
@@ -451,10 +558,10 @@ export function getInspectorPanelTemplate() {
                         </div>
                     </div>
                 </div>
-                <div class="inspector-empty scale-cosmic panel-resource-hidden" id="cosmic-inspector-empty">
+                <div class="inspector-empty scale5-only panel-resource-hidden" id="cosmic-inspector-empty">
                     Select a body to inspect its mass, motion, and evolutionary state.
                 </div>
-                <div id="cosmic-inspector-content" class="scale-cosmic panel-resource-hidden">
+                <div id="cosmic-inspector-content" class="scale5-only panel-resource-hidden">
                     <div class="panel-resource-grid panel-resource-grid-3">
                         <div class="card panel-resource-card">
                             <div class="card-title">Astrophysical Identity</div>
@@ -512,7 +619,7 @@ export function getPhysicsPanelTemplate() {
     return `
         <div class="panel" id="panel-physics">
             <div class="panel-resource-shell panel-resource-shell-padded">
-                <div class="panel-resource-grid panel-resource-grid-2">
+                <div class="scale-ae panel-resource-grid panel-resource-grid-2">
                     <div class="card panel-resource-card" id="physics-constants">
                         <div class="card-title">Ontic Chain Constants</div>
                         <div class="panel-resource-empty">Loading...</div>

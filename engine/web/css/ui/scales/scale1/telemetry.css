@@ -78,17 +78,402 @@
 .field-swatch-pe-trails     { background: var(--chart-pe-momentum); }
 .field-swatch-pe-efield     { background: var(--chart-pe-mobile); }
 .field-swatch-pe-potential  { background: linear-gradient(90deg, var(--chart-pe-coulomb), var(--chart-pe-mobile)); }
+.field-swatch-pe-field-battery { background: linear-gradient(90deg, #a78bfa, #fbbf24); }
 .field-swatch-pe-gravity    { background: var(--chart-pe-gravity); }
 .field-swatch-pe-force-coulomb { background: #ff4444; }
 .field-swatch-pe-force-gravity { background: var(--chart-pe-gravity); }
+.field-swatch-pe-force-lorentz { background: #22d3ee; }
+.field-swatch-pe-force-exchange { background: #c084fc; }
 .field-swatch-pe-force-strong  { background: #ff1744; }
+.field-swatch-pe-force-radiation { background: #fbbf24; }
+.field-swatch-pe-force-magnetic-dipole { background: #60a5fa; }
+.field-swatch-pe-force-spin-orbit { background: #fb923c; }
 .field-swatch-pe-force-net     { background: var(--chart-pe-force, #44cc66); }
 .field-swatch-pe-forces     { background: var(--chart-pe-force); }
 .field-swatch-pe-system     { background: linear-gradient(90deg, #46c6ff, #d77bf0); }
 .field-swatch-pe-admissibility { background: #4ade80; }
 .field-swatch-pe-provenance    { background: #38bdf8; }
-.field-swatch-pe-mass-comparison { background: #f472b6; }
 
+/* ── Scale 1 physics card inside Controls ───────────────────────────────── */
+.pe-physics-card,
+.pe-physics-section {
+    min-width: 0;
+}
+
+.pe-trail-section-label {
+    margin-top: var(--sp-lg);
+}
+
+.pe-trail-boundary {
+    margin: 0 0 var(--sp-md);
+    padding: var(--sp-sm) var(--sp-md);
+    border-left: 3px solid var(--chart-pe-momentum);
+    background: color-mix(in oklch, var(--chart-pe-momentum) 7%, transparent);
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+    line-height: 1.35;
+}
+
+.pe-trail-mode-group {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-sm);
+    margin-bottom: var(--sp-md);
+}
+
+.pe-trail-mode-group .ctrl-btn-secondary {
+    min-width: 0;
+    min-height: 32px;
+    padding-inline: var(--sp-sm);
+    font-size: var(--fs-xs);
+    line-height: 1.15;
+    white-space: normal;
+}
+
+.pe-trail-mode-group .ctrl-btn-secondary.active {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+    color: var(--accent-text);
+}
+
+.pe-trail-energy-legend {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+    margin-bottom: var(--sp-md);
+    padding: var(--sp-sm) var(--sp-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: color-mix(in oklch, var(--bg-surface) 82%, transparent);
+}
+
+.pe-trail-energy-legend[hidden] {
+    display: none !important;
+}
+
+.pe-trail-energy-legend-title,
+.pe-trail-energy-range {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+}
+
+.pe-trail-energy-ramp {
+    height: 8px;
+    border: 1px solid color-mix(in oklch, var(--border) 70%, transparent);
+    border-radius: 999px;
+    background: linear-gradient(90deg, #1d4ed8 0%, #22d3ee 32%, #facc15 66%, #ef4444 100%);
+}
+
+.pe-trail-energy-range {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--sp-md);
+}
+
+.pe-trail-control-row {
+    display: grid;
+    grid-template-columns: minmax(76px, 0.7fr) minmax(90px, 1.6fr) minmax(64px, auto);
+    min-width: 0;
+}
+
+.pe-trail-control-row .pe-ctrl-label,
+.pe-trail-control-row .pe-slider,
+.pe-trail-value {
+    min-width: 0;
+}
+
+.pe-trail-value {
+    width: auto;
+    white-space: nowrap;
+}
+
+.pe-trail-actions {
+    justify-content: flex-end;
+    margin-bottom: var(--sp-lg);
+}
+
+/* Scenario behavior is a first-class scientific cue. Static and null cases
+   must read as intentional before the user mistakes them for failed motion. */
+.pe-scenario-behavior {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 24px;
+    padding: 2px 7px;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    background: var(--accent-dim);
+    color: var(--accent-text);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.035em;
+    white-space: nowrap;
+}
+
+#pe-controls.tb-group-scenario {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+#pe-controls .tb-select-scenario-wide {
+    flex: 1 1 220px;
+    min-width: min(220px, 100%);
+}
+
+.pe-scenario-behavior[data-behavior="null_control"],
+.pe-scenario-behavior[data-behavior="awaiting_input"] {
+    border-color: var(--warning);
+    background: color-mix(in oklch, var(--warning) 12%, transparent);
+    color: var(--warning-text);
+}
+
+.pe-scenario-behavior[data-behavior="read_only_replay"],
+.pe-scenario-behavior[data-behavior="static_reference"] {
+    border-color: var(--text-muted);
+    background: color-mix(in oklch, var(--text-muted) 10%, transparent);
+    color: var(--text-secondary);
+}
+
+.pe-m3-view-group {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-xs);
+}
+
+.pe-m3-view-group[hidden],
+.pe-paired-scenario[hidden] {
+    display: none !important;
+}
+
+#pe-m3-view-select {
+    min-width: 142px;
+}
+
+.pe-paired-scenario {
+    max-width: 220px;
+    min-height: 27px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pe-scenario-contract {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+    margin: var(--sp-sm) 0 0;
+    padding-top: var(--sp-sm);
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+    line-height: 1.35;
+}
+
+.pe-scenario-details {
+    min-width: 0;
+    margin-bottom: var(--sp-md);
+    padding: var(--sp-sm) var(--sp-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: color-mix(in oklch, var(--bg-surface) 82%, transparent);
+}
+
+.pe-scenario-details-summary {
+    min-width: 0;
+    margin: 0;
+    color: var(--text-secondary);
+    font-weight: 700;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.pe-scenario-details[open] .pe-scenario-details-summary {
+    color: var(--accent-text);
+}
+
+.pe-scenario-observation-label {
+    color: var(--accent-text);
+    letter-spacing: 0.04em;
+}
+
+.pe-scenario-observation-cue {
+    display: block;
+    margin-bottom: 3px;
+    padding: var(--sp-sm);
+    border-left: 3px solid var(--accent);
+    background: color-mix(in oklch, var(--accent) 7%, transparent);
+    color: var(--text-primary);
+}
+
+.pe-physics-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--sp-md);
+    margin-bottom: var(--sp-sm);
+}
+
+.pe-physics-card-header .card-title {
+    margin-bottom: 2px;
+}
+
+.pe-physics-active-count {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    white-space: nowrap;
+}
+
+.pe-physics-profile-state {
+    flex: 0 0 auto;
+    padding: 3px 7px;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    background: var(--accent-dim);
+    color: var(--accent-text);
+    font-size: var(--fs-xs);
+    line-height: 1.2;
+}
+
+.pe-physics-profile-state.is-modified {
+    border-color: var(--warning);
+    background: color-mix(in oklch, var(--warning) 14%, transparent);
+    color: var(--warning-text);
+}
+
+.pe-physics-boundary {
+    margin: 0 0 var(--sp-md);
+    padding: var(--sp-sm) var(--sp-md);
+    border-left: 3px solid var(--warning);
+    background: color-mix(in oklch, var(--warning) 7%, transparent);
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+    line-height: 1.35;
+}
+
+.pe-physics-profile-actions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-sm);
+    margin-bottom: var(--sp-md);
+}
+
+.pe-physics-profile-actions .ctrl-btn-secondary {
+    min-width: 0;
+    min-height: 30px;
+    padding-inline: var(--sp-sm);
+    font-size: var(--fs-xs);
+    line-height: 1.15;
+    white-space: normal;
+}
+
+.pe-physics-columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-lg);
+}
+
+.pe-physics-section .toggle-row {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--sp-sm);
+    min-height: 34px;
+    padding: 3px 0;
+}
+
+.pe-physics-section .toggle-row label {
+    min-width: 0;
+    line-height: 1.25;
+}
+
+.pe-physics-row-status {
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.pe-physics-row-status[data-tier="verified"] { color: var(--positive); }
+.pe-physics-row-status[data-tier="retired"] { color: var(--negative); }
+.pe-physics-row-status[data-tier="quarantined"] { color: var(--warning); }
+
+.panel-mount-bottom .pe-physics-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.panel-mount-left .pe-physics-card-header,
+.panel-mount-right .pe-physics-card-header {
+    align-items: stretch;
+    flex-direction: column;
+}
+
+.panel-mount-left .pe-physics-profile-state,
+.panel-mount-right .pe-physics-profile-state {
+    align-self: flex-start;
+}
+
+/* ── Scale 1 viewport overlay design audit ─────────────────────────────── */
+#pe-viewport-overlay {
+    width: min(300px, calc(100vw - 24px));
+    max-width: min(300px, calc(100vw - 24px));
+}
+
+#pe-viewport-overlay .scale-overlay-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+}
+
+.pe-overlay-summary {
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: var(--accent-dim);
+    color: var(--accent-text);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    white-space: nowrap;
+}
+
+#pe-viewport-overlay .scale-overlay-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 5px;
+    width: 100%;
+}
+
+#pe-viewport-overlay .view-toggle.field-toggle {
+    width: 100%;
+    min-width: 0;
+    justify-content: flex-start;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#pe-viewport-overlay .scale-overlay-section-hint {
+    font-size: var(--fs-xs);
+    line-height: 1.25;
+}
+
+#pe-viewport-overlay .scale-overlay-body {
+    scrollbar-gutter: stable;
+}
+
+@media (max-height: 760px) and (min-width: 768px) {
+    #pe-viewport-overlay .scale-overlay-body {
+        max-height: calc(100vh - 150px);
+    }
+}
 /* ── Responsive: compact phones ─────────────────────────────────────────── */
 /* The conservation row reserves 150px across three fixed columns (label /
    alarm / sparkline), which squeezes the 1fr value column on a phone-width
@@ -98,5 +483,14 @@
     .pe-conservation-row {
         grid-template-columns: 40px 1fr 16px 56px;
         gap: 4px;
+    }
+
+    .pe-physics-card-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .pe-physics-profile-state {
+        align-self: flex-start;
     }
 }

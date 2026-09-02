@@ -1,11 +1,13 @@
 import {
     getCosmicInfoPanelTemplate,
+    getInteractionHierarchyPanelTemplate,
     getInspectorPanelTemplate,
     getPhysicsPanelTemplate,
+    getParticleLogPanelTemplate,
     getPlanetaryPanelTemplate,
     getScaleControlsBlocksTemplate,
     getZooPanelTemplate,
-} from './template.js';
+} from './template.js?v=7';
 import { getDiagnosticsPanelTemplate } from './diagnostics-template.js';
 
 function htmlToElement(markup) {
@@ -44,6 +46,8 @@ export function ensurePanelResources(panelArea) {
     ensurePanel(panelArea, 'diagnostics', getDiagnosticsPanelTemplate(), 'charts');
     ensureControlsBlocks(panelArea);
     ensurePanel(panelArea, 'zoo', getZooPanelTemplate(), 'inspector');
+    ensurePanel(panelArea, 'particle-log', getParticleLogPanelTemplate(), 'zoo');
+    ensurePanel(panelArea, 'interaction-hierarchy', getInteractionHierarchyPanelTemplate(), 'particle-log');
     ensurePanel(panelArea, 'inspector', getInspectorPanelTemplate(), 'physics');
     ensurePanel(panelArea, 'planetary', getPlanetaryPanelTemplate(), 'reference frame context');
     ensurePanel(panelArea, 'physics', getPhysicsPanelTemplate(), 'planetary');

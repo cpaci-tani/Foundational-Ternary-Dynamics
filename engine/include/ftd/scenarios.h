@@ -12,7 +12,7 @@
 //  and get an empty lattice with no error.
 //
 //  AFTER this port, every UI scenario has a C++ implementation.  The catalog
-//  has since grown to 130 public Scale-0 scenarios; scale0_scenario_ids() is
+//  has since grown to 142 public Scale-0 scenarios; scale0_scenario_ids() is
 //  the native registry audited by the scenario wiring test.
 //
 //  Function layout mirrors the JS group files 1-for-1:
@@ -21,6 +21,7 @@
 //    setup_quantum_scenario   ← js/bridge/scenarios/quantum-scenarios.js
 //    setup_s0_seed_scenario   ← js/bridge/scenarios/s0-seed-scenarios.js
 //    setup_s0_field_scenario  ← js/bridge/scenarios/s0-field-scenarios.js
+//    setup_cell_scenario      ← s0-cell-* flux cells (native-only group, 2026-09-02)
 //    dispatch_scenario        ← js/bridge/scenarios/index.js
 //
 //  Each group function returns true only when it executed an exact scenario
@@ -76,5 +77,7 @@ bool setup_quantum_scenario (RenderBridge& rb, const std::string& name);
 bool setup_s0_seed_scenario (RenderBridge& rb, const std::string& name);
 bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name);
 bool setup_vacuum_scenario  (RenderBridge& rb, const std::string& name);
+// s0-cell-* flux cells: bounded field reservoirs (see ftd/flux_cell.h).
+bool setup_cell_scenario    (RenderBridge& rb, const std::string& name);
 
 }  // namespace ftd
