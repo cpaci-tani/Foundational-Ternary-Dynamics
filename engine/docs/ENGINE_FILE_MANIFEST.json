@@ -3,13 +3,13 @@
   "generated_by": "engine/tools/build_file_manifest.py",
   "note": "Mechanical per-file catalog. Conceptual docs: engine/ARCHITECTURE.md, CALLSTACKS.md, SCENARIO_ARCHITECTURE.md, SPEC_ENGINE.md, engine/docs/ENGINE_CODE_MAP.md.",
   "totals": {
-    "files": 2691,
-    "loc": 733478
+    "files": 2692,
+    "loc": 733956
   },
   "subsystems": {
     "tests": {
       "files": 810,
-      "loc": 247096
+      "loc": 247129
     },
     "other": {
       "files": 806,
@@ -21,15 +21,15 @@
     },
     "src/core": {
       "files": 198,
-      "loc": 69274
+      "loc": 69302
     },
     "include": {
       "files": 300,
       "loc": 38954
     },
     "web/tests": {
-      "files": 144,
-      "loc": 35501
+      "files": 145,
+      "loc": 35709
     },
     "web/scale0": {
       "files": 68,
@@ -45,7 +45,7 @@
     },
     "web/viewport": {
       "files": 22,
-      "loc": 10603
+      "loc": 10740
     },
     "web/bridge": {
       "files": 26,
@@ -53,7 +53,7 @@
     },
     "web/scale1": {
       "files": 20,
-      "loc": 4416
+      "loc": 4488
     },
     "src/scenarios": {
       "files": 8,
@@ -7283,7 +7283,7 @@
     {
       "path": "engine/src/particle_engine.cpp",
       "lang": "cpp",
-      "loc": 1454,
+      "loc": 1482,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "ParticleEngine: Scale 1 simulation Phase 7: Effective, lattice-free engine with continuous positions and analytical forces, advanced once per discrete global tick.",
@@ -14578,7 +14578,7 @@
     {
       "path": "engine/tests/test_particle_engine.cpp",
       "lang": "cpp",
-      "loc": 641,
+      "loc": 674,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Phase 7 \u2014 Stage 2: ParticleEngine unit tests (17 gates) PE1: Particle injection (id assigned, charge correct) PE2: Free particle (constant velocity when alone, no damping) PE3: Opposite attract (fo...",
@@ -25969,7 +25969,7 @@
     {
       "path": "engine/web/js/scales/scale1/pe-cloud-expander.js",
       "lang": "js",
-      "loc": 502,
+      "loc": 564,
       "subsystem": "web/scale1",
       "primary": true,
       "purpose": "Scale 1 \u2014 PE Cloud Expander \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Fixed-boundary point cloud per particle.",
@@ -25984,7 +25984,8 @@
         "getTrailHistory()",
         "clearCloudAndTrails()",
         "MAX_CLOUD_TOTAL",
-        "TRAIL_MAX_LENGTH"
+        "TRAIL_MAX_LENGTH",
+        "PE_APPEARANCE_ROLE"
       ]
     },
     {
@@ -26096,7 +26097,7 @@
     {
       "path": "engine/web/js/scales/scale1/ui/overlays/template.js",
       "lang": "js",
-      "loc": 114,
+      "loc": 124,
       "subsystem": "web/scale1",
       "primary": true,
       "purpose": "Scale 1 Viewport Overlay \u2014 particle engine dynamics (grouped by physical role)",
@@ -28026,7 +28027,7 @@
     {
       "path": "engine/web/js/viewport/particle-renderer.js",
       "lang": "js",
-      "loc": 1239,
+      "loc": 1260,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "@file engine/web/js/viewport/particle-renderer.js @purpose Owns particle positions, trails, velocity vectors, per-particle force vectors for the Scale-0 lattice dashboard.",
@@ -28048,7 +28049,7 @@
     {
       "path": "engine/web/js/viewport/shaders.js",
       "lang": "js",
-      "loc": 160,
+      "loc": 276,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "Centralized Shaders for FTD Web Frontend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Houses shared GLSL shader strings to ensure DRY compliance and enable global shader opt...",
@@ -28056,7 +28057,9 @@
         "PARTICLE_SHADER_UNIFORMS",
         "PARTICLE_VERT",
         "FLUX_VOL_VERT",
-        "PARTICLE_FRAG"
+        "PARTICLE_FRAG",
+        "RECORD_PARTICLE_VERT",
+        "RECORD_PARTICLE_FRAG"
       ]
     },
     {
@@ -29111,6 +29114,15 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale1-particle-appearance.spec.js",
+      "lang": "js",
+      "loc": 123,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale1-particle-ledger.node.test.mjs",
       "lang": "js",
       "loc": 118,
@@ -29178,7 +29190,7 @@
     {
       "path": "engine/web/tests/scale1-wasm-tick-stress.spec.js",
       "lang": "js",
-      "loc": 143,
+      "loc": 228,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",

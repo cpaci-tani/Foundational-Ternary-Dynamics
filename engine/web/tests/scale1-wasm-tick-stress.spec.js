@@ -66,6 +66,91 @@ test('64-particle all-physics state survives sustained direct WASM ticks', async
     expect(realErrors(consoleErrors)).toEqual([]);
 });
 
+test('mixed particle-zoo injection survives sustained all-physics ticks', async ({ page }) => {
+    test.setTimeout(120_000);
+    const consoleErrors = attachConsoleWatcher(page);
+    await openScale1(page);
+    await page.selectOption('#pe-scenario-select', 's1-empty-zoo');
+
+    const result = await page.evaluate(async () => {
+        const bridge = window.__ftdCtx?.bridge;
+        if (!bridge) throw new Error('Scale 1 bridge unavailable');
+        const { getAllParticles } = await import('/js/particle-catalog.js');
+        for (const spec of Array.from(bridge.peGetPhysicsRegistry()?.physics || [])) {
+            if (spec.available && spec.toggle) bridge.peSetToggle(spec.toggle, true);
+        }
+        const catalog = getAllParticles().filter(particle =>
+            Number.isFinite(particle.mass_mev) && particle.mass_mev > 0);
+        for (let i = 0; i < catalog.length; ++i) {
+            const particle = catalog[i];
+            const angle = i * Math.PI * (3 - Math.sqrt(5));
+            const layer = Math.floor(i / 12) - 2;
+            bridge.peAddParticle(
+                particle.id,
+                particle.charge > 0 ? 1 : particle.charge < 0 ? -1 : 0,
+                4.0 * Math.cos(angle),
+                4.0 * Math.sin(angle),
+                layer * 1.25,
+                0, 0, 0,
+                particle.mass_mev,
+                0.1,
+            );
+        }
+        const startTick = Number(bridge.peGetTick());
+        for (let tick = 0; tick < 2_000; ++tick) bridge.peTick();
+        const data = bridge.peGetParticleData();
+        const finite = values => Array.from(values || []).every(Number.isFinite);
+        return {
+            startTick,
+            endTick: Number(bridge.peGetTick()),
+            count: Number(data.count || 0),
+            finite: finite(data.positions) && finite(data.velocities)
+                && finite(data.masses),
+        };
+    });
+
+    expect(result.endTick - result.startTick).toBe(2_000);
+    expect(result.count).toBeGreaterThanOrEqual(0);
+    expect(result.finite).toBe(true);
+    expect(realErrors(consoleErrors)).toEqual([]);
+});
+
+test('unrepresentable derived momentum is rejected before it can poison a tick', async ({ page }) => {
+    test.setTimeout(90_000);
+    await openScale1(page);
+    await page.selectOption('#pe-scenario-select', 's1-empty-zoo');
+
+    const result = await page.evaluate(() => {
+        const bridge = window.__ftdCtx?.bridge;
+        if (!bridge) throw new Error('Scale 1 bridge unavailable');
+        let rejected = false;
+        let message = '';
+        try {
+            bridge.peAddParticle(
+                null, 0, 0, 0, 0,
+                Math.sqrt(1 / 3) * 0.99, 0, 0,
+                Number.MAX_VALUE * 0.5, 0.1,
+            );
+        } catch (error) {
+            rejected = true;
+            message = error?.message || String(error);
+        }
+        const beforeTick = Number(bridge.peGetTick());
+        bridge.peTick();
+        return {
+            rejected,
+            message,
+            particleCount: Number(bridge.peParticleCount()),
+            tickAdvanced: Number(bridge.peGetTick()) === beforeTick + 1,
+        };
+    });
+
+    expect(result.rejected).toBe(true);
+    expect(result.message).toContain('momentum exceeds finite representation');
+    expect(result.particleCount).toBe(0);
+    expect(result.tickAdvanced).toBe(true);
+});
+
 test('every runnable scenario survives 1,000 direct ticks with all physics', async ({ page }) => {
     test.setTimeout(240_000);
     const consoleErrors = attachConsoleWatcher(page);

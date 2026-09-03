@@ -158,3 +158,119 @@ export const PARTICLE_FRAG = `
         gl_FragColor = vec4(rgb, alpha * alpha * uOpacity * bright * vVisibility);
     }
 `;
+
+// Scale-0/1 particle mesh variant.  Scale 1 supplies `appearanceRole` and
+// `focusWeight` so its effective records can remain legible without turning
+// their presentation cloud into a literal solid-particle claim.  Scale 0
+// leaves both attributes at zero and therefore keeps the legacy particle
+// rendering path byte-for-byte equivalent in behavior.
+export const RECORD_PARTICLE_VERT = `
+    attribute float size;
+    attribute vec3 particleColor;
+    attribute float manifestPhase;
+    attribute float manifestRate;
+    attribute float appearanceRole;
+    attribute float focusWeight;
+    varying vec3 vColor;
+    varying float vManifestPhase;
+    varying float vManifestRate;
+    varying float vAppearanceRole;
+    varying float vFocusWeight;
+
+    void main() {
+        vColor = particleColor;
+        vManifestPhase = manifestPhase;
+        vManifestRate = manifestRate;
+        vAppearanceRole = appearanceRole;
+        vFocusWeight = focusWeight;
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        float focusScale = appearanceRole > 0.5 && appearanceRole < 1.5
+            ? mix(1.0, 1.28, focusWeight)
+            : 1.0;
+        gl_PointSize = size * focusScale * (150.0 / -mvPosition.z);
+        gl_PointSize = clamp(gl_PointSize, 1.0, 512.0);
+        gl_Position = projectionMatrix * mvPosition;
+    }
+`;
+
+export const RECORD_PARTICLE_FRAG = `
+    uniform int shapeType;
+    uniform float uOpacity;
+    uniform float uGlow;
+    uniform float uManifestTime;
+    uniform float uManifestEnabled;
+    uniform float uManifestThresh;
+    varying vec3 vColor;
+    varying float vManifestPhase;
+    varying float vManifestRate;
+    varying float vAppearanceRole;
+    varying float vFocusWeight;
+
+    void main() {
+        vec2 c = gl_PointCoord - vec2(0.5);
+        float dist;
+
+        if (shapeType == 1) {
+            dist = max(abs(c.x), abs(c.y));
+            if (dist > 0.48) discard;
+        } else if (shapeType == 2) {
+            dist = abs(c.x) + abs(c.y);
+            if (dist > 0.5) discard;
+        } else if (shapeType == 3) {
+            float angle = atan(c.y, c.x);
+            float r = length(c);
+            float star = cos(5.0 * angle) * 0.15 + 0.35;
+            if (r > star) discard;
+            dist = r / star * 0.5;
+        } else if (shapeType == 4) {
+            float x = c.x, y = c.y + 0.15;
+            if (y > 0.35 || y < -0.35 + 0.7 * abs(x) / 0.4) discard;
+            dist = length(c);
+        } else if (shapeType == 5) {
+            vec2 a = abs(c);
+            dist = max(a.x * 0.866 + a.y * 0.5, a.y);
+            if (dist > 0.45) discard;
+            dist /= 0.45;
+        } else if (shapeType == 6) {
+            float r = length(c);
+            if (r > 0.5 || r < 0.3) discard;
+            dist = abs(r - 0.4) / 0.1;
+        } else if (shapeType == 7) {
+            float ax = abs(c.x), ay = abs(c.y);
+            if (ax > 0.15 && ay > 0.15) discard;
+            dist = max(ax, ay);
+        } else {
+            dist = length(c);
+            if (dist > 0.5) discard;
+        }
+
+        float isCore = step(0.5, vAppearanceRole) * (1.0 - step(1.5, vAppearanceRole));
+        float isRim = step(1.5, vAppearanceRole);
+        float alpha = 1.0 - smoothstep(0.15, 0.5, dist);
+        float glow = exp(-dist * dist * 4.0) * uGlow;
+
+        // Effective-record cores and support rims never blink away.  The
+        // localization cloud still carries the manifestation duty cycle, but
+        // a raised floor keeps its geometry readable between active phases.
+        float bright = 1.0;
+        if (uManifestEnabled > 0.5) {
+            float wave = sin(uManifestTime * vManifestRate + vManifestPhase);
+            float on = smoothstep(uManifestThresh - 0.10, uManifestThresh + 0.10, wave);
+            float floorValue = mix(0.24, 0.68, max(isCore, isRim * 0.72));
+            bright = mix(floorValue, 1.0, on);
+        }
+
+        float hotCenter = isCore * (1.0 - smoothstep(0.0, 0.34, dist));
+        vec3 rgb = mix(vColor + glow, vec3(1.0), hotCenter * 0.48) * bright;
+
+        // Inspection is presentation-only: the selected record receives a
+        // cyan rim inside its core sprite, with no mutation of engine state.
+        float selectionRing = vFocusWeight * isCore
+            * smoothstep(0.31, 0.37, dist)
+            * (1.0 - smoothstep(0.43, 0.49, dist));
+        rgb = mix(rgb, vec3(0.34, 0.94, 1.0), selectionRing);
+        alpha = max(alpha, selectionRing * 0.96);
+
+        gl_FragColor = vec4(rgb, alpha * alpha * uOpacity * bright);
+    }
+`;

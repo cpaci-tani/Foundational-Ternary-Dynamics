@@ -37,7 +37,7 @@ import {
 import {
     expandPEToCloud, buildPEManifestBlinkRate, updateTrailHistory,
     getCloudParticleMap, getTrailHistory, clearCloudAndTrails, MANIFEST_FILL
-} from './pe-cloud-expander.js?v=3';
+} from './pe-cloud-expander.js?v=4';
 import {
     getScale1Scenario, getScale1ScenarioPreset, DEFAULT_SCALE1_SCENARIO,
     installScale1ScenarioManifest, populateScale1ScenarioSelect,

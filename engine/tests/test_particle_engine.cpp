@@ -323,6 +323,39 @@ int main() {
             tick_failed_closed = true;
         }
         check("PE13g: tick fails closed on an inadmissible record", tick_failed_closed);
+
+        ParticleEngine overflow_guard;
+        overflow_guard.toggles.coulomb = false;
+        overflow_guard.toggles.relativistic_verlet = true;
+        bool rejected_momentum_overflow = false;
+        try {
+            overflow_guard.add_particle(
+                0, {0, 0, 0}, {C_SPEED * 0.99, 0, 0},
+                std::numeric_limits<double>::max() * 0.5, 0.1);
+        } catch (const std::overflow_error&) {
+            rejected_momentum_overflow = true;
+        }
+        check("PE13h: finite inputs with unrepresentable momentum are rejected",
+              rejected_momentum_overflow);
+        check("PE13i: rejected injection leaves an admissible empty engine",
+              overflow_guard.particles().empty()
+              && overflow_guard.validate_state(&error));
+
+        const int massive_id = overflow_guard.add_particle(
+            0, {0, 0, 0}, {}, std::numeric_limits<double>::max() * 0.5, 0.1);
+        bool rejected_velocity_overflow = false;
+        try {
+            (void)overflow_guard.set_particle_velocity(
+                massive_id, {C_SPEED * 0.99, 0, 0});
+        } catch (const std::overflow_error&) {
+            rejected_velocity_overflow = true;
+        }
+        check("PE13j: velocity update rejects unrepresentable momentum",
+              rejected_velocity_overflow);
+        check("PE13k: rejected velocity update preserves the prior record",
+              overflow_guard.particles()[0].velocity.mag2() == 0.0
+              && overflow_guard.particles()[0].momentum.mag2() == 0.0
+              && overflow_guard.validate_state(&error));
     }
 
     // ---- PE14: Integrator transition coherence ----

@@ -29,7 +29,14 @@ const _cloudCol = new Float32Array(MAX_CLOUD_TOTAL * 3);
 const _cloudSize = new Float32Array(MAX_CLOUD_TOTAL);
 const _cloudPhase = new Float32Array(MAX_CLOUD_TOTAL);
 const _cloudRate = new Float32Array(MAX_CLOUD_TOTAL);
+const _cloudRole = new Float32Array(MAX_CLOUD_TOTAL);
 const _cloudParticleMap = new Int32Array(MAX_CLOUD_TOTAL);
+
+export const PE_APPEARANCE_ROLE = Object.freeze({
+    SUPPORT: 0,
+    RECORD_CORE: 1,
+    SUPPORT_RIM: 2,
+});
 
 const _trailHistory = new Map();
 const _activeIdsSet = new Set();
@@ -54,30 +61,33 @@ function getUnitTemplate() {
     const n = 4000;
     const offsets = new Float32Array(n * 3);
     const brightness = new Float32Array(n);
+    const radialInverse = (index, base) => {
+        let value = 0;
+        let fraction = 1 / base;
+        for (let i = index; i > 0; i = Math.floor(i / base)) {
+            value += fraction * (i % base);
+            fraction /= base;
+        }
+        return value;
+    };
     for (let i = 0; i < n; i++) {
-        const u1 = Math.random() || 1e-10;
-        const u2 = Math.random();
-        const u3 = Math.random() || 1e-10;
-        const u4 = Math.random();
-        const sq1 = Math.sqrt(-2 * Math.log(u1));
-        const sq3 = Math.sqrt(-2 * Math.log(u3));
-        const ox = sq1 * Math.cos(2 * Math.PI * u2) * 0.42;
-        const oy = sq1 * Math.sin(2 * Math.PI * u2) * 0.42;
-        const oz = sq3 * Math.cos(2 * Math.PI * u4) * 0.42;
+        // Deterministic low-discrepancy volume sampling: stable across reloads
+        // and well distributed even when a low-population particle consumes
+        // only the prefix of this template.
+        const z = 1 - 2 * radialInverse(i + 1, 2);
+        const azimuth = 2 * Math.PI * radialInverse(i + 1, 3);
+        const radial = Math.pow(radialInverse(i + 1, 5), 0.56);
+        const planar = Math.sqrt(Math.max(0, 1 - z * z));
+        const ox = radial * planar * Math.cos(azimuth);
+        const oy = radial * planar * Math.sin(azimuth);
+        const oz = radial * z;
         offsets[i * 3] = ox;
         offsets[i * 3 + 1] = oy;
         offsets[i * 3 + 2] = oz;
         const dist = Math.sqrt(ox * ox + oy * oy + oz * oz);
         brightness[i] = Math.exp(-dist * dist * 2.5);
     }
-    const inBall = new Uint8Array(n);
-    for (let i = 0; i < n; i++) {
-        const ox = offsets[i * 3];
-        const oy = offsets[i * 3 + 1];
-        const oz = offsets[i * 3 + 2];
-        inBall[i] = (ox * ox + oy * oy + oz * oz <= 1.0) ? 1 : 0;
-    }
-    _unitTemplate = { n, offsets, brightness, inBall };
+    _unitTemplate = { n, offsets, brightness };
     return _unitTemplate;
 }
 
@@ -97,12 +107,12 @@ function strongColorTint(colorId, base) {
 export function visualLocalizationRadius(massMev, rEff) {
     const m = Math.max(massMev, K_B * 0.05);
     const comptonLike = 0.2 + 2.2 * Math.pow(K_B / m, 0.38);
-    return Math.max(rEff || 0.1, comptonLike);
+    return Math.min(6.5, Math.max(0.72, rEff || 0.1, comptonLike));
 }
 
 function pointCountForParticle(massMev, radius) {
-    const nRaw = Math.round(120 * Math.pow(massMev / K_B, 0.28) * (radius / 2.0));
-    return Math.min(Math.max(nRaw, 24), 2800);
+    const nRaw = Math.round(68 * Math.pow(massMev / K_B, 0.28) * (radius / 2.0));
+    return Math.min(Math.max(nRaw, 32), 1200);
 }
 
 function betaFromVelocity(vx, vy, vz) {
@@ -177,7 +187,7 @@ function hashUint32(a, b, c) {
     return h;
 }
 
-function writeCloudPoint(out, cx, cy, cz, cr, cg, cb, size, phase, rate, pid) {
+function writeCloudPoint(out, cx, cy, cz, cr, cg, cb, size, phase, rate, role, pid) {
     _cloudPos[out * 3] = cx;
     _cloudPos[out * 3 + 1] = cy;
     _cloudPos[out * 3 + 2] = cz;
@@ -187,6 +197,7 @@ function writeCloudPoint(out, cx, cy, cz, cr, cg, cb, size, phase, rate, pid) {
     _cloudSize[out] = size;
     _cloudPhase[out] = phase;
     _cloudRate[out] = rate;
+    _cloudRole[out] = role;
     _cloudParticleMap[out] = pid;
 }
 
@@ -327,9 +338,26 @@ export function expandPEToCloud(peData, typeMap, opts = {}) {
         const radius = visualLocalizationRadius(mass, rEff);
         const n = Math.min(pointCountForParticle(mass, radius), tmpl.n, MAX_CLOUD_TOTAL - out);
 
-        for (let j = 0; j < n && out < MAX_CLOUD_TOTAL; j++) {
-            if (!tmpl.inBall[j]) continue;
+        // One persistent effective-record core anchors selection and identity.
+        // This is a display marker for the native record coordinate, not a
+        // claim that the effective particle has a solid spherical interior.
+        const massRatio = Math.max(mass, K_B * 0.01) / K_B;
+        const coreSize = Math.min(12.5, 8.4 + 0.72 * Math.log10(1 + massRatio));
+        const coreWhite = 0.30 + 0.12 * keNorm;
+        const corePhase = (hashUint32(pid, 0, 7) / 4294967296) * Math.PI * 2;
+        if (out < MAX_CLOUD_TOTAL) {
+            writeCloudPoint(
+                out, cx, cy, cz,
+                br * (1 - coreWhite) + coreWhite,
+                bg * (1 - coreWhite) + coreWhite,
+                bb * (1 - coreWhite) + coreWhite,
+                coreSize, corePhase, slotRate,
+                PE_APPEARANCE_ROLE.RECORD_CORE, pid,
+            );
+            out++;
+        }
 
+        for (let j = 0; j < n && out < MAX_CLOUD_TOTAL; j++) {
             let ox = tmpl.offsets[j * 3] * radius;
             let oy = tmpl.offsets[j * 3 + 1] * radius;
             let oz = tmpl.offsets[j * 3 + 2] * radius;
@@ -338,8 +366,8 @@ export function expandPEToCloud(peData, typeMap, opts = {}) {
             [ox, oy, oz] = stretchOffset(ox, oy, oz, vx, vy, vz, beta);
 
             const b = tmpl.brightness[j];
-            const fade = 0.40 + 0.60 * b;
-            const ptSize = (0.85 + b * 1.6) * (0.88 + beta * 0.18);
+            const fade = 0.56 + 0.44 * b;
+            const ptSize = (1.05 + b * 1.9) * (0.92 + beta * 0.20);
             let phase = (hashUint32(pid, j, 1) / 4294967296) * Math.PI * 2;
             if (spinSign) phase += spinSign * 0.72;
 
@@ -350,6 +378,38 @@ export function expandPEToCloud(peData, typeMap, opts = {}) {
                 ptSize,
                 phase,
                 slotRate,
+                PE_APPEARANCE_ROLE.SUPPORT,
+                pid,
+            );
+            out++;
+        }
+
+        // A sparse outer rim exposes r_eff / the bounded interaction support.
+        // It is deliberately dotted, rather than a solid surface, to avoid
+        // presenting a hard particle wall that the effective engine does not
+        // contain.
+        const rimCount = Math.min(48, Math.max(12, Math.round(Math.sqrt(n) * 1.8)));
+        for (let j = 0; j < rimCount && out < MAX_CLOUD_TOTAL; j++) {
+            const source = (j * 53 + 17) % tmpl.n;
+            let ox = tmpl.offsets[source * 3];
+            let oy = tmpl.offsets[source * 3 + 1];
+            let oz = tmpl.offsets[source * 3 + 2];
+            const inv = 1 / Math.max(1e-8, Math.sqrt(ox * ox + oy * oy + oz * oz));
+            ox *= radius * inv;
+            oy *= radius * inv;
+            oz *= radius * inv;
+            [ox, oy, oz] = rotateOffset(ox, oy, oz, orbit.ux, orbit.uy, orbit.uz, orbit.angle);
+            [ox, oy, oz] = stretchOffset(ox, oy, oz, vx, vy, vz, beta);
+            const rimWhite = 0.24;
+            writeCloudPoint(
+                out, cx + ox, cy + oy, cz + oz,
+                br * (1 - rimWhite) + rimWhite,
+                bg * (1 - rimWhite) + rimWhite,
+                bb * (1 - rimWhite) + rimWhite,
+                1.45 + beta * 0.35,
+                corePhase + j * 0.37,
+                slotRate * 0.82,
+                PE_APPEARANCE_ROLE.SUPPORT_RIM,
                 pid,
             );
             out++;
@@ -362,6 +422,8 @@ export function expandPEToCloud(peData, typeMap, opts = {}) {
         sizes: _cloudSize,
         phases: _cloudPhase,
         rates: _cloudRate,
+        roles: _cloudRole,
+        particleIds: _cloudParticleMap,
         count: out,
     };
 }

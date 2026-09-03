@@ -7,7 +7,7 @@
  */
 
 import { appRegistry } from './core/registry.js';
-import { Viewport } from './viewport.js?v=23';
+import { Viewport } from './viewport.js?v=24';
 import { FluxEnergyChart, ParticleChart } from './charts.js';
 import { telemetryHub } from './telemetry-hub.js';
 import { createInspectorAppRuntime } from './inspector/app-runtime.js?v=5';
@@ -17,7 +17,7 @@ import { debugLog } from './core/log.js';
 
 // ── Scale Controllers (extracted from inline code) ─────────────────
 import * as Scale0Controller from './scales/scale0/controller.js?v=44';
-import * as Scale1Controller from './scales/scale1/controller.js?v=30';
+import * as Scale1Controller from './scales/scale1/controller.js?v=31';
 import * as Scale2Controller from './scales/scale2/controller.js';
 import * as Scale3Controller from './scales/scale3/controller.js';
 // ── Phase 1-3: Ontic Observatory, Physics Fidelity, Aggregation Bridge
@@ -36,7 +36,7 @@ import { K_B } from './constants.js';
 import { AggregateDetector, EmergenceMonitor } from './aggregation-bridge.js?v=2';
 import { createOnticPanel } from './ui/app-ontic.js';
 import { BackgroundManager } from './backgrounds.js';
-import { AppShell } from './ui/shell/app-shell.js?v=25';
+import { AppShell } from './ui/shell/app-shell.js?v=26';
 import {
     initChartsPanel,
     initDiagnosticsPanel,

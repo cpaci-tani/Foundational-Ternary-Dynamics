@@ -85,7 +85,7 @@ import { ViewportFluxRenderer } from './viewport/flux-renderer.js?v=5';
 // forwards every particle-mesh method through a thin wrapper. Atom/bond/
 // orbital rendering is owned by MolecularRenderer (see import above) and
 // remains delegated separately. See viewport/REFACTOR_MAP.md §3d.
-import { ViewportParticleRenderer } from './viewport/particle-renderer.js?v=12';
+import { ViewportParticleRenderer } from './viewport/particle-renderer.js?v=13';
 // Field overlays (E/B/Poynting/divergence/force volumes/dark matter/damping/
 // genesis/confinement/dual flux/chirality/light/horizon + quantum overlays)
 // extracted as Phase 3c — the largest viewport sub-renderer (66 methods, 27+

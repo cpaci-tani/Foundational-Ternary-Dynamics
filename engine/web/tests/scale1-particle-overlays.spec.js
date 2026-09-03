@@ -496,8 +496,8 @@ test.describe('Scale 1 native-engine scenarios and overlays', () => {
             };
         });
 
-        expect(audit.buttonCount).toBe(17);
-        expect(audit.uniqueButtonCount).toBe(17);
+        expect(audit.buttonCount).toBe(18);
+        expect(audit.uniqueButtonCount).toBe(18);
         expect(audit.advancedIds).toBe(true);
         expect(audit.exchangeActive).toBe(true);
         expect(audit.exchangePressed).toBe('true');

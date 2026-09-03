@@ -32,7 +32,11 @@ import {
 import { MAX_PARTICLES, PE_VIS_BOUNDARY_R } from './constants.js';
 
 // Custom particle shaders — centralized in viewport/shaders.js (D-1).
-import { PARTICLE_VERT, PARTICLE_FRAG, PARTICLE_SHADER_UNIFORMS } from './shaders.js';
+import {
+    RECORD_PARTICLE_VERT,
+    RECORD_PARTICLE_FRAG,
+    PARTICLE_SHADER_UNIFORMS,
+} from './shaders.js?v=2';
 
 // SU(3)-labeled color-charge palette, keyed off the real genesis-assigned
 // Voxel::color field (0=colorless, 1=red, 2=green, 3=blue). Deliberately
@@ -289,22 +293,30 @@ export class ViewportParticleRenderer {
         const sizes = new Float32Array(MAX_PARTICLES);
         const manifestPhases = new Float32Array(MAX_PARTICLES);
         const manifestRates = new Float32Array(MAX_PARTICLES);
+        const appearanceRoles = new Float32Array(MAX_PARTICLES);
+        const focusWeights = new Float32Array(MAX_PARTICLES);
 
         const posAttr = new THREE.BufferAttribute(positions, 3);
         const colAttr = new THREE.BufferAttribute(colors, 3);
         const sizeAttr = new THREE.BufferAttribute(sizes, 1);
         const phaseAttr = new THREE.BufferAttribute(manifestPhases, 1);
         const rateAttr = new THREE.BufferAttribute(manifestRates, 1);
+        const roleAttr = new THREE.BufferAttribute(appearanceRoles, 1);
+        const focusAttr = new THREE.BufferAttribute(focusWeights, 1);
         posAttr.setUsage(THREE.DynamicDrawUsage);
         colAttr.setUsage(THREE.DynamicDrawUsage);
         sizeAttr.setUsage(THREE.DynamicDrawUsage);
         phaseAttr.setUsage(THREE.DynamicDrawUsage);
         rateAttr.setUsage(THREE.DynamicDrawUsage);
+        roleAttr.setUsage(THREE.DynamicDrawUsage);
+        focusAttr.setUsage(THREE.DynamicDrawUsage);
         geometry.setAttribute('position', posAttr);
         geometry.setAttribute('particleColor', colAttr);
         geometry.setAttribute('size', sizeAttr);
         geometry.setAttribute('manifestPhase', phaseAttr);
         geometry.setAttribute('manifestRate', rateAttr);
+        geometry.setAttribute('appearanceRole', roleAttr);
+        geometry.setAttribute('focusWeight', focusAttr);
         geometry.setDrawRange(0, 0);
 
         const material = new THREE.ShaderMaterial({
@@ -314,8 +326,8 @@ export class ViewportParticleRenderer {
                 uOpacity: { value: this.visualSettings.particleOpacity ?? 0.9 },
                 uGlow: { value: this.visualSettings.glowIntensity ?? 0.15 },
             },
-            vertexShader: PARTICLE_VERT,
-            fragmentShader: PARTICLE_FRAG,
+            vertexShader: RECORD_PARTICLE_VERT,
+            fragmentShader: RECORD_PARTICLE_FRAG,
             transparent: true,
             depthWrite: false,
             depthTest: true,
@@ -1007,7 +1019,11 @@ export class ViewportParticleRenderer {
         const sizeAttr = geo.getAttribute('size');
         const phaseAttr = geo.getAttribute('manifestPhase');
         const rateAttr = geo.getAttribute('manifestRate');
+        const roleAttr = geo.getAttribute('appearanceRole');
+        const focusAttr = geo.getAttribute('focusWeight');
         const hasManifest = !!(data.phases && data.rates);
+        const hasAppearanceRoles = !!data.roles;
+        const hasParticleIds = !!data.particleIds;
         const colorByColorCharge = this.visualSettings.colorByColorCharge && !!data.colorCharge;
         const latticeMode = this._getEngineMode() === 'lattice';
 
@@ -1067,6 +1083,9 @@ export class ViewportParticleRenderer {
                 phaseAttr.array[count] = 0;
                 rateAttr.array[count] = 0;
             }
+            roleAttr.array[count] = hasAppearanceRoles ? data.roles[i] : 0;
+            focusAttr.array[count] = this._peInspectionIds && hasParticleIds
+                && this._peInspectionIds.has(Number(data.particleIds[i])) ? 1 : 0;
             count++;
         }
 
@@ -1075,6 +1094,8 @@ export class ViewportParticleRenderer {
         sizeAttr.needsUpdate = true;
         if (phaseAttr) phaseAttr.needsUpdate = true;
         if (rateAttr) rateAttr.needsUpdate = true;
+        roleAttr.needsUpdate = true;
+        focusAttr.needsUpdate = true;
 
         geo.setDrawRange(0, count);
     }

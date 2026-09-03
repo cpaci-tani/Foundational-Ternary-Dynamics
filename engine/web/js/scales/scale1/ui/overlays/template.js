@@ -91,7 +91,7 @@ export function getScale1OverlayTemplate() {
     overlaySection(
       'Particle anatomy',
       'Qualification and source record',
-      overlayRow('', `
+      `${overlayRow('', `
         <button class="view-toggle field-toggle" id="toggle-pe-admissibility"
           title="Identity/qualification halo: solid green marks a qualified registered native record; dashed amber marks an unqualified candidate.">
           <span class="field-swatch field-swatch-pe-admissibility"></span>Identity halo
@@ -100,7 +100,17 @@ export function getScale1OverlayTemplate() {
           title="Floating source and constituent label from snapshot provenance. No catalog identity is inferred.">
           <span class="field-swatch field-swatch-pe-provenance"></span>Provenance
         </button>
-      `),
+      `)}
+      <div class="pe-appearance-key" aria-label="Scale 1 particle appearance key">
+        <span class="pe-appearance-key-item pe-appearance-key-core"
+          title="Persistent bright center: the effective ParticleEngine record coordinate, not a solid particle interior.">Record core</span>
+        <span class="pe-appearance-key-item pe-appearance-key-cloud"
+          title="Deterministic dotted volume: effective localization support in simulation units, not a recovered quantum probability density.">Localization</span>
+        <span class="pe-appearance-key-item pe-appearance-key-rim"
+          title="Sparse outer rim: the effective interaction-support radius r_eff, not a material wall.">Support rim</span>
+        <span class="pe-appearance-key-item pe-appearance-key-pulse"
+          title="Brightness phase: bounded activity and manifestation timing. Hue remains a catalog presentation aid.">Activity phase</span>
+      </div>`,
     ),
   ].join('');
 

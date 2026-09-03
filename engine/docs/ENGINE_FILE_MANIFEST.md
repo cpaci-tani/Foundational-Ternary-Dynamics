@@ -4,24 +4,24 @@
 > Machine-readable source of truth: [`ENGINE_FILE_MANIFEST.json`](ENGINE_FILE_MANIFEST.json)  
 > Narrative map: [`ENGINE_CODE_MAP.md`](ENGINE_CODE_MAP.md)
 
-**2691 code files, 733,478 LOC** (tracked `.cpp/.cc/.h/.hpp/.cu/.cuh/.js/.mjs/.py` under `engine/`).
+**2692 code files, 733,956 LOC** (tracked `.cpp/.cc/.h/.hpp/.cu/.cuh/.js/.mjs/.py` under `engine/`).
 
 ## Subsystem rollup
 
 | Subsystem | Files | LOC |
 |---|--:|--:|
-| `tests` | 810 | 247,096 |
+| `tests` | 810 | 247,129 |
 | `other` | 806 | 163,140 |
 | `web/js-toplevel` | 51 | 76,143 |
-| `src/core` | 198 | 69,274 |
+| `src/core` | 198 | 69,302 |
 | `include` | 300 | 38,954 |
-| `web/tests` | 144 | 35,501 |
+| `web/tests` | 145 | 35,709 |
 | `web/scale0` | 68 | 23,203 |
 | `cuda` | 30 | 18,527 |
 | `web/ui` | 86 | 12,753 |
-| `web/viewport` | 22 | 10,603 |
+| `web/viewport` | 22 | 10,740 |
 | `web/bridge` | 26 | 9,528 |
-| `web/scale1` | 20 | 4,416 |
+| `web/scale1` | 20 | 4,488 |
 | `src/scenarios` | 8 | 3,795 |
 | `wasm` | 5 | 3,584 |
 | `web/scale2` | 12 | 2,074 |
@@ -46,7 +46,7 @@
 
 ## Files by subsystem
 
-### `tests`  (810 files, 247,096 LOC)
+### `tests`  (810 files, 247,129 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
@@ -95,6 +95,7 @@
 | [`test_emergent_ic1_topology.cpp`](../../engine/tests/test_emergent_ic1_topology.cpp) | 683 | @file test_emergent_ic1_topology.cpp @brief Regression + topology verification for the canonical ic1 cluster. |
 | [`test_bound_dressing_persistence.cpp`](../../engine/tests/test_bound_dressing_persistence.cpp) | 678 | FTD-0727: locked finite-volume bound-dressing persistence campaign. |
 | [`test_connected_block_translation_stability.cpp`](../../engine/tests/test_connected_block_translation_stability.cpp) | 676 | FTD-0624: dynamical classification of connected-block translation extrema. |
+| [`test_particle_engine.cpp`](../../engine/tests/test_particle_engine.cpp) | 674 | Phase 7 — Stage 2: ParticleEngine unit tests (17 gates) PE1: Particle injection (id assigned, charge correct) PE2: Free particle (constant velocity when alone, no damping) PE3: Opposite attract (fo... |
 | [`test_finite_support_outgoing_tail_formation.cpp`](../../engine/tests/test_finite_support_outgoing_tail_formation.cpp) | 668 | FTD-0739: finite-support outgoing-tail matter formation. |
 | [`test_persistence_reentry_volume_discriminator.cpp`](../../engine/tests/test_persistence_reentry_volume_discriminator.cpp) | 668 | FTD-0730: locked persistence/re-entry volume discriminator. |
 | [`campaign_m4_moving_dressing_observer_forensics_cuda.cpp`](../../engine/tests/campaign_m4_moving_dressing_observer_forensics_cuda.cpp) | 664 | FTD-0762: outcome-aware CUDA forensics for the FTD-0761 observer failure. |
@@ -106,7 +107,6 @@
 | [`campaign_dispersion.cpp`](../../engine/tests/campaign_dispersion.cpp) | 646 | Campaign: Dispersion Relation (consolidated suite) Merges 3 legacy dispersion test/campaign files into a single ftd::test-instrumented suite using the Phase 2a NDJSON telemetry API: test_dispersion... |
 | [`campaign_thomson_native_continuity.cpp`](../../engine/tests/campaign_thomson_native_continuity.cpp) | 646 | FTD-0291: Thomson native finite-volume continuity meter. |
 | [`test_energy_adapted_mixed_capture_corners.cpp`](../../engine/tests/test_energy_adapted_mixed_capture_corners.cpp) | 641 | FTD-0734: energy-adapted mixed capture corners. |
-| [`test_particle_engine.cpp`](../../engine/tests/test_particle_engine.cpp) | 641 | Phase 7 — Stage 2: ParticleEngine unit tests (17 gates) PE1: Particle injection (id assigned, charge correct) PE2: Free particle (constant velocity when alone, no damping) PE3: Opposite attract (fo... |
 | [`test_spline_poynting_noether_defect.cpp`](../../engine/tests/test_spline_poynting_noether_defect.cpp) | 639 | FTD-0619: spline-Poynting versus fixed-lattice Noether defect. |
 | [`campaign_transported_chart_matter_morphology_cuda.cpp`](../../engine/tests/campaign_transported_chart_matter_morphology_cuda.cpp) | 638 | FTD-0764: transported-chart morphology and momentum replay on CUDA. |
 | [`campaign_m3_relational_chart_held_out_validation_cuda.cpp`](../../engine/tests/campaign_m3_relational_chart_held_out_validation_cuda.cpp) | 637 | FTD-0760: relational-chart fresh held-out M3 validation. |
@@ -1728,13 +1728,13 @@
 | [`bridge-init.js`](../../engine/web/js/bridge-init.js) | 32 | @file engine/web/js/bridge-init.js @purpose Bridge barrel + capability-getter installer. |
 | [`status.js`](../../engine/web/js/app-wire/status.js) | 27 | app-wire/status.js — toast + loading-bar helpers for the dashboard. |
 
-### `src/core`  (198 files, 69,274 LOC)
+### `src/core`  (198 files, 69,302 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
 | [`connected_moore_block_action.cpp`](../../engine/src/eft/connected_moore_block_action.cpp) | 2572 | _symbols:_ PreparedForwardFields, PreparedReverseFields, Candidate, RootResult |
 | [`render_bridge.cpp`](../../engine/src/render_bridge.cpp) | 1500 | Logic-First FTD Engine (v2.0) Built from axioms: {3D lattice, ternary states, flux field, local causality} Six rules, nothing else: 1. |
-| [`particle_engine.cpp`](../../engine/src/particle_engine.cpp) | 1454 | ParticleEngine: Scale 1 simulation Phase 7: Effective, lattice-free engine with continuous positions and analytical forces, advanced once per discrete global tick. |
+| [`particle_engine.cpp`](../../engine/src/particle_engine.cpp) | 1482 | ParticleEngine: Scale 1 simulation Phase 7: Effective, lattice-free engine with continuous positions and analytical forces, advanced once per discrete global tick. |
 | [`ws_server_commands.cpp`](../../engine/src/ws_server_commands.cpp) | 997 | @file ws_server_commands.cpp @brief Resource policy, transactional bridge changes, and command dispatch. |
 | [`domain.cpp`](../../engine/src/scale1/domain.cpp) | 854 |  |
 | [`closed_neutral_trimer_pair.cpp`](../../engine/src/eft/closed_neutral_trimer_pair.cpp) | 841 | _symbols:_ PreparedForwardFields, Candidate, RootResult |
@@ -2236,7 +2236,7 @@
 | [`proper_time_rate.h`](../../engine/include/ftd/proper_time_rate.h) | 6 | Compatibility include. |
 | [`native_wave_energy.h`](../../engine/include/ftd/eft/native_wave_energy.h) | 3 | Compatibility name for the exact wave-energy observer used by FTD-0452. |
 
-### `web/tests`  (144 files, 35,501 LOC)
+### `web/tests`  (145 files, 35,709 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
@@ -2288,6 +2288,7 @@
 | [`scale2-atom-overlays.spec.js`](../../engine/web/tests/scale2-atom-overlays.spec.js) | 234 | @ts-check |
 | [`scale0-panel-mutation-contract.spec.js`](../../engine/web/tests/scale0-panel-mutation-contract.spec.js) | 229 | @ts-check |
 | [`scale0-worker-lifecycle.node.test.mjs`](../../engine/web/tests/scale0-worker-lifecycle.node.test.mjs) | 228 | _symbols:_ FakeWorker |
+| [`scale1-wasm-tick-stress.spec.js`](../../engine/web/tests/scale1-wasm-tick-stress.spec.js) | 228 | @ts-check |
 | [`scale0-diagnostics-integration-audit.spec.js`](../../engine/web/tests/scale0-diagnostics-integration-audit.spec.js) | 224 | @ts-check |
 | [`flux-slice-axes.spec.js`](../../engine/web/tests/flux-slice-axes.spec.js) | 213 | @ts-check |
 | [`flux-upload-microbench.spec.js`](../../engine/web/tests/flux-upload-microbench.spec.js) | 208 | @ts-check |
@@ -2312,7 +2313,6 @@
 | [`take_gallery_screenshots.spec.js`](../../engine/web/tests/take_gallery_screenshots.spec.js) | 152 | @ts-check |
 | [`animation-clock-freeze.spec.js`](../../engine/web/tests/animation-clock-freeze.spec.js) | 150 | @ts-check |
 | [`sitewide-font-floor.spec.js`](../../engine/web/tests/sitewide-font-floor.spec.js) | 148 | @ts-check |
-| [`scale1-wasm-tick-stress.spec.js`](../../engine/web/tests/scale1-wasm-tick-stress.spec.js) | 143 | @ts-check |
 | [`panel-mount-integration.spec.js`](../../engine/web/tests/panel-mount-integration.spec.js) | 142 | @ts-check |
 | [`scale1-scenario-health.spec.js`](../../engine/web/tests/scale1-scenario-health.spec.js) | 141 | @ts-check |
 | [`scale0-scalecontext.spec.js`](../../engine/web/tests/scale0-scalecontext.spec.js) | 137 | @ts-check |
@@ -2326,6 +2326,7 @@
 | [`scale0-telemetry-gating.spec.js`](../../engine/web/tests/scale0-telemetry-gating.spec.js) | 126 | @ts-check |
 | [`scale0-controls-integration-audit.spec.js`](../../engine/web/tests/scale0-controls-integration-audit.spec.js) | 125 | @ts-check |
 | [`scale0-panel-wiring.spec.js`](../../engine/web/tests/scale0-panel-wiring.spec.js) | 124 | @ts-check |
+| [`scale1-particle-appearance.spec.js`](../../engine/web/tests/scale1-particle-appearance.spec.js) | 123 | @ts-check |
 | [`scale0-time.spec.js`](../../engine/web/tests/scale0-time.spec.js) | 122 | @ts-check |
 | [`scale0-standard-model-overlay.spec.js`](../../engine/web/tests/scale0-standard-model-overlay.spec.js) | 118 | @ts-check |
 | [`scale1-particle-ledger.node.test.mjs`](../../engine/web/tests/scale1-particle-ledger.node.test.mjs) | 118 | Run: node engine/web/tests/scale1-particle-ledger.node.test.mjs |
@@ -2584,12 +2585,12 @@
 | [`template.js`](../../engine/web/js/ui/components/viewport-frame/template.js) | 3 | _symbols:_ getViewportFrameTemplate() |
 | [`uPlot.iife.min.js`](../../engine/web/js/ui/charts/vendor/uPlot.iife.min.js) | 2 | ! https://github.com/leeoniya/uPlot (v1.6.30) |
 
-### `web/viewport`  (22 files, 10,603 LOC)
+### `web/viewport`  (22 files, 10,740 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
 | [`viewport.js`](../../engine/web/js/viewport.js) | 1329 | @file viewport.js @brief Three.js 3D Viewport — renders particles and fields from the simulation bridge. |
-| [`particle-renderer.js`](../../engine/web/js/viewport/particle-renderer.js) | 1239 | @file engine/web/js/viewport/particle-renderer.js @purpose Owns particle positions, trails, velocity vectors, per-particle force vectors for the Scale-0 lattice dashboard. |
+| [`particle-renderer.js`](../../engine/web/js/viewport/particle-renderer.js) | 1260 | @file engine/web/js/viewport/particle-renderer.js @purpose Owns particle positions, trails, velocity vectors, per-particle force vectors for the Scale-0 lattice dashboard. |
 | [`scene-core.js`](../../engine/web/js/viewport/scene-core.js) | 1023 | @file engine/web/js/viewport/scene-core.js @purpose Owns scene-level rendering infrastructure for the Scale-0 dashboard: boundary wireframe, axis indicators, post-processing pipeline (bloom), camer... |
 | [`field-em-renderer.js`](../../engine/web/js/viewport/field-em-renderer.js) | 966 | fieldEmMethods — ViewportFieldRenderer mixin (heatmap / EM / phase / state). |
 | [`flux-renderer.js`](../../engine/web/js/viewport/flux-renderer.js) | 859 | @file engine/web/js/viewport/flux-renderer.js @purpose Owns flux volume, flux streamlines for the Scale-0 lattice dashboard. |
@@ -2599,12 +2600,12 @@
 | [`field-quantum-renderer.js`](../../engine/web/js/viewport/field-quantum-renderer.js) | 542 | fieldQuantumMethods — ViewportFieldRenderer mixin (dual / chirality / quantum / entropy). |
 | [`field-topology-renderer.js`](../../engine/web/js/viewport/field-topology-renderer.js) | 497 | fieldTopologyMethods — ViewportFieldRenderer mixin (halo / damping / genesis / strings). |
 | [`field-renderer.js`](../../engine/web/js/viewport/field-renderer.js) | 337 | ViewportFieldRenderer — Scale-0 field overlay façade. |
+| [`shaders.js`](../../engine/web/js/viewport/shaders.js) | 276 | Centralized Shaders for FTD Web Frontend ──────────────────────────────────────────────────────────────────── Houses shared GLSL shader strings to ensure DRY compliance and enable global shader opt... |
 | [`boundary-geometry.js`](../../engine/web/js/viewport/boundary-geometry.js) | 274 | viewport/boundary-geometry.js — Three.js boundary wireframe builders Extracted from viewport.js as refactoring-analyst ticket RF-4 of the post-modularization cleanup (see engine/web/docs/INDEX.md). |
 | [`clock-hover.js`](../../engine/web/js/viewport/clock-hover.js) | 268 | _symbols:_ GlobalClockHoverController, tagClockHover(), GLOBAL_CLOCK_PHASES |
 | [`color-ramps.js`](../../engine/web/js/viewport/color-ramps.js) | 265 | Color ramps for Scale 0 viewport overlays. |
 | [`flux-activation.js`](../../engine/web/js/viewport/flux-activation.js) | 260 | Flux-volume activation proxy. |
 | [`spin-arrow-manager.js`](../../engine/web/js/viewport/spin-arrow-manager.js) | 233 | Spin-Arrow Manager — Three.js primitive that follows tracked particles and visualizes their spin orientation + precession rate. |
-| [`shaders.js`](../../engine/web/js/viewport/shaders.js) | 160 | Centralized Shaders for FTD Web Frontend ──────────────────────────────────────────────────────────────────── Houses shared GLSL shader strings to ensure DRY compliance and enable global shader opt... |
 | [`field-renderer-shared.js`](../../engine/web/js/viewport/field-renderer-shared.js) | 63 | Shared helpers/constants for FieldRenderer mixins. |
 | [`mesh-factory.js`](../../engine/web/js/viewport/mesh-factory.js) | 61 | @file engine/web/js/viewport/mesh-factory.js @purpose Utility factory functions to build Three.js buffer geometries and line meshes. |
 | [`field-renderer-core.js`](../../engine/web/js/viewport/field-renderer-core.js) | 46 | fieldCoreMethods — ViewportFieldRenderer mixin (clip / center sync). |
@@ -2642,20 +2643,20 @@
 | [`sampler-registry.classic.js`](../../engine/web/js/bridge/sampler-registry.classic.js) | 33 | Classic-worker sampler + toggle-requires registry. |
 | [`scale2.js`](../../engine/web/js/bridge/capabilities/scale2.js) | 25 | @file engine/web/js/bridge/capabilities/scale2.js @purpose Scale-2 (atom engine) capability factory. |
 
-### `web/scale1`  (20 files, 4,416 LOC)
+### `web/scale1`  (20 files, 4,488 LOC)
 
 | File | LOC | Purpose |
 |---|--:|---|
 | [`controller.js`](../../engine/web/js/scales/scale1/controller.js) | 829 | Scale 1 (Particles) Controller — native-engine edition. |
 | [`particle-ledger.js`](../../engine/web/js/scales/scale1/telemetry/particle-ledger.js) | 663 | Scale-1 particle relationship and event ledger. |
 | [`scenario-registry.js`](../../engine/web/js/scales/scale1/scenario-registry.js) | 648 | Scale-1 scenario execution adapter. |
-| [`pe-cloud-expander.js`](../../engine/web/js/scales/scale1/pe-cloud-expander.js) | 502 | Scale 1 — PE Cloud Expander ──────────────────────────────────────────────────────────────────── Fixed-boundary point cloud per particle. |
+| [`pe-cloud-expander.js`](../../engine/web/js/scales/scale1/pe-cloud-expander.js) | 564 | Scale 1 — PE Cloud Expander ──────────────────────────────────────────────────────────────────── Fixed-boundary point cloud per particle. |
 | [`pe-controls.js`](../../engine/web/js/scales/scale1/ui/controls/pe-controls.js) | 378 | Scale 1 — Particle Engine Controls Card (native-engine edition). |
 | [`component.js`](../../engine/web/js/scales/scale1/ui/particle-log/component.js) | 344 | _symbols:_ ParticleLogPanelComponent, InteractionHierarchyPanelComponent, initParticleLogPanel(), initInteractionHierarchyPanel() |
 | [`inspection-focus.js`](../../engine/web/js/scales/scale1/inspection-focus.js) | 175 | Scale 1 inspection-focus contract. |
 | [`particle-worker-executor.js`](../../engine/web/js/scales/scale1/particle-worker-executor.js) | 143 | Main-thread coordinator for state-complete Scale-1 worker tick batches. |
 | [`checkpoint-replay.js`](../../engine/web/js/scales/scale1/checkpoint-replay.js) | 131 | Versioned Scale-1 checkpoint and deterministic replay coordinator. |
-| [`template.js`](../../engine/web/js/scales/scale1/ui/overlays/template.js) | 114 | Scale 1 Viewport Overlay — particle engine dynamics (grouped by physical role) |
+| [`template.js`](../../engine/web/js/scales/scale1/ui/overlays/template.js) | 124 | Scale 1 Viewport Overlay — particle engine dynamics (grouped by physical role) |
 | [`store.js`](../../engine/web/js/scales/scale1/state/store.js) | 107 | Scale-1 state store. |
 | [`trail-settings.js`](../../engine/web/js/scales/scale1/trail-settings.js) | 78 | Presentation-only trajectory-history settings for Scale 1. |
 | [`particle-engine.worker.js`](../../engine/web/js/scales/scale1/particle-engine.worker.js) | 72 | Dedicated single-owner Scale-1 tick worker. |

@@ -203,15 +203,29 @@ bool ParticleEngine::validate_state(std::string* err) const {
     } else {
         for (const auto& p : particles_) {
             if (!std::isfinite(p.mass) || p.mass <= 0.0) {
-                message = "particle mass must be finite and positive";
+                message = "particle " + std::to_string(p.id)
+                    + " mass must be finite and positive";
             } else if (!std::isfinite(p.r_eff) || p.r_eff < 0.0) {
-                message = "particle effective radius must be finite and nonnegative";
-            } else if (!finite_vec3(p.position) || !finite_vec3(p.velocity)
-                       || !finite_vec3(p.acceleration)
-                       || !finite_vec3(p.prev_acceleration)
-                       || !finite_vec3(p.spin_axis)
-                       || !finite_vec3(p.momentum)) {
-                message = "particle vector fields must be finite";
+                message = "particle " + std::to_string(p.id)
+                    + " effective radius must be finite and nonnegative";
+            } else if (!finite_vec3(p.position)) {
+                message = "particle " + std::to_string(p.id)
+                    + " position must be finite";
+            } else if (!finite_vec3(p.velocity)) {
+                message = "particle " + std::to_string(p.id)
+                    + " velocity must be finite";
+            } else if (!finite_vec3(p.acceleration)) {
+                message = "particle " + std::to_string(p.id)
+                    + " acceleration must be finite";
+            } else if (!finite_vec3(p.prev_acceleration)) {
+                message = "particle " + std::to_string(p.id)
+                    + " previous acceleration must be finite";
+            } else if (!finite_vec3(p.spin_axis)) {
+                message = "particle " + std::to_string(p.id)
+                    + " spin axis must be finite";
+            } else if (!finite_vec3(p.momentum)) {
+                message = "particle " + std::to_string(p.id)
+                    + " momentum must be finite";
             }
             if (!message.empty()) break;
         }
@@ -222,15 +236,21 @@ bool ParticleEngine::validate_state(std::string* err) const {
 
 Vec3 ParticleEngine::momentum_from_velocity(const Particle& p) {
     if (p.locked) return {};
-    const double v2 = p.velocity.mag2();
+    const double speed = std::hypot(p.velocity.x, p.velocity.y, p.velocity.z);
     const double c2 = C_SPEED * C_SPEED;
-    if (v2 <= 1e-30) return {};
-    if (v2 >= c2) {
+    if (speed <= 1e-15) return {};
+    if (!std::isfinite(speed) || speed >= C_SPEED) {
         throw std::domain_error(
             "ParticleEngine cannot construct finite momentum at or beyond C_SPEED");
     }
+    const double v2 = speed * speed;
     const double gamma = 1.0 / std::sqrt(1.0 - v2 / c2);
-    return p.velocity * (p.mass * gamma);
+    const Vec3 momentum = p.velocity * (p.mass * gamma);
+    if (!finite_vec3(momentum)) {
+        throw std::overflow_error(
+            "ParticleEngine relativistic momentum exceeds finite representation");
+    }
+    return momentum;
 }
 
 double ParticleEngine::kinetic_energy(const Particle& p, bool relativistic) {
@@ -265,20 +285,21 @@ int ParticleEngine::add_particle(int8_t charge, Vec3 position, Vec3 velocity,
             "ParticleEngine particle effective radius must be finite and nonnegative");
     }
     Particle p;
-    p.id = next_id_++;
+    p.id = next_id_;
     p.charge = charge;
     p.mass = mass;
     p.r_eff = r_eff;
     p.position = position;
     p.velocity = velocity;
-    const double requested_speed = p.velocity.mag();
-    if (requested_speed >= C_SPEED) {
+    const double requested_speed = std::hypot(
+        p.velocity.x, p.velocity.y, p.velocity.z);
+    const bool projected_speed = requested_speed >= C_SPEED;
+    if (projected_speed) {
         // The effective record has no admissible superluminal state. Project at
         // the API boundary and mark the run ineligible for a conservation-drift
         // claim instead of allowing an invalid record into a transaction.
         const double capped = std::nextafter(C_SPEED, 0.0);
         p.velocity *= capped / requested_speed;
-        ++speed_projection_count_;
     }
     p.spin = spin;
     p.color = color;
@@ -287,7 +308,9 @@ int ParticleEngine::add_particle(int8_t charge, Vec3 position, Vec3 velocity,
         p.spin_axis = {0.0, 0.0, static_cast<double>(spin)};
     }
     p.momentum = momentum_from_velocity(p);
+    if (projected_speed) ++speed_projection_count_;
     p.provenance.source_object_id = p.id;
+    ++next_id_;
     particles_.push_back(p);
     forces_.push_back({});
     invalidate_observation();
@@ -304,7 +327,7 @@ int ParticleEngine::add_locked_particle(int8_t charge, Vec3 position, double mas
             "ParticleEngine locked-particle mass must be finite and positive");
     }
     Particle p;
-    p.id = next_id_++;
+    p.id = next_id_;
     p.charge = charge;
     p.mass = mass;
     p.r_eff = R_EFF_DEFAULT;
@@ -318,6 +341,7 @@ int ParticleEngine::add_locked_particle(int8_t charge, Vec3 position, double mas
     p.momentum = {0.0, 0.0, 0.0};
     p.provenance.source_object_id = p.id;
     p.provenance.source_kind = "imposed_kinematic_anchor";
+    ++next_id_;
     particles_.push_back(p);
     forces_.push_back({});
     invalidate_observation();
@@ -328,14 +352,18 @@ bool ParticleEngine::set_particle_velocity(int id, Vec3 velocity) {
     if (!finite_vec3(velocity)) return false;
     for (auto& p : particles_) {
         if (p.id != id) continue;
-        const double speed = velocity.mag();
-        if (speed >= C_SPEED) {
+        const double speed = std::hypot(velocity.x, velocity.y, velocity.z);
+        const bool projected_speed = speed >= C_SPEED;
+        if (projected_speed) {
             const double capped = std::nextafter(C_SPEED, 0.0);
             velocity *= capped / speed;
-            ++speed_projection_count_;
         }
-        p.velocity = p.locked ? Vec3{} : velocity;
-        p.momentum = momentum_from_velocity(p);
+        Particle candidate = p;
+        candidate.velocity = candidate.locked ? Vec3{} : velocity;
+        candidate.momentum = momentum_from_velocity(candidate);
+        p.velocity = candidate.velocity;
+        p.momentum = candidate.momentum;
+        if (projected_speed) ++speed_projection_count_;
         invalidate_observation();
         return true;
     }
