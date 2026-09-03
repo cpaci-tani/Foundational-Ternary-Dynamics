@@ -1178,6 +1178,14 @@ export class WasmBridge {
         }
     }
 
+    aeSetAtomVelocity(id, vx, vy, vz) {
+        return this._ensureAEFallback().aeSetAtomVelocity(id, vx, vy, vz);
+    }
+
+    aeSetExperimentState(experiment) {
+        return this._ensureAEFallback().aeSetExperimentState(experiment);
+    }
+
     aeTick() {
         if (this._aeHasWasm && this._ae) {
             this._ae.tick();

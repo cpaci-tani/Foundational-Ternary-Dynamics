@@ -180,7 +180,7 @@ In the **Particle Zoo**, each Category or Generation heading is a collapsible di
 
 Scale 2 runs the AtomEngine — softened Coulomb (ionic), Lennard-Jones 12-6 (vdW), harmonic bond springs, plus toggleable Phase-3 forces (H-bonds LJ 10-12·cos²θ, dipole–dipole, VSEPR angle strain, Berendsen thermostat, electronegativity-extended auto-bonding). **All AE energies, temperatures, and momenta are sim units** (implicit k_B = 1) — panels label them "(sim)", never MeV or Kelvin. The JS engine is the production backend on every bridge; its force constants are visualization-scale tunings, deliberately different from the C++ AtomEngine's ontic-chain prefactors (see `engine/SPEC_ENGINE.md` §Scale 2).
 
-The selector contains 146 entries: 29 curated contracts plus 117 generated
+The selector contains 150 entries: 33 curated contracts plus 117 generated
 single-element references (hydrogen is already the curated composite
 reference). Every curated entry applies a complete physics and visual profile
 at load.
@@ -194,8 +194,8 @@ Scenario groups include:
 - **Water / H-bond** (`ae-water-dimer`, `ae-water-cluster`) — pre-bonded H₂O with Phase-3 H-bonds + angle strain; shows dashed donor-H···acceptor lines.
 - **VSEPR** (`ae-vsepr-linear`, `-tetrahedral`, `-bent`) — seeded at the wrong angle, angle strain relaxes toward 180°/109.47°/104.5°; the exact post-safety net arrow includes every active force component.
 - **Thermal** (`ae-thermal-gas`) — Berendsen thermostat toward T = 1.0 (sim); velocity vectors on.
-- **Validation laboratories** (`ae-conservative-pair`, `ae-damped-relaxation`, `ae-polar-dimer`) — isolate conservation, damping, and dipole/H-bond behavior.
-- **Nuclear laboratories** (`ae-dt-fusion`, `ae-u235-fission`, `ae-dt-fusion-burn`, `ae-u235-chain-reaction`) — finite live collision/transport models with separate microscopic Q, represented-population energy, deposition, and escape ledgers. Their reaction hazards and transport coefficients are explicitly **[PARAMETRIC]**; they are not ab-initio nuclear calculations.
+- **Controlled laboratories** (`ae-conservative-pair`, `ae-damped-relaxation`, `ae-polar-dimer`, `ae-bond-rupture-cycle`, `ae-argon-thermal-cycle`, `ae-crystal-impulse-vacancy`, `ae-u235-criticality-controls`) — isolate conservation, dissipation, bond topology, thermal intervention, defect-limited energy transport, and finite neutron controls. Scheduled phases are displayed in live diagnostics and never alter a force kernel.
+- **Nuclear laboratories** (`ae-dt-fusion`, `ae-u235-fission`, `ae-dt-fusion-burn`, `ae-u235-chain-reaction`, `ae-u235-criticality-controls`) — finite live collision/transport models with separate microscopic Q, represented-population energy, deposition, and escape ledgers. Their reaction hazards and transport coefficients are explicitly **[PARAMETRIC]**; they are not ab-initio nuclear calculations.
 - **Periodic table** (`ae-periodic`) — all 118 elements locked; clouds/shells off for performance.
 
 **Control map:** the scenario selector is in the context bar. All presentation

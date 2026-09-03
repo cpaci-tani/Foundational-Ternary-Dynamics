@@ -234,6 +234,25 @@ export function setupAEScenario(name, ctx) {
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 25); viewport.controls.update(); }
             break;
         }
+        case 'ae-bond-rupture-cycle': {
+            // Start at the H-H spring equilibrium with enough explicitly
+            // imposed outward kinetic energy to cross the 3.5*r_eq topology
+            // threshold. The controller's declared experiment protocol turns
+            // the pair around at tick 200 and damps it only after recapture.
+            const halfEq = 4.489848193237492 / 2;
+            const left = bridge.aeAddAtom(1, -halfEq, 0, 0, -2.0, 0, 0, 0);
+            const right = bridge.aeAddAtom(1, halfEq, 0, 0, 2.0, 0, 0, 0);
+            bridge.aeCreateBond(left, right, 1);
+            if (inspector) inspector.setScenarioInfo({ title: 'Bond Rupture & Recombination',
+                desc: 'A declared three-phase protocol pulls one effective H-H spring apart, reverses the fragments, then damps the recaptured pair.',
+                fields: {
+                    'Topology': '1 bond → 0 bonds → 1 bond',
+                    'Protocol': 'rupture (T=0) · return (T=200) · settle (T=950)',
+                    'Boundary': '[IMPOSED] graph rule and external control interventions',
+                }});
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 42); viewport.controls.update(); }
+            break;
+        }
         case 'ae-o2-form': {
             bridge.aeSetBonding(true);
             bridge.aeAddAtom(8, -5, 0, 0, 0.06, 0, 0, 0);
@@ -370,6 +389,36 @@ export function setupAEScenario(name, ctx) {
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 55); viewport.controls.update(); }
             break;
         }
+        case 'ae-argon-thermal-cycle': {
+            const spacing = 1.72;
+            const samples = [];
+            let vxMean = 0, vyMean = 0, vzMean = 0;
+            for (let ix = -1; ix <= 1; ix++) {
+                for (let iy = -1; iy <= 1; iy++) {
+                    for (let iz = -1; iz <= 1; iz++) {
+                        const vx = (random() - 0.5) * 0.08;
+                        const vy = (random() - 0.5) * 0.08;
+                        const vz = (random() - 0.5) * 0.08;
+                        samples.push({ x: ix * spacing, y: iy * spacing, z: iz * spacing, vx, vy, vz });
+                        vxMean += vx; vyMean += vy; vzMean += vz;
+                    }
+                }
+            }
+            vxMean /= samples.length; vyMean /= samples.length; vzMean /= samples.length;
+            for (const atom of samples) {
+                bridge.aeAddAtom(18, atom.x, atom.y, atom.z,
+                    atom.vx - vxMean, atom.vy - vyMean, atom.vz - vzMean, 0);
+            }
+            if (inspector) inspector.setScenarioInfo({ title: 'Argon Heat–Quench–Release',
+                desc: 'A dense LJ cluster follows an explicit thermostat schedule, then evolves freely after the external thermal control is removed.',
+                fields: {
+                    'Atoms': '27 × Ar at approximately LJ equilibrium spacing',
+                    'Protocol': 'T*=1.80 (0–499) · T*=0.08 (500–1499) · free (1500+)',
+                    'Boundary': '[IMPOSED] reduced-unit protocol; not a real argon phase diagram',
+                }});
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(13, 10, 18); viewport.controls.update(); }
+            break;
+        }
         case 'ae-collision': {
             bridge.aeSetBonding(false);
             bridge.aeAddAtom(18, -20, 0, 0, 0.4, 0, 0, 0);
@@ -503,6 +552,29 @@ export function setupAEScenario(name, ctx) {
             break;
         }
 
+        case 'ae-u235-criticality-controls': {
+            const [, neutron] = incidentVelocities('u235_fission');
+            for (let ix = -1; ix <= 1; ix++) {
+                for (let iy = -1; iy <= 1; iy++) {
+                    for (let iz = -1; iz <= 1; iz++) {
+                        bridge.aeAddLockedAtom(92, ix * 1.9, iy * 1.9, iz * 1.9, 0, 143);
+                    }
+                }
+            }
+            bridge.aeAddAtom(0, -0.82, 0, 0, neutron.vx, neutron.vy, neutron.vz, 0, 1);
+            if (inspector) inspector.setScenarioInfo({
+                title: 'U-235 Criticality Control Laboratory',
+                desc: 'A repeatable finite-fuel source run. Reload, change one transport control before playback, and compare births, fission losses, leakage, absorption, and observed reproduction.',
+                fields: {
+                    'Baseline': '27 U-235 + thermal neutron · open boundary · continuous source',
+                    'Controls': 'boundary · moderator · absorber · source · reactivity',
+                    'Boundary': '[PARAMETRIC] finite one-group transport; not reactor certification',
+                },
+            });
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(24, 18, 30); viewport.controls.update(); }
+            break;
+        }
+
         // ══════════════════════════════════════════════════════════════
         // METALLIC CLUSTERS -- multi-atom bonding
         // ══════════════════════════════════════════════════════════════
@@ -536,6 +608,37 @@ export function setupAEScenario(name, ctx) {
                 desc: 'Copper atoms in face-centered cubic seed \u2014 nearest-neighbor bonding.',
                 fields: { 'Atoms': '7 \u00d7 Cu', 'Layout': 'FCC (center + 6 face)', 'Force': 'vdW + bond' }});
             if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 15); viewport.controls.update(); }
+            break;
+        }
+        case 'ae-crystal-impulse-vacancy': {
+            // Coordinate separation that makes the engine's softened distance
+            // equal to the Fe-Fe order-1 spring equilibrium. The unconnected
+            // far side of the vacancy row therefore remains exactly at rest.
+            const spacing = 1.48557394385361;
+            const buildChain = (y, vacancy) => {
+                const ids = [];
+                const sites = [];
+                for (let site = -4; site <= 4; site++) {
+                    if (vacancy && site === 0) continue;
+                    const id = bridge.aeAddAtom(26, site * spacing, y, 0,
+                        site === -4 ? 0.18 : 0, 0, 0, 0);
+                    ids.push(id);
+                    sites.push(site);
+                }
+                for (let i = 1; i < ids.length; i++) {
+                    if (sites[i] - sites[i - 1] === 1) bridge.aeCreateBond(ids[i - 1], ids[i], 1);
+                }
+            };
+            buildChain(3.2, false);
+            buildChain(-3.2, true);
+            if (inspector) inspector.setScenarioInfo({ title: 'Crystal Impulse & Vacancy',
+                desc: 'Equal impulses enter matched harmonic iron-record chains. The lower chain has one missing site, so its explicit bond graph cannot transmit across the gap.',
+                fields: {
+                    'Upper': '9 Fe records · 8 links · complete',
+                    'Lower': '8 Fe records · 6 links · center vacancy',
+                    'Boundary': '[IMPOSED] 1-D harmonic analogue; not metallic phonon recovery',
+                }});
+            if (viewport) { viewport.controls.target.set(0, 0, 0); viewport.camera.position.set(0, 0, 30); viewport.controls.update(); }
             break;
         }
 

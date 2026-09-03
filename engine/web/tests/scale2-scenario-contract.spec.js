@@ -40,7 +40,7 @@ test.describe('Scale 2 canonical scenario contract', () => {
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
     });
 
-    test('all 146 selector entries load, match their physics profile, and remain finite', async ({ page }) => {
+    test('all 150 selector entries load, match their physics profile, and remain finite', async ({ page }) => {
         test.setTimeout(180_000);
         const errors = attachConsoleWatcher(page);
         await gotoAndReady(page);
@@ -100,9 +100,9 @@ test.describe('Scale 2 canonical scenario contract', () => {
             };
         });
 
-        expect(audit.count).toBe(146);
+        expect(audit.count).toBe(150);
         expect(audit.curated.ok, audit.curated.errors.join('\n')).toBe(true);
-        expect(audit.curated.count).toBe(29);
+        expect(audit.curated.count).toBe(33);
         expect(audit.failures, audit.failures.join('\n')).toEqual([]);
         expect(audit.deterministic).toBe(true);
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);

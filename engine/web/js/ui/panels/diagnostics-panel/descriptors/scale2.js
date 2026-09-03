@@ -23,6 +23,12 @@ export const sections = [
         rows: [
             { id: 'scenario', label: 'Scenario', unit: '', format: 'text',
               source: 's2.runtime.scenario' },
+            { id: 'experiment-phase', label: 'Experiment Phase', unit: '', format: 'text',
+              source: 's2.runtime.experiment.phase',
+              tooltip: 'Current phase of the selected declared Scale 2 experiment protocol.' },
+            { id: 'experiment-transitions', label: 'Protocol Transitions', unit: 'ct',
+              source: 's2.runtime.experiment.transitionCount',
+              tooltip: 'Number of scheduled control interventions applied since the experiment was loaded.' },
             { id: 'dt', label: 'Time Step', unit: 'tick', source: 's2.runtime.dt' },
             { id: 'softening', label: 'Softening', unit: 'a₀', source: 's2.runtime.softening' },
             { id: 'ionic-on', label: 'Ionic (Coulomb)', unit: '', format: 'boolean',

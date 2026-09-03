@@ -152,6 +152,7 @@ export function createAtomEngine(state) {
             force_clamped_last: false,
             force_clamp_scale: 1.0,
             force_clamp_events: 0,
+            experiment: null,
             nuclear: _aeNewNuclearState(),
             last_error: '',
         };
@@ -166,6 +167,7 @@ export function createAtomEngine(state) {
             state._ae.force_clamped_last = false;
             state._ae.force_clamp_scale = 1.0;
             state._ae.force_clamp_events = 0;
+            state._ae.experiment = null;
             state._ae.nuclear = _aeNewNuclearState();
             state._ae.last_error = '';
         }
@@ -687,6 +689,53 @@ export function createAtomEngine(state) {
         const k_bond = AE_K_BOND * eps_mix / (r_eq * r_eq);
         a.bonds.push({ partner_id: idB, r_eq, k_bond, order });
         b.bonds.push({ partner_id: idA, r_eq, k_bond, order });
+        return true;
+    }
+
+    /** Generic protocol intervention: replace one unlocked atom's velocity. */
+    function aeSetAtomVelocity(id, vx, vy, vz) {
+        if (!state._ae || !Number.isInteger(id) || ![vx, vy, vz].every(Number.isFinite)) {
+            return _aeReject('aeSetAtomVelocity requires an integer ID and finite velocity');
+        }
+        const atom = state._ae.atoms.find(item => item.id === id);
+        if (!atom || atom.locked) return _aeReject(`atom ${id} is unavailable for a velocity intervention`);
+        atom.vx = vx;
+        atom.vy = vy;
+        atom.vz = vz;
+        state._ae.last_error = '';
+        return true;
+    }
+
+    /**
+     * Attach declared experiment status to runtime telemetry. This is
+     * presentation metadata only; the force and integration paths never read
+     * it, so scenario identity cannot alter the equations of motion.
+     */
+    function aeSetExperimentState(experiment) {
+        if (!state._ae) return false;
+        if (experiment === null) {
+            state._ae.experiment = null;
+            return true;
+        }
+        if (!experiment || typeof experiment !== 'object') {
+            return _aeReject('experiment state must be an object or null');
+        }
+        const numeric = ['phaseIndex', 'phaseStartTick', 'transitionCount'];
+        if (numeric.some(key => !Number.isFinite(Number(experiment[key])))) {
+            return _aeReject('experiment state counters must be finite');
+        }
+        state._ae.experiment = Object.freeze({
+            id: String(experiment.id || ''),
+            protocol: String(experiment.protocol || ''),
+            label: String(experiment.label || ''),
+            phase: String(experiment.phase || ''),
+            phaseIndex: Number(experiment.phaseIndex),
+            phaseStartTick: Number(experiment.phaseStartTick),
+            transitionCount: Number(experiment.transitionCount),
+            observation: String(experiment.observation || ''),
+            complete: !!experiment.complete,
+        });
+        state._ae.last_error = '';
         return true;
     }
 
@@ -1889,6 +1938,7 @@ export function createAtomEngine(state) {
             forceClampScale: ae.force_clamp_scale,
             forceClampEvents: ae.force_clamp_events,
             lastError: ae.last_error,
+            experiment: ae.experiment ? { ...ae.experiment } : null,
             nuclear: aeGetNuclearDiagnostics(),
             toggles: {
                 ionic: !!ae.ionic,
@@ -2000,7 +2050,7 @@ export function createAtomEngine(state) {
 
     return {
         initAE, resetAE,
-        aeAddAtom, aeAddLockedAtom, aeCreateBond,
+        aeAddAtom, aeAddLockedAtom, aeCreateBond, aeSetAtomVelocity,
         _aeBuildBondLookup, _aeIsBonded, _aeIs13,
         _aeComputeDipoleMoments, _aeComputeForce, _aeComputeAllForces,
         aePreBond, aeTick,
@@ -2012,6 +2062,6 @@ export function createAtomEngine(state) {
         aeAtomCount, aeClear, aeInspectAtom, aeGetRuntimeState,
         aeConfigureNuclearReaction, aeSetNuclearEnvironment, aeInjectNuclearParticle,
         aeGetNuclearDiagnostics, aeGetNuclearVisuals,
-        aeGetVelocities, aeGetDipoles, aeGetHBondPairs,
+        aeGetVelocities, aeGetDipoles, aeGetHBondPairs, aeSetExperimentState,
     };
 }

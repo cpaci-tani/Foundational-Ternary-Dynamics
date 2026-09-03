@@ -76,6 +76,11 @@ export function createAeAdvancedCard() {
       <label for="ae-thermostat"
         title="[IMPOSED] Weak Berendsen-style velocity rescaling toward a target temperature; it does not generate a canonical ensemble.">Thermostat</label>
     </div>
+    <label class="pe-ctrl-row" title="[IMPOSED] Berendsen target in AtomEngine reduced temperature units; this is not Kelvin.">
+      <span class="pe-ctrl-label">Thermostat target</span>
+      <input type="range" class="pe-slider" id="ae-thermostat-slider" min="0.01" max="3" step="0.01" value="1">
+      <span class="pe-ctrl-value" id="ae-thermostat-value">1.00</span>
+    </label>
     <div class="toggle-row">
       <input type="checkbox" id="ae-electronegativity">
       <label for="ae-electronegativity"

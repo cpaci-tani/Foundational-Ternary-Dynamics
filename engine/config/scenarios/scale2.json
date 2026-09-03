@@ -3,6 +3,6 @@
   "name": "Atoms",
   "engineMode": "atoms",
   "registry": "engine/web/js/scales/scale2/scenario-registry.js",
-  "scenarioCount": 146,
-  "contract": "Twenty-nine curated scenarios, including four parametric nuclear-reaction initial-condition presets for the live transport laboratory, plus 117 generated element references. Physics profiles, epistemic status, overlays, deterministic seeds, expectations, and evidence are owned by the executable registry. This file is navigation metadata only."
+  "scenarioCount": 150,
+  "contract": "Thirty-three curated scenarios, including four controlled comparison laboratories and four parametric nuclear-reaction initial-condition presets for the live transport laboratory, plus 117 generated element references. Physics profiles, epistemic status, overlays, deterministic seeds, expectations, and evidence are owned by the executable registry. This file is navigation metadata only."
 }

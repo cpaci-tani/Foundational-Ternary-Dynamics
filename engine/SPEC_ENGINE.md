@@ -2610,9 +2610,23 @@ All three panels read live data from `TelemetryHub` (`js/telemetry-hub.js`), whi
 
 **Scale 1 (ParticleEngine):** Leptons: Hydrogen, Helium, Positronium, Muonium, True Muonium, Tauonium, Tauonic Hydrogen. Exotic Atoms: Pionic H, Kaonic H, Σ⁺ Atom, Protonium. Hadrons: Pionium, Kaonium, Δ⁺⁺ System, Ω⁻ Scattering. Nuclear: Deuteron, Tritium, Helion. Bosons: W⁺W⁻ Pair. Scattering: p-e, Three-body, π⁺-p, μ⁻-p. Custom. (23 scenarios)
 
-**Scale 2 (AtomEngine):** 146 selector entries: 29 curated contracts plus 117 generated single-element references (hydrogen is the curated composite reference). Curated groups include noble-gas clusters, ionic fragments, effective covalent capture, water networks, VSEPR relaxation, thermal/collision dynamics, metallic packing, three validation laboratories, four nuclear-reaction initial-condition presets, periodic-table atlas, and custom mode. Every curated contract owns a deterministic seed, complete 11-term physics profile, numeric parameters, visual profile, expected counts, evidence, and epistemic status. Scale 3 keeps its own explicit force profiles on the shared production AtomEngine. Scenario contract and Scale-2/3 regression tests prevent profile leakage.
+**Scale 2 (AtomEngine):** 150 selector entries: 33 curated contracts plus 117 generated single-element references (hydrogen is the curated composite reference). Curated groups include noble-gas clusters, ionic fragments, effective covalent capture, water networks, VSEPR relaxation, thermal/collision dynamics, metallic packing, seven validation laboratories, five nuclear-reaction/transport initial-condition presets, periodic-table atlas, and custom mode. Every curated contract owns a deterministic seed, complete 11-term physics profile, numeric parameters, visual profile, expected counts, evidence, and epistemic status. Scale 3 keeps its own explicit force profiles on the shared production AtomEngine. Scenario contract and Scale-2/3 regression tests prevent profile leakage.
 
-The four nuclear presets arm a separate `[PARAMETRIC]` browser-side reaction
+Four controlled laboratories extend the scenario surface without changing any
+force kernel. Bond rupture/recombination declares an outward drive, an
+equal-and-opposite return drive at tick 200, and post-recapture damping at tick
+950. The 27-record argon laboratory uses a declared reduced-unit Berendsen
+heat/quench schedule and releases the thermostat at tick 1500. Matched complete
+and vacancy-bearing iron chains receive equal impulses under explicit harmonic
+links. The U-235 criticality-control laboratory exposes the existing finite
+one-group boundary, moderator, absorber, source, and reactivity controls over a
+repeatable seed. Protocol state is telemetry only; the generic protocol runner
+uses public bridge controls and scenario identity is never read by the force or
+nuclear interaction kernels. These are `[IMPOSED]`/`[PARAMETRIC]` effective
+experiments, not recovered chemistry, phase-transition, phonon, or reactor
+physics.
+
+The five nuclear laboratories arm a separate `[PARAMETRIC]` browser-side reaction
 laboratory over the effective-unit AtomEngine. After initialization, scenario
 identity never participates in the tick path. D-T fusion evaluates
 `²H + ³H → ⁴He + n` at `Q = 17.5892969 MeV`; the selected U-235 fission

@@ -144,13 +144,13 @@ test.describe('Scale 2 parametric dynamic nuclear laboratory', () => {
         });
     }
 
-    test('scenario registry publishes all four reaction presets as parametric', async ({ page }) => {
+    test('scenario registry publishes all five reaction laboratories as parametric', async ({ page }) => {
         const registry = await page.evaluate(async () => {
             const module = await import('./js/scales/scale2/scenario-registry.js');
             const nuclear = await import('./js/scales/scale2/nuclear-reactions.js');
             return {
                 count: module.AE_CURATED_SCENARIOS.length,
-                scenarios: ['ae-dt-fusion', 'ae-u235-fission', 'ae-dt-fusion-burn', 'ae-u235-chain-reaction'].map((id) => {
+                scenarios: ['ae-dt-fusion', 'ae-u235-fission', 'ae-dt-fusion-burn', 'ae-u235-chain-reaction', 'ae-u235-criticality-controls'].map((id) => {
                     const item = module.getAEScenarioMeta(id);
                     return {
                         id: item?.id,
@@ -172,13 +172,14 @@ test.describe('Scale 2 parametric dynamic nuclear laboratory', () => {
             };
         });
 
-        expect(registry.count).toBe(29);
+        expect(registry.count).toBe(33);
         expect(registry.validation.ok, registry.validation.errors.join('\n')).toBe(true);
         expect(registry.scenarios).toEqual([
             expect.objectContaining({ id: 'ae-dt-fusion', reaction: 'dt_fusion', status: 'parametric', owner: 'js_effective_atom_engine' }),
             expect.objectContaining({ id: 'ae-u235-fission', reaction: 'u235_fission', status: 'parametric', owner: 'js_effective_atom_engine' }),
             expect.objectContaining({ id: 'ae-dt-fusion-burn', reaction: 'dt_fusion', mode: 'batch', status: 'parametric', owner: 'js_effective_atom_engine' }),
             expect.objectContaining({ id: 'ae-u235-chain-reaction', reaction: 'u235_fission', mode: 'chain', status: 'parametric', owner: 'js_effective_atom_engine' }),
+            expect.objectContaining({ id: 'ae-u235-criticality-controls', reaction: 'u235_fission', mode: 'sandbox', status: 'parametric', owner: 'js_effective_atom_engine' }),
         ]);
         for (const scenario of registry.scenarios) {
             expect(scenario.evidence).toContain('[PARAMETRIC]');

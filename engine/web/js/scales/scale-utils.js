@@ -184,6 +184,8 @@ export function syncAEParamsFromUI(bridge) {
     if (dtEl) bridge.aeSetDt(parseFloat(dtEl.value));
     const softEl = document.getElementById('ae-soft-slider');
     if (softEl) bridge.aeSetSoftening(parseFloat(softEl.value));
+    const thermostatEl = document.getElementById('ae-thermostat-slider');
+    if (thermostatEl) bridge.aeSetThermostatTemp(parseFloat(thermostatEl.value));
     for (const spec of AE_PHYSICS_SPECS) {
         const el = document.getElementById(spec.elementId);
         if (el && bridge[spec.setter]) bridge[spec.setter](el.checked);

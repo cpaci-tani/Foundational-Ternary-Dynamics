@@ -49,6 +49,9 @@ import {
 } from './ui-bindings.js';
 import { setupAEScenario, getAEScenarioPreset } from './scenarios.js';
 import { AE_PHYSICS_SPECS, getAEScenarioMeta } from './scenario-registry.js';
+import {
+    advanceAEExperiment, resetAEExperiment, startAEExperiment,
+} from './experiment-runtime.js';
 import { renderAEScenarioDescription } from './ui/dom.js';
 import { telemetryHub } from '../../telemetry-hub.js';
 
@@ -193,7 +196,7 @@ function updateAtomicEnergyDisplay(dom, atomData) {
 // =====================================================================
 
 export function resetScale2(ctx) {
-    const { viewport } = ctx;
+    const { bridge, viewport } = ctx;
 
     // Reset visual flags to defaults
     _showNucleusShells = true;
@@ -231,6 +234,7 @@ export function resetScale2(ctx) {
     _fieldDirty        = true;
     _fieldAtomCount    = -1;
     _tickAcc.reset();
+    resetAEExperiment(bridge);
 
     _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
 
@@ -376,10 +380,14 @@ function applyAEScenarioPhysics(bridge, scenario) {
         const softSlider = document.getElementById('ae-soft-slider');
         const dtValue = document.getElementById('ae-dt-value');
         const softValue = document.getElementById('ae-soft-value');
+        const thermostatSlider = document.getElementById('ae-thermostat-slider');
+        const thermostatValue = document.getElementById('ae-thermostat-value');
         if (dtSlider) dtSlider.value = String(params.dt);
         if (softSlider) softSlider.value = String(params.softening);
         if (dtValue) dtValue.textContent = params.dt.toFixed(2);
         if (softValue) softValue.textContent = params.softening.toFixed(2);
+        if (thermostatSlider) thermostatSlider.value = String(params.thermostatTemp);
+        if (thermostatValue) thermostatValue.textContent = params.thermostatTemp.toFixed(2);
     }
 }
 
@@ -494,6 +502,7 @@ export function animateAE(ctx) {
         for (let i = 0; i < wholeTicks; i++) {
             try {
                 bridge.aeTick();
+                advanceAEExperiment(bridge);
             } catch (e) {
                 console.error('[FTD] aeTick exception:', e);
                 if (setRunning) setRunning(false);
@@ -947,6 +956,11 @@ export function loadAEScenario(ctx, name) {
     // enable auto-bonding to create topology, but the published runtime profile
     // and controls always settle to this contract.
     applyAEScenarioPhysics(bridge, scenario);
+
+    // Start any declared presentation-level intervention schedule only after
+    // the canonical scenario profile is established. The protocol runner uses
+    // generic bridge controls and never enters a force kernel.
+    startAEExperiment(scenario, bridge);
 
     // Apply the scenario's visual preset (flags + DOM controls + viewport
     // layers). Last writer after resetAllVisualState + setupAEScenario.

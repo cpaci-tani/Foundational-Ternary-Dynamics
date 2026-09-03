@@ -12,7 +12,7 @@
 
 **2026-09-02 implementation reconciliation.** The production browser Scale 2
 AtomEngine has been hardened and scenario-qualified, but this does not promote
-the verdict. Its 29 curated scenarios are deterministic effective-model
+the verdict. Its 33 curated scenarios are deterministic effective-model
 contracts over 11 toggle-gated terms; 117 additional selector entries are
 single-element references. Exact potential accounting exists for Coulomb,
 Lennard-Jones, harmonic bonds, and harmonic angles. The directional H-bond and
@@ -20,6 +20,17 @@ induced-dipole toys remain incomplete force/potential models and explicitly
 disable conservative-energy claims. The browser continues to use its
 effective-unit JS engine until a Planck-to-Bohr/effective-unit bridge exists;
 native/browser force magnitudes must not be compared.
+
+**2026-09-03 controlled-experiment reconciliation.** Four additional curated
+laboratories isolate bond-topology cycling, a reduced-unit LJ heat/quench
+schedule, impulse propagation across complete versus vacancy-interrupted
+harmonic chains, and matched-seed finite U-235 transport controls. Timed drives,
+thermostat targets, damping, harmonic links, source intensity, boundary,
+moderation, absorption, and reactivity remain declared `[IMPOSED]` or
+`[PARAMETRIC]` inputs. These experiments validate causal software behavior and
+bookkeeping; they do not establish electronic chemical kinetics, real argon
+phase temperatures, metallic phonons, defect energetics, or reactor
+criticality.
 
 **2026-09-03 nuclear-laboratory reconciliation.** Four curated contracts seed
 deterministic D-T fusion and neutron-induced U-235 fission initial states: one

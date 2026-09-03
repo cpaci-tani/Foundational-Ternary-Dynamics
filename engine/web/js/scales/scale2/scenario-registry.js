@@ -27,6 +27,7 @@ export const AE_DEFAULT_SCENARIO = 'ae-hydrogen-atom';
  * @property {Readonly<Record<string, number|string|boolean>>} expected
  * @property {string} [reaction] Legacy single-channel identifier
  * @property {Readonly<Record<string, string|number>>} [nuclear]
+ * @property {Readonly<{protocol:string,label:string,observation:string,phases:ReadonlyArray<{tick:number,label:string}>}>} [experiment]
  * @property {string} evidence
  */
 
@@ -96,6 +97,13 @@ const AE_SCENARIO_PRESENTATION = [
         tags: ['covalent'],
     },
     {
+        id: 'ae-bond-rupture-cycle',
+        category: 'Validation Laboratories',
+        title: 'Bond Rupture & Recombination',
+        summary: 'A bonded H₂ pair is pulled beyond the imposed break distance, driven back together, and damped after recapture so the complete bond-topology cycle is directly observable.',
+        tags: ['validation', 'bonding', 'topology', 'protocol'],
+    },
+    {
         id: 'ae-o2-form',
         category: 'Covalent Formation',
         title: 'O + O \u2192 O\u2082',
@@ -150,6 +158,13 @@ const AE_SCENARIO_PRESENTATION = [
         title: 'Ar Gas (12 atoms + thermostat)',
         summary: 'Thermal gas is about ensemble behavior, temperature control, and whether kinetic agitation overwhelms short-range ordering.',
         tags: ['thermal', 'vdw'],
+    },
+    {
+        id: 'ae-argon-thermal-cycle',
+        category: 'Validation Laboratories',
+        title: 'Argon Heat–Quench–Release',
+        summary: 'A dense 27-atom Lennard-Jones argon cluster is heated, quenched, then released from its thermostat while temperature, energy, and coordination evolve.',
+        tags: ['validation', 'thermal', 'vdw', 'protocol'],
     },
     {
         id: 'ae-collision',
@@ -208,6 +223,13 @@ const AE_SCENARIO_PRESENTATION = [
         tags: ['nuclear', 'fission', 'chain-reaction', 'energy-transport'],
     },
     {
+        id: 'ae-u235-criticality-controls',
+        category: 'Nuclear Reactions',
+        title: 'U-235 Criticality Control Laboratory',
+        summary: 'A repeatable finite U-235 source experiment exposes boundary, moderation, absorption, source, and reactivity controls so neutron reproduction is compared as an outcome rather than prescribed.',
+        tags: ['nuclear', 'fission', 'criticality', 'controls', 'validation'],
+    },
+    {
         id: 'ae-fe-bcc',
         category: 'Metallic Clusters',
         title: 'Fe BCC Cluster (9 atoms)',
@@ -220,6 +242,13 @@ const AE_SCENARIO_PRESENTATION = [
         title: 'Cu FCC Seed (7 atoms)',
         summary: 'Cu FCC is the close-packed comparison case to BCC iron.',
         tags: ['metallic'],
+    },
+    {
+        id: 'ae-crystal-impulse-vacancy',
+        category: 'Metallic Clusters',
+        title: 'Crystal Impulse & Vacancy',
+        summary: 'Matched finite iron chains receive the same impulse; one has complete harmonic connectivity while the other contains a vacancy that interrupts strain-energy transport.',
+        tags: ['metallic', 'validation', 'energy-transport', 'defect'],
     },
     {
         id: 'ae-periodic',
@@ -334,6 +363,24 @@ const CONTRACTS = Object.freeze({
         overlays: overlays({ forceBond: true }), expected: { atomCount: 2, dynamic: true },
         evidence: 'Distance/valence capture plus harmonic spring; not electronic covalent-bond formation.',
     },
+    'ae-bond-rupture-cycle': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'imposed', seed: 0x02001e,
+        physics: profile({ vdw: true, bonds_force: true, bonding: true }),
+        parameters: Object.freeze({ dt: 0.02, softening: 0.3, thermostatTemp: 1.0 }),
+        overlays: overlays({ clouds: false, shells: false, bondStyle: 'cylinders',
+            velocities: true, forceBond: true, forceVdw: true, forceNet: true }),
+        experiment: Object.freeze({
+            protocol: 'bond-rupture-cycle', label: 'Rupture → return → recapture',
+            observation: 'Track bond count, separation, bond potential, and the explicit damping intervention after recapture.',
+            phases: Object.freeze([
+                Object.freeze({ tick: 0, label: 'Outward rupture drive' }),
+                Object.freeze({ tick: 200, label: 'Controlled return drive' }),
+                Object.freeze({ tick: 950, label: 'Recapture settling' }),
+            ]),
+        }),
+        expected: { atomCount: 2, bondCount: 1, dynamic: true, topologyCycle: true },
+        evidence: '[IMPOSED] Distance/valence bond topology and harmonic spring. Timed velocity reversal and final damping are declared protocol interventions, not emergent chemical kinetics.',
+    },
     'ae-o2-form': {
         scenarioClass: 'effective_dynamics', epistemicStatus: 'imposed', seed: 0x02000a,
         physics: profile({ vdw: true, bonds_force: true, bonding: true, speed_limit: true }),
@@ -377,6 +424,24 @@ const CONTRACTS = Object.freeze({
         scenarioClass: 'effective_dynamics', epistemicStatus: 'imposed', seed: 0x020011,
         physics: profile({ vdw: true, speed_limit: true, thermostat: true }), overlays: overlays({ velocities: true }),
         expected: { atomCount: 12, bondCount: 0, dynamic: true }, evidence: 'Lennard-Jones ensemble with an imposed Berendsen thermostat in simulation units.',
+    },
+    'ae-argon-thermal-cycle': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'imposed', seed: 0x02001f,
+        physics: profile({ vdw: true, speed_limit: true, thermostat: true }),
+        parameters: Object.freeze({ dt: 0.05, softening: 0.15, thermostatTemp: 1.8 }),
+        overlays: overlays({ clouds: false, labels: false, shells: false,
+            bondStyle: 'off', velocities: true }),
+        experiment: Object.freeze({
+            protocol: 'argon-thermal-cycle', label: 'Heat → quench → free evolution',
+            observation: 'Compare temperature, kinetic/potential exchange, radius, and ordering across explicitly driven phases.',
+            phases: Object.freeze([
+                Object.freeze({ tick: 0, label: 'Heat at T*=1.80' }),
+                Object.freeze({ tick: 500, label: 'Quench at T*=0.08' }),
+                Object.freeze({ tick: 1500, label: 'Thermostat released' }),
+            ]),
+        }),
+        expected: { atomCount: 27, bondCount: 0, dynamic: true, protocolTicks: 1500 },
+        evidence: '[IMPOSED] Lennard-Jones cluster plus a declared Berendsen heat/quench schedule in simulation units. It is not a calibrated argon phase diagram or canonical ensemble.',
     },
     'ae-collision': {
         scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x020012,
@@ -455,6 +520,29 @@ const CONTRACTS = Object.freeze({
         expected: { atomCount: 28, bondCount: 0, dynamic: true, finiteFuel: 27, maxReactionEvents: 27 },
         evidence: '[PARAMETRIC] The 200 MeV recoverable budget follows the standard average U-235 fission partition. Free neutron trajectories, seeded energy-dependent collision hazards, ambient moderation, leakage, containment, the selected Ba/Kr channel, and the 10^18 ensemble weight define an effective transport laboratory; measured k-effective is an outcome, not an input, and this is not reactor certification.',
     },
+    'ae-u235-criticality-controls': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x020020,
+        reaction: 'u235_fission',
+        nuclear: Object.freeze({ channel: 'u235_fission', mode: 'sandbox', eventLimit: 27,
+            eventWeight: 1e16, reactivityScale: 8, collisionRadiusScale: 1.5,
+            transportRadius: 12, boundaryMode: 'leak', moderatorStrength: 0,
+            absorberStrength: 0, sourceEnabled: true, sourceRate: 0.05,
+            sourceEnergyMeV: 2.53e-8, particleLimit: 256,
+            neutronContainment: 0.88, gammaContainment: 0.92, seed: 0x020020 }),
+        physics: profile({ speed_limit: true }),
+        parameters: Object.freeze({ dt: 0.1, softening: 0.3, thermostatTemp: 1.0 }),
+        overlays: overlays({ clouds: false, shells: true, bondStyle: 'off',
+            nuclearEvents: true, radiation: true, heat: true, nuclearBoundary: true }),
+        experiment: Object.freeze({
+            protocol: 'criticality-controls', label: 'Interactive matched-seed controls',
+            observation: 'Reload the same seed, change one leakage, reflection, moderation, absorption, source, or reactivity control before playback, then compare measured neutron births and resolved losses.',
+            phases: Object.freeze([
+                Object.freeze({ tick: 0, label: 'Open-boundary baseline' }),
+            ]),
+        }),
+        expected: { atomCount: 28, bondCount: 0, dynamic: true, finiteFuel: 27, interactiveControls: true },
+        evidence: '[PARAMETRIC] Same finite one-group U-235 transport model as the chain-reaction laboratory. Controls are explicit imposed coefficients; observed reproduction is diagnostic only and is not reactor criticality certification.',
+    },
     'ae-fe-bcc': {
         scenarioClass: 'effective_dynamics', epistemicStatus: 'imposed', seed: 0x020013,
         physics: profile({ vdw: true, bonds_force: true, speed_limit: true }), overlays: overlays({ forceBond: true }),
@@ -464,6 +552,22 @@ const CONTRACTS = Object.freeze({
         scenarioClass: 'effective_dynamics', epistemicStatus: 'imposed', seed: 0x020014,
         physics: profile({ vdw: true, bonds_force: true, speed_limit: true }), overlays: overlays({ forceBond: true }),
         expected: { atomCount: 7, dynamic: true }, evidence: 'Finite FCC seed with generic empirical springs; not a metallic electronic-structure model.',
+    },
+    'ae-crystal-impulse-vacancy': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'imposed', seed: 0x020021,
+        physics: profile({ bonds_force: true }),
+        parameters: Object.freeze({ dt: 0.08, softening: 0.3, thermostatTemp: 1.0 }),
+        overlays: overlays({ clouds: false, labels: false, shells: false,
+            bondStyle: 'cylinders', velocities: true }),
+        experiment: Object.freeze({
+            protocol: 'crystal-impulse-vacancy', label: 'Matched complete/defect impulse',
+            observation: 'Compare velocity and bond-energy propagation along a complete harmonic chain and an otherwise matched chain interrupted by one vacancy.',
+            phases: Object.freeze([
+                Object.freeze({ tick: 0, label: 'Matched impulses launched' }),
+            ]),
+        }),
+        expected: { atomCount: 17, bondCount: 14, dynamic: true, completeChainAtoms: 9, vacancyChainAtoms: 8 },
+        evidence: '[IMPOSED] Finite one-dimensional harmonic iron-record analogue for causal visualization. It does not recover metallic bonding, a phonon dispersion, or bulk defect energetics.',
     },
     'ae-periodic': {
         scenarioClass: 'static_reference', epistemicStatus: 'empirical', seed: 0x020015,
@@ -608,6 +712,22 @@ export function validateAEScenarioRegistry() {
         }
         if (scenario.nuclear && scenario.nuclear.channel !== scenario.reaction) {
             errors.push(`nuclear.channel:${scenario.id}`);
+        }
+        if (scenario.experiment) {
+            const experiment = scenario.experiment;
+            if (!experiment.protocol || !experiment.label || !experiment.observation ||
+                !Array.isArray(experiment.phases) || experiment.phases.length === 0) {
+                errors.push(`experiment:${scenario.id}`);
+            } else {
+                let priorTick = -1;
+                for (const phase of experiment.phases) {
+                    if (!Number.isInteger(phase.tick) || phase.tick < 0 || phase.tick <= priorTick || !phase.label) {
+                        errors.push(`experiment.phase:${scenario.id}`);
+                        break;
+                    }
+                    priorTick = phase.tick;
+                }
+            }
         }
         for (const term of AE_PHYSICS_SPECS) {
             if (typeof scenario.physics?.[term.key] !== 'boolean') {

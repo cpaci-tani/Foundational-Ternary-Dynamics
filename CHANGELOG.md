@@ -1,5 +1,19 @@
 # Foundational Ternary Dynamics Changelog
 
+# Scale 2 Controlled Experiment Laboratories (2026-09-03)
+
+- Added deterministic bond rupture/recombination, argon heat-quench-release,
+  crystal impulse/vacancy, and U-235 criticality-control laboratories. Scale 2
+  now exposes 33 curated contracts plus 117 generated element references.
+- Added a generic declared-protocol runner for presentation-level velocity,
+  thermostat, and damping interventions. Live protocol phase and transition
+  count are published to diagnostics; scenario identity is not read by any
+  force or nuclear interaction kernel.
+- Added matched comparison fixtures and explicit epistemic boundaries: the
+  bond graph, thermostat schedule, harmonic crystal analogue, and finite
+  one-group neutron controls remain `[IMPOSED]`/`[PARAMETRIC]`, not recovered
+  chemical kinetics, phase thermodynamics, phonons, or reactor physics.
+
 # Scale 2 Overlay Integrity Audit (2026-09-03)
 
 - Consolidated atom/molecule visualization controls into the responsive

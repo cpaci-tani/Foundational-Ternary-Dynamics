@@ -14,9 +14,9 @@ unfinished scenarios, and a structural exhibit. A familiar name or a passing
 behavioral test is not evidence of physical identity.
 
 > **Historical baseline note (2026-09-03):** The table below remains the
-> frozen `eeea93e` inventory. The current Scale 2 selector has 146 entries
-> (29 curated contracts plus 117 generated element references), and the
-> current all-scale presentation total is 373. Current assertions live in
+> frozen `eeea93e` inventory. The current Scale 2 selector has 150 entries
+> (33 curated contracts plus 117 generated element references), and the
+> current all-scale presentation total is 377. Current assertions live in
 > `tests/scientific-scenario-inventory.spec.js`; the frozen counts are retained
 > here as provenance rather than silently rewritten.
 

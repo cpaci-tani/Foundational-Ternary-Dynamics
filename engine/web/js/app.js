@@ -1366,6 +1366,16 @@ function wireControls() {
         });
     }
 
+    const aeThermostatSlider = document.getElementById('ae-thermostat-slider');
+    const aeThermostatValue = document.getElementById('ae-thermostat-value');
+    if (aeThermostatSlider) {
+        aeThermostatSlider.addEventListener('input', () => {
+            const target = parseFloat(aeThermostatSlider.value);
+            if (aeThermostatValue) aeThermostatValue.textContent = target.toFixed(2);
+            bridge.aeSetThermostatTemp(target);
+        });
+    }
+
     // Dynamic Scale-2 nuclear laboratory. These controls mutate the live
     // environment; they never reload or branch on the selected scenario.
     const nuclearPatch = (patch) => bridge.aeSetNuclearEnvironment?.(patch);

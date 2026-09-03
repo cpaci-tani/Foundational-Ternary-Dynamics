@@ -21,8 +21,13 @@ export function renderAEScenarioDescription(scenarioId) {
         return;
     }
 
+    const experiment = meta.experiment;
+    const protocolLine = experiment
+        ? `\nProtocol: ${experiment.phases.map(phase => `T=${phase.tick}: ${phase.label}`).join(' · ')}`
+        : '';
+    const observationLine = experiment ? `\nObserve: ${experiment.observation}` : '';
     const tagLine = meta.tags?.length ? `\nTags: ${meta.tags.join(', ')}` : '';
-    text.textContent = `${meta.summary}${tagLine}`;
+    text.textContent = `${meta.summary}${protocolLine}${observationLine}${tagLine}`;
     wrap.style.display = '';
     wrap.open = false;
 }
