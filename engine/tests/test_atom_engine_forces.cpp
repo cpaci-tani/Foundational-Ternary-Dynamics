@@ -524,6 +524,24 @@ static void section_hbonds() {
         ftd::Vec3 f = ae.compute_force(1);
         std::cout << "  f = (" << f.x << ", " << f.y << ", " << f.z << ") |f|=" << f.mag() << "\n";
         ftd::test::check("HB1: nonzero H-bond force", f.mag() > 1e-30);
+        ftd::test::check("HB1b: attractive tail pulls H toward acceptor", f.x > 0.0);
+    }
+
+    // ---- HB1c: Inside sigma the 10-12 core must repel ----
+    std::cout << "\n--- HB1c: H-bond short-range core repels ---\n";
+    {
+        ftd::AtomEngine ae;
+        ae.set_bonding_enabled(false);
+        const int d = ae.add_atom(8, {0, 0, 0});
+        const int h = ae.add_atom(1, {bond_len, 0, 0});
+        ae.create_bond(d, h, 1);
+        ae.add_atom(8, {bond_len + 0.8 * sig_hb, 0, 0});
+        ae.toggles.ionic = false;
+        ae.toggles.van_der_waals = false;
+        ae.toggles.covalent_bonds = false;
+        ae.toggles.h_bonds = true;
+        const ftd::Vec3 f = ae.compute_force(1);
+        ftd::test::check("HB1c: short-range core pushes H away from acceptor", f.x < 0.0);
     }
 
     // ---- HB2: No H involved → zero ----

@@ -86,8 +86,11 @@ export function nuclearBindingEnergy(Z, N) {
  * @param {number} Z — atomic number
  * @returns {{ massEnergy, bindingEnergy, bindingPerNucleon, massDeficit, electronBinding, massNumber }}
  */
-export function atomicEnergy(Z) {
-    const N = defaultNeutronCount(Z);
+export function isotopeEnergy(Z, N) {
+    if (!Number.isInteger(Z) || Z < 0 || Z > 118 ||
+        !Number.isInteger(N) || N < 0 || (Z === 0 && N !== 1)) {
+        throw new RangeError(`invalid isotope Z=${Z}, N=${N}`);
+    }
     const A = Z + N;
 
     // Nuclear binding energy
@@ -127,6 +130,14 @@ export function atomicEnergy(Z) {
         massInKB: massEnergy / M_E_PHYS,
         bindingInKB: B / M_E_PHYS,
     };
+}
+
+/**
+ * Energy summary for the periodic-table default isotope of element Z.
+ * Use isotopeEnergy() when the neutron count is part of the live state.
+ */
+export function atomicEnergy(Z) {
+    return isotopeEnergy(Z, defaultNeutronCount(Z));
 }
 
 /**

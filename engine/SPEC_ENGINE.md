@@ -2042,16 +2042,39 @@ Files: `particle_engine.h`, `particle_engine.cpp`, `wasm/bindings_particle.cpp`,
 
 ### Scale 2: Atom (AtomEngine)
 
-Composite atoms with inter-atomic forces and covalent bonding. Three forces:
-- **Ionic** (Coulomb): F = -alpha * Q_i * Q_j * r_hat / (4pi * r^2_soft)
-- **Van der Waals** (LJ 12-6): 24 eps [2(sigma/r)^12 - (sigma/r)^6] / r
-- **Covalent** (harmonic spring): -k * (r - r_eq) * r_hat
+Composite atom records with an effective classical/empirical inter-atomic
+model. The implemented channels are ionic Coulomb, Lennard-Jones 12-6,
+harmonic bond springs, directional 10-12 H-bond response, harmonic VSEPR
+angle strain, and an induced dipole-dipole toy term. Automatic bond capture,
+bond-order inference, damping, speed limiting, a Berendsen thermostat, and a
+QEq-like electronegativity transfer are independently toggle-gated.
 
-Automatic bond formation (r < 1.2 sigma_avg) and breaking (r > 2 r_eq). `compute_atomic_properties(Z, N)` derives all parameters from ontic constants.
+This is **not a substrate derivation of atomic quantum dynamics**. Element
+identity, valence, radii, electronegativity, and orbital presentation include
+empirical tables or borrowed chemistry constructions. Interaction formulas are
+`[PARAMETRIC]`; capture/break thresholds and browser-scale coefficients are
+`[IMPOSED]`. The wrong-dispersion boundary in FTD-0270 remains open: the
+substrate's linear wave sector does not recover the quadratic Schrodinger
+dispersion needed for atomic spectra.
+
+The browser engine validates every finite record before and after each tick,
+rolls back a rejected step, and applies one uniform whole-force safety scale
+when the effective field exceeds its configured ceiling. The safety event and
+scale are explicit telemetry. A per-particle clamp is forbidden because it
+would break action-reaction symmetry. The native engine rejects invalid finite
+inputs and performs the same pre/post state validation.
+
+Diagnostics exactly track scalar potentials for ionic, Lennard-Jones,
+harmonic-bond, and harmonic-angle channels. H-bond and induced-dipole forces do
+not yet expose their complete coordinate gradients/scalar potentials, so
+`energy_complete=false` whenever either is active. Damping, thermostat,
+auto-bonding, electronegativity transfer, speed limiting, or an active force
+clamp prevent a conservative-energy claim. Force overlays use the same six
+components and post-safety net force as the integrator.
 
 **Atomic closure-context vector (diagnostic/readout only).** `compute_atomic_properties(Z, N)` also returns `closure_context`, and `AtomEngine::closure_context_for(id, cfg)` exposes the same shell-context readout for live atoms. The vector records `Z`, `n_shell`, `z_eff`, `r_cloud`, `delta_valence`, `xi_orbital`, `tau_electronic`, and ratios such as `kappa`, `zeta`, `beta`, and `theta`. Its cloud scale follows the shell-context estimate `r_cloud = R_BOHR*n_shell^2/z_eff`: across a period, stronger screened return force contracts the cloud; at a new shell, the scale resets outward. This is a physics-facing scale diagnostic, not a force retuning. `Atom.radius` and `vdw_sigma` remain the legacy simulation/LJ interaction scales used by bonding, CUDA pair-force uploads, and scale bridges.
 
-**JS <-> C++ constant divergence (deliberate, [IMPOSED] both sides).** The C++ AtomEngine derives force prefactors from the ontic chain (Coulomb `ALPHA/(4pi)` in `atom/atom_forces.cpp`; bond spring `ALPHA*K_B/r_eq^2*order` in `atom_engine.cpp`), while the web mock (`web/js/bridge/mock-atom-engine.js`) uses visualization-scale MD tunings from `web/js/constants.js` (`AE_K_COULOMB = 2.0`, `AE_K_BOND = 50.0`, plus a 3.5*r_eq break threshold vs C++'s 2*r_eq). Both parameter sets are calibrations, not derivations; force magnitudes and equilibrium time scales are NOT expected to match across backends. **The JS mock is the production Scale-2/3 backend** — `wasm-bridge.js` `_aeHasWasm` is deliberately disabled (audit P1-2, deferred feature D-11) until a Planck-unit <-> Bohr-unit conversion shim exists, so every browser Scale-2/3 readout comes from the JS engine. Cross-backend numeric comparisons of AE outputs are meaningless until that shim lands.
+**JS <-> C++ constant divergence (deliberate, [IMPOSED] both sides).** The C++ AtomEngine uses FTD-linked prefactors (Coulomb `ALPHA/(4pi)` in `atom/atom_forces.cpp`; bond spring `ALPHA*K_B/r_eq^2*order` in `atom_engine.cpp`), while the web engine (`web/js/bridge/mock-atom-engine.js`) uses visualization-scale MD tunings from `web/js/constants.js` (`AE_K_COULOMB = 2.0`, `AE_K_BOND = 50.0`, plus a 3.5*r_eq break threshold vs C++'s 2*r_eq). Neither set is an atomic-physics derivation; force magnitudes and equilibrium time scales are NOT expected to match across backends. **The JS engine is the production Scale-2/3 browser backend** — `wasm-bridge.js` `_aeHasWasm` is deliberately disabled (audit P1-2, deferred feature D-11) until a Planck-unit <-> Bohr/effective-unit conversion shim exists. Cross-backend numeric comparisons of AE outputs are meaningless until that shim lands.
 
 Files: `atomic_closure_context.h`, `atom_engine.h`, `atom_engine.cpp`, `src/atom/atom_forces.cpp`, `web/js/atomic-props.js`, `web/js/bridge/mock-atom-engine.js` (production web backend).
 
@@ -2587,7 +2610,36 @@ All three panels read live data from `TelemetryHub` (`js/telemetry-hub.js`), whi
 
 **Scale 1 (ParticleEngine):** Leptons: Hydrogen, Helium, Positronium, Muonium, True Muonium, Tauonium, Tauonic Hydrogen. Exotic Atoms: Pionic H, Kaonic H, Σ⁺ Atom, Protonium. Hadrons: Pionium, Kaonium, Δ⁺⁺ System, Ω⁻ Scattering. Nuclear: Deuteron, Tritium, Helion. Bosons: W⁺W⁻ Pair. Scattering: p-e, Three-body, π⁺-p, μ⁻-p. Custom. (23 scenarios)
 
-**Scale 2 (AtomEngine):** Individual elements (118), Periodic Table. Noble Gas Clusters: He/Ar/Mix. Ionic Formation: NaCl/MgF₂/Lattice. Covalent Formation: H₂/O₂/CH₄. H-Bonding: Water Dimer/Pentamer. VSEPR Geometry: CO₂/CH₄/H₂O. Thermal Dynamics: Gas/Collision. Metallic Clusters: Fe BCC/Cu FCC. Custom. Phase 3 forces (JS MockBridge): H-bonds, angle strain, dipole-dipole, thermostat, electronegativity. Scale 3 molecules: 25-molecule library + NaCl Crystal
+**Scale 2 (AtomEngine):** 146 selector entries: 29 curated contracts plus 117 generated single-element references (hydrogen is the curated composite reference). Curated groups include noble-gas clusters, ionic fragments, effective covalent capture, water networks, VSEPR relaxation, thermal/collision dynamics, metallic packing, three validation laboratories, four nuclear-reaction initial-condition presets, periodic-table atlas, and custom mode. Every curated contract owns a deterministic seed, complete 11-term physics profile, numeric parameters, visual profile, expected counts, evidence, and epistemic status. Scale 3 keeps its own explicit force profiles on the shared production AtomEngine. Scenario contract and Scale-2/3 regression tests prevent profile leakage.
+
+The four nuclear presets arm a separate `[PARAMETRIC]` browser-side reaction
+laboratory over the effective-unit AtomEngine. After initialization, scenario
+identity never participates in the tick path. D-T fusion evaluates
+`²H + ³H → ⁴He + n` at `Q = 17.5892969 MeV`; the selected U-235 fission
+channel evaluates `²³⁵U + n → ¹⁴¹Ba + ⁹²Kr + 3n` at
+`Q = 173.2801360 MeV`. Evaluated atomic masses determine the selected-channel
+mass Q. D-T starts at 20 keV center-of-mass energy; U-235 uses a 0.0253 eV
+thermal neutron. The U-235 average recoverable budget is a separate imported
+200 MeV ledger (168 MeV fragments + 5 MeV prompt neutrons + 13 MeV gamma +
+14 MeV delayed heat). Product velocities close nucleon number, charge, total
+momentum, and the explicitly named kinetic injection. Exact live trajectories
+and swept intersections determine eligible isotope pairs; a replayable seeded,
+energy-dependent normalized hazard accepts or rejects each collision. Prompt
+neutrons remain ordinary integrated particles. They can leak from or reflect at
+the computed transport volume, scatter in an ambient one-group moderator, be
+captured by an ambient absorber, or initiate another live collision. Observed
+neutron reproduction is calculated from births and resolved losses; it is not
+an input. The laboratory exposes all of these environment coefficients plus
+manual/continuous reactant injection while preserving ensemble weighting,
+fuel/generation/neutron-loss counters, and
+`released = deposited + in-transit + escaped` accounting. Collision radii,
+normalized response curves, product channel, moderator/absorber response,
+containment, energy-deposition time constants, and directions are imposed.
+This layer does not recover absolute cross sections in barns, barrier tunnelling,
+yield distributions, self-consistent plasma transport, or reactor-grade neutron
+transport from the FTD substrate. The native/WASM
+AtomEngine remains out of scope until the documented Planck-to-effective-unit
+bridge exists.
 
 ### Field Visualization Overlays (5 categorical groups)
 
@@ -2603,21 +2655,52 @@ The Scale 0 overlay panel is organised into five semantic columns; each column g
 
 The Weak force shares the force-style selector but its "Arrows" mode renders additive-blended radial sprites (`PointsMaterial` + CanvasTexture gradient), not arrows — transmutation sites pulse along the intensity palette.
 
-### Scale 2/3 Atom & Molecule Visualization (6 features)
+### Scale 2/3 Atom & Molecule Visualization
 
 Enhanced pedagogical visualization for Scale 2 (atoms) and Scale 3 (molecules):
 
 | Feature | Implementation | Controls |
 |---------|---------------|----------|
-| **Enhanced nucleus** | Denser proton/neutron clouds (8 pts/nucleon), white center glow, larger radius | Always on |
-| **Strong force shells** | Translucent orange InstancedMesh spheres (100 pool), AdditiveBlending, radius = 0.5 × cbrt(A) × 1.8 | Shells checkbox (default ON) |
+| **Composite-atom decoration** | Empirical proton/neutron samples and hydrogenic/Slater orbital-density motifs; not integrated internal particles or a solved wavefunction | Orbitals checkbox |
+| **Nuclear extent** | Translucent orange InstancedMesh envelopes (512 pool), radius proportional to cbrt(A); not a rendered strong-force field | Nuclear extent checkbox (default ON) |
+| **Record labels** | Camera-facing chemical or isotope labels sampled for large nuclear populations | Labels checkbox (default ON) |
 | **Thick styled bonds** | CylinderGeometry InstancedMesh (1500 pool) with single/double/triple order support, CPK-blended colors | Bond style dropdown (Thick/Thin/Off) |
+| **Thin bonds** | LineSegments resolved through stable atom ID to current array index, so despawn/reaction compaction cannot retarget a bond | Bond style dropdown (Thin) |
 | **Bonding electron clouds** | Gaussian ellipsoidal point clouds along bond axes (8 × order points per bond, light cyan) | Clouds checkbox |
-| **Orbital shell boundaries** | Translucent spheres per principal quantum number using Slater Z_eff (n=1 blue, n=2 green, n=3 orange, n=4+ pink) | Bounds checkbox (default OFF) |
-| **Shaped orbital lobes** | Elongated ellipsoid InstancedMesh (2000 pool) for p/d/f valence orbitals, AdditiveBlending | Lobes checkbox (default OFF) |
-| **Per-atom force arrows** | 4 LineSegments sets: Coulomb (red), vdW (green), Bond (orange), Net (white), log-compressed scaling | F_C / F_vdW / F_B / F_net toggle buttons |
+| **Orbital shell guides** | Empirical translucent spheres per principal quantum number using Slater Z_eff (1024 pool; n=1 blue, n=2 green, n=3 orange, n=4+ pink) | Shell bounds checkbox (default OFF) |
+| **Orbital lobe motifs** | Schematic elongated ellipsoids (2000 pool) for p/d/f valence angular families; not solved phase or occupancy | Lobe motifs checkbox (default OFF) |
+| **Electrostatic landscape** | Signed softened-Coulomb potential points and world-aligned E vectors on the same XZ samples; refreshes in paused and running states | Potential + E toggle |
+| **Per-atom force vectors** | 7 LineSegments sets (512 records): Coulomb, vdW, bond, H-bond, angle, dipole, and exact post-safety net force, with log-compressed scaling and V heads | Independent force toggle buttons |
+| **Intermolecular geometry** | Dipole vectors and donor-H...acceptor dashed pairs from live atom records; the H-bond line buffer grows to the eligible live pair count | Dipoles / H-bonds toggles |
+| **Kinetics** | Per-record velocity vectors with a causal-saturation color ramp (2,048-record Scale 2 nuclear ceiling) | Velocities toggle |
+| **Nuclear event and transport** | Accepted collision flashes/planes, emitted-neutron product directions plus qualitative gamma fronts, deposition-scaled heat halos, and the live leak/reflect boundary | Events / Radiation / Heat / Boundary toggles |
+| **Reliable inspection** | Screen-space atom-center fallback remains clickable through sparse orbital clouds; merged decorative bond-cloud samples retain an explicit non-atom map | Viewport click + Inspector |
+| **Interaction component** | Live bond-connected member list, center of mass, total effective mass/charge, and translational KE for the selected atom | Inspector |
 
-Force decomposition computed via `aeGetForceDecomposition()` in MockBridge (ionic, vdW, bond, net). Arrows updated every 2nd frame for performance. All features auto-hidden on Scale 0/1 transitions via CSS `scale23-only` class and `setEngineMode()` cleanup.
+Force decomposition is computed by the production browser AtomEngine through
+the same evaluator used for integration. Requested components are display
+gates only; the net vector remains the exact complete post-safety integrator
+force. Directional force and dipole layers use log-compressed shafts with
+explicit V heads and update every second frame. All features auto-hide on
+Scale 0/1 transitions via the shared mode cleanup.
+
+The responsive overlay is the single control owner for Scale 2/3. The former
+mobile fallback toolbar was retired because it duplicated control IDs and
+could receive bindings while the visible overlay remained inert. The panel is
+height-constrained above the status bar and its control and legend regions
+scroll independently when vertical space is limited. Scenario-registry
+validation rejects unknown/missing overlay fields and force or nuclear layers
+that are enabled where their corresponding dynamics are inapplicable.
+
+The opt-in hardware gate
+`tests/scale2-overlay-load-release-gate.spec.js` exercises the entire overlay
+surface at the 118-record atlas and at a live 192-record water population with
+all applicable effective interactions enabled. The 2026-09-03 RTX 5090
+ANGLE/D3D11 record held 60.00 effective FPS (659+ samples, p99 <= 16.67 ms,
+zero >20 ms intervals, zero Long Tasks) and 59.98 ticks/s for the live case.
+Run it from `engine/web/tests` with `FTD_HARDWARE_WEBGL=1` and
+`FTD_SCALE2_LOAD_GATE=1`; software-rendered Chromium is rejected rather than
+used as release evidence.
 
 ### Boundary Containment (7 shapes)
 

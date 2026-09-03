@@ -62,10 +62,25 @@ Vec3 AtomEngine::compute_pairwise_force(int i, int j) const {
 
     if (r < 1e-30) return f;
 
+    bool is_bonded = false;
+    for (const auto& b : ai.bonds) {
+        if (b.partner_id == aj.id) { is_bonded = true; break; }
+    }
+    bool is_one_three = false;
+    if (!is_bonded) {
+        for (const auto& bi : ai.bonds) {
+            for (const auto& bj : aj.bonds) {
+                if (bi.partner_id == bj.partner_id) { is_one_three = true; break; }
+            }
+            if (is_one_three) break;
+        }
+    }
+
         Vec3 r_hat = r_vec * (1.0 / r);
 
         // 1. Ionic force (now uses continuous fractional charge)
-        if (toggles.ionic && (std::abs(ai.q_frac) > 1e-6 || std::abs(aj.q_frac) > 1e-6)) {
+        if (toggles.ionic && !is_bonded && !is_one_three &&
+            (std::abs(ai.q_frac) > 1e-6 || std::abs(aj.q_frac) > 1e-6)) {
             double f_ionic = -ALPHA * ai.q_frac * aj.q_frac / (4.0 * PI * r2);
             Vec3 fi = r_hat * f_ionic;
             f += fi;
@@ -73,7 +88,7 @@ Vec3 AtomEngine::compute_pairwise_force(int i, int j) const {
         }
 
         // 2. Van der Waals (Lennard-Jones 12-6)
-        if (toggles.van_der_waals) {
+        if (toggles.van_der_waals && !is_bonded && !is_one_three) {
             double eps_mix = std::sqrt(ai.vdw_epsilon * aj.vdw_epsilon);
             double sig_mix = 0.5 * (ai.vdw_sigma + aj.vdw_sigma);
 
@@ -139,7 +154,12 @@ Vec3 AtomEngine::compute_pairwise_force(int i, int j) const {
                     double sr = sig_hb / r;
                     double sr10 = std::pow(sr, 10.0);
                     double sr12 = sr10 * sr * sr;
-                    double f_rad = H_BOND_EPSILON * HB_1012_DERIV_COEFF * (sr12 - sr10) / r;
+                    // Force on the current atom points along r_hat with
+                    // +dV/dr, because r_hat = (x_j-x_i)/r while
+                    // grad_i(r) = -r_hat.  The previous (sr12-sr10)
+                    // ordering inverted the well: it attracted inside sigma
+                    // and repelled throughout the intended attractive tail.
+                    double f_rad = H_BOND_EPSILON * HB_1012_DERIV_COEFF * (sr10 - sr12) / r;
 
                     double cos_theta = 1.0;
                     if (donor >= 0) {
@@ -357,7 +377,7 @@ void AtomEngine::compute_all_forces() {
                     double theta = std::acos(cos_theta);
 
                     int nbonds = static_cast<int>(ai.bonds.size());
-                    int lone_pairs = ai.valence_electrons - nbonds;
+                    int lone_pairs = (ai.valence_electrons - nbonds) / 2;
                     if (lone_pairs < 0) lone_pairs = 0;
                     int steric_number = nbonds + lone_pairs;
 
@@ -386,14 +406,18 @@ void AtomEngine::compute_all_forces() {
                     if (perp1_mag < 1e-30) continue;
                     perp1 = perp1 * (1.0 / perp1_mag);
 
-                    Vec3 f_j1 = perp1 * (dV / (m1 * sin_theta));
+                    // |r2_hat-cos(theta)r1_hat| = sin(theta).  perp1 is
+                    // normalized above, so grad(theta) contributes 1/m1,
+                    // not 1/(m1*sin(theta)).  Keeping the extra sine factor
+                    // over-amplified angle forces away from 90 degrees.
+                    Vec3 f_j1 = perp1 * (dV / m1);
 
                     Vec3 perp2 = r1_hat - r2_hat * cos_theta;
                     double perp2_mag = std::sqrt(perp2.mag2());
                     if (perp2_mag < 1e-30) continue;
                     perp2 = perp2 * (1.0 / perp2_mag);
 
-                    Vec3 f_j2 = perp2 * (dV / (m2 * sin_theta));
+                    Vec3 f_j2 = perp2 * (dV / m2);
 
                     // Newton's 3rd law: center atom gets the equal-and-opposite
                     // reaction force. Without this, angle_strain would conserve
@@ -583,7 +607,7 @@ void AtomEngine::compute_all_forces() {
         for (int i = 0; i < static_cast<int>(atoms_.size()); ++i) {
             const auto& ai = atoms_[i];
             int nbonds = static_cast<int>(ai.bonds.size());
-            int lone_pairs = ai.valence_electrons - nbonds;
+            int lone_pairs = (ai.valence_electrons - nbonds) / 2;
             if (lone_pairs < 0) lone_pairs = 0;
             int steric_number = nbonds + lone_pairs;
 

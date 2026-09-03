@@ -493,9 +493,9 @@ export class TelemetryHub {
         // purpose: aeGetForceDecomposition is O(N²) and visibility-gated, so
         // an always-collected force channel would either pay that cost every
         // tick or sit dead when arrows are hidden (the B1 dead-buffer class).
-                this._s2_ae = new MultiRingBuffer(200, ['aeKE', 'aeTemp', 'aeEnergy', 'aeBonds', 'aePEIonic', 'aePEVdw', 'aePEBond', 'aeMomentum', 'aeAtomCount', 'aeDrift']);
+                this._s2_ae = new MultiRingBuffer(200, ['aeKE', 'aeTemp', 'aeEnergy', 'aeBonds', 'aePEIonic', 'aePEVdw', 'aePEBond', 'aePEAngle', 'aeMomentum', 'aeAtomCount', 'aeDrift', 'aeForceClampEvents', 'aeNuclearReleased', 'aeNuclearDeposited', 'aeNuclearTransit', 'aeNuclearEscaped', 'aeNuclearJoule', 'aeReactionEvents', 'aeNuclearGeneration', 'aeNuclearFuel', 'aeNuclearLiveNeutrons', 'aeNuclearEventRate', 'aeNuclearK']);
         const aeVs = this._s2_ae.views;
-        this.aeKE = aeVs.aeKE; this.aeTemp = aeVs.aeTemp; this.aeEnergy = aeVs.aeEnergy; this.aeBonds = aeVs.aeBonds; this.aePEIonic = aeVs.aePEIonic; this.aePEVdw = aeVs.aePEVdw; this.aePEBond = aeVs.aePEBond; this.aeMomentum = aeVs.aeMomentum; this.aeAtomCount = aeVs.aeAtomCount; this.aeDrift = aeVs.aeDrift;
+        this.aeKE = aeVs.aeKE; this.aeTemp = aeVs.aeTemp; this.aeEnergy = aeVs.aeEnergy; this.aeBonds = aeVs.aeBonds; this.aePEIonic = aeVs.aePEIonic; this.aePEVdw = aeVs.aePEVdw; this.aePEBond = aeVs.aePEBond; this.aePEAngle = aeVs.aePEAngle; this.aeMomentum = aeVs.aeMomentum; this.aeAtomCount = aeVs.aeAtomCount; this.aeDrift = aeVs.aeDrift; this.aeForceClampEvents = aeVs.aeForceClampEvents; this.aeNuclearReleased = aeVs.aeNuclearReleased; this.aeNuclearDeposited = aeVs.aeNuclearDeposited; this.aeNuclearTransit = aeVs.aeNuclearTransit; this.aeNuclearEscaped = aeVs.aeNuclearEscaped; this.aeNuclearJoule = aeVs.aeNuclearJoule; this.aeReactionEvents = aeVs.aeReactionEvents; this.aeNuclearGeneration = aeVs.aeNuclearGeneration; this.aeNuclearFuel = aeVs.aeNuclearFuel; this.aeNuclearLiveNeutrons = aeVs.aeNuclearLiveNeutrons; this.aeNuclearEventRate = aeVs.aeNuclearEventRate; this.aeNuclearK = aeVs.aeNuclearK;
         this._aeInitialEnergy = null;
 
         // ── Scale 4 — Planetary (200-sample) ───────────
@@ -1227,7 +1227,8 @@ export class TelemetryHub {
         // aeEnergy pushed 0 forever.
         const ke = diag.totalKE || 0;
         const totalEnergy = diag.totalEnergy ?? (
-            ke + (diag.totalPEIonic || 0) + (diag.totalPEVdw || 0) + (diag.totalPEBond || 0)
+            ke + (diag.totalPEIonic || 0) + (diag.totalPEVdw || 0) +
+                (diag.totalPEBond || 0) + (diag.totalPEAngle || 0)
         );
         const pMag = Math.sqrt(
             (diag.momentumX || 0) ** 2 + (diag.momentumY || 0) ** 2 + (diag.momentumZ || 0) ** 2
@@ -1270,9 +1271,22 @@ export class TelemetryHub {
                 aePEIonic: diag.totalPEIonic || 0,
                 aePEVdw: diag.totalPEVdw || 0,
                 aePEBond: diag.totalPEBond || 0,
+                aePEAngle: diag.totalPEAngle || 0,
                 aeMomentum: pMag,
                 aeAtomCount: diag.atomCount || 0,
-                aeDrift: energyDrift
+                aeDrift: energyDrift,
+                aeForceClampEvents: diag.forceClampEvents || 0,
+                aeNuclearReleased: diag.nuclear?.releasedMeV || 0,
+                aeNuclearDeposited: diag.nuclear?.depositedMeV || 0,
+                aeNuclearTransit: diag.nuclear?.inTransitMeV || 0,
+                aeNuclearEscaped: diag.nuclear?.escapedMeV || 0,
+                aeNuclearJoule: diag.nuclear?.releasedJoule || 0,
+                aeReactionEvents: diag.nuclear?.eventCount || 0,
+                aeNuclearGeneration: diag.nuclear?.generation || 0,
+                aeNuclearFuel: diag.nuclear?.fuelRemaining || 0,
+                aeNuclearLiveNeutrons: diag.nuclear?.liveNeutrons || 0,
+                aeNuclearEventRate: diag.nuclear?.eventRatePer100Ticks || 0,
+                aeNuclearK: diag.nuclear?.kEffective || 0
             }, currentTick);
         }
         return diag;

@@ -44,6 +44,7 @@ import { BaseLifecycleController } from '../../lifecycle.js';
 import { getMolecule, loadMolecule } from '../../molecules.js';
 import { Scale3ControlsComponent } from './ui/controls/component.js';
 import { telemetryHub } from '../../telemetry-hub.js';
+import { AE_PHYSICS_SPECS } from '../scale2/scenario-registry.js';
 
 
 // =====================================================================
@@ -58,6 +59,29 @@ import { syncAEParamsFromUI as _syncAEParamsFromUIInternal, resetAETogglesToDefa
 // Scale 3 tracks initial energy for drift monitoring (same purpose as
 // Scale 2's _aeInitialEnergy, but scoped to molecule scenarios).
 let _aeInitialEnergy = null;
+
+function applyMolecularPhysicsProfile(bridge, overrides = {}) {
+    const profile = {
+        ionic: false,
+        vdw: true,
+        bonds_force: true,
+        bonding: false,
+        damping: false,
+        speed_limit: true,
+        h_bonds: false,
+        angle_strain: false,
+        dipole_dipole: false,
+        thermostat: false,
+        electronegativity: false,
+        ...overrides,
+    };
+    for (const spec of AE_PHYSICS_SPECS) {
+        const enabled = !!profile[spec.key];
+        bridge[spec.setter]?.(enabled);
+        const checkbox = document.getElementById(spec.elementId);
+        if (checkbox) checkbox.checked = enabled;
+    }
+}
 
 
 // =====================================================================
@@ -108,7 +132,9 @@ export function loadMoleculeScenario(ctx, name) {
     // reference with Scale 2 (resetScale treats 2 and 3 identically).
     telemetryHub.resetScale(2);
 
-    // Reset toggles to defaults (bonding ON for molecules) then sync sliders
+    // Reset shared controls and sync numeric integration parameters. Each
+    // molecule path then applies an explicit Scale 3 force profile; it must not
+    // inherit whichever Scale 2 scenario ran previously.
     _resetAETogglesToDefaults(bridge);
     _syncAEParamsFromUIInternal(bridge);
 
@@ -119,6 +145,7 @@ export function loadMoleculeScenario(ctx, name) {
         // Without this, atoms placed at covalent bond distances (inside the
         // LJ wall) experience explosive repulsive forces on the first tick.
         if (bridge.aePreBond) bridge.aePreBond();
+        applyMolecularPhysicsProfile(bridge);
 
         // Stability check: one-tick dry run to detect explosions
         const preData = bridge.aeGetAtomData();
@@ -138,6 +165,7 @@ export function loadMoleculeScenario(ctx, name) {
         _syncAEParamsFromUIInternal(bridge);
         loadMolecule(bridge, molId);
         if (bridge.aePreBond) bridge.aePreBond();
+        applyMolecularPhysicsProfile(bridge);
 
         if (inspector) { inspector.setScenarioInfo(null); inspector.setCurrentMolecule(molId); }
         const mol = getMolecule(molId);
@@ -170,12 +198,17 @@ export function loadMoleculeScenario(ctx, name) {
                 }
             }
         }
-        if (bridge.aePreBond) bridge.aePreBond();
+        applyMolecularPhysicsProfile(bridge, {
+            ionic: true, vdw: true, bonds_force: false, angle_strain: false,
+        });
         if (inspector) inspector.setScenarioInfo({
             title: 'NaCl Ionic Crystal',
             desc: '3\u00d73\u00d73 rock salt lattice \u2014 alternating Na\u207a and Cl\u207b ions',
             fields: { 'Structure': 'FCC (rock salt)', 'Bonding': 'Ionic' }
         });
+    }
+    if (name === 'mol-custom') {
+        applyMolecularPhysicsProfile(bridge, { ionic: true, bonding: true, angle_strain: false });
     }
     // mol-custom: empty, user builds manually
 

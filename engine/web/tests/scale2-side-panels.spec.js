@@ -68,9 +68,14 @@ test.describe('Scale 2 side panels', () => {
             'PE (Ionic)',
             'PE (vdW)',
             'PE (Bond)',
+            'PE (Angle)',
             'Atom Count',
             'Bond Count',
             'Conservative Drift',
+            'Nuclear Released Energy',
+            'Nuclear Reaction Events',
+            'Live Neutrons',
+            'Observed Neutron Reproduction',
         ]));
         // No Scale 0 leakage…
         expect(grid.titles).not.toEqual(expect.arrayContaining([
@@ -105,6 +110,8 @@ test.describe('Scale 2 side panels', () => {
             'Atoms & Bonds',
             'Momentum',
             'Conservative Drift',
+            'Nuclear Reaction',
+            'Nuclear Population',
         ]));
         expect(charts.chips).not.toEqual(expect.arrayContaining([
             'Flux & Energy',
@@ -154,6 +161,7 @@ test.describe('Scale 2 side panels', () => {
         expect(diag.sectionTitles).toEqual(expect.arrayContaining([
             'Scenario Dynamics',
             'Phase 3 Forces',
+            'Nuclear Reaction Ledger',
             'Tracked Energy',
             'Conservation & Thermal',
         ]));
@@ -164,7 +172,7 @@ test.describe('Scale 2 side panels', () => {
         expect(diag.hbonds).toBe('on');
         expect(diag.angle).toBe('on');
         expect(diag.bonding).toBe('off');
-        expect(diag.ionic).toBe('on');
+        expect(diag.ionic).toBe('off');
         expect(diag.atoms).toBe('6');
         expect(diag.bonds).toBe('4');
         expect(diag.total).not.toBe('0');

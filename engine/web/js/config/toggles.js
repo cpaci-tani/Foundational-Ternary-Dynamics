@@ -287,22 +287,6 @@ export const SCALE0_ENABLE_ALL_PHYSICS_EXCLUDED_KEYS = Object.freeze([
     'de_broglie_clock',
 ]);
 
-// Scale 2/3 (Atoms/Molecules) — matching AtomToggles in atom_engine.h
-export const SCALE2_TOGGLES = [
-    ['ae-ionic', true, 'aeSetIonic'],
-    ['ae-vdw', true, 'aeSetVdw'],
-    ['ae-bonds-force', true, 'aeSetBondsForce'],
-    ['ae-bonding', true, 'aeSetBonding'],
-    ['ae-damping', false, 'aeSetDamping'],
-    ['ae-speed-limit', true, 'aeSetSpeedLimit'],
-    // Phase 3 extensions (off by default — scenarios enable as needed)
-    ['ae-hbonds', false, 'aeSetHBonds'],
-    ['ae-angle', false, 'aeSetAngleStrain'],
-    ['ae-dipole', false, 'aeSetDipoleDipole'],
-    ['ae-thermostat', false, 'aeSetThermostat'],
-    ['ae-electronegativity', false, 'aeSetElectronegativity'],
-];
-
 // Scale 0 scenario-specific toggle overrides.
 // Maps scenario name to array of [toggleKey, value, domId].
 // When a scenario loads, these overrides are applied AFTER defaults reset.

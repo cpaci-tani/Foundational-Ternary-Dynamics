@@ -7,7 +7,7 @@
  */
 
 import { appRegistry } from './core/registry.js';
-import { Viewport } from './viewport.js?v=24';
+import { Viewport } from './viewport.js?v=26';
 import { FluxEnergyChart, ParticleChart } from './charts.js';
 import { telemetryHub } from './telemetry-hub.js';
 import { createInspectorAppRuntime } from './inspector/app-runtime.js?v=5';
@@ -20,6 +20,7 @@ import * as Scale0Controller from './scales/scale0/controller.js?v=44';
 import * as Scale1Controller from './scales/scale1/controller.js?v=31';
 import * as Scale2Controller from './scales/scale2/controller.js';
 import * as Scale3Controller from './scales/scale3/controller.js';
+import { AE_PHYSICS_SPECS } from './scales/scale2/scenario-registry.js';
 // ── Phase 1-3: Ontic Observatory, Physics Fidelity, Aggregation Bridge
 import * as Scale4Controller from './scales/scale4/controller.js';
 import * as Scale5Controller from './scales/scale5/controller.js';
@@ -36,7 +37,7 @@ import { K_B } from './constants.js';
 import { AggregateDetector, EmergenceMonitor } from './aggregation-bridge.js?v=2';
 import { createOnticPanel } from './ui/app-ontic.js';
 import { BackgroundManager } from './backgrounds.js';
-import { AppShell } from './ui/shell/app-shell.js?v=26';
+import { AppShell } from './ui/shell/app-shell.js?v=27';
 import {
     initChartsPanel,
     initDiagnosticsPanel,
@@ -45,7 +46,7 @@ import {
     initParticleLogPanel,
     initScenePanel,
     initTelemetryGridPanel,
-} from './ui/panels/index.js?v=11';
+} from './ui/panels/index.js';
 import { floatingWindowManager } from './ui/components/floating-window/component.js?v=2';
 import { initFluxSlicePanel } from './scales/scale0/ui/overlays/flux-slice-panel.js';
 import { initWaveLabPanel } from './scales/scale0/ui/overlays/wave-lab-panel.js?v=2';
@@ -129,6 +130,9 @@ let _showOrbitalLobes = false;    // p/d/f orbital lobe shapes
 let _showAEForceIonic = false;    // Coulomb force arrows
 let _showAEForceVdw = false;      // van der Waals force arrows
 let _showAEForceBond = false;     // bond spring force arrows
+let _showAEForceHBond = false;    // H-bond force arrows
+let _showAEForceAngle = false;    // angle-strain force arrows
+let _showAEForceDipole = false;   // dipole-dipole force arrows
 let _showAEForceNet = false;      // net force arrows
 let _forceFrame = 0;              // throttle: compute forces every 2nd frame
 let _fieldParticleBuf = [];     // reusable {x,y,z} array for E/B field seeds (Scale 0)
@@ -369,16 +373,26 @@ function _resetAllVisualState() {
 
     // Reset AE toggle buttons (DOM shared across scales, kept here)
     const aeFieldBtn2 = document.getElementById('toggle-ae-field');
-    if (aeFieldBtn2) aeFieldBtn2.classList.remove('active');
+    if (aeFieldBtn2) {
+        aeFieldBtn2.classList.remove('active');
+        aeFieldBtn2.setAttribute('aria-pressed', 'false');
+    }
     for (const id of [
-        'ae-show-clouds', 'ae-show-shells', 'ae-show-shell-bounds', 'ae-show-lobes',
-        'ae-force-ionic', 'ae-force-vdw', 'ae-force-bond', 'ae-force-net',
+        'ae-show-clouds', 'ae-show-shells', 'ae-show-labels', 'ae-show-shell-bounds', 'ae-show-lobes',
+        'ae-force-ionic', 'ae-force-vdw', 'ae-force-bond',
+        'ae-force-hbond', 'ae-force-angle', 'ae-force-dipole', 'ae-force-net',
         'toggle-ae-velocities', 'toggle-ae-dipoles', 'toggle-ae-hbonds',
+        'toggle-ae-nuclear-events', 'toggle-ae-radiation', 'toggle-ae-heat',
+        'toggle-ae-nuclear-boundary',
     ]) {
         const el = document.getElementById(id);
         if (el) {
-            if (el.type === 'checkbox') el.checked = (id === 'ae-show-shells' || id === 'ae-show-clouds');
-            else el.classList.remove('active');
+            if (el.type === 'checkbox') {
+                el.checked = (id === 'ae-show-shells' || id === 'ae-show-clouds' || id === 'ae-show-labels');
+            } else {
+                el.classList.remove('active');
+                el.setAttribute('aria-pressed', 'false');
+            }
         }
     }
     const bondSelect = document.getElementById('bond-style-select');
@@ -1046,6 +1060,14 @@ function wireToolbar() {
         });
     }
 
+    const labelToggle = document.getElementById('ae-show-labels');
+    if (labelToggle) {
+        labelToggle.addEventListener('change', (e) => {
+            Scale2Controller.setAEVisualToggle('showElementLabels', e.target.checked);
+            viewport.toggleElementLabels(e.target.checked);
+        });
+    }
+
     // Shell boundary spheres
     const shellBoundsToggle = document.getElementById('ae-show-shell-bounds');
     if (shellBoundsToggle) {
@@ -1079,6 +1101,9 @@ function wireToolbar() {
         ['ae-force-ionic', '_showAEForceIonic', 'toggleAEForceIonic'],
         ['ae-force-vdw', '_showAEForceVdw', 'toggleAEForceVdw'],
         ['ae-force-bond', '_showAEForceBond', 'toggleAEForceBond'],
+        ['ae-force-hbond', '_showAEForceHBond', 'toggleAEForceHBond'],
+        ['ae-force-angle', '_showAEForceAngle', 'toggleAEForceAngle'],
+        ['ae-force-dipole', '_showAEForceDipole', 'toggleAEForceDipole'],
         ['ae-force-net', '_showAEForceNet', 'toggleAEForceNet'],
     ];
     for (const [id, flag, method] of forceToggles) {
@@ -1086,10 +1111,14 @@ function wireToolbar() {
         if (btn) {
             btn.addEventListener('click', () => {
                 const isActive = btn.classList.toggle('active');
+                btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
                 switch (flag) {
                     case '_showAEForceIonic': Scale2Controller.setAEVisualToggle('showAEForceIonic', isActive); break;
                     case '_showAEForceVdw': Scale2Controller.setAEVisualToggle('showAEForceVdw', isActive); break;
                     case '_showAEForceBond': Scale2Controller.setAEVisualToggle('showAEForceBond', isActive); break;
+                    case '_showAEForceHBond': Scale2Controller.setAEVisualToggle('showAEForceHBond', isActive); break;
+                    case '_showAEForceAngle': Scale2Controller.setAEVisualToggle('showAEForceAngle', isActive); break;
+                    case '_showAEForceDipole': Scale2Controller.setAEVisualToggle('showAEForceDipole', isActive); break;
                     case '_showAEForceNet': Scale2Controller.setAEVisualToggle('showAEForceNet', isActive); break;
                 }
                 viewport[method](isActive);
@@ -1310,17 +1339,10 @@ function wireControls() {
     });
 
     // AE controls — force & dynamics toggles
-    const aeToggleMap = {
-        'ae-ionic': (v) => bridge.aeSetIonic(v),
-        'ae-vdw': (v) => bridge.aeSetVdw(v),
-        'ae-bonds-force': (v) => bridge.aeSetBondsForce(v),
-        'ae-bonding': (v) => bridge.aeSetBonding(v),
-        'ae-damping': (v) => bridge.aeSetDamping(v),
-        'ae-speed-limit': (v) => bridge.aeSetSpeedLimit(v),
-    };
-    for (const [elId, setter] of Object.entries(aeToggleMap)) {
-        const el = document.getElementById(elId);
-        if (el) el.addEventListener('change', () => setter(el.checked));
+    for (const spec of AE_PHYSICS_SPECS) {
+        const el = document.getElementById(spec.elementId);
+        if (!el) continue;
+        el.addEventListener('change', () => bridge[spec.setter]?.(el.checked));
     }
 
     // AE sliders
@@ -1341,6 +1363,67 @@ function wireControls() {
             const s = parseFloat(aeSoftSlider.value);
             aeSoftValue.textContent = s.toFixed(2);
             bridge.aeSetSoftening(s);
+        });
+    }
+
+    // Dynamic Scale-2 nuclear laboratory. These controls mutate the live
+    // environment; they never reload or branch on the selected scenario.
+    const nuclearPatch = (patch) => bridge.aeSetNuclearEnvironment?.(patch);
+    const bindNuclearRange = (id, valueId, key, format) => {
+        const input = document.getElementById(id);
+        const value = document.getElementById(valueId);
+        input?.addEventListener('input', () => {
+            const numeric = Number(input.value);
+            if (value) value.textContent = format(numeric);
+            nuclearPatch({ [key]: numeric });
+        });
+    };
+    bindNuclearRange('ae-nuclear-reactivity', 'ae-nuclear-reactivity-value', 'reactivityScale', v => v.toFixed(1));
+    bindNuclearRange('ae-nuclear-collision-radius', 'ae-nuclear-collision-radius-value', 'collisionRadiusScale', v => `${v.toFixed(2)}×`);
+    bindNuclearRange('ae-nuclear-transport-radius', 'ae-nuclear-transport-radius-value', 'transportRadius', v => `${v.toFixed(0)} lu`);
+    bindNuclearRange('ae-nuclear-moderator', 'ae-nuclear-moderator-value', 'moderatorStrength', v => v.toFixed(2));
+    bindNuclearRange('ae-nuclear-absorber', 'ae-nuclear-absorber-value', 'absorberStrength', v => v.toFixed(2));
+    bindNuclearRange('ae-nuclear-source-rate', 'ae-nuclear-source-rate-value', 'sourceRate', v => `${v.toFixed(2)}/tick`);
+    document.getElementById('ae-nuclear-boundary')?.addEventListener('change', event =>
+        nuclearPatch({ boundaryMode: event.currentTarget.value }));
+    document.getElementById('ae-nuclear-source-energy')?.addEventListener('change', event =>
+        nuclearPatch({ sourceEnergyMeV: Number(event.currentTarget.value) }));
+    document.getElementById('ae-nuclear-source-enabled')?.addEventListener('change', event =>
+        nuclearPatch({ sourceEnabled: event.currentTarget.checked }));
+    document.getElementById('ae-nuclear-channel')?.addEventListener('change', event => {
+        const channel = event.currentTarget.value;
+        if (!channel) {
+            bridge.aeConfigureNuclearReaction?.('');
+            return;
+        }
+        bridge.aeConfigureNuclearReaction?.({
+            channel,
+            mode: 'sandbox',
+            eventLimit: 100000,
+            seed: 0x5eed235,
+        });
+        const valueOf = id => Number(document.getElementById(id)?.value);
+        nuclearPatch({
+            reactivityScale: valueOf('ae-nuclear-reactivity'),
+            collisionRadiusScale: valueOf('ae-nuclear-collision-radius'),
+            transportRadius: valueOf('ae-nuclear-transport-radius'),
+            boundaryMode: document.getElementById('ae-nuclear-boundary')?.value,
+            moderatorStrength: valueOf('ae-nuclear-moderator'),
+            absorberStrength: valueOf('ae-nuclear-absorber'),
+            sourceRate: valueOf('ae-nuclear-source-rate'),
+            sourceEnergyMeV: valueOf('ae-nuclear-source-energy'),
+            sourceEnabled: !!document.getElementById('ae-nuclear-source-enabled')?.checked,
+        });
+    });
+    for (const [id, kind] of [
+        ['btn-ae-inject-neutron', 'neutron'],
+        ['btn-ae-inject-dt', 'dt-pair'],
+        ['btn-ae-inject-u235', 'u235'],
+    ]) {
+        document.getElementById(id)?.addEventListener('click', () => {
+            if (bridge.aeInjectNuclearParticle?.(kind) === false) {
+                showToast('Select a nuclear channel before injecting reactants.', 'info');
+            }
         });
     }
 
@@ -1482,6 +1565,7 @@ function wireViewportToggles() {
         aeFieldBtn.addEventListener('click', () => {
             aeFieldBtn.classList.toggle('active');
             const aeFieldOn = aeFieldBtn.classList.contains('active');
+            aeFieldBtn.setAttribute('aria-pressed', aeFieldOn ? 'true' : 'false');
             Scale2Controller.setAEVisualToggle('showAEField', aeFieldOn);
             viewport.toggleFieldHeatmap(aeFieldOn);
             viewport.toggleFieldVectors(aeFieldOn);
@@ -1496,6 +1580,10 @@ function wireViewportToggles() {
         ['toggle-ae-velocities', 'showAEVelocities', (on) => viewport.toggleVelocityVectors(on)],
         ['toggle-ae-dipoles', 'showAEDipoles', (on) => viewport.toggleAEDipoles(on)],
         ['toggle-ae-hbonds', 'showAEHBondLines', (on) => viewport.toggleHBondLines(on)],
+        ['toggle-ae-nuclear-events', 'showAENuclearEvents', (on) => viewport.toggleNuclearEvents?.(on)],
+        ['toggle-ae-radiation', 'showAERadiation', (on) => viewport.toggleNuclearRadiation?.(on)],
+        ['toggle-ae-heat', 'showAEHeat', (on) => viewport.toggleNuclearHeat?.(on)],
+        ['toggle-ae-nuclear-boundary', 'showAENuclearBoundary', (on) => viewport.toggleNuclearBoundary?.(on)],
     ];
     for (const [btnId, flagKey, vpToggle] of aeStructureToggles) {
         const btn = document.getElementById(btnId);
@@ -1515,6 +1603,7 @@ function wireViewportToggles() {
         molBondBtn.addEventListener('click', () => {
             molBondBtn.classList.toggle('active');
             _showBonds = molBondBtn.classList.contains('active');
+            molBondBtn.setAttribute('aria-pressed', _showBonds ? 'true' : 'false');
             viewport.toggleBondLines(_showBonds);
         });
     }
@@ -1964,7 +2053,8 @@ function loadAEScenario(name) {
 }
 
 
-// AE toggle helpers (_syncAEParamsFromUI, _resetAETogglesToDefaults, _aeSetPhase3) moved to Scale2Controller
+// AE toggle helpers moved to Scale2Controller; scenario profiles now come from
+// the canonical Scale 2 registry rather than an imperative Phase-3 helper.
 function _syncAEParamsFromUI() {
     Scale2Controller.syncAEParams({ bridge });
 }

@@ -1,5 +1,111 @@
 # Foundational Ternary Dynamics Changelog
 
+# Scale 2 Overlay Integrity Audit (2026-09-03)
+
+- Consolidated atom/molecule visualization controls into the responsive
+  viewport overlay and retired the obsolete Scale 2/3 fallback toolbar whose
+  duplicate DOM IDs caused the application to wire hidden controls instead of
+  the visible panel.
+- Corrected thin-bond rendering to resolve stable atom IDs after reactions or
+  removals, and aligned Scale 2 electric-field vectors with the atom/world
+  coordinate system and potential samples. A field preset now renders while
+  paused and refreshes after paused edits.
+- Separated nuclear event, radiation, deposited-heat, and transport-boundary
+  visibility. Neutron packets follow the accepted product directions, heat
+  halos scale with each event's modeled deposited fraction, and stale renderer
+  event records are pruned with the physics effect buffer.
+- Reclassified the orange A^(1/3) layer as an empirical nuclear-extent
+  envelope rather than a strong-force field, labeled orbital lobes as
+  schematic, added a chemical/isotope label toggle, and added direction heads
+  to single-color force and dipole vectors.
+- Raised Scale 2 per-atom renderer capacities to the default 512-record nuclear
+  population, extended velocity telemetry through the configurable 2,048-record
+  nuclear ceiling, and made H-bond geometry grow instead of truncating at 256.
+  Completed scenario-boundary clearing, constrained the overlay above the
+  status bar with internal scrolling, and added applicability, wiring, tooltip,
+  capacity, stable-ID, coordinate-alignment, nuclear-layer, and constrained
+  layout regression gates.
+- Added an opt-in hardware release gate for the complete Scale 2 overlay
+  surface. On the RTX 5090 ANGLE/D3D11 path, both the paused 118-record atlas
+  and a live 192-record water population completed 659+ frame samples at
+  60.00 effective FPS with p99 <= 16.67 ms, no intervals over 20 ms, and no
+  Long Tasks; the live population sustained 59.98 AtomEngine ticks/s.
+
+# Scale 2 Nuclear Populations and Energy Transport (2026-09-03)
+
+- Added four deterministic nuclear-reaction scenarios to the Scale 2 selector:
+  deuterium-tritium fusion (`²H + ³H → ⁴He + n`) and the reference
+  neutron-induced U-235 fission channel
+  (`²³⁵U + n → ¹⁴¹Ba + ⁹²Kr + 3n`), each as a microscopic initial-condition
+  preset and as a finite population (D-T burn / U-235 chain reaction).
+- Added live isotope identity to AtomEngine records and rendering, including
+  explicit free-neutron products, isotope labels, post-reaction inspection,
+  and product trajectories.
+- Compute selected-channel mass Q values from evaluated atomic masses:
+  17.5892969 MeV for
+  D-T fusion and 173.2801360 MeV for the selected U-235 product channel.
+  D-T uses a 20 keV representative center-of-mass encounter and U-235 a
+  0.0253 eV thermal neutron. Deterministic product kinematics close proton,
+  neutron, charge, momentum, and named kinetic ledgers on every event.
+- Added an imported average U-235 recoverable-energy partition: 168 MeV
+  fragments, 5 MeV prompt-neutron kinetic energy, 13 MeV prompt/capture gamma,
+  and 14 MeV delayed heat = 200 MeV recoverable per fission. This is kept
+  separate from the selected Ba/Kr channel's 173.280 MeV mass Q.
+- Replaced target-assigned neutron flights, forced pair capture, imposed
+  `k-effective`, and scripted transport deadlines with live swept isotope
+  collisions, seeded energy-dependent hazards, ordinary integrated prompt
+  neutrons, computed-volume leakage/reflection, ambient one-group moderation
+  and absorption, and reproduction measured from neutron births and resolved
+  losses. Scenario identity is not read by the tick path.
+- Added an always-editable nuclear laboratory control card for channel,
+  reactivity, collision radius, transport volume/boundary, moderation,
+  absorption, neutron energy, continuous source rate, and manual neutron,
+  D-T, and U-235 injection. A color-coded wire sphere shows the computed
+  transport boundary.
+- Corrected the Scale 2 controls mount to target `#panel-controls-grid`;
+  the generic grid selector had placed all four AtomEngine cards inside a
+  hidden Scale 5 controls block after panel-resource composition.
+- Retained finite ensemble weights, fuel/generation/leakage/absorption counters, exponential
+  charged/neutron/gamma/delayed deposition, and an exact
+  `released = deposited + in-transit + escaped` transport ledger.
+- Added staged event cores, reaction-plane shock rings, distinct neutron/gamma
+  packets and wavefronts, deposited-energy halos, radiation/heat overlay
+  toggles, MeV/J status formatting, diagnostics, chart channels, and browser
+  regression tests for microscopic and population modes. Presentation timing
+  is intentionally decoupled from physics ticks so high-throughput runs remain
+  visible without altering any reaction or energy ledger; each ignition starts
+  when its booked event reaches the renderer, and post-plateau motion is
+  explicitly labeled as carrier/heat aftermath.
+- Kept the epistemic boundary explicit: these are `[PARAMETRIC]` effective
+  reaction laboratories. Collision radii, normalized energy-response hazards,
+  moderator/absorber response, selected product channels, ensemble weight,
+  containment, and deposition time constants are imposed. No absolute cross
+  section in barns, ab initio tunnelling, yield distribution, self-consistent
+  plasma transport, or reactor-grade neutron transport is claimed.
+
+# Scale 2 AtomEngine Contract and Physics Audit (2026-09-02)
+
+- Rebuilt Scale 2 around one executable scenario registry: 25 deterministic
+  curated contracts plus 117 generated element references, each with complete
+  physics/visual profiles, numeric parameters, expectations, evidence, and
+  explicit epistemic status.
+- Corrected the H-bond radial sign, dipole-force assignment, VSEPR lone-pair
+  count, and harmonic-angle gradient; aligned 1-2/1-3 exclusions and tracked
+  harmonic-angle potential energy in native and browser engines.
+- Unified browser force integration, inspection, and seven overlay channels.
+  The net overlay is the actual post-safety force; one global safety scale
+  preserves internal action-reaction symmetry and reports every intervention.
+- Added finite-state input guards and pre/post-tick validation with rollback,
+  deterministic scenario loading, exact applicability profiles, Scale 3 shared
+  backend regression profiles, reliable screen-space atom picking, and live
+  bond-connected inspection context.
+- Kept the epistemic boundary explicit: Scale 2 is an effective
+  classical/empirical chemistry model, not recovered atomic quantum dynamics.
+  H-bond and dipole accounting remain partial and cannot claim conservation.
+- Added analytic force/energy checks, all-146-entry scenario validation,
+  extended coupled-profile stress coverage, native AtomEngine regression, and
+  Scale 2/3 browser regression tests.
+
 # FTD-1024 — Finite Cartesian Linearization / Tensor Composition Boundary (2026-08-26)
 
 - Proved the canonical finite composition theorem

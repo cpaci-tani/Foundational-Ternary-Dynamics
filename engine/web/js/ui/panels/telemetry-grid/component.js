@@ -47,11 +47,16 @@ const CHANNELS = {
         { key: 'aePEIonic',   title: 'PE (Ionic)',      buffer: 'aePEIonic',   color: 'var(--chart-ae-pe-ionic, #f87171)', unit: '(sim)' },
         { key: 'aePEVdw',     title: 'PE (vdW)',        buffer: 'aePEVdw',     color: 'var(--chart-ae-pe-vdw, #2dd4bf)',   unit: '(sim)' },
         { key: 'aePEBond',    title: 'PE (Bond)',       buffer: 'aePEBond',    color: 'var(--chart-ae-pe-bond, #fb923c)',  unit: '(sim)' },
+        { key: 'aePEAngle',   title: 'PE (Angle)',      buffer: 'aePEAngle',   color: 'var(--chart-ae-pe-angle, #facc15)', unit: '(sim)' },
         { key: 'aeTemp',      title: 'Temperature',     buffer: 'aeTemp',      color: 'var(--chart-ae-temp, #fb8c00)',     unit: '(sim)' },
         { key: 'aeAtomCount', title: 'Atom Count',      buffer: 'aeAtomCount', color: 'var(--chart-ae-atoms, #42a5f5)',    unit: 'ct' },
         { key: 'aeBonds',     title: 'Bond Count',      buffer: 'aeBonds',     color: 'var(--chart-ae-bonds, #a78bfa)',    unit: 'ct' },
         { key: 'aeMomentum',  title: 'Momentum |p|',    buffer: 'aeMomentum',  color: 'var(--chart-ae-momentum, #60a5fa)', unit: '(sim)' },
-        { key: 'aeDrift',     title: 'Conservative Drift', buffer: 'aeDrift',  color: 'var(--chart-ae-drift, #fbbf24)',    unit: '%' }
+        { key: 'aeDrift',     title: 'Conservative Drift', buffer: 'aeDrift',  color: 'var(--chart-ae-drift, #fbbf24)',    unit: '%' },
+        { key: 'aeNuclearReleased', title: 'Nuclear Released Energy', buffer: 'aeNuclearReleased', color: '#f97316', unit: 'MeV' },
+        { key: 'aeReactionEvents', title: 'Nuclear Reaction Events', buffer: 'aeReactionEvents', color: '#fde047', unit: 'ct' },
+        { key: 'aeNuclearLiveNeutrons', title: 'Live Neutrons', buffer: 'aeNuclearLiveNeutrons', color: '#67e8f9', unit: 'ct' },
+        { key: 'aeNuclearK', title: 'Observed Neutron Reproduction', buffer: 'aeNuclearK', color: '#c084fc', unit: '' }
     ],
     // Scale 4: Planetary N-body
     '4': [

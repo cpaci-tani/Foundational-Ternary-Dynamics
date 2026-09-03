@@ -83,9 +83,15 @@ test.describe('Scale 2 physics invariants', () => {
             const mobile = state._ae.atoms[1];
             const mobileKE = 0.5 * mobile.mass * (mobile.vx ** 2 + mobile.vy ** 2 + mobile.vz ** 2);
 
+            const c = ae.aeAddAtom(1, 0, 4, 0, 0, 0, 0, 0);
+            ae.aeCreateBond(a, c);
+            ae.aeSetBondsForce(true);
             ae.aeSetAngleStrain(true);
-            const partial = ae.aeGetDiagnostics();
+            const angleTracked = ae.aeGetDiagnostics();
             ae.aeSetAngleStrain(false);
+            ae.aeSetHBonds(true);
+            const partial = ae.aeGetDiagnostics();
+            ae.aeSetHBonds(false);
             ae.aeSetThermostat(true);
             const driven = ae.aeGetDiagnostics();
 
@@ -108,7 +114,7 @@ test.describe('Scale 2 physics invariants', () => {
 
             return {
                 active, pairOff, bondOn, bondOff, constrained, mobileKE,
-                partial, driven, baselineDrift, validDrift,
+                angleTracked, partial, driven, baselineDrift, validDrift,
                 invalidDriftIsNaN: Number.isNaN(invalidDrift),
             };
         });
@@ -121,6 +127,8 @@ test.describe('Scale 2 physics invariants', () => {
         expect(result.bondOn.totalPEBond).toBeGreaterThan(0);
         expect(result.bondOff.totalPEBond).toBe(0);
         expect(result.constrained.temperature).toBeCloseTo(2 * result.mobileKE / 3, 12);
+        expect(result.angleTracked.totalPEAngle).toBeGreaterThan(0);
+        expect(result.angleTracked.energyComplete).toBe(true);
         expect(result.partial.energyStatus).toBe('partial-untracked-potential');
         expect(result.partial.energyComplete).toBe(false);
         expect(result.driven.energyStatus).toBe('complete-driven');
@@ -128,6 +136,108 @@ test.describe('Scale 2 physics invariants', () => {
         expect(result.baselineDrift).toBe(0);
         expect(result.validDrift).toBeCloseTo(2, 12);
         expect(result.invalidDriftIsNaN).toBe(true);
+    });
+
+    test('H-bond force has a repulsive core and attractive tail', async ({ page }) => {
+        const result = await page.evaluate(async () => {
+            const { createAtomEngine } = await import('./js/bridge/mock-atom-engine.js');
+            const state = {};
+            const ae = createAtomEngine(state);
+            ae.initAE();
+            ae.aeSetIonic(false); ae.aeSetVdw(false); ae.aeSetBondsForce(false);
+            ae.aeSetBonding(false); ae.aeSetSpeedLimit(false); ae.aeSetHBonds(true);
+            const donor = ae.aeAddAtom(8, 0, 0, 0);
+            const hydrogen = ae.aeAddAtom(1, 1, 0, 0);
+            const acceptor = ae.aeAddAtom(8, 4, 0, 0);
+            ae.aeCreateBond(donor, hydrogen, 1);
+            ae._aeBuildBondLookup();
+            const sig = (state._ae.atoms[hydrogen].vdw_sigma + state._ae.atoms[acceptor].vdw_sigma) / 2;
+            state._ae.atoms[acceptor].x = 1 + 1.2 * sig;
+            const attractive = ae.aeGetForceDecomposition().hbond[hydrogen * 3];
+            state._ae.atoms[acceptor].x = 1 + 0.8 * sig;
+            const repulsive = ae.aeGetForceDecomposition().hbond[hydrogen * 3];
+            return { attractive, repulsive };
+        });
+        expect(result.attractive).toBeGreaterThan(0);
+        expect(result.repulsive).toBeLessThan(0);
+    });
+
+    test('angle force is the negative gradient of tracked angle energy', async ({ page }) => {
+        const result = await page.evaluate(async () => {
+            const { createAtomEngine } = await import('./js/bridge/mock-atom-engine.js');
+            const state = {};
+            const ae = createAtomEngine(state);
+            ae.initAE();
+            ae.aeSetIonic(false); ae.aeSetVdw(false); ae.aeSetBondsForce(false);
+            ae.aeSetBonding(false); ae.aeSetSpeedLimit(false); ae.aeSetAngleStrain(true);
+            const o = ae.aeAddAtom(8, 0, 0, 0);
+            const h1 = ae.aeAddAtom(1, 3, 0, 0);
+            const h2 = ae.aeAddAtom(1, 0, 3, 0);
+            ae.aeCreateBond(o, h1, 1); ae.aeCreateBond(o, h2, 1);
+            const analytic = ae.aeGetForceDecomposition().angle[h1 * 3 + 1];
+            const eps = 1e-5;
+            state._ae.atoms[h1].y += eps;
+            const plus = ae.aeGetDiagnostics().totalPEAngle;
+            state._ae.atoms[h1].y -= 2 * eps;
+            const minus = ae.aeGetDiagnostics().totalPEAngle;
+            state._ae.atoms[h1].y += eps;
+            return { analytic, numeric: -(plus - minus) / (2 * eps) };
+        });
+        expect(result.analytic).toBeCloseTo(result.numeric, 6);
+    });
+
+    test('force decomposition sums to the exact post-safety integrator force', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+        await loadScenario(page, 'ae-polar-dimer', 4);
+        const result = await page.evaluate(() => {
+            const decomp = window._ftdBridge.aeGetForceDecomposition({ net: true });
+            const channels = ['ionic', 'vdw', 'bond', 'hbond', 'angle', 'dipole'];
+            let maxResidual = 0;
+            let totalFx = 0, totalFy = 0, totalFz = 0;
+            for (let i = 0; i < decomp.count; i++) {
+                for (let axis = 0; axis < 3; axis++) {
+                    const k = i * 3 + axis;
+                    const sum = channels.reduce((value, name) => value + decomp[name][k], 0);
+                    maxResidual = Math.max(maxResidual, Math.abs(sum - decomp.net[k]));
+                }
+                totalFx += decomp.net[i * 3];
+                totalFy += decomp.net[i * 3 + 1];
+                totalFz += decomp.net[i * 3 + 2];
+            }
+            return {
+                count: decomp.count,
+                maxResidual,
+                internalResidual: Math.hypot(totalFx, totalFy, totalFz),
+                clamped: decomp.clamped,
+            };
+        });
+        expect(result.count).toBe(4);
+        expect(result.maxResidual).toBeLessThan(2e-5);
+        expect(result.internalResidual).toBeLessThan(2e-5);
+        expect(typeof result.clamped).toBe('boolean');
+        expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
+    });
+
+    test('runtime input guards reject non-finite state without advancing', async ({ page }) => {
+        const result = await page.evaluate(async () => {
+            const { createAtomEngine } = await import('./js/bridge/mock-atom-engine.js');
+            const state = {};
+            const ae = createAtomEngine(state);
+            ae.initAE();
+            const invalidId = ae.aeAddAtom(0, Number.NaN, 0, 0);
+            ae.aeSetDt(99); const clampedDt = ae.aeGetDt();
+            const rejectedSoft = ae.aeSetSoftening(Number.NaN);
+            const id = ae.aeAddAtom(1, 0, 0, 0);
+            state._ae.atoms[id].vx = Number.NaN;
+            const ticked = ae.aeTick();
+            return { invalidId, clampedDt, rejectedSoft, ticked, tick: state._ae.tick, error: state._ae.last_error };
+        });
+        expect(result.invalidId).toBe(-1);
+        expect(result.clampedDt).toBe(0.5);
+        expect(result.rejectedSoft).toBe(false);
+        expect(result.ticked).toBe(false);
+        expect(result.tick).toBe(0);
+        expect(result.error).toContain('pre-tick state rejected');
     });
 
     test('momentum is conserved through a head-on LJ collision', async ({ page }) => {

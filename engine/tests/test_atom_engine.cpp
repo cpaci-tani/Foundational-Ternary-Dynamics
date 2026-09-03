@@ -9,6 +9,8 @@
 #include <cmath>
 #include <iostream>
 #include <iomanip>
+#include <limits>
+#include <stdexcept>
 #include "ftd/atom_engine.h"
 #include "ftd/constants.h"
 
@@ -304,6 +306,21 @@ int main() {
         check_close("T = 2*KE/(3*N)", d.temperature, expected_T, expected_T * 0.01);
     }
 
+    // ── AE14a: Finite-domain input guards ──────────────────────────
+    {
+        std::cout << "\n--- AE14a: Finite-domain input guards ---\n";
+        AtomEngine ae;
+        bool rejected_dt = false, rejected_atom = false;
+        try { ae.set_dt(std::numeric_limits<double>::quiet_NaN()); }
+        catch (const std::invalid_argument&) { rejected_dt = true; }
+        try { ae.add_atom(1, {std::numeric_limits<double>::infinity(), 0.0, 0.0}); }
+        catch (const std::invalid_argument&) { rejected_atom = true; }
+        check("non-finite dt rejected", rejected_dt);
+        check("non-finite atom position rejected", rejected_atom);
+        std::string state_error;
+        check("fresh AtomEngine state validates", ae.validate_state(&state_error));
+    }
+
     // ── AE15: OnticEntity conversion ────────────────────────────────
     {
         std::cout << "\n--- AE14b: Diagnostics follow active model ---\n";
@@ -336,10 +353,22 @@ int main() {
         ae.toggles.covalent_bonds = false;
         check("disabled bond PE is zero", ae.diagnostics().total_pe_bond == 0.0);
 
-        ae.toggles.angle_strain = true;
-        AtomDiagnostics partial = ae.diagnostics();
-        check("untracked many-body PE marks accounting partial", !partial.energy_complete);
-        check("partial accounting cannot claim conservation", !partial.energy_conservative);
+        AtomEngine angle_ae;
+        angle_ae.set_bonding_enabled(false);
+        angle_ae.set_damping_enabled(false);
+        angle_ae.toggles.ionic = false;
+        angle_ae.toggles.van_der_waals = false;
+        angle_ae.toggles.covalent_bonds = false;
+        const int center = angle_ae.add_atom(8, {0.0, 0.0, 0.0});
+        const int t1 = angle_ae.add_atom(1, {3.0, 0.0, 0.0});
+        const int t2 = angle_ae.add_atom(1, {0.0, 3.0, 0.0});
+        check("angle fixture bond 1", angle_ae.create_bond(center, t1));
+        check("angle fixture bond 2", angle_ae.create_bond(center, t2));
+        angle_ae.toggles.angle_strain = true;
+        AtomDiagnostics angle_diag = angle_ae.diagnostics();
+        check("angle PE is tracked", angle_diag.total_pe_angle > 0.0);
+        check("tracked angle accounting is complete", angle_diag.energy_complete);
+        check("static angle profile can claim conservation", angle_diag.energy_conservative);
     }
 
     // ── AE15: OnticEntity conversion ────────────────────────────────

@@ -180,18 +180,33 @@ In the **Particle Zoo**, each Category or Generation heading is a collapsible di
 
 Scale 2 runs the AtomEngine — softened Coulomb (ionic), Lennard-Jones 12-6 (vdW), harmonic bond springs, plus toggleable Phase-3 forces (H-bonds LJ 10-12·cos²θ, dipole–dipole, VSEPR angle strain, Berendsen thermostat, electronegativity-extended auto-bonding). **All AE energies, temperatures, and momenta are sim units** (implicit k_B = 1) — panels label them "(sim)", never MeV or Kelvin. The JS engine is the production backend on every bridge; its force constants are visualization-scale tunings, deliberately different from the C++ AtomEngine's ontic-chain prefactors (see `engine/SPEC_ENGINE.md` §Scale 2).
 
-Scenario groups (each applies a **visual preset** at load, mirroring Scale 1):
+The selector contains 146 entries: 29 curated contracts plus 117 generated
+single-element references (hydrogen is already the curated composite
+reference). Every curated entry applies a complete physics and visual profile
+at load.
+
+Scenario groups include:
 
 - **Single atoms** (`ae-hydrogen-atom`, `ae-el-1…118`) — shell boundary spheres on, orbital clouds on.
 - **Ionic formation** (`ae-nacl-form`, `ae-nacl-lattice`, `ae-mgf2`) — Coulomb-driven; lights the F_C force arrows + field heatmap.
 - **Noble clusters / collision** (`ae-he-cluster`, `ae-ar-cluster`, `ae-noble-mix`, `ae-collision`) — vdW only; lights F_vdW (collision also velocity vectors).
 - **Covalent / metallic** (`ae-h2-form`, `ae-o2-form`, `ae-ch4-form`, `ae-fe-bcc`, `ae-cu-fcc`) — auto-bonding or pre-bonded; lights F_bond arrows.
 - **Water / H-bond** (`ae-water-dimer`, `ae-water-cluster`) — pre-bonded H₂O with Phase-3 H-bonds + angle strain; shows dashed donor-H···acceptor lines.
-- **VSEPR** (`ae-vsepr-linear`, `-tetrahedral`, `-bent`) — seeded at the wrong angle, angle strain relaxes toward 180°/109.47°/104.5°; lights F_net (note: the net arrow decomposition is ionic+vdW+bond only — the angle force itself is not in it).
+- **VSEPR** (`ae-vsepr-linear`, `-tetrahedral`, `-bent`) — seeded at the wrong angle, angle strain relaxes toward 180°/109.47°/104.5°; the exact post-safety net arrow includes every active force component.
 - **Thermal** (`ae-thermal-gas`) — Berendsen thermostat toward T = 1.0 (sim); velocity vectors on.
+- **Validation laboratories** (`ae-conservative-pair`, `ae-damped-relaxation`, `ae-polar-dimer`) — isolate conservation, damping, and dipole/H-bond behavior.
+- **Nuclear laboratories** (`ae-dt-fusion`, `ae-u235-fission`, `ae-dt-fusion-burn`, `ae-u235-chain-reaction`) — finite live collision/transport models with separate microscopic Q, represented-population energy, deposition, and escape ledgers. Their reaction hazards and transport coefficients are explicitly **[PARAMETRIC]**; they are not ab-initio nuclear calculations.
 - **Periodic table** (`ae-periodic`) — all 118 elements locked; clouds/shells off for performance.
 
-**Control map:** scenario select + orbital-clouds checkbox in the Scale 2 toolbar; nucleus shells / shell bounds / orbital lobes / bond style / F_C / F_vdW / F_bond / F_net in the shared Scale 2/3 toolbar; physics toggles + dt/softening in the Controls card; Fields / Velocities / Dipoles / H-Bonds buttons in the viewport overlay panel. The Diagnostics, Charts, and Telemetry-Grid side panels carry dedicated Scale 2 descriptors (scenario dynamics + Phase-3 states + Hamiltonian decomposition + conservation rows; 5 chart groups; 10 telemetry channels).
+**Control map:** the scenario selector is in the context bar. All presentation
+layers live in the single scrollable **Atom overlays** panel: empirical orbital
+decoration, nuclear extent, labels, shell/lobe motifs, bond style, signed
+potential plus E field, all six force components plus exact net force,
+velocities, dipoles, H-bonds, and independent nuclear event/radiation/heat/
+boundary layers. Physics toggles, integrator parameters, and the interactive
+nuclear transport laboratory live in **Controls**. Diagnostics, Charts, and
+Telemetry Grid carry the dynamic measurements. Every overlay control has an
+epistemically scoped tooltip; presentation visibility never enables a force.
 
 ---
 

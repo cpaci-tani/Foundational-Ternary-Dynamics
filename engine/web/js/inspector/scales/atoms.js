@@ -13,9 +13,10 @@ import {
     formatLength,
 } from '../../units.js';
 
-export function handleAEClick(target, intersects) {
-    if (intersects.length > 0) {
-        const hitIdx = intersects[0].index;
+export function handleAEClick(target, intersects, event = null) {
+    let newId = -1;
+    for (const intersect of intersects) {
+        const hitIdx = intersect.index;
         let atomArrayIdx = -1;
 
         if (target._aeCloudMode && target._aeCloudAtomMap) {
@@ -25,17 +26,27 @@ export function handleAEClick(target, intersects) {
         }
 
         if (atomArrayIdx >= 0 && target._aeAtomIds && atomArrayIdx < target._aePointCount) {
-            const newId = target._aeAtomIds[atomArrayIdx];
-            if (newId !== target._selectedAEAtomId) {
-                target._selectedAEAtomId = newId;
-                if (target._aeTelemetry) {
-                    for (const b of Object.values(target._aeTelemetry.buffers)) b.clear();
-                    target._aeTelemetry.lastTick = null;
-                }
-            }
-            showAEInspector(target);
-            return;
+            newId = Number(target._aeAtomIds[atomArrayIdx]);
+            break;
         }
+    }
+    if (newId < 0) {
+        newId = target.pickAEAtomAtClientPoint?.(
+            event?.clientX,
+            event?.clientY,
+            event?.pointerType || 'mouse',
+        ) ?? -1;
+    }
+    if (newId >= 0) {
+        if (newId !== target._selectedAEAtomId) {
+            target._selectedAEAtomId = newId;
+            if (target._aeTelemetry) {
+                for (const b of Object.values(target._aeTelemetry.buffers)) b.clear();
+                target._aeTelemetry.lastTick = null;
+            }
+        }
+        showAEInspector(target);
+        return;
     }
     target._selectedAEAtomId = -1;
     if (target._aeTelemetry) {
@@ -67,13 +78,13 @@ export function updateAEFields(target) {
     }
 
     const element = getElement(data.Z);
-    const symbol = elementSymbol(data.Z);
+    const symbol = data.Z === 0 ? 'n' : elementSymbol(data.Z);
     const color = cpkColor(data.Z);
 
     if (target.aeFields.dot) {
         target.aeFields.dot.style.background = `rgb(${Math.round(color[0] * 255)},${Math.round(color[1] * 255)},${Math.round(color[2] * 255)})`;
     }
-    if (target.aeFields.name) target.aeFields.name.textContent = element ? element.name : `Z=${data.Z}`;
+    if (target.aeFields.name) target.aeFields.name.textContent = element ? element.name : (data.Z === 0 ? 'Free neutron' : `Z=${data.Z}`);
     if (target.aeFields.symbol) target.aeFields.symbol.textContent = symbol;
     if (target.aeFields.id) target.aeFields.id.textContent = data.id;
     if (target.aeFields.z) target.aeFields.z.textContent = data.Z;
@@ -92,6 +103,27 @@ export function updateAEFields(target) {
     if (target.aeFields.ke) target.aeFields.ke.textContent = formatEnergy(data.ke, 2).text;
     if (target.aeFields.fnet) target.aeFields.fnet.textContent = formatForce(data.fNetMag, 2).text;
 
+    const component = data.component;
+    if (component) {
+        if (target.aeFields.componentKind) {
+            target.aeFields.componentKind.textContent = component.count > 1 ? 'Bonded component' : 'Isolated atom';
+        }
+        if (target.aeFields.componentMembers) {
+            target.aeFields.componentMembers.textContent = component.members.map(memberId => `#${memberId}`).join(', ');
+        }
+        if (target.aeFields.componentCenter) {
+            target.aeFields.componentCenter.textContent = formatPosition(
+                component.centerX, component.centerY, component.centerZ, 2,
+            );
+        }
+        if (target.aeFields.componentMass) target.aeFields.componentMass.textContent = `${component.mass.toFixed(3)} AMU`;
+        if (target.aeFields.componentCharge) {
+            target.aeFields.componentCharge.textContent = component.charge === 0
+                ? '0' : `${component.charge > 0 ? '+' : ''}${component.charge.toFixed(4)} e`;
+        }
+        if (target.aeFields.componentKE) target.aeFields.componentKE.textContent = formatEnergy(component.ke, 2).text;
+    }
+
     if (target.aeFields.bonds) {
         buildAEBondsList(target, data.bonds);
     }
@@ -99,8 +131,9 @@ export function updateAEFields(target) {
     if (target.aeFields.nearest) {
         if (data.nearestId >= 0) {
             const nearElement = getElement(data.nearestZ);
-            const nearSymbol = elementSymbol(data.nearestZ);
-            target.aeFields.nearest.textContent = nearElement ? `${nearSymbol} (#${data.nearestId})` : `#${data.nearestId}`;
+            const nearSymbol = data.nearestZ === 0 ? 'n' : elementSymbol(data.nearestZ);
+            target.aeFields.nearest.textContent = nearElement || data.nearestZ === 0
+                ? `${nearSymbol} (#${data.nearestId})` : `#${data.nearestId}`;
         } else {
             target.aeFields.nearest.textContent = '--';
         }

@@ -10,22 +10,40 @@ import { getElement } from '../../elements.js';
 
 export const AE_DEFAULT_SCENARIO = 'ae-hydrogen-atom';
 
-/** @typedef {{ id: string, title: string, category: string, summary: string, tags?: string[] }} AEScenarioMeta */
+/**
+ * @typedef {object} AEScenarioMeta
+ * @property {string} id
+ * @property {string} title
+ * @property {string} category
+ * @property {string} summary
+ * @property {string[]} [tags]
+ * @property {'static_reference'|'effective_dynamics'|'sandbox'} scenarioClass
+ * @property {'empirical'|'parametric'|'imposed'|'mixed'} epistemicStatus
+ * @property {string} owner
+ * @property {number} seed
+ * @property {Readonly<Record<string, boolean|number>>} physics
+ * @property {Readonly<{dt:number, softening:number, thermostatTemp:number}>} parameters
+ * @property {Readonly<Record<string, boolean|string>>} overlays
+ * @property {Readonly<Record<string, number|string|boolean>>} expected
+ * @property {string} [reaction] Legacy single-channel identifier
+ * @property {Readonly<Record<string, string|number>>} [nuclear]
+ * @property {string} evidence
+ */
 
 /** @type {AEScenarioMeta[]} */
-export const AE_CURATED_SCENARIOS = [
+const AE_SCENARIO_PRESENTATION = [
     {
         id: 'ae-hydrogen-atom',
         category: 'Single-Atom Physics',
-        title: 'Hydrogen Atom (p + e\u2212)',
-        summary: 'Hydrogen is the central-potential baseline for the atom engine and the cleanest place to compare orbital intuition, cloud display, and one-center attraction.',
-        tags: ['static', 'ionic'],
+        title: 'Hydrogen Reference (composite)',
+        summary: 'A locked composite hydrogen record with an empirical 1s cloud visualization. The AtomEngine does not integrate an internal proton-electron pair or a quantum orbital.',
+        tags: ['static', 'reference'],
     },
     {
         id: 'ae-rutherford-scattering',
         category: 'Single-Atom Physics',
         title: 'Rutherford Scattering',
-        summary: 'Rutherford scattering is about large-angle deflection from a compact charged center, so treat it as a geometry-and-impact-parameter problem.',
+        summary: 'Effective He2+ point-center deflection from a locked +79 charged center. This is classical Coulomb scattering, not resolved nuclear structure.',
         tags: ['ionic', 'dynamics'],
     },
     {
@@ -95,7 +113,7 @@ export const AE_CURATED_SCENARIOS = [
         id: 'ae-water-dimer',
         category: 'H-Bonding',
         title: 'Water Dimer (H-bond)',
-        summary: 'The water dimer is the entry point for hydrogen bonding, dipole alignment, and directional intermolecular preference.',
+        summary: 'The water dimer exposes the effective directional H-bond kernel and intramolecular angle response. Dipole forces remain independently toggle-gated.',
         tags: ['hbond'],
     },
     {
@@ -141,6 +159,55 @@ export const AE_CURATED_SCENARIOS = [
         tags: ['vdw', 'dynamics'],
     },
     {
+        id: 'ae-conservative-pair',
+        category: 'Validation Laboratories',
+        title: 'Conservative Ar Pair',
+        summary: 'A closed two-body Lennard-Jones trajectory with every driven intervention disabled, intended for tracked-energy and momentum drift checks.',
+        tags: ['validation', 'conservation'],
+    },
+    {
+        id: 'ae-damped-relaxation',
+        category: 'Validation Laboratories',
+        title: 'Damped Cluster Relaxation',
+        summary: 'An intentionally strained argon cluster loses kinetic energy through the explicit damping sink and settles toward lower-energy spacing.',
+        tags: ['validation', 'damping'],
+    },
+    {
+        id: 'ae-polar-dimer',
+        category: 'Validation Laboratories',
+        title: 'Polar HF Dimer',
+        summary: 'Two bonded HF records expose electronegativity charge transfer, intermolecular Coulomb response, and the effective dipole-dipole term.',
+        tags: ['validation', 'dipole', 'electronegativity'],
+    },
+    {
+        id: 'ae-dt-fusion',
+        category: 'Nuclear Reactions',
+        title: '²H + ³H Fusion',
+        summary: 'Live deuterium and tritium trajectories enter an explicit energy-dependent collision hazard, then accepted events transform into ⁴He + n with evaluated-mass Q = 17.589 MeV and exact nucleon, momentum, and energy ledgers.',
+        tags: ['nuclear', 'fusion', 'isotopes', 'conservation'],
+    },
+    {
+        id: 'ae-u235-fission',
+        category: 'Nuclear Reactions',
+        title: '²³⁵U Neutron-Induced Fission',
+        summary: 'A live neutron trajectory intersects ²³⁵U and a seeded one-group hazard can produce the reference ¹⁴¹Ba + ⁹²Kr + 3n channel with evaluated-mass Q = 173.280 MeV and exact bookkeeping.',
+        tags: ['nuclear', 'fission', 'isotopes', 'conservation'],
+    },
+    {
+        id: 'ae-dt-fusion-burn',
+        category: 'Nuclear Reactions',
+        title: 'Finite D-T Fusion Burn',
+        summary: 'A finite D-T initial population evolves through live swept collisions. Each accepted rendered transaction carries an explicit ensemble weight while microscopic conservation and macroscopic energy remain separate ledgers.',
+        tags: ['nuclear', 'fusion', 'population', 'energy-transport'],
+    },
+    {
+        id: 'ae-u235-chain-reaction',
+        category: 'Nuclear Reactions',
+        title: 'Finite U-235 Chain Reaction',
+        summary: 'Deterministic-seed free-neutron transport evolves through finite U-235 fuel and measures generation, reproduction, scattering, leakage, absorption, deposition, and extinction or depletion.',
+        tags: ['nuclear', 'fission', 'chain-reaction', 'energy-transport'],
+    },
+    {
         id: 'ae-fe-bcc',
         category: 'Metallic Clusters',
         title: 'Fe BCC Cluster (9 atoms)',
@@ -169,6 +236,253 @@ export const AE_CURATED_SCENARIOS = [
         tags: ['sandbox'],
     },
 ];
+
+/**
+ * Canonical production-AtomEngine physics surface.  These are effective
+ * classical/empirical terms; none is a substrate derivation of quantum
+ * chemistry.  The registry is consumed by scenario loading, controls, tests,
+ * diagnostics, and the knowledge surface so toggle applicability has one
+ * owner.
+ */
+export const AE_PHYSICS_SPECS = Object.freeze([
+    { key: 'ionic', elementId: 'ae-ionic', label: 'Ionic (Coulomb)', setter: 'aeSetIonic', defaultValue: false, status: 'parametric', conservative: true, energy: 'ionic' },
+    { key: 'vdw', elementId: 'ae-vdw', label: 'Van der Waals', setter: 'aeSetVdw', defaultValue: false, status: 'parametric', conservative: true, energy: 'vdw' },
+    { key: 'bonds_force', elementId: 'ae-bonds-force', label: 'Bond springs', setter: 'aeSetBondsForce', defaultValue: false, status: 'parametric', conservative: true, energy: 'bond' },
+    { key: 'bonding', elementId: 'ae-bonding', label: 'Auto-bonding', setter: 'aeSetBonding', defaultValue: false, status: 'imposed', conservative: false, energy: null },
+    { key: 'damping', elementId: 'ae-damping', label: 'Damping', setter: 'aeSetDamping', defaultValue: false, status: 'imposed', conservative: false, energy: null },
+    { key: 'speed_limit', elementId: 'ae-speed-limit', label: 'Speed limit', setter: 'aeSetSpeedLimit', defaultValue: true, status: 'imposed', conservative: false, energy: null },
+    { key: 'h_bonds', elementId: 'ae-hbonds', label: 'Hydrogen-bond force', setter: 'aeSetHBonds', defaultValue: false, status: 'parametric', conservative: false, energy: null },
+    { key: 'angle_strain', elementId: 'ae-angle', label: 'VSEPR angle strain', setter: 'aeSetAngleStrain', defaultValue: false, status: 'parametric', conservative: true, energy: 'angle' },
+    { key: 'dipole_dipole', elementId: 'ae-dipole', label: 'Dipole-dipole force', setter: 'aeSetDipoleDipole', defaultValue: false, status: 'parametric', conservative: false, energy: null },
+    { key: 'thermostat', elementId: 'ae-thermostat', label: 'Berendsen thermostat', setter: 'aeSetThermostat', defaultValue: false, status: 'imposed', conservative: false, energy: null },
+    { key: 'electronegativity', elementId: 'ae-electronegativity', label: 'Electronegativity charge transfer', setter: 'aeSetElectronegativity', defaultValue: false, status: 'empirical', conservative: false, energy: null },
+]);
+
+const PHYSICS_OFF = Object.freeze(Object.fromEntries(AE_PHYSICS_SPECS.map((term) => [term.key, false])));
+const profile = (overrides = {}) => Object.freeze({ ...PHYSICS_OFF, ...overrides });
+const DEFAULT_PARAMETERS = Object.freeze({ dt: 0.1, softening: 0.3, thermostatTemp: 1.0 });
+const overlays = (overrides = {}) => Object.freeze({
+    clouds: true, labels: true, shells: true, shellBounds: false, lobes: false,
+    bondStyle: 'cylinders', field: false, velocities: false,
+    dipoles: false, hbondLines: false,
+    nuclearEvents: false, radiation: false, heat: false, nuclearBoundary: false,
+    forceIonic: false, forceVdw: false, forceBond: false,
+    forceHbond: false, forceAngle: false, forceDipole: false, forceNet: false,
+    ...overrides,
+});
+const AE_OVERLAY_KEYS = Object.freeze(Object.keys(overlays()));
+const AE_BOND_STYLES = Object.freeze(['cylinders', 'lines', 'off']);
+const AE_FORCE_OVERLAY_PHYSICS = Object.freeze({
+    forceIonic: 'ionic',
+    forceVdw: 'vdw',
+    forceBond: 'bonds_force',
+    forceHbond: 'h_bonds',
+    forceAngle: 'angle_strain',
+    forceDipole: 'dipole_dipole',
+});
+
+const CONTRACTS = Object.freeze({
+    'ae-hydrogen-atom': {
+        scenarioClass: 'static_reference', epistemicStatus: 'empirical', seed: 0x020001,
+        physics: profile(), overlays: overlays({ shellBounds: true }),
+        expected: { atomCount: 1, bondCount: 0, dynamic: false },
+        evidence: 'Static composite-atom presentation; orbital cloud is empirical visualization, not an electron trajectory.',
+    },
+    'ae-rutherford-scattering': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x020002,
+        physics: profile({ ionic: true, speed_limit: true }),
+        overlays: overlays({ field: true, velocities: true, forceIonic: true }),
+        expected: { atomCount: 2, bondCount: 0, dynamic: true },
+        evidence: 'Effective point-center Coulomb scattering; not a resolved nucleus/electron calculation.',
+    },
+    'ae-he-cluster': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x020003,
+        physics: profile({ vdw: true, speed_limit: true }), overlays: overlays({ forceVdw: true }),
+        expected: { atomCount: 6, dynamic: true }, evidence: 'Lennard-Jones noble-gas cluster fixture.',
+    },
+    'ae-ar-cluster': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x020004,
+        physics: profile({ vdw: true, speed_limit: true }), overlays: overlays({ forceVdw: true }),
+        expected: { atomCount: 8, dynamic: true }, evidence: 'Lennard-Jones noble-gas cluster fixture.',
+    },
+    'ae-noble-mix': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x020005,
+        physics: profile({ vdw: true, speed_limit: true }), overlays: overlays({ forceVdw: true }),
+        expected: { atomCount: 6, dynamic: true }, evidence: 'Mixed-species Lennard-Jones fixture.',
+    },
+    'ae-nacl-form': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x020006,
+        physics: profile({ ionic: true, vdw: true, speed_limit: true }),
+        overlays: overlays({ field: true, forceIonic: true }),
+        expected: { atomCount: 2, bondCount: 0, dynamic: true }, evidence: 'Effective charged-center Coulomb plus excluded-volume fixture.',
+    },
+    'ae-nacl-lattice': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x020007,
+        physics: profile({ ionic: true, vdw: true, speed_limit: true }),
+        overlays: overlays({ field: true, forceIonic: true }),
+        expected: { atomCount: 9, bondCount: 0, dynamic: true }, evidence: 'Finite ionic crystal fragment; no periodic Ewald sum.',
+    },
+    'ae-mgf2': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x020008,
+        physics: profile({ ionic: true, vdw: true, speed_limit: true }),
+        overlays: overlays({ field: true, forceIonic: true }),
+        expected: { atomCount: 3, bondCount: 0, dynamic: true }, evidence: 'Effective charged-center MgF2 assembly fixture.',
+    },
+    'ae-h2-form': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'imposed', seed: 0x020009,
+        physics: profile({ vdw: true, bonds_force: true, bonding: true, speed_limit: true }),
+        overlays: overlays({ forceBond: true }), expected: { atomCount: 2, dynamic: true },
+        evidence: 'Distance/valence capture plus harmonic spring; not electronic covalent-bond formation.',
+    },
+    'ae-o2-form': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'imposed', seed: 0x02000a,
+        physics: profile({ vdw: true, bonds_force: true, bonding: true, speed_limit: true }),
+        overlays: overlays({ forceBond: true }), expected: { atomCount: 2, dynamic: true },
+        evidence: 'Empirical valence-based bond-order inference and harmonic spring.',
+    },
+    'ae-ch4-form': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'imposed', seed: 0x02000b,
+        physics: profile({ vdw: true, bonds_force: true, bonding: true, angle_strain: true, speed_limit: true }),
+        overlays: overlays({ forceBond: true, forceAngle: true, forceNet: true }), expected: { atomCount: 5, dynamic: true },
+        evidence: 'Distance capture plus imposed VSEPR angle potential.',
+    },
+    'ae-water-dimer': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x02000c,
+        physics: profile({ vdw: true, bonds_force: true, h_bonds: true, angle_strain: true, speed_limit: true }),
+        overlays: overlays({ hbondLines: true, forceHbond: true, forceAngle: true, forceNet: true }), expected: { atomCount: 6, bondCount: 4, dynamic: true },
+        evidence: 'Explicit imposed 10-12 directional H-bond plus harmonic intramolecular terms.',
+    },
+    'ae-water-cluster': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x02000d,
+        physics: profile({ vdw: true, bonds_force: true, h_bonds: true, angle_strain: true, speed_limit: true }),
+        overlays: overlays({ hbondLines: true, forceHbond: true, forceAngle: true, forceNet: true }), expected: { atomCount: 15, bondCount: 10, dynamic: true },
+        evidence: 'Finite five-water network under the same imposed effective force field.',
+    },
+    'ae-vsepr-linear': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x02000e,
+        physics: profile({ bonds_force: true, angle_strain: true, speed_limit: true }), overlays: overlays({ forceAngle: true, forceNet: true }),
+        expected: { atomCount: 3, bondCount: 2, dynamic: true }, evidence: 'Harmonic angle relaxation toward the imposed linear target.',
+    },
+    'ae-vsepr-tetrahedral': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x02000f,
+        physics: profile({ bonds_force: true, angle_strain: true, speed_limit: true }), overlays: overlays({ forceAngle: true, forceNet: true }),
+        expected: { atomCount: 5, bondCount: 4, dynamic: true }, evidence: 'Harmonic angle relaxation toward the imposed tetrahedral target.',
+    },
+    'ae-vsepr-bent': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x020010,
+        physics: profile({ bonds_force: true, angle_strain: true, speed_limit: true }), overlays: overlays({ forceAngle: true, forceNet: true }),
+        expected: { atomCount: 3, bondCount: 2, dynamic: true }, evidence: 'Harmonic angle relaxation toward the empirical water angle.',
+    },
+    'ae-thermal-gas': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'imposed', seed: 0x020011,
+        physics: profile({ vdw: true, speed_limit: true, thermostat: true }), overlays: overlays({ velocities: true }),
+        expected: { atomCount: 12, bondCount: 0, dynamic: true }, evidence: 'Lennard-Jones ensemble with an imposed Berendsen thermostat in simulation units.',
+    },
+    'ae-collision': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x020012,
+        physics: profile({ vdw: true, speed_limit: true }), overlays: overlays({ velocities: true, forceVdw: true }),
+        expected: { atomCount: 2, bondCount: 0, dynamic: true }, evidence: 'Two-body Lennard-Jones momentum-conservation fixture.',
+    },
+    'ae-conservative-pair': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x020017,
+        physics: profile({ vdw: true }), overlays: overlays({ velocities: true, forceVdw: true, forceNet: true }),
+        expected: { atomCount: 2, bondCount: 0, dynamic: true },
+        evidence: 'Closed two-body Lennard-Jones regression fixture with no damping, thermostat, topology changes, or safety ceiling.',
+    },
+    'ae-damped-relaxation': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'imposed', seed: 0x020018,
+        physics: profile({ vdw: true, damping: true, speed_limit: true }), overlays: overlays({ velocities: true, forceVdw: true }),
+        expected: { atomCount: 4, bondCount: 0, dynamic: true },
+        evidence: 'Explicit non-conservative damping-sink regression fixture.',
+    },
+    'ae-polar-dimer': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x020019,
+        physics: profile({ ionic: true, vdw: true, bonds_force: true, speed_limit: true, dipole_dipole: true, electronegativity: true }),
+        overlays: overlays({ field: true, dipoles: true, forceIonic: true, forceDipole: true, forceNet: true }),
+        expected: { atomCount: 4, bondCount: 2, dynamic: true },
+        evidence: 'Effective QEq-like partial charges and point-dipole interaction; not ab initio HF electronic structure.',
+    },
+    'ae-dt-fusion': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x02001a,
+        reaction: 'dt_fusion',
+        nuclear: Object.freeze({ channel: 'dt_fusion', mode: 'single', eventLimit: 1,
+            eventWeight: 1, reactivityScale: 4, transportRadius: 10,
+            neutronContainment: 0.85, gammaContainment: 1, seed: 0x02001a }),
+        physics: profile({ speed_limit: true }),
+        parameters: Object.freeze({ dt: 0.1, softening: 0.3, thermostatTemp: 1.0 }),
+        overlays: overlays({ clouds: false, shells: true, bondStyle: 'off', velocities: false,
+            nuclearEvents: true, radiation: true, heat: true, nuclearBoundary: true }),
+        expected: { atomCount: 2, finalAtomCount: 2, bondCount: 0, dynamic: true, reactionEvents: 1 },
+        evidence: '[PARAMETRIC] D-T product identity and Q use evaluated atomic masses. The live swept-collision radius and normalized energy-dependent hazard are imposed; no tunnelling or absolute cross-section recovery is claimed.',
+    },
+    'ae-u235-fission': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x02001b,
+        reaction: 'u235_fission',
+        nuclear: Object.freeze({ channel: 'u235_fission', mode: 'single', eventLimit: 1,
+            eventWeight: 1, reactivityScale: 8, transportRadius: 12,
+            neutronContainment: 0.75, gammaContainment: 0.9, seed: 0x02001b }),
+        physics: profile({ speed_limit: true }),
+        parameters: Object.freeze({ dt: 0.1, softening: 0.3, thermostatTemp: 1.0 }),
+        overlays: overlays({ clouds: false, shells: true, bondStyle: 'off', velocities: false,
+            nuclearEvents: true, radiation: true, heat: true, nuclearBoundary: true }),
+        expected: { atomCount: 2, finalAtomCount: 5, bondCount: 0, dynamic: true, reactionEvents: 1 },
+        evidence: '[PARAMETRIC] IAEA reference product channel and evaluated atomic-mass Q. The live collision hazard, average energy partition, containment, and directions are imposed; no yield distribution is claimed.',
+    },
+    'ae-dt-fusion-burn': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x02001c,
+        reaction: 'dt_fusion',
+        nuclear: Object.freeze({ channel: 'dt_fusion', mode: 'batch', eventLimit: 12,
+            eventWeight: 1e18, reactivityScale: 3, transportRadius: 14,
+            neutronContainment: 0.9, gammaContainment: 1, seed: 0x02001c }),
+        physics: profile({ speed_limit: true }),
+        parameters: Object.freeze({ dt: 0.1, softening: 0.3, thermostatTemp: 1.0 }),
+        overlays: overlays({ clouds: false, shells: true, bondStyle: 'off', velocities: false,
+            nuclearEvents: true, radiation: true, heat: true, nuclearBoundary: true }),
+        expected: { atomCount: 24, finalAtomCount: 24, bondCount: 0, dynamic: true, reactionEvents: 12 },
+        evidence: '[PARAMETRIC] D-T identity and 17.589 MeV release use evaluated masses and standard 3.52/14.07 MeV product partition. The 10^18 ensemble weight, collision hazard, initial plasma state, and deposition time constants are imposed presentation and population parameters.',
+    },
+    'ae-u235-chain-reaction': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'parametric', seed: 0x02001d,
+        reaction: 'u235_fission',
+        nuclear: Object.freeze({ channel: 'u235_fission', mode: 'chain', eventLimit: 27,
+            eventWeight: 1e18, reactivityScale: 12, collisionRadiusScale: 1.5,
+            transportRadius: 11, boundaryMode: 'leak', moderatorStrength: 0.08,
+            neutronContainment: 0.88, gammaContainment: 0.92, seed: 0x02001d }),
+        physics: profile({ speed_limit: true }),
+        parameters: Object.freeze({ dt: 0.1, softening: 0.3, thermostatTemp: 1.0 }),
+        overlays: overlays({ clouds: false, shells: true, bondStyle: 'off', velocities: false,
+            nuclearEvents: true, radiation: true, heat: true, nuclearBoundary: true }),
+        expected: { atomCount: 28, bondCount: 0, dynamic: true, finiteFuel: 27, maxReactionEvents: 27 },
+        evidence: '[PARAMETRIC] The 200 MeV recoverable budget follows the standard average U-235 fission partition. Free neutron trajectories, seeded energy-dependent collision hazards, ambient moderation, leakage, containment, the selected Ba/Kr channel, and the 10^18 ensemble weight define an effective transport laboratory; measured k-effective is an outcome, not an input, and this is not reactor certification.',
+    },
+    'ae-fe-bcc': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'imposed', seed: 0x020013,
+        physics: profile({ vdw: true, bonds_force: true, speed_limit: true }), overlays: overlays({ forceBond: true }),
+        expected: { atomCount: 9, dynamic: true }, evidence: 'Finite BCC geometry with generic empirical springs; not a metallic electronic-structure model.',
+    },
+    'ae-cu-fcc': {
+        scenarioClass: 'effective_dynamics', epistemicStatus: 'imposed', seed: 0x020014,
+        physics: profile({ vdw: true, bonds_force: true, speed_limit: true }), overlays: overlays({ forceBond: true }),
+        expected: { atomCount: 7, dynamic: true }, evidence: 'Finite FCC seed with generic empirical springs; not a metallic electronic-structure model.',
+    },
+    'ae-periodic': {
+        scenarioClass: 'static_reference', epistemicStatus: 'empirical', seed: 0x020015,
+        physics: profile(), overlays: overlays({ clouds: false, shells: false, bondStyle: 'off' }),
+        expected: { atomCount: 118, bondCount: 0, dynamic: false }, evidence: 'Static periodic-table parameter atlas.',
+    },
+    'ae-custom': {
+        scenarioClass: 'sandbox', epistemicStatus: 'mixed', seed: 0x020016,
+        physics: profile({ ionic: true, vdw: true, bonds_force: true, speed_limit: true }), overlays: overlays(),
+        expected: { atomCount: 0, dynamic: false }, evidence: 'User-authored effective sandbox; no scenario-level validation claim.',
+    },
+});
+
+export const AE_CURATED_SCENARIOS = Object.freeze(AE_SCENARIO_PRESENTATION.map((row) => Object.freeze({
+    ...row,
+    owner: 'js_effective_atom_engine',
+    ...CONTRACTS[row.id],
+    parameters: CONTRACTS[row.id]?.parameters || DEFAULT_PARAMETERS,
+})));
 
 const AE_CURATED_MAP = new Map(AE_CURATED_SCENARIOS.map((s) => [s.id, s]));
 
@@ -203,6 +517,15 @@ export function getAEScenarioMeta(id) {
             title: `${Z} ${el.symbol} \u2014 ${el.name}`,
             summary: `Isolated ${el.name} atom (Z = ${Z}). Orbital clouds and shell boundary spheres are enabled; dynamics are off (locked atom).`,
             tags: ['elements', 'static'],
+            scenarioClass: 'static_reference',
+            epistemicStatus: 'empirical',
+            owner: 'js_effective_atom_engine',
+            seed: 0x020100 + Z,
+            physics: profile(),
+            parameters: DEFAULT_PARAMETERS,
+            overlays: overlays({ shellBounds: true }),
+            expected: Object.freeze({ atomCount: 1, bondCount: 0, dynamic: false }),
+            evidence: 'Static empirical element-table and orbital-visualization entry.',
         };
     }
     return null;
@@ -230,6 +553,7 @@ export function populateAEScenarioSelect(select, selectedId = AE_DEFAULT_SCENARI
             const option = document.createElement('option');
             option.value = scenario.id;
             option.textContent = scenario.title;
+            option.title = `${scenario.summary} [${scenario.epistemicStatus}]`;
             option.selected = scenario.id === selectedId;
             group.appendChild(option);
         }
@@ -246,6 +570,7 @@ export function populateAEScenarioSelect(select, selectedId = AE_DEFAULT_SCENARI
             const id = `ae-el-${Z}`;
             const option = document.createElement('option');
             option.value = id;
+            option.title = `Static empirical element reference for ${el.name}; no atomic quantum dynamics are integrated.`;
             option.textContent = `${Z} ${el.symbol} \u2014 ${el.name}`;
             option.selected = id === selectedId;
             group.appendChild(option);
@@ -268,6 +593,51 @@ export function validateAEScenarioRegistry() {
         seen.add(scenario.id);
         if (!scenario.category) errors.push(`category:${scenario.id}`);
         if (!scenario.title) errors.push(`title:${scenario.id}`);
+        if (!scenario.scenarioClass) errors.push(`scenarioClass:${scenario.id}`);
+        if (!scenario.epistemicStatus) errors.push(`epistemicStatus:${scenario.id}`);
+        if (!scenario.owner) errors.push(`owner:${scenario.id}`);
+        if (!Number.isInteger(scenario.seed)) errors.push(`seed:${scenario.id}`);
+        if (!scenario.physics) errors.push(`physics:${scenario.id}`);
+        if (!scenario.parameters || !Number.isFinite(scenario.parameters.dt) ||
+            !Number.isFinite(scenario.parameters.softening) ||
+            !Number.isFinite(scenario.parameters.thermostatTemp)) errors.push(`parameters:${scenario.id}`);
+        if (!scenario.overlays) errors.push(`overlays:${scenario.id}`);
+        if (!scenario.expected) errors.push(`expected:${scenario.id}`);
+        if (scenario.reaction && !['dt_fusion', 'u235_fission'].includes(scenario.reaction)) {
+            errors.push(`reaction:${scenario.id}`);
+        }
+        if (scenario.nuclear && scenario.nuclear.channel !== scenario.reaction) {
+            errors.push(`nuclear.channel:${scenario.id}`);
+        }
+        for (const term of AE_PHYSICS_SPECS) {
+            if (typeof scenario.physics?.[term.key] !== 'boolean') {
+                errors.push(`physics.${term.key}:${scenario.id}`);
+            }
+        }
+        for (const key of AE_OVERLAY_KEYS) {
+            if (!(key in (scenario.overlays || {}))) {
+                errors.push(`overlays.${key}:${scenario.id}`);
+            } else if (key !== 'bondStyle' && typeof scenario.overlays[key] !== 'boolean') {
+                errors.push(`overlays.${key}.type:${scenario.id}`);
+            }
+        }
+        if (!AE_BOND_STYLES.includes(scenario.overlays?.bondStyle)) {
+            errors.push(`overlays.bondStyle:${scenario.id}`);
+        }
+        for (const [overlayKey, physicsKey] of Object.entries(AE_FORCE_OVERLAY_PHYSICS)) {
+            if (scenario.overlays?.[overlayKey] && !scenario.physics?.[physicsKey]) {
+                errors.push(`overlays.${overlayKey}.inapplicable:${scenario.id}`);
+            }
+        }
+        if (scenario.overlays?.forceNet &&
+            !AE_PHYSICS_SPECS.some(term => term.key !== 'speed_limit' && scenario.physics?.[term.key])) {
+            errors.push(`overlays.forceNet.inapplicable:${scenario.id}`);
+        }
+        for (const key of ['nuclearEvents', 'radiation', 'heat', 'nuclearBoundary']) {
+            if (scenario.overlays?.[key] && !scenario.nuclear) {
+                errors.push(`overlays.${key}.inapplicable:${scenario.id}`);
+            }
+        }
     }
     return { ok: errors.length === 0, errors, count: AE_CURATED_SCENARIOS.length };
 }

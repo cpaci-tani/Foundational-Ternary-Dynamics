@@ -92,12 +92,17 @@ export class WebSocketScaleFallbackFacade {
         return this._ensureFallback().aeAddLockedAtom(Z, x, y, z, charge, N);
     }
     aeCreateBond(idA, idB, order) { this._ensureFallback().aeCreateBond(idA, idB, order); }
-    aeTick() { this._ensureFallback().aeTick(); }
+    aeTick() { return this._ensureFallback().aeTick(); }
     aeGetAtomData() { return this._ensureFallback().aeGetAtomData(); }
     aeGetDiagnostics() { return this._ensureFallback().aeGetDiagnostics(); }
     aeGetFieldSources() { return this._ensureFallback().aeGetFieldSources(); }
     aeGetForceDecomposition(want) { return this._ensureFallback().aeGetForceDecomposition(want); }
     aeGetRuntimeState() { return this._ensureFallback().aeGetRuntimeState(); }
+    aeConfigureNuclearReaction(channelId) { return this._ensureFallback().aeConfigureNuclearReaction(channelId); }
+    aeSetNuclearEnvironment(patch) { return this._ensureFallback().aeSetNuclearEnvironment(patch); }
+    aeInjectNuclearParticle(kind) { return this._ensureFallback().aeInjectNuclearParticle(kind); }
+    aeGetNuclearDiagnostics() { return this._ensureFallback().aeGetNuclearDiagnostics(); }
+    aeGetNuclearVisuals() { return this._ensureFallback().aeGetNuclearVisuals(); }
     aeGetVelocities() { return this._ensureFallback().aeGetVelocities(); }
     aeGetDipoles() { return this._ensureFallback().aeGetDipoles(); }
     aeGetHBondPairs() { return this._ensureFallback().aeGetHBondPairs(); }

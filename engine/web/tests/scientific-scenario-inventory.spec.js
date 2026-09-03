@@ -61,9 +61,9 @@ test('the frozen live inventory remains synchronized with the audit baseline', (
     // registry hydrates the full particle-scale program in the browser.
     expect(scale1Ids).toHaveLength(1);
     expect(SCALE1_SCENARIO_TARGET_COUNT).toBe(36);
-    expect(AE_CURATED_SCENARIOS).toHaveLength(22);
+    expect(AE_CURATED_SCENARIOS).toHaveLength(29);
     expect(ELEMENT_COUNT).toBe(118);
-    expect(scale2Count).toBe(139);
+    expect(scale2Count).toBe(146);
     expect(getAllMolecules()).toHaveLength(25);
     expect(scale3Count).toBe(27);
     expect(scale4Ids).toHaveLength(8);
@@ -76,9 +76,9 @@ test('the frozen live inventory remains synchronized with the audit baseline', (
         + scale4Ids.length
         + scale5Ids.length
         + 1; // Scale 6 structural exhibit, not a physics scenario.
-    // Includes the Scale-1 open-terminal and finite-port batteries plus the
-    // Scale-0 membrane-transfer and resonant-cell scenarios added 2026-09-02.
-    expect(totalPresentationEntries).toBe(366);
+    // Includes the Scale-1 batteries, the Scale-0 membrane/resonant-cell
+    // additions, and Scale 2's validation and nuclear-reaction laboratories.
+    expect(totalPresentationEntries).toBe(373);
 });
 
 test('the manifest schema contains every pinned scientific-contract field', () => {

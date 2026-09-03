@@ -54,7 +54,7 @@ for (const mode of MODES) {
         const errors = attachConsoleWatcher(page);
         const failures = attachNetworkWatcher(page);
 
-        await page.goto('/index.html');
+        await gotoAndReady(page, { path: '/index.html' });
         await expect.poll(() => page.evaluate(() => !!window._ftdBridge),
             { timeout: 15_000 }).toBe(true);
         await page.waitForTimeout(800);
@@ -77,7 +77,7 @@ for (const mode of MODES) {
 
 
 test('Scale 5 cosmic: no _cosmicInterval leak after Phase B.1', async ({ page }) => {
-    await page.goto('/index.html');
+    await gotoAndReady(page, { path: '/index.html' });
     await expect.poll(() => page.evaluate(() => !!window._ftdBridge),
         { timeout: 45_000 }).toBe(true);
 
@@ -98,7 +98,7 @@ test('Scale 5 cosmic: no _cosmicInterval leak after Phase B.1', async ({ page })
 });
 
 test('Constants: K_B matches 0.511 and is a named export', async ({ page }) => {
-    await page.goto('/index.html');
+    await gotoAndReady(page, { path: '/index.html' });
     const k = await page.evaluate(async () => {
         const mod = await import('./js/constants.js');
         return { K_B: mod.K_B, hasAlpha: typeof mod.ALPHA === 'number', hasGStar: typeof mod.G_STAR === 'number' };
@@ -109,7 +109,7 @@ test('Constants: K_B matches 0.511 and is a named export', async ({ page }) => {
 });
 
 test('Scale 0 module contract and scenario registry are wired', async ({ page }) => {
-    await page.goto('/index.html');
+    await gotoAndReady(page, { path: '/index.html' });
     await expect.poll(() => page.evaluate(() => !!window._ftdBridge),
         { timeout: 45_000 }).toBe(true);
 
@@ -138,7 +138,7 @@ test('Scale 0 module contract and scenario registry are wired', async ({ page })
 
 test('UI shell initializes mount roots and responsive layout state', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/index.html');
+    await gotoAndReady(page, { path: '/index.html' });
     await expect.poll(() => page.evaluate(() => document.getElementById('app')?.dataset.shellReady === 'true'),
         { timeout: 15_000 }).toBe(true);
 
@@ -167,8 +167,8 @@ test('UI shell initializes mount roots and responsive layout state', async ({ pa
                 scale1ScenarioSelect: !!document.getElementById('pe-scenario-select'),
                 scale2ScenarioSelect: !!document.getElementById('ae-scenario-select'),
                 scale3ScenarioSelect: !!document.getElementById('mol-scenario-select'),
-                scale23VisualControls: !!document.getElementById('ae-visual-controls'),
-                scale23ForceControls: !!document.getElementById('ae-force-controls'),
+                scale23VisualControlsRemoved: !document.getElementById('ae-visual-controls'),
+                scale23ForceControlsRemoved: !document.getElementById('ae-force-controls'),
                 scale4ScenarioSelect: !!document.getElementById('planetary-scenario-select'),
                 zooPanel: !!document.getElementById('panel-zoo'),
                 zooSearch: !!document.getElementById('zoo-search'),
@@ -222,8 +222,8 @@ test('UI shell initializes mount roots and responsive layout state', async ({ pa
     expect(shell.ui.scale1ScenarioSelect).toBe(true);
     expect(shell.ui.scale2ScenarioSelect).toBe(true);
     expect(shell.ui.scale3ScenarioSelect).toBe(true);
-    expect(shell.ui.scale23VisualControls).toBe(true);
-    expect(shell.ui.scale23ForceControls).toBe(true);
+    expect(shell.ui.scale23VisualControlsRemoved).toBe(true);
+    expect(shell.ui.scale23ForceControlsRemoved).toBe(true);
     expect(shell.ui.scale4ScenarioSelect).toBe(true);
     expect(shell.ui.zooPanel).toBe(true);
     expect(shell.ui.zooSearch).toBe(true);
@@ -263,7 +263,7 @@ test('UI shell initializes mount roots and responsive layout state', async ({ pa
 });
 
 test('UI panel registry matches rendered shell tabs and panels', async ({ page }) => {
-    await page.goto('/index.html');
+    await gotoAndReady(page, { path: '/index.html' });
     await expect.poll(() => page.evaluate(() => document.getElementById('app')?.dataset.shellReady === 'true'),
         { timeout: 15_000 }).toBe(true);
 
@@ -374,7 +374,7 @@ test('Inspector scale modules expose modular handlers', async ({ page }) => {
 
 test('Responsive breakpoint: tablet layout at 768px width', async ({ page }) => {
     await page.setViewportSize({ width: 768, height: 1024 });
-    await page.goto('/index.html');
+    await gotoAndReady(page, { path: '/index.html' });
     await expect.poll(() => page.evaluate(() => document.getElementById('app')?.dataset.shellReady === 'true'),
         { timeout: 15_000 }).toBe(true);
 
@@ -398,7 +398,7 @@ test('Responsive breakpoint: tablet layout at 768px width', async ({ page }) => 
 
 test('Responsive breakpoint: desktop layout at 1280px width', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto('/index.html');
+    await gotoAndReady(page, { path: '/index.html' });
     await expect.poll(() => page.evaluate(() => document.getElementById('app')?.dataset.shellReady === 'true'),
         { timeout: 15_000 }).toBe(true);
 
@@ -421,7 +421,7 @@ test('Responsive breakpoint: desktop layout at 1280px width', async ({ page }) =
 });
 
 test('Inspector app runtime exposes a modular app-shell adapter', async ({ page }) => {
-    await page.goto('/index.html');
+    await gotoAndReady(page, { path: '/index.html' });
     await expect.poll(() => page.evaluate(() => document.getElementById('app')?.dataset.shellReady === 'true'),
         { timeout: 15_000 }).toBe(true);
 
@@ -430,7 +430,7 @@ test('Inspector app runtime exposes a modular app-shell adapter', async ({ page 
         // Match app-runtime's versioned module identity; an unversioned import
         // is a different browser module and cannot patch the constructor used
         // by createInspectorAppRuntime.
-        const inspectorMod = await import('./js/inspector.js?v=2');
+        const inspectorMod = await import('./js/inspector.js?v=5');
 
         class FakeInspector {
             setEngineMode(mode) {
@@ -496,7 +496,7 @@ test('Inspector app runtime exposes a modular app-shell adapter', async ({ page 
 });
 
 test('Settings modal applies and resets extended shell preferences', async ({ page }) => {
-    await page.goto('/index.html');
+    await gotoAndReady(page, { path: '/index.html' });
     await expect.poll(() => page.evaluate(() => document.getElementById('app')?.dataset.shellReady === 'true'),
         { timeout: 20_000 }).toBe(true);
 
@@ -559,7 +559,7 @@ test('Settings modal applies and resets extended shell preferences', async ({ pa
 });
 
 test('UI tooltip system annotates controls and telemetry with custom help', async ({ page }) => {
-    await page.goto('/index.html', { waitUntil: 'commit', timeout: 45_000 });
+    await gotoAndReady(page, { path: '/index.html' });
     await expect.poll(() => page.evaluate(() => document.getElementById('app')?.dataset.shellReady === 'true'),
         { timeout: 45_000 }).toBe(true);
 
@@ -587,12 +587,13 @@ test('UI tooltip system annotates controls and telemetry with custom help', asyn
     expect(result.playTooltip).toContain('Keyboard shortcut');
     expect(result.energyTooltip).toContain('represented active channels');
     expect(result.statusTooltip).toContain('Current total energy');
-    expect(result.scenarioLabelTooltip).toContain('Registered M3 particle anatomy');
+    expect(result.scenarioLabelTooltip).toContain('M3 Evidence Replay');
+    expect(result.scenarioLabelTooltip).toContain('[MEASURED · UNVALIDATED]');
     expect(result.scenarioLabelTooltip).toContain('Dynamics: native_matter_observer');
 });
 
 test('Tooltip palette follows theme switches', async ({ page }) => {
-    await page.goto('/index.html');
+    await gotoAndReady(page, { path: '/index.html' });
     await expect.poll(() => page.evaluate(() => document.getElementById('app')?.dataset.shellReady === 'true'),
         { timeout: 20_000 }).toBe(true);
 
@@ -639,7 +640,7 @@ test('Tooltip palette follows theme switches', async ({ page }) => {
 });
 
 test('Knowledge base opens as a single responsive library with shared content', async ({ page }) => {
-    await page.goto('/index.html');
+    await gotoAndReady(page, { path: '/index.html' });
     await expect.poll(() => page.evaluate(() => document.getElementById('app')?.dataset.shellReady === 'true'),
         { timeout: 15_000 }).toBe(true);
 

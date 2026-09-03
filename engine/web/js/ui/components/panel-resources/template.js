@@ -394,6 +394,26 @@ export function getInspectorPanelTemplate() {
                     Select an atom or orbital cloud sample to inspect its local chemistry.
                 </div>
                 <div id="ae-inspector-content" class="scale-ae panel-resource-hidden">
+                    <div class="card panel-resource-card panel-resource-section-card">
+                        <div class="card-title">Interaction Component</div>
+                        <div class="panel-resource-muted-copy">
+                            Live bond-connected context for the selected atom. This observer view does not alter the force graph.
+                        </div>
+                        <dl class="inspector-grid">
+                            <dt title="Whether the selected record is isolated or belongs to a bond-connected component.">Scope</dt>
+                            <dd id="ae-insp-component-kind">--</dd>
+                            <dt title="All atom engine IDs reachable from the selection through current covalent bonds.">Members</dt>
+                            <dd id="ae-insp-component-members">--</dd>
+                            <dt title="Instantaneous mass-weighted center of the bond-connected component, in simulation length units.">Center of mass</dt>
+                            <dd id="ae-insp-component-center">--</dd>
+                            <dt title="Sum of constituent effective atomic masses.">Total mass</dt>
+                            <dd id="ae-insp-component-mass">--</dd>
+                            <dt title="Sum of the component atoms' current effective fractional charges.">Net charge</dt>
+                            <dd id="ae-insp-component-charge">--</dd>
+                            <dt title="Sum of constituent translational kinetic energies in the effective simulation model.">Total KE</dt>
+                            <dd id="ae-insp-component-ke">--</dd>
+                        </dl>
+                    </div>
                     <div class="panel-resource-grid panel-resource-grid-3">
                         <div class="card panel-resource-card">
                             <div class="card-title">Element</div>

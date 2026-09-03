@@ -295,18 +295,24 @@ export const fieldEmMethods = {
         this._fieldVectors.visible = false;
         this._scene.add(this._fieldVectors);
     },
-    updateFieldVectors(gridPositions, forces, count, maxForce, arrowScale = 8.0) {
+    updateFieldVectors(
+        gridPositions, forces, count, maxForce, arrowScale = 8.0,
+        coordinateOffset = VOXEL_CENTER_OFFSET,
+    ) {
         this._syncCenterAndRadius();
         if (!this._fieldVectors) this._buildFieldVectors();
         const posAttr = this._fieldVectors.geometry.getAttribute('position');
         const colAttr = this._fieldVectors.geometry.getAttribute('color');
         const n = Math.min(count, MAX_FIELD_GRID);
+        const offset = Number.isFinite(coordinateOffset) ? coordinateOffset : VOXEL_CENTER_OFFSET;
 
         for (let i = 0; i < n; i++) {
-            // +VOXEL_CENTER_OFFSET so arrows align with particles + flux volume.
-            const gx = gridPositions[i * 3]     + VOXEL_CENTER_OFFSET;
-            const gy = gridPositions[i * 3 + 1] + VOXEL_CENTER_OFFSET;
-            const gz = gridPositions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
+            // Lattice/particle modes use voxel-centered coordinates; Scale 2
+            // passes zero because its atom and potential data are already in
+            // world coordinates.
+            const gx = gridPositions[i * 3]     + offset;
+            const gy = gridPositions[i * 3 + 1] + offset;
+            const gz = gridPositions[i * 3 + 2] + offset;
             const fx = forces[i * 3], fy = forces[i * 3 + 1], fz = forces[i * 3 + 2];
             const mag = Math.sqrt(fx * fx + fy * fy + fz * fz);
 

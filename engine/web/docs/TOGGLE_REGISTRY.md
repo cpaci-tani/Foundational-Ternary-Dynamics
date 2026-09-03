@@ -14,7 +14,7 @@
 | Scale 0 (Lattice) | **Field/overlay** toggles (`fieldFlags`, render-side) | **32** | All 32 verified by live click test |
 | Scale 0 (Lattice) | **Physics-term** toggles (`bridge.setToggle`, sim-side) | 27 visible (19 standard + 8 advanced) | Wired via the canonical config tables → active bridge |
 | Scale 0 (Lattice) | Viewport volume/slice (not in `fieldFlags`) | 2 | Wired via `bindings.js` (`setFluxVolumeVisible` / `setFluxSliceVisible`) |
-| Scale 2/3 (Atoms/Molecules) | Atom-engine physics toggles | 11 | Wired via `SCALE2_TOGGLES` → bridge |
+| Scale 2/3 (Atoms/Molecules) | Atom-engine physics toggles | 11 | Wired via `AE_PHYSICS_SPECS` → bridge |
 
 The **field/overlay toggles are the W3-2 deliverable's focus** — they are the family the audit mis-flagged, and the family with a clean DOM-id  state-key mapping that a click test can exercise exhaustively.
 
@@ -26,7 +26,7 @@ Web toggle state-of-truth is currently split across **three files** with **three
 
 ### Source 1 — physics-term toggles → the engine bridge
 **File:** [`engine/web/js/config/toggles.js`](../js/config/toggles.js)
-`SCALE0_TOGGLES`, `SCALE0_ADVANCED_TOGGLES`, `SCALE2_TOGGLES`, and the
+`SCALE0_TOGGLES`, `SCALE0_ADVANCED_TOGGLES`, and the
 `*_SCENARIO_OVERRIDES` tables. Each row is `[toggleKey, defaultValue,
 domElementId]`. These drive the active bridge's toggle mutators — they change
 the **simulation** (which physics terms run). They mirror the C++ `TermToggles`
@@ -180,23 +180,41 @@ Buttons in the overlay panel (`template.js`) that are **not** `fieldFlags` keys 
 
 ---
 
-## Scale 2/3 — Atom/molecule physics toggles (`SCALE2_TOGGLES`)
+## Scale 2/3 — Atom/molecule physics toggles (`AE_PHYSICS_SPECS`)
 
-Sim-side toggles for the atom engine (`AtomToggles`), dispatched via the Scale-2 bridge. DOM ids use the `aeSet*` convention. Listed for the canonical map; out of scope for the Scale-0 W3-2 test.
+Sim-side toggles for the atom engine, dispatched via the Scale-2 bridge. The
+canonical key, checkbox id, bridge setter, default, epistemic status,
+conservative status, and energy-accounting channel live together in
+`js/scales/scale2/scenario-registry.js::AE_PHYSICS_SPECS`. Curated scenarios
+own complete profiles over all 11 keys, so omitted values cannot leak from a
+previous scenario. Listed here for navigation; the executable registry and
+its browser contract test are authoritative.
 
-| DOM id | Toggle key | Default |
+| DOM id | Toggle key | Registry default |
 |--------|-----------|---------|
-| `aeSetIonic` | `ae-ionic` | on |
-| `aeSetVdw` | `ae-vdw` | on |
-| `aeSetBondsForce` | `ae-bonds-force` | on |
-| `aeSetBonding` | `ae-bonding` | on |
-| `aeSetDamping` | `ae-damping` | off |
-| `aeSetSpeedLimit` | `ae-speed-limit` | on |
-| `aeSetHBonds` | `ae-hbonds` | off |
-| `aeSetAngleStrain` | `ae-angle` | off |
-| `aeSetDipoleDipole` | `ae-dipole` | off |
-| `aeSetThermostat` | `ae-thermostat` | off |
-| `aeSetElectronegativity` | `ae-electronegativity` | off |
+| `ae-ionic` | `ionic` | off |
+| `ae-vdw` | `vdw` | off |
+| `ae-bonds-force` | `bonds_force` | off |
+| `ae-bonding` | `bonding` | off |
+| `ae-damping` | `damping` | off |
+| `ae-speed-limit` | `speed_limit` | on |
+| `ae-hbonds` | `h_bonds` | off |
+| `ae-angle` | `angle_strain` | off |
+| `ae-dipole` | `dipole_dipole` | off |
+| `ae-thermostat` | `thermostat` | off |
+| `ae-electronegativity` | `electronegativity` | off |
+
+Presentation-only nuclear layers are kept out of `AE_PHYSICS_SPECS` because
+they do not alter the AtomEngine transaction:
+
+| DOM id | Visual state | Meaning |
+|--------|--------------|---------|
+| `toggle-ae-radiation` | `showAERadiation` | Prompt neutron/gamma traces and scheduled one-group neutron flights |
+| `toggle-ae-heat` | `showAEHeat` | Additive halos for the deposited-energy channel |
+
+Both default off globally and are enabled by the four nuclear scenario visual
+profiles. Event flashes remain visible in nuclear scenarios so a reaction is
+observable even when both optional transport layers are hidden.
 
 ---
 

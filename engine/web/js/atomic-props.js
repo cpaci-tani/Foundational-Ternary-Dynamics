@@ -194,7 +194,7 @@ export function computeAtomicProps(Z, N = 0) {
     const radius = z_cbrt > 0 ? 1.0 / z_cbrt : 1.0;
     const vdw_epsilon = AE_EPS_BASE * Math.pow(Z, 2.0 / 3.0);
     const vdw_sigma = radius * N_BASE;
-    const max_bonds = elemMaxBonds(Z);
+    const max_bonds = Z === 0 ? 0 : elemMaxBonds(Z);
     // Theme D3 (2026-04-26): electronegativity fallback now reads the
     // full Pauling table from constants.js (Z=1..86) instead of the
     // drift-prone `1.5 + 0.3*log(Z)` formula that used to kick in for

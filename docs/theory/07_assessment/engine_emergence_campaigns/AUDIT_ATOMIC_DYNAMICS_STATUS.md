@@ -10,6 +10,34 @@
 
 **FTD derives ~0% of atomic quantum dynamics from its substrate, and this is by declared design, not by oversight.** The framework's constitution (FC-1) formally **declines** recovering the Schrödinger equation, the continuous Born rule, and Hilbert space. What exists in the codebase under "atoms" is classical mechanics + classical electromagnetism + parametrized chemistry + empirical lookup. The honest framing of every atomic result is *"standard physics formula, with FTD's constants inserted,"* never *"derived from the lattice."*
 
+**2026-09-02 implementation reconciliation.** The production browser Scale 2
+AtomEngine has been hardened and scenario-qualified, but this does not promote
+the verdict. Its 29 curated scenarios are deterministic effective-model
+contracts over 11 toggle-gated terms; 117 additional selector entries are
+single-element references. Exact potential accounting exists for Coulomb,
+Lennard-Jones, harmonic bonds, and harmonic angles. The directional H-bond and
+induced-dipole toys remain incomplete force/potential models and explicitly
+disable conservative-energy claims. The browser continues to use its
+effective-unit JS engine until a Planck-to-Bohr/effective-unit bridge exists;
+native/browser force magnitudes must not be compared.
+
+**2026-09-03 nuclear-laboratory reconciliation.** Four curated contracts seed
+deterministic D-T fusion and neutron-induced U-235 fission initial states: one
+microscopic and one finite-population preset for each channel. After tick zero,
+scenario identity does not enter the reaction path. Exact live and swept
+trajectories supply collision candidates; a replayable seeded, energy-dependent
+normalized hazard accepts events. Prompt neutrons are ordinary integrated
+particles subject to finite-volume leakage/reflection and explicit ambient
+one-group moderation/absorption. Neutron reproduction is observed from births
+and resolved losses rather than imposed as `k-effective`. The model still uses
+evaluated isotope masses, imported reaction channels, a standard average U-235
+energy partition, and imposed collision radii, hazard shape/scale, population,
+containment, deposition, moderation, absorption, and emission rules; it remains
+a `[PARAMETRIC]` effective laboratory. Exact composition, charge, momentum,
+kinetic-injection, and transport ledgers validate software transactions; they do
+not constitute an FTD derivation of nuclear reactions, tunnelling, absolute
+cross sections, fission yields, plasma dynamics, or reactor physics.
+
 ---
 
 ## 1 · The status table
@@ -19,7 +47,7 @@
 | Coulomb potential (electrostatics) | `[THEOREM]` for the lattice form; classical | Phase-G geometric Coulomb = lattice Poisson Green's function (FTD-0004); `poisson_solvers.cpp` |
 | **Quantum of action ℏ** | **ABSENT / `[DECLINED]`** | No ℏ constant anywhere (`constants.h`); appears only in a units comment. FC-1 declines deriving it. |
 | **Quantum kinetic operator** `−ℏ²/2m ∇²` | **ABSENT** | Kinetic energy is classical `½mv²` (`particle_engine.cpp`, `diagnostics_compute.cpp`). The flux wave equation is classical (2nd-order in time, `phase_write.cpp`). |
-| **Discrete / quantized energy levels** | **ABSENT** | No Bohr model, no Rydberg derivation, no spectral lines anywhere in the corpus. |
+| **Discrete / quantized substrate modes** | `[MEASURED — BOUNDARY]`; wrong dispersion for atomic spectra | FTD-0270 found discrete finite-box modes but linear `omega proportional to \|k\|` dispersion, not the quadratic Schrödinger dispersion required for Rydberg levels. Atomic energy levels remain not recovered. |
 | Hydrogen "spectrum" benchmark | classical reproduction, **not** a derivation | `campaign_hydrogen_spectrum.cpp` places classical Kepler orbits at `r_n=n²a₀` and checks `1/n²` scaling (generic to any `1/r` force); the Rydberg scale is calibrated via `ALPHA`/`K_B`. |
 | Born rule (probabilities) | `[SELECTION]` (form) + `[OPEN]` (proportionality) | `DERIV_QM_FROM_LATTICE.md`; LEDGER FTD-0187. The `\|ψ\|²` *form* is selected; the step `probability = energy density` is asserted, not derived. FC-1 declines the continuous Born rule. |
 | Electron spin = ½ | `[SELECTION]` | `DERIV_SPIN_STATISTICS_BRIDGE.md`: ℤ₂ topology of lemniscates motivates spin-½, but the value (vs 3/2, …) is not forced. |

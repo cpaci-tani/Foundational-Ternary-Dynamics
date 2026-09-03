@@ -5,7 +5,7 @@
  */
 import { setVoxelCenterOffset } from './field-renderer-shared.js';
 import { fieldCoreMethods } from './field-renderer-core.js';
-import { fieldEmMethods } from './field-em-renderer.js?v=5';
+import { fieldEmMethods } from './field-em-renderer.js?v=6';
 import { fieldForceMethods } from './field-force-renderer.js?v=4';
 import { fieldTopologyMethods } from './field-topology-renderer.js?v=2';
 import { fieldQuantumMethods } from './field-quantum-renderer.js?v=2';

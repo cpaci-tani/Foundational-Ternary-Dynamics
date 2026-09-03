@@ -167,6 +167,22 @@ export function expandAEToOrbitalCloud(atomData, time = 0) {
         const cz = atomData.positions[i * 3 + 2];
         const Z = atomData.atomicNums ? atomData.atomicNums[i] : 1;
 
+        // A free neutron is a nuclear product, not an atom with an orbital
+        // template. Keep it selectable if a user manually enables clouds in a
+        // nuclear scenario, but never synthesize an electron cloud around it.
+        if (Z === 0) {
+            _cloudPos[out * 3] = cx;
+            _cloudPos[out * 3 + 1] = cy;
+            _cloudPos[out * 3 + 2] = cz;
+            _cloudCol[out * 3] = 0.55;
+            _cloudCol[out * 3 + 1] = 0.62;
+            _cloudCol[out * 3 + 2] = 0.72;
+            _cloudSize[out] = 2.2;
+            _cloudAtomMap[out] = i;
+            out++;
+            continue;
+        }
+
         // Template includes nuclear structure + electron orbitals
         const tmpl = generateTemplate(Z);
         const nucCount = nucleonCount(Z);  // number of nuclear cloud points

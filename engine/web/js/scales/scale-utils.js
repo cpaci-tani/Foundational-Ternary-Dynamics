@@ -16,7 +16,7 @@
  *   applyScaleGridAxesDefaults - Per-scale default grid/axes visibility
  */
 
-import { SCALE2_TOGGLES } from '../config/toggles.js';
+import { AE_PHYSICS_SPECS } from './scale2/scenario-registry.js';
 
 
 // ── formatNumber ────────────────────────────────────────────────────
@@ -184,9 +184,9 @@ export function syncAEParamsFromUI(bridge) {
     if (dtEl) bridge.aeSetDt(parseFloat(dtEl.value));
     const softEl = document.getElementById('ae-soft-slider');
     if (softEl) bridge.aeSetSoftening(parseFloat(softEl.value));
-    for (const [elId, , setter] of SCALE2_TOGGLES) {
-        const el = document.getElementById(elId);
-        if (el && bridge[setter]) bridge[setter](el.checked);
+    for (const spec of AE_PHYSICS_SPECS) {
+        const el = document.getElementById(spec.elementId);
+        if (el && bridge[spec.setter]) bridge[spec.setter](el.checked);
     }
 }
 
@@ -194,10 +194,10 @@ export function syncAEParamsFromUI(bridge) {
  * Reset all AE toggle checkboxes to their default values and push them to the bridge.
  */
 export function resetAETogglesToDefaults(bridge) {
-    for (const [elId, defaultVal, setter] of SCALE2_TOGGLES) {
-        const el = document.getElementById(elId);
-        if (el) el.checked = defaultVal;
-        if (bridge[setter]) bridge[setter](defaultVal);
+    for (const spec of AE_PHYSICS_SPECS) {
+        const el = document.getElementById(spec.elementId);
+        if (el) el.checked = spec.defaultValue;
+        if (bridge[spec.setter]) bridge[spec.setter](spec.defaultValue);
     }
 }
 

@@ -138,9 +138,12 @@ int main() {
         ftd::AtomEngine ae;
         ae.set_bonding_enabled(false);
         ae.set_damping_enabled(false);
-        // Na+ and Cl- at distance ~500 (near vdW sigma ~450, in attractive well)
+        // Bonded Na-Cl contributes the spring channel. A second, nonbonded
+        // Cl- contributes ionic + vdW; direct 1-2 pairs intentionally exclude
+        // those nonbonded terms in both native and browser AtomEngines.
         int id0 = ae.add_atom(11, {0, 0, 0}, {}, +1);
         int id1 = ae.add_atom(17, {500, 0, 0}, {}, -1);
+        ae.add_atom(17, {-500, 0, 0}, {}, -1);
         ae.create_bond(id0, id1, 1);
 
         ae.toggles.ionic = true;
@@ -151,7 +154,7 @@ int main() {
         ae.tick();
 
         const auto& fd = ae.force_diag();
-        check("force_diag has 2 entries", fd.size() == 2);
+        check("force_diag has 3 entries", fd.size() == 3);
 
         if (fd.size() >= 2) {
             check("Ionic diag nonzero", fd[0].f_ionic.mag() > 1e-10);

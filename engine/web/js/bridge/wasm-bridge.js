@@ -1181,8 +1181,9 @@ export class WasmBridge {
     aeTick() {
         if (this._aeHasWasm && this._ae) {
             this._ae.tick();
+            return true;
         } else {
-            this._ensureAEFallback().aeTick();
+            return this._ensureAEFallback().aeTick();
         }
     }
 
@@ -1215,6 +1216,21 @@ export class WasmBridge {
 
     aeGetRuntimeState() {
         return this._ensureAEFallback().aeGetRuntimeState();
+    }
+    aeConfigureNuclearReaction(channelId) {
+        return this._ensureAEFallback().aeConfigureNuclearReaction(channelId);
+    }
+    aeSetNuclearEnvironment(patch) {
+        return this._ensureAEFallback().aeSetNuclearEnvironment(patch);
+    }
+    aeInjectNuclearParticle(kind) {
+        return this._ensureAEFallback().aeInjectNuclearParticle(kind);
+    }
+    aeGetNuclearDiagnostics() {
+        return this._ensureAEFallback().aeGetNuclearDiagnostics();
+    }
+    aeGetNuclearVisuals() {
+        return this._ensureAEFallback().aeGetNuclearVisuals();
     }
 
     aeGetVelocities()  { return this._ensureAEFallback().aeGetVelocities(); }

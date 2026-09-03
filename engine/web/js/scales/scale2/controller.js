@@ -35,7 +35,7 @@ import {
     electronConfig, slaterZeff, A0_DISPLAY
 } from '../../orbitals.js';
 import {
-    atomicEnergy,
+    isotopeEnergy,
     formatEnergy as formatEnergyAE
 } from '../../atomic-energy.js';
 import { drawBindingEnergyCurve } from './ui/binding-energy-chart.js';
@@ -44,10 +44,11 @@ import { M_E_PHYS } from '../../constants.js';
 import { generateGridXZ, sampleAEField } from '../../fields.js';
 import { createTickAccumulator, formatSI } from '../scale-utils.js';
 import {
-    syncAEParamsFromUI, resetAETogglesToDefaults, aeSetPhase3,
-    bindScale2ControlsUI
+    syncAEParamsFromUI, resetAETogglesToDefaults,
+    bindScale2ControlsUI, syncAENuclearControlsFromBridge
 } from './ui-bindings.js';
 import { setupAEScenario, getAEScenarioPreset } from './scenarios.js';
+import { AE_PHYSICS_SPECS, getAEScenarioMeta } from './scenario-registry.js';
 import { renderAEScenarioDescription } from './ui/dom.js';
 import { telemetryHub } from '../../telemetry-hub.js';
 
@@ -60,13 +61,17 @@ export { bindScale2ControlsUI };
 // =====================================================================
 
 // -- Enhanced atom/molecule visual toggle flags -----------------------
-let _showNucleusShells   = true;    // strong force glow shells around nuclei
+let _showNucleusShells   = true;    // empirical A^(1/3) nuclear-extent envelopes
+let _showElementLabels   = true;    // chemical/isotope labels anchored to records
 let _bondStyle           = 'cylinders'; // 'cylinders' | 'lines' | 'off'
 let _showShellBounds     = false;   // translucent shell boundary spheres
 let _showOrbitalLobes    = false;   // p/d/f orbital lobe shapes
 let _showAEForceIonic    = false;   // Coulomb force arrows
 let _showAEForceVdw      = false;   // van der Waals force arrows
 let _showAEForceBond     = false;   // bond spring force arrows
+let _showAEForceHBond    = false;   // directional H-bond radial component
+let _showAEForceAngle    = false;   // VSEPR angle-strain force
+let _showAEForceDipole   = false;   // dipole-dipole force
 let _showAEForceNet      = false;   // net force arrows
 let _forceFrame          = 0;       // throttle: compute forces every 2nd frame
 
@@ -79,6 +84,10 @@ let _showBonds           = true;    // bond rendering (shared with Scale 3)
 let _showAEVelocities    = false;   // per-atom velocity vectors
 let _showAEDipoles       = false;   // per-atom dipole-moment arrows
 let _showAEHBondLines    = false;   // dashed donor-H···acceptor lines
+let _showAENuclearEvents = false;   // accepted-collision flashes + reaction planes
+let _showAERadiation     = false;   // prompt neutron/gamma transport traces
+let _showAEHeat          = false;   // deposited-energy halos
+let _showAENuclearBoundary = false; // live neutron transport volume
 
 // -- Element legend cache (avoid DOM rebuilds) -----------------------
 let _prevLegendKey       = '';
@@ -93,12 +102,15 @@ let _aeMergeCap          = 0;
 let _aeMergePos          = null;
 let _aeMergeCol          = null;
 let _aeMergeSize         = null;
+let _aeMergeAtomMap      = null;
 
 // -- Energy drift tracking -------------------------------------------
 let _aeInitialEnergy     = null;    // captured at scenario load, before first tick
 
 // -- Field computation cache -----------------------------------------
 let _fieldGrid           = null;    // cached grid from generateGridXZ
+let _fieldDirty          = true;    // force one paused-state refresh after a state/control change
+let _fieldAtomCount      = -1;      // catches paused injections/removals without resampling every frame
 
 // -- Tick accumulator (sub-1 speed fractional ticks, shared helper) --
 const _tickAcc = createTickAccumulator();
@@ -118,6 +130,19 @@ let _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' }
  */
 let _baChartDrawn = false;
 
+const ISOTOPE_SUPERSCRIPT = Object.freeze({
+    0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴',
+    5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹',
+});
+
+function isotopeLabel(Z, N) {
+    if (Z === 0 && N === 1) return 'n';
+    const el = getElement(Z);
+    if (!el) return `Z${Z}`;
+    const massNumber = String(Z + N).split('').map(digit => ISOTOPE_SUPERSCRIPT[digit]).join('');
+    return `${massNumber}${el.symbol}`;
+}
+
 function updateAtomicEnergyDisplay(dom, atomData) {
     if (!dom.aeDiagMass || !atomData || atomData.count === 0) return;
 
@@ -134,7 +159,8 @@ function updateAtomicEnergyDisplay(dom, atomData) {
     if (atomData.count === 1 && atomData.atomicNums) {
         // -- Single element --
         const Z = atomData.atomicNums[0];
-        const e = atomicEnergy(Z);
+        const N = atomData.neutronCounts?.[0] ?? getElement(Z)?.neutrons ?? Z;
+        const e = isotopeEnergy(Z, N);
         dom.aeDiagMass.textContent = formatEnergyAE(e.massEnergy);
         dom.aeDiagNbe.textContent = formatEnergyAE(e.bindingEnergy);
         dom.aeDiagBa.textContent = e.bindingPerNucleon.toFixed(4) + ' MeV';
@@ -145,7 +171,8 @@ function updateAtomicEnergyDisplay(dom, atomData) {
         let totalMass = 0, totalBE = 0, totalNucleons = 0, totalEBE = 0;
         for (let i = 0; i < atomData.count; i++) {
             const Z = atomData.atomicNums[i];
-            const e = atomicEnergy(Z);
+            const N = atomData.neutronCounts?.[i] ?? getElement(Z)?.neutrons ?? Z;
+            const e = isotopeEnergy(Z, N);
             totalMass += e.massEnergy;
             totalBE += e.bindingEnergy;
             totalNucleons += e.massNumber;
@@ -170,12 +197,16 @@ export function resetScale2(ctx) {
 
     // Reset visual flags to defaults
     _showNucleusShells = true;
+    _showElementLabels = true;
     _bondStyle         = 'cylinders';
     _showShellBounds   = false;
     _showOrbitalLobes  = false;
     _showAEForceIonic  = false;
     _showAEForceVdw    = false;
     _showAEForceBond   = false;
+    _showAEForceHBond  = false;
+    _showAEForceAngle  = false;
+    _showAEForceDipole = false;
     _showAEForceNet    = false;
     _forceFrame        = 0;
     _showOrbitalClouds = true;
@@ -184,14 +215,21 @@ export function resetScale2(ctx) {
     _showAEVelocities  = false;
     _showAEDipoles     = false;
     _showAEHBondLines  = false;
+    _showAENuclearEvents = false;
+    _showAERadiation   = false;
+    _showAEHeat        = false;
+    _showAENuclearBoundary = false;
     _prevLegendKey     = '';
     _aeLabelBuf        = [];
     _aeMergeCap        = 0;
     _aeMergePos        = null;
     _aeMergeCol        = null;
     _aeMergeSize       = null;
+    _aeMergeAtomMap    = null;
     _aeInitialEnergy   = null;
     _fieldGrid         = null;
+    _fieldDirty        = true;
+    _fieldAtomCount    = -1;
     _tickAcc.reset();
 
     _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
@@ -205,6 +243,9 @@ export function resetScale2(ctx) {
         viewport.toggleAEForceIonic(false);
         viewport.toggleAEForceVdw(false);
         viewport.toggleAEForceBond(false);
+        viewport.toggleAEForceHBond(false);
+        viewport.toggleAEForceAngle(false);
+        viewport.toggleAEForceDipole(false);
         viewport.toggleAEForceNet(false);
         viewport.toggleFieldHeatmap(false);
         viewport.toggleFieldVectors(false);
@@ -212,6 +253,11 @@ export function resetScale2(ctx) {
         viewport.toggleVelocityVectors?.(false);
         viewport.toggleAEDipoles?.(false);
         viewport.toggleHBondLines?.(false);
+        viewport.toggleNuclearEvents?.(false);
+        viewport.toggleNuclearRadiation?.(false);
+        viewport.toggleNuclearHeat?.(false);
+        viewport.toggleNuclearBoundary?.(false);
+        viewport.toggleElementLabels?.(true);
         viewport.updateElementLabels(null);
     }
 }
@@ -224,12 +270,16 @@ export function resetScale2(ctx) {
 export function getAEVisualState() {
     return {
         showNucleusShells: _showNucleusShells,
+        showElementLabels: _showElementLabels,
         bondStyle:         _bondStyle,
         showShellBounds:   _showShellBounds,
         showOrbitalLobes:  _showOrbitalLobes,
         showAEForceIonic:  _showAEForceIonic,
         showAEForceVdw:    _showAEForceVdw,
         showAEForceBond:   _showAEForceBond,
+        showAEForceHBond:  _showAEForceHBond,
+        showAEForceAngle:  _showAEForceAngle,
+        showAEForceDipole: _showAEForceDipole,
         showAEForceNet:    _showAEForceNet,
         showOrbitalClouds: _showOrbitalClouds,
         showAEField:       _showAEField,
@@ -237,32 +287,46 @@ export function getAEVisualState() {
         showAEVelocities:  _showAEVelocities,
         showAEDipoles:     _showAEDipoles,
         showAEHBondLines:  _showAEHBondLines,
+        showAENuclearEvents: _showAENuclearEvents,
+        showAERadiation:   _showAERadiation,
+        showAEHeat:        _showAEHeat,
+        showAENuclearBoundary: _showAENuclearBoundary,
     };
 }
 
 export function setAEVisualToggle(key, value) {
     switch (key) {
         case 'showNucleusShells': _showNucleusShells = value; break;
+        case 'showElementLabels': _showElementLabels = value; break;
         case 'bondStyle':         _bondStyle         = value; break;
         case 'showShellBounds':   _showShellBounds   = value; break;
         case 'showOrbitalLobes':  _showOrbitalLobes  = value; break;
         case 'showAEForceIonic':  _showAEForceIonic  = value; break;
         case 'showAEForceVdw':    _showAEForceVdw    = value; break;
         case 'showAEForceBond':   _showAEForceBond   = value; break;
+        case 'showAEForceHBond':  _showAEForceHBond  = value; break;
+        case 'showAEForceAngle':  _showAEForceAngle  = value; break;
+        case 'showAEForceDipole': _showAEForceDipole = value; break;
         case 'showAEForceNet':    _showAEForceNet    = value; break;
         case 'showOrbitalClouds': _showOrbitalClouds = value; break;
-        case 'showAEField':       _showAEField       = value; break;
+        case 'showAEField':       _showAEField       = value; _fieldDirty = !!value; break;
         case 'showBonds':         _showBonds         = value; break;
         case 'showAEVelocities':  _showAEVelocities  = value; break;
         case 'showAEDipoles':     _showAEDipoles     = value; break;
         case 'showAEHBondLines':  _showAEHBondLines  = value; break;
+        case 'showAENuclearEvents': _showAENuclearEvents = value; break;
+        case 'showAERadiation':   _showAERadiation   = value; break;
+        case 'showAEHeat':        _showAEHeat        = value; break;
+        case 'showAENuclearBoundary': _showAENuclearBoundary = value; break;
         default:
             console.warn(`[Scale2] Unknown visual toggle: ${key}`);
             return;
     }
     if ([
         'showOrbitalClouds', 'showAEForceIonic', 'showAEForceVdw', 'showAEForceBond',
-        'showAEForceNet', 'showAEVelocities', 'showAEDipoles', 'showAEHBondLines',
+        'showAEForceHBond', 'showAEForceAngle', 'showAEForceDipole', 'showAEForceNet',
+        'showAEVelocities', 'showAEDipoles', 'showAEHBondLines', 'showAENuclearEvents',
+        'showAERadiation', 'showAEHeat', 'showAENuclearBoundary',
     ].includes(key)) {
         _prevLegendKey = '';
     }
@@ -285,6 +349,40 @@ function _setCheckbox(id, on) {
     if (el) el.checked = !!on;
 }
 
+function createScenarioRandom(seed) {
+    let state = (Number(seed) >>> 0) || 0x6d2b79f5;
+    return () => {
+        state = (state + 0x6d2b79f5) >>> 0;
+        let t = state;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+
+function applyAEScenarioPhysics(bridge, scenario) {
+    if (!scenario?.physics) return;
+    for (const spec of AE_PHYSICS_SPECS) {
+        const enabled = !!scenario.physics[spec.key];
+        bridge[spec.setter]?.(enabled);
+        _setCheckbox(spec.elementId, enabled);
+    }
+    const params = scenario.parameters;
+    if (params) {
+        bridge.aeSetDt?.(params.dt);
+        bridge.aeSetSoftening?.(params.softening);
+        bridge.aeSetThermostatTemp?.(params.thermostatTemp);
+        const dtSlider = document.getElementById('ae-dt-slider');
+        const softSlider = document.getElementById('ae-soft-slider');
+        const dtValue = document.getElementById('ae-dt-value');
+        const softValue = document.getElementById('ae-soft-value');
+        if (dtSlider) dtSlider.value = String(params.dt);
+        if (softSlider) softSlider.value = String(params.softening);
+        if (dtValue) dtValue.textContent = params.dt.toFixed(2);
+        if (softValue) softValue.textContent = params.softening.toFixed(2);
+    }
+}
+
 /**
  * Apply a scenario's visual preset: module flags, DOM controls (shared
  * scale-2/3 toolbar checkboxes, bond-style select, force/field buttons),
@@ -296,6 +394,7 @@ function applyAEVisualPreset(viewport, preset) {
     if (!v) return;
 
     _showOrbitalClouds = !!v.clouds;
+    _showElementLabels = v.labels !== false;
     _showNucleusShells = !!v.shells;
     _bondStyle         = v.bondStyle || 'cylinders';
     _showShellBounds   = !!v.shellBounds;
@@ -304,12 +403,21 @@ function applyAEVisualPreset(viewport, preset) {
     _showAEForceIonic  = !!v.forceIonic;
     _showAEForceVdw    = !!v.forceVdw;
     _showAEForceBond   = !!v.forceBond;
+    _showAEForceHBond  = !!v.forceHbond;
+    _showAEForceAngle  = !!v.forceAngle;
+    _showAEForceDipole = !!v.forceDipole;
     _showAEForceNet    = !!v.forceNet;
     _showAEVelocities  = !!v.velocities;
     _showAEDipoles     = !!v.dipoles;
     _showAEHBondLines  = !!v.hbondLines;
+    _showAENuclearEvents = !!v.nuclearEvents;
+    _showAERadiation   = !!v.radiation;
+    _showAEHeat        = !!v.heat;
+    _showAENuclearBoundary = !!v.nuclearBoundary;
+    _fieldDirty        = _showAEField;
 
     _setCheckbox('ae-show-clouds', _showOrbitalClouds);
+    _setCheckbox('ae-show-labels', _showElementLabels);
     _setCheckbox('ae-show-shells', _showNucleusShells);
     _setCheckbox('ae-show-shell-bounds', _showShellBounds);
     _setCheckbox('ae-show-lobes', _showOrbitalLobes);
@@ -318,11 +426,18 @@ function applyAEVisualPreset(viewport, preset) {
     _setButtonActive('ae-force-ionic', _showAEForceIonic);
     _setButtonActive('ae-force-vdw', _showAEForceVdw);
     _setButtonActive('ae-force-bond', _showAEForceBond);
+    _setButtonActive('ae-force-hbond', _showAEForceHBond);
+    _setButtonActive('ae-force-angle', _showAEForceAngle);
+    _setButtonActive('ae-force-dipole', _showAEForceDipole);
     _setButtonActive('ae-force-net', _showAEForceNet);
     _setButtonActive('toggle-ae-field', _showAEField);
     _setButtonActive('toggle-ae-velocities', _showAEVelocities);
     _setButtonActive('toggle-ae-dipoles', _showAEDipoles);
     _setButtonActive('toggle-ae-hbonds', _showAEHBondLines);
+    _setButtonActive('toggle-ae-nuclear-events', _showAENuclearEvents);
+    _setButtonActive('toggle-ae-radiation', _showAERadiation);
+    _setButtonActive('toggle-ae-heat', _showAEHeat);
+    _setButtonActive('toggle-ae-nuclear-boundary', _showAENuclearBoundary);
 
     if (!viewport) return;
     viewport.toggleNucleusShells(_showNucleusShells);
@@ -333,6 +448,9 @@ function applyAEVisualPreset(viewport, preset) {
     viewport.toggleAEForceIonic(_showAEForceIonic);
     viewport.toggleAEForceVdw(_showAEForceVdw);
     viewport.toggleAEForceBond(_showAEForceBond);
+    viewport.toggleAEForceHBond(_showAEForceHBond);
+    viewport.toggleAEForceAngle(_showAEForceAngle);
+    viewport.toggleAEForceDipole(_showAEForceDipole);
     viewport.toggleAEForceNet(_showAEForceNet);
     viewport.toggleFieldHeatmap(_showAEField);
     viewport.toggleFieldVectors(_showAEField);
@@ -341,6 +459,11 @@ function applyAEVisualPreset(viewport, preset) {
     viewport.toggleVelocityVectors?.(_showAEVelocities);
     viewport.toggleAEDipoles?.(_showAEDipoles);
     viewport.toggleHBondLines?.(_showAEHBondLines);
+    viewport.toggleNuclearEvents?.(_showAENuclearEvents);
+    viewport.toggleNuclearRadiation?.(_showAERadiation);
+    viewport.toggleNuclearHeat?.(_showAEHeat);
+    viewport.toggleNuclearBoundary?.(_showAENuclearBoundary);
+    viewport.toggleElementLabels?.(_showElementLabels);
 }
 
 
@@ -422,14 +545,23 @@ export function animateAE(ctx) {
                     _aeMergePos = new Float32Array(_aeMergeCap * 3);
                     _aeMergeCol = new Float32Array(_aeMergeCap * 3);
                     _aeMergeSize = new Float32Array(_aeMergeCap);
+                    _aeMergeAtomMap = new Int32Array(_aeMergeCap);
                 }
                 _aeMergePos.set(cloudData.positions.subarray(0, cloudData.count * 3));
                 _aeMergeCol.set(cloudData.colors.subarray(0, cloudData.count * 3));
                 _aeMergeSize.set(cloudData.sizes.subarray(0, cloudData.count));
+                _aeMergeAtomMap.set(cloudData.atomMap.subarray(0, cloudData.count));
                 _aeMergePos.set(bondCloud.positions.subarray(0, bondCloud.count * 3), cloudData.count * 3);
                 _aeMergeCol.set(bondCloud.colors.subarray(0, bondCloud.count * 3), cloudData.count * 3);
                 _aeMergeSize.set(bondCloud.sizes.subarray(0, bondCloud.count), cloudData.count);
-                cloudData = { positions: _aeMergePos, colors: _aeMergeCol, sizes: _aeMergeSize, count: mergedCount };
+                _aeMergeAtomMap.fill(-1, cloudData.count, mergedCount);
+                cloudData = {
+                    positions: _aeMergePos,
+                    colors: _aeMergeCol,
+                    sizes: _aeMergeSize,
+                    count: mergedCount,
+                    atomMap: _aeMergeAtomMap,
+                };
             }
         }
 
@@ -460,27 +592,33 @@ export function animateAE(ctx) {
         viewport.toggleBondLines(false);
     }
 
-    // ── 6. Update nucleus shells (strong force glow) ───────────────
+    // ── 6. Update empirical nuclear-extent envelopes ──────────────
     if (_showNucleusShells && atomData.count > 0) {
         viewport.updateNucleusShells(atomData);
+    } else if (_showNucleusShells) {
+        viewport.updateNucleusShells(null);
     }
 
     if (_showShellBounds && atomData.count > 0) {
         viewport.updateOrbitalShells(atomData, electronConfig, slaterZeff, A0_DISPLAY);
         viewport.toggleOrbitalShells(true);
+    } else if (_showShellBounds) {
+        viewport.updateOrbitalShells(null, electronConfig, slaterZeff, A0_DISPLAY);
     }
 
     if (_showOrbitalLobes && atomData.count > 0) {
         viewport.updateOrbitalLobes(atomData, electronConfig, slaterZeff, A0_DISPLAY);
         viewport.toggleOrbitalLobes(true);
+    } else if (_showOrbitalLobes) {
+        viewport.updateOrbitalLobes(null, electronConfig, slaterZeff, A0_DISPLAY);
     }
 
     // ── 7. Update per-atom force arrows (every 2nd frame) ──────────
-    // F-8: only request the channels whose arrows are actually visible. The
-    // bridge skips the O(N²) ionic+vdW pair loop entirely when no long-range
-    // channel (ionic / vdW / net) is on, so bond-only arrows are O(bonds).
-    // Returned values for visible channels are bit-identical to the full sweep.
-    const anyForce = _showAEForceIonic || _showAEForceVdw || _showAEForceBond || _showAEForceNet;
+    // Request only visible output arrays. Net force is nevertheless evaluated
+    // from the complete active kernel so its arrow exactly matches the force
+    // used by the integrator rather than a presentation-only partial sum.
+    const anyForce = _showAEForceIonic || _showAEForceVdw || _showAEForceBond ||
+        _showAEForceHBond || _showAEForceAngle || _showAEForceDipole || _showAEForceNet;
     if (anyForce && atomData.count > 0) {
         _forceFrame++;
         if (_forceFrame % 2 === 0) {
@@ -488,10 +626,15 @@ export function animateAE(ctx) {
                 ionic: _showAEForceIonic,
                 vdw:   _showAEForceVdw,
                 bond:  _showAEForceBond,
+                hbond: _showAEForceHBond,
+                angle: _showAEForceAngle,
+                dipole: _showAEForceDipole,
                 net:   _showAEForceNet,
             });
             viewport.updateAEForces(atomData.positions, forceData, forceData.count);
         }
+    } else if (anyForce) {
+        viewport.updateAEForces(null, null, 0);
     }
 
     // ── 7b. Kinetic/electrostatic structure overlays ────────────────
@@ -502,35 +645,62 @@ export function animateAE(ctx) {
         if (vel && vel.count > 0) {
             viewport.updateVelocityVectors(atomData.positions, vel.velocities, vel.count);
         }
+    } else if (_showAEVelocities) {
+        viewport.updateVelocityVectors(null, new Float32Array(0), 0);
     }
     if (_showAEDipoles && atomData.count > 0) {
         const dip = bridge.aeGetDipoles?.();
         if (dip && dip.count > 0) {
             viewport.updateAEDipoles(atomData.positions, dip.dipoles, dip.count);
         }
+    } else if (_showAEDipoles) {
+        viewport.updateAEDipoles(null, null, 0);
     }
     if (_showAEHBondLines && atomData.count > 0) {
         const hb = bridge.aeGetHBondPairs?.();
         if (hb) viewport.updateHBondLines(hb.segments, hb.count);
+    } else if (_showAEHBondLines) {
+        viewport.updateHBondLines(null, 0);
     }
+    viewport.updateNuclearEffects?.(bridge.aeGetNuclearVisuals?.(), {
+        events: _showAENuclearEvents,
+        radiation: _showAERadiation,
+        heat: _showAEHeat,
+        boundary: _showAENuclearBoundary,
+    });
 
     // ── 8. Update element labels ───────────────────────────────────
-    if (atomData.count > 0 && atomData.atomicNums) {
-        while (_aeLabelBuf.length < atomData.count) _aeLabelBuf.push({ x: 0, y: 0, z: 0, symbol: '', color: '#ffffff' });
-        _aeLabelBuf.length = atomData.count;
+    if (_showElementLabels && atomData.count > 0 && atomData.atomicNums) {
+        const showIsotopes = !!bridge.aeGetNuclearDiagnostics?.();
+        const isotopeSeen = new Map();
+        let labelCount = 0;
         for (let i = 0; i < atomData.count; i++) {
             const Z = atomData.atomicNums[i];
+            const N = atomData.neutronCounts?.[i] ?? getElement(Z)?.neutrons ?? Z;
+            const isotopeKey = `${Z}:${N}`;
+            const seen = isotopeSeen.get(isotopeKey) || 0;
+            isotopeSeen.set(isotopeKey, seen + 1);
+            // Large nuclear populations remain legible by sampling repeated
+            // isotope labels. The atoms themselves and legend stay complete.
+            const labelCap = !showIsotopes || atomData.count <= 12
+                ? Infinity
+                : Z === 0 ? 5 : Z === 92 ? 3 : 3;
+            if (seen >= labelCap) continue;
             const r = Math.round(atomData.colors[i * 3] * 255);
             const g = Math.round(atomData.colors[i * 3 + 1] * 255);
             const b = Math.round(atomData.colors[i * 3 + 2] * 255);
             const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-            const lbl = _aeLabelBuf[i];
+            while (_aeLabelBuf.length <= labelCount) {
+                _aeLabelBuf.push({ x: 0, y: 0, z: 0, symbol: '', color: '#ffffff' });
+            }
+            const lbl = _aeLabelBuf[labelCount++];
             lbl.x = atomData.positions[i * 3];
             lbl.y = atomData.positions[i * 3 + 1];
             lbl.z = atomData.positions[i * 3 + 2];
-            lbl.symbol = getElement(Z).symbol;
+            lbl.symbol = showIsotopes ? isotopeLabel(Z, N) : (getElement(Z)?.symbol || 'n');
             lbl.color = lum > 200 ? '#aaaaaa' : '#ffffff';
         }
+        _aeLabelBuf.length = labelCount;
         viewport.updateElementLabels(_aeLabelBuf);
     } else {
         viewport.updateElementLabels(null);
@@ -539,6 +709,7 @@ export function animateAE(ctx) {
     // Update element legend (only rebuild when set of elements changes)
     if (dom.aeLegend && atomData.count > 0 && atomData.atomicNums) {
         if (frameCount % 10 === 0) {
+            const nuclearDiag = bridge.aeGetNuclearDiagnostics?.();
             _aeLegendZSet.clear();
             for (let i = 0; i < atomData.count; i++) _aeLegendZSet.add(atomData.atomicNums[i]);
             _aeLegendZArr.length = 0;
@@ -549,16 +720,26 @@ export function animateAE(ctx) {
                 + (_showAEForceIonic ? '+Fi' : '')
                 + (_showAEForceVdw ? '+Fv' : '')
                 + (_showAEForceBond ? '+Fb' : '')
+                + (_showAEForceHBond ? '+Fh' : '')
+                + (_showAEForceAngle ? '+Fa' : '')
+                + (_showAEForceDipole ? '+Fμ' : '')
                 + (_showAEForceNet ? '+Fn' : '')
                 + (_showAEVelocities ? '+v' : '')
                 + (_showAEDipoles ? '+mu' : '')
-                + (_showAEHBondLines ? '+hb' : '');
-            if (key !== _prevLegendKey) {
-                _prevLegendKey = key;
+                + (_showAEHBondLines ? '+hb' : '')
+                + (_showAENuclearEvents ? '+ne' : '')
+                + (_showAERadiation ? '+nr' : '')
+                + (_showAEHeat ? '+nh' : '')
+                + (_showAENuclearBoundary ? '+nb' : '');
+            const fullKey = key + (nuclearDiag
+                ? `+nr:${nuclearDiag.channel}:${nuclearDiag.phase}:${nuclearDiag.eventCount}:${nuclearDiag.generation}:${nuclearDiag.liveNeutrons}:${nuclearDiag.kEffective.toFixed(3)}`
+                : '');
+            if (fullKey !== _prevLegendKey) {
+                _prevLegendKey = fullKey;
                 let html = '<div class="ae-legend-header">Elements</div>';
                 for (let k = 0; k < _aeLegendZArr.length; k++) {
                     const Z = _aeLegendZArr[k];
-                    const el = getElement(Z);
+                    const el = getElement(Z) || { symbol: 'n', name: 'Free neutron', color: [0.5, 0.5, 0.5] };
                     const [r, g, b] = el.color;
                     const hex = `#${(r * 255 | 0).toString(16).padStart(2, '0')}${(g * 255 | 0).toString(16).padStart(2, '0')}${(b * 255 | 0).toString(16).padStart(2, '0')}`;
                     html += `<div class="ae-legend-item"><span class="ae-legend-swatch" style="background:${hex}"></span><span class="ae-legend-sym">${el.symbol}</span><span class="ae-legend-name">${el.name}</span></div>`;
@@ -572,15 +753,19 @@ export function animateAE(ctx) {
                     html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-orb-d"></span><span class="ae-legend-name">d orbitals</span></div>';
                     html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-orb-f"></span><span class="ae-legend-name">f orbitals</span></div>';
                 }
-                const anyForce = _showAEForceIonic || _showAEForceVdw || _showAEForceBond || _showAEForceNet;
+                const anyForce = _showAEForceIonic || _showAEForceVdw || _showAEForceBond ||
+                    _showAEForceHBond || _showAEForceAngle || _showAEForceDipole || _showAEForceNet;
                 if (anyForce) {
                     html += '<div class="ae-legend-sep"></div><div class="ae-legend-header">Force arrows</div>';
                     if (_showAEForceIonic) html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-force-ionic"></span><span class="ae-legend-name">F<sub>C</sub> Coulomb</span></div>';
                     if (_showAEForceVdw) html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-force-vdw"></span><span class="ae-legend-name">F<sub>vdW</sub> LJ 12-6</span></div>';
                     if (_showAEForceBond) html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-force-bond"></span><span class="ae-legend-name">F<sub>B</sub> bond spring</span></div>';
+                    if (_showAEForceHBond) html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-force-hbond"></span><span class="ae-legend-name">F<sub>HB</sub> H-bond</span></div>';
+                    if (_showAEForceAngle) html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-force-angle"></span><span class="ae-legend-name">F<sub>θ</sub> angle strain</span></div>';
+                    if (_showAEForceDipole) html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-force-dipole"></span><span class="ae-legend-name">F<sub>μμ</sub> dipole</span></div>';
                     if (_showAEForceNet) {
-                        html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-force-net"></span><span class="ae-legend-name">F<sub>net</sub> sum above</span></div>';
-                        html += '<p class="ae-legend-note">F<sub>net</sub> omits angle, H-bond, and μ–μ dynamics.</p>';
+                        html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-force-net"></span><span class="ae-legend-name">F<sub>net</sub> actual integrator force</span></div>';
+                        html += '<p class="ae-legend-note">F<sub>net</sub> is the complete post-safety force used by the integrator.</p>';
                     }
                 }
                 if (_showAEVelocities) {
@@ -595,6 +780,24 @@ export function animateAE(ctx) {
                     html += '<div class="ae-legend-sep"></div><div class="ae-legend-header">H-bonds</div>';
                     html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-hbond"></span><span class="ae-legend-name">Dashed H&#183;&#183;&#183;A pairs</span></div>';
                 }
+                if (nuclearDiag) {
+                    const nuclearPhase = nuclearDiag.phase === 'multiplying' ? 'reaction active'
+                        : nuclearDiag.phase === 'transport' ? 'neutron transport active'
+                        : nuclearDiag.phase === 'event-limit' ? 'reaction complete · carrier aftermath'
+                            : nuclearDiag.phase === 'fuel-depleted' ? 'reaction complete · fuel depleted'
+                                : nuclearDiag.phase === 'extinct' ? 'reaction complete · chain extinct'
+                                    : nuclearDiag.phase;
+                    html += '<div class="ae-legend-sep"></div><div class="ae-legend-header">Nuclear reaction</div>';
+                    html += `<div class="ae-legend-item"><span class="ae-legend-swatch" style="background:#f97316"></span><span class="ae-legend-name">${nuclearDiag.label}</span></div>`;
+                    if (_showAENuclearEvents) html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-nuclear-event"></span><span class="ae-legend-name">Accepted collision site / reaction plane</span></div>';
+                    if (_showAERadiation) html += '<div class="ae-legend-item"><span class="ae-legend-swatch" style="background:#67e8f9"></span><span class="ae-legend-name">Neutron / gamma transport</span></div>';
+                    if (_showAEHeat) html += '<div class="ae-legend-item"><span class="ae-legend-swatch" style="background:#fb923c"></span><span class="ae-legend-name">Deposited-energy halo</span></div>';
+                    if (_showAENuclearBoundary) html += `<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-nuclear-boundary-${nuclearDiag.boundaryMode === 'reflect' ? 'reflect' : 'leak'}"></span><span class="ae-legend-name">${nuclearDiag.boundaryMode === 'reflect' ? 'Reflective' : 'Open'} neutron boundary</span></div>`;
+                    html += `<p class="ae-legend-note">${nuclearPhase} · ${nuclearDiag.eventCount} rendered event${nuclearDiag.eventCount === 1 ? '' : 's'} · ${nuclearDiag.liveNeutrons} live neutron${nuclearDiag.liveNeutrons === 1 ? '' : 's'} · generation ${nuclearDiag.generation} · observed reproduction ${nuclearDiag.kEffective.toFixed(3)} · mass-channel Q ${nuclearDiag.qMeV.toFixed(3)} MeV/event · total recoverable ${nuclearDiag.releasedMeV.toExponential(3)} MeV (${nuclearDiag.releasedJoule.toExponential(3)} J)</p>`;
+                    if (['event-limit', 'fuel-depleted', 'extinct', 'complete'].includes(nuclearDiag.phase)) {
+                        html += '<p class="ae-legend-note">Released energy is cumulative and now remains flat; visible packets and halos are the labeled aftermath, not additional reactions.</p>';
+                    }
+                }
                 dom.aeLegend.innerHTML = html;
             }
         }
@@ -604,7 +807,8 @@ export function animateAE(ctx) {
     }
 
     // ── 9. Update force field overlay (heatmap + vectors) ──────────
-    if (_showAEField && running && atomData.count > 0) {
+    if (_showAEField && atomData.count > 0 &&
+        (running || _fieldDirty || atomData.count !== _fieldAtomCount || frameCount % 15 === 0)) {
         let maxR = 5;
         for (let i = 0; i < atomData.count; i++) {
             const ax = Math.abs(atomData.positions[i * 3]);
@@ -619,7 +823,18 @@ export function animateAE(ctx) {
         const src = bridge.aeGetFieldSources();
         const field = sampleAEField(src, _fieldGrid.positions, _fieldGrid.count);
         viewport.updateFieldHeatmap(_fieldGrid.positions, field.potentials, _fieldGrid.count, field.maxPotential);
-        viewport.updateFieldVectors(_fieldGrid.positions, field.forces, _fieldGrid.count, field.maxForce, 3.0);
+        // Atom positions are already world coordinates. The shared field
+        // renderer defaults to the Scale-0 half-voxel shift, so pass an
+        // explicit zero offset to keep the AE vectors aligned with both the
+        // atom centers and the potential samples.
+        viewport.updateFieldVectors(_fieldGrid.positions, field.forces, _fieldGrid.count, field.maxForce, 3.0, 0);
+        _fieldDirty = false;
+        _fieldAtomCount = atomData.count;
+    } else if (_showAEField && atomData.count === 0) {
+        viewport.updateFieldHeatmap(new Float32Array(0), new Float32Array(0), 0, 0);
+        viewport.updateFieldVectors(new Float32Array(0), new Float32Array(0), 0, 0, 3.0, 0);
+        _fieldDirty = false;
+        _fieldAtomCount = 0;
     }
 
     // ── 10. Render viewport ────────────────────────────────────────
@@ -632,7 +847,19 @@ export function animateAE(ctx) {
         if (diag) {
             const sTick = formatSI(diag.tick);
             const sParticles = String(diag.atomCount);
-            const sEnergy = formatEnergy(diag.totalEnergy, 2).text;
+            const nuclear = diag.nuclear;
+            let sEnergy = formatEnergy(diag.totalEnergy, 2).text;
+            if (nuclear) {
+                const joule = nuclear.releasedJoule || 0;
+                if (nuclear.eventWeight > 1) {
+                    sEnergy = joule >= 1e9 ? `${(joule / 1e9).toFixed(3)} GJ`
+                        : joule >= 1e6 ? `${(joule / 1e6).toFixed(3)} MJ`
+                            : joule >= 1e3 ? `${(joule / 1e3).toFixed(3)} kJ`
+                                : `${joule.toFixed(3)} J`;
+                } else {
+                    sEnergy = `${nuclear.microscopicReleasedMeV.toFixed(3)} MeV`;
+                }
+            }
             const sState = running ? 'Running' : 'Idle';
 
             if (_statusCache.tick !== sTick) { dom.statusPtime.textContent = sTick; _statusCache.tick = sTick; }
@@ -701,10 +928,9 @@ export function loadAEScenario(ctx, name) {
     // Reset all AE toggles to defaults, then sync sliders from UI
     resetAETogglesToDefaults(bridge);
     syncAEParamsFromUI(bridge);
-    // Scale 2 override: no auto-bonding for individual atoms
-    if (bridge.aeSetBonding) bridge.aeSetBonding(false);
-    const bondEl = document.getElementById('ae-bonding');
-    if (bondEl) bondEl.checked = false;
+    const scenario = getAEScenarioMeta(name);
+    bridge.aeConfigureNuclearReaction?.(scenario?.nuclear || scenario?.reaction || '');
+    syncAENuclearControlsFromBridge(bridge);
 
     // Clear molecule info (molecules are Scale 3 only)
     if (inspector) inspector.setCurrentMolecule(null);
@@ -712,8 +938,15 @@ export function loadAEScenario(ctx, name) {
     // Run scenario-specific setup (big switch delegated to scenarios.js)
     setupAEScenario(name, {
         bridge, viewport, inspector,
-        helpers: { setPhase3: aeSetPhase3 },
+        helpers: {
+            random: createScenarioRandom(scenario?.seed),
+        },
     });
+
+    // The registry is the final physics writer. Scenario setup may temporarily
+    // enable auto-bonding to create topology, but the published runtime profile
+    // and controls always settle to this contract.
+    applyAEScenarioPhysics(bridge, scenario);
 
     // Apply the scenario's visual preset (flags + DOM controls + viewport
     // layers). Last writer after resetAllVisualState + setupAEScenario.

@@ -228,7 +228,8 @@ inline AtomicProperties compute_atomic_properties(int Z, int N = 0) {
     p.max_bonds = (Z >= 1 && Z <= 118) ? max_bonds_table[Z] : ((Z <= 2) ? Z : 4);
 
     // Valence electron count (electrons in outermost shell for VSEPR geometry)
-    // Required for correct lone-pair counting: lone_pairs = valence_electrons - bonds
+    // Required for correct lone-pair counting:
+    // lone_pairs = floor((valence_electrons - bonds) / 2)
     // Example: O (Z=8) has 6 valence electrons, 2 bonds → 2 lone pairs → bent geometry
     static constexpr int valence_table[119] = {
     //  0   1   2   3   4   5   6   7   8   9
@@ -342,6 +343,7 @@ struct AtomDiagnostics {
     double total_pe_ionic = 0.0;
     double total_pe_vdw = 0.0;
     double total_pe_bond = 0.0;
+    double total_pe_angle = 0.0;
     double total_energy = 0.0;    // KE + the potential terms tracked above
     Vec3 total_momentum;
     double temperature = 0.0;     // T = 2*KE_free / (3*N_free*k_B) in FTD units
@@ -389,9 +391,10 @@ public:
     const std::vector<Atom>& atoms() const { return atoms_; }
     int current_tick() const override { return tick_; }
     double dt() const override { return dt_; }
-    void set_dt(double d) override { dt_ = d; }
+    void set_dt(double d) override;
     double softening() const { return soft_; }
-    void set_softening(double s) { soft_ = s; }
+    void set_softening(double s);
+    bool validate_state(std::string* err = nullptr) const;
 
     // ── ScaleEngine interface (revision 3.4) ────────────────────────────
     int scale_level() const override { return static_cast<int>(ScaleLevel::ATOM); }
@@ -421,7 +424,7 @@ public:
         b.entity_count = d.atom_count;
         b.total_energy = d.total_energy;
         b.total_ke = d.total_ke;
-        b.total_pe = d.total_pe_ionic + d.total_pe_vdw + d.total_pe_bond;
+        b.total_pe = d.total_pe_ionic + d.total_pe_vdw + d.total_pe_bond + d.total_pe_angle;
         b.total_momentum = d.total_momentum;
         return b;
     }
@@ -434,9 +437,9 @@ public:
 
     // Thermostat control
     double target_temperature() const { return target_temperature_; }
-    void set_target_temperature(double T) { target_temperature_ = T; }
+    void set_target_temperature(double T);
     double thermostat_tau() const { return thermostat_tau_; }
-    void set_thermostat_tau(double tau) { thermostat_tau_ = tau; }
+    void set_thermostat_tau(double tau);
 
     // Per-atom force decomposition (populated after compute_all_forces)
     const std::vector<AtomForceDiag>& force_diag() const { return force_diag_; }

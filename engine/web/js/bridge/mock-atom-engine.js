@@ -6,10 +6,9 @@
  * Includes Berendsen thermostat, electronegativity-sensitive auto-bonding,
  * 1-2 / 1-3 exclusion, and a Velocity Verlet integrator.
  *
- * Extracted from `bridge-init.js` during the bridge modularization pass
- * documented in engine/web/docs/INDEX.md. This is a move, not
- * a rewrite — method bodies preserved verbatim; the only structural change
- * is that `this.*` field accesses go through the live `state` reference.
+ * Extracted from `bridge-init.js` during the bridge modularization pass and
+ * subsequently hardened as the production browser AtomEngine. The live
+ * `state` reference owns all mutable engine state.
  *
  * STATE CONTRACT — `state` must be the MockBridge instance (not a
  * destructured copy), exposing:
@@ -30,7 +29,7 @@
  * below 100000 (typical simulations have <1000 atoms).
  */
 
-import { NEUTRON_PROTON_MASS_RATIO } from '../constants.js';
+import { M_P_PHYS, NEUTRON_PROTON_MASS_RATIO } from '../constants.js';
 import {
     AE_K_COULOMB, AE_K_BOND, AE_SPEED_MAX,
     AE_H_BOND_EPS, AE_K_ANGLE, AE_THERMOSTAT_TAU,
@@ -39,11 +38,25 @@ import {
 import { cpkColor, defaultNeutronCount as elemNeutrons, maxBonds as elemMaxBonds } from '../elements.js';
 import { debugLog } from '../core/log.js';
 import {
+    evaluateNuclearReaction,
+    getNuclearReactionChannel,
+    incidentVelocities,
+    MEV_TO_JOULE,
+} from '../scales/scale2/nuclear-reactions.js';
+import {
     valenceElectrons as _valenceElectrons,
     covalentValence as _covalentValence,
     AROMATIC_ORDER,
     MAX_BOND_ORDER,
 } from './mock-atom-valence.js';
+
+const AE_LIMITS = Object.freeze({
+    dt: Object.freeze([0.001, 0.5]),
+    soft: Object.freeze([0.01, 10.0]),
+    thermostat_temp: Object.freeze([1e-6, 1e6]),
+});
+const AE_FORCE_MAX = 50.0;
+const AE_FORCE_COMPONENTS = Object.freeze(['ionic', 'vdw', 'bond', 'hbond', 'angle', 'dipole']);
 
 // Atomic properties (mass in proton units, LJ radius/ε/σ, max bonds,
 // electronegativity) come from the canonical atomic-props.js
@@ -59,6 +72,65 @@ import {
  * @param {object} state - MockBridge instance (live reference).
  */
 export function createAtomEngine(state) {
+
+    function _aeNewNuclearState(config = {}) {
+        const channel = typeof config === 'string' ? config : (config.channel || '');
+        const mode = typeof config === 'object' && config.mode ? config.mode : 'single';
+        const finiteOr = (value, fallback) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+        const eventLimit = mode === 'single' ? 1
+            : Math.max(1, Math.floor(Number(config.eventLimit) || Number.MAX_SAFE_INTEGER));
+        return {
+            channel,
+            mode,
+            phase: channel ? 'armed' : 'disabled',
+            event_limit: eventLimit,
+            event_weight: Math.max(1, Number(config.eventWeight) || 1),
+            // k_effective is measured from live neutron births and losses. It
+            // is intentionally never accepted as a scenario input.
+            k_effective: 0,
+            reactivity_scale: Math.max(0, Math.min(20, finiteOr(config.reactivityScale, 1))),
+            collision_radius_scale: Math.max(0.25, Math.min(4, finiteOr(config.collisionRadiusScale, 1))),
+            transport_radius: Math.max(2, Math.min(100, finiteOr(config.transportRadius, 18))),
+            boundary_mode: config.boundaryMode === 'reflect' ? 'reflect' : 'leak',
+            moderator_strength: Math.max(0, Math.min(1, finiteOr(config.moderatorStrength, 0))),
+            absorber_strength: Math.max(0, Math.min(1, finiteOr(config.absorberStrength, 0))),
+            source_enabled: !!config.sourceEnabled,
+            source_rate: Math.max(0, Math.min(4, finiteOr(config.sourceRate, 0))),
+            source_energy_mev: Math.max(1e-12, Math.min(20, finiteOr(config.sourceEnergyMeV, 2.53e-8))),
+            source_accumulator: 0,
+            particle_limit: Math.max(32, Math.min(2048, Math.floor(finiteOr(config.particleLimit, 512)))),
+            source_saturated: false,
+            random_seed: (Number(config.seed) >>> 0) || 0x5eed235,
+            neutron_containment: Math.max(0, Math.min(1, Number(config.neutronContainment) || 0)),
+            gamma_containment: Math.max(0, Math.min(1, Number(config.gammaContainment) || 0)),
+            event_count: 0,
+            represented_event_count: 0,
+            event_tick: -1,
+            generation: 0,
+            fuel_initial: 0,
+            fuel_remaining: 0,
+            effects: [],
+            history: [],
+            leaked_neutrons: 0,
+            absorbed_neutrons: 0,
+            scattered_neutrons: 0,
+            source_neutrons: 0,
+            fission_neutron_births: 0,
+            neutron_fission_losses: 0,
+            released_mev: 0,
+            microscopic_released_mev: 0,
+            released_joule: 0,
+            deposited_mev: 0,
+            in_transit_mev: 0,
+            escaped_mev: 0,
+            kinetic_mev: 0,
+            charged_mev: 0,
+            neutron_mev: 0,
+            prompt_gamma_mev: 0,
+            delayed_heat_mev: 0,
+            last_event: null,
+        };
+    }
 
     function initAE() {
         state._ae = {
@@ -77,6 +149,11 @@ export function createAtomEngine(state) {
             thermostat: false,
             thermostat_temp: 1.0,
             electronegativity: false,
+            force_clamped_last: false,
+            force_clamp_scale: 1.0,
+            force_clamp_events: 0,
+            nuclear: _aeNewNuclearState(),
+            last_error: '',
         };
     }
 
@@ -86,13 +163,131 @@ export function createAtomEngine(state) {
             state._ae.bonds = [];
             state._ae.nextId = 0;
             state._ae.tick = 0;
+            state._ae.force_clamped_last = false;
+            state._ae.force_clamp_scale = 1.0;
+            state._ae.force_clamp_events = 0;
+            state._ae.nuclear = _aeNewNuclearState();
+            state._ae.last_error = '';
         }
+    }
+
+    function _aeReject(message) {
+        if (state._ae) state._ae.last_error = message;
+        return false;
+    }
+
+    function _aeSetBounded(name, value) {
+        if (!state._ae || !Number.isFinite(value)) return _aeReject(`${name} must be finite`);
+        const [lo, hi] = AE_LIMITS[name];
+        state._ae[name] = Math.max(lo, Math.min(hi, value));
+        state._ae.last_error = '';
+        return true;
+    }
+
+    function _aeStateIssue() {
+        if (!state._ae) return 'atom engine is not initialized';
+        const ae = state._ae;
+        if (!Number.isFinite(ae.dt) || ae.dt <= 0) return 'time step must be finite and positive';
+        if (!Number.isFinite(ae.soft) || ae.soft <= 0) return 'softening must be finite and positive';
+        const ids = new Set();
+        const byId = new Map();
+        for (const a of ae.atoms) {
+            if (!Number.isInteger(a.id) || ids.has(a.id)) return 'atom IDs must be unique integers';
+            ids.add(a.id); byId.set(a.id, a);
+            if (!Number.isInteger(a.Z) || a.Z < 0 || a.Z > 118 || (a.Z === 0 && a.N !== 1))
+                return `atom ${a.id} has invalid atomic number/isotope`;
+            if (!Number.isInteger(a.N) || a.N < 0) return `atom ${a.id} has invalid neutron count`;
+            if (!Number.isFinite(a.mass) || a.mass <= 0) return `atom ${a.id} has invalid mass`;
+            for (const key of ['charge', 'q_frac', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'ax', 'ay', 'az']) {
+                if (!Number.isFinite(a[key])) return `atom ${a.id} has non-finite ${key}`;
+            }
+        }
+        for (const a of ae.atoms) {
+            const partners = new Set();
+            for (const b of a.bonds) {
+                if (!Number.isInteger(b.partner_id) || b.partner_id === a.id || !byId.has(b.partner_id))
+                    return `atom ${a.id} has an invalid bond partner`;
+                if (partners.has(b.partner_id)) return `atom ${a.id} has a duplicate bond`;
+                partners.add(b.partner_id);
+                if (!Number.isFinite(b.r_eq) || b.r_eq <= 0 || !Number.isFinite(b.k_bond) || b.k_bond < 0 ||
+                    !Number.isFinite(b.order) || b.order <= 0)
+                    return `atom ${a.id} has invalid bond parameters`;
+                if (!byId.get(b.partner_id).bonds.some(back => back.partner_id === a.id))
+                    return `bond ${a.id}-${b.partner_id} is not reciprocal`;
+            }
+        }
+        const nuclear = ae.nuclear;
+        if (nuclear) {
+            for (const key of [
+                'event_weight', 'k_effective', 'reactivity_scale', 'collision_radius_scale',
+                'transport_radius', 'moderator_strength', 'absorber_strength', 'source_rate',
+                'source_energy_mev', 'source_accumulator', 'particle_limit', 'neutron_containment', 'gamma_containment',
+                'event_count', 'represented_event_count', 'generation', 'fuel_initial',
+                'fuel_remaining', 'released_mev', 'microscopic_released_mev',
+                'released_joule', 'deposited_mev', 'in_transit_mev', 'escaped_mev',
+                'kinetic_mev', 'charged_mev', 'neutron_mev', 'prompt_gamma_mev', 'delayed_heat_mev',
+                'leaked_neutrons', 'absorbed_neutrons', 'scattered_neutrons',
+                'source_neutrons', 'fission_neutron_births', 'neutron_fission_losses',
+            ]) {
+                if (!Number.isFinite(nuclear[key]) || nuclear[key] < 0) {
+                    return `nuclear ledger has invalid ${key}`;
+                }
+            }
+            if (!['leak', 'reflect'].includes(nuclear.boundary_mode)) {
+                return 'nuclear transport has an invalid boundary mode';
+            }
+        }
+        return '';
+    }
+
+    function _aeDynamicSnapshot() {
+        return {
+            atoms: state._ae.atoms.map(a => ({
+                ...a,
+                bonds: a.bonds.map(bond => ({ ...bond })),
+            })),
+            nextId: state._ae.nextId,
+            nuclear: {
+                ...state._ae.nuclear,
+                last_event: state._ae.nuclear.last_event
+                    ? { ...state._ae.nuclear.last_event }
+                    : null,
+                effects: state._ae.nuclear.effects.map(item => ({
+                    ...item,
+                    neutronDirections: item.neutronDirections?.map(direction => ({ ...direction })) || [],
+                })),
+                history: state._ae.nuclear.history.map(item => ({
+                    ...item,
+                    neutronDirections: item.neutronDirections?.map(direction => ({ ...direction })) || [],
+                })),
+            },
+        };
+    }
+
+    function _aeRestoreDynamic(snapshot) {
+        state._ae.atoms = snapshot.atoms.map(a => ({
+            ...a,
+            bonds: a.bonds.map(bond => ({ ...bond })),
+        }));
+        state._ae.nextId = snapshot.nextId;
+        state._ae.nuclear = snapshot.nuclear;
     }
 
     function aeAddAtom(Z, x, y, z, vx = 0, vy = 0, vz = 0, charge = 0, N = -1) {
         if (!state._ae) initAE();
+        const explicitNeutron = Z === 0 && N === 1;
+        if (!Number.isInteger(Z) || (!explicitNeutron && (Z < 1 || Z > 118)) ||
+            ![x, y, z, vx, vy, vz, charge].every(Number.isFinite) ||
+            !(N === -1 || (Number.isInteger(N) && N >= 0))) {
+            _aeReject('aeAddAtom received invalid atomic or finite-state data');
+            return -1;
+        }
         const neutrons = N >= 0 ? N : elemNeutrons(Z);
         const props = computeAtomicProps(Z, neutrons);
+        if (!Number.isFinite(props.mass) || props.mass <= 0) {
+            _aeReject(`aeAddAtom could not construct a positive finite mass for Z=${Z}`);
+            return -1;
+        }
         const id = state._ae.nextId++;
         state._ae.atoms.push({
             id, Z, N: neutrons, charge, mass: props.mass, radius: props.radius,
@@ -109,6 +304,369 @@ export function createAtomEngine(state) {
         return id;
     }
 
+    function aeConfigureNuclearReaction(config = '') {
+        if (!state._ae) initAE();
+        const channelId = typeof config === 'string' ? config : (config?.channel || '');
+        if (channelId && !getNuclearReactionChannel(channelId)) {
+            return _aeReject(`unknown nuclear reaction channel: ${channelId}`);
+        }
+        state._ae.nuclear = _aeNewNuclearState(
+            typeof config === 'string' ? { channel: config } : config,
+        );
+        state._ae.last_error = '';
+        return true;
+    }
+
+    function _aeNuclearSample(...keys) {
+        const nuclear = state._ae.nuclear;
+        let x = nuclear.random_seed >>> 0;
+        for (let i = 0; i < keys.length; i++) {
+            x ^= Math.imul((Number(keys[i]) >>> 0) + i + 1, [0x9e3779b1, 0x85ebca6b, 0xc2b2ae35][i % 3]);
+            x >>>= 0;
+        }
+        x ^= x >>> 16;
+        x = Math.imul(x, 0x7feb352d) >>> 0;
+        x ^= x >>> 15;
+        x = Math.imul(x, 0x846ca68b) >>> 0;
+        x ^= x >>> 16;
+        return (x >>> 0) / 4294967296;
+    }
+
+    function _aeNuclearDirection(...keys) {
+        const z = 2 * _aeNuclearSample(...keys, 17) - 1;
+        const phi = 2 * Math.PI * _aeNuclearSample(...keys, 31);
+        const radial = Math.sqrt(Math.max(0, 1 - z * z));
+        return { x: radial * Math.cos(phi), y: radial * Math.sin(phi), z };
+    }
+
+    function aeSetNuclearEnvironment(patch = {}) {
+        if (!state._ae) initAE();
+        const nuclear = state._ae.nuclear;
+        if (!nuclear) return false;
+        const bounded = (key, sourceKey, lo, hi) => {
+            if (!(sourceKey in patch)) return;
+            const value = Number(patch[sourceKey]);
+            if (Number.isFinite(value)) nuclear[key] = Math.max(lo, Math.min(hi, value));
+        };
+        bounded('reactivity_scale', 'reactivityScale', 0, 20);
+        bounded('collision_radius_scale', 'collisionRadiusScale', 0.25, 4);
+        bounded('transport_radius', 'transportRadius', 2, 100);
+        bounded('moderator_strength', 'moderatorStrength', 0, 1);
+        bounded('absorber_strength', 'absorberStrength', 0, 1);
+        bounded('source_rate', 'sourceRate', 0, 4);
+        bounded('source_energy_mev', 'sourceEnergyMeV', 1e-12, 20);
+        if ('sourceEnabled' in patch) nuclear.source_enabled = !!patch.sourceEnabled;
+        if ('boundaryMode' in patch) nuclear.boundary_mode = patch.boundaryMode === 'reflect' ? 'reflect' : 'leak';
+        state._ae.last_error = '';
+        return true;
+    }
+
+    function _aeTagNeutron(id, generation = 0, source = '') {
+        const atom = state._ae.atoms.find(item => item.id === id);
+        if (!atom || atom.Z !== 0 || atom.N !== 1) return;
+        atom.nuclear_generation = Math.max(0, Math.floor(generation));
+        atom.nuclear_source = source;
+    }
+
+    function aeInjectNuclearParticle(kind = 'neutron') {
+        if (!state._ae?.nuclear?.channel) return _aeReject('enable a nuclear channel before injecting reactants');
+        const nuclear = state._ae.nuclear;
+        const required = kind === 'dt-pair' ? 2 : 1;
+        if (state._ae.atoms.length + required > nuclear.particle_limit) {
+            nuclear.source_saturated = true;
+            return _aeReject(`nuclear particle limit ${nuclear.particle_limit} reached`);
+        }
+        nuclear.source_saturated = false;
+        const ordinal = state._ae.nextId + state._ae.tick * 4099;
+        if (kind === 'neutron') {
+            const neutronMass = NEUTRON_PROTON_MASS_RATIO;
+            const speed = Math.sqrt(2 * nuclear.source_energy_mev / Math.max(M_P_PHYS * neutronMass, 1e-30));
+            const radius = nuclear.transport_radius * 0.82;
+            const spreadY = (_aeNuclearSample(ordinal, 1) - 0.5) * nuclear.transport_radius * 0.3;
+            const spreadZ = (_aeNuclearSample(ordinal, 2) - 0.5) * nuclear.transport_radius * 0.3;
+            const directionLength = Math.hypot(radius, spreadY, spreadZ) || 1;
+            const direction = { x: radius / directionLength, y: -spreadY / directionLength, z: -spreadZ / directionLength };
+            const id = aeAddAtom(0, -radius, spreadY, spreadZ,
+                direction.x * speed, direction.y * speed, direction.z * speed, 0, 1);
+            if (id < 0) return false;
+            _aeTagNeutron(id, 0, 'source');
+            nuclear.source_neutrons++;
+            return id;
+        }
+        if (kind === 'dt-pair') {
+            const velocities = incidentVelocities('dt_fusion');
+            const axis = _aeNuclearDirection(ordinal, 3);
+            const center = _aeNuclearDirection(ordinal, 4);
+            const centerScale = nuclear.transport_radius * 0.2 * _aeNuclearSample(ordinal, 5);
+            const half = getNuclearReactionChannel('dt_fusion').captureRadius *
+                nuclear.collision_radius_scale * 0.42;
+            const cx = center.x * centerScale, cy = center.y * centerScale, cz = center.z * centerScale;
+            const dSpeed = Math.hypot(velocities[0].vx, velocities[0].vy, velocities[0].vz);
+            const tSpeed = Math.hypot(velocities[1].vx, velocities[1].vy, velocities[1].vz);
+            const dId = aeAddAtom(1, cx - axis.x * half, cy - axis.y * half, cz - axis.z * half,
+                axis.x * dSpeed, axis.y * dSpeed, axis.z * dSpeed, 0, 1);
+            const tId = aeAddAtom(1, cx + axis.x * half, cy + axis.y * half, cz + axis.z * half,
+                -axis.x * tSpeed, -axis.y * tSpeed, -axis.z * tSpeed, 0, 2);
+            return dId >= 0 && tId >= 0 ? dId : false;
+        }
+        if (kind === 'u235') {
+            let position = { x: 0, y: 0, z: 0 };
+            const spacing = Math.max(1.4, 1.3 * getNuclearReactionChannel('u235_fission').captureRadius *
+                nuclear.collision_radius_scale);
+            const candidates = [];
+            for (let x = -2; x <= 2; x++) for (let y = -2; y <= 2; y++) for (let z = -2; z <= 2; z++) {
+                candidates.push({ x: x * spacing, y: y * spacing, z: z * spacing, r2: x * x + y * y + z * z });
+            }
+            candidates.sort((a, b) => a.r2 - b.r2 || a.x - b.x || a.y - b.y || a.z - b.z);
+            const free = candidates.find(candidate => state._ae.atoms.every(atom => atom.Z !== 92 ||
+                Math.hypot(atom.x - candidate.x, atom.y - candidate.y, atom.z - candidate.z) > spacing * 0.8));
+            if (free) {
+                position = free;
+            } else {
+                const direction = _aeNuclearDirection(ordinal, 7);
+                const radius = nuclear.transport_radius * 0.65 * Math.cbrt(_aeNuclearSample(ordinal, 8));
+                position = { x: direction.x * radius, y: direction.y * radius, z: direction.z * radius };
+            }
+            const id = aeAddLockedAtom(92, position.x, position.y, position.z, 0, 143);
+            nuclear.fuel_initial++;
+            nuclear.fuel_remaining++;
+            return id;
+        }
+        return _aeReject(`unknown nuclear injection: ${kind}`);
+    }
+
+    function _aeEmitNuclearSource() {
+        const nuclear = state._ae?.nuclear;
+        if (!nuclear?.channel || !nuclear.source_enabled || nuclear.source_rate <= 0) return;
+        nuclear.source_accumulator = Math.min(4, nuclear.source_accumulator + nuclear.source_rate);
+        let emitted = 0;
+        while (nuclear.source_accumulator >= 1 && emitted < 4) {
+            if (aeInjectNuclearParticle(nuclear.channel === 'dt_fusion' ? 'dt-pair' : 'neutron') === false) {
+                nuclear.source_accumulator = Math.min(1, nuclear.source_accumulator);
+                break;
+            }
+            nuclear.source_accumulator -= 1;
+            emitted++;
+        }
+    }
+
+    function _aeRefreshMeasuredK() {
+        const nuclear = state._ae.nuclear;
+        const resolved = nuclear.neutron_fission_losses + nuclear.absorbed_neutrons + nuclear.leaked_neutrons;
+        nuclear.k_effective = resolved > 0 ? nuclear.fission_neutron_births / resolved : 0;
+    }
+
+    function _aeApplyNuclearEvent(event, tick, generation = 0) {
+        const nuclear = state._ae.nuclear;
+
+        const consumed = new Set(event.inputIds);
+        for (let i = state._ae.atoms.length - 1; i >= 0; i--) {
+            if (consumed.has(state._ae.atoms[i].id)) state._ae.atoms.splice(i, 1);
+        }
+        for (const atom of state._ae.atoms) {
+            atom.bonds = atom.bonds.filter(bond => !consumed.has(bond.partner_id));
+        }
+
+        const productIds = [];
+        for (const product of event.products) {
+            productIds.push(aeAddAtom(
+                product.Z, product.x, product.y, product.z,
+                product.vx, product.vy, product.vz, 0, product.N,
+            ));
+        }
+        if (productIds.some(id => id < 0)) return false;
+        let emittedNeutrons = 0;
+        for (let i = 0; i < event.products.length; i++) {
+            if (event.products[i].Z !== 0 || event.products[i].N !== 1) continue;
+            emittedNeutrons++;
+            _aeTagNeutron(productIds[i], event.kind === 'fission' ? generation + 1 : 0, event.kind);
+        }
+        if (event.kind === 'fission') {
+            nuclear.neutron_fission_losses++;
+            nuclear.fission_neutron_births += emittedNeutrons;
+        }
+
+        nuclear.event_count++;
+        nuclear.represented_event_count += nuclear.event_weight;
+        nuclear.event_tick = tick;
+        nuclear.generation = Math.max(nuclear.generation, generation);
+        nuclear.microscopic_released_mev += event.totalReleasedMeV;
+        nuclear.released_mev += event.totalReleasedMeV * nuclear.event_weight;
+        nuclear.released_joule = nuclear.released_mev * MEV_TO_JOULE;
+        nuclear.kinetic_mev += event.kineticReleaseMeV * nuclear.event_weight;
+        nuclear.charged_mev += event.chargedKineticMeV * nuclear.event_weight;
+        nuclear.neutron_mev += event.neutronKineticMeV * nuclear.event_weight;
+        nuclear.prompt_gamma_mev += event.promptGammaMeV * nuclear.event_weight;
+        nuclear.delayed_heat_mev += event.delayedHeatMeV * nuclear.event_weight;
+        const neutronDirections = event.products
+            .filter(product => product.Z === 0 && product.N === 1)
+            .map((product) => {
+                const magnitude = Math.hypot(product.vx, product.vy, product.vz);
+                return magnitude > 1e-12
+                    ? { x: product.vx / magnitude, y: product.vy / magnitude, z: product.vz / magnitude }
+                    : { x: 1, y: 0, z: 0 };
+            });
+        const record = {
+            ordinal: nuclear.event_count,
+            tick,
+            generation,
+            x: event.center.x,
+            y: event.center.y,
+            z: event.center.z,
+            axisX: event.axis?.x ?? 1,
+            axisY: event.axis?.y ?? 0,
+            axisZ: event.axis?.z ?? 0,
+            weight: nuclear.event_weight,
+            totalMeV: event.totalReleasedMeV * nuclear.event_weight,
+            chargedMeV: event.chargedKineticMeV * nuclear.event_weight,
+            neutronMeV: event.neutronKineticMeV * nuclear.event_weight,
+            gammaMeV: event.promptGammaMeV * nuclear.event_weight,
+            delayedMeV: event.delayedHeatMeV * nuclear.event_weight,
+            collisionEnergyMeV: event.collisionEnergyMeV,
+            reactionProbability: event.reactionProbability,
+            neutronDirections,
+        };
+        nuclear.history.push(record);
+        nuclear.effects.push({ ...record, kind: event.kind });
+        if (nuclear.effects.length > 256) nuclear.effects.splice(0, nuclear.effects.length - 256);
+        nuclear.last_event = {
+            ...event,
+            generation,
+            productIds,
+            products: event.products.map(({ Z, N, label }) => ({ Z, N, label })),
+        };
+        _aeRefreshMeasuredK();
+        return true;
+    }
+
+    function _aeNuclearTransportForEvent(event, tick, nuclear) {
+        const progress = (age, tau) => 1 - Math.exp(-Math.max(0, age) / tau);
+        const age = tick - event.tick;
+        const chargedP = progress(age, 12);
+        const neutronP = progress(age, 60);
+        const gammaP = progress(age, 35);
+        const delayedP = progress(age, 180);
+        const deposited = event.chargedMeV * chargedP
+            + event.neutronMeV * nuclear.neutron_containment * neutronP
+            + event.gammaMeV * nuclear.gamma_containment * gammaP
+            + event.delayedMeV * delayedP;
+        const escaped = event.neutronMeV * (1 - nuclear.neutron_containment) * neutronP
+            + event.gammaMeV * (1 - nuclear.gamma_containment) * gammaP;
+        return { deposited, escaped };
+    }
+
+    function _aeUpdateNuclearTransport(tick) {
+        const nuclear = state._ae.nuclear;
+        let deposited = 0, escaped = 0;
+        for (const event of nuclear.history) {
+            const transport = _aeNuclearTransportForEvent(event, tick, nuclear);
+            deposited += transport.deposited;
+            escaped += transport.escaped;
+        }
+        nuclear.deposited_mev = deposited;
+        nuclear.escaped_mev = escaped;
+        nuclear.in_transit_mev = Math.max(0, nuclear.released_mev - deposited - escaped);
+    }
+
+    function _aeRemoveNuclearAtoms(ids) {
+        if (ids.size === 0) return;
+        for (let i = state._ae.atoms.length - 1; i >= 0; i--) {
+            if (ids.has(state._ae.atoms[i].id)) state._ae.atoms.splice(i, 1);
+        }
+        for (const atom of state._ae.atoms) {
+            atom.bonds = atom.bonds.filter(bond => !ids.has(bond.partner_id));
+        }
+    }
+
+    function _aeProcessNeutronEnvironment(tick) {
+        const nuclear = state._ae.nuclear;
+        const remove = new Set();
+        for (const neutron of state._ae.atoms) {
+            if (neutron.Z !== 0 || neutron.N !== 1) continue;
+            const radius = Math.hypot(neutron.x, neutron.y, neutron.z);
+            if (radius > nuclear.transport_radius) {
+                if (nuclear.boundary_mode === 'reflect') {
+                    const nx = neutron.x / radius, ny = neutron.y / radius, nz = neutron.z / radius;
+                    const radialVelocity = neutron.vx * nx + neutron.vy * ny + neutron.vz * nz;
+                    if (radialVelocity > 0) {
+                        neutron.vx -= 2 * radialVelocity * nx;
+                        neutron.vy -= 2 * radialVelocity * ny;
+                        neutron.vz -= 2 * radialVelocity * nz;
+                    }
+                    const inside = nuclear.transport_radius * (1 - 1e-6);
+                    neutron.x = nx * inside; neutron.y = ny * inside; neutron.z = nz * inside;
+                } else {
+                    remove.add(neutron.id);
+                    nuclear.leaked_neutrons++;
+                    continue;
+                }
+            }
+            const absorbP = 1 - Math.exp(-nuclear.absorber_strength * state._ae.dt * 0.75);
+            if (_aeNuclearSample(tick, neutron.id, 71) < absorbP) {
+                remove.add(neutron.id);
+                nuclear.absorbed_neutrons++;
+                continue;
+            }
+            const scatterP = 1 - Math.exp(-nuclear.moderator_strength * state._ae.dt * 0.5);
+            if (_aeNuclearSample(tick, neutron.id, 83) < scatterP) {
+                const direction = _aeNuclearDirection(tick, neutron.id, nuclear.scattered_neutrons);
+                const speed = Math.hypot(neutron.vx, neutron.vy, neutron.vz) *
+                    Math.sqrt(Math.max(0.05, 1 - 0.55 * nuclear.moderator_strength));
+                neutron.vx = direction.x * speed;
+                neutron.vy = direction.y * speed;
+                neutron.vz = direction.z * speed;
+                nuclear.scattered_neutrons++;
+            }
+        }
+        _aeRemoveNuclearAtoms(remove);
+        _aeRefreshMeasuredK();
+    }
+
+    function _aeProcessNuclearReaction(tick, previousById = null) {
+        const nuclear = state._ae.nuclear;
+        if (!nuclear?.channel) return false;
+        if (nuclear.fuel_initial === 0 && nuclear.channel === 'u235_fission') {
+            nuclear.fuel_initial = state._ae.atoms.filter(atom => atom.Z === 92 && atom.N === 143).length;
+        }
+
+        _aeProcessNeutronEnvironment(tick);
+        let changed = false;
+        let processed = 0;
+        while (processed < 32 && nuclear.event_count < nuclear.event_limit) {
+            const event = evaluateNuclearReaction(nuclear.channel, state._ae.atoms, tick, {
+                previousById,
+                collisionRadiusScale: nuclear.collision_radius_scale,
+                reactivityScale: nuclear.reactivity_scale,
+                sampleForPair: (firstId, secondId) =>
+                    _aeNuclearSample(tick, firstId, secondId, nuclear.event_count, 53),
+            });
+            if (!event) break;
+            const inputNeutron = state._ae.atoms.find(atom =>
+                event.inputIds.includes(atom.id) && atom.Z === 0 && atom.N === 1);
+            const generation = inputNeutron?.nuclear_generation || 0;
+            if (!_aeApplyNuclearEvent(event, tick, generation)) break;
+            changed = true;
+            processed++;
+        }
+
+        nuclear.fuel_remaining = nuclear.channel === 'u235_fission'
+            ? state._ae.atoms.filter(atom => atom.Z === 92 && atom.N === 143).length
+            : Math.max(0, nuclear.event_limit - nuclear.event_count);
+        const liveNeutrons = state._ae.atoms.filter(atom => atom.Z === 0 && atom.N === 1).length;
+        if (nuclear.mode === 'chain' || nuclear.mode === 'sandbox') {
+            nuclear.phase = nuclear.event_count >= nuclear.event_limit ? 'event-limit'
+                : nuclear.fuel_remaining === 0 ? 'fuel-depleted'
+                : liveNeutrons > 0 || nuclear.source_enabled ? (nuclear.event_count > 0 ? 'multiplying' : 'transport')
+                    : nuclear.event_count > 0 ? 'extinct' : 'armed';
+        } else {
+            nuclear.phase = nuclear.event_count >= nuclear.event_limit ? 'complete'
+                : nuclear.event_count > 0 ? 'reacting' : 'armed';
+        }
+        nuclear.events_per_100_ticks = nuclear.history.filter(event => tick - event.tick < 100).length;
+        _aeUpdateNuclearTransport(tick);
+        return changed;
+    }
+
     function aeAddLockedAtom(Z, x, y, z, charge = 0, N = -1) {
         const id = aeAddAtom(Z, x, y, z, 0, 0, 0, charge, N);
         if (state._ae && id >= 0) {
@@ -118,16 +676,18 @@ export function createAtomEngine(state) {
     }
 
     function aeCreateBond(idA, idB, order = 1) {
-        if (!state._ae) return;
+        if (!state._ae || !Number.isInteger(idA) || !Number.isInteger(idB) || idA === idB ||
+            !Number.isFinite(order) || order <= 0 || order > MAX_BOND_ORDER) return false;
         const a = state._ae.atoms.find(at => at.id === idA);
         const b = state._ae.atoms.find(at => at.id === idB);
-        if (!a || !b) return;
+        if (!a || !b || a.bonds.some(bond => bond.partner_id === idB)) return false;
         const sig_avg = (a.vdw_sigma + b.vdw_sigma) / 2;
         const r_eq = sig_avg * Math.pow(2, 1.0 / 6.0) / order;
         const eps_mix = Math.sqrt(a.vdw_epsilon * b.vdw_epsilon);
         const k_bond = AE_K_BOND * eps_mix / (r_eq * r_eq);
         a.bonds.push({ partner_id: idB, r_eq, k_bond, order });
         b.bonds.push({ partner_id: idA, r_eq, k_bond, order });
+        return true;
     }
 
     /**
@@ -175,12 +735,13 @@ export function createAtomEngine(state) {
         return false;
     }
 
-    function _aeComputeDipoleMoments() {
+    function _aeComputeDipoleMoments(updateCharges = true) {
         const atoms = state._ae.atoms;
-        // Zero out and reset q_frac
+        // Visualization may request dipoles while charge equilibration is off.
+        // In that case dipole inspection must not mutate the dynamical charges.
         for (const a of atoms) {
             a.dipole_x = 0; a.dipole_y = 0; a.dipole_z = 0;
-            a.q_frac = a.charge;
+            if (updateCharges) a.q_frac = a.charge;
         }
         
         for (const a of atoms) {
@@ -190,8 +751,10 @@ export function createAtomEngine(state) {
                 const aj = atoms[jIdx];
                 const chi_diff = aj.electronegativity - a.electronegativity;
                 
-                // QEq transfer
-                a.q_frac += 0.5 * chi_diff;
+                // [IMPOSED] QEq-like transfer. Apply only when the explicit
+                // electronegativity dynamics toggle is active.
+                if (updateCharges && state._ae.electronegativity)
+                    a.q_frac += 0.5 * chi_diff;
 
                 if (Math.abs(chi_diff) < 1e-10) continue;
                 a.dipole_x += (aj.x - a.x) * chi_diff;
@@ -201,11 +764,33 @@ export function createAtomEngine(state) {
         }
     }
 
-    function _aeComputeForce(i) {
+    function _aeEquilibriumAngle(atom) {
+        const nbonds = atom.bonds.length;
+        const lonePairs = Math.max(0, Math.floor((atom.valence_electrons - nbonds) / 2));
+        const steric = nbonds + lonePairs;
+        if (steric === 2) return Math.PI;
+        if (steric === 3) return 2 * Math.PI / 3;
+        if (steric === 4) {
+            if (lonePairs === 0) return Math.acos(-1 / 3);
+            if (lonePairs === 1) return 107 * Math.PI / 180;
+            return 104.5 * Math.PI / 180;
+        }
+        return Math.acos(-1 / 3);
+    }
+
+    function _aeComputeForce(i, parts = null) {
         const atoms = state._ae.atoms;
         const ai = atoms[i];
         let fx = 0, fy = 0, fz = 0;
         const soft2 = state._ae.soft * state._ae.soft;
+        const add = (component, x, y, z) => {
+            fx += x; fy += y; fz += z;
+            if (parts) {
+                parts[component].fx += x;
+                parts[component].fy += y;
+                parts[component].fz += z;
+            }
+        };
 
         for (let j = 0; j < atoms.length; j++) {
             if (j === i) continue;
@@ -225,7 +810,7 @@ export function createAtomEngine(state) {
             // Ionic (Coulomb) — skip for bonded and 1-3 pairs
             if (state._ae.ionic && !isBonded && !is13 && (Math.abs(ai.q_frac) > 1e-6 || Math.abs(aj.q_frac) > 1e-6)) {
                 const f_ionic = -AE_K_COULOMB * ai.q_frac * aj.q_frac / r2;
-                fx += f_ionic * rx; fy += f_ionic * ry; fz += f_ionic * rz;
+                add('ionic', f_ionic * rx, f_ionic * ry, f_ionic * rz);
             }
 
             // Van der Waals (LJ 12-6) — skip for bonded and 1-3 pairs
@@ -236,7 +821,7 @@ export function createAtomEngine(state) {
                 const sr6 = sr * sr * sr * sr * sr * sr;
                 const sr12 = sr6 * sr6;
                 const f_vdw = -24.0 * eps_mix * (2.0 * sr12 - sr6) / r;
-                fx += f_vdw * rx; fy += f_vdw * ry; fz += f_vdw * rz;
+                add('vdw', f_vdw * rx, f_vdw * ry, f_vdw * rz);
             }
 
             // H-bonds: LJ 10-12 + cos²(θ_DHA) angular factor
@@ -254,7 +839,10 @@ export function createAtomEngine(state) {
                     const shr = sig_hb / r;
                     const shr10 = Math.pow(shr, 10);
                     const shr12 = shr10 * shr * shr;
-                    const f_rad = AE_H_BOND_EPS * 60.0 * (shr12 - shr10) / r;
+                    // V = eps*(5*(sigma/r)^12 - 6*(sigma/r)^10).
+                    // Since r_hat points from the current atom to its partner,
+                    // the force on the current atom is +dV/dr * r_hat.
+                    const f_rad = AE_H_BOND_EPS * 60.0 * (shr10 - shr12) / r;
                     const donor = atoms[donorIdx];
                     const dhx = hAtom.x - donor.x, dhy = hAtom.y - donor.y, dhz = hAtom.z - donor.z;
                     const hax = acceptor.x - hAtom.x, hay = acceptor.y - hAtom.y, haz = acceptor.z - hAtom.z;
@@ -264,7 +852,7 @@ export function createAtomEngine(state) {
                     if (dh_mag > 1e-30 && ha_mag > 1e-30)
                         cos_theta = (dhx*hax + dhy*hay + dhz*haz) / (dh_mag * ha_mag);
                     const ang = cos_theta * cos_theta;
-                    fx += f_rad * ang * rx; fy += f_rad * ang * ry; fz += f_rad * ang * rz;
+                    add('hbond', f_rad * ang * rx, f_rad * ang * ry, f_rad * ang * rz);
                 };
                 if (ai.Z === 1 && isElecNeg(aj.Z)) hbondForce(ai, aj, i, j);
                 if (aj.Z === 1 && isElecNeg(ai.Z)) hbondForce(aj, ai, j, i);
@@ -298,9 +886,13 @@ export function createAtomEngine(state) {
                     //                  + (mj.rhat) mi - 5 (mi.rhat)(mj.rhat) rhat ]
                     const coeff = 3.0 * AE_K_COULOMB / (r2 * r2);
                     const t5 = 5.0 * mi_dot_r * mj_dot_r;
-                    fx += coeff * (mi_dot_mj*rx + mi_dot_r*mj_x + mj_dot_r*mi_x - t5*rx);
-                    fy += coeff * (mi_dot_mj*ry + mi_dot_r*mj_y + mj_dot_r*mi_y - t5*ry);
-                    fz += coeff * (mi_dot_mj*rz + mi_dot_r*mj_z + mj_dot_r*mi_z - t5*rz);
+                    // The bracket is the force on j for R = r_j-r_i; the
+                    // force on the current atom i is its negative.  This
+                    // matches the corrected native AtomEngine assignment.
+                    add('dipole',
+                        -coeff * (mi_dot_mj*rx + mi_dot_r*mj_x + mj_dot_r*mi_x - t5*rx),
+                        -coeff * (mi_dot_mj*ry + mi_dot_r*mj_y + mj_dot_r*mi_y - t5*ry),
+                        -coeff * (mi_dot_mj*rz + mi_dot_r*mj_z + mj_dot_r*mi_z - t5*rz));
                 }
             }
         }
@@ -317,7 +909,7 @@ export function createAtomEngine(state) {
                 const rx = dx / r, ry = dy / r, rz = dz / r;
                 const dr = r - bond.r_eq;
                 const f_bond = bond.k_bond * dr;
-                fx += f_bond * rx; fy += f_bond * ry; fz += f_bond * rz;
+                add('bond', f_bond * rx, f_bond * ry, f_bond * rz);
             }
         }
 
@@ -340,20 +932,7 @@ export function createAtomEngine(state) {
                     cos_t = Math.max(-1, Math.min(1, cos_t));
                     const theta = Math.acos(cos_t);
 
-                    const nbonds = ai.bonds.length;
-                    const lone_pairs = Math.max(0, Math.floor((ai.valence_electrons - nbonds) / 2));
-                    const steric = nbonds + lone_pairs;
-                    let theta_eq;
-                    switch (steric) {
-                        case 2: theta_eq = Math.PI; break;
-                        case 3: theta_eq = 2 * Math.PI / 3; break;
-                        case 4:
-                            if (lone_pairs === 0) theta_eq = Math.acos(-1/3);
-                            else if (lone_pairs === 1) theta_eq = 107 * Math.PI / 180;
-                            else theta_eq = 104.5 * Math.PI / 180;
-                            break;
-                        default: theta_eq = Math.acos(-1/3); break;
-                    }
+                    const theta_eq = _aeEquilibriumAngle(ai);
 
                     const sin_t = Math.sin(theta);
                     if (Math.abs(sin_t) < 1e-15) continue;
@@ -370,21 +949,17 @@ export function createAtomEngine(state) {
                     if (pm2 < 1e-30) continue;
                     p2x /= pm2; p2y /= pm2; p2z /= pm2;
 
-                    const fj1 = dV / (m1 * sin_t);
-                    const fj2 = dV / (m2 * sin_t);
-                    fx -= fj1 * p1x + fj2 * p2x;
-                    fy -= fj1 * p1y + fj2 * p2y;
-                    fz -= fj1 * p1z + fj2 * p2z;
+                    // p1/p2 are normalized after their raw magnitude
+                    // sin(theta) is measured, so the analytic gradient is
+                    // dV/m rather than dV/(m*sin(theta)).
+                    const fj1 = dV / m1;
+                    const fj2 = dV / m2;
+                    add('angle',
+                        -(fj1 * p1x + fj2 * p2x),
+                        -(fj1 * p1y + fj2 * p2y),
+                        -(fj1 * p1z + fj2 * p2z));
                 }
             }
-        }
-
-        // Safety clamp: cap force magnitude to prevent residual explosions
-        const fmag2 = fx * fx + fy * fy + fz * fz;
-        const F_MAX = 50.0;
-        if (fmag2 > F_MAX * F_MAX) {
-            const scale = F_MAX / Math.sqrt(fmag2);
-            fx *= scale; fy *= scale; fz *= scale;
         }
 
         return { fx, fy, fz };
@@ -572,15 +1147,26 @@ export function createAtomEngine(state) {
         }
     }
 
-    function _aeComputeAllForces() {
+    function _aeComputeAllForces(capture = false) {
         const atoms = state._ae.atoms;
         _aeBuildBondLookup();
 
-        if (state._ae.dipole_dipole) _aeComputeDipoleMoments();
+        // Always reset q_frac to the formal charge. Charge transfer is applied
+        // only when enabled; dipoles are refreshed when their force or visual
+        // inputs can affect this evaluation.
+        _aeComputeDipoleMoments(true);
 
         const forces = new Array(atoms.length);
+        const components = capture ? Object.fromEntries(
+            AE_FORCE_COMPONENTS.map(name => [name, new Array(atoms.length)])) : null;
         for (let i = 0; i < atoms.length; i++) {
-            forces[i] = _aeComputeForce(i);
+            let parts = null;
+            if (capture) {
+                parts = {};
+                for (const name of AE_FORCE_COMPONENTS)
+                    parts[name] = components[name][i] = { fx: 0, fy: 0, fz: 0 };
+            }
+            forces[i] = _aeComputeForce(i, parts);
         }
 
         // Angle strain: distribute Newton's-3rd-law forces to terminal atoms
@@ -602,20 +1188,7 @@ export function createAtomEngine(state) {
                         let cos_t = (r1x*r2x+r1y*r2y+r1z*r2z)/(m1*m2);
                         cos_t = Math.max(-1, Math.min(1, cos_t));
                         const theta = Math.acos(cos_t);
-                        const nbonds = ai.bonds.length;
-                        const lone_pairs = Math.max(0, Math.floor((ai.valence_electrons - nbonds) / 2));
-                        const steric = nbonds + lone_pairs;
-                        let theta_eq;
-                        switch (steric) {
-                            case 2: theta_eq = Math.PI; break;
-                            case 3: theta_eq = 2*Math.PI/3; break;
-                            case 4:
-                                if (lone_pairs===0) theta_eq = Math.acos(-1/3);
-                                else if (lone_pairs===1) theta_eq = 107*Math.PI/180;
-                                else theta_eq = 104.5*Math.PI/180;
-                                break;
-                            default: theta_eq = Math.acos(-1/3); break;
-                        }
+                        const theta_eq = _aeEquilibriumAngle(ai);
                         const sin_t = Math.sin(theta);
                         if (Math.abs(sin_t) < 1e-15) continue;
                         const dV = AE_K_ANGLE * (theta - theta_eq);
@@ -629,14 +1202,46 @@ export function createAtomEngine(state) {
                         const pm2=Math.sqrt(p2x*p2x+p2y*p2y+p2z*p2z);
                         if (pm2<1e-30) continue;
                         p2x/=pm2; p2y/=pm2; p2z/=pm2;
-                        const fj1 = dV/(m1*sin_t), fj2 = dV/(m2*sin_t);
+                        const fj1 = dV/m1, fj2 = dV/m2;
                         forces[j1].fx += fj1*p1x; forces[j1].fy += fj1*p1y; forces[j1].fz += fj1*p1z;
                         forces[j2].fx += fj2*p2x; forces[j2].fy += fj2*p2y; forces[j2].fz += fj2*p2z;
+                        if (capture) {
+                            components.angle[j1].fx += fj1*p1x;
+                            components.angle[j1].fy += fj1*p1y;
+                            components.angle[j1].fz += fj1*p1z;
+                            components.angle[j2].fx += fj2*p2x;
+                            components.angle[j2].fy += fj2*p2y;
+                            components.angle[j2].fz += fj2*p2z;
+                        }
                     }
                 }
             }
         }
 
+        // A per-particle clamp violates action-reaction symmetry. If a safety
+        // limit is necessary, scale the complete force field uniformly so zero
+        // net internal force remains zero and expose the intervention in
+        // diagnostics instead of silently pretending the step is conservative.
+        let maxMagnitude = 0;
+        for (const f of forces)
+            maxMagnitude = Math.max(maxMagnitude, Math.hypot(f.fx, f.fy, f.fz));
+        const clampScale = maxMagnitude > AE_FORCE_MAX ? AE_FORCE_MAX / maxMagnitude : 1.0;
+        if (clampScale < 1.0) {
+            for (const f of forces) {
+                f.fx *= clampScale; f.fy *= clampScale; f.fz *= clampScale;
+            }
+            if (capture) {
+                for (const name of AE_FORCE_COMPONENTS) {
+                    for (const f of components[name]) {
+                        f.fx *= clampScale; f.fy *= clampScale; f.fz *= clampScale;
+                    }
+                }
+            }
+        }
+
+        forces.components = components;
+        forces.clamped = clampScale < 1.0;
+        forces.clampScale = clampScale;
         return forces;
     }
 
@@ -645,8 +1250,17 @@ export function createAtomEngine(state) {
         const atoms = state._ae.atoms;
         const dt = state._ae.dt;
         const tickNum = state._ae.tick;
+        const preIssue = _aeStateIssue();
+        if (preIssue) {
+            _aeReject(`pre-tick state rejected: ${preIssue}`);
+            return false;
+        }
+        const snapshot = _aeDynamicSnapshot();
+        _aeEmitNuclearSource();
 
         let forces = _aeComputeAllForces();
+        let forceClamped = forces.clamped;
+        let clampScale = forces.clampScale;
 
         // Debug: log first 3 ticks
         if (tickNum < 3) {
@@ -684,6 +1298,8 @@ export function createAtomEngine(state) {
         }
 
         forces = _aeComputeAllForces();
+        forceClamped = forceClamped || forces.clamped;
+        clampScale = Math.min(clampScale, forces.clampScale);
 
         // Half-kick again
         for (let i = 0; i < atoms.length; i++) {
@@ -699,18 +1315,6 @@ export function createAtomEngine(state) {
             for (let i = 0; i < Math.min(atoms.length, 4); i++) {
                 const a = atoms[i];
                 debugLog(`  atom ${a.id} after tick: pos=(${a.x.toFixed(3)},${a.y.toFixed(3)},${a.z.toFixed(3)}) vel=(${a.vx.toFixed(4)},${a.vy.toFixed(4)},${a.vz.toFixed(4)})`);
-            }
-        }
-
-        // Speed limit
-        if (state._ae.speed_limit) {
-            for (const a of atoms) {
-                if (a.locked) continue;
-                const speed = Math.sqrt(a.vx * a.vx + a.vy * a.vy + a.vz * a.vz);
-                if (speed > AE_SPEED_MAX) {
-                    const s = AE_SPEED_MAX / speed;
-                    a.vx *= s; a.vy *= s; a.vz *= s;
-                }
             }
         }
 
@@ -735,11 +1339,26 @@ export function createAtomEngine(state) {
             if (n_free > 0) {
                 const T_current = 2.0 * ke / (3.0 * n_free);
                 if (T_current > 1e-30) {
-                    const lam = Math.sqrt(1.0 + dt / AE_THERMOSTAT_TAU
+                    const lambdaSq = Math.max(0, 1.0 + dt / AE_THERMOSTAT_TAU
                         * (state._ae.thermostat_temp / T_current - 1.0));
+                    const lam = Math.sqrt(lambdaSq);
                     for (const a of atoms) {
                         if (!a.locked) { a.vx *= lam; a.vy *= lam; a.vz *= lam; }
                     }
+                }
+            }
+        }
+
+        // Apply the causal display-model speed ceiling after every velocity
+        // modifier, including the thermostat. Otherwise a hot target can
+        // immediately undo the ceiling in the same tick.
+        if (state._ae.speed_limit) {
+            for (const a of atoms) {
+                if (a.locked) continue;
+                const speed = Math.hypot(a.vx, a.vy, a.vz);
+                if (speed > AE_SPEED_MAX) {
+                    const s = AE_SPEED_MAX / speed;
+                    a.vx *= s; a.vy *= s; a.vz *= s;
                 }
             }
         }
@@ -790,17 +1409,37 @@ export function createAtomEngine(state) {
             _aeInferBondOrders();
         }
 
+        // Nuclear reaction channels are separate from the molecular force
+        // field. Exact isotope pairs become eligible through their current or
+        // swept trajectories, then a deterministic-seed [PARAMETRIC] hazard
+        // decides whether a momentum/Q-closed reaction occurs. Scenario IDs
+        // never participate in this tick path.
+        const previousById = new Map(snapshot.atoms.map(atom => [atom.id, atom]));
+        _aeProcessNuclearReaction(tickNum + 1, previousById);
+
+        const postIssue = _aeStateIssue();
+        if (postIssue) {
+            _aeRestoreDynamic(snapshot);
+            _aeReject(`tick rolled back: ${postIssue}`);
+            return false;
+        }
+        state._ae.force_clamped_last = forceClamped;
+        state._ae.force_clamp_scale = clampScale;
+        if (forceClamped) state._ae.force_clamp_events++;
+        state._ae.last_error = '';
         state._ae.tick++;
+        return true;
     }
 
     function aeGetAtomData() {
-        if (!state._ae) return { positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0), atomicNums: new Int32Array(0), charges: new Float32Array(0), ids: new Int32Array(0), bonds: new Int32Array(0), bondOrders: new Float32Array(0), bondCount: 0, count: 0 };
+        if (!state._ae) return { positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0), atomicNums: new Int32Array(0), neutronCounts: new Int32Array(0), charges: new Float32Array(0), ids: new Int32Array(0), bonds: new Int32Array(0), bondOrders: new Float32Array(0), bondCount: 0, count: 0 };
         const atoms = state._ae.atoms;
         const count = atoms.length;
         const positions = new Float32Array(count * 3);
         const colors = new Float32Array(count * 3);
         const sizes = new Float32Array(count);
         const atomicNums = new Int32Array(count);
+        const neutronCounts = new Int32Array(count);
         const charges = new Float32Array(count);
         const ids = new Int32Array(count);
 
@@ -825,6 +1464,7 @@ export function createAtomEngine(state) {
             sizes[i] = 6.0 + a.radius * 10.0;
             if (sizes[i] > 60) sizes[i] = 60;
             atomicNums[i] = a.Z;
+            neutronCounts[i] = a.N;
             charges[i] = a.q_frac;
             ids[i] = a.id;
         }
@@ -841,7 +1481,7 @@ export function createAtomEngine(state) {
             }
         }
 
-        return { positions, colors, sizes, atomicNums, charges, ids, bonds, bondOrders, bondCount, count };
+        return { positions, colors, sizes, atomicNums, neutronCounts, charges, ids, bonds, bondOrders, bondCount, count };
     }
 
     function aeGetFieldSources() {
@@ -860,9 +1500,9 @@ export function createAtomEngine(state) {
     }
 
     function aeGetDiagnostics() {
-        if (!state._ae) return { tick: 0, atomCount: 0, bondCount: 0, totalKE: 0, totalPEIonic: 0, totalPEVdw: 0, totalPEBond: 0, totalEnergy: 0, momentumX: 0, momentumY: 0, momentumZ: 0, temperature: 0, energyComplete: true, energyConservative: false, energyStatus: 'complete-driven' };
+        if (!state._ae) return { tick: 0, atomCount: 0, bondCount: 0, totalKE: 0, totalPEIonic: 0, totalPEVdw: 0, totalPEBond: 0, totalPEAngle: 0, totalEnergy: 0, momentumX: 0, momentumY: 0, momentumZ: 0, temperature: 0, energyComplete: true, energyConservative: false, energyStatus: 'complete-driven', forceClamped: false, forceClampScale: 1, forceClampEvents: 0, nuclear: null, lastError: '' };
         const atoms = state._ae.atoms;
-        let ke = 0, pe_ionic = 0, pe_vdw = 0, pe_bond = 0;
+        let ke = 0, pe_ionic = 0, pe_vdw = 0, pe_bond = 0, pe_angle = 0;
         let freeKE = 0, freeAtoms = 0;
         let px = 0, py = 0, pz = 0;
         const soft2 = state._ae.soft * state._ae.soft;
@@ -879,6 +1519,7 @@ export function createAtomEngine(state) {
         }
 
         _aeBuildBondLookup();
+        _aeComputeDipoleMoments(true);
         for (let i = 0; i < atoms.length; i++) {
             for (let j = i + 1; j < atoms.length; j++) {
                 const ai = atoms[i], aj = atoms[j];
@@ -913,9 +1554,33 @@ export function createAtomEngine(state) {
                     const partner = idToAtom.get(b.partner_id);
                     if (!partner) continue;
                     const dx = partner.x - a.x, dy = partner.y - a.y, dz = partner.z - a.z;
-                    const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                    const r = Math.sqrt(dx * dx + dy * dy + dz * dz + soft2);
                     const dr = r - b.r_eq;
                     pe_bond += 0.5 * b.k_bond * dr * dr;
+                }
+            }
+        }
+
+        if (state._ae.angle_strain) {
+            for (let i = 0; i < atoms.length; i++) {
+                const center = atoms[i];
+                if (center.bonds.length < 2) continue;
+                const thetaEq = _aeEquilibriumAngle(center);
+                for (let b1 = 0; b1 < center.bonds.length; b1++) {
+                    for (let b2 = b1 + 1; b2 < center.bonds.length; b2++) {
+                        const j1 = state._aeIdToIdx.get(center.bonds[b1].partner_id);
+                        const j2 = state._aeIdToIdx.get(center.bonds[b2].partner_id);
+                        if (j1 === undefined || j2 === undefined) continue;
+                        const a1 = atoms[j1], a2 = atoms[j2];
+                        const r1x = a1.x-center.x, r1y = a1.y-center.y, r1z = a1.z-center.z;
+                        const r2x = a2.x-center.x, r2y = a2.y-center.y, r2z = a2.z-center.z;
+                        const m1 = Math.hypot(r1x, r1y, r1z), m2 = Math.hypot(r2x, r2y, r2z);
+                        if (m1 < 1e-30 || m2 < 1e-30) continue;
+                        const cosTheta = Math.max(-1, Math.min(1,
+                            (r1x*r2x + r1y*r2y + r1z*r2z) / (m1*m2)));
+                        const dTheta = Math.acos(cosTheta) - thetaEq;
+                        pe_angle += 0.5 * AE_K_ANGLE * dTheta * dTheta;
+                    }
                 }
             }
         }
@@ -930,157 +1595,192 @@ export function createAtomEngine(state) {
         // statistic. The UI relabels it "(sim)" (audit P0-10); do not append
         // a "K" suffix or treat this as an SI temperature downstream.
         const T = freeAtoms > 0 ? 2.0 * freeKE / (3.0 * freeAtoms) : 0;
-        const energyComplete = !(state._ae.h_bonds || state._ae.angle_strain || state._ae.dipole_dipole);
-        const energyConservative = energyComplete && !(state._ae.damping || state._ae.thermostat ||
-            state._ae.bonding || state._ae.speed_limit || state._ae.electronegativity);
-        const energyStatus = !energyComplete
+        // H-bond and induced-dipole kernels intentionally omit terms from the
+        // full coordinate gradient, so no complete scalar potential is claimed
+        // while either is active. Angle strain is now tracked exactly.
+        const energyComplete = !(state._ae.h_bonds || state._ae.dipole_dipole);
+        const nuclearActive = !!state._ae.nuclear?.channel;
+        const energyConservative = energyComplete && !nuclearActive && !(state._ae.damping || state._ae.thermostat ||
+            state._ae.bonding || state._ae.speed_limit || state._ae.electronegativity ||
+            state._ae.force_clamped_last);
+        const energyStatus = nuclearActive
+            ? `reaction-${state._ae.nuclear.phase}`
+            : !energyComplete
             ? 'partial-untracked-potential'
             : (energyConservative ? 'complete-conservative' : 'complete-driven');
 
         return {
             tick: state._ae.tick, atomCount: atoms.length, bondCount,
             totalKE: ke, totalPEIonic: pe_ionic, totalPEVdw: pe_vdw, totalPEBond: pe_bond,
-            totalEnergy: ke + pe_ionic + pe_vdw + pe_bond,
+            totalPEAngle: pe_angle,
+            totalEnergy: ke + pe_ionic + pe_vdw + pe_bond + pe_angle,
             momentumX: px, momentumY: py, momentumZ: pz, temperature: T,
-            energyComplete, energyConservative, energyStatus
+            energyComplete, energyConservative, energyStatus,
+            forceClamped: state._ae.force_clamped_last,
+            forceClampScale: state._ae.force_clamp_scale,
+            forceClampEvents: state._ae.force_clamp_events,
+            nuclear: aeGetNuclearDiagnostics(),
+            lastError: state._ae.last_error || 'ok',
+        };
+    }
+
+    function aeGetNuclearDiagnostics() {
+        if (!state._ae?.nuclear?.channel) return null;
+        const nuclear = state._ae.nuclear;
+        const channel = getNuclearReactionChannel(nuclear.channel);
+        const event = nuclear.last_event;
+        const transportResidual = nuclear.released_mev - (nuclear.deposited_mev +
+            nuclear.in_transit_mev + nuclear.escaped_mev);
+        return {
+            channel: nuclear.channel,
+            label: channel?.label || nuclear.channel,
+            kind: channel?.kind || '',
+            phase: nuclear.phase,
+            mode: nuclear.mode,
+            eventCount: nuclear.event_count,
+            representedEventCount: nuclear.represented_event_count,
+            eventTick: nuclear.event_tick,
+            eventWeight: nuclear.event_weight,
+            generation: nuclear.generation,
+            kEffective: nuclear.k_effective,
+            reactivityScale: nuclear.reactivity_scale,
+            collisionRadiusScale: nuclear.collision_radius_scale,
+            transportRadius: nuclear.transport_radius,
+            boundaryMode: nuclear.boundary_mode,
+            moderatorStrength: nuclear.moderator_strength,
+            absorberStrength: nuclear.absorber_strength,
+            sourceEnabled: nuclear.source_enabled,
+            sourceRate: nuclear.source_rate,
+            sourceEnergyMeV: nuclear.source_energy_mev,
+            particleLimit: nuclear.particle_limit,
+            sourceSaturated: nuclear.source_saturated,
+            neutronContainment: nuclear.neutron_containment,
+            gammaContainment: nuclear.gamma_containment,
+            fuelInitial: nuclear.fuel_initial,
+            fuelRemaining: nuclear.fuel_remaining,
+            liveNeutrons: state._ae.atoms.filter(atom => atom.Z === 0 && atom.N === 1).length,
+            eventRatePer100Ticks: nuclear.events_per_100_ticks || 0,
+            leakedNeutrons: nuclear.leaked_neutrons,
+            absorbedNeutrons: nuclear.absorbed_neutrons,
+            scatteredNeutrons: nuclear.scattered_neutrons,
+            sourceNeutrons: nuclear.source_neutrons,
+            fissionNeutronBirths: nuclear.fission_neutron_births,
+            neutronFissionLosses: nuclear.neutron_fission_losses,
+            qMeV: channel?.qMeV || 0,
+            incidentEnergyMeV: channel?.incidentEnergyMeV || 0,
+            kineticReleaseMeV: channel?.energyBudget?.kineticMeV || 0,
+            recoverablePerEventMeV: channel?.energyBudget?.totalRecoverableMeV || 0,
+            microscopicReleasedMeV: nuclear.microscopic_released_mev,
+            releasedMeV: nuclear.released_mev,
+            releasedJoule: nuclear.released_joule,
+            depositedMeV: nuclear.deposited_mev,
+            inTransitMeV: nuclear.in_transit_mev,
+            escapedMeV: nuclear.escaped_mev,
+            kineticMeV: nuclear.kinetic_mev,
+            chargedMeV: nuclear.charged_mev,
+            neutronMeV: nuclear.neutron_mev,
+            promptGammaMeV: nuclear.prompt_gamma_mev,
+            delayedHeatMeV: nuclear.delayed_heat_mev,
+            protonResidual: event?.protonResidual || 0,
+            chargeResidual: event?.chargeResidual || 0,
+            neutronResidual: event?.neutronResidual || 0,
+            momentumResidual: event?.momentumResidual || 0,
+            energyResidualMeV: event?.energyResidualMeV || 0,
+            totalLedgerResidualMeV: event?.totalLedgerResidualMeV || 0,
+            transportResidualMeV: transportResidual,
+            transportResidualFraction: transportResidual / Math.max(Math.abs(nuclear.released_mev), 1),
+            kineticBeforeSim: event?.kineticBeforeSim || 0,
+            kineticAfterSim: event?.kineticAfterSim || 0,
+            collisionEnergyMeV: event?.collisionEnergyMeV || 0,
+            reactionProbability: event?.reactionProbability || 0,
+            source: channel?.source || '',
+        };
+    }
+
+    function aeGetNuclearVisuals() {
+        if (!state._ae?.nuclear?.channel) return null;
+        const nuclear = state._ae.nuclear;
+        const tick = state._ae.tick;
+        return {
+            tick,
+            mode: nuclear.mode,
+            phase: nuclear.phase,
+            transportRadius: nuclear.transport_radius,
+            boundaryMode: nuclear.boundary_mode,
+            effects: nuclear.effects.map((event) => {
+                const transport = _aeNuclearTransportForEvent(event, tick, nuclear);
+                return {
+                    ...event,
+                    neutronDirections: event.neutronDirections?.map(direction => ({ ...direction })) || [],
+                    simAge: Math.max(0, tick - event.tick),
+                    depositedMeV: transport.deposited,
+                    depositedFraction: transport.deposited / Math.max(event.totalMeV, 1e-12),
+                };
+            }),
+            // Neutrons are ordinary live particles now; no target-assignment
+            // flight overlay exists. The renderer obtains their positions from
+            // aeGetAtomData like every other particle.
+            flights: [],
+            depositedMeV: nuclear.deposited_mev,
+            escapedMeV: nuclear.escaped_mev,
+            inTransitMeV: nuclear.in_transit_mev,
         };
     }
 
     /**
-     * Decomposed forces on each atom: ionic (Coulomb), vdW (LJ), bond (spring), net.
-     *
-     * F-8 (visibility-gated, EXACT): the O(N²) ionic+vdW pair loop is the only
-     * expensive part. The caller passes `want` flags for the channels whose
-     * force arrows are actually visible; `net` requires all three channels.
-     * Channels that are neither requested nor needed by `net` are returned as
-     * the zeroed Float32Array they were allocated to — the renderer leaves those
-     * (invisible) arrow meshes hidden, so the displayed output is identical.
-     *
-     * The long-range pair loop is skipped ENTIRELY when no long-range channel
-     * (ionic, vdW, or net) is requested — e.g. bond-only arrows on ae-periodic.
-     * No cutoff is introduced: when the loop does run it is the same exact
-     * full-N² sum as before, so every displayed channel value is unchanged.
-     *
-     * @param {{ionic?:boolean, vdw?:boolean, bond?:boolean, net?:boolean}} [want]
-     *        Which channels to compute. Omitted ⇒ all (backward-compatible).
+     * Exact decomposition of the force field used by the integrator. `net` is
+     * the actual post-safety force, including H-bond, angle and dipole terms;
+     * it is no longer a three-channel visual approximation.
      */
     function aeGetForceDecomposition(want) {
-        if (!state._ae) return { ionic: new Float32Array(0), vdw: new Float32Array(0), bond: new Float32Array(0), net: new Float32Array(0), count: 0 };
-        const atoms = state._ae.atoms;
-        const n = atoms.length;
-        const ionic = new Float32Array(n * 3);
-        const vdw   = new Float32Array(n * 3);
-        const bond  = new Float32Array(n * 3);
-        const net   = new Float32Array(n * 3);
-        const soft2 = state._ae.soft * state._ae.soft;
-
-        // Default to all-channels when no selection is given (callers that pass
-        // a `want` object get per-channel gating). `net` pulls in every channel.
-        const wantNet   = !want || want.net;
-        const wantIonic = wantNet || (want && want.ionic);
-        const wantVdw   = wantNet || (want && want.vdw);
-        const wantBond  = wantNet || !want || want.bond;
-        // The pair loop produces ONLY the long-range channels (ionic, vdW).
-        const wantPair  = wantIonic || wantVdw;
-
-        // Net accumulator kept in f64 so the final net = f32((fi+fv)+fb) is
-        // bit-identical to the original single-expression sum (no intermediate
-        // float32 rounding between the ionic+vdW and bond passes). Only when net
-        // is actually requested.
-        const netAcc = wantNet ? new Float64Array(n * 3) : null;
-
-        _aeBuildBondLookup();
-
-        for (let i = 0; wantPair && i < n; i++) {
-            const ai = atoms[i];
-            let fi_x = 0, fi_y = 0, fi_z = 0;
-            let fv_x = 0, fv_y = 0, fv_z = 0;
-
-            for (let j = 0; j < n; j++) {
-                if (j === i) continue;
-                const aj = atoms[j];
-                const dx = aj.x - ai.x, dy = aj.y - ai.y, dz = aj.z - ai.z;
-                const r2 = dx * dx + dy * dy + dz * dz + soft2;
-                const r = Math.sqrt(r2);
-                if (r < 1e-20) continue;
-                const rx = dx / r, ry = dy / r, rz = dz / r;
-
-                const isBonded = _aeIsBonded(ai.id, aj.id);
-                const is13 = !isBonded && _aeIs13(i, j);
-
-                if (wantIonic && state._ae.ionic && !isBonded && !is13 && (Math.abs(ai.q_frac) > 1e-6 || Math.abs(aj.q_frac) > 1e-6)) {
-                    const f = -AE_K_COULOMB * ai.q_frac * aj.q_frac / r2;
-                    fi_x += f * rx; fi_y += f * ry; fi_z += f * rz;
-                }
-
-                if (wantVdw && state._ae.vdw && !isBonded && !is13) {
-                    const eps_mix = Math.sqrt(ai.vdw_epsilon * aj.vdw_epsilon);
-                    const sig_mix = (ai.vdw_sigma + aj.vdw_sigma) / 2;
-                    const sr = sig_mix / r;
-                    const sr6 = sr * sr * sr * sr * sr * sr;
-                    const sr12 = sr6 * sr6;
-                    const f = -24.0 * eps_mix * (2.0 * sr12 - sr6) / r;
-                    fv_x += f * rx; fv_y += f * ry; fv_z += f * rz;
+        const empty = () => new Float32Array(0);
+        if (!state._ae) return {
+            ionic: empty(), vdw: empty(), bond: empty(), hbond: empty(),
+            angle: empty(), dipole: empty(), net: empty(), count: 0,
+            clamped: false, clampScale: 1,
+        };
+        const forces = _aeComputeAllForces(true);
+        const n = state._ae.atoms.length;
+        const result = { count: n, clamped: forces.clamped, clampScale: forces.clampScale };
+        const wantNet = !want || !!want.net;
+        for (const name of AE_FORCE_COMPONENTS) {
+            const include = !want || wantNet || !!want[name];
+            const out = new Float32Array(n * 3);
+            if (include) {
+                for (let i = 0; i < n; i++) {
+                    const f = forces.components[name][i];
+                    out[i*3] = f.fx; out[i*3+1] = f.fy; out[i*3+2] = f.fz;
                 }
             }
-
-            ionic[i * 3] = fi_x; ionic[i * 3 + 1] = fi_y; ionic[i * 3 + 2] = fi_z;
-            vdw[i * 3]   = fv_x; vdw[i * 3 + 1]   = fv_y; vdw[i * 3 + 2]   = fv_z;
-            // Seed the f64 net accumulator with the ionic+vdW partials (bond
-            // added in the bond pass). Kept in f64 → no intermediate rounding.
-            if (netAcc) {
-                netAcc[i * 3] = fi_x + fv_x; netAcc[i * 3 + 1] = fi_y + fv_y; netAcc[i * 3 + 2] = fi_z + fv_z;
-            }
+            result[name] = out;
         }
-
-        // Bond spring channel (O(bonds), cheap) — computed independently of the
-        // long-range pair loop so bond-only arrows skip the N² work entirely.
-        if (wantBond && state._ae.bonds_force) {
+        const net = new Float32Array(n * 3);
+        if (wantNet) {
             for (let i = 0; i < n; i++) {
-                const ai = atoms[i];
-                let fb_x = 0, fb_y = 0, fb_z = 0;
-                for (const b of ai.bonds) {
-                    const jIdx = state._aeIdToIdx.get(b.partner_id);
-                    const aj = jIdx !== undefined ? atoms[jIdx] : null;
-                    if (!aj) continue;
-                    const dx = aj.x - ai.x, dy = aj.y - ai.y, dz = aj.z - ai.z;
-                    const r = Math.sqrt(dx * dx + dy * dy + dz * dz + soft2);
-                    if (r < 1e-20) continue;
-                    const rx = dx / r, ry = dy / r, rz = dz / r;
-                    const dr = r - b.r_eq;
-                    const f = b.k_bond * dr;
-                    fb_x += f * rx; fb_y += f * ry; fb_z += f * rz;
-                }
-                bond[i * 3] = fb_x; bond[i * 3 + 1] = fb_y; bond[i * 3 + 2] = fb_z;
-                // Add the f64 bond partial onto the f64 net accumulator.
-                if (netAcc) {
-                    netAcc[i * 3] += fb_x; netAcc[i * 3 + 1] += fb_y; netAcc[i * 3 + 2] += fb_z;
-                }
+                net[i*3] = forces[i].fx;
+                net[i*3+1] = forces[i].fy;
+                net[i*3+2] = forces[i].fz;
             }
         }
-
-        // Commit the f64 net accumulator to the float32 net channel in one pass.
-        // net[k] = f32((fi+fv)+fb), matching the original fi+fv+fb expression.
-        if (netAcc) net.set(netAcc);
-
-        return { ionic, vdw, bond, net, count: n };
+        result.net = net;
+        return result;
     }
 
-    function aeSetDt(dt)              { if (state._ae) state._ae.dt = dt; }
+    function aeSetDt(dt)              { return _aeSetBounded('dt', Number(dt)); }
     function aeGetDt()                 { return state._ae ? state._ae.dt : 0.01; }
-    function aeSetSoftening(s)        { if (state._ae) state._ae.soft = s; }
-    function aeSetDamping(e)          { if (state._ae) state._ae.damping = e; }
-    function aeSetBonding(e)          { if (state._ae) state._ae.bonding = e; }
-    function aeSetIonic(e)            { if (state._ae) state._ae.ionic = e; }
-    function aeSetVdw(e)              { if (state._ae) state._ae.vdw = e; }
-    function aeSetBondsForce(e)       { if (state._ae) state._ae.bonds_force = e; }
-    function aeSetSpeedLimit(e)       { if (state._ae) state._ae.speed_limit = e; }
-    function aeSetHBonds(e)           { if (state._ae) state._ae.h_bonds = e; }
-    function aeSetAngleStrain(e)      { if (state._ae) state._ae.angle_strain = e; }
-    function aeSetDipoleDipole(e)     { if (state._ae) state._ae.dipole_dipole = e; }
-    function aeSetThermostat(e)       { if (state._ae) state._ae.thermostat = e; }
-    function aeSetThermostatTemp(t)   { if (state._ae) state._ae.thermostat_temp = t; }
-    function aeSetElectronegativity(e){ if (state._ae) state._ae.electronegativity = e; }
+    function aeSetSoftening(s)        { return _aeSetBounded('soft', Number(s)); }
+    function aeSetDamping(e)          { if (!state._ae) return false; state._ae.damping = !!e; return true; }
+    function aeSetBonding(e)          { if (!state._ae) return false; state._ae.bonding = !!e; return true; }
+    function aeSetIonic(e)            { if (!state._ae) return false; state._ae.ionic = !!e; return true; }
+    function aeSetVdw(e)              { if (!state._ae) return false; state._ae.vdw = !!e; return true; }
+    function aeSetBondsForce(e)       { if (!state._ae) return false; state._ae.bonds_force = !!e; return true; }
+    function aeSetSpeedLimit(e)       { if (!state._ae) return false; state._ae.speed_limit = !!e; return true; }
+    function aeSetHBonds(e)           { if (!state._ae) return false; state._ae.h_bonds = !!e; return true; }
+    function aeSetAngleStrain(e)      { if (!state._ae) return false; state._ae.angle_strain = !!e; return true; }
+    function aeSetDipoleDipole(e)     { if (!state._ae) return false; state._ae.dipole_dipole = !!e; return true; }
+    function aeSetThermostat(e)       { if (!state._ae) return false; state._ae.thermostat = !!e; return true; }
+    function aeSetThermostatTemp(t)   { return _aeSetBounded('thermostat_temp', Number(t)); }
+    function aeSetElectronegativity(e){ if (!state._ae) return false; state._ae.electronegativity = !!e; return true; }
     function aeAtomCount()            { return state._ae ? state._ae.atoms.length : 0; }
     function aeClear()                { resetAE(); }
 
@@ -1108,7 +1808,8 @@ export function createAtomEngine(state) {
      */
     function aeGetDipoles() {
         if (!state._ae) return { dipoles: new Float32Array(0), count: 0 };
-        _aeComputeDipoleMoments();
+        _aeBuildBondLookup();
+        _aeComputeDipoleMoments(false);
         const atoms = state._ae.atoms;
         const dipoles = new Float32Array(atoms.length * 3);
         for (let i = 0; i < atoms.length; i++) {
@@ -1184,6 +1885,11 @@ export function createAtomEngine(state) {
             dt: ae.dt,
             softening: ae.soft,
             thermostatTemp: ae.thermostat_temp,
+            forceClamped: ae.force_clamped_last,
+            forceClampScale: ae.force_clamp_scale,
+            forceClampEvents: ae.force_clamp_events,
+            lastError: ae.last_error,
+            nuclear: aeGetNuclearDiagnostics(),
             toggles: {
                 ionic: !!ae.ionic,
                 vdw: !!ae.vdw,
@@ -1228,8 +1934,48 @@ export function createAtomEngine(state) {
         // Net force magnitude — must rebuild bond lookups first.
         _aeBuildBondLookup();
         const idx = state._ae.atoms.indexOf(a);
-        const f = _aeComputeForce(idx);
+        const forces = _aeComputeAllForces(false);
+        const f = forces[idx];
         const fNetMag = Math.sqrt(f.fx * f.fx + f.fy * f.fy + f.fz * f.fz);
+
+        // Bond-connected observer component. This is derived from the live
+        // topology for inspection only and never feeds back into dynamics.
+        const byId = new Map(state._ae.atoms.map(atom => [atom.id, atom]));
+        const memberIds = [];
+        const pending = [a.id];
+        const visited = new Set();
+        while (pending.length > 0) {
+            const currentId = pending.pop();
+            if (visited.has(currentId)) continue;
+            const current = byId.get(currentId);
+            if (!current) continue;
+            visited.add(currentId);
+            memberIds.push(currentId);
+            for (const bond of current.bonds) {
+                if (!visited.has(bond.partner_id)) pending.push(bond.partner_id);
+            }
+        }
+        memberIds.sort((lhs, rhs) => lhs - rhs);
+        let componentMass = 0;
+        let componentCharge = 0;
+        let componentKE = 0;
+        let centerX = 0, centerY = 0, centerZ = 0;
+        for (const memberId of memberIds) {
+            const atom = byId.get(memberId);
+            const atomMass = atom.Z + atom.N * NEUTRON_PROTON_MASS_RATIO;
+            const atomSpeed2 = atom.vx * atom.vx + atom.vy * atom.vy + atom.vz * atom.vz;
+            componentMass += atomMass;
+            componentCharge += atom.q_frac;
+            componentKE += 0.5 * atomMass * atomSpeed2;
+            centerX += atomMass * atom.x;
+            centerY += atomMass * atom.y;
+            centerZ += atomMass * atom.z;
+        }
+        if (componentMass > 0) {
+            centerX /= componentMass;
+            centerY /= componentMass;
+            centerZ /= componentMass;
+        }
 
         return {
             id, Z: a.Z, N: a.N, charge: a.q_frac, mass, radius: a.radius,
@@ -1240,7 +1986,15 @@ export function createAtomEngine(state) {
             speed, ke, bonds: bondInfo,
             nearestId, nearestDist, nearestZ, fNetMag,
             alpha_pol: a.alpha_pol, e_ion: a.e_ion, e_aff: a.e_aff,
-            sigma_scatter: a.sigma_scatter, z_eff: a.z_eff
+            sigma_scatter: a.sigma_scatter, z_eff: a.z_eff,
+            component: {
+                count: memberIds.length,
+                members: memberIds,
+                centerX, centerY, centerZ,
+                mass: componentMass,
+                charge: componentCharge,
+                ke: componentKE,
+            },
         };
     }
 
@@ -1256,6 +2010,8 @@ export function createAtomEngine(state) {
         aeSetHBonds, aeSetAngleStrain, aeSetDipoleDipole,
         aeSetThermostat, aeSetThermostatTemp, aeSetElectronegativity,
         aeAtomCount, aeClear, aeInspectAtom, aeGetRuntimeState,
+        aeConfigureNuclearReaction, aeSetNuclearEnvironment, aeInjectNuclearParticle,
+        aeGetNuclearDiagnostics, aeGetNuclearVisuals,
         aeGetVelocities, aeGetDipoles, aeGetHBondPairs,
     };
 }

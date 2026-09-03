@@ -85,7 +85,7 @@ import { ViewportFluxRenderer } from './viewport/flux-renderer.js?v=5';
 // forwards every particle-mesh method through a thin wrapper. Atom/bond/
 // orbital rendering is owned by MolecularRenderer (see import above) and
 // remains delegated separately. See viewport/REFACTOR_MAP.md §3d.
-import { ViewportParticleRenderer } from './viewport/particle-renderer.js?v=13';
+import { ViewportParticleRenderer } from './viewport/particle-renderer.js?v=14';
 // Field overlays (E/B/Poynting/divergence/force volumes/dark matter/damping/
 // genesis/confinement/dual flux/chirality/light/horizon + quantum overlays)
 // extracted as Phase 3c — the largest viewport sub-renderer (66 methods, 27+
@@ -93,7 +93,7 @@ import { ViewportParticleRenderer } from './viewport/particle-renderer.js?v=13';
 // writeArrowFieldIntoMesh, writeStreamlinesIntoMesh) live HERE as the
 // canonical home; FluxRenderer + ParticleRenderer's constructor callbacks
 // route through bound methods on FieldRenderer. See viewport/REFACTOR_MAP.md §3c.
-import { ViewportFieldRenderer } from './viewport/field-renderer.js?v=7';
+import { ViewportFieldRenderer } from './viewport/field-renderer.js?v=8';
 
 // Pre-allocated buffer-size constants (MAX_PARTICLES / MAX_FIELD_GRID)
 // were centralized into viewport/constants.js (D-6). They were unused in
@@ -526,8 +526,10 @@ export class Viewport {
 
     // ── Field Vectors (force arrows on XZ plane) ─────────────────────
     _buildFieldVectors() { this._fieldRenderer._buildFieldVectors(); }
-    updateFieldVectors(gridPositions, forces, count, maxForce, arrowScale = 8.0) {
-        this._fieldRenderer.updateFieldVectors(gridPositions, forces, count, maxForce, arrowScale);
+    updateFieldVectors(gridPositions, forces, count, maxForce, arrowScale = 8.0, coordinateOffset) {
+        this._fieldRenderer.updateFieldVectors(
+            gridPositions, forces, count, maxForce, arrowScale, coordinateOffset,
+        );
     }
     toggleFieldVectors(on) { this._fieldRenderer.toggleFieldVectors(on); }
 
@@ -897,6 +899,11 @@ export class Viewport {
 
     updateNucleusShells(atomData) { this._molRenderer.updateNucleusShells(atomData); }
     toggleNucleusShells(on)       { this._molRenderer.toggleNucleusShells(on); }
+    updateNuclearEffects(data, options) { this._molRenderer.updateNuclearEffects(data, options); }
+    toggleNuclearEvents(on)       { this._molRenderer.toggleNuclearEvents(on); }
+    toggleNuclearRadiation(on)    { this._molRenderer.toggleNuclearRadiation(on); }
+    toggleNuclearHeat(on)         { this._molRenderer.toggleNuclearHeat(on); }
+    toggleNuclearBoundary(on)     { this._molRenderer.toggleNuclearBoundary(on); }
 
     updateBondCylinders(atomData)  { this._molRenderer.updateBondCylinders(atomData); }
     toggleBondCylinders(on)        { this._molRenderer.toggleBondCylinders(on); }
@@ -914,6 +921,9 @@ export class Viewport {
     toggleAEForceIonic(on)         { this._molRenderer.toggleAEForceIonic(on); }
     toggleAEForceVdw(on)           { this._molRenderer.toggleAEForceVdw(on); }
     toggleAEForceBond(on)          { this._molRenderer.toggleAEForceBond(on); }
+    toggleAEForceHBond(on)         { this._molRenderer.toggleAEForceHBond(on); }
+    toggleAEForceAngle(on)         { this._molRenderer.toggleAEForceAngle(on); }
+    toggleAEForceDipole(on)        { this._molRenderer.toggleAEForceDipole(on); }
     toggleAEForceNet(on)           { this._molRenderer.toggleAEForceNet(on); }
     updateAEDipoles(positions, dipoles, count) {
         this._molRenderer.updateAEDipoles(positions, dipoles, count);

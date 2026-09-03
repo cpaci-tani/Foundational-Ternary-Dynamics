@@ -76,11 +76,13 @@ export class Inspector {
 
         // AE mode state (Scale 2)
         this._selectedAEAtomId = -1;
+        this._aeAtomData = null;
         this._aeAtomIds = null;        // Int32Array from atomData.ids
         this._aeCloudAtomMap = null;   // Int32Array from orbital expansion
         this._aeCloudMode = false;     // Whether orbital clouds are on
         this._aeCloudCount = 0;
         this._aePointCount = 0;        // Non-cloud atom point count
+        this._aePickProjection = new THREE.Vector3();
         this._currentMolId = null;     // Current molecule ID for info card
 
         // Scale 4 Planetary DOM elements
@@ -349,6 +351,7 @@ export class Inspector {
     }
 
     setAEContext(atomData, cloudAtomMap, cloudMode) {
+        this._aeAtomData = atomData || null;
         this._aeAtomIds = atomData?.ids || null;
         this._aeCloudAtomMap = cloudAtomMap || null;
         this._aeCloudMode = cloudMode;
@@ -362,6 +365,57 @@ export class Inspector {
         if (this.aeMolFields.bondCount && this._currentMolId && atomData) {
             this.aeMolFields.bondCount.textContent = Math.round((atomData.bondCount || 0) / 2);
         }
+    }
+
+    /**
+     * Select the nearest atom center in screen space without inflating the
+     * rendered atom or orbital-cloud points. This closes the sparse-cloud hit
+     * gaps and remains stable when decorative bond-cloud samples are present.
+     */
+    pickAEAtomAtClientPoint(clientX, clientY, pointerType = 'mouse') {
+        const data = this._aeAtomData;
+        const camera = this.viewport?.camera;
+        const canvas = this.viewport?.renderer?.domElement;
+        if ((this._engineMode !== 'atoms' && this._engineMode !== 'molecules')
+            || !data?.positions || !data?.ids || !camera || !canvas) return -1;
+
+        const rect = canvas.getBoundingClientRect();
+        if (!(rect.width > 0 && rect.height > 0)) return -1;
+        const x = Number.isFinite(Number(clientX))
+            ? Number(clientX) : rect.left + (this.mouse.x + 1) * rect.width / 2;
+        const y = Number.isFinite(Number(clientY))
+            ? Number(clientY) : rect.top + (1 - this.mouse.y) * rect.height / 2;
+        const hitRadiusPx = pointerType === 'touch' ? 38 : 30;
+        let bestDistance2 = hitRadiusPx * hitRadiusPx;
+        let bestDepth = Number.POSITIVE_INFINITY;
+        let bestId = -1;
+        const count = Math.max(0, Math.min(
+            Number(data.count) || 0,
+            Math.floor(data.positions.length / 3),
+            data.ids.length,
+        ));
+
+        for (let index = 0; index < count; index++) {
+            const i3 = index * 3;
+            const px = Number(data.positions[i3]);
+            const py = Number(data.positions[i3 + 1]);
+            const pz = Number(data.positions[i3 + 2]);
+            if (![px, py, pz].every(Number.isFinite)) continue;
+            const projected = this._aePickProjection.set(px, py, pz).project(camera);
+            if (!Number.isFinite(projected.x) || !Number.isFinite(projected.y)
+                || projected.z < -1 || projected.z > 1) continue;
+            const screenX = rect.left + (projected.x + 1) * rect.width / 2;
+            const screenY = rect.top + (1 - projected.y) * rect.height / 2;
+            const dx = screenX - x;
+            const dy = screenY - y;
+            const distance2 = dx * dx + dy * dy;
+            if (distance2 > bestDistance2
+                || (distance2 === bestDistance2 && projected.z >= bestDepth)) continue;
+            bestDistance2 = distance2;
+            bestDepth = projected.z;
+            bestId = Number(data.ids[index]);
+        }
+        return Number.isInteger(bestId) && bestId >= 0 ? bestId : -1;
     }
 
     setCurrentMolecule(molId) {
@@ -419,7 +473,7 @@ export class Inspector {
                 }
             }
         } else if (this._engineMode === 'atoms' || this._engineMode === 'molecules') {
-            handleAEClick(this, intersects);
+            handleAEClick(this, intersects, e);
         } else if (this._engineMode === 'particles') {
             handlePEClick(this, intersects, e);
         } else if (this._engineMode === 'meta') {

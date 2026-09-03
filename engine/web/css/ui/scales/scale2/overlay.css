@@ -1,17 +1,64 @@
 /* Scale 2 atom overlay — AE-specific swatches and force button colors */
 
+#ae-viewport-overlay {
+    width: min(300px, calc(100vw - 24px));
+    max-width: min(300px, calc(100vw - 24px));
+    max-height: calc(100% - 8px - var(
+        --panel-mount-bottom-offset,
+        calc(var(--status-bar-offset, calc(28px * var(--ui-scale))) + 12px)
+    ));
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: flex-start;
+    overflow: hidden;
+}
+
+#ae-viewport-overlay .scale-overlay-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    scrollbar-gutter: stable;
+}
+
+#ae-viewport-overlay .scale-overlay-legend {
+    flex: 0 1 auto;
+    max-height: min(180px, 28vh);
+}
+
 .field-swatch-ae-field          { background: linear-gradient(135deg, #4488ff, #ff6644); }
 .field-swatch-ae-force-ionic    { background: #ff4444; }
 .field-swatch-ae-force-vdw      { background: #44ff44; }
 .field-swatch-ae-force-bond     { background: #ff8844; }
+.field-swatch-ae-force-hbond    { background: #38bdf8; }
+.field-swatch-ae-force-angle    { background: #facc15; }
+.field-swatch-ae-force-dipole   { background: #e879f9; }
 .field-swatch-ae-force-net      { background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.35); }
 .field-swatch-ae-dipole         { background: #66ccff; }
 .field-swatch-ae-hbond          { background: repeating-linear-gradient(90deg, #aaaaff 0 2px, transparent 2px 4px); }
 .field-swatch-ae-velocities     { background: linear-gradient(90deg, #39e639, #ffff66, #ff6633, #ffffff); }
+.field-swatch-ae-nuclear-event  { background: #fff6c7; box-shadow: 0 0 5px rgba(255, 246, 199, 0.72); }
+.field-swatch-ae-radiation      { background: linear-gradient(90deg, #55f4ef, #f472ff); }
+.field-swatch-ae-heat           { background: linear-gradient(90deg, #fbbf24, #fb923c); }
+.field-swatch-ae-nuclear-boundary {
+    background: linear-gradient(135deg, #67e8f9 0 48%, #fbbf24 52% 100%);
+}
+
+#ae-viewport-overlay .scale-overlay-section-hint {
+    font-size: var(--fs-xs);
+}
+
+#ae-viewport-overlay .scale-overlay-row .view-toggle {
+    justify-content: center;
+    text-align: center;
+}
 
 #ae-viewport-overlay #ae-force-ionic { color: #ff6666; }
 #ae-viewport-overlay #ae-force-vdw   { color: #66ff66; }
 #ae-viewport-overlay #ae-force-bond  { color: #ffaa66; }
+#ae-viewport-overlay #ae-force-hbond { color: #7dd3fc; }
+#ae-viewport-overlay #ae-force-angle { color: #fde047; }
+#ae-viewport-overlay #ae-force-dipole { color: #f0abfc; }
 #ae-viewport-overlay #ae-force-net   { color: #ffffff; }
 
 /* Nuclear binding row — supplemental to descriptor diagnostics table */

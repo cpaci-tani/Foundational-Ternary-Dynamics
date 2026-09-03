@@ -536,7 +536,7 @@ const PARTICLE_SCENARIO_GUIDES = Object.freeze({
 });
 
 const ATOM_SCENARIO_GUIDES = Object.freeze({
-    'ae-hydrogen-atom': 'Hydrogen is the central-potential baseline for the atom engine and the cleanest place to compare orbital intuition, cloud display, and one-center attraction.',
+    'ae-hydrogen-atom': 'This is one locked composite hydrogen record with an empirical 1s cloud display. It is not an integrated proton-electron pair or a quantum orbital solution.',
     'ae-rutherford-scattering': 'Rutherford scattering is about large-angle deflection from a compact charged center, so treat it as a geometry-and-impact-parameter problem.',
     'ae-he-cluster': 'Helium clustering is a weak-binding problem dominated by van der Waals attraction and excluded-volume repulsion, not strong covalent directionality.',
     'ae-ar-cluster': 'Argon makes the same noble-gas story visually stronger because dispersion attraction is deeper and the cluster compacts more readily.',
@@ -547,13 +547,16 @@ const ATOM_SCENARIO_GUIDES = Object.freeze({
     'ae-h2-form': 'H₂ formation is the simplest covalent-bonding case, where bond length and spring-like stabilization are the main quantities to watch.',
     'ae-o2-form': 'O₂ formation pushes beyond the minimal H₂ picture and invites discussion of stronger bonding and molecular stability.',
     'ae-ch4-form': 'CH₄ is the tetrahedral geometry showcase, so symmetry and bond-angle stabilization matter as much as raw radial attraction.',
-    'ae-water-dimer': 'The water dimer is the entry point for hydrogen bonding, dipole alignment, and directional intermolecular preference.',
+    'ae-water-dimer': 'The water dimer exposes the effective directional H-bond kernel and intramolecular angle response. Dipole forces are independently toggle-gated.',
     'ae-water-cluster': 'Water clusters quickly turn into network problems: local H-bond rules create global geometry.',
     'ae-vsepr-linear': 'The CO₂ case shows how repulsion geometry can favor a 180° arrangement even when the molecule is built from more than two atoms.',
     'ae-vsepr-tetrahedral': 'CH₄ tetrahedral is the classic 109.5° geometry lesson.',
     'ae-vsepr-bent': 'H₂O bent geometry is the standard “lone pairs change the angle” teaching case.',
     'ae-thermal-gas': 'Thermal gas is about ensemble behavior, temperature control, and whether kinetic agitation overwhelms short-range ordering.',
     'ae-collision': 'Head-on collision is the atom-engine momentum-conservation demo.',
+    'ae-conservative-pair': 'This closed Lennard-Jones pair disables driven interventions so tracked-energy and momentum drift can be tested directly.',
+    'ae-damped-relaxation': 'This deliberately strained cluster exposes the damping sink; energy loss is expected and must not be reported as conservative drift.',
+    'ae-polar-dimer': 'This paired-HF effective model combines empirical electronegativity transfer with Coulomb and dipole toys. It is a force-field validation fixture, not ab initio quantum chemistry.',
     'ae-fe-bcc': 'Fe BCC is a packing-and-coordination scenario where geometry matters as much as pair potential.',
     'ae-cu-fcc': 'Cu FCC is the close-packed comparison case to BCC iron.',
     'ae-periodic': 'Periodic Table mode is a parameter atlas rather than one fixed simulation; the lesson is periodic trends, valence, and how element identity changes force-relevant quantities.',
@@ -697,7 +700,7 @@ function makeAtomScenario(id, title, summary, notation = [], focus = '') {
 }
 
 const ATOM_SCENARIO_ENTRIES = Object.freeze([
-    makeAtomScenario('ae-hydrogen-atom', 'Hydrogen Atom (p + e−)', 'a one-electron central-force atom.', ['V(r) = -kQ_iQ_j/r²', 'central potential']),
+    makeAtomScenario('ae-hydrogen-atom', 'Hydrogen Reference (composite)', 'a locked composite atom with an empirical 1s cloud visualization.', ['static reference', 'empirical cloud']),
     makeAtomScenario('ae-rutherford-scattering', 'Rutherford Scattering', 'a charged-particle scattering experiment off a compact center.', ['θ(b)', 'inverse-square scattering']),
     makeAtomScenario('ae-he-cluster', 'He Cluster (6 atoms, vdW)', 'a weakly bound noble-gas cluster dominated by dispersion forces.', ['Lennard-Jones 12-6']),
     makeAtomScenario('ae-ar-cluster', 'Ar Cluster (8 atoms, vdW)', 'a heavier noble-gas cluster with stronger dispersion attraction.', ['Lennard-Jones 12-6']),
@@ -708,13 +711,16 @@ const ATOM_SCENARIO_ENTRIES = Object.freeze([
     makeAtomScenario('ae-h2-form', 'H + H -> H₂', 'the simplest covalent bond-formation case.', ['bond spring', 'equilibrium bond length']),
     makeAtomScenario('ae-o2-form', 'O + O -> O₂', 'a covalent diatomic formation scenario with stronger bonding.', ['bond order', 'equilibrium separation']),
     makeAtomScenario('ae-ch4-form', 'C + 4H -> CH₄', 'tetrahedral covalent formation around a carbon center.', ['tetrahedral geometry', '109.5°']),
-    makeAtomScenario('ae-water-dimer', 'Water Dimer (H-bond)', 'directional hydrogen bonding between two polar molecules.', ['H-bond', 'dipole alignment']),
+    makeAtomScenario('ae-water-dimer', 'Water Dimer (H-bond)', 'effective directional hydrogen bonding between two pre-bonded molecular records.', ['H-bond', 'angle response']),
     makeAtomScenario('ae-water-cluster', 'Water Pentamer', 'small-network hydrogen bonding and cluster geometry.', ['network bonding', 'H-bond geometry']),
     makeAtomScenario('ae-vsepr-linear', 'CO₂ -> Linear (180°)', 'VSEPR geometry favoring a linear molecular arrangement.', ['180°', 'VSEPR']),
     makeAtomScenario('ae-vsepr-tetrahedral', 'CH₄ -> Tetrahedral (109.5°)', 'VSEPR geometry favoring tetrahedral coordination.', ['109.5°', 'tetrahedral']),
     makeAtomScenario('ae-vsepr-bent', 'H₂O -> Bent (104.5°)', 'VSEPR geometry shifted by lone-pair repulsion.', ['104.5°', 'bent geometry']),
     makeAtomScenario('ae-thermal-gas', 'Ar Gas (12 atoms + thermostat)', 'thermalized gas-like motion under thermostat control.', ['temperature', 'Berendsen thermostat']),
     makeAtomScenario('ae-collision', 'Head-On Collision', 'direct impact dynamics, momentum exchange, and rebound.', ['momentum conservation', 'collision dynamics']),
+    makeAtomScenario('ae-conservative-pair', 'Conservative Ar Pair', 'a closed two-body Lennard-Jones validation trajectory.', ['tracked energy', 'momentum drift']),
+    makeAtomScenario('ae-damped-relaxation', 'Damped Cluster Relaxation', 'an intentionally driven relaxation with an explicit damping sink.', ['damping sink', 'non-conservative profile']),
+    makeAtomScenario('ae-polar-dimer', 'Polar HF Dimer', 'an effective polar-force fixture with charge transfer and dipole response.', ['QEq-like transfer', 'dipole toy']),
     makeAtomScenario('ae-fe-bcc', 'Fe BCC Cluster (9 atoms)', 'body-centered-cubic metallic packing.', ['BCC packing', 'coordination number']),
     makeAtomScenario('ae-cu-fcc', 'Cu FCC Seed (7 atoms)', 'face-centered-cubic metallic packing.', ['FCC packing', 'coordination number']),
     makeAtomScenario('ae-periodic', 'Periodic Table (All 118)', 'a catalogue-driven survey across element parameters rather than one fixed small molecule.', ['Z', 'valence', 'periodic trends']),

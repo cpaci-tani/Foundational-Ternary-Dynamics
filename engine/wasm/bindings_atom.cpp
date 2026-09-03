@@ -236,6 +236,7 @@ static val get_ae_diagnostics(ftd::AtomEngine& ae) {
     result.set("totalPEIonic",  d.total_pe_ionic);
     result.set("totalPEVdw",    d.total_pe_vdw);
     result.set("totalPEBond",   d.total_pe_bond);
+    result.set("totalPEAngle",  d.total_pe_angle);
     result.set("totalEnergy",   d.total_energy);
     result.set("momentumX",     d.total_momentum.x);
     result.set("momentumY",     d.total_momentum.y);

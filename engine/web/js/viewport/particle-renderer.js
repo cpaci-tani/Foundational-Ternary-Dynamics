@@ -428,7 +428,10 @@ export class ViewportParticleRenderer {
 
     // ── Velocity Vectors (PE mode overlay) ──────────────────────────────
     _buildVelocityVectors() {
-        const MAX_VEC = 200; // max particles for velocity vectors
+        // Shared by Scale 1 and Scale 2. Scale 2's effective nuclear lab may
+        // admit as many as 2,048 live atom/carrier records, so the old 200-line
+        // pool silently hid valid velocity telemetry in large reactions.
+        const MAX_VEC = 2048;
         const vertices = new Float32Array(MAX_VEC * 2 * 3);
         const colors = new Float32Array(MAX_VEC * 2 * 3);
         const geo = new THREE.BufferGeometry();
@@ -1189,7 +1192,7 @@ export class ViewportParticleRenderer {
     // ── Lifecycle ─────────────────────────────────────────────────────
     onLatticeSizeChanged(size, halfN) {
         // Particle, velocity-vectors, trails, and particle-forces buffers are
-        // all sized by particle count caps (MAX_PARTICLES, MAX_VEC=200,
+        // all sized by particle count caps (MAX_PARTICLES, velocity MAX_VEC=2048,
         // MAX_SEGMENTS=10000, MAX_PFORCES=200) — none scale with the lattice
         // dimension. So a lattice resize doesn't require rebuilding any of
         // these meshes.

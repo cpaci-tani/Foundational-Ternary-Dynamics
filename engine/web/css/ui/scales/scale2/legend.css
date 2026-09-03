@@ -74,15 +74,21 @@
 .ae-legend-swatch-force-ionic { background: #ff4444; }
 .ae-legend-swatch-force-vdw   { background: #44ff44; }
 .ae-legend-swatch-force-bond  { background: #ff8844; }
+.ae-legend-swatch-force-hbond { background: #38bdf8; }
+.ae-legend-swatch-force-angle { background: #facc15; }
+.ae-legend-swatch-force-dipole { background: #e879f9; }
 .ae-legend-swatch-force-net   { background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.35); }
 .ae-legend-swatch-velocity-ramp { background: linear-gradient(90deg, #39e639, #ffff66, #ff6633, #ffffff); }
 .ae-legend-swatch-dipole      { background: #66ccff; }
 .ae-legend-swatch-hbond       { background: repeating-linear-gradient(90deg, #aaaaff 0 2px, transparent 2px 4px); }
+.ae-legend-swatch-nuclear-event { background: #fff6c7; box-shadow: 0 0 4px rgba(255, 246, 199, 0.7); }
+.ae-legend-swatch-nuclear-boundary-leak { background: #67e8f9; }
+.ae-legend-swatch-nuclear-boundary-reflect { background: #fbbf24; }
 
 .ae-legend-note {
     margin: 2px 0 0;
     padding: 0;
-    font-size: 16px;
+    font-size: var(--fs-xs);
     color: var(--text-muted);
     line-height: 1.3;
 }
