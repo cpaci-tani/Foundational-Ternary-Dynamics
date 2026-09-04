@@ -859,7 +859,7 @@ git commit -m "feat(phi_v2_lattice): the complete synchronous Phi v2 tick as pur
 - Produces:
   - `prepare.py`: `def isolated_relation(L, owner=None, axis=0, phase=0, polarity=+1, slot=1) -> LatticeState`; `def r5_vacuum(L, seed, occupation=0.5, eps=+1, background=None) -> LatticeState` (every relation's both slots = `background` (default `encode(0,+1)`), `s=0`, `ell=0`, one polarity layer's 192 channels each occupied independently with probability `occupation` from `np.random.default_rng(seed)`, conjugate layer blank); `def sparse_material(L, seed, n_tokens, field_occupation=0.0, eps=+1) -> LatticeState` (`n_tokens` distinct random relations each get one token `encode(phase, polarity)` with random phase/polarity in a random slot; field layer as in `r5_vacuum` at `field_occupation`).
   - `journal.py`: `@dataclass class SiteRow: tick:int; site:int; s_before:int; s_after:int`; `@dataclass class RelationRow: tick:int; kind:str; owner:int; idx:tuple; lam_before:int; rho_before:int; lam_after:int; rho_after:int`; `class Journal` with `site_rows: list[SiteRow]`, `relation_rows: list[RelationRow]`, `def record(self, tick, before, after)` (appends a `SiteRow` for every site whose `s` changed and a `RelationRow` for every relation whose `(λ,ρ)` changed), `def site_series(self, site, horizon) -> list[int]` (the full `s` trajectory reconstructed from an initial state — store `s0` at construction: `Journal(state0)`), `def relation_series(self, kind, owner, idx, horizon) -> list[tuple[int,int]]`.
-  - `conservation.py`: `def work_units(st) -> int` (occupied channels + occupied relation slots); `def gauss_residual(before, after) -> int` (`max |ΔQ + div J|`, must be 0); `def layer_sum(st) -> tuple[int,...]` (sum over sites and occupied channels of `layer_value_of(c, ell_x)`, both polarities).
+  - `conservation.py`: `def work_units(st) -> int` (occupied channels + occupied relation slots); `def current_from_events(st, ev) -> tuple[np.ndarray, np.ndarray]` (J from the crossing log); `def gauss_residual(before, after, ev) -> int` (`max |ΔQ + div J_ev|` + log-vs-ε-difference mismatch, must be 0); `def layer_sum(st) -> tuple[int,...]` (sum over sites and occupied channels of `layer_value_of(c, ell_x)`, both polarities).
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -898,7 +898,7 @@ def test_r5_vacuum_conserves_work_units_layer_sums_and_gauss_for_20_ticks():
     w0, ls0 = K.work_units(st), K.layer_sum(st)
     for t in range(20):
         new, ev = T.tick(st, tables)
-        assert K.gauss_residual(st, new) == 0
+        assert K.gauss_residual(st, new, ev) == 0
         assert K.work_units(new) == w0
         assert K.layer_sum(new) == ls0, f"layer sum changed at tick {t}"
         st = new
@@ -1035,10 +1035,31 @@ def work_units(st: S.LatticeState) -> int:
     return int(st.bank.sum()) + int((st.sc != S.BLANK_IDX).sum()) + int((st.fcc != S.BLANK_IDX).sum())
 
 
-def gauss_residual(before: S.LatticeState, after: S.LatticeState) -> int:
+def current_from_events(st: S.LatticeState, ev) -> tuple[np.ndarray, np.ndarray]:
+    """J_r rebuilt from the tick's crossing LOG alone (direction x polarity of the moved token,
+    read from the PRE-state slot: 0 for +1 primary->reserve, 1 for -1). Independent of
+    tick._current's eps-difference route, so the Gauss check below is not a tautology."""
+    Jsc = np.zeros(st.sc.shape[:2], dtype=int); Jfcc = np.zeros(st.fcc.shape[:3], dtype=int)
+    for kind, owner, idx, dirn in ev.crossings:
+        slot = 0 if dirn == +1 else 1
+        tok = st.sc[owner, idx[0], slot] if kind == "sc" else st.fcc[owner, idx[0], idx[1], slot]
+        pol = T._eps(tok)
+        if kind == "sc":
+            Jsc[owner, idx[0]] = dirn * pol
+        else:
+            Jfcc[owner, idx[0], idx[1]] = dirn * pol
+    return Jsc, Jfcc
+
+
+def gauss_residual(before: S.LatticeState, after: S.LatticeState, ev) -> int:
+    """max |dQ + div J| with J from the crossing LOG, plus the disagreement between the log route
+    and the eps-difference route. 0 iff both the identity and the tick's bookkeeping hold."""
     Qb = T._incidence(before, before.sc, before.fcc); Qa = T._incidence(after, after.sc, after.fcc)
-    div = T._divergence(before, T._current(before, after))
-    return int(np.abs(Qa - Qb + div).max()) if len(Qa) else 0
+    J_ev = current_from_events(before, ev)
+    div = T._divergence(before, J_ev)
+    Jsc, Jfcc = T._current(before, after)
+    mismatch = int(np.abs(Jsc - J_ev[0]).max(initial=0)) + int(np.abs(Jfcc - J_ev[1]).max(initial=0))
+    return int(np.abs(Qa - Qb + div).max(initial=0)) + mismatch
 
 
 def layer_sum(st: S.LatticeState) -> tuple[int, ...]:
@@ -1185,7 +1206,7 @@ def run(L=6, seed=20260904, n_tokens=24, field_occupation=0.02, horizon=64):
     jr = J.Journal(st); states = [st]; w0 = K.work_units(st); gauss_ok = True; n_abs = 0
     for t in range(1, horizon + 1):
         new, ev = T.tick(st, tables); jr.record(t, st, new)
-        gauss_ok &= (K.gauss_residual(st, new) == 0)
+        gauss_ok &= (K.gauss_residual(st, new, ev) == 0)
         n_abs += len(ev.absorptions)
         st = new; states.append(st)
     assert K.work_units(st) == w0, "work units not conserved"
