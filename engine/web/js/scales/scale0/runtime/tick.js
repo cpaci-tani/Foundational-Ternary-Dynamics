@@ -3,6 +3,7 @@ import {
     setScale0PlaybackRunning,
     setScale0PlaybackSpeed,
 } from '../state/store.js';
+import { getOrCreateTransactionTracker } from './transaction-tracker.js';
 
 /** Advance Scale-0 physics by `tickCount` ticks on the active owner only. */
 export function runScale0PhysicsTicks(ctx, state, tickCount = 1) {
@@ -20,8 +21,24 @@ export function runScale0PhysicsTicks(ctx, state, tickCount = 1) {
     }
 
     const mainScale0 = ctx.bridge.capabilities.scale0;
+    // History-journal drain (native-charge gate, opt-in, observation-only —
+    // see transaction-tracker.js). Only the direct (non-worker) WasmBridge
+    // implements enableHistoryJournal/drainHistoryEvents today; MockBridge
+    // and the worker-backed WasmBridgeProxy simply lack the methods, so this
+    // guard also doubles as the "no-op on a mock-owned/worker scenario" gate.
+    // historyJournalEnabled() is the single source of truth for "is the
+    // journal running" (set by the transaction panel's toggle) so the tick
+    // loop never needs its own duplicate enabled flag.
+    const trackingJournal = typeof ctx.bridge.historyJournalEnabled === 'function'
+        && typeof ctx.bridge.drainHistoryEvents === 'function'
+        && ctx.bridge.historyJournalEnabled();
+    const tracker = trackingJournal ? getOrCreateTransactionTracker(ctx) : null;
     for (let i = 0; i < tickCount; i++) {
         mainScale0.tickScale0();
+        // The native journal clears itself at the start of the NEXT tick()
+        // (render_bridge.cpp), so this tick's rows must be drained now, before
+        // the following tickScale0() call discards them.
+        if (tracker) tracker.ingestTick(ctx.bridge.drainHistoryEvents());
     }
 
     // WebSocketBridge is asynchronous and may coalesce high-frequency playback

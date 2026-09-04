@@ -10,6 +10,7 @@ export {
     collectScale0Unconditional,
 } from './demand.js';
 export { SCALE0_GRID_CHANNELS } from './registry/scale0-grid-channels.js';
+export { SCALE0_TRANSACTION_CHANNELS } from './registry/scale0-transaction-channels.js';
 export {
     readScale0DiagAudit,
     readScale0TotalEnergy,
