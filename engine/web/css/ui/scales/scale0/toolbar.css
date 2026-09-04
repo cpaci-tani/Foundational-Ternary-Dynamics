@@ -541,6 +541,10 @@
 .field-swatch-state          { background: linear-gradient(90deg, #4072ff 0%, #ff594d 100%); }
 .field-swatch-latency        { background: linear-gradient(90deg, #1a3acc 0%, #ff3b2f 100%); }
 .field-swatch-gauss          { background: linear-gradient(90deg, #2159d9 0%, #f2f2f2 50%, #e51a33 100%); }
+/* Proper time / lapse / de Broglie phase overlays (2026-09-03) */
+.field-swatch-proper-time    { background: linear-gradient(90deg, #331a00 0%, #ff9d1a 100%); }
+.field-swatch-lapse          { background: linear-gradient(90deg, #e51a33 0%, #2ee06a 100%); }
+.field-swatch-db-phase       { background: conic-gradient(#ff4d4d, #ffe14d, #4dff88, #4dd2ff, #a64dff, #ff4d4d); }
 
 /* Scenario epistemic status text */
 .lat-scenario-desc-text {

@@ -841,6 +841,14 @@ export class Viewport {
     toggleGaussResidualField(on) { this._fieldRenderer.toggleGaussResidualField(on); }
     updateGaussResidualField(data) { this._fieldRenderer.updateGaussResidualField(data); }
 
+    // -- Proper time τ / lapse dτ/dt / de Broglie phase φ (2026-09-03) --
+    toggleProperTimeField(on) { this._fieldRenderer.toggleProperTimeField(on); }
+    updateProperTimeField(data) { this._fieldRenderer.updateProperTimeField(data); }
+    toggleLapseField(on) { this._fieldRenderer.toggleLapseField(on); }
+    updateLapseField(data) { this._fieldRenderer.updateLapseField(data); }
+    toggleDBPhaseField(on) { this._fieldRenderer.toggleDBPhaseField(on); }
+    updateDBPhaseField(data) { this._fieldRenderer.updateDBPhaseField(data); }
+
     // -- Topological Sheet (deformable rubber-sheet) overlays --
     toggleGravPotentialField(on) { this._topoRenderer?.toggleGravPotential(on); }
     updateGravPotentialField(data) { this._topoRenderer?.updateGravPotential(data); }

@@ -986,6 +986,11 @@ export class WasmBridgeProxy {
     getCurlJSampled(stride = 2)         { return this._wantSampler('curlJ',        stride, EMPTY_VEC); }
     getStateFieldSampled(stride = 1)    { return this._wantSampler('state',        stride, EMPTY_VAL); }
     getGaussResidualSampled(stride = 1) { return this._wantSampler('gaussResidual',stride, EMPTY_VAL); }
+    // Proper-time / lapse / de Broglie phase overlays (2026-09-03) — WASM-only,
+    // see sampler-registry.classic.js for the worker-side [method, 'val'] entry.
+    getTauSampled(stride = 2)           { return this._wantSampler('tau',          stride, EMPTY_VAL); }
+    getPhaseSampled(stride = 2)         { return this._wantSampler('dbPhase',      stride, EMPTY_VAL); }
+    getLapseSampled(stride = 2)         { return this._wantSampler('lapse',        stride, EMPTY_VAL); }
     getEMForceField(stride = 2)         { return this._readSampler('em',           stride, EMPTY_VEC); }
     getGravityForceField(stride = 2)    { return this._readSampler('gravity',      stride, EMPTY_VEC); }
     getStrongForceField(stride = 2)     { return this._readSampler('strong',       stride, EMPTY_VEC); }

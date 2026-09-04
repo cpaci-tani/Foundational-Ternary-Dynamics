@@ -599,3 +599,83 @@ export function computeGaussResidualFrame(sampled, _state) {
     for (let i = 0; i < g.count; i++) { const a = Math.abs(g.values[i]); if (a > maxAbs) maxAbs = a; }
     return { positions: g.positions, values: g.values, count: g.count, normalizer: maxAbs, signed: true };
 }
+
+// ══════════════════════════════════════════════════════════════════════
+// Proper time / lapse / de Broglie phase overlays (2026-09-03) — WASM-only
+// pass-throughs of Voxel::tau / a live causal_kinematics.h proper_time_rate
+// evaluation / Voxel::phase (see get_tau_sampled / get_lapse_sampled /
+// get_phase_sampled in ftd_wasm.cpp). Live only while latency_field and/or
+// de_broglie_clock is ON — the JS mock substrate has no equivalent voxel
+// fields, so these read empty (graceful no-op) on flux-mock scenarios.
+// ══════════════════════════════════════════════════════════════════════
+
+/**
+ * Accumulated proper time τ(x) = Σ√max(1−u²/C_SPEED²−L²,0), the FTD-0402
+ * causal-budget contract integrated per manifested voxel by
+ * accumulate_proper_time (transmutation_phases.cpp). Peak-held normalizer —
+ * same VU-meter convention as the other magnitude-only overlays above — so a
+ * decaying run fades instead of re-saturating on the next tick.
+ */
+export function computeProperTimeFrame(sampled, state) {
+    const t = sampled.properTime;
+    if (!t || !t.count) return null;
+    let max = 0;
+    for (let i = 0; i < t.count; i++) if (t.values[i] > max) max = t.values[i];
+    const heldMax = updateDecayingMax(state, 'properTime', max);
+    return {
+        positions: t.positions,
+        values: t.values,
+        count: t.count,
+        normalizer: heldMax,
+        signed: false,
+        ...sampleGridMetadata(t),
+    };
+}
+
+/**
+ * Instantaneous lapse (clock rate) dτ/dt(x) = √max(1−u²/C_SPEED²−L²,0) —
+ * causal_kinematics.h's proper_time_rate evaluated live from voxel.latency
+ * and voxel.velocity. Fixed [0,1] range by construction (no peak-hold
+ * normalizer needed): 0 = frozen clock / horizon reading, 1 = full rate.
+ */
+export function computeLapseFrame(sampled, _state) {
+    const l = sampled.lapse;
+    if (!l || !l.count) return null;
+    return {
+        positions: l.positions,
+        values: l.values,
+        count: l.count,
+        normalizer: 1,
+        signed: false,
+        ...sampleGridMetadata(l),
+    };
+}
+
+/**
+ * de Broglie internal clock phase φ(x) (FTD-0271): dφ = ω₀·dτ, advanced only
+ * while de_broglie_clock is ON. The engine returns raw (unwrapped, possibly
+ * large) radians; this wraps to [0, 2π) for the cyclic hue-wheel renderer
+ * (updateDBPhaseField) and reports the wrap count so a caller wanting the
+ * unwrapped winding number still has it.
+ */
+export function computeDbPhaseFrame(sampled, state) {
+    const p = sampled.dbPhase;
+    if (!p || !p.count) return null;
+    const TWO_PI = 2 * Math.PI;
+    if (!state.dbPhaseValues || state.dbPhaseValues.length < p.count) {
+        state.dbPhaseValues = new Float32Array(p.count);
+    }
+    const values = state.dbPhaseValues;
+    for (let i = 0; i < p.count; i++) {
+        const raw = p.values[i];
+        values[i] = ((raw % TWO_PI) + TWO_PI) % TWO_PI;
+    }
+    return {
+        positions: p.positions,
+        values,
+        count: p.count,
+        normalizer: TWO_PI,
+        signed: false,
+        ...sampleGridMetadata(p),
+    };
+}

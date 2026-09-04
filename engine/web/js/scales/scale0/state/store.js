@@ -43,6 +43,12 @@ export const FIELD_TOGGLE_KEYS = [
     'showStateField',     // s(x) ∈ {-1,0,+1}        — ternary manifestation field [AXIOM]
     'showLatency',        // L(x) = √(|J|²/|J|²max)  — time-dilation / Born-Infeld latency
     'showGaussResidual',  // ∇·J − s_charge          — Gauss-projection conservation leak
+    // Proper time / lapse / de Broglie clock overlays (2026-09-03) — WASM-only
+    // per-voxel Voxel::tau/phase + the live causal_kinematics.h proper_time_rate
+    // evaluation. Live only when latency_field and/or de_broglie_clock is ON.
+    'showProperTime',     // τ(x) = Σ√max(1-u²/C²-L²,0)   — accumulated proper time
+    'showLapse',          // dτ/dt(x) = √max(1-u²/C²-L²,0) — instantaneous clock rate
+    'showDBPhase',        // φ(x), dφ=ω₀·dτ               — de Broglie internal clock phase
 ];
 
 export const FORCE_FIELD_KEYS = new Set([

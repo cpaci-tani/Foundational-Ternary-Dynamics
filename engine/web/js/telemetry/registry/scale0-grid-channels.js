@@ -28,4 +28,17 @@ export const SCALE0_GRID_CHANNELS = [
     { key: 'lagHam',     title: 'Hamiltonian (H)',   buffer: 'lag.hamiltonian', telemetryGroup: 'lagrangian', color: 'var(--chart-energy, #42a5f5)', unit: 'H' },
     { key: 'lagKinetic', title: 'Field Kinetic (T)', buffer: 'lag.fieldKinetic',telemetryGroup: 'lagrangian', color: 'var(--chart-flux, #fb8c00)', unit: 'T' },
     { key: 'lagGrad',    title: 'Field Gradient (V)',buffer: 'lag.fieldGradient',telemetryGroup: 'lagrangian', color: 'var(--chart-negative, #f87171)', unit: 'V' },
+    // Proper time / lapse / de Broglie phase (2026-09-03) — field-sampler
+    // aggregates published by publishScale0ProperTimeMetrics (telemetry-hub.js),
+    // NOT part of the engine Diagnostics struct, so no `telemetryGroup` is set:
+    // these are always presented as plain live/unavailable numeric channels
+    // (chart-card.js / telemetry-grid component.js both treat a missing
+    // telemetryGroup as "no staleness badge", not an error) rather than joining
+    // the diagnostics/audit/lagrangian group-staleness system. WASM-only; live
+    // only while latency_field and/or de_broglie_clock is ON (time-panel.js).
+    { key: 'properTimeMean',   title: 'Proper Time τ (mean)',   buffer: 'ptime.properTimeMean',   color: 'var(--chart-flux, #fb8c00)',   unit: 'τ' },
+    { key: 'properTimeSpread', title: 'Proper Time τ (spread)', buffer: 'ptime.properTimeSpread', color: 'var(--chart-eb, #a78bfa)',      unit: 'τ' },
+    { key: 'lapseMean',        title: 'Lapse dτ/dt (mean)',     buffer: 'ptime.lapseMean',        color: 'var(--chart-positive, #4ade80)', unit: 'dτ/dt' },
+    { key: 'dbPhaseMean',      title: 'dB Phase φ (mean)',      buffer: 'ptime.dbPhaseMean',      color: 'var(--chart-charge, #4ade80)', unit: 'rad' },
+    { key: 'dbPhaseCircVar',   title: 'dB Phase φ (circ. var.)',buffer: 'ptime.dbPhaseCircVar',   color: 'var(--chart-negative, #f87171)', unit: '1' },
 ];

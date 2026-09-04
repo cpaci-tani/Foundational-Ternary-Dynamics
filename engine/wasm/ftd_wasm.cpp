@@ -34,6 +34,7 @@
 #include "ftd/constants.h"
 #include "ftd/knot_telemetry.h"  // full KnotTracker definition (PIMPL fwd-decl in render_bridge.h)
 #include "ftd/visual_sample_grid.h"  // shared center-anchored sample grid (CPU/GPU/WASM)
+#include "ftd/causal_kinematics.h"  // proper_time_rate — proper-time/lapse overlay samplers
 #include "bindings_internal.h"
 
 using namespace emscripten;
@@ -1324,6 +1325,56 @@ val get_gauss_residual_sampled(ftd::RenderBridge& rb, int stride) {
             const double r = rb.divergence_flux(idx) - static_cast<double>(ternary.state_at(idx));
             if (std::abs(r) < 1e-6) return std::nullopt;
             return r;
+        });
+}
+
+// Per-voxel accumulated proper time τ = Σ√max(1−u²/C_SPEED²−L²,0) (FTD-0402
+// causal-budget contract, causal_kinematics.h proper_time_rate). Accumulated
+// each tick at manifested voxels by accumulate_proper_time
+// (transmutation_phases.cpp) only while latency_field or de_broglie_clock is
+// ON; gated to non-void voxels only — τ is undefined at the void (state=0).
+// Read-only diagnostic accumulator; not mixed into the golden state hash.
+val get_tau_sampled(ftd::RenderBridge& rb, int stride) {
+    const auto& ternary = rb.ternary_field();
+    const auto& voxels = rb.voxels();
+    return sample_scalar_overlay(rb, stride, /*interior=*/false,
+        [&](int, int, int, int idx) -> std::optional<double> {
+            if (ternary.state_at(idx) == 0) return std::nullopt;
+            return voxels[static_cast<std::size_t>(idx)].tau;
+        });
+}
+
+// Per-voxel de Broglie internal clock phase φ (FTD-0271): dφ = ω₀·dτ,
+// advanced only while the de_broglie_clock toggle is ON. Raw (unwrapped)
+// radians — the JS overlay/panel layer wraps to [0, 2π) for display. IMPOSED
+// clock axiom (ω₀ tied to K_B), not a substrate derivation of covariance —
+// see the FTD-0271/FTD-0402 comments on Voxel::phase and
+// causal_kinematics.h's header note.
+val get_phase_sampled(ftd::RenderBridge& rb, int stride) {
+    const auto& ternary = rb.ternary_field();
+    const auto& voxels = rb.voxels();
+    return sample_scalar_overlay(rb, stride, /*interior=*/false,
+        [&](int, int, int, int idx) -> std::optional<double> {
+            if (ternary.state_at(idx) == 0) return std::nullopt;
+            return voxels[static_cast<std::size_t>(idx)].phase;
+        });
+}
+
+// Per-voxel lapse (instantaneous clock rate) dτ/dt = √max(1−u²/C_SPEED²−L²,0)
+// — causal_kinematics.h's proper_time_rate evaluated live from voxel.latency
+// and voxel.velocity. Distinct from get_tau_sampled's time-INTEGRAL τ above:
+// the engine does not persist the rate itself, only its running sum, so this
+// recomputes it per sample rather than reading a stored field. Gated to
+// non-void voxels; a rate of exactly 0 (the causal budget saturated,
+// B=β²+L²≥1) is a genuine horizon/frozen-clock reading and is NOT filtered.
+val get_lapse_sampled(ftd::RenderBridge& rb, int stride) {
+    const auto& ternary = rb.ternary_field();
+    const auto& voxels = rb.voxels();
+    return sample_scalar_overlay(rb, stride, /*interior=*/false,
+        [&](int, int, int, int idx) -> std::optional<double> {
+            if (ternary.state_at(idx) == 0) return std::nullopt;
+            const auto& v = voxels[static_cast<std::size_t>(idx)];
+            return ftd::proper_time_rate(v.latency, v.velocity.mag2());
         });
 }
 

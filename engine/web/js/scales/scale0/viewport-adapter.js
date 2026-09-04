@@ -33,6 +33,12 @@ const NON_FORCE_OVERLAYS = {
     // New substrate overlays (2026-06-03)
     showLatency:           'toggleLatencyField',
     showGaussResidual:     'toggleGaussResidualField',
+    // Proper time / lapse / de Broglie clock overlays (2026-09-03) — WASM-only,
+    // dedicated point clouds (not routed through the Heat-Map meta-toggle),
+    // matching the showStateField pattern above.
+    showProperTime:        'toggleProperTimeField',
+    showLapse:             'toggleLapseField',
+    showDBPhase:           'toggleDBPhaseField',
 };
 
 const FORCE_ARROW_OVERLAYS = {
@@ -171,6 +177,9 @@ export function createScale0ViewportAdapter(viewport) {
             viewport.togglePhaseField?.(false);
             viewport.toggleHorizonField?.(false);
             viewport.toggleStateField?.(false);
+            viewport.toggleProperTimeField?.(false);
+            viewport.toggleLapseField?.(false);
+            viewport.toggleDBPhaseField?.(false);
             scalarOverlays.clear();
         },
         applyParticleFrame(frame) {
@@ -272,6 +281,11 @@ export function createScale0ViewportAdapter(viewport) {
         applyStateField(data)    { viewport?.updateStateField?.(data); },
         applyLatency(data)       { scalarOverlays.apply('latency', data); },
         applyGaussResidual(data) { scalarOverlays.apply('gaussResidual', data); },
+        // Proper time / lapse / de Broglie clock overlays (2026-09-03) — direct
+        // point-cloud updates, same non-heatmap pattern as applyStateField.
+        applyProperTime(data)    { viewport?.updateProperTimeField?.(data); },
+        applyLapse(data)         { viewport?.updateLapseField?.(data); },
+        applyDBPhase(data)       { viewport?.updateDBPhaseField?.(data); },
         render() {
             viewport?.render?.();
         },

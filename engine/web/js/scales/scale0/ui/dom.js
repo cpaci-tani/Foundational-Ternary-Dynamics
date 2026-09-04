@@ -33,6 +33,10 @@ export const FIELD_TOGGLE_BINDINGS = [
     ['toggle-state-field',         'showStateField'],
     ['toggle-latency',             'showLatency'],
     ['toggle-gauss-residual',      'showGaussResidual'],
+    // Proper time / lapse / de Broglie clock overlays (2026-09-03)
+    ['toggle-proper-time',         'showProperTime'],
+    ['toggle-lapse',               'showLapse'],
+    ['toggle-db-phase',            'showDBPhase'],
 ];
 
 export const FORCE_STYLE_VALUES = ['arrows', 'heatmap', 'flow', 'glyphs'];

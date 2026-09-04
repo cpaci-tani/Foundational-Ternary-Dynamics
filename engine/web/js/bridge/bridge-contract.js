@@ -118,6 +118,13 @@ export const SCALE0_SAMPLER_METHODS = Object.freeze({
     curlJ:         'getCurlJSampled',
     state:         'getStateFieldSampled',
     gaussResidual: 'getGaussResidualSampled',
+    // Proper-time / lapse / de Broglie phase overlays (2026-09-03). WASM-only
+    // (Voxel::tau/phase and the live proper_time_rate evaluation have no JS
+    // mock-substrate equivalent) — absent bridges fall through the drift-warned
+    // empty-sample path above exactly like the other WASM-only kinds.
+    tau:           'getTauSampled',
+    dbPhase:       'getPhaseSampled',
+    lapse:         'getLapseSampled',
 });
 
 /** [dependent, prerequisite] edges from TermToggles::validate() on the Scale-0 surface. */

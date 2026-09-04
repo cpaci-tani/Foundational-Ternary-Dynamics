@@ -139,6 +139,11 @@ export function getScale0OverlayApplicability(scenarioId, engineTerms = null) {
     const selectiveDamping = state && !!terms.selective_damping;
     const genesis = flux && !!terms.genesis;
     const standardModel = isScale0StandardModelScenario(scenarioId);
+    // Proper time τ / lapse dτ/dt / de Broglie phase φ (2026-09-03) — WASM-only
+    // Voxel::tau/phase fields, accumulated only at manifested (state≠0) voxels
+    // and only while latency_field or de_broglie_clock is requested
+    // (accumulate_proper_time's engine-side gate, transmutation_phases.cpp).
+    const properTimeClock = state && !!(terms.latency_field || terms.de_broglie_clock);
 
     const applicable = new Set();
     const allow = (condition, ...ids) => {
@@ -159,6 +164,7 @@ export function getScale0OverlayApplicability(scenarioId, engineTerms = null) {
     allow(genesis, 'toggle-genesis-iso', 'toggle-color-charge');
     allow(selectiveDamping, 'toggle-damping-zones');
     allow(flux || state, 'toggle-gauss-residual');
+    allow(properTimeClock, 'toggle-proper-time', 'toggle-lapse', 'toggle-db-phase');
     // Static catalog context only. This deliberately does not depend on a live
     // field value and does not make the overlay scheduler sample anything.
     allow(standardModel, 'toggle-sm-reference');
@@ -166,7 +172,7 @@ export function getScale0OverlayApplicability(scenarioId, engineTerms = null) {
     return {
         scenarioId,
         terms,
-        domains: { flux, state, dual, gravity, emForce, strong, standardModel },
+        domains: { flux, state, dual, gravity, emForce, strong, standardModel, properTimeClock },
         applicable,
     };
 }

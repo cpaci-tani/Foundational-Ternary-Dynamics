@@ -71,6 +71,13 @@ emscripten::val get_kretschmann_sampled(ftd::RenderBridge& rb, int stride);
 emscripten::val get_state_field_sampled(ftd::RenderBridge& rb, int stride);
 emscripten::val get_gauss_residual_sampled(ftd::RenderBridge& rb, int stride);
 
+// Proper-time / lapse / de Broglie phase overlay samplers (2026-09-03) —
+// per-voxel Voxel::tau, Voxel::phase, and a live proper_time_rate(latency,
+// speed²) evaluation. See ftd_wasm.cpp for the FTD-0402/FTD-0271 provenance.
+emscripten::val get_tau_sampled(ftd::RenderBridge& rb, int stride);
+emscripten::val get_phase_sampled(ftd::RenderBridge& rb, int stride);
+emscripten::val get_lapse_sampled(ftd::RenderBridge& rb, int stride);
+
 // Sample the engine's Coulomb potential field along a ray from p1 to p2.
 // Returns { positions:Float32Array(3N), V:Float32Array(N), count:N } via
 // trilinear interpolation of phi_coulomb_. count=0 when phi_coulomb_ is

@@ -286,6 +286,18 @@ export function getScale0OverlayTemplate() {
           title="[MEASURED residual of a SELECTION constraint] Gauss-constraint residual r(x)=∇·J−s. div(J)=s is a selected step (SPEC_ENGINE.md), not a theorem, so this measures the miss of that constraint — it is not a charge-conservation violation (see LEDGER FTD-0421/FTD-0426). Red = positive, blue = negative residual.">
         <span class="field-swatch field-swatch-gauss"></span>Gauss resid.
       </button>
+      <button class="view-toggle field-toggle" id="toggle-proper-time"
+          title="[MEASURED, IMPOSED clock axiom] Accumulated proper time τ(x)=Σ√max(1−u²/C_SPEED²−L²,0), the FTD-0402 causal-budget contract integrated per manifested voxel by accumulate_proper_time. Live only while latency_field or de_broglie_clock is ON — otherwise every manifested voxel reads τ=0 (nothing accumulated yet). Not a substrate derivation of physical proper time.">
+        <span class="field-swatch field-swatch-proper-time"></span>Proper time &tau;
+      </button>
+      <button class="view-toggle field-toggle" id="toggle-lapse"
+          title="[MEASURED, IMPOSED clock axiom] Instantaneous lapse dτ/dt(x)=√max(1−u²/C_SPEED²−L²,0) — causal_kinematics.h's proper_time_rate evaluated live from the voxel's latency and velocity. Red=frozen clock (causal budget saturated, a horizon reading), green=full rate. Distinct from accumulated τ at left.">
+        <span class="field-swatch field-swatch-lapse"></span>Lapse d&tau;/dt
+      </button>
+      <button class="view-toggle field-toggle" id="toggle-db-phase"
+          title="[IMPOSED clock axiom, FTD-0271] de Broglie internal clock phase φ(x), advanced as dφ=ω₀·dτ only while the de_broglie_clock toggle is ON. Wrapped to [0,2π) and rendered as a cyclic hue wheel (the winding clock hand), not a one-directional ramp. ω₀ is IMPOSED and tied to K_B; this is implementation telemetry, not evidence of physical covariance.">
+        <span class="field-swatch field-swatch-db-phase"></span>dB phase &phi;
+      </button>
     </div>
 
     <div class="s0-overlay-col" data-col="stress-energy">
