@@ -10,6 +10,9 @@
 
 **Spec:** `docs/theory/01_reference/SPEC_V3_COMMON_ACTION_PHI_R2_R5_v2.md` (§1 state, §2 collision, §3 tick, §5 R5 preparation) + `docs/theory/01_reference/SPEC_V3_FINITE_CARRIER_INVENTORY_R1_v2.md` (§3 alphabets, §4 ownership) + `docs/theory/01_reference/strict_discrete_common_action_register_v3.json` (`selected_phi`, `carrier_inventory`). Executable cell reference: `scripts/proofs/proof_v3_common_action_phi_v2.py`. Corrected criterion: `docs/theory/07_assessment/engine_infrastructure_rg/AUDIT_C4_TRANSACTION_CENSUS.md` §3.5/§5.
 
+
+> **Post-review amendments (ruling R14, final whole-branch review, 2026-09-04):** the shipped code differs from the task blocks below in four reporting-layer respects, recorded here rather than re-patching every block: (1) `census.relation_census` requires a period to repeat at least twice in the window (`p ≤ n // 2`); (2) `journal.site_series`/`relation_series` return `horizon + 1` entries with index 0 = the initial state, so `first_occupied == 0` means seeded; (3) criterion A is printed as one predicate ("a relation's token is never replaced or dropped") because on A9 orbit constancy ≡ polarity constancy; (4) `TickEvents.gate_holds` records relations whose lone phase-0 token was blocked by an odd gate, and `run_census` reports `gate_blocked_fraction` — the gate-modulation reading is measured, not inferred. The law itself (`tick.py` stages 3.1–3.4) is unchanged.
+
 ## Global Constraints
 
 - **Never re-implement a certified function.** Import from `scripts/proofs/`: `proof_v3_common_action_phi_v2.{A9, BLANK, PHASES, readout, rotate, phase_index, encode, relation_tick}`; `proof_hodge_flag_pair_collision_invariant_space.{one_particle_states, field_value, PHASE_COORDINATES}`; `proof_global_c3_cotangent_layer_hodge_maxwell_target.{internal_tick, layer_value}`; `proof_shared_edge_hodge_flag_bcc_propagation.{SC_DIRECTIONS}`; `proof_global_c3_cotangent_layer_equivariant_collision.{main, CERTIFICATE_DATA}`.
@@ -48,7 +51,7 @@ scripts/tests/phi_v2_lattice/
   test_channels.py test_geometry.py test_state.py test_tick.py test_prepare.py test_conservation.py test_census.py
 ```
 
-`_cache/` must be added to `.gitignore` (one line: `scripts/phi_v2_lattice/_cache/`).
+`_cache/` ignores itself (`_cache/.gitignore` containing `*`, written unconditionally by `load_collision_tables`; ruling R3 — the repo root `.gitignore` is an untracked owner file and is never staged).
 
 ---
 
@@ -57,7 +60,7 @@ scripts/tests/phi_v2_lattice/
 **Files:**
 - Create: `scripts/phi_v2_lattice/__init__.py`, `scripts/phi_v2_lattice/_proofs.py`, `scripts/phi_v2_lattice/channels.py`
 - Test: `scripts/tests/phi_v2_lattice/test_channels.py`
-- Modify: `.gitignore` (append `scripts/phi_v2_lattice/_cache/`)
+- (Ruling R3: no repo `.gitignore` edit — the cache directory ignores itself via `_cache/.gitignore` written by `load_collision_tables`)
 
 **Interfaces:**
 - Produces:
@@ -261,7 +264,7 @@ def load_collision_tables():
     return tables
 ```
 
-Also create an empty `scripts/phi_v2_lattice/__init__.py` and append `scripts/phi_v2_lattice/_cache/` to `.gitignore`. Add `scripts/tests/phi_v2_lattice/conftest.py` containing:
+Also create an empty `scripts/phi_v2_lattice/__init__.py`. Add `scripts/tests/phi_v2_lattice/conftest.py` containing:
 
 ```python
 import sys
@@ -277,7 +280,7 @@ Expected: 6 passed (first run ~60 s while the collision certificate builds; late
 - [ ] **Step 5: Commit**
 
 ```bash
-git add scripts/phi_v2_lattice/__init__.py scripts/phi_v2_lattice/_proofs.py scripts/phi_v2_lattice/channels.py scripts/tests/phi_v2_lattice/conftest.py scripts/tests/phi_v2_lattice/test_channels.py .gitignore
+git add scripts/phi_v2_lattice/__init__.py scripts/phi_v2_lattice/_proofs.py scripts/phi_v2_lattice/channels.py scripts/tests/phi_v2_lattice/conftest.py scripts/tests/phi_v2_lattice/test_channels.py
 git commit -m "feat(phi_v2_lattice): certified-import shim and 384-channel algebra with frozen collision tables"
 ```
 
