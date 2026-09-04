@@ -74,7 +74,8 @@ def stream(st: S.LatticeState, bank: np.ndarray) -> np.ndarray:
         if st.s[x] != 0:
             c2 = C.half_turn(c2)
         y = G.shift(st.L, x, d)
-        assert not out[y, c2], "streaming write collision (spec says impossible)"
+        if out[y, c2]:
+            raise RuntimeError(f"streaming write collision (spec says impossible): ({x}, {c}) -> ({y}, {c2})")
         out[y, c2] = True
     return out
 
