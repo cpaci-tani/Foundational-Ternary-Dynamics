@@ -31,15 +31,29 @@ def run(L=6, seed=20260904, n_tokens=24, field_occupation=0.02, horizon=64):
         in_place_flips=sum(r.in_place_flips for r in rows),
         nulls=sum(r.nulls for r in rows), bounces=sum(r.bounces for r in rows), reversals=sum(r.reversals for r in rows),
         gauss_identity_every_tick=gauss_ok, absorptions=n_abs,
+        seeded=sum(1 for r in rows if r.first_occupied == 0),
+        created_mid_horizon=sum(1 for r in rows if r.first_occupied not in (0, None)),
+        phase_step_violations=sum(1 for r in rows if not r.phase_steps_ok),
+        crossings_not_at_phase0=sum(1 for r in rows if not r.crossings_at_phase0),
+        runs_mod4_violations=sum(1 for r in rows if not r.runs_mod4_ok),
         site=X.site_census(states),
     )
     print("\n== Phi v2 composed-law census ==")
     for k, v in summary.items(): print(f"  {k}: {v}")
-    print("\n  CRITERION (corrected FTD-1028): period-8 & duty 4/8 for every token-bearing relation, "
-          "orbit_violations = polarity_violations = in_place_flips = 0")
-    ok = (summary["period_other"] == 0 and summary["period_none"] == 0 and summary["orbit_violations"] == 0
-          and summary["polarity_violations"] == 0 and summary["in_place_flips"] == 0)
-    print(f"  VERDICT: {'CRITERION MET under composition' if ok else 'CRITERION NOT MET under composition — see counts'}")
+    a = (summary["orbit_violations"] == 0 and summary["polarity_violations"] == 0
+         and summary["in_place_flips"] == 0 and summary["reversals"] == 0)
+    b = (summary["phase_step_violations"] == 0 and summary["crossings_not_at_phase0"] == 0
+         and summary["runs_mod4_violations"] == 0)
+    c = (summary["period_other"] == 0 and summary["period_none"] == 0
+         and summary["duty_4_of_8"] == summary["relations_seen"])
+    print("\n  CRITERION (corrected FTD-1028), measured from each relation's first occupation:")
+    print(f"  A carrier conservation (orbit, polarity, no in-place flip, no reversal): {'MET' if a else 'NOT MET'}")
+    print(f"  B clock integrity (phase +1/tick, crossings only at phase 0, interior runs = 0 mod 4): {'MET' if b else 'NOT MET'}")
+    print(f"  C exact period 8 / duty 4 of 8 (expected only under an always-even gate): {'MET' if c else 'NOT MET'}")
+    verdict = ('CRITERION MET under composition' if (a and b and c)
+               else 'A+B MET, C NOT MET under composition — gate-modulated clock, carrier intact' if (a and b)
+               else 'CRITERION NOT MET under composition — see counts')
+    print(f"  VERDICT: {verdict}")
     return summary
 
 
