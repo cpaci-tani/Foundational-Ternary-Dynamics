@@ -105,6 +105,17 @@ def test_U_is_the_certified_internal_tick_with_period_twelve():
         assert C.tangent(w3) == C.tangent(c)
         assert C.phase(w3) == (C.phase(c) + 3) % 4
 
+def test_half_turn_is_a_phase_only_shift():
+    """Spec 3.2: the manifested-departure half-turn is k -> k+2 with the FLAG fixed
+    (a channel permutation that cannot create a streaming write collision). It is NOT U∘U,
+    which also rotates the flag."""
+    for c in range(C.N_CHANNELS):
+        h = C.half_turn(c)
+        assert C.tangent(h) == C.tangent(c) and C.polarity(h) == C.polarity(c)
+        assert C.phase(h) == (C.phase(c) + 2) % 4
+        assert C.half_turn(h) == c
+        assert h != C.U(C.U(c)) or C.tangent(C.U(C.U(c))) == C.tangent(c)
+
 def test_tangent_is_an_sc_unit_vector():
     for c in range(C.N_CHANNELS):
         d = C.tangent(c)
