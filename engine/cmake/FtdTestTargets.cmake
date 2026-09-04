@@ -1355,6 +1355,9 @@ ftd_add_test(test_native_charge_gate tests/test_native_charge_gate.cpp
 ftd_add_test(test_history_journal_drain tests/test_history_journal_drain.cpp
              CTEST_NAME history_journal_drain TIMEOUT 300
              LABELS native eft ledger)
+ftd_add_test(test_c4_transaction_census tests/test_c4_transaction_census.cpp
+             CTEST_NAME c4_transaction_census TIMEOUT 300
+             LABELS native eft ledger)
 ftd_add_test(campaign_emergent_static_charge tests/campaign_emergent_static_charge.cpp
              CTEST_NAME campaign_emergent_static_charge TIMEOUT 1800
              LABELS native eft campaign observable ledger)
