@@ -1166,7 +1166,7 @@ mid-horizon by absorption are judged on their own history) and per site."""
 from __future__ import annotations
 from dataclasses import dataclass
 from . import state as S, tick as T
-from ._proofs import readout, rotate
+from ._proofs import readout, rotate, phase_index
 
 
 def _orbit(idx):
@@ -1178,7 +1178,7 @@ def _orbit(idx):
 
 def _occ(idx): return int(readout(S.z_of(idx))[0])
 def _pol(idx): return int(readout(S.z_of(idx))[1]) if _occ(idx) else 0
-def _phase(idx): return int(readout(S.z_of(idx))[2])
+def _phase(idx): return phase_index(S.z_of(idx))
 
 
 def _classify_nulls(sig):
