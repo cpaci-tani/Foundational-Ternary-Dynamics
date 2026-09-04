@@ -99,18 +99,71 @@ Theorem-grade regardless of any engine), the `C₄` reading of v3's constitution
 selected expiry acts on oriented `(normal, hand)` presentations — an oriented passage by
 design), and the question of whether a v3-native `Φ` realises the cycle.
 
-### 3.5 What it gives FTD-1028
+### 3.5 What it gives FTD-1028 — criterion **corrected by §5**
 
-The retirement path there was "implement `hodge_expiry`, rerun, compare." It now has a
-**quantitative acceptance criterion**: a candidate `Φ` realises `C₄` iff it delivers
-`T1 ≥ 0.5` and `T3 < 0.1` on this instrument, and carries a record across the null (the
-same identity before and after `0`). The census is the falsifier for the next law.
+The retirement path there was "implement `hodge_expiry`, rerun, compare." The first
+draft of this audit proposed the acceptance criterion `T1 ≥ 0.5, T3 < 0.1` — i.e. that a
+candidate `Φ` must realise *polarity reversal through an oriented null*. **§5 shows the
+constitution's own law does not do that and is not meant to.** The corrected criterion,
+read off `Φ v2`'s certified relation, is: an exact period-8 site square wave with 4/8
+duty; the carrier's `C₄` orbit conserved across every null; polarity conserved by every
+map; and no in-place sign flip. The legacy engine fails all four; the census instrument
+measures all four.
 
-## 4. Reproduction
+## 5. The same questions asked of the constitution's own law — `[MEASURED, EXACT]`
+
+"If the legacy engine fails, test the engine with the proper physics." The proper physics
+exists as a **certified relation, not an engine**: the register's `executable_reference`
+for P5 is `scripts/proofs/proof_v3_common_action_phi_v2.py` (31/31 checks, 39 s), which
+defines the cell law exactly and has no lattice driver. The census questions were
+therefore asked of that law at the level where it exists — the isolated primary/reserve
+relation — exhaustively over all eight payloads
+(`scripts/proofs/proof_phi_v2_isolated_relation_census.py`, 8/8):
+
+- The record is a Gaussian integer `z ∈ A9 = {−1,0,1}²`. `readout` gives occupancy
+  (`BLANK` = 0), **polarity** (+1 on the four axis cells, −1 on the four diagonals), and a
+  **phase** (four per polarity). `rotate(z) = iz` — the `C₄` — **preserves polarity and
+  advances phase** (C11).
+- Every payload has **exact period 8** and **duty 4/8**: the primary readout is the square
+  wave `++++0000` (or `----0000`) at the starting phase's offset.
+- **Every null is a bounce** (`+s → 0 → +s`); zero reversal passages. The null is the token
+  *residing in the reserve*, not an annihilation.
+- The **carrier persists**: the token's `C₄` orbit is constant across every null.
+- **Polarity is conserved by every map**: by `rotate` (C11), by `relation_tick`, and by the
+  55,008-row collision table, whose 192 states are `(Hodge flag, phase)` with no polarity
+  variable at all (polarity is a separate copy label, C8). Polarity reversal **does not
+  occur in `Φ v2`**.
+- The external gate controls **transport** (the crossing at phase 0), not the clock: an
+  alternating gate leaves the period-8 wave intact; a closed gate holds the readout at 0
+  while the token keeps rotating (C17).
+
+**Reading.** The `C₄` of the constitution is a *phase* clock living in the part of the record
+the ternary readout quotients away (P3), and it appears at the readout as a period-8
+square wave — the eighth root, the square wave, and the persistent carrier of the
+2026-09-04 discussion, now certified rather than conjectured. The derivation's §1 premise
+— *polarity* reversal through an *oriented* null — has **no referent** in the constitution's
+law: `Φ v2` never reverses polarity, and its nulls are transport residences. The census
+instrument's gates T1/T3 encoded the derivation's `C₄`, not the constitution's; §3.5 is
+corrected accordingly.
+
+**Two constitution violations in the legacy engine, now separable.** FTD-1027 §F5 found the
+engine's reversal skips the null. §5 shows something stronger: in `Φ v2` there is nothing
+to skip — polarity is a conserved label. The engine's 61 `WeakTransmutation` flips violate
+the constitution twice, by flipping a conserved quantity and by doing so in one step.
+
+**What remains open, precisely.** Whether the period-8 square wave and carrier persistence
+survive *composition* — many relations interacting through the collision layers on a
+lattice with a conflict-free schedule. The isolated result is exact; the composed result
+is the FTD-1028 lattice driver that does not yet exist, and the corrected criterion above
+is what it must reproduce.
+
+## 6. Reproduction
 
 ```
 engine\build_native.bat build --target test_c4_transaction_census
 cd engine\build && ctest -C Release -R c4_transaction -V
+python scripts/proofs/proof_v3_common_action_phi_v2.py            # 31/31, ~40 s
+python scripts/proofs/proof_phi_v2_isolated_relation_census.py    # 8/8, <1 s
 ```
 
 The CTest exit status reports instrument validity, not the theory verdict; the lock
