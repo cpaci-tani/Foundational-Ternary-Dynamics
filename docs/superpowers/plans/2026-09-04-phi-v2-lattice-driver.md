@@ -1106,7 +1106,7 @@ git commit -m "feat(phi_v2_lattice): R5/isolated/sparse preparations, transition
 
 **Interfaces:**
 - Consumes: Tasks 1–4.
-- Produces: `@dataclass class RelationCensus: period: int|None; duty: int|None; orbit_constant: bool; polarity_constant: bool; in_place_flips: int; nulls: int; bounces: int; reversals: int`; `def relation_census(journal, kind, owner, idx, horizon) -> RelationCensus`; `def site_census(journal, horizon) -> dict` with keys `manifest` (`0→±`), `withdraw` (`±→0`), `flip_in_place` (`±→∓` in one tick), `flip_via_wrap` (subset of in-place flips where `|Q|≥2` pre or post — needs `Q`; pass the states instead: signature `site_census(states: list[LatticeState]) -> dict`), `null_bounce`, `null_reversal`; `def run(L, seed, n_tokens, field_occupation, horizon) -> dict` in `run_census.py` printing a table and returning the summary.
+- Produces: `@dataclass class RelationCensus: period: int|None; duty: int|None; orbit_constant: bool; polarity_constant: bool; in_place_flips: int; nulls: int; bounces: int; reversals: int; first_occupied: int|None; phase_steps_ok: bool; crossings_at_phase0: bool; runs_mod4_ok: bool` (all measured from the relation's first occupation); `def relation_census(journal, kind, owner, idx, horizon) -> RelationCensus`; `def site_census(journal, horizon) -> dict` with keys `manifest` (`0→±`), `withdraw` (`±→0`), `flip_in_place` (`±→∓` in one tick), `flip_via_wrap` (subset of in-place flips where `|Q|≥2` pre or post — needs `Q`; pass the states instead: signature `site_census(states: list[LatticeState]) -> dict`), `null_bounce`, `null_reversal`; `def run(L, seed, n_tokens, field_occupation, horizon) -> dict` in `run_census.py` printing a table and returning the summary.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -1121,8 +1121,35 @@ def test_isolated_relation_census_is_exact():
     rc = X.relation_census(jr, "sc", 32, (0,), 32)
     assert (rc.period, rc.duty, rc.orbit_constant, rc.polarity_constant, rc.in_place_flips) == (8, 4, True, True, 0)
     assert rc.reversals == 0 and rc.bounces == rc.nulls
+    assert rc.first_occupied == 0 and rc.phase_steps_ok and rc.crossings_at_phase0 and rc.runs_mod4_ok
     sc = X.site_census(states)
     assert sc["flip_in_place"] == 0 and sc["null_reversal"] == 0
+
+def test_absorbed_token_census_is_measured_from_first_occupation():
+    """A token CREATED mid-horizon by absorption of a streaming channel: the census must judge it
+    from its first occupation, and with no field left the gate is always even -> exact period 8."""
+    from phi_v2_lattice import channels as C
+    tables = C.load_collision_tables(); st = S.blank(4); x = 5
+    c = next(c for c in range(384) if C.phase(c) == 0 and C.polarity(c) == +1)
+    st.bank[x, c] = True                       # phase 0 -> streams twice -> phase 2 -> absorbed in tick 3
+    jr = J.Journal(st)
+    for t in range(1, 25):
+        new, ev = T.tick(st, tables); jr.record(t, st, new); st = new
+    seen = {(r.kind, r.owner, tuple(r.idx)) for r in jr.relation_rows}
+    assert len(seen) == 1
+    kind, owner, idx = next(iter(seen))
+    rc = X.relation_census(jr, kind, owner, idx, 24)
+    assert rc.first_occupied == 2
+    assert rc.orbit_constant and rc.polarity_constant and rc.in_place_flips == 0 and rc.reversals == 0
+    assert rc.phase_steps_ok and rc.crossings_at_phase0 and rc.runs_mod4_ok
+    assert (rc.period, rc.duty) == (8, 4)
+
+def test_never_occupied_relation_has_no_period():
+    tables = C.load_collision_tables(); st = Pz.isolated_relation(4); jr = J.Journal(st)
+    for t in range(1, 9):
+        new, ev = T.tick(st, tables); jr.record(t, st, new); st = new
+    rc = X.relation_census(jr, "sc", 0, (0,), 8)
+    assert rc.period is None and rc.first_occupied is None
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -1134,9 +1161,10 @@ Expected: FAIL with `ImportError` for `census`
 
 ```python
 # scripts/phi_v2_lattice/census.py
+"""Corrected-criterion census per relation (measured from FIRST OCCUPATION, so tokens created
+mid-horizon by absorption are judged on their own history) and per site."""
 from __future__ import annotations
 from dataclasses import dataclass
-import numpy as np
 from . import state as S, tick as T
 from ._proofs import readout, rotate
 
@@ -1150,27 +1178,12 @@ def _orbit(idx):
 
 def _occ(idx): return int(readout(S.z_of(idx))[0])
 def _pol(idx): return int(readout(S.z_of(idx))[1]) if _occ(idx) else 0
+def _phase(idx): return int(readout(S.z_of(idx))[2])
 
 
-@dataclass
-class RelationCensus:
-    period: int | None; duty: int | None; orbit_constant: bool; polarity_constant: bool
-    in_place_flips: int; nulls: int; bounces: int; reversals: int
-
-
-def relation_census(journal, kind, owner, idx, horizon) -> RelationCensus:
-    series = journal.relation_series(kind, owner, idx, horizon)
-    prim = [_occ(l) for l, _ in series]
-    tokens = [(l if _occ(l) else r) for l, r in series]
-    orbits = {_orbit(t) for t in tokens if _occ(t)}
-    pols = {_pol(t) for t in tokens if _occ(t)}
-    # period of the (lambda, rho) pair
-    period = next((p for p in range(1, horizon) if series[p:] == series[:-p] and series[0] == series[p]), None)
-    duty = sum(prim[:period]) if period else None
-    # in-place polarity flip of the token
-    flips = sum(1 for a, b in zip(tokens, tokens[1:]) if _occ(a) and _occ(b) and _pol(a) == -_pol(b))
-    # site-like readout of the primary slot: nulls entered from sign s, exited to sign s'
-    sig = [_pol(l) for l, _ in series]; nulls = bounces = reversals = 0; n = len(sig)
+def _classify_nulls(sig):
+    """Nulls of a signed readout sequence: entered from sign s, exited to s' (bounce iff s' == s)."""
+    nulls = bounces = reversals = 0; n = len(sig)
     for i in range(1, n):
         if sig[i] == 0 and sig[i - 1] != 0:
             j = i
@@ -1179,7 +1192,46 @@ def relation_census(journal, kind, owner, idx, horizon) -> RelationCensus:
                 nulls += 1
                 if sig[j] == sig[i - 1]: bounces += 1
                 else: reversals += 1
-    return RelationCensus(period, duty, len(orbits) <= 1, len(pols) <= 1, flips, nulls, bounces, reversals)
+    return nulls, bounces, reversals
+
+
+def _runs(bits):
+    """(value, length) of the maximal constant runs of a sequence."""
+    runs = []; start = 0
+    for i in range(1, len(bits) + 1):
+        if i == len(bits) or bits[i] != bits[start]:
+            runs.append((bits[start], i - start)); start = i
+    return runs
+
+
+@dataclass
+class RelationCensus:
+    period: int | None; duty: int | None; orbit_constant: bool; polarity_constant: bool
+    in_place_flips: int; nulls: int; bounces: int; reversals: int
+    first_occupied: int | None      # series index at which the relation first holds a token (None: never)
+    phase_steps_ok: bool            # the token's phase advances by exactly +1 mod 4 every tick while present
+    crossings_at_phase0: bool       # every primary-occupancy change happens with the token's previous phase == 0
+    runs_mod4_ok: bool              # every INTERIOR occupancy run after first occupation has length == 0 mod 4
+
+
+def relation_census(journal, kind, owner, idx, horizon) -> RelationCensus:
+    series = journal.relation_series(kind, owner, idx, horizon)
+    tokens = [(l if _occ(l) else r) for l, r in series]
+    first = next((i for i, t in enumerate(tokens) if _occ(t)), None)
+    if first is None:
+        return RelationCensus(None, None, True, True, 0, 0, 0, 0, None, True, True, True)
+    tail = series[first:]; toks = tokens[first:]; prim = [_occ(l) for l, _ in tail]; n = len(tail)
+    orbits = {_orbit(t) for t in toks if _occ(t)}
+    pols = {_pol(t) for t in toks if _occ(t)}
+    period = next((p for p in range(1, n) if tail[p:] == tail[:-p]), None)
+    duty = sum(prim[:period]) if period else None
+    flips = sum(1 for a, b in zip(toks, toks[1:]) if _occ(a) and _occ(b) and _pol(a) == -_pol(b))
+    nulls, bounces, reversals = _classify_nulls([_pol(l) for l, _ in tail])
+    phase_ok = all(_phase(b) == (_phase(a) + 1) % 4 for a, b in zip(toks, toks[1:]) if _occ(a) and _occ(b))
+    cross_ok = all(_phase(toks[t - 1]) == 0 for t in range(1, n) if prim[t] != prim[t - 1])
+    runs_ok = all(length % 4 == 0 for _, length in _runs(prim)[1:-1])
+    return RelationCensus(period, duty, len(orbits) <= 1, len(pols) <= 1, flips, nulls, bounces, reversals,
+                          first, phase_ok, cross_ok, runs_ok)
 
 
 def site_census(states) -> dict:
@@ -1194,13 +1246,8 @@ def site_census(states) -> dict:
             elif a == -b and a != 0:
                 out["flip_in_place"] += 1
                 if abs(Q[t - 1][i]) >= 2 or abs(Q[t][i]) >= 2: out["flip_via_wrap"] += 1
-        for t in range(1, len(seq)):
-            if seq[t] == 0 and seq[t - 1] != 0:
-                j = t
-                while j < len(seq) and seq[j] == 0: j += 1
-                if j < len(seq):
-                    if seq[j] == seq[t - 1]: out["null_bounce"] += 1
-                    else: out["null_reversal"] += 1
+        _, bounce, reversal = _classify_nulls(seq)
+        out["null_bounce"] += bounce; out["null_reversal"] += reversal
     return out
 ```
 
@@ -1239,15 +1286,29 @@ def run(L=6, seed=20260904, n_tokens=24, field_occupation=0.02, horizon=64):
         in_place_flips=sum(r.in_place_flips for r in rows),
         nulls=sum(r.nulls for r in rows), bounces=sum(r.bounces for r in rows), reversals=sum(r.reversals for r in rows),
         gauss_identity_every_tick=gauss_ok, absorptions=n_abs,
+        seeded=sum(1 for r in rows if r.first_occupied == 0),
+        created_mid_horizon=sum(1 for r in rows if r.first_occupied not in (0, None)),
+        phase_step_violations=sum(1 for r in rows if not r.phase_steps_ok),
+        crossings_not_at_phase0=sum(1 for r in rows if not r.crossings_at_phase0),
+        runs_mod4_violations=sum(1 for r in rows if not r.runs_mod4_ok),
         site=X.site_census(states),
     )
     print("\n== Phi v2 composed-law census ==")
     for k, v in summary.items(): print(f"  {k}: {v}")
-    print("\n  CRITERION (corrected FTD-1028): period-8 & duty 4/8 for every token-bearing relation, "
-          "orbit_violations = polarity_violations = in_place_flips = 0")
-    ok = (summary["period_other"] == 0 and summary["period_none"] == 0 and summary["orbit_violations"] == 0
-          and summary["polarity_violations"] == 0 and summary["in_place_flips"] == 0)
-    print(f"  VERDICT: {'CRITERION MET under composition' if ok else 'CRITERION NOT MET under composition — see counts'}")
+    a = (summary["orbit_violations"] == 0 and summary["polarity_violations"] == 0
+         and summary["in_place_flips"] == 0 and summary["reversals"] == 0)
+    b = (summary["phase_step_violations"] == 0 and summary["crossings_not_at_phase0"] == 0
+         and summary["runs_mod4_violations"] == 0)
+    c = (summary["period_other"] == 0 and summary["period_none"] == 0
+         and summary["duty_4_of_8"] == summary["relations_seen"])
+    print("\n  CRITERION (corrected FTD-1028), measured from each relation's first occupation:")
+    print(f"  A carrier conservation (orbit, polarity, no in-place flip, no reversal): {'MET' if a else 'NOT MET'}")
+    print(f"  B clock integrity (phase +1/tick, crossings only at phase 0, interior runs = 0 mod 4): {'MET' if b else 'NOT MET'}")
+    print(f"  C exact period 8 / duty 4 of 8 (expected only under an always-even gate): {'MET' if c else 'NOT MET'}")
+    verdict = ('CRITERION MET under composition' if (a and b and c)
+               else 'A+B MET, C NOT MET under composition — gate-modulated clock, carrier intact' if (a and b)
+               else 'CRITERION NOT MET under composition — see counts')
+    print(f"  VERDICT: {verdict}")
     return summary
 
 
@@ -1264,7 +1325,7 @@ if __name__ == "__main__":
 - [ ] **Step 4: Run test to verify it passes, then run the experiment**
 
 Run: `cd scripts && python -m pytest tests/phi_v2_lattice/test_census.py -q`
-Expected: 1 passed
+Expected: 3 passed
 Run: `cd scripts && python -m phi_v2_lattice.experiments.run_census --L 6 --tokens 24 --field 0.02 --horizon 64`
 Expected: a summary table and a VERDICT line. **Report the table verbatim in your summary, whatever it says.** Then also run with `--field 0.0` (no field: every token is isolated — all periods must be 8) and `--field 0.10` (dense field: collisions and absorptions active).
 
