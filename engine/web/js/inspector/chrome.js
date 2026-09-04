@@ -8,8 +8,12 @@ export const INSPECTOR_MODE_COPY = Object.freeze({
         prompt: 'Select a particle in the viewport or a dynamic cluster in Interaction Hierarchy to isolate its overlays.',
     },
     atoms: {
-        label: 'Atoms & Molecules',
+        label: 'Atoms',
         prompt: 'Single-click an atom or orbital cloud sample to inspect its local chemistry.',
+    },
+    molecules: {
+        label: 'Molecules',
+        prompt: 'Single-click an atom to inspect its live molecular component, bonds, and local effective chemistry.',
     },
     planetary: {
         label: 'Planetary',

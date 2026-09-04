@@ -299,7 +299,7 @@ export function updateAEMoleculeInfo(target, molId) {
     }
 
     if (target.aeMolFields.bondCount) {
-        target.aeMolFields.bondCount.textContent = '--';
+        target.aeMolFields.bondCount.textContent = molecule.bonds?.length ?? 0;
     }
 
     if (target.aeMolFields.mass) {

@@ -154,7 +154,8 @@ int AtomEngine::index_of(int id) const {
     return -1;
 }
 
-bool AtomEngine::create_bond(int id_a, int id_b, int order) {
+bool AtomEngine::create_bond(int id_a, int id_b, int order,
+                             double equilibrium_distance) {
     if (id_a == id_b || order < 1 || order > 3) return false;
     int ia = index_of(id_a);
     int ib = index_of(id_b);
@@ -167,7 +168,9 @@ bool AtomEngine::create_bond(int id_a, int id_b, int order) {
 
     // Compute bond parameters from ontic chain
     double sigma_avg = 0.5 * (atoms_[ia].vdw_sigma + atoms_[ib].vdw_sigma);
-    double r_eq = sigma_avg;  // equilibrium at sigma
+    double r_eq = std::isfinite(equilibrium_distance) && equilibrium_distance > 0.0
+        ? equilibrium_distance
+        : sigma_avg;
     double k_bond = ALPHA * K_B / (r_eq * r_eq) * order;  // stiffer for multiple bonds
 
     Bond ba;

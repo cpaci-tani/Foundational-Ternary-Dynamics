@@ -2,16 +2,12 @@ export function getScale3ScenarioToolbarTemplate() {
     return `
         <div class="tb-group tb-group-scenario scale3-only" id="mol-controls">
             <label class="tb-label" for="mol-scenario-select">Scenario</label>
-            <select class="tb-select tb-select-scenario-wide" id="mol-scenario-select">
-                <optgroup label="Special">
-                    <option value="mol-crystal">NaCl Crystal</option>
-                    <option value="mol-custom">Custom (Manual)</option>
-                </optgroup>
-            </select>
-            <label class="tb-check tb-check-inline" title="Show electron orbital probability clouds">
-                <input type="checkbox" id="mol-show-clouds" checked>
-                Orbitals
-            </label>
+            <select class="tb-select tb-select-scenario-wide" id="mol-scenario-select"
+                title="Scale 3 molecule-engine scenario"></select>
+            <details class="ae-scenario-desc scale3-scenario-meta" id="mol-scenario-desc" style="display:none">
+                <summary>About this scenario</summary>
+                <pre id="mol-scenario-desc-text" class="ae-scenario-desc-text"></pre>
+            </details>
         </div>
     `;
 }

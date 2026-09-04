@@ -1,5 +1,31 @@
 # Foundational Ternary Dynamics Changelog
 
+# Scale 3 Molecular Dynamics Rebuild (2026-09-03)
+
+- Rebuilt Scale 3 around 35 canonical contracts: 25 molecular references,
+  eight interactive experiments, a finite NaCl crystal fragment, and a custom
+  sandbox. Every contract owns its seed, complete physics/visual profile,
+  expected topology, evidence statement, and epistemic status.
+- Replaced runtime distance reconstruction of catalog molecules with explicit
+  atom-index graphs, integer effective bond orders, and declared equilibrium
+  lengths propagated through the JavaScript, bridge, WASM, and C++ bond APIs.
+- Added live bond-component topology, formed/broken/order-change counters,
+  translation/rotation/internal kinetic decomposition, radius of gyration,
+  dipole magnitude, bond-length/strain observables, dedicated Scale 3
+  diagnostics, and molecule-only chart descriptors.
+- Added vibration, rigid rotation, dissociation, capture, water-dimer,
+  dipole-alignment, methane-collision, and water heat-quench-release
+  laboratories. These remain effective `[IMPOSED]`/`[PARAMETRIC]` classical
+  models; no ab-initio chemistry or substrate-QM recovery is claimed.
+- Removed redundant molecule-bond UI state, excluded Scale 2 nuclear controls
+  and nuclear charts from Scale 3, and added collapsible scenario evidence in
+  the Scale 3 toolbar.
+- Added a hardware-backed sustained release gate spanning six canonical
+  workloads and a 192-atom/64-water complete-surface stress fixture. Corrected
+  live molecule-inspector refresh and gave Scale 3 its own inspector label and
+  prompt. Reconciled the npm lockfile so clean installs and production builds
+  are reproducible again.
+
 # Scale 2 Controlled Experiment Laboratories (2026-09-03)
 
 - Added deterministic bond rupture/recombination, argon heat-quench-release,

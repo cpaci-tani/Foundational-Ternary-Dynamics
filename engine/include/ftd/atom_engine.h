@@ -381,7 +381,8 @@ public:
 
     /// Create a covalent bond between two atoms by id.
     /// Returns true if bond was created, false if already bonded or invalid.
-    bool create_bond(int id_a, int id_b, int order = 1);
+    bool create_bond(int id_a, int id_b, int order = 1,
+                     double equilibrium_distance = -1.0);
 
     /// Remove bond between two atoms by id.
     bool remove_bond(int id_a, int id_b);

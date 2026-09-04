@@ -1,4 +1,4 @@
-import { setInspectorSectionVisibility } from '../chrome.js?v=2';
+import { setInspectorSectionVisibility } from '../chrome.js?v=3';
 import { getById, chargeLabel, formatMass } from '../../particle-catalog.js';
 import {
     formatPosition,

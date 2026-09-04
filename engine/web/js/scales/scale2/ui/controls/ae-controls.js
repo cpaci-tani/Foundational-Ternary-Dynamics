@@ -119,7 +119,7 @@ export function createAeIntegratorCard() {
 
 export function createAeNuclearLaboratoryCard() {
   const card = document.createElement('div');
-  card.className = 'card scale-ae';
+  card.className = 'card scale-ae scale2-only';
   card.innerHTML = `
     <div class="card-title">Nuclear Transport Laboratory</div>
     <p class="panel-resource-muted-copy" style="margin: 0 0 8px 0; font-size: var(--fs-xs);">

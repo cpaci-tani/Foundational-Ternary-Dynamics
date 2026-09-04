@@ -1170,12 +1170,11 @@ export class WasmBridge {
         return this._ensureAEFallback().aeAddLockedAtom(Z, x, y, z, charge, N);
     }
 
-    aeCreateBond(idA, idB, order = 1) {
+    aeCreateBond(idA, idB, order = 1, equilibriumDistance = -1) {
         if (this._aeHasWasm && this._module && this._ae) {
-            this._module.aeCreateBond(this._ae, idA, idB, order);
-        } else {
-            this._ensureAEFallback().aeCreateBond(idA, idB, order);
+            return this._module.aeCreateBond(this._ae, idA, idB, order, equilibriumDistance) === 1;
         }
+        return !!this._ensureAEFallback().aeCreateBond(idA, idB, order, equilibriumDistance);
     }
 
     aeSetAtomVelocity(id, vx, vy, vz) {
@@ -1184,6 +1183,14 @@ export class WasmBridge {
 
     aeSetExperimentState(experiment) {
         return this._ensureAEFallback().aeSetExperimentState(experiment);
+    }
+
+    aeSetMoleculeReference(label = '') {
+        return this._ensureAEFallback().aeSetMoleculeReference(label);
+    }
+
+    aeGetMoleculeDiagnostics() {
+        return this._ensureAEFallback().aeGetMoleculeDiagnostics();
     }
 
     aeTick() {

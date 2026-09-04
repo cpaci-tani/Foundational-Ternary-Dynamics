@@ -85,7 +85,7 @@ FTD spans multiple physical regimes exposed as live scale "modes" you can switch
 | **0** | Lattice / Substrate | Raw flux field J(x) + wave equation + 3³ voxel dynamics | `flux-pulse`, `flux-cascade` |
 | **1** | Particles | Continuous N-body ParticleEngine: Coulomb, optional Newtonian gravity, backend-supported advanced terms | `pe-hydrogen`, `pe-scattering` |
 | **2** | Atoms | Electron orbitals, nuclear shells, periodic table | `ae-carbon`, `ae-hydrogen` |
-| **3** | Molecules | Bonded atoms, vdW + LJ + bond springs | `mol-h2`, `mol-water`, `mol-caffeine` |
+| **3** | Molecules | Declared molecular graphs, classical force fields, live topology and kinetic modes | `mol-h2-vibration`, `mol-water-dimer-hbond`, `mol-caffeine` |
 | **4** | Planetary | N-body gravity, Kepler orbits, exoplanet systems | `planetary-solar-system`, `planetary-trappist-1` |
 | **5** | Cosmic | Lambda-CDM, Hubble flow, galaxy formation, BH | `cosmic-lcdm`, `cosmic-stellar-lifecycle` |
 | **6** | Meta | Moore neighborhood geometry (octahedron, cuboctahedron, stella octangula) | `meta-decomposition` |

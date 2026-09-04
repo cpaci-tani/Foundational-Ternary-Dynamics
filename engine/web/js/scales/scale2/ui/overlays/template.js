@@ -8,24 +8,12 @@ import { createScaleOverlayPanel, overlayRow, overlaySection } from '../../../..
 export function getScale2OverlayTemplate() {
   const bodyHtml = [
     overlaySection(
-      'Atomic structure',
-      'QM-inspired decoration — not the integrator state',
+      'Structure',
+      'Declared graph plus optional empirical atom decoration',
       `
       ${overlayRow('', `
-        <label class="scale-overlay-check" title="[EMPIRICAL DISPLAY] Sampled hydrogenic/Slater orbital-density motifs. These points are not electron trajectories or a solved many-electron wavefunction.">
-          <input type="checkbox" id="ae-show-clouds" checked> Orbitals
-        </label>
-        <label class="scale-overlay-check" title="[EMPIRICAL DISPLAY] Nuclear-extent envelope scaled with mass number A^(1/3). It is not a rendered strong-force field.">
-          <input type="checkbox" id="ae-show-shells" checked> Nuclear extent
-        </label>
         <label class="scale-overlay-check" title="Chemical or isotope labels anchored to the live atom records.">
           <input type="checkbox" id="ae-show-labels" checked> Labels
-        </label>
-        <label class="scale-overlay-check" title="[EMPIRICAL DISPLAY] Principal-shell scale guides from the Slater effective-charge approximation; not hard quantum boundaries.">
-          <input type="checkbox" id="ae-show-shell-bounds"> Shell bounds
-        </label>
-        <label class="scale-overlay-check" title="[SCHEMATIC] Valence p/d/f symmetry motifs. They show angular families, not solved orbital phase or occupancy.">
-          <input type="checkbox" id="ae-show-lobes"> Lobe motifs
         </label>
       `)}
       ${overlayRow('bonds', `
@@ -36,6 +24,22 @@ export function getScale2OverlayTemplate() {
           <option value="off">Off</option>
         </select>
       `)}
+      <div class="scale2-only">
+      ${overlayRow('', `
+        <label class="scale-overlay-check" title="[EMPIRICAL DISPLAY] Sampled hydrogenic/Slater orbital-density motifs. These points are not electron trajectories or a solved many-electron wavefunction.">
+          <input type="checkbox" id="ae-show-clouds" checked> Orbitals
+        </label>
+        <label class="scale-overlay-check" title="[EMPIRICAL DISPLAY] Nuclear-extent envelope scaled with mass number A^(1/3). It is not a rendered strong-force field.">
+          <input type="checkbox" id="ae-show-shells" checked> Nuclear extent
+        </label>
+        <label class="scale-overlay-check" title="[EMPIRICAL DISPLAY] Principal-shell scale guides from the Slater effective-charge approximation; not hard quantum boundaries.">
+          <input type="checkbox" id="ae-show-shell-bounds"> Shell bounds
+        </label>
+        <label class="scale-overlay-check" title="[SCHEMATIC] Valence p/d/f symmetry motifs. They show angular families, not solved orbital phase or occupancy.">
+          <input type="checkbox" id="ae-show-lobes"> Lobe motifs
+        </label>
+      `)}
+      </div>
       `,
     ),
     overlaySection(
@@ -143,22 +147,13 @@ export function getScale2OverlayTemplate() {
         </button>
       `),
     )}</div>`,
-    `
-    <div class="scale-overlay-section scale3-only">
-      <span class="scale-overlay-section-label">Molecular view</span>
-      ${overlayRow('', `
-        <button class="view-toggle active" id="toggle-mol-bonds" aria-pressed="true"
-          title="Show covalent bonds">Bonds</button>
-      `)}
-    </div>
-    `,
   ].join('');
 
   return createScaleOverlayPanel({
     id: 'ae-viewport-overlay',
     scaleClass: 'scale-ae',
-    title: 'Atom overlays',
-    footnote: 'Effective atom-engine visuals. Empirical, schematic, and parametric layers are labeled; none is substrate-QM recovery.',
+    title: '<span class="scale2-only">Atom overlays</span><span class="scale3-only">Molecule overlays</span>',
+    footnote: 'Effective classical-engine visuals. Empirical, schematic, imposed, and parametric layers are labeled; none is substrate-QM or ab-initio chemistry recovery.',
     bodyHtml,
     legendHtml: '<div id="ae-legend" class="ae-legend scale-overlay-legend" aria-live="polite"></div>',
   });

@@ -10,9 +10,9 @@ import { appRegistry } from './core/registry.js';
 import { Viewport } from './viewport.js?v=26';
 import { FluxEnergyChart, ParticleChart } from './charts.js';
 import { telemetryHub } from './telemetry-hub.js';
-import { createInspectorAppRuntime } from './inspector/app-runtime.js?v=5';
+import { createInspectorAppRuntime } from './inspector/app-runtime.js?v=7';
 import { initZoo, setEngineMode as setZooMode } from './zoo.js?v=3';
-import { getCategories, getMoleculesByCategory } from './molecules.js';
+import { populateScale3ScenarioSelect, SCALE3_DEFAULT_SCENARIO } from './scales/scale3/scenario-registry.js';
 import { debugLog } from './core/log.js';
 
 // ── Scale Controllers (extracted from inline code) ─────────────────
@@ -115,7 +115,6 @@ let fpsDisplay = 0;
 //   'cosmic'        (Scale 5) — galaxy/cluster simulation (CosmicRenderer)
 // Transitions: switchEngineMode() is the SOLE entry point for mode changes.
 let engineMode = 'lattice';
-let _showBonds = true;
 let _showOrbitalClouds = true; // orbital electron clouds in AE mode
 let bgManager = null;          // BackgroundManager instance
 let _prevLegendKey = '';        // cached element-set key for legend rebuild
@@ -1035,20 +1034,13 @@ function wireToolbar() {
         });
     }
 
-    // Orbital cloud toggles (Scale 2 and Scale 3)
+    // Scale 2 empirical orbital-cloud decoration.
     const cloudToggle = document.getElementById('ae-show-clouds');
     if (cloudToggle) {
         cloudToggle.addEventListener('change', (e) => {
             Scale2Controller.setAEVisualToggle('showOrbitalClouds', e.target.checked);
         });
     }
-    const molCloudToggle = document.getElementById('mol-show-clouds');
-    if (molCloudToggle) {
-        molCloudToggle.addEventListener('change', (e) => {
-            Scale2Controller.setAEVisualToggle('showOrbitalClouds', e.target.checked);
-        });
-    }
-
     // ── Enhanced atom/molecule visual controls ──
 
     // Nucleus shells (strong force glow)
@@ -1607,17 +1599,6 @@ function wireViewportToggles() {
         }
     }
 
-    // Scale 3 bonds toggle
-    const molBondBtn = document.getElementById('toggle-mol-bonds');
-    if (molBondBtn) {
-        molBondBtn.addEventListener('click', () => {
-            molBondBtn.classList.toggle('active');
-            _showBonds = molBondBtn.classList.contains('active');
-            molBondBtn.setAttribute('aria-pressed', _showBonds ? 'true' : 'false');
-            viewport.toggleBondLines(_showBonds);
-        });
-    }
-
 }
 
 
@@ -2079,42 +2060,7 @@ function loadMoleculeScenario(name) {
 // ── Build Scale 3 Molecule Dropdown ──────────────────────────────────
 function buildScale3MoleculeDropdown() {
     const select = document.getElementById('mol-scenario-select');
-    if (!select) return;
-
-    // Clear existing options
-    select.innerHTML = '';
-
-    // Add molecule categories from data-driven library
-    for (const cat of getCategories()) {
-        const mols = getMoleculesByCategory(cat.id);
-        if (!mols.length) continue;
-        const group = document.createElement('optgroup');
-        group.label = cat.label;
-        for (const mol of mols) {
-            const opt = document.createElement('option');
-            opt.value = `mol-${mol.id}`;
-            const cleanFormula = mol.formula.replace(/<[^>]+>/g, '');
-            opt.textContent = `${cleanFormula} ${mol.name}`;
-            group.appendChild(opt);
-        }
-        select.appendChild(group);
-    }
-
-    // Add special entries
-    const specialGroup = document.createElement('optgroup');
-    specialGroup.label = 'Special';
-    const crystalOpt = document.createElement('option');
-    crystalOpt.value = 'mol-crystal';
-    crystalOpt.textContent = 'NaCl Crystal (3\u00d73\u00d73)';
-    specialGroup.appendChild(crystalOpt);
-    const customOpt = document.createElement('option');
-    customOpt.value = 'mol-custom';
-    customOpt.textContent = 'Custom';
-    specialGroup.appendChild(customOpt);
-    select.appendChild(specialGroup);
-
-    // Default to H2
-    select.value = 'mol-h2';
+    populateScale3ScenarioSelect(select, SCALE3_DEFAULT_SCENARIO);
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────

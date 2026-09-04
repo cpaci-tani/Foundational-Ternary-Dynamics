@@ -14,6 +14,7 @@ import {
 } from '../js/scales/scale2/scenario-registry.js';
 import { ELEMENT_COUNT } from '../js/elements.js';
 import { getAllMolecules } from '../js/molecules.js';
+import { SCALE3_SCENARIOS } from '../js/scales/scale3/scenario-registry.js';
 import {
     getScale4ScenarioToolbarTemplate,
 } from '../js/scales/scale4/ui/toolbar/template.js';
@@ -41,7 +42,7 @@ test('the frozen live inventory remains synchronized with the audit baseline', (
     const scale0Ids = SCALE0_SCENARIOS.map((scenario) => scenario.id);
     const scale1Ids = SCALE1_SCENARIOS.map((scenario) => scenario.id);
     const scale2Count = AE_CURATED_SCENARIOS.length + ELEMENT_COUNT - 1;
-    const scale3Count = getAllMolecules().length + 2;
+    const scale3Count = SCALE3_SCENARIOS.length;
     const scale4Ids = optionIds(
         getScale4ScenarioToolbarTemplate(),
         /^(?:planetary-|exo-)/,
@@ -65,7 +66,7 @@ test('the frozen live inventory remains synchronized with the audit baseline', (
     expect(ELEMENT_COUNT).toBe(118);
     expect(scale2Count).toBe(150);
     expect(getAllMolecules()).toHaveLength(25);
-    expect(scale3Count).toBe(27);
+    expect(scale3Count).toBe(35);
     expect(scale4Ids).toHaveLength(8);
     expect(scale5Ids).toHaveLength(13);
 
@@ -78,7 +79,7 @@ test('the frozen live inventory remains synchronized with the audit baseline', (
         + 1; // Scale 6 structural exhibit, not a physics scenario.
     // Includes the Scale-1 batteries, the Scale-0 membrane/resonant-cell
     // additions, and Scale 2's validation and nuclear-reaction laboratories.
-    expect(totalPresentationEntries).toBe(377);
+    expect(totalPresentationEntries).toBe(385);
 });
 
 test('the manifest schema contains every pinned scientific-contract field', () => {

@@ -3,6 +3,7 @@ import { ChartCard } from './chart-card.js';
 import { charts as scale0Charts } from './descriptors/scale0.js';
 import { charts as scale1Charts } from './descriptors/scale1.js';
 import { charts as scale2Charts } from './descriptors/scale2.js';
+import { charts as scale3Charts } from './descriptors/scale3.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { PerfFlags } from '../../../config/perf-flags.js';
 import { isPanelLive } from '../panel-visibility.js';
@@ -14,10 +15,8 @@ const LS_ACTIVE_PREFIX = 'ftd.charts.active.';
 const CHARTS_BY_SCALE = Object.freeze({
     '0': scale0Charts,
     '1': scale1Charts,
-    // Scales 2 (atoms) and 3 (molecules) share the AtomEngine and therefore
-    // the same chart descriptors / hub buffers.
     '2': scale2Charts,
-    '3': scale2Charts,
+    '3': scale3Charts,
 });
 
 function getScaleCharts(scale) {

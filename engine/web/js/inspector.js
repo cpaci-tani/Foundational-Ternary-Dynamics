@@ -5,13 +5,13 @@
  * - Scale 0 (Lattice): Raycasts against lattice particles, queries WASM for voxel data
  * - Scale 1 (Particles): Raycasts against cloud points, maps back to PE particle via
  *   cloud-to-particle map, queries bridge for per-particle telemetry
- * - Scale 2 (Atoms): Raycasts against atom/orbital cloud points, maps back to atom via
- *   cloud-to-atom map, queries bridge for per-atom telemetry + molecule info
+ * - Scale 2/3 (Atoms/Molecules): Raycasts against atom/orbital cloud points,
+ *   maps back to atom via cloud-to-atom map, and queries live component data.
  */
 
 import * as THREE from 'three';
 import { TickHistoryControl } from './ui/charts/history-window.js';
-import { updateInspectorChrome, resetInspectorSelection } from './inspector/chrome.js?v=2';
+import { updateInspectorChrome, resetInspectorSelection } from './inspector/chrome.js?v=3';
 import { collectInspectorDom } from './inspector/dom-bindings.js?v=2';
 import { bindInspectorPointerControls } from './inspector/pointer-controller.js';
 import {
@@ -589,7 +589,7 @@ export class Inspector {
             if (this._selectedCosmicId >= 0 && this.cosmicContentEl && this.cosmicContentEl.style.display === 'block') {
                 updateCosmicFields(this);
             }
-        } else if (this._engineMode === 'atoms') {
+        } else if (this._engineMode === 'atoms' || this._engineMode === 'molecules') {
             if (this._selectedAEAtomId >= 0 && this.aeContentEl &&
                 this.aeContentEl.style.display === 'block') {
                 updateAEFields(this);

@@ -35,7 +35,7 @@ import {
     AE_H_BOND_EPS, AE_K_ANGLE, AE_THERMOSTAT_TAU,
     computeAtomicProps,
 } from '../atomic-props.js';
-import { cpkColor, defaultNeutronCount as elemNeutrons, maxBonds as elemMaxBonds } from '../elements.js';
+import { cpkColor, defaultNeutronCount as elemNeutrons } from '../elements.js';
 import { debugLog } from '../core/log.js';
 import {
     evaluateNuclearReaction,
@@ -152,6 +152,7 @@ export function createAtomEngine(state) {
             force_clamped_last: false,
             force_clamp_scale: 1.0,
             force_clamp_events: 0,
+            molecule_reference: null,
             experiment: null,
             nuclear: _aeNewNuclearState(),
             last_error: '',
@@ -167,6 +168,7 @@ export function createAtomEngine(state) {
             state._ae.force_clamped_last = false;
             state._ae.force_clamp_scale = 1.0;
             state._ae.force_clamp_events = 0;
+            state._ae.molecule_reference = null;
             state._ae.experiment = null;
             state._ae.nuclear = _aeNewNuclearState();
             state._ae.last_error = '';
@@ -677,16 +679,21 @@ export function createAtomEngine(state) {
         return id;
     }
 
-    function aeCreateBond(idA, idB, order = 1) {
+    function aeCreateBond(idA, idB, order = 1, equilibriumDistance = -1) {
         if (!state._ae || !Number.isInteger(idA) || !Number.isInteger(idB) || idA === idB ||
             !Number.isFinite(order) || order <= 0 || order > MAX_BOND_ORDER) return false;
         const a = state._ae.atoms.find(at => at.id === idA);
         const b = state._ae.atoms.find(at => at.id === idB);
         if (!a || !b || a.bonds.some(bond => bond.partner_id === idB)) return false;
         const sig_avg = (a.vdw_sigma + b.vdw_sigma) / 2;
-        const r_eq = sig_avg * Math.pow(2, 1.0 / 6.0) / order;
+        const declaredDistance = Number(equilibriumDistance);
+        const r_eq = Number.isFinite(declaredDistance) && declaredDistance > 0
+            ? declaredDistance
+            : sig_avg * Math.pow(2, 1.0 / 6.0);
         const eps_mix = Math.sqrt(a.vdw_epsilon * b.vdw_epsilon);
-        const k_bond = AE_K_BOND * eps_mix / (r_eq * r_eq);
+        // [PARAMETRIC] Bond order scales this effective classical spring. It
+        // declares molecular topology; it is not recovered electron density.
+        const k_bond = AE_K_BOND * eps_mix * order / (r_eq * r_eq);
         a.bonds.push({ partner_id: idB, r_eq, k_bond, order });
         b.bonds.push({ partner_id: idA, r_eq, k_bond, order });
         return true;
@@ -1956,6 +1963,176 @@ export function createAtomEngine(state) {
         };
     }
 
+    /**
+     * Capture the declared molecule graph after construction. The snapshot is
+     * observational only: topology comparisons never feed the force path.
+     */
+    function aeSetMoleculeReference(label = '') {
+        if (!state._ae) return false;
+        const edges = new Map();
+        for (const atom of state._ae.atoms) {
+            for (const bond of atom.bonds) {
+                if (atom.id >= bond.partner_id) continue;
+                edges.set(`${atom.id}:${bond.partner_id}`, bond.order);
+            }
+        }
+        state._ae.molecule_reference = {
+            label: String(label || ''),
+            atomCount: state._ae.atoms.length,
+            edges,
+        };
+        return true;
+    }
+
+    function _aeSolveSymmetric3(inertia, angularMomentum) {
+        const [a, b, c, d, e, f] = inertia;
+        const scale = Math.max(1, Math.abs(a) + Math.abs(d) + Math.abs(f));
+        const ridge = scale * 1e-10;
+        const ar = a + ridge, dr = d + ridge, fr = f + ridge;
+        const det = ar * (dr * fr - e * e) - b * (b * fr - c * e) + c * (b * e - c * dr);
+        if (!Number.isFinite(det) || Math.abs(det) < 1e-24) return [0, 0, 0];
+        const inv00 = (dr * fr - e * e) / det;
+        const inv01 = (c * e - b * fr) / det;
+        const inv02 = (b * e - c * dr) / det;
+        const inv11 = (ar * fr - c * c) / det;
+        const inv12 = (b * c - ar * e) / det;
+        const inv22 = (ar * dr - b * b) / det;
+        const [lx, ly, lz] = angularMomentum;
+        return [
+            inv00 * lx + inv01 * ly + inv02 * lz,
+            inv01 * lx + inv11 * ly + inv12 * lz,
+            inv02 * lx + inv12 * ly + inv22 * lz,
+        ];
+    }
+
+    /**
+     * Live Scale-3 observables derived only from positions, velocities,
+     * masses, charges, and the current bond graph. Translational, rotational,
+     * and residual vibrational kinetic energies are a classical rigid-body
+     * decomposition in AtomEngine simulation units.
+     */
+    function aeGetMoleculeDiagnostics() {
+        if (!state._ae) return null;
+        const atoms = state._ae.atoms;
+        const byId = new Map(atoms.map((atom) => [atom.id, atom]));
+        const visited = new Set();
+        const components = [];
+        for (const seed of atoms) {
+            if (visited.has(seed.id)) continue;
+            const members = [];
+            const pending = [seed.id];
+            while (pending.length) {
+                const id = pending.pop();
+                if (visited.has(id)) continue;
+                const atom = byId.get(id);
+                if (!atom) continue;
+                visited.add(id);
+                members.push(atom);
+                for (const bond of atom.bonds) pending.push(bond.partner_id);
+            }
+            components.push(members);
+        }
+
+        let totalMass = 0, netCharge = 0;
+        let translationalKE = 0, rotationalKE = 0, vibrationalKE = 0;
+        let radiusWeighted = 0;
+        let totalLx = 0, totalLy = 0, totalLz = 0;
+        let dipoleX = 0, dipoleY = 0, dipoleZ = 0;
+        let largestComponent = 0;
+        for (const members of components) {
+            largestComponent = Math.max(largestComponent, members.length);
+            let mass = 0, charge = 0;
+            let cx = 0, cy = 0, cz = 0, cvx = 0, cvy = 0, cvz = 0;
+            for (const atom of members) {
+                mass += atom.mass;
+                charge += atom.q_frac;
+                cx += atom.mass * atom.x; cy += atom.mass * atom.y; cz += atom.mass * atom.z;
+                cvx += atom.mass * atom.vx; cvy += atom.mass * atom.vy; cvz += atom.mass * atom.vz;
+            }
+            if (mass <= 0) continue;
+            cx /= mass; cy /= mass; cz /= mass;
+            cvx /= mass; cvy /= mass; cvz /= mass;
+            totalMass += mass;
+            netCharge += charge;
+            translationalKE += 0.5 * mass * (cvx * cvx + cvy * cvy + cvz * cvz);
+
+            let internalKE = 0, rg2 = 0;
+            let lX = 0, lY = 0, lZ = 0;
+            let ixx = 0, ixy = 0, ixz = 0, iyy = 0, iyz = 0, izz = 0;
+            for (const atom of members) {
+                const rx = atom.x - cx, ry = atom.y - cy, rz = atom.z - cz;
+                const vx = atom.vx - cvx, vy = atom.vy - cvy, vz = atom.vz - cvz;
+                const m = atom.mass;
+                internalKE += 0.5 * m * (vx * vx + vy * vy + vz * vz);
+                rg2 += m * (rx * rx + ry * ry + rz * rz);
+                lX += m * (ry * vz - rz * vy);
+                lY += m * (rz * vx - rx * vz);
+                lZ += m * (rx * vy - ry * vx);
+                ixx += m * (ry * ry + rz * rz); ixy -= m * rx * ry; ixz -= m * rx * rz;
+                iyy += m * (rx * rx + rz * rz); iyz -= m * ry * rz;
+                izz += m * (rx * rx + ry * ry);
+                dipoleX += atom.q_frac * rx; dipoleY += atom.q_frac * ry; dipoleZ += atom.q_frac * rz;
+            }
+            const omega = _aeSolveSymmetric3([ixx, ixy, ixz, iyy, iyz, izz], [lX, lY, lZ]);
+            const rawRot = 0.5 * (lX * omega[0] + lY * omega[1] + lZ * omega[2]);
+            const rotation = Math.max(0, Math.min(internalKE, Number.isFinite(rawRot) ? rawRot : 0));
+            rotationalKE += rotation;
+            vibrationalKE += Math.max(0, internalKE - rotation);
+            radiusWeighted += rg2;
+            totalLx += lX; totalLy += lY; totalLz += lZ;
+        }
+
+        let bondCount = 0, bondLengthSum = 0, strain2 = 0;
+        let minBondLength = Infinity, maxBondLength = 0;
+        const currentEdges = new Map();
+        for (const atom of atoms) {
+            for (const bond of atom.bonds) {
+                if (atom.id >= bond.partner_id) continue;
+                const other = byId.get(bond.partner_id);
+                if (!other) continue;
+                const length = Math.hypot(other.x - atom.x, other.y - atom.y, other.z - atom.z);
+                bondCount++;
+                bondLengthSum += length;
+                minBondLength = Math.min(minBondLength, length);
+                maxBondLength = Math.max(maxBondLength, length);
+                const relative = bond.r_eq > 0 ? (length - bond.r_eq) / bond.r_eq : 0;
+                strain2 += relative * relative;
+                currentEdges.set(`${atom.id}:${bond.partner_id}`, bond.order);
+            }
+        }
+        const reference = state._ae.molecule_reference;
+        let formedBonds = 0, brokenBonds = 0, orderChanges = 0;
+        if (reference) {
+            for (const [key, order] of currentEdges) {
+                if (!reference.edges.has(key)) formedBonds++;
+                else if (reference.edges.get(key) !== order) orderChanges++;
+            }
+            for (const key of reference.edges.keys()) if (!currentEdges.has(key)) brokenBonds++;
+        }
+        const topologyMatch = !!reference && formedBonds === 0 && brokenBonds === 0 && orderChanges === 0 &&
+            reference.atomCount === atoms.length;
+        return {
+            componentCount: components.length,
+            moleculeCount: components.filter((members) => members.length > 1).length,
+            isolatedAtoms: components.filter((members) => members.length === 1).length,
+            largestComponent,
+            totalMass, netCharge,
+            translationalKE, rotationalKE, vibrationalKE,
+            kineticClosure: translationalKE + rotationalKE + vibrationalKE,
+            angularMomentum: Math.hypot(totalLx, totalLy, totalLz),
+            radiusOfGyration: totalMass > 0 ? Math.sqrt(radiusWeighted / totalMass) : 0,
+            dipoleMagnitude: Math.hypot(dipoleX, dipoleY, dipoleZ),
+            bondCount,
+            meanBondLength: bondCount ? bondLengthSum / bondCount : 0,
+            minBondLength: bondCount ? minBondLength : 0,
+            maxBondLength: bondCount ? maxBondLength : 0,
+            bondRmsStrain: bondCount ? Math.sqrt(strain2 / bondCount) : 0,
+            referenceLabel: reference?.label || '',
+            referenceBondCount: reference?.edges.size ?? 0,
+            formedBonds, brokenBonds, orderChanges, topologyMatch,
+        };
+    }
+
     function aeInspectAtom(id) {
         if (!state._ae) return null;
         const a = state._ae.atoms.find(at => at.id === id);
@@ -2063,5 +2240,6 @@ export function createAtomEngine(state) {
         aeConfigureNuclearReaction, aeSetNuclearEnvironment, aeInjectNuclearParticle,
         aeGetNuclearDiagnostics, aeGetNuclearVisuals,
         aeGetVelocities, aeGetDipoles, aeGetHBondPairs, aeSetExperimentState,
+        aeSetMoleculeReference, aeGetMoleculeDiagnostics,
     };
 }

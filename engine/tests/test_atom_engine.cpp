@@ -108,6 +108,21 @@ int main() {
                     h_scaled.zeta, h_scaled.r_cloud / 1024.0, h_scaled.r_cloud * 1e-12);
     }
 
+    // ── Declared molecular topology: explicit equilibrium length ───
+    {
+        std::cout << "\n--- Declared molecular bond parameters ---\n";
+        AtomEngine ae;
+        ae.set_bonding_enabled(false);
+        const int left = ae.add_atom(6, {-2.125, 0.0, 0.0});
+        const int right = ae.add_atom(8, {2.125, 0.0, 0.0});
+        check("declared bond created", ae.create_bond(left, right, 2, 4.25));
+        check_close("declared equilibrium length retained",
+                    ae.atoms()[0].bonds[0].r_eq, 4.25, 1e-12);
+        check("declared integer order retained", ae.atoms()[0].bonds[0].order == 2);
+        check("declared multiple bond has positive stiffness",
+              ae.atoms()[0].bonds[0].k_bond > 0.0);
+    }
+
     // ── AE3: Free atom (no forces) ─────────────────────────────────
     {
         std::cout << "\n--- AE3: Free atom drift ---\n";

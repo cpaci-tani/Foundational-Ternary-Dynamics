@@ -364,7 +364,7 @@ function createScenarioRandom(seed) {
     };
 }
 
-function applyAEScenarioPhysics(bridge, scenario) {
+export function applyAEScenarioPhysics(bridge, scenario) {
     if (!scenario?.physics) return;
     for (const spec of AE_PHYSICS_SPECS) {
         const enabled = !!scenario.physics[spec.key];
@@ -397,7 +397,7 @@ function applyAEScenarioPhysics(bridge, scenario) {
  * and viewport layer visibility. Runs AFTER setupAEScenario so the
  * preset is the last writer over resetScale2's defaults.
  */
-function applyAEVisualPreset(viewport, preset) {
+export function applyAEVisualPreset(viewport, preset) {
     const v = preset?.visuals;
     if (!v) return;
 
@@ -857,7 +857,13 @@ export function animateAE(ctx) {
             const sTick = formatSI(diag.tick);
             const sParticles = String(diag.atomCount);
             const nuclear = diag.nuclear;
-            let sEnergy = formatEnergy(diag.totalEnergy, 2).text;
+            // The browser molecule engine uses visualization-scale reduced
+            // masses and force constants. Do not imply a measured eV/meV
+            // calibration on Scale 3; its dedicated diagnostics use the same
+            // explicit reduced-unit convention.
+            let sEnergy = engineMode === 'molecules'
+                ? `${Number(diag.totalEnergy).toPrecision(4)} sim`
+                : formatEnergy(diag.totalEnergy, 2).text;
             if (nuclear) {
                 const joule = nuclear.releasedJoule || 0;
                 if (nuclear.eventWeight > 1) {

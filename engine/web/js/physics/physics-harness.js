@@ -591,7 +591,15 @@ export class PhysicsHarness {
     }
 
     /** Create a bond between two atoms in the Scale-2 engine. */
-    aeCreateBond(idA, idB, order = 1) {
-        this.bridge?.aeCreateBond?.(idA, idB, order);
+    aeCreateBond(idA, idB, order = 1, equilibriumDistance = -1) {
+        return this.bridge?.aeCreateBond?.(idA, idB, order, equilibriumDistance) ?? false;
+    }
+
+    aeSetMoleculeReference(label = '') {
+        return this.bridge?.aeSetMoleculeReference?.(label) ?? false;
+    }
+
+    aeGetMoleculeDiagnostics() {
+        return this.bridge?.aeGetMoleculeDiagnostics?.() ?? null;
     }
 }

@@ -261,9 +261,9 @@ static int ae_add_locked_atom(ftd::AtomEngine& ae, int Z,
     return ae.add_locked_atom(Z, ftd::Vec3(x, y, z), charge, N);
 }
 
-static int ae_create_bond(ftd::AtomEngine& ae, int id_a, int id_b, int order) {
-    ae.create_bond(id_a, id_b, order);
-    return 0;
+static int ae_create_bond(ftd::AtomEngine& ae, int id_a, int id_b, int order,
+                          double equilibrium_distance) {
+    return ae.create_bond(id_a, id_b, order, equilibrium_distance) ? 1 : 0;
 }
 
 // ── AE Controls ────────────────────────────────────────────────────

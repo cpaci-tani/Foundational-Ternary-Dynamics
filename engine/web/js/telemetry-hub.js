@@ -396,7 +396,7 @@ export class TelemetryHub {
             _potentialMin: 0, _potentialMax: 0, _overlaySystemL: 0,
             _overlayProvenanceOn: false,
         };
-        this.s2  = { diag: null, runtime: null };  // also used for scale3
+        this.s2  = { diag: null, runtime: null, molecule: null };  // also used for scale3
         this.s4  = { diag: null };
         this.s5  = { diag: null, cosmic: null };
 
@@ -493,9 +493,14 @@ export class TelemetryHub {
         // purpose: aeGetForceDecomposition is O(N²) and visibility-gated, so
         // an always-collected force channel would either pay that cost every
         // tick or sit dead when arrows are hidden (the B1 dead-buffer class).
-                this._s2_ae = new MultiRingBuffer(200, ['aeKE', 'aeTemp', 'aeEnergy', 'aeBonds', 'aePEIonic', 'aePEVdw', 'aePEBond', 'aePEAngle', 'aeMomentum', 'aeAtomCount', 'aeDrift', 'aeForceClampEvents', 'aeNuclearReleased', 'aeNuclearDeposited', 'aeNuclearTransit', 'aeNuclearEscaped', 'aeNuclearJoule', 'aeReactionEvents', 'aeNuclearGeneration', 'aeNuclearFuel', 'aeNuclearLiveNeutrons', 'aeNuclearEventRate', 'aeNuclearK']);
+                this._s2_ae = new MultiRingBuffer(200, ['aeKE', 'aeTemp', 'aeEnergy', 'aeBonds', 'aePEIonic', 'aePEVdw', 'aePEBond', 'aePEAngle', 'aeMomentum', 'aeAtomCount', 'aeDrift', 'aeForceClampEvents', 'aeNuclearReleased', 'aeNuclearDeposited', 'aeNuclearTransit', 'aeNuclearEscaped', 'aeNuclearJoule', 'aeReactionEvents', 'aeNuclearGeneration', 'aeNuclearFuel', 'aeNuclearLiveNeutrons', 'aeNuclearEventRate', 'aeNuclearK', 'aeMolTranslation', 'aeMolRotation', 'aeMolVibration', 'aeMolComponents', 'aeMolLargest', 'aeMolRadius', 'aeMolBondStrain', 'aeMolDipole', 'aeMolTopologyChanges']);
         const aeVs = this._s2_ae.views;
         this.aeKE = aeVs.aeKE; this.aeTemp = aeVs.aeTemp; this.aeEnergy = aeVs.aeEnergy; this.aeBonds = aeVs.aeBonds; this.aePEIonic = aeVs.aePEIonic; this.aePEVdw = aeVs.aePEVdw; this.aePEBond = aeVs.aePEBond; this.aePEAngle = aeVs.aePEAngle; this.aeMomentum = aeVs.aeMomentum; this.aeAtomCount = aeVs.aeAtomCount; this.aeDrift = aeVs.aeDrift; this.aeForceClampEvents = aeVs.aeForceClampEvents; this.aeNuclearReleased = aeVs.aeNuclearReleased; this.aeNuclearDeposited = aeVs.aeNuclearDeposited; this.aeNuclearTransit = aeVs.aeNuclearTransit; this.aeNuclearEscaped = aeVs.aeNuclearEscaped; this.aeNuclearJoule = aeVs.aeNuclearJoule; this.aeReactionEvents = aeVs.aeReactionEvents; this.aeNuclearGeneration = aeVs.aeNuclearGeneration; this.aeNuclearFuel = aeVs.aeNuclearFuel; this.aeNuclearLiveNeutrons = aeVs.aeNuclearLiveNeutrons; this.aeNuclearEventRate = aeVs.aeNuclearEventRate; this.aeNuclearK = aeVs.aeNuclearK;
+        this.aeMolTranslation = aeVs.aeMolTranslation; this.aeMolRotation = aeVs.aeMolRotation;
+        this.aeMolVibration = aeVs.aeMolVibration; this.aeMolComponents = aeVs.aeMolComponents;
+        this.aeMolLargest = aeVs.aeMolLargest; this.aeMolRadius = aeVs.aeMolRadius;
+        this.aeMolBondStrain = aeVs.aeMolBondStrain; this.aeMolDipole = aeVs.aeMolDipole;
+        this.aeMolTopologyChanges = aeVs.aeMolTopologyChanges;
         this._aeInitialEnergy = null;
 
         // ── Scale 4 — Planetary (200-sample) ───────────
@@ -1258,6 +1263,11 @@ export class TelemetryHub {
             scenario = scenario.replace(/<[^>]*>/g, '');
         }
         this.s2.runtime = runtime ? { scenario, ...runtime } : { scenario };
+        const activeScale = typeof document !== 'undefined'
+            ? document.getElementById('app')?.dataset.activeScale
+            : null;
+        const molecule = activeScale === '3' ? bridge.aeGetMoleculeDiagnostics?.() ?? null : null;
+        this.s2.molecule = molecule;
 
         const currentTick = diag.tick || 0;
         if (currentTick !== this._lastTick2) {
@@ -1286,7 +1296,17 @@ export class TelemetryHub {
                 aeNuclearFuel: diag.nuclear?.fuelRemaining || 0,
                 aeNuclearLiveNeutrons: diag.nuclear?.liveNeutrons || 0,
                 aeNuclearEventRate: diag.nuclear?.eventRatePer100Ticks || 0,
-                aeNuclearK: diag.nuclear?.kEffective || 0
+                aeNuclearK: diag.nuclear?.kEffective || 0,
+                aeMolTranslation: molecule?.translationalKE || 0,
+                aeMolRotation: molecule?.rotationalKE || 0,
+                aeMolVibration: molecule?.vibrationalKE || 0,
+                aeMolComponents: molecule?.componentCount || 0,
+                aeMolLargest: molecule?.largestComponent || 0,
+                aeMolRadius: molecule?.radiusOfGyration || 0,
+                aeMolBondStrain: molecule?.bondRmsStrain || 0,
+                aeMolDipole: molecule?.dipoleMagnitude || 0,
+                aeMolTopologyChanges: (molecule?.formedBonds || 0) + (molecule?.brokenBonds || 0) +
+                    (molecule?.orderChanges || 0),
             }, currentTick);
         }
         return diag;
@@ -1570,7 +1590,7 @@ export class TelemetryHub {
                         case 2:
             case 3:
                 this._s2_ae.clear();
-                this.s2 = { diag: null, runtime: null };
+                this.s2 = { diag: null, runtime: null, molecule: null };
                 this._aeInitialEnergy = null;
                 this._lastTick2 = -1;
                 break;

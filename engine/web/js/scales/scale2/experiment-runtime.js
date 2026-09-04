@@ -67,6 +67,22 @@ function applyPhase(bridge, phase) {
             bridge.aeSetThermostat?.(false);
             setCheckbox('ae-thermostat', false);
             break;
+        case 'molecular-thermal-cycle:0':
+            bridge.aeSetThermostat?.(true);
+            bridge.aeSetThermostatTemp?.(1.4);
+            setCheckbox('ae-thermostat', true);
+            setThermostatTargetUI(1.4);
+            break;
+        case 'molecular-thermal-cycle:1':
+            bridge.aeSetThermostat?.(true);
+            bridge.aeSetThermostatTemp?.(0.12);
+            setCheckbox('ae-thermostat', true);
+            setThermostatTargetUI(0.12);
+            break;
+        case 'molecular-thermal-cycle:2':
+            bridge.aeSetThermostat?.(false);
+            setCheckbox('ae-thermostat', false);
+            break;
         default:
             break;
     }

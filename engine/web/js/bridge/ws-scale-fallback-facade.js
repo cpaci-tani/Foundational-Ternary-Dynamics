@@ -91,7 +91,11 @@ export class WebSocketScaleFallbackFacade {
     aeAddLockedAtom(Z, x, y, z, charge, N) {
         return this._ensureFallback().aeAddLockedAtom(Z, x, y, z, charge, N);
     }
-    aeCreateBond(idA, idB, order) { this._ensureFallback().aeCreateBond(idA, idB, order); }
+    aeCreateBond(idA, idB, order, equilibriumDistance) {
+        return this._ensureFallback().aeCreateBond(idA, idB, order, equilibriumDistance);
+    }
+    aeSetMoleculeReference(label) { return this._ensureFallback().aeSetMoleculeReference(label); }
+    aeGetMoleculeDiagnostics() { return this._ensureFallback().aeGetMoleculeDiagnostics(); }
     aeTick() { return this._ensureFallback().aeTick(); }
     aeGetAtomData() { return this._ensureFallback().aeGetAtomData(); }
     aeGetDiagnostics() { return this._ensureFallback().aeGetDiagnostics(); }

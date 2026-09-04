@@ -8,6 +8,7 @@ import { DiagnosticsTable } from './table.js?v=2';
 import { sections as scale0Sections } from './descriptors/scale0.js';
 import { sections as scale1Sections } from './descriptors/scale1.js?v=9';
 import { sections as scale2Sections } from './descriptors/scale2.js';
+import { sections as scale3Sections } from './descriptors/scale3.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { PerfFlags } from '../../../config/perf-flags.js';
 import { isPanelLive } from '../panel-visibility.js';
@@ -17,7 +18,7 @@ export class DiagnosticsPanelComponent {
     constructor(panelEl) {
         this.el = panelEl;
         this.tables = [];
-        this.tablesByScale = { '0': [], '1': [], ae: [] };
+        this.tablesByScale = { '0': [], '1': [], '2': [], '3': [] };
     }
 
     init() {
@@ -53,20 +54,31 @@ export class DiagnosticsPanelComponent {
             }
             this.el.insertBefore(scale1Root, scale0Root.nextSibling);
 
-            // Scales 2 + 3 share the AtomEngine descriptor table. Supplemental
-            // nuclear/binding cards live in a collapsible details block below.
-            const aeRoot = document.createElement('div');
-            aeRoot.className = 'scale-ae diag-ae-root';
+            const scale2Root = document.createElement('div');
+            scale2Root.className = 'scale2-only diag-scale2-root';
             for (const section of scale2Sections) {
                 const table = new DiagnosticsTable(section, telemetryHub, {
                     resetScope: 2,
                     historyControl: this.historyControl,
                 });
-                aeRoot.appendChild(table.el);
+                scale2Root.appendChild(table.el);
                 this.tables.push(table);
-                this.tablesByScale.ae.push(table);
+                this.tablesByScale['2'].push(table);
             }
-            this.el.insertBefore(aeRoot, scale1Root.nextSibling);
+            this.el.insertBefore(scale2Root, scale1Root.nextSibling);
+
+            const scale3Root = document.createElement('div');
+            scale3Root.className = 'scale3-only diag-scale3-root';
+            for (const section of scale3Sections) {
+                const table = new DiagnosticsTable(section, telemetryHub, {
+                    resetScope: 2,
+                    historyControl: this.historyControl,
+                });
+                scale3Root.appendChild(table.el);
+                this.tables.push(table);
+                this.tablesByScale['3'].push(table);
+            }
+            this.el.insertBefore(scale3Root, scale2Root.nextSibling);
             this.el.dataset.panelRedesignMounted = '1';
         }
         this.el.dataset.component = 'diagnostics-panel';
@@ -86,14 +98,7 @@ export class DiagnosticsPanelComponent {
             return;
         }
         const scale = document.getElementById('app')?.dataset.activeScale || '0';
-        const groupId = scale === '1' ? '1'
-            : ((scale === '2' || scale === '3') ? 'ae'
-                : (scale === '0' ? '0' : null));
-        const group = groupId === '1'
-            ? this.tablesByScale['1']
-            : groupId === 'ae'
-                ? this.tablesByScale.ae
-                : (groupId === '0' ? this.tablesByScale['0'] : null);
+        const group = this.tablesByScale[scale] || null;
         if (!group) return;
         // Consume the same coherent source samples as the other chart panels.
         // DiagnosticsTable independently stamps every row and spark buffer, so
@@ -107,10 +112,11 @@ export class DiagnosticsPanelComponent {
         this.tables.length = 0;
         this.tablesByScale['0'].length = 0;
         this.tablesByScale['1'].length = 0;
-        this.tablesByScale.ae.length = 0;
+        this.tablesByScale['2'].length = 0;
+        this.tablesByScale['3'].length = 0;
         this.historyControl?.destroy();
         this.historyControl = null;
-        this.el.querySelectorAll('.diag-scale0-root, .diag-scale1-root, .diag-ae-root')
+        this.el.querySelectorAll('.diag-scale0-root, .diag-scale1-root, .diag-scale2-root, .diag-scale3-root')
             .forEach((root) => root.remove());
         delete this.el.dataset.panelRedesignMounted;
         if (this.el._ftdDiagnosticsPanel === this) this.el._ftdDiagnosticsPanel = null;

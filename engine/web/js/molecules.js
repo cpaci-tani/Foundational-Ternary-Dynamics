@@ -1,22 +1,13 @@
 /**
- * Molecular Library — 25 molecules for Scale 2 (AtomEngine).
+ * Molecular Library — 25 reference structures for Scale 3 (Molecule Engine).
  *
  * Each molecule is a data object: atom positions, charges, metadata.
  * Positions in Bohr-scaled simulation units (S≈5).
  * Molecules centered at origin, principal axis along x, planar in xy.
  *
- * Auto-bonding threshold: 1.2 × sigma_avg.
- *   H σ≈4.0  C σ≈2.2  N σ≈2.1  O σ≈2.0  S σ≈1.6  Cl σ≈1.55  Na σ≈1.79
- *   H-H threshold ≈ 4.8    C-H ≈ 3.7    C-C ≈ 2.6
- *   O-H ≈ 3.6              N-H ≈ 3.7    C-O ≈ 2.5
- *
- * BOND-ORDER INFERENCE (audit P0-12/P0-13, resolved 2026-05-27): the
- * auto-bonder establishes connectivity only; bond orders (double / triple /
- * aromatic) are then inferred by `_aeInferBondOrders()` in mock-atom-engine.js
- * from valence saturation + interatomic distance, and the molecular renderer
- * draws 2 / 3 / delocalised cylinders accordingly. Geometries below are sized
- * so every advertised multiple bond is within the auto-bond threshold; the
- * descriptions name the order the visualization actually shows.
+ * Every reference carries an explicit graph and integer effective bond order.
+ * Runtime distance inference is reserved for experiments that deliberately
+ * enable auto-bonding; it is not used to reconstruct catalog identity.
  */
 
 import { C_SPEED } from './constants.js';
@@ -52,6 +43,58 @@ function ring(n, r) {
     }
     return pts;
 }
+
+// Canonical molecular graph for every reference structure. Atom indices refer
+// to the corresponding `atoms` array below. These graphs are declared data,
+// not reconstructed from distance thresholds at runtime. Bond order is an
+// effective topology/display attribute; the AtomEngine remains a classical
+// spring model rather than an electronic-structure calculation.
+const MOLECULE_TOPOLOGY = Object.freeze({
+    h2: [[0, 1, 1]],
+    o2: [[0, 1, 2]],
+    n2: [[0, 1, 3]],
+    hcl: [[0, 1, 1]],
+    water: [[0, 1, 1], [0, 2, 1]],
+    nacl: [],
+    noble: [],
+    co2: [[0, 1, 2], [1, 2, 2]],
+    nh3: [[0, 1, 1], [0, 2, 1], [0, 3, 1]],
+    h2o2: [[0, 1, 1], [0, 2, 1], [1, 3, 1]],
+    h2s: [[0, 1, 1], [0, 2, 1]],
+    methane: [[0, 1, 1], [0, 2, 1], [0, 3, 1], [0, 4, 1]],
+    ethane: [[0, 1, 1], [0, 2, 1], [0, 3, 1], [0, 4, 1],
+        [1, 5, 1], [1, 6, 1], [1, 7, 1]],
+    ethylene: [[0, 1, 2], [0, 2, 1], [0, 3, 1], [1, 4, 1], [1, 5, 1]],
+    acetylene: [[0, 1, 1], [1, 2, 3], [2, 3, 1]],
+    methanol: [[0, 1, 1], [0, 3, 1], [0, 4, 1], [0, 5, 1], [1, 2, 1]],
+    formaldehyde: [[0, 1, 2], [0, 2, 1], [0, 3, 1]],
+    benzene: [[0, 1, 2], [1, 2, 1], [2, 3, 2], [3, 4, 1],
+        [4, 5, 2], [5, 0, 1], [0, 6, 1], [1, 7, 1], [2, 8, 1],
+        [3, 9, 1], [4, 10, 1], [5, 11, 1]],
+    ethanol: [[0, 1, 1], [1, 2, 1], [2, 3, 1], [0, 4, 1], [0, 5, 1],
+        [0, 6, 1], [1, 7, 1], [1, 8, 1]],
+    acetic_acid: [[0, 1, 1], [1, 2, 2], [1, 3, 1], [3, 4, 1], [0, 5, 1],
+        [0, 6, 1], [0, 7, 1]],
+    glycine: [[0, 1, 1], [0, 5, 1], [0, 6, 1], [1, 2, 1], [1, 7, 1],
+        [1, 8, 1], [2, 3, 2], [2, 4, 1], [4, 9, 1]],
+    urea: [[0, 1, 2], [0, 2, 1], [0, 3, 1], [2, 4, 1], [2, 5, 1],
+        [3, 6, 1], [3, 7, 1]],
+    adenine: [[0, 1, 2], [1, 2, 1], [2, 3, 2], [3, 4, 1],
+        [4, 5, 2], [5, 0, 1], [3, 8, 1], [8, 7, 2],
+        [7, 6, 1], [6, 4, 2], [5, 9, 1], [1, 10, 1], [7, 11, 1],
+        [8, 12, 1], [9, 13, 1], [9, 14, 1]],
+    // A finite conventional-cell fragment. Boundary-spanning neighbours are
+    // absent by construction, so this is a connectivity reference, not bulk
+    // diamond energetics.
+    diamond: [[0, 4, 1], [1, 4, 1], [1, 5, 1], [2, 4, 1], [2, 6, 1],
+        [3, 4, 1], [3, 7, 1]],
+    caffeine: [[0, 1, 2], [1, 2, 1], [2, 3, 2], [3, 4, 1],
+        [4, 5, 2], [5, 0, 1], [3, 6, 1], [6, 7, 2],
+        [7, 8, 1], [8, 2, 2], [0, 9, 2], [2, 10, 2], [5, 11, 1],
+        [11, 12, 1], [11, 13, 1], [11, 14, 1], [1, 15, 1], [15, 16, 1],
+        [15, 17, 1], [15, 18, 1], [6, 19, 1], [19, 20, 1], [19, 21, 1],
+        [19, 22, 1], [7, 23, 1]],
+});
 
 // ── Molecule Data ────────────────────────────────────────────────────
 
@@ -550,6 +593,15 @@ const MOLECULES = [
     },
 ];
 
+for (const molecule of MOLECULES) {
+    const topology = MOLECULE_TOPOLOGY[molecule.id];
+    if (!topology) throw new Error(`Missing declared molecular topology: ${molecule.id}`);
+    molecule.bonds = Object.freeze(topology.map(([a, b, order]) => Object.freeze({ a, b, order })));
+    Object.freeze(molecule.atoms);
+    Object.freeze(molecule);
+}
+Object.freeze(MOLECULES);
+
 // ── Accessor Functions ───────────────────────────────────────────────
 
 export function getCategories() {
@@ -574,19 +626,64 @@ export function getMoleculesByCategory(catId) {
  * @param {string} id — molecule id from the catalog
  * @returns {boolean} true if loaded, false if not found
  */
-export function loadMolecule(bridge, id) {
-    const mol = getMolecule(id);
-    if (!mol) return false;
+function rotatePoint(x, y, z, rotation) {
+    const [rx, ry, rz] = rotation;
+    const cx = Math.cos(rx), sx = Math.sin(rx);
+    const cy = Math.cos(ry), sy = Math.sin(ry);
+    const cz = Math.cos(rz), sz = Math.sin(rz);
+    const y1 = y * cx - z * sx, z1 = y * sx + z * cx;
+    const x2 = x * cy + z1 * sy, z2 = -x * sy + z1 * cy;
+    return [x2 * cz - y1 * sz, x2 * sz + y1 * cz, z2];
+}
 
+/**
+ * Add one declared molecular record with an optional rigid transform.
+ * Returns atom IDs so protocols can apply explicit interventions afterward.
+ */
+export function instantiateMolecule(bridge, id, options = {}) {
+    const mol = getMolecule(id);
+    if (!mol) return null;
+
+    const offset = Array.isArray(options.offset) ? options.offset : [0, 0, 0];
+    const velocity = Array.isArray(options.velocity) ? options.velocity : [0, 0, 0];
+    const rotation = Array.isArray(options.rotation) ? options.rotation : [0, 0, 0];
+    const angularVelocity = Array.isArray(options.angularVelocity)
+        ? options.angularVelocity
+        : [0, 0, 0];
+
+    const atomIds = [];
     for (const atom of mol.atoms) {
-        bridge.aeAddAtom(
+        const [x, y, z] = rotatePoint(atom.x || 0, atom.y || 0, atom.z || 0, rotation);
+        const [spinX, spinY, spinZ] = [
+            angularVelocity[1] * z - angularVelocity[2] * y,
+            angularVelocity[2] * x - angularVelocity[0] * z,
+            angularVelocity[0] * y - angularVelocity[1] * x,
+        ];
+        atomIds.push(bridge.aeAddAtom(
             atom.Z,
-            atom.x || 0, atom.y || 0, atom.z || 0,
-            atom.vx || 0, atom.vy || 0, atom.vz || 0,
+            x + (offset[0] || 0), y + (offset[1] || 0), z + (offset[2] || 0),
+            (atom.vx || 0) + (velocity[0] || 0) + spinX,
+            (atom.vy || 0) + (velocity[1] || 0) + spinY,
+            (atom.vz || 0) + (velocity[2] || 0) + spinZ,
             atom.charge || 0
-        );
+        ));
     }
-    return true;
+    for (const bond of mol.bonds) {
+        const first = mol.atoms[bond.a];
+        const second = mol.atoms[bond.b];
+        const firstRotated = rotatePoint(first.x || 0, first.y || 0, first.z || 0, rotation);
+        const secondRotated = rotatePoint(second.x || 0, second.y || 0, second.z || 0, rotation);
+        const distance = Math.hypot(secondRotated[0] - firstRotated[0],
+            secondRotated[1] - firstRotated[1], secondRotated[2] - firstRotated[2]);
+        if (!bridge.aeCreateBond?.(atomIds[bond.a], atomIds[bond.b], bond.order, distance)) {
+            throw new Error(`Failed declared bond ${id}:${bond.a}-${bond.b}`);
+        }
+    }
+    return Object.freeze({ molecule: mol, atomIds: Object.freeze(atomIds) });
+}
+
+export function loadMolecule(bridge, id, options = {}) {
+    return !!instantiateMolecule(bridge, id, options);
 }
 
 /**
