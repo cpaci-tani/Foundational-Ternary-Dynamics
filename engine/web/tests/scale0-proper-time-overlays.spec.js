@@ -185,12 +185,31 @@ test.describe('Scale-0 proper-time overlay — live sampler + telemetry (WASM-ow
         // reads below aimed at the same object.
         await page.evaluate(() => { if (window.__ftdCtx) window.__ftdCtx._wasmWorkerDisabled = true; });
 
-        // s0-seed-ee-annihilation manifests real ±1 ternary state (an e+/e-
-        // pair) on the WASM engine — SCALE0_SCENARIO_DOMAIN_OVERRIDES
-        // (applicability.js) marks it { flux: true, state: true }. τ/φ only
-        // accumulate at manifested (state≠0) voxels, so a flux-only/vacuum
-        // scenario would read empty regardless of the toggles below.
-        await selectScale0Scenario(page, 's0-seed-ee-annihilation');
+        // The flag above only takes effect on the NEXT scenario load. Reload a
+        // WASM-owned, non-self-seeding scenario so the ACTIVE bridge becomes
+        // ctx.bridge (main thread): the Time panel's ptime.* telemetry
+        // publisher samples the active bridge, and the injection below must
+        // land on the same instance it reads.
+        await selectScale0Scenario(page, 'empty');
+
+        // Integration fix (2026-09-04): the original s0-seed-ee-annihilation
+        // selection produced ZERO particles on the main-thread WASM instance
+        // (scenario seeding lands on the active/worker bridge, not on
+        // ctx.bridge). τ/φ only accumulate at manifested (state≠0) voxels, so
+        // create particles the way every other WASM-owned spec does
+        // (scale0-substrate-protocol-v2, scale0-sampler-lifetime): inject a
+        // supercritical flux blob on ctx.bridge itself and let genesis fire.
+        await page.evaluate(() => {
+            const b = window.__ftdCtx?.bridge;
+            if (!b?.injectFlux || !b?.tick) throw new Error('ctx.bridge lacks injectFlux/tick (proxy path?)');
+            // The default (pedagogical flux) scenario's toggle defaults leave
+            // genesis/movement OFF on this instance — measured via a probe on
+            // 2026-09-04 — so no supercritical blob can manifest without this.
+            b.setToggle('genesis', true);
+            b.setToggle('movement', true);
+            const N = b.latticeSize, mid = Math.floor(N / 2);
+            b.injectFlux(mid, mid, mid, 50.0, 0.0, 0.0);
+        });
 
         // Enable the two engine toggles through the REAL production checkbox
         // + 'change' event path (ui/controls/wire.js) — the same path
@@ -203,6 +222,11 @@ test.describe('Scale-0 proper-time overlay — live sampler + telemetry (WASM-ow
                     cb.dispatchEvent(new Event('change', { bubbles: true }));
                 }
             }
+            // Belt and braces: the checkbox path targets the ACTIVE bridge,
+            // which may be the worker proxy; the samplers below read
+            // ctx.bridge, so set the engine toggles on that instance too.
+            const b = window.__ftdCtx?.bridge;
+            if (b?.setToggle) { b.setToggle('latency_field', true); b.setToggle('de_broglie_clock', true); }
         });
 
         // Also enable the three overlay flags (proves the store/dom/viewport
@@ -236,7 +260,7 @@ test.describe('Scale-0 proper-time overlay — live sampler + telemetry (WASM-ow
             };
         });
 
-        expect(sample.particleCount, 's0-seed-ee-annihilation should manifest particles').toBeGreaterThan(0);
+        expect(sample.particleCount, 'a supercritical injected flux blob should manifest particles via genesis').toBeGreaterThan(0);
         expect(sample.tauCount, 'τ sampler should return a nonzero count once manifested voxels exist').toBeGreaterThan(0);
         expect(sample.tauMax, 'accumulated τ should be positive after ticking with latency_field/de_broglie_clock ON').toBeGreaterThan(0);
         expect(sample.lapseCount, 'lapse sampler should return a nonzero count').toBeGreaterThan(0);

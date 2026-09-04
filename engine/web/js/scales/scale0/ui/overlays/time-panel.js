@@ -472,7 +472,11 @@ export function mountTimePanel(host, getBridge) {
     // an absent/unbound sampler yields count=0, which this treats as "no field"
     // rather than an error (graceful degradation, matching every other overlay).
     function sampleProperTimeMetrics(caps) {
-        const tau = caps.getScale0FieldSamples?.({ kind: 'properTime', stride: 1 })
+        // Sampler KIND is 'tau' (bridge-contract SCALE0_SAMPLER_METHODS);
+        // 'properTime' is the overlay-slot name that field-sample-cache.js maps
+        // to it. Passing the slot name here returned the EMPTY fallback and
+        // published NaN for the τ mean (integration fix 2026-09-04).
+        const tau = caps.getScale0FieldSamples?.({ kind: 'tau', stride: 1 })
             || { values: new Float32Array(0), count: 0 };
         const lapse = caps.getScale0FieldSamples?.({ kind: 'lapse', stride: 1 })
             || { values: new Float32Array(0), count: 0 };

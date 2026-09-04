@@ -206,22 +206,85 @@ test.describe('Transaction panel — live bridge behavior', () => {
         }
     });
 
-    test('drainHistoryEvents on the deployed WASM binary — bindings not yet built', async () => {
-        test.skip(true,
-            'This worktree adds enableHistoryJournal/historyJournalEnabled/drainHistoryEvents '
-            + 'to engine/wasm/bindings_render_bridge.cpp and engine/web/js/bridge/wasm-bridge.js, '
-            + 'but does not run build_wasm.bat (per task constraints — the integrator rebuilds once '
-            + 'after merging with the concurrent tau/latency-sampler worktree). The .wasm binary '
-            + 'under engine/web/wasm/ therefore predates these exports; isTransactionTrackingSupported() '
-            + 'correctly reports false against it today. Un-skip this test after the WASM rebuild lands.');
+    // Integration (2026-09-04): the two tests below were bodiless test.skip(true)
+    // placeholders pending the WASM rebuild. The rebuild landed (bindings verified
+    // present in ftd_core{,64,_mt}.wasm), so they now assert against the live
+    // main-thread WasmBridge (ctx.bridge) — the same instance the direct
+    // sampler specs use. They self-skip (with the probe result) only if the
+    // deployed binary genuinely lacks the bindings.
+    test('the deployed WASM binary exposes the history-journal bindings and the journal toggles cleanly', async ({ page }) => {
+        test.setTimeout(60_000);
+        await gotoAndReady(page);
+        await expect.poll(() => page.evaluate(() => !!window.__ftdCtx?.bridge), { timeout: 15_000 }).toBe(true);
+        const r = await page.evaluate(async () => {
+            const b = window.__ftdCtx?.bridge;
+            const { isTransactionTrackingSupported } = await import('/js/scales/scale0/runtime/transaction-tracker.js');
+            const supported = isTransactionTrackingSupported(b);
+            const m = b?._module;
+            const probe = { supported, moduleReachable: !!m, drain: typeof m?.drainHistoryEvents === 'function' };
+            if (!supported) return { probe };
+            const before = b.historyJournalEnabled();
+            const on = b.enableHistoryJournal(true);
+            const during = b.historyJournalEnabled();
+            b.enableHistoryJournal(false);
+            const after = b.historyJournalEnabled();
+            return { probe, before, on, during, after };
+        });
+        test.skip(!r.probe.supported, `deployed WASM lacks the journal bindings (probe: ${JSON.stringify(r.probe)})`);
+        expect(r.before, 'journal must be OFF by default (opt-in, performance)').toBe(false);
+        expect(r.during, 'enableHistoryJournal(true) must be reflected by historyJournalEnabled()').toBe(true);
+        expect(r.after, 'enableHistoryJournal(false) must switch it back off').toBe(false);
     });
 
-    test('a full tick loop drains real genesis/annihilation events on a WASM-owned scenario', async () => {
-        test.skip(true,
-            'Requires the rebuilt WASM binary (see the skip reason above) — cannot enable the '
-            + 'journal or observe real drained rows until engine/web/wasm/*.wasm is rebuilt from '
-            + 'this worktree\'s bindings_render_bridge.cpp. The native-side equivalent of this '
-            + 'assertion is engine/tests/test_history_journal_drain.cpp, which DOES run today '
-            + '(ctest -R history_journal) against the native RenderBridge the WASM binary wraps.');
+    test('a live tick loop drains real genesis rows and the tracker ingests them', async ({ page }) => {
+        test.setTimeout(90_000);
+        await gotoAndReady(page);
+        await expect.poll(() => page.evaluate(() => !!window.__ftdCtx?.bridge), { timeout: 15_000 }).toBe(true);
+        const r = await page.evaluate(async () => {
+            const b = window.__ftdCtx?.bridge;
+            const { isTransactionTrackingSupported, TransactionTracker, HISTORY_EVENT_KIND } =
+                await import('/js/scales/scale0/runtime/transaction-tracker.js');
+            if (!isTransactionTrackingSupported(b) || !b?.injectFlux || !b?.tick) {
+                return { skip: 'bridge lacks journal bindings or direct inject/tick surface' };
+            }
+            // The default scenario's toggle defaults leave genesis/movement OFF on
+            // ctx.bridge (probe-measured 2026-09-04); the journal only has
+            // something to record once manifestation can actually happen.
+            b.setToggle('genesis', true);
+            b.setToggle('movement', true);
+            b.enableHistoryJournal(true);
+            const N = b.latticeSize, mid = Math.floor(N / 2);
+            // Supercritical blob: |J| >> K_GENESIS so genesis fires within the loop.
+            b.injectFlux(mid, mid, mid, 50.0, 0.0, 0.0);
+            const tracker = new TransactionTracker();
+            let rows = 0, genesisRows = 0, badKind = 0, badGenesis = 0;
+            const kinds = new Set();
+            for (let i = 0; i < 12; i++) {
+                b.tick();
+                // The native journal clears at the START of the next tick(),
+                // so drain immediately after each tick.
+                const d = b.drainHistoryEvents();
+                rows += d.rowCount;
+                for (let j = 0; j < d.rowCount; j++) {
+                    const k = d.kind[j]; kinds.add(k);
+                    if (k < 0 || k > 5) badKind++;
+                    if (k === HISTORY_EVENT_KIND.GENESIS) {
+                        genesisRows++;
+                        if (d.stateBefore[j] !== 0 || d.stateAfter[j] === 0) badGenesis++;
+                    }
+                }
+                tracker.ingestTick(d);
+            }
+            b.enableHistoryJournal(false);
+            const snap = tracker.snapshotTelemetry();
+            return { skip: null, rows, genesisRows, badKind, badGenesis, kinds: [...kinds].sort(),
+                     snapIsObject: !!snap && typeof snap === 'object' };
+        });
+        test.skip(!!r.skip, r.skip || '');
+        expect(r.rows, 'the drained journal must contain rows after ticking a supercritical blob').toBeGreaterThan(0);
+        expect(r.badKind, 'every drained kind must be a valid HistoryEventKind (0..5)').toBe(0);
+        expect(r.genesisRows, 'at least one Genesis row must fire from the injected blob').toBeGreaterThan(0);
+        expect(r.badGenesis, 'every Genesis row must go stateBefore=0 -> stateAfter!=0').toBe(0);
+        expect(r.snapIsObject, 'tracker.snapshotTelemetry() must return an object after ingesting real rows').toBe(true);
     });
 });
