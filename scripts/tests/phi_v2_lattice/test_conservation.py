@@ -31,6 +31,6 @@ def test_journal_reconstructs_series():
     for t in range(1, 17):
         new, ev = T.tick(st, tables); jr.record(t, st, new); st = new
     tail = owner
-    assert jr.site_series(tail, 16) == [1,1,1,1,0,0,0,0]*2
+    assert jr.site_series(tail, 16) == [0] + [1,1,1,1,0,0,0,0]*2
     rel = jr.relation_series("sc", owner, (0,), 16)
-    assert len(rel) == 16 and rel[0] != rel[4]
+    assert len(rel) == 17 and rel[0] != rel[4]

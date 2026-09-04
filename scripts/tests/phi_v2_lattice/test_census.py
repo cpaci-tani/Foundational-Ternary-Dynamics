@@ -26,7 +26,7 @@ def test_absorbed_token_census_is_measured_from_first_occupation():
     assert len(seen) == 1
     kind, owner, idx = next(iter(seen))
     rc = X.relation_census(jr, kind, owner, idx, 24)
-    assert rc.first_occupied == 2
+    assert rc.first_occupied == 3   # index 0 is t=0; the token lands during tick 3
     assert rc.orbit_constant and rc.polarity_constant and rc.in_place_flips == 0 and rc.reversals == 0
     assert rc.phase_steps_ok and rc.crossings_at_phase0 and rc.runs_mod4_ok
     assert (rc.period, rc.duty) == (8, 4)

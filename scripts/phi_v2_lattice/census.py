@@ -44,6 +44,12 @@ def _runs(bits):
 
 @dataclass
 class RelationCensus:
+    """On the A9 alphabet the C4 orbit classes coincide with the polarity classes (three classes:
+    polarity -1, polarity +1, BLANK), so orbit_constant and polarity_constant are the SAME test on
+    occupied tokens, and polarity constancy already implies no in-place flip and no reversal. All
+    four fields are kept (composition can violate them independently even though the certified law
+    cannot), but together they are a composition-bug detector (relation clobbering) — one predicate,
+    not four independent physics findings."""
     period: int | None; duty: int | None; orbit_constant: bool; polarity_constant: bool
     in_place_flips: int; nulls: int; bounces: int; reversals: int
     first_occupied: int | None      # series index at which the relation first holds a token (None: never)
@@ -61,7 +67,8 @@ def relation_census(journal, kind, owner, idx, horizon) -> RelationCensus:
     tail = series[first:]; toks = tokens[first:]; prim = [_occ(l) for l, _ in tail]; n = len(tail)
     orbits = {_orbit(t) for t in toks if _occ(t)}
     pols = {_pol(t) for t in toks if _occ(t)}
-    period = next((p for p in range(1, n) if tail[p:] == tail[:-p]), None)
+    # a period must repeat at least twice inside the window; without this guard, p near n matches by coincidence
+    period = next((p for p in range(1, n // 2 + 1) if tail[p:] == tail[:-p]), None)
     duty = sum(prim[:period]) if period else None
     flips = sum(1 for a, b in zip(toks, toks[1:]) if _occ(a) and _occ(b) and _pol(a) == -_pol(b))
     nulls, bounces, reversals = _classify_nulls([_pol(l) for l, _ in tail])

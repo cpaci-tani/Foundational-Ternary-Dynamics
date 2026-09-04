@@ -75,6 +75,7 @@ def load_collision_tables():
         tables = tuple(dict(layer) for layer in data["collisions"])
         _CACHE.parent.mkdir(parents=True, exist_ok=True)
         _CACHE.write_bytes(pickle.dumps(tables))
+    if _CACHE.parent.exists():
         (_CACHE.parent / ".gitignore").write_text("*\n", encoding="utf-8")
     digest = _hash_tables(tables)
     if digest != COLLISION_HASH:

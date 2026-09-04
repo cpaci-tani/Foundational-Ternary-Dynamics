@@ -32,20 +32,24 @@ class Journal:
                                                   int(after.fcc[i, p, q, 0]), int(after.fcc[i, p, q, 1])))
 
     def site_series(self, site: int, horizon: int) -> list[int]:
-        cur = int(self.s0[site]); out = []
+        """s0 at index 0 (the initial state, before any tick), then the state after each of
+        ticks 1..horizon: horizon + 1 entries total."""
+        cur = int(self.s0[site]); out = [cur]
         rows = {r.tick: r.s_after for r in self.site_rows if r.site == site}
         for t in range(1, horizon + 1):
             cur = rows.get(t, cur); out.append(cur)
         return out
 
     def relation_series(self, kind: str, owner: int, idx: tuple, horizon: int) -> list[tuple[int, int]]:
+        """sc0/fcc0 at index 0 (the initial state, before any tick), then the state after each of
+        ticks 1..horizon: horizon + 1 entries total."""
         if kind == "sc":
             cur = (int(self.sc0[owner, idx[0], 0]), int(self.sc0[owner, idx[0], 1]))
         else:
             cur = (int(self.fcc0[owner, idx[0], idx[1], 0]), int(self.fcc0[owner, idx[0], idx[1], 1]))
         rows = {r.tick: (r.lam_after, r.rho_after) for r in self.relation_rows
                 if r.kind == kind and r.owner == owner and tuple(r.idx) == tuple(idx)}
-        out = []
+        out = [cur]
         for t in range(1, horizon + 1):
             cur = rows.get(t, cur); out.append(cur)
         return out

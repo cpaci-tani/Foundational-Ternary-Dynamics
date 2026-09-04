@@ -11,7 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 import numpy as np
 from . import channels as C, geometry as G, state as S
-from ._proofs import BLANK, readout, rotate, encode, relation_tick
+from ._proofs import BLANK, readout, rotate, encode, relation_tick, phase_index
 
 _N = C.N_STATES
 
@@ -21,6 +21,9 @@ class TickEvents:
     absorptions: list = field(default_factory=list)   # (x, channel, owner, axis)
     collisions: list = field(default_factory=list)    # (site, eps, before_pair, after_pair)
     crossings: list = field(default_factory=list)     # (kind, owner, idx, direction)
+    gate_holds: list = field(default_factory=list)    # (kind, owner, idx): relations whose lone token
+                                                       # sat at phase 0 but whose crossing was blocked
+                                                       # by an odd gate this tick
 
 
 def bal3(q: int) -> int:
@@ -88,35 +91,45 @@ def gate(st: S.LatticeState, tail: int, head: int) -> int:
 
 def _cross_pair(st, lam_idx, rho_idx, tail, head):
     lam, rho = S.z_of(lam_idx), S.z_of(rho_idx)
-    lam2, rho2 = relation_tick(lam, rho, even_gate=bool(gate(st, tail, head)))
+    lam_occ, rho_occ = readout(lam)[0], readout(rho)[0]
+    one_owned = bool(lam_occ) != bool(rho_occ)
+    token = lam if lam_occ else rho
+    at_phase0 = one_owned and phase_index(token) == 0
+    g = gate(st, tail, head)
+    lam2, rho2 = relation_tick(lam, rho, even_gate=bool(g))
     direction = 0
     if readout(lam)[0] and not readout(lam2)[0]:
         direction = +1
     elif not readout(lam)[0] and readout(lam2)[0]:
         direction = -1
-    return S.idx_of(lam2), S.idx_of(rho2), direction
+    held = at_phase0 and not g
+    return S.idx_of(lam2), S.idx_of(rho2), direction, held
 
 
 def cross_relations(st: S.LatticeState, absorbing: set):
-    new_sc = st.sc.copy(); new_fcc = st.fcc.copy(); events = []
+    new_sc = st.sc.copy(); new_fcc = st.fcc.copy(); events = []; holds = []
     N = S.n_sites(st)
     for i in range(N):
         for a in range(3):
             if (i, a) in absorbing:
                 continue
             tail, head = G.sc_endpoints(st.L, i, a)
-            l2, r2, dirn = _cross_pair(st, st.sc[i, a, 0], st.sc[i, a, 1], tail, head)
+            l2, r2, dirn, held = _cross_pair(st, st.sc[i, a, 0], st.sc[i, a, 1], tail, head)
             new_sc[i, a, 0], new_sc[i, a, 1] = l2, r2
             if dirn:
                 events.append(("sc", i, (a,), dirn))
+            if held:
+                holds.append(("sc", i, (a,)))
         for p in range(3):
             for q in range(2):
                 tail, head = G.fcc_endpoints(st.L, i, p, q)
-                l2, r2, dirn = _cross_pair(st, st.fcc[i, p, q, 0], st.fcc[i, p, q, 1], tail, head)
+                l2, r2, dirn, held = _cross_pair(st, st.fcc[i, p, q, 0], st.fcc[i, p, q, 1], tail, head)
                 new_fcc[i, p, q, 0], new_fcc[i, p, q, 1] = l2, r2
                 if dirn:
                     events.append(("fcc", i, (p, q), dirn))
-    return new_sc, new_fcc, events
+                if held:
+                    holds.append(("fcc", i, (p, q)))
+    return new_sc, new_fcc, events, holds
 
 
 # ---------------------------------------------------------------- 3.4 manifestation
@@ -184,8 +197,9 @@ def tick(st: S.LatticeState, tables):
     new_bank = stream(st, collided)
     new_ell = ((st.ell.astype(int) - 1) % 3).astype(np.int8)
     # 3.3 crossing on every non-absorbing relation (gate from PRE-tick banks)
-    new_sc, new_fcc, crossings = cross_relations(st, absorbing)
+    new_sc, new_fcc, crossings, holds = cross_relations(st, absorbing)
     ev.crossings.extend(crossings)
+    ev.gate_holds.extend(holds)
     # 3.1 (write half): the absorbed token lands as (lambda', rho') = (BLANK, R z)
     for (owner, axis), (x, c) in adm.items():
         z = encode(2, C.polarity(c))

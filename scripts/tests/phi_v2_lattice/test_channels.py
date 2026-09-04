@@ -44,7 +44,7 @@ def test_half_turn_is_a_phase_only_shift():
         assert C.tangent(h) == C.tangent(c) and C.polarity(h) == C.polarity(c)
         assert C.phase(h) == (C.phase(c) + 2) % 4
         assert C.half_turn(h) == c
-        assert h != C.U(C.U(c)) or C.tangent(C.U(C.U(c))) == C.tangent(c)
+        assert h != C.U(C.U(c))
 
 def test_tangent_is_an_sc_unit_vector():
     for c in range(C.N_CHANNELS):

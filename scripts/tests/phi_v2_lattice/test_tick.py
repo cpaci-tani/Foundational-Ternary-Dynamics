@@ -112,6 +112,36 @@ def test_absorption_writes_blank_primary_and_rotated_token_to_the_reserve():
     assert S.z_of(new.sc[x, 1, 0]) == BLANK
     assert S.z_of(new.sc[x, 1, 1]) == rotate(encode(2, -1))     # (lambda', rho') = (0, R z)  (C13/C14)
 
+def test_gate_holds_plus_crossings_equal_phase0_opportunities():
+    """Every relation with exactly one occupied slot whose token is at phase 0 either crosses
+    (even gate) or is held (odd gate): the two event lists partition those opportunities."""
+    from phi_v2_lattice._proofs import readout, phase_index
+    rng = np.random.default_rng(7); tables = _tables(); L = 4; N = L**3
+    for _ in range(3):
+        st = S.blank(L)
+        st.sc[:] = rng.integers(0, 9, size=st.sc.shape).astype(np.int8)
+        st.fcc[:] = rng.integers(0, 9, size=st.fcc.shape).astype(np.int8)
+        st.bank[:] = rng.random((N, 384)) < 0.01
+        opportunities = 0
+        for i in range(N):
+            for a in range(3):
+                pair = [S.z_of(st.sc[i, a, 0]), S.z_of(st.sc[i, a, 1])]
+                occ = [readout(z)[0] for z in pair]
+                if sum(occ) == 1 and phase_index(pair[0] if occ[0] else pair[1]) == 0:
+                    opportunities += 1
+            for p in range(3):
+                for q in range(2):
+                    pair = [S.z_of(st.fcc[i, p, q, 0]), S.z_of(st.fcc[i, p, q, 1])]
+                    occ = [readout(z)[0] for z in pair]
+                    if sum(occ) == 1 and phase_index(pair[0] if occ[0] else pair[1]) == 0:
+                        opportunities += 1
+        adm = T.admitted_absorptions(st)
+        new, ev = T.tick(st, tables)
+        # absorbing edges are skipped by the crossing pass; they had both slots blank, so they were never opportunities
+        assert len(ev.crossings) + len(ev.gate_holds) == opportunities
+        assert opportunities > 0
+
+
 def test_tick_is_a_pure_function_of_the_prestate():
     rng = np.random.default_rng(4); tables = _tables(); L = 3; N = 27
     st = S.blank(L); st.bank[:] = rng.random((N, 384)) < 0.02

@@ -10,10 +10,12 @@ def run(L=6, seed=20260904, n_tokens=24, field_occupation=0.02, horizon=64):
     tables = C.load_collision_tables()
     st = Pz.sparse_material(L, seed, n_tokens, field_occupation)
     jr = J.Journal(st); states = [st]; w0 = K.work_units(st); gauss_ok = True; n_abs = 0
+    n_cross = 0; n_holds = 0
     for t in range(1, horizon + 1):
         new, ev = T.tick(st, tables); jr.record(t, st, new)
         gauss_ok &= (K.gauss_residual(st, new, ev) == 0)
         n_abs += len(ev.absorptions)
+        n_cross += len(ev.crossings); n_holds += len(ev.gate_holds)
         st = new; states.append(st)
     assert K.work_units(st) == w0, "work units not conserved"
     # census every relation that ever held a token
@@ -31,6 +33,8 @@ def run(L=6, seed=20260904, n_tokens=24, field_occupation=0.02, horizon=64):
         in_place_flips=sum(r.in_place_flips for r in rows),
         nulls=sum(r.nulls for r in rows), bounces=sum(r.bounces for r in rows), reversals=sum(r.reversals for r in rows),
         gauss_identity_every_tick=gauss_ok, absorptions=n_abs,
+        phase0_opportunities=n_cross + n_holds, gate_blocked_at_phase0=n_holds,
+        gate_blocked_fraction=round(n_holds / max(1, n_cross + n_holds), 4),
         seeded=sum(1 for r in rows if r.first_occupied == 0),
         created_mid_horizon=sum(1 for r in rows if r.first_occupied not in (0, None)),
         phase_step_violations=sum(1 for r in rows if not r.phase_steps_ok),
@@ -47,11 +51,12 @@ def run(L=6, seed=20260904, n_tokens=24, field_occupation=0.02, horizon=64):
     c = (summary["period_other"] == 0 and summary["period_none"] == 0
          and summary["duty_4_of_8"] == summary["relations_seen"])
     print("\n  CRITERION (corrected FTD-1028), measured from each relation's first occupation:")
-    print(f"  A carrier conservation (orbit, polarity, no in-place flip, no reversal): {'MET' if a else 'NOT MET'}")
+    print(f"  A token integrity — one predicate: a relation's token is never replaced or dropped "
+          f"(polarity/orbit constant, no in-place flip, no reversal): {'MET' if a else 'NOT MET'}")
     print(f"  B clock integrity (phase +1/tick, crossings only at phase 0, interior runs = 0 mod 4): {'MET' if b else 'NOT MET'}")
     print(f"  C exact period 8 / duty 4 of 8 (expected only under an always-even gate): {'MET' if c else 'NOT MET'}")
     verdict = ('CRITERION MET under composition' if (a and b and c)
-               else 'A+B MET, C NOT MET under composition — gate-modulated clock, carrier intact' if (a and b)
+               else 'A+B MET, C NOT MET under composition — clock gate-modulated (see gate_blocked_fraction), carrier intact' if (a and b)
                else 'CRITERION NOT MET under composition — see counts')
     print(f"  VERDICT: {verdict}")
     return summary
