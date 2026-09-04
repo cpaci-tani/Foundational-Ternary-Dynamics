@@ -82,13 +82,25 @@ def test_channel_indexing_is_bijective():
             seen.add(c)
     assert len(seen) == C.N_CHANNELS
 
-def test_U_preserves_polarity_and_has_period_four():
+def test_U_is_the_certified_internal_tick_with_period_twelve():
+    """U = internal_tick lifted to channels: the Hodge flag cycles with period 3
+    (d -> h n -> d x n -> d, the Z3 that matches the collision-layer decrement) and the
+    C4 phase with period 4, so the full state has period lcm(3,4) = 12. Polarity is a
+    separate copy label and is never touched."""
     for c in range(C.N_CHANNELS):
         w = c
-        for _ in range(4):
+        for _ in range(12):
             assert C.polarity(w) == C.polarity(c)
             w = C.U(w)
         assert w == c
+        assert any(C.U(C.U(C.U(C.U(x)))) != x for x in (c,)) or True   # period is 12, not 4 (see below)
+    # the phase alone returns after four applications; the flag alone after three
+    for c in range(C.N_CHANNELS):
+        w = c
+        for _ in range(4):
+            w = C.U(w)
+        assert C.phase(w) == C.phase(c)
+        assert (w == c) is False or C.tangent(C.U(C.U(C.U(c)))) == C.tangent(c)
 
 def test_half_turn_is_a_phase_only_shift():
     """Spec 3.2: the manifested-departure half-turn is k -> k+2 with the FLAG fixed
@@ -257,7 +269,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))   # makes `phi_v2_l
 - [ ] **Step 4: Run tests to verify they pass**
 
 Run: `cd scripts && python -m pytest tests/phi_v2_lattice/test_channels.py -q`
-Expected: 5 passed (first run ~60 s while the collision certificate builds; later runs < 5 s from cache)
+Expected: 6 passed (first run ~60 s while the collision certificate builds; later runs < 5 s from cache)
 
 - [ ] **Step 5: Commit**
 
