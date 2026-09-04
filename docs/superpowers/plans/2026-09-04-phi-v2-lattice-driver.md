@@ -536,8 +536,26 @@ def test_isolated_relation_reproduces_the_certified_period_eight_square_wave():
     # after 8 ticks the pair returns exactly
     assert st.sc[owner, 0].tolist() == st0.sc[owner, 0].tolist()
 
+def _current_from_events(st, ev):
+    """J_r rebuilt from the tick's crossing LOG alone: direction x polarity of the token that
+    moved (pre-state slot lambda for +1, rho for -1). Independent of _current's eps-difference."""
+    Jsc = np.zeros(st.sc.shape[:2], dtype=int); Jfcc = np.zeros(st.fcc.shape[:3], dtype=int)
+    for kind, owner, idx, dirn in ev.crossings:
+        slot = 0 if dirn == +1 else 1
+        tok = st.sc[owner, idx[0], slot] if kind == "sc" else st.fcc[owner, idx[0], idx[1], slot]
+        pol = T._eps(tok)
+        assert pol != 0
+        if kind == "sc":
+            Jsc[owner, idx[0]] = dirn * pol
+        else:
+            Jfcc[owner, idx[0], idx[1]] = dirn * pol
+    return Jsc, Jfcc
+
 def test_gauss_identity_holds_on_random_states():
-    rng = np.random.default_rng(1); tables = _tables(); L = 4; N = L**3
+    """dQ + div J = 0 with J rebuilt from the crossing EVENT LOG, not from the eps-difference
+    (that route makes the identity a tautology of the helpers). Also checks that the log and
+    the eps-difference agree, and that the test is live (some current actually flows)."""
+    rng = np.random.default_rng(1); tables = _tables(); L = 4; N = L**3; live = False
     for _ in range(5):
         st = S.blank(L)
         st.sc[:] = rng.integers(0, 9, size=st.sc.shape).astype(np.int8)
@@ -547,10 +565,14 @@ def test_gauss_identity_holds_on_random_states():
         Q_before = T._incidence(st, st.sc, st.fcc)
         new, ev = T.tick(st, tables)
         Q_after = T._incidence(new, new.sc, new.fcc)
-        J = T._current(st, new)                            # per-relation oriented current
-        div = T._divergence(st, J)
+        J_ev = _current_from_events(st, ev)
+        div = T._divergence(st, J_ev)
         assert np.array_equal(Q_after - Q_before + div, np.zeros(N, dtype=int))
+        Jsc, Jfcc = T._current(st, new)                     # the eps-difference route must agree
+        assert np.array_equal(Jsc, J_ev[0]) and np.array_equal(Jfcc, J_ev[1])
+        live |= bool(np.any(div != 0))
         assert np.array_equal(new.s, np.vectorize(T.bal3)(Q_after))
+    assert live
 
 def test_work_units_are_conserved_by_the_tick():
     rng = np.random.default_rng(2); tables = _tables(); L = 4; N = L**3
@@ -690,7 +712,8 @@ def stream(st: S.LatticeState, bank: np.ndarray) -> np.ndarray:
         if st.s[x] != 0:
             c2 = C.half_turn(c2)
         y = G.shift(st.L, x, d)
-        assert not out[y, c2], "streaming write collision (spec says impossible)"
+        if out[y, c2]:
+            raise RuntimeError(f"streaming write collision (spec says impossible): ({x}, {c}) -> ({y}, {c2})")
         out[y, c2] = True
     return out
 
