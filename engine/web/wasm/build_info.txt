@@ -1,5 +1,5 @@
-sha=da866f1deee0eb194fa6647e8bb94c677b3e3512-dirty
-built=Thu 09/03/2026 22:49:11.54
+sha=68101d45590089f6982b6ab5cbf6ca2f66e1b4f9
+built=Fri 09/04/2026  1:01:57.80
 variants=wasm32,wasm64,wasm32-threads
 source_scope=engine/** excluding generated engine/web/wasm{,.next,.previous}/**
 emcc=emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 5.0.2 (dc80f645ee70178c11666de0c3860d9e064d50e4)
@@ -14,4 +14,4 @@ sha256.ftd_core64.js=1b2a9af334046c2f16e4e78961c4017708c7cc6d7d40df3f83ceb4109c4
 sha256.ftd_core64.wasm=4ffcc014726c07d4267bc5fc3cd9d85ccb2bea4f65b8676f0c614b8ab4b0706e
 sha256.ftd_core_mt.js=1d5a7f3d37b6c6068e80a499ac61b4367f94d21f1590576acee95559d6740c4e
 sha256.ftd_core_mt.wasm=22d5385dc5d24c0dfb733f3e0e39c2e60854aec5df06924bdc7fb1ea4b852f27
-sha256.build_info.json=1c7f734e956f0d60d0b95fd02a40a6046d3414d6ce3de5f9c9903ebad0f3ecf6
+sha256.build_info.json=7ac876a39a67670e5fb0b2115fad6e8ac4b23990023a346d95b8ebc0c9e53ffa
