@@ -11,6 +11,20 @@ def test_r5_vacuum_conserves_work_units_layer_sums_and_gauss_for_20_ticks():
         assert K.layer_sum(new) == ls0, f"layer sum changed at tick {t}"
         st = new
 
+def test_gauss_residual_is_live_on_material_with_crossings():
+    """The R5 vacuum never crosses (both slots occupied everywhere), so gauss_residual there is
+    0 == 0. Exercise the crossing-log route on preparations where crossings actually occur."""
+    tables = C.load_collision_tables(); crossings = 0
+    for st in (Pz.isolated_relation(4), Pz.sparse_material(4, seed=5, n_tokens=12, field_occupation=0.02)):
+        w0 = K.work_units(st)
+        for t in range(12):
+            new, ev = T.tick(st, tables)
+            crossings += len(ev.crossings)
+            assert K.gauss_residual(st, new, ev) == 0
+            assert K.work_units(new) == w0
+            st = new
+    assert crossings > 0
+
 def test_journal_reconstructs_series():
     tables = C.load_collision_tables(); st = Pz.isolated_relation(4)
     jr = J.Journal(st); owner = 32
