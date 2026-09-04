@@ -64,6 +64,7 @@ import { initTimePanel } from './ui/overlays/time-panel.js';
 import { initThermoPanel } from './ui/overlays/thermo-panel.js?v=3';
 import { initDispersionPanel } from './ui/overlays/dispersion-panel.js';
 import { initKnotsPanel } from './ui/overlays/knots-panel.js';
+import { initTransactionPanel } from './ui/overlays/transaction-panel.js';
 import {
     initScaleContextPanel,
     SCALE0_LATTICE_SIZE_ACK_EVENT,
@@ -422,6 +423,7 @@ class Scale0LifecycleController extends BaseLifecycleController {
         try { initThermoPanel(); } catch (e) { /* ignore */ }
         try { initDispersionPanel(); } catch (e) { /* ignore */ }
         try { initKnotsPanel(); } catch (e) { /* ignore */ }
+        try { initTransactionPanel(); } catch (e) { /* ignore */ }
         try { initScaleContextPanel(); } catch (e) { /* ignore */ }
         // Reveal the prime-tick toggle whenever Scale 0 becomes active.
         try { ensurePrimeTickButton(true); } catch (e) { /* ignore */ }

@@ -109,6 +109,29 @@ const EMPTY_PARTICLE_DATA = Object.freeze({
 const EMPTY_KNOT_TELEMETRY = Object.freeze({ ids: new Int32Array(0), signs: new Int32Array(0), birth: new Int32Array(0), age: new Int32Array(0), size: new Int32Array(0), peak: new Int32Array(0), fields: new Float32Array(0), stride: 11, count: 0 });
 const EMPTY_KNOT_EVENTS = Object.freeze({ tick: new Int32Array(0), type: new Int32Array(0), nparents: new Int32Array(0), nchildren: new Int32Array(0), sign: new Int32Array(0), count: 0 });
 const EMPTY_KNOT_AGG = Object.freeze({ alive: 0, netCharge: 0, births: 0, deaths: 0, fissions: 0, fusions: 0 });
+// History-journal drain fallback (native-charge gate, opt-in, observation-
+// only — see ftd/eft/history_event_journal.h + bindings_render_bridge.cpp
+// drainHistoryEvents). One row per touched site; `eventId` groups the 1-2
+// rows produced by the same underlying HistoryEvent (Movement/Annihilation/
+// PairProduction each touch two sites with the same eventId). particleId
+// before/after come from the embedded complete Voxel snapshot, so a record
+// can be followed by particle_id continuity, not by re-deriving it from
+// state/position alone.
+const EMPTY_HISTORY_EVENTS = Object.freeze({
+    kind: new Uint8Array(0),
+    tick: new Int32Array(0),
+    eventId: new Int32Array(0),
+    slot: new Uint8Array(0),
+    site: new Int32Array(0),
+    stateBefore: new Int8Array(0),
+    stateAfter: new Int8Array(0),
+    particleIdBefore: new Int32Array(0),
+    particleIdAfter: new Int32Array(0),
+    chiralityBefore: new Int8Array(0),
+    chiralityAfter: new Int8Array(0),
+    eventCount: 0,
+    rowCount: 0,
+});
 
 // Generic delegate: run `fn` if the WASM module exposes both the bridge AND
 // the specified method, else return `fallback`. Collapses the two-line guard
@@ -578,6 +601,26 @@ export class WasmBridge {
         if (!this._module || !this._bridge) return EMPTY_KNOT_AGG;
         const r = this._module.getKnotAggregate(this._bridge);
         return r || EMPTY_KNOT_AGG;
+    }
+
+    // ── History journal (native-charge gate, opt-in, observation-only) ──
+    // Disabled by default, and the native side refuses to enable it on a
+    // non-CPU backend (RenderBridge::enable_history_journal already enforces
+    // this and returns false, which enableHistoryJournal propagates as-is).
+    // drainHistoryEvents must be polled once per ticked frame — the journal
+    // clears itself at the start of the next tick() — so a caller (the
+    // transaction tracker) drains inside the tick loop, not lazily.
+    enableHistoryJournal(enabled = true) {
+        return _wasmCallOr(this, 'enableHistoryJournal', false,
+            (m, b) => m.enableHistoryJournal(b, !!enabled));
+    }
+    historyJournalEnabled() {
+        return _wasmCallOr(this, 'historyJournalEnabled', false,
+            (m, b) => m.historyJournalEnabled(b));
+    }
+    drainHistoryEvents() {
+        return _wasmCallOr(this, 'drainHistoryEvents', EMPTY_HISTORY_EVENTS,
+            (m, b) => m.drainHistoryEvents(b));
     }
 
     getScale0ParticleList() {

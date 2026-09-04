@@ -58,6 +58,7 @@ import { initTimePanel } from './scales/scale0/ui/overlays/time-panel.js';
 import { initThermoPanel } from './scales/scale0/ui/overlays/thermo-panel.js?v=3';
 import { initDispersionPanel } from './scales/scale0/ui/overlays/dispersion-panel.js';
 import { initKnotsPanel } from './scales/scale0/ui/overlays/knots-panel.js';
+import { initTransactionPanel } from './scales/scale0/ui/overlays/transaction-panel.js';
 import { initScaleContextPanel } from './scales/scale0/ui/overlays/scale-context-panel.js?v=3';
 import { initSettingsModal } from './ui/components/settings-modal/component.js?v=2';
 // Wire / boot helpers extracted per refactoring-analyst RF-9 (partial).
@@ -555,6 +556,7 @@ async function init() {
     initThermoPanel();
     initDispersionPanel();
     initKnotsPanel();
+    initTransactionPanel();
     initScaleContextPanel();
     appRegistry.register('panel:fluxSlice', window.__ftdFluxSlicePanel);
     appRegistry.register('panel:waveLab', window.__ftdWaveLabPanel);
@@ -566,6 +568,7 @@ async function init() {
     appRegistry.register('panel:thermo', window.__ftdThermoPanel);
     appRegistry.register('panel:dispersion', window.__ftdDispersionPanel);
     appRegistry.register('panel:knots', window.__ftdKnotsPanel);
+    appRegistry.register('panel:transactions', window.__ftdTransactionPanel);
     // Scene panel — curated render controls (FOV / exposure / bloom / fog / ...).
     // Scales 0–3 only (gated by panel-registry); unmounted cleanly when
     // the user switches to a separate-renderer scale like 4/5/12.

@@ -19,6 +19,7 @@
 #include <emscripten/val.h>
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <iomanip>
 #include <random>
 #include <sstream>
@@ -366,6 +367,95 @@ static bool setup_scenario(ftd::RenderBridge& rb, const std::string& name) {
     return false;
 }
 
+// ── History journal exposure (native-charge gate, opt-in, observation-only)
+// See ftd/eft/history_event_journal.h. The journal never runs unless
+// enableHistoryJournal(true) is called from JS, refuses to enable on a
+// non-CPU backend (RenderBridge::enable_history_journal already enforces
+// this and returns false), and is cleared at the start of every tick() —
+// so a caller must drainHistoryEvents() once per ticked frame or lose that
+// tick's rows. drainHistoryEvents flattens each HistoryEvent (1 or 2 touched
+// sites) into parallel typed arrays, one row per touched site, so JS pays no
+// per-event object-allocation cost. `eventId` groups the 1-2 rows that came
+// from the same underlying HistoryEvent (Movement/Annihilation/PairProduction
+// each touch two sites in the same tick with the same eventId; a JS tracker
+// uses this to pair a Movement's vacated source with its filled target
+// instead of re-deriving the pairing from position alone). particleId
+// before/after come from the embedded complete Voxel snapshot (not the
+// legacy top-level scalars), so a record can be followed by particle_id
+// continuity across Movement/WeakTransmutation without needing to infer it
+// from state alone.
+static bool enable_history_journal_js(ftd::RenderBridge& rb, bool enabled) {
+    return rb.enable_history_journal(enabled);
+}
+static bool history_journal_enabled_js(ftd::RenderBridge& rb) {
+    return rb.history_journal_enabled();
+}
+
+static val drain_history_events(ftd::RenderBridge& rb) {
+    static std::vector<int> tick_cache, event_id_cache, site_cache,
+        pid_before_cache, pid_after_cache;
+    static std::vector<std::uint8_t> kind_cache, slot_cache;
+    static std::vector<std::int8_t> state_before_cache, state_after_cache,
+        chirality_before_cache, chirality_after_cache;
+
+    const std::vector<ftd::eft::HistoryEvent> events = rb.history_events();
+
+    int rows = 0;
+    for (const auto& e : events) rows += std::min(e.site_count, 2);
+
+    if (static_cast<int>(tick_cache.size()) < rows) {
+        tick_cache.resize(rows);
+        event_id_cache.resize(rows);
+        site_cache.resize(rows);
+        pid_before_cache.resize(rows);
+        pid_after_cache.resize(rows);
+        kind_cache.resize(rows);
+        slot_cache.resize(rows);
+        state_before_cache.resize(rows);
+        state_after_cache.resize(rows);
+        chirality_before_cache.resize(rows);
+        chirality_after_cache.resize(rows);
+    }
+
+    int row = 0;
+    for (int ei = 0; ei < static_cast<int>(events.size()); ++ei) {
+        const auto& e = events[ei];
+        const int slots = std::min(e.site_count, 2);
+        for (int s = 0; s < slots; ++s) {
+            const auto& before = e.before[s];
+            const auto& after = e.after[s];
+            tick_cache[row] = e.tick;
+            event_id_cache[row] = ei;
+            site_cache[row] = before.index;
+            kind_cache[row] = static_cast<std::uint8_t>(e.kind);
+            slot_cache[row] = static_cast<std::uint8_t>(s);
+            state_before_cache[row] = before.voxel.state;
+            state_after_cache[row] = after.voxel.state;
+            pid_before_cache[row] = before.voxel.particle_id;
+            pid_after_cache[row] = after.voxel.particle_id;
+            chirality_before_cache[row] = before.chirality_sign;
+            chirality_after_cache[row] = after.chirality_sign;
+            ++row;
+        }
+    }
+
+    val result = val::object();
+    result.set("kind",             val(typed_memory_view(rows, kind_cache.data())));
+    result.set("tick",             val(typed_memory_view(rows, tick_cache.data())));
+    result.set("eventId",          val(typed_memory_view(rows, event_id_cache.data())));
+    result.set("slot",             val(typed_memory_view(rows, slot_cache.data())));
+    result.set("site",             val(typed_memory_view(rows, site_cache.data())));
+    result.set("stateBefore",      val(typed_memory_view(rows, state_before_cache.data())));
+    result.set("stateAfter",       val(typed_memory_view(rows, state_after_cache.data())));
+    result.set("particleIdBefore", val(typed_memory_view(rows, pid_before_cache.data())));
+    result.set("particleIdAfter",  val(typed_memory_view(rows, pid_after_cache.data())));
+    result.set("chiralityBefore",  val(typed_memory_view(rows, chirality_before_cache.data())));
+    result.set("chiralityAfter",   val(typed_memory_view(rows, chirality_after_cache.data())));
+    result.set("eventCount",       static_cast<int>(events.size()));
+    result.set("rowCount",         rows);
+    return result;
+}
+
 // ── Embind Registration ──────────────────────────────────────────────
 // All RB-related helpers (data extraction, inspection, scenario setup,
 // toggles, injection, time step) register here. The RenderBridge class_<>
@@ -478,4 +568,13 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     // Threaded build: A/B the parallel_for pool size (no-op on serial builds).
     function("ftdSetPoolThreads",  &ftd::set_pool_threads);
     function("ftdPoolThreads",     &ftd::parallel_max_threads);
+
+    // History journal (native-charge gate, opt-in, observation-only). See
+    // ftd/eft/history_event_journal.h. Disabled by default and refuses to
+    // enable on a non-CPU backend; drainHistoryEvents must be polled once
+    // per ticked frame (the journal clears itself at the start of the next
+    // tick()).
+    function("enableHistoryJournal",  &enable_history_journal_js);
+    function("historyJournalEnabled", &history_journal_enabled_js);
+    function("drainHistoryEvents",    &drain_history_events);
 }
