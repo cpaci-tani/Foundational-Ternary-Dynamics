@@ -89,7 +89,17 @@ def test_U_preserves_polarity_and_has_period_four():
             assert C.polarity(w) == C.polarity(c)
             w = C.U(w)
         assert w == c
-        assert C.half_turn(c) == C.U(C.U(c))
+
+def test_half_turn_is_a_phase_only_shift():
+    """Spec 3.2: the manifested-departure half-turn is k -> k+2 with the FLAG fixed
+    (a channel permutation that cannot create a streaming write collision). It is NOT U∘U,
+    which also rotates the flag."""
+    for c in range(C.N_CHANNELS):
+        h = C.half_turn(c)
+        assert C.tangent(h) == C.tangent(c) and C.polarity(h) == C.polarity(c)
+        assert C.phase(h) == (C.phase(c) + 2) % 4
+        assert C.half_turn(h) == c
+        assert h != C.U(C.U(c)) or C.tangent(C.U(C.U(c))) == C.tangent(c)
 
 def test_tangent_is_an_sc_unit_vector():
     for c in range(C.N_CHANNELS):
@@ -199,7 +209,10 @@ def U(c: int) -> int:
 
 
 def half_turn(c: int) -> int:
-    return U(U(c))
+    """Phase-only shift k -> k+2 with the flag fixed (spec 3.2). NOT U∘U."""
+    i, eps = unpack(c)
+    flag, k = STATES[i]
+    return channel(STATE_INDEX[(flag, (k + 2) % 4)], eps)
 
 
 def field_value_of(c: int) -> tuple[int, ...]:
@@ -1131,10 +1144,11 @@ from phi_v2_lattice import prepare as Pz, tick as T, channels as C, journal as J
 def run(L=6, seed=20260904, n_tokens=24, field_occupation=0.02, horizon=64):
     tables = C.load_collision_tables()
     st = Pz.sparse_material(L, seed, n_tokens, field_occupation)
-    jr = J.Journal(st); states = [st]; w0 = K.work_units(st); gauss_ok = True
+    jr = J.Journal(st); states = [st]; w0 = K.work_units(st); gauss_ok = True; n_abs = 0
     for t in range(1, horizon + 1):
         new, ev = T.tick(st, tables); jr.record(t, st, new)
         gauss_ok &= (K.gauss_residual(st, new) == 0)
+        n_abs += len(ev.absorptions)
         st = new; states.append(st)
     assert K.work_units(st) == w0, "work units not conserved"
     # census every relation that ever held a token
@@ -1151,7 +1165,7 @@ def run(L=6, seed=20260904, n_tokens=24, field_occupation=0.02, horizon=64):
         polarity_violations=sum(1 for r in rows if not r.polarity_constant),
         in_place_flips=sum(r.in_place_flips for r in rows),
         nulls=sum(r.nulls for r in rows), bounces=sum(r.bounces for r in rows), reversals=sum(r.reversals for r in rows),
-        gauss_identity_every_tick=gauss_ok, absorptions=sum(1 for _ in []),
+        gauss_identity_every_tick=gauss_ok, absorptions=n_abs,
         site=X.site_census(states),
     )
     print("\n== Phi v2 composed-law census ==")
@@ -1172,7 +1186,7 @@ if __name__ == "__main__":
     a = ap.parse_args(); run(a.L, a.seed, a.tokens, a.field, a.horizon)
 ```
 
-(`experiments/__init__.py` is empty.) Note `absorptions` in the summary should count `len(ev.absorptions)` accumulated across ticks — replace the placeholder `sum(1 for _ in [])` with an accumulator `n_abs` incremented by `len(ev.absorptions)` in the loop.
+(`experiments/__init__.py` is empty.)
 
 - [ ] **Step 4: Run test to verify it passes, then run the experiment**
 
