@@ -972,6 +972,24 @@ export class WasmBridge {
         return _wasmCallOr(this, 'getGaussResidualSampled', EMPTY_SCALAR_SAMPLE,
             (m, b) => m.getGaussResidualSampled(b, stride));
     }
+    // Proper-time / lapse / de Broglie phase overlay samplers (2026-09-03) —
+    // bound in bindings_render_bridge.cpp (get_tau_sampled / get_phase_sampled /
+    // get_lapse_sampled, ftd_wasm.cpp). WASM-only: no JS mock-substrate voxel
+    // carries tau/phase, so this proxy is the whole story on the WasmBridge
+    // side; _wasmCallOr falls back to EMPTY_SCALAR_SAMPLE until a rebuilt
+    // module exposes these three module-level functions.
+    getTauSampled(stride = 2) {
+        return _wasmCallOr(this, 'getTauSampled', EMPTY_SCALAR_SAMPLE,
+            (m, b) => m.getTauSampled(b, stride));
+    }
+    getPhaseSampled(stride = 2) {
+        return _wasmCallOr(this, 'getPhaseSampled', EMPTY_SCALAR_SAMPLE,
+            (m, b) => m.getPhaseSampled(b, stride));
+    }
+    getLapseSampled(stride = 2) {
+        return _wasmCallOr(this, 'getLapseSampled', EMPTY_SCALAR_SAMPLE,
+            (m, b) => m.getLapseSampled(b, stride));
+    }
     /** Kind-dispatched Scale-0 field sampler; see bridge-contract.js samplerOr. */
     getSamplerOr(kind, stride = 2, fallback) { return samplerOr(this, kind, stride, fallback); }
     // Direct WASM samplers are synchronous: an empty record is a completed

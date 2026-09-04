@@ -528,6 +528,48 @@ export const fieldQuantumMethods = {
             { signed: true, normalizer: data?.normalizer, threshold: 0.05 });
     },
 
+    // ── Proper time / lapse / de Broglie phase (2026-09-03) ────────────
+    // WASM-only diagnostics — see get_tau_sampled/get_phase_sampled/
+    // get_lapse_sampled (ftd_wasm.cpp) and computeProperTimeFrame /
+    // computeLapseFrame / computeDbPhaseFrame (overlay-frames.js). Threshold
+    // 0 (not the default 0.02) because the interesting reading for all three
+    // — τ=0 just after manifestation, dτ/dt=0 at a frozen horizon, φ=0 at
+    // clock start — sits AT the low end of the range; the default cull would
+    // hide exactly the cases worth seeing. Sparsity is already handled
+    // upstream by the sampler restricting to manifested (state≠0) voxels.
+
+    // Accumulated proper time τ ≥ 0 — amber intensity ramp, brighter = more
+    // elapsed proper time at that voxel.
+    toggleProperTimeField(on) { this._toggleScalarCloud('properTime', on); },
+    updateProperTimeField(data) {
+        this._updateScalarCloud('properTime', data,
+            (t, rgb) => { rgb[0] = Math.min(1, 0.2 + 0.8 * t); rgb[1] = Math.min(1, 0.15 + 0.5 * t); rgb[2] = 0.05; },
+            { normalizer: data?.normalizer || 1, threshold: 0 });
+    },
+
+    // Lapse dτ/dt ∈ [0,1] — red (frozen / horizon) → green (full rate).
+    toggleLapseField(on) { this._toggleScalarCloud('lapse', on); },
+    updateLapseField(data) {
+        this._updateScalarCloud('lapse', data,
+            (t, rgb) => { rgb[0] = Math.min(1, 1 - t); rgb[1] = Math.min(1, t); rgb[2] = 0.15; },
+            { normalizer: 1, threshold: 0 });
+    },
+
+    // de Broglie clock phase φ, pre-wrapped to [0,2π) by computeDbPhaseFrame —
+    // a cyclic cosine-wheel palette (t = φ/2π ∈ [0,1)) so the winding clock
+    // hand reads as a color rotation rather than a one-directional ramp.
+    toggleDBPhaseField(on) { this._toggleScalarCloud('dbPhase', on); },
+    updateDBPhaseField(data) {
+        this._updateScalarCloud('dbPhase', data,
+            (t, rgb) => {
+                const a = 2 * Math.PI * t;
+                rgb[0] = 0.5 + 0.5 * Math.cos(a);
+                rgb[1] = 0.5 + 0.5 * Math.cos(a - 2.094395);
+                rgb[2] = 0.5 + 0.5 * Math.cos(a - 4.18879);
+            },
+            { normalizer: 2 * Math.PI, threshold: 0 });
+    },
+
     // ══════════════════════════════════════════════════════════════════
     // ── |ψ|² breathing animation ──────────────────────────────────────
     _animateQuantumField() {

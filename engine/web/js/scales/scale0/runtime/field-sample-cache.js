@@ -30,10 +30,13 @@ const KIND_BY_SLOT = {
     curlJ: 'curlJ',
     state: 'state',
     gaussResidual: 'gaussResidual',
+    properTime: 'tau',
+    lapse: 'lapse',
+    dbPhase: 'dbPhase',
 };
 
 /** Slots that always sample at stride 1 regardless of sweep stride. */
-const STRIDE_ONE_SLOTS = new Set(['state', 'gaussResidual']);
+const STRIDE_ONE_SLOTS = new Set(['state', 'gaussResidual', 'properTime', 'lapse', 'dbPhase']);
 
 /** Scalar overlay flag → sample slots required before compute*Frame runs. */
 export const SCALAR_SAMPLE_DEPS = {
@@ -54,6 +57,9 @@ export const SCALAR_SAMPLE_DEPS = {
     showStateField: ['state'],
     showLatency: ['latency'],
     showGaussResidual: ['gaussResidual'],
+    showProperTime: ['properTime'],
+    showLapse: ['lapse'],
+    showDBPhase: ['dbPhase'],
 };
 
 /**
@@ -156,6 +162,9 @@ export function buildSampleSnapshot(fieldCapability, flags, stride, acScale0) {
     if (flags.showGravPotential) cache.ensureSample('poissonLatency');
     if (flags.showStateField) cache.ensureSample('state');
     if (flags.showGaussResidual) cache.ensureSample('gaussResidual');
+    if (flags.showProperTime) cache.ensureSample('properTime');
+    if (flags.showLapse) cache.ensureSample('lapse');
+    if (flags.showDBPhase) cache.ensureSample('dbPhase');
 
     return cache.sampled;
 }

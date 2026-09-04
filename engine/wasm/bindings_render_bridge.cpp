@@ -432,6 +432,11 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     function("getStateFieldSampled",  &get_state_field_sampled);
     function("getGaussResidualSampled", &get_gauss_residual_sampled);
 
+    // Proper-time / lapse / de Broglie phase overlay samplers (2026-09-03).
+    function("getTauSampled",         &get_tau_sampled);
+    function("getPhaseSampled",       &get_phase_sampled);
+    function("getLapseSampled",       &get_lapse_sampled);
+
     // Direct Coulomb-potential ray sampling (2026-04-27) — engine-side
     // trilinear interpolation of phi_coulomb_ for the P1 Coulomb panel.
     function("sampleVAtRay",           &sample_v_at_ray);

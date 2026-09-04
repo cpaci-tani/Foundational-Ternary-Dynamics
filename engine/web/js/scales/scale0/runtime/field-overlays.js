@@ -36,6 +36,9 @@ import {
     computeStateFieldFrame,
     computeLatencyFrame,
     computeGaussResidualFrame,
+    computeProperTimeFrame,
+    computeLapseFrame,
+    computeDbPhaseFrame,
 } from './overlay-frames.js?v=2';
 import {
     computeStreamlineParams,
@@ -467,6 +470,9 @@ const SCALAR_JOBS = [
     ['showStateField',        (s, ctx, state) => computeStateFieldFrame(s, state),                                    (va, v) => va.applyStateField(v)],
     ['showLatency',           (s, ctx, state) => computeLatencyFrame(s, state),                                       (va, v) => va.applyLatency(v)],
     ['showGaussResidual',     (s, ctx, state) => computeGaussResidualFrame(s, state),                                 (va, v) => va.applyGaussResidual(v)],
+    ['showProperTime',        (s, ctx, state) => computeProperTimeFrame(s, state),                                    (va, v) => va.applyProperTime(v)],
+    ['showLapse',             (s, ctx, state) => computeLapseFrame(s, state),                                         (va, v) => va.applyLapse(v)],
+    ['showDBPhase',           (s, ctx, state) => computeDbPhaseFrame(s, state),                                       (va, v) => va.applyDBPhase(v)],
 ];
 
 // Force-flow type table, allocated ONCE at module load. Filtered into the

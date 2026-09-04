@@ -461,6 +461,18 @@ export class TelemetryHub {
                 this._s0_lag = new MultiRingBuffer(400, ['fieldKinetic', 'fieldGradient', 'bornInfeld', 'coupling', 'velocity', 'gauss', 'dissipation', 'total', 'hamiltonian', 'action']);
         this.lag = this._s0_lag.views;
 
+        // ── Proper time / lapse / de Broglie phase (2026-09-03, 200-sample) ──
+        // Field-sampler-derived aggregates (mean/min/max/spread of the τ and
+        // dτ/dt overlay fields; circular mean/variance of the wrapped φ field)
+        // — NOT part of the engine's per-tick Diagnostics struct, so this is a
+        // dedicated buffer fed by publishScale0ProperTimeMetrics() rather than
+        // _publishScale0Diagnostics(). Live only while latency_field and/or
+        // de_broglie_clock is ON; the publisher pushes unavailableSample() rows
+        // otherwise.
+                this._s0_ptime = new MultiRingBuffer(200, ['properTimeMean', 'properTimeMin', 'properTimeMax', 'properTimeSpread', 'lapseMean', 'dbPhaseMean', 'dbPhaseCircVar']);
+        this.ptime = this._s0_ptime.views;
+        this._lastTickPTime = -1;
+
         // ── Scale 1 — Particle Engine (200-sample) ─────
                 // peAnnihilations RETIRED (2026-07 revision): the native engine
                 // exposes no annihilation counter and deriving one from count
@@ -769,6 +781,39 @@ export class TelemetryHub {
             }, meta.tick);
         }
         return diag;
+    }
+
+    /**
+     * Publish one tick's worth of proper-time / lapse / de Broglie phase
+     * overlay-sampler aggregates (2026-09-03). Unlike _publishScale0Diagnostics,
+     * this is NOT fed by the engine's per-tick Diagnostics struct — the caller
+     * (e.g. the Time Observatory panel) computes these reductions itself from
+     * getScale0FieldSamples({kind:'tau'|'lapse'|'dbPhase'}) and hands them in.
+     * `metrics` fields not supplied fall back to unavailableSample() (NaN) so a
+     * scenario/toggle state that cannot produce one quantity (e.g. φ without
+     * de_broglie_clock) still advances the others. `tick` gates against
+     * re-publishing the same sample twice, mirroring _publishScale0Diagnostics's
+     * own _lastTick0 dedupe.
+     * @param {{properTimeMean?:number, properTimeMin?:number, properTimeMax?:number,
+     *          lapseMean?:number, dbPhaseMean?:number, dbPhaseCircVar?:number}} metrics
+     * @param {number} tick
+     */
+    publishScale0ProperTimeMetrics(metrics, tick) {
+        if (tick === this._lastTickPTime) return;
+        this._lastTickPTime = tick;
+        const mean = finiteSample(metrics?.properTimeMean);
+        const min = finiteSample(metrics?.properTimeMin);
+        const max = finiteSample(metrics?.properTimeMax);
+        const spread = (Number.isFinite(min) && Number.isFinite(max)) ? (max - min) : unavailableSample();
+        this._s0_ptime.push({
+            properTimeMean: mean,
+            properTimeMin: min,
+            properTimeMax: max,
+            properTimeSpread: spread,
+            lapseMean: finiteSample(metrics?.lapseMean),
+            dbPhaseMean: finiteSample(metrics?.dbPhaseMean),
+            dbPhaseCircVar: finiteSample(metrics?.dbPhaseCircVar),
+        }, tick);
     }
 
     _publishScale0Audit(audit, meta) {
@@ -1558,6 +1603,7 @@ export class TelemetryHub {
                 this._s0_sp.clear();
                 this._s0_aud.clear();
                 this._s0_lag.clear();
+                this._s0_ptime.clear();
                 this.ebDiff.clear();
                 this.gauss.clear();
                 this.s0 = freshScale0State();
@@ -1569,6 +1615,7 @@ export class TelemetryHub {
                 this._lastTick0 = -1;
                 this._lastAuditTick = -1;
                 this._lastLagTick = -1;
+                this._lastTickPTime = -1;
                 break;
                         case 1:
                 this._s1_pe.clear();
