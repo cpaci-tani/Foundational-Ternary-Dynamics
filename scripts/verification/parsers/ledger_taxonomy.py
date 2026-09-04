@@ -345,6 +345,11 @@ EXCEPTIONS = {
     "FTD-1022": "gravity-cosmology",            # 3^3 slow-envelope live Newton; freeze still not test-body at 27/125
     "FTD-1023": "framework-postulates",         # owner-ratified v3 strict-discrete constitution
     "FTD-1024": "qm-foundations",               # finite Cartesian linearization and tensor composition
+    # 2026-09-03/04 audits: MQ step-9 closure, radical surface, schedule type census, canonical-Phi decision
+    "FTD-1025": "spine-master-quadratic",      # compact-phase route closed at the response function
+    "FTD-1026": "framework-boundary-imports",  # radical surface: one adopted bit, branch no-go
+    "FTD-1027": "engine-infrastructure",       # schedule kind-census (source-lint)
+    "FTD-1028": "framework-postulates",        # v3 Phi canonical; engine = probe of legacy law
 }
 
 

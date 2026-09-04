@@ -1,6 +1,6 @@
 # LEDGER index — categorised claim map
 
-**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (943 claim rows). **Do not edit by hand** — regenerate instead.
+**Generated** by `scripts/theory/build_ledger_index.py` from `LEDGER.md` (947 claim rows). **Do not edit by hand** — regenerate instead.
 
 This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the single source of truth for claim status; where this index and the ledger disagree, **the ledger wins**.
 
@@ -12,18 +12,18 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 | Programme | Claims | Scope |
 |---|---:|---|
-| [Algebraic spine — master quadratic](#algebraic-spine-master-quadratic) | 18 | The polynomial x^2-16G*^2x+16G*^3, its roots, the coefficient 16, D=3, minimality/uniqueness scans, and the x+ = 1/alpha identification. |
+| [Algebraic spine — master quadratic](#algebraic-spine-master-quadratic) | 19 | The polynomial x^2-16G*^2x+16G*^3, its roots, the coefficient 16, D=3, minimality/uniqueness scans, and the x+ = 1/alpha identification. |
 | [Algebraic spine — G*, CM curves, modular](#algebraic-spine-g-cm-curves-modular) | 41 | G* itself, lemniscatic/CM-curve theory, Chowla-Selberg, modular and quasi-modular values, the chi_-4 character, FQCR, Sym^k period algebra. |
 | [Algebraic spine — periods, Watson, transcendence](#algebraic-spine-periods-watson-transcendence) | 14 | Watson integrals, lattice Green-function periods, the native closure N, delta-independence, E1/E2 transcendence, the period-import frontier. |
-| [Framework — postulates & constitution](#framework-postulates-constitution) | 15 | P1-P5, the Framework Commitments (FC-0/1/2/3/W), the axiom register, calibrations, adoption-pricing rules. |
-| [Framework — boundary, imports, consumption](#framework-boundary-imports-consumption) | 55 | The modulus/argument frontier, type-priority, the priced-import ledger, the consumption programme, act-counts, what the ontology cannot self-set. |
+| [Framework — postulates & constitution](#framework-postulates-constitution) | 16 | P1-P5, the Framework Commitments (FC-0/1/2/3/W), the axiom register, calibrations, adoption-pricing rules. |
+| [Framework — boundary, imports, consumption](#framework-boundary-imports-consumption) | 56 | The modulus/argument frontier, type-priority, the priced-import ledger, the consumption programme, act-counts, what the ontology cannot self-set. |
 | [Framework — audits, red-teams, reconciliation](#framework-audits-red-teams-reconciliation) | 25 | Adversarial audits, red-team remediation, retractions, tag-honesty and corpus-wide reconciliation passes, rigidity / look-elsewhere audits. |
 | [Quantum foundations](#quantum-foundations) | 20 | Born rule, measurement and the declined map M, CHSH/Bell, Spekkens, the deviation-prediction ledger, frame-relative projection. |
 | [SM constants — mass & flavour](#sm-constants-mass-flavour) | 33 | m_e, m_p/m_e, Higgs mass, mixing angles, PMNS/CKM, Yukawa prefactors, the cluster-size-mass identification and its N(A) law. |
 | [Alpha readout programme (MC-T4.3)](#alpha-readout-programme-mc-t4-3) | 33 | The alpha-readout contract, the ARC-A/B/C campaigns, observable selection, FC-W and the carrier-narrowing theorem, engine alpha probes. |
 | [QCD, colour & electroweak](#qcd-colour-electroweak) | 15 | Confinement, colour charge and singlets, SU(3)/Z3 structure, hadrodynamics, electroweak rank, generations, no-4th-generation. |
 | [Gravity & cosmology](#gravity-cosmology) | 31 | Newton's law from the substrate, graviton/spin-2 provenance, Kerr-Newman, strong-field signatures, Lambda, dark matter. |
-| [Engine infrastructure & RG](#engine-infrastructure-rg) | 39 | Langevin/thermostat, operator-mixing matrices, RG flow and blocking, the bridge-contract gates, Ward identities, GPU/CUDA ports and parity. |
+| [Engine infrastructure & RG](#engine-infrastructure-rg) | 40 | Langevin/thermostat, operator-mixing matrices, RG flow and blocking, the bridge-contract gates, Ward identities, GPU/CUDA ports and parity. |
 | [Engine emergence campaigns](#engine-emergence-campaigns) | 37 | Fermion-emergence phases, genesis/evaporation and thermal phase maps, atomic and bound-state spectra, wave sectors and dispersion. |
 | [Lorentz recovery & causal structure](#lorentz-recovery-causal-structure) | 37 | The discrete flux pole, anisotropy exponents, the common cone, CFL and causal normalisation, preferred-frame operators, anisotropic-QED RG. |
 | [Charge, Gauss & native EM emergence](#charge-gauss-native-em-emergence) | 15 | Native additive charge, Gauss projection and dressing, face-current sidecars, longitudinal susceptibility, dressed hazards, monopoles. |
@@ -38,7 +38,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *The polynomial x^2-16G*^2x+16G*^3, its roots, the coefficient 16, D=3, minimality/uniqueness scans, and the x+ = 1/alpha identification.*
 
-**18 claims.**
+**19 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -60,6 +60,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0084` | THEOREM, SELECTION | Program A partial closure: ladder-walk step-size multiset $\{3,3,4,6\}$ from $O_h$ structure | L338 |
 | `FTD-0210` | CLOSED_NEGATIVE, SMC | x_- physical-identification search — Arc B P1 of Wilsonian-reframe plan v2 | L368 |
 | `FTD-0312` | CLOSED_NEGATIVE, OPEN, SMC, THEOREM | Is the master quadratic's smaller root x₋ = 3.024 (its residual δ_c = x₋−3 = 0.024) "the dimensionless pressure of the flux" (owner conjecture)?… | L458 |
+| `FTD-1025` | CLOSED_NEGATIVE, THEOREM, MEASURED | Does the compact-phase/BCC route derive the master quadratic's linear coefficient `16G*²`, or does it substitute a Brillouin-zone integral for a… | L1164 |
 
 ---
 
@@ -144,7 +145,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *P1-P5, the Framework Commitments (FC-0/1/2/3/W), the axiom register, calibrations, adoption-pricing rules.*
 
-**15 claims.**
+**16 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -163,6 +164,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0257` | SYNTHESIS, SELECTION, MEASURED, THEOREM, IMPOSED | Two-orthogonal-fields formalization — Flux ⊥ State primary pair; nested symplectic (q,p) quadrature pair; decompositions-not-dimensions | L420 |
 | `FTD-1000` | SUPERSEDED, SYNTHESIS | Does folding CLK-1 into FC-2's metric-half declaration correctly register an adoption rather than a derivation, and does it require disambiguating… | L1138 |
 | `FTD-1023` | AXIOM, SELECTION, SYNTHESIS, OPEN | Ratification of the FTD v3 strict-discrete common-action constitution and complete rewrite of P1--P5 | L1162 |
+| `FTD-1028` | SCOPE_CONTRACT | Which `Φ` is canonical — the v3 selected reference law or the engine's schedule — and how is the gap between them to be read? | L1167 |
 
 ---
 
@@ -170,7 +172,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *The modulus/argument frontier, type-priority, the priced-import ledger, the consumption programme, act-counts, what the ontology cannot self-set.*
 
-**55 claims.**
+**56 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -229,6 +231,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0743` | SCOPE_CONTRACT | What exact state-only predicate would count as a metastable matter object? | L886 |
 | `FTD-0744` | SCOPE_CONTRACT | How should evidence decide among native state, reconstructed chart, constituent phase space, and connection-based extensions? | L887 |
 | `FTD-1002` | SYNTHESIS | Does the FTD-1000 fold contradict the four-walls distinctness theorem (FTD-0357), or is it licensed by it? | L1140 |
+| `FTD-1026` | MEASURED, CLOSED_NEGATIVE, NO_GO | Which radicals in the constants chain, the spine, and the dimensional map are warranted, and what does the unwarranted set cost? | L1165 |
 
 ---
 
@@ -459,7 +462,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 *Langevin/thermostat, operator-mixing matrices, RG flow and blocking, the bridge-contract gates, Ward identities, GPU/CUDA ports and parity.*
 
-**39 claims.**
+**40 claims.**
 
 | ID | Epistemic tag | Claim | LEDGER |
 |---|---|---|---:|
@@ -502,6 +505,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 | `FTD-0751` | NUMERICAL_FACT | At what exact stage does the remaining CPU/CUDA trajectory divergence first appear? | L894 |
 | `FTD-0752` | NUMERICAL_FACT | Does a separately compiled explicit-rounding CUDA backend close the bounded dynamic parity gate? | L895 |
 | `FTD-0759` | INFRASTRUCTURE | Can the M3 matter/root/observer pipeline remain device-resident with qualified CPU parity and utilization? | L902 |
+| `FTD-1027` | MEASURED, REFUTATION | What kind of law is the engine's schedule — which phases are hyperbolic, elliptic, combinatorial, or algebraic, and what does that permit and forbid? | L1166 |
 
 ---
 
@@ -1256,10 +1260,10 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 
 | Tag | Rows |
 |---|---:|
-| THEOREM | 434 |
-| CLOSED_NEGATIVE | 245 |
+| THEOREM | 435 |
+| CLOSED_NEGATIVE | 247 |
 | OPEN | 244 |
-| MEASURED | 185 |
+| MEASURED | 188 |
 | SELECTION | 111 |
 | DERIVED | 102 |
 | SMC | 84 |
@@ -1274,7 +1278,7 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 | EXECUTION_INVALID | 30 |
 | AXIOM | 29 |
 | SELECTED_DYNAMICS | 29 |
-| NO_GO | 23 |
+| NO_GO | 24 |
 | PARAMETRIC | 20 |
 | RETRACTED | 20 |
 | PARTIAL | 18 |
@@ -1283,7 +1287,7 @@ Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser tha
 | EXACT | 15 |
 | RECONCILIATION | 14 |
 | OBSERVATION | 13 |
+| REFUTATION | 13 |
 | RESOLVED | 12 |
-| REFUTATION | 12 |
 | ENGINE_FACT | 12 |
 
