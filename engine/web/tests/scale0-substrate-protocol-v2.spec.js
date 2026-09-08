@@ -10,7 +10,8 @@
  * - F4 (genesis response): checks the preregistered fixed A=12/16/40
  *   finite-box ordering without promoting it to a universal power law.
  * - G4 (cluster count): implements connected-components BFS cluster counting.
- * - I5 (determinism): compares two full runs for bit-exact identical trajectories.
+ * - I5 (repeatability): compares selected diagnostics at four checkpoints
+ *   across two runs; floating values use relative tolerance 1e-12.
  */
 
 import { test, expect } from '@playwright/test';
@@ -472,7 +473,7 @@ test.describe('Scale-0 Substrate Experimental Protocol (v2)', () => {
         expect(clusters_ic3).toBe(2);
     });
 
-    test('§R5: I5 determinism (bit-exact checkpoint trajectories)', async ({ page }) => {
+    test('§R5: I5 repeatability (diagnostics at registered checkpoints)', async ({ page }) => {
         const trajectories = await page.evaluate(() => {
             const b = window._ftdBridge;
             const runs = [];
@@ -520,7 +521,7 @@ test.describe('Scale-0 Substrate Experimental Protocol (v2)', () => {
             return runs;
         });
 
-        // Assert bit-exact identity
+        // Compare sampled diagnostics; this does not establish complete-state replay.
         const t1 = trajectories[0];
         const t2 = trajectories[1];
 
@@ -543,7 +544,7 @@ test.describe('Scale-0 Substrate Experimental Protocol (v2)', () => {
             checkFloat(c1.BFieldEnergy, c2.BFieldEnergy, 'BFieldEnergy');
         }
 
-        console.log(`[I5 Determinism] Bit-exact trajectories verified successfully!`);
+        console.log(`[I5 Repeatability] Registered diagnostic checkpoints agree within their declared tolerances.`);
     });
 
     test('§R6: I3 Gauss constraint enforcement (< 1e-3)', async ({ page }) => {
