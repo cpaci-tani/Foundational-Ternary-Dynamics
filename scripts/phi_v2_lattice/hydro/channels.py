@@ -130,7 +130,7 @@ def relation_target(v: int):
 
 
 ENCODING_HASH = hashlib.sha256(repr((VELOCITIES, FACE_W, GROUP)).encode()).hexdigest()
-TABLE_HASH = "UNSET"  # Task 2 pins the generated table's SHA256 here.
+TABLE_HASH = "094d6f42dae6c84383b347305aa9bb570fb93fabc21b1d093dc86b4a26900e52"
 
 
 def table_path() -> Path:
