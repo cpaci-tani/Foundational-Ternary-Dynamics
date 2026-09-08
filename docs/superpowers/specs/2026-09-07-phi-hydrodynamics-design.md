@@ -142,10 +142,31 @@ complement (else H0 missed an invariant: stop and report). Report every
 eigenvalue of `P(0)` of modulus 1 (roots of unity from the U period indicate
 staggered modes; they are recorded, not suppressed).
 
-Exact arithmetic is mandatory for `Λ1`, `Λ2`, and the verdict. Implementation
-may work over ℚ with real and imaginary parts as a 370-dimensional real system,
-or over ℚ(i) directly; both must agree on a test case. Full `P(k)` at the
-finite k of gate H2 may be evaluated in float64 for the prediction curve only.
+With `ε = −iκ` as the formal variable, `e^{−iκ n̂·d} = e^{ε n̂·d}` and every
+coefficient matrix is real rational: `P(ε) = P0 + ε A1 + ε² A2`, so no
+Gaussian rationals are needed; eigenvalues read `λ = 1 − iκ μ1 − κ² μ2` and
+the per-period damping is `μ2 − μ1²/2`.
+
+Two arithmetic tracks, both rigorous, fixed by what the physical coupling
+allows. At p = 1/96, `r = p(1−p)^189` is a rational with 374-digit numerator
+and 377-digit denominator; exact elimination on the 185-dimensional complement
+at that r is infeasible. Therefore:
+
+1. **Exact track** at the declared proxy coupling `r₀ = 1/695` (relative
+   offset −0.049 % from `r(1/96) ≈ 1.43955 × 10⁻³`), using python-flint
+   `fmpq_mat`. Every structural clause of the verdict (block dimension,
+   characteristic polynomials, cross-direction equalities) is decided exactly
+   here. The proxy is a declared reference coupling, not a fit.
+2. **Certified track** at the exact physical `r(p)` for p ∈ {1/96, 1/192, 1/48},
+   using python-flint `arb_mat` ball arithmetic at 256-bit precision. Each
+   verdict clause is reported as PROVED (enclosure excludes the alternative),
+   CONSISTENT (enclosure contains the exact-track pattern), or UNDECIDED
+   (enclosure too wide), never as a bare float. Anisotropy can be proved this
+   way; isotropy at physical r can only be found consistent.
+
+The certified track at `r₀` must enclose the exact track's rationals; that is
+a test, not a hope. Full `P(k)` at the finite k of gate H2 may be evaluated in
+float64 for the prediction curve only.
 
 **Outputs.** For each direction and for p ∈ {1/96, 1/192, 1/48}: the exact
 `Λ1`, `Λ2`; their eigenvalue structure; first-order propagation speeds; second-
@@ -333,10 +354,12 @@ they are properties of the candidate, not defects to be tuned away.
 
 ## 6. Risks and mitigations
 
-- Exact resolvent over ℚ(i) in 185 dimensions may be slow: use the real
-  370-dimensional formulation, cache `P(0)` factorization, and cross-check a
-  small case both ways. Fallback is high-precision floating point with rational
-  reconstruction, reported as such.
+- Exact arithmetic at the physical coupling is infeasible (377-digit
+  denominators): the exact track runs at the declared proxy `r₀ = 1/695`
+  (measured: period map 0.23 s, rank 0.02 s with python-flint) and the
+  certified ball-arithmetic track carries the physical values with rigorous
+  enclosures. If an enclosure is too wide to decide a clause, precision is
+  raised (512-bit) once; a still-undecided clause is reported as such.
 - CUDA throughput at L = 64 is unmeasured: the probe decides L before
   registration; L = 32 or 48 is acceptable.
 - Lattice-gas noise: multiple seeds and full-torus projection; acceptance uses
