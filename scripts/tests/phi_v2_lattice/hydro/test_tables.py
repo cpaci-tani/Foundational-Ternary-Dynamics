@@ -45,3 +45,7 @@ def test_perm_application_matches_channels_perm():
     states = np.array([1 << c for c in range(24)], dtype=np.uint32)
     for g in range(96):
         assert T.apply_perm(g, states).tolist() == [1 << int(H.PERM[g, c]) for c in range(24)]
+
+
+def test_no_admissible_pair_left_unpaired(table):
+    assert T.unpaired_admissible(table) == 0

@@ -130,7 +130,7 @@ def relation_target(v: int):
 
 
 ENCODING_HASH = hashlib.sha256(repr((VELOCITIES, FACE_W, GROUP)).encode()).hexdigest()
-TABLE_HASH = "094d6f42dae6c84383b347305aa9bb570fb93fabc21b1d093dc86b4a26900e52"
+TABLE_HASH = "abf25cf26072c03b5b7865fe84d3f31c270263d2c061e7bf3d81e27d783b5375"
 
 
 def table_path() -> Path:

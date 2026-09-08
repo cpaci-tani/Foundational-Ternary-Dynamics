@@ -1,19 +1,31 @@
 """Deterministic G-equivariant collision involution on the 24-velocity occupancy sets.
 
-Class key (n, P): particle number and 3-momentum. Orbits under the 96-element group
-are bucketed by class and by the conjugacy class of their stabilizer, paired in
-canonical order, and extended equivariantly. Unpaired orbits are fixed. No parameter
-is fitted; the collision efficiency is a measured property of the rule.
+Class key (n, P): particle number and 3-momentum. Spec A.2's rule pairs an unpaired
+orbit A with the first later unpaired orbit *of the same class* containing a member B
+with Stab(B) == Stab(A) exactly -- "of the same class" means the *orbit* contains a
+member whose momentum equals A's, not that the orbit's canonical representative
+(the numerically smallest 24-bit encoding chosen by canonical_orbits()) happens to
+carry that momentum itself; a representative's own momentum is not a rotation
+invariant, so two orbits genuinely pairable under the rule can have representatives
+with differently oriented momentum vectors.
 
-Correction to the pairing search (found by exhaustive verify_table, not a rule change):
-stabilizer conjugacy alone underdetermines the conjugating element g for a pair
-(a, b) -- several g in G satisfy g.Stab(b).g^-1 == Stab(a) (a coset of N_G(Stab(a))),
-and a non-identity g in general rotates the momentum vector, so not every such g
-sends rep_b to a state with rep_a's exact momentum. F(a) = g.b must conserve momentum,
-so build_table additionally requires the momentum of g.rep_b to match rep_a's before
-accepting g. This is a bug fix in *which* g realizes "find g with g.Stab(b).g^-1 =
-Stab(a)", not a change to the pairing rule itself; see build_table for the worked
-counterexample that exposed it.
+build_table() therefore buckets canonical orbit representatives by particle number,
+by the *rotation-orbit* of the representative's momentum under the 48 signed
+permutations (momentum_orbit_key -- an O_h orbit invariant: sorted absolute
+component values; the w-flip does not move momentum), and by the conjugacy class of
+the representative's stabilizer. These three keys are each necessary conditions for
+admissibility and cannot themselves discard a genuinely admissible pair. Within a
+bucket, every unpaired orbit representative is tested in canonical order against
+every later unpaired representative's full 96-element orbit membership for a member
+whose momentum matches exactly and whose stabilizer, conjugated back by the group
+element that reaches it, equals the first orbit's stabilizer exactly; the first
+admissible partner found is paired (F(a) = g.b, F(b) = g^-1.a) and both orbits are
+consumed. An orbit with no admissible partner anywhere in its bucket is fixed. No
+parameter is fitted; the collision efficiency is a measured property of the rule.
+
+unpaired_admissible() is an independent completeness check: it re-derives, from the
+orbits build_table() actually left fixed, whether any pair of them still admits a
+partner under the rule's literal condition. It must return 0.
 """
 from __future__ import annotations
 
@@ -116,52 +128,84 @@ def conjugacy_keys(stab: np.ndarray):
     return best_hi, best_lo
 
 
+def momentum_orbit_key(P_rows: np.ndarray) -> np.ndarray:
+    """Canonical key of the O_h orbit of each momentum vector: components' absolute values sorted descending."""
+    a = np.sort(np.abs(P_rows.astype(np.int64)), axis=1)[:, ::-1]
+    return (a[:, 0] << 16) | (a[:, 1] << 8) | a[:, 2]
+
+
 def build_table() -> np.ndarray:
     pop, P = state_arrays()
     rep, g_of = canonical_orbits()
     reps = np.unique(rep)
-    key = (pop[reps].astype(np.int64) << 24) | ((P[reps, 0].astype(np.int64) + 8) << 16) \
-        | ((P[reps, 1].astype(np.int64) + 8) << 8) | (P[reps, 2].astype(np.int64) + 8)
     stab = stabilizer_rows(reps)
     conj_hi, conj_lo = conjugacy_keys(stab)
-    order = np.lexsort((reps, conj_lo, conj_hi, key))
+    bucket = (pop[reps].astype(np.int64) << 32) | momentum_orbit_key(P[reps])
+    order = np.lexsort((reps, conj_lo, conj_hi, bucket))
     partner_member = np.array(reps, dtype=np.uint32)   # default: fixed orbit
-    pairs_a, pairs_b = [], []
-    i = 0
-    while i < len(order) - 1:
-        p, q = order[i], order[i + 1]
-        if key[p] == key[q] and conj_hi[p] == conj_hi[q] and conj_lo[p] == conj_lo[q]:
-            pairs_a.append(p); pairs_b.append(q); i += 2
-        else:
-            i += 1
-    pairs_a = np.array(pairs_a, dtype=np.int64); pairs_b = np.array(pairs_b, dtype=np.int64)
-    a_states, b_states = reps[pairs_a], reps[pairs_b]
-    g_pair = np.full(len(pairs_a), -1, dtype=np.int64)
-    for g in range(_G):
-        # membership of h in g Stab(b) g^-1 equals stab_b[g^-1 h g]; CONJ[INVERSE[g]] indexes that
-        conj_b = stab[pairs_b][:, H.CONJ[H.INVERSE[g]]]
-        # Stabilizer conjugacy alone underdetermines g: several g in G satisfy
-        # g.Stab(b).g^-1 == Stab(a) (they form a coset of N_G(Stab(a))), and not all
-        # of them send rep_b to a state with the same momentum vector as rep_a (a
-        # non-identity g in general ROTATES the momentum vector; conjugating stabilizers
-        # says nothing about that rotation). F(a) = g.b must additionally conserve
-        # momentum exactly, so among the stabilizer-conjugating candidates we require
-        # the momentum of g.rep_b to equal the momentum of rep_a (== momentum of rep_b,
-        # since both share the same class key) before accepting g. Verified against the
-        # brief's own worked example ({+x w0,+y w0,+z w1} / {edge(1,1,0), +z w1}): the
-        # unfiltered first match (ascending g) violates momentum; g=59 (present under
-        # both CONJ conventions) is the smallest that satisfies both conditions.
-        cand = apply_perm(g, b_states)
-        momentum_ok = (P[cand] == P[a_states]).all(axis=1)
-        match = (conj_b == stab[pairs_a]).all(axis=1) & momentum_ok & (g_pair < 0)
-        g_pair[match] = g
-    assert (g_pair >= 0).all(), "conjugate, momentum-matching stabilizers must be conjugate by some g"
-    partner_member[pairs_a] = apply_perm(g_pair, b_states)                # F(a) = g . b
-    partner_member[pairs_b] = apply_perm(H.INVERSE[g_pair], a_states)     # F(b) = g^-1 . a
+    paired = np.zeros(len(reps), dtype=bool)
+    all_g = np.arange(_G)
+    conj_index = H.CONJ[H.INVERSE[all_g]]              # row g: membership index for g Stab g^-1 (the convention verified in 8c9ce823)
+    start = 0
+    while start < len(order):
+        end = start
+        while (end < len(order) and bucket[order[end]] == bucket[order[start]]
+               and conj_hi[order[end]] == conj_hi[order[start]] and conj_lo[order[end]] == conj_lo[order[start]]):
+            end += 1
+        members = order[start:end]                       # same n, same momentum orbit type, same stabilizer conjugacy class; rep order
+        for i, p in enumerate(members):
+            if paired[p]:
+                continue
+            a = reps[p]
+            for q in members[i + 1:]:
+                if paired[q]:
+                    continue
+                b = reps[q]
+                images = apply_perm(all_g, np.full(_G, b, dtype=np.uint32))          # g.b for every g
+                momentum_ok = (P[images] == P[a]).all(axis=1)
+                if not momentum_ok.any():
+                    continue
+                conj_ok = (stab[q][conj_index] == stab[p]).all(axis=1)              # g Stab(b) g^-1 == Stab(a)
+                admissible = np.flatnonzero(momentum_ok & conj_ok)
+                if len(admissible) == 0:
+                    continue
+                g = int(admissible[0])
+                partner_member[p] = images[g]                                        # F(a) = g.b, same momentum, equal stabilizer
+                partner_member[q] = apply_perm(H.INVERSE[g], np.array([a], dtype=np.uint32))[0]   # F(b) = g^-1.a
+                paired[p] = paired[q] = True
+                break
+        start = end
     lookup = np.zeros(N, dtype=np.uint32)
     lookup[reps] = partner_member
-    base = lookup[rep]                                                    # partner member of each state's rep
-    return apply_perm(g_of.astype(np.int64), base)                        # F(g . rep) = g . partner
+    base = lookup[rep]
+    return apply_perm(g_of.astype(np.int64), base)
+
+
+def unpaired_admissible(table: np.ndarray) -> int:
+    """Number of pairs of FIXED orbit representatives that the rule would still pair (must be 0)."""
+    pop, P = state_arrays()
+    rep, _ = canonical_orbits()
+    reps = np.unique(rep)
+    fixed = reps[table[reps] == reps]
+    stab = stabilizer_rows(fixed)
+    conj_hi, conj_lo = conjugacy_keys(stab)
+    bucket = (pop[fixed].astype(np.int64) << 32) | momentum_orbit_key(P[fixed])
+    keys = {}
+    for i in range(len(fixed)):
+        keys.setdefault((int(bucket[i]), int(conj_hi[i]), int(conj_lo[i])), []).append(i)
+    all_g = np.arange(_G)
+    conj_index = H.CONJ[H.INVERSE[all_g]]
+    count = 0
+    for members in keys.values():
+        for x in range(len(members)):
+            p = members[x]
+            for q in members[x + 1:]:
+                images = apply_perm(all_g, np.full(_G, fixed[q], dtype=np.uint32))
+                momentum_ok = (P[images] == P[fixed[p]]).all(axis=1)
+                conj_ok = (stab[q][conj_index] == stab[p]).all(axis=1)
+                if (momentum_ok & conj_ok).any():
+                    count += 1
+    return count
 
 
 def verify_table(table: np.ndarray) -> dict:
