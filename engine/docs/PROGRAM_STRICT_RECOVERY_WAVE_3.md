@@ -44,7 +44,7 @@ SHA256, computed with `python -c "import hashlib; print(hashlib.sha256(open('<pa
 
 | File | SHA256 |
 |---|---|
-| `engine/docs/evidence/strict-recovery-wave3-exact.json` | `3c7c6a4679e5babe9bf8b222b3ea11367b3bbfe765d80265e995ef49fd404a3c` |
+| `engine/docs/evidence/strict-recovery-wave3-exact.json` | `bcf3e79802b5acf8bffc6083993488ec24275ff0df2f2e41fe15f0d919604478` |
 | `engine/docs/evidence/strict-hydro-throughput-2026-09.json` | `4c6f0c86fcfd3595e9dbac09bb465785291e9b1a560c0c2f0fbfc3b06a8de998` |
 | `engine/docs/evidence/strict-hydro-response-v1.json` | `092d36821051b9f234ea24566d6b939eceaa5b1fba24f0ef8c41caa40b5dc4e6` |
 
@@ -59,10 +59,13 @@ From the worktree root, in Git Bash:
 FTD_STRICT_CUDA_REQUIRED=1 python -m pytest scripts/tests/phi_v2_lattice -q -p no:cacheprovider
 ```
 
-Result: **468 passed, 45 skipped in 114.67 s (0:01:54)** (pytest also reports
+Result: **469 passed, 45 skipped in 115.04 s (0:01:55)** (pytest also reports
 1 unrelated warning: an unknown `cache_dir` config option, not a test
-result). `FTD_STRICT_CUDA_REQUIRED=1` turns a missing CUDA binary/device into
-a hard failure for `test_cuda_parity.py` specifically; none of that suite's
+result). The count rose from 468 to 469 passed with this fix wave's one new
+regression test (`test_certified_verdict_uses_declared_precision_regardless_of_ambient`,
+`test_recovery_hydro_verdict.py`, I-1). `FTD_STRICT_CUDA_REQUIRED=1` turns a
+missing CUDA binary/device into a hard failure for `test_cuda_parity.py`
+specifically; none of that suite's
 tests skipped, confirming the CUDA CLI and device are present. The 45 skips
 (`pytest -rs`) are all pre-existing, orthogonal-binary skips, none of them
 new to this wave: 33 in `test_native_parity.py` ("strict native CLI not
@@ -114,6 +117,42 @@ appropriate matter gates"):
 ; field-sector hydrodynamic verdict recorded in wave 3
 ```
 
+## Deviations from the spec (ruled)
+
+Three points where the executed work departs from design section 3, each
+ruled at the final whole-branch review and recorded here rather than silently
+matched to the design text.
+
+1. **H2 prediction formula.** `recovery_hydro_campaign.predict` computes
+   `m(n) = W P(k)^n h0` — the full 192-channel period map `P(k)` propagated
+   `n` times and projected onto the 7 conserved weights `W` only at readout —
+   instead of design section 3.3's `m(n) = P_eff(k)^n m(0)` with `P_eff(k)`
+   the 7x7 block of `P(k)`. Ruled: gate H1 found `block_dimension = 7`, i.e.
+   the seven-space is not invariant under `M1`/`M2`; propagating a 7x7 block
+   power would have assumed exactly the moment closure H1 had just refuted.
+   `m(n) = W P(k)^n h0` tests the linearized-Boltzmann product closure on its
+   own terms (does the full linear dynamics, viewed through the 7 conserved
+   projections, match this prediction), not a closure the evidence already
+   rejects.
+2. **The phi = 1 density-mode preparation arm.** Design section 3.3 specifies
+   preparing with phi being "(a) the density mode (`phi_c = 1`) and (b) each
+   momentum-like right eigenvector from H1". `recovery_hydro_campaign.cases`
+   runs seven arms, `mode in range(7)`, each a column of the equilibrium
+   basis `V` (`recovery_hydro_campaign.mode_shape`) — none of the seven is
+   the uniform `phi_c = 1` density-mode preparation, since that mode is not
+   itself a column of `V`. Not run in this wave; recorded here for inclusion
+   in the Phase 2 (H2') campaign design.
+3. **Per-mode outputs.** Design section 3.2's "Outputs" (first-order
+   propagation speeds, second-order damping rates per unit `|k|^2`, the
+   density-mode diffusion coefficient) are supplied by the float64 mode table
+   (`verdict.mode_table_float64`; see
+   [DERIV_STRICT_HYDRODYNAMIC_DISPERSION.md](DERIV_STRICT_HYDRODYNAMIC_DISPERSION.md#mode-table-float64-report))
+   rather than as exact rationals, because the label `"other"` (block
+   dimension 7, not 4) leaves no 4-dimensional NS-class block for those exact
+   per-mode quantities to be defined on; the density-mode diffusion
+   coefficient specifically does not exist for this law, since the density
+   functional is not an eigenfunctional of `M1`.
+
 ## Disposition
 
 No new law or physical identity is adopted by this wave. H1's exact-track
@@ -124,3 +163,15 @@ the audit characterizes the measurement's statistical power without
 reinterpreting the registered outcome. Per spec section 4.1, because H1's
 verdict is not NS-class isotropic, Phase 2 (a priced FCHC-class successor
 candidate) is triggered; that plan is written separately.
+
+Before its own H2'-class campaign is locked, the Phase 2 (and any H2-prime)
+plan requires: a pre-lock statistical power calculation against both the
+seed-scatter noise floor (`F = rms(stderr)/rms(|predicted|)`, per the H2
+audit's post hoc diagnostic above) and the epsilon^2 amplitude budget (per
+[DERIV_STRICT_HYDRODYNAMIC_SECTOR.md](DERIV_STRICT_HYDRODYNAMIC_SECTOR.md#gate-h2-registered-cuda-verification)'s
+regime paragraph); a registered epsilon-scaling control arm (multiple
+`epsilon` values, since this wave ran only `epsilon = 1/4` with no scaling
+check); and a rate-band tolerance that does not shrink with seed count alone
+(the registered `2`-standard-error band narrows as `1/sqrt(seeds)` regardless
+of whether the underlying signal is resolvable, which is exactly the low-power
+failure mode the H2 audit's diagnostic identified in 28 of 42 cells).

@@ -107,6 +107,13 @@ Preregistration:
 Audit: [AUDIT_STRICT_HYDRODYNAMIC_RESPONSE.md](AUDIT_STRICT_HYDRODYNAMIC_RESPONSE.md).
 Evidence: `evidence/strict-hydro-response-v1.json`.
 
+Prediction, as actually computed (`recovery_hydro_campaign.predict`):
+`m(n) = W P(k)^n h0`, the full 192-channel period map `P(k)` propagated `n`
+times and projected onto the 7 conserved weights `W` only at readout — a
+ruled deviation from design section 3.3's 7x7 block power
+`P_eff(k)^n m(0)`; see
+[PROGRAM_STRICT_RECOVERY_WAVE_3.md](PROGRAM_STRICT_RECOVERY_WAVE_3.md#deviations-from-the-spec-ruled).
+
 Registered matrix: periodic `L = 32`, single polarity, 23 stroboscopes of 48
 microticks each (1,104 microticks per case), 3 directions x 2 wavenumbers x 7
 stage-0 conserved modes x 8 seeds = 336 cases, 370,944 physical microticks
@@ -156,6 +163,14 @@ map at kinetic-scale wavevectors, not a hydrodynamic limit; a hydrodynamic
 window would require `|k|` small enough for the slow-mode rates to lie on
 their `k`-scaling branch, which the throughput probe places beyond the
 feasible lattice sizes.
+
+Separately, at the registered `epsilon = 1/4` the linearization used for the
+H2 prediction neglects a relative correction of order `epsilon^2 ~ 6 %` that
+feeds the k-mode at order `epsilon^3`; this amplitude budget, together with
+the seed-scatter noise floor above, is not accounted for by the registered
+10 % relative-RMS band, and no `epsilon`-scaling control arm was run to
+separate a genuine closure failure from a nonlinear correction at this
+amplitude.
 
 ## Phase 2 trigger decision
 
