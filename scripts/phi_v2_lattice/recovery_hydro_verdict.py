@@ -118,7 +118,9 @@ def exact_verdict(dispersions: dict) -> dict:
     operators = [m for n in directions for m in (dispersions[n].M1, dispersions[n].M2)]
     block = closure_block(a, operators)
     dim = block.nrows()
+    m1_only_block = closure_block(a, [dispersions[n].M1 for n in directions])
     out = {"block_dimension": dim, "block_rows": [[_text(block[i, j]) for j in range(7)] for i in range(dim)],
+           "block_dimension_first_order_only": m1_only_block.nrows(),
            "clauses": {"block_dimension_is_four": dim == 4},
            "charpoly_M1": {str(n): [_text(c) for c in _charpoly_coeffs(dispersions[n].M1)] for n in directions},
            "charpoly_M2": {str(n): [_text(c) for c in _charpoly_coeffs(dispersions[n].M2)] for n in directions}}
@@ -130,6 +132,8 @@ def exact_verdict(dispersions: dict) -> dict:
         return out
     if dim != 4:
         out["label"] = "other"
+        out["charpoly_M1_on_block"] = {
+            str(n): [_text(c) for c in _charpoly_coeffs(restrict(block, dispersions[n].M1))] for n in directions}
         return out
     s_norm, sound_ok, trans, longi = {}, True, {}, {}
     for n in directions:
@@ -177,14 +181,24 @@ def _status(delta_ball) -> str:
 
 
 def certified_verdict(dispersions: dict, block) -> dict:
-    """Ball-arithmetic evaluation of the clauses on the exact block basis."""
+    """Ball-arithmetic evaluation of the clauses on the exact block basis.
+
+    Well-defined for any block dimension b = block.nrows(): the block-invariance
+    residual and the certified characteristic polynomials (full 7x7 and the b x b
+    block restriction) are always computed. The three sound-pair/isotropy clauses
+    and their `values` are only meaningful for the pre-registered b == 4 case; for
+    any other b they report the string "NOT APPLICABLE (block dimension {b} != 4)"
+    and an empty `values` dict, rather than raising.
+    """
     directions = tuple(dispersions)
     Bq = block
-    B = flint.arb_mat([[D.Certified.scalar(_fraction(Bq[i, j])) for j in range(7)] for i in range(Bq.nrows())])
-    Gi = flint.arb_mat([[D.Certified.scalar(_fraction((Bq * Bq.transpose()).inv()[i, j])) for j in range(Bq.nrows())]
-                        for i in range(Bq.nrows())])
-    report = {}
+    b = Bq.nrows()
+    B = flint.arb_mat([[D.Certified.scalar(_fraction(Bq[i, j])) for j in range(7)] for i in range(b)])
+    Gi = flint.arb_mat([[D.Certified.scalar(_fraction((Bq * Bq.transpose()).inv()[i, j])) for j in range(b)]
+                        for i in range(b)])
+    report = {"block_dimension": b}
     s_values, trans_values, long_values, invariance = {}, {}, {}, {}
+    charpoly_m1_full, charpoly_m2_full, charpoly_m1_block = {}, {}, {}
     for n in directions:
         M1, M2 = dispersions[n].M1, dispersions[n].M2
         X = (B * M1 * B.transpose()) * Gi
@@ -197,6 +211,11 @@ def certified_verdict(dispersions: dict, block) -> dict:
                 if best is None or bound > best:
                     best = bound
         invariance[str(n)] = str(best)
+        charpoly_m1_full[str(n)] = [str(c) for c in M1.charpoly().coeffs()]
+        charpoly_m2_full[str(n)] = [str(c) for c in M2.charpoly().coeffs()]
+        charpoly_m1_block[str(n)] = [str(c) for c in X.charpoly().coeffs()]
+        if b != 4:
+            continue
         coeffs = X.charpoly().coeffs()
         s = -coeffs[2]
         n2 = _direction_norm2(n)
@@ -210,8 +229,18 @@ def certified_verdict(dispersions: dict, block) -> dict:
         trans_values[n] = (tc[3] / n2, tc[2] / (n2 * n2))
         trace = sum((PL * Y * PL)[i, i] for i in range(4))
         long_values[n] = (trace / 2 - s / 2) / n2
-    first = directions[0]
     report["block_invariance_max_residual"] = invariance
+    report["charpoly_M1_certified"] = charpoly_m1_full
+    report["charpoly_M2_certified"] = charpoly_m2_full
+    report["charpoly_M1_block_certified"] = charpoly_m1_block
+    if b != 4:
+        na = f"NOT APPLICABLE (block dimension {b} != 4)"
+        report["sound_speed_direction_independent"] = na
+        report["transverse_isotropic"] = na
+        report["longitudinal_isotropic"] = na
+        report["values"] = {}
+        return report
+    first = directions[0]
     report["sound_speed_direction_independent"] = _worst(
         [_status(s_values[n] - s_values[first]) for n in directions[1:]])
     report["transverse_isotropic"] = _worst(

@@ -100,6 +100,51 @@ def test_direction_dependent_sound_speed_is_other():
     assert verdict["clauses"]["clause_2_holds"] is False
 
 
+def _seven_dim_case(direction):
+    """Isotropic M1 unchanged; M2 perturbed so the density-functional closure reaches
+    all seven coordinates (rho, j, and the three independently-decaying modes)."""
+    M1, M2 = _isotropic_case(direction)
+    rows = [[Fraction(int(M2[i, j].p), int(M2[i, j].q)) for j in range(7)] for i in range(7)]
+    rows[0][4] = Fraction(1)
+    rows[4][5] = Fraction(1)
+    rows[5][6] = Fraction(1)
+    return M1, _mat(rows)
+
+
+def test_seven_dimensional_closure_is_other_and_certified_does_not_raise():
+    W = _w_with_constant_first()
+    exact = {n: Synthetic(n, *_seven_dim_case(n), W) for n in D.DIRECTIONS}
+    verdict = V.exact_verdict(exact)
+    assert verdict["block_dimension"] == 7
+    assert verdict["label"] == "other"
+    assert verdict["block_dimension_first_order_only"] == 4
+    assert len(verdict["charpoly_M1_on_block"]) == 3
+
+    block = V.closure_block(V.density_functional(W),
+                             [m for n in D.DIRECTIONS for m in (exact[n].M1, exact[n].M2)])
+    assert block.nrows() == 7
+    flint.ctx.prec = 256
+    balls = {}
+    for n in D.DIRECTIONS:
+        M1, M2 = _seven_dim_case(n)
+        balls[n] = Synthetic(
+            n,
+            flint.arb_mat([[D.Certified.scalar(Fraction(int(M1[i, j].p), int(M1[i, j].q))) for j in range(7)]
+                           for i in range(7)]),
+            flint.arb_mat([[D.Certified.scalar(Fraction(int(M2[i, j].p), int(M2[i, j].q))) for j in range(7)]
+                           for i in range(7)]),
+            W)
+    report = V.certified_verdict(balls, block)
+    assert report["block_dimension"] == 7
+    assert report["sound_speed_direction_independent"] == "NOT APPLICABLE (block dimension 7 != 4)"
+    assert report["transverse_isotropic"] == "NOT APPLICABLE (block dimension 7 != 4)"
+    assert report["longitudinal_isotropic"] == "NOT APPLICABLE (block dimension 7 != 4)"
+    assert report["values"] == {}
+    assert len(report["charpoly_M1_certified"]) == 3
+    for coeffs in report["charpoly_M1_certified"].values():
+        assert len(coeffs) == 8
+
+
 def test_diffusive_only_synthetic():
     W = _w_with_constant_first()
     disp = {}
