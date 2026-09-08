@@ -142,22 +142,20 @@ registered acceptance rule.
 
 ## Regime diagnostic (not an acceptance; float64 report)
 
-The horizon rule used in the preregistration is set by the slowest of the
-seven registered modes' predicted per-period decay rates at the registered
-wavevectors, computed at `L in {16, 32, 48, 64}`:
-0.01034575894892908, 0.01018756463675881, 0.010154744789741202,
-0.010139334707868304 respectively — essentially independent of `L` (hence of
-`k`), which is the signature of a collisional relaxation rate rather than a
-vanishing hydrodynamic one. The `k = 0` spectrum of the same period map at
-`p = 1/96` has its top 7 eigenvalue moduli exactly at 1 (the conserved
-modes) and its eighth-largest modulus at 0.97392369, giving a per-period
-decay rate of 0.026422330418528987 for the fastest-decaying mode adjacent to
-the conserved sector. At the registered wavevectors
-(`2 pi m / 32`, `m in {1, 2}`) the hydrodynamic modes decay faster than this
-collisional relaxation, so the campaign probed the kinetic regime of the
-linearized period map, not a hydrodynamic limit; a hydrodynamic window would
-require wavevectors small enough that the slow-mode decay falls below this
-rate, which the throughput probe places beyond the feasible lattice sizes.
+The slowest registered-mode rates at the registered wavevectors are 0.01035,
+0.01019, 0.01015, and 0.01014 per period at `L = 16, 32, 48, 64`, a range of
+`|k|` from `2 pi / 64` to `2 pi / 16` (a factor 4), over which the rate
+changes by 2%; a diffusive mode would scale as `k^2` (a factor 16) and a
+propagating mode's damping as `k^2`, so these modes are outside the
+small-`k` scaling window already at `|k| = 2 pi / 64`. They lie below the
+`k = 0` relaxation gap of the non-conserved sector, 0.026422330418528987 per
+period (eighth-largest modulus 0.97392369, the slowest non-conserved mode),
+so the seven slow modes remain separated from the fast sector but their
+rates have saturated. The campaign therefore probed the linearized period
+map at kinetic-scale wavevectors, not a hydrodynamic limit; a hydrodynamic
+window would require `|k|` small enough for the slow-mode rates to lie on
+their `k`-scaling branch, which the throughput probe places beyond the
+feasible lattice sizes.
 
 ## Phase 2 trigger decision
 
