@@ -8,6 +8,8 @@
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 import { resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
+import { telemetryHub } from '../../../../telemetry-hub.js';
+import { isCurrentScale0TelemetryMeta } from '../../../../telemetry/scale0-read.js';
 import {
     PLANCK_LENGTH_M, PLANCK_TIME_S,
     FTD_ELECTRON_PLANCK_RATIO, FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M,
@@ -33,7 +35,8 @@ function normalizeSize(value) {
 }
 
 function sci(x, digits = 2) {
-    if (!Number.isFinite(x) || x === 0) return '0';
+    if (!Number.isFinite(x)) return '—';
+    if (x === 0) return '0';
     const [mantissa, exponentText] = x.toExponential(digits).split('e');
     const exponent = Number(exponentText);
     if (exponent === 0) return mantissa;
@@ -242,7 +245,9 @@ function readTelemetry(getBridge) {
     let maxClusterSize = 0;
     let knotTelemetryAvailable = false;
     try {
-        const diagnostics = capability?.getScale0Diagnostics?.();
+        const meta = telemetryHub.getScale0TelemetryMeta?.('diagnostics');
+        const diagnostics = capability && isCurrentScale0TelemetryMeta(meta)
+            ? telemetryHub.s0?.diag : null;
         if (Number.isFinite(diagnostics?.manifested)) manifested = diagnostics.manifested;
         const knot = capability?.getScale0KnotTelemetry?.();
         if (knot && knot.count && knot.size) {
@@ -281,8 +286,8 @@ export function mountScaleContextPanel(host, getBridge) {
         setText(panel, 'tick-time', `${sci(FTD_TICK_S, 4)} s`);
         setText(panel, 'lhc-length', `${sci(LHC_LEN_M)} m`);
         setText(panel, 'lhc-gap', `${sci(LHC_LEN_M / (L * FTD_ELECTRON_PRIMARY_PLANCK_LENGTH_M))}× longer`);
-        setText(panel, 'uv-cutoff', `${OMEGA_MAX.toFixed(3)} rad/tick`);
-        setText(panel, 'genesis', `${K_GENESIS.toFixed(3)} MeV`);
+        setText(panel, 'uv-cutoff', `${OMEGA_MAX.toFixed(3)} stencil units`);
+        setText(panel, 'genesis', `${K_GENESIS.toFixed(3)} field units`);
         setText(panel, 'pair-threshold', `${PAIR_MEV.toFixed(3)} MeV`);
         const deltaV = Math.pow(GRB_E_GEV / M_PLANCK_GEV, 2) / 8;
         setText(panel, 'lv-delta', sci(deltaV, 1));

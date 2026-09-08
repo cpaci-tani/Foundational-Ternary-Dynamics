@@ -7,7 +7,7 @@ import { SECTION_SYMBOLS } from './data/symbols.js';
 import { SECTION_CONSTANTS } from './data/constants.js';
 import { SECTION_DIMENSIONS_UNITS } from './data/dimensions-units.js';
 import { SECTION_PHYSICS_TERMS } from './data/physics-terms.js';
-import { SECTION_SCALES } from './data/scales.js';
+import { SECTION_SCALES } from './data/scales.js?v=2';
 import { SECTION_RUNTIME } from './data/runtime.js';
 
 const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
@@ -564,11 +564,16 @@ const ATOM_SCENARIO_GUIDES = Object.freeze({
 });
 
 const PLANETARY_SCENARIO_GUIDES = Object.freeze({
-    'planetary-solar': 'This is the standard many-body orbital classroom: angular momentum, orbital period, eccentricity, and long-term stability around a dominant central mass.',
+    'planetary-solar': 'Our Solar System begins from JPL approximate J2000 elements and evolves under the complete toggle-gated Scale 4 effective-physics stack in AU, solar masses, and Julian years.',
     'planetary-binary': 'Binary stars force you to reason in barycentric coordinates instead of pretending one body is fixed.',
     'planetary-threebody': 'The three-body problem is where perturbation, resonance, and sensitivity overtake closed-form ellipse intuition.',
+    'planetary-mercury-relativity': 'Mercury isolates the dominant-star Schwarzschild 1PN correction so perihelion precession can be compared with a Newtonian run.',
+    'planetary-earth-moon-tides': 'The Earth–Moon lab exposes outward constant-Q tidal migration and the equal-and-opposite terrestrial spin reservoir.',
+    'planetary-radiation-lab': 'Three equal-density grains show how area-to-mass ratio changes radiation pressure and Poynting-Robertson drag.',
+    'planetary-atmosphere-entry': 'A ten-ton capsule enters a co-rotating exponential Earth atmosphere with a stiffness-bounded drag step.',
+    'planetary-roche-lab': 'An icy moon begins inside Saturn’s fluid Roche threshold and fragments into independently gravitating debris.',
+    'planetary-impact-lab': 'Two finite rocky bodies collide and become one perfectly inelastic, momentum-conserving remnant.',
     'exo-TRAPPIST-1': 'TRAPPIST-1 is especially good for resonance-chain intuition because the compact architecture makes period ratios and dynamical spacing visually meaningful.',
-    'exo-Kepler-90': 'Kepler-90 is a packed multi-planet comparison case where architecture and orbital crowding matter.',
     'exo-Kepler-11': 'Kepler-11 emphasizes compact multi-planet stability and the challenge of fitting many worlds into a narrow orbital span.',
     'exo-HR 8799': 'HR 8799 is a wide, massive-system contrast case with larger separations and long-period companions.',
     'exo-Kepler-20': 'Kepler-20 is useful for comparing interior compact planets with farther companions in one observed-system frame.',
@@ -788,16 +793,16 @@ const MOLECULE_SCENARIO_ENTRIES = Object.freeze(
 const PLANETARY_SCENARIO_ENTRIES = Object.freeze([
     makeScenarioEntry({
         id: 'planetary-solar',
-        title: 'Solar System [Scale 4]',
-        shortTitle: 'Solar System',
-        scale: 'Scale 4 / Planetary',
-        summary: 'A canonical many-body orbital system with one dominant central mass.',
+        title: 'Our Solar System [Scale 4]',
+        shortTitle: 'Our Solar System',
+        scale: 'Scale 4 / Solar System',
+        summary: 'The Sun, eight planets, Pluto, and selected major moons initialized at J2000.',
         body: [
-            'This scenario is the standard planetary baseline: approximately Keplerian motion organized around a dominant central body.',
+            'This is the default Scale 4 system: imported astronomical reference data evolved by the full toggle-gated effective celestial-mechanics stack.',
             PLANETARY_SCENARIO_GUIDES['planetary-solar'],
             'The math emphasis is orbital mechanics: inverse-square gravity, angular momentum conservation, semimajor axis, eccentricity, and orbital period scaling.',
         ],
-        bullets: ['Best first stop for planetary mechanics.'],
+        bullets: ['Physical AU/M☉/yr dynamics are the default.', 'JPL mean radii and all separations render at one uncompressed 1:1 AU gauge.', '[PARAMETRIC] imported astronomy; not an FTD derivation.'],
         notation: ['F = G m₁m₂/r²', 'L', 'a', 'e', 'T² ∝ a³'],
         tags: ['scale4', 'orbits'],
     }),
@@ -805,7 +810,7 @@ const PLANETARY_SCENARIO_ENTRIES = Object.freeze([
         id: 'planetary-binary',
         title: 'Binary Star System [Scale 4]',
         shortTitle: 'Binary Stars',
-        scale: 'Scale 4 / Planetary',
+        scale: 'Scale 4 / Solar System',
         summary: 'Two heavy bodies orbiting a shared barycenter.',
         body: [
             'Binary-star motion shifts the intuition from one-center orbits to mutual revolution about a barycenter.',
@@ -820,7 +825,7 @@ const PLANETARY_SCENARIO_ENTRIES = Object.freeze([
         id: 'planetary-threebody',
         title: 'Three-Body Problem [Scale 4]',
         shortTitle: 'Three-Body',
-        scale: 'Scale 4 / Planetary',
+        scale: 'Scale 4 / Solar System',
         summary: 'A classic nonintegrable orbital-dynamics problem.',
         body: [
             'The three-body scenario emphasizes sensitivity, resonance, and complex orbital exchanges that do not reduce to a simple closed-form two-body solution.',
@@ -831,12 +836,30 @@ const PLANETARY_SCENARIO_ENTRIES = Object.freeze([
         notation: ['N-body integration', 'resonance', 'chaos'],
         tags: ['scale4', 'three-body', 'chaos'],
     }),
-    ...['TRAPPIST-1', 'Kepler-90', 'Kepler-11', 'HR 8799', 'Kepler-20'].map((name) =>
+    ...[
+        ['planetary-mercury-relativity', 'Mercury · 1PN Precession', 'A focused weak-field relativity comparison around the Sun.', ['Dominant-star Schwarzschild 1PN; not full EIH.', '[PARAMETRIC] standard weak-field correction.'], ['1PN', 'perihelion precession']],
+        ['planetary-earth-moon-tides', 'Earth–Moon · Tidal Migration', 'Secular orbital migration coupled to a scalar Earth-spin reservoir.', ['Near-circular constant-Q approximation.', '[PARAMETRIC] k₂ and Q inputs.'], ['da/dt', 'tidal torque']],
+        ['planetary-radiation-lab', 'Dust · Radiation + P-R Drag', 'Three silicate grains compare radiation response by area-to-mass ratio.', ['Radiation pressure is radial; P-R and solar-wind drag remove orbital energy.', '[PARAMETRIC / IMPOSED] effective dust dynamics.'], ['β', 'Poynting-Robertson drag']],
+        ['planetary-atmosphere-entry', 'Earth · Atmospheric Entry', 'A finite capsule samples exponential atmospheric density and drag.', ['Co-rotating atmosphere with bounded explicit drag.', 'No lift, ablation, weather, or fluid wake.'], ['ρ(h)', 'quadratic drag']],
+        ['planetary-roche-lab', 'Saturn · Roche Disruption', 'A finite-density moon crosses the fluid Roche threshold.', ['Eight-fragment breakup is an imposed event law.', 'Fragments remain live gravitating bodies.'], ['Roche limit', 'tidal disruption']],
+        ['planetary-impact-lab', 'Protoplanet Impact', 'Two finite rocky bodies resolve a contact event.', ['Linear momentum is conserved.', 'The perfectly inelastic outcome and spherical remnant are [IMPOSED].'], ['contact', 'inelastic collision']],
+    ].map(([id, title, summary, bullets, notation]) => makeScenarioEntry({
+        id,
+        title: `${title} [Scale 4]`,
+        shortTitle: title,
+        scale: 'Scale 4 / Solar System',
+        summary,
+        body: [PLANETARY_SCENARIO_GUIDES[id], 'Use the physics controls and live perturbation/event charts to compare enabled and disabled paths.'],
+        bullets,
+        notation,
+        tags: ['scale4', 'physics-lab'],
+    })),
+    ...['TRAPPIST-1', 'Kepler-11', 'HR 8799', 'Kepler-20'].map((name) =>
         makeScenarioEntry({
             id: `exo-${name}`,
             title: `${name} System [Scale 4]`,
             shortTitle: `${name}`,
-            scale: 'Scale 4 / Planetary',
+            scale: 'Scale 4 / Solar System',
             summary: 'An exoplanetary system imported as a real-system orbital sandbox.',
             body: [
                 `${name} is a data-driven planetary system scenario based on archived exoplanet data rather than a stylized toy model.`,

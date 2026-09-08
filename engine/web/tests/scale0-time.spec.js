@@ -71,10 +71,15 @@ test.describe('Scale-0 Time Observatory', () => {
         const d = await page.evaluate(() => {
             const txt = document.getElementById('panel-time')?.textContent || '';
             const slider = document.getElementById('time-panel-vslider');
+            const cardD = document.getElementById('time-panel-card-d');
+            const historical = cardD?.querySelector('.time-subhead');
             return {
                 txt,
                 hasSlider: !!slider,
                 sliderMax: slider ? slider.getAttribute('max') : null,
+                historicalCaption: historical?.textContent ?? '',
+                historicalCaveat: historical?.getAttribute('data-ui-tooltip') || historical?.title || '',
+                cardDCharts: cardD?.querySelectorAll('svg.time-chart').length ?? 0,
             };
         });
         expect(d.hasSlider, 'imposed-v slider present').toBe(true);
@@ -84,7 +89,10 @@ test.describe('Scale-0 Time Observatory', () => {
         expect(d.txt.includes('[T]'), '[T] theory tag present').toBe(true);
         expect(d.txt.includes('[D]'), '[D] derived tag present').toBe(true);
         expect(d.txt.includes('FTD-0252'), 'FTD-0252 provenance rendered').toBe(true);
-        expect(d.txt.includes('IR convergence'), 'IR-convergence mini-chart rendered').toBe(true);
+        expect(d.historicalCaption, 'historical finite-size mini-chart caption').toContain('Historical finite-size residual');
+        expect(d.historicalCaveat, 'finite-size trend is not a continuum recovery certificate')
+            .toContain('does not establish exact covariance or strict-record continuum recovery');
+        expect(d.cardDCharts, 'kinematic and historical finite-size charts rendered in Card D').toBe(2);
 
         // The slider is interactive: moving it updates the imposed-v readout.
         await page.evaluate(() => {

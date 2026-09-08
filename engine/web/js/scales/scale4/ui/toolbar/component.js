@@ -1,4 +1,4 @@
-import { getScale4ScenarioToolbarTemplate } from './template.js';
+import { getScale4ScenarioToolbarTemplate } from './template.js?v=4';
 
 function htmlToElement(markup) {
     const template = document.createElement('template');

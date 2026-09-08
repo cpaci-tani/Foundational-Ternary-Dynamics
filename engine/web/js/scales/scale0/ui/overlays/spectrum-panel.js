@@ -4,34 +4,30 @@
  * Characterizes the lattice field itself (NOT emergent particle masses — those
  * live in the Zoo). Four sections:
  *   ① E(k) energy spectrum (hero) — FFT-derived spatial power spectrum of the
- *      flux field J, Parseval-validated against the audit; live (band-limited,
- *      downsampled) + a Deep Measure full-band snapshot.
+ *      flux field J, Parseval-checked within the resampled grid; live (undersampled,
+ *      downsampled) + a Deep Measure higher-grid snapshot.
  *   ② Topology — Gauss violation, defect/monopole proxy, flux-tube count, chirality.
  *   ③ Field metrics + distributions — vorticity/helicity/coherence/Fisher/
  *      Kretschmann/entropy: value + spatial histogram.
  *   ④ Energy partition — E/B/wave/field split, Poynting, drift.
  *
  * Honesty (CLAUDE.md): [M] measured, [D] derived/computed, [≈] approximate
- * (downsampled / band-limited). See SPEC_SCALE0_LATTICE_SPECTROSCOPY.md.
+ * (downsampled / undersampled). See SPEC_SCALE0_LATTICE_SPECTROSCOPY.md.
  */
 
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
-import { cardStyle, titleStyle, tagBadge, formatExp, formatFixed } from './_card-helpers.js';
-import {
-    energySpectrum, spectralPeak, spectralSlope, denseVectorGridFromSamples,
-} from '../../analysis/lattice-spectrum.js';
-import {
-    defectCount, fluxTubeComponents, metricStats, histogram, chiralityFromAudit,
-} from '../../analysis/lattice-topology.js';
-import { readScale0DiagAudit } from '../../../../telemetry/scale0-read.js';
-import { getScale0State, resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
-import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
+import { cardStyle, titleStyle, tagBadge, formatExp as finiteExp, formatFixed as finiteFixed } from './_card-helpers.js';
+import { SpectrumAnalysisClient, captureSpectrumObservation } from '../../analysis/spectrum-analysis-client.js';
+import { isCurrentScale0TelemetryMeta } from '../../../../telemetry/scale0-read.js';
+import { telemetryHub } from '../../../../telemetry-hub.js';
+import { getScale0State, isScale0AuthoritativeGenerationReady, subscribeScale0Qualification, resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
+import { isPanelLive, PANEL_VISIBILITY_CHANGE_EVENT } from '../../../../ui/panels/panel-visibility.js';
 
 const PANEL_ID = 'spectrum-panel';
 const HZ = 2;                 // exploratory data — slower cadence
-const M_LIVE = 32;            // default live FFT grid (band-limited)
+const M_LIVE = 32;            // default live FFT grid (undersampled)
 const M_LIVE_LARGE = 8;       // large-lattice live grid; Deep Measure remains 64³
-const M_DEEP = 64;            // Deep Measure FFT grid (full band)
+const M_DEEP = 64;            // Deep Measure FFT grid (higher grid)
 const EMPTY_SCENARIO_ID = 'empty';
 const SCENARIO_SYNC_MAX_FRAMES = 120;
 
@@ -40,14 +36,14 @@ const METRIC_KINDS = [
     { kind: 'helicity',    name: 'Helicity',    sym: 'H',  desc: 'H = J·(∇×J) — linking / handedness of field lines; nonzero for helical (Beltrami) flows.' },
     { kind: 'coherence',   name: 'Coherence',   sym: 'C',  desc: 'Phase coherence — how ordered (vs random / turbulent) the field is locally.' },
     { kind: 'fisher',      name: 'Fisher info', sym: 'I',  desc: 'Fisher information — local distinguishability / how sharply the field varies.' },
-    { kind: 'kretschmann', name: 'Kretschmann', sym: 'K',  desc: 'Kretschmann scalar — the effective curvature the field imprints on the substrate.' },
+    { kind: 'kretschmann', name: 'Curvature proxy', sym: 'K',  desc: '(18-point Laplacian of normalized latency proxy)²; not the Riemann curvature invariant.' },
 ];
 
 const SECTION_HELP = {
-    spectrum: 'Spatial energy spectrum E(k): the FFT power spectrum of the flux field J — which spatial scales hold the field energy (a turbulence-style spectrum). Peak λ* is the dominant wavelength; slope p<0 = energy at large scales, p>0 = small-scale (UV) buildup; Parseval ≈ 1 confirms the transform is correct. Deep Measure resolves the full k-range (the live view is band-limited to large scales).',
-    topology: 'Topological structure of the field. Gauss violation: how well ∇·E = ρ holds. Defects: monopole-like sources/sinks of div·J. Flux tubes: connected coherent |J| structures (confinement strings). Chirality: left vs right handedness asymmetry.',
+    spectrum: 'Spatial energy spectrum E(k): the FFT power spectrum of the flux field J — which spatial scales hold the field energy (a turbulence-style spectrum). Peak λ* is the dominant wavelength; slope p<0 = energy at large scales, p>0 = small-scale (UV) buildup; Parseval ≈ 1 confirms the transform is correct. Both modes resample without anti-alias filtering; Parseval checks only the resampled grid. Deep Measure uses a fixed 64³ FFT, not a full-lattice certification. Effective sampler stride and center origin are retained; strongest-bin representatives and nonuniform boundary gaps make peak wavelengths approximate.',
+    topology: 'Field-structure diagnostics. Gauss audit: the selected div J constraint, evaluated only in vacuum cells. Defects: divergence-threshold proxies. Flux components: threshold-connected |J| regions; no confinement identification. Dual-channel imbalance compares squared flux or wave amplitudes; it does not establish physical handedness.',
     metrics: 'Field metrics with their spatial distributions. Each row shows the metric RMS plus a histogram of its per-voxel values — the histogram shape reveals structure (uniform / peaked / bimodal) a single mean would hide.',
-    energy: 'How the field energy partitions across channels (E-field / B-field / wave / total), the net Poynting flux |S|, and the energy drift since the run started.',
+    energy: 'Separate reference diagnostics: wave/flux terms, electric/magnetic reductions, the magnitude of a volume sum of C_SPEED²(E×B), and the hub energy change from its first nonzero audit baseline (|H| > 1e-12). These are not a complete conserved Hamiltonian or a boundary flux.',
 };
 
 function liveStride(L) {
@@ -60,51 +56,35 @@ function liveGridSize(L) { return L >= 65 ? M_LIVE_LARGE : M_LIVE; }
 
 // ── Compute ──────────────────────────────────────────────────────────────────
 
-/** Spectrum + the dense magnitude grid (reused for flux-tube topology). */
-function computeSpectrum(caps, L, stride, M) {
-    const samples = caps.getScale0FieldSamples({ kind: 'fluxVector', stride });
-    const grid = denseVectorGridFromSamples(samples, L, stride);
-    const spec = energySpectrum(grid, grid.srcN, M, L);
-    const peak = spectralPeak(spec.k, spec.E);
-    const slope = spectralSlope(spec.k, spec.E);
-    const parseval = spec.sumReal > 0 ? spec.totalE / spec.sumReal : 1;
-    // magnitude grid for flux-tube CC (on the same srcN grid)
-    const Nc = grid.srcN ** 3;
-    const mag = new Float64Array(Nc);
-    for (let i = 0; i < Nc; i++) mag[i] = Math.hypot(grid.jx[i], grid.jy[i], grid.jz[i]);
-    return { spec, peak, slope, parseval, mag, srcN: grid.srcN, stride, M, sampleCount: samples.count };
-}
+function finiteValue(...values) { return values.find(Number.isFinite) ?? null; }
+function formatExp(value) { return Number.isFinite(value) ? finiteExp(value) : '—'; }
+function formatFixed(value, digits = 3) { return Number.isFinite(value) ? finiteFixed(value, digits) : '—'; }
 
-function computeTopology(caps, sp, audit) {
-    const dj = caps.getScale0FieldSamples({ kind: 'divJ', stride: sp.stride });
-    const defects = defectCount(dj.values || dj.vectors || [], dj.count | 0, 0.5);
-    const tubes = fluxTubeComponents(sp.mag, sp.srcN, 0.35);
-    const chir = chiralityFromAudit(audit);
+function readQualifiedTelemetry(hub = telemetryHub) {
+    const diagMeta = hub.getScale0TelemetryMeta?.('diagnostics') ?? null;
+    const auditMeta = hub.getScale0TelemetryMeta?.('audit') ?? null;
+    const diagCurrent = isCurrentScale0TelemetryMeta(diagMeta)
+        && Number.isSafeInteger(diagMeta.tick) && diagMeta.tick >= 0;
+    const auditCurrent = isCurrentScale0TelemetryMeta(auditMeta)
+        && Number.isSafeInteger(auditMeta.tick) && auditMeta.tick >= 0;
     return {
-        defects, tubes, chir,
-        gauss: audit ? (audit.gaussViolation ?? 0) : 0,
-        gaussMax: audit ? (audit.maxGaussError ?? 0) : 0,
+        diag: diagCurrent ? hub.s0?.diag ?? null : null,
+        audit: auditCurrent ? hub.s0?.audit ?? null : null,
+        diagTick: diagCurrent ? diagMeta.tick : null,
+        auditTick: auditCurrent ? auditMeta.tick : null,
     };
 }
 
-function computeMetrics(caps, stride) {
-    const out = [];
-    for (const m of METRIC_KINDS) {
-        const s = caps.getScale0FieldSamples({ kind: m.kind, stride });
-        const vals = s.values || new Float32Array(0), n = s.count | 0;
-        out.push({ ...m, stats: metricStats(vals, n), hist: histogram(vals, n, 22) });
-    }
-    return out;
-}
-
-// ── Render: ① spectrum (log–log E(k)) ────────────────────────────────────────
-
 function renderSpectrum(container, r, isDeep) {
+    if (!r) {
+        container.innerHTML = '<div class="spec-hist-empty">Flux sample unavailable or pending.</div>';
+        return;
+    }
     const { spec, peak, slope, parseval } = r;
     const ks = [], es = [];
     for (let i = 0; i < spec.E.length; i++) { if (spec.E[i] > 0 && spec.k[i] > 0) { ks.push(spec.k[i]); es.push(spec.E[i]); } }
     if (ks.length < 2) {
-        container.innerHTML = `<div class="spec-hist-empty">No field energy yet — load/seed a flux scenario.</div>`;
+        container.innerHTML = `<div class="spec-hist-empty">No resolved nonzero spectral range in this sampled grid.</div>`;
         return;
     }
     const W = 360, H = 188, m = { top: 16, right: 14, bottom: 34, left: 44 };
@@ -153,8 +133,8 @@ function renderSpectrum(container, r, isDeep) {
         <div class="spec-readouts">
             <span>${tagBadge('D')}peak λ* <b>${lam}</b> vox (k*=${peak.kPeak.toFixed(3)})</span>
             <span>${tagBadge('D')}slope p <b>${Number.isFinite(slope.slope) ? slope.slope.toFixed(2) : '—'}</b></span>
-            <span title="ΣE(k) / Σ|J|² — should be 1 if the FFT is correct">${tagBadge('M')}Parseval <b style="color:${pOk ? 'var(--positive-text)' : 'var(--warning-text)'}">${parseval.toFixed(3)}</b></span>
-            <span>${isDeep ? `${tagBadge('D')}DEEP M=${r.M}³ · k&lt;${spec.kNyq.toFixed(2)}` : `${tagBadge('≈')}live M=${r.M}³ · band-limited k&lt;${spec.kNyq.toFixed(2)}`}</span>
+            <span title="Total Fourier power including DC / resampled-grid |J|²; this checks the transform, not sampling accuracy">${tagBadge('M')}Parseval <b style="color:${pOk ? 'var(--positive-text)' : 'var(--warning-text)'}">${parseval.toFixed(3)}</b></span>
+            <span>${isDeep ? `${tagBadge('D')}DEEP M=${r.M}³ · axial Nyquist ${spec.kNyq.toFixed(2)}` : `${tagBadge('≈')}live M=${r.M}³ · undersampled axial Nyquist ${spec.kNyq.toFixed(2)}`}</span>
         </div>`;
 }
 
@@ -166,17 +146,18 @@ function row(label, value, tag = 'D', color = 'var(--text-primary)', tip = '') {
 }
 
 function renderTopology(container, t) {
-    const gaugeOk = t.gauss < 1e-4;
+    const gaugePresent = Number.isFinite(t.gauss);
+    const gaugeOk = gaugePresent && t.gauss >= 0 && t.gauss < 1e-4;
     container.innerHTML =
-        row('Gauss violation Σ(∇·E−ρ)²', formatExp(t.gauss), 'M', gaugeOk ? 'var(--positive-text)' : 'var(--warning-text)',
-            'Sum of squared Gauss-law residuals ∇·E−ρ over the lattice. Near 0 (green) = the constraint holds; large = drift.') +
+        row('Vacuum constraint residual Σr²', formatExp(t.gauss), 'M', !gaugePresent ? 'var(--text-muted)' : gaugeOk ? 'var(--positive-text)' : 'var(--warning-text)',
+            'Native audit r=div J−g(s−mean charge), squared and summed only at unmanifested sites; g is the selected Coulomb charge coupling. Distinct from the raw div J−s overlay.') +
         row('  max |Gauss error|', formatExp(t.gaussMax), 'M', 'var(--text-muted)', 'The worst single-voxel Gauss-law residual.') +
-        row('Defects (src / sink / net)', `${t.defects.sources} / ${t.defects.sinks} / ${t.defects.net >= 0 ? '+' : ''}${t.defects.net}`, 'D', undefined,
-            'Monopole-like sources (div·J>0) and sinks (div·J<0) above half the peak |div·J|; net = signed imbalance. A proxy, not a quantized charge.') +
-        row('Flux tubes (count / largest)', `${t.tubes.count} / ${t.tubes.largest}`, 'D', undefined,
-            'Connected components of |J| above a threshold (6-neighbour, periodic) — coherent flux bundles / confinement strings: count and largest size.') +
-        row('Chirality (E asym / wv asym)', `${formatFixed(t.chir.eAsym, 3)} / ${formatFixed(t.chir.wvAsym, 3)}`, 'M', undefined,
-            'Left/right handedness asymmetry (L−R)/(L+R) for the E-field and wave channels. 0 = balanced.');
+        row('Defects (src / sink / net)', t.defects ? `${t.defects.sources} / ${t.defects.sinks} / ${t.defects.net >= 0 ? '+' : ''}${t.defects.net}` : '—', 'D', undefined,
+            'Counts above half the peak |div J| among retained sampled representatives; net is their signed imbalance. Not a quantized charge or a count of all microscopic defects.') +
+        row('Flux tubes (count / largest)', t.tubes ? `${t.tubes.count} / ${t.tubes.largest}` : '—', 'D', undefined,
+            'Connected components of |J| above a threshold (6-neighbour, periodic) — threshold-connected regions: count and largest size; neither coherence nor confinement follows from connectivity.') +
+        row('Channel asymmetry (flux / wave)', `${formatFixed(t.chir.eAsym, 3)} / ${formatFixed(t.chir.wvAsym, 3)}`, 'D', undefined,
+            '(L−R)/(L+R) of squared reference flux and wave-velocity records. Unavailable for missing channels or zero denominators; no fermion-handedness identification.');
 }
 
 // ── Render: ③ metrics + distributions ────────────────────────────────────────
@@ -197,8 +178,8 @@ function renderMetrics(container, metrics) {
     for (const m of metrics) {
         html += `<div class="spec-metric-row" title="${m.desc}">
             <span class="spec-metric-name">${m.sym} <span class="spec-metric-sub">${m.name}</span></span>
-            <span class="spec-metric-val">${formatExp(m.stats.rms)}<span class="spec-metric-unit">rms</span></span>
-            <span class="spec-metric-hist">${miniHist(m.hist)}</span>
+            <span class="spec-metric-val">${formatExp(m.stats?.rms)}<span class="spec-metric-unit">rms</span></span>
+            <span class="spec-metric-hist">${m.hist ? miniHist(m.hist) : 'No retained sample statistics'}</span>
         </div>`;
     }
     container.innerHTML = html || `<div class="spec-hist-empty">No metric data.</div>`;
@@ -206,26 +187,37 @@ function renderMetrics(container, metrics) {
 
 // ── Render: ④ energy partition ───────────────────────────────────────────────
 
-function renderEnergy(container, audit, entropy) {
-    if (!audit) { container.innerHTML = `<div class="spec-hist-empty">No audit data.</div>`; return; }
+function renderEnergy(container, audit, entropy, { auditTick = null, diagTick = null } = {}) {
     const parts = [
-        { k: 'E-field', v: audit.eFieldEnergy ?? audit.EFieldEnergy ?? 0, c: 'var(--positive-text)' },
-        { k: 'B-field', v: audit.bFieldEnergy ?? audit.BFieldEnergy ?? 0, c: 'var(--negative-text)' },
-        { k: 'Wave',    v: audit.waveEnergy ?? 0, c: 'var(--chart-flux, #fb8c00)' },
-        { k: 'Field',   v: audit.fieldEnergy ?? 0, c: 'var(--accent)' },
+        { k: 'Wave',    v: finiteValue(audit?.waveEnergy), c: 'var(--chart-flux, #fb8c00)' },
+        { k: 'Flux',    v: finiteValue(audit?.fieldEnergy), c: 'var(--accent)' },
     ];
-    const total = parts.reduce((a, p) => a + Math.max(0, p.v), 0) || 1;
-    let bar = `<div class="spec-energy-bar" title="Stacked share of the field energy across channels — hover a segment for its value.">`;
-    for (const p of parts) { const pct = Math.max(0, p.v) / total * 100; bar += `<span style="width:${pct.toFixed(1)}%;background:${p.c}" title="${p.k}: ${formatExp(p.v)}"></span>`; }
-    bar += `</div><div class="spec-energy-legend">`;
+    const total = parts.reduce((sum, p) => sum + p.v, 0);
+    const partition = parts.every(p => Number.isFinite(p.v) && p.v >= 0)
+        && Number.isFinite(total) && total > 0;
+    let bar = partition
+        ? '<div class="spec-energy-bar" title="Disjoint reference wave/flux terms; separate E/B diagnostics below. Not a certified conserved Hamiltonian.">'
+        : '<div class="spec-hist-empty">Partition unavailable or has no positive support.</div>';
+    if (partition) {
+        for (const p of parts) bar += `<span style="width:${(p.v / total * 100).toFixed(1)}%;background:${p.c}" title="${p.k}: ${formatExp(p.v)}"></span>`;
+        bar += '</div>';
+    }
+    bar += '<div class="spec-energy-legend">';
     for (const p of parts) bar += `<span><i style="background:${p.c}"></i>${p.k} ${formatExp(p.v)}</span>`;
     bar += `</div>`;
-    const px = audit.totalPoynting?.x ?? 0, py = audit.totalPoynting?.y ?? 0, pz = audit.totalPoynting?.z ?? 0;
-    const pMag = Math.hypot(px, py, pz);
+    const px = finiteValue(audit?.totalPoynting?.x, audit?.poyntingX);
+    const py = finiteValue(audit?.totalPoynting?.y, audit?.poyntingY);
+    const pz = finiteValue(audit?.totalPoynting?.z, audit?.poyntingZ);
+    const pMag = [px, py, pz].every(Number.isFinite) ? Math.hypot(px, py, pz) : null;
+    const drift = finiteValue(audit?.energyDrift);
+    const tickLabel = tick => Number.isSafeInteger(tick) && tick >= 0 ? String(tick) : 'unavailable';
     container.innerHTML = bar +
-        row('Poynting |S|', formatExp(pMag), 'M', undefined, 'Magnitude of the net Poynting flux S = E×B — the field energy transport.') +
-        row('Energy drift', `${formatFixed(audit.energyDrift ?? 0, 3)} %`, 'M', undefined, 'Percentage change in total field energy since the run started — a conservation check.') +
-        row('Entropy', formatExp(entropy ?? 0), 'M', undefined, 'Field entropy from the diagnostics — a disorder measure.');
+        row('E diagnostic (= wave)', formatExp(finiteValue(audit?.eFieldEnergy, audit?.EFieldEnergy)), 'M', undefined, 'Same ½Σ|wave velocity|² term; do not add it a second time.') +
+        row('B diagnostic', formatExp(finiteValue(audit?.bFieldEnergy, audit?.BFieldEnergy)), 'M', undefined, '(C_SPEED²/2)Σ|curl J|²; separate diagnostic, not an extra ledger partition.') +
+        row('Poynting volume sum magnitude', formatExp(pMag), 'M', undefined, 'Magnitude of the volume sum of C_SPEED²(E×B). A reference diagnostic, not net boundary flux through a surface.') +
+        row('Accounted energy change', Number.isFinite(drift) ? `${formatFixed(drift, 3)} %` : '—', 'D', undefined, 'Hub percentage change of dynamicEnergy (fallback totalEnergy), relative to its first nonzero audit with |H| > 1e-12 after a source/intervention baseline reset. Damping and pumping can change this value; it is not a complete conservation test.') +
+        row('Flux-weight entropy', formatExp(finiteValue(entropy)), 'M', undefined, 'Native Shannon spread −Σp ln p of normalized squared flux weights, with native cutoffs. Not thermodynamic entropy.') +
+        `<div class="spec-observation-scope">Audit tick ${tickLabel(auditTick)}; diagnostics tick ${tickLabel(diagTick)}. Independently sampled groups.</div>`;
 }
 
 // ── Panel shell ──────────────────────────────────────────────────────────────
@@ -245,8 +237,8 @@ function buildPanel() {
                 <div style="${titleStyle()}" title="${SECTION_HELP.spectrum}">Energy spectrum E(k) ⓘ</div>
                 <div id="${PANEL_ID}-spec" class="spec-hist-box"></div>
                 <div class="spec-actions">
-                    <button id="${PANEL_ID}-deep" type="button" class="spec-btn" title="Full-resolution snapshot spectrum + topology of the current tick">Deep Measure</button>
-                    <button id="${PANEL_ID}-live" type="button" class="spec-btn spec-btn-ghost" hidden title="Resume the live band-limited view">↻ Live</button>
+                    <button id="${PANEL_ID}-deep" type="button" class="spec-btn" title="Fixed 64³ FFT snapshot of sampled field data; no anti-alias or full-band guarantee">Deep Measure</button>
+                    <button id="${PANEL_ID}-live" type="button" class="spec-btn spec-btn-ghost" hidden title="Resume the live undersampled view">↻ Live</button>
                 </div>
             </section>
             <section style="${cardStyle(150)}">
@@ -258,7 +250,7 @@ function buildPanel() {
                 <div id="${PANEL_ID}-metrics"></div>
             </section>
             <section style="${cardStyle(130)}">
-                <div style="${titleStyle()}" title="${SECTION_HELP.energy}">Energy partition ⓘ</div>
+                <div style="${titleStyle()}" title="${SECTION_HELP.energy}">Energy diagnostics ⓘ</div>
                 <div id="${PANEL_ID}-energy"></div>
             </section>
         </div>
@@ -286,28 +278,58 @@ export function mountSpectrumPanel(host, getBridge) {
     const applicableContent = panel.querySelector('.spectrum-applicable-content');
     const inapplicableMessage = panel.querySelector('.spectrum-inapplicable');
 
-    let mode = 'live';   // 'live' | 'deep' (deep freezes the hero on a full-band snapshot)
+    let mode = 'live';   // 'live' | 'deep' (deep freezes the hero on a higher-grid snapshot)
     let lastSpec = null; // last computed spectrum (exposed for tests/diagnostics)
     let inapplicable = false;
     let disposed = false;
     let sub = null;
     let deepTimer = 0;
+    let deepPending = false;
+    let deepRequestToken = 0;
     let samplerWantSignature = '';
+    let samplerBridge = null;
     let scenarioSelect = null;
     let scenarioSyncRaf = 0;
     let scenarioSyncToken = 0;
+    let analysisOwner = null;
+    let analysisGeneration = null;
+    let latestAnalysisResult = null;
+    const ownerIds = new WeakMap();
+    let nextOwnerId = 0;
+    let panelWasLive = isPanelLive(host);
+    const analysis = new SpectrumAnalysisClient();
 
     function releaseSamplerWants(force = false) {
         if (!force && !samplerWantSignature) return;
-        getBridge?.()?.replaceSamplerWants?.('spectrum-panel', []);
+        samplerBridge?.replaceSamplerWants?.('spectrum-panel', []);
         samplerWantSignature = '';
+        samplerBridge = null;
     }
 
     function setSamplerWants(bridge, keys) {
+        if (disposed) return;
         const signature = keys.join('|');
-        if (signature === samplerWantSignature) return;
+        if (signature === samplerWantSignature && bridge === samplerBridge) return;
+        if (samplerBridge && bridge !== samplerBridge) releaseSamplerWants(true);
         bridge?.replaceSamplerWants?.('spectrum-panel', keys);
+        samplerBridge = bridge;
         samplerWantSignature = signature;
+    }
+
+    function cancelDeepMeasurement(label = 'live') {
+        analysis.cancel();
+        latestAnalysisResult = null;
+        ++deepRequestToken;
+        if (deepTimer) clearTimeout(deepTimer);
+        deepTimer = 0;
+        deepPending = false;
+        // Release the owner that received this demand, even after a bridge swap.
+        releaseSamplerWants(true);
+        mode = 'live';
+        modeBadge.textContent = label;
+        liveBtn.hidden = true;
+        deepBtn.disabled = disposed || inapplicable
+            || !isScale0AuthoritativeGenerationReady(getScale0State());
     }
 
     function stopCoordinator() {
@@ -325,52 +347,127 @@ export function mountSpectrumPanel(host, getBridge) {
         return b?.capabilities?.scale0 || null;
     }
 
-    function renderHero(caps, L, stride, M, isDeep) {
-        const sp = computeSpectrum(caps, L, stride, M);
-        renderSpectrum(specBody, sp, isDeep);
-        lastSpec = sp;
-        return sp;
+    function currentAnalysisContext(owner) {
+        if (!ownerIds.has(owner)) {
+            if (nextOwnerId === Number.MAX_SAFE_INTEGER) throw new RangeError('Spectrum owner identity exhausted');
+            ownerIds.set(owner, ++nextOwnerId);
+        }
+        return { owner, generation: getScale0State().qualificationAnchor?.loadGeneration,
+            ownerId: ownerIds.get(owner), scenarioId: getScale0State().currentScenarioId, scenarioToken: scenarioSyncToken };
+    }
+
+    function canPublish(context) {
+        const state = getScale0State();
+        return !disposed && !inapplicable && isPanelLive(host)
+            && isScale0AuthoritativeGenerationReady(state)
+            && state.currentScenarioId !== EMPTY_SCENARIO_ID
+            && getBridge?.() === context.owner
+            && state.qualificationAnchor?.loadGeneration === context.generation
+            && state.currentScenarioId === context.scenarioId
+            && scenarioSyncToken === context.scenarioToken;
+    }
+
+    function wireContext(context) {
+        // The owner object stays on the UI thread; this transaction-local token
+        // and load/scenario identity are echoed by the observation-only worker.
+        return { ownerId: context.ownerId, generation: context.generation, scenarioId: context.scenarioId,
+            scenarioToken: context.scenarioToken };
+    }
+
+    function unavailableAnalysis() {
+        if (mode === 'live') { lastSpec = null; renderSpectrum(specBody, null, false); }
+        renderTopology(topoBody, { defects: null, tubes: null,
+            chir: { eAsym: null, wvAsym: null }, gauss: null, gaussMax: null });
+        renderMetrics(metBody, METRIC_KINDS.map(m => ({ ...m, stats: null, hist: null })));
+    }
+
+    function suspendAnalysis() {
+        if (deepPending) cancelDeepMeasurement();
+        else { analysis.cancel(); latestAnalysisResult = null; releaseSamplerWants(); }
+    }
+
+    function publishReadyAnalysis() {
+        const ready = latestAnalysisResult;
+        latestAnalysisResult = null;
+        if (!ready || !canPublish(ready.context) || deepPending) return;
+        if (ready.error) { unavailableAnalysis(); return; }
+        const { result, requestedMode } = ready;
+        if (requestedMode === 'live' && mode === 'live') {
+            lastSpec = result.spectrum;
+            renderSpectrum(specBody, lastSpec, false);
+        }
+        renderTopology(topoBody, result.topology);
+        renderMetrics(metBody, result.metrics.map(m => ({
+            ...METRIC_KINDS.find(description => description.kind === m.kind), ...m,
+        })));
     }
 
     function update() {
-        // The event-driven applicability transition normally removes the
-        // coordinator before an empty frame. This guard keeps direct/manual
-        // calls inert as well, with no bridge/sample/FFT access.
+        if (disposed) return;
         if (inapplicable || getScale0State().currentScenarioId === EMPTY_SCENARIO_ID) {
             if (!inapplicable) setEmptyApplicability(true);
             return;
         }
-        if (!isPanelLive(host)) {
-            releaseSamplerWants();
+        panelWasLive = isPanelLive(host);
+        if (!isScale0AuthoritativeGenerationReady(getScale0State()) || !panelWasLive) {
+            suspendAnalysis();
             return;
         }
         const b = getBridge?.();
+        const generation = getScale0State().qualificationAnchor?.loadGeneration;
+        if ((analysisOwner && analysisOwner !== b)
+            || (analysisGeneration !== null && analysisGeneration !== generation)) {
+            cancelDeepMeasurement();
+            lastSpec = null;
+            renderSpectrum(specBody, null, false);
+        }
+        analysisOwner = b;
+        analysisGeneration = generation;
         const caps = getCaps();
-        if (!caps) return;
+        if (!caps) { cancelDeepMeasurement(); unavailableAnalysis(); return; }
         const L = caps.latticeSize || 33;
         const stride = liveStride(L);
-        setSamplerWants(b, [
+        setSamplerWants(b, [...new Set([
             `fluxVector@${stride}`, `divJ@${stride}`,
             ...METRIC_KINDS.map((m) => `${m.kind}@${stride}`),
-        ]);
-        const { diag, audit } = readScale0DiagAudit(b);
-
-        // ① hero — only when live (deep freezes the snapshot)
-        let sp;
-        if (mode === 'live') {
-            sp = renderHero(caps, L, stride, liveGridSize(L), false);
-        } else {
-            // still need a magnitude grid for topology while frozen — cheap live one
-            sp = computeSpectrum(caps, L, stride, liveGridSize(L));
-        }
-        // ②③④ always live
-        renderTopology(topoBody, computeTopology(caps, sp, audit));
-        renderMetrics(metBody, computeMetrics(caps, stride));
-        renderEnergy(enBody, audit, diag?.entropy);
+            ...(deepPending ? ['fluxVector@1'] : []),
+        ])]);
+        const telemetry = readQualifiedTelemetry();
+        // Live DOM publication remains inside this registered 2 Hz callback;
+        // worker messages only replace the single bounded result mailbox.
+        publishReadyAnalysis();
+        renderEnergy(enBody, telemetry.audit, telemetry.diag?.entropy, telemetry);
+        // Deep owns the sole active worker until it completes or its original
+        // deadline expires. Its completion immediately resumes live topology.
+        if (deepPending) return;
+        const context = currentAnalysisContext(b);
+        const requestedMode = mode === 'live' ? 'live' : 'topology';
+        try {
+            const observation = captureSpectrumObservation(caps, { L, stride,
+                M: liveGridSize(L), mode: requestedMode, metricKinds: METRIC_KINDS, ...telemetry });
+            analysis.submit(observation, { context: wireContext(context),
+                onResult(result) {
+                    if (!canPublish(context) || deepPending) return;
+                    latestAnalysisResult = { result, requestedMode, context };
+                },
+                onError() { if (canPublish(context) && !deepPending) latestAnalysisResult = { context, error: true }; },
+            });
+        } catch { unavailableAnalysis(); }
     }
 
+    function onVisibilityChange() {
+        if (disposed) return;
+        const live = isPanelLive(host), becameLive = live && !panelWasLive;
+        panelWasLive = live;
+        if (!live) suspendAnalysis();
+        else if (becameLive) update();
+    }
+    window.addEventListener?.(PANEL_VISIBILITY_CHANGE_EVENT, onVisibilityChange);
+
     function setEmptyApplicability(nextValue) {
+        if (disposed) return;
         const next = !!nextValue;
+        if (next) cancelDeepMeasurement();
         if (next === inapplicable) {
             if (next) {
                 // A rapid empty → nonempty → empty sequence can leave the
@@ -407,8 +504,6 @@ export function mountSpectrumPanel(host, getBridge) {
         if (next) {
             stopCoordinator();
             releaseSamplerWants(true);
-            if (deepTimer) clearTimeout(deepTimer);
-            deepTimer = 0;
             mode = 'live';
             lastSpec = null;
             modeBadge.textContent = 'live';
@@ -422,6 +517,7 @@ export function mountSpectrumPanel(host, getBridge) {
     }
 
     function handleScenarioIntent(scenarioId) {
+        if (disposed) return;
         const token = ++scenarioSyncToken;
         if (scenarioSyncRaf) cancelAnimationFrame(scenarioSyncRaf);
         scenarioSyncRaf = 0;
@@ -438,21 +534,23 @@ export function mountSpectrumPanel(host, getBridge) {
         // identical kind list could be mistaken for already registered on the
         // new bridge and the restored panel would read an unrequested cache.
         stopCoordinator();
-        releaseSamplerWants(true);
-        if (deepTimer) clearTimeout(deepTimer);
-        deepTimer = 0;
+        cancelDeepMeasurement();
         mode = 'live';
         lastSpec = null;
         modeBadge.textContent = 'live';
         liveBtn.hidden = true;
         deepBtn.disabled = true;
         panel.dataset.applicability = 'pending-scenario';
+        for (const body of [specBody, topoBody, metBody, enBody]) {
+            body.innerHTML = '<div class="spec-hist-empty">Awaiting the current scenario generation; measurement unavailable.</div>';
+        }
 
         let remaining = SCENARIO_SYNC_MAX_FRAMES;
         const reconcile = () => {
             scenarioSyncRaf = 0;
             if (disposed || token !== scenarioSyncToken) return;
-            if (getScale0State().currentScenarioId === scenarioId) {
+            if (getScale0State().currentScenarioId === scenarioId
+                && isScale0AuthoritativeGenerationReady(getScale0State())) {
                 setEmptyApplicability(false);
                 return;
             }
@@ -467,6 +565,7 @@ export function mountSpectrumPanel(host, getBridge) {
     }
 
     function rebindScenarioApplicability() {
+        if (disposed) return;
         const nextSelect = document.getElementById('scenario-select');
         if (nextSelect !== scenarioSelect) {
             scenarioSelect?.removeEventListener('change', onScenarioChange);
@@ -479,30 +578,78 @@ export function mountSpectrumPanel(host, getBridge) {
     }
 
     deepBtn.addEventListener('click', () => {
-        if (inapplicable || getScale0State().currentScenarioId === EMPTY_SCENARIO_ID) return;
+        if (disposed || deepPending || inapplicable || !isPanelLive(host)
+            || !isScale0AuthoritativeGenerationReady(getScale0State())
+            || getScale0State().currentScenarioId === EMPTY_SCENARIO_ID) return;
         const caps = getCaps();
         if (!caps) return;
+        analysis.cancel();
+        latestAnalysisResult = null;
         const L = caps.latticeSize || 33;
-        const token = scenarioSyncToken;
+        const owner = getBridge?.();
+        const context = currentAnalysisContext(owner);
+        const requestToken = ++deepRequestToken;
+        analysisOwner = owner;
+        analysisGeneration = context.generation;
         mode = 'deep';
-        modeBadge.textContent = 'measuring…';
+        deepPending = true;
+        modeBadge.textContent = 'measuring\u2026';
         deepBtn.disabled = true;
-        // Let the "measuring…" state paint before the (brief) full-res FFT.
-        deepTimer = setTimeout(() => {
+        liveBtn.hidden = false;
+        setSamplerWants(owner, [...new Set([
+            `fluxVector@${liveStride(L)}`, `divJ@${liveStride(L)}`,
+            ...METRIC_KINDS.map(m => `${m.kind}@${liveStride(L)}`), 'fluxVector@1',
+        ])]);
+        // One absolute budget includes availability, queueing and computation.
+        const deadline = performance.now() + 5000;
+        const fail = () => {
+            if (requestToken !== deepRequestToken) return;
+            cancelDeepMeasurement('deep sample unavailable');
+            update();
+        };
+        const measure = () => {
+            if (requestToken !== deepRequestToken) return;
             deepTimer = 0;
-            if (disposed || inapplicable || token !== scenarioSyncToken) return;
-            try { renderHero(caps, L, 1, M_DEEP, true); modeBadge.textContent = 'deep (frozen)'; }
-            catch (e) { modeBadge.textContent = 'live'; mode = 'live'; console.error('[spectrum] deep measure', e); }
-            deepBtn.disabled = false;
-            liveBtn.hidden = false;
-        }, 30);
+            if (!canPublish(context)) { cancelDeepMeasurement(); return; }
+            if (performance.now() >= deadline) { fail(); return; }
+            try {
+                const observation = captureSpectrumObservation(caps, { L, stride: 1, M: M_DEEP, mode: 'deep' });
+                if (!observation.flux) { deepTimer = setTimeout(measure, 50); return; }
+                analysis.submit(observation, { context: wireContext(context), deadline,
+                    onResult(result) {
+                        if (requestToken !== deepRequestToken) return;
+                        if (!canPublish(context)) { cancelDeepMeasurement(); return; }
+                        if (!result.spectrum) { deepTimer = setTimeout(measure, 50); return; }
+                        lastSpec = result.spectrum;
+                        renderSpectrum(specBody, lastSpec, true);
+                        modeBadge.textContent = 'deep (frozen)';
+                        deepPending = false;
+                        releaseSamplerWants(true);
+                        deepBtn.disabled = false;
+                        liveBtn.hidden = false;
+                        update();
+                    }, onError: fail,
+                });
+            } catch { fail(); }
+        };
+        deepTimer = setTimeout(measure, 30);
     });
     liveBtn.addEventListener('click', () => {
-        if (inapplicable) return;
-        mode = 'live'; modeBadge.textContent = 'live'; liveBtn.hidden = true;
+        if (disposed || inapplicable) return;
+        cancelDeepMeasurement();
+        update();
     });
 
     rebindScenarioApplicability();
+    let boundary = null;
+    const unsubscribeQualification = subscribeScale0Qualification(q => {
+        const next = q.authoritativeLoad
+            ? `${q.authoritativeLoad.status}:${q.authoritativeLoad.loadGeneration}`
+            : `ready:${q.anchor?.loadGeneration}`;
+        if (next === boundary) return;
+        boundary = next;
+        handleScenarioIntent(q.scenarioId);
+    });
     if (!inapplicable) {
         update();
         startCoordinator();
@@ -517,13 +664,16 @@ export function mountSpectrumPanel(host, getBridge) {
         get applicability() { return inapplicable ? 'inapplicable-empty' : 'applicable'; },
         get coordinatorActive() { return !!sub; },
         get samplerWantsActive() { return !!samplerWantSignature; },
+        get analysisPending() { return analysis.busy || analysis.queued; },
         rebindScenarioApplicability,
         dispose: () => {
+            if (disposed) return;
+            unsubscribeQualification();
             disposed = true;
+            window.removeEventListener?.(PANEL_VISIBILITY_CHANGE_EVENT, onVisibilityChange);
+            analysis.dispose();
             stopCoordinator();
-            releaseSamplerWants(true);
-            if (deepTimer) clearTimeout(deepTimer);
-            deepTimer = 0;
+            cancelDeepMeasurement();
             if (scenarioSyncRaf) cancelAnimationFrame(scenarioSyncRaf);
             scenarioSyncRaf = 0;
             scenarioSyncToken++;

@@ -1,287 +1,153 @@
-export const EXOPLANET_SEEDS = {
-  "TRAPPIST-1": [
-    {
-      "pl_name": "TRAPPIST-1 e",
-      "sy_snum": 1,
-      "sy_pnum": 7,
-      "pl_rade": 0.92,
-      "pl_masse": 0.692,
-      "pl_orbsmax": 0.02925,
-      "pl_orbeccen": 0.0051,
-      "st_mass": 0.0898,
-      "st_rad": 0.1192,
-      "mass_sol": 2.0784148143578795e-06
-    },
-    {
-      "pl_name": "TRAPPIST-1 c",
-      "sy_snum": 1,
-      "sy_pnum": 7,
-      "pl_rade": 1.095,
-      "pl_masse": 1.156,
-      "pl_orbsmax": 0.01581512,
-      "pl_orbeccen": 0.00654,
-      "st_mass": 0.090778,
-      "st_rad": 0.114827,
-      "mass_sol": 3.4720339962394635e-06
-    },
-    {
-      "pl_name": "TRAPPIST-1 b",
-      "sy_snum": 1,
-      "sy_pnum": 7,
-      "pl_rade": 1.086,
-      "pl_masse": 0.85,
-      "pl_orbsmax": 0.01111,
-      "pl_orbeccen": 0.081,
-      "st_mass": 0.0802,
-      "st_rad": 0.117,
-      "mass_sol": 2.5529661737054878e-06
-    },
-    {
-      "pl_name": "TRAPPIST-1 g",
-      "sy_snum": 1,
-      "sy_pnum": 7,
-      "pl_rade": 1.148,
-      "pl_masse": 1.148,
-      "pl_orbsmax": 0.04687692,
-      "pl_orbeccen": 0.00208,
-      "st_mass": 0.089,
-      "st_rad": null,
-      "mass_sol": 3.4480060793104706e-06
-    },
-    {
-      "pl_name": "TRAPPIST-1 f",
-      "sy_snum": 1,
-      "sy_pnum": 7,
-      "pl_rade": 1.045,
-      "pl_masse": 0.68,
-      "pl_orbsmax": 0.0371,
-      "pl_orbeccen": 0.063,
-      "st_mass": 0.0898,
-      "st_rad": 0.121,
-      "mass_sol": 2.0423729389643906e-06
-    },
-    {
-      "pl_name": "TRAPPIST-1 d",
-      "sy_snum": 1,
-      "sy_pnum": 7,
-      "pl_rade": 0.788,
-      "pl_masse": 0.388,
-      "pl_orbsmax": 0.02227,
-      "pl_orbeccen": 0.00837,
-      "st_mass": 0.0898,
-      "st_rad": 0.1192,
-      "mass_sol": 1.1653539710561522e-06
-    },
-    {
-      "pl_name": "TRAPPIST-1 h",
-      "sy_snum": 1,
-      "sy_pnum": 7,
-      "pl_rade": 0.755,
-      "pl_masse": 0.326,
-      "pl_orbsmax": 0.06189,
-      "pl_orbeccen": 0.00567,
-      "st_mass": 0.0898,
-      "st_rad": 0.1192,
-      "mass_sol": 9.791376148564578e-07
+/**
+ * Catalog-backed example planetary systems for Scale 4.
+ *
+ * Distances are AU, masses are Earth masses, and radii are Earth radii in the
+ * source records below. The bridge converts those quantities to its physical
+ * AU / solar-mass gauge without any display enlargement or orbit compression.
+ *
+ * The NASA Exoplanet Archive does not provide visible-light surface colors for
+ * these planets. `color` and `style` are therefore explicitly modeled cues,
+ * inferred from broad radius class and catalog equilibrium temperature. They
+ * are presentation metadata, not observations or FTD-derived predictions.
+ */
+
+export const EARTH_RADIUS_KM = 6371.0084;
+export const EARTH_MASS_SOLAR = 3.0034896161241036e-6;
+
+export const EXOPLANET_PROVENANCE = Object.freeze({
+    source: 'NASA Exoplanet Archive Planetary Systems Composite Parameters (PSCompPars)',
+    retrieved: '2026-09-04',
+    epistemic: '[PARAMETRIC]',
+    scale: 'Catalog semimajor axes and radii; rendered at 1 world unit = 1 AU with no body enlargement',
+    appearance: 'Modeled color cue from radius class and equilibrium temperature; not observed true color',
+    url: 'https://exoplanetarchive.ipac.caltech.edu/TAP/sync',
+});
+
+function appearanceFor(hostName, radiusEarth, equilibriumTemperatureK) {
+    const temperature = Number(equilibriumTemperatureK);
+    if (hostName === 'HR 8799') {
+        return {
+            className: 'Young self-luminous gas giant',
+            appearanceClass: 'young-gas-giant',
+            style: 15,
+            color: temperature >= 1250 ? '#d97850' : '#c5684c',
+        };
     }
-  ],
-  "Kepler-90": [],
-  "Kepler-11": [
-    {
-      "pl_name": "Kepler-11 e",
-      "sy_snum": 1,
-      "sy_pnum": 6,
-      "pl_rade": 3.98,
-      "pl_masse": 8.79,
-      "pl_orbsmax": 0.194,
-      "pl_orbeccen": 0.0,
-      "st_mass": 0.986,
-      "st_rad": 1.064,
-      "mass_sol": 2.6400673725730866e-05
-    },
-    {
-      "pl_name": "Kepler-11 c",
-      "sy_snum": 1,
-      "sy_pnum": 6,
-      "pl_rade": 3.15,
-      "pl_masse": 4.6034,
-      "pl_orbsmax": 0.106,
-      "pl_orbeccen": 0.0,
-      "st_mass": 0.986,
-      "st_rad": 1.064,
-      "mass_sol": 1.3826264098865697e-05
-    },
-    {
-      "pl_name": "Kepler-11 d",
-      "sy_snum": 1,
-      "sy_pnum": 6,
-      "pl_rade": 3.37,
-      "pl_masse": 7.47,
-      "pl_orbsmax": 0.156,
-      "pl_orbeccen": 0.0,
-      "st_mass": 0.99,
-      "st_rad": 1.07,
-      "mass_sol": 2.243606743244705e-05
-    },
-    {
-      "pl_name": "Kepler-11 f",
-      "sy_snum": 1,
-      "sy_pnum": 6,
-      "pl_rade": 2.49,
-      "pl_masse": 2.0,
-      "pl_orbsmax": 0.25,
-      "pl_orbeccen": 0.013,
-      "st_mass": 1.05,
-      "st_rad": 1.12955,
-      "mass_sol": 6.006979232248207e-06
-    },
-    {
-      "pl_name": "Kepler-11 b",
-      "sy_snum": 1,
-      "sy_pnum": 6,
-      "pl_rade": 1.85,
-      "pl_masse": 1.07,
-      "pl_orbsmax": 0.0903,
-      "pl_orbeccen": 0.0,
-      "st_mass": 0.921,
-      "st_rad": 1.046,
-      "mass_sol": 3.213733889252791e-06
-    },
-    {
-      "pl_name": "Kepler-11 g",
-      "sy_snum": 1,
-      "sy_pnum": 6,
-      "pl_rade": 3.4,
-      "pl_masse": 50.4464,
-      "pl_orbsmax": 0.4596,
-      "pl_orbeccen": 0.0,
-      "st_mass": 0.921,
-      "st_rad": 1.046,
-      "mass_sol": 0.00015151523857084297
+    if (radiusEarth > 4) {
+        return {
+            className: 'Neptune-like exoplanet',
+            appearanceClass: 'sub-neptune',
+            style: 14,
+            color: temperature >= 700 ? '#caa77b' : '#789db0',
+        };
     }
-  ],
-  "HR 8799": [
-    {
-      "pl_name": "HR 8799 e",
-      "sy_snum": 1,
-      "sy_pnum": 4,
-      "pl_rade": 10.0881,
-      "pl_masse": 3178.3,
-      "pl_orbsmax": 14.5,
-      "pl_orbeccen": 0.15,
-      "st_mass": 1.61,
-      "st_rad": 1.49338,
-      "mass_sol": 0.009545991046927238
-    },
-    {
-      "pl_name": "HR 8799 c",
-      "sy_snum": 1,
-      "sy_pnum": 4,
-      "pl_rade": 11.209,
-      "pl_masse": 3000.0,
-      "pl_orbsmax": 38.0,
-      "pl_orbeccen": 0.5,
-      "st_mass": 1.61,
-      "st_rad": 1.49338,
-      "mass_sol": 0.00901046884837231
-    },
-    {
-      "pl_name": "HR 8799 d",
-      "sy_snum": 1,
-      "sy_pnum": 4,
-      "pl_rade": 13.0,
-      "pl_masse": 3000.0,
-      "pl_orbsmax": 24.0,
-      "pl_orbeccen": 0.6,
-      "st_mass": 1.5,
-      "st_rad": null,
-      "mass_sol": 0.00901046884837231
-    },
-    {
-      "pl_name": "HR 8799 b",
-      "sy_snum": 1,
-      "sy_pnum": 4,
-      "pl_rade": 6.7254,
-      "pl_masse": 2000.0,
-      "pl_orbsmax": 67.96,
-      "pl_orbeccen": 0.0,
-      "st_mass": 1.51,
-      "st_rad": null,
-      "mass_sol": 0.006006979232248207
+    if (radiusEarth > 1.6) {
+        return {
+            className: 'Sub-Neptune exoplanet',
+            appearanceClass: 'sub-neptune',
+            style: 14,
+            color: temperature >= 900 ? '#d6a06b'
+                : temperature >= 700 ? '#c5ad82'
+                    : temperature >= 500 ? '#8eb3ad' : '#7896b4',
+        };
     }
-  ],
-  "Kepler-20": [
-    {
-      "pl_name": "Kepler-20 b",
-      "sy_snum": 2,
-      "sy_pnum": 6,
-      "pl_rade": 1.868,
-      "pl_masse": 9.7,
-      "pl_orbsmax": 0.0463,
-      "pl_orbeccen": 0.03,
-      "st_mass": 0.96,
-      "st_rad": 0.914982,
-      "mass_sol": 2.91338492764038e-05
-    },
-    {
-      "pl_name": "Kepler-20 f",
-      "sy_snum": 2,
-      "sy_pnum": 6,
-      "pl_rade": 1.03,
-      "pl_masse": 14.3,
-      "pl_orbsmax": 0.13941,
-      "pl_orbeccen": 0.32,
-      "st_mass": 0.912,
-      "st_rad": 0.944,
-      "mass_sol": 4.294990151057468e-05
-    },
-    {
-      "pl_name": "Kepler-20 d",
-      "sy_snum": 2,
-      "sy_pnum": 6,
-      "pl_rade": 2.63,
-      "pl_masse": 20.1,
-      "pl_orbsmax": 0.3453,
-      "pl_orbeccen": 0.6,
-      "st_mass": 0.95,
-      "st_rad": 0.93,
-      "mass_sol": 6.037014128409448e-05
-    },
-    {
-      "pl_name": "Kepler-20 g",
-      "sy_snum": 2,
-      "sy_pnum": 6,
-      "pl_rade": null,
-      "pl_masse": 1.0,
-      "pl_orbsmax": 0.2055,
-      "pl_orbeccen": 0.15,
-      "st_mass": 0.948,
-      "st_rad": 0.9639,
-      "mass_sol": 3.0034896161241036e-06
-    },
-    {
-      "pl_name": "Kepler-20 c",
-      "sy_snum": 2,
-      "sy_pnum": 6,
-      "pl_rade": 3.03,
-      "pl_masse": 16.1,
-      "pl_orbsmax": 0.0919,
-      "pl_orbeccen": 0.0,
-      "st_mass": 0.876,
-      "st_rad": 0.925,
-      "mass_sol": 4.835618281959807e-05
-    },
-    {
-      "pl_name": "Kepler-20 e",
-      "sy_snum": 2,
-      "sy_pnum": 6,
-      "pl_rade": 0.805,
-      "pl_masse": 0.76,
-      "pl_orbsmax": 0.0626,
-      "pl_orbeccen": 0.0,
-      "st_mass": 1.0,
-      "st_rad": 0.887,
-      "mass_sol": 2.2826521082543188e-06
-    }
-  ]
-};
+    return {
+        className: 'Rocky exoplanet',
+        appearanceClass: 'rocky',
+        style: 13,
+        color: temperature >= 350 ? '#b85b40'
+            : temperature >= 250 ? '#9a735c'
+                : temperature >= 210 ? '#877d73' : '#82939c',
+    };
+}
+
+function planet(hostName, name, radiusEarth, massEarth, semiMajorAxisAu, eccentricity, periodDays, equilibriumTemperatureK) {
+    const appearance = appearanceFor(hostName, radiusEarth, equilibriumTemperatureK);
+    const modeledEccentricity = Number.isFinite(eccentricity) ? eccentricity : 0;
+    return Object.freeze({
+        name,
+        radiusEarth,
+        massEarth,
+        semiMajorAxisAu,
+        eccentricity: modeledEccentricity,
+        catalogEccentricity: eccentricity,
+        eccentricityBasis: Number.isFinite(eccentricity)
+            ? 'NASA Exoplanet Archive composite value'
+            : '[IMPOSED] circular initialization because the catalog composite value is unavailable',
+        periodDays,
+        equilibriumTemperatureK,
+        radiusKm: radiusEarth * EARTH_RADIUS_KM,
+        massSolar: massEarth * EARTH_MASS_SOLAR,
+        colorBasis: 'modeled from radius class and equilibrium temperature; not observed true color',
+        ...appearance,
+
+        // Compatibility aliases for older catalog consumers.
+        pl_name: name,
+        pl_rade: radiusEarth,
+        pl_masse: massEarth,
+        pl_orbsmax: semiMajorAxisAu,
+        pl_orbeccen: eccentricity,
+        pl_orbper: periodDays,
+        pl_eqt: equilibriumTemperatureK,
+        mass_sol: massEarth * EARTH_MASS_SOLAR,
+    });
+}
+
+function system(host, planets) {
+    return Object.freeze({
+        host: Object.freeze(host),
+        planets: Object.freeze(planets),
+        provenance: EXOPLANET_PROVENANCE,
+    });
+}
+
+export const EXOPLANET_SYSTEMS = Object.freeze({
+    'TRAPPIST-1': system({
+        name: 'TRAPPIST-1', key: 'trappist-1', massSolar: 0.0898, radiusSolar: 0.1192,
+        temperatureK: 2566, spectralType: 'M8.0 V', color: '#ff9b69',
+    }, [
+        planet('TRAPPIST-1', 'TRAPPIST-1 b', 1.116, 1.374, 0.01154, 0.00622, 1.510826, 397.6),
+        planet('TRAPPIST-1', 'TRAPPIST-1 c', 1.097, 1.308, 0.0158, 0.00654, 2.421937, 339.7),
+        planet('TRAPPIST-1', 'TRAPPIST-1 d', 0.788, 0.388, 0.02227, 0.00837, 4.049219, 286.2),
+        planet('TRAPPIST-1', 'TRAPPIST-1 e', 0.92, 0.692, 0.02925, 0.0051, 6.101013, 249.7),
+        planet('TRAPPIST-1', 'TRAPPIST-1 f', 1.045, 1.039, 0.03849, 0.01007, 9.20754, 217.7),
+        planet('TRAPPIST-1', 'TRAPPIST-1 g', 1.129, 1.321, 0.04683, 0.00208, 12.352446, 197.3),
+        planet('TRAPPIST-1', 'TRAPPIST-1 h', 0.755, 0.326, 0.06189, 0.00567, 18.772866, 171.7),
+    ]),
+    'Kepler-11': system({
+        name: 'Kepler-11', key: 'kepler-11', massSolar: 0.961, radiusSolar: 1.065,
+        temperatureK: 5663, spectralType: 'G-type', color: '#fff2df',
+    }, [
+        planet('Kepler-11', 'Kepler-11 b', 1.8, 1.9, 0.091, 0.045, 10.3039, 849),
+        planet('Kepler-11', 'Kepler-11 c', 2.87, 2.9, 0.107, 0.026, 13.0241, 786),
+        planet('Kepler-11', 'Kepler-11 d', 3.12, 7.3, 0.155, 0.004, 22.6845, 653),
+        planet('Kepler-11', 'Kepler-11 e', 4.19, 8.0, 0.195, 0.012, 31.9996, 582),
+        planet('Kepler-11', 'Kepler-11 f', 2.49, 2.0, 0.25, 0.013, 46.6888, 513),
+        planet('Kepler-11', 'Kepler-11 g', 3.33, 25.0, 0.466, 0.15, 118.3807, 376),
+    ]),
+    'HR 8799': system({
+        name: 'HR 8799', key: 'hr-8799', massSolar: 1.5, radiusSolar: 1.49338,
+        temperatureK: 7204.58, spectralType: 'A5 V', color: '#dfe9ff',
+    }, [
+        planet('HR 8799', 'HR 8799 e', 13.11453, 3178.3, 16.4, 0.15, 20815.6, 1150),
+        planet('HR 8799', 'HR 8799 d', 13.0, 3000.0, 24.0, 0.6, 37000, 1300),
+        planet('HR 8799', 'HR 8799 c', 13.0, 3000.0, 38.0, 0.5, 69000, 1200),
+        planet('HR 8799', 'HR 8799 b', 13.0, 2000.0, 68.0, null, 170000, 1200),
+    ]),
+    'Kepler-20': system({
+        name: 'Kepler-20', key: 'kepler-20', massSolar: 0.929, radiusSolar: 0.9164,
+        temperatureK: 5495, spectralType: 'G-type', color: '#ffeedc',
+    }, [
+        planet('Kepler-20', 'Kepler-20 b', 1.773, 9.7, 0.04565, 0.083, 3.6961049, 1187),
+        planet('Kepler-20', 'Kepler-20 e', 0.821, 0.76, 0.0637, 0.092, 6.0984882, 1004),
+        planet('Kepler-20', 'Kepler-20 c', 2.894, 11.1, 0.0936, 0.076, 10.8540774, 828),
+        planet('Kepler-20', 'Kepler-20 f', 0.952, 1.4, 0.1387, 0.094, 19.578328, 681),
+        planet('Kepler-20', 'Kepler-20 g', 4.71, 19.96, 0.2055, 0.15, 34.94, 524),
+        planet('Kepler-20', 'Kepler-20 d', 2.606, 13.4, 0.3474, 0.082, 77.611455, 430),
+    ]),
+});
+
+// Retained export shape for dropdown/catalog parity checks.
+export const EXOPLANET_SEEDS = Object.freeze(Object.fromEntries(
+    Object.entries(EXOPLANET_SYSTEMS).map(([name, entry]) => [name, entry.planets]),
+));

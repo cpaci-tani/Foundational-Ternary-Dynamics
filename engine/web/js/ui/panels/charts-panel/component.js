@@ -4,6 +4,7 @@ import { charts as scale0Charts } from './descriptors/scale0.js';
 import { charts as scale1Charts } from './descriptors/scale1.js';
 import { charts as scale2Charts } from './descriptors/scale2.js';
 import { charts as scale3Charts } from './descriptors/scale3.js';
+import { charts as scale4Charts } from './descriptors/scale4.js?v=2';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { PerfFlags } from '../../../config/perf-flags.js';
 import { isPanelLive } from '../panel-visibility.js';
@@ -17,6 +18,7 @@ const CHARTS_BY_SCALE = Object.freeze({
     '1': scale1Charts,
     '2': scale2Charts,
     '3': scale3Charts,
+    '4': scale4Charts,
 });
 
 function getScaleCharts(scale) {
@@ -47,7 +49,7 @@ export class ChartsPanelComponent {
     constructor(panelEl) {
         this.el = panelEl;
         this.cards = new Map(); // chartId → ChartCard
-        this._destroyTimers = new Set();
+        this._destroyTimers = new Map(); // timer -> fading card still owned here
         this.activeScale = '0';
         this.descriptors = scale0Charts;
     }
@@ -91,6 +93,11 @@ export class ChartsPanelComponent {
     }
 
     _destroyAllCards() {
+        for (const [timer, card] of this._destroyTimers) {
+            clearTimeout(timer);
+            card.destroy();
+        }
+        this._destroyTimers.clear();
         for (const card of this.cards.values()) card.destroy();
         this.cards.clear();
         if (this.grid) this.grid.innerHTML = '';
@@ -129,7 +136,7 @@ export class ChartsPanelComponent {
                     this._destroyTimers.delete(timer);
                     victim.destroy();
                 }, 140);
-                this._destroyTimers.add(timer);
+                this._destroyTimers.set(timer, victim);
                 this.cards.delete(id);
             }
         }
@@ -152,10 +159,7 @@ export class ChartsPanelComponent {
     }
 
     cleanup() {
-        for (const timer of this._destroyTimers) clearTimeout(timer);
-        this._destroyTimers.clear();
-        for (const card of this.cards.values()) card.destroy();
-        this.cards.clear();
+        this._destroyAllCards();
         this.historyControl?.destroy();
         this.historyControl = null;
         this.el.innerHTML = '';

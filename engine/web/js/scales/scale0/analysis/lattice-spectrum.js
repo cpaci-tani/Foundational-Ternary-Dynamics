@@ -7,18 +7,20 @@
  * The energy spectrum (turbulence-style): FFT each component of J, sum the modal
  * power, and radial-bin by physical |k|. With the unitary normalization here,
  *     Σ_k E(k) = Σ_x |J(x)|²            (Parseval)
- * which the caller cross-checks against the audit's field energy — a built-in
- * validation that the instrument is correct. See SPEC_SCALE0_LATTICE_SPECTROSCOPY.md §3.
+ * which validates the FFT against the RESAMPLED grid only. It does not
+ * validate resampling accuracy or conservation of the engine Hamiltonian. See SPEC_SCALE0_LATTICE_SPECTROSCOPY.md §3.
  *
  * The lattice side L is generally odd (33/49/65/97/129), so we always resample
- * the field onto a power-of-2 grid M (trilinear) before the radix-2 FFT. M<L
- * band-limits the spectrum to k < πM/L — the honest "live = large scales only,
- * Deep Measure = full band" distinction.
+ * the field onto a power-of-2 grid M (trilinear) before the radix-2 FFT. M<L undersamples without an anti-alias filter. Neither live nor a fixed
+ * Deep Measure grid certifies a full microscopic spectrum.
  */
 
 // ── 1-D radix-2 Cooley–Tukey FFT (in place, forward; length must be 2^p) ──────
 export function fft1d(re, im) {
     const n = re.length;
+    if (!Number.isSafeInteger(n) || n < 1 || (n & (n - 1)) !== 0 || im.length !== n) {
+        throw new RangeError("FFT requires equally sized power-of-two arrays");
+    }
     // bit-reversal permutation
     for (let i = 1, j = 0; i < n; i++) {
         let bit = n >> 1;
@@ -78,8 +80,9 @@ export function fft3dInPlace(re, im, M) {
 }
 
 export function nextPow2(n) {
+    if (!Number.isSafeInteger(n) || n < 1 || n > 2 ** 30) throw new RangeError("Invalid FFT length");
     let p = 1;
-    while (p < n) p <<= 1;
+    while (p < n) p *= 2;
     return p;
 }
 
@@ -89,11 +92,11 @@ export function resampleInto(src, srcN, M, dst) {
     const scale = srcN / M;
     const sN = srcN;
     for (let z = 0; z < M; z++) {
-        const sz = z * scale, z0 = Math.floor(sz), fz = sz - z0, z1 = Math.min(z0 + 1, sN - 1);
+        const sz = z * scale, z0 = Math.floor(sz), fz = sz - z0, z1 = (z0 + 1) % sN;
         for (let y = 0; y < M; y++) {
-            const sy = y * scale, y0 = Math.floor(sy), fy = sy - y0, y1 = Math.min(y0 + 1, sN - 1);
+            const sy = y * scale, y0 = Math.floor(sy), fy = sy - y0, y1 = (y0 + 1) % sN;
             for (let x = 0; x < M; x++) {
-                const sx = x * scale, x0 = Math.floor(sx), fx = sx - x0, x1 = Math.min(x0 + 1, sN - 1);
+                const sx = x * scale, x0 = Math.floor(sx), fx = sx - x0, x1 = (x0 + 1) % sN;
                 const c000 = src[(z0 * sN + y0) * sN + x0], c100 = src[(z0 * sN + y0) * sN + x1];
                 const c010 = src[(z0 * sN + y1) * sN + x0], c110 = src[(z0 * sN + y1) * sN + x1];
                 const c001 = src[(z1 * sN + y0) * sN + x0], c101 = src[(z1 * sN + y0) * sN + x1];
@@ -132,8 +135,11 @@ export function energySpectrum(comps, srcN, M, boxL) {
 
     const k0 = 2 * Math.PI / boxL;               // fundamental wavenumber (rad/voxel)
     const kNyq = k0 * (M / 2);
-    const nBins = Math.max(1, Math.floor(M / 2));
-    const dk = kNyq / nBins;
+    // Keep the complete cubic Fourier domain. Corner modes exceed the
+    // axial Nyquist; folding them into its last bin mislabels their scale.
+    const dk = k0;
+    const kMax = Math.sqrt(3) * kNyq;
+    const nBins = Math.floor(kMax / dk) + 1;
     const Esum = new Float64Array(nBins);
     const kMid = new Float64Array(nBins);
     for (let b = 0; b < nBins; b++) kMid[b] = (b + 0.5) * dk;
@@ -158,36 +164,46 @@ export function energySpectrum(comps, srcN, M, boxL) {
             }
         }
     }
-    return { k: Array.from(kMid), E: Array.from(Esum), kNyq, totalE, sumReal, M, boxL };
+    return { k: Array.from(kMid), E: Array.from(Esum), kNyq, kMax, totalE, sumReal, M, boxL, sampling: "periodic-trilinear-no-antialias" };
 }
 
 /**
  * Reconstruct dense jx/jy/jz grids (srcN³) from a SPARSE flux-vector sample set
- * (getFluxVectorSampled skips near-zero voxels — those are genuine zeros). Sample
- * positions are voxel+0.5 at `stride` spacing. srcN = ceil(L/stride); stride 1 ⇒
- * the full field. Returns { jx, jy, jz, srcN } for energySpectrum().
+ * (getFluxVectorSampled skips near-zero voxels — reconstructed as zero at the sampler threshold). Sample
+ * positions are voxel+0.5 on the published center-anchored grid. Effective stride
+ * may exceed the requested stride. Missing near-zero representatives become zero;
+ * strongest-bin representatives and a nonuniform periodic boundary gap make the
+ * reconstructed FFT an approximate spatial description, not a full-field FFT.
  */
 export function denseVectorGridFromSamples(samples, L, stride) {
-    const srcN = Math.ceil(L / stride);
+    stride = Number.isInteger(samples.effectiveStride) && samples.effectiveStride > 0
+        ? samples.effectiveStride : stride;
+    if (!Number.isInteger(L) || L < 1 || !Number.isInteger(stride) || stride < 1) {
+        throw new RangeError('Invalid lattice or sample stride');
+    }
+    const center = Math.floor((L - 1) / 2);
+    const origin = Number.isInteger(samples.origin) ? samples.origin : center % stride;
+    if (origin < 0 || origin >= L) throw new RangeError('Invalid sample origin');
+    const srcN = Math.floor((L - 1 - origin) / stride) + 1;
     const Nc = srcN * srcN * srcN;
     const jx = new Float64Array(Nc), jy = new Float64Array(Nc), jz = new Float64Array(Nc);
     const pos = samples.positions, vec = samples.vectors, count = samples.count | 0;
     for (let i = 0; i < count; i++) {
-        const gx = Math.round((pos[i * 3] - 0.5) / stride);
-        const gy = Math.round((pos[i * 3 + 1] - 0.5) / stride);
-        const gz = Math.round((pos[i * 3 + 2] - 0.5) / stride);
+        const gx = Math.round((pos[i * 3] - 0.5 - origin) / stride);
+        const gy = Math.round((pos[i * 3 + 1] - 0.5 - origin) / stride);
+        const gz = Math.round((pos[i * 3 + 2] - 0.5 - origin) / stride);
         if (gx < 0 || gx >= srcN || gy < 0 || gy >= srcN || gz < 0 || gz >= srcN) continue;
         const idx = (gz * srcN + gy) * srcN + gx;
         jx[idx] = vec[i * 3]; jy[idx] = vec[i * 3 + 1]; jz[idx] = vec[i * 3 + 2];
     }
-    return { jx, jy, jz, srcN };
+    return { jx, jy, jz, srcN, effectiveStride: stride, origin, uniformPeriodicSpacing: srcN * stride === L };
 }
 
 /** Dominant mode: the k bin with the most energy; λ* = 2π/k*. */
 export function spectralPeak(k, E) {
     let bi = -1, bv = -Infinity;
     for (let i = 0; i < E.length; i++) { if (E[i] > bv) { bv = E[i]; bi = i; } }
-    if (bi < 0 || k[bi] <= 0) return { kPeak: 0, lambdaPeak: Infinity, energy: 0 };
+    if (bi < 0 || !(bv > 0) || !Number.isFinite(bv) || !(k[bi] > 0)) return { kPeak: 0, lambdaPeak: Infinity, energy: 0 };
     return { kPeak: k[bi], lambdaPeak: 2 * Math.PI / k[bi], energy: bv };
 }
 

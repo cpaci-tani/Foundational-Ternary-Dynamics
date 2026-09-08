@@ -19,7 +19,7 @@ export const actionRows = [
     { id: 'action',     label: 'Action S (observer baseline included)',      unit: 'ℏ',  source: 's0.lagrangian.totalAction', trend: 'lag.action' },
     { id: 'total',      label: 'ℒ total (observer baseline included)',       unit: 'E*', source: 's0.lagrangian.total',       trend: 'lag.total' },
     { id: 'hamiltonian',label: 'Hamiltonian H (observer baseline included)', unit: 'E*', source: 's0.lagrangian.hamiltonian', trend: 'lag.hamiltonian' },
-    { id: 'gauss',      label: 'Gauss ‖div J−s‖',       unit: 'E*²',  source: 's0.lagrangian.gauss',       trend: 'lag.gauss' },
+    { id: 'gauss',      label: 'Gauss constraint term', unit: 'E*²',  source: 's0.lagrangian.gauss',       trend: 'lag.gauss' },
     { id: 'max-gauss',  label: 'Max Gauss err',         unit: 'E*',   source: 's0.audit.maxGaussError',    trend: 'aud.maxGaussError' },
     { id: 'flux-mag',   label: 'Total |J|',             unit: '|J|',  source: 's0.diag.totalFlux',         trend: 'flux' },
     { id: 'wave-ke',    label: 'Wave KE',               unit: 'E*',   source: 's0.audit.waveEnergy',       trend: 'aud.waveEnergy' },

@@ -40,12 +40,12 @@ const DEFAULT_FRONT_DISTANCE = 2.2;
 const clamp01 = value => Math.max(0, Math.min(1, Number(value) || 0));
 const clockNow = () => globalThis.performance?.now?.() ?? Date.now();
 
-function mappedClockColor(rate) {
+function mappedClockColor(rate, target = new THREE.Color()) {
     const r = clamp01(rate);
     if (r >= 0.5) {
-        return CLOCK_COLOR_LOADED.clone().lerp(CLOCK_COLOR_FREE, (r - 0.5) * 2);
+        return target.copy(CLOCK_COLOR_LOADED).lerp(CLOCK_COLOR_FREE, (r - 0.5) * 2);
     }
-    return CLOCK_COLOR_LIMIT.clone().lerp(CLOCK_COLOR_LOADED, r * 2);
+    return target.copy(CLOCK_COLOR_LIMIT).lerp(CLOCK_COLOR_LOADED, r * 2);
 }
 
 export class ViewportSceneCore {
@@ -149,11 +149,7 @@ export class ViewportSceneCore {
 
     _disposeBoundary() {
         if (this.wireframe) {
-            this._scene.remove(this.wireframe);
-            this.wireframe.traverse(child => {
-                if (child.geometry) child.geometry.dispose();
-                if (child.material) child.material.dispose();
-            });
+            this._disposeDecorationGroup(this.wireframe);
             this.wireframe = null;
         }
     }
@@ -244,9 +240,19 @@ export class ViewportSceneCore {
     _disposeDecorationGroup(group) {
         if (!group) return;
         this._scene.remove(group);
+        const released = new Set();
+        const release = resource => {
+            if (!resource || released.has(resource)) return;
+            released.add(resource);
+            resource.dispose();
+        };
         group.traverse(child => {
-            if (child.geometry) child.geometry.dispose();
-            if (child.material) child.material.dispose();
+            // ArrowHelper borrows module-global geometry shared across viewports.
+            if (child.parent?.type !== 'ArrowHelper') release(child.geometry);
+            for (const material of (Array.isArray(child.material) ? child.material : [child.material])) {
+                release(material?.map);
+                release(material);
+            }
         });
     }
 
@@ -566,7 +572,7 @@ export class ViewportSceneCore {
             ? Math.max(0, Number(maxCausalBudget)) : 0;
         this._globalClockRate = this._globalClockHasCausalBudget
             ? Math.sqrt(Math.max(0, 1 - this._globalClockCausalBudget)) : 1;
-        this._globalClockRateColor = mappedClockColor(this._globalClockRate);
+        this._globalClockRateColor = mappedClockColor(this._globalClockRate, this._globalClockRateColor);
         this._globalClockProjectionEvents = Number.isFinite(Number(causalProjectionEvents))
             ? Math.max(0, Math.trunc(Number(causalProjectionEvents))) : 0;
         if (this._globalClockProjectionEvents > 0
@@ -609,24 +615,34 @@ export class ViewportSceneCore {
         if (readout) {
             const rateText = this._globalClockHasCausalBudget
                 ? ` · τ′min ${this._globalClockRate.toFixed(3)}` : '';
-            readout.textContent = `tick ${this._globalTick}${rateText}`;
-            readout.dataset.clockState = this._globalClockRunning ? 'running' : 'idle';
-            readout.dataset.causalBudget = this._globalClockHasCausalBudget
-                ? this._globalClockCausalBudget.toFixed(6) : 'unavailable';
-            readout.dataset.clockRate = this._globalClockHasCausalBudget
-                ? this._globalClockRate.toFixed(6) : 'unavailable';
-            readout.dataset.causalProjection = this._globalClockProjectionEvents > 0 ? 'true' : 'false';
-            readout.style.setProperty('--clock-rate-color', `#${this._globalClockRateColor.getHexString()}`);
-            readout.title = 'Global ordinal tick [AXIOM]. The colored local-rate band is '
+            const text = `tick ${this._globalTick}${rateText}`;
+            if (readout.textContent !== text) readout.textContent = text;
+            const fields = {
+                clockState: this._globalClockRunning ? 'running' : 'idle',
+                causalBudget: this._globalClockHasCausalBudget
+                    ? this._globalClockCausalBudget.toFixed(6) : 'unavailable',
+                clockRate: this._globalClockHasCausalBudget
+                    ? this._globalClockRate.toFixed(6) : 'unavailable',
+                causalProjection: this._globalClockProjectionEvents > 0 ? 'true' : 'false',
+            };
+            for (const [key, value] of Object.entries(fields)) {
+                if (readout.dataset[key] !== value) readout.dataset[key] = value;
+            }
+            const color = `#${this._globalClockRateColor.getHexString()}`;
+            if (readout.style.getPropertyValue('--clock-rate-color') !== color) {
+                readout.style.setProperty('--clock-rate-color', color);
+            }
+            const title = 'Global ordinal tick [AXIOM]. The colored local-rate band is '
                 + 'τ′min=√max(0,1−Bmax) from the engine’s selected/imposed causal budget, '
                 + 'not recovered spacetime. The clockwise color pulse replays the ten stages '
                 + 'after a settled tick; rose marks a causal projection. The muted C4 motif is '
                 + 'a conditional theory reference, not production G* clock telemetry.';
+            if (readout.title !== title) readout.title = title;
         }
     }
 
     _animateGlobalClock(now = clockNow()) {
-        if (!this.globalClock || !this._globalClockPhaseCursor) return;
+        if (!this.globalClock?.visible || !this._globalClockPhaseCursor) return;
         const elapsed = now - this._globalClockPulseStartedAt;
         const duration = this._globalClockPulseDurationMs;
         const pulseLive = Number.isFinite(elapsed) && elapsed >= 0 && elapsed < duration;
@@ -965,40 +981,20 @@ export class ViewportSceneCore {
     dispose() {
         this._globalClockHover?.dispose();
         this._globalClockHover = null;
-        // Helper: dispose geometry+material for any Three.js Object3D
-        const disposeMesh = (obj) => {
-            if (!obj) return;
-            this._scene.remove(obj);
-            if (obj.geometry) obj.geometry.dispose();
-            if (obj.material) {
-                if (obj.material.map) obj.material.map.dispose();
-                obj.material.dispose();
-            }
-        };
-
-        // Helper: dispose a Group by traversing all children
-        const disposeGroup = (group) => {
-            if (!group) return;
-            this._scene.remove(group);
-            group.traverse(child => {
-                if (child.geometry) child.geometry.dispose();
-                if (child.material) {
-                    if (child.material.map) child.material.map.dispose();
-                    child.material.dispose();
-                }
-            });
-        };
+        const disposeMesh = obj => this._disposeDecorationGroup(obj);
+        const disposeGroup = disposeMesh;
 
         // Wireframe is a Group containing LineSegments — traverse children
         disposeGroup(this.wireframe);
         this.wireframe = null;
 
-        // Post-processing composer render targets
+        // The bundled bloom dispose omits its owned high-pass material.
+        this._bloomPass?.materialHighPassFilter?.dispose();
+        this._bloomPass?.dispose();
+        this._bloomPass = null;
         if (this._composer) {
-            this._composer.renderTarget1.dispose();
-            this._composer.renderTarget2.dispose();
+            this._composer.dispose();
             this._composer = null;
-            this._bloomPass = null;
         }
 
         // Inspector helpers

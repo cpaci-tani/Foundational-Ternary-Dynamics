@@ -239,7 +239,10 @@ export function hannWindow(n) {
 }
 
 export function timeSeriesPowerSpectrum(values, { dt = 1, removeMean = true, window = 'hann' } = {}) {
-    const raw = Array.from(values ?? [], (v) => Number(v)).filter(Number.isFinite);
+    const raw = Array.from(values ?? [], (v) => Number(v));
+    if (!Number.isFinite(dt) || dt <= 0 || !raw.every(Number.isFinite)) {
+        throw new RangeError("Spectrum requires finite uniformly sampled values and positive dt; missing samples cannot be dropped");
+    }
     const n = raw.length;
     if (n < 4) return { frequency: [], power: [], totalPower: 0, n, M: 0, dt };
 

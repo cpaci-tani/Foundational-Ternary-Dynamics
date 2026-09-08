@@ -213,11 +213,32 @@ export class UPlotChart {
         const yColumns = this.series.map((s, idx) => {
             const buf = this.hub[s.buffer];
             const col = this.ys[idx].subarray(0, n);
-            if (buf && buf.flattenInto) {
+            col.fill(Number.NaN);
+            if (!buf) return col;
+            // A shared ring has one tick axis. Independent diagnostic groups
+            // can publish at different ticks: join exact timestamps, never
+            // place their last n values onto another group's time axis.
+            if ((buf === firstBuf || (buf.parent && buf.parent === firstBuf.parent)) && buf.flattenInto) {
                 buf.flattenInto(col, n);
-            } else if (buf) {
-                const start = Math.max(0, (buf.count || 0) - n);
-                for (let i = 0; i < n; i++) col[i] = buf.get(start + i) ?? 0;
+            } else if (typeof buf.get === 'function') {
+                const stamped = typeof firstBuf.flattenTicksInto === 'function';
+                if (stamped && typeof buf.getTick !== 'function') return col;
+                const count = buf.count || 0;
+                const ordinalStart = (buf.total ?? count) - count;
+                const tickAt = stamped ? i => buf.getTick(i) : i => ordinalStart + i;
+                // Hub histories are ordered within one generation. Upper bound
+                // selects the latest refinement if a tick has repeated rows.
+                for (let i = 0; i < n; i++) {
+                    if (!Number.isFinite(xs[i])) continue;
+                    let lo = 0, hi = count;
+                    while (lo < hi) {
+                        const mid = Math.floor((lo + hi) / 2);
+                        if (tickAt(mid) <= xs[i]) lo = mid + 1;
+                        else hi = mid;
+                    }
+                    const j = lo - 1;
+                    if (j >= 0 && tickAt(j) === xs[i]) col[i] = buf.get(j) ?? Number.NaN;
+                }
             }
             return col;
         });

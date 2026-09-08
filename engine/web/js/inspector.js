@@ -15,6 +15,7 @@ import { updateInspectorChrome, resetInspectorSelection } from './inspector/chro
 import { collectInspectorDom } from './inspector/dom-bindings.js?v=2';
 import { bindInspectorPointerControls } from './inspector/pointer-controller.js';
 import {
+    normalizeLatticePosition,
     handleLatticeClick,
     showLatticeInspector,
     hideLatticeInspector,
@@ -46,7 +47,7 @@ import {
     showPlanetaryInspector,
     hidePlanetaryInspector,
     updatePlanetaryFields,
-} from './inspector/scales/planetary.js';
+} from './inspector/scales/planetary.js?v=4';
 import {
     handleCosmicClick,
     showCosmicInspector,
@@ -113,10 +114,10 @@ export class Inspector {
             btnFocus.addEventListener('click', () => {
                 if (this._selectedPos && this.viewport && this.viewport.controls) {
                     const {x, y, z} = this._selectedPos;
-                    this.viewport.controls.target.set(x, y, z);
+                    this.viewport.controls.target.set(x + 0.5, y + 0.5, z + 0.5);
                     const dist = 15;
                     const currPos = this.viewport.camera.position.clone();
-                    const targetPos = new THREE.Vector3(x, y, z);
+                    const targetPos = new THREE.Vector3(x + 0.5, y + 0.5, z + 0.5);
                     const dir = currPos.sub(targetPos).normalize().multiplyScalar(dist);
                     this.viewport.camera.position.copy(targetPos.clone().add(dir));
                 }
@@ -131,9 +132,8 @@ export class Inspector {
             const el = document.getElementById(`insp-pos-${axis}`);
             if (el) {
                 el.addEventListener('change', (e) => {
-                    if (!this._selectedPos) this._selectedPos = { x: 0, y: 0, z: 0 };
-                    this._selectedPos[axis] = parseInt(e.target.value) || 0;
-                    this._showLatticeInspector(); // Re-trigger inspector and highlight graphics
+                    this.selectLatticePosition({ ...(this._selectedPos || { x: 0, y: 0, z: 0 }),
+                        [axis]: e.target.value });
                 });
             }
         });
@@ -158,22 +158,24 @@ export class Inspector {
 
     setBridge(bridge) {
         this.bridge = bridge;
+        this._latticeInspectionCache = null;
+        if (this._selectedPos && this._engineMode === 'lattice') {
+            if (!this.selectLatticePosition(this._selectedPos)) {
+                this._selectedPos = null;
+                this._hideLatticeInspector();
+            }
+        }
     }
 
     getSelectedLatticePosition() {
-        return this._selectedPos;
+        return this._selectedPos ? { ...this._selectedPos } : null;
     }
 
     /** Select a lattice position through the inspector's public lifecycle. */
     selectLatticePosition(position) {
         if (this._engineMode !== 'lattice' || !position) return false;
-        const L = Math.max(1, Math.trunc(Number(this.bridge?.latticeSize) || 32));
-        const bounded = {};
-        for (const axis of ['x', 'y', 'z']) {
-            const value = Number(position[axis]);
-            if (!Number.isFinite(value)) return false;
-            bounded[axis] = Math.max(0, Math.min(L - 1, Math.round(value)));
-        }
+        const bounded = normalizeLatticePosition(position, this.bridge?.latticeSize);
+        if (!bounded) return false;
         this.selectedIndex = -1;
         this._selectedPos = bounded;
         this._showLatticeInspector();
@@ -181,13 +183,20 @@ export class Inspector {
     }
 
     clearSelection() {
+        const hadPlanetarySelection = this._selectedPlanetaryId >= 0;
         this._setPEInspectionFocus(null);
+        this._planetaryRenderer?.setSelectedBody?.(-1);
         resetInspectorSelection(this);
         this._hideLatticeInspector();
         this._hidePEInspector();
         this._hideAEInspector();
         this._hidePlanetaryInspector();
         this._hideCosmicInspector();
+        if (hadPlanetarySelection) {
+            document.dispatchEvent(new CustomEvent('ftd:scale4-selection-change', {
+                detail: { bodyId: -1 },
+            }));
+        }
     }
 
     _updateInspectorChrome() {
@@ -343,6 +352,19 @@ export class Inspector {
     setPlanetaryContext(bridge, renderer) {
         this.bridge = bridge;
         this._planetaryRenderer = renderer;
+    }
+
+    selectPlanetaryBody(bodyId) {
+        if (this._engineMode !== 'planetary') return false;
+        const id = Number(bodyId);
+        if (!Number.isInteger(id) || id < 0 || !this.bridge?.getBody?.(id)) return false;
+        this._selectedPlanetaryId = id;
+        this._planetaryRenderer?.setSelectedBody?.(id);
+        this._showPlanetaryInspector();
+        document.dispatchEvent(new CustomEvent('ftd:scale4-selection-change', {
+            detail: { bodyId: id },
+        }));
+        return true;
     }
 
     setCosmicContext(bridge, renderer) {

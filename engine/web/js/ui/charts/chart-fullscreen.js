@@ -69,7 +69,9 @@ export function attachFullscreen(cardEl) {
             const overlay = document.getElementById('chart-fullscreen-overlay');
             if (!overlay) return;
             if (this._originalParent) {
-                this._originalParent.insertBefore(cardEl, this._originalNext || null);
+                const next = this._originalNext?.parentNode === this._originalParent
+                    ? this._originalNext : null;
+                this._originalParent.insertBefore(cardEl, next);
             }
             cardEl.classList.remove('is-fs');
             overlay.classList.remove('is-open');

@@ -103,6 +103,7 @@ test.describe('Conservation panel and WASM diagnostics', () => {
 
             const firstTotals = harness.getConservationTotals();
             api.update();
+            const originalRows = [...api.element.querySelector('.cons-rows-grid').children];
             const firstLengths = {
                 diagnostics: api.diagnosticHistoryLength,
                 energy: api.energyHistoryLength,
@@ -201,15 +202,18 @@ test.describe('Conservation panel and WASM diagnostics', () => {
                 },
             };
 
+            const retainedRows = originalRows.length === 12 && originalRows.every((node, i) =>
+                node === api.element.querySelector('.cons-rows-grid').children[i]);
             api.dispose();
             host.remove();
             panelModule.initConservationMicropanel();
             return {
                 provenance, firstLengths, afterNewAudit, afterReusedAudit,
-                unavailable, nullProvenance,
+                unavailable, nullProvenance, retainedRows,
             };
         });
 
+        expect(result.retainedRows).toBe(true);
         expect(result.provenance.energy).toEqual({
             sampleTick: 96, stateVersion: 12, source: 'fixture', sourceEpoch: 2,
         });

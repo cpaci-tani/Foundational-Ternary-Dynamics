@@ -1,24 +1,64 @@
-import { G_N } from '../../../constants.js';
+import { G_HELIOCENTRIC, G_N } from '../../../constants.js';
+import { SOLAR_PHYSICS_DEFINITIONS } from '../../../config/solar-system-physics.js?v=4';
 
 const G_N_LABEL = G_N.toFixed(2);
+const SOLAR_PHYSICS_ROWS = SOLAR_PHYSICS_DEFINITIONS.map((item) => `
+    <label class="solar-physics-row" for="planetary-physics-${item.key}" title="${item.description} ${item.status === 'CORE' ? 'Core effective dynamics.' : `[${item.status}] imported effective physics; not an FTD derivation.`}">
+        <input type="checkbox" id="planetary-physics-${item.key}" data-solar-physics="${item.key}" checked>
+        <span class="solar-physics-copy"><strong>${item.label}</strong><small>${item.status}</small></span>
+        <span class="solar-physics-state" id="planetary-physics-state-${item.key}">active</span>
+    </label>
+`).join('');
 
 export function getScaleControlsBlocksTemplate() {
     return `
-        <!-- Planetary Controls (visible only in planetary mode) -->
+        <!-- Solar System controls (internal engine mode remains "planetary" for compatibility) -->
         <div class="scale4-only scale-controls-block">
-            <div class="panel-grid panel-grid-2">
+            <div class="panel-grid panel-grid-1">
                 <div class="card">
-                    <div class="card-title">FTD Sandbox Physics</div>
+                    <div class="card-title">Solar System Dynamics</div>
                     <div class="scale-info-mono">
-                        <div>Gravity ($G_N$): <span id="planetary-ctrl-gravity">${G_N_LABEL}</span></div>
-                        <div>Verlet $\\Delta t$: <span>0.0001 (N-body)</span></div>
+                        <div title="The active gravitational constant and its unit convention.">Gravity: <span id="planetary-ctrl-gravity">${G_HELIOCENTRIC.toFixed(3)} AU³ M☉⁻¹ yr⁻²</span></div>
+                        <div title="The active tick interval and the stable internal subdivision used by the split-kick solver.">Integrator: <span id="planetary-ctrl-integrator">Split-kick Velocity Verlet · 1 minute/tick</span></div>
+                        <div title="The active simulation state units. One rendered world unit is one AU.">State units: <span id="planetary-ctrl-units">AU · M☉ · Julian yr</span></div>
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-title">Planet Genesis</div>
+                    <div class="card-title">Data & Rendering Contract</div>
                     <div class="scale-info-mono">
-                        <div>Renderer: <span>Procedural GLSL FBM</span></div>
-                        <div>Source: <span>NASA Exoplanet Archive</span></div>
+                        <div title="The provenance of the active scenario's initial state; high-precision spacecraft navigation requires Horizons/SPICE.">Initial state: <span id="planetary-ctrl-epoch">J2000 approximate elements</span></div>
+                        <div title="Procedural materials distinguish each planet and animate axial rotation; atmospheres and rings are visual layers.">Surfaces: <span>Procedural 128-segment GLSL</span></div>
+                        <div title="Solar System colors are planet-specific reference palettes. Exoplanet visible colors are generally not measured, so example-system colors are explicitly modeled from broad radius class and catalog equilibrium temperature.">Appearance: <span id="planetary-ctrl-appearance">Planet-specific procedural reference palette</span></div>
+                        <div title="Body surfaces use JPL volume-equivalent mean radii converted by 149,597,870.7 km per AU; positions and orbit paths use the same AU coordinates without compression.">Geometry gauge: <span>1 world unit = 1 AU</span></div>
+                    </div>
+                </div>
+                <div class="card solar-physics-card">
+                    <div class="solar-physics-heading">
+                        <div>
+                            <div class="card-title">Effective Physics Stack</div>
+                            <div class="solar-physics-summary" id="planetary-physics-summary">10 active · 10 applicable</div>
+                        </div>
+                        <button type="button" class="ctrl-btn" id="planetary-physics-enable-all" title="Request every available Solar System physics kernel. Scenario-inapplicable kernels remain in standby.">Enable all</button>
+                    </div>
+                    <div class="solar-physics-contract" title="These are standard effective astronomy models. FTD does not derive the imported formulas or measured body parameters.">[PARAMETRIC / IMPOSED] standard celestial mechanics; not foundational FTD derivations.</div>
+                    <div class="solar-physics-list">${SOLAR_PHYSICS_ROWS}</div>
+                </div>
+                <div class="card solar-physics-audit-card">
+                    <div class="card-title">Live Physics Audit</div>
+                    <div class="scale-info-mono">
+                        <div title="Largest direct pairwise Newtonian acceleration in the current force sweep.">Max Newtonian: <span id="planetary-audit-newtonian">0</span></div>
+                        <div title="Largest dominant-star first-post-Newtonian acceleration in the current force sweep.">Max 1PN: <span id="planetary-audit-gr">0</span></div>
+                        <div title="Largest configured parent-oblate J2 acceleration in the current force sweep.">Max J₂: <span id="planetary-audit-j2">0</span></div>
+                        <div title="Largest combined radiation-pressure plus Poynting-Robertson and optional solar-wind acceleration in the current force sweep.">Max radiation: <span id="planetary-audit-radiation">0</span></div>
+                        <div title="Largest outward photon-pressure acceleration in the current force sweep.">Max photon pressure: <span id="planetary-audit-pressure">0</span></div>
+                        <div title="Largest Poynting-Robertson drag acceleration before the optional solar-wind correction.">Max P-R drag: <span id="planetary-audit-pr-drag">0</span></div>
+                        <div title="Largest separately audited solar-wind drag correction. This is zero when the solar-wind toggle is off or inapplicable.">Max solar wind: <span id="planetary-audit-solar-wind">0</span></div>
+                        <div title="Largest equilibrium-tide tangential acceleration in the current force sweep.">Max tide: <span id="planetary-audit-tide">0</span></div>
+                        <div title="Largest atmospheric drag acceleration in the current force sweep.">Max atmosphere: <span id="planetary-audit-atmosphere">0</span></div>
+                        <div title="Cumulative momentum-conserving perfectly inelastic merge events.">Impacts: <span id="planetary-audit-collisions">0</span></div>
+                        <div title="Cumulative fluid-Roche threshold fragmentation events.">Roche events: <span id="planetary-audit-roche">0</span></div>
+                        <div title="Cumulative mechanical energy transferred into modeled dissipative sinks.">Dissipated: <span id="planetary-audit-dissipated">0</span></div>
+                        <div title="Newest bounded event-ledger entry from the live bridge.">Latest event: <span id="planetary-audit-latest-event">scenario loaded</span></div>
                     </div>
                 </div>
             </div>
@@ -273,6 +313,10 @@ export function getInspectorPanelTemplate() {
                                 <dd id="insp-f-exchange">--</dd>
                             </dl>
                         </div>
+                    </div>
+                    <div class="card panel-resource-card">
+                        <div class="card-title">Periodic neighborhood observations</div>
+                        <div id="insp-moore-grid" aria-label="Sampled geometric neighborhood"></div>
                     </div>
                 </div>
                 <div class="inspector-empty scale1-only" id="pe-inspector-empty" title="Viewport selection helper.">
@@ -544,36 +588,76 @@ export function getInspectorPanelTemplate() {
                     </div>
                 </div>
                 <div class="inspector-empty scale4-only panel-resource-hidden" id="planetary-inspector-empty">
-                    Select a world or star to inspect its current telemetry.
+                    Select the Sun, a planet, a dwarf planet, or a modeled major moon to inspect its physical and live orbital state.
                 </div>
                 <div id="planetary-inspector-content" class="scale4-only panel-resource-hidden">
                     <div class="panel-resource-grid panel-resource-grid-2">
                         <div class="card panel-resource-card">
-                            <div class="card-title">Astrophysical Identity</div>
+                            <div class="card-title">Body Identity</div>
                             <div class="pe-insp-header">
                                 <span class="pe-insp-catalog-dot" id="planetary-insp-dot"></span>
                                 <span class="pe-insp-name" id="planetary-insp-type">--</span>
                             </div>
                             <dl class="inspector-grid">
-                                <dt>Body ID</dt>
+                                <dt title="Stable simulation record identifier for this scenario load.">Body ID</dt>
                                 <dd id="planetary-insp-id">--</dd>
-                                <dt>Mass (sol)</dt>
+                                <dt title="Imported mass in solar masses and a more legible secondary unit.">Mass</dt>
                                 <dd id="planetary-insp-mass">--</dd>
-                                <dt>Temp (K)</dt>
+                                <dt title="Reference mean/effective temperature, not a live climate calculation.">Reference temperature</dt>
                                 <dd id="planetary-insp-temp">--</dd>
-                                <dt>Biome</dt>
+                                <dt title="Broad astronomical class; this is not an inferred biosphere.">Class</dt>
                                 <dd id="planetary-insp-biome">--</dd>
+                                <dt title="Imported mean or equatorial radius used only for metadata; rendering may use an explicit display gauge.">Radius</dt>
+                                <dd id="planetary-insp-radius">--</dd>
+                                <dt title="Imported axial tilt relative to the body's orbital plane.">Axial tilt</dt>
+                                <dd id="planetary-insp-tilt">--</dd>
+                                <dt title="Imported sidereal rotation period; a negative value denotes retrograde rotation.">Sidereal day</dt>
+                                <dd id="planetary-insp-day">--</dd>
                             </dl>
                         </div>
                         <div class="card panel-resource-card">
                             <div class="card-title">Orbital Dynamics</div>
                             <dl class="inspector-grid">
-                                <dt>Pos (AU)</dt>
+                                <dt title="Live Cartesian position in the simulation's J2000 ecliptic frame.">Position (AU)</dt>
                                 <dd id="planetary-insp-pos">--</dd>
-                                <dt>Velocity</dt>
+                                <dt title="Live Cartesian velocity in AU per Julian year.">Velocity</dt>
                                 <dd id="planetary-insp-vel">--</dd>
-                                <dt>Speed</dt>
+                                <dt title="Magnitude of live velocity in AU/yr and km/s.">Speed</dt>
                                 <dd id="planetary-insp-speed">--</dd>
+                                <dt title="Current distance from the body's modeled parent, measured from the N-body state.">Parent distance</dt>
+                                <dd id="planetary-insp-distance">--</dd>
+                                <dt title="Imported semimajor axis of the reference orbit.">Semimajor axis</dt>
+                                <dd id="planetary-insp-sma">--</dd>
+                                <dt title="Imported reference-orbit eccentricity.">Eccentricity</dt>
+                                <dd id="planetary-insp-ecc">--</dd>
+                            </dl>
+                        </div>
+                        <div class="card panel-resource-card">
+                            <div class="card-title">Environment</div>
+                            <dl class="inspector-grid">
+                                <dt title="Imported qualitative atmosphere summary.">Atmosphere</dt>
+                                <dd id="planetary-insp-atmosphere">--</dd>
+                                <dt title="Imported qualitative magnetic-field summary.">Magnetic field</dt>
+                                <dd id="planetary-insp-magnetic">--</dd>
+                                <dt title="Named parent in the modeled hierarchy.">Parent</dt>
+                                <dd id="planetary-insp-parent">--</dd>
+                                <dt title="Reference count of known natural satellites; the renderer models only a selected major-moon subset.">Known moons</dt>
+                                <dd id="planetary-insp-moons">--</dd>
+                            </dl>
+                        </div>
+                        <div class="card panel-resource-card">
+                            <div class="card-title">Live Effective Physics</div>
+                            <dl class="inspector-grid">
+                                <dt title="Configured dimensionless quadrupole coefficient used by the axisymmetric J2 kernel.">J₂ coefficient</dt>
+                                <dd id="planetary-insp-j2">--</dd>
+                                <dt title="Largest live source-specific ratio of radiation pressure to stellar gravity for this body's area-to-mass ratio.">Radiation β</dt>
+                                <dd id="planetary-insp-beta">--</dd>
+                                <dt title="Instantaneous semimajor-axis migration rate inferred from the constant-Q equilibrium-tide kernel.">Tidal migration</dt>
+                                <dd id="planetary-insp-tide">--</dd>
+                                <dt title="Live altitude relative to the configured parent surface when a parent exists.">Parent altitude</dt>
+                                <dd id="planetary-insp-altitude">--</dd>
+                                <dt title="Live local exponential-atmosphere density sampled by the drag kernel.">Local atmosphere</dt>
+                                <dd id="planetary-insp-density">--</dd>
                             </dl>
                         </div>
                     </div>
@@ -653,9 +737,14 @@ export function getPhysicsPanelTemplate() {
 export function getPlanetaryPanelTemplate() {
     return `
         <div class="panel" id="panel-planetary">
-            <div class="panel-section panel-resource-stack">
-                <div class="card">
-                    <div class="card-title">Celestial Hierarchy</div>
+            <div class="panel-section panel-resource-stack solar-system-panel-content">
+                <div class="card solar-system-summary-card">
+                    <div class="card-title" id="planetary-system-title">Our Solar System · J2000</div>
+                    <div class="solar-system-summary" id="planetary-system-summary">Sun · 8 planets · 1 dwarf planet · 9 modeled major moons</div>
+                    <div class="solar-system-contract" id="planetary-geometry-contract">Physical 1:1 AU geometry: JPL mean radii, body separations, and orbit paths share one uncompressed scale. Labels and selection marks are UI overlays.</div>
+                </div>
+                <div class="card solar-system-hierarchy-card">
+                    <div class="card-title">Live Celestial Hierarchy</div>
                     <ul id="planetary-layer-list" class="zoo-list panel-resource-list">
                     </ul>
                 </div>

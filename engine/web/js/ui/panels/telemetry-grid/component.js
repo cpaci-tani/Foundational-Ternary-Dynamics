@@ -58,16 +58,16 @@ const CHANNELS = {
         { key: 'aeNuclearLiveNeutrons', title: 'Live Neutrons', buffer: 'aeNuclearLiveNeutrons', color: '#67e8f9', unit: 'ct' },
         { key: 'aeNuclearK', title: 'Observed Neutron Reproduction', buffer: 'aeNuclearK', color: '#c084fc', unit: '' }
     ],
-    // Scale 4: Planetary N-body
+    // Scale 4: Solar System N-body
     '4': [
-        { key: 'plTotal',      title: 'Total Energy',      buffer: 'plTotal',       color: 'var(--chart-pe-total, #e8e8e8)',   unit: '(sim)' },
-        { key: 'plKE',         title: 'Kinetic Energy',    buffer: 'plKE',          color: 'var(--chart-pe-ke, #4ade80)',      unit: '(sim)' },
-        { key: 'plPE',         title: 'Potential Energy',  buffer: 'plPE',          color: 'var(--chart-pe-coulomb, #f87171)', unit: '(sim)' },
+        { key: 'plTotal',      title: 'Total Energy',      buffer: 'plTotal',       color: 'var(--chart-pe-total, #e8e8e8)',   unit: 'M☉·AU²/yr²' },
+        { key: 'plKE',         title: 'Kinetic Energy',    buffer: 'plKE',          color: 'var(--chart-pe-ke, #4ade80)',      unit: 'M☉·AU²/yr²' },
+        { key: 'plPE',         title: 'Potential Energy',  buffer: 'plPE',          color: 'var(--chart-pe-coulomb, #f87171)', unit: 'M☉·AU²/yr²' },
         { key: 'plDrift',      title: 'Energy Drift',      buffer: 'plEnergyDrift', color: 'var(--chart-pe-drift, #fbbf24)',   unit: '%' },
         { key: 'plCount',      title: 'Body Count',        buffer: 'plCount',       color: 'var(--chart-pe-count, #fb8c00)',   unit: 'ct' },
-        { key: 'plMomentum',   title: 'Total Momentum',    buffer: 'plMomentum',    color: 'var(--chart-pe-momentum, #a78bfa)', unit: '(sim)' },
+        { key: 'plMomentum',   title: 'Total Momentum',    buffer: 'plMomentum',    color: 'var(--chart-pe-momentum, #a78bfa)', unit: 'M☉·AU/yr' },
         { key: 'plVirial',     title: 'Virial Ratio',      buffer: 'plVirial',      color: 'var(--chart-pe-virial, #fbbf24)', unit: 'ratio' },
-        { key: 'plRadius',     title: 'System Radius',     buffer: 'plSystemRadius',color: 'var(--chart-pe-radius, #42a5f5)', unit: 'lu' }
+        { key: 'plRadius',     title: 'System Radius',     buffer: 'plSystemRadius',color: 'var(--chart-pe-radius, #42a5f5)', unit: 'AU' }
     ],
     // Scale 5: Cosmic N-body
     '5': [

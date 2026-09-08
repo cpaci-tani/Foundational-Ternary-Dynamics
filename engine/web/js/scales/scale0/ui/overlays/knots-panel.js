@@ -5,6 +5,8 @@ import {
 } from '../../../../ui/panels/panel-visibility.js?v=2';
 import {
     getScale0State,
+    isScale0AuthoritativeGenerationReady,
+    subscribeScale0Qualification,
     isKnotTrackingActive,
     isKnotZonesActive,
     markFieldDirty,
@@ -274,7 +276,7 @@ function buildPanel() {
     root.dataset.applicability = 'applicable';
     root.innerHTML = `
       <div class="knots-applicable-content">
-      <div class="kp-title">Field-Line Knots <small>· where streamlines tangle</small></div>
+      <div class="kp-title">Field-Line Knots <small>· sampled streamline clumps</small></div>
       <div class="kp-head">
         <span id="kp-track-dot" title="● = tracking on, ○ = off">○</span>
         <span id="kp-alive" title="Knots currently tracked, by field family. A knot is a clump where the field-lines bunch and cross.">tracking off</span>
@@ -296,10 +298,10 @@ function buildPanel() {
         <span id="kp-sens-val" style="min-width:30px;text-align:right;color:var(--text-muted,#888)">50%</span>
       </label>
       <div class="kp-em" id="kp-em">
-        <div class="kp-em-h" title="Total electromagnetic field energy U = ½(E² + B²) and how it splits into electric vs magnetic, over time. From the engine's energy audit.">EM FIELD ENERGY <span class="kp-em-tot" id="kp-em-totals"></span></div>
-        <div class="kp-em-legend" title="total = the whole EM field energy ½(E²+B²); electric = ½|E|²; magnetic = ½|B|²; wave = radiation energy. Hover the chart for live values."><span style="color:#f6c453">▬</span> total <span style="color:#5ad2e0">▬</span> electric <span style="color:#f08bb0">▬</span> magnetic <span style="color:#9be08b">▬</span> wave</div>
+        <div class="kp-em-h" title="Engine diagnostics U_E + U_B: U_E=½|wave_vel|² and U_B=(C_SPEED²/2)|curl J|². This sum is not the total engine Hamiltonian.">EM DIAGNOSTIC ENERGY <span class="kp-em-tot" id="kp-em-totals"></span></div>
+        <div class="kp-em-legend" title="total = diagnostic E+B sum; magnetic includes C_SPEED²; wave equals the electric diagnostic and is not an additional partition. Hover the chart for live values."><span style="color:#f6c453">▬</span> total <span style="color:#5ad2e0">▬</span> electric <span style="color:#f08bb0">▬</span> magnetic <span style="color:#9be08b">▬</span> wave</div>
         <canvas class="kp-em-chart" id="kp-em-chart" data-ui-tooltip-skip>Hover for values</canvas>
-        <div class="kp-em-h2" title="How the EM energy is split across the individual knots — each bar is one knot's share. Hover a bar for its value.">energy held by each knot</div>
+        <div class="kp-em-h2" title="How the EM energy is split across the individual knots — each bar is one knot's share. Hover a bar for its value.">estimated energy in each clump region</div>
         <canvas class="kp-em-bars" id="kp-em-bars" data-ui-tooltip-skip>Hover for per-knot values</canvas>
       </div>
       <div class="kp-list" id="kp-list" title="One row per tracked knot. Click a row to expand its details, highlight it in white in the 3-D view, and chart its energy share over time."></div>
@@ -310,9 +312,9 @@ function buildPanel() {
         of the same substrate — tracking rebuilds them even with overlays off.
         Turn on <b>Radiative E</b>, <b>B Field</b>, or <b>Flux Lines</b> to <i>see</i> the lines.
         <b style="color:var(--accent-amber,#f6c453)">energy / flux / charge</b> = each knot's share of the
-        scenario's actual field over its region — <b>genuine measurements</b>.
+        scenario's actual field over its region — sampled estimates of reference fields.
         The live dashboard reports a <b>volume-weighted stride-sampled estimate</b>
-        of flux |J|, energy ½(E²+B²), and charge |∇·J|; it is marked ≈ and is not an exact full-volume integral.
+        of flux |J|, energy ½(E²+B²) in the tracker convention (B normalization may differ from the native audit), and charge |∇·J|; it is marked ≈ and is not an exact full-volume integral.
         The <b>drawn field-line shape</b> (segments / crossings / legs / length) depends on how the lines are seeded —
         it's a Feynman-diagram <b>analogy</b>, <b>NOT</b> a physical amplitude. Ages are counted in whole ticks.
       </div>
@@ -494,7 +496,7 @@ export function mountKnotsPanel(host) {
             listRenderRaf = 0;
             const pending = pendingListRender;
             pendingListRender = null;
-            if (!pending || disposed || !panel.isConnected) return;
+            if (!pending || disposed || !panel.isConnected || !measurementActive || !isPanelLive(host)) return;
             commitListStructure(pending.list, pending.nextStructureKey, pending.html);
         });
     }
@@ -506,7 +508,7 @@ export function mountKnotsPanel(host) {
             feedRenderRaf = 0;
             const pending = pendingFeedRender;
             pendingFeedRender = null;
-            if (!pending || disposed || !panel.isConnected) return;
+            if (!pending || disposed || !panel.isConnected || !measurementActive || !isPanelLive(host)) return;
             pending.feed.innerHTML = pending.html;
             lastFeedHtml = pending.html;
         });
@@ -519,7 +521,7 @@ export function mountKnotsPanel(host) {
             chartRenderRaf = 0;
             const next = pendingChartRender;
             pendingChartRender = null;
-            if (!next || disposed || !panel.isConnected) return;
+            if (!next || disposed || !panel.isConnected || !measurementActive || !isPanelLive(host)) return;
             if (next.drawEnergy) {
                 drawEnergyLines(el('kp-em-chart'), [
                     { rb: emHub.emTotal, color: '#f6c453', width: 1.7, label: 'total (E+B)' },
@@ -540,7 +542,8 @@ export function mountKnotsPanel(host) {
             if (!inapplicable) setEmptyApplicability(true);
             return;
         }
-        if (panel.dataset.applicability !== 'applicable' || !measurementActive) return;
+        if (panel.dataset.applicability !== 'applicable' || !measurementActive
+            || !isScale0AuthoritativeGenerationReady(getScale0State())) return;
         if (!isPanelLive(host)) return;
         updateCount++;
         const trackingOn = !!getScale0State().knotTracking;
@@ -566,13 +569,30 @@ export function mountKnotsPanel(host) {
             { key: 'flux', tag: 'J', name: 'Flux', tr: J },
         ];
         const eAgg = E.getAggregate(), bAgg = B.getAggregate(), jAgg = J.getAggregate();
+        const unknownFields = FIELDS.filter(f => f.tr.getTelemetry()?.status === 'sample-tick-unavailable');
+        if (unknownFields.length === FIELDS.length) {
+            if (feedRenderRaf) cancelAnimationFrame(feedRenderRaf);
+            if (chartRenderRaf) cancelAnimationFrame(chartRenderRaf);
+            feedRenderRaf = chartRenderRaf = 0;
+            pendingFeedRender = pendingChartRender = null;
+            lastFeedHtml = '';
+            el('kp-alive').textContent = 'sample time unavailable';
+            el('kp-tally').textContent = 'No current time-qualified clump observation';
+            el('kp-contrib-sum').textContent = '';
+            el('kp-em').style.display = 'none';
+            renderEmptyList(el('kp-list'), false);
+            el('kp-list').innerHTML = '<div class="kp-empty">The current sampler has no engine-tick provenance. Clump counts and histories are unavailable; no zero count was measured.</div>';
+            setHtmlIfChanged(el('kp-feed'), '');
+            return;
+        }
         const eC = E.getContributions(), bC = B.getContributions(), jC = J.getContributions();
         const pct = (v) => `${Math.round((v || 0) * 100)}%`;
 
         // Header counts (plain words) + per-field "how much energy these knots hold".
         const eTel0 = E.getTelemetry(), bTel0 = B.getTelemetry(), jTel0 = J.getTelemetry();
         const dropped = (eTel0.dropped || 0) + (bTel0.dropped || 0) + (jTel0.dropped || 0);
-        setHtmlIfChanged(el('kp-alive'), `<b>${eTel0.count}</b> electric · <b>${bTel0.count}</b> magnetic · <b>${jTel0.count}</b> flux knots`
+        const countLabel = tel => tel.status === 'sample-tick-unavailable' ? 'unavailable' : tel.count;
+        setHtmlIfChanged(el('kp-alive'), `<b>${countLabel(eTel0)}</b> electric · <b>${countLabel(bTel0)}</b> magnetic · <b>${countLabel(jTel0)}</b> flux clumps`
             + (dropped ? ` <span class="kp-dim">(showing largest; ${dropped} more dropped)</span>` : ''));
         el('kp-tally').textContent =
             `${(eAgg.births || 0) + (bAgg.births || 0) + (jAgg.births || 0)} born · ${(eAgg.deaths || 0) + (bAgg.deaths || 0) + (jAgg.deaths || 0)} died`
@@ -582,9 +602,13 @@ export function mountKnotsPanel(host) {
         const sampleStride = Math.max(eC.sampling?.energyStride || 1, bC.sampling?.energyStride || 1,
             jC.sampling?.fluxStride || 1);
         const estimateTag = sampleStride > 1 ? `≈ stride ${sampleStride} estimate · ` : '';
-        setHtmlIfChanged(el('kp-contrib-sum'), anyC
-            ? `${estimateTag}These knots hold <b>${pct(eC.captured.energyFrac)}</b> of the field energy (electric) and <b>${pct(bC.captured.energyFrac)}</b> (magnetic)`
-            : '<span style="opacity:.7">waiting for a streamline sweep to measure each knot\'s share</span>');
+        const contributionUnavailable = [eC, bC, jC].some(c =>
+            c.status === 'sample-provenance-unavailable' || c.status === 'sample-tick-unavailable');
+        setHtmlIfChanged(el('kp-contrib-sum'), contributionUnavailable
+            ? '<span style="opacity:.7">Contribution measurements unavailable: the field samples do not identify a matching source, state and tick.</span>'
+            : anyC
+                ? `${estimateTag}These knots hold <b>${pct(eC.captured.energyFrac)}</b> of the field energy (electric) and <b>${pct(bC.captured.energyFrac)}</b> (magnetic)`
+                : '<span style="opacity:.7">waiting for a streamline sweep to measure each knot\'s share</span>');
 
         // ── Scenario EM energy: total + electric/magnetic breakdown over time ──
         // From the engine's energy audit; EM field energy U = ½(E²+B²).
@@ -914,7 +938,8 @@ export function mountKnotsPanel(host) {
         const reconcile = () => {
             scenarioSyncRaf = 0;
             if (disposed || token !== scenarioSyncToken) return;
-            if (getScale0State().currentScenarioId === scenarioId) {
+            if (getScale0State().currentScenarioId === scenarioId
+                && isScale0AuthoritativeGenerationReady(getScale0State())) {
                 setEmptyApplicability(false);
                 return;
             }
@@ -941,6 +966,15 @@ export function mountKnotsPanel(host) {
     }
 
     rebindScenarioApplicability();
+    let boundary = null;
+    const unsubscribeQualification = subscribeScale0Qualification(q => {
+        const next = q.authoritativeLoad
+            ? `${q.authoritativeLoad.status}:${q.authoritativeLoad.loadGeneration}`
+            : `ready:${q.anchor?.loadGeneration}`;
+        if (next === boundary) return;
+        boundary = next;
+        handleScenarioIntent(q.scenarioId);
+    });
 
     // Match the sibling singleton panels (e.g. genesis-burst-panel): null the
     // global on dispose, but only if it still points at THIS instance, so a
@@ -962,6 +996,7 @@ export function mountKnotsPanel(host) {
         },
     };
     api.dispose = () => {
+        unsubscribeQualification();
         disposed = true;
         stopAllCoordinators();
         setKnotTrackingApplicability(

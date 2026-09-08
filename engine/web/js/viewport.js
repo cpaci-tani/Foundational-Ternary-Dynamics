@@ -1146,7 +1146,10 @@ export class Viewport {
     }
 
     dispose() {
+        if (this._disposed) return;
+        this._disposed = true;
         this._resizeObserver.disconnect();
+        this.controls.dispose();
 
         // Helper: dispose geometry+material for any Three.js Object3D
         const disposeMesh = (obj) => {
@@ -1201,6 +1204,7 @@ export class Viewport {
 
         // Renderer last (after every sub-renderer has freed its GPU resources).
         this.renderer.dispose();
+        this.renderer.domElement.remove();
     }
 
     // ── Backward-compat getters/setters for Phase 3b extracted state ──

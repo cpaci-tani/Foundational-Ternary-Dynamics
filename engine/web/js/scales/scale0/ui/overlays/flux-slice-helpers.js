@@ -29,11 +29,18 @@ import {
     computeHorizonFrame,
 } from '../../runtime/overlay-frames.js';
 import { DUAL_DELTA } from '../../../../constants.js';
+import { FIELD_SAMPLE_KIND_CODES } from '../../../../bridge/ws-binary-codec.js';
 
 export const DEFAULT_CANVAS_PX = 220;
 export const DENSE_CANVAS_PX = 160; // shrink when >2 active rows are visible
 export const FLOOR_FRAC = 1e-6;
 export const DENSE_THRESHOLD = 2;
+
+// Native VisualFieldKind stencil contract; all other registered kinds include
+// boundary sites. Keep the full-kind parity test when adding another sampler.
+const INTERIOR_SAMPLE_KINDS = new Set([
+    'vorticity', 'helicity', 'kretschmann', 'fisher', 'coherence', 'curlJ',
+]);
 
 // ── Slot → canonical sampler kind ────────────────────────────────────
 //
@@ -54,6 +61,7 @@ export const SLOT_TO_KIND = {
     helicity:      'helicity',
     kretschmann:   'kretschmann',
     latency:       'latency',
+    poissonLatency: 'poissonLatency',
     fisher:        'fisher',
     coherence:     'coherence',
     curlJ:         'curlJ',
@@ -382,12 +390,9 @@ export const FIELD_DRIVERS = [
         vizFlagKey: 'showGravPotential',
         signed: true,
         ramp: absThenRamp(rampGravWell),
-        requiredSampledKeys: ['fluxVector'],
-        // ctx={bridge} reproduces getActiveScale0Bridge(ctx,scratch)'s
-        // ctx.bridge fallback exactly (scratch is a fresh {} lacking
-        // useFluxMock/fluxMock) — getGravPotentialSamples is implemented on
-        // zero bridges repo-wide today, so this always falls through to
-        // the |J|² JS proxy, matching production.
+        requiredSampledKeys: ['poissonLatency', 'fluxVector'],
+        // Match the 3D branch: clamped Poisson map -L² when available,
+        // otherwise the selected local-force scalar -G_N|J|.
         source: (bridge, sampled, scratch) => computeGravPotentialFrame({ bridge }, sampled, scratch),
         sample: (bridge, axis, mid, N, source) => sliceDerivedFrame(source, axis, mid, N),
     },
@@ -484,8 +489,26 @@ export function resolveSamplePlane(sample, axis, requested, latticeSize) {
     const origin = Math.trunc(Number(sample?.origin));
     const N = Math.trunc(Number(latticeSize));
     if (stride > 0 && origin >= 0 && N > 0) {
-        const lastAllowed = origin > 0 ? N - 2 : N - 1;
-        const last = origin + Math.max(0, Math.floor((lastAllowed - origin) / stride)) * stride;
+        // A center-anchored full grid can start above zero (N=8, stride=2
+        // samples 1,3,5,7). Only the declared kind/interior contract excludes
+        // boundary sites; origin alone does not identify the usable extent.
+        const knownKind = FIELD_SAMPLE_KIND_CODES.has(sample?.kind);
+        const interior = knownKind ? INTERIOR_SAMPLE_KINDS.has(sample.kind)
+            : typeof sample?.interior === 'boolean' ? sample.interior : null;
+        const axisCount = sample?.axisCount;
+        let last;
+        if (interior !== null) {
+            const lastAllowed = interior ? N - 2 : N - 1;
+            last = origin + Math.max(0, Math.floor((lastAllowed - origin) / stride)) * stride;
+        } else if (Number.isSafeInteger(axisCount) && axisCount > 0
+            && origin + (axisCount - 1) * stride < N) {
+            last = origin + (axisCount - 1) * stride;
+        } else {
+            // Unqualified legacy display compatibility only: these records do
+            // not establish a grid kind or scientific observation provenance.
+            const lastAllowed = origin > 0 ? N - 2 : N - 1;
+            last = origin + Math.max(0, Math.floor((lastAllowed - origin) / stride)) * stride;
+        }
         const nearest = origin + Math.round((requested - origin) / stride) * stride;
         return Math.max(origin, Math.min(last, nearest));
     }

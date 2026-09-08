@@ -16,6 +16,7 @@ import {
     isKnotTrackingActive,
 } from '../state/store.js';
 import { getFieldLineKnotTracker } from './field-line-knots.js';
+import { commonSampleProvenance, safeCounterNumber } from '../../../lib/exact-counter.js';
 import {
     overlayWorkActive,
     wantsStreamlineApply,
@@ -311,9 +312,8 @@ export function buildDerivedSubstrateData(state, sampled, fieldCapability, N) {
 
     if (state.fieldFlags.showDualSubstrate && sampled.fluxVector?.count > 0) {
         // [TIER-1 VISUAL] Scalar (1+/-delta)/2 decomposition is an amplitude
-        // asymmetry demonstration, NOT a true chirality projection. A real
-        // L/R decomposition requires a pseudovector operation (Helmholtz-
-        // style split into curl-free and divergence-free parts). Surfaced
+        // asymmetry demonstration with no handedness content. It does not
+        // sample the engine's independently stored L/R records. Surfaced
         // as "dual substrate" for visualization only.
         const leftFactor = (1 + DUAL_DELTA) / 2;
         const rightFactor = (1 - DUAL_DELTA) / 2;
@@ -373,15 +373,10 @@ export function buildDerivedSubstrateData(state, sampled, fieldCapability, N) {
 // force-flow) carry a large weight, so at most ONE of them lands per frame;
 // the cheap scalar jobs pack in behind it up to the budget.
 //
-// VISUAL CORRECTNESS: the field is sampled ONCE at the start of a sweep
-// (state.overlaySched.sampled) and every job in that sweep reads the SAME
-// snapshot, so overlays remain mutually coherent — they just finish
-// painting over 1–few frames instead of all at once. The maximum lag of
-// an overlay behind the live field is (jobs_in_sweep / jobs_per_frame)
-// frames, bounded by OVERLAY_SWEEP_MAX_FRAMES; for diagnostic overlays a
-// sub-100 ms catch-up lag is visually imperceptible. Each overlay still
-// renders the exact same geometry/values it did before — only the frame on
-// which it lands moves.
+// OBSERVATION SCOPE: each kind is copied on its first lazy read and retained
+// across this sweep. Different kinds can represent different engine ticks;
+// this scheduler does not implement an atomic multi-field snapshot. Rendering
+// is passive and bounded by job budgets, not a same-tick scientific certificate.
 //
 // SKIP-UNCHANGED: a fresh sweep is only started when the underlying data
 // actually changed since the last sweep finished (a tick advanced, or the
@@ -698,6 +693,12 @@ function applyDerivedJob(frame, viewportAdapter) {
 function measureKnotContributions(tr, sched) {
     const { sampleCache, sampled, latticeSize, params, state } = sched;
     sampleCache.ensureSamples(['eField', 'bField', 'fluxVector', 'divergence']);
+    const provenance = commonSampleProvenance([sampled.eField, sampled.bField,
+        sampled.fluxVector, sampled.divergence]);
+    if (!provenance || safeCounterNumber(provenance.sampleTick) === null) {
+        tr.invalidateContributions('sample-provenance-unavailable');
+        return;
+    }
     tr.measureContributions({
         eField: sampled.eField,
         bField: sampled.bField,
@@ -705,7 +706,7 @@ function measureKnotContributions(tr, sched) {
         divJ: sampled.divergence,
         latticeSize,
         sampleStride: params.stride,
-        tick: state.fieldDataVersion,
+        tick: safeCounterNumber(provenance.sampleTick),
     });
 }
 
@@ -734,7 +735,7 @@ function runJob(sched, slot) {
                         bidirectional: true,
                     },
                 );
-                slot.sampleTick = (sched.acScale0?.getScale0Diagnostics?.()?.tick | 0) || 0;
+                slot.sampleTick = sampled.eField.sampleTick ?? null;
                 slot.phase = 1;
                 return false;
             }
@@ -788,7 +789,7 @@ function runJob(sched, slot) {
                         bidirectional: true,
                     },
                 );
-                slot.sampleTick = (sched.acScale0?.getScale0Diagnostics?.()?.tick | 0) || 0;
+                slot.sampleTick = sampled.bField.sampleTick ?? null;
                 slot.phase = 1;
                 return false;
             }
@@ -835,7 +836,7 @@ function runJob(sched, slot) {
                         bidirectional: true,
                     },
                 );
-                slot.sampleTick = (sched.acScale0?.getScale0Diagnostics?.()?.tick | 0) || 0;
+                slot.sampleTick = sampled.fluxVector.sampleTick ?? null;
                 slot.phase = 1;
                 return false;
             }
@@ -1076,6 +1077,15 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
     const fieldThrottle = latticeSize > 96 ? 12 : (latticeSize > 48 ? 6 : 3);
     const sched = ensureOverlaySched(state);
     const knotTrackingActive = isKnotTrackingActive(state);
+
+    if (state.authoritativeLoad != null) {
+        cancelStreamlineJobs(sched);
+        sched.active = false;
+        sched.sampled = null;
+        sched.sampleCache = null;
+        sched.forceCache = null;
+        return;
+    }
 
     if (!overlayWorkActive(state.anyFieldActive, knotTrackingActive)) {
         // No visual overlays and no knot tracking — abandon any half-finished

@@ -69,6 +69,7 @@
     position: relative !important;
     top: unset !important; left: unset !important;
     width: 100%;
+    min-width: 0;
 }
 
 /* ── Viewport: always the second grid row (1fr = fills remaining space) ───── */
@@ -78,6 +79,7 @@
     top: unset !important; left: unset !important;
     overflow: hidden;
     min-height: 0;   /* critical: prevents canvas from expanding the 1fr row */
+    min-width: 0;    /* toolbar content must not widen the shell at tablet widths */
     width: 100%;
 }
 

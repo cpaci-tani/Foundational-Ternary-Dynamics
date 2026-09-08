@@ -7,11 +7,9 @@
 // temperature slider drives langevin_T across the first-order condensation point
 // T_up~0.05 so the user can ignite the lattice and watch m and the heat map.
 //
-// FINDINGS (load-bearing, [MEASURED — BOUNDARY], FTD-0274): the lattice condenses
-// void→matter in a first-order jump at T_up~0.05, but has NO maximum temperature
-// (manifestation is a safety valve absorbing arbitrary heat; T_kin tested to 27×c²
-// with no blow-up). Tighter (smaller) lattices ignite at lower T. These are engine
-// MEASUREMENTS, not derivations. The footer states this.
+// Historical FTD-0274 measurements concern a bounded Langevin reference
+// experiment. A finite heating run does not establish unlimited stability,
+// absence of a maximum temperature, or recovery of physical matter.
 
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
@@ -21,12 +19,11 @@ import {
     SCALE0_MUTATION_REASONS,
     SCALE0_MUTATION_SOURCES,
 } from '../../state/store.js';
-import { paintSliceToCanvas } from './slice-render.js';
+import { paintSliceToCanvas, transposeAndFlipNN } from './slice-render.js';
 import { rampEmEnergy } from '../../../../viewport/color-ramps.js';
 import { C_SPEED } from '../../../../constants.js';
 import {
     isCurrentScale0TelemetryMeta,
-    readScale0DiagAudit,
     readScale0TotalEnergy,
     readScale0WaveEnergy,
     readScale0FieldEnergy,
@@ -79,7 +76,7 @@ function buildPanel() {
         <div class="tp-title">Thermodynamics <small>· FTD-0274</small></div>
         <div class="tp-ctl">
             <span style="opacity:0.8">T</span>
-            <input id="${PANEL_ID}-slider" type="range" min="0" max="0.14" step="0.0025" value="0.03">
+            <input id="${PANEL_ID}-slider" type="range" min="0" max="0.20" step="0.0025" value="0.03">
             <span id="${PANEL_ID}-tval" class="tp-tval">0.030</span>
         </div>
         <div class="tp-scale"><span>0 (abs. zero)</span><span class="tp-tup">↑ T_up≈0.05</span><span>hot</span></div>
@@ -99,10 +96,12 @@ function buildPanel() {
             <canvas id="${PANEL_ID}-heat" class="tp-heat" width="64" height="64"></canvas>
         </div>
         <svg id="${PANEL_ID}-spark" class="tp-spark" viewBox="0 0 240 34" preserveAspectRatio="none"></svg>
-        <div class="tp-foot"><b>[MEASURED — BOUNDARY]</b> the void condenses to matter in a
-        <b>first-order</b> jump at T<sub>up</sub>≈0.05; there is <b>no maximum temperature</b>
-        (manifestation is a safety valve) — you cannot explode the lattice by overheating,
-        the explosion <i>is</i> the condensation.</div>`;
+        <div class="tp-foot"><b>[REFERENCE ENGINE]</b> T is an imposed Langevin bath
+        parameter; T_kin uses an equipartition convention. Manifestation fraction
+        is an occupancy diagnostic, not recovered matter. The historical onset
+        near 0.05 is preparation-dependent. A finite heating campaign cannot
+        establish the absence of a maximum temperature or guarantee stability
+        under arbitrary heating.</div>`;
     return root;
 }
 
@@ -175,6 +174,7 @@ export function mountThermoPanel(host, getBridge) {
     }
 
     function commitTemp(T, ctx, owner, loadGeneration) {
+        if (!Number.isFinite(T) || T < 0 || T > 0.20) return false;
         if (!ctx || !owner || typeof owner.setLangevinTemp !== 'function') return false;
         try {
             return commitScale0ScientificMutation(ctx, {
@@ -257,9 +257,10 @@ export function mountThermoPanel(host, getBridge) {
         // thermodynamic state.
         const diagMeta = currentScale0Meta('diagnostics');
         const auditMeta = currentScale0Meta('audit');
-        const snapshots = readScale0DiagAudit(b);
-        const diag = diagMeta ? snapshots.diag : null;
-        const audit = auditMeta ? snapshots.audit : null;
+        // A fallback cannot acquire the missing producer provenance. Read the
+        // qualified groups directly instead of computing and discarding it.
+        const diag = diagMeta ? telemetryHub.s0?.diag ?? null : null;
+        const audit = auditMeta ? telemetryHub.s0?.audit ?? null : null;
         const L = Number.isFinite(b.latticeSize) && b.latticeSize > 0
             ? b.latticeSize : null;
         const Nvox = Number.isFinite(L) ? L * L * L : null;
@@ -331,9 +332,9 @@ export function mountThermoPanel(host, getBridge) {
                     if (Number.isFinite(s[i]) && s[i] > measuredMax) measuredMax = s[i];
                 }
                 if (heat.width !== L) { heat.width = L; heat.height = L; }
-                paintSliceToCanvas(heat, s, L, {
+                paintSliceToCanvas(heat, transposeAndFlipNN(s, L), L, {
                     ramp: rampEmEnergy,
-                    norm: Math.max(measuredMax, 1e-9),
+                    norm: 1 / Math.max(measuredMax, 1e-9),
                 });
                 hmaxEl.textContent = `|J|max ${measuredMax.toFixed(2)}`;
                 paintedSlice = true;

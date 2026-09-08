@@ -71,11 +71,9 @@ export function computePsiSquaredFrame(sampled, state, dualActive) {
     if (!sampled.fluxVector?.count) return null;
     const buf = ensureTier1Buffers(state, sampled.fluxVector.count);
     const { vectors, positions, count } = sampled.fluxVector;
-    // |ψ|² = |J_L|² + |J_R|² when dual substrate is active, else |J|².
-    // When dual is on the state store already tracks dualLVecs/dualRVecs, but
-    // for Tier 1 we use the (J_L + J_R) invariant = |J|², which equals
-    // |J_L|² + |J_R|² + 2·J_L·J_R. The cross term vanishes for orthogonal
-    // chiralities, so using |J|² is a faithful approximation at this tier.
+    // This display computes |J|² regardless of dualActive. It does not
+    // compute |J_L|² + |J_R|²: their cross term need not vanish. The
+    // historical overlay name does not establish a Born probability.
     let max = 0;
     for (let i = 0; i < count; i++) {
         const x = vectors[i * 3];
@@ -97,7 +95,8 @@ export function computePhaseFrame(sampled, state, dualLVecs, dualRVecs) {
     // We project the chirality pair onto the flux direction and take the
     // signed scalar components J_L.Jhat and J_R.Jhat. Using magnitudes
     // would collapse the output to [0, pi/2] and discard chirality sign.
-    const hasDual = dualLVecs && dualRVecs && dualLVecs.length >= count * 3;
+    const hasDual = dualLVecs && dualRVecs && dualLVecs.length >= count * 3
+        && dualRVecs.length >= count * 3;
     const { vectors } = sampled.fluxVector;
     for (let i = 0; i < count; i++) {
         if (hasDual) {
@@ -166,15 +165,8 @@ export function computeLagrangianDensityFrame(sampled, state) {
 }
 
 export function computeEntropyDensityFrame(sampled, state) {
-    // Disorder proxy, NOT the Shannon entropy of the ternary state over a
-    // Moore neighborhood. This is a pointwise function of |J| (a rank-based
-    // estimator: high where |J| is near the median/disordered, low where |J|
-    // is near zero or near the max) normalized by a GLOBAL |J|_max, not a
-    // per-neighborhood quantity. The ternary state field is already exposed
-    // at stride 1 elsewhere in this runtime (see computeStateFieldFrame /
-    // the 'state' sample slot), so the blocker is implementing a real
-    // neighborhood-sampling Shannon estimator, not state-field access.
-    // This Tier 1 stand-in is retained until that upgrade lands.
+    // Pointwise display proxy 4p(1-p), p=|J|/max|J|. It is neither
+    // Shannon entropy nor a rank or neighborhood-disorder estimator.
     if (!sampled.fluxVector?.count) return null;
     const buf = ensureTier1Buffers(state, sampled.fluxVector.count);
     const { vectors, positions, count } = sampled.fluxVector;
@@ -189,7 +181,7 @@ export function computeEntropyDensityFrame(sampled, state) {
     }
     const eps = 1e-9;
     // Pass 2: mapped entropy — 4·p·(1-p) where p = |J|/max gives a smooth
-    // 0→1→0 bump (Gini-style impurity, equivalent to Shannon up to scale).
+    // 0→1→0 bump; this polynomial is not proportional to Shannon entropy.
     for (let i = 0; i < count; i++) {
         const x = vectors[i * 3];
         const y = vectors[i * 3 + 1];
@@ -412,8 +404,8 @@ export function computeVorticityFrame(sampled, state) {
 // ══════════════════════════════════════════════════════════════════════
 
 /**
- * Event-horizon overlay — points where latency proxy L(x) ≥ 0.95.
- * Below that, the well is sub-horizon (light still escapes).  We emit
+ * Threshold display — points where the held-normalized latency proxy is ≥ 0.95.
+ * This threshold does not diagnose an event horizon or light escape. We emit
  * positions + values so the viewport can either render them as an
  * isosurface (preferred) or fall back to a point cloud.
  *
@@ -553,8 +545,8 @@ export function computeStateFieldFrame(sampled, _state) {
 
 /**
  * Latency / time-dilation field L(x) = √(|J|²/|J|²_max) ∈ [0, 0.998]. The
- * Born-Infeld proper-time field that creates gravity wells, event horizons,
- * and time dilation (f = 1 − L²). [PROXY]: |J|²_max is computed by the
+ * Relative flux-magnitude display, not a measured proper-time or horizon field.
+ * [PROXY]: |J|²_max is computed by the
  * engine itself as the CURRENT TICK's own global peak (get_latency_sampled,
  * ftd_wasm.cpp) — L arrives here already ratio-normalized, so its own top
  * value saturates toward ~0.998 whenever any nonzero flux exists anywhere,
@@ -587,9 +579,9 @@ export function computeLatencyFrame(sampled, state) {
 }
 
 /**
- * Gauss-constraint residual r(x) = ∇·J − s_charge. FTD-native charge is the
- * ternary state, so a clean substrate would have r ≈ 0; non-zero r maps the
- * non-variational Gauss-projection conservation leak (SPEC_ENGINE.md).
+ * Raw visual residual r(x) = ∇·J − s_charge. The configured solver uses a
+ * coupled, neutralized source and normally vacuum-only correction; this
+ * readout diagnoses neither that residual nor charge continuity.
  * Signed pass-through of the engine's gauss-residual sampler.
  */
 export function computeGaussResidualFrame(sampled, _state) {
@@ -636,7 +628,7 @@ export function computeProperTimeFrame(sampled, state) {
  * Instantaneous lapse (clock rate) dτ/dt(x) = √max(1−u²/C_SPEED²−L²,0) —
  * causal_kinematics.h's proper_time_rate evaluated live from voxel.latency
  * and voxel.velocity. Fixed [0,1] range by construction (no peak-hold
- * normalizer needed): 0 = frozen clock / horizon reading, 1 = full rate.
+ * normalizer needed): 0 = zero selected clock rate, 1 = full rate.
  */
 export function computeLapseFrame(sampled, _state) {
     const l = sampled.lapse;
@@ -655,8 +647,7 @@ export function computeLapseFrame(sampled, _state) {
  * de Broglie internal clock phase φ(x) (FTD-0271): dφ = ω₀·dτ, advanced only
  * while de_broglie_clock is ON. The engine returns raw (unwrapped, possibly
  * large) radians; this wraps to [0, 2π) for the cyclic hue-wheel renderer
- * (updateDBPhaseField) and reports the wrap count so a caller wanting the
- * unwrapped winding number still has it.
+ * (updateDBPhaseField). This frame does not retain the wrap count.
  */
 export function computeDbPhaseFrame(sampled, state) {
     const p = sampled.dbPhase;

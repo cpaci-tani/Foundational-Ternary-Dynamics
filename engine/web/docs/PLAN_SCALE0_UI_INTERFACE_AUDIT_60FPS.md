@@ -1,0 +1,110 @@
+# Plan — Scale 0 UI Interface Audit and 60 FPS Gate
+
+**Current disposition (2026-09-07): BLOCKED for general release.** The broader
+[production audit](../../docs/AUDIT_SCALE0_COMPREHENSIVE_2026-09-07.md) found
+two frame failures among 140 measured overlay rows and 18 callback-budget
+failures among 144 panel rows on its frozen candidates. Its separately
+registered repair campaign does not replace those failures. The dated results
+below are retained as historical evidence for their original workloads;
+they do not certify the current candidate or all nonempty preparations.
+
+**Historical status:** Gates 0–31 (including 10a–10c) passed their recorded workloads
+**Scope:** every user-facing interface available while Scale 0 (`lattice`) is active
+**Rule:** only one numbered interface may be `IN PROGRESS`; the next interface does not start until the current one is `PASS`
+**Target host:** the project Windows 11 workstation, foreground browser tab, dev server with COOP/COEP enabled
+
+## Objective
+
+Verify that every Scale 0 interface is correctly wired to the active physics owner, race-safe across lifecycle transitions, free of redundant hidden work and unbounded allocation/listener growth, and compatible with a sustained 60 FPS UI frame budget.
+
+The 60 FPS requirement applies to foreground UI responsiveness and rendering. A panel may intentionally refresh measured data at 1–4 Hz; that slower scientific sampling cadence is acceptable only when it does not stall the browser frame loop or delay interaction.
+
+“Always” is operationalized as the full registered test matrix on the target host. It cannot cover background-tab throttling, power-saving modes, other hardware, or external OS/GPU interruptions.
+
+## Per-interface release gate
+
+An interface passes only when all six checks pass:
+
+1. **Ownership and wiring** — every control/readout has one named owner and a traceable path through state, telemetry, the active Scale 0 capability, or the physics harness. Worker-owned scenarios must not read the idle main-thread bridge.
+2. **Lifecycle and races** — rapid input, pause/play/step/reset, scenario and lattice-size changes, panel float/dock/collapse, resize, Scale 0 exit/re-entry, worker fallback, and disposal produce no stale writes, out-of-order commits, duplicate listeners, orphaned timers, or post-dispose work.
+3. **Performance** — after a three-second warm-up and during a minimum twelve-second capture:
+   - effective foreground rAF rate is at least 59.5 FPS;
+   - p95 frame interval is at most 17.0 ms and p99 at most 20.0 ms;
+   - no reproducible panel-attributable frame interval exceeds 33.4 ms;
+   - no panel-attributable Long Task is at least 50 ms;
+   - measured panel update work is p95 at most 2 ms and max at most 8 ms;
+   - action-to-next-paint latency is p95 at most 50 ms during the interaction burst.
+4. **Demand and redundancy** — a hidden or collapsed interface performs zero bridge/sampler reads, DOM writes, canvas paints, and chart updates. Repeated reads within one telemetry/field epoch require an explicit correctness reason.
+5. **Resource stability** — ten open/close or mount/unmount cycles return subscriptions, listeners, DOM nodes, canvases, workers, and retained memory to baseline; no monotonic growth is allowed.
+6. **Verification evidence** — focused automated tests, browser measurements, console/page error capture, and a recorded result exist. A code-review-only pass is not sufficient.
+
+Any failing check leaves the interface `BLOCKED`. The issue is fixed and the entire gate is rerun before the audit proceeds.
+
+## Workload matrix
+
+Each applicable interface is measured in these states:
+
+- paused and playing;
+- docked-active, floated-expanded, floated-collapsed, and hidden;
+- default lattice size, large interactive size (`N=97`), and the maximum supported by
+  the active backend (`N=97` for browser/WASM; `N=181` for native GPU);
+- worker-backed WASM through its measured `N=97` ceiling and the supported
+  in-thread fallback through its measured `N=33` ceiling;
+- empty/static, flux-heavy, particle-rich, and interface-specific scenarios selected from the live registry;
+- steady state plus a rapid interaction burst and a teardown/re-entry burst.
+
+The all-scenario wiring contracts remain separate correctness gates. The performance matrix uses representative worst-case scenario classes so one interface audit remains reproducible; any discovered worse case is added to the matrix.
+
+## Audit sequence
+
+| # | Interface | Primary ownership | Required sub-checks | Status |
+|---:|---|---|---|---|
+| 0 | Measurement harness and evidence format | `tests/`, browser Performance APIs, `raf-coordinator.js` | Reproducible rAF, Long Task, callback-cost, request-count, lifecycle-count capture | PASS — automated probe 2/2; focused Edge capture 144.05 FPS, p99 7.01 ms, zero Long Tasks |
+| 1 | Panel shell lifecycle | `app-shell.js`, `panel-dock-controller.js`, floating/mobile/mount controllers, `panel-visibility.js` | Dock, float, collapse, resize, mobile, scale exit/re-entry, subscriber teardown | PASS — 5/5 shell + 27/27 mount checks; Edge 142.72 FPS, p99 7.03 ms, zero Long Tasks, zero resource growth |
+| 2 | Playback and Scale 0 mode controls | `app.js`, workspace/topbar components, Scale 0 controller | Play, pause, step, reset, speed, mode switch; one action per input | PASS — 7/7 gate + 5/5 smoke checks; Edge 144.05 FPS, p99 7.01 ms, zero Long Tasks; hidden work 432→0 mutations |
+| 3 | Scenario toolbar and epistemic-status disclosure | `ui/toolbar/*`, `scenario-registry.js`, `ui/dom.js`, scenario loader | Rapid selection, stale async setup rejection, current-owner/status parity | PASS — 4/4 gate + 6/6 health/teardown/closure checks; all 130 scenarios healthy; Edge 143.55 FPS, p99 7.02 ms, zero Long Tasks |
+| 4 | Lattice size and boundary toolbar | `ui/toolbar/*`, `ui/bindings.js`, active harness | Resize ordering, boundary parity, worker replacement, upload invalidation | PASS — a focused check invokes the production worker-init fallback path from a healthy L49 worker and verifies clamp/reload at direct-WASM L33, re-disabled larger options, and a refused later L49 resize; off-thread browser/WASM is capped at measured `N=97`, direct main-thread fallback at measured `N=33`, and larger sizes are native-GPU only; Edge 144.05 FPS, p99 7.02 ms, zero Long Tasks, exact worker conservation |
+| 5 | Physics Toggles controls card | `ui/controls/physics-toggles.js`, `wire.js` | Toggle parity, defaults, scenario reload, no duplicate dispatch | PASS — 6/6 focused and 10/10 broader compatibility checks; the state-only knot-zone check now proves its requested/applicable/effective contract and restores a retained request when Knot Tracking becomes active; bulk profile enables 24 dependency-compatible physics terms in one active-owner transaction; live Dual Substrate transitions preserve the seeded field; Edge 144.05 FPS, p99 7.05 ms, zero Long Tasks; zero idle writes; hidden card zero work |
+| 6 | Substrate controls card | `ui/controls/substrate-controls.js`, `wire.js` | Bounded coordinates, honest constant readouts, active owner, pause/reload behavior | PASS — 3/3 focused + 2/2 compatibility checks; Edge 144.13 FPS, p99 7.04 ms, zero intervals over 16.7 ms and zero Long Tasks; 35/35 active-owner commands, zero idle writes |
+| 7 | Flux Volume controls card | `ui/controls/flux-volume.js`, `wire.js` | Visibility/style state, upload invalidation, no redundant volume reads | PASS — 5/5 focused/compatibility checks; Edge 144.05 FPS, p99 7.02 ms, zero intervals over 16.7 ms and zero Long Tasks; 2,400 inputs coalesced to 40 transactions with zero node churn |
+| 8 | Particle Display controls card | `ui/controls/flux-volume.js`, `wire.js` | Particle flags, empty frames, scenario transitions | PASS — 3/3 focused + 3/3 shared-scheduler regression checks; Edge 144.04 FPS, p99 7.01 ms, zero intervals over 16.7 ms and zero Long Tasks; 1,600 inputs coalesced to 40 atomic particle-buffer updates |
+| 9 | Selection controls card | `ui/controls/flux-volume.js`, inspector/viewport selection | Clear/select handoff, stale selection after resize/scenario change | PASS — 3/3 focused + 6/6 shared-path regression checks; Edge 143.97 FPS, p99 7.00 ms, zero intervals over 16.7 ms and zero Long Tasks; 2,400 inputs coalesced to 40 frame commits with lifetime-stable highlight resources |
+| 10 | Visualization overlay | `ui/overlays/template.js`, `bindings.js`, `panel-shell.js`, field overlay runtime | All registered controls (33 primary layer toggles / 38 View buttons), style/axis/height controls, search, counts, clear, collapse, applicability | PASS — 14/14 shell, inventory, wiring, containment, applicability, reconciliation, clear/collapse, scheduler, and lifecycle checks; hardware-ANGLE RTX 5090 interaction capture ran 12.20 s / 731 frames at 60.00 FPS, p95/p99 16.67 ms, zero >20 ms gaps or Long Tasks, action p95 19.53 ms, and zero rAF/DOM/canvas/heap growth |
+| 10a | Flux/E/B flow lines | `field-overlays.js`, `streamline-worker.js`, `fieldlines.js`, viewport field/flux renderers, Flow Lines card | All registered sizes, seed bounds, worker ownership/cancellation, density/length/opacity, empty draws, lifecycle | PASS — worker-backed atomic results; all-size deterministic gate; browser L=9…97 Edge p99 <=7.12 ms, zero >20 ms/Long Tasks; native-only UI capture explicitly deferred |
+| 10b | Gravity force + potential overlays | compact CPU/CUDA/WASM samplers, `overlay-frames.js`, `field-overlays.js`, field-force/topology renderers | Exact radius-2 operators, selected Poisson-latency potential, backend parity, per-style ownership/races, bounded work, empty draws, lifecycle | PASS — CPU/CUDA/WASM operator parity; all-size deterministic bounds; the release test has explicit `native`, `wasm`, `direct-wasm`, and backend-derived `auto` contracts, refuses impossible size/owner pairs, records WebGL renderer provenance, refuses SwiftShader/software certification, and enforces p95 <=17 ms; the hardware-ANGLE/explicit-native 40-combination `L=9…181` × arrows/heatmap/flow/glyphs matrix recorded a 60.00 FPS minimum and 16.67 ms worst p99; live Edge L=97 held 144.05 FPS in all four styles with p99 <=7.07 ms and zero >20 ms/Long Tasks |
+| 10c | Visualization panel UX shell | `ui/overlays/template.js`, `panel-shell.js`, Scale 0 overlay stylesheet, `dom.js` | Information hierarchy, active rail, render-mode ownership, accordion/filter/context controls, accessibility, responsive bounds, resource stability | PASS — complete layer-inspector redesign; 8/8 focused + 6/6 overlay-wiring checks; hardware-ANGLE RTX 5090 interaction capture ran 12.20 s / 731 frames at 60.00 FPS, p99 16.67 ms, zero >20 ms/Long Tasks, and zero resource growth |
+| 11 | Symmetry Aggregation overlay | retired `ui/overlays/symmetry-panel.js` surface | Resolve live disabled/pending surface: wire it correctly or remove it from the live UI | PASS — removed because the disabled U(1)/SU(2)/SU(3) controls had no physics owner; retired the module, controller mount, per-frame projection hook, inspector listeners, renderer allocation/API, compatibility accessors, and CSS; 2/2 focused retirement/adapter checks; no live source references remain outside the guard test |
+| 12 | Conservation micropanel | `conservation-micropanel.js`, telemetry hub/active owner | Demand gate, audit reuse, source-bounded drift history, fullscreen/scale-exit lifecycle | PASS — active-worker ownership, staggered-source provenance, honest unavailable values, ten remount/fullscreen cycles, demand gating, and full-catalog unconditional rollback all pass; remount now disposes the prior subscriber, fullscreen dispose closes the portal, controller registry refreshes on re-entry, and unconditional mode opens the worker audit/Lagrangian mask; hardware-ANGLE RTX 5090 12.00 s / 719-frame capture held 60.00 FPS, p99 16.67 ms, callback p95 0.185 ms/max 0.195 ms, zero Long Tasks/resource growth |
+| 13 | Genesis Burst scenario overlay | `genesis-burst-panel.js`, scenario loader, physics harness | Deterministic Fire/Sweep ownership, generation cancellation, scenario/scale disposal, interval cleanup | PASS — 6/6 scientific/mutation/owner/cancellation checks plus ten remount cycles with exactly one live 500 ms guard and zero after each dispose; native-unacknowledged experiments fail closed without mutation; hardware-ANGLE RTX 5090 live Fire capture ran 12.00 s / 720 frames at 60.00 FPS, p99 16.67 ms, action-to-paint 2.89 ms, zero >20 ms gaps/Long Tasks/resource growth |
+| 14 | Controls sidepanel integration | `Scale0ControlsComponent`, panel shell | Six-card composition, idempotent mount, floated responsive layout, combined request load | PASS — component reconciles six keyed singleton cards and preserves identity/state across ten init calls; floated 420/780/1100 px layouts resolve to 1/2/2 columns with no Scale 0 duplicate IDs; hardware-ANGLE RTX 5090 combined 40-action burst plus 12 s capture ran 12.66 s / 759 frames at 60.00 FPS, p99 16.67 ms, action p95 17.79 ms, zero >20 ms gaps/Long Tasks/resource growth |
+| 15 | Diagnostics sidepanel | diagnostics component + Scale 0 descriptors | Live/floated gating, audit catch-up, row parity, no hidden collection, ring-wrap cadence | PASS — exact five-section descriptor parity; singleton init preserves tables/sparklines; cleanup/remount is complete; active/floated updates run while collapsed/hidden updates are zero; shared-ring wrap regression passes; live cadence recorded 47 commits / 47 source advances; hardware-ANGLE RTX 5090 L=97 12.01 s / 720-frame capture held 60.00 FPS, p99 16.67 ms, 367 panel updates at p95 0.58 ms/max 1.32 ms, 174/174 chart coverage, zero >20 ms gaps/Long Tasks/resource growth |
+| 16 | Telemetry Grid sidepanel | telemetry-grid component + Scale 0 channel registry | 23-channel draw cost, buffer reuse, collapsed/floated behavior, resize | PASS — scroll-vs-float race removed; expandable 220 px title rail + bidirectional side resize; 41 automated checks; Edge 144.09 FPS, p99 7.00 ms, zero >20 ms gaps/Long Tasks; chart/source 48.07/48.02 Hz with 100% sample coverage; hidden work and deep telemetry demand both zero |
+| 17 | Charts sidepanel | charts component + Scale 0 descriptors | uPlot update/rescale cost, buffer epochs, float/collapse/resize | PASS — singleton/lifecycle/cadence checks pass; 46/46 source advances rendered; hardware-ANGLE RTX 5090 L=97 held 60.00 FPS for 720 frames, callback p95 0.195 ms, zero Long Tasks/resource growth |
+| 18 | Lagrangian sidepanel | Lagrangian component + Scale 0 descriptors | Active-owner telemetry, demand mask, chart/table update cost | PASS — root-owned singleton and balanced teardown; provenance/null-control contracts preserved; hardware L=97 held 60.00 FPS for 719 frames, callback p95 0.345 ms, zero Long Tasks/resource growth |
+| 19 | Inspector sidepanel | inspector component + `inspector/scales/lattice.js` | Bounded Moore reads, epoch cache, selection churn, teardown | PASS — 6/6 bounded-read, selection, float/live, and lifecycle checks; hardware L=97 held 60.00 FPS for 720 frames, callback p95 0.015 ms, zero retained work/resources |
+| 20 | Scene sidepanel | scene component + viewport/background adapters | Render-setting parity, resize, no duplicate viewport updates | PASS — 7/7 control/FOV/fog/persistence/visibility/singleton-listener checks; hardware L=97 held 60.00 FPS for 719 frames with zero periodic panel work or resource growth |
+| 21 | Flux Slice sidepanel | `flux-slice-panel.js`, helpers, sampler cache | All field rows/axes, deep expansion, sampling budget, canvas reuse | PASS — 7/7 axes/planes/volume/default-row/worker/lifecycle checks; hardware L=97 held 60.00 FPS for 719 frames, update p95 1.195 ms, zero Long Tasks/resource growth |
+| 22 | Wave Lab sidepanel | `wave-lab-panel.js`, `wave-lab/wave-info.js` | Reseed cancellation, sparkline lifecycle, scenario applicability | PASS — large-lattice comparator now uses a labeled stride-volume estimate instead of per-voxel Map allocations; mutation contract passes; hardware L=97 held 60.00 FPS for 720 frames, callback p95 1.865 ms, zero Long Tasks |
+| 23 | P1 Observables sidepanel | panel orchestrator + eight child instruments | Coulomb, anisotropy, hydrogen, Bell, gravity, g−2, Thomson, fine structure; modal lifecycle | PASS — 7/7 Empty/applicability/epistemic/direct-owner checks; hardware L=97 held 60.00 FPS for 719 frames, callback p95 0.815 ms, zero Long Tasks/resource growth |
+| 24 | Spectrum sidepanel | `spectrum-panel.js`, spectrum/topology analysis | Live/deep transition, cancellation, FFT/sampler cost, active owner | PASS — visible Spectrum now owns audit demand; live L=97 reduction is explicitly approximate/band-limited while Deep remains exact stride-1; Parseval/deep checks pass; hardware held 60.00 FPS for 719 frames, callback p95 1.56 ms |
+| 25 | Dispersion sidepanel | `dispersion-panel.js` | Live measurement trigger, scenario applicability, arm subscription | PASS — explicitly identified as the canonical FTD-0299 reference atlas, with no fabricated live measurement; singleton/row/point/one-shot-arm checks pass; hardware L=97 held 60.00 FPS for 720 frames with zero periodic work/resource growth |
+| 26 | Knots sidepanel | `knots-panel.js`, knot runtime/cache | Detection/identity/attribution, canvas interaction, history bounds | PASS — 38/38 detection/identity/contribution/attribution/color/seed/telemetry checks; live contributions use a labeled volume-weighted stride estimate while dense/FTV2 exact paths remain tested; hardware L=97 held 60.00 FPS for 720 frames, callback p95 1.02 ms, zero Long Tasks/resource growth |
+| 27 | Gravity sidepanel | `gravity-panel.js`, gravity analysis/samplers | Quantity switch, three canvases, active owner, hidden-work gate | PASS — Empty/pending/stale generations fail closed; the selected radius-2 engine support field and Poisson-derived `[IMPOSED]` latency map are separated from labeled `L_p/K_p/|F_p|` presentation proxies; branch status honors both umbrella and gravity toggles and states that `phase_forces` applies the enabled branch only at manifested sites. Center-anchored FTV2/direct-WASM reductions, sampler revision coherence, 4 Hz demand, rotating-plane reuse, collapse/visibility teardown, worker reuse/disposal, and cache generations are pinned by 9/9 scientific/lifecycle checks plus 2/2 worker lifecycle checks; adversarial tests poison the zero-copy volume at the first later engine call and invoke the L49 worker-failure recovery through clamp, reload, option disabling, and subsequent resize refusal. Worker L=97 and direct fallback L=33 clear the absolute foreground gate; forced direct L=97 measured only 16.49 FPS live and 18.47 FPS collapsed because the main-thread physics tick remained blocking, so direct fallback now refuses L>33 rather than weakening the gate. The hardware-ANGLE/explicit-native overlay matrix passed all 40 size/style combinations at a 60.00 FPS minimum, p95 <=17 ms, and 16.67 ms worst p99; the harness records the unmasked WebGL renderer and rejects software-renderer certification. Edge verified branch-status changes, scientific tooltips, collapse/restore, and site-style parity; its extension automation footer was throttled and was not used as performance evidence. |
+| 28 | Time sidepanel | `time-panel.js`, time analysis | Slider interaction, imposed/measured separation, five-card draw cost | PASS — one-pass allocation-bounded radial summary and adaptive large-L sampling replace the 117k-object sort; static kinematic SVGs are event-driven; unit/integration/contracts pass; hardware L=97 twin-clock workload held 60.00 FPS for 719 frames, callback p95 1.295 ms |
+| 29 | Thermo sidepanel | `thermo-panel.js`, telemetry + field slice | Slider/presets, heatmap allocation, active owner, hidden-work gate | PASS — mutation-owner and status/energy provenance contracts pass; hardware L=97 thermalization held 60.00 FPS for 720 frames, callback p95 1.24 ms, zero Long Tasks/resource growth |
+| 30 | Scale Context sidepanel | `scale-context-panel.js` | Live/static value ownership, SVG update cost, hidden-work gate | PASS — 3/3 geometry/calibration/resize/responsive checks; hardware L=97 held 60.00 FPS for 719 frames, loop p95 0.04 ms, zero DOM churn or resource growth |
+| 31 | Integrated Scale 0 all-interface regression | full Scale 0 UI | Cross-panel demand masks, float combinations, rapid switching, final 60 FPS matrix | PASS — all 17 canonical panels measured individually for 600 foreground frames at Empty L=97 on hardware ANGLE/RTX 5090; every panel recorded 60.00 FPS and p95/p99 16.67 ms with zero Long Tasks; every collapsed panel recorded zero DOM/canvas work and stable resources |
+
+## Evidence recorded for each PASS
+
+- exact source paths and ownership chain;
+- focused tests and commands;
+- scenario, lattice size, bridge mode, panel state, sample duration, and browser viewport;
+- rAF mean/p95/p99/max, Long Tasks, panel callback p95/max, input-to-paint p95;
+- request/DOM/canvas counts while active versus hidden;
+- lifecycle counts before and after ten cycles;
+- findings and patches, followed by the post-fix measurements.
+
+## Existing evidence to reuse, not assume
+
+The existing Scale 0 panel-render, panel-wiring, request-budget, telemetry-gating, worker-teardown, sampler-lifetime, and resize-guard tests are inputs to this audit. Their current presence does not count as a fresh PASS. The active `SPEC_SCALE0_PERF_TELEMETRY_PANELS.md` documents earlier optimization work and several deferred items; this audit raises its earlier `>30 FPS at N=97` performance target to the gate above.

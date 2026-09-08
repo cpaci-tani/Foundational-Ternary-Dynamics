@@ -3,8 +3,8 @@
  * B3 regression — the `langevin` research toggle must not leak across scenario
  * switches.
  *
- * The emergent-ic* / quark-gluon-plasma C++ scenario bodies enable the Langevin
- * thermostat. `langevin` is intentionally NOT in `SCALE0_TOGGLES`
+ * The quark-gluon-plasma C++ scenario body enables the Langevin thermostat.
+ * `langevin` is intentionally NOT in `SCALE0_TOGGLES`
  * (config/toggles.js documents it as a user-owned research control), so the
  * loader's whitelist reset never clears it — which RAISED the concern (audit B3)
  * that it could persist into the next scenario.
@@ -62,17 +62,17 @@ async function readLangevin(page) {
 }
 
 test.describe('Scale-0 langevin toggle-leak (B3)', () => {
-    test('langevin does not leak from an emergent scenario into the next', async ({ page }) => {
+    test('langevin does not leak from a thermal scenario into the next', async ({ page }) => {
         await gotoAndReady(page);
         await waitForCtx(page);
 
-        // 1) An emergent scenario enables the langevin thermostat in its load().
-        await selectScenario(page, 's0-seed-emergent-ic1');
-        const emergent = await readLangevin(page);
-        const activeLangevin = emergent.useFluxMock ? emergent.langevinMock : emergent.langevinMain;
+        // 1) The qualified thermal-transport scenario enables the thermostat.
+        await selectScenario(page, 's0-seed-quark-gluon-plasma');
+        const thermal = await readLangevin(page);
+        const activeLangevin = thermal.useFluxMock ? thermal.langevinMock : thermal.langevinMain;
         expect(activeLangevin,
-            `emergent-ic1 should run with langevin ON on its active bridge ` +
-            `(useFluxMock=${emergent.useFluxMock}, main=${emergent.langevinMain}, mock=${emergent.langevinMock})`)
+            `quark-gluon-plasma should run with langevin ON on its active bridge ` +
+            `(useFluxMock=${thermal.useFluxMock}, main=${thermal.langevinMain}, mock=${thermal.langevinMock})`)
             .toBe(true);
 
         // 2) Switch to a scenario that does NOT use langevin — it must be OFF everywhere.
@@ -80,25 +80,25 @@ test.describe('Scale-0 langevin toggle-leak (B3)', () => {
         const after = await readLangevin(page);
         expect(after.langevinMain,
             `langevin leaked onto the MAIN bridge after switching to flux-pulse ` +
-            `(was set by emergent-ic1; useFluxMock-then=${emergent.useFluxMock})`).toBe(false);
+            `(was set by quark-gluon-plasma; useFluxMock-then=${thermal.useFluxMock})`).toBe(false);
         expect(after.langevinMock ?? false,
             `langevin leaked onto the FLUX MOCK after switching to flux-pulse`).toBe(false);
     });
 
-    test('langevin does not leak from an emergent scenario into a main-bridge scenario', async ({ page }) => {
+    test('langevin does not leak from a thermal scenario into a main-bridge scenario', async ({ page }) => {
         await gotoAndReady(page);
         await waitForCtx(page);
 
-        await selectScenario(page, 's0-seed-emergent-ic1');
-        const emergent = await readLangevin(page);
+        await selectScenario(page, 's0-seed-quark-gluon-plasma');
+        const thermal = await readLangevin(page);
 
-        // quantum-tunnel runs on the main/WASM bridge — exactly where the emergent
-        // custom-load sets langevin, so this is the sequence in which a leak bites.
+        // quantum-tunnel runs on the main/WASM bridge — exactly where an inactive
+        // bridge pin would resurface, so this is the sequence in which a leak bites.
         await selectScenario(page, 'quantum-tunnel');
         const after = await readLangevin(page);
         expect(after.langevinMain,
             `langevin leaked onto the main bridge into quantum-tunnel ` +
-            `(emergent: useFluxMock=${emergent.useFluxMock} main=${emergent.langevinMain} mock=${emergent.langevinMock}; ` +
+            `(thermal: useFluxMock=${thermal.useFluxMock} main=${thermal.langevinMain} mock=${thermal.langevinMock}; ` +
             `quantum: useFluxMock=${after.useFluxMock})`).toBe(false);
     });
 });

@@ -170,11 +170,35 @@ export function gravitySlice(mag, N, axis, index, kind = 'latency', maxRho = 0, 
     const M = N * N * N;
     if (!mag || mag.length < M) return out;
     const rho = maxRho > 0 ? maxRho : maxRhoOf(mag, M);
+    const vidx = (x, y, z) => (z * N + y) * N + x;
+    return gravitySliceWithLayout(mag, N, axis, index, kind, rho, spacing, vidx, out);
+}
+
+/** Same zero-border proxy stencil on a validated, owned normal slab. */
+export function gravitySliceFromSlab(slab, kind = 'latency') {
+    const N = slab?.N, axis = slab?.axis, index = slab?.index;
+    if (!Number.isSafeInteger(N) || N < 1 || ![0, 1, 2].includes(axis)
+        || !Number.isSafeInteger(index) || index < 0 || index >= N
+        || !(slab.data instanceof Float64Array)) return null;
+    const startPlane = Math.max(0, index - 1);
+    const planeCount = Math.min(N - 1, index + 1) - startPlane + 1;
+    if (slab.startPlane !== startPlane || slab.planeCount !== planeCount
+        || slab.data.length !== planeCount * N * N || !(slab.maxRho >= 1e-30)) return null;
+    const vidx = (x, y, z) => {
+        const plane = axis === 0 ? x : axis === 1 ? y : z;
+        const a = axis === 0 ? y : x;
+        const b = axis === 2 ? y : z;
+        return ((plane - startPlane) * N + a) * N + b;
+    };
+    return gravitySliceWithLayout(slab.data, N, axis, index, kind, slab.maxRho,
+        1, vidx, new Float64Array(N * N));
+}
+
+function gravitySliceWithLayout(mag, N, axis, index, kind, rho, spacing, vidx, out) {
     const invRho = 1 / rho;
     const h = Math.max(1, Number(spacing) || 1);
     const invH = 1 / h;
     const invH2 = invH * invH;
-    const vidx = (x, y, z) => (z * N + y) * N + x;
     const Lof = (x, y, z) => {
         const m = mag[vidx(x, y, z)];
         return Math.sqrt(Math.min(m * m * invRho, LATENCY_HORIZON_CLAMP));

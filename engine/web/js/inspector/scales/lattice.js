@@ -32,91 +32,163 @@ function voxelKey(x, y, z) {
     return `${x},${y},${z}`;
 }
 
+export function normalizeLatticePosition(position, latticeSize) {
+    const L = Number(latticeSize);
+    if (!position || !Number.isSafeInteger(L) || L < 1) return null;
+    const result = {};
+    for (const axis of ['x', 'y', 'z']) {
+        const raw = position[axis];
+        if ((typeof raw !== 'number' && typeof raw !== 'string')
+            || (typeof raw === 'string' && !raw.trim())) return null;
+        const value = Number(raw);
+        if (!Number.isFinite(value)) return null;
+        result[axis] = Math.max(0, Math.min(L - 1, Math.round(value)));
+    }
+    return result;
+}
+
 function buildNeighbourOrder(x, y, z, L) {
     const order = [];
+    const seen = new Set([voxelKey(x, y, z)]);
     for (let dz = -1; dz <= 1; dz++) {
         for (let dy = 1; dy >= -1; dy--) {
             for (let dx = -1; dx <= 1; dx++) {
-                if (dx === 0 && dy === 0 && dz === 0) continue;
-                order.push({
-                    x: (x + dx + L) % L,
-                    y: (y + dy + L) % L,
-                    z: (z + dz + L) % L,
-                });
+                const pos = { x: (x + dx + L) % L, y: (y + dy + L) % L, z: (z + dz + L) % L };
+                const key = voxelKey(pos.x, pos.y, pos.z);
+                if (seen.has(key)) continue;
+                seen.add(key);
+                order.push(pos);
             }
         }
     }
     return order;
 }
 
+function currentTick(bridge) {
+    const tick = typeof bridge?.currentTick === 'function' ? bridge.currentTick() : null;
+    return Number.isSafeInteger(tick) && tick >= 0 ? tick : null;
+}
+
 function inspectionCache(target, x, y, z) {
     const bridge = target.bridge;
-    const L = Math.max(1, Math.trunc(Number(bridge?.latticeSize) || 64));
+    const L = Number(bridge?.latticeSize);
     const positionKey = `${L}:${voxelKey(x, y, z)}`;
+    const sourceKey = `${bridge?.configurationToken ?? ''}:${bridge?._scenarioDataGeneration ?? ''}`;
+    const tick = currentTick(bridge);
     let cache = target._latticeInspectionCache;
-    if (!cache || cache.bridge !== bridge || cache.positionKey !== positionKey) {
+    if (!cache || cache.bridge !== bridge || cache.positionKey !== positionKey
+        || cache.sourceKey !== sourceKey || cache.socket !== bridge?._ws
+        || (tick !== null && cache.lastTick !== null && tick < cache.lastTick)) {
         cache = {
-            bridge,
-            positionKey,
-            lastRequestAt: -Infinity,
-            lastVisualEpoch: null,
-            voxel: null,
-            force: null,
-            neighbours: new Map(),
-            neighbourOrder: buildNeighbourOrder(x, y, z, L),
-            cursor: 0,
-            revision: 0,
-            renderedRevision: -1,
+            bridge, positionKey, centerKey: voxelKey(x, y, z), sourceKey,
+            socket: bridge?._ws, lastTick: tick,
+            lastRequestAt: -Infinity, lastVisualEpoch: null,
+            voxel: null, force: null, voxelMeta: null, forceMeta: null,
+            neighbours: new Map(), neighbourMeta: new Map(),
+            neighbourOrder: buildNeighbourOrder(x, y, z, L), cursor: 0,
+            revision: 0, renderedRevision: -1,
         };
         target._latticeInspectionCache = cache;
     }
+    cache.lastTick = tick;
     return cache;
+}
+
+function sameRecord(a, b) {
+    if (a === b) return true;
+    if (!a || !b) return false;
+    const keys = Object.keys(a);
+    return keys.length === Object.keys(b).length && keys.every(key => Object.is(a[key], b[key]));
+}
+
+function storeSample(cache, key, value, meta = null, force = false) {
+    const center = key === cache.centerKey;
+    const old = force ? cache.force : center ? cache.voxel : cache.neighbours.get(key) ?? null;
+    const oldMeta = force ? cache.forceMeta : center ? cache.voxelMeta : cache.neighbourMeta.get(key) ?? null;
+    if (sameRecord(old, value) && sameRecord(oldMeta, meta)) return;
+    // Own primitive records so later producer mutation cannot rewrite a display.
+    const owned = value ? { ...value } : null;
+    const ownedMeta = value && meta ? { ...meta } : null;
+    if (force) { cache.force = owned; cache.forceMeta = ownedMeta; }
+    else if (center) { cache.voxel = owned; cache.voxelMeta = ownedMeta; }
+    else if (owned) { cache.neighbours.set(key, owned); cache.neighbourMeta.set(key, ownedMeta); }
+    else { cache.neighbours.delete(key); cache.neighbourMeta.delete(key); }
+    cache.revision++;
+}
+
+function consumeCompleted(cache, x, y, z) {
+    const bridge = cache.bridge;
+    // Accessors and native Maps contain completed replies and never issue work.
+    // The native point-reply protocol currently supplies no actual sampled tick.
+    const read = typeof bridge.getInspectionSample === 'function'
+        ? pos => bridge.getInspectionSample(pos.x, pos.y, pos.z)
+        : bridge.isNativeGPU && bridge._voxelCache instanceof Map
+            ? pos => bridge._voxelCache.get(voxelKey(pos.x, pos.y, pos.z)) ?? null : null;
+    if (read) {
+        for (const pos of [{ x, y, z }, ...cache.neighbourOrder]) {
+            const value = read(pos);
+            const meta = value && typeof bridge.getInspectionSampleMeta === 'function'
+                ? bridge.getInspectionSampleMeta(pos.x, pos.y, pos.z) : null;
+            storeSample(cache, voxelKey(pos.x, pos.y, pos.z), value, meta);
+        }
+    }
+    const force = typeof bridge.getForceSample === 'function'
+        ? bridge.getForceSample(x, y, z)
+        : bridge.isNativeGPU && bridge._forceAtCache instanceof Map
+            ? bridge._forceAtCache.get(voxelKey(x, y, z)) ?? null : undefined;
+    if (force !== undefined) storeSample(cache, voxelKey(x, y, z), force, null, true);
 }
 
 function refreshInspectionCache(target, x, y, z) {
     const bridge = target.bridge;
     const cache = inspectionCache(target, x, y, z);
     if (typeof bridge?.inspectVoxel !== 'function') return cache;
-
+    // Consume completed replies before cadence and paused-epoch guards.
+    // Scheduling a read does not establish that its response was observed.
+    consumeCompleted(cache, x, y, z);
     const native = !!bridge.isNativeGPU;
     const interval = native ? NATIVE_REFRESH_MS : LOCAL_REFRESH_MS;
     const now = nowMs();
-    // WebSocketBridge advances this only when a completed physics frame has
-    // made new visual data available. Once all 26 neighbours are resolved,
-    // avoid re-requesting a paused lattice simply because the inspector is
-    // still being painted.
     const visualEpoch = native && Number.isFinite(Number(bridge._visualEpoch))
-        ? Number(bridge._visualEpoch)
-        : null;
-    const incomplete = !cache.voxel
-        || cache.neighbours.size < cache.neighbourOrder.length
-        // A native force response can arrive a round later than voxel data.
-        // Keep retrying that one bounded read until it is real rather than
-        // treating the unresolved value as a physical zero.
+        ? Number(bridge._visualEpoch) : null;
+    const incomplete = !cache.voxel || cache.neighbours.size < cache.neighbourOrder.length
         || (typeof bridge.getForceAt === 'function' && !cache.force);
     if (visualEpoch !== null && visualEpoch === cache.lastVisualEpoch && !incomplete) return cache;
     if (now - cache.lastRequestAt < interval) return cache;
     cache.lastRequestAt = now;
     cache.lastVisualEpoch = visualEpoch;
-    cache.revision++;
-
-    const voxel = bridge.inspectVoxel(x, y, z);
-    if (voxel) cache.voxel = voxel;
+    const synchronous = !native && typeof bridge.getInspectionSample !== 'function';
+    const request = pos => {
+        const value = bridge.inspectVoxel(pos.x, pos.y, pos.z);
+        const meta = value && typeof bridge.getInspectionSampleMeta === 'function'
+            ? bridge.getInspectionSampleMeta(pos.x, pos.y, pos.z)
+            : value && synchronous ? { sampleTick: currentTick(bridge), stale: false } : null;
+        storeSample(cache, voxelKey(pos.x, pos.y, pos.z), value, meta);
+    };
+    request({ x, y, z });
     if (typeof bridge.getForceAt === 'function') {
         const force = bridge.getForceAt(x, y, z);
-        if (force) cache.force = force;
+        storeSample(cache, voxelKey(x, y, z), force,
+            force && synchronous ? { sampleTick: currentTick(bridge), stale: false } : null, true);
     }
-
     const budget = native ? NATIVE_NEIGHBOUR_READ_BUDGET : LOCAL_NEIGHBOUR_READ_BUDGET;
     const order = cache.neighbourOrder;
-    for (let i = 0; i < Math.min(budget, order.length); i++) {
-        const idx = (cache.cursor + i) % order.length;
-        const pos = order[idx];
-        const neighbour = bridge.inspectVoxel(pos.x, pos.y, pos.z);
-        if (neighbour) cache.neighbours.set(voxelKey(pos.x, pos.y, pos.z), neighbour);
-    }
-    cache.cursor = (cache.cursor + budget) % order.length;
+    for (let i = 0; i < Math.min(budget, order.length); i++) request(order[(cache.cursor + i) % order.length]);
+    cache.cursor = order.length ? (cache.cursor + budget) % order.length : 0;
     return cache;
+}
+
+function sampleSummary(cache) {
+    const metas = [cache.voxelMeta, ...cache.neighbourMeta.values()];
+    const ticks = metas.map(meta => meta?.sampleTick).filter(tick => Number.isSafeInteger(tick) && tick >= 0);
+    const expected = 1 + cache.neighbourOrder.length;
+    const coverage = `${Number(!!cache.voxel) + cache.neighbours.size}/${expected} sites resolved`;
+    const observed = ticks.length ? `sampled ticks ${Math.min(...ticks)}..${Math.max(...ticks)}` : 'sample ticks unavailable';
+    const incomplete = ticks.length < expected ? '; some sample ticks unavailable' : '';
+    const stale = metas.some(meta => meta?.stale) ? '; retained older samples' : '';
+    const forceTick = cache.forceMeta?.sampleTick;
+    const force = Number.isSafeInteger(forceTick) ? `force sampled tick ${forceTick}` : 'force sample tick unavailable';
+    return `Periodic geometric neighborhood - ${coverage} - ${observed}${ticks.length ? incomplete : ''}${stale}. ${force}. Separate point observations; values are not one simultaneous neighborhood sample.`;
 }
 
 export function handleLatticeClick(target, intersects) {
@@ -128,33 +200,17 @@ export function handleLatticeClick(target, intersects) {
             hideLatticeInspector(target);
             return;
         }
-        if (hit.object === target.viewport._voidBox) {
-            target.selectedIndex = -1;
-            // Voxel k occupies world coords [k, k+1) and is rendered at centre
-            // k+0.5. A ray-hit anywhere in [k, k+1) should map to voxel k —
-            // Math.floor does that correctly. Math.round snaps half-points
-            // toward +∞ (Math.round(16.5) === 17 in JS), so clicking on the
-            // rendered centre of voxel 16 was selecting voxel 17.
-            target._selectedPos = {
-                x: Math.floor(hit.point.x),
-                y: Math.floor(hit.point.y),
-                z: Math.floor(hit.point.z),
-            };
-        } else {
-            target.selectedIndex = hit.index;
-            const posArr = hit.object.geometry.getAttribute('position').array;
-            // The geometry stores voxel-centre world coords (k+0.5), so we
-            // subtract the 0.5 offset via floor to recover the integer index.
-            target._selectedPos = {
-                x: Math.floor(posArr[target.selectedIndex * 3]),
-                y: Math.floor(posArr[target.selectedIndex * 3 + 1]),
-                z: Math.floor(posArr[target.selectedIndex * 3 + 2]),
-            };
-        }
-        const L = target.bridge.latticeSize || 32;
-        target._selectedPos.x = Math.max(0, Math.min(L - 1, target._selectedPos.x));
-        target._selectedPos.y = Math.max(0, Math.min(L - 1, target._selectedPos.y));
-        target._selectedPos.z = Math.max(0, Math.min(L - 1, target._selectedPos.z));
+        const positions = hit.object?.geometry?.getAttribute('position');
+        if (!Number.isSafeInteger(hit.index) || hit.index < 0 || !positions?.array
+            || hit.index * 3 + 2 >= positions.array.length) return;
+        const position = normalizeLatticePosition({
+            x: Math.floor(positions.array[hit.index * 3]),
+            y: Math.floor(positions.array[hit.index * 3 + 1]),
+            z: Math.floor(positions.array[hit.index * 3 + 2]),
+        }, target.bridge?.latticeSize);
+        if (!position) return;
+        target.selectedIndex = hit.index;
+        target._selectedPos = position;
         showLatticeInspector(target);
         return;
     }
@@ -196,7 +252,10 @@ export function hideLatticeInspector(target) {
 
 export function updateLatticeFields(target) {
     if (!target._selectedPos) return;
-    const { x, y, z } = target._selectedPos;
+    const position = normalizeLatticePosition(target._selectedPos, target.bridge?.latticeSize);
+    if (!position) return;
+    target._selectedPos = position;
+    const { x, y, z } = position;
 
     const readCache = refreshInspectionCache(target, x, y, z);
     let voxel = readCache.voxel;
@@ -208,33 +267,12 @@ export function updateLatticeFields(target) {
     // until the next scheduled read revision arrives.
     if (readCache.renderedRevision === readCache.revision) return;
 
-    if (!voxel && typeof target.bridge.inspectVoxel !== 'function') {
-        voxel = {
-            state: 0,
-            particleId: -1,
-            spin: 0,
-            color: 0,
-            pairId: -1,
-            locked: false,
-            fluxX: 0,
-            fluxY: 0,
-            fluxZ: 0,
-            density: 0,
-            divJ: 0,
-            curlX: 0,
-            curlY: 0,
-            curlZ: 0,
-            velX: 0,
-            velY: 0,
-            velZ: 0,
-            speed: 0,
-            accelMag: 0,
-        };
-    }
 
     if (voxel) {
-        const stateLabel = voxel.state === 1 ? '+1 (positive)' : voxel.state === -1 ? '-1 (negative)' : '0 (void)';
-        const stateColor = voxel.state === 1 ? '#4ade80' : voxel.state === -1 ? '#f87171' : '#9ca3af';
+        const stateLabel = voxel.state === 1 ? '+1 (positive)' : voxel.state === -1 ? '-1 (negative)'
+            : voxel.state === 0 ? '0 (void)' : 'Invalid state';
+        const stateColor = voxel.state === 1 ? '#4ade80' : voxel.state === -1 ? '#f87171'
+            : voxel.state === 0 ? '#9ca3af' : '#fbbf24';
         target.fields.id.textContent = voxel.particleId >= 0 ? voxel.particleId : '--';
         target.fields.state.innerHTML = `<span style="color:${stateColor}">${stateLabel}</span>`;
         if (target.fields.pos) target.fields.pos.textContent = formatPosition(x, y, z, 0);
@@ -288,7 +326,7 @@ export function updateLatticeFields(target) {
     const mooreGrid = document.getElementById('insp-moore-grid');
     if (mooreGrid && typeof target.bridge.inspectVoxel === 'function') {
         const L = target.bridge.latticeSize || 64;
-        let html = '';
+        let html = `<div class="inspector-observation-scope" style="font-size:16px;color:var(--text-muted);margin-bottom:8px">${sampleSummary(readCache)}</div>`;
         for (let dz = -1; dz <= 1; dz++) {
             html += '<div style="display:inline-block; margin: 0 8px;">';
             html += `<div style="color:var(--text-muted);font-size:16px;margin-bottom:6px">Z${dz === 0 ? '' : (dz > 0 ? `+${dz}` : dz)}</div>`;
@@ -300,8 +338,9 @@ export function updateLatticeFields(target) {
                     const nZ = (z + dz + L) % L;
                     const isCenter = dx === 0 && dy === 0 && dz === 0;
                     const neighbourKey = voxelKey(nX, nY, nZ);
-                    const nV = isCenter ? voxel : readCache.neighbours.get(neighbourKey);
-                    const known = isCenter ? !!voxel : readCache.neighbours.has(neighbourKey);
+                    const centerAlias = nX === x && nY === y && nZ === z;
+                    const nV = centerAlias ? voxel : readCache.neighbours.get(neighbourKey);
+                    const known = !!nV;
                     let symbol = known ? '·' : '…';
                     let color = '#475569';
                     let bg = '#0f172a';
@@ -319,11 +358,12 @@ export function updateLatticeFields(target) {
                         color = '#f87171';
                         bg = 'rgba(248, 113, 113, 0.15)';
                     } else if (nV && nV.state === 0) {
-                        const fx = nV.fluxX || 0;
-                        const fy = nV.fluxY || 0;
-                        const fz = nV.fluxZ || 0;
+                        const fx = nV.fluxX;
+                        const fy = nV.fluxY;
+                        const fz = nV.fluxZ;
                         const fluxMag = Math.sqrt(fx * fx + fy * fy + fz * fz);
-                        if (fluxMag > 0.001) {
+                        if (!Number.isFinite(fluxMag)) { symbol = '?'; color = '#fbbf24'; }
+                        else if (fluxMag > 0.001) {
                             const intensity = Math.min(1.0, fluxMag * 2.0);
                             bg = `rgba(56, 189, 248, ${intensity * 0.4})`;
                             color = `rgba(125, 211, 252, ${0.4 + intensity * 0.6})`;
@@ -331,6 +371,7 @@ export function updateLatticeFields(target) {
                         }
                     }
 
+                    if (known && ![-1, 0, 1].includes(nV.state)) { symbol = '?'; color = '#fbbf24'; }
                     if (isCenter) {
                         borderStyle = 'border:1px solid #94a3b8;';
                         if (bg === '#0f172a') bg = '#1e293b';

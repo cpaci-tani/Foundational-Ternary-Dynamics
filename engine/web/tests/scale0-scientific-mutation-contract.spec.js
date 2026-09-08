@@ -28,7 +28,12 @@ test.describe.serial('Scale 0 authoritative scientific-mutation contract', () =>
     test('cache-version mapping preserves one central store singleton', async () => {
         const result = await page.evaluate(async () => {
             const bare = await import('/js/scales/scale0/state/store.js');
-            const versioned = await import('/js/scales/scale0/state/store.js?v=2');
+            const imports = JSON.parse(document.querySelector('script[type="importmap"]').textContent).imports;
+            const canonical = new URL('/js/scales/scale0/state/store.js', document.baseURI).href;
+            const entry = Object.entries(imports).find(([key]) => new URL(key, document.baseURI).href === canonical);
+            const mapped = entry?.[1];
+            if (!mapped || !/\?v=\d+/.test(mapped)) throw new Error('store requires an explicit import-map version');
+            const versioned = await import(new URL(mapped, document.baseURI).href);
             return {
                 sameState: bare.getScale0State() === versioned.getScale0State(),
                 sameQualification: bare.getScale0QualificationState

@@ -7,12 +7,12 @@
 
 export const PANEL_REGISTRY = Object.freeze([
     { id: 'controls',         label: 'Controls',        icon: '\u2699\uFE0E',  scales: null },
-    { id: 'diagnostics',      label: 'Diagnostics',     icon: '\u25A4',        scales: ['0', '1', '2', '3'] },
-    { id: 'telemetry-grid',   label: 'Telemetry Grid',  icon: '📈',            scales: ['0', '1', '2', '3', '5'] },
-    { id: 'charts',           label: 'Charts',          icon: '\u2248',        scales: ['0', '1', '2', '3'] },
+    { id: 'diagnostics',      label: 'Diagnostics',     icon: '\u25A4',        scales: ['0', '1', '2', '3', '4'] },
+    { id: 'telemetry-grid',   label: 'Telemetry Grid',  icon: '📈',            scales: ['0', '1', '2', '3', '4', '5'] },
+    { id: 'charts',           label: 'Charts',          icon: '\u2248',        scales: ['0', '1', '2', '3', '4'] },
     { id: 'lagrangian',       label: 'Lagrangian',      icon: '\u2112',        scales: ['0'] },
     { id: 'inspector',        label: 'Inspector',       icon: '\u25CE',        scales: ['0', '1', '2', '3', '4', '5'] },
-    { id: 'planetary',        label: 'System Explorer', icon: '\u2641',        scales: ['4'] },
+    { id: 'planetary',        label: 'Solar System',    icon: '\u2609',        scales: ['4'] },
     { id: 'zoo',              label: 'Particle Zoo',    icon: '\u229B',        scales: ['1'] },
     { id: 'interaction-hierarchy', label: 'Interaction Hierarchy', icon: '\u21B3', scales: ['1'] },
     { id: 'particle-log',     label: 'Particle Log',    icon: '\u2263',        scales: ['1'] },

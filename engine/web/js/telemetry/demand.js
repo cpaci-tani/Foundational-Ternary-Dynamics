@@ -138,11 +138,17 @@ export function collectScale0OnDemand(telemetryHub, ctx, state, demand) {
     const verChanged = ver !== telemetryHub._lastAuditVersion;
     const openedA = wantAudit && !telemetryHub._prevWantAudit;
     const openedL = wantLag && !telemetryHub._prevWantLag;
+    // A paused worker can finish an asynchronous telemetry request without a
+    // physics-data version change. Its getters only read completed caches;
+    // ingest them on UI passes while demanded, preserving their own group
+    // versions/timestamps. Direct WASM getters still perform reductions and
+    // retain the existing field-version gate below.
+    const workerCache = fm?.isWorker === true;
 
-    if (wantAudit && (verChanged || openedA)) {
+    if (wantAudit && (workerCache || verChanged || openedA)) {
         telemetryHub.collectScale0Audit(ctx.bridge, state.fluxMock, state.useFluxMock);
     }
-    if (wantLag && (verChanged || openedL)) {
+    if (wantLag && (workerCache || verChanged || openedL)) {
         telemetryHub.collectScale0Lagrangian(ctx.bridge, state.fluxMock, state.useFluxMock);
     }
     if (wantAudit || wantLag) telemetryHub._lastAuditVersion = ver;

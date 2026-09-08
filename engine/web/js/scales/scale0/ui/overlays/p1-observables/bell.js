@@ -99,10 +99,10 @@ export class BellComponent extends BaseComponent {
             </div>
             <div class="p1-bell-result">
                 S = <span class="p1-bell-result-val" style="color:${sColor};">${chsh.S.toFixed(4)}</span>
-                <span class="p1-bell-desc">(|S| = ${sAbs.toFixed(4)}, ${sLabel}; classical ≤ 2; Tsirelson = 2√2 ≈ 2.8284)</span>
+                <span class="p1-bell-desc">(|S| = ${sAbs.toFixed(4)}, ${sLabel}; local, measurement-independent ≤ 2; Tsirelson = 2√2 ≈ 2.8284)</span>
             </div>
             <div class="p1-bell-footer">
-                <b>This panel is analytic, not a measurement.</b> It evaluates the closed form E(a,b)=cos(a−b) in JavaScript; no bridge, WASM or engine call is made anywhere in this file, and no lattice quantity is read. The substrate is local/classical and native CHSH satisfies S ≤ 2 — a native S &gt; 2 would be an FC-1 <i>falsifier</i>, not a prediction. Reaching 2√2 additionally requires the [SELECTION] J→ψ complexification and the measurement map M that FC-1 explicitly <i>declines</i>. test_bell_aggregate.cpp validates the same closed form, not a lattice ensemble. <b>Lattice-statistical aggregation across many shots is follow-up.</b>
+                <b>This panel is analytic, not a measurement.</b> It evaluates the closed form E(a,b)=cos(a−b) in JavaScript; no bridge, WASM or engine call is made anywhere in this file, and no lattice quantity is read. For local outcomes with measurement-independent settings, the native CHSH bound is |S| ≤ 2. A reported violation requires auditing these assumptions and the sampling protocol before interpreting it. Reaching 2√2 additionally requires the [SELECTION] J→ψ complexification and the measurement map M that FC-1 explicitly <i>declines</i>. test_bell_aggregate.cpp validates the same closed form, not a lattice ensemble. <b>Lattice-statistical aggregation across many shots is follow-up.</b>
             </div>
         `;
 

@@ -18,6 +18,8 @@ export function parseFtv2Frame(buf) {
     if (!buf || buf.byteLength < 16) return null;
     const header = buf instanceof DataView ? buf : new DataView(buf);
     const bytes = header.buffer;
+    const base = header.byteOffset;
+    const length = header.byteLength;
     if (header.getUint32(0, true) !== FTV2_MAGIC) return null;
     const latticeSize = header.getUint32(4, true);
     const stride = header.getUint32(8, true);
@@ -26,19 +28,20 @@ export function parseFtv2Frame(buf) {
         return latticeSize >= 1 && stride >= 1
             && axisCount >= 1 && axisCount <= 64
             && Number.isSafeInteger(count)
-            && bytes.byteLength === headerBytes + count * 4;
+            && length === headerBytes + count * 4;
     };
 
-    if (bytes.byteLength >= 20) {
+    if (length >= 20) {
         const origin = header.getUint32(12, true);
         const axisCount = header.getUint32(16, true);
-        if (plausible(axisCount, 20)) {
+        if (plausible(axisCount, 20) && origin < latticeSize
+            && origin + (axisCount - 1) * stride < latticeSize) {
             return {
                 latticeSize,
                 stride,
                 origin,
                 axisCount,
-                data: new Float32Array(bytes, 20, axisCount * axisCount * axisCount),
+                data: new Float32Array(bytes, base + 20, axisCount * axisCount * axisCount),
             };
         }
     }
@@ -51,6 +54,6 @@ export function parseFtv2Frame(buf) {
         stride,
         origin: grid.origin,
         axisCount,
-        data: new Float32Array(bytes, 16, axisCount * axisCount * axisCount),
+        data: new Float32Array(bytes, base + 16, axisCount * axisCount * axisCount),
     };
 }

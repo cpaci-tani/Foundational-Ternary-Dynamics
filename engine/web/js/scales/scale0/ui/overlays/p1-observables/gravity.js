@@ -12,7 +12,7 @@ const TWO_PI = 2.0 * Math.PI;
 
 const TEMPLATE = `
     <section data-section="gravity" style="${cardStyle(140)}">
-        <div style="${titleStyle()}">${tagBadge('M', 'engine latency field; the g_rr half of the FTD-0361 proof was RETRACTED')}Gravitational time dilation</div>
+        <div style="${titleStyle()}">${tagBadge('T', 'sqrt(1-latency) diagnostic proxy; not an accumulated proper-time measurement')}Latency clock proxy</div>
         <div ref="body" class="p1-empty-state">
             Load <code>s0-seed-schwarzschild</code> to see proper-time ratio.
         </div>
@@ -43,9 +43,12 @@ export class GravityComponent extends BaseComponent {
 
     _probeTimeDilation(bridge) {
         const latSample = bridge?.getLatencySampled?.(2);
-        if (!latSample || !latSample.values || !latSample.positions || latSample.count === 0) return null;
+        if (!latSample || !Number.isInteger(latSample.count) || latSample.count <= 0
+            || latSample.values?.length < latSample.count || latSample.positions?.length < 3*latSample.count
+            || !latSample.values || !latSample.positions) return null;
 
-        const L = bridge?.latticeSize || 32;
+        const L = Number(bridge?.getLatticeSize?.() ?? bridge?.latticeSize);
+        if (!Number.isInteger(L) || L < 1) return null;
         const mid = L / 2;
         let bestCenter = { d2: Infinity, idx: 0 };
         let bestCorner = { d2: Infinity, idx: 0 };
@@ -54,6 +57,8 @@ export class GravityComponent extends BaseComponent {
             const x = latSample.positions[i * 3];
             const y = latSample.positions[i * 3 + 1];
             const z = latSample.positions[i * 3 + 2];
+            const latency = latSample.values[i];
+            if (![x,y,z,latency].every(Number.isFinite) || latency < 0 || latency > 1) return null;
             const dC2 = (x - mid) ** 2 + (y - mid) ** 2 + (z - mid) ** 2;
             if (dC2 < bestCenter.d2) { bestCenter.d2 = dC2; bestCenter.idx = i; }
             const dE2 = (x - cornerX) ** 2 + (y - cornerY) ** 2 + (z - cornerZ) ** 2;
@@ -62,8 +67,8 @@ export class GravityComponent extends BaseComponent {
         const latCenter = latSample.values[bestCenter.idx];
         const latCorner = latSample.values[bestCorner.idx];
         const tauCenter = Math.sqrt(Math.max(0, 1.0 - latCenter));
-        const tauCorner = Math.sqrt(Math.max(1e-6, 1.0 - latCorner));
-        const ratio = tauCenter / tauCorner;
+        const tauCorner = Math.sqrt(1.0 - latCorner);
+        const ratio = tauCorner > 0 ? tauCenter / tauCorner : null;
         return { latCenter, latCorner, tauCenter, tauCorner, ratio, latticeSize: L };
     }
 
@@ -73,7 +78,7 @@ export class GravityComponent extends BaseComponent {
             return;
         }
         container.className = '';
-        const { latCenter, latCorner, tauCenter, tauCorner, ratio } = probe;
+        const { latCenter, latCorner, tauCenter, tauCorner, ratio, latticeSize } = probe;
         const angCorner = (tickPhase * tauCorner) % TWO_PI;
         const angCenter = (tickPhase * tauCenter) % TWO_PI;
         const farX = 18 + 14 * Math.cos(angCorner - Math.PI / 2);
@@ -103,11 +108,11 @@ export class GravityComponent extends BaseComponent {
                 </div>
             </div>
             <div class="p1-gravity-stats">
-                τ<sub>well</sub> / τ<sub>far</sub> = <span class="p1-gravity-ratio">${ratio.toExponential(3)}</span>
-                <span class="p1-bell-desc">  (clock at well runs ${(ratio < 1 ? `${(1 / ratio).toFixed(2)}× slower` : 'as fast')} than far clock)</span>
+                proxy τ′<sub>well</sub> / τ′<sub>far</sub> = <span class="p1-gravity-ratio">${ratio === null ? 'unavailable' : ratio.toExponential(3)}</span>
+                <span class="p1-bell-desc">${ratio === 0 ? ' (zero center proxy rate)' : ''}</span>
             </div>
             <div class="p1-gravity-footer">
-                Lattice latency proxy L(x) ∈ [0,1] modifies effective tick rate. Proper-time rate τ′ ≈ √(1−L), analogous to GR's √(1 − 2GM/(rc²)). L=32³ lattice. test_einstein_equations.cpp validates time dilation to 0.004% match against GR after the latency-fix patch (April 13).
+                Selected clock illustration τ′=√(1−latency), sampled on the ${latticeSize}³ reference-engine lattice. The hands use display time; this panel does not measure accumulated proper time or certify a gravitational continuum limit.
             </div>
         `;
     }

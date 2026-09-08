@@ -235,63 +235,85 @@ export async function measureScale0UiActionToPaint(label, action) {
     const probe = getProbe();
     const startedAt = performance.now();
     action();
-    const paintedAt = await new Promise((resolve) => {
-        requestAnimationFrame(() => resolve(performance.now()));
+    const paintedAt = await new Promise((resolve, reject) => {
+        const timer = setTimeout(() => {
+            cancelAnimationFrame(frame);
+            reject(new Error('Foreground action frame timeout'));
+        }, 5000);
+        const frame = requestAnimationFrame(() => {
+            clearTimeout(timer);
+            resolve(performance.now());
+        });
     });
     const duration = paintedAt - startedAt;
     probe.actionLatencies.push({ label, duration });
     return duration;
 }
 
-export async function stopScale0UiAuditProbe() {
+export async function stopScale0UiAuditProbe({ retainTimingSamples = false } = {}) {
     const probe = getProbe();
     probe.running = false;
     probe.stoppedAt = performance.now();
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    try {
+        await new Promise((resolve) => setTimeout(resolve, 0));
 
-    const frameSummary = summarize(probe.frameDeltas);
-    const callbackSummary = {};
-    for (const [id, samples] of probe.callbackSamples.entries()) {
-        callbackSummary[id] = summarize(samples);
+        const frameSummary = summarize(probe.frameDeltas);
+        const callbackSummary = {};
+        for (const [id, samples] of probe.callbackSamples.entries()) {
+            callbackSummary[id] = summarize(samples);
+        }
+        const actionValues = probe.actionLatencies.map((entry) => entry.duration);
+        const resourcesEnd = snapshotResources(probe.root);
+        const report = {
+            durationMs: probe.stoppedAt - probe.startedAt,
+            frames: {
+                ...frameSummary,
+                effectiveFps: frameSummary.meanMs > 0 ? 1000 / frameSummary.meanMs : 0,
+                intervalsOver20ms: probe.frameDeltas.filter((value) => value > 20).length,
+                intervalsOver33_4ms: probe.frameDeltas.filter((value) => value > 33.4).length,
+            },
+            longTaskSupported: probe.longTaskSupported,
+            longTasks: probe.longTasks.slice(),
+            callbacks: callbackSummary,
+            methods: Object.fromEntries(probe.methodCounts.entries()),
+            actions: {
+                ...summarize(actionValues),
+                samples: probe.actionLatencies.slice(),
+            },
+            dom: {
+                mutationRecords: probe.mutationRecords,
+                addedNodes: probe.addedNodes,
+                removedNodes: probe.removedNodes,
+                canvasDraws: probe.canvasDraws,
+            },
+            resourcesStart: probe.resourcesStart,
+            resourcesEnd,
+            resourceDelta: {
+                rafSubscribers: resourcesEnd.rafSubscribers - probe.resourcesStart.rafSubscribers,
+                domNodes: resourcesEnd.domNodes - probe.resourcesStart.domNodes,
+                canvases: resourcesEnd.canvases - probe.resourcesStart.canvases,
+                heapBytes: resourcesEnd.heapBytes && probe.resourcesStart.heapBytes
+                    ? resourcesEnd.heapBytes - probe.resourcesStart.heapBytes
+                    : 0,
+            },
+            errors: probe.errors.slice(),
+        };
+
+        // Copy only after measurement stops. Existing collection and callback
+        // timing stay unchanged; raw vectors permit independent reconstruction.
+        if (retainTimingSamples) {
+            report.timingSamples = {
+                frames: probe.frameDeltas.slice(),
+                callbacks: Object.fromEntries(Array.from(probe.callbackSamples,
+                    ([id, samples]) => [id, samples.slice()])),
+            };
+        }
+        return report;
+    } finally {
+        try {
+            restoreProbe(probe);
+        } finally {
+            if (window.__ftdScale0UiAuditProbe === probe) window.__ftdScale0UiAuditProbe = null;
+        }
     }
-    const actionValues = probe.actionLatencies.map((entry) => entry.duration);
-    const resourcesEnd = snapshotResources(probe.root);
-    const report = {
-        durationMs: probe.stoppedAt - probe.startedAt,
-        frames: {
-            ...frameSummary,
-            effectiveFps: frameSummary.meanMs > 0 ? 1000 / frameSummary.meanMs : 0,
-            intervalsOver20ms: probe.frameDeltas.filter((value) => value > 20).length,
-            intervalsOver33_4ms: probe.frameDeltas.filter((value) => value > 33.4).length,
-        },
-        longTaskSupported: probe.longTaskSupported,
-        longTasks: probe.longTasks.slice(),
-        callbacks: callbackSummary,
-        methods: Object.fromEntries(probe.methodCounts.entries()),
-        actions: {
-            ...summarize(actionValues),
-            samples: probe.actionLatencies.slice(),
-        },
-        dom: {
-            mutationRecords: probe.mutationRecords,
-            addedNodes: probe.addedNodes,
-            removedNodes: probe.removedNodes,
-            canvasDraws: probe.canvasDraws,
-        },
-        resourcesStart: probe.resourcesStart,
-        resourcesEnd,
-        resourceDelta: {
-            rafSubscribers: resourcesEnd.rafSubscribers - probe.resourcesStart.rafSubscribers,
-            domNodes: resourcesEnd.domNodes - probe.resourcesStart.domNodes,
-            canvases: resourcesEnd.canvases - probe.resourcesStart.canvases,
-            heapBytes: resourcesEnd.heapBytes && probe.resourcesStart.heapBytes
-                ? resourcesEnd.heapBytes - probe.resourcesStart.heapBytes
-                : 0,
-        },
-        errors: probe.errors.slice(),
-    };
-
-    restoreProbe(probe);
-    window.__ftdScale0UiAuditProbe = null;
-    return report;
 }

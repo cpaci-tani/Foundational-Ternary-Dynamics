@@ -10,7 +10,7 @@ import { appRegistry } from './core/registry.js';
 import { Viewport } from './viewport.js?v=26';
 import { FluxEnergyChart, ParticleChart } from './charts.js';
 import { telemetryHub } from './telemetry-hub.js';
-import { createInspectorAppRuntime } from './inspector/app-runtime.js?v=7';
+import { createInspectorAppRuntime } from './inspector/app-runtime.js?v=10';
 import { initZoo, setEngineMode as setZooMode } from './zoo.js?v=3';
 import { populateScale3ScenarioSelect, SCALE3_DEFAULT_SCENARIO } from './scales/scale3/scenario-registry.js';
 import { debugLog } from './core/log.js';
@@ -22,7 +22,7 @@ import * as Scale2Controller from './scales/scale2/controller.js';
 import * as Scale3Controller from './scales/scale3/controller.js';
 import { AE_PHYSICS_SPECS } from './scales/scale2/scenario-registry.js';
 // ── Phase 1-3: Ontic Observatory, Physics Fidelity, Aggregation Bridge
-import * as Scale4Controller from './scales/scale4/controller.js';
+import * as Scale4Controller from './scales/scale4/controller.js?v=12';
 import * as Scale5Controller from './scales/scale5/controller.js';
 import * as Scale6Controller from './scales/scale6/controller.js';
 import { applyScaleGridAxesDefaults } from './scales/scale-utils.js';
@@ -37,7 +37,7 @@ import { K_B } from './constants.js';
 import { AggregateDetector, EmergenceMonitor } from './aggregation-bridge.js?v=2';
 import { createOnticPanel } from './ui/app-ontic.js';
 import { BackgroundManager } from './backgrounds.js';
-import { AppShell } from './ui/shell/app-shell.js?v=27';
+import { AppShell } from './ui/shell/app-shell.js?v=32';
 import {
     initChartsPanel,
     initDiagnosticsPanel,
@@ -46,8 +46,8 @@ import {
     initParticleLogPanel,
     initScenePanel,
     initTelemetryGridPanel,
-} from './ui/panels/index.js';
-import { floatingWindowManager } from './ui/components/floating-window/component.js?v=2';
+} from './ui/panels/index.js?v=2';
+import { isPanelLive } from './ui/panels/panel-visibility.js?v=2';
 import { initFluxSlicePanel } from './scales/scale0/ui/overlays/flux-slice-panel.js';
 import { initWaveLabPanel } from './scales/scale0/ui/overlays/wave-lab-panel.js?v=2';
 import { initP1ObservablesPanel } from './scales/scale0/ui/overlays/p1-observables-panel.js?v=3';
@@ -875,12 +875,7 @@ function _buildScale1Ctx(now) {
 // Same predicate _makeCtx() exposes, hoisted so the per-frame ctx builder
 // doesn't allocate a closure every frame.
 const _isPanelVisibleFn = (panelId) => {
-    if (document.documentElement.classList.contains('ui-hidden')) return false;
-    if (activeTab === panelId) {
-        return !document.getElementById('app')?.classList.contains('panels-collapsed');
-    }
-    const floating = floatingWindowManager.getWindow(panelId);
-    return !!floating && !floating.isCollapsed;
+    return isPanelLive(document.getElementById(`panel-${panelId}`));
 };
 
 const _scale2Ctx = {
@@ -1983,8 +1978,8 @@ function switchEngineMode(mode) {
     applyScaleGridAxesDefaults(viewport, mode);
 
     // Re-point the inspector at the active scale's bridge (audit P1-1).
-    // Scales 0-3 (lattice/particles/atoms/molecules) all share the
-    // app-level `bridge`; restore it here so that returning from a
+    // Scales 1-3 share the app-level bridge; Scale 0 may own a worker.
+    // Restore the selected owner here so that returning from a
     // self-bridged scale (Scale 4 planetary / Scale 5 cosmic, which swap
     // in their own bridge during loadScenario) does not leave the
     // inspector querying a stale planetary/cosmic backend. Scales 4/5
@@ -1992,16 +1987,10 @@ function switchEngineMode(mode) {
     // guard avoids clobbering them.
     if (mode === 'lattice' || mode === 'particles'
         || mode === 'atoms' || mode === 'molecules') {
-        // Worker-hosted Scale-0 scenarios run a SEPARATE RenderBridge inside the
-        // worker that is never ticked on the main thread. Pointing the inspector
-        // at the app-level direct `bridge` in that case shows frozen tick-0
-        // numbers. Route through the active physics owner instead: when a worker
-        // proxy (fluxMock with isWorker) is live, use it. With M7's
-        // null-returning proxy reads, the inspector now honestly shows "no data"
-        // on the worker path rather than frozen-wrong values (intended
-        // degradation; true worker-backed inspect is a Phase-2 follow-up).
+        // The Scale-0 loader updates this again when it selects a new owner.
+        // A retained lattice worker must never answer particle/atom queries.
         const fluxMock = Scale0Controller.getFluxMock();
-        const activeBridge = (fluxMock && fluxMock.isWorker) ? fluxMock : bridge;
+        const activeBridge = (mode === 'lattice' && fluxMock?.isWorker) ? fluxMock : bridge;
         inspectorRuntime?.setBridge(activeBridge);
     }
 

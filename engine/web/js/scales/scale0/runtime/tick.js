@@ -7,6 +7,9 @@ import { getOrCreateTransactionTracker } from './transaction-tracker.js';
 
 /** Advance Scale-0 physics by `tickCount` ticks on the active owner only. */
 export function runScale0PhysicsTicks(ctx, state, tickCount = 1) {
+    if (!Number.isSafeInteger(tickCount) || tickCount < 0) {
+        throw new RangeError('Scale-0 tick count must be a nonnegative safe integer');
+    }
     if (tickCount <= 0) return;
 
     // Worker path (WasmBridgeProxy): tickScale0 capability is a no-op because the
@@ -16,7 +19,6 @@ export function runScale0PhysicsTicks(ctx, state, tickCount = 1) {
     const fm = state.fluxMock;
     if (fm && fm.isWorker && state.useFluxMock) {
         for (let i = 0; i < tickCount; i++) fm.tickOnce();
-        state.fieldDataVersion = (state.fieldDataVersion || 0) + tickCount;
         return;
     }
 

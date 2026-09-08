@@ -36,6 +36,7 @@ export const fieldQuantumMethods = {
         const sizeAttr = this._dualFluxVolume.geometry.getAttribute('size');
         const maxPts = posAttr.array.length / 3;
         let maxL = 0, maxR = 0;
+        let invalidDual = false;
 
         const lCount = lData.count, rCount = rData.count;
         const totalDual = lCount + rCount;
@@ -45,15 +46,21 @@ export const fieldQuantumMethods = {
             const a = lData.vectors[i * 3], b = lData.vectors[i * 3 + 1], c = lData.vectors[i * 3 + 2];
             const m = Math.sqrt(a * a + b * b + c * c);
             dualMags[i] = m;
+            if (!Number.isFinite(m) || !Number.isFinite(dualMags[i])) invalidDual = true;
             if (m > maxL) maxL = m;
         }
         for (let i = 0; i < rCount; i++) {
             const a = rData.vectors[i * 3], b = rData.vectors[i * 3 + 1], c = rData.vectors[i * 3 + 2];
             const m = Math.sqrt(a * a + b * b + c * c);
             dualMags[lCount + i] = m;
+            if (!Number.isFinite(m) || !Number.isFinite(dualMags[lCount + i])) invalidDual = true;
             if (m > maxR) maxR = m;
         }
         const maxVal = Math.max(maxL, maxR, 1e-20);
+        if (invalidDual || !(maxVal > 0) || !Number.isFinite(maxVal)) {
+            this._dualFluxVolume.geometry.setDrawRange(0, 0);
+            return;
+        }
         const threshold = maxVal * 0.02;
         let vi = 0;
 
@@ -63,6 +70,10 @@ export const fieldQuantumMethods = {
             const mag = dualMags[i];
             if (mag < threshold) continue;
             const px = lData.positions[i * 3], py = lData.positions[i * 3 + 1], pz = lData.positions[i * 3 + 2];
+            if (!Number.isFinite(Math.fround(px)) || !Number.isFinite(Math.fround(py)) || !Number.isFinite(Math.fround(pz))) {
+                this._dualFluxVolume.geometry.setDrawRange(0, 0);
+                return;
+            }
             if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
             posAttr.array[vi * 3] = px; posAttr.array[vi * 3 + 1] = py; posAttr.array[vi * 3 + 2] = pz;
             const t = mag / maxVal;
@@ -74,6 +85,10 @@ export const fieldQuantumMethods = {
             const mag = dualMags[lCount + i];
             if (mag < threshold) continue;
             const px = rData.positions[i * 3], py = rData.positions[i * 3 + 1], pz = rData.positions[i * 3 + 2];
+            if (!Number.isFinite(Math.fround(px)) || !Number.isFinite(Math.fround(py)) || !Number.isFinite(Math.fround(pz))) {
+                this._dualFluxVolume.geometry.setDrawRange(0, 0);
+                return;
+            }
             if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
             posAttr.array[vi * 3] = px; posAttr.array[vi * 3 + 1] = py; posAttr.array[vi * 3 + 2] = pz;
             const t = mag / maxVal;
@@ -127,6 +142,10 @@ export const fieldQuantumMethods = {
         for (let i = 0; i < count; i++) {
             const a = Math.abs(values[i]);
             if (a > maxVal) maxVal = a;
+        }
+        if (!(maxVal > 0) || !Number.isFinite(maxVal)) {
+            this._chiralityField.geometry.setDrawRange(0, 0);
+            return;
         }
         const threshold = maxVal * 0.02;
         const _needsClip = this._clipActive();
@@ -221,7 +240,11 @@ export const fieldQuantumMethods = {
     _populateQuantumField(data, kind, options = {}) {
         this._syncCenterAndRadius();
         if (!this._quantumField) this._buildQuantumField();
-        if (!data || !data.positions || !data.values || !data.count) return;
+        if (!data || !data.positions || !data.values || !data.count) {
+            this._quantumField.geometry.setDrawRange(0, 0);
+            this._quantumFieldKind = null;
+            return;
+        }
         const posAttr = this._quantumField.geometry.getAttribute('position');
         const colAttr = this._quantumField.geometry.getAttribute('color');
         const maxPts = posAttr.array.length / 3;
@@ -389,7 +412,10 @@ export const fieldQuantumMethods = {
     },
     updateHorizonField(data) {
         this._syncCenterAndRadius();
-        if (!data?.count) return;
+        if (!data?.count) {
+            this._horizonField?.geo.setDrawRange(0, 0);
+            return;
+        }
         if (!this._horizonField) this._buildHorizonField();
         const hf = this._horizonField;
         if (!hf.points.visible) return;
@@ -413,7 +439,8 @@ export const fieldQuantumMethods = {
 
     // ══════════════════════════════════════════════════════════════════
     // ── State field s — ternary {-1,0,+1} manifestation point cloud ───
-    // The literal FTD ontology (Postulate 3). Void (s=0) is the implicit
+    // Reference-engine manifestation readout; this continuous-J engine is not
+    // the v3 complete finite record law. Void (s=0) is the implicit
     // background and is not drawn; manifested voxels render as a point
     // cloud coloured by sign: s=-1 blue, s=+1 red. Data comes from the
     // engine's ternary state buffer (getStateFieldSampled) on WASM, or the

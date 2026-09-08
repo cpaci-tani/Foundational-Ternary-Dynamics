@@ -118,6 +118,7 @@ test.describe('Scale 0 panel shell audit gate', () => {
             fixture.className = 'panel';
             const layoutClasses = [
                 'panel-grid panel-grid-3',
+                'panel-grid panel-grid-4',
                 'panel-resource-grid panel-resource-grid-3',
                 'charts-row',
                 'charts-grid',
@@ -130,6 +131,15 @@ test.describe('Scale 0 panel shell audit gate', () => {
                 'flux-slice-row-tiles',
                 'grav-slice-tiles',
                 'p1-gravity-grid',
+                'particle-log-summary',
+                'particle-log-category-toggles',
+                'particle-log-view-toggles',
+                'pe-physics-columns',
+                'pe-physics-profile-actions',
+                'pc-grid-2',
+                'oo-fc-grid',
+                'oo-obs-grid',
+                'meta-stat-grid',
             ];
             const grids = layoutClasses.map((className) => {
                 const grid = document.createElement('div');
@@ -152,9 +162,23 @@ test.describe('Scale 0 panel shell audit gate', () => {
                 wide: await setWidthAndRead(audit, 780, grids),
                 ultra: await setWidthAndRead(audit, 1100, grids),
             };
+            audit.el.style.width = '120px';
+            audit.el.style.height = '220px';
+            const sentinel = document.createElement('div');
+            sentinel.style.height = '900px';
+            fixture.appendChild(sentinel);
+            await nextLayout();
+            audit.body.scrollTop = audit.body.scrollHeight;
+            const narrowWindow = {
+                width: Math.round(audit.el.getBoundingClientRect().width),
+                bodyOverflow: getComputedStyle(audit.body).overflowY,
+                bodyScrollable: audit.body.scrollHeight > audit.body.clientHeight,
+                reachedBottom: audit.body.scrollTop > 0,
+                panelMinHeight: getComputedStyle(fixture).minHeight,
+            };
             audit.destroy();
             fixture.remove();
-            return { realControls, structural, familyCount: layoutClasses.length };
+            return { realControls, structural, narrowWindow, familyCount: layoutClasses.length };
         });
 
         expect(result.realControls).toEqual({
@@ -163,10 +187,102 @@ test.describe('Scale 0 panel shell audit gate', () => {
             ultra: 2,
             containerName: 'floating-sidepanel',
         });
-        expect(result.familyCount).toBe(13);
+        expect(result.familyCount).toBe(23);
         expect(new Set(result.structural.narrow)).toEqual(new Set([1]));
         expect(new Set(result.structural.wide)).toEqual(new Set([2]));
         expect(new Set(result.structural.ultra)).toEqual(new Set([2]));
+        expect(result.narrowWindow).toEqual({
+            width: 320,
+            bodyOverflow: 'auto',
+            bodyScrollable: true,
+            reachedBottom: true,
+            panelMinHeight: '100%',
+        });
+        expect(realErrors(consoleErrors)).toEqual([]);
+    });
+
+    test('narrow docked sidepanels stack structural groups and keep the last child reachable', async ({ page }) => {
+        const consoleErrors = attachConsoleWatcher(page);
+        const result = await page.evaluate(async () => {
+            const area = document.getElementById('panel-area');
+            const activePanel = area?.querySelector('.panel.active');
+            if (!area || !activePanel) throw new Error('Active panel dock fixture unavailable');
+
+            const originalStyle = area.getAttribute('style');
+            const fixture = document.createElement('div');
+            fixture.className = 'panel-shell-width-audit';
+            const layoutClasses = [
+                'panel-grid panel-grid-2',
+                'panel-grid panel-grid-3',
+                'panel-grid panel-grid-4',
+                'panel-resource-grid panel-resource-grid-2',
+                'panel-resource-grid panel-resource-grid-3',
+                'charts-row',
+                'charts-grid',
+                'diag-scale0-root',
+                'diag-scale1-root',
+                'diag-s0-grid',
+                'telemetry-grid-container',
+                'lag-layout',
+                'lag-charts-grid',
+                'flux-slice-row-tiles',
+                'grav-slice-tiles',
+                'p1-gravity-grid',
+                'particle-log-summary',
+                'particle-log-category-toggles',
+                'particle-log-view-toggles',
+                'pe-physics-columns',
+                'pe-physics-profile-actions',
+                'pc-grid-2',
+                'oo-fc-grid',
+                'oo-obs-grid',
+                'meta-stat-grid',
+            ];
+            const grids = layoutClasses.map((className) => {
+                const grid = document.createElement('div');
+                grid.className = className;
+                grid.style.display = 'grid';
+                grid.replaceChildren(
+                    document.createElement('div'),
+                    document.createElement('div'),
+                    document.createElement('div'),
+                );
+                fixture.appendChild(grid);
+                return grid;
+            });
+            const sentinel = document.createElement('div');
+            sentinel.style.height = '900px';
+            fixture.appendChild(sentinel);
+            activePanel.appendChild(fixture);
+
+            area.style.width = '520px';
+            area.style.maxWidth = '520px';
+            await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+            const columns = grids.map((grid) => getComputedStyle(grid).gridTemplateColumns.trim().split(/\s+/).length);
+            area.scrollTop = area.scrollHeight;
+            const areaRect = area.getBoundingClientRect();
+            const sentinelRect = sentinel.getBoundingClientRect();
+            const report = {
+                containerName: getComputedStyle(area).containerName,
+                columns,
+                overflowY: getComputedStyle(area).overflowY,
+                scrollable: area.scrollHeight > area.clientHeight,
+                reachedBottom: area.scrollTop > 0 && sentinelRect.bottom <= areaRect.bottom + 2,
+                horizontalOverflow: area.scrollWidth - area.clientWidth,
+            };
+
+            fixture.remove();
+            if (originalStyle === null) area.removeAttribute('style');
+            else area.setAttribute('style', originalStyle);
+            return report;
+        });
+
+        expect(result.containerName).toBe('docked-sidepanel');
+        expect(new Set(result.columns)).toEqual(new Set([1]));
+        expect(['auto', 'scroll']).toContain(result.overflowY);
+        expect(result.scrollable).toBe(true);
+        expect(result.reachedBottom).toBe(true);
+        expect(result.horizontalOverflow).toBeLessThanOrEqual(1);
         expect(realErrors(consoleErrors)).toEqual([]);
     });
 

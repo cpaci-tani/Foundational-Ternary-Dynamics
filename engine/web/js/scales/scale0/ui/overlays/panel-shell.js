@@ -92,7 +92,7 @@ export function initOverlayPanelShell() {
     // Toggle buttons live inside `body`; watch their class changes so the strip
     // (a sibling of body, so its own edits don't re-trigger us) stays in sync.
     new MutationObserver((mutations) => {
-        const activeChanged = mutations.some((mutation) => {
+        const activeChanged = mutations.map((mutation) => {
             if (!mutation.target.classList?.contains('view-toggle')) return false;
             const oldClasses = new Set((mutation.oldValue || '').split(/\s+/).filter(Boolean));
             const changed = oldClasses.has('active') !== mutation.target.classList.contains('active');
@@ -103,7 +103,7 @@ export function initOverlayPanelShell() {
                 );
             }
             return changed;
-        });
+        }).some(Boolean);
         if (activeChanged && panel._activeSignature !== activeSignature()) {
             scheduleOverlayPanelShellRefresh();
         }

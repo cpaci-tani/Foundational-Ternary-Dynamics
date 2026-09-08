@@ -10,7 +10,6 @@ import { cardStyle, titleStyle, tagBadge, formatExp } from '../_card-helpers.js'
 
 const PANEL_ID = 'p1-observables-panel';
 const TWO_PI = 2.0 * Math.PI;
-const OMEGA_HISTORY_LEN = 60;
 
 const TEMPLATE = `
     <section data-section="g2" style="${cardStyle(312)}">
@@ -50,25 +49,8 @@ export class G2Component extends BaseComponent {
             if (tracked) {
                 this.trackingState.position = { x: tracked.x, y: tracked.y, z: tracked.z };
                 this.trackingState.spin = Number.isFinite(tracked.spin) ? tracked.spin : 1;
-                // omegaMeasured is genuinely 0, not a stub: the engine has no
-                // spin-precession dynamics (no torque-from-B update rule) —
-                // particle.spin is assigned once at genesis (curl-sign, or a
-                // random +-1 fallback) and never evolves thereafter. There is
-                // no per-tick precession to measure. Building a real ω_measured
-                // requires new physics (a spin-torque term in the CUDA/CPU
-                // update kernels), not a wiring fix — investigated 2026-07-14,
-                // scoped out of the engine-visualization checklist as a
-                // separate physics initiative. The [~M] tag on this field is
-                // the honest tag until that physics exists (see the footer
-                // text below, which already states this).
-                this.trackingState.omegaMeasured = 0;
-                const historyTick = Number.isFinite(tick)
-                    ? tick : this.trackingState.omegaHistory.length;
-                if (historyTick !== this.trackingState.lastHistoryTick) {
-                    this.trackingState.lastHistoryTick = historyTick;
-                    this.trackingState.omegaHistory.push(this.trackingState.omegaMeasured);
-                    this.trackingState.omegaHistoryTicks.push(historyTick);
-                }
+                // Scalar genesis spin is not a three-dimensional precession
+                // observable. Do not manufacture zero measurements or histories.
             } else {
                 // Tracked particle disappeared — auto-untrack
                 const sam = this._getSpinArrowManager();
@@ -107,10 +89,6 @@ export class G2Component extends BaseComponent {
             position: { x: tracked.x, y: tracked.y, z: tracked.z },
             bField,
             omegaPredicted,
-            omegaMeasured: 0,
-            omegaHistory: [],
-            omegaHistoryTicks: [],
-            lastHistoryTick: null,
             m_lepton_units: m_lep,
             q,
             spin: Number.isFinite(tracked.spin) ? tracked.spin : 1,
@@ -135,7 +113,7 @@ export class G2Component extends BaseComponent {
                 // boundary 2026-07-14) flips the arrow between +z/-z. This is
                 // still not a true 3D spin axis — the engine only tracks a
                 // scalar +-1 per voxel, assigned once at manifestation and
-                // never evolved (see the omegaMeasured comment above) — but it
+                // never evolved — but it
                 // is the REAL value instead of the previous hardcoded {sz:1}.
                 getSpin: () => {
                     const state = this.trackingState;
@@ -196,73 +174,35 @@ export class G2Component extends BaseComponent {
         if (!state || state.trackedId == null) {
             container.innerHTML = `
                 <div class="p1-g2-untracked">
-                    <div class="p1-g2-untracked-title">Live precession <span class="p1-g2-untracked-label">[awaiting tracking]</span></div>
+                    <div class="p1-g2-untracked-title">Precession illustration <span class="p1-g2-untracked-label">[awaiting tracking]</span></div>
                     <div class="p1-g2-untracked-desc">
                         Click <button id="${PANEL_ID}-g2-track-btn" type="button" class="p1-btn-track">Track first particle</button>
-                        to mount a 3D spin arrow on the first manifested particle and read its precession rate against the Schwinger prediction.
+                        to attach a spin illustration to the first manifested particle. Precession is not measured by this engine.
                     </div>
                 </div>
             `;
             return;
         }
 
-        const { trackedId, position, bField, omegaPredicted, omegaMeasured, omegaHistory } = state;
-        const visibleHistory = this.historyControl
-            ? this.historyControl.slice(
-                omegaHistory.map((value, index) => ({
-                    value,
-                    tick: state.omegaHistoryTicks?.[index] ?? index,
-                })),
-                entry => entry.tick,
-            ).map(entry => entry.value)
-            : omegaHistory.slice(-OMEGA_HISTORY_LEN);
-        const bMag = Math.sqrt(bField.x * bField.x + bField.y * bField.y + bField.z * bField.z);
-        const residualPct = (omegaPredicted !== 0)
-            ? Math.abs(omegaMeasured - omegaPredicted) / Math.abs(omegaPredicted) * 100
-            : NaN;
-
-        const W = 240, H = 48, m = { left: 8, right: 8, top: 6, bottom: 6 };
-        const innerW = W - m.left - m.right;
-        const innerH = H - m.top - m.bottom;
-        let sparkSvg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;">`;
-        sparkSvg += `<rect x="${m.left}" y="${m.top}" width="${innerW}" height="${innerH}" fill="rgba(255,255,255,0.02)" stroke="var(--border-light, rgba(255,255,255,0.06))" stroke-width="0.5"/>`;
-        if (visibleHistory.length > 1) {
-            const minV = Math.min(...visibleHistory, omegaPredicted);
-            const maxV = Math.max(...visibleHistory, omegaPredicted);
-            const span = (maxV - minV) || Math.abs(omegaPredicted) * 0.5 || 1e-9;
-            const ypx = (v) => m.top + (1 - (v - minV) / span) * innerH;
-            const yPred = ypx(omegaPredicted);
-            sparkSvg += `<line x1="${m.left}" y1="${yPred.toFixed(1)}" x2="${m.left + innerW}" y2="${yPred.toFixed(1)}" stroke="var(--text-muted)" stroke-width="0.8" stroke-dasharray="3,3"/>`;
-            let path = '';
-            for (let i = 0; i < visibleHistory.length; i++) {
-                const fx = i / Math.max(1, visibleHistory.length - 1);
-                const x = (m.left + fx * innerW).toFixed(1);
-                const y = ypx(visibleHistory[i]).toFixed(1);
-                path += (i === 0 ? 'M' : 'L') + x + ',' + y;
-            }
-            sparkSvg += `<path d="${path}" stroke="var(--accent)" stroke-width="1.4" fill="none"/>`;
-        } else {
-            sparkSvg += `<text x="${m.left + innerW / 2}" y="${m.top + innerH / 2 + 4}" text-anchor="middle" fill="var(--text-muted)" font-size="16" font-style="italic">collecting samples…</text>`;
-        }
-        sparkSvg += `</svg>`;
+        const { trackedId, position, bField, omegaPredicted } = state;
+        const bMag = Math.hypot(bField.x, bField.y, bField.z);
 
         container.innerHTML = `
             <div class="p1-g2-tracked">
                 <div class="p1-g2-tracked-header">
-                    <span style="font-weight:600;">Live precession</span>
+                    <span style="font-weight:600;">Precession illustration</span>
                     <button id="${PANEL_ID}-g2-untrack-btn" type="button" class="p1-btn-untrack">untrack</button>
                 </div>
                 <div class="p1-g2-tracked-grid">
                     <span>${tagBadge('M')}id</span><span class="p1-g2-tracked-val">${trackedId}</span>
                     <span>${tagBadge('M')}position</span><span class="p1-g2-tracked-val">(${position.x.toFixed(1)}, ${position.y.toFixed(1)}, ${position.z.toFixed(1)})</span>
-                    <span>${tagBadge('D')}|B|</span><span class="p1-g2-tracked-val-accent">${formatExp(bMag)}</span>
-                    <span>${tagBadge('D')}ω_predicted</span><span class="p1-g2-tracked-val-accent">${formatExp(omegaPredicted)}</span>
-                    <span>${tagBadge('~M')}ω_measured</span><span class="p1-g2-tracked-val-warning">${formatExp(omegaMeasured)}</span>
-                    <span>${tagBadge('M')}residual</span><span class="p1-g2-tracked-val-warning">${Number.isFinite(residualPct) ? residualPct.toFixed(1) + '%' : '—'}</span>
+                    <span>${tagBadge('T')}imposed |B|</span><span class="p1-g2-tracked-val-accent">${formatExp(bMag)}</span>
+                    <span>${tagBadge('T')}ω_reference</span><span class="p1-g2-tracked-val-accent">${formatExp(omegaPredicted)}</span>
+                    <span>ω_measured</span><span class="p1-g2-tracked-val-warning">unavailable</span>
+                    <span>residual</span><span class="p1-g2-tracked-val-warning">unavailable</span>
                 </div>
-                <div class="p1-g2-tracked-svg-box">${sparkSvg}</div>
                 <div class="p1-g2-tracked-footer">
-                    ${tagBadge('D')}ω_predicted = (q·|B|/m_lepton)·(1+a_e). 3D arrow rotates at this rate. ${tagBadge('~M')}ω_measured = 0 currently — engine has no spin-precession physics yet (particle.spin is randomly initialized at manifestation, no torque-from-B). Residual slot is reserved; once engine adds spin dynamics, the [~M] tag promotes to [M].
+                    Imposed illustrative field |B| = 0.2 and mass = 1; imported precession formula ω_reference = (q·|B|/m)·(1+a_e). Arrow motion illustrates this formula. This engine has no measured spin-precession observable or residual.
                 </div>
             </div>
         `;

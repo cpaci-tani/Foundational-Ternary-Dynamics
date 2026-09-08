@@ -1588,6 +1588,9 @@ test('rapid native scenario changes coalesce to the latest pending allocation', 
         stage('flux-standing', 14);
         resolvers.shift()();
         await new Promise(resolve => setTimeout(resolve, 25));
+        // The first allocation can complete after a newer selection, but that
+        // retired generation must not qualify the UI while the latest is pending.
+        const acknowledgementsBeforeLatest = callbacks.map(profile => profile.loadGeneration);
         resolvers.shift()();
         await new Promise(resolve => setTimeout(resolve, 0));
 
@@ -1596,6 +1599,7 @@ test('rapid native scenario changes coalesce to the latest pending allocation', 
             commands: sent.map(({ cmd, name }) => ({ cmd, name })),
             activeScenario: bridge._activeScenario,
             inFlight: bridge._scenarioRequestInFlight,
+            acknowledgementsBeforeLatest,
             acknowledgements: callbacks.map((profile) => ({
                 authoritativeScenarioAck: profile.authoritativeScenarioAck,
                 scenarioId: profile.scenarioId,
@@ -1610,8 +1614,8 @@ test('rapid native scenario changes coalesce to the latest pending allocation', 
     ]);
     expect(result.activeScenario).toBe('flux-standing');
     expect(result.inFlight).toBe(false);
+    expect(result.acknowledgementsBeforeLatest).toEqual([]);
     expect(result.acknowledgements).toEqual([
-        { authoritativeScenarioAck: true, scenarioId: 'flux-pulse', loadGeneration: 11 },
         { authoritativeScenarioAck: true, scenarioId: 'flux-standing', loadGeneration: 14 },
     ]);
 });

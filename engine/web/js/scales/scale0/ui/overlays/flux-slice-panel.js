@@ -55,6 +55,8 @@ import { rampViridis } from '../../../../viewport/color-ramps.js';
 import {
     getFieldStateSnapshot,
     getScale0State,
+    isScale0AuthoritativeGenerationReady,
+    subscribeScale0Qualification,
     resolveActiveScale0BridgeFromWindow,
 } from '../../state/store.js';
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
@@ -309,6 +311,18 @@ export class FluxSlicePanel {
         for (const drv of FIELD_DRIVERS) this._refreshChip(drv.key);
         this._refreshResetButton();
         this._bindScenarioApplicability();
+        let boundary = null;
+        this._unsubscribeQualification = subscribeScale0Qualification(q => {
+            const next = q.authoritativeLoad
+                ? `${q.authoritativeLoad.status}:${q.authoritativeLoad.loadGeneration}`
+                : `ready:${q.anchor?.loadGeneration}`;
+            if (next === boundary) return;
+            boundary = next;
+            this._releaseAllWantedSamplers();
+            this._scratch = Object.fromEntries(FIELD_DRIVERS.map(d => [d.key, {}]));
+            for (const key of Object.keys(this._fieldGlobalMax)) this._fieldGlobalMax[key] = 0;
+            this._handleScenarioIntent(q.scenarioId);
+        });
         if (this.visible && !this._emptyInapplicable) this._startSelfDrive();
 
         return panel;
@@ -363,7 +377,8 @@ export class FluxSlicePanel {
         const reconcile = () => {
             this._scenarioSyncRaf = 0;
             if (this._disposed || token !== this._scenarioSyncToken) return;
-            if (getScale0State().currentScenarioId === scenarioId) {
+            if (getScale0State().currentScenarioId === scenarioId
+                && isScale0AuthoritativeGenerationReady(getScale0State())) {
                 this._setEmptyApplicability(false);
                 return;
             }
@@ -505,8 +520,9 @@ export class FluxSlicePanel {
     // update() — the only place that diff runs — stops being called at all
     // once hidden.
     _releaseAllWantedSamplers() {
-        const bridge = this.getBridge?.();
+        const bridge = this._samplerBridge || this.getBridge?.();
         bridge?.replaceSamplerWants?.('flux-slice', []);
+        this._samplerBridge = null;
         if (!this._prevWantedKeys) return;
         if (bridge && typeof bridge.unwantSampler === 'function') {
             for (const key of this._prevWantedKeys) {
@@ -662,6 +678,14 @@ export class FluxSlicePanel {
             this._wasLive = false;
             return;
         }
+        if (!isScale0AuthoritativeGenerationReady(getScale0State())) {
+            this._releaseAllWantedSamplers();
+            for (const field of Object.values(this._fields)) for (const slot of Object.values(field.slots)) {
+                slot.ctx.clearRect(0, 0, slot.canvas.width, slot.canvas.height);
+                setTextIfChanged(slot.readout, 'awaiting current generation');
+            }
+            return;
+        }
         this._wasLive = true;
         if (!this.visible || !this._panel) return;
         // Defensive: if the self-drive loop isn't running but we're visible,
@@ -704,8 +728,11 @@ export class FluxSlicePanel {
         }
 
         const mid = N >> 1;
-        const diag = bridge.getDiagnostics?.() ?? {};
-        const simTick = (diag.tick ?? 0) | 0;
+        // The panel needs only the owner clock, not a full-volume diagnostic
+        // reduction. Keep unavailable/unsafe clocks distinct from tick zero.
+        const tickReadback = bridge.currentTick?.();
+        const simTick = Number.isSafeInteger(tickReadback) && tickReadback >= 0
+            ? tickReadback : null;
         const isRunning = (typeof window !== 'undefined' && window.__ftdCtx)
             ? !!window.__ftdCtx.running
             : true;
@@ -714,7 +741,8 @@ export class FluxSlicePanel {
         // Reset every per-field override back to 'on' (the always-visible
         // default) and clear rolling autoscale so the new scenario starts
         // clean and fully visible.
-        if (this._lastSimTick > 0 && simTick < this._lastSimTick) {
+        if (Number.isSafeInteger(this._lastSimTick) && this._lastSimTick > 0
+            && simTick !== null && simTick < this._lastSimTick) {
             // Reset to the default map (force rows → mirror), NOT blanket
             // 'on' — a scenario switch must not silently re-arm the
             // expensive force-field samplers (see DEFAULT_FIELD_OVERRIDE's
@@ -729,7 +757,7 @@ export class FluxSlicePanel {
             for (const drv of FIELD_DRIVERS) this._refreshChip(drv.key);
             this._refreshResetButton();
         }
-        this._lastSimTick = simTick;
+        if (simTick !== null) this._lastSimTick = simTick;
 
         // Reconcile row visibility + dense layout. Also collects the
         // visible-this-frame subset so the shared sample cache below fetches
@@ -858,6 +886,8 @@ export class FluxSlicePanel {
     // visits multiples of stride starting at 0, so a mismatched stride
     // makes the slice come back completely EMPTY, not just coarser.
     _buildFrameSampleCache(bridge, visibleDrivers, mid) {
+        if (this._samplerBridge && this._samplerBridge !== bridge) this._releaseAllWantedSamplers();
+        this._samplerBridge = bridge;
         const sampled = {};
         const neededSlots = new Set();
         for (const drv of visibleDrivers) {
@@ -949,7 +979,7 @@ export class FluxSlicePanel {
             const c = slot.ctx;
             c.fillStyle = '#0a0d14';
             c.fillRect(0, 0, slot.canvas.width, slot.canvas.height);
-            setTextIfChanged(slot.readout, `t=${simTick} · max —`);
+            setTextIfChanged(slot.readout, `${simTick === null ? 'tick unavailable' : `t=${simTick}`} · max —`);
             return;
         }
 
@@ -1031,7 +1061,7 @@ export class FluxSlicePanel {
 
         const pausedTag = isRunning ? '' : ' ⏸';
         setTextIfChanged(slot.readout,
-            `t=${simTick}${pausedTag} · max ${this._fmt(axisFrameMax)}`);
+            `${simTick === null ? 'tick unavailable' : `t=${simTick}`}${pausedTag} · max ${this._fmt(axisFrameMax)}`);
     }
 
     _fmt(v) {
@@ -1188,6 +1218,7 @@ export class FluxSlicePanel {
     // ── Teardown ──────────────────────────────────────────────────────
 
     dispose() {
+        this._unsubscribeQualification?.();
         this._disposed = true;     // self-drive guard (Audit pass 2 FLUX-2)
         this._stopSelfDrive();
         this._releaseAllWantedSamplers();

@@ -30,6 +30,7 @@ import { TickHistoryControl } from '../../../../../ui/charts/history-window.js';
 import { RingBuffer } from '../../../../../telemetry-hub.js';
 import { getScale0Scenario } from '../../../scenario-registry.js';
 import { getPhysicsHarness } from '../../../../../physics/index.js';
+import { updateRetainedReadout } from '../../../../../ui/panels/retained-readout.js';
 
 const SCENARIO_IDS = new Set([
     RF_LATTICE_WAVE_SCENARIO_ID,
@@ -237,7 +238,7 @@ function singleWaveBody(m, lane) {
     const period = lane.frequency > 0 ? 1 / lane.frequency : 0;
     const family = setName(lane.set);
     const note = lane.set === 'sound'
-        ? 'Longitudinal medium proxy: slower dashboard speed, no acoustic-material derivation.'
+        ? 'Longitudinal seed proxy under the reference wave operator; no recovered acoustic material or sound speed.'
         : lane.set === 'rf'
             ? 'RF proxy: long-wavelength transverse flux mode, one lattice-period across the box.'
             : 'Light proxy: shorter-wavelength transverse flux mode, not SI-calibrated color.';
@@ -281,6 +282,7 @@ export class WaveInfoComponent extends BaseComponent {
         this.reseedHandle = null;
         this.queuedReseed = null;
         this.synth = new LatticeSynth();
+        this.audioToken = 0;
         this.history = {
             energy: new RingBuffer(150),
             peakJ: new RingBuffer(150),
@@ -303,7 +305,9 @@ export class WaveInfoComponent extends BaseComponent {
 
     update(bridge, scenarioId) {
         const scenario = getScale0Scenario(scenarioId);
-        if (scenarioId !== this.scenarioId) {
+        if (scenarioId !== this.scenarioId || bridge !== this.bridgeRef) {
+            this.audioToken++;
+            this.synth.stop();
             this._cancelScheduledReseed();
             for (const buffer of Object.values(this.history)) buffer.clear();
             this.lastHistoryTick = null;
@@ -312,14 +316,14 @@ export class WaveInfoComponent extends BaseComponent {
             this.bridgeRef = null;
             this.scenarioId = '';
             this.controlKey = '';
-            this.refs.title.textContent = 'Wave Lab';
-            this.refs.info.innerHTML = infoCenter(null, null);
+            updateRetainedReadout(this.refs.title, 'Wave Lab');
+            updateRetainedReadout(this.refs.info, infoCenter(null, null));
             this.refs.controls.innerHTML = '';
-            this.refs.body.innerHTML = `
+            updateRetainedReadout(this.refs.body, `
                 <div style="color:var(--text-muted);font-size:16px;line-height:1.35;">
                     ${tagBadge('T')}Standalone wave instruments are available as RF lattice wave, Light lattice wave, and Sound lattice proxy.
                 </div>
-            `;
+            `);
             this._updateTrendlines(null, null);
             return;
         }
@@ -333,30 +337,30 @@ export class WaveInfoComponent extends BaseComponent {
                    ${audioIcon}
                </button>` 
             : '';
-        this.refs.title.innerHTML = `
+        updateRetainedReadout(this.refs.title, `
             <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
                 <span>${titleText}</span>
                 ${audioButton}
             </div>
-        `;
+        `);
 
         const m = getSpectrumComparatorMetrics(bridge, scenarioId);
         if (!m || !m.active) {
             this.synth.update(null);
             this._updateTrendlines(null, null);
-            this.refs.body.innerHTML = `
+            updateRetainedReadout(this.refs.body, `
                 <div style="color:var(--text-muted);font-style:italic;">
                     ${tagBadge('~M')} waiting for field buffers
                 </div>
-            `;
+            `);
             return;
         }
 
         const lane = m.lanes?.[0];
         this.synth.update(m);
-        this.refs.info.innerHTML = infoCenter(m, lane);
+        updateRetainedReadout(this.refs.info, infoCenter(m, lane));
         this._renderControls(m, lane);
-        this.refs.body.innerHTML = m.singleScenario && lane ? singleWaveBody(m, lane) : '';
+        updateRetainedReadout(this.refs.body, m.singleScenario && lane ? singleWaveBody(m, lane) : '');
         this._updateTrendlines(m, lane);
     }
 
@@ -372,17 +376,22 @@ export class WaveInfoComponent extends BaseComponent {
 
         // One history row per completed engine tick. Render cadence must not
         // manufacture duplicate scientific samples.
+        let redraw = false;
         if (m.tick !== this.lastHistoryTick) {
+            redraw = true;
             this.lastHistoryTick = m.tick;
             this.history.energy.push(lane.energy || 0, m.tick);
-            this.history.peakJ.push(lane.peakDirectionalFlux || lane.peakFlux || 0, m.tick);
-            this.history.peakW.push(lane.peakDirectionalWaveVel || lane.peakWaveVel || 0, m.tick);
+            this.history.peakJ.push(Number.isFinite(lane.peakDirectionalFlux)
+                ? lane.peakDirectionalFlux : (lane.peakFlux || 0), m.tick);
+            this.history.peakW.push(Number.isFinite(lane.peakDirectionalWaveVel)
+                ? lane.peakDirectionalWaveVel : (lane.peakWaveVel || 0), m.tick);
             this.history.sampleJ.push(lane.sampleFlux || 0, m.tick);
             this.history.sampleW.push(lane.sampleWaveVel || 0, m.tick);
         }
 
         // Build DOM once
         if (Object.keys(this.sparks).length === 0) {
+            redraw = true;
             this.refs.trendlines.innerHTML = `
                 <div style="margin:0 0 10px;padding:9px;border:1px solid var(--border);border-radius:7px;background:rgba(255,255,255,0.025);">
                     <div style="display:flex;align-items:center;margin-bottom:6px;color:var(--text-primary);font-weight:600;">
@@ -411,18 +420,26 @@ export class WaveInfoComponent extends BaseComponent {
             initSpark('spark-sampleW', this.history.sampleW, '#8b5cf6');
         }
 
-        // Update all sparklines
-        for (const key in this.sparks) {
+        // Window changes and resizes have independent Sparkline subscriptions.
+        // Retained data does not need five more identical setData() calls.
+        if (redraw) for (const key in this.sparks) {
             this.sparks[key].update();
         }
     }
 
     async _toggleAudio() {
         if (!isSingleWaveScenario(this.scenarioId) || this.scenarioId !== SOUND_LATTICE_WAVE_SCENARIO_ID) return;
+        const token = ++this.audioToken;
+        const owner = this.bridgeRef;
+        const scenario = this.scenarioId;
         if (this.synth.active) {
             this.synth.stop();
         } else {
             await this.synth.init();
+        }
+        if (token !== this.audioToken || owner !== this.bridgeRef || scenario !== this.scenarioId) {
+            this.synth.stop();
+            return;
         }
         // Force a UI update to refresh the icon
         this.update(this.bridgeRef, this.scenarioId);
@@ -605,6 +622,7 @@ export class WaveInfoComponent extends BaseComponent {
     }
 
     onUnmount() {
+        this.audioToken++;
         this._cancelScheduledReseed();
         this.bridgeRef = null;
         this.scenarioId = '';

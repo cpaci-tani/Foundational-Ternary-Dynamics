@@ -139,6 +139,7 @@ test.describe('Scale 0 Visualization overlay audit gate', () => {
                 'toggleChiralityField', 'togglePsiSquaredField', 'togglePhaseField',
                 'toggleLagrangianDensityField', 'toggleEntropyDensityField',
                 'toggleHorizonField', 'toggleStateField', 'toggleLatencyField',
+                'toggleProperTimeField', 'toggleLapseField', 'toggleDBPhaseField',
                 'toggleGaussResidualField', 'toggleDarkMatterHalo', 'toggleDampingZones',
                 'toggleKnotZones', 'toggleGenesisIsosurface', 'toggleConfinement',
                 'toggleFluxSlice', 'toggleFluxStreamlines',
@@ -274,8 +275,8 @@ test.describe('Scale 0 Visualization overlay audit gate', () => {
         });
 
         expect(result.panel).toEqual({
-            columns: 8, primaryButtons: 33, uniquePrimary: 33, allViewButtons: 38,
-            fieldBindings: 30, sheetSliders: 6, forceStyles: 3, sceneFlowButtons: 1, scalarStyles: 2,
+            columns: 8, primaryButtons: 36, uniquePrimary: 36, allViewButtons: 41,
+            fieldBindings: 33, sheetSliders: 6, forceStyles: 3, sceneFlowButtons: 1, scalarStyles: 2,
             axes: 3, fluxStyles: 2, clearButtons: 8, missingPrimary: [],
             ungroupedBindings: [], nonStoreBindings: [],
             standalonePrimary: ['toggle-sm-reference', 'toggle-flux-volume', 'toggle-flux-slice'],

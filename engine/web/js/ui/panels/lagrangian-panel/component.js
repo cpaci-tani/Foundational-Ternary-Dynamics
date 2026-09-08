@@ -192,6 +192,7 @@ export class LagrangianPanelComponent {
         // Drop cards for terms that became hidden.
         for (const [key, entry] of this.cards) {
             if (this.hidden.has(key)) {
+                if (entry.card._ftdCard?._isFullscreen) entry.card._ftdCard._exitFullscreen();
                 entry.chart.destroy();
                 this.cardObserver?.unobserve(entry.card);
                 entry.card.remove();
@@ -266,7 +267,10 @@ export class LagrangianPanelComponent {
 
     cleanup() {
         this.cardObserver?.disconnect();
-        for (const entry of this.cards.values()) entry.chart.destroy();
+        for (const entry of this.cards.values()) {
+            if (entry.card._ftdCard?._isFullscreen) entry.card._ftdCard._exitFullscreen();
+            entry.chart.destroy();
+        }
         this.cards.clear();
         for (const t of this.tables) t.destroy();
         this.tables.length = 0;

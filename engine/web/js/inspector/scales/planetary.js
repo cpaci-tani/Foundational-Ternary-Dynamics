@@ -1,18 +1,12 @@
 import { setInspectorSectionVisibility } from '../chrome.js';
 
-// D-16: single source of the distance→(temperature, biome) classification for a
-// NON-STAR body. Both the inspector (here) and the planetary renderer
-// (planetary-renderer.js, which imports this) previously inlined the identical
-// three-way distance branch; this is the one definition. Thresholds and the
-// `1.25 - d` temperate ramp are byte-identical to both former copies, so visual
-// + telemetry output is unchanged. Star and gas-giant special-casing stays at
-// each call site (they differ by design and are not shared).
-//
-// (Architectural note: the natural home for this shared pure helper is
-// constants.js, alongside GLSL_SIMPLEX_NOISE_3D, but that file is outside this
-// change's ownership scope. It lives here to avoid pulling three.js into a
-// DOM-only module; chrome.js — the renderer's only added transitive import — is
-// side-effect-free.)
+const EARTH_MASS_SOLAR = 3.00349e-6;
+const AU_PER_YEAR_TO_KM_PER_SECOND = 4.740470463;
+const AU_METERS = 149_597_870_700;
+
+// Backward-compatible helper for generic exoplanet scenarios. The default
+// Solar System inspector uses imported body metadata instead of pretending a
+// distance-only heuristic is a physical surface or biome model.
 export function classifyBiome(d) {
     if (d < 0.5) return { uTemp: 1.0, biome: 'Lava World' };
     if (d > 2.0) return { uTemp: -1.0, biome: 'Ice World' };
@@ -22,12 +16,10 @@ export function classifyBiome(d) {
 export function handlePlanetaryClick(target, intersects) {
     if (intersects.length > 0) {
         const mesh = intersects[0].object;
-        target._selectedPlanetaryId = mesh.userData.id;
-        showPlanetaryInspector(target);
+        target.selectPlanetaryBody?.(mesh.userData.id);
         return;
     }
-    target._selectedPlanetaryId = -1;
-    hidePlanetaryInspector(target);
+    target.clearSelection?.();
 }
 
 export function showPlanetaryInspector(target) {
@@ -59,6 +51,7 @@ export function updatePlanetaryFields(target) {
         return;
     }
 
+    const body = data.bodies?.[index] || target.bridge.getBody?.(target._selectedPlanetaryId) || {};
     const off = index * 16;
     const x = data.buffer[off + 0];
     const y = data.buffer[off + 1];
@@ -70,40 +63,69 @@ export function updatePlanetaryFields(target) {
     const vz = data.buffer[off + 10];
     const speed = Math.sqrt(vx * vx + vy * vy + vz * vz);
 
-    let starPos = { x: 0, y: 0, z: 0 };
-    for (let i = 0; i < data.count; i++) {
-        if (data.buffer[i * 16 + 3] === 0) {
-            starPos = { x: data.buffer[i * 16 + 0], y: data.buffer[i * 16 + 1], z: data.buffer[i * 16 + 2] };
-            break;
-        }
-    }
-
-    const d = Math.sqrt(((x - starPos.x) ** 2) + ((y - starPos.y) ** 2) + ((z - starPos.z) ** 2));
-    let uTemp = 0.0;
-    let biome = 'Deep Space';
-
-    if (type === 0) {
-        target.planetaryFields.type.textContent = 'Host Star';
-        target.planetaryFields.dot.style.background = '#facc15';
-        biome = 'Stellar Plasma';
-    } else {
-        target.planetaryFields.type.textContent = 'Rocky Exoplanet';
-        target.planetaryFields.dot.style.background = '#4ade80';
-
-        ({ uTemp, biome } = classifyBiome(d));
-
-        if (type === 2) {
-            target.planetaryFields.type.textContent = 'Gas Giant';
-            target.planetaryFields.dot.style.background = '#38bdf8';
-            biome = 'Gas/Fluid Envelope';
-        }
-    }
+    const parent = data.bodies?.find((candidate) => candidate.id === body.parentId) || null;
+    const dx = x - (parent?.x || 0);
+    const dy = y - (parent?.y || 0);
+    const dz = z - (parent?.z || 0);
+    const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    const fallbackClass = type === 0 ? 'Host star'
+        : type === 2 ? 'Giant planet'
+            : type === 3 ? 'Natural satellite'
+                : type === 5 ? 'Dwarf planet' : 'Terrestrial planet';
+    const displayName = body.name || fallbackClass;
+    const bodyClass = body.className || fallbackClass;
+    const temp = Number(body.temperatureK);
+    const radiusKm = Number(body.radiusKm);
+    const rotationDays = Number(body.rotationDays);
+    const earthMasses = mass / EARTH_MASS_SOLAR;
 
     target.planetaryFields.id.textContent = target._selectedPlanetaryId;
-    target.planetaryFields.mass.textContent = typeof mass === 'number' ? `${mass.toFixed(4)} M☉` : mass;
-    target.planetaryFields.temp.textContent = `${uTemp.toFixed(2)} (relative)`;
-    target.planetaryFields.biome.textContent = biome;
-    target.planetaryFields.pos.textContent = `(${x.toFixed(4)}, ${y.toFixed(4)}, ${z.toFixed(4)})`;
-    target.planetaryFields.vel.textContent = `(${vx.toFixed(4)}, ${vy.toFixed(4)}, ${vz.toFixed(4)})`;
-    target.planetaryFields.speed.textContent = `${speed.toFixed(6)} AU/t`;
+    target.planetaryFields.type.textContent = `${displayName} · ${bodyClass}`;
+    target.planetaryFields.dot.style.background = body.color || (type === 0 ? '#facc15' : '#60a5fa');
+    target.planetaryFields.mass.textContent = type === 0
+        ? `${mass.toPrecision(7)} M☉`
+        : `${mass.toExponential(6)} M☉ · ${earthMasses.toPrecision(6)} M⊕`;
+    target.planetaryFields.temp.textContent = Number.isFinite(temp) ? `${temp.toLocaleString()} K` : '—';
+    target.planetaryFields.biome.textContent = bodyClass;
+    target.planetaryFields.pos.textContent = `(${x.toFixed(9)}, ${y.toFixed(9)}, ${z.toFixed(9)}) AU`;
+    target.planetaryFields.vel.textContent = `(${vx.toFixed(5)}, ${vy.toFixed(5)}, ${vz.toFixed(5)}) AU/yr`;
+    target.planetaryFields.speed.textContent = `${speed.toFixed(6)} AU/yr · ${(speed * AU_PER_YEAR_TO_KM_PER_SECOND).toFixed(3)} km/s`;
+    target.planetaryFields.radius.textContent = Number.isFinite(radiusKm)
+        ? `${radiusKm.toLocaleString(undefined, { maximumFractionDigits: 4 })} km · ${(radiusKm / (AU_METERS / 1000)).toExponential(9)} AU`
+        : '—';
+    target.planetaryFields.tilt.textContent = Number.isFinite(body.axialTiltDeg) ? `${body.axialTiltDeg.toFixed(3)}°` : '—';
+    target.planetaryFields.day.textContent = Number.isFinite(rotationDays)
+        ? `${Math.abs(rotationDays).toFixed(5)} d${rotationDays < 0 ? ' · retrograde' : ''}` : '—';
+    target.planetaryFields.distance.textContent = parent
+        ? `${d.toFixed(9)} AU · ${(d * AU_METERS / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} km`
+        : 'System barycenter';
+    target.planetaryFields.sma.textContent = Number.isFinite(body.orbit?.a) ? `${body.orbit.a.toFixed(7)} AU` : '—';
+    target.planetaryFields.ecc.textContent = Number.isFinite(body.orbit?.e) ? body.orbit.e.toFixed(7) : '—';
+    target.planetaryFields.atmosphere.textContent = body.atmosphere || '—';
+    target.planetaryFields.magnetic.textContent = body.magneticField || '—';
+    target.planetaryFields.parent.textContent = parent?.name || 'Solar System barycenter';
+    target.planetaryFields.moons.textContent = Number.isFinite(body.moonsKnown) ? String(body.moonsKnown) : '—';
+    if (target.planetaryFields.j2) {
+        target.planetaryFields.j2.textContent = Number.isFinite(body.j2) && body.j2 > 0 ? body.j2.toExponential(6) : '—';
+    }
+    if (target.planetaryFields.beta) {
+        target.planetaryFields.beta.textContent = Number.isFinite(body.radiationBeta) && body.radiationBeta > 0
+            ? body.radiationBeta.toExponential(6) : '—';
+    }
+    if (target.planetaryFields.tide) {
+        const migrationMPerYear = Number(body.tidalMigrationAuPerYear) * AU_METERS;
+        target.planetaryFields.tide.textContent = Number.isFinite(migrationMPerYear) && migrationMPerYear !== 0
+            ? `${migrationMPerYear.toExponential(4)} m/yr` : '—';
+    }
+    if (target.planetaryFields.altitude) {
+        const sampledAltitudeKm = Number(body.liveAltitudeKm);
+        const altitudeKm = Number.isFinite(sampledAltitudeKm)
+            ? sampledAltitudeKm
+            : (parent && Number.isFinite(parent.radiusKm) ? d * AU_METERS / 1000 - parent.radiusKm : NaN);
+        target.planetaryFields.altitude.textContent = Number.isFinite(altitudeKm) ? `${altitudeKm.toLocaleString(undefined, { maximumFractionDigits: 2 })} km` : '—';
+    }
+    if (target.planetaryFields.density) {
+        const density = Number(body.localAtmosphereDensityKgM3);
+        target.planetaryFields.density.textContent = Number.isFinite(density) && density > 0 ? `${density.toExponential(5)} kg/m³` : 'vacuum / outside envelope';
+    }
 }

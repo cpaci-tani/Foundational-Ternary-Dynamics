@@ -1,17 +1,10 @@
 // Dispersion — docked Scale-0 side panel (FTD-0298 / FTD-0299).
 //
 // Mounts into #panel-dispersion (registry id 'dispersion'). NOT a floating overlay.
-// Charts the lattice flux-wave dispersion ω(k) = 2c·|sin(k/2)|, c = C_SPEED = 1/√3:
-//   · the analytic curve + group velocity v_g = c·cos(k/2);
-//   · the engine-MEASURED dispersion atlas from the FTD-0299 campaign across
-//     ⟨100⟩/⟨110⟩/⟨111⟩ (ω_eig == the 18-pt stencil eigenvalue to machine zero;
-//     IR phase speed isotropic at 1/√3 — LIGHT-CONFIRMED);
-//   · calibrated markers showing that ALL observable light & radio live at the far
-//     IR (k/k_zone ≲ 1e-28), one flux-wave sector; the zone edge (k=π) is the UV
-//     cutoff at ≈ the Planck frequency where v_g → 0;
-//   · the NO-ACOUSTIC-BRANCH contrast — FTD has light but no sound: the lattice IS
-//     space, so there is no broken-translation Goldstone (FTD-0298 §5; FTD-0299
-//     condensate-compression probe = NULL).
+// Displays the historical reference-engine spatial-stencil eigenfrequency
+// atlas. The axial curve is omega_eig=2c|sin(k/2)|. The fully discrete
+// leapfrog temporal frequency is instead 2asin(omega_eig/2). Neither is
+// a measurement of light, acoustic recovery, or the v3 finite-law candidate.
 // "Measure live" button is present for UI parity; live re-measurement is not available
 // on the WASM engine (WasmBridgeProxy self-ticks; synchronous tick-loop is incompatible).
 
@@ -28,7 +21,7 @@ const OMEGA_MAX = 2 * C;           // 2/√3 ≈ 1.1547 rad/tick (per-axis zone 
 const K_MAX = Math.PI;             // Brillouin zone edge (rad/voxel)
 
 // Engine-measured atlas — FTD-0299 canonical run, L=32 (kmag, ω_eig). ω_eig equals
-// the 18-pt stencil eigenvalue to machine precision (LIGHT-CONFIRMED).
+// the 18-pt stencil eigenvalue to machine precision (REFERENCE STENCIL).
 const ATLAS = Object.freeze({
     '100': [[0.1963, 0.1132], [0.3927, 0.2253], [0.5890, 0.3352], [0.7854, 0.4419],
             [0.9817, 0.5443], [1.1781, 0.6415], [1.3744, 0.7325], [1.5708, 0.8165]],
@@ -73,7 +66,7 @@ function buildPanel() {
     root.id = PANEL_ID;
     root.dataset.applicability = 'reference-atlas';
     root.innerHTML = `
-        <div class="dp-title">Dispersion ω(k) <small>· light = radio · FTD-0298/0299</small></div>
+        <div class="dp-title">Dispersion ω(k) <small>· reference stencil · FTD-0298/0299</small></div>
         <svg class="dp-plot" id="${PANEL_ID}-plot" viewBox="0 0 360 220" preserveAspectRatio="xMidYMid meet"></svg>
         <div class="dp-legend">
             <span><i style="background:var(--text-muted,#888)"></i>analytic 2c·sin(k/2)</span>
@@ -87,11 +80,12 @@ function buildPanel() {
             <button id="${PANEL_ID}-measure" type="button">Measure live ▸</button>
             <span class="dp-status" id="${PANEL_ID}-status">engine-measured: FTD-0299 atlas</span>
         </div>
-        <div class="dp-foot"><b>Light & radio are one flux-wave sector</b> — only k differs; every
-        observable frequency sits at the far IR (k/k_zone ≲ 1e-28), so FTD predicts no vacuum
-        dispersion. The zone edge (k=π, 2-voxel wavelength ≈ Planck scale) is the UV cutoff
-        where v_g→0. <b>No acoustic branch:</b> the lattice <i>is</i> space ⇒ no broken-translation
-        Goldstone ⇒ no sound (FTD-0298 §5; FTD-0299 condensate probe = NULL).</div>`;
+        <div class="dp-foot"><b>Historical reference-engine stencil atlas.</b>
+        The axial curve is ω_eig=2c|sin(k/2)|; actual leapfrog frequency is
+        ω_tick=2asin(ω_eig/2). The curves are not interchangeable at finite k.
+        SI markers impose the electron-primary length calibration. No light
+        identification, zero physical dispersion, or general impossibility of
+        sound follows from this chart. Acoustic and strict-law recovery remain open.</div>`;
     return root;
 }
 
@@ -110,7 +104,7 @@ function renderPlot(svg, live) {
 
     // no-acoustic-branch contrast (greyed line where ω_s=c·k would sit, struck out)
     s += `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(0.55)}" y2="${Y(C * 0.55)}" stroke="#666" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/>`;
-    s += `<text x="${X(0.58)}" y="${Y(C * 0.5)}" font-size="16" fill="#888">no acoustic branch ✗</text>`;
+    s += `<text x="${X(0.58)}" y="${Y(C * 0.5)}" font-size="16" fill="#888">acoustic recovery open</text>`;
 
     // analytic curve ω = 2c|sin(k/2)|
     let path = '';
@@ -131,7 +125,7 @@ function renderPlot(svg, live) {
 
     // axes labels
     s += `<text x="${m.left + iW / 2}" y="${H - 4}" text-anchor="middle" font-size="16" fill="var(--text-muted,#888)">k (rad/voxel) · 0 → π</text>`;
-    s += `<text x="10" y="${m.top + iH / 2}" transform="rotate(-90 10 ${m.top + iH / 2})" text-anchor="middle" font-size="16" fill="var(--text-muted,#888)">ω (rad/tick)</text>`;
+    s += `<text x="10" y="${m.top + iH / 2}" transform="rotate(-90 10 ${m.top + iH / 2})" text-anchor="middle" font-size="16" fill="var(--text-muted,#888)">ω_eig (stencil units)</text>`;
     s += `<text x="${m.left - 3}" y="${Y(OMEGA_MAX) + 3}" text-anchor="end" font-size="16" fill="var(--text-muted,#888)">${OMEGA_MAX.toFixed(2)}</text>`;
     s += `</svg>`;
     svg.outerHTML = s.replace('<svg ', `<svg class="dp-plot" id="${PANEL_ID}-plot" `);
@@ -156,10 +150,10 @@ export function mountDispersionPanel(host, getBridge) {
         if (svg) renderPlot(svg, livePts);
         el('rows').innerHTML =
             rowHTML('c (IR phase speed)', `${C.toFixed(5)} = 1/√3`, 'Selected lattice speed [SELECTION, FTD-0407]. The production 18-point stencil has an actual stability ceiling of c ≤ √3/2 ≈ 0.866, so 1/√3 is conservative, not forced. SI value is calibration-dependent.') +
-            rowHTML('ω_max (zone edge)', `${OMEGA_MAX.toFixed(4)} = 2/√3`, 'Per-axis Nyquist; physically ≈ the Planck frequency (~2×10⁴² Hz).') +
+            rowHTML('ω_max (zone edge)', `${OMEGA_MAX.toFixed(4)} = 2/√3`, 'Axial spatial-stencil eigenfrequency at Nyquist, not the leapfrog temporal frequency; SI identification is imposed.') +
             rowHTML('visible k/k_zone', kOverKzone(5e14).toExponential(1), 'A 5×10¹⁴ Hz wave on a voxel≡ℓ_P lattice — deep IR.') +
             rowHTML('FM radio k/k_zone', kOverKzone(1e8).toExponential(1), 'A 10⁸ Hz wave — even deeper IR; co-propagates with light at c.') +
-            rowHTML('atlas', 'LIGHT-CONFIRMED', 'Engine ω_eig matches the 18-pt stencil to machine zero; c_eff isotropic at 1/√3.');
+            rowHTML('atlas', 'REFERENCE STENCIL', 'Historical rounded stencil data; not a live temporal-frequency measurement.');
     }
 
     function measureLive() {

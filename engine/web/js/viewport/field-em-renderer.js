@@ -483,6 +483,10 @@ export const fieldEmMethods = {
             mags[i] = m;
             if (m > maxMag) maxMag = m;
         }
+        if (!(maxMag > 0) || !Number.isFinite(maxMag)) {
+            mesh.geometry.setDrawRange(0, 0);
+            return;
+        }
         const threshold = maxMag * thresholdFrac;
         const _needsClip = this._clipActive();
         const [br, bg, bb] = colors.base;
@@ -715,6 +719,11 @@ export const fieldEmMethods = {
             mags[i] = m;
             if (m > maxMag) maxMag = m;
         }
+        if (!(maxMag > 0) || !Number.isFinite(maxMag)) {
+            this._poyntingVectors.geometry.setDrawRange(0, 0);
+            this._poyntingVectors.visible = false;
+            return;
+        }
         const threshold = maxMag * 0.05;
         const arrowBase = 2.0;
 
@@ -804,6 +813,10 @@ export const fieldEmMethods = {
             const a = Math.abs(values[i]);
             if (a > maxVal) maxVal = a;
         }
+        if (!(maxVal > 0) || !Number.isFinite(maxVal)) {
+            this._divField.geometry.setDrawRange(0, 0);
+            return;
+        }
         const threshold = maxVal * 0.01;
 
         // Gather active indices (F-16: reused Int32Array, ascending order).
@@ -872,7 +885,8 @@ export const fieldEmMethods = {
     updatePhaseField(data) {
         this._syncCenterAndRadius();
         this._phaseData = data;
-        if (!this._phaseVisible || !data?.count) return;
+        if (!this._phaseVisible) return;
+        if (!data?.count) { this._phaseNeedles?.geometry.setDrawRange(0, 0); return; }
         if (!this._phaseNeedles) this._buildPhaseNeedles();
         const posAttr = this._phaseNeedles.geometry.getAttribute('position');
         const colAttr = this._phaseNeedles.geometry.getAttribute('color');

@@ -159,15 +159,20 @@ export class TopologySheetRenderer {
     }
 
     onLatticeSizeChanged(size, halfN) {
+        this._gravPotData = null;
+        this._gravPotDrawable = false;
         if (this._gravSurface) {
             this._rebuildGravSurfaceIfResized();
-            if (this._gravPotData) {
-                this.updateGravPotential(this._gravPotData);
-            }
+            this._gravSurface.visible = this._gravSurfaceWire.visible = false;
         }
         for (const key of Object.keys(this._topoSheets)) {
+            this._topoSheets[key].lastData = null;
             this._rebuildSheetIfResized(key);
+            const sheet = this._topoSheets[key];
+            sheet.solid.geometry.setDrawRange(0, 0);
+            sheet.wire.geometry.setDrawRange(0, 0);
         }
+        if (this._scatterBufs) this._scatterBufs._bd = null;
     }
 
     // ── Gravitational potential Φ (special-case rubber sheet) ──────────
@@ -214,7 +219,7 @@ export class TopologySheetRenderer {
         if (this._gravSurfaceSize === N) return;
         this._gravSurface.geometry?.dispose();
         this._gravSurface.material?.dispose();
-        this._gravSurfaceWire.geometry?.dispose();
+        // Solid and wire share the same gravity geometry; dispose once.
         this._gravSurfaceWire.material?.dispose();
         this.scene.remove(this._gravSurface);
         this.scene.remove(this._gravSurfaceWire);
@@ -263,6 +268,8 @@ export class TopologySheetRenderer {
         this._gravSurface.position.y = sliceY;
         this._gravSurfaceWire.position.y = sliceY + 0.02;
 
+        // Invalidate across updates even if a caller reuses the frame object.
+        if (this._scatterBufs) this._scatterBufs._bd = null;
         const heights = this._scatterHeights(pos, halfN, N, data, sliceY);
 
         if (!this._rampScratch) this._rampScratch = new Float32Array(3);
@@ -279,7 +286,7 @@ export class TopologySheetRenderer {
         }
         pos.needsUpdate = true;
         col.needsUpdate = true;
-        geo.computeVertexNormals();
+        // MeshBasicMaterial does not consume lighting normals.
     }
 
     // ── Topology sheets (generic key-based) ─────────────────────────────
@@ -329,7 +336,7 @@ export class TopologySheetRenderer {
         const N = this._getLatticeSize();
         if (s.size === N) return;
         const vis = s.solid.visible;
-        const lastData = s.lastData;   // carry across the rebuild so setHeight() can still re-slice
+        // Resize invalidates the old spatial support; wait for a new frame.
         // Pre-2026-04-26 this disposed only geometries — `_buildSheet` allocates
         // both new geometries AND new materials, so the old materials leaked
         // 2 per sheet × 10 sheets every lattice resize. Dispose materials too
@@ -345,9 +352,8 @@ export class TopologySheetRenderer {
         const ns = this._topoSheets[key];
         ns.solid.visible = vis;
         ns.wire.visible  = vis;
-        // Re-slice at the new size from the retained data (so a height slider
-        // dragged after a paused resize still updates instead of showing flat).
-        if (lastData) this.update(key, lastData);
+        ns.solid.geometry.setDrawRange(0, 0);
+        ns.wire.geometry.setDrawRange(0, 0);
     }
 
     /**
@@ -370,11 +376,21 @@ export class TopologySheetRenderer {
      * @param {{positions: Float32Array, values: Float32Array, count: number, normalizer: number}} data
      */
     update(key, data) {
-        if (!data?.count) return;
+        if (!data?.count) {
+            const previous = this._topoSheets[key];
+            if (previous) {
+                previous.lastData = null;
+                previous.solid.geometry.setDrawRange(0, 0);
+                previous.wire.geometry.setDrawRange(0, 0);
+            }
+            return;
+        }
         if (!this._topoSheets[key]) this._buildSheet(key);
         this._rebuildSheetIfResized(key);
         const s = this._topoSheets[key];
-        s.lastData = data;   // kept so setHeight() can re-slice without new engine data
+        s.lastData = data;   // retained only within this spatial support
+        s.solid.geometry.setDrawRange(0, Infinity);
+        s.wire.geometry.setDrawRange(0, Infinity);
         if (!s.solid.visible) return;
         const cfg = TOPOLOGY_CONFIGS[key];
         const geo = s.solid.geometry;
@@ -389,6 +405,8 @@ export class TopologySheetRenderer {
         s.solid.position.y = sliceY;
         s.wire.position.y = sliceY + 0.02;
 
+        // Invalidate across updates even if a caller reuses the frame object.
+        if (this._scatterBufs) this._scatterBufs._bd = null;
         const heights = this._scatterHeights(pos, halfN, N, data, sliceY);
 
         // Reuse scratch RGB triple across all sheets × all frames.
@@ -411,7 +429,7 @@ export class TopologySheetRenderer {
         }
         pos.needsUpdate = true;
         col.needsUpdate = true;
-        geo.computeVertexNormals();
+        // MeshBasicMaterial does not consume lighting normals.
 
         // Deform the coarse wireframe to match — same sampler.
         if (s.wire && s.wire.geometry) {
@@ -585,7 +603,7 @@ export class TopologySheetRenderer {
             this._gravSurface = null;
         }
         if (this._gravSurfaceWire) {
-            this._gravSurfaceWire.geometry?.dispose();
+            // Solid and wire share the same gravity geometry; dispose once.
             this._gravSurfaceWire.material?.dispose();
             this.scene.remove(this._gravSurfaceWire);
             this._gravSurfaceWire = null;

@@ -37,6 +37,9 @@
     border: 1px solid var(--border);
     border-radius: var(--radius-xl);
     box-shadow: var(--dock-shadow);
+    min-width: 0;
+    container-name: docked-sidepanel;
+    container-type: inline-size;
     transition: background var(--dur-base) var(--ease-out),
                 border-color var(--dur-base) var(--ease-out);
 }
@@ -228,6 +231,63 @@ html[data-density="compact"] #panel-area {
 
 .panel-grid-4 {
     grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+/* ── Width-aware sidepanel composition contract ────────────────────────────
+   A side-mounted dock is narrow even on a wide monitor, so viewport media
+   queries cannot choose its internal card count. Use the dock's actual width:
+   structural card/plot groups stack at <720px and the dock remains the single
+   vertical scroll owner. Compact label/value rows deliberately keep their own
+   internal layouts. The same family list is mirrored by FloatingWindow below. */
+@container docked-sidepanel (max-width: 719px) {
+    .panel :is(
+        .panel-grid-2,
+        .panel-grid-3,
+        .panel-grid-4,
+        .panel-resource-grid-2,
+        .panel-resource-grid-3,
+        .charts-row,
+        .charts-grid,
+        .diag-scale0-root,
+        .diag-scale1-root,
+        .diag-s0-grid,
+        .telemetry-grid-container,
+        .lag-layout,
+        .lag-charts-grid,
+        .flux-slice-row-tiles,
+        .grav-slice-tiles,
+        .p1-gravity-grid,
+        .particle-log-summary,
+        .particle-log-category-toggles,
+        .particle-log-view-toggles,
+        .pe-physics-columns,
+        .pe-physics-profile-actions,
+        .pc-grid-2,
+        .oo-fc-grid,
+        .oo-obs-grid,
+        .meta-stat-grid
+    ) {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+}
+
+/* Prevent an intrinsic-width child from widening the dock and being clipped
+   by its horizontal overflow guard. Tall content remains reachable through
+   #panel-area's mount-specific vertical scrollport. */
+#panel-area .panel,
+#panel-area .panel > *,
+#panel-area .panel :is(
+    .panel-grid,
+    .panel-resource-grid,
+    .charts-row,
+    .charts-grid,
+    .telemetry-grid-container,
+    .lag-layout,
+    .lag-charts-grid
+) > * {
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
 }
 
 /* Scale context header above controls grid */

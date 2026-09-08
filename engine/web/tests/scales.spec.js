@@ -430,7 +430,7 @@ test('Inspector app runtime exposes a modular app-shell adapter', async ({ page 
         // Match app-runtime's versioned module identity; an unversioned import
         // is a different browser module and cannot patch the constructor used
         // by createInspectorAppRuntime.
-        const inspectorMod = await import('./js/inspector.js?v=5');
+        const inspectorMod = await import('./js/inspector.js?v=10');
 
         class FakeInspector {
             setEngineMode(mode) {

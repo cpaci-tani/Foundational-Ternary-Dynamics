@@ -6,7 +6,7 @@
  *   - `WasmBridge` (wasm-bridge.js) — Emscripten-compiled C++ engine, the
  *     canonical main-thread path; re-exported from `bridge-init.js`.
  *   - `WasmBridgeProxy` (wasm-bridge-proxy.js) — main-thread proxy over a
- *     worker-hosted `WasmBridge` (zero-copy SharedArrayBuffer field views).
+ *     worker-hosted C++ engine (pinned publications copied into owned snapshots).
  *   - `WebSocketBridge` (ws-bridge.js) — the same surface backed by a native
  *     server over WebSocket.
  *
@@ -89,9 +89,7 @@ export function emptySampleResult() {
 // `kind` to a concrete bridge sampler call. Each live bridge implements a
 // different subset of the surface:
 //   • WasmBridge / WasmBridgeProxy — every kind.
-//   • WebSocketBridge              — the core kinds + vorticity/helicity/curlJ;
-//                                    kretschmann/latency/fisher/coherence/state/
-//                                    gaussResidual are absent.
+//   • WebSocketBridge              — FTS2 kinds; tau/dbPhase/lapse unavailable.
 // The capability code used to guard each optional kind inline with
 // `bridge.getXSampled?.(stride) ?? empty`, so a bridge that DROPPED a sampler
 // rendered nothing silently — a CONTRACTS.md §2.4 violation with no signal.
@@ -136,6 +134,15 @@ export const TOGGLE_REQUIRES = Object.freeze([
     ['triad_binding', 'dual_substrate'],
     ['latency_field', 'gravity'],
 ]);
+
+/** Validate finite boundary selectors before dispatch, without coercing NaN,
+ * fractions, strings or out-of-range values into a different physical profile. */
+export function validateScale0BoundarySelector(value, maximum) {
+    if (!Number.isInteger(value) || value < 0 || value > maximum) {
+        throw new RangeError(`Scale-0 boundary selector must be an integer in 0..${maximum}`);
+    }
+    return value;
+}
 
 const _samplerDriftWarned = new Set();
 
@@ -207,8 +214,7 @@ export function particleDataToList(pd) {
 }
 
 export const SCALE0_DIRECT_READS = [
-    // Tier 1 — field/flux/state-derived: the proxy's shadow computes these live
-    // from the worker's shared field buffers, so a plain forward returns real data.
+    // Field/flux/state reads are computed by the owning engine and cached by the proxy.
     { name: 'getEFieldSampled',        empty: emptySampleResult },
     { name: 'getBFieldSampled',        empty: emptySampleResult },
     { name: 'getPoyntingSampled',      empty: emptySampleResult },
@@ -228,9 +234,7 @@ export const SCALE0_DIRECT_READS = [
     { name: 'getStrongForceField',     empty: emptySampleResult },
     { name: 'getForceFieldSampled',    empty: emptySampleResult },
     { name: 'getGravityFieldSampled',  empty: emptySampleResult },
-    // Audit / Lagrangian: field terms are live off the shadow; particle terms
-    // read zero under the worker (shadow._particles is empty) — acceptable, the
-    // confirmed breakage was the field charts. Returns null before ready.
+    // Audit / Lagrangian: owning-worker measurements retain their sampled provenance.
     { name: 'getEnergyAudit',          empty: () => null },
     { name: 'getLagrangian',           empty: () => null },
     { name: 'getForceAt',              empty: () => null },
@@ -240,8 +244,6 @@ export const SCALE0_DIRECT_READS = [
     { name: 'getKnotTelemetry',        empty: () => null },
     { name: 'getKnotEvents',           empty: () => null },
     { name: 'getKnotAggregate',        empty: () => null },
-    // Tier 2 — particle-dependent: the proxy OVERRIDES this with worker-sourced
-    // data (shadow._particles is empty). Listed for contract-test coverage; the
-    // proxy's own getScale0ParticleList wins over the generic forwarder.
+    // Particle list is decoded from the owning worker's published particle frame.
     { name: 'getScale0ParticleList',   empty: () => [] },
 ];

@@ -37,18 +37,20 @@ export class CoulombComponent extends BaseComponent {
         this._lastProbe = null;
         this._lastProbeAt = -Infinity;
         this._lastProbeKey = '';
+        this._lastBridge = null;
     }
 
     update(bridge, now = performance.now(), particles = null, scenarioId = '') {
         const particleList = particles || bridge.getScale0ParticleList?.() || [];
         const pair = findOppositeChargePairFromList(particleList);
         const probeKey = `${scenarioId}:${pair?.pPos?.id ?? 'none'}:${pair?.pNeg?.id ?? 'none'}`;
-        const due = !bridge?.isNativeGPU || probeKey !== this._lastProbeKey
+        const due = bridge !== this._lastBridge || !bridge?.isNativeGPU || probeKey !== this._lastProbeKey
             || now - this._lastProbeAt >= NATIVE_PROBE_INTERVAL_MS;
         if (due) {
             this._lastProbe = this._probeCoulombEngineE(bridge, particleList);
             this._lastProbeAt = now;
             this._lastProbeKey = probeKey;
+            this._lastBridge = bridge;
         }
         const engineProbe = this._lastProbe;
 
@@ -72,7 +74,7 @@ export class CoulombComponent extends BaseComponent {
                 <span style="opacity:0.7;">Engine probe samples |E| via <code>getEFieldSampled</code> + JS trilinear interp; analytic ref = |α·q₁/(4π·r²) − α·q₂/(4π·(d−r)²)|. Residual amplified to be visible alongside curves.</span>
             `;
         } else {
-            metaLine = `Engine field unavailable — falling back to analytic-source probe`;
+            metaLine = `Engine field unavailable — no measured probe`;
             heroLine = `
                 <div style="font-size:16px;color:var(--text-muted);">
                     ${tagBadge('T')} no engine field samples — chart frame shown for layout stability
@@ -98,7 +100,7 @@ export class CoulombComponent extends BaseComponent {
         const dy = pNeg.y - pPos.y;
         const dz = pNeg.z - pPos.z;
         const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        if (dist < 1.0) return null;
+        if (!Number.isFinite(dist) || dist < 1.0) return null;
 
         const q1 = getParticleCharge(pPos, +1);
         const q2 = getParticleCharge(pNeg, -1);
@@ -115,7 +117,9 @@ export class CoulombComponent extends BaseComponent {
                 pPos.x + dx * tMax, pPos.y + dy * tMax, pPos.z + dz * tMax,
                 PROBE_SAMPLES
             );
-            if (direct && direct.count > 0 && direct.V && direct.V.length === direct.count) {
+            if (direct && Number.isInteger(direct.count) && direct.count >= 2
+                && direct.count <= PROBE_SAMPLES && direct.V && direct.V.length === direct.count
+                && Array.from(direct.V).every(Number.isFinite)) {
                 const ds = (rMax - rMin) / Math.max(1, direct.count - 1);
                 engineSamples = new Array(direct.count);
                 for (let i = 0; i < direct.count; i++) {
@@ -143,7 +147,9 @@ export class CoulombComponent extends BaseComponent {
                 ? 'js-trilinear'
                 : `js-trilinear (stride ${probeStride})`;
         }
-        if (!engineSamples) return null;
+        if (!engineSamples?.length || !engineSamples.every(sample =>
+            Number.isFinite(sample.r) && sample.r > 0 && sample.r < dist
+            && Number.isFinite(sample.E_mag) && sample.E_mag >= 0)) return null;
 
         const out = new Array(engineSamples.length);
         let maxAbsResidual = 0;
@@ -158,7 +164,7 @@ export class CoulombComponent extends BaseComponent {
             const residual = E_mag - E_analytic_mag;
             sumAbsResidual += Math.abs(residual);
             if (Math.abs(residual) > Math.abs(maxAbsResidual)) {
-                maxAbsResidual = residual;
+                maxAbsResidual = Math.abs(residual);
             }
             out[i] = { r, lattice: E_mag, analytic: E_analytic_mag, residual };
         }

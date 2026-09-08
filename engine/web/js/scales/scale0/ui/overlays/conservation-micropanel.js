@@ -141,17 +141,41 @@ export function mountConservationMicropanel(host, getBridge, hub = telemetryHub)
     let lastEnergyStamp = null;
     let lastMomentumStamp = null;
     let lastRenderState = '';
+    let headlineRows = null;
+
+    function writeHeadlineRows(rows) {
+        if (!headlineRows) {
+            rowsEl.innerHTML = rows.map(({ label, value, color, options }) =>
+                renderRow(label, value, color, options)).join('');
+            headlineRows = rows.map((_, i) => ({ label: rowsEl.children[i * 3],
+                value: rowsEl.children[i * 3 + 1], dot: rowsEl.children[i * 3 + 2] }));
+        }
+        rows.forEach(({ label, value, color, options }, i) => {
+            const nodes = headlineRows[i];
+            const text = options.missing ? '        —' : formatExp(value);
+            const title = options.missing
+                ? (options.reason || 'Collecting a current source snapshot and the full lookback window.') : '';
+            if (nodes.lastLabel !== label) nodes.label.textContent = label;
+            if (nodes.lastValue !== text) nodes.value.textContent = text;
+            if (nodes.lastColor !== color) {
+                nodes.value.style.color = color;
+                nodes.dot.style.background = color;
+            }
+            if (nodes.lastTitle !== title) {
+                if (title) nodes.label.setAttribute('title', title);
+                else nodes.label.removeAttribute('title');
+            }
+            nodes.lastLabel = label; nodes.lastValue = text;
+            nodes.lastColor = color; nodes.lastTitle = title;
+        });
+    }
 
     function renderWaiting(status = 'waiting') {
         if (lastRenderState === status) return;
         lastRenderState = status;
         const muted = 'var(--text-muted)';
-        rowsEl.innerHTML = [
-            renderRow('ΔE', Number.NaN, muted, { key: 'E', missing: true }),
-            renderRow('Δp', Number.NaN, muted, { key: 'p', missing: true }),
-            renderRow('ΔL', Number.NaN, muted, { key: 'L', missing: true }),
-            renderRow('ΔQ', Number.NaN, muted, { key: 'Q', missing: true }),
-        ].join('');
+        writeHeadlineRows(['E', 'p', 'L', 'Q'].map(key => ({ label: `Δ${key}`,
+            value: Number.NaN, color: muted, options: { key, missing: true } })));
         statusEl.textContent = status;
         if (panel._ftdCard?._isFullscreen) renderHistorySparklines();
     }
@@ -226,7 +250,7 @@ export function mountConservationMicropanel(host, getBridge, hub = telemetryHub)
             const span = (maxV - minV) || (peakAbs * 2 || 1e-12);
             let path = '';
             for (let i = 0; i < values.length; i++) {
-                const fx = i / Math.max(1, values.length - 1);
+                const fx = (s.history[i].tick - tBase) / Math.max(1, tLast - tBase);
                 if (!Number.isFinite(values[i])) { path += ' '; continue; }
                 const fy = 1 - (values[i] - minV) / span;
                 const x = (margin.left + fx * innerW).toFixed(1);
@@ -384,18 +408,18 @@ export function mountConservationMicropanel(host, getBridge, hub = telemetryHub)
         const colL = lLive ? hyst.L.update(statusToken(dL)) : 'var(--text-muted)';
         const colQ = qLive ? hyst.Q.update(statusToken(dQ)) : 'var(--text-muted)';
 
-        rowsEl.innerHTML = [
-            renderRow('ΔE', dE, colE, { key: 'E', missing: !eLive,
+        writeHeadlineRows([
+            { label: 'ΔE', value: dE, color: colE, options: { key: 'E', missing: !eLive,
                 reason: energyObservation?.available
                     ? 'Collecting the full 100-tick audit-energy lookback.'
-                    : 'Dynamic energy needs a current energy-audit snapshot.' }),
-            renderRow('Δp', dp, colP, { key: 'p', missing: !pLive,
+                    : 'Dynamic energy needs a current energy-audit snapshot.' } },
+            { label: 'Δp', value: dp, color: colP, options: { key: 'p', missing: !pLive,
                 reason: momentumObservation?.available
                     ? 'Collecting the full 100-tick Poynting lookback.'
-                    : 'Poynting needs a current energy-audit snapshot.' }),
-            renderRow('ΔL', dL, colL, { key: 'L', missing: !lLive }),
-            renderRow('ΔQ', dQ, colQ, { key: 'Q', missing: !qLive }),
-        ].join('');
+                    : 'Poynting needs a current energy-audit snapshot.' } },
+            { label: 'ΔL', value: dL, color: colL, options: { key: 'L', missing: !lLive } },
+            { label: 'ΔQ', value: dQ, color: colQ, options: { key: 'Q', missing: !qLive } },
+        ]);
 
         const energyClock = energyObservation?.available
             ? `t=${energyObservation.sampleTick}` : 'waiting';

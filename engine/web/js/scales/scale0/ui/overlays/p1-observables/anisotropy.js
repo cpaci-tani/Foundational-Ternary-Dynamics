@@ -43,9 +43,49 @@ export function sampleFluxMagnitude(sampler, x, y, z) {
     return Number.isFinite(value) ? value : null;
 }
 
+/** The existing 8×16 ring preparation, rounded and wrapped to dense cells. */
+export function circularFluxProbeIndices(L, cx, cy, cz) {
+    if (!Number.isSafeInteger(L) || L < 1 || !Number.isSafeInteger(L ** 3)
+        || ![cx, cy, cz].every(Number.isFinite)) return null;
+    const wrap = (v) => ((Math.round(v) % L) + L) % L;
+    const indices = new Float64Array(RADII.length * ANGULAR_SAMPLES);
+    let next = 0;
+    for (const r of RADII) {
+        for (let i = 0; i < ANGULAR_SAMPLES; i++) {
+            const theta = (i * 2.0 * Math.PI) / ANGULAR_SAMPLES;
+            const x = wrap(cx + r * Math.cos(theta));
+            const y = wrap(cy + r * Math.sin(theta));
+            const z = wrap(cz);
+            indices[next++] = (z * L + y) * L + x;
+        }
+    }
+    return indices;
+}
+
+/** Preserve ring order and the original two-pass mean/variance operations. */
+export function circularFluxDecay(samples) {
+    if (!ArrayBuffer.isView(samples) || samples.length !== RADII.length * ANGULAR_SAMPLES) return null;
+    const decayPoints = [];
+    for (let ring = 0; ring < RADII.length; ring++) {
+        const values = [];
+        for (let i = 0; i < ANGULAR_SAMPLES; i++) {
+            const value = Number(samples[ring * ANGULAR_SAMPLES + i]);
+            if (!Number.isFinite(value)) return null;
+            values.push(value);
+        }
+        const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
+        if (!Number.isFinite(mean) || mean <= 0) return null;
+        const variance = values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / values.length;
+        const aniso = Math.sqrt(variance) / mean * 100;
+        if (!Number.isFinite(aniso)) return null;
+        decayPoints.push({ r: RADII[ring], aniso, mean });
+    }
+    return decayPoints;
+}
+
 const TEMPLATE = `
     <section data-section="anisotropy" style="${cardStyle(220)}">
-        <div style="${titleStyle()}">Lattice Anisotropy & SO(2) Recovery</div>
+        <div style="${titleStyle()}">Sampled circular field anisotropy</div>
         <div ref="plot" class="p1-anisotropy-plot-box"></div>
         <div ref="desc" class="p1-anisotropy-desc-box"></div>
     </section>
@@ -69,32 +109,46 @@ export class AnisotropyComponent extends BaseComponent {
         const cx = activeSource ? activeSource.x : L / 2;
         const cy = activeSource ? activeSource.y : L / 2;
         const cz = activeSource ? activeSource.z : L / 2;
-        const sourceKey = `${L}:${cx}:${cy}:${cz}:${activeSource?.id ?? 'center'}`;
+        const sourceKey = `${bridge.configurationToken ?? ''}:${L}:${cx}:${cy}:${cz}:${activeSource?.id ?? 'center'}`;
         const interval = bridge.isNativeGPU ? NATIVE_SAMPLE_INTERVAL_MS : LOCAL_SAMPLE_INTERVAL_MS;
         const sourceChanged = bridge !== this._lastBridge || sourceKey !== this._lastSourceKey;
         if (sourceChanged) this._decayPoints = null;
 
-        // The old implementation made 128 independent inspect_voxel requests
-        // on every 4 Hz panel pass (plus the inspector's own requests). Native
-        // runs now consume one bounded FTV2 |J| frame, then evaluate all of the
-        // same 8×16 circular probes locally from that measured regular grid.
+        // One worker pin supplies exactly the same 128 nearest-cell samples.
+        // Direct/reference bridges without this API retain their dense or
+        // compact-volume sampling path and its declared regular-grid stride.
         if (sourceChanged || now - this._lastSampleAt >= interval) {
             this._lastBridge = bridge;
             this._lastSourceKey = sourceKey;
             this._lastSampleAt = now;
-            const sampler = makeFluxMagnitudeSampler(bridge.getFluxVolume?.(), L);
-            if (sampler) {
-                this._decayPoints = this._computeDecayPoints(sampler, cx, cy, cz);
-                this._sampleStride = sampler.stride;
+            if (typeof bridge.sampleFluxAtCells === 'function') {
+                if (sourceChanged || !this._probeIndices) {
+                    this._probeIndices = circularFluxProbeIndices(L, cx, cy, cz);
+                }
+                const samples = this._probeIndices ? bridge.sampleFluxAtCells(this._probeIndices) : null;
+                this._decayPoints = circularFluxDecay(samples);
+                this._sampleStride = 1;
+            } else {
+                const sampler = makeFluxMagnitudeSampler(bridge.getFluxVolume?.(), L);
+                if (sampler) {
+                    this._decayPoints = this._computeDecayPoints(sampler, cx, cy, cz);
+                    this._sampleStride = sampler.stride;
+                } else this._decayPoints = null;
             }
         }
 
         const decayPoints = this._decayPoints;
-        this._renderAnisotropyDecay(this.refs.plot, decayPoints);
         const sourceLabel = activeSource ? `charge ID ${activeSource.id} (${activeSource.state > 0 ? '+' : ''}${activeSource.state})` : 'grid center';
+        // Retained observations do not need a new SVG/description each UI pass.
+        if (this._renderedDecayPoints === decayPoints
+            && this._renderedSourceLabel === sourceLabel && this._renderedStride === this._sampleStride) return;
+        this._renderedDecayPoints = decayPoints;
+        this._renderedSourceLabel = sourceLabel;
+        this._renderedStride = this._sampleStride;
+        this._renderAnisotropyDecay(this.refs.plot, decayPoints);
         if (!decayPoints) {
             this.refs.desc.innerHTML = `
-                <div class="p1-anisotropy-desc-sub">${tagBadge('M')}Waiting for the engine's compact |J| field sample; no inferred zero-value probe is shown.</div>
+                <div class="p1-anisotropy-desc-sub">Anisotropy unavailable: complete finite samples and a positive mean on every ring are required.</div>
             `;
             return;
         }
@@ -106,15 +160,15 @@ export class AnisotropyComponent extends BaseComponent {
                 <span>${tagBadge('~M')}Anisotropy: ${minAniso.toFixed(2)}% (at r=8.5a)</span>
             </div>
             <div class="p1-anisotropy-desc-sub">
-                ${tagBadge('M')} Rotational symmetry recovery O_h → SO(2) quantified via σ_rel(r) = σ(r)/⟨|J|(r)⟩ × 100% over 16-point circular samplers. The values are measured from the engine's bounded regular |J| grid (stride ${this._sampleStride}a), not from synthetic fallback values.
+                ${tagBadge('M')} σ_rel(r) = σ(r)/⟨|J|(r)⟩ × 100% over 16 circular samples from the bounded regular |J| grid (stride ${this._sampleStride}a). Nearest-cell sampling and periodic wrap affect this diagnostic; it does not establish continuum rotational symmetry.
             </div>
         `;
     }
 
     _computeDecayPoints(sampler, cx, cy, cz) {
-        const decayPoints = [];
+        const samples = new Float64Array(RADII.length * ANGULAR_SAMPLES);
+        let next = 0;
         for (const r of RADII) {
-            const values = [];
             for (let i = 0; i < ANGULAR_SAMPLES; i++) {
                 const theta = (i * 2.0 * Math.PI) / ANGULAR_SAMPLES;
                 const value = sampleFluxMagnitude(
@@ -123,14 +177,11 @@ export class AnisotropyComponent extends BaseComponent {
                     cy + r * Math.sin(theta),
                     cz,
                 );
-                if (value !== null) values.push(value);
+                if (value === null) return null;
+                samples[next++] = value;
             }
-            if (values.length !== ANGULAR_SAMPLES) return null;
-            const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
-            const variance = values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / values.length;
-            decayPoints.push({ r, aniso: mean > 1e-9 ? Math.sqrt(variance) / mean * 100.0 : 0.0, mean });
         }
-        return decayPoints;
+        return circularFluxDecay(samples);
     }
 
     _renderAnisotropyDecay(container, decayPoints) {

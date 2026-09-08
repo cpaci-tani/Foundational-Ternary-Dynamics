@@ -11,7 +11,7 @@ import { getScale0OverlayTemplate } from '../../../scales/scale0/ui/overlays/tem
 import { getScale0StandardModelHudTemplate } from '../../../scales/scale0/ui/overlays/standard-model.js?v=2';
 import { getScale1OverlayTemplate } from '../../../scales/scale1/ui/overlays/template.js?v=6';
 import { getScale2OverlayTemplate } from '../../../scales/scale2/ui/overlays/template.js';
-import { getScale4OverlayTemplate } from '../../../scales/scale4/ui/overlays/template.js';
+import { getScale4OverlayTemplate } from '../../../scales/scale4/ui/overlays/template.js?v=4';
 import { getScale5OverlayTemplate } from '../../../scales/scale5/ui/overlays/template.js';
 
 export class ViewportOverlaysComponent {

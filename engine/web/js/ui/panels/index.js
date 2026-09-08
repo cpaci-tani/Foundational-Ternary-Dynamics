@@ -1,5 +1,5 @@
-export { DiagnosticsPanelComponent, initDiagnosticsPanel } from './diagnostics-panel/component.js';
-export { ChartsPanelComponent, initChartsPanel } from './charts-panel/component.js';
+export { DiagnosticsPanelComponent, initDiagnosticsPanel } from './diagnostics-panel/component.js?v=2';
+export { ChartsPanelComponent, initChartsPanel } from './charts-panel/component.js?v=2';
 export { LagrangianPanelComponent, initLagrangianPanel } from './lagrangian-panel/component.js';
 export { ScenePanelComponent, initScenePanel } from './scene-panel/component.js';
 export { TelemetryGridPanelComponent, initTelemetryGridPanel } from './telemetry-grid/component.js?v=2';

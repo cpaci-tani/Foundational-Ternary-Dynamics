@@ -14,7 +14,7 @@
  */
 
 import { debugLog } from './core/log.js';
-import { particleDataToList, samplerOr } from './bridge/bridge-contract.js';
+import { particleDataToList, samplerOr, validateScale0BoundarySelector } from './bridge/bridge-contract.js';
 import { WebSocketScaleFallbackFacade } from './bridge/ws-scale-fallback-facade.js';
 import {
     decodeNativeBinaryFrame,
@@ -24,6 +24,7 @@ import {
 } from './bridge/ws-binary-codec.js';
 import { K_B } from './constants.js';
 import { parseNativeWsPort } from './lib/origin-policy.js';
+import { exactCounter, compareExactCounters, safeCounterNumber, normalizeNativeCounters } from './lib/exact-counter.js';
 
 const EMPTY_FIELD_SAMPLE = Object.freeze({
     positions: new Float32Array(0),
@@ -81,6 +82,10 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         this._connected = false;
         this._pendingQueue = [];  // FIFO queue of {resolve, reject}
         this._nextRequestId = 1;
+        this._wireRequests = new Map();
+        this._nativeBinaryVersion = 2;
+        this._nativeInstanceId = null;
+        this._lastWireRejection = null;
         this._binaryResolve = null;  // for particle data (binary frames)
 
         this.isWasm = false;
@@ -153,6 +158,8 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         // a fresh frame.  The response handler wakes the paused renderer once
         // the cache is actually populated.
         this._visualEpoch = 1;
+        this._visualInterventionEpoch = 1;
+        this._nativeCompletedTick = null;
         this._particleRequestEpoch = 0;
         this._volumeRequestEpoch = 0;
         this._sliceRequestEpoch = new Map();
@@ -232,6 +239,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
     }
 
     async connect() {
+        if (this._disposed) throw new Error('WebSocketBridge disposed');
         // Guard: reject if already connected or connecting to prevent duplicate sockets
         if (this._restartRequired) {
             return Promise.reject(new Error('Native CUDA engine restart is required'));
@@ -247,6 +255,8 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             try {
                 const socket = new WebSocket(this._url);
                 this._ws = socket;
+                this._nativeBinaryVersion = 2;
+                this._nativeInstanceId = null;
                 this._connectionRecoveryPending = true;
                 socket.binaryType = 'arraybuffer';
 
@@ -282,6 +292,10 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                             reject(error);
                             return;
                         }
+                        this._nativeBinaryVersion = info.nativeProtocolVersion >= 3
+                            && info.nativeBinaryVersions?.includes(3)
+                            && /^[0-9a-f]{32}$/.test(info.nativeInstanceId ?? '') ? 3 : 2;
+                        this._nativeInstanceId = this._nativeBinaryVersion === 3 ? info.nativeInstanceId : null;
                         this.latticeSize = info.latticeSize || this.latticeSize;
                         this.isNativeGPU = info.gpu || false;
                         this._observeTelemetrySourceEpoch(info?.telemetrySourceEpoch);
@@ -331,7 +345,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                     if (this._ws !== socket) return;
                     if (event.data instanceof ArrayBuffer) {
                         // Binary frame = particle data
-                        this._handleBinary(event.data);
+                        this._handleBinary(event.data, socket);
                     } else {
                         // Text frame = JSON response
                         this._handleJSON(event.data, socket);
@@ -347,6 +361,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                     this._connectionRecoveryPending = false;
                     this._resetTelemetryRequests();
                     this._resetSimulationRequests();
+                    this._retireWireRequests();
                     this._resetVisualRequests();
                     debugLog('[ws-bridge] Disconnected');
                     // Retire only work submitted on this socket. A delayed
@@ -378,6 +393,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                     this._connectionRecoveryPending = false;
                     this._resetTelemetryRequests();
                     this._resetSimulationRequests();
+                    this._retireWireRequests();
                     this._resetVisualRequests();
                     // Drain only this generation's tracked requests.
                     for (let i = this._pendingQueue.length - 1; i >= 0; i--) {
@@ -456,6 +472,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
     dispose() {
         if (this._disposed) return;
         this._disposed = true;
+        this._retireWireRequests();
         this.ready = false;   // other teardown paths (onclose/onerror) clear this; dispose must too
         this._reconnecting = false;
         for (const t of ['_reconnectTimer', '_simulationWatchdog', '_telemetryDemandExpiryTimer',
@@ -491,6 +508,11 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
     _sendJSON(obj, timeoutMs = DEFAULT_COMMAND_TIMEOUT_MS) {
         return new Promise((resolve, reject) => {
             if (!this._connected) { reject(new Error('Not connected')); return; }
+            if (this._nativeBinaryVersion !== 3 && ['get_particles', 'get_flux_volume',
+                'get_field_sample', 'get_field_slices'].includes(obj.cmd)) {
+                reject(new Error('Correlated binary requests require native protocol v3'));
+                return;
+            }
             const socket = this._ws;
             if (!socket) { reject(new Error('No active WebSocket')); return; }
             // Guard: cap pending queue at 64 to prevent unbounded memory growth
@@ -500,8 +522,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                 reject(new Error('Pending queue full (64 commands in flight)'));
                 return;
             }
-            const requestId = this._nextRequestId++;
-            if (this._nextRequestId >= Number.MAX_SAFE_INTEGER) this._nextRequestId = 1;
+            const requestId = this._allocateRequestId();
 
             // Timeout
             const timeoutId = setTimeout(() => {
@@ -523,20 +544,172 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
 
             // Current servers echo _requestId. FIFO fallback remains for older
             // servers and deterministic test doubles during rolling upgrades.
-            this._pendingQueue.push({ resolve, reject, timeoutId, requestId, socket });
-            socket.send(JSON.stringify({ ...obj, _requestId: requestId }));
+            const pending = { resolve, reject, timeoutId, requestId, socket,
+                ...this._requestIdentity(obj) };
+            this._pendingQueue.push(pending);
+            try { socket.send(JSON.stringify(this._wireCommand(obj, requestId))); }
+            catch (error) {
+                clearTimeout(timeoutId);
+                this._pendingQueue.splice(this._pendingQueue.indexOf(pending), 1);
+                reject(error);
+            }
         });
+    }
+
+    _allocateRequestId() {
+        // IDs never wrap within a socket lifetime, so a late reply cannot alias a new request.
+        if (!Number.isSafeInteger(this._nextRequestId) || this._nextRequestId < 1
+            || this._nextRequestId >= Number.MAX_SAFE_INTEGER) throw new Error('Native request ID exhausted');
+        return this._nextRequestId++;
+    }
+
+    _requestIdentity(command) {
+        return { command, generation: this._scenarioDataGeneration,
+            visualEpoch: this._visualEpoch, interventionEpoch: this._visualInterventionEpoch, sourceEpoch: this._expectedTelemetrySourceEpoch,
+            nativeInstanceId: this._nativeInstanceId, latticeSize: this.latticeSize };
+    }
+
+    _wireCommand(obj, requestId) {
+        const binary = ['get_particles', 'get_flux_volume', 'get_field_sample', 'get_field_slices'].includes(obj.cmd);
+        return { ...obj, _requestId: requestId,
+            ...(binary && this._nativeBinaryVersion === 3 ? { _binaryVersion: 3 } : {}) };
+    }
+
+    _retireWireRequests() {
+        for (const pending of this._wireRequests.values()) clearTimeout(pending.timeoutId);
+        this._wireRequests.clear();
     }
 
     _sendAndForget(obj) {
         if (!this._connected || !this._ws) return false;
+        let requestId = null;
         try {
-            this._ws.send(JSON.stringify(obj));
+            const tracked = ['tick', 'run', 'get_particles', 'get_flux_volume',
+                'get_flux_slice', 'get_field_sample', 'get_field_slices'].includes(obj.cmd);
+            // No-ID mutations remain the existing fire-and-forget stream. Adding
+            // a bounded visual-request map must not silently drop injection bursts.
+            if (this._nativeBinaryVersion !== 3 || !tracked) {
+                this._ws.send(JSON.stringify(obj));
+                return true;
+            }
+            if (!['tick', 'run'].includes(obj.cmd) && this._wireRequests.size >= 64) return false;
+            requestId = this._allocateRequestId();
+            const socket = this._ws;
+            const timeoutId = setTimeout(() => {
+                if (!this._wireRequests.delete(requestId)) return;
+                this._lastWireRejection = { reason: 'request-timeout', requestId };
+                if (this._ws === socket) socket.close();
+            }, ['tick', 'run'].includes(obj.cmd) ? LONG_OPERATION_TIMEOUT_MS : DIAGNOSTIC_COMMAND_TIMEOUT_MS);
+            this._wireRequests.set(requestId, { requestId, socket, timeoutId, ...this._requestIdentity(obj) });
+            socket.send(JSON.stringify(this._wireCommand(obj, requestId)));
             return true;
         } catch (e) {
+            const pending = this._wireRequests.get(requestId);
+            if (pending) clearTimeout(pending.timeoutId);
+            this._wireRequests.delete(requestId);
             debugLog('[ws-bridge] Command send failed:', e?.message || e);
             return false;
         }
+    }
+
+    _rejectWire(reason, requestId = null) {
+        this._lastWireRejection = Object.freeze({ reason, requestId });
+        return false;
+    }
+
+    _findWireRequest(requestId, socket) {
+        const id = safeCounterNumber(requestId);
+        if (id === null || id < 1) return null;
+        return this._pendingQueue.find(p => p.requestId === id && p.socket === socket)
+            ?? (this._wireRequests.get(id)?.socket === socket ? this._wireRequests.get(id) : null);
+    }
+
+    _finishWireRequest(pending, value) {
+        clearTimeout(pending.timeoutId);
+        this._wireRequests.delete(pending.requestId);
+        const index = this._pendingQueue.indexOf(pending);
+        if (index >= 0) this._pendingQueue.splice(index, 1);
+        pending.resolve?.(value);
+    }
+
+    _responseMatchesRequest(pending, data) {
+        const command = pending.command?.cmd;
+        if (!command) return true; // legacy test hosts
+        if (data.cmd && data.cmd !== command) return false;
+        if (data.operation && data.operation !== command) return false;
+        if (data.error || data.type === 'operation_progress' || data.type === 'visual_deferred') return true;
+        if (['inspect_voxel', 'get_force_at'].includes(command) && this._nativeBinaryVersion === 3) {
+            const size = pending.latticeSize;
+            if (!Number.isSafeInteger(size) || size < 1 || data.type != null) return false;
+            for (const axis of ['x', 'y', 'z']) {
+                const coordinate = pending.command[axis] ?? 0;
+                if (!Number.isSafeInteger(coordinate)
+                    || data[axis] !== ((coordinate % size) + size) % size) return false;
+            }
+            return command === 'inspect_voxel'
+                ? Number.isInteger(data.state) && data.state >= -1 && data.state <= 1
+                    && ['fluxX', 'fluxY', 'fluxZ'].every(key => hasOwn(data, key))
+                : ['coulombX', 'coulombY', 'coulombZ'].every(key => hasOwn(data, key));
+        }
+        const expected = { tick_complete: 'tick', run_complete: 'run', flux_slice: 'get_flux_slice',
+            flux_volume: 'get_flux_volume' }[data.type];
+        if (expected) return command === expected
+            && (data.type !== 'flux_slice' || (data.axis === pending.command.axis && data.index === pending.command.index));
+        if (data.type === 'field_sample') return ['get_field_sample', 'get_field_slices'].includes(command)
+            && data.token === pending.command.token && data.kind === pending.command.kind;
+        return !['tick', 'run', 'get_particles', 'get_flux_volume', 'get_flux_slice',
+            'get_field_sample', 'get_field_slices'].includes(command);
+    }
+
+    _dropVisualRequest(pending) {
+        const command = pending.command;
+        if (pending.generation !== this._scenarioDataGeneration) return;
+        if (['get_field_sample', 'get_field_slices'].includes(command?.cmd)) {
+            const field = this._fieldSampleRequestsByToken.get(command.token);
+            if (field?.epoch === pending.visualEpoch) this._rejectFieldSample(command.token, 'retired request');
+        } else if (command?.cmd === 'get_particles' && this._particleRequestEpoch === pending.visualEpoch) {
+            this._particleRequestInFlight = false;
+            this._particleRequestEpoch = 0;
+            if (this._binaryResolve) { this._binaryResolve(this._particleData); this._binaryResolve = null; }
+        } else if (command?.cmd === 'get_flux_volume' && this._volumeRequestEpoch === pending.visualEpoch) {
+            this._volumeRequestInFlight = false;
+            this._volumeRequestEpoch = 0;
+        } else if (['inspect_voxel', 'get_force_at'].includes(command?.cmd)) {
+            const key = `${command.x ?? 0},${command.y ?? 0},${command.z ?? 0}`;
+            const epochs = command.cmd === 'inspect_voxel' ? this._voxelRequestEpoch : this._forceAtRequestEpoch;
+            if (epochs.get(key) === pending.visualEpoch) epochs.set(key, 0);
+        } else if (command?.cmd === 'get_flux_slice') {
+            const key = `${command.axis}_${command.index}`;
+            if (this._sliceRequestEpoch.get(key) === pending.visualEpoch) {
+                this._sliceRequestsInFlight.delete(key);
+                this._sliceRequestEpoch.delete(key);
+            }
+        }
+    }
+
+    _acceptVisualIdentity(pending, provenance = null) {
+        if (pending.generation !== this._scenarioDataGeneration) return this._rejectWire('retired-generation', pending.requestId);
+        if (pending.visualEpoch !== this._visualEpoch
+            && (!provenance || pending.interventionEpoch !== this._visualInterventionEpoch
+                || compareExactCounters(provenance.sampleTick, this._nativeCompletedTick) !== 0)) {
+            return this._rejectWire('retired-generation', pending.requestId);
+        }
+        if (provenance) {
+            if (provenance.latticeSize !== null && provenance.latticeSize !== undefined
+                && (provenance.latticeSize !== pending.latticeSize
+                    || provenance.latticeSize !== this.latticeSize)) return this._rejectWire('lattice-size-mismatch', pending.requestId);
+            if (this._nativeCompletedTick !== null
+                && compareExactCounters(provenance.sampleTick, this._nativeCompletedTick) < 0) return this._rejectWire('retired-sample-tick', pending.requestId);
+            if (provenance.nativeInstanceId !== this._nativeInstanceId
+                || provenance.nativeInstanceId !== pending.nativeInstanceId) return this._rejectWire('foreign-instance', pending.requestId);
+            if (this._expectedTelemetrySourceEpoch !== null
+                && compareExactCounters(provenance.sourceEpoch, this._expectedTelemetrySourceEpoch) !== 0) return this._rejectWire('retired-source', pending.requestId);
+            if (pending.sourceEpoch !== null
+                && compareExactCounters(provenance.sourceEpoch, pending.sourceEpoch) !== 0) return this._rejectWire('changed-request-source', pending.requestId);
+            const epoch = this._telemetrySnapshotMeta?.epoch;
+            if (epoch !== null && compareExactCounters(provenance.epoch, epoch) < 0) return this._rejectWire('retired-epoch', pending.requestId);
+        }
+        return true;
     }
 
     // ── Native telemetry subscription/cache ──────────────────────────
@@ -841,21 +1014,16 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
 
     _normalizeTelemetryGroupMeta(snapshot, group, value, fallbackVersion) {
         const meta = snapshot?.groupMeta?.[group] || {};
-        const numberOrNull = candidate => {
-            if (candidate === null || candidate === undefined || candidate === '') return null;
-            const value = Number(candidate);
-            return Number.isFinite(value) ? value : null;
-        };
-        const suppliedSnapshotVersion = numberOrNull(
+        const suppliedSnapshotVersion = exactCounter(
             meta.snapshotVersion ?? snapshot?.snapshotVersion,
         );
         return {
-            epoch: numberOrNull(meta.epoch ?? snapshot?.epoch),
-            sourceEpoch: numberOrNull(meta.sourceEpoch ?? snapshot?.sourceEpoch),
-            stateVersion: numberOrNull(meta.stateVersion ?? meta.state_version),
-            tick: numberOrNull(meta.tick ?? value?.tick ?? snapshot?.tick),
+            epoch: exactCounter(meta.epoch ?? snapshot?.epoch),
+            sourceEpoch: exactCounter(meta.sourceEpoch ?? snapshot?.sourceEpoch),
+            stateVersion: exactCounter(meta.stateVersion ?? meta.state_version),
+            tick: exactCounter(meta.tick ?? value?.tick ?? snapshot?.tick),
             snapshotVersion: suppliedSnapshotVersion
-                ?? numberOrNull(fallbackVersion)
+                ?? exactCounter(fallbackVersion)
                 ?? ++this._telemetrySyntheticVersion,
             stale: !!(meta.stale ?? snapshot?.stale),
             receivedAt: telemetryNow(),
@@ -864,10 +1032,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
 
     _compareTelemetryGroupMeta(incoming, current) {
         if (!current) return 1;
-        const compareNumber = (left, right) => {
-            if (left === null || right === null || left === right) return 0;
-            return Math.sign(left - right);
-        };
+        const compareNumber = (left, right) => compareExactCounters(left, right) ?? 0;
         let order = compareNumber(incoming.sourceEpoch, current.sourceEpoch);
         if (order) return order;
         order = compareNumber(incoming.epoch, current.epoch);
@@ -877,7 +1042,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         // aggregate publication, so do not let that aggregate repaint this
         // group's older value.
         if (incoming.stateVersion !== null && current.stateVersion !== null) {
-            return Math.sign(incoming.stateVersion - current.stateVersion);
+            return compareExactCounters(incoming.stateVersion, current.stateVersion) ?? 0;
         }
         order = compareNumber(incoming.tick, current.tick);
         if (order) return order;
@@ -891,13 +1056,13 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
     }
 
     _observeTelemetrySourceEpoch(value) {
-        const epoch = Number.isFinite(Number(value)) ? Number(value) : null;
+        const epoch = exactCounter(value);
         if (epoch === null) return false;
         const previous = this._expectedTelemetrySourceEpoch;
-        if (previous !== null && epoch < previous) return false;
+        if (previous !== null && compareExactCounters(epoch, previous) < 0) return false;
         this._expectedTelemetrySourceEpoch = epoch;
         this._telemetrySnapshotMeta.sourceEpoch = epoch;
-        if (previous === null || epoch > previous) {
+        if (previous === null || compareExactCounters(epoch, previous) > 0) {
             // Preserve each cached group's own sample epoch, but make the
             // aggregate source boundary explicit immediately. Consumers can
             // retain old numbers as visibly stale while waiting for the first
@@ -913,8 +1078,8 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         // an acceptable substitute: it could be a delayed frame from a prior
         // source. This turns source replacement into a hard cache boundary.
         if (this._expectedTelemetrySourceEpoch === null) return true;
-        const epoch = Number.isFinite(Number(value)) ? Number(value) : null;
-        return epoch !== null && epoch >= this._expectedTelemetrySourceEpoch;
+        const epoch = exactCounter(value);
+        return epoch !== null && compareExactCounters(epoch, this._expectedTelemetrySourceEpoch) >= 0;
     }
 
     _isTelemetryGroupCurrent(group) {
@@ -926,6 +1091,9 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
     }
 
     _handleTelemetryInvalidated(data = {}) {
+        if (this._nativeBinaryVersion === 3 && data.nativeInstanceId !== this._nativeInstanceId) {
+            return this._rejectWire('foreign-or-missing-telemetry-instance');
+        }
         if (!this._observeTelemetrySourceEpoch(data?.sourceEpoch)) return false;
         for (const group of TELEMETRY_GROUPS) {
             const cached = this._telemetryGroupCache?.[group];
@@ -953,29 +1121,33 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
     }
 
     _updateTelemetrySnapshotMeta(snapshot) {
-        const incomingEpoch = Number.isFinite(snapshot?.epoch) ? snapshot.epoch : null;
-        const incomingVersion = Number.isFinite(snapshot?.snapshotVersion)
-            ? snapshot.snapshotVersion : null;
+        const incomingEpoch = exactCounter(snapshot?.epoch);
+        const incomingVersion = exactCounter(snapshot?.snapshotVersion);
         const currentEpoch = this._telemetrySnapshotMeta.epoch;
         const currentVersion = this._telemetrySnapshotMeta.snapshotVersion;
-        const newerEpoch = incomingEpoch !== null && (currentEpoch === null || incomingEpoch > currentEpoch);
+        const newerEpoch = incomingEpoch !== null && (currentEpoch === null || compareExactCounters(incomingEpoch, currentEpoch) > 0);
         const sameEpochNewerVersion = incomingEpoch !== null && incomingEpoch === currentEpoch
-            && incomingVersion !== null && (currentVersion === null || incomingVersion >= currentVersion);
+            && incomingVersion !== null && (currentVersion === null || compareExactCounters(incomingVersion, currentVersion) >= 0);
         const unversionedNewer = incomingEpoch === null && incomingVersion !== null
-            && (currentVersion === null || incomingVersion >= currentVersion);
+            && (currentVersion === null || compareExactCounters(incomingVersion, currentVersion) >= 0);
         if (!newerEpoch && !sameEpochNewerVersion && !unversionedNewer) return;
         if (incomingEpoch !== null) this._telemetrySnapshotMeta.epoch = incomingEpoch;
-        if (Number.isFinite(snapshot?.sourceEpoch)) {
-            this._telemetrySnapshotMeta.sourceEpoch = snapshot.sourceEpoch;
+        if (exactCounter(snapshot?.sourceEpoch) !== null) {
+            this._telemetrySnapshotMeta.sourceEpoch = exactCounter(snapshot.sourceEpoch);
         }
         if (incomingVersion !== null) this._telemetrySnapshotMeta.snapshotVersion = incomingVersion;
-        if (Number.isFinite(snapshot?.tick)) this._telemetrySnapshotMeta.tick = snapshot.tick;
+        if (exactCounter(snapshot?.tick) !== null) this._telemetrySnapshotMeta.tick = exactCounter(snapshot.tick);
     }
 
     /** Merge a scheduler delta without overwriting absent or stale groups. */
     _acceptTelemetrySnapshot(snapshot, generation = this._scenarioDataGeneration,
         fromPush = false, fallbackVersion = null) {
         if (generation !== this._scenarioDataGeneration || snapshot?.error) return false;
+        try { normalizeNativeCounters(snapshot); }
+        catch (_) { return this._rejectWire('invalid-telemetry-counter'); }
+        if (this._nativeBinaryVersion === 3 && snapshot?.nativeInstanceId !== this._nativeInstanceId) {
+            return this._rejectWire('foreign-or-missing-telemetry-instance');
+        }
         if (fromPush && !this._canAcceptTelemetryPush(snapshot)) return false;
         if (!fromPush && !this._matchesExpectedTelemetrySourceEpoch(snapshot?.sourceEpoch)) return false;
         const groups = snapshot?.groups && typeof snapshot.groups === 'object'
@@ -993,7 +1165,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             switch (group) {
             case 'diagnostics':
                 this._lastDiag = value;
-                if (Number.isFinite(value.tick)) this._lastTick = value.tick;
+                if (exactCounter(value.tick) !== null) this._lastTick = exactCounter(value.tick);
                 break;
             case 'audit': this._acceptEnergyAudit(value); break;
             case 'lagrangian': this._lastLagrangian = value; break;
@@ -1037,6 +1209,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         const snapshot = {
             type: 'telemetry',
             source: 'native',
+            nativeInstanceId: this._nativeInstanceId,
             epoch: this._telemetrySnapshotMeta?.epoch ?? null,
             sourceEpoch: this._telemetrySnapshotMeta?.sourceEpoch
                 ?? this._expectedTelemetrySourceEpoch ?? null,
@@ -1197,7 +1370,10 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         this._simulationWatchdog = null;
         this._simulationInFlight = false;
         this._simulationTicksInFlight = 0;
-        if (Number.isFinite(data?.tick)) this._lastTick = data.tick;
+        if (exactCounter(data?.tick) !== null) {
+            this._lastTick = exactCounter(data.tick);
+            this._nativeCompletedTick = exactCounter(data.tick);
+        }
 
         const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
         if (ctx?.bridge === this && typeof ctx.onBridgeSimulationComplete === 'function') {
@@ -1215,7 +1391,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         // Only completed physics makes the visual caches stale.  Marking them
         // at command submission let the renderer request pre-tick data while
         // the CUDA work was still queued.
-        this._markVisualDataDirty();
+        this._markVisualDataDirty(false, true);
 
         // Protocol v2 starts its compact snapshot producer on the server's
         // settled tick boundary. This call only performs a cache hydration or
@@ -1288,10 +1464,15 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         this._retireSimulationTransport(data, socket, true);
     }
 
-    _recoverOperationError(data = {}) {
+    _recoverOperationError(data = {}, correlated = null) {
         const operation = String(
-            data.operation || data.command || data.cmd || data.category || '',
+            correlated?.command?.cmd || data.operation || data.command || data.cmd || data.category || '',
         ).toLowerCase();
+        if (correlated && ['get_particles', 'get_flux_volume', 'get_flux_slice',
+            'get_field_sample', 'get_field_slices', 'inspect_voxel', 'get_force_at'].includes(operation)) {
+            this._dropVisualRequest(correlated);
+            return;
+        }
         if (operation === 'tick' || operation === 'run' || operation === 'simulation') {
             // ws_server disconnects after a simulation exception because CUDA
             // may be partially advanced. Retire immediately as well so no rAF
@@ -1304,8 +1485,8 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             this._volumeRequestInFlight = false;
             this._volumeRequestEpoch = 0;
         } else if (operation === 'get_flux_slice' || operation === 'slice') {
-            this._sliceRequestsInFlight.clear();
-            this._sliceRequestEpoch.clear();
+            if (correlated?.command) this._dropVisualRequest(correlated);
+            else { this._sliceRequestsInFlight.clear(); this._sliceRequestEpoch.clear(); }
         } else if (operation === 'get_field_sample' || operation === 'field_sample'
             || operation === 'get_field_slices' || operation === 'field_slices') {
             this._fieldSampleRequestTokenByKey.clear();
@@ -1383,9 +1564,11 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         return true;
     }
 
-    _handleVisualDeferred(data = {}) {
+    _handleVisualDeferred(data = {}, correlated = null) {
         const operation = String(data.operation || '').toLowerCase();
-        if (operation === 'get_particles' || operation === 'particle') {
+        if (correlated && ['get_particles', 'get_flux_volume'].includes(correlated.command?.cmd)) {
+            this._dropVisualRequest(correlated);
+        } else if (operation === 'get_particles' || operation === 'particle') {
             this._particleRequestInFlight = false;
             this._particleRequestEpoch = 0;
             // Avoid stranding callers of getParticleDataAsync(): deferral is
@@ -1398,14 +1581,15 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             this._volumeRequestInFlight = false;
             this._volumeRequestEpoch = 0;
         } else if (operation === 'get_flux_slice' || operation === 'slice') {
-            this._sliceRequestsInFlight.clear();
-            this._sliceRequestEpoch.clear();
+            if (correlated?.command) this._dropVisualRequest(correlated);
+            else { this._sliceRequestsInFlight.clear(); this._sliceRequestEpoch.clear(); }
         } else if (operation === 'get_field_sample' || operation === 'field_sample'
             || operation === 'get_field_slices' || operation === 'field_slices') {
             // The server emits no binary frame for a deferred sampler. Return
             // all bounded in-flight work to its fair demand queue and retry
             // only after telemetry has published or the tiny bounded delay.
             for (const [token, pending] of this._fieldSampleRequestsByToken) {
+                if (correlated?.command && correlated.command.token !== token) continue;
                 this._fieldSampleRequestsByToken.delete(token);
                 this._fieldSampleRequestTokenByKey.delete(pending.key);
                 this._fieldSampleRequestEpoch.set(pending.key, 0);
@@ -1455,7 +1639,8 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         this._forceAtRequestEpoch.clear();
     }
 
-    _markVisualDataDirty(clearCaches = false) {
+    _markVisualDataDirty(clearCaches = false, completedTick = false) {
+        if (!completedTick) this._visualInterventionEpoch++;
         this._visualEpoch++;
         if (this._visualEpoch >= Number.MAX_SAFE_INTEGER) {
             this._visualEpoch = 1;
@@ -1464,6 +1649,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             this._sliceRequestEpoch.clear();
         }
         if (clearCaches) {
+            this._nativeCompletedTick = null;
             this._scenarioDataGeneration++;
             if (this._scenarioDataGeneration >= Number.MAX_SAFE_INTEGER) {
                 this._scenarioDataGeneration = 1;
@@ -1785,8 +1971,10 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         const profile = this._queuedScenarioProfile;
         this._queuedScenarioProfile = null;
         this._scenarioRequestInFlight = true;
+        const generation = this._profileGeneration;
         this._sendJSON(this._scenarioProfileCommand(profile), LONG_OPERATION_TIMEOUT_MS)
             .then(response => {
+                if (generation !== this._profileGeneration) return;
                 if (this._isOperationDeferred(response)) {
                     this._queuedScenarioProfile = profile;
                     this._scenarioRetryAfterMs = Math.max(1, Math.min(
@@ -1797,6 +1985,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                 this._acceptScenarioResponse(response, profile);
             })
             .catch(err => {
+                if (generation !== this._profileGeneration) return;
                 console.error('[ws-bridge] Native scenario setup failed:', err?.message || err);
                 if (typeof window !== 'undefined') {
                     window.dispatchEvent(new CustomEvent('ftd:engine-error', {
@@ -1869,16 +2058,26 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
 
     _completeFieldSample(
         token, kind, stride, components, positions, payload, count,
-        effectiveStride = null, origin = null,
+        effectiveStride = null, origin = null, provenance = null,
     ) {
         const pending = this._fieldSampleRequestsByToken.get(token);
         // Tokens are connection-local and identify both kind and requested
         // stride. An unknown token is a stale response from a superseded epoch
         // or connection; never let it repopulate a freshly-cleared scenario.
         if (!pending) return false;
+        if (pending.epoch !== this._visualEpoch
+            && (!provenance || pending.interventionEpoch !== this._visualInterventionEpoch
+                || compareExactCounters(provenance.sampleTick, this._nativeCompletedTick) !== 0)) {
+            this._rejectFieldSample(token, 'retired visual epoch');
+            return false;
+        }
         const resolvedKind = pending.kind || kind;
         if (!resolvedKind || (kind && kind !== resolvedKind)) {
             this._rejectFieldSample(token, `kind mismatch (${kind} != ${resolvedKind})`);
+            return false;
+        }
+        if (components !== (WS_VECTOR_FIELD_KINDS.has(resolvedKind) ? 3 : 1)) {
+            this._rejectFieldSample(token, `component mismatch for ${resolvedKind}`);
             return false;
         }
         const resolvedStride = pending?.stride || Math.max(1, Math.trunc(stride || 1));
@@ -1889,12 +2088,14 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             ? { positions, values: payload, count }
             : { positions, vectors: payload, count };
         sample.kind = resolvedKind;
+        this._attachSampleProvenance(sample, provenance);
         if (Number.isInteger(effectiveStride) && effectiveStride > 0) {
             sample.effectiveStride = effectiveStride;
         }
         if (Number.isInteger(origin) && origin >= 0) sample.origin = origin;
         this._fieldSampleCache.set(key, sample);
-        this._fieldSampleCacheEpoch.set(key, pending.epoch);
+        this._fieldSampleCacheEpoch.set(key, this._visualEpoch);
+        this._fieldSampleRequestEpoch.set(key, this._visualEpoch);
         this._drainFieldSampleRequests();
         this._notifyVisualDataReady(true, false);
         return true;
@@ -1917,14 +2118,60 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             // onmessage already guards this in production, but retain the
             // source check here as well: tests and alternate hosts can call
             // this decoder directly while an old socket is draining.
-            if (sourceSocket && this._ws && sourceSocket !== this._ws) return;
-            const data = JSON.parse(text);
+            if (sourceSocket && this._ws && sourceSocket !== this._ws) return this._rejectWire('retired-socket');
+            const data = normalizeNativeCounters(JSON.parse(text));
+            if (!data || typeof data !== 'object' || Array.isArray(data)) return this._rejectWire('invalid-json-object');
+            const hasRequestId = hasOwn(data, '_requestId');
+            let correlated = null;
+            const jsonProvenance = this._jsonObservationProvenance(data);
+            if (hasRequestId) {
+                correlated = this._findWireRequest(data._requestId, sourceSocket);
+                if (!correlated) return this._rejectWire('unknown-or-retired-request', data._requestId);
+                if (!this._responseMatchesRequest(correlated, data)) return this._rejectWire('response-kind-mismatch', data._requestId);
+                if (data.nativeInstanceId && this._nativeInstanceId
+                    && data.nativeInstanceId !== this._nativeInstanceId) return this._rejectWire('foreign-instance', data._requestId);
+                const visualCommand = ['get_particles', 'get_flux_volume', 'get_flux_slice',
+                    'get_field_sample', 'get_field_slices', 'inspect_voxel', 'get_force_at']
+                    .includes(correlated.command?.cmd);
+                if (visualCommand && (data.error || data.type === 'visual_deferred')
+                    && (correlated.generation !== this._scenarioDataGeneration
+                        || correlated.visualEpoch !== this._visualEpoch)) {
+                    this._finishWireRequest(correlated, { error: 'Retired visual control response', type: 'stale_response' });
+                    this._dropVisualRequest(correlated);
+                    return this._rejectWire('retired-generation', data._requestId);
+                }
+                const point = ['inspect_voxel', 'get_force_at'].includes(correlated.command?.cmd)
+                    && !data.error && !['operation_progress', 'visual_deferred'].includes(data.type);
+                const visual = point || ['flux_slice', 'flux_volume', 'field_sample'].includes(data.type);
+                if (visual && this._nativeBinaryVersion === 3 && !jsonProvenance) {
+                    return this._rejectWire('missing-json-provenance', data._requestId);
+                }
+                if (visual && !this._acceptVisualIdentity(correlated, jsonProvenance)) {
+                    this._finishWireRequest(correlated, { error: 'Retired visual response', type: 'stale_response' });
+                    this._dropVisualRequest(correlated);
+                    return;
+                }
+                if (['tick_complete', 'run_complete'].includes(data.type)
+                    && correlated.generation !== this._scenarioDataGeneration) {
+                    this._finishWireRequest(correlated, { error: 'Retired simulation acknowledgement', type: 'stale_response' });
+                    return this._rejectWire('retired-generation', data._requestId);
+                }
+                if (point) this._attachSampleProvenance(data, jsonProvenance);
+                if (data.type !== 'operation_progress') this._finishWireRequest(correlated, data);
+            } else if (this._nativeBinaryVersion === 3
+                && !data.error
+                && !['telemetry_snapshot', 'telemetry_invalidated', 'telemetry'].includes(data.type)) {
+                return this._rejectWire('missing-request-id');
+            }
+
             // Check fire-and-forget cached responses first, preventing them
             // from mistakenly resolving pending command promises in the queue!
             if (data.type === 'flux_slice') {
                 const key = `${data.axis}_${data.index}`;
                 this._sliceRequestsInFlight.delete(key);
-                this._sliceCache.set(key, new Float64Array(data.data));
+                const sample = Float64Array.from(data.data || [], value => Number.isFinite(value) ? value : Number.NaN);
+                this._attachSampleProvenance(sample, jsonProvenance);
+                this._sliceCache.set(key, sample);
                 if (this._sliceCache.size > MAX_SLICE_CACHE) {
                     this._sliceCache.delete(this._sliceCache.keys().next().value);
                 }
@@ -1933,7 +2180,8 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             }
             if (data.type === 'flux_volume') {
                 this._volumeRequestInFlight = false;
-                this._volumeCache = new Float64Array(data.data);
+                this._volumeCache = Float64Array.from(data.data || [], value => Number.isFinite(value) ? value : Number.NaN);
+                this._attachSampleProvenance(this._volumeCache, jsonProvenance);
                 this._notifyVisualDataReady();
                 return;
             }
@@ -1953,7 +2201,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                     this._completeFieldSample(
                         token, kind, data.stride, components, positions, payload, count,
                         Number.isInteger(data.effectiveStride) ? data.effectiveStride : null,
-                        Number.isInteger(data.origin) ? data.origin : null,
+                        Number.isInteger(data.origin) ? data.origin : null, jsonProvenance,
                     );
                 }
                 return;
@@ -1973,18 +2221,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                 // Not an engine failure: native intentionally yielded bulk
                 // visual work to a due compact telemetry observation. Reset
                 // only the affected bounded request and retry after push/TTL.
-                this._handleVisualDeferred(data);
-                if (Number.isFinite(data._requestId)) {
-                    const idx = this._pendingQueue.findIndex(
-                        pending => pending.requestId === data._requestId
-                            && pending.socket === sourceSocket,
-                    );
-                    if (idx >= 0) {
-                        const [{ resolve, timeoutId }] = this._pendingQueue.splice(idx, 1);
-                        if (timeoutId) clearTimeout(timeoutId);
-                        resolve(data);
-                    }
-                }
+                this._handleVisualDeferred(data, correlated);
                 return;
             }
             if (data.type === 'telemetry_invalidated') {
@@ -2002,7 +2239,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             // older `telemetry` type. Preserve request-id responses for their
             // original _sendJSON promise, but treat truly unsolicited data as
             // the same delta stream.
-            if (data.type === 'telemetry' && !Number.isFinite(data._requestId)) {
+            if (data.type === 'telemetry' && !hasRequestId) {
                 this._acceptTelemetrySnapshot(data, this._scenarioDataGeneration, true);
                 return;
             }
@@ -2016,28 +2253,19 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                 return;
             }
 
-            if (Number.isFinite(data._requestId)) {
-                const idx = this._pendingQueue.findIndex(
-                    pending => pending.requestId === data._requestId
-                        && pending.socket === sourceSocket,
-                );
-                if (idx >= 0) {
-                    const [{ resolve, timeoutId }] = this._pendingQueue.splice(idx, 1);
-                    if (timeoutId) clearTimeout(timeoutId);
-                    resolve(data);
-                    return;
-                }
-            }
             if (data.error) {
                 // An uncorrelated error belongs to a fire-and-forget mutation.
                 // Never let it resolve an unrelated diagnostics/resize promise.
-                this._recoverOperationError(data);
+                this._recoverOperationError(data, correlated);
+                if (correlated?.resolve) return;
                 console.error('[ws-bridge] Native command failed:', data.error);
                 if (typeof window !== 'undefined') {
                     window.dispatchEvent(new CustomEvent('ftd:engine-error', { detail: data }));
                 }
                 return;
             }
+
+            if (correlated) return;
 
             // Compatibility fallback for a server that predates request IDs.
             const fallbackIndex = this._pendingQueue.findIndex(
@@ -2053,14 +2281,57 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             if (data.tick !== undefined) this._lastTick = data.tick;
             if (data.manifested !== undefined && data.tick !== undefined) this._lastDiag = data;
         } catch (e) {
-            console.warn('[ws-bridge] Bad JSON:', text);
+            this._rejectWire('invalid-json-or-counter');
+            console.warn('[ws-bridge] Bad JSON:', e?.message || e);
         }
     }
 
-    _handleBinary(buf) {
+    _jsonObservationProvenance(data) {
+        const sampleTick = exactCounter(data.sampleTick);
+        const sourceEpoch = exactCounter(data.sourceEpoch), epoch = exactCounter(data.epoch);
+        if (!/^[0-9a-f]{32}$/.test(data.nativeInstanceId ?? '')
+            || sampleTick === null || sourceEpoch === null || epoch === null) return null;
+        return Object.freeze({ status: 'approximate', model: 'production-reference', units: 'reference-lattice',
+            nativeInstanceId: data.nativeInstanceId, source: data.nativeInstanceId,
+            sampleTick, sourceEpoch, epoch,
+            latticeSize: Number.isSafeInteger(data.latticeSize) ? data.latticeSize : null,
+            physicalTime: Number.isFinite(data.physicalTime) ? data.physicalTime : null,
+            dt: Number.isFinite(data.dt) ? data.dt : null });
+    }
+
+    _attachSampleProvenance(sample, provenance) {
+        sample.provenance = provenance ?? Object.freeze({ status: 'unavailable', reason: 'legacy-wire' });
+        sample.sampleTick = exactCounter(provenance?.sampleTick);
+        sample.sampleTickNumber = safeCounterNumber(provenance?.sampleTick);
+        sample.sourceEpoch = exactCounter(provenance?.sourceEpoch);
+        sample.epoch = exactCounter(provenance?.epoch);
+        sample.nativeInstanceId = provenance?.nativeInstanceId ?? null;
+        sample.source = provenance?.nativeInstanceId ?? null;
+    }
+
+    _handleBinary(buf, sourceSocket = this._ws) {
+        if (sourceSocket !== this._ws) return this._rejectWire('retired-socket');
         const frame = decodeNativeBinaryFrame(buf, { latticeSize: this.latticeSize });
+        if (frame.type === 'invalid-envelope') return this._rejectWire('invalid-binary-envelope');
+        if (frame.wireVersion === 3) {
+            const pending = this._findWireRequest(frame.requestId, sourceSocket);
+            if (!pending) return this._rejectWire('unknown-or-retired-request', frame.requestId);
+            const expected = { particles: ['get_particles'], volume: ['get_flux_volume'],
+                field: ['get_field_sample', 'get_field_slices'] }[frame.type];
+            if (!expected?.includes(pending.command?.cmd)
+                || (frame.type === 'field' && (frame.kind !== pending.command.kind
+                    || frame.token !== pending.command.token))) return this._rejectWire('response-kind-mismatch', frame.requestId);
+            if (!this._acceptVisualIdentity(pending, frame.provenance)) {
+                this._finishWireRequest(pending, { error: 'Retired binary response', type: 'stale_response' });
+                this._dropVisualRequest(pending);
+                return;
+            }
+            this._finishWireRequest(pending, frame);
+        } else if (this._nativeBinaryVersion === 3) return this._rejectWire('missing-binary-provenance');
+        if (frame.data && typeof frame.data === 'object') this._attachSampleProvenance(frame.data, frame.provenance);
         if (frame.type === 'particles') {
             this._particleRequestInFlight = false;
+            this._particleRequestEpoch = this._visualEpoch;
             this._particleData = frame.data;
             this._notifyVisualDataReady();
             if (this._binaryResolve) {
@@ -2078,6 +2349,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         }
         if (frame.type === 'volume') {
             this._volumeRequestInFlight = false;
+            this._volumeRequestEpoch = this._visualEpoch;
             this._volumeCache = frame.data;
             this._notifyVisualDataReady();
             return;
@@ -2094,7 +2366,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             this._completeFieldSample(
                 frame.token, frame.kind, pending?.stride || 1,
                 frame.components, frame.positions, frame.payload, frame.count,
-                frame.effectiveStride, frame.origin,
+                frame.effectiveStride, frame.origin, frame.provenance,
             );
             return;
         }
@@ -2591,10 +2863,14 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             this._voxelRequestsInFlight.add(key);
             this._pointQueryRequestsInFlight++;
             this._voxelRequestEpoch.set(key, this._visualEpoch);
+            const generation = this._scenarioDataGeneration;
+            const socket = this._ws;
+            const current = () => generation === this._scenarioDataGeneration && socket === this._ws;
             this._sendJSON({ cmd: 'inspect_voxel', x: ix, y: iy, z: iz }, DIAGNOSTIC_COMMAND_TIMEOUT_MS)
-                .then(data => { if (!data?.error) { this._voxelCache.set(key, data); if (this._voxelCache.size > MAX_POINT_CACHE) this._voxelCache.delete(this._voxelCache.keys().next().value); } })
-                .catch(() => { this._voxelRequestEpoch.set(key, 0); })
+                .then(data => { if (current() && !data?.error) { this._voxelCache.set(key, data); if (this._voxelCache.size > MAX_POINT_CACHE) this._voxelCache.delete(this._voxelCache.keys().next().value); } })
+                .catch(() => { if (current()) this._voxelRequestEpoch.set(key, 0); })
                 .finally(() => {
+                    if (!current()) return;
                     this._voxelRequestsInFlight.delete(key);
                     this._pointQueryRequestsInFlight = Math.max(
                         0, this._pointQueryRequestsInFlight - 1);
@@ -2616,10 +2892,14 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             this._forceAtRequestsInFlight.add(key);
             this._pointQueryRequestsInFlight++;
             this._forceAtRequestEpoch.set(key, this._visualEpoch);
+            const generation = this._scenarioDataGeneration;
+            const socket = this._ws;
+            const current = () => generation === this._scenarioDataGeneration && socket === this._ws;
             this._sendJSON({ cmd: 'get_force_at', x: ix, y: iy, z: iz }, DIAGNOSTIC_COMMAND_TIMEOUT_MS)
-                .then(data => { if (!data?.error) { this._forceAtCache.set(key, data); if (this._forceAtCache.size > MAX_POINT_CACHE) this._forceAtCache.delete(this._forceAtCache.keys().next().value); } })
-                .catch(() => { this._forceAtRequestEpoch.set(key, 0); })
+                .then(data => { if (current() && !data?.error) { this._forceAtCache.set(key, data); if (this._forceAtCache.size > MAX_POINT_CACHE) this._forceAtCache.delete(this._forceAtCache.keys().next().value); } })
+                .catch(() => { if (current()) this._forceAtRequestEpoch.set(key, 0); })
                 .finally(() => {
+                    if (!current()) return;
                     this._forceAtRequestsInFlight.delete(key);
                     this._pointQueryRequestsInFlight = Math.max(
                         0, this._pointQueryRequestsInFlight - 1);
@@ -2674,7 +2954,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
 
             let token = this._nextFieldSampleToken++ >>> 0;
             if (token === 0) token = this._nextFieldSampleToken++ >>> 0;
-            const pending = { ...demand, token, epoch: this._visualEpoch };
+            const pending = { ...demand, token, epoch: this._visualEpoch, interventionEpoch: this._visualInterventionEpoch };
             this._fieldSampleRequestEpoch.set(key, pending.epoch);
             this._fieldSampleRequestTokenByKey.set(key, token);
             this._fieldSampleRequestsByToken.set(token, pending);
@@ -2770,7 +3050,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
     getSamplerSnapshotVersion(kind, stride = 2) {
         if (kind === 'gravityMetricAgg') {
             const meta = this._telemetryGroupCache?.gravity?.meta;
-            return Number.isFinite(Number(meta?.stateVersion)) ? Number(meta.stateVersion) : null;
+            return safeCounterNumber(meta?.stateVersion);
         }
         const normalizedStride = Math.max(1, Math.min(64, Math.trunc(Number(stride) || 1)));
         const key = `${kind}@${normalizedStride}`;
@@ -2800,7 +3080,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         this._boundaryShape = shape;
     }
     setFluxBoundaryMode(mode) {
-        const normalized = Math.max(0, Math.min(2, Math.trunc(Number(mode) || 0)));
+        const normalized = validateScale0BoundarySelector(mode, 2);
         if (this._scenarioDraft) {
             this._fluxBoundaryMode = normalized;
             this._scenarioDraft.fluxBoundaryMode = normalized;
@@ -2811,7 +3091,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         this._queueLiveProfileMutation({ fluxBoundaryMode: normalized });
     }
     setFluxPeriodicAxis(axis) {
-        const normalized = Math.max(0, Math.min(3, Math.trunc(Number(axis) || 0)));
+        const normalized = validateScale0BoundarySelector(axis, 3);
         if (this._scenarioDraft) {
             this._fluxPeriodicAxis = normalized;
             this._scenarioDraft.fluxPeriodicAxis = normalized;
@@ -2826,7 +3106,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         this.setFluxBoundaryMode(this._reflectiveBoundary ? 1 : 2);
     }
     // Scale-0 tick readback.
-    currentTick() { return this._lastDiag?.tick ?? 0; }
+    currentTick() { return safeCounterNumber(this._lastDiag?.tick ?? this._lastTick ?? 0); }
 }
 
 /**

@@ -20,6 +20,7 @@ import {
     markFieldDirty,
     getPrimeTickOnLoad,
     setPrimeTickOnLoad,
+    beginScale0AuthoritativeLoad,
     completeScale0AuthoritativeLoad,
     failScale0AuthoritativeLoad,
 } from './state/store.js';
@@ -194,9 +195,21 @@ export function bindUI(ctx) {
         ctx._scale0ScenarioRestoreBound = true;
         window.addEventListener('pageshow', reconcileRestoredScenario);
     }
-    ctx.onBridgeConnectionReady = () => {
+    ctx.onBridgeConnectionReady = ({ generation = 1 } = {}) => {
         if (ctx.engineMode && ctx.engineMode !== 'lattice') return;
         syncScale0LatticeSizeAvailability(ctx.bridge?.isNativeGPU);
+        if (generation > 1 && state.qualificationAnchor) {
+            // Reconnection is transport recovery, not authorization to reseed
+            // the server's evolved state. Its identity is unconfirmed until
+            // an explicit scenario/reset transaction establishes a new anchor.
+            ctx.pauseSimulation?.();
+            beginScale0AuthoritativeLoad({ scenarioId: state.currentScenarioId,
+                loadGeneration: Number(ctx._loadGeneration || 0) });
+            failScale0AuthoritativeLoad({ scenarioId: state.currentScenarioId,
+                loadGeneration: Number(ctx._loadGeneration || 0), reason: 'native-reconnection-state-unconfirmed' });
+            window.showToast?.('Native connection restored; simulation paused. Reset explicitly to establish a new scenario baseline.', 'error');
+            return;
+        }
         loadSelectedScenario(ctx, { force: true });
     };
 

@@ -321,7 +321,8 @@ export class ViewportParticleRenderer {
 
         const material = new THREE.ShaderMaterial({
             uniforms: {
-                ...PARTICLE_SHADER_UNIFORMS,
+                ...Object.fromEntries(Object.entries(PARTICLE_SHADER_UNIFORMS)
+                    .map(([key, uniform]) => [key, { ...uniform }])),
                 shapeType: { value: this.visualSettings.particleShape ?? 0 },
                 uOpacity: { value: this.visualSettings.particleOpacity ?? 0.9 },
                 uGlow: { value: this.visualSettings.glowIntensity ?? 0.15 },

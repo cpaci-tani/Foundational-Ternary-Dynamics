@@ -31,7 +31,7 @@ export function getScale0OverlayTemplate() {
         </span>
         <span class="s0-overlay-title-group">
           <span class="s0-overlay-title">Visualization</span>
-          <span class="s0-overlay-subtitle">Scale 0 · field layers</span>
+          <span class="s0-overlay-subtitle">Scale 0 · reference field layers</span>
         </span>
       </div>
       <div class="s0-overlay-header-tools">
@@ -143,11 +143,11 @@ export function getScale0OverlayTemplate() {
         <span class="field-swatch field-swatch-flux-lines"></span>Flux Lines
       </button>
       <button class="view-toggle field-toggle" id="toggle-div-field"
-          title="[SELECTION] Divergence ∇·J. The engine's Gauss projection targets ∇·J≈s each tick, so this reads as charge sources (red) and sinks (blue) BY CONSTRUCTION — a selected polarity-to-charge map, not a derivation of charge conservation (see LEDGER FTD-0421/FTD-0426). Same buffer as Charge ρ (Topology column), rendered here as points instead of a rubber sheet.">
+          title="[SELECTION] Divergence ∇·J. The correction targets a coupled, mean-neutralized source and normally acts only on vacuum sites. This raw divergence is not that solver residual or a derivation of charge conservation. Same buffer as Charge ρ (Topology column), rendered here as points instead of a rubber sheet.">
         <span class="field-swatch field-swatch-divj"></span>&nabla;&middot;J
       </button>
       <button class="view-toggle field-toggle" id="toggle-state-field"
-          title="[AXIOM] Ternary state field s ∈ {−1,0,+1} — the manifestation layer (Postulate 3: J is primary, s is its threshold projection). Manifested voxels render as points (s=−1 blue, s=+1 red); void (s=0) is invisible. Which voxels light up is set by the genesis threshold K_GENESIS (a calibrated value) plus stochastic evaporation.">
+          title="[REFERENCE ENGINE] Ternary state field s ∈ {−1,0,+1}, the continuous-J engine manifestation layer. The v3 strict law instead has a complete finite record; this overlay is not its microscopic state. Manifested voxels render as points (s=−1 blue, s=+1 red); void (s=0) is invisible. Which voxels light up is set by the genesis threshold K_GENESIS (a calibrated value) plus stochastic evaporation.">
         <span class="field-swatch field-swatch-state"></span>State s
       </button>
     </div>
@@ -168,7 +168,7 @@ export function getScale0OverlayTemplate() {
         <span class="field-swatch field-swatch-b-field"></span>B Field
       </button>
       <button class="view-toggle field-toggle" id="toggle-poynting"
-          title="[DERIVED from E and B; electromagnetic reading SELECTION] Poynting vector S = E × B (energy flux direction). Inherits E's limitation above — the electrostatic near-field contribution is absent, so S is understated wherever a static charge dominates.">
+          title="[DERIVED from E and B; electromagnetic reading SELECTION] Poynting vector S = C_SPEED²(E × B), using the reference wave-energy convention. Inherits E's limitation above — the electrostatic near-field contribution is absent; its omitted cross term can add or cancel.">
         <span class="field-swatch field-swatch-energy"></span>Poynting S
       </button>
     </div>
@@ -206,7 +206,7 @@ export function getScale0OverlayTemplate() {
             title="Turn off every quantum overlay">&#10005;</button>
       </div>
       <button class="view-toggle field-toggle" id="toggle-psi-squared"
-          title="[PROXY] Flux energy density |J|², max-normalized — the conserved quadratic density of the discrete wave equation. Computed as |J|² unconditionally; the Dual Substrate toggle does not change this overlay's math. Displayed as a Born-style |ψ|² analogue, but FTD does NOT derive probability from it: the energy-density-to-probability step is [OPEN] (LEDGER FTD-0187) and measured threshold-crossing Born scaling came back [CLOSED NEGATIVE] (FTD-0200).">
+          title="[PROXY] Flux amplitude squared |J|², max-normalized. This quantity alone is not the conserved wave Hamiltonian. Computed as |J|² unconditionally; the Dual Substrate toggle does not change this overlay's math. Displayed as a Born-style |ψ|² analogue, but FTD does NOT derive probability from it: the energy-density-to-probability step is [OPEN] (LEDGER FTD-0187) and measured threshold-crossing Born scaling came back [CLOSED NEGATIVE] (FTD-0200).">
         <span class="field-swatch field-swatch-psi-squared"></span>|&psi;|&sup2;
       </button>
       <button class="view-toggle field-toggle" id="toggle-phase"
@@ -256,7 +256,7 @@ export function getScale0OverlayTemplate() {
       </div>
       <div class="s0-overlay-group">
       <button class="view-toggle field-toggle" id="toggle-charge-density"
-          title="[SELECTION] Charge density ρ(x) = ∇·J. The engine's Gauss projection targets ∇·J≈s each tick, so this reads as sources (red hills) and sinks (blue wells) BY CONSTRUCTION — a selected polarity-to-charge map, not a derivation of charge conservation (see LEDGER FTD-0421/FTD-0426). Same ∇·J buffer as the Volume column's ∇·J overlay, rendered here as a signed rubber sheet. The y slider slides the sheet up/down and samples ρ in a thin slab at that height.">
+          title="[SELECTION] Charge density ρ(x) = ∇·J. The correction targets a coupled, mean-neutralized source and normally acts only on vacuum sites. This raw divergence is not that solver residual or a derivation of charge conservation. Same ∇·J buffer as the Volume column's ∇·J overlay, rendered here as a signed rubber sheet. The y slider slides the sheet up/down and samples ρ in a thin slab at that height.">
         <span class="field-swatch field-swatch-charge"></span>Charge &rho;
       </button>
       <div class="s0-sheet-height-row" data-sheet-height="chargeDensity">
@@ -283,15 +283,15 @@ export function getScale0OverlayTemplate() {
         <span class="field-swatch field-swatch-latency"></span>Latency L
       </button>
       <button class="view-toggle field-toggle" id="toggle-gauss-residual"
-          title="[MEASURED residual of a SELECTION constraint] Gauss-constraint residual r(x)=∇·J−s. div(J)=s is a selected step (SPEC_ENGINE.md), not a theorem, so this measures the miss of that constraint — it is not a charge-conservation violation (see LEDGER FTD-0421/FTD-0426). Red = positive, blue = negative residual.">
+          title="[PROXY residual] Raw r(x)=∇·J−s. The engine audit instead uses a coupled, mean-neutralized source and normally vacuum-only correction. This display is not the solver residual or a charge-conservation violation. Red = positive, blue = negative residual.">
         <span class="field-swatch field-swatch-gauss"></span>Gauss resid.
       </button>
       <button class="view-toggle field-toggle" id="toggle-proper-time"
-          title="[MEASURED, IMPOSED clock axiom] Accumulated proper time τ(x)=Σ√max(1−u²/C_SPEED²−L²,0), the FTD-0402 causal-budget contract integrated per manifested voxel by accumulate_proper_time. Live only while latency_field or de_broglie_clock is ON — otherwise every manifested voxel reads τ=0 (nothing accumulated yet). Not a substrate derivation of physical proper time.">
+          title="[MEASURED, IMPOSED clock axiom] Accumulated proper time τ(x)=Σ√max(1−u²/C_SPEED²−L²,0), the FTD-0402 causal-budget contract integrated per manifested voxel by accumulate_proper_time. Accumulation requires latency_field or de_broglie_clock; disabling them does not erase previously retained values. Not a substrate derivation of physical proper time.">
         <span class="field-swatch field-swatch-proper-time"></span>Proper time &tau;
       </button>
       <button class="view-toggle field-toggle" id="toggle-lapse"
-          title="[MEASURED, IMPOSED clock axiom] Instantaneous lapse dτ/dt(x)=√max(1−u²/C_SPEED²−L²,0) — causal_kinematics.h's proper_time_rate evaluated live from the voxel's latency and velocity. Red=frozen clock (causal budget saturated, a horizon reading), green=full rate. Distinct from accumulated τ at left.">
+          title="[MEASURED, IMPOSED clock axiom] Instantaneous lapse dτ/dt(x)=√max(1−u²/C_SPEED²−L²,0) — causal_kinematics.h's proper_time_rate evaluated live from the voxel's latency and velocity. Red=zero mapped rate (selected budget saturated), green=full mapped rate. This does not identify a physical horizon. Distinct from accumulated τ at left.">
         <span class="field-swatch field-swatch-lapse"></span>Lapse d&tau;/dt
       </button>
       <button class="view-toggle field-toggle" id="toggle-db-phase"
@@ -361,7 +361,7 @@ export function getScale0OverlayTemplate() {
         <span class="field-swatch field-swatch-color-charge"></span>Color charge
       </button>
       <button class="view-toggle field-toggle" id="toggle-damping-zones"
-          title="Selective damping zones — an octahedral (cross-shaped) wireframe around each particle tracing its true von Neumann 1-hop footprint: the manifested voxel plus its 6 face-adjacent neighbors (7 cells total) where energy actually dissipates (engine: compute_near_particle_mask, neighbors_6). Replaces a prior full 3×3×3 Moore-cube outline that over-drew the damped region 4x (27 cells implied vs 7 actually damped).">
+          title="[PROXY] Bounding-box glyph around each particle: a 3×3×3 box encloses the 7-cell von Neumann damping footprint (center plus 6 face neighbors). The box does not mark all enclosed cells as damped; it is not an octahedral cell mask. At most 100 particle boxes are shown.">
         <span class="field-swatch field-swatch-damping"></span>Damping
       </button>
       <button class="view-toggle field-toggle" id="toggle-confinement"

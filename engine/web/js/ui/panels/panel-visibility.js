@@ -28,12 +28,18 @@ export function notifyPanelVisibilityChange(detail = {}) {
 }
 
 export function isPanelLive(el) {
-    if (!el) return false;
+    if (!el?.isConnected || el.hidden) return false;
     if (document.documentElement.classList.contains('ui-hidden')) return false;
+    const app = el.closest('#app');
+    const scales = el.dataset.panelScales;
+    if (scales && app?.dataset.activeScale
+        && !scales.split(',').includes(app.dataset.activeScale)) return false;
+    // The floating host owns visibility even if a retained panel still has
+    // its dock's active class. Detached roots never have a visible consumer.
+    const fw = el.closest('.floating-window');
+    if (fw) return !fw.hidden && !fw.classList.contains('is-collapsed');
     if (el.classList.contains('active')) {
-        const app = el.closest('#app');
         return !app?.classList.contains('panels-collapsed');
     }
-    const fw = el.closest('.floating-window');
-    return !!fw && !fw.classList.contains('is-collapsed');
+    return false;
 }

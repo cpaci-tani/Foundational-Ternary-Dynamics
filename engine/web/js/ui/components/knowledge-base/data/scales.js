@@ -78,20 +78,20 @@ export const SECTION_SCALES = Object.freeze({
             },
             {
                 id: 'scale4',
-                title: 'Scale 4: Planetary',
+                title: 'Scale 4: Solar System',
                 shortTitle: 'Scale 4',
-                summary: 'The planetary presentation layer for orbit-like or layered macro structure.',
+                summary: 'A physically parameterized Solar System layer with inspectable orbital dynamics.',
                 body: [
-                    'Scale 4 reframes the engine’s presentation toward planetary or celestial structure and ships with its own scenario controls and panels.',
-                    'This is one of the places where the shell becomes more about interpretive visualization than about direct lattice-state inspection.',
+                    'Scale 4 models our Sun, eight planets, Pluto, and a selected major-moon set in AU, solar masses, and Julian years. Direct N-body gravity is extended by independently toggleable 1PN, J2, tides, radiation/drag, stellar mass loss, atmosphere, collision, and Roche kernels.',
+                    'Planet positions start from JPL approximate J2000 orbital elements. JPL volume-equivalent mean radii and every separation render in one uncompressed AU gauge; procedural materials, labels, selection marks, belts, and contextual bands remain visualization layers.',
                 ],
                 bullets: [
-                    'Planetary scenarios and panels.',
-                    'Macro-scale educational framing.',
-                    'More interpretive than substrate-facing.',
+                    'Physical gravity is the default; a nonphysical slow comparison remains explicit.',
+                    'Live force, dissipation, event, mechanical-energy, momentum, and per-body telemetry.',
+                    'Imported astronomy and standard celestial mechanics are [PARAMETRIC] or [IMPOSED], not FTD derivations.',
                 ],
                 notation: ['Scale 4'],
-                tags: ['scales', 'planetary'],
+                tags: ['scales', 'solar-system', 'planetary'],
             },
             {
                 id: 'scale5',

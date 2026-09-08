@@ -378,7 +378,7 @@ function normFieldFnInto(fieldFn, px, py, pz, dir, minMag) {
     const v = fieldFn(px, py, pz);
     const vx = v[0], vy = v[1], vz = v[2];
     const m = Math.sqrt(vx * vx + vy * vy + vz * vz);
-    if (m < minMag) {
+    if (!Number.isFinite(m) || m <= 0 || m < minMag) {
         _nx = _fbx; _ny = _fby; _nz = _fbz; // fallback (already dir-signed)
         return;
     }
@@ -396,7 +396,7 @@ function normGridInto(px, py, pz, dir, minMag) {
     lookupFieldInto(_gridIndex, px, py, pz);
     const vx = _fx, vy = _fy, vz = _fz;
     const m = Math.sqrt(vx * vx + vy * vy + vz * vz);
-    if (m < minMag) {
+    if (!Number.isFinite(m) || m <= 0 || m < minMag) {
         _nx = _fbx; _ny = _fby; _nz = _fbz;
         return;
     }
@@ -423,7 +423,7 @@ function integrateGridInto(x0, y0, z0, h, maxSteps, minMag, bounds, originCenter
         lookupFieldInto(_gridIndex, x, y, z);
         const vx = _fx, vy = _fy, vz = _fz;
         const mag = Math.sqrt(vx * vx + vy * vy + vz * vz);
-        if (mag < minMag) break;
+        if (!Number.isFinite(mag) || mag <= 0 || mag < minMag) break;
 
         // Step-local fallback = dir-signed normalized raw field at (x,y,z).
         // dir*(vx/mag) ≡ (dir*vx)/mag bit-for-bit, matching the old fbx/fby/fbz
@@ -474,7 +474,7 @@ function integrateFieldFnInto(fieldFn, x0, y0, z0, h, maxSteps, minMag, bounds, 
         const raw = fieldFn(x, y, z);
         const vx = raw[0], vy = raw[1], vz = raw[2];
         const mag = Math.sqrt(vx * vx + vy * vy + vz * vz);
-        if (mag < minMag) break;
+        if (!Number.isFinite(mag) || mag <= 0 || mag < minMag) break;
 
         _fbx = dir * (vx / mag);
         _fby = dir * (vy / mag);
@@ -760,6 +760,7 @@ export function advanceStreamlineTask(task, {
     while (task.seedCursor < task.seeds.length && task.lineCount < task.maxLines) {
         const seed = task.seeds[task.seedCursor++];
         const sx = seed[0], sy = seed[1], sz = seed[2];
+        if (!Number.isFinite(sx) || !Number.isFinite(sy) || !Number.isFinite(sz)) continue;
 
         if (task.bidirectional) {
             const fwdLen = integrateInto(
@@ -855,7 +856,7 @@ export function generateBFieldSeeds(particles, radius = 4, maxSeeds = 200) {
         if (seeds.length >= maxSeeds) break;
 
         // Flux direction (or default to z-axis if zero)
-        let fx = p.fx || 0, fy = p.fy || 0, fz = p.fz || 1;
+        let fx = p.fx ?? 0, fy = p.fy ?? 0, fz = p.fz ?? 0;
         const fmag = Math.sqrt(fx * fx + fy * fy + fz * fz);
         if (fmag > 1e-10) { fx /= fmag; fy /= fmag; fz /= fmag; }
         else { fx = 0; fy = 0; fz = 1; }
@@ -1042,7 +1043,8 @@ export function generateImportanceSeeds(fieldData, count, exponent = 1.5) {
 /**
  * Generate B-field seeds via importance sampling, then offset each seed
  * perpendicular to the local field direction. This places seeds on the
- * circumference of B's natural loop structure (∇·B = 0 means lines close)
+ * circumference of a local perpendicular ring. Zero divergence alone does
+ * not require field lines to close; these seeds impose no topological claim.
  * rather than at the loop center where integration would just spin in place.
  *
  * `offset` is the perpendicular displacement in voxels — should be a few

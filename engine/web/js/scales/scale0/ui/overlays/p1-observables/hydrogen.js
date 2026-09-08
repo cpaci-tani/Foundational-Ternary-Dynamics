@@ -15,7 +15,7 @@ const TEMPLATE = `
     <section data-section="hydrogen" style="${cardStyle(120)}">
         <div style="${titleStyle()}">${tagBadge('T', 'analytic Rydberg formula E_n = -K_B Z^2 alpha^2/(2n^2); NOT a lattice eigenvalue')}Hydrogen Spectrum</div>
         <div ref="body" class="p1-empty-state">
-            Load <code>s0-seed-hydrogen</code> to see the predicted level diagram.
+            Load <code>s0-seed-hydrogen</code> to see the reference level diagram.
         </div>
     </section>
 `;
@@ -42,14 +42,14 @@ export class HydrogenComponent extends BaseComponent {
                         E₁ = <span class="p1-hydrogen-val">${E1eV.toFixed(3)} eV</span>
                         &nbsp;|&nbsp; ionization = <span class="p1-hydrogen-val">${ionEV.toFixed(3)} eV</span>
                         (CODATA: ${RYDBERG_EV_CODATA.toFixed(3)} eV; rel err ${relErr.toFixed(3)}%).
-                        <br><span class="p1-hydrogen-desc">All levels follow E_n = -m_e·Z²·α²/(2n²) using FTD's α and m_e from the ontic chain. Lyman/Balmer/Paschen transitions shown.</span>
+                        <br><span class="p1-hydrogen-desc">[PARAMETRIC] Imported Bohr/Schrödinger reference E_n = -m_e·Z²·α²/(2n²), using the configured α and imposed mass anchor; not a recovered spectrum. Lyman/Balmer/Paschen transitions shown.</span>
                     </div>`
                 );
                 this.renderedFor = scenarioId;
             }
         } else if (this.renderedFor !== null) {
             this.refs.body.className = 'p1-empty-state';
-            this.refs.body.innerHTML = 'Load <code>s0-seed-hydrogen</code> or <code>s0-seed-helium</code> to see the predicted level diagram.';
+            this.refs.body.innerHTML = 'Load <code>s0-seed-hydrogen</code> or <code>s0-seed-helium</code> to see the reference level diagram.';
             this.renderedFor = null;
         }
     }

@@ -33,7 +33,7 @@ import { debugLog } from '../core/log.js';
 import { createNativeParticleEngine } from './native-particle-engine.js?v=7';
 import { createAtomEngine } from './mock-atom-engine.js';
 import { reflectIntoBoundary } from './boundary.js';
-import { samplerOr, particleDataToList, TOGGLE_REQUIRES } from './bridge-contract.js';
+import { samplerOr, particleDataToList, TOGGLE_REQUIRES, validateScale0BoundarySelector } from './bridge-contract.js';
 import { loadVerifiedWasmVariant } from './wasm-artifact-identity.js';
 
 // ── WASM Bridge ────────────────────────────────────────────────────
@@ -1034,7 +1034,11 @@ export class WasmBridge {
             (m, b) => m.getLapseSampled(b, stride));
     }
     /** Kind-dispatched Scale-0 field sampler; see bridge-contract.js samplerOr. */
-    getSamplerOr(kind, stride = 2, fallback) { return samplerOr(this, kind, stride, fallback); }
+    getSamplerOr(kind, stride = 2, fallback) {
+        const sample = samplerOr(this, kind, stride, fallback);
+        return sample && typeof sample === 'object'
+            ? { ...sample, sampleTick: this._bridge ? this.currentTick() : null } : sample;
+    }
     // Direct WASM samplers are synchronous: an empty record is a completed
     // scientific zero/unavailable result, never a lazy transport placeholder.
     hasSamplerSnapshot() { return true; }
@@ -1129,7 +1133,7 @@ export class WasmBridge {
 
     // 0 = Periodic, 1 = Reflective, 2 = Dispersal
     setFluxBoundaryMode(mode) {
-        const normalized = Math.max(0, Math.min(2, Math.trunc(Number(mode) || 0)));
+        const normalized = validateScale0BoundarySelector(mode, 2);
         this._fluxBoundaryMode = normalized;
         if (this._module && this._bridge && typeof this._module.setFluxBoundary === 'function') {
             this._module.setFluxBoundary(this._bridge, normalized);
@@ -1140,7 +1144,7 @@ export class WasmBridge {
     // Orientation metadata: 0=X/lateral, 1=Y/vertical, 2=Z/forward-aft,
     // 3=show all axes. Boundary coverage is always controlled by the mode.
     setFluxPeriodicAxis(axis) {
-        const normalized = Math.max(0, Math.min(3, Math.trunc(Number(axis) || 0)));
+        const normalized = validateScale0BoundarySelector(axis, 3);
         this._fluxPeriodicAxis = normalized;
         if (this._module && this._bridge
             && typeof this._module.setFluxPeriodicAxis === 'function') {

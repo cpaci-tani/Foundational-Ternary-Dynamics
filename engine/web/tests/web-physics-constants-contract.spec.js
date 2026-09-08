@@ -34,15 +34,15 @@ test('Scale 4 telemetry preserves an intentional zero gravity coupling', async (
     const diagnostics = (tick) => ({ tick });
 
     const zeroHub = new TelemetryHub();
-    zeroHub.collectScale4({ G: 0, _bodies: bodies, getDiagnostics: () => diagnostics(1) });
+    zeroHub.collectScale4({ G: 0, getBodies: () => bodies, getDiagnostics: () => diagnostics(1) });
 
     const fallbackHub = new TelemetryHub();
-    fallbackHub.collectScale4({ _bodies: bodies, getDiagnostics: () => diagnostics(1) });
+    fallbackHub.collectScale4({ getBodies: () => bodies, getDiagnostics: () => diagnostics(1) });
 
     return {
       zeroPotential: zeroHub.plPE.last(),
       fallbackPotential: fallbackHub.plPE.last(),
-      expectedFallback: -G_N * 2 * 3 / Math.sqrt(1 + 1e-6),
+      expectedFallback: -G_N * 2 * 3 / Math.sqrt(1 + 1e-18),
     };
   });
 
@@ -51,19 +51,21 @@ test('Scale 4 telemetry preserves an intentional zero gravity coupling', async (
   expect(result.fallbackPotential).toBeCloseTo(result.expectedFallback, 7);
 });
 
-test('Scale 4 toolbar displays the canonical decorative gravity coupling', async ({ page }) => {
+test('Scale 4 toolbar defaults to canonical heliocentric gravity and labels the slow comparison', async ({ page }) => {
   await page.goto('/js/constants.js');
 
   const result = await page.evaluate(async () => {
-    const [{ G_N }, { getScale4ScenarioToolbarTemplate }] = await Promise.all([
+    const [{ G_N, G_HELIOCENTRIC }, { getScale4ScenarioToolbarTemplate }] = await Promise.all([
       import('/js/constants.js'),
       import('/js/scales/scale4/ui/toolbar/template.js?gravity-contract=1'),
     ]);
     return {
       gravity: G_N,
+      heliocentric: G_HELIOCENTRIC,
       markup: getScale4ScenarioToolbarTemplate(),
     };
   });
 
-  expect(result.markup).toContain(`G=${result.gravity}, lattice-natural`);
+  expect(result.markup).toContain(`<option value="physical" selected>Physical · G=${result.heliocentric.toFixed(3)}</option>`);
+  expect(result.markup).toContain(`Slow comparison · G=${result.gravity}`);
 });

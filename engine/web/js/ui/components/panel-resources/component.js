@@ -7,7 +7,7 @@ import {
     getPlanetaryPanelTemplate,
     getScaleControlsBlocksTemplate,
     getZooPanelTemplate,
-} from './template.js?v=7';
+} from './template.js?v=12';
 import { getDiagnosticsPanelTemplate } from './diagnostics-template.js';
 
 function htmlToElement(markup) {

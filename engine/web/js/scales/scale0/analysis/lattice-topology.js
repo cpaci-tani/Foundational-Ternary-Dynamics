@@ -87,16 +87,19 @@ export function fluxTubeComponents(mag, srcN, relThreshold = 0.35) {
     return { count: sizes.length, largest: sizes[0] || 0, sizes, threshold: tau };
 }
 
-/** Chirality / L–R handedness from the energy audit's left/right channels. */
+/** Squared flux/wave channel asymmetry from the audit's left/right records. */
 export function chiralityFromAudit(audit) {
-    if (!audit) return { total: 0, eAsym: 0, wvAsym: 0 };
-    const eL = audit.ELTotal ?? audit.eLTotal ?? 0, eR = audit.ERTotal ?? audit.eRTotal ?? 0;
-    const wL = audit.wvLTotal ?? 0, wR = audit.wvRTotal ?? 0;
-    const sE = eL + eR, sW = wL + wR;
+    const finite = (...values) => values.find(Number.isFinite) ?? null;
+    const asymmetry = (left, right) => {
+        const sum = left + right;
+        return Number.isFinite(left) && Number.isFinite(right) && left >= 0 && right >= 0
+            && Number.isFinite(sum) && sum > 0 ? (left - right) / sum : null;
+    };
     return {
-        total: audit.chiralityTotal ?? 0,
-        eAsym: sE !== 0 ? (eL - eR) / sE : 0,
-        wvAsym: sW !== 0 ? (wL - wR) / sW : 0,
+        total: finite(audit?.chiralityTotal),
+        // Historical property name retained; EL/ER are squared flux records.
+        eAsym: asymmetry(finite(audit?.ELTotal, audit?.eLTotal), finite(audit?.ERTotal, audit?.eRTotal)),
+        wvAsym: asymmetry(finite(audit?.wvLTotal, audit?.waveLTotal), finite(audit?.wvRTotal, audit?.waveRTotal)),
     };
 }
 

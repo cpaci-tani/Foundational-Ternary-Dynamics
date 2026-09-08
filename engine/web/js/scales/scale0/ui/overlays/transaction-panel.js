@@ -19,6 +19,8 @@ import {
     isTransactionTrackingSupported,
 } from '../../runtime/transaction-tracker.js';
 
+import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
+
 const PANEL_ID = 'transaction-panel';
 const POLL_MS = 400;
 
@@ -116,7 +118,7 @@ export function mountTransactionPanel(host) {
 
     function activeCtxAndBridge() {
         const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
-        const bridge = resolveActiveScale0BridgeFromWindow() || ctx?.bridge || null;
+        const bridge = resolveActiveScale0BridgeFromWindow() || null;
         return { ctx, bridge };
     }
 
@@ -134,7 +136,7 @@ export function mountTransactionPanel(host) {
     });
 
     function render() {
-        if (disposed) return;
+        if (disposed || !isPanelLive(host)) return;
         const { ctx, bridge } = activeCtxAndBridge();
         const supported = isTransactionTrackingSupported(bridge);
 

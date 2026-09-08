@@ -16,8 +16,8 @@ export const INSPECTOR_MODE_COPY = Object.freeze({
         prompt: 'Single-click an atom to inspect its live molecular component, bonds, and local effective chemistry.',
     },
     planetary: {
-        label: 'Planetary',
-        prompt: 'Single-click a world or star to inspect its live telemetry.',
+        label: 'Solar System',
+        prompt: 'Single-click the Sun, a planet, dwarf planet, or major moon to inspect its imported properties and live orbital state.',
     },
     cosmic: {
         label: 'Cosmic',
@@ -63,7 +63,7 @@ export function getInspectorSelectionSummary(target) {
     }
     if (target._selectedPEParticleId >= 0) return `Selected particle #${target._selectedPEParticleId}.`;
     if (target._selectedAEAtomId >= 0) return `Selected atom #${target._selectedAEAtomId}.`;
-    if (target._selectedPlanetaryId >= 0) return `Selected planetary body #${target._selectedPlanetaryId}.`;
+    if (target._selectedPlanetaryId >= 0) return `Selected Solar System body #${target._selectedPlanetaryId}.`;
     if (target._selectedCosmicId >= 0) return `Selected cosmic body #${target._selectedCosmicId}.`;
     return getInspectorModeCopy(target._engineMode).prompt;
 }

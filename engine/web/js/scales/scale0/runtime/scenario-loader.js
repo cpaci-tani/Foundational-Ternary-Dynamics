@@ -64,9 +64,10 @@ import {
 //   • SCALE0_TOGGLES is the UI-visible subset the loader resets every load.
 //   • Isolation helpers (configure_*_terms) MAY zero the full TermToggles
 //     registry, including research keys — required for certified ICs.
-//   • Research keys outside the whitelist normally persist across loads unless
-//     a configure_* helper clears them, or SCALE0_SCENARIO_RESEARCH_TERMS pins
-//     them for a specific scenario (applied after the whitelist reset).
+//   • Advanced keys outside the whitelist normally persist across loads unless
+//     a configure_* helper clears them. Keys used by
+//     SCALE0_SCENARIO_RESEARCH_TERMS are scenario-owned: every load clears them
+//     on every bridge and pins the current values only on the active owner.
 const DEFAULT_TOGGLES = SCALE0_TOGGLES;
 const PHYSICS_UI_TOGGLES = [...SCALE0_TOGGLES, ...SCALE0_ADVANCED_TOGGLES];
 
@@ -566,7 +567,7 @@ function applyAuxiliaryDefaults(ctx, viewportAdapter, scenarioId, { resetSpeed =
     setButtonActive('toggle-flux-slice', false);
 }
 
-function applyToggleDefaults(mainScale0, mockScale0, scenarioName) {
+function applyToggleDefaults(mainScale0, mockScale0, activeScale0, scenarioName) {
     for (const [key, val, elId] of DEFAULT_TOGGLES) {
         mainScale0.setToggle(key, val);
         setCheckboxValue(elId, val);
@@ -615,14 +616,23 @@ function applyToggleDefaults(mainScale0, mockScale0, scenarioName) {
         }
     }
 
-    // Research terms outside SCALE0_TOGGLES (no checkbox). Applied after the
-    // whitelist so isolation profiles that enable langevin / ew_background_sweep
-    // / pair_production / emergent_forces reach both bridges.
+    // Scenario-owned research terms must never survive on a dormant bridge.
+    // A worker-hosted scenario used to pin Langevin on both the worker and the
+    // main-thread fallback; switching away reset only the active worker, so a
+    // later fallback could resurrect the old thermostat. Clear every key used
+    // by any scenario on both owners, then pin this scenario only on the owner
+    // that will actually execute it. Other advanced user controls retain their
+    // long-term ownership semantics.
+    const researchKeys = new Set(Object.values(SCALE0_SCENARIO_RESEARCH_TERMS)
+        .flatMap((terms) => Object.keys(terms)));
+    for (const key of researchKeys) {
+        mainScale0.setToggle?.(key, false);
+        mockScale0?.setToggle?.(key, false);
+    }
     const research = SCALE0_SCENARIO_RESEARCH_TERMS[scenarioName];
     if (research) {
         for (const [key, val] of Object.entries(research)) {
-            mainScale0.setToggle?.(key, val);
-            mockScale0?.setToggle?.(key, val);
+            activeScale0?.setToggle?.(key, val);
         }
     }
 }
@@ -846,14 +856,30 @@ export async function enforceDirectWasmInteractiveFallback(ctx) {
     return { clamped, latticeSize: Number(ctx.bridge?.latticeSize) };
 }
 
+function syncScale0InspectorOwner(ctx, bridge) {
+    if (ctx.engineMode && ctx.engineMode !== 'lattice') return;
+    if (typeof ctx.inspectorRuntime?.setBridge === 'function') {
+        ctx.inspectorRuntime.setBridge(bridge);
+    } else {
+        ctx.inspector?.setBridge?.(bridge);
+    }
+}
+
 export async function fallbackToInThreadEngine(ctx, state, viewportAdapter, scenarioId, params) {
     if (ctx._wasmWorkerDisabled) return;     // already fell back once
+    const loadGeneration = ctx._loadGeneration;
     ctx._wasmWorkerDisabled = true;
     setFluxMock(null, false);                // disposes the dead proxy; useFluxMock=false
     ctx.useFluxMock = false;
     ctx.fluxMock = null;
+    // The dead worker and the not-yet-prepared direct bridge cannot supply
+    // this scenario's point observations while fallback awaits a resize.
+    syncScale0InspectorOwner(ctx, null);
     try {
         const fallback = await enforceDirectWasmInteractiveFallback(ctx);
+        if (ctx._loadGeneration !== loadGeneration
+            || (ctx.engineMode && ctx.engineMode !== 'lattice')
+            || state.currentScenarioId !== scenarioId) return;
         if (fallback.clamped) {
             if (typeof window.showToast === 'function') {
                 window.showToast(
@@ -929,6 +955,11 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
             && ctx._loadGeneration === loadGen
             && getScale0State().currentScenarioId === scenario.id;
         const workerCallbacks = {
+            onRuntimeFailure: (msg) => {
+                if (!callbackIsCurrent()) return;
+                ctx.pauseSimulation?.();
+                reportScenarioSetupFailure(`Engine paused; current state retained. ${msg}`);
+            },
             onInitFailure: () => {
                 if (!callbackIsCurrent()) return;
                 void fallbackToInThreadEngine(ctx, state, viewportAdapter, scenarioId, params);
@@ -1012,7 +1043,10 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // Apply the in-memory scenario profile (defaults + overrides + research terms).
     // Do NOT re-read DOM checkboxes onto the worker — that re-coupled physics to
     // stale UI and undid applyToggleDefaults.
-    applyToggleDefaults(ctx.bridge.capabilities.scale0, wasmWorker?.capabilities?.scale0 ?? null, scenario.id);
+    const mainScale0 = ctx.bridge.capabilities.scale0;
+    const workerScale0 = wasmWorker?.capabilities?.scale0 ?? null;
+    const activeScale0 = useWasmWorker ? workerScale0 : mainScale0;
+    applyToggleDefaults(mainScale0, workerScale0, activeScale0, scenario.id);
 
     setFluxMock(wasmWorker, useWasmWorker);
     ctx.useFluxMock = useWasmWorker;
@@ -1021,6 +1055,9 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     ctx.resetAllVisualState();
 
     const activeBridge = (useWasmWorker && wasmWorker) ? wasmWorker : ctx.bridge;
+    // Worker inspection is already blocked by beginConfiguration. Direct
+    // setBridge can eagerly reselect/read, so bind it only after preparation.
+    if (useWasmWorker) syncScale0InspectorOwner(ctx, activeBridge);
     if (typeof activeBridge.setupScenario !== 'function') {
         reportScenarioSetupFailure(`Active Scale-0 bridge has no setupScenario (${scenario.id})`);
     }
@@ -1151,6 +1188,10 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     }
 
     if (resetTickAccumulator) state.tickAccumulator.reset();
+    // setBridge may synchronously read a retained selection. At this point
+    // setup, auxiliary/gravity overrides and optional prime tick have finished.
+    // Native pending-configuration guards still fence asynchronous point reads.
+    if (!useWasmWorker) syncScale0InspectorOwner(ctx, setupOk !== false ? activeBridge : null);
     if (setupOk !== false && canSynchronouslyAcknowledge) {
         ctx.syncScale0AuthoritativeLatticeSize?.(activeN);
         completeScale0AuthoritativeLoad({
@@ -1312,6 +1353,9 @@ async function performScale0LatticeResize(
 }
 
 export function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) {
+    if (!Number.isSafeInteger(newSize) || newSize < 1) {
+        return Promise.reject(new RangeError('Scale-0 lattice size must be a positive safe integer'));
+    }
     const scenarioId = state.currentScenarioId || readInputValue('scenario-select', 'flux-pulse');
     const resizeIntent = (ctx._scale0ResizeIntentGeneration || 0) + 1;
     ctx._scale0ResizeIntentGeneration = resizeIntent;

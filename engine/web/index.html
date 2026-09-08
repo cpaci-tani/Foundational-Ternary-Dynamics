@@ -20,7 +20,7 @@
     <!-- First-paint CSS: tokens, shell, loading overlay, viewport chrome, primitives, themes. -->
     <link rel="stylesheet" href="css/tokens.css?v=15">
     <link rel="stylesheet" href="css/scale-visibility.css">
-    <link rel="stylesheet" href="css/ui/shell/app-shell.css?v=5">
+    <link rel="stylesheet" href="css/ui/shell/app-shell.css?v=6">
     <link rel="stylesheet" href="css/ui/shell/regions.css">
     <link rel="stylesheet" href="css/ui/shell/responsive.css?v=9">
     <link rel="stylesheet" href="css/ui/shell/z-layers.css?v=2">
@@ -28,8 +28,8 @@
     <link rel="stylesheet" href="css/ui/components/gpu-server-card.css?v=2">
     <link rel="stylesheet" href="css/ui/components/topbar.css?v=2">
     <link rel="stylesheet" href="css/ui/components/workspace-tabs.css?v=2">
-    <link rel="stylesheet" href="css/ui/components/panel-dock.css?v=2">
-    <link rel="stylesheet" href="css/ui/components/floating-window.css?v=4">
+    <link rel="stylesheet" href="css/ui/components/panel-dock.css?v=3">
+    <link rel="stylesheet" href="css/ui/components/floating-window.css?v=5">
     <link rel="stylesheet" href="css/ui/components/panel-mount.css?v=2">
     <link rel="stylesheet" href="css/ui/components/viewport-frame.css?v=2">
     <link rel="stylesheet" href="css/ui/components/viewport-overlays.css?v=3">
@@ -74,7 +74,7 @@
             { href: 'css/ui/scales/scale2/legend.css?v=3' },
             { href: 'css/ui/scales/scale2/toolbar.css' },
             { href: 'css/ui/scales/scale2/overlay.css?v=2' },
-            { href: 'css/ui/scales/scale4/overlays.css?v=2' },
+            { href: 'css/ui/scales/scale4/overlays.css?v=6' },
             { href: 'css/ui/primitives/toast.css' },
             { href: 'css/ui/panels/diagnostics-panel.css?v=8' },
             { href: 'css/ui/panels/charts-panel.css?v=10' },
@@ -275,7 +275,7 @@
                     <option value="particles">Scale 1 (Particles)</option>
                     <option value="atoms">Scale 2 (Atoms)</option>
                     <option value="molecules">Scale 3 (Molecules)</option>
-                    <option value="planetary">Scale 4 (Planetary)</option>
+                    <option value="planetary">Scale 4 (Solar System)</option>
                     <!-- Scale 5 (Cosmic) hidden — engine unfinished. Re-enable this option when ready. -->
                     <option value="meta">Scale 6 (Meta)</option>
                 </select>
@@ -307,7 +307,7 @@
                     <span class="scale1-only">Scale 1 &middot; Particle Engine</span>
                     <span class="scale2-only">Scale 2 &middot; Atom Engine</span>
                     <span class="scale3-only">Scale 3 &middot; Molecular Engine</span>
-                    <span class="scale4-only">Scale 4 &middot; Planetary Sandbox</span>
+                    <span class="scale4-only">Scale 4 &middot; Solar System</span>
                     <span class="scale5-only">Scale 5 &middot; Cosmic Engine</span>
                 </div>
                 <!-- Scale control cards are rendered by each scale's ControlsComponent (via controller.bindUI) -->
@@ -330,8 +330,8 @@
 
             <!-- Physics panel is rendered by js/ui/components/panel-resources -->
 
-        <!-- ── System Explorer (Planetary) ──────────────────────── -->
-        <!-- Planetary panel is rendered by js/ui/components/panel-resources -->
+        <!-- Solar System panel (internal mode key: planetary) -->
+        <!-- Rendered by js/ui/components/panel-resources -->
 
             <!-- Scene panel is rendered by js/ui/panels/scene-panel -->
             <div class="panel" id="panel-scene"></div>
@@ -374,10 +374,10 @@
                 <div class="status-dot idle" id="status-dot"></div>
                 <span id="status-state">Idle</span>
             </div>
-            <div class="status-item" id="status-time-item">T: <span class="status-value" id="status-ptime">0</span>
+            <div class="status-item" id="status-time-item"><span id="status-time-label">T</span>: <span class="status-value" id="status-ptime">0</span>
             </div>
-            <div class="status-item">Particles: <span class="status-value" id="status-particles">0</span></div>
-            <div class="status-item">Energy: <span class="status-value" id="status-energy">0.0000</span></div>
+            <div class="status-item"><span id="status-particles-label">Particles</span>: <span class="status-value" id="status-particles">0</span></div>
+            <div class="status-item"><span id="status-energy-label">Energy</span>: <span class="status-value" id="status-energy">0.0000</span></div>
             <div class="status-item" style="margin-left:auto">
                 <span class="status-value" id="status-fps">--</span> fps
             </div>
@@ -391,7 +391,7 @@
     </div>
 
     <!-- ── Application Scripts ──────────────────────── -->
-    <script type="module" src="js/app.js?v=133"></script>
+    <script type="module" src="js/app.js?v=145"></script>
 </body>
 
 </html>

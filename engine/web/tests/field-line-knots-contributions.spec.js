@@ -42,7 +42,7 @@ test('energy: per-knot ½|E|² over the box + scenario fractions', () => {
         positions: new Float32Array([...c0, ...c1, 15, 15, 15]),
         vectors: new Float32Array([2, 0, 0, 0, 2, 0, 10, 0, 0]),
     };
-    const c = tr.measureContributions({ eField, bField: null, fluxVolume: null, divJ: null, latticeSize: 33 });
+    const c = tr.measureContributions({ tick: 0, eField, bField: null, fluxVolume: null, divJ: null, latticeSize: 33 });
     expect(c.count).toBe(2);
     expect(c.totals.energy).toBeCloseTo(54, 5);     // 2 + 2 + 50
     expect(c.energy[0]).toBeCloseTo(2, 5);
@@ -57,7 +57,7 @@ test('flux: exact integral over the dense N³ volume; each voxel counted once', 
     const { tr } = twoKnots();
     const N = 33;
     const fluxVolume = new Float64Array(N * N * N).fill(1);   // |J|=1 everywhere
-    const c = tr.measureContributions({ eField: null, bField: null, fluxVolume, divJ: null, latticeSize: N });
+    const c = tr.measureContributions({ tick: 0, eField: null, bField: null, fluxVolume, divJ: null, latticeSize: N });
     expect(c.totals.flux).toBeCloseTo(N * N * N, 5);          // sum of all voxels
     // each box is centroid±1 → integer voxels {c-1,c,c+1}³ = 27, disjoint boxes
     expect(c.flux[0]).toBe(27);
@@ -77,7 +77,7 @@ test('flux: compact FTV2 grid is integrated with physical cell-volume weights', 
         stride,
         axisCount,
     };
-    const c = tr.measureContributions({ fluxVolume: volume, latticeSize: N });
+    const c = tr.measureContributions({ tick: 0, fluxVolume: volume, latticeSize: N });
     // Interior samples cover 4³ cells; terminal samples cover the remaining
     // 1³ edge. Weighted together they represent the full physical volume.
     expect(c.totals.flux).toBeCloseTo(N ** 3, 5);
@@ -97,7 +97,7 @@ test('live sparse vector samples use terminal-cell volume weights without a dens
         positions: new Float32Array([0, 0, 0, 4, 4, 4, 8, 8, 8]),
         vectors: new Float32Array([1, 0, 0, 1, 0, 0, 1, 0, 0]),
     };
-    const c = tr.measureContributions({ fluxField, latticeSize: N, sampleStride: stride });
+    const c = tr.measureContributions({ tick: 0, fluxField, latticeSize: N, sampleStride: stride });
     // Represented cells are 4³, 4³, and the shorter terminal 2³ cell.
     expect(c.totals.flux).toBe(64 + 64 + 8);
     expect(c.sampling.fluxMode).toBe('sampled-vector');
@@ -113,7 +113,7 @@ test('charge: per-knot |∇·J| over the box + fractions', () => {
         positions: new Float32Array([...c0, 15, 15, 15]),
         values: new Float32Array([3, 7]),                    // 3 inside knot0, 7 background
     };
-    const c = tr.measureContributions({ eField: null, bField: null, fluxVolume: null, divJ, latticeSize: 33 });
+    const c = tr.measureContributions({ tick: 0, eField: null, bField: null, fluxVolume: null, divJ, latticeSize: 33 });
     expect(c.totals.charge).toBeCloseTo(10, 5);
     expect(c.charge[0]).toBeCloseTo(3, 5);
     expect(c.chargeFrac[0]).toBeCloseTo(0.3, 6);
@@ -124,33 +124,35 @@ test('E and B both contribute to energy', () => {
     const c0 = [z.centroids[0], z.centroids[1], z.centroids[2]];
     const eField = { count: 1, positions: new Float32Array(c0), vectors: new Float32Array([2, 0, 0]) }; // ½·4=2
     const bField = { count: 1, positions: new Float32Array(c0), vectors: new Float32Array([0, 0, 2]) }; // ½·4=2
-    const c = tr.measureContributions({ eField, bField, fluxVolume: null, divJ: null, latticeSize: 33 });
+    const c = tr.measureContributions({ tick: 0, eField, bField, fluxVolume: null, divJ: null, latticeSize: 33 });
     expect(c.energy[0]).toBeCloseTo(4, 5);          // E + B
     expect(c.totals.energy).toBeCloseTo(4, 5);
 });
 
+// Numerical fixtures declare their observation tick explicitly; live mixed-source
+// samples are gated separately before reaching this accumulator.
 test('history accumulates per knot and prunes the dead', () => {
     const tr = new FieldLineKnotTracker(opt);
     tr.record(makeStreamlines(clump([5, 5, 5])), null, 0, 33);
     const id = tr.getTelemetry().ids[0];
     const c0 = [tr.getKnotZones().centroids[0], tr.getKnotZones().centroids[1], tr.getKnotZones().centroids[2]];
     const eField = { count: 1, positions: new Float32Array(c0), vectors: new Float32Array([1, 0, 0]) };
-    tr.measureContributions({ eField, latticeSize: 33 });
-    tr.measureContributions({ eField, latticeSize: 33 });
+    tr.measureContributions({ tick: 0, eField, latticeSize: 33 });
+    tr.measureContributions({ tick: 0, eField, latticeSize: 33 });
     const h = tr.getKnotHistory(id);
     expect(h.n).toBe(2);
     expect(h.energyFrac.length).toBe(2);
     expect(h.energyFrac[0]).toBeCloseTo(1, 6);      // the only sample → 100% of energy
     // knot dies (empty record) → its history is pruned
     tr.record({ count: 0, buffer: new Float32Array(0), offsets: new Int32Array(0), lengths: new Int32Array(0) }, null, 1, 33);
-    tr.measureContributions({ eField, latticeSize: 33 });
+    tr.measureContributions({ tick: 1, eField, latticeSize: 33 });
     expect(tr.getKnotHistory(id).n).toBe(0);
 });
 
 test('reset clears contributions + history', () => {
     const { tr } = twoKnots();
     const c0 = [tr.getKnotZones().centroids[0], tr.getKnotZones().centroids[1], tr.getKnotZones().centroids[2]];
-    tr.measureContributions({ eField: { count: 1, positions: new Float32Array(c0), vectors: new Float32Array([1, 0, 0]) }, latticeSize: 33 });
+    tr.measureContributions({ tick: 0, eField: { count: 1, positions: new Float32Array(c0), vectors: new Float32Array([1, 0, 0]) }, latticeSize: 33 });
     tr.reset();
     expect(tr.getContributions().count).toBe(0);
     expect(tr.getContributions().totals.energy).toBe(0);

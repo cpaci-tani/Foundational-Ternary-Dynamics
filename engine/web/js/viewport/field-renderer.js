@@ -180,7 +180,7 @@ export class ViewportFieldRenderer {
             this._eFieldLines, this._bFieldLines, this._poyntingVectors,
             this._divField, this._forceVolume, this._gravityField,
             this._strongForce, this._weakField,
-            this._darkMatterHalo, this._dampingZones, this._genesisIsosurface,
+            this._darkMatterHalo, this._dampingZones, this._knotZones, this._genesisIsosurface,
             this._confinementStrings, this._dualFluxVolume,
             this._chiralityField, this._phaseNeedles,
             this._quantumField,
@@ -188,6 +188,11 @@ export class ViewportFieldRenderer {
         for (const m of dynamicMeshes) {
             if (m && m.geometry) m.geometry.setDrawRange(0, 0);
         }
+        this._horizonField?.geo.setDrawRange(0, 0);
+        this._stateField?.geo.setDrawRange(0, 0);
+        for (const cloud of Object.values(this._scalarClouds || {})) cloud.geo.setDrawRange(0, 0);
+        this._psi2Data = this._phaseData = this._lagrangianData = this._entropyData = null;
+        this._quantumFieldKind = null;
         // These three renderers distinguish requested from drawable state.
         // A resize invalidates their buffers, so hide the meshes until the
         // next coherent overlay update repopulates a non-empty draw range.
@@ -254,7 +259,8 @@ export class ViewportFieldRenderer {
             this._scene.remove(obj);
             if (obj.geometry) obj.geometry.dispose();
             if (obj.material) {
-                if (obj.material.map) obj.material.map.dispose();
+                // Textures are shared: instance _softDiscTex is disposed once
+                // below; the module-level weak sprite remains reusable.
                 obj.material.dispose();
             }
         };

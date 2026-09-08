@@ -123,6 +123,7 @@ export class ViewportFluxRenderer {
         this._fluxActivationScratchA = new Float64Array(0);
         this._fluxActivationScratchB = new Float64Array(0);
         this._fluxDensitySnapshot = new Float64Array(0);
+        this._fluxPendingDensitySnapshot = new Float64Array(0);
         this._fluxAsyncJob = null;
         this._fluxPendingFrame = null;
         this._fluxAsyncRaf = 0;
@@ -143,6 +144,8 @@ export class ViewportFluxRenderer {
 
     /** Reset visual normalization at an authoritative scenario/resize boundary. */
     resetFluxNormalization() {
+        this._cancelFluxAsyncUpdate();
+        this._fluxVolume?.geometry.setDrawRange(0, 0);
         this._fluxMaxDecay = 0;
     }
 
@@ -227,7 +230,7 @@ export class ViewportFluxRenderer {
             vertexShader: FLUX_VOL_VERT,
             fragmentShader: PARTICLE_FRAG,
             uniforms: {
-                ...PARTICLE_SHADER_UNIFORMS,
+                ...Object.fromEntries(Object.entries(PARTICLE_SHADER_UNIFORMS).map(([key, uniform]) => [key, { ...uniform }])),
                 uOpacity: { value: glow ? FLUX_GLOW_UOPACITY : FLUX_FLAT_UOPACITY },
                 uGlow: { value: glow ? FLUX_GLOW_UGLOW : 0.0 },
                 uManifestEnabled: { value: 0 },
@@ -280,6 +283,7 @@ export class ViewportFluxRenderer {
         this._fluxActivationScratchA = new Float64Array(count);
         this._fluxActivationScratchB = new Float64Array(count);
         this._fluxDensitySnapshot = new Float64Array(count);
+        this._fluxPendingDensitySnapshot = new Float64Array(count);
     }
 
     _mapManifestedState(particleData, sourceN, compactSpacing, compactOrigin, compact) {
@@ -438,7 +442,14 @@ export class ViewportFluxRenderer {
     }
 
     _queueLargeFluxUpdate(frame, particleData) {
-        this._fluxPendingFrame = { ...frame, densitySource: frame.density, particleData };
+        // One reusable pending snapshot is distinct from the active job's
+        // snapshot. Bridge buffers may be reused before this job starts.
+        this._fluxPendingDensitySnapshot.set(frame.density);
+        const positions = particleData?.positions?.slice();
+        this._fluxPendingFrame = { ...frame,
+            densitySource: this._fluxPendingDensitySnapshot,
+            particleData: positions ? { positions, count: particleData.count } : null,
+        };
         if (!this._fluxAsyncJob) this._startPendingFluxUpdate();
     }
 
@@ -548,6 +559,7 @@ export class ViewportFluxRenderer {
 
         // Early exit if no data.
         if (!density || density.length === 0) {
+            this._cancelFluxAsyncUpdate();
             if (this._fluxVolume) this._fluxVolume.geometry.setDrawRange(0, 0);
             return;
         }
@@ -569,14 +581,15 @@ export class ViewportFluxRenderer {
                 || sourceN < 1 || sourceN > FLUX_SOURCE_MAX_AXIS_POINTS
                 || !Number.isFinite(compactSpacing) || compactSpacing < 1
                 || density.length !== compactCount) {
-                // Async resize transition or malformed descriptor: retain the
-                // previous valid draw until the matching cache arrives.
+                this._cancelFluxAsyncUpdate();
+                this._fluxVolume?.geometry.setDrawRange(0, 0);
                 return;
             }
         } else {
             const total = N * N * N;
             if (density.length !== total) {
-                // Size mismatch during an async resize/startup transition.
+                this._cancelFluxAsyncUpdate();
+                this._fluxVolume?.geometry.setDrawRange(0, 0);
                 return;
             }
             sourceN = N;
@@ -584,6 +597,9 @@ export class ViewportFluxRenderer {
 
         // Capacity and scientific coordinates depend only on the received
         // source grid. The threshold is deliberately absent from this call.
+        if (this._fluxVolumeSize !== latticeSize || this._fluxVolumeAxisCapacity !== sourceN) {
+            this._cancelFluxAsyncUpdate();
+        }
         this._ensureFluxVolumeCapacity(latticeSize, sourceN);
 
         const _bs = this._boundaryShape;
@@ -683,6 +699,7 @@ export class ViewportFluxRenderer {
     toggleFluxVolume(on) {
         const next = !!on;
         this.showFlux = next;
+        if (!next) this._cancelFluxAsyncUpdate();
         if (!this._fluxVolume) { if (!next) return; this._buildFluxVolume(this._latticeSize); }
         if (this._fluxVolume.visible === next) return;
         this._fluxVolume.visible = next;

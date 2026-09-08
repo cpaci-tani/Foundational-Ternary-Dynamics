@@ -82,6 +82,15 @@ export class FieldLineKnotTracker {
     // tick        : integer engine tick
     // latticeSize : N
     record(streamlines, fieldSamples, tick, latticeSize) {
+        // Unknown sample provenance cannot create a fictitious tick-zero
+        // history or attribute an old sampler to later diagnostics.
+        if (!Number.isSafeInteger(tick) || tick < 0) {
+            this._tel = { ...emptyTelemetry(), sampleTick: null, status: 'sample-tick-unavailable' };
+            this._contrib = { ...emptyContrib(), sampleTick: null, status: 'sample-tick-unavailable' };
+            this._zones = { ...this._zones, count: 0 };
+            this._agg.alive = 0;
+            return this._tel;
+        }
         const N = latticeSize | 0;
         const cs = this.cellSize;
         const G = Math.max(1, Math.ceil(N / cs));
@@ -322,7 +331,15 @@ export class FieldLineKnotTracker {
     // their original exact/weighted integration paths.
     // Each sample/voxel is assigned to ONE knot (nearest containing box) so the
     // fractions never double-count and Σ frac == captured.
+    invalidateContributions(reason = 'sample-provenance-unavailable') {
+        this._contrib = { ...emptyContrib(), sampleTick: null, status: reason };
+        return this._contrib;
+    }
+
     measureContributions({ eField, bField, fluxField, fluxVolume, divJ, latticeSize, sampleStride = 1, tick = null }) {
+        if (!Number.isSafeInteger(tick) || tick < 0) {
+            return this.invalidateContributions('sample-tick-unavailable');
+        }
         const K = this._zones.count;
         const cen = this._zones.centroids, ext = this._zones.extents, zids = this._zones.ids;
         const N = latticeSize | 0;
@@ -434,6 +451,7 @@ export class FieldLineKnotTracker {
         }
         const ids = Int32Array.from(zids);
         this._contrib = {
+            sampleTick: Number.isSafeInteger(tick) && tick >= 0 ? tick : null,
             count: K, ids, energy, flux, charge, energyFrac, fluxFrac, chargeFrac,
             totals: { energy: totE, flux: totF, charge: totQ },
             captured: {
@@ -453,6 +471,7 @@ export class FieldLineKnotTracker {
         };
 
         // accumulate per-knot history; prune knots that died
+        if (!Number.isSafeInteger(tick) || tick < 0) return this._contrib;
         const alive = new Set();
         for (let k = 0; k < K; k++) {
             const id = ids[k]; alive.add(id);

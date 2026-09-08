@@ -27,6 +27,7 @@ import {
     forceMagnitudes,
     gravityProxySamplesFromVolume,
     gravitySlice,
+    gravitySliceFromSlab,
     maxRhoOf,
 } from '../../analysis/gravity-analysis.js?v=4';
 import {
@@ -523,6 +524,7 @@ export function mountGravityPanel(host, getBridge) {
     let lastSamplerVersions = null;
     let lastHadVolume = false;
     let sliceCursor = 0;
+    let slabRetryAll = false;
     let inapplicable = false;
     let disposed = false;
     let armSub = null;
@@ -577,6 +579,7 @@ export function mountGravityPanel(host, getBridge) {
         lastSamplerVersions = null;
         lastHadVolume = false;
         sliceCursor = 0;
+        slabRetryAll = false;
         // Never reveal a previous scenario generation while the new transport
         // is still filling its lazy sampler caches. Neutralize every rendered
         // scientific surface at the same boundary that retires the JS values.
@@ -598,6 +601,46 @@ export function mountGravityPanel(host, getBridge) {
     function paintSlices(caps, { all = false, preparedVolume = null, preparedMaxRho = 0 } = {}) {
         const L = caps.latticeSize || 33;
         const q = QUANTITIES.find((x) => x.kind === activeKind) || QUANTITIES[0];
+        if (typeof caps.getScale0FluxSlabsWithMaxRho === 'function') {
+            // Both rotating refresh and quantity-change batches acquire exactly
+            // one publication and scan its full-grid normalizer once. The
+            // publication still carries no exact physics sample tick.
+            const mid = gravitySliceMidIndex(L, L);
+            const repaintAll = all || slabRetryAll;
+            const targetTiles = repaintAll ? tiles : [tiles[sliceCursor % tiles.length]];
+            const batch = caps.getScale0FluxSlabsWithMaxRho(targetTiles.map(t => ({ axis: t.axis, index: mid })));
+            const valid = L > 1 && batch?.N === L && batch.slabs?.length === targetTiles.length;
+            for (let i = 0; i < targetTiles.length; i++) {
+                const t = targetTiles[i], slab = valid ? batch.slabs[i] : null;
+                const raw = slab?.axis === t.axis && slab?.index === mid
+                    && slab?.maxRho === batch.maxRho && slab?.metadata === batch.metadata
+                    ? gravitySliceFromSlab(slab, activeKind) : null;
+                if (!raw) {
+                    // A failed quantity-change read must be retried even when
+                    // the paused field/sampler versions have not advanced.
+                    lastHadVolume = false;
+                    slabRetryAll = true;
+                    for (const tile of tiles) {
+                        paintSliceToCanvas(tile.canvas, null, L, {});
+                        tile.readout.textContent = '—';
+                    }
+                    setText(modeEl, 'proxy · waiting');
+                    modeEl.title = 'Waiting for coherent magnitude slabs and their full-grid normalization.';
+                    return false;
+                }
+                const data = transposeAndFlipNN(raw, L);
+                let max = 0;
+                for (let j = 0; j < data.length; j++) if (data[j] > max) max = data[j];
+                const norm = max > 1e-30 ? 1 / max : 1;
+                paintSliceToCanvas(t.canvas, data, L, { ramp: q.ramp, signed: false, norm });
+                t.readout.textContent = `max ${formatExp(max)}`;
+            }
+            if (!repaintAll) sliceCursor++;
+            slabRetryAll = false;
+            setText(modeEl, `proxy · dense ${L}³ grid`);
+            modeEl.title = 'Slices retain full-grid normalization from the same observation; sample tick is unavailable.';
+            return true;
+        }
         // Mock/WASM expose dense N³ |J|. Native FTV2 exposes the same quantity
         // as a bounded regular grid; compute the proxy derivatives directly on
         // that grid with its physical spacing instead of expanding to N³.

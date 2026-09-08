@@ -283,6 +283,24 @@ export function seedSpectrumComparator(harness, ctx, scenarioId = RF_LATTICE_WAV
     }
 }
 
+// Native and worker vector samplers publish numeric Float32/Float64 records.
+// A typed count-zero record is a completed empty result only when the owner
+// reports a completed snapshot, if that availability API exists.
+function hasVectorSampleShape(sample) {
+    const numeric = value => value instanceof Float32Array || value instanceof Float64Array;
+    return !!sample && numeric(sample.positions) && numeric(sample.vectors)
+        && Number.isSafeInteger(sample.count) && sample.count >= 0
+        && sample.positions.length % 3 === 0 && sample.vectors.length % 3 === 0
+        && sample.count <= sample.positions.length / 3
+        && sample.count <= sample.vectors.length / 3;
+}
+
+function hasCompletedVectorSample(bridge, sample, kind, stride) {
+    return hasVectorSampleShape(sample)
+        && (typeof bridge.hasSamplerSnapshot !== 'function'
+            || bridge.hasSamplerSnapshot(kind, stride) === true);
+}
+
 // Reduce sparse vector samplers directly into the small lane accumulator set.
 // The former implementation allocated one Map entry plus one three-number
 // Array for every nonzero voxel, then scanned the lane volume and performed a
@@ -291,32 +309,46 @@ export function seedSpectrumComparator(harness, ctx, scenarioId = RF_LATTICE_WAV
 // the same sparse samples (omitted vectors are defined as zero by the WASM
 // sampler) and keeps the foreground panel update bounded.
 function reduceVectorSample(sample, laneRows, N, { wave = false, stride = 1 } = {}) {
-    if (!sample?.positions || !sample?.vectors) return;
+    if (!hasVectorSampleShape(sample)) return false;
     const positions = sample.positions;
     const vectors = sample.vectors;
-    const count = Math.min(
-        Math.max(0, Math.trunc(Number(sample.count) || 0)),
-        Math.floor(positions.length / 3),
-        Math.floor(vectors.length / 3),
-    );
+    const count = sample.count;
     const sign = wave ? -1 : 1;
     const volumeWeight = stride * stride * stride;
     const probeX = Math.round((N - 1) / 2);
 
     for (let i = 0; i < count; i++) {
         const offset = i * 3;
-        const x = Math.floor(positions[offset]);
-        const y = Math.floor(positions[offset + 1]);
-        const z = Math.floor(positions[offset + 2]);
-        const vx = sign * vectors[offset];
-        const vy = sign * vectors[offset + 1];
-        const vz = sign * vectors[offset + 2];
-        const rawEnergy = 0.5 * (vx * vx + vy * vy + vz * vz);
-        const vectorEnergy = rawEnergy * volumeWeight;
-        const magnitude = Math.sqrt(2 * rawEnergy);
+        const px = positions[offset], py = positions[offset + 1], pz = positions[offset + 2];
+        const rawVx = vectors[offset], rawVy = vectors[offset + 1], rawVz = vectors[offset + 2];
+        // Validate in the existing pass: malformed payloads never become an
+        // apparent empty lane. Partial accumulators are discarded by the caller.
+        if (!Number.isFinite(px) || !Number.isFinite(py) || !Number.isFinite(pz)
+            || !Number.isFinite(rawVx) || !Number.isFinite(rawVy) || !Number.isFinite(rawVz)) return false;
+        const x = Math.floor(px);
+        const y = Math.floor(py);
+        const z = Math.floor(pz);
+        let vx;
+        let vy;
+        let vz;
+        let vectorEnergy;
+        let magnitude;
+        let admitted = false;
 
         for (const row of laneRows) {
             if (Math.abs(y - row.y) > row._band || Math.abs(z - row.z) > row._band) continue;
+            // Samplers supply numeric typed arrays. Compute the same vector
+            // expressions once, only when at least one lane uses this site.
+            if (!admitted) {
+                vx = sign * rawVx;
+                vy = sign * rawVy;
+                vz = sign * rawVz;
+                const rawEnergy = 0.5 * (vx * vx + vy * vy + vz * vz);
+                vectorEnergy = rawEnergy * volumeWeight;
+                magnitude = Math.sqrt(2 * rawEnergy);
+                if (!Number.isFinite(vectorEnergy) || !Number.isFinite(magnitude)) return false;
+                admitted = true;
+            }
             const directional = row.componentIndex === 0 ? vx
                 : (row.componentIndex === 1 ? vy : vz);
             if (wave) {
@@ -346,6 +378,7 @@ function reduceVectorSample(sample, laneRows, N, { wave = false, stride = 1 } = 
             row._energyX += x * vectorEnergy;
         }
     }
+    return true;
 }
 
 function selectMetricStride(N) {
@@ -362,6 +395,27 @@ function selectMetricStride(N) {
         if (mid % stride === 0) return stride;
     }
     return target;
+}
+
+// Retain only the current lattice size. This cache contains no sampled state
+// or clock: owners and same-tick mutations always supply fresh field samples.
+let currentFourierBasis = null;
+
+function getFourierBasis(N) {
+    if (currentFourierBasis?.N === N) return currentFourierBasis;
+    const rows = [];
+    for (let m = 1; m <= 8; m++) {
+        const cos = new Float64Array(N);
+        const sin = new Float64Array(N);
+        const kMode = 2 * Math.PI * m / N;
+        for (let x = 0; x < N; x++) {
+            cos[x] = Math.cos(kMode * x);
+            sin[x] = Math.sin(kMode * x);
+        }
+        rows.push({ cos, sin });
+    }
+    currentFourierBasis = { N, rows };
+    return currentFourierBasis;
 }
 
 export function getSpectrumComparatorMetrics(bridge, scenarioId = RF_LATTICE_WAVE_SCENARIO_ID) {
@@ -384,6 +438,7 @@ export function getSpectrumComparatorMetrics(bridge, scenarioId = RF_LATTICE_WAV
             tag: lane.tag,
             modeN: lane.modeN,
             component: lane.component,
+            componentIndex: lane.componentIndex,
             y: lane.y,
             z: lane.z,
             amplitude: lane.amplitude,
@@ -420,30 +475,31 @@ export function getSpectrumComparatorMetrics(bridge, scenarioId = RF_LATTICE_WAV
 
     // J = flux (live sample); W = wave_vel = -E (established convention, see
     // diagnostics_compute.cpp) since there is no direct wave_vel sampler.
-    reduceVectorSample(
-        bridge.getFluxVectorSampled(sampleStride),
-        laneRows,
-        N,
-        { stride: sampleStride },
-    );
-    reduceVectorSample(
-        bridge.getEFieldSampled(sampleStride),
-        laneRows,
-        N,
-        { wave: true, stride: sampleStride },
-    );
+    const fluxSample = bridge.getFluxVectorSampled(sampleStride);
+    const fluxComplete = hasCompletedVectorSample(bridge, fluxSample, 'fluxVector', sampleStride)
+        && reduceVectorSample(fluxSample, laneRows, N, { stride: sampleStride });
+    // Consume J before invoking E: a later WASM call may invalidate its view.
+    // Always request both fields, even while J is pending, so async demand
+    // registration cannot starve the other sampler.
+    const electricSample = bridge.getEFieldSampled(sampleStride);
+    const electricComplete = hasCompletedVectorSample(bridge, electricSample, 'e', sampleStride)
+        && reduceVectorSample(electricSample, laneRows, N, { wave: true, stride: sampleStride });
+    if (!fluxComplete || !electricComplete) {
+        return { active: false, reason: 'waiting for field buffers' };
+    }
 
+    const fourierBasis = getFourierBasis(N);
     let totalLaneEnergy = 0;
     for (const row of laneRows) {
         row.energyCentroidX = row.energy > 0 ? row._energyX / row.energy : 0;
         for (let m = 1; m <= 8; m++) {
             let re = 0;
             let im = 0;
-            const kMode = 2 * Math.PI * m / N;
+            const { cos, sin } = fourierBasis.rows[m - 1];
             for (let x = 0; x < N; x++) {
                 const val = row._lineFlux[x];
-                re += val * Math.cos(kMode * x);
-                im -= val * Math.sin(kMode * x);
+                re += val * cos[x];
+                im -= val * sin[x];
             }
             row.harmonics.push(Math.sqrt(re * re + im * im) * 2 * sampleStride / N);
         }

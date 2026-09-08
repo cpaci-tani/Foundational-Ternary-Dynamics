@@ -149,7 +149,7 @@ export const sections = [
         title: 'Constraints',
         telemetryGroups: ['audit'],
         rows: [
-            { id: 'gauss',     label: 'Gauss \u03A3(div J\u2212s)\u00B2', unit: 'E*\u00B2',
+            { id: 'gauss',     label: 'Gauss residual squared', unit: 'E*\u00B2',
               source: 's0.audit.gaussViolation',     trend: 'gauss' },
             { id: 'max-gauss', label: 'Max Gauss err', unit: 'E*',
               source: 's0.audit.maxGaussError',      trend: 'aud.maxGaussError' },

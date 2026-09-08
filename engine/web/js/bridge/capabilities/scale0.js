@@ -21,6 +21,14 @@ export function createScale0Capabilities(bridge) {
         getScale0ParticleFrame: () => bridge.getParticleData(),
         getScale0FluxVolume: () => bridge.getFluxVolume(),
         getScale0FluxSlice: (axis, index) => bridge.getFluxSlice(axis, index),
+        // Optional coherent slab observation. Absence selects the existing
+        // direct/native volume path; null from a supporting owner means wait.
+        ...(typeof bridge.getFluxSlabWithMaxRho === 'function' ? {
+            getScale0FluxSlabWithMaxRho: (axis, index) => bridge.getFluxSlabWithMaxRho(axis, index),
+        } : {}),
+        ...(typeof bridge.getFluxSlabsWithMaxRho === 'function' ? {
+            getScale0FluxSlabsWithMaxRho: requests => bridge.getFluxSlabsWithMaxRho(requests),
+        } : {}),
         // Single kind-dispatched chokepoint (bridge.getSamplerOr, defined once in
         // bridge-contract.js): maps `kind` → the bridge's concrete sampler, keeps
         // the empty-sample fallback (CONTRACTS.md §2.3 — the optional pattern is

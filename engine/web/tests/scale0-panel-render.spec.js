@@ -17,6 +17,8 @@ test.describe('Scale-0 panel render V2 (FTD_PANEL_RENDER_V2)', () => {
         await gotoAndReady(page);
         const r = await page.evaluate(async () => {
             const { isPanelLive } = await import('/js/ui/panels/panel-visibility.js');
+            const fixture = document.createElement('div');
+            document.body.appendChild(fixture);
             const mk = (cls, wrapCls) => {
                 const el = document.createElement('div');
                 el.className = cls;
@@ -24,21 +26,32 @@ test.describe('Scale-0 panel render V2 (FTD_PANEL_RENDER_V2)', () => {
                     const fw = document.createElement('div');
                     fw.className = wrapCls;
                     fw.appendChild(el);
+                    fixture.appendChild(fw);
+                } else {
+                    fixture.appendChild(el);
                 }
                 return el;
             };
-            return {
+            const detached = mk('panel active');
+            detached.remove();
+            const result = {
                 active:    isPanelLive(mk('panel active')),
                 hidden:    isPanelLive(mk('panel')),
                 floated:   isPanelLive(mk('panel', 'floating-window')),
                 collapsed: isPanelLive(mk('panel', 'floating-window is-collapsed')),
+                collapsedActive: isPanelLive(mk('panel active', 'floating-window is-collapsed')),
+                detached: isPanelLive(detached),
                 nullEl:    isPanelLive(null),
             };
+            fixture.remove();
+            return result;
         });
         expect(r.active, 'active tab → live').toBe(true);
         expect(r.hidden, 'hidden docked → not live').toBe(false);
         expect(r.floated, 'floated (expanded) → live — fixes the freeze bug').toBe(true);
         expect(r.collapsed, 'floated + collapsed → not live — skip invisible work').toBe(false);
+        expect(r.collapsedActive, 'floating collapse overrides retained dock active class').toBe(false);
+        expect(r.detached, 'detached active panel has no visible consumer').toBe(false);
         expect(r.nullEl, 'null → not live').toBe(false);
     });
 

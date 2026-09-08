@@ -19,6 +19,7 @@
  */
 
 import { C_SPEED, G_N } from './constants.js';
+import { exactCounter, compareExactCounters, safeCounterNumber, normalizeNativeCounters } from './lib/exact-counter.js';
 
 // Native CUDA telemetry is published as independent group deltas.  Keep each
 // group’s provenance instead of attaching one misleading "current tick" to
@@ -139,7 +140,7 @@ export class RingBuffer {
     push(value, tick = this.total) {
         if (this.count === this.size) this._grow();
         this.data[this.head] = finiteSample(value);
-        this.ticks[this.head] = Number.isFinite(Number(tick)) ? Number(tick) : this.total;
+        this.ticks[this.head] = safeCounterNumber(tick) ?? Number.NaN;
         this.head = (this.head + 1) % this.size;
         if (this.count < this.size) this.count++;
         this.total++;
@@ -260,7 +261,7 @@ export class MultiRingBuffer {
             // contract as RingBuffer.push() and RingBufferView.setLast().
             this.data[(i * this.size) + this.head] = finiteSample(val);
         }
-        this.ticks[this.head] = Number.isFinite(Number(tick)) ? Number(tick) : this.total;
+        this.ticks[this.head] = safeCounterNumber(tick) ?? Number.NaN;
         this.head = (this.head + 1) % this.size;
         if (this.count < this.size) this.count++;
         this.total++;
@@ -272,7 +273,7 @@ export class MultiRingBuffer {
         for (let i = 0; i < this.numChannels; i++) {
             this.data[(i * this.size) + this.head] = frameArray[i];
         }
-        this.ticks[this.head] = Number.isFinite(Number(tick)) ? Number(tick) : this.total;
+        this.ticks[this.head] = safeCounterNumber(tick) ?? Number.NaN;
         this.head = (this.head + 1) % this.size;
         if (this.count < this.size) this.count++;
         this.total++;
@@ -397,7 +398,7 @@ export class TelemetryHub {
             _overlayProvenanceOn: false,
         };
         this.s2  = { diag: null, runtime: null, molecule: null };  // also used for scale3
-        this.s4  = { diag: null };
+        this.s4  = { diag: null, runtime: null };
         this.s5  = { diag: null, cosmic: null };
 
         // Demand-gated telemetry bookkeeping (SPEC_SCALE0_PERF_TELEMETRY_PANELS §5).
@@ -516,9 +517,13 @@ export class TelemetryHub {
         this._aeInitialEnergy = null;
 
         // ── Scale 4 — Planetary (200-sample) ───────────
-                this._s4_pl = new MultiRingBuffer(200, ['plKE', 'plPE', 'plTotal', 'plEnergyDrift', 'plCount', 'plMomentum', 'plVirial', 'plSystemRadius']);
+        this._s4_pl = new MultiRingBuffer(200, ['plKE', 'plPE', 'plTotal', 'plEnergyDrift', 'plCount', 'plMomentum', 'plVirial', 'plSystemRadius', 'plNewtonianAccel', 'plRelAccel', 'plJ2Accel', 'plRadiationAccel', 'plRadiationPressureAccel', 'plPrDragAccel', 'plSolarWindAccel', 'plTideAccel', 'plAtmosphereAccel', 'plDissipationPower', 'plDissipated', 'plCollisions', 'plRoche', 'plMassLoss']);
         const plVs = this._s4_pl.views;
         this.plKE = plVs.plKE; this.plPE = plVs.plPE; this.plTotal = plVs.plTotal; this.plEnergyDrift = plVs.plEnergyDrift; this.plCount = plVs.plCount; this.plMomentum = plVs.plMomentum; this.plVirial = plVs.plVirial; this.plSystemRadius = plVs.plSystemRadius;
+        this.plNewtonianAccel = plVs.plNewtonianAccel; this.plRelAccel = plVs.plRelAccel; this.plJ2Accel = plVs.plJ2Accel; this.plRadiationAccel = plVs.plRadiationAccel;
+        this.plRadiationPressureAccel = plVs.plRadiationPressureAccel; this.plPrDragAccel = plVs.plPrDragAccel; this.plSolarWindAccel = plVs.plSolarWindAccel;
+        this.plTideAccel = plVs.plTideAccel; this.plAtmosphereAccel = plVs.plAtmosphereAccel; this.plDissipationPower = plVs.plDissipationPower;
+        this.plDissipated = plVs.plDissipated; this.plCollisions = plVs.plCollisions; this.plRoche = plVs.plRoche; this.plMassLoss = plVs.plMassLoss;
         this._plInitialEnergy = null;
 
         // ── Scale 5 — Cosmic (200-sample) ──────────────
@@ -541,15 +546,13 @@ export class TelemetryHub {
                 : 'unavailable';
             const result = {
                 source: external.backend ?? source,
-                epoch: external.epoch ?? null,
-                sourceEpoch: external.sourceEpoch ?? null,
-                stateVersion: Number.isFinite(external.stateVersion)
-                    ? external.stateVersion : null,
-                snapshotVersion: Number.isFinite(external.snapshotVersion)
-                    ? external.snapshotVersion : (Number.isFinite(external.stateVersion)
-                        ? external.stateVersion : ++this._s0LocalSampleSequence),
-                tick: Number.isFinite(externalTick) ? externalTick : null,
-                sampleTick: Number.isFinite(externalTick) ? externalTick : null,
+                epoch: exactCounter(external.epoch),
+                sourceEpoch: exactCounter(external.sourceEpoch),
+                stateVersion: exactCounter(external.stateVersion),
+                snapshotVersion: exactCounter(external.snapshotVersion)
+                    ?? exactCounter(external.stateVersion) ?? ++this._s0LocalSampleSequence,
+                tick: exactCounter(externalTick),
+                sampleTick: exactCounter(externalTick),
                 stale: !hasValue || external.stale === true || status !== 'available',
                 status,
                 sampledAt: Number.isFinite(external.sampledAt) ? external.sampledAt : null,
@@ -587,17 +590,15 @@ export class TelemetryHub {
         const tick = meta.tick ?? snapshot?.tick ?? value?.tick ?? null;
         return {
             source,
-            epoch: meta.epoch ?? snapshot?.epoch ?? null,
-            sourceEpoch: meta.sourceEpoch ?? snapshot?.sourceEpoch ?? null,
-            stateVersion: Number.isFinite(stateVersion) ? stateVersion : null,
+            epoch: exactCounter(meta.epoch ?? snapshot?.epoch),
+            sourceEpoch: exactCounter(meta.sourceEpoch ?? snapshot?.sourceEpoch),
+            stateVersion: exactCounter(stateVersion),
             // Older native servers have no version metadata.  Give each
             // response a synthetic monotonic identity so their cache remains
             // safe, while preferring real source stateVersion when present.
-            snapshotVersion: Number.isFinite(snapshotVersion)
-                ? snapshotVersion : ++this._s0LocalSampleSequence,
-            tick: Number.isFinite(tick) ? tick : null,
-            sampleTick: Number.isFinite(meta.sampleTick ?? tick)
-                ? (meta.sampleTick ?? tick) : null,
+            snapshotVersion: exactCounter(snapshotVersion) ?? ++this._s0LocalSampleSequence,
+            tick: exactCounter(tick),
+            sampleTick: exactCounter(meta.sampleTick ?? tick),
             stale: !!(meta.stale || snapshot?.stale),
             sampledAt: Number.isFinite(meta.sampledAt) ? meta.sampledAt : null,
             // Preserve bridge receipt time so a temporarily busy UI still
@@ -610,38 +611,10 @@ export class TelemetryHub {
     _compareScale0GroupMeta(incoming, current) {
         if (!current) return 1;
         if (incoming.source !== current.source) return 1;
-        if (incoming.sourceEpoch !== null && current.sourceEpoch !== null
-            && incoming.sourceEpoch !== current.sourceEpoch) {
-            const incomingSource = Number(incoming.sourceEpoch);
-            const currentSource = Number(current.sourceEpoch);
-            if (Number.isFinite(incomingSource) && Number.isFinite(currentSource)) {
-                return Math.sign(incomingSource - currentSource);
-            }
-            return String(incoming.sourceEpoch).localeCompare(String(current.sourceEpoch));
-        }
-        if (incoming.epoch !== null && current.epoch !== null
-            && incoming.epoch !== current.epoch) {
-            const inEpoch = Number(incoming.epoch);
-            const currentEpoch = Number(current.epoch);
-            if (Number.isFinite(inEpoch) && Number.isFinite(currentEpoch)) {
-                return Math.sign(inEpoch - currentEpoch);
-            }
-            return String(incoming.epoch).localeCompare(String(current.epoch));
-        }
-        // stateVersion is per-group and therefore takes precedence over a
-        // global publication sequence. Equal state versions are duplicates,
-        // even if another group advanced the aggregate snapshot meanwhile.
-        if (incoming.stateVersion !== null && current.stateVersion !== null) {
-            // A later aggregate publication can contain this same cached
-            // group. Equal source versions are duplicates, not fresh data.
-            return Math.sign(incoming.stateVersion - current.stateVersion);
-        }
-        if (incoming.tick !== null && current.tick !== null
-            && incoming.tick !== current.tick) {
-            return Math.sign(incoming.tick - current.tick);
-        }
-        if (incoming.snapshotVersion !== null && current.snapshotVersion !== null) {
-            return Math.sign(incoming.snapshotVersion - current.snapshotVersion);
+        for (const key of ['sourceEpoch', 'epoch', 'stateVersion', 'tick', 'snapshotVersion']) {
+            const order = compareExactCounters(incoming[key], current[key]);
+            if (order === null) continue;
+            if (order || key === 'stateVersion') return order;
         }
         return 0;
     }
@@ -700,12 +673,12 @@ export class TelemetryHub {
     }
 
     _observeScale0SourceEpoch(snapshot, source) {
-        const epoch = Number(snapshot?.sourceEpoch);
-        if (!Number.isFinite(epoch)) return;
+        const epoch = exactCounter(snapshot?.sourceEpoch);
+        if (epoch === null) return;
         const current = this.s0.meta.expectedSourceEpoch;
         const currentSource = this.s0.meta.expectedSource;
-        if (currentSource === source && current !== null && epoch < current) return;
-        const boundaryChanged = currentSource !== source || current === null || epoch > current;
+        if (currentSource === source && current !== null && compareExactCounters(epoch, current) < 0) return;
+        const boundaryChanged = currentSource !== source || current === null || compareExactCounters(epoch, current) > 0;
         this.s0.meta.expectedSource = source;
         this.s0.meta.expectedSourceEpoch = epoch;
         if (boundaryChanged) {
@@ -921,6 +894,8 @@ export class TelemetryHub {
      */
     ingestScale0Snapshot(snapshot, source = 'native') {
         if (!snapshot || typeof snapshot !== 'object') return false;
+        try { normalizeNativeCounters(snapshot); } catch (_) { return false; }
+        if (/^[0-9a-f]{32}$/.test(snapshot.nativeInstanceId ?? '')) source = `${source}:${snapshot.nativeInstanceId}`;
         this._observeScale0SourceEpoch(snapshot, source);
         if (snapshot.type === 'telemetry_invalidated') {
             for (const group of SCALE0_SNAPSHOT_GROUPS) {
@@ -964,11 +939,11 @@ export class TelemetryHub {
         if (!meta) return null;
         const expectedEpoch = this.s0.meta.expectedSourceEpoch;
         const expectedSource = this.s0.meta.expectedSource;
-        const groupEpoch = Number(meta.sourceEpoch);
+        const groupEpoch = exactCounter(meta.sourceEpoch);
         const staleBySourceBoundary = expectedSource !== null
-            && Number.isFinite(expectedEpoch)
+            && expectedEpoch !== null
             && (meta.source !== expectedSource
-                || !Number.isFinite(groupEpoch) || groupEpoch < expectedEpoch);
+                || groupEpoch === null || compareExactCounters(groupEpoch, expectedEpoch) < 0);
         const receivedAt = Number.isFinite(meta.receivedAt) ? meta.receivedAt : telemetryNow();
         return {
             ...meta,
@@ -1364,12 +1339,17 @@ export class TelemetryHub {
         const diag = bridge.getDiagnostics?.();
         if (!diag) return null;
         this.s4.diag = diag;
+        this.s4.runtime = {
+            G: bridge.G,
+            softeningSq: bridge.softeningSq,
+            provenance: diag.provenance || null,
+        };
 
         const currentTick = diag.tick || 0;
         if (currentTick !== this._lastTick4) {
             this._lastTick4 = currentTick;
 
-            const bodies = bridge._bodies || [];
+            const bodies = bridge.getBodies?.() || [];
             const N = bodies.length;
 
             let ke = 0;
@@ -1393,7 +1373,7 @@ export class TelemetryHub {
 
             // A bridge may intentionally disable gravity with G = 0. Only a
             // missing value falls back to the canonical lattice coupling.
-            const G = bridge.G ?? G_N;
+            const G = diag.newtonianEnabled === false ? 0 : (bridge.G ?? G_N);
             for (let i = 0; i < N; i++) {
                 const bi = bodies[i];
                 const mi = bi.mass || 0;
@@ -1404,7 +1384,7 @@ export class TelemetryHub {
                     const dy = bi.y - bj.y;
                     const dz = bi.z - bj.z;
                     const r2 = dx * dx + dy * dy + dz * dz;
-                    pe -= G * mi * mj / Math.sqrt(r2 + 1e-6);
+                    pe -= G * mi * mj / Math.sqrt(r2 + (bridge.softeningSq ?? 1e-18));
                 }
             }
 
@@ -1430,12 +1410,12 @@ export class TelemetryHub {
 
             const virial = pe !== 0 ? (2 * ke / Math.abs(pe)) : 0;
 
-            if (this._plInitialEnergy === null && Math.abs(totalEnergy) > 1e-12) {
+            if (this._plInitialEnergy === null && Number.isFinite(totalEnergy) && Math.abs(totalEnergy) > Number.EPSILON) {
                 this._plInitialEnergy = totalEnergy;
             }
-            const drift = this._plInitialEnergy
+            const drift = this._plInitialEnergy !== null
                 ? ((totalEnergy - this._plInitialEnergy) / Math.abs(this._plInitialEnergy)) * 100
-                : 0;
+                : unavailableSample();
 
             // Single push({...}) into the owning MultiRingBuffer — plKE etc.
             // are RingBufferViews (this._s4_pl.views.plKE); RingBufferView
@@ -1450,6 +1430,20 @@ export class TelemetryHub {
                 plMomentum: momentum,
                 plVirial: virial,
                 plSystemRadius: systemRadius,
+                plNewtonianAccel: diag.forceAudit?.newtonianAcceleration || 0,
+                plRelAccel: diag.forceAudit?.relativityAcceleration || 0,
+                plJ2Accel: diag.forceAudit?.j2Acceleration || 0,
+                plRadiationAccel: diag.forceAudit?.radiationAcceleration || 0,
+                plRadiationPressureAccel: diag.forceAudit?.radiationPressureAcceleration || 0,
+                plPrDragAccel: diag.forceAudit?.poyntingRobertsonDragAcceleration || 0,
+                plSolarWindAccel: diag.forceAudit?.solarWindDragAcceleration || 0,
+                plTideAccel: diag.forceAudit?.tideAcceleration || 0,
+                plAtmosphereAccel: diag.forceAudit?.atmosphereAcceleration || 0,
+                plDissipationPower: diag.forceAudit?.instantaneousDissipationPower || 0,
+                plDissipated: diag.dissipatedEnergy || 0,
+                plCollisions: diag.collisionCount || 0,
+                plRoche: diag.rocheDisruptionCount || 0,
+                plMassLoss: diag.stellarMassLost || 0,
             }, currentTick);
         }
         return diag;
@@ -1643,7 +1637,7 @@ export class TelemetryHub {
                 break;
                         case 4:
                 this._s4_pl.clear();
-                this.s4 = { diag: null };
+                this.s4 = { diag: null, runtime: null };
                 this._plInitialEnergy = null;
                 this._lastTick4 = -1;
                 break;

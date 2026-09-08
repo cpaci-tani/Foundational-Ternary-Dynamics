@@ -1,27 +1,26 @@
 // Main-thread proxy for the Scale-0 WASM physics Web Worker. Presents the same
 // surface the rest of Scale-0 calls on a bridge, but:
-//   • READS of the flux volume return a zero-copy view over the worker's
-//     -pthread heap (a SharedArrayBuffer); the worker keeps the getFluxVolume
-//     cache fresh in shared memory each tick, so the main thread never ticks
-//     or recomputes anything.
+//   • Flux READS return cached owned snapshots copied while a publication slot
+//     is pinned. Worker progress cannot overwrite a retained renderer frame.
 //   • diagnostics + particle frame ride postMessage (small, worker-computed).
 //   • COMMANDS (inject/toggle/setup/scenario/dt) postMessage to the worker.
 // Mirrors mock-bridge-proxy.js, but there is NO MockBridge "shadow": the WASM
-// field is C++-laid-out in the WASM heap, so reads are served directly from the
-// heap view + the last frame payload. See project memory 2026-06-16.
+// field is computed by C++; the proxy only copies completed observations.
 //
 // The hosted module is ftd_core_mt (threaded, -sPTHREAD_POOL_SIZE=8). The
 // proxy sends workerPoolSize() (host cores − 1, capped at 8). Flux reads go
-// through a double-buffered SAB with an atomic published-slot index.
+// through a reader-pinned double-buffered SAB publication protocol.
 
 import { createScale0Capabilities } from './capabilities/scale0.js';
-import { particleDataToList } from './bridge-contract.js';
+import { particleDataToList, validateScale0BoundarySelector } from './bridge-contract.js';
 import { createSamplerWantSet } from './sampler-want-set.js';
+import './flux-publication.classic.js';
 
 const CTRL = { FRAME: 0, N: 1, TICK: 2, RUNNING: 3, PCOUNT: 4, TICKS_PER_FRAME: 5, DATA_VERSION: 6, LEN: 8 };
 const EMPTY_PARTS = () => ({ positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0), spin: new Float32Array(0), colorCharge: new Float32Array(0), locked: new Uint8Array(0), count: 0 });
 const EMPTY_VEC = () => ({ positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 });
 const EMPTY_VAL = () => ({ positions: new Float32Array(0), values: new Float32Array(0), count: 0 });
+const MAX_INSPECTION_COORDINATES = 128;
 const SCENARIO_SCOPED_MESSAGE_TYPES = new Set([
     'ready', 'frame', 'configurationApplied', 'runningState', 'error',
     'fluxRebind', 'inspectResult', 'forceAtResult', 'digestResult',
@@ -132,6 +131,7 @@ export class WasmBridgeProxy {
         this._disposeTimer = null;
         this._defaultCallbacks = {
             onInitFailure: (opts && typeof opts.onInitFailure === 'function') ? opts.onInitFailure : null,
+            onRuntimeFailure: (opts && typeof opts.onRuntimeFailure === 'function') ? opts.onRuntimeFailure : null,
             onSetupFailure: (opts && typeof opts.onSetupFailure === 'function') ? opts.onSetupFailure : null,
             onEngineToggles: (opts && typeof opts.onEngineToggles === 'function') ? opts.onEngineToggles : null,
             onConfigurationApplied: (opts && typeof opts.onConfigurationApplied === 'function')
@@ -184,6 +184,7 @@ export class WasmBridgeProxy {
         this._fluxSab = null;
         this._fluxLen = 0;
         this._fluxDouble = false;
+        this._fluxBufferGeneration = 0;
         this._lastDiag = null;
         this._lastDiagMeta = null;
         this._lastParts = null;
@@ -194,7 +195,9 @@ export class WasmBridgeProxy {
         this._lastKnot = null;
         this._lastKnotEvents = null;
         this._lastKnotAgg = null;
-        this._lastInspect = null;
+        this._inspectionCache = new Map();
+        this._inspectionPending = new Map();
+        this._nextInspectionRequestId = 0;
         this._lastForceAt = null;
         this._lastDynamicalStateDigest = null;
         this._pendingConfigurationFrame = null;
@@ -250,7 +253,7 @@ export class WasmBridgeProxy {
         // fallback so the app can switch to the in-thread bridge.
         this._worker.onerror = (e) => {
             console.error('[WasmWorker]', e.message || e);
-            if (!this._ready) this._triggerFallback('worker onerror: ' + (e.message || 'load failed'));
+            this._triggerFallback('worker onerror: ' + (e.message || 'load failed'));
         };
         // Reconfiguration owns the timers. A constructed proxy may sit idle
         // briefly while the loader stages defaults, so construction alone must
@@ -312,6 +315,7 @@ export class WasmBridgeProxy {
         this._ctrl = null;
         this._fluxView = null;
         this._fluxSab = null;
+        this._fluxSnapshot = null;
         this._fluxLen = 0;
         this._fluxDouble = false;
         this._lastDiag = null;
@@ -324,7 +328,7 @@ export class WasmBridgeProxy {
         this._lastKnot = null;
         this._lastKnotEvents = null;
         this._lastKnotAgg = null;
-        this._lastInspect = null;
+        this._clearInspectionCaches();
         this._lastForceAt = null;
         this._lastDynamicalStateDigest = null;
         this._pendingConfigurationFrame = null;
@@ -371,6 +375,7 @@ export class WasmBridgeProxy {
         this._configurationCallbacks = {
             token,
             onInitFailure: callback('onInitFailure'),
+            onRuntimeFailure: callback('onRuntimeFailure'),
             onSetupFailure: callback('onSetupFailure'),
             onEngineToggles: callback('onEngineToggles'),
             onConfigurationApplied: callback('onConfigurationApplied'),
@@ -400,19 +405,15 @@ export class WasmBridgeProxy {
         return token;
     }
 
-    /**
-     * Latched, fire-once worker-fallback path. Cancels all timers, tears down
-     * the (dead or stalled) worker, and notifies the caller (onInitFailure) so
-     * it can fall back to the in-thread WasmBridge. Never throws.
-     *
-     * The ONLY latch is `_initFailed` — deliberately NOT gated on `_ready`, so
-     * the frame-watchdog can fire fallback even for a worker that reported
-     * 'ready' but then never produced a frame ("ready but dead"). The pre-ready
-     * call sites (onerror, ready-timeout, worker init-error) gate on `!_ready`
-     * themselves, so their behaviour is unchanged.
-     */
+    /** Initialization may retry another backend before its configuration commits.
+     * A committed owner must survive a stall: replacing it would reseed physics. */
     _triggerFallback(reason) {
         if (this._initFailed || this._terminated || this._disposing) return;
+        if (this._pendingConfigurationToken > 0
+            && this._appliedConfigurationToken === this._pendingConfigurationToken) {
+            this._pauseForRuntimeFailure(reason);
+            return;
+        }
         this._initFailed = true;
         this._clearConfigurationTimers();
         this._clearFrameWatchdog();
@@ -422,6 +423,16 @@ export class WasmBridgeProxy {
         if (cb) { try { cb(reason); } catch (e) { console.error('[WasmWorker] onInitFailure handler threw:', e); } }
     }
 
+    _pauseForRuntimeFailure(reason) {
+        this._clearInspectionCaches();
+        this._running = false;
+        this._clearFrameWatchdog();
+        this._postRunningState(false);
+        console.error('[WasmWorker] retained engine paused: ' + reason);
+        const cb = this._callbacksForCurrentConfiguration().onRuntimeFailure;
+        try { cb?.(reason); } catch (e) { console.error('[WasmWorker] runtime failure handler threw:', e); }
+    }
+
     /** Now-clock helper (performance.now where available, Date.now otherwise). */
     _now() { return (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now(); }
 
@@ -429,7 +440,7 @@ export class WasmBridgeProxy {
      * Arm/re-arm the dead-worker frame watchdog. Only meaningful once ready and
      * running; a no-op otherwise. Each call replaces any pending timer, so it
      * doubles as the per-frame reset. If FRAME_WATCHDOG_MS elapses while the
-     * worker is still ready+running and no newer frame has arrived, fall back.
+     * worker is still ready+running and no newer frame has arrived, pause it.
      */
     _armFrameWatchdog() {
         if (typeof setTimeout !== 'function') return;
@@ -543,14 +554,18 @@ export class WasmBridgeProxy {
         if (m.knot) this._lastKnot = m.knot;
         if (m.knotEvents) this._lastKnotEvents = m.knotEvents;
         if (m.knotAgg) this._lastKnotAgg = m.knotAgg;
-        if (m.inspect) this._lastInspect = m.inspect;
+        // frame.inspect is a retained earlier point read, not a new sample.
+        // Only a matching inspectResult may publish a coordinate observation.
         if (m.forceAt) this._lastForceAt = m.forceAt;
         if (m.dynamicalStateDigest !== undefined) {
             this._lastDynamicalStateDigest = m.dynamicalStateDigest;
         }
         const hadSamplers = Boolean(m.samplers && Object.keys(m.samplers).length);
         if (hadSamplers) {
-            Object.assign(this._samplerCache, m.samplers);
+            const sampleTick = Number.isSafeInteger(m.diag?.tick) && m.diag.tick >= 0 ? m.diag.tick : null;
+            for (const [key, sample] of Object.entries(m.samplers)) {
+                this._samplerCache[key] = { ...sample, sampleTick };
+            }
             const version = Number(m.dataVersion);
             for (const key of Object.keys(m.samplers)) this._samplerCacheVersion[key] = version;
         }
@@ -688,7 +703,7 @@ export class WasmBridgeProxy {
             this._runAckSeq = Number(m.seq) || 0;
             this._runningAck = !!m.running;
         } else if (m.type === 'inspectResult') {
-            this._lastInspect = m.inspect || null;
+            this._acceptInspectionResult(m);
         } else if (m.type === 'forceAtResult') {
             this._lastForceAt = m.forceAt || null;
         } else if (m.type === 'digestResult') {
@@ -700,6 +715,9 @@ export class WasmBridgeProxy {
             }
         } else if (m.type === 'error') {
             console.error('[WasmWorker]', m.where, m.msg);
+            if (m.where === 'runtime' || m.where === 'tickScale0') {
+                this._pauseForRuntimeFailure(m.msg || 'worker transaction failed');
+            }
             // A module-init failure inside the worker (createFTDModuleMT().catch
             // posts where:'init') means the engine never built — fall back if we
             // haven't yet become ready.
@@ -717,6 +735,7 @@ export class WasmBridgeProxy {
     }
 
     _cmd(method, ...args) {
+        this._clearInspectionCaches();
         if (!this._ready || this._terminated || this._disposing) {
             // Buffer the command; will be replayed as batchCommand after 'ready'.
             if (!this._terminated && !this._disposing) this._pendingCommands.push({ method, args });
@@ -845,7 +864,10 @@ export class WasmBridgeProxy {
     getForceFieldSampled(stride = 2) { return this.getEMForceField(stride); }
     getGravityFieldSampled(stride = 2) { return this._readSampler('gravity', stride, EMPTY_VEC); }
     _bindFlux(m) {
-        if (m.fluxSab && m.doubleBuffered) {
+        this._fluxSnapshot = null;
+        this._fluxBufferGeneration = (this._fluxBufferGeneration ?? 0) + 1;
+        if (m.fluxSab && m.doubleBuffered
+            && m.fluxProtocol === globalThis.FTD_FLUX_PUBLICATION.PROTOCOL) {
             this._fluxSab = m.fluxSab;
             this._fluxLen = m.fluxLen | 0;
             this._fluxDouble = true;
@@ -853,11 +875,10 @@ export class WasmBridgeProxy {
             return;
         }
         this._fluxDouble = false;
-        try {
-            this._fluxView = new Float64Array(m.heap, m.fluxPtr, m.fluxLen);
-        } catch {
-            this._fluxView = null;
-        }
+        // A raw threaded heap or legacy unpinned double buffer is not a
+        // coherent observation. Fail closed rather than expose torn frames.
+        this._fluxSab = null;
+        this._fluxView = null;
     }
 
     _currentFluxView() {
@@ -865,14 +886,16 @@ export class WasmBridgeProxy {
             const n = this._fluxLen | 0;
             const N = this.latticeSize | 0;
             if (!(N > 0) || n !== N * N * N) return null;
-            const slot = Atomics.load(new Int32Array(this._fluxSab, 0, 1), 0);
-            return new Float64Array(this._fluxSab, 8 + slot * n * 8, n);
+            this._fluxSnapshot = globalThis.FTD_FLUX_PUBLICATION.snapshot(
+                this._fluxSab, n, this._fluxSnapshot,
+            );
+            return this._fluxSnapshot?.data ?? null;
         }
         return this._fluxView;
     }
 
     getFluxVolume() {
-        if (!this._ready
+        if (!this._ready || this._terminated || this._disposing
             || this._appliedConfigurationToken !== this._pendingConfigurationToken) {
             return new Float64Array(0);
         }
@@ -883,53 +906,118 @@ export class WasmBridgeProxy {
         return view;
     }
     /**
-     * Slice the published flux volume (double-buffered SAB when the worker
-     * could allocate it, else the heap view) into a single 2D plane.
-     *
-     * Output layout is byte-for-byte identical to the direct WasmBridge's
-     * C++ binding (ftd_wasm.cpp get_flux_slice: `cache[a*N+b]` with
-     * axis0: a=y,b=z (x=index fixed); axis1: a=x,b=z (y=index fixed);
-     * axis2: a=x,b=y (z=index fixed)), substituting get_flux_volume's own
-     * documented layout (`view[z*N*N + y*N + x] = density(x,y,z)`) — so
-     * downstream consumers (transposeAndFlipNN in this file, frame-sync.js's
-     * getScale0FluxSlice) need no changes.
+     * Owned observation of at most N² or 128 cells from one pinned publication.
+     * No full-volume snapshot/cache is needed. The signed publication counter
+     * identifies the buffer read only; it is not a physics tick or a global
+     * lineage ID. Worker telemetry can arrive later than the buffer write.
+     */
+    _boundedFluxRead(read, ...selectors) {
+        const N = this.latticeSize;
+        const buffer = this._fluxSab;
+        const generation = this._fluxBufferGeneration;
+        const token = this._pendingConfigurationToken;
+        if (!this._ready || this._terminated || this._disposing
+            || this._appliedConfigurationToken !== this._pendingConfigurationToken
+            || !this._fluxDouble || !this._fluxSab
+            || !Number.isSafeInteger(N) || N < 1 || this._fluxLen !== N ** 3
+            || !Number.isSafeInteger(this._fluxBufferGeneration)) return new Float64Array(0);
+        let snapshot;
+        try {
+            snapshot = read(buffer, N, ...selectors);
+        } catch (error) {
+            if (error instanceof RangeError) return new Float64Array(0);
+            throw error;
+        }
+        if (!snapshot || this._terminated || this._disposing || !this._ready
+            || this._fluxSab !== buffer || this._fluxBufferGeneration !== generation
+            || this._pendingConfigurationToken !== token
+            || this._appliedConfigurationToken !== token || this.latticeSize !== N) {
+            return new Float64Array(0);
+        }
+        Object.defineProperty(snapshot.data, 'meta', { value: Object.freeze({
+            publicationVersion: snapshot.version,
+            bufferGeneration: generation,
+            configurationToken: token,
+            latticeSize: N,
+            sampleTick: null,
+            representation: 'reference-flux-magnitude',
+        }) });
+        return snapshot.data;
+    }
+
+    /**
+     * Output matches direct get_flux_slice's a*N+b layout:
+     * axis 0: a=y,b=z; axis 1: a=x,b=z; axis 2: a=x,b=y.
+     * Copy exactly N² Float64 values while the source slot remains pinned.
+     * Invalid selectors or an unavailable publication return an empty array;
+     * a completed all-zero plane still contains N² real measured zeros.
      */
     getFluxSlice(axis, index) {
-        if (!this._ready) return new Float64Array(0);
-        const view = this._currentFluxView();
-        if (!view) return new Float64Array(0);
-        const N = this.latticeSize | 0;
-        if (!(N > 0)) return new Float64Array(0);
-        const NN = N * N;
-        if (view.length !== NN * N) return new Float64Array(0);
-        const idx = Math.min(Math.max(index | 0, 0), N - 1);
-        const out = new Float64Array(NN);
-        if (axis === 0) {
-            // YZ plane, X fixed at `idx`: out[y*N+z] = density(idx, y, z)
-            for (let y = 0; y < N; y++) {
-                const base = y * N;
-                for (let z = 0; z < N; z++) {
-                    out[base + z] = view[z * NN + y * N + idx];
-                }
-            }
-        } else if (axis === 1) {
-            // XZ plane, Y fixed at `idx`: out[x*N+z] = density(x, idx, z)
-            for (let x = 0; x < N; x++) {
-                const base = x * N;
-                for (let z = 0; z < N; z++) {
-                    out[base + z] = view[z * NN + idx * N + x];
-                }
-            }
-        } else {
-            // XY plane, Z fixed at `idx`: out[x*N+y] = density(x, y, idx)
-            for (let x = 0; x < N; x++) {
-                const base = x * N;
-                for (let y = 0; y < N; y++) {
-                    out[base + y] = view[idx * NN + y * N + x];
-                }
-            }
+        return this._boundedFluxRead(globalThis.FTD_FLUX_PUBLICATION.snapshotSlice, axis, index);
+    }
+
+    /** One slab from the same bounded batch/publication contract below. */
+    getFluxSlabWithMaxRho(axis, index) {
+        return this.getFluxSlabsWithMaxRho([{ axis, index }])?.slabs[0] ?? null;
+    }
+
+    /**
+     * Owned 1..3 requested normal slabs and one same-publication full max(|J|^2).
+     * Each slab contains only valid planes in index-1..index+1. Selectors are
+     * exact, not clamped. Null is unavailable; completed zero fields remain
+     * shaped observations. No full-volume copy or cached fallback is used.
+     */
+    getFluxSlabsWithMaxRho(requests) {
+        const N = this.latticeSize;
+        const buffer = this._fluxSab;
+        const generation = this._fluxBufferGeneration;
+        const token = this._pendingConfigurationToken;
+        if (!this._ready || this._terminated || this._disposing
+            || this._appliedConfigurationToken !== token
+            || !this._fluxDouble || !buffer
+            || !Number.isSafeInteger(N) || N < 1 || this._fluxLen !== N ** 3
+            || !Number.isSafeInteger(generation)) return null;
+        let snapshot;
+        try {
+            snapshot = globalThis.FTD_FLUX_PUBLICATION.snapshotSlabsWithMaxRho(buffer, N, requests);
+        } catch (error) {
+            if (error instanceof RangeError) return null;
+            throw error;
         }
-        return out;
+        if (!snapshot || !this._ready || this._terminated || this._disposing
+            || !this._fluxDouble || this._fluxLen !== N ** 3
+            || this._fluxSab !== buffer || this._fluxBufferGeneration !== generation
+            || this._pendingConfigurationToken !== token || this._appliedConfigurationToken !== token
+            || this.latticeSize !== N) return null;
+        const supports = snapshot.slabs.map(slab => Object.freeze({
+            axis: slab.axis, index: slab.index, startPlane: slab.startPlane, planeCount: slab.planeCount,
+            inPlaneAxes: Object.freeze(slab.axis === 0 ? ['y', 'z'] : slab.axis === 1 ? ['x', 'z'] : ['x', 'y']),
+        }));
+        const metadata = Object.freeze({
+            publicationVersion: snapshot.version,
+            bufferGeneration: generation,
+            configurationToken: token,
+            latticeSize: N,
+            sampleTick: null,
+            representation: 'reference-flux-magnitude',
+            support: Object.freeze({ slabs: Object.freeze(supports), layout: 'plane-major:a*N+b' }),
+            normalization: 'full-volume-max-square',
+            normalizationCellCount: N ** 3,
+        });
+        const slabs = Object.freeze(snapshot.slabs.map(slab => Object.freeze({
+            ...slab, maxRho: snapshot.maxRho, metadata,
+        })));
+        return Object.freeze({ N, maxRho: snapshot.maxRho, metadata, slabs });
+    }
+
+    /**
+     * Return owned Float64 values for 1..128 linear cell indices, in input
+     * order, from one pinned publication. Layout: z*N*N+y*N+x. Callers own
+     * coordinate rounding/wrapping. Invalid or unavailable reads are empty.
+     * Metadata is a buffer/configuration namespace, not cross-field provenance.
+     */
+    sampleFluxAtCells(indices) {
+        return this._boundedFluxRead(globalThis.FTD_FLUX_PUBLICATION.snapshotCells, indices);
     }
     getDiagnostics() { return this._lastDiag ?? null; }
     getEnergyAudit() { return this._lastAudit ?? null; }
@@ -1023,32 +1111,117 @@ export class WasmBridgeProxy {
     setBoundaryShape() {}
     setReflectiveBoundary() {}
     setFluxBoundaryMode(mode) {
-        const normalized = Math.max(0, Math.min(2, Math.trunc(Number(mode) || 0)));
+        const normalized = validateScale0BoundarySelector(mode, 2);
         this._requestedFluxBoundaryMode = normalized;
         this._cmd('setFluxBoundary', normalized);
     }
     setFluxPeriodicAxis(axis) {
-        const normalized = Math.max(0, Math.min(3, Math.trunc(Number(axis) || 0)));
+        const normalized = validateScale0BoundarySelector(axis, 3);
         this._requestedFluxPeriodicAxis = normalized;
         this._cmd('setFluxPeriodicAxis', normalized);
     }
 
-    // ── Single-point inspect reads (parity with direct WasmBridge) ──────────
-    // A synchronous worker round-trip is impossible, and the worker hosts a
-    // SEPARATE RenderBridge from any main-thread bridge, so these cannot be
-    // answered from this proxy. They return SAFE empty/null values so that
-    // optional-chaining callers (e.g. anisotropy.js) degrade to their analytic
-    // fallback instead of throwing and tripping the raf-coordinator error budget.
-    // TODO (Phase 2): true worker-backed inspect via a request/response channel
-    // into the worker's RenderBridge.
-    inspectVoxel(x, y, z) {
-        this._worker.postMessage({
-            type: 'inspectVoxel', x, y, z,
-            configurationToken: this._pendingConfigurationToken,
+    // Bounded asynchronous point observations. A neighborhood reader must not
+    // evict its own center by requesting its neighbors. Records keep the actual
+    // worker execution clock; a later frame never supplies their timestamp.
+    _clearInspectionCaches() {
+        this._inspectionCache?.clear();
+        this._inspectionPending?.clear();
+    }
+
+    _inspectionCoordinate(x, y, z) {
+        const n = this.latticeSize;
+        if (!Number.isSafeInteger(n) || n <= 0 || n > 0x7fffffff
+            || ![x, y, z].every(Number.isSafeInteger)) return null;
+        const coordinates = [x, y, z].map(v => ((v % n) + n) % n);
+        return { x: coordinates[0], y: coordinates[1], z: coordinates[2], key: coordinates.join(',') };
+    }
+
+    _inspectionAvailable() {
+        return this._ready && !this._terminated && !this._disposing && !this._initFailed
+            && this._appliedConfigurationToken === this._pendingConfigurationToken;
+    }
+
+    _inspectionEntry(x, y, z) {
+        if (!this._inspectionAvailable()) return null;
+        const coordinate = this._inspectionCoordinate(x, y, z);
+        const entry = coordinate && this._inspectionCache?.get(coordinate.key);
+        if (!entry || entry.configurationToken !== this._pendingConfigurationToken) return null;
+        this._inspectionCache.delete(coordinate.key);
+        this._inspectionCache.set(coordinate.key, entry);
+        return entry;
+    }
+
+    getInspectionSample(x, y, z) {
+        const entry = this._inspectionEntry(x, y, z);
+        return entry ? structuredClone(entry.voxel) : null;
+    }
+
+    getInspectionSampleMeta(x, y, z) {
+        const entry = this._inspectionEntry(x, y, z);
+        if (!entry) return null;
+        return Object.freeze({
+            sampleTick: entry.sampleTick,
+            configurationToken: entry.configurationToken,
+            dataVersion: entry.dataVersion,
+            stale: entry.sampleTick === null || entry.dataVersion === null || !this._ctrl
+                || entry.sampleTick !== this.currentTick() || entry.dataVersion !== this.dataVersion,
         });
-        const c = this._lastInspect;
-        if (c && c.x === x && c.y === y && c.z === z) return c.voxel;
-        return c?.voxel ?? null;
+    }
+
+    _acceptInspectionResult(message) {
+        if (!this._inspectionAvailable()) return;
+        const coordinate = this._inspectionCoordinate(message.x, message.y, message.z);
+        if (!coordinate || coordinate.x !== message.x || coordinate.y !== message.y
+            || coordinate.z !== message.z) return;
+        const pending = this._inspectionPending?.get(coordinate.key);
+        if (!pending || pending.requestId !== message.requestId
+            || pending.configurationToken !== message.configurationToken
+            || message.configurationToken !== this._pendingConfigurationToken) return;
+        const sample = message.inspect;
+        if (sample && (sample.x !== coordinate.x || sample.y !== coordinate.y
+            || sample.z !== coordinate.z)) return;
+        this._inspectionPending.delete(coordinate.key);
+        if (!sample?.voxel || typeof sample.voxel !== 'object') {
+            this._inspectionCache?.delete(coordinate.key);
+            return;
+        }
+        const nonnegativeInteger = value => Number.isSafeInteger(value) && value >= 0 ? value : null;
+        this._inspectionCache ??= new Map();
+        this._inspectionCache.delete(coordinate.key);
+        this._inspectionCache.set(coordinate.key, {
+            voxel: structuredClone(sample.voxel),
+            configurationToken: message.configurationToken,
+            sampleTick: nonnegativeInteger(message.sampleTick),
+            dataVersion: nonnegativeInteger(message.dataVersion),
+        });
+        while (this._inspectionCache.size > MAX_INSPECTION_COORDINATES)
+            this._inspectionCache.delete(this._inspectionCache.keys().next().value);
+    }
+
+    inspectVoxel(x, y, z) {
+        if (!this._inspectionAvailable()) return null;
+        const coordinate = this._inspectionCoordinate(x, y, z);
+        if (!coordinate) return null;
+        const meta = this.getInspectionSampleMeta(x, y, z);
+        this._inspectionPending ??= new Map();
+        if ((!meta || meta.stale) && !this._inspectionPending.has(coordinate.key)
+            && this._inspectionPending.size < MAX_INSPECTION_COORDINATES) {
+            const requestId = (this._nextInspectionRequestId ?? 0) + 1;
+            if (!Number.isSafeInteger(requestId)) throw new RangeError('Inspection request identity exhausted');
+            this._nextInspectionRequestId = requestId;
+            const request = { type: 'inspectVoxel', x: coordinate.x, y: coordinate.y,
+                z: coordinate.z, requestId, configurationToken: this._pendingConfigurationToken };
+            this._inspectionPending.set(coordinate.key, request);
+            try { this._worker.postMessage(request); }
+            catch { this._inspectionPending.delete(coordinate.key); }
+        }
+        return this.getInspectionSample(x, y, z);
+    }
+    getForceSample(x, y, z) {
+        if (!this._inspectionAvailable()) return null;
+        const c = this._lastForceAt;
+        return c && c.x === x && c.y === y && c.z === z ? structuredClone(c.force) : null;
     }
     getForceAt(x, y, z) {
         this._worker.postMessage({
@@ -1057,7 +1230,7 @@ export class WasmBridgeProxy {
         });
         const c = this._lastForceAt;
         if (c && c.x === x && c.y === y && c.z === z) return c.force;
-        return c?.force ?? null;
+        return null;
     }
     sampleVAtRay() { return { positions: new Float32Array(0), V: new Float32Array(0), count: 0 }; }
     // The worker does not currently post a constants payload, so there is no
@@ -1137,6 +1310,10 @@ export class WasmBridgeProxy {
         }
     }
     setTicksPerFrame(v) {
+        if (typeof v !== 'number' || !Number.isFinite(v)
+            || Math.round(v * 1000) < 1 || Math.round(v * 1000) > 0x7fffffff) {
+            throw new RangeError('Worker speed must fit the positive fixed-point control word');
+        }
         this._pendingTPF = v;
         if (this._ctrl) Atomics.store(this._ctrl, CTRL.TICKS_PER_FRAME, Math.round(v * 1000));
     }
@@ -1175,6 +1352,7 @@ export class WasmBridgeProxy {
                 .map(([key, value]) => [key, !!value])
             : [];
         if (!normalized.length) return;
+        this._clearInspectionCaches();
         for (const [key, value] of normalized) this._toggles[key] = value;
         if (!this._ready || this._terminated || this._disposing
             || this._appliedConfigurationToken !== this._pendingConfigurationToken) {
@@ -1234,6 +1412,7 @@ export class WasmBridgeProxy {
     resize(n) { this.reset(n); }
     _finalizeWorkerTermination(mode) {
         if (this._terminated) return;
+        this._clearInspectionCaches();
         this._terminated = true;
         this._disposing = false;
         if (this._disposeTimer) {
@@ -1255,6 +1434,7 @@ export class WasmBridgeProxy {
     }
 
     _hardTerminate() {
+        this._clearInspectionCaches();
         this._disposing = true;
         this._pendingCreateMessage = null;
         this._clearConfigurationTimers();
@@ -1273,6 +1453,7 @@ export class WasmBridgeProxy {
 
     terminate() {
         if (this._terminated || this._disposing) return;
+        this._clearInspectionCaches();
         this._disposing = true;
         this._pendingCreateMessage = null;
         try { this._samplerWants.clear(); } catch { /* ignore */ }

@@ -17,7 +17,7 @@ export let VOXEL_CENTER_OFFSET = 0.0;
 /** Points material using PARTICLE_VERT + PARTICLE_FRAG (manifest disabled). */
 export function _makeParticleFragMaterial(overrides = {}, extra = {}) {
     return new THREE.ShaderMaterial({
-        uniforms: { ...PARTICLE_SHADER_UNIFORMS, ...overrides },
+        uniforms: { ...Object.fromEntries(Object.entries(PARTICLE_SHADER_UNIFORMS).map(([key, uniform]) => [key, { ...uniform }])), ...overrides },
         vertexShader: PARTICLE_VERT,
         fragmentShader: PARTICLE_FRAG,
         transparent: true,

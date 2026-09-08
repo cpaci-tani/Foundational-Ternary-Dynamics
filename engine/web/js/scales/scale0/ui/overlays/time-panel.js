@@ -34,7 +34,7 @@ import {
 import { FTD0252_PROVENANCE, DILATION_VS_V, IR_CONVERGENCE } from '../../data/ftd0252-reference.js';
 import { resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
-import { readScale0DiagAudit } from '../../../../telemetry/scale0-read.js';
+import { beginTimeReadout, updateTimeReadout } from './time-readout.js';
 import { telemetryHub } from '../../../../telemetry-hub.js';
 import { C_SPEED } from '../../../../constants.js';
 import { TickHistoryControl } from '../../../../ui/charts/history-window.js';
@@ -81,7 +81,14 @@ function row(label, value, tag = 'D', color = 'var(--text-primary)', tip = '') {
     return `<div class="time-row"><span class="time-row-l"${t}>${tagBadge(tag)}${label}</span><span class="time-row-v" style="color:${color}">${value}</span></div>`;
 }
 
-function sparkline(values, color, w = 220, h = 30) {
+// Keep dynamic text and attributes separate from the card's structural HTML.
+// Defaults are resolved before binding so a color crossing does not rebuild it.
+function bindTimeRow(readout) {
+    return (label, value, tag = 'D', color = 'var(--text-primary)', tip = '') =>
+        row(label, readout.slot(value), tag, readout.slot(color), tip ? readout.slot(tip) : '');
+}
+
+function sparkline(values, color, w = 220, h = 30, slot = String) {
     const n = values.length;
     if (n < 2) return `<svg viewBox="0 0 ${w} ${h}" class="time-spark"></svg>`;
     let min = Infinity, max = -Infinity;
@@ -93,7 +100,7 @@ function sparkline(values, color, w = 220, h = 30) {
         const y = h - ((values[i] - min) / span) * (h - 2) - 1;
         d += `${i ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)} `;
     }
-    return `<svg viewBox="0 0 ${w} ${h}" class="time-spark"><path d="${d}" fill="none" stroke="${color}" stroke-width="1.4"/></svg>`;
+    return `<svg viewBox="0 0 ${w} ${h}" class="time-spark"><path d="${slot(d)}" fill="none" stroke="${color}" stroke-width="1.4"/></svg>`;
 }
 
 /**
@@ -102,7 +109,7 @@ function sparkline(values, color, w = 220, h = 30) {
  * dashed }]. `marker` (optional) = {x,y} drawn as a dot. Axes are 0-based on y
  * unless yMin/yMax given. Mirrors the p1-observables dashed-vs-solid pattern.
  */
-function dualCurveChart(series, { w = 240, h = 110, xMin, xMax, yMin, yMax, marker } = {}) {
+function dualCurveChart(series, { w = 240, h = 110, xMin, xMax, yMin, yMax, marker, slot = String } = {}) {
     const m = { left: 30, right: 8, top: 8, bottom: 18 };
     const innerW = w - m.left - m.right;
     const innerH = h - m.top - m.bottom;
@@ -122,8 +129,8 @@ function dualCurveChart(series, { w = 240, h = 110, xMin, xMax, yMin, yMax, mark
     // y gridline labels (lo, mid, hi)
     for (const yv of [lo, (lo + hi) / 2, hi]) {
         const y = ypx(yv);
-        svg += `<line x1="${m.left}" y1="${y.toFixed(1)}" x2="${(m.left + innerW)}" y2="${y.toFixed(1)}" stroke="var(--border-light, rgba(255,255,255,0.05))" stroke-width="0.4"/>`;
-        svg += `<text x="${m.left - 3}" y="${(y + 3).toFixed(1)}" text-anchor="end" fill="var(--text-muted)" font-size="16">${yv.toFixed(2)}</text>`;
+        svg += `<line x1="${m.left}" y1="${slot(y.toFixed(1))}" x2="${(m.left + innerW)}" y2="${slot(y.toFixed(1))}" stroke="var(--border-light, rgba(255,255,255,0.05))" stroke-width="0.4"/>`;
+        svg += `<text x="${m.left - 3}" y="${slot((y + 3).toFixed(1))}" text-anchor="end" fill="var(--text-muted)" font-size="16">${slot(yv.toFixed(2))}</text>`;
     }
     for (const s of series) {
         if (!s.pts.length) continue;
@@ -132,15 +139,15 @@ function dualCurveChart(series, { w = 240, h = 110, xMin, xMax, yMin, yMax, mark
             d += (i ? 'L' : 'M') + xpx(s.pts[i].x).toFixed(1) + ',' + ypx(s.pts[i].y).toFixed(1);
         }
         const dash = s.dashed ? ' stroke-dasharray="4,3"' : '';
-        svg += `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="1.5"${dash}/>`;
+        svg += `<path d="${slot(d)}" fill="none" stroke="${s.color}" stroke-width="1.5"${dash}/>`;
         if (s.dots) for (const p of s.pts) {
-            svg += `<circle cx="${xpx(p.x).toFixed(1)}" cy="${ypx(p.y).toFixed(1)}" r="2.1" fill="${s.color}"/>`;
+            svg += `<circle cx="${slot(xpx(p.x).toFixed(1))}" cy="${slot(ypx(p.y).toFixed(1))}" r="2.1" fill="${s.color}"/>`;
         }
     }
     if (marker && Number.isFinite(marker.x) && Number.isFinite(marker.y)) {
         const mx = xpx(marker.x), my = ypx(marker.y);
-        svg += `<line x1="${mx.toFixed(1)}" y1="${m.top}" x2="${mx.toFixed(1)}" y2="${(m.top + innerH).toFixed(1)}" stroke="var(--accent)" stroke-width="0.8" stroke-dasharray="2,2"/>`;
-        svg += `<circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="3" fill="var(--accent)" stroke="#000" stroke-width="0.5"/>`;
+        svg += `<line x1="${slot(mx.toFixed(1))}" y1="${m.top}" x2="${slot(mx.toFixed(1))}" y2="${(m.top + innerH).toFixed(1)}" stroke="var(--accent)" stroke-width="0.8" stroke-dasharray="2,2"/>`;
+        svg += `<circle cx="${slot(mx.toFixed(1))}" cy="${slot(my.toFixed(1))}" r="3" fill="var(--accent)" stroke="#000" stroke-width="0.5"/>`;
     }
     svg += `</svg>`;
     return svg;
@@ -150,28 +157,31 @@ function dualCurveChart(series, { w = 240, h = 110, xMin, xMax, yMin, yMax, mark
 
 // Card A — lab clock & summary. The [C++] sub-block surfaces the genuine Poisson
 // latency readout when active; otherwise the panel is honestly "proxy only".
-function renderClockBlock(agg) {
+function renderClockBlock(agg, readout) {
+    const renderRow = bindTimeRow(readout);
     const head = `<div class="time-cpp-head" title="The genuine voxel.latency from the engine's Poisson solver (∇²L=4πGρ), ρ from real rest mass — an [IMPOSED] engine model. Distinct from the |J|² proxy.">Real C++ latency field (Poisson) ⓘ</div>`;
     if (!agg || !agg.active)
         return head + `<div class="time-cpp-inactive">${tagBadge('~M')}proxy only — derived |J|² latency (no real Poisson source)</div>`;
     let html = head;
-    html += row('Lapse f_min', formatFixed(agg.fMin, 5), 'M', undefined, 'Min lapse f = 1 − L_max² (deepest real time dilation), [C++].');
-    html += row('dτ/dt (min)', formatFixed(Math.sqrt(Math.max(0, agg.fMin)), 5), 'M', undefined, 'Slowest clock rate √f_min from the real latency field, [C++].');
-    html += row('Time-dilation (peak)', `${formatExp(agg.dilationMaxPct)} %`, 'M', undefined, '(1 − √f_min)·100 from the real latency field, [C++].');
-    html += row('γ_ftd (max)', formatFixed(agg.gammaMax, 5), 'M', undefined, 'Max FTD generalized Lorentz factor √f/√(f²−v²), [C++].');
+    html += renderRow('Lapse f_min', formatFixed(agg.fMin, 5), 'M', undefined, 'Min lapse f = 1 − L_max² (deepest real time dilation), [C++].');
+    html += renderRow('dτ/dt (min)', formatFixed(Math.sqrt(Math.max(0, agg.fMin)), 5), 'M', undefined, 'Slowest clock rate √f_min from the real latency field, [C++].');
+    html += renderRow('Time-dilation (peak)', `${formatExp(agg.dilationMaxPct)} %`, 'M', undefined, '(1 − √f_min)·100 from the real latency field, [C++].');
+    html += renderRow('γ_ftd (max)', formatFixed(agg.gammaMax, 5), 'M', undefined, 'Max FTD generalized Lorentz factor 1/√(1−L²−|v|²/C_SPEED²), [C++].');
     return html;
 }
 
 function renderCardA(container, metrics, agg) {
+    const readout = beginTimeReadout(container);
+    const renderRow = bindTimeRow(readout);
     const { physicalTime, fMin, dtauMin, gammaMax } = metrics;
-    let html = `<div style="${heroStyle()}" title="Lab-frame elapsed time (physical ticks of the substrate clock).">t = ${formatFixed(physicalTime, 1)}</div>`;
+    let html = `<div style="${heroStyle()}" title="Lab-frame elapsed time (physical ticks of the substrate clock).">t = ${readout.slot(formatFixed(physicalTime, 1))}</div>`;
     html += `<div style="font-size:16px;color:var(--text-muted);margin:2px 0 8px;">physical time (lab clock)</div>`;
-    html += row('Slowest dτ/dt', formatFixed(dtauMin, 5), '~M', undefined, 'Slowest clock rate √f over the sampled latency field (proxy unless the [C++] block below is active).');
-    html += row('f_min (lapse)', formatFixed(fMin, 5), '~M', undefined, 'Minimum lapse f = 1 − L_max² over the sampled field.');
-    html += row('Peak slowdown', `${formatFixed((1 - dtauMin) * 100, 3)} %`, '~M', undefined, 'Peak clock slowdown (1 − √f_min)·100 from the proxy field.');
-    html += row('FTD γ_max', formatFixed(gammaMax, 4), 'D', undefined, 'Max FTD generalized Lorentz factor √f/√(f²−v²) at the deepest sampled point (v=0 ⇒ 1/√f).');
-    html += renderClockBlock(agg);
-    container.innerHTML = html;
+    html += renderRow('Slowest dτ/dt', formatFixed(dtauMin, 5), '~M', undefined, 'Slowest clock rate √f over the sampled latency field (proxy unless the [C++] block below is active).');
+    html += renderRow('f_min (lapse)', formatFixed(fMin, 5), '~M', undefined, 'Minimum lapse f = 1 − L_max² over the sampled field.');
+    html += renderRow('Peak slowdown', `${formatFixed((1 - dtauMin) * 100, 3)} %`, '~M', undefined, 'Peak clock slowdown (1 − √f_min)·100 from the proxy field.');
+    html += renderRow('FTD γ_max', formatFixed(gammaMax, 4), 'D', undefined, 'Max FTD generalized Lorentz factor 1/√(1−L²−|v|²/C_SPEED²) at the deepest sampled point (v=0 ⇒ 1/√f).');
+    html += renderClockBlock(agg, readout);
+    readout.commit(html);
 }
 
 // Card B — radial dilation profile (measured vs predicted).
@@ -179,13 +189,15 @@ function renderCardA(container, metrics, agg) {
 // the deepest sampled latency as the well depth — a [D] reference curve, not a
 // fit to the data point-by-point.
 function renderCardB(container, summary) {
+    const readout = beginTimeReadout(container);
+    const renderRow = bindTimeRow(readout);
     if (!summary?.hasField) {
-        container.innerHTML = `<div class="time-empty">No latency field yet — load a gravity-well / Time scenario and press play.</div>`;
+        readout.commit(`<div class="time-empty">No latency field yet — load a gravity-well / Time scenario and press play.</div>`);
         return;
     }
     const bins = summary.bins;
     if (bins.length < 2) {
-        container.innerHTML = `<div class="time-empty">Field too sparse for a radial profile — let it propagate a few ticks.</div>`;
+        readout.commit(`<div class="time-empty">Field too sparse for a radial profile — let it propagate a few ticks.</div>`);
         return;
     }
     // Deepest (min dτ/dt) sample drives the prediction well-depth.
@@ -215,35 +227,37 @@ function renderCardB(container, summary) {
 
     let html = `<div class="time-legend">`
         + `<span class="time-legend-item"><span class="time-swatch" style="background:var(--accent)"></span>${tagBadge('~M')}measured dτ/dt(r)</span>`
-        + `<span class="time-legend-item"><span class="time-swatch time-swatch-dash" style="background:var(--caution,#fb8c00)"></span>${tagBadge('D')}predicted √(1−L·r₀/r)</span>`
+        + `<span class="time-legend-item"><span class="time-swatch time-swatch-dash" style="background:var(--caution,#fb8c00)"></span>${tagBadge('D')}reference √(1−(L·r₀/r)²)</span>`
         + `</div>`;
     html += dualCurveChart([
         { pts: predPts, color: 'var(--caution, #fb8c00)', dashed: true },
         { pts: measPts, color: 'var(--accent)', dots: true },
-    ], { w: 240, h: 120, yMin: Math.max(0, Math.min(...measPts.map((p) => p.y), ...predPts.map((p) => p.y)) - 0.02), yMax: 1.0 });
+    ], { slot: readout.slot, w: 240, h: 120, yMin: Math.max(0, Math.min(...measPts.map((p) => p.y), ...predPts.map((p) => p.y)) - 0.02), yMax: 1.0 });
     html += `<div class="time-chart-xlabel">radius r from mass center →</div>`;
-    html += row('Well depth L_max', formatFixed(lMax, 4), '~M', undefined, 'Deepest sampled latency (gravity-well depth).');
-    html += row('dτ/dt at well floor', formatFixed(clockRate(lMax), 5), '~M', undefined, 'Slowest measured clock rate √(1−L_max²).');
-    html += row('Mean residual (meas vs pred)', Number.isFinite(residPct) ? `${formatFixed(residPct, 2)} %` : '—', 'D', undefined, 'Mean |measured − predicted| / predicted across radial bins.');
-    container.innerHTML = html;
+    html += renderRow('Well depth L_max', formatFixed(lMax, 4), '~M', undefined, 'Deepest sampled latency (gravity-well depth).');
+    html += renderRow('dτ/dt at well floor', formatFixed(clockRate(lMax), 5), '~M', undefined, 'Slowest measured clock rate √(1−L_max²).');
+    html += renderRow('Mean residual (meas vs pred)', Number.isFinite(residPct) ? `${formatFixed(residPct, 2)} %` : '—', 'D', undefined, 'Mean |measured − predicted| / predicted across radial bins.');
+    readout.commit(html);
 }
 
 // Card C — twin clocks (Δτ).
 function renderCardC(container, twin) {
+    const readout = beginTimeReadout(container);
+    const renderRow = bindTimeRow(readout);
     const { tauDeep, tauFar, history, lDeep, lFar, active } = twin;
     if (!active) {
-        container.innerHTML = `<div class="time-empty">Twin clocks idle — load a gravity-well / Time scenario; the deep clock (well floor) ticks slower than the far clock (shallow edge).</div>`;
+        readout.commit(`<div class="time-empty">Twin clocks idle — load a gravity-well / Time scenario; the deep clock (well floor) ticks slower than the far clock (shallow edge).</div>`);
         return;
     }
     const dtau = tauFar - tauDeep;
-    let html = `<div style="${heroStyle()}" title="Accumulated proper-time lead of the far clock over the deep clock — the GPS/twin offset, built from Σ√f·dt at each probe.">Δτ = ${formatExp(dtau)}</div>`;
-    html += `<div style="font-size:16px;color:var(--text-muted);margin:2px 0 8px;">${tagBadge('~M')}far clock lead (twin / GPS offset)</div>`;
-    html += sparkline(history, 'var(--positive-text)', 232, 32);
+    let html = `<div style="${heroStyle()}" title="Accumulated proper-time lead of the far clock over the deep clock — a sampled proxy quadrature; extrema may change location and unresolved time variation is unbounded.">Δτ = ${readout.slot(formatExp(dtau))}</div>`;
+    html += `<div style="font-size:16px;color:var(--text-muted);margin:2px 0 8px;">${tagBadge('~M')}sampled proxy-clock difference (approximate)</div>`;
+    html += sparkline(history, 'var(--positive-text)', 232, 32, readout.slot);
     html += `<div class="time-chart-xlabel">Δτ accumulating over ticks →</div>`;
-    html += row('τ_deep (well floor)', formatExp(tauDeep), '~M', undefined, `Proper time at the deepest probe (latency L≈${formatFixed(lDeep, 3)}); runs slowest.`);
-    html += row('τ_far (shallow edge)', formatExp(tauFar), '~M', undefined, `Proper time at the shallowest probe (latency L≈${formatFixed(lFar, 3)}); runs fastest.`);
-    html += row('Δτ = τ_far − τ_deep', formatExp(dtau), '~M', dtau >= 0 ? 'var(--positive-text)' : 'var(--negative-text)', 'The far clock outruns the deep clock — grows monotonically while the well stands.');
-    container.innerHTML = html;
+    html += renderRow('τ_deep (well floor)', formatExp(tauDeep), '~M', undefined, `Proper time at the deepest probe (latency L≈${formatFixed(lDeep, 3)}); runs slowest.`);
+    html += renderRow('τ_far (shallow edge)', formatExp(tauFar), '~M', undefined, `Proper time at the shallowest probe (latency L≈${formatFixed(lFar, 3)}); runs fastest.`);
+    html += renderRow('Δτ = τ_far − τ_deep', formatExp(dtau), '~M', dtau >= 0 ? 'var(--positive-text)' : 'var(--negative-text)', 'The far clock outruns the deep clock — grows monotonically while the well stands.');
+    readout.commit(html);
 }
 
 // Card D — kinematic (imposed v) + baked FTD-0252.
@@ -294,7 +308,7 @@ function renderCardD(container, vImposed) {
 
     // IR-convergence mini-chart: residual → 0 as L⁻² (γ emerges in the IR).
     const irPts = IR_CONVERGENCE.map((p) => ({ x: p.L, y: p.resid }));
-    html += `<div class="time-subhead" title="Median |dτ/dt − √(1−v²)| vs lattice size L, mass held fixed (k⊥→0). Falls ~ L⁻²: exact Lorentz γ emerges in the IR / continuum limit.">IR convergence — γ emerges as L⁻² ⓘ</div>`;
+    html += `<div class="time-subhead" title="Median |dτ/dt − √(1−v²)| vs lattice size L, mass held fixed (k⊥→0). Falls ~ L⁻²: Historical finite-size trend; it does not establish exact covariance or strict-record continuum recovery.">Historical finite-size residual ⓘ</div>`;
     html += dualCurveChart([{ pts: irPts, color: 'var(--positive-text)', dots: true }],
         { w: 240, h: 70, yMin: 0 });
     html += `<div class="time-chart-xlabel">${tagBadge('M')}lattice L →   (median residual ↓)</div>`;
@@ -307,8 +321,10 @@ function renderCardD(container, vImposed) {
 // Raw speed is normalized by C_SPEED and combined with the local latency L.
 // The relation remains a selected clock axiom, not evidence of covariance.
 function renderCardE(container, db) {
+    const readout = beginTimeReadout(container);
+    const renderRow = bindTimeRow(readout);
     if (!db.hasData) {
-        container.innerHTML = `<div class="time-empty">de Broglie clock idle — load the “De Broglie Clock (pilot wave)” scenario (or enable the de_broglie_clock toggle) and press play. The manifested cluster's flux then oscillates at ω₀.</div>`;
+        readout.commit(`<div class="time-empty">de Broglie clock idle — load the “De Broglie Clock (pilot wave)” scenario (or enable the de_broglie_clock toggle) and press play. The manifested cluster's flux then oscillates at ω₀.</div>`);
         return;
     }
     const { active, omega0, phase, speed, latency, clockRate } = db;
@@ -317,18 +333,18 @@ function renderCardE(container, db) {
     const TWO_PI = 2 * Math.PI;
     const phaseWrapped = ((phase % TWO_PI) + TWO_PI) % TWO_PI;   // clock-hand angle
     const turns = Math.floor(phase / TWO_PI);                    // completed cycles
-    let html = `<div style="${heroStyle()}" title="The manifested cluster's internal de Broglie phase, winding at dφ/dt = ω₀·dτ/dt (the rest-frame Compton clock). Shown wrapped to [0, 2π) — the clock hand.">φ = ${formatFixed(phaseWrapped, 3)} rad</div>`;
-    html += `<div style="font-size:16px;color:var(--text-muted);margin:2px 0 8px;">${tagBadge(active ? 'M' : '~M')}internal clock phase (centre voxel) — ${active ? 'running' : 'idle'}</div>`;
-    html += row('ω₀ (Compton freq.)', formatFixed(omega0, 3), 'IMPOSED', undefined, 'de Broglie internal-clock frequency ω₀∝K_B. IMPOSED — FTD\'s native flux is massless (no restoring term); the substrate fixes the shape, not the absolute scale (no ℏ).');
-    html += row('Clock active', active ? 'ON' : 'OFF', 'M', active ? 'var(--positive-text)' : 'var(--text-muted)', 'de_broglie_clock toggle: adds the Klein-Gordon mass term −ω₀²·J at manifested voxels.');
-    html += row('cycles ticked', String(turns), 'M', undefined, 'Completed clock cycles = ⌊φ/2π⌋ since the clock started.');
-    html += row('Period 2π/ω₀', Number.isFinite(period) ? `${formatFixed(period, 2)} ticks` : '—', 'D', undefined, 'Rest-frame oscillation period of the cluster\'s flux.');
-    html += row('cluster speed u_raw', formatFixed(speed, 4), 'M', undefined, `Raw manifested-cluster speed in nodes/tick; β=|u|/C_SPEED=${formatFixed(speed / C_SPEED, 4)}.`);
-    html += row('local latency L', formatFixed(latency, 5), 'M', undefined, 'Latency used with β² in the full causal budget B=β²+L².');
-    html += row('dφ/dt', formatFixed(clockRate, 5), '~M', undefined, 'Implemented ω₀·√max(1−β²−L²,0) clock rate under the FTD-0402 contract.');
-    html += row('clock ratio', formatFixed(redshift, 5), '~M', redshift < 1 ? 'var(--caution,#fb8c00)' : undefined, 'Selected implementation ratio √max(1−β²−L²,0); it is not a derived covariant prediction.');
+    let html = `<div style="${heroStyle()}" title="The manifested cluster's internal de Broglie phase, winding at dφ/dt = ω₀·dτ/dt (the rest-frame Compton clock). Shown wrapped to [0, 2π) — the clock hand.">φ = ${readout.slot(formatFixed(phaseWrapped, 3))} rad</div>`;
+    html += `<div style="font-size:16px;color:var(--text-muted);margin:2px 0 8px;">${tagBadge(active ? 'M' : '~M')}internal clock phase (centre voxel) — ${readout.slot(active ? 'running' : 'idle')}</div>`;
+    html += renderRow('ω₀ (Compton freq.)', formatFixed(omega0, 3), 'IMPOSED', undefined, 'de Broglie internal-clock frequency ω₀∝K_B. IMPOSED — FTD\'s native flux is massless (no restoring term); the substrate fixes the shape, not the absolute scale (no ℏ).');
+    html += renderRow('Clock active', active ? 'ON' : 'OFF', 'M', active ? 'var(--positive-text)' : 'var(--text-muted)', 'de_broglie_clock toggle: adds the Klein-Gordon mass term −ω₀²·J at manifested voxels.');
+    html += renderRow('cycles ticked', String(turns), 'M', undefined, 'Completed clock cycles = ⌊φ/2π⌋ since the clock started.');
+    html += renderRow('Period 2π/ω₀', Number.isFinite(period) ? `${formatFixed(period, 2)} ticks` : '—', 'D', undefined, 'Rest-frame oscillation period of the cluster\'s flux.');
+    html += renderRow('cluster speed u_raw', formatFixed(speed, 4), 'M', undefined, `Raw manifested-cluster speed in nodes/tick; β=|u|/C_SPEED=${formatFixed(speed / C_SPEED, 4)}.`);
+    html += renderRow('local latency L', formatFixed(latency, 5), 'M', undefined, 'Latency used with β² in the full causal budget B=β²+L².');
+    html += renderRow('dφ/dt', formatFixed(clockRate, 5), '~M', undefined, 'Implemented ω₀·√max(1−β²−L²,0) clock rate under the FTD-0402 contract.');
+    html += renderRow('clock ratio', formatFixed(redshift, 5), '~M', redshift < 1 ? 'var(--caution,#fb8c00)' : undefined, 'Selected implementation ratio √max(1−β²−L²,0); it is not a derived covariant prediction.');
     html += `<div class="time-provenance" title="FTD-0402 maps raw nodes/tick to the C_SPEED=1/√3 transport cone and freezes B=β²+L².">${tagBadge('AXIOM')}The moving-clock normalization is the existing clock/bandwidth axiom. ω₀ remains IMPOSED and tied to K_B.</div>`;
-    container.innerHTML = html;
+    readout.commit(html);
 }
 
 // ── panel shell ─────────────────────────────────────────────────────────────
@@ -340,10 +356,10 @@ function buildPanel() {
     const SECTION_HELP = {
         a: 'Lab-frame physical time + the slowest clock rate dτ/dt, minimum lapse f, and FTD γ over the sampled latency field. The [C++] block is the genuine Poisson latency readout (only when the engine sources it); otherwise the rows are the derived |J|² proxy [~M].',
         b: 'Measured proper-time rate dτ/dt as a function of radius from the mass center (solid [~M]) vs a weak-field prediction curve (dashed [D]), with a residual. Clocks slow toward the well.',
-        c: 'Two fixed probes — deep (near the mass) and far (near the box edge) — each accumulate proper time τ = Σ√f·dt. The far clock outruns the deep clock; Δτ is the live twin/GPS offset.',
-        d: 'Kinematic time dilation. The √(1−v²) [T] and FTD γ(v) [D] curves vs this session’s baked FTD-0252 measured points [M] (offline campaign). The velocity is [IMPOSED] (rigid translation is [BOUNDARY-blocked]). Inset: the departure from exact γ vanishes as L⁻² — γ emerges in the IR.',
+        c: 'Sampled extrema of the latency proxy, with right-endpoint quadrature over observed lab-time intervals. Probe locations may change; omitted field history and quadrature error are not bounded. This is not a physical twin/GPS measurement.',
+        d: 'Kinematic time dilation. The √(1−v²) [T] and FTD γ(v) [D] curves vs this session’s baked FTD-0252 measured points [M] (offline campaign). The velocity is [IMPOSED] (rigid translation is [BOUNDARY-blocked]). Inset: historical finite-size residual; no continuum recovery certificate.',
         e: 'The imposed de Broglie internal clock (FTD-0271). FTD-0402 normalizes raw speed by C_SPEED and advances phase with the full selected budget B=β²+L². This card is implementation telemetry, not evidence of physical covariance.',
-        f: 'Field-wide τ/dτ-dt/φ aggregates (2026-09-03), reduced over every manifested voxel rather than the single centre voxel Card E reads. WASM-only (get_tau_sampled/get_lapse_sampled/get_phase_sampled, ftd_wasm.cpp); requires a WASM rebuild before these are live. Also publishes the ptime.* telemetry-grid channels.',
+        f: 'Field-wide τ/dτ-dt/φ aggregates (2026-09-03), reduced over sampled manifested voxels rather than the single centre voxel Card E reads. Requested stride 1 may be raised by the backend budget; counts and effective strides describe the sampled support. WASM-only (get_tau_sampled/get_lapse_sampled/get_phase_sampled, ftd_wasm.cpp); requires a WASM rebuild before these are live. Also publishes the ptime.* telemetry-grid channels.',
     };
     root.innerHTML = `
         <header class="time-header">
@@ -359,7 +375,7 @@ function buildPanel() {
             <div id="${PANEL_ID}-card-b"></div>
         </section>
         <section style="${cardStyle(180)}">
-            <div style="${titleStyle()}" title="${SECTION_HELP.c}">C · Twin clocks (Δτ) ⓘ</div>
+            <div style="${titleStyle()}" title="${SECTION_HELP.c}">C · Sampled proxy clocks (Δτ) ⓘ</div>
             <div id="${PANEL_ID}-card-c"></div>
         </section>
         <section style="${cardStyle(260)}">
@@ -416,26 +432,47 @@ export function mountTimePanel(host, getBridge) {
     // twin-clock accumulators
     let twin = { tauDeep: 0, tauFar: 0, history: [], historyTicks: [], lDeep: 0, lFar: 0, active: false };
     let lastTick = -1;
+    let lastPhysicalTime = null;
 
     function resetTwin() {
         twin = { tauDeep: 0, tauFar: 0, history: [], historyTicks: [], lDeep: 0, lFar: 0, active: false };
         lastTick = -1;
+        lastPhysicalTime = null;
     }
 
     function visibleTwin() {
-        const entries = twin.history.map((value, index) => ({
-            value,
-            tick: twin.historyTicks[index] ?? index,
-        }));
+        const count = twin.history.length;
+        let first = 0;
+        if (!historyControl.isAll && count >= 2) {
+            const last = count - 1;
+            const lastTick = Number(twin.historyTicks[last] ?? last);
+            if (!Number.isFinite(lastTick)) {
+                first = Math.max(0, count - historyControl.ticks);
+            } else {
+                const minimumTick = lastTick - historyControl.ticks;
+                first = last;
+                while (first > 0) {
+                    const tick = Number(twin.historyTicks[first - 1] ?? first - 1);
+                    if (!Number.isFinite(tick) || tick < minimumTick) break;
+                    first--;
+                }
+            }
+        }
+        // Keep the complete run; allocate only the requested display window.
         return {
             ...twin,
-            history: historyControl.slice(entries, entry => entry.tick).map(entry => entry.value),
+            history: twin.history.slice(first),
         };
     }
 
-    // Card D is event-driven (slider) AND rAF-refreshed. Render once up-front so
-    // the baked FTD-0252 curve + tags exist even before the first rAF tick.
-    function renderD() { renderCardD(cardD, vImposed); }
+    // Card D owns form controls: preserve their existing renderer and only
+    // rebuild when its imposed value changes, including while telemetry waits.
+    let lastRenderedV;
+    function renderD() {
+        if (Object.is(lastRenderedV, vImposed)) return;
+        renderCardD(cardD, vImposed);
+        lastRenderedV = vImposed;
+    }
     renderD();
     // Delegate slider input (the input is re-created on each renderD()).
     cardD.addEventListener('input', (e) => {
@@ -501,7 +538,7 @@ export function mountTimePanel(host, getBridge) {
         // Circular statistics (Mardia & Jupp): mean angle = atan2(mean sin, mean
         // cos); circular variance = 1 − R, R = |mean unit vector| ∈ [0,1]. R=1
         // (var=0) is a fully synchronized clock phase across the field; R→0
-        // (var→1) is uniformly scrambled phase.
+        // (var→1) has no preferred first circular moment; it need not be uniform.
         let dbPhaseMean = Number.NaN, dbPhaseCircVar = Number.NaN;
         if (phase.count > 0) {
             let sc = 0, ss = 0;
@@ -510,11 +547,15 @@ export function mountTimePanel(host, getBridge) {
             const meanCos = sc / n, meanSin = ss / n;
             const R = Math.sqrt(meanCos * meanCos + meanSin * meanSin);
             const TWO_PI = 2 * Math.PI;
-            dbPhaseMean = (Math.atan2(meanSin, meanCos) + TWO_PI) % TWO_PI;
-            dbPhaseCircVar = 1 - R;
+            // Float32 sampler angles carry ~1e-7 rounding; below this
+            // display-resolution floor a cancelling first moment has no angle.
+            if (R > 1e-6) dbPhaseMean = (Math.atan2(meanSin, meanCos) + TWO_PI) % TWO_PI;
+            dbPhaseCircVar = Math.max(0, Math.min(1, 1 - R));
         }
         return {
             hasField, tauCount: tau.count, lapseCount: lapse.count, phaseCount: phase.count,
+            tauStride: tau.effectiveStride ?? null, lapseStride: lapse.effectiveStride ?? null,
+            phaseStride: phase.effectiveStride ?? null,
             properTimeMean, properTimeMin, properTimeMax, lapseMean, dbPhaseMean, dbPhaseCircVar,
         };
     }
@@ -522,23 +563,25 @@ export function mountTimePanel(host, getBridge) {
     // Card F — field-wide τ/lapse/φ status + telemetry publication + a one-click
     // "enable" affordance for the two toggles these overlays depend on.
     function renderCardF(container, ptime, toggles) {
+        const readout = beginTimeReadout(container);
+        const renderRow = bindTimeRow(readout);
         const { latencyField, deBroglieClock } = toggles;
         const needsEnable = !latencyField && !deBroglieClock;
         let html = `<div class="time-provenance" title="get_tau_sampled/get_lapse_sampled/get_phase_sampled (ftd_wasm.cpp) accumulate only at manifested voxels, and only while at least one of these two engine toggles is ON.">Requires <code>latency_field</code> and/or <code>de_broglie_clock</code> ON. τ needs either; φ additionally needs de_broglie_clock specifically (dφ=ω₀·dτ).</div>`;
         if (needsEnable) {
             html += `<button type="button" class="time-enable-ptime-btn" id="${PANEL_ID}-enable-ptime" style="margin:4px 0 8px;padding:4px 10px;font-size:16px;background:var(--accent,#7dd3fc);color:#04111a;border:none;border-radius:4px;cursor:pointer;">Enable latency_field + de_broglie_clock</button>`;
         }
-        html += row('latency_field', latencyField ? 'ON' : 'OFF', 'M', latencyField ? 'var(--positive-text)' : 'var(--text-muted)', 'Engine toggle gating accumulate_proper_time (transmutation_phases.cpp).');
-        html += row('de_broglie_clock', deBroglieClock ? 'ON' : 'OFF', 'M', deBroglieClock ? 'var(--positive-text)' : 'var(--text-muted)', 'Engine toggle additionally advancing the phase φ.');
+        html += renderRow('latency_field', latencyField ? 'ON' : 'OFF', 'M', latencyField ? 'var(--positive-text)' : 'var(--text-muted)', 'Engine toggle gating accumulate_proper_time (transmutation_phases.cpp).');
+        html += renderRow('de_broglie_clock', deBroglieClock ? 'ON' : 'OFF', 'M', deBroglieClock ? 'var(--positive-text)' : 'var(--text-muted)', 'Engine toggle additionally advancing the phase φ.');
         if (!ptime.hasField) {
             html += `<div class="time-empty">No τ/lapse/φ field yet — enable the toggles above, load a scenario with manifested particles, and press play.</div>`;
         } else {
-            html += row('τ mean / min / max', `${formatExp(ptime.properTimeMean)} / ${formatExp(ptime.properTimeMin)} / ${formatExp(ptime.properTimeMax)}`, 'M', undefined, `Accumulated proper time over ${ptime.tauCount} manifested voxels.`);
-            html += row('dτ/dt mean (lapse)', formatFixed(ptime.lapseMean, 5), 'M', undefined, `Instantaneous clock rate, mean over ${ptime.lapseCount} manifested voxels.`);
-            html += row('φ circular mean', Number.isFinite(ptime.dbPhaseMean) ? `${formatFixed(ptime.dbPhaseMean, 3)} rad` : '—', 'M', undefined, `Circular mean (Mardia–Jupp) over ${ptime.phaseCount} manifested voxels.`);
-            html += row('φ circular variance', Number.isFinite(ptime.dbPhaseCircVar) ? formatFixed(ptime.dbPhaseCircVar, 4) : '—', 'M', undefined, '1 − R; 0 = fully synchronized phase, 1 = uniformly scrambled.');
+            html += renderRow('τ mean / min / max', `${formatExp(ptime.properTimeMean)} / ${formatExp(ptime.properTimeMin)} / ${formatExp(ptime.properTimeMax)}`, 'M', undefined, `Accumulated proper time over ${ptime.tauCount} sampled manifested voxels; effective stride ${ptime.tauStride ?? "unavailable"}.`);
+            html += renderRow('dτ/dt mean (lapse)', formatFixed(ptime.lapseMean, 5), 'M', undefined, `Instantaneous clock rate, mean over ${ptime.lapseCount} sampled manifested voxels; effective stride ${ptime.lapseStride ?? "unavailable"}.`);
+            html += renderRow('φ circular mean', Number.isFinite(ptime.dbPhaseMean) ? `${formatFixed(ptime.dbPhaseMean, 3)} rad` : '—', 'M', undefined, `Circular mean (Mardia–Jupp) over ${ptime.phaseCount} sampled manifested voxels; effective stride ${ptime.phaseStride ?? "unavailable"}; mean unavailable when R ≤ 1e-6.`);
+            html += renderRow('φ circular variance', Number.isFinite(ptime.dbPhaseCircVar) ? formatFixed(ptime.dbPhaseCircVar, 4) : '—', 'M', undefined, '1 − R; 0 = aligned phases, 1 = vanishing first circular moment (not necessarily uniform).');
         }
-        container.innerHTML = html;
+        readout.commit(html);
     }
 
     function update() {
@@ -553,6 +596,7 @@ export function mountTimePanel(host, getBridge) {
         const sourceChanged = sourceBoundary !== null && nextSourceBoundary !== null
             && sourceBoundary !== nextSourceBoundary;
         if (b !== bridgeId || nextResetVersion !== resetVersion || sourceChanged) {
+            bridgeId?.replaceSamplerWants?.('time-panel', []);
             bridgeId = b;
             resetVersion = nextResetVersion;
             resetTwin();
@@ -561,15 +605,18 @@ export function mountTimePanel(host, getBridge) {
         // Gate the heavy work (latency sampler + radial bins) on visibility —
         // the established panel pattern (isPanelLive); idle when the tab is hidden.
         if (!isPanelLive(host)) {
-            getBridge?.()?.replaceSamplerWants?.('time-panel', []);
+            bridgeId?.replaceSamplerWants?.('time-panel', []);
+            lastPhysicalTime = null;
             return;
         }
         const sampleStride = Math.max(BASE_STRIDE,
             Math.ceil((Number(caps.latticeSize) || 33) / TARGET_AXIS_SAMPLES));
-        getBridge?.()?.replaceSamplerWants?.('time-panel', [`latency@${sampleStride}`]);
+        getBridge?.()?.replaceSamplerWants?.('time-panel', [`latency@${sampleStride}`, 'tau@1', 'lapse@1', 'dbPhase@1']);
 
         const diagMeta = telemetryHub.getScale0TelemetryMeta?.('diagnostics') ?? null;
-        const { diag: hubDiag } = readScale0DiagAudit(b);
+        // This instrument consumes only qualified diagnostics. Fetching the
+        // combined helper also computed an unused direct-WASM energy audit.
+        const hubDiag = telemetryHub.s0?.diag ?? null;
         const diag = diagMeta && diagMeta.stale !== true && Number.isFinite(diagMeta.tick)
             ? hubDiag : null;
         const tick = Number.isFinite(diag?.tick) ? diag.tick : null;
@@ -578,10 +625,11 @@ export function mountTimePanel(host, getBridge) {
         const dt = Number.isFinite(diag?.dt) && diag.dt > 0 ? diag.dt : null;
         if (!diag || tick === null || !Number.isFinite(physicalTime)) {
             const unavailable = '<div class="time-empty">Current Scale-0 telemetry is unavailable; no zero baseline has been synthesized.</div>';
-            cardA.innerHTML = unavailable;
-            cardB.innerHTML = unavailable;
-            cardC.innerHTML = unavailable;
+            updateTimeReadout(cardA, unavailable);
+            updateTimeReadout(cardB, unavailable);
+            updateTimeReadout(cardC, unavailable);
             lastMetrics = null;
+            lastPhysicalTime = null;
             renderD();
             renderCardE(cardE, {
                 hasData: false, active: false, omega0: Number.NaN,
@@ -613,16 +661,20 @@ export function mountTimePanel(host, getBridge) {
         if (hasField) {
             if (tick !== lastTick) {
                 // On the first valid tick just latch; thereafter accumulate.
-                if (lastTick >= 0 && Number.isFinite(dt)) {
-                    twin.tauDeep += properTimeStep(lDeep, dt);
-                    twin.tauFar += properTimeStep(lFar, dt);
+                if (lastPhysicalTime !== null && physicalTime > lastPhysicalTime) {
+                    // Right-endpoint proxy quadrature over observed lab time,
+                    // not one fictitious engine tick per rendering callback.
+                    const interval = physicalTime - lastPhysicalTime;
+                    twin.tauDeep += properTimeStep(lDeep, interval);
+                    twin.tauFar += properTimeStep(lFar, interval);
                     twin.history.push(twin.tauFar - twin.tauDeep);
                     twin.historyTicks.push(tick);
                 }
                 twin.lDeep = lDeep; twin.lFar = lFar; twin.active = true;
                 lastTick = tick;
+                lastPhysicalTime = physicalTime;
             }
-        }
+        } else { lastPhysicalTime = null; twin.active = false; }
         renderCardC(cardC, visibleTwin());
 
         // Card D is static between slider events; recreating both SVG curves
@@ -651,7 +703,7 @@ export function mountTimePanel(host, getBridge) {
         const clockRateNow = hasPhase && Number.isFinite(omega0)
             ? omega0 * clockRate(latency, speed) : Number.NaN;
         renderCardE(cardE, {
-            hasData: dbActive || (hasPhase && phase !== 0),
+            hasData: hasPhase,
             active: dbActive, omega0, phase, speed, latency, clockRate: clockRateNow,
         });
 
@@ -689,6 +741,7 @@ export function mountTimePanel(host, getBridge) {
         get sourceBoundary() { return sourceBoundary; },
         setImposedV: (v) => { vImposed = Math.max(0, Math.min(0.95, +v || 0)); renderD(); },
         dispose: () => {
+            bridgeId?.replaceSamplerWants?.('time-panel', []);
             armSub.unsubscribe();
             liveSub?.unsubscribe();
             historyControl.destroy();

@@ -38,6 +38,18 @@ const KIND_BY_SLOT = {
 /** Slots that always sample at stride 1 regardless of sweep stride. */
 const STRIDE_ONE_SLOTS = new Set(['state', 'gaussResidual', 'properTime', 'lapse', 'dbPhase']);
 
+// Direct WASM samplers/particle getters may reuse native or JS scratch arrays.
+// Retain owned bytes across asynchronous overlay jobs, without claiming that
+// different lazy reads occurred at the same engine tick.
+export function ownSampleSnapshot(sample) {
+    if (!sample || typeof sample !== 'object') return sample;
+    const owned = { ...sample };
+    for (const [key, value] of Object.entries(owned)) {
+        if (ArrayBuffer.isView(value) && typeof value.slice === 'function') owned[key] = value.slice();
+    }
+    return owned;
+}
+
 /** Scalar overlay flag → sample slots required before compute*Frame runs. */
 export const SCALAR_SAMPLE_DEPS = {
     showPsiSquared: ['fluxVector'],
@@ -84,7 +96,7 @@ export function createFieldSampleCache(fieldCapability, acScale0, stride, kindOv
         const cacheKey = `${kind}@${effectiveStride}`;
         let result = byKind.get(cacheKey);
         if (result === undefined) {
-            result = fieldCapability.getScale0FieldSamples({ kind, stride: effectiveStride });
+            result = ownSampleSnapshot(fieldCapability.getScale0FieldSamples({ kind, stride: effectiveStride }));
             byKind.set(cacheKey, result);
         }
         sampled[slot] = result;
@@ -106,7 +118,7 @@ export function createFieldSampleCache(fieldCapability, acScale0, stride, kindOv
 
     function ensureParticleData() {
         if (sampled.particleData !== undefined) return sampled.particleData;
-        sampled.particleData = acScale0 ? acScale0.getScale0ParticleFrame() : null;
+        sampled.particleData = acScale0 ? ownSampleSnapshot(acScale0.getScale0ParticleFrame()) : null;
         return sampled.particleData;
     }
 
@@ -126,7 +138,7 @@ export function createForceFieldCache(fieldCapability) {
             const key = `${type}@${stride}`;
             let result = byKey.get(key);
             if (result === undefined) {
-                result = fieldCapability.getScale0ForceField(type, stride);
+                result = ownSampleSnapshot(fieldCapability.getScale0ForceField(type, stride));
                 byKey.set(key, result);
             }
             return result;

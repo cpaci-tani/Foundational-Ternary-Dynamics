@@ -20,6 +20,7 @@
 const FTD_WASM_BASE_URL = new URL('../../wasm/', self.location.href).href;
 importScripts(new URL('./sampler-registry.classic.js', self.location.href).href);
 importScripts(new URL('./sampler-cadence.classic.js?v=2', self.location.href).href);
+importScripts(new URL('./flux-publication.classic.js', self.location.href).href);
 // The threaded glue is intentionally NOT imported here. initModule() first
 // verifies the manifest, glue, and module bytes, then executes the verified
 // glue from a Blob URL and supplies the verified module through `wasmBinary`.
@@ -51,25 +52,17 @@ let fluxPubSab = null, fluxPubN = 0;
 function publishFlux(vol) {
   if (!vol || !vol.length) return false;
   const n = vol.length;
-  // 8-byte header: Int32 published-slot + 4 bytes pad. Float64Array views
-  // require a multiple-of-8 byteOffset; a 4-byte header throws and the
-  // catch below would silently revert to the torn single-buffer heap view.
-  const header = 8;
-  const bytes = n * 8;
-  const need = header + 2 * bytes;
   try {
-    if (!fluxPubSab || fluxPubSab.byteLength < need || fluxPubN !== n) {
-      fluxPubSab = new SharedArrayBuffer(need);
+    if (!fluxPubSab || fluxPubN !== n) {
+      fluxPubSab = self.FTD_FLUX_PUBLICATION.create(n);
       fluxPubN = n;
-      Atomics.store(new Int32Array(fluxPubSab, 0, 1), 0, 0);
       self.postMessage({
         type: 'fluxRebind', fluxSab: fluxPubSab, fluxLen: n, doubleBuffered: true,
+        fluxProtocol: self.FTD_FLUX_PUBLICATION.PROTOCOL,
         configurationToken: activeConfigurationToken,
       });
     }
-    const slot = 1 - Atomics.load(new Int32Array(fluxPubSab, 0, 1), 0);
-    new Float64Array(fluxPubSab, header + slot * bytes, n).set(vol);
-    Atomics.store(new Int32Array(fluxPubSab, 0, 1), 0, slot);
+    self.FTD_FLUX_PUBLICATION.publish(fluxPubSab, vol);
     return true;
   } catch (e) {
     fluxPubSab = null;
@@ -489,7 +482,8 @@ function buildBridge(n, scen, configurationToken = 0) {
     type: 'ready', N, ctrl: ctrlSab, heap: vol.buffer, fluxPtr: vol.byteOffset, fluxLen: vol.length,
     setupOk, setupError, artifactIdentity, configurationToken,
     workerRuntimeId, moduleInitCount, renderBridgeGeneration,
-    ...(doubled ? { fluxSab: fluxPubSab, doubleBuffered: true } : {}),
+    ...(doubled ? { fluxSab: fluxPubSab, doubleBuffered: true,
+                   fluxProtocol: self.FTD_FLUX_PUBLICATION.PROTOCOL } : {}),
   });
   // Standing wants belong to UI state and survive scenario replacement. Force
   // one coherent current-generation population after the new bridge is ready.
@@ -607,12 +601,14 @@ function postFrame(
         stateVersion: ++lagrangianStateVersion, tick, stale: true, status: 'error',
       });
     }
-  } else if (lastLagrangianMeta) {
-    lastLagrangianMeta = {
-      ...lastLagrangianMeta,
-      stale: true,
-      status: 'inactive',
-    };
+  } else if (!lastLagrangianMeta || lastLagrangianMeta.status !== 'inactive'
+      || lastLagrangianMeta.sourceEpoch !== activeConfigurationToken) {
+    // Inactivity is an explicit observation boundary, including before the
+    // first sample and after configuration replacement. Repeated inactive
+    // frames retain this identity instead of fabricating new observations.
+    lastLagrangianMeta = telemetryGroupMeta({
+      stateVersion: ++lagrangianStateVersion, tick, stale: true, status: 'inactive',
+    });
   }
 
   // Audit-derived decomposition is valid only when both observations describe
@@ -692,6 +688,10 @@ function postFrame(
           } else {
             samplers[key] = { positions: new Float32Array(raw.positions || 0), values: new Float32Array(raw.values || 0), count: raw.count | 0 };
           }
+          if (Number.isInteger(raw.effectiveStride) && raw.effectiveStride > 0) {
+            samplers[key].effectiveStride = raw.effectiveStride;
+          }
+          if (Number.isInteger(raw.origin) && raw.origin >= 0) samplers[key].origin = raw.origin;
         }
       } catch { /* ignore — method may not be bound in this WASM build */ }
     });
@@ -730,8 +730,14 @@ function loop() {
     const whole = Math.floor(tickAcc); tickAcc -= whole;
     const maxTicks = N > 96 ? 1 : (N > 48 ? 1 : (N > 32 ? 2 : whole));
     const toRun = Math.min(whole, maxTicks);
-    for (let i = 0; i < toRun; i++) bridge.tick();
-    if (toRun > 0) postFrame(true);
+    try {
+      for (let i = 0; i < toRun; i++) bridge.tick();
+      if (toRun > 0) postFrame(true);
+    } catch (e) {
+      Atomics.store(ctrl, CTRL.RUNNING, 0);
+      self.postMessage({ type: 'error', where: 'runtime',
+        configurationToken: activeConfigurationToken, msg: String(e && e.message || e) });
+    }
   }
   const elapsed = performance.now() - t0;
   timer = setTimeout(loop, Math.max(0, TARGET_DT - elapsed));
@@ -772,7 +778,13 @@ self.onmessage = (e) => {
         if (!mod || !bridge
             || Number(msg.configurationToken) !== activeConfigurationToken) break;
         lastAudit = null; lastAuditMeta = null; auditFrameCounter = 0;
-        applyCommand(msg.method, msg.args || []);
+        const result = applyCommand(msg.method, msg.args || []);
+        if (!result.ok) {
+          if (msg.method === 'tickScale0' && ctrl) Atomics.store(ctrl, CTRL.RUNNING, 0);
+          self.postMessage({ type: 'error', where: msg.method,
+            configurationToken: activeConfigurationToken, msg: result.error });
+          break;
+        }
         engineTogglesDirty = true;
         postFrame(true);
         break;
@@ -860,15 +872,27 @@ self.onmessage = (e) => {
         break;
       }
       case 'inspectVoxel': {
-        if (Number(msg.configurationToken) !== activeConfigurationToken) break;
+        if (msg.configurationToken !== activeConfigurationToken
+            || !Number.isSafeInteger(msg.requestId) || msg.requestId <= 0
+            || ![msg.x, msg.y, msg.z].every(v => Number.isSafeInteger(v) && v >= 0 && v < N)) break;
         lastInspect = null;
+        let sampleTick = null;
+        let dataVersion = null;
         if (mod && bridge && typeof mod.inspectVoxel === 'function') {
           try {
-            lastInspect = { x: msg.x | 0, y: msg.y | 0, z: msg.z | 0, voxel: mod.inspectVoxel(bridge, msg.x, msg.y, msg.z) };
+            lastInspect = { x: msg.x, y: msg.y, z: msg.z, voxel: mod.inspectVoxel(bridge, msg.x, msg.y, msg.z) };
+            // Inspection and the true core clock read are synchronous in this
+            // worker turn. A cached diagnostic/frame clock is not provenance.
+            const tick = typeof bridge.currentTick === 'function' ? bridge.currentTick() : null;
+            sampleTick = Number.isSafeInteger(tick) && tick >= 0 ? tick : null;
+            const version = ctrl ? Atomics.load(ctrl, CTRL.DATA_VERSION) : null;
+            dataVersion = Number.isSafeInteger(version) && version >= 0 ? version : null;
           } catch { lastInspect = null; }
         }
         self.postMessage({
           type: 'inspectResult', inspect: lastInspect,
+          requestId: msg.requestId, x: msg.x, y: msg.y, z: msg.z,
+          sampleTick, dataVersion,
           configurationToken: msg.configurationToken,
         });
         break;
@@ -963,10 +987,12 @@ self.onmessage = (e) => {
       case 'setTelemetryMask': {
         const nextWantAudit = msg.wantAudit !== false;
         const auditChanged = nextWantAudit !== wantAudit;
+        const nextWantLag = msg.wantLag !== false;
+        const lagChanged = nextWantLag !== wantLag;
         const nextWantGravity = msg.wantGravity === true;
         const gravityBecameWanted = nextWantGravity && !wantGravity;
         wantAudit = nextWantAudit;
-        wantLag   = msg.wantLag   !== false;
+        wantLag = nextWantLag;
         wantGravity = nextWantGravity;
         if (auditChanged) {
           // Never reuse an observation across an inactive boundary. The next
@@ -975,7 +1001,9 @@ self.onmessage = (e) => {
           lastAudit = null;
           auditFrameCounter = 0;
         }
-        let publishPausedMaskChange = auditChanged;
+        // A paused Lagrangian-only transition must publish even when audit is
+        // already demanded. This is a readback, not a physics-data advance.
+        let publishPausedMaskChange = auditChanged || lagChanged;
         if (gravityBecameWanted) {
           gravitySamplerCadence.reset();
           const dataVersion = ctrl ? Atomics.load(ctrl, CTRL.DATA_VERSION) : 0;

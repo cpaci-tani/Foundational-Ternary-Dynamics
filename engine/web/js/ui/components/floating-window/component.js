@@ -3,7 +3,7 @@
  * Detaches any DOM panel and mounts it inside a viewport-floating window.
  */
 
-import { notifyPanelVisibilityChange } from '../../panels/panel-visibility.js?v=2';
+import { isPanelLive, notifyPanelVisibilityChange } from '../../panels/panel-visibility.js?v=2';
 
 let _activeWindows = [];
 let _maxZIndex = 1000;
@@ -159,7 +159,7 @@ export class FloatingWindow {
     }
 
     triggerChartResize() {
-        if (!this.body) return;
+        if (this._destroyed || !this.body || !isPanelLive(this.panelEl)) return;
         // Trigger ResizeObserver callbacks for nested elements with custom resize functions (like uPlot charts)
         const resizableEls = this.body.querySelectorAll('*');
         resizableEls.forEach(el => {
