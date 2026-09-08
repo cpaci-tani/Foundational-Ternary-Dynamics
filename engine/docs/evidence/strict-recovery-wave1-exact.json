@@ -1,0 +1,719 @@
+{
+  "calculation_kind": "exact_finite_maps_and_complete_counting_pushforward",
+  "collision_sha256": "D0BB71DBED7938ED286E1D6D91A16700DA31F4550E83B2FB3580CCC347B2BD25",
+  "complete_counting_witness": {
+    "channel_4_marginal": {
+      "denominator": "4",
+      "numerator": "1"
+    },
+    "channel_5_marginal": {
+      "denominator": "4",
+      "numerator": "1"
+    },
+    "covariance": {
+      "denominator": "16",
+      "numerator": "3"
+    },
+    "joint_4_5": {
+      "denominator": "4",
+      "numerator": "1"
+    },
+    "physical_microticks": 2,
+    "preparation": "four equally counted singleton-site sets empty,{0},{1},{0,1}",
+    "product_of_marginals": {
+      "denominator": "16",
+      "numerator": "1"
+    },
+    "selected_external_counting_measure": true,
+    "support_after": 4,
+    "support_before": 4
+  },
+  "kinetic_reference": {
+    "finite_map_certificate": {
+      "background_codes": 8,
+      "collision_hash": "D0BB71DBED7938ED286E1D6D91A16700DA31F4550E83B2FB3580CCC347B2BD25",
+      "law_id": "phi-v2-staged-candidate-1",
+      "layers": 3,
+      "pair_states_per_layer": 18336,
+      "product_tangent_closure": false,
+      "record_family_period_microticks": 48,
+      "stationary_absolute_clock": false,
+      "stationary_field_reference": true,
+      "streaming_channels": 384
+    },
+    "full_record_reference": "correlated phase-dependent lift; absolute clock advances",
+    "half_occupation_pricing": {
+      "at_least_one_event_upper_bound": {
+        "denominator": "6129982163463555433433388108601236734474956488734408704",
+        "numerator": "417717"
+      },
+      "collision_stages": 16,
+      "expected_logged_pair_events": {
+        "denominator": "6129982163463555433433388108601236734474956488734408704",
+        "numerator": "417717"
+      },
+      "hydrodynamics_certified": false,
+      "law_id": "phi-v2-staged-candidate-1",
+      "microticks": 64,
+      "p": {
+        "denominator": "2",
+        "numerator": "1"
+      },
+      "per_site_polarity_eligibility": {
+        "denominator": "196159429230833773869868419475239575503198607639501078528",
+        "numerator": "573"
+      },
+      "preparation_id": "strict-kinetic-counting-reference-1",
+      "relaxation_certified": false,
+      "start_tick": 0,
+      "temporal_independence_assumed": false
+    },
+    "mean_population_at_selected_density": {
+      "denominator": "1",
+      "numerator": "2916"
+    },
+    "measured_campaign": false,
+    "selected_preparation_pricing": {
+      "at_least_one_event_upper_bound": {
+        "denominator": "1",
+        "numerator": "1"
+      },
+      "collision_stages": 16,
+      "expected_logged_pair_events": {
+        "denominator": "176168397534013955677373895457649319776080287418810289490461298137220838412075123189687170901228906343859729745656160433571948701627396777616974775472244914352629249233733023196016881768783081505698926948629713915392993944831437495972734495953341040458951188738871820177914035058958663815302414506532328508784022943935316604706859785343370884536970833707918702252244003192832",
+        "numerator": "1118197127112746494244594424439437932509964405118696435303991890772396846736963738496204822588824114105057783448413645255847085971234833284454753163819442408199985751342769110925249920718575468915503746124268179144640263333766971608327227599188253223175011512215761726644714013337127851135838332265908001951932955317495910213015621186851376867021912175914621911942958831787109375"
+      },
+      "hydrodynamics_certified": false,
+      "law_id": "phi-v2-staged-candidate-1",
+      "microticks": 64,
+      "p": {
+        "denominator": "96",
+        "numerator": "1"
+      },
+      "per_site_polarity_eligibility": {
+        "denominator": "4109656377673477558041778233236043331736400944906006433233481162945087718476888473769022322783867927189559775506666910594366419311563912028248787562216529362018135126124523965116681817902171725364944567857633966218287762745027773906051950321599539791826413330900401821110378609855387709483374725608386159452913687236123065754601625072490155994478455608738327486140348106482384896",
+        "numerator": "1118197127112746494244594424439437932509964405118696435303991890772396846736963738496204822588824114105057783448413645255847085971234833284454753163819442408199985751342769110925249920718575468915503746124268179144640263333766971608327227599188253223175011512215761726644714013337127851135838332265908001951932955317495910213015621186851376867021912175914621911942958831787109375"
+      },
+      "preparation_id": "strict-kinetic-counting-reference-1",
+      "relaxation_certified": false,
+      "start_tick": 0,
+      "temporal_independence_assumed": false
+    }
+  },
+  "law_id": "phi-v2-staged-candidate-1",
+  "limits": {
+    "atomic_molecular_recovery": false,
+    "canonical_law_adoption": false,
+    "gravity_recovery": false,
+    "material_particle_identification": false,
+    "maxwell_or_collisional_fluid_recovery": false,
+    "physical_calibration": false
+  },
+  "schema": "strict_recovery_wave1_calculation_v1",
+  "source_sha256": {
+    "scripts/phi_v2_lattice/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scripts/phi_v2_lattice/_proofs.py": "c06360e475fe9fe938d2af97ddd4ed5552fb8706c72543666b4eb7ee78f91583",
+    "scripts/phi_v2_lattice/channels.py": "788bb325e68dbd697767627fa6b5a97ff191a0d64bee33919ef6f0da396fc33d",
+    "scripts/phi_v2_lattice/checkpoint.py": "18561414b814b8caf2d57913727ce46fa8de88de619434ea9922f3bca2e9da8f",
+    "scripts/phi_v2_lattice/experiments/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scripts/phi_v2_lattice/experiments/run_recovery_wave1.py": "60d31096bd034e27cd8182aac19b05e234662dc8499de068b69f7d8b6bb888d3",
+    "scripts/phi_v2_lattice/geometry.py": "05c9dfd125c19e24dd3d4f492bdec8cf30d6abad6cc6c4866a7519745508030d",
+    "scripts/phi_v2_lattice/prepare.py": "f5a61b389f5498e0bd822c2f148f3ef40def8b143d59c004e451288a3547092a",
+    "scripts/phi_v2_lattice/recovery_ensemble.py": "ee2df5a4a2b083989baf7d2bb3550387c4dea4ab583597c1d46b4f5fe2063a1e",
+    "scripts/phi_v2_lattice/recovery_kinetic_reference.py": "8866836ccd5a416e05b157795b8acbf25f4f86463f65c93a4aeaed474f7e3896",
+    "scripts/phi_v2_lattice/recovery_transport.py": "80269e6c0a2b5d0b8d37abaada177b64a0670e66558d9c7c0ef2c83de1bad7a7",
+    "scripts/phi_v2_lattice/staged.py": "c6398980cceda4f52a3cb3275b42806b8ceb4af6407a4c92a92c9a5704dc2e75",
+    "scripts/phi_v2_lattice/state.py": "00c86b69528859eb84429390c7d569aa7f26048ade821d5dce936b59b45d3e17",
+    "scripts/phi_v2_lattice/tick.py": "579e37bc7f14ad3e7d5c166c270977db00f211a7f57dfe91a16c8215149d9472",
+    "scripts/proofs/proof_c18_equivariant_single_record_collision_no_go.py": "f759ee742070ef3ebf31e0268d89de2e1b6a9c5877a1977a4947bde0beec76e3",
+    "scripts/proofs/proof_global_c3_cotangent_layer_equivariant_collision.py": "6aa86b113392520d15dc3a16aed1422aae41a4c3a0fdbd3f7e4226d9088996c8",
+    "scripts/proofs/proof_global_c3_cotangent_layer_full_tick_maxwell_vacuum.py": "78ce75e442618bed6396f906f17f283fa80113524d2283e6f61eee8428ff664f",
+    "scripts/proofs/proof_global_c3_cotangent_layer_hodge_maxwell_target.py": "975433e0fd496de68ef500595d6fa927cd55b8cfedfb0158d307053c661a6c4a",
+    "scripts/proofs/proof_hodge_flag_pair_collision_invariant_space.py": "c535f14a5fd86f4d46b63a2cbe4d522177744dcd43196afca37e8eae3acfe22e",
+    "scripts/proofs/proof_moore_bond_capacity_type_census.py": "d8d83f4600822a7c8cb426120b61d8ca57465b379340ff51d87ee81d3a95a7f6",
+    "scripts/proofs/proof_oriented_bond_plaquette_hodge_maxwell_target.py": "8d497a7d05c1d7e1957c83013b50b63d38683cd493dfea6ac3fd4bc0760473f0",
+    "scripts/proofs/proof_shared_edge_hodge_flag_bcc_propagation.py": "28046ad9723e34f7f0ee099f5d44b9cf0bdcbddbe2b4352fbd8fd6991fdd0455",
+    "scripts/proofs/proof_v3_common_action_phi_v2.py": "485cbc761ee93727bb37c26951b96f82c00b03bbbb923c8ac476721d103fe04a"
+  },
+  "transport": {
+    "channels": 384,
+    "comparison": "multiply the displacement bounds by declared comparison spacing a",
+    "domain": "one global field token; homogeneous doubly occupied periodic background",
+    "maximum_held_time_ripple": {
+      "denominator": "12",
+      "numerator": "11"
+    },
+    "maximum_integer_tick_ripple": {
+      "denominator": "6",
+      "numerator": "5"
+    },
+    "norm": "L-infinity path distance; finite label pairing bounds W1 with that cost",
+    "orbits": [
+      [
+        0,
+        113,
+        170,
+        3,
+        112,
+        169,
+        2,
+        115,
+        168,
+        1,
+        114,
+        171
+      ],
+      [
+        4,
+        93,
+        166,
+        7,
+        92,
+        165,
+        6,
+        95,
+        164,
+        5,
+        94,
+        167
+      ],
+      [
+        8,
+        89,
+        138,
+        11,
+        88,
+        137,
+        10,
+        91,
+        136,
+        9,
+        90,
+        139
+      ],
+      [
+        12,
+        117,
+        134,
+        15,
+        116,
+        133,
+        14,
+        119,
+        132,
+        13,
+        118,
+        135
+      ],
+      [
+        16,
+        185,
+        74,
+        19,
+        184,
+        73,
+        18,
+        187,
+        72,
+        17,
+        186,
+        75
+      ],
+      [
+        20,
+        149,
+        70,
+        23,
+        148,
+        69,
+        22,
+        151,
+        68,
+        21,
+        150,
+        71
+      ],
+      [
+        24,
+        145,
+        106,
+        27,
+        144,
+        105,
+        26,
+        147,
+        104,
+        25,
+        146,
+        107
+      ],
+      [
+        28,
+        189,
+        102,
+        31,
+        188,
+        101,
+        30,
+        191,
+        100,
+        29,
+        190,
+        103
+      ],
+      [
+        32,
+        121,
+        130,
+        35,
+        120,
+        129,
+        34,
+        123,
+        128,
+        33,
+        122,
+        131
+      ],
+      [
+        36,
+        85,
+        142,
+        39,
+        84,
+        141,
+        38,
+        87,
+        140,
+        37,
+        86,
+        143
+      ],
+      [
+        40,
+        81,
+        162,
+        43,
+        80,
+        161,
+        42,
+        83,
+        160,
+        41,
+        82,
+        163
+      ],
+      [
+        44,
+        125,
+        174,
+        47,
+        124,
+        173,
+        46,
+        127,
+        172,
+        45,
+        126,
+        175
+      ],
+      [
+        48,
+        177,
+        98,
+        51,
+        176,
+        97,
+        50,
+        179,
+        96,
+        49,
+        178,
+        99
+      ],
+      [
+        52,
+        157,
+        110,
+        55,
+        156,
+        109,
+        54,
+        159,
+        108,
+        53,
+        158,
+        111
+      ],
+      [
+        56,
+        153,
+        66,
+        59,
+        152,
+        65,
+        58,
+        155,
+        64,
+        57,
+        154,
+        67
+      ],
+      [
+        60,
+        181,
+        78,
+        63,
+        180,
+        77,
+        62,
+        183,
+        76,
+        61,
+        182,
+        79
+      ],
+      [
+        192,
+        305,
+        362,
+        195,
+        304,
+        361,
+        194,
+        307,
+        360,
+        193,
+        306,
+        363
+      ],
+      [
+        196,
+        285,
+        358,
+        199,
+        284,
+        357,
+        198,
+        287,
+        356,
+        197,
+        286,
+        359
+      ],
+      [
+        200,
+        281,
+        330,
+        203,
+        280,
+        329,
+        202,
+        283,
+        328,
+        201,
+        282,
+        331
+      ],
+      [
+        204,
+        309,
+        326,
+        207,
+        308,
+        325,
+        206,
+        311,
+        324,
+        205,
+        310,
+        327
+      ],
+      [
+        208,
+        377,
+        266,
+        211,
+        376,
+        265,
+        210,
+        379,
+        264,
+        209,
+        378,
+        267
+      ],
+      [
+        212,
+        341,
+        262,
+        215,
+        340,
+        261,
+        214,
+        343,
+        260,
+        213,
+        342,
+        263
+      ],
+      [
+        216,
+        337,
+        298,
+        219,
+        336,
+        297,
+        218,
+        339,
+        296,
+        217,
+        338,
+        299
+      ],
+      [
+        220,
+        381,
+        294,
+        223,
+        380,
+        293,
+        222,
+        383,
+        292,
+        221,
+        382,
+        295
+      ],
+      [
+        224,
+        313,
+        322,
+        227,
+        312,
+        321,
+        226,
+        315,
+        320,
+        225,
+        314,
+        323
+      ],
+      [
+        228,
+        277,
+        334,
+        231,
+        276,
+        333,
+        230,
+        279,
+        332,
+        229,
+        278,
+        335
+      ],
+      [
+        232,
+        273,
+        354,
+        235,
+        272,
+        353,
+        234,
+        275,
+        352,
+        233,
+        274,
+        355
+      ],
+      [
+        236,
+        317,
+        366,
+        239,
+        316,
+        365,
+        238,
+        319,
+        364,
+        237,
+        318,
+        367
+      ],
+      [
+        240,
+        369,
+        290,
+        243,
+        368,
+        289,
+        242,
+        371,
+        288,
+        241,
+        370,
+        291
+      ],
+      [
+        244,
+        349,
+        302,
+        247,
+        348,
+        301,
+        246,
+        351,
+        300,
+        245,
+        350,
+        303
+      ],
+      [
+        248,
+        345,
+        258,
+        251,
+        344,
+        257,
+        250,
+        347,
+        256,
+        249,
+        346,
+        259
+      ],
+      [
+        252,
+        373,
+        270,
+        255,
+        372,
+        269,
+        254,
+        375,
+        268,
+        253,
+        374,
+        271
+      ]
+    ],
+    "period_microticks": [
+      48
+    ],
+    "velocities_per_microtick": [
+      [
+        {
+          "denominator": "12",
+          "numerator": "-1"
+        },
+        {
+          "denominator": "12",
+          "numerator": "-1"
+        },
+        {
+          "denominator": "12",
+          "numerator": "-1"
+        }
+      ],
+      [
+        {
+          "denominator": "12",
+          "numerator": "-1"
+        },
+        {
+          "denominator": "12",
+          "numerator": "-1"
+        },
+        {
+          "denominator": "12",
+          "numerator": "1"
+        }
+      ],
+      [
+        {
+          "denominator": "12",
+          "numerator": "-1"
+        },
+        {
+          "denominator": "12",
+          "numerator": "1"
+        },
+        {
+          "denominator": "12",
+          "numerator": "-1"
+        }
+      ],
+      [
+        {
+          "denominator": "12",
+          "numerator": "-1"
+        },
+        {
+          "denominator": "12",
+          "numerator": "1"
+        },
+        {
+          "denominator": "12",
+          "numerator": "1"
+        }
+      ],
+      [
+        {
+          "denominator": "12",
+          "numerator": "1"
+        },
+        {
+          "denominator": "12",
+          "numerator": "-1"
+        },
+        {
+          "denominator": "12",
+          "numerator": "-1"
+        }
+      ],
+      [
+        {
+          "denominator": "12",
+          "numerator": "1"
+        },
+        {
+          "denominator": "12",
+          "numerator": "-1"
+        },
+        {
+          "denominator": "12",
+          "numerator": "1"
+        }
+      ],
+      [
+        {
+          "denominator": "12",
+          "numerator": "1"
+        },
+        {
+          "denominator": "12",
+          "numerator": "1"
+        },
+        {
+          "denominator": "12",
+          "numerator": "-1"
+        }
+      ],
+      [
+        {
+          "denominator": "12",
+          "numerator": "1"
+        },
+        {
+          "denominator": "12",
+          "numerator": "1"
+        },
+        {
+          "denominator": "12",
+          "numerator": "1"
+        }
+      ]
+    ]
+  }
+}

@@ -1,0 +1,282 @@
+{
+  "schema": "strict-stack-working-tree-source-evidence-1",
+  "scope": "research validation; not an isolated committed production revision",
+  "files": {
+    "engine/build_strict/lab/relation_3.bin": {
+      "sha256": "dd49805e7897131f1c2ef55a8a5f3e0438e47b15c8354d52c9e636a5936e3e42",
+      "bytes": 11348
+    },
+    "engine/build_strict/lab/relation_4.bin": {
+      "sha256": "0c4468ce02ae562a73056338033197186e2065ae80c3f0d68a51930ff2d781b7",
+      "bytes": 26740
+    },
+    "engine/build_strict/lab/relation_7.bin": {
+      "sha256": "e93e1e31ae1a1e92a8a465c9ec47932eb9aabeec85e5c2a61f9b8f9cb9edc84b",
+      "bytes": 142804
+    },
+    "engine/build_strict/lab/relation_9.bin": {
+      "sha256": "2e84b1feabb2cbde893aaa75e1ed96002ea7e2a904793e74dc7107f904263951",
+      "bytes": 303380
+    },
+    "engine/build_strict/lab/sparse_3.bin": {
+      "sha256": "dccf4e0305b5c55555cc4d1a02646518ea85ce0dbe7dcd72cbc77e92be1bdf7a",
+      "bytes": 11348
+    },
+    "engine/build_strict/lab/sparse_4.bin": {
+      "sha256": "5ba91357b99f032d3f5e37fbd0f8e6bd307143391b283c4633f05e8228014f56",
+      "bytes": 26740
+    },
+    "engine/build_strict/lab/sparse_7.bin": {
+      "sha256": "7d5f85231e8d0b544ed632c9f0cdb1bfab20b902984ed066e4b4d419723e91b1",
+      "bytes": 142804
+    },
+    "engine/build_strict/lab/sparse_9.bin": {
+      "sha256": "d2b574de47a2dc03c03f4389c0300cfb355130805313db6a43bc3baf98fa4d55",
+      "bytes": 303380
+    },
+    "engine/build_strict_cuda/ftd_strict_cuda_cli": {
+      "sha256": "d9f75b0dad49fed042ea569f77e6dc7e803383919c3c6b5c0f7d517eeae14be2",
+      "bytes": 1359936
+    },
+    "engine/build_strict_native/ftd_strict_cli.exe": {
+      "sha256": "00b7e20a92f740dccf11783934f1a099d28b702b6bd237e51838333e1d67b140",
+      "bytes": 427520
+    },
+    "engine/build_strict_wasm/ftd_strict_wasm.mjs": {
+      "sha256": "d3e8084cac1dba40491afe35950941c855497ae94900d2ad02db02e05a999ce9",
+      "bytes": 54483
+    },
+    "engine/build_strict_wasm/ftd_strict_wasm.wasm": {
+      "sha256": "26049aacc8cf74273f64c5a33e53d8b72a9748576a4c78b3f318327119d7ed73",
+      "bytes": 326137
+    },
+    "engine/cmake/FtdStrictCandidate.cmake": {
+      "sha256": "f35df51bc96226518205448eacff30bcce82f126d54ff4bfa392e40db311867b",
+      "bytes": 244
+    },
+    "engine/strict/CMakeLists.txt": {
+      "sha256": "b2fa7394a298235303c83ac6a193b1aaaf351a7a61fd5a7cb9bc214ea16027ed",
+      "bytes": 1265
+    },
+    "engine/strict/cuda.cmake": {
+      "sha256": "ad761012c94925e7a1207eb4df80bdc21060f62b3219ad7b702af7b76648cd70",
+      "bytes": 553
+    },
+    "engine/strict/cuda_main.cpp": {
+      "sha256": "f654715c95c50ed888c73ea1b1638f53ebbb7d814164b632d03922e8f98053b3",
+      "bytes": 1850
+    },
+    "engine/strict/frozen_tables.h": {
+      "sha256": "f081c981c6dfdd50777cdcc8a63438b5a9ecfa9e0ccccd4e94ff25bda8b2cdbd",
+      "bytes": 320506
+    },
+    "engine/strict/generate_tables.py": {
+      "sha256": "45bb1526ba0f171f75e720cb169ece038d973d18779105104e7c2ec80bf433a0",
+      "bytes": 3109
+    },
+    "engine/strict/main.cpp": {
+      "sha256": "69184bec8b454ea27e3ec514f5beb08663de40f69de9838eb6833dd065f3d602",
+      "bytes": 1725
+    },
+    "engine/strict/native_selftest.cpp": {
+      "sha256": "b65d80d53861b2854c2910fb9b06fd286f46197a7c1db7d5116871c46bfe9031",
+      "bytes": 926
+    },
+    "engine/strict/prepare_lab.py": {
+      "sha256": "713087db4be6f1c82daa3e0051ad4d0048a6d88ee12811670c5d5374d8498e41",
+      "bytes": 1333
+    },
+    "engine/strict/serve_lab.py": {
+      "sha256": "5fc200ea50a5261daa5f2d10fee861e708ee7e1ca2cd44c4ab81c5b45d34e2bf",
+      "bytes": 1090
+    },
+    "engine/strict/staged_cuda.cu": {
+      "sha256": "eff36d996e28eda60ce3e4bf2b6da7ec7965d3543440b22789f94aa4b9c39562",
+      "bytes": 12881
+    },
+    "engine/strict/staged_cuda.h": {
+      "sha256": "1e60a3f921fe84b600e1ca94438c79d75c5146afb2e53ef3d3e62d3a03ce9a93",
+      "bytes": 283
+    },
+    "engine/strict/staged_runtime.cpp": {
+      "sha256": "f8e2ea2623e0d050ddcf602ded8bacf889f13ae57f1819ddd672748758a4df8b",
+      "bytes": 13227
+    },
+    "engine/strict/staged_runtime.h": {
+      "sha256": "a87ca0d24664e98bb10c0346407529b5a4c87baf4a9c7f65c513d574fc4d43f8",
+      "bytes": 1645
+    },
+    "engine/strict/wasm.cmake": {
+      "sha256": "80587a4e72b58dc3f2b00d5727a1db883d2d001d2cf002e02682b22cb1461689",
+      "bytes": 569
+    },
+    "engine/strict/wasm_bindings.cpp": {
+      "sha256": "e825ef6f661eac581ead1e718d217d56d2b2b2f7d742bc26fea215a1da042709",
+      "bytes": 8067
+    },
+    "engine/strict/web/index.html": {
+      "sha256": "49fd54dc2b81a9b61345c051caa88aeb7f0aa359c81b76903f6aeefcaddec56a",
+      "bytes": 4107
+    },
+    "engine/strict/web/laboratory.js": {
+      "sha256": "53340c1e5e068ee42f1ccf2924d1f6fed635dedaabce4fef22c7914926a5ba3e",
+      "bytes": 8242
+    },
+    "engine/web/js/strict/strict-worker.js": {
+      "sha256": "ec6eb9074015fec51a92d7986811048de498f18ea9df8ce330952a37390d1abc",
+      "bytes": 1839
+    },
+    "engine/web/js/strict/worker-protocol.js": {
+      "sha256": "a99f465d7f456cc0ce76f5d2451f4f5d5cc88b4e9e7955d40d8612ea09ac76f5",
+      "bytes": 8238
+    },
+    "engine/web/tests/playwright.strict.config.js": {
+      "sha256": "588607d707b2b69c93a0267a0799dade82ba3766be70e90f306b96512d5c1867",
+      "bytes": 964
+    },
+    "engine/web/tests/strict-candidate-lab.spec.js": {
+      "sha256": "1ee87786ac833f9804dfa3f2806a91f5a194fdd0b83e58f9bd7b72117ca13e6b",
+      "bytes": 14464
+    },
+    "engine/web/tests/strict-runtime-worker.node.test.mjs": {
+      "sha256": "bb64af1c104867c696ee31b8200276bc7b91206a4ce98c67004df62610155a8e",
+      "bytes": 12527
+    },
+    "scripts/phi_v2_lattice/__init__.py": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "scripts/phi_v2_lattice/_proofs.py": {
+      "sha256": "c06360e475fe9fe938d2af97ddd4ed5552fb8706c72543666b4eb7ee78f91583",
+      "bytes": 960
+    },
+    "scripts/phi_v2_lattice/census.py": {
+      "sha256": "f920ddfffc3473247dbff52c8088a98a98da0388ad0e4d5193ba9ec2fe17527d",
+      "bytes": 4842
+    },
+    "scripts/phi_v2_lattice/channels.py": {
+      "sha256": "788bb325e68dbd697767627fa6b5a97ff191a0d64bee33919ef6f0da396fc33d",
+      "bytes": 2651
+    },
+    "scripts/phi_v2_lattice/checkpoint.py": {
+      "sha256": "18561414b814b8caf2d57913727ce46fa8de88de619434ea9922f3bca2e9da8f",
+      "bytes": 3483
+    },
+    "scripts/phi_v2_lattice/coarse.py": {
+      "sha256": "30e6edb3894bfe75055c29b84478599d8627df69fed80c1b9363ee05c7538fd5",
+      "bytes": 5073
+    },
+    "scripts/phi_v2_lattice/conservation.py": {
+      "sha256": "e675b3ccc382e83496b4e400eef8fd87cabe080e54cba20aa63e192de9fc207b",
+      "bytes": 2016
+    },
+    "scripts/phi_v2_lattice/continuum_contract.py": {
+      "sha256": "cdf204419b19421a889581bb85928429473cbfc4ba7a45eb87d7f12c664641d7",
+      "bytes": 6918
+    },
+    "scripts/phi_v2_lattice/geometry.py": {
+      "sha256": "05c9dfd125c19e24dd3d4f492bdec8cf30d6abad6cc6c4866a7519745508030d",
+      "bytes": 2067
+    },
+    "scripts/phi_v2_lattice/journal.py": {
+      "sha256": "f186e6a027c6d687988b123f7f0b8a36364313eb3841c238c4b887322f341e03",
+      "bytes": 2740
+    },
+    "scripts/phi_v2_lattice/native_codec.py": {
+      "sha256": "b34c4d726bb66029eac954064a6a50bc88edd8fd8924fe67514ec56a8116de78",
+      "bytes": 2427
+    },
+    "scripts/phi_v2_lattice/prepare.py": {
+      "sha256": "f5a61b389f5498e0bd822c2f148f3ef40def8b143d59c004e451288a3547092a",
+      "bytes": 1747
+    },
+    "scripts/phi_v2_lattice/resolved.py": {
+      "sha256": "7702ebb64d2ec3d8dde90ca8b52db290005567110c28a28289816a426801861f",
+      "bytes": 12867
+    },
+    "scripts/phi_v2_lattice/runtime.py": {
+      "sha256": "803cff8cda0f81217fd7ff1f11a6e2dc14c43177078ae7a6821a00a8147e13f1",
+      "bytes": 5355
+    },
+    "scripts/phi_v2_lattice/staged.py": {
+      "sha256": "c6398980cceda4f52a3cb3275b42806b8ceb4af6407a4c92a92c9a5704dc2e75",
+      "bytes": 6922
+    },
+    "scripts/phi_v2_lattice/state.py": {
+      "sha256": "00c86b69528859eb84429390c7d569aa7f26048ade821d5dce936b59b45d3e17",
+      "bytes": 1306
+    },
+    "scripts/phi_v2_lattice/tick.py": {
+      "sha256": "579e37bc7f14ad3e7d5c166c270977db00f211a7f57dfe91a16c8215149d9472",
+      "bytes": 9362
+    },
+    "scripts/tests/phi_v2_lattice/test_causal_witness.py": {
+      "sha256": "8f50dacd8a088158c2a6f3519e7cd7d711102326cd482d99425ce77b305e4197",
+      "bytes": 859
+    },
+    "scripts/tests/phi_v2_lattice/test_census.py": {
+      "sha256": "5610ebfc2457c773b1d31e631b3d4e37cfc303bc27fe2d258caa4a43abf540d1",
+      "bytes": 2317
+    },
+    "scripts/tests/phi_v2_lattice/test_channels.py": {
+      "sha256": "1d34c8d57eee5594ec36dc0865a58a9eff3d251c3e3e19a9fc40f6c82a31baa1",
+      "bytes": 3200
+    },
+    "scripts/tests/phi_v2_lattice/test_checkpoint.py": {
+      "sha256": "c6cf66fdc5d4eb85275eade56bc2e255c669e65dded3237e3bc6a49bf3987f6d",
+      "bytes": 2182
+    },
+    "scripts/tests/phi_v2_lattice/test_coarse.py": {
+      "sha256": "cc9c957db441dabef17a296784812eec887dbf1a923859e445af135f310463c8",
+      "bytes": 2720
+    },
+    "scripts/tests/phi_v2_lattice/test_conservation.py": {
+      "sha256": "5690b84cb300b4f496a6a4abf342323cf298728cd880fddd60b8be5968c0281a",
+      "bytes": 1691
+    },
+    "scripts/tests/phi_v2_lattice/test_continuum_contract.py": {
+      "sha256": "0aa83c15482b61d01d252beebd8da30e6a2de0e38650c136358f312faf2676f2",
+      "bytes": 5585
+    },
+    "scripts/tests/phi_v2_lattice/test_cuda_parity.py": {
+      "sha256": "7b4300da557f10ded6855466c4996b2ab7d3c28ad87d6c4bfab4574c32e7c59c",
+      "bytes": 5539
+    },
+    "scripts/tests/phi_v2_lattice/test_geometry.py": {
+      "sha256": "15013c2dc5586bd6395c0c2335895951bbba5646b40486116e6dd77f47ad98d8",
+      "bytes": 1209
+    },
+    "scripts/tests/phi_v2_lattice/test_native_parity.py": {
+      "sha256": "c96c138d74d6c1c2ac4d470bc1a7203f337266ce4aeca31e577904b4464e66a1",
+      "bytes": 5935
+    },
+    "scripts/tests/phi_v2_lattice/test_prepare.py": {
+      "sha256": "392f3358033048d8cc78eddd9f556cea605e77568b285cf797083769c6a8fdeb",
+      "bytes": 994
+    },
+    "scripts/tests/phi_v2_lattice/test_resolved.py": {
+      "sha256": "c49a3b94323fc2d7578d24380d6aab22e5863f1e8197aec40b1c6299bdf50dc9",
+      "bytes": 12213
+    },
+    "scripts/tests/phi_v2_lattice/test_runtime.py": {
+      "sha256": "a5d462279657a1993d8c15d2258da7cbe6a8964f2811b2ea2706eb145ae11d87",
+      "bytes": 6024
+    },
+    "scripts/tests/phi_v2_lattice/test_staged.py": {
+      "sha256": "e78e6876da2583a62976064cdcb04409875d9e3c09cd142f6d5e950f7f902316",
+      "bytes": 6484
+    },
+    "scripts/tests/phi_v2_lattice/test_state.py": {
+      "sha256": "19299fbfa18da9893c2b336b130fe541b91432ba328f04a5a15bda813f8f0174",
+      "bytes": 741
+    },
+    "scripts/tests/phi_v2_lattice/test_tick.py": {
+      "sha256": "bdf08982842853c8611a88655cb5df943a06301a75d1cfad312f0b3da488bdbd",
+      "bytes": 7999
+    },
+    "scripts/tests/phi_v2_lattice/test_wasm_parity.py": {
+      "sha256": "a6435d7c1ec48e2898a1f498ac55bd024f32d1e84edda3dfcba03c1f4fb5d553",
+      "bytes": 5371
+    }
+  }
+}

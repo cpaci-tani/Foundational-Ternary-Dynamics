@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FTD · Strict discrete laboratory</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background:#101820; color:#e2e9ee }
+    * { box-sizing:border-box } body { max-width:1180px; margin:auto; padding:28px }
+    h1 { font-size:1.8rem; margin:8px 0 } p { color:#b8c8d3; max-width:850px; line-height:1.55 }
+    .label { text-transform:uppercase; letter-spacing:.14em; color:#78dac1; font-size:.75rem }
+    .controls { display:flex; gap:12px; align-items:end; flex-wrap:wrap; padding:18px 0 }
+    label { display:grid; gap:6px; font-size:.85rem } button,select { font:inherit; padding:10px; border:1px solid #547082; border-radius:6px; background:#1b2c38; color:inherit }
+    button { cursor:pointer } button:disabled { opacity:.45; cursor:wait } :focus-visible { outline:3px solid #78dac1; outline-offset:3px }
+    .metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:12px 0 }
+    .metric { background:#1b2c38; border-radius:8px; padding:15px } .metric strong { display:block; margin-top:5px; color:#78dac1; font-size:1.35rem }
+    .views { display:grid; grid-template-columns:1fr 1fr; gap:16px } figure { margin:0; padding:14px; border:1px solid #385163; border-radius:9px }
+    figcaption { padding-bottom:12px; font-weight:600 } canvas { display:block; width:100%; aspect-ratio:1; background:#0c131b; border-radius:5px }
+    #status { min-height:1.5em; margin:8px 0; color:#e1c887 } .legend { font-size:.85rem }
+    details { margin-top:20px; border-top:1px solid #385163; padding-top:15px } pre { overflow-wrap:anywhere; white-space:pre-wrap; font-size:.75rem }
+    @media(max-width:650px) { body{padding:16px} .views{grid-template-columns:1fr} .metrics{grid-template-columns:repeat(2,1fr)} }
+  </style>
+</head>
+<body>
+  <div class="label">Selected candidate · Local research laboratory</div>
+  <h1>One state, multiple resolutions</h1>
+  <p>Both views observe the same finite records. Changing block width changes the observation; it does not replace the physical state. This candidate has four physical microticks per cycle. Continuum, atomic and gravitational recovery remain open.</p>
+  <div class="controls">
+    <label>Preparation<select id="preparation"><option value="relation">One relation token</option><option value="sparse">Sparse records</option></select></label>
+    <label>Lattice width<select id="size"><option>3</option><option selected>4</option><option>7</option><option>9</option></select></label>
+    <label>Block width<select id="width"><option>1</option><option selected>2</option><option>4</option></select></label>
+    <button id="reset">Reset preparation</button><button id="step">One microtick</button><button id="run">Run</button>
+  </div>
+  <div id="status" role="status" aria-live="polite">Loading the compiled candidate…</div>
+  <div class="metrics">
+    <div class="metric">Global microtick<strong id="tick">—</strong></div>
+    <div class="metric">Next stage<strong id="phase">—</strong></div>
+    <div class="metric">Conserved tokens<strong id="tokens">—</strong></div>
+    <div class="metric">Publication generation<strong id="generation">—</strong></div>
+  </div>
+  <div class="views">
+    <figure><figcaption>Microscopic field occupation · slices</figcaption><canvas id="micro" aria-label="Microscopic field-token counts by lattice site"></canvas></figure>
+    <figure><figcaption>Exact block field occupation · slices</figcaption><canvas id="blocks" aria-label="Aggregated field-token counts by block"></canvas></figure>
+  </div>
+  <p class="legend">Brighter cells contain more field tokens. Relation tokens are included in the conserved total above. Cells show exact counts; these are not calibrated mass, charge or energy densities.</p>
+  <details><summary>State provenance and capability limits</summary><pre id="provenance">Waiting for one authoritative owner.</pre></details>
+  <script type="module" src="laboratory.js"></script>
+</body>
+</html>

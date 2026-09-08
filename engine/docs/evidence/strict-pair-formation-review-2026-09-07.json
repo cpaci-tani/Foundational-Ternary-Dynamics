@@ -1,0 +1,51 @@
+{
+  "status": "accepted_scoped_theorem",
+  "law": "phi-v2-staged-candidate-1",
+  "reviewer": "/root/pair_formation_review",
+  "recording_method": "Coordinator transcription of independent mathematical agent review; not external human certification",
+  "claim": "The co-located equal-complete-flag pair predicate and its complement are invariant at every physical microtick in the registered periodic two-token homogeneous occupied-relation family.",
+  "reviewed_checks": {
+    "combined_tests_passed": 129,
+    "reviewer_test_seconds": 13.15,
+    "additional_eight_microtick_preparations": 192,
+    "collision_rows": 55008,
+    "channels": 384,
+    "flags": 48,
+    "background_codes": 8,
+    "gate_values": 2,
+    "streaming_lattice_sizes": [
+      3,
+      4,
+      7
+    ]
+  },
+  "per_layer_collision_partition": {
+    "equal_flags_preserved": 288,
+    "unequal_flags_preserved": 18048,
+    "cross_class_rows": 0
+  },
+  "proof_scope": "Preimage invariance of one field predicate, not invertibility of the complete state; all-time claim follows from the structural induction, not finite trajectory extrapolation.",
+  "coordinator_log": "engine/docs/evidence/strict-pair-formation-integrated-2026-09-07.log",
+  "files": {
+    "scripts/phi_v2_lattice/recovery_pair_formation.py": {
+      "sha256": "25d9c1c05e30e16a9e80b616e24892000f23f586f6ea8b8445efa18ae00a282a",
+      "bytes": 5533
+    },
+    "scripts/tests/phi_v2_lattice/test_recovery_pair_formation.py": {
+      "sha256": "82e4e338e2dc6a9b55b6204f968473df5d3fa61e7df6fc4a00728b851121d38e",
+      "bytes": 5516
+    },
+    "engine/docs/AUDIT_STRICT_PAIR_FORMATION_OBSTRUCTION.md": {
+      "sha256": "e98c531a5095d73ce4f179847273fd3a5a079cc11ef17a33541d881e5a525580",
+      "bytes": 9384
+    }
+  },
+  "physical_recovery_certified": false,
+  "remaining": [
+    "Formation in other sectors",
+    "Restoring binding",
+    "Spectra and chemistry",
+    "Constitutive closure",
+    "Causal gravity"
+  ]
+}

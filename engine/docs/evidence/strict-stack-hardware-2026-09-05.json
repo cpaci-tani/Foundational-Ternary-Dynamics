@@ -1,0 +1,450 @@
+{
+  "complete": true,
+  "artifactsBefore": {
+    "/build_strict_wasm/ftd_strict_wasm.mjs": {
+      "bytes": 54483,
+      "sha256": "d3e8084cac1dba40491afe35950941c855497ae94900d2ad02db02e05a999ce9"
+    },
+    "/build_strict_wasm/ftd_strict_wasm.wasm": {
+      "bytes": 326137,
+      "sha256": "26049aacc8cf74273f64c5a33e53d8b72a9748576a4c78b3f318327119d7ed73"
+    },
+    "/strict/web/laboratory.js": {
+      "bytes": 8242,
+      "sha256": "53340c1e5e068ee42f1ccf2924d1f6fed635dedaabce4fef22c7914926a5ba3e"
+    },
+    "/web/js/strict/strict-worker.js": {
+      "bytes": 1839,
+      "sha256": "ec6eb9074015fec51a92d7986811048de498f18ea9df8ce330952a37390d1abc"
+    },
+    "/web/js/strict/worker-protocol.js": {
+      "bytes": 8238,
+      "sha256": "a99f465d7f456cc0ce76f5d2451f4f5d5cc88b4e9e7955d40d8612ea09ac76f5"
+    }
+  },
+  "artifactsAfter": {
+    "/build_strict_wasm/ftd_strict_wasm.mjs": {
+      "bytes": 54483,
+      "sha256": "d3e8084cac1dba40491afe35950941c855497ae94900d2ad02db02e05a999ce9"
+    },
+    "/build_strict_wasm/ftd_strict_wasm.wasm": {
+      "bytes": 326137,
+      "sha256": "26049aacc8cf74273f64c5a33e53d8b72a9748576a4c78b3f318327119d7ed73"
+    },
+    "/strict/web/laboratory.js": {
+      "bytes": 8242,
+      "sha256": "53340c1e5e068ee42f1ccf2924d1f6fed635dedaabce4fef22c7914926a5ba3e"
+    },
+    "/web/js/strict/strict-worker.js": {
+      "bytes": 1839,
+      "sha256": "ec6eb9074015fec51a92d7986811048de498f18ea9df8ce330952a37390d1abc"
+    },
+    "/web/js/strict/worker-protocol.js": {
+      "bytes": 8238,
+      "sha256": "a99f465d7f456cc0ce76f5d2451f4f5d5cc88b4e9e7955d40d8612ea09ac76f5"
+    }
+  },
+  "reports": [
+    {
+      "preparation": "relation",
+      "size": 3,
+      "width": 1,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rendering": "Canvas2D; hardware WebGL probe only",
+      "frames": {
+        "count": 721,
+        "durationMs": 12016.199999999999,
+        "meanFps": 60.00233018758011,
+        "p95Ms": 16.700000000000728,
+        "p99Ms": 16.800000000000182,
+        "maxMs": 16.80000000000109,
+        "intervalsOver33_4ms": 0,
+        "longTasks": [],
+        "tickStart": "52",
+        "tickEnd": "1012",
+        "visibility": "visible"
+      }
+    },
+    {
+      "preparation": "relation",
+      "size": 3,
+      "width": 3,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rendering": "Canvas2D; hardware WebGL probe only",
+      "frames": {
+        "count": 721,
+        "durationMs": 12016.199999999999,
+        "meanFps": 60.00233018758011,
+        "p95Ms": 16.700000000000728,
+        "p99Ms": 16.799999999999272,
+        "maxMs": 16.80000000000291,
+        "intervalsOver33_4ms": 0,
+        "longTasks": [],
+        "tickStart": "1056",
+        "tickEnd": "2020",
+        "visibility": "visible"
+      }
+    },
+    {
+      "preparation": "relation",
+      "size": 4,
+      "width": 1,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rendering": "Canvas2D; hardware WebGL probe only",
+      "frames": {
+        "count": 721,
+        "durationMs": 12016.100000000002,
+        "meanFps": 60.0028295370378,
+        "p95Ms": 16.799999999999272,
+        "p99Ms": 16.800000000000182,
+        "maxMs": 16.80000000000109,
+        "intervalsOver33_4ms": 0,
+        "longTasks": [],
+        "tickStart": "52",
+        "tickEnd": "1012",
+        "visibility": "visible"
+      }
+    },
+    {
+      "preparation": "relation",
+      "size": 4,
+      "width": 2,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rendering": "Canvas2D; hardware WebGL probe only",
+      "frames": {
+        "count": 721,
+        "durationMs": 12016.300000000001,
+        "meanFps": 60.00183084643359,
+        "p95Ms": 16.700000000000728,
+        "p99Ms": 16.80000000000109,
+        "maxMs": 16.80000000000291,
+        "intervalsOver33_4ms": 0,
+        "longTasks": [],
+        "tickStart": "1056",
+        "tickEnd": "2020",
+        "visibility": "visible"
+      }
+    },
+    {
+      "preparation": "relation",
+      "size": 4,
+      "width": 4,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rendering": "Canvas2D; hardware WebGL probe only",
+      "frames": {
+        "count": 721,
+        "durationMs": 12016.199999999997,
+        "meanFps": 60.002330187580114,
+        "p95Ms": 16.700000000004366,
+        "p99Ms": 16.80000000000291,
+        "maxMs": 16.80000000000291,
+        "intervalsOver33_4ms": 0,
+        "longTasks": [],
+        "tickStart": "2064",
+        "tickEnd": "3028",
+        "visibility": "visible"
+      }
+    },
+    {
+      "preparation": "relation",
+      "size": 7,
+      "width": 1,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rendering": "Canvas2D; hardware WebGL probe only",
+      "frames": {
+        "count": 721,
+        "durationMs": 12016.2,
+        "meanFps": 60.0023301875801,
+        "p95Ms": 16.799999999999272,
+        "p99Ms": 16.80000000000109,
+        "maxMs": 16.80000000000109,
+        "intervalsOver33_4ms": 0,
+        "longTasks": [],
+        "tickStart": "52",
+        "tickEnd": "1012",
+        "visibility": "visible"
+      }
+    },
+    {
+      "preparation": "relation",
+      "size": 7,
+      "width": 7,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rendering": "Canvas2D; hardware WebGL probe only",
+      "frames": {
+        "count": 721,
+        "durationMs": 12016.100000000002,
+        "meanFps": 60.0028295370378,
+        "p95Ms": 16.799999999999272,
+        "p99Ms": 16.80000000000291,
+        "maxMs": 16.80000000000291,
+        "intervalsOver33_4ms": 0,
+        "longTasks": [],
+        "tickStart": "1060",
+        "tickEnd": "2020",
+        "visibility": "visible"
+      }
+    },
+    {
+      "preparation": "relation",
+      "size": 9,
+      "width": 1,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rendering": "Canvas2D; hardware WebGL probe only",
+      "frames": {
+        "count": 721,
+        "durationMs": 12016.2,
+        "meanFps": 60.0023301875801,
+        "p95Ms": 16.700000000000728,
+        "p99Ms": 16.80000000000109,
+        "maxMs": 16.80000000000109,
+        "intervalsOver33_4ms": 0,
+        "longTasks": [],
+        "tickStart": "56",
+        "tickEnd": "1016",
+        "visibility": "visible"
+      }
+    },
+    {
+      "preparation": "relation",
+      "size": 9,
+      "width": 3,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rendering": "Canvas2D; hardware WebGL probe only",
+      "frames": {
+        "count": 721,
+        "durationMs": 12016.099999999999,
+        "meanFps": 60.00282953703781,
+        "p95Ms": 16.700000000000728,
+        "p99Ms": 16.80000000000109,
+        "maxMs": 16.80000000000291,
+        "intervalsOver33_4ms": 0,
+        "longTasks": [],
+        "tickStart": "1064",
+        "tickEnd": "2024",
+        "visibility": "visible"
+      }
+    },
+    {
+      "preparation": "relation",
+      "size": 9,
+      "width": 9,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rendering": "Canvas2D; hardware WebGL probe only",
+      "frames": {
+        "count": 721,
+        "durationMs": 12016.100000000002,
+        "meanFps": 60.0028295370378,
+        "p95Ms": 16.799999999995634,
+        "p99Ms": 16.80000000000291,
+        "maxMs": 16.80000000000291,
+        "intervalsOver33_4ms": 0,
+        "longTasks": [],
+        "tickStart": "2072",
+        "tickEnd": "3032",
+        "visibility": "visible"
+      }
+    },
+    {
+      "preparation": "sparse",
+      "size": 3,
+      "width": 1,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rendering": "Canvas2D; hardware WebGL probe only",
+      "frames": {
+        "count": 721,
+        "durationMs": 12016.300000000001,
+        "meanFps": 60.00183084643359,
+        "p95Ms": 16.799999999999272,
+        "p99Ms": 16.80000000000109,
+        "maxMs": 16.80000000000109,
+        "intervalsOver33_4ms": 0,
+        "longTasks": [],
+        "tickStart": "52",
+        "tickEnd": "1012",
+        "visibility": "visible"
+      }
+    },
+    {
+      "preparation": "sparse",
+      "size": 3,
+      "width": 3,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rendering": "Canvas2D; hardware WebGL probe only",
+      "frames": {
+        "count": 721,
+        "durationMs": 12016.099999999999,
+        "meanFps": 60.00282953703781,
+        "p95Ms": 16.700000000000728,
+        "p99Ms": 16.799999999999272,
+        "maxMs": 16.80000000000291,
+        "intervalsOver33_4ms": 0,
+        "longTasks": [],
+        "tickStart": "1060",
+        "tickEnd": "2020",
+        "visibility": "visible"
+      }
+    },
+    {
+      "preparation": "sparse",
+      "size": 4,
+      "width": 1,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rendering": "Canvas2D; hardware WebGL probe only",
+      "frames": {
+        "count": 721,
+        "durationMs": 12016.199999999999,
+        "meanFps": 60.00233018758011,
+        "p95Ms": 16.700000000000728,
+        "p99Ms": 16.800000000000182,
+        "maxMs": 16.80000000000109,
+        "intervalsOver33_4ms": 0,
+        "longTasks": [],
+        "tickStart": "52",
+        "tickEnd": "1012",
+        "visibility": "visible"
+      }
+    },
+    {
+      "preparation": "sparse",
+      "size": 4,
+      "width": 2,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rendering": "Canvas2D; hardware WebGL probe only",
+      "frames": {
+        "count": 721,
+        "durationMs": 12016.3,
+        "meanFps": 60.0018308464336,
+        "p95Ms": 16.799999999999272,
+        "p99Ms": 16.80000000000109,
+        "maxMs": 16.80000000000291,
+        "intervalsOver33_4ms": 0,
+        "longTasks": [],
+        "tickStart": "1056",
+        "tickEnd": "2020",
+        "visibility": "visible"
+      }
+    },
+    {
+      "preparation": "sparse",
+      "size": 4,
+      "width": 4,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rendering": "Canvas2D; hardware WebGL probe only",
+      "frames": {
+        "count": 721,
+        "durationMs": 12016.2,
+        "meanFps": 60.0023301875801,
+        "p95Ms": 16.700000000004366,
+        "p99Ms": 16.80000000000291,
+        "maxMs": 16.80000000000291,
+        "intervalsOver33_4ms": 0,
+        "longTasks": [],
+        "tickStart": "2068",
+        "tickEnd": "3028",
+        "visibility": "visible"
+      }
+    },
+    {
+      "preparation": "sparse",
+      "size": 7,
+      "width": 1,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rendering": "Canvas2D; hardware WebGL probe only",
+      "frames": {
+        "count": 721,
+        "durationMs": 12016.2,
+        "meanFps": 60.0023301875801,
+        "p95Ms": 16.700000000000728,
+        "p99Ms": 16.80000000000109,
+        "maxMs": 16.80000000000109,
+        "intervalsOver33_4ms": 0,
+        "longTasks": [],
+        "tickStart": "52",
+        "tickEnd": "1012",
+        "visibility": "visible"
+      }
+    },
+    {
+      "preparation": "sparse",
+      "size": 7,
+      "width": 7,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rendering": "Canvas2D; hardware WebGL probe only",
+      "frames": {
+        "count": 721,
+        "durationMs": 12016.199999999999,
+        "meanFps": 60.00233018758011,
+        "p95Ms": 16.700000000000728,
+        "p99Ms": 16.799999999999272,
+        "maxMs": 16.80000000000291,
+        "intervalsOver33_4ms": 0,
+        "longTasks": [],
+        "tickStart": "1060",
+        "tickEnd": "2020",
+        "visibility": "visible"
+      }
+    },
+    {
+      "preparation": "sparse",
+      "size": 9,
+      "width": 1,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rendering": "Canvas2D; hardware WebGL probe only",
+      "frames": {
+        "count": 721,
+        "durationMs": 12016.1,
+        "meanFps": 60.002829537037805,
+        "p95Ms": 16.700000000000728,
+        "p99Ms": 16.800000000000182,
+        "maxMs": 16.80000000000109,
+        "intervalsOver33_4ms": 0,
+        "longTasks": [],
+        "tickStart": "56",
+        "tickEnd": "1016",
+        "visibility": "visible"
+      }
+    },
+    {
+      "preparation": "sparse",
+      "size": 9,
+      "width": 3,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rendering": "Canvas2D; hardware WebGL probe only",
+      "frames": {
+        "count": 721,
+        "durationMs": 12016.1,
+        "meanFps": 60.002829537037805,
+        "p95Ms": 16.799999999999272,
+        "p99Ms": 16.80000000000109,
+        "maxMs": 16.80000000000291,
+        "intervalsOver33_4ms": 0,
+        "longTasks": [],
+        "tickStart": "1064",
+        "tickEnd": "2024",
+        "visibility": "visible"
+      }
+    },
+    {
+      "preparation": "sparse",
+      "size": 9,
+      "width": 9,
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rendering": "Canvas2D; hardware WebGL probe only",
+      "frames": {
+        "count": 721,
+        "durationMs": 12016.099999999999,
+        "meanFps": 60.00282953703781,
+        "p95Ms": 16.799999999995634,
+        "p99Ms": 16.80000000000291,
+        "maxMs": 16.80000000000291,
+        "intervalsOver33_4ms": 0,
+        "longTasks": [],
+        "tickStart": "2072",
+        "tickEnd": "3032",
+        "visibility": "visible"
+      }
+    }
+  ],
+  "errors": []
+}

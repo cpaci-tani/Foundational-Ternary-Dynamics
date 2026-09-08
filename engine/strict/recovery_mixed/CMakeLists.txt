@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.20)
+project(ftd_strict_mixed_campaign LANGUAGES CXX CUDA)
+set(FTD_STRICT_CUDA ON CACHE BOOL "Real CUDA campaign backend" FORCE)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/.." strict_core)
+find_package(OpenSSL REQUIRED COMPONENTS Crypto)
+add_executable(ftd_strict_mixed_campaign mixed_main.cpp)
+target_compile_features(ftd_strict_mixed_campaign PRIVATE cxx_std_17)
+target_link_libraries(ftd_strict_mixed_campaign PRIVATE ftd_strict_cuda OpenSSL::Crypto)
