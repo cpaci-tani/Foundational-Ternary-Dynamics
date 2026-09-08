@@ -30,6 +30,7 @@ def report() -> dict:
     verdict = V.exact_verdict(exact)
     block = V.closure_block(V.density_functional(exact[D.DIRECTIONS[0]].W),
                             [m for n in D.DIRECTIONS for m in (exact[n].M1, exact[n].M2)])
+    mode_table_float64 = {str(n): V.mode_table_float64(exact[n].M1, exact[n].M2, n) for n in D.DIRECTIONS}
     certified, residuals, certified_verdicts = {}, {}, {}
     for p in D.REFERENCE_PS:
         balls = {n: D.certified_dispersion(n, p, exact[n]) for n in D.DIRECTIONS}
@@ -59,7 +60,8 @@ def report() -> dict:
                                "M1": _entries(exact[n].M1, 7, 7), "M2": _entries(exact[n].M2, 7, 7)}
                       for n in D.DIRECTIONS},
             "certified": certified, "certified_residuals": residuals},
-        "verdict": {"exact": verdict, "certified": certified_verdicts},
+        "verdict": {"exact": verdict, "certified": certified_verdicts,
+                   "mode_table_float64": mode_table_float64},
         "limits": {"closure": "linearized Boltzmann product closure assumed",
                    "correlation_leakage_bounded": False, "physical_units": False,
                    "navier_stokes_clay_claim": False, "canonical_adoption": False},

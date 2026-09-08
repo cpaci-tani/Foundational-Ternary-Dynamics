@@ -339,7 +339,8 @@ def _fit_rate(series: np.ndarray) -> float:
     return -float(slope)
 
 
-def summarize_campaign(directory) -> dict:
+def summarize_campaign(directory, write: bool = True) -> dict:
+    """Recompute the campaign report from the trace; write=False skips report.json (read-only audits)."""
     directory = Path(directory)
     lock = validate_lock(directory)
     execution = json.loads((directory / "execution.json").read_text())
@@ -405,5 +406,6 @@ def summarize_campaign(directory) -> dict:
               "execution": execution, "registration": reg, "groups": len(results), "groups_passing": passes,
               "boltzmann_closure_verified_at_registered_scope": passes == len(results),
               "results": results}
-    (directory / "report.json").write_text(_json(output) + "\n", encoding="utf-8")
+    if write:
+        (directory / "report.json").write_text(_json(output) + "\n", encoding="utf-8")
     return output

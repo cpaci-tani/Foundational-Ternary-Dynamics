@@ -155,6 +155,45 @@ def test_diffusive_only_synthetic():
     assert verdict["label"] == "diffusive only"
 
 
+def test_certified_verdict_uses_declared_precision_regardless_of_ambient():
+    """I-1 regression: certified_verdict's own arithmetic must not run at the caller's ambient prec.
+
+    Inputs are built at prec=256 (so they carry tight radii, as real certified
+    operators would from certified_dispersion's own save/restore). Ambient
+    prec is then deliberately reset to flint's default (53, double precision)
+    before calling certified_verdict -- reproducing the exact call site in
+    run_recovery_wave3.py, where certified_dispersion has already restored the
+    caller's ambient precision by the time certified_verdict runs. Before the
+    fix, certified_verdict did its own matrix arithmetic at that ambient
+    53-bit precision, degrading the tight input radii by many orders of
+    magnitude; after the fix it locally elevates to prec=256 (its own
+    default), so every charpoly coefficient radius stays far below 1e-40.
+    """
+    W = _w_with_constant_first()
+    exact = {n: Synthetic(n, *_anisotropic_case(n), W) for n in D.DIRECTIONS}
+    block = V.closure_block(V.density_functional(W), [m for n in D.DIRECTIONS for m in (exact[n].M1, exact[n].M2)])
+    saved = flint.ctx.prec
+    flint.ctx.prec = 256
+    try:
+        balls = {}
+        for n in D.DIRECTIONS:
+            M1, M2 = _anisotropic_case(n)
+            balls[n] = Synthetic(
+                n,
+                flint.arb_mat([[D.Certified.scalar(Fraction(int(M1[i, j].p), int(M1[i, j].q))) for j in range(7)]
+                               for i in range(7)]),
+                flint.arb_mat([[D.Certified.scalar(Fraction(int(M2[i, j].p), int(M2[i, j].q))) for j in range(7)]
+                               for i in range(7)]),
+                W)
+    finally:
+        flint.ctx.prec = 53  # deliberately left at flint's default ambient before the call under test
+    try:
+        report = V.certified_verdict(balls, block)
+        assert flint.arb(report["max_charpoly_radius"]) < flint.arb("1e-40")
+    finally:
+        flint.ctx.prec = saved
+
+
 def test_certified_verdict_marks_proved_consistent_or_undecided():
     W = _w_with_constant_first()
     exact = {n: Synthetic(n, *_anisotropic_case(n), W) for n in D.DIRECTIONS}
