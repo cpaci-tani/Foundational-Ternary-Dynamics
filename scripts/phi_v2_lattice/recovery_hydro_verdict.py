@@ -153,10 +153,11 @@ def exact_verdict(dispersions: dict) -> dict:
     same_long = sound_ok and len(set(longi.values())) == 1
     out["clauses"].update({"sound_speed_direction_independent": same_speed,
                            "transverse_isotropic": same_trans,
-                           "longitudinal_isotropic": same_long})
+                           "longitudinal_isotropic": same_long,
+                           "clause_2_holds": sound_ok and same_speed})
     if sound_ok and same_speed and same_trans and same_long:
         out["label"] = "NS-class isotropic"
-    elif sound_ok:
+    elif sound_ok and same_speed:
         out["label"] = "anisotropic momentum hydrodynamics"
     else:
         out["label"] = "other"

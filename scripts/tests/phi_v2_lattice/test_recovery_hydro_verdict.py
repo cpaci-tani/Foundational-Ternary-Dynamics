@@ -89,6 +89,17 @@ def test_anisotropic_synthetic_is_flagged():
     assert verdict["clauses"]["transverse_isotropic"] is False
 
 
+def test_direction_dependent_sound_speed_is_other():
+    W = _w_with_constant_first()
+    speeds = {(1, 0, 0): Fraction(1, 3), (1, 1, 0): Fraction(1, 2), (1, 1, 1): Fraction(1, 2)}
+    disp = {n: Synthetic(n, *_isotropic_case(n, cs2=speeds[n]), W) for n in D.DIRECTIONS}
+    verdict = V.exact_verdict(disp)
+    assert verdict["label"] == "other"
+    assert verdict["clauses"]["sound_pair_all_directions"] is True
+    assert verdict["clauses"]["sound_speed_direction_independent"] is False
+    assert verdict["clauses"]["clause_2_holds"] is False
+
+
 def test_diffusive_only_synthetic():
     W = _w_with_constant_first()
     disp = {}
