@@ -118,7 +118,7 @@ void pair_production_cpu(RenderBridge& rb) {
     if (nz < 0) nz += L; else if (nz >= L) nz -= L;
 
     int partner = lattice.index(nx, ny, nz);
-    if (voxels[partner].state != 0) continue; // Partner space must be empty
+    if (partner == i || voxels[partner].state != 0) continue; // Distinct empty partner
 
     // FTD-HISTORY-BEGIN: observation-only native event journal.
     const auto history_before_i = eft::capture_history_site(i, v);

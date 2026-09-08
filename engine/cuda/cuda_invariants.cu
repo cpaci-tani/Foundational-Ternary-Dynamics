@@ -10,6 +10,9 @@
 //   read_constants_for_check(double*)   tiny self-check kernel for c_consts
 
 #include "cuda_invariants.cuh"
+#include "cuda_error.cuh"
+#include <cmath>
+#include <stdexcept>
 
 #include <cuda_runtime.h>
 
@@ -24,6 +27,10 @@ __constant__ double c_A[9];
 __constant__ double c_consts[3];
 
 void upload_invariant_matrix(double Gstar, double varpi) {
+    if (!std::isfinite(Gstar) || Gstar == 0.0 || !std::isfinite(varpi)
+        || !std::isfinite(1.0 / Gstar)) {
+        throw std::invalid_argument("Invariant constants and inverse Gstar must be finite");
+    }
     const double invGstar = 1.0 / Gstar;
 
     // Row-major: h_A[3*i + j] is A_{ij}.
@@ -37,8 +44,8 @@ void upload_invariant_matrix(double Gstar, double varpi) {
     };
     const double h_consts[3] = {Gstar, varpi, invGstar};
 
-    cudaMemcpyToSymbol(c_A,      h_A,      sizeof(h_A));
-    cudaMemcpyToSymbol(c_consts, h_consts, sizeof(h_consts));
+    CUDA_CHECK(cudaMemcpyToSymbol(c_A, h_A, sizeof(h_A)));
+    CUDA_CHECK(cudaMemcpyToSymbol(c_consts, h_consts, sizeof(h_consts)));
 }
 
 void upload_invariant_matrix() {

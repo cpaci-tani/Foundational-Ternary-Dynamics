@@ -24,6 +24,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <unordered_map>
+#include <string>
 #include <cufft.h>
 #include <cuda_runtime_api.h>
 
@@ -399,23 +400,17 @@ private:
     // The kernel sequence of one tick, with NO host-side device reads and no
     // data-dependent host branching. This is what gets captured.
     void record_tick_body();
-    // Hash of every host-derived value that reaches a kernel argument, EXCEPT
+    // Exact serialized key of every host-derived kernel argument, EXCEPT
     // the tick counter (which is device-resident, see GpuBuffers::d_tick).
-    // The 64-bit FNV-1a-style hash is used directly as the graph_cache_ key
-    // with no equality check against the source toggle/parameter state on
-    // lookup (the usual hash-map shortcut of trusting the hash). This is an
-    // accepted, deliberate risk, not an oversight: the input space is a
-    // small, bounded combinatorial set of toggles/scalars, at most
-    // MAX_GRAPH_CACHE (16) entries are resident at once, and a 64-bit hash's
-    // collision probability over that space is negligible — a
-    // simplicity/performance tradeoff against adding a full state-equality
-    // fallback on every cache hit.
-    std::uint64_t graph_key() const;
+    // Explicit primitive bytes avoid struct padding. The unordered_map hashes
+    // for lookup, then compares the entire key, so hash collisions cannot
+    // silently replay another configuration's captured law.
+    std::string graph_key() const;
     // False for tick shapes that cannot be represented by a static graph.
     bool graph_eligible() const;
     void destroy_graph_cache();
 
-    std::unordered_map<std::uint64_t, cudaGraphExec_t> graph_cache_;
+    std::unordered_map<std::string, cudaGraphExec_t> graph_cache_;
     std::size_t graph_replays_ = 0;
     std::size_t graph_captures_ = 0;
     std::size_t graph_capture_failures_ = 0;

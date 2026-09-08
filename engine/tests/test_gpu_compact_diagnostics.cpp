@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
+#include <cstring>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -71,6 +72,40 @@ void populate(ftd::RenderBridge& rb) {
 
 int main() {
     constexpr int L = 12;
+
+    // A wrapped preparation has several source offsets per destination.
+    // Scheduling of those contributions must not change the initial state.
+    for (const bool dual : {false, true}) {
+        constexpr int small = 9;
+        ftd::RenderBridge reference(small);
+        reference.force_cpu();
+        reference.toggles.dual_substrate = dual;
+        reference.inject_wavepacket(0, 4, 8, -1, 5.0, 0.7);
+        ftd::gpu::GpuEngine engine(small);
+        engine.toggles.dual_substrate = dual;
+        const std::vector<ftd::Voxel> blank(small * small * small);
+        std::vector<ftd::Voxel> baseline, observed;
+        bool repeatable = true;
+        double max_error = 0.0;
+        for (int repetition = 0; repetition < 16; ++repetition) {
+            engine.upload_from_host(blank);
+            engine.inject_wavepacket(0, 4, 8, -1, 5.0, 0.7);
+            engine.sync_to_host(observed);
+            if (repetition == 0) baseline = observed;
+            for (std::size_t i = 0; i < observed.size(); ++i) {
+                for (auto field : {&ftd::Voxel::flux, &ftd::Voxel::flux_L, &ftd::Voxel::flux_R}) {
+                    const auto& actual = observed[i].*field;
+                    const auto& first = baseline[i].*field;
+                    const auto& cpu = reference.voxels()[i].*field;
+                    repeatable = repeatable && std::memcmp(&actual, &first, sizeof(actual)) == 0;
+                    max_error = std::max({max_error, std::abs(actual.x - cpu.x),
+                        std::abs(actual.y - cpu.y), std::abs(actual.z - cpu.z)});
+                }
+            }
+        }
+        check(dual ? "wrapped dual preparation is bit-repeatable" : "wrapped preparation is bit-repeatable", repeatable);
+        check("wrapped preparation matches CPU ordered contributions", max_error <= 2e-12);
+    }
 
     // Direct CPU/GPU parity for the shared Rule-8 update, independent of the
     // CPU SOR vs CUDA FFT latency solvers.

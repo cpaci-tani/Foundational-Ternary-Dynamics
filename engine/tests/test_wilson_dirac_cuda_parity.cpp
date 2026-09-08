@@ -30,6 +30,8 @@
 #include <iostream>
 #include <random>
 #include <vector>
+#include <stdexcept>
+#include <limits>
 
 #ifndef M_PI
 constexpr double M_PI = 3.14159265358979323846;
@@ -136,6 +138,25 @@ int main() {
     std::mt19937 rng(0xa5a5beef);
 
     int passed = 0, failed = 0;
+    {
+        Lattice lattice(3);
+        SpinorField psi(3), out(3);
+        GaugeLinks links(3);
+        WilsonDiracParams params;
+        const auto before = out.data;
+        const auto rejects = [&] {
+            try { apply_wilson_dirac_gpu(out, psi, links, lattice, params); }
+            catch (const std::invalid_argument&) { return out.data == before; }
+            return false;
+        };
+        bool valid = true;
+        psi.data.pop_back(); valid &= rejects(); psi.data.push_back(zero_spinor());
+        links.U[1].pop_back(); valid &= rejects(); links.U[1].push_back({1, 0});
+        params.a = 0; valid &= rejects();
+        params.a = 1; params.m = std::numeric_limits<double>::infinity(); valid &= rejects();
+        std::cout << "malformed inputs reject before output mutation " << (valid ? "PASS" : "FAIL") << '\n';
+        valid ? ++passed : ++failed;
+    }
     if (run_case("identity links     ",  8, 0, rng)) ++passed; else ++failed;
     if (run_case("random U(1) links  ", 12, 1, rng)) ++passed; else ++failed;
     if (run_case("uniform B (twisted)", 16, 2, rng)) ++passed; else ++failed;

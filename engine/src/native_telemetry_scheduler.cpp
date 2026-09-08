@@ -8,6 +8,10 @@
 
 namespace ftd {
 
+NativeTelemetryScheduler::NativeTelemetryScheduler(NowFunction now) : now_(now) {
+    if (!now_) throw std::invalid_argument("telemetry clock must be provided");
+}
+
 const NativeTelemetryScheduler::Demand& NativeTelemetryScheduler::demand() const { return demand_; }
 
 const std::array<std::uint32_t, 4>& NativeTelemetryScheduler::min_interval_ms() const {
@@ -36,7 +40,7 @@ bool NativeTelemetryScheduler::has_pending_or_due_observation() const {
         if (direct_mutation_due_ != Clock::time_point::min()) return true;
         if (!schedule_armed_) return false;
         bool throttled = false;
-        return due_mask(Clock::now(), throttled) != 0;
+        return due_mask(now_(), throttled) != 0;
     }
 
 void NativeTelemetryScheduler::abort_and_suspend(const std::string& reason) {
@@ -128,7 +132,7 @@ void NativeTelemetryScheduler::on_state_mutated(const RenderBridge& bridge) {
         // commands.  Treat the last mutation in a short quiet window as a
         // settled observation boundary, avoiding snapshots of half-built
         // wave packets while still serving a paused editor.
-        direct_mutation_due_ = Clock::now() + kDirectMutationDebounce;
+        direct_mutation_due_ = now_() + kDirectMutationDebounce;
         last_failed_attempt_epoch_ = kNoEpoch;
         last_failed_attempt_mask_ = 0;
         publish_invalidation("state_mutated");
@@ -157,7 +161,7 @@ void NativeTelemetryScheduler::on_tick_complete(RenderBridge& bridge) {
 bool NativeTelemetryScheduler::pump(RenderBridge& bridge) {
         if (suspended_) return false;
         bool published = false;
-        const auto now = Clock::now();
+        const auto now = now_();
 
         if (direct_mutation_due_ != Clock::time_point::min()
             && now >= direct_mutation_due_) {
@@ -352,9 +356,12 @@ std::uint32_t NativeTelemetryScheduler::due_mask(Clock::time_point now,
                     || static_cast<std::uint64_t>(current_tick_ - sampled_tick) >= cadence;
             }
             if (!cadence_due) return;
-            // A never-seen group is allowed to establish an initial value
-            // immediately. Existing values obey the source-owned GPU QoS.
-            if ((cache_.groups & bit) != 0 && now < next_allowed_[index]) {
+            // The deadline records an attempted producer pass, even when its
+            // result was retired before publication. Empty caches and demand
+            // changes must not bypass that source-owned minimum interval.
+            // A new source starts with the minimum sentinel, so its very first
+            // observation is still eligible immediately.
+            if (now < next_allowed_[index]) {
                 throttled = true;
                 return;
             }

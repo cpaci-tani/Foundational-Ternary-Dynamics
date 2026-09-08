@@ -34,6 +34,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <stdexcept>
 
 using namespace ftd;
 
@@ -262,6 +263,26 @@ void test_delta_integration_through_flush() {
 
 int main() {
     test::init("test_gpu_delta_upload");
+    {
+        gpu::GpuBuffers buffers;
+        buffers.allocate(3);
+        std::vector<Voxel> voxels(27), short_voxels(26);
+        std::vector<double> phi(27), short_phi(26);
+        const auto rejects = [](auto action) {
+            try { action(); }
+            catch (const std::logic_error&) { return true; }
+            return false;
+        };
+        const auto before = gpu::g_gpu_upload_bytes;
+        bool valid = rejects([&] { buffers.allocate(3); });
+        valid &= rejects([&] { buffers.upload(voxels, short_phi, phi); });
+        valid &= rejects([&] { buffers.upload_voxels_range(voxels, -1, 2); });
+        valid &= rejects([&] { buffers.upload_voxels_range(voxels, 26, 2); });
+        valid &= rejects([&] { buffers.upload_voxels_range(voxels, 0, -1); });
+        valid &= rejects([&] { buffers.upload_voxels_delta(short_voxels, {}); });
+        test::check("malformed uploads and repeated allocation reject before transfer",
+                    valid && gpu::g_gpu_upload_bytes == before, "");
+    }
     test_delta_byte_identity();
     test_delta_noop_on_no_change();
     test_delta_integration_through_flush();

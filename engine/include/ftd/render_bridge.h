@@ -621,6 +621,8 @@ public:
     const std::vector<double>& phi_latency() const;
 
 private:
+    // Narrow regression access for named preflight records and finite horizons.
+    friend struct TickPreflightTestAccess;
     // Sub-phases of a single G*-tick
     void phase_read();      // Compute delta_J from neighbors
     void phase_write();     // Commit flux, round positions

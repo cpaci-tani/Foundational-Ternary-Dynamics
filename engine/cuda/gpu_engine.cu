@@ -797,6 +797,8 @@ bool GpuEngine::interop_signal_fence(std::uint64_t value) {
 }
 
 void GpuEngine::set_dt(double dt) {
+    if (!std::isfinite(dt) || dt <= 0.0)
+        throw std::invalid_argument("tick duration must be finite and positive");
     // Mirror RenderBridge::set_dt: dt<1 is honored with symplectic_leapfrog
     // or verlet_wave_integrator. The plain leapfrog hardcodes dt=1.
     // FTD-0408/0411 exact monodromies lock the unit tick.
@@ -1094,14 +1096,11 @@ bool GpuEngine::graph_eligible() const {
     return true;
 }
 
-std::uint64_t GpuEngine::graph_key() const {
-    std::uint64_t h = 1469598103934665603ULL;
+std::string GpuEngine::graph_key() const {
+    std::string h;
+    h.reserve(256);
     const auto mix = [&h](const void* p, std::size_t n) {
-        const auto* b = static_cast<const unsigned char*>(p);
-        for (std::size_t i = 0; i < n; ++i) {
-            h ^= b[i];
-            h *= 1099511628211ULL;
-        }
+        h.append(static_cast<const char*>(p), n);
     };
     const auto mix_bool = [&mix](bool v) { const unsigned char c = v ? 1u : 0u; mix(&c, 1); };
     const auto mix_int  = [&mix](int v)  { mix(&v, sizeof(v)); };
@@ -1220,7 +1219,7 @@ void GpuEngine::tick() {
     if (!graph_capture_enabled || !graph_eligible()) {
         record_tick_body();
     } else {
-        const std::uint64_t key = graph_key();
+        const std::string key = graph_key();
         const auto it = graph_cache_.find(key);
         if (it != graph_cache_.end()) {
             if (it->second) {
@@ -1921,6 +1920,8 @@ void GpuEngine::inject_particle(int x, int y, int z, int8_t state,
 
 void GpuEngine::inject_wavepacket(int cx, int cy, int cz, int8_t state,
                                   double sigma, double amplitude) {
+    if (!std::isfinite(sigma) || sigma <= 0.0 || !std::isfinite(amplitude))
+        throw std::invalid_argument("wavepacket sigma must be finite and positive; amplitude finite");
     // Match CPU RenderBridge::inject_wavepacket exactly
     int radius = static_cast<int>(GAUSSIAN_CUTOFF_SIGMA * sigma) + 1;
 
@@ -2075,7 +2076,12 @@ void GpuEngine::upload_gauge_links(const std::vector<SU2Link>& su2_x,
                                    const std::vector<SU2Link>& su2_z,
                                    const std::vector<SU3Link>& su3_x,
                                    const std::vector<SU3Link>& su3_y,
-                                   const std::vector<SU3Link>& su3_z) {
+                                    const std::vector<SU3Link>& su3_z) {
+    const auto required = static_cast<std::size_t>(N_);
+    if (su2_x.size() != required || su2_y.size() != required || su2_z.size() != required
+        || su3_x.size() != required || su3_y.size() != required || su3_z.size() != required) {
+        throw std::invalid_argument("gauge link arrays must match the lattice site count");
+    }
     const std::size_t bytes2 = static_cast<std::size_t>(N_) * sizeof(SU2Link);
     const std::size_t bytes3 = static_cast<std::size_t>(N_) * sizeof(SU3Link);
     try {

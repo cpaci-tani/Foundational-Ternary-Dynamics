@@ -451,3 +451,6 @@ endif()
 if(EMSCRIPTEN)
     add_subdirectory(wasm)
 endif()
+
+# Isolated finite-record research candidate; production profiles remain unchanged.
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FtdStrictCandidate.cmake)

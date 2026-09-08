@@ -40,6 +40,8 @@ class RenderBridge;
 
 class NativeTelemetryScheduler final {
 public:
+    using Clock = std::chrono::steady_clock;
+    using NowFunction = Clock::time_point (*)();
     static constexpr std::uint32_t kMaxCadenceTicks = 65535u;
 
     /// Subscription state controlled by one explicit protocol command.  A
@@ -102,7 +104,10 @@ public:
         std::string reason;
     };
 
-    NativeTelemetryScheduler() = default;
+    // External producer scheduling time, independent of the physical clock.
+    // An injected clock must be nondecreasing; it enables exact deadline tests
+    // without sleeps or changes to simulation ticks.
+    explicit NativeTelemetryScheduler(NowFunction now = &Clock::now);
 
     const Demand& demand() const;
     const std::array<std::uint32_t, 4>& min_interval_ms() const;
@@ -175,7 +180,6 @@ public:
     std::optional<Invalidation> take_invalidation();
 
 private:
-    using Clock = std::chrono::steady_clock;
     static constexpr auto kDirectMutationDebounce = std::chrono::milliseconds(16);
     static constexpr std::uint64_t kNoEpoch = ~std::uint64_t{0};
 
@@ -205,6 +209,7 @@ private:
 
     void promote(const TelemetrySnapshot& completed, std::uint32_t mask);
 
+    NowFunction now_;
     Demand demand_{};
     TelemetrySnapshot cache_{};
     std::array<std::uint64_t, 4> group_snapshot_versions_{{0, 0, 0, 0}};

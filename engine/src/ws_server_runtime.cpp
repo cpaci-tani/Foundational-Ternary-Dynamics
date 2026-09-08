@@ -6,8 +6,10 @@
 #include "ws_server_internal.h"
 
 #include "ftd/constants.h"
+#include "ftd/ws_json.h"
 
 #include <chrono>
+#include <charconv>
 #include <cstdlib>
 #include <cstring>
 #include <iomanip>
@@ -17,10 +19,6 @@
 #include <thread>
 #include <vector>
 
-#ifndef _WIN32
-#include <sys/ioctl.h>
-#endif
-
 namespace ftd::ws_server_detail {
 
 using ftd::WS_BINARY;
@@ -29,13 +27,31 @@ using ftd::WS_PING;
 using ftd::WS_PONG;
 using ftd::WS_TEXT;
 
+// Error reporting must not throw a second validation exception while trying
+// to identify the original failed command. Invalid IDs are never echoed.
+struct FailedCommandIdentity {
+    std::string operation;
+    std::uint64_t request_id = 0;
+};
+static FailedCommandIdentity failed_command_identity(const std::string& message) {
+    FailedCommandIdentity out;
+    try {
+        const auto command = ftd::parse_json_object(message);
+        if (command.has("cmd") && command.at("cmd").kind == ftd::JsonValue::Kind::String)
+            out.operation = command.string("cmd");
+        try {
+            out.request_id = static_cast<std::uint64_t>(command.integer_or(
+                "_requestId", 0, 1, ftd::kJsonSafeInteger));
+        } catch (const std::invalid_argument&) {}
+    } catch (const std::invalid_argument&) {}
+    return out;
+}
+
 // The original server blocked indefinitely in ws_read_frame(), which meant an
 // already-completed CUDA event could not be published until the browser sent
 // another command.  Keep the WebSocket transport single-writer/ordered, but
 // wake periodically to poll the non-blocking native snapshot fence.
 enum class ClientPollResult { readable, timeout, error };
-enum class ClientFrameReadiness { ready, incomplete, error };
-
 ClientPollResult wait_for_client_activity(SOCKET client, int timeout_ms) {
     fd_set read_set;
     FD_ZERO(&read_set);
@@ -56,93 +72,186 @@ ClientPollResult wait_for_client_activity(SOCKET client, int timeout_ms) {
         : ClientPollResult::timeout;
 }
 
-bool socket_recv_would_block() {
-#ifdef _WIN32
-    const int error = WSAGetLastError();
-    return error == WSAEWOULDBLOCK;
-#else
-    return errno == EAGAIN || errno == EWOULDBLOCK;
-#endif
-}
-
-// ws_read_frame() correctly uses recv_exact() for a complete WebSocket frame,
-// but it is intentionally blocking. A TCP socket can become readable after
-// only the first few bytes have arrived, so gate the legacy parser on a
-// non-consuming, complete-frame check. This keeps telemetry fence polling
-// alive during a slow/partial client upload without changing ws_protocol.
-ClientFrameReadiness complete_client_frame_available(SOCKET client) {
-    std::uint64_t available = 0;
-#ifdef _WIN32
-    u_long buffered = 0;
-    if (::ioctlsocket(client, FIONREAD, &buffered) == SOCKET_ERROR)
-        return ClientFrameReadiness::error;
-    available = buffered;
-#else
-    int buffered = 0;
-    if (::ioctl(client, FIONREAD, &buffered) < 0)
-        return ClientFrameReadiness::error;
-    available = buffered > 0 ? static_cast<std::uint64_t>(buffered) : 0u;
-#endif
-
-    // select() also reports a clean close as readable. Let ws_read_frame()
-    // consume that immediately; it cannot block because recv() returns zero.
-    if (available == 0) return ClientFrameReadiness::ready;
-    if (available < 2) return ClientFrameReadiness::incomplete;
-
-    std::array<std::uint8_t, 14> header{};
-    const int peeked = ::recv(
-        client, reinterpret_cast<char*>(header.data()),
-        static_cast<int>((std::min)(available,
-                                    static_cast<std::uint64_t>(header.size()))),
-        MSG_PEEK);
-    if (peeked == 0) return ClientFrameReadiness::ready;
-    if (peeked < 0) {
-        return socket_recv_would_block()
-            ? ClientFrameReadiness::incomplete
-            : ClientFrameReadiness::error;
-    }
-    if (peeked < 2) return ClientFrameReadiness::incomplete;
-
-    const bool fin = (header[0] & 0x80u) != 0;
-    const bool reserved = (header[0] & 0x70u) != 0;
-    const bool masked = (header[1] & 0x80u) != 0;
-    const std::uint8_t length_code = header[1] & 0x7fu;
-    std::size_t extended_bytes = 0;
-    if (length_code == 126u) extended_bytes = 2;
-    else if (length_code == 127u) extended_bytes = 8;
-    const std::size_t prefix_bytes = 2u + extended_bytes;
-
-    if (available < prefix_bytes
-        || static_cast<std::size_t>(peeked) < prefix_bytes) {
-        return ClientFrameReadiness::incomplete;
+// Each network operation has a monotonic deadline. Waiting services only
+// observation production: flushing here would interleave a second frame into
+// an incomplete response. No input dispatch or physical tick occurs here.
+static void serve_client(SOCKET client, std::unique_ptr<RenderBridge>& rb,
+                         NativeTelemetryScheduler& telemetry, int& lattice_size,
+                         const ftd::WsIoPolicy& policy) {
+    const auto pump_while_waiting = [&]() {
+        try {
+            telemetry.pump(*rb);
+        } catch (const std::exception& ex) {
+            if (!telemetry.suspended()) telemetry.abort_and_suspend(ex.what());
+            throw;
+        } catch (...) {
+            if (!telemetry.suspended())
+                telemetry.abort_and_suspend("unknown native observation failure during socket wait");
+            throw;
+        }
+    };
+    // Source, tick and demand stay fixed inside any blocked operation. Each
+    // of four groups can publish at most once at that tick, so this hook adds
+    // at most four publication objects and no invalidations. This bound relies
+    // on the backend's existing current-tick metadata contract.
+    ftd::WsIoScope io(client, policy, pump_while_waiting);
+    // WebSocket handshake
+    if (!ftd::ws_handshake(client)) {
+        std::cerr << "[ws_server] Handshake failed\n";
+        return;
     }
 
-    // Invalid control bits/masking are rejected by ws_read_frame() before it
-    // reads a mask/payload, so dispatch it now rather than wait for bytes that
-    // well-formed browsers will never send.
-    if (!fin || reserved || !masked) return ClientFrameReadiness::ready;
+    std::cout << "[ws_server] WebSocket handshake complete\n";
 
-    std::uint64_t payload_bytes = length_code;
-    if (length_code == 126u) {
-        payload_bytes = (static_cast<std::uint64_t>(header[2]) << 8u)
-                      | static_cast<std::uint64_t>(header[3]);
-    } else if (length_code == 127u) {
-        payload_bytes = 0;
-        for (std::size_t i = 0; i < 8; ++i) {
-            payload_bytes = (payload_bytes << 8u) | header[2u + i];
+    // Message loop.  Snapshot publication is intentionally serviced from
+    // this same single transport writer: an unsolicited JSON delta cannot
+    // interleave with a binary response frame or be mistaken for a
+    // request-correlated response.
+    bool connected = true;
+    constexpr int kTelemetryPollIntervalMs = 8;
+    const auto service_telemetry = [&]() -> bool {
+        telemetry.pump(*rb);
+        return flush_telemetry_publications(client, telemetry);
+    };
+    while (connected) {
+        try {
+            if (!service_telemetry()) {
+                connected = false;
+                break;
+            }
+        } catch (const std::exception& ex) {
+            std::cerr << "[ws_server] Telemetry publisher failed: "
+                      << ex.what() << "\n";
+            if (!telemetry.suspended()) telemetry.abort_and_suspend(ex.what());
+            send_json_response(
+                client, json_native_recovery_required("telemetry", telemetry), 0);
+            connected = false;
+            break;
+        } catch (...) {
+            const std::string message = "unknown native telemetry publisher failure";
+            std::cerr << "[ws_server] " << message << "\n";
+            if (!telemetry.suspended()) telemetry.abort_and_suspend(message);
+            send_json_response(
+                client, json_native_recovery_required("telemetry", telemetry), 0);
+            connected = false;
+            break;
+        }
+
+        const ClientPollResult poll = wait_for_client_activity(
+            client, kTelemetryPollIntervalMs);
+        if (poll == ClientPollResult::error) {
+            connected = false;
+            break;
+        }
+        if (poll == ClientPollResult::timeout) continue;
+
+        // Start one absolute read deadline only after readability. Consume
+        // partial input so half-close is observable; the I/O wait hook can
+        // service scalar observation completion without writing frames.
+        std::vector<uint8_t> payload;
+        uint8_t opcode = ftd::ws_read_frame(client, payload);
+
+        switch (opcode) {
+        case WS_TEXT: {
+            std::string msg(payload.begin(), payload.end());
+            try {
+                if (!handle_command(msg, client, rb, telemetry, lattice_size))
+                    connected = false;
+            } catch (const std::exception& ex) {
+                // CUDA/kernel/validation failures are surfaced through the
+                // protocol. Allocation commands are transactional, but a
+                // tick/run exception may leave a partially advanced CUDA
+                // state. Send the typed error, then break this client
+                // connection. The retained native source is suspended;
+                // reconnect cannot silently replace its state or retry it.
+                std::cerr << "[ws_server] Command failed: " << ex.what() << "\n";
+                const auto identity = failed_command_identity(msg);
+                const auto& operation = identity.operation;
+                if (operation == "tick" || operation == "run") {
+                    if (!telemetry.suspended()) telemetry.abort_and_suspend(ex.what());
+                    if (!send_json_response(
+                            client,
+                            json_native_recovery_required(operation, telemetry),
+                            identity.request_id)) {
+                        connected = false;
+                    }
+                    connected = false;
+                } else if (!send_json_response(
+                               client, json_error(ex.what(), operation),
+                               identity.request_id)) {
+                    connected = false;
+                }
+            } catch (...) {
+                const std::string message = "unknown native command failure";
+                std::cerr << "[ws_server] " << message << "\n";
+                const auto identity = failed_command_identity(msg);
+                const auto& operation = identity.operation;
+                if (operation == "tick" || operation == "run") {
+                    if (!telemetry.suspended()) telemetry.abort_and_suspend(message);
+                    if (!send_json_response(
+                            client,
+                            json_native_recovery_required(operation, telemetry),
+                            identity.request_id)) {
+                        connected = false;
+                    }
+                    connected = false;
+                } else if (!send_json_response(
+                               client, json_error(message, operation),
+                               identity.request_id)) {
+                    connected = false;
+                }
+            }
+            break;
+        }
+        case WS_BINARY:
+            // Binary frames from client not expected; ignore
+            break;
+        case WS_PING: {
+            // Respond with pong (same payload)
+            if (!ftd::ws_send_frame(client, WS_PONG, payload.data(), payload.size()))
+                connected = false;
+            break;
+        }
+        case WS_PONG:
+            // Unsolicited pong is valid and requires no response.
+            break;
+        case WS_CLOSE:
+            // Send close frame back
+            ftd::ws_send_frame(client, WS_CLOSE, nullptr, 0);
+            connected = false;
+            break;
+        default:
+            // 0xFF = disconnect/error, anything else = unknown
+            connected = false;
+            break;
+        }
+
+        // A command's normal response (including any binary frame) is
+        // completely written before an optional publisher delta.  CPU
+        // snapshots may be ready immediately; CUDA snapshots will be
+        // picked up by a later idle poll without stalling the command.
+        if (connected) {
+            try {
+                if (!service_telemetry()) connected = false;
+            } catch (const std::exception& ex) {
+                std::cerr << "[ws_server] Telemetry publisher failed: "
+                          << ex.what() << "\n";
+                if (!telemetry.suspended()) telemetry.abort_and_suspend(ex.what());
+                send_json_response(
+                    client, json_native_recovery_required("telemetry", telemetry), 0);
+                connected = false;
+            } catch (...) {
+                const std::string message = "unknown native telemetry publisher failure";
+                std::cerr << "[ws_server] " << message << "\n";
+                if (!telemetry.suspended()) telemetry.abort_and_suspend(message);
+                send_json_response(
+                    client, json_native_recovery_required("telemetry", telemetry), 0);
+                connected = false;
+            }
         }
     }
-
-    // Match ws_protocol's 64 KiB bound. It rejects this before reading the
-    // mask/payload, so the existing parser remains safe to enter.
-    constexpr std::uint64_t kMaxClientFrameBytes = 64ull * 1024ull;
-    if (payload_bytes > kMaxClientFrameBytes) return ClientFrameReadiness::ready;
-
-    const std::uint64_t frame_bytes = static_cast<std::uint64_t>(prefix_bytes)
-                                    + 4u + payload_bytes;
-    return available >= frame_bytes
-        ? ClientFrameReadiness::ready
-        : ClientFrameReadiness::incomplete;
+    if (ftd::ws_last_io_status() == ftd::WsIoStatus::timeout)
+        std::cerr << "[ws_server] Client network operation timed out\n";
 }
 
 // ============================================================================
@@ -150,6 +259,9 @@ ClientFrameReadiness complete_client_frame_available(SOCKET client) {
 // ============================================================================
 
 int run_server(int argc, char* argv[]) {
+    // Allocate the external transport namespace before any client mutation.
+    // This random identifier never enters the engine's deterministic state.
+    (void)ftd::native_instance_nonce();
     // The desktop host redirects stdout/stderr to its persistent session log.
     // Line-buffer explicitly so startup, allocation, and failure messages are
     // visible immediately instead of appearing only when the process exits.
@@ -159,17 +271,34 @@ int run_server(int argc, char* argv[]) {
     int lattice_size = 32;
     int port = 9100;
     // Revision 1.4 hardening: default to loopback. The protocol has NO
-    // authentication and no Origin check, so the previous INADDR_ANY default
+    // authentication, so the previous INADDR_ANY default
     // let any LAN host (or any webpage — same-origin policy does not block
     // cross-origin WebSocket) drive the engine. LAN/remote use is preserved
     // via an explicit opt-in flag: --bind <addr> (e.g. --bind 0.0.0.0).
     std::string bind_addr = "127.0.0.1";
     bool single_client = false;
+    ftd::WsIoPolicy client_io_policy;
 
     std::vector<const char*> positional;
     for (int i = 1; i < argc; ++i) {
         if (std::strcmp(argv[i], "--bind") == 0 && i + 1 < argc) {
             bind_addr = argv[++i];
+        } else if (std::strcmp(argv[i], "--client-timeout-ms") == 0) {
+            if (i + 1 >= argc) {
+                std::cerr << "[ws_server] --client-timeout-ms requires an integer in [100,60000]\n";
+                return 2;
+            }
+            const char* value = argv[++i];
+            int timeout_ms = 0;
+            const auto parsed = std::from_chars(value, value + std::strlen(value), timeout_ms);
+            if (parsed.ec != std::errc{} || parsed.ptr != value + std::strlen(value)
+                || timeout_ms < 100 || timeout_ms > 60000) {
+                std::cerr << "[ws_server] --client-timeout-ms requires an integer in [100,60000]\n";
+                return 2;
+            }
+            client_io_policy.handshake_timeout = std::chrono::milliseconds(timeout_ms);
+            client_io_policy.read_timeout = std::chrono::milliseconds(timeout_ms);
+            client_io_policy.write_timeout = std::chrono::milliseconds(timeout_ms);
         } else if (std::strcmp(argv[i], "--once") == 0) {
             single_client = true;
         } else {
@@ -327,167 +456,14 @@ int run_server(int argc, char* argv[]) {
 
         std::cout << "[ws_server] Client connected\n";
 
-        // WebSocket handshake
-        if (!ftd::ws_handshake(client)) {
-            std::cerr << "[ws_server] Handshake failed\n";
-            closesocket(client);
-            continue;
-        }
-
-        std::cout << "[ws_server] WebSocket handshake complete\n";
-
-        // Message loop.  Snapshot publication is intentionally serviced from
-        // this same single transport writer: an unsolicited JSON delta cannot
-        // interleave with a binary response frame or be mistaken for a
-        // request-correlated response.
-        bool connected = true;
-        constexpr int kTelemetryPollIntervalMs = 8;
-        const auto service_telemetry = [&]() -> bool {
-            telemetry.pump(*rb);
-            return flush_telemetry_publications(client, telemetry);
-        };
-        while (connected) {
-            try {
-                if (!service_telemetry()) {
-                    connected = false;
-                    break;
-                }
-            } catch (const std::exception& ex) {
-                std::cerr << "[ws_server] Telemetry publisher failed: "
-                          << ex.what() << "\n";
-                if (!telemetry.suspended()) telemetry.abort_and_suspend(ex.what());
-                send_json_response(
-                    client, json_native_recovery_required("telemetry", telemetry), 0);
-                connected = false;
-                break;
-            } catch (...) {
-                const std::string message = "unknown native telemetry publisher failure";
-                std::cerr << "[ws_server] " << message << "\n";
-                if (!telemetry.suspended()) telemetry.abort_and_suspend(message);
-                send_json_response(
-                    client, json_native_recovery_required("telemetry", telemetry), 0);
-                connected = false;
-                break;
-            }
-
-            const ClientPollResult poll = wait_for_client_activity(
-                client, kTelemetryPollIntervalMs);
-            if (poll == ClientPollResult::error) {
-                connected = false;
-                break;
-            }
-            if (poll == ClientPollResult::timeout) continue;
-
-            const ClientFrameReadiness frame =
-                complete_client_frame_available(client);
-            if (frame == ClientFrameReadiness::error) {
-                connected = false;
-                break;
-            }
-            if (frame == ClientFrameReadiness::incomplete) {
-                // The socket remains readable while a partial frame sits in
-                // its receive buffer. Avoid a tight spin but keep snapshot
-                // fence latency bounded to a millisecond in this rare case.
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
-                continue;
-            }
-
-            std::vector<uint8_t> payload;
-            uint8_t opcode = ftd::ws_read_frame(client, payload);
-
-            switch (opcode) {
-            case WS_TEXT: {
-                std::string msg(payload.begin(), payload.end());
-                try {
-                    if (!handle_command(msg, client, rb, telemetry, lattice_size))
-                        connected = false;
-                } catch (const std::exception& ex) {
-                    // CUDA/kernel/validation failures are surfaced through the
-                    // protocol. Allocation commands are transactional, but a
-                    // tick/run exception may leave a partially advanced CUDA
-                    // state. Send the typed error, then break this client
-                    // connection so the dashboard reconnect path rebuilds the
-                    // selected scenario instead of immediately retrying the
-                    // poisoned bridge in an rAF error loop.
-                    std::cerr << "[ws_server] Command failed: " << ex.what() << "\n";
-                    const std::string operation = ftd::json_string(msg, "cmd");
-                    if (operation == "tick" || operation == "run") {
-                        if (!telemetry.suspended()) telemetry.abort_and_suspend(ex.what());
-                        if (!send_json_response(
-                                client,
-                                json_native_recovery_required(operation, telemetry),
-                                request_id_from(msg))) {
-                            connected = false;
-                        }
-                        connected = false;
-                    } else if (!send_json_response(
-                                   client, json_error(ex.what(), operation),
-                                   request_id_from(msg))) {
-                        connected = false;
-                    }
-                } catch (...) {
-                    const std::string message = "unknown native command failure";
-                    std::cerr << "[ws_server] " << message << "\n";
-                    const std::string operation = ftd::json_string(msg, "cmd");
-                    if (operation == "tick" || operation == "run") {
-                        if (!telemetry.suspended()) telemetry.abort_and_suspend(message);
-                        if (!send_json_response(
-                                client,
-                                json_native_recovery_required(operation, telemetry),
-                                request_id_from(msg))) {
-                            connected = false;
-                        }
-                        connected = false;
-                    } else if (!send_json_response(
-                                   client, json_error(message, operation),
-                                   request_id_from(msg))) {
-                        connected = false;
-                    }
-                }
-                break;
-            }
-            case WS_BINARY:
-                // Binary frames from client not expected; ignore
-                break;
-            case WS_PING: {
-                // Respond with pong (same payload)
-                ftd::ws_send_frame(client, WS_PONG, payload.data(), payload.size());
-                break;
-            }
-            case WS_CLOSE:
-                // Send close frame back
-                ftd::ws_send_frame(client, WS_CLOSE, nullptr, 0);
-                connected = false;
-                break;
-            default:
-                // 0xFF = disconnect/error, anything else = unknown
-                connected = false;
-                break;
-            }
-
-            // A command's normal response (including any binary frame) is
-            // completely written before an optional publisher delta.  CPU
-            // snapshots may be ready immediately; CUDA snapshots will be
-            // picked up by a later idle poll without stalling the command.
-            if (connected) {
-                try {
-                    if (!service_telemetry()) connected = false;
-                } catch (const std::exception& ex) {
-                    std::cerr << "[ws_server] Telemetry publisher failed: "
-                              << ex.what() << "\n";
-                    if (!telemetry.suspended()) telemetry.abort_and_suspend(ex.what());
-                    send_json_response(
-                        client, json_native_recovery_required("telemetry", telemetry), 0);
-                    connected = false;
-                } catch (...) {
-                    const std::string message = "unknown native telemetry publisher failure";
-                    std::cerr << "[ws_server] " << message << "\n";
-                    if (!telemetry.suspended()) telemetry.abort_and_suspend(message);
-                    send_json_response(
-                        client, json_native_recovery_required("telemetry", telemetry), 0);
-                    connected = false;
-                }
-            }
+        try {
+            serve_client(client, rb, telemetry, lattice_size, client_io_policy);
+        } catch (const std::exception& ex) {
+            // A callback marks genuine backend failures suspended itself.
+            // Socket setup/protocol failure alone never poisons the physics.
+            std::cerr << "[ws_server] Client session failed: " << ex.what() << "\n";
+        } catch (...) {
+            std::cerr << "[ws_server] Client session failed: unknown exception\n";
         }
 
         closesocket(client);

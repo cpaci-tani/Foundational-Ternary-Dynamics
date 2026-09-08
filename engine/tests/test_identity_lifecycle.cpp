@@ -213,6 +213,17 @@ void test_dual_pair_register_consistency() {
 
 int main() {
     std::printf("CPU identity/lifecycle regression\n");
+    {
+        ftd::RenderBridge bridge(1);
+        bridge.force_cpu();
+        bridge.toggles.disable_all();
+        bridge.toggles.pair_production = true;
+        bridge.inject_flux(0, 0, 0, {1000, 0, 0});
+        bridge.tick();
+        check("one-site domain cannot produce a pair with itself",
+              bridge.charge_sum() == 0 && bridge.state_at(0) == 0
+              && bridge.injector().peek_next_particle_id() == 0);
+    }
     test_pair_production_uses_independent_monotonic_ids();
     test_pair_provenance_lifetime_cleanup();
     test_retired_ids_are_never_reused();

@@ -71,9 +71,9 @@ VisualDeviceView make_visual_view(const GpuBuffers& b) {
 }
 
 __device__ __forceinline__ int wrap_coord(int value, int L) {
-    if (value < 0) return value + L;
-    if (value >= L) return value - L;
-    return value;
+    if (value >= 0 && value < L) return value;
+    const int remainder = value % L;
+    return remainder < 0 ? remainder + L : remainder;
 }
 
 __device__ __forceinline__ int site_index(int x, int y, int z, int L) {
@@ -207,12 +207,12 @@ __global__ void visual_field_kernel(
             // thin Wilson loops / IC4 point seeds / vortex cores as soon as
             // the large-lattice traffic cap raises stride above one.
             double best_rho = 0.0;
-            const int x_end = x + stride;
-            const int y_end = y + stride;
-            const int z_end = z + stride;
-            for (int bz = z; bz < z_end; ++bz) {
-                for (int by = y; by < y_end; ++by) {
-                    for (int bx = x; bx < x_end; ++bx) {
+            const auto xb = visual_sample_block(b.L, start, stride, axis_count, x);
+            const auto yb = visual_sample_block(b.L, start, stride, axis_count, y);
+            const auto zb = visual_sample_block(b.L, start, stride, axis_count, z);
+            for (int bz = zb.begin; bz < zb.end; ++bz) {
+                for (int by = yb.begin; by < yb.end; ++by) {
+                    for (int bx = xb.begin; bx < xb.end; ++bx) {
                         const int block_idx = site_index(bx, by, bz, b.L);
                         const double block_rho = rho_at(b, block_idx);
                         if (block_rho > best_rho) {
@@ -347,6 +347,11 @@ __global__ void visual_particle_attributes_kernel(
     const int q = blockIdx.x * blockDim.x + threadIdx.x;
     if (q >= count) return;
     const int idx = indices[q];
+    if (idx < 0 || idx >= b.N) {
+        for (int component = 0; component < 5; ++component)
+            out[q * 5 + component] = 0.0f;
+        return;
+    }
     out[q * 5 + 0] = static_cast<float>(b.remainder_x[idx]);
     out[q * 5 + 1] = static_cast<float>(b.remainder_y[idx]);
     out[q * 5 + 2] = static_cast<float>(b.remainder_z[idx]);

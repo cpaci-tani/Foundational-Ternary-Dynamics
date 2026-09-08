@@ -6,6 +6,8 @@
 #include "ftd/gpu_buffers.h"
 #include "ftd/eft/gpu_dual_cell_fields.cuh"
 #include "ftd/constants.h"
+#include "ftd/lattice.h"
+#include <stdexcept>
 #include <cuda_runtime.h>
 #include <cmath>
 #include <cstdio>
@@ -249,16 +251,16 @@ __global__ void compute_eft_operators_gpu_kernel(
     double op10 = Jx * dsdx + Jy * dsdy + Jz * dsdz;
 
     // Write components to global memory SoA
-    d_op_results[0 * N + i] = op1;
-    d_op_results[1 * N + i] = op2;
-    d_op_results[2 * N + i] = op3;
-    d_op_results[3 * N + i] = op4;
-    d_op_results[4 * N + i] = op5;
-    d_op_results[5 * N + i] = op6;
-    d_op_results[6 * N + i] = op7;
-    d_op_results[7 * N + i] = op8;
-    d_op_results[8 * N + i] = op9;
-    d_op_results[9 * N + i] = op10;
+    d_op_results[static_cast<std::size_t>(0) * N + i] = op1;
+    d_op_results[static_cast<std::size_t>(1) * N + i] = op2;
+    d_op_results[static_cast<std::size_t>(2) * N + i] = op3;
+    d_op_results[static_cast<std::size_t>(3) * N + i] = op4;
+    d_op_results[static_cast<std::size_t>(4) * N + i] = op5;
+    d_op_results[static_cast<std::size_t>(5) * N + i] = op6;
+    d_op_results[static_cast<std::size_t>(6) * N + i] = op7;
+    d_op_results[static_cast<std::size_t>(7) * N + i] = op8;
+    d_op_results[static_cast<std::size_t>(8) * N + i] = op9;
+    d_op_results[static_cast<std::size_t>(9) * N + i] = op10;
 }
 
 // ---------- Parallel Tree Reduction Kernel ----------
@@ -293,9 +295,23 @@ __global__ void reduce_blocks_kernel(
     }
 }
 
+namespace {
+void validate_fields(const GpuDualCellFields& fields) {
+    if (fields.N != ftd::Lattice::checked_total_sites(fields.L)
+        || !fields.d_rho_cell || !fields.d_phi_x || !fields.d_phi_y || !fields.d_phi_z) {
+        throw std::invalid_argument("EFT fields require matching allocated dimensions");
+    }
+}
+} // namespace
+
 // ---------- C++ Orchestration Implementations ----------
 
 void gpu_render_bridge_to_dual_cell_fields(const ftd::gpu::GpuBuffers& bufs, GpuDualCellFields& out) {
+    validate_fields(out);
+    if (out.L != bufs.L || out.N != bufs.N || !bufs.d_state
+        || !bufs.d_flux_x || !bufs.d_flux_y || !bufs.d_flux_z) {
+        throw std::invalid_argument("EFT conversion requires matching source/output dimensions");
+    }
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads
     dim3 grid((L + 3) / 4, (L + 7) / 8, (L + 7) / 8);
@@ -311,6 +327,11 @@ void gpu_render_bridge_to_dual_cell_fields(const ftd::gpu::GpuBuffers& bufs, Gpu
 }
 
 void gpu_block_dual_cell_b2(const GpuDualCellFields& fine, GpuDualCellFields& coarse) {
+    validate_fields(fine);
+    validate_fields(coarse);
+    if (fine.L % 2 != 0 || coarse.L != fine.L / 2) {
+        throw std::invalid_argument("EFT b=2 requires even fine side and exact half-size output");
+    }
     int fine_L = fine.L;
     int coarse_L = coarse.L;
 
@@ -326,6 +347,11 @@ void gpu_block_dual_cell_b2(const GpuDualCellFields& fine, GpuDualCellFields& co
 }
 
 void gpu_compute_eft_means(const GpuSnapshotPair& p, double* out_means) {
+    validate_fields(p.before);
+    validate_fields(p.after);
+    if (p.before.L != p.after.L || !out_means) {
+        throw std::invalid_argument("EFT means require matching snapshot dimensions and output");
+    }
     int L = p.L();
     int N = p.total_sites();
 
@@ -347,11 +373,11 @@ void gpu_compute_eft_means(const GpuSnapshotPair& p, double* out_means) {
     // Maximum blocks for 1st pass: (N + 511) / 512
     int max_blocks = (N + 511) / 512;
     ftd::gpu::CudaDeviceBuffer<double> temp(max_blocks);
-    ftd::gpu::CudaDeviceBuffer<double> scalar(1);
+    ftd::gpu::CudaDeviceBuffer<double> next(max_blocks);
 
     // 4. Reduce each of the 10 operators independently
     for (int op = 0; op < 10; ++op) {
-        double* d_input = op_results.get() + op * N;
+        double* d_input = op_results.get() + static_cast<std::size_t>(op) * N;
 
         // Pass 1: Reduce N to block-sums
         int threads1 = 256;
@@ -360,16 +386,21 @@ void gpu_compute_eft_means(const GpuSnapshotPair& p, double* out_means) {
             d_input, temp.get(), N);
         CUDA_CHECK(cudaGetLastError());
 
-        // Pass 2: Reduce block-sums to final scalar sum
-        int threads2 = 256;
-        int blocks2 = 1;
-        reduce_blocks_kernel<<<blocks2, threads2, threads2 * sizeof(double)>>>(
-            temp.get(), scalar.get(), blocks1);
-        CUDA_CHECK(cudaGetLastError());
-
-        // Copy final sum to host and divide by N to get the mean
+        // Continue until one scalar. A single 256-thread second pass only
+        // consumes 512 block sums and used to truncate lattices above 64^3.
+        int remaining = blocks1;
+        double* reduced = temp.get();
+        double* destination = next.get();
+        while (remaining > 1) {
+            const int blocks = (remaining + 511) / 512;
+            reduce_blocks_kernel<<<blocks, 256, 256 * sizeof(double)>>>(
+                reduced, destination, remaining);
+            CUDA_CHECK(cudaGetLastError());
+            remaining = blocks;
+            std::swap(reduced, destination);
+        }
         double sum_val = 0.0;
-        CUDA_CHECK(cudaMemcpy(&sum_val, scalar.get(), sizeof(double),
+        CUDA_CHECK(cudaMemcpy(&sum_val, reduced, sizeof(double),
                               cudaMemcpyDeviceToHost));
         out_means[op] = sum_val / static_cast<double>(N);
     }

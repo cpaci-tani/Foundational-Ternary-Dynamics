@@ -360,8 +360,10 @@ void test_unlocked_composite_candidate_outcomes() {
         int n8, n16, n32, n64;
     };
     const Case cases[] = {
-        {"s0-vacuum-proton", 3, +1, 3, 1, 0, 0},
-        {"s0-vacuum-neutron", 3, -1, 1, 1, 1, 0},
+        // Periodic transport retains net charge after opposite-sign
+        // annihilation. The former late zero counts assumed open faces.
+        {"s0-vacuum-proton", 3, +1, 3, 1, 1, 1},
+        {"s0-vacuum-neutron", 3, -1, 1, 1, 1, 1},
         {"s0-vacuum-pion-charged", 2, 0, 0, 0, 0, 0},
         {"s0-vacuum-pion-neutral", 2, 0, 0, 0, 0, 0},
         {"s0-vacuum-kaon-charged", 2, 0, 0, 0, 0, 0},
@@ -396,6 +398,8 @@ void test_unlocked_composite_candidate_outcomes() {
                       + std::to_string(t), stats.finite);
                 check(std::string(c.id) + " matches the selected finite-run survival count at "
                       + std::to_string(t), stats.manifested == expected[checkpoint]);
+                check(std::string(c.id) + " preserves net charge on the periodic domain",
+                      stats.signed_state == c.signed_state);
                 ++checkpoint;
             }
         }
@@ -406,8 +410,9 @@ void test_unlocked_composite_candidate_outcomes() {
         ftd::test::run_for(replay, 64);
         check(std::string(c.id) + " 64-tick history replays bit-exactly",
               exact_research_setup_replay(rb, replay));
-        check(std::string(c.id) + " does not survive as a bound candidate",
-              manifested_count(rb) == 0);
+        check(std::string(c.id) + " loses its composite cohort (a lone charge is not a bound composite)",
+              manifested_count(rb) == std::abs(c.signed_state)
+              && manifested_count(rb) < c.initial);
     }
 
     ftd::RenderBridge charged(24), neutral(24);
@@ -710,8 +715,10 @@ void test_fixed_seed_thermal_transport_cohort() {
           && exact_speed == 8 && initial.field_norm > 0.0
           && initial.wave_norm > 0.0);
     check("thermal transport event journal enables", rb.enable_history_journal());
-    const int expected_n[] = {8, 8, 8, 1};
-    const int expected_q[] = {0, 0, 0, -1};
+    // The current preparation explicitly selects all-face periodic transport.
+    // With no annihilation, markers cannot deplete by leaving the domain.
+    const int expected_n[] = {8, 8, 8, 8};
+    const int expected_q[] = {0, 0, 0, 0};
     int checkpoint = 0;
     int movement_events = 0;
     int annihilation_events = 0;
@@ -740,8 +747,9 @@ void test_fixed_seed_thermal_transport_cohort() {
     }
     std::cout << "    thermal transport movement_events=" << movement_events
               << " annihilation_events=" << annihilation_events << '\n';
-    check("thermal transport depletion is open-boundary motion, not annihilation",
-          movement_events == 145 && annihilation_events == 0);
+    check("thermal transport moves without annihilation or periodic-domain escape",
+          movement_events > 0 && annihilation_events == 0
+          && manifested_count(rb) == initial.manifested);
     check("thermal transport 64-tick history replays bit-exactly",
           exact_research_setup_replay(rb, replay));
 }

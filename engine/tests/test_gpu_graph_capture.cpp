@@ -25,6 +25,7 @@
 #include <cstdint>
 #include <cstring>
 #include <string>
+#include <stdexcept>
 #include <vector>
 
 using namespace ftd;
@@ -245,6 +246,29 @@ int main() {
         su2_engine.toggles.su3_gauge = false;
         su2_engine.graph_capture_enabled = true;
         su2_engine.upload_gauge_links(su2, su2, su2, su3, su3, su3);
+        // Reject every malformed direction before any allocation/copy and
+        // preserve the previously accepted gauge state.
+        for (int direction = 0; direction < 6; ++direction) {
+            auto a = su2, b = su2, c = su2;
+            auto d = su3, e = su3, f = su3;
+            if (direction == 0) a.pop_back();
+            if (direction == 1) b.push_back(SU2Link{});
+            if (direction == 2) c.clear();
+            if (direction == 3) d.pop_back();
+            if (direction == 4) e.push_back(SU3Link{});
+            if (direction == 5) f.clear();
+            bool rejected = false;
+            try { su2_engine.upload_gauge_links(a, b, c, d, e, f); }
+            catch (const std::invalid_argument&) { rejected = true; }
+            test::check("G8: malformed gauge shape rejected", rejected);
+        }
+        std::vector<SU2Link> out2x, out2y, out2z;
+        std::vector<SU3Link> out3x, out3y, out3z;
+        su2_engine.download_gauge_links(out2x, out2y, out2z, out3x, out3y, out3z);
+        test::check("G8: rejected upload preserves gauge values",
+            out2x.size() == su2.size() && out3z.size() == su3.size()
+            && std::memcmp(out2x.data(), su2.data(), su2.size() * sizeof(SU2Link)) == 0
+            && std::memcmp(out3z.data(), su3.data(), su3.size() * sizeof(SU3Link)) == 0);
         seed_scene(su2_engine);
         for (int t = 0; t < 8; ++t) {
             su2_engine.tick();

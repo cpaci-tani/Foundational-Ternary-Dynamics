@@ -8,11 +8,13 @@
 #include "ftd/render_bridge.h"
 #include "ftd/scenarios.h"
 #include "ftd/visual_field_sample.h"
+#include "ftd/visual_sample_grid.h"
 #include "ftd/constants.h"
 
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <climits>
 #include <iostream>
 #include <string>
 
@@ -63,6 +65,25 @@ bool vector_at(const ftd::VisualFieldSample& sample, float x, float y, float z,
 int main() {
     std::cout << "Visual field sample contract\n";
 
+    {
+        ftd::RenderBridge rb(5);
+        std::vector<float> attributes(15, 9.0f);
+        rb.voxels()[0].spin = 1;
+        rb.copy_visual_particle_attributes({-1, 0, 125}, attributes);
+        check("invalid attribute records are zero, including reused output",
+              attributes.size() == 15
+              && std::all_of(attributes.begin(), attributes.begin() + 5,
+                             [](float v) { return v == 0.0f; })
+              && attributes[8] == 1.0f
+              && std::all_of(attributes.begin() + 10, attributes.end(),
+                             [](float v) { return v == 0.0f; }));
+        rb.inject_flux(2, 2, 2, {1, 0, 0});
+        const auto profile = rb.aggregate_profile(rb.lattice().index(2, 2, 2));
+        check("compact aggregate counts a periodic source once",
+              profile.site_count == 1 && profile.total_energy == 1.0
+              && profile.effective_radius == 0.0);
+    }
+
     ftd::VisualFieldKind parsed{};
     check("parse E alias", ftd::parse_visual_field_kind("e", parsed)
           && parsed == ftd::VisualFieldKind::Electric);
@@ -76,6 +97,42 @@ int main() {
     check("real Poisson latency has stable next wire kind",
           static_cast<std::uint32_t>(ftd::VisualFieldKind::PoissonLatency) == 17u);
     check("reject unknown kind", !ftd::parse_visual_field_kind("not-a-field", parsed));
+
+    bool partition_ok = true;
+    for (int size = 1; size <= 129; ++size) {
+        for (int stride = 1; stride <= size+2; ++stride) {
+            const auto grid = ftd::visual_sample_grid(size, stride, false);
+            std::vector<int> counts(static_cast<std::size_t>(size), 0);
+            for (int anchor=grid.origin; anchor<grid.end(); anchor+=grid.stride) {
+                const auto bin = ftd::visual_sample_block(size,grid.origin,grid.stride,grid.count,anchor);
+                if (bin.begin < 0 || bin.end > size || bin.begin >= bin.end) {
+                    partition_ok = false; continue;
+                }
+                for (int source=bin.begin; source<bin.end; ++source) ++counts[source];
+            }
+            partition_ok = partition_ok && std::all_of(counts.begin(),counts.end(),[](int count){return count==1;});
+        }
+    }
+    check("all source bins partition odd/even domains without omissions or duplicates", partition_ok);
+    const auto huge_stride = ftd::visual_sample_grid(7,INT_MAX,false);
+    check("oversized requested stride stays bounded and produces one center", huge_stride.count==1
+          && huge_stride.origin==3 && huge_stride.stride==7 && huge_stride.end()==10);
+
+    // Center-anchored output bins must cover both source borders once. N=7,
+    // stride4 has only anchor3; the previous forward bin omitted coordinates
+    // 0..2 entirely. N=5,stride2 previously wrapped the last bin onto source0.
+    for (const int size : {5, 7}) {
+        const int stride = size == 7 ? 4 : 2;
+        for (const int source : {0, size-1}) {
+            ftd::RenderBridge rb(size);
+            rb.force_cpu();
+            rb.inject_flux(source, source, source, {0.25, -0.5, 1.0});
+            ftd::VisualFieldSample sample;
+            rb.copy_visual_field_sample(ftd::VisualFieldKind::FluxVector, stride, sample);
+            check("border seed represented exactly once L=" + std::to_string(size)
+                  + " source=" + std::to_string(source), sample.count() == 1);
+        }
+    }
 
     {
         ftd::RenderBridge rb(8);

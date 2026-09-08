@@ -6,6 +6,7 @@
 #include "ws_server_internal.h"
 
 #include "ftd/lagrangian.h"
+#include "ftd/ws_json.h"
 
 #include <algorithm>
 #include <array>
@@ -15,6 +16,7 @@
 #include <iomanip>
 #include <optional>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 
 namespace ftd::ws_server_detail {
@@ -213,18 +215,18 @@ void append_telemetry_group_meta(
         if (!first) ss << ',';
         first = false;
         ss << '"' << telemetry_group_name(index) << "\":{"
-           << "\"epoch\":" << meta.epoch
+           << "\"epoch\":" << ftd::json_exact_uint64(meta.epoch)
            // `epoch` is the cross-backend mutation/version contract. The
            // GPU additionally exposes a device state counter; CPU's internal
            // count is merely a snapshot sequence, so keep it diagnostic-only.
-           << ",\"stateVersion\":" << meta.epoch
-           << ",\"backendStateVersion\":" << meta.state_version
+           << ",\"stateVersion\":" << ftd::json_exact_uint64(meta.epoch)
+           << ",\"backendStateVersion\":" << ftd::json_exact_uint64(meta.state_version)
            << ",\"tick\":" << meta.tick
-           << ",\"snapshotVersion\":" << group_snapshot_versions[index]
+           << ",\"snapshotVersion\":" << ftd::json_exact_uint64(group_snapshot_versions[index])
            << ",\"stale\":" << (meta.epoch == current_epoch ? "false" : "true")
            << ",\"physicalTime\":" << std::setprecision(17)
-           << meta.physical_time
-           << ",\"dt\":" << meta.dt
+           << finite_json(meta.physical_time)
+           << ",\"dt\":" << finite_json(meta.dt)
            << ",\"latticeSize\":" << meta.lattice_size
            << '}';
     }
@@ -247,9 +249,10 @@ std::string json_telemetry_envelope(
     std::optional<std::uint32_t> published_mask = std::nullopt) {
     std::ostringstream ss;
     ss << "{\"type\":\"" << type << "\""
-       << ",\"snapshotVersion\":" << snapshot_version
-       << ",\"sourceEpoch\":" << source_epoch
-       << ",\"epoch\":" << epoch
+       << ",\"nativeInstanceId\":\"" << ftd::native_instance_id() << "\""
+       << ",\"snapshotVersion\":" << ftd::json_exact_uint64(snapshot_version)
+       << ",\"sourceEpoch\":" << ftd::json_exact_uint64(source_epoch)
+       << ",\"epoch\":" << ftd::json_exact_uint64(epoch)
        << ",\"tick\":" << tick
        << ",\"availableMask\":" << available_mask
        << ",\"freshMask\":" << fresh_mask
@@ -304,10 +307,11 @@ std::string json_telemetry_invalidation(
     // of the newly-mutated state.
     std::ostringstream ss;
     ss << "{\"type\":\"telemetry_invalidated\""
-       << ",\"sourceEpoch\":" << invalidation.source_epoch
-       << ",\"epoch\":" << invalidation.epoch
+       << ",\"nativeInstanceId\":\"" << ftd::native_instance_id() << "\""
+       << ",\"sourceEpoch\":" << ftd::json_exact_uint64(invalidation.source_epoch)
+       << ",\"epoch\":" << ftd::json_exact_uint64(invalidation.epoch)
        << ",\"tick\":" << invalidation.tick
-       << ",\"snapshotVersion\":" << invalidation.snapshot_version
+       << ",\"snapshotVersion\":" << ftd::json_exact_uint64(invalidation.snapshot_version)
        << ",\"availableMask\":" << invalidation.available_mask
        << ",\"freshMask\":0"
        << ",\"pendingMask\":" << invalidation.pending_mask
@@ -347,21 +351,21 @@ std::string json_voxel(ftd::RenderBridge& rb, int x, int y, int z) {
        << ",\"locked\":" << (v.locked ? "true" : "false")
        << ",\"spin\":" << static_cast<int>(v.spin)
        << ",\"color\":" << static_cast<int>(v.color)
-       << ",\"fluxX\":" << v.flux.x << ",\"fluxY\":" << v.flux.y
-       << ",\"fluxZ\":" << v.flux.z << ",\"density\":" << v.density()
-       << ",\"phase\":" << v.phase << ",\"tau\":" << v.tau
-       << ",\"latency\":" << v.latency
-       << ",\"waveVelX\":" << v.wave_vel.x << ",\"waveVelY\":" << v.wave_vel.y
-       << ",\"waveVelZ\":" << v.wave_vel.z
-       << ",\"velX\":" << v.velocity.x << ",\"velY\":" << v.velocity.y
-       << ",\"velZ\":" << v.velocity.z << ",\"speed\":" << v.speed()
-       << ",\"accelMag\":" << v.accel_mag
-       << ",\"divJ\":" << div << ",\"curlX\":" << curl.x
-       << ",\"curlY\":" << curl.y << ",\"curlZ\":" << curl.z
-       << ",\"Ex\":" << em.E.x << ",\"Ey\":" << em.E.y
-       << ",\"Ez\":" << em.E.z << ",\"Emag\":" << em.E_mag
-       << ",\"Bx\":" << em.B.x << ",\"By\":" << em.B.y
-       << ",\"Bz\":" << em.B.z << ",\"Bmag\":" << em.B_mag << "}";
+       << ",\"fluxX\":" << finite_json(v.flux.x) << ",\"fluxY\":" << finite_json(v.flux.y)
+       << ",\"fluxZ\":" << finite_json(v.flux.z) << ",\"density\":" << finite_json(v.density())
+       << ",\"phase\":" << finite_json(v.phase) << ",\"tau\":" << finite_json(v.tau)
+       << ",\"latency\":" << finite_json(v.latency)
+       << ",\"waveVelX\":" << finite_json(v.wave_vel.x) << ",\"waveVelY\":" << finite_json(v.wave_vel.y)
+       << ",\"waveVelZ\":" << finite_json(v.wave_vel.z)
+       << ",\"velX\":" << finite_json(v.velocity.x) << ",\"velY\":" << finite_json(v.velocity.y)
+       << ",\"velZ\":" << finite_json(v.velocity.z) << ",\"speed\":" << finite_json(v.speed())
+       << ",\"accelMag\":" << finite_json(v.accel_mag)
+       << ",\"divJ\":" << finite_json(div) << ",\"curlX\":" << finite_json(curl.x)
+       << ",\"curlY\":" << finite_json(curl.y) << ",\"curlZ\":" << finite_json(curl.z)
+       << ",\"Ex\":" << finite_json(em.E.x) << ",\"Ey\":" << finite_json(em.E.y)
+       << ",\"Ez\":" << finite_json(em.E.z) << ",\"Emag\":" << finite_json(em.E_mag)
+       << ",\"Bx\":" << finite_json(em.B.x) << ",\"By\":" << finite_json(em.B.y)
+       << ",\"Bz\":" << finite_json(em.B.z) << ",\"Bmag\":" << finite_json(em.B_mag) << "}";
     return ss.str();
 }
 
@@ -372,26 +376,26 @@ std::string json_force_at(ftd::RenderBridge& rb, int x, int y, int z) {
        << "{\"x\":" << rb.lattice().wrap(x)
        << ",\"y\":" << rb.lattice().wrap(y)
        << ",\"z\":" << rb.lattice().wrap(z)
-       << ",\"coulombX\":" << fd.f_coulomb.x
-       << ",\"coulombY\":" << fd.f_coulomb.y
-       << ",\"coulombZ\":" << fd.f_coulomb.z
-       << ",\"coulombMag\":" << fd.f_coulomb.mag()
-       << ",\"strongX\":" << fd.f_strong.x
-       << ",\"strongY\":" << fd.f_strong.y
-       << ",\"strongZ\":" << fd.f_strong.z
-       << ",\"strongMag\":" << fd.f_strong.mag()
-       << ",\"magneticX\":" << fd.f_magnetic.x
-       << ",\"magneticY\":" << fd.f_magnetic.y
-       << ",\"magneticZ\":" << fd.f_magnetic.z
-       << ",\"magneticMag\":" << fd.f_magnetic.mag()
-       << ",\"gravityX\":" << fd.f_gravity.x
-       << ",\"gravityY\":" << fd.f_gravity.y
-       << ",\"gravityZ\":" << fd.f_gravity.z
-       << ",\"gravityMag\":" << fd.f_gravity.mag()
-       << ",\"exchangeX\":" << fd.f_exchange.x
-       << ",\"exchangeY\":" << fd.f_exchange.y
-       << ",\"exchangeZ\":" << fd.f_exchange.z
-       << ",\"exchangeMag\":" << fd.f_exchange.mag() << "}";
+       << ",\"coulombX\":" << finite_json(fd.f_coulomb.x)
+       << ",\"coulombY\":" << finite_json(fd.f_coulomb.y)
+       << ",\"coulombZ\":" << finite_json(fd.f_coulomb.z)
+       << ",\"coulombMag\":" << finite_json(fd.f_coulomb.mag())
+       << ",\"strongX\":" << finite_json(fd.f_strong.x)
+       << ",\"strongY\":" << finite_json(fd.f_strong.y)
+       << ",\"strongZ\":" << finite_json(fd.f_strong.z)
+       << ",\"strongMag\":" << finite_json(fd.f_strong.mag())
+       << ",\"magneticX\":" << finite_json(fd.f_magnetic.x)
+       << ",\"magneticY\":" << finite_json(fd.f_magnetic.y)
+       << ",\"magneticZ\":" << finite_json(fd.f_magnetic.z)
+       << ",\"magneticMag\":" << finite_json(fd.f_magnetic.mag())
+       << ",\"gravityX\":" << finite_json(fd.f_gravity.x)
+       << ",\"gravityY\":" << finite_json(fd.f_gravity.y)
+       << ",\"gravityZ\":" << finite_json(fd.f_gravity.z)
+       << ",\"gravityMag\":" << finite_json(fd.f_gravity.mag())
+       << ",\"exchangeX\":" << finite_json(fd.f_exchange.x)
+       << ",\"exchangeY\":" << finite_json(fd.f_exchange.y)
+       << ",\"exchangeZ\":" << finite_json(fd.f_exchange.z)
+       << ",\"exchangeMag\":" << finite_json(fd.f_exchange.mag()) << "}";
     return ss.str();
 }
 
@@ -415,15 +419,18 @@ std::string json_info(ftd::RenderBridge& rb,
     // Protocol v2 turns telemetry into a native publisher/cache rather than
     // an RPC that performs a fresh reduction for every side panel.
     ss << ",\"telemetryProtocolVersion\":2"
+       << ",\"nativeProtocolVersion\":3,\"nativeBinaryVersions\":[2,3]"
+       << ",\"nativeInstanceId\":\"" << ftd::native_instance_id() << "\""
+       << ",\"exactIntegerEncoding\":\"safe-number-or-decimal-string\""
        << ",\"telemetryPush\":true"
        << ",\"telemetryRecoveryRequired\":"
        << (telemetry.suspended() ? "true" : "false")
        << ",\"restartRequired\":"
        << (telemetry.restart_required() ? "true" : "false")
-       << ",\"sourceEpoch\":" << telemetry.source_epoch()
-       << ",\"telemetrySourceEpoch\":" << telemetry.source_epoch()
-       << ",\"telemetryEpoch\":" << telemetry.epoch()
-       << ",\"telemetrySnapshotVersion\":" << telemetry.snapshot_version();
+       << ",\"sourceEpoch\":" << ftd::json_exact_uint64(telemetry.source_epoch())
+       << ",\"telemetrySourceEpoch\":" << ftd::json_exact_uint64(telemetry.source_epoch())
+       << ",\"telemetryEpoch\":" << ftd::json_exact_uint64(telemetry.epoch())
+       << ",\"telemetrySnapshotVersion\":" << ftd::json_exact_uint64(telemetry.snapshot_version());
     if (telemetry.suspended()) {
         ss << ",\"telemetryRecoveryReason\":\""
            << json_escape(telemetry.suspension_reason()) << "\"";
@@ -438,12 +445,13 @@ std::string json_visual_deferred(
     const auto view = telemetry.latest();
     std::ostringstream ss;
     ss << "{\"type\":\"visual_deferred\""
+       << ",\"nativeInstanceId\":\"" << ftd::native_instance_id() << "\""
        << ",\"operation\":\"" << operation << "\""
        << ",\"reason\":\"telemetry_priority\""
-       << ",\"sourceEpoch\":" << view.source_epoch
-       << ",\"epoch\":" << view.epoch
+       << ",\"sourceEpoch\":" << ftd::json_exact_uint64(view.source_epoch)
+       << ",\"epoch\":" << ftd::json_exact_uint64(view.epoch)
        << ",\"tick\":" << view.tick
-       << ",\"snapshotVersion\":" << view.snapshot_version
+       << ",\"snapshotVersion\":" << ftd::json_exact_uint64(view.snapshot_version)
        << ",\"pendingMask\":" << view.pending_mask
        // Hint only: a GPU fence can take longer; the normal retry trigger is
        // the next telemetry_snapshot publication.
@@ -454,120 +462,21 @@ std::string json_visual_deferred(
 // --------------------------------------------------------------------------
 // Telemetry control-plane JSON helpers
 // --------------------------------------------------------------------------
-// ws_protocol intentionally provides only flat string-search helpers for the
-// legacy command surface. The demand command has one small nested object
-// (`everyTicks`), so parse only that controlled top-level shape here rather
-// than adding a general JSON dependency to the standalone native server.
-
-bool json_top_level_value_start(const std::string& json, const char* key,
-                                std::size_t& value_start) {
-    int depth = 0;
-    for (std::size_t i = 0; i < json.size(); ++i) {
-        const char c = json[i];
-        if (c == '{' || c == '[') {
-            ++depth;
-            continue;
-        }
-        if (c == '}' || c == ']') {
-            --depth;
-            continue;
-        }
-        if (c != '"') continue;
-
-        const std::size_t begin = i + 1;
-        std::size_t end = begin;
-        for (; end < json.size(); ++end) {
-            if (json[end] == '\\') {
-                ++end;
-                continue;
-            }
-            if (json[end] == '"') break;
-        }
-        if (end >= json.size()) return false;
-        if (depth == 1 && json.compare(begin, end - begin, key) == 0) {
-            std::size_t cursor = end + 1;
-            while (cursor < json.size()
-                   && std::isspace(static_cast<unsigned char>(json[cursor]))) {
-                ++cursor;
-            }
-            if (cursor < json.size() && json[cursor] == ':') {
-                ++cursor;
-                while (cursor < json.size()
-                       && std::isspace(static_cast<unsigned char>(json[cursor]))) {
-                    ++cursor;
-                }
-                value_start = cursor;
-                return cursor < json.size();
-            }
-        }
-        i = end;
-    }
-    return false;
-}
-
-std::optional<bool> json_top_level_bool(const std::string& json,
-                                        const char* key) {
-    std::size_t start = 0;
-    if (!json_top_level_value_start(json, key, start)) return std::nullopt;
-    if (json.compare(start, 4, "true") == 0) return true;
-    if (json.compare(start, 5, "false") == 0) return false;
-    return std::nullopt;
-}
-
-std::optional<double> json_top_level_number(const std::string& json,
-                                            const char* key) {
-    std::size_t start = 0;
-    if (!json_top_level_value_start(json, key, start)) return std::nullopt;
-    const char* first = json.c_str() + start;
-    char* end = nullptr;
-    const double value = std::strtod(first, &end);
-    if (end == first || !std::isfinite(value)) return std::nullopt;
-    return value;
-}
-
-std::optional<std::string> json_top_level_object(const std::string& json,
-                                                  const char* key) {
-    std::size_t start = 0;
-    if (!json_top_level_value_start(json, key, start)
-        || start >= json.size() || json[start] != '{') return std::nullopt;
-
-    int depth = 0;
-    bool in_string = false;
-    for (std::size_t i = start; i < json.size(); ++i) {
-        const char c = json[i];
-        if (in_string) {
-            if (c == '\\') {
-                ++i;
-            } else if (c == '"') {
-                in_string = false;
-            }
-            continue;
-        }
-        if (c == '"') {
-            in_string = true;
-        } else if (c == '{') {
-            ++depth;
-        } else if (c == '}') {
-            if (--depth == 0) return json.substr(start, i - start + 1);
-        }
-    }
-    return std::nullopt;
-}
+// Demand and selection use the bounded typed JSON parser shared by native
+// commands. Validate into a candidate before publishing a changed demand.
 
 std::uint32_t telemetry_selection_mask(const std::string& json) {
+    const auto request = ftd::parse_json_object(json);
     std::uint32_t mask = 0;
     bool explicit_selection = false;
     const std::array<const char*, 4> names{{
         "diagnostics", "audit", "gravity", "lagrangian",
     }};
     for (std::size_t i = 0; i < names.size(); ++i) {
-        const auto value = json_top_level_bool(json, names[i]);
-        if (!value) continue;
+        if (!request.has(names[i])) continue;
         explicit_selection = true;
-        if (*value) mask |= kTelemetryGroupBits[i];
+        if (request.boolean(names[i])) mask |= kTelemetryGroupBits[i];
     }
-    // Preserve the original endpoint's convenient summary default. The
-    // distinction is only response selection; no call here changes demand.
     return explicit_selection ? mask : ftd::TELEMETRY_DIAGNOSTICS;
 }
 
@@ -575,46 +484,44 @@ bool parse_telemetry_demand(const std::string& json,
                             const ftd::NativeTelemetryScheduler& scheduler,
                             ftd::NativeTelemetryScheduler::Demand& out,
                             std::string& error) {
-    out = scheduler.demand();
-
-    if (const auto raw_mask = json_top_level_number(json, "mask")) {
-        if (*raw_mask < 0.0
-            || *raw_mask > static_cast<double>(ftd::TELEMETRY_ALL)
-            || std::floor(*raw_mask) != *raw_mask) {
-            error = "telemetry mask must be within the supported group bits";
-            return false;
+    // Optional means absent. A supplied malformed field must not silently
+    // inherit a prior value, and failure must leave the caller's output intact.
+    try {
+        const auto request = ftd::parse_json_object(json);
+        auto candidate = scheduler.demand();
+        const bool has_mask = request.has("mask");
+        if (has_mask) {
+            candidate.enabled_mask = static_cast<std::uint32_t>(
+                request.integer("mask", 0, ftd::TELEMETRY_ALL));
         }
-        out.enabled_mask = static_cast<std::uint32_t>(*raw_mask)
-                         & ftd::TELEMETRY_ALL;
-    }
-
-    const std::array<const char*, 4> names{{
-        "diagnostics", "audit", "gravity", "lagrangian",
-    }};
-    for (std::size_t i = 0; i < names.size(); ++i) {
-        const auto value = json_top_level_bool(json, names[i]);
-        if (!value) continue;
-        if (*value) out.enabled_mask |= kTelemetryGroupBits[i];
-        else        out.enabled_mask &= ~kTelemetryGroupBits[i];
-    }
-
-    if (const auto cadence = json_top_level_object(json, "everyTicks")) {
+        const std::array<const char*, 4> names{{
+            "diagnostics", "audit", "gravity", "lagrangian",
+        }};
         for (std::size_t i = 0; i < names.size(); ++i) {
-            if (!ftd::json_has_key(*cadence, names[i])) continue;
-            const double raw = ftd::json_number(*cadence, names[i]);
-            if (!std::isfinite(raw) || raw < 1.0
-                || raw > static_cast<double>(
-                    ftd::NativeTelemetryScheduler::kMaxCadenceTicks)
-                || std::floor(raw) != raw) {
-                error = std::string("everyTicks.") + names[i]
-                      + " must be an integer in [1,65535]";
-                return false;
+            if (!request.has(names[i])) continue;
+            const bool enabled = request.boolean(names[i]);
+            if (has_mask && enabled != ((candidate.enabled_mask & kTelemetryGroupBits[i]) != 0)) {
+                throw std::invalid_argument("telemetry mask conflicts with group selection");
             }
-            out.every_ticks[i] = static_cast<std::uint32_t>(raw);
+            if (enabled) candidate.enabled_mask |= kTelemetryGroupBits[i];
+            else candidate.enabled_mask &= ~kTelemetryGroupBits[i];
         }
+        if (request.has("everyTicks")) {
+            const auto& cadence = request.at("everyTicks");
+            (void)cadence.object();
+            for (std::size_t i = 0; i < names.size(); ++i) {
+                if (!cadence.has(names[i])) continue;
+                candidate.every_ticks[i] = static_cast<std::uint32_t>(
+                    cadence.integer(names[i], 1, ftd::NativeTelemetryScheduler::kMaxCadenceTicks));
+            }
+        }
+        out = candidate;
+        error.clear();
+        return true;
+    } catch (const std::invalid_argument& ex) {
+        error = ex.what();
+        return false;
     }
-
-    return true;
 }
 
 std::string json_telemetry_demand_ack(
@@ -623,6 +530,7 @@ std::string json_telemetry_demand_ack(
     const auto view = scheduler.latest();
     std::ostringstream ss;
     ss << "{\"type\":\"telemetry_demand\""
+       << ",\"nativeInstanceId\":\"" << ftd::native_instance_id() << "\""
        << ",\"enabledMask\":" << demand.enabled_mask
        << ",\"everyTicks\":{"
        << "\"diagnostics\":" << demand.every_ticks[0]
@@ -634,10 +542,10 @@ std::string json_telemetry_demand_ack(
        << ",\"audit\":" << view.min_interval_ms[1]
        << ",\"gravity\":" << view.min_interval_ms[2]
        << ",\"lagrangian\":" << view.min_interval_ms[3]
-       << "},\"snapshotVersion\":" << view.snapshot_version
-       << ",\"sourceEpoch\":" << view.source_epoch
-       << ",\"telemetrySourceEpoch\":" << view.source_epoch
-       << ",\"epoch\":" << view.epoch
+       << "},\"snapshotVersion\":" << ftd::json_exact_uint64(view.snapshot_version)
+       << ",\"sourceEpoch\":" << ftd::json_exact_uint64(view.source_epoch)
+       << ",\"telemetrySourceEpoch\":" << ftd::json_exact_uint64(view.source_epoch)
+       << ",\"epoch\":" << ftd::json_exact_uint64(view.epoch)
        << ",\"tick\":" << view.tick << '}';
     return ss.str();
 }
@@ -669,7 +577,10 @@ std::string json_flux_slice(ftd::RenderBridge& rb, int axis, int index) {
     bool first = true;
     for (const float magnitude : magnitudes) {
         if (!first) ss << ",";
-        ss << magnitude;
+        // Keep the existing stream/precision for bulk samples; constructing
+        // one temporary string stream per cell would add avoidable overhead.
+        if (std::isfinite(magnitude)) ss << magnitude;
+        else ss << "null";
         first = false;
     }
     ss << "]}";

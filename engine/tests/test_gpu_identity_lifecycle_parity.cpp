@@ -10,6 +10,7 @@
 #include "ftd/render_bridge.h"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
@@ -385,6 +386,37 @@ void test_clean_voxel_reads_do_not_repoll_identity_counters() {
 
 int main() {
     std::printf("GPU identity/lifecycle parity regression\n");
+    {
+        bool union_preserved = true;
+        for (int repeat = 0; repeat < 16; ++repeat) {
+            RenderBridge bridge(9);
+            bridge.toggles.disable_all();
+            bridge.toggles.triad_binding = true;
+            for (const auto& p : std::vector<std::array<int, 3>>{
+                     {4, 4, 4}, {5, 5, 4}, {5, 4, 5}, {4, 5, 5}})
+                bridge.inject_particle(p[0], p[1], p[2], +1, {});
+            bridge.voxel_at(0, 0, 0).locked = true;
+            for (int tick = 0; tick < 4; ++tick) bridge.tick();
+            const auto& voxels = static_cast<const RenderBridge&>(bridge).voxels();
+            int locked_count = 0;
+            for (const auto& voxel : voxels) locked_count += voxel.locked;
+            union_preserved &= locked_count == 5 && voxels[0].locked;
+            for (const auto& voxel : voxels)
+                if (voxel.state != 0) union_preserved &= voxel.locked;
+        }
+        check("overlapping GPU triad proposals retain exact lock union on repeat",
+              union_preserved);
+    }
+    {
+        RenderBridge bridge(1);
+        bridge.toggles.disable_all();
+        bridge.toggles.pair_production = true;
+        bridge.inject_flux(0, 0, 0, {1000, 0, 0});
+        bridge.tick();
+        check("GPU one-site domain cannot produce a pair with itself",
+              bridge.charge_sum() == 0 && bridge.state_at(0) == 0
+              && bridge.injector().peek_next_particle_id() == 0);
+    }
     test_pair_transaction(false);
     test_pair_transaction(true);
     test_same_tick_genesis_evaporation_order();

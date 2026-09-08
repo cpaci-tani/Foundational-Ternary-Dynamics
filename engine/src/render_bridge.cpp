@@ -1,29 +1,13 @@
 /**
- * Logic-First FTD Engine (v2.0)
+ * Scale-0 floating-point reference engine.
  *
- * Built from axioms: {3D lattice, ternary states, flux field, local causality}
- *
- * Six rules, nothing else:
- *   1. Flux wave equation: d²J/dt² = c²∇²J (local linear dynamics)
- *   2. State-flux coupling: −g_c·∇(s) source term (from δS/δJ = 0; electric
- *      sign per lagrangian.h Term 2, amended 2026-07-18)
- *   3. Gauss projection: enforce ∇·J = s (charge conservation)
- *   4. Manifestation/Evaporation: threshold crossing
- *   5. Field-mediated forces: F = -α·s·∇φ_C + G_N·∇ρ (Poisson Coulomb, Phase 3)
- *   6. Movement + Collision: remainder accumulation, speed limit, annihilation
- *
- * Everything phenomenological has been stripped:
- *   - No pairwise Coulomb, Yukawa, Lorentz, exchange forces
- *   - No QCD running coupling
- *   - No weak transmutation
- *   - No binding energy maintenance
- *   - No noetic/reference frame context
- *   - No latency/bandwidth/proper time
- *
- * What emerges from these rules IS the physics.
- * What doesn't emerge is a genuine absence, not a missing formula.
- *
- * Archived: engine_v1_phenomenological/ contains the full 1382-line version.
+ * The base path evolves a ternary site readout and continuous flux using
+ * selected wave/coupling, approximate Gauss correction, manifestation and
+ * transport rules. Optional toggles add the phenomenological and research
+ * extensions orchestrated below. Poisson solves, composed stencil phases
+ * and pair interactions do not satisfy the strict candidate's physical
+ * radius-one microtick contract. See the separately versioned engine/strict
+ * candidate and its acceptance reports for that narrower claim.
  */
 
 #include "ftd/render_bridge.h"
@@ -452,7 +436,7 @@ void RenderBridge::copy_visual_particle_attributes(
     if (backend_->copy_visual_particle_attributes(indices, out)) return;
   }
   const auto& source = std::as_const(*this).voxels();
-  out.resize(indices.size() * 5u);
+  out.assign(indices.size() * 5u, 0.0f);
   for (std::size_t i = 0; i < indices.size(); ++i) {
     const int idx = indices[i];
     if (idx < 0 || static_cast<std::size_t>(idx) >= source.size()) continue;
@@ -544,6 +528,8 @@ void RenderBridge::seed_rng(unsigned int seed) {
 }
 
 void RenderBridge::set_dt(double dt) {
+    if (!std::isfinite(dt) || dt <= 0.0)
+        throw std::invalid_argument("tick duration must be finite and positive");
     // E1 (FTD-0337): the Verlet wave integrator honors dt < 1 exactly like
     // the symplectic-leapfrog path (the FTD-0337 recon showed the default
     // non-symplectic leapfrog silently clamps dt to 1 — the "dt-invariance"
@@ -715,22 +701,9 @@ void RenderBridge::phase_read() {
 // (RF-4 dedup of the manifest body is the only structural change; the
 // state/spin/color assignments themselves are unchanged).
 void RenderBridge::phase_write() {
-  // ARCH-7b (2026-04-25): originally a PRE-write flux snapshot, taken so
-  // genesis curl reads could not race sibling-thread voxel.flux writes.
-  //
-  // AUDIT 2026-09-02: the snapshot is DEAD in every reachable path. Both this
-  // call and the overwrite in phase_write_main_loop are gated on the same
-  // genesis toggle, and the overwrite refills the whole buffer with
-  // post-leapfrog, post-damping flux before Loop 2's genesis reads it, so
-  // the values consumed for genesis spin (curl) and polarity (divergence) are
-  // POST-write, not pre-write. The race the snapshot was introduced to prevent
-  // is instead avoided by that overwrite happening in its own loop.
-  // Retained rather than removed: deleting an O(N) write is not obviously
-  // behaviour-neutral, and the buffer's contents are still consumed. See the
-  // matching notes in render_bridge_phases/phase_write.cpp.
-  if (toggles.genesis) {
-    snapshot_flux_pre_write(*this);
-  }
+  // The post-integration snapshot in phase_write_main_loop is the only
+  // snapshot consumed by genesis. The earlier pre-integration full-volume
+  // copy was overwritten before every read and has been removed.
 
   // Phase D: Precompute near-particle mask (O(N), race-free).
   if (toggles.selective_damping) {
@@ -855,29 +828,21 @@ void RenderBridge::phase_movement() {
 
 void RenderBridge::tick() {
   assert_sim_thread();
-  causal_projection_events_this_tick_ = 0;
-  // FTD-HISTORY-BEGIN: observation-only native event journal.
-  if (history_event_journal_->enabled()) history_event_journal_->clear();
-  // FTD-HISTORY-END
-
-  // A caller can leave dt_<1 behind by enabling an alternate integrator,
-  // calling set_dt(), then switching toggles. FTD-0408/0411 are defined only
-  // for the unit-step default map, so normalize stale state before validation
-  // and before physical_time_ advances.
-  if ((toggles.lorentz_period2_floquet
-       || toggles.lorentz_bcc_time_floquet) && dt_ != 1.0) {
-    dt_ = 1.0;
-    if (backend_) backend_->set_dt(dt_);
-  }
+  // Read-only, constant-size preflight. Rejected configuration and registered
+  // clock/schedule horizons must retain the previous event journal, counters,
+  // warning memo and dt. This is not rollback for failures in later phases.
+  const bool unit_floquet = toggles.lorentz_period2_floquet
+      || toggles.lorentz_bcc_time_floquet;
+  const double prospective_dt = unit_floquet ? 1.0 : dt_;
   // F3 (callstack audit 2026-04-17): validate runs on BOTH paths now
   // so toggle-combination warnings surface regardless of CPU/GPU build.
   //
   // ARCH-3 (2026-04-25): throw under strict_validation; otherwise emit ONE
   // warning per unique error string per bridge instance (last_validation_warn_)
   // so tests don't spam stderr every tick with the same message.
-  {
-      std::string validErr;
-      if (!toggles.validate(&validErr)) {
+  std::string validErr;
+  const bool valid_toggles = toggles.validate(&validErr);
+  if (!valid_toggles) {
           if (toggles.strict_validation || toggles.matched_gauss_dynamics) {
 #ifdef __EMSCRIPTEN__
               // WASM build compiles with -fno-exceptions; downgrade to
@@ -889,17 +854,9 @@ void RenderBridge::tick() {
               throw std::logic_error("[TermToggles] Invalid combination: " + validErr);
 #endif
           }
-          if (validErr != last_validation_warn_) {
-              std::cerr << "[TermToggles] Invalid combination: " << validErr;
-              last_validation_warn_ = validErr;
-          }
-      } else if (!last_validation_warn_.empty()) {
-          // Reset memo when toggles get fixed mid-run.
-          last_validation_warn_.clear();
-      }
   }
 
-  if (toggles.matched_gauss_dynamics && dt_ != 1.0) {
+  if (toggles.matched_gauss_dynamics && prospective_dt != 1.0) {
 #ifdef __EMSCRIPTEN__
     std::cerr << "[FTD-0428] FATAL: matched_gauss_dynamics requires dt=1\n";
     std::abort();
@@ -907,6 +864,67 @@ void RenderBridge::tick() {
     throw std::logic_error(
         "[FTD-0428] matched_gauss_dynamics requires the locked unit tick");
 #endif
+  }
+
+  if (toggles.matched_gauss_dynamics && !matched_gauss_dynamics_->initialized()) {
+#ifdef __EMSCRIPTEN__
+    std::cerr << "[FTD-0428] FATAL: matched_gauss_dynamics requires explicit initialization\n";
+    std::abort();
+#else
+    throw std::logic_error(
+        "[FTD-0428] matched_gauss_dynamics requires explicit initialization");
+#endif
+  }
+
+  const auto reject_horizon = [](const char* message) {
+#ifdef __EMSCRIPTEN__
+    std::cerr << "[TickPreflight] FATAL: " << message << std::endl;
+    std::abort();
+#else
+    throw std::overflow_error(message);
+#endif
+  };
+  if (tick_ < 0 || tick_ == std::numeric_limits<int>::max())
+    reject_horizon("[TickPreflight] tick counter has no representable next tick");
+  if (!std::isfinite(prospective_dt) || prospective_dt <= 0.0
+      || !std::isfinite(physical_time_) || physical_time_ < 0.0
+      || !std::isfinite(physical_time_ + prospective_dt))
+    reject_horizon("[TickPreflight] physical time requires a finite nonnegative clock and finite positive step");
+  if (energy_ledger_.updates == std::numeric_limits<std::uint64_t>::max())
+    reject_horizon("[TickPreflight] energy ledger update counter is exhausted");
+  if (toggles.flux_pump && flux_pump_configured_
+      && flux_pump_applied_ < flux_pump_ticks_) {
+    if (flux_pump_applied_ < 0 || flux_pump_period_ <= 0
+        || flux_pump_next_tick_ < -1)
+      reject_horizon("[TickPreflight] invalid active flux-pump schedule");
+    const std::int64_t next = flux_pump_next_tick_ < 0
+        ? tick_ : flux_pump_next_tick_;
+    if (tick_ >= next
+        && next + static_cast<std::int64_t>(flux_pump_period_)
+            > std::numeric_limits<int>::max())
+      reject_horizon("[TickPreflight] due flux-pump schedule exceeds its tick horizon");
+  }
+
+  // All preflight checks passed. Preserve the successful tick's existing
+  // mutation order and floating-point operations; no lattice copy is needed.
+  causal_projection_events_this_tick_ = 0;
+  // FTD-HISTORY-BEGIN: observation-only native event journal.
+  if (history_event_journal_->enabled()) history_event_journal_->clear();
+  // FTD-HISTORY-END
+
+  // A caller may leave a subunit dt behind when switching integrators.
+  // FTD-0408/0411 normalize that stale value to the unit-step default map.
+  if (unit_floquet && dt_ != 1.0) {
+    dt_ = 1.0;
+    if (backend_) backend_->set_dt(dt_);
+  }
+  if (!valid_toggles) {
+    if (validErr != last_validation_warn_) {
+      std::cerr << "[TermToggles] Invalid combination: " << validErr;
+      last_validation_warn_ = validErr;
+    }
+  } else if (!last_validation_warn_.empty()) {
+    last_validation_warn_.clear();
   }
 
   // Flux-cell mechanisms (ftd/flux_cell.h): the pump source and the scheduled
@@ -1073,15 +1091,6 @@ void RenderBridge::tick() {
   // into oriented face current; reaction-bearing histories fail closed.
   std::vector<int> matched_before;
   if (toggles.matched_gauss_dynamics) {
-    if (!matched_gauss_dynamics_->initialized()) {
-#ifdef __EMSCRIPTEN__
-      std::cerr << "[FTD-0428] FATAL: matched_gauss_dynamics requires explicit initialization\n";
-      std::abort();
-#else
-      throw std::logic_error(
-          "[FTD-0428] matched_gauss_dynamics requires explicit initialization");
-#endif
-    }
     matched_before = matched_state_snapshot();
   }
 

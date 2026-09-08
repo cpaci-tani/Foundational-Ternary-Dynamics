@@ -19,7 +19,7 @@ namespace ftd::ws_server_detail {
 //  Particle data extraction (matches WASM get_particle_data)
 // ============================================================================
 
-std::vector<uint8_t> pack_particle_data(ftd::RenderBridge& rb) {
+std::vector<uint8_t> pack_particle_data(ftd::RenderBridge& rb, std::size_t prefix_bytes) {
     constexpr uint32_t kParticleFrameMagic = 0x32505446u; // LE bytes: F T P 2
     std::vector<std::int8_t> states;
     rb.copy_visual_states(states);
@@ -60,7 +60,7 @@ std::vector<uint8_t> pack_particle_data(ftd::RenderBridge& rb) {
 
     // FTP2 layout: [u32 magic][u32 count][pos 3N][color 3N][size N]
     //              [spin N][colorCharge N], all payload values float32.
-    size_t header_bytes = 8;
+    size_t header_bytes = prefix_bytes + 8;
     size_t pos_bytes    = count * 3 * sizeof(float);
     size_t col_bytes    = count * 3 * sizeof(float);
     size_t size_bytes   = count * sizeof(float);
@@ -70,7 +70,7 @@ std::vector<uint8_t> pack_particle_data(ftd::RenderBridge& rb) {
                         + spin_bytes + charge_bytes;
 
     std::vector<uint8_t> buf(total_bytes);
-    auto* ptr = buf.data();
+    auto* ptr = buf.data() + prefix_bytes;
 
     std::memcpy(ptr, &kParticleFrameMagic, sizeof(kParticleFrameMagic));
     ptr += sizeof(kParticleFrameMagic);
@@ -130,7 +130,7 @@ std::vector<uint8_t> pack_particle_data(ftd::RenderBridge& rb) {
 // refresh only to discard 97.5% of it in JavaScript. Reuse the sparse compact
 // GPU field sampler and materialize only its bounded regular grid here.
 std::vector<uint8_t> pack_flux_volume(ftd::RenderBridge& rb,
-                                      int requested_axis_samples) {
+                                      int requested_axis_samples, std::size_t prefix_bytes) {
     constexpr uint32_t kFluxVolumeMagic = 0x32565446u; // LE bytes: F T V 2
     const auto& read_rb = std::as_const(rb);
     const int n = read_rb.lattice().size();
@@ -148,7 +148,7 @@ std::vector<uint8_t> pack_flux_volume(ftd::RenderBridge& rb,
     const std::size_t count = axis_count > 0
         ? static_cast<std::size_t>(axis_count) * axis_count * axis_count
         : 0;
-    std::vector<uint8_t> buf(20u + count * sizeof(float), 0u);
+    std::vector<uint8_t> buf(prefix_bytes + 20u + count * sizeof(float), 0u);
     const uint32_t header[5] = {
         kFluxVolumeMagic,
         static_cast<uint32_t>(n),
@@ -156,7 +156,7 @@ std::vector<uint8_t> pack_flux_volume(ftd::RenderBridge& rb,
         static_cast<uint32_t>(origin),
         static_cast<uint32_t>(axis_count),
     };
-    std::memcpy(buf.data(), header, sizeof(header));
+    std::memcpy(buf.data() + prefix_bytes, header, sizeof(header));
     const std::size_t compact_count = sample.count();
     if (sample.components != 3u || sample.positions.size() != compact_count * 3u
         || sample.data.size() != compact_count * 3u) {
@@ -179,7 +179,7 @@ std::vector<uint8_t> pack_flux_volume(ftd::RenderBridge& rb,
         const std::size_t q = (static_cast<std::size_t>(zi) * axis_count + yi)
                             * axis_count + xi;
         const float density = std::sqrt(jx * jx + jy * jy + jz * jz);
-        ftd::write_binary_value(buf, sizeof(header) + q * sizeof(float), density);
+        ftd::write_binary_value(buf, prefix_bytes + sizeof(header) + q * sizeof(float), density);
     }
     return buf;
 }
@@ -193,7 +193,7 @@ std::vector<uint8_t> pack_field_sample(ftd::RenderBridge& rb,
                                        ftd::VisualFieldKind kind,
                                        int stride,
                                        std::uint32_t token,
-                                       int planes_mid = -1) {
+                                       int planes_mid, std::size_t prefix_bytes) {
     constexpr std::uint32_t kFieldSampleMagic = 0x32535446u; // F T S 2
     ftd::VisualFieldSample sample;
     rb.copy_visual_field_sample(kind, stride, sample);
@@ -218,8 +218,11 @@ std::vector<uint8_t> pack_field_sample(ftd::RenderBridge& rb,
         const int origin = (std::max)(0, sample.origin);
         const int estride = (std::max)(1, sample.effective_stride);
         const int lattice_n = static_cast<int>(rb.lattice().size());
-        const int last_allowed = origin > 0 ? lattice_n - 2 : lattice_n - 1;
-        const int last = origin + ((std::max)(0, last_allowed - origin) / estride) * estride;
+        const auto grid = ftd::visual_sample_grid(lattice_n, estride, ftd::is_interior_field_kind(kind));
+        const int last = origin + std::max(0, grid.count - 1) * estride;
+        // External mid may be INT_MAX. Clamp before doubling for nearest-grid
+        // rounding; clipping afterward would already have overflowed signed int.
+        planes_mid = std::clamp(planes_mid, origin, last);
         int plane = planes_mid;
         if (planes_mid >= origin) {  // Math.round((mid-origin)/estride), integer form
             plane = origin + ((2 * (planes_mid - origin) + estride) / (2 * estride)) * estride;
@@ -251,7 +254,7 @@ std::vector<uint8_t> pack_field_sample(ftd::RenderBridge& rb,
     const std::uint32_t kind_code = static_cast<std::uint32_t>(kind);
     const std::uint32_t components = sample.components;
     const std::uint32_t count = static_cast<std::uint32_t>(sample.count());
-    const std::size_t header_bytes = 7u * sizeof(std::uint32_t);
+    const std::size_t header_bytes = prefix_bytes + 7u * sizeof(std::uint32_t);
     const std::size_t position_bytes = static_cast<std::size_t>(count) * 3u * sizeof(float);
     const std::size_t data_bytes = static_cast<std::size_t>(count) * components * sizeof(float);
     std::vector<std::uint8_t> frame(header_bytes + position_bytes + data_bytes);
@@ -260,7 +263,7 @@ std::vector<uint8_t> pack_field_sample(ftd::RenderBridge& rb,
         static_cast<std::uint32_t>(std::max(1, sample.effective_stride)),
         static_cast<std::uint32_t>(std::max(0, sample.origin)),
     };
-    std::memcpy(frame.data(), header, header_bytes);
+    std::memcpy(frame.data() + prefix_bytes, header, sizeof(header));
     if (position_bytes != 0)
         std::memcpy(frame.data() + header_bytes, sample.positions.data(), position_bytes);
     if (data_bytes != 0)

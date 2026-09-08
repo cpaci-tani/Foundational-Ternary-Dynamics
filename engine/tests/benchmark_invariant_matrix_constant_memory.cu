@@ -20,6 +20,8 @@
 #include <cstdlib>
 #include <random>
 #include <vector>
+#include <limits>
+#include <stdexcept>
 
 #include "../cuda/cuda_invariants.cuh"
 #include "ftd/constants.h"
@@ -81,6 +83,19 @@ int main() {
 
     // Upload constant memory.
     upload_invariant_matrix();
+
+    // Invalid uploads must fail before either constant-memory write and
+    // leave the previously accepted constants intact (checked below).
+    int rejected = 0;
+    for (double bad : {0.0, std::numeric_limits<double>::infinity(),
+                       std::numeric_limits<double>::quiet_NaN(),
+                       std::numeric_limits<double>::denorm_min()}) {
+        try { upload_invariant_matrix(bad, varpi); }
+        catch (const std::invalid_argument&) { ++rejected; }
+    }
+    try { upload_invariant_matrix(Gstar, std::numeric_limits<double>::infinity()); }
+    catch (const std::invalid_argument&) { ++rejected; }
+    if (rejected != 5) { std::fprintf(stderr, "FAIL: invalid invariant uploads accepted\n"); return 1; }
 
     // Self-check c_consts.
     double *dCheck = nullptr;

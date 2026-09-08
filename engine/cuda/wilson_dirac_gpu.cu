@@ -18,6 +18,9 @@
 #include "cuda_error.cuh"
 #include "cuda_device_buffer.cuh"
 #include "cuda_index.cuh"
+#include <cmath>
+#include <limits>
+#include <stdexcept>
 
 namespace ftd {
 namespace wilson_dirac {
@@ -125,6 +128,20 @@ void apply_wilson_dirac_gpu(SpinorField& out,
                             const WilsonDiracParams& params) {
     const int L = lattice.size();
     const int N = L * L * L;
+
+    if (N > std::numeric_limits<int>::max() / 4)
+        throw std::length_error("Wilson-Dirac component index exceeds int capacity");
+    if (psi.L != L || out.L != L || links.L != L
+        || psi.data.size() != static_cast<std::size_t>(N)
+        || out.data.size() != static_cast<std::size_t>(N))
+        throw std::invalid_argument("Wilson-Dirac spinor extents must match lattice");
+    for (const auto& direction : links.U)
+        if (direction.size() != static_cast<std::size_t>(N))
+            throw std::invalid_argument("Wilson-Dirac link extents must match lattice");
+    if (!std::isfinite(params.a) || params.a <= 0.0
+        || !std::isfinite(params.m) || !std::isfinite(params.r)
+        || !std::isfinite(params.spatial_speed))
+        throw std::invalid_argument("Wilson-Dirac parameters must be finite with a > 0");
 
     // Each site holds 4 cdoubles. cuDoubleComplex is layout-compatible with
     // std::complex<double> for our purposes (re-im pair of doubles).

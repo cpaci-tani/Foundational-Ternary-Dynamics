@@ -24,7 +24,9 @@ constexpr std::size_t kMaxDenseVisualSamples = 262144u;
 // sample points, so a fine stride on a large lattice can't blow the point budget.
 // `interior` kinds skip the two boundary voxels per axis (usable extent N-2).
 inline int bounded_visual_stride(int N, int requested_stride, bool interior) {
-    int stride = std::max(1, requested_stride);
+    // A stride larger than the domain still means one center sample. Clamp
+    // before ceil arithmetic and loop increments can overflow for hostile ints.
+    int stride = std::max(1, std::min(std::max(1, N), requested_stride));
     const int extent = std::max(0, N - (interior ? 2 : 0));
     const auto samples_for = [extent](int s) -> std::size_t {
         const std::size_t per_axis = static_cast<std::size_t>((extent + s - 1) / s);
@@ -54,6 +56,32 @@ struct VisualSampleGrid {
     //   for (int v = grid.origin; v < grid.end(); v += grid.stride) { … }
     int end() const { return origin + count * stride; }
 };
+
+struct VisualSampleBlock {
+    int begin;
+    int end;  // exclusive; always within the source domain
+};
+
+#ifdef __CUDACC__
+#define FTD_SAMPLE_HD __host__ __device__
+#else
+#define FTD_SAMPLE_HD
+#endif
+
+// Source partition for a strongest-flux representative. Interior boundaries
+// are nearest-anchor midpoints (ties belong to the lower anchor); the first
+// and last bins extend to the finite source borders. Unlike forward ranges
+// [anchor,anchor+stride), this covers every source site exactly once even when
+// center anchoring starts above zero or the last stride exceeds N. Output
+// anchors remain unchanged. This is a display reduction, not a field average.
+FTD_SAMPLE_HD inline VisualSampleBlock visual_sample_block(
+    int N, int origin, int stride, int count, int anchor) {
+    const int last = origin + (count - 1) * stride;
+    return {anchor == origin ? 0 : anchor - (stride - 1) / 2,
+            anchor == last ? N : anchor + stride / 2 + 1};
+}
+
+#undef FTD_SAMPLE_HD
 
 // Build the center-anchored grid for a lattice of size `N`. `interior` kinds use
 // the range [1, N-2] (skipping the boundary voxels their neighbour stencils would

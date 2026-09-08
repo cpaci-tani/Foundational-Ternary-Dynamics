@@ -12,6 +12,7 @@
 #include "ftd/render_bridge.h"
 #include "ftd/visual_field_sample.h"
 #include "ftd/ws_protocol.h"
+#include "ftd/ws_observation.h"
 
 #include <cstdint>
 #include <cstddef>
@@ -42,14 +43,14 @@ ResourceBudget resource_budget(int requested_size);
 std::string budget_error(const ResourceBudget& budget);
 std::unique_ptr<RenderBridge> make_interactive_bridge(int lattice_size);
 
-std::vector<std::uint8_t> pack_particle_data(RenderBridge& bridge);
+std::vector<std::uint8_t> pack_particle_data(RenderBridge& bridge, std::size_t prefix_bytes = 0);
 std::vector<std::uint8_t> pack_flux_volume(RenderBridge& bridge,
-                                           int requested_axis_samples);
+                                           int requested_axis_samples, std::size_t prefix_bytes = 0);
 std::vector<std::uint8_t> pack_field_sample(RenderBridge& bridge,
                                             VisualFieldKind kind,
                                             int stride,
                                             std::uint32_t token,
-                                            int planes_mid);
+                                            int planes_mid, std::size_t prefix_bytes = 0);
 
 std::string json_escape(const std::string& value);
 std::string json_error(const std::string& message,

@@ -276,9 +276,14 @@ int main() {
     topology.toggles.movement = true;
     topology.toggles.color_forces = true;
     topology.toggles.strong_stress_energy = true;
-    topology.inject_particle(0, Y, Z, +1, {}, +1, 1);
+    // This fixture tests loss through a domain face. Periodic transport
+    // preserves the cohort and cannot trigger the topology-loss branch.
+    topology.toggles.flux_boundary = ftd::FluxBoundaryMode::Dispersal;
+    // Begin inside the domain: the Dispersal shell is already void when the
+    // strong snapshot is taken. This hop must reach the face during movement.
+    topology.inject_particle(1, Y, Z, +1, {}, +1, 1);
     topology.inject_particle(16, Y, Z, +1, {}, -1, 2);
-    auto& escaping = topology.voxel_at(0, Y, Z);
+    auto& escaping = topology.voxel_at(1, Y, Z);
     escaping.remainder.x = -0.8;
     escaping.velocity.x = -0.55;
     topology.tick();

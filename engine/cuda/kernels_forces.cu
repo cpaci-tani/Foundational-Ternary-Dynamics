@@ -1198,7 +1198,7 @@ __global__ void triad_detection_kernel(
     const int* __restrict__ num_particles_ptr,
     const int  max_particles,
     const int8_t* __restrict__ state,
-    uint8_t* __restrict__ locked,
+    int32_t* __restrict__ proposed_lock,
     int L
 ) {
     const int raw = *num_particles_ptr;
@@ -1262,10 +1262,18 @@ __global__ void triad_detection_kernel(
     double ratio = r_min / r_max;
     if (ratio < ftd::TRIAD_RATIO_THRESHOLD) return;
 
-    // Triad detected — lock all three
-    locked[i] = 1;
-    locked[best1_j] = 1;
-    locked[best2_j] = 1;
+    // Multiple proposals may share a voxel. Accumulate their exact union
+    // atomically, then let the voxel's sole commit thread write the byte.
+    atomicExch(proposed_lock + i, 1);
+    atomicExch(proposed_lock + best1_j, 1);
+    atomicExch(proposed_lock + best2_j, 1);
+}
+
+__global__ void commit_triad_locks_kernel(
+    const int32_t* __restrict__ proposed_lock,
+    uint8_t* __restrict__ locked, int N) {
+    const int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < N && proposed_lock[i]) locked[i] = 1;
 }
 
 // ---------- Launcher Functions ----------
@@ -2089,10 +2097,17 @@ void launch_exchange_force(GpuBuffers& bufs, double dt) {
 
 void launch_triad_detection(GpuBuffers& bufs) {
     const cudaStream_t stream = bufs.stream;
+    // Movement and cluster-inertia have finished on this stream. Their rank
+    // scratch is dead until reinitialized by the next movement phase.
+    CUDA_CHECK(cudaMemsetAsync(bufs.d_movement_rank, 0,
+                              bufs.N * sizeof(int32_t), stream));
     triad_detection_kernel<<<PARTICLE_FORCE_GRID, PARTICLE_FORCE_BLOCK, 0, stream>>>(
         bufs.d_plist_idx, bufs.d_num_particles, GpuBuffers::MAX_PARTICLES,
-        bufs.d_state, bufs.d_locked, bufs.L
+        bufs.d_state, bufs.d_movement_rank, bufs.L
     );
+    CUDA_CHECK(cudaGetLastError());
+    commit_triad_locks_kernel<<<(bufs.N + 255) / 256, 256, 0, stream>>>(
+        bufs.d_movement_rank, bufs.d_locked, bufs.N);
     CUDA_CHECK(cudaGetLastError());
 }
 

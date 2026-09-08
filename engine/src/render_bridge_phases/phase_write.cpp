@@ -119,16 +119,9 @@ inline void manifest_at(RenderBridge& rb,
 // Public free-function entry points
 // =============================================================================
 
-// Copies the CURRENT (pre-leapfrog) flux into rb.flux_pre_write_. The
-// caller (RenderBridge::phase_write() in render_bridge.cpp) only invokes
-// this when toggles.genesis is set — and whenever genesis is on,
-// phase_write_main_loop below unconditionally overwrites rb.flux_pre_write_
-// with the POST-leapfrog, POST-damping flux (see the "post-write" copy
-// further down) before any genesis curl/divergence read ever runs. So this
-// copy's output is DEAD in every path that reaches it: no consumer sees the
-// values written here. Left in place (not removed) since deleting it could
-// change timing/behaviour this audit did not verify — do not rely on its
-// output.
+// Legacy explicit snapshot helper retained for source compatibility. The tick
+// orchestrator no longer calls it: genesis consumes the separate complete
+// post-integration snapshot written below, before any neighborhood reads.
 void snapshot_flux_pre_write(RenderBridge& rb) {
   const int N = static_cast<int>(rb.lattice_.total_sites());
   rb.flux_pre_write_.resize(N);

@@ -7,12 +7,29 @@
 #include "ftd/render_bridge.h"
 #include <iostream>
 #include <cmath>
+#include <limits>
+#include <stdexcept>
 
 int main() {
     using namespace ftd;
     using namespace ftd::test;
 
     Counter c;
+    {
+        RenderBridge rb(3);
+        prepare_bridge(rb, /*force_cpu=*/true);
+        rb.toggles.symplectic_leapfrog = true;
+        rb.set_dt(0.5);
+        bool all_rejected = true;
+        for (double dt : {0.0, -0.5, std::numeric_limits<double>::infinity(),
+                          std::numeric_limits<double>::quiet_NaN()}) {
+            bool rejected = false;
+            try { rb.set_dt(dt); }
+            catch (const std::invalid_argument&) { rejected = true; }
+            all_rejected &= rejected && rb.dt() == 0.5;
+        }
+        check("invalid tick durations reject without changing dt", all_rejected, &c);
+    }
     std::cout << "============================================================\n";
     std::cout << "  Scale 0: Symplectic Leapfrog Wave Energy Conservation Test\n";
     std::cout << "============================================================\n\n";

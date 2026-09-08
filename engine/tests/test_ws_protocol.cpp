@@ -2,12 +2,10 @@
 // test_ws_protocol.cpp — WebSocket remote-control protocol unit tests
 // (revision 1.4). First automated coverage for the ws_server surface.
 //
-// Scope: the PURE parts of the wire protocol — SHA-1, base64, the RFC 6455
-// Sec-WebSocket-Accept derivation (the exact computation ws_handshake
-// performs, ws_protocol.cpp:81-86), and the string-search JSON helpers the
-// command dispatcher relies on. Socket-coupled framing (ws_read_frame /
-// ws_send_frame) needs a loopback pair harness — tracked as follow-up in
-// the revision plan (Phase 5 coverage), not silently skipped.
+// Scope: SHA-1, base64, the RFC 6455 Sec-WebSocket-Accept derivation,
+// typed JSON compatibility helpers, and unaligned binary values. POSIX-only
+// socketpair fixtures below cover handshake header casing, frame validation,
+// and closed-peer sends; those fixtures are compiled out on Windows.
 // ============================================================================
 
 #include "ftd/ws_sha1.h"
@@ -104,7 +102,7 @@ void test_rfc6455_accept_derivation() {
 }
 
 void test_json_helpers() {
-    section("string-search JSON helpers (command dispatch dependencies)");
+    section("typed JSON compatibility helpers (command dispatch dependencies)");
     const std::string j =
         R"({"cmd":"set_toggle","name":"dual_substrate","value":true,"x":8,"rate":0.25,"off":false})";
     check("json_string extracts cmd", json_string(j, "cmd") == "set_toggle", "");
@@ -152,9 +150,17 @@ void test_lowercase_websocket_handshake() {
     check("handshake socketpair created", pair_result == 0, "POSIX socketpair failed");
     if (pair_result != 0) return;
 
+    // AF_UNIX has no IP loopback identity. An absent Origin is deliberately
+    // rejected for this transport, so supply a trusted Origin to isolate the
+    // header-casing behavior under test without relaxing the production gate.
+    check("Unix socketpair has no IP loopback identity",
+          !ws_peer_is_loopback(sockets[0]), "fixture must not impersonate TCP loopback");
+    check("absent Origin remains rejected on Unix socketpair",
+          !ws_origin_allowed("", ws_peer_is_loopback(sockets[0])), "Origin gate must remain enforced");
     const std::string request =
         "GET / HTTP/1.1\r\n"
         "host: localhost\r\n"
+        "origin: http://localhost:8080\r\n"
         "upgrade: websocket\r\n"
         "connection: Upgrade\r\n"
         "sec-websocket-key:\tdGhlIHNhbXBsZSBub25jZQ==  \r\n"

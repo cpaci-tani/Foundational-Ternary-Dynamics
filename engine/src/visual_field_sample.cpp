@@ -158,13 +158,13 @@ void RenderBridge::copy_visual_field_sample(VisualFieldKind kind, int stride,
                 if (kind == VisualFieldKind::FluxVector) {
                     double best_rho = 0.0;
                     Vec3 best{};
-                    const int bx_end = std::min(x + grid.stride, grid.end());
-                    const int by_end = std::min(y + grid.stride, grid.end());
-                    const int bz_end = std::min(z + grid.stride, grid.end());
-                    for (int bz = z; bz < bz_end; ++bz) {
-                        for (int by = y; by < by_end; ++by) {
-                            for (int bx = x; bx < bx_end; ++bx) {
-                                const int block_idx = lattice_.index(bx, by, bz);
+                    const auto bx = visual_sample_block(n, grid.origin, grid.stride, grid.count, x);
+                    const auto by = visual_sample_block(n, grid.origin, grid.stride, grid.count, y);
+                    const auto bz = visual_sample_block(n, grid.origin, grid.stride, grid.count, z);
+                    for (int sz = bz.begin; sz < bz.end; ++sz) {
+                        for (int sy = by.begin; sy < by.end; ++sy) {
+                            for (int sx = bx.begin; sx < bx.end; ++sx) {
+                                const int block_idx = lattice_.index(sx, sy, sz);
                                 const double block_rho = rho_at(fields_ref, block_idx);
                                 if (block_rho > best_rho) {
                                     best_rho = block_rho;

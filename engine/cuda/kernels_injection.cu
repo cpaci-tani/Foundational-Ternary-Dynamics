@@ -118,44 +118,49 @@ __global__ void inject_wavepacket_support_kernel(
     double* flx, double* fly, double* flz,
     double* frx, double* fry, double* frz,
     const int32_t* allocation_base,
-    int cx, int cy, int cz, int radius, int diameter, int L,
+    int cx, int cy, int cz, int radius, int span, int L,
     double sigma, double scale, double left_fraction,
     bool dual) {
     const int q = blockIdx.x * blockDim.x + threadIdx.x;
     if (*allocation_base < 0) return;
-    const int count = diameter * diameter * diameter;
+    const int count = span * span * span;
     if (q >= count) return;
-    const int iz = q % diameter;
-    const int iy = (q / diameter) % diameter;
-    const int ix = q / (diameter * diameter);
-    const int dx = ix - radius;
-    const int dy = iy - radius;
-    const int dz = iz - radius;
-    if (dx == 0 && dy == 0 && dz == 0) return;
-    const double r2 = static_cast<double>(dx * dx + dy * dy + dz * dz);
-    const double r = sqrt(r2);
-    if (r > GAUSSIAN_CUTOFF_SIGMA * sigma) return;
-
-    const int x = wrap_coordinate(cx + dx, L);
-    const int y = wrap_coordinate(cy + dy, L);
-    const int z = wrap_coordinate(cz + dz, L);
+    const int iz = q % span;
+    const int iy = (q / span) % span;
+    const int ix = q / (span * span);
+    const int x = wrap_coordinate(cx + ix - radius, L);
+    const int y = wrap_coordinate(cy + iy - radius, L);
+    const int z = wrap_coordinate(cz + iz - radius, L);
     const int index = x * L * L + y * L + z;
-    const double g = exp(-r2 / (2.0 * sigma * sigma));
-    const double mag = scale * g;
-    const double jx = mag * dx / r;
-    const double jy = mag * dy / r;
-    const double jz = mag * dz / r;
-    atomicAdd(fx + index, jx);
-    atomicAdd(fy + index, jy);
-    atomicAdd(fz + index, jz);
-    if (dual) {
-        const double right_fraction = 1.0 - left_fraction;
-        atomicAdd(flx + index, left_fraction * jx);
-        atomicAdd(fly + index, left_fraction * jy);
-        atomicAdd(flz + index, left_fraction * jz);
-        atomicAdd(frx + index, right_fraction * jx);
-        atomicAdd(fry + index, right_fraction * jy);
-        atomicAdd(frz + index, right_fraction * jz);
+    // One writer per periodic destination. Its congruent offsets are visited
+    // in the CPU preparation's dx/dy/dz order. Atomic floating-point scatter
+    // was schedule-dependent whenever the support wrapped onto itself.
+    for (int dx = ix - radius; dx <= radius; dx += L)
+    for (int dy = iy - radius; dy <= radius; dy += L)
+    for (int dz = iz - radius; dz <= radius; dz += L) {
+        if (dx == 0 && dy == 0 && dz == 0) continue;
+        const double r2 = static_cast<double>(dx) * dx
+                        + static_cast<double>(dy) * dy
+                        + static_cast<double>(dz) * dz;
+        const double r = sqrt(r2);
+        if (r > GAUSSIAN_CUTOFF_SIGMA * sigma) continue;
+        const double g = exp(-r2 / (2.0 * sigma * sigma));
+        const double mag = scale * g;
+        const double jx = mag * dx / r;
+        const double jy = mag * dy / r;
+        const double jz = mag * dz / r;
+        fx[index] += jx;
+        fy[index] += jy;
+        fz[index] += jz;
+        if (dual) {
+            const double right_fraction = 1.0 - left_fraction;
+            flx[index] += left_fraction * jx;
+            fly[index] += left_fraction * jy;
+            flz[index] += left_fraction * jz;
+            frx[index] += right_fraction * jx;
+            fry[index] += right_fraction * jy;
+            frz[index] += right_fraction * jz;
+        }
     }
 }
 
@@ -278,7 +283,8 @@ void launch_inject_wavepacket(GpuBuffers& b, int cx, int cy, int cz,
         b.d_identity_error, center, state);
     CUDA_CHECK(cudaGetLastError());
     const int diameter = 2 * radius + 1;
-    const int count = diameter * diameter * diameter;
+    const int span = diameter < b.L ? diameter : b.L;
+    const int count = span * span * span;
     constexpr int threads = 256;
     const int blocks = (count + threads - 1) / threads;
     const double left = dual
@@ -290,7 +296,7 @@ void launch_inject_wavepacket(GpuBuffers& b, int cx, int cy, int cz,
         b.d_flux_L_x, b.d_flux_L_y, b.d_flux_L_z,
         b.d_flux_R_x, b.d_flux_R_y, b.d_flux_R_z,
         b.d_identity_allocation_base,
-        cx, cy, cz, radius, diameter, b.L, sigma, scale, left, dual);
+        cx, cy, cz, radius, span, b.L, sigma, scale, left, dual);
     CUDA_CHECK(cudaGetLastError());
 }
 

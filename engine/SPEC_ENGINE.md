@@ -281,6 +281,80 @@ tick: `dual_substrate` (J_L + J_R chirality),
 ontology (FTD-0257); whether it should remain default-on is an open governance
 question, not a settled rule.
 
+### Scale 4: Solar System (browser effective model)
+
+Scale 4 is presented to the user as **Solar System** while retaining the
+internal `planetary` route for saved-layout compatibility. Its default scenario
+is our Solar System initialized from imported J2000 mean orbital elements.
+This is a `[PARAMETRIC]` astronomy model, not an FTD derivation.
+The executable admission source is
+`web/js/scales/scale4/scenario-registry.js`; the toolbar, bridge fallback, and
+`config/scenarios/scale4.json` navigation metadata are regression-checked
+against that registry.
+
+- The physics state contains the Sun, all eight planets, Pluto as a
+  representative dwarf planet, and nine modeled major moons. Positions are AU,
+  masses are solar masses, and time is Julian years.
+- The physical default uses `G_HELIOCENTRIC = 4*pi^2` and a split-kick
+  Velocity-Verlet integrator. One public tick is one physical minute by
+  default and can be changed live to one hour or one day. Longer public ticks
+  are subdivided into scenario-stable integration steps; the playback-speed
+  multiplier independently controls how many selected ticks run per rendered
+  frame. The dimensionless Figure-8 experiment retains its explicit `0.01`
+  natural-time tick because no minute/hour/day mapping is defined. Initial Cartesian states are reconstructed from
+  the classical orbital elements and recentered into the system barycentric
+  frame. A labeled slow comparison gauge using lattice `G_N` remains available
+  but is not astronomy-time faithful.
+- Ten independently switchable effective kernels default ON: direct Newtonian
+  gravity; single-star Schwarzschild 1PN; axisymmetric parent `J2`;
+  constant-Q equilibrium tides with a parent-spin reservoir; radiation pressure
+  plus Poynting-Robertson drag summed over luminous stars; a separately labeled
+  solar-wind drag correction;
+  isotropic stellar mass loss; co-rotating exponential-atmosphere drag;
+  physical-radius perfectly inelastic impacts; and fluid-Roche fragmentation
+  into bounded gravitating debris. Scenario applicability is computed live, so
+  a requested kernel with no required body or parameter remains visible as
+  `standby` instead of pretending to contribute. The 1PN, `J2`, and tide
+  corrections depend on enabled Newtonian gravity; solar-wind drag depends on
+  enabled radiation forces. These dependencies are part of the live
+  applicability contract, not merely UI hints. Multi-star systems keep the
+  test-body 1PN approximation in standby because they require a full EIH model.
+- Conservative relative corrections are applied with an equal-and-opposite
+  material reaction. The tide-to-spin exchange uses the two-body reduced mass
+  so the orbital torque matches that relative-acceleration split. Dissipative
+  work, stellar mass loss, impacts, atmosphere
+  entries, and Roche events have separate live ledgers. The displayed
+  `K + U_Newton` is therefore explicitly a **Newtonian mechanical proxy**, not
+  a complete Hamiltonian or a pure integrator-error measurement when
+  non-conservative kernels are active.
+  Newtonian, 1PN, `J2`, tide, atmosphere, photon-pressure, Poynting-Robertson,
+  and solar-wind acceleration channels are independently exposed to live
+  diagnostics; disabling stellar mass loss stops future loss without erasing
+  the cumulative ledger.
+- Rendering is deliberately richer than the dynamics: procedural body
+  surfaces, atmospheres, axial tilt and rotation, rings, orbit curves, labels,
+  the ecliptic, habitable band, asteroid belt, Kuiper belt, sampled gravity
+  strength, live velocity/acceleration vectors, Hill domains, Roche limits, and
+  collision surfaces. Gravity has no rendered finite cutoff; the field overlay
+  is a logarithmically colored finite sampling window. Body surfaces
+  use JPL volume-equivalent mean radii and all body positions, parent-relative
+  separations, and orbit curves use the same uncompressed AU gauge: one world
+  unit is one AU. Labels and selection marks remain screen-space UI aids and do
+  not alter physical geometry or forces.
+- This model does not claim ephemeris-grade prediction. Its 1PN term is the
+  dominant-star test-body Schwarzschild correction, not the full EIH N-body
+  equations; `J2` stops at the axisymmetric quadrupole; tides are secular
+  near-circular constant-Q; atmospheres are exponential and do not solve fluid
+  flow, weather, ablation, lift, or magnetohydrodynamics; collisions use one
+  imposed perfectly-inelastic outcome; and Roche breakup uses an imposed
+  eight-fragment event rather than self-consistent continuum fracture. It does
+  not solve stellar interiors, radiative transfer, plasma/magnetic dynamics,
+  geology, high-degree gravity fields, or spacecraft-grade ephemerides. Most
+  known moons and minor-body backreaction remain outside the declared scope;
+  the belts are deterministic display populations, not gravitating particles.
+  Every non-Newtonian kernel and imported body parameter is `[PARAMETRIC]` or
+  `[IMPOSED]`, never presented as an FTD derivation.
+
 ### Scale 5: Cosmic Engine (v2.12)
 
 N-body + SPH cosmic simulation with Barnes-Hut octree gravity. Its configured

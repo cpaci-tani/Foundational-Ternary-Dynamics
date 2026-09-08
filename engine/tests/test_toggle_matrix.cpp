@@ -3,15 +3,14 @@
  * @brief Pairwise toggle-combination smoke test.
  *
  * Closes TEST-005 from CHECKLIST_ENGINE.md. The audit found that virtually
- * all existing tests use enable_all() / disable_all() ± a few flips. The
- * 13 OFF-default toggles produce 2¹³ = 8192 combinations, of which the
- * existing tests probe maybe 30–50 directly.
+ * all existing tests use enable_all() / disable_all() ± a few flips. This
+ * gate derives its inventory from TOGGLE_SPECS so new terms cannot silently
+ * fall outside the interaction matrix.
  *
- * Pairwise (orthogonal-array) coverage of N binary parameters needs
- * roughly O(log N) test runs but enumerating ALL pairs is N(N-1)/2 ≈ 78
- * for N=13. We do all 78 pairs explicitly: each pair (i, j) with both ON,
- * everything else OFF (plus the always-on base toggles wave_propagation +
- * gauss_projection).
+ * We enumerate every pair explicitly: each pair (i, j) with both ON,
+ * everything else OFF except declared prerequisites. Cross-cutting setup that
+ * cannot be represented by a simple requires_ edge (triad dual mode, cluster
+ * force channel, and the legacy reflective boundary mode) is applied here.
  *
  * Pass criteria for each combination:
  *   (a) `validate()` either accepts the combo or rejects it cleanly (no
@@ -41,36 +40,37 @@
 
 namespace {
 
-// Setter for each OFF-default toggle. Functions take a TermToggles& and
-// flip the named toggle ON while leaving others untouched.
-struct ToggleSpec {
-    const char* name;
-    void (*set_on)(ftd::TermToggles&);
-};
+void clear_all(ftd::TermToggles& toggles) {
+    for (const auto& spec : ftd::TOGGLE_SPECS)
+        toggles.*(spec.field) = false;
+    toggles.bcc_stencil = ftd::BccStencilMode::FULL;
+    toggles.langevin_site_filter = ftd::SiteClass::ALL_SITES;
+    toggles.flux_boundary = ftd::FluxBoundaryMode::Periodic;
+    toggles.periodic_axis = ftd::PeriodicAxis::Z;
+}
 
-// 13 OFF-default toggles per term_toggles.h.
-const ToggleSpec specs[] = {
-    {"larmor_radiation",  [](ftd::TermToggles& t){ t.larmor_radiation  = true; t.damping = true; t.selective_damping = true; }},  // requires damping, selective_damping
-    {"color_forces",      [](ftd::TermToggles& t){ t.color_forces      = true; }},
-    {"strong_force",      [](ftd::TermToggles& t){ t.strong_force      = true; }},
-    {"triad_binding",     [](ftd::TermToggles& t){ t.triad_binding     = true; t.color_forces = true; }}, // requires color_forces
-    {"pair_production",   [](ftd::TermToggles& t){ t.pair_production   = true; }},
-    {"exchange_force",    [](ftd::TermToggles& t){ t.exchange_force    = true; t.poisson_coulomb = true; }}, // requires poisson_coulomb
-    {"latency_field",     [](ftd::TermToggles& t){ t.latency_field     = true; t.gravity = true; }}, // requires gravity
-    {"exact_dual_gauss",  [](ftd::TermToggles& t){ t.exact_dual_gauss  = true; }},
-    {"emergent_forces",   [](ftd::TermToggles& t){ t.emergent_forces   = true; t.poisson_coulomb = false; }}, // mutex with poisson
-    {"langevin",          [](ftd::TermToggles& t){ t.langevin          = true; t.langevin_T = 0.005; t.langevin_gamma = 0.02; }},
-    {"weak_transmutation",[](ftd::TermToggles& t){ t.weak_transmutation= true; t.dual_substrate = true; }}, // requires dual_substrate
-    {"dual_substrate",    [](ftd::TermToggles& t){ t.dual_substrate    = true; }},
-    {"selective_damping", [](ftd::TermToggles& t){ t.selective_damping = true; t.damping = true; }},
-};
-const int N_TOGGLES = static_cast<int>(sizeof(specs) / sizeof(specs[0]));
+void enable_with_requirements(ftd::TermToggles& toggles,
+                              const ftd::ToggleSpec& spec) {
+    toggles.*(spec.field) = true;
+    ftd::term_toggles_detail::for_each_csv(
+        spec.requires_, [&](std::string_view dependency) {
+            const auto* dependency_spec =
+                ftd::term_toggles_detail::find_spec(dependency);
+            if (dependency_spec && !(toggles.*(dependency_spec->field)))
+                enable_with_requirements(toggles, *dependency_spec);
+        });
 
-void enable_base(ftd::TermToggles& t) {
-    t.disable_all();
-    t.wave_propagation = true;
-    t.gauss_projection = true;
-    t.movement         = true;
+    const std::string_view name(spec.name);
+    if (name == "triad_binding")
+        toggles.dual_substrate = true;
+    if (name == "cluster_inertia")
+        toggles.forces = true;
+    if (name == "reflective_boundary")
+        toggles.flux_boundary = ftd::FluxBoundaryMode::Reflective;
+    if (name == "langevin") {
+        toggles.langevin_T = 0.005;
+        toggles.langevin_gamma = 0.02;
+    }
 }
 
 bool finite_audit(const ftd::EnergyLedger& l) {
@@ -157,6 +157,21 @@ int audit_interactive_gpu_contract() {
     if (stochastic.validate(&error)) {
         std::printf("  FAIL  validator accepted silently skipped dual-substrate Langevin\n");
         ++failures;
+    }
+
+    for (const char* writer : {"flux_pump", "flux_cell_port"}) {
+        ftd::TermToggles staged;
+        clear_all(staged);
+        staged.matched_gauss_dynamics = true;
+        const auto* writer_spec = ftd::term_toggles_detail::find_spec(writer);
+        staged.*(writer_spec->field) = true;
+        error.clear();
+        if (staged.validate(&error)
+            || error.find("isolated conservative movement sector") == std::string::npos) {
+            std::printf("  FAIL  matched-Gauss validator accepted unjournaled writer %s\n",
+                        writer);
+            ++failures;
+        }
     }
 
     return failures;
@@ -417,14 +432,18 @@ int audit_native_scenario_profiles() {
 } // namespace
 
 int main() {
+    const std::size_t toggle_count =
+        sizeof(ftd::TOGGLE_SPECS) / sizeof(ftd::TOGGLE_SPECS[0]);
+    const std::size_t pair_count = toggle_count * (toggle_count - 1) / 2;
     std::setvbuf(stdout, nullptr, _IONBF, 0);
     std::printf("================================================================\n");
-    std::printf("  TEST-005: Toggle Pairwise Smoke Matrix (%d toggles, %d pairs)\n",
-                N_TOGGLES, N_TOGGLES * (N_TOGGLES - 1) / 2);
+    std::printf("  TEST-005: Toggle Pairwise Smoke Matrix (%zu toggles, %zu pairs)\n",
+                toggle_count, pair_count);
     std::printf("================================================================\n\n");
 
     int failures = 0;
     int rejected_by_validate = 0;
+    int pair_failures = 0;
     int passed = 0;
 
     std::printf("  Auditing native full-GPU profile contract...\n");
@@ -435,55 +454,70 @@ int main() {
     failures += audit_native_scenario_profiles();
     std::printf("\n");
 
-    auto run_pair = [&](int i, int j) -> bool {
+    enum class PairResult { Passed, Rejected, Failed };
+    auto run_pair = [&](std::size_t i, std::size_t j) -> PairResult {
         ftd::RenderBridge rb(8);
-        enable_base(rb.toggles);
-        specs[i].set_on(rb.toggles);
-        specs[j].set_on(rb.toggles);
+        clear_all(rb.toggles);
+        enable_with_requirements(rb.toggles, ftd::TOGGLE_SPECS[i]);
+        enable_with_requirements(rb.toggles, ftd::TOGGLE_SPECS[j]);
         rb.force_cpu();
-        rb.seed_rng(0xBADC0FFEEu + i * 100 + j);
+        rb.seed_rng(0xBADC0FFEEu + i * 100u + j);
 
         // Skip combinations that the validator rejects. (Not a failure —
         // the validator's job is exactly this.)
         std::string err;
         if (!rb.toggles.validate(&err)) {
-            ++rejected_by_validate;
-            return true;
+            return PairResult::Rejected;
         }
 
         // Inject a small charged pair so something interesting can happen
         // for force/exchange/triad/pair_production-on combos.
         rb.inject_particle(3, 4, 4, +1, ftd::Vec3{0, 0, 0}, 0, 1);
         rb.inject_particle(5, 4, 4, -1, ftd::Vec3{0, 0, 0}, 0, 2);
+        if (rb.toggles.matched_gauss_dynamics) {
+            const auto initialized = rb.initialize_matched_gauss_dynamics();
+            if (!initialized.valid) {
+                std::printf("  FAIL  pair (%s, %s): matched-Gauss initialization failed\n",
+                            ftd::TOGGLE_SPECS[i].name,
+                            ftd::TOGGLE_SPECS[j].name);
+                return PairResult::Failed;
+            }
+        }
 
         try {
             for (int t = 0; t < 5; ++t) rb.tick();
         } catch (const std::exception& e) {
             std::printf("  FAIL  pair (%s, %s): exception: %s\n",
-                        specs[i].name, specs[j].name, e.what());
-            return false;
+                        ftd::TOGGLE_SPECS[i].name,
+                        ftd::TOGGLE_SPECS[j].name, e.what());
+            return PairResult::Failed;
         }
 
         if (!finite_audit(rb.energy_ledger())) {
             std::printf("  FAIL  pair (%s, %s): non-finite energy ledger\n",
-                        specs[i].name, specs[j].name);
-            return false;
+                        ftd::TOGGLE_SPECS[i].name,
+                        ftd::TOGGLE_SPECS[j].name);
+            return PairResult::Failed;
         }
-        return true;
+        return PairResult::Passed;
     };
 
-    for (int i = 0; i < N_TOGGLES; ++i) {
-        for (int j = i + 1; j < N_TOGGLES; ++j) {
-            if (run_pair(i, j)) ++passed;
-            else                ++failures;
+    for (std::size_t i = 0; i < toggle_count; ++i) {
+        for (std::size_t j = i + 1; j < toggle_count; ++j) {
+            switch (run_pair(i, j)) {
+                case PairResult::Passed:   ++passed; break;
+                case PairResult::Rejected: ++rejected_by_validate; break;
+                case PairResult::Failed:   ++pair_failures; break;
+            }
         }
     }
+    failures += pair_failures;
 
     std::printf("\n  Combinations tested: %d (passed) + %d (validator-rejected) + %d (failed)\n",
-                passed, rejected_by_validate, failures);
+                passed, rejected_by_validate, pair_failures);
     std::printf("================================================================\n");
     if (failures == 0) {
-        std::printf("  RESULT: PASS — all %d toggle pairs survive 5 ticks without crash/NaN\n",
+        std::printf("  RESULT: PASS — all %d toggle pairs either validate and survive 5 ticks or reject cleanly\n",
                     passed + rejected_by_validate);
     } else {
         std::printf("  RESULT: FAIL — %d pairs trigger crash, exception, or non-finite state\n",

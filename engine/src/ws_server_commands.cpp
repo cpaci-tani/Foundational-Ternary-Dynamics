@@ -6,6 +6,7 @@
 #include "ws_server_internal.h"
 
 #include "ftd/constants.h"
+#include "ftd/ws_command_validation.h"
 #ifdef FTD_ENABLE_CUDA
 #include "ftd/gpu_buffers.h"
 #endif
@@ -224,13 +225,14 @@ std::string json_native_recovery_required(
         : recorded_reason;
     std::ostringstream ss;
     ss << "{\"type\":\"native_recovery_required\""
+       << ",\"nativeInstanceId\":\"" << ftd::native_instance_id() << "\""
        << ",\"error\":\"" << json_escape(reason) << "\""
        << ",\"operation\":\"" << json_escape(operation) << "\""
        << ",\"restartRequired\":true"
-       << ",\"sourceEpoch\":" << telemetry.source_epoch()
-       << ",\"telemetrySourceEpoch\":" << telemetry.source_epoch()
-       << ",\"telemetryEpoch\":" << telemetry.epoch()
-       << ",\"telemetrySnapshotVersion\":" << telemetry.snapshot_version()
+       << ",\"sourceEpoch\":" << ftd::json_exact_uint64(telemetry.source_epoch())
+       << ",\"telemetrySourceEpoch\":" << ftd::json_exact_uint64(telemetry.source_epoch())
+       << ",\"telemetryEpoch\":" << ftd::json_exact_uint64(telemetry.epoch())
+       << ",\"telemetrySnapshotVersion\":" << ftd::json_exact_uint64(telemetry.snapshot_version())
        << '}';
     return ss.str();
 }
@@ -246,23 +248,24 @@ std::string json_operation_deferred(
     const auto view = telemetry.latest();
     std::ostringstream ss;
     ss << "{\"type\":\"operation_deferred\""
+       << ",\"nativeInstanceId\":\"" << ftd::native_instance_id() << "\""
        << ",\"operation\":\"" << json_escape(operation) << "\""
        << ",\"reason\":\"" << reason << "\""
        << ",\"retryAfterMs\":16"
-       << ",\"sourceEpoch\":" << view.source_epoch
-       << ",\"telemetrySourceEpoch\":" << view.source_epoch
-       << ",\"epoch\":" << view.epoch
+       << ",\"sourceEpoch\":" << ftd::json_exact_uint64(view.source_epoch)
+       << ",\"telemetrySourceEpoch\":" << ftd::json_exact_uint64(view.source_epoch)
+       << ",\"epoch\":" << ftd::json_exact_uint64(view.epoch)
        << ",\"tick\":" << view.tick
-       << ",\"snapshotVersion\":" << view.snapshot_version
+       << ",\"snapshotVersion\":" << ftd::json_exact_uint64(view.snapshot_version)
        << ",\"pendingMask\":" << view.pending_mask
        << '}';
     return ss.str();
 }
 
 std::uint64_t request_id_from(const std::string& json) {
-    const double raw = ftd::json_number(json, "_requestId");
-    if (!std::isfinite(raw) || raw <= 0.0) return 0;
-    return static_cast<std::uint64_t>(raw);
+    const auto record = ftd::parse_json_object(json);
+    return static_cast<std::uint64_t>(record.integer_or(
+        "_requestId", 0, 1, ftd::kJsonSafeInteger));
 }
 
 std::string attach_request_id(std::string response, std::uint64_t request_id) {
@@ -283,17 +286,17 @@ const ftd::ToggleSpec* find_toggle_spec(const std::string& name) {
     return ftd::term_toggles_detail::find_spec(name);
 }
 
-bool apply_profile_fields(const std::string& json,
+bool apply_profile_fields(const ftd::JsonValue& record,
                           ftd::TermToggles& staged,
                           std::string& error) {
     for (const auto& spec : ftd::TOGGLE_SPECS) {
         const std::string key = std::string("toggle_") + spec.name;
-        if (ftd::json_has_key(json, key))
-            staged.*(spec.field) = ftd::json_bool(json, key);
+        if (record.has(key))
+            staged.*(spec.field) = record.boolean(key);
     }
 
-    if (ftd::json_has_key(json, "fluxBoundaryMode")) {
-        const int mode = static_cast<int>(ftd::json_number(json, "fluxBoundaryMode"));
+    if (record.has("fluxBoundaryMode")) {
+        const int mode = static_cast<int>(record.integer("fluxBoundaryMode", 0, 2));
         if (mode < static_cast<int>(ftd::FluxBoundaryMode::Periodic)
             || mode > static_cast<int>(ftd::FluxBoundaryMode::Dispersal)) {
             error = "fluxBoundaryMode must be 0 (periodic), 1 (reflective), or 2 (dispersal)";
@@ -303,8 +306,8 @@ bool apply_profile_fields(const std::string& json,
         staged.reflective_boundary = false;
     }
 
-    if (ftd::json_has_key(json, "fluxPeriodicAxis")) {
-        const int axis = static_cast<int>(ftd::json_number(json, "fluxPeriodicAxis"));
+    if (record.has("fluxPeriodicAxis")) {
+        const int axis = static_cast<int>(record.integer("fluxPeriodicAxis", 0, 3));
         if (axis < static_cast<int>(ftd::PeriodicAxis::X)
             || axis > static_cast<int>(ftd::PeriodicAxis::All)) {
             error = "fluxPeriodicAxis must be 0 (X), 1 (Y), 2 (Z), or 3 (XYZ)";
@@ -336,10 +339,10 @@ std::string json_profile_ack(const ftd::RenderBridge& rb,
     ss << std::setprecision(17);
     ss << "{\"ok\":true,\"tick\":" << rb.current_tick()
        << ",\"latticeSize\":" << rb.lattice().size();
-    ss << ",\"sourceEpoch\":" << telemetry.source_epoch()
-       << ",\"telemetrySourceEpoch\":" << telemetry.source_epoch()
-       << ",\"telemetryEpoch\":" << telemetry.epoch();
-    if (!scenario.empty()) ss << ",\"scenario\":\"" << scenario << "\"";
+    ss << ",\"sourceEpoch\":" << ftd::json_exact_uint64(telemetry.source_epoch())
+       << ",\"telemetrySourceEpoch\":" << ftd::json_exact_uint64(telemetry.source_epoch())
+       << ",\"telemetryEpoch\":" << ftd::json_exact_uint64(telemetry.epoch());
+    if (!scenario.empty()) ss << ",\"scenario\":\"" << json_escape(scenario) << "\"";
     ss << ",\"fluxBoundaryMode\":"
        << static_cast<int>(rb.toggles.flux_boundary)
        << ",\"fluxPeriodicAxis\":"
@@ -401,9 +404,9 @@ std::string json_dynamical_state_digest(
        << ",\"latticeSize\":" << digest.lattice_size
        << ",\"siteCount\":" << digest.site_count
        << ",\"tick\":" << digest.tick
-       << ",\"stateVersion\":" << digest.state_version
-       << ",\"sourceEpoch\":" << telemetry.source_epoch()
-       << ",\"telemetrySourceEpoch\":" << telemetry.source_epoch()
+       << ",\"stateVersion\":" << ftd::json_exact_uint64(digest.state_version)
+       << ",\"sourceEpoch\":" << ftd::json_exact_uint64(telemetry.source_epoch())
+       << ",\"telemetrySourceEpoch\":" << ftd::json_exact_uint64(telemetry.source_epoch())
        << ",\"hashLo\":\"" << hash_lo.str() << "\""
        << ",\"hashHi\":\"" << hash_hi.str() << "\""
        << ",\"nonfiniteValueCount\":" << digest.nonfinite_value_count
@@ -434,7 +437,7 @@ bool replace_bridge_transactionally(
     const char* operation,
     const std::optional<std::string>& scenario = std::nullopt,
     std::uint64_t request_id = 0,
-    const std::string* profile_json = nullptr) {
+    const ftd::JsonValue* profile_json = nullptr) {
     // RenderBridge assignment destroys the old CUDA backend. Do not reach
     // candidate construction or that destructive assignment while the native
     // snapshot scheduler owns a live fence: GpuBuffers teardown can
@@ -486,7 +489,7 @@ bool replace_bridge_transactionally(
         return send_json_response(client, json_error(message, operation), request_id);
     }
 
-    if (!ftd::ws_send_text(client, json_progress(operation, "allocating", budget.size)))
+    if (!send_json_response(client, json_progress(operation, "allocating", budget.size), request_id))
         return false;
 
     try {
@@ -497,7 +500,7 @@ bool replace_bridge_transactionally(
             return send_json_response(client, json_error(message, operation), request_id);
         }
 
-        if (profile_json && ftd::json_bool(*profile_json, "applyProfile")) {
+        if (profile_json && profile_json->boolean_or("applyProfile")) {
             ftd::TermToggles staged = candidate->toggles;
             std::string profile_error;
             if (!apply_profile_fields(*profile_json, staged, profile_error)) {
@@ -537,7 +540,7 @@ bool replace_bridge_transactionally(
 
         std::cout << "[ws_server] " << operation << " committed at L="
                   << lattice_size << "\n";
-        if (!ftd::ws_send_text(client, json_progress(operation, "ready", lattice_size)))
+        if (!send_json_response(client, json_progress(operation, "ready", lattice_size), request_id))
             return false;
         return send_json_response(client,
             scenario ? json_profile_ack(*rb, telemetry, *scenario)
@@ -566,8 +569,85 @@ bool handle_command(const std::string& json, SOCKET client,
                     ftd::NativeTelemetryScheduler& telemetry,
                     int& lattice_size)
 {
-    std::string cmd = ftd::json_string(json, "cmd");
-    const std::uint64_t request_id = request_id_from(json);
+    ftd::JsonValue record;
+    std::string cmd;
+    std::uint64_t request_id = 0;
+    int binary_version = 2;
+    try {
+        record = ftd::parse_json_object(json);
+        // Recover only a valid exact id. Invalid/ambiguous ids are never echoed.
+        request_id = static_cast<std::uint64_t>(record.integer_or(
+            "_requestId", 0, 1, ftd::kJsonSafeInteger));
+        cmd = record.string("cmd");
+        ftd::validate_ws_command(record);
+        binary_version = static_cast<int>(record.integer_or("_binaryVersion", 2, 2, 3));
+        if (binary_version == 3 && request_id == 0)
+            throw std::invalid_argument("binary version 3 requires _requestId");
+    } catch (const std::invalid_argument& ex) {
+        return send_json_response(client, json_error(ex.what(), cmd), request_id);
+    }
+    // Normalize safely decoded coordinates before injection implementations
+    // add stencil offsets. This preserves periodic wrapping without signed
+    // overflow for an otherwise valid INT_MIN/INT_MAX wire coordinate.
+    const auto coordinate = [&](const char* key) {
+        const auto raw = record.integer(key, std::numeric_limits<int>::min(),
+                                       std::numeric_limits<int>::max());
+        const auto size = rb->lattice().size();
+        return static_cast<int>((raw % size + size) % size);
+    };
+
+    const auto capture = [&]() {
+        if (rb->current_tick() < 0) throw std::runtime_error("invalid native sample tick");
+        ftd::NativeObservation result;
+        result.request_id = request_id;
+        result.sample_tick = static_cast<std::uint64_t>(rb->current_tick());
+        result.source_epoch = telemetry.source_epoch();
+        result.epoch = telemetry.epoch();
+        result.physical_time = rb->physical_time();
+        result.dt = rb->dt();
+        result.lattice_size = static_cast<std::uint32_t>(rb->lattice().size());
+        result.instance_nonce = ftd::native_instance_nonce();
+        return result;
+    };
+    const auto unchanged = [&](const ftd::NativeObservation& before) {
+        const auto after = capture();
+        if (before.sample_tick != after.sample_tick || before.source_epoch != after.source_epoch
+            || before.epoch != after.epoch || before.lattice_size != after.lattice_size
+            || std::memcmp(&before.physical_time, &after.physical_time, sizeof(double)) != 0
+            || std::memcmp(&before.dt, &after.dt, sizeof(double)) != 0)
+            throw std::runtime_error("native source changed during observation");
+    };
+    const auto observed_binary = [&](auto pack) {
+        const auto before = capture();
+        const auto prefix = binary_version == 3 ? ftd::kNativeObservationHeaderBytes : 0u;
+        auto bytes = pack(prefix);
+        unchanged(before);
+        if (binary_version == 3) ftd::write_native_observation_header(bytes, before);
+        return ftd::ws_send_binary(client, bytes);
+    };
+    const auto observed_json = [&](auto pack) {
+        const auto before = capture();
+        auto response = pack();
+        unchanged(before);
+        if (response.empty() || response.back() != '}')
+            throw std::runtime_error("invalid native observation JSON");
+        response.pop_back();
+        response += ",\"sampleTick\":" + ftd::json_exact_uint64(before.sample_tick)
+            + ",\"sourceEpoch\":" + ftd::json_exact_uint64(before.source_epoch)
+            + ",\"epoch\":" + ftd::json_exact_uint64(before.epoch)
+            + ",\"nativeInstanceId\":\"" + ftd::native_instance_id() + "\"}";
+        return send_json_response(client, std::move(response), request_id);
+    };
+    const auto mutation_ack = [&]() {
+        if (request_id == 0) return true;
+        std::ostringstream response;
+        response << "{\"type\":\"command_complete\",\"cmd\":\"" << json_escape(cmd)
+                 << "\",\"tick\":" << rb->current_tick()
+                 << ",\"sourceEpoch\":" << ftd::json_exact_uint64(telemetry.source_epoch())
+                 << ",\"epoch\":" << ftd::json_exact_uint64(telemetry.epoch())
+                 << ",\"nativeInstanceId\":\"" << ftd::native_instance_id() << "\"}";
+        return send_json_response(client, response.str(), request_id);
+    };
 
     if (telemetry.suspended() && cmd != "info") {
         // Do not attempt reset/resize/setup_scenario here. A timed-out CUDA
@@ -584,12 +664,15 @@ bool handle_command(const std::string& json, SOCKET client,
         // side-panel reduction or D2H wait.
         telemetry.on_tick_complete(*rb);
         std::ostringstream ss;
-        ss << "{\"type\":\"tick_complete\",\"tick\":" << rb->current_tick() << "}";
-        return ftd::ws_send_text(client, ss.str());
+        ss << "{\"type\":\"tick_complete\",\"tick\":" << rb->current_tick()
+           << ",\"sourceEpoch\":" << ftd::json_exact_uint64(telemetry.source_epoch())
+           << ",\"epoch\":" << ftd::json_exact_uint64(telemetry.epoch())
+           << ",\"nativeInstanceId\":\"" << ftd::native_instance_id() << "\"}";
+        return send_json_response(client, ss.str(), request_id);
     }
     else if (cmd == "run") {
-        const double raw_n = ftd::json_has_key(json, "n")
-            ? ftd::json_number(json, "n") : 1.0;
+        const double raw_n = record.has("n")
+            ? record.number_or("n") : 1.0;
         if (!std::isfinite(raw_n) || raw_n < 1.0
             || std::floor(raw_n) != raw_n) {
             return send_json_response(client, json_error(
@@ -608,16 +691,18 @@ bool handle_command(const std::string& json, SOCKET client,
         rb->run(n);
         telemetry.on_tick_complete(*rb);
         std::ostringstream ss;
-        ss << "{\"type\":\"run_complete\",\"tick\":" << rb->current_tick() << "}";
-        return ftd::ws_send_text(client, ss.str());
+        ss << "{\"type\":\"run_complete\",\"tick\":" << rb->current_tick()
+           << ",\"sourceEpoch\":" << ftd::json_exact_uint64(telemetry.source_epoch())
+           << ",\"epoch\":" << ftd::json_exact_uint64(telemetry.epoch())
+           << ",\"nativeInstanceId\":\"" << ftd::native_instance_id() << "\"}";
+        return send_json_response(client, ss.str(), request_id);
     }
     else if (cmd == "get_particles") {
         if (telemetry.has_pending_or_due_observation()) {
             return send_json_response(
                 client, json_visual_deferred("get_particles", telemetry), request_id);
         }
-        auto data = pack_particle_data(*rb);
-        return ftd::ws_send_binary(client, data);
+        return observed_binary([&](std::size_t prefix) { return pack_particle_data(*rb, prefix); });
     }
     else if (cmd == "get_diagnostics") {
         const auto view = telemetry.latest();
@@ -687,61 +772,62 @@ bool handle_command(const std::string& json, SOCKET client,
         return send_json_response(client, response, request_id);
     }
     else if (cmd == "inspect_voxel") {
-        const int x = static_cast<int>(ftd::json_number(json, "x"));
-        const int y = static_cast<int>(ftd::json_number(json, "y"));
-        const int z = static_cast<int>(ftd::json_number(json, "z"));
-        return send_json_response(client, json_voxel(*rb, x, y, z), request_id);
+        const int x = coordinate("x");
+        const int y = coordinate("y");
+        const int z = coordinate("z");
+        return observed_json([&] { return json_voxel(*rb, x, y, z); });
     }
     else if (cmd == "get_force_at") {
-        const int x = static_cast<int>(ftd::json_number(json, "x"));
-        const int y = static_cast<int>(ftd::json_number(json, "y"));
-        const int z = static_cast<int>(ftd::json_number(json, "z"));
-        return send_json_response(client, json_force_at(*rb, x, y, z), request_id);
+        const int x = coordinate("x");
+        const int y = coordinate("y");
+        const int z = coordinate("z");
+        return observed_json([&] { return json_force_at(*rb, x, y, z); });
     }
     else if (cmd == "get_flux_slice") {
         if (telemetry.has_pending_or_due_observation()) {
             return send_json_response(
                 client, json_visual_deferred("get_flux_slice", telemetry), request_id);
         }
-        int axis = static_cast<int>(ftd::json_number(json, "axis"));
-        int index = static_cast<int>(ftd::json_number(json, "index"));
-        return ftd::ws_send_text(client, json_flux_slice(*rb, axis, index));
+        int axis = static_cast<int>(record.integer_or("axis", 0, 0, 3));
+        int index = static_cast<int>(record.integer_or("index", 0, std::numeric_limits<int>::min(), std::numeric_limits<int>::max()));
+        return observed_json([&] { return json_flux_slice(*rb, axis, index); });
     }
     else if (cmd == "get_flux_volume") {
         if (telemetry.has_pending_or_due_observation()) {
             return send_json_response(
                 client, json_visual_deferred("get_flux_volume", telemetry), request_id);
         }
-        int axis_samples = static_cast<int>(ftd::json_number(json, "axisSamples"));
+        int axis_samples = static_cast<int>(record.integer_or("axisSamples", 0, std::numeric_limits<int>::min(), std::numeric_limits<int>::max()));
         if (axis_samples <= 0) axis_samples = 53;
-        return ftd::ws_send_binary(client, pack_flux_volume(*rb, axis_samples));
+        return observed_binary([&](std::size_t prefix) { return pack_flux_volume(*rb, axis_samples, prefix); });
     }
     else if (cmd == "get_field_sample" || cmd == "get_field_slices") {
         if (telemetry.has_pending_or_due_observation()) {
             return send_json_response(
                 client, json_visual_deferred(cmd.c_str(), telemetry), request_id);
         }
-        const std::string kind_name = ftd::json_string(json, "kind");
+        const std::string kind_name = record.string_or("kind");
         ftd::VisualFieldKind kind{};
         if (!ftd::parse_visual_field_kind(kind_name, kind)) {
             return send_json_response(
                 client, json_error("unknown field sample kind: " + kind_name, cmd), request_id);
         }
-        int stride = static_cast<int>(ftd::json_number(json, "stride"));
+        int stride = static_cast<int>(record.integer_or("stride", 0, std::numeric_limits<int>::min(), std::numeric_limits<int>::max()));
         stride = std::clamp(stride, 1, 64);
-        const double raw_token = ftd::json_number(json, "token");
-        const std::uint32_t token = raw_token > 0.0
-            ? static_cast<std::uint32_t>(raw_token) : 0u;
+        const auto token = static_cast<std::uint32_t>(
+            record.integer_or("token", 0, 0, 4294967295LL));
         // get_field_slices carries the center mid-plane index; the packer then
         // returns only the three orthogonal center planes (~axis× less traffic).
         const int planes_mid = (cmd == "get_field_slices")
-            ? std::max(0, static_cast<int>(ftd::json_number(json, "mid")))
+            ? std::max(0, static_cast<int>(record.integer_or("mid", 0, std::numeric_limits<int>::min(), std::numeric_limits<int>::max())))
             : -1;
-        return ftd::ws_send_binary(client, pack_field_sample(*rb, kind, stride, token, planes_mid));
+        return observed_binary([&](std::size_t prefix) {
+            return pack_field_sample(*rb, kind, stride, token, planes_mid, prefix);
+        });
     }
     else if (cmd == "set_toggle") {
-        std::string name = ftd::json_string(json, "name");
-        bool value = ftd::json_bool(json, "value");
+        std::string name = record.string_or("name");
+        bool value = record.boolean_or("value");
         const auto* spec = find_toggle_spec(name);
         if (!spec) {
             std::cerr << "[TermToggles] Rejected unknown toggle: " << name << "\n";
@@ -770,10 +856,10 @@ bool handle_command(const std::string& json, SOCKET client,
         if (name == "dual_substrate") rb->set_dual_substrate(value);
         else rb->toggles = staged;
         telemetry.on_state_mutated(*rb);
-        return true;  // Fire-and-forget
+        return mutation_ack();  // Legacy requests without an ID remain silent
     }
     else if (cmd == "set_flux_boundary") {
-        const int mode = static_cast<int>(ftd::json_number(json, "mode"));
+        const int mode = static_cast<int>(record.integer_or("mode", 0, 0, 2));
         if (mode < 0 || mode > 2) {
             std::cerr << "[TermToggles] Rejected flux boundary mode " << mode << "\n";
             return send_json_response(
@@ -793,10 +879,10 @@ bool handle_command(const std::string& json, SOCKET client,
         }
         rb->toggles = staged;
         telemetry.on_state_mutated(*rb);
-        return true;
+        return mutation_ack();
     }
     else if (cmd == "set_flux_periodic_axis") {
-        const int axis = static_cast<int>(ftd::json_number(json, "axis"));
+        const int axis = static_cast<int>(record.integer_or("axis", 0, 0, 3));
         if (axis < 0 || axis > 3) {
             return send_json_response(
                 client, json_error("invalid orientation axis", cmd), request_id);
@@ -812,11 +898,11 @@ bool handle_command(const std::string& json, SOCKET client,
         }
         rb->toggles = staged;
         telemetry.on_state_mutated(*rb);
-        return true;
+        return mutation_ack();
     }
     else if (cmd == "set_param") {
-        std::string name = ftd::json_string(json, "name");
-        double value = ftd::json_number(json, "value");
+        std::string name = record.string_or("name");
+        double value = record.number_or("value");
         if (!std::isfinite(value)) {
             std::cerr << "[ws_server] Rejected non-finite parameter " << name << "\n";
             return send_json_response(
@@ -840,7 +926,7 @@ bool handle_command(const std::string& json, SOCKET client,
             changed = true;
         }
         else if (name == "langevin_seed" && value >= 0.0) {
-            const auto seed = static_cast<unsigned int>(value);
+            const auto seed = static_cast<unsigned int>(record.integer("value", 0, 4294967295LL));
             rb->toggles.langevin_seed = seed;
             rb->seed_rng(seed);
             changed = true;
@@ -873,85 +959,85 @@ bool handle_command(const std::string& json, SOCKET client,
         return send_json_response(client, "{\"ok\":true,\"cmd\":\"set_param\"}", request_id);
     }
     else if (cmd == "inject_flux") {
-        int x = static_cast<int>(ftd::json_number(json, "x"));
-        int y = static_cast<int>(ftd::json_number(json, "y"));
-        int z = static_cast<int>(ftd::json_number(json, "z"));
-        double fx = ftd::json_number(json, "fx");
-        double fy = ftd::json_number(json, "fy");
-        double fz = ftd::json_number(json, "fz");
+        int x = coordinate("x");
+        int y = coordinate("y");
+        int z = coordinate("z");
+        double fx = record.number_or("fx");
+        double fy = record.number_or("fy");
+        double fz = record.number_or("fz");
         rb->inject_flux(x, y, z, {fx, fy, fz});
         telemetry.on_state_mutated(*rb);
-        return true;
+        return mutation_ack();
     }
     else if (cmd == "inject_flux_add") {
-        int x = static_cast<int>(ftd::json_number(json, "x"));
-        int y = static_cast<int>(ftd::json_number(json, "y"));
-        int z = static_cast<int>(ftd::json_number(json, "z"));
-        double fx = ftd::json_number(json, "fx");
-        double fy = ftd::json_number(json, "fy");
-        double fz = ftd::json_number(json, "fz");
+        int x = coordinate("x");
+        int y = coordinate("y");
+        int z = coordinate("z");
+        double fx = record.number_or("fx");
+        double fy = record.number_or("fy");
+        double fz = record.number_or("fz");
         rb->inject_flux_add(x, y, z, {fx, fy, fz});
         telemetry.on_state_mutated(*rb);
-        return true;
+        return mutation_ack();
     }
     else if (cmd == "inject_wave_vel_add") {
-        int x = static_cast<int>(ftd::json_number(json, "x"));
-        int y = static_cast<int>(ftd::json_number(json, "y"));
-        int z = static_cast<int>(ftd::json_number(json, "z"));
-        double wx = ftd::json_number(json, "wx");
-        double wy = ftd::json_number(json, "wy");
-        double wz = ftd::json_number(json, "wz");
+        int x = coordinate("x");
+        int y = coordinate("y");
+        int z = coordinate("z");
+        double wx = record.number_or("wx");
+        double wy = record.number_or("wy");
+        double wz = record.number_or("wz");
         rb->inject_wave_vel_add(x, y, z, {wx, wy, wz});
         telemetry.on_state_mutated(*rb);
-        return true;
+        return mutation_ack();
     }
     else if (cmd == "inject_particle") {
-        int x = static_cast<int>(ftd::json_number(json, "x"));
-        int y = static_cast<int>(ftd::json_number(json, "y"));
-        int z = static_cast<int>(ftd::json_number(json, "z"));
-        int8_t state = static_cast<int8_t>(ftd::json_number(json, "state"));
-        double fx = ftd::json_number(json, "fx");
-        double fy = ftd::json_number(json, "fy");
-        double fz = ftd::json_number(json, "fz");
+        int x = coordinate("x");
+        int y = coordinate("y");
+        int z = coordinate("z");
+        int8_t state = static_cast<int8_t>(record.integer("state", -1, 1));
+        double fx = record.number_or("fx");
+        double fy = record.number_or("fy");
+        double fz = record.number_or("fz");
         rb->inject_particle(x, y, z, state, {fx, fy, fz});
         telemetry.on_state_mutated(*rb);
-        return true;
+        return mutation_ack();
     }
     else if (cmd == "inject_wavepacket") {
-        int x = static_cast<int>(ftd::json_number(json, "x"));
-        int y = static_cast<int>(ftd::json_number(json, "y"));
-        int z = static_cast<int>(ftd::json_number(json, "z"));
-        int8_t state = static_cast<int8_t>(ftd::json_number(json, "state"));
+        int x = coordinate("x");
+        int y = coordinate("y");
+        int z = coordinate("z");
+        int8_t state = static_cast<int8_t>(record.integer("state", -1, 1));
         rb->inject_wavepacket(x, y, z, state);
         telemetry.on_state_mutated(*rb);
-        return true;
+        return mutation_ack();
     }
     else if (cmd == "create_pair") {
-        int x = static_cast<int>(ftd::json_number(json, "x"));
-        int y = static_cast<int>(ftd::json_number(json, "y"));
-        int z = static_cast<int>(ftd::json_number(json, "z"));
-        double fx = ftd::json_number(json, "fx");
-        double fy = ftd::json_number(json, "fy");
-        double fz = ftd::json_number(json, "fz");
+        int x = coordinate("x");
+        int y = coordinate("y");
+        int z = coordinate("z");
+        double fx = record.number_or("fx");
+        double fy = record.number_or("fy");
+        double fz = record.number_or("fz");
         rb->create_entangled_pair(x, y, z, {fx, fy, fz});
         telemetry.on_state_mutated(*rb);
-        return true;
+        return mutation_ack();
     }
     else if (cmd == "resize") {
-        int new_size = static_cast<int>(ftd::json_number(json, "size"));
+        int new_size = static_cast<int>(record.integer_or("size", 0, std::numeric_limits<int>::min(), std::numeric_limits<int>::max()));
         return replace_bridge_transactionally(
             client, rb, telemetry, lattice_size, new_size, "resize", std::nullopt,
             request_id);
     }
     else if (cmd == "resize_scenario") {
-        int new_size = static_cast<int>(ftd::json_number(json, "size"));
-        std::string name = ftd::json_string(json, "name");
+        int new_size = static_cast<int>(record.integer_or("size", 0, std::numeric_limits<int>::min(), std::numeric_limits<int>::max()));
+        std::string name = record.string_or("name");
         return replace_bridge_transactionally(
             client, rb, telemetry, lattice_size, new_size, "resize_scenario", name,
-            request_id, &json);
+            request_id, &record);
     }
     else if (cmd == "preflight_resize") {
-        int new_size = static_cast<int>(ftd::json_number(json, "size"));
+        int new_size = static_cast<int>(record.integer_or("size", 0, std::numeric_limits<int>::min(), std::numeric_limits<int>::max()));
         return send_json_response(
             client, json_budget(resource_budget(new_size)), request_id);
     }
@@ -961,15 +1047,15 @@ bool handle_command(const std::string& json, SOCKET client,
             request_id);
     }
     else if (cmd == "setup_scenario") {
-        std::string name = ftd::json_string(json, "name");
+        std::string name = record.string_or("name");
         return replace_bridge_transactionally(
             client, rb, telemetry, lattice_size, lattice_size, "setup_scenario", name,
-            request_id, &json);
+            request_id, &record);
     }
     else if (cmd == "apply_profile") {
         ftd::TermToggles staged = rb->toggles;
         std::string profile_error;
-        if (!apply_profile_fields(json, staged, profile_error)) {
+        if (!apply_profile_fields(record, staged, profile_error)) {
             return send_json_response(
                 client, json_error("invalid scenario profile: " + profile_error, cmd),
                 request_id);
@@ -982,7 +1068,7 @@ bool handle_command(const std::string& json, SOCKET client,
         rb->toggles = staged;
         telemetry.on_state_mutated(*rb);
         return send_json_response(
-            client, json_profile_ack(*rb, telemetry, ftd::json_string(json, "name")),
+            client, json_profile_ack(*rb, telemetry, record.string_or("name")),
             request_id);
     }
     else if (cmd == "info") {

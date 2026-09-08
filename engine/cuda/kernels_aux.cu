@@ -930,7 +930,7 @@ __global__ void pair_production_candidate_kernel(
     if (r >= p) return;
 
     const int partner = pair_partner_index(i, fx, fy, fz, L);
-    if (state[partner] != 0) return;
+    if (partner == i || state[partner] != 0) return;
     candidate[i] = 1;
 }
 
@@ -975,7 +975,7 @@ __global__ void pair_production_commit_kernel(
         const double fz = flux_z[i];
         const double jmag = sqrt(fx*fx + fy*fy + fz*fz);
         const int partner = pair_partner_index(i, fx, fy, fz, L);
-        if (state[partner] != 0) continue;
+        if (partner == i || state[partner] != 0) continue;
 
         // Leave the transaction untouched if the representable identity
         // namespace is exhausted.  The final INT_MAX sentinel is deliberately

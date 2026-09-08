@@ -12,6 +12,7 @@
 #include <cstdio>
 #include <cmath>
 #include <vector>
+#include <stdexcept>
 
 using namespace ftd;
 
@@ -206,6 +207,43 @@ int main() {
         std::sprintf(msg, "Op O%d Coarse Parity", a + 1);
         CHECK_CLOSE(gpu_c2_means[a], cpu_c2_means[a], 1e-12, msg);
     }
+
+    // L=65 crosses the old reduction's 512-block ceiling. Exact constant
+    // data makes every expected operator known without a sampled reference.
+    eft::gpu::GpuSnapshotPair large;
+    large.before.allocate(65);
+    large.after.allocate(65);
+    std::vector<double> ones(large.before.N, 1.0);
+    for (auto* fields : {&large.before, &large.after}) {
+        CHECK(cudaMemset(fields->d_rho_cell, 0, fields->N * sizeof(int)) == cudaSuccess, "large zero charge");
+        CHECK(cudaMemcpy(fields->d_phi_x, ones.data(), ones.size() * sizeof(double), cudaMemcpyHostToDevice) == cudaSuccess, "large uniform x field");
+        CHECK(cudaMemset(fields->d_phi_y, 0, fields->N * sizeof(double)) == cudaSuccess, "large zero y field");
+        CHECK(cudaMemset(fields->d_phi_z, 0, fields->N * sizeof(double)) == cudaSuccess, "large zero z field");
+    }
+    double large_means[10]{};
+    eft::gpu::gpu_compute_eft_means(large, large_means);
+    for (int op = 0; op < 10; ++op) {
+        CHECK_CLOSE(large_means[op], (op == 0 || op == 4) ? 1.0 : 0.0,
+                    0.0, "L65 exact complete-domain uniform operator");
+    }
+    auto rejects = [](auto call) {
+        try { call(); } catch (const std::invalid_argument&) { return true; }
+        return false;
+    };
+    CHECK(rejects([&]{ eft::gpu::gpu_render_bridge_to_dual_cell_fields(gpu.bufs(), large.before); }), "conversion rejects mismatched dimensions");
+    CHECK(rejects([&]{ eft::gpu::gpu_block_dual_cell_b2(large.before, gpu_c2_before); }), "blocking rejects odd fine side");
+    CHECK(rejects([&]{ eft::gpu::gpu_block_dual_cell_b2(gpu_before, gpu_after); }), "blocking rejects wrong coarse side");
+    eft::gpu::GpuSnapshotPair mismatch{gpu_before, large.after};
+    double sentinel[10];
+    for (double& value : sentinel) value = 123.0;
+    CHECK(rejects([&]{ eft::gpu::gpu_compute_eft_means(mismatch, sentinel); }), "means reject mismatched snapshots");
+    CHECK(sentinel[0] == 123.0 && sentinel[9] == 123.0, "invalid means preserve output");
+    CHECK(rejects([&]{ eft::gpu::gpu_compute_eft_means(large, nullptr); }), "means reject null output");
+    auto malformed = gpu_before;
+    malformed.N -= 1;
+    CHECK(rejects([&]{ eft::gpu::gpu_block_dual_cell_b2(malformed, gpu_c2_before); }), "blocking rejects inconsistent cube count");
+    large.before.free();
+    large.after.free();
 
     // Free device structures
     gpu_before.free();

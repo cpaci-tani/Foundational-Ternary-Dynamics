@@ -589,6 +589,8 @@ val sample_vector_overlay(ftd::RenderBridge& rb, int stride, bool interior, Samp
     result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
     result.set("vectors",   val(typed_memory_view(count * 3, vec_cache.data())));
     result.set("count", count);
+    result.set("effectiveStride", grid.stride);
+    result.set("origin", grid.origin);
     return result;
 }
 
@@ -621,6 +623,8 @@ val sample_scalar_overlay(ftd::RenderBridge& rb, int stride, bool interior, Samp
     result.set("positions", val(typed_memory_view(count * 3, pos_cache.data())));
     result.set("values",    val(typed_memory_view(count,     val_cache.data())));
     result.set("count", count);
+    result.set("effectiveStride", grid.stride);
+    result.set("origin", grid.origin);
     return result;
 }
 
@@ -628,9 +632,11 @@ val sample_scalar_overlay(ftd::RenderBridge& rb, int stride, bool interior, Samp
 val get_e_field_sampled(ftd::RenderBridge& rb, int stride) {
     return sample_vector_overlay(rb, stride, /*interior=*/false,
         [&](int, int, int, int idx) -> std::optional<std::array<double, 3>> {
-            const auto em = rb.em_field_at(idx);
-            if (em.E_mag < 1e-15) return std::nullopt;
-            return std::array<double, 3>{em.E.x, em.E.y, em.E.z};
+            // Match the full EM diagnostic's electric expression and threshold;
+            // this sampler does not use its magnetic curl or magnetic norm.
+            const auto E = static_cast<const ftd::RenderBridge&>(rb).voxels()[idx].wave_vel * -1.0;
+            if (E.mag() < 1e-15) return std::nullopt;
+            return std::array<double, 3>{E.x, E.y, E.z};
         });
 }
 
@@ -747,14 +753,18 @@ val get_divj_sampled(ftd::RenderBridge& rb, int stride) {
         });
 }
 
-// Raw flux vectors J at every voxel carrying density.
+// Strongest-flux representative of each bounded source bin. Use the common
+// native sampler so sparse off-grid/border seeds match CPU and CUDA readback.
 val get_flux_vector_sampled(ftd::RenderBridge& rb, int stride) {
-    const auto& fields = rb.fields();
-    return sample_vector_overlay(rb, stride, /*interior=*/false,
-        [&](int, int, int, int idx) -> std::optional<std::array<double, 3>> {
-            if (fields.density_at(static_cast<std::size_t>(idx)) < 1e-15) return std::nullopt;
-            return std::array<double, 3>{fields.flux_x[idx], fields.flux_y[idx], fields.flux_z[idx]};
-        });
+    static ftd::VisualFieldSample sample;
+    rb.copy_visual_field_sample(ftd::VisualFieldKind::FluxVector, stride, sample);
+    val result = val::object();
+    result.set("positions", val(typed_memory_view(sample.positions.size(), sample.positions.data())));
+    result.set("vectors", val(typed_memory_view(sample.data.size(), sample.data.data())));
+    result.set("count", static_cast<unsigned int>(sample.count()));
+    result.set("effectiveStride", sample.effective_stride);
+    result.set("origin", sample.origin);
+    return result;
 }
 
 // Combined force vectors (Coulomb + gravity + magnetic) from the engine's own

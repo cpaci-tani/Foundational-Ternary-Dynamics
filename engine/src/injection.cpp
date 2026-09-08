@@ -131,6 +131,8 @@ void inject_particle_cpu(RenderBridge& rb, int x, int y, int z, int8_t state,
 
 void inject_wavepacket_cpu(RenderBridge& rb, int cx, int cy, int cz, int8_t state,
                            double sigma, double amplitude) {
+  if (!std::isfinite(sigma) || sigma <= 0.0 || !std::isfinite(amplitude))
+    throw std::invalid_argument("wavepacket sigma must be finite and positive; amplitude finite");
 #ifdef FTD_ENABLE_CUDA
   if (auto* gpu = rb.gpu_engine_ptr()) {
     gpu->toggles.dual_substrate = rb.toggles.dual_substrate;  // OPEN-5
@@ -264,6 +266,12 @@ AggregateProfile compute_aggregate_profile(const RenderBridge& rb, int center_id
   auto cc = lattice.coord(center_idx);
   int N = lattice.size();
   int scan = 20;
+  // One minimum-image representative per periodic site. A fixed 41^3
+  // offset scan counted small domains repeatedly (729 copies of a central
+  // point at L=5), inflating both the norm and its effective radius. Even
+  // domains assign the antipodal tie to the positive offset.
+  const int scan_lo = -std::min(scan, (N - 1) / 2);
+  const int scan_hi = std::min(scan, N / 2);
 
   double sum_j2 = 0.0;
   double sum_r2_j2 = 0.0;
@@ -274,9 +282,9 @@ AggregateProfile compute_aggregate_profile(const RenderBridge& rb, int center_id
   std::vector<double> radial_sum(20, 0.0);
   std::vector<int> radial_count(20, 0);
 
-  for (int dx = -scan; dx <= scan; ++dx) {
-    for (int dy = -scan; dy <= scan; ++dy) {
-      for (int dz = -scan; dz <= scan; ++dz) {
+  for (int dx = scan_lo; dx <= scan_hi; ++dx) {
+    for (int dy = scan_lo; dy <= scan_hi; ++dy) {
+      for (int dz = scan_lo; dz <= scan_hi; ++dz) {
         int x = ((cc.x + dx) % N + N) % N;
         int y = ((cc.y + dy) % N + N) % N;
         int z = ((cc.z + dz) % N + N) % N;

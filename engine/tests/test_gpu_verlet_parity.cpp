@@ -16,6 +16,8 @@
 #include <functional>
 #include <string>
 #include <vector>
+#include <limits>
+#include <stdexcept>
 
 namespace {
 
@@ -152,6 +154,15 @@ int main() {
     engine.toggles.verlet_wave_integrator = true;
     engine.set_dt(0.5);
     check("GpuEngine honors dt<1 under Verlet", std::abs(engine.dt() - 0.5) < 1e-15);
+    bool all_rejected = true;
+    for (double dt : {0.0, -0.5, std::numeric_limits<double>::infinity(),
+                      std::numeric_limits<double>::quiet_NaN()}) {
+        bool rejected = false;
+        try { engine.set_dt(dt); }
+        catch (const std::invalid_argument&) { rejected = true; }
+        all_rejected &= rejected && engine.dt() == 0.5;
+    }
+    check("GpuEngine rejects invalid dt without mutation", all_rejected);
 
     std::printf("\n%d passed, %d failed\n", passed, failed);
     return failed == 0 ? 0 : 1;

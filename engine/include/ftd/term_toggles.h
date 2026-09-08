@@ -1,6 +1,6 @@
 #pragma once
 // Runtime toggles for the logic-first engine.
-// 44 boolean toggles plus typed non-bool configuration fields.
+// 46 boolean toggles plus typed non-bool configuration fields.
 //
 // Phase 6 (2026-04-27): redesign as a TABLE-DRIVEN registry. Adding a new
 // boolean toggle now requires its storage field plus one TOGGLE_SPECS[] row,
@@ -420,9 +420,11 @@ inline bool TermToggles::validate(std::string* err) const {
         msg += "cluster_inertia requires a force channel (forces, color_forces, strong_force, or exchange_force)\n";
 
     // FTD-0428: the matched face/edge complex owns all field evolution in its
-    // selected branch.  Only conservative particle movement and read-only
-    // observers may coexist.  This prevents an apparent Gauss failure from
-    // actually being an unjournaled legacy writer or reaction.
+    // selected branch. Only conservative particle movement and read-only
+    // observers may coexist. This prevents an apparent Gauss failure from
+    // actually being an unjournaled legacy writer or reaction. Flux-cell pump
+    // and port operations are included explicitly: they run before the matched
+    // history snapshot, so allowing either would bypass the continuity journal.
     if (matched_gauss_dynamics) {
         if (flux_boundary != FluxBoundaryMode::Periodic)
             msg += "matched_gauss_dynamics requires flux_boundary=Periodic\n";
@@ -438,7 +440,7 @@ inline bool TermToggles::validate(std::string* err) const {
             || su2_gauge || su3_gauge || absorbing_boundary
             || reflective_boundary || field_energy_gravity || cluster_inertia
             || de_broglie_clock || db_clock_coulomb || ew_background_sweep
-            || geometric_gravity) {
+            || geometric_gravity || flux_pump || flux_cell_port) {
             msg += "matched_gauss_dynamics requires the isolated conservative movement sector\n";
         }
     }

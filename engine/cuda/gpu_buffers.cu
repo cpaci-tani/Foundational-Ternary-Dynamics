@@ -55,6 +55,8 @@ struct ByteFlagToInt {
 // ---------- Allocation ----------
 
 void GpuBuffers::allocate(int lattice_size) {
+    if (N != 0 || stream || d_state || visual_capture_quarantined)
+        throw std::logic_error("GpuBuffers must be released before allocation");
     L = lattice_size;
     N = static_cast<int>(Lattice::checked_total_sites(L));
 
@@ -721,6 +723,11 @@ void GpuBuffers::free() {
 void GpuBuffers::upload(const std::vector<Voxel>& host_voxels,
                         const std::vector<double>& host_phi,
                         const std::vector<double>& host_phi_coulomb) {
+    if (N <= 0 || !d_state || visual_capture_quarantined
+        || host_voxels.size() != static_cast<std::size_t>(N)
+        || host_phi.size() != static_cast<std::size_t>(N)
+        || host_phi_coulomb.size() != static_cast<std::size_t>(N))
+        throw std::invalid_argument("GpuBuffers upload requires matching live extents");
     upload_voxels(host_voxels);
     CUDA_CHECK(cudaMemcpy(d_phi, host_phi.data(), N * sizeof(double), cudaMemcpyHostToDevice));
     CUDA_CHECK(cudaMemcpy(d_phi_coulomb, host_phi_coulomb.data(), N * sizeof(double), cudaMemcpyHostToDevice));
@@ -787,7 +794,11 @@ void GpuBuffers::upload_voxels(const std::vector<Voxel>& host_voxels) {
 
 void GpuBuffers::upload_voxels_range(const std::vector<Voxel>& host_voxels,
                                      int lo, int count) {
-    if (count <= 0) return;
+    if (N <= 0 || !d_state || visual_capture_quarantined
+        || lo < 0 || count < 0 || lo > N || count > N - lo
+        || host_voxels.size() != static_cast<std::size_t>(N))
+        throw std::invalid_argument("GpuBuffers upload range outside matching live buffers");
+    if (count == 0) return;
 
     // Scatter the AoS fields for [lo, lo+count) into per-field host staging,
     // then upload each staging array to the matching offset in its device SoA
@@ -940,6 +951,9 @@ void GpuBuffers::upload_voxels_range(const std::vector<Voxel>& host_voxels,
 
 void GpuBuffers::upload_voxels_delta(const std::vector<Voxel>& host_voxels,
                                      const std::vector<Voxel>& shadow) {
+    if (N <= 0 || !d_state || visual_capture_quarantined
+        || host_voxels.size() != static_cast<std::size_t>(N))
+        throw std::invalid_argument("GpuBuffers delta upload requires matching live extents");
     // Fall back to a full upload when we cannot trust a partial one:
     //   - g_gpu_force_full_upload: test knob capturing the pre-C5 reference;
     //   - shadow not a valid device mirror of size N (cold start / resize).
@@ -1440,7 +1454,10 @@ void GpuBuffers::precompute_green_function() {
 }
 
 void GpuBuffers::ensure_matched_gauss() {
+    if (N <= 0 || !d_state || visual_capture_quarantined)
+        throw std::logic_error("optional buffers require a live primary allocation");
     if (d_matched_ex) return;
+    try {
     const std::size_t bytes = static_cast<std::size_t>(N) * sizeof(double);
     CUDA_CHECK(cudaMalloc(&d_matched_ex, bytes));
     CUDA_CHECK(cudaMalloc(&d_matched_ey, bytes));
@@ -1458,10 +1475,26 @@ void GpuBuffers::ensure_matched_gauss() {
     CUDA_CHECK(cudaMemset(d_matched_bx, 0, bytes));
     CUDA_CHECK(cudaMemset(d_matched_by, 0, bytes));
     CUDA_CHECK(cudaMemset(d_matched_bz, 0, bytes));
+    } catch (...) {
+        if (d_matched_ex) { cudaFree(d_matched_ex); d_matched_ex = nullptr; }
+        if (d_matched_ey) { cudaFree(d_matched_ey); d_matched_ey = nullptr; }
+        if (d_matched_ez) { cudaFree(d_matched_ez); d_matched_ez = nullptr; }
+        if (d_matched_bx) { cudaFree(d_matched_bx); d_matched_bx = nullptr; }
+        if (d_matched_by) { cudaFree(d_matched_by); d_matched_by = nullptr; }
+        if (d_matched_bz) { cudaFree(d_matched_bz); d_matched_bz = nullptr; }
+        if (d_matched_cx) { cudaFree(d_matched_cx); d_matched_cx = nullptr; }
+        if (d_matched_cy) { cudaFree(d_matched_cy); d_matched_cy = nullptr; }
+        if (d_matched_cz) { cudaFree(d_matched_cz); d_matched_cz = nullptr; }
+        if (d_matched_valid) { cudaFree(d_matched_valid); d_matched_valid = nullptr; }
+        throw;
+    }
 }
 
 void GpuBuffers::ensure_strong_stress() {
+    if (N <= 0 || !d_state || visual_capture_quarantined)
+        throw std::logic_error("optional buffers require a live primary allocation");
     if (d_strong_t00) return;
+    try {
     const std::size_t bytes = static_cast<std::size_t>(N) * sizeof(double);
     const std::size_t pbytes =
         static_cast<std::size_t>(MAX_PARTICLES) * sizeof(double);
@@ -1484,6 +1517,28 @@ void GpuBuffers::ensure_strong_stress() {
     CUDA_CHECK(cudaMalloc(&d_strong_mz, pbytes));
     CUDA_CHECK(cudaMalloc(&d_strong_count, sizeof(int)));
     CUDA_CHECK(cudaMalloc(&d_strong_step, sizeof(StrongStepDevice)));
+    } catch (...) {
+        if (d_strong_t00) { cudaFree(d_strong_t00); d_strong_t00 = nullptr; }
+        if (d_strong_sxx) { cudaFree(d_strong_sxx); d_strong_sxx = nullptr; }
+        if (d_strong_syy) { cudaFree(d_strong_syy); d_strong_syy = nullptr; }
+        if (d_strong_szz) { cudaFree(d_strong_szz); d_strong_szz = nullptr; }
+        if (d_strong_sxy) { cudaFree(d_strong_sxy); d_strong_sxy = nullptr; }
+        if (d_strong_sxz) { cudaFree(d_strong_sxz); d_strong_sxz = nullptr; }
+        if (d_strong_syz) { cudaFree(d_strong_syz); d_strong_syz = nullptr; }
+        if (d_strong_idx) { cudaFree(d_strong_idx); d_strong_idx = nullptr; }
+        if (d_strong_id) { cudaFree(d_strong_id); d_strong_id = nullptr; }
+        if (d_strong_begin_id) { cudaFree(d_strong_begin_id); d_strong_begin_id = nullptr; }
+        if (d_strong_color) { cudaFree(d_strong_color); d_strong_color = nullptr; }
+        if (d_strong_px) { cudaFree(d_strong_px); d_strong_px = nullptr; }
+        if (d_strong_py) { cudaFree(d_strong_py); d_strong_py = nullptr; }
+        if (d_strong_pz) { cudaFree(d_strong_pz); d_strong_pz = nullptr; }
+        if (d_strong_mx) { cudaFree(d_strong_mx); d_strong_mx = nullptr; }
+        if (d_strong_my) { cudaFree(d_strong_my); d_strong_my = nullptr; }
+        if (d_strong_mz) { cudaFree(d_strong_mz); d_strong_mz = nullptr; }
+        if (d_strong_count) { cudaFree(d_strong_count); d_strong_count = nullptr; }
+        if (d_strong_step) { cudaFree(d_strong_step); d_strong_step = nullptr; }
+        throw;
+    }
 }
 
 }  // namespace gpu

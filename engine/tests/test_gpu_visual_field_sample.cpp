@@ -61,6 +61,23 @@ void check_sample_parity(const std::string& label,
 int main() {
     std::cout << "CUDA visual field sample contract\n";
 
+    for (const int size : {5, 7}) {
+        const int stride = size == 7 ? 4 : 2;
+        for (const int source : {0, size-1}) {
+            ftd::RenderBridge cpu(size); cpu.force_cpu();
+            ftd::RenderBridge gpu(size); gpu.set_interactive_gpu_mode(true);
+            cpu.inject_flux(source,source,source,{0.25,-0.5,1.0});
+            gpu.inject_flux(source,source,source,{0.25,-0.5,1.0});
+            ftd::VisualFieldSample a,b;
+            cpu.copy_visual_field_sample(ftd::VisualFieldKind::FluxVector,stride,a);
+            reset_full_mirror_counters();
+            gpu.copy_visual_field_sample(ftd::VisualFieldKind::FluxVector,stride,b);
+            check("border flux represented exactly once",a.count()==1 && b.count()==1);
+            check_sample_parity("border bin CPU/CUDA parity",a,b);
+            check_no_full_mirror("border bin sample avoids full mirror");
+        }
+    }
+
     // L=65 forces the bounded sampler from requested stride 1 to effective
     // stride 2.  The one-voxel seed lies strictly between the regular anchors.
     {
@@ -191,6 +208,36 @@ int main() {
               cpu_gravity.count() != 0 && gpu_gravity.count() != 0);
         check_sample_parity("CPU/CUDA geometric latency gravity", cpu_gravity, gpu_gravity);
         check_no_full_mirror("GPU geometric gravity sample avoids full mirror");
+    }
+
+    {
+        ftd::RenderBridge rb(5);
+        rb.set_interactive_gpu_mode(true);
+        rb.voxels()[0].spin = 1;
+        std::vector<float> attributes(15, 9.0f);
+        rb.copy_visual_particle_attributes({-1, 0, 125}, attributes);
+        check("GPU invalid attribute indices are bounded and zero-filled",
+              attributes.size() == 15 && attributes[8] == 1.0f
+              && std::all_of(attributes.begin(), attributes.begin() + 5,
+                             [](float v) { return v == 0.0f; })
+              && std::all_of(attributes.begin() + 10, attributes.end(),
+                             [](float v) { return v == 0.0f; }));
+    }
+
+    {
+        ftd::RenderBridge cpu(1);
+        cpu.force_cpu();
+        cpu.toggles.disable_all();
+        cpu.inject_flux(0, 0, 0, {3.0, 1.0, 2.0});
+        ftd::RenderBridge gpu(1);
+        gpu.set_interactive_gpu_mode(true);
+        gpu.toggles.disable_all();
+        gpu.inject_flux(0, 0, 0, {3.0, 1.0, 2.0});
+        ftd::VisualFieldSample expected, actual;
+        cpu.copy_visual_field_sample(ftd::VisualFieldKind::GravityForce, 1, expected);
+        gpu.copy_visual_field_sample(ftd::VisualFieldKind::GravityForce, 1, actual);
+        check_sample_parity("one-site periodic radius-two gravity", expected, actual);
+        check("one-site gravity has no self gradient", actual.count() == 0);
     }
 
     // Finally exercise d_latency as produced by the real CUDA Poisson phase,

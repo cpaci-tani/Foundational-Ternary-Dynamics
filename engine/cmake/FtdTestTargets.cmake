@@ -352,6 +352,38 @@ endif()
 add_test(NAME ws_protocol COMMAND test_ws_protocol)
 set_tests_properties(ws_protocol PROPERTIES TIMEOUT 60 LABELS "unit")
 
+# Real loopback adversaries for bounded native transport and frame admission.
+find_package(Threads REQUIRED)
+foreach(transport_target test_ws_io_deadlines test_ws_frame_prefix)
+    ftd_add_test(${transport_target} tests/${transport_target}.cpp NO_CORE
+                 TIMEOUT 60 LABELS unit scale0 transport)
+    target_sources(${transport_target} PRIVATE src/ws_protocol.cpp)
+    target_link_libraries(${transport_target} PRIVATE Threads::Threads)
+    if(WIN32)
+        target_link_libraries(${transport_target} PRIVATE ws2_32)
+    endif()
+endforeach()
+
+# Typed native command boundary and source-owned observation scheduling.
+ftd_add_test(test_ws_json_validation tests/test_ws_json_validation.cpp NO_CORE
+             TIMEOUT 60 LABELS unit scale0)
+target_sources(test_ws_json_validation PRIVATE src/ws_protocol.cpp)
+foreach(validation_target test_ws_command_validation test_ws_telemetry_validation test_ws_observation_v3)
+    ftd_add_test(${validation_target} tests/${validation_target}.cpp
+                 TIMEOUT 60 LABELS unit scale0)
+    target_sources(${validation_target} PRIVATE src/ws_server_commands.cpp
+        src/ws_server_binary.cpp src/ws_server_telemetry.cpp src/ws_protocol.cpp)
+endforeach()
+if(WIN32)
+    foreach(validation_target test_ws_json_validation test_ws_command_validation test_ws_telemetry_validation test_ws_observation_v3)
+        target_link_libraries(${validation_target} PRIVATE ws2_32)
+    endforeach()
+endif()
+ftd_add_test(test_native_telemetry_scheduler tests/test_native_telemetry_scheduler.cpp
+             TIMEOUT 60 LABELS unit scale0)
+ftd_add_test(test_tick_preflight tests/test_tick_preflight.cpp
+             TIMEOUT 60 LABELS unit scale0)
+
 ftd_add_test(test_visual_field_sample tests/test_visual_field_sample.cpp
              CTEST_NAME visual_field_sample TIMEOUT 60
              LABELS unit render scale0)
