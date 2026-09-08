@@ -24,9 +24,13 @@ def test_K_is_exact_and_annihilated_by_conserved_weights():
 def test_verdict_at_quarter_density():
     v = B.verdict(Fraction(1, 4))
     assert v["block_dimension"] == 4
-    assert v["label"] == "NS-class isotropic"
+    # H1' NS-class gate CLOSED NEGATIVE at the registered scope (2026-09-08); pins the verdict of record, see engine/docs/evidence/strict-hydro4-dispersion-exact.json
+    assert v["label"] == "anisotropic momentum hydrodynamics"
     assert set(v["sound_speed_squared_normalized"].values()) == {"1/2"}   # hand route: sum_i v_ix^2 / 24
     assert v["stable"] is True and Fraction(v["shear_viscosity"]) > 0
+    assert v["cubic_identity_holds"] is True
+    assert v["stable"] is True
+    assert Fraction(v["cubic_shear_constants"]["nu_E"]) > Fraction(v["cubic_shear_constants"]["nu_T2"]) > 0
 
 
 def test_nonlinear_coefficients_match_hand_derivation():

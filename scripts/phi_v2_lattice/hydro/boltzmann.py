@@ -6,6 +6,7 @@ predictions and laboratory curves only.
 """
 from __future__ import annotations
 from fractions import Fraction
+from math import isqrt
 import flint
 import numpy as np
 import sympy as sp
@@ -125,18 +126,90 @@ def dispersion(direction, d) -> Dispersion:
     return Dispersion("exact_fmpq", tuple(direction), None, Fraction(d), M1, M2, W, V, N - 4, series[0])
 
 
+def _exact_sqrt(value: Fraction):
+    """Rational square root of `value` if it is a perfect square of a rational, else None."""
+    if value < 0:
+        return None
+    num, den = value.numerator, value.denominator
+    sn, sd = isqrt(num), isqrt(den)
+    if sn * sn == num and sd * sd == den:
+        return Fraction(sn, sd)
+    return None
+
+
+def _transverse_roots(c1_normalized: Fraction, c0_normalized: Fraction) -> dict:
+    """The two |n|^2-normalized transverse decay coefficients nu for one direction.
+
+    nu are the two roots of the monic quadratic x^2 + c1'x + c0' (the direction's
+    already-|n|^2-normalized transverse polynomial, contract sec 4): nu = (-c1' +- sqrt(disc))/2
+    with disc = c1'^2 - 4c0' (this generalizes the pre-existing double-root formula
+    nu = -c1'/2 exactly: when disc == 0 both roots collapse to -c1'/2). Reported exact
+    (as Fraction strings) when disc is a perfect rational square; otherwise the raw
+    normalized coefficients, the discriminant, and a float64 pair are reported, flagged
+    `exact: False`.
+    """
+    disc = c1_normalized * c1_normalized - 4 * c0_normalized
+    entry = {
+        "c1_normalized": str(c1_normalized),
+        "c0_normalized": str(c0_normalized),
+        "discriminant_normalized": str(disc),
+    }
+    root = _exact_sqrt(disc)
+    if root is not None:
+        nu_lo, nu_hi = (-c1_normalized - root) / 2, (-c1_normalized + root) / 2
+        entry["exact"] = True
+        entry["nu"] = [str(nu_lo), str(nu_hi)]
+        entry["nu_float64"] = [float(nu_lo), float(nu_hi)]
+    else:
+        c1f, discf = float(c1_normalized), float(disc)
+        sqrtf = discf ** 0.5 if discf >= 0 else float("nan")
+        entry["exact"] = False
+        entry["nu"] = None
+        entry["nu_float64"] = [(-c1f - sqrtf) / 2, (-c1f + sqrtf) / 2]
+    return entry
+
+
 def verdict(d) -> dict:
     out = exact_verdict({n: dispersion(n, d) for n in DIRECTIONS})
     out["density"] = str(Fraction(d))
     trans = out.get("transverse_polynomial_normalized", {})
     if trans:
-        c1, c0 = (Fraction(x) for x in next(iter(trans.values())))
+        by_direction = {key: _transverse_roots(*(Fraction(x) for x in pair)) for key, pair in trans.items()}
+        out["shear_viscosity_by_direction"] = by_direction
+        first_key = next(iter(trans))
+        c1, c0 = (Fraction(x) for x in trans[first_key])
         nu = -c1 / 2
         out["shear_viscosity"] = str(nu)
         out["transverse_double_root"] = bool(c1 * c1 == 4 * c0)
-        out["stable"] = bool(nu > 0)
+
+        def _direction_positive(entry: dict) -> bool:
+            values = [Fraction(v) for v in entry["nu"]] if entry["exact"] else entry["nu_float64"]
+            return all(v > 0 for v in values)
+
+        out["stable"] = bool(all(_direction_positive(entry) for entry in by_direction.values()))
+
+        key_100, key_110, key_111 = (str(n) for n in DIRECTIONS)
+        entry_100, entry_110, entry_111 = by_direction[key_100], by_direction[key_110], by_direction[key_111]
+        if entry_100["exact"] and entry_110["exact"] and entry_111["exact"]:
+            nu_T2 = Fraction(entry_100["nu"][0])
+            roots_110 = [Fraction(v) for v in entry_110["nu"]]
+            nu_e_candidates = [r for r in roots_110 if r != nu_T2]
+            nu_111 = Fraction(entry_111["nu"][0])
+            if len(nu_e_candidates) == 1 and entry_111["nu"][0] == entry_111["nu"][1]:
+                nu_E = nu_e_candidates[0]
+                out["cubic_shear_constants"] = {"nu_T2": str(nu_T2), "nu_E": str(nu_E)}
+                out["cubic_identity_holds"] = bool(nu_111 == (2 * nu_E + nu_T2) / 3)
+            else:
+                out["cubic_shear_constants"] = None
+                out["cubic_identity_holds"] = False
+        else:
+            out["cubic_shear_constants"] = None
+            out["cubic_identity_holds"] = False
     else:
         out["shear_viscosity"], out["transverse_double_root"], out["stable"] = None, None, None
+        out["shear_viscosity_by_direction"] = None
+        out["cubic_shear_constants"] = None
+        out["cubic_identity_holds"] = None
     speeds = out.get("sound_speed_squared_normalized", {})
     out["sound_speed_squared"] = next(iter(speeds.values())) if speeds else None
     return out
