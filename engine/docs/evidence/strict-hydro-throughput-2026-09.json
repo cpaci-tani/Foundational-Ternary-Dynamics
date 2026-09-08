@@ -1,0 +1,45 @@
+{
+  "device": {
+    "backend": "cuda_device_kernels",
+    "name": "NVIDIA GeForce RTX 5090",
+    "compute_major": 12,
+    "compute_minor": 0,
+    "device": 0,
+    "canonical_adoption": false
+  },
+  "runs": [
+    {
+      "L": 16,
+      "sites": 4096,
+      "microticks": 48,
+      "elapsed_seconds": 0.3509915000759065,
+      "microticks_per_second": 136.75544846419177,
+      "state_bytes": 1704052
+    },
+    {
+      "L": 32,
+      "sites": 32768,
+      "microticks": 48,
+      "elapsed_seconds": 0.8962118000490591,
+      "microticks_per_second": 53.5587681364745,
+      "state_bytes": 13631604
+    },
+    {
+      "L": 48,
+      "sites": 110592,
+      "microticks": 48,
+      "elapsed_seconds": 2.7273615999147296,
+      "microticks_per_second": 17.59942649390558,
+      "state_bytes": 46006388
+    },
+    {
+      "L": 64,
+      "sites": 262144,
+      "microticks": 48,
+      "elapsed_seconds": 6.55746589996852,
+      "microticks_per_second": 7.319900817209043,
+      "state_bytes": 109052020
+    }
+  ],
+  "note": "wall time includes per-tick host download, decode, validation and event extraction inside advance"
+}
