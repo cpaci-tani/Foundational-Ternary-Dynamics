@@ -347,8 +347,14 @@ def summarize_campaign(directory) -> dict:
     preflight = json.loads(preflight_bytes)
     if execution["preflight_sha256"] != _sha(preflight_bytes) or preflight["lock_sha256"] != _sha((directory / "lock.json").read_bytes()):
         raise ValueError("execution/preflight receipt is not tied to current lock")
-    if execution["trace_sha256"] != _sha((directory / "trace.jsonl").read_bytes()):
-        raise ValueError("trace changed after execution")
+    for name in ("registration_sha256", "manifest_sha256", "runner_sha256", "instrument_sha256"):
+        if preflight[name] != lock[name]:
+            raise ValueError("preflight identity differs from accepted lock")
+    if preflight["case_count"] != len(lock["manifest"]) or execution["device"].get("backend") != "cuda_device_kernels":
+        raise ValueError("execution capability or case inventory mismatch")
+    if (execution["postflight"] != "complete frozen-source/input validation passed"
+            or execution["trace_sha256"] != _sha((directory / "trace.jsonl").read_bytes())):
+        raise ValueError("missing or mismatched executed campaign provenance")
     predictions = json.loads((directory / "predictions.json").read_text())
     reg = lock["registration"]
     traces = {}

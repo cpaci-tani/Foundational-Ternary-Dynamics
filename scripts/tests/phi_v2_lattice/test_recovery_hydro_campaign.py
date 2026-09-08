@@ -87,3 +87,30 @@ def test_lock_rejects_tampering(tmp_path, monkeypatch):
     (tmp_path / (one[0].case_id + ".bin")).write_bytes(b"\x00" * 10)
     with pytest.raises(ValueError):
         Camp.validate_lock(tmp_path)
+
+
+def test_summarize_rejects_forged_backend(tmp_path, monkeypatch):
+    """A stale/hand-edited execution.json claiming a non-CUDA backend must not pass silently,
+    even when preflight.json and trace.jsonl are otherwise present and self-consistent."""
+    if not (ROOT / "engine/build_strict_hydro/ftd_strict_hydro_campaign").is_file():
+        pytest.skip("optional hydro campaign runner required for lock fixture")
+    one = Camp.cases(L=4, stroboscopes=1)[:1]
+    monkeypatch.setattr(Camp, "cases", lambda L, stroboscopes: one)
+    monkeypatch.setenv("FTD_HYDRO_ALLOW_MISSING_PREREG", "1")
+    Camp.prepare_campaign(tmp_path, L=4, stroboscopes=1)
+    lock = json.loads((tmp_path / "lock.json").read_text())
+    preflight = {"lock_sha256": Camp._sha((tmp_path / "lock.json").read_bytes()),
+                 "registration_sha256": lock["registration_sha256"], "manifest_sha256": lock["manifest_sha256"],
+                 "runner_sha256": lock["runner_sha256"], "instrument_sha256": lock["instrument_sha256"],
+                 "case_count": len(lock["manifest"]), "validation": "complete preflight passed"}
+    (tmp_path / "preflight.json").write_text(Camp._json(preflight) + "\n", encoding="utf-8")
+    (tmp_path / "trace.jsonl").write_text("", encoding="utf-8")
+    execution = {"schema": "strict-hydro-execution-1",
+                 "preflight_sha256": Camp._sha((tmp_path / "preflight.json").read_bytes()),
+                 "postflight": "complete frozen-source/input validation passed",
+                 "device": {"backend": "forged_not_real_gpu"},
+                 "elapsed_seconds": 0.0, "physical_microticks": 0,
+                 "trace_sha256": Camp._sha((tmp_path / "trace.jsonl").read_bytes())}
+    (tmp_path / "execution.json").write_text(Camp._json(execution) + "\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="execution capability or case inventory mismatch"):
+        Camp.summarize_campaign(tmp_path)
