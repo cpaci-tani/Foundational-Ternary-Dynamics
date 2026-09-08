@@ -64,3 +64,61 @@ correlation leakage not bounded here].** The wave-2 full-tangent bounds are
 loose; this is a prediction for gate H2, not a theorem about Phi.
 
 <!-- RESULTS MARKER: nothing above this line changes after results exist -->
+
+## Results
+
+Evidence: `engine/docs/evidence/strict-recovery-wave3-exact.json`, produced by
+`scripts/phi_v2_lattice/experiments/run_recovery_wave3.py` via
+`PYTHONPATH=scripts python -m phi_v2_lattice.experiments.run_recovery_wave3 --output engine/docs/evidence/strict-recovery-wave3-exact.json`.
+Run twice in the foreground; the two output files are byte-identical (`cmp`).
+Wall-clock time: 76.322 s (run 1), 76.597 s (run 2).
+
+**Exact verdict** (`verdict.exact`): `label = "other"`. `block_dimension = 7`.
+`block_dimension_first_order_only = 7`. Clause 1 fails: the density
+functional's closure under the first- and second-order operators spans all
+seven conserved moments; the first-order operators alone already close the
+same seven-dimensional space.
+
+Per direction, characteristic polynomial of `M1` (coefficients low to high),
+identical to `charpoly_M1_on_block` (the closure block is the full
+seven-dimensional moment space):
+
+- n = (1,0,0): `[0, -256/3, 0, 176/3, 0, -40/3, 0, 1]`
+- n = (1,1,0): `[0, -2048/3, 0, 704/3, 0, -80/3, 0, 1]`
+- n = (1,1,1): `[0, -2304, 0, 528, 0, -40, 0, 1]`
+
+Because `block_dimension != 4`, `sound_speed_squared_normalized`,
+`transverse_polynomial_normalized`, and `longitudinal_damping_normalized` are
+not computed.
+
+**Certified verdict** (`verdict.certified`), 256-bit ball arithmetic at the
+physical `r(p)`: `block_dimension = 7` at every reference density (p = 1/96,
+1/192, 1/48). `sound_speed_direction_independent`, `transverse_isotropic`,
+and `longitudinal_isotropic` each report
+`"NOT APPLICABLE (block dimension 7 != 4)"` and `values = {}` at all three
+densities.
+
+Certified residuals per density (`dispersion.certified_residuals`, largest of
+`max_biorthogonality_error` / `max_left_null_radius` / `max_right_null_error`,
+identical across the three directions at each p): p = 1/96:
+`[1.96642804904508e-73 +/- 3.71e-88]`; p = 1/192:
+`[1.99208281454806e-73 +/- 4.02e-88]`; p = 1/48:
+`[3.16440167620994e-73 +/- 2.24e-88]`. The verdict's own block-invariance
+residual (`block_invariance_max_residual`, largest over the three directions,
+at n = (1,1,1)) is `[1.01326852046694e-11 +/- 1.58e-26]`, identical at all
+three densities.
+
+Unit-modulus spectrum of `P0` (float64 report, never an acceptance
+criterion): 7 eigenvalues with `|lambda| > 1 - 1e-9`, matching the seven
+conserved modes.
+
+## What this does and does not establish
+
+This is a linear-response (Boltzmann, product-closure) prediction at the
+declared reference couplings r(p) for p in {1/96, 1/192, 1/48}, evaluated on
+the exact finite operators of the wave-3 staged candidate; correlation
+leakage beyond the product closure is not bounded here. Gate H2 tests the
+closure assumption against the full tangent dynamics. The result carries no
+physical units and constitutes no Clay Millennium claim; it is a statement
+about the finite operators of this law, not an adopted physical dispersion
+relation.
