@@ -175,7 +175,7 @@
 }
 .flux-slice-row {
     display: grid;
-    grid-template-columns: 80px 1fr;
+    grid-template-columns: 80px minmax(0, 1fr);
     gap: 6px;
     align-items: start;
     padding: 6px 0;
@@ -195,6 +195,8 @@
 .flux-slice-row-label {
     display: flex;
     flex-direction: column;
+    min-width: 0;
+    overflow-wrap: anywhere;
     gap: 4px;
     padding-top: 4px;
 }
@@ -235,10 +237,11 @@
     background: rgba(220, 110, 110, 0.18);
 }
 
-/* Per-row tile grid (xy / xz / yz columns). */
+/* Keep xy / xz / yz side by side at every dock/window width. Field rows stack. */
 .flux-slice-row-tiles {
     display: grid;
-    grid-template-columns: repeat(3, auto);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    min-width: 0;
     gap: 8px;
 }
 
@@ -307,7 +310,7 @@
     letter-spacing: 0.02em;
 }
 .flux-slice-panel.dock-mode .flux-slice-row {
-    grid-template-columns: 56px 1fr;
+    grid-template-columns: 56px minmax(0, 1fr);
     gap: 8px;
     padding: 10px 0;
     align-items: center;        /* vertically center label vs tiles for visual stability */
@@ -347,6 +350,7 @@
 }
 .flux-slice-tile {
     margin: 0;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -364,6 +368,8 @@
 .flux-slice-caption {
     display: flex;
     flex-direction: column;
+    max-width: 100%;
+    overflow-wrap: anywhere;
     align-items: center;
     gap: 1px;
     font-size: var(--fs-xs);

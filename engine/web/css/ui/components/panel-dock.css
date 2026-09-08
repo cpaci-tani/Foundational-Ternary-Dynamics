@@ -238,7 +238,8 @@ html[data-density="compact"] #panel-area {
    queries cannot choose its internal card count. Use the dock's actual width:
    structural card/plot groups stack at <720px and the dock remains the single
    vertical scroll owner. Compact label/value rows deliberately keep their own
-   internal layouts. The same family list is mirrored by FloatingWindow below. */
+   internal layouts, including Flux Slices' three-plane rows. The same family
+   list is mirrored by FloatingWindow below. */
 @container docked-sidepanel (max-width: 719px) {
     .panel :is(
         .panel-grid-2,
@@ -254,7 +255,6 @@ html[data-density="compact"] #panel-area {
         .telemetry-grid-container,
         .lag-layout,
         .lag-charts-grid,
-        .flux-slice-row-tiles,
         .grav-slice-tiles,
         .p1-gravity-grid,
         .particle-log-summary,

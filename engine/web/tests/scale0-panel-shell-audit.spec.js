@@ -81,7 +81,7 @@ test.describe('Scale 0 panel shell audit gate', () => {
         expect(realErrors(consoleErrors)).toEqual([]);
     });
 
-    test('floating sidepanels stack by panel width and never exceed two columns', async ({ page }) => {
+    test('floating sidepanels stack structural groups while flux-slice axes keep three columns', async ({ page }) => {
         const consoleErrors = attachConsoleWatcher(page);
         const result = await page.evaluate(async () => {
             const { floatingWindowManager } = await import('/js/ui/components/floating-window/component.js');
@@ -178,7 +178,7 @@ test.describe('Scale 0 panel shell audit gate', () => {
             };
             audit.destroy();
             fixture.remove();
-            return { realControls, structural, narrowWindow, familyCount: layoutClasses.length };
+            return { realControls, structural, narrowWindow, layoutClasses, familyCount: layoutClasses.length };
         });
 
         expect(result.realControls).toEqual({
@@ -188,9 +188,12 @@ test.describe('Scale 0 panel shell audit gate', () => {
             containerName: 'floating-sidepanel',
         });
         expect(result.familyCount).toBe(23);
-        expect(new Set(result.structural.narrow)).toEqual(new Set([1]));
-        expect(new Set(result.structural.wide)).toEqual(new Set([2]));
-        expect(new Set(result.structural.ultra)).toEqual(new Set([2]));
+        for (const [index, family] of result.layoutClasses.entries()) {
+            const fluxAxes = family === 'flux-slice-row-tiles';
+            expect(result.structural.narrow[index], `${family}: narrow`).toBe(fluxAxes ? 3 : 1);
+            expect(result.structural.wide[index], `${family}: wide`).toBe(fluxAxes ? 3 : 2);
+            expect(result.structural.ultra[index], `${family}: ultra`).toBe(fluxAxes ? 3 : 2);
+        }
         expect(result.narrowWindow).toEqual({
             width: 320,
             bodyOverflow: 'auto',
@@ -264,6 +267,7 @@ test.describe('Scale 0 panel shell audit gate', () => {
             const sentinelRect = sentinel.getBoundingClientRect();
             const report = {
                 containerName: getComputedStyle(area).containerName,
+                layoutClasses,
                 columns,
                 overflowY: getComputedStyle(area).overflowY,
                 scrollable: area.scrollHeight > area.clientHeight,
@@ -278,7 +282,11 @@ test.describe('Scale 0 panel shell audit gate', () => {
         });
 
         expect(result.containerName).toBe('docked-sidepanel');
-        expect(new Set(result.columns)).toEqual(new Set([1]));
+        for (const [index, family] of result.layoutClasses.entries()) {
+            expect(result.columns[index], `${family}: narrow dock`).toBe(
+                family === 'flux-slice-row-tiles' ? 3 : 1,
+            );
+        }
         expect(['auto', 'scroll']).toContain(result.overflowY);
         expect(result.scrollable).toBe(true);
         expect(result.reachedBottom).toBe(true);

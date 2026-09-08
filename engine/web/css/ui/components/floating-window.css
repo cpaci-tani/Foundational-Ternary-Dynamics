@@ -164,7 +164,7 @@
      >= 720 CSS px -> at most two structural columns
 
    The list is intentionally limited to panel/card composition grids. Compact
-   label/input/value rows (for example Scene sliders) retain their own layout. */
+   label/input/value rows and Flux Slices' three-plane rows retain their own layout. */
 .floating-window-body .panel :is(
     .panel-grid-2,
     .panel-grid-3,
@@ -179,7 +179,6 @@
     .telemetry-grid-container,
     .lag-layout,
     .lag-charts-grid,
-    .flux-slice-row-tiles,
     .grav-slice-tiles,
     .p1-gravity-grid,
     .particle-log-summary,
@@ -210,7 +209,6 @@
         .telemetry-grid-container,
         .lag-layout,
         .lag-charts-grid,
-        .flux-slice-row-tiles,
         .grav-slice-tiles,
         .p1-gravity-grid,
         .particle-log-summary,
