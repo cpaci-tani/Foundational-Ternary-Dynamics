@@ -1,0 +1,25 @@
+{
+  "status": "passed",
+  "case_count": 15,
+  "cases": [
+    "capabilities_and_instance_namespace",
+    "exact_legacy_payload_and_provenance_get_particles_",
+    "exact_legacy_payload_and_provenance_get_flux_volume_",
+    "exact_legacy_payload_and_provenance_get_field_sample_e",
+    "exact_legacy_payload_and_provenance_get_field_sample_divJ",
+    "exact_legacy_payload_and_provenance_get_field_slices_fluxVector",
+    "observation_preserves_scoped_dynamical_digest",
+    "same_tick_direct_edit_changes_sample_epoch",
+    "correlated_tick_complete",
+    "correlated_run_complete",
+    "correlated_observation_get_flux_slice",
+    "correlated_observation_inspect_voxel",
+    "correlated_observation_get_force_at",
+    "invalid_version_or_identity_rejects_before_tick",
+    "correlated_progress_and_equal_tick_source_replacement"
+  ],
+  "backend": "forced_cpu",
+  "lattice_size": 7,
+  "executable_sha256": "c572e45558330e419a2989802da5559faf2fa3443e0b88bfe0822c51909f3415",
+  "scope": "independent native wire layout, sampled state provenance, precision and correlation; not full replay or physics"
+}

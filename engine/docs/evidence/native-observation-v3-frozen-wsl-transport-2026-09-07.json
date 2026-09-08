@@ -1,0 +1,144 @@
+{
+  "status": "passed",
+  "backend": "forced_cpu",
+  "lattice_size": 17,
+  "configured_timeout_ms": 400,
+  "checks": [
+    {
+      "case": "six_invalid_timeout_arguments",
+      "status": "passed"
+    },
+    {
+      "case": "idle_upgraded_client_has_no_transaction_deadline",
+      "status": "passed"
+    },
+    {
+      "case": "silent_handshake_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "partial_handshake_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "slow_drip_handshake_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "one_header_byte_eof_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "partial_command_eof_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "partial_command_timeout_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "slow_drip_frame_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "oversized_ping_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "fragmented_control_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "fragmented_text_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "reserved_bits_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "unmasked_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "unsupported_opcode_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "reserved_control_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "nonminimal_16_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "nonminimal_64_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "length_high_bit_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "over_input_cap_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "one_byte_close_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "valid_controls_tcp_chunks_and_ordered_coalesced_frames",
+      "status": "passed"
+    },
+    {
+      "case": "completed_tick_retained_exactly_once",
+      "status": "passed"
+    },
+    {
+      "case": "blocked_output_releases_owner_and_does_not_execute_queued_tick",
+      "status": "passed"
+    },
+    {
+      "case": "complete_binary_response_precedes_next_json_frame",
+      "status": "passed"
+    },
+    {
+      "case": "all_group_wait_pump_publishes_without_tick_or_interleaving",
+      "status": "passed"
+    },
+    {
+      "case": "timeout_retires_all_old_demand_and_cache",
+      "status": "passed"
+    }
+  ],
+  "case_count": 27,
+  "timings_seconds": {
+    "silent_handshake": 0.40148667499999924,
+    "partial_handshake": 0.4009439400000012,
+    "slow_drip_handshake": 0.4906043430000011,
+    "one_header_byte_eof": 0.00023289399999981697,
+    "partial_command_eof": 2.8796999998803585e-05,
+    "partial_command_timeout": 0.40053663199999967,
+    "slow_drip_frame": 0.490686010000001,
+    "oversized_ping": 3.273300000117274e-05,
+    "fragmented_control": 1.3904999999425627e-05,
+    "fragmented_text": 2.1351999999197346e-05,
+    "reserved_bits": 1.2803000000616294e-05,
+    "unmasked": 8.529000000478959e-06,
+    "unsupported_opcode": 3.057099999992374e-05,
+    "reserved_control": 1.9460000000748323e-05,
+    "nonminimal_16": 3.18319999994543e-05,
+    "nonminimal_64": 2.1043000000275924e-05,
+    "length_high_bit": 4.117399999969962e-05,
+    "over_input_cap": 2.182299999908821e-05,
+    "one_byte_close": 9.284999999970012e-05,
+    "completed_then_partial": 4.00250000005542e-05,
+    "backpressure_reconnect": 0.8880896370000002,
+    "normal_close": 3.0340000005679713e-06,
+    "subscribed_partial_input_timeout": 0.4007243580000015
+  },
+  "scope": "actual TCP liveness, framing, scoped state retention and command ordering; no full replay, GPU or performance certification",
+  "executable_sha256": "87741ae6ac7c14650ae648677425964bb3fba76d1f35748eeab78463954ed20c"
+}

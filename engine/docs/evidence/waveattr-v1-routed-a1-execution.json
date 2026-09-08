@@ -1,0 +1,84 @@
+{
+  "schema": "ftd.wave-attribution.execution.v1",
+  "acceptance": false,
+  "mode": "diagnostic",
+  "variant": "routed",
+  "runId": "waveattr-v1-routed-a1",
+  "startedAtUtc": "2026-09-08T07:30:15.913638+00:00",
+  "draftManifestSha256": "a9f763396e72a59cde8aba4927a547c5fa12deeaf0fcc9969b7bafaec7120259",
+  "baseManifestSha256": "d7b671f7fdefa4d8df8c0ddbdf52d1cd1075770d9ba2e0338cba6b4adb31708c",
+  "checkedSourceFiles": 2176,
+  "checkedDraftFiles": 37,
+  "runnerSha256": "e3aa96cd051c64ea63a743f3317871eee07a4ffe22c2541fa0ed3fa1d07c9b8a",
+  "trace": "off",
+  "status": "failed",
+  "command": [
+    "node",
+    "C:\\Users\\cpaci\\Desktop\\ftd\\engine\\build\\scale0_wave_attribution_probe_20260908\\run-browser.mjs",
+    "diagnostic"
+  ],
+  "exitCode": 1,
+  "finishedAtUtc": "2026-09-08T07:33:29.822675+00:00",
+  "sourceDrift": [],
+  "archive": {
+    "path": "engine/build/waveattr-v1-routed-a1-results.zip",
+    "sha256": "67e46f4b97ca32eddac3916b00533563e9e6afa2cb87390832b28d9683f24fd7",
+    "files": [
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/manifest.json",
+        "bytes": 9483,
+        "sha256": "a9f763396e72a59cde8aba4927a547c5fa12deeaf0fcc9969b7bafaec7120259"
+      },
+      {
+        "path": "engine/build/run_scale0_wave_attribution_20260908.py",
+        "bytes": 4722,
+        "sha256": "e3aa96cd051c64ea63a743f3317871eee07a4ffe22c2541fa0ed3fa1d07c9b8a"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/run-reservations/waveattr-v1-routed-a1/browser.log",
+        "bytes": 3322,
+        "sha256": "e0715bc21cae9afd75d67e384116598bdf620d6a0de332d9af09132741813841"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/run-reservations/waveattr-v1-routed-a1/reservation.json",
+        "bytes": 768,
+        "sha256": "9bb2edb807e985f4174424400b61f578f73d1501658ee542f333edfa7b1b1c4c"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/browser-results/waveattr-v1-routed-a1/.last-run.json",
+        "bytes": 96,
+        "sha256": "4834bb7cc1a48cd0ca3bc803fbe69a4413363433afe760f9b08cb41ab6a642aa"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/browser-results/waveattr-v1-routed-a1/wave-attribution.diagnosti-14611-stic-attribution-routed-L97-chromium/error-context.md",
+        "bytes": 9232,
+        "sha256": "bcd3174c12d2fe89cb6fec4ddbdf9b4ea07816d32f66c53cbd19d6d590c4e694"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/browser-results/waveattr-v1-routed-a1/wave-attribution.diagnosti-14611-stic-attribution-routed-L97-chromium/test-failed-1.png",
+        "bytes": 8323,
+        "sha256": "c911b878351b13dc3356d43aa72b5e5259849fba5a9050c3296a0e271c5866c4"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/browser-results/waveattr-v1-routed-a1/wave-attribution.diagnosti-51ef0-stic-attribution-routed-L33-chromium/attachments/wave-attribution-L33-3e91587c8596ebc655ff2456e68993560f8ed1c5.json",
+        "bytes": 10080274,
+        "sha256": "9f31d89da6fba788ad65da9f051e222a9034b4bdb2cf9dbabbfd49f4bebf3fbf"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/browser-results/waveattr-v1-routed-a1/wave-attribution.diagnosti-14611-stic-attribution-routed-L97-chromium/attachments/wave-attribution-L97-65bc54a2e38b1fee630b9f8952a948882472930b.json",
+        "bytes": 4849,
+        "sha256": "7edf91c36291d528dd87285610a8c68835b0d919da598414a212265be7c9628a"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/records/waveattr-v1-routed-a1-L33.json",
+        "bytes": 10080274,
+        "sha256": "9f31d89da6fba788ad65da9f051e222a9034b4bdb2cf9dbabbfd49f4bebf3fbf"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/records/waveattr-v1-routed-a1-L97.json",
+        "bytes": 4849,
+        "sha256": "7edf91c36291d528dd87285610a8c68835b0d919da598414a212265be7c9628a"
+      }
+    ]
+  }
+}

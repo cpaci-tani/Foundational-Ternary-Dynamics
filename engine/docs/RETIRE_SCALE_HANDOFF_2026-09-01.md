@@ -32,3 +32,11 @@ entity emerged from the Scale-0 substrate.
   It changes presentation only and creates no cross-scale simulation state.
 
 No replacement runtime scale handoff is planned.
+
+**2026-09-04 direction update:** the owner subsequently requested one strict
+discrete causal stack connected by coarse-graining. The
+[new architecture plan](PLAN_STRICT_DISCRETE_COARSE_GRAINING.md) starts with
+exact passive observations of the finite Phi-v2 runtime and requires closure
+and causal certification before reduced evolution. It does not restore the
+retired lossy handoff APIs above. The preceding sentence records the disposition
+at the original retirement date.

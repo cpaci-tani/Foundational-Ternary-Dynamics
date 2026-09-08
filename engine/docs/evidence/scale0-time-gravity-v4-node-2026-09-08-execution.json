@@ -1,0 +1,36 @@
+{
+  "schema": "scale0-time-gravity-v4-node-execution-v1",
+  "startedUtc": "2026-09-08T06:32:15.699993+00:00",
+  "completedUtc": "2026-09-08T06:32:16.056799+00:00",
+  "commands": [
+    [
+      "node",
+      "--test",
+      "--test-concurrency=4",
+      "engine/web/tests/scale0-gravity-slab.node.test.mjs",
+      "engine/web/tests/scale0-bounded-flux-reads.node.test.mjs",
+      "engine/web/tests/scale0-worker-lifecycle.node.test.mjs",
+      "engine/web/tests/scale0-time-retained-readout.node.test.mjs"
+    ],
+    [
+      "node",
+      "--test",
+      "--test-name-pattern=reader pin|unchanged publication|proxy slices and volume",
+      "engine/web/tests/scale0-runtime-audit.node.test.mjs"
+    ]
+  ],
+  "exitCodes": [
+    0,
+    0
+  ],
+  "archive": "engine/build/scale0_time_gravity_v4_node_results_20260908.zip",
+  "archiveSha256": "36fd7e17fead4b139c91f9bcefa5b009682372904770a778723c1696e5ce68db",
+  "files": [
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-node-2026-09-08.log",
+      "bytes": 5729,
+      "sha256": "afc49250b1b520d7f7a17f638d76509f6641b7bef6adb72ddfe769f4125602ff"
+    }
+  ],
+  "scope": "Available outputs captured immediately after this invocation, before any subsequent browser run. Hardware matrix disables tracing; no hardware trace claim."
+}

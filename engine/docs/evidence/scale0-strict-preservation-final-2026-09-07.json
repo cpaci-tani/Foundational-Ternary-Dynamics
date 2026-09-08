@@ -1,0 +1,17 @@
+[
+  {
+    "manifest": "strict-stack-source-manifest-2026-09-05.json",
+    "files": 69,
+    "drift": []
+  },
+  {
+    "manifest": "strict-recovery-wave1-manifest-2026-09-05.json",
+    "files": 44,
+    "drift": []
+  },
+  {
+    "manifest": "strict-recovery-wave2-manifest-2026-09-05.json",
+    "files": 73,
+    "drift": []
+  }
+]

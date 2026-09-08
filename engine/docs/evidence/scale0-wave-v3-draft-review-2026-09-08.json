@@ -1,0 +1,177 @@
+{
+  "schema": "ftd.scale0.independent-draft-review.v1",
+  "reviewedAtUtc": "2026-09-08T05:26:22.387297+00:00",
+  "reviewer": "/root/time_gravity_cost_review",
+  "implementationAuthor": "Separate implementation agent assigned by the coordinator; exact task identity not recorded in the draft",
+  "independentOfImplementation": true,
+  "status": "accepted_bounded_component_and_arithmetic_change_for_integration",
+  "releaseApproved": false,
+  "completeWaveObservationApproved": false,
+  "physicsRecoveryApproved": false,
+  "scope": {
+    "draftDirectory": "engine/build/scale0_wave_v3_draft_20260908",
+    "proposedProductionFiles": [
+      "engine/web/js/scales/scale0/analysis/wave-spectrum.js",
+      "engine/web/tests/scale0-wave-spectrum-metrics.node.test.mjs"
+    ],
+    "productionFilesEditedByReviewer": [],
+    "draftFilesEditedByReviewer": [],
+    "reviewerWrites": [
+      "engine/docs/evidence/scale0-wave-v3-draft-review-2026-09-08.json",
+      "engine/docs/evidence/scale0-wave-v3-draft-independent-module-tests-2026-09-08.log",
+      "engine/docs/evidence/scale0-wave-v3-draft-independent-parity-tests-2026-09-08.log"
+    ],
+    "freezeDiscipline": "Read-only review started during the frozen hardware campaign. Root explicitly authorized the two isolated Node suites only after reporting completed hardware measurement and the zero-drift post-run source/archive check. No production edits, builds, browser sessions or numerical campaigns were performed by this reviewer."
+  },
+  "identity": {
+    "draftManifest": {
+      "path": "engine/build/scale0_wave_v3_draft_20260908/draft-manifest.json",
+      "sha256": "e14aa74fc681efe6bddb456810c7d159bb18625c9664288723e691e735ad60fb",
+      "bytes": 1809
+    },
+    "manifestEntriesChecked": 9,
+    "manifestEntryMismatches": [],
+    "proposedPatchExactlyMatchesNormalizedFullSourceDiff": true,
+    "productionBaselineStillMatches": true,
+    "baselineSourceSha256": "8b5b565d56dd142e8bd2298386987cc8d91ef305accb264ae317705fb5956e2f",
+    "candidateSourceSha256": "8a78cacd244794084b1adf43b3adf0d30876c8fc2f193bfa8b1feedd7248cd25",
+    "actualModuleTestSha256": "3ffb6e0bc1d5ef931553f28d3eacaae9222396a87535da9176053355574364d7",
+    "parityScriptSha256": "00b2c68ad39d943d77027e4c328ea9be2731f0214f10a3a0c82395177e6ed710",
+    "unchangedConstantsSha256": "e1c2982b611417e62e9ffc46773306f3f079a164d18136a8b7760499a75c3b53",
+    "inspectedWaveInfoSha256": "7283f20e398edad768f7c2f4dd734943d8d9c8715ba3b7adfc279ad05ceadb24",
+    "note": "The draft's own unexecuted labels describe its preparation snapshot. Independent execution evidence is recorded here without editing those historical inputs."
+  },
+  "execution": [
+    {
+      "command": "node --test engine/build/scale0_wave_v3_draft_20260908/engine/web/tests/scale0-wave-spectrum-metrics.node.test.mjs",
+      "exitCode": 0,
+      "tests": 14,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "log": "engine/docs/evidence/scale0-wave-v3-draft-independent-module-tests-2026-09-08.log",
+      "logSha256": "4aadad4dffab6e557d64d68dbfc86fba911de634c48578839fe7444ddd8f0a47"
+    },
+    {
+      "command": "node --test engine/build/scale0_wave_v3_draft_20260908/draft-reference-parity.mjs",
+      "exitCode": 0,
+      "tests": 12,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "completePublicOutputComparisons": 48,
+      "log": "engine/docs/evidence/scale0-wave-v3-draft-independent-parity-tests-2026-09-08.log",
+      "logSha256": "8b84636a18f34d3f64681ceed7487847e33fbb21f9ea8d00a3e21eda6498d744"
+    }
+  ],
+  "findings": [
+    {
+      "id": "WVD-01",
+      "disposition": "accepted_correctness_repair",
+      "subject": "Named directional component reaches the accumulator",
+      "source": "draft wave-spectrum.js:196-232,409-450; reduceVectorSample:331-353",
+      "assessment": "Registered RF/light lanes declare y and both sound scenarios declare x. The baseline accumulator omitted componentIndex, causing the reducer's fallback to select z. The draft copies the existing lane componentIndex, correcting directional peaks, centre probes, centre-line input and harmonics. Full vector energies and centroids preserve their definitions. W remains minus E. The additive public componentIndex field is intentional and covered by the corrected-reference oracle.",
+      "evidence": "Actual public-module fixtures cover all four registered scenarios. Signed mixed-vector and genuine directional-zero controls exercise x/y; the whole-module private-export view supplies the z control without a new production export.",
+      "limit": "This corrects the metrics object. The separate WaveInfo history fallback described in WVD-08 is not repaired."
+    },
+    {
+      "id": "WVD-02",
+      "disposition": "accepted_value_preserving_with_declared_domain",
+      "subject": "Current-N Fourier cache",
+      "source": "draft wave-spectrum.js:378-397,469-483",
+      "assessment": "Cache entries use exactly the prior kMode=2*Math.PI*m/N and kMode*x expressions and store cosine/sine results in Float64 arrays. Each re/im accumulation retains its original x order, signs, square-root expression and 2*sampleStride/N normalization. The module retains only one N entry and no field, owner, scenario or clock data. Replacing N replaces the module-held entry. Payload is 128*N bytes, plus a bounded number of objects; this is linear in valid N, not a globally fixed resource cap.",
+      "domain": "Positive finite integer lattice sizes supplied by a valid owner; ordinary numeric Number typed arrays with stable contents during synchronous consumption; ordinary stable Math intrinsics. Side-effectful getters, BigInt arrays, concurrent mutation of input samples and hostile dimensions are outside this equivalence claim.",
+      "evidence": "Exact current-cache contents/replacement checks; exact uncached arithmetic checks at N=7/33/97; complete corrected-reference comparisons with Float32/Float64 inputs at N=7/9/33/65/97 and return to N=33.",
+      "limit": "No measured callback improvement or allocation timing follows from this source change. Invalid-size rejection and supported maximum dimensions remain a separate input-validation obligation."
+    },
+    {
+      "id": "WVD-03",
+      "disposition": "accepted_value_preserving_with_declared_domain",
+      "subject": "Defer vector arithmetic until the first admitted lane",
+      "source": "draft wave-spectrum.js:293-359",
+      "assessment": "The original y/z admission predicate is retained. For every admitted numeric sample, signed components, raw energy, volume weighting and magnitude are evaluated once in the original expression order, then accumulated into each admitted lane in its original order. Excluded sites contribute nothing before or after. Repeated centre-line points still use last assignment while energies accumulate every admitted point.",
+      "evidence": "Manufactured inclusive-band, overlapping-lane and excluded-site controls verify two magnitude evaluations for two admitted samples and unchanged stride-three weighted energies. Full corrected-reference parity includes repeated coordinates and off-lane samples.",
+      "limit": "Eliminating observable getter accesses or calls to a side-effectful replacement Math.sqrt is not promised equivalent; the optimization explicitly declares ordinary numeric sample inputs."
+    },
+    {
+      "id": "WVD-04",
+      "disposition": "test_oracles_accepted_for_bounded_claim",
+      "subject": "Actual-module and corrected-reference tests",
+      "assessment": "The public tests import the complete draft module and its copied actual constants. The private view changes only the constants import URL and appends private exports; it does not replace function bodies. The parity oracle first hashes the complete baseline, then performs one count-checked componentIndex insertion and import-URL substitution. It therefore isolates the performance changes against the corrected baseline rather than demanding equality with the known component bug.",
+      "evidence": "Both suites passed independently: 14 module tests and 12 parity tests containing 48 complete scenario comparisons. The proposed patch exactly matches the normalized source diff, and all nine draft manifest entries match their hashes and byte counts.",
+      "limit": "The alternate Fourier angle expression is a bounded mathematical cross-check at absolute tolerance 1e-13. It is not an independent implementation of the full sampling pipeline or a continuum/physical spectrum oracle. Browser display, native sample support, asynchronous transport, malformed input and hardware timing are not covered by these passing Node tests.",
+      "optionalStrengthening": "A closed-form centre-line impulse with all eight amplitudes equal to 2*abs(A)*stride/N would independently pin the normalization without duplicating the finite-sum loop. This is not required to accept the narrowly preserved arithmetic claim."
+    },
+    {
+      "id": "WVD-05",
+      "disposition": "open_preexisting_observation_defect",
+      "subject": "Missing payloads currently become active zero measurements",
+      "source": "draft and production getSpectrumComparatorMetrics; draft:400-407,454-467,514-519; reduceVectorSample:293-301",
+      "assessment": "Method presence is the only availability guard. A null or malformed J/E payload makes the reducer return without contributions, but the public result remains active with zero energies/probes/harmonics. The draft's null/empty test explicitly reproduces this existing behavior. Passing it is a compatibility observation, not approval of that behavior as a scientific contract.",
+      "impact": "An unavailable worker sample, partially available J/E pair or malformed payload can be displayed as a completed zero observation. A legitimate completed count-zero sample must remain distinguishable from unavailable transport.",
+      "minimumFollowup": "Define explicit per-field availability and completed-empty status before reduction. Require shape/count validity and current owner/configuration provenance. Return an unavailable/partial status for missing fields and prevent false zero histories and audio updates. Preserve real completed zeros. Register separate tests for absent payload, completed count-zero, J-only/E-only readiness, recovery and source replacement.",
+      "blocks": ["complete_wave_observation_certification", "scientific_release_claim_for_unqualified_history"],
+      "blocksBoundedArithmeticIntegration": false
+    },
+    {
+      "id": "WVD-06",
+      "disposition": "open_preexisting_observation_defect",
+      "subject": "Owner clock fallback and J/E sample clocks are conflated",
+      "source": "draft wave-spectrum.js:515-519; production wave-info.js:377-387; wasm-bridge-proxy.js:565-570,982-989",
+      "assessment": "A missing currentTick method returns tick zero in the metrics object. WaveInfo appends histories using that owner tick, even though the J and E getters may return separately cached samples and sampleTick may be unknown. A newly advanced owner clock alone does not establish a new J/E observation. Equal finite sample ticks also require matching owner/configuration/source identity before they establish a common observation.",
+      "minimumFollowup": "Separate ownerTick from each field's sampleTick and publication/source identity. Preserve unknown times as null. Only combine values into an asserted common-tick energy/history when both field records satisfy a declared coherence contract. Otherwise report asynchronous/unknown-clock observations explicitly and suppress the combined scientific history or use a separately labelled observation-order display. Never substitute the latest owner tick, zero, minimum/maximum sample tick, render time or matching arrival time for missing provenance.",
+      "requiredRegressions": [
+        "Owner tick advances while both cached samples are unchanged",
+        "Only J or only E publication advances",
+        "One or both sample times are null",
+        "Equal sample times from different configurations or owners",
+        "Genuine completed tick zero",
+        "Same-tick state mutation and changed publication",
+        "Reload under the same owner and stale response rejection"
+      ],
+      "blocks": ["complete_wave_observation_certification", "scientific_release_claim_for_unqualified_history"],
+      "blocksBoundedArithmeticIntegration": false
+    },
+    {
+      "id": "WVD-07",
+      "disposition": "open_preexisting_validation_scope",
+      "subject": "Malformed dimensions and nonfinite samples are outside the tested contract",
+      "source": "draft wave-spectrum.js:293-310,403,450,514-519",
+      "assessment": "The API still uses latticeSize||33 and does not require a supported positive integer dimension before allocation. Count is clamped to buffer lengths; nonfinite coordinates/components and invalid domain positions are not rejected as a completed observation. The cache adds 128*N bytes for valid N and does not make hostile dimensions safe. Current tests cover legitimate typed numeric fixtures and selected absent payloads, not complete corrupted-state rejection.",
+      "minimumFollowup": "Register a bounded observation-input schema with explicit owner-supported dimensions, numeric typed arrays, safe counts and complete coordinate/vector records. Reject unsupported or corrupted input without synthesizing a default physical domain. Preserve existing legitimate sample thresholds, signed zero and Float32 rounding. Decide whether malformed payloads invalidate the observation rather than silently truncate before changing behavior.",
+      "blocksBoundedArithmeticIntegration": false,
+      "limit": "The current draft may be integrated only with its valid-owner input-domain restriction documented; it must not be advertised as complete input validation."
+    },
+    {
+      "id": "WVD-08",
+      "disposition": "open_preexisting_readout_defect",
+      "subject": "Directional zero is still replaced by vector magnitude in the history charts",
+      "source": "production wave-info.js:265-267,383-387",
+      "assessment": "The numeric body uses nullish fallback and can correctly display a zero directional peak. The histories use peakDirectionalFlux||peakFlux||0 and the corresponding W expression, so a real zero component with a nonzero orthogonal vector produces a nonzero directional-peak chart. The draft's actual metrics tests catch the zero component at the producer but do not invoke WaveInfo's history logic.",
+      "minimumFollowup": "Use a declared finite/availability-aware directional selection in the history consumer; retain genuine zero and do not replace invalid or unavailable observations with a vector norm or zero. Add an actual WaveInfo update regression with nonzero orthogonal components, zero selected J/W components and a coherent observed history key. Verify body and chart agree and that missing data does not append a new zero sample.",
+      "blocks": ["claim_that_all_directional_wave_readouts_are_repaired"],
+      "blocksBoundedArithmeticIntegration": false
+    }
+  ],
+  "integrationDecision": {
+    "accepted": true,
+    "meaning": "The isolated component correction and two declared-domain arithmetic optimizations are ready for coordinator-controlled integration and focused browser verification. Existing observation defects do not require retaining the known component bug, but they remain explicit blockers to broader scientific readout certification.",
+    "requirements": [
+      "Preserve this reviewed draft and its reference, manifest, logs and open findings before integration.",
+      "Keep value-changing component correction separate from value-preserving optimization in the change ledger.",
+      "Retain WVD-05 through WVD-08 as open; do not count legacy null-payload compatibility as availability acceptance.",
+      "Run actual integrated WaveInfo browser numeric/readout tests and the unchanged callback/frame hardware gates on a newly frozen candidate.",
+      "Any availability, clock, input-schema or history follow-up is a distinct behavior change with manufactured source/provenance regressions and independent re-audit.",
+      "No new native artifact, rendering cadence, sampler resolution, physics evolution, canonical law or physical-identification claim follows from the Node test results."
+    ],
+    "unmeasured": [
+      "Main-thread callback improvement",
+      "Allocation and garbage-collection cost",
+      "Actual browser chart/audio behavior after component correction",
+      "Native/WASM sample and transport provenance across owner generations",
+      "Full Scale-0 hardware and lifecycle matrix for the future integrated candidate"
+    ]
+  }
+}

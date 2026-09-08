@@ -1,0 +1,118 @@
+{
+  "schema": "scale0-wave-v3-evidence-archive-v1",
+  "sealedUtc": "2026-09-08T06:21:38.999342+00:00",
+  "candidateIdentity": "a3048e602619adc7042fbf9877a573e4e392a0acc2e662c1ccec2642300870db",
+  "status": "bounded_correctness_accepted_hardware_callback_gate_failed",
+  "releaseApproved": false,
+  "archive": "engine/build/scale0_wave_v3_evidence_20260908.zip",
+  "archiveBytes": 239577,
+  "archiveSha256": "909f3825b9edee94e31c3d3e8626b49123465512eb7dab1cf7eea59d579c34f8",
+  "files": [
+    {
+      "path": "engine/docs/PROGRAM_SCALE0_WAVE_CORRECTNESS_V3_2026-09-08.md",
+      "bytes": 12454,
+      "sha256": "441a7a0200b986c3e04727787125d41d0358f187e18a3eb5e2adae5e4ab09b0f"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-hardware-wave-v3-panels-L33-2026-09-08.json",
+      "bytes": 339044,
+      "sha256": "a3cd7cfb74f3d19f1d971f143ab4c6ceb2bfc2aac4f726dba40fb07598867924"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-hardware-wave-v3-panels-L97-2026-09-08.json",
+      "bytes": 193895,
+      "sha256": "9562d0b390b0f5243aac1bea7e25cb45b8d8d936accc757bbd44156338665a2c"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-browser-2026-09-08.log",
+      "bytes": 1294,
+      "sha256": "4dd53fe182d1237798da9a8d856ba7e4a41662635a17fc2bbb2edc38ade82b74"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-candidate-manifest-2026-09-08.json",
+      "bytes": 405901,
+      "sha256": "4ef20a1b26369b2a74a89e83809efe27908fef4a8c35a4a13e0c52fb7f927a8b"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-draft-independent-module-tests-2026-09-08.log",
+      "bytes": 1377,
+      "sha256": "4aadad4dffab6e557d64d68dbfc86fba911de634c48578839fe7444ddd8f0a47"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-draft-independent-parity-tests-2026-09-08.log",
+      "bytes": 982,
+      "sha256": "8b84636a18f34d3f64681ceed7487847e33fbb21f9ea8d00a3e21eda6498d744"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-draft-review-2026-09-08.json",
+      "bytes": 16762,
+      "sha256": "3cb2f1eb6600537192658839c83b214b75b919e233c0dfd5e8a5b181b636eeeb"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-draft2-independent-module-tests-2026-09-08.log",
+      "bytes": 1845,
+      "sha256": "6d32b30680b87a095f2b320f4fec8c741f7030b7faf4345f401ccf5625b8e0d6"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-draft2-independent-parity-tests-2026-09-08.log",
+      "bytes": 981,
+      "sha256": "c36994606495b9f072c12556db736e6b852a07c872408258564db2e48e546896"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-draft2-review-2026-09-08.json",
+      "bytes": 14793,
+      "sha256": "7a1718f0a6fa96f9454f0ded2dd7088730dff0afdbae7634ffc8b0172281b1c3"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-freeze-review-2026-09-08.json",
+      "bytes": 15663,
+      "sha256": "663bd8d0707601043fc7b844a0bec9c7eaa1d38c1bbb3685ea07711ee09b5be8"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-hardware-2026-09-08.log",
+      "bytes": 409508,
+      "sha256": "ec007bdbd4c7e5d3e7a8c1a90b23422ba9b075a3c2a9cd00f7441da82462ab96"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-hardware-execution-2026-09-08.json",
+      "bytes": 3245,
+      "sha256": "432af0d2bc8ab5484ec755ac1bd3285eb1b590fa60a0dc1a37a64027f980d6db"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-hardware-review-2026-09-08.json",
+      "bytes": 92690,
+      "sha256": "16ef764fef793f874587ff93f13c1ce79202a7765de65b6cf6c9c31a8c7271ab"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-harness-review-2026-09-08.json",
+      "bytes": 11277,
+      "sha256": "fd37df6e350945afc3bd53173f0f562f1a4d6891fc585fc410046c153a163e91"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-integrated-node-2026-09-08.log",
+      "bytes": 3996,
+      "sha256": "7f4b5b6ccb1579e54338858e525204aef5f95c710c408d4e676e32e30b5c3fce"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-integration-2026-09-08.json",
+      "bytes": 1926,
+      "sha256": "a246050397776d6e775269510dbcc5b8e1ca1d97f2bde04b72d0a4a2f10d4c22"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-postrun-source-check-2026-09-08.json",
+      "bytes": 330,
+      "sha256": "f3c3bec2b95b13f27697c97a213ef37407640c793ee262e2cf1142dcaa6db1aa"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-verification-2026-09-08.json",
+      "bytes": 11254,
+      "sha256": "fd0bddae0fd0140ce92f0f82d422ca46a9ece067d882ae422a56281c105d7f16"
+    }
+  ],
+  "separateImmediateHardwareArchive": {
+    "path": "engine/build/scale0_wave_v3_hardware_results_20260908.zip",
+    "bytes": 575456,
+    "sha256": "843d949e585349e1b40f3da87859d80b6fae0af73b16660be695fdfb95b14c26"
+  },
+  "scope": "Final Wave v3 evidence; archived preregistration remains in the separate immutable source candidate archive. Hardware failures are retained; no performance release approval."
+}

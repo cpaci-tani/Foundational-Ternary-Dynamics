@@ -1,0 +1,74 @@
+{
+  "schema": "ftd.wave-attribution.execution.v1",
+  "acceptance": false,
+  "mode": "diagnostic",
+  "variant": "routed",
+  "runId": "waveattr-v1-routed-a2",
+  "startedAtUtc": "2026-09-08T07:47:19.928456+00:00",
+  "draftManifestSha256": "a9f763396e72a59cde8aba4927a547c5fa12deeaf0fcc9969b7bafaec7120259",
+  "baseManifestSha256": "d7b671f7fdefa4d8df8c0ddbdf52d1cd1075770d9ba2e0338cba6b4adb31708c",
+  "checkedSourceFiles": 2176,
+  "checkedDraftFiles": 37,
+  "runnerSha256": "e3aa96cd051c64ea63a743f3317871eee07a4ffe22c2541fa0ed3fa1d07c9b8a",
+  "trace": "off",
+  "status": "passed",
+  "command": [
+    "node",
+    "C:\\Users\\cpaci\\Desktop\\ftd\\engine\\build\\scale0_wave_attribution_probe_20260908\\run-browser.mjs",
+    "diagnostic"
+  ],
+  "exitCode": 0,
+  "finishedAtUtc": "2026-09-08T07:50:03.310718+00:00",
+  "sourceDrift": [],
+  "archive": {
+    "path": "engine/build/waveattr-v1-routed-a2-results.zip",
+    "sha256": "6db7b34fe3fce758bd311dd864352f982e2bb3c33adbe0f83a55de63b76e8e86",
+    "files": [
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/manifest.json",
+        "bytes": 9483,
+        "sha256": "a9f763396e72a59cde8aba4927a547c5fa12deeaf0fcc9969b7bafaec7120259"
+      },
+      {
+        "path": "engine/build/run_scale0_wave_attribution_20260908.py",
+        "bytes": 4722,
+        "sha256": "e3aa96cd051c64ea63a743f3317871eee07a4ffe22c2541fa0ed3fa1d07c9b8a"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/run-reservations/waveattr-v1-routed-a2/browser.log",
+        "bytes": 718,
+        "sha256": "2153f6268ef388605bed5a96000388c26fe3fe5f57b8a61df78326632a2d7209"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/run-reservations/waveattr-v1-routed-a2/reservation.json",
+        "bytes": 771,
+        "sha256": "136afcec5f545a206f72e04e49c2f2fbbd1ff57fb5bc8a66602d8f3a45b887f9"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/browser-results/waveattr-v1-routed-a2/.last-run.json",
+        "bytes": 45,
+        "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/browser-results/waveattr-v1-routed-a2/wave-attribution.diagnosti-51ef0-stic-attribution-routed-L33-chromium/attachments/wave-attribution-L33-e1abd53d8599353d7816162c9f89af4cedeaf440.json",
+        "bytes": 10078642,
+        "sha256": "584ee2a84ccc2115f72ec7b74f5054833a8ed9f710470baccf5cb310e030585b"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/browser-results/waveattr-v1-routed-a2/wave-attribution.diagnosti-14611-stic-attribution-routed-L97-chromium/attachments/wave-attribution-L97-738b75e4c492b558f2225fefb3dc5d21a689c14e.json",
+        "bytes": 9569358,
+        "sha256": "8bc66126f505a2704a757956d91fae167fc2f906709d2cc45f150aa1d3676243"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/records/waveattr-v1-routed-a2-L33.json",
+        "bytes": 10078642,
+        "sha256": "584ee2a84ccc2115f72ec7b74f5054833a8ed9f710470baccf5cb310e030585b"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/records/waveattr-v1-routed-a2-L97.json",
+        "bytes": 9569358,
+        "sha256": "8bc66126f505a2704a757956d91fae167fc2f906709d2cc45f150aa1d3676243"
+      }
+    ]
+  }
+}

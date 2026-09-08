@@ -1,0 +1,351 @@
+{
+  "status": "passed_at_declared_scope",
+  "candidate_identity": "a833ab9bc9c163872edd554cd349453c02a8c5d934a4d9bfbdac423c9267167b",
+  "checked_files": 2160,
+  "source_drift": [],
+  "archive_matches": true,
+  "archive_content_drift": [],
+  "v2_changes_only": [
+    "engine/web/tests/ws-bridge-visual-cache.spec.js"
+  ],
+  "strict_preservation": [
+    {
+      "manifest": "strict-stack-source-manifest-2026-09-05.json",
+      "files": 69,
+      "drift": []
+    },
+    {
+      "manifest": "strict-recovery-wave1-manifest-2026-09-05.json",
+      "files": 44,
+      "drift": []
+    },
+    {
+      "manifest": "strict-recovery-wave2-manifest-2026-09-05.json",
+      "files": 73,
+      "drift": []
+    }
+  ],
+  "prior_archive_preservation": [
+    {
+      "manifest": "scale0-correctness-candidate-manifest-2026-09-07.json",
+      "archive_matches": true
+    },
+    {
+      "manifest": "scale0-correctness-candidate-v2-manifest-2026-09-07.json",
+      "archive_matches": true
+    },
+    {
+      "manifest": "scale0-transport-candidate-manifest-2026-09-07.json",
+      "archive_matches": true
+    },
+    {
+      "manifest": "native-observation-v3-candidate-manifest-2026-09-07.json",
+      "archive_matches": true
+    }
+  ],
+  "wasm_artifacts": {
+    "files": [
+      {
+        "file": "ftd_core.js",
+        "matches": true
+      },
+      {
+        "file": "ftd_core.wasm",
+        "matches": true
+      },
+      {
+        "file": "ftd_core64.js",
+        "matches": true
+      },
+      {
+        "file": "ftd_core64.wasm",
+        "matches": true
+      },
+      {
+        "file": "ftd_core_mt.js",
+        "matches": true
+      },
+      {
+        "file": "ftd_core_mt.wasm",
+        "matches": true
+      }
+    ],
+    "bundle_identity_retained": "97dbc15f61ba8952e68be8012279e50bf0bc650e5806f6bb5ca705952df5d4e3",
+    "source_dirty": true
+  },
+  "executed_checks": {
+    "native": {
+      "ctests": 9,
+      "wire": 16,
+      "transport": 27,
+      "command": 9,
+      "executable_sha256": "57272f17a49c80b682f613f2755ca21336a154bbeb3c4f65cba548c10e673022"
+    },
+    "wsl": {
+      "ctests": 9,
+      "wire": 16,
+      "transport": 27,
+      "command": 9,
+      "executable_sha256": "87741ae6ac7c14650ae648677425964bb3fba76d1f35748eeab78463954ed20c"
+    }
+  },
+  "node_tests": 84,
+  "actual_js_native_cases": 11,
+  "browser": {
+    "initial_run": {
+      "passed": 57,
+      "failed": 1,
+      "failure_preserved": true
+    },
+    "v2_affected_scenario_resize": {
+      "passed": 11,
+      "failed": 0
+    },
+    "fixture_only_repair_independently_reviewed": true,
+    "full_58_test_suite_not_repeated": true
+  },
+  "scientific_review_source_drift": [],
+  "evidence": [
+    {
+      "file": "native-observation-v3-browser-failure-2026-09-07.json",
+      "sha256": "7291625bc7011cbd58167e70c923dae6b7bf47805b5075041ace125d9e516602"
+    },
+    {
+      "file": "native-observation-v3-browser-fixture-review-2026-09-07.json",
+      "sha256": "3d407460865b2fc56fe95124f9c8fea89fabaddb11ff282e64c9fa3a49f71500"
+    },
+    {
+      "file": "native-observation-v3-candidate-manifest-2026-09-07.json",
+      "sha256": "3ec4dcd53446786dd9f66003e2e91b0c172518d430cf887717ad664fc293a44f"
+    },
+    {
+      "file": "native-observation-v3-candidate-v2-manifest-2026-09-07.json",
+      "sha256": "8027af4f2b1b39f176f15e26a30dee252b179e8580288b35898bab7b82da59bd"
+    },
+    {
+      "file": "native-observation-v3-current-native-wire-2026-09-07.json",
+      "sha256": "0a7f66f99bab3e917d2d91fa45422760834a2822c587e88a3ad63d6248d228d5"
+    },
+    {
+      "file": "native-observation-v3-current-native-wire-2026-09-07.server.log",
+      "sha256": "57484fa32b8743eec96da2bf879250e9ee4f0bdb26f9b589ed3b5983983f68c8"
+    },
+    {
+      "file": "native-observation-v3-current-wsl-tests-2026-09-07.log",
+      "sha256": "8fdb98c23c9d04bd7aa14c73295b4d73001065122b3f7735c0d9a7953e1f524c"
+    },
+    {
+      "file": "native-observation-v3-final-build-2026-09-07.log",
+      "sha256": "623d51e8af98d8f88a16a70bc0392e21d3e193db89350dcdd0c8049b173a86ae"
+    },
+    {
+      "file": "native-observation-v3-final-build-v2-2026-09-07.log",
+      "sha256": "8db08a6badc50d1639c539cea5b6ed66d677717afb7b699edb69f16fa9add668"
+    },
+    {
+      "file": "native-observation-v3-final-native-tests-2026-09-07.log",
+      "sha256": "c9e2f20706827e7c4880ba14cd297435263090b0b66b11c3f093cd666f4def69"
+    },
+    {
+      "file": "native-observation-v3-fixture-build-2026-09-07.log",
+      "sha256": "167b9bf70ba6e67db0cd4395366f1ce1d2c2bee1b72161ca220ea12e2210cec8"
+    },
+    {
+      "file": "native-observation-v3-fixture-tests-2026-09-07.log",
+      "sha256": "4c7ff8be52ce5d9c6cd215895b828b64b3abe9327c2148d17421d8861940da05"
+    },
+    {
+      "file": "native-observation-v3-fixture-v2-build-2026-09-07.log",
+      "sha256": "167b9bf70ba6e67db0cd4395366f1ce1d2c2bee1b72161ca220ea12e2210cec8"
+    },
+    {
+      "file": "native-observation-v3-fixture-v2-tests-2026-09-07.log",
+      "sha256": "f1ebb5da341104fc48688e466cc4ca13ff1d7f49394032c3709627a86de9c003"
+    },
+    {
+      "file": "native-observation-v3-frozen-browser-2026-09-07.log",
+      "sha256": "3c0c38d8caa5d3f349e4eed92fc8471e4ed112ee9f5dc5b08d3892197f3eedb2"
+    },
+    {
+      "file": "native-observation-v3-frozen-diff-check-2026-09-07.log",
+      "sha256": "f2794ce414976af0ca228d30b2b530e837e05014c9ed36968fc1e2d049921e7f"
+    },
+    {
+      "file": "native-observation-v3-frozen-js-native-2026-09-07.json",
+      "sha256": "bbb9b2f3ab08769ce5a4ca3db1b429d02dd0421408215b386558671699ce5cb1"
+    },
+    {
+      "file": "native-observation-v3-frozen-js-native-2026-09-07.server.log",
+      "sha256": "c043f2fe71d3aede5171bf7d670884676e1837e6a495e088e45f309da9a7157d"
+    },
+    {
+      "file": "native-observation-v3-frozen-native-build-2026-09-07.log",
+      "sha256": "14b0446954d0ae62ee4bb9f2e0c4a7f6f3804ab10330828472dbbcaeb80c9589"
+    },
+    {
+      "file": "native-observation-v3-frozen-native-command-2026-09-07.json",
+      "sha256": "7ef97223c7a9521d7e2103807469a7d28dc67f631bf90fa7253b9a33e4cd2b61"
+    },
+    {
+      "file": "native-observation-v3-frozen-native-command-2026-09-07.server.log",
+      "sha256": "c3aac0cc8230cd719672e24adc0af15d0e4ab8ddf283f30df41caf14e4b437d7"
+    },
+    {
+      "file": "native-observation-v3-frozen-native-tests-2026-09-07.log",
+      "sha256": "4595a8cdb4fd71a42c578f5f6e3d2561ea667e1731231a92428b0c34084b39ec"
+    },
+    {
+      "file": "native-observation-v3-frozen-native-transport-2026-09-07.json",
+      "sha256": "e4f01b4c04b68f648284902c17ee5651bc1c12238cf249ec3f0b75c395a485a0"
+    },
+    {
+      "file": "native-observation-v3-frozen-native-transport-2026-09-07.server.log",
+      "sha256": "bfbb68ce53511875b1f01098389034aff8ae8bf34ef62b55673b4193a7b2ff3c"
+    },
+    {
+      "file": "native-observation-v3-frozen-native-wire-2026-09-07.json",
+      "sha256": "0a7f66f99bab3e917d2d91fa45422760834a2822c587e88a3ad63d6248d228d5"
+    },
+    {
+      "file": "native-observation-v3-frozen-native-wire-2026-09-07.server.log",
+      "sha256": "260ff1abac8cbc01093d21eab284ab2bf6a679f070b29ca7fb3f641e03b544f0"
+    },
+    {
+      "file": "native-observation-v3-frozen-node-2026-09-07.log",
+      "sha256": "f1dd2d0f69909a6f13d31972cd93ad4a18ac59b51c6a84f410b327b5b23953c3"
+    },
+    {
+      "file": "native-observation-v3-frozen-wsl-build-2026-09-07.log",
+      "sha256": "c2ed93ffd93c840755c0e91392ae593b1b52de9b7aaf6c208123feaceb1dde2e"
+    },
+    {
+      "file": "native-observation-v3-frozen-wsl-command-2026-09-07.json",
+      "sha256": "b18d30137ab5950167f1b24d2eb266598b6aaeae49f35fc80513398b01df8194"
+    },
+    {
+      "file": "native-observation-v3-frozen-wsl-command-2026-09-07.server.log",
+      "sha256": "014b510bfd130709190dcf223a4b202d4f6a3d69b66b4d18a137b5284c435fcb"
+    },
+    {
+      "file": "native-observation-v3-frozen-wsl-tests-2026-09-07.log",
+      "sha256": "a69e75bdaf3473ac2c78442c03e4f57be491836a9ca1b3f53cb661f3b1b82b21"
+    },
+    {
+      "file": "native-observation-v3-frozen-wsl-transport-2026-09-07.json",
+      "sha256": "6129c44120667c72ae828536b71c23ec83ce55223f17ad04637caf3cb827f680"
+    },
+    {
+      "file": "native-observation-v3-frozen-wsl-transport-2026-09-07.server.log",
+      "sha256": "dcba9a3d085052ad2049a9384dfa520a3b6a40b7a17d88628aa713dcf8d296f5"
+    },
+    {
+      "file": "native-observation-v3-frozen-wsl-wire-2026-09-07.json",
+      "sha256": "52a6116cba6295cf57e39e4520c5051806190d338e64826df951348a9180e1ad"
+    },
+    {
+      "file": "native-observation-v3-frozen-wsl-wire-2026-09-07.server.log",
+      "sha256": "55e0c0ecb70c89111fc47da1ef6d1960d6bd445e9633c533a53f773df19a5436"
+    },
+    {
+      "file": "native-observation-v3-initial-build-2026-09-07.log",
+      "sha256": "355d86f2f88aefc1e8a327f80601b7da4c9b98e92976197c94b6fa878d214ed8"
+    },
+    {
+      "file": "native-observation-v3-initial-tests-2026-09-07.log",
+      "sha256": "52ce5d59387bf5d9c0dcb256a847939b4212ecdb41aea137c6d8f811af0cfaa0"
+    },
+    {
+      "file": "native-observation-v3-js-native-initial-2026-09-07.log",
+      "sha256": "ab90a1bc3427259803b6eaca35fb1ac7ffe1dbf68067627f86abaa0e6dc68023"
+    },
+    {
+      "file": "native-observation-v3-js-native-initial-2026-09-07.server.log",
+      "sha256": "2726ce004dfa77e3484e387c77f65b7549feedc01117cfabb3ca67e5c2c6017f"
+    },
+    {
+      "file": "native-observation-v3-js-native-public-lifecycle-2026-09-07.json",
+      "sha256": "42926bb1d615651b5e64a6db452d0906739ea6bee8c20ef98bd238186f0e51c7"
+    },
+    {
+      "file": "native-observation-v3-js-native-public-lifecycle-2026-09-07.log",
+      "sha256": "4935860153f7b94fc1b321d13c2520cc9067aa8d0332f9dac677a5bef397f8b7"
+    },
+    {
+      "file": "native-observation-v3-js-native-public-lifecycle-2026-09-07.server.log",
+      "sha256": "e510afab9e5dd82b5602e31c86f1116803cc9a38e7398bf5275cdb05fbd3e9d3"
+    },
+    {
+      "file": "native-observation-v3-js-native-retry-2026-09-07.log",
+      "sha256": "f8087c60689a76026c8a980f2775260236ac5dbc2eed66262b6fba5c8331e984"
+    },
+    {
+      "file": "native-observation-v3-js-native-retry-2026-09-07.server.log",
+      "sha256": "0521fb9b89f5d54762ac216fa78ed175d0c4ab3c178cb6a4939bf5387756c395"
+    },
+    {
+      "file": "native-observation-v3-js-native-review-fixed-2026-09-07.json",
+      "sha256": "bbb9b2f3ab08769ce5a4ca3db1b429d02dd0421408215b386558671699ce5cb1"
+    },
+    {
+      "file": "native-observation-v3-js-native-review-fixed-2026-09-07.server.log",
+      "sha256": "f8e6099b261bf999664ad5270d799de2de1320fce479a5fffa02763d996a17ba"
+    },
+    {
+      "file": "native-observation-v3-native-wire-clock-2026-09-07.json",
+      "sha256": "9b3d3adac3ee0668d69fd09376501ccaf225a5a7ae97a75ef29eae6294715e09"
+    },
+    {
+      "file": "native-observation-v3-native-wire-clock-2026-09-07.server.log",
+      "sha256": "a75f404e3e1025dde426ccca17cc715610c16e15126cf1bb036590cedfd88226"
+    },
+    {
+      "file": "native-observation-v3-native-wire-initial-2026-09-07.json",
+      "sha256": "2ec4fb6ad00f551f901c4738cb7660db1d79c561e0c87455b313fe20169ab97a"
+    },
+    {
+      "file": "native-observation-v3-native-wire-initial-2026-09-07.server.log",
+      "sha256": "7a7dde22ce1c2913cc61e77546e02fafac5070efa23cebfc1fa59e6291d6b1f2"
+    },
+    {
+      "file": "native-observation-v3-native-wire-reviewed-2026-09-07.server.log",
+      "sha256": "d037d4ced52eb88ca9eeb075b2413be910f08bbe95403088dfe89c027c999d3d"
+    },
+    {
+      "file": "native-observation-v3-review-fixes-build-2026-09-07.log",
+      "sha256": "4300057167b5302db5a827a216bbe95da75101ce53b243f5507e42de4fbca1b0"
+    },
+    {
+      "file": "native-observation-v3-review-fixes-tests-2026-09-07.log",
+      "sha256": "19970de9b5f0c27f131769bcc3ad0fbb3327cc7ac52401f739a151fbd87d43c2"
+    },
+    {
+      "file": "native-observation-v3-schema-build-2026-09-07.log",
+      "sha256": "8650e449b2e23400216d4bddda44ac358d1593bc6e8e640a54f12f505e83cf2a"
+    },
+    {
+      "file": "native-observation-v3-schema-tests-2026-09-07.log",
+      "sha256": "19970de9b5f0c27f131769bcc3ad0fbb3327cc7ac52401f739a151fbd87d43c2"
+    },
+    {
+      "file": "native-observation-v3-v2-browser-scenario-2026-09-07.log",
+      "sha256": "08beccedf1d7b031f9158b1a3316871c7a5dd339798734afdda6244f2439fb6f"
+    },
+    {
+      "file": "native-observation-v3-wsl-build-2026-09-07.log",
+      "sha256": "d007f3e0e789866e4f55d30e9b4d232f06f5734e54700cddd72a3b8587e14ae9"
+    },
+    {
+      "file": "native-observation-v3-wsl-tests-2026-09-07.log",
+      "sha256": "43ac3f2bd5dceb9015780bbbb6b253229aa87311bb6704c037c66ff55d3e6707"
+    },
+    {
+      "file": "native-observation-v3-wsl-wire-2026-09-07.json",
+      "sha256": "52a6116cba6295cf57e39e4520c5051806190d338e64826df951348a9180e1ad"
+    },
+    {
+      "file": "native-observation-v3-wsl-wire-2026-09-07.server.log",
+      "sha256": "52fb8acb9c282f9192e9c0cc6fdf52aad0466893194aef583b99ffe3b4e753a8"
+    }
+  ],
+  "scope": "NTR-05/07 reference observation provenance and correlation, forced CPU; no full replay, GPU parity renewal, hardware FPS renewal, physical recovery, canonical adoption or clean release."
+}

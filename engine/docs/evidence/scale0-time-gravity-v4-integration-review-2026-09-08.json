@@ -1,0 +1,679 @@
+{
+  "schema": "scale0-time-gravity-v4-independent-integration-review-v1",
+  "reviewed_utc": "2026-09-08T06:38:04.588489+00:00",
+  "local_record_date": "2026-09-08",
+  "reviewer": "/root/bounded_worker_reads",
+  "coordinator": "/root",
+  "status": "accepted_integration_identity_browser_gate_failed",
+  "integration_identity_accepted": true,
+  "full_candidate_frozen": false,
+  "browser_gate_approved": false,
+  "hardware_gate_approved": false,
+  "release_approved": false,
+  "physical_recovery_approved": false,
+  "disposition": "All 11 reviewed Time/Gravity implementation/test copies and the separately reviewed harness match their accepted bytes. Across the 2,172-entry Wave v3 baseline scope, exactly eight files changed and four declared files were added; no other frozen source drift or removals were found. Both isolated drafts and predecessor source/evidence archives remain intact. The 55 integrated Node checks are confirmed from retained logs. The integrated browser run records six passes and one fixture-import failure before its assertions. That browser gate blocks candidate freeze until an independently reviewed repair and successful rerun; hardware acceptance remains separate.",
+  "method": "Read-only source, manifest, hash, ZIP-content and existing-log inspection. No test, browser, build, GPU or numerical campaign was launched. This reviewer did not re-audit the independently accepted Time/Gravity implementations.",
+  "inputs": {
+    "implementation_integration": {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-integration-2026-09-08.json",
+      "bytes": 22170,
+      "sha256": "2a673e5f1a3026bf2bad758f468f30aefba2425000bd851ba5360cc5fc45d6e6"
+    },
+    "harness_integration": {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-harness-integration-2026-09-08.json",
+      "bytes": 880,
+      "sha256": "edd811c83ecdf265b83e78a70fc5616c7f9d19d59039a1fb22457a44f9dc4719"
+    },
+    "harness_review": {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-harness-review-2026-09-08.json",
+      "bytes": 13709,
+      "sha256": "d09e31e337c5afe9e9a6369e8e0ab28f858124f26fd4cf4fd0b87c368293b061"
+    },
+    "wave_baseline_manifest": {
+      "path": "engine/docs/evidence/scale0-wave-v3-candidate-manifest-2026-09-08.json",
+      "bytes": 405901,
+      "sha256": "4ef20a1b26369b2a74a89e83809efe27908fef4a8c35a4a13e0c52fb7f927a8b"
+    },
+    "preregistration": {
+      "path": "engine/docs/PROGRAM_SCALE0_TIME_GRAVITY_V4_2026-09-08.md",
+      "bytes": 11204,
+      "sha256": "660d8aeec3ac49d9cc7cea3fb8dd399791c72a1524284ec7ae4c14927af2d0f4"
+    }
+  },
+  "source_reconciliation": {
+    "baseline_identity": "a3048e602619adc7042fbf9877a573e4e392a0acc2e662c1ccec2642300870db",
+    "baseline_entries_checked": 2172,
+    "changed_count": 8,
+    "added_count": 4,
+    "unchanged_baseline_count": 2164,
+    "changed": [
+      {
+        "path": "engine/web/js/bridge/capabilities/scale0.js",
+        "bytes": 5202,
+        "sha256": "9e90ad033b9d609b7b0b59d3bf753a17be2c7ff4abd4868a94892ec5c1e94b56"
+      },
+      {
+        "path": "engine/web/js/bridge/flux-publication.classic.js",
+        "bytes": 9059,
+        "sha256": "f2f9d25f69991419325d981afea4474b596cd7005bce927ef99465b640e213ed"
+      },
+      {
+        "path": "engine/web/js/bridge/wasm-bridge-proxy.js",
+        "bytes": 76544,
+        "sha256": "c35f343ecb5fbc565f1c0b6fff00a8b436680c22a3c9186e57d0c75a5efd0681"
+      },
+      {
+        "path": "engine/web/js/scales/scale0/analysis/gravity-analysis.js",
+        "bytes": 12240,
+        "sha256": "9a9500a3f1d7611a1baa3f8f7292f0013f8c4234b01510bb897011dd2f98434b"
+      },
+      {
+        "path": "engine/web/js/scales/scale0/ui/overlays/gravity-panel.js",
+        "bytes": 56245,
+        "sha256": "dcbfd6b54f0109debcc3635934e7bb831f47d859eb2696644d2f9daa5185223c"
+      },
+      {
+        "path": "engine/web/js/scales/scale0/ui/overlays/time-panel.js",
+        "bytes": 48859,
+        "sha256": "88994fa5d0700e45fc7a1dc35d8a987925033637f860e4ba252f807b32bb866f"
+      },
+      {
+        "path": "engine/web/tests/scale0-comprehensive-performance.spec.js",
+        "bytes": 26482,
+        "sha256": "6f9c7164cf59d1d479ac3b475f81d6171c2b2de1afbf303e91fce8a46cc02f53"
+      },
+      {
+        "path": "engine/web/tests/scale0-time-retained-readout.node.test.mjs",
+        "bytes": 13596,
+        "sha256": "b3afca6628065d666f541b59daf62040275c6eb4cbc6ab392726b5eb01aba27f"
+      }
+    ],
+    "added": [
+      {
+        "path": "engine/web/js/scales/scale0/ui/overlays/time-readout.js",
+        "bytes": 4422,
+        "sha256": "97cb4c351ff0fe541136b1e34651570c295be71713d4b0e84364b9f436957e00"
+      },
+      {
+        "path": "engine/web/tests/fixtures/gravity-dense-v3-oracle.mjs",
+        "bytes": 3024,
+        "sha256": "6b4d7b232ad3a58a5c9fc3c96e011683d1d53b4f83a07d1c356d6e698643d3d8"
+      },
+      {
+        "path": "engine/web/tests/scale0-gravity-slab.node.test.mjs",
+        "bytes": 17758,
+        "sha256": "19ee49f30d15f1983d6a0a0b186fc9b31b73d90413b79d0b51f53244391702b7"
+      },
+      {
+        "path": "engine/web/tests/scale0-gravity-slab.spec.js",
+        "bytes": 7761,
+        "sha256": "7777458eed1dc8dbc724eb0e9eb779729535d89413868f59a631d2f514bc37db"
+      }
+    ],
+    "unexpected_drift": [],
+    "missing_baseline_files": [],
+    "implementation_copies": [
+      {
+        "path": "engine/web/js/scales/scale0/ui/overlays/time-panel.js",
+        "kind": "changed",
+        "current": {
+          "path": "engine/web/js/scales/scale0/ui/overlays/time-panel.js",
+          "bytes": 48859,
+          "sha256": "88994fa5d0700e45fc7a1dc35d8a987925033637f860e4ba252f807b32bb866f"
+        },
+        "reviewed_draft": {
+          "path": "engine/build/scale0_time_v4_draft_20260908/engine/web/js/scales/scale0/ui/overlays/time-panel.js",
+          "bytes": 48859,
+          "sha256": "88994fa5d0700e45fc7a1dc35d8a987925033637f860e4ba252f807b32bb866f"
+        },
+        "exact_copy": true,
+        "baseline": {
+          "path": "engine/web/js/scales/scale0/ui/overlays/time-panel.js",
+          "sha256": "069c23c52de53cb68052cc693e9e65e767001bbc6987a6ce5e47ba41387dd4bd",
+          "bytes": 47776
+        }
+      },
+      {
+        "path": "engine/web/js/scales/scale0/ui/overlays/time-readout.js",
+        "kind": "added",
+        "current": {
+          "path": "engine/web/js/scales/scale0/ui/overlays/time-readout.js",
+          "bytes": 4422,
+          "sha256": "97cb4c351ff0fe541136b1e34651570c295be71713d4b0e84364b9f436957e00"
+        },
+        "reviewed_draft": {
+          "path": "engine/build/scale0_time_v4_draft_20260908/engine/web/js/scales/scale0/ui/overlays/time-readout.js",
+          "bytes": 4422,
+          "sha256": "97cb4c351ff0fe541136b1e34651570c295be71713d4b0e84364b9f436957e00"
+        },
+        "exact_copy": true,
+        "baseline": null
+      },
+      {
+        "path": "engine/web/tests/scale0-time-retained-readout.node.test.mjs",
+        "kind": "changed",
+        "current": {
+          "path": "engine/web/tests/scale0-time-retained-readout.node.test.mjs",
+          "bytes": 13596,
+          "sha256": "b3afca6628065d666f541b59daf62040275c6eb4cbc6ab392726b5eb01aba27f"
+        },
+        "reviewed_draft": {
+          "path": "engine/build/scale0_time_v4_draft_20260908/engine/web/tests/scale0-time-retained-readout.node.test.mjs",
+          "bytes": 13596,
+          "sha256": "b3afca6628065d666f541b59daf62040275c6eb4cbc6ab392726b5eb01aba27f"
+        },
+        "exact_copy": true,
+        "baseline": {
+          "path": "engine/web/tests/scale0-time-retained-readout.node.test.mjs",
+          "sha256": "74d4c66346f48c484d39e50aa62a3babf42eba1d27879237a7506edca66ca707",
+          "bytes": 10355
+        }
+      },
+      {
+        "path": "engine/web/js/bridge/flux-publication.classic.js",
+        "kind": "changed",
+        "current": {
+          "path": "engine/web/js/bridge/flux-publication.classic.js",
+          "bytes": 9059,
+          "sha256": "f2f9d25f69991419325d981afea4474b596cd7005bce927ef99465b640e213ed"
+        },
+        "reviewed_draft": {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/bridge/flux-publication.classic.js",
+          "bytes": 9059,
+          "sha256": "f2f9d25f69991419325d981afea4474b596cd7005bce927ef99465b640e213ed"
+        },
+        "exact_copy": true,
+        "baseline": {
+          "path": "engine/web/js/bridge/flux-publication.classic.js",
+          "sha256": "4974dc66eb7d94b526b36719a5fd7be7962417895d9396e7b5ebb329648e4d69",
+          "bytes": 5993,
+          "role": "proposed_edit"
+        }
+      },
+      {
+        "path": "engine/web/js/bridge/wasm-bridge-proxy.js",
+        "kind": "changed",
+        "current": {
+          "path": "engine/web/js/bridge/wasm-bridge-proxy.js",
+          "bytes": 76544,
+          "sha256": "c35f343ecb5fbc565f1c0b6fff00a8b436680c22a3c9186e57d0c75a5efd0681"
+        },
+        "reviewed_draft": {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/bridge/wasm-bridge-proxy.js",
+          "bytes": 76544,
+          "sha256": "c35f343ecb5fbc565f1c0b6fff00a8b436680c22a3c9186e57d0c75a5efd0681"
+        },
+        "exact_copy": true,
+        "baseline": {
+          "path": "engine/web/js/bridge/wasm-bridge-proxy.js",
+          "sha256": "a2e151ed349978e1dafd3105247f71af45ba84e9fa5f9017e94e5141aa501536",
+          "bytes": 73815,
+          "role": "proposed_edit"
+        }
+      },
+      {
+        "path": "engine/web/js/bridge/capabilities/scale0.js",
+        "kind": "changed",
+        "current": {
+          "path": "engine/web/js/bridge/capabilities/scale0.js",
+          "bytes": 5202,
+          "sha256": "9e90ad033b9d609b7b0b59d3bf753a17be2c7ff4abd4868a94892ec5c1e94b56"
+        },
+        "reviewed_draft": {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/bridge/capabilities/scale0.js",
+          "bytes": 5202,
+          "sha256": "9e90ad033b9d609b7b0b59d3bf753a17be2c7ff4abd4868a94892ec5c1e94b56"
+        },
+        "exact_copy": true,
+        "baseline": {
+          "path": "engine/web/js/bridge/capabilities/scale0.js",
+          "sha256": "fcae35504f1c7145c453c3141aced61ebe798c6d31d21a4e62002beb17b54794",
+          "bytes": 4682,
+          "role": "proposed_edit"
+        }
+      },
+      {
+        "path": "engine/web/js/scales/scale0/analysis/gravity-analysis.js",
+        "kind": "changed",
+        "current": {
+          "path": "engine/web/js/scales/scale0/analysis/gravity-analysis.js",
+          "bytes": 12240,
+          "sha256": "9a9500a3f1d7611a1baa3f8f7292f0013f8c4234b01510bb897011dd2f98434b"
+        },
+        "reviewed_draft": {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/scales/scale0/analysis/gravity-analysis.js",
+          "bytes": 12240,
+          "sha256": "9a9500a3f1d7611a1baa3f8f7292f0013f8c4234b01510bb897011dd2f98434b"
+        },
+        "exact_copy": true,
+        "baseline": {
+          "path": "engine/web/js/scales/scale0/analysis/gravity-analysis.js",
+          "sha256": "9a38058819916d2e964f77be28c18486072c4f511ce61e980f031177a2d7eee5",
+          "bytes": 11030,
+          "role": "proposed_edit"
+        }
+      },
+      {
+        "path": "engine/web/js/scales/scale0/ui/overlays/gravity-panel.js",
+        "kind": "changed",
+        "current": {
+          "path": "engine/web/js/scales/scale0/ui/overlays/gravity-panel.js",
+          "bytes": 56245,
+          "sha256": "dcbfd6b54f0109debcc3635934e7bb831f47d859eb2696644d2f9daa5185223c"
+        },
+        "reviewed_draft": {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/scales/scale0/ui/overlays/gravity-panel.js",
+          "bytes": 56245,
+          "sha256": "dcbfd6b54f0109debcc3635934e7bb831f47d859eb2696644d2f9daa5185223c"
+        },
+        "exact_copy": true,
+        "baseline": {
+          "path": "engine/web/js/scales/scale0/ui/overlays/gravity-panel.js",
+          "sha256": "814ca52bfdefeb26bc1f53cdb01ebcfd81dc9a6c33b455350ef23835e6c6aa09",
+          "bytes": 53702,
+          "role": "proposed_edit"
+        }
+      },
+      {
+        "path": "engine/web/tests/fixtures/gravity-dense-v3-oracle.mjs",
+        "kind": "added",
+        "current": {
+          "path": "engine/web/tests/fixtures/gravity-dense-v3-oracle.mjs",
+          "bytes": 3024,
+          "sha256": "6b4d7b232ad3a58a5c9fc3c96e011683d1d53b4f83a07d1c356d6e698643d3d8"
+        },
+        "reviewed_draft": {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/tests/fixtures/gravity-dense-v3-oracle.mjs",
+          "bytes": 3024,
+          "sha256": "6b4d7b232ad3a58a5c9fc3c96e011683d1d53b4f83a07d1c356d6e698643d3d8"
+        },
+        "exact_copy": true,
+        "baseline": null
+      },
+      {
+        "path": "engine/web/tests/scale0-gravity-slab.node.test.mjs",
+        "kind": "added",
+        "current": {
+          "path": "engine/web/tests/scale0-gravity-slab.node.test.mjs",
+          "bytes": 17758,
+          "sha256": "19ee49f30d15f1983d6a0a0b186fc9b31b73d90413b79d0b51f53244391702b7"
+        },
+        "reviewed_draft": {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/tests/scale0-gravity-slab.node.test.mjs",
+          "bytes": 17758,
+          "sha256": "19ee49f30d15f1983d6a0a0b186fc9b31b73d90413b79d0b51f53244391702b7"
+        },
+        "exact_copy": true,
+        "baseline": null
+      },
+      {
+        "path": "engine/web/tests/scale0-gravity-slab.spec.js",
+        "kind": "added",
+        "current": {
+          "path": "engine/web/tests/scale0-gravity-slab.spec.js",
+          "bytes": 7761,
+          "sha256": "7777458eed1dc8dbc724eb0e9eb779729535d89413868f59a631d2f514bc37db"
+        },
+        "reviewed_draft": {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/tests/scale0-gravity-slab.spec.js",
+          "bytes": 7761,
+          "sha256": "7777458eed1dc8dbc724eb0e9eb779729535d89413868f59a631d2f514bc37db"
+        },
+        "exact_copy": true,
+        "baseline": null
+      }
+    ],
+    "harness_copy": {
+      "source": {
+        "path": "engine/web/tests/scale0-comprehensive-performance.spec.js",
+        "bytes": 26482,
+        "sha256": "6f9c7164cf59d1d479ac3b475f81d6171c2b2de1afbf303e91fce8a46cc02f53"
+      },
+      "accepted_draft": {
+        "path": "engine/build/scale0_time_gravity_v4_harness_20260908/engine/web/tests/scale0-comprehensive-performance.spec.js",
+        "bytes": 26482,
+        "sha256": "6f9c7164cf59d1d479ac3b475f81d6171c2b2de1afbf303e91fce8a46cc02f53"
+      },
+      "exact_copy": true
+    },
+    "time_baseline_records_checked": 9,
+    "gravity_baseline_records_checked": 12,
+    "baseline_scope_note": "The 9 and 12 dependency records overlap and are not summed as unique source files. Historical baseline bytes are checked against the Wave manifest and retained draft references; current modified files are checked against their accepted successor bytes.",
+    "completeness_boundary": "This compares the complete preceding frozen manifest scope plus exactly the four declared additions. It does not claim every unrelated checkout file is clean, or that a new complete candidate manifest has already been frozen."
+  },
+  "implementation_review_binding": {
+    "reviews": [
+      {
+        "path": "engine/docs/evidence/scale0-time-v4-draft-review-2026-09-08.json",
+        "bytes": 10129,
+        "sha256": "6d741388a07d8a61d11e00579c2a6ddc3fca6c48a9e466a6135b1e0d08eacaf7",
+        "reviewer": "/root/wave_component_v3_draft",
+        "status": "accepted_bounded_time_presentation_change_for_integration",
+        "independent_of_implementation": true
+      },
+      {
+        "path": "engine/docs/evidence/scale0-gravity-v4-draft-review-2026-09-08.json",
+        "bytes": 9077,
+        "sha256": "02955295c217c12b323036be9498612b347f3eb1bbb024f82af907f2ad2162b9",
+        "reviewer": "/root/time_gravity_cost_review",
+        "status": {
+          "controlled_integration": "ACCEPT_WITH_BROWSER_GATES_PENDING",
+          "implementation_blockers_found": [],
+          "production_release_approved": false,
+          "hardware_performance_approved": false,
+          "physics_recovery_approved": false
+        },
+        "independent_of_implementation": true
+      }
+    ],
+    "time_manifest": {
+      "path": "engine/build/scale0_time_v4_draft_20260908/manifest.json",
+      "bytes": 8348,
+      "sha256": "b3efe6ee465ba0850b20af3b9872f357a710ceb69865110c63f4d88e05e221f4"
+    },
+    "gravity_manifest": {
+      "path": "engine/build/scale0_gravity_v4_draft_20260908/draft-manifest.json",
+      "bytes": 4915,
+      "sha256": "e6234cfb3f6d1700b89dda5fd47b3c9ba51b6c8f30cd9a5452b9800abed3f3bd"
+    },
+    "accepted_review_manifest_hashes_match_archived_drafts": true,
+    "scope_boundary": "Time and Gravity authors cross-reviewed each other. Their accepted source hashes are preserved by this integration; this coordinator-level identity audit does not substitute for those implementation reviews."
+  },
+  "isolated_draft_preservation": [
+    {
+      "archive": {
+        "path": "engine/build/scale0_time_v4_draft_20260908.zip",
+        "bytes": 122888,
+        "sha256": "fd352e46fcc1be8557b1fc0d0e12882a02b7eda61d9584da75caa335e942402c"
+      },
+      "archive_entries": 34,
+      "checked_entries": 34,
+      "archive_mismatches": [],
+      "current_entries_checked": 34,
+      "current_mismatches": [],
+      "additional_entries": [],
+      "duplicate_or_unsafe_names": []
+    },
+    {
+      "archive": {
+        "path": "engine/build/scale0_gravity_v4_draft_20260908.zip",
+        "bytes": 138019,
+        "sha256": "68a3076bfe08ddc56f0eb1a30c432c5c32a9bd7383eff0a5bb45c27194879866"
+      },
+      "archive_entries": 25,
+      "checked_entries": 25,
+      "archive_mismatches": [],
+      "current_entries_checked": 25,
+      "current_mismatches": [],
+      "additional_entries": [],
+      "duplicate_or_unsafe_names": []
+    }
+  ],
+  "node_execution": {
+    "execution": {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-node-2026-09-08-execution.json",
+      "bytes": 1326,
+      "sha256": "1032c9e4e86ae5123d231d9d4d789edb5671e1f4680d5656bb8414c4d565a069"
+    },
+    "commands": [
+      [
+        "node",
+        "--test",
+        "--test-concurrency=4",
+        "engine/web/tests/scale0-gravity-slab.node.test.mjs",
+        "engine/web/tests/scale0-bounded-flux-reads.node.test.mjs",
+        "engine/web/tests/scale0-worker-lifecycle.node.test.mjs",
+        "engine/web/tests/scale0-time-retained-readout.node.test.mjs"
+      ],
+      [
+        "node",
+        "--test",
+        "--test-name-pattern=reader pin|unchanged publication|proxy slices and volume",
+        "engine/web/tests/scale0-runtime-audit.node.test.mjs"
+      ]
+    ],
+    "exit_codes": [
+      0,
+      0
+    ],
+    "log": {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-node-2026-09-08.log",
+      "bytes": 5729,
+      "sha256": "afc49250b1b520d7f7a17f638d76509f6641b7bef6adb72ddfe769f4125602ff"
+    },
+    "archive": {
+      "archive": {
+        "path": "engine/build/scale0_time_gravity_v4_node_results_20260908.zip",
+        "bytes": 2340,
+        "sha256": "36fd7e17fead4b139c91f9bcefa5b009682372904770a778723c1696e5ce68db"
+      },
+      "archive_entries": 1,
+      "checked_entries": 1,
+      "archive_mismatches": [],
+      "current_entries_checked": 1,
+      "current_mismatches": [],
+      "additional_entries": [],
+      "duplicate_or_unsafe_names": []
+    },
+    "reported_tests": [
+      52,
+      3
+    ],
+    "reported_pass": [
+      52,
+      3
+    ],
+    "reported_fail": [
+      0,
+      0
+    ],
+    "reported_cancelled": [
+      0,
+      0
+    ],
+    "reported_skipped": [
+      0,
+      0
+    ],
+    "total_passed": 55,
+    "independently_rerun": false,
+    "boundary": "The four-file integrated group and the three filtered shared-publication tests are distinct in this invocation. These 55 checks overlap earlier isolated evidence and are not added to prior test counts as independent new coverage."
+  },
+  "predecessor_preservation": {
+    "wave_source_archive": {
+      "archive": {
+        "path": "engine/build/scale0_wave_v3_candidate_20260908.zip",
+        "bytes": 8802892,
+        "sha256": "76cd720f90170775679fb1f6ff26468d14eb08e432be93d0688daa44203b716b"
+      },
+      "archive_entries": 2174,
+      "checked_entries": 2172,
+      "archive_mismatches": [],
+      "current_entries_checked": 0,
+      "current_mismatches": [],
+      "additional_entries": [
+        "engine/docs/PROGRAM_SCALE0_WAVE_CORRECTNESS_V3_2026-09-08.md",
+        "engine/docs/evidence/scale0-wave-v3-harness-review-2026-09-08.json"
+      ],
+      "duplicate_or_unsafe_names": []
+    },
+    "wave_preregistration_archive_snapshots_match": true,
+    "wave_evidence_seal": {
+      "path": "engine/docs/evidence/scale0-wave-v3-evidence-archive-2026-09-08.json",
+      "bytes": 5108,
+      "sha256": "284cd1f0993e82505431eb916af6d546e4cf04a6772de052580d9a77e82d9b70"
+    },
+    "wave_evidence_archive": {
+      "archive": {
+        "path": "engine/build/scale0_wave_v3_evidence_20260908.zip",
+        "bytes": 239577,
+        "sha256": "909f3825b9edee94e31c3d3e8626b49123465512eb7dab1cf7eea59d579c34f8"
+      },
+      "archive_entries": 20,
+      "checked_entries": 20,
+      "archive_mismatches": [],
+      "current_entries_checked": 0,
+      "current_mismatches": [],
+      "additional_entries": [],
+      "duplicate_or_unsafe_names": []
+    },
+    "wave_hardware_archive": {
+      "archive": {
+        "path": "engine/build/scale0_wave_v3_hardware_results_20260908.zip",
+        "bytes": 575456,
+        "sha256": "843d949e585349e1b40f3da87859d80b6fae0af73b16660be695fdfb95b14c26"
+      },
+      "archive_entries": 11,
+      "checked_entries": 11,
+      "archive_mismatches": [],
+      "current_entries_checked": 0,
+      "current_mismatches": [],
+      "additional_entries": [],
+      "duplicate_or_unsafe_names": []
+    },
+    "hardware_attachment_boundary": "All eleven Wave hardware members remain preserved in the immediate archive. Current transient test-results files may be replaced by the authorized integrated browser invocation; archive contents, not current transient paths, are the preservation object.",
+    "wave_disposition": "Wave v3 remains four passing hidden/collapsed rows and four visible callback failures, including two new worker threshold failures relative to v2. Those failures are not cleared by this Time/Gravity integration.",
+    "strict_manifests": [
+      {
+        "manifest": {
+          "path": "engine/docs/evidence/strict-stack-source-manifest-2026-09-05.json",
+          "bytes": 11378,
+          "sha256": "8d5ea8ed89b7e200f5c7ffdd5b0ea72bbbe358be8175fa7224f1ee0d1f3c1511"
+        },
+        "entries_checked": 69,
+        "mismatches": []
+      },
+      {
+        "manifest": {
+          "path": "engine/docs/evidence/strict-recovery-wave1-manifest-2026-09-05.json",
+          "bytes": 8095,
+          "sha256": "467cdd078dc5d1c7cfd8c4bff5f66d4522a0ec44362fccbbd42d583b2b362ea5"
+        },
+        "entries_checked": 44,
+        "mismatches": []
+      },
+      {
+        "manifest": {
+          "path": "engine/docs/evidence/strict-recovery-wave2-manifest-2026-09-05.json",
+          "bytes": 13583,
+          "sha256": "22c0332a57006bf17230548e98d6c319e51660fc302cebb9392e2192ba4bd6d9"
+        },
+        "entries_checked": 73,
+        "mismatches": []
+      }
+    ],
+    "strict_count_boundary": "The 69/44/73 scopes can overlap and are not 186 unique files.",
+    "six_wasm_artifacts_and_build_info_unchanged": [
+      {
+        "path": "engine/web/wasm/ftd_core.js",
+        "bytes": 136178,
+        "sha256": "8f0d5aa0420e81d5245a13866d8069833e0117df1418023749067abe63addec7"
+      },
+      {
+        "path": "engine/web/wasm/ftd_core.wasm",
+        "bytes": 931721,
+        "sha256": "6ad203d9202c400ca6b52c929387be4c6e90db084e5bc0d147e9560c8c1339a7"
+      },
+      {
+        "path": "engine/web/wasm/ftd_core64.js",
+        "bytes": 145014,
+        "sha256": "1b2a9af334046c2f16e4e78961c4017708c7cc6d7d40df3f83ceb4109c4e2624"
+      },
+      {
+        "path": "engine/web/wasm/ftd_core64.wasm",
+        "bytes": 962980,
+        "sha256": "be667edfdd2a364120c9b56946b4a617cb69b641c51b56394db5747bf5caaad3"
+      },
+      {
+        "path": "engine/web/wasm/ftd_core_mt.js",
+        "bytes": 158993,
+        "sha256": "1d5a7f3d37b6c6068e80a499ac61b4367f94d21f1590576acee95559d6740c4e"
+      },
+      {
+        "path": "engine/web/wasm/ftd_core_mt.wasm",
+        "bytes": 952655,
+        "sha256": "d30871aa97f771c7f864a1165acc2963ec826d50421435f3a9c62d867a22d69f"
+      },
+      {
+        "path": "engine/web/wasm/build_info.json",
+        "bytes": 5821,
+        "sha256": "33d3efb14fee4f3aa362f42afb4c02cefcb668178bb98c68d096aacbd7f94f0f"
+      }
+    ]
+  },
+  "pending_browser_and_freeze": {
+    "browser": {
+      "status": "FAILED_FIXTURE_IMPORT_BEFORE_ASSERTIONS",
+      "execution": {
+        "path": "engine/docs/evidence/scale0-time-gravity-v4-browser-2026-09-08-execution.json",
+        "bytes": 2133,
+        "sha256": "ede36a9414bb80677d94aa7d589665e2b9c29c45f822bf261be13eb7c62811de"
+      },
+      "commands": [
+        [
+          "node",
+          "node_modules/@playwright/test/cli.js",
+          "test",
+          "--workers=1",
+          "scale0-gravity-slab.spec.js",
+          "scale0-time.spec.js",
+          "scale0-gravity-overlay-audit.spec.js",
+          "--grep",
+          "mounted Gravity|lab clock ticks|compact native gravity slices|direct-WASM fused proxy|mounted direct-WASM consumes|worker sampler readiness|paused native replies"
+        ]
+      ],
+      "exit_codes": [
+        1
+      ],
+      "log": {
+        "path": "engine/docs/evidence/scale0-time-gravity-v4-browser-2026-09-08.log",
+        "bytes": 5449,
+        "sha256": "386d3fa2380ee9f248e8aeddc539814f4826daf2553cb84613fd35557b778465"
+      },
+      "passed": 6,
+      "failed": 1,
+      "failed_test": "mounted Gravity uses one batch for all planes, exact pixels and unavailable recovery without dense reads",
+      "error": "Failed to fetch dynamically imported module: http://localhost:8081/tests/fixtures/gravity-dense-v3-oracle.mjs",
+      "scope": "The five existing Gravity cases and actual Time panel case passed. The new slab case failed during its initial Promise.all imports, so its batch/pixel/recovery assertions were not executed and are not passed evidence.",
+      "immediate_archive": {
+        "archive": {
+          "path": "engine/build/scale0_time_gravity_v4_browser_results_20260908.zip",
+          "bytes": 181868,
+          "sha256": "8d8e077e92f601103457c447897b428f0ab434a457c9d4aef76f18b38b89f069"
+        },
+        "archive_entries": 5,
+        "checked_entries": 5,
+        "archive_mismatches": [],
+        "current_entries_checked": 0,
+        "current_mismatches": [],
+        "additional_entries": [],
+        "duplicate_or_unsafe_names": []
+      },
+      "artifact_note": "Five archived members retain the failure log, .last-run.json, screenshot, error-context and functional-browser trace. This actual functional trace is distinct from untraced hardware campaigns."
+    },
+    "browser_execution_by_reviewer": false,
+    "complete_candidate_freeze": "Blocked pending isolated fixture repair, independent review, explicit integration amendment and successful new browser result. A new full manifest/archive must then identify accepted successor bytes and preserve these original failure artifacts.",
+    "hardware": "The exact 16-row Time/Gravity campaign requires separate pre-run freeze acceptance and unchanged gates; no hardware result is approved here."
+  },
+  "required_amendment": "Any repaired Gravity test changes the accepted hash even if the path count remains eight changed/four added. Preserve this original integration review and failure archive; record the reviewed successor test bytes in a separate amendment.",
+  "blocking_next_gate_findings": [
+    {
+      "id": "TG4-BROWSER-01",
+      "finding": "New Gravity mounted browser fixture failed to import its oracle module before assertions.",
+      "disposition": "No candidate freeze or hardware admission until a reviewed isolated fixture repair, recorded integration amendment and successful affected browser run."
+    }
+  ],
+  "remaining_gates": [
+    "Repair and independently review the isolated Gravity browser fixture, record an integration amendment, then rerun the affected browser gate and preserve both outcomes.",
+    "Freeze the full successor candidate with immutable source/archive identities and preregistration/review snapshots.",
+    "Independently check that complete freeze before running the registered 16 hardware rows.",
+    "Retain raw timing vectors and all failure artifacts, independently reconstruct gates, and reconcile post-run source/archive hashes."
+  ],
+  "limitations": [
+    "Archived draft status fields preserve their original pending-review/browser wording; later acceptance is recorded in the independent reviews and integration evidence.",
+    "Reference observation batching and retained presentation do not establish shared microscopic sample time or strict physical recovery.",
+    "The predecessor source archive is unchanged although the live checkout now intentionally carries this reviewed successor.",
+    "No commit, deployment, universal FPS guarantee, canonical law adoption or release approval follows."
+  ],
+  "blocking_integration_findings": []
+}

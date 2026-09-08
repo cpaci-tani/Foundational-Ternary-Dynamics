@@ -1,0 +1,226 @@
+{
+  "schema": "scale0-wave-v3-harness-review-v1",
+  "reviewed_utc": "2026-09-08T05:58:41.851255+00:00",
+  "local_record_date": "2026-09-08",
+  "reviewer": "/root/bounded_worker_reads",
+  "author": "/root",
+  "status": "accepted_for_distinct_candidate_freeze_hardware_pending",
+  "release_approved": false,
+  "physical_recovery_approved": false,
+  "disposition": "Harness and preregistration are accepted after exception-cleanup and exact-size admission repairs. A new candidate freeze, independent identity check and eight-row hardware campaign remain required.",
+  "scope": {
+    "sources": [
+      {
+        "path": "engine/web/tests/scale0-comprehensive-performance.spec.js",
+        "size": 25066,
+        "sha256": "1df97e12082b620f44c446b3d3020d238c6ef671c2742f8ff8c55d1ecccc30b5",
+        "baseline_sha256": "c5a0e8b727011c9e0b3b40310ee26e6366823c4fbb9c83da2da89d2c9ec00f14",
+        "baseline_size": 24005,
+        "added_lines": 17,
+        "removed_lines": 8
+      },
+      {
+        "path": "engine/web/tests/scale0-ui-audit-probe.js",
+        "size": 12045,
+        "sha256": "b368a7f6327aa8544146972dffa1bc675a9781ec10b52fec0867110c5d7b86d1",
+        "baseline_sha256": "945649f253545e491c253e74a731d4d9e6949ec8e0e51c60fe73c0547d369a27",
+        "baseline_size": 11247,
+        "added_lines": 64,
+        "removed_lines": 49
+      }
+    ],
+    "preregistration": {
+      "path": "engine/docs/PROGRAM_SCALE0_WAVE_CORRECTNESS_V3_2026-09-08.md",
+      "size": 9173,
+      "sha256": "4c6746a2d638e860b9343e4e9789d7e937709f9a4570968fc25b6b3166a688db"
+    },
+    "baseline_manifest": {
+      "path": "engine/docs/evidence/scale0-performance-v2-candidate-manifest-2026-09-07.json",
+      "size": 409619,
+      "sha256": "f75c21d37a620a18d48541732815d2f767f870b490ed6912125a3a75be7e1ebd"
+    },
+    "baseline_identity": "8ad614edd7616b43622b437d29a5d3800a614f35ad4d9da9fb3226f725fd0177",
+    "baseline_archive": {
+      "path": "engine/build/scale0_performance_v2_candidate_20260907.zip",
+      "size": 10208612,
+      "sha256": "3278a805f0ac37156036925dbae4ffe7ddcd20a9a7ff012c9e86b75ae252503f"
+    },
+    "baseline_archive_hash_matches": true,
+    "excluded": "Wave numerical implementation and production readout correctness were reviewed by another agent; this reviewer does not reapprove those sources."
+  },
+  "registered_matrix": {
+    "profile": "wave-v3",
+    "kind": "panels",
+    "preparation": [
+      {
+        "id": "wave-lab",
+        "scenario": "s0-field-rf-lattice-wave"
+      }
+    ],
+    "states": [
+      "docked",
+      "floated",
+      "collapsed",
+      "hidden"
+    ],
+    "sizes_in_required_order": [
+      33,
+      97
+    ],
+    "backends": [
+      "direct WASM L33",
+      "worker WASM L97"
+    ],
+    "logical_rows": 8,
+    "physics_playing_all_states": true,
+    "candidate_identity": "Required lowercase 64-hex FTD_AUDIT_CANDIDATE_ID, embedded in each new report.",
+    "identity_boundary": "The harness validates identifier shape, not that it matches the current bytes. Independent pre-run manifest/archive verification and post-run reconciliation must bind the identifier to the measured candidate.",
+    "outputs": [
+      {
+        "path": "engine/docs/evidence/scale0-hardware-wave-v3-panels-L33-2026-09-08.json",
+        "absent_at_review": true
+      },
+      {
+        "path": "engine/docs/evidence/scale0-hardware-wave-v3-panels-L97-2026-09-08.json",
+        "absent_at_review": true
+      }
+    ],
+    "existing_output_behavior": "Refuses overwrite; existing profile dates and output names remain unchanged."
+  },
+  "gate_comparison": {
+    "complete_normalized_failure_block_identical_to_v2": true,
+    "frame_intervals_min": 600,
+    "duration_ms_min": 12000,
+    "effective_fps_min": 59.5,
+    "frame_p95_ms_max": 17,
+    "frame_p99_ms_max": 20,
+    "intervals_over_33_4ms_max": 0,
+    "long_tasks_max": 0,
+    "callback_p95_ms_max": 2,
+    "callback_max_ms_max": 8,
+    "visible_action_samples": 10,
+    "action_next_raf_p95_ms_max": 50,
+    "other_checks_unchanged": [
+      "Hardware renderer and visible document",
+      "Long Tasks instrumentation support",
+      "Same owner and load generation",
+      "Authoritative ready WASM and expected qualification",
+      "Lifecycle equality",
+      "Safe clocks and advancing playing state",
+      "Correct panel mount before and after actions",
+      "No hidden/collapsed canvas work",
+      "Instrumented runtime errors"
+    ],
+    "owner_read_accounting": "Only standalone ownerRead diagnostic summaries are excluded; nested native calls remain inside inclusive interface callback timing.",
+    "existing_workload_flow": "Original scenario load, availability check, warmup, four-state transitions, running-settled wait, sample window and paired actions are unchanged."
+  },
+  "probe_contract": {
+    "default": "Without retainTimingSamples the nominal report matches frozen v2 exactly in controlled execution, and no timingSamples property is added.",
+    "optional_output": "timingSamples.frames and each timingSamples.callbacks[id] are independent Array.slice copies of the collected vectors, with original order preserved.",
+    "copy_order": "running=false and stoppedAt recorded, existing asynchronous zero-delay drain, existing summary/report construction, optional copies, finally restoration. No new timing collection or callback cadence is introduced.",
+    "summary_rule": "Nearest rank ceil(n*q)-1 with clipping; sorted-sum mean. Raw frame vectors also reconstruct inverse-mean FPS and >20/>33.4 counts.",
+    "cleanup": "Report construction and copies are inside try/finally. Restoration runs on raw-copy failure; a nested finally clears the global only when it still refers to this probe, including when restoration itself throws.",
+    "async_boundary": "As in v2, already installed callback hooks can collect during the existing zero-delay drain after stoppedAt. The copied vectors include exactly the data summarized after that drain. This preserves the existing contract; it is not a new claim that every callback timestamp lies before stoppedAt.",
+    "retention_limit": "Raw arrays are copied after measurement, so their allocation does not enter the already recorded callback durations or frame summary; report serialization/retention still consumes memory after the window."
+  },
+  "findings_and_repairs": [
+    {
+      "finding": "New raw-copy failure could bypass restoration and leave hooks, listeners and the global probe installed.",
+      "independent_reproduction": "Injected failure on the second frames.slice call, after summary creation, left the subscriber wrapped, two listeners active and the global uncleared.",
+      "owner_fix": "Wrap asynchronous stop/report/copy/return in try/finally; restore and conditionally clear the same global in nested finally.",
+      "reaudit": "Independent frame-copy and callback-copy failures now reject while restoring hooks/listeners and clearing the probe."
+    },
+    {
+      "finding": "Initial wave-v3 size validation admitted subsets and duplicates despite the single-invocation eight-row registration.",
+      "owner_fix": "wave-v3 requires normalized sizes.join(\",\") === \"33,97\".",
+      "reaudit": "Subsets, reverse order, duplicates, extra and invalid sizes reject; legacy profile size options remain accepted."
+    }
+  ],
+  "independent_checks": {
+    "execution": "Controlled Node vm execution of actual current probe source versus the frozen v2 source; timers, DOM and RAF are minimal stubs. No browser or hardware campaign was launched. No permanent test file was added.",
+    "syntax": [
+      {
+        "file": "engine/web/tests/scale0-comprehensive-performance.spec.js",
+        "command": "node --check",
+        "exit_code": 0
+      },
+      {
+        "file": "engine/web/tests/scale0-ui-audit-probe.js",
+        "command": "node --check",
+        "exit_code": 0
+      }
+    ],
+    "probe_cases": {
+      "default_matches_frozen": true,
+      "raw_vectors_reconstruct_summaries_and_keep_owned_copies": true,
+      "raw_frame_copy_throw_restores": true,
+      "raw_callback_copy_throw_restores": true,
+      "restore_throw_clears_same_global": true,
+      "replacement_global_not_cleared": true,
+      "existing_asynchronous_drain_behavior_matches": true
+    },
+    "admission_cases": {
+      "default_wave_33_97_accepted": true,
+      "invalid_size_identity_or_kind_cases_rejected": 12,
+      "legacy_profile_size_cases_accepted": 9,
+      "wave_report_date": "2026-09-08",
+      "legacy_report_date": "2026-09-07"
+    },
+    "manufactured_numeric_fixture": {
+      "frame_samples": [
+        16,
+        17,
+        20,
+        33.5
+      ],
+      "frame_mean_ms": 21.625,
+      "frame_p95_ms": 33.5,
+      "frame_p99_ms": 33.5,
+      "over20_count": 1,
+      "over33_4_count": 1,
+      "callback_samples": [
+        0.1,
+        0.2,
+        2,
+        8.1
+      ],
+      "callback_p95_ms": 8.1
+    },
+    "boundaries": [
+      "The controlled probes establish these code paths, not real browser timing.",
+      "Arbitrary host restoration functions throwing can still leave partial restoration; the global cleanup is protected and the exception propagates.",
+      "Overlapping start/stop transactions are not certified; the registered harness serially awaits stop before starting another measurement."
+    ]
+  },
+  "legacy_compatibility": {
+    "profiles": [
+      "baseline",
+      "repair-v1",
+      "repair-v2"
+    ],
+    "selection_sizes_dates_outputs_gates_and_raw_retention_unchanged": true,
+    "additive_metadata": "The shared report object now includes candidateIdentity, null when no environment value is supplied.",
+    "failure_semantics": "Exception cleanup is strengthened for all profiles; this is a deliberate recovery-path change, while nominal default probe records remain unchanged."
+  },
+  "preregistration_review": {
+    "status": "accepted",
+    "verified": [
+      "Exactly Wave Lab/RF preparation across four states and two backend sizes",
+      "Intentional lane/zero/availability correctness changes distinguished from optimizations",
+      "No inferred performance improvement from source arithmetic changes",
+      "Open owner/sample-clock and direct missing-binding boundaries remain explicit",
+      "Overlapping implementation test counts are not summed as unique evidence",
+      "Requires frozen identity, same thresholds and independent raw-vector reconstruction",
+      "Requires log/raw report/transient attachment archive before another Playwright run on either success or failure",
+      "No renewal of other seven v2 callback failures or general physical recovery approval"
+    ],
+    "implementation_results": "The program links coordinator-reported 43 integrated Node and five mounted-browser passes; this review did not rerun or independently reapprove those production checks."
+  },
+  "remaining_before_hardware": [
+    "Freeze distinct complete candidate source/archive and snapshots.",
+    "Independently verify that identity and require the same value in both reports.",
+    "Run the registered eight rows serially and preserve transient outputs before another browser invocation.",
+    "Independently reconstruct raw frame/callback/action summaries and verify post-run candidate hashes."
+  ],
+  "unresolved_harness_blockers": []
+}

@@ -1,0 +1,12 @@
+{
+  "schema": "scale0-time-gravity-v4-harness-integration-v1",
+  "integratedUtc": "2026-09-08T06:25:05.103709+00:00",
+  "source": "engine/web/tests/scale0-comprehensive-performance.spec.js",
+  "baselineSha256": "1df97e12082b620f44c446b3d3020d238c6ef671c2742f8ff8c55d1ecccc30b5",
+  "candidateSha256": "6f9c7164cf59d1d479ac3b475f81d6171c2b2de1afbf303e91fce8a46cc02f53",
+  "scope": "Reviewed isolated harness copied to production after baseline verification; new profile and compact failure display, unchanged gate block and measurement loop.",
+  "independentReview": "engine/docs/evidence/scale0-time-gravity-v4-harness-review-2026-09-08.json",
+  "independentReviewSha256": "d09e31e337c5afe9e9a6369e8e0ab28f858124f26fd4cf4fd0b87c368293b061",
+  "sourceBaselineMatched": true,
+  "waveV3EvidenceSeal": "engine/docs/evidence/scale0-wave-v3-evidence-archive-2026-09-08.json"
+}

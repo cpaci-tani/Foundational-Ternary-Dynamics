@@ -1,0 +1,498 @@
+{
+  "schema": "scale0-performance-v2-freeze-review-v1",
+  "reviewed_utc": "2026-09-08T04:15:34.291242+00:00",
+  "local_record_date": "2026-09-07",
+  "reviewer": "/root/bounded_worker_reads",
+  "status": "accepted_for_registered_hardware_campaign_execution",
+  "disposition": "Frozen source/archive identity and prerequisite evidence accepted at the declared scope. Hardware performance remains unmeasured for this candidate at review time.",
+  "independence": {
+    "freeze_author": "/root",
+    "freeze_reviewer": "/root/bounded_worker_reads",
+    "method": "Independent read-only hashes and manifest comparisons; no builds, tests, browser sessions or hardware campaigns executed in this freeze review. Only this new review artifact was written.",
+    "implementation_conflict": "Reviewer implemented bounded worker reads and P1. That implementation was independently audited by /root/spectrum_async_implementation; this freeze check does not self-approve its physics or performance."
+  },
+  "candidate": {
+    "path": "engine/docs/evidence/scale0-performance-v2-candidate-manifest-2026-09-07.json",
+    "size": 409619,
+    "sha256": "f75c21d37a620a18d48541732815d2f767f870b490ed6912125a3a75be7e1ebd",
+    "identity": "8ad614edd7616b43622b437d29a5d3800a614f35ad4d9da9fb3226f725fd0177",
+    "identity_encoding": "SHA256 of files array JSON sorted keys, compact separators, UTF8",
+    "recomputed_identity_matches": true,
+    "files": 2171,
+    "source_dirty": true,
+    "git_head_at_freeze": "b52e0aeac23a13b9d27c2542374a85865483dbbb",
+    "frozen_utc": "2026-09-08T04:08:30.325208+00:00",
+    "archive": {
+      "path": "engine/build/scale0_performance_v2_candidate_20260907.zip",
+      "size": 10208612,
+      "sha256": "3278a805f0ac37156036925dbae4ffe7ddcd20a9a7ff012c9e86b75ae252503f"
+    },
+    "archive_hash_matches": true,
+    "current_source_drift": [],
+    "archive_content_drift": [],
+    "missing_entries": [],
+    "duplicate_entries": [],
+    "unsafe_paths": [],
+    "archive_entries": 2174,
+    "embedded_manifest": "_candidate_manifest.json",
+    "embedded_manifest_matches": "All keys match external manifest except archive_sha256, omitted before the enclosing archive was hashed.",
+    "preregistration_snapshots": [
+      {
+        "path": "engine/docs/PROGRAM_SCALE0_PERFORMANCE_V2_2026-09-07.md",
+        "sha256": "d20cd24b3e2223fafefb168ce017bc3696703c66842e3972728c1ceb82a7c7e4",
+        "scope": "Frozen archive snapshot; live disposition may be appended later",
+        "archive_matches": true,
+        "current_matches_at_review": true
+      },
+      {
+        "path": "engine/docs/evidence/scale0-performance-v2-independent-review-2026-09-07.json",
+        "sha256": "f6d6bd97202c3e0b4a4d7d5a432bc8398945904609e36bbcc762f7c6a804ffe7",
+        "scope": "Frozen archive snapshot; live disposition may be appended later",
+        "archive_matches": true,
+        "current_matches_at_review": true
+      }
+    ]
+  },
+  "baseline": {
+    "path": "engine/docs/evidence/native-observation-v3-candidate-v2-manifest-2026-09-07.json",
+    "size": 401945,
+    "sha256": "8027af4f2b1b39f176f15e26a30dee252b179e8580288b35898bab7b82da59bd",
+    "identity": "a833ab9bc9c163872edd554cd349453c02a8c5d934a4d9bfbdac423c9267167b",
+    "files": 2160,
+    "recomputed_identity_matches": true,
+    "verification": {
+      "path": "engine/docs/evidence/native-observation-v3-verification-2026-09-07.json",
+      "size": 13434,
+      "sha256": "53365769cce728d5b83e82b522a742dd5c319a76e917514aa0e78fedd4bfae87"
+    },
+    "changed_count": 15,
+    "added_count": 11,
+    "removed_files": [],
+    "declared_change_lists_match": true,
+    "changed_files": [
+      {
+        "path": "engine/web/js/bridge/flux-publication.classic.js",
+        "size": 5993,
+        "sha256": "4974dc66eb7d94b526b36719a5fd7be7962417895d9396e7b5ebb329648e4d69"
+      },
+      {
+        "path": "engine/web/js/bridge/wasm-bridge-proxy.js",
+        "size": 73815,
+        "sha256": "a2e151ed349978e1dafd3105247f71af45ba84e9fa5f9017e94e5141aa501536"
+      },
+      {
+        "path": "engine/web/js/scales/scale0/ui/overlays/conservation-micropanel.js",
+        "size": 24550,
+        "sha256": "544ac82ea11d1811af7d1a8f2c092b485531ed3854594acde8cb8ce781ce273c"
+      },
+      {
+        "path": "engine/web/js/scales/scale0/ui/overlays/p1-observables/anisotropy.js",
+        "size": 11717,
+        "sha256": "fc674e4b85447c1b323bebb3a0398d842b5bedf46b612a7a1e1c76f4259c96f1"
+      },
+      {
+        "path": "engine/web/js/scales/scale0/ui/overlays/spectrum-panel.js",
+        "size": 38202,
+        "sha256": "ab28bacdc90baea764ef49db3a091aa62da6d380885d5d68aacc464aa5a998b7"
+      },
+      {
+        "path": "engine/web/js/scales/scale0/ui/overlays/time-panel.js",
+        "size": 47776,
+        "sha256": "069c23c52de53cb68052cc693e9e65e767001bbc6987a6ce5e47ba41387dd4bd"
+      },
+      {
+        "path": "engine/web/js/scales/scale0/ui/overlays/wave-lab/wave-info.js",
+        "size": 32252,
+        "sha256": "7283f20e398edad768f7c2f4dd734943d8d9c8715ba3b7adfc279ad05ceadb24"
+      },
+      {
+        "path": "engine/web/js/viewport/field-quantum-renderer.js",
+        "size": 30844,
+        "sha256": "44494428df2a9451a4748da8c8353894762917e8199d54400089443058045378"
+      },
+      {
+        "path": "engine/web/tests/scale0-comprehensive-performance.spec.js",
+        "size": 24005,
+        "sha256": "c5a0e8b727011c9e0b3b40310ee26e6366823c4fbb9c83da2da89d2c9ec00f14"
+      },
+      {
+        "path": "engine/web/tests/scale0-conservation-panel.spec.js",
+        "size": 21409,
+        "sha256": "4d0814d7604d976ad127d2f6ebcc4e6fa375f58ccdab99b263523c091b8fbc1d"
+      },
+      {
+        "path": "engine/web/tests/scale0-overlay-render-analysis.node.test.mjs",
+        "size": 12580,
+        "sha256": "3f08c94a11515567d966027f7325ae05781f55337739766f56c5e053b7e25db5"
+      },
+      {
+        "path": "engine/web/tests/scale0-panel-redundant-reads.node.test.mjs",
+        "size": 7344,
+        "sha256": "37f68802160e460559fbe89f0ff7c036781b4bec8744d0f6bd318c86ae0c9264"
+      },
+      {
+        "path": "engine/web/tests/scale0-spectrum-lifecycle.node.test.mjs",
+        "size": 14543,
+        "sha256": "39d4840b3762beb807934579499b9d6e2d2766d5bf2de114867891f47574b838"
+      },
+      {
+        "path": "engine/web/tests/scale0-spectrum-provenance.node.test.mjs",
+        "size": 7403,
+        "sha256": "e9d3035cf6f0f20ce1fc2ff43894719b2c8cebd6938859baa21063b7eed1ee5f"
+      },
+      {
+        "path": "engine/web/tests/scale0-time.spec.js",
+        "size": 7441,
+        "sha256": "ebc0efe2cba7867fe1600c782f96ec4493b466cb4d631db363866aa6c9187871"
+      }
+    ],
+    "added_files": [
+      {
+        "path": "engine/web/js/scales/scale0/analysis/spectrum-analysis-client.js",
+        "size": 7165,
+        "sha256": "2be201c8035cef6926b41357aaec2264d846b6ce9fd8cd07323b875f54caa7b7"
+      },
+      {
+        "path": "engine/web/js/scales/scale0/analysis/spectrum-analysis-core.js",
+        "size": 3072,
+        "sha256": "d3e82c5bac8c1ee7352fc3ee147b8d5298dbdfa772a2c72aef96b040c237f5d3"
+      },
+      {
+        "path": "engine/web/js/scales/scale0/analysis/spectrum-analysis-worker.js",
+        "size": 839,
+        "sha256": "a83b3ddaa82cbfe00fd3c0b1502110abd7878850921d057c8b1972902e7e7d6d"
+      },
+      {
+        "path": "engine/web/js/ui/panels/retained-readout.js",
+        "size": 2440,
+        "sha256": "1122665004d5472b83f70c6ad92aea3173686cd6aa54260cc071c1c574d629e5"
+      },
+      {
+        "path": "engine/web/tests/scale0-bounded-flux-reads.node.test.mjs",
+        "size": 19635,
+        "sha256": "ff5e22677425e8ddabda9c31b01bd6320a740755c3c052df1eded6fa426b9a07"
+      },
+      {
+        "path": "engine/web/tests/scale0-damping-performance-preparation.js",
+        "size": 6410,
+        "sha256": "0b5814e16bda40204c443c64ae6312e957c56284d34f1ce17a38c5478e6fdaf5"
+      },
+      {
+        "path": "engine/web/tests/scale0-damping-performance-preparation.spec.js",
+        "size": 3778,
+        "sha256": "f28eb69eb65135baaffe78537ef2f135dea46d76164f55f4bb1bfb7c147211f0"
+      },
+      {
+        "path": "engine/web/tests/scale0-retained-readout.spec.js",
+        "size": 11847,
+        "sha256": "8b74eb88a53b37acf3b0696b3c53fd8b452291bb4895736d70eac15371972037"
+      },
+      {
+        "path": "engine/web/tests/scale0-spectrum-async.node.test.mjs",
+        "size": 12146,
+        "sha256": "a4dfe4bf90e51b1449ae3ebdb53510b6df366d7f26d4206ecc3819fbd4f7d512"
+      },
+      {
+        "path": "engine/web/tests/scale0-spectrum-browser-client.spec.js",
+        "size": 2907,
+        "sha256": "2d9c68a30cb7b4e984bea0804f0a85234df51b88bd0e2e84783a5765af67b0b2"
+      },
+      {
+        "path": "engine/web/tests/scale0-time-retained-readout.node.test.mjs",
+        "size": 10355,
+        "sha256": "74d4c66346f48c484d39e50aa62a3babf42eba1d27879237a7506edca66ca707"
+      }
+    ]
+  },
+  "strict_source_preservation": {
+    "sets": [
+      {
+        "path": "engine/docs/evidence/strict-stack-source-manifest-2026-09-05.json",
+        "size": 11378,
+        "sha256": "8d5ea8ed89b7e200f5c7ffdd5b0ea72bbbe358be8175fa7224f1ee0d1f3c1511",
+        "checked_files": 69,
+        "source_drift": [],
+        "included_in_new_candidate": 40,
+        "historical_basis": "engine/docs/evidence/native-observation-v3-verification-2026-09-07.json strict_preservation"
+      },
+      {
+        "path": "engine/docs/evidence/strict-recovery-wave1-manifest-2026-09-05.json",
+        "size": 8095,
+        "sha256": "467cdd078dc5d1c7cfd8c4bff5f66d4522a0ec44362fccbbd42d583b2b362ea5",
+        "checked_files": 44,
+        "source_drift": [],
+        "included_in_new_candidate": 19,
+        "historical_basis": "engine/docs/evidence/native-observation-v3-verification-2026-09-07.json strict_preservation"
+      },
+      {
+        "path": "engine/docs/evidence/strict-recovery-wave2-manifest-2026-09-05.json",
+        "size": 13583,
+        "sha256": "22c0332a57006bf17230548e98d6c319e51660fc302cebb9392e2192ba4bd6d9",
+        "checked_files": 73,
+        "source_drift": [],
+        "included_in_new_candidate": 32,
+        "historical_basis": "engine/docs/evidence/native-observation-v3-verification-2026-09-07.json strict_preservation"
+      }
+    ],
+    "prior_manifest_hash_links_match": true,
+    "status": "All 69/44/73 manifest-listed current files match historical byte lengths and SHA256 values; these sets can overlap and counts are not summed as unique files.",
+    "scope": "Source preservation only; no new causal, conservation, backend-parity or physical-recovery certificate."
+  },
+  "wasm_preservation": {
+    "files": [
+      {
+        "path": "engine/web/wasm/build_info.json",
+        "size": 5821,
+        "sha256": "33d3efb14fee4f3aa362f42afb4c02cefcb668178bb98c68d096aacbd7f94f0f",
+        "matches_baseline": true,
+        "matches_current_and_archive": true
+      },
+      {
+        "path": "engine/web/wasm/ftd_core.js",
+        "size": 136178,
+        "sha256": "8f0d5aa0420e81d5245a13866d8069833e0117df1418023749067abe63addec7",
+        "matches_baseline": true,
+        "matches_current_and_archive": true
+      },
+      {
+        "path": "engine/web/wasm/ftd_core.wasm",
+        "size": 931721,
+        "sha256": "6ad203d9202c400ca6b52c929387be4c6e90db084e5bc0d147e9560c8c1339a7",
+        "matches_baseline": true,
+        "matches_current_and_archive": true
+      },
+      {
+        "path": "engine/web/wasm/ftd_core64.js",
+        "size": 145014,
+        "sha256": "1b2a9af334046c2f16e4e78961c4017708c7cc6d7d40df3f83ceb4109c4e2624",
+        "matches_baseline": true,
+        "matches_current_and_archive": true
+      },
+      {
+        "path": "engine/web/wasm/ftd_core64.wasm",
+        "size": 962980,
+        "sha256": "be667edfdd2a364120c9b56946b4a617cb69b641c51b56394db5747bf5caaad3",
+        "matches_baseline": true,
+        "matches_current_and_archive": true
+      },
+      {
+        "path": "engine/web/wasm/ftd_core_mt.js",
+        "size": 158993,
+        "sha256": "1d5a7f3d37b6c6068e80a499ac61b4367f94d21f1590576acee95559d6740c4e",
+        "matches_baseline": true,
+        "matches_current_and_archive": true
+      },
+      {
+        "path": "engine/web/wasm/ftd_core_mt.wasm",
+        "size": 952655,
+        "sha256": "d30871aa97f771c7f864a1165acc2963ec826d50421435f3a9c62d867a22d69f",
+        "matches_baseline": true,
+        "matches_current_and_archive": true
+      }
+    ],
+    "six_loaders_and_binaries_plus_build_info_unchanged": true,
+    "build_info_bundle_identity": "97dbc15f61ba8952e68be8012279e50bf0bc650e5806f6bb5ca705952df5d4e3",
+    "scope": "Bytes match both the baseline and current frozen archive; WASM execution was not rerun by this reviewer."
+  },
+  "prior_archive_preservation": [
+    {
+      "manifest": {
+        "path": "engine/docs/evidence/native-observation-v3-candidate-v2-manifest-2026-09-07.json",
+        "size": 401945,
+        "sha256": "8027af4f2b1b39f176f15e26a30dee252b179e8580288b35898bab7b82da59bd"
+      },
+      "archive": {
+        "path": "engine/build/native_observation_v3_candidate_v2_20260907.zip",
+        "size": 8755103,
+        "sha256": "a5eb995ba69787a1a2f445b0a3be68462e33bd56afeb79838fa855caf523b8d9"
+      },
+      "matches_historical_manifest": true
+    },
+    {
+      "manifest": {
+        "path": "engine/docs/evidence/scale0-correctness-candidate-manifest-2026-09-07.json",
+        "size": 403426,
+        "sha256": "97a5b19f61b7aec4716db7356691b953c0fd9cfced2ade45b592536ba01bb3b3"
+      },
+      "archive": {
+        "path": "engine/build/scale0_audit_correctness_candidate_20260907.zip",
+        "size": 8704650,
+        "sha256": "d174323bf5e5a938af0e56dd8ede4d856f56333b7b31e632d71aaa7837a6e60c"
+      },
+      "matches_historical_manifest": true
+    },
+    {
+      "manifest": {
+        "path": "engine/docs/evidence/scale0-correctness-candidate-v2-manifest-2026-09-07.json",
+        "size": 398988,
+        "sha256": "e9a63609e5c15f7e43e7e1649abd0fc931cfb4c1a2a2061ab250619df0d4ed56"
+      },
+      "archive": {
+        "path": "engine/build/scale0_audit_correctness_candidate_v2_20260907.zip",
+        "size": 8704811,
+        "sha256": "e8d0797ce62b7e845ccc928bc64ba0e003f9051d0cec2a8d847fd2a29ed8bb60"
+      },
+      "matches_historical_manifest": true
+    },
+    {
+      "manifest": {
+        "path": "engine/docs/evidence/scale0-transport-candidate-manifest-2026-09-07.json",
+        "size": 401042,
+        "sha256": "96b8280efd5e4827e7fb5a899aebacdd6883f8768f097e94e35bcc7ec5cfdbeb"
+      },
+      "archive": {
+        "path": "engine/build/scale0_transport_candidate_20260907.zip",
+        "size": 8718603,
+        "sha256": "a5200558dc8912f81d0d2585cb8e6893521b6bd016a7f2ef79da851aa3e6139b"
+      },
+      "matches_historical_manifest": true
+    },
+    {
+      "manifest": {
+        "path": "engine/docs/evidence/native-observation-v3-candidate-manifest-2026-09-07.json",
+        "size": 406663,
+        "sha256": "3ec4dcd53446786dd9f66003e2e91b0c172518d430cf887717ad664fc293a44f"
+      },
+      "archive": {
+        "path": "engine/build/native_observation_v3_candidate_20260907.zip",
+        "size": 8755021,
+        "sha256": "cff9a05c32240d1feb902bfcb01cb7b21c01989f7ee550245ae44e6c3e7bd8aa"
+      },
+      "matches_historical_manifest": true
+    }
+  ],
+  "prerequisite_logs": {
+    "evidence": [
+      {
+        "path": "engine/docs/evidence/scale0-performance-v2-node-2026-09-07.log",
+        "size": 11512,
+        "sha256": "0cd95bbf3297b506b2c7ce192623b726208a96231d656fe9c5380b0a3b8357e1"
+      },
+      {
+        "path": "engine/docs/evidence/scale0-performance-v2-damping-time-final-2026-09-07.log",
+        "size": 934,
+        "sha256": "b72956bd7ddd1970e4583927c291d98f66590f83d1d5e789fe3d14f3fd5e09b4"
+      },
+      {
+        "path": "engine/docs/evidence/scale0-performance-v2-browser-functional-2026-09-07.log",
+        "size": 6661,
+        "sha256": "e9139a07b1d72d2a1e59dbc9f2894863d5bc5d6b70e4e808879dd705e7221359"
+      },
+      {
+        "path": "engine/docs/evidence/scale0-performance-v2-time-caption-regression-2026-09-07.log",
+        "size": 3454,
+        "sha256": "e13b553affbafd158a87cecff6e9847996abdacc833ae59c827c1950093fb6e9"
+      }
+    ],
+    "method": "Read coordinator-produced log bytes; these checks were not rerun during this freeze audit.",
+    "node": {
+      "tests": 125,
+      "passed": 125,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "duration_ms": 372.1146
+    },
+    "final_focused_browser": {
+      "passed": 3,
+      "failed": 0,
+      "reported_duration": "1.4m",
+      "cases": [
+        "Damping modified-profile actual UI preparation at direct WASM L33",
+        "Damping modified-profile actual UI preparation at worker WASM L97",
+        "Time live clock, twin-clock delta and historical finite-size residual card"
+      ]
+    },
+    "earlier_integrated_browser": {
+      "passed": 11,
+      "failed": 1,
+      "skipped": 1,
+      "reported_duration": "2.7m",
+      "failure": "Stale Time IR convergence caption expectation; preserved original failure and subsequent tooltip-attribute fixture failure are superseded for that case by the final focused pass.",
+      "skip": "Direct-only vacuum diagnostic with a worker-owned scene remains skipped; no replacement physical-energy certification."
+    }
+  },
+  "affected_gate_reviews": {
+    "spectrum": {
+      "reviewer": "/root/bounded_worker_reads",
+      "status": "accepted_after_visibility_and_timer_receiver_repairs",
+      "independent_node_passed": 43,
+      "verified": [
+        "Numerical FFT/topology modules unchanged against baseline archive",
+        "Exact owned transfer copies preserve bridge caches and completed-empty zero observations",
+        "Separate source/generation/request fences and unknown clocks retained",
+        "One active and one latest pending job; absolute Deep deadline",
+        "Live mailbox publication uses coordinator cadence; repeated visible notifications are inert",
+        "Default browser timer wrappers preserve global receiver; coordinator actual-browser regression passed"
+      ],
+      "boundaries": [
+        "No common same-tick cross-field state inferred",
+        "No full-lattice trajectory or continuum certificate",
+        "No hardware FPS result inferred from asynchronous dispatch"
+      ]
+    },
+    "bounded_reads": {
+      "author": "/root/bounded_worker_reads",
+      "independent_reviewer": "/root/spectrum_async_implementation",
+      "status": "accepted_after_acquire_exception_pin_release_repair",
+      "independent_node_passed": 52,
+      "additional_independent_probes": 4,
+      "scope": "Owned exact N-squared planes and at most 128 Float64 cell observations under retained pin; original P1 numerical operations and direct/reference fallback preserved. Pin stress remains sampled."
+    },
+    "damping_preparation": {
+      "status": "accepted_at_registered_modified_reference_scope",
+      "profile": "damping-zones-modified-v1",
+      "scenario": "s0-seed-sloop",
+      "actual_ui_mutations": [
+        "damping=true",
+        "selective_damping=true"
+      ],
+      "canonical_truth_terms_checked": 46,
+      "baseline_all_false": true,
+      "exact_changed_terms": 2,
+      "expected_qualification": "suspended",
+      "prepared_markers": 12,
+      "draw_vertices": 288,
+      "qualification_anchor_preserved": true,
+      "owner_and_lifecycle_preserved": true,
+      "measurement_qualification_and_lifecycle_bound_to_preparation": true,
+      "scope": "Four repair-v2 logical rows only. No within-contract original scenario claim; 12-marker proxy display workload does not certify the 100-glyph cap or physical damping recovery."
+    },
+    "time_browser_fixture": {
+      "status": "accepted_test_only_repair",
+      "caption": "Historical finite-size residual",
+      "caveat": "Does not establish exact covariance or strict-record continuum recovery",
+      "expected_charts": 2,
+      "tooltip_reader": "data-ui-tooltip, falling back to title",
+      "scope": "The normalized renderCardD implementation matches the baseline; numerical thresholds and scientific caveat are preserved."
+    }
+  },
+  "registered_next_gate": {
+    "profile": "repair-v2",
+    "panels": 144,
+    "overlays": 144,
+    "total_logical_rows": 288,
+    "backends": [
+      "direct WASM L33",
+      "worker WASM L97"
+    ],
+    "damping_modified_rows": 4,
+    "hardware_status": "unmeasured_at_this_review",
+    "thresholds_changed": false,
+    "required_evidence": [
+      "Hardware renderer provenance",
+      "Foreground frame distribution and long tasks",
+      "Inclusive callback duration",
+      "Interaction latency",
+      "Owner, qualification, reset/disposal and lifecycle assertions",
+      "Post-campaign candidate source identity check"
+    ]
+  },
+  "limitations": [
+    "This is a dirty local candidate archive, not a clean release or canonical law adoption.",
+    "Historical preregistration and independent-review snapshots remain immutable in the archive; their pending statuses record the earlier stage. This new artifact records the resolved freeze prerequisites.",
+    "No new physics, all-scale dynamics recovery, general causal closure, continuum limit or universal 60 FPS claim follows from this review.",
+    "Freeze hashes describe bytes read at the recorded review time; later source mutation requires revalidation before attributing campaign evidence."
+  ],
+  "unresolved_blockers_for_campaign_start": []
+}

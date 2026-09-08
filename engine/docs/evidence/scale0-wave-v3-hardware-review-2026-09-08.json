@@ -1,0 +1,2833 @@
+{
+  "schema": "scale0-wave-v3-independent-hardware-review-v1",
+  "reviewed_utc": "2026-09-08T06:18:15.513460+00:00",
+  "local_record_date": "2026-09-08",
+  "reviewer": "/root/bounded_worker_reads",
+  "coordinator": "/root",
+  "status": "accepted_evidence_accounting_hardware_callback_gate_failed",
+  "release_approved": false,
+  "physical_recovery_approved": false,
+  "hardware_gate_pass": false,
+  "post_run_source_preservation_pass": true,
+  "disposition": "All eight registered rows and retained raw timing statistics are internally consistent and source/archive preservation passes. Four hidden/collapsed rows pass. All four visible rows fail the unchanged interface callback p95 gate. Two worker visible rows are new threshold failures relative to v2; both direct visible failures persist. This candidate is not performance-release approved.",
+  "method": {
+    "independence": "Read existing frozen sources, raw reports and artifacts; execute only this independent evidence-reconstruction script. No production edits, tests, builds, browser or scientific campaigns.",
+    "script": {
+      "path": "engine/build/scale0_wave_v3_hardware_independent_review_20260908.py",
+      "bytes": 21459,
+      "sha256": "b8bacc2ea8ffdaaca6cd057c137ab6dad0c82065d762975c7a2c0baa03b8d18c"
+    },
+    "statistics": "Nearest rank ceil(n*q)-1 with clipping. Samples are sorted ascending, summed by sequential binary64 additions and divided by count, matching the declared probe algorithm. Every count/mean/median/p95/p99/max plus frame FPS and threshold counts equals the reported number exactly; no tolerance was needed.",
+    "numeric_field_comparisons": 696,
+    "raw_totals": {
+      "frame_samples": 5801,
+      "callback_series": 96,
+      "callback_samples": 9110,
+      "action_samples": 40
+    },
+    "comparison_scope": "Every recorded callback series is reconstructed, including diagnostic ownerRead series. Only standalone method:ownerRead.* entries are excluded from the interface callback gate, as preregistered; nested calls remain in inclusive callback durations. Callback durations overlap/nest and are not summed into wall-clock cost."
+  },
+  "inputs": {
+    "execution": {
+      "path": "engine/docs/evidence/scale0-wave-v3-hardware-execution-2026-09-08.json",
+      "bytes": 3245,
+      "sha256": "432af0d2bc8ab5484ec755ac1bd3285eb1b590fa60a0dc1a37a64027f980d6db"
+    },
+    "reports": [
+      {
+        "path": "engine/docs/evidence/scale0-hardware-wave-v3-panels-L33-2026-09-08.json",
+        "bytes": 339044,
+        "sha256": "a3cd7cfb74f3d19f1d971f143ab4c6ceb2bfc2aac4f726dba40fb07598867924"
+      },
+      {
+        "path": "engine/docs/evidence/scale0-hardware-wave-v3-panels-L97-2026-09-08.json",
+        "bytes": 193895,
+        "sha256": "9562d0b390b0f5243aac1bea7e25cb45b8d8d936accc757bbd44156338665a2c"
+      }
+    ],
+    "hardware_log": {
+      "path": "engine/docs/evidence/scale0-wave-v3-hardware-2026-09-08.log",
+      "bytes": 409508,
+      "sha256": "ec007bdbd4c7e5d3e7a8c1a90b23422ba9b075a3c2a9cd00f7441da82462ab96"
+    },
+    "candidate_manifest": {
+      "path": "engine/docs/evidence/scale0-wave-v3-candidate-manifest-2026-09-08.json",
+      "bytes": 405901,
+      "sha256": "4ef20a1b26369b2a74a89e83809efe27908fef4a8c35a4a13e0c52fb7f927a8b"
+    },
+    "freeze_review": {
+      "path": "engine/docs/evidence/scale0-wave-v3-freeze-review-2026-09-08.json",
+      "bytes": 15663,
+      "sha256": "663bd8d0707601043fc7b844a0bec9c7eaa1d38c1bbb3685ea07711ee09b5be8"
+    },
+    "baseline_reports": [
+      {
+        "path": "engine/docs/evidence/scale0-hardware-repair-v2-panels-L33-2026-09-07.json",
+        "bytes": 535787,
+        "sha256": "feb2d9c505fd6a939e7d85188e610af50b5286a4addf396958d9c52a82bd2cdb"
+      },
+      {
+        "path": "engine/docs/evidence/scale0-hardware-repair-v2-panels-L97-2026-09-07.json",
+        "bytes": 517402,
+        "sha256": "fccc19109bcaf7d8c81fe601f41b1fe356d912733805bf3504f5f070b7352c3e"
+      }
+    ]
+  },
+  "coverage": {
+    "profile": "wave-v3",
+    "kind": "panels",
+    "plan": [
+      {
+        "id": "wave-lab",
+        "scenario": "s0-field-rf-lattice-wave"
+      }
+    ],
+    "ordered_sizes": [
+      33,
+      97
+    ],
+    "states": [
+      "docked",
+      "floated",
+      "collapsed",
+      "hidden"
+    ],
+    "expected_rows": 8,
+    "observed_rows": 8,
+    "duplicates": [],
+    "missing": [],
+    "unexpected": [],
+    "all_report_candidate_identities_match": true,
+    "candidate_identity": "a3048e602619adc7042fbf9877a573e4e392a0acc2e662c1ccec2642300870db",
+    "all_runtime_errors": [],
+    "log_rows_exactly_match_reports": true,
+    "playwright_exit": 1,
+    "playwright_matrix_tests_failed": 2,
+    "distinction": "Two failed Playwright matrix tests contain eight audited rows; they are not two failed rows."
+  },
+  "outcome": {
+    "passed_rows": 4,
+    "failed_rows": 4,
+    "callback_p95_failed_rows": 4,
+    "callback_max_failed_rows": 0,
+    "new_worker_callback_failed_rows": 2,
+    "persistent_direct_callback_failed_rows": 2,
+    "all_noncallback_gates_pass": true,
+    "all_frame_gates_pass": true,
+    "long_tasks": 0,
+    "frames_over_20ms": 0,
+    "frames_over_33_4ms": 0,
+    "registered_gates": {
+      "minFrames": 600,
+      "minDurationMs": 12000,
+      "minFps": 59.5,
+      "p95Ms": 17,
+      "p99Ms": 20,
+      "maxLongFrames": 0,
+      "actionSamples": 10,
+      "actionP95Ms": 50
+    },
+    "callback_p95_limit_ms": 2,
+    "callback_max_limit_ms": 8,
+    "hardware_renderers": [
+      "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    ]
+  },
+  "rows": [
+    {
+      "size": 33,
+      "id": "wave-lab",
+      "scenario": "s0-field-rf-lattice-wave",
+      "state": "docked",
+      "backend": "wasm-direct",
+      "duration_ms": 12175.995000004768,
+      "frames": {
+        "count": 730,
+        "meanMs": 16.666000000000004,
+        "medianMs": 16.665000000000873,
+        "p95Ms": 16.67000000000189,
+        "p99Ms": 16.67000000000553,
+        "maxMs": 16.67000000000553,
+        "effectiveFps": 60.002400096003825,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "wave_callback": {
+        "count": 48,
+        "meanMs": 3.3202083433667817,
+        "medianMs": 3.234999895095825,
+        "p95Ms": 4.115000009536743,
+        "p99Ms": 4.2850000858306885,
+        "maxMs": 4.2850000858306885
+      },
+      "actions": {
+        "count": 10,
+        "meanMs": 16.05950000286102,
+        "medianMs": 15.009999990463257,
+        "p95Ms": 19.7849999666214,
+        "p99Ms": 19.7849999666214,
+        "maxMs": 19.7849999666214
+      },
+      "callback_series_count": 13,
+      "callback_sample_count": 1695,
+      "all_callback_summaries": {
+        "method:ownerRead.getParticleData": {
+          "count": 731,
+          "meanMs": 0.03409029357899719,
+          "medianMs": 0.034999966621398926,
+          "p95Ms": 0.04500007629394531,
+          "p99Ms": 0.05500006675720215,
+          "maxMs": 0.25
+        },
+        "method:ownerRead.getDiagnostics": {
+          "count": 372,
+          "meanMs": 2.1760483858405903,
+          "medianMs": 2.125,
+          "p95Ms": 2.5450000762939453,
+          "p99Ms": 2.6449999809265137,
+          "maxMs": 3.2549999952316284
+        },
+        "flux-slice-panel": {
+          "count": 292,
+          "meanMs": 0.022465752820446067,
+          "medianMs": 0.019999980926513672,
+          "p95Ms": 0.034999966621398926,
+          "p99Ms": 0.039999961853027344,
+          "maxMs": 0.08000004291534424
+        },
+        "p1-observables-panel": {
+          "count": 48,
+          "meanMs": 0.00906249632438024,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.014999985694885254,
+          "p99Ms": 0.015000104904174805,
+          "maxMs": 0.015000104904174805
+        },
+        "wave-lab-panel": {
+          "count": 48,
+          "meanMs": 3.3202083433667817,
+          "medianMs": 3.234999895095825,
+          "p95Ms": 4.115000009536743,
+          "p99Ms": 4.2850000858306885,
+          "maxMs": 4.2850000858306885
+        },
+        "conservation-micropanel": {
+          "count": 48,
+          "meanMs": 0.4741666615009308,
+          "medianMs": 0.4650000333786011,
+          "p95Ms": 0.5950000286102295,
+          "p99Ms": 0.7100000381469727,
+          "maxMs": 0.7100000381469727
+        },
+        "time-panel-arm": {
+          "count": 24,
+          "meanMs": 0.009999995430310568,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.014999985694885254,
+          "p99Ms": 0.015000104904174805,
+          "maxMs": 0.015000104904174805
+        },
+        "thermo-panel-arm": {
+          "count": 24,
+          "meanMs": 0.003541668256123861,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.009999990463256836,
+          "p99Ms": 0.009999990463256836,
+          "maxMs": 0.009999990463256836
+        },
+        "dispersion-panel-arm": {
+          "count": 12,
+          "meanMs": 0.0012499988079071045,
+          "medianMs": 0,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.004999995231628418,
+          "maxMs": 0.004999995231628418
+        },
+        "scale-context-panel-loop": {
+          "count": 24,
+          "meanMs": 0.0033333301544189453,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.004999995231628418,
+          "maxMs": 0.004999995231628418
+        },
+        "spectrum-panel": {
+          "count": 24,
+          "meanMs": 0.030416682362556458,
+          "medianMs": 0.029999971389770508,
+          "p95Ms": 0.04499995708465576,
+          "p99Ms": 0.04999995231628418,
+          "maxMs": 0.04999995231628418
+        },
+        "gravity-panel-arm": {
+          "count": 24,
+          "meanMs": 0.004166662693023682,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.009999990463256836,
+          "p99Ms": 0.009999990463256836,
+          "maxMs": 0.009999990463256836
+        },
+        "knots-panel-arm": {
+          "count": 24,
+          "meanMs": 0.007916664083798727,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.010000109672546387,
+          "p99Ms": 0.014999985694885254,
+          "maxMs": 0.014999985694885254
+        }
+      },
+      "failed_callbacks": {
+        "wave-lab-panel": {
+          "count": 48,
+          "meanMs": 3.3202083433667817,
+          "medianMs": 3.234999895095825,
+          "p95Ms": 4.115000009536743,
+          "p99Ms": 4.2850000858306885,
+          "maxMs": 4.2850000858306885
+        }
+      },
+      "recomputed_failures": [
+        "interface callback budget"
+      ],
+      "reported_failures_match": true,
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": false,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "dom": {
+        "mutationRecords": 343,
+        "addedNodes": 0,
+        "removedNodes": 0,
+        "canvasDraws": 490
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 209,
+        "canvases": 5,
+        "heapBytes": 53500000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 209,
+        "canvases": 5,
+        "heapBytes": 53500000
+      },
+      "resource_delta_recomputed": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "owner_clock_interval": [
+        62,
+        793
+      ],
+      "qualification_before": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-field-rf-lattice-wave",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-field-rf-lattice-wave",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "in-thread-engine-readback"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "qualification_after": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-field-rf-lattice-wave",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-field-rf-lattice-wave",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "in-thread-engine-readback"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle_before": null,
+      "lifecycle_after": null,
+      "mount": {
+        "connected": true,
+        "live": true,
+        "floated": false,
+        "collapsed": false
+      },
+      "mount_after": {
+        "connected": true,
+        "live": true,
+        "floated": false,
+        "collapsed": false
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "raw_summaries_exact": true
+    },
+    {
+      "size": 33,
+      "id": "wave-lab",
+      "scenario": "s0-field-rf-lattice-wave",
+      "state": "floated",
+      "backend": "wasm-direct",
+      "duration_ms": 12174.789999961853,
+      "frames": {
+        "count": 730,
+        "meanMs": 16.666006849315075,
+        "medianMs": 16.665000000000873,
+        "p95Ms": 16.67000000000553,
+        "p99Ms": 16.67000000000553,
+        "maxMs": 16.67000000000553,
+        "effectiveFps": 60.00237543650699,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "wave_callback": {
+        "count": 49,
+        "meanMs": 3.3790816360590408,
+        "medianMs": 3.40500009059906,
+        "p95Ms": 3.965000033378601,
+        "p99Ms": 4.165000081062317,
+        "maxMs": 4.165000081062317
+      },
+      "actions": {
+        "count": 10,
+        "meanMs": 16.66600000858307,
+        "medianMs": 15.68999993801117,
+        "p95Ms": 24.2849999666214,
+        "p99Ms": 24.2849999666214,
+        "maxMs": 24.2849999666214
+      },
+      "callback_series_count": 13,
+      "callback_sample_count": 1701,
+      "all_callback_summaries": {
+        "method:ownerRead.getParticleData": {
+          "count": 731,
+          "meanMs": 0.035560876824135,
+          "medianMs": 0.034999966621398926,
+          "p95Ms": 0.04500007629394531,
+          "p99Ms": 0.059999942779541016,
+          "maxMs": 0.07500004768371582
+        },
+        "method:ownerRead.getDiagnostics": {
+          "count": 372,
+          "meanMs": 2.1368817209556537,
+          "medianMs": 2.0600000619888306,
+          "p95Ms": 2.5200001001358032,
+          "p99Ms": 2.6200000047683716,
+          "maxMs": 3.6549999713897705
+        },
+        "flux-slice-panel": {
+          "count": 292,
+          "meanMs": 0.019143833281242684,
+          "medianMs": 0.019999980926513672,
+          "p95Ms": 0.029999971389770508,
+          "p99Ms": 0.03000009059906006,
+          "maxMs": 0.040000081062316895
+        },
+        "wave-lab-panel": {
+          "count": 49,
+          "meanMs": 3.3790816360590408,
+          "medianMs": 3.40500009059906,
+          "p95Ms": 3.965000033378601,
+          "p99Ms": 4.165000081062317,
+          "maxMs": 4.165000081062317
+        },
+        "conservation-micropanel": {
+          "count": 49,
+          "meanMs": 0.3541836738586426,
+          "medianMs": 0.3450000286102295,
+          "p95Ms": 0.4099999666213989,
+          "p99Ms": 0.41999995708465576,
+          "maxMs": 0.41999995708465576
+        },
+        "time-panel-arm": {
+          "count": 25,
+          "meanMs": 0.012400012016296386,
+          "medianMs": 0.010000109672546387,
+          "p95Ms": 0.015000104904174805,
+          "p99Ms": 0.019999980926513672,
+          "maxMs": 0.019999980926513672
+        },
+        "thermo-panel-arm": {
+          "count": 25,
+          "meanMs": 0.0027999973297119143,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.004999995231628418,
+          "maxMs": 0.004999995231628418
+        },
+        "dispersion-panel-arm": {
+          "count": 13,
+          "meanMs": 0.0023076901069054236,
+          "medianMs": 0,
+          "p95Ms": 0.009999990463256836,
+          "p99Ms": 0.009999990463256836,
+          "maxMs": 0.009999990463256836
+        },
+        "scale-context-panel-loop": {
+          "count": 25,
+          "meanMs": 0.003000001907348633,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.005000114440917969,
+          "p99Ms": 0.009999990463256836,
+          "maxMs": 0.009999990463256836
+        },
+        "spectrum-panel": {
+          "count": 24,
+          "meanMs": 0.028749992450078327,
+          "medianMs": 0.02500009536743164,
+          "p95Ms": 0.04499995708465576,
+          "p99Ms": 0.04499995708465576,
+          "maxMs": 0.04499995708465576
+        },
+        "gravity-panel-arm": {
+          "count": 24,
+          "meanMs": 0.003541673223177592,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.005000114440917969,
+          "p99Ms": 0.009999990463256836,
+          "maxMs": 0.009999990463256836
+        },
+        "knots-panel-arm": {
+          "count": 24,
+          "meanMs": 0.007083326578140259,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.009999990463256836,
+          "p99Ms": 0.014999985694885254,
+          "maxMs": 0.014999985694885254
+        },
+        "p1-observables-panel": {
+          "count": 48,
+          "meanMs": 0.007708335916201274,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.010000109672546387,
+          "p99Ms": 0.014999985694885254,
+          "maxMs": 0.014999985694885254
+        }
+      },
+      "failed_callbacks": {
+        "wave-lab-panel": {
+          "count": 49,
+          "meanMs": 3.3790816360590408,
+          "medianMs": 3.40500009059906,
+          "p95Ms": 3.965000033378601,
+          "p99Ms": 4.165000081062317,
+          "maxMs": 4.165000081062317
+        }
+      },
+      "recomputed_failures": [
+        "interface callback budget"
+      ],
+      "reported_failures_match": true,
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": false,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "dom": {
+        "mutationRecords": 340,
+        "addedNodes": 0,
+        "removedNodes": 0,
+        "canvasDraws": 490
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 209,
+        "canvases": 5,
+        "heapBytes": 53500000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 209,
+        "canvases": 5,
+        "heapBytes": 53500000
+      },
+      "resource_delta_recomputed": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "owner_clock_interval": [
+        855,
+        1586
+      ],
+      "qualification_before": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-field-rf-lattice-wave",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-field-rf-lattice-wave",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "in-thread-engine-readback"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "qualification_after": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-field-rf-lattice-wave",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-field-rf-lattice-wave",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "in-thread-engine-readback"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle_before": null,
+      "lifecycle_after": null,
+      "mount": {
+        "connected": true,
+        "live": true,
+        "floated": true,
+        "collapsed": false
+      },
+      "mount_after": {
+        "connected": true,
+        "live": true,
+        "floated": true,
+        "collapsed": false
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "raw_summaries_exact": true
+    },
+    {
+      "size": 33,
+      "id": "wave-lab",
+      "scenario": "s0-field-rf-lattice-wave",
+      "state": "collapsed",
+      "backend": "wasm-direct",
+      "duration_ms": 12007.405000090599,
+      "frames": {
+        "count": 720,
+        "meanMs": 16.665999999999997,
+        "medianMs": 16.665000000000873,
+        "p95Ms": 16.67000000000553,
+        "p99Ms": 16.67000000000553,
+        "maxMs": 16.670000000012806,
+        "effectiveFps": 60.00240009600385,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "wave_callback": {
+        "count": 48,
+        "meanMs": 0.017395836611588795,
+        "medianMs": 0.019999980926513672,
+        "p95Ms": 0.02499997615814209,
+        "p99Ms": 0.02500009536743164,
+        "maxMs": 0.02500009536743164
+      },
+      "actions": {
+        "count": 0,
+        "meanMs": 0,
+        "medianMs": 0,
+        "p95Ms": 0,
+        "p99Ms": 0,
+        "maxMs": 0
+      },
+      "callback_series_count": 13,
+      "callback_sample_count": 1675,
+      "all_callback_summaries": {
+        "method:ownerRead.getParticleData": {
+          "count": 721,
+          "meanMs": 0.037122052354058674,
+          "medianMs": 0.03500008583068848,
+          "p95Ms": 0.04999995231628418,
+          "p99Ms": 0.060000061988830566,
+          "maxMs": 0.09500002861022949
+        },
+        "spectrum-panel": {
+          "count": 24,
+          "meanMs": 0.026249984900156658,
+          "medianMs": 0.02499997615814209,
+          "p95Ms": 0.034999966621398926,
+          "p99Ms": 0.03500008583068848,
+          "maxMs": 0.03500008583068848
+        },
+        "gravity-panel-arm": {
+          "count": 24,
+          "meanMs": 0.002499997615814209,
+          "medianMs": 0,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.009999990463256836,
+          "maxMs": 0.009999990463256836
+        },
+        "knots-panel-arm": {
+          "count": 24,
+          "meanMs": 0.007083326578140259,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.009999990463256836,
+          "p99Ms": 0.019999980926513672,
+          "maxMs": 0.019999980926513672
+        },
+        "method:ownerRead.getDiagnostics": {
+          "count": 366,
+          "meanMs": 2.200887978076935,
+          "medianMs": 2.1449999809265137,
+          "p95Ms": 2.5549999475479126,
+          "p99Ms": 2.649999976158142,
+          "maxMs": 4.050000071525574
+        },
+        "flux-slice-panel": {
+          "count": 288,
+          "meanMs": 0.02010416529244847,
+          "medianMs": 0.019999980926513672,
+          "p95Ms": 0.029999971389770508,
+          "p99Ms": 0.034999966621398926,
+          "maxMs": 0.03500008583068848
+        },
+        "p1-observables-panel": {
+          "count": 48,
+          "meanMs": 0.006458344558874766,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.014999985694885254,
+          "p99Ms": 0.014999985694885254,
+          "maxMs": 0.014999985694885254
+        },
+        "wave-lab-panel": {
+          "count": 48,
+          "meanMs": 0.017395836611588795,
+          "medianMs": 0.019999980926513672,
+          "p95Ms": 0.02499997615814209,
+          "p99Ms": 0.02500009536743164,
+          "maxMs": 0.02500009536743164
+        },
+        "conservation-micropanel": {
+          "count": 48,
+          "meanMs": 0.09958333522081375,
+          "medianMs": 0.09500002861022949,
+          "p95Ms": 0.125,
+          "p99Ms": 0.14500010013580322,
+          "maxMs": 0.14500010013580322
+        },
+        "time-panel-arm": {
+          "count": 24,
+          "meanMs": 0.005833332737286885,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.009999990463256836,
+          "p99Ms": 0.009999990463256836,
+          "maxMs": 0.009999990463256836
+        },
+        "thermo-panel-arm": {
+          "count": 24,
+          "meanMs": 0.002708330750465393,
+          "medianMs": 0,
+          "p95Ms": 0.009999990463256836,
+          "p99Ms": 0.009999990463256836,
+          "maxMs": 0.009999990463256836
+        },
+        "scale-context-panel-loop": {
+          "count": 24,
+          "meanMs": 0.0018749982118606567,
+          "medianMs": 0,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.004999995231628418,
+          "maxMs": 0.004999995231628418
+        },
+        "dispersion-panel-arm": {
+          "count": 12,
+          "meanMs": 0.003750006357828776,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.009999990463256836,
+          "p99Ms": 0.009999990463256836,
+          "maxMs": 0.009999990463256836
+        }
+      },
+      "failed_callbacks": {},
+      "recomputed_failures": [],
+      "reported_failures_match": true,
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": true,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "dom": {
+        "mutationRecords": 0,
+        "addedNodes": 0,
+        "removedNodes": 0,
+        "canvasDraws": 0
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 209,
+        "canvases": 5,
+        "heapBytes": 53500000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 209,
+        "canvases": 5,
+        "heapBytes": 53500000
+      },
+      "resource_delta_recomputed": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "owner_clock_interval": [
+        1647,
+        2368
+      ],
+      "qualification_before": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-field-rf-lattice-wave",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-field-rf-lattice-wave",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "in-thread-engine-readback"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "qualification_after": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-field-rf-lattice-wave",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-field-rf-lattice-wave",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "in-thread-engine-readback"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle_before": null,
+      "lifecycle_after": null,
+      "mount": {
+        "connected": true,
+        "live": false,
+        "floated": true,
+        "collapsed": true
+      },
+      "mount_after": {
+        "connected": true,
+        "live": false,
+        "floated": true,
+        "collapsed": true
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "raw_summaries_exact": true
+    },
+    {
+      "size": 33,
+      "id": "wave-lab",
+      "scenario": "s0-field-rf-lattice-wave",
+      "state": "hidden",
+      "backend": "wasm-direct",
+      "duration_ms": 12018.429999947548,
+      "frames": {
+        "count": 721,
+        "meanMs": 16.665998613037466,
+        "medianMs": 16.66500000000815,
+        "p95Ms": 16.669999999998254,
+        "p99Ms": 16.670000000012806,
+        "maxMs": 16.670000000012806,
+        "effectiveFps": 60.002405089468844,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "wave_callback": {
+        "count": 48,
+        "meanMs": 0.007500000298023224,
+        "medianMs": 0.005000114440917969,
+        "p95Ms": 0.014999985694885254,
+        "p99Ms": 0.020000100135803223,
+        "maxMs": 0.020000100135803223
+      },
+      "actions": {
+        "count": 0,
+        "meanMs": 0,
+        "medianMs": 0,
+        "p95Ms": 0,
+        "p99Ms": 0,
+        "maxMs": 0
+      },
+      "callback_series_count": 13,
+      "callback_sample_count": 1677,
+      "all_callback_summaries": {
+        "method:ownerRead.getParticleData": {
+          "count": 722,
+          "meanMs": 0.040498617613414646,
+          "medianMs": 0.039999961853027344,
+          "p95Ms": 0.05000007152557373,
+          "p99Ms": 0.060000061988830566,
+          "maxMs": 0.0700000524520874
+        },
+        "method:ownerRead.getDiagnostics": {
+          "count": 367,
+          "meanMs": 2.313596731635465,
+          "medianMs": 2.2699999809265137,
+          "p95Ms": 2.740000009536743,
+          "p99Ms": 2.8799999952316284,
+          "maxMs": 3.465000033378601
+        },
+        "flux-slice-panel": {
+          "count": 288,
+          "meanMs": 0.01104166524277793,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.014999985694885254,
+          "p99Ms": 0.019999980926513672,
+          "maxMs": 0.029999971389770508
+        },
+        "wave-lab-panel": {
+          "count": 48,
+          "meanMs": 0.007500000298023224,
+          "medianMs": 0.005000114440917969,
+          "p95Ms": 0.014999985694885254,
+          "p99Ms": 0.020000100135803223,
+          "maxMs": 0.020000100135803223
+        },
+        "conservation-micropanel": {
+          "count": 48,
+          "meanMs": 0.10729167113701503,
+          "medianMs": 0.10500001907348633,
+          "p95Ms": 0.13499999046325684,
+          "p99Ms": 0.18499994277954102,
+          "maxMs": 0.18499994277954102
+        },
+        "p1-observables-panel": {
+          "count": 48,
+          "meanMs": 0.0065624962250391645,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.009999990463256836,
+          "p99Ms": 0.014999985694885254,
+          "maxMs": 0.014999985694885254
+        },
+        "time-panel-arm": {
+          "count": 24,
+          "meanMs": 0.0018749982118606567,
+          "medianMs": 0,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.004999995231628418,
+          "maxMs": 0.004999995231628418
+        },
+        "thermo-panel-arm": {
+          "count": 24,
+          "meanMs": 0.0016666650772094727,
+          "medianMs": 0,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.009999990463256836,
+          "maxMs": 0.009999990463256836
+        },
+        "scale-context-panel-loop": {
+          "count": 24,
+          "meanMs": 0.0014583369096120198,
+          "medianMs": 0,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.005000114440917969,
+          "maxMs": 0.005000114440917969
+        },
+        "spectrum-panel": {
+          "count": 24,
+          "meanMs": 0.014166673024495443,
+          "medianMs": 0.014999985694885254,
+          "p95Ms": 0.020000100135803223,
+          "p99Ms": 0.020000100135803223,
+          "maxMs": 0.020000100135803223
+        },
+        "gravity-panel-arm": {
+          "count": 24,
+          "meanMs": 0.002291664481163025,
+          "medianMs": 0,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.004999995231628418,
+          "maxMs": 0.004999995231628418
+        },
+        "knots-panel-arm": {
+          "count": 24,
+          "meanMs": 0.006458337108294169,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.009999990463256836,
+          "p99Ms": 0.010000109672546387,
+          "maxMs": 0.010000109672546387
+        },
+        "dispersion-panel-arm": {
+          "count": 12,
+          "meanMs": 0.0016666650772094727,
+          "medianMs": 0,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.004999995231628418,
+          "maxMs": 0.004999995231628418
+        }
+      },
+      "failed_callbacks": {},
+      "recomputed_failures": [],
+      "reported_failures_match": true,
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": true,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "dom": {
+        "mutationRecords": 0,
+        "addedNodes": 0,
+        "removedNodes": 0,
+        "canvasDraws": 0
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 209,
+        "canvases": 5,
+        "heapBytes": 53500000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 209,
+        "canvases": 5,
+        "heapBytes": 53500000
+      },
+      "resource_delta_recomputed": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "owner_clock_interval": [
+        2429,
+        3151
+      ],
+      "qualification_before": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-field-rf-lattice-wave",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-field-rf-lattice-wave",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "in-thread-engine-readback"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "qualification_after": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-field-rf-lattice-wave",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-field-rf-lattice-wave",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "in-thread-engine-readback"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle_before": null,
+      "lifecycle_after": null,
+      "mount": {
+        "connected": true,
+        "live": false,
+        "floated": true,
+        "collapsed": false
+      },
+      "mount_after": {
+        "connected": true,
+        "live": false,
+        "floated": true,
+        "collapsed": false
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "raw_summaries_exact": true
+    },
+    {
+      "size": 97,
+      "id": "wave-lab",
+      "scenario": "s0-field-rf-lattice-wave",
+      "state": "docked",
+      "backend": "wasm-worker",
+      "duration_ms": 12170.199999928474,
+      "frames": {
+        "count": 730,
+        "meanMs": 16.665993150684926,
+        "medianMs": 16.665000000000873,
+        "p95Ms": 16.67000000000189,
+        "p99Ms": 16.67000000000553,
+        "maxMs": 16.67000000000553,
+        "effectiveFps": 60.00242475552096,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "wave_callback": {
+        "count": 48,
+        "meanMs": 2.262500007947286,
+        "medianMs": 2.2100000381469727,
+        "p95Ms": 3.8249999284744263,
+        "p99Ms": 3.944999933242798,
+        "maxMs": 3.944999933242798
+      },
+      "actions": {
+        "count": 10,
+        "meanMs": 16.604000008106233,
+        "medianMs": 16.50499999523163,
+        "p95Ms": 17.5,
+        "p99Ms": 17.5,
+        "maxMs": 17.5
+      },
+      "callback_series_count": 11,
+      "callback_sample_count": 593,
+      "all_callback_summaries": {
+        "flux-slice-panel": {
+          "count": 292,
+          "meanMs": 0.032688361732927086,
+          "medianMs": 0.03000009059906006,
+          "p95Ms": 0.04999995231628418,
+          "p99Ms": 0.0700000524520874,
+          "maxMs": 0.08500003814697266
+        },
+        "p1-observables-panel": {
+          "count": 49,
+          "meanMs": 0.0091836793082101,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.014999985694885254,
+          "p99Ms": 0.015000104904174805,
+          "maxMs": 0.015000104904174805
+        },
+        "wave-lab-panel": {
+          "count": 48,
+          "meanMs": 2.262500007947286,
+          "medianMs": 2.2100000381469727,
+          "p95Ms": 3.8249999284744263,
+          "p99Ms": 3.944999933242798,
+          "maxMs": 3.944999933242798
+        },
+        "conservation-micropanel": {
+          "count": 48,
+          "meanMs": 0.44052083790302277,
+          "medianMs": 0.5049999952316284,
+          "p95Ms": 0.6649999618530273,
+          "p99Ms": 0.7150000333786011,
+          "maxMs": 0.7150000333786011
+        },
+        "time-panel-arm": {
+          "count": 24,
+          "meanMs": 0.017291670044263203,
+          "medianMs": 0.015000104904174805,
+          "p95Ms": 0.02499997615814209,
+          "p99Ms": 0.03000009059906006,
+          "maxMs": 0.03000009059906006
+        },
+        "thermo-panel-arm": {
+          "count": 24,
+          "meanMs": 0.002708330750465393,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.004999995231628418,
+          "maxMs": 0.004999995231628418
+        },
+        "dispersion-panel-arm": {
+          "count": 12,
+          "meanMs": 0.0025000075499216714,
+          "medianMs": 0,
+          "p95Ms": 0.005000114440917969,
+          "p99Ms": 0.005000114440917969,
+          "maxMs": 0.005000114440917969
+        },
+        "scale-context-panel-loop": {
+          "count": 24,
+          "meanMs": 0.002499997615814209,
+          "medianMs": 0,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.004999995231628418,
+          "maxMs": 0.004999995231628418
+        },
+        "spectrum-panel": {
+          "count": 24,
+          "meanMs": 0.01875000198682149,
+          "medianMs": 0.019999980926513672,
+          "p95Ms": 0.02499997615814209,
+          "p99Ms": 0.029999971389770508,
+          "maxMs": 0.029999971389770508
+        },
+        "gravity-panel-arm": {
+          "count": 24,
+          "meanMs": 0.0031250019868214927,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.005000114440917969,
+          "maxMs": 0.005000114440917969
+        },
+        "knots-panel-arm": {
+          "count": 24,
+          "meanMs": 0.011458327372868856,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.014999985694885254,
+          "p99Ms": 0.020000100135803223,
+          "maxMs": 0.020000100135803223
+        }
+      },
+      "failed_callbacks": {
+        "wave-lab-panel": {
+          "count": 48,
+          "meanMs": 2.262500007947286,
+          "medianMs": 2.2100000381469727,
+          "p95Ms": 3.8249999284744263,
+          "p99Ms": 3.944999933242798,
+          "maxMs": 3.944999933242798
+        }
+      },
+      "recomputed_failures": [
+        "interface callback budget"
+      ],
+      "reported_failures_match": true,
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": false,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "dom": {
+        "mutationRecords": 333,
+        "addedNodes": 0,
+        "removedNodes": 0,
+        "canvasDraws": 480
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 209,
+        "canvases": 5,
+        "heapBytes": 148000000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 209,
+        "canvases": 5,
+        "heapBytes": 148000000
+      },
+      "resource_delta_recomputed": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "owner_clock_interval": [
+        13,
+        166
+      ],
+      "qualification_before": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-field-rf-lattice-wave",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-field-rf-lattice-wave",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "worker-configuration-applied"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "qualification_after": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-field-rf-lattice-wave",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-field-rf-lattice-wave",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "worker-configuration-applied"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle_before": {
+        "workerRuntimeId": "89d27163-5926-4215-a297-cc620a89438f",
+        "moduleInitCount": 1,
+        "renderBridgeGeneration": 1,
+        "configurationToken": 3,
+        "appliedConfigurationToken": 3
+      },
+      "lifecycle_after": {
+        "workerRuntimeId": "89d27163-5926-4215-a297-cc620a89438f",
+        "moduleInitCount": 1,
+        "renderBridgeGeneration": 1,
+        "configurationToken": 3,
+        "appliedConfigurationToken": 3
+      },
+      "mount": {
+        "connected": true,
+        "live": true,
+        "floated": false,
+        "collapsed": false
+      },
+      "mount_after": {
+        "connected": true,
+        "live": true,
+        "floated": false,
+        "collapsed": false
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "raw_summaries_exact": true
+    },
+    {
+      "size": 97,
+      "id": "wave-lab",
+      "scenario": "s0-field-rf-lattice-wave",
+      "state": "floated",
+      "backend": "wasm-worker",
+      "duration_ms": 12176.52999997139,
+      "frames": {
+        "count": 730,
+        "meanMs": 16.665993150684926,
+        "medianMs": 16.665000000000873,
+        "p95Ms": 16.67000000000553,
+        "p99Ms": 16.67000000000553,
+        "maxMs": 16.67000000000553,
+        "effectiveFps": 60.00242475552096,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "wave_callback": {
+        "count": 48,
+        "meanMs": 2.087083339691162,
+        "medianMs": 2.0149999856948853,
+        "p95Ms": 2.6549999713897705,
+        "p99Ms": 3.1899999380111694,
+        "maxMs": 3.1899999380111694
+      },
+      "actions": {
+        "count": 10,
+        "meanMs": 16.593999993801116,
+        "medianMs": 16.764999985694885,
+        "p95Ms": 17.485000014305115,
+        "p99Ms": 17.485000014305115,
+        "maxMs": 17.485000014305115
+      },
+      "callback_series_count": 11,
+      "callback_sample_count": 593,
+      "all_callback_summaries": {
+        "flux-slice-panel": {
+          "count": 292,
+          "meanMs": 0.030787664733520927,
+          "medianMs": 0.029999971389770508,
+          "p95Ms": 0.04500007629394531,
+          "p99Ms": 0.060000061988830566,
+          "maxMs": 0.07499992847442627
+        },
+        "p1-observables-panel": {
+          "count": 49,
+          "meanMs": 0.021224486584566077,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.014999985694885254,
+          "p99Ms": 0.625,
+          "maxMs": 0.625
+        },
+        "wave-lab-panel": {
+          "count": 48,
+          "meanMs": 2.087083339691162,
+          "medianMs": 2.0149999856948853,
+          "p95Ms": 2.6549999713897705,
+          "p99Ms": 3.1899999380111694,
+          "maxMs": 3.1899999380111694
+        },
+        "conservation-micropanel": {
+          "count": 48,
+          "meanMs": 0.3205208306511243,
+          "medianMs": 0.375,
+          "p95Ms": 0.5400000810623169,
+          "p99Ms": 0.5549999475479126,
+          "maxMs": 0.5549999475479126
+        },
+        "time-panel-arm": {
+          "count": 24,
+          "meanMs": 0.017916664481163025,
+          "medianMs": 0.014999985694885254,
+          "p95Ms": 0.02499997615814209,
+          "p99Ms": 0.029999971389770508,
+          "maxMs": 0.029999971389770508
+        },
+        "thermo-panel-arm": {
+          "count": 24,
+          "meanMs": 0.0033333351214726767,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.005000114440917969,
+          "p99Ms": 0.009999990463256836,
+          "maxMs": 0.009999990463256836
+        },
+        "scale-context-panel-loop": {
+          "count": 24,
+          "meanMs": 0.002499997615814209,
+          "medianMs": 0,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.004999995231628418,
+          "maxMs": 0.004999995231628418
+        },
+        "spectrum-panel": {
+          "count": 24,
+          "meanMs": 0.015625009934107464,
+          "medianMs": 0.014999985694885254,
+          "p95Ms": 0.02500009536743164,
+          "p99Ms": 0.029999971389770508,
+          "maxMs": 0.029999971389770508
+        },
+        "gravity-panel-arm": {
+          "count": 24,
+          "meanMs": 0.002291664481163025,
+          "medianMs": 0,
+          "p95Ms": 0.009999990463256836,
+          "p99Ms": 0.009999990463256836,
+          "maxMs": 0.009999990463256836
+        },
+        "knots-panel-arm": {
+          "count": 24,
+          "meanMs": 0.008750001589457193,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.014999985694885254,
+          "p99Ms": 0.014999985694885254,
+          "maxMs": 0.014999985694885254
+        },
+        "dispersion-panel-arm": {
+          "count": 12,
+          "meanMs": 0.0037499964237213135,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.014999985694885254,
+          "p99Ms": 0.014999985694885254,
+          "maxMs": 0.014999985694885254
+        }
+      },
+      "failed_callbacks": {
+        "wave-lab-panel": {
+          "count": 48,
+          "meanMs": 2.087083339691162,
+          "medianMs": 2.0149999856948853,
+          "p95Ms": 2.6549999713897705,
+          "p99Ms": 3.1899999380111694,
+          "maxMs": 3.1899999380111694
+        }
+      },
+      "recomputed_failures": [
+        "interface callback budget"
+      ],
+      "reported_failures_match": true,
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": false,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "dom": {
+        "mutationRecords": 335,
+        "addedNodes": 0,
+        "removedNodes": 0,
+        "canvasDraws": 480
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 209,
+        "canvases": 5,
+        "heapBytes": 148000000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 209,
+        "canvases": 5,
+        "heapBytes": 148000000
+      },
+      "resource_delta_recomputed": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "owner_clock_interval": [
+        178,
+        334
+      ],
+      "qualification_before": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-field-rf-lattice-wave",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-field-rf-lattice-wave",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "worker-configuration-applied"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "qualification_after": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-field-rf-lattice-wave",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-field-rf-lattice-wave",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "worker-configuration-applied"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle_before": {
+        "workerRuntimeId": "89d27163-5926-4215-a297-cc620a89438f",
+        "moduleInitCount": 1,
+        "renderBridgeGeneration": 1,
+        "configurationToken": 3,
+        "appliedConfigurationToken": 3
+      },
+      "lifecycle_after": {
+        "workerRuntimeId": "89d27163-5926-4215-a297-cc620a89438f",
+        "moduleInitCount": 1,
+        "renderBridgeGeneration": 1,
+        "configurationToken": 3,
+        "appliedConfigurationToken": 3
+      },
+      "mount": {
+        "connected": true,
+        "live": true,
+        "floated": true,
+        "collapsed": false
+      },
+      "mount_after": {
+        "connected": true,
+        "live": true,
+        "floated": true,
+        "collapsed": false
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "raw_summaries_exact": true
+    },
+    {
+      "size": 97,
+      "id": "wave-lab",
+      "scenario": "s0-field-rf-lattice-wave",
+      "state": "collapsed",
+      "backend": "wasm-worker",
+      "duration_ms": 12002.889999985695,
+      "frames": {
+        "count": 720,
+        "meanMs": 16.665999999999997,
+        "medianMs": 16.665000000000873,
+        "p95Ms": 16.67000000000553,
+        "p99Ms": 16.67000000000553,
+        "maxMs": 16.670000000012806,
+        "effectiveFps": 60.00240009600385,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "wave_callback": {
+        "count": 48,
+        "meanMs": 0.02802083392937978,
+        "medianMs": 0.02499997615814209,
+        "p95Ms": 0.04500007629394531,
+        "p99Ms": 0.060000061988830566,
+        "maxMs": 0.060000061988830566
+      },
+      "actions": {
+        "count": 0,
+        "meanMs": 0,
+        "medianMs": 0,
+        "p95Ms": 0,
+        "p99Ms": 0,
+        "maxMs": 0
+      },
+      "callback_series_count": 11,
+      "callback_sample_count": 588,
+      "all_callback_summaries": {
+        "flux-slice-panel": {
+          "count": 288,
+          "meanMs": 0.029270829839838877,
+          "medianMs": 0.029999971389770508,
+          "p95Ms": 0.04499995708465576,
+          "p99Ms": 0.060000061988830566,
+          "maxMs": 0.06499993801116943
+        },
+        "wave-lab-panel": {
+          "count": 48,
+          "meanMs": 0.02802083392937978,
+          "medianMs": 0.02499997615814209,
+          "p95Ms": 0.04500007629394531,
+          "p99Ms": 0.060000061988830566,
+          "maxMs": 0.060000061988830566
+        },
+        "conservation-micropanel": {
+          "count": 48,
+          "meanMs": 0.1233333299557368,
+          "medianMs": 0.11000001430511475,
+          "p95Ms": 0.21000003814697266,
+          "p99Ms": 0.24500000476837158,
+          "maxMs": 0.24500000476837158
+        },
+        "p1-observables-panel": {
+          "count": 48,
+          "meanMs": 0.00885416567325592,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.014999985694885254,
+          "p99Ms": 0.019999980926513672,
+          "maxMs": 0.019999980926513672
+        },
+        "time-panel-arm": {
+          "count": 24,
+          "meanMs": 0.006041665871938069,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.009999990463256836,
+          "p99Ms": 0.010000109672546387,
+          "maxMs": 0.010000109672546387
+        },
+        "thermo-panel-arm": {
+          "count": 24,
+          "meanMs": 0.002499997615814209,
+          "medianMs": 0,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.004999995231628418,
+          "maxMs": 0.004999995231628418
+        },
+        "scale-context-panel-loop": {
+          "count": 24,
+          "meanMs": 0.0022916694482167563,
+          "medianMs": 0,
+          "p95Ms": 0.005000114440917969,
+          "p99Ms": 0.009999990463256836,
+          "maxMs": 0.009999990463256836
+        },
+        "spectrum-panel": {
+          "count": 24,
+          "meanMs": 0.012916659315427145,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.019999980926513672,
+          "p99Ms": 0.019999980926513672,
+          "maxMs": 0.019999980926513672
+        },
+        "gravity-panel-arm": {
+          "count": 24,
+          "meanMs": 0.0031249970197677612,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.009999990463256836,
+          "maxMs": 0.009999990463256836
+        },
+        "knots-panel-arm": {
+          "count": 24,
+          "meanMs": 0.006250003973642985,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.009999990463256836,
+          "p99Ms": 0.010000109672546387,
+          "maxMs": 0.010000109672546387
+        },
+        "dispersion-panel-arm": {
+          "count": 12,
+          "meanMs": 0.002916663885116577,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.004999995231628418,
+          "maxMs": 0.004999995231628418
+        }
+      },
+      "failed_callbacks": {},
+      "recomputed_failures": [],
+      "reported_failures_match": true,
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": true,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "dom": {
+        "mutationRecords": 0,
+        "addedNodes": 0,
+        "removedNodes": 0,
+        "canvasDraws": 0
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 209,
+        "canvases": 5,
+        "heapBytes": 148000000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 209,
+        "canvases": 5,
+        "heapBytes": 148000000
+      },
+      "resource_delta_recomputed": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "owner_clock_interval": [
+        347,
+        500
+      ],
+      "qualification_before": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-field-rf-lattice-wave",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-field-rf-lattice-wave",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "worker-configuration-applied"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "qualification_after": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-field-rf-lattice-wave",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-field-rf-lattice-wave",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "worker-configuration-applied"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle_before": {
+        "workerRuntimeId": "89d27163-5926-4215-a297-cc620a89438f",
+        "moduleInitCount": 1,
+        "renderBridgeGeneration": 1,
+        "configurationToken": 3,
+        "appliedConfigurationToken": 3
+      },
+      "lifecycle_after": {
+        "workerRuntimeId": "89d27163-5926-4215-a297-cc620a89438f",
+        "moduleInitCount": 1,
+        "renderBridgeGeneration": 1,
+        "configurationToken": 3,
+        "appliedConfigurationToken": 3
+      },
+      "mount": {
+        "connected": true,
+        "live": false,
+        "floated": true,
+        "collapsed": true
+      },
+      "mount_after": {
+        "connected": true,
+        "live": false,
+        "floated": true,
+        "collapsed": true
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "raw_summaries_exact": true
+    },
+    {
+      "size": 97,
+      "id": "wave-lab",
+      "scenario": "s0-field-rf-lattice-wave",
+      "state": "hidden",
+      "backend": "wasm-worker",
+      "duration_ms": 12005.284999966621,
+      "frames": {
+        "count": 720,
+        "meanMs": 16.666006944444437,
+        "medianMs": 16.66500000000815,
+        "p95Ms": 16.669999999998254,
+        "p99Ms": 16.670000000012806,
+        "maxMs": 16.670000000012806,
+        "effectiveFps": 60.00237509401416,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "wave_callback": {
+        "count": 48,
+        "meanMs": 0.011562493940194448,
+        "medianMs": 0.009999990463256836,
+        "p95Ms": 0.019999980926513672,
+        "p99Ms": 0.029999971389770508,
+        "maxMs": 0.029999971389770508
+      },
+      "actions": {
+        "count": 0,
+        "meanMs": 0,
+        "medianMs": 0,
+        "p95Ms": 0,
+        "p99Ms": 0,
+        "maxMs": 0
+      },
+      "callback_series_count": 11,
+      "callback_sample_count": 588,
+      "all_callback_summaries": {
+        "flux-slice-panel": {
+          "count": 288,
+          "meanMs": 0.014496530095736185,
+          "medianMs": 0.014999985694885254,
+          "p95Ms": 0.020000100135803223,
+          "p99Ms": 0.029999971389770508,
+          "maxMs": 0.034999966621398926
+        },
+        "p1-observables-panel": {
+          "count": 48,
+          "meanMs": 0.009687498211860657,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.014999985694885254,
+          "p99Ms": 0.019999980926513672,
+          "maxMs": 0.019999980926513672
+        },
+        "wave-lab-panel": {
+          "count": 48,
+          "meanMs": 0.011562493940194448,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.019999980926513672,
+          "p99Ms": 0.029999971389770508,
+          "maxMs": 0.029999971389770508
+        },
+        "conservation-micropanel": {
+          "count": 48,
+          "meanMs": 0.13395833720763525,
+          "medianMs": 0.11500000953674316,
+          "p95Ms": 0.1950000524520874,
+          "p99Ms": 0.26999998092651367,
+          "maxMs": 0.26999998092651367
+        },
+        "time-panel-arm": {
+          "count": 24,
+          "meanMs": 0.0029166688521703086,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.005000114440917969,
+          "maxMs": 0.005000114440917969
+        },
+        "thermo-panel-arm": {
+          "count": 24,
+          "meanMs": 0.0014583319425582886,
+          "medianMs": 0,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.004999995231628418,
+          "maxMs": 0.004999995231628418
+        },
+        "scale-context-panel-loop": {
+          "count": 24,
+          "meanMs": 0.0010416656732559204,
+          "medianMs": 0,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.004999995231628418,
+          "maxMs": 0.004999995231628418
+        },
+        "spectrum-panel": {
+          "count": 24,
+          "meanMs": 0.012083321809768677,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.014999985694885254,
+          "p99Ms": 0.019999980926513672,
+          "maxMs": 0.019999980926513672
+        },
+        "gravity-panel-arm": {
+          "count": 24,
+          "meanMs": 0.0012499988079071045,
+          "medianMs": 0,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.009999990463256836,
+          "maxMs": 0.009999990463256836
+        },
+        "knots-panel-arm": {
+          "count": 24,
+          "meanMs": 0.008333335320154825,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.010000109672546387,
+          "p99Ms": 0.019999980926513672,
+          "maxMs": 0.019999980926513672
+        },
+        "dispersion-panel-arm": {
+          "count": 12,
+          "meanMs": 0.002499997615814209,
+          "medianMs": 0,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.004999995231628418,
+          "maxMs": 0.004999995231628418
+        }
+      },
+      "failed_callbacks": {},
+      "recomputed_failures": [],
+      "reported_failures_match": true,
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": true,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "dom": {
+        "mutationRecords": 0,
+        "addedNodes": 0,
+        "removedNodes": 0,
+        "canvasDraws": 0
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 209,
+        "canvases": 5,
+        "heapBytes": 148000000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 209,
+        "canvases": 5,
+        "heapBytes": 148000000
+      },
+      "resource_delta_recomputed": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "owner_clock_interval": [
+        513,
+        670
+      ],
+      "qualification_before": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-field-rf-lattice-wave",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-field-rf-lattice-wave",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "worker-configuration-applied"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "qualification_after": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-field-rf-lattice-wave",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-field-rf-lattice-wave",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "worker-configuration-applied"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle_before": {
+        "workerRuntimeId": "89d27163-5926-4215-a297-cc620a89438f",
+        "moduleInitCount": 1,
+        "renderBridgeGeneration": 1,
+        "configurationToken": 3,
+        "appliedConfigurationToken": 3
+      },
+      "lifecycle_after": {
+        "workerRuntimeId": "89d27163-5926-4215-a297-cc620a89438f",
+        "moduleInitCount": 1,
+        "renderBridgeGeneration": 1,
+        "configurationToken": 3,
+        "appliedConfigurationToken": 3
+      },
+      "mount": {
+        "connected": true,
+        "live": false,
+        "floated": true,
+        "collapsed": false
+      },
+      "mount_after": {
+        "connected": true,
+        "live": false,
+        "floated": true,
+        "collapsed": false
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "raw_summaries_exact": true
+    }
+  ],
+  "baseline_comparison": {
+    "records": [
+      {
+        "size": 33,
+        "state": "docked",
+        "baseline_failures": [
+          "interface callback budget"
+        ],
+        "current_failures": [
+          "interface callback budget"
+        ],
+        "baseline_wave_callback": {
+          "count": 48,
+          "meanMs": 2.8022916664679847,
+          "medianMs": 2.7750000953674316,
+          "p95Ms": 3.375,
+          "p99Ms": 3.490000009536743,
+          "maxMs": 3.490000009536743
+        },
+        "current_wave_callback": {
+          "count": 48,
+          "meanMs": 3.3202083433667817,
+          "medianMs": 3.234999895095825,
+          "p95Ms": 4.115000009536743,
+          "p99Ms": 4.2850000858306885,
+          "maxMs": 4.2850000858306885
+        },
+        "p95_difference_ms": 0.7400000095367432,
+        "new_callback_threshold_failure": false,
+        "baseline_dom": {
+          "mutationRecords": 192,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 480
+        },
+        "current_dom": {
+          "mutationRecords": 343,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 490
+        },
+        "baseline_resources_start": {
+          "rafSubscribers": 11,
+          "domNodes": 209,
+          "canvases": 5,
+          "heapBytes": 47400000
+        },
+        "current_resources_start": {
+          "rafSubscribers": 11,
+          "domNodes": 209,
+          "canvases": 5,
+          "heapBytes": 53500000
+        },
+        "baseline_tick_interval": [
+          62,
+          793
+        ],
+        "current_tick_interval": [
+          62,
+          793
+        ]
+      },
+      {
+        "size": 33,
+        "state": "floated",
+        "baseline_failures": [
+          "interface callback budget"
+        ],
+        "current_failures": [
+          "interface callback budget"
+        ],
+        "baseline_wave_callback": {
+          "count": 48,
+          "meanMs": 2.7609374995032945,
+          "medianMs": 2.680000066757202,
+          "p95Ms": 3.25,
+          "p99Ms": 3.5850000381469727,
+          "maxMs": 3.5850000381469727
+        },
+        "current_wave_callback": {
+          "count": 49,
+          "meanMs": 3.3790816360590408,
+          "medianMs": 3.40500009059906,
+          "p95Ms": 3.965000033378601,
+          "p99Ms": 4.165000081062317,
+          "maxMs": 4.165000081062317
+        },
+        "p95_difference_ms": 0.7150000333786011,
+        "new_callback_threshold_failure": false,
+        "baseline_dom": {
+          "mutationRecords": 196,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 490
+        },
+        "current_dom": {
+          "mutationRecords": 340,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 490
+        },
+        "baseline_resources_start": {
+          "rafSubscribers": 11,
+          "domNodes": 209,
+          "canvases": 5,
+          "heapBytes": 47400000
+        },
+        "current_resources_start": {
+          "rafSubscribers": 11,
+          "domNodes": 209,
+          "canvases": 5,
+          "heapBytes": 53500000
+        },
+        "baseline_tick_interval": [
+          854,
+          1585
+        ],
+        "current_tick_interval": [
+          855,
+          1586
+        ]
+      },
+      {
+        "size": 33,
+        "state": "collapsed",
+        "baseline_failures": [],
+        "current_failures": [],
+        "baseline_wave_callback": {
+          "count": 48,
+          "meanMs": 0.0047916645805041,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.009999990463256836,
+          "p99Ms": 0.009999990463256836,
+          "maxMs": 0.009999990463256836
+        },
+        "current_wave_callback": {
+          "count": 48,
+          "meanMs": 0.017395836611588795,
+          "medianMs": 0.019999980926513672,
+          "p95Ms": 0.02499997615814209,
+          "p99Ms": 0.02500009536743164,
+          "maxMs": 0.02500009536743164
+        },
+        "p95_difference_ms": 0.014999985694885254,
+        "new_callback_threshold_failure": false,
+        "baseline_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "current_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "baseline_resources_start": {
+          "rafSubscribers": 11,
+          "domNodes": 209,
+          "canvases": 5,
+          "heapBytes": 47400000
+        },
+        "current_resources_start": {
+          "rafSubscribers": 11,
+          "domNodes": 209,
+          "canvases": 5,
+          "heapBytes": 53500000
+        },
+        "baseline_tick_interval": [
+          1646,
+          2367
+        ],
+        "current_tick_interval": [
+          1647,
+          2368
+        ]
+      },
+      {
+        "size": 33,
+        "state": "hidden",
+        "baseline_failures": [],
+        "current_failures": [],
+        "baseline_wave_callback": {
+          "count": 48,
+          "meanMs": 0.0014583344260851543,
+          "medianMs": 0,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.005000114440917969,
+          "maxMs": 0.005000114440917969
+        },
+        "current_wave_callback": {
+          "count": 48,
+          "meanMs": 0.007500000298023224,
+          "medianMs": 0.005000114440917969,
+          "p95Ms": 0.014999985694885254,
+          "p99Ms": 0.020000100135803223,
+          "maxMs": 0.020000100135803223
+        },
+        "p95_difference_ms": 0.009999990463256836,
+        "new_callback_threshold_failure": false,
+        "baseline_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "current_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "baseline_resources_start": {
+          "rafSubscribers": 11,
+          "domNodes": 209,
+          "canvases": 5,
+          "heapBytes": 47400000
+        },
+        "current_resources_start": {
+          "rafSubscribers": 11,
+          "domNodes": 209,
+          "canvases": 5,
+          "heapBytes": 53500000
+        },
+        "baseline_tick_interval": [
+          2428,
+          3149
+        ],
+        "current_tick_interval": [
+          2429,
+          3151
+        ]
+      },
+      {
+        "size": 97,
+        "state": "docked",
+        "baseline_failures": [],
+        "current_failures": [
+          "interface callback budget"
+        ],
+        "baseline_wave_callback": {
+          "count": 48,
+          "meanMs": 1.5784374922513962,
+          "medianMs": 1.5699999332427979,
+          "p95Ms": 1.8949999809265137,
+          "p99Ms": 2.34499990940094,
+          "maxMs": 2.34499990940094
+        },
+        "current_wave_callback": {
+          "count": 48,
+          "meanMs": 2.262500007947286,
+          "medianMs": 2.2100000381469727,
+          "p95Ms": 3.8249999284744263,
+          "p99Ms": 3.944999933242798,
+          "maxMs": 3.944999933242798
+        },
+        "p95_difference_ms": 1.9299999475479126,
+        "new_callback_threshold_failure": true,
+        "baseline_dom": {
+          "mutationRecords": 191,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 480
+        },
+        "current_dom": {
+          "mutationRecords": 333,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 480
+        },
+        "baseline_resources_start": {
+          "rafSubscribers": 11,
+          "domNodes": 209,
+          "canvases": 5,
+          "heapBytes": 148000000
+        },
+        "current_resources_start": {
+          "rafSubscribers": 11,
+          "domNodes": 209,
+          "canvases": 5,
+          "heapBytes": 148000000
+        },
+        "baseline_tick_interval": [
+          14,
+          159
+        ],
+        "current_tick_interval": [
+          13,
+          166
+        ]
+      },
+      {
+        "size": 97,
+        "state": "floated",
+        "baseline_failures": [],
+        "current_failures": [
+          "interface callback budget"
+        ],
+        "baseline_wave_callback": {
+          "count": 48,
+          "meanMs": 1.5334374979138374,
+          "medianMs": 1.4450000524520874,
+          "p95Ms": 1.9399999380111694,
+          "p99Ms": 2.940000057220459,
+          "maxMs": 2.940000057220459
+        },
+        "current_wave_callback": {
+          "count": 48,
+          "meanMs": 2.087083339691162,
+          "medianMs": 2.0149999856948853,
+          "p95Ms": 2.6549999713897705,
+          "p99Ms": 3.1899999380111694,
+          "maxMs": 3.1899999380111694
+        },
+        "p95_difference_ms": 0.7150000333786011,
+        "new_callback_threshold_failure": true,
+        "baseline_dom": {
+          "mutationRecords": 191,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 480
+        },
+        "current_dom": {
+          "mutationRecords": 335,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 480
+        },
+        "baseline_resources_start": {
+          "rafSubscribers": 11,
+          "domNodes": 209,
+          "canvases": 5,
+          "heapBytes": 148000000
+        },
+        "current_resources_start": {
+          "rafSubscribers": 11,
+          "domNodes": 209,
+          "canvases": 5,
+          "heapBytes": 148000000
+        },
+        "baseline_tick_interval": [
+          170,
+          316
+        ],
+        "current_tick_interval": [
+          178,
+          334
+        ]
+      },
+      {
+        "size": 97,
+        "state": "collapsed",
+        "baseline_failures": [],
+        "current_failures": [],
+        "baseline_wave_callback": {
+          "count": 48,
+          "meanMs": 0.027604167660077412,
+          "medianMs": 0.02499997615814209,
+          "p95Ms": 0.039999961853027344,
+          "p99Ms": 0.05000007152557373,
+          "maxMs": 0.05000007152557373
+        },
+        "current_wave_callback": {
+          "count": 48,
+          "meanMs": 0.02802083392937978,
+          "medianMs": 0.02499997615814209,
+          "p95Ms": 0.04500007629394531,
+          "p99Ms": 0.060000061988830566,
+          "maxMs": 0.060000061988830566
+        },
+        "p95_difference_ms": 0.005000114440917969,
+        "new_callback_threshold_failure": false,
+        "baseline_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "current_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "baseline_resources_start": {
+          "rafSubscribers": 11,
+          "domNodes": 209,
+          "canvases": 5,
+          "heapBytes": 148000000
+        },
+        "current_resources_start": {
+          "rafSubscribers": 11,
+          "domNodes": 209,
+          "canvases": 5,
+          "heapBytes": 148000000
+        },
+        "baseline_tick_interval": [
+          327,
+          470
+        ],
+        "current_tick_interval": [
+          347,
+          500
+        ]
+      },
+      {
+        "size": 97,
+        "state": "hidden",
+        "baseline_failures": [],
+        "current_failures": [],
+        "baseline_wave_callback": {
+          "count": 48,
+          "meanMs": 0.013229163984457651,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.02499997615814209,
+          "p99Ms": 0.0549999475479126,
+          "maxMs": 0.0549999475479126
+        },
+        "current_wave_callback": {
+          "count": 48,
+          "meanMs": 0.011562493940194448,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.019999980926513672,
+          "p99Ms": 0.029999971389770508,
+          "maxMs": 0.029999971389770508
+        },
+        "p95_difference_ms": -0.004999995231628418,
+        "new_callback_threshold_failure": false,
+        "baseline_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "current_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "baseline_resources_start": {
+          "rafSubscribers": 11,
+          "domNodes": 209,
+          "canvases": 5,
+          "heapBytes": 148000000
+        },
+        "current_resources_start": {
+          "rafSubscribers": 11,
+          "domNodes": 209,
+          "canvases": 5,
+          "heapBytes": 148000000
+        },
+        "baseline_tick_interval": [
+          481,
+          628
+        ],
+        "current_tick_interval": [
+          513,
+          670
+        ]
+      }
+    ],
+    "boundary": "These are matched panel/scenario/size/visibility rows with unchanged gates and renderer class, not a paired experiment on identical sampled state. V2 retained only frame/callback aggregates, so its raw distributions cannot be reconstituted. The v3 corrections intentionally alter component selection, missing-data and zero-history behavior. Recorded regressions are threshold outcomes, not proof that one optimization caused a timing change. No causal speedup, significance, common sample time or complete numerical provenance follows from these comparisons."
+  },
+  "post_run_identity": {
+    "candidate_identity": "a3048e602619adc7042fbf9877a573e4e392a0acc2e662c1ccec2642300870db",
+    "identity_recomputed": true,
+    "candidate_source_archive": {
+      "archive": {
+        "path": "engine/build/scale0_wave_v3_candidate_20260908.zip",
+        "bytes": 8802892,
+        "sha256": "76cd720f90170775679fb1f6ff26468d14eb08e432be93d0688daa44203b716b"
+      },
+      "entries_checked": 2172,
+      "zip_entries": 2174,
+      "content_mismatches": [],
+      "current_entries_checked": 2172,
+      "current_mismatches": [],
+      "duplicate_entries": [],
+      "unsafe_paths": [],
+      "additional_entries": [
+        "engine/docs/PROGRAM_SCALE0_WAVE_CORRECTNESS_V3_2026-09-08.md",
+        "engine/docs/evidence/scale0-wave-v3-harness-review-2026-09-08.json"
+      ]
+    },
+    "exact_changed_from_v2": [
+      {
+        "path": "engine/web/js/scales/scale0/analysis/wave-spectrum.js",
+        "size": 21947,
+        "sha256": "7155a8ee3d0daf069d9aa24326b02e0ee9e8767f4886abbeb2bdcb1398d9694e"
+      },
+      {
+        "path": "engine/web/js/scales/scale0/ui/overlays/wave-lab/wave-info.js",
+        "size": 31766,
+        "sha256": "9cfa9b980a5570dc07e9fc190991523bc56ad1a0f387d7acb7d9073969f44cb9"
+      },
+      {
+        "path": "engine/web/tests/scale0-comprehensive-performance.spec.js",
+        "size": 25066,
+        "sha256": "1df97e12082b620f44c446b3d3020d238c6ef671c2742f8ff8c55d1ecccc30b5"
+      },
+      {
+        "path": "engine/web/tests/scale0-retained-readout.spec.js",
+        "size": 19998,
+        "sha256": "3943f52aadbea001c3caba74e8ea23ef974d2c911a2604c5ffb4558c4e2f450b"
+      },
+      {
+        "path": "engine/web/tests/scale0-ui-audit-probe.js",
+        "size": 12045,
+        "sha256": "b368a7f6327aa8544146972dffa1bc675a9781ec10b52fec0867110c5d7b86d1"
+      }
+    ],
+    "exact_added_from_v2": [
+      {
+        "path": "engine/web/tests/scale0-wave-spectrum-metrics.node.test.mjs",
+        "size": 16137,
+        "sha256": "54adc73bfb6aef835b2d21775c43c7865a06772ee4675def38f1164afacb4d50"
+      }
+    ],
+    "preregistration_snapshots": [
+      {
+        "path": "engine/docs/PROGRAM_SCALE0_WAVE_CORRECTNESS_V3_2026-09-08.md",
+        "size": 9173,
+        "sha256": "4c6746a2d638e860b9343e4e9789d7e937709f9a4570968fc25b6b3166a688db",
+        "archive_matches": true,
+        "current": {
+          "path": "engine/docs/PROGRAM_SCALE0_WAVE_CORRECTNESS_V3_2026-09-08.md",
+          "bytes": 9173,
+          "sha256": "4c6746a2d638e860b9343e4e9789d7e937709f9a4570968fc25b6b3166a688db"
+        },
+        "current_matches_snapshot": true
+      },
+      {
+        "path": "engine/docs/evidence/scale0-wave-v3-harness-review-2026-09-08.json",
+        "size": 11277,
+        "sha256": "fd37df6e350945afc3bd53173f0f562f1a4d6891fc585fc410046c153a163e91",
+        "archive_matches": true,
+        "current": {
+          "path": "engine/docs/evidence/scale0-wave-v3-harness-review-2026-09-08.json",
+          "bytes": 11277,
+          "sha256": "fd37df6e350945afc3bd53173f0f562f1a4d6891fc585fc410046c153a163e91"
+        },
+        "current_matches_snapshot": true
+      }
+    ],
+    "live_program_policy": "The immutable archived preregistration is checked by its frozen digest. The live program may append completed disposition; its separately recorded current bytes do not replace the frozen snapshot.",
+    "strict_manifests": [
+      {
+        "manifest": {
+          "path": "engine/docs/evidence/strict-stack-source-manifest-2026-09-05.json",
+          "bytes": 11378,
+          "sha256": "8d5ea8ed89b7e200f5c7ffdd5b0ea72bbbe358be8175fa7224f1ee0d1f3c1511"
+        },
+        "entries_checked": 69,
+        "current_mismatches": []
+      },
+      {
+        "manifest": {
+          "path": "engine/docs/evidence/strict-recovery-wave1-manifest-2026-09-05.json",
+          "bytes": 8095,
+          "sha256": "467cdd078dc5d1c7cfd8c4bff5f66d4522a0ec44362fccbbd42d583b2b362ea5"
+        },
+        "entries_checked": 44,
+        "current_mismatches": []
+      },
+      {
+        "manifest": {
+          "path": "engine/docs/evidence/strict-recovery-wave2-manifest-2026-09-05.json",
+          "bytes": 13583,
+          "sha256": "22c0332a57006bf17230548e98d6c319e51660fc302cebb9392e2192ba4bd6d9"
+        },
+        "entries_checked": 73,
+        "current_mismatches": []
+      }
+    ],
+    "strict_count_boundary": "69/44/73 are separately checked scopes that may overlap, not 186 unique files.",
+    "six_wasm_artifacts_and_build_info": [
+      {
+        "path": "engine/web/wasm/ftd_core.js",
+        "size": 136178,
+        "sha256": "8f0d5aa0420e81d5245a13866d8069833e0117df1418023749067abe63addec7"
+      },
+      {
+        "path": "engine/web/wasm/ftd_core.wasm",
+        "size": 931721,
+        "sha256": "6ad203d9202c400ca6b52c929387be4c6e90db084e5bc0d147e9560c8c1339a7"
+      },
+      {
+        "path": "engine/web/wasm/ftd_core64.js",
+        "size": 145014,
+        "sha256": "1b2a9af334046c2f16e4e78961c4017708c7cc6d7d40df3f83ceb4109c4e2624"
+      },
+      {
+        "path": "engine/web/wasm/ftd_core64.wasm",
+        "size": 962980,
+        "sha256": "be667edfdd2a364120c9b56946b4a617cb69b641c51b56394db5747bf5caaad3"
+      },
+      {
+        "path": "engine/web/wasm/ftd_core_mt.js",
+        "size": 158993,
+        "sha256": "1d5a7f3d37b6c6068e80a499ac61b4367f94d21f1590576acee95559d6740c4e"
+      },
+      {
+        "path": "engine/web/wasm/ftd_core_mt.wasm",
+        "size": 952655,
+        "sha256": "d30871aa97f771c7f864a1165acc2963ec826d50421435f3a9c62d867a22d69f"
+      },
+      {
+        "path": "engine/web/wasm/build_info.json",
+        "size": 5821,
+        "sha256": "33d3efb14fee4f3aa362f42afb4c02cefcb668178bb98c68d096aacbd7f94f0f"
+      }
+    ],
+    "all_seven_wasm_records_unchanged_from_v2": true,
+    "wasm_bundle_sha256": "97dbc15f61ba8952e68be8012279e50bf0bc650e5806f6bb5ca705952df5d4e3"
+  },
+  "hardware_result_preservation": {
+    "execution_archive": {
+      "archive": {
+        "path": "engine/build/scale0_wave_v3_hardware_results_20260908.zip",
+        "bytes": 575456,
+        "sha256": "843d949e585349e1b40f3da87859d80b6fae0af73b16660be695fdfb95b14c26"
+      },
+      "entries_checked": 11,
+      "zip_entries": 11,
+      "content_mismatches": [],
+      "current_entries_checked": 11,
+      "current_mismatches": [],
+      "duplicate_entries": [],
+      "unsafe_paths": [],
+      "additional_entries": []
+    },
+    "all_eleven_members_checked": true,
+    "retained_members": [
+      {
+        "path": "engine/docs/evidence/scale0-hardware-wave-v3-panels-L33-2026-09-08.json",
+        "bytes": 339044,
+        "sha256": "a3cd7cfb74f3d19f1d971f143ab4c6ceb2bfc2aac4f726dba40fb07598867924"
+      },
+      {
+        "path": "engine/docs/evidence/scale0-hardware-wave-v3-panels-L97-2026-09-08.json",
+        "bytes": 193895,
+        "sha256": "9562d0b390b0f5243aac1bea7e25cb45b8d8d936accc757bbd44156338665a2c"
+      },
+      {
+        "path": "engine/docs/evidence/scale0-wave-v3-candidate-manifest-2026-09-08.json",
+        "bytes": 405901,
+        "sha256": "4ef20a1b26369b2a74a89e83809efe27908fef4a8c35a4a13e0c52fb7f927a8b"
+      },
+      {
+        "path": "engine/docs/evidence/scale0-wave-v3-hardware-2026-09-08.log",
+        "bytes": 409508,
+        "sha256": "ec007bdbd4c7e5d3e7a8c1a90b23422ba9b075a3c2a9cd00f7441da82462ab96"
+      },
+      {
+        "path": "engine/web/test-results/.last-run.json",
+        "bytes": 145,
+        "sha256": "e67f206766bdfe08b2273d445eb2ce2e06278bca733ec73bed5329b58168435e"
+      },
+      {
+        "path": "engine/web/test-results/scale0-comprehensive-perfo-6dade-panels-hardware-matrix-L-97-chromium/attachments/hardware-panels-L97-f27ca4a405d0ae82993fc3835980ef400a39f2cc.json",
+        "bytes": 193895,
+        "sha256": "9562d0b390b0f5243aac1bea7e25cb45b8d8d936accc757bbd44156338665a2c"
+      },
+      {
+        "path": "engine/web/test-results/scale0-comprehensive-perfo-6dade-panels-hardware-matrix-L-97-chromium/error-context.md",
+        "bytes": 167158,
+        "sha256": "6e7604d5b4270ba7d2e7b8ec15b70921b2be085d8ee4343c24942353504026ea"
+      },
+      {
+        "path": "engine/web/test-results/scale0-comprehensive-perfo-6dade-panels-hardware-matrix-L-97-chromium/test-failed-1.png",
+        "bytes": 152640,
+        "sha256": "b93e8feb46c0e1d67a1a0b443a5d929309a365479eb50d024988911ba41fea12"
+      },
+      {
+        "path": "engine/web/test-results/scale0-comprehensive-perfo-e0160-panels-hardware-matrix-L-33-chromium/attachments/hardware-panels-L33-acedb2525699d651d44bb4a6c3eb86c467ee0140.json",
+        "bytes": 339044,
+        "sha256": "a3cd7cfb74f3d19f1d971f143ab4c6ceb2bfc2aac4f726dba40fb07598867924"
+      },
+      {
+        "path": "engine/web/test-results/scale0-comprehensive-perfo-e0160-panels-hardware-matrix-L-33-chromium/error-context.md",
+        "bytes": 240716,
+        "sha256": "2a755468858f53b47cfedda0daac1c9cae494f3999dc32aed882f726204fab73"
+      },
+      {
+        "path": "engine/web/test-results/scale0-comprehensive-perfo-e0160-panels-hardware-matrix-L-33-chromium/test-failed-1.png",
+        "bytes": 151208,
+        "sha256": "beb79679c37920082f45509809606c4ce8ab6052486df3439c4d34403de00776"
+      }
+    ],
+    "transient_scope": "Both raw report attachments, both failure screenshots, both error-context files and .last-run.json are retained with the two canonical reports, candidate manifest and invocation log. Screenshots were hashed, not used as numerical or provenance evidence.",
+    "trace": "Harness explicitly configures trace off. No trace was produced or claimed.",
+    "capture_chronology": "Execution record states capture immediately after the invocation and before the next Playwright run. This review independently verifies present archive/current bytes; it cannot reconstruct external process scheduling from those hashes alone."
+  },
+  "prior_evidence_preservation": {
+    "v2_source_archive": {
+      "archive": {
+        "path": "engine/build/scale0_performance_v2_candidate_20260907.zip",
+        "bytes": 10208612,
+        "sha256": "3278a805f0ac37156036925dbae4ffe7ddcd20a9a7ff012c9e86b75ae252503f"
+      },
+      "entries_checked": 2171,
+      "zip_entries": 2174,
+      "content_mismatches": [],
+      "current_entries_checked": 0,
+      "current_mismatches": null,
+      "duplicate_entries": [],
+      "unsafe_paths": [],
+      "additional_entries": [
+        "_candidate_manifest.json",
+        "engine/docs/PROGRAM_SCALE0_PERFORMANCE_V2_2026-09-07.md",
+        "engine/docs/evidence/scale0-performance-v2-independent-review-2026-09-07.json"
+      ]
+    },
+    "v2_evidence_seal": {
+      "path": "engine/docs/evidence/scale0-performance-v2-evidence-archive-2026-09-07.json",
+      "bytes": 6559,
+      "sha256": "1ee59302c157f1439058d4752332ce472a6fda4a3a0d9ff3e1d5fdd3078dc304"
+    },
+    "v2_evidence_archive": {
+      "archive": {
+        "path": "engine/build/scale0_performance_v2_evidence_20260907.zip",
+        "bytes": 414547,
+        "sha256": "27736901ad385d2ba08e88b94f91438fb5a990c488a69835774d779f8c69a51f"
+      },
+      "entries_checked": 27,
+      "zip_entries": 27,
+      "content_mismatches": [],
+      "current_entries_checked": 0,
+      "current_mismatches": null,
+      "duplicate_entries": [],
+      "unsafe_paths": [],
+      "additional_entries": []
+    },
+    "prior_candidate_disposition": "The sealed v2 record remains 279/288 rows passing with nine callback failures. It is not rewritten by this eight-row follow-up. Seven non-Wave failures were not remeasured.",
+    "prior_artifact_limit": "V2 raw panel reports and failure log are preserved. Its transient panel screenshots/error-context were cleared by a later invocation; they are not retroactively restored by the new Wave v3 attachments."
+  },
+  "limitations": [
+    "This is independent reconstruction of retained measurements, not an independent browser reproduction or universal 60 FPS guarantee.",
+    "Frame intervals and callback durations are fully retained, but absolute timing origins, callback start/stop timestamps and action dispatch/RAF timestamps are not. The reported measurement duration cannot be independently reconstructed from those vectors.",
+    "The inherited stop protocol may collect installed callbacks during its zero-delay drain after stoppedAt; raw vectors and summaries cover exactly that same collected data.",
+    "Reported same-owner/generation/readiness flags and endpoint clocks validate the registered lifecycle contract; they do not certify that separate J/E observations share one microscopic tick or state identity. Direct lifecycle snapshots are null and do not expose the worker lifecycle fields.",
+    "Five canvases with 480 or 490 intercepted draw calls establish activity under the Wave panel root. Those are counts of selected Canvas2D methods, not proof of five scientifically complete plots, display-present timing or numerical correctness.",
+    "Action samples measure synchronous dispatch to next foreground rAF, not physical display presentation. Endpoint resource equality over these windows is not a proof against all leaks or races.",
+    "Hardware renderer and empty Long Tasks/runtime-error records apply only to these observed windows and instrumentation.",
+    "No strict causal law, continuum limit, carrier recovery, matter/spectra/chemistry/macroscopic recovery, canonical adoption, commit or public deployment is approved."
+  ],
+  "blocking_release_findings": [
+    {
+      "id": "WV3-HW-01",
+      "scope": "direct L33 docked/floated",
+      "finding": "Persistent Wave interface callback p95 failures; current 4.115/3.965 ms exceeds 2 ms.",
+      "disposition": "Remain open; no gate retuning."
+    },
+    {
+      "id": "WV3-HW-02",
+      "scope": "worker L97 docked/floated",
+      "finding": "New Wave interface callback p95 failures; current 3.825/2.655 ms exceeds 2 ms versus v2 1.895/1.940 ms.",
+      "disposition": "Record regression and require a separately reviewed successor before another campaign."
+    }
+  ],
+  "evidence_integrity_findings": []
+}

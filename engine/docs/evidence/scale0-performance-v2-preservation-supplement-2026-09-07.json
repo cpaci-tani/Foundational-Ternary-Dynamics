@@ -1,0 +1,71 @@
+{
+  "schema": "scale0-performance-v2-preservation-supplement-v1",
+  "verified_utc": "2026-09-08T05:37:19.386851+00:00",
+  "pair_formation_review_sources": [
+    {
+      "path": "scripts/phi_v2_lattice/recovery_pair_formation.py",
+      "sha256": "25d9c1c05e30e16a9e80b616e24892000f23f586f6ea8b8445efa18ae00a282a",
+      "bytes": 5533,
+      "matches_prior_review": true
+    },
+    {
+      "path": "scripts/tests/phi_v2_lattice/test_recovery_pair_formation.py",
+      "sha256": "82e4e338e2dc6a9b55b6204f968473df5d3fa61e7df6fc4a00728b851121d38e",
+      "bytes": 5516,
+      "matches_prior_review": true
+    },
+    {
+      "path": "engine/docs/AUDIT_STRICT_PAIR_FORMATION_OBSTRUCTION.md",
+      "sha256": "e98c531a5095d73ce4f179847273fd3a5a079cc11ef17a33541d881e5a525580",
+      "bytes": 9384,
+      "matches_prior_review": true
+    }
+  ],
+  "additional_prior_candidate_archives": [
+    {
+      "manifest": "scale0-candidate-manifest-2026-09-07.json",
+      "archive": "engine/build/scale0_audit_candidate_20260907.zip",
+      "sha256": "c8490a91db11757776a3d0bae580e09bee8055f1d963f71a68c4b3a792368dbd",
+      "matches_prior_manifest": true
+    },
+    {
+      "manifest": "scale0-panels-candidate-manifest-2026-09-07.json",
+      "archive": "engine/build/scale0_audit_panels_candidate_20260907.zip",
+      "sha256": "dfe7a7a1ad1af51d3f9b1900ac3c510c3a504b170c5f0833a3b80bfc7538333a",
+      "matches_prior_manifest": true
+    },
+    {
+      "manifest": "scale0-performance-candidate-manifest-2026-09-07.json",
+      "archive": "engine/build/scale0_audit_performance_candidate_20260907.zip",
+      "sha256": "c9b943fdf08f556c0101ad28aa3eb2ae54c3d6261041c1f8e2615f558ea7d6c6",
+      "matches_prior_manifest": true
+    }
+  ],
+  "prior_panel_report_preservation": [
+    {
+      "prior_verification": "scale0-panels-candidate-verification-2026-09-07.json",
+      "path": "engine/docs/evidence/scale0-hardware-panels-L33-2026-09-07.json",
+      "sha256": "1ff8c50900b834a3776b204d40aa97c216fc4c0a15fe153015963f874c4670f8",
+      "matches_prior_verification": true
+    },
+    {
+      "prior_verification": "scale0-panels-candidate-verification-2026-09-07.json",
+      "path": "engine/docs/evidence/scale0-hardware-panels-L97-2026-09-07.json",
+      "sha256": "3a9d8425c8c527ad11d8dc4fb252502258b2b7809459d6478e75c28bd3db0f15",
+      "matches_prior_verification": true
+    },
+    {
+      "prior_verification": "scale0-performance-candidate-verification-2026-09-07.json",
+      "path": "engine/docs/evidence/scale0-hardware-repair-v1-panels-L33-2026-09-07.json",
+      "sha256": "4641ac1097294f2c013b473e5775c19902af839c26d19f88de986a3984587e9f",
+      "matches_prior_verification": true
+    },
+    {
+      "prior_verification": "scale0-performance-candidate-verification-2026-09-07.json",
+      "path": "engine/docs/evidence/scale0-hardware-repair-v1-panels-L97-2026-09-07.json",
+      "sha256": "d7fb8167345968281201c6f4eb640480298cbc58bfa1a8de2f0df4e8a2a94356",
+      "matches_prior_verification": true
+    }
+  ],
+  "scope": "Additional preservation checks complement final verification; no rerun, claim promotion or alteration of prior failed outcomes."
+}

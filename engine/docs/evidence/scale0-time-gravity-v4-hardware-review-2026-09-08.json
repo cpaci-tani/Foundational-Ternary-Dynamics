@@ -1,0 +1,3182 @@
+{
+  "schema": "scale0-time-gravity-v4-independent-hardware-review-v1",
+  "reviewed_utc": "2026-09-08T07:00:02.471Z",
+  "local_record_date": "2026-09-08",
+  "reviewer": "/root/bounded_worker_reads",
+  "coordinator": "/root",
+  "status": "accepted_evidence_accounting_hardware_callback_gate_failed",
+  "release_approved": false,
+  "hardware_gate_pass": false,
+  "physical_recovery_approved": false,
+  "post_run_source_preservation_pass": true,
+  "disposition": "The complete 16-row Time/Gravity campaign is internally consistent and all frozen source/archive preservation checks pass. Thirteen rows pass. Direct Time docked/floated and worker Gravity floated fail the unchanged callback p95 limit. Two prior Time/Gravity callback failures clear in this follow-up, while the historical v2 and Wave records remain intact. The candidate is not performance-release approved.",
+  "method": {
+    "execution": "Read-only source/manifest/ZIP checks and independent reconstruction of existing raw reports. No tests, browser, builds, GPU or numerical campaign was launched.",
+    "statistics": "Nearest-rank ceil(n*q)-1 with clipping; ascending sort followed by sequential binary64 accumulation and division reproduces the declared probe algorithm. Every summary field matches exactly without a tolerance.",
+    "numeric_summary_fields_reconstructed": 1404,
+    "raw_totals": {
+      "frame_samples": 11603,
+      "callback_series": 194,
+      "callback_samples": 18420,
+      "action_samples": 80,
+      "long_tasks": 0,
+      "frames_over_20ms": 0,
+      "frames_over_33_4ms": 0
+    },
+    "scope": "All frame and callback vectors, including every diagnostic ownerRead series, and all action durations were reconstructed. Only standalone method:ownerRead.* diagnostics are excluded from the interface callback gate as preregistered. Nested owner reads remain inside inclusive callback timings; nested durations are not added as independent wall time."
+  },
+  "inputs": {
+    "manifest": {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-candidate-manifest-2026-09-08.json",
+      "bytes": 409249,
+      "sha256": "d7b671f7fdefa4d8df8c0ddbdf52d1cd1075770d9ba2e0338cba6b4adb31708c"
+    },
+    "freeze_review": {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-freeze-review-2026-09-08.json",
+      "bytes": 26197,
+      "sha256": "a44dd07e24181bfab8916098d3869b97b7bd02c0163f6610544dd291171b0b86"
+    },
+    "coordinator_postcheck": {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-postrun-source-check-2026-09-08.json",
+      "bytes": 455,
+      "sha256": "27d669f25fbf5a72f724eeaf66990ad7ca317e31f5b5e6b6559ab2736e822c8f"
+    },
+    "execution": {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-hardware-2026-09-08-execution.json",
+      "bytes": 3432,
+      "sha256": "d0b08b2065840b17c746f0ffe813db9e2209254b48523a8d8c950b932b74fd7b"
+    },
+    "reports": [
+      {
+        "path": "engine/docs/evidence/scale0-hardware-time-gravity-v4-panels-L33-2026-09-08.json",
+        "bytes": 679550,
+        "sha256": "f38252326cead0c49cecb86e58dfcdd6b9087fb4f18e9ae9dedc04037a1e85a9"
+      },
+      {
+        "path": "engine/docs/evidence/scale0-hardware-time-gravity-v4-panels-L97-2026-09-08.json",
+        "bytes": 391461,
+        "sha256": "7a29ffee78309b4d1cc5a11439073c0387d9bdcf1652e8fdd36265ef4be1f50d"
+      }
+    ],
+    "hardware_log": {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-hardware-2026-09-08.log",
+      "bytes": 8682,
+      "sha256": "b86308d7095a76bcb3fa2fc6706e90e3c5f74cbf37dbefa85d3b5a1d618440f1"
+    },
+    "baseline_reports": [
+      {
+        "path": "engine/docs/evidence/scale0-hardware-repair-v2-panels-L33-2026-09-07.json",
+        "bytes": 535787,
+        "sha256": "feb2d9c505fd6a939e7d85188e610af50b5286a4addf396958d9c52a82bd2cdb"
+      },
+      {
+        "path": "engine/docs/evidence/scale0-hardware-repair-v2-panels-L97-2026-09-07.json",
+        "bytes": 517402,
+        "sha256": "fccc19109bcaf7d8c81fe601f41b1fe356d912733805bf3504f5f070b7352c3e"
+      }
+    ]
+  },
+  "coverage": {
+    "profile": "time-gravity-v4",
+    "kind": "panels",
+    "candidate_identity": "69b0bb82befe103572ac4710631c4242fc9c6b23990bea93c22ed5426b3ff394",
+    "ordered_sizes": [
+      33,
+      97
+    ],
+    "plan": [
+      {
+        "id": "gravity",
+        "scenario": "s0-seed-massive-body"
+      },
+      {
+        "id": "time",
+        "scenario": "s0-seed-time-twin-clocks"
+      }
+    ],
+    "states": [
+      "docked",
+      "floated",
+      "collapsed",
+      "hidden"
+    ],
+    "expected_rows": 16,
+    "observed_rows": 16,
+    "duplicates": [],
+    "missing": [],
+    "unexpected": [],
+    "all_report_identities_match": true,
+    "all_runtime_errors": [],
+    "all_sixteen_logged_rows_match_reports": true,
+    "playwright_exit": 1,
+    "failed_playwright_matrix_tests": 2,
+    "count_boundary": "Two failed Playwright matrix tests contain 16 audited rows and three failed rows."
+  },
+  "outcome": {
+    "passed_rows": 13,
+    "failed_rows": 3,
+    "callback_p95_failed_rows": 3,
+    "callback_max_failed_rows": 0,
+    "all_noncallback_gates_pass": true,
+    "all_frame_gates_pass": true,
+    "all_eight_hidden_collapsed_rows_pass": true,
+    "cleared_prior_time_gravity_callback_failures": 2,
+    "prior_time_gravity_failed_rows": 5,
+    "new_time_gravity_failed_rows": 0,
+    "reported_gates": {
+      "minFrames": 600,
+      "minDurationMs": 12000,
+      "minFps": 59.5,
+      "p95Ms": 17,
+      "p99Ms": 20,
+      "maxLongFrames": 0,
+      "actionSamples": 10,
+      "actionP95Ms": 50
+    },
+    "callback_p95_limit_ms": 2,
+    "callback_max_limit_ms": 8,
+    "hardware_renderers": [
+      "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    ],
+    "remaining_failures": [
+      {
+        "size": 33,
+        "id": "time",
+        "state": "docked",
+        "callback": {
+          "count": 24,
+          "meanMs": 1.917916680375735,
+          "medianMs": 1.8700000047683716,
+          "p95Ms": 2.490000009536743,
+          "p99Ms": 2.8799999952316284,
+          "maxMs": 2.8799999952316284
+        },
+        "failures": [
+          "interface callback budget"
+        ]
+      },
+      {
+        "size": 33,
+        "id": "time",
+        "state": "floated",
+        "callback": {
+          "count": 25,
+          "meanMs": 1.9062000131607055,
+          "medianMs": 1.8199999332427979,
+          "p95Ms": 2.5850000381469727,
+          "p99Ms": 2.7350000143051147,
+          "maxMs": 2.7350000143051147
+        },
+        "failures": [
+          "interface callback budget"
+        ]
+      },
+      {
+        "size": 97,
+        "id": "gravity",
+        "state": "floated",
+        "callback": {
+          "count": 48,
+          "meanMs": 1.5442708383003871,
+          "medianMs": 1.4449999332427979,
+          "p95Ms": 2.100000023841858,
+          "p99Ms": 4.045000076293945,
+          "maxMs": 4.045000076293945
+        },
+        "failures": [
+          "interface callback budget"
+        ]
+      }
+    ],
+    "cleared_prior_failures": [
+      {
+        "size": 97,
+        "id": "gravity",
+        "state": "docked",
+        "baseline_p95_ms": 3.0549999475479126,
+        "current_p95_ms": 1.9300000667572021
+      },
+      {
+        "size": 97,
+        "id": "time",
+        "state": "floated",
+        "baseline_p95_ms": 2.059999942779541,
+        "current_p95_ms": 0.9800000190734863
+      }
+    ],
+    "workload_note": "Each of the four visible Gravity rows records 48 intercepted Canvas2D operations. Visible Time rows use DOM/SVG and record zero intercepted Canvas2D operations; this does not mean no rendering work. Hidden/collapsed roots record zero canvas operations."
+  },
+  "rows": [
+    {
+      "size": 33,
+      "id": "gravity",
+      "scenario": "s0-seed-massive-body",
+      "state": "docked",
+      "backend": "wasm-direct",
+      "duration_ms": 12178.929999947548,
+      "frames": {
+        "count": 730,
+        "meanMs": 16.665999999999997,
+        "medianMs": 16.665000000000873,
+        "p95Ms": 16.67000000000189,
+        "p99Ms": 16.67000000000553,
+        "maxMs": 16.67000000000553,
+        "effectiveFps": 60.00240009600385,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "primary_callback": {
+        "count": 48,
+        "meanMs": 1.4845833356181781,
+        "medianMs": 1.4500000476837158,
+        "p95Ms": 1.7799999713897705,
+        "p99Ms": 2.024999976158142,
+        "maxMs": 2.024999976158142
+      },
+      "actions": {
+        "count": 10,
+        "meanMs": 16.399000012874602,
+        "medianMs": 15.230000019073486,
+        "p95Ms": 20.125,
+        "p99Ms": 20.125,
+        "maxMs": 20.125
+      },
+      "failed_callbacks": {},
+      "recomputed_failures": [],
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": true,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "raw_summaries_exact": true,
+      "callback_series": 14,
+      "callback_samples": 1771,
+      "dom": {
+        "mutationRecords": 192,
+        "addedNodes": 48,
+        "removedNodes": 48,
+        "canvasDraws": 48
+      },
+      "resource_delta": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 150,
+        "canvases": 3,
+        "heapBytes": 50400000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 150,
+        "canvases": 3,
+        "heapBytes": 50400000
+      },
+      "owner_clock_interval": [
+        80,
+        811
+      ],
+      "qualification": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-seed-massive-body",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-seed-massive-body",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "in-thread-engine-readback"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle": null,
+      "mount": {
+        "connected": true,
+        "live": true,
+        "floated": false,
+        "collapsed": false
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "size": 33,
+      "id": "gravity",
+      "scenario": "s0-seed-massive-body",
+      "state": "floated",
+      "backend": "wasm-direct",
+      "duration_ms": 12171.75,
+      "frames": {
+        "count": 730,
+        "meanMs": 16.666,
+        "medianMs": 16.665000000000873,
+        "p95Ms": 16.67000000000553,
+        "p99Ms": 16.67000000000553,
+        "maxMs": 16.67000000000553,
+        "effectiveFps": 60.00240009600384,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "primary_callback": {
+        "count": 48,
+        "meanMs": 1.538020834326744,
+        "medianMs": 1.5099999904632568,
+        "p95Ms": 1.784999966621399,
+        "p99Ms": 2.5049999952316284,
+        "maxMs": 2.5049999952316284
+      },
+      "actions": {
+        "count": 10,
+        "meanMs": 16.286500024795533,
+        "medianMs": 15.525000095367432,
+        "p95Ms": 19.87000000476837,
+        "p99Ms": 19.87000000476837,
+        "maxMs": 19.87000000476837
+      },
+      "failed_callbacks": {},
+      "recomputed_failures": [],
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": true,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "raw_summaries_exact": true,
+      "callback_series": 14,
+      "callback_samples": 1767,
+      "dom": {
+        "mutationRecords": 200,
+        "addedNodes": 48,
+        "removedNodes": 48,
+        "canvasDraws": 48
+      },
+      "resource_delta": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 150,
+        "canvases": 3,
+        "heapBytes": 50400000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 150,
+        "canvases": 3,
+        "heapBytes": 50400000
+      },
+      "owner_clock_interval": [
+        873,
+        1604
+      ],
+      "qualification": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-seed-massive-body",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-seed-massive-body",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "in-thread-engine-readback"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle": null,
+      "mount": {
+        "connected": true,
+        "live": true,
+        "floated": true,
+        "collapsed": false
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "size": 33,
+      "id": "gravity",
+      "scenario": "s0-seed-massive-body",
+      "state": "collapsed",
+      "backend": "wasm-direct",
+      "duration_ms": 12011.514999985695,
+      "frames": {
+        "count": 720,
+        "meanMs": 16.665999999999997,
+        "medianMs": 16.665000000000873,
+        "p95Ms": 16.67000000000553,
+        "p99Ms": 16.67000000000553,
+        "maxMs": 16.670000000012806,
+        "effectiveFps": 60.00240009600385,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "primary_callback": {
+        "count": 24,
+        "meanMs": 0.01812499264876048,
+        "medianMs": 0.015000104904174805,
+        "p95Ms": 0.02500009536743164,
+        "p99Ms": 0.029999971389770508,
+        "maxMs": 0.029999971389770508
+      },
+      "actions": {
+        "count": 0,
+        "meanMs": 0,
+        "medianMs": 0,
+        "p95Ms": 0,
+        "p99Ms": 0,
+        "maxMs": 0
+      },
+      "failed_callbacks": {},
+      "recomputed_failures": [],
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": true,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "raw_summaries_exact": true,
+      "callback_series": 13,
+      "callback_samples": 1675,
+      "dom": {
+        "mutationRecords": 0,
+        "addedNodes": 0,
+        "removedNodes": 0,
+        "canvasDraws": 0
+      },
+      "resource_delta": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 150,
+        "canvases": 3,
+        "heapBytes": 50400000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 150,
+        "canvases": 3,
+        "heapBytes": 50400000
+      },
+      "owner_clock_interval": [
+        1666,
+        2387
+      ],
+      "qualification": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-seed-massive-body",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-seed-massive-body",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "in-thread-engine-readback"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle": null,
+      "mount": {
+        "connected": true,
+        "live": false,
+        "floated": true,
+        "collapsed": true
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "size": 33,
+      "id": "gravity",
+      "scenario": "s0-seed-massive-body",
+      "state": "hidden",
+      "backend": "wasm-direct",
+      "duration_ms": 12025.875,
+      "frames": {
+        "count": 721,
+        "meanMs": 16.66600554785021,
+        "medianMs": 16.66500000000815,
+        "p95Ms": 16.669999999998254,
+        "p99Ms": 16.670000000012806,
+        "maxMs": 16.670000000012806,
+        "effectiveFps": 60.00238012215185,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "primary_callback": {
+        "count": 24,
+        "meanMs": 0.0068750033775965376,
+        "medianMs": 0.004999995231628418,
+        "p95Ms": 0.010000109672546387,
+        "p99Ms": 0.015000104904174805,
+        "maxMs": 0.015000104904174805
+      },
+      "actions": {
+        "count": 0,
+        "meanMs": 0,
+        "medianMs": 0,
+        "p95Ms": 0,
+        "p99Ms": 0,
+        "maxMs": 0
+      },
+      "failed_callbacks": {},
+      "recomputed_failures": [],
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": true,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "raw_summaries_exact": true,
+      "callback_series": 13,
+      "callback_samples": 1677,
+      "dom": {
+        "mutationRecords": 0,
+        "addedNodes": 0,
+        "removedNodes": 0,
+        "canvasDraws": 0
+      },
+      "resource_delta": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 150,
+        "canvases": 3,
+        "heapBytes": 50400000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 150,
+        "canvases": 3,
+        "heapBytes": 50400000
+      },
+      "owner_clock_interval": [
+        2448,
+        3170
+      ],
+      "qualification": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-seed-massive-body",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-seed-massive-body",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "in-thread-engine-readback"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle": null,
+      "mount": {
+        "connected": true,
+        "live": false,
+        "floated": true,
+        "collapsed": false
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "size": 33,
+      "id": "time",
+      "scenario": "s0-seed-time-twin-clocks",
+      "state": "docked",
+      "backend": "wasm-direct",
+      "duration_ms": 12171.019999980927,
+      "frames": {
+        "count": 730,
+        "meanMs": 16.666006849315064,
+        "medianMs": 16.66500000000815,
+        "p95Ms": 16.669999999998254,
+        "p99Ms": 16.670000000012806,
+        "maxMs": 16.670000000012806,
+        "effectiveFps": 60.00237543650702,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "primary_callback": {
+        "count": 24,
+        "meanMs": 1.917916680375735,
+        "medianMs": 1.8700000047683716,
+        "p95Ms": 2.490000009536743,
+        "p99Ms": 2.8799999952316284,
+        "maxMs": 2.8799999952316284
+      },
+      "actions": {
+        "count": 10,
+        "meanMs": 16.685500025749207,
+        "medianMs": 14.18500006198883,
+        "p95Ms": 20.65500009059906,
+        "p99Ms": 20.65500009059906,
+        "maxMs": 20.65500009059906
+      },
+      "failed_callbacks": {
+        "time-panel": {
+          "count": 24,
+          "meanMs": 1.917916680375735,
+          "medianMs": 1.8700000047683716,
+          "p95Ms": 2.490000009536743,
+          "p99Ms": 2.8799999952316284,
+          "maxMs": 2.8799999952316284
+        }
+      },
+      "recomputed_failures": [
+        "interface callback budget"
+      ],
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": false,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "raw_summaries_exact": true,
+      "callback_series": 13,
+      "callback_samples": 1696,
+      "dom": {
+        "mutationRecords": 689,
+        "addedNodes": 0,
+        "removedNodes": 0,
+        "canvasDraws": 0
+      },
+      "resource_delta": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 233,
+        "canvases": 0,
+        "heapBytes": 50400000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 233,
+        "canvases": 0,
+        "heapBytes": 50400000
+      },
+      "owner_clock_interval": [
+        61,
+        792
+      ],
+      "qualification": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-seed-time-twin-clocks",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-seed-time-twin-clocks",
+          "loadGeneration": 4,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "in-thread-engine-readback"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle": null,
+      "mount": {
+        "connected": true,
+        "live": true,
+        "floated": false,
+        "collapsed": false
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "size": 33,
+      "id": "time",
+      "scenario": "s0-seed-time-twin-clocks",
+      "state": "floated",
+      "backend": "wasm-direct",
+      "duration_ms": 12177.455000042915,
+      "frames": {
+        "count": 730,
+        "meanMs": 16.66599999999999,
+        "medianMs": 16.66500000000815,
+        "p95Ms": 16.669999999998254,
+        "p99Ms": 16.670000000012806,
+        "maxMs": 16.670000000012806,
+        "effectiveFps": 60.002400096003875,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "primary_callback": {
+        "count": 25,
+        "meanMs": 1.9062000131607055,
+        "medianMs": 1.8199999332427979,
+        "p95Ms": 2.5850000381469727,
+        "p99Ms": 2.7350000143051147,
+        "maxMs": 2.7350000143051147
+      },
+      "actions": {
+        "count": 10,
+        "meanMs": 16.676999986171722,
+        "medianMs": 14.830000042915344,
+        "p95Ms": 20.55999994277954,
+        "p99Ms": 20.55999994277954,
+        "maxMs": 20.55999994277954
+      },
+      "failed_callbacks": {
+        "time-panel": {
+          "count": 25,
+          "meanMs": 1.9062000131607055,
+          "medianMs": 1.8199999332427979,
+          "p95Ms": 2.5850000381469727,
+          "p99Ms": 2.7350000143051147,
+          "maxMs": 2.7350000143051147
+        }
+      },
+      "recomputed_failures": [
+        "interface callback budget"
+      ],
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": false,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "raw_summaries_exact": true,
+      "callback_series": 13,
+      "callback_samples": 1700,
+      "dom": {
+        "mutationRecords": 682,
+        "addedNodes": 0,
+        "removedNodes": 0,
+        "canvasDraws": 0
+      },
+      "resource_delta": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 233,
+        "canvases": 0,
+        "heapBytes": 50400000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 233,
+        "canvases": 0,
+        "heapBytes": 50400000
+      },
+      "owner_clock_interval": [
+        854,
+        1585
+      ],
+      "qualification": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-seed-time-twin-clocks",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-seed-time-twin-clocks",
+          "loadGeneration": 4,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "in-thread-engine-readback"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle": null,
+      "mount": {
+        "connected": true,
+        "live": true,
+        "floated": true,
+        "collapsed": false
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "size": 33,
+      "id": "time",
+      "scenario": "s0-seed-time-twin-clocks",
+      "state": "collapsed",
+      "backend": "wasm-direct",
+      "duration_ms": 12008.795000076294,
+      "frames": {
+        "count": 720,
+        "meanMs": 16.665999999999986,
+        "medianMs": 16.66500000000815,
+        "p95Ms": 16.669999999998254,
+        "p99Ms": 16.670000000012806,
+        "maxMs": 16.670000000012806,
+        "effectiveFps": 60.00240009600389,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "primary_callback": {
+        "count": 24,
+        "meanMs": 0.01666666567325592,
+        "medianMs": 0.014999985694885254,
+        "p95Ms": 0.020000100135803223,
+        "p99Ms": 0.020000100135803223,
+        "maxMs": 0.020000100135803223
+      },
+      "actions": {
+        "count": 0,
+        "meanMs": 0,
+        "medianMs": 0,
+        "p95Ms": 0,
+        "p99Ms": 0,
+        "maxMs": 0
+      },
+      "failed_callbacks": {},
+      "recomputed_failures": [],
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": true,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "raw_summaries_exact": true,
+      "callback_series": 13,
+      "callback_samples": 1675,
+      "dom": {
+        "mutationRecords": 0,
+        "addedNodes": 0,
+        "removedNodes": 0,
+        "canvasDraws": 0
+      },
+      "resource_delta": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 233,
+        "canvases": 0,
+        "heapBytes": 50400000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 233,
+        "canvases": 0,
+        "heapBytes": 50400000
+      },
+      "owner_clock_interval": [
+        1647,
+        2368
+      ],
+      "qualification": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-seed-time-twin-clocks",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-seed-time-twin-clocks",
+          "loadGeneration": 4,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "in-thread-engine-readback"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle": null,
+      "mount": {
+        "connected": true,
+        "live": false,
+        "floated": true,
+        "collapsed": true
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "size": 33,
+      "id": "time",
+      "scenario": "s0-seed-time-twin-clocks",
+      "state": "hidden",
+      "backend": "wasm-direct",
+      "duration_ms": 12020.25,
+      "frames": {
+        "count": 721,
+        "meanMs": 16.665998613037445,
+        "medianMs": 16.66500000000815,
+        "p95Ms": 16.670000000012806,
+        "p99Ms": 16.670000000012806,
+        "maxMs": 16.670000000012806,
+        "effectiveFps": 60.00240508946892,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "primary_callback": {
+        "count": 24,
+        "meanMs": 0.014166682958602905,
+        "medianMs": 0.014999985694885254,
+        "p95Ms": 0.020000100135803223,
+        "p99Ms": 0.02500009536743164,
+        "maxMs": 0.02500009536743164
+      },
+      "actions": {
+        "count": 0,
+        "meanMs": 0,
+        "medianMs": 0,
+        "p95Ms": 0,
+        "p99Ms": 0,
+        "maxMs": 0
+      },
+      "failed_callbacks": {},
+      "recomputed_failures": [],
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": true,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "raw_summaries_exact": true,
+      "callback_series": 13,
+      "callback_samples": 1678,
+      "dom": {
+        "mutationRecords": 0,
+        "addedNodes": 0,
+        "removedNodes": 0,
+        "canvasDraws": 0
+      },
+      "resource_delta": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 233,
+        "canvases": 0,
+        "heapBytes": 50400000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 233,
+        "canvases": 0,
+        "heapBytes": 50400000
+      },
+      "owner_clock_interval": [
+        2429,
+        3151
+      ],
+      "qualification": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-seed-time-twin-clocks",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-seed-time-twin-clocks",
+          "loadGeneration": 4,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "in-thread-engine-readback"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle": null,
+      "mount": {
+        "connected": true,
+        "live": false,
+        "floated": true,
+        "collapsed": false
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "size": 97,
+      "id": "gravity",
+      "scenario": "s0-seed-massive-body",
+      "state": "docked",
+      "backend": "wasm-worker",
+      "duration_ms": 12175.600000023842,
+      "frames": {
+        "count": 730,
+        "meanMs": 16.665999999999997,
+        "medianMs": 16.665000000000873,
+        "p95Ms": 16.67000000000189,
+        "p99Ms": 16.67000000000553,
+        "maxMs": 16.67000000000553,
+        "effectiveFps": 60.00240009600385,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "primary_callback": {
+        "count": 48,
+        "meanMs": 1.5130208333333333,
+        "medianMs": 1.46999990940094,
+        "p95Ms": 1.9300000667572021,
+        "p99Ms": 3.3499999046325684,
+        "maxMs": 3.3499999046325684
+      },
+      "actions": {
+        "count": 10,
+        "meanMs": 16.543500006198883,
+        "medianMs": 16.40499997138977,
+        "p95Ms": 17.72499990463257,
+        "p99Ms": 17.72499990463257,
+        "maxMs": 17.72499990463257
+      },
+      "failed_callbacks": {},
+      "recomputed_failures": [],
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": true,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "raw_summaries_exact": true,
+      "callback_series": 11,
+      "callback_samples": 618,
+      "dom": {
+        "mutationRecords": 411,
+        "addedNodes": 48,
+        "removedNodes": 48,
+        "canvasDraws": 48
+      },
+      "resource_delta": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 150,
+        "canvases": 3,
+        "heapBytes": 60300000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 150,
+        "canvases": 3,
+        "heapBytes": 60300000
+      },
+      "owner_clock_interval": [
+        13,
+        127
+      ],
+      "qualification": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-seed-massive-body",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-seed-massive-body",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "worker-configuration-applied"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle": {
+        "workerRuntimeId": "9b3b6819-4838-480a-9f7e-e93af2398eb4",
+        "moduleInitCount": 1,
+        "renderBridgeGeneration": 1,
+        "configurationToken": 3,
+        "appliedConfigurationToken": 3
+      },
+      "mount": {
+        "connected": true,
+        "live": true,
+        "floated": false,
+        "collapsed": false
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "size": 97,
+      "id": "gravity",
+      "scenario": "s0-seed-massive-body",
+      "state": "floated",
+      "backend": "wasm-worker",
+      "duration_ms": 12169.634999990463,
+      "frames": {
+        "count": 730,
+        "meanMs": 16.66599999999999,
+        "medianMs": 16.665000000000873,
+        "p95Ms": 16.67000000000553,
+        "p99Ms": 16.67000000000553,
+        "maxMs": 16.67000000000553,
+        "effectiveFps": 60.002400096003875,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "primary_callback": {
+        "count": 48,
+        "meanMs": 1.5442708383003871,
+        "medianMs": 1.4449999332427979,
+        "p95Ms": 2.100000023841858,
+        "p99Ms": 4.045000076293945,
+        "maxMs": 4.045000076293945
+      },
+      "actions": {
+        "count": 10,
+        "meanMs": 16.429499995708465,
+        "medianMs": 16.40499997138977,
+        "p95Ms": 17.829999923706055,
+        "p99Ms": 17.829999923706055,
+        "maxMs": 17.829999923706055
+      },
+      "failed_callbacks": {
+        "gravity-panel": {
+          "count": 48,
+          "meanMs": 1.5442708383003871,
+          "medianMs": 1.4449999332427979,
+          "p95Ms": 2.100000023841858,
+          "p99Ms": 4.045000076293945,
+          "maxMs": 4.045000076293945
+        }
+      },
+      "recomputed_failures": [
+        "interface callback budget"
+      ],
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": false,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "raw_summaries_exact": true,
+      "callback_series": 11,
+      "callback_samples": 622,
+      "dom": {
+        "mutationRecords": 292,
+        "addedNodes": 48,
+        "removedNodes": 48,
+        "canvasDraws": 48
+      },
+      "resource_delta": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 150,
+        "canvases": 3,
+        "heapBytes": 60300000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 150,
+        "canvases": 3,
+        "heapBytes": 60300000
+      },
+      "owner_clock_interval": [
+        136,
+        248
+      ],
+      "qualification": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-seed-massive-body",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-seed-massive-body",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "worker-configuration-applied"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle": {
+        "workerRuntimeId": "9b3b6819-4838-480a-9f7e-e93af2398eb4",
+        "moduleInitCount": 1,
+        "renderBridgeGeneration": 1,
+        "configurationToken": 3,
+        "appliedConfigurationToken": 3
+      },
+      "mount": {
+        "connected": true,
+        "live": true,
+        "floated": true,
+        "collapsed": false
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "size": 97,
+      "id": "gravity",
+      "scenario": "s0-seed-massive-body",
+      "state": "collapsed",
+      "backend": "wasm-worker",
+      "duration_ms": 12012.769999980927,
+      "frames": {
+        "count": 720,
+        "meanMs": 16.665999999999997,
+        "medianMs": 16.665000000000873,
+        "p95Ms": 16.67000000000553,
+        "p99Ms": 16.67000000000553,
+        "maxMs": 16.670000000012806,
+        "effectiveFps": 60.00240009600385,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "primary_callback": {
+        "count": 24,
+        "meanMs": 0.022500013311704,
+        "medianMs": 0.02499997615814209,
+        "p95Ms": 0.03500008583068848,
+        "p99Ms": 0.04999995231628418,
+        "maxMs": 0.04999995231628418
+      },
+      "actions": {
+        "count": 0,
+        "meanMs": 0,
+        "medianMs": 0,
+        "p95Ms": 0,
+        "p99Ms": 0,
+        "maxMs": 0
+      },
+      "failed_callbacks": {},
+      "recomputed_failures": [],
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": true,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "raw_summaries_exact": true,
+      "callback_series": 11,
+      "callback_samples": 588,
+      "dom": {
+        "mutationRecords": 0,
+        "addedNodes": 0,
+        "removedNodes": 0,
+        "canvasDraws": 0
+      },
+      "resource_delta": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 150,
+        "canvases": 3,
+        "heapBytes": 60300000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 150,
+        "canvases": 3,
+        "heapBytes": 60300000
+      },
+      "owner_clock_interval": [
+        259,
+        379
+      ],
+      "qualification": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-seed-massive-body",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-seed-massive-body",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "worker-configuration-applied"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle": {
+        "workerRuntimeId": "9b3b6819-4838-480a-9f7e-e93af2398eb4",
+        "moduleInitCount": 1,
+        "renderBridgeGeneration": 1,
+        "configurationToken": 3,
+        "appliedConfigurationToken": 3
+      },
+      "mount": {
+        "connected": true,
+        "live": false,
+        "floated": true,
+        "collapsed": true
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "size": 97,
+      "id": "gravity",
+      "scenario": "s0-seed-massive-body",
+      "state": "hidden",
+      "backend": "wasm-worker",
+      "duration_ms": 12011.610000014305,
+      "frames": {
+        "count": 720,
+        "meanMs": 16.665993055555553,
+        "medianMs": 16.66500000000815,
+        "p95Ms": 16.669999999998254,
+        "p99Ms": 16.670000000012806,
+        "maxMs": 16.670000000012806,
+        "effectiveFps": 60.002425098014385,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "primary_callback": {
+        "count": 24,
+        "meanMs": 0.010833332935969034,
+        "medianMs": 0.009999990463256836,
+        "p95Ms": 0.015000104904174805,
+        "p99Ms": 0.019999980926513672,
+        "maxMs": 0.019999980926513672
+      },
+      "actions": {
+        "count": 0,
+        "meanMs": 0,
+        "medianMs": 0,
+        "p95Ms": 0,
+        "p99Ms": 0,
+        "maxMs": 0
+      },
+      "failed_callbacks": {},
+      "recomputed_failures": [],
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": true,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "raw_summaries_exact": true,
+      "callback_series": 11,
+      "callback_samples": 588,
+      "dom": {
+        "mutationRecords": 0,
+        "addedNodes": 0,
+        "removedNodes": 0,
+        "canvasDraws": 0
+      },
+      "resource_delta": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 150,
+        "canvases": 3,
+        "heapBytes": 60300000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 150,
+        "canvases": 3,
+        "heapBytes": 60300000
+      },
+      "owner_clock_interval": [
+        389,
+        508
+      ],
+      "qualification": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-seed-massive-body",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-seed-massive-body",
+          "loadGeneration": 3,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "worker-configuration-applied"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle": {
+        "workerRuntimeId": "9b3b6819-4838-480a-9f7e-e93af2398eb4",
+        "moduleInitCount": 1,
+        "renderBridgeGeneration": 1,
+        "configurationToken": 3,
+        "appliedConfigurationToken": 3
+      },
+      "mount": {
+        "connected": true,
+        "live": false,
+        "floated": true,
+        "collapsed": false
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "size": 97,
+      "id": "time",
+      "scenario": "s0-seed-time-twin-clocks",
+      "state": "docked",
+      "backend": "wasm-worker",
+      "duration_ms": 12184.210000038147,
+      "frames": {
+        "count": 731,
+        "meanMs": 16.66599179206568,
+        "medianMs": 16.66500000000815,
+        "p95Ms": 16.669999999998254,
+        "p99Ms": 16.670000000012806,
+        "maxMs": 16.670000000012806,
+        "effectiveFps": 60.00242964694598,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "primary_callback": {
+        "count": 24,
+        "meanMs": 0.7739583303531011,
+        "medianMs": 0.6599999666213989,
+        "p95Ms": 1,
+        "p99Ms": 2.2799999713897705,
+        "maxMs": 2.2799999713897705
+      },
+      "actions": {
+        "count": 10,
+        "meanMs": 16.64949998855591,
+        "medianMs": 16.539999961853027,
+        "p95Ms": 18.18499994277954,
+        "p99Ms": 18.18499994277954,
+        "maxMs": 18.18499994277954
+      },
+      "failed_callbacks": {},
+      "recomputed_failures": [],
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": true,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "raw_summaries_exact": true,
+      "callback_series": 11,
+      "callback_samples": 596,
+      "dom": {
+        "mutationRecords": 742,
+        "addedNodes": 0,
+        "removedNodes": 0,
+        "canvasDraws": 0
+      },
+      "resource_delta": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 233,
+        "canvases": 0,
+        "heapBytes": 60300000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 233,
+        "canvases": 0,
+        "heapBytes": 60300000
+      },
+      "owner_clock_interval": [
+        11,
+        139
+      ],
+      "qualification": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-seed-time-twin-clocks",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-seed-time-twin-clocks",
+          "loadGeneration": 4,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "worker-configuration-applied"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle": {
+        "workerRuntimeId": "9b3b6819-4838-480a-9f7e-e93af2398eb4",
+        "moduleInitCount": 1,
+        "renderBridgeGeneration": 2,
+        "configurationToken": 4,
+        "appliedConfigurationToken": 4
+      },
+      "mount": {
+        "connected": true,
+        "live": true,
+        "floated": false,
+        "collapsed": false
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "size": 97,
+      "id": "time",
+      "scenario": "s0-seed-time-twin-clocks",
+      "state": "floated",
+      "backend": "wasm-worker",
+      "duration_ms": 12169.235000014305,
+      "frames": {
+        "count": 730,
+        "meanMs": 16.66600000000001,
+        "medianMs": 16.66500000000815,
+        "p95Ms": 16.669999999998254,
+        "p99Ms": 16.670000000012806,
+        "maxMs": 16.670000000012806,
+        "effectiveFps": 60.002400096003804,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "primary_callback": {
+        "count": 24,
+        "meanMs": 0.6966666728258133,
+        "medianMs": 0.6750000715255737,
+        "p95Ms": 0.9800000190734863,
+        "p99Ms": 0.9850000143051147,
+        "maxMs": 0.9850000143051147
+      },
+      "actions": {
+        "count": 10,
+        "meanMs": 16.7085000038147,
+        "medianMs": 16.514999985694885,
+        "p95Ms": 18.019999980926514,
+        "p99Ms": 18.019999980926514,
+        "maxMs": 18.019999980926514
+      },
+      "failed_callbacks": {},
+      "recomputed_failures": [],
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": true,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "raw_summaries_exact": true,
+      "callback_series": 11,
+      "callback_samples": 593,
+      "dom": {
+        "mutationRecords": 733,
+        "addedNodes": 0,
+        "removedNodes": 0,
+        "canvasDraws": 0
+      },
+      "resource_delta": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 233,
+        "canvases": 0,
+        "heapBytes": 60300000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 233,
+        "canvases": 0,
+        "heapBytes": 60300000
+      },
+      "owner_clock_interval": [
+        150,
+        279
+      ],
+      "qualification": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-seed-time-twin-clocks",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-seed-time-twin-clocks",
+          "loadGeneration": 4,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "worker-configuration-applied"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle": {
+        "workerRuntimeId": "9b3b6819-4838-480a-9f7e-e93af2398eb4",
+        "moduleInitCount": 1,
+        "renderBridgeGeneration": 2,
+        "configurationToken": 4,
+        "appliedConfigurationToken": 4
+      },
+      "mount": {
+        "connected": true,
+        "live": true,
+        "floated": true,
+        "collapsed": false
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "size": 97,
+      "id": "time",
+      "scenario": "s0-seed-time-twin-clocks",
+      "state": "collapsed",
+      "backend": "wasm-worker",
+      "duration_ms": 12005.100000023842,
+      "frames": {
+        "count": 720,
+        "meanMs": 16.666006944444458,
+        "medianMs": 16.66500000000815,
+        "p95Ms": 16.669999999998254,
+        "p99Ms": 16.670000000012806,
+        "maxMs": 16.670000000012806,
+        "effectiveFps": 60.00237509401409,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "primary_callback": {
+        "count": 24,
+        "meanMs": 0.026458323001861572,
+        "medianMs": 0.02499997615814209,
+        "p95Ms": 0.034999966621398926,
+        "p99Ms": 0.040000081062316895,
+        "maxMs": 0.040000081062316895
+      },
+      "actions": {
+        "count": 0,
+        "meanMs": 0,
+        "medianMs": 0,
+        "p95Ms": 0,
+        "p99Ms": 0,
+        "maxMs": 0
+      },
+      "failed_callbacks": {},
+      "recomputed_failures": [],
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": true,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "raw_summaries_exact": true,
+      "callback_series": 11,
+      "callback_samples": 588,
+      "dom": {
+        "mutationRecords": 0,
+        "addedNodes": 0,
+        "removedNodes": 0,
+        "canvasDraws": 0
+      },
+      "resource_delta": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 233,
+        "canvases": 0,
+        "heapBytes": 60300000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 233,
+        "canvases": 0,
+        "heapBytes": 60300000
+      },
+      "owner_clock_interval": [
+        293,
+        464
+      ],
+      "qualification": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-seed-time-twin-clocks",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-seed-time-twin-clocks",
+          "loadGeneration": 4,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "worker-configuration-applied"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle": {
+        "workerRuntimeId": "9b3b6819-4838-480a-9f7e-e93af2398eb4",
+        "moduleInitCount": 1,
+        "renderBridgeGeneration": 2,
+        "configurationToken": 4,
+        "appliedConfigurationToken": 4
+      },
+      "mount": {
+        "connected": true,
+        "live": false,
+        "floated": true,
+        "collapsed": true
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "size": 97,
+      "id": "time",
+      "scenario": "s0-seed-time-twin-clocks",
+      "state": "hidden",
+      "backend": "wasm-worker",
+      "duration_ms": 12013.72000002861,
+      "frames": {
+        "count": 720,
+        "meanMs": 16.666000000000025,
+        "medianMs": 16.66500000000815,
+        "p95Ms": 16.670000000012806,
+        "p99Ms": 16.670000000012806,
+        "maxMs": 16.670000000012806,
+        "effectiveFps": 60.00240009600375,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "primary_callback": {
+        "count": 24,
+        "meanMs": 0.018750006953875225,
+        "medianMs": 0.019999980926513672,
+        "p95Ms": 0.02500009536743164,
+        "p99Ms": 0.029999971389770508,
+        "maxMs": 0.029999971389770508
+      },
+      "actions": {
+        "count": 0,
+        "meanMs": 0,
+        "medianMs": 0,
+        "p95Ms": 0,
+        "p99Ms": 0,
+        "maxMs": 0
+      },
+      "failed_callbacks": {},
+      "recomputed_failures": [],
+      "checks_pass": {
+        "frame instrumentation": true,
+        "hardware provenance": true,
+        "background page": true,
+        "foreground frame gate": true,
+        "long-task instrumentation unavailable": true,
+        "action to next-frame budget": true,
+        "interface callback budget": true,
+        "hidden canvas work": true,
+        "state ownership/qualification": true,
+        "instrumented runtime errors": true,
+        "clock provenance": true,
+        "play state": true,
+        "playing clock did not advance": true,
+        "panel mount state": true
+      },
+      "raw_summaries_exact": true,
+      "callback_series": 11,
+      "callback_samples": 588,
+      "dom": {
+        "mutationRecords": 0,
+        "addedNodes": 0,
+        "removedNodes": 0,
+        "canvasDraws": 0
+      },
+      "resource_delta": {
+        "rafSubscribers": 0,
+        "domNodes": 0,
+        "canvases": 0,
+        "heapBytes": 0
+      },
+      "resources_start": {
+        "rafSubscribers": 11,
+        "domNodes": 233,
+        "canvases": 0,
+        "heapBytes": 60300000
+      },
+      "resources_end": {
+        "rafSubscribers": 11,
+        "domNodes": 233,
+        "canvases": 0,
+        "heapBytes": 60300000
+      },
+      "owner_clock_interval": [
+        479,
+        652
+      ],
+      "qualification": {
+        "status": "within-contract",
+        "suspended": false,
+        "scenarioId": "s0-seed-time-twin-clocks",
+        "mutationEpoch": 0,
+        "qualificationBaselineEpoch": 0,
+        "anchor": {
+          "scenarioId": "s0-seed-time-twin-clocks",
+          "loadGeneration": 4,
+          "mutationEpoch": 0,
+          "tick": 1,
+          "source": "worker-configuration-applied"
+        },
+        "authoritativeLoad": null,
+        "lastMutation": null
+      },
+      "lifecycle": {
+        "workerRuntimeId": "9b3b6819-4838-480a-9f7e-e93af2398eb4",
+        "moduleInitCount": 1,
+        "renderBridgeGeneration": 2,
+        "configurationToken": 4,
+        "appliedConfigurationToken": 4
+      },
+      "mount": {
+        "connected": true,
+        "live": false,
+        "floated": true,
+        "collapsed": false
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  ],
+  "baseline_comparison": {
+    "records": [
+      {
+        "size": 33,
+        "id": "gravity",
+        "state": "docked",
+        "baseline_failures": [],
+        "current_failures": [],
+        "cleared_prior_callback_failure": false,
+        "new_callback_failure": false,
+        "baseline_primary_callback": {
+          "count": 48,
+          "meanMs": 1.6486458405852318,
+          "medianMs": 1.6649999618530273,
+          "p95Ms": 1.915000081062317,
+          "p99Ms": 2.274999976158142,
+          "maxMs": 2.274999976158142
+        },
+        "current_primary_callback": {
+          "count": 48,
+          "meanMs": 1.4845833356181781,
+          "medianMs": 1.4500000476837158,
+          "p95Ms": 1.7799999713897705,
+          "p99Ms": 2.024999976158142,
+          "maxMs": 2.024999976158142
+        },
+        "p95_difference_ms": -0.1350001096725464,
+        "baseline_dom": {
+          "mutationRecords": 192,
+          "addedNodes": 48,
+          "removedNodes": 48,
+          "canvasDraws": 48
+        },
+        "current_dom": {
+          "mutationRecords": 192,
+          "addedNodes": 48,
+          "removedNodes": 48,
+          "canvasDraws": 48
+        },
+        "baseline_ticks": [
+          62,
+          793
+        ],
+        "current_ticks": [
+          80,
+          811
+        ]
+      },
+      {
+        "size": 33,
+        "id": "gravity",
+        "state": "floated",
+        "baseline_failures": [],
+        "current_failures": [],
+        "cleared_prior_callback_failure": false,
+        "new_callback_failure": false,
+        "baseline_primary_callback": {
+          "count": 48,
+          "meanMs": 1.5231250077486038,
+          "medianMs": 1.4950000047683716,
+          "p95Ms": 1.7799999713897705,
+          "p99Ms": 1.9600000381469727,
+          "maxMs": 1.9600000381469727
+        },
+        "current_primary_callback": {
+          "count": 48,
+          "meanMs": 1.538020834326744,
+          "medianMs": 1.5099999904632568,
+          "p95Ms": 1.784999966621399,
+          "p99Ms": 2.5049999952316284,
+          "maxMs": 2.5049999952316284
+        },
+        "p95_difference_ms": 0.004999995231628418,
+        "baseline_dom": {
+          "mutationRecords": 200,
+          "addedNodes": 48,
+          "removedNodes": 48,
+          "canvasDraws": 48
+        },
+        "current_dom": {
+          "mutationRecords": 200,
+          "addedNodes": 48,
+          "removedNodes": 48,
+          "canvasDraws": 48
+        },
+        "baseline_ticks": [
+          856,
+          1587
+        ],
+        "current_ticks": [
+          873,
+          1604
+        ]
+      },
+      {
+        "size": 33,
+        "id": "gravity",
+        "state": "collapsed",
+        "baseline_failures": [],
+        "current_failures": [],
+        "cleared_prior_callback_failure": false,
+        "new_callback_failure": false,
+        "baseline_primary_callback": {
+          "count": 24,
+          "meanMs": 0.019583324591318767,
+          "medianMs": 0.019999980926513672,
+          "p95Ms": 0.02499997615814209,
+          "p99Ms": 0.02500009536743164,
+          "maxMs": 0.02500009536743164
+        },
+        "current_primary_callback": {
+          "count": 24,
+          "meanMs": 0.01812499264876048,
+          "medianMs": 0.015000104904174805,
+          "p95Ms": 0.02500009536743164,
+          "p99Ms": 0.029999971389770508,
+          "maxMs": 0.029999971389770508
+        },
+        "p95_difference_ms": 1.1920928955078125e-7,
+        "baseline_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "current_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "baseline_ticks": [
+          1648,
+          2370
+        ],
+        "current_ticks": [
+          1666,
+          2387
+        ]
+      },
+      {
+        "size": 33,
+        "id": "gravity",
+        "state": "hidden",
+        "baseline_failures": [],
+        "current_failures": [],
+        "cleared_prior_callback_failure": false,
+        "new_callback_failure": false,
+        "baseline_primary_callback": {
+          "count": 24,
+          "meanMs": 0.00812499225139618,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.009999990463256836,
+          "p99Ms": 0.014999985694885254,
+          "maxMs": 0.014999985694885254
+        },
+        "current_primary_callback": {
+          "count": 24,
+          "meanMs": 0.0068750033775965376,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.010000109672546387,
+          "p99Ms": 0.015000104904174805,
+          "maxMs": 0.015000104904174805
+        },
+        "p95_difference_ms": 1.1920928955078125e-7,
+        "baseline_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "current_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "baseline_ticks": [
+          2431,
+          3152
+        ],
+        "current_ticks": [
+          2448,
+          3170
+        ]
+      },
+      {
+        "size": 33,
+        "id": "time",
+        "state": "docked",
+        "baseline_failures": [
+          "interface callback budget"
+        ],
+        "current_failures": [
+          "interface callback budget"
+        ],
+        "cleared_prior_callback_failure": false,
+        "new_callback_failure": false,
+        "baseline_primary_callback": {
+          "count": 24,
+          "meanMs": 2.5025000274181366,
+          "medianMs": 2.4850000143051147,
+          "p95Ms": 2.8550000190734863,
+          "p99Ms": 2.9200000762939453,
+          "maxMs": 2.9200000762939453
+        },
+        "current_primary_callback": {
+          "count": 24,
+          "meanMs": 1.917916680375735,
+          "medianMs": 1.8700000047683716,
+          "p95Ms": 2.490000009536743,
+          "p99Ms": 2.8799999952316284,
+          "maxMs": 2.8799999952316284
+        },
+        "p95_difference_ms": -0.36500000953674316,
+        "baseline_dom": {
+          "mutationRecords": 672,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "current_dom": {
+          "mutationRecords": 689,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "baseline_ticks": [
+          61,
+          792
+        ],
+        "current_ticks": [
+          61,
+          792
+        ]
+      },
+      {
+        "size": 33,
+        "id": "time",
+        "state": "floated",
+        "baseline_failures": [
+          "interface callback budget"
+        ],
+        "current_failures": [
+          "interface callback budget"
+        ],
+        "cleared_prior_callback_failure": false,
+        "new_callback_failure": false,
+        "baseline_primary_callback": {
+          "count": 24,
+          "meanMs": 2.3643749902645745,
+          "medianMs": 2.2899999618530273,
+          "p95Ms": 2.7100000381469727,
+          "p99Ms": 3.125,
+          "maxMs": 3.125
+        },
+        "current_primary_callback": {
+          "count": 25,
+          "meanMs": 1.9062000131607055,
+          "medianMs": 1.8199999332427979,
+          "p95Ms": 2.5850000381469727,
+          "p99Ms": 2.7350000143051147,
+          "maxMs": 2.7350000143051147
+        },
+        "p95_difference_ms": -0.125,
+        "baseline_dom": {
+          "mutationRecords": 671,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "current_dom": {
+          "mutationRecords": 682,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "baseline_ticks": [
+          853,
+          1584
+        ],
+        "current_ticks": [
+          854,
+          1585
+        ]
+      },
+      {
+        "size": 33,
+        "id": "time",
+        "state": "collapsed",
+        "baseline_failures": [],
+        "current_failures": [],
+        "cleared_prior_callback_failure": false,
+        "new_callback_failure": false,
+        "baseline_primary_callback": {
+          "count": 24,
+          "meanMs": 0.013333320617675781,
+          "medianMs": 0.014999985694885254,
+          "p95Ms": 0.019999980926513672,
+          "p99Ms": 0.019999980926513672,
+          "maxMs": 0.019999980926513672
+        },
+        "current_primary_callback": {
+          "count": 24,
+          "meanMs": 0.01666666567325592,
+          "medianMs": 0.014999985694885254,
+          "p95Ms": 0.020000100135803223,
+          "p99Ms": 0.020000100135803223,
+          "maxMs": 0.020000100135803223
+        },
+        "p95_difference_ms": 1.1920928955078125e-7,
+        "baseline_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "current_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "baseline_ticks": [
+          1646,
+          2367
+        ],
+        "current_ticks": [
+          1647,
+          2368
+        ]
+      },
+      {
+        "size": 33,
+        "id": "time",
+        "state": "hidden",
+        "baseline_failures": [],
+        "current_failures": [],
+        "cleared_prior_callback_failure": false,
+        "new_callback_failure": false,
+        "baseline_primary_callback": {
+          "count": 24,
+          "meanMs": 0.00979168713092804,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.014999985694885254,
+          "p99Ms": 0.019999980926513672,
+          "maxMs": 0.019999980926513672
+        },
+        "current_primary_callback": {
+          "count": 24,
+          "meanMs": 0.014166682958602905,
+          "medianMs": 0.014999985694885254,
+          "p95Ms": 0.020000100135803223,
+          "p99Ms": 0.02500009536743164,
+          "maxMs": 0.02500009536743164
+        },
+        "p95_difference_ms": 0.005000114440917969,
+        "baseline_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "current_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "baseline_ticks": [
+          2428,
+          3149
+        ],
+        "current_ticks": [
+          2429,
+          3151
+        ]
+      },
+      {
+        "size": 97,
+        "id": "gravity",
+        "state": "docked",
+        "baseline_failures": [
+          "interface callback budget"
+        ],
+        "current_failures": [],
+        "cleared_prior_callback_failure": true,
+        "new_callback_failure": false,
+        "baseline_primary_callback": {
+          "count": 48,
+          "meanMs": 2.225833331545194,
+          "medianMs": 2.1200000047683716,
+          "p95Ms": 3.0549999475479126,
+          "p99Ms": 4.069999933242798,
+          "maxMs": 4.069999933242798
+        },
+        "current_primary_callback": {
+          "count": 48,
+          "meanMs": 1.5130208333333333,
+          "medianMs": 1.46999990940094,
+          "p95Ms": 1.9300000667572021,
+          "p99Ms": 3.3499999046325684,
+          "maxMs": 3.3499999046325684
+        },
+        "p95_difference_ms": -1.1249998807907104,
+        "baseline_dom": {
+          "mutationRecords": 393,
+          "addedNodes": 49,
+          "removedNodes": 49,
+          "canvasDraws": 49
+        },
+        "current_dom": {
+          "mutationRecords": 411,
+          "addedNodes": 48,
+          "removedNodes": 48,
+          "canvasDraws": 48
+        },
+        "baseline_ticks": [
+          10,
+          118
+        ],
+        "current_ticks": [
+          13,
+          127
+        ]
+      },
+      {
+        "size": 97,
+        "id": "gravity",
+        "state": "floated",
+        "baseline_failures": [
+          "interface callback budget"
+        ],
+        "current_failures": [
+          "interface callback budget"
+        ],
+        "cleared_prior_callback_failure": false,
+        "new_callback_failure": false,
+        "baseline_primary_callback": {
+          "count": 48,
+          "meanMs": 2.1880208402872086,
+          "medianMs": 2.100000023841858,
+          "p95Ms": 3.190000057220459,
+          "p99Ms": 3.8700000047683716,
+          "maxMs": 3.8700000047683716
+        },
+        "current_primary_callback": {
+          "count": 48,
+          "meanMs": 1.5442708383003871,
+          "medianMs": 1.4449999332427979,
+          "p95Ms": 2.100000023841858,
+          "p99Ms": 4.045000076293945,
+          "maxMs": 4.045000076293945
+        },
+        "p95_difference_ms": -1.090000033378601,
+        "baseline_dom": {
+          "mutationRecords": 307,
+          "addedNodes": 48,
+          "removedNodes": 48,
+          "canvasDraws": 48
+        },
+        "current_dom": {
+          "mutationRecords": 292,
+          "addedNodes": 48,
+          "removedNodes": 48,
+          "canvasDraws": 48
+        },
+        "baseline_ticks": [
+          126,
+          234
+        ],
+        "current_ticks": [
+          136,
+          248
+        ]
+      },
+      {
+        "size": 97,
+        "id": "gravity",
+        "state": "collapsed",
+        "baseline_failures": [],
+        "current_failures": [],
+        "cleared_prior_callback_failure": false,
+        "new_callback_failure": false,
+        "baseline_primary_callback": {
+          "count": 24,
+          "meanMs": 0.02874999741713206,
+          "medianMs": 0.029999971389770508,
+          "p95Ms": 0.03500008583068848,
+          "p99Ms": 0.039999961853027344,
+          "maxMs": 0.039999961853027344
+        },
+        "current_primary_callback": {
+          "count": 24,
+          "meanMs": 0.022500013311704,
+          "medianMs": 0.02499997615814209,
+          "p95Ms": 0.03500008583068848,
+          "p99Ms": 0.04999995231628418,
+          "maxMs": 0.04999995231628418
+        },
+        "p95_difference_ms": 0,
+        "baseline_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "current_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "baseline_ticks": [
+          242,
+          353
+        ],
+        "current_ticks": [
+          259,
+          379
+        ]
+      },
+      {
+        "size": 97,
+        "id": "gravity",
+        "state": "hidden",
+        "baseline_failures": [],
+        "current_failures": [],
+        "cleared_prior_callback_failure": false,
+        "new_callback_failure": false,
+        "baseline_primary_callback": {
+          "count": 24,
+          "meanMs": 0.012291669845581055,
+          "medianMs": 0.010000109672546387,
+          "p95Ms": 0.014999985694885254,
+          "p99Ms": 0.02500009536743164,
+          "maxMs": 0.02500009536743164
+        },
+        "current_primary_callback": {
+          "count": 24,
+          "meanMs": 0.010833332935969034,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.015000104904174805,
+          "p99Ms": 0.019999980926513672,
+          "maxMs": 0.019999980926513672
+        },
+        "p95_difference_ms": 1.1920928955078125e-7,
+        "baseline_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "current_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "baseline_ticks": [
+          361,
+          472
+        ],
+        "current_ticks": [
+          389,
+          508
+        ]
+      },
+      {
+        "size": 97,
+        "id": "time",
+        "state": "docked",
+        "baseline_failures": [],
+        "current_failures": [],
+        "cleared_prior_callback_failure": false,
+        "new_callback_failure": false,
+        "baseline_primary_callback": {
+          "count": 24,
+          "meanMs": 1.586666668454806,
+          "medianMs": 1.4849998950958252,
+          "p95Ms": 1.9550000429153442,
+          "p99Ms": 3.5700000524520874,
+          "maxMs": 3.5700000524520874
+        },
+        "current_primary_callback": {
+          "count": 24,
+          "meanMs": 0.7739583303531011,
+          "medianMs": 0.6599999666213989,
+          "p95Ms": 1,
+          "p99Ms": 2.2799999713897705,
+          "maxMs": 2.2799999713897705
+        },
+        "p95_difference_ms": -0.9550000429153442,
+        "baseline_dom": {
+          "mutationRecords": 713,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "current_dom": {
+          "mutationRecords": 742,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "baseline_ticks": [
+          10,
+          132
+        ],
+        "current_ticks": [
+          11,
+          139
+        ]
+      },
+      {
+        "size": 97,
+        "id": "time",
+        "state": "floated",
+        "baseline_failures": [
+          "interface callback budget"
+        ],
+        "current_failures": [],
+        "cleared_prior_callback_failure": true,
+        "new_callback_failure": false,
+        "baseline_primary_callback": {
+          "count": 25,
+          "meanMs": 1.480399990081787,
+          "medianMs": 1.350000023841858,
+          "p95Ms": 2.059999942779541,
+          "p99Ms": 3.0149999856948853,
+          "maxMs": 3.0149999856948853
+        },
+        "current_primary_callback": {
+          "count": 24,
+          "meanMs": 0.6966666728258133,
+          "medianMs": 0.6750000715255737,
+          "p95Ms": 0.9800000190734863,
+          "p99Ms": 0.9850000143051147,
+          "maxMs": 0.9850000143051147
+        },
+        "p95_difference_ms": -1.0799999237060547,
+        "baseline_dom": {
+          "mutationRecords": 732,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "current_dom": {
+          "mutationRecords": 733,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "baseline_ticks": [
+          141,
+          262
+        ],
+        "current_ticks": [
+          150,
+          279
+        ]
+      },
+      {
+        "size": 97,
+        "id": "time",
+        "state": "collapsed",
+        "baseline_failures": [],
+        "current_failures": [],
+        "cleared_prior_callback_failure": false,
+        "new_callback_failure": false,
+        "baseline_primary_callback": {
+          "count": 24,
+          "meanMs": 0.022708336512247723,
+          "medianMs": 0.02499997615814209,
+          "p95Ms": 0.029999971389770508,
+          "p99Ms": 0.03000009059906006,
+          "maxMs": 0.03000009059906006
+        },
+        "current_primary_callback": {
+          "count": 24,
+          "meanMs": 0.026458323001861572,
+          "medianMs": 0.02499997615814209,
+          "p95Ms": 0.034999966621398926,
+          "p99Ms": 0.040000081062316895,
+          "maxMs": 0.040000081062316895
+        },
+        "p95_difference_ms": 0.004999995231628418,
+        "baseline_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "current_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "baseline_ticks": [
+          272,
+          422
+        ],
+        "current_ticks": [
+          293,
+          464
+        ]
+      },
+      {
+        "size": 97,
+        "id": "time",
+        "state": "hidden",
+        "baseline_failures": [],
+        "current_failures": [],
+        "cleared_prior_callback_failure": false,
+        "new_callback_failure": false,
+        "baseline_primary_callback": {
+          "count": 24,
+          "meanMs": 0.02187497913837433,
+          "medianMs": 0.019999980926513672,
+          "p95Ms": 0.02499997615814209,
+          "p99Ms": 0.029999971389770508,
+          "maxMs": 0.029999971389770508
+        },
+        "current_primary_callback": {
+          "count": 24,
+          "meanMs": 0.018750006953875225,
+          "medianMs": 0.019999980926513672,
+          "p95Ms": 0.02500009536743164,
+          "p99Ms": 0.029999971389770508,
+          "maxMs": 0.029999971389770508
+        },
+        "p95_difference_ms": 1.1920928955078125e-7,
+        "baseline_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "current_dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "baseline_ticks": [
+          433,
+          582
+        ],
+        "current_ticks": [
+          479,
+          652
+        ]
+      }
+    ],
+    "boundary": "These are descriptive matches by panel, scenario, backend size and visibility with unchanged gates and renderer class. V2 retained only frame/callback aggregates, so its raw distributions cannot be reconstructed. Owner tick intervals, initial histories and scheduling differ across runs. The comparison does not isolate a causal effect of any implementation change, establish statistical significance, or certify common sample time.",
+    "historical_disposition": "The sealed v2 campaign remains 279/288 rows passing with nine callback failures. The five Time/Gravity failures in that record are retained; this follow-up records two corresponding rows now passing and three still failing. Wave v3's four visible callback failures and other panel failures remain separate unremeasured work."
+  },
+  "post_run_preservation": {
+    "candidate_archive": {
+      "archive": {
+        "path": "engine/build/scale0_time_gravity_v4_candidate_20260908.zip",
+        "bytes": 8839993,
+        "sha256": "d1ccce4553b231f039ea47d2af5d374e019fbf31d87c2747b189a6bf40586702"
+      },
+      "entries_checked": 2176,
+      "zip_entries": 2184,
+      "archive_mismatches": [],
+      "current_entries_checked": 2176,
+      "current_mismatches": [],
+      "duplicate_or_unsafe_entries": [],
+      "additional_entries": [
+        "engine/build/run_scale0_time_gravity_v4_checks_20260908.py",
+        "engine/docs/PROGRAM_SCALE0_TIME_GRAVITY_V4_2026-09-08.md",
+        "engine/docs/evidence/scale0-gravity-v4-browser-repair-integration-2026-09-08.json",
+        "engine/docs/evidence/scale0-gravity-v4-browser-repair-review-2026-09-08.json",
+        "engine/docs/evidence/scale0-gravity-v4-draft-review-2026-09-08.json",
+        "engine/docs/evidence/scale0-time-gravity-v4-harness-review-2026-09-08.json",
+        "engine/docs/evidence/scale0-time-gravity-v4-integration-review-2026-09-08.json",
+        "engine/docs/evidence/scale0-time-v4-draft-review-2026-09-08.json"
+      ]
+    },
+    "snapshots": [
+      {
+        "frozen": {
+          "path": "engine/docs/PROGRAM_SCALE0_TIME_GRAVITY_V4_2026-09-08.md",
+          "size": 12555,
+          "sha256": "5a090337b80b749f605a18c5ac7f1d83893849de206769b5e590b2d55c5f8731"
+        },
+        "archive_matches": true,
+        "current": {
+          "path": "engine/docs/PROGRAM_SCALE0_TIME_GRAVITY_V4_2026-09-08.md",
+          "bytes": 16048,
+          "sha256": "3108cf4b6d3e4523be66a5134e2d8554a9dc02e16f083c6c902c96e06f2846be"
+        },
+        "current_matches": false
+      },
+      {
+        "frozen": {
+          "path": "engine/build/run_scale0_time_gravity_v4_checks_20260908.py",
+          "size": 4669,
+          "sha256": "5f12081f39674619e319d2ea8e82ebcd87e5bf313ecce18369bab5e158ce0bf0"
+        },
+        "archive_matches": true,
+        "current": {
+          "path": "engine/build/run_scale0_time_gravity_v4_checks_20260908.py",
+          "bytes": 4669,
+          "sha256": "5f12081f39674619e319d2ea8e82ebcd87e5bf313ecce18369bab5e158ce0bf0"
+        },
+        "current_matches": true
+      },
+      {
+        "frozen": {
+          "path": "engine/docs/evidence/scale0-time-gravity-v4-harness-review-2026-09-08.json",
+          "size": 13709,
+          "sha256": "d09e31e337c5afe9e9a6369e8e0ab28f858124f26fd4cf4fd0b87c368293b061"
+        },
+        "archive_matches": true,
+        "current": {
+          "path": "engine/docs/evidence/scale0-time-gravity-v4-harness-review-2026-09-08.json",
+          "bytes": 13709,
+          "sha256": "d09e31e337c5afe9e9a6369e8e0ab28f858124f26fd4cf4fd0b87c368293b061"
+        },
+        "current_matches": true
+      },
+      {
+        "frozen": {
+          "path": "engine/docs/evidence/scale0-time-v4-draft-review-2026-09-08.json",
+          "size": 10129,
+          "sha256": "6d741388a07d8a61d11e00579c2a6ddc3fca6c48a9e466a6135b1e0d08eacaf7"
+        },
+        "archive_matches": true,
+        "current": {
+          "path": "engine/docs/evidence/scale0-time-v4-draft-review-2026-09-08.json",
+          "bytes": 10129,
+          "sha256": "6d741388a07d8a61d11e00579c2a6ddc3fca6c48a9e466a6135b1e0d08eacaf7"
+        },
+        "current_matches": true
+      },
+      {
+        "frozen": {
+          "path": "engine/docs/evidence/scale0-gravity-v4-draft-review-2026-09-08.json",
+          "size": 9077,
+          "sha256": "02955295c217c12b323036be9498612b347f3eb1bbb024f82af907f2ad2162b9"
+        },
+        "archive_matches": true,
+        "current": {
+          "path": "engine/docs/evidence/scale0-gravity-v4-draft-review-2026-09-08.json",
+          "bytes": 9077,
+          "sha256": "02955295c217c12b323036be9498612b347f3eb1bbb024f82af907f2ad2162b9"
+        },
+        "current_matches": true
+      },
+      {
+        "frozen": {
+          "path": "engine/docs/evidence/scale0-gravity-v4-browser-repair-review-2026-09-08.json",
+          "size": 2648,
+          "sha256": "c1af5e80289b612661ca47184bef8c34cadff54287a0b71fbc5cdd16fae6e23e"
+        },
+        "archive_matches": true,
+        "current": {
+          "path": "engine/docs/evidence/scale0-gravity-v4-browser-repair-review-2026-09-08.json",
+          "bytes": 2648,
+          "sha256": "c1af5e80289b612661ca47184bef8c34cadff54287a0b71fbc5cdd16fae6e23e"
+        },
+        "current_matches": true
+      },
+      {
+        "frozen": {
+          "path": "engine/docs/evidence/scale0-gravity-v4-browser-repair-integration-2026-09-08.json",
+          "size": 3169,
+          "sha256": "d679b88865812778874dccba1e3a58ac50095ad958d26683c4ce5cb59c245f75"
+        },
+        "archive_matches": true,
+        "current": {
+          "path": "engine/docs/evidence/scale0-gravity-v4-browser-repair-integration-2026-09-08.json",
+          "bytes": 3169,
+          "sha256": "d679b88865812778874dccba1e3a58ac50095ad958d26683c4ce5cb59c245f75"
+        },
+        "current_matches": true
+      },
+      {
+        "frozen": {
+          "path": "engine/docs/evidence/scale0-time-gravity-v4-integration-review-2026-09-08.json",
+          "size": 29473,
+          "sha256": "0003a85d86982453a7a0c126958f03c36a9587041b201c8af62f6773b02d1493"
+        },
+        "archive_matches": true,
+        "current": {
+          "path": "engine/docs/evidence/scale0-time-gravity-v4-integration-review-2026-09-08.json",
+          "bytes": 29473,
+          "sha256": "0003a85d86982453a7a0c126958f03c36a9587041b201c8af62f6773b02d1493"
+        },
+        "current_matches": true
+      }
+    ],
+    "frozen_scope": "All 2,176 current files and archive copies match; all eight archived snapshots match frozen hashes. No source or artifact was altered during measurement.",
+    "live_program_disposition": "The live program's status now reports 13/16 and an appended Frozen hardware outcome section. Source comparison found only that status change and appended outcome; the preregistered contract body is unchanged. The independently preserved archive snapshot remains the preregistration. This later live disposition update is recorded separately and is not frozen source drift.",
+    "strict_manifests": [
+      {
+        "manifest": {
+          "path": "engine/docs/evidence/strict-stack-source-manifest-2026-09-05.json",
+          "bytes": 11378,
+          "sha256": "8d5ea8ed89b7e200f5c7ffdd5b0ea72bbbe358be8175fa7224f1ee0d1f3c1511"
+        },
+        "entries_checked": 69,
+        "mismatches": []
+      },
+      {
+        "manifest": {
+          "path": "engine/docs/evidence/strict-recovery-wave1-manifest-2026-09-05.json",
+          "bytes": 8095,
+          "sha256": "467cdd078dc5d1c7cfd8c4bff5f66d4522a0ec44362fccbbd42d583b2b362ea5"
+        },
+        "entries_checked": 44,
+        "mismatches": []
+      },
+      {
+        "manifest": {
+          "path": "engine/docs/evidence/strict-recovery-wave2-manifest-2026-09-05.json",
+          "bytes": 13583,
+          "sha256": "22c0332a57006bf17230548e98d6c319e51660fc302cebb9392e2192ba4bd6d9"
+        },
+        "entries_checked": 73,
+        "mismatches": []
+      }
+    ],
+    "strict_count_boundary": "69/44/73 are independently checked scopes that overlap; they are not 186 unique files.",
+    "six_wasm_artifacts_and_build_info_unchanged": [
+      {
+        "path": "engine/web/wasm/ftd_core.js",
+        "size": 136178,
+        "sha256": "8f0d5aa0420e81d5245a13866d8069833e0117df1418023749067abe63addec7"
+      },
+      {
+        "path": "engine/web/wasm/ftd_core.wasm",
+        "size": 931721,
+        "sha256": "6ad203d9202c400ca6b52c929387be4c6e90db084e5bc0d147e9560c8c1339a7"
+      },
+      {
+        "path": "engine/web/wasm/ftd_core64.js",
+        "size": 145014,
+        "sha256": "1b2a9af334046c2f16e4e78961c4017708c7cc6d7d40df3f83ceb4109c4e2624"
+      },
+      {
+        "path": "engine/web/wasm/ftd_core64.wasm",
+        "size": 962980,
+        "sha256": "be667edfdd2a364120c9b56946b4a617cb69b641c51b56394db5747bf5caaad3"
+      },
+      {
+        "path": "engine/web/wasm/ftd_core_mt.js",
+        "size": 158993,
+        "sha256": "1d5a7f3d37b6c6068e80a499ac61b4367f94d21f1590576acee95559d6740c4e"
+      },
+      {
+        "path": "engine/web/wasm/ftd_core_mt.wasm",
+        "size": 952655,
+        "sha256": "d30871aa97f771c7f864a1165acc2963ec826d50421435f3a9c62d867a22d69f"
+      },
+      {
+        "path": "engine/web/wasm/build_info.json",
+        "size": 5821,
+        "sha256": "33d3efb14fee4f3aa362f42afb4c02cefcb668178bb98c68d096aacbd7f94f0f"
+      }
+    ],
+    "coordinator_check": "The coordinator's separate postcheck is consistent with this independent source/archive reconciliation. This review performed its own checks rather than relying only on that record."
+  },
+  "hardware_artifact_preservation": {
+    "archive": {
+      "archive": {
+        "path": "engine/build/scale0_time_gravity_v4_hardware_results_20260908.zip",
+        "bytes": 613547,
+        "sha256": "4ca0ec2616a25abad60168d2e6d3f6149d11468f5d582c1aa98c992f54c06ab5"
+      },
+      "entries_checked": 11,
+      "zip_entries": 11,
+      "archive_mismatches": [],
+      "current_entries_checked": 11,
+      "current_mismatches": [],
+      "duplicate_or_unsafe_entries": [],
+      "additional_entries": []
+    },
+    "members": [
+      {
+        "path": "engine/docs/evidence/scale0-hardware-time-gravity-v4-panels-L33-2026-09-08.json",
+        "bytes": 679550,
+        "sha256": "f38252326cead0c49cecb86e58dfcdd6b9087fb4f18e9ae9dedc04037a1e85a9"
+      },
+      {
+        "path": "engine/docs/evidence/scale0-hardware-time-gravity-v4-panels-L97-2026-09-08.json",
+        "bytes": 391461,
+        "sha256": "7a29ffee78309b4d1cc5a11439073c0387d9bdcf1652e8fdd36265ef4be1f50d"
+      },
+      {
+        "path": "engine/docs/evidence/scale0-time-gravity-v4-candidate-manifest-2026-09-08.json",
+        "bytes": 409249,
+        "sha256": "d7b671f7fdefa4d8df8c0ddbdf52d1cd1075770d9ba2e0338cba6b4adb31708c"
+      },
+      {
+        "path": "engine/docs/evidence/scale0-time-gravity-v4-hardware-2026-09-08.log",
+        "bytes": 8682,
+        "sha256": "b86308d7095a76bcb3fa2fc6706e90e3c5f74cbf37dbefa85d3b5a1d618440f1"
+      },
+      {
+        "path": "engine/web/test-results/.last-run.json",
+        "bytes": 145,
+        "sha256": "e67f206766bdfe08b2273d445eb2ce2e06278bca733ec73bed5329b58168435e"
+      },
+      {
+        "path": "engine/web/test-results/scale0-comprehensive-perfo-6dade-panels-hardware-matrix-L-97-chromium/attachments/hardware-panels-L97-e0548b8f17d253c5bb72506594722fb26bfcafbc.json",
+        "bytes": 391461,
+        "sha256": "7a29ffee78309b4d1cc5a11439073c0387d9bdcf1652e8fdd36265ef4be1f50d"
+      },
+      {
+        "path": "engine/web/test-results/scale0-comprehensive-perfo-6dade-panels-hardware-matrix-L-97-chromium/error-context.md",
+        "bytes": 68919,
+        "sha256": "9088fa8e0f13ad5ec4385c3818868e3a4ac2ac3401bcd8d3c677c8ce89b17f3e"
+      },
+      {
+        "path": "engine/web/test-results/scale0-comprehensive-perfo-6dade-panels-hardware-matrix-L-97-chromium/test-failed-1.png",
+        "bytes": 150517,
+        "sha256": "354bb061f8b6c360189e02025474f335313aff9360355bfe0ceb0f298c17cc70"
+      },
+      {
+        "path": "engine/web/test-results/scale0-comprehensive-perfo-e0160-panels-hardware-matrix-L-33-chromium/attachments/hardware-panels-L33-b595306fcc52f238447ec8b56a57f7b13c7d146d.json",
+        "bytes": 679550,
+        "sha256": "f38252326cead0c49cecb86e58dfcdd6b9087fb4f18e9ae9dedc04037a1e85a9"
+      },
+      {
+        "path": "engine/web/test-results/scale0-comprehensive-perfo-e0160-panels-hardware-matrix-L-33-chromium/error-context.md",
+        "bytes": 69200,
+        "sha256": "551c29b40eaf618ee0c07dfaeccab2d4c0253804fc3b9c3b814c49e6e61bfff4"
+      },
+      {
+        "path": "engine/web/test-results/scale0-comprehensive-perfo-e0160-panels-hardware-matrix-L-33-chromium/test-failed-1.png",
+        "bytes": 154685,
+        "sha256": "968f5960ab210924235847d1b62bf996b0675c7fe9746c7f1d2d12c576b98206"
+      }
+    ],
+    "all_eleven_members_current_and_archive_bytes_verified": true,
+    "retained": "Both canonical reports, both report attachments, full log, candidate manifest, .last-run.json, both failure screenshots and both error-context files are preserved.",
+    "trace": "The hardware harness explicitly disables tracing. No hardware trace is claimed; the prior functional MIME-failure trace is a different artifact.",
+    "screenshot_boundary": "Screenshot files were hashed and preserved, not used to infer numerical correctness or timing.",
+    "capture_boundary": "Execution record states immediate retention after the invocation. Present archive bytes independently verify preservation; hashes alone do not reconstruct external process scheduling."
+  },
+  "predecessor_preservation": {
+    "wave_source": {
+      "archive": {
+        "path": "engine/build/scale0_wave_v3_candidate_20260908.zip",
+        "bytes": 8802892,
+        "sha256": "76cd720f90170775679fb1f6ff26468d14eb08e432be93d0688daa44203b716b"
+      },
+      "entries_checked": 2172,
+      "zip_entries": 2174,
+      "archive_mismatches": [],
+      "current_entries_checked": 0,
+      "current_mismatches": [],
+      "duplicate_or_unsafe_entries": [],
+      "additional_entries": [
+        "engine/docs/PROGRAM_SCALE0_WAVE_CORRECTNESS_V3_2026-09-08.md",
+        "engine/docs/evidence/scale0-wave-v3-harness-review-2026-09-08.json"
+      ]
+    },
+    "wave_evidence_seal": {
+      "path": "engine/docs/evidence/scale0-wave-v3-evidence-archive-2026-09-08.json",
+      "bytes": 5108,
+      "sha256": "284cd1f0993e82505431eb916af6d546e4cf04a6772de052580d9a77e82d9b70"
+    },
+    "wave_evidence": {
+      "archive": {
+        "path": "engine/build/scale0_wave_v3_evidence_20260908.zip",
+        "bytes": 239577,
+        "sha256": "909f3825b9edee94e31c3d3e8626b49123465512eb7dab1cf7eea59d579c34f8"
+      },
+      "entries_checked": 20,
+      "zip_entries": 20,
+      "archive_mismatches": [],
+      "current_entries_checked": 0,
+      "current_mismatches": [],
+      "duplicate_or_unsafe_entries": [],
+      "additional_entries": []
+    },
+    "wave_hardware": {
+      "archive": {
+        "path": "engine/build/scale0_wave_v3_hardware_results_20260908.zip",
+        "bytes": 575456,
+        "sha256": "843d949e585349e1b40f3da87859d80b6fae0af73b16660be695fdfb95b14c26"
+      },
+      "entries_checked": 11,
+      "zip_entries": 11,
+      "archive_mismatches": [],
+      "current_entries_checked": 0,
+      "current_mismatches": [],
+      "duplicate_or_unsafe_entries": [],
+      "additional_entries": []
+    },
+    "v2_source": {
+      "archive": {
+        "path": "engine/build/scale0_performance_v2_candidate_20260907.zip",
+        "bytes": 10208612,
+        "sha256": "3278a805f0ac37156036925dbae4ffe7ddcd20a9a7ff012c9e86b75ae252503f"
+      },
+      "entries_checked": 2171,
+      "zip_entries": 2174,
+      "archive_mismatches": [],
+      "current_entries_checked": 0,
+      "current_mismatches": [],
+      "duplicate_or_unsafe_entries": [],
+      "additional_entries": [
+        "_candidate_manifest.json",
+        "engine/docs/PROGRAM_SCALE0_PERFORMANCE_V2_2026-09-07.md",
+        "engine/docs/evidence/scale0-performance-v2-independent-review-2026-09-07.json"
+      ]
+    },
+    "v2_evidence_seal": {
+      "path": "engine/docs/evidence/scale0-performance-v2-evidence-archive-2026-09-07.json",
+      "bytes": 6559,
+      "sha256": "1ee59302c157f1439058d4752332ce472a6fda4a3a0d9ff3e1d5fdd3078dc304"
+    },
+    "v2_evidence": {
+      "archive": {
+        "path": "engine/build/scale0_performance_v2_evidence_20260907.zip",
+        "bytes": 414547,
+        "sha256": "27736901ad385d2ba08e88b94f91438fb5a990c488a69835774d779f8c69a51f"
+      },
+      "entries_checked": 27,
+      "zip_entries": 27,
+      "archive_mismatches": [],
+      "current_entries_checked": 0,
+      "current_mismatches": [],
+      "duplicate_or_unsafe_entries": [],
+      "additional_entries": []
+    },
+    "v2_matched_reports_equal_sealed_archive_bytes": true,
+    "historical_attachment_limit": "V2 raw reports and failure log remain preserved. Its transient panel screenshots/error-context were cleared by a later invocation and are not retroactively supplied by the newer Wave or Time/Gravity attachments."
+  },
+  "limitations": [
+    "This is independent reconstruction of retained measurements, not a second browser campaign or universal 60 FPS guarantee.",
+    "Raw frame intervals and callback durations are retained, but their absolute timing origins and callback start/stop timestamps are not. The reported measurement duration cannot be independently reconstructed from these vectors.",
+    "The existing stop protocol may collect installed callbacks during its zero-delay drain after stoppedAt. Retained vectors and summary calculations cover that same collected data.",
+    "Actions measure dispatch to next foreground requestAnimationFrame, not physical display presentation.",
+    "Same-owner/generation/readiness flags and endpoint clock checks satisfy the registered lifecycle contract. They do not prove that J/E, slab data, telemetry and other observations share a microscopic tick or state identity.",
+    "Direct lifecycle records are null; worker lifecycle fields are checked where present. Zero endpoint resource deltas over these windows do not prove absence of all leaks or races.",
+    "Canvas and DOM counters measure selected operations under the tested panel root; they do not establish complete histories, scientific sample cadence, numerical equality or observation provenance.",
+    "Hardware renderer, no Long Tasks and no runtime errors apply only to these windows and instrumentation.",
+    "No strict-law adoption, continuum or matter recovery, spectra, chemistry, causal gravitational recovery, commit, public deployment or release approval follows."
+  ],
+  "blocking_release_findings": [
+    {
+      "id": "TG4-HW-01",
+      "scope": "direct L33 Time docked/floated",
+      "finding": "Callback p95 2.490/2.585 ms exceeds the unchanged 2 ms limit.",
+      "disposition": "Both prior failures remain open."
+    },
+    {
+      "id": "TG4-HW-02",
+      "scope": "worker L97 Gravity floated",
+      "finding": "Callback p95 2.100 ms exceeds the unchanged 2 ms limit.",
+      "disposition": "Prior failure remains open. Worker Gravity docked now passes at 1.930 ms."
+    }
+  ],
+  "evidence_integrity_findings": []
+}

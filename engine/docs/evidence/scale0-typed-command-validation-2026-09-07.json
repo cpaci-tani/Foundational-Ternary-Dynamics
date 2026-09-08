@@ -1,0 +1,89 @@
+{
+  "schema": "scale0-typed-command-validation-1",
+  "date": "2026-09-07",
+  "finding_ids": [
+    "NTR-01",
+    "NTR-02"
+  ],
+  "status": "implemented_independently_reviewed_coordinator_tests_passed",
+  "dispatch_operations_covered": 33,
+  "source_files": [
+    {
+      "path": "engine/include/ftd/ws_json.h",
+      "bytes": 2200,
+      "sha256": "89aa7ccce59d6113666570067456cc915c230ec9f2f984537320f037462762df"
+    },
+    {
+      "path": "engine/include/ftd/ws_command_validation.h",
+      "bytes": 6313,
+      "sha256": "eddc07f622ed6ec7575dcff5514187c81dcf47de8906510d4c235331e3d03d4b"
+    },
+    {
+      "path": "engine/include/ftd/ws_protocol.h",
+      "bytes": 6137,
+      "sha256": "de388f5013e0f65662f1b6055cf9163bd1379268612b99f0227c40b563373cb0"
+    },
+    {
+      "path": "engine/src/ws_protocol.cpp",
+      "bytes": 21714,
+      "sha256": "2c17111236d0f39b42c6c0b45f05fe2e8889236d5ac945b49f8716330f1411d6"
+    },
+    {
+      "path": "engine/src/ws_server_commands.cpp",
+      "bytes": 43968,
+      "sha256": "7038070688158411ef454529f2be2067e6d778da8ec1e6b2e8e690b746e72316"
+    },
+    {
+      "path": "engine/tests/test_ws_json_validation.cpp",
+      "bytes": 4317,
+      "sha256": "4c9d640a90b9cbc6bdf1d20cfa878ce377cfce2bdab2e39c08998acb8840a91a"
+    },
+    {
+      "path": "engine/tests/test_ws_command_validation.cpp",
+      "bytes": 10892,
+      "sha256": "0fcbc7d1ac020bd6c3cdae467a0d09e85c303ce3519509b6b4e670ef55a52b2c"
+    }
+  ],
+  "evidence_files": [
+    {
+      "path": "engine/docs/evidence/scale0-correctness-native-build-2026-09-07.log",
+      "bytes": 12292,
+      "sha256": "1db63afebf6ba3512cf16d39c0c10d5b0e9724ed132ac3471c0fcf4bdb35fc1d"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-correctness-native-tests-2026-09-07.log",
+      "bytes": 1573,
+      "sha256": "a24e0b2cb475358c92bbffc619797c3d3e9fbe0883dc6aa9aceab3571f1d2bdc"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-correctness-native-wire-2026-09-07.json",
+      "bytes": 261,
+      "sha256": "4c0da3dd2d7a4307c2908a5a67e477e48675cd2b9956fc5c7d2e0024e064563f"
+    }
+  ],
+  "validation": {
+    "native_build": "MSVC 14.44.35207 canonical Release, coordinated by root",
+    "native_ctest": {
+      "passed": 10,
+      "failed": 0,
+      "elapsed_seconds": 0.31,
+      "executor": "coordinator"
+    },
+    "independent_wire": {
+      "status": "passed",
+      "checks": 18,
+      "backend": "forced_cpu",
+      "scope": "independent JSON oracle and actual WebSocket command rejection; digest is scoped",
+      "executable_sha256": "6dbf3e632e8c66d46a8b8c0765d8a6d288e3bb218b8b03a826b39a665a177e09"
+    },
+    "source_reviewer": "runtime agent (independent of implementation)",
+    "review_repair": "Escape decoded profile labels in success responses; regression includes quote/newline/NUL."
+  },
+  "limits": [
+    "Floating production reference engine; no strict discrete physical-law certification.",
+    "Input validation does not prevent later floating dynamical overflow.",
+    "Digest checks are scoped and exclude RNG/identity/clock fields; rejection-before-mutation also checked structurally and against profile/seed/scheduler.",
+    "Socket deadline/control-frame/provenance/legacy correlation findings remain separate.",
+    "No GPU/browser campaign executed by this implementation agent."
+  ]
+}

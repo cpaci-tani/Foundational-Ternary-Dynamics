@@ -1,0 +1,1235 @@
+{
+  "schema": "ftd.scale0.wave-attribution.results-review.v1",
+  "reviewedAtUtc": "2026-09-08T07:40:52.793876+00:00",
+  "reviewer": "/root/bounded_worker_reads",
+  "status": "accepted_partial_attribution_accounting_routed_worker_startup_failed",
+  "acceptance": false,
+  "disposition": {
+    "baselineDiagnostic": {
+      "measuredRows": 8,
+      "registeredIntegrityPassedRows": 8,
+      "executionExitCode": 0
+    },
+    "routedDiagnostic": {
+      "measuredRows": 4,
+      "registeredIntegrityPassedRows": 4,
+      "missingWorkerRows": 4,
+      "executionExitCode": 1
+    },
+    "totalMeasuredRows": 12,
+    "plannedDiagnosticRows": 16,
+    "workerAttributionAvailable": false,
+    "releaseApproval": false,
+    "performanceApproval": false,
+    "physicalRecoveryApproval": false
+  },
+  "method": {
+    "independence": "Python reconstruction imports no project module and never invokes the author analyzer. Stored analysis was used only as a comparison target after independent reconstruction.",
+    "timing": "All retained frame/callback/action vectors use sorted sequential IEEE-754 binary64 addition and nearest-rank ceil(n*q)-1 percentiles, matching the registered original summary contract exactly.",
+    "trees": "A separate endpoint sweep reconstructs each child-interval union. All records are traced to declared roots, checked for closed contained intervals, valid fixed enums, bounds and status, then partitioned into exclusive stage durations.",
+    "association": "All 194 scheduled roots map bijectively onto retained Wave callback indices with exact equal endpoint difference and elapsed value.",
+    "checked": {
+      "aggregateFields": 1068,
+      "frames": 8703,
+      "callbackSamples": 15874,
+      "callbackSeries": 148,
+      "actions": 60,
+      "spanTimingFields": 8114,
+      "roots": 234,
+      "scheduledRoots": 194,
+      "spans": 4057
+    },
+    "aggregateMismatches": [],
+    "spanTimingMismatches": [],
+    "maximumPerRootReconstructionErrorMs": 0.0,
+    "otherReproductions": "All 234 reported root totals and all cohort fields reconstructed here agree; no timing vector or invocation was imputed."
+  },
+  "identityAndPreservation": {
+    "baseSourceIdentity": "69b0bb82befe103572ac4710631c4242fc9c6b23990bea93c22ed5426b3ff394",
+    "probeManifestSha256": "a9f763396e72a59cde8aba4927a547c5fa12deeaf0fcc9969b7bafaec7120259",
+    "productionFilesChecked": 2176,
+    "productionSourceMismatches": [],
+    "probeEntriesChecked": 37,
+    "probeEntryMismatches": [],
+    "candidateFreeze": {
+      "archive": {
+        "path": "engine/build/scale0_wave_attribution_v1_candidate_20260908.zip",
+        "bytes": 273984,
+        "sha256": "08414b4e6f49c8c116de02af563bfd9e47b64e572f1522dc2f3008674b1bbf6c"
+      },
+      "members": 45,
+      "archiveMismatches": [],
+      "liveSnapshotDifferences": [
+        "engine/docs/PROGRAM_SCALE0_WAVE_ATTRIBUTION_V1_2026-09-08.md"
+      ]
+    },
+    "invocationArchives": [
+      {
+        "archive": {
+          "path": "engine/build/waveattr-v1-baseline-a1-results.zip",
+          "bytes": 102763,
+          "sha256": "e90d65e656253e3b3625affc74993e83fa620651a1588a662f3148a8b0e93d62"
+        },
+        "members": 9,
+        "archiveMismatches": [],
+        "liveSnapshotDifferences": []
+      },
+      {
+        "archive": {
+          "path": "engine/build/waveattr-v1-routed-a1-results.zip",
+          "bytes": 725864,
+          "sha256": "67e46f4b97ca32eddac3916b00533563e9e6afa2cb87390832b28d9683f24fd7"
+        },
+        "members": 11,
+        "archiveMismatches": [],
+        "liveSnapshotDifferences": []
+      }
+    ],
+    "heldEquivalenceArchive": {
+      "archive": {
+        "path": "engine/build/waveattr-v1-equivalence-a1-results.zip",
+        "bytes": 6804,
+        "sha256": "993f526187b15640cec297744a2154da7932bba0316bf9b425b7a2f443303c98"
+      },
+      "members": 5,
+      "archiveMismatches": [],
+      "liveSnapshotDifferences": []
+    },
+    "rawReports": [
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/records/waveattr-v1-baseline-a1-L33.json",
+        "bytes": 373595,
+        "sha256": "fc8d313fb2da6310028cd5fc99969e0420abe50f327f287c49517a0ab665036e"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/records/waveattr-v1-baseline-a1-L97.json",
+        "bytes": 221166,
+        "sha256": "796715bfd3711e68a109e742de4329c00af68f2861d01cc389457b5b6148c26a"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/records/waveattr-v1-routed-a1-L33.json",
+        "bytes": 10080274,
+        "sha256": "9f31d89da6fba788ad65da9f051e222a9034b4bdb2cf9dbabbfd49f4bebf3fbf"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/records/waveattr-v1-routed-a1-L97.json",
+        "bytes": 4849,
+        "sha256": "7edf91c36291d528dd87285610a8c68835b0d919da598414a212265be7c9628a"
+      }
+    ],
+    "snapshotNote": "All 45 pre-timing archive entries verify. The live coordinator program differs from its frozen archived snapshot; the archived preregistration remains the reviewed timing contract. No production or sealed probe entry differs. This is not a claim that the current live prose was independently re-audited.",
+    "preservationLimit": "Timing diagnostics used trace off. Routed worker screenshot, error context, raw empty report and log are retained in its 11-member archive; no diagnostic trace is asserted."
+  },
+  "failedWorkerStartup": {
+    "runId": "waveattr-v1-routed-a1",
+    "L": 97,
+    "recordedRows": 0,
+    "missingStates": [
+      "docked",
+      "floated",
+      "collapsed",
+      "hidden"
+    ],
+    "failure": "gotoAndReady timed out after 90000 ms while waiting for window._ftdBridge, before any measured state.",
+    "recordedRuntimeErrors": [
+      "Failed to load resource: net::ERR_CONNECTION_REFUSED"
+    ],
+    "interpretation": "The absent run cannot support worker stage-cost, rendering, callback, sampling or physics conclusions. ERR_CONNECTION_REFUSED and the startup timeout are observed evidence; their cause is under separate investigation.",
+    "noReplacement": true
+  },
+  "workloadIntegrity": {
+    "scope": "RF WaveLab; direct L33 and worker L97; docked, floated, collapsed, hidden, in order per completed size.",
+    "renderer": "All 12 measured rows report ANGLE NVIDIA GeForce RTX 5090 Direct3D11; no software renderer appears.",
+    "checked": [
+      "all six reviewed routes delivered with matching baseline and delivered hashes in each completed size",
+      "visible document, correct backend/size namespace and authoritative owner generation",
+      "within-contract qualification at endpoints, unchanged lifecycle/mount, advancing unpaused owner clock",
+      "at least 600 frames and 12000 ms per measured row",
+      "10 correctly labeled raw action samples per visible row and none for collapsed/hidden",
+      "no recorded audit/runtime errors, no Long Tasks, zero tracked subscriber/DOM/canvas resource deltas",
+      "expected connected/live/floated/collapsed mount shapes"
+    ],
+    "rendering": "All 8703 frame intervals reconstruct; none exceed 20 ms or 33.4 ms. These diagnostic observations are not a new production performance acceptance campaign.",
+    "rawResults": [
+      {
+        "run": "waveattr-v1-baseline-a1",
+        "variant": "baseline",
+        "L": 33,
+        "state": "docked",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "ticks": [
+          81,
+          812
+        ],
+        "durationMs": 12175.545000076294,
+        "frames": {
+          "count": 730,
+          "meanMs": 16.666000000000004,
+          "medianMs": 16.665000000000873,
+          "p95Ms": 16.67000000000189,
+          "p99Ms": 16.67000000000553,
+          "maxMs": 16.67000000000553,
+          "effectiveFps": 60.002400096003825,
+          "intervalsOver20ms": 0,
+          "intervalsOver33_4ms": 0
+        },
+        "waveCallback": {
+          "count": 49,
+          "meanMs": 3.4391836706472905,
+          "medianMs": 3.3899999856948853,
+          "p95Ms": 4.460000038146973,
+          "p99Ms": 4.879999995231628,
+          "maxMs": 4.879999995231628
+        },
+        "actions": {
+          "count": 10,
+          "meanMs": 16.55999997854233,
+          "medianMs": 14.740000009536743,
+          "p95Ms": 20.919999957084656,
+          "p99Ms": 20.919999957084656,
+          "maxMs": 20.919999957084656
+        },
+        "dom": {
+          "mutationRecords": 334,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 480
+        },
+        "canvases": 5,
+        "integrityReconstructed": true,
+        "rawUsage": {
+          "roots": 0,
+          "spans": 0,
+          "recorderClockCalls": 0,
+          "preallocatedBytes": 31459840
+        }
+      },
+      {
+        "run": "waveattr-v1-baseline-a1",
+        "variant": "baseline",
+        "L": 33,
+        "state": "floated",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "ticks": [
+          875,
+          1607
+        ],
+        "durationMs": 12188.610000014305,
+        "frames": {
+          "count": 731,
+          "meanMs": 16.666005471956232,
+          "medianMs": 16.665000000000873,
+          "p95Ms": 16.67000000000553,
+          "p99Ms": 16.67000000000553,
+          "maxMs": 16.67000000000553,
+          "effectiveFps": 60.00238039539185,
+          "intervalsOver20ms": 0,
+          "intervalsOver33_4ms": 0
+        },
+        "waveCallback": {
+          "count": 49,
+          "meanMs": 3.5522449016571045,
+          "medianMs": 3.6100000143051147,
+          "p95Ms": 4.575000047683716,
+          "p99Ms": 4.694999933242798,
+          "maxMs": 4.694999933242798
+        },
+        "actions": {
+          "count": 10,
+          "meanMs": 16.573000013828278,
+          "medianMs": 14.865000009536743,
+          "p95Ms": 20.4099999666214,
+          "p99Ms": 20.4099999666214,
+          "maxMs": 20.4099999666214
+        },
+        "dom": {
+          "mutationRecords": 336,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 480
+        },
+        "canvases": 5,
+        "integrityReconstructed": true,
+        "rawUsage": {
+          "roots": 0,
+          "spans": 0,
+          "recorderClockCalls": 0,
+          "preallocatedBytes": 31459840
+        }
+      },
+      {
+        "run": "waveattr-v1-baseline-a1",
+        "variant": "baseline",
+        "L": 33,
+        "state": "collapsed",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "ticks": [
+          1669,
+          2390
+        ],
+        "durationMs": 12008.039999961853,
+        "frames": {
+          "count": 720,
+          "meanMs": 16.665999999999997,
+          "medianMs": 16.665000000000873,
+          "p95Ms": 16.67000000000553,
+          "p99Ms": 16.67000000000553,
+          "maxMs": 16.67000000000553,
+          "effectiveFps": 60.00240009600385,
+          "intervalsOver20ms": 0,
+          "intervalsOver33_4ms": 0
+        },
+        "waveCallback": {
+          "count": 48,
+          "meanMs": 0.005208333333333333,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.009999990463256836,
+          "p99Ms": 0.014999985694885254,
+          "maxMs": 0.014999985694885254
+        },
+        "actions": {
+          "count": 0,
+          "meanMs": 0,
+          "medianMs": 0,
+          "p95Ms": 0,
+          "p99Ms": 0,
+          "maxMs": 0
+        },
+        "dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "canvases": 5,
+        "integrityReconstructed": true,
+        "rawUsage": {
+          "roots": 0,
+          "spans": 0,
+          "recorderClockCalls": 0,
+          "preallocatedBytes": 31459840
+        }
+      },
+      {
+        "run": "waveattr-v1-baseline-a1",
+        "variant": "baseline",
+        "L": 33,
+        "state": "hidden",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "ticks": [
+          2452,
+          3173
+        ],
+        "durationMs": 12014.644999980927,
+        "frames": {
+          "count": 720,
+          "meanMs": 16.666000000000004,
+          "medianMs": 16.66500000000815,
+          "p95Ms": 16.669999999998254,
+          "p99Ms": 16.670000000012806,
+          "maxMs": 16.670000000012806,
+          "effectiveFps": 60.002400096003825,
+          "intervalsOver20ms": 0,
+          "intervalsOver33_4ms": 0
+        },
+        "waveCallback": {
+          "count": 48,
+          "meanMs": 0.00270833820104599,
+          "medianMs": 0,
+          "p95Ms": 0.005000114440917969,
+          "p99Ms": 0.010000109672546387,
+          "maxMs": 0.010000109672546387
+        },
+        "actions": {
+          "count": 0,
+          "meanMs": 0,
+          "medianMs": 0,
+          "p95Ms": 0,
+          "p99Ms": 0,
+          "maxMs": 0
+        },
+        "dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "canvases": 5,
+        "integrityReconstructed": true,
+        "rawUsage": {
+          "roots": 0,
+          "spans": 0,
+          "recorderClockCalls": 0,
+          "preallocatedBytes": 31459840
+        }
+      },
+      {
+        "run": "waveattr-v1-baseline-a1",
+        "variant": "baseline",
+        "L": 97,
+        "state": "docked",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "ticks": [
+          16,
+          153
+        ],
+        "durationMs": 12175.129999995232,
+        "frames": {
+          "count": 730,
+          "meanMs": 16.665999999999997,
+          "medianMs": 16.665000000000873,
+          "p95Ms": 16.67000000000189,
+          "p99Ms": 16.67000000000553,
+          "maxMs": 16.67000000000553,
+          "effectiveFps": 60.00240009600385,
+          "intervalsOver20ms": 0,
+          "intervalsOver33_4ms": 0
+        },
+        "waveCallback": {
+          "count": 49,
+          "meanMs": 2.396224489017409,
+          "medianMs": 2.3450000286102295,
+          "p95Ms": 3.3799999952316284,
+          "p99Ms": 3.5649999380111694,
+          "maxMs": 3.5649999380111694
+        },
+        "actions": {
+          "count": 10,
+          "meanMs": 16.47649998664856,
+          "medianMs": 16.509999990463257,
+          "p95Ms": 20.90499997138977,
+          "p99Ms": 20.90499997138977,
+          "maxMs": 20.90499997138977
+        },
+        "dom": {
+          "mutationRecords": 332,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 480
+        },
+        "canvases": 5,
+        "integrityReconstructed": true,
+        "rawUsage": {
+          "roots": 0,
+          "spans": 0,
+          "recorderClockCalls": 0,
+          "preallocatedBytes": 31459840
+        }
+      },
+      {
+        "run": "waveattr-v1-baseline-a1",
+        "variant": "baseline",
+        "L": 97,
+        "state": "floated",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "ticks": [
+          165,
+          299
+        ],
+        "durationMs": 12180.259999990463,
+        "frames": {
+          "count": 731,
+          "meanMs": 16.665998632010936,
+          "medianMs": 16.665000000000873,
+          "p95Ms": 16.67000000000553,
+          "p99Ms": 16.67000000000553,
+          "maxMs": 16.67000000000553,
+          "effectiveFps": 60.00240502115888,
+          "intervalsOver20ms": 0,
+          "intervalsOver33_4ms": 0
+        },
+        "waveCallback": {
+          "count": 49,
+          "meanMs": 2.310816326919867,
+          "medianMs": 2.2799999713897705,
+          "p95Ms": 3.059999942779541,
+          "p99Ms": 3.2249999046325684,
+          "maxMs": 3.2249999046325684
+        },
+        "actions": {
+          "count": 10,
+          "meanMs": 16.390499997138978,
+          "medianMs": 16.02999997138977,
+          "p95Ms": 18.174999952316284,
+          "p99Ms": 18.174999952316284,
+          "maxMs": 18.174999952316284
+        },
+        "dom": {
+          "mutationRecords": 343,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 490
+        },
+        "canvases": 5,
+        "integrityReconstructed": true,
+        "rawUsage": {
+          "roots": 0,
+          "spans": 0,
+          "recorderClockCalls": 0,
+          "preallocatedBytes": 31459840
+        }
+      },
+      {
+        "run": "waveattr-v1-baseline-a1",
+        "variant": "baseline",
+        "L": 97,
+        "state": "collapsed",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "ticks": [
+          309,
+          445
+        ],
+        "durationMs": 12019.844999909401,
+        "frames": {
+          "count": 721,
+          "meanMs": 16.6660055478502,
+          "medianMs": 16.665000000000873,
+          "p95Ms": 16.67000000000553,
+          "p99Ms": 16.67000000000553,
+          "maxMs": 16.670000000012806,
+          "effectiveFps": 60.00238012215189,
+          "intervalsOver20ms": 0,
+          "intervalsOver33_4ms": 0
+        },
+        "waveCallback": {
+          "count": 48,
+          "meanMs": 0.006354170540968577,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.010000109672546387,
+          "p99Ms": 0.015000104904174805,
+          "maxMs": 0.015000104904174805
+        },
+        "actions": {
+          "count": 0,
+          "meanMs": 0,
+          "medianMs": 0,
+          "p95Ms": 0,
+          "p99Ms": 0,
+          "maxMs": 0
+        },
+        "dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "canvases": 5,
+        "integrityReconstructed": true,
+        "rawUsage": {
+          "roots": 0,
+          "spans": 0,
+          "recorderClockCalls": 0,
+          "preallocatedBytes": 31459840
+        }
+      },
+      {
+        "run": "waveattr-v1-baseline-a1",
+        "variant": "baseline",
+        "L": 97,
+        "state": "hidden",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "ticks": [
+          456,
+          590
+        ],
+        "durationMs": 12009.049999952316,
+        "frames": {
+          "count": 720,
+          "meanMs": 16.666000000000004,
+          "medianMs": 16.66500000000815,
+          "p95Ms": 16.669999999998254,
+          "p99Ms": 16.670000000012806,
+          "maxMs": 16.670000000012806,
+          "effectiveFps": 60.002400096003825,
+          "intervalsOver20ms": 0,
+          "intervalsOver33_4ms": 0
+        },
+        "waveCallback": {
+          "count": 48,
+          "meanMs": 0.0031249995032946267,
+          "medianMs": 0.004999995231628418,
+          "p95Ms": 0.004999995231628418,
+          "p99Ms": 0.005000114440917969,
+          "maxMs": 0.005000114440917969
+        },
+        "actions": {
+          "count": 0,
+          "meanMs": 0,
+          "medianMs": 0,
+          "p95Ms": 0,
+          "p99Ms": 0,
+          "maxMs": 0
+        },
+        "dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "canvases": 5,
+        "integrityReconstructed": true,
+        "rawUsage": {
+          "roots": 0,
+          "spans": 0,
+          "recorderClockCalls": 0,
+          "preallocatedBytes": 31459840
+        }
+      },
+      {
+        "run": "waveattr-v1-routed-a1",
+        "variant": "routed",
+        "L": 33,
+        "state": "docked",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "ticks": [
+          81,
+          812
+        ],
+        "durationMs": 12174.070000052452,
+        "frames": {
+          "count": 730,
+          "meanMs": 16.665993150684937,
+          "medianMs": 16.665000000000873,
+          "p95Ms": 16.67000000000189,
+          "p99Ms": 16.67000000000553,
+          "maxMs": 16.67000000000553,
+          "effectiveFps": 60.00242475552092,
+          "intervalsOver20ms": 0,
+          "intervalsOver33_4ms": 0
+        },
+        "waveCallback": {
+          "count": 49,
+          "meanMs": 3.4817346966996485,
+          "medianMs": 3.5500000715255737,
+          "p95Ms": 4.324999928474426,
+          "p99Ms": 4.395000100135803,
+          "maxMs": 4.395000100135803
+        },
+        "actions": {
+          "count": 10,
+          "meanMs": 16.604499995708466,
+          "medianMs": 15.214999914169312,
+          "p95Ms": 22.075000047683716,
+          "p99Ms": 22.075000047683716,
+          "maxMs": 22.075000047683716
+        },
+        "dom": {
+          "mutationRecords": 334,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 480
+        },
+        "canvases": 5,
+        "integrityReconstructed": true,
+        "rawUsage": {
+          "roots": 89,
+          "spans": 1954,
+          "recorderClockCalls": 3770,
+          "preallocatedBytes": 31459840
+        }
+      },
+      {
+        "run": "waveattr-v1-routed-a1",
+        "variant": "routed",
+        "L": 33,
+        "state": "floated",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "ticks": [
+          891,
+          1622
+        ],
+        "durationMs": 12174.599999904633,
+        "frames": {
+          "count": 730,
+          "meanMs": 16.665993150684937,
+          "medianMs": 16.665000000000873,
+          "p95Ms": 16.67000000000553,
+          "p99Ms": 16.67000000000553,
+          "maxMs": 16.67000000000553,
+          "effectiveFps": 60.00242475552092,
+          "intervalsOver20ms": 0,
+          "intervalsOver33_4ms": 0
+        },
+        "waveCallback": {
+          "count": 49,
+          "meanMs": 3.6801020369237785,
+          "medianMs": 3.6799999475479126,
+          "p95Ms": 4.394999980926514,
+          "p99Ms": 4.789999961853027,
+          "maxMs": 4.789999961853027
+        },
+        "actions": {
+          "count": 10,
+          "meanMs": 16.330499982833864,
+          "medianMs": 16.115000009536743,
+          "p95Ms": 20.139999985694885,
+          "p99Ms": 20.139999985694885,
+          "maxMs": 20.139999985694885
+        },
+        "dom": {
+          "mutationRecords": 342,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 490
+        },
+        "canvases": 5,
+        "integrityReconstructed": true,
+        "rawUsage": {
+          "roots": 49,
+          "spans": 1911,
+          "recorderClockCalls": 3724,
+          "preallocatedBytes": 31459840
+        }
+      },
+      {
+        "run": "waveattr-v1-routed-a1",
+        "variant": "routed",
+        "L": 33,
+        "state": "collapsed",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "ticks": [
+          1700,
+          2421
+        ],
+        "durationMs": 12008.284999966621,
+        "frames": {
+          "count": 720,
+          "meanMs": 16.665999999999997,
+          "medianMs": 16.665000000000873,
+          "p95Ms": 16.67000000000553,
+          "p99Ms": 16.67000000000553,
+          "maxMs": 16.670000000012806,
+          "effectiveFps": 60.00240009600385,
+          "intervalsOver20ms": 0,
+          "intervalsOver33_4ms": 0
+        },
+        "waveCallback": {
+          "count": 48,
+          "meanMs": 0.013958334922790527,
+          "medianMs": 0.014999985694885254,
+          "p95Ms": 0.019999980926513672,
+          "p99Ms": 0.02499997615814209,
+          "maxMs": 0.02499997615814209
+        },
+        "actions": {
+          "count": 0,
+          "meanMs": 0,
+          "medianMs": 0,
+          "p95Ms": 0,
+          "p99Ms": 0,
+          "maxMs": 0
+        },
+        "dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "canvases": 5,
+        "integrityReconstructed": true,
+        "rawUsage": {
+          "roots": 48,
+          "spans": 96,
+          "recorderClockCalls": 96,
+          "preallocatedBytes": 31459840
+        }
+      },
+      {
+        "run": "waveattr-v1-routed-a1",
+        "variant": "routed",
+        "L": 33,
+        "state": "hidden",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "ticks": [
+          2488,
+          3209
+        ],
+        "durationMs": 12016.450000047684,
+        "frames": {
+          "count": 720,
+          "meanMs": 16.665993055555553,
+          "medianMs": 16.66500000000815,
+          "p95Ms": 16.669999999998254,
+          "p99Ms": 16.670000000012806,
+          "maxMs": 16.670000000012806,
+          "effectiveFps": 60.002425098014385,
+          "intervalsOver20ms": 0,
+          "intervalsOver33_4ms": 0
+        },
+        "waveCallback": {
+          "count": 48,
+          "meanMs": 0.009895828862984976,
+          "medianMs": 0.009999990463256836,
+          "p95Ms": 0.015000104904174805,
+          "p99Ms": 0.019999980926513672,
+          "maxMs": 0.019999980926513672
+        },
+        "actions": {
+          "count": 0,
+          "meanMs": 0,
+          "medianMs": 0,
+          "p95Ms": 0,
+          "p99Ms": 0,
+          "maxMs": 0
+        },
+        "dom": {
+          "mutationRecords": 0,
+          "addedNodes": 0,
+          "removedNodes": 0,
+          "canvasDraws": 0
+        },
+        "canvases": 5,
+        "integrityReconstructed": true,
+        "rawUsage": {
+          "roots": 48,
+          "spans": 96,
+          "recorderClockCalls": 96,
+          "preallocatedBytes": 31459840
+        }
+      }
+    ]
+  },
+  "directL33Attribution": {
+    "population": "97 active scheduled callbacks: 48 docked and 49 floated. One additional docked scheduled callback has no metrics and is retained separately; 96 collapsed/hidden scheduled callbacks return without metrics. Forty standalone resize roots occur in the docked row.",
+    "cohortCoverage": [
+      {
+        "L": 33,
+        "state": "docked",
+        "origins": {
+          "scheduled": 49,
+          "resize": 40
+        },
+        "cohorts": [
+          {
+            "cohort": {
+              "ECount": 35937,
+              "ETick": null,
+              "JCount": 35937,
+              "JTick": null,
+              "availability": "available",
+              "basisHit": 1,
+              "chartInitialization": 0,
+              "componentIndex": 1,
+              "newHistoryRow": 1,
+              "origin": "scheduled"
+            },
+            "count": 48
+          },
+          {
+            "cohort": {
+              "ECount": null,
+              "ETick": null,
+              "JCount": null,
+              "JTick": null,
+              "availability": "unknown-or-no-metrics",
+              "basisHit": null,
+              "chartInitialization": null,
+              "componentIndex": null,
+              "newHistoryRow": null,
+              "origin": "scheduled"
+            },
+            "count": 1
+          },
+          {
+            "cohort": {
+              "ECount": null,
+              "ETick": null,
+              "JCount": null,
+              "JTick": null,
+              "availability": "unknown-or-no-metrics",
+              "basisHit": null,
+              "chartInitialization": null,
+              "componentIndex": null,
+              "newHistoryRow": null,
+              "origin": "resize"
+            },
+            "count": 40
+          }
+        ],
+        "maxReconstructionErrorMs": 0.0
+      },
+      {
+        "L": 33,
+        "state": "floated",
+        "origins": {
+          "scheduled": 49
+        },
+        "cohorts": [
+          {
+            "cohort": {
+              "ECount": 35937,
+              "ETick": null,
+              "JCount": 35937,
+              "JTick": null,
+              "availability": "available",
+              "basisHit": 1,
+              "chartInitialization": 0,
+              "componentIndex": 1,
+              "newHistoryRow": 1,
+              "origin": "scheduled"
+            },
+            "count": 49
+          }
+        ],
+        "maxReconstructionErrorMs": 0.0
+      },
+      {
+        "L": 33,
+        "state": "collapsed",
+        "origins": {
+          "scheduled": 48
+        },
+        "cohorts": [
+          {
+            "cohort": {
+              "ECount": null,
+              "ETick": null,
+              "JCount": null,
+              "JTick": null,
+              "availability": "unknown-or-no-metrics",
+              "basisHit": null,
+              "chartInitialization": null,
+              "componentIndex": null,
+              "newHistoryRow": null,
+              "origin": "scheduled"
+            },
+            "count": 48
+          }
+        ],
+        "maxReconstructionErrorMs": 0.0
+      },
+      {
+        "L": 33,
+        "state": "hidden",
+        "origins": {
+          "scheduled": 48
+        },
+        "cohorts": [
+          {
+            "cohort": {
+              "ECount": null,
+              "ETick": null,
+              "JCount": null,
+              "JTick": null,
+              "availability": "unknown-or-no-metrics",
+              "basisHit": null,
+              "chartInitialization": null,
+              "componentIndex": null,
+              "newHistoryRow": null,
+              "origin": "scheduled"
+            },
+            "count": 48
+          }
+        ],
+        "maxReconstructionErrorMs": 0.0
+      }
+    ],
+    "dominantCosts": [
+      {
+        "L": 33,
+        "state": "docked",
+        "activeScheduledInvocations": 48,
+        "activeScheduledTotalMs": 170.56000006198883,
+        "disjointCosts": [
+          {
+            "group": "acquisition_including_native_boundary",
+            "summaryPerActiveScheduledInvocation": {
+              "count": 48,
+              "meanMs": 1.4669791385531425,
+              "medianMs": 1.4800001382827759,
+              "p95Ms": 1.834999918937683,
+              "p99Ms": 2.129999876022339,
+              "maxMs": 2.129999876022339
+            },
+            "totalExclusiveMs": 70.41499865055084,
+            "fractionOfActiveScheduledTime": 0.41284591126265835
+          },
+          {
+            "group": "qualification_and_reduction",
+            "summaryPerActiveScheduledInvocation": {
+              "count": 48,
+              "meanMs": 1.1483333508173625,
+              "medianMs": 1.0500000715255737,
+              "p95Ms": 1.5049999952316284,
+              "p99Ms": 1.7300000190734863,
+              "maxMs": 1.7300000190734863
+            },
+            "totalExclusiveMs": 55.1200008392334,
+            "fractionOfActiveScheduledTime": 0.3231707365103214
+          },
+          {
+            "group": "formatted_readouts_and_retained_dom",
+            "summaryPerActiveScheduledInvocation": {
+              "count": 48,
+              "meanMs": 0.6899999951322874,
+              "medianMs": 0.6599999666213989,
+              "p95Ms": 0.9249999523162842,
+              "p99Ms": 0.9800000190734863,
+              "maxMs": 0.9800000190734863
+            },
+            "totalExclusiveMs": 33.11999976634979,
+            "fractionOfActiveScheduledTime": 0.1941838634750971
+          },
+          {
+            "group": "remaining_wrappers_setup_and_residual",
+            "summaryPerActiveScheduledInvocation": {
+              "count": 48,
+              "meanMs": 0.10093750556310017,
+              "medianMs": 0.09499990940093994,
+              "p95Ms": 0.13999998569488525,
+              "p99Ms": 0.18999993801116943,
+              "maxMs": 0.18999993801116943
+            },
+            "totalExclusiveMs": 4.845000267028809,
+            "fractionOfActiveScheduledTime": 0.0284064274464583
+          },
+          {
+            "group": "fourier",
+            "summaryPerActiveScheduledInvocation": {
+              "count": 48,
+              "meanMs": 0.0629166712363561,
+              "medianMs": 0.060000061988830566,
+              "p95Ms": 0.09500002861022949,
+              "p99Ms": 0.125,
+              "maxMs": 0.125
+            },
+            "totalExclusiveMs": 3.0200002193450928,
+            "fractionOfActiveScheduledTime": 0.017706380266460455
+          },
+          {
+            "group": "chart_work",
+            "summaryPerActiveScheduledInvocation": {
+              "count": 48,
+              "meanMs": 0.053958334028720856,
+              "medianMs": 0.04999995231628418,
+              "p95Ms": 0.09000003337860107,
+              "p99Ms": 0.13000011444091797,
+              "maxMs": 0.13000011444091797
+            },
+            "totalExclusiveMs": 2.590000033378601,
+            "fractionOfActiveScheduledTime": 0.015185272235209216
+          },
+          {
+            "group": "controls_audio_and_direct_markup",
+            "summaryPerActiveScheduledInvocation": {
+              "count": 48,
+              "meanMs": 0.015416671832402548,
+              "medianMs": 0.014999985694885254,
+              "p95Ms": 0.04499995708465576,
+              "p99Ms": 0.04500007629394531,
+              "maxMs": 0.04500007629394531
+            },
+            "totalExclusiveMs": 0.7400002479553223,
+            "fractionOfActiveScheduledTime": 0.004338650607917298
+          },
+          {
+            "group": "history_preparation",
+            "summaryPerActiveScheduledInvocation": {
+              "count": 48,
+              "meanMs": 0.014791667461395264,
+              "medianMs": 0.014999985694885254,
+              "p95Ms": 0.02499997615814209,
+              "p99Ms": 0.03500008583068848,
+              "maxMs": 0.03500008583068848
+            },
+            "totalExclusiveMs": 0.7100000381469727,
+            "fractionOfActiveScheduledTime": 0.004162758195877862
+          }
+        ]
+      },
+      {
+        "L": 33,
+        "state": "floated",
+        "activeScheduledInvocations": 49,
+        "activeScheduledTotalMs": 180.32499980926514,
+        "disjointCosts": [
+          {
+            "group": "acquisition_including_native_boundary",
+            "summaryPerActiveScheduledInvocation": {
+              "count": 49,
+              "meanMs": 1.600918358686019,
+              "medianMs": 1.6149998903274536,
+              "p95Ms": 2.269999861717224,
+              "p99Ms": 2.340000033378601,
+              "maxMs": 2.340000033378601
+            },
+            "totalExclusiveMs": 78.44499957561493,
+            "fractionOfActiveScheduledTime": 0.43502010069922875
+          },
+          {
+            "group": "qualification_and_reduction",
+            "summaryPerActiveScheduledInvocation": {
+              "count": 49,
+              "meanMs": 1.1732653111827618,
+              "medianMs": 1.1600000858306885,
+              "p95Ms": 1.5049999952316284,
+              "p99Ms": 1.6150000095367432,
+              "maxMs": 1.6150000095367432
+            },
+            "totalExclusiveMs": 57.49000024795532,
+            "fractionOfActiveScheduledTime": 0.318813255559485
+          },
+          {
+            "group": "formatted_readouts_and_retained_dom",
+            "summaryPerActiveScheduledInvocation": {
+              "count": 49,
+              "meanMs": 0.6916326527692833,
+              "medianMs": 0.7000000476837158,
+              "p95Ms": 0.9249999523162842,
+              "p99Ms": 0.9500000476837158,
+              "maxMs": 0.9500000476837158
+            },
+            "totalExclusiveMs": 33.889999985694885,
+            "fractionOfActiveScheduledTime": 0.1879384445947112
+          },
+          {
+            "group": "remaining_wrappers_setup_and_residual",
+            "summaryPerActiveScheduledInvocation": {
+              "count": 49,
+              "meanMs": 0.09163265812153719,
+              "medianMs": 0.08999991416931152,
+              "p95Ms": 0.125,
+              "p99Ms": 0.17499995231628418,
+              "maxMs": 0.17499995231628418
+            },
+            "totalExclusiveMs": 4.490000247955322,
+            "fractionOfActiveScheduledTime": 0.024899488438677515
+          },
+          {
+            "group": "fourier",
+            "summaryPerActiveScheduledInvocation": {
+              "count": 49,
+              "meanMs": 0.048265294152863174,
+              "medianMs": 0.04500007629394531,
+              "p95Ms": 0.08000004291534424,
+              "p99Ms": 0.08500003814697266,
+              "maxMs": 0.08500003814697266
+            },
+            "totalExclusiveMs": 2.3649994134902954,
+            "fractionOfActiveScheduledTime": 0.013115205412404393
+          },
+          {
+            "group": "chart_work",
+            "summaryPerActiveScheduledInvocation": {
+              "count": 49,
+              "meanMs": 0.041938776872595965,
+              "medianMs": 0.039999961853027344,
+              "p95Ms": 0.06500005722045898,
+              "p99Ms": 0.06999993324279785,
+              "maxMs": 0.06999993324279785
+            },
+            "totalExclusiveMs": 2.055000066757202,
+            "fractionOfActiveScheduledTime": 0.011396090774606038
+          },
+          {
+            "group": "controls_audio_and_direct_markup",
+            "summaryPerActiveScheduledInvocation": {
+              "count": 49,
+              "meanMs": 0.017142855391210438,
+              "medianMs": 0.014999985694885254,
+              "p95Ms": 0.02499997615814209,
+              "p99Ms": 0.034999966621398926,
+              "maxMs": 0.034999966621398926
+            },
+            "totalExclusiveMs": 0.8399999141693115,
+            "fractionOfActiveScheduledTime": 0.00465825545574825
+          },
+          {
+            "group": "history_preparation",
+            "summaryPerActiveScheduledInvocation": {
+              "count": 49,
+              "meanMs": 0.015306129747507523,
+              "medianMs": 0.014999985694885254,
+              "p95Ms": 0.02500009536743164,
+              "p99Ms": 0.040000081062316895,
+              "maxMs": 0.040000081062316895
+            },
+            "totalExclusiveMs": 0.7500003576278687,
+            "fractionOfActiveScheduledTime": 0.004159159065138862
+          }
+        ]
+      }
+    ],
+    "disjointGroupDefinitions": {
+      "acquisition_including_native_boundary": [
+        "J_GET",
+        "E_GET",
+        "NATIVE_BOUND"
+      ],
+      "qualification_and_reduction": [
+        "J_REDUCE",
+        "E_REDUCE"
+      ],
+      "fourier": [
+        "FOURIER",
+        "BASIS"
+      ],
+      "formatted_readouts_and_retained_dom": [
+        "READOUT_TITLE",
+        "READOUT_INFO",
+        "READOUT_BODY",
+        "RETAINED_DOM",
+        "TITLE_CONTENT"
+      ],
+      "chart_work": [
+        "CHART",
+        "CHART_WINDOW",
+        "CHART_SETDATA",
+        "CHART_RESIZE",
+        "CHART_SETSIZE"
+      ],
+      "history_preparation": [
+        "HISTORY",
+        "HISTORY_PREP"
+      ],
+      "controls_audio_and_direct_markup": [
+        "CONTROLS",
+        "AUDIO",
+        "DOM_SET"
+      ],
+      "remaining_wrappers_setup_and_residual": [
+        "ROOT",
+        "PANEL",
+        "COMPONENT",
+        "METRICS",
+        "SETUP",
+        "ORIGIN"
+      ]
+    },
+    "decisionEvidence": [
+      "Acquisition including native/embind boundary accounts for 41.2846% docked and 43.5020% floated of active scheduled inclusive time; mean paired group costs are 1.46698 and 1.60092 ms.",
+      "Qualification/reduction accounts for 32.3171% and 31.8813%; means are 1.14833 and 1.17327 ms.",
+      "Formatted readouts and retained DOM account for 19.4184% and 18.7938%; means are 0.69000 and 0.69163 ms.",
+      "Fourier work is 1.7706% and 1.3115%; chart work within these scheduled callbacks is 1.5185% and 1.1396%. Standalone resize work remains separate.",
+      "These retained direct-WASM cohorts support prioritizing acquisition/reduction investigation before Fourier/chart micro-optimization. They do not isolate a native internal allocation, prove the benefit of a proposed optimization, or supply worker costs."
+    ]
+  },
+  "limits": [
+    "No independent percentiles were subtracted. Cost shares divide sums of disjoint stage durations by the matching active callback inclusive sums.",
+    "Observer effects remain: extra clocks, typed writes, branches/closures, metadata descriptor reads, identities, 31459840-byte recorder storage and routed-source/JIT changes. No overhead correction or uninstrumented speedup is claimed.",
+    "The native-boundary span includes binding guards and JS/embind/native call/return work; it is not pure C++ CPU time.",
+    "The observed active cohort has componentIndex 1, J/E counts 35937, new history row on each active callback, existing charts and warm Fourier basis. Cold initialization, waiting, completed-empty and repeated-history active cohorts were not observed and are not inferred.",
+    "J and E sample ticks are unknown in the captured direct cohort. Existing ownerReadTick does not establish common sample provenance or simultaneous fields.",
+    "Baseline and routed invocations sampled different live trajectories. Their callback p95 values are descriptive; lower routed values do not demonstrate a speedup or negative instrumentation cost.",
+    "Five retained canvases and 480/490 selected draw operations in the visible routed rows do not by themselves establish same-time chart data or expensive chart CPU.",
+    "The routed L97 measurement remains failed/absent. A future attempt requires separately retained execution evidence and cannot erase this failure.",
+    "Existing v2, Wave-v3 and Time/Gravity-v4 performance failures remain separate. No physical recovery or continuum closure is certified."
+  ],
+  "reviewArtifacts": {
+    "independentCode": {
+      "path": "engine/build/scale0_wave_attribution_review_20260908/reconstruct_results.py",
+      "bytes": 15029,
+      "sha256": "f036c7d6e85fb6a5357750e8391167a0e14fc21f74e5d69cd17628d14fd79ff4"
+    },
+    "completePerInvocationCalculation": {
+      "path": "engine/build/scale0_wave_attribution_review_20260908/independent-results-calculation.json",
+      "bytes": 566024,
+      "sha256": "dea1a73e8fa47bc6ce0ddab9697a29dcb5e0e4ca8e89f51f8026d557dd8a86dd"
+    },
+    "execution": "python engine/build/scale0_wave_attribution_review_20260908/reconstruct_results.py",
+    "exitCode": 0,
+    "browserRunsByReviewer": 0,
+    "buildsByReviewer": 0,
+    "gpuRunsByReviewer": 0
+  }
+}

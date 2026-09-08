@@ -1,0 +1,64 @@
+{
+  "schema": "scale0-gravity-v4-browser-repair-integration-v1",
+  "integratedUtc": "2026-09-08T06:42:43.558288+00:00",
+  "path": "engine/web/tests/scale0-gravity-slab.spec.js",
+  "beforeSha256": "7777458eed1dc8dbc724eb0e9eb779729535d89413868f59a631d2f514bc37db",
+  "afterSha256": "3e814ebc0767a85d4b78010d9a8c778673ba176750c086f8607105d66a5ae7c5",
+  "independentReview": "engine/docs/evidence/scale0-gravity-v4-browser-repair-review-2026-09-08.json",
+  "independentReviewSha256": "c1af5e80289b612661ca47184bef8c34cadff54287a0b71fbc5cdd16fae6e23e",
+  "archive": "engine/build/scale0_gravity_v4_browser_repair2_20260908.zip",
+  "archiveSha256": "3bf71f72bfdc0cb91dfdd4300014e081e6d10ee9471577e2b38f88112666b103",
+  "archiveFiles": [
+    {
+      "path": "engine/build/scale0_gravity_v4_browser_repair2_20260908/baseline-hashes.json",
+      "sha256": "585e07ddeed785729298381c96e82b520f577605b5db13aea8507eb8cd47e7b8",
+      "bytes": 1732
+    },
+    {
+      "path": "engine/build/scale0_gravity_v4_browser_repair2_20260908/DRAFT_REVIEW.md",
+      "sha256": "3b31a9a33066354dbe3de4bff04e49ee1dd1348217fd380227f16c473cba8a9e",
+      "bytes": 3145
+    },
+    {
+      "path": "engine/build/scale0_gravity_v4_browser_repair2_20260908/engine/web/tests/fixtures/gravity-dense-v3-oracle.mjs",
+      "sha256": "6b4d7b232ad3a58a5c9fc3c96e011683d1d53b4f83a07d1c356d6e698643d3d8",
+      "bytes": 3024
+    },
+    {
+      "path": "engine/build/scale0_gravity_v4_browser_repair2_20260908/engine/web/tests/scale0-gravity-slab.spec.js",
+      "sha256": "3e814ebc0767a85d4b78010d9a8c778673ba176750c086f8607105d66a5ae7c5",
+      "bytes": 8536
+    },
+    {
+      "path": "engine/build/scale0_gravity_v4_browser_repair2_20260908/failure-trace-extract.json",
+      "sha256": "308b0092e9dc884fef8f44ac01d05f73db80ace96e8f0fb1009694832a49a7f9",
+      "bytes": 2479
+    },
+    {
+      "path": "engine/build/scale0_gravity_v4_browser_repair2_20260908/preparation-attempt1.log",
+      "sha256": "85069e53f870d93fa4ecc7752e8ac6343852942742ea6d1dbd51c1eabacbd1f8",
+      "bytes": 452
+    },
+    {
+      "path": "engine/build/scale0_gravity_v4_browser_repair2_20260908/preparation-attempt2-checks.json",
+      "sha256": "77c743e2dadce263e93755463e51f09ac78704c99fd97fc9d4dc7888b08910a6",
+      "bytes": 776
+    },
+    {
+      "path": "engine/build/scale0_gravity_v4_browser_repair2_20260908/proposed-test-repair.patch",
+      "sha256": "fb1d04e323a9787f3dfe749abf034556c47b627e1f2198d567bdf564996d0ca5",
+      "bytes": 1304
+    },
+    {
+      "path": "engine/build/scale0_gravity_v4_browser_repair2_20260908/reference/engine/web/tests/scale0-gravity-slab.spec.js",
+      "sha256": "7777458eed1dc8dbc724eb0e9eb779729535d89413868f59a631d2f514bc37db",
+      "bytes": 7761
+    },
+    {
+      "path": "engine/build/scale0_gravity_v4_browser_repair2_20260908/manifest.json",
+      "sha256": "680fc0fb3c581a8c210589d7c83590e6d13b969c0e4f82fe1f5a766696ad953e",
+      "bytes": 4144
+    }
+  ],
+  "scope": "Test-only MIME repair. Original 7576-byte page.goto-through-final-assertion suffix and frozen oracle preserved. No product/server changes."
+}

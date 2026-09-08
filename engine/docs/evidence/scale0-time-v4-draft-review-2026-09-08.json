@@ -1,0 +1,162 @@
+{
+  "schema": "ftd.scale0.independent-draft-review.v1",
+  "reviewedAtUtc": "2026-09-08T06:29:31.917506+00:00",
+  "reviewer": "/root/wave_component_v3_draft",
+  "implementationAuthor": "/root/time_gravity_cost_review",
+  "independentOfImplementation": true,
+  "status": "accepted_bounded_time_presentation_change_for_integration",
+  "releaseApproved": false,
+  "completeTimeObservationApproved": false,
+  "performanceApproved": false,
+  "physicsRecoveryApproved": false,
+  "scope": {
+    "draftDirectory": "engine/build/scale0_time_v4_draft_20260908",
+    "proposedProductionFiles": [
+      "engine/web/js/scales/scale0/ui/overlays/time-panel.js",
+      "engine/web/js/scales/scale0/ui/overlays/time-readout.js",
+      "engine/web/tests/scale0-time-retained-readout.node.test.mjs"
+    ],
+    "productionFilesEditedByReviewer": [],
+    "draftFilesEditedByReviewer": [],
+    "reviewerWrites": [
+      "engine/docs/evidence/scale0-time-v4-draft-review-2026-09-08.json"
+    ],
+    "freezeDiscipline": "Reviewer performed read-only source and identity review and two explicitly authorized isolated Node suites. Root separately scheduled the browser suite serially. No reviewer browser/build/physics-campaign execution or production integration occurred."
+  },
+  "identity": {
+    "draftManifest": {
+      "path": "engine/build/scale0_time_v4_draft_20260908/manifest.json",
+      "sha256": "b3efe6ee465ba0850b20af3b9872f357a710ceb69865110c63f4d88e05e221f4",
+      "bytes": 8348
+    },
+    "manifestEntriesChecked": 33,
+    "productionBaselinesChecked": 9,
+    "manifestEntryMismatches": [],
+    "productionBaselineStillMatches": true,
+    "baselinePanelSha256": "069c23c52de53cb68052cc693e9e65e767001bbc6987a6ce5e47ba41387dd4bd",
+    "candidatePanelSha256": "88994fa5d0700e45fc7a1dc35d8a987925033637f860e4ba252f807b32bb866f",
+    "newPrivateHelperSha256": "97cb4c351ff0fe541136b1e34651570c295be71713d4b0e84364b9f436957e00",
+    "note": "All 33 sealed manifest files and all nine production baselines were verified after independent Node execution and the coordinator's isolated browser run. The sealed draft's pending-review/browser status is preserved as historical preparation evidence."
+  },
+  "independentExecution": [
+    {
+      "command": "node --test engine/build/scale0_time_v4_draft_20260908/draft-reference-parity.mjs",
+      "exitCode": 0,
+      "tests": 11,
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "stdout": "✔ actual Time update preserves sample kinds, strides, reductions and qualified publication (3.4702ms)\n✔ same-tick readouts remain current without duplicate quadrature or reduced sampling cadence (1.9332ms)\n✔ unavailable readouts recover and Card D rebuilds only on actual imposed-value change (1.6341ms)\n✔ hidden time clears demand; source reset discards quadrature; disposal releases resources (1.4488ms)\n✔ display window matches existing inclusive tick-window oracle including fallback clocks (3.7778ms)\n✔ rolling display does not read or copy hidden history values; All remains complete (1.0925ms)\n✔ count-driven zero samples and Float32 circular cancellation remain observable (1.834ms)\n✔ missed ticks integrate observed physical-time intervals and unavailable gaps only relatch (1.5977ms)\n✔ whole mounted source matches frozen v3 through numeric, missing, state and lifecycle transitions (7.3816ms)\n✔ Card A/B/C/D/E exact markup and SVG strings match all declared display states (2.8383ms)\n✔ scientific acquisition, reduction, quadrature and lifecycle code is unchanged (0.2918ms)\nℹ tests 11\nℹ suites 0\nℹ pass 11\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 93.4732\n"
+    },
+    {
+      "command": "node --test engine/build/scale0_time_v4_draft_20260908/time-slot-bindings.node.test.mjs",
+      "exitCode": 0,
+      "tests": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "stdout": "✔ actual Time slot compiler preserves literals and independent bindings (1.2434ms)\n✔ actual Time slot updater retains text identity and skips unchanged writes (0.144ms)\n✔ actual Time attribute updater preserves SVG namespaces and migrated dynamic tooltip ownership (0.2293ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 55.8915\n"
+    }
+  ],
+  "coordinatorExecution": {
+    "executor": "/root",
+    "reportedByCoordinator": true,
+    "logIndependentlyReadAndHashed": true,
+    "command": "node engine/web/tests/node_modules/@playwright/test/cli.js test --config engine/build/scale0_time_v4_draft_20260908/playwright.config.mjs",
+    "log": "engine/docs/evidence/scale0-time-v4-isolated-browser-attempt1-2026-09-08.log",
+    "logSha256": "e2e3a206e31dc6e95eb1b33e1152d69e96336fb4e3f87243277ea6f297e76ad4",
+    "logBytes": 854,
+    "tests": 2,
+    "passed": 2,
+    "failed": 0,
+    "durationSeconds": 4.4,
+    "coverage": "Actual mounted complete baseline/candidate DOM and SVG trees; stable numeric updates retain every element/text node and perform zero innerHTML writes; migrated dynamic tooltip values; real panel D and F event boundaries; missing/recovery, hidden, history, source replacement and disposal.",
+    "limitation": "Controlled bridge/scheduler/qualification fixture. This does not certify downstream application mutation wiring, production scheduling races, or hardware callback/frame budgets."
+  },
+  "reviewFindings": [
+    {
+      "id": "TIME-T1-RENDER",
+      "status": "accepted_within_private_contract",
+      "finding": "Panel transformations preserve authored labels, styles, precision, scalar expressions and complete SVG path accumulation order. Dynamic path values are bound only after calculation, avoiding nested markers. Static Card D output and its editable controls remain byte-identical."
+    },
+    {
+      "id": "TIME-T1-RETENTION",
+      "status": "accepted_within_private_contract",
+      "finding": "WeakMap state holds one template and current bindings per card. Stable templates update unequal text or attributes; structural, empty, sparse and unavailable transitions go through one owner. Tooltip migration updates data-ui-tooltip without recreating native title. The private contract requires sole-owner HTML/SVG readout trees and nonempty plain scalar/path slot values; arbitrary external subtree edits are outside it."
+    },
+    {
+      "id": "TIME-T1-SCIENTIFIC",
+      "status": "unchanged",
+      "finding": "Independent guarded source-section comparisons confirm acquisition order, strides, count-driven reductions, 2 Hz schedule, hub publication, qualification, inclusive history restriction, physical-time quadrature, reset and disposal remain unchanged. Only the three unavailable A/B/C call names are normalized for the update comparison.",
+      "guardedSections": [
+        {
+          "start": "    function sampleField(",
+          "end": "    function sampleProperTimeMetrics(",
+          "baselineCharacters": 1160,
+          "exactAfterThreeUnavailableCallNameNormalization": true
+        },
+        {
+          "start": "    function sampleProperTimeMetrics(",
+          "end": "    // Card F",
+          "baselineCharacters": 3033,
+          "exactAfterThreeUnavailableCallNameNormalization": true
+        },
+        {
+          "start": "    function visibleTwin()",
+          "end": "    // Card D",
+          "baselineCharacters": 935,
+          "exactAfterThreeUnavailableCallNameNormalization": true
+        },
+        {
+          "start": "    function update()",
+          "end": "    // Defer the rAF",
+          "baselineCharacters": 7726,
+          "exactAfterThreeUnavailableCallNameNormalization": true
+        },
+        {
+          "start": "    // Defer the rAF",
+          "end": "\n}",
+          "baselineCharacters": 1381,
+          "exactAfterThreeUnavailableCallNameNormalization": true
+        },
+        {
+          "start": "function renderCardD(",
+          "end": "// Card E",
+          "baselineCharacters": 4047,
+          "exactAfterThreeUnavailableCallNameNormalization": true
+        }
+      ]
+    },
+    {
+      "id": "TIME-T1-EVIDENCE",
+      "status": "bounded_acceptance",
+      "finding": "The full-module Node fixtures check complete markup and scientific outputs; actual helper tests check slot parsing/update and namespaced attributes. These Node tests alone do not test DOM parsing. The separately executed and read coordinator browser log closes the declared actual DOM/compiler fixture gate for this revision."
+    }
+  ],
+  "blockingFindings": [],
+  "openGates": [
+    {
+      "id": "TIME-T1-PERFORMANCE",
+      "status": "open",
+      "detail": "No inclusive callback/frame hardware matrix has run for this candidate. Stable updates avoid parse/traversal but still produce formatted strings, arrays and complete paths; structural transitions incur an extra inert parse. No speedup or foreground 60 FPS approval follows from this review."
+    },
+    {
+      "id": "TIME-T1-INTEGRATED-LIFECYCLE",
+      "status": "open",
+      "detail": "Root must integrate and freeze the accepted candidate, preserve real app owner/mutation qualification contracts, and run the registered lifecycle/performance matrix. The isolated event fixture does not prove all application mutation races."
+    },
+    {
+      "id": "TIME-OBSERVATION-CLOCKS",
+      "status": "existing_open",
+      "detail": "No common sampler/aggregate clock is fabricated or newly certified. Existing clock provenance and proxy-observation limitations remain outside T1 and unresolved."
+    },
+    {
+      "id": "TIME-PHYSICAL-RECOVERY",
+      "status": "existing_open",
+      "detail": "Latency/proper-time/phase displays and their imported reference curves are unchanged reference-model observations. Renderer parity is not a recovery of causal gravity, proper-time geometry or a continuum limit."
+    }
+  ],
+  "disposition": "Accept the bounded private Time readout implementation for coordinator integration. Keep source identity and independent evidence attached; release/performance and physical recovery remain unapproved."
+}

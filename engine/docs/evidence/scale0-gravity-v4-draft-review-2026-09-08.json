@@ -1,0 +1,186 @@
+{
+  "schema": "scale0-gravity-v4-independent-review-v1",
+  "reviewed_utc": "2026-09-08T06:29:48.106768+00:00",
+  "reviewer": "/root/time_gravity_cost_review",
+  "implementation_author": "/root/wave_component_v3_draft",
+  "independent_of_implementation": true,
+  "review_scope": "G1 bounded batch slabs, dense/pixel equivalence, ownership/fences and panel integration",
+  "candidate": {
+    "directory": "engine/build/scale0_gravity_v4_draft_20260908",
+    "manifest_sha256": "e6234cfb3f6d1700b89dda5fd47b3c9ba51b6c8f30cd9a5452b9800abed3f3bd",
+    "manifest_files_verified_before_and_after": 24,
+    "production_baselines_verified_before_and_after": 12
+  },
+  "disposition": {
+    "controlled_integration": "ACCEPT_WITH_BROWSER_GATES_PENDING",
+    "implementation_blockers_found": [],
+    "production_release_approved": false,
+    "hardware_performance_approved": false,
+    "physics_recovery_approved": false
+  },
+  "executed": {
+    "author_suite_independently_reproduced": {
+      "passed": 21,
+      "failed": 0,
+      "skipped": 0,
+      "command": "node --test engine/build/scale0_gravity_v4_draft_20260908/engine/web/tests/scale0-gravity-slab.node.test.mjs"
+    },
+    "independent_adversarial_units": {
+      "status": "PASS",
+      "manufactured_fields": 25,
+      "complete_float64_comparisons": 2100,
+      "support": "N=7; every index 0..6; axes 0,1,2; latency,dilation,kretschmann,force",
+      "numeric_cases": [
+        "signed and negative zero",
+        "subnormal-square and tiny values",
+        "near-clamp finite values",
+        "NaN",
+        "positive infinity",
+        "negative infinity",
+        "finite square overflow"
+      ],
+      "basis_cases": "18 distinct single nonzero face/edge neighbors about (3,3,3)",
+      "publication_wrap_versions": [
+        2147483647,
+        -2147483648,
+        0
+      ],
+      "oracle": "frozen exact original maxRhoOf and gravitySlice; both dense and slab complete byte arrays compared",
+      "classification": "bounded manufactured software unit checks, not a numerical search or physics campaign"
+    },
+    "structural_checks": {
+      "oracle_functions_found_verbatim_in_baseline": 2,
+      "dense_fallback_and_entire_update_to_module_end_unchanged": true
+    },
+    "logs": [
+      {
+        "path": "engine/docs/evidence/scale0-gravity-v4-independent-node-2026-09-08.log",
+        "sha256": "81f3b3572409349149c695d2a65d1894ca42d67695dee05920023ec4e3259114"
+      },
+      {
+        "path": "engine/docs/evidence/scale0-gravity-v4-independent-edge-cases-2026-09-08.log",
+        "sha256": "57e91322d27c299420e9e79f3782b91232fc4ad1954d123dbf2664348cd9b8a8"
+      }
+    ]
+  },
+  "findings": [
+    {
+      "id": "G1-NORMALIZATION",
+      "status": "PASS_SCOPED",
+      "sources": [
+        "engine/web/js/bridge/flux-publication.classic.js:119",
+        "engine/web/js/scales/scale0/analysis/gravity-analysis.js:45"
+      ],
+      "finding": "One acquired publication remains pinned through one ascending full max-square scan and every ordered slab copy. Initialization 1e-30, two input reads per square, strict comparison and array order match maxRhoOf. No plane-only or diagnostics maximum substitution exists. The 3-selector witness measures one acquisition and 2*N^3 plus total slab-length numeric reads."
+    },
+    {
+      "id": "G1-PIN-OWNERSHIP",
+      "status": "PASS_SCOPED",
+      "sources": [
+        "engine/web/js/bridge/flux-publication.classic.js:39",
+        "engine/web/js/bridge/flux-publication.classic.js:142"
+      ],
+      "finding": "Existing acquire constructs the shared view under a cleanup catch. New copy/normalization work is under finally release, including second-allocation failure. Typed result buffers are owned copies; immutable records/support metadata do not make typed-array elements immutable. Controlled writer interleaving advances into the other slot once and cannot overwrite the pinned slot; this is not concurrent stress evidence."
+    },
+    {
+      "id": "G1-FENCES",
+      "status": "PASS_SCOPED",
+      "sources": [
+        "engine/web/js/bridge/wasm-bridge-proxy.js:972",
+        "engine/web/js/bridge/capabilities/scale0.js:24"
+      ],
+      "finding": "Public proxy validates readiness/disposal, applied versus pending configuration, buffer presence/layout/generation and dimensions before acquisition and rejects changes afterward. All selectors and request count are captured before pinning. Invalid requests and unavailable observations return null; no cached dense fallback is taken. Unsupported owners lack the optional capability."
+    },
+    {
+      "id": "G1-NUMERICS",
+      "status": "PASS_SCOPED",
+      "sources": [
+        "engine/web/js/scales/scale0/analysis/gravity-analysis.js:177",
+        "engine/web/tests/fixtures/gravity-dense-v3-oracle.mjs:13"
+      ],
+      "finding": "The slab mapper supplies precisely the same logical x/y/z values to the unchanged stencil. Direct dense wrapper keeps its original input mapper and spacing. Independent byte checks cover all axes/planes, every face/edge basis, nonfinite/signed/tiny values and wrap counters. Existing suite additionally checks 4 sizes, raw/transpose planes and actual renderer RGBA byte buffers."
+    },
+    {
+      "id": "G1-PANEL",
+      "status": "BROWSER_GATE_PENDING",
+      "sources": [
+        "engine/web/js/scales/scale0/ui/overlays/gravity-panel.js:604",
+        "engine/web/tests/scale0-gravity-slab.spec.js:3"
+      ],
+      "finding": "Rotating presentation requests one slab; a quantity action requests all three with shared metadata and maximum. Any failed slab clears all canvases, resets lastHadVolume and arms slabRetryAll; a later successful read repaints all cleared planes even at fixed versions. Existing sample/reduction/history/owner/qualification/update/disposal source and direct/native volume fallback remain unchanged. Actual mounted callback/event, canvas and paused-recovery behavior is prepared but unexecuted."
+    },
+    {
+      "id": "G1-PROVENANCE",
+      "status": "LIMIT_EXPLICIT",
+      "sources": [
+        "engine/web/js/bridge/wasm-bridge-proxy.js:1006"
+      ],
+      "finding": "Common immutable metadata binds all selected magnitude planes to one publication, buffer generation, configuration, lattice/support and max-scan size. sampleTick remains null. Signed publication version is local transport identity, not a common scalar-sampler time or complete physics lineage."
+    },
+    {
+      "id": "G1-PERFORMANCE",
+      "status": "OPEN_UNMEASURED",
+      "finding": "Owned bytes fall from dense Float64 N^3 to at most 3*N^2 per requested interior slab. Full O(N^3) max scan remains inclusive and pin hold can delay optional publication. No callback/frame gains, universal FPS guarantee or physical gravity recovery follow from these tests."
+    }
+  ],
+  "remaining_gates": [
+    "Run prepared mounted Gravity slab browser test serially against staged sources or reviewed integration.",
+    "Rerun existing direct-WASM zero-copy call-order and native FTV2 compact-grid regressions after integration.",
+    "Rerun affected shared publication/bounded-read and capability consumer tests on the integrated source.",
+    "Freeze a distinct candidate and run registered foreground hardware callback/frame/ownership/lifecycle matrix; measure publication contention.",
+    "Continue to keep exact sample time unknown and scalar sampler provenance separate."
+  ],
+  "preservation": {
+    "production_edits_by_reviewer": false,
+    "draft_edits_by_reviewer": false,
+    "browser_run": false,
+    "build_run": false,
+    "hardware_campaign_run": false
+  },
+  "supplemental_reproduction_recipe": {
+    "field_patterns": {
+      "signed": [
+        -4,
+        "-0",
+        2,
+        -3,
+        0.5
+      ],
+      "tiny": [
+        0,
+        "1e-200",
+        "-1e-160",
+        "1e-16"
+      ],
+      "clamp": [
+        0,
+        1,
+        "1-Number.EPSILON"
+      ],
+      "nan": [
+        "NaN",
+        1,
+        2
+      ],
+      "positive-infinity": [
+        "Infinity",
+        1,
+        2
+      ],
+      "negative-infinity": [
+        "-Infinity",
+        1,
+        2
+      ],
+      "finite-square-overflow": [
+        "1e200",
+        "-1e200",
+        1
+      ]
+    },
+    "fill": "Float64Array.from({length:343},(_,i)=>pattern[i%pattern.length])",
+    "basis": "for each x,y,z in -1..1 with Manhattan norm 1 or 2, zero Float64Array(343) except index ((3+z)*7+3+y)*7+3+x equal to 1",
+    "compare": "publish each field; for each requested index 0..6 capture axes 0,1,2 in one batch; compare all 4 gravitySliceFromSlab and gravitySlice outputs byte-for-byte to the frozen gravitySlice; compare maxRho to frozen maxRhoOf",
+    "wrap": "create fresh buffer; Atomics.store(header,0,initial) for initial=2147483646,2147483647,-1; publish field filled with 9; require version=(initial+1)|0, maxRho=81, slab values=9, both slot locks=0"
+  }
+}

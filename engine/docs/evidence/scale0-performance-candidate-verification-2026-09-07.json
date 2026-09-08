@@ -1,0 +1,480 @@
+{
+  "candidate_identity": "2166608709d498f908e60042333c6cd845e27e53df176354c0af8f9d7089f11f",
+  "checked_files": 2135,
+  "source_drift": [],
+  "archive_matches": true,
+  "verified_utc": "2026-09-07T22:22:00.340359+00:00",
+  "hardware": [
+    {
+      "L": 33,
+      "file": "engine/docs/evidence/scale0-hardware-repair-v1-panels-L33-2026-09-07.json",
+      "sha256": "4641ac1097294f2c013b473e5775c19902af839c26d19f88de986a3984587e9f",
+      "rows": 32,
+      "passed": 26,
+      "failed": [
+        {
+          "id": "wave-lab",
+          "state": "docked",
+          "failures": [
+            "interface callback budget"
+          ],
+          "frames": {
+            "count": 731,
+            "meanMs": 16.665998632010947,
+            "medianMs": 16.66500000000815,
+            "p95Ms": 16.669999999998254,
+            "p99Ms": 16.670000000012806,
+            "maxMs": 16.670000000012806,
+            "effectiveFps": 60.00240502115884,
+            "intervalsOver20ms": 0,
+            "intervalsOver33_4ms": 0
+          },
+          "callbacks_over_budget": {
+            "wave-lab-panel": {
+              "count": 49,
+              "meanMs": 2.0237755167241,
+              "medianMs": 1.9950000047683716,
+              "p95Ms": 2.6649999618530273,
+              "p99Ms": 3.3149999380111694,
+              "maxMs": 3.3149999380111694
+            },
+            "conservation-micropanel": {
+              "count": 49,
+              "meanMs": 2.079183653909333,
+              "medianMs": 2,
+              "p95Ms": 2.5749999284744263,
+              "p99Ms": 3.3899999856948853,
+              "maxMs": 3.3899999856948853
+            }
+          }
+        },
+        {
+          "id": "wave-lab",
+          "state": "floated",
+          "failures": [
+            "interface callback budget"
+          ],
+          "frames": {
+            "count": 730,
+            "meanMs": 16.66600000000001,
+            "medianMs": 16.66500000000815,
+            "p95Ms": 16.669999999998254,
+            "p99Ms": 16.670000000012806,
+            "maxMs": 16.670000000012806,
+            "effectiveFps": 60.002400096003804,
+            "intervalsOver20ms": 0,
+            "intervalsOver33_4ms": 0
+          },
+          "callbacks_over_budget": {
+            "wave-lab-panel": {
+              "count": 49,
+              "meanMs": 2.000510198729379,
+              "medianMs": 2.0149999856948853,
+              "p95Ms": 2.3799999952316284,
+              "p99Ms": 3.03000009059906,
+              "maxMs": 3.03000009059906
+            }
+          }
+        },
+        {
+          "id": "spectrum",
+          "state": "docked",
+          "failures": [
+            "interface callback budget"
+          ],
+          "frames": {
+            "count": 730,
+            "meanMs": 16.66599999999999,
+            "medianMs": 16.66500000000815,
+            "p95Ms": 16.670000000012806,
+            "p99Ms": 16.670000000012806,
+            "maxMs": 16.670000000012806,
+            "effectiveFps": 60.002400096003875,
+            "intervalsOver20ms": 0,
+            "intervalsOver33_4ms": 0
+          },
+          "callbacks_over_budget": {
+            "spectrum-panel": {
+              "count": 24,
+              "meanMs": 10.640416666865349,
+              "medianMs": 10.065000057220459,
+              "p95Ms": 13.639999985694885,
+              "p99Ms": 13.729999899864197,
+              "maxMs": 13.729999899864197
+            }
+          }
+        },
+        {
+          "id": "spectrum",
+          "state": "floated",
+          "failures": [
+            "interface callback budget"
+          ],
+          "frames": {
+            "count": 730,
+            "meanMs": 16.66600000000003,
+            "medianMs": 16.66500000000815,
+            "p95Ms": 16.670000000012806,
+            "p99Ms": 16.670000000012806,
+            "maxMs": 16.670000000012806,
+            "effectiveFps": 60.00240009600374,
+            "intervalsOver20ms": 0,
+            "intervalsOver33_4ms": 0
+          },
+          "callbacks_over_budget": {
+            "spectrum-panel": {
+              "count": 24,
+              "meanMs": 10.342500016093254,
+              "medianMs": 10.105000019073486,
+              "p95Ms": 13.285000085830688,
+              "p99Ms": 14.809999942779541,
+              "maxMs": 14.809999942779541
+            }
+          }
+        },
+        {
+          "id": "time",
+          "state": "docked",
+          "failures": [
+            "interface callback budget"
+          ],
+          "frames": {
+            "count": 730,
+            "meanMs": 16.66599999999999,
+            "medianMs": 16.665000000037253,
+            "p95Ms": 16.67000000004191,
+            "p99Ms": 16.67000000004191,
+            "maxMs": 16.67000000004191,
+            "effectiveFps": 60.002400096003875,
+            "intervalsOver20ms": 0,
+            "intervalsOver33_4ms": 0
+          },
+          "callbacks_over_budget": {
+            "time-panel": {
+              "count": 24,
+              "meanMs": 1.854166676600774,
+              "medianMs": 1.7649999856948853,
+              "p95Ms": 2.2200000286102295,
+              "p99Ms": 3.024999976158142,
+              "maxMs": 3.024999976158142
+            }
+          }
+        },
+        {
+          "id": "time",
+          "state": "floated",
+          "failures": [
+            "interface callback budget"
+          ],
+          "frames": {
+            "count": 730,
+            "meanMs": 16.66599999999999,
+            "medianMs": 16.665000000037253,
+            "p95Ms": 16.67000000004191,
+            "p99Ms": 16.67000000004191,
+            "maxMs": 16.67000000004191,
+            "effectiveFps": 60.002400096003875,
+            "intervalsOver20ms": 0,
+            "intervalsOver33_4ms": 0
+          },
+          "callbacks_over_budget": {
+            "time-panel": {
+              "count": 24,
+              "meanMs": 1.9035416841506958,
+              "medianMs": 1.7799999713897705,
+              "p95Ms": 2.75,
+              "p99Ms": 3.1600000858306885,
+              "maxMs": 3.1600000858306885
+            }
+          }
+        }
+      ],
+      "runtime_errors": [],
+      "renderers": [
+        "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      ]
+    },
+    {
+      "L": 97,
+      "file": "engine/docs/evidence/scale0-hardware-repair-v1-panels-L97-2026-09-07.json",
+      "sha256": "d7fb8167345968281201c6f4eb640480298cbc58bfa1a8de2f0df4e8a2a94356",
+      "rows": 32,
+      "passed": 23,
+      "failed": [
+        {
+          "id": "flux-slice",
+          "state": "docked",
+          "failures": [
+            "interface callback budget"
+          ],
+          "frames": {
+            "count": 730,
+            "meanMs": 16.666000000000004,
+            "medianMs": 16.665000000000873,
+            "p95Ms": 16.67000000000189,
+            "p99Ms": 16.67000000000553,
+            "maxMs": 16.67000000000553,
+            "effectiveFps": 60.002400096003825,
+            "intervalsOver20ms": 0,
+            "intervalsOver33_4ms": 0
+          },
+          "callbacks_over_budget": {
+            "flux-slice-panel": {
+              "count": 292,
+              "meanMs": 1.1348116442765275,
+              "medianMs": 0.08500003814697266,
+              "p95Ms": 3.2050000429153442,
+              "p99Ms": 4.315000057220459,
+              "maxMs": 4.710000038146973
+            }
+          }
+        },
+        {
+          "id": "flux-slice",
+          "state": "floated",
+          "failures": [
+            "interface callback budget"
+          ],
+          "frames": {
+            "count": 731,
+            "meanMs": 16.665991792065658,
+            "medianMs": 16.665000000000873,
+            "p95Ms": 16.67000000000553,
+            "p99Ms": 16.67000000000553,
+            "maxMs": 16.67000000000553,
+            "effectiveFps": 60.002429646946055,
+            "intervalsOver20ms": 0,
+            "intervalsOver33_4ms": 0
+          },
+          "callbacks_over_budget": {
+            "flux-slice-panel": {
+              "count": 292,
+              "meanMs": 0.9299828744914433,
+              "medianMs": 0.07500004768371582,
+              "p95Ms": 2.6100000143051147,
+              "p99Ms": 4.064999938011169,
+              "maxMs": 4.205000042915344
+            }
+          }
+        },
+        {
+          "id": "wave-lab",
+          "state": "docked",
+          "failures": [
+            "interface callback budget"
+          ],
+          "frames": {
+            "count": 730,
+            "meanMs": 16.66600000000001,
+            "medianMs": 16.66500000000815,
+            "p95Ms": 16.669999999998254,
+            "p99Ms": 16.670000000012806,
+            "maxMs": 16.670000000012806,
+            "effectiveFps": 60.002400096003804,
+            "intervalsOver20ms": 0,
+            "intervalsOver33_4ms": 0
+          },
+          "callbacks_over_budget": {
+            "conservation-micropanel": {
+              "count": 49,
+              "meanMs": 2.453163273480474,
+              "medianMs": 2.450000047683716,
+              "p95Ms": 3.615000009536743,
+              "p99Ms": 4.144999980926514,
+              "maxMs": 4.144999980926514
+            }
+          }
+        },
+        {
+          "id": "p1-observables",
+          "state": "docked",
+          "failures": [
+            "interface callback budget"
+          ],
+          "frames": {
+            "count": 730,
+            "meanMs": 16.665993150684915,
+            "medianMs": 16.66500000000815,
+            "p95Ms": 16.670000000012806,
+            "p99Ms": 16.670000000012806,
+            "maxMs": 16.670000000012806,
+            "effectiveFps": 60.002424755521,
+            "intervalsOver20ms": 0,
+            "intervalsOver33_4ms": 0
+          },
+          "callbacks_over_budget": {
+            "p1-observables-panel": {
+              "count": 49,
+              "meanMs": 1.279183672398937,
+              "medianMs": 1.3900001049041748,
+              "p95Ms": 2.3100000619888306,
+              "p99Ms": 3.125,
+              "maxMs": 3.125
+            }
+          }
+        },
+        {
+          "id": "p1-observables",
+          "state": "floated",
+          "failures": [
+            "interface callback budget"
+          ],
+          "frames": {
+            "count": 731,
+            "meanMs": 16.666005471956232,
+            "medianMs": 16.66500000000815,
+            "p95Ms": 16.670000000012806,
+            "p99Ms": 16.670000000012806,
+            "maxMs": 16.670000000012806,
+            "effectiveFps": 60.00238039539185,
+            "intervalsOver20ms": 0,
+            "intervalsOver33_4ms": 0
+          },
+          "callbacks_over_budget": {
+            "p1-observables-panel": {
+              "count": 49,
+              "meanMs": 1.2455101986320651,
+              "medianMs": 1.3249999284744263,
+              "p95Ms": 2.340000033378601,
+              "p99Ms": 2.8700000047683716,
+              "maxMs": 2.8700000047683716
+            }
+          }
+        },
+        {
+          "id": "gravity",
+          "state": "docked",
+          "failures": [
+            "interface callback budget"
+          ],
+          "frames": {
+            "count": 730,
+            "meanMs": 16.665993150684955,
+            "medianMs": 16.66500000000815,
+            "p95Ms": 16.670000000012806,
+            "p99Ms": 16.670000000012806,
+            "maxMs": 16.67000000004191,
+            "effectiveFps": 60.002424755520856,
+            "intervalsOver20ms": 0,
+            "intervalsOver33_4ms": 0
+          },
+          "callbacks_over_budget": {
+            "gravity-panel": {
+              "count": 48,
+              "meanMs": 1.9774999991059303,
+              "medianMs": 1.915000081062317,
+              "p95Ms": 2.565000057220459,
+              "p99Ms": 3.03000009059906,
+              "maxMs": 3.03000009059906
+            }
+          }
+        },
+        {
+          "id": "gravity",
+          "state": "floated",
+          "failures": [
+            "interface callback budget"
+          ],
+          "frames": {
+            "count": 730,
+            "meanMs": 16.66599999999999,
+            "medianMs": 16.665000000037253,
+            "p95Ms": 16.67000000004191,
+            "p99Ms": 16.67000000004191,
+            "maxMs": 16.67000000004191,
+            "effectiveFps": 60.002400096003875,
+            "intervalsOver20ms": 0,
+            "intervalsOver33_4ms": 0
+          },
+          "callbacks_over_budget": {
+            "gravity-panel": {
+              "count": 48,
+              "meanMs": 2.1503125056624413,
+              "medianMs": 2.069999933242798,
+              "p95Ms": 2.7699999809265137,
+              "p99Ms": 4.9049999713897705,
+              "maxMs": 4.9049999713897705
+            }
+          }
+        },
+        {
+          "id": "thermo",
+          "state": "docked",
+          "failures": [
+            "interface callback budget"
+          ],
+          "frames": {
+            "count": 730,
+            "meanMs": 16.66599999999999,
+            "medianMs": 16.665000000037253,
+            "p95Ms": 16.67000000004191,
+            "p99Ms": 16.67000000004191,
+            "maxMs": 16.67000000004191,
+            "effectiveFps": 60.002400096003875,
+            "intervalsOver20ms": 0,
+            "intervalsOver33_4ms": 0
+          },
+          "callbacks_over_budget": {
+            "thermo-panel": {
+              "count": 49,
+              "meanMs": 1.6975510217705552,
+              "medianMs": 1.6050000190734863,
+              "p95Ms": 2.7300000190734863,
+              "p99Ms": 3.2950000762939453,
+              "maxMs": 3.2950000762939453
+            }
+          }
+        },
+        {
+          "id": "thermo",
+          "state": "floated",
+          "failures": [
+            "interface callback budget"
+          ],
+          "frames": {
+            "count": 731,
+            "meanMs": 16.66600547195627,
+            "medianMs": 16.665000000037253,
+            "p95Ms": 16.67000000004191,
+            "p99Ms": 16.67000000004191,
+            "maxMs": 16.67000000004191,
+            "effectiveFps": 60.00238039539171,
+            "intervalsOver20ms": 0,
+            "intervalsOver33_4ms": 0
+          },
+          "callbacks_over_budget": {
+            "thermo-panel": {
+              "count": 49,
+              "meanMs": 1.7110203991130906,
+              "medianMs": 1.6050000190734863,
+              "p95Ms": 2.2850000858306885,
+              "p99Ms": 3.5049999952316284,
+              "maxMs": 3.5049999952316284
+            }
+          }
+        }
+      ],
+      "runtime_errors": [],
+      "renderers": [
+        "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      ]
+    }
+  ],
+  "strict_preservation": [
+    {
+      "manifest": "strict-stack-source-manifest-2026-09-05.json",
+      "files": 69,
+      "drift": []
+    },
+    {
+      "manifest": "strict-recovery-wave1-manifest-2026-09-05.json",
+      "files": 44,
+      "drift": []
+    },
+    {
+      "manifest": "strict-recovery-wave2-manifest-2026-09-05.json",
+      "files": 73,
+      "drift": []
+    }
+  ]
+}

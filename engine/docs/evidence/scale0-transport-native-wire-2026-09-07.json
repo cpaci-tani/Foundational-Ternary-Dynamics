@@ -1,0 +1,135 @@
+{
+  "status": "passed",
+  "backend": "forced_cpu",
+  "lattice_size": 17,
+  "configured_timeout_ms": 400,
+  "checks": [
+    {
+      "case": "six_invalid_timeout_arguments",
+      "status": "passed"
+    },
+    {
+      "case": "idle_upgraded_client_has_no_transaction_deadline",
+      "status": "passed"
+    },
+    {
+      "case": "silent_handshake_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "partial_handshake_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "slow_drip_handshake_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "one_header_byte_eof_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "partial_command_eof_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "partial_command_timeout_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "slow_drip_frame_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "oversized_ping_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "fragmented_control_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "fragmented_text_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "reserved_bits_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "unmasked_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "unsupported_opcode_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "reserved_control_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "nonminimal_16_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "nonminimal_64_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "length_high_bit_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "over_input_cap_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "one_byte_close_retains_state",
+      "status": "passed"
+    },
+    {
+      "case": "valid_controls_tcp_chunks_and_ordered_coalesced_frames",
+      "status": "passed"
+    },
+    {
+      "case": "completed_tick_retained_exactly_once",
+      "status": "passed"
+    },
+    {
+      "case": "blocked_output_releases_owner_and_does_not_execute_queued_tick",
+      "status": "passed"
+    },
+    {
+      "case": "complete_binary_response_precedes_next_json_frame",
+      "status": "passed"
+    }
+  ],
+  "case_count": 25,
+  "timings_seconds": {
+    "silent_handshake": 0.38792639994062483,
+    "partial_handshake": 0.40126289997715503,
+    "slow_drip_handshake": 0.49200670002028346,
+    "one_header_byte_eof": 5.580007564276457e-05,
+    "partial_command_eof": 5.7999975979328156e-05,
+    "partial_command_timeout": 0.40242239995859563,
+    "slow_drip_frame": 0.4927872000262141,
+    "oversized_ping": 6.720004603266716e-05,
+    "fragmented_control": 8.679996244609356e-05,
+    "fragmented_text": 2.929999027401209e-05,
+    "reserved_bits": 4.680000711232424e-05,
+    "unmasked": 3.090000245720148e-05,
+    "unsupported_opcode": 4.9600028432905674e-05,
+    "reserved_control": 3.4499913454055786e-05,
+    "nonminimal_16": 2.9399991035461426e-05,
+    "nonminimal_64": 0.00011309992987662554,
+    "length_high_bit": 3.120000474154949e-05,
+    "over_input_cap": 3.47999157384038e-05,
+    "one_byte_close": 3.0099996365606785e-05,
+    "completed_then_partial": 3.0199997127056122e-05,
+    "backpressure_reconnect": 0.8029691999545321,
+    "normal_close": 2.359994687139988e-05
+  },
+  "scope": "actual TCP liveness, framing, scoped state retention and command ordering; no full replay, GPU or performance certification",
+  "executable_sha256": "b3759bb00e27fe00d7d0f166ed737f118a61c6ed12f5dcd3fc40321a5820db19"
+}

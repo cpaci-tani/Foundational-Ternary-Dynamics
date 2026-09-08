@@ -1,0 +1,44 @@
+{
+  "schema": "scale0-wave-v3-controlled-integration-v1",
+  "integrated_utc": "2026-09-08T05:42:30.816077+00:00",
+  "baseline_candidate_identity": "8ad614edd7616b43622b437d29a5d3800a614f35ad4d9da9fb3226f725fd0177",
+  "review": "engine/docs/evidence/scale0-wave-v3-draft2-review-2026-09-08.json",
+  "review_sha256": "7a1718f0a6fa96f9454f0ded2dd7088730dff0afdbae7634ffc8b0172281b1c3",
+  "files": [
+    {
+      "path": "engine/web/js/scales/scale0/analysis/wave-spectrum.js",
+      "bytes": 21947,
+      "sha256": "7155a8ee3d0daf069d9aa24326b02e0ee9e8767f4886abbeb2bdcb1398d9694e",
+      "baseline": {
+        "bytes": 18902,
+        "sha256": "8b5b565d56dd142e8bd2298386987cc8d91ef305accb264ae317705fb5956e2f"
+      }
+    },
+    {
+      "path": "engine/web/js/scales/scale0/ui/overlays/wave-lab/wave-info.js",
+      "bytes": 31766,
+      "sha256": "9cfa9b980a5570dc07e9fc190991523bc56ad1a0f387d7acb7d9073969f44cb9",
+      "baseline": {
+        "bytes": 32252,
+        "sha256": "7283f20e398edad768f7c2f4dd734943d8d9c8715ba3b7adfc279ad05ceadb24"
+      }
+    },
+    {
+      "path": "engine/web/tests/scale0-retained-readout.spec.js",
+      "bytes": 19998,
+      "sha256": "3943f52aadbea001c3caba74e8ea23ef974d2c911a2604c5ffb4558c4e2f450b",
+      "baseline": {
+        "bytes": 11847,
+        "sha256": "8b74eb88a53b37acf3b0696b3c53fd8b452291bb4895736d70eac15371972037"
+      }
+    },
+    {
+      "path": "engine/web/tests/scale0-wave-spectrum-metrics.node.test.mjs",
+      "bytes": 16137,
+      "sha256": "54adc73bfb6aef835b2d21775c43c7865a06772ee4675def38f1164afacb4d50",
+      "baseline": null
+    }
+  ],
+  "status": "reviewed_source_integrated_browser_and_hardware_pending",
+  "scope": "Three reviewed production/test files replaced only after exact baseline-byte checks; one new test added. Native law and WASM artifacts unchanged. v2 evidence archive and both drafts preserved."
+}

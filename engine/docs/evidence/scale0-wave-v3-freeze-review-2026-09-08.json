@@ -1,0 +1,354 @@
+{
+  "schema": "scale0-wave-v3-independent-freeze-review-v1",
+  "reviewed_utc": "2026-09-08T06:08:13.218123+00:00",
+  "local_record_date": "2026-09-08",
+  "reviewer": "/root/bounded_worker_reads",
+  "coordinator": "/root",
+  "status": "accepted_frozen_candidate_for_registered_eight_row_hardware_campaign",
+  "campaign_admission_approved": true,
+  "release_approved": false,
+  "hardware_pass_approved": false,
+  "physical_recovery_approved": false,
+  "disposition": "All registered source/archive bytes, exact reviewed changes and predecessor archives pass this independent freeze check. The coordinator may execute the preregistered eight-row Wave v3 hardware campaign while holding source/artifact bytes fixed. Hardware results and post-run reconciliation remain required.",
+  "candidate": {
+    "manifest": {
+      "path": "engine/docs/evidence/scale0-wave-v3-candidate-manifest-2026-09-08.json",
+      "size": 405901,
+      "sha256": "4ef20a1b26369b2a74a89e83809efe27908fef4a8c35a4a13e0c52fb7f927a8b"
+    },
+    "identity": "a3048e602619adc7042fbf9877a573e4e392a0acc2e662c1ccec2642300870db",
+    "identity_encoding": "SHA256 of files array JSON sorted keys, compact separators, UTF8",
+    "identity_recomputed": true,
+    "file_count": 2172,
+    "total_registered_file_bytes": 30752732,
+    "current_files_checked": 2172,
+    "current_mismatches": [],
+    "archive_verification": {
+      "archive": {
+        "path": "engine/build/scale0_wave_v3_candidate_20260908.zip",
+        "size": 8802892,
+        "sha256": "76cd720f90170775679fb1f6ff26468d14eb08e432be93d0688daa44203b716b"
+      },
+      "entries_checked": 2172,
+      "zip_entries": 2174,
+      "content_mismatches": [],
+      "duplicate_entries": [],
+      "unsafe_paths": [],
+      "additional_entries": [
+        "engine/docs/PROGRAM_SCALE0_WAVE_CORRECTNESS_V3_2026-09-08.md",
+        "engine/docs/evidence/scale0-wave-v3-harness-review-2026-09-08.json"
+      ]
+    },
+    "frozen_utc": "2026-09-08T05:59:30.143319+00:00",
+    "git_head_in_manifest": "d78d93983e4195175eb18081077beeb2a02bbda7",
+    "source_dirty_in_manifest": true,
+    "scope_boundary": "The manifest-defined complete scope is checked against its predecessor plus exactly the reviewed addition. This does not assert that every unrelated checkout file is clean or frozen."
+  },
+  "baseline_comparison": {
+    "manifest": {
+      "path": "engine/docs/evidence/scale0-performance-v2-candidate-manifest-2026-09-07.json",
+      "size": 409619,
+      "sha256": "f75c21d37a620a18d48541732815d2f767f870b490ed6912125a3a75be7e1ebd"
+    },
+    "identity": "8ad614edd7616b43622b437d29a5d3800a614f35ad4d9da9fb3226f725fd0177",
+    "baseline_files": 2171,
+    "unchanged_files": 2166,
+    "changed_count": 5,
+    "added_count": 1,
+    "removed": [],
+    "changed": [
+      {
+        "path": "engine/web/js/scales/scale0/analysis/wave-spectrum.js",
+        "size": 21947,
+        "sha256": "7155a8ee3d0daf069d9aa24326b02e0ee9e8767f4886abbeb2bdcb1398d9694e"
+      },
+      {
+        "path": "engine/web/js/scales/scale0/ui/overlays/wave-lab/wave-info.js",
+        "size": 31766,
+        "sha256": "9cfa9b980a5570dc07e9fc190991523bc56ad1a0f387d7acb7d9073969f44cb9"
+      },
+      {
+        "path": "engine/web/tests/scale0-comprehensive-performance.spec.js",
+        "size": 25066,
+        "sha256": "1df97e12082b620f44c446b3d3020d238c6ef671c2742f8ff8c55d1ecccc30b5"
+      },
+      {
+        "path": "engine/web/tests/scale0-retained-readout.spec.js",
+        "size": 19998,
+        "sha256": "3943f52aadbea001c3caba74e8ea23ef974d2c911a2604c5ffb4558c4e2f450b"
+      },
+      {
+        "path": "engine/web/tests/scale0-ui-audit-probe.js",
+        "size": 12045,
+        "sha256": "b368a7f6327aa8544146972dffa1bc675a9781ec10b52fec0867110c5d7b86d1"
+      }
+    ],
+    "added": [
+      {
+        "path": "engine/web/tests/scale0-wave-spectrum-metrics.node.test.mjs",
+        "size": 16137,
+        "sha256": "54adc73bfb6aef835b2d21775c43c7865a06772ee4675def38f1164afacb4d50"
+      }
+    ],
+    "manifest_difference_lists_exact": true
+  },
+  "review_binding": {
+    "harness_review": {
+      "path": "engine/docs/evidence/scale0-wave-v3-harness-review-2026-09-08.json",
+      "size": 11277,
+      "sha256": "fd37df6e350945afc3bd53173f0f562f1a4d6891fc585fc410046c153a163e91"
+    },
+    "harness_source_hashes_match": true,
+    "integration_record": {
+      "path": "engine/docs/evidence/scale0-wave-v3-integration-2026-09-08.json",
+      "size": 1926,
+      "sha256": "a246050397776d6e775269510dbcc5b8e1ca1d97f2bde04b72d0a4a2f10d4c22"
+    },
+    "independent_implementation_review": {
+      "path": "engine/docs/evidence/scale0-wave-v3-draft2-review-2026-09-08.json",
+      "size": 14793,
+      "sha256": "7a1718f0a6fa96f9454f0ded2dd7088730dff0afdbae7634ffc8b0172281b1c3"
+    },
+    "independent_implementation_reviewer": "/root/time_gravity_cost_review",
+    "implementation_review_hash_matches_integration_record": true,
+    "all_four_integrated_files_match_integration_and_draft2_review": true,
+    "six_changed_or_added_files_partition_into_four_implementation_and_two_harness_files": true,
+    "boundary": "This reviewer independently approved the coordinator-owned harness. Production numerical/readout acceptance belongs to the separate Time/Gravity reviewer; this freeze review verifies that exactly those accepted bytes were integrated."
+  },
+  "preregistration_snapshots": [
+    {
+      "path": "engine/docs/PROGRAM_SCALE0_WAVE_CORRECTNESS_V3_2026-09-08.md",
+      "size": 9173,
+      "sha256": "4c6746a2d638e860b9343e4e9789d7e937709f9a4570968fc25b6b3166a688db",
+      "archive_matches": true,
+      "live_file_at_review": {
+        "path": "engine/docs/PROGRAM_SCALE0_WAVE_CORRECTNESS_V3_2026-09-08.md",
+        "size": 9173,
+        "sha256": "4c6746a2d638e860b9343e4e9789d7e937709f9a4570968fc25b6b3166a688db"
+      },
+      "live_matches_snapshot": true
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-harness-review-2026-09-08.json",
+      "size": 11277,
+      "sha256": "fd37df6e350945afc3bd53173f0f562f1a4d6891fc585fc410046c153a163e91",
+      "archive_matches": true,
+      "live_file_at_review": {
+        "path": "engine/docs/evidence/scale0-wave-v3-harness-review-2026-09-08.json",
+        "size": 11277,
+        "sha256": "fd37df6e350945afc3bd53173f0f562f1a4d6891fc585fc410046c153a163e91"
+      },
+      "live_matches_snapshot": true
+    }
+  ],
+  "snapshot_policy": "Archive snapshots remain immutable. Later append to the live program disposition is allowed by the frozen contract and must be recorded separately; it does not replace the archived preregistration.",
+  "prerequisite_execution_evidence": {
+    "review_method": "Read and hash existing logs only. No test, browser, build, GPU run or numerical campaign was executed for this freeze review. Test groups overlap and are not summed as distinct evidence.",
+    "integrated_node": {
+      "log": {
+        "path": "engine/docs/evidence/scale0-wave-v3-integrated-node-2026-09-08.log",
+        "size": 3996,
+        "sha256": "7f4b5b6ccb1579e54338858e525204aef5f95c710c408d4e676e32e30b5c3fce"
+      },
+      "tests": 43,
+      "passed": 43,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "reported_duration_ms": 88.2444
+    },
+    "mounted_browser": {
+      "log": {
+        "path": "engine/docs/evidence/scale0-wave-v3-browser-2026-09-08.log",
+        "size": 1294,
+        "sha256": "4dd53fe182d1237798da9a8d856ba7e4a41662635a17fc2bbb2edc38ade82b74"
+      },
+      "passed": 5,
+      "reported_duration_seconds": 9.8,
+      "scope": "Actual mounted Wave Info/retained readout checks, including directional zero and unavailable/empty/recovery cases. These are not hardware performance measurements."
+    }
+  },
+  "preservation": {
+    "strict_manifests": [
+      {
+        "manifest": {
+          "path": "engine/docs/evidence/strict-stack-source-manifest-2026-09-05.json",
+          "size": 11378,
+          "sha256": "8d5ea8ed89b7e200f5c7ffdd5b0ea72bbbe358be8175fa7224f1ee0d1f3c1511"
+        },
+        "entries_checked": 69,
+        "current_mismatches": []
+      },
+      {
+        "manifest": {
+          "path": "engine/docs/evidence/strict-recovery-wave1-manifest-2026-09-05.json",
+          "size": 8095,
+          "sha256": "467cdd078dc5d1c7cfd8c4bff5f66d4522a0ec44362fccbbd42d583b2b362ea5"
+        },
+        "entries_checked": 44,
+        "current_mismatches": []
+      },
+      {
+        "manifest": {
+          "path": "engine/docs/evidence/strict-recovery-wave2-manifest-2026-09-05.json",
+          "size": 13583,
+          "sha256": "22c0332a57006bf17230548e98d6c319e51660fc302cebb9392e2192ba4bd6d9"
+        },
+        "entries_checked": 73,
+        "current_mismatches": []
+      }
+    ],
+    "strict_scope_note": "Counts 69/44/73 may overlap; they are separately checked scopes, not 186 unique files. No strict law or physical-recovery acceptance is changed.",
+    "six_wasm_artifacts_and_build_info": [
+      {
+        "path": "engine/web/wasm/ftd_core.js",
+        "size": 136178,
+        "sha256": "8f0d5aa0420e81d5245a13866d8069833e0117df1418023749067abe63addec7"
+      },
+      {
+        "path": "engine/web/wasm/ftd_core.wasm",
+        "size": 931721,
+        "sha256": "6ad203d9202c400ca6b52c929387be4c6e90db084e5bc0d147e9560c8c1339a7"
+      },
+      {
+        "path": "engine/web/wasm/ftd_core64.js",
+        "size": 145014,
+        "sha256": "1b2a9af334046c2f16e4e78961c4017708c7cc6d7d40df3f83ceb4109c4e2624"
+      },
+      {
+        "path": "engine/web/wasm/ftd_core64.wasm",
+        "size": 962980,
+        "sha256": "be667edfdd2a364120c9b56946b4a617cb69b641c51b56394db5747bf5caaad3"
+      },
+      {
+        "path": "engine/web/wasm/ftd_core_mt.js",
+        "size": 158993,
+        "sha256": "1d5a7f3d37b6c6068e80a499ac61b4367f94d21f1590576acee95559d6740c4e"
+      },
+      {
+        "path": "engine/web/wasm/ftd_core_mt.wasm",
+        "size": 952655,
+        "sha256": "d30871aa97f771c7f864a1165acc2963ec826d50421435f3a9c62d867a22d69f"
+      },
+      {
+        "path": "engine/web/wasm/build_info.json",
+        "size": 5821,
+        "sha256": "33d3efb14fee4f3aa362f42afb4c02cefcb668178bb98c68d096aacbd7f94f0f"
+      }
+    ],
+    "all_seven_records_unchanged_from_v2": true,
+    "wasm_bundle_sha256": "97dbc15f61ba8952e68be8012279e50bf0bc650e5806f6bb5ca705952df5d4e3",
+    "v2_source_archive": {
+      "archive": {
+        "path": "engine/build/scale0_performance_v2_candidate_20260907.zip",
+        "size": 10208612,
+        "sha256": "3278a805f0ac37156036925dbae4ffe7ddcd20a9a7ff012c9e86b75ae252503f"
+      },
+      "entries_checked": 2171,
+      "zip_entries": 2174,
+      "content_mismatches": [],
+      "duplicate_entries": [],
+      "unsafe_paths": [],
+      "additional_entries": [
+        "_candidate_manifest.json",
+        "engine/docs/PROGRAM_SCALE0_PERFORMANCE_V2_2026-09-07.md",
+        "engine/docs/evidence/scale0-performance-v2-independent-review-2026-09-07.json"
+      ]
+    },
+    "v2_evidence_seal": {
+      "path": "engine/docs/evidence/scale0-performance-v2-evidence-archive-2026-09-07.json",
+      "size": 6559,
+      "sha256": "1ee59302c157f1439058d4752332ce472a6fda4a3a0d9ff3e1d5fdd3078dc304"
+    },
+    "v2_evidence_archive": {
+      "archive": {
+        "path": "engine/build/scale0_performance_v2_evidence_20260907.zip",
+        "size": 414547,
+        "sha256": "27736901ad385d2ba08e88b94f91438fb5a990c488a69835774d779f8c69a51f"
+      },
+      "entries_checked": 27,
+      "zip_entries": 27,
+      "content_mismatches": [],
+      "duplicate_entries": [],
+      "unsafe_paths": [],
+      "additional_entries": []
+    },
+    "v2_disposition": "Prior 288-row campaign remains 279 passes and nine callback failures, with all 144 overlay rows passing. This successor does not erase or reclassify those failures.",
+    "v2_artifact_boundary": "V2 raw JSON reports and the full failure log are preserved. Panel transient screenshots/error-context were cleared by the subsequent overlay invocation and are not claimed archived. Separate startup/Time fixture archives do not replace those missing panel attachments."
+  },
+  "registered_hardware_scope": {
+    "profile": "wave-v3",
+    "kind": "panels",
+    "candidate_identity_required": "a3048e602619adc7042fbf9877a573e4e392a0acc2e662c1ccec2642300870db",
+    "panel_id": "wave-lab",
+    "scenario": "s0-field-rf-lattice-wave",
+    "ordered_sizes": [
+      33,
+      97
+    ],
+    "states": [
+      "docked",
+      "floated",
+      "collapsed",
+      "hidden"
+    ],
+    "rows": 8,
+    "backends": [
+      "direct WASM L33",
+      "worker WASM L97"
+    ],
+    "physics_playing_all_states": true,
+    "gate_values": {
+      "complete_normalized_failure_block_identical_to_v2": true,
+      "frame_intervals_min": 600,
+      "duration_ms_min": 12000,
+      "effective_fps_min": 59.5,
+      "frame_p95_ms_max": 17,
+      "frame_p99_ms_max": 20,
+      "intervals_over_33_4ms_max": 0,
+      "long_tasks_max": 0,
+      "callback_p95_ms_max": 2,
+      "callback_max_ms_max": 8,
+      "visible_action_samples": 10,
+      "action_next_raf_p95_ms_max": 50,
+      "other_checks_unchanged": [
+        "Hardware renderer and visible document",
+        "Long Tasks instrumentation support",
+        "Same owner and load generation",
+        "Authoritative ready WASM and expected qualification",
+        "Lifecycle equality",
+        "Safe clocks and advancing playing state",
+        "Correct panel mount before and after actions",
+        "No hidden/collapsed canvas work",
+        "Instrumented runtime errors"
+      ],
+      "owner_read_accounting": "Only standalone ownerRead diagnostic summaries are excluded; nested native calls remain inside inclusive interface callback timing.",
+      "existing_workload_flow": "Original scenario load, availability check, warmup, four-state transitions, running-settled wait, sample window and paired actions are unchanged."
+    },
+    "raw_samples_required": "Frame and callback vectors copied after stopping, plus existing action vectors, must reconstruct reported summaries and gates independently.",
+    "execution_contract": "Run the full ordered 33,97 invocation serially without competing heavy work. Keep all 2,172 candidate source files and artifacts fixed until post-run reconciliation. Retain the invocation log, both raw reports and transient test-results archive before any subsequent Playwright invocation on either success or failure.",
+    "outputs": [
+      {
+        "path": "engine/docs/evidence/scale0-hardware-wave-v3-panels-L33-2026-09-08.json",
+        "exists_at_freeze_review": true
+      },
+      {
+        "path": "engine/docs/evidence/scale0-hardware-wave-v3-panels-L97-2026-09-08.json",
+        "exists_at_freeze_review": true
+      }
+    ]
+  },
+  "remaining_gates": [
+    "Complete all eight registered hardware rows with unchanged thresholds.",
+    "Independently reconstruct retained frame/callback/action timing statistics and gate outcomes.",
+    "Verify report candidate identities and all post-run source/archive hashes.",
+    "Preserve hardware failures and transient artifacts before another browser invocation."
+  ],
+  "unresolved_boundaries": [
+    "Hardware performance is pending; Node/browser correctness checks do not imply a performance pass.",
+    "Seven non-Wave v2 callback failures are outside this bounded follow-up.",
+    "Producer availability and common J/E sample-clock/source identity remain open; owner clocks and local cache revisions cannot supply missing provenance.",
+    "No complete observation certificate, strict-law adoption, recovery across scales, universal FPS, commit or public deployment is approved."
+  ],
+  "blocking_freeze_findings": []
+}

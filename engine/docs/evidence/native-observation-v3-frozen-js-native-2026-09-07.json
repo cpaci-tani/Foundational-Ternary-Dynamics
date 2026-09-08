@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "case_count": 11,
+  "cases": [
+    "actual_info_negotiates_v3",
+    "concurrent_actual_binary_requests_correlate_and_retain_provenance",
+    "actual_binary_observation_preserves_scoped_state",
+    "production_particle_cache_path_uses_negotiated_protocol",
+    "special_json_tick_run_completions_settle_actual_promises",
+    "special_json_slice_correlates_actual_sample",
+    "actual_point_observation_inspect_voxel_retains_provenance_and_coordinates",
+    "actual_point_observation_get_force_at_retains_provenance_and_coordinates",
+    "queued_tick_ack_then_current_particle_and_volume_samples_remain_acceptable",
+    "actual_progress_and_source_replacement_complete_without_stale_sample",
+    "no_request_promise_remains_pending"
+  ],
+  "backend": "forced_cpu",
+  "lattice_size": 7,
+  "executable_sha256": "57272f17a49c80b682f613f2755ca21336a154bbeb3c4f65cba548c10e673022",
+  "scope": "actual production JavaScript bridge against owned native CPU server; no GPU, FPS or physics certification"
+}

@@ -1,0 +1,51 @@
+{
+  "schema": "scale0-gravity-v4-browser-fixture-repair-independent-review-v1",
+  "reviewed_utc": "2026-09-08T06:41:58.068356+00:00",
+  "reviewer": "/root/time_gravity_cost_review",
+  "implementation_author": "/root/wave_component_v3_draft",
+  "independent": true,
+  "candidate": {
+    "directory": "engine/build/scale0_gravity_v4_browser_repair2_20260908",
+    "manifest_sha256": "680fc0fb3c581a8c210589d7c83590e6d13b969c0e4f82fe1f5a766696ad953e",
+    "test_sha256": "3e814ebc0767a85d4b78010d9a8c778673ba176750c086f8607105d66a5ae7c5"
+  },
+  "disposition": "ACCEPT_TEST_ONLY_INTEGRATION_AND_SERIAL_BROWSER_RERUN",
+  "blockers_found": [],
+  "verified": {
+    "all_candidate_manifest_files": 9,
+    "unchanged_current_production_baselines": 10,
+    "frozen_oracle_sha256": "6b4d7b232ad3a58a5c9fc3c96e011683d1d53b4f83a07d1c356d6e698643d3d8",
+    "original_goto_through_final_assertion_suffix_bytes_unchanged": 7576,
+    "route_only_targets": "**/tests/fixtures/gravity-dense-v3-oracle.mjs",
+    "response_body": "same raw Buffer bytes, guarded by fixed SHA256 assertion before navigation",
+    "response_content_type": "application/javascript; charset=utf-8",
+    "unchanged_import_url_and_relative_constants_resolution": true,
+    "numerical_formula_expected_pixels_lifecycle_and_assertions_unchanged": true,
+    "server_runtime_sources_oracle_and_playwright_config_unchanged": true
+  },
+  "failure_provenance": {
+    "archive": {
+      "path": "engine/build/scale0_time_gravity_v4_browser_results_20260908.zip",
+      "sha256": "8d8e077e92f601103457c447897b428f0ab434a457c9d4aef76f18b38b89f069"
+    },
+    "archive_hash_independently_verified": true,
+    "nested_trace": "engine/web/test-results/scale0-gravity-slab-mounte-119a6-ecovery-without-dense-reads-chromium/trace.zip",
+    "primary_trace_records_independently_read": true,
+    "http_status": 200,
+    "body_bytes": 3024,
+    "content_type": "text/plain",
+    "console": "Chromium rejected the oracle module import for text/plain MIME before assertions."
+  },
+  "execution": {
+    "browser_run_by_reviewer": false,
+    "tests_run_by_reviewer": false,
+    "build_run_by_reviewer": false,
+    "syntax_check": "author reports exit 0; reviewer did not rerun",
+    "production_or_candidate_edits_by_reviewer": false
+  },
+  "limits": [
+    "Accepts a fixture transport repair only; the next actual mounted test must still pass every preserved assertion.",
+    "No browser, performance or physics result is approved by this read-only review.",
+    "Retain the original failed log, trace, screenshot and error-context archive as provenance."
+  ]
+}

@@ -1,0 +1,1167 @@
+{
+  "schema": "ftd.wave-attribution.attempt2-independent-review.v1",
+  "reviewedAtUtc": "2026-09-08T07:54:57.288366+00:00",
+  "reviewer": "/root/time_gravity_cost_review",
+  "disposition": "ACCEPTED_DIAGNOSTIC_ACCOUNTING_ALL_EIGHT_ROWS",
+  "blockingDefects": [],
+  "scope": "A2 raw results only; A1 and prior frozen artifacts are verified for preservation and are never pooled into A2 statistics.",
+  "acceptance": {
+    "diagnosticIntegrity": true,
+    "performance": false,
+    "release": false,
+    "physicalRecovery": false
+  },
+  "method": {
+    "independence": "Copied the prior independent reviewer Python reconstruction into a new owned ignored directory and changed only attempt selection/preservation reporting. It imports no project module and does not invoke analyze.mjs. Stored analyzer output is compared after reconstruction.",
+    "originScript": {
+      "path": "engine/build/scale0_wave_attribution_review_20260908/reconstruct_results.py",
+      "bytes": 15029,
+      "sha256": "f036c7d6e85fb6a5357750e8391167a0e14fc21f74e5d69cd17628d14fd79ff4"
+    },
+    "trees": "Endpoint sweep independently reconstructs immediate-child interval unions, exclusive spans and root totals; scheduled sample indices and original elapsed endpoints match bijectively.",
+    "statistics": "Sorted sequential binary64 addition and nearest-rank quantiles reconstruct all retained vectors. No subtraction of independent quantiles.",
+    "checked": {
+      "aggregateFields": 696,
+      "frames": 5802,
+      "callbackSamples": 9126,
+      "callbackSeries": 96,
+      "actions": 40,
+      "spanTimingFields": 15914,
+      "roots": 469,
+      "scheduledRoots": 387,
+      "spans": 7957
+    },
+    "mismatches": [],
+    "maximumRootReconstructionErrorMs": 0.0
+  },
+  "registration": {
+    "record": {
+      "path": "engine/docs/evidence/scale0-wave-attribution-v1-attempt2-registration-2026-09-08.json",
+      "bytes": 1332,
+      "sha256": "eb542945e9c8c144ee9340ab6dac32076110793bbfdb84b10f434f1cee28a51b"
+    },
+    "registeredAtUtc": "2026-09-08T07:47:11.311800+00:00",
+    "startedAtUtc": "2026-09-08T07:47:19.928456+00:00",
+    "pins": [
+      {
+        "path": "engine/docs/PROGRAM_SCALE0_WAVE_ATTRIBUTION_V1_2026-09-08.md",
+        "sha256": "35549c40124c8dec76e04669f597abfe3194f02478c5b34a64bdb8ee2a8ea286",
+        "currentMatches": true
+      },
+      {
+        "path": "engine/docs/evidence/scale0-wave-startup-forensic-execution-2026-09-08.json",
+        "sha256": "c0a20646c8a3edda4e11e02b8f47b61805a0ab534a009d24aa555052f04c0877",
+        "currentMatches": true
+      },
+      {
+        "path": "engine/docs/evidence/scale0-wave-startup-forensic-review-2026-09-08.json",
+        "sha256": "1d2b9db40c77e49fea800d7dacbcb077fe6956c08243c6b4245ba3350d8d0a64",
+        "currentMatches": true
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/manifest.json",
+        "sha256": "a9f763396e72a59cde8aba4927a547c5fa12deeaf0fcc9969b7bafaec7120259",
+        "currentMatches": true
+      },
+      {
+        "path": "engine/build/run_scale0_wave_attribution_20260908.py",
+        "sha256": "e3aa96cd051c64ea63a743f3317871eee07a4ffe22c2541fa0ed3fa1d07c9b8a",
+        "currentMatches": true
+      }
+    ],
+    "trace": "off",
+    "unchangedWorkload": true
+  },
+  "identity": {
+    "execution": {
+      "path": "engine/docs/evidence/waveattr-v1-routed-a2-execution.json",
+      "bytes": 3491,
+      "sha256": "524dbc2f8e306cfeb8563aae2468ce401532ae07d5ff05871a763436f2202cdc"
+    },
+    "probeManifestSha256": "a9f763396e72a59cde8aba4927a547c5fa12deeaf0fcc9969b7bafaec7120259",
+    "productionFilesChecked": 2176,
+    "productionDrift": [],
+    "probeFilesChecked": 37,
+    "probeDrift": [],
+    "a2Archives": [
+      {
+        "archive": {
+          "path": "engine/build/waveattr-v1-routed-a2-results.zip",
+          "bytes": 1381013,
+          "sha256": "6db7b34fe3fce758bd311dd864352f982e2bb3c33adbe0f83a55de63b76e8e86"
+        },
+        "members": 9,
+        "archiveMismatches": [],
+        "liveSnapshotDifferences": []
+      }
+    ],
+    "preservedA1Archive": {
+      "archive": {
+        "path": "engine/build/waveattr-v1-routed-a1-results.zip",
+        "bytes": 725864,
+        "sha256": "67e46f4b97ca32eddac3916b00533563e9e6afa2cb87390832b28d9683f24fd7"
+      },
+      "members": 11,
+      "archiveMismatches": [],
+      "liveSnapshotDifferences": []
+    },
+    "preservedFreeze": {
+      "archive": {
+        "path": "engine/build/scale0_wave_attribution_v1_candidate_20260908.zip",
+        "bytes": 273984,
+        "sha256": "08414b4e6f49c8c116de02af563bfd9e47b64e572f1522dc2f3008674b1bbf6c"
+      },
+      "members": 45,
+      "archiveMismatches": [],
+      "liveSnapshotDifferences": [
+        "engine/docs/PROGRAM_SCALE0_WAVE_ATTRIBUTION_V1_2026-09-08.md"
+      ]
+    },
+    "preservedEquivalence": {
+      "archive": {
+        "path": "engine/build/waveattr-v1-equivalence-a1-results.zip",
+        "bytes": 6804,
+        "sha256": "993f526187b15640cec297744a2154da7932bba0316bf9b425b7a2f443303c98"
+      },
+      "members": 5,
+      "archiveMismatches": [],
+      "liveSnapshotDifferences": []
+    }
+  },
+  "preservation": {
+    "record": {
+      "path": "engine/build/scale0_wave_attribution_probe_20260908/records/waveattr-v1-routed-a1-L97.json",
+      "bytes": 4849,
+      "sha256": "7edf91c36291d528dd87285610a8c68835b0d919da598414a212265be7c9628a"
+    },
+    "rows": 0,
+    "errors": [
+      "Failed to load resource: net::ERR_CONNECTION_REFUSED"
+    ],
+    "pooledOrReplaced": false
+  },
+  "hardwareAndWorkload": "All eight raw rows identify ANGLE NVIDIA RTX5090 hardware, visible document, same owner/generation, unchanged qualified endpoints/lifecycle/mount, advancing unpaused owner ticks, >=600 frames and >=12000ms, ten paired foreground actions for each visible state, no recorded runtime/long-task/resource-delta failures. Frame gates are not newly accepted by this instrumented diagnostic.",
+  "cadenceAndProvenance": [
+    {
+      "L": 33,
+      "state": "docked",
+      "scheduledCallbacks": 48,
+      "elapsedMs": 12175.629999995232,
+      "observedCallbackHz": 3.9423011376018158,
+      "scheduledStartGapRangeMs": [
+        248.5,
+        251.3950001001358
+      ],
+      "ownerIds": [
+        1
+      ],
+      "newHistoryWarmBasisScheduledRows": 48,
+      "nativeBoundSpans": 96,
+      "JCountRange": [
+        35937,
+        35937
+      ],
+      "ECountRange": [
+        35937,
+        35937
+      ],
+      "requestedAndEffectiveStride": 1,
+      "observedJandETicks": "both_unknown",
+      "ownerReadTickRange": [
+        95,
+        800
+      ]
+    },
+    {
+      "L": 33,
+      "state": "floated",
+      "scheduledCallbacks": 49,
+      "elapsedMs": 12181.44000005722,
+      "observedCallbackHz": 4.022512937696186,
+      "scheduledStartGapRangeMs": [
+        248.64999997615814,
+        251.0
+      ],
+      "ownerIds": [
+        1
+      ],
+      "newHistoryWarmBasisScheduledRows": 49,
+      "nativeBoundSpans": 98,
+      "JCountRange": [
+        35937,
+        35937
+      ],
+      "ECountRange": [
+        35937,
+        35937
+      ],
+      "requestedAndEffectiveStride": 1,
+      "observedJandETicks": "both_unknown",
+      "ownerReadTickRange": [
+        898,
+        1618
+      ]
+    },
+    {
+      "L": 33,
+      "state": "collapsed",
+      "scheduledCallbacks": 48,
+      "elapsedMs": 12010.995000004768,
+      "observedCallbackHz": 3.996338354980661,
+      "scheduledStartGapRangeMs": [
+        248.34999990463257,
+        251.67499995231628
+      ],
+      "ownerIds": [],
+      "newHistoryWarmBasisScheduledRows": 0,
+      "nativeBoundSpans": 0,
+      "JCountRange": null,
+      "ECountRange": null,
+      "requestedAndEffectiveStride": null,
+      "observedJandETicks": "no_metrics",
+      "ownerReadTickRange": null
+    },
+    {
+      "L": 33,
+      "state": "hidden",
+      "scheduledCallbacks": 48,
+      "elapsedMs": 12010.169999957085,
+      "observedCallbackHz": 3.996612870606454,
+      "scheduledStartGapRangeMs": [
+        249.1599999666214,
+        250.67499995231628
+      ],
+      "ownerIds": [],
+      "newHistoryWarmBasisScheduledRows": 0,
+      "nativeBoundSpans": 0,
+      "JCountRange": null,
+      "ECountRange": null,
+      "requestedAndEffectiveStride": null,
+      "observedJandETicks": "no_metrics",
+      "ownerReadTickRange": null
+    },
+    {
+      "L": 97,
+      "state": "docked",
+      "scheduledCallbacks": 49,
+      "elapsedMs": 12176.389999985695,
+      "observedCallbackHz": 4.024181222846638,
+      "scheduledStartGapRangeMs": [
+        246.55999994277954,
+        251.375
+      ],
+      "ownerIds": [
+        1
+      ],
+      "newHistoryWarmBasisScheduledRows": 49,
+      "nativeBoundSpans": 0,
+      "JCountRange": [
+        24717,
+        35937
+      ],
+      "ECountRange": [
+        24041,
+        35937
+      ],
+      "requestedAndEffectiveStride": 3,
+      "observedJandETicks": "all_equal_each_other_and_existing_owner_read_tick",
+      "ownerReadTickRange": [
+        16,
+        150
+      ]
+    },
+    {
+      "L": 97,
+      "state": "floated",
+      "scheduledCallbacks": 49,
+      "elapsedMs": 12177.655000090599,
+      "observedCallbackHz": 4.023763195757759,
+      "scheduledStartGapRangeMs": [
+        248.72500002384186,
+        251.24000000953674
+      ],
+      "ownerIds": [
+        1
+      ],
+      "newHistoryWarmBasisScheduledRows": 49,
+      "nativeBoundSpans": 0,
+      "JCountRange": [
+        35937,
+        35937
+      ],
+      "ECountRange": [
+        35937,
+        35937
+      ],
+      "requestedAndEffectiveStride": 3,
+      "observedJandETicks": "all_equal_each_other_and_existing_owner_read_tick",
+      "ownerReadTickRange": [
+        169,
+        303
+      ]
+    },
+    {
+      "L": 97,
+      "state": "collapsed",
+      "scheduledCallbacks": 48,
+      "elapsedMs": 12017.294999957085,
+      "observedCallbackHz": 3.994243296862681,
+      "scheduledStartGapRangeMs": [
+        247.87999999523163,
+        252.05000007152557
+      ],
+      "ownerIds": [],
+      "newHistoryWarmBasisScheduledRows": 0,
+      "nativeBoundSpans": 0,
+      "JCountRange": null,
+      "ECountRange": null,
+      "requestedAndEffectiveStride": null,
+      "observedJandETicks": "no_metrics",
+      "ownerReadTickRange": null
+    },
+    {
+      "L": 97,
+      "state": "hidden",
+      "scheduledCallbacks": 48,
+      "elapsedMs": 12004.795000076294,
+      "observedCallbackHz": 3.998402305053518,
+      "scheduledStartGapRangeMs": [
+        248.77999997138977,
+        251.84500002861023
+      ],
+      "ownerIds": [],
+      "newHistoryWarmBasisScheduledRows": 0,
+      "nativeBoundSpans": 0,
+      "JCountRange": null,
+      "ECountRange": null,
+      "requestedAndEffectiveStride": null,
+      "observedJandETicks": "no_metrics",
+      "ownerReadTickRange": null
+    }
+  ],
+  "rows": [
+    {
+      "run": "waveattr-v1-routed-a2",
+      "L": 33,
+      "state": "docked",
+      "ticks": [
+        81,
+        812
+      ],
+      "durationMs": 12175.629999995232,
+      "frames": {
+        "count": 730,
+        "meanMs": 16.666,
+        "medianMs": 16.665000000000873,
+        "p95Ms": 16.67000000000189,
+        "p99Ms": 16.67000000000553,
+        "maxMs": 16.67000000000553,
+        "effectiveFps": 60.00240009600384,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "waveCallback": {
+        "count": 48,
+        "meanMs": 3.588750002284845,
+        "medianMs": 3.540000081062317,
+        "p95Ms": 4.320000052452087,
+        "p99Ms": 4.414999961853027,
+        "maxMs": 4.414999961853027
+      },
+      "actions": {
+        "count": 10,
+        "meanMs": 16.673000001907347,
+        "medianMs": 15.419999957084656,
+        "p95Ms": 21.544999957084656,
+        "p99Ms": 21.544999957084656,
+        "maxMs": 21.544999957084656
+      },
+      "integrityReconstructed": true,
+      "activeScheduledInvocations": 48,
+      "originCounts": {
+        "scheduled": 48,
+        "resize": 40
+      },
+      "dominantDisjointCosts": [
+        {
+          "group": "acquisition_including_native_boundary",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 48,
+            "meanMs": 1.4926041687528293,
+            "medianMs": 1.440000057220459,
+            "p95Ms": 1.9049999713897705,
+            "p99Ms": 2.2149999141693115,
+            "maxMs": 2.2149999141693115
+          },
+          "totalExclusiveMs": 71.6450001001358,
+          "fractionOfActiveScheduledTime": 0.41591199381470845
+        },
+        {
+          "group": "qualification_and_reduction",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 48,
+            "meanMs": 1.2046874985098839,
+            "medianMs": 1.1349999904632568,
+            "p95Ms": 1.565000057220459,
+            "p99Ms": 1.6949999332427979,
+            "maxMs": 1.6949999332427979
+          },
+          "totalExclusiveMs": 57.824999928474426,
+          "fractionOfActiveScheduledTime": 0.33568442988307823
+        },
+        {
+          "group": "formatted_readouts_and_retained_dom",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 48,
+            "meanMs": 0.6613541468977928,
+            "medianMs": 0.6250001192092896,
+            "p95Ms": 0.9200000762939453,
+            "p99Ms": 0.9449999332427979,
+            "maxMs": 0.9449999332427979
+          },
+          "totalExclusiveMs": 31.744999051094055,
+          "fractionOfActiveScheduledTime": 0.18428537693534777
+        },
+        {
+          "group": "remaining_wrappers_setup_and_residual",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 48,
+            "meanMs": 0.08666666100422542,
+            "medianMs": 0.07999992370605469,
+            "p95Ms": 0.12000000476837158,
+            "p99Ms": 0.30500006675720215,
+            "maxMs": 0.30500006675720215
+          },
+          "totalExclusiveMs": 4.15999972820282,
+          "fractionOfActiveScheduledTime": 0.024149539797714375
+        },
+        {
+          "group": "fourier",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 48,
+            "meanMs": 0.06250000496705373,
+            "medianMs": 0.060000061988830566,
+            "p95Ms": 0.11000001430511475,
+            "p99Ms": 0.12999999523162842,
+            "maxMs": 0.12999999523162842
+          },
+          "totalExclusiveMs": 3.000000238418579,
+          "fractionOfActiveScheduledTime": 0.017415536029888382
+        },
+        {
+          "group": "chart_work",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 48,
+            "meanMs": 0.05104167511065801,
+            "medianMs": 0.04500007629394531,
+            "p95Ms": 0.08999991416931152,
+            "p99Ms": 0.1099998950958252,
+            "maxMs": 0.1099998950958252
+          },
+          "totalExclusiveMs": 2.4500004053115845,
+          "fractionOfActiveScheduledTime": 0.014222688980330581
+        },
+        {
+          "group": "controls_audio_and_direct_markup",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 48,
+            "meanMs": 0.015625002483526867,
+            "medianMs": 0.014999985694885254,
+            "p95Ms": 0.029999971389770508,
+            "p99Ms": 0.03000009059906006,
+            "maxMs": 0.03000009059906006
+          },
+          "totalExclusiveMs": 0.7500001192092896,
+          "fractionOfActiveScheduledTime": 0.0043538843534876815
+        },
+        {
+          "group": "history_preparation",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 48,
+            "meanMs": 0.014270844558874765,
+            "medianMs": 0.014999985694885254,
+            "p95Ms": 0.02499997615814209,
+            "p99Ms": 0.02500009536743164,
+            "maxMs": 0.02500009536743164
+          },
+          "totalExclusiveMs": 0.6850005388259888,
+          "fractionOfActiveScheduledTime": 0.003976550205444505
+        }
+      ],
+      "maxReconstructionErrorMs": 0.0
+    },
+    {
+      "run": "waveattr-v1-routed-a2",
+      "L": 33,
+      "state": "floated",
+      "ticks": [
+        890,
+        1621
+      ],
+      "durationMs": 12181.44000005722,
+      "frames": {
+        "count": 730,
+        "meanMs": 16.666,
+        "medianMs": 16.665000000000873,
+        "p95Ms": 16.67000000000553,
+        "p99Ms": 16.67000000000553,
+        "maxMs": 16.67000000000553,
+        "effectiveFps": 60.00240009600384,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "waveCallback": {
+        "count": 49,
+        "meanMs": 3.8536734726964212,
+        "medianMs": 3.884999990463257,
+        "p95Ms": 5,
+        "p99Ms": 5.149999976158142,
+        "maxMs": 5.149999976158142
+      },
+      "actions": {
+        "count": 10,
+        "meanMs": 16.858000016212465,
+        "medianMs": 15.879999995231628,
+        "p95Ms": 25.210000038146973,
+        "p99Ms": 25.210000038146973,
+        "maxMs": 25.210000038146973
+      },
+      "integrityReconstructed": true,
+      "activeScheduledInvocations": 49,
+      "originCounts": {
+        "scheduled": 49
+      },
+      "dominantDisjointCosts": [
+        {
+          "group": "acquisition_including_native_boundary",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 1.6710204080659516,
+            "medianMs": 1.6549999713897705,
+            "p95Ms": 2.2799999713897705,
+            "p99Ms": 2.6450001001358032,
+            "maxMs": 2.6450001001358032
+          },
+          "totalExclusiveMs": 81.87999999523163,
+          "fractionOfActiveScheduledTime": 0.4336175391883257
+        },
+        {
+          "group": "qualification_and_reduction",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 1.2194897787911552,
+            "medianMs": 1.1600000858306885,
+            "p95Ms": 1.6050000190734863,
+            "p99Ms": 2.2350000143051147,
+            "maxMs": 2.2350000143051147
+          },
+          "totalExclusiveMs": 59.7549991607666,
+          "fractionOfActiveScheduledTime": 0.3164486528065587
+        },
+        {
+          "group": "formatted_readouts_and_retained_dom",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 0.7326530656036065,
+            "medianMs": 0.7150000333786011,
+            "p95Ms": 1.0099998712539673,
+            "p99Ms": 1.1350001096725464,
+            "maxMs": 1.1350001096725464
+          },
+          "totalExclusiveMs": 35.90000021457672,
+          "fractionOfActiveScheduledTime": 0.1901180966147005
+        },
+        {
+          "group": "remaining_wrappers_setup_and_residual",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 0.09673469407217843,
+            "medianMs": 0.09499990940093994,
+            "p95Ms": 0.14499998092651367,
+            "p99Ms": 0.1549999713897705,
+            "maxMs": 0.1549999713897705
+          },
+          "totalExclusiveMs": 4.740000009536743,
+          "fractionOfActiveScheduledTime": 0.02510194357605836
+        },
+        {
+          "group": "fourier",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 0.05448980963959986,
+            "medianMs": 0.04999995231628418,
+            "p95Ms": 0.10000002384185791,
+            "p99Ms": 0.10500001907348633,
+            "maxMs": 0.10500001907348633
+          },
+          "totalExclusiveMs": 2.670000672340393,
+          "fractionOfActiveScheduledTime": 0.014139705926219343
+        },
+        {
+          "group": "chart_work",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 0.04448978268370336,
+            "medianMs": 0.039999961853027344,
+            "p95Ms": 0.060000061988830566,
+            "p99Ms": 0.10000002384185791,
+            "maxMs": 0.10000002384185791
+          },
+          "totalExclusiveMs": 2.179999351501465,
+          "fractionOfActiveScheduledTime": 0.011544772279986088
+        },
+        {
+          "group": "controls_audio_and_direct_markup",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 0.018265305733194157,
+            "medianMs": 0.019999980926513672,
+            "p95Ms": 0.034999966621398926,
+            "p99Ms": 0.03500008583068848,
+            "maxMs": 0.03500008583068848
+          },
+          "totalExclusiveMs": 0.8949999809265137,
+          "fractionOfActiveScheduledTime": 0.004739712864259331
+        },
+        {
+          "group": "history_preparation",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 0.016530628107031996,
+            "medianMs": 0.015000104904174805,
+            "p95Ms": 0.02499997615814209,
+            "p99Ms": 0.03000009059906006,
+            "maxMs": 0.03000009059906006
+          },
+          "totalExclusiveMs": 0.8100007772445679,
+          "fractionOfActiveScheduledTime": 0.004289576743891976
+        }
+      ],
+      "maxReconstructionErrorMs": 0.0
+    },
+    {
+      "run": "waveattr-v1-routed-a2",
+      "L": 33,
+      "state": "collapsed",
+      "ticks": [
+        1700,
+        2421
+      ],
+      "durationMs": 12010.995000004768,
+      "frames": {
+        "count": 720,
+        "meanMs": 16.665993055555553,
+        "medianMs": 16.665000000000873,
+        "p95Ms": 16.67000000000553,
+        "p99Ms": 16.67000000000553,
+        "maxMs": 16.670000000012806,
+        "effectiveFps": 60.002425098014385,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "waveCallback": {
+        "count": 48,
+        "meanMs": 0.014687498410542807,
+        "medianMs": 0.014999985694885254,
+        "p95Ms": 0.019999980926513672,
+        "p99Ms": 0.020000100135803223,
+        "maxMs": 0.020000100135803223
+      },
+      "actions": {
+        "count": 0,
+        "meanMs": 0,
+        "medianMs": 0,
+        "p95Ms": 0,
+        "p99Ms": 0,
+        "maxMs": 0
+      },
+      "integrityReconstructed": true,
+      "activeScheduledInvocations": 0,
+      "originCounts": {
+        "panel_external": 1,
+        "scheduled": 48
+      },
+      "dominantDisjointCosts": [],
+      "maxReconstructionErrorMs": 0.0
+    },
+    {
+      "run": "waveattr-v1-routed-a2",
+      "L": 33,
+      "state": "hidden",
+      "ticks": [
+        2488,
+        3209
+      ],
+      "durationMs": 12010.169999957085,
+      "frames": {
+        "count": 720,
+        "meanMs": 16.666000000000004,
+        "medianMs": 16.66500000000815,
+        "p95Ms": 16.669999999998254,
+        "p99Ms": 16.670000000012806,
+        "maxMs": 16.670000000012806,
+        "effectiveFps": 60.002400096003825,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "waveCallback": {
+        "count": 48,
+        "meanMs": 0.011770841976006826,
+        "medianMs": 0.009999990463256836,
+        "p95Ms": 0.020000100135803223,
+        "p99Ms": 0.060000061988830566,
+        "maxMs": 0.060000061988830566
+      },
+      "actions": {
+        "count": 0,
+        "meanMs": 0,
+        "medianMs": 0,
+        "p95Ms": 0,
+        "p99Ms": 0,
+        "maxMs": 0
+      },
+      "integrityReconstructed": true,
+      "activeScheduledInvocations": 0,
+      "originCounts": {
+        "scheduled": 48
+      },
+      "dominantDisjointCosts": [],
+      "maxReconstructionErrorMs": 0.0
+    },
+    {
+      "run": "waveattr-v1-routed-a2",
+      "L": 97,
+      "state": "docked",
+      "ticks": [
+        16,
+        152
+      ],
+      "durationMs": 12176.389999985695,
+      "frames": {
+        "count": 731,
+        "meanMs": 16.66600547195623,
+        "medianMs": 16.665000000000873,
+        "p95Ms": 16.67000000000189,
+        "p99Ms": 16.67000000000553,
+        "maxMs": 16.67000000000553,
+        "effectiveFps": 60.00238039539187,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "waveCallback": {
+        "count": 49,
+        "meanMs": 2.335204087958044,
+        "medianMs": 2.284999966621399,
+        "p95Ms": 3.125,
+        "p99Ms": 4.620000004768372,
+        "maxMs": 4.620000004768372
+      },
+      "actions": {
+        "count": 10,
+        "meanMs": 16.253500020504,
+        "medianMs": 15.429999947547913,
+        "p95Ms": 18.5900000333786,
+        "p99Ms": 18.5900000333786,
+        "maxMs": 18.5900000333786
+      },
+      "integrityReconstructed": true,
+      "activeScheduledInvocations": 49,
+      "originCounts": {
+        "scheduled": 49,
+        "resize": 40
+      },
+      "dominantDisjointCosts": [
+        {
+          "group": "qualification_and_reduction",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 1.174081632069179,
+            "medianMs": 1.1399999856948853,
+            "p95Ms": 1.4849998950958252,
+            "p99Ms": 1.6100000143051147,
+            "maxMs": 1.6100000143051147
+          },
+          "totalExclusiveMs": 57.52999997138977,
+          "fractionOfActiveScheduledTime": 0.5027747416697197
+        },
+        {
+          "group": "formatted_readouts_and_retained_dom",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 0.8207142766641111,
+            "medianMs": 0.7450000047683716,
+            "p95Ms": 1.2799999713897705,
+            "p99Ms": 2.7599998712539673,
+            "maxMs": 2.7599998712539673
+          },
+          "totalExclusiveMs": 40.21499955654144,
+          "fractionOfActiveScheduledTime": 0.3514529119301784
+        },
+        {
+          "group": "remaining_wrappers_setup_and_residual",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 0.12867346345161906,
+            "medianMs": 0.12000000476837158,
+            "p95Ms": 0.20000004768371582,
+            "p99Ms": 0.26999998092651367,
+            "maxMs": 0.26999998092651367
+          },
+          "totalExclusiveMs": 6.3049997091293335,
+          "fractionOfActiveScheduledTime": 0.055101592239903144
+        },
+        {
+          "group": "chart_work",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 0.06775511527548031,
+            "medianMs": 0.06500005722045898,
+            "p95Ms": 0.11499989032745361,
+            "p99Ms": 0.1499999761581421,
+            "maxMs": 0.1499999761581421
+          },
+          "totalExclusiveMs": 3.320000648498535,
+          "fractionOfActiveScheduledTime": 0.02901464399830121
+        },
+        {
+          "group": "fourier",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 0.05602040826057901,
+            "medianMs": 0.04500007629394531,
+            "p95Ms": 0.11500000953674316,
+            "p99Ms": 0.16000008583068848,
+            "maxMs": 0.16000008583068848
+          },
+          "totalExclusiveMs": 2.7450000047683716,
+          "fractionOfActiveScheduledTime": 0.02398951275798962
+        },
+        {
+          "group": "acquisition_including_native_boundary",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 0.05081633402376759,
+            "medianMs": 0.04999995231628418,
+            "p95Ms": 0.07499992847442627,
+            "p99Ms": 0.09500002861022949,
+            "maxMs": 0.09500002861022949
+          },
+          "totalExclusiveMs": 2.490000367164612,
+          "fractionOfActiveScheduledTime": 0.021760981956914335
+        },
+        {
+          "group": "history_preparation",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 0.018979593199126576,
+            "medianMs": 0.014999985694885254,
+            "p95Ms": 0.03500008583068848,
+            "p99Ms": 0.05500006675720215,
+            "maxMs": 0.05500006675720215
+          },
+          "totalExclusiveMs": 0.9300000667572021,
+          "fractionOfActiveScheduledTime": 0.008127595055609366
+        },
+        {
+          "group": "controls_audio_and_direct_markup",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 0.01816326501418133,
+            "medianMs": 0.014999985694885254,
+            "p95Ms": 0.029999971389770508,
+            "p99Ms": 0.04500007629394531,
+            "maxMs": 0.04500007629394531
+          },
+          "totalExclusiveMs": 0.8899999856948853,
+          "fractionOfActiveScheduledTime": 0.007778020391384167
+        }
+      ],
+      "maxReconstructionErrorMs": 0.0
+    },
+    {
+      "run": "waveattr-v1-routed-a2",
+      "L": 97,
+      "state": "floated",
+      "ticks": [
+        168,
+        304
+      ],
+      "durationMs": 12177.655000090599,
+      "frames": {
+        "count": 730,
+        "meanMs": 16.666,
+        "medianMs": 16.665000000000873,
+        "p95Ms": 16.67000000000553,
+        "p99Ms": 16.67000000000553,
+        "maxMs": 16.67000000000553,
+        "effectiveFps": 60.00240009600384,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "waveCallback": {
+        "count": 49,
+        "meanMs": 2.390816323611201,
+        "medianMs": 2.305000066757202,
+        "p95Ms": 3.2649999856948853,
+        "p99Ms": 3.7200000286102295,
+        "maxMs": 3.7200000286102295
+      },
+      "actions": {
+        "count": 10,
+        "meanMs": 16.711500024795534,
+        "medianMs": 17.045000076293945,
+        "p95Ms": 18.68499994277954,
+        "p99Ms": 18.68499994277954,
+        "maxMs": 18.68499994277954
+      },
+      "integrityReconstructed": true,
+      "activeScheduledInvocations": 49,
+      "originCounts": {
+        "scheduled": 49
+      },
+      "dominantDisjointCosts": [
+        {
+          "group": "qualification_and_reduction",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 1.2084693860034554,
+            "medianMs": 1.1800000667572021,
+            "p95Ms": 1.6200000047683716,
+            "p99Ms": 1.7000000476837158,
+            "maxMs": 1.7000000476837158
+          },
+          "totalExclusiveMs": 59.21499991416931,
+          "fractionOfActiveScheduledTime": 0.5054630814039811
+        },
+        {
+          "group": "formatted_readouts_and_retained_dom",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 0.8285714412222103,
+            "medianMs": 0.7849999666213989,
+            "p95Ms": 1.1349999904632568,
+            "p99Ms": 1.940000057220459,
+            "maxMs": 1.940000057220459
+          },
+          "totalExclusiveMs": 40.600000619888306,
+          "fractionOfActiveScheduledTime": 0.34656423960277183
+        },
+        {
+          "group": "remaining_wrappers_setup_and_residual",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 0.16030612040539177,
+            "medianMs": 0.1400001049041748,
+            "p95Ms": 0.2799999713897705,
+            "p99Ms": 0.29999983310699463,
+            "maxMs": 0.29999983310699463
+          },
+          "totalExclusiveMs": 7.854999899864197,
+          "fractionOfActiveScheduledTime": 0.06705078881311045
+        },
+        {
+          "group": "chart_work",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 0.057142868333933304,
+            "medianMs": 0.0549999475479126,
+            "p95Ms": 0.09500002861022949,
+            "p99Ms": 0.13499999046325684,
+            "maxMs": 0.13499999046325684
+          },
+          "totalExclusiveMs": 2.800000548362732,
+          "fractionOfActiveScheduledTime": 0.023900986357505722
+        },
+        {
+          "group": "acquisition_including_native_boundary",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 0.051632647611656965,
+            "medianMs": 0.04999995231628418,
+            "p95Ms": 0.08500003814697266,
+            "p99Ms": 0.11000001430511475,
+            "maxMs": 0.11000001430511475
+          },
+          "totalExclusiveMs": 2.5299997329711914,
+          "fractionOfActiveScheduledTime": 0.021596241878451203
+        },
+        {
+          "group": "fourier",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 0.04479591457211241,
+            "medianMs": 0.039999961853027344,
+            "p95Ms": 0.07999992370605469,
+            "p99Ms": 0.10500001907348633,
+            "maxMs": 0.10500001907348633
+          },
+          "totalExclusiveMs": 2.1949998140335083,
+          "fractionOfActiveScheduledTime": 0.018736660834091413
+        },
+        {
+          "group": "history_preparation",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 0.020102031376897072,
+            "medianMs": 0.019999980926513672,
+            "p95Ms": 0.034999966621398926,
+            "p99Ms": 0.04999995231628418,
+            "maxMs": 0.04999995231628418
+          },
+          "totalExclusiveMs": 0.9849995374679565,
+          "fractionOfActiveScheduledTime": 0.0084080199630451
+        },
+        {
+          "group": "controls_audio_and_direct_markup",
+          "summaryPerActiveScheduledInvocation": {
+            "count": 49,
+            "meanMs": 0.019795914085543886,
+            "medianMs": 0.019999980926513672,
+            "p95Ms": 0.039999961853027344,
+            "p99Ms": 0.0549999475479126,
+            "maxMs": 0.0549999475479126
+          },
+          "totalExclusiveMs": 0.9699997901916504,
+          "fractionOfActiveScheduledTime": 0.008279981147043203
+        }
+      ],
+      "maxReconstructionErrorMs": 0.0
+    },
+    {
+      "run": "waveattr-v1-routed-a2",
+      "L": 97,
+      "state": "collapsed",
+      "ticks": [
+        319,
+        452
+      ],
+      "durationMs": 12017.294999957085,
+      "frames": {
+        "count": 721,
+        "meanMs": 16.665998613037456,
+        "medianMs": 16.665000000000873,
+        "p95Ms": 16.67000000000553,
+        "p99Ms": 16.67000000000553,
+        "maxMs": 16.670000000012806,
+        "effectiveFps": 60.00240508946889,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "waveCallback": {
+        "count": 48,
+        "meanMs": 0.018229171633720398,
+        "medianMs": 0.019999980926513672,
+        "p95Ms": 0.029999971389770508,
+        "p99Ms": 0.04499995708465576,
+        "maxMs": 0.04499995708465576
+      },
+      "actions": {
+        "count": 0,
+        "meanMs": 0,
+        "medianMs": 0,
+        "p95Ms": 0,
+        "p99Ms": 0,
+        "maxMs": 0
+      },
+      "integrityReconstructed": true,
+      "activeScheduledInvocations": 0,
+      "originCounts": {
+        "panel_external": 1,
+        "scheduled": 48
+      },
+      "dominantDisjointCosts": [],
+      "maxReconstructionErrorMs": 0.0
+    },
+    {
+      "run": "waveattr-v1-routed-a2",
+      "L": 97,
+      "state": "hidden",
+      "ticks": [
+        464,
+        598
+      ],
+      "durationMs": 12004.795000076294,
+      "frames": {
+        "count": 720,
+        "meanMs": 16.666000000000004,
+        "medianMs": 16.66500000000815,
+        "p95Ms": 16.669999999998254,
+        "p99Ms": 16.670000000012806,
+        "maxMs": 16.670000000012806,
+        "effectiveFps": 60.002400096003825,
+        "intervalsOver20ms": 0,
+        "intervalsOver33_4ms": 0
+      },
+      "waveCallback": {
+        "count": 48,
+        "meanMs": 0.014166655639807383,
+        "medianMs": 0.014999985694885254,
+        "p95Ms": 0.02499997615814209,
+        "p99Ms": 0.03500008583068848,
+        "maxMs": 0.03500008583068848
+      },
+      "actions": {
+        "count": 0,
+        "meanMs": 0,
+        "medianMs": 0,
+        "p95Ms": 0,
+        "p99Ms": 0,
+        "maxMs": 0
+      },
+      "integrityReconstructed": true,
+      "activeScheduledInvocations": 0,
+      "originCounts": {
+        "scheduled": 48
+      },
+      "dominantDisjointCosts": [],
+      "maxReconstructionErrorMs": 0.0
+    }
+  ],
+  "interpretation": {
+    "L97Worker": "Visible qualification/reduction is about 50.3% docked and 50.5% floated of active scheduled time; formatted readouts/retained DOM about35.1% and34.7%. Synchronous acquisition is about2.2% in each state and excludes worker sampling CPU. These are disjoint same-invocation totals, not p95 subtraction.",
+    "L33Direct": "Acquisition including native boundary plus qualification/reduction is about75.2% docked and75.0% floated. Native spans include JavaScript/embind boundary and return work. A1 L33 values are not included.",
+    "clock": "L33 payload clocks remain absent. In all98 observed L97 visible scheduled invocations, separate J/E metadata ticks equal each other and the existing owner-read tick. This observation does not prove a general common-publication/clock contract.",
+    "cohort": "All visible scheduled invocations are available, new-history, warm-basis, preexisting-chart observations. Cold cache, initialization, waiting, completed-empty and same-tick redraw costs are not established by this run. Worker docked count varies between24041 and35937; floated count is35937.",
+    "originalFailure": "The A1 L97 startup failure remains retained and unexplained. Successful later startup and A2 do not erase or explain it."
+  },
+  "limits": [
+    "Instrumentation overhead is included and has not been measured or subtracted.",
+    "No stage timing is attributed to unrelated global ownerRead diagnostics.",
+    "No worker CPU, GPU, native-only CPU, physical recovery or broad lifecycle guarantee is established.",
+    "The pre-timing freeze archive verifies; its live coordinator program has since gained explicit dispositions and registrations. Current prose is not represented as byte-identical to its original snapshot."
+  ],
+  "reviewArtifacts": [
+    {
+      "path": "engine/build/scale0_wave_attribution_attempt2_review_20260908/cadence-provenance.json",
+      "bytes": 4625,
+      "sha256": "b4aa87a565325966f48c592ea658ef2d00fc88164edcce6ec14e883580478d9f"
+    },
+    {
+      "path": "engine/build/scale0_wave_attribution_attempt2_review_20260908/finalize_review.py",
+      "bytes": 10026,
+      "sha256": "05dff40fa22ec11b36f4d12c23ac4e3df8ee5ace265981f9024c5a5e66030e3f"
+    },
+    {
+      "path": "engine/build/scale0_wave_attribution_attempt2_review_20260908/independent-results-calculation.json",
+      "bytes": 1134847,
+      "sha256": "b7d3a3774b07d5cb1298348c44e0e9669d291aae56c61b3a8ca38cde3c9bd74c"
+    },
+    {
+      "path": "engine/build/scale0_wave_attribution_attempt2_review_20260908/reconstruct_attempt2.py",
+      "bytes": 15918,
+      "sha256": "bad1dfcc2d0af203f8bae6ac45c695128643d719559422a58406161f389f6997"
+    },
+    {
+      "path": "engine/build/scale0_wave_attribution_attempt2_review_20260908/reconstruct_results.hubble-original.py",
+      "bytes": 15029,
+      "sha256": "f036c7d6e85fb6a5357750e8391167a0e14fc21f74e5d69cd17628d14fd79ff4"
+    },
+    {
+      "path": "engine/build/scale0_wave_attribution_attempt2_review_20260908/reconstruction.log",
+      "bytes": 5293,
+      "sha256": "fb5bd85e7faa448893e5d9ff884d3e2058dbf1ed8e9b802d75f8c55f2ed07f52"
+    }
+  ],
+  "productionOrProbeEdits": [],
+  "browserBuildGpuExecuted": false
+}

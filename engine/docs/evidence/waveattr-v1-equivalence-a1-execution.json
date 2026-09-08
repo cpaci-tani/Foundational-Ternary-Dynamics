@@ -1,0 +1,54 @@
+{
+  "schema": "ftd.wave-attribution.execution.v1",
+  "acceptance": false,
+  "mode": "equivalence",
+  "variant": "routed",
+  "runId": "waveattr-v1-equivalence-a1",
+  "startedAtUtc": "2026-09-08T07:25:31.022058+00:00",
+  "draftManifestSha256": "a9f763396e72a59cde8aba4927a547c5fa12deeaf0fcc9969b7bafaec7120259",
+  "baseManifestSha256": "d7b671f7fdefa4d8df8c0ddbdf52d1cd1075770d9ba2e0338cba6b4adb31708c",
+  "checkedSourceFiles": 2176,
+  "checkedDraftFiles": 37,
+  "runnerSha256": "e3aa96cd051c64ea63a743f3317871eee07a4ffe22c2541fa0ed3fa1d07c9b8a",
+  "trace": "retain-on-failure",
+  "status": "passed",
+  "command": [
+    "node",
+    "C:\\Users\\cpaci\\Desktop\\ftd\\engine\\build\\scale0_wave_attribution_probe_20260908\\run-browser.mjs",
+    "equivalence"
+  ],
+  "exitCode": 0,
+  "finishedAtUtc": "2026-09-08T07:25:38.165599+00:00",
+  "sourceDrift": [],
+  "archive": {
+    "path": "engine/build/waveattr-v1-equivalence-a1-results.zip",
+    "sha256": "993f526187b15640cec297744a2154da7932bba0316bf9b425b7a2f443303c98",
+    "files": [
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/manifest.json",
+        "bytes": 9483,
+        "sha256": "a9f763396e72a59cde8aba4927a547c5fa12deeaf0fcc9969b7bafaec7120259"
+      },
+      {
+        "path": "engine/build/run_scale0_wave_attribution_20260908.py",
+        "bytes": 4722,
+        "sha256": "e3aa96cd051c64ea63a743f3317871eee07a4ffe22c2541fa0ed3fa1d07c9b8a"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/run-reservations/waveattr-v1-equivalence-a1/browser.log",
+        "bytes": 617,
+        "sha256": "8f0f7c2d468cb31392849489581a29e45f92a6d5b35383fa40696635b9a23e2c"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/run-reservations/waveattr-v1-equivalence-a1/reservation.json",
+        "bytes": 778,
+        "sha256": "a59dc49109ff3c3886b710f74c4dbc8befbc527a83c4f0d4ff7649852065ede9"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_probe_20260908/browser-results/waveattr-v1-equivalence-a1/.last-run.json",
+        "bytes": 45,
+        "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+      }
+    ]
+  }
+}

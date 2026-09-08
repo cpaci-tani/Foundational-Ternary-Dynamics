@@ -1,0 +1,153 @@
+{
+  "schema": "scale0-e-only-sampler-1",
+  "date": "2026-09-07",
+  "status": "accepted_bounded_electric_sampler_source_and_actual_wasm_oracle",
+  "scope": "Only get_e_field_sampled lambda changed relative to frozen panel candidate; full EM diagnostic, shared sampling driver and production laws preserved.",
+  "source": {
+    "path": "engine/wasm/ftd_wasm.cpp",
+    "before_sha256": "eb9936c67f7bb8c7731db8695db607a7373475979efc362d44d23b22070a8e7c",
+    "after_sha256": "a3de5008a55dcbc793f5e390d7f95c45380fb6344221e131acfdf956f90a8802",
+    "archive": "engine/build/scale0_audit_panels_candidate_20260907.zip"
+  },
+  "implementation": "Explicit const RenderBridge voxel read; identical Vec3 multiply by -1.0, mag2/sqrt and <1e-15 branch; omit unused magnetic curl/norm.",
+  "same_contract": [
+    "grid coordinates, effective stride and origin",
+    "z-y-x traversal and threshold compaction",
+    "Float32 conversion and count",
+    "static per-lambda borrowed WASM buffer lifetime",
+    "no tick or dynamical digest mutation"
+  ],
+  "builds": [
+    {
+      "tree": "build_wasm",
+      "command": "C:/emsdk/upstream/emscripten/emmake.bat cmake --build engine/build_wasm --target ftd_wasm --parallel 24",
+      "exit_code": 0,
+      "log": "engine/docs/evidence/scale0-e-only-wasm32-build-2026-09-07.log"
+    },
+    {
+      "tree": "build_wasm64",
+      "command": "C:/emsdk/upstream/emscripten/emmake.bat cmake --build engine/build_wasm64 --target ftd_wasm --parallel 24",
+      "exit_code": 0,
+      "log": "engine/docs/evidence/scale0-e-only-wasm64-build-2026-09-07.log"
+    },
+    {
+      "tree": "build_wasm_mt",
+      "command": "C:/emsdk/upstream/emscripten/emmake.bat cmake --build engine/build_wasm_mt --target ftd_wasm --parallel 24",
+      "exit_code": 0,
+      "log": "engine/docs/evidence/scale0-e-only-wasm-mt-build-2026-09-07.log"
+    }
+  ],
+  "build_warning": "MT retains existing Emscripten -pthread + ALLOW_MEMORY_GROWTH performance warning. No performance conclusion from compilation.",
+  "predeployment_correction": "Literal nonconst rb.voxels accessor was caught before live copy; corrected to const read semantics and all3 families rebuilt. Earlier private stage never deployed.",
+  "backup": {
+    "directory": "engine/build_wasm_e_only_backup_20260907",
+    "bundle_sha256": "8059ae90eede1b25e647e84be0ba78b6f0af08f1e80ccef1a71534b0b21fb8ce",
+    "files": [
+      {
+        "file": "ftd_core.js",
+        "sha256": "8f0d5aa0420e81d5245a13866d8069833e0117df1418023749067abe63addec7"
+      },
+      {
+        "file": "ftd_core.wasm",
+        "sha256": "382ac85ec14e0bf27661942c7197f8df0aa00d23dfab164c0f2597dfda1a19f8"
+      },
+      {
+        "file": "ftd_core64.js",
+        "sha256": "1b2a9af334046c2f16e4e78961c4017708c7cc6d7d40df3f83ceb4109c4e2624"
+      },
+      {
+        "file": "ftd_core64.wasm",
+        "sha256": "93032f640e8d47856c342b3b32e5be4873e3ff2d531ae7d214600238095dd871"
+      },
+      {
+        "file": "ftd_core_mt.js",
+        "sha256": "1d5a7f3d37b6c6068e80a499ac61b4367f94d21f1590576acee95559d6740c4e"
+      },
+      {
+        "file": "ftd_core_mt.wasm",
+        "sha256": "394e02ef868f3413dccac980bf2eb7d84d0b6e92dc2a9c9dbfb54dbffea4bcb1"
+      },
+      {
+        "file": "build_info.json",
+        "sha256": "8ecbd7ce6399229496e8b6c249f561bf5882185a765eafea8127ce1fcfbe00ec"
+      },
+      {
+        "file": "build_info.txt",
+        "sha256": "84d85b72658eaffb07eb1041497a79f73ece94eb88c85947b7e462c395d06325"
+      }
+    ]
+  },
+  "installed": {
+    "bundle_sha256": "adeadccc47a7a4f51ab68fed4e9270954fa0c76fae69726a39968a0cd9556b6b",
+    "manifest_sha256": "da914092ac43018a334d1f2b8d7b60dcdb9bbf241af55cfc262c820ebd2b5f52",
+    "files": [
+      {
+        "file": "ftd_core.js",
+        "size": 136178,
+        "sha256": "8f0d5aa0420e81d5245a13866d8069833e0117df1418023749067abe63addec7"
+      },
+      {
+        "file": "ftd_core.wasm",
+        "size": 930943,
+        "sha256": "4b0f68c62f860f56f3b1945dc2ed64ae717f2b1cb2556b09231f66ec84235936"
+      },
+      {
+        "file": "ftd_core64.js",
+        "size": 145014,
+        "sha256": "1b2a9af334046c2f16e4e78961c4017708c7cc6d7d40df3f83ceb4109c4e2624"
+      },
+      {
+        "file": "ftd_core64.wasm",
+        "size": 962209,
+        "sha256": "0ae2fdf992987b502157c6751cdb6cedf99e8f825d7234102693b5116893a81b"
+      },
+      {
+        "file": "ftd_core_mt.js",
+        "size": 158993,
+        "sha256": "1d5a7f3d37b6c6068e80a499ac61b4367f94d21f1590576acee95559d6740c4e"
+      },
+      {
+        "file": "ftd_core_mt.wasm",
+        "size": 951880,
+        "sha256": "b6302699e75575eb7cf3571cb671e700381b70ef748ce47ab26e96a5af0ffc76"
+      },
+      {
+        "file": "build_info.json",
+        "size": 2910,
+        "sha256": "da914092ac43018a334d1f2b8d7b60dcdb9bbf241af55cfc262c820ebd2b5f52"
+      },
+      {
+        "file": "build_info.txt",
+        "size": 401,
+        "sha256": "f43f288cf76ef8e9f121b1d47a402cda47f8ada7c8bb16c862edf28d4abf85bb"
+      }
+    ]
+  },
+  "copy_validation": "Exact8 filenames copied using native PowerShell Copy-Item -LiteralPath; each stage/live SHA256 matched. No directory move/delete. All initial8 backup bytes matched predecessor live files before replacement; strict artifacts outside named destinations untouched.",
+  "independent_source_review": {
+    "reviewer": "plan_continuum_gate",
+    "disposition": "accepted by plan_continuum_gate; actual coordinator oracle subsequently passed"
+  },
+  "oracle": {
+    "path": "engine/web/tests/scale0-electric-sampler-oracle.spec.js",
+    "sha256": "e26db846b90446b766fcf0ceee1901c0810450c8945fd103be3d8fdc4350bf8d",
+    "syntax_check": "node --check passed",
+    "execution": {
+      "owner": "coordinator",
+      "command": "npx playwright test scale0-electric-sampler-oracle.spec.js --project=chromium",
+      "passed": 3,
+      "failed": 0,
+      "comparison_cases": 72,
+      "duration_seconds": 5.7,
+      "log": "engine/docs/evidence/scale0-electric-sampler-oracle-2026-09-07.log",
+      "log_sha256": "662bb625ab950b73a8e50ac4c94a91fa8ffa5c0f1275c388f10787284320edad"
+    },
+    "coverage": "3actualABIs,4L values1/8/9/33, empty/prepared/one-tick states and4prepared strides =>72 comparisons; unchanged full-EM inspect oracle, Uint32 Float32 bit patterns, threshold fixtures, signed zeros, geometry/count/metadata, tick/digest identity",
+    "threshold_preparation": "Existing injection ABI rounds to Float32; fixtures verify actual unchanged Emag lies below versus at-or-above threshold, not an exact double equality preparation."
+  },
+  "limits": [
+    "No speedup or FPS claim until coordinator measures final candidate.",
+    "Full-EM point diagnostic oracle is unchanged production reference, not an independent physical-law derivation.",
+    "WASM finite prepared fixtures do not certify arbitrary states or CPU/CUDA bitwise parity."
+  ]
+}

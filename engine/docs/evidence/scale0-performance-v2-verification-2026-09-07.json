@@ -1,0 +1,412 @@
+{
+  "schema": "scale0-performance-v2-final-verification-v1",
+  "verified_utc": "2026-09-08T05:34:32.275551+00:00",
+  "status": "frozen_candidate_evidence_reconciled_performance_failures_remain",
+  "release_approved": false,
+  "candidate_identity": "8ad614edd7616b43622b437d29a5d3800a614f35ad4d9da9fb3226f725fd0177",
+  "candidate_manifest": {
+    "path": "engine/docs/evidence/scale0-performance-v2-candidate-manifest-2026-09-07.json",
+    "size": 409619,
+    "sha256": "f75c21d37a620a18d48541732815d2f767f870b490ed6912125a3a75be7e1ebd"
+  },
+  "source_dirty": true,
+  "source_files_checked": 2171,
+  "source_drift": [],
+  "archive": {
+    "path": "engine/build/scale0_performance_v2_candidate_20260907.zip",
+    "size": 10208612,
+    "sha256": "3278a805f0ac37156036925dbae4ffe7ddcd20a9a7ff012c9e86b75ae252503f"
+  },
+  "archive_content_drift": [],
+  "archive_preregistration_snapshots_preserved": [
+    {
+      "path": "engine/docs/PROGRAM_SCALE0_PERFORMANCE_V2_2026-09-07.md",
+      "sha256": "d20cd24b3e2223fafefb168ce017bc3696703c66842e3972728c1ceb82a7c7e4",
+      "scope": "Frozen archive snapshot; live disposition may be appended later"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-independent-review-2026-09-07.json",
+      "sha256": "f6d6bd97202c3e0b4a4d7d5a432bc8398945904609e36bbcc762f7c6a804ffe7",
+      "scope": "Frozen archive snapshot; live disposition may be appended later"
+    }
+  ],
+  "strict_preservation": [
+    {
+      "manifest": "strict-stack-source-manifest-2026-09-05.json",
+      "files": 69,
+      "drift": []
+    },
+    {
+      "manifest": "strict-recovery-wave1-manifest-2026-09-05.json",
+      "files": 44,
+      "drift": []
+    },
+    {
+      "manifest": "strict-recovery-wave2-manifest-2026-09-05.json",
+      "files": 73,
+      "drift": []
+    }
+  ],
+  "prior_archive_preservation": [
+    {
+      "manifest": "scale0-correctness-candidate-manifest-2026-09-07.json",
+      "archive": {
+        "path": "engine/build/scale0_audit_correctness_candidate_20260907.zip",
+        "size": 8704650,
+        "sha256": "d174323bf5e5a938af0e56dd8ede4d856f56333b7b31e632d71aaa7837a6e60c"
+      },
+      "matches": true
+    },
+    {
+      "manifest": "scale0-correctness-candidate-v2-manifest-2026-09-07.json",
+      "archive": {
+        "path": "engine/build/scale0_audit_correctness_candidate_v2_20260907.zip",
+        "size": 8704811,
+        "sha256": "e8d0797ce62b7e845ccc928bc64ba0e003f9051d0cec2a8d847fd2a29ed8bb60"
+      },
+      "matches": true
+    },
+    {
+      "manifest": "scale0-transport-candidate-manifest-2026-09-07.json",
+      "archive": {
+        "path": "engine/build/scale0_transport_candidate_20260907.zip",
+        "size": 8718603,
+        "sha256": "a5200558dc8912f81d0d2585cb8e6893521b6bd016a7f2ef79da851aa3e6139b"
+      },
+      "matches": true
+    },
+    {
+      "manifest": "native-observation-v3-candidate-manifest-2026-09-07.json",
+      "archive": {
+        "path": "engine/build/native_observation_v3_candidate_20260907.zip",
+        "size": 8755021,
+        "sha256": "cff9a05c32240d1feb902bfcb01cb7b21c01989f7ee550245ae44e6c3e7bd8aa"
+      },
+      "matches": true
+    },
+    {
+      "manifest": "native-observation-v3-candidate-v2-manifest-2026-09-07.json",
+      "archive": {
+        "path": "engine/build/native_observation_v3_candidate_v2_20260907.zip",
+        "size": 8755103,
+        "sha256": "a5eb995ba69787a1a2f445b0a3be68462e33bd56afeb79838fa855caf523b8d9"
+      },
+      "matches": true
+    }
+  ],
+  "preserved_browser_failure_archives": [
+    {
+      "path": "engine/build/scale0_performance_v2_browser_startup_failure_20260907.zip",
+      "size": 8936414,
+      "sha256": "f221a8d61bcc73c4cf0c7b409ac00b4d74bb5c681e2ffbca053f369da9de2c0a"
+    },
+    {
+      "path": "engine/build/scale0_performance_v2_time_test_failure_20260907.zip",
+      "size": 13174306,
+      "sha256": "f57066cfe618cbf687a5336497ae64fe8514bad56f7031121aae3a833940d2f2"
+    }
+  ],
+  "wasm_artifacts": [
+    {
+      "path": "engine/web/wasm/ftd_core.js",
+      "size": 136178,
+      "sha256": "8f0d5aa0420e81d5245a13866d8069833e0117df1418023749067abe63addec7"
+    },
+    {
+      "path": "engine/web/wasm/ftd_core.wasm",
+      "size": 931721,
+      "sha256": "6ad203d9202c400ca6b52c929387be4c6e90db084e5bc0d147e9560c8c1339a7"
+    },
+    {
+      "path": "engine/web/wasm/ftd_core64.js",
+      "size": 145014,
+      "sha256": "1b2a9af334046c2f16e4e78961c4017708c7cc6d7d40df3f83ceb4109c4e2624"
+    },
+    {
+      "path": "engine/web/wasm/ftd_core64.wasm",
+      "size": 962980,
+      "sha256": "be667edfdd2a364120c9b56946b4a617cb69b641c51b56394db5747bf5caaad3"
+    },
+    {
+      "path": "engine/web/wasm/ftd_core_mt.js",
+      "size": 158993,
+      "sha256": "1d5a7f3d37b6c6068e80a499ac61b4367f94d21f1590576acee95559d6740c4e"
+    },
+    {
+      "path": "engine/web/wasm/ftd_core_mt.wasm",
+      "size": 952655,
+      "sha256": "d30871aa97f771c7f864a1165acc2963ec826d50421435f3a9c62d867a22d69f"
+    }
+  ],
+  "wasm_bundle_identity": "97dbc15f61ba8952e68be8012279e50bf0bc650e5806f6bb5ca705952df5d4e3",
+  "wasm_source_dirty": true,
+  "native_or_wasm_rebuilt_for_this_wave": false,
+  "hardware_execution": {
+    "completedUtc": "2026-09-08T05:23:36.0834920Z",
+    "overlaysExit": 0,
+    "panelsExit": 1
+  },
+  "hardware_reports": [
+    {
+      "kind": "panels",
+      "size": 33,
+      "report": {
+        "path": "engine/docs/evidence/scale0-hardware-repair-v2-panels-L33-2026-09-07.json",
+        "size": 535787,
+        "sha256": "feb2d9c505fd6a939e7d85188e610af50b5286a4addf396958d9c52a82bd2cdb"
+      },
+      "rows": 72,
+      "passed": 66,
+      "failed": 6,
+      "failures": [
+        {
+          "id": "wave-lab",
+          "state": "docked",
+          "failures": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "wave-lab",
+          "state": "floated",
+          "failures": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "spectrum",
+          "state": "docked",
+          "failures": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "spectrum",
+          "state": "floated",
+          "failures": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "time",
+          "state": "docked",
+          "failures": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "time",
+          "state": "floated",
+          "failures": [
+            "interface callback budget"
+          ]
+        }
+      ],
+      "errors": []
+    },
+    {
+      "kind": "panels",
+      "size": 97,
+      "report": {
+        "path": "engine/docs/evidence/scale0-hardware-repair-v2-panels-L97-2026-09-07.json",
+        "size": 517402,
+        "sha256": "fccc19109bcaf7d8c81fe601f41b1fe356d912733805bf3504f5f070b7352c3e"
+      },
+      "rows": 72,
+      "passed": 69,
+      "failed": 3,
+      "failures": [
+        {
+          "id": "gravity",
+          "state": "docked",
+          "failures": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "gravity",
+          "state": "floated",
+          "failures": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "time",
+          "state": "floated",
+          "failures": [
+            "interface callback budget"
+          ]
+        }
+      ],
+      "errors": []
+    },
+    {
+      "kind": "overlays",
+      "size": 33,
+      "report": {
+        "path": "engine/docs/evidence/scale0-hardware-repair-v2-overlays-L33-2026-09-07.json",
+        "size": 608068,
+        "sha256": "84254128a10c153adf9f186cd6e77fede1f610666ac250b81d7d39979f8b1f72"
+      },
+      "rows": 72,
+      "passed": 72,
+      "failed": 0,
+      "failures": [],
+      "errors": []
+    },
+    {
+      "kind": "overlays",
+      "size": 97,
+      "report": {
+        "path": "engine/docs/evidence/scale0-hardware-repair-v2-overlays-L97-2026-09-07.json",
+        "size": 596744,
+        "sha256": "c5a21caa76ec27fb82422a4df972fd272bd05a3950023c73f2e48b2bfa933586"
+      },
+      "rows": 72,
+      "passed": 72,
+      "failed": 0,
+      "failures": [],
+      "errors": []
+    }
+  ],
+  "hardware_totals": {
+    "logical_rows": 288,
+    "measured_rows": 288,
+    "passed": 279,
+    "failed": 9,
+    "frame_intervals": 209553,
+    "raw_action_samples": 2160,
+    "renderers": [
+      "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    ],
+    "runtime_errors": 0
+  },
+  "software_prerequisites": {
+    "node": {
+      "passed": 125,
+      "failed": 0,
+      "skipped": 0
+    },
+    "browser_initial_functional": {
+      "passed": 11,
+      "failed": 1,
+      "skipped": 1
+    },
+    "browser_final_affected_damping_time": {
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0
+    },
+    "browser_unique_passing_cases": 14,
+    "full_unified_15_case_rerun": false,
+    "skip": "Direct-only vacuum diagnostic remains unavailable on the worker owner.",
+    "retained_failures": "Default browser timer receiver failure and both stale Time caption/tooltip fixture failures remain separate historical records; repaired cases passed focused reruns."
+  },
+  "new_scientific_proposal": {
+    "document": {
+      "path": "engine/docs/SPEC_PHI_ALIGNMENT_SUCCESSOR_PROPOSAL_V1.md",
+      "size": 22302,
+      "sha256": "7bfc33975ff2b879807c4fde8ef83f8c4b3c6f78d88b6c574620958fb52195c1"
+    },
+    "review": {
+      "path": "engine/docs/evidence/phi-alignment-proposal-v1-review-2026-09-07.json",
+      "size": 12603,
+      "sha256": "fc5cdf039eca8e39c532b438afebe269bcd758d0b0e1846e6e01e031987d5060"
+    },
+    "status": "accepted_as_bounded_proposal_only",
+    "implemented": false,
+    "physical_recovery_certified": false
+  },
+  "known_unrepaired_correctness_finding_at_frozen_revision": "WaveLab lane accumulators omit componentIndex, so x/y directional peaks, probes and harmonics use z. A separately versioned correction requires direct manufactured component fixtures.",
+  "evidence_preservation_limits": [
+    "Raw frame and callback timing vectors were not retained; independent reviews validate recorded aggregates and gate consistency. Raw interaction samples were retained and recomputed.",
+    "Panel raw JSON and full failure logs are retained. The subsequent overlay Playwright invocation cleared the panel test-results screenshot/error-context attachments before archival; no archived panel screenshots or traces are claimed.",
+    "The original stale-Time functional-suite failure log is retained, but its transient test-results were cleared by the next suite before archival.",
+    "Except the explicit Damping vertex checks, the hardware matrix does not independently prove nonzero rendered geometry for each overlay.",
+    "The reports do not embed candidate identity; binding uses the preregistration, execution context, frozen archive, independent reviews and pre/post source checks."
+  ],
+  "remaining_gates": [
+    "Nine panel callback p95 failures remain unless an independently reviewed later candidate passes the unchanged gate.",
+    "Correct the separately identified WaveLab component defect and audit its actual directional outputs.",
+    "Full production replay remains intentionally deferred; strict complete-state checkpoints remain mandatory.",
+    "General continuum correlation/leakage/relaxation control, restoring matter, spectra, chemistry, macroscopic response and causal gravity remain open research gates.",
+    "Clean release, broader lifecycle/performance scope and canonical adoption/deployment remain separate gates."
+  ],
+  "evidence": [
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-browser-functional-2026-09-07.log",
+      "size": 6661,
+      "sha256": "e9139a07b1d72d2a1e59dbc9f2894863d5bc5d6b70e4e808879dd705e7221359"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-browser-startup-failure-2026-09-07.json",
+      "size": 617,
+      "sha256": "38dc5c4010c90b55e4cc3296f89cc0ca48703b2a634890e68769c8f3d74aaf3a"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-campaign-execution-2026-09-07.json",
+      "size": 98,
+      "sha256": "521fdd443c5854b562b26b80adaa274da5681dae521e5d6966121f99134d35a8"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-candidate-manifest-2026-09-07.json",
+      "size": 409619,
+      "sha256": "f75c21d37a620a18d48541732815d2f767f870b490ed6912125a3a75be7e1ebd"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-damping-preparation-2026-09-07.log",
+      "size": 764,
+      "sha256": "e00407f77132f61272d739ab724397179742358524fc6250db276d26037678b0"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-damping-time-final-2026-09-07.log",
+      "size": 934,
+      "sha256": "b72956bd7ddd1970e4583927c291d98f66590f83d1d5e789fe3d14f3fd5e09b4"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-freeze-review-2026-09-07.json",
+      "size": 21440,
+      "sha256": "8760973ab31c708c806301daa00e0a67faa271082d1381d588bb6602e16d3908"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-independent-review-2026-09-07.json",
+      "size": 24872,
+      "sha256": "f6d6bd97202c3e0b4a4d7d5a432bc8398945904609e36bbcc762f7c6a804ffe7"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-integrated-review-2026-09-07.json",
+      "size": 97354,
+      "sha256": "5c651302d33ac82a44f3c710dc438705db5b67063ebe4a6c4e20a75b291b6132"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-node-2026-09-07.log",
+      "size": 11512,
+      "sha256": "0cd95bbf3297b506b2c7ce192623b726208a96231d656fe9c5380b0a3b8357e1"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-overlays-hardware-2026-09-07.log",
+      "size": 19530,
+      "sha256": "9edebfb986d2476524911156eb91472133eb52ef0933bb04100818aba41e65da"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-overlays-L33-review-2026-09-07.json",
+      "size": 81071,
+      "sha256": "7e43b8d87e18caad6d01bdd740ba0b6669f9703a99465430c80742c533b783d0"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-panels-hardware-2026-09-07.log",
+      "size": 134345,
+      "sha256": "ebdcf6049bd1ca278601cc898b8603ab5d2bdb9ee61a63f30c7980744ad0cb87"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-panels-review-2026-09-07.json",
+      "size": 324100,
+      "sha256": "6e82fc0c37db871f47e0f7cddb283b5697c880c0f8577e971947c7b2282ad227"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-time-caption-regression-2026-09-07.log",
+      "size": 3454,
+      "sha256": "e13b553affbafd158a87cecff6e9847996abdacc833ae59c827c1950093fb6e9"
+    }
+  ]
+}

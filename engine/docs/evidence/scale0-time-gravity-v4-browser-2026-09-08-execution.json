@@ -1,0 +1,51 @@
+{
+  "schema": "scale0-time-gravity-v4-browser-execution-v1",
+  "startedUtc": "2026-09-08T06:32:28.638159+00:00",
+  "completedUtc": "2026-09-08T06:35:06.897323+00:00",
+  "commands": [
+    [
+      "node",
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "--workers=1",
+      "scale0-gravity-slab.spec.js",
+      "scale0-time.spec.js",
+      "scale0-gravity-overlay-audit.spec.js",
+      "--grep",
+      "mounted Gravity|lab clock ticks|compact native gravity slices|direct-WASM fused proxy|mounted direct-WASM consumes|worker sampler readiness|paused native replies"
+    ]
+  ],
+  "exitCodes": [
+    1
+  ],
+  "archive": "engine/build/scale0_time_gravity_v4_browser_results_20260908.zip",
+  "archiveSha256": "8d8e077e92f601103457c447897b428f0ab434a457c9d4aef76f18b38b89f069",
+  "files": [
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-browser-2026-09-08.log",
+      "bytes": 5449,
+      "sha256": "386d3fa2380ee9f248e8aeddc539814f4826daf2553cb84613fd35557b778465"
+    },
+    {
+      "path": "engine/web/test-results/.last-run.json",
+      "bytes": 96,
+      "sha256": "4c85200dff9ea0a249b505914d91f3d85538cf60cf4faf23d99e2718b98c45f8"
+    },
+    {
+      "path": "engine/web/test-results/scale0-gravity-slab-mounte-119a6-ecovery-without-dense-reads-chromium/error-context.md",
+      "bytes": 10433,
+      "sha256": "723bb7bc7f7c99f6737d487d389c0f1f7630654ff6af6c7a333cac3d8e70d447"
+    },
+    {
+      "path": "engine/web/test-results/scale0-gravity-slab-mounte-119a6-ecovery-without-dense-reads-chromium/test-failed-1.png",
+      "bytes": 55594,
+      "sha256": "77c21f435b117626ac2de2e310c1463048dec79d9cf869d217d92d704f6eeb8c"
+    },
+    {
+      "path": "engine/web/test-results/scale0-gravity-slab-mounte-119a6-ecovery-without-dense-reads-chromium/trace.zip",
+      "bytes": 123319,
+      "sha256": "5b25156f9bcab7a38c05be85cd68ba47d25e7fa238d4b0d8903b271578118159"
+    }
+  ],
+  "scope": "Available outputs captured immediately after this invocation, before any subsequent browser run. Hardware matrix disables tracing; no hardware trace claim."
+}

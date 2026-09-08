@@ -1,0 +1,7 @@
+{
+  "status": "passed",
+  "checks": 9,
+  "backend": "forced_cpu",
+  "scope": "independent JSON oracle and actual WebSocket command rejection; digest is scoped",
+  "executable_sha256": "a3343bbfc93067d9584db9d33b8ae37c8934ebdae55358317d139641837535e1"
+}

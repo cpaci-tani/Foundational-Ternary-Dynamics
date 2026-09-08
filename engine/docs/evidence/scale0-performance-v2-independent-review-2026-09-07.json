@@ -1,0 +1,512 @@
+{
+  "schema": "scale0-performance-v2-review-preregistration-v1",
+  "registered_utc": "2026-09-08T04:00:35.847Z",
+  "local_record_date": "2026-09-07",
+  "status": "source_scoped_reviews_accepted_browser_and_hardware_prerequisites_pending",
+  "recording_agent": "/root/spectrum_async_implementation",
+  "recording_method": "Transcription of independent read-only agent reports and coordinator evidence; independent bounded-read reproduction by this recorder. Authors do not approve their own implementations. No external human certification.",
+  "ledger": "engine/docs/PROGRAM_SCALE0_PERFORMANCE_V2_2026-09-07.md",
+  "baseline": {
+    "identity": "a833ab9bc9c163872edd554cd349453c02a8c5d934a4d9bfbdac423c9267167b",
+    "source_files": 2160,
+    "archive": "engine/build/native_observation_v3_candidate_v2_20260907.zip",
+    "role": "preserved prior native observation candidate; not repair-v2 identity"
+  },
+  "candidate": {
+    "status": "freeze_pending",
+    "manifest": null,
+    "archive": null,
+    "identity": null
+  },
+  "source_scopes": {
+    "spectrum": [
+      "engine/web/js/scales/scale0/ui/overlays/spectrum-panel.js",
+      "engine/web/js/scales/scale0/analysis/spectrum-analysis-client.js",
+      "engine/web/js/scales/scale0/analysis/spectrum-analysis-core.js",
+      "engine/web/js/scales/scale0/analysis/spectrum-analysis-worker.js"
+    ],
+    "bounded_reads": [
+      "engine/web/js/bridge/flux-publication.classic.js",
+      "engine/web/js/bridge/wasm-bridge-proxy.js",
+      "engine/web/js/scales/scale0/ui/overlays/p1-observables/anisotropy.js"
+    ],
+    "time": [
+      "engine/web/js/scales/scale0/ui/overlays/time-panel.js"
+    ],
+    "coordinator_readouts": [
+      "engine/web/js/ui/panels/retained-readout.js",
+      "engine/web/js/scales/scale0/ui/overlays/wave-lab/wave-info.js",
+      "engine/web/js/scales/scale0/ui/overlays/conservation-micropanel.js",
+      "engine/web/js/viewport/field-quantum-renderer.js"
+    ],
+    "harness": [
+      "engine/web/tests/scale0-comprehensive-performance.spec.js",
+      "engine/web/tests/scale0-ui-audit-probe.js",
+      "engine/web/tests/scale0-damping-performance-preparation.js"
+    ]
+  },
+  "preregistration_source_snapshot": {
+    "status": "read_only_snapshot_not_candidate_freeze",
+    "files": {
+      "engine/web/js/scales/scale0/ui/overlays/spectrum-panel.js": "ab28bacdc90baea764ef49db3a091aa62da6d380885d5d68aacc464aa5a998b7",
+      "engine/web/js/scales/scale0/analysis/spectrum-analysis-client.js": "2be201c8035cef6926b41357aaec2264d846b6ce9fd8cd07323b875f54caa7b7",
+      "engine/web/js/scales/scale0/analysis/spectrum-analysis-core.js": "d3e82c5bac8c1ee7352fc3ee147b8d5298dbdfa772a2c72aef96b040c237f5d3",
+      "engine/web/js/scales/scale0/analysis/spectrum-analysis-worker.js": "a83b3ddaa82cbfe00fd3c0b1502110abd7878850921d057c8b1972902e7e7d6d",
+      "engine/web/js/bridge/flux-publication.classic.js": "4974dc66eb7d94b526b36719a5fd7be7962417895d9396e7b5ebb329648e4d69",
+      "engine/web/js/bridge/wasm-bridge-proxy.js": "a2e151ed349978e1dafd3105247f71af45ba84e9fa5f9017e94e5141aa501536",
+      "engine/web/js/scales/scale0/ui/overlays/p1-observables/anisotropy.js": "fc674e4b85447c1b323bebb3a0398d842b5bedf46b612a7a1e1c76f4259c96f1",
+      "engine/web/js/scales/scale0/ui/overlays/time-panel.js": "069c23c52de53cb68052cc693e9e65e767001bbc6987a6ce5e47ba41387dd4bd",
+      "engine/web/js/ui/panels/retained-readout.js": "1122665004d5472b83f70c6ad92aea3173686cd6aa54260cc071c1c574d629e5",
+      "engine/web/js/scales/scale0/ui/overlays/wave-lab/wave-info.js": "7283f20e398edad768f7c2f4dd734943d8d9c8715ba3b7adfc279ad05ceadb24",
+      "engine/web/js/scales/scale0/ui/overlays/conservation-micropanel.js": "544ac82ea11d1811af7d1a8f2c092b485531ed3854594acde8cb8ce781ce273c",
+      "engine/web/js/viewport/field-quantum-renderer.js": "44494428df2a9451a4748da8c8353894762917e8199d54400089443058045378",
+      "engine/web/tests/scale0-comprehensive-performance.spec.js": "c5a0e8b727011c9e0b3b40310ee26e6366823c4fbb9c83da2da89d2c9ec00f14",
+      "engine/web/tests/scale0-ui-audit-probe.js": "945649f253545e491c253e74a731d4d9e6949ec8e0e51c60fe73c0547d369a27",
+      "engine/web/tests/scale0-damping-performance-preparation.js": "db8ee1637ac0a3180f51165c08653bd8caef06b06f91a5498c4509a73ecc49ca"
+    },
+    "updated_utc": "2026-09-08T04:04:25.418Z"
+  },
+  "reviews": [
+    {
+      "scope": "Spectrum worker, numerical compatibility and lifecycle",
+      "author": "/root/spectrum_async_implementation",
+      "reviewer": "/root/bounded_worker_reads",
+      "status": "accepted_after_visibility_and_browser_timer_repairs",
+      "independently_rerun_node_tests": 43,
+      "additional_independent_checks": [
+        "Twenty unchanged-visible notifications perform no extra captures or off-coordinator result publication",
+        "Missed hide notification is recovered by ordinary update; one show transition resumes",
+        "onError cancel, dispose and submit reentrancy",
+        "Obsolete worker error/messageerror cannot affect current work",
+        "onResult new submission wins over old pending job"
+      ],
+      "numerical_oracles_unchanged": [
+        "lattice-spectrum.js",
+        "lattice-topology.js"
+      ],
+      "repaired_findings": [
+        "Duplicate global visibility events bypassed the 2 Hz cadence; actual visibility transition guard and regression added"
+      ],
+      "subsequent_browser_finding": {
+        "status": "fixed_independent_reaudit_and_actual_browser_regression_passed",
+        "finding": "Browser Illegal invocation: default timer functions stored as methods received the client object instead of the window receiver",
+        "fix": "Arrow defaults invoke globalThis.setTimeout and globalThis.clearTimeout",
+        "author_node_tests_after_fix": 43,
+        "browser_regression": "engine/web/tests/scale0-spectrum-browser-client.spec.js",
+        "browser_regression_status": "passed_in_coordinator_13_test_suite",
+        "independent_node_tests_after_fix": 43,
+        "independent_receiver_probe": "Previous bare-default source fails; current globalThis arrow wrappers pass",
+        "client_sha256": "2be201c8035cef6926b41357aaec2264d846b6ce9fd8cd07323b875f54caa7b7"
+      },
+      "boundaries": [
+        "No hardware FPS certification",
+        "No full-lattice or continuum certificate",
+        "Per-section sampler clocks remain separate; no joint same-tick state claim"
+      ]
+    },
+    {
+      "scope": "Bounded worker plane/cell observations and P1",
+      "author": "/root/bounded_worker_reads",
+      "reviewer": "/root/spectrum_async_implementation",
+      "status": "accepted_after_exception_release_repair",
+      "independently_rerun_node_tests": 52,
+      "new_node_tests_in_group": 21,
+      "adjacent_node_tests_in_group": 31,
+      "additional_independent_probes": {
+        "count": 4,
+        "cases": [
+          "Shared typed-view construction throw releases acquired pin",
+          "Same-buffer rebind during probe selector access rejects stale result",
+          "Resize during probe selector access rejects stale result",
+          "Disposal during probe selector access rejects stale result"
+        ],
+        "result": "passed"
+      },
+      "repaired_findings": [
+        "acquire previously leaked its pin if shared typed-view construction threw before returning a release handle; owner fixed and reviewer reproduced regression"
+      ],
+      "verified": [
+        "Owned N-squared plane and at most 128-cell Float64 output",
+        "No full-volume fallback or cache population",
+        "Selection validation before pinning and ownership/configuration check after copying",
+        "Original plane layout and circular probe order, Math.round, wrapping, trigonometry and two-pass reduction",
+        "Unknown sampleTick remains null; immutable local publication/configuration metadata",
+        "Direct/native compact fallback and retained SVG cadence"
+      ],
+      "boundaries": [
+        "Concurrent stress is sampled, not exhaustive global enumeration",
+        "PublicationVersion is signed, wrapping and buffer-local",
+        "No global source lineage or hardware performance certification"
+      ]
+    },
+    {
+      "scope": "Time retained readouts and visible history-window copy",
+      "author": "/root/plan_continuum_gate",
+      "reviewer": "/root",
+      "status": "coordinator_source_scoped_acceptance",
+      "focused_node_tests": 6,
+      "verified": [
+        "Cards A/B/C/E/F use retained readout helper",
+        "Imposed card D redraws only on selected-value change",
+        "Complete history retained while visible window alone is copied",
+        "Sampling, source clocks, quadrature and publication cadence unchanged"
+      ],
+      "boundaries": [
+        "Real DOM and hardware verification pending",
+        "Author does not independently approve Time implementation"
+      ]
+    },
+    {
+      "scope": "Coordinator helper, Wave Lab, Conservation and dual renderer",
+      "author": "/root",
+      "reviewer": "/root/plan_continuum_gate",
+      "status": "independent_source_scoped_acceptance",
+      "verified": [
+        "Helper sole-owner div-wrapped HTML/SVG usage preserves numeric markup and retained nodes",
+        "Wave Lab metric/sampler/synth cadence and five history samples unchanged; no-append/no-rebuild chart reuse preserves independent history and resize listeners",
+        "Conservation twelve fixed headline elements retain text/color/missing-title semantics; separate clocks, baseline, hysteresis and source reset unchanged",
+        "Dual invalid data clears dual geometry and leaves chirality untouched; valid coordinate/color/size recovery tested"
+      ],
+      "independent_node_observation": {
+        "passed": 14,
+        "failed": 1,
+        "total": 15,
+        "failure": "Existing extracted Spectrum cancellation fixture omitted the new analysis dependency",
+        "subsequent_coordinator_result": "Fixture dependency repaired; coordinator reports 15/15 integrated pass; initial failure retained"
+      },
+      "boundaries": [
+        "Detached parsing and allocations remain",
+        "Arbitrary container contexts and independent form-control state are not certified",
+        "Reviewer added missing real-browser tests afterward; those are implementation work, not independent browser approval",
+        "No FPS attribution for old frame stalls"
+      ]
+    },
+    {
+      "scope": "Damping modified-profile preparation",
+      "author": "/root/plan_continuum_gate",
+      "reviewer": "/root",
+      "status": "registered_preparation_actual_browser_checks_passed_hardware_pending",
+      "implementation": [
+        "engine/web/tests/scale0-damping-performance-preparation.js",
+        "engine/web/tests/scale0-damping-performance-preparation.spec.js"
+      ],
+      "author_check": "JavaScript syntax only; browser not executed by author",
+      "boundaries": [
+        "No within-contract original scenario claim",
+        "12-marker display workload, not a 100-glyph worst case",
+        "Four logical rows remain unmeasured until execution"
+      ],
+      "browser": {
+        "reporter": "/root",
+        "passed": 2,
+        "failed": 0,
+        "duration_seconds": 56.3,
+        "log": "engine/docs/evidence/scale0-performance-v2-damping-preparation-2026-09-07.log",
+        "backends": [
+          "wasm-direct L33",
+          "wasm-worker L97"
+        ],
+        "verified": [
+          "12 particle support",
+          "288 draw vertices paused and playing",
+          "Same owner and original anchor/configuration",
+          "Exactly damping and selective_damping overrides",
+          "Explicit suspended qualification"
+        ]
+      }
+    }
+  ],
+  "integrated_evidence_before_browser_timer_fix": {
+    "reporter": "/root",
+    "node_passed": 124,
+    "node_failed": 0,
+    "groups": {
+      "spectrum": 42,
+      "bounded_and_adjacent": 52,
+      "time": 6,
+      "renderer_analysis": 15,
+      "redundant_reads": 9
+    },
+    "status": "coordinator_report_current_timer_fix_requires_updated_integrated_run"
+  },
+  "browser": {
+    "status": "functional_suite_partial_time_fixture_correction_and_focused_rerun_pending",
+    "finding": "Receiver-sensitive default browser timer invocation in Spectrum client",
+    "initial_suite_disposition": "Coordinator stopped initial nine-test attempt after conservation live-tick and vacuum startup-related failures; staggered fixture passed; remaining cases not completed; preserved pre-freeze record is not a hardware campaign",
+    "known_required_specs": [
+      "scale0-retained-readout.spec.js",
+      "scale0-spectrum-browser-client.spec.js",
+      "scale0-spectrum-provenance.spec.js",
+      "scale0-damping-performance-preparation.spec.js"
+    ],
+    "approved": false,
+    "initial_failure_record": "engine/docs/evidence/scale0-performance-v2-browser-startup-failure-2026-09-07.json",
+    "initial_failure_archive": "engine/build/scale0_performance_v2_browser_startup_failure_20260907.zip",
+    "initial_failure_archive_sha256": "f221a8d61bcc73c4cf0c7b409ac00b4d74bb5c681e2ffbca053f369da9de2c0a",
+    "retained_readout_followup": {
+      "reporter": "/root",
+      "passed": 3,
+      "failed": 0,
+      "duration_seconds": 5.6,
+      "scope": "Retained readout helper and Wave Lab functional browser checks only"
+    },
+    "integrated_followup": {
+      "reporter": "/root",
+      "registered_tests": 13,
+      "passed": 11,
+      "skipped": 1,
+      "failed": 1,
+      "duration": "2.7m",
+      "status": "partial_suite_failure_preserved",
+      "log": "engine/docs/evidence/scale0-performance-v2-browser-functional-2026-09-07.log",
+      "failure": "Time old literal IR convergence mismatches unchanged historical finite-size residual caveat; author reproduced same output from frozen and current source",
+      "failure_disposition": "Test-only correction and independent review in progress; focused Time rerun pending",
+      "skip": "Direct-only vacuum diagnostic skips when worker owns scene; no core physical-energy evidence"
+    },
+    "spectrum_timer_and_provenance": {
+      "status": "passed",
+      "cases": [
+        "Default browser timer receiver with real module worker cancel/completion/dispose",
+        "Actual direct L33 Spectrum provenance and Deep",
+        "Actual worker L97 Spectrum provenance and Deep",
+        "Existing live/Deep Parseval panel integration"
+      ],
+      "scope": "Observation compatibility and lifecycle; no physical continuum or full matrix performance approval"
+    }
+  },
+  "preregistration": {
+    "profile": "repair-v2",
+    "harness": "engine/web/tests/scale0-comprehensive-performance.spec.js",
+    "backends": [
+      {
+        "name": "wasm-direct",
+        "lattice_size": 33
+      },
+      {
+        "name": "wasm-worker",
+        "lattice_size": 97
+      }
+    ],
+    "panels": {
+      "ids": [
+        "controls",
+        "diagnostics",
+        "telemetry-grid",
+        "charts",
+        "lagrangian",
+        "inspector",
+        "scene",
+        "flux-slice",
+        "wave-lab",
+        "p1-observables",
+        "spectrum",
+        "dispersion",
+        "knots",
+        "transactions",
+        "gravity",
+        "time",
+        "thermo",
+        "scale-context"
+      ],
+      "states": [
+        "docked",
+        "floated",
+        "collapsed",
+        "hidden"
+      ],
+      "physics_playing": true,
+      "logical_rows": 144,
+      "default_preparation": "flux-pulse",
+      "preparation_overrides": {
+        "wave-lab": "s0-field-rf-lattice-wave",
+        "gravity": "s0-seed-massive-body",
+        "time": "s0-seed-time-twin-clocks",
+        "thermo": "flux-thermalization"
+      },
+      "inspector_preparation": "Select center voxel on the authoritative owner"
+    },
+    "overlays": {
+      "ids": [
+        "toggle-e-field",
+        "toggle-b-field",
+        "toggle-poynting",
+        "toggle-div-field",
+        "toggle-flux-lines",
+        "toggle-force-em",
+        "toggle-force-gravity",
+        "toggle-force-strong",
+        "toggle-force-weak",
+        "toggle-dual-substrate",
+        "toggle-chirality",
+        "toggle-dark-halo",
+        "toggle-damping-zones",
+        "toggle-genesis-iso",
+        "toggle-confinement",
+        "toggle-color-charge",
+        "toggle-psi-squared",
+        "toggle-phase",
+        "toggle-lagrangian-density",
+        "toggle-entropy-density",
+        "toggle-grav-potential",
+        "toggle-em-energy",
+        "toggle-charge-density",
+        "toggle-vorticity",
+        "toggle-horizon",
+        "toggle-e-pressure",
+        "toggle-b-pressure",
+        "toggle-state-field",
+        "toggle-latency",
+        "toggle-gauss-residual",
+        "toggle-proper-time",
+        "toggle-lapse",
+        "toggle-db-phase",
+        "toggle-flux-volume",
+        "toggle-flux-slice",
+        "toggle-sm-reference"
+      ],
+      "states": [
+        "paused",
+        "playing"
+      ],
+      "logical_rows": 144,
+      "preparation_selection": "First applicable scenario in ordered preferred list then remaining frozen SCALE0_SCENARIOS order; save resolved plan before measurement",
+      "preferred_preparations": [
+        "flux-pulse",
+        "flux-dual-substrate",
+        "flux-baryon",
+        "flux-random-genesis",
+        "s0-seed-time-twin-clocks",
+        "s0-seed-de-broglie-clock",
+        "s0-seed-massive-body"
+      ],
+      "damping_zones": {
+        "status": "registered_modified_reference_preparation_browser_passed_hardware_unmeasured",
+        "logical_rows": 4,
+        "profile": "damping-zones-modified-v1",
+        "scenario": "s0-seed-sloop",
+        "prepared_markers": 12,
+        "helper": "engine/web/tests/scale0-damping-performance-preparation.js",
+        "browser_spec": "engine/web/tests/scale0-damping-performance-preparation.spec.js",
+        "controls": [
+          {
+            "id": "t-damping",
+            "term": "damping",
+            "value": true
+          },
+          {
+            "id": "t-selective",
+            "term": "selective_damping",
+            "value": true
+          }
+        ],
+        "mechanism": "Set actual UI controls and dispatch bubbling change events; wait for authoritative engine truth; synchronize actual UI from engine",
+        "expected_qualification": "suspended",
+        "mutation_epoch_increment": 2,
+        "expected_draw_vertices": 288,
+        "expected_other_terms": "All other registered terms remain exactly baseline false",
+        "invariants": [
+          "Same authoritative owner",
+          "Unchanged original qualification anchor",
+          "Unchanged load generation",
+          "Unchanged pending/applied configuration tokens",
+          "Unchanged paused preparation tick",
+          "Same profile and qualification before and after each hardware row",
+          "Paused clock fixed or playing clock advances according to registered row"
+        ],
+        "acceptance_boundary": "Engineering modified reference profile; no within-contract original scenario claim and no 100-glyph worst-case claim",
+        "rule": "All four rows remain unmeasured until executed. Failed UI/profile/geometry prerequisites remain failure/unmeasured; no retrospective baseline credit",
+        "browser_evidence": "engine/docs/evidence/scale0-performance-v2-damping-preparation-2026-09-07.log"
+      }
+    },
+    "gates_unchanged": {
+      "min_frames": 600,
+      "min_duration_ms": 12000,
+      "min_effective_fps": 59.5,
+      "frame_p95_ms": 17,
+      "frame_p99_ms": 20,
+      "intervals_over_33_4_ms": 0,
+      "long_tasks": 0,
+      "long_task_instrumentation_required": true,
+      "callback_inclusive_p95_ms": 2,
+      "callback_inclusive_max_ms": 8,
+      "visible_action_samples": 10,
+      "dispatch_to_next_raf_p95_ms": 50,
+      "page_visibility": "visible",
+      "hardware_renderer": "Nonempty unmasked renderer; reject SwiftShader/software; retain hardware ANGLE/RTX provenance",
+      "owner": "Same WASM owner, authoritative load, generation and settled lifecycle; within-contract qualification for original rows, explicitly suspended for four separately registered modified Damping rows",
+      "clock": "Exact nonnegative safe integer ticks; playing advances, paused does not",
+      "mount": "Correct connected dock/floating/collapsed/hidden state before and after",
+      "hidden_collapsed_canvas_draws": 0,
+      "runtime_errors": 0
+    },
+    "callback_timing": "Whole subscriber elapsed includes nested owner reads. Standalone method:ownerRead rows are diagnostic and excluded only as separate callback entries; their time is not subtracted from parent callbacks.",
+    "extra_owner_read_instrumentation": "sampleFluxAtCells",
+    "output_pattern": "engine/docs/evidence/scale0-hardware-repair-v2-{panels|overlays}-L{33|97}-2026-09-07.json",
+    "overwrite_rule": "Harness refuses any pre-existing campaign output; preserve baseline, repair-v1 and all failed runs",
+    "execution_rule": "Serial browser suites from engine/web/tests with FTD_HARDWARE_WEBGL=1; no concurrent heavy builds, scientific GPU campaign or second browser suite",
+    "freeze_rule": "New candidate manifest/archive and browser prerequisites before hardware; source/artifact reconciliation after collection",
+    "hardware_status": "not_measured",
+    "measured_panel_rows": 0,
+    "measured_overlay_rows": 0,
+    "qualification_exception": "Only new modified Damping profile uses suspended; all numerical performance thresholds and all prior within-contract rows remain unchanged",
+    "total_logical_rows": 288,
+    "preparation_amendment_utc": "2026-09-08T04:02:22.765Z"
+  },
+  "preserved_prior_results": {
+    "baseline_overlays": {
+      "measured": 140,
+      "passed": 138,
+      "failed_frames": 2,
+      "unmeasured_logical_damping_rows": 4
+    },
+    "baseline_panels": {
+      "measured": 144,
+      "passed": 126,
+      "failed_callbacks": 18
+    },
+    "repair_v1_panels": {
+      "measured": 64,
+      "passed": 49,
+      "failed_callbacks": 15,
+      "frame_owner_clock_visibility_passed": 64
+    }
+  },
+  "not_claimed": [
+    "FPS or universal 60 FPS guarantee",
+    "Production release or deployment approval",
+    "Physical recovery or continuum closure",
+    "Full production replay or late rollback",
+    "Joint same-tick cross-field state",
+    "All sizes, native rendering, all overlay combinations or long-run retention",
+    "Allocation-free readout rendering"
+  ],
+  "updated_utc": "2026-09-08T04:04:25.418Z",
+  "coordinator_final_node": {
+    "passed": 125,
+    "failed": 0,
+    "skipped": 0,
+    "log": "engine/docs/evidence/scale0-performance-v2-node-2026-09-07.log",
+    "scope": "43 Spectrum, 52 bounded-read and adjacent runtime, 6 Time, 15 renderer/analysis, 9 redundant reads"
+  },
+  "integration_followups": {
+    "time_old_caption": "Frozen Card D unchanged; old test expected IR convergence, actual caption Historical finite-size residual. Test now checks actual caption, two charts and caveat from tooltip-manager attribute or title. Original suite failure log retained; trace was cleared by subsequent suite before archival.",
+    "time_tooltip_reader_failure": {
+      "log": "engine/docs/evidence/scale0-performance-v2-time-caption-regression-2026-09-07.log",
+      "archive": "engine/build/scale0_performance_v2_time_test_failure_20260907.zip",
+      "sha256": "f57066cfe618cbf687a5336497ae64fe8514bad56f7031121aae3a833940d2f2"
+    },
+    "damping_full_profile": "Independent review required all 46 canonical engine toggles, replacing the initial 28 UI-toggle check. Initial 2 browser passes remain limited to 28 keys; final 46-key run pending."
+  },
+  "final_integration": {
+    "damping_and_time": {
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "elapsed": "1.4m",
+      "log": "engine/docs/evidence/scale0-performance-v2-damping-time-final-2026-09-07.log"
+    },
+    "independent_damping_review": "Accepted by bounded-read agent after all46 registry expansion and qualification/lifecycle binding; original numerical gates unchanged.",
+    "independent_time_review": "Accepted test-only frozen-caption and tooltip-manager-reader repair; numerical assertions unchanged.",
+    "unique_browser_outcome": "14 passing cases across initial functional suite and affected-case reruns; direct-only vacuum case skipped on worker; earlier failures retained separately. No full15-case unified rerun."
+  }
+}

@@ -138,42 +138,33 @@ def main():
         else:
             print(f"  [PASS] Molecule ID '{mol_id}' found in molecules.js for scenario '{sc_id}'")
 
-    # 6. Check scale 4 scenario registry consistency (Planetary vs Consciousness mismatch!)
-    s4_js_path = os.path.join(root_dir, "engine", "web", "js", "scales", "scale4", "controller.js")
-    s4_toolbar_path = os.path.join(root_dir, "engine", "web", "js", "scales", "scale4", "ui", "toolbar", "template.js")
-    s4_bridge_path = os.path.join(root_dir, "engine", "web", "js", "bridge", "mock-scale4.js")
-    
+    # 6. Check Scale 4 navigation metadata against its canonical executable registry.
+    s4_registry_path = os.path.join(root_dir, "engine", "web", "js", "scales", "scale4", "scenario-registry.js")
     print(f"\nChecking Scale 4 scenarios:")
     s4_json_name = json_data[4].get("name")
     s4_json_mode = json_data[4].get("engineMode")
     print(f"  scale4.json states name='{s4_json_name}', engineMode='{s4_json_mode}'")
-    
-    if os.path.exists(s4_js_path):
-        with open(s4_js_path, "r", encoding="utf-8") as f:
-            s4_js = f.read()
-        print(f"  scale4/controller.js references 'planetary' and handles N-Body simulation.")
-        
-    if os.path.exists(s4_toolbar_path):
-        with open(s4_toolbar_path, "r", encoding="utf-8") as f:
-            s4_toolbar = f.read()
-        toolbar_options = re.findall(r'value="([^"]+)"', s4_toolbar)
-        print(f"  scale4 toolbar dropdown options: {toolbar_options}")
-        
-    s4_json_ids = [sc.get("id") for sc in json_data[4].get("scenarios", [])]
-    print(f"  scale4.json scenario IDs: {s4_json_ids}")
-    
     s4_mismatches = []
-    for sc_id in s4_json_ids:
-        if os.path.exists(s4_toolbar_path) and sc_id not in s4_toolbar:
-            s4_mismatches.append(sc_id)
-            
+    expected_registry = "engine/web/js/scales/scale4/scenario-registry.js"
+    for field, expected in (("name", "Solar System"), ("engineMode", "planetary"),
+                            ("selectId", "planetary-scenario-select"), ("registry", expected_registry)):
+        if json_data[4].get(field) != expected:
+            s4_mismatches.append(f"{field}:{json_data[4].get(field)!r}")
+    if not os.path.exists(s4_registry_path):
+        s4_mismatches.append("registry:missing")
+        registry_ids = []
+    else:
+        with open(s4_registry_path, "r", encoding="utf-8") as f:
+            s4_registry = f.read()
+        registry_ids = re.findall(r"^\s*\['((?:planetary|exo)-[^']+)'\s*,", s4_registry, re.MULTILINE)
+    if json_data[4].get("scenarioCount") != len(registry_ids):
+        s4_mismatches.append(
+            f"scenarioCount:{json_data[4].get('scenarioCount')}!=registry:{len(registry_ids)}"
+        )
     if s4_mismatches:
-        # This is a known and critical mismatch we want to report, but let's not block the exit code
-        # unless it is an active scale mismatch.
-        print(f"  [WARN/FAIL] Scale 4 discrepancy: Scenarios in scale4.json ({len(s4_json_ids)}) do not match the options implemented in planetary toolbar/bridge!")
-        print(f"    scale4.json specifies Consciousness scenarios: {s4_json_ids}")
-        if os.path.exists(s4_toolbar_path):
-            print(f"    Planetary toolbar template implements: {toolbar_options}")
+        print(f"  [FAIL] Scale 4 metadata/registry mismatch: {s4_mismatches}")
+    else:
+        print(f"  [PASS] Scale 4 metadata points to {len(registry_ids)} canonical Solar System scenarios.")
 
     # 7. Check scale 5 scenario registry consistency (Cosmic scenarios)
     s5_toolbar_path = os.path.join(root_dir, "engine", "web", "js", "scales", "scale5", "ui", "toolbar", "template.js")
@@ -207,14 +198,14 @@ def main():
     print(f"Scale 1: {len(s1_mismatches)} mismatches.")
     print(f"Scale 2: {len(s2_mismatches)} mismatches.")
     print(f"Scale 3: {len(s3_mismatches)} mismatches.")
-    print(f"Scale 4: Mismatched Scale Definition! (scale4.json defines 'Consciousness' while UI/controller implements 'Planetary')")
+    print(f"Scale 4: {len(s4_mismatches)} metadata/registry mismatches.")
     print(f"Scale 5: 0 mismatches.")
     
-    if s0_mismatches or s1_mismatches or s2_mismatches or s3_mismatches:
+    if s0_mismatches or s1_mismatches or s2_mismatches or s3_mismatches or s4_mismatches:
         print("[FAIL] Mismatches detected in active scales!")
         sys.exit(1)
     else:
-        print("[PASS] Active scales 0-3 and 5-6 are consistent with codebases.")
+        print("[PASS] Active scales 0-6 are consistent with their declared code sources.")
         sys.exit(0)
 
 if __name__ == "__main__":

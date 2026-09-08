@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "bundle_sha256": "97dbc15f61ba8952e68be8012279e50bf0bc650e5806f6bb5ca705952df5d4e3",
+  "files": [
+    "ftd_core.js",
+    "ftd_core.wasm",
+    "ftd_core64.js",
+    "ftd_core64.wasm",
+    "ftd_core_mt.js",
+    "ftd_core_mt.wasm"
+  ],
+  "source_dirty": true,
+  "clean_release_gate": "not_passed: local uncommitted candidate"
+}

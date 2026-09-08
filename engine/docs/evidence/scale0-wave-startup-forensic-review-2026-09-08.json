@@ -1,0 +1,112 @@
+{
+  "schema": "ftd.wave-startup.forensic-review.v1",
+  "reviewedAtUtc": "2026-09-08T07:45:19.743350+00:00",
+  "reviewer": "/root/time_gravity_cost_review",
+  "independence": "Read-only review; reviewer did not author this startup harness.",
+  "disposition": "ACCEPTED_FOR_ROOT_SCHEDULED_STARTUP_FORENSICS",
+  "blockingDefects": [],
+  "manifestSha256": "22cb1433cb22ff8732e0b780aa467eb3ee39b72d4eb8936041f2a31db7a304fd",
+  "probeManifestSha256": "a9f763396e72a59cde8aba4927a547c5fa12deeaf0fcc9969b7bafaec7120259",
+  "hashChecks": {
+    "startupFiles": 6,
+    "frozenProbeFiles": 37,
+    "helperConfigServerDependencies": 3,
+    "liveRoutedProductionBaselines": 6,
+    "mismatches": []
+  },
+  "reviewedFiles": [
+    {
+      "path": "identity.mjs",
+      "sha256": "2116a96635c4235c4b3ed3c7124336254462e5c8bef57f487e90619754c9c8c2",
+      "bytes": 1108
+    },
+    {
+      "path": "playwright.config.mjs",
+      "sha256": "cbd991163aa8fc0f0fd1f7100b6bbd7e0f5c7302e45dbab0b0091f256469b6fd",
+      "bytes": 946
+    },
+    {
+      "path": "README.md",
+      "sha256": "0818d9e5dff49e8ba24cf2ae2cf186c210661c160f81dd47f7af5b62db8b4f97",
+      "bytes": 2582
+    },
+    {
+      "path": "run-startup.mjs",
+      "sha256": "9a62b563a1d33baafc8095dae200e77d5fc21dc47a58453802af4aa9090de0f2",
+      "bytes": 1944
+    },
+    {
+      "path": "startup.spec.mjs",
+      "sha256": "763d767a3972857b3ecf129401be011b4a0b8552f9e0c767157a76e34ed2943f",
+      "bytes": 7989
+    },
+    {
+      "path": "syntax-checks.json",
+      "sha256": "8f173ce47613357953c283c12b474aae04443a8afafed527152089068b9415a7",
+      "bytes": 409
+    }
+  ],
+  "startupSourceFindings": [
+    {
+      "source": "engine/web/tests/_helpers.js:18",
+      "finding": "gotoAndReady navigates with DOMContentLoaded then waits for truthy window._ftdBridge with the requested 90000 ms timeout."
+    },
+    {
+      "source": "engine/build/scale0_wave_attribution_probe_20260908/wave-attribution.diagnostic.spec.mjs:34",
+      "finding": "The failed initial wait precedes size97 selection and worker qualification. The recorded empty rows cannot demonstrate a 97-cubed worker allocation failure."
+    },
+    {
+      "source": "engine/web/js/app.js:84",
+      "finding": "The global accessor exists only after the app module body begins. Its captured bridge remains null until await bootBridge resolves at line531."
+    },
+    {
+      "source": "engine/web/js/app-wire/bridge-boot.js:20",
+      "finding": "Explicit engine=wasm bypasses the native WebSocket probe and awaits createBridge. Initial boot is direct WASM regardless of the later Scale0 worker selection."
+    },
+    {
+      "source": "engine/web/js/bridge/wasm-bridge.js:199",
+      "finding": "Initial verified-factory/module load and RenderBridge allocation do not invoke the routed _wasmCallOr sampler helper. Wave panel initialization follows the app bridge assignment. No concrete transformed function mechanism for the pre-assignment failure was identified."
+    },
+    {
+      "source": "engine/build/scale0_wave_attribution_probe_20260908/records/waveattr-v1-routed-a1-L97.json",
+      "finding": "One generic ERR_CONNECTION_REFUSED, five successful startup route hits and no failed routed request are retained. The precise failed URL and absent-versus-null getter state are unknown. Static-module-load failure and pending direct-WASM initialization remain distinguishable possibilities, not diagnoses."
+    }
+  ],
+  "harnessChecks": [
+    {
+      "status": "PASS_SOURCE",
+      "contract": "Binding",
+      "detail": "Identity validation hard-pins the original probe manifest, checks all 37 entries through its original verifier, and checks startup manifest files plus helper/config/server dependencies. Both variants use the original pinned installAttribution routes."
+    },
+    {
+      "status": "PASS_SOURCE",
+      "contract": "Startup workload",
+      "detail": "Both cases call the unchanged helper at /?engine=wasm with timeout90000, in separate ordinary Playwright contexts. No forced worker flag, lattice/scenario selection, sampler, recorder.start or scientific timing is added."
+    },
+    {
+      "status": "PASS_SOURCE",
+      "contract": "Forensic discriminators",
+      "detail": "Before navigation, at DOMContentLoaded during the original wait, and after wait, snapshots record property descriptor existence/type separately from getter null/undefined/object/error. Logs retain console location, page error stack, exact failed/request/response URL and resource type, page lifecycle and dedicated worker create/close URLs."
+    },
+    {
+      "status": "PASS_SOURCE",
+      "contract": "Exclusive evidence",
+      "detail": "Launcher mkdir without recursive creates a fresh run directory before Playwright startup. Reservation token/status is required by config. JSON/NDJSON/log files begin with wx where applicable; raw report and event stream are saved/flushed and attached before readiness assertions. A failed first case does not make the second serial case dependent on success."
+    },
+    {
+      "status": "PASS_SOURCE_WITH_LIMIT",
+      "contract": "Bounded capture",
+      "detail": "Limits explicitly fail overflow at 20000 events, 128 workers or eight DOMContentLoaded snapshots. Snapshot evaluation has a separate five-second evidence timeout. Stream errors are reported. Tracing and snapshot work intentionally perturb startup; no acceptance timings result."
+    }
+  ],
+  "limits": [
+    "This is source and byte-identity review only; no browser or test suite executed by reviewer.",
+    "Full trace and extra snapshot/event work can alter startup timing and whether a transient failure reproduces.",
+    "Worker evidence directly records observed Playwright page worker create/close events; nested pthread lifecycle/errors are not guaranteed to be fully represented. Console/page/network coverage records only events exposed through their corresponding page hooks.",
+    "The later audit-probe route is not artificially imported during startup. Missing later-route delivery is expected to remain visible, not forced to pass a six-route campaign check.",
+    "Absent or successful reproduction cannot retrospectively identify the original generic resource failure without matching evidence."
+  ],
+  "productionOrProbeEdits": [],
+  "browserBuildGpuExecuted": false,
+  "performanceOrPhysicsAcceptance": false
+}

@@ -1,0 +1,23 @@
+{
+  "checks": [
+    {
+      "manifest": "strict-stack-source-manifest-2026-09-05.json",
+      "identities": 69,
+      "mismatches": [],
+      "sha256": "8d5ea8ed89b7e200f5c7ffdd5b0ea72bbbe358be8175fa7224f1ee0d1f3c1511"
+    },
+    {
+      "manifest": "strict-recovery-wave1-manifest-2026-09-05.json",
+      "identities": 44,
+      "mismatches": [],
+      "sha256": "467cdd078dc5d1c7cfd8c4bff5f66d4522a0ec44362fccbbd42d583b2b362ea5"
+    },
+    {
+      "manifest": "strict-recovery-wave2-manifest-2026-09-05.json",
+      "identities": 73,
+      "mismatches": [],
+      "sha256": "22c0332a57006bf17230548e98d6c319e51660fc302cebb9392e2192ba4bd6d9"
+    }
+  ],
+  "preserved": true
+}

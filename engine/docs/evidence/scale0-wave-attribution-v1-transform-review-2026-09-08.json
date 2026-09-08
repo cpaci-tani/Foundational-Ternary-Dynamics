@@ -1,0 +1,165 @@
+{
+  "schema": "ftd.wave-attribution.transform-review.v1",
+  "reviewedAtUtc": "2026-09-08T07:26:26.725583+00:00",
+  "reviewer": "/root/time_gravity_cost_review",
+  "independence": "Reviewer authored the attribution plan but did not author this probe implementation. Recorder/tree/campaign review belongs to the separate reviewer.",
+  "candidate": "engine/build/scale0_wave_attribution_probe_20260908",
+  "manifestSha256": "a9f763396e72a59cde8aba4927a547c5fa12deeaf0fcc9969b7bafaec7120259",
+  "disposition": "ACCEPTED_FOR_HELD_BROWSER_EQUIVALENCE_ONLY",
+  "blockingDefects": [],
+  "productionEdited": [],
+  "candidateEdited": [],
+  "identity": {
+    "before": {
+      "manifestSha256": "a9f763396e72a59cde8aba4927a547c5fa12deeaf0fcc9969b7bafaec7120259",
+      "manifestFilesVerified": 37,
+      "productionBaselinesVerified": 6,
+      "mismatches": []
+    },
+    "after": {
+      "manifestSha256": "a9f763396e72a59cde8aba4927a547c5fa12deeaf0fcc9969b7bafaec7120259",
+      "manifestFilesVerified": 37,
+      "productionBaselinesVerified": 6,
+      "mismatches": []
+    },
+    "routes": [
+      {
+        "pathname": "/tests/scale0-ui-audit-probe.js",
+        "source": "engine/web/tests/scale0-ui-audit-probe.js",
+        "baselineSha256": "b368a7f6327aa8544146972dffa1bc675a9781ec10b52fec0867110c5d7b86d1",
+        "routedSha256": "cc9db3c2c4d5a352632ac91109e1e6f60cb787c1dcb7e36413fb6e094fa5e982",
+        "bytes": 12370
+      },
+      {
+        "pathname": "/js/scales/scale0/ui/overlays/wave-lab-panel.js",
+        "source": "engine/web/js/scales/scale0/ui/overlays/wave-lab-panel.js",
+        "baselineSha256": "93cfcaffe81a11dc1509a7957a2a67d9f506a85c34e5c0a3a433feeb36e6447f",
+        "routedSha256": "c8eddd9aae73ff8aabe11c7217d4cc31427acf21c2cfd07bcbb6663af835fd00",
+        "bytes": 3133
+      },
+      {
+        "pathname": "/js/scales/scale0/ui/overlays/wave-lab/wave-info.js",
+        "source": "engine/web/js/scales/scale0/ui/overlays/wave-lab/wave-info.js",
+        "baselineSha256": "9cfa9b980a5570dc07e9fc190991523bc56ad1a0f387d7acb7d9073969f44cb9",
+        "routedSha256": "38428753d73c9ef0116ba396284bc1680fa12ab133f25bf1fbcd93dd0b6dc702",
+        "bytes": 34595
+      },
+      {
+        "pathname": "/js/scales/scale0/analysis/wave-spectrum.js",
+        "source": "engine/web/js/scales/scale0/analysis/wave-spectrum.js",
+        "baselineSha256": "7155a8ee3d0daf069d9aa24326b02e0ee9e8767f4886abbeb2bdcb1398d9694e",
+        "routedSha256": "10029b274a6f76cc366bacbca496ac1b5af2ff35a023c1af4d0aed84e92abea0",
+        "bytes": 23056
+      },
+      {
+        "pathname": "/js/ui/charts/sparkline.js",
+        "source": "engine/web/js/ui/charts/sparkline.js",
+        "baselineSha256": "752c2815258682399938f0191c6157ee48fd68b17dd41ce7983a5571e7c1b0d2",
+        "routedSha256": "21618f2b625a0912a161c9e87d1d3438d7c4516b12cd42907cde41722da93bed",
+        "bytes": 4918
+      },
+      {
+        "pathname": "/js/bridge/wasm-bridge.js",
+        "source": "engine/web/js/bridge/wasm-bridge.js",
+        "baselineSha256": "3f9804e6870f6c6b847f617b62657183c54b144afda143cf5eb6ba6e3f11a6dc",
+        "routedSha256": "75ce7e02638a8837373c8a7709142aed6e2f11f60a47a507807c36136efdc815",
+        "bytes": 67265
+      }
+    ]
+  },
+  "scope": [
+    "Read the six complete routed source diffs, preparation anchors, actual-module Node checks, recorder entry/exit/metadata wrappers and prepared mounted-browser equivalence test.",
+    "Independent focused execution covers actual analysis modules, actual Sparkline module with fake uPlot, actual native delegation helper and actual subscriber wrapper.",
+    "This review checks admitted production objects and call paths. It does not assert observational equivalence for arbitrary accessor/proxy substitutions or eliminate instrumentation timing effects."
+  ],
+  "findings": [
+    {
+      "id": "T01",
+      "status": "PASS",
+      "subject": "J-before-E acquisition and reduction",
+      "detail": "The original J getter is followed by its availability check and full reduction before the original E getter. Both ordinary demands remain, including missing/pending J; a throwing J getter still prevents E. New scalar descriptor reads make no bridge/native request and retain no field payload. The 48-case full-module comparison includes N=33/97, RF/light/sound/unrelated, signed/zero/empty/missing J/missing E and E-call invalidation of J arrays."
+    },
+    {
+      "id": "T02",
+      "status": "PASS_SCOPED",
+      "subject": "Scientific values and cache domain",
+      "detail": "No channel selection, sample validation, finite arithmetic, quadrature/Fourier reduction, preparation, cache key, output object or clock fallback changed in the source diff. Exact output comparisons passed. The additional basis-hit observation reads the existing cache key; it does not alter cache lifetime."
+    },
+    {
+      "id": "T03",
+      "status": "PASS_SCOPED",
+      "subject": "Return, throw, receiver and order",
+      "detail": "Added acquisition, retained DOM, audio and chart closures call the original operation and return its result; original thrown objects are rethrown through finally. Native delegation keeps fallback identity, native arguments and fn invocation. Sparkline invokes the existing uPlot receiver. Instrumentation faults are contained by recorder safe wrappers. DOM assignment and setData argument temporaries change evaluation ordering only relative to instrumentation/property lookup; accepted production refs/uPlot are ordinary owned properties, not adversarial accessors."
+    },
+    {
+      "id": "T04",
+      "status": "PASS_SOURCE_AND_NODE_BROWSER_PENDING",
+      "subject": "History, charts, controls and lifecycle",
+      "detail": "The diff preserves history tick gating, finite-zero directional values, buffer push formulas, chart window/copy loops, five-chart call order, control key/reseed handlers and unmount logic. Source changes wrap existing operations; registration adds only WeakMap attribution. Actual Sparkline baseline/routed arrays, receiver, window update, resize and disposal behavior match in the focused test. Full mounted WaveInfo/DOM/uPlot parity is delegated to the held-browser check and is not claimed here."
+    },
+    {
+      "id": "T05",
+      "status": "PASS",
+      "subject": "Original scheduled timing endpoints",
+      "detail": "The subscriber wrapper retains the original start performance.now call and uses its original end position for the inclusive elapsed subtraction. The root receives those exact endpoint values and the same callback sample index. Instrumentation adds elapsed work inside the interval; it does not replace the scheduled callback or infer callback time by independent-quantile subtraction. Focused actual-wrapper return/throw/sample association test passed."
+    },
+    {
+      "id": "T06",
+      "status": "ACCEPTED_SCOPE_LIMIT",
+      "subject": "Stage attribution interpretation",
+      "detail": "J/E acquisition includes new scalar metadata descriptor work; NATIVE_BOUND includes guards and JavaScript/embind return work, not isolated C++ CPU time. Worker getters time synchronous cache/demand work, not asynchronous worker computation. FOURIER extends through output assembly. The Sound controls innerHTML += operation remains inside CONTROLS inclusive time without its own DOM_SET child. RF-only attribution must not be described as exhaustive per-setter Sound attribution."
+    },
+    {
+      "id": "T07",
+      "status": "OPEN_PRESERVED",
+      "subject": "Observation provenance and labels",
+      "detail": "Owner-read tick remains separate from independently cached J/E sample times; missing payload sample metadata remains unknown. No common publication clock is invented. Existing directional-versus-magnitude/probe axis labels and direct missing-native-versus-completed-empty ambiguity are not repaired or certified by instrumentation."
+    }
+  ],
+  "checks": [
+    {
+      "kind": "sha256_and_size",
+      "result": "PASS",
+      "detail": "All 37 manifest file identities, pinned manifest identity and six live production baselines verified before and after review."
+    },
+    {
+      "kind": "focused_node",
+      "command": "node --test --test-name-pattern 'whole actual analysis|actual routed analysis|actual Sparkline|actual native delegation|actual audit subscriber' engine/build/scale0_wave_attribution_probe_20260908/attribution.node.test.mjs",
+      "result": "PASS",
+      "tests": 5,
+      "failed": 0,
+      "detail": "The unrelated filesystem-reservation test was not selected, so no candidate fixture directories were created. No complete-suite reproduction claimed by this reviewer. Transient-view test mutates J arrays at E acquisition; actual ArrayBuffer detachment is not separately tested."
+    }
+  ],
+  "reviewArtifacts": [
+    {
+      "path": "engine/build/scale0_wave_attribution_transform_review_20260908/identity-postcheck.json",
+      "sha256": "f2f8ee4a7a515abca40284d68e5e0fff83552588359dd5d90122fa1b40b55ff2"
+    },
+    {
+      "path": "engine/build/scale0_wave_attribution_transform_review_20260908/identity-precheck.json",
+      "sha256": "f2f8ee4a7a515abca40284d68e5e0fff83552588359dd5d90122fa1b40b55ff2"
+    },
+    {
+      "path": "engine/build/scale0_wave_attribution_transform_review_20260908/node-semantic-review.log",
+      "sha256": "31409c015461bffa8754388a6b3cef8e7429a558a35a352dee118ffeb32ed7d9"
+    }
+  ],
+  "remainingGates": [
+    "Root-scheduled mounted-browser baseline/routed equivalence",
+    "Separately identified diagnostic timing run with its declared overhead and bound source identities",
+    "Uninstrumented acceptance/performance checks remain separate; no speedup or physical recovery approved"
+  ],
+  "notRun": [
+    "browser",
+    "build",
+    "GPU",
+    "performance campaign"
+  ],
+  "acceptance": {
+    "instrumentationSourceBounded": true,
+    "mountedBrowserEquivalence": false,
+    "performance": false,
+    "physicalRecovery": false
+  }
+}

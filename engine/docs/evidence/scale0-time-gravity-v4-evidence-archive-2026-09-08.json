@@ -1,0 +1,142 @@
+{
+  "schema": "scale0-time-gravity-v4-evidence-archive-v1",
+  "sealedUtc": "2026-09-08T07:01:07.979514+00:00",
+  "candidateIdentity": "69b0bb82befe103572ac4710631c4242fc9c6b23990bea93c22ed5426b3ff394",
+  "status": "bounded_correctness_accepted_three_hardware_callback_failures_remain",
+  "releaseApproved": false,
+  "archive": "engine/build/scale0_time_gravity_v4_evidence_20260908.zip",
+  "archiveSha256": "b57b79c4c2c01c2c1ea85c15b50efe1422d1e95ce60479defa6f0f92c6792835",
+  "files": [
+    {
+      "path": "engine/docs/PROGRAM_SCALE0_TIME_GRAVITY_V4_2026-09-08.md",
+      "bytes": 17063,
+      "sha256": "205de354ec94490d30297e4e3b27b2a585991f17b8f0733fe812f4e0268b2f4f"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-gravity-v4-browser-repair-integration-2026-09-08.json",
+      "bytes": 3169,
+      "sha256": "d679b88865812778874dccba1e3a58ac50095ad958d26683c4ce5cb59c245f75"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-gravity-v4-browser-repair-review-2026-09-08.json",
+      "bytes": 2648,
+      "sha256": "c1af5e80289b612661ca47184bef8c34cadff54287a0b71fbc5cdd16fae6e23e"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-gravity-v4-draft-review-2026-09-08.json",
+      "bytes": 9077,
+      "sha256": "02955295c217c12b323036be9498612b347f3eb1bbb024f82af907f2ad2162b9"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-hardware-time-gravity-v4-panels-L33-2026-09-08.json",
+      "bytes": 679550,
+      "sha256": "f38252326cead0c49cecb86e58dfcdd6b9087fb4f18e9ae9dedc04037a1e85a9"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-hardware-time-gravity-v4-panels-L97-2026-09-08.json",
+      "bytes": 391461,
+      "sha256": "7a29ffee78309b4d1cc5a11439073c0387d9bdcf1652e8fdd36265ef4be1f50d"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-browser-2026-09-08-execution.json",
+      "bytes": 2133,
+      "sha256": "ede36a9414bb80677d94aa7d589665e2b9c29c45f822bf261be13eb7c62811de"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-browser-2026-09-08.log",
+      "bytes": 5449,
+      "sha256": "386d3fa2380ee9f248e8aeddc539814f4826daf2553cb84613fd35557b778465"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-browser-repair-2026-09-08-execution.json",
+      "bytes": 1139,
+      "sha256": "7c16d1da7a7bb9a2cfe6a78b26daa937d0d949e85694f9573a6edf299b494c6b"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-browser-repair-2026-09-08.log",
+      "bytes": 665,
+      "sha256": "accbf7173ce5e3aef5b37168bc37430e44d43c838fb833c1bc428a71d0ada533"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-candidate-manifest-2026-09-08.json",
+      "bytes": 409249,
+      "sha256": "d7b671f7fdefa4d8df8c0ddbdf52d1cd1075770d9ba2e0338cba6b4adb31708c"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-freeze-review-2026-09-08.json",
+      "bytes": 26197,
+      "sha256": "a44dd07e24181bfab8916098d3869b97b7bd02c0163f6610544dd291171b0b86"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-hardware-2026-09-08-execution.json",
+      "bytes": 3432,
+      "sha256": "d0b08b2065840b17c746f0ffe813db9e2209254b48523a8d8c950b932b74fd7b"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-hardware-2026-09-08.log",
+      "bytes": 8682,
+      "sha256": "b86308d7095a76bcb3fa2fc6706e90e3c5f74cbf37dbefa85d3b5a1d618440f1"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-hardware-review-2026-09-08.json",
+      "bytes": 99953,
+      "sha256": "8c8bfbfcccd675aeed38c43643f44ac0aed76c74aee529250c1ccf3db1ac0058"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-harness-integration-2026-09-08.json",
+      "bytes": 880,
+      "sha256": "edd811c83ecdf265b83e78a70fc5616c7f9d19d59039a1fb22457a44f9dc4719"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-harness-review-2026-09-08.json",
+      "bytes": 13709,
+      "sha256": "d09e31e337c5afe9e9a6369e8e0ab28f858124f26fd4cf4fd0b87c368293b061"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-integration-2026-09-08.json",
+      "bytes": 22170,
+      "sha256": "2a673e5f1a3026bf2bad758f468f30aefba2425000bd851ba5360cc5fc45d6e6"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-integration-review-2026-09-08.json",
+      "bytes": 29473,
+      "sha256": "0003a85d86982453a7a0c126958f03c36a9587041b201c8af62f6773b02d1493"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-node-2026-09-08-execution.json",
+      "bytes": 1326,
+      "sha256": "1032c9e4e86ae5123d231d9d4d789edb5671e1f4680d5656bb8414c4d565a069"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-node-2026-09-08.log",
+      "bytes": 5729,
+      "sha256": "afc49250b1b520d7f7a17f638d76509f6641b7bef6adb72ddfe769f4125602ff"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-postrun-source-check-2026-09-08.json",
+      "bytes": 455,
+      "sha256": "27d669f25fbf5a72f724eeaf66990ad7ca317e31f5b5e6b6559ab2736e822c8f"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-verification-2026-09-08.json",
+      "bytes": 12627,
+      "sha256": "0f3cdcd9bedd591c2d1e4b205e5b0a703e6f58d94902182150c0383706c0e8ef"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-v4-draft-review-2026-09-08.json",
+      "bytes": 10129,
+      "sha256": "6d741388a07d8a61d11e00579c2a6ddc3fca6c48a9e466a6135b1e0d08eacaf7"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-v4-isolated-browser-attempt1-2026-09-08.log",
+      "bytes": 854,
+      "sha256": "e2e3a206e31dc6e95eb1b33e1152d69e96336fb4e3f87243277ea6f297e76ad4"
+    }
+  ],
+  "separateImmediateHardwareArchive": {
+    "path": "engine/build/scale0_time_gravity_v4_hardware_results_20260908.zip",
+    "bytes": 613547,
+    "sha256": "4ca0ec2616a25abad60168d2e6d3f6149d11468f5d582c1aa98c992f54c06ab5"
+  },
+  "scope": "Completed T1/G1 evidence; all three hardware failures retained. Source candidate and original preregistration are preserved separately. Live program may later add follow-up disposition."
+}

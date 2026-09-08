@@ -1,0 +1,32 @@
+{
+  "schema": "scale0-time-gravity-v4-browser-repair-execution-v1",
+  "startedUtc": "2026-09-08T06:42:43.885450+00:00",
+  "completedUtc": "2026-09-08T06:42:48.084421+00:00",
+  "commands": [
+    [
+      "node",
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "scale0-gravity-slab.spec.js",
+      "--workers=1"
+    ]
+  ],
+  "exitCodes": [
+    0
+  ],
+  "archive": "engine/build/scale0_time_gravity_v4_browser-repair_results_20260908.zip",
+  "archiveSha256": "43de59df29f7433d9b1dfae13fb3bd8a6c749a8285eb4e33d43283f5d179a2af",
+  "files": [
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-browser-repair-2026-09-08.log",
+      "bytes": 665,
+      "sha256": "accbf7173ce5e3aef5b37168bc37430e44d43c838fb833c1bc428a71d0ada533"
+    },
+    {
+      "path": "engine/web/test-results/.last-run.json",
+      "bytes": 45,
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    }
+  ],
+  "scope": "Available outputs captured immediately after this invocation, before any subsequent browser run. Hardware matrix disables tracing; no hardware trace claim."
+}

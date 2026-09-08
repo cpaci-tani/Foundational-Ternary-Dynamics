@@ -1,0 +1,155 @@
+{
+  "candidate_identity": "e384cc592fbd194845b2973326f4af1de8bc635ca9c7a2d0755cda897b24936f",
+  "checked_files": 2129,
+  "source_drift": [],
+  "archive_matches": true,
+  "verified_utc": "2026-09-07T21:32:57.669092+00:00",
+  "hardware": [
+    {
+      "L": 33,
+      "sha256": "1ff8c50900b834a3776b204d40aa97c216fc4c0a15fe153015963f874c4670f8",
+      "rows": 72,
+      "passed": 62,
+      "failed": [
+        {
+          "id": "flux-slice",
+          "state": "docked",
+          "failure": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "flux-slice",
+          "state": "floated",
+          "failure": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "wave-lab",
+          "state": "docked",
+          "failure": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "wave-lab",
+          "state": "floated",
+          "failure": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "spectrum",
+          "state": "docked",
+          "failure": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "spectrum",
+          "state": "floated",
+          "failure": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "time",
+          "state": "docked",
+          "failure": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "time",
+          "state": "floated",
+          "failure": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "thermo",
+          "state": "docked",
+          "failure": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "scale-context",
+          "state": "docked",
+          "failure": [
+            "interface callback budget"
+          ]
+        }
+      ],
+      "frame_gate_failures": 0,
+      "errors": []
+    },
+    {
+      "L": 97,
+      "sha256": "3a9d8425c8c527ad11d8dc4fb252502258b2b7809459d6478e75c28bd3db0f15",
+      "rows": 72,
+      "passed": 64,
+      "failed": [
+        {
+          "id": "flux-slice",
+          "state": "docked",
+          "failure": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "flux-slice",
+          "state": "floated",
+          "failure": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "wave-lab",
+          "state": "docked",
+          "failure": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "p1-observables",
+          "state": "docked",
+          "failure": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "gravity",
+          "state": "docked",
+          "failure": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "gravity",
+          "state": "floated",
+          "failure": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "thermo",
+          "state": "docked",
+          "failure": [
+            "interface callback budget"
+          ]
+        },
+        {
+          "id": "thermo",
+          "state": "floated",
+          "failure": [
+            "interface callback budget"
+          ]
+        }
+      ],
+      "frame_gate_failures": 0,
+      "errors": []
+    }
+  ]
+}

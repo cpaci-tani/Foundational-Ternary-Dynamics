@@ -1,0 +1,17 @@
+{
+  "status": "failed_preserved",
+  "passed": 57,
+  "failed": 1,
+  "log": "engine/docs/evidence/native-observation-v3-frozen-browser-2026-09-07.log",
+  "archive": "engine/build/native_observation_v3_browser_failure_20260907.zip",
+  "archive_sha256": "8bba8f3527ffbf40a2f98011d60c613f3cbc02af363ba43c00290e3107c4972f",
+  "test": "rapid native scenario changes coalesce to the latest pending allocation",
+  "expected_generations": [
+    11,
+    14
+  ],
+  "received_generations": [
+    14
+  ],
+  "disposition": "Independent contract review pending; failure not reclassified"
+}

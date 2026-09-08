@@ -1,0 +1,138 @@
+{
+  "schema": "ftd.wave-startup.forensic-execution.v1",
+  "completedAtUtc": "2026-09-08T07:46:39.247986+00:00",
+  "exitCode": 0,
+  "testsPassed": 2,
+  "diagnosticOnly": true,
+  "initialBootOnly": true,
+  "originalFailureExplained": false,
+  "checkedProductionFiles": 2176,
+  "sourceDrift": [],
+  "runs": [
+    {
+      "variant": "baseline",
+      "ready": true,
+      "failedRequests": [],
+      "pageErrors": [],
+      "events": 891
+    },
+    {
+      "variant": "routed",
+      "ready": true,
+      "failedRequests": [],
+      "pageErrors": [],
+      "events": 894
+    }
+  ],
+  "archive": {
+    "path": "engine/build/scale0_wave_startup_forensic_a1_20260908.zip",
+    "sha256": "ea1a7c10c1e78d7a0cef8b81da834eb5a2bb8de4128033f5049bb752ed8e209d",
+    "files": [
+      {
+        "path": "engine/build/scale0_wave_attribution_startup_20260908/identity.mjs",
+        "bytes": 1108,
+        "sha256": "2116a96635c4235c4b3ed3c7124336254462e5c8bef57f487e90619754c9c8c2"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_startup_20260908/manifest.json",
+        "bytes": 1788,
+        "sha256": "22cb1433cb22ff8732e0b780aa467eb3ee39b72d4eb8936041f2a31db7a304fd"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_startup_20260908/playwright.config.mjs",
+        "bytes": 946,
+        "sha256": "cbd991163aa8fc0f0fd1f7100b6bbd7e0f5c7302e45dbab0b0091f256469b6fd"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_startup_20260908/README.md",
+        "bytes": 2582,
+        "sha256": "0818d9e5dff49e8ba24cf2ae2cf186c210661c160f81dd47f7af5b62db8b4f97"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_startup_20260908/run-startup.mjs",
+        "bytes": 1944,
+        "sha256": "9a62b563a1d33baafc8095dae200e77d5fc21dc47a58453802af4aa9090de0f2"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_startup_20260908/startup.spec.mjs",
+        "bytes": 7989,
+        "sha256": "763d767a3972857b3ecf129401be011b4a0b8552f9e0c767157a76e34ed2943f"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_startup_20260908/syntax-checks.json",
+        "bytes": 409,
+        "sha256": "8f173ce47613357953c283c12b474aae04443a8afafed527152089068b9415a7"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_startup_20260908/runs/wave-startup-a1/baseline.json",
+        "bytes": 13203,
+        "sha256": "e4e12546058475f4cabeab52f19d60402ad11bda2322046f447bfe5d00d3f4f6"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_startup_20260908/runs/wave-startup-a1/baseline.ndjson",
+        "bytes": 181572,
+        "sha256": "2b88aa5ba08a7416c5756f3e6e773c27c60020a491c74fadd12838b8d10c3eaf"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_startup_20260908/runs/wave-startup-a1/browser.log",
+        "bytes": 675,
+        "sha256": "0ef36790e3afebe39f54b8c7c0d8ce6a112bd4584d0040f99eafe01fc3eae065"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_startup_20260908/runs/wave-startup-a1/reservation.json",
+        "bytes": 804,
+        "sha256": "4f59198030e1674481e5a3dd62187c5e0ba2c6e154902a279f40ddfbdcac89d0"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_startup_20260908/runs/wave-startup-a1/routed.json",
+        "bytes": 13446,
+        "sha256": "432063d7782b123acca0b66c75b73d90189fcb722807833dde7ed4af59d44563"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_startup_20260908/runs/wave-startup-a1/routed.ndjson",
+        "bytes": 182162,
+        "sha256": "cfbed65dbbd16b7e29cb2ae8208662b3b85f6a4b8edc52d20191b9eac5d46076"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_startup_20260908/runs/wave-startup-a1/browser-results/.last-run.json",
+        "bytes": 45,
+        "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_startup_20260908/runs/wave-startup-a1/browser-results/startup-initial-direct-WASM-startup-baseline-chromium/trace.zip",
+        "bytes": 1742283,
+        "sha256": "9788616aeeff5c4052416eb3726a338136cfaefa9cb6df5ebce0878f04ab1c46"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_startup_20260908/runs/wave-startup-a1/browser-results/startup-initial-direct-WASM-startup-routed-chromium/trace.zip",
+        "bytes": 1763160,
+        "sha256": "956c4ed77f3f94d67b7e0ea37d16c393bdb02ab139e6bf7f78b99ef5b15b5099"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_startup_20260908/runs/wave-startup-a1/browser-results/startup-initial-direct-WASM-startup-routed-chromium/attachments/routed-startup-events-966fb170c2cd9bc2c74103e80fdc51bfa90cde89.ndjson",
+        "bytes": 182162,
+        "sha256": "cfbed65dbbd16b7e29cb2ae8208662b3b85f6a4b8edc52d20191b9eac5d46076"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_startup_20260908/runs/wave-startup-a1/browser-results/startup-initial-direct-WASM-startup-routed-chromium/attachments/routed-startup-report-6afad6bbba9d477186869c0a3b5b5c9d23d8ae02.json",
+        "bytes": 13446,
+        "sha256": "432063d7782b123acca0b66c75b73d90189fcb722807833dde7ed4af59d44563"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_startup_20260908/runs/wave-startup-a1/browser-results/startup-initial-direct-WASM-startup-baseline-chromium/attachments/baseline-startup-events-67247e9f8b4ef468136b6c9f73d47406ab894cf6.ndjson",
+        "bytes": 181572,
+        "sha256": "2b88aa5ba08a7416c5756f3e6e773c27c60020a491c74fadd12838b8d10c3eaf"
+      },
+      {
+        "path": "engine/build/scale0_wave_attribution_startup_20260908/runs/wave-startup-a1/browser-results/startup-initial-direct-WASM-startup-baseline-chromium/attachments/baseline-startup-report-7d7a901e6ccfe05d99cf886cec61de86bfde794c.json",
+        "bytes": 13203,
+        "sha256": "e4e12546058475f4cabeab52f19d60402ad11bda2322046f447bfe5d00d3f4f6"
+      },
+      {
+        "path": "engine/docs/evidence/scale0-wave-startup-forensic-review-2026-09-08.json",
+        "bytes": 6463,
+        "sha256": "1d2b9db40c77e49fea800d7dacbcb077fe6956c08243c6b4245ba3350d8d0a64"
+      }
+    ]
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "candidate_identity": "292800fd8dc3f9971d55300eadc8feea18c887402fcd8d794d57ad26ad0c44bc",
+  "checked_files": 2145,
+  "source_drift": [],
+  "archive_matches": true,
+  "verified_utc": "2026-09-07T23:39:03.979276+00:00",
+  "strict_preservation": [
+    {
+      "manifest": "strict-stack-source-manifest-2026-09-05.json",
+      "files": 69,
+      "drift": []
+    },
+    {
+      "manifest": "strict-recovery-wave1-manifest-2026-09-05.json",
+      "files": 44,
+      "drift": []
+    },
+    {
+      "manifest": "strict-recovery-wave2-manifest-2026-09-05.json",
+      "files": 73,
+      "drift": []
+    }
+  ],
+  "evidence": [
+    {
+      "file": "scale0-correctness-v2-native-tests-2026-09-07.log",
+      "sha256": "875222eb462d11474a0f3a5a07f220ea7b994f178906b121208efb61ff3c0be3"
+    },
+    {
+      "file": "scale0-correctness-v2-wsl-tests-2026-09-07.log",
+      "sha256": "540cf6a459050e77b2a7e4f0331641ec385b4c30ac55ac1316d688ae21596588"
+    },
+    {
+      "file": "scale0-correctness-frozen-node-tests-2026-09-07.log",
+      "sha256": "0cb100e65a2f862025fcc738795022dcf0b2ca21f3a07997bc79d3b9de4e2f9c"
+    },
+    {
+      "file": "scale0-correctness-v2-browser-tests-2026-09-07.log",
+      "sha256": "4947c1b7a7f20764ff558fee6d4b529ec0975096e2a9f0807f6a331389cc3808"
+    },
+    {
+      "file": "scale0-correctness-native-wire-2026-09-07.json",
+      "sha256": "4c0da3dd2d7a4307c2908a5a67e477e48675cd2b9956fc5c7d2e0024e064563f"
+    },
+    {
+      "file": "scale0-correctness-v2-wsl-wire-2026-09-07.json",
+      "sha256": "550248f81a953a3f592d430ba3cc97bf4fba5e73d02a2edd0cc953a381f8cfc4"
+    },
+    {
+      "file": "scale0-correctness-v2-artifact-hashes-2026-09-07.json",
+      "sha256": "faea2d26c743f9c70c759f66c4c34a97815ed93e43bc4bbf7d7f65a3ee40b322"
+    }
+  ],
+  "test_disposition": {
+    "windows_cpu": "10/10 passed",
+    "wsl_cpu": "9/9 passed",
+    "node": "27/27 passed",
+    "browser": "6/9 passed; 3 clean-source assertions failed on source.dirty=true",
+    "gpu_execution": "not run",
+    "hardware_performance": "not certified"
+  },
+  "prior_archives": [
+    {
+      "manifest": "scale0-performance-candidate-manifest-2026-09-07.json",
+      "archive_matches": true
+    },
+    {
+      "manifest": "scale0-correctness-candidate-manifest-2026-09-07.json",
+      "archive_matches": true
+    }
+  ]
+}

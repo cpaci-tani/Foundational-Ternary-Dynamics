@@ -1,0 +1,77 @@
+{
+  "schema": "scale0-time-gravity-v4-hardware-execution-v1",
+  "startedUtc": "2026-09-08T06:48:43.536162+00:00",
+  "completedUtc": "2026-09-08T06:53:16.947191+00:00",
+  "commands": [
+    [
+      "node",
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "scale0-comprehensive-performance.spec.js",
+      "--workers=1"
+    ]
+  ],
+  "exitCodes": [
+    1
+  ],
+  "archive": "engine/build/scale0_time_gravity_v4_hardware_results_20260908.zip",
+  "archiveSha256": "4ca0ec2616a25abad60168d2e6d3f6149d11468f5d582c1aa98c992f54c06ab5",
+  "files": [
+    {
+      "path": "engine/docs/evidence/scale0-hardware-time-gravity-v4-panels-L33-2026-09-08.json",
+      "bytes": 679550,
+      "sha256": "f38252326cead0c49cecb86e58dfcdd6b9087fb4f18e9ae9dedc04037a1e85a9"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-hardware-time-gravity-v4-panels-L97-2026-09-08.json",
+      "bytes": 391461,
+      "sha256": "7a29ffee78309b4d1cc5a11439073c0387d9bdcf1652e8fdd36265ef4be1f50d"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-candidate-manifest-2026-09-08.json",
+      "bytes": 409249,
+      "sha256": "d7b671f7fdefa4d8df8c0ddbdf52d1cd1075770d9ba2e0338cba6b4adb31708c"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-hardware-2026-09-08.log",
+      "bytes": 8682,
+      "sha256": "b86308d7095a76bcb3fa2fc6706e90e3c5f74cbf37dbefa85d3b5a1d618440f1"
+    },
+    {
+      "path": "engine/web/test-results/.last-run.json",
+      "bytes": 145,
+      "sha256": "e67f206766bdfe08b2273d445eb2ce2e06278bca733ec73bed5329b58168435e"
+    },
+    {
+      "path": "engine/web/test-results/scale0-comprehensive-perfo-6dade-panels-hardware-matrix-L-97-chromium/attachments/hardware-panels-L97-e0548b8f17d253c5bb72506594722fb26bfcafbc.json",
+      "bytes": 391461,
+      "sha256": "7a29ffee78309b4d1cc5a11439073c0387d9bdcf1652e8fdd36265ef4be1f50d"
+    },
+    {
+      "path": "engine/web/test-results/scale0-comprehensive-perfo-6dade-panels-hardware-matrix-L-97-chromium/error-context.md",
+      "bytes": 68919,
+      "sha256": "9088fa8e0f13ad5ec4385c3818868e3a4ac2ac3401bcd8d3c677c8ce89b17f3e"
+    },
+    {
+      "path": "engine/web/test-results/scale0-comprehensive-perfo-6dade-panels-hardware-matrix-L-97-chromium/test-failed-1.png",
+      "bytes": 150517,
+      "sha256": "354bb061f8b6c360189e02025474f335313aff9360355bfe0ceb0f298c17cc70"
+    },
+    {
+      "path": "engine/web/test-results/scale0-comprehensive-perfo-e0160-panels-hardware-matrix-L-33-chromium/attachments/hardware-panels-L33-b595306fcc52f238447ec8b56a57f7b13c7d146d.json",
+      "bytes": 679550,
+      "sha256": "f38252326cead0c49cecb86e58dfcdd6b9087fb4f18e9ae9dedc04037a1e85a9"
+    },
+    {
+      "path": "engine/web/test-results/scale0-comprehensive-perfo-e0160-panels-hardware-matrix-L-33-chromium/error-context.md",
+      "bytes": 69200,
+      "sha256": "551c29b40eaf618ee0c07dfaeccab2d4c0253804fc3b9c3b814c49e6e61bfff4"
+    },
+    {
+      "path": "engine/web/test-results/scale0-comprehensive-perfo-e0160-panels-hardware-matrix-L-33-chromium/test-failed-1.png",
+      "bytes": 154685,
+      "sha256": "968f5960ab210924235847d1b62bf996b0675c7fe9746c7f1d2d12c576b98206"
+    }
+  ],
+  "scope": "Available outputs captured immediately after this invocation, before any subsequent browser run. Hardware matrix disables tracing; no hardware trace claim."
+}

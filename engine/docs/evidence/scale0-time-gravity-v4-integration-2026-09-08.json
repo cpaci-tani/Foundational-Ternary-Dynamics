@@ -1,0 +1,479 @@
+{
+  "schema": "scale0-time-gravity-v4-integration-v1",
+  "integratedUtc": "2026-09-08T06:31:44.567552+00:00",
+  "baselineValidation": "All 9 Time and 12 Gravity baseline records matched before any integration; overlapping dependencies counted separately. Four proposed new paths were absent.",
+  "changes": [
+    {
+      "path": "engine/web/js/scales/scale0/ui/overlays/time-panel.js",
+      "before": {
+        "path": "engine/web/js/scales/scale0/ui/overlays/time-panel.js",
+        "sha256": "069c23c52de53cb68052cc693e9e65e767001bbc6987a6ce5e47ba41387dd4bd",
+        "bytes": 47776
+      },
+      "after": {
+        "path": "engine/build/scale0_time_v4_draft_20260908/engine/web/js/scales/scale0/ui/overlays/time-panel.js",
+        "bytes": 48859,
+        "sha256": "88994fa5d0700e45fc7a1dc35d8a987925033637f860e4ba252f807b32bb866f"
+      },
+      "draft": "engine/build/scale0_time_v4_draft_20260908"
+    },
+    {
+      "path": "engine/web/js/scales/scale0/ui/overlays/time-readout.js",
+      "before": null,
+      "after": {
+        "path": "engine/build/scale0_time_v4_draft_20260908/engine/web/js/scales/scale0/ui/overlays/time-readout.js",
+        "bytes": 4422,
+        "sha256": "97cb4c351ff0fe541136b1e34651570c295be71713d4b0e84364b9f436957e00"
+      },
+      "draft": "engine/build/scale0_time_v4_draft_20260908"
+    },
+    {
+      "path": "engine/web/tests/scale0-time-retained-readout.node.test.mjs",
+      "before": {
+        "path": "engine/web/tests/scale0-time-retained-readout.node.test.mjs",
+        "sha256": "74d4c66346f48c484d39e50aa62a3babf42eba1d27879237a7506edca66ca707",
+        "bytes": 10355
+      },
+      "after": {
+        "path": "engine/build/scale0_time_v4_draft_20260908/engine/web/tests/scale0-time-retained-readout.node.test.mjs",
+        "bytes": 13596,
+        "sha256": "b3afca6628065d666f541b59daf62040275c6eb4cbc6ab392726b5eb01aba27f"
+      },
+      "draft": "engine/build/scale0_time_v4_draft_20260908"
+    },
+    {
+      "path": "engine/web/js/bridge/flux-publication.classic.js",
+      "before": {
+        "path": "engine/web/js/bridge/flux-publication.classic.js",
+        "sha256": "4974dc66eb7d94b526b36719a5fd7be7962417895d9396e7b5ebb329648e4d69",
+        "bytes": 5993,
+        "role": "proposed_edit"
+      },
+      "after": {
+        "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/bridge/flux-publication.classic.js",
+        "bytes": 9059,
+        "sha256": "f2f9d25f69991419325d981afea4474b596cd7005bce927ef99465b640e213ed"
+      },
+      "draft": "engine/build/scale0_gravity_v4_draft_20260908"
+    },
+    {
+      "path": "engine/web/js/bridge/wasm-bridge-proxy.js",
+      "before": {
+        "path": "engine/web/js/bridge/wasm-bridge-proxy.js",
+        "sha256": "a2e151ed349978e1dafd3105247f71af45ba84e9fa5f9017e94e5141aa501536",
+        "bytes": 73815,
+        "role": "proposed_edit"
+      },
+      "after": {
+        "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/bridge/wasm-bridge-proxy.js",
+        "bytes": 76544,
+        "sha256": "c35f343ecb5fbc565f1c0b6fff00a8b436680c22a3c9186e57d0c75a5efd0681"
+      },
+      "draft": "engine/build/scale0_gravity_v4_draft_20260908"
+    },
+    {
+      "path": "engine/web/js/bridge/capabilities/scale0.js",
+      "before": {
+        "path": "engine/web/js/bridge/capabilities/scale0.js",
+        "sha256": "fcae35504f1c7145c453c3141aced61ebe798c6d31d21a4e62002beb17b54794",
+        "bytes": 4682,
+        "role": "proposed_edit"
+      },
+      "after": {
+        "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/bridge/capabilities/scale0.js",
+        "bytes": 5202,
+        "sha256": "9e90ad033b9d609b7b0b59d3bf753a17be2c7ff4abd4868a94892ec5c1e94b56"
+      },
+      "draft": "engine/build/scale0_gravity_v4_draft_20260908"
+    },
+    {
+      "path": "engine/web/js/scales/scale0/analysis/gravity-analysis.js",
+      "before": {
+        "path": "engine/web/js/scales/scale0/analysis/gravity-analysis.js",
+        "sha256": "9a38058819916d2e964f77be28c18486072c4f511ce61e980f031177a2d7eee5",
+        "bytes": 11030,
+        "role": "proposed_edit"
+      },
+      "after": {
+        "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/scales/scale0/analysis/gravity-analysis.js",
+        "bytes": 12240,
+        "sha256": "9a9500a3f1d7611a1baa3f8f7292f0013f8c4234b01510bb897011dd2f98434b"
+      },
+      "draft": "engine/build/scale0_gravity_v4_draft_20260908"
+    },
+    {
+      "path": "engine/web/js/scales/scale0/ui/overlays/gravity-panel.js",
+      "before": {
+        "path": "engine/web/js/scales/scale0/ui/overlays/gravity-panel.js",
+        "sha256": "814ca52bfdefeb26bc1f53cdb01ebcfd81dc9a6c33b455350ef23835e6c6aa09",
+        "bytes": 53702,
+        "role": "proposed_edit"
+      },
+      "after": {
+        "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/scales/scale0/ui/overlays/gravity-panel.js",
+        "bytes": 56245,
+        "sha256": "dcbfd6b54f0109debcc3635934e7bb831f47d859eb2696644d2f9daa5185223c"
+      },
+      "draft": "engine/build/scale0_gravity_v4_draft_20260908"
+    },
+    {
+      "path": "engine/web/tests/fixtures/gravity-dense-v3-oracle.mjs",
+      "before": null,
+      "after": {
+        "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/tests/fixtures/gravity-dense-v3-oracle.mjs",
+        "bytes": 3024,
+        "sha256": "6b4d7b232ad3a58a5c9fc3c96e011683d1d53b4f83a07d1c356d6e698643d3d8"
+      },
+      "draft": "engine/build/scale0_gravity_v4_draft_20260908"
+    },
+    {
+      "path": "engine/web/tests/scale0-gravity-slab.node.test.mjs",
+      "before": null,
+      "after": {
+        "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/tests/scale0-gravity-slab.node.test.mjs",
+        "bytes": 17758,
+        "sha256": "19ee49f30d15f1983d6a0a0b186fc9b31b73d90413b79d0b51f53244391702b7"
+      },
+      "draft": "engine/build/scale0_gravity_v4_draft_20260908"
+    },
+    {
+      "path": "engine/web/tests/scale0-gravity-slab.spec.js",
+      "before": null,
+      "after": {
+        "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/tests/scale0-gravity-slab.spec.js",
+        "bytes": 7761,
+        "sha256": "7777458eed1dc8dbc724eb0e9eb779729535d89413868f59a631d2f514bc37db"
+      },
+      "draft": "engine/build/scale0_gravity_v4_draft_20260908"
+    }
+  ],
+  "reviews": [
+    {
+      "path": "engine/docs/evidence/scale0-time-v4-draft-review-2026-09-08.json",
+      "bytes": 10129,
+      "sha256": "6d741388a07d8a61d11e00579c2a6ddc3fca6c48a9e466a6135b1e0d08eacaf7"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-gravity-v4-draft-review-2026-09-08.json",
+      "bytes": 9077,
+      "sha256": "02955295c217c12b323036be9498612b347f3eb1bbb024f82af907f2ad2162b9"
+    }
+  ],
+  "isolatedDraftArchives": [
+    {
+      "archive": {
+        "path": "engine/build/scale0_time_v4_draft_20260908.zip",
+        "bytes": 122888,
+        "sha256": "fd352e46fcc1be8557b1fc0d0e12882a02b7eda61d9584da75caa335e942402c"
+      },
+      "files": [
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/draft-reference-parity.mjs",
+          "bytes": 4871,
+          "sha256": "155938248f29d97ac5f5baa9fcc885b9ae70b82289187da22baf77640d15a69a"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/DRAFT_REVIEW.md",
+          "bytes": 7804,
+          "sha256": "e8f72b3a9566916e980001c561b1872e58c2c2d5011f55a5270c5a24408e5a40"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/engine/web/js/constants.js",
+          "bytes": 38502,
+          "sha256": "e1c2982b611417e62e9ffc46773306f3f079a164d18136a8b7760499a75c3b53"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/engine/web/js/scales/scale0/analysis/package.json",
+          "bytes": 21,
+          "sha256": "5a065fe7d8eab2a582f428e11c2ea63aaf70607a54f69cfd5c711b5c53d91b32"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/engine/web/js/scales/scale0/analysis/time-analysis.js",
+          "bytes": 4255,
+          "sha256": "45ef1b04d044a933ab59fd4e3d5e59182232bf6b9a14395af0ac4be2a11e6195"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/engine/web/js/scales/scale0/data/ftd0252-reference.js",
+          "bytes": 1358,
+          "sha256": "a92a228b0dfe3d26c7b1f4edab145f71ec13558439e8ac1f58bd24373d3a35a7"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/engine/web/js/scales/scale0/ui/overlays/_card-helpers.js",
+          "bytes": 6958,
+          "sha256": "8a1ce5a87645e6261858eda52121259174afdabd92ede43c1b70c335ac5eda0a"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/engine/web/js/scales/scale0/ui/overlays/time-panel.js",
+          "bytes": 48859,
+          "sha256": "88994fa5d0700e45fc7a1dc35d8a987925033637f860e4ba252f807b32bb866f"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/engine/web/js/scales/scale0/ui/overlays/time-readout.js",
+          "bytes": 4422,
+          "sha256": "97cb4c351ff0fe541136b1e34651570c295be71713d4b0e84364b9f436957e00"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/engine/web/js/ui/charts/history-window.js",
+          "bytes": 7347,
+          "sha256": "7367b2a08bd35361ed7c8d997b7d8edfc34f71b908c2a09e32208584ec6233e0"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/engine/web/js/ui/panels/retained-readout.js",
+          "bytes": 2440,
+          "sha256": "1122665004d5472b83f70c6ad92aea3173686cd6aa54260cc071c1c574d629e5"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/engine/web/tests/scale0-time-retained-readout.node.test.mjs",
+          "bytes": 13596,
+          "sha256": "b3afca6628065d666f541b59daf62040275c6eb4cbc6ab392726b5eb01aba27f"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/engine/web/tests/scale0-time-slot-readout.spec.js",
+          "bytes": 12112,
+          "sha256": "4cad59003307546b944a76abb0514d238447d28b784d8d2741f2ff428e7b5661"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/node-bindings-attempt1.log",
+          "bytes": 406,
+          "sha256": "e3688b7a37e0c38713aebf8a51e90af99f07cc3c2b7c4f4d2f1c061b14b7ced4"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/node-parity-attempt1.log",
+          "bytes": 4832,
+          "sha256": "64c8ee31d6ae29f85d9a1806e63c655ec93c3c98ebe4f7ee2c0e0e6c6adae0ab"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/node-parity-attempt2.log",
+          "bytes": 6768,
+          "sha256": "a828a5ad9e5191e38f0972c04b76846fd5f04e8d6259a5110e7879451761b030"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/node-parity-attempt3.log",
+          "bytes": 1241,
+          "sha256": "56085f4574741015832a716915eec2202fffe8b8210360f94de31e08912e299e"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/node-parity-attempt4.log",
+          "bytes": 1240,
+          "sha256": "8c322b014b424c25c91a17ee6a687775d8afa34de268637a538f114a32eb7c05"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/playwright.config.mjs",
+          "bytes": 431,
+          "sha256": "0c19dfcf8e9c0351fbd0b15b201669c6fd6a5fa4f0c49a208abc775066c04dc7"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/prepare_candidate.py",
+          "bytes": 4943,
+          "sha256": "8e5314d7d93062cf4c3f9bd9ca6afbaeb4b201f4923ddb521bb678dbc72eb5be"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/prepare_tests.py",
+          "bytes": 3985,
+          "sha256": "82868651e1df6f7351787c3a226c560c761fe2a1a3c0cbeb66bffcc8e6573f1a"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/proposed-source.patch",
+          "bytes": 35441,
+          "sha256": "86db5aab951f39209c1ad2775c5fe2bb683c2bb2e99a5738447788996a64ca26"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/reference/engine/web/js/constants.js",
+          "bytes": 38502,
+          "sha256": "e1c2982b611417e62e9ffc46773306f3f079a164d18136a8b7760499a75c3b53"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/reference/engine/web/js/scales/scale0/analysis/package.json",
+          "bytes": 21,
+          "sha256": "5a065fe7d8eab2a582f428e11c2ea63aaf70607a54f69cfd5c711b5c53d91b32"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/reference/engine/web/js/scales/scale0/analysis/time-analysis.js",
+          "bytes": 4255,
+          "sha256": "45ef1b04d044a933ab59fd4e3d5e59182232bf6b9a14395af0ac4be2a11e6195"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/reference/engine/web/js/scales/scale0/data/ftd0252-reference.js",
+          "bytes": 1358,
+          "sha256": "a92a228b0dfe3d26c7b1f4edab145f71ec13558439e8ac1f58bd24373d3a35a7"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/reference/engine/web/js/scales/scale0/ui/overlays/_card-helpers.js",
+          "bytes": 6958,
+          "sha256": "8a1ce5a87645e6261858eda52121259174afdabd92ede43c1b70c335ac5eda0a"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/reference/engine/web/js/scales/scale0/ui/overlays/time-panel.js",
+          "bytes": 47776,
+          "sha256": "069c23c52de53cb68052cc693e9e65e767001bbc6987a6ce5e47ba41387dd4bd"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/reference/engine/web/js/ui/charts/history-window.js",
+          "bytes": 7347,
+          "sha256": "7367b2a08bd35361ed7c8d997b7d8edfc34f71b908c2a09e32208584ec6233e0"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/reference/engine/web/js/ui/panels/retained-readout.js",
+          "bytes": 2440,
+          "sha256": "1122665004d5472b83f70c6ad92aea3173686cd6aa54260cc071c1c574d629e5"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/reference/engine/web/tests/scale0-time-retained-readout.node.test.mjs",
+          "bytes": 10355,
+          "sha256": "74d4c66346f48c484d39e50aa62a3babf42eba1d27879237a7506edca66ca707"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/seal_manifest.py",
+          "bytes": 2570,
+          "sha256": "f1d4251285f61e77742f0c5caf0e6d3275adf190637e8a0199472a2a81c459bd"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/time-slot-bindings.node.test.mjs",
+          "bytes": 2783,
+          "sha256": "9664888dfe190cd7fe4731cf2c2952eb1b0c24b77bfe4d4b1f52a1bdf72c776c"
+        },
+        {
+          "path": "engine/build/scale0_time_v4_draft_20260908/manifest.json",
+          "bytes": 8348,
+          "sha256": "b3efe6ee465ba0850b20af3b9872f357a710ceb69865110c63f4d88e05e221f4"
+        }
+      ]
+    },
+    {
+      "archive": {
+        "path": "engine/build/scale0_gravity_v4_draft_20260908.zip",
+        "bytes": 138019,
+        "sha256": "68a3076bfe08ddc56f0eb1a30c432c5c32a9bd7383eff0a5bb45c27194879866"
+      },
+      "files": [
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/baseline-manifest.json",
+          "bytes": 2769,
+          "sha256": "1f9afc416204a0c6542c50ada7b3f6408a66f9df1e0cadaab85617e9b04f077a"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/DRAFT_REVIEW.md",
+          "bytes": 7929,
+          "sha256": "aba421954dbd10c3f4a31e0fa05fe02c7e91800b2afb4a26a5e3416620238614"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/bridge/bridge-contract.js",
+          "bytes": 13142,
+          "sha256": "38e038ecab5007e4e9acd18bbb08160004ad0df2dfc0f988d27aff6090419fd5"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/bridge/capabilities/scale0.js",
+          "bytes": 5202,
+          "sha256": "9e90ad033b9d609b7b0b59d3bf753a17be2c7ff4abd4868a94892ec5c1e94b56"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/bridge/flux-publication.classic.js",
+          "bytes": 9059,
+          "sha256": "f2f9d25f69991419325d981afea4474b596cd7005bce927ef99465b640e213ed"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/bridge/sampler-want-set.js",
+          "bytes": 3254,
+          "sha256": "366d40d72c1999caeaf4b4be6fdadf74af137965c7e5c412e782c013c53ede19"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/bridge/wasm-bridge-proxy.js",
+          "bytes": 76544,
+          "sha256": "c35f343ecb5fbc565f1c0b6fff00a8b436680c22a3c9186e57d0c75a5efd0681"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/constants.js",
+          "bytes": 38502,
+          "sha256": "e1c2982b611417e62e9ffc46773306f3f079a164d18136a8b7760499a75c3b53"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/scales/scale0/analysis/gravity-analysis.js",
+          "bytes": 12240,
+          "sha256": "9a9500a3f1d7611a1baa3f8f7292f0013f8c4234b01510bb897011dd2f98434b"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/scales/scale0/analysis/lattice-topology.js",
+          "bytes": 5185,
+          "sha256": "00f658f7713263def01faa30f69d057fd05f9e0463e185ac5a8f3555de01abfe"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/scales/scale0/analysis/package.json",
+          "bytes": 21,
+          "sha256": "5a065fe7d8eab2a582f428e11c2ea63aaf70607a54f69cfd5c711b5c53d91b32"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/scales/scale0/ui/overlays/gravity-panel.js",
+          "bytes": 56245,
+          "sha256": "dcbfd6b54f0109debcc3635934e7bb831f47d859eb2696644d2f9daa5185223c"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/scales/scale0/ui/overlays/slice-render.js",
+          "bytes": 5119,
+          "sha256": "f4e022f96af0eb4ba30cb7f8ad28e484329fe2cd67e5f85bee5eac8dcae1ca0e"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/js/viewport/color-ramps.js",
+          "bytes": 10140,
+          "sha256": "a05edde9142df78d59cd11a031017943b80575ead63a0555e22d4bbed29933f2"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/tests/fixtures/gravity-dense-v3-oracle.mjs",
+          "bytes": 3024,
+          "sha256": "6b4d7b232ad3a58a5c9fc3c96e011683d1d53b4f83a07d1c356d6e698643d3d8"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/tests/scale0-gravity-slab.node.test.mjs",
+          "bytes": 17758,
+          "sha256": "19ee49f30d15f1983d6a0a0b186fc9b31b73d90413b79d0b51f53244391702b7"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/engine/web/tests/scale0-gravity-slab.spec.js",
+          "bytes": 7761,
+          "sha256": "7777458eed1dc8dbc724eb0e9eb779729535d89413868f59a631d2f514bc37db"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/node-gravity-slab-attempt1.log",
+          "bytes": 2074,
+          "sha256": "10c5150acfa23d7f63eb7ba43de670a90fb144e7d4412c6d2f2344681ba9b000"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/proposed-source.patch",
+          "bytes": 13762,
+          "sha256": "599d37df0fa5a9812607b2bcbce29c1678530e686a12dd57eee9f5c729583942"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/reference/engine/web/js/bridge/capabilities/scale0.js",
+          "bytes": 4682,
+          "sha256": "fcae35504f1c7145c453c3141aced61ebe798c6d31d21a4e62002beb17b54794"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/reference/engine/web/js/bridge/flux-publication.classic.js",
+          "bytes": 5993,
+          "sha256": "4974dc66eb7d94b526b36719a5fd7be7962417895d9396e7b5ebb329648e4d69"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/reference/engine/web/js/bridge/wasm-bridge-proxy.js",
+          "bytes": 73815,
+          "sha256": "a2e151ed349978e1dafd3105247f71af45ba84e9fa5f9017e94e5141aa501536"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/reference/engine/web/js/scales/scale0/analysis/gravity-analysis.js",
+          "bytes": 11030,
+          "sha256": "9a38058819916d2e964f77be28c18486072c4f511ce61e980f031177a2d7eee5"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/reference/engine/web/js/scales/scale0/ui/overlays/gravity-panel.js",
+          "bytes": 53702,
+          "sha256": "814ca52bfdefeb26bc1f53cdb01ebcfd81dc9a6c33b455350ef23835e6c6aa09"
+        },
+        {
+          "path": "engine/build/scale0_gravity_v4_draft_20260908/draft-manifest.json",
+          "bytes": 4915,
+          "sha256": "e6234cfb3f6d1700b89dda5fd47b3c9ba51b6c8f30cd9a5452b9800abed3f3bd"
+        }
+      ]
+    }
+  ],
+  "hardwarePassed": false,
+  "scope": "11 reviewed observer implementation/test files copied exactly. Harness has a separate integration record. No native law or WASM change."
+}

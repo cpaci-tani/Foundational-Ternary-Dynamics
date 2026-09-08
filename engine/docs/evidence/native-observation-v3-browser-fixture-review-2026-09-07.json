@@ -1,0 +1,27 @@
+{
+  "status": "stale_fixture_confirmed",
+  "original_run": {
+    "passed": 57,
+    "failed": 1,
+    "record": "engine/docs/evidence/native-observation-v3-browser-failure-2026-09-07.json"
+  },
+  "reviewer": "/root/native_observation_review",
+  "reproducer": "/root/wire_client_implementation",
+  "recording_method": "Coordinator transcription of independent source review and implementation-author actual-fixture Node VM reproduction; not a new browser pass",
+  "baseline_manifest": "engine/docs/evidence/scale0-transport-candidate-manifest-2026-09-07.json",
+  "method": "_dispatchQueuedScenarioProfile",
+  "newline_normalized_method_sha256": "1ffb3db89f30b658c83012804a21f1bda8665bd5e5d77c3f9321a0cdb52710db",
+  "baseline_and_current_results": {
+    "sent_scenarios": [
+      "flux-pulse",
+      "flux-standing"
+    ],
+    "active_scenario": "flux-standing",
+    "authoritative_generations": [
+      14
+    ]
+  },
+  "independent_reason": "The existing _profileGeneration guard rejects the generation11 ACK after requests12,13,14 supersede it. Publishing11 as current authority would violate scenario ownership.",
+  "approved_fix": "Test only: retain exactly two dispatched allocations; assert no authoritative callback after the superseded ACK, then exactly generation14 after its own ACK.",
+  "original_failure_retained": true
+}

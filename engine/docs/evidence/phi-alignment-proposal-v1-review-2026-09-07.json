@@ -1,0 +1,195 @@
+{
+  "schema": "ftd-phi-alignment-proposal-review-1",
+  "review_date": "2026-09-07",
+  "reviewer": "formation_alignment_redteam",
+  "review_kind": "independent provisional AI-simulated mathematical source and design review",
+  "document": "engine/docs/SPEC_PHI_ALIGNMENT_SUCCESSOR_PROPOSAL_V1.md",
+  "status": "accepted_as_bounded_proposal_only",
+  "scope": "Transcription and epistemic accuracy of the newly written proposal against an independent manual review of the existing channel definitions, collision generator, staged law and specified finite-map construction.",
+  "implementation_certified": false,
+  "physical_recovery_certified": false,
+  "canonical_adoption": false,
+  "external_human_review": false,
+  "numerical_campaigns": "NOT RUN",
+  "tests": "NOT RUN",
+  "builds": "NOT RUN",
+  "browser_or_gpu_work": "NOT RUN",
+  "successor_table_generated": false,
+  "successor_trajectory_executed": false,
+  "assumptions": [
+    "The proposed collision reads only a local unordered same-polarity pair and input layer; no A9 values, pending controls, diagnostics or additional records enter its selection.",
+    "The original collision family is the finite map defined by the cited existing generator. This review did not rerun its exhaustive certificate or regenerate the frozen tables.",
+    "Layer conjugation uses r=(-q) mod 3; all noncollision stages, admissible records and exactly-two eligibility remain unchanged.",
+    "Formation and persistence statements use the specified finite periodic homogeneous occupied background and the stated complete initial states.",
+    "Support minimality is measured in changed internal pair-table rows within the proposal's explicit comparison class.",
+    "The Bernoulli measure is an external finite counting reference at the specified initial collision, not an ontic probability law."
+  ],
+  "methods": [
+    "Read the complete proposal with numbered lines.",
+    "Independently derived O_h and uniform C4 covariance from the polar, axial and pseudoscalar transformation laws.",
+    "Checked the layer-conjugation sign using U's layer decrement and U^3's phase action.",
+    "Derived D0 and P0 cardinalities and exact two-to-one, zero-preimage and singleton fibers.",
+    "Derived the stabilizer argument restricting incoming same-flag formation to the adjacent-phase orbit.",
+    "Manually decoded the relevant C0 packed entries and U channel entries from the existing native frozen transcription.",
+    "Manually traced both specified formation witnesses through the staged schedule.",
+    "Checked the finite alphabet factor count symbolically.",
+    "Derived the exact one-site, one-polarity initial Bernoulli total-variation drift.",
+    "Checked the inherited displaced same-flag pair non-restoring argument."
+  ],
+  "verified_exact_expressions": {
+    "local_alphabet_before_schedule_restrictions": "9^19 * 2^396",
+    "internal_channels_per_polarity": 192,
+    "all_internal_pair_rows_per_layer": 18336,
+    "base_eligible_orbit_rows": 192,
+    "base_aligned_adjacent_phase_orbit_rows": 192,
+    "changed_rows_across_three_layers": 576,
+    "initial_pair_state_weight": "w = p^2 * (1-p)^190",
+    "initial_alignment_probability": "192*w",
+    "initial_exactly_two_probability": "18336*w",
+    "initial_bank_total_variation": "192*w",
+    "conjugation": "C_q' = U^r (C_0 composed with A_0) U^(-r), r=(-q) mod 3",
+    "phase_reversal_witness": "R C_0'({0,5})={4,7}; C_0' R({0,5})={0,3}",
+    "contact_witness": "{0,5} -> A0 {0,1} -> C0 {4,5}; streaming U gives {93,94} at x-e_x",
+    "separated_witness": "L=7, ell=2: 113@(3,2,3),94@(3,4,3); tick3 {167,170}@(3,3,3); tick6 {166,167}; tick7 {4,7}@(3,3,4)"
+  },
+  "required_future_gates": [
+    "Fresh successor law, collision-table and checkpoint identities; preserve original identities and reject incompatible checkpoints.",
+    "Exhaustive local pair-map checks, intermediate-record causal support, exact token and polarity accounting, and checkpoint continuation.",
+    "Execute the preregistered finite witnesses and controls without changing their acceptance criteria after outcomes.",
+    "Complete-state and event parity for every claimed backend.",
+    "New reference-evolution and error analysis before any successor continuum claim.",
+    "An independently specified additional mechanism before any restoring-binding or higher material-recovery claim."
+  ],
+  "limitations": [
+    "No exhaustive table checks, source-law execution, backend parity tests or numerical campaigns were performed.",
+    "Moment conservation is evaluated at the input collision layer, not at every committed physical microtick.",
+    "O_h and C4 covariance are collision statements; no new full-runtime phase symmetry is certified.",
+    "Phase reversal fails and the predecessor selection is an explicit law price.",
+    "The new map invalidates the old full-support product-reference stationarity, isometry and multistep response evidence.",
+    "Formation is enabled by a selected local map; the displaced same-flag pair still has no restoring response.",
+    "The minimum changed-row count is neither a globally minimal ontology nor a uniqueness result."
+  ],
+  "closing_disclosure": "This is a provisional, AI-simulated review, not a substitute for actual external human mathematical review. A human referee may identify errors missed here or reject concerns raised here.",
+  "document_sha256": "7bfc33975ff2b879807c4fde8ef83f8c4b3c6f78d88b6c574620958fb52195c1",
+  "findings": [
+    {
+      "id": "A1",
+      "file": "engine/docs/SPEC_PHI_ALIGNMENT_SUCCESSOR_PROPOSAL_V1.md",
+      "line": 75,
+      "severity": "non-issue",
+      "disposition": "accepted",
+      "statement": "The proposed composition and layer exponent correctly define a local finite deterministic collision family.",
+      "reason": "Adjacent phases uniquely select a predecessor; distinct phases prevent slot collapse; r=(-q) mod 3 agrees with U's layer decrement.",
+      "checked": "Manual map, ownership and layer-covariance derivation against staged.py:124 and the existing collision generator:313."
+    },
+    {
+      "id": "A2",
+      "file": "engine/docs/SPEC_PHI_ALIGNMENT_SUCCESSOR_PROPOSAL_V1.md",
+      "line": 114,
+      "severity": "non-issue",
+      "disposition": "accepted",
+      "statement": "The stated formal local alphabet cardinality is correct and is appropriately distinguished from reachability.",
+      "reason": "s and ell contribute 3*3; 18 A9 payload slots contribute 9^18; 384 bank bits and 12 pending controls contribute 2^396.",
+      "checked": "Exact symbolic multiplication gives 9^19*2^396."
+    },
+    {
+      "id": "A3",
+      "file": "engine/docs/SPEC_PHI_ALIGNMENT_SUCCESSOR_PROPOSAL_V1.md",
+      "line": 168,
+      "severity": "non-issue",
+      "disposition": "accepted_with_explicit_boundary",
+      "statement": "The proposal correctly confines moment preservation to the input collision layer.",
+      "reason": "The staged runtime decrements ell before U executes at the next microtick; the committed layer readout need not be conserved.",
+      "checked": "For {0,5}->{4,5}, q0->q2 changes the displayed sum from (-2e_x,-2e_y) to (2e_z,-2e_x)."
+    },
+    {
+      "id": "A4",
+      "file": "engine/docs/SPEC_PHI_ALIGNMENT_SUCCESSOR_PROPOSAL_V1.md",
+      "line": 190,
+      "severity": "non-issue",
+      "disposition": "accepted_with_explicit_price",
+      "statement": "Collision O_h/C4 covariance and the failure of phase reflection are transcribed correctly.",
+      "reason": "Pseudoscalar handedness transforms uniformly under O_h, while phase reflection exchanges the predecessor and successor.",
+      "checked": "Decoded C0({0,3})={4,7} and used the involution to verify C0'R({0,5})={0,3}, distinct from RC0'({0,5})={4,7}."
+    },
+    {
+      "id": "A5",
+      "file": "engine/docs/SPEC_PHI_ALIGNMENT_SUCCESSOR_PROPOSAL_V1.md",
+      "line": 205,
+      "severity": "non-issue",
+      "disposition": "accepted",
+      "statement": "The exact orbit sizes, collision fibers and named erased distinction are correct.",
+      "reason": "A0|D0 is a bijection onto P0, while A0 fixes P0; C0 preserves these self-orbits.",
+      "checked": "Derived 192 D0 states, 192 P0 states, two preimages per P0 output, none per D0 output, and 576 changed internal rows over three layers."
+    },
+    {
+      "id": "A6",
+      "file": "engine/docs/SPEC_PHI_ALIGNMENT_SUCCESSOR_PROPOSAL_V1.md",
+      "line": 234,
+      "severity": "non-issue",
+      "disposition": "accepted_only_in_stated_class",
+      "statement": "The restricted minimum changed-row support follows from the stated conservation and stabilizer argument.",
+      "reason": "Saturated moment sums force common d,n; equal and opposite phase cases have stabilizers incompatible with a common-handed output; the adjacent-phase orbit is the only remaining incoming class.",
+      "checked": "Manual reflection and reflection-plus-phase-shift stabilizer proof; verified that no A9/control inputs or broader ontology-minimality claim are included."
+    },
+    {
+      "id": "A7",
+      "file": "engine/docs/SPEC_PHI_ALIGNMENT_SUCCESSOR_PROPOSAL_V1.md",
+      "line": 282,
+      "severity": "non-issue",
+      "disposition": "accepted_as_unexecuted_analytic_witness",
+      "statement": "Both specified formation witnesses and the unchanged same-flag persistence statement agree with the source-level channel maps.",
+      "reason": "The frozen entries and U conjugation give the documented contact merge and separated tick6 entry into the same-flag sector.",
+      "checked": "Manually decoded C0 pair values and U entries; no staged trajectory was executed."
+    },
+    {
+      "id": "A8",
+      "file": "engine/docs/SPEC_PHI_ALIGNMENT_SUCCESSOR_PROPOSAL_V1.md",
+      "line": 348,
+      "severity": "non-issue",
+      "disposition": "accepted_with_explicit_obstruction",
+      "statement": "The exact initial bank TV drift and rejection of inherited stationary-reference evidence are justified.",
+      "reason": "192 pair states lose weight w and 192 gain weight w; TV equals 192w>0.",
+      "checked": "Exact finite-probability calculation, not a sampled estimate or whole-system multitime bound."
+    },
+    {
+      "id": "A9",
+      "file": "engine/docs/SPEC_PHI_ALIGNMENT_SUCCESSOR_PROPOSAL_V1.md",
+      "line": 379,
+      "severity": "medium",
+      "disposition": "resolved_by_author_before_review_freeze",
+      "statement": "The earlier wording ambiguously associated the alignment opportunity probability with all exactly-two collision events.",
+      "reason": "The eligible alignment orbit has 192 rows, whereas the complete internal pair domain has 18336; first-step probabilities alone do not determine later event counts.",
+      "checked": "Final document explicitly states initial 192w alignment eligibility, 18336w total exactly-two eligibility, and rejects arbitrary-horizon multiplication without a new ensemble-evolution argument."
+    },
+    {
+      "id": "A10",
+      "file": "engine/docs/SPEC_PHI_ALIGNMENT_SUCCESSOR_PROPOSAL_V1.md",
+      "line": 386,
+      "severity": "non-issue",
+      "disposition": "accepted_with_explicit_negative_control",
+      "statement": "The document retains the absence of restoring response and makes no material-recovery promotion.",
+      "reason": "Displaced same-flag channels have identical free flag evolution and displacement, remain separated and never enter the new local collision map.",
+      "checked": "Rechecked the all-finite-time displacement argument against DERIV_STRICT_PAIR_SECTOR.md:131."
+    },
+    {
+      "id": "A11",
+      "file": "engine/docs/SPEC_PHI_ALIGNMENT_SUCCESSOR_PROPOSAL_V1.md",
+      "line": 395,
+      "severity": "non-issue",
+      "disposition": "accepted_as_future_gate_only",
+      "statement": "The proposal keeps implementation, checkpoint, backend and canonical-adoption gates separate from analytic design review.",
+      "reason": "The fixed law is not implemented or executed; identities and exhaustive checks are explicitly required before acceptance.",
+      "checked": "Read the complete gate section, including 56 actual microticks, U-conjugated local-contact scope and the prohibition on assuming U preserves separated spatial histories."
+    }
+  ],
+  "author_correction": {
+    "initial_reviewed_document_sha256": "fb6fd4a11c64b78ca126541968178687ceeb070e33ef8fe8419cd62078e3e14a",
+    "changed_by": "successor_formation_review",
+    "scope": "Clarified the distinct initial alignment and exactly-two probabilities and the unavailable multitime inference.",
+    "verified_final_lines": [
+      379,
+      384
+    ]
+  }
+}

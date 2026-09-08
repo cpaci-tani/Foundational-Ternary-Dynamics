@@ -1,0 +1,32 @@
+{
+  "schema": "ftd.wave-attribution.repeat-registration.v1",
+  "registeredAtUtc": "2026-09-08T07:47:11.311800+00:00",
+  "runId": "waveattr-v1-routed-a2",
+  "reason": "Missing L97 data following initial-app startup failure; same candidate after separately successful forensics",
+  "unchangedProbe": true,
+  "unchangedWorkload": true,
+  "priorFailureRetained": true,
+  "acceptance": false,
+  "files": [
+    {
+      "path": "engine/docs/PROGRAM_SCALE0_WAVE_ATTRIBUTION_V1_2026-09-08.md",
+      "sha256": "35549c40124c8dec76e04669f597abfe3194f02478c5b34a64bdb8ee2a8ea286"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-startup-forensic-execution-2026-09-08.json",
+      "sha256": "c0a20646c8a3edda4e11e02b8f47b61805a0ab534a009d24aa555052f04c0877"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-startup-forensic-review-2026-09-08.json",
+      "sha256": "1d2b9db40c77e49fea800d7dacbcb077fe6956c08243c6b4245ba3350d8d0a64"
+    },
+    {
+      "path": "engine/build/scale0_wave_attribution_probe_20260908/manifest.json",
+      "sha256": "a9f763396e72a59cde8aba4927a547c5fa12deeaf0fcc9969b7bafaec7120259"
+    },
+    {
+      "path": "engine/build/run_scale0_wave_attribution_20260908.py",
+      "sha256": "e3aa96cd051c64ea63a743f3317871eee07a4ffe22c2541fa0ed3fa1d07c9b8a"
+    }
+  ]
+}

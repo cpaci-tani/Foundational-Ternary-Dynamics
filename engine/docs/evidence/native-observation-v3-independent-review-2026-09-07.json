@@ -1,0 +1,62 @@
+{
+  "status": "accepted_at_declared_NTR_05_NTR_07_engineering_scope",
+  "reviewer": "/root/native_observation_review",
+  "recording_method": "Coordinator transcription of independent read-only agent final review; no external human certification",
+  "review_method": "Independent source/code review, adversarial JS re-probes, archive and evidence hashing, executable and raw result reconciliation; no builds or test suite reruns during final evidence audit",
+  "candidate_identity": "a833ab9bc9c163872edd554cd349453c02a8c5d934a4d9bfbdac423c9267167b",
+  "reviewed_ledger_sha256": "6fe262165648a8468590c7ddcdc0877b959eb9328cf5cc27425ab1f092c09565",
+  "reviewed_verification_sha256": "53365769cce728d5b83e82b522a742dd5c319a76e917514aa0e78fedd4bfae87",
+  "verified": {
+    "source_files": 2160,
+    "archive_entries": 2160,
+    "source_or_archive_drift": 0,
+    "evidence_hashes": 60,
+    "v2_changes_only": [
+      "engine/web/tests/ws-bridge-visual-cache.spec.js"
+    ],
+    "windows": {
+      "ctests": 9,
+      "observation_wire_cases": 16,
+      "transport_cases": 27,
+      "command_checks": 9
+    },
+    "wsl_forced_cpu": {
+      "ctests": 9,
+      "observation_wire_cases": 16,
+      "transport_cases": 27,
+      "command_checks": 9
+    },
+    "node_tests": 84,
+    "actual_js_native_cases": 11,
+    "initial_browser": {
+      "passed": 57,
+      "failed": 1,
+      "failure_and_archive_preserved": true
+    },
+    "corrected_browser_scenario_resize": {
+      "passed": 11,
+      "failed": 0,
+      "seconds": 27.3,
+      "full_58_suite_repeated": false
+    },
+    "strict_manifest_file_counts": [
+      69,
+      44,
+      73
+    ],
+    "strict_drift": 0,
+    "prior_archives_preserved": 4,
+    "scientific_files_preserved": 3,
+    "wasm_artifacts_preserved": 6,
+    "native_executable_hashes_match_all_recorded_checks": true
+  },
+  "remaining": [
+    "Finite native counter exhaustion",
+    "Incomplete direct and worker combination metadata; affected knot contributions unavailable",
+    "Full production replay and late rollback deferred; strict checkpoints retained",
+    "Open continuum closure, formation, binding, spectra, chemistry and causal gravity recovery",
+    "Existing hardware performance failures and unmeasured cases",
+    "Dirty-source production release and incomplete GPU campaign gates"
+  ],
+  "new_blocking_defects": []
+}

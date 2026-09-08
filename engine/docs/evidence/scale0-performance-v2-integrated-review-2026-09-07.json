@@ -1,0 +1,2794 @@
+{
+  "schema": "scale0-performance-v2-integrated-review-v1",
+  "reviewed_utc": "2026-09-08T05:33:48.218144+00:00",
+  "local_record_date": "2026-09-07",
+  "reviewer": "/root/bounded_worker_reads",
+  "status": "failed_registered_panel_callback_gate_integrated_evidence_accounting_accepted",
+  "release_approved": false,
+  "physical_recovery_approved": false,
+  "disposition": "All 288 registered rows are complete: 279 pass and nine panel rows fail callback p95 <= 2 ms. All 144 overlays pass their declared preparations. Evidence accounting is accepted; the full registered release gate remains failed.",
+  "method": {
+    "scope": "Independent worker-overlay gate, aggregate and raw-action review; integration binds prior panel/direct-overlay reviews by every source-row hash.",
+    "not_performed": [
+      "No tests, browser, builds, GPU or numerical campaigns",
+      "No source mutation",
+      "No reconstruction of absent raw frame/callback timing vectors"
+    ],
+    "write_ownership": "Only this new integrated JSON artifact."
+  },
+  "post_campaign_freeze": {
+    "manifest": {
+      "path": "engine/docs/evidence/scale0-performance-v2-candidate-manifest-2026-09-07.json",
+      "size": 409619,
+      "sha256": "f75c21d37a620a18d48541732815d2f767f870b490ed6912125a3a75be7e1ebd"
+    },
+    "identity": "8ad614edd7616b43622b437d29a5d3800a614f35ad4d9da9fb3226f725fd0177",
+    "archive": {
+      "path": "engine/build/scale0_performance_v2_candidate_20260907.zip",
+      "size": 10208612,
+      "sha256": "3278a805f0ac37156036925dbae4ffe7ddcd20a9a7ff012c9e86b75ae252503f"
+    },
+    "current_files_checked": 2171,
+    "archived_files_checked": 2171,
+    "current_drift": [],
+    "archive_drift": [],
+    "archive_entries": 2174,
+    "duplicate_entries": [],
+    "embedded_manifest_matches_except_omitted_archive_sha256": true,
+    "preregistration_snapshots": [
+      {
+        "path": "engine/docs/PROGRAM_SCALE0_PERFORMANCE_V2_2026-09-07.md",
+        "sha256": "d20cd24b3e2223fafefb168ce017bc3696703c66842e3972728c1ceb82a7c7e4",
+        "scope": "Frozen archive snapshot; live disposition may be appended later",
+        "archive_matches": true,
+        "live_record_at_review": {
+          "path": "engine/docs/PROGRAM_SCALE0_PERFORMANCE_V2_2026-09-07.md",
+          "size": 24305,
+          "sha256": "d4a60f32d57b3213afc2e25b2f46073e38e9c2c0de062205381876e1296493f4"
+        },
+        "live_matches_snapshot": false,
+        "live_difference_disposition": "Live program ledger may append completed campaign disposition under the explicit frozen-snapshot rule; archived preregistration remains authoritative."
+      },
+      {
+        "path": "engine/docs/evidence/scale0-performance-v2-independent-review-2026-09-07.json",
+        "sha256": "f6d6bd97202c3e0b4a4d7d5a432bc8398945904609e36bbcc762f7c6a804ffe7",
+        "scope": "Frozen archive snapshot; live disposition may be appended later",
+        "archive_matches": true,
+        "live_record_at_review": {
+          "path": "engine/docs/evidence/scale0-performance-v2-independent-review-2026-09-07.json",
+          "size": 24872,
+          "sha256": "f6d6bd97202c3e0b4a4d7d5a432bc8398945904609e36bbcc762f7c6a804ffe7"
+        },
+        "live_matches_snapshot": true,
+        "live_difference_disposition": "Live program ledger may append completed campaign disposition under the explicit frozen-snapshot rule; archived preregistration remains authoritative."
+      }
+    ],
+    "check_started_utc": "2026-09-08T05:33:47.744817+00:00",
+    "check_completed_utc": "2026-09-08T05:33:48.040103+00:00",
+    "coordinator_notified_before_isolated_draft_tests": true,
+    "scope": "Isolated Wave Lab draft under engine/build is outside the frozen source set. Live program-ledger completion text is separately permitted; no candidate source change is included."
+  },
+  "preservation": {
+    "strict_source_scopes": [
+      {
+        "path": "engine/docs/evidence/strict-stack-source-manifest-2026-09-05.json",
+        "size": 11378,
+        "sha256": "8d5ea8ed89b7e200f5c7ffdd5b0ea72bbbe358be8175fa7224f1ee0d1f3c1511",
+        "source_files_checked": 69,
+        "drift": []
+      },
+      {
+        "path": "engine/docs/evidence/strict-recovery-wave1-manifest-2026-09-05.json",
+        "size": 8095,
+        "sha256": "467cdd078dc5d1c7cfd8c4bff5f66d4522a0ec44362fccbbd42d583b2b362ea5",
+        "source_files_checked": 44,
+        "drift": []
+      },
+      {
+        "path": "engine/docs/evidence/strict-recovery-wave2-manifest-2026-09-05.json",
+        "size": 13583,
+        "sha256": "22c0332a57006bf17230548e98d6c319e51660fc302cebb9392e2192ba4bd6d9",
+        "source_files_checked": 73,
+        "drift": []
+      }
+    ],
+    "strict_manifest_hashes_match_prior_freeze_review": true,
+    "strict_counts_may_overlap": true,
+    "six_wasm_loaders_binaries_plus_build_info": [
+      {
+        "path": "engine/web/wasm/build_info.json",
+        "size": 5821,
+        "sha256": "33d3efb14fee4f3aa362f42afb4c02cefcb668178bb98c68d096aacbd7f94f0f",
+        "baseline_current_archive_match": true
+      },
+      {
+        "path": "engine/web/wasm/ftd_core.js",
+        "size": 136178,
+        "sha256": "8f0d5aa0420e81d5245a13866d8069833e0117df1418023749067abe63addec7",
+        "baseline_current_archive_match": true
+      },
+      {
+        "path": "engine/web/wasm/ftd_core.wasm",
+        "size": 931721,
+        "sha256": "6ad203d9202c400ca6b52c929387be4c6e90db084e5bc0d147e9560c8c1339a7",
+        "baseline_current_archive_match": true
+      },
+      {
+        "path": "engine/web/wasm/ftd_core64.js",
+        "size": 145014,
+        "sha256": "1b2a9af334046c2f16e4e78961c4017708c7cc6d7d40df3f83ceb4109c4e2624",
+        "baseline_current_archive_match": true
+      },
+      {
+        "path": "engine/web/wasm/ftd_core64.wasm",
+        "size": 962980,
+        "sha256": "be667edfdd2a364120c9b56946b4a617cb69b641c51b56394db5747bf5caaad3",
+        "baseline_current_archive_match": true
+      },
+      {
+        "path": "engine/web/wasm/ftd_core_mt.js",
+        "size": 158993,
+        "sha256": "1d5a7f3d37b6c6068e80a499ac61b4367f94d21f1590576acee95559d6740c4e",
+        "baseline_current_archive_match": true
+      },
+      {
+        "path": "engine/web/wasm/ftd_core_mt.wasm",
+        "size": 952655,
+        "sha256": "d30871aa97f771c7f864a1165acc2963ec826d50421435f3a9c62d867a22d69f",
+        "baseline_current_archive_match": true
+      }
+    ],
+    "bundle_identity": "97dbc15f61ba8952e68be8012279e50bf0bc650e5806f6bb5ca705952df5d4e3",
+    "prior_candidate_archives": [
+      {
+        "path": "engine/build/native_observation_v3_candidate_v2_20260907.zip",
+        "size": 8755103,
+        "sha256": "a5eb995ba69787a1a2f445b0a3be68462e33bd56afeb79838fa855caf523b8d9",
+        "matches_prior_freeze_review": true
+      },
+      {
+        "path": "engine/build/scale0_audit_correctness_candidate_20260907.zip",
+        "size": 8704650,
+        "sha256": "d174323bf5e5a938af0e56dd8ede4d856f56333b7b31e632d71aaa7837a6e60c",
+        "matches_prior_freeze_review": true
+      },
+      {
+        "path": "engine/build/scale0_audit_correctness_candidate_v2_20260907.zip",
+        "size": 8704811,
+        "sha256": "e8d0797ce62b7e845ccc928bc64ba0e003f9051d0cec2a8d847fd2a29ed8bb60",
+        "matches_prior_freeze_review": true
+      },
+      {
+        "path": "engine/build/scale0_transport_candidate_20260907.zip",
+        "size": 8718603,
+        "sha256": "a5200558dc8912f81d0d2585cb8e6893521b6bd016a7f2ef79da851aa3e6139b",
+        "matches_prior_freeze_review": true
+      },
+      {
+        "path": "engine/build/native_observation_v3_candidate_20260907.zip",
+        "size": 8755021,
+        "sha256": "cff9a05c32240d1feb902bfcb01cb7b21c01989f7ee550245ae44e6c3e7bd8aa",
+        "matches_prior_freeze_review": true
+      }
+    ],
+    "earlier_failure_archives": [
+      {
+        "path": "engine/build/scale0_performance_v2_browser_startup_failure_20260907.zip",
+        "size": 8936414,
+        "sha256": "f221a8d61bcc73c4cf0c7b409ac00b4d74bb5c681e2ffbca053f369da9de2c0a",
+        "matches_recorded_hash": true,
+        "scope": "Earlier startup or Time fixture failure; not hardware-panel attachments."
+      },
+      {
+        "path": "engine/build/scale0_performance_v2_time_test_failure_20260907.zip",
+        "size": 13174306,
+        "sha256": "f57066cfe618cbf687a5336497ae64fe8514bad56f7031121aae3a833940d2f2",
+        "matches_recorded_hash": true,
+        "scope": "Earlier startup or Time fixture failure; not hardware-panel attachments."
+      }
+    ]
+  },
+  "scope": {
+    "profile": "repair-v2",
+    "panels": {
+      "ids": [
+        "controls",
+        "diagnostics",
+        "telemetry-grid",
+        "charts",
+        "lagrangian",
+        "inspector",
+        "scene",
+        "flux-slice",
+        "wave-lab",
+        "p1-observables",
+        "spectrum",
+        "dispersion",
+        "knots",
+        "transactions",
+        "gravity",
+        "time",
+        "thermo",
+        "scale-context"
+      ],
+      "states": [
+        "docked",
+        "floated",
+        "collapsed",
+        "hidden"
+      ],
+      "rows": 144
+    },
+    "overlays": {
+      "ids": [
+        "toggle-e-field",
+        "toggle-b-field",
+        "toggle-poynting",
+        "toggle-div-field",
+        "toggle-flux-lines",
+        "toggle-force-em",
+        "toggle-force-gravity",
+        "toggle-force-strong",
+        "toggle-force-weak",
+        "toggle-dual-substrate",
+        "toggle-chirality",
+        "toggle-dark-halo",
+        "toggle-damping-zones",
+        "toggle-genesis-iso",
+        "toggle-confinement",
+        "toggle-color-charge",
+        "toggle-psi-squared",
+        "toggle-phase",
+        "toggle-lagrangian-density",
+        "toggle-entropy-density",
+        "toggle-grav-potential",
+        "toggle-em-energy",
+        "toggle-charge-density",
+        "toggle-vorticity",
+        "toggle-horizon",
+        "toggle-e-pressure",
+        "toggle-b-pressure",
+        "toggle-state-field",
+        "toggle-latency",
+        "toggle-gauss-residual",
+        "toggle-proper-time",
+        "toggle-lapse",
+        "toggle-db-phase",
+        "toggle-flux-volume",
+        "toggle-flux-slice",
+        "toggle-sm-reference"
+      ],
+      "states": [
+        "paused",
+        "playing"
+      ],
+      "rows": 144
+    },
+    "backends": [
+      "direct WASM L33",
+      "worker WASM L97"
+    ],
+    "total_rows": 288,
+    "missing_rows": [],
+    "duplicate_rows": [],
+    "registered_modified_damping_rows": 4
+  },
+  "registered_gates": {
+    "minFrames": 600,
+    "minDurationMs": 12000,
+    "minFps": 59.5,
+    "p95Ms": 17,
+    "p99Ms": 20,
+    "maxLongFrames": 0,
+    "actionSamples": 10,
+    "actionP95Ms": 50,
+    "callbackP95Ms": 2,
+    "callbackMaxMs": 8,
+    "longTasks": 0,
+    "ownerRead": "Standalone diagnostic rows excluded; nested synchronous calls remain included in registered callbacks."
+  },
+  "matrices": [
+    {
+      "path": "engine/docs/evidence/scale0-hardware-repair-v2-panels-L33-2026-09-07.json",
+      "size": 33,
+      "sha256": "feb2d9c505fd6a939e7d85188e610af50b5286a4addf396958d9c52a82bd2cdb",
+      "kind": "panels",
+      "rows": 72,
+      "passed": 66,
+      "failed": 6,
+      "frame_intervals": 52208,
+      "raw_action_samples": 360
+    },
+    {
+      "path": "engine/docs/evidence/scale0-hardware-repair-v2-panels-L97-2026-09-07.json",
+      "size": 97,
+      "sha256": "fccc19109bcaf7d8c81fe601f41b1fe356d912733805bf3504f5f070b7352c3e",
+      "kind": "panels",
+      "rows": 72,
+      "passed": 69,
+      "failed": 3,
+      "frame_intervals": 52206,
+      "raw_action_samples": 360
+    },
+    {
+      "path": "engine/docs/evidence/scale0-hardware-repair-v2-overlays-L33-2026-09-07.json",
+      "size": 33,
+      "sha256": "84254128a10c153adf9f186cd6e77fede1f610666ac250b81d7d39979f8b1f72",
+      "kind": "overlays",
+      "rows": 72,
+      "passed": 72,
+      "failed": 0,
+      "frame_intervals": 52569,
+      "raw_action_samples": 720
+    },
+    {
+      "path": "engine/docs/evidence/scale0-hardware-repair-v2-overlays-L97-2026-09-07.json",
+      "size": 97,
+      "sha256": "c5a21caa76ec27fb82422a4df972fd272bd05a3950023c73f2e48b2bfa933586",
+      "kind": "overlays",
+      "rows": 72,
+      "passed": 72,
+      "failed": 0,
+      "frame_intervals": 52570,
+      "raw_action_samples": 720
+    }
+  ],
+  "overall": {
+    "rows": 288,
+    "passed": 279,
+    "failed": 9,
+    "panels_passed": 135,
+    "panels_failed": 9,
+    "overlays_passed": 144,
+    "overlays_failed": 0,
+    "frame_gate_passed_rows": 288,
+    "clock_ownership_qualification_passed_rows": 288,
+    "raw_action_samples_recomputed_across_reviews": 2160,
+    "frame_intervals_as_aggregate_counts": 209553,
+    "instrumented_runtime_errors": 0,
+    "long_tasks": 0,
+    "intervals_over_33_4ms": 0,
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "failed_rows": [
+    {
+      "kind": "panels",
+      "size": 33,
+      "id": "wave-lab",
+      "state": "docked",
+      "failures": [
+        "interface callback budget"
+      ],
+      "callbacks": {
+        "wave-lab-panel": {
+          "count": 48,
+          "meanMs": 2.8022916664679847,
+          "medianMs": 2.7750000953674316,
+          "p95Ms": 3.375,
+          "p99Ms": 3.490000009536743,
+          "maxMs": 3.490000009536743
+        }
+      }
+    },
+    {
+      "kind": "panels",
+      "size": 33,
+      "id": "wave-lab",
+      "state": "floated",
+      "failures": [
+        "interface callback budget"
+      ],
+      "callbacks": {
+        "wave-lab-panel": {
+          "count": 48,
+          "meanMs": 2.7609374995032945,
+          "medianMs": 2.680000066757202,
+          "p95Ms": 3.25,
+          "p99Ms": 3.5850000381469727,
+          "maxMs": 3.5850000381469727
+        }
+      }
+    },
+    {
+      "kind": "panels",
+      "size": 33,
+      "id": "spectrum",
+      "state": "docked",
+      "failures": [
+        "interface callback budget"
+      ],
+      "callbacks": {
+        "spectrum-panel": {
+          "count": 24,
+          "meanMs": 5.787916675209999,
+          "medianMs": 5.560000061988831,
+          "p95Ms": 6.605000019073486,
+          "p99Ms": 6.764999985694885,
+          "maxMs": 6.764999985694885
+        }
+      }
+    },
+    {
+      "kind": "panels",
+      "size": 33,
+      "id": "spectrum",
+      "state": "floated",
+      "failures": [
+        "interface callback budget"
+      ],
+      "callbacks": {
+        "spectrum-panel": {
+          "count": 24,
+          "meanMs": 6.00291666885217,
+          "medianMs": 5.685000061988831,
+          "p95Ms": 6.794999957084656,
+          "p99Ms": 6.935000061988831,
+          "maxMs": 6.935000061988831
+        }
+      }
+    },
+    {
+      "kind": "panels",
+      "size": 33,
+      "id": "time",
+      "state": "docked",
+      "failures": [
+        "interface callback budget"
+      ],
+      "callbacks": {
+        "time-panel": {
+          "count": 24,
+          "meanMs": 2.5025000274181366,
+          "medianMs": 2.4850000143051147,
+          "p95Ms": 2.8550000190734863,
+          "p99Ms": 2.9200000762939453,
+          "maxMs": 2.9200000762939453
+        }
+      }
+    },
+    {
+      "kind": "panels",
+      "size": 33,
+      "id": "time",
+      "state": "floated",
+      "failures": [
+        "interface callback budget"
+      ],
+      "callbacks": {
+        "time-panel": {
+          "count": 24,
+          "meanMs": 2.3643749902645745,
+          "medianMs": 2.2899999618530273,
+          "p95Ms": 2.7100000381469727,
+          "p99Ms": 3.125,
+          "maxMs": 3.125
+        }
+      }
+    },
+    {
+      "kind": "panels",
+      "size": 97,
+      "id": "gravity",
+      "state": "docked",
+      "failures": [
+        "interface callback budget"
+      ],
+      "callbacks": {
+        "gravity-panel": {
+          "count": 48,
+          "meanMs": 2.225833331545194,
+          "medianMs": 2.1200000047683716,
+          "p95Ms": 3.0549999475479126,
+          "p99Ms": 4.069999933242798,
+          "maxMs": 4.069999933242798
+        }
+      }
+    },
+    {
+      "kind": "panels",
+      "size": 97,
+      "id": "gravity",
+      "state": "floated",
+      "failures": [
+        "interface callback budget"
+      ],
+      "callbacks": {
+        "gravity-panel": {
+          "count": 48,
+          "meanMs": 2.1880208402872086,
+          "medianMs": 2.100000023841858,
+          "p95Ms": 3.190000057220459,
+          "p99Ms": 3.8700000047683716,
+          "maxMs": 3.8700000047683716
+        }
+      }
+    },
+    {
+      "kind": "panels",
+      "size": 97,
+      "id": "time",
+      "state": "floated",
+      "failures": [
+        "interface callback budget"
+      ],
+      "callbacks": {
+        "time-panel": {
+          "count": 25,
+          "meanMs": 1.480399990081787,
+          "medianMs": 1.350000023841858,
+          "p95Ms": 2.059999942779541,
+          "p99Ms": 3.0149999856948853,
+          "maxMs": 3.0149999856948853
+        }
+      }
+    }
+  ],
+  "prior_scoped_reviews": [
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-panels-review-2026-09-07.json",
+      "size": 324100,
+      "sha256": "6e82fc0c37db871f47e0f7cddb283b5697c880c0f8577e971947c7b2282ad227",
+      "status": "failed_hardware_callback_gate_evidence_accounting_accepted",
+      "report_and_every_reviewed_row_hash_matches": true
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-overlays-L33-review-2026-09-07.json",
+      "size": 81071,
+      "sha256": "7e43b8d87e18caad6d01bdd740ba0b6669f9703a99465430c80742c533b783d0",
+      "status": "passed_direct_L33_registered_overlay_gates_evidence_accounting_accepted",
+      "report_and_every_reviewed_row_hash_matches": true
+    }
+  ],
+  "worker_L97_overlay_review": {
+    "source_report": {
+      "path": "engine/docs/evidence/scale0-hardware-repair-v2-overlays-L97-2026-09-07.json",
+      "size": 596744,
+      "sha256": "c5a21caa76ec27fb82422a4df972fd272bd05a3950023c73f2e48b2bfa933586"
+    },
+    "status": "72_of_72_registered_rows_pass",
+    "gate_rows_checked": 72,
+    "aggregate_summaries_checked": 874,
+    "raw_actions_recomputed": 720,
+    "gate_and_summary_discrepancies": [],
+    "frame_fps_resource_delta_method_count_checks": true,
+    "duration_ms_range": [
+      12169.570000052452,
+      12188.044999957085
+    ],
+    "effective_fps_range": [
+      60.00237543650673,
+      60.00242475552128
+    ],
+    "maximum_frame_p95_ms": 16.670000000158325,
+    "maximum_frame_p99_ms": 16.670000000158325,
+    "maximum_frame_ms": 16.670000000158325,
+    "maximum_action_p95_ms": 23.764999985694885,
+    "maximum_callback_p95": {
+      "id": "toggle-flux-volume",
+      "state": "paused",
+      "callback": "conservation-micropanel",
+      "summary": {
+        "count": 49,
+        "meanMs": 0.22397959232330322,
+        "medianMs": 0.2200000286102295,
+        "p95Ms": 0.309999942779541,
+        "p99Ms": 0.35500001907348633,
+        "maxMs": 0.35500001907348633
+      }
+    },
+    "maximum_callback_max": {
+      "id": "toggle-vorticity",
+      "state": "playing",
+      "callback": "conservation-micropanel",
+      "summary": {
+        "count": 49,
+        "meanMs": 0.13408164102203993,
+        "medianMs": 0.11000001430511475,
+        "p95Ms": 0.24500000476837158,
+        "p99Ms": 1.0149999856948853,
+        "maxMs": 1.0149999856948853
+      }
+    },
+    "single_worker_runtime_id": "35e8d545-a642-4db5-90d0-6615a9f2cf26",
+    "module_init_count": 1,
+    "within_contract_rows": 70,
+    "registered_suspended_rows": 2,
+    "damping": [
+      {
+        "state": "paused",
+        "canonical_terms": 46,
+        "baseline_all_false": true,
+        "changed_terms": [
+          "damping",
+          "selective_damping"
+        ],
+        "qualification": "suspended",
+        "original_anchor_preserved": true,
+        "mutation_epoch_increment": 2,
+        "same_worker_module_and_configuration": true,
+        "prepared_particles": 12,
+        "vertices_before": 288,
+        "vertices_after": 288,
+        "ticks": [
+          1,
+          1
+        ],
+        "profile_sha256": "213f9dd55daf56cae4b568ed96545055e846977abae0777ec46bf782370e5e21"
+      },
+      {
+        "state": "playing",
+        "canonical_terms": 46,
+        "baseline_all_false": true,
+        "changed_terms": [
+          "damping",
+          "selective_damping"
+        ],
+        "qualification": "suspended",
+        "original_anchor_preserved": true,
+        "mutation_epoch_increment": 2,
+        "same_worker_module_and_configuration": true,
+        "prepared_particles": 12,
+        "vertices_before": 288,
+        "vertices_after": 288,
+        "ticks": [
+          14,
+          191
+        ],
+        "profile_sha256": "213f9dd55daf56cae4b568ed96545055e846977abae0777ec46bf782370e5e21"
+      }
+    ],
+    "canonical_damping_term_names": [
+      "wave_propagation",
+      "coupling",
+      "damping",
+      "genesis",
+      "evaporation",
+      "gauss_projection",
+      "forces",
+      "gravity",
+      "poisson_coulomb",
+      "movement",
+      "lorentz_force",
+      "selective_damping",
+      "larmor_radiation",
+      "dual_substrate",
+      "color_forces",
+      "strong_stress_energy",
+      "weak_transmutation",
+      "strong_force",
+      "triad_binding",
+      "pair_production",
+      "exchange_force",
+      "latency_field",
+      "exact_dual_gauss",
+      "matched_gauss_dynamics",
+      "emergent_forces",
+      "langevin",
+      "symplectic_leapfrog",
+      "verlet_wave_integrator",
+      "lorentz_period2_floquet",
+      "lorentz_bcc_time_floquet",
+      "su2_gauge",
+      "su3_gauge",
+      "symmetric_movement_order",
+      "absorbing_boundary",
+      "reflective_boundary",
+      "field_energy_gravity",
+      "cluster_inertia",
+      "geometric_gravity",
+      "de_broglie_clock",
+      "db_clock_coulomb",
+      "confinement",
+      "knot_tracking",
+      "strict_validation",
+      "ew_background_sweep",
+      "flux_pump",
+      "flux_cell_port"
+    ],
+    "nonzero_resource_deltas": [],
+    "row_reviews": [
+      {
+        "id": "toggle-e-field",
+        "state": "paused",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "44f3acaf91af23b0a5232ec05e1669672c06298ee2b811471c1bac5102a61f69",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-e-field",
+        "state": "playing",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "77a521aa679e07924975ebcd97376b7a222d2766142d4db92089258bed63056c",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          16,
+          214
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-b-field",
+        "state": "paused",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "23917ba8f4ceb27432386175eade600c8e657ddb6869029c54f1a97c2471aec8",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-b-field",
+        "state": "playing",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "0d550f8d0bcb6c28a9decaf6a410e4d651c5ca3fcb0389389b3f4bb9c83d5426",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          16,
+          218
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-poynting",
+        "state": "paused",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "eed75319fd64cf908931f1cd07a64656a38b815b7270f41b13dd35731dafdb23",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-poynting",
+        "state": "playing",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "8d0b82392c8812e8ddd044ff21e5175839949e972ef1c61b594cdec972f001fb",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          18,
+          218
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-div-field",
+        "state": "paused",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "3230bd148dd9f5354a1aa14795d5ce35e61c1f5af61a167c57cbf40f8b97dbe5",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-div-field",
+        "state": "playing",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "e406fda1fbe960b07be292089d1240623c318b55d13bf28bca02533b588aebf4",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          18,
+          199
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-flux-lines",
+        "state": "paused",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "b26eb3f610d714319cbe3a8b805d756c2fcb2406704802d76e036b4920d51be2",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-flux-lines",
+        "state": "playing",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "8a5a7a66cf405ea14a6d38b88350ef482398b3e863b2d0ac3e475cad5c4baf8c",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          10,
+          130
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-force-em",
+        "state": "paused",
+        "scenario": "s0-seed-moving-source-reciprocity",
+        "source_row_sha256": "6ba33b99f1291d7c039cd27be56bc1f5bc934ce6fd2019a935be68a88b7248e0",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 731,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-force-em",
+        "state": "playing",
+        "scenario": "s0-seed-moving-source-reciprocity",
+        "source_row_sha256": "9ae74ad040cf94d7d1d1b8e464473449edafdc621f68cfebfc5770a7c41bd15d",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          10,
+          108
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-force-gravity",
+        "state": "paused",
+        "scenario": "s0-seed-massive-body",
+        "source_row_sha256": "3f477db08344c34ae1565e899e18958be0427c1e5526603aa7d17f4698f0bc5e",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-force-gravity",
+        "state": "playing",
+        "scenario": "s0-seed-massive-body",
+        "source_row_sha256": "fa1953d00f2d03b197d02b355f55622cce94863204add7316be3f05270342c48",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          10,
+          93
+        ],
+        "frame_intervals": 731,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-force-strong",
+        "state": "paused",
+        "scenario": "s0-vacuum-proton",
+        "source_row_sha256": "6846f6975765a402ea0c0b28f472b1e869648dde69340c515013692f0e8c0da4",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 731,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-force-strong",
+        "state": "playing",
+        "scenario": "s0-vacuum-proton",
+        "source_row_sha256": "3266e901450cc07c0fa949d44f3fbe6d0284ffc5707f60aeb17f2bcd229113d8",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          13,
+          137
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-force-weak",
+        "state": "paused",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "2a0368c3bf8322170514e73f8f8c488a3c4540eed74f85857bd02cdd244f7059",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-force-weak",
+        "state": "playing",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "9945faf86b6885f71dd94a26ac186290e5f9d10cc2b7175542923106b5235380",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          16,
+          199
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-dual-substrate",
+        "state": "paused",
+        "scenario": "s0-seed-beta-decay",
+        "source_row_sha256": "cb4b79f939866f134cfcd5bde95800bb261d1006bdce641b193097fe4492e082",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-dual-substrate",
+        "state": "playing",
+        "scenario": "s0-seed-beta-decay",
+        "source_row_sha256": "a6744d1999b5b4f554de4aadb5af16cb4251c81201c0b230256252e142ae4ea8",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          14,
+          180
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-chirality",
+        "state": "paused",
+        "scenario": "s0-seed-beta-decay",
+        "source_row_sha256": "b07d56725622322779bde3eb402ddfbb9eff9e8ccc4d0724f26de6d789bc4bce",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-chirality",
+        "state": "playing",
+        "scenario": "s0-seed-beta-decay",
+        "source_row_sha256": "3b63ec04fb07fd85b21c6dbab9c4d1e63290f79c50c2c7c13848a6776fccec3d",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          17,
+          179
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-dark-halo",
+        "state": "paused",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "0394c8e1f5da3166e0f307c2286798164223f2effbc19de493e6008dd2cbdf6b",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-dark-halo",
+        "state": "playing",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "ab6d2f20a1045ae0e17cc9ca5e13cbfbe920d29833c70777b1edfd31e4912cf9",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          16,
+          206
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-damping-zones",
+        "state": "paused",
+        "scenario": "s0-seed-sloop",
+        "source_row_sha256": "4b35675bbea13afd6f13f1440a8a26ddee7d4817ae7ca2ee1712037fa8ad9a55",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "registered modified damping profile/glyph workload": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-damping-zones",
+        "state": "playing",
+        "scenario": "s0-seed-sloop",
+        "source_row_sha256": "df678dd6133653f824a1991a5fbfe43aabac73b199bd8bfccfb6971a2c7acdd7",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "registered modified damping profile/glyph workload": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          14,
+          191
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-genesis-iso",
+        "state": "paused",
+        "scenario": "flux-random-genesis",
+        "source_row_sha256": "2dd512f87b4c42ae950ad3a0c4184a61196aa4962e8a659f01f367588c4c6295",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-genesis-iso",
+        "state": "playing",
+        "scenario": "flux-random-genesis",
+        "source_row_sha256": "24bbb456194c5a422592f3533364d13cdb3aabcf5cca42220922c83fd0f92c6b",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          10,
+          131
+        ],
+        "frame_intervals": 731,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-confinement",
+        "state": "paused",
+        "scenario": "s0-vacuum-proton",
+        "source_row_sha256": "c407169e96d79388b418ae3279245162d3ec82f4895fb8a2c4a34f96aba07847",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-confinement",
+        "state": "playing",
+        "scenario": "s0-vacuum-proton",
+        "source_row_sha256": "a73cd6fc14fc2f76a0359ae696204f4d574d0c900fafb0f8d15d65322685fa0a",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          13,
+          179
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-color-charge",
+        "state": "paused",
+        "scenario": "flux-random-genesis",
+        "source_row_sha256": "39ed29d95f47c78f2fce5ff82bc9809809f85a67179456f6a25bedf423f09d9d",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-color-charge",
+        "state": "playing",
+        "scenario": "flux-random-genesis",
+        "source_row_sha256": "278011564d62df2c903a55fd9f218d243569641af674c4470ab6e69429769eee",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          10,
+          131
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-psi-squared",
+        "state": "paused",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "78ab8b25eea9ce782cf1b265fd96df70ff755e455acc3085cd74e11c96274a96",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-psi-squared",
+        "state": "playing",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "7818612538652afba7d32a0a88386d2bd538cc841b7bce565a2965138ea502ec",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          12,
+          136
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-phase",
+        "state": "paused",
+        "scenario": "s0-seed-beta-decay",
+        "source_row_sha256": "3cb3942f6d0080324bc590aa5a8db684e2352a464b04abeedbc23cea6ebfcad7",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-phase",
+        "state": "playing",
+        "scenario": "s0-seed-beta-decay",
+        "source_row_sha256": "740b34c7095eed2c0634276cf004a60b7a339c71ab12cbd3d73f30f83e267e54",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          11,
+          135
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-lagrangian-density",
+        "state": "paused",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "e4ab97ca518cfd75313f26cd8083b3f17ceef594f1ea18ba9e163772e1c06c93",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-lagrangian-density",
+        "state": "playing",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "1da3995c9833a20111e555d1a7fc366ebf42b892e31c1cb6bcbb1402dd67ed47",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          10,
+          94
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-entropy-density",
+        "state": "paused",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "57abee1afccd229c9de62af5279f3b175c8ea09d626cab47a0b9c61521147df3",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-entropy-density",
+        "state": "playing",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "f74481e29e3b805cba65cd81e4ecc0e894f9bbf7c8a6498c55a0152665c3d803",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          10,
+          93
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-grav-potential",
+        "state": "paused",
+        "scenario": "s0-seed-massive-body",
+        "source_row_sha256": "feb3fa0814d1ac058bae95b7281b7b3125315198b751b32c232abd1334975f64",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-grav-potential",
+        "state": "playing",
+        "scenario": "s0-seed-massive-body",
+        "source_row_sha256": "b5ebd7b14511e74d792660b2c9f5f8216e98f53470dac4afd3a020923ee2b50d",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          7,
+          68
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-em-energy",
+        "state": "paused",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "d7294c055fb5772df6377383a4eacace5cfa767af09b8be1ccf9942311a49c83",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-em-energy",
+        "state": "playing",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "81be44e9ba680780e3b29372c739e3f536d492048dcbcbfc72381df15b44985b",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          11,
+          109
+        ],
+        "frame_intervals": 731,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-charge-density",
+        "state": "paused",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "984abcd78d36a5ef454dc732616cdf1301367614775041d86751e888198c1561",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-charge-density",
+        "state": "playing",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "f5a92ece93e69bdf8fe401050eff5874715bd5b4e8e6d04c2afe639667b88d76",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          17,
+          207
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-vorticity",
+        "state": "paused",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "fe1350606d3b35c334be97237dbe2e3d3d3bcf2d575831edb7e371379afef195",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 731,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-vorticity",
+        "state": "playing",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "442514802cd1e76285a09e99e9f9bc4719e50a4c14698f9f6f338b3b4d35d37a",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          16,
+          157
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-horizon",
+        "state": "paused",
+        "scenario": "s0-seed-massive-body",
+        "source_row_sha256": "509bda9650871cb7582dffebd23c7840403eefe90d5180f9dd8e76e1ad6ff387",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-horizon",
+        "state": "playing",
+        "scenario": "s0-seed-massive-body",
+        "source_row_sha256": "96008e628b389097f48431c22a80d2ba3859570a71c52862558b39fbe8911d86",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          11,
+          109
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-e-pressure",
+        "state": "paused",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "c515336223ceba047cfa2ba4765a144c86a2bc12c739f4f317df91eb085073e5",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-e-pressure",
+        "state": "playing",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "3351b7af0ce0ba5f55a533d22009075df7f3619cf3eb7720095e9594d8837eef",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          15,
+          167
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-b-pressure",
+        "state": "paused",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "21bcbca37f6268b47d18f10a4762ba10ebdfb1beef9f00d84dc22d25f6e0ef0a",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-b-pressure",
+        "state": "playing",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "94cf2b008b8530634a22d4e94d0d0943fb79fd95174cecec75748764c89ba549",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          14,
+          164
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-state-field",
+        "state": "paused",
+        "scenario": "flux-baryon",
+        "source_row_sha256": "6bb36af539bd42470aa280bdfb52fe465609e0217cbe7acb2a1b69d0d24f845c",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-state-field",
+        "state": "playing",
+        "scenario": "flux-baryon",
+        "source_row_sha256": "7e3248e3b7fa245d685042485a955859f3df01b989ba25287511db9175b8a074",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          15,
+          181
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-latency",
+        "state": "paused",
+        "scenario": "s0-seed-massive-body",
+        "source_row_sha256": "d5af8fcc75ac3f0af245e0fc375124da860e13bf7e174d2e921cd6f2048cf424",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-latency",
+        "state": "playing",
+        "scenario": "s0-seed-massive-body",
+        "source_row_sha256": "984a70db11c58f0edc2382585c84a8c705e52f720f3e34e020e293cc99476b2b",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          8,
+          74
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-gauss-residual",
+        "state": "paused",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "34049bb74496fa5a5879af2cb7504846ff725e71fb9a22a59b6eea190b270122",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 731,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-gauss-residual",
+        "state": "playing",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "3d0f3e6364410265185588095f63dbd457d95eb228ea1576ae505a5f774c396c",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          11,
+          105
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-proper-time",
+        "state": "paused",
+        "scenario": "s0-seed-de-broglie-clock",
+        "source_row_sha256": "141dcfe20b2f0ef88b2004881b8e0dfbac0545b517d314842667298cec168645",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 731,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-proper-time",
+        "state": "playing",
+        "scenario": "s0-seed-de-broglie-clock",
+        "source_row_sha256": "40de3f0f5f71278db7f8ddf340d0a9d788c9350e64266950bad8f18f6cff3025",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          11,
+          105
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-lapse",
+        "state": "paused",
+        "scenario": "s0-seed-de-broglie-clock",
+        "source_row_sha256": "1f681a1480367e7b47e8222d91c7646295709324a1139eb6b9bfcfe1ea912cfe",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-lapse",
+        "state": "playing",
+        "scenario": "s0-seed-de-broglie-clock",
+        "source_row_sha256": "e4d36b7473df86bb037a776ad9ae4397f4475224f5ad1e266a3aba1b052a8238",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          10,
+          98
+        ],
+        "frame_intervals": 731,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-db-phase",
+        "state": "paused",
+        "scenario": "s0-seed-de-broglie-clock",
+        "source_row_sha256": "4b9faad969b221549c94860b37c4e80739aae9c115854d032109022d6cc86073",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-db-phase",
+        "state": "playing",
+        "scenario": "s0-seed-de-broglie-clock",
+        "source_row_sha256": "89342be61bb6f27f3ca77def6be1eac949e76bbfb8de970497fabb2fe9c5cd04",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          10,
+          97
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-flux-volume",
+        "state": "paused",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "3bd9afe967d61412f17dd0fd5da8245a0ffb2d2e7261ca826e381bcb220998be",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-flux-volume",
+        "state": "playing",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "8dab32c1adb819850cbdf561a3de1f079329e442a90ecae79c7dc6f484b34004",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          9,
+          101
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-flux-slice",
+        "state": "paused",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "8b129829cc4f64b9663fa8f46c13f855304a2c602e10dd8d4eb9737f09297d2b",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-flux-slice",
+        "state": "playing",
+        "scenario": "flux-pulse",
+        "source_row_sha256": "ac1f80e05439113cb3ef7c2c41b231c6a93003cabe7065646450d7c49eb605de",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          9,
+          110
+        ],
+        "frame_intervals": 731,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-sm-reference",
+        "state": "paused",
+        "scenario": "s0-seed-up-quark",
+        "source_row_sha256": "69a08f4986483e4d357348b43f5043b24b81df683ba19eb0f12f31e8c0ca3952",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "paused clock changed": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          1,
+          1
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      },
+      {
+        "id": "toggle-sm-reference",
+        "state": "playing",
+        "scenario": "s0-seed-up-quark",
+        "source_row_sha256": "e96debbc4ea55fccb3ea6c26eb2d4517076145cb1e5ce9b6e7c47f5f6d5ec94c",
+        "gate_checks_pass": {
+          "frame instrumentation": true,
+          "hardware provenance": true,
+          "background page": true,
+          "foreground frame gate": true,
+          "long-task instrumentation unavailable": true,
+          "action to next-frame budget": true,
+          "interface callback budget": true,
+          "state ownership/qualification": true,
+          "instrumented runtime errors": true,
+          "clock provenance": true,
+          "play state": true,
+          "playing clock did not advance": true
+        },
+        "recorded_failures_match": true,
+        "passed": true,
+        "clock_interval": [
+          9,
+          138
+        ],
+        "frame_intervals": 730,
+        "raw_action_samples_recomputed": 10
+      }
+    ]
+  },
+  "execution": {
+    "record": {
+      "path": "engine/docs/evidence/scale0-performance-v2-campaign-execution-2026-09-07.json",
+      "size": 98,
+      "sha256": "521fdd443c5854b562b26b80adaa274da5681dae521e5d6966121f99134d35a8"
+    },
+    "values": {
+      "completedUtc": "2026-09-08T05:23:36.0834920Z",
+      "overlaysExit": 0,
+      "panelsExit": 1
+    },
+    "logs": [
+      {
+        "path": "engine/docs/evidence/scale0-performance-v2-panels-hardware-2026-09-07.log",
+        "size": 134345,
+        "sha256": "ebdcf6049bd1ca278601cc898b8603ab5d2bdb9ee61a63f30c7980744ad0cb87",
+        "logical_rows_cross_checked": 144,
+        "row_flags_fps_p99_match_raw_reports": true
+      },
+      {
+        "path": "engine/docs/evidence/scale0-performance-v2-overlays-hardware-2026-09-07.log",
+        "size": 19530,
+        "sha256": "9edebfb986d2476524911156eb91472133eb52ef0933bb04100818aba41e65da",
+        "logical_rows_cross_checked": 144,
+        "row_flags_fps_p99_match_raw_reports": true
+      }
+    ],
+    "disposition": "Both panel matrix tests failed, panelsExit=1; both overlay matrix tests passed in a reported 35.8 minutes, overlaysExit=0. The combined failure is retained."
+  },
+  "artifact_preservation_limit": {
+    "status": "hardware_panel_transient_attachments_missing",
+    "retained": [
+      "Both panel raw JSONs",
+      "Full panel hardware failure log",
+      "Both overlay raw JSONs",
+      "Full overlay hardware log",
+      "Frozen candidate archive and independent scoped reviews"
+    ],
+    "logged_panel_paths": [
+      {
+        "logged_reference": "..\\test-results\\scale0-comprehensive-perfo-e0160-panels-hardware-matrix-L-33-chromium\\attachments\\hardware-panels-L33-58607401e6de2193fde7464923c1a9f4fcb11ff4.json",
+        "exists_at_review": false
+      },
+      {
+        "logged_reference": "..\\test-results\\scale0-comprehensive-perfo-e0160-panels-hardware-matrix-L-33-chromium\\test-failed-1.png",
+        "exists_at_review": false
+      },
+      {
+        "logged_reference": "..\\test-results\\scale0-comprehensive-perfo-e0160-panels-hardware-matrix-L-33-chromium\\error-context.md",
+        "exists_at_review": false
+      },
+      {
+        "logged_reference": "..\\test-results\\scale0-comprehensive-perfo-6dade-panels-hardware-matrix-L-97-chromium\\attachments\\hardware-panels-L97-676674d104605042a9909bfd9fb959d2403be245.json",
+        "exists_at_review": false
+      },
+      {
+        "logged_reference": "..\\test-results\\scale0-comprehensive-perfo-6dade-panels-hardware-matrix-L-97-chromium\\test-failed-1.png",
+        "exists_at_review": false
+      },
+      {
+        "logged_reference": "..\\test-results\\scale0-comprehensive-perfo-6dade-panels-hardware-matrix-L-97-chromium\\error-context.md",
+        "exists_at_review": false
+      }
+    ],
+    "finding": "After the overlay Playwright invocation, referenced panel screenshot/error-context/temporary JSON attachment paths are absent. No separate hardware-panel screenshot/context archive was identified in task evidence.",
+    "traces": "Panel hardware log names no trace attachment; frozen harness disables traces. No hardware-panel trace archive is claimed.",
+    "separate_archives": "Hash-verified earlier startup and Time fixture-failure archives do not replace hardware-panel attachments.",
+    "effect": "The unchanged raw panel JSONs and matching log establish the nine callback failures; visual/context attachment preservation remains incomplete."
+  },
+  "measurement_limits": [
+    "Frame/callback reports retain aggregate statistics, not raw vectors. Finiteness, ordering, inverse-mean FPS and thresholds were checked; empirical percentiles were not independently reconstructed.",
+    "Raw actions permit independent nearest-rank percentile and mean recomputation. Their latency is dispatch to next foreground rAF, not display-present time.",
+    "Capability sampling can bypass ownerRead instrumentation; global diagnostic timings cannot be causally assigned to an interface without call-chain evidence.",
+    "Non-Damping overlay rows lack per-overlay geometry records; passing does not prove nonzero support or physical correctness for every overlay.",
+    "Damping tests the registered 12-marker modified reference profile: 46 booleans, two changes, suspended qualification, the same anchor and 288 endpoint vertices. No 100-glyph worst-case or strict physical damping claim follows.",
+    "Stable owner/configuration/mount and coarse resource snapshots do not establish complete disposal, leak freedom, backend parity or deterministic replay.",
+    "Historical comparisons remain descriptive because source/WASM identities and scientific tick intervals differ.",
+    "Prospective source correctness findings and isolated follow-up drafts are not retrofitted into this frozen campaign disposition."
+  ],
+  "remaining_release_blockers": [
+    "Nine registered panel callback p95 failures require a separately frozen follow-up and new evidence.",
+    "Physical recovery, causal closure and continuum gates retain their separate program-ledger status.",
+    "No full release, public deployment or canonical adoption approved."
+  ]
+}

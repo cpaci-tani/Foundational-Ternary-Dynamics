@@ -1,0 +1,10 @@
+{
+  "schema": "scale0-time-gravity-v4-postrun-source-check-v1",
+  "verifiedUtc": "2026-09-08T06:53:58.293823+00:00",
+  "candidateIdentity": "69b0bb82befe103572ac4710631c4242fc9c6b23990bea93c22ed5426b3ff394",
+  "sourceFiles": 2176,
+  "snapshots": 8,
+  "mismatches": [],
+  "manifestSha256": "d7b671f7fdefa4d8df8c0ddbdf52d1cd1075770d9ba2e0338cba6b4adb31708c",
+  "archiveSha256": "d1ccce4553b231f039ea47d2af5d374e019fbf31d87c2747b189a6bf40586702"
+}

@@ -1,0 +1,312 @@
+{
+  "schema": "scale0-time-gravity-v4-independent-harness-review-v1",
+  "reviewed_utc": "2026-09-08T06:24:02.073337+00:00",
+  "local_record_date": "2026-09-08",
+  "reviewer": "/root/bounded_worker_reads",
+  "author": "/root",
+  "status": "accepted_isolated_harness_for_controlled_integration",
+  "harness_integration_approved": true,
+  "production_time_gravity_implementation_approved": false,
+  "hardware_gate_approved": false,
+  "release_approved": false,
+  "physical_recovery_approved": false,
+  "disposition": "The isolated coordinator-authored harness passes independent source and focused in-memory review. Its exact candidate bytes may be integrated only after rechecking the captured production baseline. This review approves neither the separate Time/Gravity implementation candidates nor a hardware result.",
+  "identity": {
+    "manifest": {
+      "path": "engine/build/scale0_time_gravity_v4_harness_20260908/manifest.json",
+      "bytes": 450,
+      "sha256": "cad9835ff1c47503528b3aa94b7831c8ecb1bbcbfa5fbb7e3147b8ec7457d439"
+    },
+    "captured_baseline": {
+      "path": "engine/build/scale0_time_gravity_v4_harness_20260908/baseline/engine/web/tests/scale0-comprehensive-performance.spec.js",
+      "bytes": 25066,
+      "sha256": "1df97e12082b620f44c446b3d3020d238c6ef671c2742f8ff8c55d1ecccc30b5"
+    },
+    "current_source": {
+      "path": "engine/web/tests/scale0-comprehensive-performance.spec.js",
+      "bytes": 25066,
+      "sha256": "1df97e12082b620f44c446b3d3020d238c6ef671c2742f8ff8c55d1ecccc30b5"
+    },
+    "current_equals_captured_baseline": true,
+    "candidate": {
+      "path": "engine/build/scale0_time_gravity_v4_harness_20260908/engine/web/tests/scale0-comprehensive-performance.spec.js",
+      "bytes": 26482,
+      "sha256": "6f9c7164cf59d1d479ac3b475f81d6171c2b2de1afbf303e91fce8a46cc02f53"
+    },
+    "candidate_matches_draft_manifest": true,
+    "preregistration": {
+      "path": "engine/docs/PROGRAM_SCALE0_TIME_GRAVITY_V4_2026-09-08.md",
+      "bytes": 7078,
+      "sha256": "5bca88380f95bd305677806d30ec6b7191ea6b263f68b8624772f494af3ccb1d"
+    },
+    "unchanged_raw_timing_probe": {
+      "path": "engine/web/tests/scale0-ui-audit-probe.js",
+      "bytes": 12045,
+      "sha256": "b368a7f6327aa8544146972dffa1bc675a9781ec10b52fec0867110c5d7b86d1"
+    },
+    "normalized_diff_added_lines": 20,
+    "normalized_diff_removed_lines": 8
+  },
+  "registered_scope": {
+    "profile": "time-gravity-v4",
+    "kind": "panels",
+    "panels": [
+      {
+        "id": "gravity",
+        "scenario": "s0-seed-massive-body"
+      },
+      {
+        "id": "time",
+        "scenario": "s0-seed-time-twin-clocks"
+      }
+    ],
+    "panel_order": "Actual Scale 0 registry currently yields Gravity then Time. Assertions compare sorted identities/preparations and reject duplicates; the program does not prescribe panel order.",
+    "states": [
+      "docked",
+      "floated",
+      "collapsed",
+      "hidden"
+    ],
+    "ordered_sizes": [
+      33,
+      97
+    ],
+    "logical_rows": 16,
+    "physics_playing_all_states": true,
+    "backends": [
+      "direct WASM L33",
+      "worker WASM L97"
+    ],
+    "candidate_identity": "Required lowercase 64-hex value in FTD_AUDIT_CANDIDATE_ID, embedded in the report.",
+    "identity_boundary": "Shape validation does not verify source binding. A distinct complete source/artifact freeze, independent pre-run identity check and post-run hash reconciliation are still required.",
+    "output_date": "2026-09-08",
+    "outputs": [
+      {
+        "path": "engine/docs/evidence/scale0-hardware-time-gravity-v4-panels-L33-2026-09-08.json",
+        "absent_at_review": true
+      },
+      {
+        "path": "engine/docs/evidence/scale0-hardware-time-gravity-v4-panels-L97-2026-09-08.json",
+        "absent_at_review": true
+      }
+    ]
+  },
+  "source_comparison": {
+    "full_gate_block_identical": true,
+    "preparation_availability_warmup_visibility_action_clock_and_measurement_loop_identical_except_v4_raw_retention": true,
+    "full_row_storage_error_capture_cleanup_attachment_and_row_count_checks_unchanged": true,
+    "existing_report_save_and_no_overwrite_block_identical": true,
+    "probe_source_unchanged": true,
+    "new_behavior": [
+      "Adds time-gravity-v4 as a panels-only profile requiring the full ordered 33,97 invocation and candidate identity.",
+      "Selects exactly the registered Time and Gravity identities/preparations and verifies the resulting plan.",
+      "Uses the new dated output prefix and enables the existing post-stop raw frame/callback retention.",
+      "For time-gravity-v4 only, the final assertion displays failed row identities/states and reasons rather than dumping full raw vectors."
+    ]
+  },
+  "unchanged_gates": {
+    "frame_intervals_min": 600,
+    "duration_ms_min": 12000,
+    "effective_fps_min": 59.5,
+    "frame_p95_ms_max": 17,
+    "frame_p99_ms_max": 20,
+    "intervals_over_33_4ms_max": 0,
+    "long_tasks_max": 0,
+    "callback_p95_ms_max": 2,
+    "callback_max_ms_max": 8,
+    "visible_action_samples": 10,
+    "action_dispatch_to_next_raf_p95_ms_max": 50,
+    "other_checks": [
+      "Hardware renderer and foreground document",
+      "Long Tasks instrumentation support",
+      "Same owner/load generation, authoritative WASM readiness and qualification",
+      "Lifecycle equality and safe advancing owner clock while playing",
+      "Correct panel mount before and after paired actions",
+      "No hidden/collapsed canvas work",
+      "Instrumented runtime errors"
+    ],
+    "callback_accounting": "Only standalone method:ownerRead.* diagnostics are excluded from the callback gate. Nested owner reads remain in inclusive interface callback timings."
+  },
+  "compact_failure_display": {
+    "original_filter_preserved": "report.rows.filter(r => r.failure || r.failures?.length)",
+    "new_profile_projection": [
+      "id",
+      "state",
+      "failure",
+      "failures"
+    ],
+    "failed_row_discrimination_unchanged": true,
+    "exception_failure_and_nonempty_gate_failure_both_retained": true,
+    "full_reports_and_nested_raw_arrays_unmodified": true,
+    "full_report_saved_and_attached_before_assertion": true,
+    "legacy_profiles_keep_original_failed_row_objects": true,
+    "scope": "The mapping changes final assertion display only. The same row-count assertion and report.errors assertion remain; saved JSON and attachments retain every field and raw vector."
+  },
+  "raw_timing_contract": {
+    "retain_profiles": [
+      "wave-v3",
+      "time-gravity-v4"
+    ],
+    "legacy_retention_unchanged": true,
+    "copy_after_stop": true,
+    "probe_review": "engine/docs/evidence/scale0-wave-v3-harness-review-2026-09-08.json",
+    "boundary": "The unchanged probe retains its already reviewed stop/drain/try-finally behavior. This review checks the option selection and unchanged bytes; it does not rerun that probe fault suite or launch a browser."
+  },
+  "independent_checks": {
+    "syntax": {
+      "command": "node --check engine/build/scale0_time_gravity_v4_harness_20260908/engine/web/tests/scale0-comprehensive-performance.spec.js",
+      "exit_code": 0
+    },
+    "controlled_execution": "Node vm/new Function execution of extracted actual draft/baseline source blocks with mocked environment, assertions and filesystem output. Uses the actual current panel registry. No browser, permanent regression test or hardware process was launched.",
+    "results": {
+      "acceptedNewProfile": {
+        "sizes": [
+          33,
+          97
+        ],
+        "kind": "panels",
+        "profile": "time-gravity-v4",
+        "candidateIdentity": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "reportDate": "2026-09-08",
+        "gates": {
+          "minFrames": 600,
+          "minDurationMs": 12000,
+          "minFps": 59.5,
+          "p95Ms": 17,
+          "p99Ms": 20,
+          "maxLongFrames": 0,
+          "actionSamples": 10,
+          "actionP95Ms": 50
+        },
+        "repairPanels": [
+          "flux-slice",
+          "wave-lab",
+          "p1-observables",
+          "spectrum",
+          "gravity",
+          "time",
+          "thermo",
+          "scale-context"
+        ]
+      },
+      "invalidAdmissionsRejected": 22,
+      "legacyAdmissionComparisons": 324,
+      "selectedActualRegistryPlan": [
+        {
+          "id": "gravity",
+          "scenario": "s0-seed-massive-body"
+        },
+        {
+          "id": "time",
+          "scenario": "s0-seed-time-twin-clocks"
+        }
+      ],
+      "invalidPlansRejected": 6,
+      "registeredRows": 16,
+      "gateBlockIdentical": true,
+      "measurementAndPreparationLoopIdenticalExceptNewRawRetention": true,
+      "reportSaveAndNoOverwriteBlockIdentical": true,
+      "fullRowStorageAndCleanupSuffixIdentical": true,
+      "outputCases": [
+        {
+          "profile": "baseline",
+          "exists": false,
+          "rejected": false
+        },
+        {
+          "profile": "baseline",
+          "exists": true,
+          "rejected": true
+        },
+        {
+          "profile": "repair-v1",
+          "exists": false,
+          "rejected": false
+        },
+        {
+          "profile": "repair-v1",
+          "exists": true,
+          "rejected": true
+        },
+        {
+          "profile": "repair-v2",
+          "exists": false,
+          "rejected": false
+        },
+        {
+          "profile": "repair-v2",
+          "exists": true,
+          "rejected": true
+        },
+        {
+          "profile": "wave-v3",
+          "exists": false,
+          "rejected": false
+        },
+        {
+          "profile": "wave-v3",
+          "exists": true,
+          "rejected": true
+        },
+        {
+          "profile": "time-gravity-v4",
+          "exists": false,
+          "rejected": false
+        },
+        {
+          "profile": "time-gravity-v4",
+          "exists": true,
+          "rejected": true
+        }
+      ],
+      "compactFailureMappingProfiles": 5,
+      "fullReportsUnmutated": true,
+      "legacyPlanSelectionsUnchanged": true,
+      "rawRetentionProfiles": [
+        "wave-v3",
+        "time-gravity-v4"
+      ]
+    },
+    "invalid_admission_scope": [
+      "Single/reversed/duplicated/extra/nonfinite/out-of-domain sizes",
+      "Missing, short, long, uppercase, nonhex, newline-suffixed and whitespace-prefixed candidate identities",
+      "Overlay/unknown kind and unknown profile"
+    ],
+    "invalid_plan_scope": [
+      "Empty or missing panel",
+      "Duplicated identity",
+      "Extra unregistered panel",
+      "Wrong preparation",
+      "Unknown panel identity"
+    ],
+    "legacy_profiles": [
+      "baseline",
+      "repair-v1",
+      "repair-v2",
+      "wave-v3"
+    ],
+    "legacy_equivalence": "324 combinations compare both acceptance/results and rejection messages with the baseline; four actual-registry panel selections match. Five profile mappings preserve baseline full-row assertion objects except the new v4 display projection. Ten mocked output cases verify five creates and five no-overwrite rejections."
+  },
+  "preregistration_review": {
+    "status": "accepted_as_declared_contract",
+    "scope": "The program consistently separates Time presentation, Gravity observation batching and hardware acceptance. This is a contract review, not certification that either implementation satisfies it.",
+    "gravity_batch_amendment": "One to three copied selectors share one publication pin, one full-volume maximum using the retained mag*mag scan and initial 1e-30, and owned slabs in caller order. Quantity-change refresh requests all three planes together. sampleTick remains null, failures release pins, unsupported direct paths retain their previous full-volume path. These are explicit implementation obligations for its separate independent review.",
+    "time_boundary": "Formulas, complete histories, sample requests, controls, source resets and cadence remain acceptance requirements for the Time implementation reviewer.",
+    "evidence_retention": "Requires complete raw frame/callback/action samples, reports and failure attachments; immediate archive before another Playwright invocation on success or failure; then independent statistics and source/artifact reconciliation.",
+    "epistemic_boundary": "No reference observer optimization, harness result or matched owner clock establishes strict physical recovery or common microscopic observation time. Prior Wave/Spectrum and broader recovery blockers remain open."
+  },
+  "remaining_gates": [
+    "Independently accept the separate Time and Gravity implementation drafts, returning any fixes to their authors.",
+    "Recheck this exact baseline immediately before controlled harness integration.",
+    "Freeze a separately identified complete integrated candidate and immutable preregistration/review snapshots.",
+    "Independently verify the candidate identity before running all 16 registered hardware rows serially.",
+    "Preserve full evidence, reconstruct retained statistics and reconcile post-run source/archive hashes without retuning thresholds."
+  ],
+  "limitations": [
+    "Controlled source execution establishes admission and report behavior, not browser scheduling, timing, hardware performance or physics.",
+    "Candidate identity admission validates shape only; artifact binding remains a separate freeze/post-run gate.",
+    "Output paths are size-specific and the runtime still permits only its registered exact panel plans; malformed external payloads beyond these harness inputs were not exhaustively enumerated.",
+    "Existing legacy profile behavior is preserved, including their broader size options; no new legacy acceptance restriction is introduced."
+  ],
+  "blocking_harness_findings": []
+}

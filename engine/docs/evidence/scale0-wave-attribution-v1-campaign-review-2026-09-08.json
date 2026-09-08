@@ -1,0 +1,432 @@
+{
+  "schema": "ftd.scale0.wave-attribution.campaign-review.v1",
+  "reviewedAtUtc": "2026-09-08T07:26:17.354031+00:00",
+  "reviewer": "/root/bounded_worker_reads",
+  "status": "accepted_scoped_campaign_integrity_browser_equivalence_pending",
+  "acceptance": false,
+  "scope": {
+    "independentOf": [
+      "probe author /root/wave_component_v3_draft",
+      "coordinator runner/program author /root"
+    ],
+    "responsibility": [
+      "campaign admission and preparation",
+      "routing and source identity binding",
+      "recorded invocation association and complete span accounting",
+      "cleanup and evidence preservation",
+      "coordinator pre/post source checks"
+    ],
+    "separateReview": "Source transformation and scientific value/lifecycle equivalence are independently reviewed by /root/time_gravity_cost_review; this record does not replace that review.",
+    "productionChanges": [],
+    "browserRunsByReviewer": 0,
+    "buildsByReviewer": 0,
+    "gpuRunsByReviewer": 0
+  },
+  "decision": {
+    "openBlockersInReviewedScope": [],
+    "heldInputBrowserCheck": "May be scheduled by root after the separate transform review accepts the same sealed bytes.",
+    "timingCampaign": "Conditional on held-input browser equivalence passing and root freezing this manifest, runner and preregistration. Execute baseline first, then routed, serially under distinct run IDs.",
+    "performanceApproval": false,
+    "releaseApproval": false,
+    "physicalRecoveryApproval": false
+  },
+  "identities": {
+    "probeManifest": {
+      "path": "engine/build/scale0_wave_attribution_probe_20260908/manifest.json",
+      "bytes": 9483,
+      "sha256": "a9f763396e72a59cde8aba4927a547c5fa12deeaf0fcc9969b7bafaec7120259"
+    },
+    "probeEntryCount": 37,
+    "allProbeEntriesMatch": true,
+    "baselineManifest": {
+      "path": "engine/docs/evidence/scale0-time-gravity-v4-candidate-manifest-2026-09-08.json",
+      "bytes": 409249,
+      "sha256": "d7b671f7fdefa4d8df8c0ddbdf52d1cd1075770d9ba2e0338cba6b4adb31708c"
+    },
+    "baselineIdentity": "69b0bb82befe103572ac4710631c4242fc9c6b23990bea93c22ed5426b3ff394",
+    "baselineIdentityIndependentlyRecomputed": true,
+    "productionSourceCount": 2176,
+    "productionSourceMismatches": [],
+    "coordinatorRunner": {
+      "path": "engine/build/run_scale0_wave_attribution_20260908.py",
+      "bytes": 4722,
+      "sha256": "e3aa96cd051c64ea63a743f3317871eee07a4ffe22c2541fa0ed3fa1d07c9b8a"
+    },
+    "preReviewCoordinatorRunner": {
+      "path": "engine/build/run_scale0_wave_attribution_20260908.pre-review1.py",
+      "bytes": 4050,
+      "sha256": "4fc7c2b9a20b05617262d69a5fbc71f7bc7b39a51fa659c6c0ce588208c38fe2"
+    },
+    "coordinatorProgramAtReview": {
+      "path": "engine/docs/PROGRAM_SCALE0_WAVE_ATTRIBUTION_V1_2026-09-08.md",
+      "bytes": 5778,
+      "sha256": "e8094c8f91f7ddb0ea776a56f648eb4e92e9ed60e7163ed340fd79e480657907"
+    },
+    "preRepairProbeArchive": {
+      "path": "engine/build/scale0_wave_attribution_probe_20260908/pre-cleanup-review1.zip",
+      "bytes": 117077,
+      "sha256": "1be38d1c92c39cf5bec562c25f01985e5dd0c98e153d96382ceafd82016a20b8"
+    },
+    "preRepairArchiveMembers": 31,
+    "preRepairArchiveBadMember": null,
+    "preRepairArchivedManifestSha256": "1d90e4f5cb8530fa51fb02390e0b7135d6a1ebd575bbe0502d1ad350109cf183"
+  },
+  "registeredWorkload": {
+    "panel": "WaveLab",
+    "scenario": "s0-field-rf-lattice-wave",
+    "orderedSizes": [
+      33,
+      97
+    ],
+    "backends": {
+      "33": "wasm-direct",
+      "97": "wasm-worker"
+    },
+    "orderedStates": [
+      "docked",
+      "floated",
+      "collapsed",
+      "hidden"
+    ],
+    "rowsPerDiagnosticVariant": 8,
+    "timingVariantOrder": [
+      "baseline",
+      "routed"
+    ],
+    "totalProspectiveDiagnosticRows": 16,
+    "minimumFramesPerState": 600,
+    "minimumDurationMsPerState": 12000,
+    "visibleActionSamplesPerState": 10,
+    "initialWarmupMs": 2000,
+    "stateWarmupMs": 1000,
+    "measurementTimeoutMs": 60000,
+    "traceDuringDiagnostic": "off",
+    "traceDuringHeldEquivalence": "retain-on-failure",
+    "otherInterfaces": "Spectrum and production optimization are outside this diagnostic."
+  },
+  "resolvedFindings": [
+    {
+      "id": "WATTR-01",
+      "issue": "Manifest bytes were recorded without checking their entries or route-map relation.",
+      "repair": "verifyDraftManifest checks all 37 entry sizes/hashes and exact manifest.routes equality to the loaded route map before launch and installation. The coordinator additionally requires the independently reviewed manifest SHA.",
+      "disposition": "accepted"
+    },
+    {
+      "id": "WATTR-02",
+      "issue": "An empty route-failure list did not establish interception and delivery of all required modules.",
+      "repair": "requireRouteCoverage requires all six route source identities and no failures before each full-app row can pass. Each request verifies HTTP 200 and the exact served baseline hash before fulfilling the reviewed body. Successful hit history is bounded at 64; failures at eight; capacity invalidates delivery.",
+      "disposition": "accepted"
+    },
+    {
+      "id": "WATTR-03",
+      "issue": "Empty scheduled captures could be accepted.",
+      "repair": "Every routed diagnostic row calls analyzeAttribution with minScheduled=1 and its actual Wave callback timing vector. The registered host remains scheduled when collapsed/hidden and returns early internally, so a positive host callback requirement is appropriate in all four states.",
+      "disposition": "accepted"
+    },
+    {
+      "id": "WATTR-04",
+      "issue": "Analyzer could omit unreachable records, including a closed zero-duration orphan cycle.",
+      "repair": "Analyzer reconciles raw span/root usage counts, checks stage/origin membership, one ROOT per sequential root ID, parent precedence, full reachability from the declared root, same-root parentage, time containment and per-root bounds. The earlier cycle witness is rejected by the regression suite.",
+      "disposition": "accepted"
+    },
+    {
+      "id": "WATTR-05",
+      "issue": "Recorder export could be skipped on audit startup/stop failures.",
+      "repair": "Setup is inside the capture try. The cleanup helper independently attempts recorder.stop in finally even when audit stop rejects; missing audit/raw stay null, errors remain explicit, and raw rows are saved before assertions. Incomplete capture cannot pass integrity.",
+      "disposition": "accepted_with_failure_limits_recorded"
+    },
+    {
+      "id": "WATTR-06",
+      "issue": "Run reuse could let Playwright clear prior artifacts before an in-test overwrite check.",
+      "repair": "Dedicated launcher performs exclusive directory reservation before spawning Playwright. Existing reservations, result directories or either report reject launch. Config requires the random reservation token and reserved state. Each run writes a distinct streamed browser log.",
+      "disposition": "accepted"
+    },
+    {
+      "id": "WATTR-07",
+      "issue": "Diagnostic inherited active retain-on-failure tracing.",
+      "repair": "The diagnostic spec explicitly sets test.use({trace:off}) for both variants. Functional equivalence retains forensic tracing. No diagnostic trace is promised.",
+      "disposition": "accepted"
+    },
+    {
+      "id": "WATTR-08",
+      "issue": "Coordinator accepted a live baseline manifest without pinning its reviewed identity and did not recheck baseline/runner bytes afterward.",
+      "repair": "Runner pins baseline manifest SHA d7b671f7fdefa4d8df8c0ddbdf52d1cd1075770d9ba2e0338cba6b4adb31708c, source identity and 2176 count, independently reconstructs compact sorted files-array identity, and checks baseline manifest plus initial runner hash in every pre/post source check. Original runner bytes are preserved.",
+      "disposition": "accepted"
+    }
+  ],
+  "timingAccount": {
+    "association": "The routed audit wrapper preserves the original callback start and final performance.now endpoints. The exact same elapsed value is appended once to the original callback vector and attached to the scheduled ROOT with its vector index.",
+    "oneToOne": "Scheduled root count equals the complete retained vector length; indices are unique and elapsed/endpoints match strictly. Finite endpoints and nonnegative duration are required.",
+    "subtraction": "Each span exclusive duration is its inclusive interval minus the union of its immediate child intervals. Per-root exclusive sums reconstruct the original callback interval with fixed 1e-7 ms tolerance. This is per invocation, never subtraction of independent percentiles.",
+    "partition": "Scheduled callbacks and standalone panel/component, controls/audio, history-window and resize origins remain separately identified. Raw spans retain their parent/root IDs and scalar metadata; analysis does not pool the cohorts.",
+    "bounds": {
+      "maxRootsPerState": 256,
+      "maxSpansPerRoot": 512,
+      "overflow": "Recorder invalidates and stops without scientific fallback. Future events after invalidation are not counted or reconstructed; the entire capture is invalid."
+    },
+    "unknowns": "Independent payload sampleTick values are retained only when present as data properties; unknowns remain null. Existing owner-read tick is not a common J/E sample time. Worker getter spans measure main-thread demand/cache access; native spans include JS/embind guard and call/return work.",
+    "observerEffects": "Clock calls, typed writes, closure/branch work, descriptor reads, WeakMap identities, preallocated recorder memory, source transformation and JIT perturbation remain in instrumented observations. No calibrated overhead has been removed."
+  },
+  "campaignAndEvidence": {
+    "integrityChecks": [
+      "hardware unmasked renderer, reject software rendering",
+      "visible document",
+      "same owner and load generation with authoritative readiness",
+      "within-contract qualification at both endpoints",
+      "unchanged lifecycle and mount endpoints",
+      "expected live/hidden panel state",
+      "advancing owner clock and unpaused simulation",
+      "minimum frame count and duration",
+      "audit and runtime error rejection",
+      "route and span completeness"
+    ],
+    "acceptanceBoundary": "The diagnostic intentionally does not evaluate production callback/frame performance thresholds. Its records set acceptance:false and integrity:passed only for valid instrumentation/workload. Existing v2, Wave-v3 and Time/Gravity-v4 failures remain separate, unchanged evidence.",
+    "saveBeforeAssert": true,
+    "coordinatorPreservation": "Each invocation gets an exclusive execution record and result archive. Finally archives manifest, runner, streamed reservation/log, available browser artifacts and per-size raw reports after source recheck; ordinary nonzero subprocess exit remains failed.",
+    "baselineOrder": "Coordinator program requires held equivalence, baseline diagnostic, routed diagnostic. The one-invocation runner does not enforce inter-invocation order itself; root owns serial scheduling and checking the prior disposition.",
+    "artifactLimits": [
+      "No diagnostic trace is promised because tracing is disabled. Screenshots exist only when Playwright emits them.",
+      "Process/host termination, filesystem failure or an exception inside postcheck/archive finalization can prevent a complete final archive; the started execution record and available run files remain and require explicit root preservation/disposition.",
+      "A probe startup failure before its global handle is published can leave partially installed instrumentation until page teardown; the affected invocation is failed and later row timings must not be accepted as an independent successful campaign.",
+      "Baseline/routed observations occur in different executions and may sample different physical histories. They are descriptive controls, not paired same-state measurements or an uninstrumented speedup."
+    ]
+  },
+  "checksExecutedByReviewer": {
+    "sourceVerification": {
+      "path": "engine/build/scale0_wave_attribution_review_20260908/source-check.json",
+      "bytes": 447,
+      "sha256": "46efee0d5607845d00e52e2cdc9cfebc2c09b742884cc5543c03858eeb987a1d"
+    },
+    "nodeCommand": [
+      "node",
+      "--test",
+      "--test-name-pattern=^(?!exclusive run reservations).*",
+      "engine/build/scale0_wave_attribution_probe_20260908/attribution.node.test.mjs"
+    ],
+    "actualNodeOutcome": {
+      "tests": 14,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    "nodeLog": {
+      "path": "engine/build/scale0_wave_attribution_review_20260908/node-existing-readonly.log",
+      "bytes": 1618,
+      "sha256": "4b765ae57e73c97992708c7551677fc9bb062fc2a861a3b814ada9cd35650822"
+    },
+    "note": "The intended test-name exclusion did not exclude the reservation fixture: all fourteen tests ran. The newly generated, unmanifested reservation-node-fixture-rjGZoP is preserved as reviewer evidence; no sealed entry was changed.",
+    "generatedFixtureDirectory": "engine/build/scale0_wave_attribution_probe_20260908/reservation-node-fixture-rjGZoP",
+    "coverage": [
+      "actual analysis outputs and transient J-before-E consumption",
+      "actual audit callback/exception association",
+      "actual Sparkline setData/window/resize equivalence",
+      "native delegation/fallback/original exceptions",
+      "capacity, owner and stack invalidation",
+      "scalar accessor traps and unknown times",
+      "audit/raw failure cleanup",
+      "orphan-cycle/enums/usage/empty capture rejection",
+      "actual exclusive reservation and prior-evidence rejection"
+    ],
+    "finalSealedEntryRecheck": "37 entries unchanged after the independent Node run",
+    "notExecuted": [
+      "browser equivalence",
+      "browser routing",
+      "hardware timing campaign",
+      "native/WASM builds",
+      "GPU work"
+    ]
+  },
+  "unresolvedResearchAndProductLimits": [
+    "Four visible Wave-v3 callback failures remain recorded; this diagnostic has no measured timing outcome yet.",
+    "Three Time/Gravity-v4 callback failures and separate older failures remain unchanged.",
+    "No common J/E sample-time certification, corrected Wave component headings, physical recovery, or continuum closure follows from this review."
+  ],
+  "reviewedProbeEntries": [
+    {
+      "path": "analyze.mjs",
+      "sha256": "9ddc442304402186e0bc3d9a5fc653533be9347343555cfba3b8cadd7f240440",
+      "bytes": 6361
+    },
+    {
+      "path": "anchor-records.json",
+      "sha256": "53c0f83155741e9ab4f8b255585585920d12b10ad79b9422bb943d3fe12089e6",
+      "bytes": 8233
+    },
+    {
+      "path": "attribution.node.test.mjs",
+      "sha256": "282b0a7ab03702f740f738fc03be0be2617fd8d3bbdeff3b68d235a2ca76b474",
+      "bytes": 15871
+    },
+    {
+      "path": "baseline/engine/web/js/bridge/wasm-bridge.js",
+      "sha256": "3f9804e6870f6c6b847f617b62657183c54b144afda143cf5eb6ba6e3f11a6dc",
+      "bytes": 66879
+    },
+    {
+      "path": "baseline/engine/web/js/scales/scale0/analysis/wave-spectrum.js",
+      "sha256": "7155a8ee3d0daf069d9aa24326b02e0ee9e8767f4886abbeb2bdcb1398d9694e",
+      "bytes": 21947
+    },
+    {
+      "path": "baseline/engine/web/js/scales/scale0/ui/overlays/wave-lab/wave-info.js",
+      "sha256": "9cfa9b980a5570dc07e9fc190991523bc56ad1a0f387d7acb7d9073969f44cb9",
+      "bytes": 31766
+    },
+    {
+      "path": "baseline/engine/web/js/scales/scale0/ui/overlays/wave-lab-panel.js",
+      "sha256": "93cfcaffe81a11dc1509a7957a2a67d9f506a85c34e5c0a3a433feeb36e6447f",
+      "bytes": 2813
+    },
+    {
+      "path": "baseline/engine/web/js/ui/charts/sparkline.js",
+      "sha256": "752c2815258682399938f0191c6157ee48fd68b17dd41ce7983a5571e7c1b0d2",
+      "bytes": 3893
+    },
+    {
+      "path": "baseline/engine/web/tests/scale0-ui-audit-probe.js",
+      "sha256": "b368a7f6327aa8544146972dffa1bc675a9781ec10b52fec0867110c5d7b86d1",
+      "bytes": 12045
+    },
+    {
+      "path": "capture-cleanup.mjs",
+      "sha256": "832a8b1ed524ec31547908bc5a379c0f99e7d1dddcf48f0c92d4e17680849f84",
+      "bytes": 755
+    },
+    {
+      "path": "node-attempt1.log",
+      "sha256": "a23f0cc0b2e76e67b3ac438a3c1381d4265c66ac30b4c1ba8259eb6499f8ad10",
+      "bytes": 799
+    },
+    {
+      "path": "node-attempt2.log",
+      "sha256": "f3e1e5aa2491ab19351568bf46962be9c149e3cbb8f5e64120721d81ffa22acb",
+      "bytes": 2159
+    },
+    {
+      "path": "node-attempt3.log",
+      "sha256": "dc4c392ea60d596d5db44dab89c620865909e0afd84bee047d7a1043724fbcf5",
+      "bytes": 1100
+    },
+    {
+      "path": "node-attempt4.log",
+      "sha256": "fdcb975c06aba0c281b9e760c2a83918dd589fc89074d4ca0753476004b9c37d",
+      "bytes": 1208
+    },
+    {
+      "path": "node-attempt5.log",
+      "sha256": "314e7d3b63417af05dfe72730c48f2d25e25cc115a78f25f1fd7b32d96dea841",
+      "bytes": 1510
+    },
+    {
+      "path": "playwright.config.mjs",
+      "sha256": "ae0fe6f2bddb5cec9fcb2babae802cd1aabab8e00737dafc9dac746729584158",
+      "bytes": 784
+    },
+    {
+      "path": "pre-cleanup-review1.zip",
+      "sha256": "1be38d1c92c39cf5bec562c25f01985e5dd0c98e153d96382ceafd82016a20b8",
+      "bytes": 117077
+    },
+    {
+      "path": "preparation-attempt1.log",
+      "sha256": "35edf742566ceea163fc11093a46254b3f70fab4c4d95b25b3004741a69bd12b",
+      "bytes": 440
+    },
+    {
+      "path": "prepare.py",
+      "sha256": "072733f9a4a33e76d4acc09c850519d94ff1609530b744449628f8fd1cfe02aa",
+      "bytes": 14073
+    },
+    {
+      "path": "PREREGISTRATION.json",
+      "sha256": "473ad0a0d994184354d9928f6e01d7f5fe27b1db71b0695aa50555b4606c37f3",
+      "bytes": 2510
+    },
+    {
+      "path": "README.md",
+      "sha256": "24638b3efa824adb2ce6105d937c94a5a2c4d0e4f655b1f00365d4ab20cd033c",
+      "bytes": 11378
+    },
+    {
+      "path": "recorder.js",
+      "sha256": "f9f50a6851635430b53c98e79d3ab62eda1919021404c059ecb7e3b3a17cc2a0",
+      "bytes": 11933
+    },
+    {
+      "path": "reservation-node-fixture-JipBvb/run-reservations/one/reservation.json",
+      "sha256": "2d83caec4de497a6e049d54b50ef17d9cdc7f76907a831a5fa994f82fbda7d08",
+      "bytes": 351
+    },
+    {
+      "path": "reservation-node-fixture-JipBvb/run-reservations/used/reservation.json",
+      "sha256": "093f8ec5e2dc7f2824906310d2ced2459ecfc2a5616d0052dd586612e1080f55",
+      "bytes": 543
+    },
+    {
+      "path": "route-map.json",
+      "sha256": "d84a54a1363e3984de74d470985ce03b746fa81fc3cbc1702961d36052f90588",
+      "bytes": 2015
+    },
+    {
+      "path": "routed/engine/web/js/bridge/wasm-bridge.js",
+      "sha256": "75ce7e02638a8837373c8a7709142aed6e2f11f60a47a507807c36136efdc815",
+      "bytes": 67265
+    },
+    {
+      "path": "routed/engine/web/js/scales/scale0/analysis/wave-spectrum.js",
+      "sha256": "10029b274a6f76cc366bacbca496ac1b5af2ff35a023c1af4d0aed84e92abea0",
+      "bytes": 23056
+    },
+    {
+      "path": "routed/engine/web/js/scales/scale0/ui/overlays/wave-lab/wave-info.js",
+      "sha256": "38428753d73c9ef0116ba396284bc1680fa12ab133f25bf1fbcd93dd0b6dc702",
+      "bytes": 34595
+    },
+    {
+      "path": "routed/engine/web/js/scales/scale0/ui/overlays/wave-lab-panel.js",
+      "sha256": "c8eddd9aae73ff8aabe11c7217d4cc31427acf21c2cfd07bcbb6663af835fd00",
+      "bytes": 3133
+    },
+    {
+      "path": "routed/engine/web/js/ui/charts/sparkline.js",
+      "sha256": "21618f2b625a0912a161c9e87d1d3438d7c4516b12cd42907cde41722da93bed",
+      "bytes": 4918
+    },
+    {
+      "path": "routed/engine/web/tests/scale0-ui-audit-probe.js",
+      "sha256": "cc9db3c2c4d5a352632ac91109e1e6f60cb787c1dcb7e36413fb6e094fa5e982",
+      "bytes": 12370
+    },
+    {
+      "path": "routed-source.patch",
+      "sha256": "8383c8c265871f69e6d2f2806472612f7d3ec69e84220fd8a6133d866cf4b21f",
+      "bytes": 20640
+    },
+    {
+      "path": "routing.mjs",
+      "sha256": "4ff3055a00d651e1e1481aff4e910717e3116fb6c10e58ee119121448fb2b9e4",
+      "bytes": 3161
+    },
+    {
+      "path": "run-browser.mjs",
+      "sha256": "0d55943312f028c1fe4604825d3bdccee648aad0526aac9d82192fdeb6bde636",
+      "bytes": 1720
+    },
+    {
+      "path": "run-reservation.mjs",
+      "sha256": "c4bc6ba47d67ebe65af97fc1e1ca927e9f5031ea5da1f741d2fa2be7e1069af3",
+      "bytes": 1835
+    },
+    {
+      "path": "wave-attribution.diagnostic.spec.mjs",
+      "sha256": "a3b8193bb659a01e4bdbf3bf7dbd9b30de33f5a0915daf45e39f74c5ae5141a2",
+      "bytes": 13487
+    },
+    {
+      "path": "wave-attribution.equivalence.spec.mjs",
+      "sha256": "7307ae2ac407fa53965c6ac806e82e8767dcd2d15aec0ab631786e6bc19890ec",
+      "bytes": 4877
+    }
+  ]
+}

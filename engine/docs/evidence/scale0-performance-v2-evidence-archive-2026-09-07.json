@@ -1,0 +1,148 @@
+{
+  "schema": "scale0-performance-v2-evidence-archive-v1",
+  "sealed_utc": "2026-09-08T05:38:39.993755+00:00",
+  "candidate_identity": "8ad614edd7616b43622b437d29a5d3800a614f35ad4d9da9fb3226f725fd0177",
+  "archive": "engine/build/scale0_performance_v2_evidence_20260907.zip",
+  "archive_bytes": 414547,
+  "archive_sha256": "27736901ad385d2ba08e88b94f91438fb5a990c488a69835774d779f8c69a51f",
+  "files": [
+    {
+      "path": "docs/audits/INDEX.md",
+      "bytes": 9212,
+      "sha256": "4bb37681c042005759cbe552c9f1ff89d4d7c9f546dcde0e7480f3ccba10b023"
+    },
+    {
+      "path": "engine/docs/evidence/phi-alignment-proposal-v1-review-2026-09-07.json",
+      "bytes": 12603,
+      "sha256": "fc5cdf039eca8e39c532b438afebe269bcd758d0b0e1846e6e01e031987d5060"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-hardware-repair-v2-overlays-L33-2026-09-07.json",
+      "bytes": 608068,
+      "sha256": "84254128a10c153adf9f186cd6e77fede1f610666ac250b81d7d39979f8b1f72"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-hardware-repair-v2-overlays-L97-2026-09-07.json",
+      "bytes": 596744,
+      "sha256": "c5a21caa76ec27fb82422a4df972fd272bd05a3950023c73f2e48b2bfa933586"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-hardware-repair-v2-panels-L33-2026-09-07.json",
+      "bytes": 535787,
+      "sha256": "feb2d9c505fd6a939e7d85188e610af50b5286a4addf396958d9c52a82bd2cdb"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-hardware-repair-v2-panels-L97-2026-09-07.json",
+      "bytes": 517402,
+      "sha256": "fccc19109bcaf7d8c81fe601f41b1fe356d912733805bf3504f5f070b7352c3e"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-browser-functional-2026-09-07.log",
+      "bytes": 6661,
+      "sha256": "e9139a07b1d72d2a1e59dbc9f2894863d5bc5d6b70e4e808879dd705e7221359"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-browser-startup-failure-2026-09-07.json",
+      "bytes": 617,
+      "sha256": "38dc5c4010c90b55e4cc3296f89cc0ca48703b2a634890e68769c8f3d74aaf3a"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-campaign-execution-2026-09-07.json",
+      "bytes": 98,
+      "sha256": "521fdd443c5854b562b26b80adaa274da5681dae521e5d6966121f99134d35a8"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-candidate-manifest-2026-09-07.json",
+      "bytes": 409619,
+      "sha256": "f75c21d37a620a18d48541732815d2f767f870b490ed6912125a3a75be7e1ebd"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-damping-preparation-2026-09-07.log",
+      "bytes": 764,
+      "sha256": "e00407f77132f61272d739ab724397179742358524fc6250db276d26037678b0"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-damping-time-final-2026-09-07.log",
+      "bytes": 934,
+      "sha256": "b72956bd7ddd1970e4583927c291d98f66590f83d1d5e789fe3d14f3fd5e09b4"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-freeze-review-2026-09-07.json",
+      "bytes": 21440,
+      "sha256": "8760973ab31c708c806301daa00e0a67faa271082d1381d588bb6602e16d3908"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-independent-review-2026-09-07.json",
+      "bytes": 24872,
+      "sha256": "f6d6bd97202c3e0b4a4d7d5a432bc8398945904609e36bbcc762f7c6a804ffe7"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-integrated-review-2026-09-07.json",
+      "bytes": 97354,
+      "sha256": "5c651302d33ac82a44f3c710dc438705db5b67063ebe4a6c4e20a75b291b6132"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-node-2026-09-07.log",
+      "bytes": 11512,
+      "sha256": "0cd95bbf3297b506b2c7ce192623b726208a96231d656fe9c5380b0a3b8357e1"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-overlays-hardware-2026-09-07.log",
+      "bytes": 19530,
+      "sha256": "9edebfb986d2476524911156eb91472133eb52ef0933bb04100818aba41e65da"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-overlays-L33-review-2026-09-07.json",
+      "bytes": 81071,
+      "sha256": "7e43b8d87e18caad6d01bdd740ba0b6669f9703a99465430c80742c533b783d0"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-panels-hardware-2026-09-07.log",
+      "bytes": 134345,
+      "sha256": "ebdcf6049bd1ca278601cc898b8603ab5d2bdb9ee61a63f30c7980744ad0cb87"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-panels-review-2026-09-07.json",
+      "bytes": 324100,
+      "sha256": "6e82fc0c37db871f47e0f7cddb283b5697c880c0f8577e971947c7b2282ad227"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-preservation-supplement-2026-09-07.json",
+      "bytes": 3219,
+      "sha256": "04d77ed0c0922d083f1430069af5e4c62d8980f89c771c1c7341f695b0ecaf42"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-time-caption-regression-2026-09-07.log",
+      "bytes": 3454,
+      "sha256": "e13b553affbafd158a87cecff6e9847996abdacc833ae59c827c1950093fb6e9"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-performance-v2-verification-2026-09-07.json",
+      "bytes": 15213,
+      "sha256": "010bd7bd2adf4f8fe961e80b75f2ec6bfe7b1937c10374974acc664fa8f50e67"
+    },
+    {
+      "path": "engine/docs/PLAN_SCALE0_PERFORMANCE_V3_FOLLOWUP_2026-09-07.md",
+      "bytes": 18116,
+      "sha256": "b416630b04e01110e929d17268e9d6b1324209eb7be4cabf6c6ec898471905dd"
+    },
+    {
+      "path": "engine/docs/PLAN_SCALE0_TIME_GRAVITY_PERFORMANCE_V3_2026-09-08.md",
+      "bytes": 28376,
+      "sha256": "658ffbcc1c304c56a6a0ca0eb85ae264932e504f9df4a923f2e08b8f38865b9e"
+    },
+    {
+      "path": "engine/docs/PROGRAM_SCALE0_PERFORMANCE_V2_2026-09-07.md",
+      "bytes": 24305,
+      "sha256": "d4a60f32d57b3213afc2e25b2f46073e38e9c2c0de062205381876e1296493f4"
+    },
+    {
+      "path": "engine/docs/SPEC_PHI_ALIGNMENT_SUCCESSOR_PROPOSAL_V1.md",
+      "bytes": 22302,
+      "sha256": "7bfc33975ff2b879807c4fde8ef83f8c4b3c6f78d88b6c574620958fb52195c1"
+    }
+  ],
+  "status": "evidence_preserved_nine_callback_failures_remain",
+  "release_approved": false,
+  "scope": "Completed v2 source/evidence verification, raw hardware reports, logs, independent reviews, live disposition and prospective plan snapshots. This archive is distinct from the frozen source candidate and prior browser-failure archives. No missing transient panel screenshots/traces or raw frame/callback vectors are claimed."
+}

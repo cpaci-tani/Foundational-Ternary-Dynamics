@@ -1,0 +1,8 @@
+{
+  "status": "interrupted_after_reproduced_browser_startup_defect",
+  "archive": "engine/build/scale0_performance_v2_browser_startup_failure_20260907.zip",
+  "sha256": "f221a8d61bcc73c4cf0c7b409ac00b4d74bb5c681e2ffbca053f369da9de2c0a",
+  "reason": "Illegal invocation: browser clearTimeout stored as client method; dashboard initialization failed. First conservation live-tick and vacuum scenario cases failed; staggered fixture passed. Interrupted before remaining suite; not a hardware campaign.",
+  "source_revision": "pre-freeze performance-v2 integration",
+  "utc": "2026-09-08T03:57:02.681723+00:00"
+}

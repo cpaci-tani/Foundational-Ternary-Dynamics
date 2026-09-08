@@ -1,0 +1,166 @@
+{
+  "schema": "ftd.scale0.independent-draft-review.v1",
+  "reviewedAtUtc": "2026-09-08T05:39:13.505592+00:00",
+  "reviewer": "/root/time_gravity_cost_review",
+  "independentOfImplementation": true,
+  "status": "accepted_bounded_draft2_for_production_integration_and_browser_verification",
+  "blockingCodeFindingsForBoundedIntegration": [],
+  "releaseApproved": false,
+  "hardwareApproved": false,
+  "completeObservationApproved": false,
+  "physicsRecoveryApproved": false,
+  "scope": {
+    "draftDirectory": "engine/build/scale0_wave_v3_draft2_20260908",
+    "previousReview": "engine/docs/evidence/scale0-wave-v3-draft-review-2026-09-08.json",
+    "proposedProductionFiles": [
+      "engine/web/js/scales/scale0/analysis/wave-spectrum.js",
+      "engine/web/js/scales/scale0/ui/overlays/wave-lab/wave-info.js",
+      "engine/web/tests/scale0-wave-spectrum-metrics.node.test.mjs",
+      "engine/web/tests/scale0-retained-readout.spec.js"
+    ],
+    "productionFilesEditedByReviewer": [],
+    "draftFilesEditedByReviewer": [],
+    "reviewerWrites": [
+      "engine/docs/evidence/scale0-wave-v3-draft2-review-2026-09-08.json",
+      "engine/docs/evidence/scale0-wave-v3-draft2-independent-module-tests-2026-09-08.log",
+      "engine/docs/evidence/scale0-wave-v3-draft2-independent-parity-tests-2026-09-08.log"
+    ],
+    "browserExecutedByReviewer": false,
+    "buildsExecutedByReviewer": false,
+    "hardwareMeasurementsExecutedByReviewer": false
+  },
+  "identity": {
+    "manifest": "engine/build/scale0_wave_v3_draft2_20260908/draft-manifest.json",
+    "manifestSha256": "f50a77ffa6ec93b97a4b614d682104c015a884ed330e05ddf7dcd45b6483f1a4",
+    "draft2ManifestEntriesChecked": 16,
+    "draft2Mismatches": [],
+    "draft1ManifestEntriesChecked": 9,
+    "draft1Mismatches": [],
+    "productionBaselinesChecked": 3,
+    "productionBaselineMismatchesAtReviewTime": [],
+    "proposedPatchExactlyMatchesNormalizedFullDiff": true,
+    "candidateHashes": {
+      "engine/web/js/scales/scale0/analysis/wave-spectrum.js": "7155a8ee3d0daf069d9aa24326b02e0ee9e8767f4886abbeb2bdcb1398d9694e",
+      "engine/web/js/scales/scale0/ui/overlays/wave-lab/wave-info.js": "9cfa9b980a5570dc07e9fc190991523bc56ad1a0f387d7acb7d9073969f44cb9",
+      "engine/web/tests/scale0-wave-spectrum-metrics.node.test.mjs": "54adc73bfb6aef835b2d21775c43c7865a06772ee4675def38f1164afacb4d50",
+      "engine/web/tests/scale0-retained-readout.spec.js": "3943f52aadbea001c3caba74e8ea23ef974d2c911a2604c5ffb4558c4e2f450b"
+    },
+    "note": "Checks describe the isolated draft and production baselines at the recorded review time. Subsequent coordinator integration requires its own record; this review does not overwrite draft1 or its evidence."
+  },
+  "independentExecution": [
+    {
+      "command": "node --test engine/build/scale0_wave_v3_draft2_20260908/engine/web/tests/scale0-wave-spectrum-metrics.node.test.mjs",
+      "exitCode": 0,
+      "tests": 19,
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "log": "engine/docs/evidence/scale0-wave-v3-draft2-independent-module-tests-2026-09-08.log",
+      "logSha256": "6d32b30680b87a095f2b320f4fec8c741f7030b7faf4345f401ccf5625b8e0d6"
+    },
+    {
+      "command": "node --test engine/build/scale0_wave_v3_draft2_20260908/draft-reference-parity.mjs",
+      "exitCode": 0,
+      "tests": 12,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "completeScenarioComparisons": 48,
+      "log": "engine/docs/evidence/scale0-wave-v3-draft2-independent-parity-tests-2026-09-08.log",
+      "logSha256": "c36994606495b9f072c12556db736e6b852a07c872408258564db2e48e546896"
+    }
+  ],
+  "findings": [
+    {
+      "id": "WVD2-01",
+      "status": "accepted",
+      "subject": "Component correction and current-N arithmetic cache",
+      "assessment": "The previously reviewed componentIndex correction, current-N Float64 Fourier basis and shared admitted-site vector arithmetic remain present. The finite valid-input outputs equal the complete hash-checked baseline with only its component correction over both typed-array precisions, all four registered scenarios and the registered lattice sizes. Original accumulation order, signs, stride weighting, repeated-site behavior and eight harmonics remain unchanged for that domain.",
+      "scopeLimit": "The validation added in draft2 is a separate value-changing input policy and adds per-record finite checks. It is not part of the value-preserving claim. No elapsed-time improvement is measured."
+    },
+    {
+      "id": "WVD2-02",
+      "status": "accepted_scoped_availability_repair",
+      "subject": "Explicit pending/missing versus completed empty",
+      "assessment": "hasVectorSampleShape requires Float32Array or Float64Array position/vector storage, a nonnegative safe-integer count, triple-aligned capacities and sufficient capacity for all declared records. The reducer no longer coerces or truncates corrupted counts. A typed count-zero record remains a valid completed observation when no readiness method exists or when the owner's readiness method returns exactly true. When hasSamplerSnapshot exists, fluxVector and e are checked independently.",
+      "evidence": "Independent actual-module tests pass for both missing fields, each independently missing, worker placeholder pending, J-only completion, both completed-empty, recovery, malformed count/type/shape and nonfinite declared components.",
+      "limit": "A sample's transport presence is not a common-clock or source-coherence certificate. The direct missing-native fallback is still indistinguishable under this consumer-level contract and remains OPEN in WVD2-06."
+    },
+    {
+      "id": "WVD2-03",
+      "status": "accepted",
+      "subject": "Both asynchronous demands and immediate J consumption are preserved",
+      "assessment": "With both sampler methods present, ordinary unavailable/malformed payload handling still invokes J and E once each per attempt. A missing/pending J result does not short-circuit the E getter, preventing demand starvation. A completed J result is validated and reduced before the E getter is called. Any partial lane accumulation remains local and is discarded when either field is incomplete; no active partial metrics object is returned.",
+      "evidence": "The actual-module test detaches J's buffers from inside the E getter after J has been reduced, and verifies the expected J/W probes and 188.5 total energy. Availability tests assert both getter calls on each normal unsuccessful attempt.",
+      "exceptionLimit": "Thrown getter or readiness-method exceptions still propagate, as in the prior getter path; the second getter is not promised to run after a thrown first getter. This is not a new exception/lifecycle recovery implementation. The declared contract is for actual bridge methods returning sample records or unavailable payloads."
+    },
+    {
+      "id": "WVD2-04",
+      "status": "accepted_source_change_browser_pending",
+      "subject": "Real zero directional history values are retained",
+      "assessment": "WaveInfo now selects Number.isFinite(directionalPeak), preserving a genuine zero even when the vector norm is positive. The energy/probe histories, history clock selection, repeated-tick suppression and chart redraw policy are unchanged. The existing vector-peak fallback remains deliberately available for missing/nonfinite directional metadata; this change is not a redesign of that legacy fallback.",
+      "evidence": "The new mounted browser regression checks named x and y readouts and chart histories for zero directional components with norms 3 and 4, followed by directional peaks 2 and 5. Its stated energy oracle 12.5 then 27 agrees with the fixture vectors. It separately invokes the actual mounted fallback path for missing/nonfinite directional metadata.",
+      "limit": "The browser regression was inspected but not run. Full closure of the actual displayed/history behavior requires its integrated browser pass. Synthetic legacy inputs can still use vector-norm fallback; do not claim all missing directional metadata becomes unavailable."
+    },
+    {
+      "id": "WVD2-05",
+      "status": "browser_test_design_accepted_execution_pending",
+      "subject": "Mounted unavailable and recovery regression",
+      "assessment": "The second appended browser case mounts the actual WaveInfo component and calls its real update/reducer path. It verifies J missing, E missing, both missing and malformed E leave the existing history unchanged, show waiting, send null metrics to the audio update and retain the same owner. Completed typed empty observations append one genuine zero row, followed by valid recovery. Expected histories [2.5,0,18.5] at fixture ticks [10,15,16] and eight J/E getter pairs follow the sequence. Existing three browser cases are preserved by the append-only test diff.",
+      "limitations": [
+        "Both new cases stub uPlot and audio updates; they are numeric/readout integration tests, not actual plotting/audio performance evidence.",
+        "The clock in these fixtures is controlled and coherent by construction; they do not resolve worker/native clock provenance.",
+        "Neither new case is a real worker transport readiness test. Worker-placeholder distinction is covered by the Node bridge-contract fixture; actual transport acceptance remains in the broader lifecycle/provenance work.",
+        "No browser test was executed by this reviewer."
+      ]
+    },
+    {
+      "id": "WVD2-06",
+      "status": "open",
+      "subject": "Direct missing-native fallback and owner/sample-clock provenance",
+      "assessment": "Direct hasSamplerSnapshot reports true even when a missing native binding returns the typed empty fallback. The current metrics tick remains currentTick?.()??0, while worker J/E samples can be separately cached and have unknown or differing sample times. Draft2 explicitly leaves both issues unchanged. Source/configuration fences of the existing bridge still apply, but presence checks alone cannot promote the returned metrics to a joint observed trajectory point.",
+      "requiredFollowup": "Add a separately reviewed producer/capability availability contract and per-field source/publication/sample-time identity. Preserve unknown clocks as null. Native FTN3 commonSampleProvenance can be used on actual returned tuples without new scans. Direct and worker paths require explicit metadata binding; do not replace absent sample identity with an owner tick, zero, arrival time or matching cache presence.",
+      "blocks": ["complete_observation_certification", "scientific_release_claim_for_joint_wave_histories"],
+      "blocksBoundedIntegration": false
+    },
+    {
+      "id": "WVD2-07",
+      "status": "open_bounded_input_domain",
+      "subject": "Validation scope is finite records, not complete hostile-input or arithmetic closure",
+      "assessment": "Declared position/vector components are checked for finiteness, including samples outside all lanes; per-admitted-vector weighted energy and magnitude are checked too. Unsupported dimensions still enter through latticeSize||33 before allocation; finite out-of-domain coordinates and aggregate/harmonic accumulation overflow are not comprehensively rejected. Count-zero unused capacity is not scanned, consistently with count defining the declared observations. Instanceof accepts the actual same-realm Float32/Float64 producer schema and does not promise cross-realm arbitrary-array compatibility.",
+      "requiredFollowup": "Keep valid owner-supported dimensions, numeric producer arrays, synchronous stable contents and ordinary Math intrinsics as explicit preconditions. A complete observation-input schema and aggregate finiteness gate require separate bounded changes and tests, rather than being inferred from these 19 tests.",
+      "blocksBoundedIntegration": false,
+      "performanceLimit": "Validation now reads every declared vector component even outside lane support. The admission optimization still avoids excluded-site energy/magnitude arithmetic, but the net callback change requires the unchanged hardware gate on a new candidate."
+    },
+    {
+      "id": "WVD2-08",
+      "status": "accepted_preservation_and_review_boundary",
+      "subject": "Artifact preservation and independent evidence",
+      "assessment": "All 16 draft2 manifest entries, all nine draft1 manifest entries and all three current production baselines match their recorded hashes and lengths at review time. The proposed patch equals the full normalized diff for the three existing-file changes. The independent reviewer changed no implementation or draft file, ran only the two authorized isolated Node suites, and preserved uniquely named logs. This establishes the reviewed candidate identity without certifying future integration bytes.",
+      "requiredFollowup": "The coordinator must verify copied integration bytes, run the five integrated retained-readout browser cases, preserve any failure evidence and collect future hardware evidence against a newly frozen manifest. Any subsequent implementation changes require affected-test reruns and independent review."
+    }
+  ],
+  "priorFindingDisposition": {
+    "WVD-01_component": "accepted_and_retained",
+    "WVD-02_cache": "accepted_and_retained_with_valid_input_domain",
+    "WVD-03_admission": "accepted_and_retained_with_added_validation_cost",
+    "WVD-04_oracles": "accepted_plus_independent_draft2_execution",
+    "WVD-05_missing_payload": "scoped_repair_passes_node_tests; direct_missing_binding_fallback_still_open; mounted_browser_pending",
+    "WVD-06_clocks": "open_unchanged",
+    "WVD-07_validation": "partially_repaired_counts_shapes_finite_components; dimensions_domains_aggregate_overflow_open",
+    "WVD-08_zero_history": "source_repaired_for_finite_zero; mounted_browser_pending; legacy_missing_metadata_fallback_preserved"
+  },
+  "integrationDecision": {
+    "accepted": true,
+    "conditions": [
+      "Integrate only the four reviewed files; preserve both isolated drafts, their manifests and all prior review evidence.",
+      "Describe component, availability and finite-zero history corrections as behavior changes; describe basis/admission reuse only within the exact finite numeric domain verified by parity.",
+      "Run actual integrated browser numeric/readout cases before claiming those UI defects closed.",
+      "Keep producer availability, joint sample clocks/source identity and broader input-domain limitations explicitly OPEN.",
+      "Retain existing physics transactions, sampler requests, cadence, support, history completeness and threshold gates.",
+      "No release, hardware improvement, strict-law adoption or physical recovery approval follows from this review."
+    ]
+  }
+}

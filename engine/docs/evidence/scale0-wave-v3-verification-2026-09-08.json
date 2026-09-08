@@ -1,0 +1,272 @@
+{
+  "schema": "scale0-wave-v3-final-verification-v1",
+  "verifiedUtc": "2026-09-08T06:21:38.970065+00:00",
+  "status": "bounded_correctness_accepted_hardware_callback_gate_failed",
+  "releaseApproved": false,
+  "physicalRecoveryApproved": false,
+  "candidateIdentity": "a3048e602619adc7042fbf9877a573e4e392a0acc2e662c1ccec2642300870db",
+  "sourceDirty": true,
+  "candidate": {
+    "archive": {
+      "path": "engine/build/scale0_wave_v3_candidate_20260908.zip",
+      "bytes": 8802892,
+      "sha256": "76cd720f90170775679fb1f6ff26468d14eb08e432be93d0688daa44203b716b"
+    },
+    "entriesChecked": 2172,
+    "currentChecked": true,
+    "mismatches": []
+  },
+  "preregistrationSnapshots": [
+    {
+      "path": "engine/docs/PROGRAM_SCALE0_WAVE_CORRECTNESS_V3_2026-09-08.md",
+      "size": 9173,
+      "sha256": "4c6746a2d638e860b9343e4e9789d7e937709f9a4570968fc25b6b3166a688db"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-harness-review-2026-09-08.json",
+      "size": 11277,
+      "sha256": "fd37df6e350945afc3bd53173f0f562f1a4d6891fc585fc410046c153a163e91"
+    }
+  ],
+  "hardwareResults": {
+    "archive": {
+      "path": "engine/build/scale0_wave_v3_hardware_results_20260908.zip",
+      "bytes": 575456,
+      "sha256": "843d949e585349e1b40f3da87859d80b6fae0af73b16660be695fdfb95b14c26"
+    },
+    "entriesChecked": 11,
+    "currentChecked": true,
+    "mismatches": []
+  },
+  "hardwareOutcome": {
+    "passed_rows": 4,
+    "failed_rows": 4,
+    "callback_p95_failed_rows": 4,
+    "callback_max_failed_rows": 0,
+    "new_worker_callback_failed_rows": 2,
+    "persistent_direct_callback_failed_rows": 2,
+    "all_noncallback_gates_pass": true,
+    "all_frame_gates_pass": true,
+    "long_tasks": 0,
+    "frames_over_20ms": 0,
+    "frames_over_33_4ms": 0,
+    "registered_gates": {
+      "minFrames": 600,
+      "minDurationMs": 12000,
+      "minFps": 59.5,
+      "p95Ms": 17,
+      "p99Ms": 20,
+      "maxLongFrames": 0,
+      "actionSamples": 10,
+      "actionP95Ms": 50
+    },
+    "callback_p95_limit_ms": 2,
+    "callback_max_limit_ms": 8,
+    "hardware_renderers": [
+      "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    ]
+  },
+  "independentReview": {
+    "path": "engine/docs/evidence/scale0-wave-v3-hardware-review-2026-09-08.json",
+    "bytes": 92690,
+    "sha256": "16ef764fef793f874587ff93f13c1ce79202a7765de65b6cf6c9c31a8c7271ab"
+  },
+  "strictPreservation": [
+    {
+      "manifest": {
+        "path": "engine/docs/evidence/strict-stack-source-manifest-2026-09-05.json",
+        "bytes": 11378,
+        "sha256": "8d5ea8ed89b7e200f5c7ffdd5b0ea72bbbe358be8175fa7224f1ee0d1f3c1511"
+      },
+      "entriesChecked": 69,
+      "mismatches": []
+    },
+    {
+      "manifest": {
+        "path": "engine/docs/evidence/strict-recovery-wave1-manifest-2026-09-05.json",
+        "bytes": 8095,
+        "sha256": "467cdd078dc5d1c7cfd8c4bff5f66d4522a0ec44362fccbbd42d583b2b362ea5"
+      },
+      "entriesChecked": 44,
+      "mismatches": []
+    },
+    {
+      "manifest": {
+        "path": "engine/docs/evidence/strict-recovery-wave2-manifest-2026-09-05.json",
+        "bytes": 13583,
+        "sha256": "22c0332a57006bf17230548e98d6c319e51660fc302cebb9392e2192ba4bd6d9"
+      },
+      "entriesChecked": 73,
+      "mismatches": []
+    }
+  ],
+  "wasmArtifacts": [
+    {
+      "path": "engine/web/wasm/ftd_core.js",
+      "size": 136178,
+      "sha256": "8f0d5aa0420e81d5245a13866d8069833e0117df1418023749067abe63addec7"
+    },
+    {
+      "path": "engine/web/wasm/ftd_core.wasm",
+      "size": 931721,
+      "sha256": "6ad203d9202c400ca6b52c929387be4c6e90db084e5bc0d147e9560c8c1339a7"
+    },
+    {
+      "path": "engine/web/wasm/ftd_core64.js",
+      "size": 145014,
+      "sha256": "1b2a9af334046c2f16e4e78961c4017708c7cc6d7d40df3f83ceb4109c4e2624"
+    },
+    {
+      "path": "engine/web/wasm/ftd_core64.wasm",
+      "size": 962980,
+      "sha256": "be667edfdd2a364120c9b56946b4a617cb69b641c51b56394db5747bf5caaad3"
+    },
+    {
+      "path": "engine/web/wasm/ftd_core_mt.js",
+      "size": 158993,
+      "sha256": "1d5a7f3d37b6c6068e80a499ac61b4367f94d21f1590576acee95559d6740c4e"
+    },
+    {
+      "path": "engine/web/wasm/ftd_core_mt.wasm",
+      "size": 952655,
+      "sha256": "d30871aa97f771c7f864a1165acc2963ec826d50421435f3a9c62d867a22d69f"
+    },
+    {
+      "path": "engine/web/wasm/build_info.json",
+      "size": 5821,
+      "sha256": "33d3efb14fee4f3aa362f42afb4c02cefcb668178bb98c68d096aacbd7f94f0f"
+    }
+  ],
+  "wasmBundleIdentity": "97dbc15f61ba8952e68be8012279e50bf0bc650e5806f6bb5ca705952df5d4e3",
+  "nativeOrWasmRebuilt": false,
+  "priorV2EvidenceArchive": {
+    "archive": {
+      "path": "engine/build/scale0_performance_v2_evidence_20260907.zip",
+      "bytes": 414547,
+      "sha256": "27736901ad385d2ba08e88b94f91438fb5a990c488a69835774d779f8c69a51f"
+    },
+    "entriesChecked": 27,
+    "currentChecked": false,
+    "mismatches": []
+  },
+  "softwareChecks": {
+    "integratedNode": {
+      "pass": 43,
+      "fail": 0
+    },
+    "mountedBrowser": {
+      "pass": 5,
+      "fail": 0
+    },
+    "distinctCounts": "Draft and integrated groups overlap; do not sum them."
+  },
+  "evidence": [
+    {
+      "path": "engine/docs/evidence/scale0-hardware-wave-v3-panels-L33-2026-09-08.json",
+      "bytes": 339044,
+      "sha256": "a3cd7cfb74f3d19f1d971f143ab4c6ceb2bfc2aac4f726dba40fb07598867924"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-hardware-wave-v3-panels-L97-2026-09-08.json",
+      "bytes": 193895,
+      "sha256": "9562d0b390b0f5243aac1bea7e25cb45b8d8d936accc757bbd44156338665a2c"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-browser-2026-09-08.log",
+      "bytes": 1294,
+      "sha256": "4dd53fe182d1237798da9a8d856ba7e4a41662635a17fc2bbb2edc38ade82b74"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-candidate-manifest-2026-09-08.json",
+      "bytes": 405901,
+      "sha256": "4ef20a1b26369b2a74a89e83809efe27908fef4a8c35a4a13e0c52fb7f927a8b"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-draft-independent-module-tests-2026-09-08.log",
+      "bytes": 1377,
+      "sha256": "4aadad4dffab6e557d64d68dbfc86fba911de634c48578839fe7444ddd8f0a47"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-draft-independent-parity-tests-2026-09-08.log",
+      "bytes": 982,
+      "sha256": "8b84636a18f34d3f64681ceed7487847e33fbb21f9ea8d00a3e21eda6498d744"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-draft-review-2026-09-08.json",
+      "bytes": 16762,
+      "sha256": "3cb2f1eb6600537192658839c83b214b75b919e233c0dfd5e8a5b181b636eeeb"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-draft2-independent-module-tests-2026-09-08.log",
+      "bytes": 1845,
+      "sha256": "6d32b30680b87a095f2b320f4fec8c741f7030b7faf4345f401ccf5625b8e0d6"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-draft2-independent-parity-tests-2026-09-08.log",
+      "bytes": 981,
+      "sha256": "c36994606495b9f072c12556db736e6b852a07c872408258564db2e48e546896"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-draft2-review-2026-09-08.json",
+      "bytes": 14793,
+      "sha256": "7a1718f0a6fa96f9454f0ded2dd7088730dff0afdbae7634ffc8b0172281b1c3"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-freeze-review-2026-09-08.json",
+      "bytes": 15663,
+      "sha256": "663bd8d0707601043fc7b844a0bec9c7eaa1d38c1bbb3685ea07711ee09b5be8"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-hardware-2026-09-08.log",
+      "bytes": 409508,
+      "sha256": "ec007bdbd4c7e5d3e7a8c1a90b23422ba9b075a3c2a9cd00f7441da82462ab96"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-hardware-execution-2026-09-08.json",
+      "bytes": 3245,
+      "sha256": "432af0d2bc8ab5484ec755ac1bd3285eb1b590fa60a0dc1a37a64027f980d6db"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-hardware-review-2026-09-08.json",
+      "bytes": 92690,
+      "sha256": "16ef764fef793f874587ff93f13c1ce79202a7765de65b6cf6c9c31a8c7271ab"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-harness-review-2026-09-08.json",
+      "bytes": 11277,
+      "sha256": "fd37df6e350945afc3bd53173f0f562f1a4d6891fc585fc410046c153a163e91"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-integrated-node-2026-09-08.log",
+      "bytes": 3996,
+      "sha256": "7f4b5b6ccb1579e54338858e525204aef5f95c710c408d4e676e32e30b5c3fce"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-integration-2026-09-08.json",
+      "bytes": 1926,
+      "sha256": "a246050397776d6e775269510dbcc5b8e1ca1d97f2bde04b72d0a4a2f10d4c22"
+    },
+    {
+      "path": "engine/docs/evidence/scale0-wave-v3-postrun-source-check-2026-09-08.json",
+      "bytes": 330,
+      "sha256": "f3c3bec2b95b13f27697c97a213ef37407640c793ee262e2cf1142dcaa6db1aa"
+    }
+  ],
+  "limitations": [
+    "This is independent reconstruction of retained measurements, not an independent browser reproduction or universal 60 FPS guarantee.",
+    "Frame intervals and callback durations are fully retained, but absolute timing origins, callback start/stop timestamps and action dispatch/RAF timestamps are not. The reported measurement duration cannot be independently reconstructed from those vectors.",
+    "The inherited stop protocol may collect installed callbacks during its zero-delay drain after stoppedAt; raw vectors and summaries cover exactly that same collected data.",
+    "Reported same-owner/generation/readiness flags and endpoint clocks validate the registered lifecycle contract; they do not certify that separate J/E observations share one microscopic tick or state identity. Direct lifecycle snapshots are null and do not expose the worker lifecycle fields.",
+    "Five canvases with 480 or 490 intercepted draw calls establish activity under the Wave panel root. Those are counts of selected Canvas2D methods, not proof of five scientifically complete plots, display-present timing or numerical correctness.",
+    "Action samples measure synchronous dispatch to next foreground rAF, not physical display presentation. Endpoint resource equality over these windows is not a proof against all leaks or races.",
+    "Hardware renderer and empty Long Tasks/runtime-error records apply only to these observed windows and instrumentation.",
+    "No strict causal law, continuum limit, carrier recovery, matter/spectra/chemistry/macroscopic recovery, canonical adoption, commit or public deployment is approved."
+  ],
+  "remaining": [
+    "Four visible Wave callbacks over budget, including two new worker failures versus v2.",
+    "Seven other v2 callback failures not renewed in this campaign.",
+    "Wave common J/E observation provenance and direct missing-binding availability remain open.",
+    "Strict continuum, restoring matter, spectra, chemistry and causal macroscopic recovery retain research gates.",
+    "No complete release or canonical adoption approval."
+  ]
+}
