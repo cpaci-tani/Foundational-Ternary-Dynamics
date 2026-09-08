@@ -30,7 +30,7 @@ def _text(q) -> str:
 
 def density_functional(W):
     """Row a with a W = (1,...,1); raises if the constant weight is outside the row space."""
-    ones = D.Exact.from_rows([[1] * N])
+    ones = D.Exact.from_rows([[1] * W.ncols()])
     gram = W * W.transpose()
     a = (ones * W.transpose()) * gram.inv()
     if a * W != ones:
@@ -121,12 +121,12 @@ def exact_verdict(dispersions: dict) -> dict:
     block = closure_block(a, operators)
     dim = block.nrows()
     m1_only_block = closure_block(a, [dispersions[n].M1 for n in directions])
-    out = {"block_dimension": dim, "block_rows": [[_text(block[i, j]) for j in range(7)] for i in range(dim)],
+    out = {"block_dimension": dim, "block_rows": [[_text(block[i, j]) for j in range(block.ncols())] for i in range(dim)],
            "block_dimension_first_order_only": m1_only_block.nrows(),
            "clauses": {"block_dimension_is_four": dim == 4},
            "charpoly_M1": {str(n): [_text(c) for c in _charpoly_coeffs(dispersions[n].M1)] for n in directions},
            "charpoly_M2": {str(n): [_text(c) for c in _charpoly_coeffs(dispersions[n].M2)] for n in directions}}
-    all_first_order_zero = all(dispersions[n].M1 == D.Exact.zeros(7, 7) for n in directions)
+    all_first_order_zero = all(dispersions[n].M1 == D.Exact.zeros(W.nrows(), W.nrows()) for n in directions)
     if all_first_order_zero:
         out["label"] = "diffusive only"
         out["density_diffusion_charpoly_on_block"] = {
@@ -296,7 +296,7 @@ def certified_verdict(dispersions: dict, block, prec: int = 256) -> dict:
         directions = tuple(dispersions)
         Bq = block
         b = Bq.nrows()
-        B = flint.arb_mat([[D.Certified.scalar(_fraction(Bq[i, j])) for j in range(7)] for i in range(b)])
+        B = flint.arb_mat([[D.Certified.scalar(_fraction(Bq[i, j])) for j in range(Bq.ncols())] for i in range(b)])
         Gi = flint.arb_mat([[D.Certified.scalar(_fraction((Bq * Bq.transpose()).inv()[i, j])) for j in range(b)]
                             for i in range(b)])
         report = {"block_dimension": b}
