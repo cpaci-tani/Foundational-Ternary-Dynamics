@@ -99,5 +99,7 @@ def test_certified_track_encloses_exact_track_at_proxy(exact100):
 def test_certified_physical_bases_are_consistent(exact100):
     certified = D.certified_dispersion((1, 0, 0), Fraction(1, 96), exact100)
     residual = D.certified_residuals(certified)
-    assert residual["max_left_null_radius"] < 1e-40
-    assert residual["max_biorthogonality_error"] < 1e-40
+    bound = flint.arb("1e-40")
+    assert residual["max_left_null_radius"] < bound
+    assert residual["max_biorthogonality_error"] < bound
+    assert residual["max_right_null_error"] < bound

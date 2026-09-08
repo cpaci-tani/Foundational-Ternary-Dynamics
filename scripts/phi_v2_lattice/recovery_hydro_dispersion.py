@@ -250,6 +250,11 @@ def certified_residuals(d: Dispersion) -> dict:
     default 53 bits -- double precision -- since certified_dispersion restores
     the caller's saved precision before returning). Elevate locally so the
     reported radius reflects d's actual precision, not the caller's ambient one.
+
+    Returns flint.arb upper bounds for each of the three defining-identity
+    residuals -- never native floats -- so a caller compares them against
+    another arb (e.g. flint.arb("1e-40")) as a rigorous ball comparison, per
+    the global contract that no float enters an acceptance test.
     """
     saved = flint.ctx.prec
     flint.ctx.prec = max(saved, _RESIDUAL_PREC)
@@ -259,7 +264,18 @@ def certified_residuals(d: Dispersion) -> dict:
         bio = d.W * d.V - Certified.identity(7)
         right = (I - d.P0) * d.V
         def worst(M, n, m):
-            return max(float(abs(M[i, j].mid()) + M[i, j].rad()) for i in range(n) for j in range(m))
+            # Robust arb maximum: keep the candidate bound (|mid| + rad)
+            # with the largest value under arb's decidable `>`, never
+            # converting an operand to a native float. Decidable here
+            # because the candidates are effectively point values (tiny,
+            # well-separated radii ~1e-75 vs the 1e-40 acceptance bound).
+            best = None
+            for i in range(n):
+                for j in range(m):
+                    bound = abs(M[i, j].mid()) + M[i, j].rad()
+                    if best is None or bound > best:
+                        best = bound
+            return best
         return {"max_left_null_radius": worst(left, 7, N),
                 "max_biorthogonality_error": worst(bio, 7, 7),
                 "max_right_null_error": worst(right, N, 7)}
