@@ -73,6 +73,9 @@ std::string events_json(const Events& events);
 // Loads and SHA-256-verifies the 2^24-entry collision blob (against tables::TABLE_HASH);
 // throws on any I/O, length, or hash mismatch.
 void load_table(const std::filesystem::path& path);
+// Same verification and install from an in-memory blob (the WASM bindings cannot read the
+// filesystem); throws on length or hash mismatch. load_table(path) delegates to this.
+void load_table(const std::vector<std::uint8_t>& bytes);
 // Throws if load_table() has not yet succeeded.
 const std::vector<std::uint32_t>& table();
 

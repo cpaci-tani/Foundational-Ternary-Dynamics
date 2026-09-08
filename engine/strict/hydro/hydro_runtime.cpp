@@ -382,10 +382,7 @@ std::string events_json(const Events& ev) {
     return out.str();
 }
 
-void load_table(const std::filesystem::path& path) {
-    std::ifstream input(path, std::ios::binary);
-    if (!input) throw std::runtime_error("cannot open hydro collision table blob");
-    std::vector<Byte> bytes((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+void load_table(const std::vector<Byte>& bytes) {
     constexpr std::size_t expected_bytes = (std::size_t(1) << 24) * 4;
     if (bytes.size() != expected_bytes) throw std::invalid_argument("hydro collision table has wrong length");
     const auto digest = sha256(bytes.data(), bytes.size());
@@ -398,6 +395,13 @@ void load_table(const std::filesystem::path& path) {
     }
     table_storage() = std::move(parsed);
     table_loaded_flag() = true;
+}
+
+void load_table(const std::filesystem::path& path) {
+    std::ifstream input(path, std::ios::binary);
+    if (!input) throw std::runtime_error("cannot open hydro collision table blob");
+    std::vector<Byte> bytes((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+    load_table(bytes);
 }
 
 const std::vector<std::uint32_t>& table() {
