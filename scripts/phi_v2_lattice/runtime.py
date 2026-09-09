@@ -108,9 +108,7 @@ class StrictRuntime:
 
     @_serialized
     def advance(self, microticks: int) -> dict:
-        if (not isinstance(microticks, Integral) or isinstance(microticks, bool)
-                or microticks < 0):
-            raise ValueError("microticks must be a nonnegative integer")
+        microticks = P._plain_integer(microticks, "microticks")
         candidate = self._state
         for _ in range(int(microticks)):
             candidate, _ = P.step(candidate)
@@ -132,6 +130,7 @@ class StrictRuntime:
 
     @_serialized
     def observe(self, resolution: int = 1, observable: str = "counts") -> Observation:
+        resolution = P._plain_integer(resolution, "resolution", 1)
         if observable == "counts":
             payload = B.restrict(self._state.lattice, resolution)
         elif observable == "resolved":

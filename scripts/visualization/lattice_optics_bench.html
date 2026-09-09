@@ -1,0 +1,537 @@
+<meta charset="utf-8">
+<title>Lattice Optics Bench</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#0e0f14; --surface:#171922; --surface2:#1f2230; --line:#2b2f3f;
+  --text:#e8e5dc; --muted:#8b8f9e; --accent:#f5a45c; --accent2:#7fb3ff; --good:#7ed9a5; --warn:#f0c674;
+  --grid:#2a2d3a; --plotbg:#111319;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#f4f2ec; --surface:#ffffff; --surface2:#ebe8e0; --line:#d6d2c6;
+    --text:#1b1c22; --muted:#666a78; --accent:#c9691a; --accent2:#2a62b8; --good:#2e8b57; --warn:#a8790a;
+    --grid:#e2dfd5; --plotbg:#fbfaf6; color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f4f2ec; --surface:#ffffff; --surface2:#ebe8e0; --line:#d6d2c6;
+  --text:#1b1c22; --muted:#666a78; --accent:#c9691a; --accent2:#2a62b8; --good:#2e8b57; --warn:#a8790a;
+  --grid:#e2dfd5; --plotbg:#fbfaf6; color-scheme:light;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 "IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-variant-numeric:tabular-nums}
+header{display:flex;align-items:baseline;gap:22px;padding:14px 22px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+header h1{font-size:17px;font-weight:600;margin:0 0 12px;letter-spacing:.01em}
+header h1 small{color:var(--muted);font-weight:400;margin-left:10px}
+nav{display:flex;gap:2px;margin-left:auto}
+nav button{background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:8px 12px 12px;font:inherit;font-weight:500;cursor:pointer}
+nav button[aria-selected="true"]{color:var(--text);border-bottom-color:var(--accent)}
+nav button:focus-visible{outline:2px solid var(--accent2);outline-offset:-2px;border-radius:4px}
+main{padding:16px 22px 28px}
+.lab{display:none;grid-template-columns:290px minmax(0,1fr);gap:20px;align-items:start}
+.lab.active{display:grid}
+@media (max-width:900px){.lab{grid-template-columns:1fr}}
+.rail{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+.card h2{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 10px;font-weight:500}
+.ctl{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;margin:0 0 8px}
+.ctl label{color:var(--text)}
+.ctl .val{color:var(--accent);font-family:"IBM Plex Mono",monospace;font-size:12.5px;text-align:right}
+.ctl input[type=range]{grid-column:1/3;width:100%;accent-color:var(--accent);margin:0}
+.ctl select,.ctl input[type=number]{grid-column:1/3;background:var(--surface2);color:var(--text);border:1px solid var(--line);border-radius:4px;padding:5px 7px;font:inherit}
+.ctl input[type=checkbox]{accent-color:var(--accent);justify-self:end}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+button.b{background:var(--surface2);color:var(--text);border:1px solid var(--line);border-radius:4px;padding:6px 11px;font:inherit;font-weight:500;cursor:pointer}
+button.b.primary{background:var(--accent);color:#14110c;border-color:transparent}
+button.b:focus-visible{outline:2px solid var(--accent2);outline-offset:1px}
+.stage{display:flex;flex-direction:column;gap:14px;min-width:0}
+.maprow{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.mapwrap{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px}
+.mapwrap canvas.map{display:block;width:100%;height:auto;image-rendering:pixelated;border-radius:3px}
+.caption{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:12.5px;margin-top:8px;flex-wrap:wrap}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-family:"IBM Plex Mono",monospace;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--surface2);border:1px solid var(--line);color:var(--text)}
+.chip.good{border-color:var(--good);color:var(--good)}
+.chip.warn{border-color:var(--warn);color:var(--warn)}
+.chip.bad{border-color:var(--accent);color:var(--accent)}
+.plotwrap{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px}
+.plotwrap canvas{display:block;width:100%;height:260px}
+.note{color:var(--muted);font-size:12.5px;line-height:1.5;max-width:66ch}
+.note b{color:var(--text);font-weight:500}
+.apthumb{display:block;width:100%;height:auto;image-rendering:pixelated;border:1px solid var(--line);border-radius:3px;background:#000}
+.paint{cursor:crosshair}
+kbd{font-family:"IBM Plex Mono",monospace;font-size:11.5px;background:var(--surface2);border:1px solid var(--line);border-radius:3px;padding:0 5px}
+.legendline{display:inline-block;width:18px;height:0;border-top:2px solid;vertical-align:middle;margin-right:6px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<header>
+  <h1>Lattice Optics Bench <small>far fields, in-plane sources, and the engine's wave law through an aperture</small></h1>
+  <nav role="tablist">
+    <button role="tab" aria-selected="true" data-tab="far">Far field</button>
+    <button role="tab" aria-selected="false" data-tab="inplane">In-plane sources</button>
+    <button role="tab" aria-selected="false" data-tab="lattice">Lattice wave</button>
+    <button role="tab" aria-selected="false" data-tab="disp">Stencil dispersion</button>
+  </nav>
+</header>
+
+<main>
+<!-- ============================ FAR FIELD ============================ -->
+<section class="lab active" id="lab-far">
+  <div class="rail">
+    <div class="card"><h2>Aperture</h2>
+      <div class="ctl"><label for="far-preset">Type</label><span></span>
+        <select id="far-preset">
+          <option value="single">single slit</option>
+          <option value="double" selected>double slit</option>
+          <option value="grating">N slits</option>
+          <option value="rect">rectangle</option>
+          <option value="circle">circular aperture</option>
+          <option value="annulus">annulus</option>
+          <option value="rings">thin concentric rings</option>
+          <option value="pingrid">pinhole grid</option>
+          <option value="hex">hexagonal pinhole array</option>
+          <option value="custom">paint your own</option>
+        </select></div>
+      <div id="far-params"></div>
+      <canvas id="far-apthumb" class="apthumb" width="128" height="128"></canvas>
+      <p class="note" id="far-apnote"></p>
+    </div>
+    <div class="card"><h2>Display</h2>
+      <div class="ctl"><label for="far-floor">log floor</label><span class="val" id="far-floor-v">10⁻⁴</span><input type="range" id="far-floor" min="2" max="6" step="1" value="4"></div>
+      <div class="ctl"><label for="far-zeros">mark predicted zeros on cut</label><input type="checkbox" id="far-zeros" checked></div>
+    </div>
+    <div class="card"><p class="note">Far-field intensity |ℱ{aperture}|² on direction cosines u = sin θₓ, v = sin θᵧ, λ = 1. Computed by a 1024² FFT of the aperture mask at 0.25 λ pitch. The cut at v = 0 is overlaid with the closed form where one exists; the residual chip is the FFT against that form.</p></div>
+  </div>
+  <div class="stage">
+    <div class="mapwrap"><canvas class="map" id="far-map" width="512" height="512"></canvas>
+      <div class="caption"><span>log₁₀ I/I<sub>max</sub>, u and v from −1 to 1</span><div class="chips" id="far-chips"></div></div></div>
+    <div class="plotwrap"><canvas id="far-plot"></canvas></div>
+  </div>
+</section>
+
+<!-- ============================ IN-PLANE ============================ -->
+<section class="lab" id="lab-inplane">
+  <div class="rail">
+    <div class="card"><h2>Sources</h2>
+      <div class="ctl"><label for="ip-preset">Preset</label><span></span>
+        <select id="ip-preset">
+          <option value="two" selected>two sources</option>
+          <option value="four">four sources (cross)</option>
+          <option value="line">line array (steerable)</option>
+          <option value="ring">ring of sources</option>
+          <option value="grid">square grid</option>
+          <option value="random">random scatter</option>
+        </select></div>
+      <div id="ip-params"></div>
+      <div class="row"><button class="b" id="ip-clear">Clear</button><button class="b" id="ip-apply">Rebuild from preset</button></div>
+      <p class="note">Click the map to add a source at the cursor; <kbd>shift</kbd>-click removes the nearest. <span id="ip-count" class="mono"></span></p>
+    </div>
+    <div class="card"><h2>Wave</h2>
+      <div class="ctl"><label for="ip-lam">wavelength λ</label><span class="val" id="ip-lam-v">1.0</span><input type="range" id="ip-lam" min="0.5" max="4" step="0.1" value="1"></div>
+      <div class="ctl"><label for="ip-L">half-width of view (λ)</label><span class="val" id="ip-L-v">50</span><input type="range" id="ip-L" min="10" max="120" step="5" value="50"></div>
+      <div class="ctl"><label for="ip-decay">1/√r amplitude (2D)</label><input type="checkbox" id="ip-decay" checked></div>
+      <div class="ctl"><label for="ip-floor">log floor</label><span class="val" id="ip-floor-v">10⁻³</span><input type="range" id="ip-floor" min="1" max="5" step="1" value="3"></div>
+    </div>
+    <div class="card"><p class="note">|Σⱼ aⱼ e^{i(k rⱼ + φⱼ)} / √rⱼ|² for sources lying <b>in the plotted plane</b>. Bright spots at the sources, hyperbolic fringes r₁−r₂ = mλ, and end-fire beams along rows are near-field signatures — none of this is a far-field diffraction pattern.</p></div>
+  </div>
+  <div class="stage">
+    <div class="mapwrap"><canvas class="map" id="ip-map" width="300" height="300"></canvas>
+      <div class="caption"><span id="ip-caption">log₁₀ I/I<sub>max</sub></span><div class="chips" id="ip-chips"></div></div></div>
+  </div>
+</section>
+
+<!-- ============================ LATTICE ============================ -->
+<section class="lab" id="lab-lattice">
+  <div class="rail">
+    <div class="card"><h2>Run</h2>
+      <div class="row"><button class="b primary" id="lt-run">Run</button><button class="b" id="lt-step">Step ×20</button><button class="b" id="lt-reset">Reset</button></div>
+      <div class="ctl" style="margin-top:10px"><label for="lt-spf">steps per frame</label><span class="val" id="lt-spf-v">15</span><input type="range" id="lt-spf" min="1" max="60" step="1" value="15"></div>
+      <div class="ctl"><label for="lt-size">grid</label><span></span><select id="lt-size"><option value="320,240">320 × 240</option><option value="480,400" selected>480 × 400</option><option value="640,520">640 × 520</option></select></div>
+    </div>
+    <div class="card"><h2>Wave &amp; aperture</h2>
+      <div class="ctl"><label for="lt-lam">λ (cells)</label><span class="val" id="lt-lam-v">8</span><input type="range" id="lt-lam" min="4" max="16" step="1" value="8"></div>
+      <div class="ctl"><label for="lt-mode">experiment</label><span></span>
+        <select id="lt-mode">
+          <option value="plane">plane wave, no screen</option>
+          <option value="single">plane wave → single slit</option>
+          <option value="double" selected>plane wave → double slit</option>
+          <option value="grating">plane wave → N slits</option>
+          <option value="point">point source (isotropy)</option>
+          <option value="two">two point sources (Young)</option>
+        </select></div>
+      <div id="lt-params"></div>
+    </div>
+    <div class="card"><h2>Display</h2>
+      <div class="ctl"><label for="lt-view">field</label><span></span><select id="lt-view"><option value="raw">J (instantaneous, signed)</option><option value="env" selected>|A| envelope (demodulated)</option><option value="envr">√r |A| (lobes)</option></select></div>
+      <div class="ctl"><label for="lt-R">read-out radius R (cells)</label><span class="val" id="lt-R-v">150</span><input type="range" id="lt-R" min="40" max="300" step="2" value="150"></div>
+    </div>
+    <div class="card"><p class="note">The engine's own update — leapfrog <span class="mono">v += c²∇²J; J += v</span>, c² = 1/3, 18-point Laplacian (face ⅓, edge ⅙) reduced exactly to 2D (axial ⅔, diagonal ⅙, centre −10/3). Dirichlet screen, cubic sponge, on-grid demodulation at the exact lattice frequency ω(k). The read-out plot compares the arc intensity with the closed form; the regime chip says whether the arc is far enough away for that comparison to mean anything.</p></div>
+  </div>
+  <div class="stage">
+    <div class="mapwrap"><canvas class="map" id="lt-map" width="480" height="400"></canvas>
+      <div class="caption"><span id="lt-caption"></span><div class="chips" id="lt-chips"></div></div></div>
+    <div class="plotwrap"><canvas id="lt-plot"></canvas></div>
+  </div>
+</section>
+
+<!-- ============================ DISPERSION ============================ -->
+<section class="lab" id="lab-disp">
+  <div class="rail">
+    <div class="card"><h2>Stencil</h2>
+      <div class="ctl"><label for="dp-c2">c² (engine: 1/3)</label><span class="val" id="dp-c2-v">0.3333</span><input type="range" id="dp-c2" min="0.05" max="0.75" step="0.0033" value="0.3333"></div>
+      <div class="ctl"><label for="dp-what">quantity</label><span></span><select id="dp-what"><option value="vph">phase velocity error ω/(c k) − 1</option><option value="vg">group velocity error dω/dk / c − 1</option></select></div>
+      <div class="ctl"><label for="dp-log">log-y (|error|)</label><input type="checkbox" id="dp-log" checked></div>
+    </div>
+    <div class="card"><p class="note">Exact leapfrog dispersion of the 18-point stencil, cos ω = 1 + c² L(k)/2 with L(k) = ⅔Σcos kᵢ + ⅔Σcos kᵢ cos kⱼ − 4, along the cubic directions [100], [110], [111]. The x-axis is cells per wavelength. Vertical rules mark the λ used on the lattice tab. The stability bound is c² &lt; 3/4 (strict).</p></div>
+    <div class="card"><h2>At the lattice tab's λ</h2><div id="dp-table" class="mono note"></div></div>
+  </div>
+  <div class="stage"><div class="plotwrap"><canvas id="dp-plot" style="height:420px"></canvas></div></div>
+</section>
+</main>
+
+<script>
+'use strict';
+// ---------------------------------------------------------------- utilities
+const $ = id => document.getElementById(id);
+const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const PI = Math.PI, TAU = 2*Math.PI;
+const clamp=(x,a,b)=>x<a?a:x>b?b:x;
+function sinc(x){ return x===0?1:Math.sin(PI*x)/(PI*x); }
+// Bessel J0, J1 (Numerical Recipes rational approximations, |err| < 1e-8)
+function j0(x){ const ax=Math.abs(x); if(ax<8){ const y=x*x;
+  const a=57568490574.0+y*(-13362590354.0+y*(651619640.7+y*(-11214424.18+y*(77392.33017+y*(-184.9052456)))));
+  const b=57568490411.0+y*(1029532985.0+y*(9494680.718+y*(59272.64853+y*(267.8532712+y)))); return a/b; }
+  const z=8/ax,y=z*z,xx=ax-0.785398164;
+  const a=1+y*(-0.1098628627e-2+y*(0.2734510407e-4+y*(-0.2073370639e-5+y*0.2093887211e-6)));
+  const b=-0.1562499995e-1+y*(0.1430488765e-3+y*(-0.6911147651e-5+y*(0.7621095161e-6-y*0.934935152e-7)));
+  return Math.sqrt(0.636619772/ax)*(Math.cos(xx)*a-z*Math.sin(xx)*b); }
+function j1(x){ const ax=Math.abs(x); if(ax<8){ const y=x*x;
+  const a=x*(72362614232.0+y*(-7895059235.0+y*(242396853.1+y*(-2972611.439+y*(15704.48260+y*(-30.16036606))))));
+  const b=144725228442.0+y*(2300535178.0+y*(18583304.74+y*(99447.43394+y*(376.9991397+y)))); return a/b; }
+  const z=8/ax,y=z*z,xx=ax-2.356194491;
+  const a=1+y*(0.183105e-2+y*(-0.3516396496e-4+y*(0.2457520174e-5+y*(-0.240337019e-6))));
+  const b=0.04687499995+y*(-0.2002690873e-3+y*(0.8449199096e-5+y*(-0.88228987e-6+y*0.105787412e-6)));
+  const r=Math.sqrt(0.636619772/ax)*(Math.cos(xx)*a-z*Math.sin(xx)*b); return x<0?-r:r; }
+function airyAmp(x){ return x===0?1:2*j1(x)/x; }
+
+// magma colormap (polynomial fit to matplotlib's magma) → 256-entry LUT
+const MAGMA=(()=>{ const c=[[-0.002136485053939582,-0.000749655052795221,-0.005386127855323933],[0.2516605407371642,0.6775232436837668,2.494026567585842],[8.353717279216625,-3.577719514958484,0.3144679030132573],[-27.66873308576866,14.26473078096533,-13.68929318390006],[52.17613981234068,-27.94360607168351,12.94416944238394],[-50.76852536473588,29.04658282127291,4.23415299384598],[18.65570506591883,-11.48977351997711,-5.601961508734096]];
+  const lut=new Uint8ClampedArray(256*3); for(let i=0;i<256;i++){ const t=i/255; for(let ch=0;ch<3;ch++){ let v=0,p=1; for(let k=0;k<7;k++){ v+=c[k][ch]*p; p*=t; } lut[i*3+ch]=Math.round(clamp(v,0,1)*255);} } return lut; })();
+// diverging (blue – pale – red) for signed fields
+const DIVG=(()=>{ const lut=new Uint8ClampedArray(256*3); const a=[38,84,196],m=[242,240,232],b=[196,52,42];
+  for(let i=0;i<256;i++){ const t=i/255; const s=t<0.5?t*2:(t-0.5)*2; const A=t<0.5?a:m,B=t<0.5?m:b; for(let ch=0;ch<3;ch++) lut[i*3+ch]=Math.round(A[ch]+(B[ch]-A[ch])*s);} return lut; })();
+
+// draw a w×h Float32Array into a canvas: mode 'log' (I/Imax with floor) or 'sym' (signed, ±vmax)
+function drawField(cv,data,w,h,mode,floorDec,vmax,transpose){
+  if(cv.width!==(transpose?h:w)||cv.height!==(transpose?w:h)){ cv.width=transpose?h:w; cv.height=transpose?w:h; }
+  const ctx=cv.getContext('2d'); const img=ctx.createImageData(cv.width,cv.height); const px=img.data;
+  let mx=0; if(mode==='log'){ for(let i=0;i<data.length;i++) if(data[i]>mx) mx=data[i]; if(mx<=0) mx=1; }
+  const lut=mode==='log'?MAGMA:DIVG; const inv=1/floorDec;
+  for(let y=0;y<cv.height;y++) for(let x=0;x<cv.width;x++){
+    const sx=transpose?y:x, sy=transpose?x:y; const v=data[sy*w+sx];
+    let t; if(mode==='log'){ t=v<=0?0:1+Math.log10(v/mx)*inv; t=clamp(t,0,1);} else { t=clamp(0.5+0.5*v/vmax,0,1); }
+    const k=Math.round(t*255)*3, o=(y*cv.width+x)*4; px[o]=lut[k]; px[o+1]=lut[k+1]; px[o+2]=lut[k+2]; px[o+3]=255; }
+  ctx.putImageData(img,0,0); return ctx;
+}
+
+// minimal line plot
+function linePlot(cv,opt){
+  const dpr=window.devicePixelRatio||1; const W=cv.clientWidth, H=cv.clientHeight;
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr); const g=cv.getContext('2d'); g.scale(dpr,dpr);
+  const text=css('--text'),muted=css('--muted'),grid=css('--grid'),bg=css('--plotbg');
+  g.fillStyle=bg; g.fillRect(0,0,W,H);
+  const m={l:52,r:14,t:opt.title?26:12,b:34}; const pw=W-m.l-m.r, ph=H-m.t-m.b;
+  const [x0,x1]=opt.xlim; const logy=!!opt.logy; const [y0,y1]=opt.ylim;
+  const X=x=>m.l+(x-x0)/(x1-x0)*pw; const Y=y=>{ const v=logy?Math.log10(Math.max(y,y0)):y; const a=logy?Math.log10(y0):y0,b=logy?Math.log10(y1):y1; return m.t+ph-(v-a)/(b-a)*ph; };
+  g.font='11px "IBM Plex Mono", monospace'; g.strokeStyle=grid; g.lineWidth=1; g.fillStyle=muted; g.textAlign='center'; g.textBaseline='top';
+  const xt=opt.xticks||[]; for(const t of xt){ const x=X(t); g.beginPath(); g.moveTo(x,m.t); g.lineTo(x,m.t+ph); g.stroke(); g.fillText(fmt(t),x,m.t+ph+5); }
+  g.textAlign='right'; g.textBaseline='middle';
+  const yt=opt.yticks||(logy?decades(y0,y1):[]); for(const t of yt){ const y=Y(t); g.beginPath(); g.moveTo(m.l,y); g.lineTo(m.l+pw,y); g.stroke(); g.fillText(logy?pow10(t):fmt(t),m.l-6,y); }
+  for(const vl of (opt.vlines||[])){ g.strokeStyle=vl.color||muted; g.setLineDash(vl.dash||[3,3]); g.beginPath(); g.moveTo(X(vl.x),m.t); g.lineTo(X(vl.x),m.t+ph); g.stroke(); g.setLineDash([]); if(vl.label){ g.fillStyle=vl.color||muted; g.textAlign='left'; g.textBaseline='top'; g.fillText(vl.label,X(vl.x)+3,m.t+2);} }
+  g.save(); g.beginPath(); g.rect(m.l,m.t,pw,ph); g.clip();
+  for(const s of opt.series){ g.strokeStyle=s.color; g.fillStyle=s.color; g.lineWidth=s.width||1.5; g.setLineDash(s.dash||[]);
+    if(s.points){ const st=s.every||1; for(let i=0;i<s.x.length;i+=st){ if(!isFinite(s.y[i])) continue; g.beginPath(); g.arc(X(s.x[i]),Y(s.y[i]),2.2,0,TAU); g.fill(); } }
+    else { g.beginPath(); let pen=false; for(let i=0;i<s.x.length;i++){ const v=s.y[i]; if(!isFinite(v)||(logy&&v<=0)){ pen=false; continue;} const x=X(s.x[i]),y=Y(v); if(!pen){g.moveTo(x,y);pen=true;} else g.lineTo(x,y);} g.stroke(); }
+    g.setLineDash([]); }
+  g.restore();
+  g.strokeStyle=muted; g.lineWidth=1; g.beginPath(); g.moveTo(m.l,m.t); g.lineTo(m.l,m.t+ph); g.lineTo(m.l+pw,m.t+ph); g.stroke();
+  g.fillStyle=muted; g.font='12px "IBM Plex Sans", sans-serif'; g.textAlign='center'; g.textBaseline='bottom'; g.fillText(opt.xlabel||'',m.l+pw/2,H-4);
+  g.save(); g.translate(13,m.t+ph/2); g.rotate(-PI/2); g.textBaseline='top'; g.fillText(opt.ylabel||'',0,0); g.restore();
+  if(opt.title){ g.fillStyle=text; g.font='500 12.5px "IBM Plex Sans", sans-serif'; g.textAlign='left'; g.textBaseline='top'; g.fillText(opt.title,m.l,4); }
+  // legend
+  let ly=m.t+8, lx=(opt.legend==='right'?m.l+pw-150:m.l+10);
+  const items=opt.series.filter(s=>s.label);
+  if(items.length){ g.font='11.5px "IBM Plex Sans", sans-serif'; const bw=150,bh=items.length*16+8; g.fillStyle=bg; g.globalAlpha=0.92; g.fillRect(lx-6,ly-4,bw,bh); g.globalAlpha=1; g.strokeStyle=grid; g.strokeRect(lx-6,ly-4,bw,bh);
+    for(const s of items){ g.strokeStyle=s.color; g.fillStyle=s.color; g.lineWidth=2; g.setLineDash(s.dash||[]); if(s.points){ g.beginPath(); g.arc(lx+9,ly+6,2.5,0,TAU); g.fill(); } else { g.beginPath(); g.moveTo(lx,ly+6); g.lineTo(lx+18,ly+6); g.stroke(); } g.setLineDash([]); g.fillStyle=text; g.textAlign='left'; g.textBaseline='middle'; g.fillText(s.label,lx+24,ly+6); ly+=16; } }
+}
+function fmt(v){ return Math.abs(v)<1e-9?'0':(Number.isInteger(v)?String(v):v.toFixed(2).replace(/\.?0+$/,'')); }
+function pow10(t){ const e=Math.round(Math.log10(t)); return e===0?'1':'10'+sup(e); }
+function sup(e){ const m={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'}; return String(e).split('').map(c=>m[c]).join(''); }
+function decades(a,b){ const out=[]; for(let e=Math.ceil(Math.log10(a));e<=Math.floor(Math.log10(b));e++) out.push(10**e); return out; }
+function chips(el,list){ el.innerHTML=list.map(c=>`<span class="chip ${c.cls||''}">${c.t}</span>`).join(''); }
+
+// declarative controls
+function buildControls(host,defs,onChange,state){
+  host.innerHTML='';
+  for(const d of defs){ const w=document.createElement('div'); w.className='ctl';
+    if(d.type==='range'){ w.innerHTML=`<label for="${d.id}">${d.label}</label><span class="val" id="${d.id}-v"></span><input type="range" id="${d.id}" min="${d.min}" max="${d.max}" step="${d.step}" value="${state[d.key]}">`;
+      host.appendChild(w); const inp=w.querySelector('input'),val=w.querySelector('.val'); const show=()=>val.textContent=(d.fmt||fmt)(+inp.value)+(d.unit?' '+d.unit:''); show();
+      inp.addEventListener('input',()=>{ state[d.key]=+inp.value; show(); onChange(); }); }
+    else if(d.type==='check'){ w.innerHTML=`<label for="${d.id}">${d.label}</label><input type="checkbox" id="${d.id}" ${state[d.key]?'checked':''}>`; host.appendChild(w); w.querySelector('input').addEventListener('change',e=>{ state[d.key]=e.target.checked; onChange(); }); }
+  }
+}
+// debounce
+function debounce(fn,ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); }; }
+
+// ---------------------------------------------------------------- tabs
+const tabs=[...document.querySelectorAll('nav button')];
+let activeTab='far';
+function showTab(name){ activeTab=name; tabs.forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===name))); document.querySelectorAll('.lab').forEach(s=>s.classList.toggle('active',s.id==='lab-'+name));
+  if(name==='far') far.render(); if(name==='inplane') ip.render(); if(name==='disp') disp.render(); if(name==='lattice') lat.draw(); }
+tabs.forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+
+// ================================================================= FFT
+function makeFFT(n){ const lv=Math.log2(n)|0; const cs=new Float64Array(n/2),sn=new Float64Array(n/2); for(let i=0;i<n/2;i++){ cs[i]=Math.cos(TAU*i/n); sn[i]=Math.sin(TAU*i/n);} const rev=new Uint32Array(n); for(let i=0;i<n;i++){ let r=0,x=i; for(let b=0;b<lv;b++){ r=(r<<1)|(x&1); x>>=1;} rev[i]=r; }
+  return function(re,im){ for(let i=0;i<n;i++){ const j=rev[i]; if(j>i){ let t=re[i];re[i]=re[j];re[j]=t; t=im[i];im[i]=im[j];im[j]=t; } }
+    for(let size=2;size<=n;size<<=1){ const half=size>>1, step=n/size; for(let i=0;i<n;i+=size){ for(let j=i,k=0;j<i+half;j++,k+=step){ const jr=j+half; const tr=re[jr]*cs[k]+im[jr]*sn[k], ti=im[jr]*cs[k]-re[jr]*sn[k]; re[jr]=re[j]-tr; im[jr]=im[j]-ti; re[j]+=tr; im[j]+=ti; } } } }; }
+
+// ================================================================= FAR FIELD LAB
+const far=(()=>{
+  const N=1024, DP=0.25, fft=makeFFT(N); const re=new Float64Array(N*N), im=new Float64Array(N*N); const tr=new Float64Array(N),ti=new Float64Array(N);
+  const st={preset:'double',a:2,d:8,n:4,h:1.2,b:3,r:2,rin:1,rout:2,nr:3,r0:2,ds:2,ng:8,dg:3,rh:0.35,floor:4,zeros:true};
+  const paint=new Uint8Array(32*32); // custom aperture, 0.5λ cells over 16λ box
+  const P={
+    single:[{type:'range',id:'f-a',key:'a',label:'slit width a',min:0.5,max:8,step:0.25,unit:'λ'},{type:'range',id:'f-h',key:'h',label:'slit height h',min:0.5,max:8,step:0.1,unit:'λ'}],
+    double:[{type:'range',id:'f-a',key:'a',label:'slit width a',min:0.25,max:6,step:0.25,unit:'λ'},{type:'range',id:'f-d',key:'d',label:'separation d',min:1,max:20,step:0.5,unit:'λ'},{type:'range',id:'f-h',key:'h',label:'slit height h',min:0.5,max:8,step:0.1,unit:'λ'}],
+    grating:[{type:'range',id:'f-a',key:'a',label:'slit width a',min:0.25,max:4,step:0.25,unit:'λ'},{type:'range',id:'f-d',key:'d',label:'pitch d',min:1,max:10,step:0.5,unit:'λ'},{type:'range',id:'f-n',key:'n',label:'number of slits N',min:2,max:12,step:1},{type:'range',id:'f-h',key:'h',label:'slit height h',min:0.5,max:8,step:0.1,unit:'λ'}],
+    rect:[{type:'range',id:'f-a',key:'a',label:'width a',min:0.5,max:10,step:0.25,unit:'λ'},{type:'range',id:'f-b',key:'b',label:'height b',min:0.5,max:10,step:0.25,unit:'λ'}],
+    circle:[{type:'range',id:'f-r',key:'r',label:'radius a',min:0.5,max:8,step:0.25,unit:'λ'}],
+    annulus:[{type:'range',id:'f-rin',key:'rin',label:'inner radius',min:0.25,max:7,step:0.25,unit:'λ'},{type:'range',id:'f-rout',key:'rout',label:'outer radius',min:0.5,max:8,step:0.25,unit:'λ'}],
+    rings:[{type:'range',id:'f-nr',key:'nr',label:'number of rings',min:1,max:10,step:1},{type:'range',id:'f-r0',key:'r0',label:'first radius',min:0.5,max:6,step:0.25,unit:'λ'},{type:'range',id:'f-ds',key:'ds',label:'ring spacing',min:0.5,max:4,step:0.25,unit:'λ'}],
+    pingrid:[{type:'range',id:'f-ng',key:'ng',label:'N × N pinholes',min:2,max:12,step:1},{type:'range',id:'f-dg',key:'dg',label:'pitch d',min:1,max:8,step:0.5,unit:'λ'},{type:'range',id:'f-rh',key:'rh',label:'hole radius',min:0.15,max:2,step:0.05,unit:'λ'}],
+    hex:[{type:'range',id:'f-ng',key:'ng',label:'rings of holes',min:1,max:6,step:1},{type:'range',id:'f-dg',key:'dg',label:'pitch d',min:1,max:8,step:0.5,unit:'λ'},{type:'range',id:'f-rh',key:'rh',label:'hole radius',min:0.15,max:2,step:0.05,unit:'λ'}],
+    custom:[]
+  };
+  const notes={single:'Closed form: sinc²(a u)·sinc²(h v).',double:'Closed form at v = 0: sinc²(a u)·cos²(π d u). Fringe zeros at (2m+1)/2d, envelope zeros at m/a.',grating:'Closed form at v = 0: sinc²(a u)·[sin(Nπdu)/(N sin πdu)]². Orders at m/d, N−2 secondary maxima between.',rect:'Closed form: sinc²(a u)·sinc²(b v).',circle:'Airy: [2J₁(x)/x]², x = 2πa sinθ. Zeros at x = 3.832, 7.016, 10.17.',annulus:'Amplitude ∝ a₂² A(2πa₂ρ) − a₁² A(2πa₁ρ) with A = 2J₁(x)/x. Thin annuli tend to J₀.',rings:'Amplitude ∝ Σᵢ aᵢ J₀(2π aᵢ ρ) for thin rings (drawn 0.25 λ wide, which adds a slow sinc envelope).',pingrid:'Closed form at v = 0: grating²(u) × Airy(hole). The hole size sets the envelope.',hex:'No simple closed form on the cut; the far field is the reciprocal (also hexagonal) lattice under the hole\'s Airy envelope.',custom:'Paint cells with the mouse (left: open, right or shift: block). The box is 16 λ across. No closed form; the FFT is the answer.'};
+
+  function aperture(x,y){ // x,y in λ, returns transmission 0/1
+    const s=st; switch(s.preset){
+      case 'single': return Math.abs(x)<s.a/2&&Math.abs(y)<s.h/2?1:0;
+      case 'double': return (Math.abs(x-s.d/2)<s.a/2||Math.abs(x+s.d/2)<s.a/2)&&Math.abs(y)<s.h/2?1:0;
+      case 'grating': { if(Math.abs(y)>=s.h/2) return 0; for(let m=0;m<s.n;m++){ const c=(m-(s.n-1)/2)*s.d; if(Math.abs(x-c)<s.a/2) return 1; } return 0; }
+      case 'rect': return Math.abs(x)<s.a/2&&Math.abs(y)<s.b/2?1:0;
+      case 'circle': return x*x+y*y<s.r*s.r?1:0;
+      case 'annulus': { const q=x*x+y*y; return q<s.rout*s.rout&&q>=s.rin*s.rin?1:0; }
+      case 'rings': { const r=Math.hypot(x,y); for(let i=0;i<s.nr;i++){ const a=s.r0+i*s.ds; if(Math.abs(r-a)<0.125) return 1; } return 0; }
+      case 'pingrid': { for(let i=0;i<s.ng;i++){ const cx=(i-(s.ng-1)/2)*s.dg; if(Math.abs(x-cx)>s.rh) continue; for(let j=0;j<s.ng;j++){ const cy=(j-(s.ng-1)/2)*s.dg; if((x-cx)**2+(y-cy)**2<s.rh*s.rh) return 1; } } return 0; }
+      case 'hex': { const d=s.dg; for(let i=-s.ng;i<=s.ng;i++) for(let j=-s.ng;j<=s.ng;j++){ const k=-i-j; if(Math.max(Math.abs(i),Math.abs(j),Math.abs(k))>s.ng) continue; const cx=d*(i+j/2), cy=d*j*Math.sqrt(3)/2; if((x-cx)**2+(y-cy)**2<s.rh*s.rh) return 1; } return 0; }
+      case 'custom': { const cx=Math.floor(x/0.5+16), cy=Math.floor(y/0.5+16); if(cx<0||cx>31||cy<0||cy>31) return 0; return paint[cy*32+cx]; }
+    } return 0; }
+  function extent(){ const s=st; switch(s.preset){ case 'single':return Math.max(s.a,s.h)/2+1; case 'double':return Math.max(s.d+s.a,s.h)/2+1; case 'grating':return Math.max((s.n-1)*s.d+s.a,s.h)/2+1; case 'rect':return Math.max(s.a,s.b)/2+1; case 'circle':return s.r+1; case 'annulus':return s.rout+1; case 'rings':return s.r0+(s.nr-1)*s.ds+1; case 'pingrid':return (s.ng-1)*s.dg/2+s.rh+1; case 'hex':return s.ng*s.dg+s.rh+1; case 'custom':return 8.5; } return 10; }
+
+  function closedForm(u){ // at v=0, normalised to 1 at u=0; null if none
+    const s=st, S=2*PI*u;
+    switch(s.preset){
+      case 'single': case 'rect': return sinc(s.a*u)**2;
+      case 'double': return (sinc(s.a*u)*Math.cos(PI*s.d*u))**2;
+      case 'grating': { const den=Math.sin(PI*s.d*u); const g=Math.abs(den)<1e-9?1:Math.sin(s.n*PI*s.d*u)/(s.n*den); return (sinc(s.a*u)*g)**2; }
+      case 'circle': return airyAmp(S*s.r)**2;
+      case 'annulus': { const a2=s.rout,a1=s.rin; const A=(a2*a2*airyAmp(S*a2)-a1*a1*airyAmp(S*a1))/(a2*a2-a1*a1); return A*A; }
+      case 'rings': { let num=0,den=0; for(let i=0;i<s.nr;i++){ const a=s.r0+i*s.ds; num+=a*j0(S*a); den+=a; } return (num/den)**2; }
+      case 'pingrid': { const den=Math.sin(PI*s.dg*u); const g=Math.abs(den)<1e-9?1:Math.sin(s.ng*PI*s.dg*u)/(s.ng*den); return (g*airyAmp(S*s.rh))**2; }
+    } return null; }
+  function predictedZeros(){ const s=st, z=[]; const push=v=>{ if(v>0&&v<1) z.push(v); };
+    if(s.preset==='double'){ for(let m=0;m<40;m++) push((2*m+1)/(2*s.d)); for(let m=1;m<10;m++) push(m/s.a); }
+    else if(s.preset==='single'||s.preset==='rect'){ for(let m=1;m<10;m++) push(m/s.a); }
+    else if(s.preset==='grating'){ for(let m=1;m<200;m++){ const v=m/(s.n*s.d); if(m%s.n!==0) push(v);} for(let m=1;m<10;m++) push(m/s.a); }
+    else if(s.preset==='circle'){ for(const j of [3.8317,7.0156,10.1735,13.3237]) push(j/(2*PI*s.r)); }
+    else if(s.preset==='pingrid'){ for(let m=1;m<200;m++){ const v=m/(s.ng*s.dg); if(m%s.ng!==0) push(v);} for(const j of [3.8317,7.0156]) push(j/(2*PI*s.rh)); }
+    return z; }
+
+  const map=$('far-map'), plot=$('far-plot'), thumb=$('far-apthumb');
+  let Icrop=new Float32Array(512*512);
+  function compute(){
+    re.fill(0); im.fill(0);
+    const E=extent(); const px=Math.ceil(E/DP); const c=N/2;
+    // area-weighted mask by 2×2 subsampling inside the bounding box
+    for(let iy=-px;iy<=px;iy++) for(let ix=-px;ix<=px;ix++){ let t=0; for(const sx of [-0.25,0.25]) for(const sy of [-0.25,0.25]) t+=aperture((ix+sx)*DP,(iy+sy)*DP); if(t>0) re[(c+iy)*N+(c+ix)]=t*0.25; }
+    // thumbnail
+    const tctx=thumb.getContext('2d'); const timg=tctx.createImageData(128,128); const sc=Math.max(1,Math.ceil(px/64)); for(let y=0;y<128;y++) for(let x=0;x<128;x++){ const gx=c+(x-64)*sc, gy=c+(y-64)*sc; const v=re[gy*N+gx]||0; const o=(y*128+x)*4; const g=Math.round(30+v*225); timg.data[o]=g; timg.data[o+1]=g; timg.data[o+2]=Math.round(40+v*215); timg.data[o+3]=255; } tctx.putImageData(timg,0,0);
+    // 2D FFT
+    for(let y=0;y<N;y++){ const o=y*N; for(let i=0;i<N;i++){ tr[i]=re[o+i]; ti[i]=im[o+i]; } fft(tr,ti); for(let i=0;i<N;i++){ re[o+i]=tr[i]; im[o+i]=ti[i]; } }
+    for(let x=0;x<N;x++){ for(let i=0;i<N;i++){ tr[i]=re[i*N+x]; ti[i]=im[i*N+x]; } fft(tr,ti); for(let i=0;i<N;i++){ re[i*N+x]=tr[i]; im[i*N+x]=ti[i]; } }
+    // crop |u|,|v| ≤ 1: frequency index f = (k − N/2)/(N·DP); shifted index (k + N/2) % N
+    const span=Math.round(N*DP); // 256 → indices N/2 ± 256
+    let mx=0; for(let j=0;j<512;j++) for(let i=0;i<512;i++){ const ku=((i-256)+N)%N, kv=((j-256)+N)%N; const I=re[kv*N+ku]**2+im[kv*N+ku]**2; Icrop[j*512+i]=I; if(I>mx) mx=I; }
+    for(let i=0;i<Icrop.length;i++) Icrop[i]/=mx;
+  }
+  function render(){
+    drawField(map,Icrop,512,512,'log',st.floor,1,false);
+    // flip vertically so v increases upward: canvas row 0 is top → draw with transform
+    const ctx=map.getContext('2d'); const img=ctx.getImageData(0,0,512,512); const flipped=ctx.createImageData(512,512); for(let y=0;y<512;y++) flipped.data.set(img.data.subarray(y*2048,(y+1)*2048),(511-y)*2048); ctx.putImageData(flipped,0,0);
+    // cut at v=0
+    const u=new Float32Array(512), Ic=new Float32Array(512), Ie=new Float32Array(512); let hasCF=closedForm(0)!==null, maxdev=0;
+    for(let i=0;i<512;i++){ u[i]=(i-256)/256; Ic[i]=Icrop[256*512+i]; if(hasCF){ Ie[i]=closedForm(u[i]); const d=Math.abs(Ic[i]-Ie[i]); if(d>maxdev) maxdev=d; } }
+    // normalise cut to its own max (the map max may sit off the cut)
+    let cm=0; for(let i=0;i<512;i++) if(Ic[i]>cm) cm=Ic[i]; if(cm>0) for(let i=0;i<512;i++) Ic[i]/=cm; if(hasCF){ maxdev=0; for(let i=0;i<512;i++){ const d=Math.abs(Ic[i]-Ie[i]); if(d>maxdev) maxdev=d; } }
+    const floor=10**-st.floor; const series=[]; if(hasCF) series.push({x:u,y:Ie,color:css('--accent2'),label:'closed form',dash:[5,4]});
+    series.push({x:u,y:Ic,color:css('--accent'),label:'FFT of aperture',points:true,every:3});
+    const vl=st.zeros?predictedZeros().flatMap(z=>[{x:z},{x:-z}]).map(o=>({x:o.x,color:css('--muted'),dash:[2,4]})):[];
+    linePlot(plot,{xlim:[-1,1],ylim:[floor,2],logy:true,xticks:[-1,-0.5,0,0.5,1],series,vlines:vl,xlabel:'u = sin θₓ  (cut at v = 0)',ylabel:'I / I_max',legend:'right',title:hasCF?'cut vs closed form; dotted rules are the predicted zeros':'cut through the FFT (no closed form for this aperture)'});
+    const ch=[{t:'1024² FFT, pitch 0.25 λ'}]; if(hasCF) ch.push({t:'max |ΔI| = '+maxdev.toExponential(1),cls:maxdev<0.02?'good':maxdev<0.1?'warn':'bad'}); chips($('far-chips'),ch);
+  }
+  const recompute=debounce(()=>{ compute(); render(); },60);
+  function setPreset(p){ st.preset=p; buildControls($('far-params'),P[p],recompute,st); $('far-apnote').textContent=notes[p]; thumb.classList.toggle('paint',p==='custom'); recompute(); }
+  $('far-preset').addEventListener('change',e=>setPreset(e.target.value));
+  $('far-floor').addEventListener('input',e=>{ st.floor=+e.target.value; $('far-floor-v').textContent='10'+sup(-st.floor); render(); });
+  $('far-zeros').addEventListener('change',e=>{ st.zeros=e.target.checked; render(); });
+  // painting
+  let painting=false, paintVal=1;
+  function paintAt(ev){ if(st.preset!=='custom') return; const r=thumb.getBoundingClientRect(); const x=Math.floor((ev.clientX-r.left)/r.width*32), y=Math.floor((ev.clientY-r.top)/r.height*32); if(x<0||x>31||y<0||y>31) return; paint[y*32+x]=paintVal; recompute(); }
+  thumb.addEventListener('contextmenu',e=>e.preventDefault());
+  thumb.addEventListener('pointerdown',e=>{ if(st.preset!=='custom') return; painting=true; paintVal=(e.button===2||e.shiftKey)?0:1; paintAt(e); });
+  thumb.addEventListener('pointermove',e=>{ if(painting) paintAt(e); }); window.addEventListener('pointerup',()=>painting=false);
+  // seed a starter custom shape: a ring of holes plus a bar
+  for(let i=0;i<12;i++){ const a=TAU*i/12; const x=Math.round(16+9*Math.cos(a)), y=Math.round(16+9*Math.sin(a)); paint[y*32+x]=1; paint[y*32+x+1]=1; paint[(y+1)*32+x]=1; paint[(y+1)*32+x+1]=1; } for(let x=12;x<20;x++) paint[16*32+x]=1;
+  setPreset('double');
+  return {render};
+})();
+
+// ================================================================= IN-PLANE LAB
+const ip=(()=>{
+  const G=300; const map=$('ip-map'); const I=new Float32Array(G*G);
+  const st={preset:'two',lam:1,L:50,decay:true,floor:3,s:5,n:8,steer:0,ring:12,rr:6,ng:15,dg:2,nrand:20,seed:1};
+  let sources=[]; // {x,y,ph,amp}
+  const P={two:[{type:'range',id:'i-s',key:'s',label:'half-separation s',min:0.5,max:20,step:0.5,unit:'λ'}],four:[{type:'range',id:'i-s',key:'s',label:'distance from centre',min:0.5,max:20,step:0.5,unit:'λ'}],
+    line:[{type:'range',id:'i-n',key:'n',label:'elements N',min:2,max:32,step:1},{type:'range',id:'i-s',key:'s',label:'element pitch',min:0.25,max:5,step:0.25,unit:'λ'},{type:'range',id:'i-st',key:'steer',label:'steer angle',min:-80,max:80,step:1,unit:'°'}],
+    ring:[{type:'range',id:'i-rn',key:'ring',label:'sources on ring',min:3,max:48,step:1},{type:'range',id:'i-rr',key:'rr',label:'ring radius',min:0.5,max:20,step:0.5,unit:'λ'}],
+    grid:[{type:'range',id:'i-ng',key:'ng',label:'N × N',min:2,max:21,step:1},{type:'range',id:'i-dg',key:'dg',label:'pitch d',min:0.5,max:5,step:0.25,unit:'λ'}],
+    random:[{type:'range',id:'i-nr',key:'nrand',label:'sources',min:2,max:80,step:1},{type:'range',id:'i-sd',key:'seed',label:'seed',min:1,max:99,step:1}]};
+  function fromPreset(){ const s=st; sources=[];
+    if(s.preset==='two') sources=[{x:-s.s,y:0,ph:0,amp:1},{x:s.s,y:0,ph:0,amp:1}];
+    else if(s.preset==='four') sources=[{x:-s.s,y:0},{x:s.s,y:0},{x:0,y:-s.s},{x:0,y:s.s}].map(o=>({...o,ph:0,amp:1}));
+    else if(s.preset==='line'){ const k=TAU/s.lam, th=s.steer*PI/180; for(let i=0;i<s.n;i++){ const y=(i-(s.n-1)/2)*s.s; sources.push({x:0,y,ph:-k*y*Math.sin(th),amp:1}); } }
+    else if(s.preset==='ring'){ for(let i=0;i<s.ring;i++){ const a=TAU*i/s.ring; sources.push({x:s.rr*Math.cos(a),y:s.rr*Math.sin(a),ph:0,amp:1}); } }
+    else if(s.preset==='grid'){ for(let i=0;i<s.ng;i++) for(let j=0;j<s.ng;j++) sources.push({x:(i-(s.ng-1)/2)*s.dg,y:(j-(s.ng-1)/2)*s.dg,ph:0,amp:1}); }
+    else if(s.preset==='random'){ let r=s.seed*9301+49297; const rnd=()=>{ r=(r*9301+49297)%233280; return r/233280; }; for(let i=0;i<s.nrand;i++) sources.push({x:(rnd()-0.5)*s.L,y:(rnd()-0.5)*s.L,ph:rnd()*TAU,amp:1}); }
+  }
+  function compute(){ const k=TAU/st.lam, L=st.L; const re=new Float32Array(G*G), im=new Float32Array(G*G); const rmin=st.lam/4;
+    for(const s of sources){ for(let j=0;j<G;j++){ const y=-L+(j+0.5)*2*L/G; const dy=y-s.y; for(let i=0;i<G;i++){ const x=-L+(i+0.5)*2*L/G; const dx=x-s.x; let r=Math.sqrt(dx*dx+dy*dy); if(r<rmin) r=rmin; const a=st.decay?s.amp/Math.sqrt(r):s.amp; const p=k*r+s.ph; const o=j*G+i; re[o]+=a*Math.cos(p); im[o]+=a*Math.sin(p); } } }
+    for(let o=0;o<G*G;o++) I[o]=re[o]*re[o]+im[o]*im[o]; }
+  function render(){ drawField(map,I,G,G,'log',st.floor,1,false);
+    const ctx=map.getContext('2d'); const img=ctx.getImageData(0,0,G,G); const fl=ctx.createImageData(G,G); for(let y=0;y<G;y++) fl.data.set(img.data.subarray(y*G*4,(y+1)*G*4),(G-1-y)*G*4); ctx.putImageData(fl,0,0);
+    ctx.strokeStyle='#d8f3ff'; ctx.lineWidth=1; for(const s of sources){ const px=(s.x+st.L)/(2*st.L)*G, py=G-(s.y+st.L)/(2*st.L)*G; ctx.beginPath(); ctx.arc(px,py,3,0,TAU); ctx.stroke(); }
+    $('ip-count').textContent=sources.length+' source'+(sources.length===1?'':'s');
+    $('ip-caption').innerHTML='log₁₀ I/I<sub>max</sub>, view ±'+st.L+' λ';
+    const ch=[{t:'λ = '+st.lam.toFixed(1)}]; if(st.preset==='two'&&sources.length===2){ ch.push({t:'fringes: r₁−r₂ = mλ, |m| ≤ '+Math.floor(2*st.s/st.lam)}); } if(st.preset==='line'){ ch.push({t:'main lobe at '+st.steer+'°'}); } if(st.preset==='grid'){ const r=st.dg/st.lam; ch.push({t:'d/λ = '+r.toFixed(2)+(Math.abs(r-Math.round(r))<1e-9?' → end-fire cross':'')}); } chips($('ip-chips'),ch); }
+  const recompute=debounce(()=>{ compute(); render(); },80);
+  function setPreset(p){ st.preset=p; buildControls($('ip-params'),P[p],()=>{ fromPreset(); recompute(); },st); fromPreset(); recompute(); }
+  $('ip-preset').addEventListener('change',e=>setPreset(e.target.value));
+  $('ip-apply').addEventListener('click',()=>{ fromPreset(); recompute(); }); $('ip-clear').addEventListener('click',()=>{ sources=[]; recompute(); });
+  for(const [id,key,vfmt] of [['ip-lam','lam',v=>v.toFixed(1)],['ip-L','L',v=>String(v)]]){ $(id).addEventListener('input',e=>{ st[key]=+e.target.value; $(id+'-v').textContent=vfmt(st[key]); if(st.preset==='line'&&key==='lam') fromPreset(); recompute(); }); }
+  $('ip-decay').addEventListener('change',e=>{ st.decay=e.target.checked; recompute(); });
+  $('ip-floor').addEventListener('input',e=>{ st.floor=+e.target.value; $('ip-floor-v').textContent='10'+sup(-st.floor); render(); });
+  map.addEventListener('click',e=>{ const r=map.getBoundingClientRect(); const x=(e.clientX-r.left)/r.width*2*st.L-st.L, y=st.L-(e.clientY-r.top)/r.height*2*st.L;
+    if(e.shiftKey){ if(!sources.length) return; let bi=0,bd=1e9; sources.forEach((s,i)=>{ const d=Math.hypot(s.x-x,s.y-y); if(d<bd){bd=d;bi=i;} }); sources.splice(bi,1); } else sources.push({x,y,ph:0,amp:1}); recompute(); });
+  setPreset('two');
+  return {render};
+})();
+
+// ================================================================= LATTICE LAB
+const lat=(()=>{
+  const C2=1/3; const st={lam:8,mode:'double',a:2,d:5,n:3,s:4,spf:15,view:'env',R:150,Nx:480,Ny:400};
+  const P={plane:[],single:[{type:'range',id:'l-a',key:'a',label:'slit width a',min:0.5,max:6,step:0.5,unit:'λ'}],double:[{type:'range',id:'l-a',key:'a',label:'slit width a',min:0.5,max:4,step:0.5,unit:'λ'},{type:'range',id:'l-d',key:'d',label:'separation d',min:1,max:10,step:0.5,unit:'λ'}],grating:[{type:'range',id:'l-a',key:'a',label:'slit width a',min:0.5,max:3,step:0.5,unit:'λ'},{type:'range',id:'l-d',key:'d',label:'pitch d',min:1,max:6,step:0.5,unit:'λ'},{type:'range',id:'l-n',key:'n',label:'slits N',min:2,max:8,step:1}],point:[],two:[{type:'range',id:'l-s',key:'s',label:'source separation',min:1,max:12,step:0.5,unit:'λ'}]};
+  let Nx,Ny,u,v,damp,screen,Are,Aim,t,w,T,xs,xa,y0,running=false,raf=null;
+  const map=$('lt-map'), plot=$('lt-plot');
+  function omega(k){ const L=(2/3)*(Math.cos(k)+2)+(2/3)*(2*Math.cos(k)+1)-4; return Math.acos(1+C2*L/2); }
+  function reset(){ [Nx,Ny]=$('lt-size').value.split(',').map(Number); st.Nx=Nx; st.Ny=Ny;
+    u=new Float32Array(Nx*Ny); v=new Float32Array(Nx*Ny); Are=new Float32Array(Nx*Ny); Aim=new Float32Array(Nx*Ny); t=0;
+    const lam=st.lam, k=TAU/lam; w=omega(k); T=TAU/w; const sp=Math.round(3*lam)+8; xs=sp+lam; xa=sp+4*lam; y0=Ny>>1;
+    damp=new Float32Array(Nx*Ny); for(let j=0;j<Ny;j++) for(let i=0;i<Nx;i++){ const dx=Math.min(i,Nx-1-i), dy=Math.min(j,Ny-1-j); const s=0.08*(Math.max(0,1-dx/sp)**3+Math.max(0,1-dy/sp)**3); damp[j*Nx+i]=1-Math.min(s,0.16); }
+    screen=new Uint8Array(Nx*Ny); const m=st.mode;
+    if(m==='single'||m==='double'||m==='grating'){ const open=new Uint8Array(Ny); const cs=m==='single'?[0]:m==='double'?[-st.d/2,st.d/2]:Array.from({length:st.n},(_,i)=>(i-(st.n-1)/2)*st.d); for(let j=0;j<Ny;j++){ const y=(j-y0)/lam; for(const c of cs) if(Math.abs(y-c)<st.a/2) open[j]=1; } for(let j=0;j<Ny;j++) if(!open[j]){ screen[j*Nx+xa]=1; screen[j*Nx+xa+1]=1; } }
+    draw(); }
+  function step(n){ const NX=Nx, NY=Ny; const ea=1/(3*T); for(let it=0;it<n;it++){
+      for(let j=1;j<NY-1;j++){ const o=j*NX; for(let i=1;i<NX-1;i++){ const p=o+i; const ax=u[p-1]+u[p+1]+u[p-NX]+u[p+NX]; const dg=u[p-NX-1]+u[p-NX+1]+u[p+NX-1]+u[p+NX+1]; v[p]+=C2*((2/3)*ax+(1/6)*dg-(10/3)*u[p]); } }
+      const ramp=Math.min(1,t/(4*T)), src=0.05*ramp*Math.sin(w*t); const m=st.mode;
+      if(m==='point') v[y0*NX+xa]+=src*6; else if(m==='two'){ const h=Math.round(st.s*st.lam/2); v[(y0-h)*NX+xa]+=src*6; v[(y0+h)*NX+xa]+=src*6; } else { for(let j=0;j<NY;j++) v[j*NX+xs]+=src; }
+      const cw=Math.cos(w*t), sw=Math.sin(w*t);
+      for(let p=0;p<NX*NY;p++){ u[p]+=v[p]; const dmp=damp[p]; u[p]*=dmp; v[p]*=dmp; if(screen[p]){ u[p]=0; v[p]=0; } Are[p]+=ea*(u[p]*cw-Are[p]); Aim[p]+=ea*(u[p]*sw-Aim[p]); }
+      t++; } }
+  function sampleA2(x,y){ // bilinear on |A|² from Are, Aim
+    const i=Math.floor(x), j=Math.floor(y); if(i<0||j<0||i>=Nx-1||j>=Ny-1) return 0; const fx=x-i, fy=y-j; const g=(ii,jj)=>{ const p=jj*Nx+ii; return Are[p]*Are[p]+Aim[p]*Aim[p]; };
+    return (1-fx)*(1-fy)*g(i,j)+fx*(1-fy)*g(i+1,j)+(1-fx)*fy*g(i,j+1)+fx*fy*g(i+1,j+1); }
+  function draw(){
+    const view=st.view; const F=new Float32Array(Nx*Ny);
+    if(view==='raw'){ let mx=1e-9; for(let p=0;p<Nx*Ny;p++){ F[p]=u[p]; const a=Math.abs(u[p]); if(a>mx) mx=a; } drawField(map,F,Nx,Ny,'sym',1,mx*0.8,false); }
+    else { const cx=xa+1, cy=y0; for(let j=0;j<Ny;j++) for(let i=0;i<Nx;i++){ const p=j*Nx+i; let a2=Are[p]*Are[p]+Aim[p]*Aim[p]; if(view==='envr'&&i>xa){ const r=Math.hypot(i-cx,j-cy); a2*=Math.max(r,1); } F[p]=a2; }
+      if(view==='envr'){ for(let j=0;j<Ny;j++) for(let i=0;i<=xa+1;i++) F[j*Nx+i]*=0.05; } drawField(map,F,Nx,Ny,'log',3,1,false); }
+    const ctx=map.getContext('2d'); ctx.strokeStyle='#d8f3ff'; ctx.setLineDash([4,4]); ctx.lineWidth=1; const R=Math.min(st.R,Nx-xa-10,y0-6);
+    ctx.beginPath(); ctx.arc(xa+1,y0,R,-PI/2,PI/2); ctx.stroke(); ctx.setLineDash([]);
+    if(st.mode!=='plane'&&st.mode!=='point'&&st.mode!=='two'){ ctx.fillStyle='rgba(216,243,255,0.55)'; for(let j=0;j<Ny;j++) if(screen[j*Nx+xa]) ctx.fillRect(xa,j,2,1); }
+    $('lt-caption').innerHTML=(view==='raw'?'signed J, blue/red':(view==='env'?'log₁₀ |A|², demodulated at ω(k)':'log₁₀ r|A|², radial falloff removed'))+' &middot; t = '+t+' ticks = '+(t/T).toFixed(1)+' periods &middot; screen at x = '+xa;
+    readout(R);
+  }
+  function readout(R){
+    const m=st.mode; const th=[]; for(let d=-85;d<=85;d+=1) th.push(d*PI/180); const s=th.map(Math.sin); const cx=xa+1, cy=y0;
+    let I=th.map(a=>sampleA2(cx+R*Math.cos(a),cy+R*Math.sin(a))); let mx=Math.max(...I,1e-30);
+    const lam=st.lam; const ch=[{t:'λ = '+lam+' cells'},{t:'ω = '+w.toFixed(4)+', T = '+T.toFixed(2)+' ticks'}];
+    const series=[]; let title='', ylim=[1e-4,2], logy=true, ylabel='I / I_max';
+    if(m==='plane'){ I=I.map(x=>x/mx); series.push({x:s,y:I,color:css('--accent'),label:'lattice, arc'}); title='free plane wave: the arc should read the incident amplitude, flat where the beam is'; }
+    else if(m==='point'){ const mean=I.reduce((a,b)=>a+b,0)/I.length; I=I.map(x=>x/mean); const dev=Math.max(...I.map(x=>Math.abs(x-1))); logy=false; ylim=[0.9,1.1]; ylabel='I / ⟨I⟩'; series.push({x:s,y:s.map(()=>1),color:css('--accent2'),label:'isotropic',dash:[5,4]}); series.push({x:s,y:I,color:css('--accent'),label:'lattice, arc'}); title='point source: intensity around the arc, normalised to its mean — the deviation is lattice anisotropy'; ch.push({t:'max |I/⟨I⟩ − 1| = '+(dev*100).toFixed(2)+' %',cls:dev<0.01?'good':dev<0.05?'warn':'bad'}); }
+    else { let bare, D; const a=st.a, d=st.d, n=st.n;
+      if(m==='two'){ bare=s.map(x=>Math.cos(PI*st.s*x)**2); D=st.s*lam; }
+      else { const N=m==='single'?1:m==='double'?2:n, dd=m==='single'?0:m==='double'?d:d; bare=s.map(x=>{ const e=sinc(a*x)**2; if(N===1) return e; const den=Math.sin(PI*dd*x); const g=Math.abs(den)<1e-9?1:Math.sin(N*PI*dd*x)/(N*den); return e*g*g; }); D=(m==='single'?a:(N-1)*dd+a)*lam; }
+      const rs=bare.map((b,i)=>b*(1-s[i]*s[i])); const rsm=Math.max(...rs); const rsn=rs.map(x=>x/rsm);
+      I=I.map(x=>x/mx); let db=0,dr=0; for(let i=0;i<I.length;i++){ if(Math.abs(th[i])<=PI/3){ db=Math.max(db,Math.abs(I[i]-bare[i])); dr=Math.max(dr,Math.abs(I[i]-rsn[i])); } }
+      const ratio=R/(2*D*D/lam); ch.push({t:'R / (2D²/λ) = '+ratio.toFixed(2)+(ratio>=1?' far field':ratio>=0.3?' Fresnel: expect mismatch':' near field'),cls:ratio>=1?'good':ratio>=0.3?'warn':'bad'});
+      if(t>3*T) ch.push({t:'max|ΔI| to bare '+db.toFixed(3)+', to RS-I '+dr.toFixed(3)+' (|θ|≤60°)'});
+      series.push({x:s,y:bare,color:css('--muted'),label:'bare Fourier pattern',dash:[2,3]}); series.push({x:s,y:rsn,color:css('--accent2'),label:'Rayleigh–Sommerfeld I'}); series.push({x:s,y:I,color:css('--accent'),label:'lattice, arc',points:true,every:2});
+      title='arc intensity vs the closed forms (normalised to peak)'; }
+    if(t<3*T) ch.push({t:'demodulator settling ('+(t/T).toFixed(1)+' / 3 periods)',cls:'warn'});
+    chips($('lt-chips'),ch);
+    linePlot(plot,{xlim:[-1,1],ylim,logy,xticks:[-1,-0.5,0,0.5,1],series,xlabel:'sin θ  (arc at R = '+R+' cells)',ylabel,legend:'right',title});
+  }
+  function frame(){ if(!running) return; step(st.spf); draw(); raf=requestAnimationFrame(frame); }
+  function setRunning(r){ running=r; $('lt-run').textContent=r?'Pause':'Run'; if(r) frame(); else if(raf) cancelAnimationFrame(raf); }
+  $('lt-run').addEventListener('click',()=>setRunning(!running)); $('lt-step').addEventListener('click',()=>{ step(20); draw(); }); $('lt-reset').addEventListener('click',()=>{ setRunning(false); reset(); });
+  $('lt-spf').addEventListener('input',e=>{ st.spf=+e.target.value; $('lt-spf-v').textContent=st.spf; });
+  $('lt-size').addEventListener('change',()=>{ setRunning(false); reset(); });
+  $('lt-lam').addEventListener('input',e=>{ st.lam=+e.target.value; $('lt-lam-v').textContent=st.lam; setRunning(false); reset(); disp.render(); });
+  $('lt-view').addEventListener('change',e=>{ st.view=e.target.value; draw(); });
+  $('lt-R').addEventListener('input',e=>{ st.R=+e.target.value; $('lt-R-v').textContent=st.R; draw(); });
+  function setMode(m){ st.mode=m; buildControls($('lt-params'),P[m],()=>{ setRunning(false); reset(); },st); setRunning(false); reset(); }
+  $('lt-mode').addEventListener('change',e=>setMode(e.target.value));
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden) setRunning(false); });
+  setMode('double');
+  return {draw,st,omega};
+})();
+
+// ================================================================= DISPERSION LAB
+const disp=(()=>{
+  const plot=$('dp-plot'); const st={c2:1/3,what:'vph',log:true};
+  function L3(kx,ky,kz){ const cx=Math.cos(kx),cy=Math.cos(ky),cz=Math.cos(kz); return (2/3)*(cx+cy+cz)+(2/3)*(cx*cy+cx*cz+cy*cz)-4; }
+  function om(k,dir,c2){ const [a,b,c]=dir; const nrm=Math.hypot(a,b,c); const x=1+c2*L3(k*a/nrm,k*b/nrm,k*c/nrm)/2; return x<-1?NaN:Math.acos(Math.min(1,x)); }
+  function render(){ const c=Math.sqrt(st.c2); const dirs=[{d:[1,0,0],l:'[100]',col:css('--accent')},{d:[1,1,0],l:'[110]',col:css('--accent2')},{d:[1,1,1],l:'[111]',col:css('--good')}];
+    const x=[],ks=[]; for(let cpl=2;cpl<=40;cpl+=0.1){ x.push(cpl); ks.push(TAU/cpl); }
+    const series=dirs.map(o=>{ const y=ks.map((k,i)=>{ if(st.what==='vph'){ const w=om(k,o.d,st.c2); return w/(c*k)-1; } const h=1e-4; const w1=om(k+h,o.d,st.c2),w0=om(k-h,o.d,st.c2); return (w1-w0)/(2*h)/c-1; }); return {x,y:st.log?y.map(Math.abs):y,color:o.col,label:o.l,width:1.6}; });
+    const lam=lat.st.lam; const vl=[{x:lam,color:css('--muted'),label:'λ = '+lam+' cells (lattice tab)'}];
+    const ylim=st.log?[1e-6,1]:[-0.2,0.05];
+    linePlot(plot,{xlim:[2,40],ylim,logy:st.log,xticks:[2,4,6,8,12,16,20,30,40],series,vlines:vl,xlabel:'cells per wavelength',ylabel:(st.log?'|':'')+(st.what==='vph'?'ω/(ck) − 1':'v_g/c − 1')+(st.log?'|':''),legend:'right',title:'leapfrog + 18-point stencil, c² = '+st.c2.toFixed(4)+(st.c2>=0.75?'  — UNSTABLE (c² ≥ 3/4)':'')});
+    const k=TAU/lam; const rows=dirs.map(o=>{ const w=om(k,o.d,st.c2); return o.l+': ω = '+w.toFixed(5)+', v_ph/c − 1 = '+(w/(c*k)-1).toExponential(2); }); const w100=om(k,[1,0,0],st.c2),w111=om(k,[1,1,1],st.c2);
+    $('dp-table').innerHTML=rows.join('<br>')+'<br>anisotropy [111]−[100]: '+((w111-w100)/w100).toExponential(2)+'<br>period T = '+(TAU/om(k,[1,0,0],st.c2)).toFixed(3)+' ticks'; }
+  $('dp-c2').addEventListener('input',e=>{ st.c2=+e.target.value; $('dp-c2-v').textContent=st.c2.toFixed(4); render(); });
+  $('dp-what').addEventListener('change',e=>{ st.what=e.target.value; render(); }); $('dp-log').addEventListener('change',e=>{ st.log=e.target.checked; render(); });
+  return {render};
+})();
+
+// redraw plots when theme or size changes
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{ far.render(); ip.render(); disp.render(); lat.draw(); });
+window.addEventListener('resize',debounce(()=>{ if(activeTab==='far') far.render(); if(activeTab==='lattice') lat.draw(); if(activeTab==='disp') disp.render(); },150));
+new MutationObserver(()=>{ far.render(); ip.render(); disp.render(); lat.draw(); }).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+disp.render();
+</script>

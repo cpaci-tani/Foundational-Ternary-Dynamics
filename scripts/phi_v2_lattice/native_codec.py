@@ -29,7 +29,7 @@ def encode(state: P.StagedState) -> bytes:
 
 
 def decode(data: bytes) -> P.StagedState:
-    if not isinstance(data, bytes) or len(data) < HEADER.size:
+    if type(data) is not bytes or len(data) < HEADER.size:
         raise ValueError("native state must be complete bytes")
     magic, L, microtick, *hashes = HEADER.unpack_from(data)
     if magic != MAGIC or tuple(hashes) != HASHES:

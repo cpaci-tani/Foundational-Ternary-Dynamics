@@ -8,13 +8,24 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import lru_cache
-from numbers import Integral
+from types import MappingProxyType
 import numpy as np
 
 from . import channels as C, geometry as G, state as S, tick as T
 from ._proofs import encode, rotate, relation_tick, phase_index, readout
 
 LAW_ID = "phi-v2-staged-candidate-1"
+
+# Concrete numeric storage is allowed; user-defined arithmetic is not state.
+_INTEGER_TYPES = (int, np.int8, np.int16, np.int32, np.int64,
+                           np.uint8, np.uint16, np.uint32, np.uint64,
+                           np.longlong, np.ulonglong)
+
+
+def _plain_integer(value, name, minimum=0):
+    if not any(type(value) is allowed for allowed in _INTEGER_TYPES) or int(value) < minimum:
+        raise ValueError(f"{name} must be a concrete integer >= {minimum}")
+    return int(value)
 
 
 @dataclass
@@ -31,7 +42,7 @@ class StagedState:
 
 
 def _array(value, dtype, shape, name, bounds=None):
-    if not isinstance(value, np.ndarray) or value.dtype != np.dtype(dtype) or value.shape != shape:
+    if type(value) is not np.ndarray or value.dtype != np.dtype(dtype) or value.shape != shape:
         raise ValueError(f"{name}: expected {dtype} array of shape {shape}")
     if value.dtype == np.dtype(bool) and np.any(value.view(np.uint8) > 1):
         raise ValueError(f"{name}: noncanonical boolean bytes")
@@ -40,11 +51,9 @@ def _array(value, dtype, shape, name, bounds=None):
 
 
 def _validate_lattice(st):
-    if not isinstance(st, S.LatticeState):
+    if type(st) is not S.LatticeState:
         raise ValueError("expected LatticeState payload")
-    if isinstance(st.L, bool) or not isinstance(st.L, Integral) or st.L < 3:
-        raise ValueError("periodic candidate requires integer L >= 3")
-    n = int(st.L) ** 3
+    n = _plain_integer(st.L, "periodic lattice side", 3) ** 3
     for name, shape, bounds in (("s", (n,), (-1, 1)), ("ell", (n,), (0, 2)),
                                 ("sc", (n, 3, 2), (0, 8)), ("fcc", (n, 3, 2, 2), (0, 8))):
         _array(getattr(st, name), "int8", shape, name, bounds)
@@ -53,10 +62,9 @@ def _validate_lattice(st):
 
 
 def validate(state: StagedState) -> None:
-    if not isinstance(state, StagedState):
+    if type(state) is not StagedState:
         raise ValueError("expected StagedState")
-    if isinstance(state.microtick, bool) or not isinstance(state.microtick, Integral) or state.microtick < 0:
-        raise ValueError("microtick must be a nonnegative integer")
+    _plain_integer(state.microtick, "microtick")
     st = state.lattice
     n = _validate_lattice(st)
     for name, shape in (("admitted_sc", (n, 3)), ("gate_sc", (n, 3)), ("gate_fcc", (n, 3, 2))):
@@ -88,7 +96,28 @@ def work_units(state: StagedState) -> int:
 
 @lru_cache(maxsize=1)
 def _default_tables():
-    return C.load_collision_tables()
+    return _checked_tables(C.load_collision_tables())
+
+
+def _checked_tables(tables):
+    """Freeze the very lookups whose contents pass the law identity check.
+
+    Hashing ``items()`` on a mapping subclass does not constrain its lookup
+    behavior. Copy only concrete dictionaries with concrete finite pair leaves.
+    The owned read-only snapshot also prevents later caller mutation.
+    """
+    if type(tables) is not tuple or len(tables) != 3 or any(type(t) is not dict for t in tables):
+        raise ValueError("collision tables must be a tuple of three concrete dictionaries")
+    snapshots = tuple(dict(table) for table in tables)
+    for table in snapshots:
+        for before, after in table.items():
+            for pair in (before, after):
+                if (type(pair) is not tuple or len(pair) != 2
+                        or any(type(value) is not int for value in pair)):
+                    raise ValueError("collision table pairs must contain concrete integer values")
+    if C._hash_tables(snapshots) != C.COLLISION_HASH:
+        raise ValueError("collision table does not match candidate law")
+    return tuple(MappingProxyType(table) for table in snapshots)
 
 
 def _cross(pair, even):
@@ -122,9 +151,7 @@ def step(state: StagedState, tables=None) -> tuple[StagedState, T.TickEvents]:
             out.admitted_sc[owner, axis] = True
             events.absorptions.append((x, c, owner, axis))
     elif state.phase == 1:
-        tables = _default_tables() if tables is None else tables
-        if C._hash_tables(tables) != C.COLLISION_HASH:
-            raise ValueError("collision table does not match candidate law")
+        tables = _default_tables() if tables is None else _checked_tables(tables)
         for i in np.flatnonzero(st.bank.any(axis=1)):
             dst.bank[i], evs = T.collide_row(st.bank[i], st.ell[i], tables)
             events.collisions.extend((int(i), eps, before, after) for eps, before, after in evs)
