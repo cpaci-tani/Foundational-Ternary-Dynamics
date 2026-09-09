@@ -18,8 +18,10 @@ const PREPARATIONS = [
 const CAPTION_TEXT = 'Discrete lattice-gas fluid on `phi-hydro-staged-candidate-1`, a priced successor to the selected Φ-v2 (adopted, not derived). Its fluid limit — sound speed, Galilean factor and two cubic shear viscosities at the registered density — is derived by exact Chapman–Enskog (H1′) and measured in the registered campaign (H2′). It is anisotropic momentum hydrodynamics, not Navier–Stokes: the adopted symmetry group forces a cubic viscosity tensor. One realization: statistical noise scales as 1/√N per block.';
 
 const TESTS_DIR = path.dirname(fileURLToPath(import.meta.url)); // engine/web/tests
+// Ignored build directory (not the wave-scoped .superpowers/sdd/... plan folder,
+// which outlives this wave and should not accumulate test artifacts).
 const SCREENSHOT_PATH = path.resolve(
-    TESTS_DIR, '..', '..', '..', '.superpowers', 'sdd', '2026-09-08-fchc-successor-part-a',
+    TESTS_DIR, '..', '..', 'build_strict_hydro', 'lab', 'screenshots',
     'task-13-shear-wave-t2-after-20-stages.png',
 );
 

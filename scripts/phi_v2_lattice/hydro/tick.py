@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 import numpy as np
 from .. import geometry as G
-from ..tick import gate, manifest  # noqa: F401  (unchanged relation sector)
+from ..tick import manifest  # noqa: F401  (unchanged relation sector; re-exported for T.manifest in hydro/staged.py)
 from . import channels as H, state as S
 
 
@@ -69,6 +69,25 @@ def collide_site(row: np.ndarray, table: np.ndarray):
 
 
 def stream(st: S.LatticeState, bank: np.ndarray) -> np.ndarray:
+    """Advance every occupied (site, polarity, velocity) channel one passive-phase step.
+
+    A write collision at `out[y, c2]` (two distinct source channels landing on
+    the same destination) is impossible by construction. `channel(pol, k2, v)`
+    encodes (pol, k2, v) injectively, so two sources sharing a destination
+    channel c2 must share the same pol and the same v (k2 is then forced equal
+    too, but is not needed for the argument). Two occupied source channels
+    with the same pol and v cannot live at the same site x: the exclusion
+    invariant maintained on `bank` caps occupancy at one particle per (site,
+    polarity, velocity) regardless of phase (see `_mask`, which raises
+    "exclusion violated" the moment more than one phase is set for a given
+    velocity at a site), so equal (pol, v) forces distinct sources to distinct
+    sites x != x'. Streaming then maps each source to y = shift(x, V[v]) with
+    the same v for both -- and shift-by-a-fixed-vector is injective (it is a
+    lattice translation), so x != x' forces y != y'. Distinct sources with
+    equal velocity and polarity are therefore always at distinct sites, and
+    distinct sites with the same velocity stream to distinct destinations; no
+    two occupied source channels can ever target the same (y, c2).
+    """
     out = np.zeros_like(bank)
     xs, cs = np.nonzero(bank)
     for x, c in zip(xs.tolist(), cs.tolist()):

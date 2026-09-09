@@ -116,7 +116,10 @@ def main():
 
     first = report()
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(first, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    # newline="" disables Path.write_text's universal-newline translation (which on
+    # Windows rewrites every "\n" to "\r\n"), so the bytes written match the
+    # .gitattributes-declared `*.json text eol=lf` committed form on every platform.
+    args.output.write_text(json.dumps(first, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="")
 
     if args.check:
         second = report()
