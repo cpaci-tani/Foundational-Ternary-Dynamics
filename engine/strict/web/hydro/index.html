@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FTD · Hydro laboratory</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background:#101820; color:#e2e9ee }
+    * { box-sizing:border-box } body { max-width:1180px; margin:auto; padding:28px }
+    h1 { font-size:1.8rem; margin:8px 0 } p { color:#b8c8d3; max-width:850px; line-height:1.55 }
+    .label { text-transform:uppercase; letter-spacing:.14em; color:#78dac1; font-size:.75rem }
+    .controls { display:flex; gap:12px; align-items:end; flex-wrap:wrap; padding:18px 0 }
+    label { display:grid; gap:6px; font-size:.85rem } button,select { font:inherit; padding:10px; border:1px solid #547082; border-radius:6px; background:#1b2c38; color:inherit }
+    button { cursor:pointer } button:disabled { opacity:.45; cursor:wait } :focus-visible { outline:3px solid #78dac1; outline-offset:3px }
+    .metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:12px 0 }
+    .metric { background:#1b2c38; border-radius:8px; padding:15px } .metric strong { display:block; margin-top:5px; color:#78dac1; font-size:1.2rem }
+    .metric small { display:block; color:#8fa4b0; margin-top:2px }
+    .views { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px } figure { margin:0; padding:14px; border:1px solid #385163; border-radius:9px }
+    figcaption { padding-bottom:12px; font-weight:600 } canvas { display:block; width:100%; aspect-ratio:1; background:#0c131b; border-radius:5px }
+    #status { min-height:1.5em; margin:8px 0; color:#e1c887 } .legend { font-size:.85rem }
+    blockquote.caption { margin:18px 0; padding:14px 18px; border-left:3px solid #78dac1; background:#16222c; color:#cfe3ec; font-size:.92rem; line-height:1.6 }
+    details { margin-top:20px; border-top:1px solid #385163; padding-top:15px } pre { overflow-wrap:anywhere; white-space:pre-wrap; font-size:.75rem }
+    @media(max-width:900px) { body{padding:16px} .views{grid-template-columns:1fr} .metrics{grid-template-columns:repeat(2,1fr)} }
+  </style>
+</head>
+<body>
+  <div class="label">Priced successor candidate · Local research laboratory</div>
+  <h1>phi-hydro-staged-candidate-1: fluid limit laboratory</h1>
+  <p>Every preparation below runs the momentum-conserving lattice-gas successor law
+  in the compiled worker. One step advances one stage (four physical microticks).
+  The chart tracks the same projected mode the sidecar's noiseless Chapman–Enskog
+  prediction was built for; the readouts compare a fitted decay rate against the
+  exact H1&prime; constant this preparation's (direction, polarization) cell probes.</p>
+  <div class="controls">
+    <label>Preparation<select id="preparation">
+      <option value="hydro-shear-wave-t2" selected>Shear wave (T2 cell)</option>
+      <option value="hydro-shear-wave-e">Shear wave (E cell)</option>
+      <option value="hydro-sound-wave">Sound wave</option>
+      <option value="hydro-taylor-green">Taylor–Green vortex</option>
+      <option value="hydro-shear-layer">Shear layer</option>
+      <option value="hydro-vortex-pair">Vortex pair</option>
+    </select></label>
+    <label>Lattice width<select id="size"><option value="16" selected>16</option><option value="32">32</option></select></label>
+    <button id="reset">Reset preparation</button><button id="step">Step (one stage)</button><button id="run">Run</button>
+  </div>
+  <div id="status" role="status" aria-live="polite">Loading the compiled successor…</div>
+  <div class="metrics">
+    <div class="metric">Stage<strong id="stage">—</strong><small>4 microticks / stage</small></div>
+    <div class="metric">Fitted decay rate γ<sub>fit</sub><strong id="gammaFit">—</strong><small>last ≤32 stages</small></div>
+    <div class="metric">Implied ν<sub>fit</sub> = γ<sub>fit</sub>/|k|²<strong id="nuFit">—</strong><small id="probedLabel">vs constant probed</small></div>
+    <div class="metric"><span id="probedName">Constant probed</span><strong id="probedValue">—</strong></div>
+    <div class="metric">ν<sub>T2</sub><strong id="nuT2">—</strong></div>
+    <div class="metric">ν<sub>E</sub><strong id="nuE">—</strong></div>
+    <div class="metric">c<sub>s</sub>²<strong id="csq">—</strong></div>
+    <div class="metric">g<strong id="gconst">—</strong></div>
+    <div class="metric">Mass (exact)<strong id="mass">—</strong><small>must stay constant</small></div>
+    <div class="metric">Total momentum (exact)<strong id="momentum">—</strong><small>(p<sub>x</sub>, p<sub>y</sub>, p<sub>z</sub>), must stay constant</small></div>
+  </div>
+  <div class="views">
+    <figure><figcaption>Density · z-mid slab</figcaption><canvas id="density" aria-label="Block-averaged density on the z-mid slab"></canvas></figure>
+    <figure><figcaption>Momentum · z-mid slab</figcaption><canvas id="momentum-canvas" aria-label="Block-averaged momentum arrows on the z-mid slab"></canvas></figure>
+    <figure><figcaption>Projected mode vs stage</figcaption><canvas id="chart" aria-label="Projected-mode amplitude versus stage, measured against the H1-prime prediction"></canvas></figure>
+  </div>
+  <p class="legend">Brighter density cells hold more field tokens. Momentum arrows show the block-summed (p<sub>x</sub>, p<sub>y</sub>) at each z-mid cell. The chart overlays the measured |projected mode| (dots) against the noiseless sidecar prediction (line).</p>
+  <blockquote class="caption" id="caption">Discrete lattice-gas fluid on `phi-hydro-staged-candidate-1`, a priced successor to the selected Φ-v2 (adopted, not derived). Its fluid limit — sound speed, Galilean factor and two cubic shear viscosities at the registered density — is derived by exact Chapman–Enskog (H1′) and measured in the registered campaign (H2′). It is anisotropic momentum hydrodynamics, not Navier–Stokes: the adopted symmetry group forces a cubic viscosity tensor. One realization: statistical noise scales as 1/√N per block.</blockquote>
+  <details><summary>Provenance</summary><pre id="provenance">Waiting for one authoritative owner.</pre></details>
+  <script type="module" src="hydro-lab.js"></script>
+</body>
+</html>
