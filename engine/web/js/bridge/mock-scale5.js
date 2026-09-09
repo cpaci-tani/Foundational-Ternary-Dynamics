@@ -32,6 +32,7 @@ import {
 import { runCosmicScenario } from './cosmic-scenarios/index.js';
 import { computeCosmicForces } from './cosmic-physics.js';
 import { postCosmicUpdates } from './cosmic-postupdates.js';
+import { isGasType } from './cosmic-sph.js';
 
 // ── Friedmann / Hubble integration (audit P0-9, 2026-05-27) ─────────────
 // Flat ΛCDM background: H(a)² = H0²·(Ω_M·a⁻³ + Ω_Λ), with a=1 "today".
@@ -96,6 +97,10 @@ export class CosmicMockBridge {
         this._enableSubgrid = false;
         this._stellarEvolution = false;
         this._hawkingEvaporation = false;
+        // Scale 5 physics-term toggles (mirrors Scale 0's per-term dashboard
+        // pattern). sph_monaghan gates the Monaghan SPH gas solver
+        // (cosmic-sph.js); default off so existing scenarios are unaffected.
+        this._toggles = { sph_monaghan: false };
     }
 
     static TYPE = {
@@ -113,6 +118,7 @@ export class CosmicMockBridge {
             temperature: temp,
             internal_energy: Math.max(temp * 0.001, 0.01),
             density: 0, pressure: 0,
+            h: Math.cbrt(mass) * 0.2, sound: 0, du: 0, // Monaghan SPH state (cosmic-sph.js)
             luminosity: type === 2 ? Math.pow(mass, 3.5) : 0,
             radius: Math.cbrt(mass) * 0.1,
             tidal_stretch: 0, // 0 = normal, grows toward 1.0 as star is disrupted
@@ -415,19 +421,25 @@ export class CosmicMockBridge {
     }
 
     getDiagnostics() {
-        let totalMass = 0, totalKE = 0;
+        let totalMass = 0, totalKE = 0, totalThermal = 0;
         const counts = new Array(9).fill(0);
         let dmMass = 0;
+        const TYPE = CosmicMockBridge.TYPE;
         for (const b of this._bodies) {
             totalMass += b.mass;
             totalKE += 0.5 * b.mass * (b.vx * b.vx + b.vy * b.vy + b.vz * b.vz);
             const idx = b.type + 3;
             if (idx >= 0 && idx < 9) counts[idx]++;
-            if (b.type === CosmicMockBridge.TYPE.DARK_MATTER) dmMass += b.mass;
+            if (b.type === TYPE.DARK_MATTER) dmMass += b.mass;
+            // Total thermal (internal) energy of gas bodies — the SPH
+            // energy-equation counterpart to totalKE above (audit: Task 4,
+            // sph_monaghan). Zero when no gas bodies are present regardless
+            // of the toggle, so this is a harmless addition on old scenarios.
+            if (isGasType(b.type, TYPE)) totalThermal += b.mass * (b.internal_energy || 0);
         }
         return {
             tick: this._tick, bodyCount: this._bodies.length,
-            countsByType: counts, totalMass, totalKE, dmMass,
+            countsByType: counts, totalMass, totalKE, dmMass, totalThermal,
             // Live ΛCDM background (audit P0-9): _H and _a are integrated
             // each tick by _stepFriedmann, no longer the static H0/1.0.
             // hubbleParameter is the present (visual-clock) Hubble rate;
@@ -435,13 +447,31 @@ export class CosmicMockBridge {
             hubbleParameter: this._H, scaleFactor: this._a,
             redshift: this._z, hubble0: this._H0,
             omegaMatter: this._omegaM, omegaLambda: this._omegaL,
-            customTelemetry: this._customTelemetry
+            customTelemetry: this._customTelemetry,
+            toggles: { ...this._toggles },
+            // Set by gas-laboratory scenarios (Task 5); absent otherwise.
+            customProfiles: this._customProfiles ?? null,
         };
     }
 
     setDt(dt) { this._dt = dt; }
     getDt() { return this._dt; }
     clear() { this._bodies = []; this._tick = 0; this._nextId = 0; }
+
+    // ================================================================
+    // PHYSICS-TERM TOGGLES (mirrors the Scale 0 dashboard pattern)
+    // ================================================================
+
+    /** @param {string} key @param {boolean} value */
+    setToggle(key, value) {
+        if (!(key in this._toggles)) throw new Error('unknown toggle ' + key);
+        this._toggles[key] = !!value;
+    }
+
+    /** @param {string} key @returns {boolean} */
+    getToggle(key) {
+        return this._toggles[key];
+    }
 
     _rng(seed) {
         let s = seed;

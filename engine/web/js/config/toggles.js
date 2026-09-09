@@ -218,6 +218,16 @@ export const SCALE0_TOGGLES = [
 // in SCALE0_TOGGLES would cause the whitelist-reset to clobber them on every
 // load. See scenario-loader.js and engine/include/ftd/scenarios.h.
 
+// Scale 5 (Cosmic) — physics-term toggles for the JS-only CosmicMockBridge
+// (bridge/mock-scale5.js). Mirrors the SCALE0_TOGGLES [key, default, domId]
+// shape; wired by scales/scale5/ui/toolbar/component.js against
+// bridge.setToggle()/getToggle(). sph_monaghan gates the Monaghan (1992)
+// SPH gas solver (bridge/cosmic-sph.js) — default off so every existing
+// cosmic scenario is bit-identical until a gas laboratory opts in.
+export const SCALE5_TOGGLES = [
+    ['sph_monaghan', false, 't-sph-monaghan'],
+];
+
 // ── Advanced / research toggles surfaced in the Physics card ─────────────
 // A CURATED subset of the engine terms omitted from SCALE0_TOGGLES above: only
 // the ones that are functional (a real native CUDA + CPU branch) and physically

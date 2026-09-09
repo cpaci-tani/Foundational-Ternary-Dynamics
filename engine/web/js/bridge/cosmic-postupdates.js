@@ -328,6 +328,25 @@ export function postCosmicUpdates(TYPE) {
         }
     }
 
+    // --- Monaghan SPH energy equation (toggle-gated; Task 4, sph_monaghan) ---
+    // computeSphForces (cosmic-sph.js) accumulates a du/dt into b.du during
+    // this tick's force pass; integrate it into internal_energy here by
+    // forward Euler and refresh the display temperature from it. This runs
+    // once per tick, after the kick-drift-kick completes. Across ticks it
+    // interleaves with the ad-hoc cooling block in cosmic-physics.js's
+    // sub-grid section (still active whenever _enableSubgrid is on): that
+    // block's next _computeForces() call reads whatever internal_energy
+    // this block leaves behind, so the two apply in sequence tick-over-tick
+    // rather than colliding within a single tick.
+    if (this._toggles?.sph_monaghan) {
+        for (const b of this._bodies) {
+            if (!isGas(b.type)) continue;
+            b.internal_energy = Math.max(1e-6, b.internal_energy + b.du * this._dt);
+            b.temperature = Math.max(100, b.internal_energy * 1000);
+            b.du = 0;
+        }
+    }
+
     // --- Custom telemetry + speed limit + cleanup ---
     this._updateTelemetry();
     enforceCosmicSpeedLimit.call(this);

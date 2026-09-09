@@ -24,6 +24,7 @@ export function getScale5ScenarioToolbarTemplate() {
                 <option value="blackhole">Black Hole</option>
                 <option value="merger">Merger</option>
             </select>
+            <label class="tb-toggle" title="[IMPOSED effective gas dynamics] Monaghan SPH for gas bodies (default off)"><input type="checkbox" id="t-sph-monaghan"> SPH gas</label>
         </div>
     `;
 }

@@ -26,6 +26,7 @@ import { CosmicRenderer } from '../../cosmic-renderer.js';
 import { CosmicMockBridge } from '../../bridge/mock-scale5.js';
 import { createStatusBarCache, hideScale0Overlays, createTickAccumulator, saveScaleCameraState, restoreScaleCameraState } from '../scale-utils.js';
 import { telemetryHub } from '../../telemetry-hub.js';
+import { syncScale5Toggles } from './ui/toolbar/component.js';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -86,6 +87,12 @@ class Scale5LifecycleController extends BaseLifecycleController {
         // Create cosmic bridge (JS-only mock for now)
         this.bridge = new CosmicMockBridge();
         this.bridge.setupScenario(scenarioName);
+
+        // Reflect this bridge's toggle state (e.g. a gas laboratory setting
+        // `this._toggles.sph_monaghan = true` in its scenario setup) onto
+        // the toolbar checkbox, and make the checkbox drive THIS bridge
+        // going forward (Task 4, sph_monaghan; see toolbar/component.js).
+        syncScale5Toggles(this.bridge);
 
         // Inform the inspector about the cosmic bridge so it can route
         // queries to the right backend (audit P1-1 fix, 2026-05-27).
@@ -178,6 +185,7 @@ class Scale5LifecycleController extends BaseLifecycleController {
             this.renderer = null;
         }
         this.bridge = null;
+        syncScale5Toggles(null); // stop the toolbar checkbox driving a destroyed bridge
         // Restore lattice particles visibility for other scales
         if (ctx && ctx.viewport && ctx.viewport.particles) {
             ctx.viewport.particles.visible = true;
