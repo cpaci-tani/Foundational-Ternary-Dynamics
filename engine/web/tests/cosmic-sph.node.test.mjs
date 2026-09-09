@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 
 import { SPH, kernelW, kernelGradMag, isGasType, computeSphForces } from '../js/bridge/cosmic-sph.js';
 import { computeCosmicForces } from '../js/bridge/cosmic-physics.js';
-import { referenceStep } from './cosmic-sph-reference.mjs';
+import { CosmicMockBridge } from '../js/bridge/mock-scale5.js';
+import { referenceStep, W, dW, GAMMA, ALPHA, BETA } from './cosmic-sph-reference.mjs';
 
 // Minimal TYPE enum mirroring CosmicMockBridge.TYPE (mock-scale5.js) — kept
 // local so this test does not need to construct a full CosmicMockBridge.
@@ -75,6 +76,50 @@ function assertRelClose(actual, expected, label) {
         diff < 1e-12 || diff / scale < 1e-9,
         `${label}: actual=${actual} expected=${expected} diff=${diff}`,
     );
+}
+
+/**
+ * Pre-fix reference: identical to `referenceStep` except the force loop's
+ * `hAvg` uses the ENTRY-tick h (bi.h/bj.h, never mutated by this function)
+ * instead of the density-pass-updated `hNew`. Used only to prove that the
+ * h-timing fix in cosmic-sph.js actually changes the force output relative
+ * to the old (pre-fix) one-tick-lagged behavior — see the h-timing
+ * regression test below. Density guards are kept identical to referenceStep
+ * so this isolates ONLY the h-timing difference.
+ */
+function referenceStepEntryH(bodies) {
+    const n = bodies.length, rho = new Float64Array(n), P = new Float64Array(n), c = new Float64Array(n);
+    for (let i = 0; i < n; i++) {
+        const bi = bodies[i]; let r = bi.mass * W(0, bi.h);
+        for (let j = 0; j < n; j++) if (j !== i) { const bj = bodies[j]; const d = Math.hypot(bi.x - bj.x, bi.y - bj.y, bi.z - bj.z); if (d < 2 * Math.max(bi.h, bj.h)) r += bj.mass * W(d, bi.h); }
+        rho[i] = r; P[i] = (GAMMA - 1) * r * bi.u; c[i] = r > 0 ? Math.sqrt(GAMMA * P[i] / r) : 0;
+    }
+    const ax = new Float64Array(n), ay = new Float64Array(n), az = new Float64Array(n);
+    for (let i = 0; i < n; i++) {
+        if (rho[i] <= 0) continue;
+        for (let j = 0; j < n; j++) {
+            if (j === i) continue; const bi = bodies[i], bj = bodies[j];
+            const rx = bi.x - bj.x, ry = bi.y - bj.y, rz = bi.z - bj.z, r2 = rx * rx + ry * ry + rz * rz, r = Math.sqrt(r2);
+            if (r >= 2 * Math.max(bi.h, bj.h) || r < 1e-10) continue;
+            const hAvg = 0.5 * (bi.h + bj.h); // ENTRY h -- the pre-fix (buggy) behavior
+            const g = dW(r, hAvg) / r, gx = g * rx, gy = g * ry, gz = g * rz;
+            const vx = bi.vx - bj.vx, vy = bi.vy - bj.vy, vz = bi.vz - bj.vz, vdotr = vx * rx + vy * ry + vz * rz;
+            let pi = 0;
+            if (vdotr < 0) { const mu = hAvg * vdotr / (r2 + 0.01 * hAvg * hAvg); pi = (-ALPHA * 0.5 * (c[i] + c[j]) * mu + BETA * mu * mu) / (0.5 * (rho[i] + rho[j])); }
+            const pressTerm = rho[j] > 0 ? P[i] / (rho[i] * rho[i]) + P[j] / (rho[j] * rho[j]) : 0;
+            const term = pressTerm + pi;
+            ax[i] -= bj.mass * term * gx; ay[i] -= bj.mass * term * gy; az[i] -= bj.mass * term * gz;
+        }
+    }
+    return { ax, ay, az };
+}
+
+/** Every own-enumerable numeric field on `obj` is a finite number (no NaN/Infinity). */
+function assertAllFinite(obj, label) {
+    for (const [key, value] of Object.entries(obj)) {
+        if (typeof value !== 'number') continue;
+        assert.ok(Number.isFinite(value), `${label}.${key} = ${value} is not finite`);
+    }
 }
 
 // ── Kernel / helper sanity ──────────────────────────────────────────────
@@ -182,4 +227,176 @@ test('regression guard: sph_monaghan is a no-op on a non-gas fixture (toggle off
 test('regression guard: sph_monaghan absent from _toggles does not throw (optional-chaining fallback)', () => {
     const bridge = { _bodies: buildStarFixture(5), _softening: 5, _enableSubgrid: false };
     assert.doesNotThrow(() => computeCosmicForces.call(bridge, TYPE));
+});
+
+// ── h-timing: forces must read the density-updated h, not the entry h ────
+
+test('h-timing regression: forces use the density-updated h (matches cosmic_sph.cpp tick order)', () => {
+    const bodies = buildGasFixture(50);
+    const bridge = { _bodies: bodies.map((b) => ({ ...b })), _toggles: { sph_monaghan: true }, _softening: 1 };
+    computeSphForces(bridge, TYPE);
+
+    const refBodies = toReferenceBodies(bodies);
+    const refNew = referenceStep(refBodies);        // post-density h (current, correct)
+    const refOld = referenceStepEntryH(refBodies);   // entry-tick h (pre-fix, wrong)
+
+    // h after the pass must equal ETA*cbrt(m/rho) -- confirms the adaptive
+    // smoothing length was actually written back during the density pass.
+    for (let i = 0; i < 50; i++) {
+        assertRelClose(bridge._bodies[i].h, refNew.hNew[i], `h[${i}]`);
+    }
+
+    // The module's accelerations must match the post-density-h reference...
+    let matchesNew = true;
+    let matchesOld = true;
+    for (let i = 0; i < 50; i++) {
+        const b = bridge._bodies[i];
+        const scaleNew = Math.max(Math.abs(refNew.ax[i]), Math.abs(refNew.ay[i]), Math.abs(refNew.az[i]), 1e-12);
+        if (Math.abs(b.ax - refNew.ax[i]) / scaleNew > 1e-9 ||
+            Math.abs(b.ay - refNew.ay[i]) / scaleNew > 1e-9 ||
+            Math.abs(b.az - refNew.az[i]) / scaleNew > 1e-9) matchesNew = false;
+
+        const scaleOld = Math.max(Math.abs(refOld.ax[i]), Math.abs(refOld.ay[i]), Math.abs(refOld.az[i]), 1e-12);
+        if (Math.abs(b.ax - refOld.ax[i]) / scaleOld > 1e-6 ||
+            Math.abs(b.ay - refOld.ay[i]) / scaleOld > 1e-6 ||
+            Math.abs(b.az - refOld.az[i]) / scaleOld > 1e-6) matchesOld = false;
+    }
+    assert.ok(matchesNew, 'module accelerations should match the density-updated-h (post-fix) reference');
+    // ...and must clearly diverge from the entry-h (pre-fix) reference -- this
+    // is what would fail if someone reverted the h-timing fix.
+    assert.ok(!matchesOld, 'module accelerations should diverge from the entry-h (pre-fix) reference');
+});
+
+// ── Zero-mass gas body: density-positivity guards must prevent NaN ───────
+
+/** A tight cluster of normal GAS bodies plus one zero-mass GAS body, all
+ * mutually within each other's SPH neighbour cutoff (addBody sets
+ * h = cbrt(mass)*0.2; the zero-mass body gets h = 0 from cbrt(0)). */
+function buildZeroMassGasCluster() {
+    const bridge = new CosmicMockBridge();
+    bridge.setToggle('sph_monaghan', true);
+    const T = CosmicMockBridge.TYPE;
+    bridge.addBody(T.GAS, 8, 0.00, 0.00, 0.00, 0, 0, 0, 500);
+    bridge.addBody(T.GAS, 8, 0.30, 0.00, 0.00, 0, 0, 0, 500);
+    bridge.addBody(T.GAS, 8, 0.00, 0.30, 0.00, 0, 0, 0, 500);
+    bridge.addBody(T.GAS, 8, 0.30, 0.30, 0.00, 0, 0, 0, 500);
+    bridge.addBody(T.GAS, 8, 0.15, 0.15, 0.30, 0, 0, 0, 500);
+    bridge.addBody(T.GAS, 0, 0.15, 0.15, 0.15, 0, 0, 0, 0); // zero-mass gas body
+    return bridge;
+}
+
+test('zero-mass gas body: computeSphForces leaves every body finite (density/pressure/sound/h/ax/ay/az/du)', () => {
+    const bridge = buildZeroMassGasCluster();
+    const T = CosmicMockBridge.TYPE;
+    const result = computeSphForces(bridge, T);
+    assert.equal(result.gasCount, 6);
+    assert.ok(result.pairs > 0, 'the cluster must produce neighbour pairs for this test to be meaningful');
+
+    for (let i = 0; i < bridge._bodies.length; i++) {
+        const b = bridge._bodies[i];
+        assertAllFinite(
+            { density: b.density, pressure: b.pressure, sound: b.sound, h: b.h, ax: b.ax, ay: b.ay, az: b.az, du: b.du },
+            `body[${i}] (mass=${b.mass})`,
+        );
+    }
+    // The zero-mass body itself: mass*kernelW(0,h=0) self-term is 0 and its
+    // own h stays 0 (rho<=0 skips the adaptive-h write) -- both finite, not NaN.
+    const zeroBody = bridge._bodies[5];
+    assert.equal(zeroBody.mass, 0);
+    assert.equal(zeroBody.h, 0);
+});
+
+test('zero-mass gas body: one full tick (force pass + cosmic-postupdates) leaves internal_energy finite and drops the zero-mass body', () => {
+    const bridge = buildZeroMassGasCluster();
+    bridge.setDt(0.01);
+    assert.equal(bridge._bodies.length, 6);
+
+    bridge.tick();
+
+    // The mass<=0.01 cleanup filter at the end of postCosmicUpdates removes
+    // the zero-mass body -- confirms the tick actually ran to completion
+    // rather than stalling on a NaN somewhere upstream.
+    assert.equal(bridge._bodies.length, 5, 'the zero-mass body should be filtered out after the tick');
+    for (const b of bridge._bodies) {
+        assert.ok(Number.isFinite(b.internal_energy), `internal_energy = ${b.internal_energy} is not finite`);
+        assert.ok(Number.isFinite(b.temperature), `temperature = ${b.temperature} is not finite`);
+        assert.ok(Number.isFinite(b.ax) && Number.isFinite(b.ay) && Number.isFinite(b.az), 'acceleration is not finite');
+    }
+});
+
+// ── Legacy ad-hoc gas repulsion is suppressed exactly when sph_monaghan is on ──
+
+/** Two GAS bodies 1 unit apart, well inside the legacy h_press = softening*2.5
+ * range at softening=5 (h_press=12.5), so the ad-hoc repulsion block in
+ * cosmic-physics.js would fire for this pair when the toggle is off. */
+function buildTwoGasBodies() {
+    const mk = (id, x) => ({
+        id, type: TYPE.GAS, mass: 2, x, y: 0, z: 0, vx: 0, vy: 0, vz: 0, ax: 0, ay: 0, az: 0,
+        internal_energy: 1, temperature: 500, density: 0, pressure: 0, sound: 0, du: 0, h: 2.0,
+    });
+    return [mk(0, 0), mk(1, 1)];
+}
+
+test('legacy-repulsion suppression: sph_monaghan off applies the ad-hoc gas repulsion (no SPH fields); on runs SPH instead (no legacy repulsion)', () => {
+    const softening = 5;
+
+    // Baseline: gravity only (no subgrid at all), to isolate the legacy
+    // repulsion's own contribution to ax below.
+    const bridgeGravOnly = { _bodies: buildTwoGasBodies(), _toggles: { sph_monaghan: false }, _softening: softening, _enableSubgrid: false };
+    computeCosmicForces.call(bridgeGravOnly, TYPE);
+
+    // Toggle OFF, subgrid ON: gravity + legacy ad-hoc gas repulsion.
+    const bridgeOff = { _bodies: buildTwoGasBodies(), _toggles: { sph_monaghan: false }, _softening: softening, _enableSubgrid: true };
+    computeCosmicForces.call(bridgeOff, TYPE);
+
+    // Toggle ON, subgrid ON: gravity + Monaghan SPH (legacy repulsion skipped).
+    const bridgeOn = { _bodies: buildTwoGasBodies(), _toggles: { sph_monaghan: true }, _softening: softening, _enableSubgrid: true };
+    computeCosmicForces.call(bridgeOn, TYPE);
+
+    // OFF path: no SPH fields written.
+    assert.equal(bridgeOff._bodies[0].density, 0, 'toggle off: SPH must not run, density stays 0');
+    assert.equal(bridgeOff._bodies[1].density, 0, 'toggle off: SPH must not run, density stays 0');
+
+    // OFF path: legacy repulsion contributes a nonzero push, repulsive along
+    // the pair axis (body0 at x=0 pushed toward -x, away from body1 at x=1).
+    const legacyAx0 = bridgeOff._bodies[0].ax - bridgeGravOnly._bodies[0].ax;
+    const legacyAx1 = bridgeOff._bodies[1].ax - bridgeGravOnly._bodies[1].ax;
+    assert.ok(legacyAx0 < 0, `legacy repulsion on body 0 should push it toward -x, got delta ax = ${legacyAx0}`);
+    assert.ok(legacyAx1 > 0, `legacy repulsion on body 1 should push it toward +x, got delta ax = ${legacyAx1}`);
+    assert.ok(Math.abs(legacyAx0) > 1e-12, 'legacy repulsion must be a genuinely nonzero contribution');
+
+    // ON path: SPH ran instead (density > 0, no legacy repulsion contribution).
+    assert.ok(bridgeOn._bodies[0].density > 0, 'toggle on: SPH must run, density > 0');
+    assert.ok(bridgeOn._bodies[1].density > 0, 'toggle on: SPH must run, density > 0');
+    assert.notEqual(bridgeOn._bodies[0].ax, bridgeOff._bodies[0].ax, 'toggle on vs off must produce different physics for this pair');
+});
+
+// ── CosmicMockBridge toggle + diagnostics API (mock-scale5.js) ───────────
+
+test('CosmicMockBridge.setToggle validates the key, getToggle reads it back, and getDiagnostics().toggles is a copy', () => {
+    const bridge = new CosmicMockBridge();
+    assert.throws(() => bridge.setToggle('not_a_real_toggle', true), /unknown toggle/);
+
+    assert.equal(bridge.getToggle('sph_monaghan'), false);
+    bridge.setToggle('sph_monaghan', true);
+    assert.equal(bridge.getToggle('sph_monaghan'), true);
+
+    const diag = bridge.getDiagnostics();
+    assert.deepEqual(diag.toggles, { sph_monaghan: true });
+    diag.toggles.sph_monaghan = false; // mutate the returned object
+    assert.equal(bridge.getToggle('sph_monaghan'), true, 'mutating the diagnostics.toggles copy must not affect the bridge');
+    assert.equal(bridge.getDiagnostics().toggles.sph_monaghan, true, 'a fresh diagnostics call must reflect the real state, not the earlier mutated copy');
+});
+
+test('CosmicMockBridge.getDiagnostics().totalThermal sums mass*internal_energy over GAS/NEBULA bodies only', () => {
+    const bridge = new CosmicMockBridge();
+    const T = CosmicMockBridge.TYPE;
+    bridge.addBody(T.GAS, 2, 0, 0, 0, 0, 0, 0, 1000);          // internal_energy = max(1000*0.001, 0.01) = 1.0
+    bridge.addBody(T.NEBULA, 3, 5, 5, 5, 0, 0, 0, 2000);       // internal_energy = 2.0
+    bridge.addBody(T.STAR, 10, -5, -5, -5, 0, 0, 0, 5800);     // not counted
+    bridge.addBody(T.DARK_MATTER, 100, 0, 0, 100, 0, 0, 0, 0); // not counted
+
+    const diag = bridge.getDiagnostics();
+    const expected = 2 * 1.0 + 3 * 2.0;
+    assert.ok(Math.abs(diag.totalThermal - expected) < 1e-12, `totalThermal=${diag.totalThermal} expected=${expected}`);
 });

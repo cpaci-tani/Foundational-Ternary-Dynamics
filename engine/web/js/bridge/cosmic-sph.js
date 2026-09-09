@@ -13,6 +13,13 @@
  * applied to internal_energy by cosmic-postupdates.js after the tick's
  * kick-drift-kick completes.
  *
+ * The smoothing length used in the force pass below is the value the
+ * density pass just wrote (h updated in place, `if (rho > 0)`), matching
+ * cosmic_sph.cpp: compute_sph_density() overwrites smoothing_length before
+ * compute_sph_forces() runs in the same tick (cosmic_engine.cpp:394-395).
+ * Only the neighbour-list membership test still uses the entry-tick h,
+ * matching find_sph_neighbors() running before the density pass.
+ *
  * Gated behind the `sph_monaghan` toggle (default off, see toggles.js /
  * mock-scale5.js). computeCosmicForces() in cosmic-physics.js calls
  * computeSphForces() after the gravity pass only when the toggle is on,
@@ -67,20 +74,34 @@ export function isGasType(type, TYPE) {
 /**
  * Run one Monaghan SPH gas pass against `bridge._bodies`.
  *
- * Order (matches the independent reference exactly, see module header):
+ * Order (matches CosmicEngine::compute_sph_density / compute_sph_forces
+ * tick order in cosmic_sph.cpp, and the independent reference):
  *   1. Collect gas bodies (GAS + NEBULA), init `h` for any that lack it.
- *   2. Build the neighbour list once (O(N^2), cutoff 2*max(h_i, h_j)),
- *      reused for both density and forces.
+ *   2. Build the neighbour list once (O(N^2), cutoff 2*max(h_i, h_j)) using
+ *      the smoothing length AS OF ENTRY (the "old" h) — matches
+ *      find_sph_neighbors(), which runs before the density pass. Reused
+ *      for both density and forces below.
  *   3. Density (self-term included) -> pressure (ideal gas EOS) -> sound
- *      speed, all evaluated with the smoothing length AS OF ENTRY (the
- *      "old" h) — mirrors cosmic-sph-reference.mjs, which computes forces
- *      before ever consulting the adaptive h it derives.
- *   4. Pressure + Monaghan-Gingold artificial-viscosity accelerations,
- *      and the du/dt energy exchange, accumulated on BOTH bodies of each
- *      pair (Newton-3) using that same old h.
- *   5. Adaptive smoothing length h = ETA * cbrt(m/rho) is written back
- *      AFTER the force/energy pass, so it takes effect starting next
- *      tick's neighbour search/density pass, not this one.
+ *      speed, evaluated with the entry-tick h (each body's own density
+ *      only ever reads its OWN h — kernelW(d, bi.h) — never a neighbour's,
+ *      so a single left-to-right pass is safe regardless of iteration
+ *      order). Immediately after, when rho > 0, the adaptive smoothing
+ *      length h = ETA * cbrt(m/rho) is written back to the body IN PLACE
+ *      — matches cosmic_sph.cpp:99-102, which updates smoothing_length
+ *      before compute_sph_forces ever runs this tick.
+ *   4. Pressure + Monaghan-Gingold artificial-viscosity accelerations, and
+ *      the du/dt energy exchange, accumulated on BOTH bodies of each pair
+ *      (Newton-3), reading the smoothing length step 3 just updated — the
+ *      C++ force pass reads bodies_[i].smoothing_length AFTER
+ *      compute_sph_density has already overwritten it this same tick, so
+ *      this port now matches that tick order (a correction from an
+ *      earlier revision that lagged h by one tick). Density guards mirror
+ *      cosmic_sph.cpp:115 (rho_i <= 0 -> body i receives nothing) and :134
+ *      (the pressure term is added only when rho_j > 0); the viscosity
+ *      term is additionally zeroed when the pair's rho_avg <= 0
+ *      (defensive — only reachable when both sides are already
+ *      zero-density, so it changes nothing that wasn't already excluded
+ *      by the per-side guards below).
  *
  * Mutates b.density, b.pressure, b.sound, b.h, and adds onto b.ax/ay/az
  * and b.du. Caller (cosmic-physics.js) must run the gravity pass first —
@@ -130,14 +151,16 @@ export function computeSphForces(bridge, TYPE) {
     }
     const nPairs = pairA.length;
 
-    // Density (self-term) -> pressure -> sound speed, using the OLD h.
+    // Density (self-term) -> pressure -> sound speed, using the entry-tick
+    // h; then (when rho > 0) the adaptive h = ETA*cbrt(m/rho) is written
+    // back to the body IMMEDIATELY, so the force pass below reads it.
+    // Safe in a single left-to-right pass: a body's own density only ever
+    // reads ITS OWN h (kernelW(d, bi.h)), never a neighbour's.
     const rho = new Float64Array(nGas);
     const P = new Float64Array(nGas);
     const c = new Float64Array(nGas);
-    const hOld = new Float64Array(nGas);
     for (let a = 0; a < nGas; a++) {
         const bi = bodies[gasIdx[a]];
-        hOld[a] = bi.h;
         let r = bi.mass * kernelW(0, bi.h);
         for (const bx of neighbors[a]) {
             const bj = bodies[gasIdx[bx]];
@@ -153,16 +176,28 @@ export function computeSphForces(bridge, TYPE) {
         bi.pressure = press;
         bi.sound = c[a];
         bi.du = 0;
+        // Adaptive smoothing length, written back in place right here (as
+        // in cosmic_sph.cpp's compute_sph_density) so the force pass below
+        // reads the post-density h, not the entry-tick one.
+        if (r > 0) bi.h = SPH.ETA * Math.cbrt(bi.mass / r);
     }
 
     // Pressure + Monaghan-Gingold artificial-viscosity forces, and the
-    // du/dt energy equation. Both use the cached OLD h (hOld), not b.h —
-    // the adaptive-h write below happens after this loop.
+    // du/dt energy equation. Both read the CURRENT b.h (post-density-
+    // update), matching cosmic_sph.cpp's compute_sph_forces reading the
+    // just-recomputed smoothing_length.
+    //
+    // Density guards mirror cosmic_sph.cpp:115/:134: pressTerm requires
+    // BOTH sides' density positive; each side's term (pressure+viscosity)
+    // is zeroed when THAT side's own density is non-positive, so a
+    // zero/negative-density body contributes and receives nothing (no
+    // 0/0 division), while the other side of the pair still gets a finite
+    // (possibly viscosity-only) contribution.
     for (let p = 0; p < nPairs; p++) {
         const a = pairA[p], bx = pairB[p], r = pairR[p];
         if (r < 1e-10) continue;
         const bi = bodies[gasIdx[a]], bj = bodies[gasIdx[bx]];
-        const hAvg = 0.5 * (hOld[a] + hOld[bx]);
+        const hAvg = 0.5 * (bi.h + bj.h);
         const rx = bi.x - bj.x, ry = bi.y - bj.y, rz = bi.z - bj.z;
         const r2 = rx * rx + ry * ry + rz * rz;
         const g = kernelGradMag(r, hAvg) / r;
@@ -170,28 +205,27 @@ export function computeSphForces(bridge, TYPE) {
 
         const vx = bi.vx - bj.vx, vy = bi.vy - bj.vy, vz = bi.vz - bj.vz;
         const vdotr = vx * rx + vy * ry + vz * rz;
+        const rhoA = rho[a], rhoB = rho[bx];
+        const rhoAvg = 0.5 * (rhoA + rhoB);
         let pi = 0;
-        if (vdotr < 0) {
+        if (vdotr < 0 && rhoAvg > 0) {
             const mu = hAvg * vdotr / (r2 + SPH.EPS2_FACTOR * hAvg * hAvg);
-            pi = (-SPH.ALPHA * 0.5 * (c[a] + c[bx]) * mu + SPH.BETA * mu * mu) / (0.5 * (rho[a] + rho[bx]));
+            pi = (-SPH.ALPHA * 0.5 * (c[a] + c[bx]) * mu + SPH.BETA * mu * mu) / rhoAvg;
         }
-        const term = P[a] / (rho[a] * rho[a]) + P[bx] / (rho[bx] * rho[bx]) + pi;
+        const pressTerm = (rhoA > 0 && rhoB > 0) ? P[a] / (rhoA * rhoA) + P[bx] / (rhoB * rhoB) : 0;
+        const termA = rhoA > 0 ? pressTerm + pi : 0;
+        const termB = rhoB > 0 ? pressTerm + pi : 0;
 
-        // Newton-3: force on `a` is -m_b * term * grad_W; force on `bx` is
-        // +m_a * term * grad_W (same gx/gy/gz, not recomputed with the
-        // separation flipped — see module header / reference derivation).
-        bi.ax -= bj.mass * term * gx; bi.ay -= bj.mass * term * gy; bi.az -= bj.mass * term * gz;
-        bj.ax += bi.mass * term * gx; bj.ay += bi.mass * term * gy; bj.az += bi.mass * term * gz;
+        // Newton-3: force on `a` uses termA; force on `bx` uses termB
+        // (same gx/gy/gz, not recomputed with the separation flipped —
+        // see module header / reference derivation). The two terms differ
+        // only when one side's density is non-positive.
+        bi.ax -= bj.mass * termA * gx; bi.ay -= bj.mass * termA * gy; bi.az -= bj.mass * termA * gz;
+        bj.ax += bi.mass * termB * gx; bj.ay += bi.mass * termB * gy; bj.az += bi.mass * termB * gz;
 
         const dot = vx * gx + vy * gy + vz * gz;
-        bi.du += 0.5 * bj.mass * term * dot;
-        bj.du += 0.5 * bi.mass * term * dot;
-    }
-
-    // Adaptive smoothing length, applied AFTER the force/energy pass so it
-    // takes effect starting next tick.
-    for (let a = 0; a < nGas; a++) {
-        if (rho[a] > 0) bodies[gasIdx[a]].h = SPH.ETA * Math.cbrt(bodies[gasIdx[a]].mass / rho[a]);
+        bi.du += 0.5 * bj.mass * termA * dot;
+        bj.du += 0.5 * bi.mass * termB * dot;
     }
 
     return { gasCount: nGas, pairs: nPairs };
