@@ -97,6 +97,7 @@
  * 's0-field-electric-dipole' |
  * 's0-field-magnetic-dipole' |
  * 's0-field-vortex-line' |
+ * 's0-field-shear-layer' |
  * 's0-seed-octahedron' |
  * 's0-seed-cuboctahedron' |
  * 's0-seed-stella-octangula' |
@@ -474,6 +475,10 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     's0-field-electric-dipole':  isolatedScale0Profile(),
     's0-field-magnetic-dipole':  isolatedScale0Profile(),
     's0-field-vortex-line':      isolatedScale0Profile(),
+    // Hydrodynamics-program contrast: isolate the wave map so the sheared
+    // layer propagates rather than diffusing (see the fluid laboratory
+    // at engine/strict/web/hydro/ for the diffusive contrast case).
+    's0-field-shear-layer':      isolatedScale0Profile('wave_propagation'),
 
     // Beta-decay — leptonic output of weak transmutation needs both
     // dual_substrate (chiral L/R substrates) and weak_transmutation on.
@@ -626,6 +631,13 @@ export const SCALE0_SCENARIO_BOUNDARY = {
     's0-field-light-lattice-wave': { mode: 0 },
     's0-field-sound-lattice-wave': { mode: 0 },
     's0-field-sound-collision': { mode: 0 },
+    // configure_free_wave_terms leaves the canonical Periodic boundary
+    // intact, and the seed itself is built to close smoothly on the wrap
+    // (see the C++ scenario comment) — without this entry
+    // applyAuxiliaryDefaults would clobber it back to dispersal (mode 2)
+    // and sponge the periodic edges. periodicAxis is orientation metadata
+    // only (Y, since the sheared profile and its propagation run along y).
+    's0-field-shear-layer': { mode: 0, periodicAxis: 1 },
     // configure_emergent_recoil_terms pins Periodic; without this entry
     // applyAuxiliaryDefaults would clobber it back to dispersal (mode 2).
     's0-field-thomson-unlocked-recoil': { mode: 0 },

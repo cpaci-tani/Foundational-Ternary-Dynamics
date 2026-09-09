@@ -99,6 +99,7 @@ const LAYMAN_NAMES = {
     's0-field-electric-dipole': 'An Electric Dipole',
     's0-field-magnetic-dipole': 'A Magnetic Dipole',
     's0-field-vortex-line': 'A Vortex Line',
+    's0-field-shear-layer': 'A Sheared Field That Will Not Diffuse',
     's0-seed-octahedron': 'An Octahedron Shell',
     's0-seed-cuboctahedron': 'A Cuboctahedron Shell',
     's0-seed-stella-octangula': 'A Star-Tetrahedron Shell',
@@ -752,6 +753,19 @@ export const SCALE0_SCENARIO_CATALOG = [
      * Discrepancy: No electromagnetic, fluid, or quantized-vortex identity is established.
      */
     makeScenario('1. Validated Native Dynamics', 's0-field-vortex-line', 'Azimuthal Inverse-Radius Vector Profile', ['field'], '[IMPOSED]'),
+    /*
+     * Scenario: s0-field-shear-layer (Periodic Double Sheared Flux Layer)
+     * Physical purpose: Contrasts wave propagation against fluid diffusion — a sheared
+     * J_x(y) layer, uniform in x, Gaussian in z, evolved under the isolated linear wave map.
+     * Parameters: Edges at y = N/4 and y = 3N/4; amplitude A = 0.03, edge width delta = 2.5
+     * sites, sigma_z = N/6.
+     * Expected behavior: The x,z-averaged profile follows the exact d'Alembert split
+     * 0.5[f(y - cT) + f(y + cT)] — the layer propagates, it does not diffuse.
+     * Discrepancy: The Scale 0 field obeys a wave equation with div J = s, not a fluid
+     * equation; the lattice-gas fluid, with its derived anisotropic momentum hydrodynamics,
+     * lives in the strict laboratory (engine/strict/web/hydro/).
+     */
+    makeScenario('1. Validated Native Dynamics', 's0-field-shear-layer', 'Sheared Flux Layer — Propagates, Does Not Diffuse', ['field', 'wave', 'contrast'], '[EMERGENT] within the frozen linear wave map'),
     /*
      * Scenario: s0-seed-octahedron (Octahedron (6 face-neighbors))
      * Physical purpose: Seeds an octahedral arrangement of 6 face-neighboring charges.

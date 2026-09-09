@@ -302,6 +302,13 @@ export const SCALE0_SCENARIO_VALIDATION = Object.freeze({
         target: 'scenario_behavior',
         assertion: 'Every non-axis vector is exactly tangential and r times its magnitude is constant on all z slices, with all production terms off.',
     }),
+    's0-field-shear-layer': Object.freeze({
+        level: 'behavioral',
+        qualification: 'WAVE-PROPAGATED SHEAR LAYER — a contrast to fluid diffusion, not a fluid',
+        test: 'engine/tests/test_scenario_behavior.cpp',
+        target: 'scenario_behavior',
+        assertion: 'The x,z-averaged J_x profile after T ticks matches the d\'Alembert split 0.5[f(y - cT) + f(y + cT)] within 8 percent RMS and its edges move by at least 0.7 cT.',
+    }),
     'flux-dipole': Object.freeze({
         level: 'behavioral',
         qualification: 'ANTISYMMETRIC NATIVE WAVE PAIR — odd-parity Gaussian vector blobs, not an electromagnetic dipole',

@@ -54,6 +54,7 @@ const NEWLY_PORTED_SCENARIOS = [
     ['s0-field-uniform-b',    'newly ported',  's0-field'],
     ['s0-field-electric-dipole', 'newly ported', 's0-field'],
     ['s0-field-vortex-line',  'newly ported',  's0-field'],
+    ['s0-field-shear-layer',  'newly ported',  's0-field'],
     // s0-vacuum-* + s0-seed-* — sample spans all sub-categories.
     // (Audit-3 + Audit-4 2026-04-28: many seed mirrors removed; replaced
     //  with their s0-vacuum-* canonical counterparts.)

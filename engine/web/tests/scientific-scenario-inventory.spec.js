@@ -57,7 +57,7 @@ test('the frozen live inventory remains synchronized with the audit baseline', (
     expectUnique(scale4Ids, 'Scale 4');
     expectUnique(scale5Ids, 'Scale 5');
 
-    expect(scale0Ids).toHaveLength(142);
+    expect(scale0Ids).toHaveLength(143);
     // Node sees the one-row pre-WASM bootstrap. The authoritative native
     // registry hydrates the full particle-scale program in the browser.
     expect(scale1Ids).toHaveLength(1);
@@ -82,7 +82,7 @@ test('the frozen live inventory remains synchronized with the audit baseline', (
         + 1; // Scale 6 structural exhibit, not a physics scenario.
     // Includes the Scale-1 batteries, the Scale-0 membrane/resonant-cell
     // additions, and Scale 2's validation and nuclear-reaction laboratories.
-    expect(totalPresentationEntries).toBe(397);
+    expect(totalPresentationEntries).toBe(398);
 });
 
 test('the manifest schema contains every pinned scientific-contract field', () => {

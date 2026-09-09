@@ -252,6 +252,16 @@ export const SCALE0_SCENARIO_VISUAL_PROFILES = {
         fluxThreshold: 0.0005,
         fluxOpacity: 0.85,
     },
+    's0-field-shear-layer': {
+        // Wave-family presentation, matching the other s0-field-*-wave
+        // entries: reveal J and lead with the flux-slice overlay so the
+        // propagating (not diffusing) sheared profile is visible.
+        fluxVolume: true,
+        fluxSlice: true,
+        fluxPointScale: 2.6,
+        fluxThreshold: 0.0005,
+        fluxOpacity: 0.85,
+    },
     's0-field-thomson-scattering': {
         fluxVolume: true,
         fluxSlice: true,
