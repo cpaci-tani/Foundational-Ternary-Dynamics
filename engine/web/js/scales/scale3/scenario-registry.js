@@ -199,7 +199,7 @@ const experiments = [
                 Object.freeze({ tick: 300, label: 'impose flow, thermostat off, measure' }),
             ]),
         }),
-        liquid: Object.freeze({ kind: 'channel', U: 0.6, axis: 'x', gradient: 'y', h: 21,
+        liquid: Object.freeze({ kind: 'channel', U: 0.6, axis: 'x', gradient: 'y', h: 21, wallZ: 18,
             window: Object.freeze({ start: 300, end: 900 }) }),
         expected: { atomCount: 180, bondCount: 96, componentCount: 84, dynamic: true },
         evidence: '[IMPOSED effective classical dynamics; coefficients in engine units] Water confined between locked-argon walls with an imposed parabolic flow; the first-mode decay rate is a classical-liquid momentum-diffusivity estimator, not a substrate transport derivation.',

@@ -175,10 +175,13 @@ export class LiquidTransportTracker {
         const { tick } = frame; const L = this.L;
         if (tick < L.window.start || tick > L.window.end) { this.summaryCache.status = tick < L.window.start ? 'thermalizing' : 'window closed'; return; }
         const mol = moleculeCentroids(frame.positions, frame.atomicNums, frame.bonds, frame.count, frame.bondCount);
-        const cen = mol.centroids, vel = mol.velocitiesOf(frame.velocities);
+        const wallZ = L.wallZ, keep = mol.molecules.reduce((ks, comp, k) => { if (!Number.isFinite(wallZ) || comp.every((a) => frame.atomicNums[a] !== wallZ)) ks.push(k); return ks; }, []);
+        const allCen = mol.centroids, allVel = mol.velocitiesOf(frame.velocities), m = keep.length;
+        const cen = new Float64Array(3 * m), vel = new Float64Array(3 * m);
+        keep.forEach((k, i) => { for (let c = 0; c < 3; c++) { cen[3 * i + c] = allCen[3 * k + c]; vel[3 * i + c] = allVel[3 * k + c]; } });
         const t = (tick - L.window.start) * this.dt;
         const g = { x: 0, y: 1, z: 2 }[L.gradient], f = { x: 0, y: 1, z: 2 }[L.axis];
-        const m = mol.molecules.length, coords = new Float64Array(m), values = new Float64Array(m);
+        const coords = new Float64Array(m), values = new Float64Array(m);
         for (let k = 0; k < m; k++) { coords[k] = cen[3 * k + g]; values[k] = vel[3 * k + f]; }
         const drift = [0, 0, 0]; for (let k = 0; k < m; k++) for (let c = 0; c < 3; c++) drift[c] += cen[3 * k + c] / m;
         if (!this.ref) this.ref = { cen: Float64Array.from(cen), drift };

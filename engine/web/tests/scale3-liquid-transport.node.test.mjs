@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
     velocityProfile, fitErfWidth, firstModeAmplitude, firstModeAmplitudeWithOffset, meanSquareDisplacement,
-    linearRegression, logDecayRate, angularVelocitySplit, moleculeCentroids,
+    linearRegression, logDecayRate, angularVelocitySplit, moleculeCentroids, LiquidTransportTracker,
 } from '../js/scales/scale3/liquid-transport.js';
 
 function erf(x) {  // Abramowitz–Stegun 7.1.26, |error| < 1.5e-7
@@ -97,4 +97,43 @@ test('molecule centroids group O with its two bonded H', () => {
     const r = moleculeCentroids(positions, atomicNums, bonds, 6, 4);
     assert.equal(r.molecules.length, 2);
     assert.ok(Math.abs(r.centroids[0] - (16 * 0 + 3.4 - 0.85) / 18) < 1e-6);
+});
+
+test('LiquidTransportTracker channel branch: wallZ drops locked argon wall atoms from the mode fit', () => {
+    // Synthetic channel frame: water-like O-H-H molecules on an exact
+    // cosine-plus-offset velocity profile, plus locked zero-velocity Z=18
+    // argon "wall" atoms sitting outside the fluid band (|y| > h/2) as
+    // their own single-atom components -- exactly the shape
+    // moleculeCentroids sees for mol-liquid-channel-decay (Finding 1).
+    const h = 20, c0 = 1.7, a1 = 0.42, nMol = 24;
+    const wallOffsets = [1, 3, 5, 7]; // -> |y| = h/2+1 .. h/2+7, all outside the band
+    const wallYs = [];
+    for (const off of wallOffsets) { wallYs.push(h / 2 + off, -(h / 2 + off)); }
+    const nWall = wallYs.length, count = 3 * nMol + nWall;
+    const positions = new Float32Array(3 * count), velocities = new Float32Array(3 * count);
+    const atomicNums = new Int32Array(count), bonds = new Int32Array(4 * nMol);
+    const offs = [[0, 0, 0], [0.76, 0, 0.59], [-0.76, 0, 0.59]], zs = [8, 1, 1];
+    for (let i = 0; i < nMol; i++) {
+        const y = -h / 2 + (i + 0.5) * h / nMol, vx = c0 + a1 * Math.cos(Math.PI * y / h), base = 3 * i;
+        for (let a = 0; a < 3; a++) {
+            const idx = base + a;
+            positions[3 * idx] = offs[a][0]; positions[3 * idx + 1] = y; positions[3 * idx + 2] = offs[a][2];
+            velocities[3 * idx] = vx; atomicNums[idx] = zs[a];
+        }
+        bonds[4 * i] = base; bonds[4 * i + 1] = base + 1; bonds[4 * i + 2] = base; bonds[4 * i + 3] = base + 2;
+    }
+    for (let w = 0; w < nWall; w++) {
+        const idx = 3 * nMol + w;
+        positions[3 * idx + 1] = wallYs[w]; atomicNums[idx] = 18; // velocities stay zero (locked)
+    }
+    const frame = { tick: 0, positions, velocities, atomicNums, bonds, count, bondCount: 2 * nMol };
+    const liquidWith = { kind: 'channel', gradient: 'y', axis: 'x', h, wallZ: 18, window: { start: 0, end: 0 } };
+    const liquidWithout = { kind: 'channel', gradient: 'y', axis: 'x', h, window: { start: 0, end: 0 } };
+
+    const withWall = new LiquidTransportTracker(liquidWith, 1); withWall.sample(frame);
+    const noFilter = new LiquidTransportTracker(liquidWithout, 1); noFilter.sample(frame);
+
+    assert.ok(Math.abs(withWall.samples[0].a - a1) < 1e-6, `filtered a ${withWall.samples[0].a} vs true a1 ${a1}`);
+    assert.ok(Math.abs(noFilter.samples[0].a - a1) > 0.01 * Math.abs(a1),
+        `unfiltered a ${noFilter.samples[0].a} should differ from a1 ${a1} by more than 1%`);
 });
