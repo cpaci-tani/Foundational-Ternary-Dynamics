@@ -405,6 +405,178 @@ def test_summarize_rejects_forged_backend(tmp_path, monkeypatch):
         C.summarize_campaign(tmp_path)
 
 
+# --- lock amendment (task-12: resume machinery changes campaign.py's own hash) -----------
+
+
+def test_validate_lock_accepts_a_declared_amendment_and_rejects_a_further_unrelated_change(tmp_path, monkeypatch):
+    """`_record_amendment`/`validate_lock`'s amendment bridge (task-12-brief.md): a declared
+    amendment lets ONE authorized hash transition through, and reports it
+    (`amendments_verified`), but a SECOND, unrecorded change to the same file is still
+    rejected -- the one declared amendment is not a blanket pass. Mutates a real but inert
+    instrument-source fragment (a CMake fragment never invoked by this test -- no rebuild is
+    triggered) in place, restored in `finally` regardless of outcome."""
+    if not _runner_built():
+        pytest.skip("optional hydro campaign runner (ftd_hydro_campaign) not built")
+    one = [c for c in C.cases(4) if c.arm == "shear" and max(abs(c.mx), abs(c.my), abs(c.mz)) == 1][:1]
+    monkeypatch.setattr(C, "cases", lambda L: one)
+    monkeypatch.setenv("FTD_HYDRO_ALLOW_MISSING_PREREG", "1")
+    C.prepare_campaign(tmp_path, L=4)
+    C.validate_lock(tmp_path)  # clean before any tampering
+
+    root = Path(C.__file__).resolve().parents[3]
+    target = "engine/strict/hydro/campaign/CMakeLists.txt"
+    target_path = root / target
+    original_bytes = target_path.read_bytes()
+    try:
+        target_path.write_bytes(original_bytes + b"\n# amendment-test appendix\n")
+        with pytest.raises(ValueError, match="instrument source changed"):
+            C.validate_lock(tmp_path)
+
+        lock = C._record_amendment(tmp_path, target, "unit-test amendment")
+        recorded = lock["amendments"][-1]
+        assert recorded["file"] == target
+        assert recorded["hash_after"] == C._sha(target_path.read_bytes())
+        assert recorded["hash_at_lock"] == json.loads((tmp_path / "lock.json").read_text())["instrument_sha256"][target]
+        result = C.validate_lock(tmp_path)
+        assert result["amendments_verified"] == [recorded]
+
+        # Idempotent: re-recording with the file unchanged (still at hash_after) appends
+        # nothing new -- a re-run resume attempt must not accumulate duplicate entries.
+        lock_again = C._record_amendment(tmp_path, target, "unit-test amendment (repeat)")
+        assert lock_again["amendments"] == lock["amendments"]
+
+        # A SECOND, unrecorded change to the SAME file must still be rejected.
+        target_path.write_bytes(original_bytes + b"\n# a further, unrecorded change\n")
+        with pytest.raises(ValueError, match="instrument source changed"):
+            C.validate_lock(tmp_path)
+
+        # And an unrelated (never-amended) instrument path is still fully protected too.
+        other = "engine/strict/hydro/hydro_sha256.h"
+        other_path = root / other
+        other_original = other_path.read_bytes()
+        try:
+            other_path.write_bytes(other_original + b"\n// unrecorded change to a different file\n")
+            with pytest.raises(ValueError, match="instrument source changed"):
+                C.validate_lock(tmp_path)
+        finally:
+            other_path.write_bytes(other_original)
+    finally:
+        target_path.write_bytes(original_bytes)
+
+
+# --- resume after an interruption (task-12) -----------------------------------------------
+
+
+def test_resume_campaign_keeps_complete_cases_discards_the_partial_and_reruns_the_rest(tmp_path, monkeypatch):
+    """task-12-brief.md's resume machinery, on a tiny synthetic 3-case fixture built from a
+    real completed run (real GPU instrument, small L/stages -- same gating as the
+    instrument smoke test). Case 0 is made complete-but-DELIBERATELY-WRONG (one moment
+    value corrupted) so its byte-identical survival in the final trace proves
+    `resume_campaign` preserves a complete block VERBATIM rather than silently recomputing
+    it (the brief's "no silent patching"). Case 1 is truncated mid-write with a garbage
+    trailing line, exactly like the real interrupted trace. Case 2 never started at all."""
+    if not _runner_built():
+        pytest.skip("optional hydro campaign runner (ftd_hydro_campaign) not built")
+    three = [c for c in C.cases(8) if c.arm == "shear" and max(abs(c.mx), abs(c.my), abs(c.mz)) == 1][:3]
+    assert len({c.seed for c in three}) == 3  # three genuinely distinct cases
+    monkeypatch.setattr(C, "cases", lambda L: three)
+    monkeypatch.setenv("FTD_HYDRO_ALLOW_MISSING_PREREG", "1")
+    monkeypatch.setattr(C, "horizon", lambda L, budget_seconds=C.HORIZON_BUDGET_SECONDS: 8)
+    C.prepare_campaign(tmp_path, L=8)
+    lock = json.loads((tmp_path / "lock.json").read_text())
+    stages = lock["registration"]["stages"]
+    assert stages == 8
+    C.run_campaign(tmp_path)  # a real, complete run to source case blocks from
+
+    complete_bytes = (tmp_path / "trace.jsonl").read_bytes()
+    header_bytes, header, per_case, undecodable = C._parse_trace_lines(C._split_lines(complete_bytes))
+    assert undecodable == 0
+    case_ids = [c.case_id for c in three]
+    for cid in case_ids:
+        assert len(per_case[cid]) == stages + 1
+    kept_id, partial_id, never_id = case_ids
+
+    # Corrupt stage 1 (not stage 0): summarize_campaign cross-checks stage 0 against the
+    # Python-side observer of the frozen preparation, so corrupting stage 0 would (rightly)
+    # be caught as a GPU/observer mismatch rather than surviving as "kept verbatim". Stage 1
+    # is only ever used for the rate fit, not for that ground-truth check, and mass/momentum
+    # are left untouched so the separate conservation check does not trip either.
+    corrupted_stage1 = json.loads(per_case[kept_id][1][1].decode("utf-8"))
+    corrupted_stage1["moments"][0][0] = -999999.0
+    corrupted_lines = [per_case[kept_id][0][1],
+                       json.dumps(corrupted_stage1, separators=(",", ":")).encode("utf-8")] + \
+        [raw for _, raw in per_case[kept_id][2:]]
+
+    half = stages // 2
+    partial_lines = [raw for _, raw in per_case[partial_id][:half]]
+    truncated_tail = per_case[partial_id][half][1][:20]  # cut mid-JSON-object, no closing brace
+
+    synthetic_lines = [header_bytes] + corrupted_lines + partial_lines
+    synthetic_bytes = b"\n".join(synthetic_lines) + b"\n" + truncated_tail  # no trailing '\n': a live cut
+
+    (tmp_path / "trace.jsonl").unlink()
+    (tmp_path / "trace.jsonl.part").write_bytes(synthetic_bytes)
+
+    execution = C.resume_campaign(tmp_path)
+    counts = execution["interruption"]["counts"]
+    assert counts == {"total_cases": 3, "kept_complete_cases": 1,
+                      "discarded_partial_case_ids": [partial_id], "resumed_cases": 2}
+    assert execution["interruption"]["part_undecodable_lines"] == 1
+    assert execution["physical_microticks"] == len(lock["manifest"]) * stages * C.STAGE_MICROTICKS
+
+    final_bytes = (tmp_path / "trace.jsonl").read_bytes()
+    final_lines = C._split_lines(final_bytes)
+    assert len(final_lines) == 1 + 3 * (stages + 1)  # header + (stages+1) records * 3 cases
+
+    _, _, final_per_case, final_undecodable = C._parse_trace_lines(final_lines)
+    assert final_undecodable == 0
+    for cid in case_ids:
+        assert len(final_per_case[cid]) == stages + 1
+
+    # kept case's corruption survived verbatim -- proof it was NOT recomputed.
+    kept_final = dict(final_per_case[kept_id])
+    assert json.loads(kept_final[1].decode("utf-8"))["moments"][0][0] == -999999.0
+
+    # resumed cases were genuinely recomputed and agree with the original (uncorrupted)
+    # real run -- the same deterministic preparation reproduces the same GPU result.
+    for cid in (partial_id, never_id):
+        original_by_stage = dict(per_case[cid])
+        final_by_stage = dict(final_per_case[cid])
+        for stage in range(stages + 1):
+            assert json.loads(final_by_stage[stage].decode("utf-8"))["moments"] == \
+                json.loads(original_by_stage[stage].decode("utf-8"))["moments"]
+
+    # summarize_campaign accepts the resumed campaign and reproduces byte-identically.
+    report = C.summarize_campaign(tmp_path)
+    assert report["execution"]["interruption"]["counts"]["resumed_cases"] == 2
+    report_again = C.summarize_campaign(tmp_path, write=False)
+    assert C._json(report) == C._json(report_again)
+
+
+def test_resume_campaign_refuses_when_trace_jsonl_already_exists(tmp_path, monkeypatch):
+    if not _runner_built():
+        pytest.skip("optional hydro campaign runner (ftd_hydro_campaign) not built")
+    one = [c for c in C.cases(8) if c.arm == "shear" and max(abs(c.mx), abs(c.my), abs(c.mz)) == 1][:1]
+    monkeypatch.setattr(C, "cases", lambda L: one)
+    monkeypatch.setenv("FTD_HYDRO_ALLOW_MISSING_PREREG", "1")
+    monkeypatch.setattr(C, "horizon", lambda L, budget_seconds=C.HORIZON_BUDGET_SECONDS: 8)
+    C.prepare_campaign(tmp_path, L=8)
+    C.run_campaign(tmp_path)
+    with pytest.raises(ValueError, match="nothing to resume"):
+        C.resume_campaign(tmp_path)
+
+
+def test_resume_campaign_refuses_when_part_trace_is_missing(tmp_path, monkeypatch):
+    if not _runner_built():
+        pytest.skip("optional hydro campaign runner (ftd_hydro_campaign) not built")
+    one = [c for c in C.cases(8) if c.arm == "shear" and max(abs(c.mx), abs(c.my), abs(c.mz)) == 1][:1]
+    monkeypatch.setattr(C, "cases", lambda L: one)
+    monkeypatch.setenv("FTD_HYDRO_ALLOW_MISSING_PREREG", "1")
+    C.prepare_campaign(tmp_path, L=8)
+    with pytest.raises(ValueError, match="nothing to resume from"):
+        C.resume_campaign(tmp_path)
+
+
 # --- instrument smoke test (Task 11's own end-to-end proof; Task 12 runs the real thing) --
 
 

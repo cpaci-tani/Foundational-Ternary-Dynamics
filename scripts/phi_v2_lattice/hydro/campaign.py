@@ -56,6 +56,7 @@ Design notes (this module's own derivations, not retyped from H1'):
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+from datetime import datetime, timezone
 from fractions import Fraction
 import hashlib
 import json
@@ -801,14 +802,68 @@ def prepare_campaign(directory, L: int) -> dict:
             "microticks": len(manifest) * stages * STAGE_MICROTICKS}
 
 
+def _resolve_amended_hash(lock: dict, relative_path: str, locked_hash: str) -> tuple[str, list[dict]]:
+    """Follow the `lock['amendments']` chain (if any) recorded for `relative_path`,
+    starting from `locked_hash` (the ORIGINAL `instrument_sha256` value recorded at
+    `prepare_campaign` time -- never overwritten by an amendment). Returns
+    `(expected_current_hash, chain_applied)`; `expected_current_hash == locked_hash` and
+    `chain_applied == []` when this path carries no amendment. Raises ValueError if an
+    amendment's own `hash_at_lock` does not match where the chain so far has arrived (a
+    malformed or out-of-order amendments list is treated as untrusted, not silently
+    accepted)."""
+    expected = locked_hash
+    chain = []
+    for amendment in lock.get("amendments", []):
+        if amendment.get("file") != relative_path:
+            continue
+        if amendment.get("hash_at_lock") != expected:
+            raise ValueError(f"amendment chain broken for {relative_path}")
+        expected = amendment["hash_after"]
+        chain.append(amendment)
+    return expected, chain
+
+
+def _record_amendment(directory: Path, relative_path: str, reason: str) -> dict:
+    """Bring `relative_path`'s locked hash forward to its CURRENT on-disk hash by
+    appending one `{file, hash_at_lock, hash_after, reason, timestamp}` entry to
+    `lock.json`'s `amendments` list (creating the list if absent), chaining from the
+    latest hash already recorded for this path (the original `instrument_sha256` value if
+    this is the path's first amendment). Rewrites `lock.json` byte-exact (LF only, no
+    Windows text-mode CRLF translation, matching the rest of this module's writes) and
+    returns the updated lock dict. A no-op (lock.json untouched, returned unchanged) if
+    the current hash already equals the latest recorded hash for this path -- so calling
+    this twice in a row (e.g. a re-run resume attempt) never appends a duplicate entry.
+    Does NOT touch `instrument_sha256` itself -- that dict remains the original
+    registration witness; `validate_lock`/`_resolve_amended_hash` bridge the gap."""
+    directory = Path(directory)
+    root = Path(__file__).resolve().parents[3]
+    lock = json.loads((directory / "lock.json").read_bytes())
+    if relative_path not in lock["instrument_sha256"]:
+        raise ValueError(f"{relative_path} is not a locked instrument source; cannot amend")
+    current = _hash_instrument_path(root, relative_path)
+    latest, _ = _resolve_amended_hash(lock, relative_path, lock["instrument_sha256"][relative_path])
+    if current == latest:
+        return lock
+    amendment = {"file": relative_path, "hash_at_lock": latest, "hash_after": current,
+                 "reason": reason, "timestamp": datetime.now(timezone.utc).isoformat()}
+    lock = dict(lock)
+    lock["amendments"] = list(lock.get("amendments", [])) + [amendment]
+    (directory / "lock.json").write_bytes((_json(lock) + "\n").encode("utf-8"))
+    return lock
+
+
 def validate_lock(directory) -> dict:
     directory = Path(directory)
     lock = json.loads((directory / "lock.json").read_text())
     root = Path(__file__).resolve().parents[3]
     if set(lock["instrument_sha256"]) != instrument_paths():
         raise ValueError("incomplete instrument source closure")
-    if any(_hash_instrument_path(root, p) != h for p, h in lock["instrument_sha256"].items()):
-        raise ValueError("instrument source changed after registration lock")
+    amendments_verified = []
+    for p, locked_hash in lock["instrument_sha256"].items():
+        expected, chain = _resolve_amended_hash(lock, p, locked_hash)
+        if _hash_instrument_path(root, p) != expected:
+            raise ValueError("instrument source changed after registration lock")
+        amendments_verified.extend(chain)
     runner = root / RUNNER
     if not runner.is_file():
         raise ValueError("CUDA hydro campaign runner missing")
@@ -833,6 +888,13 @@ def validate_lock(directory) -> dict:
                                    str(c["mz"]), "0"]))
     if (directory / "manifest.tsv").read_text(encoding="utf-8") != "\n".join(expected) + "\n":
         raise ValueError("executable manifest differs from lock")
+    if amendments_verified:
+        # Report the amendment(s) actually exercised to bridge a hash mismatch in THIS
+        # call, without mutating the on-disk lock.json or the returned dict's other keys
+        # (run_campaign's own `validate_lock(directory) != lock` re-check stays valid: two
+        # consecutive calls against unchanged files produce the identical extra key).
+        lock = dict(lock)
+        lock["amendments_verified"] = amendments_verified
     return lock
 
 
@@ -873,6 +935,267 @@ def run_campaign(directory) -> dict:
                  "physical_microticks": len(lock["manifest"]) * lock["registration"]["stages"] * STAGE_MICROTICKS,
                  "trace_sha256": _sha((directory / "trace.jsonl").read_bytes())}
     (directory / "execution.json").write_text(_json(execution) + "\n", encoding="utf-8")
+    return execution
+
+
+def _split_lines(data: bytes) -> list[bytes]:
+    """Split raw trace bytes on '\\n' without any text-mode newline translation (the
+    instrument, run through WSL2 Linux, always writes bare '\\n'; Windows text-mode
+    read/write would otherwise round-trip '\\n' through '\\r\\n' -- the exact bug
+    task-13-fix1 found and fixed for the lab's manifest sidecars). A trailing empty
+    element from a final '\\n' is dropped; a truncated final write (no trailing '\\n',
+    e.g. a kill mid-line) is kept as the last element so callers can detect and discard
+    it."""
+    lines = data.split(b"\n")
+    if lines and lines[-1] == b"":
+        lines.pop()
+    return lines
+
+
+def _parse_trace_lines(lines: list[bytes]):
+    """Parse a list of raw trace lines (as `_split_lines` returns): the first line must be
+    the header record; every subsequent non-empty line is attempted as one stage record.
+    A line that fails to decode as UTF-8 JSON (a write truncated mid-record by an external
+    kill) is dropped, not attributed to any case, and counted in `undecodable` -- exactly
+    the fate the resume brief requires for the cut line.
+
+    Returns `(header_bytes, header_dict, per_case, undecodable)`, where `per_case` maps
+    case_id -> the list of `(stage:int, raw_line:bytes)` pairs found, IN FILE ORDER
+    (duplicates or out-of-order stage numbers are not resolved here -- callers that need a
+    complete, correctly-ordered block validate that themselves)."""
+    if not lines:
+        raise ValueError("empty trace")
+    header_bytes = lines[0]
+    header = json.loads(header_bytes.decode("utf-8"))
+    if not header.get("header"):
+        raise ValueError("first line of trace is not a header record")
+    per_case: dict[str, list[tuple[int, bytes]]] = {}
+    undecodable = 0
+    for raw in lines[1:]:
+        if not raw:
+            continue
+        try:
+            rec = json.loads(raw.decode("utf-8"))
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            undecodable += 1
+            continue
+        per_case.setdefault(rec["case_id"], []).append((int(rec["stage"]), raw))
+    return header_bytes, header, per_case, undecodable
+
+
+def _complete_case_block(records: list[tuple[int, bytes]], stages: int) -> list[bytes] | None:
+    """`records` (as `_parse_trace_lines` groups them) is a COMPLETE, correctly-ordered
+    block for one case iff it has exactly `stages + 1` entries whose stage numbers are
+    EXACTLY `{0, ..., stages}` and already appear in ascending file order (the order the
+    instrument's own `for (s = 0; s <= stages; ++s)` loop writes them in -- summarize_campaign
+    trusts file order as stage order, so this function re-verifies that trust rather than
+    silently re-sorting a block that arrived out of order). Returns the raw line list
+    (ready to concatenate into the final trace) on success, `None` otherwise."""
+    stage_numbers = [s for s, _ in records]
+    if len(records) != stages + 1 or set(stage_numbers) != set(range(stages + 1)) \
+            or stage_numbers != sorted(stage_numbers):
+        return None
+    return [raw for _, raw in records]
+
+
+def resume_campaign(directory) -> dict:
+    """Resume a campaign interrupted mid-run (host restart, power loss, etc.), honestly:
+    keep every trace record of every case whose stage sequence (0..stages) is complete in
+    `trace.jsonl.part`; discard the records of any incomplete case (the one case cut
+    mid-write, plus its truncated/undecodable last line) and re-run the instrument ONLY on
+    that case plus every case the interrupted run never reached (both in the original
+    `manifest.tsv` order); then assemble `trace.jsonl` as the original header followed by
+    each manifest case's block, IN MANIFEST ORDER, drawn from whichever source (kept or
+    resumed) has it -- `summarize_campaign` requires each case's `stages + 1`-record block
+    to be contiguous and in that exact order, so this function sorts the two sources' blocks
+    into it rather than concatenating kept-then-resumed.
+
+    No registered logic changes: same manifest.tsv (only re-run on a FILTERED subset of its
+    rows, `manifest_resume.tsv`), same table, same stage count, same instrument binary,
+    same acceptance/prediction code (untouched by this function). Every case's tick is an
+    independent, deterministic function of its own frozen, hash-verified preparation with
+    no cross-case coupling, so keeping one run's records for some cases and another run's
+    records for the rest reproduces exactly what a single uninterrupted run would have
+    written, case by case -- concatenation is exact, not an approximation.
+
+    Adding this function changes `campaign.py`'s own hash, which the lock recorded via
+    `instrument_paths()`; this function begins by recording that as a declared lock
+    amendment (`_record_amendment`, idempotent) before calling `validate_lock` -- see the
+    module's amendment machinery above. It then writes a fresh `preflight.json` (mirroring
+    `run_campaign`'s own step) tied to the now-amended `lock.json`, and a final
+    `execution.json` receipt in `run_campaign`'s own shape (`schema`, `preflight_sha256`,
+    `postflight`, `device`, `elapsed_seconds`, `physical_microticks`, `trace_sha256` for the
+    COMPLETE 1120-case campaign) plus an `interruption` section documenting exactly what
+    happened, so the evidence itself declares the resume rather than looking like an
+    ordinary uninterrupted run.
+
+    Refuses to run if `trace.jsonl` already exists (nothing to resume) or if
+    `trace.jsonl.part` is missing (nothing to resume from). Never deletes
+    `trace.jsonl.part` or `trace_resume.jsonl`; refuses to overwrite a pre-existing
+    `trace_resume.jsonl` from a prior resume attempt rather than silently clobbering it."""
+    directory = Path(directory).resolve()
+    root = Path(__file__).resolve().parents[3]
+    trace_path = directory / "trace.jsonl"
+    part_path = directory / "trace.jsonl.part"
+    if trace_path.exists():
+        raise ValueError("trace.jsonl already exists; nothing to resume")
+    if not part_path.is_file():
+        raise ValueError("no trace.jsonl.part found; nothing to resume from")
+
+    # Original-start provenance, captured BEFORE this function overwrites preflight.json
+    # below (its mtime is the run_campaign-written marker closest to "the GPU subprocess
+    # was about to be launched"; task-12-brief.md names it as the primary source).
+    preflight_path = directory / "preflight.json"
+    if preflight_path.is_file():
+        original_start = preflight_path.stat().st_mtime
+        original_start_source = ("preflight.json mtime -- written by the original run_campaign "
+                                  "immediately before it invoked the GPU subprocess")
+        original_preflight_bytes = preflight_path.read_bytes()
+    else:
+        original_start = part_path.stat().st_ctime
+        original_start_source = ("trace.jsonl.part filesystem creation time (Windows st_ctime; "
+                                  "preflight.json was missing)")
+        original_preflight_bytes = None
+    kill_time = part_path.stat().st_mtime
+
+    # Record the amendment (idempotent) and validate against the NOW-amended lock.json.
+    _record_amendment(directory, "scripts/phi_v2_lattice/hydro/campaign.py",
+                       "resume machinery added after the OS-restart interruption; registered "
+                       "logic unchanged -- see the audit's diff")
+    lock = validate_lock(directory)
+    stages = lock["registration"]["stages"]
+    table_sha256 = _sha(H.table_path().read_bytes())
+
+    # Fresh preflight.json tied to the NOW-amended lock.json (mirrors run_campaign's own
+    # step, written before the GPU subprocess runs so the post-subprocess re-check below
+    # can detect any tampering with lock.json during execution, exactly like run_campaign's
+    # own `_sha(lock.json) != preflight["lock_sha256"]` check).
+    preflight = {"lock_sha256": _sha((directory / "lock.json").read_bytes()),
+                 "registration_sha256": lock["registration_sha256"], "manifest_sha256": lock["manifest_sha256"],
+                 "runner_sha256": lock["runner_sha256"], "instrument_sha256": lock["instrument_sha256"],
+                 "case_count": len(lock["manifest"]), "validation": "complete preflight passed"}
+    (directory / "preflight.json").write_bytes((_json(preflight) + "\n").encode("utf-8"))
+
+    part_bytes = part_path.read_bytes()
+    header_bytes, header, per_case, part_undecodable = _parse_trace_lines(_split_lines(part_bytes))
+    if header.get("table_sha256") != table_sha256:
+        raise ValueError("interrupted trace header does not match the registered table")
+    if header.get("stages") != stages:
+        raise ValueError("interrupted trace header does not match the registered stage count")
+
+    complete_blocks: dict[str, list[bytes]] = {}
+    discarded_partial_case_ids: list[str] = []
+    for case_id, records in per_case.items():
+        block = _complete_case_block(records, stages)
+        if block is None:
+            discarded_partial_case_ids.append(case_id)
+        else:
+            complete_blocks[case_id] = block
+
+    manifest_text = (directory / "manifest.tsv").read_text(encoding="utf-8")
+    manifest_lines = [line for line in manifest_text.split("\n") if line.strip()]
+    manifest_case_ids = [line.split("\t", 1)[0] for line in manifest_lines]
+    locked_case_ids = [row["case"]["case_id"] for row in lock["manifest"]]
+    if manifest_case_ids != locked_case_ids:
+        raise ValueError("manifest.tsv case order does not match the locked manifest")
+
+    resume_case_ids = [cid for cid in manifest_case_ids if cid not in complete_blocks]
+    if not resume_case_ids:
+        raise ValueError("nothing to resume: every manifest case already has a complete trace block")
+    resume_id_set = set(resume_case_ids)
+    resume_lines = [line for line in manifest_lines if line.split("\t", 1)[0] in resume_id_set]
+    manifest_resume_path = directory / "manifest_resume.tsv"
+    manifest_resume_path.write_text("\n".join(resume_lines) + "\n", encoding="utf-8")
+
+    trace_resume_path = directory / "trace_resume.jsonl"
+    if trace_resume_path.exists():
+        raise ValueError("trace_resume.jsonl already exists; refusing to overwrite a prior resume attempt")
+
+    runner = root / RUNNER
+    table_path = H.table_path()
+    args = [table_path, manifest_resume_path, trace_resume_path]
+    linux_args = [_linux(p) for p in args] if os.name == "nt" else [str(p) for p in args]
+    runner_arg = _linux(runner) if os.name == "nt" else str(runner)
+    command = (["wsl", "-d", "Ubuntu-22.04", "--", runner_arg] + linux_args if os.name == "nt"
+               else [str(runner)] + linux_args)
+    timeout_seconds = run_timeout_seconds(lock["registration"])
+    started = time.perf_counter()
+    result = subprocess.run(command + [str(stages)], capture_output=True, text=True, timeout=timeout_seconds)
+    resume_elapsed = time.perf_counter() - started
+    (directory / "resume.stdout.txt").write_text(result.stdout, encoding="utf-8")
+    (directory / "resume.stderr.txt").write_text(result.stderr, encoding="utf-8")
+    if result.returncode:
+        raise RuntimeError("GPU hydro campaign resume runner failed; partial evidence retained: " + result.stderr)
+    if validate_lock(directory) != lock or _sha((directory / "lock.json").read_bytes()) != preflight["lock_sha256"]:
+        raise ValueError("campaign inputs changed during the resume GPU execution")
+    devices = [json.loads(line) for line in result.stderr.splitlines() if line.startswith("{")]
+    if not devices or devices[0].get("backend") != "cuda_device_kernels":
+        raise ValueError("missing real GPU provenance on resume")
+
+    resume_bytes = trace_resume_path.read_bytes()
+    _, resume_header, resume_per_case, resume_undecodable = _parse_trace_lines(_split_lines(resume_bytes))
+    if resume_header.get("table_sha256") != table_sha256 or resume_header.get("stages") != stages:
+        raise ValueError("resume trace header does not match the registered law/stage count")
+    if resume_undecodable:
+        raise ValueError("resume trace contains undecodable lines")
+    missing = resume_id_set - set(resume_per_case)
+    if missing:
+        raise ValueError(f"resume trace missing cases: {sorted(missing)}")
+    resume_blocks: dict[str, list[bytes]] = {}
+    for case_id in resume_case_ids:
+        block = _complete_case_block(resume_per_case[case_id], stages)
+        if block is None:
+            raise ValueError(f"resume trace incomplete for case {case_id}")
+        resume_blocks[case_id] = block
+
+    final_lines = [header_bytes]
+    for case_id in manifest_case_ids:
+        block = complete_blocks.get(case_id)
+        final_lines.extend(block if block is not None else resume_blocks[case_id])
+    final_bytes = b"\n".join(final_lines) + b"\n"
+    trace_path.write_bytes(final_bytes)
+
+    part_sha256 = _sha(part_bytes)
+    resume_trace_sha256 = _sha(resume_bytes)
+    final_sha256 = _sha(final_bytes)
+    runner_sha256 = _sha(runner.read_bytes())
+
+    original_elapsed = max(0.0, kill_time - original_start)
+    interruption = {
+        "original_start": datetime.fromtimestamp(original_start, tz=timezone.utc).isoformat(),
+        "original_start_source": original_start_source,
+        "kill_time": datetime.fromtimestamp(kill_time, tz=timezone.utc).isoformat(),
+        "kill_time_source": "trace.jsonl.part mtime (its last successful write before the host restart)",
+        "cause": "host restart by an operating-system update",
+        "original_run_elapsed_seconds": original_elapsed,
+        "resume_elapsed_seconds": resume_elapsed,
+        "part_undecodable_lines": part_undecodable,
+        "counts": {
+            "total_cases": len(manifest_case_ids),
+            "kept_complete_cases": len(complete_blocks),
+            "discarded_partial_case_ids": sorted(discarded_partial_case_ids),
+            "resumed_cases": len(resume_case_ids),
+        },
+        "trace_part_sha256": part_sha256,
+        "trace_resume_sha256": resume_trace_sha256,
+        "trace_final_sha256": final_sha256,
+        "resume_instrument": {"command": command + [str(stages)], "binary": str(runner),
+                              "binary_sha256": runner_sha256},
+        "original_preflight_sha256": _sha(original_preflight_bytes) if original_preflight_bytes is not None else None,
+        "concatenation_exactness": ("every case is an independent deterministic computation of its own "
+                                     "frozen, hash-verified preparation -- phi-hydro-staged-candidate-1's "
+                                     "tick has no cross-case coupling -- so concatenating the kept-complete "
+                                     "blocks with the freshly re-run resume blocks, in manifest order, "
+                                     "reproduces exactly what a single uninterrupted run would have "
+                                     "written, case by case; this is exact, not an approximation"),
+    }
+    execution = {"schema": "strict-hydro4-execution-1",
+                 "preflight_sha256": _sha((directory / "preflight.json").read_bytes()),
+                 "postflight": "complete frozen-source/input validation passed", "device": devices[0],
+                 "elapsed_seconds": original_elapsed + resume_elapsed,
+                 "physical_microticks": len(lock["manifest"]) * stages * STAGE_MICROTICKS,
+                 "trace_sha256": final_sha256, "interruption": interruption}
+    (directory / "execution.json").write_bytes((_json(execution) + "\n").encode("utf-8"))
     return execution
 
 
