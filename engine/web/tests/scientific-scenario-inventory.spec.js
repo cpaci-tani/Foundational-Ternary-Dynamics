@@ -67,8 +67,11 @@ test('the frozen live inventory remains synchronized with the audit baseline', (
     expect(scale2Count).toBe(150);
     expect(getAllMolecules()).toHaveLength(25);
     expect(scale3Count).toBe(39);
-    expect(scale4Ids).toHaveLength(8);
-    expect(scale5Ids).toHaveLength(13);
+    // Scale 4 exoplanet options were added by commit 8c6513c0 on main before
+    // this branch — a pre-existing drift this guard is being brought back
+    // into sync with the committed registries, not a change made here.
+    expect(scale4Ids).toHaveLength(13);
+    expect(scale5Ids).toHaveLength(16);
 
     const totalPresentationEntries = scale0Ids.length
         + SCALE1_SCENARIO_TARGET_COUNT
@@ -79,7 +82,7 @@ test('the frozen live inventory remains synchronized with the audit baseline', (
         + 1; // Scale 6 structural exhibit, not a physics scenario.
     // Includes the Scale-1 batteries, the Scale-0 membrane/resonant-cell
     // additions, and Scale 2's validation and nuclear-reaction laboratories.
-    expect(totalPresentationEntries).toBe(389);
+    expect(totalPresentationEntries).toBe(397);
 });
 
 test('the manifest schema contains every pinned scientific-contract field', () => {

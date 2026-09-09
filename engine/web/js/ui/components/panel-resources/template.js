@@ -96,6 +96,18 @@ export function getScaleControlsBlocksTemplate() {
                         <div>KE: <span id="cosmic-ke">--</span></div>
                     </div>
                 </div>
+                <div class="card" id="cosmic-gas-profile-card" hidden title="Diagnostic-only axis binning of the gas population for the three Monaghan-SPH gas laboratories; not shown for other Scale 5 scenarios.">
+                    <div class="card-title">Gas profile — [IMPOSED effective gas dynamics]</div>
+                    <div class="scale-info-mono">
+                        <div>Axis: <span id="cosmic-profile-axis">--</span></div>
+                    </div>
+                    <canvas id="cosmic-profile-density" width="220" height="70" title="Density per bin (mass / bin volume)"></canvas>
+                    <canvas id="cosmic-profile-velocity" width="220" height="70" title="Mean radial/x velocity per bin"></canvas>
+                    <div class="scale-info-mono">
+                        <div>Thermal E: <span id="cosmic-thermal">--</span></div>
+                        <div>Kinetic E: <span id="cosmic-kinetic">--</span></div>
+                    </div>
+                </div>
             </div>
         </div>
     `;
