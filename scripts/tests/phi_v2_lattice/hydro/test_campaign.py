@@ -32,7 +32,7 @@ def _runner_built() -> bool:
 
 def test_case_count_matches_registered_inventory():
     cases = C.cases(16)
-    assert len(cases) == (4 * 2 * 3 + 3 * 2 + 3 + 1 + 1) * C.SEEDS == 280
+    assert len(cases) == (4 * 2 * 3 + 3 * 2 + 3 + 1 + 1) * C.SEEDS == 1120
     assert len({c.case_id for c in cases}) == len(cases)
 
 
@@ -148,8 +148,20 @@ def test_se_gamma_closed_form_matches_synthetic_exponential_with_known_noise():
 def test_power_calculation_flags_low_amplitude_high_epsilon_cells_as_underpowered():
     power = C.power_calculation(16, 8)
     assert power["powered_count"] + power["underpowered_count"] == len(power["cells"]) == len(C._cells(16))
+    assert power["power_threshold"] == C.POWER_THRESHOLD == 60.0
     for row in power["cells"]:
-        assert row["powered"] == (row["power"] >= 5 and row["noise_ratio"] <= 1 / 3 and row["budget_ratio"] <= 1 / 3)
+        assert row["powered"] == (row["power"] >= C.POWER_THRESHOLD and row["noise_ratio"] <= 1 / 3
+                                  and row["budget_ratio"] <= 1 / 3)
+
+
+def test_power_threshold_is_derived_from_acceptance_not_a_bare_literal():
+    """task-11-fix2: POWER_THRESHOLD == rate_sigma/rate_relative, so a powered cell's
+    analytic-SE acceptance term (rate_sigma*SE_gamma_analytic) can never exceed the
+    registered 5% relative floor (rate_relative*|gamma_pred_numeric|) -- the degeneracy
+    task-11-rereview1.md found in the old `power >= 5` criterion is structurally excluded,
+    not just empirically absent from the current inventory."""
+    expected = float(C.ACCEPTANCE["rate_sigma"]) / float(C.ACCEPTANCE["rate_relative"])
+    assert C.POWER_THRESHOLD == expected == 60.0
 
 
 def test_k4_systematic_reported_and_nonzero_for_cells_with_an_exact_reference():
@@ -204,6 +216,56 @@ def test_noiseless_prediction_trajectory_passes_acceptance_for_every_powered_l32
             f"{case.case_id}: noiseless |{gamma_meas} - {gamma_pred}| exceeds tolerance {rate_tol}"
 
 
+def test_ten_percent_rate_error_rejected_and_three_percent_accepted_for_every_powered_l48_cell():
+    """Non-degeneracy guard (task-11-fix2, controller ruling 2026-09-08) -- the check
+    task-11-rereview1.md ran by hand and found failing under the old `power >= 5` criterion
+    (a 10% rate error passed acceptance in 11/18 powered L=32 cells, because
+    `3*SE_gamma_analytic` could reach up to 60% of `gamma_pred_numeric`, swallowing the
+    intended 5% relative floor). Reproduces the review's own methodology: take the
+    noiseless `predict()` trajectory (a hypothetical PERFECT measurement), rescale it by
+    `exp(-(factor-1)*gamma_pred*n)` to emulate a rate mismeasured by `factor`, re-fit with
+    the SAME weighted estimator (`gamma_weight=gamma_pred`) `gamma_meas` uses, and check
+    against the two tolerance components available without a real multi-seed measurement
+    (`3*SE_gamma_analytic`, `5%*|gamma_pred_numeric|` -- the third component,
+    `3*SE_gamma_seeds`, needs an actual seed ensemble and is not exercised here).
+
+    L=48 is the registered L for this guard, not L=32: at SEEDS=32 and the 4-hour probe
+    budget (`horizon`'s `HORIZON_BUDGET_SECONDS`), L=48's power table gives 18 powered
+    cells spanning every arm (density, galilean, shear, sound, taylor_green) versus L=32's
+    7 -- L=48 is the strictly more informative, and (per this test) equally non-degenerate,
+    choice; see task-11-fix2-report.md for the full side-by-side inventory."""
+    L = 48
+    stages = C.horizon(L)
+    lo, hi = C._window(stages)
+    power = C.power_calculation(L, stages)
+    by_case_id = {c.case_id: c for c in C._cells(L).values()}
+    powered_rows = [row for row in power["cells"] if row["powered"]]
+    assert len(powered_rows) > 0, "expected at least one powered cell at L=48"
+    n = np.arange(stages + 1, dtype=float)
+    for row in powered_rows:
+        case = by_case_id[row["case_id_representative"]]
+        gamma_pred = row["gamma_pred_numeric"]
+        se_gamma_analytic = row["se_gamma"]
+        rate_tol = max(float(C.ACCEPTANCE["rate_sigma"]) * se_gamma_analytic,
+                       float(C.ACCEPTANCE["rate_relative"]) * abs(gamma_pred))
+        # By construction of POWER_THRESHOLD, the analytic-SE term must never be the one
+        # that loosens rate_tol beyond the registered 5% relative floor in a powered cell.
+        assert float(C.ACCEPTANCE["rate_sigma"]) * se_gamma_analytic <= \
+            float(C.ACCEPTANCE["rate_relative"]) * abs(gamma_pred) * (1 + 1e-9), \
+            f"{case.case_id}: analytic-SE term exceeds the 5% floor in a powered cell"
+        trajectory = C.predict(case, stages)
+        projected = np.array([C._project(v, case) for v in trajectory])
+        for factor, must_pass in ((1.10, False), (1.03, True)):
+            perturbed = projected * np.exp(-(factor - 1.0) * gamma_pred * n)
+            gamma_meas = C._fit_rate(perturbed, lo, hi, gamma_weight=gamma_pred)
+            passed = abs(gamma_meas - gamma_pred) <= rate_tol
+            assert passed == must_pass, (
+                f"{case.case_id}: a {factor:.0%} rate perturbation "
+                f"{'passed' if passed else 'was rejected by'} acceptance "
+                f"(expected {'PASS' if must_pass else 'FAIL'}); "
+                f"gamma_meas={gamma_meas}, gamma_pred={gamma_pred}, tol={rate_tol}")
+
+
 def test_rate_seeds_and_se_uses_the_same_weighted_estimator_as_gamma_meas():
     """Consistency-note fix (task-11-review.md non-blocking note): the per-seed fits
     feeding the operative acceptance SE must use the SAME weighted estimator
@@ -237,8 +299,24 @@ def test_horizon_is_positive_multiple_of_eight():
 def test_registration_round_trips_through_json():
     reg = C.registration(16)
     assert json.loads(C._json(reg)) == json.loads(C._json(C.registration(16)))
-    assert reg["case_count"] == 280
+    assert reg["case_count"] == 1120
     assert reg["L"] == 16
+
+
+def test_registration_reports_wall_time_estimate_for_l32_and_l48():
+    """task-11-fix2: registration() must report an estimated GPU wall-clock time, using the
+    probe's own per-L throughput (91.9 microticks/s at L=32, 25.17 at L=48; see
+    engine/docs/evidence/strict-hydro4-throughput.json) and the registered case_count/stages
+    -- so the campaign owner sees the cost of the SEEDS=32 inventory before running it."""
+    for L, expected_rate in ((32, 91.89959827890533), (48, 25.170953532878297)):
+        reg = C.registration(L)
+        n_cases = reg["case_count"]
+        stages = reg["stages"]
+        expected_seconds = n_cases * stages * C.STAGE_MICROTICKS / expected_rate
+        assert reg["estimated_wall_seconds"] is not None
+        assert reg["estimated_wall_seconds"] == pytest.approx(expected_seconds, rel=1e-9)
+        # Every registered horizon must fit inside the declared 4-hour GPU budget.
+        assert reg["estimated_wall_seconds"] <= reg["horizon_budget_seconds"]
 
 
 # --- lock protocol (mirrors scripts/tests/phi_v2_lattice/test_recovery_hydro_campaign.py) --
@@ -295,7 +373,7 @@ def test_instrument_smoke_one_case_eight_stages_at_l8(tmp_path, monkeypatch):
     one = [c for c in C.cases(8) if c.arm == "shear" and max(abs(c.mx), abs(c.my), abs(c.mz)) == 1][:1]
     monkeypatch.setattr(C, "cases", lambda L: one)
     monkeypatch.setenv("FTD_HYDRO_ALLOW_MISSING_PREREG", "1")
-    monkeypatch.setattr(C, "horizon", lambda L, budget_seconds=7200.0: 8)
+    monkeypatch.setattr(C, "horizon", lambda L, budget_seconds=C.HORIZON_BUDGET_SECONDS: 8)
     C.prepare_campaign(tmp_path, L=8)
     lock = json.loads((tmp_path / "lock.json").read_text())
     assert lock["registration"]["stages"] == 8

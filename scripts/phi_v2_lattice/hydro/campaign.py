@@ -39,6 +39,19 @@ Design notes (this module's own derivations, not retyped from H1'):
     polarization (1,-1,0) component (the other, k=(1,-1,0)/(1,1,0), is related by the same
     cubic symmetry and is not separately registered). This is a diagnostic/coverage case,
     not part of the brief's registered acceptance rows.
+  - `POWER_THRESHOLD` (fix round 2, task-11-fix2-report.md) tightens `powered` from
+    `power >= 5` to `power >= 60` (== `ACCEPTANCE["rate_sigma"]/ACCEPTANCE["rate_relative"]`,
+    derived, not a bare literal). task-11-rereview1.md found the old threshold degenerate:
+    near `power = 5`, the analytic-SE acceptance term (`rate_sigma*SE_gamma_analytic`) could
+    reach ~60% of `gamma_pred_numeric`, swallowing the registered 5% relative floor, so a
+    genuine 10% rate error passed acceptance in 11/18 powered L=32 cells. `power >= 60`
+    guarantees the opposite ordering in every powered cell by construction. `SEEDS` is
+    raised 8 -> 32 alongside (both `SE_gamma_analytic` and the empirical `SE_gamma_seeds`
+    scale as `1/sqrt(SEEDS)`) to recover cells the tightened threshold would otherwise drop.
+    `horizon`'s stage-count budget cap is raised from 2 to 4 hours (`HORIZON_BUDGET_SECONDS`,
+    shared with `run_campaign`'s subprocess timeout) since it binds at L=48 once SEEDS=32
+    quadruples the per-stage case cost; the "three e-folds" floor itself is kept (raising it
+    does not help -- see `horizon`'s docstring for the investigation).
 """
 from __future__ import annotations
 
@@ -64,14 +77,31 @@ from . import staged as Staged
 
 PROTOCOL_ID = "strict-hydro-viscosity-1"
 DENSITY = Fraction(1, 4)
-SEEDS = 8
+# task-11-fix2 (controller ruling, 2026-09-08): raised 8 -> 32. SE_gamma_analytic (and the
+# empirical per-seed SE_gamma_seeds) both scale as 1/sqrt(SEEDS); quadrupling SEEDS halves
+# both, recovering cells the tightened POWER_THRESHOLD below would otherwise drop entirely.
+SEEDS = 32
 EPSILONS = (Fraction(1, 20), Fraction(1, 10), Fraction(1, 5))
 WAVENUMBERS = (1, 2)
 U0 = Fraction(1, 10)
 ACCEPTANCE = {"rate_sigma": 3, "rate_relative": Fraction(1, 20), "rms_relative": Fraction(1, 10),
               "noise_multiple": 3}
+# task-11-fix2 (controller ruling, 2026-09-08): a cell is powered only when the analytic-SE
+# acceptance term can never be the loosening term relative to the registered 5% relative
+# floor -- i.e. rate_sigma*SE_gamma_analytic <= rate_relative*|gamma_pred_numeric| -- which
+# is exactly power = gamma_pred_numeric/SE_gamma_analytic >= rate_sigma/rate_relative = 60.
+# Replaces the prior `power >= 5` criterion: task-11-rereview1.md found it degenerate (the
+# analytic-SE term reached up to ~60% of gamma_pred_numeric -- 12x the intended 5% floor --
+# for 11/18 powered L=32 cells, silently accepting a 10% rate error). Derived from
+# ACCEPTANCE, not a bare literal, so it cannot drift from the acceptance rule it enforces.
+POWER_THRESHOLD = float(ACCEPTANCE["rate_sigma"]) / float(ACCEPTANCE["rate_relative"])
 RUNNER = "engine/build_strict_hydro_cuda/ftd_hydro_campaign"
 STAGE_MICROTICKS = 4
+# task-11-fix2: 4 hours of GPU time, shared by `horizon`'s stage-count cap and
+# `run_campaign`'s subprocess timeout, so the two can never silently drift apart (a stage
+# count `horizon` declares affordable must be a count the runner is actually given time to
+# finish).
+HORIZON_BUDGET_SECONDS = 4 * 3600.0
 
 # The four registered (direction, polarization) shear cells and which exact H1' constant
 # each probes (amendment of record, 2026-09-08): (1,0,0)/(0,1,0) and (1,1,0)/(0,0,1) -> nu_T2,
@@ -486,7 +516,15 @@ def power_calculation(L: int, stages: int) -> dict:
     Taylor constant); `predicted_rate_eigenvalue`/`predicted_frequency_eigenvalue` are the
     non-circular eigenvalue cross-check. Cells with a registered exact H1' constant also
     report `nu_exact_limit` (the k -> 0 limit) and `k4_systematic`, the relative gap between
-    the numeric prediction and that limit."""
+    the numeric prediction and that limit.
+
+    `powered` (task-11-fix2) requires `power = gamma/SE_gamma_analytic >= POWER_THRESHOLD`
+    (== 60), equivalently `rate_sigma*SE_gamma_analytic <= rate_relative*|gamma|` -- so in
+    every powered cell the analytic-SE acceptance term is, by construction, never looser
+    than the registered 5% relative floor. This replaces the prior `power >= 5` criterion:
+    at `power` near 5, `rate_sigma*SE_gamma_analytic` could reach ~60% of `gamma` (12x the
+    intended floor), which task-11-rereview1.md showed let a genuine 10% rate error pass
+    acceptance in 11/18 powered L=32 cells."""
     lo, hi = _window(stages)
     rows = []
     for key, case in sorted(_cells(L).items()):
@@ -498,7 +536,7 @@ def power_calculation(L: int, stages: int) -> dict:
         power = gamma / se_gamma if se_gamma > 0 else 0.0
         noise_ratio = sigma / amplitude if amplitude > 0 else float("inf")
         budget_ratio = (float(case.eps) / float(R.C2)) ** 2 / float(ACCEPTANCE["rate_relative"])
-        powered = bool(power >= 5 and noise_ratio <= Fraction(1, 3) and budget_ratio <= Fraction(1, 3))
+        powered = bool(power >= POWER_THRESHOLD and noise_ratio <= Fraction(1, 3) and budget_ratio <= Fraction(1, 3))
         row = {"cell": list(key), "case_id_representative": case.case_id,
                "predicted_rate": gamma, "gamma_pred_numeric": gamma,
                "predicted_rate_eigenvalue": eig_rate, "predicted_frequency_eigenvalue": eig_frequency,
@@ -513,7 +551,7 @@ def power_calculation(L: int, stages: int) -> dict:
             row["nu_exact_limit"] = nu_exact_limit
             row["k4_systematic"] = ((gamma - nu_exact_limit * k2) / gamma) if gamma else float("nan")
         rows.append(row)
-    return {"L": L, "stages": stages, "window": [lo, hi], "cells": rows,
+    return {"L": L, "stages": stages, "window": [lo, hi], "power_threshold": POWER_THRESHOLD, "cells": rows,
             "powered_count": sum(1 for r in rows if r["powered"]),
             "underpowered_count": sum(1 for r in rows if not r["powered"])}
 
@@ -530,14 +568,35 @@ def _throughput_microticks_per_second(L: int) -> float | None:
     return float(chosen["microticks_per_second"]) if chosen else None
 
 
-def horizon(L: int, budget_seconds: float = 7200.0) -> int:
+def horizon(L: int, budget_seconds: float = HORIZON_BUDGET_SECONDS) -> int:
     """Three e-folds of the slowest m=1 shear prediction, rounded up to a multiple of 8,
     capped by the probe's measured throughput within `budget_seconds` (uncapped, just
     rounded, when no throughput evidence is on disk yet). Sized off
     `predicted_rate_eigenvalue` (not the fit-on-prediction `predicted_rate`): the latter
     needs a stage count / fit window to compute a rate from, which is exactly the quantity
     this function solves for -- the eigenvalue cross-check is a close, non-circular
-    stand-in for sizing purposes only (see `predicted_rate`'s docstring)."""
+    stand-in for sizing purposes only (see `predicted_rate`'s docstring).
+
+    `budget_seconds` (task-11-fix2): the declared cap is `HORIZON_BUDGET_SECONDS`, 4 hours of
+    GPU time at the probe rate -- the SAME constant `run_campaign` passes as its own
+    subprocess timeout, so `horizon` never registers a stage count the runner itself would
+    be killed before completing. At L=32 this cap does not bind (three e-folds, 112 stages,
+    fits well inside 4h even at SEEDS=32's 1120-case inventory); at L=48 it does bind (three
+    e-folds would need 240 stages, but only 80 fit the 4h budget at 1120 cases) -- the
+    binding case is exactly why the cap must be declared, not left at the old 2-hour (7200s)
+    default, which would have capped L=48 at 40 stages instead.
+
+    The "three e-folds of the slowest shear rate" floor is kept as-is, not raised, even
+    though POWER_THRESHOLD is far stricter now: sweeping the e-fold multiplier from 3 to 16
+    (task-11-fix2 investigation) does not monotonically help, because `_window(stages)`
+    sizes the fit window as a FIXED FRACTION of `stages` ([stages/4, 3*stages/4]), not an
+    absolute range -- lengthening `stages` beyond what the slowest mode needs pushes faster
+    modes' fit windows further into their own decay, where their amplitude (and thus their
+    SE_gamma_analytic) is worse, not better. At L=32 the powered count is highest at exactly
+    the 3-e-fold floor (7 cells) and falls to 4-5 for every larger multiplier tried; raising
+    the floor would only shrink the registered inventory. Recovering more powered cells
+    instead comes from raising SEEDS (which this fix also does) and, at L=48, from the
+    budget cap itself binding above the 3-e-fold floor's own effect."""
     slow = min(predicted_rate_eigenvalue(case)[0] for case in cases(L)
                if case.arm == "shear" and max(abs(case.mx), abs(case.my), abs(case.mz)) == 1)
     needed = int(np.ceil(3.0 / slow))
@@ -551,20 +610,50 @@ def horizon(L: int, budget_seconds: float = 7200.0) -> int:
     return max(8, min(needed, affordable_stages))
 
 
+def _estimated_wall_seconds(L: int, stages: int, n_cases: int) -> float | None:
+    """Estimated GPU wall-clock time for the full registered campaign at `L`: n_cases *
+    stages * STAGE_MICROTICKS physical microticks, at the probe's own measured throughput
+    for that `L` (`engine/docs/evidence/strict-hydro4-throughput.json`; 91.9 microticks/s at
+    L=32, 25.17 at L=48). None when no throughput evidence is on disk yet."""
+    rate = _throughput_microticks_per_second(L)
+    if rate is None:
+        return None
+    return n_cases * stages * STAGE_MICROTICKS / rate
+
+
 def registration(L: int) -> dict:
     stages = horizon(L)
+    n_cases = len(cases(L))
+    wall_seconds = _estimated_wall_seconds(L, stages, n_cases)
     return {"protocol_id": PROTOCOL_ID, "law_id": Staged.LAW_ID, "density": str(DENSITY),
             "epsilons": [str(e) for e in EPSILONS], "wavenumbers": list(WAVENUMBERS), "u0": str(U0),
             "seeds": SEEDS, "L": L, "stages": stages, "microticks_per_stage": STAGE_MICROTICKS,
             "acceptance": {k: str(v) for k, v in ACCEPTANCE.items()},
+            "power_threshold": POWER_THRESHOLD,
+            "powered_criterion": ("power = gamma_pred_numeric/SE_gamma_analytic >= power_threshold "
+                                   "(== rate_sigma/rate_relative == 60), AND noise_ratio <= 1/3, AND "
+                                   "budget_ratio <= 1/3 (task-11-fix2, controller ruling 2026-09-08; "
+                                   "replaces the prior power>=5 criterion task-11-rereview1.md found "
+                                   "degenerate for 11/18 powered L=32 cells). By construction, in every "
+                                   "powered cell rate_sigma*SE_gamma_analytic <= rate_relative*"
+                                   "|gamma_pred_numeric| -- the analytic-SE acceptance term is never the "
+                                   "binding (loosening) one relative to the registered 5% relative floor"),
             "rate_tolerance_rule": ("max(rate_sigma*SE_gamma_seeds[weighted], "
                                      "rate_sigma*SE_gamma_analytic[power_calculation], "
                                      "rate_relative*|gamma_pred_numeric|); SE_gamma_seeds now uses the "
                                      "same weighted (gamma_weight=gamma_pred_numeric) per-seed fit as "
                                      "gamma_meas itself (task-11-fix1 consistency note), and the analytic "
-                                     "SE from power_calculation is kept as a registered floor"),
+                                     "SE from power_calculation is kept as a registered floor. In every "
+                                     "powered cell (task-11-fix2) the second term is <= the third by "
+                                     "construction of power_threshold -- see powered_criterion"),
             "shear_cells": [[list(d), list(p), kind] for d, p, kind in SHEAR_CELLS],
-            "case_count": len(cases(L)), "table_hash": H.TABLE_HASH,
+            "case_count": n_cases, "table_hash": H.TABLE_HASH,
+            "estimated_wall_seconds": wall_seconds,
+            "estimated_wall_seconds_rule": ("case_count * stages * microticks_per_stage / "
+                                             "throughput_microticks_per_second(L), from "
+                                             "engine/docs/evidence/strict-hydro4-throughput.json; "
+                                             "None when no throughput evidence is on disk"),
+            "horizon_budget_seconds": HORIZON_BUDGET_SECONDS,
             "boundary": "periodic",
             "background": "frozen doubly-occupied SC/FCC relations; Bernoulli fluid bank at density d"}
 
@@ -735,7 +824,7 @@ def run_campaign(directory) -> dict:
                else [str(runner)] + linux_args)
     started = time.perf_counter()
     result = subprocess.run(command + [str(lock["registration"]["stages"])], capture_output=True, text=True,
-                            timeout=4 * 3600)
+                            timeout=HORIZON_BUDGET_SECONDS)
     elapsed = time.perf_counter() - started
     (directory / "execution.stdout.txt").write_text(result.stdout, encoding="utf-8")
     (directory / "execution.stderr.txt").write_text(result.stderr, encoding="utf-8")
