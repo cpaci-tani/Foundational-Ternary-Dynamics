@@ -144,6 +144,17 @@ SHEAR_CELLS = (
     ((1, 1, 1), (1, -1, 0), "cubic"),
 )
 SOUND_DENSITY_DIRECTIONS = ((1, 0, 0), (1, 1, 0), (1, 1, 1))
+# Canonical registered representative cell per named shear quantity (task-12-fix1, controller
+# ruling): the top-level anisotropy_ratio_measured/cubic_identity_from_measured_constants/
+# nu_111_measured fields are derived from exactly these three, at m=1, eps=1/10 -- never from
+# whichever (m, eps) a dict happened to collapse onto (see summarize_campaign's
+# task-12-report.md reporting-code caveat).
+_SHEAR_T2_CELL = ((1, 0, 0), (0, 1, 0))
+_SHEAR_T2_ALT_CELL = ((1, 1, 0), (0, 0, 1))
+_SHEAR_E_CELL = ((1, 1, 0), (1, -1, 0))
+_SHEAR_CUBIC_CELL = ((1, 1, 1), (1, -1, 0))
+_SHEAR_CANONICAL_M = 1
+_SHEAR_CANONICAL_EPS = str(Fraction(1, 10))
 
 
 @dataclass(frozen=True)
@@ -1253,6 +1264,56 @@ def _cell_group_key(case_dict: dict):
             case_dict["ty"], case_dict["tz"], case_dict["eps"], case_dict["u0"])
 
 
+def _shear_group_summary(shear_nu_meas: dict, shear_nu_pred: dict, shear_details: dict,
+                         m: int, eps_str: str) -> dict:
+    """One row of the per-(m, eps) shear table (task-12-fix1): every one of the four
+    registered (direction, polarization) cells at this (m, eps), plus the anisotropy ratio,
+    the cubic identity, and nu(1,1,1) derived from the SAME canonical cell selection the
+    top-level report fields use -- nu_T2 from `_SHEAR_T2_CELL`, nu_E from `_SHEAR_E_CELL`,
+    nu(1,1,1) read directly off `_SHEAR_CUBIC_CELL` -- so the top-level fields
+    (`anisotropy_ratio_measured` etc.) are always exactly the `m=1, eps=1/10` row of this
+    table, never a value assembled from mismatched (m, eps) cells. `shear_nu_meas`/
+    `shear_nu_pred`/`shear_details` must be keyed by the FULL cell identity
+    `(direction, polarization, m, eps_str)` -- this is the fix for the collapse bug
+    task-12-report.md found (the pre-fix dicts keyed only on `(direction, polarization)`,
+    silently overwriting every m=1 cell with its m=2 counterpart)."""
+    def _entry(direction, polarization, kind):
+        key = (direction, polarization, m, eps_str)
+        entry = {"direction": list(direction), "polarization": list(polarization), "kind": kind,
+                 "nu_measured": shear_nu_meas.get(key), "nu_pred_numeric": shear_nu_pred.get(key)}
+        entry.update(shear_details.get(key) or {"nu_exact_limit": None, "powered": False,
+                                                 "rate_pass": None, "rms_pass": None})
+        return entry
+
+    nu_T2 = shear_nu_meas.get((*_SHEAR_T2_CELL, m, eps_str))
+    nu_E = shear_nu_meas.get((*_SHEAR_E_CELL, m, eps_str))
+    nu_T2_pred = shear_nu_pred.get((*_SHEAR_T2_CELL, m, eps_str))
+    nu_E_pred = shear_nu_pred.get((*_SHEAR_E_CELL, m, eps_str))
+    nu_111 = shear_nu_meas.get((*_SHEAR_CUBIC_CELL, m, eps_str))
+    nu_111_pred = shear_nu_pred.get((*_SHEAR_CUBIC_CELL, m, eps_str))
+    ratio = (nu_E / nu_T2) if (nu_T2 is not None and nu_E is not None and nu_T2) else None
+    ratio_pred = (nu_E_pred / nu_T2_pred) if (nu_T2_pred is not None and nu_E_pred is not None and nu_T2_pred) \
+        else None
+    cubic = ((2 * nu_E + nu_T2) / 3) if (nu_T2 is not None and nu_E is not None) else None
+    cubic_pred = ((2 * nu_E_pred + nu_T2_pred) / 3) if (nu_T2_pred is not None and nu_E_pred is not None) else None
+    return {"m": m, "eps": eps_str,
+            "cells": [_entry(*_SHEAR_T2_CELL, "T2"), _entry(*_SHEAR_T2_ALT_CELL, "T2"),
+                     _entry(*_SHEAR_E_CELL, "E"), _entry(*_SHEAR_CUBIC_CELL, "cubic")],
+            "anisotropy_ratio_measured": ratio, "anisotropy_ratio_pred_numeric": ratio_pred,
+            "cubic_identity_from_measured_constants": cubic, "cubic_identity_from_pred_numeric": cubic_pred,
+            "nu_111_measured": nu_111, "nu_111_pred_numeric": nu_111_pred,
+            "is_registered_top_level_source": (m == _SHEAR_CANONICAL_M and eps_str == _SHEAR_CANONICAL_EPS)}
+
+
+def _shear_derived_by_m_eps(shear_nu_meas: dict, shear_nu_pred: dict, shear_details: dict) -> list[dict]:
+    """The complete per-(m, eps) shear table -- one `_shear_group_summary` row for every
+    registered (m, eps) combination (task-12-fix1: "emit a per-(m, eps) table ... so no
+    information is hidden"). `WAVENUMBERS`/`EPSILONS` are the module's own registered grids,
+    not retyped."""
+    return [_shear_group_summary(shear_nu_meas, shear_nu_pred, shear_details, m, str(eps))
+            for m in WAVENUMBERS for eps in EPSILONS]
+
+
 def summarize_campaign(directory, write: bool = True) -> dict:
     """Recompute the campaign report from the trace; write=False skips report.json (read-only audits)."""
     directory = Path(directory)
@@ -1311,7 +1372,8 @@ def summarize_campaign(directory, write: bool = True) -> dict:
     power = power_calculation(reg["L"], stages)
     powered_keys = {tuple(r["cell"]) for r in power["cells"] if r["powered"]}
     power_by_cell = {tuple(r["cell"]): r for r in power["cells"]}
-    results, shear_nu_meas, shear_nu_pred, sound_c_meas, density_rows, galilean_row = [], {}, {}, {}, [], None
+    results, shear_nu_meas, shear_nu_pred, shear_details, sound_c_meas, density_rows, galilean_row = \
+        [], {}, {}, {}, {}, [], None
     for key, case_dicts in sorted(groups.items()):
         cases_here = [_case_from_dict(c) for c in case_dicts]
         example = cases_here[0]
@@ -1369,19 +1431,53 @@ def summarize_campaign(directory, write: bool = True) -> dict:
             nu_pred_numeric = gamma_pred / k2 if k2 else float("nan")
             direction = _unit_direction(example)
             polarization = (int(example.tx), int(example.ty), int(example.tz))
+            m = max(abs(example.mx), abs(example.my), abs(example.mz))
+            eps_str = str(example.eps)
             row["nu_measured"] = nu_meas
             row["nu_pred_numeric"] = nu_pred_numeric
-            shear_nu_meas[(direction, polarization)] = nu_meas
-            shear_nu_pred[(direction, polarization)] = nu_pred_numeric
+            row["direction"] = list(direction)
+            row["polarization"] = list(polarization)
+            row["m"] = m
+            row["eps"] = eps_str
+            # Keyed by the FULL cell identity (direction, polarization, m, eps) -- task-12-fix1
+            # (see task-12-report.md's reporting-code caveat). The pre-fix dict keyed only on
+            # (direction, polarization): every m=2 cell normalizes to the SAME unit direction as
+            # its m=1 counterpart (`_unit_direction((2,2,0)) == (1,1,0)`), so later-sorted groups
+            # silently overwrote earlier ones and the top-level fields below landed on whichever
+            # (m, eps) happened to sort last -- an underpowered m=2/eps=1/5 cell, not the clean
+            # registered representative. Nothing below this point collapses across (m, eps) now.
+            shear_key = (direction, polarization, m, eps_str)
+            shear_nu_meas[shear_key] = nu_meas
+            shear_nu_pred[shear_key] = nu_pred_numeric
+            shear_details[shear_key] = {"nu_exact_limit": row.get("nu_exact_limit"), "powered": powered,
+                                        "rate_pass": rate_ok, "rms_pass": rms_ok}
         if example.arm == "sound":
             omega_meas = _fit_angular_rate(mean, lo, hi)
             k_norm = float(np.sqrt(_k_squared(example)))
-            c_s_meas = omega_meas / k_norm if k_norm else float("nan")
+            c_s_meas_raw = omega_meas / k_norm if k_norm else float("nan")
             omega_pred = power_row["predicted_frequency_eigenvalue"]
+            c_s_pred = omega_pred / k_norm if k_norm else float("nan")
+            # Branch-sign fix (task-12-fix1, see task-12-report.md's sign-ambiguity finding):
+            # a sound mode is a complex-conjugate +-k branch pair; `_fit_angular_rate`'s
+            # phase-unwrap can lock onto either branch depending on realized seed noise, while
+            # `predicted_frequency_eigenvalue` always reports one fixed branch. `c_s_measured`
+            # is now sign-corrected to the PREDICTED branch (the physically meaningful, narrative
+            # comparison); the untouched signed fit and its bare magnitude are both still
+            # reported alongside a note. This is a narrative field only -- acceptance gates on
+            # `gamma`/`rel_rms` above, unaffected by this branch.
+            if np.isfinite(c_s_pred) and c_s_pred != 0 and np.isfinite(c_s_meas_raw):
+                c_s_meas = float(np.copysign(abs(c_s_meas_raw), c_s_pred))
+            else:
+                c_s_meas = c_s_meas_raw
             row["omega_measured"] = omega_meas
             row["omega_predicted"] = omega_pred
             row["c_s_measured"] = c_s_meas
-            row["c_s_predicted"] = omega_pred / k_norm if k_norm else float("nan")
+            row["c_s_measured_raw_signed_fit"] = c_s_meas_raw
+            row["c_s_measured_magnitude"] = abs(c_s_meas_raw) if np.isfinite(c_s_meas_raw) else c_s_meas_raw
+            row["c_s_branch_note"] = ("sound is a complex-conjugate +-k branch pair; c_s_measured is "
+                                      "sign-corrected to the predicted branch, c_s_measured_raw_signed_fit is "
+                                      "the unmodified phase-unwrap fit -- narrative only, not gated")
+            row["c_s_predicted"] = c_s_pred
             row["c_s_exact"] = float(np.sqrt(float(Fraction(_verdict()["sound_speed_squared"]))))
             sound_c_meas[_unit_direction(example)] = c_s_meas
         if example.arm == "density":
@@ -1391,31 +1487,49 @@ def summarize_campaign(directory, write: bool = True) -> dict:
             omega_meas = _fit_angular_rate(mean, lo, hi)
             k_norm = float(np.sqrt(_k_squared(example)))
             u0 = float(example.u0)
+            advection_raw = omega_meas / (k_norm * u0) if k_norm and u0 else float("nan")
+            omega_pred = power_row["predicted_frequency_eigenvalue"]
+            advection_pred = omega_pred / (k_norm * u0) if k_norm and u0 else float("nan")
+            # Same branch-sign character as the sound cells' c_s (task-12-fix1, see
+            # task-12-report.md): sign-correct the measured ratio to the predicted branch,
+            # keep the untouched signed fit and its magnitude, narrative only, not gated.
+            if np.isfinite(advection_pred) and advection_pred != 0 and np.isfinite(advection_raw):
+                advection_meas = float(np.copysign(abs(advection_raw), advection_pred))
+            else:
+                advection_meas = advection_raw
             row["omega_measured"] = omega_meas
-            row["advection_ratio_measured"] = omega_meas / (k_norm * u0) if k_norm and u0 else float("nan")
+            row["omega_predicted"] = omega_pred
+            row["advection_ratio_measured"] = advection_meas
+            row["advection_ratio_measured_raw_signed_fit"] = advection_raw
+            row["advection_ratio_measured_magnitude"] = abs(advection_raw) if np.isfinite(advection_raw) \
+                else advection_raw
+            row["advection_ratio_predicted"] = advection_pred
+            row["advection_branch_note"] = ("same oscillatory complex-conjugate branch ambiguity as the sound "
+                                            "cells' c_s_measured; advection_ratio_measured is sign-corrected to "
+                                            "the predicted branch -- narrative only, not gated")
             row["g_exact"] = float(B.nonlinear_coefficients(DENSITY)["g"])
             galilean_row = row
         results.append(row)
-    nu_T2_meas = shear_nu_meas.get(((1, 0, 0), (0, 1, 0)))
-    nu_E_meas = shear_nu_meas.get(((1, 1, 0), (1, -1, 0)))
-    nu_111_meas = shear_nu_meas.get(((1, 1, 1), (1, -1, 0)))
-    nu_T2_pred = shear_nu_pred.get(((1, 0, 0), (0, 1, 0)))
-    nu_E_pred = shear_nu_pred.get(((1, 1, 0), (1, -1, 0)))
-    nu_111_pred = shear_nu_pred.get(((1, 1, 1), (1, -1, 0)))
-    ratio_meas = (nu_E_meas / nu_T2_meas) if (nu_T2_meas is not None and nu_E_meas is not None and nu_T2_meas) else None
-    # The measured ratio and the cubic identity are now compared to the SAME quantities
-    # computed from the finite-k numeric predictions (ratio_pred_numeric /
-    # cubic_identity_from_pred_numeric), with the exact small-k H1' constants kept
-    # alongside, explicitly labelled as the k -> 0 limits (task-11-fix1).
-    ratio_pred_numeric = (nu_E_pred / nu_T2_pred) if (nu_T2_pred is not None and nu_E_pred is not None and nu_T2_pred) \
-        else None
+    # Top-level derived quantities (task-12-fix1, controller ruling): derived from the
+    # explicitly registered representative cells only -- the `m=1, eps=1/10` row of the
+    # per-(m, eps) table below, never from a dict collapse across wavenumber/epsilon (see
+    # `_shear_group_summary`'s docstring and task-12-report.md's reporting-code caveat).
+    shear_derived_by_m_eps = _shear_derived_by_m_eps(shear_nu_meas, shear_nu_pred, shear_details)
+    canonical_group = next((g for g in shear_derived_by_m_eps if g["is_registered_top_level_source"]), None)
+    ratio_meas = canonical_group["anisotropy_ratio_measured"] if canonical_group else None
+    # The measured ratio and the cubic identity are compared to the SAME quantities computed
+    # from the finite-k numeric predictions (ratio_pred_numeric / cubic_identity_from_pred_
+    # numeric), with the exact small-k H1' constants kept alongside, explicitly labelled as
+    # the k -> 0 limits (task-11-fix1).
+    ratio_pred_numeric = canonical_group["anisotropy_ratio_pred_numeric"] if canonical_group else None
+    cubic_identity_from_measured_constants = canonical_group["cubic_identity_from_measured_constants"] \
+        if canonical_group else None
+    cubic_identity_from_pred_numeric = canonical_group["cubic_identity_from_pred_numeric"] if canonical_group else None
+    nu_111_meas = canonical_group["nu_111_measured"] if canonical_group else None
+    nu_111_pred = canonical_group["nu_111_pred_numeric"] if canonical_group else None
     cubic_exact = _verdict()["cubic_shear_constants"]
     nu_T2_exact_k0, nu_E_exact_k0 = Fraction(cubic_exact["nu_T2"]), Fraction(cubic_exact["nu_E"])
     ratio_exact_k0_limit = float(nu_E_exact_k0 / nu_T2_exact_k0) if cubic_exact else None
-    cubic_identity_from_measured_constants = ((2 * nu_E_meas + nu_T2_meas) / 3) \
-        if (nu_T2_meas is not None and nu_E_meas is not None) else None
-    cubic_identity_from_pred_numeric = ((2 * nu_E_pred + nu_T2_pred) / 3) \
-        if (nu_T2_pred is not None and nu_E_pred is not None) else None
     cubic_identity_exact_k0_limit = float((2 * nu_E_exact_k0 + nu_T2_exact_k0) / 3) if cubic_exact else None
     powered_results = [r for r in results if r["powered"]]
     passes = sum(1 for r in powered_results if r["rate_pass"] and r["rms_pass"])
@@ -1433,6 +1547,7 @@ def summarize_campaign(directory, write: bool = True) -> dict:
               "cubic_identity_from_pred_numeric": cubic_identity_from_pred_numeric,
               "cubic_identity_exact_k0_limit": cubic_identity_exact_k0_limit,
               "nu_111_measured": nu_111_meas, "nu_111_pred_numeric": nu_111_pred,
+              "shear_derived_quantities_by_m_eps": shear_derived_by_m_eps,
               "density_rows": density_rows, "galilean_row": galilean_row, "results": results}
     if write:
         (directory / "report.json").write_text(_json(output) + "\n", encoding="utf-8")

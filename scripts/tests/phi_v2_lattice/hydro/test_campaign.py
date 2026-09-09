@@ -364,6 +364,89 @@ def test_run_timeout_falls_back_to_horizon_budget_when_no_wall_time_estimate():
     assert C.run_timeout_seconds(reg) == pytest.approx(C.RUN_TIMEOUT_MULTIPLIER * C.HORIZON_BUDGET_SECONDS)
 
 
+# --- summarize_campaign's shear derived-quantities table (task-12-fix1) ------------------
+
+
+def test_shear_derived_by_m_eps_top_level_ratio_is_the_registered_m1_eps1_10_cells():
+    """Regression test for the collapse bug task-12-report.md found: the pre-fix
+    `shear_nu_meas`/`shear_nu_pred` dicts inside `summarize_campaign` were keyed only on
+    `(direction, polarization)` -- dropping wavenumber `m` and epsilon `eps` -- and every
+    m=2 cell normalizes to the SAME unit direction as its m=1 counterpart, so the
+    LAST-sorted group (an underpowered m=2, eps=1/5 cell) silently overwrote the clean
+    m=1, eps=1/10 measurement in the top-level `anisotropy_ratio_measured`/
+    `cubic_identity_from_measured_constants`/`nu_111_measured` fields.
+
+    This is a synthetic report fixture (no GPU, no lock, no trace): a `shear_nu_meas`/
+    `shear_nu_pred`/`shear_details` dict with a DISTINCT, deterministic value at every one
+    of the 24 registered `(direction, polarization, m, eps)` shear cells -- including the
+    (m=2, eps=1/5) cell at the SAME `(direction, polarization)` as the registered T2
+    representative, deliberately different from its m=1, eps=1/10 value -- so any collapse
+    across (m, eps) is immediately visible as a wrong number, not silently masked by two
+    cells coincidentally agreeing."""
+    eps_values = [str(e) for e in C.EPSILONS]
+    canonical_eps = str(Fraction(1, 10))
+    shear_nu_meas, shear_nu_pred, shear_details = {}, {}, {}
+    counter = 0
+    for m in C.WAVENUMBERS:
+        for eps in eps_values:
+            for direction, polarization, _kind in C.SHEAR_CELLS:
+                counter += 1
+                key = (direction, polarization, m, eps)
+                shear_nu_meas[key] = 1.0 + counter * 0.01
+                shear_nu_pred[key] = 1.1 + counter * 0.01
+                shear_details[key] = {"nu_exact_limit": 1.2, "powered": (m == 1 and eps == canonical_eps),
+                                      "rate_pass": True, "rms_pass": True}
+
+    table = C._shear_derived_by_m_eps(shear_nu_meas, shear_nu_pred, shear_details)
+
+    # The per-(m, eps) table carries every one of the 24 registered shear cells (2
+    # wavenumbers x 3 epsilons x 4 named (direction, polarization) cells) -- "no information
+    # hidden".
+    assert len(table) == len(C.WAVENUMBERS) * len(eps_values)
+    expected_kinds = sorted(kind for _, _, kind in C.SHEAR_CELLS)
+    for row in table:
+        assert len(row["cells"]) == 4
+        assert sorted(cell["kind"] for cell in row["cells"]) == expected_kinds
+        for cell in row["cells"]:
+            key = (tuple(cell["direction"]), tuple(cell["polarization"]), row["m"], row["eps"])
+            assert cell["nu_measured"] == shear_nu_meas[key]
+            assert cell["nu_pred_numeric"] == shear_nu_pred[key]
+            assert cell["nu_exact_limit"] == shear_details[key]["nu_exact_limit"]
+
+    canonical_rows = [row for row in table if row["is_registered_top_level_source"]]
+    assert len(canonical_rows) == 1
+    canonical = canonical_rows[0]
+    assert canonical["m"] == 1 and canonical["eps"] == canonical_eps
+
+    nu_T2 = shear_nu_meas[(*C._SHEAR_T2_CELL, 1, canonical_eps)]
+    nu_E = shear_nu_meas[(*C._SHEAR_E_CELL, 1, canonical_eps)]
+    nu_111 = shear_nu_meas[(*C._SHEAR_CUBIC_CELL, 1, canonical_eps)]
+    assert canonical["anisotropy_ratio_measured"] == pytest.approx(nu_E / nu_T2)
+    assert canonical["cubic_identity_from_measured_constants"] == pytest.approx((2 * nu_E + nu_T2) / 3)
+    assert canonical["nu_111_measured"] == pytest.approx(nu_111)
+
+    # The exact bug: an (m=2, eps=1/5) cell at the SAME (direction, polarization) as the T2
+    # representative must NOT leak into the canonical ratio.
+    nu_T2_wrong_cell = shear_nu_meas[(*C._SHEAR_T2_CELL, 2, "1/5")]
+    assert nu_T2_wrong_cell != nu_T2
+    assert canonical["anisotropy_ratio_measured"] != pytest.approx(nu_E / nu_T2_wrong_cell)
+
+
+def test_shear_derived_by_m_eps_handles_missing_cells_without_crashing():
+    """A partial fixture (only one of the four named cells present at one (m, eps)) must
+    report `None` for the quantities that need the missing cell, not raise -- the same
+    None-safety the original module-level computation had before task-12-fix1 factored it
+    into `_shear_group_summary`."""
+    key = (C._SHEAR_E_CELL[0], C._SHEAR_E_CELL[1], 1, str(Fraction(1, 10)))
+    row = C._shear_group_summary({key: 1.5}, {key: 1.6}, {}, 1, str(Fraction(1, 10)))
+    assert row["anisotropy_ratio_measured"] is None
+    assert row["cubic_identity_from_measured_constants"] is None
+    assert row["nu_111_measured"] is None
+    e_cell = next(c for c in row["cells"] if c["kind"] == "E")
+    assert e_cell["nu_measured"] == 1.5
+    assert e_cell["powered"] is False  # shear_details had no entry for this key
+
+
 # --- lock protocol (mirrors scripts/tests/phi_v2_lattice/test_recovery_hydro_campaign.py) --
 
 
