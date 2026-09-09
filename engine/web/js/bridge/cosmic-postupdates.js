@@ -17,6 +17,7 @@ import {
     G_N, C_SPEED,
     M_CHANDRA_LATTICE, M_TOV_LATTICE,
 } from '../constants.js';
+import { isGasType } from './cosmic-sph.js';
 
 // Wave 2G (2026-04-26): M_CHANDRA_LATTICE / M_TOV_LATTICE migrated to
 // constants.js (single source of truth). Conversion to solar mass
@@ -26,7 +27,7 @@ import {
 export function postCosmicUpdates(TYPE) {
     const T = TYPE;
     const G = G_N;
-    const isGas  = (t) => t === T.GAS || t === T.NEBULA;
+    const isGas  = (t) => isGasType(t, T);
     const isBH   = (t) => t === T.BLACK_HOLE || t === T.QUASAR;
     const isStar = (t) => t === T.STAR || t === T.NEUTRON_STAR || t === T.WHITE_DWARF;
 

@@ -61,11 +61,15 @@ export const sections = [
     {
         id: 'mol-liquid-transport',
         title: 'Liquid transport',
+        // Only the four liquid-transport labs attach a tracker (scale3/controller.js);
+        // every other scenario leaves s2.liquid null, so gate the section on that
+        // rather than rendering six em-dashes for the other 35+ scenarios (M15a).
+        visibleWhen: (hub) => hub.s2?.liquid != null,
         rows: [
             { id: 'mol-liquid-status', label: 'Status', unit: '', format: 'text', source: 's2.liquid.status' },
             { id: 'mol-liquid-quantity', label: 'Quantity', unit: '', format: 'text', source: 's2.liquid.quantity' },
             { id: 'mol-liquid-value', label: 'Estimate', unit: '(sim)', source: 's2.liquid.value' },
-            { id: 'mol-liquid-se', label: 'Standard error', unit: '(sim)', source: 's2.liquid.se' },
+            { id: 'mol-liquid-se', label: 'Standard error', unit: '(sim)', source: 's2.liquid.se', tooltip: 'OLS slope standard error; samples from one trajectory are serially correlated, so this is a lower bound on the uncertainty.' },
             { id: 'mol-liquid-samples', label: 'Samples', unit: '', source: 's2.liquid.samples' },
             { id: 'mol-liquid-estimator', label: 'Estimator', unit: '', format: 'text', source: 's2.liquid.estimator', tooltip: '[IMPOSED effective classical dynamics; coefficients in engine units]' },
         ],

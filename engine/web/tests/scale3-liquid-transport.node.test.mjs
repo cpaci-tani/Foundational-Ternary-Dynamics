@@ -137,3 +137,89 @@ test('LiquidTransportTracker channel branch: wallZ drops locked argon wall atoms
     assert.ok(Math.abs(noFilter.samples[0].a - a1) > 0.01 * Math.abs(a1),
         `unfiltered a ${noFilter.samples[0].a} should differ from a1 ${a1} by more than 1%`);
 });
+
+test('LiquidTransportTracker.sample() ignores a second frame at the same tick (I1: same-tick guard)', () => {
+    // Synthetic single-water frame; the exact profile shape does not matter
+    // here, only that sample() is called twice with an identical frame.tick
+    // -- the shape a paused session produces, since collectScale2 runs every
+    // third rAF frame regardless of `running` while aeTick() stalls.
+    const h = 20;
+    const positions = new Float32Array([0, -5, 0, 0.76, -5, 0.59, -0.76, -5, 0.59]);
+    const velocities = new Float32Array([0.5, 0, 0, 0.5, 0, 0, 0.5, 0, 0]);
+    const atomicNums = new Int32Array([8, 1, 1]);
+    const bonds = new Int32Array([0, 1, 0, 2]);
+    const liquid = { kind: 'channel', gradient: 'y', axis: 'x', h, window: { start: 0, end: 10 } };
+    const tracker = new LiquidTransportTracker(liquid, 1);
+
+    const frame = (tick) => ({ tick, positions, velocities, atomicNums, bonds, count: 3, bondCount: 2 });
+    tracker.sample(frame(5));
+    tracker.sample(frame(5)); // duplicate frame at the same tick -- must be dropped
+    assert.equal(tracker.samples.length, 1, 'a repeated same-tick sample must not push a second row');
+
+    tracker.sample(frame(6)); // a genuinely new tick still samples
+    assert.equal(tracker.samples.length, 2, 'a new tick pushes a new row');
+});
+
+test('logDecayRate truncates at the first sign change and reports samplesDropped (I4)', () => {
+    const gamma = 0.3, trueK = 12, n = 20;
+    const t = [], a = [];
+    for (let k = 0; k < n; k++) {
+        t.push(k);
+        // Exact noiseless exponential decay up to trueK, then a synthetic
+        // noise floor that crosses zero -- the shape the channel/spinning-
+        // droplet decay estimators see once the signal has decayed into noise.
+        a.push(k < trueK ? Math.exp(-gamma * k) : 0.01 * Math.sin(k));
+    }
+    a[trueK] = -0.001; // force the sign change to land exactly at trueK
+    const d = logDecayRate(t, a);
+    assert.equal(d.n, trueK, `should keep exactly the ${trueK} samples before the sign change`);
+    assert.equal(d.samplesDropped, n - trueK, 'samplesDropped should count everything truncated away');
+    assert.ok(Math.abs(d.gamma - gamma) < 1e-6, `gamma ${d.gamma} recovered from the noiseless prefix`);
+});
+
+test('channel/spinning-droplet summary reports samples used plus samplesDropped after truncation (I4)', () => {
+    const liquid = { kind: 'channel', gradient: 'y', axis: 'x', h: 20, window: { start: 0, end: 100 } };
+    const tracker = new LiquidTransportTracker(liquid, 1);
+    const gamma = 0.3, trueK = 12, n = 20;
+    for (let k = 0; k < n; k++) {
+        const amp = k < trueK ? Math.exp(-gamma * k) : (k === trueK ? -0.001 : 0.01 * Math.sin(k));
+        tracker.samples.push({ t: k, a: amp });
+    }
+    const s = tracker.summary();
+    assert.equal(s.status, 'measuring');
+    assert.equal(s.samples, trueK);
+    assert.equal(s.samplesDropped, n - trueK);
+});
+
+test('channel/spinning-droplet summary reports noise-limited when truncation leaves fewer than 4 usable samples (I4)', () => {
+    const liquid = { kind: 'channel', gradient: 'y', axis: 'x', h: 20, window: { start: 0, end: 100 } };
+    const tracker = new LiquidTransportTracker(liquid, 1);
+    const n = 10;
+    for (let k = 0; k < n; k++) {
+        const amp = k < 2 ? Math.exp(-0.3 * k) : -0.001; // decays into noise almost immediately
+        tracker.samples.push({ t: k, a: amp });
+    }
+    const s = tracker.summary();
+    assert.match(s.status, /noise-limited/);
+    assert.equal(s.samples, 2);
+    assert.equal(s.samplesDropped, n - 2);
+});
+
+test('droplet branch skips a row and reports population changed on a molecule-count mismatch (M10)', () => {
+    const liquid = { kind: 'droplet', gradient: 'y', axis: 'x', window: { start: 0, end: 100 } };
+    const tracker = new LiquidTransportTracker(liquid, 1);
+
+    // Reference frame: 2 single-atom "molecules" (no bonds).
+    const refPositions = new Float32Array([0, 0, 0, 1, 1, 1]);
+    const refVelocities = new Float32Array(6);
+    const refAtomicNums = new Int32Array([8, 8]);
+    tracker.sample({ tick: 0, positions: refPositions, velocities: refVelocities, atomicNums: refAtomicNums, bonds: new Int32Array(0), count: 2, bondCount: 0 });
+    assert.equal(tracker.samples.length, 1);
+
+    // Later frame: only 1 molecule left (population changed).
+    const now = { tick: 1, positions: new Float32Array([0, 0, 0]), velocities: new Float32Array(3), atomicNums: new Int32Array([8]), bonds: new Int32Array(0), count: 1, bondCount: 0 };
+    tracker.sample(now);
+
+    assert.equal(tracker.samples.length, 1, 'the mismatched-population row must be skipped, not pushed');
+    assert.equal(tracker.summaryCache.status, 'population changed');
+});

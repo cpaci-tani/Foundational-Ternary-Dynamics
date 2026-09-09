@@ -400,3 +400,16 @@ test('CosmicMockBridge.getDiagnostics().totalThermal sums mass*internal_energy o
     const expected = 2 * 1.0 + 3 * 2.0;
     assert.ok(Math.abs(diag.totalThermal - expected) < 1e-12, `totalThermal=${diag.totalThermal} expected=${expected}`);
 });
+
+test('CosmicMockBridge.setupScenario() resets _toggles.sph_monaghan to false on the next scenario (M9)', () => {
+    // Safe today only because scale5/controller.js builds a fresh bridge per
+    // scenario load; a caller that reuses a bridge (as this test does)
+    // would otherwise carry sph_monaghan: true into a non-gas scenario and
+    // silently change its physics.
+    const bridge = new CosmicMockBridge();
+    bridge.setupScenario('cosmic-gas-collapse');
+    assert.equal(bridge.getToggle('sph_monaghan'), true, 'the gas lab scenario turns sph_monaghan on');
+
+    bridge.setupScenario('cosmic-galaxy');
+    assert.equal(bridge.getToggle('sph_monaghan'), false, 'setupScenario on the SAME bridge must reset the toggle for a non-gas scenario');
+});

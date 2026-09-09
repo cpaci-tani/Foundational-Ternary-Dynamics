@@ -145,20 +145,36 @@ export function linearRegression(t, y) {
     return { slope, intercept, slopeSE: Math.sqrt(sse / (n - 2) / sxx), n };
 }
 
+/** Fits log(a) vs t up to (excluding) the first non-positive amplitude: past that
+ *  point the signal has crossed zero into noise, and a bare a[i]>0 filter across the
+ *  whole series would keep only the positive noise fluctuations beyond it, biasing
+ *  the fitted rate. `samplesDropped` counts what was truncated away. */
 export function logDecayRate(t, a) {
     const tt = [], la = [];
-    for (let i = 0; i < t.length; i++) if (a[i] > 0) { tt.push(t[i]); la.push(Math.log(a[i])); }
+    for (let i = 0; i < t.length; i++) {
+        if (a[i] <= 0) break;
+        tt.push(t[i]); la.push(Math.log(a[i]));
+    }
     const r = linearRegression(tt, la);
-    return { gamma: -r.slope, gammaSE: r.slopeSE, n: r.n };
+    return { gamma: -r.slope, gammaSE: r.slopeSE, n: r.n, samplesDropped: t.length - tt.length };
 }
 
 /** Add the declared flow to the current velocities (called at the measurement phase start). */
 export function imposeLiquidFlow(bridge, scenario) {
-    const L = scenario.liquid, data = bridge.aeGetAtomData(), vel = bridge.aeGetVelocities();
+    const L = scenario.liquid;
+    if (L.kind === 'droplet') return; // this kind imposes no flow; free flight only.
+    const data = bridge.aeGetAtomData();
     const g = { x: 0, y: 1, z: 2 }[L.gradient], f = { x: 0, y: 1, z: 2 }[L.axis];
     for (let i = 0; i < data.count; i++) {
+        // Locked wall species never take a velocity: aeSetAtomVelocity rejects the
+        // call for a locked atom, so skip it here rather than fire-and-ignore.
+        if (Number.isFinite(L.wallZ) && data.atomicNums[i] === L.wallZ) continue;
         const p = [data.positions[3 * i], data.positions[3 * i + 1], data.positions[3 * i + 2]];
-        const v = [vel.velocities[3 * i], vel.velocities[3 * i + 1], vel.velocities[3 * i + 2]];
+        // Read the current velocity in double precision (aeInspectAtom), not the
+        // Float32 aeGetVelocities() renderer view, so the thermalised state is not
+        // quantised at the phase transition.
+        const atom = bridge.aeInspectAtom(data.ids[i]);
+        const v = [atom.vx, atom.vy, atom.vz];
         if (L.kind === 'shear-layer') v[f] += p[g] >= 0 ? L.U : -L.U;
         else if (L.kind === 'channel') v[f] += L.U * Math.max(0, 1 - (2 * p[g] / L.h) ** 2);
         else if (L.kind === 'spinning-droplet') {
@@ -170,10 +186,21 @@ export function imposeLiquidFlow(bridge, scenario) {
 }
 
 export class LiquidTransportTracker {
-    constructor(liquid, dt) { this.L = liquid; this.dt = dt; this.samples = []; this.ref = null; this.summaryCache = { status: 'waiting for the measurement window' }; }
+    constructor(liquid, dt) {
+        this.L = liquid; this.dt = dt; this.samples = []; this.ref = null;
+        this.summaryCache = { status: 'waiting for the measurement window' };
+        this._lastSampledTick = null;
+    }
     sample(frame) {
         const { tick } = frame; const L = this.L;
         if (tick < L.window.start || tick > L.window.end) { this.summaryCache.status = tick < L.window.start ? 'thermalizing' : 'window closed'; return; }
+        // A paused session still gets sampled every third rAF frame at the
+        // same engine tick (collectScale2 gates on frame count, not on
+        // `running`); without this guard, every extra frame at the same
+        // tick pushes a duplicate row, inflating `samples` and shrinking
+        // the reported standard error with no new information.
+        if (tick === this._lastSampledTick) return;
+        this._lastSampledTick = tick;
         const mol = moleculeCentroids(frame.positions, frame.atomicNums, frame.bonds, frame.count, frame.bondCount);
         const wallZ = L.wallZ, keep = mol.molecules.reduce((ks, comp, k) => { if (!Number.isFinite(wallZ) || comp.every((a) => frame.atomicNums[a] !== wallZ)) ks.push(k); return ks; }, []);
         const allCen = mol.centroids, allVel = mol.velocitiesOf(frame.velocities), m = keep.length;
@@ -188,7 +215,14 @@ export class LiquidTransportTracker {
         const row = { t, tick };
         if (L.kind === 'shear-layer') { const p = velocityProfile(coords, values, -L.extent, L.extent, L.bins); const fit = fitErfWidth(p.centers, p.mean); row.w2 = fit.w * fit.w; row.U = fit.U; }
         else if (L.kind === 'channel') row.a = firstModeAmplitudeWithOffset(coords, values, L.h);
-        else if (L.kind === 'droplet') row.msd = meanSquareDisplacement(this.ref.cen, cen, this.ref.drift, drift);
+        else if (L.kind === 'droplet') {
+            // meanSquareDisplacement indexes both arrays by the same molecule
+            // count; a mismatch (the kept-molecule population changed between
+            // the reference frame and this one) would otherwise read past the
+            // shorter array and surface as a silent NaN. Skip the row instead.
+            if (cen.length !== this.ref.cen.length) { this.summaryCache = { status: 'population changed' }; return; }
+            row.msd = meanSquareDisplacement(this.ref.cen, cen, this.ref.drift, drift);
+        }
         else if (L.kind === 'spinning-droplet') { const s = angularVelocitySplit(cen, vel, drift, 2); row.dOmega = s.inner - s.outer; }
         this.samples.push(row); this.summaryCache = this.summary();
     }
@@ -196,8 +230,14 @@ export class LiquidTransportTracker {
         const L = this.L, S = this.samples; if (S.length < 4) return { status: `collecting (${S.length} samples)` };
         const t = S.map((r) => r.t);
         if (L.kind === 'shear-layer') { const r = linearRegression(t, S.map((x) => x.w2)); return { status: 'measuring', quantity: 'nu', value: r.slope / 4, se: r.slopeSE / 4, samples: r.n, estimator: 'w^2 = 4 nu t (erf-profile width)' }; }
-        if (L.kind === 'channel') { const d = logDecayRate(t, S.map((x) => x.a)); const k = L.h * L.h / (Math.PI * Math.PI); return { status: 'measuring', quantity: 'nu', value: d.gamma * k, se: d.gammaSE * k, samples: d.n, estimator: 'first-mode decay, nu = gamma h^2 / pi^2' }; }
+        if (L.kind === 'channel') {
+            const d = logDecayRate(t, S.map((x) => x.a)); const k = L.h * L.h / (Math.PI * Math.PI);
+            if (d.n < 4) return { status: `noise-limited (${d.n} usable samples, ${d.samplesDropped} dropped)`, samples: d.n, samplesDropped: d.samplesDropped };
+            return { status: 'measuring', quantity: 'nu', value: d.gamma * k, se: d.gammaSE * k, samples: d.n, samplesDropped: d.samplesDropped, estimator: 'first-mode decay, nu = gamma h^2 / pi^2' };
+        }
         if (L.kind === 'droplet') { const r = linearRegression(t, S.map((x) => x.msd)); return { status: 'measuring', quantity: 'D', value: r.slope / 6, se: r.slopeSE / 6, samples: r.n, estimator: 'MSD slope / 6 (drift removed)' }; }
-        const d = logDecayRate(t, S.map((x) => Math.abs(x.dOmega))); return { status: 'measuring', quantity: 'tau', value: 1 / d.gamma, se: d.gammaSE / (d.gamma * d.gamma), samples: d.n, estimator: 'inner-outer angular velocity difference, exponential relaxation' };
+        const d = logDecayRate(t, S.map((x) => Math.abs(x.dOmega)));
+        if (d.n < 4) return { status: `noise-limited (${d.n} usable samples, ${d.samplesDropped} dropped)`, samples: d.n, samplesDropped: d.samplesDropped };
+        return { status: 'measuring', quantity: 'tau', value: 1 / d.gamma, se: d.gammaSE / (d.gamma * d.gamma), samples: d.n, samplesDropped: d.samplesDropped, estimator: 'inner-outer angular velocity difference, exponential relaxation' };
     }
 }

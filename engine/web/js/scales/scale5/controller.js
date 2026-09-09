@@ -254,6 +254,15 @@ const _lifecycleController = new Scale5LifecycleController();
 const _toolbarStatus = createStatusBarCache();
 const _panelStatus = createStatusBarCache();
 
+// Resolved once and reused, the same way _panelStatus above avoids
+// re-querying the DOM on every physics frame (M15b) — the card is part of
+// the static panel template and is not recreated on a scale mount/destroy.
+let _profileCardEl = null;
+function getProfileCardEl() {
+    if (_profileCardEl === null) _profileCardEl = document.getElementById('cosmic-gas-profile-card');
+    return _profileCardEl;
+}
+
 export function mount(ctx) {
     _lifecycleController.mount(ctx);
 }
@@ -324,7 +333,7 @@ export function animateCosmic(ctx) {
         // populate diag.customProfiles; every other scenario leaves it
         // null and the card stays hidden.
         const profile = diag.customProfiles;
-        const profileCard = document.getElementById('cosmic-gas-profile-card');
+        const profileCard = getProfileCardEl();
         if (profile) {
             if (profileCard) profileCard.hidden = false;
             _panelStatus.update('cosmic-profile-axis', profile.axis);

@@ -78,6 +78,12 @@ async function tickAndSnapshot(page, nTicks) {
             axis: profile ? profile.axis : null,
             gasCount: profile ? profile.gasCount : null,
             densitySum: density ? density.reduce((a, b) => a + b, 0) : null,
+            // b.density is written ONLY by the SPH pass (initialised to 0
+            // otherwise); densitySum/totalThermal above are both positive
+            // even if computeSphForces never runs (a mass histogram and the
+            // initial internal_energy respectively), so neither actually
+            // proves SPH engaged. This does (M7).
+            anyBodyDensityPositive: bridge._bodies.some((b) => b.density > 0),
             cardHidden: card ? card.hidden : null,
             cardExists: !!card,
         };
@@ -108,6 +114,7 @@ for (const lab of GAS_LABS) {
         expect(snap.gasCount, `${lab.id}: gasCount should be positive`).toBeGreaterThan(0);
         expect(snap.densitySum, `${lab.id}: density profile should have positive mass`).toBeGreaterThan(0);
         expect(snap.totalThermal, `${lab.id}: totalThermal should be positive`).toBeGreaterThan(0);
+        expect(snap.anyBodyDensityPositive, `${lab.id}: the SPH pass should have run (b.density > 0 for at least one body)`).toBe(true);
         expect(snap.cardExists, `${lab.id}: #cosmic-gas-profile-card should exist`).toBe(true);
         expect(snap.cardHidden, `${lab.id}: profile card should be visible`).toBe(false);
 

@@ -762,8 +762,9 @@ export const SCALE0_SCENARIO_CATALOG = [
      * Expected behavior: The x,z-averaged profile follows the exact d'Alembert split
      * 0.5[f(y - cT) + f(y + cT)] — the layer propagates, it does not diffuse.
      * Discrepancy: The Scale 0 field obeys a wave equation with div J = s, not a fluid
-     * equation; the lattice-gas fluid, with its derived anisotropic momentum hydrodynamics,
-     * lives in the strict laboratory (engine/strict/web/hydro/).
+     * equation; the lattice-gas fluid, with its anisotropic momentum hydrodynamics derived
+     * conditional on the priced adoption of the successor law, lives in the strict laboratory
+     * (engine/strict/web/hydro/).
      */
     makeScenario('1. Validated Native Dynamics', 's0-field-shear-layer', 'Sheared Flux Layer — Propagates, Does Not Diffuse', ['field', 'wave', 'contrast'], '[EMERGENT] within the frozen linear wave map'),
     /*

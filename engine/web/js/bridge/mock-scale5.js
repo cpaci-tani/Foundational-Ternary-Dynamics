@@ -250,6 +250,7 @@ export class CosmicMockBridge {
         this._customTelemetry = {};
         this._stellarEvolution = false;
         this._hawkingEvaporation = false;
+        this._toggles = { sph_monaghan: false };
 
         const rng = this._rng(42);
         const PI2 = Math.PI * 2;

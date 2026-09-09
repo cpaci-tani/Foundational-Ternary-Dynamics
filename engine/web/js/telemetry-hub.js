@@ -1244,6 +1244,12 @@ export class TelemetryHub {
     /** Attach (or clear with null) the active Scale 3 liquid-transport tracker for this scenario load. */
     attachLiquidTracker(tracker) {
         this._liquidTracker = tracker;
+        // Detaching (a non-liquid scenario load) also clears the published
+        // summary, not just the tracker reference — otherwise s2.liquid keeps
+        // the last liquid lab's reading and the diagnostics descriptor's
+        // visibleWhen gate (M15a) would stay open on a scenario that never
+        // ran a liquid lab this session.
+        if (!tracker) this.s2.liquid = null;
     }
 
     collectScale2(bridge) {

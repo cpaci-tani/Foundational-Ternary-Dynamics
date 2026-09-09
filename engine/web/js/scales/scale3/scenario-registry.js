@@ -202,7 +202,7 @@ const experiments = [
         liquid: Object.freeze({ kind: 'channel', U: 0.6, axis: 'x', gradient: 'y', h: 21, wallZ: 18,
             window: Object.freeze({ start: 300, end: 900 }) }),
         expected: { atomCount: 180, bondCount: 96, componentCount: 84, dynamic: true },
-        evidence: '[IMPOSED effective classical dynamics; coefficients in engine units] Water confined between locked-argon walls with an imposed parabolic flow; the first-mode decay rate is a classical-liquid momentum-diffusivity estimator, not a substrate transport derivation.',
+        evidence: '[IMPOSED effective classical dynamics; coefficients in engine units] Water confined between locked-argon walls with an imposed parabolic flow; the first-mode decay rate is a classical-liquid momentum-diffusivity estimator, not a substrate transport derivation; h = 21 is the declared effective channel width (wall separation 25.2 minus one argon radius per side).',
     },
     {
         id: 'mol-liquid-droplet-diffusion', category: 'Liquid Transport Experiments', title: 'Water Droplet Diffusion',
@@ -217,7 +217,7 @@ const experiments = [
             observation: 'Track drift-removed molecule mean-square displacement growth to estimate the self-diffusion coefficient D.',
             phases: Object.freeze([
                 Object.freeze({ tick: 0, label: 'thermalize (thermostat on)' }),
-                Object.freeze({ tick: 300, label: 'impose flow, thermostat off, measure' }),
+                Object.freeze({ tick: 300, label: 'thermostat off, measure (free flight)' }),
             ]),
         }),
         liquid: Object.freeze({ kind: 'droplet', axis: 'x', gradient: 'y',

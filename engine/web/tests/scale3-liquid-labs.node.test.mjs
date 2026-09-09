@@ -23,7 +23,7 @@ import { createAtomEngine } from '../js/bridge/mock-atom-engine.js';
 import { reflectIntoBoundary } from '../js/bridge/boundary.js';
 import { AE_PHYSICS_SPECS } from '../js/scales/scale2/scenario-registry.js';
 import { startAEExperiment, advanceAEExperiment, resetAEExperiment } from '../js/scales/scale2/experiment-runtime.js';
-import { LiquidTransportTracker } from '../js/scales/scale3/liquid-transport.js';
+import { LiquidTransportTracker, imposeLiquidFlow } from '../js/scales/scale3/liquid-transport.js';
 import {
     SCALE3_SCENARIOS, getScale3ScenarioMeta, validateScale3ScenarioRegistry,
 } from '../js/scales/scale3/scenario-registry.js';
@@ -89,19 +89,26 @@ function setupFresh(id) {
 
 /** A lightweight bridge stub for protocol tests: no real physics, just
  * position/velocity buffers plus call recorders for aeSetThermostat and
- * aeSetAtomVelocity so the phase-transition wiring can be asserted directly. */
-function makeRecordingStub(positionsList) {
+ * aeSetAtomVelocity so the phase-transition wiring can be asserted directly.
+ * `atomicNumsList` defaults every atom to Z=0 (never a wall species) since
+ * these tests exercise the flow-imposition formulas, not the wall filter. */
+function makeRecordingStub(positionsList, atomicNumsList = null) {
     const count = positionsList.length;
     const positions = new Float32Array(count * 3);
     positionsList.forEach((p, i) => { positions[3 * i] = p[0]; positions[3 * i + 1] = p[1]; positions[3 * i + 2] = p[2]; });
     const velocities = new Float32Array(count * 3);
     const ids = Int32Array.from({ length: count }, (_, i) => i);
+    const atomicNums = Int32Array.from({ length: count }, (_, i) => (atomicNumsList ? atomicNumsList[i] : 0));
     const calls = { thermostat: [], setVelocity: [] };
     return {
         aeSetThermostat: (on) => calls.thermostat.push(on),
         aeSetAtomVelocity: (id, vx, vy, vz) => calls.setVelocity.push([id, vx, vy, vz]),
-        aeGetAtomData: () => ({ positions, ids, count }),
+        aeGetAtomData: () => ({ positions, ids, count, atomicNums }),
         aeGetVelocities: () => ({ velocities, count }),
+        // Double-precision per-atom read (M6): this stub's velocities never
+        // move independently of aeSetAtomVelocity's recorded calls, so the
+        // stored Float32 velocities (all zero, never mutated) are exact.
+        aeInspectAtom: (id) => ({ vx: velocities[3 * id], vy: velocities[3 * id + 1], vz: velocities[3 * id + 2] }),
         aeSetExperimentState: () => {},
         aeGetRuntimeState: () => ({ experiment: null }),
         calls,
@@ -179,16 +186,60 @@ test('molecular-liquid-transport protocol threads thermostat on -> impose flow -
 });
 
 test('molecular-liquid-transport protocol threads the scenario for every liquid kind (channel, droplet, spinning-droplet)', () => {
-    for (const id of ['mol-liquid-channel-decay', 'mol-liquid-droplet-diffusion', 'mol-liquid-spinning-droplet']) {
+    // mol-liquid-droplet-diffusion imposes no flow (M6): the kind is a
+    // free-flight measurement, so imposeLiquidFlow is a declared no-op and
+    // visits zero atoms, not every atom.
+    const expectedSetVelocityCalls = {
+        'mol-liquid-channel-decay': 4,
+        'mol-liquid-droplet-diffusion': 0,
+        'mol-liquid-spinning-droplet': 4,
+    };
+    for (const id of Object.keys(expectedSetVelocityCalls)) {
         resetAEExperiment();
         const scenario = getScale3ScenarioMeta(id);
         const bridge = makeRecordingStub([[0, 5, 0], [0, -5, 0], [3, 0, 0], [-3, 0, 0]]);
         startAEExperiment(scenario, bridge);
         for (let t = 0; t < 300; t++) advanceAEExperiment(bridge);
         assert.deepEqual(bridge.calls.thermostat, [true, false], `${id}: thermostat toggles on then off`);
-        assert.equal(bridge.calls.setVelocity.length, 4, `${id}: imposeLiquidFlow visited every atom`);
+        assert.equal(bridge.calls.setVelocity.length, expectedSetVelocityCalls[id], `${id}: imposeLiquidFlow visited the expected number of atoms`);
         resetAEExperiment();
     }
+});
+
+test('imposeLiquidFlow (M6): the channel lab skips locked wall atoms and leaves diagnostics clean', () => {
+    const { scenario, bridge } = setupFresh('mol-liquid-channel-decay');
+    const data = bridge.aeGetAtomData();
+    const wallIds = [];
+    const before = new Map();
+    for (let i = 0; i < data.count; i++) {
+        const a = bridge.aeInspectAtom(data.ids[i]);
+        before.set(data.ids[i], [a.vx, a.vy, a.vz]);
+        if (data.atomicNums[i] === scenario.liquid.wallZ) wallIds.push(data.ids[i]);
+    }
+    assert.ok(wallIds.length > 0, 'the channel lab seeds locked argon wall atoms');
+
+    imposeLiquidFlow(bridge, scenario);
+
+    assert.equal(bridge.aeGetDiagnostics().lastError, 'ok', 'no rejected aeSetAtomVelocity call on a wall atom');
+    for (const id of wallIds) {
+        const a = bridge.aeInspectAtom(id);
+        const [vx, vy, vz] = before.get(id);
+        assert.equal(a.vx, vx, `wall atom ${id} vx must be untouched`);
+        assert.equal(a.vy, vy, `wall atom ${id} vy must be untouched`);
+        assert.equal(a.vz, vz, `wall atom ${id} vz must be untouched`);
+    }
+});
+
+test('imposeLiquidFlow (M6): the droplet lab is a declared no-op (the kind imposes no flow)', () => {
+    const { bridge, atomIds } = setupFresh('mol-liquid-droplet-diffusion');
+    const before = atomIds.map((id) => { const a = bridge.aeInspectAtom(id); return [a.vx, a.vy, a.vz]; });
+
+    imposeLiquidFlow(bridge, getScale3ScenarioMeta('mol-liquid-droplet-diffusion'));
+
+    atomIds.forEach((id, i) => {
+        const a = bridge.aeInspectAtom(id);
+        assert.deepEqual([a.vx, a.vy, a.vz], before[i], `atom ${id} velocity must be unchanged`);
+    });
 });
 
 test('telemetry-hub: attachLiquidTracker + collectScale2 populate s2.liquid across the thermalize/measure boundary', () => {

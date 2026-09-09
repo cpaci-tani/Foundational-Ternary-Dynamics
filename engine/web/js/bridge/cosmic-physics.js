@@ -14,7 +14,7 @@
  */
 
 import { G_N, C_SPEED } from '../constants.js';
-import { computeSphForces } from './cosmic-sph.js';
+import { computeSphForces, isGasType } from './cosmic-sph.js';
 
 // Fixed softening per body type (Gadget-2 convention: constant, energy-conserving).
 // 2026-04-26 (Wave 2H): the prior "mirrored from mock-scale5.js" note
@@ -220,7 +220,7 @@ export function computeCosmicForces(TYPE) {
     const bhIdx   = [];
     for (let i = 0; i < nb; i++) {
         const t = bodies[i].type;
-        if (t === T.GAS || t === T.NEBULA) {
+        if (isGasType(t, T)) {
             gasIdx.push(i);
         } else if (t === T.STAR || t === T.NEUTRON_STAR || t === T.WHITE_DWARF) {
             starIdx.push(i);
