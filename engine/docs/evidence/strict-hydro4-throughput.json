@@ -1,0 +1,46 @@
+{
+  "device": {
+    "backend": "cuda_device_kernels",
+    "name": "NVIDIA GeForce RTX 5090",
+    "compute_major": 12,
+    "compute_minor": 0,
+    "device": 0,
+    "canonical_adoption": false
+  },
+  "runs": [
+    {
+      "L": 32,
+      "sites": 32768,
+      "state_bytes": 7503988,
+      "t0_seconds": 1.228559499955736,
+      "t4_seconds": 1.4727883000159636,
+      "t160_seconds": 3.1702929999446496,
+      "marginal_seconds_per_microtick": 0.010881440384158244,
+      "microticks_per_second": 91.89959827890533,
+      "table_upload_seconds_derived": 0.20070303852359453
+    },
+    {
+      "L": 48,
+      "sites": 110592,
+      "state_bytes": 25325684,
+      "t0_seconds": 1.2462728000245988,
+      "t4_seconds": 1.5257845999440178,
+      "t160_seconds": 7.723404399934225,
+      "marginal_seconds_per_microtick": 0.03972833205121928,
+      "microticks_per_second": 25.170953532878297,
+      "table_upload_seconds_derived": 0.12059847171454188
+    },
+    {
+      "L": 64,
+      "sites": 262144,
+      "state_bytes": 60031092,
+      "t0_seconds": 1.7456692999694496,
+      "t4_seconds": 3.135991599992849,
+      "t160_seconds": 13.458248400012963,
+      "marginal_seconds_per_microtick": 0.06616831282064176,
+      "microticks_per_second": 15.1129741317515,
+      "table_upload_seconds_derived": 1.1256490487408324
+    }
+  ],
+  "note": "microticks_per_second = (160-4)/(t160-t4), amortizing away process start, table disk-load/verify, and the one-shot device table upload; table_upload_seconds_derived is an ESTIMATE (see module docstring), not a direct measurement -- no timing hook exists inside gpu::advance and none was added here."
+}
