@@ -35,7 +35,7 @@ def _unique_object(pairs):
 
 def restore(data: bytes) -> StagedState:
     try:
-        if not isinstance(data, bytes):
+        if type(data) is not bytes:
             raise ValueError("checkpoint must be bytes")
         payload = json.loads(data, object_pairs_hook=_unique_object)
         expected = {"schema", "law", "collision", "encoding", "boundary", "L", "microtick", "arrays"}

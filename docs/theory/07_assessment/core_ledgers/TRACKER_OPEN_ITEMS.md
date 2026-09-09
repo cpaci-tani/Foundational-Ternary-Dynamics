@@ -5489,12 +5489,13 @@ The dissemination layer still headlines claims the canon retired or corrected:
 A 2026-07-12 scope-check grep (`floor\(x_-\)|x_- = 3\.0|N_c = x_-`) hits **20+ active theory files**; at least two carry the retired identification as a live claim: `FOUND_AXIOM_ZERO.md` §7.2.3 (~line 602: "N_c = x₋ = 3.024 … [THEOREM given S1]") and `FOUND_LATTICE_PHYSICS_INTUITIONS.md` (~lines 69–70: "3 = floor(x₋) from master quadratic"). Many other hits are legitimate (retirement discussions, the independent N_c derivation, spine caveats) — the sweep needs per-site adjudication, not a blind replace. Canonical statement to propagate: x₋ ≈ 3.024 is a mathematical artifact of P(x) [THEOREM as algebra]; the x₋↔N_c *identification* is RETIRED; N_c = 3 comes from independent structural sources (Moore Layer Theorem, `DERIV_NC_FROM_TOPOLOGY.md`).
 
 ### 10.3 Bookkeeping notes for the future arc
-- `NODE_MAP_FTD_MATH.md` + `math_node_map.json` regenerate from the LEDGER (`scripts/verification/build_math_node_map.py` → `parsers/mermaid_renderer.py`) — refresh after any LEDGER sweep. **The 2026-07-12 regen was executed and then ROLLED BACK:** the builder scans `scripts/proofs/*.py` from the filesystem and absorbed a concurrent session's *uncommitted* `proof_dyadic_*.py` scripts into the JSON (24 node entries) — committing another session's in-flight work is prohibited. Re-run the regen once the concurrent session's work has landed (or teach the builder to skip untracked files). Until then the node map lags the LEDGER (e.g. the FTD-0017 label still shows the pre-FTD-0348 "0.24%"; rows FTD-0375+ absent) — known, documented, derived-artifact-only.
 - The whitepaper/manuscript refresh should also carry: electron-primary default, the 7+2 spine count, the priced-boundary framing (FTD-0371 v1.1), and the FTD-0348 Higgs figures.
 
 ---
 
 ## Recently closed
+
+- **Math node-map regeneration — resolved by owner removal (2026-09-08).** The maps and their generation pipeline were deleted; the deferred regeneration task is retired. Historical provenance remains in LEDGER FTD-0207. No claim status changes.
 
 - **FTD-0406 — strong stress–energy contract v1: CPU-SCOPED-CONTRACT (2026-07-21).** Explicit owner choices install a default-off CPU `U(1)=0` Hamiltonian, exact collision-free energy/momentum projection, local string T00/stress, and `T00/C_SPEED²` latency source. Selected/imposed architecture only; GPU, topology changes, mixed forces and NCEMC-5 remain open.
 - **FTD-0405 — NCEMC feasibility: DOUBLE-OBSTRUCTION (2026-07-21).** The current direct colour force has a potential family and two-body momentum closure, but not exact work exchange or a selected gravitational energy zero/local stress distribution. Production construction now needs explicit owner choices; NCEMC-5 and mass readout remain inadmissible.

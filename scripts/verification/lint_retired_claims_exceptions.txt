@@ -10,8 +10,7 @@
 #       of record, not live assertions);
 #   (b) correction banners / catalog rows that QUOTE the retired spelling
 #       in order to retire it;
-#   (c) machine-generated mirrors of (a) (node-map artifacts regenerated
-#       from the LEDGER by build_math_node_map.py);
+#   (c) machine-generated mirrors of (a);
 #   (d) compiled artifacts whose source is already corrected and whose
 #       regeneration is tracked elsewhere (cite the tracking note).
 # When the underlying text is removed, the lint reports the exception as
@@ -29,12 +28,6 @@ nyquist-origin        | docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRU
 five-fold-convergence | docs/theory/02_foundations/FOUND_MODULUS_ARGUMENT_FRONTIER.md | §65 correction-of-record quotes the retired phrase to retire it (corrected 2026-07-01)
 sigma-old-spelling    | docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md | catalog row quotes the corrupted spelling inside its FTD-0348 correction note
 sigma-old-spelling    | scripts/proofs/proof_complete_sm.py | dated FTD-0348 correction comment quotes the corrupted spelling it replaced
-
-# --- (c) machine-generated mirrors of the LEDGER --------------------------
-bell-violation-live   | docs/theory/09_mathematical/NODE_MAP_FTD_MATH.md | generated node label mirrors the LEDGER FTD-0023 row title (mermaid_renderer output)
-bell-violation-live   | scripts/verification/results/math_node_map.json | generated mirror of LEDGER rows (build_math_node_map.py)
-five-fold-convergence | scripts/verification/results/math_node_map.json | generated mirror of LEDGER rows (build_math_node_map.py)
-nyquist-origin        | scripts/verification/results/math_node_map.json | generated mirror of LEDGER rows (build_math_node_map.py)
 
 # --- (d) compiled artifacts, regeneration tracked elsewhere ---------------
 sloop-bell-verified   | dissemination/manuscript_v2/src/Foundational-Ternary-Dynamics.tex | compiled Quarto artifact; .qmd source corrected (FTD-0347); tracked-but-globally-stale, awaiting full re-render per the FTD-0347 note of record

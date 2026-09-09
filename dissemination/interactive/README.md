@@ -139,9 +139,10 @@ These four exist, are real (non-trivial, multi-commit) artifacts, and are not re
 `scripts/tests/test_theory_mindmap.py`) covered every git-tracked document
 under `docs/theory/` as a two-mode map (radial structure tree + keyword
 concept graph) from 2026-08-06 until removal — no longer needed, deleted
-rather than archived per explicit owner instruction. `3d_theory_map.html` +
-`graph.json` (the hand-built map this had itself superseded — see the note
-inside `3d_theory_map.html`) are still present, retained for provenance only.
+rather than archived per explicit owner instruction. The predecessor
+`old3d_theory_map.html` (formerly `3d_theory_map.html`) and its `graph.json`
+were also deleted on 2026-09-08 under the owner's instruction to remove all
+mind maps.
 
 ## How to Use
 

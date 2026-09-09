@@ -18,8 +18,7 @@ record:
       "deps":          ["FTD-NNNN", ...]   # FTD-* references in description
     }
 
-Used by scripts/verification/build_math_node_map.py to populate
-layers.ledger of the canonical math_node_map.json output.
+Used by the ledger index, ledger restructuring tools, and their tests.
 
 The parser is deliberately tolerant: cells are separated by ` | `
 (space-pipe-space) which the corpus uses consistently; internal pipes

@@ -274,9 +274,7 @@ via the full BSD formula for the CM rank-0 case (Rubin 1991). **Errata note:** e
 
 The spine is not a list but a dependency structure: a directed acyclic graph rooted in the seed. The `[AXIOM]` reading of the lattice's quarter-turn as `ℤ[i]` (§I.1) deposits the integer `4`; `G*` is constructed four ways from quarter-integer data (§I.2); the master quadratic `x² − 16G*²x + 16G*³` is assembled from `G*` and `16 = 4²` (§I.3); and the spine theorems — harmonic tower, CM uniqueness, `Q(G*)` π-freeness, the BCC complex structure, the L-value and its companions — hang off `G*` and the quadratic in turn (§I.4). Reading the arrows backward is the audit trail: every theorem-grade node traces, through explicit and checkable steps, to the one structural choice at the root, and to nothing else.
 
-![The construction DAG — the dependency spine from the seed (i / ℤ[i]) through G* and the master quadratic to the theorem-grade spine results.](../../../scripts/visualization/results/math_node_map/spine_only.png)
-
-*Figure I.1 — The construction DAG: the `[AXIOM]` ℤ[i] reading → the framework integer 4 → G\* (four routes) → the master quadratic (16 = 4²) → the audited spine branches. High-resolution [SVG](../../../scripts/visualization/results/math_node_map/spine_only.svg) is available; the figure is regenerated from `scripts/verification/results/math_node_map.json` by `scripts/visualization/render_node_map.py`.*
+The dependency statements and their canonical tags are recorded in [the algebraic spine](SPEC_ALGEBRAIC_SPINE.md).
 
 ---
 

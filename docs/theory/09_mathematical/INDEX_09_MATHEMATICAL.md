@@ -54,7 +54,6 @@ The number-theoretic core. These establish the identities the framework's centra
 | [THEOREM_LATTICE_COULOMB_ASYMPTOTIC_v1.md](THEOREM_LATTICE_COULOMB_ASYMPTOTIC_v1.md) | [THEOREM] (§2, exact) + [THEOREM — standard] (§3) + [MEASURED] (§4) | Exact ℤ³ lattice-Green's-function identity α_r(r) → 1/(2π), zero free parameters; supersedes spine Theorem 6 (Phase G) as the load-bearing content demoted by FTD-0785. |
 | [PREREG_CATALAN_INDEPENDENCE_v1.md](general_math/PREREG_CATALAN_INDEPENDENCE_v1.md) | [PRE-REGISTRATION] | Locks the frontier-documentation discipline for the G\*-paper's Conjecture 19.2 (Catalan's constant algebraic independence over ℚ̄(G\*,π)); not a proof attempt. |
 | [ROADMAP_IDENTITY_PRIORITIES.md](general_math/ROADMAP_IDENTITY_PRIORITIES.md) | [INFRASTRUCTURE / METHODOLOGY] | Synonymy-graph roadmap over the 100 verified G\*-paper identities; prioritises future verification effort, produces no new theorems. |
-| [NODE_MAP_FTD_MATH.md](NODE_MAP_FTD_MATH.md) | [INFRASTRUCTURE / METHODOLOGY] | Generated cross-sector connectivity map (13 spine theorems, 527 LEDGER claims, 93 objects, 1142 identities); descriptive navigation, not theorem-production. |
 | [ANALYSIS_DAMERELL_IDEAL_CLASS_SCAN_v1.md](number_theory/ANALYSIS_DAMERELL_IDEAL_CLASS_SCAN_v1.md) | [NUMERICAL FACT — exhaustive over stated domain] + [CLOSED NEGATIVE] + [MEASURED] | FTD-0321: full per-ideal-class Damerell scan; d=−4's dual-match privilege confirmed on its registered domain, shown a range artifact beyond it. |
 | [ANALYSIS_GSTAR_VAN_HOVE_SINGULARITY_v1.md](number_theory/ANALYSIS_GSTAR_VAN_HOVE_SINGULARITY_v1.md) | [THEOREM — closed form] + [MEASURED] + [CLOSED NEGATIVE] + [CORRECTION] | FTD-0803 (parent FTD-0321): G\* sits at an SL₂(ℤ)-invariant saddle giving a bounded log-density divergence (4–5×); the "structurally uninformative" consequence is refuted. |
 | [MATH_PERIOD_IMPORT_FRONTIER.md](number_theory/MATH_PERIOD_IMPORT_FRONTIER.md) | [SYNTHESIS] | FTD-0375: restates FTD's import boundary (G\*, δ) in period-theoretic / Grothendieck-period-conjecture vocabulary; introduces no theorem, promotes no tag. |
@@ -159,8 +158,7 @@ Fourcier curves, the division-algebra tower, von Neumann factors, and other cros
 - [DERIV_TIER_B_CLOSED_NEGATIVE.md](archive/DERIV_TIER_B_CLOSED_NEGATIVE.md) — [CLOSED NEGATIVE]: G\* opus Tier B targets T-B1/T-B2; the engine `N_base = 4` is a numerical coincidence, not a structural bridge to the Q(i)-arithmetic 4.
 - [EXPLR_TWO_PI_GSTAR_CONNECTION.md](archive/EXPLR_TWO_PI_GSTAR_CONNECTION.md) — [CLOSED NEGATIVE]: the proposed structural connection between 1/(2π) and G\*, falsified by the Q4a measurement.
 - [EXPLR_TERNARY_MATRIX_BCC_SNAP_NEGATIVE.md](archive/EXPLR_TERNARY_MATRIX_BCC_SNAP_NEGATIVE.md) — [CLOSED NEGATIVE]: executed result of the pre-registered BCC-snap test ([PREREG_TERNARY_MATRIX_BCC_SNAP_v1.md](algebra/PREREG_TERNARY_MATRIX_BCC_SNAP_v1.md)) — iterates of the ternary matrix operator do not snap to BCC primitive directions.
-- [NODE_MAP_FTD_MATH.md](archive/NODE_MAP_FTD_MATH.md) — [INFRASTRUCTURE / METHODOLOGY], superseded snapshot: stale generated LEDGER-connectivity map (commit `1632e92`); superseded by the current [NODE_MAP_FTD_MATH.md](NODE_MAP_FTD_MATH.md) at this directory's root.
 
 ---
 
-87 active docs in this cluster (+ 4 archived).
+86 active docs in this cluster (+ 3 archived; counts adjusted 2026-09-08 for mind-map removal).
