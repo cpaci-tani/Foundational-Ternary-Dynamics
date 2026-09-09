@@ -17,12 +17,23 @@ Design notes (this module's own derivations, not retyped from H1'):
     construction, to E[observe(prepare(case), case)] -- no hand-derived amplitude formula
     to get subtly wrong; the only source of test disagreement is the RNG's own statistical
     noise, exactly the quantity `noise_floor` characterizes.
-  - `predicted_rate` uses the EXACT (Fraction) small-k H1' constant times |k|^2 for every
-    cell (nu_T2 / nu_E / the cubic mean for shear-type cells; the exact
-    `longitudinal_damping_normalized` constant for sound/density cells) -- a leading-order
-    approximation at the finite registered k, used for ACCEPTANCE; `predict`'s full
-    `numeric_stage_map` (exact at any k, to float64) is used for the plotted/trajectory
-    curve. This split is deliberate (see task-11-brief.md and the amending instructions).
+  - `predicted_rate` (fix round, task-11-fix1-report.md) returns the decay rate per stage
+    of the mode `predict()` actually evolves at the registered (finite) wavevector: the
+    same weighted log-linear fit `gamma_meas` uses, run on the noiseless
+    `predict(case, stages)` trajectory over the registered fit window -- bias-matched to
+    the acceptance estimator, so residual multi-mode/window contamination shows up
+    identically on both sides of the acceptance comparison. This replaces the original
+    design (the EXACT small-k H1' constant times |k|^2), which task-11-review.md found
+    disagreed with the numeric trajectory `predict()` evolves by 5.7-27% at the registered
+    k -- exceeding the acceptance tolerance for several cells even with zero measurement
+    noise. `predicted_rate_eigenvalue` reads the same quantity directly off the dominant
+    eigenvalue of `numeric_stage_map` (the eigenvector with the largest overlap against the
+    cell's projected observable) as a non-circular cross-check; `horizon` uses it (not
+    `predicted_rate`) to size the campaign, since `predicted_rate` itself needs a stage
+    count/fit window to resolve. The exact (Fraction) small-k H1' constants
+    (`nu_T2`/`nu_E`/cubic mean / `longitudinal_damping_normalized`) are kept as
+    `nu_exact_limit`, a REPORTED reference value (the k -> 0 limit), never used for
+    acceptance; `k4_systematic` reports the O(k^4) relative gap between the two.
   - The Taylor-Green preparation is a genuine two-wavevector superposition
     (sin(a)cos(b) = 1/2[sin(a+b)+sin(a-b)]); this module tracks only its k=(1,1,0)*2pi/L,
     polarization (1,-1,0) component (the other, k=(1,-1,0)/(1,1,0), is related by the same
@@ -186,16 +197,102 @@ def _longitudinal_damping(direction: tuple) -> Fraction:
     return Fraction(_verdict()["longitudinal_damping_normalized"][str(direction)])
 
 
-def predicted_rate(case: HydroCase) -> float:
-    """Exact small-k H1' constant times |k|^2 (per stage); see module docstring."""
-    k2 = _k_squared(case)
+def _exact_rate_constant(case: HydroCase) -> Fraction:
+    """The exact (Fraction) small-k H1' constant this cell's decay rate approaches as
+    k -> 0: nu_T2 / nu_E / the cubic mean for shear-type cells, the exact
+    `longitudinal_damping_normalized` constant for sound/density cells. Reported as
+    `nu_exact_limit` -- a REFERENCE value, never used for acceptance (see `predicted_rate`
+    and the module docstring's task-11-fix1 note)."""
     direction = _unit_direction(case)
     if case.arm in ("shear", "galilean", "taylor_green"):
-        nu = _shear_constant(direction, (int(case.tx), int(case.ty), int(case.tz)))
-        return float(nu) * k2
+        return _shear_constant(direction, (int(case.tx), int(case.ty), int(case.tz)))
     if case.arm in ("sound", "density"):
-        return float(_longitudinal_damping(direction)) * k2
-    raise ValueError(f"no registered exact predicted rate for arm {case.arm}")
+        return _longitudinal_damping(direction)
+    raise ValueError(f"no registered exact rate constant for arm {case.arm}")
+
+
+def _eigen_mode(case: HydroCase) -> tuple[complex, np.ndarray]:
+    """Eigenpair of the numeric per-stage map P(k) = numeric_stage_map(k, occupancy) whose
+    eigenvector has the largest overlap with this cell's projected physical observable
+    (transverse momentum along t-hat for shear/galilean/taylor_green, the longitudinal
+    momentum pair for sound, the mass channel for density -- `_project` already
+    discriminates these by `case.arm`). This is the direct, non-circular cross-check named
+    in task-11-review.md's fix instructions; the acceptance-relevant `predicted_rate`
+    instead fits the noiseless prediction trajectory (see its docstring for why the two
+    usually agree closely but are not defined to be identical)."""
+    k = 2.0 * np.pi * np.array([case.mx, case.my, case.mz], dtype=float) / case.L
+    Pk = _cached_stage_map(k, _occupancy(case))
+    W = np.array(B.weights_rows(), dtype=float)
+    eigvals, eigvecs = np.linalg.eig(Pk)
+    overlaps = np.array([abs(_project(W @ eigvecs[:, i], case)) for i in range(eigvecs.shape[1])])
+    idx = int(np.argmax(overlaps))
+    return complex(eigvals[idx]), eigvecs[:, idx]
+
+
+def predicted_rate_eigenvalue(case: HydroCase) -> tuple[float, float]:
+    """Cross-check decay rate and oscillation frequency per stage, read directly off the
+    dominant eigenvalue located by `_eigen_mode` -- NOT the fit-on-prediction acceptance
+    estimator `predicted_rate`. Reported in the registration/power table
+    (`predicted_rate_eigenvalue`/`predicted_frequency_eigenvalue`) alongside
+    `gamma_pred_numeric` so a reviewer can see the two independent extractions agree; for
+    sound cells the predicted oscillation frequency reported in `summarize_campaign` comes
+    from this function's frequency, per task-11-review.md's fix instructions."""
+    eigval, _ = _eigen_mode(case)
+    magnitude = abs(eigval)
+    rate = -float(np.log(magnitude)) if magnitude > 0 else float("inf")
+    frequency = float(np.angle(eigval))
+    return rate, frequency
+
+
+_PREDICTED_RATE_FIXED_POINT_ITERS = 100
+_PREDICTED_RATE_FIXED_POINT_RTOL = 1e-9
+
+
+def predicted_rate(case: HydroCase, stages: int | None = None) -> float:
+    """Decay rate per stage of the mode `predict()` actually evolves at the registered
+    (finite) wavevector: the same weighted log-linear fit `gamma_meas` uses (see
+    `_fit_rate`), run on the noiseless `predict(case, stages)` trajectory over the
+    registered fit window (`_window(stages)`) -- bias-matched to the acceptance estimator,
+    so residual multi-mode/window contamination present in a real fit shows up identically
+    on both sides of the acceptance comparison, leaving only genuine measurement
+    disagreement as the residual.
+
+    The weight is resolved by FIXED-POINT iteration, not a single pass: `gamma_meas` in
+    `summarize_campaign` is `_fit_rate(mean, lo, hi, gamma_weight=gamma_pred)`, i.e. it
+    weights by whatever this function returns, so for the noiseless case (`mean ==
+    projected`) to reproduce `gamma_pred` exactly, `gamma_pred` must be a fixed point of
+    `g -> _fit_rate(projected, lo, hi, gamma_weight=g)`. Seeding the iteration at the cheap
+    `predicted_rate_eigenvalue` cross-check and repeating `_fit_rate` until it stops moving
+    finds that point (empirically an alternating, geometrically-shrinking sequence -- a
+    handful of iterations suffice for well-behaved shear cells where the eigenvalue guess
+    is already close, but sound/density cells at the registered k showed a genuinely
+    weight-SENSITIVE fit (eigenvalue and single-shot-fit rates differing by ~2x, because
+    several comparably-sized modes, not one dominant mode, contribute over the fit window)
+    -- a single-shot fit at the eigenvalue guess is then NOT a fixed point, and re-fitting
+    with `gamma_weight=gamma_pred` (as `summarize_campaign` does) would move again,
+    spuriously failing acceptance on a hypothetical PERFECT measurement exactly like the
+    blocking defect this function replaces, just relocated from the weight-choice instead
+    of the exact-vs-numeric choice. Iterating to convergence removes that residual
+    circularity for every arm, not only the arms where the single-shot guess happened to
+    already be close. `stages` defaults to `horizon(case.L)` for standalone callers;
+    `power_calculation`/`summarize_campaign` pass the already-resolved registered stage
+    count explicitly so this never re-enters `horizon` while `horizon` is itself resolving
+    that count (`horizon` uses `predicted_rate_eigenvalue`, not this function, for exactly
+    that reason)."""
+    if stages is None:
+        stages = horizon(case.L)
+    lo, hi = _window(stages)
+    trajectory = predict(case, stages)
+    projected = np.array([_project(row, case) for row in trajectory])
+    gamma, _ = predicted_rate_eigenvalue(case)
+    for _ in range(_PREDICTED_RATE_FIXED_POINT_ITERS):
+        next_gamma = _fit_rate(projected, lo, hi, gamma_weight=gamma)
+        if not np.isfinite(next_gamma):
+            return next_gamma
+        if abs(next_gamma - gamma) <= _PREDICTED_RATE_FIXED_POINT_RTOL * max(abs(gamma), 1e-300):
+            return float(next_gamma)
+        gamma = next_gamma
+    return float(gamma)
 
 
 def _effective_t(case: HydroCase) -> np.ndarray:
@@ -383,10 +480,18 @@ def _window(stages: int) -> tuple[int, int]:
 
 
 def power_calculation(L: int, stages: int) -> dict:
+    """Per-cell power/noise/budget table. `gamma` (== `gamma_pred_numeric`) is the
+    fit-on-prediction `predicted_rate` at the REGISTERED `stages`/window (task-11-fix1: the
+    powered inventory is recomputed against the numeric prediction, not the exact small-k
+    Taylor constant); `predicted_rate_eigenvalue`/`predicted_frequency_eigenvalue` are the
+    non-circular eigenvalue cross-check. Cells with a registered exact H1' constant also
+    report `nu_exact_limit` (the k -> 0 limit) and `k4_systematic`, the relative gap between
+    the numeric prediction and that limit."""
     lo, hi = _window(stages)
     rows = []
     for key, case in sorted(_cells(L).items()):
-        gamma = predicted_rate(case)
+        gamma = predicted_rate(case, stages)
+        eig_rate, eig_frequency = predicted_rate_eigenvalue(case)
         amplitude = _amplitude(case)
         sigma = noise_floor(case)
         se_gamma = _se_gamma(gamma, sigma, amplitude, lo, hi)
@@ -394,9 +499,20 @@ def power_calculation(L: int, stages: int) -> dict:
         noise_ratio = sigma / amplitude if amplitude > 0 else float("inf")
         budget_ratio = (float(case.eps) / float(R.C2)) ** 2 / float(ACCEPTANCE["rate_relative"])
         powered = bool(power >= 5 and noise_ratio <= Fraction(1, 3) and budget_ratio <= Fraction(1, 3))
-        rows.append({"cell": list(key), "case_id_representative": case.case_id, "predicted_rate": gamma,
-                     "amplitude": amplitude, "noise_floor": sigma, "se_gamma": se_gamma, "power": power,
-                     "noise_ratio": noise_ratio, "budget_ratio": budget_ratio, "powered": powered})
+        row = {"cell": list(key), "case_id_representative": case.case_id,
+               "predicted_rate": gamma, "gamma_pred_numeric": gamma,
+               "predicted_rate_eigenvalue": eig_rate, "predicted_frequency_eigenvalue": eig_frequency,
+               "amplitude": amplitude, "noise_floor": sigma, "se_gamma": se_gamma, "power": power,
+               "noise_ratio": noise_ratio, "budget_ratio": budget_ratio, "powered": powered}
+        try:
+            nu_exact_limit = float(_exact_rate_constant(case))
+        except ValueError:
+            nu_exact_limit = None
+        if nu_exact_limit is not None:
+            k2 = _k_squared(case)
+            row["nu_exact_limit"] = nu_exact_limit
+            row["k4_systematic"] = ((gamma - nu_exact_limit * k2) / gamma) if gamma else float("nan")
+        rows.append(row)
     return {"L": L, "stages": stages, "window": [lo, hi], "cells": rows,
             "powered_count": sum(1 for r in rows if r["powered"]),
             "underpowered_count": sum(1 for r in rows if not r["powered"])}
@@ -417,8 +533,12 @@ def _throughput_microticks_per_second(L: int) -> float | None:
 def horizon(L: int, budget_seconds: float = 7200.0) -> int:
     """Three e-folds of the slowest m=1 shear prediction, rounded up to a multiple of 8,
     capped by the probe's measured throughput within `budget_seconds` (uncapped, just
-    rounded, when no throughput evidence is on disk yet)."""
-    slow = min(predicted_rate(case) for case in cases(L)
+    rounded, when no throughput evidence is on disk yet). Sized off
+    `predicted_rate_eigenvalue` (not the fit-on-prediction `predicted_rate`): the latter
+    needs a stage count / fit window to compute a rate from, which is exactly the quantity
+    this function solves for -- the eigenvalue cross-check is a close, non-circular
+    stand-in for sizing purposes only (see `predicted_rate`'s docstring)."""
+    slow = min(predicted_rate_eigenvalue(case)[0] for case in cases(L)
                if case.arm == "shear" and max(abs(case.mx), abs(case.my), abs(case.mz)) == 1)
     needed = int(np.ceil(3.0 / slow))
     needed = ((needed + 7) // 8) * 8
@@ -437,6 +557,12 @@ def registration(L: int) -> dict:
             "epsilons": [str(e) for e in EPSILONS], "wavenumbers": list(WAVENUMBERS), "u0": str(U0),
             "seeds": SEEDS, "L": L, "stages": stages, "microticks_per_stage": STAGE_MICROTICKS,
             "acceptance": {k: str(v) for k, v in ACCEPTANCE.items()},
+            "rate_tolerance_rule": ("max(rate_sigma*SE_gamma_seeds[weighted], "
+                                     "rate_sigma*SE_gamma_analytic[power_calculation], "
+                                     "rate_relative*|gamma_pred_numeric|); SE_gamma_seeds now uses the "
+                                     "same weighted (gamma_weight=gamma_pred_numeric) per-seed fit as "
+                                     "gamma_meas itself (task-11-fix1 consistency note), and the analytic "
+                                     "SE from power_calculation is kept as a registered floor"),
             "shear_cells": [[list(d), list(p), kind] for d, p, kind in SHEAR_CELLS],
             "case_count": len(cases(L)), "table_hash": H.TABLE_HASH,
             "boundary": "periodic",
@@ -666,6 +792,19 @@ def _fit_angular_rate(series: np.ndarray, lo: int, hi: int) -> float:
     return float(np.polyfit(n, phase, 1)[0])
 
 
+def _rate_seeds_and_se(modes: np.ndarray, lo: int, hi: int, gamma_weight: float) -> tuple[np.ndarray, float]:
+    """Per-seed rate fits and their standard error, extracted with the SAME weighted
+    estimator (`gamma_weight`) `gamma_meas` itself uses -- the consistency-note fix
+    (task-11-review.md): the pre-fix code fit the per-seed rates unweighted
+    (`_fit_rate(m, lo, hi)`, no `gamma_weight`) while `gamma_meas` used the weighted
+    estimator, so the point estimate and the standard error gating it disagreed on what
+    estimator they characterized. Factored out of `summarize_campaign` so this is
+    unit-testable on a synthetic multi-seed series without the GPU/lock pipeline."""
+    rate_seeds = np.array([_fit_rate(m, lo, hi, gamma_weight=gamma_weight) for m in modes])
+    se = float(np.std(rate_seeds, ddof=1) / np.sqrt(len(modes))) if len(modes) > 1 else float("nan")
+    return rate_seeds, se
+
+
 def _cell_group_key(case_dict: dict):
     return (case_dict["arm"], case_dict["mx"], case_dict["my"], case_dict["mz"], case_dict["tx"],
             case_dict["ty"], case_dict["tz"], case_dict["eps"], case_dict["u0"])
@@ -728,7 +867,8 @@ def summarize_campaign(directory, write: bool = True) -> dict:
         groups.setdefault(_cell_group_key(row["case"]), []).append(row["case"])
     power = power_calculation(reg["L"], stages)
     powered_keys = {tuple(r["cell"]) for r in power["cells"] if r["powered"]}
-    results, shear_nu_meas, sound_c_meas, density_rows, galilean_row = [], {}, {}, [], None
+    power_by_cell = {tuple(r["cell"]): r for r in power["cells"]}
+    results, shear_nu_meas, shear_nu_pred, sound_c_meas, density_rows, galilean_row = [], {}, {}, {}, [], None
     for key, case_dicts in sorted(groups.items()):
         cases_here = [_case_from_dict(c) for c in case_dicts]
         example = cases_here[0]
@@ -736,42 +876,69 @@ def summarize_campaign(directory, write: bool = True) -> dict:
         mean = modes.mean(axis=0)
         predicted_series = np.array([_project(np.array([complex(*p) for p in predictions[example.case_id][n]]), example)
                                      for n in range(stages + 1)])
-        gamma_pred = predicted_rate(example)
+        power_row = power_by_cell[key]
+        # gamma_pred is the fit-on-prediction predicted_rate at the REGISTERED stages/window
+        # (== power_row["gamma_pred_numeric"], already computed there -- reused rather than
+        # recomputed to avoid a second predict() pass over the same trajectory).
+        gamma_pred = power_row["gamma_pred_numeric"]
         gamma_meas = _fit_rate(mean, lo, hi, gamma_weight=gamma_pred)
-        rate_seeds = np.array([_fit_rate(m, lo, hi) for m in modes])
-        se_gamma_seeds = float(np.std(rate_seeds, ddof=1) / np.sqrt(len(cases_here))) if len(cases_here) > 1 else float("nan")
+        # Consistency-note fix (task-11-fix1, see _rate_seeds_and_se): the per-seed fits
+        # feeding the operative SE now use the SAME weighted estimator (gamma_weight=
+        # gamma_pred) as gamma_meas itself, so the point estimate and the standard error
+        # gating it agree on what estimator they characterize (previously these were
+        # unweighted OLS fits, held against a gamma_meas built from the weighted estimator).
+        rate_seeds, se_gamma_seeds = _rate_seeds_and_se(modes, lo, hi, gamma_pred)
+        se_gamma_analytic = power_row["se_gamma"]
         amplitude = _amplitude(example)
         rel_rms = float(np.sqrt(np.sum(np.abs(mean - predicted_series) ** 2) / np.sum(np.abs(predicted_series) ** 2))) \
             if np.sum(np.abs(predicted_series) ** 2) > 0 else float("nan")
         sigma = noise_floor(example)
         this_noise_ratio = sigma / amplitude if amplitude > 0 else float("inf")
         powered = key in powered_keys
-        rate_tol = max(ACCEPTANCE["rate_sigma"] * se_gamma_seeds, float(ACCEPTANCE["rate_relative"]) * abs(gamma_pred)) \
-            if not np.isnan(se_gamma_seeds) else float(ACCEPTANCE["rate_relative"]) * abs(gamma_pred)
+        # Registered floor (task-11-fix1, mirrors registration()'s "rate_tolerance_rule"):
+        # the analytic SE from power_calculation is kept as a floor alongside the empirical
+        # (now weighted) per-seed scatter, so a campaign with very few effectively-varying
+        # seeds still gets a defensible tolerance.
+        rate_tol_components = [float(ACCEPTANCE["rate_relative"]) * abs(gamma_pred)]
+        if not np.isnan(se_gamma_seeds):
+            rate_tol_components.append(float(ACCEPTANCE["rate_sigma"]) * se_gamma_seeds)
+        if np.isfinite(se_gamma_analytic) and se_gamma_analytic > 0:
+            rate_tol_components.append(float(ACCEPTANCE["rate_sigma"]) * se_gamma_analytic)
+        rate_tol = max(rate_tol_components)
         rms_tol = max(float(ACCEPTANCE["rms_relative"]), float(ACCEPTANCE["noise_multiple"]) * this_noise_ratio)
         rate_ok = bool(abs(gamma_meas - gamma_pred) <= rate_tol)
         rms_ok = bool(rel_rms <= rms_tol)
         row = {"cell": list(key), "arm": example.arm, "seeds": len(cases_here), "powered": powered,
-               "predicted_rate": gamma_pred, "measured_rate": gamma_meas, "rate_standard_error": se_gamma_seeds,
-               "rate_tolerance": rate_tol, "relative_rms": rel_rms, "rms_tolerance": rms_tol,
+               "predicted_rate": gamma_pred, "gamma_pred_numeric": gamma_pred,
+               "predicted_rate_eigenvalue": power_row["predicted_rate_eigenvalue"],
+               "measured_rate": gamma_meas, "rate_standard_error": se_gamma_seeds,
+               "rate_standard_error_analytic": se_gamma_analytic, "rate_tolerance": rate_tol,
+               "relative_rms": rel_rms, "rms_tolerance": rms_tol,
                "rate_pass": rate_ok, "rms_pass": rms_ok,
                "mean_trajectory": [[float(v.real), float(v.imag)] for v in mean],
                "k": [example.mx, example.my, example.mz]}
+        if "nu_exact_limit" in power_row:
+            row["nu_exact_limit"] = power_row["nu_exact_limit"]
+            row["k4_systematic"] = power_row["k4_systematic"]
         if example.arm == "shear":
             k2 = _k_squared(example)
             nu_meas = gamma_meas / k2 if k2 else float("nan")
+            nu_pred_numeric = gamma_pred / k2 if k2 else float("nan")
             direction = _unit_direction(example)
             polarization = (int(example.tx), int(example.ty), int(example.tz))
-            nu_exact = float(_shear_constant(direction, polarization))
             row["nu_measured"] = nu_meas
-            row["nu_exact"] = nu_exact
+            row["nu_pred_numeric"] = nu_pred_numeric
             shear_nu_meas[(direction, polarization)] = nu_meas
+            shear_nu_pred[(direction, polarization)] = nu_pred_numeric
         if example.arm == "sound":
             omega_meas = _fit_angular_rate(mean, lo, hi)
             k_norm = float(np.sqrt(_k_squared(example)))
             c_s_meas = omega_meas / k_norm if k_norm else float("nan")
+            omega_pred = power_row["predicted_frequency_eigenvalue"]
             row["omega_measured"] = omega_meas
+            row["omega_predicted"] = omega_pred
             row["c_s_measured"] = c_s_meas
+            row["c_s_predicted"] = omega_pred / k_norm if k_norm else float("nan")
             row["c_s_exact"] = float(np.sqrt(float(Fraction(_verdict()["sound_speed_squared"]))))
             sound_c_meas[_unit_direction(example)] = c_s_meas
         if example.arm == "density":
@@ -786,13 +953,27 @@ def summarize_campaign(directory, write: bool = True) -> dict:
             row["g_exact"] = float(B.nonlinear_coefficients(DENSITY)["g"])
             galilean_row = row
         results.append(row)
-    nu_T2 = shear_nu_meas.get(((1, 0, 0), (0, 1, 0)))
-    nu_E = shear_nu_meas.get(((1, 1, 0), (1, -1, 0)))
-    nu_111 = shear_nu_meas.get(((1, 1, 1), (1, -1, 0)))
-    ratio_meas = (nu_E / nu_T2) if (nu_T2 is not None and nu_E is not None and nu_T2) else None
+    nu_T2_meas = shear_nu_meas.get(((1, 0, 0), (0, 1, 0)))
+    nu_E_meas = shear_nu_meas.get(((1, 1, 0), (1, -1, 0)))
+    nu_111_meas = shear_nu_meas.get(((1, 1, 1), (1, -1, 0)))
+    nu_T2_pred = shear_nu_pred.get(((1, 0, 0), (0, 1, 0)))
+    nu_E_pred = shear_nu_pred.get(((1, 1, 0), (1, -1, 0)))
+    nu_111_pred = shear_nu_pred.get(((1, 1, 1), (1, -1, 0)))
+    ratio_meas = (nu_E_meas / nu_T2_meas) if (nu_T2_meas is not None and nu_E_meas is not None and nu_T2_meas) else None
+    # The measured ratio and the cubic identity are now compared to the SAME quantities
+    # computed from the finite-k numeric predictions (ratio_pred_numeric /
+    # cubic_identity_from_pred_numeric), with the exact small-k H1' constants kept
+    # alongside, explicitly labelled as the k -> 0 limits (task-11-fix1).
+    ratio_pred_numeric = (nu_E_pred / nu_T2_pred) if (nu_T2_pred is not None and nu_E_pred is not None and nu_T2_pred) \
+        else None
     cubic_exact = _verdict()["cubic_shear_constants"]
-    ratio_exact = float(Fraction(cubic_exact["nu_E"]) / Fraction(cubic_exact["nu_T2"])) if cubic_exact else None
-    cubic_pred_from_meas = ((2 * nu_E + nu_T2) / 3) if (nu_T2 is not None and nu_E is not None) else None
+    nu_T2_exact_k0, nu_E_exact_k0 = Fraction(cubic_exact["nu_T2"]), Fraction(cubic_exact["nu_E"])
+    ratio_exact_k0_limit = float(nu_E_exact_k0 / nu_T2_exact_k0) if cubic_exact else None
+    cubic_identity_from_measured_constants = ((2 * nu_E_meas + nu_T2_meas) / 3) \
+        if (nu_T2_meas is not None and nu_E_meas is not None) else None
+    cubic_identity_from_pred_numeric = ((2 * nu_E_pred + nu_T2_pred) / 3) \
+        if (nu_T2_pred is not None and nu_E_pred is not None) else None
+    cubic_identity_exact_k0_limit = float((2 * nu_E_exact_k0 + nu_T2_exact_k0) / 3) if cubic_exact else None
     powered_results = [r for r in results if r["powered"]]
     passes = sum(1 for r in powered_results if r["rate_pass"] and r["rms_pass"])
     output = {"schema": "strict-hydro4-report-1", "protocol_id": PROTOCOL_ID, "law_id": Staged.LAW_ID,
@@ -803,8 +984,12 @@ def summarize_campaign(directory, write: bool = True) -> dict:
               "groups": len(results), "powered_groups": len(powered_results),
               "powered_groups_passing": passes,
               "verdict_at_registered_scope": (passes == len(powered_results)) if powered_results else None,
-              "anisotropy_ratio_measured": ratio_meas, "anisotropy_ratio_exact": ratio_exact,
-              "cubic_identity_from_measured_constants": cubic_pred_from_meas, "nu_111_measured": nu_111,
+              "anisotropy_ratio_measured": ratio_meas, "anisotropy_ratio_pred_numeric": ratio_pred_numeric,
+              "anisotropy_ratio_exact_k0_limit": ratio_exact_k0_limit,
+              "cubic_identity_from_measured_constants": cubic_identity_from_measured_constants,
+              "cubic_identity_from_pred_numeric": cubic_identity_from_pred_numeric,
+              "cubic_identity_exact_k0_limit": cubic_identity_exact_k0_limit,
+              "nu_111_measured": nu_111_meas, "nu_111_pred_numeric": nu_111_pred,
               "density_rows": density_rows, "galilean_row": galilean_row, "results": results}
     if write:
         (directory / "report.json").write_text(_json(output) + "\n", encoding="utf-8")

@@ -152,6 +152,83 @@ def test_power_calculation_flags_low_amplitude_high_epsilon_cells_as_underpowere
         assert row["powered"] == (row["power"] >= 5 and row["noise_ratio"] <= 1 / 3 and row["budget_ratio"] <= 1 / 3)
 
 
+def test_k4_systematic_reported_and_nonzero_for_cells_with_an_exact_reference():
+    """task-11-fix1 (blocking-defect fix): cells with a registered exact H1' small-k
+    constant (shear/sound/density) must report both `nu_exact_limit` (the k -> 0 limit)
+    and `k4_systematic`, the relative O(k^4) gap between the finite-k numeric prediction
+    (`gamma_pred_numeric`) and that limit. task-11-review.md measured this gap at
+    5.7-27% for several L=32 shear cells at the registered (finite) k, so it must not
+    silently read as (numerically) zero."""
+    power = C.power_calculation(16, 32)
+    referenced = [row for row in power["cells"] if "nu_exact_limit" in row]
+    assert referenced, "expected shear/sound/density cells to report nu_exact_limit"
+    for row in referenced:
+        assert "k4_systematic" in row
+        assert np.isfinite(row["k4_systematic"])
+        assert abs(row["k4_systematic"]) > 1e-4, \
+            f"{row['case_id_representative']}: k4_systematic suspiciously ~0 ({row['k4_systematic']})"
+
+
+def test_noiseless_prediction_trajectory_passes_acceptance_for_every_powered_l32_m1_shear_cell():
+    """The review's own falsifying scenario (task-11-review.md blocking finding): before
+    the fix, `predicted_rate` returned the exact small-k H1' constant times |k|^2, which
+    disagreed with the numeric trajectory `predict()` evolves by up to 16.6% at L=32/m=1 --
+    exceeding the registered acceptance tolerance for the E-constant shear cell even given
+    a hypothetical PERFECT (zero-measurement-noise) run. After the fix, `predicted_rate` IS
+    a fit read off that same numeric trajectory, so re-fitting `predict()`'s own noiseless
+    trajectory the way `summarize_campaign` fits a real (or perfectly simulated)
+    measurement must pass, for every powered m=1 shear cell, by construction -- this is
+    exactly the no-GPU-needed reproduction of the review's audit."""
+    L = 32
+    stages = C.horizon(L)
+    lo, hi = C._window(stages)
+    power = C.power_calculation(L, stages)
+    by_case_id = {c.case_id: c for c in C._cells(L).values()}
+    m1_shear_powered = [row for row in power["cells"] if row["powered"]
+                        and by_case_id[row["case_id_representative"]].arm == "shear"
+                        and max(abs(by_case_id[row["case_id_representative"]].mx),
+                                abs(by_case_id[row["case_id_representative"]].my),
+                                abs(by_case_id[row["case_id_representative"]].mz)) == 1]
+    assert len(m1_shear_powered) > 0, "expected at least one powered m=1 shear cell at L=32"
+    for row in m1_shear_powered:
+        case = by_case_id[row["case_id_representative"]]
+        gamma_pred = row["gamma_pred_numeric"]
+        trajectory = C.predict(case, stages)
+        projected = np.array([C._project(v, case) for v in trajectory])
+        # Mirrors summarize_campaign's gamma_meas exactly, with the noiseless prediction
+        # trajectory standing in for a hypothetical perfect measurement (mean == projected).
+        gamma_meas = C._fit_rate(projected, lo, hi, gamma_weight=gamma_pred)
+        rate_tol = max(float(C.ACCEPTANCE["rate_sigma"]) * row["se_gamma"],
+                       float(C.ACCEPTANCE["rate_relative"]) * abs(gamma_pred))
+        assert abs(gamma_meas - gamma_pred) <= rate_tol, \
+            f"{case.case_id}: noiseless |{gamma_meas} - {gamma_pred}| exceeds tolerance {rate_tol}"
+
+
+def test_rate_seeds_and_se_uses_the_same_weighted_estimator_as_gamma_meas():
+    """Consistency-note fix (task-11-review.md non-blocking note): the per-seed fits
+    feeding the operative acceptance SE must use the SAME weighted estimator
+    (`gamma_weight=gamma_pred`) `gamma_meas` itself uses, not unweighted OLS -- otherwise
+    the point estimate and the standard error gating it disagree on what estimator they
+    characterize. `_rate_seeds_and_se` is the factored-out helper `summarize_campaign` now
+    calls; this exercises it directly on a synthetic multi-seed series, no GPU/lock
+    pipeline needed."""
+    rng = np.random.default_rng(2026)
+    gamma, A0, sigma, stages, n_seeds = 0.03, 5.0e4, 400.0, 64, 8
+    lo, hi = C._window(stages)
+    n = np.arange(stages + 1, dtype=float)
+    clean = A0 * np.exp(-gamma * n)
+    modes = np.array([clean + rng.normal(0.0, sigma, size=clean.shape) for _ in range(n_seeds)])
+    rate_seeds_weighted, se_weighted = C._rate_seeds_and_se(modes, lo, hi, gamma)
+    # The helper's per-seed fits must equal direct weighted _fit_rate calls (not a silent
+    # fallback to unweighted).
+    assert np.allclose(rate_seeds_weighted, [C._fit_rate(m, lo, hi, gamma_weight=gamma) for m in modes])
+    se_unweighted = float(np.std([C._fit_rate(m, lo, hi) for m in modes], ddof=1) / np.sqrt(n_seeds))
+    # And the resulting SE must actually differ from the unweighted per-seed scatter
+    # (guards against a silent no-op "fix"): the weighted fit down-weights the noisier
+    # late-window points, which changes the per-seed fit's sensitivity to this noise draw.
+    assert not np.isclose(se_weighted, se_unweighted, rtol=1e-6)
+
+
 def test_horizon_is_positive_multiple_of_eight():
     h = C.horizon(16)
     assert h > 0 and h % 8 == 0
