@@ -272,8 +272,14 @@ def generate(output_dir: Path) -> dict:
             }
             json_name = f"{entry['name']}_{L}.json"
             payload = json.dumps(sidecar, indent=2, sort_keys=True) + "\n"
-            (output_dir / json_name).write_text(payload, encoding="utf-8")
-            files[json_name] = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            json_path = output_dir / json_name
+            # newline="" disables Path.write_text's universal-newline translation (which
+            # on Windows rewrites every "\n" to "\r\n" *after* a hash would otherwise be
+            # computed from the pre-translation string); the hash below is then taken
+            # from the bytes actually read back from disk, so manifest.json always
+            # matches what is really there regardless of platform newline behavior.
+            json_path.write_text(payload, encoding="utf-8", newline="")
+            files[json_name] = hashlib.sha256(json_path.read_bytes()).hexdigest()
             preparations.append({"name": entry["name"], "L": L, "bin": bin_name, "json": json_name,
                                   "bin_sha256": bin_sha256})
 
@@ -291,7 +297,11 @@ def generate(output_dir: Path) -> dict:
         "files": files,
         "status": "selected_finite_preparations_not_physical_particle_seeds",
     }
-    (output_dir / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    # Same newline="" discipline as the sidecar writes above, for manifest.json's own
+    # on-disk bytes (nothing hashes manifest.json itself today, but this keeps the file
+    # newline-consistent with every other generated text file should that change).
+    (output_dir / "manifest.json").write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="")
     return manifest
 
 

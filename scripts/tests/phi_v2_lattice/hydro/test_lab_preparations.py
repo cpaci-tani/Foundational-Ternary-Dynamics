@@ -36,6 +36,24 @@ def test_determinism_two_runs_byte_identical(tmp_path_factory):
         assert (first_dir / name).read_bytes() == (second_dir / name).read_bytes(), name
 
 
+def test_manifest_hashes_match_bytes_on_disk(generated):
+    """Guards the Windows CRLF/hash-provenance bug (task-13-review.md): every hash
+    recorded in `manifest.json["files"]` must equal the SHA-256 of the bytes actually
+    on disk for that file -- not the SHA-256 of an in-memory string computed before
+    `Path.write_text()`'s newline translation could rewrite `\\n` to `\\r\\n`. Before the
+    `newline=""` fix this failed for every sidecar `.json` (the `.bin` files, written via
+    `write_bytes`, were never affected)."""
+    import hashlib
+
+    out, manifest = generated
+    assert manifest["files"], "manifest should list at least one file"
+    for name, recorded_hash in manifest["files"].items():
+        on_disk = (out / name).read_bytes()
+        assert hashlib.sha256(on_disk).hexdigest() == recorded_hash, (
+            f"{name}: manifest hash does not match the bytes on disk"
+        )
+
+
 def test_manifest_lists_every_preparation_and_file(generated):
     out, manifest = generated
     assert manifest["law_id"] == Staged.LAW_ID == "phi-hydro-staged-candidate-1"
