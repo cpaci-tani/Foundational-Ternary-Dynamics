@@ -97,11 +97,41 @@ ACCEPTANCE = {"rate_sigma": 3, "rate_relative": Fraction(1, 20), "rms_relative":
 POWER_THRESHOLD = float(ACCEPTANCE["rate_sigma"]) / float(ACCEPTANCE["rate_relative"])
 RUNNER = "engine/build_strict_hydro_cuda/ftd_hydro_campaign"
 STAGE_MICROTICKS = 4
-# task-11-fix2: 4 hours of GPU time, shared by `horizon`'s stage-count cap and
-# `run_campaign`'s subprocess timeout, so the two can never silently drift apart (a stage
-# count `horizon` declares affordable must be a count the runner is actually given time to
-# finish).
+# task-11-fix2: 4 hours of GPU time, `horizon`'s stage-count PLANNING cap only (task-12
+# pre-lock robustness edit, controller ruling 2026-09-08: this budget no longer also gates
+# `run_campaign`'s subprocess timeout -- see RUN_TIMEOUT_MULTIPLIER/run_timeout_seconds
+# below. Sharing one constant between "how many stages can we afford" and "how long may the
+# GPU process run before we kill it" meant any real-world throughput regression relative to
+# the probe (thermal throttling, a different device, WSL2 scheduling noise) would race the
+# in-progress run against the same number that sized its own stage count, leaving zero
+# slack. The two concerns are now independent: this constant still sizes `horizon`.
 HORIZON_BUDGET_SECONDS = 4 * 3600.0
+# task-12 pre-lock robustness edit: `run_campaign`'s subprocess timeout is three times the
+# REGISTERED wall-time ESTIMATE (`registration["estimated_wall_seconds"]`), not the horizon
+# budget cap -- at the locked L=48 estimate (~3.955h) this is ~11.9h, matching the brief's
+# "roughly 12h" figure, with ample slack over the single-probe-run estimate for ordinary
+# run-to-run throughput variance. RUN_TIMEOUT_MINIMUM_SECONDS floors the timeout for
+# tiny/smoke-scale registrations (e.g. the one-case, 8-stage L=8 instrument smoke test),
+# where the compute estimate is a fraction of a second but WSL2 dispatch + CUDA context
+# startup is not -- the floor never binds at any real registered L (32 or 48: 3x the
+# estimate is already tens of thousands of seconds), so it changes nothing about the
+# registered campaign's actual timeout.
+RUN_TIMEOUT_MULTIPLIER = 3.0
+RUN_TIMEOUT_MINIMUM_SECONDS = 300.0
+
+
+def run_timeout_seconds(registration: dict) -> float:
+    """`run_campaign`'s subprocess timeout: `RUN_TIMEOUT_MULTIPLIER` (3) times the
+    registered wall-time estimate (`registration["estimated_wall_seconds"]`), floored at
+    `RUN_TIMEOUT_MINIMUM_SECONDS` so a tiny/smoke-scale registration (whose compute estimate
+    is dwarfed by fixed WSL2/CUDA dispatch overhead) is not killed before it can finish, and
+    falling back to `RUN_TIMEOUT_MULTIPLIER * HORIZON_BUDGET_SECONDS` if no throughput
+    evidence was on disk at registration time (`estimated_wall_seconds is None`). Always
+    satisfies `run_timeout_seconds(reg) >= RUN_TIMEOUT_MULTIPLIER * reg["estimated_wall_seconds"]`
+    when that estimate exists, by construction (the floor can only raise the value)."""
+    estimated = registration.get("estimated_wall_seconds")
+    base = estimated if estimated is not None else HORIZON_BUDGET_SECONDS
+    return max(RUN_TIMEOUT_MULTIPLIER * base, RUN_TIMEOUT_MINIMUM_SECONDS)
 
 # The four registered (direction, polarization) shear cells and which exact H1' constant
 # each probes (amendment of record, 2026-09-08): (1,0,0)/(0,1,0) and (1,1,0)/(0,0,1) -> nu_T2,
@@ -822,9 +852,10 @@ def run_campaign(directory) -> dict:
     runner_arg = _linux(runner) if os.name == "nt" else str(runner)
     command = (["wsl", "-d", "Ubuntu-22.04", "--", runner_arg] + linux_args if os.name == "nt"
                else [str(runner)] + linux_args)
+    timeout_seconds = run_timeout_seconds(lock["registration"])
     started = time.perf_counter()
     result = subprocess.run(command + [str(lock["registration"]["stages"])], capture_output=True, text=True,
-                            timeout=HORIZON_BUDGET_SECONDS)
+                            timeout=timeout_seconds)
     elapsed = time.perf_counter() - started
     (directory / "execution.stdout.txt").write_text(result.stdout, encoding="utf-8")
     (directory / "execution.stderr.txt").write_text(result.stderr, encoding="utf-8")

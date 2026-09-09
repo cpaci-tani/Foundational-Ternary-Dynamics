@@ -319,6 +319,51 @@ def test_registration_reports_wall_time_estimate_for_l32_and_l48():
         assert reg["estimated_wall_seconds"] <= reg["horizon_budget_seconds"]
 
 
+def test_run_timeout_is_three_times_the_registered_estimate_at_l48():
+    """task-12 pre-lock robustness edit (controller ruling, 2026-09-08): HORIZON_BUDGET_SECONDS
+    sizes `horizon`'s stage-count cap for PLANNING only; `run_campaign`'s subprocess timeout
+    must instead be >= 3x the registered wall-time estimate, so a real GPU run is never
+    killed by the same 4-hour number that already, deliberately, capped its stage count with
+    ~zero slack (task-11-fix2's own concern). At L=48 this must land near the brief's
+    declared ~12h figure and must exceed HORIZON_BUDGET_SECONDS itself (the very case the
+    edit exists to fix -- before this edit the timeout WAS HORIZON_BUDGET_SECONDS, with no
+    slack over the 3.955h estimate)."""
+    reg = C.registration(48)
+    timeout = C.run_timeout_seconds(reg)
+    assert reg["estimated_wall_seconds"] is not None
+    assert timeout >= C.RUN_TIMEOUT_MULTIPLIER * reg["estimated_wall_seconds"]
+    assert timeout == pytest.approx(C.RUN_TIMEOUT_MULTIPLIER * reg["estimated_wall_seconds"])
+    assert timeout / 3600.0 == pytest.approx(11.87, abs=0.05)  # ~3x the registered ~3.955h estimate
+    assert timeout > C.HORIZON_BUDGET_SECONDS
+
+
+def test_run_timeout_is_at_least_three_times_the_estimate_for_every_registered_l():
+    """The `>= 3x estimate` property the brief requires, checked generically (not just at the
+    registered L=48) so the floor below can never silently violate it."""
+    for L in (16, 32, 48):
+        reg = C.registration(L)
+        timeout = C.run_timeout_seconds(reg)
+        assert timeout >= C.RUN_TIMEOUT_MULTIPLIER * reg["estimated_wall_seconds"]
+
+
+def test_run_timeout_floors_tiny_registrations_without_starving_dispatch_overhead():
+    """A smoke-scale registration (one case, a handful of stages) has a compute estimate of a
+    fraction of a second -- 3x that is far too short a subprocess timeout to survive WSL2
+    dispatch + CUDA context startup. RUN_TIMEOUT_MINIMUM_SECONDS floors the timeout well
+    above that overhead without disturbing the real registered-L timeout (checked separately
+    above: the floor is far below 3x either registered L's estimate)."""
+    reg = dict(C.registration(8))
+    reg["estimated_wall_seconds"] = 0.05  # far below the floor
+    assert C.run_timeout_seconds(reg) == C.RUN_TIMEOUT_MINIMUM_SECONDS
+    assert C.RUN_TIMEOUT_MINIMUM_SECONDS >= C.RUN_TIMEOUT_MULTIPLIER * reg["estimated_wall_seconds"]
+
+
+def test_run_timeout_falls_back_to_horizon_budget_when_no_wall_time_estimate():
+    reg = dict(C.registration(48))
+    reg["estimated_wall_seconds"] = None
+    assert C.run_timeout_seconds(reg) == pytest.approx(C.RUN_TIMEOUT_MULTIPLIER * C.HORIZON_BUDGET_SECONDS)
+
+
 # --- lock protocol (mirrors scripts/tests/phi_v2_lattice/test_recovery_hydro_campaign.py) --
 
 
