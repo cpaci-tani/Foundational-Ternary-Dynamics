@@ -180,7 +180,7 @@ const experiments = [
         }),
         liquid: Object.freeze({ kind: 'shear-layer', U: 0.6, axis: 'x', gradient: 'y', extent: 18, bins: 8,
             window: Object.freeze({ start: 300, end: 900 }) }),
-        expected: { atomCount: 192, bondCount: 128, componentCount: 64, dynamic: true },
+        expected: { atomCount: 480, bondCount: 320, componentCount: 160, dynamic: true },
         evidence: '[IMPOSED effective classical dynamics; coefficients in engine units] Berendsen-thermalized water slab with an imposed counter-flow velocity step; the erf-width growth rate is a classical-liquid momentum-diffusivity estimator, not a substrate transport derivation.',
     },
     {

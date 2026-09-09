@@ -123,7 +123,7 @@ export function setupScale3Scenario(bridge, scenario) {
             return { atomIds };
         }
         case 'liquid-shear-layer':
-            return placeWaters(bridge, rng, 4, 8, 2, 4.2, 0.3, 1.0);
+            return placeWaters(bridge, rng, 10, 8, 2, 4.2, 0.3, 1.0);
         case 'liquid-channel': {
             const h = 21, wallY = [h / 2 + 2.1, -(h / 2 + 2.1)];
             const atomIds = [];

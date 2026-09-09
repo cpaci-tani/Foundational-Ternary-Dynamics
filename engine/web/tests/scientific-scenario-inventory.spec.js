@@ -66,7 +66,7 @@ test('the frozen live inventory remains synchronized with the audit baseline', (
     expect(ELEMENT_COUNT).toBe(118);
     expect(scale2Count).toBe(150);
     expect(getAllMolecules()).toHaveLength(25);
-    expect(scale3Count).toBe(35);
+    expect(scale3Count).toBe(39);
     expect(scale4Ids).toHaveLength(8);
     expect(scale5Ids).toHaveLength(13);
 
@@ -79,7 +79,7 @@ test('the frozen live inventory remains synchronized with the audit baseline', (
         + 1; // Scale 6 structural exhibit, not a physics scenario.
     // Includes the Scale-1 batteries, the Scale-0 membrane/resonant-cell
     // additions, and Scale 2's validation and nuclear-reaction laboratories.
-    expect(totalPresentationEntries).toBe(385);
+    expect(totalPresentationEntries).toBe(389);
 });
 
 test('the manifest schema contains every pinned scientific-contract field', () => {
