@@ -105,9 +105,11 @@ function makeRecordingStub(positionsList, atomicNumsList = null) {
         aeSetAtomVelocity: (id, vx, vy, vz) => calls.setVelocity.push([id, vx, vy, vz]),
         aeGetAtomData: () => ({ positions, ids, count, atomicNums }),
         aeGetVelocities: () => ({ velocities, count }),
-        // Double-precision per-atom read (M6): this stub's velocities never
-        // move independently of aeSetAtomVelocity's recorded calls, so the
-        // stored Float32 velocities (all zero, never mutated) are exact.
+        // Double-precision O(N) accessor (M6/residual fix): imposeLiquidFlow reads
+        // this instead of aeInspectAtom now. This stub's velocities never move
+        // independently of aeSetAtomVelocity's recorded calls, so the stored
+        // Float32 velocities (all zero, never mutated) are exact in Float64 too.
+        aeGetVelocitiesF64: () => ({ velocities: Float64Array.from(velocities), count }),
         aeInspectAtom: (id) => ({ vx: velocities[3 * id], vy: velocities[3 * id + 1], vz: velocities[3 * id + 2] }),
         aeSetExperimentState: () => {},
         aeGetRuntimeState: () => ({ experiment: null }),
@@ -240,6 +242,50 @@ test('imposeLiquidFlow (M6): the droplet lab is a declared no-op (the kind impos
         const a = bridge.aeInspectAtom(id);
         assert.deepEqual([a.vx, a.vy, a.vz], before[i], `atom ${id} velocity must be unchanged`);
     });
+});
+
+test('aeGetVelocitiesF64 (residual accessor fix): matches aeInspectAtom exactly and the Float32 view within rounding', () => {
+    const { bridge, atomIds } = setupFresh('mol-liquid-shear-layer');
+    const f64 = bridge.aeGetVelocitiesF64();
+    const f32 = bridge.aeGetVelocities();
+    assert.equal(f64.count, atomIds.length, 'count matches the seeded population');
+    assert.equal(f32.count, f64.count, 'the Float32 and Float64 views cover the same population');
+
+    // Spot-check a handful of atoms against the O(N) aeInspectAtom path exactly
+    // -- both read the same underlying atoms[i].vx/vy/vz, so the match is exact,
+    // not approximate.
+    for (const i of [0, 1, Math.floor(atomIds.length / 2), atomIds.length - 1]) {
+        const a = bridge.aeInspectAtom(atomIds[i]);
+        assert.equal(f64.velocities[3 * i], a.vx, `atom index ${i} vx must match aeInspectAtom exactly`);
+        assert.equal(f64.velocities[3 * i + 1], a.vy, `atom index ${i} vy must match aeInspectAtom exactly`);
+        assert.equal(f64.velocities[3 * i + 2], a.vz, `atom index ${i} vz must match aeInspectAtom exactly`);
+    }
+
+    // Every atom's Float64 read must equal the Float32 renderer view within
+    // Float32 rounding (the two views copy the same doubles at different
+    // output precision).
+    for (let k = 0; k < 3 * f64.count; k++) {
+        assert.equal(Math.fround(f64.velocities[k]), f32.velocities[k],
+            `component ${k}: Float64 view rounded to Float32 must equal the Float32 view`);
+    }
+});
+
+test('imposeLiquidFlow (residual accessor fix): the 480-atom shear-layer lab completes well under one engine tick', () => {
+    const { scenario, bridge } = setupFresh('mol-liquid-shear-layer');
+    const data = bridge.aeGetAtomData();
+    assert.equal(data.count, 480, 'the shear-layer lab seeds the registered 480-atom population');
+
+    const t0 = performance.now();
+    imposeLiquidFlow(bridge, scenario);
+    const elapsedMs = performance.now() - t0;
+    // eslint-disable-next-line no-console
+    console.log(`imposeLiquidFlow on the 480-atom shear-layer lab: ${elapsedMs.toFixed(3)} ms`);
+
+    assert.equal(bridge.aeGetDiagnostics().lastError, 'ok', 'no rejected aeSetAtomVelocity call');
+    // Before the fix, the per-atom aeInspectAtom() path (each call recomputing
+    // all forces) measured ~10215 ms for this lab; the O(N) accessor must land
+    // far below one engine tick (dt is O(1e-2), so 50 ms is generous headroom).
+    assert.ok(elapsedMs < 50, `imposeLiquidFlow took ${elapsedMs} ms, expected well under 50 ms`);
 });
 
 test('telemetry-hub: attachLiquidTracker + collectScale2 populate s2.liquid across the thermalize/measure boundary', () => {

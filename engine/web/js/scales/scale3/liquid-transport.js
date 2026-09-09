@@ -164,17 +164,18 @@ export function imposeLiquidFlow(bridge, scenario) {
     const L = scenario.liquid;
     if (L.kind === 'droplet') return; // this kind imposes no flow; free flight only.
     const data = bridge.aeGetAtomData();
+    // Read every atom's current velocity in double precision through the O(N)
+    // accessor (not the Float32 aeGetVelocities() renderer view, which
+    // quantises the thermalised state, and not a per-atom aeInspectAtom()
+    // loop, which recomputes all forces on every call and made this O(N^3)).
+    const vel = bridge.aeGetVelocitiesF64().velocities;
     const g = { x: 0, y: 1, z: 2 }[L.gradient], f = { x: 0, y: 1, z: 2 }[L.axis];
     for (let i = 0; i < data.count; i++) {
         // Locked wall species never take a velocity: aeSetAtomVelocity rejects the
         // call for a locked atom, so skip it here rather than fire-and-ignore.
         if (Number.isFinite(L.wallZ) && data.atomicNums[i] === L.wallZ) continue;
         const p = [data.positions[3 * i], data.positions[3 * i + 1], data.positions[3 * i + 2]];
-        // Read the current velocity in double precision (aeInspectAtom), not the
-        // Float32 aeGetVelocities() renderer view, so the thermalised state is not
-        // quantised at the phase transition.
-        const atom = bridge.aeInspectAtom(data.ids[i]);
-        const v = [atom.vx, atom.vy, atom.vz];
+        const v = [vel[3 * i], vel[3 * i + 1], vel[3 * i + 2]];
         if (L.kind === 'shear-layer') v[f] += p[g] >= 0 ? L.U : -L.U;
         else if (L.kind === 'channel') v[f] += L.U * Math.max(0, 1 - (2 * p[g] / L.h) ** 2);
         else if (L.kind === 'spinning-droplet') {

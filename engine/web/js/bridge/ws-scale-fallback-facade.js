@@ -108,6 +108,7 @@ export class WebSocketScaleFallbackFacade {
     aeGetNuclearDiagnostics() { return this._ensureFallback().aeGetNuclearDiagnostics(); }
     aeGetNuclearVisuals() { return this._ensureFallback().aeGetNuclearVisuals(); }
     aeGetVelocities() { return this._ensureFallback().aeGetVelocities(); }
+    aeGetVelocitiesF64() { return this._ensureFallback().aeGetVelocitiesF64(); }
     aeGetDipoles() { return this._ensureFallback().aeGetDipoles(); }
     aeGetHBondPairs() { return this._ensureFallback().aeGetHBondPairs(); }
     aeSetDt(dt) { this._ensureFallback().aeSetDt(dt); }

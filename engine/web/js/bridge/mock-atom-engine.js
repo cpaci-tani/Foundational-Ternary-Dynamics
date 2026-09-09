@@ -1856,6 +1856,19 @@ export function createAtomEngine(state) {
         return { velocities, count: atoms.length };
     }
 
+    /** Double-precision copy for interventions (e.g. imposeLiquidFlow); the Float32 view above stays for rendering. */
+    function aeGetVelocitiesF64() {
+        if (!state._ae) return { velocities: new Float64Array(0), count: 0 };
+        const atoms = state._ae.atoms;
+        const velocities = new Float64Array(atoms.length * 3);
+        for (let i = 0; i < atoms.length; i++) {
+            velocities[i * 3]     = atoms[i].vx;
+            velocities[i * 3 + 1] = atoms[i].vy;
+            velocities[i * 3 + 2] = atoms[i].vz;
+        }
+        return { velocities, count: atoms.length };
+    }
+
     /**
      * Per-atom dipole moments for the dipole-arrow overlay. Recomputes the
      * bond-χ-difference dipoles directly so arrows work even when the
@@ -2239,7 +2252,7 @@ export function createAtomEngine(state) {
         aeAtomCount, aeClear, aeInspectAtom, aeGetRuntimeState,
         aeConfigureNuclearReaction, aeSetNuclearEnvironment, aeInjectNuclearParticle,
         aeGetNuclearDiagnostics, aeGetNuclearVisuals,
-        aeGetVelocities, aeGetDipoles, aeGetHBondPairs, aeSetExperimentState,
+        aeGetVelocities, aeGetVelocitiesF64, aeGetDipoles, aeGetHBondPairs, aeSetExperimentState,
         aeSetMoleculeReference, aeGetMoleculeDiagnostics,
     };
 }
