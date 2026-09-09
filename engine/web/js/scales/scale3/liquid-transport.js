@@ -89,6 +89,26 @@ export function firstModeAmplitude(y, vx, h) {
     return den ? num / den : NaN;
 }
 
+/**
+ * First-mode amplitude that is orthogonal to a uniform drift. A pure
+ * v(y) = U (no cosine content) projects onto cos(pi y/h) at 4/pi under the
+ * bare firstModeAmplitude estimator above — that estimator is only valid
+ * once the flow has no residual center-of-mass drift. This variant solves
+ * the 2x2 least squares for vx ~= c0 + a1 cos(pi y / h) and returns a1, so a
+ * constant offset is absorbed into c0 instead of leaking into the mode
+ * amplitude.
+ */
+export function firstModeAmplitudeWithOffset(y, vx, h) {
+    const n = y.length;
+    let sumC = 0, sumCC = 0, sumV = 0, sumVC = 0;
+    for (let i = 0; i < n; i++) {
+        const c = Math.cos(Math.PI * y[i] / h);
+        sumC += c; sumCC += c * c; sumV += vx[i]; sumVC += vx[i] * c;
+    }
+    const det = n * sumCC - sumC * sumC;
+    return det ? (n * sumVC - sumC * sumV) / det : NaN;
+}
+
 export function meanSquareDisplacement(ref, now, driftRef, driftNow) {
     const m = ref.length / 3; let s = 0;
     for (let i = 0; i < m; i++) {
@@ -164,7 +184,7 @@ export class LiquidTransportTracker {
         if (!this.ref) this.ref = { cen: Float64Array.from(cen), drift };
         const row = { t, tick };
         if (L.kind === 'shear-layer') { const p = velocityProfile(coords, values, -L.extent, L.extent, L.bins); const fit = fitErfWidth(p.centers, p.mean); row.w2 = fit.w * fit.w; row.U = fit.U; }
-        else if (L.kind === 'channel') row.a = firstModeAmplitude(coords, values, L.h);
+        else if (L.kind === 'channel') row.a = firstModeAmplitudeWithOffset(coords, values, L.h);
         else if (L.kind === 'droplet') row.msd = meanSquareDisplacement(this.ref.cen, cen, this.ref.drift, drift);
         else if (L.kind === 'spinning-droplet') { const s = angularVelocitySplit(cen, vel, drift, 2); row.dOmega = s.inner - s.outer; }
         this.samples.push(row); this.summaryCache = this.summary();

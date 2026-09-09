@@ -162,6 +162,90 @@ const experiments = [
         expected: { atomCount: 12, bondCount: 8, componentCount: 4, dynamic: true },
         evidence: '[IMPOSED] Berendsen thermal protocol over four effective water records; not a canonical ensemble.',
     },
+    {
+        id: 'mol-liquid-shear-layer', category: 'Liquid Transport Experiments', title: 'Water Shear Layer',
+        summary: 'A thermalized water slab is split into two counter-flowing streams; the erf-profile width growth over the measurement window estimates the momentum diffusivity.',
+        setup: 'liquid-shear-layer', cameraDistance: 42, epistemicStatus: 'imposed', seed: 0x030101,
+        physics: profile({ vdw: true, bonds_force: true, h_bonds: true, angle_strain: true,
+            dipole_dipole: true, speed_limit: true, electronegativity: true, thermostat: true }),
+        parameters: parameters(),
+        overlays: overlays({ bondStyle: 'cylinders' }),
+        experiment: Object.freeze({
+            protocol: 'molecular-liquid-transport', label: 'Thermalize, impose flow, measure',
+            observation: 'Track the erf velocity-profile width growth across the shear layer to estimate the momentum diffusivity nu.',
+            phases: Object.freeze([
+                Object.freeze({ tick: 0, label: 'thermalize (thermostat on)' }),
+                Object.freeze({ tick: 300, label: 'impose flow, thermostat off, measure' }),
+            ]),
+        }),
+        liquid: Object.freeze({ kind: 'shear-layer', U: 0.6, axis: 'x', gradient: 'y', extent: 18, bins: 8,
+            window: Object.freeze({ start: 300, end: 900 }) }),
+        expected: { atomCount: 192, bondCount: 128, componentCount: 64, dynamic: true },
+        evidence: '[IMPOSED effective classical dynamics; coefficients in engine units] Berendsen-thermalized water slab with an imposed counter-flow velocity step; the erf-width growth rate is a classical-liquid momentum-diffusivity estimator, not a substrate transport derivation.',
+    },
+    {
+        id: 'mol-liquid-channel-decay', category: 'Liquid Transport Experiments', title: 'Water Channel Decay',
+        summary: 'A water slab confined between two locked argon walls is thermalized, then given a parabolic flow profile whose first-mode centerline decay estimates the momentum diffusivity.',
+        setup: 'liquid-channel', cameraDistance: 40, epistemicStatus: 'imposed', seed: 0x030102,
+        physics: profile({ vdw: true, bonds_force: true, h_bonds: true, angle_strain: true,
+            dipole_dipole: true, speed_limit: true, electronegativity: true, thermostat: true }),
+        parameters: parameters(),
+        overlays: overlays({ bondStyle: 'cylinders' }),
+        experiment: Object.freeze({
+            protocol: 'molecular-liquid-transport', label: 'Thermalize, impose flow, measure',
+            observation: 'Track the first-mode centerline-velocity decay rate of the channel flow to estimate the momentum diffusivity nu.',
+            phases: Object.freeze([
+                Object.freeze({ tick: 0, label: 'thermalize (thermostat on)' }),
+                Object.freeze({ tick: 300, label: 'impose flow, thermostat off, measure' }),
+            ]),
+        }),
+        liquid: Object.freeze({ kind: 'channel', U: 0.6, axis: 'x', gradient: 'y', h: 21,
+            window: Object.freeze({ start: 300, end: 900 }) }),
+        expected: { atomCount: 180, bondCount: 96, componentCount: 84, dynamic: true },
+        evidence: '[IMPOSED effective classical dynamics; coefficients in engine units] Water confined between locked-argon walls with an imposed parabolic flow; the first-mode decay rate is a classical-liquid momentum-diffusivity estimator, not a substrate transport derivation.',
+    },
+    {
+        id: 'mol-liquid-droplet-diffusion', category: 'Liquid Transport Experiments', title: 'Water Droplet Diffusion',
+        summary: 'A thermalized water droplet is released into free flight; drift-removed molecule mean-square displacement growth estimates the self-diffusion coefficient.',
+        setup: 'liquid-droplet', cameraDistance: 34, epistemicStatus: 'imposed', seed: 0x030103,
+        physics: profile({ vdw: true, bonds_force: true, h_bonds: true, angle_strain: true,
+            dipole_dipole: true, speed_limit: true, electronegativity: true, thermostat: true }),
+        parameters: parameters(),
+        overlays: overlays({ bondStyle: 'cylinders' }),
+        experiment: Object.freeze({
+            protocol: 'molecular-liquid-transport', label: 'Thermalize, impose flow, measure',
+            observation: 'Track drift-removed molecule mean-square displacement growth to estimate the self-diffusion coefficient D.',
+            phases: Object.freeze([
+                Object.freeze({ tick: 0, label: 'thermalize (thermostat on)' }),
+                Object.freeze({ tick: 300, label: 'impose flow, thermostat off, measure' }),
+            ]),
+        }),
+        liquid: Object.freeze({ kind: 'droplet', axis: 'x', gradient: 'y',
+            window: Object.freeze({ start: 300, end: 1500 }) }),
+        expected: { atomCount: 192, bondCount: 128, componentCount: 64, dynamic: true },
+        evidence: '[IMPOSED effective classical dynamics; coefficients in engine units] Thermalized water droplet in free flight; the drift-removed MSD growth rate is a classical-liquid self-diffusion estimator, not a substrate transport derivation.',
+    },
+    {
+        id: 'mol-liquid-spinning-droplet', category: 'Liquid Transport Experiments', title: 'Spinning Water Droplet',
+        summary: 'A thermalized water droplet is given an imposed rigid-core rotation profile; the inner-outer angular-velocity difference decay estimates the rotational relaxation time.',
+        setup: 'liquid-spinning-droplet', cameraDistance: 34, epistemicStatus: 'imposed', seed: 0x030104,
+        physics: profile({ vdw: true, bonds_force: true, h_bonds: true, angle_strain: true,
+            dipole_dipole: true, speed_limit: true, electronegativity: true, thermostat: true }),
+        parameters: parameters(),
+        overlays: overlays({ bondStyle: 'cylinders' }),
+        experiment: Object.freeze({
+            protocol: 'molecular-liquid-transport', label: 'Thermalize, impose flow, measure',
+            observation: 'Track the decay of the inner-outer angular-velocity difference to estimate the rotational relaxation time tau.',
+            phases: Object.freeze([
+                Object.freeze({ tick: 0, label: 'thermalize (thermostat on)' }),
+                Object.freeze({ tick: 300, label: 'impose flow, thermostat off, measure' }),
+            ]),
+        }),
+        liquid: Object.freeze({ kind: 'spinning-droplet', omega0: 0.08, R: 9, axis: 'x', gradient: 'y',
+            window: Object.freeze({ start: 300, end: 1200 }) }),
+        expected: { atomCount: 192, bondCount: 128, componentCount: 64, dynamic: true },
+        evidence: '[IMPOSED effective classical dynamics; coefficients in engine units] Thermalized water droplet given an imposed differential-rotation profile; the inner-outer angular-velocity decay rate is a classical-liquid rotational-relaxation estimator, not a substrate transport derivation.',
+    },
 ].map((entry) => Object.freeze({
     tags: Object.freeze(['experiment', 'molecular-dynamics']),
     scenarioClass: 'effective_dynamics', owner: 'js_effective_molecule_engine',
@@ -239,6 +323,17 @@ export function validateScale3ScenarioRegistry() {
         if (!Number.isFinite(scenario.parameters?.dt) || !Number.isFinite(scenario.parameters?.softening) ||
             !Number.isFinite(scenario.parameters?.thermostatTemp)) errors.push(`parameters:${scenario.id}`);
         if (!scenario.overlays || !scenario.expected) errors.push(`presentation:${scenario.id}`);
+        if (scenario.liquid) {
+            const L = scenario.liquid;
+            if (!['shear-layer', 'channel', 'droplet', 'spinning-droplet'].includes(L.kind)) {
+                errors.push(`liquid.kind:${scenario.id}`);
+            }
+            if (!Number.isFinite(L.window?.start) || !Number.isFinite(L.window?.end) ||
+                !(L.window.start < L.window.end)) errors.push(`liquid.window:${scenario.id}`);
+            if (scenario.experiment?.protocol !== 'molecular-liquid-transport') {
+                errors.push(`liquid.protocol:${scenario.id}`);
+            }
+        }
     }
     return { ok: errors.length === 0, errors, count: SCALE3_SCENARIOS.length };
 }

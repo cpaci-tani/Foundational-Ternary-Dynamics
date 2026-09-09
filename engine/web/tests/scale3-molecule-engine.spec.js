@@ -47,8 +47,8 @@ test.describe('Scale 3 molecule engine', () => {
             };
         });
 
-        expect(result.validation).toEqual({ ok: true, errors: [], count: 35 });
-        expect(result.optionCount).toBe(35);
+        expect(result.validation).toEqual({ ok: true, errors: [], count: 39 });
+        expect(result.optionCount).toBe(39);
         expect(result.failures).toEqual([]);
         expect(result.detailsVisible).toBe(true);
         expect(result.detailsText).toContain('Evidence:');

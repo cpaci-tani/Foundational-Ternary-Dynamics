@@ -58,4 +58,16 @@ export const sections = [
             { id: 'mol-status', label: 'Engine Status', unit: '', format: 'text', source: 's2.diag.lastError', tooltip: 'Latest finite-state validation or intervention error; ok means no active engine error.' },
         ],
     },
+    {
+        id: 'mol-liquid-transport',
+        title: 'Liquid transport',
+        rows: [
+            { id: 'mol-liquid-status', label: 'Status', unit: '', format: 'text', source: 's2.liquid.status' },
+            { id: 'mol-liquid-quantity', label: 'Quantity', unit: '', format: 'text', source: 's2.liquid.quantity' },
+            { id: 'mol-liquid-value', label: 'Estimate', unit: '(sim)', source: 's2.liquid.value' },
+            { id: 'mol-liquid-se', label: 'Standard error', unit: '(sim)', source: 's2.liquid.se' },
+            { id: 'mol-liquid-samples', label: 'Samples', unit: '', source: 's2.liquid.samples' },
+            { id: 'mol-liquid-estimator', label: 'Estimator', unit: '', format: 'text', source: 's2.liquid.estimator', tooltip: '[IMPOSED effective classical dynamics; coefficients in engine units]' },
+        ],
+    },
 ];

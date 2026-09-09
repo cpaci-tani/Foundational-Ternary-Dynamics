@@ -9,10 +9,12 @@ import { resetAEExperiment, startAEExperiment } from '../scale2/experiment-runti
 import { Scale3ControlsComponent } from './ui/controls/component.js';
 import { getScale3ScenarioMeta, SCALE3_DEFAULT_SCENARIO } from './scenario-registry.js';
 import { setupScale3Scenario } from './scenarios.js';
+import { LiquidTransportTracker } from './liquid-transport.js';
 import { renderScale3ScenarioDescription } from './ui/dom.js';
 
 export function resetScale3(ctx) {
     resetAEExperiment(ctx.bridge);
+    telemetryHub.attachLiquidTracker(null);
     ctx.inspector?.setCurrentMolecule(null);
 }
 
@@ -35,6 +37,7 @@ export function loadMoleculeScenario(ctx, requestedId) {
     // for every effective force, parameter, and presentation layer.
     applyAEScenarioPhysics(bridge, scenario);
     bridge.aeSetMoleculeReference?.(scenario.id);
+    telemetryHub.attachLiquidTracker(scenario.liquid ? new LiquidTransportTracker(scenario.liquid, scenario.parameters.dt) : null);
     startAEExperiment(scenario, bridge);
     applyAEVisualPreset(viewport, { visuals: scenario.overlays });
 

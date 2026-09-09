@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
-    velocityProfile, fitErfWidth, firstModeAmplitude, meanSquareDisplacement,
+    velocityProfile, fitErfWidth, firstModeAmplitude, firstModeAmplitudeWithOffset, meanSquareDisplacement,
     linearRegression, logDecayRate, angularVelocitySplit, moleculeCentroids,
 } from '../js/scales/scale3/liquid-transport.js';
 
@@ -45,6 +45,24 @@ test('first-mode amplitude and log-decay rate give nu = gamma h^2 / pi^2', () =>
     const d = logDecayRate(t, a);
     assert.ok(Math.abs(d.gamma - gamma) < 1e-6);
     assert.ok(Math.abs(d.gamma * h * h / (Math.PI * Math.PI) - nu) < 1e-6);
+});
+
+test('firstModeAmplitudeWithOffset recovers the mode amplitude under a constant drift', () => {
+    const h = 20, a1 = 0.42, c0 = 1.7;
+    const y = new Float64Array(200);
+    for (let i = 0; i < 200; i++) y[i] = -h / 2 + (i + 0.5) * h / 200;
+    const vx = new Float64Array(200);
+    for (let i = 0; i < 200; i++) vx[i] = c0 + a1 * Math.cos(Math.PI * y[i] / h);
+    const fit = firstModeAmplitudeWithOffset(y, vx, h);
+    assert.ok(Math.abs(fit - a1) < 1e-9, `a1 ${fit} vs ${a1}`);
+    // The bare (offset-blind) estimator is exactly the failure mode this
+    // guards against: a pure constant drift (a1 = 0) projects onto the
+    // cosine mode at 4/pi under firstModeAmplitude, not 0.
+    const drift = new Float64Array(200).fill(c0);
+    const bare = firstModeAmplitude(y, drift, h);
+    assert.ok(Math.abs(bare - c0 * 4 / Math.PI) < 1e-4, `bare ${bare} vs ${c0 * 4 / Math.PI}`);
+    const offsetAware = firstModeAmplitudeWithOffset(y, drift, h);
+    assert.ok(Math.abs(offsetAware) < 1e-9, `offset-aware ${offsetAware} should be ~0`);
 });
 
 test('MSD slope over 6 recovers D for a synthetic random walk', () => {

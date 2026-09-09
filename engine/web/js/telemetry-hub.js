@@ -397,7 +397,8 @@ export class TelemetryHub {
             _potentialMin: 0, _potentialMax: 0, _overlaySystemL: 0,
             _overlayProvenanceOn: false,
         };
-        this.s2  = { diag: null, runtime: null, molecule: null };  // also used for scale3
+        this.s2  = { diag: null, runtime: null, molecule: null, liquid: null };  // also used for scale3
+        this._liquidTracker = null;
         this.s4  = { diag: null, runtime: null };
         this.s5  = { diag: null, cosmic: null };
 
@@ -1240,6 +1241,11 @@ export class TelemetryHub {
 
     // ── Scale 2/3 collection ────────────────────────────────────────────────
 
+    /** Attach (or clear with null) the active Scale 3 liquid-transport tracker for this scenario load. */
+    attachLiquidTracker(tracker) {
+        this._liquidTracker = tracker;
+    }
+
     collectScale2(bridge) {
         const diag = bridge.aeGetDiagnostics?.();
         if (!diag) return null;
@@ -1288,6 +1294,16 @@ export class TelemetryHub {
             : null;
         const molecule = activeScale === '3' ? bridge.aeGetMoleculeDiagnostics?.() ?? null : null;
         this.s2.molecule = molecule;
+
+        if (this._liquidTracker) {
+            const d = bridge.aeGetAtomData();
+            const v = bridge.aeGetVelocities();
+            this._liquidTracker.sample({
+                tick: diag.tick, positions: d.positions, velocities: v.velocities,
+                atomicNums: d.atomicNums, bonds: d.bonds, count: d.count, bondCount: d.bondCount,
+            });
+            this.s2.liquid = this._liquidTracker.summaryCache;
+        }
 
         const currentTick = diag.tick || 0;
         if (currentTick !== this._lastTick2) {
@@ -1631,7 +1647,7 @@ export class TelemetryHub {
                         case 2:
             case 3:
                 this._s2_ae.clear();
-                this.s2 = { diag: null, runtime: null, molecule: null };
+                this.s2 = { diag: null, runtime: null, molecule: null, liquid: null };
                 this._aeInitialEnergy = null;
                 this._lastTick2 = -1;
                 break;
