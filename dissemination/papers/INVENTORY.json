@@ -1,7 +1,7 @@
 {
   "generated": "2026-08-16T14:52:50.532112+00:00",
   "reframe_date": "2026-04-19",
-  "n_papers": 137,
+  "n_papers": 135,
   "rows": [
     {
       "stem": "ARCH_GEOMETRIC_STANDARD_MODEL",
@@ -1353,23 +1353,6 @@
       "notes": ""
     },
     {
-      "stem": "_preview_node_map",
-      "title": null,
-      "tex": "docs/papers/figures/_preview_node_map.tex",
-      "md": null,
-      "pdf": null,
-      "location_class": "legacy",
-      "post_reframe": true,
-      "anti_target_clean": true,
-      "anti_target_offenses": [],
-      "has_source": true,
-      "size_kb": 0,
-      "last_modified": "2026-05-26T18:53:32.482685+00:00",
-      "epistemic_tier": 2,
-      "verdict": "KEEP",
-      "notes": ""
-    },
-    {
       "stem": "appendices",
       "title": null,
       "tex": "docs/papers/ontological_chain/appendices.tex",
@@ -2049,23 +2032,6 @@
       "has_source": true,
       "size_kb": 2,
       "last_modified": "2026-06-03T20:55:52.462428+00:00",
-      "epistemic_tier": 2,
-      "verdict": "KEEP",
-      "notes": ""
-    },
-    {
-      "stem": "node_map_tikz",
-      "title": null,
-      "tex": "docs/papers/figures/node_map_tikz.tex",
-      "md": null,
-      "pdf": null,
-      "location_class": "legacy",
-      "post_reframe": true,
-      "anti_target_clean": true,
-      "anti_target_offenses": [],
-      "has_source": true,
-      "size_kb": 2,
-      "last_modified": "2026-06-02T21:38:41.927155+00:00",
       "epistemic_tier": 2,
       "verdict": "KEEP",
       "notes": ""

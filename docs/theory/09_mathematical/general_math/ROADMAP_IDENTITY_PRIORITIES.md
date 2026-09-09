@@ -175,16 +175,6 @@ Adding a new `check()` to `verify_gstar_paper.py` automatically regenerates the 
 
 ---
 
-## §8 -- Successor: the corpus-wide math node map (FTD-0207)
+## §8 -- Historical corpus-wide map (FTD-0207)
 
-This roadmap is **G\*-paper-scoped** -- the synonymy graph it ranks covers only `verify_gstar_paper.py`'s 100 verified identities (72 objects, 216 bipartite edges). Subsequent work (FTD-0207) generalises the extraction across the full ~131-script corpus and adds a multi-layer structure (mathematical objects  identities  spine theorems  LEDGER claims with epistemic-tag overlay) rendered in four complementary output formats.
-
-The corpus-wide map does NOT supersede this roadmap -- the priority bundles in §3 remain the right ranking for G\*-paper-internal extensions. The corpus-wide map answers a different question: *"how do all of FTD's verified pieces connect across the whole project?"* The G\*-paper-scoped synonymy graph answers: *"which identity should be added next to the G\* paper's verification corpus?"*
-
-**Pointers:**
-- `docs/theory/09_mathematical/NODE_MAP_FTD_MATH.md` -- corpus-wide markdown view (per-sector Mermaid blocks + object backbone).
-- `dissemination/interactive/math_node_map.html` -- interactive Plotly.js viewer (filterable by layer, sector, epistemic tag, search).
-- `scripts/visualization/results/math_node_map/` -- 18 matplotlib SVG/PNG figures (full overview + spine-only + ARC-B1 context + Catalan frontier + 14 per-sector).
-- `docs/papers/figures/node_map_tikz.tex` -- spine-only TikZ fragment for paper inclusion.
-- `scripts/verification/results/math_node_map.json` -- canonical machine-readable data (commit-recorded).
-- LEDGER row FTD-0207 -- provenance + extractor honesty + reproduction recipe.
+The corpus-wide math node map and its generation pipeline were removed on 2026-09-08 by owner instruction. [LEDGER row FTD-0207](../../07_assessment/core_ledgers/LEDGER.md#ftd-0207-record) retains the historical provenance. This roadmap and its G\*-paper-scoped synonymy graph remain separate research-navigation tools; their status is unchanged.

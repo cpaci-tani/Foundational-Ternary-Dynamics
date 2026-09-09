@@ -1256,7 +1256,7 @@ This is a *navigation aid*, not a source of truth. `LEDGER.md` remains the singl
 
 ## Tag frequency across all rows
 
-Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same normaliser that feeds `math_node_map.json`. A row carrying several tags is counted under each, so the total exceeds the row count.
+Canonical tags via `ledger_parser.TAG_NORMALISATION`. A row carrying several tags is counted under each, so the total exceeds the row count.
 
 | Tag | Rows |
 |---|---:|

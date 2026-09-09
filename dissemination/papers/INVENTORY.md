@@ -2,14 +2,14 @@
 
 **Generated:** 2026-08-16 14:52 UTC  
 **Reframe date:** 2026-04-19  
-**Total papers:** 137
+**Total papers:** 135
 
 **Regenerate** with `python scripts/build_paper_inventory.py`.
 
 Per-row fields: KEEP/REVISE/RETIRE/ARCHIVED, tier 1-5, post-reframe Y/N, anti-target audit Y/N, source-availability Y/N. 
 Tier 1 = bulletproof math theorems. Tier 5 = pre-reframe / closed-negative / PDF-only.
 
-## KEEP (43)
+## KEEP (41)
 
 | Stem | Tier | Loc | Reframe | A-T clean | Source | Title / Notes |
 |---|---|---|---|---|---|---|
@@ -35,7 +35,6 @@ Tier 1 = bulletproof math theorems. Tier 5 = pre-reframe / closed-negative / PDF
 | PAPER_PATH | 2 | draft-src | Y | ✓ | ✓ | — |
 | PAPER_QUANTUM_DECLINATION_AND_EPISTEMIC_MAPPING | 2 | draft-src | Y | ✓ | ✓ | — |
 | RESEARCH_NOTE_DISCRETE_MULTICLOCK_v1 | 2 | draft | Y | ✓ | ✓ | — |
-| _preview_node_map | 2 | legacy | Y | ✓ | ✓ | — |
 | appendices | 2 | legacy | Y | ✓ | ✓ | — |
 | ch1_ontology | 2 | legacy | Y | ✓ | ✓ | — |
 | ch2_logic | 2 | legacy | Y | ✓ | ✓ | — |
@@ -49,7 +48,6 @@ Tier 1 = bulletproof math theorems. Tier 5 = pre-reframe / closed-negative / PDF
 | glossary | 2 | legacy | Y | ✓ | ✓ | — |
 | master_dag | 2 | legacy | Y | ✓ | ✓ | — |
 | monograph | 2 | legacy | Y | ✓ | ✓ | — |
-| node_map_tikz | 2 | legacy | Y | ✓ | ✓ | — |
 | ontological_chain | 2 | legacy | Y | ✓ | ✓ | The FTD Ontological Chain [3pt] A Canonical Map and Intuition Driver |
 | part0_seed | 2 | legacy | Y | ✓ | ✓ | — |
 | part1_reach | 2 | legacy | Y | ✓ | ✓ | — |

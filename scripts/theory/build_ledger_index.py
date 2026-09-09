@@ -98,8 +98,7 @@ def clip(text: str, limit: int) -> str:
 def normalised_tags(tag_cell: str) -> list[str]:
     """Canonical tag names for `tag_cell`, via the ledger_parser normaliser.
 
-    Reuses the project's existing tag vocabulary so this index and
-    math_node_map.json cannot drift into two different tag namespaces.
+    Reuses the project's existing tag vocabulary for consistent index tags.
     """
     brackets = re.findall(r"\[[^\]]+\]", tag_cell) or [tag_cell]
     out: list[str] = []
@@ -235,8 +234,7 @@ def render(records: list[dict]) -> str:
             tag_counts[norm] += 1
     add("## Tag frequency across all rows")
     add("")
-    add("Canonical tags via `ledger_parser.TAG_NORMALISATION` — the same "
-        "normaliser that feeds `math_node_map.json`. A row carrying several "
+    add("Canonical tags via `ledger_parser.TAG_NORMALISATION`. A row carrying several "
         "tags is counted under each, so the total exceeds the row count.")
     add("")
     add("| Tag | Rows |")
