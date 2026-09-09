@@ -203,6 +203,39 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
             IF(rb, x, y, z, -mag * ry / r, mag * rx / r, 0);
         }
     }
+    else if (name == "s0-field-shear-layer") {
+        // Scenario ID: s0-field-shear-layer
+        // Physical Purpose: contrast scenario for the hydrodynamics program. A sheared flux
+        // layer J_x(y) = A f(y) g(z), uniform in x, so div J = 0 by construction. Under the
+        // single-substrate wave map (wave_propagation only, gauss off) the layer does not
+        // diffuse: d'Alembert splits each edge of f into two profiles moving at +-c along y,
+        // so each edge's width grows linearly in time (c t), not as sqrt(nu t).
+        // Initial Condition Parameters: A = 0.03, delta = 2.5 sites, sigma_z = N/6. f(y) is a
+        // periodic DOUBLE layer with edges at y1 = N/4 and y2 = 3N/4:
+        //   f(y) = tanh((y - y1)/delta) - tanh((y - y2)/delta) - 1
+        // which is -1 at both ends of the periodic y-axis (y = 0 and y = N-1 meet at the wrap
+        // with a mismatch of only ~1e-4*A at delta = 2.5) and +1 between the two edges, so the
+        // seed closes smoothly on the periodic axis instead of introducing a spurious third,
+        // sharper step at the wrap point.
+        // Expected Behaviour: <J_x>(y, t) = 0.5 [f(y - c t) + f(y + c t)] to lattice-dispersion
+        // accuracy (the z-average of a periodic 3D wave-equation solution obeys the 1D wave
+        // equation exactly, so the z-Gaussian envelope drops out of the averaged prediction).
+        // Discrepancy: this is a wave field with div J = s, not a fluid; the lattice-gas fluid
+        // lives in the strict laboratory (engine/strict/web/hydro/).
+        configure_free_wave_terms(rb, false);
+        {
+            const double A = 0.030, delta = 2.5, sigma_z = std::max(2.0, N / 6.0);
+            const double y1 = 0.25 * N, y2 = 0.75 * N;
+            for (int z = 0; z < N; z++)
+            for (int y = 0; y < N; y++) {
+                const double dz = z - mc, gz = std::exp(-(dz * dz) / (2.0 * sigma_z * sigma_z));
+                const double f = std::tanh((y - y1) / delta) - std::tanh((y - y2) / delta) - 1.0;
+                const double jx = A * f * gz;
+                if (std::fabs(jx) < 1e-12) continue;
+                for (int x = 0; x < N; x++) IF(rb, x, y, z, jx, 0, 0);
+            }
+        }
+    }
 
     else if (name == "s0-field-rf-lattice-wave") {
         // Scenario ID: s0-field-rf-lattice-wave

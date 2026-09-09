@@ -111,6 +111,7 @@ inline constexpr ScenarioMeta SCENARIO_META[] = {
     {"s0-field-electric-dipole", "Softened Opposite-Source Flux Ansatz", "1. Validated Native Dynamics", "", "field", "[IMPOSED]", "admitted-behavioral", 0, 0},
     {"s0-field-magnetic-dipole", "Softened Dipole Vector-Potential Ansatz", "1. Validated Native Dynamics", "", "field", "[IMPOSED]", "admitted-behavioral", 0, 0},
     {"s0-field-vortex-line", "Azimuthal Inverse-Radius Vector Profile", "1. Validated Native Dynamics", "", "field", "[IMPOSED]", "admitted-behavioral", 0, 0},
+    {"s0-field-shear-layer", "Sheared Flux Layer — Propagates, Does Not Diffuse", "1. Validated Native Dynamics", "", "field,wave,contrast", "[EMERGENT] within the frozen linear wave map", "admitted-behavioral", 0, 0},
     {"s0-seed-octahedron", "Moore Face Shell — Exact Octahedron", "1. Validated Native Dynamics", "", "seed", "[IMPOSED] exact structural initial data", "admitted-behavioral", 0, 0},
     {"s0-seed-cuboctahedron", "Moore Edge Shell — Exact Cuboctahedron", "1. Validated Native Dynamics", "", "seed", "[IMPOSED] exact structural initial data", "admitted-behavioral", 0, 0},
     {"s0-seed-stella-octangula", "Moore Corner Shell — Exact Stella Octangula", "1. Validated Native Dynamics", "", "seed", "[IMPOSED] exact structural initial data", "admitted-behavioral", 0, 0},

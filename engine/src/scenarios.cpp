@@ -154,6 +154,7 @@ const std::vector<std::string_view>& scale0_scenario_ids() {
         "s0-field-electric-dipole",
         "s0-field-magnetic-dipole",
         "s0-field-vortex-line",
+        "s0-field-shear-layer",
         "s0-seed-octahedron",
         "s0-seed-cuboctahedron",
         "s0-seed-stella-octangula",

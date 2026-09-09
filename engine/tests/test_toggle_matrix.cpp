@@ -223,7 +223,7 @@ std::map<std::string_view, std::string> expected_scenario_profiles() {
         "s0-field-plane-wave", "s0-field-standing-wave",
         "s0-field-rf-lattice-wave", "s0-field-light-lattice-wave",
         "s0-field-sound-lattice-wave", "s0-field-sound-collision",
-        "s0-field-spacetime-forcing-boundary",
+        "s0-field-spacetime-forcing-boundary", "s0-field-shear-layer",
         "s0-vacuum-electron", "s0-vacuum-muon", "s0-vacuum-tau",
         "s0-vacuum-positron", "s0-vacuum-antimuon", "s0-vacuum-antitau",
         "s0-vacuum-w-boson", "s0-vacuum-w-minus-boson",
@@ -310,8 +310,8 @@ int audit_native_scenario_profiles() {
     const auto& ids = ftd::scale0_scenario_ids();
     std::set<std::string_view> unique(ids.begin(), ids.end());
     const auto expected = expected_scenario_profiles();
-    if (ids.size() != 142 || unique.size() != ids.size()) {
-        std::printf("  FAIL  native scenario registry: count=%zu unique=%zu (expected 142)\n",
+    if (ids.size() != 143 || unique.size() != ids.size()) {
+        std::printf("  FAIL  native scenario registry: count=%zu unique=%zu (expected 143)\n",
                     ids.size(), unique.size());
         ++failures;
     }

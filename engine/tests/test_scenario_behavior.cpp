@@ -957,6 +957,109 @@ void test_exact_traveling_harmonic() {
           normalized_divergence(rb) < 1e-12 && manifested_count(rb) == 0);
 }
 
+void test_shear_layer_propagates() {
+    // "s0-field-shear-layer" contrast seed: a static periodic double sheared
+    // flux layer J_x(y) under the isolated wave map, with edges at
+    // y1 = N/4 and y2 = 3N/4. d'Alembert predicts each edge splits into two
+    // half-amplitude images moving at +-C_SPEED along y, so the layer
+    // propagates rather than diffusing.
+    constexpr int L = 48;
+    constexpr int ticks = 12;
+    const double c = ftd::C_SPEED;
+    const double cT = c * static_cast<double>(ticks);
+    const double y1 = 0.25 * static_cast<double>(L);
+    const double y2 = 0.75 * static_cast<double>(L);
+
+    ftd::RenderBridge rb(L);
+    rb.force_cpu();
+    check("shear layer dispatched",
+          ftd::dispatch_scenario(rb, "s0-field-shear-layer"));
+    rb.toggles.strict_validation = true;
+    check("shear layer uses the isolated unprojected wave map",
+          rb.toggles.wave_propagation && !rb.toggles.gauss_projection
+          && !rb.toggles.coupling && !rb.toggles.damping
+          && !rb.toggles.genesis && !rb.toggles.dual_substrate);
+
+    const auto plane_average_jx = [&](const ftd::RenderBridge& bridge) {
+        std::vector<double> out(static_cast<std::size_t>(L), 0.0);
+        for (int y = 0; y < L; ++y) {
+            double sum = 0.0;
+            for (int x = 0; x < L; ++x)
+            for (int z = 0; z < L; ++z) {
+                sum += bridge.voxels()[static_cast<std::size_t>(
+                    bridge.lattice().index(x, y, z))].flux.x;
+            }
+            out[static_cast<std::size_t>(y)] = sum / static_cast<double>(L * L);
+        }
+        return out;
+    };
+
+    const std::vector<double> f = plane_average_jx(rb);
+    const auto interp = [&](double yy) {
+        double m = std::fmod(yy, static_cast<double>(L));
+        if (m < 0.0) m += static_cast<double>(L);
+        const int y0 = static_cast<int>(std::floor(m));
+        const int yn = (y0 + 1) % L;
+        const double frac = m - static_cast<double>(y0);
+        return f[static_cast<std::size_t>(y0)] * (1.0 - frac)
+             + f[static_cast<std::size_t>(yn)] * frac;
+    };
+
+    const double h0 = periodic_modified_hamiltonian(rb);
+    ftd::test::run_for(rb, ticks);
+    const double h1 = periodic_modified_hamiltonian(rb);
+    const double h_drift = std::fabs(h1 - h0) / std::max(1e-30, std::fabs(h0));
+
+    const std::vector<double> p = plane_average_jx(rb);
+    double num2 = 0.0, den2 = 0.0;
+    for (int y = 0; y < L; ++y) {
+        const double q = 0.5 * (interp(y - cT) + interp(y + cT));
+        const double d = p[static_cast<std::size_t>(y)] - q;
+        num2 += d * d;
+        den2 += f[static_cast<std::size_t>(y)] * f[static_cast<std::size_t>(y)];
+    }
+    const double rms_rel = std::sqrt(num2 / std::max(1e-30, den2));
+
+    // Edge-local motion check: the maximum-|dp/dy| site within each half of
+    // the periodic axis is where that half's edge image now sits, so its
+    // distance from the edge's original position (y1 for [0, L/2), y2 for
+    // [L/2, L)) measures propagation independent of the other edge.
+    double max_slope1 = -1.0;
+    int max_slope_y1 = 0;
+    for (int y = 0; y < L / 2; ++y) {
+        const int yp = (y + 1) % L;
+        const int ym = (y - 1 + L) % L;
+        const double slope = std::fabs(
+            p[static_cast<std::size_t>(yp)] - p[static_cast<std::size_t>(ym)]) / 2.0;
+        if (slope > max_slope1) { max_slope1 = slope; max_slope_y1 = y; }
+    }
+    const double edge_shift1 = std::fabs(forward_delta(max_slope_y1, y1, L));
+
+    double max_slope2 = -1.0;
+    int max_slope_y2 = 0;
+    for (int y = L / 2; y < L; ++y) {
+        const int yp = (y + 1) % L;
+        const int ym = (y - 1 + L) % L;
+        const double slope = std::fabs(
+            p[static_cast<std::size_t>(yp)] - p[static_cast<std::size_t>(ym)]) / 2.0;
+        if (slope > max_slope2) { max_slope2 = slope; max_slope_y2 = y; }
+    }
+    const double edge_shift2 = std::fabs(forward_delta(max_slope_y2, y2, L));
+
+    std::cout << "    shear layer rms_rel=" << rms_rel
+              << " edge_shift1=" << edge_shift1 << " edge_shift2=" << edge_shift2
+              << " (cT=" << cT << ")"
+              << " h_drift=" << h_drift << '\n';
+    check("shear layer follows the d'Alembert split to lattice-dispersion accuracy",
+          rms_rel < 0.08);
+    check("shear layer edge 1 (y1=N/4) has propagated, not diffused",
+          edge_shift1 >= 0.7 * cT);
+    check("shear layer edge 2 (y2=3N/4) has propagated, not diffused",
+          edge_shift2 >= 0.7 * cT);
+    check("shear layer conserves the modified Hamiltonian",
+          h_drift < 1e-6);
+}
+
 void test_gravity_named_wave_aliases_are_plain_native_modes() {
     constexpr int L = 48;
     constexpr int mode_n = 4;
@@ -3262,6 +3365,7 @@ int main() {
     test_photon_race_common_speed();
     test_rainbow_modes_are_transverse();
     test_exact_traveling_harmonic();
+    test_shear_layer_propagates();
     test_gravity_named_wave_aliases_are_plain_native_modes();
     test_gravity_named_radial_ansatz_and_optical_null();
     test_exact_standing_harmonic();
