@@ -1,0 +1,126 @@
+{
+  "id": "c4-transaction-census-v1",
+  "date": "2026-09-10",
+  "lock": {
+    "path": "docs/theory/10_eft_program/preregistrations/engine_transaction_census/PREREG_C4_TRANSACTION_CENSUS_v1.md",
+    "sha256_committed_blob": "4a4cd523a3cb0ce54f64213c2c1f3791decfa2d3fbb18c92d452cb7cb925c533",
+    "declared_lock_date": "2026-09-04",
+    "git_tag": null,
+    "note": "Locked uncommitted on branch integration-ptime-tx; lock and instrument entered git together in the 2026-09-08 bulk import (cc81ad4), so git does not independently witness the pre-registration order."
+  },
+  "instrument": {
+    "path": "engine/tests/test_c4_transaction_census.cpp",
+    "sha256_committed_blob": "625f312a361c84fbfc3f5e793fc4541af119cc14cb0414ff9773412c77c98e22",
+    "ctest_name": "c4_transaction_census"
+  },
+  "build": {
+    "generator": "Ninja",
+    "build_type": "Release",
+    "cuda": false,
+    "compiler": "GNU 13.3.0",
+    "backend": "CPU (force_cpu)",
+    "platform": "Linux x86_64 (Claude Code remote container)"
+  },
+  "run": {
+    "L": 16,
+    "ticks": 4000,
+    "langevin_seed": 424242,
+    "seed_rng": 424242,
+    "toggles": "default",
+    "replays": 3,
+    "replay_stdout_sha256": [
+      "14a552a4c72ec27f142c3ede5c63d0266b249394a69aaa922f38e15e4e475bab",
+      "14a552a4c72ec27f142c3ede5c63d0266b249394a69aaa922f38e15e4e475bab",
+      "14a552a4c72ec27f142c3ede5c63d0266b249394a69aaa922f38e15e4e475bab"
+    ],
+    "byte_identical_across_replays": true,
+    "ctest_status": "Passed (58.29 s); exit status reports instrument validity, not the theory verdict"
+  },
+  "D1_transition_census": {
+    "plus_to_null": 258539,
+    "minus_to_null": 38,
+    "null_to_plus": 259133,
+    "null_to_minus": 15,
+    "plus_to_minus_in_place": 42,
+    "minus_to_plus_in_place": 19,
+    "other": 0
+  },
+  "T1_null_passage_or_bounce": {
+    "reconstructed_nulls": 255052,
+    "exit_to_minus_from_passage": 46,
+    "exit_to_plus_from_bounce": 255006,
+    "reversal_fraction": 0.000180355,
+    "gate": "reversal fraction >= 0.5",
+    "pass": false
+  },
+  "T3_reversal_skips_null": {
+    "in_place_skip": 61,
+    "via_null_passage": 46,
+    "skip_fraction": 0.570093,
+    "gate": "skip fraction < 0.1",
+    "pass": false
+  },
+  "T2_period_structure": {
+    "half_cycles_n": 25,
+    "half_cycles_min": 6,
+    "T2a_verdict": "underpowered (<30 half-cycles); no verdict per the lock",
+    "T2b_positive_dwell": {
+      "mod4": {
+        "n": 253002,
+        "counts": [
+          61720,
+          64847,
+          63726,
+          62709
+        ],
+        "chi2": 85.5419,
+        "critical_p01": 11.345
+      },
+      "mod8": {
+        "n": 253002,
+        "counts": [
+          29969,
+          33784,
+          32724,
+          32334,
+          31751,
+          31063,
+          31002,
+          30375
+        ],
+        "chi2": 360.359,
+        "critical_p01": 18.475
+      }
+    },
+    "T2_pass": true
+  },
+  "D2_dwell": {
+    "histogram": {
+      "0": 2050,
+      "1": 4500,
+      "2": 4253,
+      "3": 4276,
+      "4": 4376,
+      "5-8": 18442,
+      "9-16": 35530,
+      "17+": 181625
+    },
+    "mean": 53.0178,
+    "CV": 1.14917
+  },
+  "verdict": "C4-NOT-REALISED (T1=0 T3=0)",
+  "instrument_status": "c4_transaction_census: INSTRUMENT-OK (gates failed: 2)",
+  "sibling_cross_check": {
+    "instrument": "engine/tests/test_history_journal_drain.cpp",
+    "stdout_sha256": "a882171986915dcf1d428d251c694c61b80d557bdf4443e60760a0c23e756fbd",
+    "complete_cycles_count": 10,
+    "complete_cycles_min": 36,
+    "weak_transmutation_events": 61,
+    "reconstructed_nulls": 255052,
+    "note": "min complete cycle 36 matches FTD-1027's cited figure, confirming lock D0.1 (same run under test)."
+  },
+  "stdout_verbatim": {
+    "census": "FTD C4 transaction census (PREREG_C4_TRANSACTION_CENSUS_v1)\n\n  PASS  journal enables on CPU backend under default toggles\n\n  -- D1 transition-type census (site-level rows, 4000 ticks, L=16) --\n     +->0: 258539   -->0: 38   0->+: 259133   0->-: 15\n     +->- (in-place, null skipped): 42   -->+ (in-place, null skipped): 19   other: 0\n\n  -- T1 the null: passage or bounce? --\n     reconstructed nulls=255052  exit to -from (C4 passage)=46  exit to +from (bounce)=255006  reversal fraction=0.000180355\n  FAIL  T1 (gate: reversal fraction >= 0.5) -- nulls are predominantly oriented passages\n\n  -- T3 do polarity reversals pass through the null? --\n     in-place +s->-s (skip)=61  via null (passage)=46  skip fraction=0.570093\n  FAIL  T3 (gate: skip fraction < 0.1) -- reversal passes through the null\n\n  -- T2 period structure (chi^2 on residues vs uniform) --\n     half-cycles (birth -> next opposite-sign birth, same site): n=25  min=6 median=61.000000\n     T2a: underpowered (<30 half-cycles) -- no verdict\n     T2b dwell      mod 4: n=253002 counts=[61720,64847,63726,62709] chi2=85.5419 crit(p<.01)=11.345  -> STRUCTURE\n     T2b dwell      mod 8: n=253002 counts=[29969,33784,32724,32334,31751,31063,31002,30375] chi2=360.359 crit(p<.01)=18.475  -> STRUCTURE\n  PASS  T2 (gate: chi^2 above p<0.01 critical on any series) -- a characteristic period exists\n\n  -- D2 null dwell histogram (ticks) --\n     0:2050  1:4500  2:4253  3:4276  4:4376  5-8:18442  9-16:35530  17+:181625  \n     mean=53.0178 CV=1.14917\n\n  -- VERDICT (PREREG_C4_TRANSACTION_CENSUS_v1 section 'Outcomes') --\n     C4-NOT-REALISED (T1=0 T3=0)\n\nc4_transaction_census: INSTRUMENT-OK (gates failed: 2)\n",
+    "history_journal_drain": "FTD history-journal drain: encoding validity + null-orientation reconstruction\n\n  PASS  journal enables on CPU backend\n  PASS  event kind is one of the six declared HistoryEventKind values\n  PASS  event tick matches the tick it was recorded on\n  PASS  event site_count is 1 or 2\n  PASS  touched site index is within the lattice\n  PASS  before/after capture agree on which site they describe\n  PASS  legacy top-level state matches the embedded voxel snapshot\n  PASS  evaporation event observed\n  PASS  genesis re-occupies the evaporated site\n  PASS  a null interval was reconstructed at the evaporated/reborn site\n  PASS  reconstructed orientation is 0-down (the site could only have died from +1)\n  -- reconstructed null: site=219 [5,6) orientation=D latency=1 ticks\n\n  PASS  journal enables on CPU backend under default toggles\n\n  -- event counts over 4000 ticks at L=16 --\n     Movement: 258530\n     Genesis: 618\n     Evaporation: 1\n     Annihilation: 23\n     WeakTransmutation: 61\n  PASS  at least one genesis event fired under default toggles\n\n  -- transaction latency (null dwell time, ticks) --\n     count=255052 min=0 median=33 same-tick(dwell=0)=2050 min-positive(crosses>=1 tick)=1\n  PASS  every reconstructed null dwell time is non-negative (the null cannot be filled before it was vacated)\n\n  -- birth-to-expiry lifetime (ticks) --\n     count=258577 min=1 median=4\n\n  -- complete +1<->0<->-1 cycles (birth-to-birth, ticks) --\n     count=10 min=36 median=111.5\n  PASS  every reconstructed orientation matches the sign it was derived from\n\nhistory_journal_drain: PASS (0 failing checks)\n"
+  }
+}
