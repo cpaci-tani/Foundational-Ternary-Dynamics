@@ -619,6 +619,21 @@ class Scale5LifecycleController extends BaseLifecycleController {
         // Restore camera/controls (audit P1-8 fix, 2026-05-27)
         if (ctx && ctx.viewport) {
             restoreScaleCameraState(this, ctx.viewport);
+            // I1-follow-up: viewport.controls is a SINGLE OrbitControls
+            // instance shared by every scale (js/viewport.js), not recreated
+            // per scale. CosmicRenderer.setCameraFollowMode() is the only
+            // thing that ever sets controls.enabled = false (while a
+            // follow-heaviest/com-lock mode is engaged), and restoring it to
+            // true was left to disengaging that mode via a static preset or
+            // a fresh CosmicRenderer construction -- neither of which
+            // happens if the user switches scale away from cosmic WHILE a
+            // follow mode is still active. Without this, leaving cosmic
+            // mid-follow left the shared controls disabled -- dead
+            // mouse-drag orbit in every other scale until cosmic was
+            // re-entered. Scale 5 is the sole owner of this side effect, so
+            // it re-enables it unconditionally on its own teardown rather
+            // than relying on whatever scale mounts next.
+            if (ctx.viewport.controls) ctx.viewport.controls.enabled = true;
         }
     }
 }

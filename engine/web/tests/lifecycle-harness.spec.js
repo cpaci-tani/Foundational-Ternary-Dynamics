@@ -289,6 +289,64 @@ test.describe('lifecycle harness — scale round-trips leak nothing', () => {
     });
 
     // ────────────────────────────────────────────────────────────────────
+    // (D2) Shared OrbitControls left enabled after leaving cosmic mid-follow.
+    //
+    // viewport.controls is a SINGLE OrbitControls instance created once in
+    // js/viewport.js and shared by every scale — it is never recreated per
+    // scale. The only places that ever touch `controls.enabled` are
+    // CosmicRenderer's constructor (always true) and
+    // CosmicRenderer.setCameraFollowMode() (false while a continuous follow
+    // mode — 'follow-heaviest' / 'com-lock' — is engaged, true again once it
+    // disengages to 'none', which every static camera preset does). Scale
+    // 5's destroy() (scale5/controller.js) calls restoreScaleCameraState(),
+    // which restores minDistance/maxDistance/target but never touched
+    // `enabled`. A user who engages a follow mode and then switches AWAY
+    // from cosmic without first picking a static preset used to leave the
+    // shared controls disabled — dead mouse-drag orbit in every other scale
+    // until cosmic is re-entered and a fresh CosmicRenderer resets it.
+    // ────────────────────────────────────────────────────────────────────
+    test('(D2) leaving cosmic mid-follow (no static preset first) restores controls.enabled', async ({ page }) => {
+        await gotoAndReady(page);
+        await waitForCtxViewport(page);
+        await page.waitForTimeout(SETTLE_MS);
+
+        await switchMode(page, 'cosmic');
+        await expect.poll(
+            () => page.evaluate(() => window.__ftdCtx?.viewport?.camera?.far ?? null),
+            { timeout: 15_000, message: 'cosmic never mutated camera.far (scene did not enter cosmic)' },
+        ).toBe(50000);
+
+        // Engage a continuous follow mode -- this sets controls.enabled =
+        // false -- and deliberately do NOT disengage it (no static preset)
+        // before switching scale. That is the exact path the regression
+        // needs: destroy() must run while a follow mode is still active.
+        const setCamera = (value) => page.evaluate((v) => {
+            const sel = /** @type {HTMLSelectElement|null} */ (document.getElementById('cosmic-camera-select'));
+            if (!sel) throw new Error('#cosmic-camera-select not found');
+            sel.value = v;
+            sel.dispatchEvent(new Event('change', { bubbles: true }));
+            return sel.value;
+        }, value);
+        expect(await setCamera('follow-heaviest')).toBe('follow-heaviest');
+
+        await expect.poll(
+            () => page.evaluate(() => window.__ftdCtx?.viewport?.controls?.enabled ?? null),
+            { timeout: 10_000, message: 'follow-heaviest never disabled the shared controls' },
+        ).toBe(false);
+
+        // Leave cosmic for another scale while the follow mode is still
+        // engaged.
+        await switchMode(page, 'lattice');
+
+        // The shared OrbitControls instance must come back enabled --
+        // otherwise mouse-drag orbit is dead in the scale just switched to.
+        await expect.poll(
+            () => page.evaluate(() => window.__ftdCtx?.viewport?.controls?.enabled ?? null),
+            { timeout: 10_000, message: 'controls.enabled not restored after leaving cosmic mid-follow' },
+        ).toBe(true);
+    });
+
+    // ────────────────────────────────────────────────────────────────────
     // (E) 10× rapid stress loop.
     //
     // Rapidly cycle lattice ↔ cosmic 10× with minimal settle. Two leak
