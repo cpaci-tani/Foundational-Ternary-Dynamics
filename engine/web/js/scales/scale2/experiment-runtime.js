@@ -7,6 +7,8 @@
  * controls, keeping the physics kernel independent of scenario identity.
  */
 
+import { imposeLiquidFlow } from '../scale3/liquid-transport.js';
+
 let active = null;
 
 function setCheckbox(id, checked) {
@@ -83,6 +85,15 @@ function applyPhase(bridge, phase) {
             bridge.aeSetThermostat?.(false);
             setCheckbox('ae-thermostat', false);
             break;
+        case 'molecular-liquid-transport:0':
+            bridge.aeSetThermostat?.(true);
+            setCheckbox('ae-thermostat', true);
+            break;
+        case 'molecular-liquid-transport:1':
+            bridge.aeSetThermostat?.(false);
+            setCheckbox('ae-thermostat', false);
+            imposeLiquidFlow(bridge, active.scenario);
+            break;
         default:
             break;
     }
@@ -107,6 +118,7 @@ export function startAEExperiment(scenario, bridge) {
         phaseIndex: -1,
         transitionCount: 0,
         tick: 0,
+        scenario,
     };
     advanceAEExperiment(bridge, 0);
     return bridge.aeGetRuntimeState?.()?.experiment || null;

@@ -12,8 +12,58 @@ function addReference(bridge, moleculeId, options) {
     return result;
 }
 
+/** Deterministic linear-congruential generator; seed is an unsigned 32-bit int. */
+function lcg(seed) {
+    let s = seed >>> 0;
+    return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+}
+
+/** Standard-normal deviate via Box–Muller, driven by the seeded rng. */
+function gauss(rng) {
+    let u = 0, v = 0;
+    while (u <= 1e-12) u = rng();
+    while (v <= 1e-12) v = rng();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+/**
+ * Place nx*ny*nz water molecules on a centred cubic lattice with position
+ * jitter and Maxwell-distributed center-of-mass velocities (std sqrt(T/mass),
+ * mass 18), then remove the total momentum so the liquid slab starts at rest
+ * in aggregate.
+ */
+function placeWaters(bridge, rng, nx, ny, nz, spacing, jitter, temperature) {
+    const mass = 18;
+    const sigma = Math.sqrt(temperature / mass);
+    const sites = [];
+    for (let ix = 0; ix < nx; ix++) {
+        for (let iy = 0; iy < ny; iy++) {
+            for (let iz = 0; iz < nz; iz++) {
+                const x = (ix - (nx - 1) / 2) * spacing + jitter * (2 * rng() - 1);
+                const y = (iy - (ny - 1) / 2) * spacing + jitter * (2 * rng() - 1);
+                const z = (iz - (nz - 1) / 2) * spacing + jitter * (2 * rng() - 1);
+                const rotation = [rng() * 2 * Math.PI, rng() * 2 * Math.PI, rng() * 2 * Math.PI];
+                const velocity = [sigma * gauss(rng), sigma * gauss(rng), sigma * gauss(rng)];
+                sites.push({ x, y, z, rotation, velocity });
+            }
+        }
+    }
+    const n = sites.length;
+    const drift = [0, 0, 0];
+    for (const s of sites) { drift[0] += s.velocity[0]; drift[1] += s.velocity[1]; drift[2] += s.velocity[2]; }
+    if (n > 0) { drift[0] /= n; drift[1] /= n; drift[2] /= n; }
+    const atomIds = [];
+    for (const s of sites) {
+        const velocity = [s.velocity[0] - drift[0], s.velocity[1] - drift[1], s.velocity[2] - drift[2]];
+        const result = addReference(bridge, 'water', { offset: [s.x, s.y, s.z], rotation: s.rotation, velocity });
+        atomIds.push(...result.atomIds);
+    }
+    return { atomIds };
+}
+
 export function setupScale3Scenario(bridge, scenario) {
     if (scenario.moleculeId) return addReference(bridge, scenario.moleculeId);
+    const rng = lcg(scenario.seed);
 
     switch (scenario.setup) {
         case 'h2-vibration': {
@@ -72,6 +122,28 @@ export function setupScale3Scenario(bridge, scenario) {
             }
             return { atomIds };
         }
+        case 'liquid-shear-layer':
+            return placeWaters(bridge, rng, 10, 8, 2, 4.2, 0.3, 1.0);
+        case 'liquid-channel': {
+            const h = 21, wallY = [h / 2 + 2.1, -(h / 2 + 2.1)];
+            const atomIds = [];
+            for (const y of wallY) {
+                for (let i = 0; i < 6; i++) {
+                    const x = -10.5 + i * 4.2;
+                    for (let j = 0; j < 3; j++) {
+                        const z = -4.2 + j * 4.2;
+                        atomIds.push(bridge.aeAddLockedAtom(18, x, y, z, 0, 22));
+                    }
+                }
+            }
+            const waters = placeWaters(bridge, rng, 4, 4, 3, 4.2, 0.3, 1.0);
+            atomIds.push(...waters.atomIds);
+            return { atomIds };
+        }
+        case 'liquid-droplet':
+            return placeWaters(bridge, rng, 4, 4, 4, 4.2, 0.3, 1.0);
+        case 'liquid-spinning-droplet':
+            return placeWaters(bridge, rng, 4, 4, 4, 4.2, 0.3, 1.0);
         case 'custom':
             return { atomIds: [] };
         default:

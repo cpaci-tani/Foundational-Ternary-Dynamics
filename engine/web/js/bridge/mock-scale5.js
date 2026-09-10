@@ -32,6 +32,7 @@ import {
 import { runCosmicScenario } from './cosmic-scenarios/index.js';
 import { computeCosmicForces } from './cosmic-physics.js';
 import { postCosmicUpdates } from './cosmic-postupdates.js';
+import { isGasType } from './cosmic-sph.js';
 
 // ── Friedmann / Hubble integration (audit P0-9, 2026-05-27) ─────────────
 // Flat ΛCDM background: H(a)² = H0²·(Ω_M·a⁻³ + Ω_Λ), with a=1 "today".
@@ -75,6 +76,15 @@ function _friedmannH(a, H0, omegaM, omegaL) {
     return H0 * Math.sqrt(omegaM * inv_a3 + omegaL);
 }
 
+// Uniform bin edges [lo, hi] split into nBins — shared by the gas-lab
+// profile channel below (Task 5).
+function _linspace(lo, hi, nBins) {
+    const edges = new Float64Array(nBins + 1);
+    const step = (hi - lo) / nBins;
+    for (let i = 0; i <= nBins; i++) edges[i] = lo + i * step;
+    return edges;
+}
+
 export class CosmicMockBridge {
     constructor() {
         this._bodies = [];
@@ -96,6 +106,10 @@ export class CosmicMockBridge {
         this._enableSubgrid = false;
         this._stellarEvolution = false;
         this._hawkingEvaporation = false;
+        // Scale 5 physics-term toggles (mirrors Scale 0's per-term dashboard
+        // pattern). sph_monaghan gates the Monaghan SPH gas solver
+        // (cosmic-sph.js); default off so existing scenarios are unaffected.
+        this._toggles = { sph_monaghan: false };
     }
 
     static TYPE = {
@@ -113,6 +127,7 @@ export class CosmicMockBridge {
             temperature: temp,
             internal_energy: Math.max(temp * 0.001, 0.01),
             density: 0, pressure: 0,
+            h: Math.cbrt(mass) * 0.2, sound: 0, du: 0, // Monaghan SPH state (cosmic-sph.js)
             luminosity: type === 2 ? Math.pow(mass, 3.5) : 0,
             radius: Math.cbrt(mass) * 0.1,
             tidal_stretch: 0, // 0 = normal, grows toward 1.0 as star is disrupted
@@ -129,6 +144,54 @@ export class CosmicMockBridge {
     // Plummer sphere enclosed mass: M(r) = M * r^3 / (r^2 + a^2)^(3/2)
     _enclosedMass(r, M_total, rs) {
         return M_total * r * r * r / Math.pow(r * r + rs * rs, 1.5);
+    }
+
+    // ================================================================
+    // GAS-LAB AXIS PROFILE (Task 5; [IMPOSED effective gas dynamics])
+    // ================================================================
+    // Diagnostic-only binning of the gas population (GAS + NEBULA) along
+    // one axis, for the "Gas profile" panel card. `edges` is a uniform
+    // Float64Array of bin boundaries (length nBins+1, from _linspace).
+    // `coordFn(b)` returns { coord, vRadial } for one gas body: `coord` is
+    // the binning coordinate, `vRadial` the velocity component reported
+    // per bin (radial for a spherical/cylindrical 'r' axis, vx for the
+    // 'x' axis). Density uses a spherical-shell volume for axis 'r' and a
+    // fixed reference-disc slab volume for axis 'x' — a display
+    // convention for this imported, non-derivational lab, not a physical
+    // normalization.
+    _computeGasProfile(axis, edges, coordFn) {
+        const T = CosmicMockBridge.TYPE;
+        const nBins = edges.length - 1;
+        const density = new Float64Array(nBins);
+        const velocity = new Float64Array(nBins);
+        const velCount = new Int32Array(nBins);
+        let thermal = 0, kinetic = 0, gasCount = 0;
+        const binWidth = (edges[nBins] - edges[0]) / nBins;
+        const crossSectionArea = Math.PI * (this._boxSize / 4) * (this._boxSize / 4);
+
+        for (const b of this._bodies) {
+            if (!isGasType(b.type, T)) continue;
+            gasCount++;
+            thermal += b.mass * (b.internal_energy || 0);
+            kinetic += 0.5 * b.mass * (b.vx * b.vx + b.vy * b.vy + b.vz * b.vz);
+
+            const { coord, vRadial } = coordFn(b);
+            if (!(coord >= edges[0]) || coord >= edges[nBins]) continue;
+            let idx = Math.floor((coord - edges[0]) / binWidth);
+            if (idx < 0) idx = 0;
+            if (idx >= nBins) idx = nBins - 1;
+
+            const binVolume = (axis === 'r')
+                ? (4 / 3) * Math.PI * (Math.pow(edges[idx + 1], 3) - Math.pow(edges[idx], 3))
+                : crossSectionArea * binWidth;
+            density[idx] += b.mass / binVolume;
+            velocity[idx] += vRadial;
+            velCount[idx]++;
+        }
+        for (let i = 0; i < nBins; i++) {
+            if (velCount[i] > 0) velocity[i] /= velCount[i];
+        }
+        return { axis, edges: Float64Array.from(edges), density, velocity, thermal, kinetic, gasCount };
     }
 
     // ================================================================
@@ -187,6 +250,7 @@ export class CosmicMockBridge {
         this._customTelemetry = {};
         this._stellarEvolution = false;
         this._hawkingEvaporation = false;
+        this._toggles = { sph_monaghan: false };
 
         const rng = this._rng(42);
         const PI2 = Math.PI * 2;
@@ -224,6 +288,10 @@ export class CosmicMockBridge {
         const isStar = (t) => t === T.STAR || t === T.NEUTRON_STAR || t === T.WHITE_DWARF;
 
         const tel = {};
+        // Reset here so every scenario other than the three gas labs below
+        // reports no profile (Task 5). getDiagnostics() falls back to null
+        // via `?? null` before the first tick runs this method anyway.
+        this._customProfiles = null;
 
         if (name === 'cosmic-merger' || name === 'cosmic-binary-agn') {
             const bhs = this._bodies.filter(b => isBH(b.type)).sort((a, b) => b.mass - a.mass);
@@ -283,6 +351,34 @@ export class CosmicMockBridge {
             const gas = this._bodies.filter(b => b.type === T.NEBULA).length;
             tel['Stable Anchor Nodes'] = nodes;
             tel['Filament Gas Clumps'] = gas;
+        } else if (name === 'cosmic-gas-collapse') {
+            const profile = this._computeGasProfile('r', _linspace(0, 40, 20), (b) => {
+                const r = Math.sqrt(b.x * b.x + b.y * b.y + b.z * b.z);
+                return { coord: r, vRadial: r > 1e-9 ? (b.x * b.vx + b.y * b.vy + b.z * b.vz) / r : 0 };
+            });
+            this._customProfiles = profile;
+            tel['Gas'] = profile.gasCount;
+            tel['Thermal E'] = profile.thermal.toExponential(2);
+            tel['Kinetic E'] = profile.kinetic.toExponential(2);
+        } else if (name === 'cosmic-gas-cloud-collision') {
+            const profile = this._computeGasProfile('x', _linspace(-45, 45, 30), (b) => ({
+                coord: b.x, vRadial: b.vx,
+            }));
+            this._customProfiles = profile;
+            tel['Gas'] = profile.gasCount;
+            tel['Thermal E'] = profile.thermal.toExponential(2);
+            tel['Kinetic E'] = profile.kinetic.toExponential(2);
+        } else if (name === 'cosmic-gas-rotating-disk') {
+            // Cylindrical radius in the disk plane (x-z; y is height —
+            // matches galaxies.js's disk convention), NOT the full 3D r.
+            const profile = this._computeGasProfile('r', _linspace(0, 40, 20), (b) => {
+                const r = Math.sqrt(b.x * b.x + b.z * b.z);
+                return { coord: r, vRadial: r > 1e-9 ? (b.x * b.vx + b.z * b.vz) / r : 0 };
+            });
+            this._customProfiles = profile;
+            tel['Gas'] = profile.gasCount;
+            tel['Thermal E'] = profile.thermal.toExponential(2);
+            tel['Kinetic E'] = profile.kinetic.toExponential(2);
         }
 
         this._customTelemetry = tel;
@@ -415,19 +511,25 @@ export class CosmicMockBridge {
     }
 
     getDiagnostics() {
-        let totalMass = 0, totalKE = 0;
+        let totalMass = 0, totalKE = 0, totalThermal = 0;
         const counts = new Array(9).fill(0);
         let dmMass = 0;
+        const TYPE = CosmicMockBridge.TYPE;
         for (const b of this._bodies) {
             totalMass += b.mass;
             totalKE += 0.5 * b.mass * (b.vx * b.vx + b.vy * b.vy + b.vz * b.vz);
             const idx = b.type + 3;
             if (idx >= 0 && idx < 9) counts[idx]++;
-            if (b.type === CosmicMockBridge.TYPE.DARK_MATTER) dmMass += b.mass;
+            if (b.type === TYPE.DARK_MATTER) dmMass += b.mass;
+            // Total thermal (internal) energy of gas bodies — the SPH
+            // energy-equation counterpart to totalKE above (audit: Task 4,
+            // sph_monaghan). Zero when no gas bodies are present regardless
+            // of the toggle, so this is a harmless addition on old scenarios.
+            if (isGasType(b.type, TYPE)) totalThermal += b.mass * (b.internal_energy || 0);
         }
         return {
             tick: this._tick, bodyCount: this._bodies.length,
-            countsByType: counts, totalMass, totalKE, dmMass,
+            countsByType: counts, totalMass, totalKE, dmMass, totalThermal,
             // Live ΛCDM background (audit P0-9): _H and _a are integrated
             // each tick by _stepFriedmann, no longer the static H0/1.0.
             // hubbleParameter is the present (visual-clock) Hubble rate;
@@ -435,13 +537,31 @@ export class CosmicMockBridge {
             hubbleParameter: this._H, scaleFactor: this._a,
             redshift: this._z, hubble0: this._H0,
             omegaMatter: this._omegaM, omegaLambda: this._omegaL,
-            customTelemetry: this._customTelemetry
+            customTelemetry: this._customTelemetry,
+            toggles: { ...this._toggles },
+            // Set by gas-laboratory scenarios (Task 5); absent otherwise.
+            customProfiles: this._customProfiles ?? null,
         };
     }
 
     setDt(dt) { this._dt = dt; }
     getDt() { return this._dt; }
     clear() { this._bodies = []; this._tick = 0; this._nextId = 0; }
+
+    // ================================================================
+    // PHYSICS-TERM TOGGLES (mirrors the Scale 0 dashboard pattern)
+    // ================================================================
+
+    /** @param {string} key @param {boolean} value */
+    setToggle(key, value) {
+        if (!(key in this._toggles)) throw new Error('unknown toggle ' + key);
+        this._toggles[key] = !!value;
+    }
+
+    /** @param {string} key @returns {boolean} */
+    getToggle(key) {
+        return this._toggles[key];
+    }
 
     _rng(seed) {
         let s = seed;

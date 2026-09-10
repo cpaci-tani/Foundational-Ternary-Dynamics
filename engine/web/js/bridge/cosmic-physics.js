@@ -14,6 +14,7 @@
  */
 
 import { G_N, C_SPEED } from '../constants.js';
+import { computeSphForces, isGasType } from './cosmic-sph.js';
 
 // Fixed softening per body type (Gadget-2 convention: constant, energy-conserving).
 // 2026-04-26 (Wave 2H): the prior "mirrored from mock-scale5.js" note
@@ -196,6 +197,16 @@ export function computeCosmicForces(TYPE) {
         b.az = AZ[i];
     }
 
+    // Monaghan SPH gas pass (toggle-gated, default off). Runs independently
+    // of _enableSubgrid — a gas lab can turn SPH on without pulling in the
+    // cooling/tidal/radiation-pressure sub-grid physics below. When the
+    // toggle is off this reads `this._toggles?.sph_monaghan` (false/undefined)
+    // and does nothing else, so the off path adds no arithmetic (bit-identical
+    // regression per cosmic-sph.node.test.mjs).
+    if (this._toggles?.sph_monaghan) {
+        computeSphForces(this, TYPE);
+    }
+
     // Sub-grid physics only active in select scenarios (BH accretion / FTD collapse).
     if (!this._enableSubgrid) return;
 
@@ -209,7 +220,7 @@ export function computeCosmicForces(TYPE) {
     const bhIdx   = [];
     for (let i = 0; i < nb; i++) {
         const t = bodies[i].type;
-        if (t === T.GAS || t === T.NEBULA) {
+        if (isGasType(t, T)) {
             gasIdx.push(i);
         } else if (t === T.STAR || t === T.NEUTRON_STAR || t === T.WHITE_DWARF) {
             starIdx.push(i);
@@ -263,29 +274,34 @@ export function computeCosmicForces(TYPE) {
         b.temperature = Math.max(100, b.internal_energy * 1000);
     }
 
-    // Gas pressure (SPH-like repulsion).
-    const h_press = this._softening * 2.5;
-    const h_press2 = h_press * h_press;
-    for (let gi = 0; gi < nGas; gi++) {
-        const bi_idx = gasIdx[gi];
-        const bi = bodies[bi_idx];
-        const bix = bi.x, biy = bi.y, biz = bi.z;
-        const biMass = bi.mass;
-        const biE = bi.internal_energy;
-        for (let gj = gi + 1; gj < nGas; gj++) {
-            const bj = bodies[gasIdx[gj]];
-            const dx = bj.x - bix, dy = bj.y - biy, dz = bj.z - biz;
-            const r2 = dx * dx + dy * dy + dz * dz;
-            if (r2 > h_press2 || r2 < 1e-10) continue;
-            const r = Math.sqrt(r2);
-            const q = r / h_press;
-            const T_avg = 0.5 * (biE + bj.internal_energy);
-            const pressScale = 1.0 + T_avg * 0.1;
-            const fmag = G * pressScale * 0.3 * (biMass + bj.mass) * (1 - q) * (1 - q) / (r2 + baseSoft2);
-            const invR = 1.0 / r;
-            const fx = fmag * dx * invR, fy = fmag * dy * invR, fz = fmag * dz * invR;
-            bi.ax -= fx; bi.ay -= fy; bi.az -= fz;
-            bj.ax += fx; bj.ay += fy; bj.az += fz;
+    // Gas pressure (SPH-like repulsion) — legacy ad-hoc term. Every pair this
+    // loop touches is gas-gas (gasIdx is GAS/NEBULA only), so it is skipped
+    // wholesale once the Monaghan SPH pass above already supplies gas-gas
+    // pressure + viscosity forces, to avoid double-counting the same physics.
+    if (!this._toggles?.sph_monaghan) {
+        const h_press = this._softening * 2.5;
+        const h_press2 = h_press * h_press;
+        for (let gi = 0; gi < nGas; gi++) {
+            const bi_idx = gasIdx[gi];
+            const bi = bodies[bi_idx];
+            const bix = bi.x, biy = bi.y, biz = bi.z;
+            const biMass = bi.mass;
+            const biE = bi.internal_energy;
+            for (let gj = gi + 1; gj < nGas; gj++) {
+                const bj = bodies[gasIdx[gj]];
+                const dx = bj.x - bix, dy = bj.y - biy, dz = bj.z - biz;
+                const r2 = dx * dx + dy * dy + dz * dz;
+                if (r2 > h_press2 || r2 < 1e-10) continue;
+                const r = Math.sqrt(r2);
+                const q = r / h_press;
+                const T_avg = 0.5 * (biE + bj.internal_energy);
+                const pressScale = 1.0 + T_avg * 0.1;
+                const fmag = G * pressScale * 0.3 * (biMass + bj.mass) * (1 - q) * (1 - q) / (r2 + baseSoft2);
+                const invR = 1.0 / r;
+                const fx = fmag * dx * invR, fy = fmag * dy * invR, fz = fmag * dz * invR;
+                bi.ax -= fx; bi.ay -= fy; bi.az -= fz;
+                bj.ax += fx; bj.ay += fy; bj.az += fz;
+            }
         }
     }
 

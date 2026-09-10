@@ -1314,6 +1314,8 @@ export class WasmBridge {
     }
 
     aeGetVelocities()  { return this._ensureAEFallback().aeGetVelocities(); }
+    /** Double-precision copy for interventions; the Float32 view above stays for rendering. */
+    aeGetVelocitiesF64() { return this._ensureAEFallback().aeGetVelocitiesF64(); }
     aeGetDipoles()     { return this._ensureAEFallback().aeGetDipoles(); }
     aeGetHBondPairs()  { return this._ensureAEFallback().aeGetHBondPairs(); }
 

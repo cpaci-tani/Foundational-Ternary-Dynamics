@@ -31,6 +31,12 @@ import {
     setupCosmicWebFallback
 } from './exotic.js';
 
+import {
+    setupGasCollapse,
+    setupGasCloudCollision,
+    setupGasRotatingDisk
+} from './gas.js';
+
 /**
  * Dispatch a scenario by name. Call via `runCosmicScenario.call(bridge, name)`.
  * Returns nothing — scenarios mutate `this` directly.
@@ -50,6 +56,9 @@ export function runCosmicScenario(name, ctx) {
         case 'cosmic-dark-matter-halo':    return setupDarkMatterHalo.call(this, ctx);
         case 'cosmic-gravitational-wave':  return setupGravitationalWave.call(this, ctx);
         case 'cosmic-baryogenesis':        return setupBaryogenesis.call(this, ctx);
+        case 'cosmic-gas-collapse':        return setupGasCollapse.call(this, ctx);
+        case 'cosmic-gas-cloud-collision': return setupGasCloudCollision.call(this, ctx);
+        case 'cosmic-gas-rotating-disk':   return setupGasRotatingDisk.call(this, ctx);
         default:                           return setupCosmicWebFallback.call(this, ctx);
     }
 }

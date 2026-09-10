@@ -97,6 +97,7 @@
  * 's0-field-electric-dipole' |
  * 's0-field-magnetic-dipole' |
  * 's0-field-vortex-line' |
+ * 's0-field-shear-layer' |
  * 's0-seed-octahedron' |
  * 's0-seed-cuboctahedron' |
  * 's0-seed-stella-octangula' |
@@ -217,6 +218,16 @@ export const SCALE0_TOGGLES = [
 // loader / restore path live in SCALE0_SCENARIO_RESEARCH_TERMS. Putting them
 // in SCALE0_TOGGLES would cause the whitelist-reset to clobber them on every
 // load. See scenario-loader.js and engine/include/ftd/scenarios.h.
+
+// Scale 5 (Cosmic) — physics-term toggles for the JS-only CosmicMockBridge
+// (bridge/mock-scale5.js). Mirrors the SCALE0_TOGGLES [key, default, domId]
+// shape; wired by scales/scale5/ui/toolbar/component.js against
+// bridge.setToggle()/getToggle(). sph_monaghan gates the Monaghan (1992)
+// SPH gas solver (bridge/cosmic-sph.js) — default off so every existing
+// cosmic scenario is bit-identical until a gas laboratory opts in.
+export const SCALE5_TOGGLES = [
+    ['sph_monaghan', false, 't-sph-monaghan'],
+];
 
 // ── Advanced / research toggles surfaced in the Physics card ─────────────
 // A CURATED subset of the engine terms omitted from SCALE0_TOGGLES above: only
@@ -464,6 +475,10 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     's0-field-electric-dipole':  isolatedScale0Profile(),
     's0-field-magnetic-dipole':  isolatedScale0Profile(),
     's0-field-vortex-line':      isolatedScale0Profile(),
+    // Hydrodynamics-program contrast: isolate the wave map so the sheared
+    // layer propagates rather than diffusing (see the fluid laboratory
+    // at engine/strict/web/hydro/ for the diffusive contrast case).
+    's0-field-shear-layer':      isolatedScale0Profile('wave_propagation'),
 
     // Beta-decay — leptonic output of weak transmutation needs both
     // dual_substrate (chiral L/R substrates) and weak_transmutation on.
@@ -616,6 +631,13 @@ export const SCALE0_SCENARIO_BOUNDARY = {
     's0-field-light-lattice-wave': { mode: 0 },
     's0-field-sound-lattice-wave': { mode: 0 },
     's0-field-sound-collision': { mode: 0 },
+    // configure_free_wave_terms leaves the canonical Periodic boundary
+    // intact, and the seed itself is built to close smoothly on the wrap
+    // (see the C++ scenario comment) — without this entry
+    // applyAuxiliaryDefaults would clobber it back to dispersal (mode 2)
+    // and sponge the periodic edges. periodicAxis is orientation metadata
+    // only (Y, since the sheared profile and its propagation run along y).
+    's0-field-shear-layer': { mode: 0, periodicAxis: 1 },
     // configure_emergent_recoil_terms pins Periodic; without this entry
     // applyAuxiliaryDefaults would clobber it back to dispersal (mode 2).
     's0-field-thomson-unlocked-recoil': { mode: 0 },

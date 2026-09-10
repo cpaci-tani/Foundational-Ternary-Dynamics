@@ -26,6 +26,7 @@ import { CosmicRenderer } from '../../cosmic-renderer.js';
 import { CosmicMockBridge } from '../../bridge/mock-scale5.js';
 import { createStatusBarCache, hideScale0Overlays, createTickAccumulator, saveScaleCameraState, restoreScaleCameraState } from '../scale-utils.js';
 import { telemetryHub } from '../../telemetry-hub.js';
+import { syncScale5Toggles } from './ui/toolbar/component.js';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -53,6 +54,58 @@ function formatCosmicTelemetry(tel) {
         .slice(0, COSMIC_TELEMETRY_MAX_PAIRS)
         .map((k) => k + ': ' + tel[k])
         .join(' · ');
+}
+
+/**
+ * Draw one bar-chart row for the gas-lab profile card (Task 5). `mode`
+ * 'nonneg' draws bars up from the bottom (density, always >= 0); 'signed'
+ * draws bars from a mid-line, positive up / negative down (radial or x
+ * velocity, which can be either sign). Normalizes to the series' own max
+ * absolute value each call — a display convenience, not a physical scale.
+ *
+ * @param {HTMLCanvasElement|null} canvas
+ * @param {Float64Array|number[]|undefined} values
+ * @param {string} color
+ * @param {'nonneg'|'signed'} mode
+ */
+function _drawGasProfileBars(canvas, values, color, mode) {
+    if (!canvas) return;
+    const ctx2d = canvas.getContext('2d');
+    if (!ctx2d) return;
+    const w = canvas.width, h = canvas.height;
+    ctx2d.clearRect(0, 0, w, h);
+    if (!values || values.length === 0) return;
+
+    let maxAbs = 0;
+    for (let i = 0; i < values.length; i++) {
+        const a = Math.abs(values[i]);
+        if (a > maxAbs) maxAbs = a;
+    }
+    if (!(maxAbs > 0)) return;
+
+    const n = values.length;
+    const barW = w / n;
+    ctx2d.fillStyle = color;
+
+    if (mode === 'signed') {
+        const midY = h / 2;
+        ctx2d.strokeStyle = '#3a4a6a';
+        ctx2d.lineWidth = 1;
+        ctx2d.beginPath();
+        ctx2d.moveTo(0, midY);
+        ctx2d.lineTo(w, midY);
+        ctx2d.stroke();
+        for (let i = 0; i < n; i++) {
+            const barH = (values[i] / maxAbs) * (h / 2 - 2);
+            const y = barH >= 0 ? midY - barH : midY;
+            ctx2d.fillRect(i * barW, y, Math.max(1, barW - 1), Math.abs(barH));
+        }
+    } else {
+        for (let i = 0; i < n; i++) {
+            const barH = (values[i] / maxAbs) * (h - 4);
+            ctx2d.fillRect(i * barW, h - barH, Math.max(1, barW - 1), barH);
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -86,6 +139,12 @@ class Scale5LifecycleController extends BaseLifecycleController {
         // Create cosmic bridge (JS-only mock for now)
         this.bridge = new CosmicMockBridge();
         this.bridge.setupScenario(scenarioName);
+
+        // Reflect this bridge's toggle state (e.g. a gas laboratory setting
+        // `this._toggles.sph_monaghan = true` in its scenario setup) onto
+        // the toolbar checkbox, and make the checkbox drive THIS bridge
+        // going forward (Task 4, sph_monaghan; see toolbar/component.js).
+        syncScale5Toggles(this.bridge);
 
         // Inform the inspector about the cosmic bridge so it can route
         // queries to the right backend (audit P1-1 fix, 2026-05-27).
@@ -178,6 +237,7 @@ class Scale5LifecycleController extends BaseLifecycleController {
             this.renderer = null;
         }
         this.bridge = null;
+        syncScale5Toggles(null); // stop the toolbar checkbox driving a destroyed bridge
         // Restore lattice particles visibility for other scales
         if (ctx && ctx.viewport && ctx.viewport.particles) {
             ctx.viewport.particles.visible = true;
@@ -193,6 +253,15 @@ const _lifecycleController = new Scale5LifecycleController();
 
 const _toolbarStatus = createStatusBarCache();
 const _panelStatus = createStatusBarCache();
+
+// Resolved once and reused, the same way _panelStatus above avoids
+// re-querying the DOM on every physics frame (M15b) — the card is part of
+// the static panel template and is not recreated on a scale mount/destroy.
+let _profileCardEl = null;
+function getProfileCardEl() {
+    if (_profileCardEl === null) _profileCardEl = document.getElementById('cosmic-gas-profile-card');
+    return _profileCardEl;
+}
 
 export function mount(ctx) {
     _lifecycleController.mount(ctx);
@@ -258,6 +327,23 @@ export function animateCosmic(ctx) {
         _panelStatus.update('cosmic-n-stars', String(c[5] || 0));
         _panelStatus.update('cosmic-n-bh', String(c[2] || 0));
         _panelStatus.update('cosmic-ke', diag.totalKE.toExponential(2));
+
+        // Gas laboratory axis-profile card (Task 5; [IMPOSED effective gas
+        // dynamics] — see the card title). Only the three gas labs
+        // populate diag.customProfiles; every other scenario leaves it
+        // null and the card stays hidden.
+        const profile = diag.customProfiles;
+        const profileCard = getProfileCardEl();
+        if (profile) {
+            if (profileCard) profileCard.hidden = false;
+            _panelStatus.update('cosmic-profile-axis', profile.axis);
+            _panelStatus.update('cosmic-thermal', profile.thermal.toExponential(3));
+            _panelStatus.update('cosmic-kinetic', profile.kinetic.toExponential(3));
+            _drawGasProfileBars(document.getElementById('cosmic-profile-density'), profile.density, '#4ade80', 'nonneg');
+            _drawGasProfileBars(document.getElementById('cosmic-profile-velocity'), profile.velocity, '#42a5f5', 'signed');
+        } else if (profileCard) {
+            profileCard.hidden = true;
+        }
     }
 
     // Render every rAF frame so OrbitControls stay responsive

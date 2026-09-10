@@ -16,6 +16,9 @@ export function getScale5ScenarioToolbarTemplate() {
                 <option value="cosmic-dark-matter-halo">Dark Matter Halo</option>
                 <option value="cosmic-gravitational-wave">Gravitational Wave (Binary)</option>
                 <option value="cosmic-baryogenesis">Baryogenesis</option>
+                <option value="cosmic-gas-collapse" title="[IMPOSED effective gas dynamics] Monaghan SPH laboratory: a uniform gas ball under self-gravity + SPH pressure">Gas Lab · Collapse</option>
+                <option value="cosmic-gas-cloud-collision" title="[IMPOSED effective gas dynamics] Monaghan SPH laboratory: two gas clouds driven into a head-on collision">Gas Lab · Cloud Collision</option>
+                <option value="cosmic-gas-rotating-disk" title="[IMPOSED effective gas dynamics] Monaghan SPH laboratory: a thin rotating gas disk on Plummer circular orbits">Gas Lab · Rotating Disk</option>
             </select>
             <label class="tb-label" for="cosmic-camera-select">Camera</label>
             <select class="tb-select tb-select-scenario-compact" id="cosmic-camera-select">
@@ -24,6 +27,7 @@ export function getScale5ScenarioToolbarTemplate() {
                 <option value="blackhole">Black Hole</option>
                 <option value="merger">Merger</option>
             </select>
+            <label class="tb-toggle" title="[IMPOSED effective gas dynamics] Monaghan SPH for gas bodies (default off)"><input type="checkbox" id="t-sph-monaghan"> SPH gas</label>
         </div>
     `;
 }
