@@ -289,12 +289,12 @@ test.describe('Scale-0 Visualization accordion', () => {
         await page.evaluate(() => { const s = document.getElementById('s0-overlay-search'); s.value = 'vortic'; s.dispatchEvent(new Event('input', { bubbles: true })); });
         await page.waitForTimeout(150);
         let r = await page.evaluate(() => ({
-            topoShown: !document.querySelector('#viewport-overlay [data-col="topology"]').classList.contains('is-filtered-out'),
-            topoOpen: !document.querySelector('#viewport-overlay [data-col="topology"]').classList.contains('is-collapsed'),
+            flowShown: !document.querySelector('#viewport-overlay [data-col="stress-energy"]').classList.contains('is-filtered-out'),
+            flowOpen: !document.querySelector('#viewport-overlay [data-col="stress-energy"]').classList.contains('is-collapsed'),
             volHidden: document.querySelector('#viewport-overlay [data-col="volume"]').classList.contains('is-filtered-out'),
             vorticVisible: !document.getElementById('toggle-vorticity').classList.contains('is-filtered-out'),
         }));
-        expect(r.topoShown && r.topoOpen, 'Topology shown + auto-expanded').toBe(true);
+        expect(r.flowShown && r.flowOpen, 'Field energy & flow shown + auto-expanded').toBe(true);
         expect(r.volHidden, 'Volume hidden (no match)').toBe(true);
         expect(r.vorticVisible, 'Vorticity visible').toBe(true);
 
@@ -321,8 +321,8 @@ test.describe('Scale-0 Visualization accordion', () => {
                 await new Promise((resolve) => requestAnimationFrame(resolve));
             };
 
-            const topology = document.querySelector('[data-col="topology"]');
-            if (topology.classList.contains('is-collapsed')) topology.querySelector('.s0-overlay-col-head').click();
+            const energyGroup = document.getElementById('toggle-em-energy').closest('[data-col]');
+            if (energyGroup.classList.contains('is-collapsed')) energyGroup.querySelector('.s0-overlay-col-head').click();
 
             const slice = document.getElementById('toggle-flux-slice');
             const energy = document.getElementById('toggle-em-energy');

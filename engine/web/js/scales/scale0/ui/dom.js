@@ -101,6 +101,8 @@ export function setForceStyleButtons(style) {
 // Sibling of setForceStyleButtons for the volumetric-scalar render-mode
 // meta-toggle (Default / Heat Map). Buttons carry data-scalar-mode.
 export function setScalarRenderButtons(mode) {
+    const controls = getEl('scalar-volume-controls');
+    if (controls) controls.style.display = mode === 'volume' ? 'flex' : 'none';
     const row = getEl('scalar-render-row');
     if (!row) return;
     for (const btn of row.querySelectorAll('.style-btn')) {

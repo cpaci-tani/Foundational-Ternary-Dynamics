@@ -48,7 +48,7 @@ const references = getAllMolecules().map((molecule, index) => {
     return Object.freeze({
         id: `mol-${molecule.id}`,
         moleculeId: molecule.id,
-        category: categoryLabels.get(molecule.category) || 'Reference Structures',
+        category: `Molecular Structure · ${categoryLabels.get(molecule.category) || 'Reference Structures'}`,
         title: `${cleanFormula} — ${molecule.name}`,
         summary: `${molecule.description} The displayed graph is declared reference topology; motion uses effective classical kernels.`,
         tags: Object.freeze(['reference', ionic ? 'ionic' : (covalent ? 'covalent' : 'atomic')]),
@@ -78,7 +78,7 @@ const references = getAllMolecules().map((molecule, index) => {
 
 const experiments = [
     {
-        id: 'mol-h2-vibration', category: 'Molecular Experiments', title: 'H₂ Normal-Mode Pulse',
+        id: 'mol-h2-vibration', category: 'Molecular Motion · Vibrations & Rotation', title: 'H₂ Normal-Mode Pulse',
         summary: 'Equal and opposite velocities excite the H–H stretch while center-of-mass momentum remains zero.',
         setup: 'h2-vibration', cameraDistance: 16, epistemicStatus: 'imposed', seed: 0x030001,
         physics: profile({ vdw: true, bonds_force: true, speed_limit: true }),
@@ -87,7 +87,7 @@ const experiments = [
         evidence: '[IMPOSED] Classical two-mass harmonic normal-mode demonstration in simulation units.',
     },
     {
-        id: 'mol-water-rotation', category: 'Molecular Experiments', title: 'H₂O Rigid-Body Rotation',
+        id: 'mol-water-rotation', category: 'Molecular Motion · Vibrations & Rotation', title: 'H₂O Rigid-Body Rotation',
         summary: 'A tangential velocity field initializes near-rigid rotation and exposes rotational versus vibrational kinetic energy.',
         setup: 'water-rotation', cameraDistance: 18, epistemicStatus: 'imposed', seed: 0x030002,
         physics: profile({ vdw: true, bonds_force: true, angle_strain: true, speed_limit: true }),
@@ -96,7 +96,7 @@ const experiments = [
         evidence: '[IMPOSED] Classical rigid-body initialization of a declared bent water graph.',
     },
     {
-        id: 'mol-h2-dissociation', category: 'Molecular Experiments', title: 'H₂ Dissociation',
+        id: 'mol-h2-dissociation', category: 'Bonding · Covalent Formation & Rupture', title: 'H₂ Dissociation',
         summary: 'An outward relative impulse stretches a declared H₂ bond through the explicit break rule.',
         setup: 'h2-dissociation', cameraDistance: 18, epistemicStatus: 'imposed', seed: 0x030003,
         physics: profile({ vdw: true, bonds_force: true, bonding: true, speed_limit: true }),
@@ -105,7 +105,7 @@ const experiments = [
         evidence: '[IMPOSED] Distance-threshold bond removal under an explicit mechanical impulse; not a quantum dissociation cross section.',
     },
     {
-        id: 'mol-h2-recombination', category: 'Molecular Experiments', title: 'H + H Capture',
+        id: 'mol-h2-recombination', category: 'Bonding · Covalent Formation & Rupture', title: 'H + H Capture',
         summary: 'Two hydrogen records approach with zero total momentum and may enter the explicit distance/valence capture rule.',
         setup: 'h2-recombination', cameraDistance: 22, epistemicStatus: 'imposed', seed: 0x030004,
         physics: profile({ vdw: true, bonds_force: true, bonding: true, damping: true, speed_limit: true }),
@@ -114,7 +114,7 @@ const experiments = [
         evidence: '[IMPOSED] Effective capture and damping fixture; no photon-emission or electronic transition model.',
     },
     {
-        id: 'mol-water-dimer-hbond', category: 'Intermolecular Experiments', title: 'Water Dimer Hydrogen Bond',
+        id: 'mol-water-dimer-hbond', category: 'Intermolecular Forces · Hydrogen Bonding', title: 'Water Dimer Hydrogen Bond',
         summary: 'Two oriented water graphs expose donor–H···acceptor geometry and the effective hydrogen-bond kernel.',
         setup: 'water-dimer', cameraDistance: 24, epistemicStatus: 'parametric', seed: 0x030005,
         physics: profile({ vdw: true, bonds_force: true, h_bonds: true, angle_strain: true,
@@ -124,7 +124,7 @@ const experiments = [
         evidence: '[PARAMETRIC] Directional effective hydrogen-bond force with incomplete scalar-potential accounting.',
     },
     {
-        id: 'mol-dipole-alignment', category: 'Intermolecular Experiments', title: 'HCl Dipole Alignment',
+        id: 'mol-dipole-alignment', category: 'Intermolecular Forces · Electric Dipoles', title: 'HCl Dipole Alignment',
         summary: 'Two HCl graphs begin misaligned so their effective dipole response can be inspected directly.',
         setup: 'dipole-alignment', cameraDistance: 24, epistemicStatus: 'parametric', seed: 0x030006,
         physics: profile({ vdw: true, bonds_force: true, dipole_dipole: true,
@@ -134,7 +134,7 @@ const experiments = [
         evidence: '[PARAMETRIC] Effective electronegativity-derived dipoles; the dipole potential is not in tracked total energy.',
     },
     {
-        id: 'mol-molecular-collision', category: 'Intermolecular Experiments', title: 'Methane–Methane Collision',
+        id: 'mol-molecular-collision', category: 'Intermolecular Forces · Collisions', title: 'Methane–Methane Collision',
         summary: 'Matched CH₄ molecules collide head-on with zero net momentum, exposing translation-to-internal-mode transfer.',
         setup: 'molecular-collision', cameraDistance: 34, epistemicStatus: 'imposed', seed: 0x030007,
         physics: profile({ vdw: true, bonds_force: true, angle_strain: true, speed_limit: true }),
@@ -143,7 +143,7 @@ const experiments = [
         evidence: '[IMPOSED] Finite classical molecular collision in reduced simulation units.',
     },
     {
-        id: 'mol-water-thermal-cycle', category: 'Thermal Experiments', title: 'Water Heat–Quench–Release',
+        id: 'mol-water-thermal-cycle', category: 'Thermodynamics · Heating & Cooling', title: 'Water Heat–Quench–Release',
         summary: 'A finite water cluster is heated, quenched, then released so thermal and structural histories remain visible.',
         setup: 'water-thermal-cycle', cameraDistance: 32, epistemicStatus: 'imposed', seed: 0x030008,
         physics: profile({ vdw: true, bonds_force: true, h_bonds: true, angle_strain: true,
@@ -163,7 +163,7 @@ const experiments = [
         evidence: '[IMPOSED] Berendsen thermal protocol over four effective water records; not a canonical ensemble.',
     },
     {
-        id: 'mol-liquid-shear-layer', category: 'Liquid Transport Experiments', title: 'Water Shear Layer',
+        id: 'mol-liquid-shear-layer', category: 'Fluid Dynamics · Momentum Transport', title: 'Water Shear Layer',
         summary: 'A thermalized water slab is split into two counter-flowing streams; the erf-profile width growth over the measurement window estimates the momentum diffusivity.',
         setup: 'liquid-shear-layer', cameraDistance: 42, epistemicStatus: 'imposed', seed: 0x030101,
         physics: profile({ vdw: true, bonds_force: true, h_bonds: true, angle_strain: true,
@@ -184,7 +184,7 @@ const experiments = [
         evidence: '[IMPOSED effective classical dynamics; coefficients in engine units] Berendsen-thermalized water slab with an imposed counter-flow velocity step; the erf-width growth rate is a classical-liquid momentum-diffusivity estimator, not a substrate transport derivation.',
     },
     {
-        id: 'mol-liquid-channel-decay', category: 'Liquid Transport Experiments', title: 'Water Channel Decay',
+        id: 'mol-liquid-channel-decay', category: 'Fluid Dynamics · Momentum Transport', title: 'Water Channel Decay',
         summary: 'A water slab confined between two locked argon walls is thermalized, then given a parabolic flow profile whose first-mode centerline decay estimates the momentum diffusivity.',
         setup: 'liquid-channel', cameraDistance: 40, epistemicStatus: 'imposed', seed: 0x030102,
         physics: profile({ vdw: true, bonds_force: true, h_bonds: true, angle_strain: true,
@@ -205,7 +205,7 @@ const experiments = [
         evidence: '[IMPOSED effective classical dynamics; coefficients in engine units] Water confined between locked-argon walls with an imposed parabolic flow; the first-mode decay rate is a classical-liquid momentum-diffusivity estimator, not a substrate transport derivation; h = 21 is the declared effective channel width (wall separation 25.2 minus one argon radius per side).',
     },
     {
-        id: 'mol-liquid-droplet-diffusion', category: 'Liquid Transport Experiments', title: 'Water Droplet Diffusion',
+        id: 'mol-liquid-droplet-diffusion', category: 'Fluid Dynamics · Diffusion', title: 'Water Droplet Diffusion',
         summary: 'A thermalized water droplet is released into free flight; drift-removed molecule mean-square displacement growth estimates the self-diffusion coefficient.',
         setup: 'liquid-droplet', cameraDistance: 34, epistemicStatus: 'imposed', seed: 0x030103,
         physics: profile({ vdw: true, bonds_force: true, h_bonds: true, angle_strain: true,
@@ -226,7 +226,7 @@ const experiments = [
         evidence: '[IMPOSED effective classical dynamics; coefficients in engine units] Thermalized water droplet in free flight; the drift-removed MSD growth rate is a classical-liquid self-diffusion estimator, not a substrate transport derivation.',
     },
     {
-        id: 'mol-liquid-spinning-droplet', category: 'Liquid Transport Experiments', title: 'Spinning Water Droplet',
+        id: 'mol-liquid-spinning-droplet', category: 'Fluid Dynamics · Momentum Transport', title: 'Spinning Water Droplet',
         summary: 'A thermalized water droplet is given an imposed rigid-core rotation profile; the inner-outer angular-velocity difference decay estimates the rotational relaxation time.',
         setup: 'liquid-spinning-droplet', cameraDistance: 34, epistemicStatus: 'imposed', seed: 0x030104,
         physics: profile({ vdw: true, bonds_force: true, h_bonds: true, angle_strain: true,
@@ -256,7 +256,7 @@ const experiments = [
 
 const special = [
     Object.freeze({
-        id: 'mol-crystal', category: 'Special', title: 'NaCl Crystal (3×3×3)',
+        id: 'mol-crystal', category: 'Condensed Matter · Ionic Crystals', title: 'NaCl Crystal (3×3×3)',
         summary: 'A finite alternating-ion crystal fragment with open boundaries; it is not a periodic Ewald calculation.',
         tags: Object.freeze(['ionic', 'crystal']), scenarioClass: 'effective_dynamics',
         epistemicStatus: 'parametric', owner: 'js_effective_molecule_engine', seed: 0x0300f0,
@@ -266,7 +266,7 @@ const special = [
         evidence: '[PARAMETRIC] Finite charged-center crystal fragment; no periodic electrostatic sum or band structure.',
     }),
     Object.freeze({
-        id: 'mol-custom', category: 'Special', title: 'Custom Molecular Sandbox',
+        id: 'mol-custom', category: 'Exploration · Custom Scenarios', title: 'Custom Molecular Sandbox',
         summary: 'An empty effective sandbox for manual atom placement, graph construction, and force selection.',
         tags: Object.freeze(['sandbox']), scenarioClass: 'sandbox', epistemicStatus: 'mixed',
         owner: 'js_effective_molecule_engine', seed: 0x0300ff, setup: 'custom',

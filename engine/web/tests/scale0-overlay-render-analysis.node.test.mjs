@@ -2,9 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
+import * as THREE from '../js/vendor/three/build/three.module.js';
+import { DUAL_DELTA } from '../js/constants.js';
 function load(path, expression, extra={}) {
- const src=readFileSync(new URL('../js/'+path,import.meta.url),'utf8').replace(/^import[\s\S]*?from\s+['"][^'"]+['"];\s*/gm,'').replace(/export\s+/g,'');
- return vm.runInNewContext(src+'\n'+expression,extra);
+ const url=new URL('../js/'+path,import.meta.url);
+ const src=readFileSync(url,'utf8').replace(/^import[\s\S]*?from\s+['"][^'"]+['"];\s*/gm,'').replace(/export\s+/g,'').replace(/import\.meta\.url/g,JSON.stringify(url.href));
+ return vm.runInNewContext(src+'\n'+expression,{URL,...extra});
 }
 const spec=load('scales/scale0/analysis/lattice-spectrum.js','({energySpectrum,resampleInto,spectralPeak,fft1d,nextPow2,denseVectorGridFromSamples})');
 test('corner Fourier power retains its radial wavenumber and Parseval',()=>{
@@ -68,6 +71,66 @@ test('zero vector and scalar fields emit no NaN vertices or bogus zero arrows',(
  const m=mesh(),ctx={...base,[key]:m};methods[method].call(ctx,data);assert.equal(m.geometry.drawRange.count,0);for(const a of Object.values(m.geometry.attributes))assert.ok(a.array.every(Number.isFinite));
  }
  const m=mesh();em._writeArrowFieldIntoMesh.call(base,m,data,{base:[0,0,0],tip:[1,1,1]},'_m');assert.equal(m.geometry.drawRange.count,0);
+});
+
+test('chirality rejects malformed and mixed nonfinite publications before GPU upload',()=>{
+ const valid={count:2,positions:[1,2,3,4,5,6],values:[1,-.5]};
+ const invalid=[null,{...valid,count:-1},{...valid,count:1.5},
+  {...valid,values:[1]},{...valid,positions:[1,2,3]}];
+ for(const bad of [NaN,Infinity,-Infinity,1e40]) {
+  invalid.push({...valid,values:[1,bad]}, {...valid,positions:[1,2,3,4,bad,6]});
+ }
+ for(const data of invalid) {
+  const m=mesh(),ctx={...base,_chiralityField:m};
+  quantum.updateChiralityField.call(ctx,valid);
+  assert.equal(m.geometry.drawRange.count,2);
+  quantum.updateChiralityField.call(ctx,data);
+  assert.equal(m.geometry.drawRange.count,0);
+  for(const a of Object.values(m.geometry.attributes))assert.ok(a.array.every(Number.isFinite));
+  quantum.updateChiralityField.call(ctx,valid);
+  assert.equal(m.geometry.drawRange.count,2,'valid publication recovers after corruption');
+ }
+});
+
+test('phase alone uses the current sampled split across direction, order and owner changes',()=>{
+ const computePhaseFrame=load('scales/scale0/runtime/overlay-frames.js','computePhaseFrame');
+ const phase=load('scales/scale0/runtime/field-overlays.js',
+  "SCALAR_JOBS.find(([flag])=>flag==='showPhase')[1]",{computePhaseFrame,DUAL_DELTA});
+ const state={fieldFlags:{showPhase:true,showDualSubstrate:false}};
+ const expected=Math.atan2(1-DUAL_DELTA,1+DUAL_DELTA);
+ for(const [vectors,positions,owner] of [
+  [[1,0,0],[1,2,3],'old'],
+  [[-1,0,0],[1,2,3],'old'],
+  [[0,-2,0,0,0,3],[4,5,6,1,2,3],'new'],
+ ]) {
+  const fluxVector={count:vectors.length/3,vectors,positions,provenance:{owner}};
+  const result=phase({fluxVector},{},state);
+  assert.equal(result.positions,positions);
+  assert.ok(result.dualAvailable);
+  for(let i=0;i<result.count;i++)assert.ok(Math.abs(result.values[i]-expected)<1e-6);
+ }
+ assert.equal(phase({fluxVector:{count:0}},{},state),null);
+});
+
+test('spin arrow geometry stays aligned with every signed axis during illustrative rotation',()=>{
+ const SpinArrowManager=load('viewport/spin-arrow-manager.js','SpinArrowManager',
+  {THREE,performance:{now:()=>0}});
+ const scene=new THREE.Scene(),manager=new SpinArrowManager(scene);
+ for(const axis of [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]]) {
+  manager.track(1,{getPosition:()=>({x:2,y:3,z:4}),
+   getSpin:()=>({sx:axis[0],sy:axis[1],sz:axis[2],omega_z:1})});
+  for(let i=0;i<80;i++)manager.update(16);
+  const tracked=manager._tracked.get(1),shaft=tracked.inner.children[0];
+  scene.updateMatrixWorld(true);
+  shaft.geometry.computeBoundingBox();
+  const direction=shaft.geometry.boundingBox.getCenter(new THREE.Vector3());
+  shaft.localToWorld(direction);
+  direction.sub(tracked.group.position).normalize();
+  assert.ok(direction.distanceTo(new THREE.Vector3(...axis))<1e-6,axis.join(','));
+  manager.untrack(1);
+ }
+ manager.dispose();
+ assert.equal(scene.children.length,0);
 });
 test('empty quantum, phase and horizon publications clear older geometry',()=>{
  const q=mesh();quantum._populateQuantumField.call({...base,_quantumField:q},null,'psi2');assert.equal(q.geometry.drawRange.count,0);

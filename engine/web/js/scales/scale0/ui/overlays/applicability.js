@@ -65,6 +65,24 @@ export const SCALE0_SCENARIO_DOMAIN_OVERRIDES = Object.freeze({
         's0-vacuum-pion-neutral',
         's0-vacuum-kaon-charged',
     ].map((id) => [id, Object.freeze({ flux: true, state: true })])),
+    // vacuum.cpp explicitly retains one inert marker in these wave templates.
+    // A source-free evolution profile does not erase that initialized record.
+    ...Object.fromEntries([
+        's0-vacuum-electron', 's0-vacuum-positron',
+        's0-vacuum-muon', 's0-vacuum-antimuon',
+        's0-vacuum-tau', 's0-vacuum-antitau',
+        's0-vacuum-w-boson', 's0-vacuum-w-minus-boson',
+    ].map((id) => [id, Object.freeze({ flux: true, state: true })])),
+    // s0_seed.cpp assigns these axis labels directly through IPF, without
+    // color forces or genesis. Observing a retained label is independent of
+    // enabling an interaction and does not identify an SU(3) charge.
+    ...Object.fromEntries([
+        's0-seed-up-quark', 's0-seed-down-quark', 's0-seed-strange-quark',
+        's0-seed-charm-quark', 's0-seed-bottom-quark', 's0-seed-top-quark',
+        's0-seed-anti-up-quark', 's0-seed-anti-down-quark',
+        's0-seed-anti-strange-quark', 's0-seed-anti-charm-quark',
+        's0-seed-anti-bottom-quark', 's0-seed-anti-top-quark',
+    ].map((id) => [id, Object.freeze({ flux: true, state: true, color: true })])),
     's0-seed-wilson-loop': Object.freeze({ flux: true, state: false }),
 });
 
@@ -162,6 +180,7 @@ export function getScale0OverlayApplicability(scenarioId, engineTerms = null) {
     allow(strong, 'toggle-force-strong', 'toggle-color-charge', 'toggle-confinement');
     allow(dual, 'toggle-dual-substrate', 'toggle-chirality', 'toggle-phase');
     allow(genesis, 'toggle-genesis-iso', 'toggle-color-charge');
+    allow(state && domainOverride.color, 'toggle-color-charge');
     allow(selectiveDamping, 'toggle-damping-zones');
     allow(flux || state, 'toggle-gauss-residual');
     allow(properTimeClock, 'toggle-proper-time', 'toggle-lapse', 'toggle-db-phase');

@@ -15,6 +15,8 @@
  *      in a moments observation's 4x2 array.
  *      Metadata and exact observations retain decimal-string integer encoding.
  */
+import { createFluidSnapshot, summarizeFluidAdvance } from './fluid-observables.js';
+
 const DECIMAL = /^(0|[1-9][0-9]*)$/;
 
 function decimal(value, name) {
@@ -121,10 +123,16 @@ export function createHydroWorkerProtocol(adapter, {
                 break;
             case 'advance': {
                 const ticks = decimal(message.microticks, 'microticks');
+                if (message.publication !== undefined && message.publication !== 'diagnostics') {
+                    throw new TypeError('advance publication must be diagnostics or omitted');
+                }
                 // Each worker task is bounded so later messages can be received.
                 if (BigInt(ticks) > batchLimit) throw new RangeError('advance exceeds maxBatchMicroticks');
                 payload = await adapter.advance(ticks);
                 if (BigInt(ticks) !== 0n) generation += 1n;
+                // The adapter has already executed every tick and summarized actual
+                // event sources. Only the explicitly requested IPC reply is projected.
+                if (message.publication === 'diagnostics') payload = { diagnostics: payload.diagnostics };
                 break;
             }
             case 'checkpoint':
@@ -157,24 +165,49 @@ export function createWasmHydroAdapter(module, checkpointJson) {
     if (typeof checkpointJson !== 'string') throw new TypeError('checkpoint must be a JSON string');
     const state = new module.HydroState(checkpointJson);
     let disposed = false;
+    let fluidSnapshot = null;
+    let fluidSource = { status: 'unavailable', reason: 'No completed advance in this owner.' };
     const alive = () => { if (disposed) throw new Error('compiled adapter disposed'); };
     return {
-        advance(ticks) { alive(); return JSON.parse(state.advance(ticks)); },
+        advance(ticks) {
+            alive();
+            const result = JSON.parse(state.advance(ticks));
+            if (BigInt(ticks) !== 0n) {
+                fluidSnapshot = null;
+                // Observer failures must not turn an already committed native advance
+                // into a reported atomic mutation failure. They fail the next fluid read.
+                try { fluidSource = summarizeFluidAdvance(result, ticks); }
+                catch (error) { fluidSource = { status: 'invalid', reason: String(error.message ?? error) }; }
+            }
+            return result;
+        },
         checkpoint() { alive(); return state.checkpoint(); },
-        restore(json) { alive(); state.restore(json); return JSON.parse(state.diagnostics()); },
-        observe(width, observable) { alive(); return JSON.parse(state.observe(width, observable)); },
+        restore(json) {
+            alive(); state.restore(json); fluidSnapshot = null;
+            fluidSource = { status: 'unavailable', reason: 'No completed advance since restore.' };
+            return JSON.parse(state.diagnostics());
+        },
+        observe(width, observable) {
+            alive();
+            if (observable === 'fluid') {
+                if (fluidSource.status === 'invalid') throw new TypeError(fluidSource.reason);
+                if (!fluidSnapshot) fluidSnapshot = createFluidSnapshot(state.checkpoint());
+                return fluidSnapshot.observe(width, fluidSource);
+            }
+            return JSON.parse(state.observe(width, observable));
+        },
         diagnostics() { alive(); return JSON.parse(state.diagnostics()); },
         capabilities() {
             alive();
-            return { backend: 'hydro_wasm_candidate', observables: ['counts', 'fields', 'moments'],
+            return { backend: 'hydro_wasm_candidate', observables: ['counts', 'fields', 'moments', 'fluid'],
                 observableSyntax: { moments: 'moments:kx,ky,kz,pol' },
-                observationPrecision: { counts: 'exact_integer', fields: 'exact_integer',
+                observationPrecision: { counts: 'exact_integer', fields: 'exact_integer', fluid: 'exact_integer_snapshot',
                     moments: { status: 'approximate_observation', arithmetic: 'ieee754_binary64',
                         error_bound_status: 'not_certified' } },
                 autonomousCoarseEvolution: false, continuumRecovery: false, physicalUnits: false,
                 particleIdentification: false, gravityRecovery: false, canonicalAdoption: false };
         },
-        dispose() { if (!disposed) { disposed = true; state.delete(); } },
+        dispose() { if (!disposed) { disposed = true; fluidSnapshot = null; fluidSource = null; state.delete(); } },
     };
 }
 

@@ -37,12 +37,12 @@ const BASE_OVERLAYS = Object.freeze({
     admissibilityRing: false, provenanceLabel: false,
 });
 
-function add(bridge, charge, position, velocity, mass, radius = 0.35) {
+function add(bridge, charge, position, velocity, mass, radius = 0.35, recordFields) {
     return bridge.peAddParticle(
         null, charge,
         position[0], position[1], position[2],
         velocity[0], velocity[1], velocity[2],
-        mass, radius,
+        mass, radius, recordFields,
     );
 }
 
@@ -350,12 +350,14 @@ const EXECUTION = Object.freeze({
         physics: { coulomb: false, strong: true, dt: 0.05, softening: 0.05 },
         overlays: { trails: true, velocities: true, forceStrong: true, forceNet: true, system: true },
         setup({ bridge }) {
-            // The native particle record has integer electric charge. Keep this
-            // strong-force control electrically neutral instead of silently
-            // truncating fractional catalog charges.
-            addTyped(bridge, 'up', 0, [-4, -2, 0], [0, 0, 0], M_U_PHYS, 0.3);
-            addTyped(bridge, 'down', 0, [4, -2, 0], [0, 0, 0], M_D_PHYS, 0.3);
-            addTyped(bridge, 'strange', 0, [0, 4, 0], [0, 0, 0], M_S_PHYS, 0.3);
+            // Unnamed neutral probes isolate the selected strong-force term.
+            // Their imposed masses and color records do not identify quarks.
+            add(bridge, 0, [-4, -2, 0], [0, 0, 0], M_U_PHYS, 0.3,
+                { spin: 1, colorId: 1, spinAxis: [0, 0, 1] });
+            add(bridge, 0, [4, -2, 0], [0, 0, 0], M_D_PHYS, 0.3,
+                { spin: 1, colorId: 2, spinAxis: [0, 0, 1] });
+            add(bridge, 0, [0, 4, 0], [0, 0, 0], M_S_PHYS, 0.3,
+                { spin: 1, colorId: 3, spinAxis: [0, 0, 1] });
         },
     },
     qed_static_coulomb: {
@@ -445,9 +447,41 @@ const EXECUTION = Object.freeze({
     },
 });
 
+// Navigation only: native family, ownership, availability, and epistemic
+// status remain authoritative. Group reference models by the phenomenon
+// they expose without changing their native scientific classification.
+const SCENARIO_GROUPS = Object.freeze({
+    'Particle Structure · Constituent Evidence': ['s1-native-m3-replay'],
+    'Electromagnetism · Electrostatics': ['s1-charge-sign-matrix', 's1-qed-static-coulomb'],
+    'Electromagnetism · Sources & Boundaries': ['s1-open-terminal-battery', 's1-finite-port-field-battery'],
+    'Electromagnetism · Orbits & Many-Body Motion': ['s1-coulomb-orbit', 's1-cluster-pair', 's1-three-body'],
+    'Electromagnetism · Scattering': ['s1-rutherford-scattering', 's1-qed-moller-reference', 's1-qed-bhabha-reference'],
+    'Electromagnetism · Magnetic Response': [
+        's1-quantum-dipole-antiparallel', 's1-quantum-dipole-transverse',
+        's1-quantum-lorentz-charge-control', 's1-quantum-lorentz-velocity-control',
+        's1-qed-magnetic-dipole', 's1-qed-lorentz-dipole',
+    ],
+    'Electromagnetism · Radiation Reaction': ['s1-quantum-radiation-scattering', 's1-qed-radiation-reaction'],
+    'Quantum Models · Exchange': [
+        's1-quantum-exchange-eligible', 's1-quantum-exchange-spinless-control', 's1-quantum-exchange-range',
+    ],
+    'Quantum Models · Spin–Orbit Coupling': [
+        's1-quantum-spin-orbit-parallel', 's1-quantum-spin-orbit-antiparallel', 's1-qed-spin-orbit',
+    ],
+    'Strong-Force Models · Color Interactions': ['s1-quantum-color-triplet'],
+    'Relativity · Particle Motion': ['s1-relativistic-integrator', 's1-quantum-relativistic-counterstream'],
+    'Interactions · Contact Events': ['s1-contact-selection'],
+    'Interactions · Force Accounting': ['s1-force-decomposition', 's1-advanced-force-isolation', 's1-incomplete-conservation'],
+    'Dissipation · Bath Damping': ['s1-damping-sink'],
+    'Particle Properties · Catalog References': ['s1-empty-zoo', 's1-parametric-species', 's1-mass-ladder'],
+});
+const scenarioGroupById = new Map(Object.entries(SCENARIO_GROUPS)
+    .flatMap(([group, ids]) => ids.map(id => [id, group])));
+const scenarioGroupOrder = new Map(Object.keys(SCENARIO_GROUPS).map((group, index) => [group, index]));
+
 const BOOTSTRAP_SCENARIO = Object.freeze({
     id: 's1-native-m3-replay', label: 'M3 Evidence Replay',
-    family: 'Particle evidence replay', group: 'Particle evidence replay',
+    family: 'Particle evidence replay', group: scenarioGroupById.get('s1-native-m3-replay'),
     workspace: 'particle_observatory', mode: 'native_matter',
     owner: 'native_matter_observer', scenarioClass: 'qualified_replay',
     status: 'measured', canonicalSource: 'FTD-0760', setupId: 'm3_anatomy',
@@ -591,7 +625,7 @@ export function installScale1ScenarioManifest(registry) {
             || { physics: {}, overlays: {}, setup() {} };
         return {
             ...nativeRow,
-            group: nativeRow.family,
+            group: scenarioGroupById.get(nativeRow.id) || nativeRow.family,
             description: scenarioDescription(nativeRow),
             ...execution,
         };
@@ -626,7 +660,9 @@ export function populateScale1ScenarioSelect(selectEl, defaultId = DEFAULT_SCALE
     if (!selectEl) return;
     selectEl.innerHTML = '';
     const groups = new Map();
-    for (const scenario of SCALE1_SCENARIOS) {
+    const presentationRows = [...SCALE1_SCENARIOS].sort((left, right) =>
+        (scenarioGroupOrder.get(left.group) ?? Infinity) - (scenarioGroupOrder.get(right.group) ?? Infinity));
+    for (const scenario of presentationRows) {
         if (!groups.has(scenario.group)) {
             const group = document.createElement('optgroup');
             group.label = scenario.group;

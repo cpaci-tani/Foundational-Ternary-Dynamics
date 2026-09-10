@@ -5,7 +5,7 @@
  * "+" inject buttons active only in Scale 1 (ParticleEngine) mode.
  */
 
-import { getAllParticles, getCategories, getByCategory, formatMass, chargeLabel } from './particle-catalog.js';
+import { getAllParticles, getCategories, getByCategory, getCatalogSimulationSupport, formatMass, chargeLabel } from './particle-catalog.js';
 import { escapeHtml } from './lib/origin-policy.js';
 
 // Generation buckets — the Moore-layer 3-generation structure ([SELECTION],
@@ -65,25 +65,29 @@ function matchesSearch(p) {
 function renderParticleCard(p) {
     const [r, g, b] = p.display_color;
     const dotColor = `rgb(${Math.round(r*255)},${Math.round(g*255)},${Math.round(b*255)})`;
-    const accStr = p.ftd_accuracy !== null ? p.ftd_accuracy.toFixed(p.ftd_accuracy < 0.1 ? 3 : 1) + '%' : '--';
+    const accStr = Number.isFinite(p.ftd_accuracy) ? p.ftd_accuracy.toFixed(p.ftd_accuracy < 0.1 ? 3 : 1) + '%' : '--';
     const accClass = p.ftd_status === 'derived' ? 'color:var(--positive-text)' :
                      p.ftd_status === 'selection' ? 'color:var(--warning-text)' :
                      'color:var(--text-muted)';
-    const canInject = _engineMode === 'particles' && p.charge !== 0 && p.mass_mev > 0;
+    const support = getCatalogSimulationSupport(p);
+    const canInject = _engineMode === 'particles' && support.supported;
+    const injectionNote = support.supported
+        ? `Inject ${p.name} as a classical point-particle approximation in Scale 1`
+        : support.reason;
 
     return `<div class="zoo-card">
         <div class="zoo-card-line1">
             <span class="zoo-dot" style="background:${dotColor}"></span>
             <span class="zoo-symbol">${escapeHtml(p.symbol)}</span>
             <span class="zoo-name">${escapeHtml(p.name)}</span>
-            <span class="zoo-accuracy" style="${accClass}" title="FTD-predicted mass deviation vs measured (yellow = strongly-motivated conjecture, grey = parametric)">${accStr}</span>
-            <button class="zoo-inject-btn" data-particle="${escapeHtml(p.id)}" title="Inject ${escapeHtml(p.name)}" ${canInject ? '' : 'disabled'}>+</button>
+            <span class="zoo-accuracy" style="${accClass}" title="Absolute relative difference between the evaluated motivating expression and the stated reference mass; not a dynamical validation">${accStr}</span>
+            <button class="zoo-inject-btn" data-particle="${escapeHtml(p.id)}" title="${escapeHtml(injectionNote)}" ${canInject ? '' : 'disabled'}>+</button>
         </div>
         <div class="zoo-card-line2">
-            <span class="zoo-mass" title="Measured (PDG) rest mass; electron uses the FTD anchor m_e = 0.511 MeV">${formatMass(p.mass_mev)}</span>
+            <span class="zoo-mass" title="${escapeHtml(p.mass_note || 'Imported reference mass')}">${formatMass(p.mass_mev)}</span>
             <span class="zoo-meta">q ${chargeLabel(p.charge)}</span>
             <span class="zoo-meta">spin ${p.spin}</span>
-            <span class="zoo-formula" title="FTD motivating mass relation [${p.ftd_status || 'unclassified'}], not a substrate derivation: ${p.ftd_formula}">${p.ftd_formula || '--'}</span>
+            <span class="zoo-formula" title="${escapeHtml(p.ftd_formula ? `Motivating relation [${p.ftd_status}]; evaluated mass ${formatMass(p.ftd_mass_mev)}. ${p.ftd_note}` : 'No reproducible mass comparison is registered for this entry.')}">${escapeHtml(p.ftd_formula || '--')}</span>
         </div>
     </div>`;
 }
@@ -156,9 +160,11 @@ function renderZoo() {
         catalog particles dropped into the continuous engine, NOT lattice-derived
         objects — lattice genesis produces hybrid colored objects, not SM particles.
         Runtime scale handoff is retired; the Scale Context sidepanel provides pedagogical scale comparison without creating particle records.
-        <strong>Mass</strong> is the measured (PDG) value (electron = FTD anchor m_e).
-        <strong>FTD Formula</strong> + <strong>Acc.</strong> are FTD's <em>prediction</em> and its deviation —
-        motivating matches, not derivations. Colour: <span style="color:var(--warning-text)">yellow</span> = [SELECTION]/strongly-motivated conjecture,
+        <strong>Mass</strong> carries the stated reference convention; neutrino flavor states have no single rest-mass entry.
+        <strong>FTD Formula</strong> + <strong>difference</strong> compare a reproducible motivating expression with that reference.
+        Unverified comparisons remain unavailable. Injection requires a supported mass and electric charge;
+        fractional charges are unavailable in the current point-particle engine.
+        Colour: <span style="color:var(--warning-text)">yellow</span> = [SELECTION]/strongly-motivated conjecture,
         grey = [PARAMETRIC]. No Standard-Model mass is currently [DERIVED].
     </p>`;
     container.innerHTML = html;
@@ -185,7 +191,7 @@ function injectFromZoo(particleId) {
     if (!_bridge || _engineMode !== 'particles') return;
 
     const p = getAllParticles().find(x => x.id === particleId);
-    if (!p) return;
+    if (!getCatalogSimulationSupport(p).supported) return;
 
     // Inject at a random offset from center (moderate distance so Coulomb
     // forces can pull the particle into orbit if there's a nucleus present)
@@ -199,8 +205,6 @@ function injectFromZoo(particleId) {
     // injection velocity sends particles flying away immediately.
     const vx = 0, vy = 0, vz = 0;
 
-    // Charge as integer sign for PE (it uses int8_t)
-    const charge = p.charge > 0 ? 1 : p.charge < 0 ? -1 : 0;
-
-    _bridge.peAddParticle(p.id, charge, x, y, z, vx, vy, vz, p.mass_mev, 0.1);
+    // Preserve the physical integer charge, including doubly charged entries.
+    _bridge.peAddParticle(p.id, p.charge, x, y, z, vx, vy, vz, p.mass_mev, 0.1);
 }

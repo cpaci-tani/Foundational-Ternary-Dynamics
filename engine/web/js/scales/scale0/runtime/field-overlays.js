@@ -17,6 +17,9 @@ import {
 } from '../state/store.js';
 import { getFieldLineKnotTracker } from './field-line-knots.js';
 import { commonSampleProvenance, safeCounterNumber } from '../../../lib/exact-counter.js';
+import { observeLatticeFields, fieldObservationProvenance } from './fluid-observation.js';
+import { appRegistry } from '../../../core/registry.js';
+import { isPanelLive } from '../../../ui/panels/panel-visibility.js';
 import {
     overlayWorkActive,
     wantsStreamlineApply,
@@ -315,17 +318,7 @@ export function buildDerivedSubstrateData(state, sampled, fieldCapability, N) {
         // asymmetry demonstration with no handedness content. It does not
         // sample the engine's independently stored L/R records. Surfaced
         // as "dual substrate" for visualization only.
-        const leftFactor = (1 + DUAL_DELTA) / 2;
-        const rightFactor = (1 - DUAL_DELTA) / 2;
-        const vecLen = sampled.fluxVector.vectors.length;
-        if (!state.dualLVecs || state.dualLVecs.length < vecLen) {
-            state.dualLVecs = new Float32Array(vecLen);
-            state.dualRVecs = new Float32Array(vecLen);
-        }
-        for (let i = 0; i < vecLen; i++) {
-            state.dualLVecs[i] = sampled.fluxVector.vectors[i] * leftFactor;
-            state.dualRVecs[i] = sampled.fluxVector.vectors[i] * rightFactor;
-        }
+        prepareDualAmplitudeSplit(sampled.fluxVector, state);
         frame.dualFlux = {
             left: { positions: sampled.fluxVector.positions, vectors: state.dualLVecs, count: sampled.fluxVector.count },
             right: { positions: sampled.fluxVector.positions, vectors: state.dualRVecs, count: sampled.fluxVector.count },
@@ -351,6 +344,30 @@ export function buildDerivedSubstrateData(state, sampled, fieldCapability, N) {
     }
 
     return frame;
+}
+
+function prepareDualAmplitudeSplit(flux, state) {
+    const vecLen = flux.count * 3;
+    if (!state.dualLVecs || state.dualLVecs.length < vecLen) {
+        state.dualLVecs = new Float32Array(vecLen);
+        state.dualRVecs = new Float32Array(vecLen);
+    }
+    const leftFactor = (1 + DUAL_DELTA) / 2;
+    const rightFactor = (1 - DUAL_DELTA) / 2;
+    for (let i = 0; i < vecLen; i++) {
+        state.dualLVecs[i] = flux.vectors[i] * leftFactor;
+        state.dualRVecs[i] = flux.vectors[i] * rightFactor;
+    }
+}
+
+function computeCurrentPhaseFrame(sampled, state) {
+    if (!sampled.fluxVector?.count) return null;
+    // Phase is the declared scalar-split proxy. Its two inputs must come from
+    // this exact owned sample, even when the separate Dual J view is hidden.
+    // Reusing a previous sweep's split can manufacture a pi phase jump when
+    // the current vector changes direction or the retained sample order moves.
+    prepareDualAmplitudeSplit(sampled.fluxVector, state);
+    return computePhaseFrame(sampled, state, state.dualLVecs, state.dualRVecs);
 }
 
 
@@ -442,6 +459,8 @@ const JOB_FORCE_FIELDS = 4; // force sample + non-flow apply (n·COST_FORCE_FIEL
 const JOB_FORCE_FLOW = 5;   // one force-flow streamline (COST_STREAMLINE)
 const JOB_DERIVED = 6;      // derived substrate group (COST_DERIVED)
 const JOB_SCALAR = 7;       // one scalar/topology sheet (COST_SCALAR)
+const JOB_FLUID_OBSERVATION = 8; // summaries from the same active-owner sample cache
+const fluidPanelLive = () => typeof document !== 'undefined' && isPanelLive(document.getElementById('panel-fluid'));
 
 // Static scalar-overlay table, allocated ONCE at module load (never per sweep).
 // Each entry is [flag, computeFn, applyFn]. Splitting compute/apply lets a
@@ -452,7 +471,7 @@ const JOB_SCALAR = 7;       // one scalar/topology sheet (COST_SCALAR)
 // builder with the matching viewport-adapter apply call.
 const SCALAR_JOBS = [
     ['showPsiSquared',        (s, ctx, state) => computePsiSquaredFrame(s, state, state.fieldFlags.showDualSubstrate), (va, v) => va.applyPsiSquared(v)],
-    ['showPhase',             (s, ctx, state) => computePhaseFrame(s, state, state.dualLVecs, state.dualRVecs),        (va, v) => va.applyPhase(v)],
+    ['showPhase',             (s, ctx, state) => computeCurrentPhaseFrame(s, state),                                (va, v) => va.applyPhase(v)],
     ['showLagrangianDensity', (s, ctx, state) => computeLagrangianDensityFrame(s, state),                             (va, v) => va.applyLagrangianDensity(v)],
     ['showEntropyDensity',    (s, ctx, state) => computeEntropyDensityFrame(s, state),                                (va, v) => va.applyEntropyDensity(v)],
     ['showGravPotential',     (s, ctx, state) => computeGravPotentialFrame(ctx, s, state),                            (va, v) => va.applyGravPotential(v)],
@@ -932,8 +951,21 @@ function runJob(sched, slot) {
             // object the old `(s) => ({ key: ... })` closures boxed every frame.
             const entry = SCALAR_JOBS[slot.scalarIndex];
             sampleCache.ensureScalarDeps(entry[0]);
+            if (state.scalarRenderMode === 'volume' && entry[0] === 'showEmEnergy'
+                && !fieldObservationProvenance([sampled.eField, sampled.bField], getActiveScale0Bridge(ctx, state))) {
+                viewportAdapter.applyEmEnergy(null); break;
+            }
             const value = entry[1](sampled, ctx, state);
             entry[2](viewportAdapter, value);
+            break;
+        }
+        case JOB_FLUID_OBSERVATION: {
+            if (!fluidPanelLive()) break;
+            sampleCache.ensureSamples(['eField', 'bField', 'fluxVector', 'poynting']);
+            const value = observeLatticeFields(sampled, getActiveScale0Bridge(ctx, state), state, stride);
+            const panel = appRegistry.get('panel:fluid');
+            if (value) panel?.update(value);
+            else panel?.clear('Waiting for field samples from the same lattice tick.');
             break;
         }
     }
@@ -1068,6 +1100,9 @@ function buildOverlayJobs(ctx, state, sched, viewportAdapter, latticeSize, param
         slot.scalarIndex = i;
     }
 
+    if (fluidPanelLive()) {
+        const slot = jobSlot(sched, n++); slot.kind = JOB_FLUID_OBSERVATION; slot.cost = COST_SCALAR;
+    }
     sched.jobCount = n;
 }
 
@@ -1087,7 +1122,9 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
         return;
     }
 
-    if (!overlayWorkActive(state.anyFieldActive, knotTrackingActive)) {
+    const fluidLive = fluidPanelLive();
+    if (fluidLive !== sched.fluidLive) { state.fieldNeedsUpdate = true; sched.fluidLive = fluidLive; }
+    if (!overlayWorkActive(state.anyFieldActive || fluidLive, knotTrackingActive)) {
         // No visual overlays and no knot tracking — abandon any half-finished
         // sweep so a later re-activation starts clean rather than resuming
         // stale jobs. The job pool itself persists (its slots are reused next

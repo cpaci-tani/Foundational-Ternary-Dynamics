@@ -88,8 +88,8 @@ function formatColorRepresentation(value) {
 
 function chiralSector(entry) {
     if (!entry) return '—';
-    if (NEUTRINO_IDS.has(entry.id)) return 'L weak sector';
-    if (ANTINEUTRINO_IDS.has(entry.id)) return 'R weak sector';
+    if (NEUTRINO_IDS.has(entry.id)) return 'L weak field';
+    if (ANTINEUTRINO_IDS.has(entry.id)) return 'Conjugate of L weak field';
     if (entry.spin === 0.5) return 'L / R fields';
     if (entry.id === 'photon' || entry.id === 'gluon') return 'N/A · helicity ±1';
     if (entry.spin === 1) return 'N/A · spin-1 boson';
@@ -98,7 +98,12 @@ function chiralSector(entry) {
 
 function shortStatus(status = '') {
     const tags = [...status.matchAll(/\[([^\]]+)\]/g)].map((match) => match[1]);
-    return tags[tags.length - 1] || 'REFERENCE';
+    // A later [EMERGENT] tag can qualify only wave propagation inside an
+    // overall [CONJECTURE]. Never promote the scenario identity from that
+    // subordinate clause; retain explicit identity rejection/open status.
+    if (tags.includes('CLOSED NEGATIVE')) return 'CLOSED NEGATIVE';
+    if (tags.includes('OPEN')) return 'OPEN';
+    return tags[0] || 'REFERENCE';
 }
 
 export function getScale0StandardModelContext(scenarioId, scenario = null) {

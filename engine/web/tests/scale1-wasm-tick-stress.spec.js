@@ -40,7 +40,7 @@ test('64-particle all-physics state survives sustained direct WASM ticks', async
             const x = (i % side) * 1.4 - 2.1;
             const y = (Math.floor(i / side) % side) * 1.4 - 2.1;
             const z = Math.floor(i / (side * side)) * 1.4 - 2.1;
-            bridge.peAddParticle('electron', i % 2 ? -1 : 1,
+            bridge.peAddParticle(i % 2 ? 'electron' : 'positron', i % 2 ? -1 : 1,
                 x, y, z, 0, 0, 0, 0.511, 0.08);
         }
         const startTick = Number(bridge.peGetTick());
@@ -75,19 +75,18 @@ test('mixed particle-zoo injection survives sustained all-physics ticks', async 
     const result = await page.evaluate(async () => {
         const bridge = window.__ftdCtx?.bridge;
         if (!bridge) throw new Error('Scale 1 bridge unavailable');
-        const { getAllParticles } = await import('/js/particle-catalog.js');
+        const { getSimulableParticles } = await import('/js/particle-catalog.js');
         for (const spec of Array.from(bridge.peGetPhysicsRegistry()?.physics || [])) {
             if (spec.available && spec.toggle) bridge.peSetToggle(spec.toggle, true);
         }
-        const catalog = getAllParticles().filter(particle =>
-            Number.isFinite(particle.mass_mev) && particle.mass_mev > 0);
+        const catalog = getSimulableParticles();
         for (let i = 0; i < catalog.length; ++i) {
             const particle = catalog[i];
             const angle = i * Math.PI * (3 - Math.sqrt(5));
             const layer = Math.floor(i / 12) - 2;
-            bridge.peAddParticle(
+            const id = bridge.peAddParticle(
                 particle.id,
-                particle.charge > 0 ? 1 : particle.charge < 0 ? -1 : 0,
+                particle.charge,
                 4.0 * Math.cos(angle),
                 4.0 * Math.sin(angle),
                 layer * 1.25,
@@ -95,6 +94,7 @@ test('mixed particle-zoo injection survives sustained all-physics ticks', async 
                 particle.mass_mev,
                 0.1,
             );
+            if (id < 0) throw new Error(`supported catalog injection rejected: ${particle.id}`);
         }
         const startTick = Number(bridge.peGetTick());
         for (let tick = 0; tick < 2_000; ++tick) bridge.peTick();
@@ -199,7 +199,7 @@ test('worker checkpoint handoff preserves a live all-physics engine', async ({ p
             const x = (i % 4) * 1.4 - 2.1;
             const y = (Math.floor(i / 4) % 4) * 1.4 - 2.1;
             const z = Math.floor(i / 16) * 1.4 - 2.1;
-            bridge.peAddParticle('electron', i % 2 ? -1 : 1,
+            bridge.peAddParticle(i % 2 ? 'electron' : 'positron', i % 2 ? -1 : 1,
                 x, y, z, 0, 0, 0, 0.511, 0.08);
         }
         document.getElementById('btn-play')?.click();

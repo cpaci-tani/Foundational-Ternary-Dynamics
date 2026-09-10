@@ -1,0 +1,28 @@
+/* Passive field observations in the ordinary Scale-0 panel host. */
+.fluid-panel { width:100%; box-sizing:border-box; padding:14px; color:var(--text-primary,#e4edf8); font:13px/1.5 var(--font-sans,system-ui,sans-serif); }
+.fluid-header { display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:18px; }
+.fluid-badge { padding:2px 7px; border:1px solid var(--border-light,#3b4c62); border-radius:12px; color:var(--text-muted,#b0c0d0); font-size:11px; }
+.fluid-intro { margin:9px 0; }
+.fluid-status { margin:10px 0; padding:7px 9px; border-left:3px solid var(--accent-text,#66c6ed); background:rgba(80,170,220,.08); font-size:12px; overflow-wrap:anywhere; }
+.fluid-provenance { margin:0; padding:0 0 8px; border-bottom:1px solid var(--border-light,rgba(170,195,225,.17)); }
+.fluid-provenance > div, .fluid-card-details > div, .fluid-material dl > div { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:3px 0; }
+.fluid-provenance dt, .fluid-card-details dt, .fluid-material dt { color:var(--text-muted,#b0c0d0); }
+.fluid-provenance dd, .fluid-card-details dd, .fluid-material dd { margin:0; text-align:right; overflow-wrap:anywhere; font-family:var(--font-mono,monospace); font-variant-numeric:tabular-nums; }
+.fluid-provenance { font-size:11px; }
+.fluid-sampling-note { margin:7px 0 12px; font-size:11px; color:var(--text-muted,#b0c0d0); }
+.fluid-cards { display:grid; gap:11px; }
+.fluid-card { --fluid-card-accent:#86c8ef; min-width:0; border:1px solid var(--border-light,rgba(170,195,225,.17)); border-left:3px solid var(--fluid-card-accent); border-radius:7px; padding:10px; background:rgba(90,130,170,.04); }
+.fluid-card-energy { --fluid-card-accent:#e4b26d; }
+.fluid-card-flow { --fluid-card-accent:#73c9b2; }
+.fluid-card header { display:flex; flex-direction:column; gap:2px; }
+.fluid-card h3, .fluid-material h3 { padding:0; margin:0; font-size:13px; font-weight:650; }
+.fluid-formula { color:var(--text-muted,#b0c0d0); font-size:11px; }
+.fluid-mean { display:flex; align-items:baseline; gap:8px; margin:8px 0 0; }
+.fluid-mean strong { font:500 21px/1.3 var(--font-mono,monospace); color:var(--fluid-card-accent); font-variant-numeric:tabular-nums; }
+.fluid-mean span { color:var(--text-muted,#b0c0d0); font-size:10px; }
+.fluid-card[data-available="false"] .fluid-mean strong { font-size:14px; color:var(--text-muted,#b0c0d0); }
+.fluid-units { margin:2px 0 7px; font-size:10px; color:var(--text-muted,#b0c0d0); }
+.fluid-card-details { margin:0; font-size:11px; }
+.fluid-note { margin:7px 0 0; color:var(--text-muted,#b0c0d0); font-size:11px; line-height:1.55; }
+.fluid-material { margin-top:13px; padding-top:11px; border-top:1px solid var(--border-light,rgba(170,195,225,.17)); }
+.fluid-material dl { margin:7px 0 0; font-size:11px; }

@@ -1183,7 +1183,10 @@ export class ViewportParticleRenderer {
             colAttr.array[i * 3 + 1] = g;
             colAttr.array[i * 3 + 2] = b;
             // Scale size by log mass (relative to electron mass K_B)
-            const s = 3.0 + 2.0 * Math.log10(p.mass_mev / K_B + 1.0);
+            const mass = data.masses?.[i];
+            const s = Number.isFinite(mass) && mass >= 0
+                ? 3.0 + 2.0 * Math.log10(mass / K_B + 1.0)
+                : p.display_size;
             sizeAttr.array[i] = Math.min(s, 40);
         }
         colAttr.needsUpdate = true;

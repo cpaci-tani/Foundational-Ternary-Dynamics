@@ -379,6 +379,7 @@ export function formatPosition(x, y, z, scale = 0) {
  * Returns a string (not an object).
  */
 export function formatMassCompat(mass_mev) {
+    if (!Number.isFinite(mass_mev) || mass_mev < 0) return 'unavailable';
     if (mass_mev === 0) return 'massless';
     return formatEnergy(mass_mev, 1).text;
 }

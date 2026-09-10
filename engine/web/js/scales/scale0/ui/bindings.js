@@ -147,11 +147,13 @@ export function updateScenarioMetadata(
             '',
         );
     }
-    // Surface the original precise name for renamed scenarios — the dropdown
-    // now shows a plain-language title, so the technical name lives here.
-    if (scenario?.laymanTitle && scenario.sourceTitle
-        && scenario.sourceTitle !== scenario.laymanTitle) {
-        sections.push(`Technical name: ${scenario.sourceTitle}`, '');
+    if (scenario?.intent) {
+        sections.push(scenario.scientificTitle, scenario.intent, '');
+    }
+    // Keep the original title available for provenance and saved-run lookup.
+    if (scenario?.scientificTitle && scenario.sourceTitle
+        && scenario.sourceTitle !== scenario.scientificTitle) {
+        sections.push(`Original technical name: ${scenario.sourceTitle}`, '');
     }
     // The registry is the canonical user-facing epistemic source. Keep this
     // explicit even when validation or seed metadata follows: those sections
@@ -423,13 +425,19 @@ export function bindScale0UI(ctx, api) {
     });
     setForceStyleButtons(api.getForceStyle());
 
-    // Volumetric-scalar render-mode meta-toggle (Default / Heat Map). Flips every
-    // active scalar overlay between its native sheet/cloud and a thermal glow cloud.
+    // Display the same scalar observations as surfaces, point heatmaps or volumes.
     const scalarModeRow = getEl('scalar-render-row');
+    const volumeOpacity = getEl('scalar-volume-opacity');
+    volumeOpacity?.addEventListener('input', () => {
+        const value = Number(volumeOpacity.value);
+        ctx.viewport?.setScalarVolumeOpacity?.(value);
+        setDisplayText(getEl('scalar-volume-opacity-value'), `${Math.round(value * 100)}%`);
+    });
     if (scalarModeRow) {
         for (const btn of scalarModeRow.querySelectorAll('.style-btn')) {
             btn.addEventListener('click', () => {
-                const mode = btn.dataset.scalarMode === 'heatmap' ? 'heatmap' : 'default';
+                const mode = ['heatmap', 'volume'].includes(btn.dataset.scalarMode) ? btn.dataset.scalarMode : 'default';
+                if (ctx._scale0ForcedScalarModePreference) ctx._scale0ForcedScalarModePreference = mode;
                 if (mode === getScalarRenderMode()) return;
                 setScalarRenderMode(mode);
                 setScalarRenderButtons(mode);

@@ -116,6 +116,14 @@ const FIELD_BUTTON_IDS = FIELD_TOGGLE_BINDINGS.map(([id]) => id);
 const FIELD_BUTTON_TO_FLAG = Object.fromEntries(FIELD_TOGGLE_BINDINGS);
 const COMPACT_SEED_FOCUS = Object.freeze({ focusRadius: 5, focusMinL: 65 });
 export const SCALE0_SCENARIO_VISUAL_PROFILES = {
+    's0-field-shear-layer': {
+        fluxVolume: false, scalarRenderMode: 'volume',
+        fieldOverlays: ['toggle-em-energy'], focusRadiusFraction: 0.6,
+    },
+    'flux-thermalization': {
+        fluxVolume: false, scalarRenderMode: 'volume',
+        fieldOverlays: ['toggle-em-energy'], focusRadiusFraction: 0.6,
+    },
     's0-seed-dynamical-flux-dressing': {
         // Show the manifested source, generated divergence, and integral
         // curves together. The curves visualize J; they are not extra strings.
@@ -487,6 +495,12 @@ export function applyScenarioVisualProfile(ctx, state, viewportAdapter, scenario
         }
     }
 
+    if (profile.scalarRenderMode) {
+        ctx._scale0ForcedScalarModePreference ??= prefs?.scalarRenderMode || 'default';
+        setScalarRenderMode(profile.scalarRenderMode);
+        setScalarRenderButtons(profile.scalarRenderMode);
+        viewportAdapter.syncScalarRenderMode(profile.scalarRenderMode, { ...state.fieldFlags });
+    }
     state.latticeNeedsUpload = true;
     markFieldDirty();
 }
@@ -699,6 +713,8 @@ export function captureOverlayPreferences(state, ctx = null) {
         overlays[id] = readButtonActive(id);
     }
     const forcedFluxPreference = ctx?._scale0ForcedFluxVolumePreference;
+    const forcedScalarMode = ctx?._scale0ForcedScalarModePreference;
+    if (ctx) delete ctx._scale0ForcedScalarModePreference;
     const forcedParameters = ctx?._scale0ForcedVisualParameterPreferences || {};
     if (ctx && typeof forcedFluxPreference === 'boolean') {
         delete ctx._scale0ForcedFluxVolumePreference;
@@ -725,7 +741,7 @@ export function captureOverlayPreferences(state, ctx = null) {
             : Number(readInputValue('flux-opacity', 0.70)),
         overlays,
         forceStyle: state?.forceStyle || 'arrows',
-        scalarRenderMode: state?.scalarRenderMode || 'default',
+        scalarRenderMode: forcedScalarMode || state?.scalarRenderMode || 'default',
     };
 }
 
@@ -813,6 +829,7 @@ export function restoreOverlayPreferences(prefs, state, viewportAdapter, getForc
 }
 
 export function resetScale0VisualState(ctx, state, viewportAdapter) {
+    if (typeof window !== 'undefined') window.__ftdFluidPanel?.clear('Waiting for the current scenario state.');
     resetFieldFlags();
     state.forceStyle = 'arrows';
     state.scalarRenderMode = 'default';

@@ -564,7 +564,11 @@ export class WasmBridgeProxy {
         if (hadSamplers) {
             const sampleTick = Number.isSafeInteger(m.diag?.tick) && m.diag.tick >= 0 ? m.diag.tick : null;
             for (const [key, sample] of Object.entries(m.samplers)) {
-                this._samplerCache[key] = { ...sample, sampleTick };
+                this._samplerCache[key] = { ...sample, sampleTick,
+                    source: 'wasm-worker',
+                    sourceEpoch: Number.isSafeInteger(m.configurationToken) ? m.configurationToken : null,
+                    epoch: Number.isSafeInteger(m.dataVersion) ? m.dataVersion : null,
+                };
             }
             const version = Number(m.dataVersion);
             for (const key of Object.keys(m.samplers)) this._samplerCacheVersion[key] = version;

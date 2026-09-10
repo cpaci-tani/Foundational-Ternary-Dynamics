@@ -287,8 +287,9 @@ function applyFilter(body, query) {
             const btns = isGroup ? unit.querySelectorAll('.view-toggle') : [unit];
             let unitMatch = false;
             for (const btn of btns) {
+                const searchable = `${btn.textContent} ${btn.dataset.search || ''}`.toLowerCase();
                 if (!btn.classList.contains('is-inapplicable')
-                    && btn.textContent.trim().toLowerCase().includes(q)) { unitMatch = true; break; }
+                    && searchable.includes(q)) { unitMatch = true; break; }
             }
             for (const btn of btns) btn.classList.toggle('is-filtered-out', !unitMatch);
             if (isGroup) unit.classList.toggle('is-filtered-out', !unitMatch);

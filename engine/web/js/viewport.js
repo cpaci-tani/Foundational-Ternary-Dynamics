@@ -48,6 +48,8 @@
  */
 
 import * as THREE from 'three';
+import { createScalarVolumeRenderer } from './viewport/scalar-volume-renderer.js';
+import { visualSampleGrid } from './lib/visual-sample-grid.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 // EffectComposer / RenderPass / UnrealBloomPass moved to viewport/scene-core.js (Phase 3a).
 // getById moved with applyParticleColors / updateTrails to viewport/particle-renderer.js (Phase 3d).
@@ -350,6 +352,7 @@ export class Viewport {
     _buildAxes() { this._sceneCore?._buildAxes(); }
 
     setLatticeSize(size) {
+        this.clearScalarVolumes();
         this.latticeSize = size;
         this._latticeSize = size;  // mirrored so quantum overlays can read it too
         this._halfN = size / 2;
@@ -865,6 +868,32 @@ export class Viewport {
     // Volumetric scalar heat-map (overlays "Heat Map" meta-toggle) — the glow
     // clouds live on the field renderer's scalar-cloud pool (field-quantum-renderer).
     updateScalarHeatmap(key, data, ramp, signed) { this._fieldRenderer.updateScalarHeatmap(key, data, ramp, signed); }
+    _scalarVolume(key) {
+        this._scalarVolumes ??= new Map();
+        if (!this._scalarVolumes.has(key)) this._scalarVolumes.set(key,
+            createScalarVolumeRenderer(this.scene, () => this.latticeSize));
+        return this._scalarVolumes.get(key);
+    }
+    updateScalarVolume(key, data, ramp, signed) {
+        const volume = this._scalarVolume(key);
+        if (!data) { volume.clear(); return; }
+        // Vorticity is sampled only on interior voxel centres by the native
+        // sampler. Do not invent an extra outer row of zero measurements.
+        const frame = key === 'vorticity' ? { ...data,
+            sampleGrid: visualSampleGrid(this.latticeSize, data.effectiveStride, true) } : data;
+        volume.update(key, frame, { ramp, signed, normalizer: data.normalizer,
+            opacity: this._scalarVolumeOpacity ?? 0.75 });
+    }
+    setScalarVolumeOpacity(value) {
+        if (!Number.isFinite(value) || value < 0 || value > 1) return;
+        this._scalarVolumeOpacity = value;
+        for (const volume of this._scalarVolumes?.values() || []) volume.setOpacity(value);
+    }
+    showScalarVolume(key, on) {
+        if (on) this._scalarVolume(key).show(key, true);
+        else { this._scalarVolumes?.get(key)?.show(key, false); this._scalarVolumes?.get(key)?.clear(); }
+    }
+    clearScalarVolumes() { for (const volume of this._scalarVolumes?.values() || []) volume.clear(); }
     showScalarHeatmap(key, on) { this._fieldRenderer.showScalarHeatmap(key, on); }
     hideAllScalarHeatmaps() { this._fieldRenderer.hideAllScalarHeatmaps(); }
     // Slide a rubber-sheet overlay's slice plane up/down (frac 0..0.999 of the
@@ -946,6 +975,7 @@ export class Viewport {
 
     // Switch between lattice wireframe (Scale 0), coordinate axes (Scale 1), atom view (Scale 2), molecule view (Scale 3)
     setEngineMode(mode) {
+        this.clearScalarVolumes();
         this._engineMode = mode;
 
         // Helper to hide all overlays from ALL scales unconditionally
@@ -1146,6 +1176,8 @@ export class Viewport {
     }
 
     dispose() {
+        for (const volume of this._scalarVolumes?.values() || []) volume.dispose();
+        this._scalarVolumes?.clear();
         if (this._disposed) return;
         this._disposed = true;
         this._resizeObserver.disconnect();

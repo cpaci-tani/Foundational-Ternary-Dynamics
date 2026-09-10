@@ -1072,7 +1072,7 @@ export class WasmBridge {
     // ./native-particle-engine.js for the adapter contract.
     initPE()                                                         { return this._peEngine.initPE(); }
     resetPE()                                                        { return this._peEngine.resetPE(); }
-    peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff) { return this._peEngine.peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff); }
+    peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff, recordFields) { return this._peEngine.peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff, recordFields); }
     peAddLockedParticle(catalogId, charge, x, y, z, mass, r_eff = 0.1) { return this._peEngine.peAddLockedParticle(catalogId, charge, x, y, z, mass, r_eff); }
     peApplyEquilibriumOrbit(particleId, options = {}) { return this._peEngine.peApplyEquilibriumOrbit(particleId, options); }
     peApplyEquilibriumOrbitBatch(entries) { return this._peEngine.peApplyEquilibriumOrbitBatch?.(entries); }

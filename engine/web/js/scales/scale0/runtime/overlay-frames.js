@@ -294,7 +294,7 @@ function buildPositionLookup(field) {
  * When only one of E/B has samples we render that one alone; both absent
  * means there is no field to render and we return null.
  */
-export function computeEmEnergyFrame(sampled, state) {
+export function computeEmEnergyFrame(sampled, state, { trackNormalization = true } = {}) {
     const eF = sampled.eField;
     const bF = sampled.bField;
     const eCount = eF?.count || 0;
@@ -343,7 +343,7 @@ export function computeEmEnergyFrame(sampled, state) {
     emit(bF);
     const positions = outPositions;
     buf.normalizer.emMax = max;
-    const heldMax = updateDecayingMax(state, 'emEnergy', max);
+    const heldMax = trackNormalization ? updateDecayingMax(state, 'emEnergy', max) : max;
     return {
         positions, values: buf.emEnergy, count, normalizer: heldMax, signed: false,
         ...sampleGridMetadata(eF || bF),

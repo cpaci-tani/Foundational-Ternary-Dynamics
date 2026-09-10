@@ -10,13 +10,14 @@
  *
  *   STANDARD MODEL — contextual catalog reference, only on elementary-particle scenarios
  *   VOLUME    — how the raw flux field is rendered (volume, slice, lines, ∇·J)
- *   FIELDS    — EM-derived vector fields (E, B, Poynting arrows, Poynting glow)
+ *   FIELDS    — EM-derived vector fields (E, B)
+ *   FIELD ENERGY & FLOW — field energy channels, Poynting flow, and flux curl
  *   FORCES    — per-particle force vectors; its presentation selector is shared
  *               with the scalar selector in the panel-level Render card
  *   PHENOMENA — emergent / composite overlays (chirality, DM halo, confinement, …)
  *
- * The same physical quantity may appear twice if the styles are distinct
- * (e.g. Poynting S arrows vs. Light = |S| bloom). Labels come with tooltips.
+ * Rendering choices share each layer's existing control. Labels and tooltips
+ * identify the sampled field quantity and its interpretation limits.
  */
 
 export function getScale0OverlayTemplate() {
@@ -64,13 +65,19 @@ export function getScale0OverlayTemplate() {
         <span class="s0-overlay-render-label">Scalar</span>
         <div class="force-style-row" id="scalar-render-row" role="group"
             aria-label="Scalar layer rendering"
-            title="Render volumetric scalar overlays as their native surface/cloud or a thermal heat map.">
+            title="Render scalar overlays as their native surface/cloud, a glow heat map, or a smooth volume. Volume interpolation and opacity affect presentation only.">
           <button class="style-btn active" type="button" data-scalar-mode="default"
               aria-pressed="true" title="Native rubber-sheet or scalar-cloud rendering">Surface</button>
           <button class="style-btn" type="button" data-scalar-mode="heatmap"
               aria-pressed="false" title="Volumetric thermal glow heat map">Heat map</button>
+          <button class="style-btn" type="button" data-scalar-mode="volume"
+              aria-pressed="false" title="Smooth volume heatmap of the selected lattice quantity; interpolation is visual only">Volume</button>
         </div>
       </div>
+      <label id="scalar-volume-controls" for="scalar-volume-opacity" style="display:none; align-items:center; gap:8px; margin:6px 0">
+        Opacity <input id="scalar-volume-opacity" type="range" min="0" max="1" step="0.05" value="0.75" style="min-width:0; flex:1">
+        <output id="scalar-volume-opacity-value" for="scalar-volume-opacity">75%</output>
+      </label>
       <div class="s0-overlay-render-row">
         <span class="s0-overlay-render-label">Vector</span>
         <div class="force-style-row" id="force-style-row" role="group"
@@ -167,10 +174,6 @@ export function getScale0OverlayTemplate() {
           title="[SELECTION] Magnetic field streamlines (B = ∇×J). Same curl operator as the &nabla;&times;J pseudovector in the Forces column, which is explicitly disclaimed there as a [PROXY] parity-even (axial) pseudovector, not the SM weak force — this overlay's Maxwell identification carries the same honesty.">
         <span class="field-swatch field-swatch-b-field"></span>B Field
       </button>
-      <button class="view-toggle field-toggle" id="toggle-poynting"
-          title="[DERIVED from E and B; electromagnetic reading SELECTION] Poynting vector S = C_SPEED²(E × B), using the reference wave-energy convention. Inherits E's limitation above — the electrostatic near-field contribution is absent; its omitted cross term can add or cancel.">
-        <span class="field-swatch field-swatch-energy"></span>Poynting S
-      </button>
     </div>
 
     <div class="s0-overlay-col" data-col="forces">
@@ -193,7 +196,7 @@ export function getScale0OverlayTemplate() {
         <span class="field-swatch field-swatch-strong"></span>Strong
       </button>
       <button class="view-toggle field-toggle" id="toggle-force-weak"
-          title="[PROXY — VISUALIZATION ONLY] The curl ∇×J (a parity-even (axial) pseudovector) rendered as arrows, scaled by DUAL_DELTA ≈ 0.957. This is a vector-calculus view of J, NOT the SM weak force — FTD's weak interaction is state transmutation (weak_transmutation toggle). Companion to Vorticity |∇×J| (Topology). Lives in this column only to share the force-style selector. (audit P1-17, 2026-05-27)">
+          title="[PROXY — VISUALIZATION ONLY] The curl ∇×J (a parity-even (axial) pseudovector) rendered as arrows, scaled by DUAL_DELTA ≈ 0.957. This is a vector-calculus view of J, NOT the SM weak force — FTD's weak interaction is state transmutation (weak_transmutation toggle). Companion to Flux curl |∇×J| (Field energy &amp; flow). Lives in this column only to share the force-style selector. (audit P1-17, 2026-05-27)">
         <span class="field-swatch field-swatch-weak"></span>&nabla;&times;J pseudovector
       </button>
     </div>
@@ -243,18 +246,6 @@ export function getScale0OverlayTemplate() {
       </div>
       </div>
       <div class="s0-overlay-group">
-      <button class="view-toggle field-toggle" id="toggle-em-energy"
-          title="EM energy density u(x) = ½|E|² + (c²/2)|B|² (C_SPEED weights the magnetic channel — see diagnostics_compute.cpp). E and B are read at their true shared positions (the engine compacts each field's sparse samples independently, so raw loop index does not pair them); peaks where EM fields concentrate, flat in vacuum. The y slider slides the sheet up/down and samples u in a thin slab at that height. Deform height is peak-hold normalized (see decaying-max).">
-        <span class="field-swatch field-swatch-em-energy"></span>EM energy u
-      </button>
-      <div class="s0-sheet-height-row" data-sheet-height="emEnergy">
-        <span class="s0-sheet-height-cap" title="Slice height — slide to read the field at different levels (y)">y</span>
-        <input type="range" class="pe-slider s0-sheet-height-slider" id="sheet-height-em-energy"
-            min="0" max="0.999" step="0.01" value="0.56" aria-label="EM energy slice height" />
-        <span class="pe-ctrl-value s0-sheet-height-val" id="sheet-height-em-energy-val">0.56</span>
-      </div>
-      </div>
-      <div class="s0-overlay-group">
       <button class="view-toggle field-toggle" id="toggle-charge-density"
           title="[SELECTION] Charge density ρ(x) = ∇·J. The correction targets a coupled, mean-neutralized source and normally acts only on vacuum sites. This raw divergence is not that solver residual or a derivation of charge conservation. Same ∇·J buffer as the Volume column's ∇·J overlay, rendered here as a signed rubber sheet. The y slider slides the sheet up/down and samples ρ in a thin slab at that height.">
         <span class="field-swatch field-swatch-charge"></span>Charge &rho;
@@ -264,18 +255,6 @@ export function getScale0OverlayTemplate() {
         <input type="range" class="pe-slider s0-sheet-height-slider" id="sheet-height-charge-density"
             min="0" max="0.999" step="0.01" value="0.62" aria-label="Charge density slice height" />
         <span class="pe-ctrl-value s0-sheet-height-val" id="sheet-height-charge-density-val">0.62</span>
-      </div>
-      </div>
-      <div class="s0-overlay-group">
-      <button class="view-toggle field-toggle" id="toggle-vorticity"
-          title="Vorticity |ω|(x)=|∇×J| — the swirl magnitude of the flux field. Rises on vortex rings and any circulating flux structure; a purely radial or uniform flow has zero curl and produces no sheet at all. The y slider slides the sheet up/down and samples |ω| in a thin slab at that height. Deform height is peak-hold normalized (see decaying-max), so read relative structure, not an absolute scale.">
-        <span class="field-swatch field-swatch-vorticity"></span>Vorticity &omega;
-      </button>
-      <div class="s0-sheet-height-row" data-sheet-height="vorticity">
-        <span class="s0-sheet-height-cap" title="Slice height — slide to read the field at different levels (y)">y</span>
-        <input type="range" class="pe-slider s0-sheet-height-slider" id="sheet-height-vorticity"
-            min="0" max="0.999" step="0.01" value="0.68" aria-label="Vorticity slice height" />
-        <span class="pe-ctrl-value s0-sheet-height-val" id="sheet-height-vorticity-val">0.68</span>
       </div>
       </div>
       <button class="view-toggle field-toggle" id="toggle-latency"
@@ -301,33 +280,61 @@ export function getScale0OverlayTemplate() {
     </div>
 
     <div class="s0-overlay-col" data-col="stress-energy">
-      <div class="s0-overlay-col-head" title="Stress-energy components and information-theoretic fields derived from J.">
-        <span class="s0-overlay-col-label">Stress-Energy</span>
+      <div class="s0-overlay-col-head" title="Energy channels and flow derived from the active lattice fields. These views do not establish a fluid velocity, gas pressure, or the full lattice Hamiltonian.">
+        <span class="s0-overlay-col-label">Field energy &amp; flow</span>
         <span class="s0-overlay-col-count" data-count-for="stress-energy" aria-hidden="true">0</span>
         <button class="s0-overlay-col-clear u-no-baseline" data-clear-col="stress-energy" type="button"
-            title="Turn off every stress-energy overlay">&#10005;</button>
+            title="Turn off every field energy and flow overlay">&#10005;</button>
       </div>
       <div class="s0-overlay-group">
-      <button class="view-toggle field-toggle" id="toggle-e-pressure"
-          title="Electric-channel energy density P_E(x) = ½|E|², E=−∂J/∂t. This is the substrate's wave-KINETIC channel — it peaks on fast-changing flux and falls to ~0 in a settled configuration, even where charge sits. The Poisson-solved electrostatic potential φ_C is a separate field this overlay does not read. The y slider slides the sheet up/down and samples P_E in a thin slab at that height.">
-        <span class="field-swatch field-swatch-e-pressure"></span>P<sub>E</sub> (electric)
+      <button class="view-toggle field-toggle" id="toggle-em-energy" data-search="fluid heatmap gas"
+          title="Field energy density = ½|E|² + (c²/2)|B|², with E=−∂J/∂t, B=∇×J and c=C_SPEED. This combines the sampled electric and magnetic channels; it is not gas pressure or the full lattice Hamiltonian. The y slider selects a thin slab in Surface mode; heat map and volume interpolation are presentation only.">
+        <span class="field-swatch field-swatch-em-energy"></span>Field energy
+      </button>
+      <div class="s0-sheet-height-row" data-sheet-height="emEnergy">
+        <span class="s0-sheet-height-cap" title="Slice height — slide to read the field at different levels (y)">y</span>
+        <input type="range" class="pe-slider s0-sheet-height-slider" id="sheet-height-em-energy"
+            min="0" max="0.999" step="0.01" value="0.56" aria-label="Field energy slice height" />
+        <span class="pe-ctrl-value s0-sheet-height-val" id="sheet-height-em-energy-val">0.56</span>
+      </div>
+      </div>
+      <button class="view-toggle field-toggle" id="toggle-poynting" data-search="fluid poynting"
+          title="[DERIVED from E and B; electromagnetic reading SELECTION] Poynting vector S = C_SPEED²(E × B), using the reference field-energy convention. E=−∂J/∂t omits the electrostatic near-field contribution. This is field energy flow, not a fluid velocity or the full lattice Hamiltonian current.">
+        <span class="field-swatch field-swatch-energy"></span>Energy flow S
+      </button>
+      <div class="s0-overlay-group">
+      <button class="view-toggle field-toggle" id="toggle-vorticity" data-search="fluid vorticity curl"
+          title="Flux curl magnitude |∇×J| measures spatial curl of the active flux field J. It is not curl of a fluid velocity and does not establish gas vorticity or viscosity. The y slider selects a thin slab in Surface mode; the display uses relative normalization.">
+        <span class="field-swatch field-swatch-vorticity"></span>Flux curl |&nabla;&times;J|
+      </button>
+      <div class="s0-sheet-height-row" data-sheet-height="vorticity">
+        <span class="s0-sheet-height-cap" title="Slice height — slide to read the field at different levels (y)">y</span>
+        <input type="range" class="pe-slider s0-sheet-height-slider" id="sheet-height-vorticity"
+            min="0" max="0.999" step="0.01" value="0.68" aria-label="Flux curl slice height" />
+        <span class="pe-ctrl-value s0-sheet-height-val" id="sheet-height-vorticity-val">0.68</span>
+      </div>
+      </div>
+      <div class="s0-overlay-group">
+      <button class="view-toggle field-toggle" id="toggle-e-pressure" data-search="fluid pressure energy"
+          title="Electric-channel energy density = ½|E|², E=−∂J/∂t. This is the wave-kinetic channel; the electrostatic near-field is not included. It measures field energy, not gas pressure or the full lattice Hamiltonian. The y slider selects a thin slab in Surface mode.">
+        <span class="field-swatch field-swatch-e-pressure"></span>Electric energy
       </button>
       <div class="s0-sheet-height-row" data-sheet-height="ePressure">
         <span class="s0-sheet-height-cap" title="Slice height — slide to read the field at different levels (y)">y</span>
         <input type="range" class="pe-slider s0-sheet-height-slider" id="sheet-height-e-pressure"
-            min="0" max="0.999" step="0.01" value="0.44" aria-label="Electric pressure slice height" />
+            min="0" max="0.999" step="0.01" value="0.44" aria-label="Electric energy slice height" />
         <span class="pe-ctrl-value s0-sheet-height-val" id="sheet-height-e-pressure-val">0.44</span>
       </div>
       </div>
       <div class="s0-overlay-group">
-      <button class="view-toggle field-toggle" id="toggle-b-pressure"
-          title="Magnetic-channel energy density P_B(x) = (c²/2)|B|², c=C_SPEED, B=∇×J — this c² factor matches the engine's own Hamiltonian convention (without it P_B was 3x too large and not magnitude-comparable with P_E). Rises where the flux field has spatial curl (shear or twist). The y slider slides the sheet up/down and samples P_B in a thin slab at that height.">
-        <span class="field-swatch field-swatch-b-pressure"></span>P<sub>B</sub> (magnetic)
+      <button class="view-toggle field-toggle" id="toggle-b-pressure" data-search="fluid pressure energy"
+          title="Magnetic-channel energy density = (c²/2)|B|², c=C_SPEED and B=∇×J. The c² factor follows the reference field-energy convention. This is energy in field curl, not gas pressure or the full lattice Hamiltonian. The y slider selects a thin slab in Surface mode.">
+        <span class="field-swatch field-swatch-b-pressure"></span>Magnetic energy
       </button>
       <div class="s0-sheet-height-row" data-sheet-height="bPressure">
         <span class="s0-sheet-height-cap" title="Slice height — slide to read the field at different levels (y)">y</span>
         <input type="range" class="pe-slider s0-sheet-height-slider" id="sheet-height-b-pressure"
-            min="0" max="0.999" step="0.01" value="0.38" aria-label="Magnetic pressure slice height" />
+            min="0" max="0.999" step="0.01" value="0.38" aria-label="Magnetic energy slice height" />
         <span class="pe-ctrl-value s0-sheet-height-val" id="sheet-height-b-pressure-val">0.38</span>
       </div>
       </div>

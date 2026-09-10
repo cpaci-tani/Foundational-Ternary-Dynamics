@@ -56,6 +56,7 @@ import { initP1ObservablesPanel } from './scales/scale0/ui/overlays/p1-observabl
 import { initConservationMicropanel } from './scales/scale0/ui/overlays/conservation-micropanel.js';
 import { initSpectrumPanel } from './scales/scale0/ui/overlays/spectrum-panel.js';
 import { initGravityPanel } from './scales/scale0/ui/overlays/gravity-panel.js?v=6';
+import { initFluidPanel } from './scales/scale0/ui/overlays/fluid-panel.js';
 import { initTimePanel } from './scales/scale0/ui/overlays/time-panel.js';
 import { initThermoPanel } from './scales/scale0/ui/overlays/thermo-panel.js?v=3';
 import { initDispersionPanel } from './scales/scale0/ui/overlays/dispersion-panel.js';
@@ -562,6 +563,7 @@ async function init() {
     initConservationMicropanel();
     initSpectrumPanel();
     initGravityPanel();
+    initFluidPanel();
     initTimePanel();
     initThermoPanel();
     initDispersionPanel();

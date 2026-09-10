@@ -7,6 +7,8 @@ if(NOT EMSCRIPTEN)
 # remain classified when CUDA modules are disabled (for
 # example the Pages merge gate), but they are not frontier research sources.
 set_property(GLOBAL APPEND PROPERTY FTD_CONDITIONAL_TEST_SOURCES
+    tests/test_native_wave_observer_scope.cpp
+    tests/test_native_carrier_current.cpp
     tests/benchmark_alpha_scaling.cpp
     tests/benchmark_langevin_gpu.cpp
     tests/benchmark_nucleon_mass_gpu.cpp
@@ -1456,6 +1458,18 @@ ftd_add_test(campaign_production_hop_kinematics_correction tests/campaign_produc
 ftd_add_test(campaign_half_tick_link_exchange tests/campaign_half_tick_link_exchange.cpp
              CTEST_NAME campaign_half_tick_link_exchange TIMEOUT 1800
              LABELS native eft movement momentum energy history geometry symmetry campaign observable ledger)
+ftd_add_test(test_native_wave_observer_scope tests/test_native_wave_observer_scope.cpp
+             CTEST_NAME native_wave_observer_scope TIMEOUT 60
+             LABELS native eft energy observable)
+ftd_add_test(test_native_carrier_current tests/test_native_carrier_current.cpp
+             NO_CORE CTEST_NAME native_carrier_current TIMEOUT 60
+             LABELS native strict carrier continuity observable)
+target_sources(test_native_carrier_current PRIVATE
+    strict/carrier_observer.cpp
+    ${CMAKE_SOURCE_DIR}/../scripts/phi_v2_lattice/native/sparse_q4_kernel_v1.cpp)
+target_include_directories(test_native_carrier_current PRIVATE
+    ${CMAKE_SOURCE_DIR}/strict
+    ${CMAKE_SOURCE_DIR}/../scripts/phi_v2_lattice/native)
 ftd_add_test(campaign_native_energy_contract_reconciliation tests/campaign_native_energy_contract_reconciliation.cpp
              CTEST_NAME campaign_native_energy_contract_reconciliation TIMEOUT 1800
              LABELS native eft movement momentum energy action campaign observable ledger)

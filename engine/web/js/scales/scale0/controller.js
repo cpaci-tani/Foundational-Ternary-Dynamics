@@ -55,6 +55,7 @@ import {
 // when present, so the boot-time calls and the mount() calls do not
 // double-mount.
 import { initFluxSlicePanel } from './ui/overlays/flux-slice-panel.js';
+import { initFluidPanel } from './ui/overlays/fluid-panel.js';
 import { initWaveLabPanel } from './ui/overlays/wave-lab-panel.js?v=2';
 import { initP1ObservablesPanel } from './ui/overlays/p1-observables-panel.js?v=3';
 import { initConservationMicropanel } from './ui/overlays/conservation-micropanel.js';
@@ -421,6 +422,7 @@ class Scale0LifecycleController extends BaseLifecycleController {
         // is idempotent and guards its own DOM host, so a missing host
         // (early boot ordering) is a safe no-op.
         try { initFluxSlicePanel(); } catch (e) { /* ignore */ }
+        initFluidPanel();
         try { initWaveLabPanel(); } catch (e) { /* ignore */ }
         try { initP1ObservablesPanel(); } catch (e) { /* ignore */ }
         try {
@@ -480,6 +482,7 @@ class Scale0LifecycleController extends BaseLifecycleController {
             try { window.__ftdKnotsPanel?.dispose?.(); } catch (e) { /* ignore */ }
             try { window.__ftdScaleContextPanel?.dispose?.(); } catch (e) { /* ignore */ }
             try { window.__ftdFluxSlicePanel?.dispose?.(); } catch (e) { /* ignore */ }
+            window.__ftdFluidPanel?.dispose?.();
             try { window.__ftdGenesisBurstPanel?.dispose?.(); } catch (e) { /* ignore */ }
         }
     }

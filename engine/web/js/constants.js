@@ -276,7 +276,8 @@ export const M_Z_PHYS      = 91187.6;                  // Z boson (MeV, PDG 2022
 export const M_HIGGS_PHYS  = 125200.0;                 // Higgs boson (MeV, PDG 2024) [PARAMETRIC PDG]
 
 // ── Quark Masses (MeV) [PARAMETRIC PDG 2022] ────────────────────────
-// Constituent quark masses from PDG 2022. Used by particle-catalog.js.
+// Running quark mass references from PDG 2022; the top entry is a legacy
+// approximate reference without a specified scheme. See catalog mass_note.
 // Not derived from FTD chain — the framework currently only predicts
 // the master quadratic root structure (X_PLUS, X_MINUS); quark masses
 // remain empirical inputs pending a full Yukawa derivation.
@@ -287,14 +288,15 @@ export const M_C_PHYS = 1270.0;     // charm quark
 export const M_B_PHYS = 4180.0;     // bottom quark
 export const M_T_PHYS = 172760.0;   // top quark
 
-// ── Neutrino Mass Upper Bounds (MeV) [PARAMETRIC PDG] ───────────────
-// [PARAMETRIC] adopted seesaw mass references, not derivable from the current
-// FTD chain. Catalog masses are stored in MeV. The lightest value is 4.1 neV
+// ── Legacy Illustrative Neutrino Mass Values (MeV) [IMPOSED] ────────
+// Selected mass-eigenstate-like values, not measured flavor masses or PDG
+// upper bounds. Flavor catalog entries therefore have no assigned mass.
+// Retained for reference-model compatibility. The lightest value is 4.1 neV
 // = 4.1e-9 eV = 4.1e-15 MeV; the previous 4.1e-9 MeV literal silently changed
 // the C++ value by 10^6.
 export const M_NU_E_PHYS   = 4.1e-15;    // m(ν_1) = 4.1 neV (in MeV)
-export const M_NU_MU_PHYS  = 8.58e-9;    // m(ν_mu)  bound = 8.58 meV (in MeV)
-export const M_NU_TAU_PHYS = 4.955e-8;   // m(ν_tau) bound = 49.55 meV (in MeV)
+export const M_NU_MU_PHYS  = 8.58e-9;    // illustrative second value = 8.58 meV
+export const M_NU_TAU_PHYS = 4.955e-8;   // illustrative third value = 49.55 meV
 
 // ── Additional Hadron Masses (MeV) [PARAMETRIC PDG] ─────────────────
 // Reference values for particle-catalog.js entries that previously

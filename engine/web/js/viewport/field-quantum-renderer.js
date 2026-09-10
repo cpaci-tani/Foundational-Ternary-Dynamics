@@ -136,10 +136,25 @@ export const fieldQuantumMethods = {
         const posAttr = this._chiralityField.geometry.getAttribute('position');
         const colAttr = this._chiralityField.geometry.getAttribute('particleColor');
         const sizeAttr = this._chiralityField.geometry.getAttribute('size');
-        const { positions, values, count } = fieldData;
+        const { positions, values, count } = fieldData || {};
         const maxPts = posAttr.array.length / 3;
+        if (!Number.isInteger(count) || count < 0 || !positions || !values
+            || positions.length < count * 3 || values.length < count) {
+            this._chiralityField.geometry.setDrawRange(0, 0);
+            return;
+        }
         let maxVal = 0;
         for (let i = 0; i < count; i++) {
+            // Validate the complete publication before uploading any prefix.
+            // A NaN beside a finite maximum otherwise passes the threshold
+            // comparison and reaches the GPU as a color/size or position.
+            if (!Number.isFinite(Math.fround(values[i]))
+                || !Number.isFinite(Math.fround(positions[i * 3] + VOXEL_CENTER_OFFSET))
+                || !Number.isFinite(Math.fround(positions[i * 3 + 1] + VOXEL_CENTER_OFFSET))
+                || !Number.isFinite(Math.fround(positions[i * 3 + 2] + VOXEL_CENTER_OFFSET))) {
+                this._chiralityField.geometry.setDrawRange(0, 0);
+                return;
+            }
             const a = Math.abs(values[i]);
             if (a > maxVal) maxVal = a;
         }
