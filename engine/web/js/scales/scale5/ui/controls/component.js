@@ -5,9 +5,20 @@
  *
  * Pass 0b (UI foundations, 2026-09-09): a single placeholder "Dynamics"
  * card — correct mounting, targeting, idempotence and teardown are what
- * this pass verifies. Pass A grows this into the full gravity/dynamics
- * card (sliders for gravitational coupling, softening, timestep, and the
- * speed limit) per the plan.
+ * this pass verifies.
+ *
+ * Pass A (2026-09-10) grows the placeholder into the real gravity/dynamics
+ * card: a `speed_limit` toggle (this pass's one toggle-registry key to
+ * wire — see SCALE5_TOGGLES; it had no UI surface before this pass) plus
+ * four sliders (gravitational-coupling multiplier, softening multiplier,
+ * integrator timestep, and the speed-limit multiplier). The speed_limit
+ * checkbox carries a `data-scale5-toggle` attribute and is bound through
+ * the SAME shared toggle-sync module Pass B used for the Gas card's
+ * checkboxes; the four sliders are bridge fields/live setters with no
+ * second UI surface, so — mirroring the Gas card's alpha/beta/adaptive-h
+ * precedent exactly — scale5/controller.js binds them directly rather than
+ * through the toggle registry. The "Scenario defaults" button and its
+ * explanatory copy are unchanged from Pass 0b.
  *
  * Pass B (2026-09-10) adds the "Gas" card beside it: the existing SPH
  * toggle, viscosity alpha/beta, an adaptive-smoothing toggle, and a legacy
@@ -40,6 +51,30 @@ function createDynamicsCard() {
     card.dataset.scale5ControlCard = DYNAMICS_CARD_KEY;
     card.innerHTML = `
         <div class="card-title">Dynamics</div>
+        <div class="toggle-row">
+            <input type="checkbox" id="cosmic-dynamics-speed-limit" data-scale5-toggle="speed_limit">
+            <label for="cosmic-dynamics-speed-limit" title="[SELECTION] The lattice speed limit c = 1/sqrt(3) caps signal speed on the substrate. When on, any body whose speed this tick exceeds it (scaled by the multiplier below) is rescaled back under it; when off, bodies may exceed the lattice light speed uncorrected.">Speed limit</label>
+        </div>
+        <label class="pe-ctrl-row" title="[IMPOSED] Live multiplier on G_N [IMPOSED] in the gravity kernel; 1 is the scenario default.">
+            <span class="pe-ctrl-label">Gravity G_N &times;</span>
+            <input type="range" class="pe-slider" id="cosmic-dynamics-gravity" min="0" max="3" step="0.05" value="1.0">
+            <span class="pe-ctrl-value" id="cosmic-dynamics-gravity-value">1.00</span>
+        </label>
+        <label class="pe-ctrl-row" title="[IMPOSED] Live multiplier on the per-type gravitational softening length, the regularization that keeps the 1/r^2 force finite at short range; 1 is the scenario default.">
+            <span class="pe-ctrl-label">Softening &times;</span>
+            <input type="range" class="pe-slider" id="cosmic-dynamics-softening" min="0.1" max="3" step="0.05" value="1.0">
+            <span class="pe-ctrl-value" id="cosmic-dynamics-softening-value">1.00</span>
+        </label>
+        <label class="pe-ctrl-row" title="[IMPOSED] Fixed Velocity-Verlet integrator substep, in the lattice-internal time unit (not a physical second).">
+            <span class="pe-ctrl-label">Timestep dt</span>
+            <input type="range" class="pe-slider" id="cosmic-dynamics-dt" min="0.001" max="0.05" step="0.001" value="0.01">
+            <span class="pe-ctrl-value" id="cosmic-dynamics-dt-value">0.010</span>
+        </label>
+        <label class="pe-ctrl-row" title="[SELECTION] Live multiplier on the lattice speed limit c = 1/sqrt(3) used by the speed-limit clamp above; 1 is the scenario default.">
+            <span class="pe-ctrl-label">Speed limit &times;</span>
+            <input type="range" class="pe-slider" id="cosmic-dynamics-speed-limit-factor" min="0.1" max="3" step="0.05" value="1.0">
+            <span class="pe-ctrl-value" id="cosmic-dynamics-speed-limit-factor-value">1.00</span>
+        </label>
         <div class="scale-info-copy">
             <div title="Every phenomenological rule toggle (gas cooling, star formation, Bondi accretion, radiation pressure, tidal stretch and disruption, Hawking evaporation, stellar evolution, mergers, emergent black-hole formation) is initialized from THIS scenario's own setting on load, per the plan's owner decision. This button re-runs that seeding without a scene reload.">
                 Rule toggles are seeded from the loaded scenario on load. Reset them to that baseline at any time.
@@ -99,9 +134,14 @@ export class Scale5ControlsComponent {
         // Reconcile by the stable data-scale5-control-card key so re-entry
         // (mount() on every scale switch, plus loadCosmicScenario() on every
         // scenario change) never duplicates the card.
-        if (!gridContainer.querySelector(`[data-scale5-control-card="${DYNAMICS_CARD_KEY}"]`)) {
-            gridContainer.appendChild(createDynamicsCard());
+        let dynamicsCard = gridContainer.querySelector(`[data-scale5-control-card="${DYNAMICS_CARD_KEY}"]`);
+        if (!dynamicsCard) {
+            dynamicsCard = createDynamicsCard();
+            gridContainer.appendChild(dynamicsCard);
         }
+        // Idempotent per root (ui/toggle-sync.js tracks registered roots in
+        // a Set) — binds this card's speed_limit checkbox (Pass A).
+        bindScale5ToggleCheckboxes(dynamicsCard);
 
         let gasCard = gridContainer.querySelector(`[data-scale5-control-card="${GAS_CARD_KEY}"]`);
         if (!gasCard) {

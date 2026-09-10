@@ -2,12 +2,17 @@
  * Scale 5 Cosmic diagnostics.
  *
  * Pass 0b (UI foundations, 2026-09-09): runtime and dynamics sections only.
- * Pass B (2026-09-10) adds `cosmic-gas`. Cosmology (Pass C), and
- * population/event-log (Pass D) sections follow in later passes per the
- * plan. `source` paths read against `s5.cosmic` (telemetry-hub.js
- * collectScale5) and `s5.diag` (the raw bridge getDiagnostics() snapshot);
- * `trend` names one of the widened `_s5_cs` ring channels
- * (telemetry-hub.js).
+ * Pass B (2026-09-10) adds `cosmic-gas`. Pass A (2026-09-10) fills out
+ * `cosmic-dynamics` with the system-radius and speed-limit/cull rows, and
+ * carries Ruling B-M1 from Pass B's review: the three gas smoothing-length
+ * rows below were mistagged [IMPOSED] and are now [MEASURED — instrument],
+ * matching the density/pressure/sound-speed rows they sit beside (a
+ * diagnostic reading of the running SPH scheme, not a control that sets an
+ * imposed coefficient). Cosmology (Pass C) and population/event-log (Pass D)
+ * sections follow in later passes per the plan. `source` paths read against
+ * `s5.cosmic` (telemetry-hub.js collectScale5) and `s5.diag` (the raw bridge
+ * getDiagnostics() snapshot); `trend` names one of the widened `_s5_cs` ring
+ * channels (telemetry-hub.js).
  */
 
 export const sections = [
@@ -38,6 +43,10 @@ export const sections = [
             { id: 'momentum', label: '|Total Momentum|', unit: '(sim)', source: 's5.cosmic.energy.momentum', trend: 'csMomentum', tooltip: 'Magnitude of total body momentum. O(N) and always available regardless of the potential-energy audit gate; a nonzero steady value can reflect real momentum injection or loss by the active phenomenological rules (accretion, mergers, ejecta, evaporation), not necessarily a numerical defect.' },
             { id: 'ang-mom', label: '|Angular Momentum|', unit: '(sim)', source: 's5.cosmic.energy.angMom', trend: 'csAngMom', tooltip: 'Magnitude of total angular momentum about the coordinate origin (not the center of mass). O(N) and always available.' },
             { id: 'com-drift', label: 'COM Drift', unit: 'lu', source: 's5.cosmic.energy.comDrift', trend: 'csComDrift', tooltip: 'Distance the center of mass has moved from its position at scenario load. O(N) and always available.' },
+            { id: 'system-radius', label: 'System Radius', unit: 'lu', source: 's5.cosmic.energy.systemRadius', trend: 'csSystemRadius', tooltip: 'Maximum distance from the instantaneous centre of mass to any body this tick. O(N) second pass over the body list (comX/comY/comZ above must finish first); always available regardless of the potential-energy audit gate. [MEASURED — instrument]' },
+            { id: 'speed-limit-clamps', label: 'Speed-Limit Clamps', unit: 'ct', source: 's5.cosmic.stats.speedLimitClamps', tooltip: 'Bodies whose speed this tick exceeded the lattice speed limit c = 1/sqrt(3) [SELECTION] (scaled by the live speed-limit multiplier) and were rescaled back under it by the speed_limit gate. Zero whenever that gate is off. [MEASURED — instrument]' },
+            { id: 'speed-limit-max-factor', label: 'Speed-Limit Max Factor', unit: 'x', source: 's5.cosmic.stats.speedLimitMaxFactor', tooltip: 'How far over the speed limit the fastest clamped body was this tick, as a ratio of its pre-clamp speed to the limit (0 when no clamps occurred this tick, not 1 — see the clamp-count row above). [MEASURED — instrument]' },
+            { id: 'bodies-culled', label: 'Bodies Culled', unit: 'ct', source: 's5.cosmic.stats.bodiesCulled', tooltip: 'Bodies removed this tick by the mass > 0.01 cleanup filter that runs every tick regardless of toggle state (e.g. fully evaporated or fully accreted remnants). [MEASURED — instrument]' },
         ],
     },
     {
@@ -57,9 +66,9 @@ export const sections = [
             { id: 'gas-neighbor-min', label: 'Neighbour Count Min', unit: 'ct', source: 's5.cosmic.stats.neighborMin', tooltip: 'Fewest neighbours held by any gas body this tick. [MEASURED — instrument]' },
             { id: 'gas-neighbor-mean', label: 'Neighbour Count Mean', unit: 'ct', source: 's5.cosmic.stats.neighborMean', tooltip: 'Mean neighbour count over gas bodies this tick. [MEASURED — instrument]' },
             { id: 'gas-neighbor-max', label: 'Neighbour Count Max', unit: 'ct', source: 's5.cosmic.stats.neighborMax', tooltip: 'Most neighbours held by any gas body this tick. [MEASURED — instrument]' },
-            { id: 'gas-h-min', label: 'Smoothing Length Min', unit: '(sim)', source: 's5.cosmic.stats.hMin', tooltip: 'Smallest adaptive SPH smoothing length h over gas bodies this tick. [IMPOSED effective gas dynamics; coefficients in engine units]' },
-            { id: 'gas-h-mean', label: 'Smoothing Length Mean', unit: '(sim)', source: 's5.cosmic.stats.hMean', tooltip: 'Mean adaptive SPH smoothing length h over gas bodies this tick. [IMPOSED effective gas dynamics; coefficients in engine units]' },
-            { id: 'gas-h-max', label: 'Smoothing Length Max', unit: '(sim)', source: 's5.cosmic.stats.hMax', tooltip: 'Largest adaptive SPH smoothing length h over gas bodies this tick. [IMPOSED effective gas dynamics; coefficients in engine units]' },
+            { id: 'gas-h-min', label: 'Smoothing Length Min', unit: '(sim)', source: 's5.cosmic.stats.hMin', tooltip: 'Smallest adaptive SPH smoothing length h over gas bodies this tick. [MEASURED — instrument]' },
+            { id: 'gas-h-mean', label: 'Smoothing Length Mean', unit: '(sim)', source: 's5.cosmic.stats.hMean', tooltip: 'Mean adaptive SPH smoothing length h over gas bodies this tick. [MEASURED — instrument]' },
+            { id: 'gas-h-max', label: 'Smoothing Length Max', unit: '(sim)', source: 's5.cosmic.stats.hMax', tooltip: 'Largest adaptive SPH smoothing length h over gas bodies this tick. [MEASURED — instrument]' },
             { id: 'gas-rho-min', label: 'Density Min', unit: '(sim)', source: 's5.cosmic.stats.rhoMin', tooltip: 'Lowest SPH kernel-summed density over gas bodies this tick. [MEASURED — instrument]' },
             { id: 'gas-rho-max', label: 'Density Max', unit: '(sim)', source: 's5.cosmic.stats.rhoMax', tooltip: 'Highest SPH kernel-summed density over gas bodies this tick. [MEASURED — instrument]' },
             { id: 'gas-p-min', label: 'Pressure Min', unit: '(sim)', source: 's5.cosmic.stats.pMin', tooltip: 'Lowest ideal-gas-EOS pressure over gas bodies this tick. [MEASURED — instrument]' },

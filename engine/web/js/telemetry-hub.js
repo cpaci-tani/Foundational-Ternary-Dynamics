@@ -533,12 +533,16 @@ export class TelemetryHub {
         // 0a's bridge accumulators (getDiagnostics().pe/momentum/angMom/
         // comDrift) now compute. csBodies/csHubble/csDM are the pre-existing
         // channels the telemetry grid already referenced.
-                this._s5_cs = new MultiRingBuffer(200, ['csBodies', 'csHubble', 'csDM', 'csKE', 'csPE', 'csTotal', 'csDrift', 'csVirial', 'csMomentum', 'csAngMom', 'csComDrift', 'csThermal']);
+        // Pass A: widened again (12 -> 13) for csSystemRadius, the one
+        // genuinely new bridge quantity this pass adds (getDiagnostics()'s
+        // new systemRadius field, same O(N) always-available shape as
+        // momentum/angMom/comDrift above it).
+                this._s5_cs = new MultiRingBuffer(200, ['csBodies', 'csHubble', 'csDM', 'csKE', 'csPE', 'csTotal', 'csDrift', 'csVirial', 'csMomentum', 'csAngMom', 'csComDrift', 'csThermal', 'csSystemRadius']);
         const csVs = this._s5_cs.views;
         this.csBodies = csVs.csBodies; this.csHubble = csVs.csHubble; this.csDM = csVs.csDM;
         this.csKE = csVs.csKE; this.csPE = csVs.csPE; this.csTotal = csVs.csTotal; this.csDrift = csVs.csDrift;
         this.csVirial = csVs.csVirial; this.csMomentum = csVs.csMomentum; this.csAngMom = csVs.csAngMom;
-        this.csComDrift = csVs.csComDrift; this.csThermal = csVs.csThermal;
+        this.csComDrift = csVs.csComDrift; this.csThermal = csVs.csThermal; this.csSystemRadius = csVs.csSystemRadius;
         // Baseline for the Scale 5 mechanical-energy drift %, set on the
         // first finite peAvailable sample (mirrors _plInitialEnergy in
         // collectScale4 below).
@@ -1536,6 +1540,7 @@ export class TelemetryHub {
             const angMom = diag.angMom
                 ? Math.hypot(diag.angMom.x, diag.angMom.y, diag.angMom.z) : unavailableSample();
             const comDrift = Number.isFinite(diag.comDrift) ? diag.comDrift : unavailableSample();
+            const systemRadius = Number.isFinite(diag.systemRadius) ? diag.systemRadius : unavailableSample();
             const thermal = Number.isFinite(diag.totalThermal) ? diag.totalThermal : 0;
 
             const adot = diag.scaleFactor * diag.hubbleParameter;
@@ -1544,7 +1549,7 @@ export class TelemetryHub {
             this.s5.cosmic = {
                 runtime,
                 stats,
-                energy: { ke, pe, total: totalEnergy, virial, drift, momentum, angMom, comDrift },
+                energy: { ke, pe, total: totalEnergy, virial, drift, momentum, angMom, comDrift, systemRadius },
                 cosmology: {
                     scaleFactor: diag.scaleFactor,
                     hubbleParameter: diag.hubbleParameter,
@@ -1586,6 +1591,7 @@ export class TelemetryHub {
                 csAngMom: angMom,
                 csComDrift: comDrift,
                 csThermal: thermal,
+                csSystemRadius: systemRadius,
             }, currentTick);
         }
         return diag;

@@ -5,9 +5,9 @@ import { gotoAndReady, switchMode, attachConsoleWatcher, realErrors } from './_h
 /**
  * Scale 5 (Cosmic) instrumentation build-out — one describe block per pass.
  *
- * This file starts with Pass B (Gas and SPH); Passes A, C and D append
- * their own `test.describe` blocks here later. Each block is
- * self-contained to its own pass's surfaces.
+ * This file starts with Pass B (Gas and SPH); Pass A appends its own
+ * `test.describe` block below (Passes C and D append theirs later). Each
+ * block is self-contained to its own pass's surfaces.
  *
  * Reaching the live CosmicMockBridge and forcing a headless-safe tick
  * follows the exact pattern established by scale5-gas-labs.spec.js (see
@@ -210,6 +210,174 @@ test.describe('Pass B: Gas and SPH', () => {
             return cb.checked;
         });
         expect(circlesChecked).toBe(true);
+        await tickAndRefresh(page, 10);
+
+        const relevantErrors = realErrors(errors);
+        expect(relevantErrors, `Console errors:\n${relevantErrors.join('\n')}`).toHaveLength(0);
+    });
+});
+
+test.describe('Pass A: Gravity and dynamics', () => {
+    test.beforeEach(async ({ page }) => {
+        page.setDefaultTimeout(30_000);
+    });
+
+    test('cosmic-dynamics diagnostics rows populate; the gas smoothing-length rows carry the corrected tag (Ruling B-M1)', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+
+        await gotoAndReady(page, { path: '/index.html' });
+        await switchMode(page, 'cosmic');
+        await page.waitForTimeout(500);
+        await openPanel(page, 'diagnostics');
+
+        // A multi-body, non-gas scenario so system-radius/momentum/etc. are
+        // all non-trivial and the direct-sum solver runs (well under the
+        // BH_N_THRESHOLD=3000 gate), then a gas-lab scenario so the
+        // cosmic-gas section (and its corrected h-row tags) is present too.
+        await selectCosmicScenario(page, 'cosmic-galaxy');
+        await page.waitForTimeout(300);
+        await tickAndRefresh(page, 30);
+
+        const dynamics = await page.evaluate(() => {
+            const read = (rowId) => {
+                const cell = document.querySelector(
+                    `#panel-diagnostics .diag-scale5-root [data-section="cosmic-dynamics"] tr[data-row="${rowId}"] .diag-value`,
+                );
+                return cell ? Number(cell.textContent) : null;
+            };
+            return {
+                systemRadius: read('system-radius'),
+                speedLimitClamps: read('speed-limit-clamps'),
+                speedLimitMaxFactor: read('speed-limit-max-factor'),
+                bodiesCulled: read('bodies-culled'),
+            };
+        });
+        expect(dynamics.systemRadius, 'system-radius should read a positive extent for a multi-body scenario')
+            .toBeGreaterThan(0);
+        // Clamp/cull counters are legitimately 0 on a quiet run — assert
+        // they render as finite numbers (never NaN-as-text, never null),
+        // not that clamping/culling actually fired this run.
+        expect(Number.isFinite(dynamics.speedLimitClamps), 'speed-limit-clamps should render a finite count').toBe(true);
+        expect(Number.isFinite(dynamics.speedLimitMaxFactor), 'speed-limit-max-factor should render a finite value').toBe(true);
+        expect(Number.isFinite(dynamics.bodiesCulled), 'bodies-culled should render a finite count').toBe(true);
+
+        await selectCosmicScenario(page, 'cosmic-gas-collapse');
+        await page.waitForTimeout(300);
+        await tickAndRefresh(page, 60);
+
+        const hRowTooltip = await page.evaluate(() => {
+            const row = document.querySelector(
+                '#panel-diagnostics .diag-scale5-root [data-section="cosmic-gas"] tr[data-row="gas-h-min"]',
+            );
+            return row ? row.dataset.uiTooltip : null;
+        });
+        expect(hRowTooltip, 'gas-h-min tooltip should exist').toBeTruthy();
+        expect(hRowTooltip).toContain('[MEASURED');
+        expect(hRowTooltip).not.toContain('[IMPOSED');
+
+        const relevantErrors = realErrors(errors);
+        expect(relevantErrors, `Console errors:\n${relevantErrors.join('\n')}`).toHaveLength(0);
+    });
+
+    test('Dynamics card sliders drive the bridge live setters; speed_limit checkbox is this pass\'s one toggle wiring', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+
+        await gotoAndReady(page, { path: '/index.html' });
+        await switchMode(page, 'cosmic');
+        await page.waitForTimeout(500);
+
+        // speed_limit has no prior UI surface — SCALE5_TOGGLES defaults it
+        // to true, and the bridge's own _toggles seed agrees.
+        const before = await page.evaluate(() => {
+            const bridge = window.__ftdCtx?.inspector?.bridge;
+            return bridge?.getToggle('speed_limit');
+        });
+        expect(before, 'speed_limit should default on').toBe(true);
+
+        const afterToggleOff = await page.evaluate(() => {
+            const cb = /** @type {HTMLInputElement|null} */ (document.getElementById('cosmic-dynamics-speed-limit'));
+            if (!cb) throw new Error('#cosmic-dynamics-speed-limit not found');
+            cb.checked = false;
+            cb.dispatchEvent(new Event('change', { bubbles: true }));
+            const bridge = window.__ftdCtx?.inspector?.bridge;
+            return bridge?.getToggle('speed_limit');
+        });
+        expect(afterToggleOff, 'bridge should see speed_limit=false after the Dynamics-card checkbox changes').toBe(false);
+
+        const sliderResult = await page.evaluate(() => {
+            /** @param {string} id @param {string} value */
+            const setSlider = (id, value) => {
+                const el = /** @type {HTMLInputElement|null} */ (document.getElementById(id));
+                if (!el) throw new Error(`#${id} not found`);
+                el.value = value;
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+            };
+            setSlider('cosmic-dynamics-gravity', '2.5');
+            setSlider('cosmic-dynamics-softening', '0.4');
+            setSlider('cosmic-dynamics-dt', '0.025');
+            setSlider('cosmic-dynamics-speed-limit-factor', '1.75');
+
+            const bridge = window.__ftdCtx?.inspector?.bridge;
+            const params = bridge?.getRuntimeParams?.();
+            return {
+                gravityScale: params?.gravityScale,
+                softeningScale: params?.softeningScale,
+                dt: params?.dt,
+                speedLimitFactor: params?.speedLimitFactor,
+                gravityLabel: document.getElementById('cosmic-dynamics-gravity-value')?.textContent,
+                softeningLabel: document.getElementById('cosmic-dynamics-softening-value')?.textContent,
+                dtLabel: document.getElementById('cosmic-dynamics-dt-value')?.textContent,
+                speedLimitFactorLabel: document.getElementById('cosmic-dynamics-speed-limit-factor-value')?.textContent,
+            };
+        });
+        expect(sliderResult.gravityScale).toBeCloseTo(2.5, 5);
+        expect(sliderResult.softeningScale).toBeCloseTo(0.4, 5);
+        expect(sliderResult.dt).toBeCloseTo(0.025, 5);
+        expect(sliderResult.speedLimitFactor).toBeCloseTo(1.75, 5);
+        expect(sliderResult.gravityLabel).toBe('2.50');
+        expect(sliderResult.softeningLabel).toBe('0.40');
+        expect(sliderResult.dtLabel).toBe('0.025');
+        expect(sliderResult.speedLimitFactorLabel).toBe('1.75');
+
+        const relevantErrors = realErrors(errors);
+        expect(relevantErrors, `Console errors:\n${relevantErrors.join('\n')}`).toHaveLength(0);
+    });
+
+    test('overlay velocity-vector and centre-of-mass-marker toggles run without console errors', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+
+        await gotoAndReady(page, { path: '/index.html' });
+        await switchMode(page, 'cosmic');
+        await page.waitForTimeout(500);
+        await selectCosmicScenario(page, 'cosmic-galaxy');
+        await page.waitForTimeout(300);
+        await tickAndRefresh(page, 10);
+
+        const velocityChecked = await page.evaluate(() => {
+            const cb = /** @type {HTMLInputElement|null} */ (document.getElementById('cosmic-overlay-velocity-vectors'));
+            if (!cb) throw new Error('#cosmic-overlay-velocity-vectors not found');
+            cb.checked = true;
+            cb.dispatchEvent(new Event('change', { bubbles: true }));
+            return cb.checked;
+        });
+        expect(velocityChecked).toBe(true);
+        await tickAndRefresh(page, 10);
+
+        const comChecked = await page.evaluate(() => {
+            const cb = /** @type {HTMLInputElement|null} */ (document.getElementById('cosmic-overlay-com-marker'));
+            if (!cb) throw new Error('#cosmic-overlay-com-marker not found');
+            cb.checked = true;
+            cb.dispatchEvent(new Event('change', { bubbles: true }));
+            return cb.checked;
+        });
+        expect(comChecked).toBe(true);
+        await tickAndRefresh(page, 10);
+
+        // Switch scenario while both overlays are on — the renderer is
+        // recreated (Ruling P1); syncScale5Overlays must re-apply the
+        // pending state to the fresh renderer without throwing.
+        await selectCosmicScenario(page, 'cosmic-merger');
+        await page.waitForTimeout(300);
         await tickAndRefresh(page, 10);
 
         const relevantErrors = realErrors(errors);

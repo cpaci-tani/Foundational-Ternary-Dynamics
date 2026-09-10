@@ -220,6 +220,60 @@ class Scale5LifecycleController extends BaseLifecycleController {
             });
             adaptiveInput.dataset.s5CtrlBound = '1';
         }
+
+        // Dynamics card (Pass A): the speed_limit checkbox is bound by
+        // Scale5ControlsComponent.init() itself through the shared
+        // toggle-sync module (same shape as the Gas card's sph_monaghan/
+        // legacy_gas_repulsion checkboxes above). The four sliders below are
+        // bridge fields/live setters with no second UI surface and no
+        // SCALE5_TOGGLES registry entry, so they are bound directly here —
+        // identical reasoning to the Gas card's alpha/beta/adaptive-h
+        // sliders just above. Lazy `this.bridge` closures for the same
+        // reason: binding happens once, before a fresh bridge necessarily
+        // exists yet.
+        const gravityInput = document.getElementById('cosmic-dynamics-gravity');
+        const gravityValue = document.getElementById('cosmic-dynamics-gravity-value');
+        if (gravityInput && !gravityInput.dataset.s5CtrlBound) {
+            this.bindEvent(gravityInput, 'input', () => {
+                const v = Number(gravityInput.value);
+                this.bridge?.setGravityScale?.(v);
+                if (gravityValue) gravityValue.textContent = v.toFixed(2);
+            });
+            gravityInput.dataset.s5CtrlBound = '1';
+        }
+
+        const softeningInput = document.getElementById('cosmic-dynamics-softening');
+        const softeningValue = document.getElementById('cosmic-dynamics-softening-value');
+        if (softeningInput && !softeningInput.dataset.s5CtrlBound) {
+            this.bindEvent(softeningInput, 'input', () => {
+                const v = Number(softeningInput.value);
+                this.bridge?.setSofteningScale?.(v);
+                if (softeningValue) softeningValue.textContent = v.toFixed(2);
+            });
+            softeningInput.dataset.s5CtrlBound = '1';
+        }
+
+        const dtInput = document.getElementById('cosmic-dynamics-dt');
+        const dtValue = document.getElementById('cosmic-dynamics-dt-value');
+        if (dtInput && !dtInput.dataset.s5CtrlBound) {
+            this.bindEvent(dtInput, 'input', () => {
+                const v = Number(dtInput.value);
+                this.bridge?.setDt?.(v);
+                if (dtValue) dtValue.textContent = v.toFixed(3);
+            });
+            dtInput.dataset.s5CtrlBound = '1';
+        }
+
+        const speedLimitFactorInput = document.getElementById('cosmic-dynamics-speed-limit-factor');
+        const speedLimitFactorValue = document.getElementById('cosmic-dynamics-speed-limit-factor-value');
+        if (speedLimitFactorInput && !speedLimitFactorInput.dataset.s5CtrlBound) {
+            this.bindEvent(speedLimitFactorInput, 'input', () => {
+                const v = Number(speedLimitFactorInput.value);
+                this.bridge?.setSpeedLimitFactor?.(v);
+                if (speedLimitFactorValue) speedLimitFactorValue.textContent = v.toFixed(2);
+            });
+            speedLimitFactorInput.dataset.s5CtrlBound = '1';
+        }
     }
 
     /** Reflect the fresh bridge's runtime SPH params (Pass B: alpha, beta,
@@ -242,6 +296,35 @@ class Scale5LifecycleController extends BaseLifecycleController {
         if (betaValue) betaValue.textContent = params.sphBeta.toFixed(1);
         const adaptiveInput = document.getElementById('cosmic-gas-adaptive-h');
         if (adaptiveInput) adaptiveInput.checked = !!params.adaptiveSmoothing;
+    }
+
+    /** Reflect the fresh bridge's runtime dynamics params (Pass A: gravity
+     *  scale, softening scale, dt, speed-limit factor) onto the Dynamics
+     *  card, mirroring _syncGasControlsFromBridge above exactly — same
+     *  reasoning: no scenario currently overrides these live-setter fields
+     *  (getRuntimeParams() always reports their `?? 1`/base defaults on a
+     *  fresh bridge), so this keeps a slider dragged on a prior scenario
+     *  from silently misrepresenting the new bridge's actual state. Called
+     *  from loadCosmicScenario() alongside _syncGasControlsFromBridge(). */
+    _syncDynamicsControlsFromBridge() {
+        if (!this.bridge?.getRuntimeParams) return;
+        const params = this.bridge.getRuntimeParams();
+        const gravityInput = document.getElementById('cosmic-dynamics-gravity');
+        const gravityValue = document.getElementById('cosmic-dynamics-gravity-value');
+        if (gravityInput) gravityInput.value = String(params.gravityScale);
+        if (gravityValue) gravityValue.textContent = params.gravityScale.toFixed(2);
+        const softeningInput = document.getElementById('cosmic-dynamics-softening');
+        const softeningValue = document.getElementById('cosmic-dynamics-softening-value');
+        if (softeningInput) softeningInput.value = String(params.softeningScale);
+        if (softeningValue) softeningValue.textContent = params.softeningScale.toFixed(2);
+        const dtInput = document.getElementById('cosmic-dynamics-dt');
+        const dtValue = document.getElementById('cosmic-dynamics-dt-value');
+        if (dtInput) dtInput.value = String(params.dt);
+        if (dtValue) dtValue.textContent = params.dt.toFixed(3);
+        const speedLimitFactorInput = document.getElementById('cosmic-dynamics-speed-limit-factor');
+        const speedLimitFactorValue = document.getElementById('cosmic-dynamics-speed-limit-factor-value');
+        if (speedLimitFactorInput) speedLimitFactorInput.value = String(params.speedLimitFactor);
+        if (speedLimitFactorValue) speedLimitFactorValue.textContent = params.speedLimitFactor.toFixed(2);
     }
 
     loadCosmicScenario(ctx, scenarioName = 'cosmic-galaxy') {
@@ -267,6 +350,7 @@ class Scale5LifecycleController extends BaseLifecycleController {
         // going forward (Task 4, sph_monaghan; see toolbar/component.js).
         syncScale5Toggles(this.bridge);
         this._syncGasControlsFromBridge();
+        this._syncDynamicsControlsFromBridge();
 
         // Inform the inspector about the cosmic bridge so it can route
         // queries to the right backend (audit P1-1 fix, 2026-05-27).
@@ -375,6 +459,14 @@ class Scale5LifecycleController extends BaseLifecycleController {
         if (betaInput) delete betaInput.dataset.s5CtrlBound;
         const adaptiveInput = document.getElementById('cosmic-gas-adaptive-h');
         if (adaptiveInput) delete adaptiveInput.dataset.s5CtrlBound;
+        const gravityInput = document.getElementById('cosmic-dynamics-gravity');
+        if (gravityInput) delete gravityInput.dataset.s5CtrlBound;
+        const softeningInput = document.getElementById('cosmic-dynamics-softening');
+        if (softeningInput) delete softeningInput.dataset.s5CtrlBound;
+        const dtInput = document.getElementById('cosmic-dynamics-dt');
+        if (dtInput) delete dtInput.dataset.s5CtrlBound;
+        const speedLimitFactorInput = document.getElementById('cosmic-dynamics-speed-limit-factor');
+        if (speedLimitFactorInput) delete speedLimitFactorInput.dataset.s5CtrlBound;
         if (this.renderer) {
             this.renderer.dispose();
             this.renderer = null;

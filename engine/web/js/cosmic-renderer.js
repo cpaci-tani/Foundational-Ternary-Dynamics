@@ -49,6 +49,30 @@ const _gasTex = makeGasSprite();
 const _haloTex = makeHaloSprite();
 const _ringTex = makeRingSprite();
 
+// ── Velocity-vector causal-saturation ramp (Pass A) ─────────────────────
+// beta = |v| / C_SPEED, the same lattice-causal-limit color convention
+// viewport/particle-renderer.js's Scale-1/2 velocity vectors already use:
+// green (slow) -> yellow -> orange -> red -> white (pinned at the cap).
+// Factored out here rather than imported, since particle-renderer.js
+// computes it inline with no exported helper of its own.
+function velocityBetaColor(beta) {
+    let r, g, b;
+    if (beta < 0.5) {
+        const t = beta / 0.5;
+        r = 0.25 + 0.75 * t; g = 0.90; b = 0.25;
+    } else if (beta < 0.85) {
+        const t = (beta - 0.5) / 0.35;
+        r = 1.0; g = 0.90 - 0.55 * t; b = 0.20;
+    } else if (beta < 0.985) {
+        const t = (beta - 0.85) / 0.135;
+        r = 1.0; g = 0.35 - 0.35 * t; b = 0.20 - 0.20 * t;
+    } else {
+        const t = (beta - 0.985) / 0.015;
+        r = 1.0; g = 0.90 * t; b = 0.90 * t;
+    }
+    return [r, g, b];
+}
+
 // ====================================================================
 export class CosmicRenderer extends BaseRenderer {
     constructor(scene, camera, renderer) {
@@ -73,6 +97,19 @@ export class CosmicRenderer extends BaseRenderer {
         this._showSmoothingCircles = false;
         this._smoothingCloud = null;
 
+        // Pass A: velocity-vector overlay (all bodies, logarithmic length
+        // normalisation) and centre-of-mass marker, both driven by
+        // scales/scale5/ui/overlays/component.js via setVelocityVectors/
+        // setComMarker below. _velocityVectors is a LineSegments pool
+        // sized once (grown only if the body count exceeds it), mirroring
+        // viewport/particle-renderer.js's Scale-1/2 velocity-vector overlay;
+        // _comMarker is a single-point screen-space-sized Points object
+        // reusing the same _ringTex texture as the smoothing-circle cloud.
+        this._showVelocityVectors = false;
+        this._velocityVectors = null;
+        this._showComMarker = false;
+        this._comMarker = null;
+
         // Subclass-specific geometry teardown. Called by BaseRenderer.dispose()
         // (core/BaseRenderer.js:37). Idempotent: nulls each reference after
         // disposing so a re-entry can rebuild from a clean slate and a
@@ -89,6 +126,8 @@ export class CosmicRenderer extends BaseRenderer {
             this._dmCloud = disposeCloud(this._dmCloud);
             this._nebulaCloud = disposeCloud(this._nebulaCloud);  // CR-H2 fix
             this._smoothingCloud = disposeCloud(this._smoothingCloud);  // Pass B
+            this._velocityVectors = disposeCloud(this._velocityVectors);  // Pass A
+            this._comMarker = disposeCloud(this._comMarker);  // Pass A
             this._bgStars = disposeCloud(this._bgStars);
 
             // Black-hole meshes are created via `_group.add(sphere, ...)` and
@@ -373,6 +412,95 @@ export class CosmicRenderer extends BaseRenderer {
 
         // -- Black holes --
         this._updateBlackHoles(bhs, bodyData);
+
+        // -- Velocity vectors (Pass A, all bodies, log-length-normalised) --
+        this._updateVelocityVectors(bodyData, positions, count);
+
+        // -- Centre-of-mass marker (Pass A) --
+        this._updateComMarker(diagnostics);
+    }
+
+    /** Pass A: one line per body, from its position in its velocity
+     *  direction. Length is logarithmically normalised to THIS FRAME's
+     *  fastest body (a display convenience — the SAME per-call
+     *  normalization convention `_drawGasProfileBars` and the colour-by
+     *  ramp above use, not a physical scale), so a quiescent halo and a
+     *  fast ejecta/merger remnant both stay legible together. Two O(N)
+     *  passes over the already-packed `velocities` buffer (Pass B) — one to
+     *  find this frame's max speed, one to draw — no pairwise loop. */
+    _updateVelocityVectors(bodyData, positions, count) {
+        if (!this._showVelocityVectors || count === 0 || !bodyData.velocities) {
+            if (this._velocityVectors) this._velocityVectors.visible = false;
+            return;
+        }
+        const lines = this._velocityVectors || this._ensureVelocityVectors();
+        const velocities = bodyData.velocities;
+        const posAttr = lines.geometry.getAttribute('position');
+        const colAttr = lines.geometry.getAttribute('color');
+        const maxLines = posAttr.array.length / 6;
+        const n = Math.min(count, maxLines);
+
+        let maxSpeed = 1e-9;
+        for (let i = 0; i < n; i++) {
+            const vx = velocities[i * 3], vy = velocities[i * 3 + 1], vz = velocities[i * 3 + 2];
+            const s = Math.sqrt(vx * vx + vy * vy + vz * vz);
+            if (s > maxSpeed) maxSpeed = s;
+        }
+        const logMax = Math.log1p(maxSpeed);
+        const MIN_LEN = 0.15, MAX_LEN = 5.0;
+
+        let drawn = 0;
+        for (let i = 0; i < n; i++) {
+            const vx = velocities[i * 3], vy = velocities[i * 3 + 1], vz = velocities[i * 3 + 2];
+            const speed = Math.sqrt(vx * vx + vy * vy + vz * vz);
+            if (speed <= 1e-9) continue; // zero-velocity body: nothing to draw
+            const line = drawn++;
+            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
+            const t = logMax > 0 ? Math.log1p(speed) / logMax : 0;
+            const len = MIN_LEN + t * (MAX_LEN - MIN_LEN);
+            const ux = vx / speed, uy = vy / speed, uz = vz / speed;
+
+            posAttr.array[line * 6] = px;
+            posAttr.array[line * 6 + 1] = py;
+            posAttr.array[line * 6 + 2] = pz;
+            posAttr.array[line * 6 + 3] = px + ux * len;
+            posAttr.array[line * 6 + 4] = py + uy * len;
+            posAttr.array[line * 6 + 5] = pz + uz * len;
+
+            // Same causal-saturation ramp as viewport/particle-renderer.js's
+            // Scale-1/2 velocity vectors: green (slow) -> yellow -> orange
+            // -> red -> white (pinned at the lattice speed limit).
+            const beta = Math.min(speed / C_SPEED, 1.0);
+            const [r, g, b] = velocityBetaColor(beta);
+            colAttr.array[line * 6] = r * 0.5;
+            colAttr.array[line * 6 + 1] = g * 0.5;
+            colAttr.array[line * 6 + 2] = b * 0.5;
+            colAttr.array[line * 6 + 3] = r;
+            colAttr.array[line * 6 + 4] = g;
+            colAttr.array[line * 6 + 5] = b;
+        }
+
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        lines.geometry.setDrawRange(0, drawn * 2);
+        lines.visible = true;
+    }
+
+    /** Pass A: single screen-space-sized marker at the instantaneous
+     *  centre of mass (diagnostics.comX/comY/comZ — the SAME O(N),
+     *  always-available quantity the COM Drift diagnostic row tracks). */
+    _updateComMarker(diagnostics) {
+        if (!this._showComMarker || !diagnostics || !Number.isFinite(diagnostics.comX)) {
+            if (this._comMarker) this._comMarker.visible = false;
+            return;
+        }
+        const marker = this._comMarker || this._ensureComMarker();
+        const p = marker.geometry.attributes.position.array;
+        p[0] = diagnostics.comX;
+        p[1] = diagnostics.comY;
+        p[2] = diagnostics.comZ;
+        marker.geometry.attributes.position.needsUpdate = true;
+        marker.visible = true;
     }
 
     // ================================================================
@@ -618,6 +746,12 @@ export class CosmicRenderer extends BaseRenderer {
     /** Pass B: toggle the gas-only smoothing-length-circle overlay. */
     setSmoothingCircles(on) { this._showSmoothingCircles = !!on; }
 
+    /** Pass A: toggle the all-bodies velocity-vector overlay. */
+    setVelocityVectors(on) { this._showVelocityVectors = !!on; }
+
+    /** Pass A: toggle the centre-of-mass marker. */
+    setComMarker(on) { this._showComMarker = !!on; }
+
     /** Pass B colour-by value lookup for body index `i` in `bodyData`.
      *  'speed' has no direct packed field — it is derived from the packed
      *  `velocities` 3-vector (Ruling J5: pack the richer datum once so a
@@ -687,6 +821,71 @@ export class CosmicRenderer extends BaseRenderer {
             this._smoothingCloud = cloud;
         }
         return cloud;
+    }
+
+    /** Build the velocity-vector LineSegments pool (Pass A). Sized for the
+     *  BH_N_THRESHOLD direct-solve population (3000, cosmic-physics.js) plus
+     *  headroom; beyond that (the Barnes-Hut branch can run with more
+     *  bodies) the overlay simply covers the first MAX_VEC bodies, same
+     *  partial-coverage behavior as viewport/particle-renderer.js's
+     *  MAX_VEC=2048 velocity-vector pool for Scales 1/2. */
+    _ensureVelocityVectors() {
+        const MAX_VEC = 4096;
+        const vertices = new Float32Array(MAX_VEC * 2 * 3);
+        const colors = new Float32Array(MAX_VEC * 2 * 3);
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        geo.setDrawRange(0, 0);
+        const mat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.75 });
+        const lines = new THREE.LineSegments(geo, mat);
+        lines.frustumCulled = false; // dynamic geometry, same rationale as _ensureCloud
+        lines.name = 'cosmic-velocity-vectors';
+        this._group.add(lines);
+        this._velocityVectors = lines;
+        return lines;
+    }
+
+    /** Build the centre-of-mass marker (Pass A): a single screen-space-sized
+     *  point reusing the smoothing-circle cloud's `_ringTex` texture and
+     *  shader shape, distinctly colored white so it reads apart from the
+     *  cyan smoothing circles. */
+    _ensureComMarker() {
+        const g = new THREE.BufferGeometry();
+        g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(3), 3));
+        const mat = new THREE.ShaderMaterial({
+            uniforms: {
+                color: { value: new THREE.Color(0xffffff) },
+                pointTexture: { value: _ringTex },
+                globalOpacity: { value: 0.9 },
+            },
+            vertexShader: `
+                void main() {
+                    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                    gl_PointSize = 900.0 / -mvPosition.z;
+                    gl_Position = projectionMatrix * mvPosition;
+                }
+            `,
+            fragmentShader: `
+                uniform sampler2D pointTexture;
+                uniform vec3 color;
+                uniform float globalOpacity;
+                void main() {
+                    vec4 texColor = texture2D(pointTexture, gl_PointCoord);
+                    gl_FragColor = vec4(color, globalOpacity) * texColor;
+                }
+            `,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            depthTest: false,
+            transparent: true,
+        });
+        const marker = new THREE.Points(g, mat);
+        marker.frustumCulled = false;
+        marker.name = 'cosmic-com-marker';
+        this._group.add(marker);
+        this._comMarker = marker;
+        return marker;
     }
 
     _ensureCloud(name, maxCount, defaultSize, opacity, blending, map, useSizes = false) {

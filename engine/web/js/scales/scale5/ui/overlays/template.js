@@ -7,9 +7,18 @@
  * overlay for gas bodies. Listeners are bound once by
  * scales/scale5/ui/overlays/component.js (bindScale5OverlayControls,
  * called by ViewportOverlaysComponent.init() right after this template is
- * appended) — this file only supplies markup. Passes C and D append their
- * own overlaySection() blocks to the SAME body alongside this one; this
- * section's ids/behavior are Pass B's alone.
+ * appended) — this file only supplies markup.
+ *
+ * Pass A (2026-09-10) adds "Dynamics": a velocity-vector overlay (all
+ * bodies, logarithmic length normalisation so a quiescent halo and a
+ * near-lattice-limit ejecta body both stay legible in the same frame — a
+ * display convenience, not a physical scale, matching the colour-by ramp's
+ * own per-frame normalization above) and a centre-of-mass marker. Both are
+ * O(N) over the already-packed `velocities` buffer (Pass B) and the
+ * existing comX/comY/comZ diagnostics (Pass 0a) — no new bridge field, no
+ * new pair loop. Passes C and D append their own overlaySection() blocks to
+ * the SAME body alongside these; each section's ids/behavior belong to the
+ * pass that added it.
  */
 
 import { createScaleOverlayPanel, overlayRow, overlaySection } from '../../../../ui/components/viewport-overlays/panel-shell.js';
@@ -43,11 +52,26 @@ export function getScale5OverlayTemplate() {
     `)}`,
   );
 
+  const dynamicsSection = overlaySection(
+    'Dynamics',
+    '',
+    `${overlayRow('', `
+      <label class="scale-overlay-check" title="[MEASURED — instrument] Draws a line from each body in its velocity direction. Length is logarithmically normalised to this frame's fastest body, so a quiescent halo and a fast-moving ejecta or merger remnant both stay visible in the same view — a display convenience, not a physical scale. Colour ramps green (slow) through yellow/orange/red to white as speed approaches the lattice speed limit c = 1/sqrt(3) [SELECTION].">
+        <input type="checkbox" id="cosmic-overlay-velocity-vectors"> Velocity vectors
+      </label>
+    `)}
+    ${overlayRow('', `
+      <label class="scale-overlay-check" title="[MEASURED — instrument] Marks the instantaneous mass-weighted centre of mass of all live bodies (the same quantity the COM Drift diagnostic row tracks over time).">
+        <input type="checkbox" id="cosmic-overlay-com-marker"> Centre-of-mass marker
+      </label>
+    `)}`,
+  );
+
   return createScaleOverlayPanel({
     id: 'cosmic-viewport-overlay',
     scaleClass: 'scale5-only',
     title: 'Cosmic overlays',
     footnote: 'Grid and axes off by default — use status bar View menu if needed',
-    bodyHtml: `${frameSection}${gasSection}`,
+    bodyHtml: `${frameSection}${gasSection}${dynamicsSection}`,
   });
 }

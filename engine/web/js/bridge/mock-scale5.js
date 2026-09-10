@@ -751,6 +751,19 @@ export class CosmicMockBridge {
             const ddz = comZ - this._comBaseline.z;
             comDrift = Math.sqrt(ddx * ddx + ddy * ddy + ddz * ddz);
         }
+        // Pass A: system radius — max distance from the instantaneous centre
+        // of mass to any body, for the Gravity & Dynamics diagnostics row.
+        // comX/comY/comZ above are only known once the loop over
+        // this._bodies above has finished, so this is a genuine second O(N)
+        // pass (not folded into the first) — cheap next to the O(N^2)/
+        // Barnes-Hut force solve already run this tick at these body counts.
+        let systemRadius2 = 0;
+        for (const b of this._bodies) {
+            const dx = b.x - comX, dy = b.y - comY, dz = b.z - comZ;
+            const d2 = dx * dx + dy * dy + dz * dz;
+            if (d2 > systemRadius2) systemRadius2 = d2;
+        }
+        const systemRadius = Math.sqrt(systemRadius2);
         return {
             tick: this._tick, bodyCount: this._bodies.length,
             countsByType: counts, totalMass, totalKE, dmMass, totalThermal,
@@ -777,6 +790,7 @@ export class CosmicMockBridge {
             angMom: { x: lx, y: ly, z: lz },
             comX, comY, comZ,
             comDrift,
+            systemRadius,
             massByType,
         };
     }
@@ -797,6 +811,7 @@ export class CosmicMockBridge {
             softening: this._softening,
             boxSize: this._boxSize,
             gravityScale: this._gravityScale ?? 1,
+            softeningScale: this._softeningScale ?? 1,
             speedLimitFactor: this._speedLimitFactor ?? 1,
             clockGain: this._clockGain ?? COSMIC_CLOCK_GAIN,
             sphAlpha: this._sphAlpha ?? SPH.ALPHA,
