@@ -120,17 +120,42 @@ test('disposal suppresses an in-flight publication and releases adapter after it
     await assert.rejects(p.dispatch(req('diagnostics', '1')), /disposed/);
 });
 
-test('finite floats pass through unchanged; non-finite numbers are rejected', async () => {
+test('only the explicitly approximate 4x2 Fourier moments allow floats', async () => {
     const adapter = fake();
-    adapter.observe = () => ({ re: 0.30000000000000004, im: -1.5e-9 });
+    const payload = {
+        status: 'approximate_observation', arithmetic: 'ieee754_binary64', error_bound_status: 'not_certified',
+        microtick: '9007199254740993', k: ['-1', '0', '0'], polarity: '0',
+        moments: [[0.30000000000000004, -1.5e-9], [0, 1], [2, 3], [4, 5]],
+    };
+    adapter.observe = () => payload;
     const p = createHydroWorkerProtocol(adapter, { ownerId: 'owner-A' });
-    const observed = await p.dispatch(req('observe', '0', { width: '1', observable: 'counts' }));
-    assert.equal(observed.payload.re, 0.30000000000000004);
-    assert.equal(observed.payload.im, -1.5e-9);
-    adapter.observe = () => ({ broken: Number.POSITIVE_INFINITY });
-    await assert.rejects(p.dispatch(req('observe', '0', { width: '1', observable: 'counts' })), /non-finite/);
-    adapter.observe = () => ({ broken: NaN });
-    await assert.rejects(p.dispatch(req('observe', '0', { width: '1', observable: 'counts' })), /non-finite/);
+    const request = req('observe', '0', { width: '1', observable: 'moments:-1,0,0,0' });
+    assert.deepEqual((await p.dispatch(request)).payload, payload);
+    await assert.rejects(p.dispatch({ ...request, observable: 'counts' }), /inexact integer/);
+    for (const invalid of [NaN, Infinity, -Infinity]) {
+        adapter.observe = () => ({ ...payload, moments: [[invalid, 0], ...payload.moments.slice(1)] });
+        await assert.rejects(p.dispatch(request), /invalid approximate/);
+    }
+    adapter.observe = () => ({ ...payload, status: 'exact_observation' });
+    await assert.rejects(p.dispatch(request), /invalid approximate/);
+    adapter.observe = () => ({ ...payload, microtick: 1.25 });
+    await assert.rejects(p.dispatch(request), /inexact integer/);
+    adapter.observe = () => ({ ...payload, microtick: '1.25' });
+    await assert.rejects(p.dispatch(request), /canonical unsigned decimal/);
+    adapter.observe = () => ({ ...payload, k: ['-0', '0', '0'] });
+    await assert.rejects(p.dispatch(request), /canonical signed decimal/);
+});
+
+test('exact observations normalize safe integers and reject precision loss', async () => {
+    const adapter = fake();
+    const p = createHydroWorkerProtocol(adapter, { ownerId: 'owner-A' });
+    const request = req('observe', '0', { width: '1', observable: 'fields' });
+    adapter.observe = () => ({ microtick: 7, momentum: [1, -1, 0] });
+    assert.deepEqual((await p.dispatch(request)).payload, { microtick: '7', momentum: ['1', '-1', '0'] });
+    for (const value of [2 ** 53, 0.5, NaN, Infinity]) {
+        adapter.observe = () => ({ microtick: value });
+        await assert.rejects(p.dispatch(request), /inexact integer/);
+    }
 });
 
 test('browser batch limits reject huge valid integers before mutation', async () => {
@@ -165,6 +190,10 @@ test('WASM adapter delegates JSON-string checkpoints and deletes exactly once', 
     assert.deepEqual(adapter.advance('1'), { microtick: '1' });
     assert.deepEqual(adapter.observe('2', 'fields'), { width: '2', name: 'fields' });
     assert.deepEqual(adapter.capabilities().observables, ['counts', 'fields', 'moments']);
+    assert.equal(adapter.capabilities().observableSyntax.moments, 'moments:kx,ky,kz,pol');
+    assert.deepEqual(adapter.capabilities().observationPrecision.moments, {
+        status: 'approximate_observation', arithmetic: 'ieee754_binary64', error_bound_status: 'not_certified',
+    });
     assert.equal(adapter.capabilities().gravityRecovery, false);
     adapter.dispose(); adapter.dispose();
     assert.equal(deleted, 1);

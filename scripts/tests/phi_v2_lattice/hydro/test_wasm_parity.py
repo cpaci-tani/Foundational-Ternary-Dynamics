@@ -4,7 +4,7 @@ Set FTD_HYDRO_WASM_MODULE to the freshly built ftd_hydro_wasm.mjs. Without that
 explicit artifact the suite skips; a skip is never a backend certificate.
 
 Beyond the Task 8 state/event parity (mirroring test_native_parity.py, but through the
-JSON "ftd-hydro-checkpoint-1" schema instead of the native binary transport), this also
+JSON "ftd-hydro-checkpoint-2" schema instead of the native binary transport), this also
 checks the WASM-only observables that have no native-CLI counterpart: `fields` (per-block
 field-token counts and lattice-gas momentum, checked exactly against a block sum computed
 directly here) and `moments:kx,ky,kz,pol` (a discrete Fourier projection, checked against
@@ -173,8 +173,79 @@ def test_wasm_matches_python_reference_every_microtick(wasm_module, table_path, 
 
         # moments:1,0,0,0, within floating-point tolerance, for polarity 0.
         expected_moments = _python_moments(state.lattice, (1, 0, 0), 0)
+        assert row["moments"]["status"] == "approximate_observation"
+        assert row["moments"]["arithmetic"] == "ieee754_binary64"
+        assert row["moments"]["error_bound_status"] == "not_certified"
+        assert row["moments"]["k"] == ["1", "0", "0"]
+        assert row["moments"]["polarity"] == "0"
         got_moments = row["moments"]["moments"]
         assert len(got_moments) == 4
         for (re, im), expected_value in zip(got_moments, expected_moments):
             assert abs(re - expected_value.real) < 1e-9
             assert abs(im - expected_value.imag) < 1e-9
+
+
+def test_wasm_checkpoint_integer_domains_and_rejection_atomicity(wasm_module, table_path, table, tmp_path):
+    from phi_v2_lattice.hydro import state as lattice_state
+
+    state = S.initialize(lattice_state.blank(4))
+    input_path, output_path = tmp_path / "checkpoint.json", tmp_path / "boundaries.json"
+    input_path.write_bytes(N.checkpoint(state))
+    completed = subprocess.run(
+        ["node", str(DRIVER), str(wasm_module), str(table_path), str(input_path), str(output_path), "--boundary"],
+        capture_output=True, text=True, timeout=120)
+    assert completed.returncode == 0, completed.stdout + completed.stderr
+    result = json.loads(output_path.read_text(encoding="utf-8"))
+    assert len(result["rejected"]) == 205
+    assert len(set(result["rejected"])) == len(result["rejected"])
+    assert result["counts"]["status"] == result["fields"]["status"] == "exact_observation"
+    moments = result["extremeMoments"]
+    assert moments["status"] == "approximate_observation"
+    assert moments["arithmetic"] == "ieee754_binary64"
+    assert moments["error_bound_status"] == "not_certified"
+    assert moments["k"] == [str(-(2**63)), str(2**63 - 1), "0"]
+    assert moments["polarity"] == "1"
+    for row in result["accepted"]:
+        before = N.restore(row["before"].encode())
+        tick = int(row["tick"])
+        assert before.microtick == tick
+        assert row["diagnostics"]["microtick"] == str(tick)
+        assert row["diagnostics"]["phase"] == str(tick % 4)
+        payload = json.loads(row["before"])
+        assert payload["schema"] == "ftd-hydro-checkpoint-2"
+        assert payload["microtick"] == str(tick)
+        restored = N.restore(row["after"].encode())
+        if tick < 2**64 - 1:
+            expected_state, events = S.step(before, table)
+            assert N.encode(restored) == N.encode(expected_state)
+            assert row["advance"]["events"] == native_json(events)
+        else:
+            assert N.encode(restored) == N.encode(before)
+
+
+def test_wasm_lexical_integer_tokens_and_periodic_moment_aliases(wasm_module, table_path, tmp_path):
+    from phi_v2_lattice.hydro import state as lattice_state
+
+    state = S.initialize(lattice_state.blank(4))
+    input_path, output_path = tmp_path / "checkpoint.json", tmp_path / "lexical-alias.json"
+    input_path.write_bytes(N.checkpoint(state))
+    completed = subprocess.run(
+        ["node", str(DRIVER), str(wasm_module), str(table_path), str(input_path), str(output_path), "--lexical-alias"],
+        capture_output=True, text=True, timeout=120)
+    assert completed.returncode == 0, completed.stdout + completed.stderr
+    result = json.loads(output_path.read_text(encoding="utf-8"))
+    assert result["actualAdvanceCalls"] == 0
+    assert len(result["rejected"]) == len(set(result["rejected"])) == 30
+    assert result["legacyDiagnostics"]["microtick"] == "1"
+    assert len(result["aliases"]) == 10
+    lattice = N.restore(result["fixture"].encode()).lattice
+    for row in result["aliases"]:
+        requested, reduced = tuple(map(int, row["requested"])), tuple(map(int, row["reduced"]))
+        assert all((a - b) % lattice.L == 0 for a, b in zip(requested, reduced))
+        assert row["raw"]["k"] == list(row["requested"])
+        assert row["raw"]["moments"] == row["canonical"]["moments"]
+        assert row["raw"]["status"] == "approximate_observation"
+        expected = _python_moments(lattice, reduced, row["pol"])
+        for (re, im), value in zip(row["raw"]["moments"], expected):
+            assert abs(re - value.real) < 1e-12
+            assert abs(im - value.imag) < 1e-12

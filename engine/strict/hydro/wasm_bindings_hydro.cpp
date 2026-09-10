@@ -42,15 +42,82 @@ long long signed_integer(const std::string& text) {
     std::size_t i = 0;
     const bool neg = text[0] == '-';
     if (neg) i = 1;
-    if (i >= text.size() || (text.size() - i > 1 && text[i] == '0'))
+    if (i >= text.size() || (text.size() - i > 1 && text[i] == '0') || text == "-0")
         throw std::invalid_argument("invalid integer literal in moments observable");
-    long long value = 0;
+    const auto limit = std::uint64_t(std::numeric_limits<long long>::max()) + (neg ? 1u : 0u);
+    std::uint64_t value = 0;
     for (; i < text.size(); ++i) {
         const char c = text[i];
-        if (c < '0' || c > '9') throw std::invalid_argument("invalid integer literal in moments observable");
+        if (c < '0' || c > '9' || value > (limit - (c - '0')) / 10)
+            throw std::invalid_argument("moments integer outside int64 alphabet");
         value = value * 10 + (c - '0');
     }
-    return neg ? -value : value;
+    if (neg && value == limit) return std::numeric_limits<long long>::min();
+    return neg ? -static_cast<long long>(value) : static_cast<long long>(value);
+}
+
+std::string string_value(const val& input) {
+    if (input.typeOf().as<std::string>() != "string")
+        throw std::invalid_argument("expected a string without coercion");
+    return input.as<std::string>();
+}
+
+template <std::size_t N>
+void object_keys(const val& input, const std::array<const char*, N>& expected) {
+    if (input.isNull() || input.typeOf().as<std::string>() != "object" ||
+        val::global("Array").call<bool>("isArray", input))
+        throw std::invalid_argument("checkpoint fields must be JSON objects");
+    const auto keys = val::global("Object").call<val>("keys", input);
+    if (keys["length"].as<unsigned>() != N)
+        throw std::invalid_argument("checkpoint object key mismatch");
+    for (unsigned i = 0; i < N; ++i) {
+        const auto key = keys[i].as<std::string>();
+        if (std::none_of(expected.begin(), expected.end(), [&](const char* item) { return key == item; }))
+            throw std::invalid_argument("checkpoint object key mismatch");
+    }
+}
+
+double integer_number(const val& input, double minimum, double maximum) {
+    if (input.typeOf().as<std::string>() != "number")
+        throw std::invalid_argument("expected a numeric integer without coercion");
+    const double value = input.as<double>();
+    if (!std::isfinite(value) || std::floor(value) != value || value < minimum || value > maximum ||
+        (value == 0 && std::signbit(value)))
+        throw std::invalid_argument("numeric integer outside admitted range");
+    return value;
+}
+
+// JSON.parse validates grammar but discards duplicate keys and rounds number
+// tokens. The checkpoint permits only integer number tokens (L and legacy tick).
+void validate_json_tokens(const std::string& text) {
+    std::vector<std::vector<std::string>> objects;
+    const auto whitespace = [](char c) { return c == ' ' || c == '\t' || c == '\r' || c == '\n'; };
+    for (std::size_t i = 0; i < text.size(); ++i) {
+        if (text[i] == '{') objects.emplace_back();
+        else if (text[i] == '}') objects.pop_back();
+        else if (text[i] == '"') {
+            const auto start = i++;
+            for (; i < text.size() && text[i] != '"'; ++i)
+                if (text[i] == '\\') ++i;
+            auto next = i + 1;
+            while (next < text.size() && whitespace(text[next])) ++next;
+            if (next < text.size() && text[next] == ':') {
+                const auto key = val::global("JSON").call<val>("parse", val(text.substr(start, i - start + 1))).as<std::string>();
+                auto& keys = objects.back();
+                if (std::find(keys.begin(), keys.end(), key) != keys.end())
+                    throw std::invalid_argument("checkpoint duplicate object key");
+                keys.push_back(key);
+            }
+        } else if (text[i] == '-' || (text[i] >= '0' && text[i] <= '9')) {
+            const auto start = i;
+            while (i + 1 < text.size() &&
+                   ((text[i + 1] >= '0' && text[i + 1] <= '9') || text[i + 1] == '.' ||
+                    text[i + 1] == 'e' || text[i + 1] == 'E' || text[i + 1] == '+' || text[i + 1] == '-')) ++i;
+            const auto token = text.substr(start, i - start + 1);
+            if (token == "-0" || token.find_first_of(".eE") != std::string::npos)
+                throw std::invalid_argument("checkpoint number token must be an integer without exponent or negative zero");
+        }
+    }
 }
 
 // Same realm-independent Uint8Array brand check as ../wasm_bindings.cpp's `bytes()`
@@ -117,31 +184,34 @@ std::vector<Byte> base64_decode(const std::string& text) {
         if (c == '/') return 63;
         return -1;
     };
+    if (text.size() % 4) throw std::invalid_argument("checkpoint base64 needs canonical padding");
     std::vector<Byte> out;
     out.reserve(text.size() / 4 * 3);
-    int buffer = 0, bits = 0;
-    for (char c : text) {
-        if (c == '=' || c == '\n' || c == '\r') continue;
-        const int v = value(c);
-        if (v < 0) throw std::invalid_argument("checkpoint array is not valid base64");
-        buffer = (buffer << 6) | v;
-        bits += 6;
-        if (bits >= 8) {
-            bits -= 8;
-            out.push_back(Byte((buffer >> bits) & 0xFF));
-        }
+    for (std::size_t i = 0; i < text.size(); i += 4) {
+        const int a = value(text[i]), b = value(text[i + 1]);
+        const bool pad2 = text[i + 2] == '=', pad3 = text[i + 3] == '=';
+        const int c = pad2 ? 0 : value(text[i + 2]), d = pad3 ? 0 : value(text[i + 3]);
+        if (a < 0 || b < 0 || c < 0 || d < 0 || (pad2 && !pad3) ||
+            ((pad2 || pad3) && i + 4 != text.size()) ||
+            (pad2 && (b & 15)) || (pad3 && !pad2 && (c & 3)))
+            throw std::invalid_argument("checkpoint array is not canonical base64");
+        const std::uint32_t buffer = (std::uint32_t(a) << 18) | (std::uint32_t(b) << 12) |
+                                     (std::uint32_t(c) << 6) | std::uint32_t(d);
+        out.push_back(Byte(buffer >> 16));
+        if (!pad2) out.push_back(Byte(buffer >> 8));
+        if (!pad3) out.push_back(Byte(buffer));
     }
     return out;
 }
 
-// ---- checkpoint JSON: schema "ftd-hydro-checkpoint-1", matching
+// ---- checkpoint JSON: schema "ftd-hydro-checkpoint-2", matching
 // scripts/phi_v2_lattice/hydro/codec.py's checkpoint()/restore() exactly (field names,
 // hex table/encoding hashes, base64 array order s/bank/sc/fcc/admitted_sc/admitted_fcc/
 // gate_sc/gate_fcc). Parsing reuses the host's JSON.parse via `val` rather than a
 // hand-rolled parser; serialization is hand-rolled (as events_json()/diagnostics() are).
 
-void decode_bytes_into(const val& arrays, const char* name, std::vector<Byte>& target) {
-    const auto raw = base64_decode(arrays[name].as<std::string>());
+void decode_bytes_into(const std::string& text, const char* name, std::vector<Byte>& target) {
+    const auto raw = base64_decode(text);
     if (raw.size() != target.size())
         throw std::invalid_argument(std::string("checkpoint array size mismatch: ") + name);
     std::copy(raw.begin(), raw.end(), target.begin());
@@ -149,33 +219,51 @@ void decode_bytes_into(const val& arrays, const char* name, std::vector<Byte>& t
 
 State parse_checkpoint(const std::string& text) {
     const val parsed = val::global("JSON").call<val>("parse", val(text));
-    if (parsed.isNull() || parsed.isUndefined() || parsed["arrays"].isUndefined())
-        throw std::invalid_argument("checkpoint must be a JSON object with an arrays field");
-    if (parsed["schema"].as<std::string>() != "ftd-hydro-checkpoint-1")
+    validate_json_tokens(text);
+    object_keys(parsed, std::array<const char*, 8>{"schema", "law", "table", "encoding", "boundary", "L", "microtick", "arrays"});
+    const auto schema = string_value(parsed["schema"]);
+    if (schema != "ftd-hydro-checkpoint-1" && schema != "ftd-hydro-checkpoint-2")
         throw std::invalid_argument("checkpoint schema mismatch");
-    if (parsed["law"].as<std::string>() != tables::LAW_ID)
+    if (string_value(parsed["law"]) != tables::LAW_ID)
         throw std::invalid_argument("checkpoint law mismatch");
-    if (parsed["table"].as<std::string>() != table_hash_hex())
+    if (string_value(parsed["table"]) != table_hash_hex())
         throw std::invalid_argument("checkpoint table mismatch");
-    const auto L = std::uint32_t(parsed["L"].as<double>());
-    // microtick is a plain JSON number in the oracle's schema (matching Python's int),
-    // so like Python/JSON.parse it is exact only up to 2^53; fine for realistic runs.
-    const auto microtick = std::uint64_t(parsed["microtick"].as<double>());
-    State state(L);
+    if (string_value(parsed["encoding"]) != encoding_hash_hex() || string_value(parsed["boundary"]) != "periodic")
+        throw std::invalid_argument("checkpoint encoding/boundary mismatch");
+    const auto L = std::uint32_t(integer_number(parsed["L"], 3, std::numeric_limits<std::uint32_t>::max()));
+    const auto microtick = schema == "ftd-hydro-checkpoint-2" ? decimal(string_value(parsed["microtick"]))
+        : std::uint64_t(integer_number(parsed["microtick"], 0, 9007199254740991.0));
+    const auto max = std::numeric_limits<std::size_t>::max();
+    if (std::size_t(L) > max / L || std::size_t(L) * L > max / L)
+        throw std::invalid_argument("checkpoint dimensions overflow");
+    const auto n = std::size_t(L) * L * L;
+    if (n > (max - ftd::hydro::HEADER_BYTES) / ftd::hydro::BYTES_PER_SITE)
+        throw std::invalid_argument("checkpoint byte count overflow");
     const val arrays = parsed["arrays"];
+    const std::array<const char*, 8> names{"s", "bank", "sc", "fcc", "admitted_sc", "admitted_fcc", "gate_sc", "gate_fcc"};
+    const std::array<unsigned, 8> sizes{1, 192, 6, 12, 3, 6, 3, 6};
+    object_keys(arrays, names);
+    std::array<std::string, 8> encoded;
+    for (unsigned i = 0; i < names.size(); ++i) {
+        encoded[i] = string_value(arrays[names[i]]);
+        const auto expected = ((std::uint64_t(n) * sizes[i] + 2) / 3) * 4;
+        if (encoded[i].size() != expected)
+            throw std::invalid_argument(std::string("checkpoint encoded array size mismatch: ") + names[i]);
+    }
+    State state(L);  // All dimensions and supplied array lengths checked before allocation.
     {
-        const auto raw = base64_decode(arrays["s"].as<std::string>());
+        const auto raw = base64_decode(encoded[0]);
         if (raw.size() != state.s.size()) throw std::invalid_argument("checkpoint array size mismatch: s");
         for (std::size_t i = 0; i < raw.size(); ++i)
             state.s[i] = std::int8_t(raw[i] < 128 ? int(raw[i]) : int(raw[i]) - 256);
     }
-    decode_bytes_into(arrays, "bank", state.bank);
-    decode_bytes_into(arrays, "sc", state.sc);
-    decode_bytes_into(arrays, "fcc", state.fcc);
-    decode_bytes_into(arrays, "admitted_sc", state.admitted_sc);
-    decode_bytes_into(arrays, "admitted_fcc", state.admitted_fcc);
-    decode_bytes_into(arrays, "gate_sc", state.gate_sc);
-    decode_bytes_into(arrays, "gate_fcc", state.gate_fcc);
+    decode_bytes_into(encoded[1], "bank", state.bank);
+    decode_bytes_into(encoded[2], "sc", state.sc);
+    decode_bytes_into(encoded[3], "fcc", state.fcc);
+    decode_bytes_into(encoded[4], "admitted_sc", state.admitted_sc);
+    decode_bytes_into(encoded[5], "admitted_fcc", state.admitted_fcc);
+    decode_bytes_into(encoded[6], "gate_sc", state.gate_sc);
+    decode_bytes_into(encoded[7], "gate_fcc", state.gate_fcc);
     state.microtick = microtick;
     ftd::hydro::validate(state);
     return state;
@@ -186,10 +274,10 @@ std::string build_checkpoint(const State& state) {
     std::vector<Byte> s_bytes(state.s.size());
     for (std::size_t i = 0; i < state.s.size(); ++i) s_bytes[i] = Byte(state.s[i]);
     std::ostringstream out;
-    out << "{\"schema\":\"ftd-hydro-checkpoint-1\",\"law\":\"" << tables::LAW_ID
+    out << "{\"schema\":\"ftd-hydro-checkpoint-2\",\"law\":\"" << tables::LAW_ID
         << "\",\"table\":\"" << table_hash_hex() << "\",\"encoding\":\"" << encoding_hash_hex()
-        << "\",\"boundary\":\"periodic\",\"L\":" << state.L << ",\"microtick\":" << state.microtick
-        << ",\"arrays\":{"
+        << "\",\"boundary\":\"periodic\",\"L\":" << state.L << ",\"microtick\":\"" << state.microtick
+        << "\",\"arrays\":{"
         << "\"s\":\"" << base64_encode(s_bytes) << "\""
         << ",\"bank\":\"" << base64_encode(state.bank) << "\""
         << ",\"sc\":\"" << base64_encode(state.sc) << "\""
@@ -347,6 +435,16 @@ std::string moments_lab(const State& state, const std::string& spec) {
     const auto kx = parts[0], ky = parts[1], kz = parts[2];
     if (parts[3] != 0 && parts[3] != 1) throw std::invalid_argument("moments polarity must be 0 or 1");
     const unsigned pol = unsigned(parts[3]);
+    // Periodic aliases must reach identical floating arithmetic even for int64
+    // requests. Choose the same representative in (-L/2, L/2] using integers.
+    const auto reduced = [&](long long k) {
+        const auto L = static_cast<long long>(state.L);
+        auto r = k % L;
+        if (r < 0) r += L;
+        if (r > L / 2) r -= L;
+        return r;
+    };
+    const auto phase_kx = reduced(kx), phase_ky = reduced(ky), phase_kz = reduced(kz);
     const double two_pi = 2.0 * std::acos(-1.0);
     const double factor = two_pi / double(state.L);
     double sum_re[4] = {0, 0, 0, 0}, sum_im[4] = {0, 0, 0, 0};
@@ -362,7 +460,7 @@ std::string moments_lab(const State& state, const std::string& spec) {
                 counts[3] += tables::VELOCITY[v][2];
             }
         }
-        const double phase = factor * (double(kx) * double(p[0]) + double(ky) * double(p[1]) + double(kz) * double(p[2]));
+        const double phase = factor * (double(phase_kx) * double(p[0]) + double(phase_ky) * double(p[1]) + double(phase_kz) * double(p[2]));
         const double c = std::cos(phase), s = std::sin(phase);  // e^{-ik.x} = cos(phase) - i*sin(phase)
         for (int idx = 0; idx < 4; ++idx) {
             sum_re[idx] += double(counts[idx]) * c;
@@ -373,7 +471,8 @@ std::string moments_lab(const State& state, const std::string& spec) {
     out << std::setprecision(17);
     out << "{\"law\":\"" << tables::LAW_ID << "\",\"table_hash\":\"" << table_hash_hex()
         << "\",\"L\":\"" << state.L << "\",\"microtick\":\"" << state.microtick << "\",\"phase\":\"" << state.phase()
-        << "\",\"status\":\"exact_observation\",\"k\":[" << kx << ',' << ky << ',' << kz << "],\"polarity\":" << pol
+        << "\",\"status\":\"approximate_observation\",\"arithmetic\":\"ieee754_binary64\",\"error_bound_status\":\"not_certified\""
+        << ",\"k\":[\"" << kx << "\",\"" << ky << "\",\"" << kz << "\"],\"polarity\":\"" << pol << '"'
         << ",\"moments\":[";
     for (int idx = 0; idx < 4; ++idx) {
         if (idx) out << ',';
@@ -407,20 +506,20 @@ State construct_state(const std::string& checkpointJson) {
 class HydroState {
     State state_;
 public:
-    explicit HydroState(const std::string& checkpointJson) : state_(construct_state(checkpointJson)) {}
+    explicit HydroState(const val& checkpointJson) : state_(construct_state(string_value(checkpointJson))) {}
     std::string checkpoint() const { return build_checkpoint(state_); }
-    void restore(const std::string& checkpointJson) { state_ = construct_state(checkpointJson); }
-    std::string advance(const std::string& ticks) {
+    void restore(const val& checkpointJson) { state_ = construct_state(string_value(checkpointJson)); }
+    std::string advance(const val& ticks) {
         State candidate = state_;
-        const auto events = ftd::hydro::advance(candidate, decimal(ticks));
+        const auto events = ftd::hydro::advance(candidate, decimal(string_value(ticks)));
         const std::string result = "{\"diagnostics\":" + ::diagnostics(candidate)
             + ",\"events\":" + ftd::hydro::events_json(events) + "}";
         state_ = std::move(candidate);
         return result;
     }
     std::string diagnostics() const { return ::diagnostics(state_); }
-    std::string observe(const std::string& width, const std::string& observable) const {
-        return ::observe(state_, width, observable);
+    std::string observe(const val& width, const val& observable) const {
+        return ::observe(state_, string_value(width), string_value(observable));
     }
 };
 
@@ -433,7 +532,7 @@ void loadTable(const val& input) {
 EMSCRIPTEN_BINDINGS(ftd_hydro_candidate) {
     emscripten::function("loadTable", &loadTable);
     emscripten::class_<HydroState>("HydroState")
-        .constructor<const std::string&>()
+        .constructor<const val&>()
         .function("advance", &HydroState::advance)
         .function("checkpoint", &HydroState::checkpoint)
         .function("restore", &HydroState::restore)

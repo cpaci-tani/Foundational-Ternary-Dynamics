@@ -7,7 +7,7 @@ See engine/docs/CONTRACT_STRICT_FINITE_WINDOW_V1.md for the support theorem.
 from dataclasses import dataclass, replace
 import base64
 import hashlib
-import json
+from . import exact_json as J
 
 import numpy as np
 
@@ -175,12 +175,12 @@ class CausalWindow:
         payload = {"schema": SCHEMA, "boundary": BOUNDARY, "origin": self._origin,
                    "initial_tick": self._initial_tick,
                    "snapshot": base64.b64encode(self._snapshot).decode("ascii")}
-        return I.pack(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode())
+        return I.pack(J.dumps(payload).encode())
 
     @classmethod
     def restore(cls, envelope):
         try:
-            payload = json.loads(I.unpack(envelope), object_pairs_hook=K._unique_object)
+            payload = J.loads(I.unpack(envelope), object_pairs_hook=K._unique_object)
             if type(payload) is not dict or set(payload) != {"schema", "boundary", "origin", "initial_tick", "snapshot"}:
                 raise ValueError("causal window checkpoint fields do not match schema")
             if payload["schema"] != SCHEMA or payload["boundary"] != BOUNDARY:

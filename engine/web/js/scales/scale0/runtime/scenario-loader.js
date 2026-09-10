@@ -957,6 +957,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
         const workerCallbacks = {
             onRuntimeFailure: (msg) => {
                 if (!callbackIsCurrent()) return;
+                ctx.scale0Validity?.runtimeFailure(msg);
                 ctx.pauseSimulation?.();
                 reportScenarioSetupFailure(`Engine paused; current state retained. ${msg}`);
             },

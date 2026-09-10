@@ -1,4 +1,5 @@
 import { getTopbarInlineTemplate, getTopbarActionButtons, getAssistantSidebarTemplate } from './template.js';
+import { createValidityIndicator } from '../validity-status.js';
 
 function htmlToFragment(markup) {
     const template = document.createElement('template');
@@ -30,6 +31,7 @@ export class TopbarComponent {
         this.toolbarMenuButton = null;
         this.assistantButton = null;
         this.vtkButton = null;
+        this.validity = null;
     }
 
     init() {
@@ -37,6 +39,8 @@ export class TopbarComponent {
         if (!this.toolbar.querySelector('[data-topbar-slot="brand"]')) {
             this._rebuildToolbar();
         }
+        this.validity ??= createValidityIndicator(this.toolbar.querySelector('[data-topbar-slot="actions"]'),
+            { id: 'scale0-validity-status' });
         this.toolbar.dataset.topbar = 'enhanced';
         this._ensureAssistantSidebar();
         this._bindInteractions();
@@ -86,6 +90,7 @@ export class TopbarComponent {
 
         this._mountRegistryItems(secondarySlot);
         actionsSlot.prepend(htmlToFragment(getTopbarActionButtons()));
+        this.validity = createValidityIndicator(actionsSlot, { id: 'scale0-validity-status' });
         this.toolbar.dataset.compactMenu = 'closed';
     }
 

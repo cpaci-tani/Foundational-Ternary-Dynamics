@@ -12,7 +12,7 @@ from threading import RLock
 from typing import Any
 from uuid import uuid4
 
-from . import channels as C, coarse as B, staged as P
+from . import channels as C, coarse as B, staged as P, exact_json as J
 
 
 def _serialized(method):
@@ -49,7 +49,7 @@ class Observation:
             if isinstance(value, bool) or value is None or isinstance(value, str):
                 return value
             if isinstance(value, Integral):
-                return str(int(value))
+                return J.integer_text(int(value))
             if is_dataclass(value):
                 return encode(asdict(value))
             if isinstance(value, dict):

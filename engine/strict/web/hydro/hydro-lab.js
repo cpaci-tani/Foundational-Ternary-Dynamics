@@ -1,13 +1,18 @@
 // Opt-in local laboratory for phi-hydro-staged-candidate-1 (Task 13). All evolution
 // occurs in the compiled worker; this file only converts the FTDHY01 preparation
-// transport into the WASM's "ftd-hydro-checkpoint-1" JSON checkpoint schema (the hydro
+// transport into the WASM's "ftd-hydro-checkpoint-2" JSON checkpoint schema (the hydro
 // bindings never accept the native binary transport directly -- see
 // engine/strict/hydro/wasm_bindings_hydro.cpp and task-10-report.md), drives
 // advance/observe, and renders the two field canvases and the projected-mode chart.
+import { validateHydroPreparation, verifyRuntimeArtifact, supportsShearDecayFit } from './hydro-preparation.js';
+import { hydroObservationValidity, hydroFailureValidity } from './hydro-validity.js';
+import { createValidityIndicator } from '../../../web/js/ui/components/validity-status.js';
 const byId = (id) => document.getElementById(id);
+const validity = createValidityIndicator(byId('hydro-validity'), { id: 'hydro-validity-status' });
+validity.reset('Waiting for a validated preparation and its first observation.');
 const elements = Object.fromEntries([
     'preparation', 'size', 'reset', 'step', 'run', 'status',
-    'stage', 'gammaFit', 'nuFit', 'probedName', 'probedValue',
+    'stage', 'gammaFit', 'nuFit', 'probedName', 'probedValue', 'probedLabel', 'fitScope',
     'nuT2', 'nuE', 'csq', 'gconst', 'mass', 'momentum',
     'density', 'momentum-canvas', 'chart', 'provenance',
 ].map((id) => [id, byId(id)]));
@@ -18,55 +23,8 @@ let worker = null, ownerId = null, generation = '0', requestSequence = 0, epoch 
 let running = false, busy = false, lastPublish = 0;
 let manifest = null, sidecar = null, stageIndex = 0, amplitudeHistory = [];
 let lastBlocks = null, lastSide = 0, lastZMid = 0;
+let lastObservedMicrotick = null;
 const pending = new Map();
-
-// ---- FTDHY01 -> "ftd-hydro-checkpoint-1" conversion --------------------------------
-// scripts/phi_v2_lattice/hydro/codec.py's encode()/checkpoint() both serialize the same
-// eight arrays via numpy .tobytes(order="C") in the same order; every element is one
-// byte (int8 or bool) either way, so the raw byte ranges after the FTDHY01 header are
-// byte-identical to what codec.checkpoint()'s base64 fields would hold for the same
-// state. No dtype reinterpretation is needed here -- only slicing and base64 encoding.
-const HEADER_SIZE = 8 + 4 + 8 + 32 + 32 + 32; // magic + L(u32) + microtick(u64) + 3x32-byte hashes
-const MAGIC = [0x46, 0x54, 0x44, 0x48, 0x59, 0x30, 0x31, 0x00]; // "FTDHY01\0"
-const ARRAY_ELEMENTS_PER_SITE = [
-    ['s', 1], ['bank', 192], ['sc', 6], ['fcc', 12],
-    ['admitted_sc', 3], ['admitted_fcc', 6], ['gate_sc', 3], ['gate_fcc', 6],
-];
-
-function base64FromBytes(bytes) {
-    let binary = '';
-    const chunk = 0x8000;
-    for (let i = 0; i < bytes.length; i += chunk) binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
-    return btoa(binary);
-}
-
-function ftdhy01ToCheckpointJson(buffer, manifestForHashes) {
-    const bytes = new Uint8Array(buffer);
-    for (let i = 0; i < MAGIC.length; i++) {
-        if (bytes[i] !== MAGIC[i]) throw new Error('preparation is not a valid FTDHY01 transport');
-    }
-    const view = new DataView(buffer);
-    const L = view.getUint32(8, true);
-    const microtick = view.getBigUint64(12, true);
-    const n = L ** 3;
-    let offset = HEADER_SIZE;
-    const arrays = {};
-    for (const [name, perSite] of ARRAY_ELEMENTS_PER_SITE) {
-        const size = perSite * n;
-        arrays[name] = base64FromBytes(bytes.subarray(offset, offset + size));
-        offset += size;
-    }
-    if (offset !== bytes.length) throw new Error('preparation transport length does not match its declared L');
-    return JSON.stringify({
-        schema: 'ftd-hydro-checkpoint-1', law: manifestForHashes.law_id, table: manifestForHashes.table_hash,
-        encoding: manifestForHashes.encoding_hash, boundary: 'periodic', L, microtick: Number(microtick), arrays,
-    });
-}
-
-async function sha256Hex(buffer) {
-    const digest = await crypto.subtle.digest('SHA-256', buffer);
-    return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('');
-}
 
 // ---- worker transport (mirrors ../laboratory.js's request/terminate pattern) -------
 function request(op, fields = {}) {
@@ -166,26 +124,13 @@ function paintChart(canvas, measured, predicted) {
     ctx.stroke();
     ctx.fillStyle = '#e1c887';
     const radius = Math.max(1.5, pixels * 0.006);
-    measured.forEach((v, i) => { const x = toX(i), y = toY(v); ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill(); });
+    measured.forEach((v, i) => {
+        if (!Number.isFinite(v)) return;
+        const x = toX(i), y = toY(v); ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
+    });
 }
 
 function repaint() { paintDensity(densityCanvas, lastBlocks, lastSide, lastZMid); paintMomentum(momentumCanvas, lastBlocks, lastSide, lastZMid); paintChart(elements.chart, amplitudeHistory, sidecar ? sidecar.prediction.amplitude : []); }
-
-// ---- decay-rate fit -------------------------------------------------------------------
-function fitDecayRate(history) {
-    const windowed = history.slice(-32);
-    if (windowed.length < 2) return null;
-    const startIndex = history.length - windowed.length;
-    const xs = windowed.map((_, i) => startIndex + i);
-    const ys = windowed.map((v) => Math.log(Math.max(v, 1e-300)));
-    const n = xs.length;
-    const xbar = xs.reduce((a, b) => a + b, 0) / n;
-    const ybar = ys.reduce((a, b) => a + b, 0) / n;
-    let num = 0, den = 0;
-    for (let i = 0; i < n; i++) { num += (xs[i] - xbar) * (ys[i] - ybar); den += (xs[i] - xbar) ** 2; }
-    if (den === 0) return null;
-    return -(num / den);
-}
 
 function projectedAmplitude(momentsPayload, polarizationVector) {
     const [px, py, pz] = momentsPayload.moments.slice(1);
@@ -206,17 +151,20 @@ function aggregateTotals(blocks) {
     return { mass, momentum: [px, py, pz] };
 }
 
-function updateReadouts() {
+function updateReadouts(fit) {
     elements.stage.textContent = String(stageIndex);
-    const gamma = fitDecayRate(amplitudeHistory);
+    const shearFit = supportsShearDecayFit(sidecar);
+    const gamma = fit.gamma;
+    elements.fitScope.textContent = shearFit ? 'last ≤32 stages; empirical amplitude fit' : 'Sound frequency fit unavailable';
+    elements.probedLabel.textContent = shearFit ? 'Decay-based diffusivity estimate' : 'Unavailable for oscillating sound mode';
     if (gamma === null || !Number.isFinite(gamma)) {
         elements.gammaFit.textContent = '—'; elements.nuFit.textContent = '—';
     } else {
         elements.gammaFit.textContent = gamma.toExponential(4);
-        elements.nuFit.textContent = (gamma / sidecar.k_squared).toFixed(6);
+        elements.nuFit.textContent = fit.diffusivity.toFixed(6);
     }
     const probed = sidecar.constant_probed;
-    elements.probedName.textContent = `Constant probed: ${probed}`;
+    elements.probedName.textContent = `Reference constant: ${probed}`;
     elements.probedValue.textContent = sidecar.constants[probed].float.toFixed(6);
     elements.nuT2.textContent = sidecar.constants.nu_T2.float.toFixed(6);
     elements.nuE.textContent = sidecar.constants.nu_E.float.toFixed(6);
@@ -232,17 +180,23 @@ function controls() {
 
 function clearPublication() {
     lastBlocks = null; amplitudeHistory = []; stageIndex = 0; sidecar = null; manifest = null;
+    lastObservedMicrotick = null;
+    validity.reset('Waiting for a validated preparation and its first observation.');
     window.__hydroLabSnapshot = null;
     for (const canvas of [densityCanvas, momentumCanvas, elements.chart]) canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
     for (const key of ['stage', 'gammaFit', 'nuFit', 'probedValue', 'nuT2', 'nuE', 'csq', 'gconst', 'mass', 'momentum']) elements[key].textContent = '—';
-    elements.probedName.textContent = 'Constant probed';
+    elements.probedName.textContent = 'Reference constant';
+    elements.probedLabel.textContent = 'Decay-based diffusivity estimate';
+    elements.fitScope.textContent = 'last ≤32 stages; empirical amplitude fit';
     elements.provenance.textContent = 'Waiting for one authoritative owner.';
 }
 
 function fail(error, localEpoch = epoch) {
     if (localEpoch !== epoch) return;
+    const failure = hydroFailureValidity(error, lastObservedMicrotick);
     epoch++; running = false; busy = false; ownerId = null; generation = '0';
     terminate(); clearPublication(); elements.status.textContent = String(error.message || error); controls();
+    validity.set(failure);
 }
 
 async function observeAndRecord(localEpoch) {
@@ -254,22 +208,36 @@ async function observeAndRecord(localEpoch) {
     const moments = await request('observe', { width: '1', observable: `moments:${mx},${my},${mz},0` });
     if (localEpoch !== epoch) return;
     if (fields.ownerId !== moments.ownerId || fields.generation !== moments.generation
-        || fields.payload.microtick !== moments.payload.microtick) {
+        || fields.payload.microtick !== moments.payload.microtick
+        || fields.payload.L !== String(L) || moments.payload.L !== String(L)
+        || fields.payload.phase !== moments.payload.phase || moments.payload.polarity !== '0'
+        || !Array.isArray(moments.payload.k) || moments.payload.k.length !== 3
+        || moments.payload.k.some((value, i) => value !== String(sidecar.k_integers[i]))
+        || fields.payload.width !== width || fields.payload.law !== manifest.law_id
+        || moments.payload.law !== manifest.law_id
+        || fields.payload.table_hash !== manifest.table_hash || moments.payload.table_hash !== manifest.table_hash) {
         throw new Error('Observation lineage mismatch');
     }
     const blocks = fields.payload.blocks;
     lastBlocks = blocks; lastSide = side; lastZMid = Math.floor(side / 2);
     const amplitude = projectedAmplitude(moments.payload, sidecar.polarization_vector);
-    amplitudeHistory.push(amplitude);
+    // Retain a gap at this stage, rather than shifting later points in time.
+    const displayedAmplitude = Number.isFinite(amplitude) && amplitude >= 0 ? amplitude : null;
+    amplitudeHistory.push(displayedAmplitude);
+    const checked = hydroObservationValidity({ amplitude, history: amplitudeHistory,
+        kSquared: sidecar.k_squared, fitEnabled: supportsShearDecayFit(sidecar), microtick: fields.payload.microtick });
+    lastObservedMicrotick = fields.payload.microtick;
     const totals = aggregateTotals(blocks);
     elements.mass.textContent = totals.mass.toString();
     elements.momentum.textContent = `(${totals.momentum.map((v) => v.toString()).join(', ')})`;
     repaint();
-    updateReadouts();
+    updateReadouts(checked.fit);
+    validity.set(checked.status);
     window.__hydroLabSnapshot = {
         ownerId, generation, stage: stageIndex, microtick: fields.payload.microtick,
         preparation: elements.preparation.value, L, mass: totals.mass.toString(),
-        momentum: totals.momentum.map((v) => v.toString()), amplitude,
+        momentum: totals.momentum.map((v) => v.toString()), amplitude: displayedAmplitude,
+        observationValid: checked.amplitudeValid && !checked.fit.issue,
     };
 }
 
@@ -288,7 +256,7 @@ async function initialize() {
         const sidecarUrl = new URL(`../../../build_strict_hydro/lab/${preparation}_${L}.json`, import.meta.url);
         const sidecarResponse = await fetch(sidecarUrl);
         if (!sidecarResponse.ok) throw new Error('Local hydro preparations are missing. Run prepare_hydro_lab.py.');
-        const fetchedSidecar = await sidecarResponse.json();
+        const sidecarBuffer = await sidecarResponse.arrayBuffer();
 
         const binUrl = new URL(`../../../build_strict_hydro/lab/${preparation}_${L}.bin`, import.meta.url);
         const binResponse = await fetch(binUrl);
@@ -296,12 +264,19 @@ async function initialize() {
         const binBuffer = await binResponse.arrayBuffer();
         if (localEpoch !== epoch) return;
 
-        const checkpoint = ftdhy01ToCheckpointJson(binBuffer, fetchedManifest);
+        const { checkpoint, sidecar: fetchedSidecar, binHash } = await validateHydroPreparation({
+            manifest: fetchedManifest, sidecarBuffer, binBuffer, preparation, L,
+        });
         const tableUrl = new URL(`../../../build_strict_hydro_tables/hydro_collision_${fetchedManifest.table_hash16}.u32`, import.meta.url);
         const wasmModuleUrl = new URL('../../../build_strict_hydro_wasm/ftd_hydro_wasm.mjs', import.meta.url);
         const wasmBinaryUrl = new URL('../../../build_strict_hydro_wasm/ftd_hydro_wasm.wasm', import.meta.url);
-        const wasmBinaryResponse = await fetch(wasmBinaryUrl);
-        const wasmModuleHash = wasmBinaryResponse.ok ? await sha256Hex(await wasmBinaryResponse.arrayBuffer()) : 'unavailable';
+        const fetchedRuntimeArtifacts = {};
+        for (const [name, url] of [['loader', wasmModuleUrl], ['binary', wasmBinaryUrl]]) {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Hydro WASM ${name} fetch failed: ${response.status}`);
+            fetchedRuntimeArtifacts[name] = await verifyRuntimeArtifact(
+                await response.arrayBuffer(), url, fetchedManifest, manifestUrl);
+        }
         if (localEpoch !== epoch) return;
 
         worker = new Worker(new URL('../../../web/js/strict/hydro-worker.js', import.meta.url), { type: 'module' });
@@ -322,7 +297,9 @@ async function initialize() {
         manifest = fetchedManifest; sidecar = fetchedSidecar; stageIndex = 0; amplitudeHistory = [];
         elements.provenance.textContent = JSON.stringify({
             lawId: manifest.law_id, tableHash: manifest.table_hash, tableHash16: manifest.table_hash16,
-            preparationSha256: sidecar.bin_sha256, wasmModuleHash, ownerId, generation,
+            preparationSha256: binHash, preparationAndSidecarVerified: true,
+            fetchedRuntimeArtifacts, runtimeDigestScope: 'Fetched artifact bytes; worker loads its own module',
+            ownerId, generation,
         }, null, 2);
         await observeAndRecord(localEpoch);
         if (localEpoch === epoch) elements.status.textContent = 'Paused. One stage advances four microticks.';

@@ -5,14 +5,15 @@
  * Two contract differences from the strict protocol, both forced by the hydro
  * candidate's own bindings (engine/strict/hydro/wasm_bindings_hydro.cpp):
  *   1. `checkpoint`/`restore` carry a JSON string (the Python oracle's
- *      "ftd-hydro-checkpoint-1" schema), not a Uint8Array of the native binary
+ *      "ftd-hydro-checkpoint-2" schema; safe-integer v1 imports remain supported),
+ *      not a Uint8Array of the native binary
  *      transport -- so there is no SharedArrayBuffer aliasing risk to defend against
  *      (strings are immutable values) and no `copyCheckpoint` step is needed here.
  *   2. The bindings already stringify every exact (potentially big) integer in their
  *      JSON output and use raw JSON numbers only for the "moments" observable's
- *      genuinely-approximate double re/im parts. `exact()` below reflects that: it
- *      still turns bigints into decimal strings, but passes finite numbers through
- *      rather than demanding they be safe integers.
+ *      approximate double re/im parts. `exact()` below allows those numbers only
+ *      in a moments observation's 4x2 array.
+ *      Metadata and exact observations retain decimal-string integer encoding.
  */
 const DECIMAL = /^(0|[1-9][0-9]*)$/;
 
@@ -23,19 +24,43 @@ function decimal(value, name) {
     return value;
 }
 
-function exact(value) {
-    if (typeof value === 'bigint') return value.toString();
+function exact(value, path = [], allowMoments = false) {
+    if (typeof value === 'bigint') value = value.toString();
     if (typeof value === 'number') {
-        if (!Number.isFinite(value)) throw new TypeError('adapter returned a non-finite number');
-        return value;
+        if (allowMoments && path.length === 3 && path[0] === 'moments') {
+            if (!Number.isFinite(value)) throw new TypeError('adapter returned a non-finite moment');
+            return value;
+        }
+        if (!Number.isSafeInteger(value)) throw new TypeError('adapter returned an inexact integer outside moments');
+        return exact(String(value), path, allowMoments);
     }
     if (value instanceof Uint8Array) return value.slice();
-    if (Array.isArray(value)) return value.map(exact);
+    if (Array.isArray(value)) return value.map((item, i) => exact(item, [...path, i], allowMoments));
     if (value && typeof value === 'object') {
-        return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, exact(v)]));
+        return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, exact(v, [...path, k], allowMoments)]));
     }
-    if (value === null || typeof value === 'string' || typeof value === 'boolean') return value;
+    if (typeof value === 'string') {
+        const key = path.at(-1);
+        if (['microtick', 'L', 'width', 'phase', 'work_units', 'polarity'].includes(key)) decimal(value, key);
+        if (path.length === 2 && path[0] === 'k' && !/^(0|-?[1-9][0-9]*)$/.test(value)) {
+            throw new TypeError('k must contain canonical signed decimal strings');
+        }
+        return value;
+    }
+    if (value === null || typeof value === 'boolean') return value;
     throw new TypeError('unsupported adapter observation value');
+}
+
+function observationPayload(payload, observable) {
+    if (typeof observable !== 'string' || !observable.startsWith('moments:')) return exact(payload);
+    if (payload?.status !== 'approximate_observation' || payload.arithmetic !== 'ieee754_binary64'
+        || payload.error_bound_status !== 'not_certified'
+        || !Array.isArray(payload.moments) || payload.moments.length !== 4
+        || !payload.moments.every((pair) => Array.isArray(pair) && pair.length === 2
+            && pair.every((part) => typeof part === 'number' && Number.isFinite(part)))) {
+        throw new TypeError('invalid approximate moments observation');
+    }
+    return exact(payload, [], true);
 }
 
 /** adapter: advance(decimal), checkpoint(), restore(jsonString),
@@ -56,9 +81,9 @@ export function createHydroWorkerProtocol(adapter, {
     let generation = 0n;
     let disposed = false;
     let queue = Promise.resolve();
-    const envelope = (requestId, payload) => ({
+    const envelope = (requestId, payload, observable) => ({
         requestId, ownerId, generation: generation.toString(),
-        integerEncoding: 'decimal_string', payload: exact(payload),
+        integerEncoding: 'decimal_string', payload: observationPayload(payload, observable),
     });
     const alive = () => { if (disposed) throw new Error('hydro runtime disposed'); };
     const capabilities = async () => ({ ...await adapter.capabilities(), maxBatchMicroticks });
@@ -119,7 +144,7 @@ export function createHydroWorkerProtocol(adapter, {
             default: throw new Error(`unsupported hydro operation: ${message.op}`);
             }
             alive();
-            return envelope(message.requestId, payload);
+            return envelope(message.requestId, payload, message.op === 'observe' ? message.observable : undefined);
         });
         queue = result.catch(() => {});
         return result;
@@ -142,6 +167,10 @@ export function createWasmHydroAdapter(module, checkpointJson) {
         capabilities() {
             alive();
             return { backend: 'hydro_wasm_candidate', observables: ['counts', 'fields', 'moments'],
+                observableSyntax: { moments: 'moments:kx,ky,kz,pol' },
+                observationPrecision: { counts: 'exact_integer', fields: 'exact_integer',
+                    moments: { status: 'approximate_observation', arithmetic: 'ieee754_binary64',
+                        error_bound_status: 'not_certified' } },
                 autonomousCoarseEvolution: false, continuumRecovery: false, physicalUnits: false,
                 particleIdentification: false, gravityRecovery: false, canonicalAdoption: false };
         },

@@ -3,9 +3,8 @@ from __future__ import annotations
 
 import base64
 import hashlib
-import json
 import numpy as np
-from . import channels as C, state as S
+from . import channels as C, state as S, exact_json as J
 from .staged import LAW_ID, StagedState, validate
 
 SCHEMA = "ftd-staged-checkpoint-1"
@@ -21,7 +20,7 @@ def checkpoint(state: StagedState) -> bytes:
         arrays[name] = base64.b64encode(value.tobytes(order="C")).decode("ascii")
     payload = dict(schema=SCHEMA, law=LAW_ID, collision=C.COLLISION_HASH, encoding=ENCODING_HASH,
                    boundary="periodic", L=int(state.lattice.L), microtick=int(state.microtick), arrays=arrays)
-    return json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return J.dumps(payload).encode("utf-8")
 
 
 def _unique_object(pairs):
@@ -37,7 +36,7 @@ def restore(data: bytes) -> StagedState:
     try:
         if type(data) is not bytes:
             raise ValueError("checkpoint must be bytes")
-        payload = json.loads(data, object_pairs_hook=_unique_object)
+        payload = J.loads(data, object_pairs_hook=_unique_object)
         expected = {"schema", "law", "collision", "encoding", "boundary", "L", "microtick", "arrays"}
         if not isinstance(payload, dict) or set(payload) != expected:
             raise ValueError("checkpoint fields do not match schema")

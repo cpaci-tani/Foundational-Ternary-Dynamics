@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import numpy as np
 from ..state import BLANK_IDX, z_of, idx_of  # noqa: F401  (re-exported for the hydro modules)
 from .channels import N_CHANNELS
+from ..staged import _plain_integer
 
 
 @dataclass
@@ -16,10 +17,11 @@ class LatticeState:
 
 
 def n_sites(st: LatticeState) -> int:
-    return st.L ** 3
+    return _plain_integer(st.L, "periodic lattice side", 3) ** 3
 
 
 def blank(L: int) -> LatticeState:
+    L = _plain_integer(L, "periodic lattice side", 3)
     N = L ** 3
     return LatticeState(L, np.zeros(N, np.int8), np.zeros((N, N_CHANNELS), bool),
                         np.full((N, 3, 2), BLANK_IDX, np.int8), np.full((N, 3, 2, 2), BLANK_IDX, np.int8))

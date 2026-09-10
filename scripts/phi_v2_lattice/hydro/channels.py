@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import itertools
 import os
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -139,14 +140,39 @@ def table_path() -> Path:
     return Path(os.environ.get("FTD_HYDRO_TABLE", default))
 
 
-def load_table() -> np.ndarray:
-    path = table_path()
-    if not path.is_file():
-        raise FileNotFoundError(f"generate the collision table first: {path}")
-    data = path.read_bytes()
+@lru_cache(maxsize=1)
+def _verified_table_bytes(data: bytes) -> bytes:
+    if len(data) != 4 * (1 << N_VEL):
+        raise ValueError("collision table has wrong length")
     if hashlib.sha256(data).hexdigest() != TABLE_HASH:
         raise ValueError("collision table hash mismatch")
-    table = np.frombuffer(data, dtype="<u4")
-    if table.shape != (1 << N_VEL,):
-        raise ValueError("collision table has wrong length")
-    return table
+    return data
+
+
+@lru_cache(maxsize=1)
+def _loaded_table_bytes(filename: str) -> bytes:
+    path = Path(filename)
+    if not path.is_file():
+        raise FileNotFoundError(f"generate the collision table first: {path}")
+    return _verified_table_bytes(path.read_bytes())
+
+
+def load_table() -> np.ndarray:
+    """Fresh array metadata over one cached, verified immutable law blob.
+
+    Retaining bytes, rather than an ndarray, prevents a caller's dtype/shape
+    changes from altering the next load. Normal steps do not reread or rehash
+    the 64 MiB table. A changed law still requires a separately versioned module.
+    """
+    return np.frombuffer(_loaded_table_bytes(str(table_path().resolve())), dtype="<u4")
+
+
+def checked_table(table: np.ndarray) -> np.ndarray:
+    """Snapshot untrusted storage; never admit executable lookup overrides."""
+    if (type(table) is not np.ndarray or table.dtype != np.dtype("<u4")
+            or table.shape != (1 << N_VEL,) or not table.flags.c_contiguous):
+        raise ValueError("collision table requires concrete canonical uint32 storage")
+    data = table.base
+    if type(data) is not bytes or len(data) != table.nbytes:
+        data = table.tobytes(order="C")
+    return np.frombuffer(_verified_table_bytes(data), dtype="<u4")

@@ -1,8 +1,8 @@
 """Four-microtick staged schedule of phi-hydro-staged-candidate-1."""
 from __future__ import annotations
 from dataclasses import dataclass
-from numbers import Integral
 import numpy as np
+from ..staged import _plain_integer
 from .. import geometry as G
 from .._proofs import encode, rotate, relation_tick, phase_index, readout
 from ..tick import gate
@@ -26,7 +26,7 @@ class StagedState:
 
 
 def _array(value, dtype, shape, name, bounds=None):
-    if not isinstance(value, np.ndarray) or value.dtype != np.dtype(dtype) or value.shape != shape:
+    if type(value) is not np.ndarray or value.dtype != np.dtype(dtype) or value.shape != shape:
         raise ValueError(f"{name}: expected {dtype} array of shape {shape}")
     if value.dtype == np.dtype(bool) and np.any(value.view(np.uint8) > 1):
         raise ValueError(f"{name}: noncanonical boolean bytes")
@@ -35,11 +35,9 @@ def _array(value, dtype, shape, name, bounds=None):
 
 
 def _validate_lattice(st):
-    if not isinstance(st, S.LatticeState):
+    if type(st) is not S.LatticeState:
         raise ValueError("expected hydro LatticeState")
-    if isinstance(st.L, bool) or not isinstance(st.L, Integral) or st.L < 3:
-        raise ValueError("periodic candidate requires integer L >= 3")
-    n = int(st.L) ** 3
+    n = _plain_integer(st.L, "periodic lattice side", 3) ** 3
     _array(st.s, "int8", (n,), "s", (-1, 1))
     _array(st.bank, "bool", (n, H.N_CHANNELS), "bank")
     _array(st.sc, "int8", (n, 3, 2), "sc", (0, 8))
@@ -50,10 +48,9 @@ def _validate_lattice(st):
 
 
 def validate(state: StagedState) -> None:
-    if not isinstance(state, StagedState):
+    if type(state) is not StagedState:
         raise ValueError("expected StagedState")
-    if isinstance(state.microtick, bool) or not isinstance(state.microtick, Integral) or state.microtick < 0:
-        raise ValueError("microtick must be a nonnegative integer")
+    _plain_integer(state.microtick, "microtick")
     n = _validate_lattice(state.lattice)
     for name, shape in (("admitted_sc", (n, 3)), ("admitted_fcc", (n, 3, 2)), ("gate_sc", (n, 3)), ("gate_fcc", (n, 3, 2))):
         _array(getattr(state, name), "bool", shape, name)
@@ -88,7 +85,7 @@ def _cross(pair, even):
 
 def step(state: StagedState, table=None):
     validate(state)
-    table = H.load_table() if table is None else table
+    table = H.load_table() if table is None else H.checked_table(table)
     st = state.lattice
     out = StagedState(int(state.microtick) + 1, S.copy(st), state.admitted_sc.copy(), state.admitted_fcc.copy(),
                       state.gate_sc.copy(), state.gate_fcc.copy())

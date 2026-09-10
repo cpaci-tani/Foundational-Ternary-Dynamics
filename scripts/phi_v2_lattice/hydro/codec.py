@@ -2,9 +2,11 @@
 from __future__ import annotations
 import base64
 import hashlib
-import json
 import struct
+from math import prod
 import numpy as np
+from .. import exact_json as J
+from ..checkpoint import _unique_object
 from . import channels as H, staged as P, state as S
 
 MAGIC = b"FTDHY01\0"
@@ -34,7 +36,7 @@ def encode(state: P.StagedState) -> bytes:
 
 
 def decode(data: bytes) -> P.StagedState:
-    if not isinstance(data, bytes) or len(data) < HEADER.size:
+    if type(data) is not bytes or len(data) < HEADER.size:
         raise ValueError("native state must be complete bytes")
     magic, L, microtick, *hashes = HEADER.unpack_from(data)
     if magic != MAGIC or tuple(hashes) != _hashes():
@@ -44,7 +46,7 @@ def decode(data: bytes) -> P.StagedState:
         raise ValueError("native state dimensions or exact byte length invalid")
     arrays, offset = [], HEADER.size
     for i, (name, shape) in enumerate(zip(NAMES, _shapes(n))):
-        size = int(np.prod(shape)); raw = data[offset:offset + size]
+        size = prod(shape); raw = data[offset:offset + size]
         if i not in _INT8 and any(v > 1 for v in raw):
             raise ValueError(f"noncanonical boolean storage in {name}")
         arrays.append(np.frombuffer(raw, dtype=np.int8 if i in _INT8 else bool).reshape(shape).copy())
@@ -54,26 +56,57 @@ def decode(data: bytes) -> P.StagedState:
     return result
 
 
-SCHEMA = "ftd-hydro-checkpoint-1"
+LEGACY_SCHEMA = "ftd-hydro-checkpoint-1"
+SCHEMA = "ftd-hydro-checkpoint-2"
 
 
 def checkpoint(state: P.StagedState) -> bytes:
     P.validate(state)
     arrays = {name: base64.b64encode(a.tobytes(order="C")).decode("ascii") for name, a in zip(NAMES, _arrays(state))}
     payload = dict(schema=SCHEMA, law=P.LAW_ID, table=H.TABLE_HASH, encoding=H.ENCODING_HASH, boundary="periodic",
-                   L=int(state.lattice.L), microtick=int(state.microtick), arrays=arrays)
-    return json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+                   L=int(state.lattice.L), microtick=J.integer_text(int(state.microtick)), arrays=arrays)
+    return J.dumps(payload).encode("utf-8")
 
 
 def restore(data: bytes) -> P.StagedState:
-    payload = json.loads(data)
-    if payload.get("schema") != SCHEMA or payload.get("law") != P.LAW_ID or payload.get("table") != H.TABLE_HASH:
-        raise ValueError("checkpoint schema/law/table mismatch")
-    L = int(payload["L"]); n = L ** 3
-    arrays = []
-    for i, (name, shape) in enumerate(zip(NAMES, _shapes(n))):
-        raw = base64.b64decode(payload["arrays"][name])
-        arrays.append(np.frombuffer(raw, dtype=np.int8 if i in _INT8 else bool).reshape(shape).copy())
-    state = P.StagedState(int(payload["microtick"]), S.LatticeState(L, *arrays[:4]), *arrays[4:])
-    P.validate(state)
-    return state
+    try:
+        if type(data) is not bytes:
+            raise ValueError("checkpoint must be complete bytes")
+        payload = J.loads(data, object_pairs_hook=_unique_object)
+        expected = {"schema", "law", "table", "encoding", "boundary", "L", "microtick", "arrays"}
+        if type(payload) is not dict or set(payload) != expected:
+            raise ValueError("checkpoint fields do not match schema")
+        if payload["schema"] not in (LEGACY_SCHEMA, SCHEMA):
+            raise ValueError("checkpoint schema mismatch")
+        for key, value in (("law", P.LAW_ID), ("table", H.TABLE_HASH),
+                           ("encoding", H.ENCODING_HASH), ("boundary", "periodic")):
+            if payload[key] != value:
+                raise ValueError(f"checkpoint {key} mismatch")
+        L = payload["L"]
+        if type(L) is not int or L < 3:
+            raise ValueError("checkpoint L must be an integer >= 3")
+        microtick = payload["microtick"]
+        if payload["schema"] == SCHEMA:
+            microtick = J.integer_from_text(microtick)
+        if type(microtick) is not int or microtick < 0:
+            raise ValueError("checkpoint microtick must be a nonnegative exact integer")
+        encoded = payload["arrays"]
+        if type(encoded) is not dict or set(encoded) != set(NAMES):
+            raise ValueError("checkpoint requires all complete-state arrays")
+        arrays = []
+        for i, (name, shape) in enumerate(zip(NAMES, _shapes(L ** 3))):
+            text = encoded[name]
+            size = prod(shape)
+            if type(text) is not str or len(text) != 4 * ((size + 2) // 3):
+                raise ValueError(f"checkpoint encoded array length mismatch: {name}")
+            raw = base64.b64decode(text, validate=True)
+            if len(raw) != size or base64.b64encode(raw).decode("ascii") != text:
+                raise ValueError(f"checkpoint noncanonical base64 or length: {name}")
+            if i not in _INT8 and any(v > 1 for v in raw):
+                raise ValueError(f"noncanonical boolean storage in {name}")
+            arrays.append(np.frombuffer(raw, dtype=np.int8 if i in _INT8 else bool).reshape(shape).copy())
+        state = P.StagedState(microtick, S.LatticeState(L, *arrays[:4]), *arrays[4:])
+        P.validate(state)
+        return state
+    except (TypeError, KeyError, UnicodeError, OverflowError) as exc:
+        raise ValueError("malformed hydro checkpoint") from exc

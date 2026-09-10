@@ -108,6 +108,7 @@ export function updateDiagnosticsAndPanels(ctx, state) {
     const diagCurrent = !!diag && isCurrentScale0TelemetryMeta(diagMeta);
     const auditCurrent = !!telemetryHub.s0?.audit
         && isCurrentScale0AuditEnergy(diagMeta, auditMeta);
+    ctx.scale0Validity?.sample({ diag, audit: telemetryHub.s0?.audit, diagMeta, diagCurrent, auditCurrent });
     const liveAudit = auditCurrent ? telemetryHub.s0.audit : null;
     const physicalTime = diagCurrent
         ? _firstFinite(diag.physicalTime, diag.tick) : undefined;

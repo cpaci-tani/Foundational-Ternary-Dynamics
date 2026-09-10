@@ -4,11 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>FTD · Hydro laboratory</title>
+  <link rel="stylesheet" href="../../../web/css/ui/components/validity-status.css">
   <style>
     :root { color-scheme: dark; font-family: system-ui, sans-serif; background:#101820; color:#e2e9ee }
     * { box-sizing:border-box } body { max-width:1180px; margin:auto; padding:28px }
     h1 { font-size:1.8rem; margin:8px 0 } p { color:#b8c8d3; max-width:850px; line-height:1.55 }
     .label { text-transform:uppercase; letter-spacing:.14em; color:#78dac1; font-size:.75rem }
+    .lab-heading { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap }
     .controls { display:flex; gap:12px; align-items:end; flex-wrap:wrap; padding:18px 0 }
     label { display:grid; gap:6px; font-size:.85rem } button,select { font:inherit; padding:10px; border:1px solid #547082; border-radius:6px; background:#1b2c38; color:inherit }
     button { cursor:pointer } button:disabled { opacity:.45; cursor:wait } :focus-visible { outline:3px solid #78dac1; outline-offset:3px }
@@ -24,13 +26,15 @@
   </style>
 </head>
 <body>
-  <div class="label">Priced successor candidate · Local research laboratory</div>
+  <div class="lab-heading"><div class="label">Priced successor candidate · Local research laboratory</div><div id="hydro-validity"></div></div>
   <h1>phi-hydro-staged-candidate-1: fluid limit laboratory</h1>
   <p>Every preparation below runs the momentum-conserving lattice-gas successor law
   in the compiled worker. One step advances one stage (four physical microticks).
   The chart tracks the same projected mode the sidecar's noiseless Chapman–Enskog
-  prediction was built for; the readouts compare a fitted decay rate against the
-  exact H1&prime; constant this preparation's (direction, polarization) cell probes.</p>
+  prediction was built for. Shear preparations show an empirical decay fit alongside
+  the H1&prime; reference viscosity. Sound shows its reference speed squared; a
+  sound-frequency estimate is unavailable. Fourier amplitudes use approximate
+  floating-point observation arithmetic with no certified error bound.</p>
   <div class="controls">
     <label>Preparation<select id="preparation">
       <option value="hydro-shear-wave-t2" selected>Shear wave (T2 cell)</option>
@@ -46,15 +50,15 @@
   <div id="status" role="status" aria-live="polite">Loading the compiled successor…</div>
   <div class="metrics">
     <div class="metric">Stage<strong id="stage">—</strong><small>4 microticks / stage</small></div>
-    <div class="metric">Fitted decay rate γ<sub>fit</sub><strong id="gammaFit">—</strong><small>last ≤32 stages</small></div>
-    <div class="metric">Implied ν<sub>fit</sub> = γ<sub>fit</sub>/|k|²<strong id="nuFit">—</strong><small id="probedLabel">vs constant probed</small></div>
-    <div class="metric"><span id="probedName">Constant probed</span><strong id="probedValue">—</strong></div>
+    <div class="metric">Fitted decay rate γ<sub>fit</sub><strong id="gammaFit">—</strong><small id="fitScope">last ≤32 stages; empirical amplitude fit</small></div>
+    <div class="metric">Decay estimate γ<sub>fit</sub>/|k|²<strong id="nuFit">—</strong><small id="probedLabel">Decay-based diffusivity estimate</small></div>
+    <div class="metric"><span id="probedName">Reference constant</span><strong id="probedValue">—</strong></div>
     <div class="metric">ν<sub>T2</sub><strong id="nuT2">—</strong></div>
     <div class="metric">ν<sub>E</sub><strong id="nuE">—</strong></div>
     <div class="metric">c<sub>s</sub>²<strong id="csq">—</strong></div>
     <div class="metric">g<strong id="gconst">—</strong></div>
-    <div class="metric">Mass (exact)<strong id="mass">—</strong><small>must stay constant</small></div>
-    <div class="metric">Total momentum (exact)<strong id="momentum">—</strong><small>(p<sub>x</sub>, p<sub>y</sub>, p<sub>z</sub>), must stay constant</small></div>
+    <div class="metric">Field-token number (exact)<strong id="mass">—</strong><small>conserved in these preparations</small></div>
+    <div class="metric">Channel momentum (exact)<strong id="momentum">—</strong><small>integer velocity sum; physical units uncalibrated</small></div>
   </div>
   <div class="views">
     <figure><figcaption>Density · z-mid slab</figcaption><canvas id="density" aria-label="Block-averaged density on the z-mid slab"></canvas></figure>

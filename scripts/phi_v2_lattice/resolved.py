@@ -14,7 +14,7 @@ from numbers import Integral
 
 import numpy as np
 
-from . import channels as C, coarse as B, state as S, tick as T
+from . import channels as C, coarse as B, staged as P, state as S, tick as T
 from ._proofs import phase_index, readout, rotate
 
 
@@ -35,7 +35,24 @@ class IntTensor:
 
     @classmethod
     def freeze(cls, array) -> IntTensor:
-        arr = np.asarray(array)
+        allowed = (bool, np.bool_, *P._INTEGER_TYPES)
+
+        def validate_sequence(value):
+            if type(value) is list or type(value) is tuple:
+                for item in value:
+                    validate_sequence(item)
+            elif not any(type(value) is kind for kind in allowed):
+                raise ValueError("exact tensor leaves must be concrete integers or booleans")
+
+        if type(array) is np.ndarray:
+            arr = array
+        elif type(array) is list or type(array) is tuple:
+            validate_sequence(array)  # Reject custom conversions before NumPy sees a leaf.
+            arr = np.asarray(array, dtype=object)  # Preserve mixed signed/large integers.
+        else:
+            raise ValueError("exact tensor requires a concrete array, list or tuple")
+        if any(not any(type(value) is kind for kind in allowed) for value in arr.flat):
+            raise ValueError("exact tensor leaves must be concrete integers or booleans")
         return cls(tuple(int(n) for n in arr.shape),
                    tuple(int(v) for v in arr.flat))
 
@@ -66,7 +83,12 @@ class ResolvedReadout:
 
 
 def _active(st):
-    return st if isinstance(st, S.LatticeState) else st.lattice
+    if type(st) is S.LatticeState:
+        return st  # Reference diagnostics also support the legacy L2 fixtures.
+    if type(st) is P.StagedState:
+        P.validate(st)
+        return st.lattice
+    raise ValueError("observations require a concrete reference or staged state")
 
 
 def restrict(st, width: int) -> ResolvedReadout:
@@ -104,7 +126,7 @@ def restrict(st, width: int) -> ResolvedReadout:
                              phase_index(value)] += 1
     pending = ()
     microtick = phase = None
-    if not isinstance(st, S.LatticeState):
+    if type(st) is P.StagedState:
         microtick, phase = int(st.microtick), int(st.phase)
         pending = tuple(PendingRecord(name, owner, IntTensor.freeze(getattr(st, name)))
                         for name, owner in (
@@ -174,8 +196,9 @@ def boundary_transfers(before, after, events: T.TickEvents, width: int,
     a zero residual does not prove log completeness (internal/cancelling
     omissions can be invisible). Logs are never repaired from the after-state.
     """
-    staged = not isinstance(before, S.LatticeState)
-    if staged != (not isinstance(after, S.LatticeState)):
+    initial, final = _active(before), _active(after)
+    staged = type(before) is P.StagedState
+    if staged != (type(after) is P.StagedState):
         raise ValueError("cannot mix reference cycles and staged microticks")
     if staged:
         if start_tick is not None and start_tick != before.microtick:
@@ -185,7 +208,6 @@ def boundary_transfers(before, after, events: T.TickEvents, width: int,
             raise ValueError("crossing log must describe exactly one microtick")
     if not isinstance(start_tick, Integral) or isinstance(start_tick, bool) or start_tick < 0:
         raise ValueError("a nonnegative integer start_tick is required")
-    initial, final = _active(before), _active(after)
     if initial.L != final.L:
         raise ValueError("transfer endpoints require matching lattice sizes")
     _validate_crossings(initial, final, events)

@@ -10,6 +10,8 @@ import { appRegistry } from './core/registry.js';
 import { Viewport } from './viewport.js?v=26';
 import { FluxEnergyChart, ParticleChart } from './charts.js';
 import { telemetryHub } from './telemetry-hub.js';
+import { createScale0ValidityMonitor } from './scales/scale0/runtime/validity.js';
+import { subscribeScale0Qualification } from './scales/scale0/state/store.js';
 import { createInspectorAppRuntime } from './inspector/app-runtime.js?v=10';
 import { initZoo, setEngineMode as setZooMode } from './zoo.js?v=3';
 import { populateScale3ScenarioSelect, SCALE3_DEFAULT_SCENARIO } from './scales/scale3/scenario-registry.js';
@@ -84,6 +86,7 @@ let bridge = null;
 Object.defineProperty(window, '_ftdBridge', { get() { return bridge; }, configurable: true });
 let viewport = null;
 let appShell = null;
+let scale0Validity = null;
 let inspector = null;
 let inspectorRuntime = null;
 let diagnosticsPanel = null;
@@ -186,6 +189,7 @@ function _makeCtx() {
         get bridge() { return bridge; },
         get viewport() { return viewport; },
         get appShell() { return appShell; },
+        get scale0Validity() { return scale0Validity; },
         get inspector() { return inspector; },
         // Exposed so scale controllers that own their own bridge (Scale 4
         // planetary, Scale 5 cosmic) can re-point the inspector via
@@ -471,6 +475,7 @@ window.showToast = showToast;
 window.addEventListener('ftd:engine-error', event => {
     const detail = event.detail || {};
     const message = detail.error || 'The native engine rejected a command.';
+    scale0Validity?.runtimeFailure(message);
     showToast(message, 'error');
     window.chrome?.webview?.postMessage?.({
         type: 'engine-error',
@@ -513,6 +518,11 @@ async function init() {
         app: document.getElementById('app'),
         onViewportResize: () => viewport?.resize?.(),
     }).init();
+
+    scale0Validity = createScale0ValidityMonitor(appShell.topbar?.validity);
+    // App lifetime subscription: pagehide can enter BFCache, whose restored page
+    // still needs load/reset notifications. A full navigation discards this page.
+    subscribeScale0Qualification(snapshot => scale0Validity.setQualification(snapshot));
 
     _loadProgress(5, 'Caching DOM...');
     _cacheDOM();
@@ -750,7 +760,14 @@ function animate(now) {
         // planetary above — MetaUnit has no physics tick, only auto-rotate
         // + label repositioning, so it self-drives at its own cadence).
     } else {
-        Scale0Controller.animateLattice(_makeCtx());
+        try {
+            Scale0Controller.animateLattice(_makeCtx());
+        } catch (error) {
+            // Observe direct WASM/frame failures without changing propagation,
+            // scheduling or the engine's existing stop/rollback behavior.
+            try { scale0Validity?.runtimeFailure(error); } catch { /* retain original error */ }
+            throw error;
+        }
     }
 
     // Animate environment background
@@ -1950,6 +1967,7 @@ function switchEngineMode(mode) {
     }
 
     engineMode = mode;
+    scale0Validity?.setMode(mode);
 
     // Stop simulation on mode switch — prevents leftover play state
     // from a previous mode causing immediate ticking in the new mode
@@ -2094,6 +2112,7 @@ function clearCharts() {
 
 // ── Launch ───────────────────────────────────────────────────────────
 init().catch(err => {
+    scale0Validity?.runtimeFailure(err);
     console.error('FTD Dashboard initialization failed:', err);
     // Show full-screen error overlay so user isn't staring at a blank page
     const overlay = document.createElement('div');
