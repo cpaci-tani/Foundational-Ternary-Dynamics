@@ -241,3 +241,42 @@
     color: var(--text-muted);
     line-height: var(--lh-loose);
 }
+
+/* ── Scale 5 Physics-rules card: bounded event-log list (Pass D) ──────
+   A small scrolling list of the bridge's own bounded event ring
+   (cap 200, getEventLog()), newest first. Lives in the controls column
+   rather than as a diagnostics-panel row (a scrolling list of many
+   entries does not fit the one-value-per-row diagnostics table shape). */
+.cosmic-event-log {
+    display: flex;
+    max-height: 160px;
+    flex-direction: column;
+    gap: 2px;
+    overflow-y: auto;
+    padding: var(--sp-xs) 0 0;
+}
+
+.cosmic-event-log-item {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--sp-sm);
+    padding: 2px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    line-height: var(--lh-loose);
+}
+
+.cosmic-event-log-item:last-child { border-bottom: none; }
+
+.cosmic-event-log-tick {
+    flex: 0 0 auto;
+    color: var(--text-secondary);
+}
+
+.cosmic-event-log-empty {
+    color: var(--text-muted);
+    font-size: var(--fs-xs);
+    font-style: italic;
+}

@@ -316,10 +316,14 @@ export class CosmicMockBridge {
         this._toggles.bondi_accretion = subgrid;
         this._toggles.stellar_evolution = !!this._stellarEvolution;
         this._toggles.hawking_evaporation = !!this._hawkingEvaporation;
-        // horizon_absorption / mergers / emergent_black_holes /
-        // tidal_disruption / speed_limit are NOT scenario-conditional
-        // today (they run regardless of _enableSubgrid in the existing
-        // code) so they keep their _freshToggles() default here.
+        // horizon_absorption / mergers / tidal_disruption / speed_limit
+        // are NOT scenario-conditional today (they run regardless of
+        // _enableSubgrid in the existing code) so they keep their
+        // _freshToggles() default here. emergent_black_holes also keeps
+        // its default value, but as of Pass D (Ruling D-1) the rule
+        // itself is AND-gated with _enableSubgrid in postCosmicUpdates
+        // -- so on the three gas laboratories (_enableSubgrid = false)
+        // it never fires regardless of this toggle's value.
     }
 
     /** Centre of mass captured once, at the end of setupScenario, as the

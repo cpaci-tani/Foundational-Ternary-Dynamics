@@ -26,6 +26,9 @@ export function getScale5ScenarioToolbarTemplate() {
                 <option value="galaxy" selected>Galaxy</option>
                 <option value="blackhole">Black Hole</option>
                 <option value="merger">Merger</option>
+                <option value="gaslab">Gas Lab</option>
+                <option value="follow-heaviest" title="Continuously tracks the highest-mass live body; interactive orbit is suspended while active. Presentation only.">Follow Heaviest</option>
+                <option value="com-lock" title="Continuously tracks the instantaneous mass-weighted centre of mass; interactive orbit is suspended while active. Presentation only.">Centre-of-Mass Lock</option>
             </select>
             <label class="tb-toggle" title="[IMPOSED effective gas dynamics] Monaghan SPH for gas bodies (default off)"><input type="checkbox" id="t-sph-monaghan"> SPH gas</label>
         </div>

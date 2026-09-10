@@ -628,3 +628,281 @@ test.describe('Pass C: Cosmology and expansion', () => {
         expect(relevantErrors, `Console errors:\n${relevantErrors.join('\n')}`).toHaveLength(0);
     });
 });
+
+test.describe('Pass D: Stellar, events, and camera', () => {
+    test.beforeEach(async ({ page }) => {
+        page.setDefaultTimeout(60_000);
+    });
+
+    test('Ruling D-1 defect fix: emergent_black_holes no longer fires on a gas laboratory past its known tick-2536 conversion point', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+
+        await gotoAndReady(page, { path: '/index.html' });
+        await switchMode(page, 'cosmic');
+        await page.waitForTimeout(500);
+        await selectCosmicScenario(page, 'cosmic-gas-cloud-collision');
+        await page.waitForTimeout(300);
+
+        // Drive the live bridge directly (not via tickAndRefresh's small
+        // batches) past the documented tick-2536 conversion point. Before
+        // the fix, a body on this exact scenario converted to BLACK_HOLE at
+        // tick 2536 then swallowed two neighbours; after the fix
+        // (emergent_black_holes AND-gated with _enableSubgrid, which the
+        // three gas laboratories set false) it must never convert.
+        const result = await page.evaluate(() => {
+            const bridge = window.__ftdCtx?.inspector?.bridge;
+            if (!bridge) throw new Error('no cosmic bridge at window.__ftdCtx.inspector.bridge');
+            const TYPE = bridge.constructor.TYPE;
+            const initialCount = bridge._bodies.length;
+            // The live app may already be auto-ticking the bridge in the
+            // background (rAF physics cadence) during the waitForTimeout
+            // calls above, so bridge._tick is not necessarily 0 here --
+            // measure ticks actually run by this loop as a delta, not as
+            // an absolute bridge._tick value.
+            const startTick = bridge._tick;
+            let conversionTick = null;
+            let iterationsRun = 0;
+            for (let i = 1; i <= 2600; i++) {
+                bridge.tick();
+                iterationsRun++;
+                const hasBH = bridge._bodies.some((b) => b.type === TYPE.BLACK_HOLE || b.type === TYPE.QUASAR);
+                if (hasBH && conversionTick === null) { conversionTick = bridge._tick; break; }
+            }
+            return {
+                enableSubgrid: bridge._enableSubgrid,
+                initialCount,
+                finalCount: bridge._bodies.length,
+                startTick,
+                endTick: bridge._tick,
+                iterationsRun,
+                conversionTick,
+            };
+        });
+
+        expect(result.enableSubgrid, 'the gas-cloud-collision lab should have _enableSubgrid = false').toBe(false);
+        expect(result.conversionTick, 'no body should convert to BLACK_HOLE/QUASAR past tick 2536 on this lab after the fix').toBeNull();
+        expect(result.iterationsRun, 'the loop should run all 2600 iterations, i.e. never break early on a conversion').toBe(2600);
+        expect(result.endTick - result.startTick, 'exactly 2600 physics ticks should have been driven by this loop').toBe(2600);
+        expect(result.endTick, 'the bridge should have ticked well past the documented tick-2536 conversion point').toBeGreaterThan(2536);
+        expect(result.finalCount, 'body count should stay at its initial 500 with no conversion/swallowing').toBe(result.initialCount);
+
+        const relevantErrors = realErrors(errors);
+        expect(relevantErrors, `Console errors:\n${relevantErrors.join('\n')}`).toHaveLength(0);
+    });
+
+    test('cosmic-population diagnostics section renders the full nine-type census', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+
+        await gotoAndReady(page, { path: '/index.html' });
+        await switchMode(page, 'cosmic');
+        await page.waitForTimeout(500);
+        await openPanel(page, 'diagnostics');
+
+        await selectCosmicScenario(page, 'cosmic-galaxy');
+        await page.waitForTimeout(300);
+        await tickAndRefresh(page, 30);
+
+        const rowIds = [
+            'n-dark-energy', 'n-quasar', 'n-black-hole', 'n-dark-matter',
+            'n-gas', 'n-star', 'n-neutron-star', 'n-nebula', 'n-white-dwarf',
+        ];
+        const counts = await page.evaluate((ids) => {
+            return ids.map((id) => {
+                const cell = document.querySelector(
+                    `#panel-diagnostics .diag-scale5-root [data-section="cosmic-population"] tr[data-row="${id}"] .diag-value`,
+                );
+                return cell ? Number(cell.textContent) : null;
+            });
+        }, rowIds);
+
+        for (let i = 0; i < rowIds.length; i++) {
+            expect(Number.isFinite(counts[i]), `${rowIds[i]} should render a finite count`).toBe(true);
+        }
+        const starIdx = rowIds.indexOf('n-star');
+        const dmIdx = rowIds.indexOf('n-dark-matter');
+        expect(counts[starIdx], 'cosmic-galaxy should have a positive star count').toBeGreaterThan(0);
+        expect(counts[dmIdx], 'cosmic-galaxy should have a positive dark-matter count').toBeGreaterThan(0);
+
+        const relevantErrors = realErrors(errors);
+        expect(relevantErrors, `Console errors:\n${relevantErrors.join('\n')}`).toHaveLength(0);
+    });
+
+    test('Physics Rules card: all eleven remaining toggles round-trip through the bridge', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+
+        await gotoAndReady(page, { path: '/index.html' });
+        await switchMode(page, 'cosmic');
+        await page.waitForTimeout(500);
+        await selectCosmicScenario(page, 'cosmic-galaxy');
+        await page.waitForTimeout(300);
+
+        const idByKey = {
+            gas_cooling: 'cosmic-rules-gas-cooling',
+            radiation_pressure: 'cosmic-rules-radiation-pressure',
+            tidal_stretch: 'cosmic-rules-tidal-stretch',
+            tidal_disruption: 'cosmic-rules-tidal-disruption',
+            star_formation: 'cosmic-rules-star-formation',
+            bondi_accretion: 'cosmic-rules-bondi-accretion',
+            horizon_absorption: 'cosmic-rules-horizon-absorption',
+            mergers: 'cosmic-rules-mergers',
+            emergent_black_holes: 'cosmic-rules-emergent-bh',
+            stellar_evolution: 'cosmic-rules-stellar-evolution',
+            hawking_evaporation: 'cosmic-rules-hawking-evaporation',
+        };
+
+        for (const [key, id] of Object.entries(idByKey)) {
+            const result = await page.evaluate(([toggleKey, domId]) => {
+                const cb = /** @type {HTMLInputElement|null} */ (document.getElementById(domId));
+                if (!cb) return { error: `#${domId} not found` };
+                const before = cb.checked;
+                cb.checked = !before;
+                cb.dispatchEvent(new Event('change', { bubbles: true }));
+                const bridge = window.__ftdCtx?.inspector?.bridge;
+                return { before, after: !before, bridgeValue: bridge?.getToggle(toggleKey) };
+            }, [key, id]);
+            expect(result.error, result.error).toBeUndefined();
+            expect(result.bridgeValue, `bridge should see ${key}=${result.after} after #${id} changes`).toBe(result.after);
+        }
+
+        const relevantErrors = realErrors(errors);
+        expect(relevantErrors, `Console errors:\n${relevantErrors.join('\n')}`).toHaveLength(0);
+    });
+
+    test('Physics Rules card event log renders bounded entries from the bridge event ring', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+
+        await gotoAndReady(page, { path: '/index.html' });
+        await switchMode(page, 'cosmic');
+        await page.waitForTimeout(500);
+        // A merger scenario reliably produces horizon-absorption/merger
+        // events within a short tick budget.
+        await selectCosmicScenario(page, 'cosmic-merger');
+        await page.waitForTimeout(300);
+        await tickAndRefresh(page, 200);
+
+        const logState = await page.evaluate(() => {
+            const bridge = window.__ftdCtx?.inspector?.bridge;
+            const events = bridge?.getEventLog?.() || [];
+            const list = document.getElementById('cosmic-event-log-list');
+            return {
+                bridgeEventCount: events.length,
+                listItemCount: list ? list.querySelectorAll('.cosmic-event-log-item').length : null,
+                hasEmptyMarker: list ? !!list.querySelector('.cosmic-event-log-empty') : null,
+            };
+        });
+        expect(logState.listItemCount, '#cosmic-event-log-list should exist').not.toBeNull();
+        if (logState.bridgeEventCount > 0) {
+            expect(logState.listItemCount, 'event log list should render at least one row once the bridge has events').toBeGreaterThan(0);
+            expect(logState.hasEmptyMarker, 'the empty-state marker should be gone once events exist').toBe(false);
+        }
+
+        const relevantErrors = realErrors(errors);
+        expect(relevantErrors, `Console errors:\n${relevantErrors.join('\n')}`).toHaveLength(0);
+    });
+
+    test('overlay Visibility, Black holes, and Trails & camera controls run without console errors and survive a scenario switch', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+
+        await gotoAndReady(page, { path: '/index.html' });
+        await switchMode(page, 'cosmic');
+        await page.waitForTimeout(500);
+        await selectCosmicScenario(page, 'cosmic-galaxy');
+        await page.waitForTimeout(300);
+        await tickAndRefresh(page, 10);
+
+        const checkboxIds = [
+            'cosmic-overlay-show-dm', 'cosmic-overlay-show-gas', 'cosmic-overlay-show-stars',
+            'cosmic-overlay-show-bh', 'cosmic-overlay-show-disks',
+            'cosmic-overlay-bh-markers', 'cosmic-overlay-accretion-markers',
+            'cosmic-overlay-trails',
+        ];
+        for (const id of checkboxIds) {
+            const checked = await page.evaluate((cbId) => {
+                const cb = /** @type {HTMLInputElement|null} */ (document.getElementById(cbId));
+                if (!cb) throw new Error(`#${cbId} not found`);
+                cb.checked = !cb.checked;
+                cb.dispatchEvent(new Event('change', { bubbles: true }));
+                return cb.checked;
+            }, id);
+            expect(typeof checked).toBe('boolean');
+        }
+        await tickAndRefresh(page, 10);
+
+        // 'Type' colour-by option (extends Pass B's existing select).
+        const typeApplied = await page.evaluate(() => {
+            const sel = /** @type {HTMLSelectElement|null} */ (document.getElementById('cosmic-overlay-colorby'));
+            if (!sel) throw new Error('#cosmic-overlay-colorby not found');
+            sel.value = 'type';
+            sel.dispatchEvent(new Event('change', { bubbles: true }));
+            return sel.value;
+        });
+        expect(typeApplied).toBe('type');
+        await tickAndRefresh(page, 10);
+
+        // Body-size-scale slider.
+        const bodySizeResult = await page.evaluate(() => {
+            const el = /** @type {HTMLInputElement|null} */ (document.getElementById('cosmic-overlay-body-size'));
+            if (!el) throw new Error('#cosmic-overlay-body-size not found');
+            el.value = '2.5';
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+            return document.getElementById('cosmic-overlay-body-size-value')?.textContent;
+        });
+        expect(bodySizeResult).toBe('2.50');
+        await tickAndRefresh(page, 10);
+
+        // Renderer is recreated on scenario switch (Ruling P1 hazard) —
+        // every pending overlay state above must re-apply without throwing.
+        await selectCosmicScenario(page, 'cosmic-black-hole');
+        await page.waitForTimeout(300);
+        await tickAndRefresh(page, 10);
+
+        const relevantErrors = realErrors(errors);
+        expect(relevantErrors, `Console errors:\n${relevantErrors.join('\n')}`).toHaveLength(0);
+    });
+
+    test('camera: gas-lab preset and follow-a-body / centre-of-mass-lock options run without console errors', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+
+        await gotoAndReady(page, { path: '/index.html' });
+        await switchMode(page, 'cosmic');
+        await page.waitForTimeout(500);
+        await selectCosmicScenario(page, 'cosmic-gas-collapse');
+        await page.waitForTimeout(300);
+        await tickAndRefresh(page, 10);
+
+        const setCamera = (value) => page.evaluate((v) => {
+            const sel = /** @type {HTMLSelectElement|null} */ (document.getElementById('cosmic-camera-select'));
+            if (!sel) throw new Error('#cosmic-camera-select not found');
+            if (![...sel.options].some((o) => o.value === v)) throw new Error(`camera option ${v} missing`);
+            sel.value = v;
+            sel.dispatchEvent(new Event('change', { bubbles: true }));
+            return sel.value;
+        }, value);
+
+        expect(await setCamera('gaslab')).toBe('gaslab');
+        await tickAndRefresh(page, 5);
+
+        expect(await setCamera('com-lock')).toBe('com-lock');
+        const posAfterEngage = await page.evaluate(() => {
+            const p = window.__ftdCtx?.inspector?._cosmicRenderer?.camera?.position;
+            return p ? { x: p.x, y: p.y, z: p.z } : null;
+        });
+        expect(posAfterEngage).not.toBeNull();
+        await tickAndRefresh(page, 60);
+        const posAfterTicks = await page.evaluate(() => {
+            const p = window.__ftdCtx?.inspector?._cosmicRenderer?.camera?.position;
+            return p ? { x: p.x, y: p.y, z: p.z } : null;
+        });
+        expect(posAfterTicks).not.toBeNull();
+
+        expect(await setCamera('follow-heaviest')).toBe('follow-heaviest');
+        await tickAndRefresh(page, 30);
+
+        // A static preset must disengage follow mode without throwing.
+        expect(await setCamera('overview')).toBe('overview');
+        await tickAndRefresh(page, 10);
+
+        const relevantErrors = realErrors(errors);
+        expect(relevantErrors, `Console errors:\n${relevantErrors.join('\n')}`).toHaveLength(0);
+    });
+});

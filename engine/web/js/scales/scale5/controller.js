@@ -505,6 +505,14 @@ class Scale5LifecycleController extends BaseLifecycleController {
         // to it. Its dead entry in CosmicRenderer.setCameraPreset() was
         // removed 2026-05-31 (audit §E item (c)). Binary AGN
         // ('cosmic-binary-agn') covers the quasar use case visually.
+        // Pass D: filled in the 9 scenarios this map left unmapped
+        // (falling through to the default 'overview' below) -- 'cosmic-
+        // cluster' above is a stale key matching no real scenario id
+        // (left as-is; harmless dead entry, not a `<select>` option, so
+        // outside the "no scenario options" constraint) and the three gas
+        // labs get the new 'gaslab' preset (tuned for their ~80-90 lu box
+        // sizes) rather than the galaxy-scale presets' overly-distant
+        // default.
         const presetMap = {
             'cosmic-galaxy': 'galaxy',
             'cosmic-super-cluster': 'overview',
@@ -513,7 +521,16 @@ class Scale5LifecycleController extends BaseLifecycleController {
             'cosmic-black-hole': 'blackhole',
             'cosmic-merger': 'merger',
             'cosmic-stellar-lifecycle': 'overview',
-            'cosmic-ftd-collapse': 'overview'
+            'cosmic-ftd-collapse': 'overview',
+            'cosmic-cartwheel-collision': 'merger',
+            'cosmic-binary-agn': 'merger',
+            'cosmic-globular-cluster': 'galaxy',
+            'cosmic-dark-matter-halo': 'overview',
+            'cosmic-gravitational-wave': 'merger',
+            'cosmic-baryogenesis': 'overview',
+            'cosmic-gas-collapse': 'gaslab',
+            'cosmic-gas-cloud-collision': 'gaslab',
+            'cosmic-gas-rotating-disk': 'gaslab',
         };
         this.renderer.setCameraPreset(presetMap[scenarioName] || 'overview', data);
 
@@ -614,6 +631,63 @@ function getChartsPanelEl() {
     if (_chartsPanelEl === null) _chartsPanelEl = document.getElementById('panel-charts');
     return _chartsPanelEl;
 }
+// Same memoization pattern (Pass D): the Physics Rules card's event-log
+// list is created once by Scale5ControlsComponent.init() and reconciled by
+// key thereafter (never recreated on a later mount), same lifetime as the
+// profile card above.
+let _eventLogListEl = null;
+function getEventLogListEl() {
+    if (_eventLogListEl === null) _eventLogListEl = document.getElementById('cosmic-event-log-list');
+    return _eventLogListEl;
+}
+
+// Cap on rendered rows -- getEventLog() itself is already bounded to 200
+// (cosmic-postupdates.js/mock-scale5.js), but showing only the most recent
+// handful keeps this a quick-glance widget rather than a second full log.
+const EVENT_LOG_VISIBLE_ROWS = 20;
+let _eventLogStamp = '';
+
+/**
+ * Render the bridge's bounded event log (Pass D) into the Physics Rules
+ * card's scrolling list, newest first. Cheap no-op when nothing changed
+ * since the last call (stamped by length + the newest entry's tick/kind,
+ * mirroring the diffing convention `_panelStatus`/`_toolbarStatus` already
+ * use for single-value spans).
+ *
+ * @param {Array<{tick:number, kind:string, detail:Object}>} events
+ */
+function _renderEventLog(events) {
+    const el = getEventLogListEl();
+    if (!el) return;
+    const last = events.length ? events[events.length - 1] : null;
+    const stamp = `${events.length}:${last ? last.tick + ':' + last.kind : ''}`;
+    if (stamp === _eventLogStamp) return;
+    _eventLogStamp = stamp;
+
+    if (events.length === 0) {
+        el.innerHTML = '<div class="cosmic-event-log-empty">No events yet.</div>';
+        return;
+    }
+    const rows = events.slice(-EVENT_LOG_VISIBLE_ROWS).reverse();
+    el.innerHTML = rows.map((e) => {
+        const label = EVENT_LOG_LABELS[e.kind] || e.kind;
+        return `<div class="cosmic-event-log-item"><span>${label}</span><span class="cosmic-event-log-tick">t${e.tick}</span></div>`;
+    }).join('');
+}
+
+// Human-readable labels for the event `kind` strings _pushEvent() records
+// (mock-scale5.js/cosmic-postupdates.js) — falls back to the raw kind for
+// any future event type this map has not been updated for.
+const EVENT_LOG_LABELS = Object.freeze({
+    horizon_absorption: 'Horizon absorption',
+    tidal_disruption: 'Tidal disruption',
+    merger: 'BH-BH merger',
+    emergent_black_hole: 'Black hole formed',
+    star_formed: 'Star formed',
+    supernova: 'Supernova',
+    evaporation: 'Evaporation',
+});
+
 let _telemetryGridPanelEl = null;
 function getTelemetryGridPanelEl() {
     if (_telemetryGridPanelEl === null) _telemetryGridPanelEl = document.getElementById('panel-telemetry-grid');
@@ -694,6 +768,13 @@ export function animateCosmic(ctx) {
         _panelStatus.update('cosmic-n-stars', String(c[5] || 0));
         _panelStatus.update('cosmic-n-bh', String(c[2] || 0));
         _panelStatus.update('cosmic-ke', diag.totalKE.toExponential(2));
+
+        // Physics Rules card event log (Pass D): a bounded ring
+        // (getEventLog(), cap 200) rendered as a small scrolling list —
+        // see _renderEventLog's own doc comment for the diffing shape.
+        if (typeof bridge.getEventLog === 'function') {
+            _renderEventLog(bridge.getEventLog());
+        }
 
         // Gas laboratory axis-profile card (Task 5; [IMPOSED effective gas
         // dynamics] — see the card title). Only the three gas labs

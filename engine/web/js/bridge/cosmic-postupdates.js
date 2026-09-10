@@ -173,13 +173,20 @@ export function postCosmicUpdates(TYPE) {
     }
 
     // --- Emergent BH formation (FTD prediction) ---
-    // Toggle: emergent_black_holes (absent key means on). Left independent
-    // of _enableSubgrid here (Pass 0a scope is the registry + gate only;
-    // reconciling this rule's relationship to _enableSubgrid on the gas
-    // laboratories is Pass D's named defect fix).
+    // Toggle: emergent_black_holes (absent key means on), AND-gated with
+    // _enableSubgrid (Ruling D-1, Pass D). This is a phenomenological
+    // threshold conversion -- exactly the class of sub-grid rule that gate
+    // governs -- so a scenario that sets _enableSubgrid = false (the three
+    // gas laboratories) does not get it. emergent_black_holes remains an
+    // independent user control layered on top: both must be satisfied.
+    //
+    // [IMPOSED threshold rule], never a relativistic criterion: at the
+    // labs' softening the v_esc > C_LAT test is dominated by the
+    // bestMenc > 50 clause, so the rule reduces to "enclosed mass above
+    // 50" in practice.
     const C_LAT = 1.0 / Math.sqrt(3.0);
     this._stats.emergentBHThreshold = C_LAT;
-    if (this._toggles?.emergent_black_holes !== false) {
+    if (this._enableSubgrid && this._toggles?.emergent_black_holes !== false) {
         const hasBH = this._bodies.some(b => isBH(b.type));
         if (!hasBH) {
             let bestBody = null, bestMenc = 0;

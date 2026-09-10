@@ -26,6 +26,29 @@
  * same "reference box size times a(t)" quantity the Comoving Box Size
  * diagnostic row computes) — geometry, not a per-body loop, so no new
  * O(N^2) cost.
+ *
+ * Pass D (2026-09-10) adds three new sections and one addition to Pass B's
+ * existing colour-by select, all bound the SAME way through
+ * bindScale5OverlayControls/syncScale5Overlays:
+ *   - a "Type" colour-by option (flat categorical palette, no viridis
+ *     ramp — there is no scalar ordering across body types);
+ *   - "Visibility": the five renderer toggles (toggleDarkMatter/
+ *     toggleGasClouds/toggleStars/toggleBlackHoles/toggleAccretionDisks)
+ *     that cosmic-renderer.js has honoured in update() since before this
+ *     pass but that nothing ever called (plan step 0.7, never executed —
+ *     Ruling P2 moved it here);
+ *   - "Black holes": a fixed-size location marker and a Bondi-accretion-
+ *     capture-radius marker, both [IMPOSED] presentation rings, never a
+ *     relativistic or horizon radius;
+ *   - "Trails & camera": bounded per-id position-history trails for the
+ *     star/remnant/black-hole population, and a presentation-only
+ *     body-size multiplier (does NOT touch the black-hole render-radius
+ *     proxy, a separately-tagged quantity). Follow-a-body and
+ *     centre-of-mass camera lock are NOT here — they are two new
+ *     `<option>`s on the toolbar's existing `#cosmic-camera-select`
+ *     (scale5/ui/toolbar/template.js), since that select is already the
+ *     established surface for camera framing and is pinned for existence
+ *     only (constraints section 6), so new options are safe.
  */
 
 import { createScaleOverlayPanel, overlayRow, overlaySection } from '../../../../ui/components/viewport-overlays/panel-shell.js';
@@ -45,11 +68,12 @@ export function getScale5OverlayTemplate() {
     '',
     `${overlayRow('', `
       <span class="scale-overlay-inline-label">Colour by</span>
-      <select class="scale-overlay-select" id="cosmic-overlay-colorby" title="[MEASURED — instrument] Colours the star and gas point clouds by an existing per-body measured quantity this tick; it does not alter dynamics.">
+      <select class="scale-overlay-select" id="cosmic-overlay-colorby" title="Colours the star and gas point clouds by an existing per-body quantity this tick; it does not alter dynamics. Density/Temperature/Speed are [MEASURED — instrument] viridis ramps; Type is a fixed categorical palette (no scalar ordering across body types), presentation-only.">
         <option value="none" selected>None (default)</option>
         <option value="density">Density</option>
         <option value="temperature">Temperature</option>
         <option value="speed">Speed</option>
+        <option value="type">Type</option>
       </select>
     `)}
     ${overlayRow('', `
@@ -84,11 +108,83 @@ export function getScale5OverlayTemplate() {
     `)}`,
   );
 
+  // Pass D: the five renderer visibility toggles (plan step 0.7, never
+  // executed until now — cosmic-renderer.js's update() has honoured
+  // _showDM/_showGas/_showStars/_showBH/_showDisks since before this pass,
+  // but nothing ever called toggleDarkMatter/toggleGasClouds/toggleStars/
+  // toggleBlackHoles/toggleAccretionDisks). Default checked to match the
+  // renderer's own defaults (all true), so a fresh scenario load looks
+  // identical whether or not a viewer has ever opened this panel.
+  const visibilitySection = overlaySection(
+    'Visibility',
+    '',
+    `${overlayRow('', `
+      <label class="scale-overlay-check" title="[MEASURED — instrument control] Shows or hides the dark-matter point cloud. Presentation only; does not alter dynamics.">
+        <input type="checkbox" id="cosmic-overlay-show-dm" checked> Dark matter
+      </label>
+    `)}
+    ${overlayRow('', `
+      <label class="scale-overlay-check" title="[MEASURED — instrument control] Shows or hides the gas and nebula point clouds. Presentation only; does not alter dynamics.">
+        <input type="checkbox" id="cosmic-overlay-show-gas" checked> Gas &amp; nebula clouds
+      </label>
+    `)}
+    ${overlayRow('', `
+      <label class="scale-overlay-check" title="[MEASURED — instrument control] Shows or hides the star point cloud (stars, white dwarfs, neutron stars). Presentation only; does not alter dynamics.">
+        <input type="checkbox" id="cosmic-overlay-show-stars" checked> Stars
+      </label>
+    `)}
+    ${overlayRow('', `
+      <label class="scale-overlay-check" title="[MEASURED — instrument control] Shows or hides black-hole/quasar meshes (event horizon, corona, jets). Presentation only; does not alter dynamics.">
+        <input type="checkbox" id="cosmic-overlay-show-bh" checked> Black holes
+      </label>
+    `)}
+    ${overlayRow('', `
+      <label class="scale-overlay-check" title="[MEASURED — instrument control] Shows or hides the accretion-disk layer of black-hole/quasar meshes, leaving the event horizon itself visible. Presentation only; does not alter dynamics.">
+        <input type="checkbox" id="cosmic-overlay-show-disks" checked> Accretion disks
+      </label>
+    `)}`,
+  );
+
+  const blackHolesSection = overlaySection(
+    'Black holes',
+    '',
+    `${overlayRow('', `
+      <label class="scale-overlay-check" title="[IMPOSED] presentation marker: a fixed-size ring at each black hole/quasar position so it stays locatable even when its accretion-disk mesh is small on screen or mid fade-in. NOT a horizon or any other physical radius.">
+        <input type="checkbox" id="cosmic-overlay-bh-markers"> Black-hole location markers
+      </label>
+    `)}
+    ${overlayRow('', `
+      <label class="scale-overlay-check" title="[IMPOSED threshold rule] Draws a circle at the Bondi capture radius r_acc = max(1.5, mass^(1/3) x 0.3) around each black hole — the SAME geometric radius the bondi_accretion rule (Physics rules card) uses when enabled, drawn here regardless of that toggle's state. Presentation only; never a relativistic or horizon radius.">
+        <input type="checkbox" id="cosmic-overlay-accretion-markers"> Bondi accretion-radius markers
+      </label>
+    `)}`,
+  );
+
+  const trailsSection = overlaySection(
+    'Trails & camera',
+    '',
+    `${overlayRow('', `
+      <label class="scale-overlay-check" title="[MEASURED — instrument] Draws a short fading position history behind each star, white dwarf, neutron star, black hole, or quasar (capped at 150 tracked bodies; gas/nebula/dark-matter are excluded as too numerous to read as trails). Presentation only; reads positions already computed, writes nothing back.">
+        <input type="checkbox" id="cosmic-overlay-trails"> Body trails
+      </label>
+    `)}
+    ${overlayRow('', `
+      <label class="pe-ctrl-row" title="Presentation-only global multiplier on star/gas/dark-matter/nebula point size. Does NOT affect the black-hole render-radius proxy, which is a separately [IMPOSED]-tagged quantity.">
+        <span class="pe-ctrl-label">Body size &times;</span>
+        <input type="range" class="pe-slider" id="cosmic-overlay-body-size" min="0.25" max="4" step="0.05" value="1">
+        <span class="pe-ctrl-value" id="cosmic-overlay-body-size-value">1.00</span>
+      </label>
+    `)}
+    <p class="scale-overlay-section-hint" style="margin:4px 0 0">
+      Follow-a-body and centre-of-mass camera lock are toolbar Camera options above the viewport, not here — see #cosmic-camera-select.
+    </p>`,
+  );
+
   return createScaleOverlayPanel({
     id: 'cosmic-viewport-overlay',
     scaleClass: 'scale5-only',
     title: 'Cosmic overlays',
     footnote: 'Grid and axes off by default — use status bar View menu if needed',
-    bodyHtml: `${frameSection}${gasSection}${dynamicsSection}${cosmologySection}`,
+    bodyHtml: `${frameSection}${visibilitySection}${gasSection}${dynamicsSection}${cosmologySection}${blackHolesSection}${trailsSection}`,
   });
 }

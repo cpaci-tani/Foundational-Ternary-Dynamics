@@ -50,6 +50,40 @@ const _gasTex = makeGasSprite();
 const _haloTex = makeHaloSprite();
 const _ringTex = makeRingSprite();
 
+// ── Pass D: Bondi accretion capture radius (presentation marker) ────────
+// Mirrors the r_acc formula bridge/cosmic-postupdates.js's bondi_accretion
+// rule actually uses, so the "Accretion capture radius" overlay draws the
+// geometric radius that rule WOULD use around a black hole -- regardless
+// of whether bondi_accretion is currently toggled on. [IMPOSED threshold
+// rule], never a relativistic or horizon radius; kept as a separate
+// duplicated constant/formula here rather than an import, matching how
+// schwarzschildRenderRadius above is already independent of
+// cosmic-postupdates.js's internal r_sink (P0-7 note).
+export function bondiAccretionRadius(mass) {
+    return Math.max(1.5, Math.cbrt(mass) * 0.3);
+}
+
+// ── Pass D: fixed per-type palette for the 'type' colour-by mode ────────
+// There is no natural scalar ordering across body types the way there is
+// for density/temperature/speed, so 'type' is a flat categorical palette
+// rather than a viridis ramp. Presentation-only; applies only to the star
+// and gas clouds (Ruling J3's existing colour-by scope), matching every
+// other colour-by mode.
+const TYPE_COLORS = {
+    [-3]: [0.55, 0.30, 0.85], // DARK_ENERGY -- violet
+    [-2]: [1.00, 0.55, 0.10], // QUASAR -- orange
+    [-1]: [0.70, 0.70, 0.75], // BLACK_HOLE (unused here -- BHs render as meshes)
+    [0]:  [0.25, 0.15, 0.50], // DARK_MATTER -- deep violet
+    [1]:  [0.30, 0.75, 1.00], // GAS -- cyan
+    [2]:  [1.00, 0.95, 0.70], // STAR -- warm white
+    [3]:  [0.60, 0.70, 1.00], // NEUTRON_STAR -- pale blue
+    [4]:  [0.90, 0.35, 0.55], // NEBULA -- magenta
+    [5]:  [0.85, 0.85, 0.95], // WHITE_DWARF -- bright white-blue
+};
+function typeColor(t) {
+    return TYPE_COLORS[t] || [0.6, 0.6, 0.6];
+}
+
 // ── Velocity-vector causal-saturation ramp (Pass A) ─────────────────────
 // beta = |v| / C_SPEED, the same lattice-causal-limit color convention
 // viewport/particle-renderer.js's Scale-1/2 velocity vectors already use:
@@ -146,6 +180,10 @@ export class CosmicRenderer extends BaseRenderer {
             this._velocityVectors = disposeCloud(this._velocityVectors);  // Pass A
             this._comMarker = disposeCloud(this._comMarker);  // Pass A
             this._bgStars = disposeCloud(this._bgStars);
+            this._bhMarkerCloud = disposeCloud(this._bhMarkerCloud);  // Pass D
+            this._accretionMarkerCloud = disposeCloud(this._accretionMarkerCloud);  // Pass D
+            this._trailCloud = disposeCloud(this._trailCloud);  // Pass D
+            if (this._trailHistory) this._trailHistory.clear();  // Pass D
 
             // Pass C: comoving grid is a THREE.Group (buildBoundary), not a
             // single Points/LineSegments object like disposeCloud expects —
@@ -185,6 +223,49 @@ export class CosmicRenderer extends BaseRenderer {
         this._showDisks = true;
         this._bhAge = new Map(); // track when each BH first appeared (for fade-in)
         this._bhMeshCache = new Map(); // persistent mesh caching
+
+        // Pass D: black-hole / accretion marker overlays -- ring-style
+        // Points clouds following the SAME shape as _smoothingCloud above
+        // (Ruling J4 precedent), off by default so a fresh scenario load
+        // renders byte-identical to before this pass until a viewer opts
+        // in via the overlay panel.
+        this._showBhMarkers = false;
+        this._bhMarkerCloud = null;
+        this._showAccretionMarkers = false;
+        this._accretionMarkerCloud = null;
+
+        // Pass D: body trails -- a bounded per-id position history (Map,
+        // capped at TRAIL_MAX_BODIES entries touched per frame) rendered as
+        // one fading LineSegments pool. Tracks only STAR/WHITE_DWARF/
+        // NEUTRON_STAR/BLACK_HOLE/QUASAR bodies (the "interesting" massive
+        // population) -- GAS/NEBULA/DARK_MATTER bodies are numerous and
+        // visually noisy as trails, and this keeps the tracked-id set
+        // small and O(1)-per-frame regardless of total body count.
+        this._showTrails = false;
+        this._trailHistory = new Map(); // id -> Array<[x,y,z]>, newest first
+        this._trailCloud = null;
+
+        // Pass D: presentation-only global multiplier on star/gas/dm point
+        // size (NOT the black-hole render-radius proxy above, which is a
+        // separate, already-tagged quantity). Applied to material.size for
+        // the non-useSizes clouds and to the per-particle size attribute
+        // for the useSizes (nebula) cloud.
+        this._bodySizeScale = 1.0;
+
+        // Pass D: continuous camera-follow mode ('none' | 'heaviest' |
+        // 'com'), engaged via setCameraPreset('follow-heaviest' |
+        // 'com-lock', ...) from the toolbar's #cosmic-camera-select. The
+        // offset is captured lazily on the FIRST update() call after
+        // engaging (or after a scenario reload, since a fresh renderer
+        // starts with no offset) and then held fixed, so the camera keeps
+        // its chosen relative view of the tracked point rather than
+        // snapping to a canned angle every frame -- a deliberate
+        // simplification (Ruling-equivalent, Pass D): follow mode moves
+        // the camera directly each frame, so interactive orbit/zoom is
+        // suspended while a follow mode is active, exactly like selecting
+        // any other camera preset suspends the PREVIOUS preset's framing.
+        this._cameraFollowMode = 'none';
+        this._cameraFollowOffset = null;
 
         this._initBackground();
     }
@@ -263,10 +344,22 @@ export class CosmicRenderer extends BaseRenderer {
         // -- Stars: diffraction-spike sprites, blackbody colored --
         if (this._showStars && stars.length > 0) {
             const cloud = this._ensureCloud('star', Math.max(stars.length, 500), 2.5, 1.0, THREE.AdditiveBlending, _starTex);
+            cloud.material.size = 2.5 * this._bodySizeScale; // Pass D: presentation-only body-size control
             const p = cloud.geometry.attributes.position.array;
             const c = cloud.geometry.attributes.color.array;
             const ids = cloud.userData.ids;
-            if (this._colorBy !== 'none') {
+            if (this._colorBy === 'type') {
+                // Pass D: flat categorical colour by body type (STAR vs
+                // WHITE_DWARF vs NEUTRON_STAR here) rather than a viridis
+                // ramp -- there is no scalar ordering across types.
+                for (let j = 0; j < stars.length; j++) {
+                    const s = stars[j];
+                    p[j*3] = s.x; p[j*3+1] = s.y; p[j*3+2] = s.z;
+                    ids[j] = s.id;
+                    const [tr, tg, tb] = typeColor(types[s.i]);
+                    c[j*3] = tr; c[j*3+1] = tg; c[j*3+2] = tb;
+                }
+            } else if (this._colorBy !== 'none') {
                 // Pass B colour-by: viridis-ramp the star cloud by an
                 // existing measured per-body quantity, scoped to the star
                 // population's own min/max THIS frame (a display
@@ -323,10 +416,23 @@ export class CosmicRenderer extends BaseRenderer {
         // -- Gas: large soft nebula sprites --
         if (this._showGas && gas.length > 0) {
             const cloud = this._ensureCloud('gas', Math.max(gas.length, 200), 8.0, 0.3, THREE.AdditiveBlending, _gasTex);
+            cloud.material.size = 8.0 * this._bodySizeScale; // Pass D: presentation-only body-size control
             const p = cloud.geometry.attributes.position.array;
             const c = cloud.geometry.attributes.color.array;
             const ids = cloud.userData.ids;
-            if (this._colorBy !== 'none') {
+            if (this._colorBy === 'type') {
+                // Pass D: flat categorical colour (uniform here, since this
+                // cloud holds only GAS-type bodies -- kept for symmetry
+                // with the star cloud and to stay correct if a future
+                // change ever mixes types into it).
+                for (let j = 0; j < gas.length; j++) {
+                    const g = gas[j];
+                    p[j*3] = g.x; p[j*3+1] = g.y; p[j*3+2] = g.z;
+                    ids[j] = g.id;
+                    const [tr, tg, tb] = typeColor(types[g.i]);
+                    c[j*3] = tr; c[j*3+1] = tg; c[j*3+2] = tb;
+                }
+            } else if (this._colorBy !== 'none') {
                 let vmin = Infinity, vmax = -Infinity;
                 for (let j = 0; j < gas.length; j++) {
                     const v = this._colorByValue(bodyData, gas[j].i);
@@ -398,7 +504,7 @@ export class CosmicRenderer extends BaseRenderer {
                 ids[j] = n.id;
                 
                 if (s) {
-                    s[j] = sizes ? sizes[n.i] : 25.0; // Custom radii
+                    s[j] = (sizes ? sizes[n.i] : 25.0) * this._bodySizeScale; // Custom radii (Pass D: body-size control)
                 }
                 if (a) {
                     // Orbital tangent is perpendicular to the radial vector
@@ -426,6 +532,7 @@ export class CosmicRenderer extends BaseRenderer {
         // -- Dark matter: ultra-faint violet revealing structure --
         if (this._showDM && dm.length > 0) {
             const cloud = this._ensureCloud('dm', Math.max(dm.length, 500), 4.0, 0.06, THREE.AdditiveBlending, _gasTex);
+            cloud.material.size = 4.0 * this._bodySizeScale; // Pass D: presentation-only body-size control
             const p = cloud.geometry.attributes.position.array;
             const c = cloud.geometry.attributes.color.array;
             const ids = cloud.userData.ids;
@@ -444,14 +551,24 @@ export class CosmicRenderer extends BaseRenderer {
         // -- Black holes --
         this._updateBlackHoles(bhs, bodyData);
 
+        // -- Black-hole / accretion-radius markers (Pass D) --
+        this._updateBhMarkers(bhs, bodyData);
+        this._updateAccretionMarkers(bhs, bodyData);
+
         // -- Velocity vectors (Pass A, all bodies, log-length-normalised) --
         this._updateVelocityVectors(bodyData, positions, count);
+
+        // -- Body trails (Pass D) --
+        this._updateTrails(bodyData);
 
         // -- Centre-of-mass marker (Pass A) --
         this._updateComMarker(diagnostics);
 
         // -- Comoving reference grid (Pass C) --
         this._updateComovingGrid(diagnostics);
+
+        // -- Camera follow (Pass D: follow-a-body / centre-of-mass lock) --
+        this._applyCameraFollow(bodyData, diagnostics);
     }
 
     /** Pass A: one line per body, from its position in its velocity
@@ -535,6 +652,169 @@ export class CosmicRenderer extends BaseRenderer {
         p[2] = diagnostics.comZ;
         marker.geometry.attributes.position.needsUpdate = true;
         marker.visible = true;
+    }
+
+    /** Pass D: a fixed-size ring at each black hole/quasar position, so a
+     *  BH stays locatable even when its accretion-disk mesh (built by
+     *  _updateBlackHoles below) is small on screen or its fade-in has not
+     *  finished. [IMPOSED] presentation marker -- NOT a horizon or any
+     *  other physical radius; the fixed on-screen size is a display
+     *  convenience like the smoothing-length circles above, not derived
+     *  from mass. */
+    _updateBhMarkers(bhs, bodyData) {
+        if (!this._showBhMarkers || bhs.length === 0) {
+            if (this._bhMarkerCloud) this._bhMarkerCloud.visible = false;
+            return;
+        }
+        const cloud = this._bhMarkerCloud || this._ensureBhMarkerCloud();
+        const p = cloud.geometry.attributes.position.array;
+        const s = cloud.geometry.attributes.size.array;
+        for (let j = 0; j < bhs.length && j * 3 < p.length; j++) {
+            const bh = bhs[j];
+            p[j * 3] = bh.x; p[j * 3 + 1] = bh.y; p[j * 3 + 2] = bh.z;
+            s[j] = 2.0; // fixed on-screen size -- presentation only
+        }
+        cloud.geometry.attributes.position.needsUpdate = true;
+        cloud.geometry.attributes.size.needsUpdate = true;
+        cloud.geometry.setDrawRange(0, Math.min(bhs.length, p.length / 3));
+        cloud.visible = true;
+    }
+
+    /** Pass D: a ring sized to the Bondi accretion capture radius r_acc
+     *  around each black hole/quasar -- the SAME formula
+     *  bridge/cosmic-postupdates.js's bondi_accretion rule actually uses
+     *  (bondiAccretionRadius() above), drawn regardless of whether that
+     *  rule is currently toggled on. [IMPOSED threshold rule]; never a
+     *  relativistic or horizon radius -- see the label on the overlay
+     *  checkbox itself. */
+    _updateAccretionMarkers(bhs, bodyData) {
+        if (!this._showAccretionMarkers || bhs.length === 0) {
+            if (this._accretionMarkerCloud) this._accretionMarkerCloud.visible = false;
+            return;
+        }
+        const cloud = this._accretionMarkerCloud || this._ensureAccretionMarkerCloud();
+        const p = cloud.geometry.attributes.position.array;
+        const s = cloud.geometry.attributes.size.array;
+        const masses = bodyData.masses;
+        for (let j = 0; j < bhs.length && j * 3 < p.length; j++) {
+            const bh = bhs[j];
+            p[j * 3] = bh.x; p[j * 3 + 1] = bh.y; p[j * 3 + 2] = bh.z;
+            const mass = masses ? masses[bh.i] : 100;
+            s[j] = Math.max(0.5, bondiAccretionRadius(mass) * 2); // diameter
+        }
+        cloud.geometry.attributes.position.needsUpdate = true;
+        cloud.geometry.attributes.size.needsUpdate = true;
+        cloud.geometry.setDrawRange(0, Math.min(bhs.length, p.length / 3));
+        cloud.visible = true;
+    }
+
+    /** Pass D: bounded per-id position-history trails for the "interesting"
+     *  massive population (stars, remnants, black holes/quasars). Not
+     *  gas/nebula/dark-matter -- those are numerous and would make the
+     *  trail overlay visually noisy and costlier for no diagnostic gain.
+     *  The tracked-id set is capped at TRAIL_MAX_BODIES per frame (the
+     *  first that many eligible bodies encountered in bodyData's own
+     *  order, which is stable frame-to-frame except across a merge/death/
+     *  formation event), keeping this O(TRAIL_MAX_BODIES * TRAIL_LEN) —
+     *  independent of total body count, so no new O(N^2) pass. Purely a
+     *  presentation trail; it reads positions the physics already
+     *  computed and writes nothing back. */
+    _updateTrails(bodyData) {
+        const TRAIL_LEN = 16;
+        const TRAIL_MAX_BODIES = 150;
+        if (!this._showTrails) {
+            if (this._trailCloud) this._trailCloud.visible = false;
+            return;
+        }
+        const { positions, types, ids, count } = bodyData;
+        if (!positions || !count) {
+            if (this._trailCloud) this._trailCloud.visible = false;
+            return;
+        }
+        const history = this._trailHistory;
+        const seen = new Set();
+        let tracked = 0;
+        for (let i = 0; i < count && tracked < TRAIL_MAX_BODIES; i++) {
+            const t = types[i];
+            if (t !== BT.STAR && t !== BT.WHITE_DWARF && t !== BT.NEUTRON_STAR
+                && t !== BT.BLACK_HOLE && t !== BT.QUASAR) continue;
+            const id = ids ? ids[i] : i;
+            seen.add(id);
+            let hist = history.get(id);
+            if (!hist) { hist = []; history.set(id, hist); }
+            hist.unshift([positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]]);
+            if (hist.length > TRAIL_LEN) hist.length = TRAIL_LEN;
+            tracked++;
+        }
+        // Evict ids no longer eligible (merged/evaporated/tidally-shredded
+        // bodies, or bodies that fell outside this frame's first
+        // TRAIL_MAX_BODIES) so the map cannot grow without bound.
+        for (const id of history.keys()) {
+            if (!seen.has(id)) history.delete(id);
+        }
+
+        const lines = this._trailCloud || this._ensureTrailCloud(TRAIL_MAX_BODIES, TRAIL_LEN);
+        const posAttr = lines.geometry.getAttribute('position');
+        const colAttr = lines.geometry.getAttribute('color');
+        const maxSegments = posAttr.array.length / 6;
+        let seg = 0;
+        outer:
+        for (const hist of history.values()) {
+            for (let k = 0; k < hist.length - 1; k++) {
+                if (seg >= maxSegments) break outer;
+                const a = hist[k], b = hist[k + 1];
+                posAttr.array[seg * 6] = a[0]; posAttr.array[seg * 6 + 1] = a[1]; posAttr.array[seg * 6 + 2] = a[2];
+                posAttr.array[seg * 6 + 3] = b[0]; posAttr.array[seg * 6 + 4] = b[1]; posAttr.array[seg * 6 + 5] = b[2];
+                // Fade with age: newest segment (k=0) brightest.
+                const fade = 1.0 - k / TRAIL_LEN;
+                colAttr.array[seg * 6] = 0.5 * fade; colAttr.array[seg * 6 + 1] = 0.7 * fade; colAttr.array[seg * 6 + 2] = 1.0 * fade;
+                colAttr.array[seg * 6 + 3] = 0.5 * fade * 0.4; colAttr.array[seg * 6 + 4] = 0.7 * fade * 0.4; colAttr.array[seg * 6 + 5] = 1.0 * fade * 0.4;
+                seg++;
+            }
+        }
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        lines.geometry.setDrawRange(0, seg * 2);
+        lines.visible = true;
+    }
+
+    /** Pass D: continuous camera tracking, engaged via
+     *  setCameraPreset('follow-heaviest' | 'com-lock', ...). The offset
+     *  between the camera and the tracked point is captured on the FIRST
+     *  call after engaging (this._cameraFollowOffset is null right after
+     *  setCameraFollowMode() or a fresh renderer construction) and held
+     *  fixed afterward, so the camera keeps whatever relative view it had
+     *  rather than snapping to a canned angle every frame. */
+    _applyCameraFollow(bodyData, diagnostics) {
+        if (this._cameraFollowMode === 'none') return;
+        let target = null;
+        if (this._cameraFollowMode === 'heaviest') {
+            target = this._findHeaviestBodyPosition(bodyData);
+        } else if (this._cameraFollowMode === 'com') {
+            if (diagnostics && Number.isFinite(diagnostics.comX)) {
+                target = new THREE.Vector3(diagnostics.comX, diagnostics.comY, diagnostics.comZ);
+            }
+        }
+        if (!target) return;
+        if (!this._cameraFollowOffset) {
+            this._cameraFollowOffset = this.camera.position.clone().sub(target);
+        }
+        this.camera.position.copy(target).add(this._cameraFollowOffset);
+        this.camera.lookAt(target);
+    }
+
+    /** Pass D: index of the highest-mass live body, for camera-follow
+     *  mode 'heaviest'. O(N) scan of the already-packed masses buffer;
+     *  no new pairwise loop. Returns null if no body has positive mass. */
+    _findHeaviestBodyPosition(bodyData) {
+        const { positions, masses, count } = bodyData;
+        if (!positions || !masses || !count) return null;
+        let bestI = -1, bestMass = 0;
+        for (let i = 0; i < count; i++) {
+            if (masses[i] > bestMass) { bestMass = masses[i]; bestI = i; }
+        }
+        if (bestI < 0) return null;
+        return new THREE.Vector3(positions[bestI * 3], positions[bestI * 3 + 1], positions[bestI * 3 + 2]);
     }
 
     // ================================================================
@@ -748,17 +1028,34 @@ export class CosmicRenderer extends BaseRenderer {
 
     // ================================================================
     setCameraPreset(name, bodyData) {
-        // Camera presets — these are the four offered by the toolbar
-        // `#cosmic-camera-select` selector (scale5/ui/toolbar/template.js).
+        // Camera presets — these are the six offered by the toolbar
+        // `#cosmic-camera-select` selector (scale5/ui/toolbar/template.js):
+        // the original four static jumps below, plus two Pass-D continuous
+        // follow modes ('follow-heaviest' | 'com-lock') handled separately
+        // -- they engage this._applyCameraFollow() (called every update())
+        // rather than a one-shot position/lookAt like the static presets.
         // The former `quasar` preset was orphaned (audit §E item (c),
         // 2026-05-31): no `<option>` exposed it and the scenario→preset map
         // in the controller never dispatched to it, so it was unreachable.
         // Binary-AGN ('Binary Quasars') uses the `overview`/`merger` framings.
+        if (name === 'follow-heaviest' || name === 'com-lock') {
+            this.setCameraFollowMode(name === 'follow-heaviest' ? 'heaviest' : 'com');
+            return;
+        }
+        // Any static preset disengages a previously-active follow mode --
+        // selecting a named camera view is an explicit "stop following"
+        // gesture, exactly like it already interrupts the previous preset.
+        this.setCameraFollowMode('none');
         const presets = {
             overview:  { pos: [0, 350, 450], target: [0, 0, 0], fov: 60 },
             galaxy:    { pos: [40, 70, 100],  target: [0, 0, 0], fov: 55 },
             blackhole: { pos: [0, 35, 70],   target: [0, 0, 0], fov: 45 },
-            merger:    { pos: [0, 80, 170],  target: [0, 0, 0], fov: 55 }
+            merger:    { pos: [0, 80, 170],  target: [0, 0, 0], fov: 55 },
+            // Pass D: tuned for the ~80-90 lu gas-lab box sizes (radius-30
+            // clouds/disks) -- the four presets above were tuned for
+            // boxSize~200 galaxy-family scenarios and sit too far back for
+            // these smaller labs.
+            gaslab:    { pos: [0, 55, 95],   target: [0, 0, 0], fov: 50 },
         };
         const p = presets[name] || presets.overview;
         this.camera.position.set(p.pos[0], p.pos[1], p.pos[2]);
@@ -766,11 +1063,38 @@ export class CosmicRenderer extends BaseRenderer {
         if (p.fov) { this.camera.fov = p.fov; this.camera.updateProjectionMatrix(); }
     }
 
+    /** Pass D: engage/disengage continuous camera tracking (see
+     *  _applyCameraFollow above). Resets the captured offset so the NEXT
+     *  update() call re-captures it from the camera's position at the
+     *  moment of engaging, rather than reusing a stale offset from a
+     *  previous follow session. */
+    setCameraFollowMode(mode) {
+        this._cameraFollowMode = mode || 'none';
+        this._cameraFollowOffset = null;
+    }
+
     toggleDarkMatter(on)     { this._showDM = on; }
     toggleGasClouds(on)      { this._showGas = on; }
     toggleStars(on)          { this._showStars = on; }
     toggleBlackHoles(on)     { this._showBH = on; }
     toggleAccretionDisks(on) { this._showDisks = on; }
+
+    /** Pass D: toggle the fixed-size black-hole location marker. */
+    setBhMarkers(on) { this._showBhMarkers = !!on; }
+
+    /** Pass D: toggle the Bondi-accretion-radius marker. */
+    setAccretionMarkers(on) { this._showAccretionMarkers = !!on; }
+
+    /** Pass D: toggle body trails (stars/remnants/black holes/quasars). */
+    setTrails(on) { this._showTrails = !!on; }
+
+    /** Pass D: presentation-only global multiplier on star/gas/dm/nebula
+     *  point size. Does NOT affect the black-hole render-radius proxy
+     *  (schwarzschildRenderRadius) -- that is a separately-tagged quantity
+     *  with its own [IMPOSED] status, not a body-size preference. */
+    setBodySizeScale(factor) {
+        if (Number.isFinite(factor) && factor > 0) this._bodySizeScale = factor;
+    }
 
     /** Pass B: 'none' (default; byte-identical to pre-Pass-B rendering) |
      *  'density' | 'temperature' | 'speed'. Applies to the star and gas
@@ -870,6 +1194,86 @@ export class CosmicRenderer extends BaseRenderer {
             this._smoothingCloud = cloud;
         }
         return cloud;
+    }
+
+    /** Pass D: shared ring-marker Points-cloud factory for the black-hole
+     *  and accretion-radius overlays -- SAME shader shape as
+     *  _ensureSmoothingCloud above (J4 precedent), parameterized by color
+     *  so the two markers read apart from each other and from the cyan
+     *  smoothing circles. `maxCount` is small and fixed (black holes are
+     *  rare relative to the rest of the population), unlike the gas-sized
+     *  smoothing-circle cloud above. */
+    _ensureRingMarkerCloud(name, colorHex, opacity, maxCount) {
+        const g = new THREE.BufferGeometry();
+        g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(maxCount * 3), 3));
+        g.setAttribute('size', new THREE.BufferAttribute(new Float32Array(maxCount), 1));
+        const mat = new THREE.ShaderMaterial({
+            uniforms: {
+                color: { value: new THREE.Color(colorHex) },
+                pointTexture: { value: _ringTex },
+                globalOpacity: { value: opacity },
+            },
+            vertexShader: `
+                attribute float size;
+                void main() {
+                    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                    gl_PointSize = size * (300.0 / -mvPosition.z);
+                    gl_Position = projectionMatrix * mvPosition;
+                }
+            `,
+            fragmentShader: `
+                uniform sampler2D pointTexture;
+                uniform vec3 color;
+                uniform float globalOpacity;
+                void main() {
+                    vec4 texColor = texture2D(pointTexture, gl_PointCoord);
+                    gl_FragColor = vec4(color, globalOpacity) * texColor;
+                }
+            `,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            depthTest: false,
+            transparent: true,
+        });
+        const cloud = new THREE.Points(g, mat);
+        cloud.frustumCulled = false;
+        cloud.name = name;
+        this._group.add(cloud);
+        return cloud;
+    }
+
+    /** [IMPOSED] presentation marker, distinctly amber so it reads apart
+     *  from the cyan smoothing circles and the blue accretion-radius
+     *  markers below. Small fixed cap -- black holes are rare. */
+    _ensureBhMarkerCloud() {
+        const cloud = this._ensureRingMarkerCloud('cosmic-bh-markers', 0xffc266, 0.85, 64);
+        this._bhMarkerCloud = cloud;
+        return cloud;
+    }
+
+    /** [IMPOSED threshold rule] marker at the Bondi capture radius --
+     *  distinctly blue so it reads apart from the amber BH markers above. */
+    _ensureAccretionMarkerCloud() {
+        const cloud = this._ensureRingMarkerCloud('cosmic-accretion-markers', 0x6fa8ff, 0.35, 64);
+        this._accretionMarkerCloud = cloud;
+        return cloud;
+    }
+
+    /** Pass D: fading LineSegments pool for body trails, sized for
+     *  TRAIL_MAX_BODIES * (TRAIL_LEN - 1) segments (_updateTrails above). */
+    _ensureTrailCloud(maxBodies, trailLen) {
+        const maxSegments = maxBodies * (trailLen - 1);
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(maxSegments * 2 * 3), 3));
+        geo.setAttribute('color', new THREE.Float32BufferAttribute(new Float32Array(maxSegments * 2 * 3), 3));
+        geo.setDrawRange(0, 0);
+        const mat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.8 });
+        const lines = new THREE.LineSegments(geo, mat);
+        lines.frustumCulled = false;
+        lines.name = 'cosmic-trails';
+        this._group.add(lines);
+        this._trailCloud = lines;
+        return lines;
     }
 
     /** Build the velocity-vector LineSegments pool (Pass A). Sized for the
