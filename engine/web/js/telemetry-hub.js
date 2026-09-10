@@ -537,12 +537,18 @@ export class TelemetryHub {
         // genuinely new bridge quantity this pass adds (getDiagnostics()'s
         // new systemRadius field, same O(N) always-available shape as
         // momentum/angMom/comDrift above it).
-                this._s5_cs = new MultiRingBuffer(200, ['csBodies', 'csHubble', 'csDM', 'csKE', 'csPE', 'csTotal', 'csDrift', 'csVirial', 'csMomentum', 'csAngMom', 'csComDrift', 'csThermal', 'csSystemRadius']);
+        // Pass C: widened again (13 -> 14) for csScaleFactor — the Friedmann
+        // scale factor a(t) already flows as `s5.cosmic.cosmology.scaleFactor`
+        // (Pass 0b); this channel is the only genuinely new addition, giving
+        // the cosmic-expansion diagnostics row a trend sparkline of the
+        // universe visibly expanding, mirroring the csSystemRadius precedent.
+                this._s5_cs = new MultiRingBuffer(200, ['csBodies', 'csHubble', 'csDM', 'csKE', 'csPE', 'csTotal', 'csDrift', 'csVirial', 'csMomentum', 'csAngMom', 'csComDrift', 'csThermal', 'csSystemRadius', 'csScaleFactor']);
         const csVs = this._s5_cs.views;
         this.csBodies = csVs.csBodies; this.csHubble = csVs.csHubble; this.csDM = csVs.csDM;
         this.csKE = csVs.csKE; this.csPE = csVs.csPE; this.csTotal = csVs.csTotal; this.csDrift = csVs.csDrift;
         this.csVirial = csVs.csVirial; this.csMomentum = csVs.csMomentum; this.csAngMom = csVs.csAngMom;
         this.csComDrift = csVs.csComDrift; this.csThermal = csVs.csThermal; this.csSystemRadius = csVs.csSystemRadius;
+        this.csScaleFactor = csVs.csScaleFactor;
         // Baseline for the Scale 5 mechanical-energy drift %, set on the
         // first finite peAvailable sample (mirrors _plInitialEnergy in
         // collectScale4 below).
@@ -1502,6 +1508,14 @@ export class TelemetryHub {
     // `boxComoving` are not exposed directly by the bridge (only their
     // factors a, H, and boxSize are) — derived here exactly as the bridge's
     // own _stepFriedmann computes adot = a * this._H internally.
+    //
+    // Pass C (cosmology and expansion, 2026-09-10): the `cosmology` block
+    // above already carried every field the cosmic-expansion diagnostics
+    // section needs (scaleFactor/hubbleParameter/hubble0/redshift/
+    // omegaMatter/omegaLambda/adot/boxComoving/clockGain/dmFraction) — no
+    // new bridge field was required. The one addition here is the
+    // `csScaleFactor` ring channel below, so the scale-factor row gets a
+    // trend sparkline of the expansion in progress.
     collectScale5(cosmicBridge) {
         if (!cosmicBridge) return null;
         const diag = cosmicBridge.getDiagnostics?.();
@@ -1592,6 +1606,7 @@ export class TelemetryHub {
                 csComDrift: comDrift,
                 csThermal: thermal,
                 csSystemRadius: systemRadius,
+                csScaleFactor: diag.scaleFactor,
             }, currentTick);
         }
         return diag;

@@ -16,6 +16,7 @@ import { BaseRenderer } from './core/BaseRenderer.js';
 import { makeStarSprite, makeGasSprite, makeHaloSprite, makeRingSprite } from './cosmic/sprites.js';
 import { DISK_VERT, DISK_FRAG, JET_VERT, JET_FRAG, blackbodyColor } from './cosmic/shaders.js';
 import { rampViridis } from './viewport/color-ramps.js';
+import { buildBoundary } from './viewport/boundary-geometry.js';
 import { C_SPEED, G_N } from './constants.js';
 
 const BT = {
@@ -110,6 +111,22 @@ export class CosmicRenderer extends BaseRenderer {
         this._showComMarker = false;
         this._comMarker = null;
 
+        // Pass C: comoving reference-grid overlay, driven by
+        // scales/scale5/ui/overlays/component.js via setComovingGrid/
+        // setBoxSize below. `_comovingGrid` is a single THREE.Group built
+        // once with viewport/boundary-geometry.js's shared `buildBoundary`
+        // helper (a unit cube, 'origin' mode — the same shape/mode
+        // viewport/scene-core.js uses for the PE/AE/molecule boundary) and
+        // then RESCALED every frame to boxSize * scaleFactor — the same
+        // "reference box size times a(t)" the Comoving Box Size diagnostic
+        // row computes, so the grid visibly grows as the universe expands.
+        // `_boxSize` defaults to the bridge's own constructor default (200)
+        // and is corrected via setBoxSize() once a scenario's actual runtime
+        // boxSize is known (scale5/controller.js, loadCosmicScenario).
+        this._showComovingGrid = false;
+        this._comovingGrid = null;
+        this._boxSize = 200;
+
         // Subclass-specific geometry teardown. Called by BaseRenderer.dispose()
         // (core/BaseRenderer.js:37). Idempotent: nulls each reference after
         // disposing so a re-entry can rebuild from a clean slate and a
@@ -129,6 +146,20 @@ export class CosmicRenderer extends BaseRenderer {
             this._velocityVectors = disposeCloud(this._velocityVectors);  // Pass A
             this._comMarker = disposeCloud(this._comMarker);  // Pass A
             this._bgStars = disposeCloud(this._bgStars);
+
+            // Pass C: comoving grid is a THREE.Group (buildBoundary), not a
+            // single Points/LineSegments object like disposeCloud expects —
+            // traverse it and dispose every child's geometry/material.
+            if (this._comovingGrid) {
+                this._comovingGrid.traverse((obj) => {
+                    if (obj.geometry) obj.geometry.dispose();
+                    if (obj.material) {
+                        if (Array.isArray(obj.material)) obj.material.forEach((m) => m.dispose());
+                        else obj.material.dispose();
+                    }
+                });
+                this._comovingGrid = null;
+            }
 
             // Black-hole meshes are created via `_group.add(sphere, ...)` and
             // tracked in `_bhMeshCache` keyed by body id. The cache.forEach
@@ -418,6 +449,9 @@ export class CosmicRenderer extends BaseRenderer {
 
         // -- Centre-of-mass marker (Pass A) --
         this._updateComMarker(diagnostics);
+
+        // -- Comoving reference grid (Pass C) --
+        this._updateComovingGrid(diagnostics);
     }
 
     /** Pass A: one line per body, from its position in its velocity
@@ -752,6 +786,21 @@ export class CosmicRenderer extends BaseRenderer {
     /** Pass A: toggle the centre-of-mass marker. */
     setComMarker(on) { this._showComMarker = !!on; }
 
+    /** Pass C: toggle the comoving reference-grid overlay. */
+    setComovingGrid(on) { this._showComovingGrid = !!on; }
+
+    /** Pass C: correct the reference box size used by the comoving grid's
+     *  scale (boxSize * scaleFactor). Called once per scenario load by
+     *  scale5/controller.js with the fresh bridge's actual runtime boxSize
+     *  — the constructor default above (200) matches the bridge's own
+     *  default but a scenario is free to override `_boxSize` (none do
+     *  today; this keeps the grid correct if one ever does). Silently
+     *  ignores a non-finite or non-positive value so a bad call can never
+     *  zero/NaN the grid's scale. */
+    setBoxSize(boxSize) {
+        if (Number.isFinite(boxSize) && boxSize > 0) this._boxSize = boxSize;
+    }
+
     /** Pass B colour-by value lookup for body index `i` in `bodyData`.
      *  'speed' has no direct packed field — it is derived from the packed
      *  `velocities` 3-vector (Ruling J5: pack the richer datum once so a
@@ -886,6 +935,37 @@ export class CosmicRenderer extends BaseRenderer {
         this._group.add(marker);
         this._comMarker = marker;
         return marker;
+    }
+
+    /** Build the comoving reference grid (Pass C): a unit cube wireframe,
+     *  the SAME `buildBoundary('cube', 'origin', …)` shape/mode
+     *  viewport/scene-core.js uses for the PE/AE/molecule boundary. Built
+     *  once at unit scale (side 1, centered at origin) — `_updateComovingGrid`
+     *  rescales it every frame rather than rebuilding geometry. */
+    _ensureComovingGrid() {
+        const mat = new THREE.LineBasicMaterial({
+            color: 0x3b5a7a, transparent: true, opacity: 0.35, depthWrite: false,
+        });
+        const group = buildBoundary('cube', 'origin', { latticeSize: 1 }, mat);
+        group.name = 'cosmic-comoving-grid';
+        this._group.add(group);
+        this._comovingGrid = group;
+        return group;
+    }
+
+    /** Pass C: rescale the comoving grid to boxSize * scaleFactor every
+     *  frame — the SAME quantity the Comoving Box Size diagnostic row
+     *  computes (telemetry-hub.js's `boxComoving = boxSize * scaleFactor`),
+     *  so the grid literally is that number rendered as an on-screen size.
+     *  O(1): one THREE.Object3D.scale write, no geometry rebuild. */
+    _updateComovingGrid(diagnostics) {
+        if (!this._showComovingGrid || !diagnostics || !Number.isFinite(diagnostics.scaleFactor)) {
+            if (this._comovingGrid) this._comovingGrid.visible = false;
+            return;
+        }
+        const grid = this._comovingGrid || this._ensureComovingGrid();
+        grid.scale.setScalar(this._boxSize * diagnostics.scaleFactor);
+        grid.visible = true;
     }
 
     _ensureCloud(name, maxCount, defaultSize, opacity, blending, map, useSizes = false) {

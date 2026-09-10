@@ -24,11 +24,25 @@ import { G_N, DM_FRACTION, BARYON_FRACTION } from '../../constants.js';
 // 10/27 come from the Moore-shell polyhedral decomposition (17 dark
 // states) per LEDGER — they are [SELECTION], NOT [THEOREM], and do not
 // match the Planck-2018 observed Ω_DM/Ω_m. See constants.js:452-459.
-const _DM_FRAC = DM_FRACTION;        // [SELECTION] 17/27 ≈ 0.6296
-const _BARYON_FRAC = BARYON_FRACTION; // [SELECTION] 10/27 ≈ 0.3704
+//
+// Pass C (2026-09-10): the split is baked into body TYPES at construction
+// time, so there is no in-place retrofit — the owner-decided UI (Cosmology
+// controls card, scale5/ui/controls/component.js) is a PRE-LOAD select that
+// writes `bridge._dmFractionOverride` and reloads the current scenario
+// (scale5/controller.js loadCosmicScenario), rather than a live knob.
+// `_dmSplit(bridge)` reads `?? DM_FRACTION` so an unset override reproduces
+// today's fixed 17/27 exactly; the baryon share is always the complement
+// (1 - dmFrac) so the two-way partition still sums to 1 for ANY override,
+// the same relationship DM_FRACTION/BARYON_FRACTION hold today (17/27 +
+// 10/27 = 1).
+function _dmSplit(bridge) {
+    const dmFrac = bridge?._dmFractionOverride ?? DM_FRACTION;
+    return { dmFrac, baryonFrac: 1 - dmFrac };
+}
 
 export function setupCosmicGalaxy(ctx) {
     const { T, rng, randn, PI2 } = ctx;
+    const { dmFrac: _DM_FRAC, baryonFrac: _BARYON_FRAC } = _dmSplit(this);
     const M_total = 7000;
     const M_bh = 100;
     const M_dm = (M_total - M_bh) * _DM_FRAC;
@@ -137,6 +151,7 @@ export function setupCosmicGalaxy(ctx) {
 
 export function setupCartwheelCollision(ctx) {
     const { T, rng, randn, PI2 } = ctx;
+    const { dmFrac: _DM_FRAC } = _dmSplit(this);
     const M_target = 6000;
     const M_bullet = 1500;
     const target_r_disk = 90;
@@ -388,6 +403,7 @@ export function setupBlackHoleScenario(ctx) {
 
 export function setupMerger(ctx) {
     const { T, rng, randn, PI2 } = ctx;
+    const { dmFrac: _DM_FRAC, baryonFrac: _BARYON_FRAC } = _dmSplit(this);
     const M1 = 3000, M2 = 2000;
     const sep = 80;
     const v_esc = Math.sqrt(2 * G_N * (M1 + M2) / sep);
@@ -473,6 +489,7 @@ export function setupMerger(ctx) {
 
 export function setupSuperCluster(ctx) {
     const { T, rng, randn, PI2 } = ctx;
+    const { dmFrac: _DM_FRAC } = _dmSplit(this);
     const clusterRadius = 140;
     const galMass = 2500;
     const r_s = 20;

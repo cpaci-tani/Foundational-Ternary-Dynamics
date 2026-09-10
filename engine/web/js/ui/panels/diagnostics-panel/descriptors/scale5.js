@@ -8,11 +8,16 @@
  * rows below were mistagged [IMPOSED] and are now [MEASURED — instrument],
  * matching the density/pressure/sound-speed rows they sit beside (a
  * diagnostic reading of the running SPH scheme, not a control that sets an
- * imposed coefficient). Cosmology (Pass C) and population/event-log (Pass D)
- * sections follow in later passes per the plan. `source` paths read against
- * `s5.cosmic` (telemetry-hub.js collectScale5) and `s5.diag` (the raw bridge
- * getDiagnostics() snapshot); `trend` names one of the widened `_s5_cs` ring
- * channels (telemetry-hub.js).
+ * imposed coefficient). Pass C (2026-09-10) adds `cosmic-expansion`: the
+ * flat-ΛCDM background (scale factor, Hubble parameter, adot, redshift, H0,
+ * Ω_m, Ω_Λ, dark-matter fraction, the display-only clock gain, and the
+ * comoving box's expansion) — almost entirely reading the `cosmology` block
+ * telemetry-hub.js's Pass-0b `collectScale5` already publishes; the one
+ * addition is the `csScaleFactor` trend channel. Population/event-log
+ * (Pass D) sections follow in a later pass per the plan. `source` paths read
+ * against `s5.cosmic` (telemetry-hub.js collectScale5) and `s5.diag` (the
+ * raw bridge getDiagnostics() snapshot); `trend` names one of the widened
+ * `_s5_cs` ring channels (telemetry-hub.js).
  */
 
 export const sections = [
@@ -77,6 +82,25 @@ export const sections = [
             { id: 'gas-c-max', label: 'Sound Speed Max', unit: '(sim)', source: 's5.cosmic.stats.cMax', tooltip: 'Highest local sound speed c = sqrt(gamma P / rho) over gas bodies this tick. [MEASURED — instrument]' },
             { id: 'gas-thermal', label: 'Thermal Energy', unit: '(sim)', source: 's5.cosmic.stats.thermal', tooltip: 'Sum of mass times internal energy over gas bodies this tick — the SPH energy-equation counterpart to kinetic energy below. [MEASURED — instrument]' },
             { id: 'gas-kinetic', label: 'Kinetic Energy', unit: '(sim)', source: 's5.cosmic.stats.kinetic', tooltip: 'Gas-only kinetic energy this tick, for direct comparison against thermal energy above (the whole-system kinetic energy in Gravity & Dynamics above includes non-gas bodies). [MEASURED — instrument]' },
+        ],
+    },
+    {
+        id: 'cosmic-expansion',
+        title: 'Cosmology & Expansion',
+        // Every row below reads the `cosmology` block telemetry-hub.js's
+        // Pass-0b collectScale5 already publishes — this section adds no
+        // new bridge field, only the csScaleFactor trend channel (Pass C).
+        rows: [
+            { id: 'scale-factor', label: 'Scale Factor a(t)', unit: '', source: 's5.cosmic.cosmology.scaleFactor', trend: 'csScaleFactor', tooltip: '[MEASURED — instrument] Flat-ΛCDM background scale factor, integrated each tick by the Friedmann solver from an early-universe initial condition (a=1 is "today"). Diagnostics-only — never feeds back into N-body dynamics.' },
+            { id: 'hubble', label: 'Hubble Parameter H(t)', unit: '', source: 's5.cosmic.cosmology.hubbleParameter', trend: 'csHubble', tooltip: '[MEASURED — instrument] Present background expansion rate H(a) = H0 * sqrt(Omega_m * a^-3 + Omega_Lambda), decreasing toward the de Sitter floor H0*sqrt(Omega_Lambda) as a(t) grows.' },
+            { id: 'adot', label: 'da/dt', unit: '', source: 's5.cosmic.cosmology.adot', tooltip: '[MEASURED — instrument] Instantaneous rate of change of the scale factor, adot = a * H — derived here exactly as the bridge\'s own Friedmann integrator computes it internally (not a separate bridge field).' },
+            { id: 'redshift', label: 'Redshift z', unit: '', source: 's5.cosmic.cosmology.redshift', tooltip: '[MEASURED — instrument] z = 1/a - 1, the cosmological redshift implied by the current scale factor.' },
+            { id: 'hubble0', label: 'H0 (anchor)', unit: '', source: 's5.cosmic.cosmology.hubble0', tooltip: '[IMPOSED] Lattice-unit Hubble-constant anchor (H0_LATTICE, constants.js "Cosmic-Lattice Anchors") calibrating the Friedmann integrator above; a tuning anchor, not a derived quantity — its calibration to physical SI units is undocumented.' },
+            { id: 'omega-m', label: 'Omega_m', unit: '', source: 's5.cosmic.cosmology.omegaMatter', tooltip: '[CONJECTURE] Matter density parameter (1/3), the flat-universe complement of Omega_Lambda below (Omega_m + Omega_Lambda = 1). Not a derived quantity — see the Omega_Lambda tooltip for the fuller caveat this pair shares.' },
+            { id: 'omega-l', label: 'Omega_Lambda', unit: '', source: 's5.cosmic.cosmology.omegaLambda', tooltip: '[CONJECTURE] Engine value, NOT a derived dark-energy density: Omega_Lambda = 2/3 does NOT match the observed Omega_Lambda ~ 0.685. FTD natively predicts Lambda = 0 (FC-1 declines hbar); any nonzero value is a [BOUNDARY] needing a horizon length. Same claim as the "Cosmology (FTD)" info card below, restated here as a live reading rather than a static string.' },
+            { id: 'dm-fraction', label: 'Dark-Matter Fraction', unit: '%', source: 's5.cosmic.cosmology.dmFraction', trend: 'csDM', tooltip: '[SELECTION] Moore-shell dark-matter mass fraction (default 17/27 ~ 63%) actually realized among live bodies this tick; does NOT match Planck 2018\'s observed Omega_DM/Omega_m ~ 84%. Fixed at scenario construction — see the Cosmology controls card\'s DM-fraction select to change it (reseeds the population; does not convert existing bodies).' },
+            { id: 'clock-gain', label: 'Clock Gain', unit: 'x', source: 's5.cosmic.cosmology.clockGain', tooltip: 'Presentation-only acceleration of the cosmic background clock — NOT physics. Multiplies the per-tick cosmic-time increment fed to the Friedmann integrator above so the dashboard shows readable expansion on human timescales; never enters the N-body force kernel or body kinematics (default 40).' },
+            { id: 'box-comoving', label: 'Comoving Box Size', unit: 'lu', source: 's5.cosmic.cosmology.boxComoving', tooltip: '[MEASURED — instrument] Reference box size (Cosmic Runtime section above) times the current scale factor — how far the comoving box has expanded from its lattice-unit reference size. The viewport\'s comoving reference grid overlay (Cosmology overlay section) renders this literal size.' },
         ],
     },
 ];

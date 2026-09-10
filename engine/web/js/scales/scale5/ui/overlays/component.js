@@ -16,12 +16,14 @@
  * the overlay DOM and the live renderer decoupled.
  *
  * This module owns Pass B's content (colour-by selector, smoothing-length
- * circles) and Pass A's "Dynamics" section (velocity-vector overlay,
- * centre-of-mass marker) — both follow the SAME pending-state-plus-
- * active-renderer shape, since both faced the identical renderer-recreated-
- * on-scenario-load hazard. Passes C and D extend the same overlay body with
- * their own sections/controls; they may add to this file or add their own
- * sibling module bound from the same `bindScale5OverlayControls` call site.
+ * circles), Pass A's "Dynamics" section (velocity-vector overlay,
+ * centre-of-mass marker), and Pass C's "Cosmology" section (comoving
+ * reference-grid toggle) — all follow the SAME pending-state-plus-
+ * active-renderer shape, since all three faced the identical
+ * renderer-recreated-on-scenario-load hazard. Pass D extends the same
+ * overlay body with its own section/controls; it may add to this file or
+ * add its own sibling module bound from the same
+ * `bindScale5OverlayControls` call site.
  */
 
 let _activeRenderer = null;
@@ -29,6 +31,7 @@ let _pendingColorBy = 'none';
 let _pendingSmoothingCircles = false;
 let _pendingVelocityVectors = false;
 let _pendingComMarker = false;
+let _pendingComovingGrid = false;
 
 /**
  * Bind the Gas-visualization and Dynamics overlay controls under `rootEl`
@@ -43,6 +46,7 @@ export function bindScale5OverlayControls(rootEl) {
     const circlesInput = rootEl?.querySelector('#cosmic-overlay-smoothing-circles');
     const velocityInput = rootEl?.querySelector('#cosmic-overlay-velocity-vectors');
     const comInput = rootEl?.querySelector('#cosmic-overlay-com-marker');
+    const comovingGridInput = rootEl?.querySelector('#cosmic-overlay-comoving-grid');
 
     colorBySelect?.addEventListener('change', () => {
         _pendingColorBy = colorBySelect.value;
@@ -63,6 +67,11 @@ export function bindScale5OverlayControls(rootEl) {
         _pendingComMarker = comInput.checked;
         _activeRenderer?.setComMarker?.(_pendingComMarker);
     });
+
+    comovingGridInput?.addEventListener('change', () => {
+        _pendingComovingGrid = comovingGridInput.checked;
+        _activeRenderer?.setComovingGrid?.(_pendingComovingGrid);
+    });
 }
 
 /**
@@ -72,7 +81,7 @@ export function bindScale5OverlayControls(rootEl) {
  * so a choice made before a scenario reload survives the reload, matching
  * syncScale5Toggles(bridge)'s shape exactly.
  *
- * @param {{setColorBy?: Function, setSmoothingCircles?: Function, setVelocityVectors?: Function, setComMarker?: Function}|null} renderer
+ * @param {{setColorBy?: Function, setSmoothingCircles?: Function, setVelocityVectors?: Function, setComMarker?: Function, setComovingGrid?: Function}|null} renderer
  */
 export function syncScale5Overlays(renderer) {
     _activeRenderer = renderer || null;
@@ -80,4 +89,5 @@ export function syncScale5Overlays(renderer) {
     _activeRenderer?.setSmoothingCircles?.(_pendingSmoothingCircles);
     _activeRenderer?.setVelocityVectors?.(_pendingVelocityVectors);
     _activeRenderer?.setComMarker?.(_pendingComMarker);
+    _activeRenderer?.setComovingGrid?.(_pendingComovingGrid);
 }

@@ -85,7 +85,9 @@ const CHANNELS = {
         { key: 'csMomentum', title: '|Total Momentum|',buffer: 'csMomentum',color: 'var(--chart-pe-momentum, #a78bfa)', unit: '(sim)' },
         { key: 'csAngMom',   title: '|Angular Momentum|', buffer: 'csAngMom', color: 'var(--chart-pe-angmom, #60a5fa)', unit: '(sim)' },
         { key: 'csComDrift', title: 'COM Drift',       buffer: 'csComDrift',color: 'var(--chart-pe-radius, #42a5f5)', unit: 'lu' },
-        { key: 'csThermal',  title: 'Gas Thermal Energy', buffer: 'csThermal', color: 'var(--chart-ae-temp, #fb8c00)', unit: '(sim)' }
+        { key: 'csThermal',  title: 'Gas Thermal Energy', buffer: 'csThermal', color: 'var(--chart-ae-temp, #fb8c00)', unit: '(sim)' },
+        // Pass C (cosmology and expansion): the Friedmann scale factor a(t).
+        { key: 'csScaleFactor', title: 'Scale Factor a(t)', buffer: 'csScaleFactor', color: 'var(--chart-flux, #fb8c00)', unit: '' }
     ]
 };
 // Scale 3 (molecules) runs the same AtomEngine as Scale 2 — identical channels.

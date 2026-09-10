@@ -5,8 +5,8 @@ import { gotoAndReady, switchMode, attachConsoleWatcher, realErrors } from './_h
 /**
  * Scale 5 (Cosmic) instrumentation build-out — one describe block per pass.
  *
- * This file starts with Pass B (Gas and SPH); Pass A appends its own
- * `test.describe` block below (Passes C and D append theirs later). Each
+ * This file starts with Pass B (Gas and SPH); Pass A and Pass C append their
+ * own `test.describe` blocks below (Pass D appends its own later). Each
  * block is self-contained to its own pass's surfaces.
  *
  * Reaching the live CosmicMockBridge and forcing a headless-safe tick
@@ -376,6 +376,223 @@ test.describe('Pass A: Gravity and dynamics', () => {
         // Switch scenario while both overlays are on — the renderer is
         // recreated (Ruling P1); syncScale5Overlays must re-apply the
         // pending state to the fresh renderer without throwing.
+        await selectCosmicScenario(page, 'cosmic-merger');
+        await page.waitForTimeout(300);
+        await tickAndRefresh(page, 10);
+
+        const relevantErrors = realErrors(errors);
+        expect(relevantErrors, `Console errors:\n${relevantErrors.join('\n')}`).toHaveLength(0);
+    });
+});
+
+test.describe('Pass C: Cosmology and expansion', () => {
+    test.beforeEach(async ({ page }) => {
+        page.setDefaultTimeout(30_000);
+    });
+
+    test('cosmic-expansion diagnostics section reads live cosmology fields, the scale factor advances with ticks, and the Omega_Lambda/DM-fraction tooltips carry their epistemic caveats', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+
+        await gotoAndReady(page, { path: '/index.html' });
+        await switchMode(page, 'cosmic');
+        await page.waitForTimeout(500);
+        await openPanel(page, 'diagnostics');
+
+        await selectCosmicScenario(page, 'cosmic-galaxy');
+        await page.waitForTimeout(300);
+        await tickAndRefresh(page, 30);
+
+        const readRow = async (rowId) => page.evaluate((id) => {
+            const cell = document.querySelector(
+                `#panel-diagnostics .diag-scale5-root [data-section="cosmic-expansion"] tr[data-row="${id}"] .diag-value`,
+            );
+            return cell ? Number(cell.textContent) : null;
+        }, rowId);
+
+        const scaleFactorBefore = await readRow('scale-factor');
+        expect(scaleFactorBefore, 'scale-factor should render a finite positive value').toBeGreaterThan(0);
+        expect(await readRow('hubble'), 'hubble row should render a finite positive rate').toBeGreaterThan(0);
+        expect(await readRow('redshift'), 'redshift row should render a finite value').not.toBeNull();
+        expect(await readRow('hubble0'), 'hubble0 anchor row should render a finite positive value').toBeGreaterThan(0);
+        expect(await readRow('omega-m'), 'omega-m row should render 1/3').toBeCloseTo(1 / 3, 5);
+        expect(await readRow('omega-l'), 'omega-l row should render 2/3').toBeCloseTo(2 / 3, 5);
+        expect(await readRow('dm-fraction'), 'dm-fraction row should render a percent in (0, 100]').toBeGreaterThan(0);
+        expect(await readRow('clock-gain'), 'clock-gain row should render the default gain (40)').toBeCloseTo(40, 5);
+        const boxBefore = await readRow('box-comoving');
+        expect(boxBefore, 'box-comoving row should render a finite positive size').toBeGreaterThan(0);
+
+        // Expansion is on by default: advancing ticks should grow both the
+        // scale factor and (by construction, boxComoving = boxSize * a) the
+        // comoving box size row beside it.
+        await tickAndRefresh(page, 120);
+        const scaleFactorAfter = await readRow('scale-factor');
+        const boxAfter = await readRow('box-comoving');
+        expect(scaleFactorAfter, 'scale factor should have advanced after 120 more ticks with expansion on')
+            .toBeGreaterThan(scaleFactorBefore);
+        expect(boxAfter, 'comoving box size should have grown along with the scale factor')
+            .toBeGreaterThan(boxBefore);
+
+        // Ruling C-1: the plan's instruction to replace the hard-coded Omega/
+        // DM strings in the "Cosmology (FTD)" info card with live readouts
+        // was overridden — those tooltips carry load-bearing epistemic
+        // caveats this diagnostics section restates rather than replaces.
+        // Confirm BOTH surfaces still carry the caveats: the pre-existing
+        // static card (untouched by this pass) and this pass's own new rows.
+        // Scoped to the pre-existing STATIC "Cosmology (FTD)" info card by
+        // its card-title text, not just its `.scale-info-copy` class — this
+        // pass's own new Cosmology CONTROLS card also uses that class for
+        // an unrelated note, and a class-only selector would conflate them.
+        // Note: ui/components/tooltips/component.js hoists every `title=`
+        // attribute into `data-ui-tooltip` (removing `title` itself) on a
+        // global pass, so by the time the page has settled the caveat text
+        // lives in `data-ui-tooltip`, not `title`.
+        const staticCardTooltips = await page.evaluate(() => {
+            const cards = document.querySelectorAll('#panel-controls-grid-scale5 .card');
+            const ftdCard = Array.from(cards).find((c) => c.querySelector('.card-title')?.textContent === 'Cosmology (FTD)');
+            const cells = ftdCard ? ftdCard.querySelectorAll('.scale-info-copy > div[data-ui-tooltip]') : [];
+            return Array.from(cells).map((el) => el.dataset.uiTooltip);
+        });
+        expect(staticCardTooltips.some((t) => /does NOT match the observed/i.test(t)), 'static Cosmology (FTD) card should still carry the Omega_Lambda mismatch caveat').toBe(true);
+        expect(staticCardTooltips.some((t) => /RETIRED/i.test(t) && /FTD-0131/i.test(t)), 'static Cosmology (FTD) card should still carry the G_N RETIRED caveat').toBe(true);
+        expect(staticCardTooltips.some((t) => /does NOT match Planck 2018/i.test(t)), 'static Cosmology (FTD) card should still carry the DM-fraction Planck mismatch caveat').toBe(true);
+
+        const omegaLRowTooltip = await page.evaluate(() => {
+            const row = document.querySelector(
+                '#panel-diagnostics .diag-scale5-root [data-section="cosmic-expansion"] tr[data-row="omega-l"]',
+            );
+            return row ? row.dataset.uiTooltip : null;
+        });
+        expect(omegaLRowTooltip, 'omega-l row tooltip should exist').toBeTruthy();
+        expect(omegaLRowTooltip).toContain('[CONJECTURE]');
+        expect(omegaLRowTooltip).toContain('NOT match the observed');
+
+        const dmRowTooltip = await page.evaluate(() => {
+            const row = document.querySelector(
+                '#panel-diagnostics .diag-scale5-root [data-section="cosmic-expansion"] tr[data-row="dm-fraction"]',
+            );
+            return row ? row.dataset.uiTooltip : null;
+        });
+        expect(dmRowTooltip, 'dm-fraction row tooltip should exist').toBeTruthy();
+        expect(dmRowTooltip).toContain('[SELECTION]');
+        expect(dmRowTooltip).toContain('NOT match Planck 2018');
+
+        const relevantErrors = realErrors(errors);
+        expect(relevantErrors, `Console errors:\n${relevantErrors.join('\n')}`).toHaveLength(0);
+    });
+
+    test('Cosmology card: expansion toggle freezes a(t); clock-gain slider drives the bridge; DM-fraction select reseeds without touching the scenario dropdown', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+
+        await gotoAndReady(page, { path: '/index.html' });
+        await switchMode(page, 'cosmic');
+        await page.waitForTimeout(500);
+        await selectCosmicScenario(page, 'cosmic-galaxy');
+        await page.waitForTimeout(300);
+        await tickAndRefresh(page, 20);
+
+        // Expansion toggle: off should freeze a(t) exactly (not merely slow
+        // its growth) since _stepFriedmann is skipped entirely while off.
+        // The app runs a real background rAF loop even in this "headless"
+        // config (ctx.running is true after scenario load) — reading the
+        // pre-toggle value and flipping the checkbox must happen in the
+        // SAME page.evaluate() call, or a background tick can land in the
+        // gap between two separate round trips and make `beforeFreeze`
+        // stale relative to when the freeze actually takes effect.
+        const beforeFreeze = await page.evaluate(() => {
+            const cb = /** @type {HTMLInputElement|null} */ (document.getElementById('cosmic-cosmology-expansion'));
+            if (!cb) throw new Error('#cosmic-cosmology-expansion not found');
+            const a = window.__ftdCtx?.inspector?.bridge?.getDiagnostics()?.scaleFactor;
+            cb.checked = false;
+            cb.dispatchEvent(new Event('change', { bubbles: true }));
+            return a;
+        });
+        await tickAndRefresh(page, 30);
+        const afterFreeze = await page.evaluate(() => window.__ftdCtx?.inspector?.bridge?.getDiagnostics()?.scaleFactor);
+        expect(afterFreeze, 'scale factor should be frozen exactly once expansion is toggled off').toBe(beforeFreeze);
+
+        // Re-enable so the rest of the run reflects normal behaviour.
+        await page.evaluate(() => {
+            const cb = /** @type {HTMLInputElement|null} */ (document.getElementById('cosmic-cosmology-expansion'));
+            cb.checked = true;
+            cb.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+
+        // Clock-gain slider: a bridge live setter, no second UI surface.
+        const clockGainResult = await page.evaluate(() => {
+            const el = /** @type {HTMLInputElement|null} */ (document.getElementById('cosmic-cosmology-clock-gain'));
+            if (!el) throw new Error('#cosmic-cosmology-clock-gain not found');
+            el.value = '90';
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+            const bridge = window.__ftdCtx?.inspector?.bridge;
+            return {
+                clockGain: bridge?.getRuntimeParams?.().clockGain,
+                label: document.getElementById('cosmic-cosmology-clock-gain-value')?.textContent,
+            };
+        });
+        expect(clockGainResult.clockGain).toBeCloseTo(90, 5);
+        expect(clockGainResult.label).toBe('90');
+
+        // DM-fraction pre-load select: reseeds the CURRENT scenario (the
+        // bridge instance is recreated) without touching the scenario
+        // dropdown's own value or its option list (constraint: this is not
+        // a scenario option, and scientific-scenario-inventory.spec.js pins
+        // the 16 Scale-5 ids).
+        const scenarioBefore = await page.evaluate(() => document.getElementById('cosmic-scenario-select')?.value);
+        const dmResult = await page.evaluate(() => {
+            const sel = /** @type {HTMLSelectElement|null} */ (document.getElementById('cosmic-cosmology-dm-fraction'));
+            if (!sel) throw new Error('#cosmic-cosmology-dm-fraction not found');
+            sel.value = '0.84';
+            sel.dispatchEvent(new Event('change', { bubbles: true }));
+            const bridge = window.__ftdCtx?.inspector?.bridge;
+            return {
+                override: bridge?._dmFractionOverride,
+                scenario: bridge?._scenarioName,
+                scenarioSelectValue: document.getElementById('cosmic-scenario-select')?.value,
+            };
+        });
+        expect(dmResult.override).toBeCloseTo(0.84, 5);
+        expect(dmResult.scenario, 'DM-fraction change should reload the SAME scenario, not switch to a different one')
+            .toBe(scenarioBefore);
+        expect(dmResult.scenarioSelectValue, "the scenario dropdown's own value must not change")
+            .toBe(scenarioBefore);
+
+        // Switching back to "default" must restore the unset-override
+        // behaviour (?? DM_FRACTION), not merely stop reflecting 0.84.
+        const backToDefault = await page.evaluate(() => {
+            const sel = /** @type {HTMLSelectElement|null} */ (document.getElementById('cosmic-cosmology-dm-fraction'));
+            sel.value = 'default';
+            sel.dispatchEvent(new Event('change', { bubbles: true }));
+            return window.__ftdCtx?.inspector?.bridge?._dmFractionOverride;
+        });
+        expect(backToDefault).toBeNull();
+
+        const relevantErrors = realErrors(errors);
+        expect(relevantErrors, `Console errors:\n${relevantErrors.join('\n')}`).toHaveLength(0);
+    });
+
+    test('comoving reference-grid overlay toggle runs without console errors and survives a scenario switch', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+
+        await gotoAndReady(page, { path: '/index.html' });
+        await switchMode(page, 'cosmic');
+        await page.waitForTimeout(500);
+        await selectCosmicScenario(page, 'cosmic-galaxy');
+        await page.waitForTimeout(300);
+        await tickAndRefresh(page, 10);
+
+        const gridChecked = await page.evaluate(() => {
+            const cb = /** @type {HTMLInputElement|null} */ (document.getElementById('cosmic-overlay-comoving-grid'));
+            if (!cb) throw new Error('#cosmic-overlay-comoving-grid not found');
+            cb.checked = true;
+            cb.dispatchEvent(new Event('change', { bubbles: true }));
+            return cb.checked;
+        });
+        expect(gridChecked).toBe(true);
+        await tickAndRefresh(page, 10);
+
+        // Ruling P1 hazard: the renderer is recreated on every scenario
+        // load, so syncScale5Overlays must re-apply the pending comoving-
+        // grid state to the FRESH renderer without throwing.
         await selectCosmicScenario(page, 'cosmic-merger');
         await page.waitForTimeout(300);
         await tickAndRefresh(page, 10);

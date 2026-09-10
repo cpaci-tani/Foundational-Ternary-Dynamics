@@ -30,6 +30,23 @@
  * apart; scale5/controller.js binds the two range sliders and the
  * adaptive-smoothing checkbox directly (they have no second surface).
  *
+ * Pass C (2026-09-10) adds the "Cosmology" card beside Dynamics and Gas: an
+ * expansion on/off checkbox (a bridge setter, `setExpansionEnabled` — NOT a
+ * SCALE5_TOGGLES registry key, so no `data-scale5-toggle` attribute and no
+ * toggle-sync binding, exactly like the Gas card's adaptive-smoothing
+ * checkbox), a clock-gain slider (bridge setter `setClockGain`, same shape
+ * as the Dynamics/Gas sliders), and a dark-matter-fraction PRE-LOAD select
+ * (Scale 4's `planetary-gravity-mode` is the precedent this mirrors: a
+ * controller-scope field that survives bridge recreation, applied to the
+ * FRESH bridge before setupScenario() runs, then the current scenario is
+ * reloaded — DM_FRACTION is baked into body TYPES at construction, so there
+ * is no live in-place retrofit). This card's static sibling, "Cosmology
+ * (FTD)" (a pre-existing info card in the same grid, from before the
+ * controls-card component existed), holds the fixed Omega_m/Omega_Lambda/
+ * G_N/gamma/c constants with their load-bearing epistemic tooltips —
+ * deliberately UNTOUCHED here (Ruling C-1): this card is live CONTROLS, not
+ * a second copy of that info.
+ *
  * Mirrors scales/scale2/ui/controls/component.js, but targets the stable
  * id `panel-controls-grid-scale5` (added to the `.scale5-only
  * .panel-grid-3` block in ui/components/panel-resources/template.js)
@@ -44,6 +61,7 @@ import { bindScale5ToggleCheckboxes } from '../toggle-sync.js';
 
 const DYNAMICS_CARD_KEY = 'dynamics-defaults';
 const GAS_CARD_KEY = 'gas-sph';
+const COSMOLOGY_CARD_KEY = 'cosmology-expansion';
 
 function createDynamicsCard() {
     const card = document.createElement('div');
@@ -117,6 +135,37 @@ function createGasCard() {
     return card;
 }
 
+function createCosmologyCard() {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.scale5ControlCard = COSMOLOGY_CARD_KEY;
+    card.innerHTML = `
+        <div class="card-title">Cosmology</div>
+        <div class="toggle-row">
+            <input type="checkbox" id="cosmic-cosmology-expansion" checked>
+            <label for="cosmic-cosmology-expansion" title="[MEASURED — instrument control] When on, the flat-&Lambda;CDM background integrator advances the scale factor a, Hubble rate H, and redshift z each tick. Turning it off FREEZES a/H/z at their current values; N-body dynamics are unaffected either way — the Friedmann step is diagnostics-only regardless of this setting.">Expansion (background clock)</label>
+        </div>
+        <label class="pe-ctrl-row" title="Display-only acceleration of the cosmic background clock (a, H, z) — NOT physics. Never touches the N-body force kernel or body kinematics; scales only how fast the universe crosses a=1 on screen. Default 40.">
+            <span class="pe-ctrl-label">Clock gain &times;</span>
+            <input type="range" class="pe-slider" id="cosmic-cosmology-clock-gain" min="0" max="200" step="1" value="40">
+            <span class="pe-ctrl-value" id="cosmic-cosmology-clock-gain-value">40</span>
+        </label>
+        <label class="pe-ctrl-row" title="[SELECTION] Dark-matter mass fraction baked into body TYPES at scenario construction (galaxy-family scenarios only) — there is no in-place retrofit. Changing this RE-SEEDS the population by reloading the current scenario; it does NOT convert existing bodies. Default 17/27 &asymp; 63% does NOT match Planck 2018's observed &Omega;_DM/&Omega;_m &asymp; 84%.">
+            <span class="pe-ctrl-label">DM fraction</span>
+            <select id="cosmic-cosmology-dm-fraction">
+                <option value="default" selected>Default (63%)</option>
+                <option value="0.84">Planck (84%)</option>
+                <option value="0.5">50 / 50</option>
+                <option value="0">Baryon only</option>
+            </select>
+        </label>
+        <div class="scale-info-copy">
+            <div title="Reloads the current scenario with the newly-selected dark-matter fraction baked into the freshly-generated body population.">Changing DM fraction reseeds the scenario — it does not convert existing bodies.</div>
+        </div>
+    `;
+    return card;
+}
+
 export class Scale5ControlsComponent {
     constructor(panelControlsDiv) {
         this.panel = panelControlsDiv;
@@ -152,6 +201,19 @@ export class Scale5ControlsComponent {
         // a Set), so calling this on every init() is safe even when the
         // card already existed.
         bindScale5ToggleCheckboxes(gasCard);
+
+        // Cosmology card (Pass C): none of its three controls are
+        // SCALE5_TOGGLES keys (expansion on/off and clock gain are bridge
+        // setters; DM fraction is a controller-scope pre-load select), so
+        // there is no bindScale5ToggleCheckboxes() call here — all three
+        // are bound directly by scale5/controller.js, mirroring the Gas
+        // card's adaptive-smoothing checkbox and the Dynamics card's
+        // sliders.
+        let cosmologyCard = gridContainer.querySelector(`[data-scale5-control-card="${COSMOLOGY_CARD_KEY}"]`);
+        if (!cosmologyCard) {
+            cosmologyCard = createCosmologyCard();
+            gridContainer.appendChild(cosmologyCard);
+        }
 
         return this;
     }

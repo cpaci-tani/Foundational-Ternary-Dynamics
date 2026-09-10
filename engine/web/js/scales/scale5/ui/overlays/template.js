@@ -16,9 +16,16 @@
  * own per-frame normalization above) and a centre-of-mass marker. Both are
  * O(N) over the already-packed `velocities` buffer (Pass B) and the
  * existing comX/comY/comZ diagnostics (Pass 0a) — no new bridge field, no
- * new pair loop. Passes C and D append their own overlaySection() blocks to
- * the SAME body alongside these; each section's ids/behavior belong to the
- * pass that added it.
+ * new pair loop. Pass D appends its own overlaySection() block to the SAME
+ * body alongside these; each section's ids/behavior belong to the pass
+ * that added it.
+ *
+ * Pass C (2026-09-10) adds "Cosmology": a comoving reference-grid toggle. A
+ * single THREE.Group built once with viewport/boundary-geometry.js's
+ * buildBoundary() and rescaled every frame to boxSize * scaleFactor (the
+ * same "reference box size times a(t)" quantity the Comoving Box Size
+ * diagnostic row computes) — geometry, not a per-body loop, so no new
+ * O(N^2) cost.
  */
 
 import { createScaleOverlayPanel, overlayRow, overlaySection } from '../../../../ui/components/viewport-overlays/panel-shell.js';
@@ -67,11 +74,21 @@ export function getScale5OverlayTemplate() {
     `)}`,
   );
 
+  const cosmologySection = overlaySection(
+    'Cosmology',
+    '',
+    `${overlayRow('', `
+      <label class="scale-overlay-check" title="[MEASURED — instrument] Draws a wireframe cube sized to the reference box (Cosmic Runtime section) times the current scale factor a(t) — the SAME quantity the Comoving Box Size diagnostic row reports — so the grid visibly grows as the background expands. Purely a diagnostic overlay; it never feeds back into N-body dynamics.">
+        <input type="checkbox" id="cosmic-overlay-comoving-grid"> Comoving reference grid
+      </label>
+    `)}`,
+  );
+
   return createScaleOverlayPanel({
     id: 'cosmic-viewport-overlay',
     scaleClass: 'scale5-only',
     title: 'Cosmic overlays',
     footnote: 'Grid and axes off by default — use status bar View menu if needed',
-    bodyHtml: `${frameSection}${gasSection}${dynamicsSection}`,
+    bodyHtml: `${frameSection}${gasSection}${dynamicsSection}${cosmologySection}`,
   });
 }

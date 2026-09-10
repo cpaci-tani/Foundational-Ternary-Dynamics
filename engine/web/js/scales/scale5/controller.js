@@ -144,6 +144,14 @@ class Scale5LifecycleController extends BaseLifecycleController {
         super();
         this.bridge = null;
         this.renderer = null;
+        // Pass C: the dark-matter-fraction pre-load select's chosen override
+        // (null = use the DM_FRACTION default). Controller-scope, mirroring
+        // scale4/controller.js's `_gravityMode` field, because the bridge is
+        // a fresh CosmicMockBridge on every scenario reload (setupScenario
+        // does not reset it, but a NEW bridge instance obviously starts
+        // without it) — this field is what survives the reload so the next
+        // bridge can be given the same override again.
+        this._dmFractionOverride = null;
     }
 
     mount(ctx) {
@@ -274,6 +282,53 @@ class Scale5LifecycleController extends BaseLifecycleController {
             });
             speedLimitFactorInput.dataset.s5CtrlBound = '1';
         }
+
+        // Cosmology card (Pass C): expansion on/off and clock gain are
+        // bridge fields/live setters with no second UI surface and no
+        // SCALE5_TOGGLES registry entry — bound directly here, identical
+        // reasoning to the Gas/Dynamics sliders above. Lazy `this.bridge`
+        // closures for the same reason: binding happens once, before a
+        // fresh bridge necessarily exists yet.
+        const expansionInput = document.getElementById('cosmic-cosmology-expansion');
+        if (expansionInput && !expansionInput.dataset.s5CtrlBound) {
+            this.bindEvent(expansionInput, 'change', () => {
+                this.bridge?.setExpansionEnabled?.(expansionInput.checked);
+            });
+            expansionInput.dataset.s5CtrlBound = '1';
+        }
+
+        const clockGainInput = document.getElementById('cosmic-cosmology-clock-gain');
+        const clockGainValue = document.getElementById('cosmic-cosmology-clock-gain-value');
+        if (clockGainInput && !clockGainInput.dataset.s5CtrlBound) {
+            this.bindEvent(clockGainInput, 'input', () => {
+                const v = Number(clockGainInput.value);
+                this.bridge?.setClockGain?.(v);
+                if (clockGainValue) clockGainValue.textContent = v.toFixed(0);
+            });
+            clockGainInput.dataset.s5CtrlBound = '1';
+        }
+
+        // Dark-matter-fraction PRE-LOAD select (Pass C, section 3 of the
+        // brief — "owner decision, already taken"). DM_FRACTION is baked
+        // into body TYPES at construction (cosmic-scenarios/galaxies.js);
+        // there is no in-place retrofit, so this stores the choice at
+        // CONTROLLER scope (this._dmFractionOverride, applied to the next
+        // fresh bridge in loadCosmicScenario) and reloads the current
+        // scenario — the exact shape scale4/controller.js's
+        // `planetary-gravity-mode` select uses for the same "must reload to
+        // take effect" reason.
+        const dmFractionSelect = document.getElementById('cosmic-cosmology-dm-fraction');
+        if (dmFractionSelect && !dmFractionSelect.dataset.s5CtrlBound) {
+            this.bindEvent(dmFractionSelect, 'change', () => {
+                const raw = dmFractionSelect.value;
+                this._dmFractionOverride = raw === 'default' ? null : Number(raw);
+                const scenario = document.getElementById('cosmic-scenario-select')?.value
+                    || this.bridge?._scenarioName
+                    || 'cosmic-galaxy';
+                this.loadCosmicScenario(ctx, scenario);
+            });
+            dmFractionSelect.dataset.s5CtrlBound = '1';
+        }
     }
 
     /** Reflect the fresh bridge's runtime SPH params (Pass B: alpha, beta,
@@ -327,6 +382,32 @@ class Scale5LifecycleController extends BaseLifecycleController {
         if (speedLimitFactorValue) speedLimitFactorValue.textContent = params.speedLimitFactor.toFixed(2);
     }
 
+    /** Reflect the fresh bridge's runtime cosmology params (Pass C: clock
+     *  gain, expansion enabled) plus the controller-scope DM-fraction
+     *  override onto the Cosmology card, mirroring
+     *  _syncGasControlsFromBridge/_syncDynamicsControlsFromBridge above.
+     *  The DM-fraction select reflects `this._dmFractionOverride` (the
+     *  controller field, not a bridge runtime param — DM fraction has no
+     *  live bridge state, only the construction-time value the current
+     *  bridge was actually built with) rather than a `getRuntimeParams()`
+     *  field, since the fraction is baked into body types at construction,
+     *  not read back from the bridge afterward. */
+    _syncCosmologyControlsFromBridge() {
+        if (!this.bridge?.getRuntimeParams) return;
+        const params = this.bridge.getRuntimeParams();
+        const expansionInput = document.getElementById('cosmic-cosmology-expansion');
+        if (expansionInput) expansionInput.checked = !!params.expansionEnabled;
+        const clockGainInput = document.getElementById('cosmic-cosmology-clock-gain');
+        const clockGainValue = document.getElementById('cosmic-cosmology-clock-gain-value');
+        if (clockGainInput) clockGainInput.value = String(params.clockGain);
+        if (clockGainValue) clockGainValue.textContent = params.clockGain.toFixed(0);
+        const dmFractionSelect = document.getElementById('cosmic-cosmology-dm-fraction');
+        if (dmFractionSelect) {
+            dmFractionSelect.value = this._dmFractionOverride == null
+                ? 'default' : String(this._dmFractionOverride);
+        }
+    }
+
     loadCosmicScenario(ctx, scenarioName = 'cosmic-galaxy') {
         this._mountControls(ctx);
         _tickAcc.reset();
@@ -342,6 +423,12 @@ class Scale5LifecycleController extends BaseLifecycleController {
 
         // Create cosmic bridge (JS-only mock for now)
         this.bridge = new CosmicMockBridge();
+        // Pass C: apply the controller-scope DM-fraction override (null by
+        // default) BEFORE setupScenario() runs — cosmic-scenarios/galaxies.js
+        // reads `this._dmFractionOverride ?? DM_FRACTION` while constructing
+        // bodies, so this must be set on the fresh bridge ahead of that call,
+        // not after.
+        this.bridge._dmFractionOverride = this._dmFractionOverride;
         this.bridge.setupScenario(scenarioName);
 
         // Reflect this bridge's toggle state (e.g. a gas laboratory setting
@@ -351,6 +438,7 @@ class Scale5LifecycleController extends BaseLifecycleController {
         syncScale5Toggles(this.bridge);
         this._syncGasControlsFromBridge();
         this._syncDynamicsControlsFromBridge();
+        this._syncCosmologyControlsFromBridge();
 
         // Inform the inspector about the cosmic bridge so it can route
         // queries to the right backend (audit P1-1 fix, 2026-05-27).
@@ -368,6 +456,14 @@ class Scale5LifecycleController extends BaseLifecycleController {
         }
         this.renderer = new CosmicRenderer(viewport.scene, viewport.camera, viewport.renderer);
         this.trackThreeObject(this.renderer);
+
+        // Pass C: correct the comoving grid's reference box size from this
+        // scenario's ACTUAL runtime boxSize — the renderer constructor
+        // default (200) matches the bridge's own constructor default, but
+        // this keeps the grid correct if a scenario ever overrides boxSize
+        // (none do today; setBoxSize no-ops on a non-finite/non-positive
+        // value so this call can never corrupt the grid's scale).
+        this.renderer.setBoxSize(this.bridge.getRuntimeParams().boxSize);
 
         // Rebind the Gas overlay's colour-by/smoothing-circle controls to
         // THIS fresh renderer (Ruling P1): ViewportOverlaysComponent.init()
@@ -467,6 +563,12 @@ class Scale5LifecycleController extends BaseLifecycleController {
         if (dtInput) delete dtInput.dataset.s5CtrlBound;
         const speedLimitFactorInput = document.getElementById('cosmic-dynamics-speed-limit-factor');
         if (speedLimitFactorInput) delete speedLimitFactorInput.dataset.s5CtrlBound;
+        const expansionInput = document.getElementById('cosmic-cosmology-expansion');
+        if (expansionInput) delete expansionInput.dataset.s5CtrlBound;
+        const clockGainInput = document.getElementById('cosmic-cosmology-clock-gain');
+        if (clockGainInput) delete clockGainInput.dataset.s5CtrlBound;
+        const dmFractionSelect = document.getElementById('cosmic-cosmology-dm-fraction');
+        if (dmFractionSelect) delete dmFractionSelect.dataset.s5CtrlBound;
         if (this.renderer) {
             this.renderer.dispose();
             this.renderer = null;
