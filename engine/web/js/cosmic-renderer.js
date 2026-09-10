@@ -13,8 +13,9 @@
 
 import * as THREE from 'three';
 import { BaseRenderer } from './core/BaseRenderer.js';
-import { makeStarSprite, makeGasSprite, makeHaloSprite } from './cosmic/sprites.js';
+import { makeStarSprite, makeGasSprite, makeHaloSprite, makeRingSprite } from './cosmic/sprites.js';
 import { DISK_VERT, DISK_FRAG, JET_VERT, JET_FRAG, blackbodyColor } from './cosmic/shaders.js';
+import { rampViridis } from './viewport/color-ramps.js';
 import { C_SPEED, G_N } from './constants.js';
 
 const BT = {
@@ -46,6 +47,7 @@ export function schwarzschildRenderRadius(mass) {
 const _starTex = makeStarSprite();
 const _gasTex = makeGasSprite();
 const _haloTex = makeHaloSprite();
+const _ringTex = makeRingSprite();
 
 // ====================================================================
 export class CosmicRenderer extends BaseRenderer {
@@ -60,6 +62,16 @@ export class CosmicRenderer extends BaseRenderer {
         this._dmCloud = null;
         this._nebulaCloud = null;   // populated lazily by _ensureCloud('nebula', …)
         this._bgStars = null;
+        // Pass B: colour-by mode ('none'|'density'|'temperature'|'speed')
+        // and the optional smoothing-length-circle overlay, both driven by
+        // scales/scale5/ui/overlays/component.js via setColorBy/
+        // setSmoothingCircles below. _smoothingCloud is a dedicated Points
+        // cloud (J4/J5: reuses the _ensureCloud-style growth/disposal
+        // pattern rather than a new lifecycle shape), populated only for
+        // GAS bodies from the `smoothingLengths` buffer.
+        this._colorBy = 'none';
+        this._showSmoothingCircles = false;
+        this._smoothingCloud = null;
 
         // Subclass-specific geometry teardown. Called by BaseRenderer.dispose()
         // (core/BaseRenderer.js:37). Idempotent: nulls each reference after
@@ -76,6 +88,7 @@ export class CosmicRenderer extends BaseRenderer {
             this._gasCloud = disposeCloud(this._gasCloud);
             this._dmCloud = disposeCloud(this._dmCloud);
             this._nebulaCloud = disposeCloud(this._nebulaCloud);  // CR-H2 fix
+            this._smoothingCloud = disposeCloud(this._smoothingCloud);  // Pass B
             this._bgStars = disposeCloud(this._bgStars);
 
             // Black-hole meshes are created via `_group.add(sphere, ...)` and
@@ -183,30 +196,52 @@ export class CosmicRenderer extends BaseRenderer {
             const p = cloud.geometry.attributes.position.array;
             const c = cloud.geometry.attributes.color.array;
             const ids = cloud.userData.ids;
-            for (let j = 0; j < stars.length; j++) {
-                const s = stars[j];
-                p[j*3] = s.x; p[j*3+1] = s.y; p[j*3+2] = s.z;
-                ids[j] = s.id;
-                const T = temperatures ? temperatures[s.i] : 5800;
-                const [r, g, b] = blackbodyColor(Math.max(T, 2000));
-                const br = 0.7 + Math.min((sizes ? sizes[s.i] : 5) * 0.03, 0.3);
+            if (this._colorBy !== 'none') {
+                // Pass B colour-by: viridis-ramp the star cloud by an
+                // existing measured per-body quantity, scoped to the star
+                // population's own min/max THIS frame (a display
+                // convenience, not a physical scale — matches the gas
+                // profile bars' own per-call normalization above).
+                let vmin = Infinity, vmax = -Infinity;
+                for (let j = 0; j < stars.length; j++) {
+                    const v = this._colorByValue(bodyData, stars[j].i);
+                    if (v < vmin) vmin = v;
+                    if (v > vmax) vmax = v;
+                }
+                const range = (vmax - vmin) || 1;
+                for (let j = 0; j < stars.length; j++) {
+                    const s = stars[j];
+                    p[j*3] = s.x; p[j*3+1] = s.y; p[j*3+2] = s.z;
+                    ids[j] = s.id;
+                    const v = this._colorByValue(bodyData, s.i);
+                    rampViridis((v - vmin) / range, c, j*3);
+                }
+            } else {
+                for (let j = 0; j < stars.length; j++) {
+                    const s = stars[j];
+                    p[j*3] = s.x; p[j*3+1] = s.y; p[j*3+2] = s.z;
+                    ids[j] = s.id;
+                    const T = temperatures ? temperatures[s.i] : 5800;
+                    const [r, g, b] = blackbodyColor(Math.max(T, 2000));
+                    const br = 0.7 + Math.min((sizes ? sizes[s.i] : 5) * 0.03, 0.3);
 
-                // Fuel stage overlay: modulate color to show evolutionary state
-                const fuelStage = bodyData.fuel_stages ? bodyData.fuel_stages[s.i] : 0;
-                if (fuelStage === 1) {
-                    // Red giant: force reddish color, larger sprite
-                    c[j*3] = 1.0 * br; c[j*3+1] = 0.3 * br; c[j*3+2] = 0.05 * br;
-                } else if (fuelStage >= 2 && fuelStage <= 4) {
-                    // Late burning: blue-white, pulsing slightly
-                    const pulse = 0.9 + 0.1 * Math.sin(this._time * 5 + s.i);
-                    c[j*3] = 0.6 * br * pulse; c[j*3+1] = 0.7 * br * pulse; c[j*3+2] = 1.0 * br * pulse;
-                } else if (fuelStage >= 5) {
-                    // Iron core / dying: dim, flickering
-                    const flicker = 0.3 + 0.7 * Math.random();
-                    c[j*3] = 0.8 * br * flicker; c[j*3+1] = 0.2 * br * flicker; c[j*3+2] = 0.1 * br * flicker;
-                } else {
-                    // Normal main sequence
-                    c[j*3] = r * br; c[j*3+1] = g * br; c[j*3+2] = b * br;
+                    // Fuel stage overlay: modulate color to show evolutionary state
+                    const fuelStage = bodyData.fuel_stages ? bodyData.fuel_stages[s.i] : 0;
+                    if (fuelStage === 1) {
+                        // Red giant: force reddish color, larger sprite
+                        c[j*3] = 1.0 * br; c[j*3+1] = 0.3 * br; c[j*3+2] = 0.05 * br;
+                    } else if (fuelStage >= 2 && fuelStage <= 4) {
+                        // Late burning: blue-white, pulsing slightly
+                        const pulse = 0.9 + 0.1 * Math.sin(this._time * 5 + s.i);
+                        c[j*3] = 0.6 * br * pulse; c[j*3+1] = 0.7 * br * pulse; c[j*3+2] = 1.0 * br * pulse;
+                    } else if (fuelStage >= 5) {
+                        // Iron core / dying: dim, flickering
+                        const flicker = 0.3 + 0.7 * Math.random();
+                        c[j*3] = 0.8 * br * flicker; c[j*3+1] = 0.2 * br * flicker; c[j*3+2] = 0.1 * br * flicker;
+                    } else {
+                        // Normal main sequence
+                        c[j*3] = r * br; c[j*3+1] = g * br; c[j*3+2] = b * br;
+                    }
                 }
             }
             cloud.geometry.attributes.position.needsUpdate = true;
@@ -221,22 +256,59 @@ export class CosmicRenderer extends BaseRenderer {
             const p = cloud.geometry.attributes.position.array;
             const c = cloud.geometry.attributes.color.array;
             const ids = cloud.userData.ids;
-            for (let j = 0; j < gas.length; j++) {
-                const g = gas[j];
-                p[j*3] = g.x; p[j*3+1] = g.y; p[j*3+2] = g.z;
-                ids[j] = g.id;
-                const T = temperatures ? temperatures[g.i] : 1e4;
-                const t = Math.max(0, Math.min(1, Math.log10(T + 1) / 7));
-                // Nebula palette: cool blue-violet -> warm pink -> hot white-gold
-                if (t < 0.35)      { c[j*3] = 0.15; c[j*3+1] = 0.12 + t * 0.5; c[j*3+2] = 0.5 + t * 0.5; }
-                else if (t < 0.6)  { c[j*3] = 0.7 + t * 0.3; c[j*3+1] = 0.2; c[j*3+2] = 0.4; }
-                else               { c[j*3] = 1.0; c[j*3+1] = 0.8; c[j*3+2] = 0.5; }
+            if (this._colorBy !== 'none') {
+                let vmin = Infinity, vmax = -Infinity;
+                for (let j = 0; j < gas.length; j++) {
+                    const v = this._colorByValue(bodyData, gas[j].i);
+                    if (v < vmin) vmin = v;
+                    if (v > vmax) vmax = v;
+                }
+                const range = (vmax - vmin) || 1;
+                for (let j = 0; j < gas.length; j++) {
+                    const g = gas[j];
+                    p[j*3] = g.x; p[j*3+1] = g.y; p[j*3+2] = g.z;
+                    ids[j] = g.id;
+                    const v = this._colorByValue(bodyData, g.i);
+                    rampViridis((v - vmin) / range, c, j*3);
+                }
+            } else {
+                for (let j = 0; j < gas.length; j++) {
+                    const g = gas[j];
+                    p[j*3] = g.x; p[j*3+1] = g.y; p[j*3+2] = g.z;
+                    ids[j] = g.id;
+                    const T = temperatures ? temperatures[g.i] : 1e4;
+                    const t = Math.max(0, Math.min(1, Math.log10(T + 1) / 7));
+                    // Nebula palette: cool blue-violet -> warm pink -> hot white-gold
+                    if (t < 0.35)      { c[j*3] = 0.15; c[j*3+1] = 0.12 + t * 0.5; c[j*3+2] = 0.5 + t * 0.5; }
+                    else if (t < 0.6)  { c[j*3] = 0.7 + t * 0.3; c[j*3+1] = 0.2; c[j*3+2] = 0.4; }
+                    else               { c[j*3] = 1.0; c[j*3+1] = 0.8; c[j*3+2] = 0.5; }
+                }
             }
             cloud.geometry.attributes.position.needsUpdate = true;
             cloud.geometry.attributes.color.needsUpdate = true;
             cloud.geometry.setDrawRange(0, gas.length);
             cloud.visible = true;
         } else if (this._gasCloud) this._gasCloud.visible = false;
+
+        // -- Smoothing-length circles (Pass B, gas only) --
+        if (this._showSmoothingCircles && gas.length > 0 && bodyData.smoothingLengths) {
+            const scloud = this._ensureSmoothingCloud(Math.max(gas.length, 200));
+            const sp = scloud.geometry.attributes.position.array;
+            const ssize = scloud.geometry.attributes.size.array;
+            for (let j = 0; j < gas.length; j++) {
+                const g = gas[j];
+                sp[j*3] = g.x; sp[j*3+1] = g.y; sp[j*3+2] = g.z;
+                // Diameter (2h) so the ring visibly bounds the SPH kernel
+                // support radius, floored so a zero/near-zero h (a body
+                // that bypassed adaptive-h initialization) still renders
+                // a faint marker rather than vanishing.
+                ssize[j] = Math.max(0.5, bodyData.smoothingLengths[g.i] * 2);
+            }
+            scloud.geometry.attributes.position.needsUpdate = true;
+            scloud.geometry.attributes.size.needsUpdate = true;
+            scloud.geometry.setDrawRange(0, gas.length);
+            scloud.visible = true;
+        } else if (this._smoothingCloud) this._smoothingCloud.visible = false;
 
         // -- Nebulae: giant structured dust clouds --
         if (this._showGas && nebulae.length > 0) {
@@ -537,6 +609,85 @@ export class CosmicRenderer extends BaseRenderer {
     toggleStars(on)          { this._showStars = on; }
     toggleBlackHoles(on)     { this._showBH = on; }
     toggleAccretionDisks(on) { this._showDisks = on; }
+
+    /** Pass B: 'none' (default; byte-identical to pre-Pass-B rendering) |
+     *  'density' | 'temperature' | 'speed'. Applies to the star and gas
+     *  clouds only (Ruling J3) — nebula/DM/BH clouds are untouched. */
+    setColorBy(mode) { this._colorBy = mode || 'none'; }
+
+    /** Pass B: toggle the gas-only smoothing-length-circle overlay. */
+    setSmoothingCircles(on) { this._showSmoothingCircles = !!on; }
+
+    /** Pass B colour-by value lookup for body index `i` in `bodyData`.
+     *  'speed' has no direct packed field — it is derived from the packed
+     *  `velocities` 3-vector (Ruling J5: pack the richer datum once so a
+     *  future velocity-vector overlay needs no buffer of its own) rather
+     *  than adding a redundant `speeds` buffer. */
+    _colorByValue(bodyData, i) {
+        switch (this._colorBy) {
+            case 'density': return bodyData.densities ? bodyData.densities[i] : 0;
+            case 'temperature': return bodyData.temperatures ? bodyData.temperatures[i] : 0;
+            case 'speed': {
+                if (!bodyData.velocities) return 0;
+                const vx = bodyData.velocities[i * 3], vy = bodyData.velocities[i * 3 + 1], vz = bodyData.velocities[i * 3 + 2];
+                return Math.sqrt(vx * vx + vy * vy + vz * vz);
+            }
+            default: return 0;
+        }
+    }
+
+    /** Grow/reuse the smoothing-length-circle Points cloud (Pass B). Follows
+     *  the SAME growth/disposal shape as _ensureCloud's `useSizes` branch
+     *  (J4: reuse the established lifecycle pattern rather than introduce
+     *  a new one), trimmed down to position + size only — no angle/radius
+     *  spaghettification attributes, since that distortion has no meaning
+     *  for a smoothing-length marker. */
+    _ensureSmoothingCloud(maxCount) {
+        let cloud = this._smoothingCloud;
+        if (!cloud || cloud.geometry.attributes.position.count < maxCount) {
+            if (cloud) { this._group.remove(cloud); cloud.geometry.dispose(); cloud.material.dispose(); }
+
+            const g = new THREE.BufferGeometry();
+            g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(maxCount * 3), 3));
+            g.setAttribute('size', new THREE.BufferAttribute(new Float32Array(maxCount), 1));
+
+            const mat = new THREE.ShaderMaterial({
+                uniforms: {
+                    color: { value: new THREE.Color(0x6fd8ff) },
+                    pointTexture: { value: _ringTex },
+                    globalOpacity: { value: 0.4 },
+                },
+                vertexShader: `
+                    attribute float size;
+                    void main() {
+                        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                        gl_PointSize = size * (300.0 / -mvPosition.z);
+                        gl_Position = projectionMatrix * mvPosition;
+                    }
+                `,
+                fragmentShader: `
+                    uniform sampler2D pointTexture;
+                    uniform vec3 color;
+                    uniform float globalOpacity;
+                    void main() {
+                        vec4 texColor = texture2D(pointTexture, gl_PointCoord);
+                        gl_FragColor = vec4(color, globalOpacity) * texColor;
+                    }
+                `,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                depthTest: false,
+                transparent: true,
+            });
+
+            cloud = new THREE.Points(g, mat);
+            cloud.frustumCulled = false;  // same rationale as _ensureCloud (F-20)
+            cloud.name = 'cosmic-smoothing-circles';
+            this._group.add(cloud);
+            this._smoothingCloud = cloud;
+        }
+        return cloud;
+    }
 
     _ensureCloud(name, maxCount, defaultSize, opacity, blending, map, useSizes = false) {
         let cloud = name === 'star' ? this._starCloud : 

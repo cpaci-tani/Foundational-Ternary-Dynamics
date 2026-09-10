@@ -273,6 +273,10 @@ export function computeCosmicForces(TYPE) {
         this._stats.rhoMax = sph.rhoMax;
         this._stats.pMin = sph.pMin;
         this._stats.pMax = sph.pMax;
+        this._stats.cMin = sph.cMin;
+        this._stats.cMax = sph.cMax;
+        this._stats.thermal = sph.thermal;
+        this._stats.kinetic = sph.kinetic;
     }
 
     // Sub-grid physics only active in select scenarios (BH accretion / FTD collapse).

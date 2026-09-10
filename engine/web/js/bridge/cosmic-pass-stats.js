@@ -59,6 +59,11 @@ export function createCosmicPassStats() {
         hMin: 0, hMean: 0, hMax: 0,
         rhoMin: 0, rhoMax: 0,
         pMin: 0, pMax: 0,
+        // Pass B: sound-speed range and gas-only thermal/kinetic energy,
+        // all read off the SAME computeSphForces() return as the fields
+        // above (see that function's Pass B header note).
+        cMin: 0, cMax: 0,
+        thermal: 0, kinetic: 0,
 
         // Sub-grid gas cooling (cosmic-physics.js, gas_cooling gate).
         coolingMean: 0, coolingMax: 0, coolingCount: 0,
@@ -117,6 +122,8 @@ export function createCosmicPassStats() {
             this.hMin = 0; this.hMean = 0; this.hMax = 0;
             this.rhoMin = 0; this.rhoMax = 0;
             this.pMin = 0; this.pMax = 0;
+            this.cMin = 0; this.cMax = 0;
+            this.thermal = 0; this.kinetic = 0;
             this.coolingMean = 0; this.coolingMax = 0; this.coolingCount = 0;
             this.maxRadiationAccel = 0;
             this.maxTidalAccel = 0;

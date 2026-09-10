@@ -383,6 +383,7 @@ export class CosmicMockBridge {
         if (s.hMax > t.hMax) t.hMax = s.hMax;
         if (s.rhoMax > t.rhoMax) t.rhoMax = s.rhoMax;
         if (s.pMax > t.pMax) t.pMax = s.pMax;
+        if (s.cMax > t.cMax) t.cMax = s.cMax;
         if (s.emergentBHEnclosedMass > t.emergentBHEnclosedMass) t.emergentBHEnclosedMass = s.emergentBHEnclosedMass;
 
         // Latest-known snapshot (no lossless cumulative form for a mean,
@@ -394,6 +395,8 @@ export class CosmicMockBridge {
         t.hMin = s.hMin; t.hMean = s.hMean;
         t.rhoMin = s.rhoMin;
         t.pMin = s.pMin;
+        t.cMin = s.cMin;
+        t.thermal = s.thermal; t.kinetic = s.kinetic;
         t.coolingMean = s.coolingMean;
         t.emergentBHVesc = s.emergentBHVesc;
         t.emergentBHThreshold = s.emergentBHThreshold;
@@ -639,6 +642,16 @@ export class CosmicMockBridge {
                 ids: new Int32Array(n), // stable body IDs (survive index shifts)
                 fuel_stages: new Int8Array(n),
                 fuel_fractions: new Float32Array(n),
+                // Pass B (colour-by / smoothing-length-circle overlays,
+                // cosmic-renderer.js): velocities is the FULL 3-vector, not
+                // just |v| — a speed-only buffer would need widening again
+                // the moment a velocity-vector overlay (Pass A) wanted the
+                // direction too, so the richer datum is packed once here;
+                // the colour-by ramp derives magnitude on demand (N sqrt's
+                // per frame at N~2600, negligible). smoothingLengths is the
+                // SPH adaptive smoothing length `h` (0 for non-gas bodies).
+                velocities: new Float32Array(n * 3),
+                smoothingLengths: new Float32Array(n),
             });
 
         const positions = buf.positions;
@@ -652,6 +665,8 @@ export class CosmicMockBridge {
         const ids = buf.ids;
         const fuel_stages = buf.fuel_stages;
         const fuel_fractions = buf.fuel_fractions;
+        const velocities = buf.velocities;
+        const smoothingLengths = buf.smoothingLengths;
 
         for (let i = 0; i < n; i++) {
             const b = this._bodies[i];
@@ -669,8 +684,14 @@ export class CosmicMockBridge {
             stretches[i] = stretch;
             fuel_stages[i] = b.fuel_stage || 0;
             fuel_fractions[i] = b.fuel_fraction != null ? b.fuel_fraction : 1.0;
+            velocities[i * 3] = b.vx; velocities[i * 3 + 1] = b.vy; velocities[i * 3 + 2] = b.vz;
+            smoothingLengths[i] = b.h || 0;
         }
-        return { positions, types, temperatures, sizes, masses, densities, luminosities, stretches, ids, fuel_stages, fuel_fractions, count: n };
+        return {
+            positions, types, temperatures, sizes, masses, densities, luminosities,
+            stretches, ids, fuel_stages, fuel_fractions, velocities, smoothingLengths,
+            count: n,
+        };
     }
 
     cosmicInspectBody(id) {

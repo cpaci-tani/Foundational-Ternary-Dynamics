@@ -126,12 +126,20 @@ export function isGasType(type, TYPE) {
  * and b.du. Caller (cosmic-physics.js) must run the gravity pass first —
  * this function only ADDS to ax/ay/az.
  *
+ * Pass B additions (all read from values the density loop already computes
+ * — no new O(N) or O(N^2) work): `cMin`/`cMax` track the sound-speed `c[a]`
+ * extrema alongside the existing rho/P extrema; `thermal`/`kinetic` sum the
+ * gas population's internal energy and kinetic energy over the SAME
+ * `gasIdx` loop (distinct from `CosmicMockBridge.getDiagnostics()`'s
+ * whole-system `totalThermal`/`totalKE`, which include non-gas bodies).
+ *
  * @param {{_bodies: object[]}} bridge
  * @param {object} TYPE CosmicMockBridge.TYPE enum
  * @returns {{gasCount: number, pairs: number, neighborMin: number,
  *   neighborMean: number, neighborMax: number, hMin: number,
  *   hMean: number, hMax: number, rhoMin: number, rhoMax: number,
- *   pMin: number, pMax: number}}
+ *   pMin: number, pMax: number, cMin: number, cMax: number,
+ *   thermal: number, kinetic: number}}
  */
 export function computeSphForces(bridge, TYPE) {
     const bodies = bridge._bodies;
@@ -148,6 +156,7 @@ export function computeSphForces(bridge, TYPE) {
             neighborMin: 0, neighborMean: 0, neighborMax: 0,
             hMin: 0, hMean: 0, hMax: 0,
             rhoMin: 0, rhoMax: 0, pMin: 0, pMax: 0,
+            cMin: 0, cMax: 0, thermal: 0, kinetic: 0,
         };
     }
 
@@ -193,6 +202,8 @@ export function computeSphForces(bridge, TYPE) {
     let hMin = Infinity, hMax = -Infinity, hSum = 0;
     let rhoMin = Infinity, rhoMax = -Infinity;
     let pMin = Infinity, pMax = -Infinity;
+    let cMin = Infinity, cMax = -Infinity;
+    let thermalSum = 0, kineticSum = 0;
     for (let a = 0; a < nGas; a++) {
         const bi = bodies[gasIdx[a]];
         let r = bi.mass * kernelW(0, bi.h);
@@ -229,6 +240,10 @@ export function computeSphForces(bridge, TYPE) {
         if (r > rhoMax) rhoMax = r;
         if (press < pMin) pMin = press;
         if (press > pMax) pMax = press;
+        if (c[a] < cMin) cMin = c[a];
+        if (c[a] > cMax) cMax = c[a];
+        thermalSum += bi.mass * bi.internal_energy;
+        kineticSum += 0.5 * bi.mass * (bi.vx * bi.vx + bi.vy * bi.vy + bi.vz * bi.vz);
     }
     const neighborMean = neighborSum / nGas;
     const hMean = hSum / nGas;
@@ -240,6 +255,8 @@ export function computeSphForces(bridge, TYPE) {
     if (!Number.isFinite(rhoMax)) rhoMax = 0;
     if (!Number.isFinite(pMin)) pMin = 0;
     if (!Number.isFinite(pMax)) pMax = 0;
+    if (!Number.isFinite(cMin)) cMin = 0;
+    if (!Number.isFinite(cMax)) cMax = 0;
 
     // Pressure + Monaghan-Gingold artificial-viscosity forces, and the
     // du/dt energy equation. Both read the CURRENT b.h (post-density-
@@ -294,5 +311,6 @@ export function computeSphForces(bridge, TYPE) {
         neighborMin, neighborMean, neighborMax,
         hMin, hMean, hMax,
         rhoMin, rhoMax, pMin, pMax,
+        cMin, cMax, thermal: thermalSum, kinetic: kineticSum,
     };
 }

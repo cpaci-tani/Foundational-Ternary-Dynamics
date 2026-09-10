@@ -13,6 +13,7 @@ import { getScale1OverlayTemplate } from '../../../scales/scale1/ui/overlays/tem
 import { getScale2OverlayTemplate } from '../../../scales/scale2/ui/overlays/template.js';
 import { getScale4OverlayTemplate } from '../../../scales/scale4/ui/overlays/template.js?v=4';
 import { getScale5OverlayTemplate } from '../../../scales/scale5/ui/overlays/template.js';
+import { bindScale5OverlayControls } from '../../../scales/scale5/ui/overlays/component.js';
 
 export class ViewportOverlaysComponent {
   constructor(viewportEl) {
@@ -38,7 +39,9 @@ export class ViewportOverlaysComponent {
     this.overlays.set('scale3', scale2);
 
     this.overlays.set('scale4', append(getScale4OverlayTemplate()));
-    this.overlays.set('scale5', append(getScale5OverlayTemplate()));
+    const scale5 = append(getScale5OverlayTemplate());
+    this.overlays.set('scale5', scale5);
+    bindScale5OverlayControls(scale5);
 
     this._mountUniversalOverlays();
     this._wireCollapsibles();

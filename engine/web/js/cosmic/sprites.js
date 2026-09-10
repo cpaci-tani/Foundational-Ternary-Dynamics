@@ -61,6 +61,30 @@ export function makeGasSprite() {
     return new THREE.CanvasTexture(c);
 }
 
+/**
+ * Thin circle-outline sprite with alpha falloff on both sides of the ring.
+ * Used by CosmicRenderer's optional smoothing-length-circle overlay (Pass B)
+ * to draw a ring of radius `h` (the SPH adaptive smoothing length) around
+ * each gas body without a new geometry/lifecycle shape — same
+ * radial-gradient authoring style as makeStarSprite/makeGasSprite/
+ * makeHaloSprite above, just shaped as a ring instead of a filled disc.
+ */
+export function makeRingSprite() {
+    const c = document.createElement('canvas');
+    c.width = 128; c.height = 128;
+    const ctx = c.getContext('2d');
+    const cx = 64, cy = 64;
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 64);
+    grad.addColorStop(0, 'rgba(255,255,255,0)');
+    grad.addColorStop(0.72, 'rgba(255,255,255,0)');
+    grad.addColorStop(0.82, 'rgba(255,255,255,0.9)');
+    grad.addColorStop(0.92, 'rgba(255,255,255,0)');
+    grad.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 128, 128);
+    return new THREE.CanvasTexture(c);
+}
+
 export function makeHaloSprite() {
     const c = document.createElement('canvas');
     c.width = 256; c.height = 256;

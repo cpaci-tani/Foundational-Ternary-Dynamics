@@ -26,8 +26,9 @@ import { CosmicRenderer } from '../../cosmic-renderer.js';
 import { CosmicMockBridge } from '../../bridge/mock-scale5.js';
 import { createStatusBarCache, hideScale0Overlays, createTickAccumulator, saveScaleCameraState, restoreScaleCameraState } from '../scale-utils.js';
 import { telemetryHub } from '../../telemetry-hub.js';
-import { syncScale5Toggles } from './ui/toolbar/component.js';
+import { syncScale5Toggles } from './ui/toggle-sync.js';
 import { Scale5ControlsComponent } from './ui/controls/component.js';
+import { syncScale5Overlays } from './ui/overlays/component.js';
 import { isPanelLive } from '../../ui/panels/panel-visibility.js';
 
 // ---------------------------------------------------------------------------
@@ -65,18 +66,30 @@ function formatCosmicTelemetry(tel) {
  * velocity, which can be either sign). Normalizes to the series' own max
  * absolute value each call — a display convenience, not a physical scale.
  *
+ * Pass B: an optional 5th `edges` argument (the bin-edge array
+ * `_computeGasProfile()` already returns and this function previously
+ * ignored) reserves a 16px bottom margin and prints the first/last bin
+ * edge there, so the two blind bar charts gain an axis scale. `edges` is
+ * optional so a caller with no profile data yet can still clear the canvas.
+ *
  * @param {HTMLCanvasElement|null} canvas
  * @param {Float64Array|number[]|undefined} values
  * @param {string} color
  * @param {'nonneg'|'signed'} mode
+ * @param {Float64Array|number[]|undefined} [edges]
  */
-function _drawGasProfileBars(canvas, values, color, mode) {
+function _drawGasProfileBars(canvas, values, color, mode, edges) {
     if (!canvas) return;
     const ctx2d = canvas.getContext('2d');
     if (!ctx2d) return;
     const w = canvas.width, h = canvas.height;
     ctx2d.clearRect(0, 0, w, h);
     if (!values || values.length === 0) return;
+
+    // 16px font floor (project styling rule) reserves the same 16px for the
+    // label row, so the axis text is never sub-floor and never overlaps bars.
+    const labelH = 16;
+    const plotH = h - labelH;
 
     let maxAbs = 0;
     for (let i = 0; i < values.length; i++) {
@@ -90,7 +103,7 @@ function _drawGasProfileBars(canvas, values, color, mode) {
     ctx2d.fillStyle = color;
 
     if (mode === 'signed') {
-        const midY = h / 2;
+        const midY = plotH / 2;
         ctx2d.strokeStyle = '#3a4a6a';
         ctx2d.lineWidth = 1;
         ctx2d.beginPath();
@@ -98,15 +111,25 @@ function _drawGasProfileBars(canvas, values, color, mode) {
         ctx2d.lineTo(w, midY);
         ctx2d.stroke();
         for (let i = 0; i < n; i++) {
-            const barH = (values[i] / maxAbs) * (h / 2 - 2);
+            const barH = (values[i] / maxAbs) * (plotH / 2 - 2);
             const y = barH >= 0 ? midY - barH : midY;
             ctx2d.fillRect(i * barW, y, Math.max(1, barW - 1), Math.abs(barH));
         }
     } else {
         for (let i = 0; i < n; i++) {
-            const barH = (values[i] / maxAbs) * (h - 4);
-            ctx2d.fillRect(i * barW, h - barH, Math.max(1, barW - 1), barH);
+            const barH = (values[i] / maxAbs) * (plotH - 4);
+            ctx2d.fillRect(i * barW, plotH - barH, Math.max(1, barW - 1), barH);
         }
+    }
+
+    if (edges && edges.length >= 2) {
+        ctx2d.fillStyle = '#8a9bbf';
+        ctx2d.font = '16px sans-serif';
+        ctx2d.textBaseline = 'bottom';
+        ctx2d.textAlign = 'left';
+        ctx2d.fillText(edges[0].toFixed(1), 1, h);
+        ctx2d.textAlign = 'right';
+        ctx2d.fillText(edges[edges.length - 1].toFixed(1), w - 1, h);
     }
 }
 
@@ -158,6 +181,67 @@ class Scale5LifecycleController extends BaseLifecycleController {
             });
             resetBtn.dataset.s5CtrlBound = '1';
         }
+
+        // Gas card (Pass B): the SPH and legacy-repulsion checkboxes are
+        // bound by Scale5ControlsComponent.init() itself, through the
+        // shared toggle-sync module (they need no `this.bridge` closure —
+        // see ui/toggle-sync.js). Only the two viscosity sliders and the
+        // adaptive-smoothing checkbox are bound here, since they have no
+        // second UI surface and no SCALE5_TOGGLES registry entry (they are
+        // bridge fields/live setters, not rule toggles — Ruling P3). Lazy
+        // `this.bridge` closures, same reasoning as resetBtn above: binding
+        // happens once, before a fresh bridge necessarily exists yet.
+        const alphaInput = document.getElementById('cosmic-gas-alpha');
+        const alphaValue = document.getElementById('cosmic-gas-alpha-value');
+        if (alphaInput && !alphaInput.dataset.s5CtrlBound) {
+            this.bindEvent(alphaInput, 'input', () => {
+                const v = Number(alphaInput.value);
+                this.bridge?.setSphAlpha?.(v);
+                if (alphaValue) alphaValue.textContent = v.toFixed(1);
+            });
+            alphaInput.dataset.s5CtrlBound = '1';
+        }
+
+        const betaInput = document.getElementById('cosmic-gas-beta');
+        const betaValue = document.getElementById('cosmic-gas-beta-value');
+        if (betaInput && !betaInput.dataset.s5CtrlBound) {
+            this.bindEvent(betaInput, 'input', () => {
+                const v = Number(betaInput.value);
+                this.bridge?.setSphBeta?.(v);
+                if (betaValue) betaValue.textContent = v.toFixed(1);
+            });
+            betaInput.dataset.s5CtrlBound = '1';
+        }
+
+        const adaptiveInput = document.getElementById('cosmic-gas-adaptive-h');
+        if (adaptiveInput && !adaptiveInput.dataset.s5CtrlBound) {
+            this.bindEvent(adaptiveInput, 'change', () => {
+                this.bridge?.setAdaptiveSmoothing?.(adaptiveInput.checked);
+            });
+            adaptiveInput.dataset.s5CtrlBound = '1';
+        }
+    }
+
+    /** Reflect the fresh bridge's runtime SPH params (Pass B: alpha, beta,
+     *  adaptive smoothing) onto the Gas card. No scenario currently
+     *  overrides these — every fresh CosmicMockBridge starts at the
+     *  SPH.ALPHA/SPH.BETA/true defaults (getRuntimeParams()) — so this
+     *  keeps a slider a user dragged on a prior scenario from silently
+     *  misrepresenting the new bridge's actual state. Called from
+     *  loadCosmicScenario() alongside syncScale5Toggles(this.bridge). */
+    _syncGasControlsFromBridge() {
+        if (!this.bridge?.getRuntimeParams) return;
+        const params = this.bridge.getRuntimeParams();
+        const alphaInput = document.getElementById('cosmic-gas-alpha');
+        const alphaValue = document.getElementById('cosmic-gas-alpha-value');
+        if (alphaInput) alphaInput.value = String(params.sphAlpha);
+        if (alphaValue) alphaValue.textContent = params.sphAlpha.toFixed(1);
+        const betaInput = document.getElementById('cosmic-gas-beta');
+        const betaValue = document.getElementById('cosmic-gas-beta-value');
+        if (betaInput) betaInput.value = String(params.sphBeta);
+        if (betaValue) betaValue.textContent = params.sphBeta.toFixed(1);
+        const adaptiveInput = document.getElementById('cosmic-gas-adaptive-h');
+        if (adaptiveInput) adaptiveInput.checked = !!params.adaptiveSmoothing;
     }
 
     loadCosmicScenario(ctx, scenarioName = 'cosmic-galaxy') {
@@ -182,6 +266,7 @@ class Scale5LifecycleController extends BaseLifecycleController {
         // the toolbar checkbox, and make the checkbox drive THIS bridge
         // going forward (Task 4, sph_monaghan; see toolbar/component.js).
         syncScale5Toggles(this.bridge);
+        this._syncGasControlsFromBridge();
 
         // Inform the inspector about the cosmic bridge so it can route
         // queries to the right backend (audit P1-1 fix, 2026-05-27).
@@ -199,6 +284,14 @@ class Scale5LifecycleController extends BaseLifecycleController {
         }
         this.renderer = new CosmicRenderer(viewport.scene, viewport.camera, viewport.renderer);
         this.trackThreeObject(this.renderer);
+
+        // Rebind the Gas overlay's colour-by/smoothing-circle controls to
+        // THIS fresh renderer (Ruling P1): ViewportOverlaysComponent.init()
+        // builds the overlay DOM once at boot and never rebuilds it, while
+        // the renderer above is recreated on every scenario load — without
+        // this call the overlay controls would keep driving a disposed
+        // renderer after the first scenario switch.
+        syncScale5Overlays(this.renderer);
 
         // Hand the cosmic bridge + renderer to the inspector so body-click
         // inspection works (audit §E item (a), 2026-05-31). The inspector's
@@ -276,12 +369,19 @@ class Scale5LifecycleController extends BaseLifecycleController {
         // leaving the button dead (scale4/controller.js:710-728 precedent).
         const resetBtn = document.getElementById('cosmic-ctrl-reset-toggles');
         if (resetBtn) delete resetBtn.dataset.s5CtrlBound;
+        const alphaInput = document.getElementById('cosmic-gas-alpha');
+        if (alphaInput) delete alphaInput.dataset.s5CtrlBound;
+        const betaInput = document.getElementById('cosmic-gas-beta');
+        if (betaInput) delete betaInput.dataset.s5CtrlBound;
+        const adaptiveInput = document.getElementById('cosmic-gas-adaptive-h');
+        if (adaptiveInput) delete adaptiveInput.dataset.s5CtrlBound;
         if (this.renderer) {
             this.renderer.dispose();
             this.renderer = null;
         }
         this.bridge = null;
         syncScale5Toggles(null); // stop the toolbar checkbox driving a destroyed bridge
+        syncScale5Overlays(null); // stop the overlay controls driving a disposed renderer
         // Restore lattice particles visibility for other scales
         if (ctx && ctx.viewport && ctx.viewport.particles) {
             ctx.viewport.particles.visible = true;
@@ -412,8 +512,8 @@ export function animateCosmic(ctx) {
             _panelStatus.update('cosmic-profile-axis', profile.axis);
             _panelStatus.update('cosmic-thermal', profile.thermal.toExponential(3));
             _panelStatus.update('cosmic-kinetic', profile.kinetic.toExponential(3));
-            _drawGasProfileBars(document.getElementById('cosmic-profile-density'), profile.density, '#4ade80', 'nonneg');
-            _drawGasProfileBars(document.getElementById('cosmic-profile-velocity'), profile.velocity, '#42a5f5', 'signed');
+            _drawGasProfileBars(document.getElementById('cosmic-profile-density'), profile.density, '#4ade80', 'nonneg', profile.edges);
+            _drawGasProfileBars(document.getElementById('cosmic-profile-velocity'), profile.velocity, '#42a5f5', 'signed', profile.edges);
         } else if (profileCard) {
             profileCard.hidden = true;
         }
