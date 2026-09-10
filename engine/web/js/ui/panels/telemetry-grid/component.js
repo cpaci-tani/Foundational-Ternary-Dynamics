@@ -69,11 +69,23 @@ const CHANNELS = {
         { key: 'plVirial',     title: 'Virial Ratio',      buffer: 'plVirial',      color: 'var(--chart-pe-virial, #fbbf24)', unit: 'ratio' },
         { key: 'plRadius',     title: 'System Radius',     buffer: 'plSystemRadius',color: 'var(--chart-pe-radius, #42a5f5)', unit: 'AU' }
     ],
-    // Scale 5: Cosmic N-body
+    // Scale 5: Cosmic N-body. Widened Pass 0b (2026-09-09) from 3 to 12
+    // channels to surface the mechanical-energy/momentum instrumentation
+    // Pass 0a's bridge accumulators now compute (telemetry-hub.js
+    // collectScale5 / _s5_cs). csBodies/csHubble/csDM are pre-existing.
     '5': [
         { key: 'csBodies',   title: 'Body Count',      buffer: 'csBodies',  color: 'var(--chart-flux, #fb8c00)',   unit: 'ct' },
         { key: 'csHubble',   title: 'Background Hubble H(a)',buffer: 'csHubble',  color: 'var(--chart-energy, #42a5f5)', unit: 'H' },
-        { key: 'csDM',       title: 'Dark Matter Frac',buffer: 'csDM',      color: 'var(--chart-eb, #a78bfa)',    unit: '%' }
+        { key: 'csDM',       title: 'Dark Matter Frac',buffer: 'csDM',      color: 'var(--chart-eb, #a78bfa)',    unit: '%' },
+        { key: 'csKE',       title: 'Kinetic Energy',  buffer: 'csKE',      color: 'var(--chart-pe-ke, #4ade80)',  unit: '(sim)' },
+        { key: 'csPE',       title: 'Potential Energy (softened)', buffer: 'csPE', color: 'var(--chart-pe-coulomb, #f87171)', unit: '(sim)' },
+        { key: 'csTotal',    title: 'Mechanical Proxy',buffer: 'csTotal',   color: 'var(--chart-pe-total, #e8e8e8)', unit: '(sim)' },
+        { key: 'csDrift',    title: 'Mechanical Proxy Δ', buffer: 'csDrift', color: 'var(--chart-pe-drift, #fbbf24)', unit: '%' },
+        { key: 'csVirial',   title: 'Virial Ratio',    buffer: 'csVirial',  color: 'var(--chart-pe-virial, #fbbf24)', unit: 'ratio' },
+        { key: 'csMomentum', title: '|Total Momentum|',buffer: 'csMomentum',color: 'var(--chart-pe-momentum, #a78bfa)', unit: '(sim)' },
+        { key: 'csAngMom',   title: '|Angular Momentum|', buffer: 'csAngMom', color: 'var(--chart-pe-angmom, #60a5fa)', unit: '(sim)' },
+        { key: 'csComDrift', title: 'COM Drift',       buffer: 'csComDrift',color: 'var(--chart-pe-radius, #42a5f5)', unit: 'lu' },
+        { key: 'csThermal',  title: 'Gas Thermal Energy', buffer: 'csThermal', color: 'var(--chart-ae-temp, #fb8c00)', unit: '(sim)' }
     ]
 };
 // Scale 3 (molecules) runs the same AtomEngine as Scale 2 — identical channels.

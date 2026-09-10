@@ -27,6 +27,8 @@ import { CosmicMockBridge } from '../../bridge/mock-scale5.js';
 import { createStatusBarCache, hideScale0Overlays, createTickAccumulator, saveScaleCameraState, restoreScaleCameraState } from '../scale-utils.js';
 import { telemetryHub } from '../../telemetry-hub.js';
 import { syncScale5Toggles } from './ui/toolbar/component.js';
+import { Scale5ControlsComponent } from './ui/controls/component.js';
+import { isPanelLive } from '../../ui/panels/panel-visibility.js';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -122,11 +124,46 @@ class Scale5LifecycleController extends BaseLifecycleController {
     }
 
     mount(ctx) {
-        // Standard setup placeholder
+        // Called by app.js's generic scale-switch dispatcher (`nextController
+        // .mount(ctx)`) whenever a switch INTO Scale 5 happens. The controls
+        // card must also be (re-)mounted here, not only from
+        // loadCosmicScenario() below, because a future caller could reach
+        // mount() without immediately loading a scenario.
+        this._mountControls(ctx);
+    }
+
+    /** Mount the Scale 5 controls card (Pass 0b) and bind its one
+     *  interactive control. Called from BOTH mount() and the top of
+     *  loadCosmicScenario() (the latter is reachable without the former —
+     *  every scenario switch calls it directly), so both the card creation
+     *  (Scale5ControlsComponent.init(), reconciled by a stable
+     *  data-scale5-control-card key) and this method itself must be
+     *  idempotent on repeated calls. */
+    _mountControls(ctx) {
+        const controlsPanel = document.getElementById('panel-controls');
+        if (controlsPanel) new Scale5ControlsComponent(controlsPanel).init();
+
+        // The "Scenario defaults" button lives in DOM that persists across
+        // scale switches (hidden via .scale5-only CSS, like Scale 4's
+        // toolbar toggles) — bindEvent()/destroy() below unbind it whenever
+        // this controller tears down, so a re-entry must re-bind. Guard with
+        // a dataset flag exactly as scale4/controller.js:710-728 does for
+        // its persistent toolbar checkboxes.
+        const resetBtn = document.getElementById('cosmic-ctrl-reset-toggles');
+        if (resetBtn && !resetBtn.dataset.s5CtrlBound) {
+            this.bindEvent(resetBtn, 'click', () => {
+                if (!this.bridge) return;
+                this.bridge._syncRuleTogglesFromScenario();
+                syncScale5Toggles(this.bridge);
+            });
+            resetBtn.dataset.s5CtrlBound = '1';
+        }
     }
 
     loadCosmicScenario(ctx, scenarioName = 'cosmic-galaxy') {
+        this._mountControls(ctx);
         _tickAcc.reset();
+        telemetryHub.resetScale(5);
         ctx._resetAllVisualState();
         ctx.running = false;
         ctx.updatePlayButton();
@@ -232,6 +269,13 @@ class Scale5LifecycleController extends BaseLifecycleController {
 
     destroy(ctx) {
         super.destroy(ctx);
+        // super.destroy() removed the "Scenario defaults" button's listener,
+        // but the button itself persists in the DOM (hidden via
+        // .scale5-only), so clear the bind-guard flag too — otherwise
+        // re-entering Scale 5 would see s5CtrlBound and skip re-binding,
+        // leaving the button dead (scale4/controller.js:710-728 precedent).
+        const resetBtn = document.getElementById('cosmic-ctrl-reset-toggles');
+        if (resetBtn) delete resetBtn.dataset.s5CtrlBound;
         if (this.renderer) {
             this.renderer.dispose();
             this.renderer = null;
@@ -263,6 +307,25 @@ function getProfileCardEl() {
     return _profileCardEl;
 }
 
+// Same memoization pattern for the three panels whose liveness gates the
+// energy audit (Pass 0b): resolved once and reused rather than three
+// getElementById calls on every physics frame (~30 Hz).
+let _diagPanelEl = null;
+function getDiagPanelEl() {
+    if (_diagPanelEl === null) _diagPanelEl = document.getElementById('panel-diagnostics');
+    return _diagPanelEl;
+}
+let _chartsPanelEl = null;
+function getChartsPanelEl() {
+    if (_chartsPanelEl === null) _chartsPanelEl = document.getElementById('panel-charts');
+    return _chartsPanelEl;
+}
+let _telemetryGridPanelEl = null;
+function getTelemetryGridPanelEl() {
+    if (_telemetryGridPanelEl === null) _telemetryGridPanelEl = document.getElementById('panel-telemetry-grid');
+    return _telemetryGridPanelEl;
+}
+
 export function mount(ctx) {
     _lifecycleController.mount(ctx);
 }
@@ -287,6 +350,16 @@ export function animateCosmic(ctx) {
     const isPhysicsFrame = (ctx.frameCount & 1) === 0;
 
     if (isPhysicsFrame) {
+        // Pass 0b: the softened-potential-energy audit (cosmic-physics.js,
+        // Pass 0a) is O(N^2) and gated behind bridge._wantEnergyAudit — pay
+        // for it only while a consumer of `pe`/`peAvailable` is actually on
+        // screen (Diagnostics, Charts, or the Telemetry Grid tab, docked or
+        // floated-and-uncollapsed per isPanelLive), so a user watching only
+        // the viewport pays nothing for it.
+        bridge._wantEnergyAudit = isPanelLive(getDiagPanelEl())
+            || isPanelLive(getChartsPanelEl())
+            || isPanelLive(getTelemetryGridPanelEl());
+
         if (ctx.running) {
             const wholeTicks = _tickAcc.accumulate(ctx.ticksPerFrame);
             if (wholeTicks > 0) {

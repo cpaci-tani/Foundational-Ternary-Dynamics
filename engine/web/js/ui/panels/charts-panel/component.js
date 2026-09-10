@@ -5,6 +5,7 @@ import { charts as scale1Charts } from './descriptors/scale1.js';
 import { charts as scale2Charts } from './descriptors/scale2.js';
 import { charts as scale3Charts } from './descriptors/scale3.js';
 import { charts as scale4Charts } from './descriptors/scale4.js?v=2';
+import { charts as scale5Charts } from './descriptors/scale5.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { PerfFlags } from '../../../config/perf-flags.js';
 import { isPanelLive } from '../panel-visibility.js';
@@ -19,10 +20,16 @@ const CHARTS_BY_SCALE = Object.freeze({
     '2': scale2Charts,
     '3': scale3Charts,
     '4': scale4Charts,
+    '5': scale5Charts,
 });
 
+// Pass 0b hardening: an unknown, undescriptored scale returns an EMPTY set,
+// not scale0Charts. The prior silent fallback meant registry and descriptor
+// could land out of order and show lattice charts under an unrelated scale
+// (the plan's own "harden the charts fallback" refinement) — every scale
+// now enabled in panel-registry.js's `charts` entry has an entry here.
 function getScaleCharts(scale) {
-    return CHARTS_BY_SCALE[String(scale)] || scale0Charts;
+    return CHARTS_BY_SCALE[String(scale)] || [];
 }
 
 function loadActiveSet(defaults, scale, descriptors) {

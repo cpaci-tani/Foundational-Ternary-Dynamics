@@ -7,9 +7,9 @@
 
 export const PANEL_REGISTRY = Object.freeze([
     { id: 'controls',         label: 'Controls',        icon: '\u2699\uFE0E',  scales: null },
-    { id: 'diagnostics',      label: 'Diagnostics',     icon: '\u25A4',        scales: ['0', '1', '2', '3', '4'] },
+    { id: 'diagnostics',      label: 'Diagnostics',     icon: '\u25A4',        scales: ['0', '1', '2', '3', '4', '5'] },
     { id: 'telemetry-grid',   label: 'Telemetry Grid',  icon: '📈',            scales: ['0', '1', '2', '3', '4', '5'] },
-    { id: 'charts',           label: 'Charts',          icon: '\u2248',        scales: ['0', '1', '2', '3', '4'] },
+    { id: 'charts',           label: 'Charts',          icon: '\u2248',        scales: ['0', '1', '2', '3', '4', '5'] },
     { id: 'lagrangian',       label: 'Lagrangian',      icon: '\u2112',        scales: ['0'] },
     { id: 'inspector',        label: 'Inspector',       icon: '\u25CE',        scales: ['0', '1', '2', '3', '4', '5'] },
     { id: 'planetary',        label: 'Solar System',    icon: '\u2609',        scales: ['4'] },

@@ -65,7 +65,7 @@ export function getScaleControlsBlocksTemplate() {
         </div>
         <!-- Cosmic Controls (visible only in cosmic mode) -->
         <div class="scale5-only scale-controls-block">
-            <div class="panel-grid panel-grid-3">
+            <div class="panel-grid panel-grid-3" id="panel-controls-grid-scale5">
                 <div class="card">
                     <div class="card-title">Simulation</div>
                     <div class="scale-info-mono" id="cosmic-ctrl-sim">

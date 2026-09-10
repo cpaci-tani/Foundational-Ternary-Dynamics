@@ -528,9 +528,21 @@ export class TelemetryHub {
         this._plInitialEnergy = null;
 
         // ── Scale 5 — Cosmic (200-sample) ──────────────
-                this._s5_cs = new MultiRingBuffer(200, ['csBodies', 'csHubble', 'csDM']);
+        // Pass 0b (UI foundations, 2026-09-09): widened from 3 to 12 channels
+        // to carry the mechanical-energy/momentum/virial instrumentation Pass
+        // 0a's bridge accumulators (getDiagnostics().pe/momentum/angMom/
+        // comDrift) now compute. csBodies/csHubble/csDM are the pre-existing
+        // channels the telemetry grid already referenced.
+                this._s5_cs = new MultiRingBuffer(200, ['csBodies', 'csHubble', 'csDM', 'csKE', 'csPE', 'csTotal', 'csDrift', 'csVirial', 'csMomentum', 'csAngMom', 'csComDrift', 'csThermal']);
         const csVs = this._s5_cs.views;
         this.csBodies = csVs.csBodies; this.csHubble = csVs.csHubble; this.csDM = csVs.csDM;
+        this.csKE = csVs.csKE; this.csPE = csVs.csPE; this.csTotal = csVs.csTotal; this.csDrift = csVs.csDrift;
+        this.csVirial = csVs.csVirial; this.csMomentum = csVs.csMomentum; this.csAngMom = csVs.csAngMom;
+        this.csComDrift = csVs.csComDrift; this.csThermal = csVs.csThermal;
+        // Baseline for the Scale 5 mechanical-energy drift %, set on the
+        // first finite peAvailable sample (mirrors _plInitialEnergy in
+        // collectScale4 below).
+        this._s5InitialEnergy = null;
     }
 
     // ── Scale 0 collection ──────────────────────────────────────────────────
@@ -1472,7 +1484,20 @@ export class TelemetryHub {
     }
 
     // ── Scale 5 collection ──────────────────────────────────────────────────
-
+    //
+    // Pass 0b (UI foundations, 2026-09-09): fills the previously-unused
+    // `s5.cosmic` slot (declared in the constructor, never assigned before
+    // this pass) with six blocks — runtime / stats / energy / cosmology /
+    // counts / events — built from the Pass 0a bridge accessors
+    // (getRuntimeParams, getPassStats, getEventLog) and getDiagnostics()'s
+    // new pe/momentum/angMom/comDrift/massByType fields. `energy.pe/total/
+    // virial/drift` are NaN unless `diag.peAvailable` (the direct-sum branch
+    // ran with `_wantEnergyAudit` on); `energy.ke/momentum/angMom/comDrift`
+    // are O(N) and always populated regardless of the audit gate, since
+    // nothing about them requires the pairwise softened-PE pass. `adot` and
+    // `boxComoving` are not exposed directly by the bridge (only their
+    // factors a, H, and boxSize are) — derived here exactly as the bridge's
+    // own _stepFriedmann computes adot = a * this._H internally.
     collectScale5(cosmicBridge) {
         if (!cosmicBridge) return null;
         const diag = cosmicBridge.getDiagnostics?.();
@@ -1486,10 +1511,81 @@ export class TelemetryHub {
             const dmMass = diag.dmMass || 0;
             const totalMass = diag.totalMass || 0;
             const dmFraction = totalMass > 0 ? (dmMass / totalMass) * 100 : 0;
+
+            const runtime = cosmicBridge.getRuntimeParams?.() || null;
+            const stats = cosmicBridge.getPassStats?.() || null;
+            const events = cosmicBridge.getEventLog?.() || [];
+
+            const peAvailable = !!diag.peAvailable;
+            const ke = Number.isFinite(diag.totalKE) ? diag.totalKE : 0;
+            const pe = peAvailable ? diag.pe : unavailableSample();
+            const totalEnergy = peAvailable ? (ke + diag.pe) : unavailableSample();
+            const virial = (peAvailable && diag.pe !== 0)
+                ? (2 * ke / Math.abs(diag.pe)) : unavailableSample();
+
+            if (this._s5InitialEnergy === null && peAvailable
+                && Number.isFinite(totalEnergy) && Math.abs(totalEnergy) > Number.EPSILON) {
+                this._s5InitialEnergy = totalEnergy;
+            }
+            const drift = (peAvailable && this._s5InitialEnergy !== null)
+                ? ((totalEnergy - this._s5InitialEnergy) / Math.abs(this._s5InitialEnergy)) * 100
+                : unavailableSample();
+
+            const momentum = diag.momentum
+                ? Math.hypot(diag.momentum.x, diag.momentum.y, diag.momentum.z) : unavailableSample();
+            const angMom = diag.angMom
+                ? Math.hypot(diag.angMom.x, diag.angMom.y, diag.angMom.z) : unavailableSample();
+            const comDrift = Number.isFinite(diag.comDrift) ? diag.comDrift : unavailableSample();
+            const thermal = Number.isFinite(diag.totalThermal) ? diag.totalThermal : 0;
+
+            const adot = diag.scaleFactor * diag.hubbleParameter;
+            const boxComoving = (runtime?.boxSize ?? 0) * diag.scaleFactor;
+
+            this.s5.cosmic = {
+                runtime,
+                stats,
+                energy: { ke, pe, total: totalEnergy, virial, drift, momentum, angMom, comDrift },
+                cosmology: {
+                    scaleFactor: diag.scaleFactor,
+                    hubbleParameter: diag.hubbleParameter,
+                    hubble0: diag.hubble0,
+                    redshift: diag.redshift,
+                    omegaMatter: diag.omegaMatter,
+                    omegaLambda: diag.omegaLambda,
+                    adot,
+                    boxComoving,
+                    clockGain: runtime?.clockGain ?? null,
+                    expansionEnabled: runtime?.expansionEnabled ?? null,
+                    dmFraction,
+                },
+                counts: {
+                    bodyCount: diag.bodyCount,
+                    countsByType: diag.countsByType,
+                    massByType: diag.massByType,
+                    totalMass,
+                    dmMass,
+                    totalThermal: thermal,
+                },
+                events,
+            };
+
+            // Single push({...}) into the owning MultiRingBuffer — csKE etc.
+            // are RingBufferViews; RingBufferView has no push() of its own
+            // (see the collectScale4 note above this method for why an
+            // individual-channel .push() call throws every tick).
             this._s5_cs.push({
                 csBodies: diag.bodyCount || diag.count || 0,
                 csHubble: diag.hubbleParameter || diag.hubble || diag.hubbleParam || 0,
                 csDM: dmFraction,
+                csKE: ke,
+                csPE: pe,
+                csTotal: totalEnergy,
+                csDrift: drift,
+                csVirial: virial,
+                csMomentum: momentum,
+                csAngMom: angMom,
+                csComDrift: comDrift,
+                csThermal: thermal,
             }, currentTick);
         }
         return diag;
@@ -1667,6 +1763,7 @@ export class TelemetryHub {
                 this._s5_cs.clear();
                 this.s5 = { diag: null, cosmic: null };
                 this._lastTick5 = -1;
+                this._s5InitialEnergy = null;
                 break;
         }
     }

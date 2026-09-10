@@ -10,6 +10,7 @@ import { sections as scale1Sections } from './descriptors/scale1.js?v=9';
 import { sections as scale2Sections } from './descriptors/scale2.js';
 import { sections as scale3Sections } from './descriptors/scale3.js';
 import { sections as scale4Sections } from './descriptors/scale4.js?v=2';
+import { sections as scale5Sections } from './descriptors/scale5.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { PerfFlags } from '../../../config/perf-flags.js';
 import { isPanelLive } from '../panel-visibility.js';
@@ -19,7 +20,7 @@ export class DiagnosticsPanelComponent {
     constructor(panelEl) {
         this.el = panelEl;
         this.tables = [];
-        this.tablesByScale = { '0': [], '1': [], '2': [], '3': [], '4': [] };
+        this.tablesByScale = { '0': [], '1': [], '2': [], '3': [], '4': [], '5': [] };
     }
 
     init() {
@@ -93,6 +94,19 @@ export class DiagnosticsPanelComponent {
                 this.tablesByScale['4'].push(table);
             }
             this.el.insertBefore(scale4Root, scale3Root.nextSibling);
+
+            const scale5Root = document.createElement('div');
+            scale5Root.className = 'scale5-only diag-scale5-root';
+            for (const section of scale5Sections) {
+                const table = new DiagnosticsTable(section, telemetryHub, {
+                    resetScope: 5,
+                    historyControl: this.historyControl,
+                });
+                scale5Root.appendChild(table.el);
+                this.tables.push(table);
+                this.tablesByScale['5'].push(table);
+            }
+            this.el.insertBefore(scale5Root, scale4Root.nextSibling);
             this.el.dataset.panelRedesignMounted = '1';
         }
         this.el.dataset.component = 'diagnostics-panel';
@@ -129,9 +143,10 @@ export class DiagnosticsPanelComponent {
         this.tablesByScale['2'].length = 0;
         this.tablesByScale['3'].length = 0;
         this.tablesByScale['4'].length = 0;
+        this.tablesByScale['5'].length = 0;
         this.historyControl?.destroy();
         this.historyControl = null;
-        this.el.querySelectorAll('.diag-scale0-root, .diag-scale1-root, .diag-scale2-root, .diag-scale3-root, .diag-scale4-root')
+        this.el.querySelectorAll('.diag-scale0-root, .diag-scale1-root, .diag-scale2-root, .diag-scale3-root, .diag-scale4-root, .diag-scale5-root')
             .forEach((root) => root.remove());
         delete this.el.dataset.panelRedesignMounted;
         if (this.el._ftdDiagnosticsPanel === this) this.el._ftdDiagnosticsPanel = null;
