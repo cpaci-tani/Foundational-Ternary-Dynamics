@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test('particle masses preserve neutrino units across constants and catalog formatting', async ({ page }) => {
+test('reference masses preserve units while neutrino flavor masses remain unavailable', async ({ page }) => {
   await page.goto('/');
 
   const result = await page.evaluate(async () => {
@@ -20,6 +20,8 @@ test('particle masses preserve neutrino units across constants and catalog forma
     return {
       lightestMeV: constants.M_NU_E_PHYS,
       lightestCatalogMeV: catalog.getById('nu_e').mass_mev,
+      flavorStatus: catalog.getById('nu_e').mass_status,
+      flavorLabel: catalog.formatMass(catalog.getById('nu_e').mass_mev),
       lightestLabel: catalog.formatMass(constants.M_NU_E_PHYS),
       middleLabel: units.formatEnergy(constants.M_NU_MU_PHYS, 1).text,
       electronLabel: catalog.formatMass(constants.M_E),
@@ -34,7 +36,9 @@ test('particle masses preserve neutrino units across constants and catalog forma
   });
 
   expect(result.lightestMeV).toBe(4.1e-15);
-  expect(result.lightestCatalogMeV).toBe(result.lightestMeV);
+  expect(result.lightestCatalogMeV).toBeNull();
+  expect(result.flavorStatus).toBe('flavor-superposition');
+  expect(result.flavorLabel).toBe('unavailable');
   expect(result.lightestLabel).toContain('neV');
   expect(result.middleLabel).toContain('meV');
   expect(result.electronLabel).toContain('keV');

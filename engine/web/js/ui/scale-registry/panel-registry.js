@@ -26,6 +26,7 @@ export const PANEL_REGISTRY = Object.freeze([
     { id: 'knots',            label: 'Knots',           icon: '⋈',        scales: ['0'] },
     { id: 'transactions',     label: 'Transactions',    icon: '⇄',        scales: ['0'] },
     { id: 'gravity',          label: 'Gravity',         icon: '◍',        scales: ['0'] },
+    { id: 'fluid',            label: 'Fluid',           icon: '≋',        scales: ['0'] },
     { id: 'time',             label: 'Time',            icon: '⏱',        scales: ['0'] },
     { id: 'thermo',           label: 'Thermo',          icon: '🌡',       scales: ['0'] },
     { id: 'scale-context',    label: 'Scale Context',   icon: '\u{1F4CF}',     scales: ['0'] },

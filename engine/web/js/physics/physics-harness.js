@@ -569,8 +569,8 @@ export class PhysicsHarness {
     // ── Setters: Scale 1 (Particle Engine) ─────────────────────────
 
     /** Add a particle to the Scale-1 engine. */
-    peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff) {
-        return this.bridge?.peAddParticle?.(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff) ?? -1;
+    peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff, recordFields) {
+        return this.bridge?.peAddParticle?.(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff, recordFields) ?? -1;
     }
 
     /** Add a locked particle to the Scale-1 engine. */

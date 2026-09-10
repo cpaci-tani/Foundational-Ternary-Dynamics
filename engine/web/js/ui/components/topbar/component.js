@@ -32,6 +32,7 @@ export class TopbarComponent {
         this.assistantButton = null;
         this.vtkButton = null;
         this.validity = null;
+        this.fluidButton = null;
     }
 
     init() {
@@ -44,7 +45,18 @@ export class TopbarComponent {
         this.toolbar.dataset.topbar = 'enhanced';
         this._ensureAssistantSidebar();
         this._bindInteractions();
+        this._initFluidButton();
         return this;
+    }
+
+    _initFluidButton() {
+        this.fluidButton = this.toolbar.querySelector('#btn-fluid');
+        if (!this.fluidButton || this.fluidButton.dataset.fluidBound === 'true') return;
+        this.fluidButton.dataset.fluidBound = 'true';
+        // Use the ordinary panel dock path, including collapse and mobile state.
+        this.fluidButton.addEventListener('click', () => {
+            this.app.querySelector('.tab[data-panel="fluid"]')?.click();
+        });
     }
 
 

@@ -24,9 +24,27 @@ const entries = [
     ['exo-Kepler-20', 'NASA Exoplanet Archive Data', 'Kepler-20 System', 'Catalog-scale six-planet system with modeled presentation colors.', 'parametric'],
 ];
 
+// Presentation groups are independent of the original catalog classification,
+// which still determines scenarioClass below.
+const PHENOMENA = Object.freeze({
+    'planetary-solar': 'Gravitation · Orbits & Many-Body Motion',
+    'planetary-binary': 'Gravitation · Orbits & Many-Body Motion',
+    'planetary-threebody': 'Gravitation · Orbits & Many-Body Motion',
+    'planetary-mercury-relativity': 'Relativity · Orbital Precession',
+    'planetary-earth-moon-tides': 'Gravitation · Tides & Disruption',
+    'planetary-roche-lab': 'Gravitation · Tides & Disruption',
+    'planetary-radiation-lab': 'Transport · Radiation & Drag',
+    'planetary-atmosphere-entry': 'Transport · Radiation & Drag',
+    'planetary-impact-lab': 'Collisions · Planetary Impacts',
+    'exo-TRAPPIST-1': 'Gravitation · Exoplanet Systems',
+    'exo-Kepler-11': 'Gravitation · Exoplanet Systems',
+    'exo-HR 8799': 'Gravitation · Exoplanet Systems',
+    'exo-Kepler-20': 'Gravitation · Exoplanet Systems',
+});
+
 export const SCALE4_SCENARIOS = Object.freeze(entries.map(([id, category, title, summary, epistemicStatus]) => Object.freeze({
     id,
-    category,
+    category: PHENOMENA[id],
     title,
     summary,
     epistemicStatus,

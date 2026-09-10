@@ -13,6 +13,7 @@
 #include "ftd/render_bridge.h"
 
 #include <cmath>
+#include <string>
 
 namespace ftd::eft {
 
@@ -22,9 +23,46 @@ struct NativeWaveEnergy {
   long double gradient = 0.0L;
   long double cross = 0.0L;
   long double naive = 0.0L;
+  // Raw reference quadratic, retained even outside its invariant domain for
+  // callers using it as one component of a separate work/exchange ledger.
   long double tick_invariant = 0.0L;
   bool finite = true;
+  bool tick_invariant_applicable = false;
+  std::string tick_invariant_reason = "not evaluated";
 };
+
+// Scope of the quadratic computed below, not a test of whether a particular
+// short trajectory happens to conserve it. This deliberately admits only the
+// source-free periodic FULL-stencil unit kick-drift profile. Other profiles
+// may have their own invariants; finite values here do not certify them.
+// Unknown future dynamics are rejected by the table-driven allowlist.
+inline std::string native_wave_invariant_unavailability_reason(
+    const RenderBridge& bridge) {
+  const auto& toggles = bridge.toggles;
+  if (!toggles.wave_propagation)
+    return "wave propagation is disabled";
+  if (toggles.flux_boundary != FluxBoundaryMode::Periodic)
+    return "requires the periodic boundary operator";
+  if (toggles.bcc_stencil != BccStencilMode::FULL)
+    return "requires the FULL 18-point stencil";
+  if (bridge.dt() != 1.0)
+    return "requires a unit tick duration";
+  if (toggles.verlet_wave_integrator || toggles.lorentz_period2_floquet
+      || toggles.lorentz_bcc_time_floquet)
+    return "requires the unit kick-drift wave integrator";
+  for (const auto& spec : TOGGLE_SPECS) {
+    // At dt=1 symplectic_leapfrog executes exactly the same kick and drift.
+    // Validation and knot telemetry do not change the field transaction.
+    if (spec.field == &TermToggles::wave_propagation
+        || spec.field == &TermToggles::symplectic_leapfrog
+        || spec.field == &TermToggles::strict_validation
+        || spec.field == &TermToggles::knot_tracking)
+      continue;
+    if (toggles.*(spec.field))
+      return std::string("outside the source-free wave contract: ") + spec.name;
+  }
+  return {};
+}
 
 inline long double dot_long_double(const Vec3& a, const Vec3& b) {
   return static_cast<long double>(a.x) * static_cast<long double>(b.x)
@@ -55,6 +93,11 @@ inline NativeWaveEnergy measure_native_wave_energy(
       && std::isfinite(result.kinetic) && std::isfinite(result.gradient)
       && std::isfinite(result.cross) && std::isfinite(result.naive)
       && std::isfinite(result.tick_invariant);
+  result.tick_invariant_reason =
+      native_wave_invariant_unavailability_reason(bridge);
+  if (!result.finite)
+    result.tick_invariant_reason = "non-finite reference energy decomposition";
+  result.tick_invariant_applicable = result.tick_invariant_reason.empty();
   return result;
 }
 
@@ -70,4 +113,3 @@ inline long double coupling_hamiltonian(const RenderBridge& bridge) {
 }
 
 }  // namespace ftd::eft
-

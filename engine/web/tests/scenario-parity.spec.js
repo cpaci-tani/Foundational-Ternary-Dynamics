@@ -658,13 +658,16 @@ test.describe('Catalog counts (derived, never hand-written)', () => {
             .toEqual({ mode: 0 });
     });
 
-    test('the qualification class table matches the registry categories', async () => {
+    test('the qualification class table matches the retained evidence categories', async () => {
         const modulePath = join(WEB_ROOT, 'js', 'scales', 'scale0', 'scenario-registry.js');
         const registry = await import(pathToFileURL(modulePath).href);
 
         const actual = new Map();
         for (const s of registry.SCALE0_SCENARIO_CATALOG) {
-            const name = String(s.category || '').replace(/^\d+\.\s*/, '').trim();
+            // Menu subjects are physics/phenomena; qualification provenance
+            // remains separate and must still match the evidence-class table.
+            expect(typeof s.evidenceCategory, `${s.id}: evidence category`).toBe('string');
+            const name = s.evidenceCategory.replace(/^\d+\.\s*/, '').trim();
             actual.set(name, (actual.get(name) || 0) + 1);
         }
 

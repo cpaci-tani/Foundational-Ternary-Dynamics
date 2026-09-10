@@ -13,9 +13,9 @@ Usage (replaces `python -m http.server 8080 -d engine/web`):
     python engine/web/serve.py --host 0.0.0.0 9090   # LAN bind (opt-in)
 
 The handler adds `Cache-Control: no-store, must-revalidate` to every
-response, plus `Pragma: no-cache` and `Expires: 0` for the older
-browsers. Same MIME defaults as http.server's SimpleHTTPRequestHandler;
-no other change.
+response, plus `Pragma: no-cache` and `Expires: 0` for the older browsers.
+The local strict-fluid laboratory has narrow static/runtime routes and an
+availability endpoint; other assets retain the public engine/web root.
 
 Threading + allow_reuse_address are enabled so the server survives
 parent-process detachment (the common case under preview managers
@@ -31,6 +31,8 @@ import os
 import socket
 import subprocess
 import sys
+from pathlib import Path
+from urllib.parse import unquote, urlsplit
 
 
 # ── GPU server (ws_server.exe) launcher paths ────────────────────────────────
@@ -42,6 +44,41 @@ _WEB_ROOT = os.path.dirname(os.path.abspath(__file__))          # engine/web
 _ENGINE_ROOT = os.path.dirname(_WEB_ROOT)                        # engine
 WS_SERVER_EXE = os.path.join(_ENGINE_ROOT, "build", "Release", "ws_server.exe")
 GPU_PORT = 9100
+STRICT_HYDRO_URL = "/strict/web/hydro/"
+STRICT_HYDRO_ARTIFACTS = (
+    "build_strict_hydro_wasm/ftd_hydro_wasm.mjs",
+    "build_strict_hydro_wasm/ftd_hydro_wasm.wasm",
+    "build_strict_hydro_tables/hydro_collision_abf25cf26072c03b.u32",
+)
+
+
+def _contained(root, relative):
+    """Resolve a static resource without permitting symlink/junction escapes."""
+    root = Path(root).resolve()
+    resource = (root / relative).resolve()
+    if not resource.is_relative_to(root):
+        raise ValueError("resource escapes its static root")
+    return resource
+
+
+def _static_resource(request_path, directory):
+    """Public web tree plus narrow local strict-lab/runtime routes only."""
+    route = unquote(urlsplit(request_path).path, errors="strict")
+    if (not route.startswith("/") or route.startswith("//") or "\\" in route
+            or "\x00" in route or ":" in route
+            or any(part in (".", "..") for part in route.split("/"))):
+        raise ValueError("invalid static resource path")
+    if route == STRICT_HYDRO_URL.rstrip("/") or route.startswith(STRICT_HYDRO_URL):
+        relative = route[len(STRICT_HYDRO_URL):] if route.startswith(STRICT_HYDRO_URL) else ""
+        return _contained(Path(_ENGINE_ROOT) / "strict" / "web" / "hydro", relative)
+    if route.startswith("/web/"):
+        return _contained(_WEB_ROOT, route[len("/web/"):])
+    if route.lstrip("/") in STRICT_HYDRO_ARTIFACTS:
+        return _contained(_ENGINE_ROOT, route.lstrip("/"))
+    # There is deliberately no mount of engine/ or any build directory.
+    if route.startswith(("/build_strict_", "/strict/")):
+        raise ValueError("strict resource is not allowlisted")
+    return _contained(directory, route.lstrip("/"))
 
 
 def _gpu_running(host="127.0.0.1", port=GPU_PORT, timeout=0.25):
@@ -63,6 +100,20 @@ QUIET = False
 
 
 class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
+    extensions_map = {**http.server.SimpleHTTPRequestHandler.extensions_map,
+                      ".mjs": "text/javascript", ".wasm": "application/wasm"}
+
+    def translate_path(self, path):
+        return str(_static_resource(path, self.directory))
+
+    def send_head(self):
+        try:
+            self.translate_path(self.path)
+        except (ValueError, UnicodeError, OSError):
+            self.send_error(404, "Not found")
+            return None
+        return super().send_head()
+
     def handle(self):
         """Suppress normal browser disconnects without hiding server faults."""
         try:
@@ -105,11 +156,22 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
     # ── GPU server (ws_server.exe) launcher API — loopback dev server only ──
     def do_GET(self):
         route = self.path.split("?", 1)[0]
+        if route == "/api/strict-hydro/status":
+            return self._strict_hydro_status()
         if route == "/api/gpu-server/status":
             return self._gpu_status()
         if route == "/api/gpu-server/download":
             return self._gpu_download()
         return super().do_GET()
+
+    def _strict_hydro_status(self):
+        try:
+            available = all(_contained(_ENGINE_ROOT, name).is_file()
+                            for name in STRICT_HYDRO_ARTIFACTS)
+        except (ValueError, OSError):
+            available = False
+        self._send_json({"available": available,
+                         "url": STRICT_HYDRO_URL if available else None})
 
     def do_POST(self):
         route = self.path.split("?", 1)[0]

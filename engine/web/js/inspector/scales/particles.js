@@ -27,8 +27,8 @@ export function handlePEClick(target, intersects, pointerEvent = null) {
 }
 
 function fmtScalar(value, digits = 3) {
-    if (!Number.isFinite(Number(value))) return '--';
-    const number = Number(value);
+    if (!Number.isFinite(value)) return '--';
+    const number = value;
     const magnitude = Math.abs(number);
     if ((magnitude > 0 && magnitude < 1e-3) || magnitude >= 1e5) {
         return number.toExponential(2);
@@ -97,41 +97,44 @@ export function updatePEFields(target) {
         target.peFields.name.textContent = cat.name;
         target.peFields.symbol.textContent = cat.symbol;
         target.peFields.catalog.textContent = catId;
-        target.peFields.mass.textContent = formatMass(cat.mass_mev);
-        target.peFields.charge.textContent = chargeLabel(cat.charge);
+        // Inspect the active native record, including deliberate lab overrides.
+        target.peFields.mass.textContent = formatMass(data.mass);
+        target.peFields.charge.textContent = Number.isFinite(data.charge) ? chargeLabel(data.charge) : '--';
     } else {
         target.peFields.dot.style.background = '#9ca3af';
-        target.peFields.name.textContent = 'Unknown';
+        target.peFields.name.textContent = 'Unclassified record';
         target.peFields.symbol.textContent = '?';
         target.peFields.catalog.textContent = catId || '--';
-        target.peFields.mass.textContent = `${data.mass.toFixed(3)} MeV`;
-        target.peFields.charge.textContent = data.charge > 0 ? `+${data.charge}` : data.charge.toString();
+        target.peFields.mass.textContent = formatMass(data.mass);
+        target.peFields.charge.textContent = Number.isFinite(data.charge) ? chargeLabel(data.charge) : '--';
     }
 
     target.peFields.id.textContent = data.id;
     target.peFields.locked.textContent = data.locked ? 'Yes (fixed)' : 'No';
-    target.peFields.rEff.textContent = formatLength(data.rEff, 2).text || '--';
-    target.peFields.spin.textContent = data.spin !== undefined ? data.spin.toString() : '--';
-    target.peFields.color.textContent = data.colorId !== undefined ? data.colorId.toString() : '--';
-    target.peFields.pair.textContent = data.pairId >= 0 ? data.pairId.toString() : '--';
-    target.peFields.pos.textContent = formatPosition(data.x, data.y, data.z, 1);
-    target.peFields.vel.textContent = formatVec3(data.vx, data.vy, data.vz, 'velocity', 1);
-    target.peFields.speed.textContent = formatVelocity(data.speed, 1).text;
-    target.peFields.ke.textContent = formatEnergy(data.ke, 1).text;
-    target.peFields.momentum.textContent = isNaN(data.momentum) ? '--' : data.momentum.toExponential(2);
-    target.peFields.accel.textContent = isNaN(data.acceleration) ? '--' : data.acceleration.toExponential(2);
-    target.peFields.orbital.textContent = data.orbitalR >= 0 ? formatLength(data.orbitalR, 1).text : '--';
+    target.peFields.rEff.textContent = Number.isFinite(data.rEff) ? formatLength(data.rEff, 1).text : '--';
+    target.peFields.spin.textContent = Number.isFinite(data.spin) ? String(data.spin) : '--';
+    target.peFields.color.textContent = Number.isFinite(data.colorId) ? String(data.colorId) : '--';
+    target.peFields.pair.textContent = Number.isInteger(data.pairId) && data.pairId >= 0 ? String(data.pairId) : '--';
+    target.peFields.pos.textContent = [data.x, data.y, data.z].every(Number.isFinite)
+        ? formatPosition(data.x, data.y, data.z, 1) : '--';
+    target.peFields.vel.textContent = [data.vx, data.vy, data.vz].every(Number.isFinite)
+        ? formatVec3(data.vx, data.vy, data.vz, 'velocity', 1) : '--';
+    target.peFields.speed.textContent = Number.isFinite(data.speed) ? formatVelocity(data.speed, 1).text : '--';
+    target.peFields.ke.textContent = Number.isFinite(data.ke) ? formatEnergy(data.ke, 1).text : '--';
+    target.peFields.momentum.textContent = Number.isFinite(data.momentum) ? data.momentum.toExponential(2) : '--';
+    target.peFields.accel.textContent = Number.isFinite(data.acceleration) ? data.acceleration.toExponential(2) : '--';
+    target.peFields.orbital.textContent = Number.isFinite(data.orbitalR) && data.orbitalR >= 0 ? formatLength(data.orbitalR, 1).text : '--';
 
-    if (data.nearestId >= 0) {
+    if (Number.isInteger(data.nearestId) && data.nearestId >= 0) {
         const nearCatId = target._peTypeMap ? target._peTypeMap.get(data.nearestId) : null;
         const nearCat = nearCatId ? getById(nearCatId) : null;
         target.peFields.nearest.textContent = nearCat ? nearCat.name : `#${data.nearestId}`;
-        target.peFields.dist.textContent = formatLength(data.nearestDist, 1).text;
-        target.peFields.fc.textContent = formatForce(data.fCoulombNearest, 1).text;
+        target.peFields.dist.textContent = Number.isFinite(data.nearestDist) ? formatLength(data.nearestDist, 1).text : '--';
+        target.peFields.fc.textContent = Number.isFinite(data.fCoulombNearest) ? formatForce(data.fCoulombNearest, 1).text : '--';
     } else {
         target.peFields.nearest.textContent = '--';
         target.peFields.dist.textContent = '--';
         target.peFields.fc.textContent = '--';
     }
-    target.peFields.fnet.textContent = formatForce(data.fNetMag, 1).text;
+    target.peFields.fnet.textContent = Number.isFinite(data.fNetMag) ? formatForce(data.fNetMag, 1).text : '--';
 }

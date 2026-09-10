@@ -6,7 +6,7 @@
  * The positive profile below is an activity density used only to locate and
  * compare a packet.  It is not substituted for the exact modified energy of
  * the source-free kick-drift map, which is reported independently through
- * NativeWaveEnergy::tick_invariant.
+ * NativeWaveEnergy::tick_invariant when its operator contract is applicable.
  */
 
 #include "ftd/eft/native_energy_contract.h"
@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <string>
 #include <vector>
 
 namespace ftd::eft {
@@ -30,7 +31,12 @@ struct WaveMorphologyObservation {
   double leading_fraction = 0.0;
   double trailing_fraction = 0.0;
   double normalized_divergence = 0.0;
-  long double exact_tick_energy = 0.0L;
+  // Geometric morphology can remain valid when the reference wave invariant
+  // is unavailable (sources, another integrator/stencil, or open boundaries).
+  bool exact_tick_energy_available = false;
+  long double exact_tick_energy =
+      std::numeric_limits<long double>::quiet_NaN();
+  std::string exact_tick_energy_reason = "not evaluated";
 };
 
 struct WaveProfileComparison {
@@ -69,6 +75,11 @@ inline WaveMorphologyObservation observe_wave_morphology(
   WaveMorphologyObservation out;
   const int length = bridge.lattice().size();
   out.x_profile.assign(static_cast<std::size_t>(length), 0.0);
+  const auto energy = measure_native_wave_energy(bridge);
+  out.exact_tick_energy_available = energy.tick_invariant_applicable;
+  out.exact_tick_energy_reason = energy.tick_invariant_reason;
+  if (out.exact_tick_energy_available)
+    out.exact_tick_energy = energy.tick_invariant;
 
   double divergence2 = 0.0;
   double flux2 = 0.0;
@@ -118,8 +129,6 @@ inline WaveMorphologyObservation observe_wave_morphology(
   out.trailing_fraction = trailing / out.activity;
   out.normalized_divergence = std::sqrt(
       divergence2 / std::max(1e-30, flux2));
-  const auto energy = measure_native_wave_energy(bridge);
-  out.exact_tick_energy = energy.tick_invariant;
   out.valid = energy.finite && std::isfinite(out.centroid_x)
       && std::isfinite(out.width_x)
       && std::isfinite(out.normalized_divergence);

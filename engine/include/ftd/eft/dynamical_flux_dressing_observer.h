@@ -16,6 +16,7 @@
 #include <cstdint>
 #include <cstring>
 #include <limits>
+#include <string>
 
 namespace ftd::eft {
 
@@ -37,7 +38,12 @@ struct DynamicalDressingObservation {
   double signed_source_divergence = 0.0;
   int manifested_count = 0;
   int max_support_radius = -1;
-  long double exact_tick_energy = 0.0L;
+  // Source-driven morphology is still meaningful when the source-free wave
+  // quadratic is only a partial account, not an invariant of this profile.
+  bool exact_tick_energy_available = false;
+  long double exact_tick_energy =
+      std::numeric_limits<long double>::quiet_NaN();
+  std::string exact_tick_energy_reason = "not evaluated";
 };
 
 namespace dynamical_dressing_detail {
@@ -143,7 +149,10 @@ inline DynamicalDressingObservation observe_dynamical_flux_dressing(
   out.signed_source_divergence = static_cast<double>(polarity)
       * bridge.divergence_flux(source_index);
   const auto energy = measure_native_wave_energy(bridge);
-  out.exact_tick_energy = energy.tick_invariant;
+  out.exact_tick_energy_available = energy.tick_invariant_applicable;
+  out.exact_tick_energy_reason = energy.tick_invariant_reason;
+  if (out.exact_tick_energy_available)
+    out.exact_tick_energy = energy.tick_invariant;
   out.valid = energy.finite && std::isfinite(out.activity)
       && std::isfinite(out.field_norm2) && std::isfinite(out.wave_norm2)
       && std::isfinite(out.mean_radius) && std::isfinite(out.near_fraction)

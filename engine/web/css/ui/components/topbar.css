@@ -185,6 +185,18 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
     letter-spacing: 0.06em;
 }
 
+.tb-btn.tb-btn-fluid {
+    width: auto;
+    min-width: max-content;
+    padding-inline: 12px;
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    white-space: nowrap;
+    flex: 0 0 auto;
+}
+
+[data-active-scale]:not([data-active-scale="0"]) #btn-fluid { display: none !important; }
+
 .tb-btn-vtk {
     color: var(--positive-text);
     border-color: color-mix(in srgb, var(--positive) 52%, var(--border));

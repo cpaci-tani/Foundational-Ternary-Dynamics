@@ -29,7 +29,11 @@ export function createScalarOverlayAdapter(viewport) {
         setVisible(flag, on) {
             const spec = SCALAR_HEATMAP[flag];
             if (!spec) return false;
-            if (mode === 'heatmap') {
+            if (mode === 'volume') {
+                viewport?.[spec.toggle]?.(false);
+                viewport?.showScalarHeatmap?.(spec.key, false);
+                viewport?.showScalarVolume?.(spec.key, on);
+            } else if (mode === 'heatmap') {
                 viewport?.[spec.toggle]?.(false);
                 viewport?.showScalarHeatmap?.(spec.key, on);
             } else {
@@ -39,22 +43,26 @@ export function createScalarOverlayAdapter(viewport) {
             return true;
         },
         setMode(nextMode) {
-            mode = nextMode === 'heatmap' ? 'heatmap' : 'default';
+            mode = ['heatmap', 'volume'].includes(nextMode) ? nextMode : 'default';
         },
         syncMode(nextMode, fieldState = {}) {
-            mode = nextMode === 'heatmap' ? 'heatmap' : 'default';
+            mode = ['heatmap', 'volume'].includes(nextMode) ? nextMode : 'default';
             if (!viewport) return;
+            viewport.clearScalarVolumes?.();
             for (const [flag, spec] of Object.entries(SCALAR_HEATMAP)) {
                 const active = !!fieldState[flag];
                 viewport[spec.toggle]?.(active && mode === 'default');
                 viewport.showScalarHeatmap?.(spec.key, active && mode === 'heatmap');
+                viewport.showScalarVolume?.(spec.key, active && mode === 'volume');
             }
             markFieldDirty();
         },
         apply(key, data) {
             const spec = BY_KEY.get(key);
             if (!spec) return false;
-            if (mode === 'heatmap') {
+            if (mode === 'volume') {
+                viewport?.updateScalarVolume?.(key, data, spec.ramp, spec.signed);
+            } else if (mode === 'heatmap') {
                 viewport?.updateScalarHeatmap?.(key, data, spec.ramp, spec.signed);
             } else {
                 viewport?.[spec.update]?.(data);
@@ -63,9 +71,11 @@ export function createScalarOverlayAdapter(viewport) {
         },
         clear() {
             if (!viewport) return;
+            viewport.clearScalarVolumes?.();
             for (const spec of Object.values(SCALAR_HEATMAP)) {
                 viewport[spec.toggle]?.(false);
                 viewport.showScalarHeatmap?.(spec.key, false);
+                viewport.showScalarVolume?.(spec.key, false);
             }
         },
     });

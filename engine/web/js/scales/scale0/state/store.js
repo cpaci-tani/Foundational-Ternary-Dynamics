@@ -560,7 +560,7 @@ export function getScalarRenderMode() {
 }
 
 export function setScalarRenderMode(mode) {
-    state.scalarRenderMode = (mode === 'heatmap') ? 'heatmap' : 'default';
+    state.scalarRenderMode = ['heatmap', 'volume'].includes(mode) ? mode : 'default';
     state.fieldNeedsUpdate = true;
 }
 

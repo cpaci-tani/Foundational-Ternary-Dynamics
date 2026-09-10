@@ -69,19 +69,69 @@ test('Coulomb rejects singleton/empty/nonfinite samples and reports an unsigned 
     assert.ok(sample.samples.every(p => p.residual < 0));
 });
 
-test('G2 scalar-spin illustration creates neither fake measured rates nor growing histories', () => {
+test('G2 scalar-spin display creates neither fake measured rates nor growing histories', () => {
     const G2 = card('g2','G2Component');
     const instance = Object.create(G2.prototype);
     Object.assign(instance, {trackingState: null, _getSpinArrowManager: () => null,
         _renderG2PrecessionSubsection: () => {}, refs: {precession: {}}});
     const particle = {id: 1,state: 1,x: 1,y: 2,z: 3,spin: 1};
     const bridge = {getScale0ParticleList: () => [particle]};
+    instance.update(bridge, [particle]);
     instance._trackParticle(bridge);
-    for (let tick=0;tick<10000;tick++) instance.update(bridge,[particle],tick);
+    for (let tick=0;tick<10000;tick++) instance.update(bridge,[particle]);
     assert.equal(instance.trackingState.omegaMeasured,undefined);
     assert.equal(instance.trackingState.omegaHistory,undefined);
     const target = {};
     G2.prototype._renderG2PrecessionSubsection.call(instance,target,instance.trackingState);
     assert.match(target.innerHTML,/unavailable/);
-    assert.match(target.innerHTML,/imposed/);
+    assert.doesNotMatch(target.innerHTML,/ω_reference|imposed \|B\|/);
+    assert.match(target.innerHTML,/scalar spin label/);
+});
+
+test('G2 tracks the sampled scalar label with zero animation and invalidates record ownership', () => {
+    const G2 = card('g2','G2Component');
+    const instance = Object.create(G2.prototype);
+    let callbacks;
+    const removed = [];
+    const manager = {track: (id, spec) => { callbacks = spec; }, untrack: id => removed.push(id)};
+    Object.assign(instance, {trackingState: null, _getSpinArrowManager: () => manager,
+        _renderG2PrecessionSubsection: () => {}, refs: {precession: {}}});
+    const particle = {id: 1,state: 1,x: 1,y: 2,z: 3,spin: -1};
+    const bridge = {getScale0ParticleList: () => [particle]};
+    const provenance = {generation: 1, mutationEpoch: 0, ready: true};
+    instance.update(bridge, [particle], provenance);
+    instance._trackParticle(bridge);
+    assert.equal(callbacks.omegaDefault, 0);
+    assert.equal(callbacks.getSpin().omega_z, 0);
+    assert.equal(callbacks.getSpin().sz, -1);
+    instance.update(bridge, [{...particle, spin: null}], provenance);
+    assert.equal(callbacks.getSpin(), null);
+    assert.equal(instance.trackingState, null);
+    assert.deepEqual(removed, [1]);
+    instance._trackParticle(bridge);
+    instance.update(bridge, [particle], {...provenance, generation: 2});
+    assert.equal(instance.trackingState, null);
+    assert.equal(callbacks.getPosition(), null);
+    assert.deepEqual(removed, [1, 1]);
+    instance._trackParticle(bridge);
+    instance.update({...bridge}, [particle], {...provenance, generation: 2});
+    assert.equal(instance.trackingState, null);
+    instance.update(bridge, [particle], provenance);
+    instance._trackParticle(bridge);
+    instance.update(bridge, [particle], {...provenance, mutationEpoch: 1});
+    assert.equal(instance.trackingState, null);
+    instance._trackParticle(bridge);
+    instance.invalidateTracking(); // synchronous qualification notification, including hidden panels
+    assert.equal(instance.trackingState, null);
+    assert.equal(instance.bridgeRef, null);
+    instance._trackParticle(bridge);
+    assert.equal(instance.trackingState, null);
+    instance.update(bridge, [particle], {...provenance, ready: false});
+    assert.equal(instance.bridgeRef, null);
+    for (const spin of [0, null, undefined, NaN, 2, '1']) {
+        const invalidBridge = {getScale0ParticleList: () => [{...particle, spin}]};
+        instance.update(invalidBridge, [], provenance);
+        instance._trackParticle(invalidBridge);
+        assert.equal(instance.trackingState, null, `spin ${spin}`);
+    }
 });

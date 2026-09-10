@@ -88,9 +88,13 @@ function buildArrowGroup() {
     tick.renderOrder = 999;
     group.add(tick);
 
-    // Three.js cylinders/cones default to +Y; rotate so local axis is +Z.
-    // After this rotation, +Z (object-local) is the arrow direction.
-    group.rotation.x = Math.PI / 2;
+    // Bake the +Y-to-+Z alignment into the geometry and marker positions.
+    // update() owns the group's quaternion, so a group.rotation here would
+    // be overwritten on the first frame and misreport every spin direction.
+    for (const child of group.children) {
+        child.geometry.rotateX(Math.PI / 2);
+        child.position.applyAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2);
+    }
     return group;
 }
 

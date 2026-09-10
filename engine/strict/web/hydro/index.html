@@ -1,73 +1,50 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>FTD · Hydro laboratory</title>
-  <link rel="stylesheet" href="../../../web/css/ui/components/validity-status.css">
-  <style>
-    :root { color-scheme: dark; font-family: system-ui, sans-serif; background:#101820; color:#e2e9ee }
-    * { box-sizing:border-box } body { max-width:1180px; margin:auto; padding:28px }
-    h1 { font-size:1.8rem; margin:8px 0 } p { color:#b8c8d3; max-width:850px; line-height:1.55 }
-    .label { text-transform:uppercase; letter-spacing:.14em; color:#78dac1; font-size:.75rem }
-    .lab-heading { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap }
-    .controls { display:flex; gap:12px; align-items:end; flex-wrap:wrap; padding:18px 0 }
-    label { display:grid; gap:6px; font-size:.85rem } button,select { font:inherit; padding:10px; border:1px solid #547082; border-radius:6px; background:#1b2c38; color:inherit }
-    button { cursor:pointer } button:disabled { opacity:.45; cursor:wait } :focus-visible { outline:3px solid #78dac1; outline-offset:3px }
-    .metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:12px 0 }
-    .metric { background:#1b2c38; border-radius:8px; padding:15px } .metric strong { display:block; margin-top:5px; color:#78dac1; font-size:1.2rem }
-    .metric small { display:block; color:#8fa4b0; margin-top:2px }
-    .views { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px } figure { margin:0; padding:14px; border:1px solid #385163; border-radius:9px }
-    figcaption { padding-bottom:12px; font-weight:600 } canvas { display:block; width:100%; aspect-ratio:1; background:#0c131b; border-radius:5px }
-    #status { min-height:1.5em; margin:8px 0; color:#e1c887 } .legend { font-size:.85rem }
-    blockquote.caption { margin:18px 0; padding:14px 18px; border-left:3px solid #78dac1; background:#16222c; color:#cfe3ec; font-size:.92rem; line-height:1.6 }
-    details { margin-top:20px; border-top:1px solid #385163; padding-top:15px } pre { overflow-wrap:anywhere; white-space:pre-wrap; font-size:.75rem }
-    @media(max-width:900px) { body{padding:16px} .views{grid-template-columns:1fr} .metrics{grid-template-columns:repeat(2,1fr)} }
-  </style>
-</head>
-<body>
-  <div class="lab-heading"><div class="label">Priced successor candidate · Local research laboratory</div><div id="hydro-validity"></div></div>
-  <h1>phi-hydro-staged-candidate-1: fluid limit laboratory</h1>
-  <p>Every preparation below runs the momentum-conserving lattice-gas successor law
-  in the compiled worker. One step advances one stage (four physical microticks).
-  The chart tracks the same projected mode the sidecar's noiseless Chapman–Enskog
-  prediction was built for. Shear preparations show an empirical decay fit alongside
-  the H1&prime; reference viscosity. Sound shows its reference speed squared; a
-  sound-frequency estimate is unavailable. Fourier amplitudes use approximate
-  floating-point observation arithmetic with no certified error bound.</p>
-  <div class="controls">
-    <label>Preparation<select id="preparation">
-      <option value="hydro-shear-wave-t2" selected>Shear wave (T2 cell)</option>
-      <option value="hydro-shear-wave-e">Shear wave (E cell)</option>
-      <option value="hydro-sound-wave">Sound wave</option>
-      <option value="hydro-taylor-green">Taylor–Green vortex</option>
-      <option value="hydro-shear-layer">Shear layer</option>
-      <option value="hydro-vortex-pair">Vortex pair</option>
-    </select></label>
-    <label>Lattice width<select id="size"><option value="16" selected>16</option><option value="32">32</option></select></label>
-    <button id="reset">Reset preparation</button><button id="step">Step (one stage)</button><button id="run">Run</button>
-  </div>
-  <div id="status" role="status" aria-live="polite">Loading the compiled successor…</div>
-  <div class="metrics">
-    <div class="metric">Stage<strong id="stage">—</strong><small>4 microticks / stage</small></div>
-    <div class="metric">Fitted decay rate γ<sub>fit</sub><strong id="gammaFit">—</strong><small id="fitScope">last ≤32 stages; empirical amplitude fit</small></div>
-    <div class="metric">Decay estimate γ<sub>fit</sub>/|k|²<strong id="nuFit">—</strong><small id="probedLabel">Decay-based diffusivity estimate</small></div>
-    <div class="metric"><span id="probedName">Reference constant</span><strong id="probedValue">—</strong></div>
-    <div class="metric">ν<sub>T2</sub><strong id="nuT2">—</strong></div>
-    <div class="metric">ν<sub>E</sub><strong id="nuE">—</strong></div>
-    <div class="metric">c<sub>s</sub>²<strong id="csq">—</strong></div>
-    <div class="metric">g<strong id="gconst">—</strong></div>
-    <div class="metric">Field-token number (exact)<strong id="mass">—</strong><small>conserved in these preparations</small></div>
-    <div class="metric">Channel momentum (exact)<strong id="momentum">—</strong><small>integer velocity sum; physical units uncalibrated</small></div>
-  </div>
-  <div class="views">
-    <figure><figcaption>Density · z-mid slab</figcaption><canvas id="density" aria-label="Block-averaged density on the z-mid slab"></canvas></figure>
-    <figure><figcaption>Momentum · z-mid slab</figcaption><canvas id="momentum-canvas" aria-label="Block-averaged momentum arrows on the z-mid slab"></canvas></figure>
-    <figure><figcaption>Projected mode vs stage</figcaption><canvas id="chart" aria-label="Projected-mode amplitude versus stage, measured against the H1-prime prediction"></canvas></figure>
-  </div>
-  <p class="legend">Brighter density cells hold more field tokens. Momentum arrows show the block-summed (p<sub>x</sub>, p<sub>y</sub>) at each z-mid cell. The chart overlays the measured |projected mode| (dots) against the noiseless sidecar prediction (line).</p>
-  <blockquote class="caption" id="caption">Discrete lattice-gas fluid on `phi-hydro-staged-candidate-1`, a priced successor to the selected Φ-v2 (adopted, not derived). Its fluid limit — sound speed, Galilean factor and two cubic shear viscosities at the registered density — is derived by exact Chapman–Enskog (H1′) and measured in the registered campaign (H2′). It is anisotropic momentum hydrodynamics, not Navier–Stokes: the adopted symmetry group forces a cubic viscosity tensor. One realization: statistical noise scales as 1/√N per block.</blockquote>
-  <details><summary>Provenance</summary><pre id="provenance">Waiting for one authoritative owner.</pre></details>
-  <script type="module" src="hydro-lab.js"></script>
-</body>
-</html>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FTD · Discrete fluid laboratory</title>
+<link rel="stylesheet" href="../../../web/css/ui/components/validity-status.css"><link rel="stylesheet" href="./fluid-lab.css">
+</head><body>
+<header><div><div class="eyebrow">FTD / Strict discrete laboratory</div><h1>Fluid dynamics</h1></div><div id="hydro-validity"></div></header>
+<p class="intro">One finite state, observed at different resolutions. Follow transport, stress and flow patterns in the compiled <code>phi-hydro-staged-candidate-1</code> runtime.</p>
+<div class="scope"><span class="badge">Recovery open</span> Exact token moments are available. A constitutive stress law, viscosity and a nonlinear fluid limit remain unverified. This candidate has a separate state from the Scale 0 reference dashboard.</div>
+<section class="controls" aria-label="Preparation and evolution">
+<label>Interactive preparation<select id="preparation">
+<option value="hydro-shear-wave-t2">Shear wave · T2</option><option value="hydro-shear-wave-e">Shear wave · E</option><option value="hydro-sound-wave">Longitudinal wave</option><option value="hydro-taylor-green">Taylor–Green pattern</option><option value="hydro-shear-layer">Periodic shear layer</option><option value="hydro-vortex-pair">Counter-rotating pattern</option>
+</select></label>
+<label>Lattice<select id="size"><option>8</option><option selected>16</option><option>32</option></select></label>
+<label>Seed<input id="seed" type="number" min="1" max="4294967295" value="1729" step="1"></label>
+<label>Occupation d<select id="occupation"><option value="0">0 · vacuum</option><option value="0.125">1/8</option><option value="0.25" selected>1/4</option><option value="0.5">1/2</option></select></label>
+<button id="reset">Reset</button><button id="step" disabled>Step · 4 ticks</button><button id="run" class="primary" disabled>Run</button>
+</section>
+<p id="status" role="status" aria-live="polite">Loading the compiled discrete runtime…</p>
+<section class="metrics" aria-label="Fluid telemetry">
+<div class="metric"><span>Physical microtick</span><strong id="microtick">—</strong><small>Cycle <span id="stage">—</span> · phase <span id="phase">—</span></small></div>
+<div class="metric"><span>Selected field tokens</span><strong id="mass">—</strong><small id="momentum">P = —</small></div>
+<div class="metric"><span>Token-weighted speed RMS</span><strong id="speed">—</strong><small>Cells / cycle · block means</small></div>
+<div class="metric"><span>Kinetic pressure</span><strong id="pressure">—</strong><small>Mean tr(C)/3 · token units</small></div>
+<div class="metric"><span>Central stress anisotropy</span><strong id="stress">—</strong><small>Mean ‖dev C‖ · includes unresolved flow</small></div>
+<div class="metric"><span>Viscosity</span><strong id="viscosity" class="open" tabindex="0" title="Unavailable: equilibrium subtraction, stress closure, discrete-time correction and microscopic error bounds are not certified.">Unavailable</strong><small>Constitutive recovery is open</small></div>
+</section>
+<section class="viewbar" aria-label="Observation controls">
+<label title="Interactive observations show at most 16 blocks per axis. Every microscopic cell is retained and evolved.">Block width<select id="width"><option>1</option><option selected>2</option><option>4</option><option>8</option></select></label>
+<label>Polarity<select id="polarity"><option value="0">0 · populated</option><option value="1">1 · initially empty</option><option value="both">Combined · mixture</option></select></label>
+<label>Plane<select id="plane"><option>XY</option><option>XZ</option><option>YZ</option></select></label>
+<label>Slice <output id="slice-label">—</output><input id="slice" type="range" min="0" max="7" value="4"></label>
+<label class="check"><input id="arrows" type="checkbox" checked>Velocity arrows</label>
+<span class="observation-note">Up to 16³ observed blocks. State and clock are preserved.</span>
+</section>
+<section class="views" aria-label="Three fluid views of the same slice">
+<figure><figcaption><span>Density &amp; transport</span><span class="chip">N / V</span></figcaption><canvas id="density" tabindex="0" aria-label="Field token density with optional velocity arrows"></canvas><div id="density-legend" class="legend">—</div></figure>
+<figure><figcaption><label class="inline">Stress<select id="stress-mode" aria-label="Stress overlay"><option value="devNorm">Central anisotropy</option><option value="pressure">Kinetic pressure</option><option value="xy">Central Cxy</option><option value="xz">Central Cxz</option><option value="yz">Central Cyz</option></select></label></figcaption><canvas id="stress-canvas" tabindex="0" aria-label="Selected central stress component"></canvas><div id="stress-legend" class="legend">—</div></figure>
+<figure><figcaption><label class="inline">Flow<select id="flow-mode" aria-label="Flow overlay"><option value="vorticity">Vorticity normal to slice</option><option value="divergence">Divergence</option><option value="strainNorm">Strain-rate magnitude</option><option value="advection">Advective acceleration magnitude</option></select></label></figcaption><canvas id="flow-canvas" tabindex="0" aria-label="Selected finite difference flow diagnostic"></canvas><div id="flow-legend" class="legend">—</div></figure>
+</section>
+<p class="hint">Hover or tap a cell to inspect it. Arrow length shares one scale across the slice. Hatched flow cells have undefined derivatives; vacuum has no velocity. Spatial derivatives use a periodic central stencil over adjacent blocks.</p>
+<output id="inspector" aria-live="polite">Cell inspection will appear here.</output>
+<section class="analysis-row">
+<figure><figcaption>Projected momentum amplitude <span class="chip">Polarity 0</span></figcaption><canvas id="chart" aria-label="Observed Fourier amplitude against physical cycles"></canvas><div class="legend">Cycles (4 microticks each) → · magnitude per site ↑ · latest 256 observations</div></figure>
+<div class="analysis-card"><div class="eyebrow">Empirical mode diagnostic</div><h2>Shear decay</h2><dl><div><dt>Decay γ / cycle</dt><dd id="gammaFit">—</dd></div><div><dt>γ / |k|², cells² / cycle</dt><dd id="nuFit">—</dd></div><div><dt>Log-fit R²</dt><dd id="r2">—</dd></div></dl><p id="fitScope">Waiting for observations.</p><p class="hint">Finite-wave slope, not a recovered viscosity. A positive slope estimate denotes decay; a negative value denotes growth. Samples can be correlated; no confidence interval is certified.</p></div>
+<div class="analysis-card"><div class="eyebrow">Exact accounting · both polarities</div><h2>Exchange ledger</h2><dl><div><dt>Field tokens</dt><dd id="all-fields">—</dd></div><div><dt>Relation tokens</dt><dd id="relations">—</dd></div><div><dt>Total work units</dt><dd id="work">—</dd></div></dl><p id="source">No advance interval yet.</p><p class="hint">Snapshot moments are not the prestream stress flux used in the exact weak balance. Relation momentum is not included in field stress.</p></div>
+</section>
+<details><summary>Observation scope &amp; provenance</summary><p id="caption">Exact N, P and second moments come from the complete finite record. Central stress includes unresolved motion; finite differences and Fourier projections use approximate display arithmetic. These observations do not establish autonomous fluid evolution, isotropic viscosity or Navier–Stokes recovery. Preparations are seeded interactive examples, not registered validation campaigns.</p><p>Lengths are measured in lattice cells. Velocities use the streaming displacement per four-microtick cycle. Pressure and stress are token momentum flux densities; no SI mass, temperature or unit conversion is assumed. Combined polarity views include relative-flow covariance. Rendering and scientific sampling have separate cadences.</p><pre id="provenance"></pre></details>
+<script type="module" src="./hydro-lab.js"></script></body></html>

@@ -237,21 +237,54 @@ export function createNativeParticleEngine(bridge) {
 
     // ── Injection ──────────────────────────────────────────────────
 
-    function peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff) {
+    function admissibleInjection(catalogId, charge, mass, coordinates, rEff) {
+        // The native charge record is int8_t in units of e. Embind must never
+        // truncate a fractional charge or coerce a missing/nonfinite mass.
+        if (!Number.isInteger(charge) || charge < -128 || charge > 127
+            || !Number.isFinite(mass) || mass <= 0
+            || !Number.isFinite(rEff) || rEff < 0
+            || !coordinates.every(Number.isFinite)) return false;
+        const entry = catalogId ? getById(catalogId) : null;
+        if (catalogId && !entry) return false;
+        if (entry && (entry.mass_status === 'flavor-superposition'
+            || entry.charge !== charge || !Number.isFinite(entry.mass_mev)
+            || entry.mass_mev <= 0)) return false;
+        return true;
+    }
+
+    // Explicit lab records have no catalog identity. Require a complete set of
+    // native fields; do not coerce fractional integer records or normalize the
+    // spin vector (its magnitude is part of the native force input).
+    function anonymousRecordFields(catalogId, fields) {
+        if (catalogId !== null || !fields || typeof fields !== 'object'
+            || Array.isArray(fields)) return null;
+        const keys = Reflect.ownKeys(fields);
+        if (keys.length !== 3
+            || !['spin', 'colorId', 'spinAxis'].every(key => keys.includes(key))) return null;
+        const { spin, colorId, spinAxis } = fields;
+        if (!Number.isInteger(spin) || spin < -1 || spin > 1
+            || !Number.isInteger(colorId) || colorId < 0 || colorId > 3
+            || !Array.isArray(spinAxis) || spinAxis.length !== 3) return null;
+        const axis = [spinAxis[0], spinAxis[1], spinAxis[2]];
+        if (!axis.every(Number.isFinite)) return null;
+        return { spin, colorId, axis };
+    }
+
+    function peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff, recordFields) {
         const m = _module();
         if (viewMode === 'native_matter') return -1;
+        if (!admissibleInjection(catalogId, charge, mass, [x,y,z,vx,vy,vz], r_eff)) return -1;
+        const record = recordFields === undefined ? null : anonymousRecordFields(catalogId, recordFields);
+        if (recordFields !== undefined && !record) return -1;
         if (!m || !_ensure()) return -1;
-        if (mass <= 0) {
-            console.warn('NativePE: rejecting massless particle:', catalogId);
-            return -1;
-        }
         const entry = catalogId ? getById(catalogId) : null;
-        const spin = catalogSpin(entry);
-        const color = entry ? catalogColorId(entry.color_charge) : 0;
-        const axis = initSpinAxis(entry, spin);
+        const spin = record ? record.spin : catalogSpin(entry);
+        const color = record ? record.colorId : (entry ? catalogColorId(entry.color_charge) : 0);
+        const axis = record ? record.axis : initSpinAxis(entry, spin);
         const id = m.peAddParticleEx(_pe, charge, x, y, z, vx, vy, vz,
                                      mass, r_eff, spin, color,
                                      axis[0], axis[1], axis[2]);
+        if (!Number.isInteger(id) || id < 0) return -1;
         typeMap.set(id, catalogId);
         return id;
     }
@@ -260,11 +293,8 @@ export function createNativeParticleEngine(bridge) {
     function peAddLockedParticle(catalogId, charge, x, y, z, mass, r_eff = 0.1) {
         const m = _module();
         if (viewMode === 'native_matter') return -1;
+        if (!admissibleInjection(catalogId, charge, mass, [x,y,z], r_eff)) return -1;
         if (!m || !_ensure()) return -1;
-        if (mass <= 0) {
-            console.warn('NativePE: rejecting massless particle:', catalogId);
-            return -1;
-        }
         const entry = catalogId ? getById(catalogId) : null;
         const spin = catalogSpin(entry);
         const color = entry ? catalogColorId(entry.color_charge) : 0;
@@ -272,6 +302,7 @@ export function createNativeParticleEngine(bridge) {
         const id = m.peAddLockedParticleEx(_pe, charge, x, y, z, mass, r_eff,
                                            spin, color,
                                            axis[0], axis[1], axis[2]);
+        if (!Number.isInteger(id) || id < 0) return -1;
         typeMap.set(id, catalogId);
         return id;
     }

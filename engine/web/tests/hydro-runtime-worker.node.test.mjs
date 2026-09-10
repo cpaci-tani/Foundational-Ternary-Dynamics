@@ -189,7 +189,7 @@ test('WASM adapter delegates JSON-string checkpoints and deletes exactly once', 
     assert.equal(adapter.checkpoint(), checkpoint);
     assert.deepEqual(adapter.advance('1'), { microtick: '1' });
     assert.deepEqual(adapter.observe('2', 'fields'), { width: '2', name: 'fields' });
-    assert.deepEqual(adapter.capabilities().observables, ['counts', 'fields', 'moments']);
+    assert.deepEqual(adapter.capabilities().observables, ['counts', 'fields', 'moments', 'fluid']);
     assert.equal(adapter.capabilities().observableSyntax.moments, 'moments:kx,ky,kz,pol');
     assert.deepEqual(adapter.capabilities().observationPrecision.moments, {
         status: 'approximate_observation', arithmetic: 'ieee754_binary64', error_bound_status: 'not_certified',

@@ -25,9 +25,9 @@ export class WebSocketScaleFallbackFacade {
 
     initPE() { this._ensureFallback().initPE(); }
     resetPE() { this._ensureFallback().resetPE(); }
-    peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff) {
+    peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff, recordFields) {
         return this._ensureFallback().peAddParticle(
-            catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff,
+            catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff, recordFields,
         );
     }
     peAddLockedParticle(catalogId, charge, x, y, z, mass, r_eff) {

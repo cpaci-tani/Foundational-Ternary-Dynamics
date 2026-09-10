@@ -11,15 +11,23 @@ export function createPhysicsTogglesCard() {
       Modified physics profile — scenario qualification suspended.
     </div>
     <div class="combo-section-label">Wave & Field</div>
-    <div class="toggle-row"><input type="checkbox" id="t-wave" checked><label for="t-wave" title="Flux wave equation: J evolves via discrete Laplacian (c^2 nabla^2 J)">Wave Propagation</label></div>
+    <div class="toggle-row"><input type="checkbox" id="t-wave" checked><label for="t-wave" title="Enables the discrete Laplacian wave drive c²∇²J. Existing wave velocity can still change J while this term is off; use Pause to freeze evolution.">Wave Propagation</label></div>
     <div class="toggle-row"><input type="checkbox" id="t-coupling" checked><label for="t-coupling" title="Manifested particles source flux via coupling term g_c * grad(s)">State-Flux Coupling</label></div>
-    <div class="toggle-row"><input type="checkbox" id="t-damping" checked><label for="t-damping" title="Exponential flux decay at rate alpha per tick (energy dissipation)">Dissipation</label></div>
     <div class="toggle-row"><input type="checkbox" id="t-gauss" checked><label for="t-gauss" title="Enforce div(J) = charge density via SOR solver on void sites">Gauss Projection</label></div>
 
-    <div class="combo-section-label">Matter</div>
+    <div class="combo-section-label">Dissipation & Thermostat</div>
+    <div class="toggle-row"><input type="checkbox" id="t-damping" checked><label for="t-damping" title="Exponential field damping at rate alpha per tick. Removes field energy; this is not material viscosity.">Field Dissipation</label></div>
+    <div class="toggle-row"><input type="checkbox" id="t-selective" checked><label for="t-selective" title="Requires Field Dissipation ON. Restricts damping to sites near manifested particles.">Selective Damping</label></div>
+    <div class="toggle-row"><input type="checkbox" id="t-langevin"><label for="t-langevin" title="[IMPOSED] Seeded Ornstein-Uhlenbeck bath on wave velocity, not particle-gas collisions. Requires Dual Substrate and Larmor Radiation OFF. Bath temperature is set in Thermo.">Langevin Thermostat</label></div>
+
+    <div class="combo-section-label">Matter & Movement</div>
     <div class="toggle-row"><input type="checkbox" id="t-genesis" checked><label for="t-genesis" title="Particles manifest when |J| exceeds K_B">Genesis</label></div>
     <div class="toggle-row"><input type="checkbox" id="t-evaporation"><label for="t-evaporation" title="Manifested particles evaporate when their local field energy drains">Evaporation</label></div>
-    <div class="toggle-row"><input type="checkbox" id="t-movement" checked><label for="t-movement" title="Particles accumulate force into velocity remainder and move on the lattice">Movement</label></div>
+    <div class="toggle-row"><input type="checkbox" id="t-movement" checked><label for="t-movement" title="Integrates positions from particle velocity, handles lattice hops and collisions. There is no separate collision toggle.">Movement & Collisions</label></div>
+    <div class="toggle-row"><input type="checkbox" id="t-symmetric-move"><label for="t-symmetric-move" title="Coordinate-independent update traversal and axis ordering (SplitMix64 Fisher-Yates). Requires Movement ON.">Symmetric Movement Order</label></div>
+
+    <div class="combo-section-label">Boundaries</div>
+    <div class="toggle-row"><input type="checkbox" id="t-absorbing"><label for="t-absorbing" title="Imposed quadratic damping sponge near lattice faces. Requires Wave Propagation; inactive for Dispersal boundaries.">Absorbing Boundary</label></div>
 
     <div class="combo-section-label">Forces</div>
     <div class="toggle-row"><input type="checkbox" id="t-forces" checked><label for="t-forces" title="Master switch: apply electromagnetic and gravitational forces to manifested particles">Forces (EM + Gravity)</label></div>
@@ -34,20 +42,16 @@ export function createPhysicsTogglesCard() {
 
     <details class="toggle-advanced">
       <summary>Advanced</summary>
-      <div class="toggle-row"><input type="checkbox" id="t-selective" checked><label for="t-selective" title="Only damp flux near particles; vacuum EM waves propagate losslessly">Selective Damping</label></div>
-      <div class="toggle-row"><input type="checkbox" id="t-larmor"><label for="t-larmor" title="Accelerating charges radiate energy: damping proportional to a^2 (needs selective damping ON)">Larmor Radiation</label></div>
+      <div class="toggle-row"><input type="checkbox" id="t-larmor"><label for="t-larmor" title="Selected radiation-damping model. Requires Field Dissipation and Selective Damping; conflicts with Langevin.">Larmor Radiation</label></div>
       <div class="toggle-row"><input type="checkbox" id="t-dual"><label for="t-dual" title="Split flux into J_L + J_R chirality pair; observable psi = J_L + J_R">Dual Substrate</label></div>
     </details>
 
     <details class="toggle-advanced">
       <summary>Research (validated)</summary>
       <div class="toggle-row"><input type="checkbox" id="t-pair-production"><label for="t-pair-production" title="Correlated +1/-1 pair manifestation on an independent code path (F11.A-5 audited); separate from genesis.">Pair Production</label></div>
-      <div class="toggle-row"><input type="checkbox" id="t-langevin"><label for="t-langevin" title="Stochastic Ornstein-Uhlenbeck thermostat (SplitMix64 per-voxel noise), validated to equipartition +/-4%. Default OFF = golden-neutral.">Langevin Thermostat</label></div>
       <div class="toggle-row"><input type="checkbox" id="t-triad"><label for="t-triad" title="Colour-singlet triad binding (locked). Requires Color Forces ON.">Triad Binding</label></div>
       <div class="toggle-row"><input type="checkbox" id="t-latency-field"><label for="t-latency-field" title="Poisson-based latency field (grad^2 L = 4 pi G rho, gravity proxy). Requires Gravity ON.">Latency Field</label></div>
       <div class="toggle-row"><input type="checkbox" id="t-exact-dual-gauss"><label for="t-exact-dual-gauss" title="Exact dual-cell face-flux Gauss projection (isolated electrodynamics variant).">Exact Dual Gauss</label></div>
-      <div class="toggle-row"><input type="checkbox" id="t-symmetric-move"><label for="t-symmetric-move" title="Coordinate-independent update traversal and axis ordering (SplitMix64 Fisher-Yates). Requires Movement ON.">Symmetric Movement Order</label></div>
-      <div class="toggle-row"><input type="checkbox" id="t-absorbing"><label for="t-absorbing" title="Imposed quadratic damping sponge at the lattice faces (absorbs outgoing waves). Requires Wave Propagation ON.">Absorbing Boundary</label></div>
       <div class="toggle-row"><input type="checkbox" id="t-knot-tracking"><label for="t-knot-tracking" title="Record per-knot telemetry at tick end (observation-only, golden-neutral).">Knot Tracking</label></div>
     </details>
 

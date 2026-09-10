@@ -3,7 +3,7 @@
  * @purpose Orchestrator for the Scale 0 P1 Observables panel, composing sub-components.
  */
 
-import { getScale0State, resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
+import { getScale0State, resolveActiveScale0BridgeFromWindow, subscribeScale0Qualification } from '../../state/store.js';
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import { CoulombComponent } from './p1-observables/coulomb.js';
 import { AnisotropyComponent } from './p1-observables/anisotropy.js';
@@ -196,6 +196,12 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
     let scenarioSyncRaf = 0;
     let scenarioSyncToken = 0;
 
+    // Invalidate retained particle IDs at the transaction boundary even while
+    // the panel is hidden and its sampling callback is inactive.
+    const unsubscribeQualification = subscribeScale0Qualification(() => {
+        components?.g2.invalidateTracking();
+    });
+
     function mountComponents() {
         if (components || disposed) return;
         components = {
@@ -255,7 +261,12 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
         components.hydrogen.update(bridge, scenarioId);
         components.bell.update(bridge, scenarioId);
         components.gravity.update(bridge, scenarioId, now);
-        components.g2.update(bridge, particles, state.fieldDataVersion);
+        components.g2.update(bridge, particles, {
+            generation: state.authoritativeLoad?.loadGeneration
+                ?? state.qualificationAnchor?.loadGeneration ?? null,
+            mutationEpoch: state.mutationEpoch,
+            ready: !state.authoritativeLoad,
+        });
         components.thomson.update(bridge, scenarioId);
         components.fineStructure.update(bridge, scenarioId);
     }
@@ -345,6 +356,7 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
         rebindScenarioApplicability,
         dispose: () => {
             disposed = true;
+            unsubscribeQualification();
             stopCoordinator();
             unmountComponents();
             if (scenarioSyncRaf) cancelAnimationFrame(scenarioSyncRaf);

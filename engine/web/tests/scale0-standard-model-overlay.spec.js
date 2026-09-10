@@ -98,21 +98,30 @@ test.describe('Scale 0 contextual Standard Model overlay', () => {
     test('keeps chirality honest across fermions, neutrinos, and bosons', async ({ page }) => {
         const values = await page.evaluate(async () => {
             const { getScale0StandardModelContext } = await import('/js/scales/scale0/ui/overlays/standard-model.js?v=2');
-            const get = (id) => getScale0StandardModelContext(id);
+            const { getScale0Scenario } = await import('/js/scales/scale0/scenario-registry.js');
+            const get = (id) => getScale0StandardModelContext(id, getScale0Scenario(id));
             return {
                 electron: get('s0-vacuum-electron').chirality,
                 neutrino: get('s0-vacuum-electron-neutrino').chirality,
                 antineutrino: get('s0-vacuum-electron-antineutrino').chirality,
                 photon: get('s0-vacuum-photon').chirality,
                 higgs: get('s0-vacuum-higgs').chirality,
+                neutrinoStatus: get('s0-vacuum-electron-neutrino').status,
+                antineutrinoStatus: get('s0-vacuum-electron-antineutrino').status,
+                electronStatus: get('s0-vacuum-electron').status,
+                photonStatus: get('s0-vacuum-photon').status,
             };
         });
         expect(values).toEqual({
             electron: 'L / R fields',
-            neutrino: 'L weak sector',
-            antineutrino: 'R weak sector',
+            neutrino: 'L weak field',
+            antineutrino: 'Conjugate of L weak field',
             photon: 'N/A · helicity ±1',
             higgs: 'N/A · scalar',
+            neutrinoStatus: 'CONJECTURE',
+            antineutrinoStatus: 'CONJECTURE',
+            electronStatus: 'CLOSED NEGATIVE',
+            photonStatus: 'OPEN',
         });
     });
 });
