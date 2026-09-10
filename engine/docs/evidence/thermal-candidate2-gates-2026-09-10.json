@@ -1,0 +1,230 @@
+{
+  "id": "thermal-candidate2-gates-v1",
+  "date": "2026-09-10",
+  "instrument": {
+    "path": "scripts/experiments/build_thermal_candidate2_gates_evidence.py",
+    "sha256": "369ca0f3e7034b7d17cbf6aaad45e65f3c57ba1b07ec43d9ca393411af91d8fc",
+    "definitions_from": [
+      "scripts/phi_v2_lattice/thermal/analysis.py",
+      "scripts/tests/phi_v2_lattice/thermal/test_thermal.py"
+    ],
+    "arithmetic": "exact rationals (fractions.Fraction); floats for display only"
+  },
+  "laws": {
+    "candidate-1": {
+      "id": "phi-thermal-pair-candidate-1",
+      "table_hash": "fa4a959896e7b0aa8fdf75271296866d777fa86aa97b6230205f0b5448cfe6cf",
+      "moved_pairs": 57111
+    },
+    "candidate-2": {
+      "id": "phi-thermal-equivariant-candidate-2",
+      "table_hash": "726908e917ef3723d02b1f9d50285fe64b1ac4e0b614b45ef3e5b1a6971f7d6d",
+      "moved_pairs": 44856
+    }
+  },
+  "gate1_pointwise_cubic_covariance": {
+    "witness": "R(x,y,z)=(x,-z,y) applied to {(-1,0,0),(1,0,0)}; R fixes the input pair",
+    "candidate-1": {
+      "witness": {
+        "F(input)": [
+          [
+            0,
+            -1,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "F(R input)": [
+          [
+            0,
+            -1,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "R(F input)": [
+          [
+            0,
+            0,
+            -1
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ],
+        "covariant": false
+      },
+      "exhaustive": {
+        "group_elements": 48,
+        "pairs": 58653,
+        "comparisons": 2815344,
+        "violations": 1682522,
+        "exactly_equivariant": false
+      }
+    },
+    "candidate-2": {
+      "witness": {
+        "F(input)": [
+          [
+            -1,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0
+          ]
+        ],
+        "F(R input)": [
+          [
+            -1,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0
+          ]
+        ],
+        "R(F input)": [
+          [
+            -1,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0
+          ]
+        ],
+        "covariant": true
+      },
+      "exhaustive": {
+        "group_elements": 48,
+        "pairs": 58653,
+        "comparisons": 2815344,
+        "violations": 0,
+        "exactly_equivariant": true
+      }
+    }
+  },
+  "gate2_moment_preparation_stationarity": {
+    "preparation": "D1Q7 tensor weights q(vx)q(vy)q(vz)/8 at theta=1",
+    "v1_witness_pair": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        0
+      ]
+    ],
+    "candidate-1": {
+      "v1_witness": {
+        "output": [
+          [
+            1,
+            -1,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ],
+        "pair_fixed_under_this_map": false,
+        "odds_ratio": {
+          "exact": "1809739687/2398596583",
+          "float": 0.754499401786232,
+          "sha256_of_str_fraction": "5581b5e49cd9f0027d425c7ae13ce47130bcb163e63291ed8b3999bb0305cfc2"
+        }
+      },
+      "exhaustive": {
+        "moved_collisions": 57111,
+        "moved_with_nonstationary_ratio": 44476,
+        "preparation_stationary": false
+      }
+    },
+    "candidate-2": {
+      "v1_witness": {
+        "output": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            0,
+            0
+          ]
+        ],
+        "pair_fixed_under_this_map": true,
+        "odds_ratio": {
+          "exact": "1",
+          "float": 1.0,
+          "sha256_of_str_fraction": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+        }
+      },
+      "exhaustive": {
+        "moved_collisions": 44856,
+        "moved_with_nonstationary_ratio": 43944,
+        "preparation_stationary": false
+      }
+    }
+  },
+  "gate3_stationary_gibbs_isotropy": {
+    "preparation": {
+      "fugacity": "1/8",
+      "energy_activity": "1/2"
+    },
+    "equilibrium_moments_signature": "(fugacity=Fraction(1, 8), energy_activity=Fraction(1, 2)) -> 'dict'",
+    "collision_map_enters_computation": false,
+    "M400/(3*M220)": {
+      "exact": "70132080473240550046319180482758240467110811550082484307326257/70305033327584625961393829208323580096755903610278948627355156",
+      "float": 0.9975399648338377,
+      "sha256_of_str_fraction": "55f3cca1faae250398e5ccd06c8c0a6d08fd9077defd2bd6b1f0e5de99c58c5e"
+    },
+    "M600/(5*M420)": {
+      "exact": "84040452745308663456089789462201829212670952257057196761727951/84778536400475296658493128481485222129969501197666413521956380",
+      "float": 0.9912939797441173,
+      "sha256_of_str_fraction": "e62713b26a6228ff26d2cf838053bb9b741262c1e7369704df242dc5649354c5"
+    },
+    "M420/(3*M222)": {
+      "exact": "1412975606674588277641552141358087035499491686627773558699273/1415721658794366561359183484251856860343852661194614337857524",
+      "float": 0.998060316374536,
+      "sha256_of_str_fraction": "2267afe6e8cfc16feff92e4774a66ab6f49a64a74934057c57c86cbbe8f0f413"
+    },
+    "fourth_residual_nonzero": true,
+    "sixth_residual_nonzero": true,
+    "mixed_sixth_residual_nonzero": true,
+    "structural_note": "Both candidates' additive-invariant census is rank 338 = 343-5, i.e. exactly {1, vx, vy, vz, |v|^2}. The homogeneous stationary product family is therefore the same Fermi-Dirac f(|v|^2) for any collision in this invariant class, and these residuals are properties of that family on the {-3..3}^3 set at the fixed activities. No collision choice within the class moves this gate. This is not a claim about other velocity sets, other invariant classes, or other activities; no parameter search was run."
+  },
+  "sanity_gibbs_stationary_under_candidate2": {
+    "violations": 0,
+    "holds": true
+  },
+  "verdict": {
+    "gate1": "candidate-2 CLOSES it: 0 violations in 2,815,344 (candidate-1: 1,682,522)",
+    "gate2": "candidate-2 FAILS it: 43,944 of 44,856 moved collisions nonstationary; the v1 witness pair is fixed under v2 so that single ratio is 1, which is why v1's witness could not be transferred blindly",
+    "gate3": "UNCHANGED and structurally collision-independent within the {N,P,E2} class"
+  },
+  "scope": "Three specified exact gates only. No relaxation, equation of state, viscosity, heat transport, thermalization, or fluid recovery is established or refuted. No coefficient, preparation, or activity search was performed."
+}
