@@ -12,7 +12,7 @@
  * tick or force computation happens in these functions.
  */
 
-import { G_N, DM_FRACTION, BARYON_FRACTION } from '../../constants.js';
+import { G_N, DM_FRACTION } from '../../constants.js';
 
 // DM:baryon split sourced from FTD constants (17/27 vs 10/27) — was
 // 0.85/0.15 (observed Universe) pre-2026-05-27 audit P0-8. Now matches

@@ -556,6 +556,33 @@ test.describe('Pass C: Cosmology and expansion', () => {
         expect(dmResult.scenarioSelectValue, "the scenario dropdown's own value must not change")
             .toBe(scenarioBefore);
 
+        // Review finding (Important): the dm-fraction tooltip must stay true
+        // even with the Planck override active, when the displayed row reads
+        // ~84% — the exact figure the OLD tooltip wording claimed the value
+        // "does NOT match". The fix attributes the mismatch to FTD's native
+        // 17/27 default rather than to the displayed number, so it holds in
+        // every override state. Confirm the tooltip text and tag survive
+        // unchanged with the override live, and that the row itself now
+        // reads close to 84% (proving this is exactly the state that broke
+        // the old wording).
+        await openPanel(page, 'diagnostics');
+        await tickAndRefresh(page, 10);
+        const dmRowTooltipWithOverride = await page.evaluate(() => {
+            const row = document.querySelector(
+                '#panel-diagnostics .diag-scale5-root [data-section="cosmic-expansion"] tr[data-row="dm-fraction"]',
+            );
+            const cell = row?.querySelector('.diag-value');
+            return { tooltip: row ? row.dataset.uiTooltip : null, value: cell ? Number(cell.textContent) : null };
+        });
+        expect(dmRowTooltipWithOverride.value, 'dm-fraction row should read well above the ~63% native default with the 0.84 Planck override active')
+            .toBeGreaterThan(75);
+        expect(dmRowTooltipWithOverride.tooltip, 'dm-fraction row tooltip should exist with the override active').toBeTruthy();
+        expect(dmRowTooltipWithOverride.tooltip).toContain('[SELECTION]');
+        expect(dmRowTooltipWithOverride.tooltip).toContain('17/27');
+        expect(dmRowTooltipWithOverride.tooltip).toContain('NOT match Planck 2018');
+        expect(dmRowTooltipWithOverride.tooltip, "must attribute the mismatch to FTD's native default, not to the displayed value")
+            .toContain("FTD's native dark-matter fraction");
+
         // Switching back to "default" must restore the unset-override
         // behaviour (?? DM_FRACTION), not merely stop reflecting 0.84.
         const backToDefault = await page.evaluate(() => {
