@@ -29,6 +29,19 @@
  * Parity: engine/web/tests/cosmic-sph-reference.mjs is an INDEPENDENT
  * reimplementation of the same formulas (not importing this file) used to
  * cross-check this module in engine/web/tests/cosmic-sph.node.test.mjs.
+ *
+ * Pass 0a (bridge foundations): the density loop below also accumulates
+ * neighbour-count / h / rho / P min-mean-max statistics purely from
+ * values it already computes (no new O(N^2) work), and the return value
+ * is widened to publish them (CosmicMockBridge._stats reads this — see
+ * cosmic-pass-stats.js). Two live knobs are read here with `?? default`
+ * fallbacks so the toggle-off / no-override path stays bit-identical:
+ * `bridge._sphAlpha`/`bridge._sphBeta` (CosmicMockBridge.setSphAlpha/
+ * setSphBeta) override the frozen SPH.ALPHA/SPH.BETA constants, and
+ * `bridge._adaptiveSmoothing` (setAdaptiveSmoothing) gates the adaptive-h
+ * write-back — absent/undefined means "on" in both cases, so a bare
+ * object-literal test fixture with no such fields behaves exactly as
+ * before this pass.
  */
 
 export const SPH = Object.freeze({
@@ -88,7 +101,10 @@ export function isGasType(type, TYPE) {
  *      order). Immediately after, when rho > 0, the adaptive smoothing
  *      length h = ETA * cbrt(m/rho) is written back to the body IN PLACE
  *      — matches cosmic_sph.cpp:99-102, which updates smoothing_length
- *      before compute_sph_forces ever runs this tick.
+ *      before compute_sph_forces ever runs this tick. Pass 0a gates this
+ *      write-back on `bridge._adaptiveSmoothing !== false` (absent means
+ *      on) so a live "freeze h" knob can suppress it without a new code
+ *      path.
  *   4. Pressure + Monaghan-Gingold artificial-viscosity accelerations, and
  *      the du/dt energy exchange, accumulated on BOTH bodies of each pair
  *      (Newton-3), reading the smoothing length step 3 just updated — the
@@ -101,7 +117,10 @@ export function isGasType(type, TYPE) {
  *      term is additionally zeroed when the pair's rho_avg <= 0
  *      (defensive — only reachable when both sides are already
  *      zero-density, so it changes nothing that wasn't already excluded
- *      by the per-side guards below).
+ *      by the per-side guards below). Pass 0a reads the viscosity
+ *      coefficients as `bridge._sphAlpha ?? SPH.ALPHA` / `bridge._sphBeta
+ *      ?? SPH.BETA` so a live override never touches the frozen SPH
+ *      object (`cosmic-sph.node.test.mjs:127-133` pins its values).
  *
  * Mutates b.density, b.pressure, b.sound, b.h, and adds onto b.ax/ay/az
  * and b.du. Caller (cosmic-physics.js) must run the gravity pass first —
@@ -109,7 +128,10 @@ export function isGasType(type, TYPE) {
  *
  * @param {{_bodies: object[]}} bridge
  * @param {object} TYPE CosmicMockBridge.TYPE enum
- * @returns {{gasCount: number, pairs: number}}
+ * @returns {{gasCount: number, pairs: number, neighborMin: number,
+ *   neighborMean: number, neighborMax: number, hMin: number,
+ *   hMean: number, hMax: number, rhoMin: number, rhoMax: number,
+ *   pMin: number, pMax: number}}
  */
 export function computeSphForces(bridge, TYPE) {
     const bodies = bridge._bodies;
@@ -120,7 +142,14 @@ export function computeSphForces(bridge, TYPE) {
         if (isGasType(bodies[i].type, TYPE)) gasIdx.push(i);
     }
     const nGas = gasIdx.length;
-    if (nGas === 0) return { gasCount: 0, pairs: 0 };
+    if (nGas === 0) {
+        return {
+            gasCount: 0, pairs: 0,
+            neighborMin: 0, neighborMean: 0, neighborMax: 0,
+            hMin: 0, hMean: 0, hMax: 0,
+            rhoMin: 0, rhoMax: 0, pMin: 0, pMax: 0,
+        };
+    }
 
     // Fallback smoothing-length init for bodies that bypassed addBody's
     // own initializer (e.g. hand-built fixtures).
@@ -156,9 +185,14 @@ export function computeSphForces(bridge, TYPE) {
     // back to the body IMMEDIATELY, so the force pass below reads it.
     // Safe in a single left-to-right pass: a body's own density only ever
     // reads ITS OWN h (kernelW(d, bi.h)), never a neighbour's.
+    const adaptiveSmoothing = bridge._adaptiveSmoothing !== false;
     const rho = new Float64Array(nGas);
     const P = new Float64Array(nGas);
     const c = new Float64Array(nGas);
+    let neighborMin = Infinity, neighborMax = -Infinity, neighborSum = 0;
+    let hMin = Infinity, hMax = -Infinity, hSum = 0;
+    let rhoMin = Infinity, rhoMax = -Infinity;
+    let pMin = Infinity, pMax = -Infinity;
     for (let a = 0; a < nGas; a++) {
         const bi = bodies[gasIdx[a]];
         let r = bi.mass * kernelW(0, bi.h);
@@ -178,9 +212,34 @@ export function computeSphForces(bridge, TYPE) {
         bi.du = 0;
         // Adaptive smoothing length, written back in place right here (as
         // in cosmic_sph.cpp's compute_sph_density) so the force pass below
-        // reads the post-density h, not the entry-tick one.
-        if (r > 0) bi.h = SPH.ETA * Math.cbrt(bi.mass / r);
+        // reads the post-density h, not the entry-tick one. Pass 0a: a
+        // live "freeze h" override (bridge._adaptiveSmoothing === false)
+        // skips this write-back; absent/undefined leaves it on.
+        if (r > 0 && adaptiveSmoothing) bi.h = SPH.ETA * Math.cbrt(bi.mass / r);
+
+        // Pass 0a stats — every value below was already computed above.
+        const nCount = neighbors[a].length;
+        if (nCount < neighborMin) neighborMin = nCount;
+        if (nCount > neighborMax) neighborMax = nCount;
+        neighborSum += nCount;
+        if (bi.h < hMin) hMin = bi.h;
+        if (bi.h > hMax) hMax = bi.h;
+        hSum += bi.h;
+        if (r < rhoMin) rhoMin = r;
+        if (r > rhoMax) rhoMax = r;
+        if (press < pMin) pMin = press;
+        if (press > pMax) pMax = press;
     }
+    const neighborMean = neighborSum / nGas;
+    const hMean = hSum / nGas;
+    if (!Number.isFinite(neighborMin)) neighborMin = 0;
+    if (!Number.isFinite(neighborMax)) neighborMax = 0;
+    if (!Number.isFinite(hMin)) hMin = 0;
+    if (!Number.isFinite(hMax)) hMax = 0;
+    if (!Number.isFinite(rhoMin)) rhoMin = 0;
+    if (!Number.isFinite(rhoMax)) rhoMax = 0;
+    if (!Number.isFinite(pMin)) pMin = 0;
+    if (!Number.isFinite(pMax)) pMax = 0;
 
     // Pressure + Monaghan-Gingold artificial-viscosity forces, and the
     // du/dt energy equation. Both read the CURRENT b.h (post-density-
@@ -193,6 +252,8 @@ export function computeSphForces(bridge, TYPE) {
     // zero/negative-density body contributes and receives nothing (no
     // 0/0 division), while the other side of the pair still gets a finite
     // (possibly viscosity-only) contribution.
+    const sphAlpha = bridge._sphAlpha ?? SPH.ALPHA;
+    const sphBeta = bridge._sphBeta ?? SPH.BETA;
     for (let p = 0; p < nPairs; p++) {
         const a = pairA[p], bx = pairB[p], r = pairR[p];
         if (r < 1e-10) continue;
@@ -210,7 +271,7 @@ export function computeSphForces(bridge, TYPE) {
         let pi = 0;
         if (vdotr < 0 && rhoAvg > 0) {
             const mu = hAvg * vdotr / (r2 + SPH.EPS2_FACTOR * hAvg * hAvg);
-            pi = (-SPH.ALPHA * 0.5 * (c[a] + c[bx]) * mu + SPH.BETA * mu * mu) / rhoAvg;
+            pi = (-sphAlpha * 0.5 * (c[a] + c[bx]) * mu + sphBeta * mu * mu) / rhoAvg;
         }
         const pressTerm = (rhoA > 0 && rhoB > 0) ? P[a] / (rhoA * rhoA) + P[bx] / (rhoB * rhoB) : 0;
         const termA = rhoA > 0 ? pressTerm + pi : 0;
@@ -228,5 +289,10 @@ export function computeSphForces(bridge, TYPE) {
         bj.du += 0.5 * bi.mass * termB * dot;
     }
 
-    return { gasCount: nGas, pairs: nPairs };
+    return {
+        gasCount: nGas, pairs: nPairs,
+        neighborMin, neighborMean, neighborMax,
+        hMin, hMean, hMax,
+        rhoMin, rhoMax, pMin, pMax,
+    };
 }

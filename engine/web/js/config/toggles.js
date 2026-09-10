@@ -225,8 +225,35 @@ export const SCALE0_TOGGLES = [
 // bridge.setToggle()/getToggle(). sph_monaghan gates the Monaghan (1992)
 // SPH gas solver (bridge/cosmic-sph.js) — default off so every existing
 // cosmic scenario is bit-identical until a gas laboratory opts in.
+//
+// Pass 0a (2026-09-09, bridge foundations): grown from 1 to 14 entries —
+// CosmicMockBridge._freshToggles() (mock-scale5.js) is the runtime source
+// of truth these mirror; every gate reads its key with the "absent means
+// on" rule (`this._toggles?.<key> !== false`). The checkboxes themselves
+// (wiring a DOM element to each domId below) are a later pass — declaring
+// the registry now is what Pass 0a asked for. The plan's Surface-Budget
+// section cites "16 bridge rule-toggles" as a target for the FULL Pass
+// 0-D plan; a careful audit of cosmic-physics.js/cosmic-postupdates.js/
+// cosmic-sph.js (the three files Pass 0a owns) found exactly 14 genuinely
+// distinct, already-gateable phenomenological rule blocks — see the SDD
+// ledger (.superpowers/sdd/2026-09-09-scale5-cosmic-instrument/
+// progress.md) for that count ruling; no extra keys were invented to pad
+// the total to 16.
 export const SCALE5_TOGGLES = [
     ['sph_monaghan', false, 't-sph-monaghan'],
+    ['gas_cooling', true, 't-gas-cooling'],
+    ['radiation_pressure', true, 't-radiation-pressure'],
+    ['tidal_stretch', true, 't-tidal-stretch'],
+    ['tidal_disruption', true, 't-tidal-disruption'],
+    ['legacy_gas_repulsion', true, 't-legacy-gas-repulsion'],
+    ['star_formation', true, 't-star-formation'],
+    ['bondi_accretion', true, 't-bondi-accretion'],
+    ['horizon_absorption', true, 't-horizon-absorption'],
+    ['mergers', true, 't-mergers'],
+    ['emergent_black_holes', true, 't-emergent-black-holes'],
+    ['stellar_evolution', false, 't-stellar-evolution'],
+    ['hawking_evaporation', false, 't-hawking-evaporation'],
+    ['speed_limit', true, 't-speed-limit'],
 ];
 
 // ── Advanced / research toggles surfaced in the Physics card ─────────────

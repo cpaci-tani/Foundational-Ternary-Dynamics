@@ -23,6 +23,25 @@
  * ./cosmic-scenarios/, the force kernel to ./cosmic-physics.js, and
  * post-integration events to ./cosmic-postupdates.js. The class below
  * owns state, the tick schedule, telemetry, and the public API.
+ *
+ * Pass 0a (bridge foundations, 2026-09-09): this class now also owns —
+ *   - `_stats`/`_totals` (cosmic-pass-stats.js): this-tick / cumulative
+ *     instrumentation, surfaced via getPassStats().
+ *   - `_toggles` (14 rule-level physics gates; see `_freshToggles()`),
+ *     re-seeded from the loaded scenario's own `_enableSubgrid` /
+ *     `_stellarEvolution` / `_hawkingEvaporation` choices by
+ *     `_syncRuleTogglesFromScenario()`.
+ *   - `_eventLog` (bounded ring, cap 200): getEventLog().
+ *   - `_comBaseline`: the centre-of-mass captured at the end of
+ *     setupScenario, for the comDrift diagnostic.
+ *   - Live setters (setGravityScale, setSofteningScale,
+ *     setSpeedLimitFactor, setClockGain, setExpansionEnabled,
+ *     setSphAlpha, setSphBeta, setAdaptiveSmoothing) that write private
+ *     fields consumed with `?? default` fallbacks elsewhere — see
+ *     getRuntimeParams() for the full current set.
+ * See .superpowers/sdd/2026-09-09-scale5-cosmic-instrument/progress.md
+ * for the pass record and the rulings made where the plan's text and the
+ * actual tick order/code did not line up cleanly.
  */
 
 import {
@@ -30,9 +49,10 @@ import {
 } from '../constants.js';
 
 import { runCosmicScenario } from './cosmic-scenarios/index.js';
-import { computeCosmicForces } from './cosmic-physics.js';
+import { computeCosmicForces, BH_N_THRESHOLD } from './cosmic-physics.js';
 import { postCosmicUpdates } from './cosmic-postupdates.js';
-import { isGasType } from './cosmic-sph.js';
+import { isGasType, SPH } from './cosmic-sph.js';
+import { createCosmicPassStats } from './cosmic-pass-stats.js';
 
 // ── Friedmann / Hubble integration (audit P0-9, 2026-05-27) ─────────────
 // Flat ΛCDM background: H(a)² = H0²·(Ω_M·a⁻³ + Ω_Λ), with a=1 "today".
@@ -62,12 +82,20 @@ import { isGasType } from './cosmic-sph.js';
 //   comfortable viewing rate. This gain scales ONLY the cosmological
 //   background clock (a, H, z diagnostics); it does NOT enter the N-body
 //   force kernel or body kinematics, so scenario dynamics are unchanged.
+//   Pass 0a: `setClockGain()` overrides this default live (`this._clockGain
+//   ?? COSMIC_CLOCK_GAIN`); `setExpansionEnabled(false)` skips the
+//   Friedmann step entirely for a tick, freezing a/H/z (still diagnostics-
+//   only, so this changes no N-body dynamics either).
 // COSMIC_A_MAX: soft display cap on a(t). In the de Sitter future a grows
 //   without bound; capping keeps the readout finite (H, z stay meaningful
 //   at the floor). Purely cosmetic — no dynamical effect.
 const COSMIC_A_INIT = 0.05;
 const COSMIC_CLOCK_GAIN = 40.0;
 const COSMIC_A_MAX = 1000.0;
+
+// Event log cap (Pass 0a). A bounded ring so a long-running session's
+// event log cannot grow without bound; oldest entries drop silently.
+const EVENT_LOG_CAP = 200;
 
 // Hubble rate from the flat-ΛCDM Friedmann equation at scale factor `a`.
 // H(a) = H0·√(Ω_M·a⁻³ + Ω_Λ). Returns lattice-unit H (pre clock-gain).
@@ -107,9 +135,15 @@ export class CosmicMockBridge {
         this._stellarEvolution = false;
         this._hawkingEvaporation = false;
         // Scale 5 physics-term toggles (mirrors Scale 0's per-term dashboard
-        // pattern). sph_monaghan gates the Monaghan SPH gas solver
-        // (cosmic-sph.js); default off so existing scenarios are unaffected.
-        this._toggles = { sph_monaghan: false };
+        // pattern). See _freshToggles() for the full 14-key registry.
+        this._toggles = this._freshToggles();
+        // Pass 0a: per-tick / cumulative instrumentation (cosmic-pass-stats.js).
+        this._stats = createCosmicPassStats();
+        this._totals = createCosmicPassStats();
+        this._eventLog = [];
+        this._comBaseline = null;
+        this._pe = NaN;
+        this._peAvailable = false;
     }
 
     static TYPE = {
@@ -236,6 +270,136 @@ export class CosmicMockBridge {
     }
 
     // ================================================================
+    // PASS 0a — TOGGLE REGISTRY / RULE-TOGGLE SYNC
+    // ================================================================
+    // 14 bridge rule-toggles, each read at its call site with the "absent
+    // key means on" convention (`this._toggles?.<key> !== false`). A
+    // thorough audit of cosmic-physics.js/cosmic-postupdates.js/
+    // cosmic-sph.js found exactly this many genuinely distinct
+    // phenomenological rule blocks; see the SDD ledger for the count
+    // ruling against the plan's aspirational "16 bridge rule-toggles"
+    // Surface-Budget figure (which is a target for the FULL Pass 0-D
+    // plan, not a literal per-pass enumeration).
+    _freshToggles() {
+        return {
+            sph_monaghan: false,
+            gas_cooling: true,
+            radiation_pressure: true,
+            tidal_stretch: true,
+            tidal_disruption: true,
+            legacy_gas_repulsion: true,
+            star_formation: true,
+            bondi_accretion: true,
+            horizon_absorption: true,
+            mergers: true,
+            emergent_black_holes: true,
+            stellar_evolution: false,
+            hawking_evaporation: false,
+            speed_limit: true,
+        };
+    }
+
+    /** Seed the rule toggles from the just-loaded scenario's OWN choices
+     *  (_enableSubgrid / _stellarEvolution / _hawkingEvaporation), called
+     *  AFTER runCosmicScenario returns so a scenario's setup function has
+     *  already run. Never touches sph_monaghan — the three gas-laboratory
+     *  scenarios (cosmic-scenarios/gas.js) set that directly on
+     *  `this._toggles` during their own setup and must survive this sync
+     *  unmodified (cosmic-sph.node.test.mjs:404-415, M9). */
+    _syncRuleTogglesFromScenario() {
+        const subgrid = !!this._enableSubgrid;
+        this._toggles.gas_cooling = subgrid;
+        this._toggles.radiation_pressure = subgrid;
+        this._toggles.tidal_stretch = subgrid;
+        this._toggles.legacy_gas_repulsion = subgrid;
+        this._toggles.star_formation = subgrid;
+        this._toggles.bondi_accretion = subgrid;
+        this._toggles.stellar_evolution = !!this._stellarEvolution;
+        this._toggles.hawking_evaporation = !!this._hawkingEvaporation;
+        // horizon_absorption / mergers / emergent_black_holes /
+        // tidal_disruption / speed_limit are NOT scenario-conditional
+        // today (they run regardless of _enableSubgrid in the existing
+        // code) so they keep their _freshToggles() default here.
+    }
+
+    /** Centre of mass captured once, at the end of setupScenario, as the
+     *  baseline for the comDrift diagnostic in getDiagnostics(). */
+    _captureComBaseline() {
+        let totalMass = 0, cx = 0, cy = 0, cz = 0;
+        for (const b of this._bodies) {
+            totalMass += b.mass;
+            cx += b.mass * b.x; cy += b.mass * b.y; cz += b.mass * b.z;
+        }
+        this._comBaseline = totalMass > 0
+            ? { x: cx / totalMass, y: cy / totalMass, z: cz / totalMass }
+            : { x: 0, y: 0, z: 0 };
+    }
+
+    /** Append one entry to the bounded event log (cap EVENT_LOG_CAP).
+     *  Called from cosmic-postupdates.js at each of the seven event
+     *  sites named in the plan: star_formed, merger, supernova,
+     *  evaporation, tidal_disruption, emergent_black_hole,
+     *  horizon_absorption. */
+    _pushEvent(kind, detail) {
+        this._eventLog.push({ tick: this._tick, kind, detail });
+        if (this._eventLog.length > EVENT_LOG_CAP) this._eventLog.shift();
+    }
+
+    /** Fold this tick's `_stats` into the cumulative `_totals`. Called
+     *  once per tick from _postUpdates(), after postCosmicUpdates
+     *  returns (so both cosmic-physics.js's and cosmic-postupdates.js's
+     *  contributions for THIS tick are already in `_stats`). See
+     *  cosmic-pass-stats.js's module header for which convention
+     *  ("running sum" / "running max" / "latest-known snapshot") applies
+     *  to which field. */
+    _accumulateTotals() {
+        const s = this._stats, t = this._totals;
+        // Running sums (event counts + masses).
+        t.starsFormed += s.starsFormed;
+        t.bondiAccretedMass += s.bondiAccretedMass;
+        t.horizonAbsorptions += s.horizonAbsorptions;
+        t.horizonAbsorbedMass += s.horizonAbsorbedMass;
+        t.emergentBHFormations += s.emergentBHFormations;
+        t.mergers += s.mergers;
+        t.gwMassLost += s.gwMassLost;
+        t.tidalDisruptions += s.tidalDisruptions;
+        t.tidalShedMass += s.tidalShedMass;
+        t.supernovae += s.supernovae;
+        t.ejectaMass += s.ejectaMass;
+        t.evaporations += s.evaporations;
+        t.hawkingMassLost += s.hawkingMassLost;
+        t.speedLimitClamps += s.speedLimitClamps;
+        t.bodiesCulled += s.bodiesCulled;
+        t.coolingCount += s.coolingCount;
+
+        // Running all-time maxima.
+        if (s.maxRadiationAccel > t.maxRadiationAccel) t.maxRadiationAccel = s.maxRadiationAccel;
+        if (s.maxTidalAccel > t.maxTidalAccel) t.maxTidalAccel = s.maxTidalAccel;
+        if (s.coolingMax > t.coolingMax) t.coolingMax = s.coolingMax;
+        if (s.hawkingMaxT > t.hawkingMaxT) t.hawkingMaxT = s.hawkingMaxT;
+        if (s.speedLimitMaxFactor > t.speedLimitMaxFactor) t.speedLimitMaxFactor = s.speedLimitMaxFactor;
+        if (s.sphPairCount > t.sphPairCount) t.sphPairCount = s.sphPairCount;
+        if (s.neighborMax > t.neighborMax) t.neighborMax = s.neighborMax;
+        if (s.hMax > t.hMax) t.hMax = s.hMax;
+        if (s.rhoMax > t.rhoMax) t.rhoMax = s.rhoMax;
+        if (s.pMax > t.pMax) t.pMax = s.pMax;
+        if (s.emergentBHEnclosedMass > t.emergentBHEnclosedMass) t.emergentBHEnclosedMass = s.emergentBHEnclosedMass;
+
+        // Latest-known snapshot (no lossless cumulative form for a mean,
+        // a min extracted from a per-tick sample, or an enum).
+        t.solverPath = s.solverPath;
+        t.solverThreshold = s.solverThreshold;
+        t.sphGasCount = s.sphGasCount;
+        t.neighborMin = s.neighborMin; t.neighborMean = s.neighborMean;
+        t.hMin = s.hMin; t.hMean = s.hMean;
+        t.rhoMin = s.rhoMin;
+        t.pMin = s.pMin;
+        t.coolingMean = s.coolingMean;
+        t.emergentBHVesc = s.emergentBHVesc;
+        t.emergentBHThreshold = s.emergentBHThreshold;
+    }
+
+    // ================================================================
     // SCENARIOS — delegated to ./cosmic-scenarios/
     // ================================================================
 
@@ -250,7 +414,12 @@ export class CosmicMockBridge {
         this._customTelemetry = {};
         this._stellarEvolution = false;
         this._hawkingEvaporation = false;
-        this._toggles = { sph_monaghan: false };
+        this._toggles = this._freshToggles();
+        this._stats = createCosmicPassStats();
+        this._totals = createCosmicPassStats();
+        this._eventLog = [];
+        this._pe = NaN;
+        this._peAvailable = false;
 
         const rng = this._rng(42);
         const PI2 = Math.PI * 2;
@@ -259,6 +428,11 @@ export class CosmicMockBridge {
 
         const ctx = { T: CosmicMockBridge.TYPE, rng, randn, PI2 };
         runCosmicScenario.call(this, name, ctx);
+
+        // Seed the rule toggles from what the scenario just set (0.6/Pass 0a).
+        this._syncRuleTogglesFromScenario();
+        // Baseline for the comDrift diagnostic.
+        this._captureComBaseline();
     }
 
     // ================================================================
@@ -275,6 +449,7 @@ export class CosmicMockBridge {
 
     _postUpdates() {
         postCosmicUpdates.call(this, CosmicMockBridge.TYPE);
+        this._accumulateTotals();
     }
 
     // ================================================================
@@ -304,7 +479,7 @@ export class CosmicMockBridge {
                 }
             } else if (bhs.length === 1) {
                 tel['Status'] = 'Merger Complete';
-                tel['Singularity Mass'] = (bhs[0].mass * LATTICE_TO_SOLAR_MASS).toFixed(1) + ' M\u2299';
+                tel['Singularity Mass'] = (bhs[0].mass * LATTICE_TO_SOLAR_MASS).toFixed(1) + ' M⊙';
             }
         } else if (name === 'cosmic-cartwheel-collision') {
             const bhs = this._bodies.filter(b => isBH(b.type));
@@ -326,7 +501,7 @@ export class CosmicMockBridge {
                 }
             }
             tel['Core Population (r<10)'] = coreStars;
-            tel['Core Density'] = ((M_core * LATTICE_TO_SOLAR_MASS) / (4 / 3 * Math.PI * 1000)).toExponential(2) + ' M\u2299/lu\u00B3';
+            tel['Core Density'] = ((M_core * LATTICE_TO_SOLAR_MASS) / (4 / 3 * Math.PI * 1000)).toExponential(2) + ' M⊙/lu³';
         } else if (name === 'cosmic-stellar-lifecycle') {
             const wd = this._bodies.filter(b => b.type === T.WHITE_DWARF || b.type === T.NEUTRON_STAR).length;
             const bh = this._bodies.filter(b => b.type === T.BLACK_HOLE).length;
@@ -335,14 +510,14 @@ export class CosmicMockBridge {
         } else if (name === 'cosmic-black-hole') {
             const bh = this._bodies.find(b => isBH(b.type));
             if (bh) {
-                tel['BH Mass'] = (bh.mass * LATTICE_TO_SOLAR_MASS).toFixed(2) + ' M\u2299';
+                tel['BH Mass'] = (bh.mass * LATTICE_TO_SOLAR_MASS).toFixed(2) + ' M⊙';
                 tel['Accretion Disk Lum'] = (bh.luminosity || 0).toExponential(2) + ' W';
             }
         } else if (name === 'cosmic-ftd-collapse') {
             const bh = this._bodies.find(b => isBH(b.type));
             if (bh) {
                 tel['Status'] = 'Collapsed (Singularity Born)';
-                tel['BH Mass'] = (bh.mass * LATTICE_TO_SOLAR_MASS).toFixed(1) + ' M\u2299';
+                tel['BH Mass'] = (bh.mass * LATTICE_TO_SOLAR_MASS).toFixed(1) + ' M⊙';
             } else {
                 tel['Status'] = 'Pre-Collapse (Increasing Density)';
             }
@@ -420,7 +595,11 @@ export class CosmicMockBridge {
         // dtCosmic = dt · GAIN (the visual-accelerated cosmic clock);
         // _friedmannH already carries H0, so H0 is NOT multiplied in here.
         // Diagnostics-only — does not perturb the N-body integration above.
-        this._stepFriedmann(dt * COSMIC_CLOCK_GAIN);
+        // Pass 0a: setExpansionEnabled(false) skips this step entirely
+        // (freezing a/H/z); setClockGain(v) overrides the default GAIN.
+        if (this._expansionEnabled ?? true) {
+            this._stepFriedmann(dt * (this._clockGain ?? COSMIC_CLOCK_GAIN));
+        }
 
         this._t_cosmic += dt;
         this._tick++;
@@ -513,19 +692,43 @@ export class CosmicMockBridge {
     getDiagnostics() {
         let totalMass = 0, totalKE = 0, totalThermal = 0;
         const counts = new Array(9).fill(0);
+        const massByType = new Array(9).fill(0);
         let dmMass = 0;
+        // Pass 0a: momentum, centre-of-mass and angular-momentum
+        // accumulators, folded into the SAME O(N) loop this method already
+        // runs for totalMass/totalKE.
+        let px = 0, py = 0, pz = 0;
+        let cxSum = 0, cySum = 0, czSum = 0;
+        let lx = 0, ly = 0, lz = 0;
         const TYPE = CosmicMockBridge.TYPE;
         for (const b of this._bodies) {
+            const vx = b.vx, vy = b.vy, vz = b.vz;
             totalMass += b.mass;
-            totalKE += 0.5 * b.mass * (b.vx * b.vx + b.vy * b.vy + b.vz * b.vz);
+            totalKE += 0.5 * b.mass * (vx * vx + vy * vy + vz * vz);
             const idx = b.type + 3;
-            if (idx >= 0 && idx < 9) counts[idx]++;
+            if (idx >= 0 && idx < 9) { counts[idx]++; massByType[idx] += b.mass; }
             if (b.type === TYPE.DARK_MATTER) dmMass += b.mass;
             // Total thermal (internal) energy of gas bodies — the SPH
             // energy-equation counterpart to totalKE above (audit: Task 4,
             // sph_monaghan). Zero when no gas bodies are present regardless
             // of the toggle, so this is a harmless addition on old scenarios.
             if (isGasType(b.type, TYPE)) totalThermal += b.mass * (b.internal_energy || 0);
+
+            px += b.mass * vx; py += b.mass * vy; pz += b.mass * vz;
+            cxSum += b.mass * b.x; cySum += b.mass * b.y; czSum += b.mass * b.z;
+            lx += b.mass * (b.y * vz - b.z * vy);
+            ly += b.mass * (b.z * vx - b.x * vz);
+            lz += b.mass * (b.x * vy - b.y * vx);
+        }
+        const comX = totalMass > 0 ? cxSum / totalMass : 0;
+        const comY = totalMass > 0 ? cySum / totalMass : 0;
+        const comZ = totalMass > 0 ? czSum / totalMass : 0;
+        let comDrift = 0;
+        if (this._comBaseline) {
+            const ddx = comX - this._comBaseline.x;
+            const ddy = comY - this._comBaseline.y;
+            const ddz = comZ - this._comBaseline.z;
+            comDrift = Math.sqrt(ddx * ddx + ddy * ddy + ddz * ddz);
         }
         return {
             tick: this._tick, bodyCount: this._bodies.length,
@@ -541,12 +744,103 @@ export class CosmicMockBridge {
             toggles: { ...this._toggles },
             // Set by gas-laboratory scenarios (Task 5); absent otherwise.
             customProfiles: this._customProfiles ?? null,
+            // Pass 0a additions below. `pe` is the SOFTENED potential
+            // energy on the gravity kernel's own convention (same eps as
+            // the force), NOT the unsoftened physical potential energy —
+            // see cosmic-physics.js. NaN/peAvailable=false when the audit
+            // was not requested (this._wantEnergyAudit falsy) or the
+            // Barnes-Hut branch ran (no pairwise loop exists there).
+            pe: this._pe ?? NaN,
+            peAvailable: this._peAvailable ?? false,
+            momentum: { x: px, y: py, z: pz },
+            angMom: { x: lx, y: ly, z: lz },
+            comX, comY, comZ,
+            comDrift,
+            massByType,
         };
     }
 
     setDt(dt) { this._dt = dt; }
     getDt() { return this._dt; }
     clear() { this._bodies = []; this._tick = 0; this._nextId = 0; }
+
+    // ================================================================
+    // PASS 0a — RUNTIME ACCESSORS
+    // ================================================================
+
+    /** Snapshot of every live-tunable runtime parameter, at its current
+     *  effective value (the default when no live override is set). */
+    getRuntimeParams() {
+        return {
+            dt: this._dt,
+            softening: this._softening,
+            boxSize: this._boxSize,
+            gravityScale: this._gravityScale ?? 1,
+            speedLimitFactor: this._speedLimitFactor ?? 1,
+            clockGain: this._clockGain ?? COSMIC_CLOCK_GAIN,
+            sphAlpha: this._sphAlpha ?? SPH.ALPHA,
+            sphBeta: this._sphBeta ?? SPH.BETA,
+            adaptiveSmoothing: this._adaptiveSmoothing !== false,
+            expansionEnabled: this._expansionEnabled ?? true,
+            scenarioName: this._scenarioName,
+            enableSubgrid: !!this._enableSubgrid,
+            stellarEvolution: !!this._stellarEvolution,
+            hawkingEvaporation: !!this._hawkingEvaporation,
+            solverPath: this._stats ? this._stats.solverPath : 'direct',
+            bhThreshold: BH_N_THRESHOLD,
+        };
+    }
+
+    /** This-tick stats (cosmic-pass-stats.js) plus the cumulative totals
+     *  nested under `totals`. */
+    getPassStats() {
+        return { ...this._stats, totals: { ...this._totals } };
+    }
+
+    /** A shallow copy of the bounded event log (cap EVENT_LOG_CAP),
+     *  oldest first. */
+    getEventLog() {
+        return this._eventLog.slice();
+    }
+
+    // ================================================================
+    // PASS 0a — LIVE SETTERS (applied silently; no provenance banner,
+    // no run-modified marking — owner decision, plan header).
+    // ================================================================
+
+    /** Multiplier on G_N in the gravity kernel (cosmic-physics.js:82-ish,
+     *  `G_N * (this._gravityScale ?? 1)`). */
+    setGravityScale(v) { this._gravityScale = v; }
+
+    /** Multiplier on the per-type softening table (cosmic-physics.js's
+     *  SoA-flatten loop). */
+    setSofteningScale(v) { this._softeningScale = v; }
+
+    /** Multiplier on the lattice speed of light used by the speed-limit
+     *  clamp (cosmic-postupdates.js enforceCosmicSpeedLimit). */
+    setSpeedLimitFactor(v) { this._speedLimitFactor = v; }
+
+    /** Overrides COSMIC_CLOCK_GAIN for the Friedmann background step
+     *  (display-only; never touches the N-body force kernel). */
+    setClockGain(v) { this._clockGain = v; }
+
+    /** Toggling this off freezes the ΛCDM background (a/H/z) without
+     *  perturbing N-body dynamics (the Friedmann step is diagnostics-only
+     *  even when enabled). */
+    setExpansionEnabled(v) { this._expansionEnabled = !!v; }
+
+    /** Overrides the frozen SPH.ALPHA artificial-viscosity coefficient
+     *  read by cosmic-sph.js (the frozen SPH object itself is left
+     *  alone — cosmic-sph.node.test.mjs:127-133 pins its values). */
+    setSphAlpha(v) { this._sphAlpha = v; }
+
+    /** Overrides the frozen SPH.BETA artificial-viscosity coefficient
+     *  (see setSphAlpha). */
+    setSphBeta(v) { this._sphBeta = v; }
+
+    /** false freezes the SPH adaptive smoothing-length write-back
+     *  (cosmic-sph.js); absent/true leaves it on. */
+    setAdaptiveSmoothing(v) { this._adaptiveSmoothing = !!v; }
 
     // ================================================================
     // PHYSICS-TERM TOGGLES (mirrors the Scale 0 dashboard pattern)

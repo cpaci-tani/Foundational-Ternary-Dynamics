@@ -11,6 +11,16 @@
  * Call via `postCosmicUpdates.call(bridgeInstance, TYPE)` so `this`
  * binds to CosmicMockBridge. Mutates `this._bodies` directly and
  * spawns new bodies via `this.addBody(...)`.
+ *
+ * Pass 0a (bridge foundations): every event block below is individually
+ * toggle-gated with the "absent key means on" rule
+ * (`this._toggles?.<key> !== false`, or for the two pre-existing flags,
+ * `this._toggles?.<key> ?? this._<flag>`) and accumulates its O(1)
+ * per-event stats into `this._stats` (cosmic-pass-stats.js; reset earlier
+ * this same tick by computeCosmicForces — see that module's ledger note
+ * for why the reset does NOT live here). Seven event sites also push
+ * onto the bounded event log via `this._pushEvent(kind, detail)`
+ * (mock-scale5.js) when the bridge is a real CosmicMockBridge instance.
  */
 
 import {
@@ -18,6 +28,7 @@ import {
     M_CHANDRA_LATTICE, M_TOV_LATTICE,
 } from '../constants.js';
 import { isGasType } from './cosmic-sph.js';
+import { createCosmicPassStats } from './cosmic-pass-stats.js';
 
 // Wave 2G (2026-04-26): M_CHANDRA_LATTICE / M_TOV_LATTICE migrated to
 // constants.js (single source of truth). Conversion to solar mass
@@ -31,6 +42,14 @@ export function postCosmicUpdates(TYPE) {
     const isBH   = (t) => t === T.BLACK_HOLE || t === T.QUASAR;
     const isStar = (t) => t === T.STAR || t === T.NEUTRON_STAR || t === T.WHITE_DWARF;
 
+    // Lazily created so a bare object-literal test fixture never throws;
+    // NOT reset here — computeCosmicForces (called earlier this same
+    // tick) already reset it, and this function ADDS to those same-tick
+    // values rather than replacing them.
+    if (!this._stats) this._stats = createCosmicPassStats();
+    const hasPushEvent = typeof this._pushEvent === 'function';
+    const pushEvent = (kind, detail) => { if (hasPushEvent) this._pushEvent(kind, detail); };
+
     // --- Always-active: event-horizon absorption + AGN jet tracking ---
     // NOTE (audit P0-7): `r_sink` below is the INTERNAL accretion-sink
     // radius — a numerically-bounded tuning parameter that decides when a
@@ -41,118 +60,153 @@ export function postCosmicUpdates(TYPE) {
     // (cosmic-renderer.js schwarzschildRenderRadius).
     // Keeping these separate is intentional: changing the sink to the full
     // linear r_s would vacuum whole disks instantly. Cross-ref P0-7.
-    for (const bh of this._bodies) {
-        if (!isBH(bh.type)) continue;
-        bh.luminosity = (bh.luminosity || 0) * 0.96;
-        const r_sink = Math.max(0.8, Math.cbrt(bh.mass) * 0.12);
-        const r_kill = r_sink * 0.4;
-        const r_h2 = r_kill * r_kill;
-        for (const b of this._bodies) {
-            if (b.id === bh.id || b.mass <= 0) continue;
-            const dx = b.x - bh.x, dy = b.y - bh.y, dz = b.z - bh.z;
-            if (dx * dx + dy * dy + dz * dz < r_h2) {
-                bh.mass += b.mass;
-                bh.luminosity = Math.min((bh.luminosity || 0) + b.mass * 8.0, 50.0);
-                b.mass = 0;
+    // Toggle: horizon_absorption (absent key means on).
+    if (this._toggles?.horizon_absorption !== false) {
+        for (const bh of this._bodies) {
+            if (!isBH(bh.type)) continue;
+            bh.luminosity = (bh.luminosity || 0) * 0.96;
+            const r_sink = Math.max(0.8, Math.cbrt(bh.mass) * 0.12);
+            const r_kill = r_sink * 0.4;
+            const r_h2 = r_kill * r_kill;
+            for (const b of this._bodies) {
+                if (b.id === bh.id || b.mass <= 0) continue;
+                const dx = b.x - bh.x, dy = b.y - bh.y, dz = b.z - bh.z;
+                if (dx * dx + dy * dy + dz * dz < r_h2) {
+                    const absorbedMass = b.mass;
+                    bh.mass += b.mass;
+                    bh.luminosity = Math.min((bh.luminosity || 0) + b.mass * 8.0, 50.0);
+                    b.mass = 0;
+                    this._stats.horizonAbsorptions++;
+                    this._stats.horizonAbsorbedMass += absorbedMass;
+                    pushEvent('horizon_absorption', { mass: absorbedMass, bhId: bh.id });
+                }
             }
         }
     }
 
     // --- Gradual tidal disruption (spaghettification) ---
-    const newGas = [];
-    for (const bh of this._bodies) {
-        if (!isBH(bh.type)) continue;
-        for (const star of this._bodies) {
-            if (!isStar(star.type) || star.mass <= 0) continue;
-            const dx = star.x - bh.x, dy = star.y - bh.y, dz = star.z - bh.z;
-            const r2 = dx * dx + dy * dy + dz * dz;
-            const r = Math.sqrt(r2 + 0.01);
-            const R_star = star.radius || Math.cbrt(star.mass) * 0.1;
-            const r_tidal = R_star * Math.pow(bh.mass / (star.mass + 0.01), 1 / 3);
-            if (r < r_tidal * 1.5) {
-                const tidalForce = bh.mass / (r2 * r + 0.01);
-                star.tidal_stretch = Math.min(1.5, (star.tidal_stretch || 0) + tidalForce * 0.0005);
-            } else {
-                star.tidal_stretch = Math.max(0, (star.tidal_stretch || 0) - 0.002);
-            }
-            if ((star.tidal_stretch || 0) > 0.3 && r < r_tidal * 1.2) {
-                const shedFraction = Math.min(0.05, star.tidal_stretch * 0.02);
-                const shedMass = star.mass * shedFraction;
-                if (shedMass > 0.01) {
-                    star.mass -= shedMass;
-                    const v = Math.sqrt(star.vx * star.vx + star.vy * star.vy + star.vz * star.vz) + 0.01;
-                    const jitter = 0.15;
-                    newGas.push({
-                        mass: shedMass,
-                        x: star.x - star.vx / v * 0.5 + (Math.random() - 0.5) * jitter,
-                        y: star.y - star.vy / v * 0.5 + (Math.random() - 0.5) * jitter,
-                        z: star.z - star.vz / v * 0.5 + (Math.random() - 0.5) * jitter,
-                        vx: star.vx * (0.9 + Math.random() * 0.2),
-                        vy: star.vy * (0.9 + Math.random() * 0.2),
-                        vz: star.vz * (0.9 + Math.random() * 0.2),
-                        temp: 5e4 * (1 + star.tidal_stretch)
-                    });
+    // Toggle: tidal_disruption (absent key means on). Distinct from
+    // cosmic-physics.js's tidal_stretch (a FORCE) — this block is the
+    // mass-shedding state machine driving `star.tidal_stretch`.
+    if (this._toggles?.tidal_disruption !== false) {
+        const newGas = [];
+        for (const bh of this._bodies) {
+            if (!isBH(bh.type)) continue;
+            for (const star of this._bodies) {
+                if (!isStar(star.type) || star.mass <= 0) continue;
+                const dx = star.x - bh.x, dy = star.y - bh.y, dz = star.z - bh.z;
+                const r2 = dx * dx + dy * dy + dz * dz;
+                const r = Math.sqrt(r2 + 0.01);
+                const R_star = star.radius || Math.cbrt(star.mass) * 0.1;
+                const r_tidal = R_star * Math.pow(bh.mass / (star.mass + 0.01), 1 / 3);
+                if (r < r_tidal * 1.5) {
+                    const tidalForce = bh.mass / (r2 * r + 0.01);
+                    star.tidal_stretch = Math.min(1.5, (star.tidal_stretch || 0) + tidalForce * 0.0005);
+                } else {
+                    star.tidal_stretch = Math.max(0, (star.tidal_stretch || 0) - 0.002);
                 }
-            }
-            if (star.mass < (star.original_mass || star.mass) * 0.2 && (star.tidal_stretch || 0) > 0.8) {
-                if (star.mass > 0.02) {
-                    newGas.push({
-                        mass: star.mass, x: star.x, y: star.y, z: star.z,
-                        vx: star.vx, vy: star.vy, vz: star.vz, temp: 1e5
-                    });
+                if ((star.tidal_stretch || 0) > 0.3 && r < r_tidal * 1.2) {
+                    const shedFraction = Math.min(0.05, star.tidal_stretch * 0.02);
+                    const shedMass = star.mass * shedFraction;
+                    if (shedMass > 0.01) {
+                        star.mass -= shedMass;
+                        const v = Math.sqrt(star.vx * star.vx + star.vy * star.vy + star.vz * star.vz) + 0.01;
+                        const jitter = 0.15;
+                        newGas.push({
+                            mass: shedMass,
+                            x: star.x - star.vx / v * 0.5 + (Math.random() - 0.5) * jitter,
+                            y: star.y - star.vy / v * 0.5 + (Math.random() - 0.5) * jitter,
+                            z: star.z - star.vz / v * 0.5 + (Math.random() - 0.5) * jitter,
+                            vx: star.vx * (0.9 + Math.random() * 0.2),
+                            vy: star.vy * (0.9 + Math.random() * 0.2),
+                            vz: star.vz * (0.9 + Math.random() * 0.2),
+                            temp: 5e4 * (1 + star.tidal_stretch)
+                        });
+                        this._stats.tidalDisruptions++;
+                        this._stats.tidalShedMass += shedMass;
+                        pushEvent('tidal_disruption', { shedMass, full: false });
+                    }
                 }
-                star.mass = 0;
+                if (star.mass < (star.original_mass || star.mass) * 0.2 && (star.tidal_stretch || 0) > 0.8) {
+                    if (star.mass > 0.02) {
+                        newGas.push({
+                            mass: star.mass, x: star.x, y: star.y, z: star.z,
+                            vx: star.vx, vy: star.vy, vz: star.vz, temp: 1e5
+                        });
+                        this._stats.tidalDisruptions++;
+                        this._stats.tidalShedMass += star.mass;
+                        pushEvent('tidal_disruption', { shedMass: star.mass, full: true });
+                    }
+                    star.mass = 0;
+                }
             }
         }
-    }
-    for (const g of newGas) {
-        this.addBody(T.GAS, g.mass, g.x, g.y, g.z, g.vx, g.vy, g.vz, g.temp);
+        for (const g of newGas) {
+            this.addBody(T.GAS, g.mass, g.x, g.y, g.z, g.vx, g.vy, g.vz, g.temp);
+        }
     }
 
     // --- BH-BH mergers (always active) ---
-    for (let i = 0; i < this._bodies.length; i++) {
-        const bi = this._bodies[i];
-        if (!isBH(bi.type) || bi.mass <= 0) continue;
-        for (let j = i + 1; j < this._bodies.length; j++) {
-            const bj = this._bodies[j];
-            if (!isBH(bj.type) || bj.mass <= 0) continue;
-            const dx = bj.x - bi.x, dy = bj.y - bi.y, dz = bj.z - bi.z;
-            const r2 = dx * dx + dy * dy + dz * dz;
-            const r_merge = Math.cbrt(bi.mass + bj.mass) * 0.3;
-            if (r2 > r_merge * r_merge) continue;
-            const m_total = bi.mass + bj.mass;
-            bi.vx = (bi.vx * bi.mass + bj.vx * bj.mass) / m_total;
-            bi.vy = (bi.vy * bi.mass + bj.vy * bj.mass) / m_total;
-            bi.vz = (bi.vz * bi.mass + bj.vz * bj.mass) / m_total;
-            bi.mass = m_total * 0.95; // 5% GW
-            bj.mass = 0;
+    // Toggle: mergers (absent key means on).
+    if (this._toggles?.mergers !== false) {
+        for (let i = 0; i < this._bodies.length; i++) {
+            const bi = this._bodies[i];
+            if (!isBH(bi.type) || bi.mass <= 0) continue;
+            for (let j = i + 1; j < this._bodies.length; j++) {
+                const bj = this._bodies[j];
+                if (!isBH(bj.type) || bj.mass <= 0) continue;
+                const dx = bj.x - bi.x, dy = bj.y - bi.y, dz = bj.z - bi.z;
+                const r2 = dx * dx + dy * dy + dz * dz;
+                const r_merge = Math.cbrt(bi.mass + bj.mass) * 0.3;
+                if (r2 > r_merge * r_merge) continue;
+                const m_total = bi.mass + bj.mass;
+                bi.vx = (bi.vx * bi.mass + bj.vx * bj.mass) / m_total;
+                bi.vy = (bi.vy * bi.mass + bj.vy * bj.mass) / m_total;
+                bi.vz = (bi.vz * bi.mass + bj.vz * bj.mass) / m_total;
+                bi.mass = m_total * 0.95; // 5% GW
+                bj.mass = 0;
+                this._stats.mergers++;
+                this._stats.gwMassLost += m_total * 0.05;
+                pushEvent('merger', { mass: bi.mass, gwMassLost: m_total * 0.05 });
+            }
         }
     }
 
     // --- Emergent BH formation (FTD prediction) ---
+    // Toggle: emergent_black_holes (absent key means on). Left independent
+    // of _enableSubgrid here (Pass 0a scope is the registry + gate only;
+    // reconciling this rule's relationship to _enableSubgrid on the gas
+    // laboratories is Pass D's named defect fix).
     const C_LAT = 1.0 / Math.sqrt(3.0);
-    const hasBH = this._bodies.some(b => isBH(b.type));
-    if (!hasBH) {
-        let bestBody = null, bestMenc = 0;
-        const checkR = this._softening * 2;
-        const checkR2 = checkR * checkR;
-        for (const b of this._bodies) {
-            if (b.mass <= 0) continue;
-            let M_enc = 0;
-            for (const other of this._bodies) {
-                if (other.id === b.id) continue;
-                const dr2 = (b.x - other.x) ** 2 + (b.y - other.y) ** 2 + (b.z - other.z) ** 2;
-                if (dr2 < checkR2) M_enc += other.mass;
+    this._stats.emergentBHThreshold = C_LAT;
+    if (this._toggles?.emergent_black_holes !== false) {
+        const hasBH = this._bodies.some(b => isBH(b.type));
+        if (!hasBH) {
+            let bestBody = null, bestMenc = 0;
+            const checkR = this._softening * 2;
+            const checkR2 = checkR * checkR;
+            for (const b of this._bodies) {
+                if (b.mass <= 0) continue;
+                let M_enc = 0;
+                for (const other of this._bodies) {
+                    if (other.id === b.id) continue;
+                    const dr2 = (b.x - other.x) ** 2 + (b.y - other.y) ** 2 + (b.z - other.z) ** 2;
+                    if (dr2 < checkR2) M_enc += other.mass;
+                }
+                if (M_enc > bestMenc) { bestMenc = M_enc; bestBody = b; }
             }
-            if (M_enc > bestMenc) { bestMenc = M_enc; bestBody = b; }
-        }
-        if (bestBody) {
-            const v_esc = Math.sqrt(2 * G * bestMenc / checkR);
-            if (v_esc > C_LAT && bestMenc > 50) {
-                bestBody.type = T.BLACK_HOLE;
-                bestBody.temperature = 0;
-                bestBody.luminosity = 0;
-                bestBody.tidal_stretch = 0;
+            if (bestBody) {
+                const v_esc = Math.sqrt(2 * G * bestMenc / checkR);
+                this._stats.emergentBHEnclosedMass = bestMenc;
+                this._stats.emergentBHVesc = v_esc;
+                if (v_esc > C_LAT && bestMenc > 50) {
+                    bestBody.type = T.BLACK_HOLE;
+                    bestBody.temperature = 0;
+                    bestBody.luminosity = 0;
+                    bestBody.tidal_stretch = 0;
+                    this._stats.emergentBHFormations++;
+                    pushEvent('emergent_black_hole', { mass: bestBody.mass, vesc: v_esc, enclosedMass: bestMenc });
+                }
             }
         }
     }
@@ -160,53 +214,67 @@ export function postCosmicUpdates(TYPE) {
     // --- Subgrid: star formation + Bondi accretion ---
     if (this._enableSubgrid) {
         const baseSoft2 = this._softening * this._softening;
-        const newStars = [];
-        for (const b of this._bodies) {
-            if (!isGas(b.type) || b.mass < 0.5) continue;
-            let nearby = 0;
-            for (const other of this._bodies) {
-                if (other.id === b.id || !isGas(other.type)) continue;
-                const dr2 = (b.x - other.x) ** 2 + (b.y - other.y) ** 2 + (b.z - other.z) ** 2;
-                if (dr2 < baseSoft2 * 9) nearby++;
+
+        // Toggle: star_formation (absent key means on).
+        if (this._toggles?.star_formation !== false) {
+            const newStars = [];
+            for (const b of this._bodies) {
+                if (!isGas(b.type) || b.mass < 0.5) continue;
+                let nearby = 0;
+                for (const other of this._bodies) {
+                    if (other.id === b.id || !isGas(other.type)) continue;
+                    const dr2 = (b.x - other.x) ** 2 + (b.y - other.y) ** 2 + (b.z - other.z) ** 2;
+                    if (dr2 < baseSoft2 * 9) nearby++;
+                }
+                if (nearby > 10 && b.temperature < 3000 && Math.random() < 0.01) {
+                    const starMass = b.mass * 0.15;
+                    b.mass -= starMass;
+                    newStars.push({
+                        type: T.STAR, mass: starMass,
+                        x: b.x, y: b.y, z: b.z, vx: b.vx, vy: b.vy, vz: b.vz,
+                        temp: 5800, lum: Math.pow(starMass, 3.5)
+                    });
+                }
             }
-            if (nearby > 10 && b.temperature < 3000 && Math.random() < 0.01) {
-                const starMass = b.mass * 0.15;
-                b.mass -= starMass;
-                newStars.push({
-                    type: T.STAR, mass: starMass,
-                    x: b.x, y: b.y, z: b.z, vx: b.vx, vy: b.vy, vz: b.vz,
-                    temp: 5800, lum: Math.pow(starMass, 3.5)
-                });
+            for (const s of newStars) {
+                this.addBody(s.type, s.mass, s.x, s.y, s.z, s.vx, s.vy, s.vz, s.temp);
+                this._bodies[this._bodies.length - 1].luminosity = s.lum;
+                this._stats.starsFormed++;
+                pushEvent('star_formed', { mass: s.mass });
             }
-        }
-        for (const s of newStars) {
-            this.addBody(s.type, s.mass, s.x, s.y, s.z, s.vx, s.vy, s.vz, s.temp);
-            this._bodies[this._bodies.length - 1].luminosity = s.lum;
         }
 
-        for (const bh of this._bodies) {
-            if (!isBH(bh.type)) continue;
-            const r_acc = Math.max(1.5, Math.cbrt(bh.mass) * 0.3);
-            const r_acc2 = r_acc * r_acc;
-            for (const gas of this._bodies) {
-                if (!isGas(gas.type) || gas.mass <= 0) continue;
-                const dx = gas.x - bh.x, dy = gas.y - bh.y, dz = gas.z - bh.z;
-                const r2 = dx * dx + dy * dy + dz * dz;
-                if (r2 > r_acc2) continue;
-                const dvx = gas.vx - bh.vx, dvy = gas.vy - bh.vy, dvz = gas.vz - bh.vz;
-                const v_rel2 = dvx * dvx + dvy * dvy + dvz * dvz;
-                const r = Math.sqrt(r2 + 0.01);
-                if (v_rel2 > 2 * G * bh.mass / r) continue;
-                const rate = 0.005 * bh.mass / (v_rel2 + 0.1);
-                const dm = Math.min(gas.mass * 0.1, gas.mass * rate * 0.001);
-                bh.mass += dm;
-                gas.mass -= dm;
+        // Toggle: bondi_accretion (absent key means on).
+        if (this._toggles?.bondi_accretion !== false) {
+            for (const bh of this._bodies) {
+                if (!isBH(bh.type)) continue;
+                const r_acc = Math.max(1.5, Math.cbrt(bh.mass) * 0.3);
+                const r_acc2 = r_acc * r_acc;
+                for (const gas of this._bodies) {
+                    if (!isGas(gas.type) || gas.mass <= 0) continue;
+                    const dx = gas.x - bh.x, dy = gas.y - bh.y, dz = gas.z - bh.z;
+                    const r2 = dx * dx + dy * dy + dz * dz;
+                    if (r2 > r_acc2) continue;
+                    const dvx = gas.vx - bh.vx, dvy = gas.vy - bh.vy, dvz = gas.vz - bh.vz;
+                    const v_rel2 = dvx * dvx + dvy * dvy + dvz * dvz;
+                    const r = Math.sqrt(r2 + 0.01);
+                    if (v_rel2 > 2 * G * bh.mass / r) continue;
+                    const rate = 0.005 * bh.mass / (v_rel2 + 0.1);
+                    const dm = Math.min(gas.mass * 0.1, gas.mass * rate * 0.001);
+                    bh.mass += dm;
+                    gas.mass -= dm;
+                    this._stats.bondiAccretedMass += dm;
+                }
             }
         }
     }
 
     // --- Stellar evolution (fuel burn + death sequence) ---
-    if (this._stellarEvolution) {
+    // Toggle: stellar_evolution, falling back to the legacy
+    // this._stellarEvolution field when the toggle key itself is absent
+    // (a fixture that sets only the old field must keep behaving as
+    // before this pass).
+    if (this._toggles?.stellar_evolution ?? this._stellarEvolution) {
         const M_chandrasekhar = M_CHANDRA_LATTICE;
         const M_tov = M_TOV_LATTICE;
         const newEjecta = [];
@@ -254,6 +322,9 @@ export function postCosmicUpdates(TYPE) {
                     b.temperature = 1e6;
                     b.radius = Math.cbrt(b.mass) * 0.005;
                     b.fuel_fraction = 0;
+                    this._stats.supernovae++;
+                    this._stats.ejectaMass += ejectMass;
+                    pushEvent('supernova', { remnant: 'neutron_star', ejectaMass: ejectMass });
                     for (let k = 0; k < 12; k++) {
                         const theta = Math.acos(2 * Math.random() - 1);
                         const phi = Math.PI * 2 * Math.random();
@@ -276,6 +347,9 @@ export function postCosmicUpdates(TYPE) {
                     b.luminosity = 0;
                     b.temperature = 0;
                     b.fuel_fraction = 0;
+                    this._stats.supernovae++;
+                    this._stats.ejectaMass += ejectMass;
+                    pushEvent('supernova', { remnant: 'black_hole', ejectaMass: ejectMass });
                     for (let k = 0; k < 15; k++) {
                         const theta = Math.acos(2 * Math.random() - 1);
                         const phi = Math.PI * 2 * Math.random();
@@ -300,7 +374,9 @@ export function postCosmicUpdates(TYPE) {
     }
 
     // --- Hawking evaporation ---
-    if (this._hawkingEvaporation) {
+    // Toggle: hawking_evaporation, with the same legacy-field fallback as
+    // stellar_evolution above.
+    if (this._toggles?.hawking_evaporation ?? this._hawkingEvaporation) {
         for (const b of this._bodies) {
             if (!isBH(b.type) || b.mass <= 0) continue;
             const T_hawking = 500.0 / (b.mass + 1);
@@ -309,9 +385,13 @@ export function postCosmicUpdates(TYPE) {
             b.mass -= dm;
             b.hawking_temp = T_hawking;
             b.budget_expense = dm;
+            this._stats.hawkingMassLost += dm;
+            if (T_hawking > this._stats.hawkingMaxT) this._stats.hawkingMaxT = T_hawking;
             if (b.mass < 2.0) {
                 const burstEnergy = b.mass;
                 b.mass = 0;
+                this._stats.evaporations++;
+                pushEvent('evaporation', { burstEnergy });
                 for (let k = 0; k < 6; k++) {
                     const theta = Math.acos(2 * Math.random() - 1);
                     const phi = Math.PI * 2 * Math.random();
@@ -351,21 +431,36 @@ export function postCosmicUpdates(TYPE) {
     // --- Custom telemetry + speed limit + cleanup ---
     this._updateTelemetry();
     enforceCosmicSpeedLimit.call(this);
+    const beforeCull = this._bodies.length;
     this._bodies = this._bodies.filter(b => b.mass > 0.01);
+    this._stats.bodiesCulled = beforeCull - this._bodies.length;
 }
 
 /**
- * Clamp every body's speed to the lattice speed of light c = 1/sqrt(3).
- * Extracted alongside postUpdates so _enforceSpeedLimit no longer lives
- * on the class.
+ * Clamp every body's speed to the lattice speed of light c = 1/sqrt(3),
+ * scaled by the live `this._speedLimitFactor ?? 1` knob (Pass 0a,
+ * CosmicMockBridge.setSpeedLimitFactor). Extracted alongside postUpdates
+ * so _enforceSpeedLimit no longer lives on the class.
+ *
+ * Toggle: speed_limit (absent key means on) — turning it off entirely
+ * skips the clamp (bodies may then exceed the lattice light speed).
  */
 export function enforceCosmicSpeedLimit() {
-    const c2 = C_SPEED * C_SPEED;
+    if (!this._stats) this._stats = createCosmicPassStats();
+    if (this._toggles?.speed_limit === false) return;
+    const cLimit = C_SPEED * (this._speedLimitFactor ?? 1);
+    const c2 = cLimit * cLimit;
+    let clamps = 0, maxFactor = 0;
     for (const b of this._bodies) {
         const v2 = b.vx * b.vx + b.vy * b.vy + b.vz * b.vz;
         if (v2 > c2) {
             const s = Math.sqrt(c2 / v2);
             b.vx *= s; b.vy *= s; b.vz *= s;
+            clamps++;
+            const factor = Math.sqrt(v2 / c2);
+            if (factor > maxFactor) maxFactor = factor;
         }
     }
+    this._stats.speedLimitClamps = clamps;
+    this._stats.speedLimitMaxFactor = maxFactor;
 }

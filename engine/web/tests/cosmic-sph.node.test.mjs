@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { SPH, kernelW, kernelGradMag, isGasType, computeSphForces } from '../js/bridge/cosmic-sph.js';
 import { computeCosmicForces } from '../js/bridge/cosmic-physics.js';
 import { CosmicMockBridge } from '../js/bridge/mock-scale5.js';
+import { SCALE5_TOGGLES } from '../js/config/toggles.js';
 import { referenceStep, W, dW, GAMMA, ALPHA, BETA } from './cosmic-sph-reference.mjs';
 
 // Minimal TYPE enum mirroring CosmicMockBridge.TYPE (mock-scale5.js) — kept
@@ -382,7 +383,16 @@ test('CosmicMockBridge.setToggle validates the key, getToggle reads it back, and
     assert.equal(bridge.getToggle('sph_monaghan'), true);
 
     const diag = bridge.getDiagnostics();
-    assert.deepEqual(diag.toggles, { sph_monaghan: true });
+    // Pass 0a: _toggles grew from 1 key to 14 (see toggles.js /
+    // mock-scale5.js _freshToggles()), so a deepEqual against a
+    // single-key literal would break the moment a second key is added.
+    // This property-wise form is strictly stronger: it still pins
+    // sph_monaghan's value AND asserts every registered toggle is
+    // actually published as a boolean.
+    assert.equal(diag.toggles.sph_monaghan, true);
+    for (const [key] of SCALE5_TOGGLES) {
+        assert.equal(typeof diag.toggles[key], 'boolean', `toggle ${key} must be published`);
+    }
     diag.toggles.sph_monaghan = false; // mutate the returned object
     assert.equal(bridge.getToggle('sph_monaghan'), true, 'mutating the diagnostics.toggles copy must not affect the bridge');
     assert.equal(bridge.getDiagnostics().toggles.sph_monaghan, true, 'a fresh diagnostics call must reflect the real state, not the earlier mutated copy');

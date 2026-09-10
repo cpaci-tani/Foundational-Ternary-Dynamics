@@ -10,11 +10,30 @@
  * binds to the bridge instance. All state mutations (body accelerations,
  * temperatures, internal energies) happen on the bridge's own bodies.
  *
- * Unit system: G = G_N = 0.01 (FTD ontic chain).
+ * Unit system: G = G_N = 0.01 (FTD ontic chain), scaled by the live
+ * `this._gravityScale ?? 1` knob (Pass 0a, CosmicMockBridge.setGravityScale).
+ *
+ * Pass 0a (bridge foundations) additions, all gated so the default path is
+ * bit-identical to before this pass:
+ *   - `this._stats` (cosmic-pass-stats.js) is reset here (see the ledger
+ *     note in that module for why the reset lives here rather than at the
+ *     top of postCosmicUpdates) and populated with the solver path/
+ *     threshold, the widened SPH return, and cooling/radiation/tidal-force
+ *     extrema.
+ *   - The softened gravitational potential energy is accumulated in the
+ *     SAME direct-sum loop using the identity `r2 * invR3 === 1 /
+ *     sqrt(r^2 + eps^2)` (already computed for the force), but ONLY when
+ *     `this._wantEnergyAudit` is truthy (default false/undefined) — the
+ *     off path adds no arithmetic. Published as `this._pe` (NaN off the
+ *     direct branch or with the audit off) and `this._peAvailable`.
+ *   - `gas_cooling`, `radiation_pressure`, `tidal_stretch` and
+ *     `legacy_gas_repulsion` are individually toggle-gated with the
+ *     "absent key means on" rule: `this._toggles?.<key> !== false`.
  */
 
 import { G_N, C_SPEED } from '../constants.js';
 import { computeSphForces, isGasType } from './cosmic-sph.js';
+import { createCosmicPassStats } from './cosmic-pass-stats.js';
 
 // Fixed softening per body type (Gadget-2 convention: constant, energy-conserving).
 // 2026-04-26 (Wave 2H): the prior "mirrored from mock-scale5.js" note
@@ -32,11 +51,6 @@ const SOFTENING = {
     [3]:  2.0,  // NEUTRON_STAR
     [4]:  3.0,  // NEBULA
     [5]:  2.0,  // WHITE_DWARF
-};
-const SOFTENING_SQ = {
-    [-3]: 36.0, [-2]: 9.0, [-1]: 2.25,
-    [0]: 64.0, [1]: 9.0, [2]: 6.25,
-    [3]: 4.0, [4]: 9.0, [5]: 4.0
 };
 
 // ── Barnes–Hut tuning (F-1) ────────────────────────────────────────────────
@@ -61,7 +75,9 @@ const BH_THETA_SQ = BH_THETA * BH_THETA;   // compared against w²/d² (no sqrt)
 // galaxy (already ~10–15 ms warm). Set to Infinity to force exact gravity
 // everywhere (disables F-1); lower it toward ~2000 only if profiling on the
 // target hardware shows the direct sum dominating below the crossover there.
-const BH_N_THRESHOLD = 3000;
+// Exported (Pass 0a) so mock-scale5.js can publish it via getRuntimeParams()/
+// getPassStats() without duplicating the constant.
+export const BH_N_THRESHOLD = 3000;
 // Max bodies a leaf cell holds before it subdivides. Small buckets keep the
 // near-field exact (intra-leaf pairs are summed directly) while bounding tree
 // depth. 8 is a good JS cache/þroughput balance.
@@ -79,7 +95,16 @@ const BH_MAX_DEPTH = 32;
  * Call via `computeCosmicForces.call(bridgeInstance)`.
  */
 export function computeCosmicForces(TYPE) {
-    const G = G_N;
+    // Pass 0a: this-tick stats. Lazily created so a bare object-literal test
+    // fixture (no constructor run) never throws; reset here rather than at
+    // the top of postCosmicUpdates — see the ledger note in
+    // cosmic-pass-stats.js for why (postCosmicUpdates runs LATER in the same
+    // tick and must ADD to what this function just wrote, not erase it).
+    if (!this._stats) this._stats = createCosmicPassStats();
+    this._stats.reset();
+
+    const G = G_N * (this._gravityScale ?? 1);
+    const softScale = this._softeningScale ?? 1;
     const n = this._bodies.length;
 
     // JIT SoA buffers — grown lazily, reused across ticks.
@@ -105,15 +130,20 @@ export function computeCosmicForces(TYPE) {
     const SOFT = soa.soft, SQ = soa.softSq;
     const AX = soa.ax, AY = soa.ay, AZ = soa.az;
 
-    // 1. Flatten JS objects into typed arrays.
+    // 1. Flatten JS objects into typed arrays. SQ is derived from SOFT (not
+    // looked up from a separate SOFTENING_SQ table) so the live softening
+    // scale (softScale) only has to be applied once; at softScale===1 this
+    // is bit-identical to the old table lookup (every entry there was
+    // already exactly SOFTENING[type]^2).
     for (let i = 0; i < n; i++) {
         const b = this._bodies[i];
         X[i] = b.x;
         Y[i] = b.y;
         Z[i] = b.z;
         M[i] = b.mass;
-        SOFT[i] = SOFTENING[b.type] || 2.0;
-        SQ[i] = SOFTENING_SQ[b.type] || 4.0;
+        const soft = (SOFTENING[b.type] || 2.0) * softScale;
+        SOFT[i] = soft;
+        SQ[i] = soft * soft;
         AX[i] = 0.0;
         AY[i] = 0.0;
         AZ[i] = 0.0;
@@ -158,8 +188,17 @@ export function computeCosmicForces(TYPE) {
     // momentum drifts by ~O(error)·(typical force). For a visual sandbox this is
     // invisible (no perceptible bulk COM drift over a session); a momentum-exact
     // result requires the direct branch.
+    this._stats.solverThreshold = BH_N_THRESHOLD;
     if (n < BH_N_THRESHOLD) {
-        // Exact O(N²) direct sum — bit-identical to the legacy kernel.
+        this._stats.solverPath = 'direct';
+        // Pass 0a: softened potential energy, folded into this loop using
+        // r2*invR3 === 1/sqrt(r^2+eps^2) (already computed for the force).
+        // Gated off by default (this._wantEnergyAudit falsy) so the common
+        // path adds no arithmetic — see cosmic-physics.js module header.
+        const wantPE = !!this._wantEnergyAudit;
+        let pe = 0;
+        // Exact O(N²) direct sum — bit-identical to the legacy kernel when
+        // wantPE is false (the PE accumulation is the only addition here).
         for (let i = 0; i < n; i++) {
             const bix = X[i], biy = Y[i], biz = Z[i], bim = M[i];
             const s_i = SOFT[i], sq_i = SQ[i];
@@ -180,13 +219,30 @@ export function computeCosmicForces(TYPE) {
                 AX[j] -= f_i * dx;
                 AY[j] -= f_i * dy;
                 AZ[j] -= f_i * dz;
+                // Softened potential energy on the FORCE KERNEL'S OWN
+                // convention (eps baked into r2, same as the force above) —
+                // this is NOT the unsoftened physical potential energy.
+                if (wantPE) pe -= G * bim * M[j] * (r2 * invR3);
             }
             AX[i] = ax;
             AY[i] = ay;
             AZ[i] = az;
         }
+        if (wantPE) {
+            this._pe = pe;
+            this._peAvailable = true;
+        } else {
+            this._pe = NaN;
+            this._peAvailable = false;
+        }
     } else {
+        this._stats.solverPath = 'barnes-hut';
         barnesHutGravity.call(this, n, G, X, Y, Z, M, SOFT, SQ, AX, AY, AZ);
+        // No pairwise loop exists on this branch — publish unavailable
+        // rather than a monopole-approximated (and therefore misleading)
+        // energy figure.
+        this._pe = NaN;
+        this._peAvailable = false;
     }
 
     // 3. Restitute accelerations back to JS body objects.
@@ -204,7 +260,19 @@ export function computeCosmicForces(TYPE) {
     // and does nothing else, so the off path adds no arithmetic (bit-identical
     // regression per cosmic-sph.node.test.mjs).
     if (this._toggles?.sph_monaghan) {
-        computeSphForces(this, TYPE);
+        const sph = computeSphForces(this, TYPE);
+        this._stats.sphGasCount = sph.gasCount;
+        this._stats.sphPairCount = sph.pairs;
+        this._stats.neighborMin = sph.neighborMin;
+        this._stats.neighborMean = sph.neighborMean;
+        this._stats.neighborMax = sph.neighborMax;
+        this._stats.hMin = sph.hMin;
+        this._stats.hMean = sph.hMean;
+        this._stats.hMax = sph.hMax;
+        this._stats.rhoMin = sph.rhoMin;
+        this._stats.rhoMax = sph.rhoMax;
+        this._stats.pMin = sph.pMin;
+        this._stats.pMax = sph.pMax;
     }
 
     // Sub-grid physics only active in select scenarios (BH accretion / FTD collapse).
@@ -232,53 +300,73 @@ export function computeCosmicForces(TYPE) {
     const nStar = starIdx.length;
     const nBH   = bhIdx.length;
 
-    // Tidal spaghettification (radial stretch only).
-    for (let bi = 0; bi < nBH; bi++) {
-        const bh = bodies[bhIdx[bi]];
-        const bhMass = bh.mass;
-        const bhx = bh.x, bhy = bh.y, bhz = bh.z;
-        const bhId = bh.id;
-        const r_tidal = Math.max(8.0, Math.cbrt(bhMass) * 1.5);
-        const r_tidal2 = r_tidal * r_tidal;
-        const tidalK = 2.0 * G * bhMass * 0.3;
-        for (let i = 0; i < nb; i++) {
-            const b = bodies[i];
-            if (b.id === bhId) continue;
-            const dx = b.x - bhx, dy = b.y - bhy, dz = b.z - bhz;
-            const r2 = dx * dx + dy * dy + dz * dz;
-            if (r2 > r_tidal2 || r2 < 0.01) continue;
-            const r = Math.sqrt(r2);
-            const invR = 1.0 / r;
-            const tidalStrength = tidalK / (r2 * r);
-            b.ax += tidalStrength * dx * invR;
-            b.ay += tidalStrength * dy * invR;
-            b.az += tidalStrength * dz * invR;
+    // Tidal spaghettification (radial stretch only). Toggle: tidal_stretch
+    // (absent key means on). Distinct from cosmic-postupdates.js's
+    // tidal_disruption (mass-shedding state machine) — this block only
+    // ever writes accelerations, never `tidal_stretch` on the body.
+    if (this._toggles?.tidal_stretch !== false) {
+        let maxTidal = 0;
+        for (let bi = 0; bi < nBH; bi++) {
+            const bh = bodies[bhIdx[bi]];
+            const bhMass = bh.mass;
+            const bhx = bh.x, bhy = bh.y, bhz = bh.z;
+            const bhId = bh.id;
+            const r_tidal = Math.max(8.0, Math.cbrt(bhMass) * 1.5);
+            const r_tidal2 = r_tidal * r_tidal;
+            const tidalK = 2.0 * G * bhMass * 0.3;
+            for (let i = 0; i < nb; i++) {
+                const b = bodies[i];
+                if (b.id === bhId) continue;
+                const dx = b.x - bhx, dy = b.y - bhy, dz = b.z - bhz;
+                const r2 = dx * dx + dy * dy + dz * dz;
+                if (r2 > r_tidal2 || r2 < 0.01) continue;
+                const r = Math.sqrt(r2);
+                const invR = 1.0 / r;
+                const tidalStrength = tidalK / (r2 * r);
+                b.ax += tidalStrength * dx * invR;
+                b.ay += tidalStrength * dy * invR;
+                b.az += tidalStrength * dz * invR;
+                if (tidalStrength > maxTidal) maxTidal = tidalStrength;
+            }
         }
+        this._stats.maxTidalAccel = maxTidal;
     }
 
-    // Gas cooling — reduces internal energy (not velocity drag).
-    const coolRadius2 = baseSoft2 * 25;
-    for (let gi = 0; gi < nGas; gi++) {
-        const b = bodies[gasIdx[gi]];
-        const bx = b.x, by = b.y, bz = b.z;
-        let localDensity = b.mass;
-        for (let gj = 0; gj < nGas; gj++) {
-            if (gj === gi) continue;
-            const other = bodies[gasIdx[gj]];
-            const dx = bx - other.x, dy = by - other.y, dz = bz - other.z;
-            const dr2 = dx * dx + dy * dy + dz * dz;
-            if (dr2 < coolRadius2) localDensity += other.mass;
+    // Gas cooling — reduces internal energy (not velocity drag). Toggle:
+    // gas_cooling (absent key means on).
+    if (this._toggles?.gas_cooling !== false) {
+        const coolRadius2 = baseSoft2 * 25;
+        let coolingSum = 0, coolingMax = 0, coolingCnt = 0;
+        for (let gi = 0; gi < nGas; gi++) {
+            const b = bodies[gasIdx[gi]];
+            const bx = b.x, by = b.y, bz = b.z;
+            let localDensity = b.mass;
+            for (let gj = 0; gj < nGas; gj++) {
+                if (gj === gi) continue;
+                const other = bodies[gasIdx[gj]];
+                const dx = bx - other.x, dy = by - other.y, dz = bz - other.z;
+                const dr2 = dx * dx + dy * dy + dz * dz;
+                if (dr2 < coolRadius2) localDensity += other.mass;
+            }
+            const coolingRate = Math.min(0.0002, 0.000002 * localDensity);
+            b.internal_energy = Math.max(0.001, b.internal_energy * (1 - coolingRate));
+            b.temperature = Math.max(100, b.internal_energy * 1000);
+            coolingSum += coolingRate;
+            coolingCnt++;
+            if (coolingRate > coolingMax) coolingMax = coolingRate;
         }
-        const coolingRate = Math.min(0.0002, 0.000002 * localDensity);
-        b.internal_energy = Math.max(0.001, b.internal_energy * (1 - coolingRate));
-        b.temperature = Math.max(100, b.internal_energy * 1000);
+        this._stats.coolingMean = coolingCnt > 0 ? coolingSum / coolingCnt : 0;
+        this._stats.coolingMax = coolingMax;
+        this._stats.coolingCount = coolingCnt;
     }
 
     // Gas pressure (SPH-like repulsion) — legacy ad-hoc term. Every pair this
     // loop touches is gas-gas (gasIdx is GAS/NEBULA only), so it is skipped
     // wholesale once the Monaghan SPH pass above already supplies gas-gas
     // pressure + viscosity forces, to avoid double-counting the same physics.
-    if (!this._toggles?.sph_monaghan) {
+    // Toggle: legacy_gas_repulsion (absent key means on) — only reachable
+    // when sph_monaghan is itself off.
+    if (!this._toggles?.sph_monaghan && this._toggles?.legacy_gas_repulsion !== false) {
         const h_press = this._softening * 2.5;
         const h_press2 = h_press * h_press;
         for (let gi = 0; gi < nGas; gi++) {
@@ -305,26 +393,32 @@ export function computeCosmicForces(TYPE) {
         }
     }
 
-    // Stellar radiation pressure on gas.
-    const radMaxR2 = 400;
-    const radInvC = 1.0 / (4 * Math.PI * C_SPEED);
-    for (let si = 0; si < nStar; si++) {
-        const star = bodies[starIdx[si]];
-        if (!(star.luminosity > 0)) continue;
-        const sx = star.x, sy = star.y, sz = star.z;
-        const starK = star.luminosity * radInvC * 0.001;
-        for (let gi = 0; gi < nGas; gi++) {
-            const gas = bodies[gasIdx[gi]];
-            const dx = gas.x - sx, dy = gas.y - sy, dz = gas.z - sz;
-            const r2 = dx * dx + dy * dy + dz * dz + baseSoft2;
-            if (r2 > radMaxR2) continue;
-            const r = Math.sqrt(r2);
-            const f_rad = starK / r2;
-            const invR = 1.0 / r;
-            gas.ax += f_rad * dx * invR;
-            gas.ay += f_rad * dy * invR;
-            gas.az += f_rad * dz * invR;
+    // Stellar radiation pressure on gas. Toggle: radiation_pressure (absent
+    // key means on).
+    if (this._toggles?.radiation_pressure !== false) {
+        const radMaxR2 = 400;
+        const radInvC = 1.0 / (4 * Math.PI * C_SPEED);
+        let maxRad = 0;
+        for (let si = 0; si < nStar; si++) {
+            const star = bodies[starIdx[si]];
+            if (!(star.luminosity > 0)) continue;
+            const sx = star.x, sy = star.y, sz = star.z;
+            const starK = star.luminosity * radInvC * 0.001;
+            for (let gi = 0; gi < nGas; gi++) {
+                const gas = bodies[gasIdx[gi]];
+                const dx = gas.x - sx, dy = gas.y - sy, dz = gas.z - sz;
+                const r2 = dx * dx + dy * dy + dz * dz + baseSoft2;
+                if (r2 > radMaxR2) continue;
+                const r = Math.sqrt(r2);
+                const f_rad = starK / r2;
+                const invR = 1.0 / r;
+                gas.ax += f_rad * dx * invR;
+                gas.ay += f_rad * dy * invR;
+                gas.az += f_rad * dz * invR;
+                if (f_rad > maxRad) maxRad = f_rad;
+            }
         }
+        this._stats.maxRadiationAccel = maxRad;
     }
 }
 
