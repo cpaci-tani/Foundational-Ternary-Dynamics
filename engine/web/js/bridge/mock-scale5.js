@@ -314,16 +314,20 @@ export class CosmicMockBridge {
         this._toggles.legacy_gas_repulsion = subgrid;
         this._toggles.star_formation = subgrid;
         this._toggles.bondi_accretion = subgrid;
+        // I3 fix: emergent_black_holes is AND-gated with _enableSubgrid in
+        // postCosmicUpdates (Pass D, Ruling D-1), exactly like its five
+        // siblings above -- it used to keep its _freshToggles() `true`
+        // default here regardless of subgrid, so it was the only rule that
+        // rendered CHECKED on the twelve _enableSubgrid = false scenarios
+        // where it can never fire (a checked box that cannot fire is the
+        // same class of problem as a wrong tooltip). Seed it the same way.
+        this._toggles.emergent_black_holes = subgrid;
         this._toggles.stellar_evolution = !!this._stellarEvolution;
         this._toggles.hawking_evaporation = !!this._hawkingEvaporation;
         // horizon_absorption / mergers / tidal_disruption / speed_limit
         // are NOT scenario-conditional today (they run regardless of
         // _enableSubgrid in the existing code) so they keep their
-        // _freshToggles() default here. emergent_black_holes also keeps
-        // its default value, but as of Pass D (Ruling D-1) the rule
-        // itself is AND-gated with _enableSubgrid in postCosmicUpdates
-        // -- so on the three gas laboratories (_enableSubgrid = false)
-        // it never fires regardless of this toggle's value.
+        // _freshToggles() default here.
     }
 
     /** Centre of mass captured once, at the end of setupScenario, as the

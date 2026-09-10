@@ -86,6 +86,7 @@ const CHANNELS = {
         { key: 'csAngMom',   title: '|Angular Momentum|', buffer: 'csAngMom', color: 'var(--chart-pe-angmom, #60a5fa)', unit: '(sim)' },
         { key: 'csComDrift', title: 'COM Drift',       buffer: 'csComDrift',color: 'var(--chart-pe-radius, #42a5f5)', unit: 'lu' },
         { key: 'csThermal',  title: 'Gas Thermal Energy', buffer: 'csThermal', color: 'var(--chart-ae-temp, #fb8c00)', unit: '(sim)' },
+        { key: 'csSystemRadius', title: 'System Radius', buffer: 'csSystemRadius', color: 'var(--chart-pe-radius, #42a5f5)', unit: 'lu' },
         // Pass C (cosmology and expansion): the Friedmann scale factor a(t).
         { key: 'csScaleFactor', title: 'Scale Factor a(t)', buffer: 'csScaleFactor', color: 'var(--chart-flux, #fb8c00)', unit: '' }
     ]

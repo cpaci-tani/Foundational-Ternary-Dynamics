@@ -133,7 +133,7 @@ function createGasCard() {
         </div>
         <div class="toggle-row">
             <input type="checkbox" id="cosmic-gas-legacy-repulsion" data-scale5-toggle="legacy_gas_repulsion">
-            <label for="cosmic-gas-legacy-repulsion" title="[IMPOSED effective gas dynamics; coefficients in engine units] Ad-hoc gas-gas repulsion term. Only fires while SPH gas dynamics above is OFF, mirroring the bridge's own guard (cosmic-physics.js).">Legacy gas repulsion (SPH off only)</label>
+            <label for="cosmic-gas-legacy-repulsion" title="[IMPOSED effective gas dynamics; coefficients in engine units] Ad-hoc gas-gas repulsion term. Fires only while SPH gas dynamics above is OFF AND the scenario's own sub-grid flag (_enableSubgrid) is on (cosmic-physics.js) -- in the three gas-lab scenarios (_enableSubgrid = false), turning SPH off here leaves gas with NO pressure term at all; this checkbox cannot supply one.">Legacy gas repulsion (SPH off only)</label>
         </div>
         <label class="pe-ctrl-row" title="[IMPOSED effective gas dynamics; coefficients in engine units] Overrides the frozen SPH.ALPHA artificial-viscosity coefficient (linear term) for the Monaghan gas pass.">
             <span class="pe-ctrl-label">Viscosity &alpha;</span>
@@ -161,7 +161,7 @@ function createCosmologyCard() {
         <div class="card-title">Cosmology</div>
         <div class="toggle-row">
             <input type="checkbox" id="cosmic-cosmology-expansion" checked>
-            <label for="cosmic-cosmology-expansion" title="[MEASURED — instrument control] When on, the flat-&Lambda;CDM background integrator advances the scale factor a, Hubble rate H, and redshift z each tick. Turning it off FREEZES a/H/z at their current values; N-body dynamics are unaffected either way — the Friedmann step is diagnostics-only regardless of this setting.">Expansion (background clock)</label>
+            <label for="cosmic-cosmology-expansion" title="[IMPOSED] When on, the flat-&Lambda;CDM background integrator advances the scale factor a, Hubble rate H, and redshift z each tick. Turning it off FREEZES a/H/z at their current values; N-body dynamics are unaffected either way — the Friedmann step is diagnostics-only regardless of this setting.">Expansion (background clock)</label>
         </div>
         <label class="pe-ctrl-row" title="Display-only acceleration of the cosmic background clock (a, H, z) — NOT physics. Never touches the N-body force kernel or body kinematics; scales only how fast the universe crosses a=1 on screen. Default 40.">
             <span class="pe-ctrl-label">Clock gain &times;</span>
@@ -192,15 +192,15 @@ function createPhysicsRulesCard() {
         <div class="card-title">Physics Rules</div>
         <div class="toggle-row">
             <input type="checkbox" id="cosmic-rules-gas-cooling" data-scale5-toggle="gas_cooling">
-            <label for="cosmic-rules-gas-cooling" title="[IMPOSED effective gas dynamics; coefficients in engine units] Radiative cooling force term applied to gas bodies (cosmic-physics.js). Independent of _enableSubgrid; not gated by the SPH pass.">Gas cooling</label>
+            <label for="cosmic-rules-gas-cooling" title="[IMPOSED effective gas dynamics; coefficients in engine units] Radiative cooling force term applied to gas bodies (cosmic-physics.js). Runs only when the scenario's own sub-grid flag (_enableSubgrid) is on -- it has no effect on the twelve _enableSubgrid = false scenarios (the three gas labs plus dark-matter halo, gravitational wave, baryogenesis, cosmic-web fallback, spiral galaxy, cartwheel collision, globular cluster, merger, and supercluster), regardless of this checkbox.">Gas cooling</label>
         </div>
         <div class="toggle-row">
             <input type="checkbox" id="cosmic-rules-radiation-pressure" data-scale5-toggle="radiation_pressure">
-            <label for="cosmic-rules-radiation-pressure" title="[IMPOSED effective gas dynamics; coefficients in engine units] Outward force on gas from nearby stellar luminosity (cosmic-physics.js).">Radiation pressure</label>
+            <label for="cosmic-rules-radiation-pressure" title="[IMPOSED effective gas dynamics; coefficients in engine units] Outward force on gas from nearby stellar luminosity (cosmic-physics.js). Runs only when the scenario's own sub-grid flag (_enableSubgrid) is on -- it has no effect on the twelve _enableSubgrid = false scenarios (the three gas labs plus dark-matter halo, gravitational wave, baryogenesis, cosmic-web fallback, spiral galaxy, cartwheel collision, globular cluster, merger, and supercluster), regardless of this checkbox.">Radiation pressure</label>
         </div>
         <div class="toggle-row">
             <input type="checkbox" id="cosmic-rules-tidal-stretch" data-scale5-toggle="tidal_stretch">
-            <label for="cosmic-rules-tidal-stretch" title="[IMPOSED effective gas dynamics; coefficients in engine units] Radial tidal-stretch FORCE near a black hole (cosmic-physics.js). Distinct from Tidal disruption below, which is the separate mass-shedding state machine this force feeds into.">Tidal stretch (force)</label>
+            <label for="cosmic-rules-tidal-stretch" title="[IMPOSED effective gas dynamics; coefficients in engine units] Radial tidal-stretch FORCE near a black hole (cosmic-physics.js). Distinct from Tidal disruption below, which is the separate mass-shedding state machine this force feeds into. Runs only when the scenario's own sub-grid flag (_enableSubgrid) is on -- it has no effect on the twelve _enableSubgrid = false scenarios (the three gas labs plus dark-matter halo, gravitational wave, baryogenesis, cosmic-web fallback, spiral galaxy, cartwheel collision, globular cluster, merger, and supercluster), regardless of this checkbox.">Tidal stretch (force)</label>
         </div>
         <div class="toggle-row">
             <input type="checkbox" id="cosmic-rules-tidal-disruption" data-scale5-toggle="tidal_disruption">
@@ -224,7 +224,7 @@ function createPhysicsRulesCard() {
         </div>
         <div class="toggle-row">
             <input type="checkbox" id="cosmic-rules-emergent-bh" data-scale5-toggle="emergent_black_holes">
-            <label for="cosmic-rules-emergent-bh" title="[IMPOSED threshold rule] Converts the highest-enclosed-mass body within 2x softening to a BLACK_HOLE once its escape velocity exceeds the lattice speed limit c = 1/sqrt(3) AND its enclosed mass exceeds 50 -- at the labs' softening this reduces to just 'enclosed mass above 50'. NEVER a relativistic criterion. Pass D fix: this rule now ALSO requires the scenario's own sub-grid flag (_enableSubgrid) to be on, matching the other sub-grid rules -- it has no effect on the three gas laboratories (_enableSubgrid = false) regardless of this checkbox.">Emergent black holes</label>
+            <label for="cosmic-rules-emergent-bh" title="[IMPOSED threshold rule] Converts the highest-enclosed-mass body within 2x softening to a BLACK_HOLE once its escape velocity exceeds the lattice speed limit c = 1/sqrt(3) AND its enclosed mass exceeds 50 -- at the labs' softening this reduces to just 'enclosed mass above 50'. NEVER a relativistic criterion. Pass D fix: this rule now ALSO requires the scenario's own sub-grid flag (_enableSubgrid) to be on, matching the other sub-grid rules -- it has no effect on the twelve _enableSubgrid = false scenarios (the three gas labs plus dark-matter halo, gravitational wave, baryogenesis, cosmic-web fallback, spiral galaxy, cartwheel collision, globular cluster, merger, and supercluster), regardless of this checkbox.">Emergent black holes</label>
         </div>
         <div class="toggle-row">
             <input type="checkbox" id="cosmic-rules-stellar-evolution" data-scale5-toggle="stellar_evolution">

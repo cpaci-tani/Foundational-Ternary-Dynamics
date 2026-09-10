@@ -905,4 +905,112 @@ test.describe('Pass D: Stellar, events, and camera', () => {
         const relevantErrors = realErrors(errors);
         expect(relevantErrors, `Console errors:\n${relevantErrors.join('\n')}`).toHaveLength(0);
     });
+
+    // I1 fix verification: the two continuous camera-follow modes used to
+    // set camera.position/lookAt() but never touch controls.target, so the
+    // very next viewport.render() -> controls.update() (OrbitControls
+    // unconditionally recomputes the camera's offset from controls.target
+    // and re-runs lookAt(controls.target) every call) undid the follow
+    // repositioning using the stale (origin) target. The console-errors-only
+    // assertion above passed even with that defect live -- nothing threw,
+    // the camera just silently pointed at the wrong place. This test reads
+    // the actual camera/controls/body state to prove the follow modes work:
+    // controls.target tracks the followed point as it moves, the camera's
+    // offset from that target is held fixed (a genuine "follow", not a
+    // teleport), interactive orbit is suspended while a follow mode is
+    // active (per the toolbar's own tooltip claim), and everything restores
+    // when a static preset disengages the follow.
+    test('camera follow: controls.target tracks the followed body/COM and interactive orbit is genuinely suspended (I1)', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+
+        await gotoAndReady(page, { path: '/index.html' });
+        await switchMode(page, 'cosmic');
+        await page.waitForTimeout(500);
+        // A gravitationally-collapsing gas ball: individual body positions
+        // (including whichever body is instantaneously heaviest) move
+        // substantially over a few hundred ticks, unlike a scenario tuned
+        // to sit near equilibrium.
+        await selectCosmicScenario(page, 'cosmic-gas-collapse');
+        await page.waitForTimeout(300);
+        await tickAndRefresh(page, 10);
+
+        const setCamera = (value) => page.evaluate((v) => {
+            const sel = /** @type {HTMLSelectElement|null} */ (document.getElementById('cosmic-camera-select'));
+            if (!sel) throw new Error('#cosmic-camera-select not found');
+            sel.value = v;
+            sel.dispatchEvent(new Event('change', { bubbles: true }));
+            return sel.value;
+        }, value);
+
+        /** Reads the current heaviest-body position straight from the live
+         *  bridge, mirroring CosmicRenderer._findHeaviestBodyPosition's own
+         *  O(N) max-mass scan, plus the renderer's camera/controls state. */
+        const readState = () => page.evaluate(() => {
+            const bridge = window.__ftdCtx?.inspector?.bridge;
+            const renderer = window.__ftdCtx?.inspector?._cosmicRenderer;
+            if (!bridge || !renderer) return null;
+            let best = null, bestMass = 0;
+            for (const b of bridge._bodies) {
+                if (b.mass > bestMass) { bestMass = b.mass; best = b; }
+            }
+            const cam = renderer.camera.position;
+            const target = renderer._controls?.target;
+            return {
+                heaviest: best ? { x: best.x, y: best.y, z: best.z } : null,
+                camera: { x: cam.x, y: cam.y, z: cam.z },
+                target: target ? { x: target.x, y: target.y, z: target.z } : null,
+                controlsEnabled: renderer._controls?.enabled ?? null,
+            };
+        });
+
+        const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z);
+
+        expect(await setCamera('follow-heaviest')).toBe('follow-heaviest');
+        // One physics-frame tick so update() -> _applyCameraFollow() runs
+        // at least once and captures the initial follow offset.
+        await tickAndRefresh(page, 2);
+
+        const s0 = await readState();
+        expect(s0, 'renderer/bridge state should be available').not.toBeNull();
+        expect(s0.heaviest, 'a heaviest body should exist').not.toBeNull();
+        expect(s0.controlsEnabled, 'interactive orbit must be suspended while follow-heaviest is active').toBe(false);
+        expect(dist(s0.target, s0.heaviest), 'controls.target should equal the heaviest body\'s position right after engaging').toBeLessThan(0.05);
+        const offset0 = { x: s0.camera.x - s0.target.x, y: s0.camera.y - s0.target.y, z: s0.camera.z - s0.target.z };
+
+        // Drive enough physics ticks for the collapsing gas ball to move
+        // its heaviest body measurably.
+        await tickAndRefresh(page, 400);
+
+        const s1 = await readState();
+        expect(s1.heaviest).not.toBeNull();
+        const bodyMoved = dist(s0.heaviest, s1.heaviest);
+        expect(bodyMoved, 'the heaviest body should have actually moved over 400 ticks (otherwise this test cannot distinguish follow from a static camera)').toBeGreaterThan(0.01);
+
+        // The camera must still be pointed at (controls.target still equal
+        // to) the CURRENT heaviest-body position, not the stale one from
+        // when follow was engaged -- this is exactly the bug I1 describes:
+        // without driving controls.target, the target stays at the origin
+        // and controls.update() would drag the camera/orientation away from
+        // the moving body every frame.
+        expect(dist(s1.target, s1.heaviest), 'controls.target should still track the CURRENT heaviest-body position after ticking').toBeLessThan(0.05);
+        expect(s1.controlsEnabled, 'interactive orbit should still be suspended while follow-heaviest remains active').toBe(false);
+
+        // The camera keeps the SAME relative offset from its target that it
+        // captured at engage time (a "follow" translates the camera with
+        // the body; it does not re-frame to a canned view every tick).
+        const offset1 = { x: s1.camera.x - s1.target.x, y: s1.camera.y - s1.target.y, z: s1.camera.z - s1.target.z };
+        expect(dist(offset0, offset1), 'the camera-to-target offset should stay fixed while following (translation, not re-framing)').toBeLessThan(0.05);
+
+        // Switching to a static preset must disengage the follow and
+        // restore normal interactive orbit + the origin target every
+        // static preset uses.
+        expect(await setCamera('overview')).toBe('overview');
+        await tickAndRefresh(page, 2);
+        const s2 = await readState();
+        expect(s2.controlsEnabled, 'a static preset must restore interactive orbit').toBe(true);
+        expect(dist(s2.target, { x: 0, y: 0, z: 0 }), 'a static preset must restore the origin target').toBeLessThan(0.001);
+
+        const relevantErrors = realErrors(errors);
+        expect(relevantErrors, `Console errors:\n${relevantErrors.join('\n')}`).toHaveLength(0);
+    });
 });

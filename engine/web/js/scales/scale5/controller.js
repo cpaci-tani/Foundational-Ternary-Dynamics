@@ -450,11 +450,24 @@ class Scale5LifecycleController extends BaseLifecycleController {
             ctx.inspector.setBridge(this.bridge);
         }
 
+        // Save prior camera state for destroy() to restore (audit P1-8,
+        // 2026-05-27). MUST run before the CosmicRenderer is constructed
+        // below: as of the I1 fix, that constructor resets
+        // viewport.controls.target to the origin (every static preset's
+        // own target) so a fresh renderer never inherits a stale target
+        // left by whichever mode was previously active. saveScaleCameraState
+        // only actually captures once (guarded by !controller._savedControls),
+        // so if it ran AFTER construction it would "save" that already-
+        // zeroed target instead of the real prior-scale target, and
+        // restoreScaleCameraState (destroy()) would then snap the PREVIOUS
+        // scale's camera to the origin on leaving Scale 5.
+        saveScaleCameraState(this, viewport);
+
         // Create cosmic renderer
         if (this.renderer) {
             this.renderer.dispose();
         }
-        this.renderer = new CosmicRenderer(viewport.scene, viewport.camera, viewport.renderer);
+        this.renderer = new CosmicRenderer(viewport.scene, viewport.camera, viewport.renderer, viewport.controls);
         this.trackThreeObject(this.renderer);
 
         // Pass C: correct the comoving grid's reference box size from this
@@ -484,9 +497,6 @@ class Scale5LifecycleController extends BaseLifecycleController {
         if (ctx.inspector?.setCosmicContext) {
             ctx.inspector.setCosmicContext(this.bridge, this.renderer);
         }
-
-        // Save prior camera state for destroy() to restore (audit P1-8, 2026-05-27)
-        saveScaleCameraState(this, viewport);
 
         // Configure camera for cosmic scale
         viewport.camera.near = 0.1;
@@ -532,7 +542,16 @@ class Scale5LifecycleController extends BaseLifecycleController {
             'cosmic-gas-cloud-collision': 'gaslab',
             'cosmic-gas-rotating-disk': 'gaslab',
         };
-        this.renderer.setCameraPreset(presetMap[scenarioName] || 'overview', data);
+        const cameraPreset = presetMap[scenarioName] || 'overview';
+        this.renderer.setCameraPreset(cameraPreset, data);
+        // M6 fix: setCameraPreset() above always lands on one of the static
+        // presets (this map never contains 'follow-heaviest'/'com-lock'),
+        // which disengages any follow mode left active from the previous
+        // scenario. Without this, #cosmic-camera-select could keep
+        // displaying "Follow Heaviest"/"Centre-of-Mass Lock" after a
+        // scenario switch silently returned the camera to a static framing.
+        const cameraSelect = document.getElementById('cosmic-camera-select');
+        if (cameraSelect) cameraSelect.value = cameraPreset;
 
         // Auto-play
         ctx.running = true;

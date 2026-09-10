@@ -1,12 +1,14 @@
 /**
  * Scale 5 Cosmic chart descriptors.
  *
- * Pass 0b (UI foundations, 2026-09-09): dynamics charts only (mirrors the
- * diagnostics descriptor's "runtime and dynamics sections only" scope for
- * this pass — runtime fields such as scenario/solver-path/dt are static
- * snapshots, not time series, so they have no chart card of their own here,
- * matching the scale4 descriptor precedent). Gas (Pass B), cosmology
- * (Pass C), and population/event (Pass D) charts follow in later passes.
+ * Dynamics charts only (energy/conservation/virial/angular-momentum-and-COM
+ * below) — mirrors the diagnostics descriptor's "runtime and dynamics
+ * sections only" precedent: runtime fields such as scenario/solver-path/dt
+ * are static snapshots, not time series, so they have no chart card of
+ * their own, matching the scale4 descriptor. Gas (Pass B), cosmology
+ * (Pass C), and population/event (Pass D) all shipped their own Diagnostics
+ * sections and controls but added no charts of their own; this file still
+ * covers only the four dynamics series from the original Pass 0b pass.
  */
 
 export const charts = [

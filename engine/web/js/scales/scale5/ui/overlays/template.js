@@ -119,27 +119,27 @@ export function getScale5OverlayTemplate() {
     'Visibility',
     '',
     `${overlayRow('', `
-      <label class="scale-overlay-check" title="[MEASURED — instrument control] Shows or hides the dark-matter point cloud. Presentation only; does not alter dynamics.">
+      <label class="scale-overlay-check" title="Presentation-only visibility toggle: shows or hides the dark-matter point cloud. Does not alter dynamics.">
         <input type="checkbox" id="cosmic-overlay-show-dm" checked> Dark matter
       </label>
     `)}
     ${overlayRow('', `
-      <label class="scale-overlay-check" title="[MEASURED — instrument control] Shows or hides the gas and nebula point clouds. Presentation only; does not alter dynamics.">
+      <label class="scale-overlay-check" title="Presentation-only visibility toggle: shows or hides the gas and nebula point clouds. Does not alter dynamics.">
         <input type="checkbox" id="cosmic-overlay-show-gas" checked> Gas &amp; nebula clouds
       </label>
     `)}
     ${overlayRow('', `
-      <label class="scale-overlay-check" title="[MEASURED — instrument control] Shows or hides the star point cloud (stars, white dwarfs, neutron stars). Presentation only; does not alter dynamics.">
+      <label class="scale-overlay-check" title="Presentation-only visibility toggle: shows or hides the star point cloud (stars, white dwarfs, neutron stars). Does not alter dynamics.">
         <input type="checkbox" id="cosmic-overlay-show-stars" checked> Stars
       </label>
     `)}
     ${overlayRow('', `
-      <label class="scale-overlay-check" title="[MEASURED — instrument control] Shows or hides black-hole/quasar meshes (event horizon, corona, jets). Presentation only; does not alter dynamics.">
+      <label class="scale-overlay-check" title="Presentation-only visibility toggle: shows or hides black-hole/quasar meshes (BH radius proxy, corona, jets). Does not alter dynamics.">
         <input type="checkbox" id="cosmic-overlay-show-bh" checked> Black holes
       </label>
     `)}
     ${overlayRow('', `
-      <label class="scale-overlay-check" title="[MEASURED — instrument control] Shows or hides the accretion-disk layer of black-hole/quasar meshes, leaving the event horizon itself visible. Presentation only; does not alter dynamics.">
+      <label class="scale-overlay-check" title="Presentation-only visibility toggle: shows or hides the accretion-disk layer of black-hole/quasar meshes, leaving the BH radius proxy itself visible. Does not alter dynamics.">
         <input type="checkbox" id="cosmic-overlay-show-disks" checked> Accretion disks
       </label>
     `)}`,

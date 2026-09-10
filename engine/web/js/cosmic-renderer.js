@@ -110,9 +110,26 @@ function velocityBetaColor(beta) {
 
 // ====================================================================
 export class CosmicRenderer extends BaseRenderer {
-    constructor(scene, camera, renderer) {
+    constructor(scene, camera, renderer, controls) {
         super(scene, camera, renderer);
         this._time = 0;
+
+        // Pass D fix (I1): the OrbitControls instance driving this camera,
+        // if any. Camera-follow mode needs to move `controls.target` (not
+        // just `camera.position`) because OrbitControls.update() — called
+        // every rAF frame by viewport.js regardless of follow state —
+        // unconditionally recomputes the camera's offset from its target
+        // and re-applies `lookAt(target)`; leaving the target stale undoes
+        // whatever _applyCameraFollow() just did. A fresh renderer always
+        // gets a clean slate here (enabled + origin target) since a new
+        // instance's own _cameraFollowMode starts at 'none' regardless of
+        // what a previous renderer instance (torn down on scenario switch)
+        // left the shared controls object in.
+        this._controls = controls || null;
+        if (this._controls) {
+            this._controls.enabled = true;
+            this._controls.target.set(0, 0, 0);
+        }
 
         this._group.name = 'cosmic-layer';
 
@@ -801,6 +818,16 @@ export class CosmicRenderer extends BaseRenderer {
         }
         this.camera.position.copy(target).add(this._cameraFollowOffset);
         this.camera.lookAt(target);
+        // I1 fix: drive controls.target too, not just the camera itself.
+        // OrbitControls.update() (viewport.js, every rAF frame) recomputes
+        // the camera's spherical offset from `controls.target` and re-runs
+        // lookAt(controls.target) unconditionally — without this line the
+        // very next controls.update() call re-derives a huge/stale offset
+        // from the ORIGIN (the last static-preset target) and both
+        // relocates and reorients the camera away from the followed body.
+        if (this._controls) {
+            this._controls.target.copy(target);
+        }
     }
 
     /** Pass D: index of the highest-mass live body, for camera-follow
@@ -1069,7 +1096,23 @@ export class CosmicRenderer extends BaseRenderer {
      *  moment of engaging, rather than reusing a stale offset from a
      *  previous follow session. */
     setCameraFollowMode(mode) {
-        this._cameraFollowMode = mode || 'none';
+        const next = mode || 'none';
+        // I1 fix: genuinely suspend interactive orbit while a follow mode
+        // is active (the toolbar tooltip already claimed this; nothing
+        // implemented it — `controls.enabled` was never touched anywhere
+        // in the codebase) and restore it, plus the origin target every
+        // static preset uses, when a follow mode disengages.
+        if (this._controls) {
+            if (next === 'none') {
+                if (this._cameraFollowMode !== 'none') {
+                    this._controls.enabled = true;
+                    this._controls.target.set(0, 0, 0);
+                }
+            } else {
+                this._controls.enabled = false;
+            }
+        }
+        this._cameraFollowMode = next;
         this._cameraFollowOffset = null;
     }
 
