@@ -18,6 +18,7 @@
  */
 
 import * as THREE from 'three';
+import { attachBackToFrontOrdering } from './point-cloud-draw-order.js';
 import { getById } from '../particle-catalog.js';
 import { K_B, C_SPEED } from '../constants.js';
 import { makeRingTexture, makeTextTexture, makeBillboardSprite } from '../scales/scale1/overlay-billboards.js';
@@ -336,6 +337,13 @@ export class ViewportParticleRenderer {
         });
 
         this.particles = new THREE.Points(geometry, material);
+        // NormalBlending + depthWrite:false: composite order is draw order, and
+        // particles move every tick, so re-sort back-to-front per frame
+        // (O(n) counting sort; point-cloud-draw-order.js).
+        this._particleDrawOrderDetach = attachBackToFrontOrdering(this.particles, {
+            mode: 'depth',
+            wrapIndex: order => new THREE.Uint32BufferAttribute(order, 1),
+        });
         this.particles.frustumCulled = false; // skip bounding sphere recompute for dynamic geometry
         this._scene.add(this.particles);
     }
@@ -1209,6 +1217,7 @@ export class ViewportParticleRenderer {
     }
 
     dispose() {
+        if (this._particleDrawOrderDetach) { this._particleDrawOrderDetach(); this._particleDrawOrderDetach = null; }
         this.clearPEScenarioVisual();
         const disposeMesh = (obj) => {
             if (!obj) return;

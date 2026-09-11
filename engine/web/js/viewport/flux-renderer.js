@@ -31,6 +31,7 @@
  */
 
 import * as THREE from 'three';
+import { attachBackToFrontOrdering } from './point-cloud-draw-order.js';
 import { fluxToColorInto, fluxToColor } from '../fields.js';
 
 // Flux-volume vertex shader (sqrt depth scaling) — centralized in
@@ -183,6 +184,9 @@ export class ViewportFluxRenderer {
     // Boundary clipping uses _insideBoundary() for non-cube shapes.
 
     _buildFluxVolume(latticeSize, axisCapacity = fluxVolumeAxisSamples(latticeSize)) {
+        // Every rebuild path funnels through here: drop the previous cloud's
+        // draw-order hook before its geometry is replaced.
+        if (this._fluxDrawOrderDetach) { this._fluxDrawOrderDetach(); this._fluxDrawOrderDetach = null; }
         // Allocate the complete received source grid. Threshold changes draw
         // count only; it never changes this capacity or its coordinate support.
         const sampledN = Math.max(1, Math.trunc(axisCapacity));
@@ -242,6 +246,14 @@ export class ViewportFluxRenderer {
         });
 
         this._fluxVolume = new THREE.Points(geo, mat);
+        // With glow OFF the cloud is NormalBlending + depthWrite:false, so its
+        // draw order is its composite order; keep it back-to-front for the
+        // camera (point-cloud-draw-order.js). Skipped automatically when
+        // glow ON switches the material to additive blending.
+        this._fluxDrawOrderDetach = attachBackToFrontOrdering(this._fluxVolume, {
+            mode: 'axis', positionAttr: 'sourcePosition',
+            wrapIndex: order => new THREE.Uint32BufferAttribute(order, 1),
+        });
         this._fluxVolume.visible = false;
         this._fluxVolume.frustumCulled = false; // skip bounding sphere recompute for dynamic geometry
         this._fluxVolume.renderOrder = 10; // render after background stars (order 0)
@@ -852,6 +864,7 @@ export class ViewportFluxRenderer {
     }
 
     dispose() {
+        if (this._fluxDrawOrderDetach) { this._fluxDrawOrderDetach(); this._fluxDrawOrderDetach = null; }
         this._cancelFluxAsyncUpdate();
         if (this._fluxVolume) {
             this._scene.remove(this._fluxVolume);
