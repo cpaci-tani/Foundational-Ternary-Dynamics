@@ -240,9 +240,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         // Expected Behaviour: Deterministic but decaying count, 22 -> 20 from
         // ticks 100 -> 120 at L=24; no static/stable claim.
         // Clean visualisation of the axial ic1 cluster (dashboard demo).
-        // Uses A=20·K_GENESIS instead of the campaign A=10 to compensate
-        // for the CPU genesis-drain that suppresses cluster growth in
-        // single-threaded WASM (vs GPU's no-drain behaviour). T=0 disables
+        // Uses A=20·K_GENESIS instead of the campaign A=10. The amplitude was
+        // chosen 2026-04-27 when only the CPU path applied the manifestation
+        // drain; since FTD-0276 (2026-06-12) `kinetic_drain` is honoured on both
+        // backends. Kept for continuity of the pinned counts (LEDGER draft
+        // FTD-1044 records the provenance). T=0 disables
         // Langevin thermal driving so the cluster is NOT obscured by
         // background thermal genesis. Run ~200 ticks for clearest view.
         configure_genesis_cluster_terms(rb, 0.0);
