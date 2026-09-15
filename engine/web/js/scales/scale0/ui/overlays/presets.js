@@ -8,7 +8,7 @@
 
 export const COL_TO_TOGGLES = {
     'standard-model': ['toggle-sm-reference'],
-    'volume':        ['toggle-flux-volume', 'toggle-flux-slice', 'toggle-flux-lines', 'toggle-div-field', 'toggle-state-field'],
+    'volume':        ['toggle-flux-volume', 'toggle-flux-slice', 'toggle-native-transport', 'toggle-flux-lines', 'toggle-div-field', 'toggle-state-field'],
     'fields':        ['toggle-e-field', 'toggle-b-field'],
     'forces':        ['toggle-force-em', 'toggle-force-gravity', 'toggle-force-strong', 'toggle-force-weak'],
     'quantum':       ['toggle-psi-squared', 'toggle-phase', 'toggle-lagrangian-density', 'toggle-entropy-density'],

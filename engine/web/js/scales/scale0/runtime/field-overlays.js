@@ -15,6 +15,7 @@ import {
     getFlowLineSettings,
     isKnotTrackingActive,
 } from '../state/store.js';
+import { renderNativeTransportLegend, readNativeTransportThreshold } from '../ui/overlays/native-transport-legend.js';
 import { getFieldLineKnotTracker } from './field-line-knots.js';
 import { commonSampleProvenance, safeCounterNumber } from '../../../lib/exact-counter.js';
 import { observeLatticeFields, fieldObservationProvenance } from './fluid-observation.js';
@@ -460,6 +461,7 @@ const JOB_FORCE_FLOW = 5;   // one force-flow streamline (COST_STREAMLINE)
 const JOB_DERIVED = 6;      // derived substrate group (COST_DERIVED)
 const JOB_SCALAR = 7;       // one scalar/topology sheet (COST_SCALAR)
 const JOB_FLUID_OBSERVATION = 8; // summaries from the same active-owner sample cache
+const JOB_NATIVE_TRANSPORT = 9;  // lattice-link energy current + native knots (COST_PASSTHROUGH)
 const fluidPanelLive = () => typeof document !== 'undefined' && isPanelLive(document.getElementById('panel-fluid'));
 
 // Static scalar-overlay table, allocated ONCE at module load (never per sweep).
@@ -729,6 +731,18 @@ function measureKnotContributions(tr, sched) {
     });
 }
 
+// The link energy observer costs one 18-neighbour pass per engine tick, so it
+// runs only while Native transport is shown. Observation-only on every owner.
+function syncNativeTransportObservation(ctx, state, sched) {
+    const want = !!state.fieldFlags.showNativeTransport;
+    if (sched.nativeObservation === want) return;
+    const owner = getActiveScale0Bridge(ctx, state);
+    if (typeof owner?.setLinkEnergyObservation !== 'function') return;
+    owner.setLinkEnergyObservation(want);
+    sched.nativeObservation = want;
+    if (!want) renderNativeTransportLegend(null);
+}
+
 function runJob(sched, slot) {
     const { ctx, state, viewportAdapter, latticeSize, params, sampled, sampleCache } = sched;
     const { stride } = params;
@@ -889,6 +903,23 @@ function runJob(sched, slot) {
             }
             break;
         }
+        case JOB_NATIVE_TRANSPORT: {
+            const owner = getActiveScale0Bridge(ctx, state);
+            const linkSample = sampleCache.ensureSample('linkEnergy');
+            // A scenario load rebuilds the engine bridge and drops the observation
+            // switch; the engine then reports 'off'. Re-send it (observation-only).
+            if (!linkSample || linkSample.status === 'off') owner?.setLinkEnergyObservation?.(true);
+            // Native knots are the engine's own manifested-cluster tracker, which every
+            // scenario setup switches off. Re-assert it while this overlay is shown.
+            const trackerOn = typeof owner?.getEngineTruthToggle === 'function'
+                ? owner.getEngineTruthToggle('knot_tracking')
+                : owner?.getToggle?.('knot_tracking');
+            if (trackerOn === false) owner?.setToggle?.('knot_tracking', true);
+            const knots = owner?.getKnotTelemetry?.() ?? null;
+            const summary = viewportAdapter.applyNativeTransport({ sample: linkSample, knots, fraction: readNativeTransportThreshold() });
+            renderNativeTransportLegend(summary);
+            break;
+        }
         case JOB_FORCE_FIELDS: {
             // params.deferFlow was set true once for this sweep (see
             // buildOverlayJobs), so the heavy flow integration is deferred out
@@ -1027,6 +1058,9 @@ function buildOverlayJobs(ctx, state, sched, viewportAdapter, latticeSize, param
     if (flags.showPoynting || flags.showDivField) {
         const slot = jobSlot(sched, n++); slot.kind = JOB_PASS; slot.cost = COST_PASSTHROUGH;
     }
+    if (flags.showNativeTransport) {
+        const slot = jobSlot(sched, n++); slot.kind = JOB_NATIVE_TRANSPORT; slot.cost = COST_PASSTHROUGH;
+    }
 
     // ── Force group ──────────────────────────────────────────────────────
     // One job samples + builds the force fields and applies the non-flow style
@@ -1112,6 +1146,7 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
     const fieldThrottle = latticeSize > 96 ? 12 : (latticeSize > 48 ? 6 : 3);
     const sched = ensureOverlaySched(state);
     const knotTrackingActive = isKnotTrackingActive(state);
+    syncNativeTransportObservation(ctx, state, sched);
 
     if (state.authoritativeLoad != null) {
         cancelStreamlineJobs(sched);

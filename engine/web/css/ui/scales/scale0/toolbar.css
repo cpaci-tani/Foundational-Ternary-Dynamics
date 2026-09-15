@@ -516,6 +516,9 @@
 .field-swatch-energy       { background: #ffa726; }
 .field-swatch-divj         { background: linear-gradient(90deg, #e53935, #1e88e5); }
 .field-swatch-flux-lines   { background: linear-gradient(90deg, #1565c0, #ffee58, #e53935); }
+.field-swatch-native-transport { background: repeating-linear-gradient(90deg, #1565c0 0 3px, #ffee58 3px 6px, #e53935 6px 9px); }
+.native-transport-legend { font-size: 11px; line-height: 1.35; color: var(--text-muted, #9aa4b2); padding: 2px 6px 6px; max-width: 260px; }
+.native-transport-threshold { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; padding-top: 4px; }
 .field-swatch-em           { background: #00e5ff; }
 .field-swatch-gravity      { background: #ffab00; }
 .field-swatch-strong       { background: #ff1744; }
