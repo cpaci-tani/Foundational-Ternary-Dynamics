@@ -103,8 +103,9 @@ inline void manifest_at(RenderBridge& rb,
     else if (ay >= ax) v.spin = (curl.y > 0) ? 1 : -1;
     else v.spin = (curl.x > 0) ? 1 : -1;
   } else {
-    v.spin = (voxel_uniform(gseed, i, tick,
-                            static_cast<std::uint64_t>(VoxelRng::GenesisSpin)) < 0.5) ? 1 : -1;
+    v.spin = (rb.toggles.genesis_deterministic
+              || voxel_uniform(gseed, i, tick,
+                               static_cast<std::uint64_t>(VoxelRng::GenesisSpin)) < 0.5) ? 1 : -1;
   }
 
   // Color from dominant flux axis (uses live flux, not the flux_pre buffer).
@@ -348,8 +349,9 @@ void phase_write_main_loop(RenderBridge& rb) {
         double dens = std::sqrt(v.flux.mag2());
         double excess = dens - K_GENESIS;
         double p = 1.0 - std::exp(-excess / K_MANIFEST);
-        if (voxel_uniform(gseed, i, rb.tick_,
-                          static_cast<std::uint64_t>(VoxelRng::GenesisManifest)) < p) {
+        if (rb.toggles.genesis_deterministic
+            || voxel_uniform(gseed, i, rb.tick_,
+                             static_cast<std::uint64_t>(VoxelRng::GenesisManifest)) < p) {
           // FTD-HISTORY-BEGIN: observation-only native event journal.
           const auto history_before = eft::capture_history_site(i, v);
           // FTD-HISTORY-END
@@ -375,8 +377,9 @@ void phase_write_main_loop(RenderBridge& rb) {
         double dens = std::sqrt(v.flux.mag2());
         double excess = dens - kg;
         double p = 1.0 - std::exp(-excess / km);
-        if (voxel_uniform(gseed, i, rb.tick_,
-                          static_cast<std::uint64_t>(VoxelRng::GenesisManifest)) < p) {
+        if (rb.toggles.genesis_deterministic
+            || voxel_uniform(gseed, i, rb.tick_,
+                             static_cast<std::uint64_t>(VoxelRng::GenesisManifest)) < p) {
           // FTD-HISTORY-BEGIN: observation-only native event journal.
           const auto history_before = eft::capture_history_site(i, v);
           // FTD-HISTORY-END
@@ -425,8 +428,9 @@ void phase_write_main_loop(RenderBridge& rb) {
       // exactly 1 (bit-identical to the pre-amendment rule). The RNG draw and
       // stream are unchanged; only the acceptance threshold scales.
       const double dtau = proper_time_rate(v.latency, v.speed() * v.speed());
-      if (voxel_uniform(gseed, i, rb.tick_,
-                        static_cast<std::uint64_t>(VoxelRng::Evaporation)) < evap_prob * K_EVAP_RATE * dtau) {
+      if (!rb.toggles.genesis_deterministic
+          && voxel_uniform(gseed, i, rb.tick_,
+                           static_cast<std::uint64_t>(VoxelRng::Evaporation)) < evap_prob * K_EVAP_RATE * dtau) {
         // FTD-HISTORY-BEGIN: observation-only native event journal.
         const auto history_before = eft::capture_history_site(i, v);
         // FTD-HISTORY-END
