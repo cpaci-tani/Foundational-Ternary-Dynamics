@@ -21,6 +21,7 @@
 #include "ftd/energy_ledger_compute.h"     // moved from mid-file to avoid nested-namespace include
 #include "ftd/render_bridge_phases.h"      // Phase 4a: phase_write decomposition (2026-04-27)
 #include "ftd/knot_telemetry.h"            // Observation-only per-knot telemetry (PIMPL; complete type here)
+#include "ftd/link_energy_observer.h"      // Observation-only link energy current (PIMPL; complete type here)
 #include <algorithm>
 #include <atomic>
 #include <cassert>
@@ -111,6 +112,7 @@ RenderBridge::RenderBridge(int lattice_size)
     ClusterTrackerParams kt_params;
     kt_params.min_cluster_size = 1;
     knot_tracker_ = std::make_unique<KnotTracker>(kt_params);
+    link_energy_observer_ = std::make_unique<LinkEnergyObserver>();
     // FTD-HISTORY-BEGIN: observation-only native event journal.
     history_event_journal_ = std::make_unique<eft::HistoryEventJournal>();
     matched_gauss_dynamics_ =
@@ -133,6 +135,9 @@ RenderBridge::~RenderBridge() = default;
 // (and the gated record() call in tick()) are golden-hash neutral.
 const KnotTracker& RenderBridge::knot_tracker() const { return *knot_tracker_; }
 void RenderBridge::reset_knot_tracker() { knot_tracker_->clear(); }
+void RenderBridge::set_link_energy_observation(bool on) { link_energy_observer_->set_enabled(on); }
+bool RenderBridge::link_energy_observation() const { return link_energy_observer_->enabled(); }
+const LinkEnergyObserver& RenderBridge::link_energy_observer() const { return *link_energy_observer_; }
 
 // FTD-HISTORY-BEGIN: observation-only native event journal.
 bool RenderBridge::enable_history_journal(bool enabled) {
@@ -927,6 +932,10 @@ void RenderBridge::tick() {
     last_validation_warn_.clear();
   }
 
+  // Observation-only link energy current: detect external writes since the
+  // last committed tick before this tick's sources act. Golden-neutral.
+  if (link_energy_observer_->enabled()) link_energy_observer_->before_tick(*this);
+
   // Flux-cell mechanisms (ftd/flux_cell.h): the pump source and the scheduled
   // port both edit the host mirror before this tick's dynamics, on every
   // backend (GPU uploads the dirty mirror before its kernels run).
@@ -1181,6 +1190,7 @@ void RenderBridge::tick() {
 
   // Observation-only knot telemetry (golden-neutral; reads settled state only).
   if (toggles.knot_tracking) knot_tracker_->record(*this);
+  if (link_energy_observer_->enabled()) link_energy_observer_->after_tick(*this);
 
   sync_ternary_from_voxels_if_needed();
   mark_fields_dirty_from_voxels();

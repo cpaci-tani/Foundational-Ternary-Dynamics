@@ -312,6 +312,7 @@ endif()
 # Core library
 add_library(ftd_core
     src/render_bridge.cpp
+    src/link_energy_observer.cpp
     src/native_telemetry_scheduler.cpp
     src/lagrangian.cpp
     src/particle_engine.cpp

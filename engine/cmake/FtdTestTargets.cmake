@@ -525,6 +525,8 @@ ftd_add_test(test_gauss_projection_symmetry tests/test_gauss_projection_symmetry
              CTEST_NAME gauss_projection_symmetry TIMEOUT 300)
 ftd_add_test(test_stencil18_dispersion tests/test_stencil18_dispersion.cpp
              CTEST_NAME stencil18_dispersion TIMEOUT 300)
+ftd_add_test(test_link_energy_observer tests/test_link_energy_observer.cpp
+             CTEST_NAME link_energy_observer TIMEOUT 300)
 ftd_add_test(test_empty_scenario_qualification
              tests/test_empty_scenario_qualification.cpp
              CTEST_NAME empty_scenario_qualification TIMEOUT 300
