@@ -97,7 +97,7 @@ const gravitySamplerCadence = createBoundedSamplerCadence(GRAVITY_SAMPLER_INTERV
 const WORKER_COMMAND_ALLOWLIST = new Set([
   'tickScale0', 'setToggle', 'setSorIterations', 'setDt', 'setOmega0',
   'setLangevinTemp', 'setLangevinGamma', 'setFluxBoundary', 'setFluxPeriodicAxis',
-  'injectParticle', 'injectFlux', 'injectWavepacket', 'injectWaveVel',
+  'injectParticle', 'injectFlux', 'injectFluxBulk', 'injectWavepacket', 'injectWaveVel',
   'createEntangledPair', 'clearField', 'seedRandomFlux',
   // Flux-cell mechanisms (engine/include/ftd/flux_cell.h, 2026-09-02).
   'setFluxCellRegion', 'clearFluxCellRegion', 'setFluxPump', 'clearFluxPump',
@@ -138,6 +138,20 @@ function applyCommand(method, args = []) {
       return { ok: true };
     } catch (e) {
       const error = 'tickScale0 failed: ' + String(e && e.message || e);
+      console.error('[WasmWorker] ' + error);
+      return { ok: false, error };
+    }
+  }
+  if (method === 'injectFluxBulk') {
+    try {
+      const buf = args[0];
+      const a = buf instanceof Float64Array ? buf : new Float64Array(buf);
+      for (let i = 0; i + 5 < a.length; i += 6) {
+        mod.injectFlux(bridge, a[i] | 0, a[i + 1] | 0, a[i + 2] | 0, a[i + 3], a[i + 4], a[i + 5]);
+      }
+      return { ok: true };
+    } catch (e) {
+      const error = 'injectFluxBulk failed: ' + String(e && e.message || e);
       console.error('[WasmWorker] ' + error);
       return { ok: false, error };
     }

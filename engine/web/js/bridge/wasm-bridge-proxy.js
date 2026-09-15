@@ -1400,6 +1400,7 @@ export class WasmBridgeProxy {
     getLangevinGamma() { return this._langevinGamma ?? 0.01; }
     injectParticle(...a) { this._cmd('injectParticle', ...a); }
     injectFlux(...a) { this._cmd('injectFlux', ...a); }
+    injectFluxBulk(records) { this._cmd('injectFluxBulk', records instanceof Float64Array ? records.buffer.slice(0) : records); }
     setSorIterations(n) { this._cmd('setSorIterations', Math.max(1, n | 0)); }
     injectWavepacket(...a) { this._cmd('injectWavepacket', ...a); }
     injectWaveVel(...a) { this._cmd('injectWaveVel', ...a); }

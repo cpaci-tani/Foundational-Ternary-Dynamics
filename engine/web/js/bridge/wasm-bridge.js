@@ -484,6 +484,13 @@ export class WasmBridge {
         }
     }
 
+    injectFluxBulk(records) {
+        if (!this._bridge) return;
+        const a = records instanceof Float64Array ? records : new Float64Array(records);
+        for (let i = 0; i + 5 < a.length; i += 6) this._module.injectFlux(this._bridge, a[i] | 0, a[i + 1] | 0, a[i + 2] | 0, a[i + 3], a[i + 4], a[i + 5]);
+        this._invalidateScale0AuditCache();
+    }
+
     injectUniformFluxAdd(fx, fy, fz) {
         if (!this._bridge) return;
         try {
