@@ -144,8 +144,72 @@ export function buildPersistentIndex(positions, vectors, count, N, stride) {
     _persistIndex.cellStart = _cellStart;
     _persistIndex.cellCount = _cellCount;
     _persistIndex.order = _order;
+    _persistIndex.dense = buildDenseGrid(positions, vectors, count, N, stride);
     return _persistIndex;
 }
+
+// Regular-grid view of the sample for trilinear interpolation. Samples are
+// expected on origin + stride*i per axis; any off-grid sample or hole means
+// no dense view, and normGridInto keeps the nearest-sample path.
+export function buildDenseGrid(positions, vectors, count, N, stride) {
+    if (!(count > 0) || !(stride > 0)) return null;
+    let ox = Infinity, oy = Infinity, oz = Infinity, mx = -Infinity, my = -Infinity, mz = -Infinity;
+    for (let i = 0; i < count; i++) {
+        const b = i * 3;
+        const x = positions[b], y = positions[b + 1], z = positions[b + 2];
+        if (x < ox) ox = x; if (x > mx) mx = x;
+        if (y < oy) oy = y; if (y > my) my = y;
+        if (z < oz) oz = z; if (z > mz) mz = z;
+    }
+    // Dimensions come from the sample itself: visual_field_sample.cpp builds the
+    // grid from visual_sample_grid(n, stride, interior) and interior kinds stop
+    // short of N-1. N is only a sanity bound.
+    const dimX = Math.round((mx - ox) / stride) + 1;
+    const dimY = Math.round((my - oy) / stride) + 1;
+    const dimZ = Math.round((mz - oz) / stride) + 1;
+    if (!(dimX >= 1 && dimY >= 1 && dimZ >= 1) || dimX > N || dimY > N || dimZ > N) return null;
+    if (dimX * dimY * dimZ !== count) return null;
+    const grid = new Float32Array(count * 3);
+    const filled = new Uint8Array(count);
+    for (let i = 0; i < count; i++) {
+        const b = i * 3;
+        const gx = (positions[b] - ox) / stride, gy = (positions[b + 1] - oy) / stride, gz = (positions[b + 2] - oz) / stride;
+        const ix = Math.round(gx), iy = Math.round(gy), iz = Math.round(gz);
+        if (Math.abs(gx - ix) > 1e-6 || Math.abs(gy - iy) > 1e-6 || Math.abs(gz - iz) > 1e-6) return null;
+        if (ix < 0 || iy < 0 || iz < 0 || ix >= dimX || iy >= dimY || iz >= dimZ) return null;
+        const g = ix + dimX * (iy + dimY * iz);
+        if (filled[g]) return null;
+        filled[g] = 1;
+        grid[g * 3] = vectors[b]; grid[g * 3 + 1] = vectors[b + 1]; grid[g * 3 + 2] = vectors[b + 2];
+    }
+    return { ox, oy, oz, stride, dimX, dimY, dimZ, grid };
+}
+
+let _i0 = 0, _i1 = 0, _t = 0;   // per-axis scratch for axisCoord
+function axisCoord(u, dim) {
+    if (dim <= 1 || !(u > 0)) { _i0 = 0; _i1 = 0; _t = 0; return; }
+    if (u >= dim - 1) { _i0 = dim - 1; _i1 = dim - 1; _t = 0; return; }
+    _i0 = Math.floor(u); _i1 = _i0 + 1; _t = u - _i0;
+}
+
+/** Trilinear field lookup on a dense view; writes _fx,_fy,_fz. Allocation-free. */
+export function lookupFieldTrilinearInto(dense, px, py, pz) {
+    const { ox, oy, oz, stride, dimX, dimY, dimZ, grid } = dense;
+    axisCoord((px - ox) / stride, dimX); const x0 = _i0, x1 = _i1, tx = _t;
+    axisCoord((py - oy) / stride, dimY); const y0 = _i0, y1 = _i1, ty = _t;
+    axisCoord((pz - oz) / stride, dimZ); const z0 = _i0, z1 = _i1, tz = _t;
+    let fx = 0, fy = 0, fz = 0;
+    for (let c = 0; c < 8; c++) {
+        const w = ((c & 1) ? tx : 1 - tx) * ((c & 2) ? ty : 1 - ty) * ((c & 4) ? tz : 1 - tz);
+        if (w === 0) continue;
+        const g = (((c & 1) ? x1 : x0) + dimX * (((c & 2) ? y1 : y0) + dimY * ((c & 4) ? z1 : z0))) * 3;
+        fx += w * grid[g]; fy += w * grid[g + 1]; fz += w * grid[g + 2];
+    }
+    _fx = fx; _fy = fy; _fz = fz;
+}
+
+/** Test-only accessor for the last sampled raw field components. */
+export function __scratchField() { return [_fx, _fy, _fz]; }
 
 // Nearest-sample field lookup against the PERSISTENT index, writing the result
 // into module scratch (_fx,_fy,_fz) instead of returning an array. Same 27-cell
@@ -393,7 +457,8 @@ function normFieldFnInto(fieldFn, px, py, pz, dir, minMag) {
 // caller's locals. Writes (_nx,_ny,_nz). Bit-identical to normFieldFnInto over
 // the same sampled field because the lookup selects the same sample.
 function normGridInto(px, py, pz, dir, minMag) {
-    lookupFieldInto(_gridIndex, px, py, pz);
+    if (_gridIndex.dense) lookupFieldTrilinearInto(_gridIndex.dense, px, py, pz);
+    else lookupFieldInto(_gridIndex, px, py, pz);
     const vx = _fx, vy = _fy, vz = _fz;
     const m = Math.sqrt(vx * vx + vy * vy + vz * vz);
     if (!Number.isFinite(m) || m <= 0 || m < minMag) {
