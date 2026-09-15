@@ -529,6 +529,18 @@ export class WasmBridge {
         }
     }
 
+    setSorIterations(n) {
+        if (this._module && this._bridge && typeof this._module.setSorIterations === 'function') {
+            this._module.setSorIterations(this._bridge, Math.max(1, n | 0));
+            this._invalidateScale0AuditCache();
+        }
+    }
+
+    getSorIterations() {
+        return (this._module && this._bridge && typeof this._module.getSorIterations === 'function')
+            ? this._module.getSorIterations(this._bridge) : null;
+    }
+
     /** Apply a dependency-ordered toggle profile with one cache invalidation. */
     setToggles(entries) {
         if (!this._module || !this._bridge || !Array.isArray(entries)) return;

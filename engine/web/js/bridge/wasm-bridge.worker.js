@@ -95,7 +95,7 @@ const gravitySamplerCadence = createBoundedSamplerCadence(GRAVITY_SAMPLER_INTERV
 // invalidated by the next WASM call, so copy every typed array out before the
 // payload crosses the postMessage boundary back to the main thread.
 const WORKER_COMMAND_ALLOWLIST = new Set([
-  'tickScale0', 'setToggle', 'setDt', 'setOmega0',
+  'tickScale0', 'setToggle', 'setSorIterations', 'setDt', 'setOmega0',
   'setLangevinTemp', 'setLangevinGamma', 'setFluxBoundary', 'setFluxPeriodicAxis',
   'injectParticle', 'injectFlux', 'injectWavepacket', 'injectWaveVel',
   'createEntangledPair', 'clearField', 'seedRandomFlux',

@@ -69,6 +69,9 @@ static bool get_toggle(ftd::RenderBridge& rb, const std::string& name) {
     return false;
 }
 
+static void set_sor_iterations(ftd::RenderBridge& rb, int n) { rb.set_sor_iterations(n); }
+static int  get_sor_iterations(const ftd::RenderBridge& rb) { return rb.sor_iterations(); }
+
 // ── Inject wrappers ──────────────────────────────────────────────────
 static void inject_particle_simple(ftd::RenderBridge& rb, int x, int y, int z, int state) {
     rb.inject_particle(x, y, z, static_cast<int8_t>(state), ftd::Vec3(0, 0, 0));
@@ -534,6 +537,8 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     // Controls
     function("setToggle",          &set_toggle);
     function("getToggle",          &get_toggle);
+    function("setSorIterations",   &set_sor_iterations);
+    function("getSorIterations",   &get_sor_iterations);
 
     // Injection
     function("injectParticle", select_overload<void(ftd::RenderBridge&, int, int, int, int)>(&inject_particle_simple));
