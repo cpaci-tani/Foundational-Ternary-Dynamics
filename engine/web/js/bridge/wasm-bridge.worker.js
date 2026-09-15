@@ -496,7 +496,7 @@ function buildBridge(n, scen, configurationToken = 0) {
     type: 'ready', N, ctrl: ctrlSab, heap: vol.buffer, fluxPtr: vol.byteOffset, fluxLen: vol.length,
     setupOk, setupError, artifactIdentity, configurationToken,
     workerRuntimeId, moduleInitCount, renderBridgeGeneration,
-    constants: (() => { try { const c = mod.getConstants(bridge); const o = {}; for (const k in c) if (typeof c[k] !== 'object') o[k] = c[k]; return o; } catch (e) { return null; } })(),
+    constants: (() => { try { const c = mod.getConstants(); const o = {}; for (const k in c) if (typeof c[k] !== 'object') o[k] = c[k]; return o; } catch (e) { return null; } })(),
     ...(doubled ? { fluxSab: fluxPubSab, doubleBuffered: true,
                    fluxProtocol: self.FTD_FLUX_PUBLICATION.PROTOCOL } : {}),
   });
