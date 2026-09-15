@@ -19,7 +19,9 @@ test('says energy is exchanged off the links and names the active terms when the
     assert.match(text, /does not close/);
     assert.match(text, /exchanged off the links by thermostat, Gauss projection, genesis/);
     assert.match(text, /hidden while the thermostat runs/);
-    assert.doesNotMatch(text, /current.*exchange|exchange.*current/i);
+    for (const sentence of text.split(/(?<=\.)\s+/)) {
+        assert.ok(!(/current/i.test(sentence) && /exchang/i.test(sentence)), `a sentence calls off-link exchange a current: ${sentence}`);
+    }
 });
 
 test('reports matter clusters and exchange sites when present', () => {

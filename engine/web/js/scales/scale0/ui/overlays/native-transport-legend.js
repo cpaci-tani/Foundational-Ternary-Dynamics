@@ -20,7 +20,7 @@ const DEFAULT_THRESHOLD = 0.05;
 
 export function describeNativeTransport(summary) {
     if (!summary) return 'Native transport: waiting for the engine.';
-    const head = '[REFERENCE ENGINE] Exact energy transport of the v1 wave step on the 18 lattice links.';
+    const head = '[REFERENCE ENGINE] Exact energy current of the v1 wave step on the 18 lattice links.';
     if (summary.status === 'unavailable') return `${head} Unavailable for this configuration: ${summary.reason}.`;
     if (summary.status !== 'ok') return `${head} Warming: the engine needs two consecutive ticks.`;
     const closure = Number(summary.closure) || 0;
