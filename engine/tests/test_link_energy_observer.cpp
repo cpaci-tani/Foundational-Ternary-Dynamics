@@ -116,6 +116,51 @@ void state_neutral() {
     check("engine state bit-identical with observer on vs off (ic1, 60 ticks)",
           a.size() == b.size() && std::memcmp(a.data(), b.data(), a.size() * sizeof(double)) == 0);
 }
+// T2: in the genesis scenario the balance fails to close exactly when a term
+// that exchanges energy off the links is on, and closes when all are off.
+void exchange_decomposition() {
+    struct Case { const char* label; bool langevin, gauss, damping, genesis; };
+    const Case cases[] = {
+        {"langevin only", true, false, false, false},
+        {"gauss_projection only", false, true, false, false},
+        {"damping only", false, false, true, false},
+        {"langevin, gauss_projection, damping and genesis off", false, false, false, false},
+    };
+    for (const auto& cs : cases) {
+        ftd::RenderBridge rb(33); rb.force_cpu();
+        ftd::dispatch_scenario(rb, "s0-seed-emergent-ic1");
+        rb.toggles.langevin = cs.langevin;
+        rb.toggles.gauss_projection = cs.gauss;
+        rb.toggles.damping = cs.damping;
+        rb.toggles.genesis = cs.genesis;
+        rb.set_link_energy_observation(true);
+        for (int t = 0; t < 100; ++t) rb.tick();
+        const auto& obs = rb.link_energy_observer();
+        std::printf("    %s: closure %.3e, terms 0x%x\n", cs.label, obs.closure(), obs.active_exchange_terms());
+        check(std::string(cs.label) + ": status Ok", obs.status() == LinkEnergyStatus::Ok);
+        if (cs.langevin || cs.gauss || cs.damping)
+            check(std::string(cs.label) + ": balance does not close (closure > 1e-9)", obs.closure() > 1e-9);
+        else
+            check(std::string(cs.label) + ": balance closes (closure <= 1e-12)", obs.closure() <= 1e-12);
+        const auto bits = obs.active_exchange_terms();
+        check(std::string(cs.label) + ": exchange-term bits match the toggles",
+              ((bits & ftd::LinkExchangeTerm::Langevin) != 0) == cs.langevin
+              && ((bits & ftd::LinkExchangeTerm::GaussProjection) != 0) == cs.gauss
+              && ((bits & ftd::LinkExchangeTerm::Damping) != 0) == cs.damping
+              && ((bits & ftd::LinkExchangeTerm::Genesis) != 0) == cs.genesis);
+    }
+    ftd::RenderBridge rb(33); rb.force_cpu();
+    ftd::dispatch_scenario(rb, "s0-seed-emergent-ic1");
+    rb.set_link_energy_observation(true);
+    for (int t = 0; t < 100; ++t) rb.tick();
+    const auto& obs = rb.link_energy_observer();
+    const auto& r = obs.residual_exact();
+    std::size_t above = 0;
+    for (double v : r) if (std::abs(v) > 0.01 * obs.max_local_change()) ++above;
+    const double frac = r.empty() ? 0.0 : static_cast<double>(above) / static_cast<double>(r.size());
+    std::printf("    scenario profile: %.1f%% of sites above 1%% of the largest local change\n", 100.0 * frac);
+    check("scenario profile with the thermostat: more than half the sites exchange energy off the links", frac > 0.5);
+}
 }  // namespace
 
 int main() {
@@ -125,6 +170,7 @@ int main() {
     independent_current();
     unavailable();
     state_neutral();
+    exchange_decomposition();
     std::printf("%s (%d failures)\n", g_fail ? "FAILED" : "ALL PASS", g_fail);
     return g_fail ? 1 : 0;
 }
