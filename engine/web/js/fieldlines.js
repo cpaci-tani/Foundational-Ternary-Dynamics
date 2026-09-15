@@ -148,41 +148,37 @@ export function buildPersistentIndex(positions, vectors, count, N, stride) {
     return _persistIndex;
 }
 
-// Regular-grid view of the sample for trilinear interpolation. Samples are
-// expected on origin + stride*i per axis; any off-grid sample or hole means
-// no dense view, and normGridInto keeps the nearest-sample path.
+// Dense regular-grid view of a sampled vector field for trilinear interpolation.
+// Sampler contract (engine/src/visual_field_sample.cpp): one vector per regular
+// output cell at anchors origin + stride*i, reported at the cell centre
+// (anchor + 0.5); each cell carries its block's strongest source site; cells
+// whose strongest site has |rho| < 1e-30 are omitted. A missing cell is a
+// zero-field cell, so the dense view fills it with zeros. The view is rejected
+// (null) only when a sample is off the stride lattice, out of range, or
+// duplicated — nearest lookup then stays in force.
 export function buildDenseGrid(positions, vectors, count, N, stride) {
-    if (!(count > 0) || !(stride > 0)) return null;
-    let ox = Infinity, oy = Infinity, oz = Infinity, mx = -Infinity, my = -Infinity, mz = -Infinity;
-    for (let i = 0; i < count; i++) {
-        const b = i * 3;
-        const x = positions[b], y = positions[b + 1], z = positions[b + 2];
-        if (x < ox) ox = x; if (x > mx) mx = x;
-        if (y < oy) oy = y; if (y > my) my = y;
-        if (z < oz) oz = z; if (z > mz) mz = z;
-    }
-    // Dimensions come from the sample itself: visual_field_sample.cpp builds the
-    // grid from visual_sample_grid(n, stride, interior) and interior kinds stop
-    // short of N-1. N is only a sanity bound.
-    const dimX = Math.round((mx - ox) / stride) + 1;
-    const dimY = Math.round((my - oy) / stride) + 1;
-    const dimZ = Math.round((mz - oz) / stride) + 1;
+    if (!(count > 0) || !(stride > 0) || !(N > 0)) return null;
+    const px = positions[0] % stride, py = positions[1] % stride, pz = positions[2] % stride;
+    const dimX = Math.floor((N - 0.5 - px) / stride) + 1;
+    const dimY = Math.floor((N - 0.5 - py) / stride) + 1;
+    const dimZ = Math.floor((N - 0.5 - pz) / stride) + 1;
     if (!(dimX >= 1 && dimY >= 1 && dimZ >= 1) || dimX > N || dimY > N || dimZ > N) return null;
-    if (dimX * dimY * dimZ !== count) return null;
-    const grid = new Float32Array(count * 3);
-    const filled = new Uint8Array(count);
+    const total = dimX * dimY * dimZ;
+    if (count > total) return null;
+    const grid = new Float32Array(total * 3);
+    const filled = new Uint8Array(total);
     for (let i = 0; i < count; i++) {
         const b = i * 3;
-        const gx = (positions[b] - ox) / stride, gy = (positions[b + 1] - oy) / stride, gz = (positions[b + 2] - oz) / stride;
+        const gx = (positions[b] - px) / stride, gy = (positions[b + 1] - py) / stride, gz = (positions[b + 2] - pz) / stride;
         const ix = Math.round(gx), iy = Math.round(gy), iz = Math.round(gz);
-        if (Math.abs(gx - ix) > 1e-6 || Math.abs(gy - iy) > 1e-6 || Math.abs(gz - iz) > 1e-6) return null;
+        if (Math.abs(gx - ix) > 1e-4 || Math.abs(gy - iy) > 1e-4 || Math.abs(gz - iz) > 1e-4) return null;
         if (ix < 0 || iy < 0 || iz < 0 || ix >= dimX || iy >= dimY || iz >= dimZ) return null;
         const g = ix + dimX * (iy + dimY * iz);
         if (filled[g]) return null;
         filled[g] = 1;
         grid[g * 3] = vectors[b]; grid[g * 3 + 1] = vectors[b + 1]; grid[g * 3 + 2] = vectors[b + 2];
     }
-    return { ox, oy, oz, stride, dimX, dimY, dimZ, grid };
+    return { ox: px, oy: py, oz: pz, stride, dimX, dimY, dimZ, grid };
 }
 
 let _i0 = 0, _i1 = 0, _t = 0;   // per-axis scratch for axisCoord

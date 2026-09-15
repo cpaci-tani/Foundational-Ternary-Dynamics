@@ -23,6 +23,30 @@ test('an off-grid sample yields no dense view (nearest fallback stays)', () => {
     const s = radialSample(); s.positions[3] += 0.25;
     assert.equal(buildDenseGrid(s.positions, s.vectors, s.count, N, STRIDE), null);
 });
+test('a sparse cell-centred sample keeps a dense view with zeros in omitted cells', async () => {
+    const mod = await import('../js/fieldlines.js');
+    // Sampler contract: anchors 0,2,...,32; positions are anchor + 0.5; zero-field cells omitted.
+    const Cc = 16.5;                                   // a cell centre, so an axis passes through centres
+    const pos = [], vec = [];
+    for (let z = 0; z < N; z += STRIDE) for (let y = 0; y < N; y += STRIDE) for (let x = 0; x < N; x += STRIDE) {
+        const cx = x + 0.5, cy = y + 0.5, cz = z + 0.5;
+        const dx = cx - Cc, dy = cy - Cc, dz = cz - Cc, r = Math.hypot(dx, dy, dz);
+        if (r > 8) continue;                           // omitted like a zero-field block
+        const a = 1 / (r * r * r);
+        pos.push(cx, cy, cz); vec.push(a * dx, a * dy, a * dz);
+    }
+    const s = {positions: new Float32Array(pos), vectors: new Float32Array(vec), count: pos.length / 3};
+    assert.ok(s.count < 17 * 17 * 17, 'test premise: the sample is sparse');
+    const d = mod.buildDenseGrid(s.positions, s.vectors, s.count, N, STRIDE);
+    assert.ok(d, 'a sparse sample must still yield a dense view');
+    assert.deepEqual([d.dimX, d.dimY, d.dimZ], [17, 17, 17]);
+    assert.deepEqual([d.ox, d.oy, d.oz], [0.5, 0.5, 0.5]);
+    mod.lookupFieldTrilinearInto(d, 0.5, 0.5, 0.5);                 // an omitted corner cell
+    assert.deepEqual(mod.__scratchField(), [0, 0, 0]);
+    mod.lookupFieldTrilinearInto(d, 20.5, 16.5, 16.5);              // kept cell at offset (4,0,0): field (1/16, 0, 0)
+    const f = mod.__scratchField();
+    assert.ok(Math.abs(f[0] - 1 / 16) < 1e-6 && Math.abs(f[1]) < 1e-9 && Math.abs(f[2]) < 1e-9, 'kept cell returns its sample: ' + f);
+});
 test('trilinear lookup is exact at grid points and averages at midpoints', async () => {
     const mod = await import('../js/fieldlines.js');
     const s = radialSample();
@@ -34,19 +58,35 @@ test('trilinear lookup is exact at grid points and averages at midpoints', async
     const m = at(21, 16, 16), i2 = i + 3;
     assert.ok(Math.abs(m[0] - 0.5 * (s.vectors[i] + s.vectors[i2])) < 1e-7);
 });
-test('streamlines on an exactly radial field stay radial', () => {
+function radialDeviationsDeg(result, centre) {
+    const devs = [];
+    for (let k = result.offsets[0] + 3; k < result.offsets[0] + result.lengths[0]; k += 3) {
+        const b = result.buffer;
+        const d = [b[k] - b[k - 3], b[k + 1] - b[k - 2], b[k + 2] - b[k - 1]];
+        const m = [(b[k] + b[k - 3]) / 2 - centre, (b[k + 1] + b[k - 2]) / 2 - centre, (b[k + 2] + b[k - 1]) / 2 - centre];
+        const dn = Math.hypot(...d), mn = Math.hypot(...m); if (dn < 1e-9 || mn < 4) continue;
+        devs.push(Math.acos(Math.min(1, Math.abs((d[0]*m[0] + d[1]*m[1] + d[2]*m[2]) / (dn * mn)))) * 180 / Math.PI);
+    }
+    devs.sort((a, b) => a - b);
+    return { devs, median: devs[Math.floor(devs.length / 2)], p90: devs[Math.floor(devs.length * 0.9)] };
+}
+
+test('streamlines along a symmetry axis stay exactly radial', () => {
     const s = radialSample();
     const r = computeStreamlines(s, [[20, 16, 16]], {N, stride: STRIDE, stepSize: 0.5, maxSteps: 40, bidirectional: false, maxLines: 1});
     assert.equal(r.count, 1);
-    const devs = [];
-    for (let k = r.offsets[0] + 3; k < r.offsets[0] + r.lengths[0]; k += 3) {
-        const d = [r.buffer[k] - r.buffer[k - 3], r.buffer[k + 1] - r.buffer[k - 2], r.buffer[k + 2] - r.buffer[k - 1]];
-        const m = [(r.buffer[k] + r.buffer[k - 3]) / 2 - C, (r.buffer[k + 1] + r.buffer[k - 2]) / 2 - C, (r.buffer[k + 2] + r.buffer[k - 1]) / 2 - C];
-        const dn = Math.hypot(...d), mn = Math.hypot(...m); if (dn < 1e-9 || mn < 4) continue;
-        devs.push(Math.acos(Math.min(1, Math.abs((d[0]*m[0]+d[1]*m[1]+d[2]*m[2]) / (dn*mn)))) * 180 / Math.PI);
-    }
-    devs.sort((a, b) => a - b);
+    const {devs, median, p90} = radialDeviationsDeg(r, C);
     assert.ok(devs.length >= 10, 'need segments');
-    assert.ok(devs[Math.floor(devs.length / 2)] < 1.5, 'median deviation < 1.5 deg, got ' + devs[Math.floor(devs.length / 2)]);
-    assert.ok(devs[Math.floor(devs.length * 0.9)] < 4.0, 'p90 deviation < 4 deg');
+    assert.ok(median < 1.5, 'median deviation < 1.5 deg, got ' + median);
+    assert.ok(p90 < 4.0, 'p90 deviation < 4 deg');
+});
+
+test('streamlines from an off-axis seed stay radial (interpolation exercised)', () => {
+    const s = radialSample();
+    const r = computeStreamlines(s, [[21, 18, 17]], {N, stride: STRIDE, stepSize: 0.5, maxSteps: 40, bidirectional: false, maxLines: 1});
+    assert.equal(r.count, 1);
+    const {devs, median, p90} = radialDeviationsDeg(r, C);
+    assert.ok(devs.length >= 10, 'need segments');
+    assert.ok(median < 1.5, `median deviation ${median} deg`);
+    assert.ok(p90 < 4.0, `p90 deviation ${p90} deg`);
 });
