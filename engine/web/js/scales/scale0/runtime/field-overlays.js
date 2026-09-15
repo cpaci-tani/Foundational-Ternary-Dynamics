@@ -740,6 +740,7 @@ function syncNativeTransportObservation(ctx, state, sched) {
     if (typeof owner?.setLinkEnergyObservation !== 'function') return;
     owner.setLinkEnergyObservation(want);
     sched.nativeObservation = want;
+    if (want) sched.nativeKnotSettled = null;  // re-assert native knots once when the overlay is switched on
     if (!want) renderNativeTransportLegend(null);
 }
 
@@ -910,11 +911,17 @@ function runJob(sched, slot) {
             // switch; the engine then reports 'off'. Re-send it (observation-only).
             if (!linkSample || linkSample.status === 'off') owner?.setLinkEnergyObservation?.(true);
             // Native knots are the engine's own manifested-cluster tracker, which every
-            // scenario setup switches off. Re-assert it while this overlay is shown.
-            const trackerOn = typeof owner?.getEngineTruthToggle === 'function'
-                ? owner.getEngineTruthToggle('knot_tracking')
-                : owner?.getToggle?.('knot_tracking');
-            if (trackerOn === false) owner?.setToggle?.('knot_tracking', true);
+            // scenario setup switches off. Re-assert it once per scenario load (and once
+            // when this overlay is switched on), then respect the user's Knot Tracking
+            // checkbox until the next load.
+            const loadGeneration = Number(ctx?._loadGeneration || 0);
+            if (sched.nativeKnotSettled !== loadGeneration) {
+                const trackerOn = typeof owner?.getEngineTruthToggle === 'function'
+                    ? owner.getEngineTruthToggle('knot_tracking')
+                    : owner?.getToggle?.('knot_tracking');
+                if (trackerOn === false) owner?.setToggle?.('knot_tracking', true);
+                else if (trackerOn === true) sched.nativeKnotSettled = loadGeneration;
+            }
             const knots = owner?.getKnotTelemetry?.() ?? null;
             const summary = viewportAdapter.applyNativeTransport({ sample: linkSample, knots, fraction: readNativeTransportThreshold() });
             renderNativeTransportLegend(summary);
