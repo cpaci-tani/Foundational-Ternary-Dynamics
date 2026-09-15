@@ -591,6 +591,7 @@ export class WasmBridgeProxy {
         if (SCENARIO_SCOPED_MESSAGE_TYPES.has(m.type)
             && Number(m.configurationToken) !== this._pendingConfigurationToken) return;
         if (m.type === 'ready') {
+            this._constants = (m.constants && typeof m.constants === 'object') ? Object.freeze({ ...m.constants }) : null;
             if (!m.artifactIdentity
                 || m.artifactIdentity.variant?.id !== 'wasm32-threads') {
                 this.artifactIdentityState = 'failed';
@@ -1237,9 +1238,7 @@ export class WasmBridgeProxy {
         return null;
     }
     sampleVAtRay() { return { positions: new Float32Array(0), V: new Float32Array(0), count: 0 }; }
-    // The worker does not currently post a constants payload, so there is no
-    // cached value to forward — return null (callers should use constants.js).
-    getConstants() { return null; }
+    getConstants() { return this._constants ?? null; }
 
     // ── Scenario / run control ──────────────────────────────────────────────
     /**
