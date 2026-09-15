@@ -34,7 +34,7 @@ const SCENARIO_SCOPED_MESSAGE_TYPES = new Set([
 // scenario-parity.spec.js pins this array exactly to TOGGLE_SPECS so a future
 // engine toggle addition cannot silently disappear from worker truth.
 export const SCALE0_ENGINE_TOGGLE_NAMES = Object.freeze([
-    'wave_propagation', 'coupling', 'damping', 'genesis', 'evaporation',
+    'wave_propagation', 'coupling', 'damping', 'genesis', 'genesis_deterministic', 'evaporation',
     'gauss_projection', 'forces', 'gravity', 'poisson_coulomb', 'movement',
     'lorentz_force', 'selective_damping', 'larmor_radiation', 'dual_substrate',
     'color_forces', 'strong_stress_energy', 'weak_transmutation', 'strong_force',

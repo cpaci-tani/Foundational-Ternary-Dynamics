@@ -70,6 +70,7 @@ inline constexpr GpuTermContract GPU_TERM_CONTRACT[] = {
     {"coupling", GpuTermImpl::NativeCuda, ToggleBackend::ANY},
     {"damping", GpuTermImpl::NativeCuda, ToggleBackend::ANY},
     {"genesis", GpuTermImpl::NativeCuda, ToggleBackend::ANY},
+    {"genesis_deterministic", GpuTermImpl::CpuOnly, ToggleBackend::CPU | ToggleBackend::JS},
     {"evaporation", GpuTermImpl::NativeCuda, ToggleBackend::ANY},
     // See header note (1): CPU 18-pt SOR (double) vs. GPU spectral FFT
     // (single) — statistical parity only, not the same algorithm.
