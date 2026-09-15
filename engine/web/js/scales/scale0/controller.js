@@ -176,6 +176,7 @@ export function bindUI(ctx) {
         loadScenario,
     });
 
+    ctx.physics = () => getActivePhysicsOwner(ctx);   // active Scale-0 physics owner (worker proxy or in-thread bridge)
     if (typeof window !== 'undefined') window.__ftdCtx = ctx;
     appRegistry.register('scale0Ctx', ctx);
 
