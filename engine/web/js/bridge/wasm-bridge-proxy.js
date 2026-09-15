@@ -20,6 +20,11 @@ const CTRL = { FRAME: 0, N: 1, TICK: 2, RUNNING: 3, PCOUNT: 4, TICKS_PER_FRAME: 
 const EMPTY_PARTS = () => ({ positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0), spin: new Float32Array(0), colorCharge: new Float32Array(0), locked: new Uint8Array(0), count: 0 });
 const EMPTY_VEC = () => ({ positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 });
 const EMPTY_VAL = () => ({ positions: new Float32Array(0), values: new Float32Array(0), count: 0 });
+const EMPTY_LINKS = () => ({
+    status: 'off', reason: '', L: 0, tick: 0,
+    links: new Float32Array(0), residual: new Float32Array(0),
+    invariant: 0, maxLocalChange: 0, maxResidual: 0, closure: 0, activeExchangeTerms: 0,
+});
 const MAX_INSPECTION_COORDINATES = 128;
 const SCENARIO_SCOPED_MESSAGE_TYPES = new Set([
     'ready', 'frame', 'configurationApplied', 'runningState', 'error',
@@ -1403,6 +1408,10 @@ export class WasmBridgeProxy {
     injectFluxBulk(records) { this._cmd('injectFluxBulk', records instanceof Float64Array ? records.buffer.slice(records.byteOffset, records.byteOffset + records.byteLength) : records); }
     setSorIterations(n) { this._sorIterations = Math.max(1, n | 0); this._cmd('setSorIterations', this._sorIterations); }
     getSorIterations() { return this._sorIterations ?? 6; }
+    setLinkEnergyObservation(on) { this._linkEnergyObservation = !!on; this._cmd('setLinkEnergyObservation', this._linkEnergyObservation); }
+    getLinkEnergyObservation() { return this._linkEnergyObservation ?? false; }
+    // Stride has no meaning for link transport; the sample is always keyed linkEnergy@1.
+    getLinkEnergyCurrent() { return this._wantSampler('linkEnergy', 1, EMPTY_LINKS); }
     injectWavepacket(...a) { this._cmd('injectWavepacket', ...a); }
     injectWaveVel(...a) { this._cmd('injectWaveVel', ...a); }
     createEntangledPair(...a) { this._cmd('createEntangledPair', ...a); }

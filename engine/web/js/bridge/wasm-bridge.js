@@ -133,6 +133,12 @@ const EMPTY_HISTORY_EVENTS = Object.freeze({
     rowCount: 0,
 });
 
+const EMPTY_LINK_ENERGY = Object.freeze({
+    status: 'off', reason: '', L: 0, tick: 0,
+    links: new Float32Array(0), residual: new Float32Array(0),
+    invariant: 0, maxLocalChange: 0, maxResidual: 0, closure: 0, activeExchangeTerms: 0,
+});
+
 // Generic delegate: run `fn` if the WASM module exposes both the bridge AND
 // the specified method, else return `fallback`. Collapses the two-line guard
 // block (`if (!this._module || !this._bridge) return X; if (typeof ... !==
@@ -546,6 +552,27 @@ export class WasmBridge {
     getSorIterations() {
         return (this._module && this._bridge && typeof this._module.getSorIterations === 'function')
             ? this._module.getSorIterations(this._bridge) : null;
+    }
+
+    setLinkEnergyObservation(on) {
+        if (this._module && this._bridge && typeof this._module.setLinkEnergyObservation === 'function') {
+            this._module.setLinkEnergyObservation(this._bridge, !!on);
+        }
+    }
+
+    // links / residual are views into observer memory; copy so later ticks cannot alias them.
+    getLinkEnergyCurrent() {
+        return _wasmCallOr(this, 'getLinkEnergyCurrent', EMPTY_LINK_ENERGY, (m, b) => {
+            const raw = m.getLinkEnergyCurrent(b);
+            return {
+                status: String(raw.status), reason: String(raw.reason),
+                L: raw.L | 0, tick: Number(raw.tick),
+                links: new Float32Array(raw.links), residual: new Float32Array(raw.residual),
+                invariant: Number(raw.invariant), maxLocalChange: Number(raw.maxLocalChange),
+                maxResidual: Number(raw.maxResidual), closure: Number(raw.closure),
+                activeExchangeTerms: raw.activeExchangeTerms >>> 0,
+            };
+        });
     }
 
     /** Apply a dependency-ordered toggle profile with one cache invalidation. */

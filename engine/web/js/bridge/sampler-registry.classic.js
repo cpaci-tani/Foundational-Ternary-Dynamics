@@ -7,6 +7,7 @@ self.FTD_SAMPLER_METHODS = {
     poynting: ['getPoyntingSampled', 'vec'],
     divJ: ['getDivJSampled', 'val'],
     fluxVector: ['getFluxVectorSampled', 'vec'],
+    linkEnergy: ['getLinkEnergyCurrent', 'links'],
     vorticity: ['getVorticitySampled', 'val'],
     helicity: ['getHelicitySampled', 'val'],
     kretschmann: ['getKretschmannSampled', 'val'],

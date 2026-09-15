@@ -31,6 +31,7 @@
 #include "ftd/scenarios.h"  // ftd::dispatch_scenario — ported JS scenario library
 #include "ftd/flux_cell.h"  // flux-cell region / pump / port controls
 #include "ftd/parallel.h"   // ftd::set_pool_threads (threaded build pool sizing)
+#include "ftd/link_energy_observer.h"  // observation-only link energy current
 #include "bindings_internal.h"
 
 using namespace emscripten;
@@ -71,6 +72,27 @@ static bool get_toggle(ftd::RenderBridge& rb, const std::string& name) {
 
 static void set_sor_iterations(ftd::RenderBridge& rb, int n) { rb.set_sor_iterations(n); }
 static int  get_sor_iterations(const ftd::RenderBridge& rb) { return rb.sor_iterations(); }
+
+static void set_link_energy_observation(ftd::RenderBridge& rb, bool on) { rb.set_link_energy_observation(on); }
+
+// links / residual are views into observer-owned memory; every JS consumer copies them.
+static val get_link_energy_current(ftd::RenderBridge& rb) {
+    const auto& obs = rb.link_energy_observer();
+    static const char* const kStatus[] = {"off", "warming", "ok", "unavailable"};
+    val result = val::object();
+    result.set("status", std::string(kStatus[static_cast<int>(obs.status())]));
+    result.set("reason", obs.reason());
+    result.set("L", obs.lattice_size());
+    result.set("tick", static_cast<double>(obs.tick()));
+    result.set("links", val(typed_memory_view(obs.links().size(), obs.links().data())));
+    result.set("residual", val(typed_memory_view(obs.residual().size(), obs.residual().data())));
+    result.set("invariant", obs.invariant());
+    result.set("maxLocalChange", obs.max_local_change());
+    result.set("maxResidual", obs.max_residual());
+    result.set("closure", obs.closure());
+    result.set("activeExchangeTerms", static_cast<unsigned int>(obs.active_exchange_terms()));
+    return result;
+}
 
 // ── Inject wrappers ──────────────────────────────────────────────────
 static void inject_particle_simple(ftd::RenderBridge& rb, int x, int y, int z, int state) {
@@ -539,6 +561,8 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     function("getToggle",          &get_toggle);
     function("setSorIterations",   &set_sor_iterations);
     function("getSorIterations",   &get_sor_iterations);
+    function("setLinkEnergyObservation", &set_link_energy_observation);
+    function("getLinkEnergyCurrent",     &get_link_energy_current);
 
     // Injection
     function("injectParticle", select_overload<void(ftd::RenderBridge&, int, int, int, int)>(&inject_particle_simple));

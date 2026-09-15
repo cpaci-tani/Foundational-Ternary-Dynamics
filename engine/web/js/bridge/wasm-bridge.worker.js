@@ -95,7 +95,7 @@ const gravitySamplerCadence = createBoundedSamplerCadence(GRAVITY_SAMPLER_INTERV
 // invalidated by the next WASM call, so copy every typed array out before the
 // payload crosses the postMessage boundary back to the main thread.
 const WORKER_COMMAND_ALLOWLIST = new Set([
-  'tickScale0', 'setToggle', 'setSorIterations', 'setDt', 'setOmega0',
+  'tickScale0', 'setToggle', 'setSorIterations', 'setLinkEnergyObservation', 'setDt', 'setOmega0',
   'setLangevinTemp', 'setLangevinGamma', 'setFluxBoundary', 'setFluxPeriodicAxis',
   'injectParticle', 'injectFlux', 'injectFluxBulk', 'injectWavepacket', 'injectWaveVel',
   'createEntangledPair', 'clearField', 'seedRandomFlux',
@@ -688,6 +688,20 @@ function postFrame(
       const [method, type] = spec;
       if (typeof mod[method] !== 'function') return;
       try {
+        if (type === 'links') {
+          const raw = mod[method](bridge);
+          if (!raw) return;
+          // links / residual are views into observer memory on the WASM heap — copy before posting.
+          samplers[key] = {
+            status: String(raw.status), reason: String(raw.reason),
+            L: raw.L | 0, tick: Number(raw.tick),
+            links: new Float32Array(raw.links || 0), residual: new Float32Array(raw.residual || 0),
+            invariant: Number(raw.invariant), maxLocalChange: Number(raw.maxLocalChange),
+            maxResidual: Number(raw.maxResidual), closure: Number(raw.closure),
+            activeExchangeTerms: raw.activeExchangeTerms >>> 0,
+          };
+          return;
+        }
         if (type === 'obj') {
           const raw = mod[method](bridge);
           if (raw) {

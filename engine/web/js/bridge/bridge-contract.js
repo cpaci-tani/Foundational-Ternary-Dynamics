@@ -106,6 +106,7 @@ export const SCALE0_SAMPLER_METHODS = Object.freeze({
     poynting:      'getPoyntingSampled',
     divJ:          'getDivJSampled',
     fluxVector:    'getFluxVectorSampled',
+    linkEnergy:    'getLinkEnergyCurrent',
     vorticity:     'getVorticitySampled',
     helicity:      'getHelicitySampled',
     kretschmann:   'getKretschmannSampled',
