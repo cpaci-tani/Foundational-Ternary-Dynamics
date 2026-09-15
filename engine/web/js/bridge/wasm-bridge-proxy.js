@@ -1401,7 +1401,8 @@ export class WasmBridgeProxy {
     injectParticle(...a) { this._cmd('injectParticle', ...a); }
     injectFlux(...a) { this._cmd('injectFlux', ...a); }
     injectFluxBulk(records) { this._cmd('injectFluxBulk', records instanceof Float64Array ? records.buffer.slice(records.byteOffset, records.byteOffset + records.byteLength) : records); }
-    setSorIterations(n) { this._cmd('setSorIterations', Math.max(1, n | 0)); }
+    setSorIterations(n) { this._sorIterations = Math.max(1, n | 0); this._cmd('setSorIterations', this._sorIterations); }
+    getSorIterations() { return this._sorIterations ?? 6; }
     injectWavepacket(...a) { this._cmd('injectWavepacket', ...a); }
     injectWaveVel(...a) { this._cmd('injectWaveVel', ...a); }
     createEntangledPair(...a) { this._cmd('createEntangledPair', ...a); }
