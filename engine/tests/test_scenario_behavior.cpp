@@ -3351,8 +3351,23 @@ void test_emergent_genesis_profile_matrix() {
                   << n100 << '/' << n120 << '\n';
         check(std::string(c.id) + " 120-tick history replays exactly",
               exact_replay(a, b));
-        check(std::string(c.id) + " matches the qualified finite-volume response",
+        // DETERMINISM PIN ONLY. These even-L=24 counts are not a seed-direction
+        // signal: on the same law, 2026-09-14 measurements gave (axial / body-diag /
+        // six-axis, tick 120) L=25 -> 1/3/6, L=33 -> 4/4/6, L=41 -> 2/3/7. Even L puts
+        // the seed off-centre and the centred divergence has a parity-cokernel floor
+        // on even boxes (poisson_solvers.cpp). See LEDGER draft FTD-1044.
+        check(std::string(c.id) + " replays the pinned even-L=24 count (determinism pin, not physics)",
               n100 == c.expected_100 && n120 == c.expected_120);
+    }
+
+    // Odd-L replay: counts are printed, not asserted (they vary with L).
+    for (const char* id : {"s0-seed-emergent-ic1", "s0-seed-emergent-ic1-diagonal", "s0-seed-emergent-ic1-isotropic"}) {
+        ftd::RenderBridge a(25), b(25);
+        a.force_cpu(); b.force_cpu();
+        check(std::string(id) + " (L=25) dispatches twice", ftd::dispatch_scenario(a, id) && ftd::dispatch_scenario(b, id));
+        ftd::test::run_for(a, 120); ftd::test::run_for(b, 120);
+        std::cout << "    " << id << " L=25 count@120=" << manifested_count(a) << '\n';
+        check(std::string(id) + " (L=25) 120-tick history replays exactly", exact_replay(a, b));
     }
 }
 
