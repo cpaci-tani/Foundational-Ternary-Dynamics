@@ -3033,6 +3033,13 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
     getCurlJSampled(stride = 2) { return this._getFieldSample('curlJ', stride, EMPTY_FIELD_SAMPLE); }
     getStateFieldSampled(stride = 1) { return this._getFieldSample('state', stride, EMPTY_SCALAR_SAMPLE); }
     getGaussResidualSampled(stride = 2) { return this._getFieldSample('gaussResidual', stride, EMPTY_SCALAR_SAMPLE); }
+    // The native WebSocket engine has no link energy observer (native transport overlay, Phase 1).
+    setLinkEnergyObservation() {}
+    getLinkEnergyCurrent() {
+        return { status: 'unavailable', reason: 'the native WebSocket engine does not provide the link energy observer',
+            L: 0, tick: 0, links: new Float32Array(0), residual: new Float32Array(0),
+            invariant: 0, maxLocalChange: 0, maxResidual: 0, closure: 0, activeExchangeTerms: 0 };
+    }
     getGravityFieldSampled(stride = 2) { return this._getFieldSample('gravity', stride, EMPTY_FIELD_SAMPLE); }
     getEMForceField(stride = 2) { return this._getFieldSample('em', stride, EMPTY_FIELD_SAMPLE); }
     getGravityForceField(stride = 2) { return this._getFieldSample('gravity', stride, EMPTY_FIELD_SAMPLE); }

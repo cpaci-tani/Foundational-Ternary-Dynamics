@@ -76,16 +76,21 @@ static int  get_sor_iterations(const ftd::RenderBridge& rb) { return rb.sor_iter
 static void set_link_energy_observation(ftd::RenderBridge& rb, bool on) { rb.set_link_energy_observation(on); }
 
 // links / residual are views into observer-owned memory; every JS consumer copies them.
+// They are exported only while the status is Ok; otherwise both are zero-length.
 static val get_link_energy_current(ftd::RenderBridge& rb) {
     const auto& obs = rb.link_energy_observer();
     static const char* const kStatus[] = {"off", "warming", "ok", "unavailable"};
+    static const float kEmpty = 0.0f;
+    const bool ok = obs.status() == ftd::LinkEnergyStatus::Ok;
     val result = val::object();
     result.set("status", std::string(kStatus[static_cast<int>(obs.status())]));
     result.set("reason", obs.reason());
     result.set("L", obs.lattice_size());
     result.set("tick", static_cast<double>(obs.tick()));
-    result.set("links", val(typed_memory_view(obs.links().size(), obs.links().data())));
-    result.set("residual", val(typed_memory_view(obs.residual().size(), obs.residual().data())));
+    result.set("links", ok ? val(typed_memory_view(obs.links().size(), obs.links().data()))
+                           : val(typed_memory_view(std::size_t{0}, &kEmpty)));
+    result.set("residual", ok ? val(typed_memory_view(obs.residual().size(), obs.residual().data()))
+                              : val(typed_memory_view(std::size_t{0}, &kEmpty)));
     result.set("invariant", obs.invariant());
     result.set("maxLocalChange", obs.max_local_change());
     result.set("maxResidual", obs.max_residual());

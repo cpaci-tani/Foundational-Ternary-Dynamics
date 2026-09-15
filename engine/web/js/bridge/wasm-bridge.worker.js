@@ -510,6 +510,7 @@ function postFrame(
   forceGravitySamplerBatch = false,
   allowUndemandedBoundedInstrument = false,
 ) {
+  const frameTransfer = [];  // freshly copied sampler buffers, moved (not cloned) with the frame
   if (!bridge) return;
   const vol = mod.getFluxVolume(bridge);            // refresh the flux cache in the shared heap
   const doubled = publishFlux(vol);
@@ -700,6 +701,7 @@ function postFrame(
             maxResidual: Number(raw.maxResidual), closure: Number(raw.closure),
             activeExchangeTerms: raw.activeExchangeTerms >>> 0,
           };
+          frameTransfer.push(samplers[key].links.buffer, samplers[key].residual.buffer);
           return;
         }
         if (type === 'obj') {
@@ -745,7 +747,7 @@ function postFrame(
                      samplers, knot, knotEvents, knotAgg,
                      inspect: lastInspect, forceAt: lastForceAt,
                      ...(digestMsg !== undefined ? { dynamicalStateDigest: digestMsg } : {}),
-                     ...(engineTogglesMsg ? { engineToggles: engineTogglesMsg } : {}) });
+                     ...(engineTogglesMsg ? { engineToggles: engineTogglesMsg } : {}) }, frameTransfer);
 }
 
 function loop() {

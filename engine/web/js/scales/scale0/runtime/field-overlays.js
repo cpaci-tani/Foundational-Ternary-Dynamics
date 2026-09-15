@@ -736,12 +736,11 @@ function measureKnotContributions(tr, sched) {
 function syncNativeTransportObservation(ctx, state, sched) {
     const want = !!state.fieldFlags.showNativeTransport;
     if (sched.nativeObservation === want) return;
+    if (!want) renderNativeTransportLegend(null);
     const owner = getActiveScale0Bridge(ctx, state);
-    if (typeof owner?.setLinkEnergyObservation !== 'function') return;
-    owner.setLinkEnergyObservation(want);
+    if (typeof owner?.setLinkEnergyObservation === 'function') owner.setLinkEnergyObservation(want);
     sched.nativeObservation = want;
     if (want) sched.nativeKnotSettled = null;  // re-assert native knots once when the overlay is switched on
-    if (!want) renderNativeTransportLegend(null);
 }
 
 function runJob(sched, slot) {
@@ -906,6 +905,13 @@ function runJob(sched, slot) {
         }
         case JOB_NATIVE_TRANSPORT: {
             const owner = getActiveScale0Bridge(ctx, state);
+            if (typeof owner?.getLinkEnergyCurrent !== 'function') {
+                renderNativeTransportLegend(viewportAdapter.applyNativeTransport({
+                    sample: { status: 'unavailable', reason: 'this engine connection does not provide the link energy observer' },
+                    knots: null,
+                }));
+                break;
+            }
             const linkSample = sampleCache.ensureSample('linkEnergy');
             // A scenario load rebuilds the engine bridge and drops the observation
             // switch; the engine then reports 'off'. Re-send it (observation-only).

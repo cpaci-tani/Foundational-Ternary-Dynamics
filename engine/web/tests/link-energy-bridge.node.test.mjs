@@ -12,12 +12,14 @@ test('both sampler registries map linkEnergy to getLinkEnergyCurrent', () => {
     assert.match(read('sampler-registry.classic.js'), /linkEnergy:\s*\['getLinkEnergyCurrent',\s*'links'\]/);
 });
 
-test('worker allows the observation command and copies link arrays off the heap', () => {
+test('worker allows the observation command, copies link arrays off the heap and transfers the copies', () => {
     const worker = read('wasm-bridge.worker.js');
     assert.match(worker, /'setLinkEnergyObservation'/);
     assert.match(worker, /type === 'links'/);
     assert.match(worker, /links: new Float32Array\(raw\.links/);
     assert.match(worker, /residual: new Float32Array\(raw\.residual/);
+    assert.match(worker, /frameTransfer\.push\(samplers\[key\]\.links\.buffer, samplers\[key\]\.residual\.buffer\)/);
+    assert.match(worker, /self\.postMessage\(\{ type: 'frame'[\s\S]*?\}, frameTransfer\)/);
 });
 
 test('proxy serves the cached linkEnergy@1 sample and forwards the observation switch', () => {
