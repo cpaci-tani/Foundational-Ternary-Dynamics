@@ -52,3 +52,16 @@ export function selectLinks(values, fraction = 0.05, cap = 20000) {
     candidates.sort((p, q) => Math.abs(values[q]) - Math.abs(values[p]));
     return { ids: Int32Array.from(candidates.slice(0, Math.max(0, cap | 0))), max };
 }
+
+// Writes each selected link's two halves into `positions` (4 vertices, 12 floats
+// per link) and records the receiving end: headAtNeighbour[i] = 1 when the value
+// is positive (transport toward the neighbour), else 0. Returns vertices written.
+export function writeSelectedLinks(L, values, ids, positions, headAtNeighbour) {
+    const n = Math.min(ids.length, Math.floor(positions.length / 12), headAtNeighbour.length);
+    for (let i = 0; i < n; i++) {
+        const id = ids[i];
+        writeLinkHalves(L, Math.floor(id / LINK_COUNT_PER_SITE), id % LINK_COUNT_PER_SITE, positions, 12 * i);
+        headAtNeighbour[i] = values[id] > 0 ? 1 : 0;
+    }
+    return 4 * n;
+}

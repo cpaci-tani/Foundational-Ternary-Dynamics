@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { LINK_DISPLACEMENT, siteIndex, writeLinkHalves, selectLinks } from '../js/link-geometry.js';
+import { LINK_DISPLACEMENT, siteIndex, writeLinkHalves, selectLinks, writeSelectedLinks } from '../js/link-geometry.js';
 
 const halves = (L, site, k) => {
     const out = new Float32Array(12);
@@ -78,4 +78,18 @@ test('selectLinks keeps exactly the links above the threshold, strongest first, 
     assert.deepEqual(Array.from(all.ids), [1, 0, 4, 5]);
     assert.deepEqual(Array.from(selectLinks(values, 0.05, 2).ids), [1, 0]);
     assert.equal(selectLinks(new Float32Array(9), 0.05, 10).ids.length, 0);
+});
+
+test('writeSelectedLinks writes four vertices per selected link and marks the receiving half', () => {
+    const L = 3;
+    const values = new Float32Array(9 * 27);
+    values[9 * siteIndex(L, 1, 1, 1) + 0] = 2;   // toward the +x neighbour
+    values[9 * siteIndex(L, 0, 0, 0) + 3] = -1;  // toward the owner
+    const { ids } = selectLinks(values, 0.05, 10);
+    const positions = new Float32Array(12 * ids.length);
+    const head = new Uint8Array(ids.length);
+    assert.equal(writeSelectedLinks(L, values, ids, positions, head), 8);
+    assert.deepEqual(Array.from(head), [1, 0]);
+    assert.deepEqual(Array.from(positions.slice(0, 3)), [1.5, 1.5, 1.5]);
+    assert.deepEqual(Array.from(positions.slice(9, 12)), [2.5, 1.5, 1.5]);
 });
