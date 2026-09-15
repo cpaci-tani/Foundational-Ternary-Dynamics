@@ -82,19 +82,40 @@ void independent_current() {
     check("links match an independent evaluation and F(j->i) = -F(i->j)", scale > 0 && worst <= 1e-14 * scale);
 }
 
-// T4: integrators that change the wave step report Unavailable with the reason.
+// T4: configurations that change or replace the wave step report Unavailable with the reason.
 void unavailable() {
-    for (const std::string toggle : {"symplectic_leapfrog", "verlet_wave_integrator"}) {
-        ftd::RenderBridge rb(17); rb.force_cpu();
-        ftd::dispatch_scenario(rb, "flux-pulse");
-        if (toggle == "symplectic_leapfrog") rb.toggles.symplectic_leapfrog = true;
-        else rb.toggles.verlet_wave_integrator = true;
-        rb.set_link_energy_observation(true);
-        rb.tick(); rb.tick();
-        const auto& obs = rb.link_energy_observer();
+    struct Case { const char* toggle; void (*configure)(ftd::RenderBridge&); };
+    const Case cases[] = {
+        {"symplectic_leapfrog", [](ftd::RenderBridge& rb) { rb.toggles.symplectic_leapfrog = true; }},
+        {"verlet_wave_integrator", [](ftd::RenderBridge& rb) { rb.toggles.verlet_wave_integrator = true; }},
+        {"lorentz_period2_floquet", [](ftd::RenderBridge& rb) { rb.toggles.lorentz_period2_floquet = true; }},
+        {"lorentz_bcc_time_floquet", [](ftd::RenderBridge& rb) { rb.toggles.lorentz_bcc_time_floquet = true; }},
+        {"wave_propagation", [](ftd::RenderBridge& rb) { rb.toggles.wave_propagation = false; }},
+    };
+    auto report = [](const std::string& toggle, const ftd::LinkEnergyObserver& obs) {
         check(toggle + ": status Unavailable", obs.status() == LinkEnergyStatus::Unavailable);
         check(toggle + ": reason names the toggle", obs.reason().find(toggle) != std::string::npos);
+    };
+    for (const auto& cs : cases) {
+        ftd::RenderBridge rb(17); rb.force_cpu();
+        ftd::dispatch_scenario(rb, "flux-pulse");
+        cs.configure(rb);
+        rb.set_link_energy_observation(true);
+        rb.tick(); rb.tick();
+        report(cs.toggle, rb.link_energy_observer());
     }
+    // matched_gauss_dynamics fails toggle validation, and tick() throws before the
+    // observer runs, unless the isolated sector is configured and explicitly
+    // initialized (FTD-0428); this uses test_matched_maxwell_integration's setup.
+    ftd::RenderBridge rb(16); rb.force_cpu();
+    rb.toggles.disable_all();
+    rb.toggles.movement = false;
+    rb.toggles.matched_gauss_dynamics = true;
+    rb.toggles.strict_validation = true;
+    check("matched_gauss_dynamics: isolated sector initializes", rb.initialize_matched_gauss_dynamics().valid);
+    rb.set_link_energy_observation(true);
+    rb.tick(); rb.tick();
+    report("matched_gauss_dynamics", rb.link_energy_observer());
 }
 
 // T3 (state half): engine state is bit-identical with the observer on or off.
@@ -161,6 +182,83 @@ void exchange_decomposition() {
     std::printf("    scenario profile: %.1f%% of sites above 1%% of the largest local change\n", 100.0 * frac);
     check("scenario profile with the thermostat: more than half the sites exchange energy off the links", frac > 0.5);
 }
+
+// Non-periodic flux boundaries: the law does not join opposite faces, so every
+// link whose neighbour leaves [0, L-1] stays exactly zero.
+void nonperiodic_boundary() {
+    const int L = 17;
+    struct Mode { const char* label; ftd::FluxBoundaryMode mode; };
+    const Mode modes[] = {
+        {"Reflective", ftd::FluxBoundaryMode::Reflective},
+        {"Dispersal", ftd::FluxBoundaryMode::Dispersal},
+    };
+    for (const auto& m : modes) {
+        const std::string label = std::string(m.label) + " boundary";
+        ftd::RenderBridge rb(L); rb.force_cpu();
+        ftd::dispatch_scenario(rb, "flux-pulse");
+        rb.toggles.flux_boundary = m.mode;
+        rb.set_link_energy_observation(true);
+        for (int t = 0; t < 20; ++t) rb.tick();
+        const auto& obs = rb.link_energy_observer();
+        check(label + ": status Ok", obs.status() == LinkEnergyStatus::Ok);
+        check(label + ": NonPeriodicBoundary bit set",
+              (obs.active_exchange_terms() & ftd::LinkExchangeTerm::NonPeriodicBoundary) != 0);
+        const auto& links = obs.links_exact();
+        const bool sized = links.size() == 9 * static_cast<std::size_t>(L) * L * L;
+        bool wrap_zero = sized;
+        std::size_t wrap_links = 0, inner_nonzero = 0;
+        if (sized) for (int x = 0; x < L; ++x) for (int y = 0; y < L; ++y) for (int z = 0; z < L; ++z) for (int k = 0; k < 9; ++k) {
+            const auto& d = ftd::LINK_DISPLACEMENT[k];
+            const int nx = x + d[0], ny = y + d[1], nz = z + d[2];
+            const bool wraps = nx < 0 || nx >= L || ny < 0 || ny >= L || nz < 0 || nz >= L;
+            const double v = links[9 * static_cast<std::size_t>((x * L + y) * L + z) + k];
+            if (wraps) { ++wrap_links; if (v != 0.0) wrap_zero = false; }
+            else if (v != 0.0) ++inner_nonzero;
+        }
+        std::printf("    %s: %zu wrap links, %zu non-zero non-wrapping links\n", label.c_str(), wrap_links, inner_nonzero);
+        check(label + ": every wrap link is exactly 0", sized && wrap_links > 0 && wrap_zero);
+        check(label + ": at least one non-wrapping link is non-zero", inner_nonzero > 0);
+    }
+}
+
+// The de Broglie clock's on-site Klein-Gordon term (phase_read) acts only at
+// manifested sites (state != 0) unless db_clock_coulomb is on, and flux-pulse
+// manifests none, so the site of largest |flux| is manifested before
+// observation starts. omega0 keeps its TermToggles default 1.0; no setter needed.
+void clock_term_named() {
+    ftd::RenderBridge rb(17); rb.force_cpu();
+    ftd::dispatch_scenario(rb, "flux-pulse");
+    const auto& vox = rb.voxels();
+    std::size_t site = 0;
+    for (std::size_t i = 1; i < vox.size(); ++i) if (vox[i].flux.mag2() > vox[site].flux.mag2()) site = i;
+    rb.set_state(static_cast<int>(site), +1);
+    rb.toggles.de_broglie_clock = true;
+    rb.set_link_energy_observation(true);
+    for (int t = 0; t < 10; ++t) rb.tick();
+    const auto& obs = rb.link_energy_observer();
+    std::printf("    de_broglie_clock: closure %.3e, terms 0x%x\n", obs.closure(), obs.active_exchange_terms());
+    check("de_broglie_clock: status Ok", obs.status() == LinkEnergyStatus::Ok);
+    check("de_broglie_clock: balance does not close (closure > 1e-9)", obs.closure() > 1e-9);
+    check("de_broglie_clock: DeBroglieClock bit set",
+          (obs.active_exchange_terms() & ftd::LinkExchangeTerm::DeBroglieClock) != 0);
+}
+
+// Switching the observer off releases every buffer.
+void release_on_disable() {
+    ftd::RenderBridge rb(17); rb.force_cpu();
+    ftd::dispatch_scenario(rb, "flux-pulse");
+    rb.set_link_energy_observation(true);
+    for (int t = 0; t < 3; ++t) rb.tick();
+    const auto& obs = rb.link_energy_observer();
+    check("release: status Ok after three ticks", obs.status() == LinkEnergyStatus::Ok);
+    check("release: links non-empty while Ok", !obs.links().empty());
+    rb.set_link_energy_observation(false);
+    check("release: status Off after disable", obs.status() == LinkEnergyStatus::Off);
+    check("release: links capacity 0", obs.links().capacity() == 0);
+    check("release: residual capacity 0", obs.residual().capacity() == 0);
+    check("release: links_exact capacity 0", obs.links_exact().capacity() == 0);
+    check("release: residual_exact capacity 0", obs.residual_exact().capacity() == 0);
+}
 }  // namespace
 
 int main() {
@@ -171,6 +269,9 @@ int main() {
     unavailable();
     state_neutral();
     exchange_decomposition();
+    nonperiodic_boundary();
+    clock_term_named();
+    release_on_disable();
     std::printf("%s (%d failures)\n", g_fail ? "FAILED" : "ALL PASS", g_fail);
     return g_fail ? 1 : 0;
 }

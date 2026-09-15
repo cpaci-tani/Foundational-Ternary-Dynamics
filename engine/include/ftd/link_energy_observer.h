@@ -34,6 +34,9 @@ inline constexpr std::uint32_t Coupling = 1u << 4;
 inline constexpr std::uint32_t AbsorbingBoundary = 1u << 5;
 inline constexpr std::uint32_t NonPeriodicBoundary = 1u << 6;
 inline constexpr std::uint32_t FluxCell = 1u << 7;
+inline constexpr std::uint32_t DeBroglieClock = 1u << 8;
+inline constexpr std::uint32_t EwBackgroundSweep = 1u << 9;
+inline constexpr std::uint32_t PairProductionTransmutation = 1u << 10;
 }  // namespace LinkExchangeTerm
 
 class LinkEnergyObserver {
@@ -62,7 +65,7 @@ public:
     std::uint32_t active_exchange_terms() const { return exchange_terms_; }
 
 private:
-    void compute(double c2);
+    void compute(double c2, bool periodic);
 
     bool enabled_ = false;
     bool have_cur_ = false;

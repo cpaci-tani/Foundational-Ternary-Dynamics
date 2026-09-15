@@ -27,6 +27,7 @@ const char* unavailable_reason(const RenderBridge& rb) {
     if (t.symplectic_leapfrog) return "symplectic_leapfrog changes the wave step";
     if (t.lorentz_period2_floquet) return "lorentz_period2_floquet varies the wave coefficient per tick";
     if (t.lorentz_bcc_time_floquet) return "lorentz_bcc_time_floquet varies the wave coefficient per tick";
+    if (t.matched_gauss_dynamics) return "matched_gauss_dynamics replaces the flux with a separate oriented-face evolution";
     if (!t.wave_propagation) return "wave_propagation is off";
     return nullptr;
 }
@@ -42,6 +43,12 @@ std::uint32_t exchange_terms(const RenderBridge& rb) {
     if (t.absorbing_boundary) m |= LinkExchangeTerm::AbsorbingBoundary;
     if (t.flux_boundary != FluxBoundaryMode::Periodic) m |= LinkExchangeTerm::NonPeriodicBoundary;
     if (t.flux_pump || t.flux_cell_port) m |= LinkExchangeTerm::FluxCell;
+    if (t.de_broglie_clock || t.db_clock_coulomb) m |= LinkExchangeTerm::DeBroglieClock;
+    if (t.ew_background_sweep) m |= LinkExchangeTerm::EwBackgroundSweep;
+    // weak_transmutation (a state sign flip; in dual mode a sum-preserving
+    // flux_L/flux_R swap) and evaporation alone (a state reset) write no flux,
+    // wave_vel or delta_j, so neither is named here.
+    if (t.pair_production) m |= LinkExchangeTerm::PairProductionTransmutation;
     return m;
 }
 
@@ -54,6 +61,27 @@ void LinkEnergyObserver::set_enabled(bool on) {
     have_prev_ = false;
     status_ = on ? LinkEnergyStatus::Warming : LinkEnergyStatus::Off;
     reason_.clear();
+    if (!on) {
+        // Release every buffer (about 240 bytes per site) so a switched-off
+        // observer costs nothing and exports no stale arrays.
+        std::vector<double>().swap(prev_);
+        std::vector<double>().swap(cur_);
+        std::vector<double>().swap(next_);
+        std::vector<double>().swap(scratch_);
+        std::vector<double>().swap(e_before_);
+        std::vector<double>().swap(e_after_);
+        std::vector<double>().swap(outflow_);
+        std::vector<double>().swap(links_d_);
+        std::vector<double>().swap(residual_d_);
+        std::vector<float>().swap(links_);
+        std::vector<float>().swap(residual_);
+        L_ = 0;
+        tick_ = 0;
+        invariant_ = 0.0;
+        max_local_change_ = 0.0;
+        max_residual_ = 0.0;
+        exchange_terms_ = 0;
+    }
 }
 
 void LinkEnergyObserver::before_tick(const RenderBridge& rb) {
@@ -87,7 +115,7 @@ void LinkEnergyObserver::after_tick(const RenderBridge& rb) {
     tick_ = static_cast<std::uint64_t>(rb.current_tick());
     exchange_terms_ = exchange_terms(rb);
     if (have_prev_) {
-        compute(C_WAVE * C_WAVE);
+        compute(C_WAVE * C_WAVE, rb.toggles.flux_boundary == FluxBoundaryMode::Periodic);
         status_ = LinkEnergyStatus::Ok;
     } else {
         status_ = LinkEnergyStatus::Warming;
@@ -101,7 +129,12 @@ void LinkEnergyObserver::after_tick(const RenderBridge& rb) {
 //   e_i(n+1/2) = 1/2 |u2_i - u1_i|^2 + 1/4 c2 sum_j w (u2_i - u2_j).(u1_i - u1_j)
 //   F(i->j)    = 1/4 c2 w (u1_i - u1_j).(s_i + s_j),  s = u2 - u0
 //   r_i        = e_i(n+1/2) - e_i(n-1/2) + sum_j F(i->j)
-void LinkEnergyObserver::compute(double c2) {
+// Under a non-periodic flux boundary the law does not connect a site to the
+// opposite face, so a link whose neighbour leaves [0, L-1] on any axis is
+// skipped entirely: no potential at either endpoint, no flow, links_d_ stays 0.
+// The boundary's own handling then appears as residual at boundary sites,
+// named by the NonPeriodicBoundary exchange bit.
+void LinkEnergyObserver::compute(double c2, bool periodic) {
     const int L = L_;
     const std::size_t N = static_cast<std::size_t>(L) * L * L;
     const std::vector<double>& u0 = prev_;
@@ -126,8 +159,10 @@ void LinkEnergyObserver::compute(double c2) {
         e_after_[i] += 0.5 * kin_after;
         for (int k = 0; k < 9; ++k) {
             const auto& d = LINK_DISPLACEMENT[k];
+            const int nx = x + d[0], ny = y + d[1], nz = z + d[2];
+            if (!periodic && (nx < 0 || nx >= L || ny < 0 || ny >= L || nz < 0 || nz >= L)) continue;
             const std::size_t j = static_cast<std::size_t>(
-                (wrap(x + d[0]) * L + wrap(y + d[1])) * L + wrap(z + d[2]));
+                (wrap(nx) * L + wrap(ny)) * L + wrap(nz));
             double pot_before = 0.0, pot_after = 0.0, flow = 0.0;
             for (int c = 0; c < 3; ++c) {
                 const double g0 = u0[3 * i + c] - u0[3 * j + c];
