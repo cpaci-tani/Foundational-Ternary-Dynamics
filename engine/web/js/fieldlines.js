@@ -183,6 +183,10 @@ export function buildDenseGrid(positions, vectors, count, N, stride) {
 
 let _i0 = 0, _i1 = 0, _t = 0;   // per-axis scratch for axisCoord
 function axisCoord(u, dim) {
+    // A non-finite coordinate has no field. NaN weights make the whole lookup
+    // NaN, which integrateGridInto's isFinite test turns into a stop; clamping
+    // it (the `!(u > 0)` branch below) would read an edge node's field instead.
+    if (!Number.isFinite(u)) { _i0 = 0; _i1 = 0; _t = NaN; return; }
     if (dim <= 1 || !(u > 0)) { _i0 = 0; _i1 = 0; _t = 0; return; }
     if (u >= dim - 1) { _i0 = dim - 1; _i1 = dim - 1; _t = 0; return; }
     _i0 = Math.floor(u); _i1 = _i0 + 1; _t = u - _i0;
@@ -391,8 +395,9 @@ export function rk4Step(fieldFn, x, y, z, h) {
 // its OWN specialized integrator (integrateGridInto / integrateFieldFnInto), so
 // the field-sampling choice costs no per-step branch — `integrateInto` dispatches
 // once per line:
-//   MODE_GRID    — nearest-sample lookup against the persistent index (Scale-0
-//                  hot path; this is the cost the profile flagged);
+//   MODE_GRID    — sampled field from the persistent index: trilinear on its
+//                  dense view, nearest sample when there is none (Scale-0 hot
+//                  path; this is the cost the profile flagged);
 //   MODE_FIELDFN — call the caller-supplied fieldFn, read its [x,y,z] return
 //                  (PE / Scale-1; fieldFn lives in fields.js and still returns a
 //                  fresh array — reading its 3 components is bit-identical to the
@@ -447,14 +452,25 @@ function normFieldFnInto(fieldFn, px, py, pz, dir, minMag) {
     _nz = dir * (vz / m);
 }
 
-// Normalized field at (px,py,pz) for the GRID path. Inlines lookupFieldInto's
-// nearest-sample scan directly (no wrapper frame) and normalizes with dir
-// folded in. `index` is the persistent index; its fields are passed by the
-// caller's locals. Writes (_nx,_ny,_nz). Bit-identical to normFieldFnInto over
-// the same sampled field because the lookup selects the same sample.
-function normGridInto(px, py, pz, dir, minMag) {
+// The ONE field source for the GRID path, writing (_fx,_fy,_fz): trilinear on
+// the dense view when the sample admits one, nearest sample otherwise.
+// integrateGridInto's stop test and step fallback read it too, not only the
+// RK4 stages, so a line stops on the field it follows. That is also the honest
+// stop. Under the sampler contract an omitted cell is a measured zero, and
+// only the dense view represents it. The nearest-sample index answers with the
+// nearest EMITTED sample, carrying a neighbour's vector one to two index cells
+// (4-8 voxels at stride 2) into a zero region. The trilinear field vanishes
+// wherever all eight surrounding nodes are omitted, so a line stops within one
+// step of the first zero node.
+function sampleGridInto(px, py, pz) {
     if (_gridIndex.dense) lookupFieldTrilinearInto(_gridIndex.dense, px, py, pz);
     else lookupFieldInto(_gridIndex, px, py, pz);
+}
+
+// Normalized field at (px,py,pz) for the GRID path, with dir folded in.
+// Writes (_nx,_ny,_nz); falls back to the step-local direction below minMag.
+function normGridInto(px, py, pz, dir, minMag) {
+    sampleGridInto(px, py, pz);
     const vx = _fx, vy = _fy, vz = _fz;
     const m = Math.sqrt(vx * vx + vy * vy + vz * vz);
     if (!Number.isFinite(m) || m <= 0 || m < minMag) {
@@ -480,15 +496,15 @@ function integrateGridInto(x0, y0, z0, h, maxSteps, minMag, bounds, originCenter
     let x = x0, y = y0, z = z0;
 
     for (let step = 0; step < maxSteps; step++) {
-        // Raw field at current position (magnitude/break test + step fallback).
-        lookupFieldInto(_gridIndex, x, y, z);
+        // Stop test + step fallback on the same field the RK4 stages integrate
+        // (see sampleGridInto for why this is also the honest stop).
+        sampleGridInto(x, y, z);
         const vx = _fx, vy = _fy, vz = _fz;
         const mag = Math.sqrt(vx * vx + vy * vy + vz * vz);
         if (!Number.isFinite(mag) || mag <= 0 || mag < minMag) break;
 
-        // Step-local fallback = dir-signed normalized raw field at (x,y,z).
-        // dir*(vx/mag) ≡ (dir*vx)/mag bit-for-bit, matching the old fbx/fby/fbz
-        // (which for backward came from the pre-negated field, (-vx)/mag).
+        // Step-local fallback = dir-signed normalized field at (x,y,z), which is
+        // therefore exactly k1. dir*(vx/mag) ≡ (dir*vx)/mag bit-for-bit.
         _fbx = dir * (vx / mag);
         _fby = dir * (vy / mag);
         _fbz = dir * (vz / mag);
