@@ -2,6 +2,8 @@
 
 A quick reference compilation of abstracts from all active papers and drafts in the FTD repository.
 
+Owner-excluded research was removed from this active catalog on 2026-09-15; see the [external archive receipt](../audits/RESEARCH_EXTERNALIZATION_2026-09-15.md) for preserved originals and hashes.
+
 ---
 
 ## DERIV_ALPHA_PRECISION.tex
@@ -15,13 +17,6 @@ We present this as a conjectured numerical identity, discuss the combinatorial o
 
 ---
 
-## DERIV_CASIMIR_RATCHET.tex
-**Path:** `docs/papers/speculative/DERIV_CASIMIR_RATCHET.tex`
-
-Zero-point energy (ZPE) in orthodox quantum electrodynamics is modeled as a divergent sum of half-harmonic oscillator modes whose isotropic fluctuations preclude macroscopic work extraction by thermodynamic fiat. Within Foundational Ternary Dynamics (FTD), we reinterpret ZPE not as stochastic vacuum fluctuations but as the \textbf{deterministic algorithmic polling} of a discrete cuboctahedral tensor network operating in its $\PT$-symmetric null space. We demonstrate that by engineering a nanoscale metamaterial boundary that explicitly breaks spatial parity ($\mathcal{P}$), the perfect destructive interference of the vacuum's complex conjugate polling states can be geometrically ``clipped,'' leaving a net imaginary residual that the network must rotate into the real physical manifold to preserve unitarity. The result is a spontaneous, continuous macroscopic direct current (DC)---a \textbf{Casimir Ratchet}---powered not by a thermal gradient but by the intrinsic computational overhead required to sustain the topology of discrete spacetime itself.
-
----
-
 ## DERIV_CLOSURE_RENORMALIZATION.tex
 **Path:** `docs/papers/src/DERIV_CLOSURE_RENORMALIZATION.tex`
 
@@ -32,31 +27,10 @@ A third layer formalizes observer boundary dynamics --- the mechanism by which t
 
 ---
 
-## DERIV_GEOMETRIC_BIOPHYSICS.tex
-**Path:** `docs/papers/speculative/DERIV_GEOMETRIC_BIOPHYSICS.tex`
-
-Orthodox evolutionary biology treats the macroscopic thermodynamic properties of life---such as the mammalian $37^\circ$C core temperature, Kleiber's $3/4$ metabolic scaling law, and deep-sea abyssal gigantism---as contingent products of natural selection and environmental happenstance. Within the discrete tensor network framework of Foundational Ternary Dynamics (FTD), we demonstrate that these biological constants are not evolutionary accidents but \textbf{strict algorithmic hardware requirements}---geometrically quantized exhaust gradients mandated by the network's cuboctahedral topology. By defining the algorithmic thermal bandwidth of liquid water ($\Theta_T \equiv 100$~K), we show that the entire terrestrial and marine biosphere obeys a symmetrical thermodynamic ladder anchored to the universal lemniscate-alpha baseline ($\G \approx 2.9587$). Deep-sea gigantism is formalized as a mandatory volumetric Ricci-flow dilution preventing localized topological singularities, and Kleiber's Law is derived as a graph-routing impedance constraint from the ratio of fundamental FTD integers ($N_c / N_{base} = 3/4$).
-
----
-
-## DERIV_GRAND_UNIFIED_MASS.tex
-**Path:** `docs/papers/speculative/DERIV_GRAND_UNIFIED_MASS.tex`
-
-Orthodox physics treats gravity as a fundamental force carried by a hypothetical spin-2 boson (the graviton), distinct from the information-theoretic structure of spacetime itself. Within the discrete tensor network framework of Foundational Ternary Dynamics (FTD), we demonstrate that \textbf{gravity is not a force}---it is the algorithmic process of \textbf{data compression}: the discrete Ricci flow by which the network minimizes its own memory cost by merging redundant boundary elements. From this single ontological principle, we derive Newton's gravitational constant $G$, the proton-to-electron mass ratio $\mu = m_p/m_e$, the iron-56 nuclear stability peak, the Feynman atomic number limit $Z = \lfloor 1/\alpha \rfloor = 137$, the Chandrasekhar stellar mass limit, and the Bekenstein--Hawking black hole entropy $S = A/4$ as geometric consequences of the lemniscate-alpha constant $\G \approx 2.9587$ and the fundamental lattice integers $\{3, 4, 7, 13\}$. We also record a numerical coincidence between the dark energy fraction $\Omega_\Lambda \approx 68.5\%$ and $\alpha^{-1}/2$; this is a value-match only, not a derivation. FTD supplies no native dark-energy source: its classical vacuum is zero-energy, so the framework predicts $\Lambda = 0$, and any nonzero value remains an open problem.
-
----
-
 ## DERIV_SOFTPLUS_RELU_DUALITY.tex
 **Path:** `docs/papers/src/DERIV_SOFTPLUS_RELU_DUALITY.tex`
 
 We prove that the Softplus function $\Man_\beta(z) = \beta^{-1}\ln(1 + e^{\beta z})$ is the \emph{unique} manifestation operator compatible with monotonicity, convexity, asymptotic linearity, and a single-species fermionic singularity structure (Theorem~\ref{thm:uniqueness}). The proof proceeds by mapping the analyticity strip to the punctured complex plane via $w = e^{\beta z}$, reducing the problem to the characterization of functions analytic on $\C \setminus (-\infty, 0]$ with a single logarithmic branch point at $w = -1$; Liouville's theorem then forces uniqueness. We show that the FTD master quadratic $x^2 - 16(G^{*})^2 x + 16(G^{*})^3 = 0$ admits a spectral representation as the characteristic polynomial of a $2 \times 2$ transfer matrix. In its canonical Frobenius companion form, the trace $16(G^{*})^2$ and determinant $16(G^{*})^3$ decompose identically into the lattice's $n = 16$ physical degrees of freedom and the lemniscate-alpha coupling $c = G^{*}$ (Theorem~\ref{thm:spectral}). The discriminant $\Delta = 64c^3(4c - 1)$ defines a $\PT$-symmetry phase boundary with mean-field critical exponent $\nu = 1/2$ (Theorem~\ref{thm:pt_transition}). Finally, we establish a structural correspondence between the Softplus temperature parameter $\beta$ and the Wilsonian RG scale: the zero-temperature limit $\beta \to \infty$ (ReLU) corresponds to the deep infrared, while finite $\beta$ corresponds to the ultraviolet lattice theory with thermally active modes (Proposition~\ref{prop:rg}).
-
----
-
-## DERIV_SONOLUMINESCENCE.tex
-**Path:** `docs/papers/speculative/DERIV_SONOLUMINESCENCE.tex`
-
-Single-bubble sonoluminescence (SBSL)---the emission of picosecond light flashes from acoustically driven cavitation bubbles---remains one of the most striking unexplained phenomena in classical hydrodynamics. The Rayleigh--Plesset equation, which assumes a continuous, infinitely compressible fluid, physically breaks down at the singularity of the collapse. Within the framework of Foundational Ternary Dynamics (FTD), we model SBSL not as a thermodynamic plasma anomaly, but as a \textbf{stress-induced topological phase transition} across a discrete cuboctahedral tensor network. We demonstrate that the emission of light is the strict algorithmic consequence of an emergency data-venting protocol---Topological Transduction---executed by the network to prevent a localized geometric gradient explosion when acoustic compression drives the local tension coupling beyond the $\PT$-symmetry breaking threshold $k_{crit} = 4/\G \approx 1.35$.
 
 ---
 
@@ -124,19 +98,6 @@ The continuum is an extraordinarily good approximation, but the approximation \e
 **Path:** `docs/papers/src/FTD_One_Unit_Final.tex`
 
 \noindent We trace the lifecycle of a hydrogen atom as a deductive chain within Foundational Ternary Dynamics (FTD), a framework postulating a cubic lattice $\ZZ^3$ with ternary states and local causality. The central object is the \emph{master quadratic} $x^2 - 16{G^{*}}^2 x + 16{G^{*}}^3 = 0$, whose coefficients are fixed by the lemniscatic constant ${G^{*}} = \sqrt{2}\,\Gamma(1/4)^2/(2\pi)$. Its roots yield $x_+ = 137.036\ldots$ (identified with $\alpha^{-1}$ at 1.26\,ppm) and $\lfloor x_- \rfloor = 3$ (the number of color charges, uniquely self-consistent in $D = 3$). From this single algebraic object, the gauge groups, the Higgs quartic $\lambda = 3/23$, the Bell violation $S = 2\sqrt{2}$, and the hydrogen spectrum follow. Every claim carries an epistemic tag: \etag{Axiom}, \etag{Theorem}, \etag{Selection}, \etag{Conjecture}, or \etag{Parametric Insertion}. Five selection principles are stated and critiqued. Falsification criteria are provided. This paper is accompanied by a complete derivation chain, a mathematical analysis of the discrete--continuous bridge, and an ontological constructor unifying the component results.
-
----
-
-## FTD_Riemann_Hypothesis.tex
-**Path:** `docs/papers/speculative/FTD_Riemann_Hypothesis.tex`
-
-We establish a chain of exact identities connecting a lattice coupling constant~$G^*$, the Jacobi theta function at the self-dual nome, the central $L$-function value of the CM elliptic curve $E:y^2=x^3-x$, and the Watson integral of the body-centered cubic lattice.
-These identities place $G^*$ at the unique fixed point of the modular transformation $\tau\mapsto -1/\tau$ --- the same self-duality that generates the functional equation $\xi(s)=\xi(1-s)$ of the Riemann zeta function.
-
-We prove a \emph{regularity ladder theorem} showing that discrete lattice sums converge to $C^m$ functions when dyadic shell coefficients satisfy a weighted $\ell^1$ condition, and that $G^*$ itself is a specific instance of this convergence via the theta series at $q=e^{-\pi}$.
-
-We then formulate a \emph{self-dual constraint conjecture}: if a lattice coupling constant is determined by self-consistency at the unique self-dual point of a modular form whose Mellin transform produces $\xi(s)$, then the zeros of $\xi(s)$ are constrained to the self-dual locus $\operatorname{Re}(s)=1/2$.
-We develop the mathematical infrastructure for this conjecture, identify the precise gaps separating it from a proof of the Riemann Hypothesis, and establish partial results within the CM framework where the Generalized Riemann Hypothesis for $L(E,s)$ is known.
 
 ---
 

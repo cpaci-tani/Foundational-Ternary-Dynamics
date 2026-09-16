@@ -129,7 +129,7 @@ Fourcier curves, the division-algebra tower, von Neumann factors, and other cros
 | File | Tag | Purpose |
 |---|---|---|
 | [EXPLR_NUMBER_THEORY.md](general_math/EXPLR_NUMBER_THEORY.md) | verified connections (some open) | The {3, 4, 7, 13} integers across modular forms, number theory, elliptic curves; the 42 nexus. |
-| [EXPLR_RIEMANN_ZETA_CONNECTION.md](number_theory/EXPLR_RIEMANN_ZETA_CONNECTION.md) | connections real but limited | Honest audit of seven claimed FTD–Riemann-zeta connections; most "derivations" are fits. |
+| [External RH research archive](../../audits/RESEARCH_EXTERNALIZATION_2026-09-15.md) | excluded from active FTD scope | Original zeta-connection assessment preserved externally; owner-requested move, 2026-09-15. |
 | [EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md](algebra/EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md) | computationally verified | The Fourcier curve's {1,2,4,8,16} frequencies are the Cayley-Jackson dimensions. |
 | [EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md](algebra/EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md) | [THEOREM] / [SELECTION] / [CONJECTURE] | Counter-rotation, lobe genesis, and the trefoil bridge of the Fourcier curve. |
 | [EXPLR_HALF_MOBIUS_LEMNISCATE.md](general_math/EXPLR_HALF_MOBIUS_LEMNISCATE.md) | [THEOREM] / [SELECTION] / [CONJECTURE] | Z₄ topology from period lattice to molecular orbitals; discriminant trichotomy. |

@@ -258,9 +258,9 @@ open.
 | FTD-0039 | Postulate 4 (26-Moore locality) — derived from P1 + symmetry | THEOREM (per Axiom Zero §2.3a) | UNAFFECTED |
 | FTD-0040 | Postulate 5 (Determinism) — independent globally; explicit finite-window update is deterministic | AXIOM globally / THEOREM on a specified finite computational window | CORRECTED 2026-07-25 — discreteness does not make an uncontained substrate finite-dimensional; Picard–Lindelöf cannot derive P5 without a global configuration space, regularity, support/decay, and […full record →](#ftd-0040-record) |
 | FTD-0041 | a_phys ≡ ℓ_P calibration declaration (with K_B = m_e mass anchor) | CALIBRATION (declared in SPEC_FTD.md, 2026-04-19) | NEW. **2026-05-03 update**: calibration tension surfaced (FTD-0130). Under the stated (a_phys = ℓ_P, K_B = m_e) calibration, the CLAUDE.md "G_N = 1/(b_3+N_c)² = 1/100 in lattice units" line is […full record →](#ftd-0041-record) |
-| FTD-0042 | Yang-Mills mass gap "proof" (FTD_Yang_Mills_Mass_Gap.tex) | RETRACTED 2026-04-19 (Session 3) | RESOLVED — moved to docs/papers/archive/retracted_under_reframe/ with retraction note |
-| FTD-0043 | Navier-Stokes regularity "proof" (FTD_Navier_Stokes.tex) | RETRACTED 2026-04-19 (Session 3) | RESOLVED — moved to docs/papers/archive/retracted_under_reframe/ with retraction note |
-| FTD-0044 | Per-voxel mass gap from manifestation threshold (Theorem 5.1 of retracted YM paper) | THEOREM (survives reframe; preserved in retracted-archive .tex; could anchor a smaller honest paper if owner wishes) | UNAFFECTED |
+| FTD-0042 | Yang-Mills mass gap "proof" (FTD_Yang_Mills_Mass_Gap.tex) | RETRACTED 2026-04-19 (Session 3) | RESOLVED — retraction note retained; paper artifacts moved outside FTD on 2026-09-15, archive ID 2026-09-15-checkpoint |
+| FTD-0043 | Navier-Stokes regularity "proof" (FTD_Navier_Stokes.tex) | RETRACTED 2026-04-19 (Session 3) | RESOLVED — retraction note retained; paper artifacts moved outside FTD on 2026-09-15, archive ID 2026-09-15-checkpoint |
+| FTD-0044 | Per-voxel mass gap from manifestation threshold (Theorem 5.1 of retracted YM paper) | THEOREM (survives reframe; original source preserved externally, independent proof retained; could anchor a smaller honest paper if owner wishes) | UNAFFECTED |
 | FTD-0045 | α_largeL ≈ 3.6 × α_ref (engine measurement at largest tested L, under a_phys ≡ ℓ_P) | HYPOTHESIS (calibration-conditional; falsifiable as stated) | RESOLVED (was FTD-0034 sub-claim; now standalone under calibration) |
 | FTD-0046 | FTD_Thermodynamic_Limit (PDF-only, no TeX source) | RETRACTED 2026-04-19 (Session 3) | RESOLVED — moved to docs/papers/archive/retracted_under_reframe/ with pdftotext extraction |
 | FTD-0047 | DERIV_THERMODYNAMIC_REFLEXION (PDF-only, no TeX source) | RETRACTED 2026-04-19 (Session 3) | RESOLVED — moved to docs/papers/archive/retracted_under_reframe/ with pdftotext extraction |
@@ -1344,7 +1344,7 @@ No numerical search, target fit, constitution, engine, or production change.
 - **statement:** A per-voxel mass gap exists from the manifestation threshold K_B; this holds at every site, in every region the framework actually exhibits. Specifically: spec(H) ⊂ {0} ∪ [K_B, ∞) on any finite Λ ⊂ ℤ³, with Δ = K_B = m_e ≈ 0.511 MeV under FTD-0041 calibration.
 - **tag:** THEOREM
 - **tag_history:** 2026-04-19 NEW (extracted from retracted YM paper Theorem 5.1); 2026-05-02 verification script added (Tier-I MC-T1.4 closure).
-- **proof_location:** `docs/papers/archive/retracted_under_reframe/FTD_Yang_Mills_Mass_Gap.tex` Theorem 5.1 (original argument); `scripts/proofs/proof_per_voxel_mass_gap.py` (5/5 tests PASS, 2026-05-02).
+- **proof_location:** Theorem 5.1 of the original YM paper (externally preserved; [archive receipt](../../../audits/RESEARCH_EXTERNALIZATION_2026-09-15.md)); `scripts/proofs/proof_per_voxel_mass_gap.py` (5/5 tests PASS, 2026-05-02).
 - **proof_status:** structural lower-bound spec(H) ⊂ {0} ∪ [K_B, ∞) verified via the manifestation-threshold rule. Full Hamiltonian-diagonalization proof of spectrum-density above K_B is outside session scope (continuum-limit territory).
 - **reframe_status:** UNAFFECTED — local statement, holds at every finite L without invoking thermodynamic limit.
 - **note:** this is the only YM-paper claim that survives the reframe cleanly. Could anchor a smaller, honest paper without the Clay-eligibility framing.

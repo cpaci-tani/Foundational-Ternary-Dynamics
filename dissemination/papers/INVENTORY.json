@@ -1,7 +1,7 @@
 {
   "generated": "2026-08-16T14:52:50.532112+00:00",
   "reframe_date": "2026-04-19",
-  "n_papers": 135,
+  "n_papers": 127,
   "rows": [
     {
       "stem": "ARCH_GEOMETRIC_STANDARD_MODEL",
@@ -89,23 +89,6 @@
       "notes": ""
     },
     {
-      "stem": "DERIV_CASIMIR_RATCHET",
-      "title": "-3emTopological Rectification of the Euclidean Vacuum: The Casimir Ratchet as a $$-Symmetry Breaking Engine in Discrete Tensor Network Dynamics",
-      "tex": "docs/papers/speculative/DERIV_CASIMIR_RATCHET.tex",
-      "md": null,
-      "pdf": null,
-      "location_class": "speculative",
-      "post_reframe": false,
-      "anti_target_clean": true,
-      "anti_target_offenses": [],
-      "has_source": true,
-      "size_kb": 17,
-      "last_modified": "2026-03-16T03:59:59.289555+00:00",
-      "epistemic_tier": 4,
-      "verdict": "RETIRE",
-      "notes": ""
-    },
-    {
       "stem": "DERIV_CLOSURE_RENORMALIZATION",
       "title": null,
       "tex": "docs/papers/src/DERIV_CLOSURE_RENORMALIZATION.tex",
@@ -170,40 +153,6 @@
       "size_kb": 222,
       "last_modified": "2026-03-16T03:59:59.261554+00:00",
       "epistemic_tier": 5,
-      "verdict": "RETIRE",
-      "notes": ""
-    },
-    {
-      "stem": "DERIV_GEOMETRIC_BIOPHYSICS",
-      "title": "-3emGeometric Biophysics: Algorithmic Thermoregulation, Deep-Sea Gigantism, and Metabolic Scaling via Discrete $$-Symmetric Tensor Network Dynamics",
-      "tex": "docs/papers/speculative/DERIV_GEOMETRIC_BIOPHYSICS.tex",
-      "md": null,
-      "pdf": null,
-      "location_class": "speculative",
-      "post_reframe": true,
-      "anti_target_clean": true,
-      "anti_target_offenses": [],
-      "has_source": true,
-      "size_kb": 19,
-      "last_modified": "2026-07-01T16:42:14.959821+00:00",
-      "epistemic_tier": 4,
-      "verdict": "RETIRE",
-      "notes": ""
-    },
-    {
-      "stem": "DERIV_GRAND_UNIFIED_MASS",
-      "title": "-3emThe Grand Unified Theory of Mass: Scale-Invariant Algorithmic Deduplication from Nuclear Geometry to Cosmological Singularities via Discrete $$-Symmetric Tensor Network Dynamics",
-      "tex": "docs/papers/speculative/DERIV_GRAND_UNIFIED_MASS.tex",
-      "md": null,
-      "pdf": null,
-      "location_class": "speculative",
-      "post_reframe": true,
-      "anti_target_clean": true,
-      "anti_target_offenses": [],
-      "has_source": true,
-      "size_kb": 19,
-      "last_modified": "2026-06-28T00:32:29.433820+00:00",
-      "epistemic_tier": 4,
       "verdict": "RETIRE",
       "notes": ""
     },
@@ -341,23 +290,6 @@
       "last_modified": "2026-04-20T03:09:18.269741+00:00",
       "epistemic_tier": 2,
       "verdict": "KEEP",
-      "notes": ""
-    },
-    {
-      "stem": "DERIV_SONOLUMINESCENCE",
-      "title": "-3emTopological Transduction: A Geometric Derivation of Sonoluminescence from Discrete $$-Symmetric Tensor Network Dynamics",
-      "tex": "docs/papers/speculative/DERIV_SONOLUMINESCENCE.tex",
-      "md": null,
-      "pdf": null,
-      "location_class": "speculative",
-      "post_reframe": false,
-      "anti_target_clean": true,
-      "anti_target_offenses": [],
-      "has_source": true,
-      "size_kb": 16,
-      "last_modified": "2026-03-16T03:59:59.283554+00:00",
-      "epistemic_tier": 4,
-      "verdict": "RETIRE",
       "notes": ""
     },
     {
@@ -569,23 +501,6 @@
       "notes": ""
     },
     {
-      "stem": "FTD_Navier_Stokes",
-      "title": null,
-      "tex": "docs/papers/archive/retracted_under_reframe/FTD_Navier_Stokes.tex",
-      "md": null,
-      "pdf": "docs/papers/archive/retracted_under_reframe/FTD_Navier_Stokes.pdf",
-      "location_class": "retracted",
-      "post_reframe": true,
-      "anti_target_clean": true,
-      "anti_target_offenses": [],
-      "has_source": true,
-      "size_kb": 30,
-      "last_modified": "2026-04-20T03:09:18.046064+00:00",
-      "epistemic_tier": 5,
-      "verdict": "ARCHIVED",
-      "notes": ""
-    },
-    {
       "stem": "FTD_One_Unit_Final",
       "title": "One Unit of Existence [6pt] The Lifecycle of a Hydrogen Atom from Lattice Geometry to Dissolution",
       "tex": "docs/papers/src/FTD_One_Unit_Final.tex",
@@ -673,23 +588,6 @@
       "notes": ""
     },
     {
-      "stem": "FTD_Riemann_Hypothesis",
-      "title": null,
-      "tex": "docs/papers/speculative/FTD_Riemann_Hypothesis.tex",
-      "md": null,
-      "pdf": null,
-      "location_class": "speculative",
-      "post_reframe": false,
-      "anti_target_clean": true,
-      "anti_target_offenses": [],
-      "has_source": true,
-      "size_kb": 31,
-      "last_modified": "2026-03-23T13:42:05.246687+00:00",
-      "epistemic_tier": 4,
-      "verdict": "RETIRE",
-      "notes": ""
-    },
-    {
       "stem": "FTD_Spatial_Correlations",
       "title": null,
       "tex": null,
@@ -738,40 +636,6 @@
       "last_modified": "2026-05-26T18:39:51.804538+00:00",
       "epistemic_tier": 2,
       "verdict": "KEEP",
-      "notes": ""
-    },
-    {
-      "stem": "FTD_Yang_Mills_Mass_Gap",
-      "title": null,
-      "tex": "docs/papers/archive/retracted_under_reframe/FTD_Yang_Mills_Mass_Gap.tex",
-      "md": null,
-      "pdf": "docs/papers/archive/retracted_under_reframe/FTD_Yang_Mills_Mass_Gap.pdf",
-      "location_class": "retracted",
-      "post_reframe": true,
-      "anti_target_clean": true,
-      "anti_target_offenses": [],
-      "has_source": true,
-      "size_kb": 31,
-      "last_modified": "2026-04-20T03:09:18.117953+00:00",
-      "epistemic_tier": 5,
-      "verdict": "ARCHIVED",
-      "notes": ""
-    },
-    {
-      "stem": "LETTER_HERMITIAN_COPE",
-      "title": null,
-      "tex": "docs/papers/speculative/LETTER_HERMITIAN_COPE.tex",
-      "md": null,
-      "pdf": null,
-      "location_class": "speculative",
-      "post_reframe": false,
-      "anti_target_clean": true,
-      "anti_target_offenses": [],
-      "has_source": true,
-      "size_kb": 8,
-      "last_modified": "2026-03-26T03:35:59.882718+00:00",
-      "epistemic_tier": 4,
-      "verdict": "RETIRE",
       "notes": ""
     },
     {
@@ -2311,5 +2175,10 @@
       "verdict": "ARCHIVED",
       "notes": ""
     }
-  ]
+  ],
+  "maintenance": {
+    "date": "2026-09-15",
+    "action": "Removed eight externally archived research papers; retained row classifications unchanged.",
+    "receipt": "docs/audits/RESEARCH_EXTERNALIZATION_2026-09-15.md"
+  }
 }

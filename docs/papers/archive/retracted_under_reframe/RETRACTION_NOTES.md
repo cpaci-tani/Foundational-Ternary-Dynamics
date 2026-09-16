@@ -1,5 +1,11 @@
 # Retracted Under the Undefined-Boundary Reframe
 
+> **Storage update, 2026-09-15:** At the owner's request, the NS/YM `.tex`
+> and `.pdf` artifacts moved outside FTD. Their retraction status is unchanged.
+> The inventory and disposition below are the historical record; the two
+> thermodynamic PDF-only artifacts remain here. See the
+> [external archive receipt](../../../audits/RESEARCH_EXTERNALIZATION_2026-09-15.md) for hashes and recovery.
+
 **Status:** four papers retracted on 2026-04-19 because their load-bearing arguments rest on completed-infinity reasoning that the framework no longer admits. See `docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md` and `reframe_deployment/CANONICAL_REFRAME.md`.
 
 This directory preserves the retracted artifacts for evidentiary record. **None of these papers should be cited as part of the FTD portfolio.** Where a paper's central claim survives in a finitary form, that surviving claim is recorded in `docs/theory/07_assessment/core_ledgers/LEDGER.md`.
@@ -22,7 +28,7 @@ This directory preserves the retracted artifacts for evidentiary record. **None 
 - **LEDGER row:** FTD-0044 — "Per-voxel mass gap (THEOREM, survives reframe)."
 - **Future work:** the surviving theorem could anchor a smaller, honest paper — focused on the per-voxel statement, with no Clay-eligibility framing. Owner discretion.
 
-**Source assessment:** [`REDERIVE_REPORT_YM_NS.md`](../../../theory/07_assessment/archive_session_outputs/REDERIVE_REPORT_YM_NS.md).
+**Source assessment:** [`REDERIVE_REPORT_YM_NS.md`](../../../theory/07_assessment/campaigns/archive_session_outputs/REDERIVE_REPORT_YM_NS.md).
 
 ---
 
@@ -42,7 +48,7 @@ This directory preserves the retracted artifacts for evidentiary record. **None 
 - **LEDGER row:** FTD-0043 — "Navier-Stokes regularity proof — RETRACTED 2026-04-19."
 - **Recommended replacement (if any):** a one-paragraph philosophical-position paper articulating why classical Navier-Stokes regularity proofs do not transfer to undefined-boundary lattice substrates. Not currently planned.
 
-**Source assessment:** [`REDERIVE_REPORT_YM_NS.md`](../../../theory/07_assessment/archive_session_outputs/REDERIVE_REPORT_YM_NS.md).
+**Source assessment:** [`REDERIVE_REPORT_YM_NS.md`](../../../theory/07_assessment/campaigns/archive_session_outputs/REDERIVE_REPORT_YM_NS.md).
 
 ---
 

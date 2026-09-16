@@ -6,7 +6,7 @@ Published outputs and paper source trees for Foundational Ternary Dynamics.
 
 - Active PDFs live directly in `docs/papers/`.
 - Archived PDFs live under `docs/papers/archive/`.
-- TeX source trees live under `docs/papers/src/` and `docs/papers/speculative/`.
+- TeX source trees live under `docs/papers/src/`; the retained finitude source remains in `speculative/`.
 - Figure source assets live under `docs/papers/src/figures/`.
 - New active PDFs should not be left behind in `src/` or `speculative/`.
 
@@ -16,7 +16,7 @@ Published outputs and paper source trees for Foundational Ternary Dynamics.
 papers/
 ├── *.pdf                # All active paper PDFs and exported figure PDFs
 ├── *.tex, *.md          # Root-level companion files and paper indexes
-├── speculative/         # Speculative paper TeX sources; PDFs publish to root
+├── speculative/         # Retained canonical finitude source
 ├── src/                 # Main paper TeX sources; PDFs publish to root
 │   └── figures/         # Figure sources and source-only support assets
 └── archive/             # Historical versions, superseded papers, unused figures
@@ -28,7 +28,7 @@ This directory is the single active PDF shelf for the project. It includes:
 
 - core/published paper PDFs
 - PDFs compiled from `src/`
-- PDFs compiled from `speculative/`
+- the retained finitude paper when compiled
 - exported figure PDFs that are still active
 
 ## Root-Level Companion Files
@@ -70,26 +70,20 @@ See `docs/papers/archive/pdf_only_no_source/README.md` for per-paper triage deta
 
 See `docs/papers/archive/retracted_under_reframe/RETRACTION_NOTES.md`.
 
-## speculative/
+## Retained finitude source and external research
 
-Speculative extensions and applications of FTD to open mathematical problems.
+`speculative/FTD_Finitude_Theorem.tex` remains because its existing preamble identifies it as canonical framework material.
 
-- `speculative/` keeps the TeX source files.
-- Their active compiled PDFs now live in `docs/papers/`.
+The RH paper, Casimir ratchet, geometric biophysics, grand unified mass,
+sonoluminescence, and Hermitian letter sources were moved outside FTD at the
+owner's request on 2026-09-15. The already-retracted Navier–Stokes and
+Yang–Mills paper sources/PDFs were moved with them. Their prior scientific
+statuses are unchanged; they are not active publications in this tree.
 
-| Paper | Description |
-|-------|-------------|
-| DERIV_CASIMIR_RATCHET | Casimir ratchet mechanism |
-| DERIV_GEOMETRIC_BIOPHYSICS | Geometric biophysics applications |
-| DERIV_GRAND_UNIFIED_MASS | Grand unified mass formula |
-| DERIV_SONOLUMINESCENCE | Sonoluminescence from lattice dynamics |
-| FTD_Finitude_Theorem | Why infinity cannot be physical (post-reframe: now canonical, see preamble) |
-| FTD_Riemann_Hypothesis | Riemann Hypothesis connection — **PARKED for owner deeper read (`docs/theory/07_assessment/PARKING_LOT.md`)** |
-| LETTER_HERMITIAN_COPE | Open letter on the Hermitian inner product |
-
-**Retracted under the undefined-boundary reframe:**
-- `FTD_Yang_Mills_Mass_Gap` — moved to `docs/papers/archive/retracted_under_reframe/`. Per-voxel mass gap (Theorem 5.1) preserved in archived `.tex` (LEDGER FTD-0044). See `RETRACTION_NOTES.md`.
-- `FTD_Navier_Stokes` — moved to `docs/papers/archive/retracted_under_reframe/`. No surviving Clay-eligible content. See `RETRACTION_NOTES.md`.
+See the [external archive receipt](../audits/RESEARCH_EXTERNALIZATION_2026-09-15.md) for original paths,
+SHA-256 digests and recovery instructions. Retraction notes remain in
+`archive/retracted_under_reframe/RETRACTION_NOTES.md`. The per-voxel mass-gap
+proof remains in `scripts/proofs/proof_per_voxel_mass_gap.py`.
 
 ## src/
 

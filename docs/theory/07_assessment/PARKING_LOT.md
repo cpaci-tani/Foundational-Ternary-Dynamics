@@ -8,14 +8,6 @@
 
 ## Parked items
 
-### 3 — Riemann hypothesis paper (`FTD_Riemann_Hypothesis.tex`)
-
-- **Status:** PARKED.
-- **Background:** classifier flagged this paper for "deeper user read for latent completed-infinity reasoning that doesn't surface as keywords" (`FLAGGED_PASSAGES_PAPERS.md` methodological caveat). The Riemann hypothesis itself involves the analytic continuation of ζ(s) over the completed complex plane — possibly proscribed in its standard formulation.
-- **Why parked:** owner judgment needed on whether to (a) re-derive in finitary terms, (b) demote to conjecture-paper status, or (c) retract entirely (parallel to YM/NS).
-- **Where to start:** read `docs/papers/speculative/FTD_Riemann_Hypothesis.tex` end to end with `CANONICAL_REFRAME.md` Q1–Q4 in mind. Decide disposition.
-- **Estimated effort:** 4–8 hours of owner reading + judgment.
-
 ### 5 — Manuscript v1 + v2 reframe sweep (~175 chapters across 4 locations)
 
 - **Status:** PARKED.
@@ -71,3 +63,10 @@
 2. Confirm the reasoning for each item is still valid (priorities may have shifted).
 3. Move items back to active work via a `CHANGELOG_REFRAME.md` entry naming the move + the planned approach.
 4. Update the table at the top of this file with the move-out date.
+
+## Removed from the active parking lot — 2026-09-15
+
+Former item 3, the Riemann hypothesis paper, was moved outside FTD at the
+owner's request. This is a scope disposition, not a mathematical retraction
+or promotion. It is no longer queued as FTD work. The original source and
+its context are preserved; see the [external archive receipt](../../audits/RESEARCH_EXTERNALIZATION_2026-09-15.md).

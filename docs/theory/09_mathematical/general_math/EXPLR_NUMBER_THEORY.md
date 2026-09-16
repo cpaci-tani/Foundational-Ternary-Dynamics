@@ -672,7 +672,7 @@ The fact that FTD discovers these integers through physical reasoning (discrete 
 
 ## Cross-References
 
-- **Riemann zeta connections:** [EXPLR_RIEMANN_ZETA_CONNECTION.md](../number_theory/EXPLR_RIEMANN_ZETA_CONNECTION.md)
+- **Riemann zeta connections (external archive):** [preservation receipt](../../../audits/RESEARCH_EXTERNALIZATION_2026-09-15.md); removed from active FTD scope on 2026-09-15.
 - **Ontological hierarchy:** [FOUND_ONTOLOGICAL_GENESIS.md](../../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md)
 - **Claims tracking:** [REF_CLAIMS_MATRIX.md](../../07_assessment/REF_CLAIMS_MATRIX.md)
 - **FTD Reference:** [SPEC_FTD_REFERENCE.md](../../01_reference/SPEC_FTD_REFERENCE.md)

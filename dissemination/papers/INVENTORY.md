@@ -2,7 +2,9 @@
 
 **Generated:** 2026-08-16 14:52 UTC  
 **Reframe date:** 2026-04-19  
-**Total papers:** 135
+**Total papers:** 127
+
+**Maintenance, 2026-09-15:** Eight owner-excluded papers moved outside FTD; [archive receipt](../../docs/audits/RESEARCH_EXTERNALIZATION_2026-09-15.md). Retained classifications are unchanged.
 
 **Regenerate** with `python scripts/build_paper_inventory.py`.
 
@@ -64,7 +66,7 @@ Tier 1 = bulletproof math theorems. Tier 5 = pre-reframe / closed-negative / PDF
 | ch5_physics | 3 | legacy | Y | ✗ | ✓ | — |
 | semantic_ontology | 3 | draft | Y | ✗ | ✓ | The Semantic Ontology of Actualization [2pt] Clocks, weights, and the common architecture  |
 
-## RETIRE (59)
+## RETIRE (53)
 
 | Stem | Tier | Loc | Reframe | A-T clean | Source | Title / Notes |
 |---|---|---|---|---|---|---|
@@ -95,14 +97,8 @@ Tier 1 = bulletproof math theorems. Tier 5 = pre-reframe / closed-negative / PDF
 | toymodel | 2 | draft | Y | ✓ | PDF only | — |
 | trichotomy | 2 | draft | Y | ✓ | PDF only | — |
 | DERIV_ALPHA_PRECISION | 4 | draft-src | N | ✓ | ✓ | — |
-| DERIV_CASIMIR_RATCHET | 4 | speculative | N | ✓ | ✓ | -3emTopological Rectification of the Euclidean Vacuum: The Casimir Ratchet as a $$-Symmetr |
-| DERIV_GEOMETRIC_BIOPHYSICS | 4 | speculative | Y | ✓ | ✓ | -3emGeometric Biophysics: Algorithmic Thermoregulation, Deep-Sea Gigantism, and Metabolic  |
-| DERIV_GRAND_UNIFIED_MASS | 4 | speculative | Y | ✓ | ✓ | -3emThe Grand Unified Theory of Mass: Scale-Invariant Algorithmic Deduplication from Nucle |
-| DERIV_SONOLUMINESCENCE | 4 | speculative | N | ✓ | ✓ | -3emTopological Transduction: A Geometric Derivation of Sonoluminescence from Discrete $$- |
 | FOUND_ONTIC_INCOMPLETENESS | 4 | draft-src | N | ✓ | ✓ | — |
 | FTD_Finitude_Theorem | 4 | speculative | Y | ✓ | ✓ | — |
-| FTD_Riemann_Hypothesis | 4 | speculative | N | ✓ | ✓ | — |
-| LETTER_HERMITIAN_COPE | 4 | speculative | N | ✓ | ✓ | — |
 | PAPER_0A_PERIOD_DESCENT | 4 | draft-src | N | ✓ | ✓ | Three Independent Paths to a Single Constant: [0.3cm] Period Descent and the Convergence o |
 | PAPER_0B_THREE_CONSTANTS | 4 | draft-src | N | ✓ | ✓ | The Three Geometric Constants: [0.3cm] $$, $$, and $G^*$ |
 | PAPER_0E_ARITHMETIC_GEOMETRIC_EQUIVALENCE | 4 | draft-src | N | ✓ | ✓ | The Arithmetic-Geometric Equivalence: [0.3cm] Why the Cubic Lattice, the Lemniscate, and t |
@@ -128,7 +124,7 @@ Tier 1 = bulletproof math theorems. Tier 5 = pre-reframe / closed-negative / PDF
 | SPEC_MASTER_QUADRATIC_DISCRETE_SPACETIME | 5 | pdf-only | N | ✓ | PDF only | — |
 | SPEC_MASTER_QUADRATIC_PAPER | 5 | pdf-only | N | ✓ | PDF only | — |
 
-## ARCHIVED (31)
+## ARCHIVED (29)
 
 | Stem | Tier | Loc | Reframe | A-T clean | Source | Title / Notes |
 |---|---|---|---|---|---|---|
@@ -160,8 +156,6 @@ Tier 1 = bulletproof math theorems. Tier 5 = pre-reframe / closed-negative / PDF
 | trd_fine_structure | 4 | archived | N | ✓ | ✓ | — |
 | white_paper_master_quadratic | 4 | archived | Y | ✓ | ✓ | The Master Quadratic of Discrete Spacetime: Deriving $^-1$ from Lattice Gauge Theory |
 | DERIV_THERMODYNAMIC_REFLEXION | 5 | retracted | N | ✓ | PDF only | — |
-| FTD_Navier_Stokes | 5 | retracted | Y | ✓ | ✓ | — |
-| FTD_Yang_Mills_Mass_Gap | 5 | retracted | Y | ✓ | ✓ | — |
 | RETRACTION_NOTES | 5 | retracted | Y | ✓ | ✓ | — |
 
 ## Anti-target offenses (papers with un-negated 'derive α' / 'no free parameters' / 'first-principles α' phrases)
