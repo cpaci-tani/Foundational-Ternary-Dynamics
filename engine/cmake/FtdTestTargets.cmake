@@ -383,6 +383,10 @@ if(WIN32)
 endif()
 ftd_add_test(test_native_telemetry_scheduler tests/test_native_telemetry_scheduler.cpp
              TIMEOUT 60 LABELS unit scale0)
+# Idle auto-stop decision table (2026-09-16 spec): pure, socket-free, no
+# ftd_core needed — every timestamp is an explicit steady_clock::time_point.
+ftd_add_test(test_ws_idle_policy tests/test_ws_idle_policy.cpp
+             NO_CORE TIMEOUT 60 LABELS unit scale0)
 ftd_add_test(test_tick_preflight tests/test_tick_preflight.cpp
              TIMEOUT 60 LABELS unit scale0)
 

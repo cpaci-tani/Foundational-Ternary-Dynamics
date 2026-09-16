@@ -34,6 +34,23 @@ import sys
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlsplit
 
+# server_controls.py lives next to this file. `python engine/web/serve.py`
+# already puts the script's own directory on sys.path[0], but a test (or
+# any other loader) that execs this module via importlib from a different
+# cwd does not — insert defensively so `import server_controls` resolves
+# either way.
+_SERVE_DIR = os.path.dirname(os.path.abspath(__file__))
+if _SERVE_DIR not in sys.path:
+    sys.path.insert(0, _SERVE_DIR)
+import server_controls
+
+# Idle auto-stop + "stop all engine servers" (spec 2026-09-16-idle-shutdown-
+# and-kill-all.md, §2-5): one process-lifetime controller. Every new route
+# handler, the activity clock, and the idle watchdog thread live in
+# server_controls.py — see NoCacheHandler.do_GET/do_POST and main() below
+# for its three-line hook.
+CONTROLS = server_controls.ServerControls()
+
 
 # ── GPU server (ws_server.exe) launcher paths ────────────────────────────────
 # The splash screen's "GPU Acceleration" card talks to the three /api/gpu-server/
@@ -170,6 +187,8 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
     # ── GPU server (ws_server.exe) launcher API — loopback dev server only ──
     def do_GET(self):
         route = self.path.split("?", 1)[0]
+        if CONTROLS.handle(self, route):
+            return
         if route in ("/api/lattice/records/catalog", "/api/lattice/records/checkpoint"):
             return self._record_lattice(route)
         if route == "/api/strict-hydro/status":
@@ -224,6 +243,8 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):
         route = self.path.split("?", 1)[0]
+        if CONTROLS.handle(self, route):
+            return
         if route == "/api/gpu-server/start":
             return self._gpu_start()
         return self.send_error(404, "Not found")
@@ -260,16 +281,17 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
         if not os.path.isfile(WS_SERVER_EXE):
             return self._send_json(
                 {"error": "ws_server.exe not built — run engine\\build_native.bat"}, 404)
-        lattice = 0
-        length = int(self.headers.get("Content-Length", 0) or 0)
-        if length:
-            try:
-                lattice = int((json.loads(self.rfile.read(length) or b"{}") or {}).get("lattice", 0))
-            except (ValueError, TypeError):
-                lattice = 0
+        body = server_controls.read_json_body(self)
+        try:
+            lattice = int(body.get("lattice", 0))
+        except (ValueError, TypeError):
+            lattice = 0
         args = [WS_SERVER_EXE]
         if 0 < lattice <= 256:  # 0 / out-of-range → the server picks its own default
             args.append(str(lattice))
+        # idleMinutes/autoStop (spec §3): at most one extra validated flag,
+        # never anything else derived from the request body.
+        args.extend(server_controls.idle_timeout_args(body))
         try:
             creationflags = 0
             if os.name == "nt":
@@ -318,6 +340,7 @@ def main():
             sys.exit(2)
         host = raw[idx + 1]
         raw = raw[:idx] + raw[idx + 2:]
+    idle_minutes, raw = server_controls.parse_idle_timeout_arg(raw)
     args = [a for a in raw if a not in ("--cache", "--quiet")]
     port = int(args[0]) if args else 8080
     web_root = os.path.dirname(os.path.abspath(__file__))
@@ -326,12 +349,15 @@ def main():
     server.allow_reuse_address = True
     mode = "cache" if ALLOW_CACHE else "no-cache"
     quiet = ", quiet" if QUIET else ""
-    print(f"FTD dev server: http://{host}:{port} ({mode}, COOP/COEP{quiet})  [Ctrl-C to stop]", flush=True)
+    idle_desc = server_controls.idle_policy_banner(idle_minutes)
+    print(f"FTD dev server: http://{host}:{port} ({mode}, COOP/COEP{quiet}, {idle_desc})  [Ctrl-C to stop]", flush=True)
+    CONTROLS.start_watchdog(idle_minutes, server.shutdown)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
         print("\nShutting down.", flush=True)
     finally:
+        CONTROLS.stop_watchdog()
         server.server_close()
 
 
