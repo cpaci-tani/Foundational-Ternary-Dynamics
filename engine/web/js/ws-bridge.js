@@ -25,6 +25,7 @@ import {
 import { K_B } from './constants.js';
 import { parseNativeWsPort } from './lib/origin-policy.js';
 import { exactCounter, compareExactCounters, safeCounterNumber, normalizeNativeCounters } from './lib/exact-counter.js';
+import { shouldHeartbeat } from './lib/heartbeat.js';
 
 const EMPTY_FIELD_SAMPLE = Object.freeze({
     positions: new Float32Array(0),
@@ -63,6 +64,13 @@ const TELEMETRY_GROUPS = Object.freeze([
 ]);
 const TELEMETRY_DEMAND_TTL_MS = 6000;
 const TELEMETRY_PUSH_STALL_POLL_MS = 1500;
+// Idle auto-stop heartbeat (spec 2026-09-16-idle-shutdown-and-kill-all.md
+// §5): a `ping` every 60s counts as native-server activity, and a parallel
+// POST keeps the dev server's own idle clock alive. HEARTBEAT_POLL_MS is
+// just the granularity at which shouldHeartbeat() is re-checked; it is not
+// itself the heartbeat cadence.
+const HEARTBEAT_INTERVAL_MS = 60000;
+const HEARTBEAT_POLL_MS = 5000;
 
 function telemetryNow() {
     return (typeof performance !== 'undefined' && typeof performance.now === 'function')
@@ -236,6 +244,48 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         // Teardown latch + tracked reconnect timer (see dispose()).
         this._disposed = false;
         this._reconnectTimer = null;
+
+        // Heartbeat (spec §5): runs independent of native-socket connection
+        // state, since the dev-server pulse below has nothing to do with the
+        // native bridge. `_maybeSendHeartbeat` gates both sends on the same
+        // pure shouldHeartbeat() decision, polled every HEARTBEAT_POLL_MS.
+        this._heartbeatLastSentMs = -Infinity;
+        this._heartbeatTimer = null;
+        this._startHeartbeat();
+    }
+
+    // ── Idle auto-stop heartbeat ─────────────────────────────────────
+
+    _isPageVisible() {
+        // No `document` (e.g. a Node unit test constructing this bridge
+        // directly) counts as visible: there is no hidden-tab concept to
+        // suppress activity for.
+        return typeof document === 'undefined' || document.visibilityState !== 'hidden';
+    }
+
+    _startHeartbeat() {
+        if (this._heartbeatTimer || this._disposed) return;
+        this._heartbeatTimer = setInterval(() => this._maybeSendHeartbeat(), HEARTBEAT_POLL_MS);
+    }
+
+    _maybeSendHeartbeat() {
+        const now = telemetryNow();
+        if (!shouldHeartbeat(now, this._heartbeatLastSentMs, this._isPageVisible(), HEARTBEAT_INTERVAL_MS)) return;
+        this._heartbeatLastSentMs = now;
+        // Native ping: fire-and-forget, and a no-op when not connected.
+        if (this._connected) this._sendAndForget({ cmd: 'ping' });
+        // Dev-server pulse: independent of native connection state entirely.
+        this._sendDevServerHeartbeat();
+    }
+
+    _sendDevServerHeartbeat() {
+        if (typeof fetch !== 'function') return;
+        try {
+            fetch('/api/heartbeat', { method: 'POST' }).catch(() => {});
+        } catch (_e) {
+            // Best-effort only — a missing dev server (GitHub Pages, etc.)
+            // must never disrupt the native bridge.
+        }
     }
 
     async connect() {
@@ -476,7 +526,8 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
         this.ready = false;   // other teardown paths (onclose/onerror) clear this; dispose must too
         this._reconnecting = false;
         for (const t of ['_reconnectTimer', '_simulationWatchdog', '_telemetryDemandExpiryTimer',
-                         '_visualDeferredRetryTimer', '_scenarioDispatchTimer', '_liveProfileDispatchTimer']) {
+                         '_visualDeferredRetryTimer', '_scenarioDispatchTimer', '_liveProfileDispatchTimer',
+                         '_heartbeatTimer']) {
             if (this[t]) { clearTimeout(this[t]); this[t] = null; }
         }
         // Reject in-flight command promises so awaiters don't hang forever.

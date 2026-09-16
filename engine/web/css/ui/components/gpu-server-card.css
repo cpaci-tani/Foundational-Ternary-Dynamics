@@ -74,5 +74,22 @@
 .gpu-btn:hover { border-color: color-mix(in srgb, var(--border, #788cb4) 55%, transparent); }
 .gpu-btn.primary { background: var(--accent-dim, #4f46e5); border-color: var(--accent, #7c5cff); color: var(--on-accent, #fff); }
 .gpu-btn.primary:hover { filter: brightness(0.92); }
+.gpu-btn.danger { border-color: color-mix(in srgb, var(--danger, #ef4444) 45%, transparent); color: var(--danger, #ef4444); }
+.gpu-btn.danger:hover { background: color-mix(in srgb, var(--danger, #ef4444) 14%, transparent); }
 .gpu-btn:disabled { opacity: 0.5; cursor: default; }
 .gpu-msg { min-height: 1em; font-size: 16px; color: var(--text-muted, #9aa4b6); }
+
+/* Idle auto-stop + stop-all controls (spec 2026-09-16-idle-shutdown-and-kill-all.md). */
+.gpu-idle-row { justify-content: space-between; font-size: 16px; }
+.gpu-idle-toggle, .gpu-idle-minutes-lbl { display: flex; align-items: center; gap: 6px; color: var(--text-secondary, #b6c0d2); }
+#gpu-idle-minutes {
+  width: 4.5em;
+  padding: 3px 6px;
+  border-radius: var(--radius-sm, 4px);
+  background: color-mix(in srgb, var(--bg-input, #1e2430) 90%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border, #788cb4) 30%, transparent);
+  color: var(--text-primary, #e6ecf5);
+  font: inherit;
+}
+.gpu-idle-hint { font-size: 14px; }
+.gpu-idle-msg, .gpu-stopall-msg { min-height: 1em; font-size: 14px; color: var(--warn, #f0a742); }
