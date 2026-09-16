@@ -63,8 +63,15 @@ async function request(payload, timeoutMs = 20000) {
     const requestId = nextRequestId++;
     socket.send(JSON.stringify({ ...payload, _requestId: requestId }));
     const message = await waitFor(
+        // The server echoes the request id on its operation_progress frames as
+        // well as on the response, so correlation alone is not enough: a long
+        // operation like setup_scenario emits {phase:"allocating"} and
+        // {phase:"ready"} first, and resolving on those returns an object with
+        // no `ok`. The production client skips progress frames the same way
+        // (ws-bridge.js: data.type === 'operation_progress' keeps it waiting).
         (candidate) => candidate.type === 'json'
-            && candidate.value._requestId === requestId,
+            && candidate.value._requestId === requestId
+            && candidate.value.type !== 'operation_progress',
         `${payload.cmd} response`, timeoutMs);
     return message.value;
 }
