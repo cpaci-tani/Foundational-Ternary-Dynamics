@@ -9,6 +9,40 @@ import { parseNativeWsPort } from '../lib/origin-policy.js';
 import { debugLog } from '../core/log.js';
 
 /**
+ * Set the "status-engine" / "status-compute" chips to match a live bridge.
+ * Shared by boot (native probe or WASM fallback) and by a live swap back to
+ * WASM after the native engine goes away mid-session (app.js fallBackToWasm).
+ * @param {object|null} bridge live bridge, or null/undefined for "no bridge yet"
+ */
+export function applyEngineStatusChip(bridge) {
+    const engineEl = document.getElementById('status-engine');
+    const computeEl = document.getElementById('status-compute');
+    if (bridge && bridge.ready && !bridge.isWasm) {
+        if (engineEl) {
+            engineEl.textContent = 'Native Engine';
+            engineEl.style.color = 'var(--accent-text)';
+        }
+        if (computeEl) {
+            computeEl.textContent = bridge.isNativeGPU ? 'GPU' : 'CPU';
+            computeEl.style.color = bridge.isNativeGPU ? 'var(--positive-text)' : 'var(--axis-z-text)';
+            computeEl.title = bridge.isNativeGPU
+                ? 'Connected to native GPU engine (CUDA)'
+                : 'Connected to native CPU engine';
+        }
+        return;
+    }
+    if (engineEl) {
+        engineEl.textContent = 'WASM Engine';
+        engineEl.style.color = 'var(--positive-text)';
+    }
+    if (computeEl) {
+        computeEl.textContent = 'CPU';
+        computeEl.style.color = 'var(--axis-z-text)';
+        computeEl.title = 'Browser WASM runs on CPU. Start ws_server.exe for GPU.';
+    }
+}
+
+/**
  * Probe native WebSocket bridge, else create in-thread WasmBridge.
  * @param {number} latticeSize
  * @param {{
@@ -19,8 +53,6 @@ import { debugLog } from '../core/log.js';
  */
 export async function bootBridge(latticeSize, ui) {
     const { showToast, loadProgress } = ui;
-    const engineEl = document.getElementById('status-engine');
-    const computeEl = document.getElementById('status-compute');
 
     const urlParams = new URLSearchParams(window.location.search);
     const forceNative = urlParams.get('engine') === 'native';
@@ -48,18 +80,14 @@ export async function bootBridge(latticeSize, ui) {
     debugLog('[init] Native bridge result:', bridge ? 'connected' : 'unavailable');
     if (bridge && bridge.ready) {
         loadProgress(30, 'GPU engine connected');
-        if (engineEl) {
-            engineEl.textContent = 'Native Engine';
-            engineEl.style.color = 'var(--accent-text)';
-        }
-        if (computeEl) {
-            computeEl.textContent = bridge.isNativeGPU ? 'GPU' : 'CPU';
-            computeEl.style.color = bridge.isNativeGPU ? 'var(--positive-text)' : 'var(--axis-z-text)';
-            computeEl.title = bridge.isNativeGPU
-                ? 'Connected to native GPU engine (CUDA)'
-                : 'Connected to native CPU engine';
-        }
-        showToast('Native engine connected — CUDA backend active.', 'success');
+        applyEngineStatusChip(bridge);
+        // Bug fix (found during the 2026-09 GPU wiring audit): this used to say
+        // "CUDA backend active" unconditionally, even when the native server
+        // answered in CPU mode (isNativeGPU === false). The chip above already
+        // gets this right — match it here.
+        showToast(bridge.isNativeGPU
+            ? 'Native engine connected — CUDA backend active.'
+            : 'Native engine connected — CPU backend (no GPU).', 'success');
         return bridge;
     }
 
@@ -74,14 +102,6 @@ export async function bootBridge(latticeSize, ui) {
             'and check the browser console / network tab for the failing module.');
     }
     loadProgress(30, 'WASM engine ready');
-    if (engineEl) {
-        engineEl.textContent = 'WASM Engine';
-        engineEl.style.color = 'var(--positive-text)';
-    }
-    if (computeEl) {
-        computeEl.textContent = 'CPU';
-        computeEl.style.color = 'var(--axis-z-text)';
-        computeEl.title = 'Browser WASM runs on CPU. Start ws_server.exe for GPU.';
-    }
+    applyEngineStatusChip(bridge);
     return bridge;
 }

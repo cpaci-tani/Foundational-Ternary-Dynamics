@@ -20,6 +20,17 @@
  * logic is therefore a small inline copy of
  * `engine/web/js/lib/idle-policy-settings.js` (the canonical, Node-tested
  * definition) — keep the two in sync when either changes.
+ *
+ * When the live page is confirmed on the native engine (via the read-only
+ * `window.__FTD_DEV__` hook — registry.js), a "Switch this page to WASM"
+ * button appears alongside "Reload & connect". It stops the same server the
+ * machine-wide "Stop all engine servers" button does (single-client design:
+ * there is only ever one relevant instance) but also dispatches
+ * 'ftd:gpu-server-stopped' on success — as does the machine-wide button,
+ * since that is the far more common real-world way a page ends up stranded.
+ * `app.js` (fallBackToWasm) listens for that event and swaps its live
+ * bridge to WASM with no reload. See
+ * docs/superpowers/specs/2026-09-16-gpu-engine-wasm-fallback.md.
  */
 (function () {
   'use strict';
@@ -80,6 +91,23 @@
   }
   function policyWords(idle) {
     return idle.enabled ? ('stops after ' + idle.minutes + ' min idle') : 'auto-stop off';
+  }
+
+  // Is THIS page's live bridge currently the native engine (not WASM)? Reads
+  // the read-only dev/Playwright hook (registry.js) that app.js populates
+  // once bootBridge() resolves — before that (a brief window right at page
+  // load) this reads as "unknown", so the Switch-to-WASM button stays
+  // hidden rather than show something we can't yet confirm applies.
+  function isPageOnNative() {
+    var b = window.__FTD_DEV__ && window.__FTD_DEV__.bridge;
+    return !!b && b.isWasm === false;
+  }
+
+  // Told the live page its native engine is gone (this page's own action,
+  // not a crash) — app.js listens for this to swap its bridge to WASM live,
+  // with no reload. See app.js fallBackToWasm().
+  function announceGpuServerStopped() {
+    try { window.dispatchEvent(new CustomEvent('ftd:gpu-server-stopped')); } catch (e) { /* no-op */ }
   }
 
   function init() {
@@ -187,9 +215,37 @@
               }
               return;
             }
+            // This machine-wide button is the most common real-world way a
+            // page ends up stranded on a native engine that just vanished —
+            // tell this page too, regardless of which button stopped it.
+            if (isPageOnNative()) announceGpuServerStopped();
             getStatus().then(function (s) { render(s, true); });
           }).catch(function () {
             stopAllBtn.disabled = false;
+          });
+        };
+      }
+      var switchWasmBtn = document.getElementById('gpu-switch-wasm');
+      if (switchWasmBtn) {
+        switchWasmBtn.onclick = function () {
+          var confirmed = window.confirm(
+            'Stop the GPU server this page is using and switch to the in-browser WASM engine?');
+          if (!confirmed) return;
+          switchWasmBtn.disabled = true;
+          // Single-client design: there is only ever one relevant
+          // ws_server.exe instance, so freeing "the one this page is using"
+          // and the machine-wide stop-all are the same server action — only
+          // the button's own wording and the live-page effect differ.
+          fetch(API + '/stop-all', { method: 'POST' }).then(function (r) {
+            if (r.status === 404) { stopAllApiUnavailable = true; return null; }
+            return r.json();
+          }).then(function (j) {
+            switchWasmBtn.disabled = false;
+            if (j === null) return;
+            announceGpuServerStopped();
+            getStatus().then(function (s) { render(s, true); });
+          }).catch(function () {
+            switchWasmBtn.disabled = false;
           });
         };
       }
@@ -207,13 +263,27 @@
         return;
       }
       var idle = readIdleSettings();
-      if (s.running) {
+      // The server-side probe (_gpu_running, a fresh TCP connect) is known
+      // to misreport "not running" while a client already holds the
+      // single-client slot (docs/superpowers/audits/gpu-web-audit — a
+      // separately-tracked finding, not fixed here). That misreport would
+      // otherwise hide this exact card's own controls from the one page
+      // that is actually, demonstrably using the server right now — so
+      // trust this page's own live connection over the probe when they
+      // disagree: if we are talking to it natively, it is running.
+      var running = s.running || isPageOnNative();
+      if (running) {
         setDot('on');
         statusEl.dataset.running = '1';
         statusEl.dataset.port = String(s.port);
         statusEl.textContent = 'running · :' + s.port + ' · ' + policyWords(idle);
+        var onNative = isPageOnNative();
         bodyEl.innerHTML = '<div class="gpu-note">GPU engine is live — the dashboard uses it automatically.</div>'
-          + '<div class="gpu-row"><button id="gpu-reload" class="gpu-btn primary">Reload &amp; connect</button></div>'
+          + '<div class="gpu-row"><button id="gpu-reload" class="gpu-btn primary">Reload &amp; connect</button>'
+          + (onNative ? ' <button id="gpu-switch-wasm" class="gpu-btn">Switch this page to WASM</button>' : '')
+          + '</div>'
+          + (onNative ? '<div class="gpu-note">This page is on the native engine right now. '
+            + 'Switching stops the server and moves this page to the in-browser WASM engine.</div>' : '')
           + idleControlsHTML(idle);
         var rl = document.getElementById('gpu-reload');
         if (rl) rl.onclick = function () { window.location.reload(); };

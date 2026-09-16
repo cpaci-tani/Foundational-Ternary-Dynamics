@@ -67,7 +67,8 @@ import { initSettingsModal } from './ui/components/settings-modal/component.js?v
 // Wire / boot helpers extracted per refactoring-analyst RF-9 (partial).
 import { wireKeyboard as wireKeyboardExternal } from './app-wire/keyboard.js';
 import { showToast, loadProgress as _loadProgress } from './app-wire/status.js';
-import { bootBridge } from './app-wire/bridge-boot.js?v=10';
+import { bootBridge, applyEngineStatusChip } from './app-wire/bridge-boot.js?v=10';
+import { createBridge } from './bridge-init.js?v=10';
 import { sliderValueToSpeed, speedLabel } from './ui/components/play-bar/speed-scale.js';
 import {
     captureScale1Checkpoint,
@@ -219,6 +220,7 @@ function _makeCtx() {
         _resetAllVisualState,
         updatePlayButton,
         pauseSimulation,
+        togglePlay,
         applyTicksPerFrameFromSlider,
         applyBoundaryShape,
         applyReflectiveBoundary,
@@ -478,6 +480,13 @@ window.addEventListener('ftd:engine-error', event => {
     const message = detail.error || 'The native engine rejected a command.';
     scale0Validity?.runtimeFailure(message);
     showToast(message, 'error');
+    // A quarantined (restart-required) native engine is unrecoverable by
+    // reconnecting — a desktop host gets its own clean restart flow via the
+    // postMessage below; a plain browser tab has no such host, so fall back
+    // to WASM live instead of leaving the dashboard silently dead.
+    if (detail.restartRequired && !window.chrome?.webview) {
+        fallBackToWasm('restart-required');
+    }
     window.chrome?.webview?.postMessage?.({
         type: 'engine-error',
         message,
@@ -497,6 +506,66 @@ window.addEventListener('ftd:engine-progress', event => {
         size: Number(detail.size) || 0,
     });
 });
+
+// ── Native-engine loss: live fallback to WASM ────────────────────────
+// The native bridge (ws_server.exe) can go away two ways while a page is
+// actively using it: voluntarily — this page's own "Switch to WASM" button,
+// or the machine-wide "Stop all engine servers" button, both in
+// gpu-server-card.js, which dispatch 'ftd:gpu-server-stopped' on success —
+// or involuntarily, via the restartRequired branch above. Either way this
+// is the one place that swaps the shared `bridge` back to an in-thread
+// WasmBridge, live, with no page reload.
+//
+// Ordinary transient disconnects are deliberately NOT handled here:
+// WebSocketBridge's exponential-backoff reconnect keeps retrying forever by
+// design (a native engine can be briefly restarted mid-session — see its
+// _scheduleReconnect doc comment); this only fires once the native side is
+// *confirmed* gone for good, not on every dropped socket.
+let _fallingBackToWasm = false;
+
+async function fallBackToWasm(reason) {
+    if (_fallingBackToWasm || !bridge || bridge.isWasm) return;
+    _fallingBackToWasm = true;
+    debugLog(`[fallBackToWasm] Switching to WASM (${reason})`);
+    try {
+        const latticeSize = bridge.latticeSize
+            || parseInt(document.getElementById('lattice-size')?.value, 10) || 33;
+        try { bridge.dispose?.(); } catch (_e) { /* already torn down */ }
+        bridge = await createBridge(latticeSize);
+        appRegistry.register('activeBridge', bridge);
+        inspectorRuntime?.setBridge(bridge);
+        applyEngineStatusChip(bridge);
+        showToast('GPU engine unavailable — switched to the in-browser WASM engine. '
+            + 'Use "Reload & connect" in the GPU card to go back.', 'info');
+
+        // Re-arm whichever scale is actually visible so it has something to
+        // simulate on the new bridge; the other scales pick up the fresh
+        // `bridge` on their own next per-frame ctx build (_buildScale1Ctx /
+        // _buildScale2Ctx / _makeCtx's live getters), same as a scale switch.
+        // Scale 4/5/6 own their own bridge independent of this one and are
+        // unaffected. Toggles reset to the scenario's defaults, matching
+        // what already happens on an ordinary scale switch — there is no
+        // enumerable toggle list to snapshot and replay generically.
+        if (engineMode === 'lattice') {
+            const scenario = document.getElementById('scenario-select')?.value || 'flux-pulse';
+            Scale0Controller.loadScenario(_makeCtx(), scenario);
+        } else if (engineMode === 'particles') {
+            loadPEScenario(document.getElementById('pe-scenario-select')?.value || 's1-native-m3-replay');
+        } else if (engineMode === 'atoms') {
+            loadAEScenario(document.getElementById('ae-scenario-select')?.value || 'ae-hydrogen-atom');
+        } else if (engineMode === 'molecules') {
+            loadMoleculeScenario(document.getElementById('mol-scenario-select')?.value || 'mol-water');
+        }
+        Scale0Controller.setLatticeNeedsUpload();
+    } catch (err) {
+        console.error('[fallBackToWasm] Failed to create WASM bridge:', err);
+        showToast('GPU engine is gone and the WASM fallback failed to start ('
+            + err.message + '). Reload the page.', 'error');
+    } finally {
+        _fallingBackToWasm = false;
+    }
+}
+window.addEventListener('ftd:gpu-server-stopped', () => { fallBackToWasm('stopped-by-user'); });
 
 // ── Initialization ───────────────────────────────────────────────────
 // Safety timeout: dismiss loading overlay after 8000ms even if init() hangs
