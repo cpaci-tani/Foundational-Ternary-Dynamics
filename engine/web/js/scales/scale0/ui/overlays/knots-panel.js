@@ -276,7 +276,7 @@ function buildPanel() {
     root.dataset.applicability = 'applicable';
     root.innerHTML = `
       <div class="knots-applicable-content">
-      <div class="kp-title">Field-Line Knots <small>· sampled streamline clumps</small></div>
+      <div class="kp-title">Field-Line Knots <small>· sampled streamline clumps, effective view · native knots draw with Native transport</small></div>
       <div class="kp-head">
         <span id="kp-track-dot" title="● = tracking on, ○ = off">○</span>
         <span id="kp-alive" title="Knots currently tracked, by field family. A knot is a clump where the field-lines bunch and cross.">tracking off</span>

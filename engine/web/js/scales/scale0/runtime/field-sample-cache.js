@@ -16,6 +16,7 @@
 /** Public sample slot → getScale0FieldSamples kind. */
 const KIND_BY_SLOT = {
     fluxVector: 'fluxVector',
+    linkEnergy: 'linkEnergy',
     poynting: 'poynting',
     eField: 'e',
     bField: 'b',
@@ -36,7 +37,7 @@ const KIND_BY_SLOT = {
 };
 
 /** Slots that always sample at stride 1 regardless of sweep stride. */
-const STRIDE_ONE_SLOTS = new Set(['state', 'gaussResidual', 'properTime', 'lapse', 'dbPhase']);
+const STRIDE_ONE_SLOTS = new Set(['state', 'gaussResidual', 'properTime', 'lapse', 'dbPhase', 'linkEnergy']);
 
 // Direct WASM samplers/particle getters may reuse native or JS scratch arrays.
 // Retain owned bytes across asynchronous overlay jobs, without claiming that
@@ -162,6 +163,7 @@ export function buildSampleSnapshot(fieldCapability, flags, stride, acScale0) {
         flags.showForceWeak || flags.showPsiSquared || flags.showPhase ||
         flags.showLagrangianDensity || flags.showEntropyDensity || flags.showGravPotential;
     if (needFlux) cache.ensureSample('fluxVector');
+    if (flags.showNativeTransport) cache.ensureSample('linkEnergy');
     if (flags.showPoynting || flags.showLagrangianDensity) cache.ensureSample('poynting');
     if (flags.showEField || flags.showEmEnergy || flags.showEPressure || flags.showLagrangianDensity) cache.ensureSample('eField');
     if (flags.showBField || flags.showEmEnergy || flags.showBPressure) cache.ensureSample('bField');

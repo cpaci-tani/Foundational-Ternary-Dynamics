@@ -275,8 +275,8 @@ test.describe('Scale 0 Visualization overlay audit gate', () => {
         });
 
         expect(result.panel).toEqual({
-            columns: 8, primaryButtons: 36, uniquePrimary: 36, allViewButtons: 41,
-            fieldBindings: 33, sheetSliders: 6, forceStyles: 3, sceneFlowButtons: 1, scalarStyles: 3,
+            columns: 8, primaryButtons: 37, uniquePrimary: 37, allViewButtons: 42,
+            fieldBindings: 34, sheetSliders: 6, forceStyles: 3, sceneFlowButtons: 1, scalarStyles: 3,
             axes: 3, fluxStyles: 2, clearButtons: 8, missingPrimary: [],
             ungroupedBindings: [], nonStoreBindings: [],
             standalonePrimary: ['toggle-sm-reference', 'toggle-flux-volume', 'toggle-flux-slice'],

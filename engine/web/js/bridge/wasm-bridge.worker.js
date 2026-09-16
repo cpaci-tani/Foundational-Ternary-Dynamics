@@ -95,9 +95,9 @@ const gravitySamplerCadence = createBoundedSamplerCadence(GRAVITY_SAMPLER_INTERV
 // invalidated by the next WASM call, so copy every typed array out before the
 // payload crosses the postMessage boundary back to the main thread.
 const WORKER_COMMAND_ALLOWLIST = new Set([
-  'tickScale0', 'setToggle', 'setDt', 'setOmega0',
+  'tickScale0', 'setToggle', 'setSorIterations', 'setLinkEnergyObservation', 'setDt', 'setOmega0',
   'setLangevinTemp', 'setLangevinGamma', 'setFluxBoundary', 'setFluxPeriodicAxis',
-  'injectParticle', 'injectFlux', 'injectWavepacket', 'injectWaveVel',
+  'injectParticle', 'injectFlux', 'injectFluxBulk', 'injectWavepacket', 'injectWaveVel',
   'createEntangledPair', 'clearField', 'seedRandomFlux',
   // Flux-cell mechanisms (engine/include/ftd/flux_cell.h, 2026-09-02).
   'setFluxCellRegion', 'clearFluxCellRegion', 'setFluxPump', 'clearFluxPump',
@@ -138,6 +138,20 @@ function applyCommand(method, args = []) {
       return { ok: true };
     } catch (e) {
       const error = 'tickScale0 failed: ' + String(e && e.message || e);
+      console.error('[WasmWorker] ' + error);
+      return { ok: false, error };
+    }
+  }
+  if (method === 'injectFluxBulk') {
+    try {
+      const buf = args[0];
+      const a = buf instanceof Float64Array ? buf : new Float64Array(buf);
+      for (let i = 0; i + 5 < a.length; i += 6) {
+        mod.injectFlux(bridge, a[i] | 0, a[i + 1] | 0, a[i + 2] | 0, a[i + 3], a[i + 4], a[i + 5]);
+      }
+      return { ok: true };
+    } catch (e) {
+      const error = 'injectFluxBulk failed: ' + String(e && e.message || e);
       console.error('[WasmWorker] ' + error);
       return { ok: false, error };
     }
@@ -482,6 +496,7 @@ function buildBridge(n, scen, configurationToken = 0) {
     type: 'ready', N, ctrl: ctrlSab, heap: vol.buffer, fluxPtr: vol.byteOffset, fluxLen: vol.length,
     setupOk, setupError, artifactIdentity, configurationToken,
     workerRuntimeId, moduleInitCount, renderBridgeGeneration,
+    constants: (() => { try { const c = mod.getConstants(); const o = {}; for (const k in c) if (typeof c[k] !== 'object') o[k] = c[k]; return o; } catch (e) { return null; } })(),
     ...(doubled ? { fluxSab: fluxPubSab, doubleBuffered: true,
                    fluxProtocol: self.FTD_FLUX_PUBLICATION.PROTOCOL } : {}),
   });
@@ -495,6 +510,7 @@ function postFrame(
   forceGravitySamplerBatch = false,
   allowUndemandedBoundedInstrument = false,
 ) {
+  const frameTransfer = [];  // freshly copied sampler buffers, moved (not cloned) with the frame
   if (!bridge) return;
   const vol = mod.getFluxVolume(bridge);            // refresh the flux cache in the shared heap
   const doubled = publishFlux(vol);
@@ -673,6 +689,21 @@ function postFrame(
       const [method, type] = spec;
       if (typeof mod[method] !== 'function') return;
       try {
+        if (type === 'links') {
+          const raw = mod[method](bridge);
+          if (!raw) return;
+          // links / residual are views into observer memory on the WASM heap — copy before posting.
+          samplers[key] = {
+            status: String(raw.status), reason: String(raw.reason),
+            L: raw.L | 0, tick: Number(raw.tick),
+            links: new Float32Array(raw.links || 0), residual: new Float32Array(raw.residual || 0),
+            invariant: Number(raw.invariant), maxLocalChange: Number(raw.maxLocalChange),
+            maxResidual: Number(raw.maxResidual), closure: Number(raw.closure),
+            activeExchangeTerms: raw.activeExchangeTerms >>> 0,
+          };
+          frameTransfer.push(samplers[key].links.buffer, samplers[key].residual.buffer);
+          return;
+        }
         if (type === 'obj') {
           const raw = mod[method](bridge);
           if (raw) {
@@ -716,7 +747,7 @@ function postFrame(
                      samplers, knot, knotEvents, knotAgg,
                      inspect: lastInspect, forceAt: lastForceAt,
                      ...(digestMsg !== undefined ? { dynamicalStateDigest: digestMsg } : {}),
-                     ...(engineTogglesMsg ? { engineToggles: engineTogglesMsg } : {}) });
+                     ...(engineTogglesMsg ? { engineToggles: engineTogglesMsg } : {}) }, frameTransfer);
 }
 
 function loop() {

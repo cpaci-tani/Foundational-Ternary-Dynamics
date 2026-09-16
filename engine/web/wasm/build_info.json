@@ -1,9 +1,9 @@
 {
     "schemaVersion":  1,
-    "bundleSha256":  "d1cd709a1f68afa92db536b358a8f974ea10dcdbb10a3b8b681eb439876744c4",
+    "bundleSha256":  "7bde79017b18634d0c1ff8e22ad876a973916e4ae127098dbb3a944eb4ed6c21",
     "source":  {
-                   "commit":  "75c0dfa936012206a5b17ed354bb8aabc6cca486",
-                   "dirty":  false,
+                   "commit":  "5e979b59f879b1bcad1d4215553e2e83ab72749d",
+                   "dirty":  true,
                    "scope":  "engine/** excluding generated engine/web/wasm{,.next,.previous}/**"
                },
     "toolchain":  {
@@ -38,8 +38,8 @@
                                            {
                                                "role":  "module",
                                                "file":  "ftd_core.wasm",
-                                               "sizeBytes":  933303,
-                                               "sha256":  "c52a73dff5bb1f67db1ffa99c1dc62d38d20e6e93811cfad7d1e890cfac2595d"
+                                               "sizeBytes":  939696,
+                                               "sha256":  "56f42150982fc7ef758d615f3a9108cbaa0ee5b6fdca33c3874dbbc9e5a19db2"
                                            }
                                        ]
                      },
@@ -67,8 +67,8 @@
                                            {
                                                "role":  "module",
                                                "file":  "ftd_core64.wasm",
-                                               "sizeBytes":  964568,
-                                               "sha256":  "888d83a7f4cf7377e95c3d51345fa999ee57ceeb0c0eaaf6a41b964e11b6054a"
+                                               "sizeBytes":  971461,
+                                               "sha256":  "67c2f4e5a7b32e2b6d556c6a96e0021043a4af70abf064243593490d110d7514"
                                            }
                                        ]
                      },
@@ -96,8 +96,8 @@
                                            {
                                                "role":  "module",
                                                "file":  "ftd_core_mt.wasm",
-                                               "sizeBytes":  954239,
-                                               "sha256":  "ef569e0d02ab009d381b5a8273c3ae64090103a0b6f72bb12bac2d7d9ac929ef"
+                                               "sizeBytes":  960574,
+                                               "sha256":  "d301ff92f63b08c18162ffeb59b9162f28b3b0474e5806aaa987431e5bdbaf6a"
                                            }
                                        ]
                      }

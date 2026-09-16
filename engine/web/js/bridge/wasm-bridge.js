@@ -133,6 +133,12 @@ const EMPTY_HISTORY_EVENTS = Object.freeze({
     rowCount: 0,
 });
 
+const EMPTY_LINK_ENERGY = Object.freeze({
+    status: 'off', reason: '', L: 0, tick: 0,
+    links: new Float32Array(0), residual: new Float32Array(0),
+    invariant: 0, maxLocalChange: 0, maxResidual: 0, closure: 0, activeExchangeTerms: 0,
+});
+
 // Generic delegate: run `fn` if the WASM module exposes both the bridge AND
 // the specified method, else return `fallback`. Collapses the two-line guard
 // block (`if (!this._module || !this._bridge) return X; if (typeof ... !==
@@ -484,6 +490,13 @@ export class WasmBridge {
         }
     }
 
+    injectFluxBulk(records) {
+        if (!this._bridge) return;
+        const a = records instanceof Float64Array ? records : new Float64Array(records);
+        for (let i = 0; i + 5 < a.length; i += 6) this._module.injectFlux(this._bridge, a[i] | 0, a[i + 1] | 0, a[i + 2] | 0, a[i + 3], a[i + 4], a[i + 5]);
+        this._invalidateScale0AuditCache();
+    }
+
     injectUniformFluxAdd(fx, fy, fz) {
         if (!this._bridge) return;
         try {
@@ -527,6 +540,39 @@ export class WasmBridge {
             this._module.setToggle(this._bridge, name, value);
             this._invalidateScale0AuditCache();
         }
+    }
+
+    setSorIterations(n) {
+        if (this._module && this._bridge && typeof this._module.setSorIterations === 'function') {
+            this._module.setSorIterations(this._bridge, Math.max(1, n | 0));
+            this._invalidateScale0AuditCache();
+        }
+    }
+
+    getSorIterations() {
+        return (this._module && this._bridge && typeof this._module.getSorIterations === 'function')
+            ? this._module.getSorIterations(this._bridge) : null;
+    }
+
+    setLinkEnergyObservation(on) {
+        if (this._module && this._bridge && typeof this._module.setLinkEnergyObservation === 'function') {
+            this._module.setLinkEnergyObservation(this._bridge, !!on);
+        }
+    }
+
+    // links / residual are views into observer memory; copy so later ticks cannot alias them.
+    getLinkEnergyCurrent() {
+        return _wasmCallOr(this, 'getLinkEnergyCurrent', EMPTY_LINK_ENERGY, (m, b) => {
+            const raw = m.getLinkEnergyCurrent(b);
+            return {
+                status: String(raw.status), reason: String(raw.reason),
+                L: raw.L | 0, tick: Number(raw.tick),
+                links: new Float32Array(raw.links), residual: new Float32Array(raw.residual),
+                invariant: Number(raw.invariant), maxLocalChange: Number(raw.maxLocalChange),
+                maxResidual: Number(raw.maxResidual), closure: Number(raw.closure),
+                activeExchangeTerms: raw.activeExchangeTerms >>> 0,
+            };
+        });
     }
 
     /** Apply a dependency-ordered toggle profile with one cache invalidation. */

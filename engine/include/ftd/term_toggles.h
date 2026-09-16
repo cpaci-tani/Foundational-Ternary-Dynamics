@@ -49,6 +49,7 @@ struct TermToggles {
     bool coupling = true;           // phase_read: -g_c * grad(s) source term (Term 2, 2026-07-18)
     bool damping = true;            // phase_write: energy dissipation
     bool genesis = true;            // phase_write: manifestation + evaporation (master)
+    bool genesis_deterministic = false; // phase_write: replace the three genesis-family draws by their deterministic limits — manifest whenever |J|>K_GENESIS, never evaporate, spin tie-break +1 (CPU/WASM only; default OFF => golden-neutral)
     bool evaporation = false;       // phase_write: evaporation alone (test isolation; OR'd with genesis)
     bool gauss_projection = true;   // gauss_project: div(J) = s constraint
     bool forces = true;             // phase_forces: field-mediated EM + gravity
@@ -229,6 +230,7 @@ inline constexpr ToggleSpec TOGGLE_SPECS[] = {
     {"coupling",           &TermToggles::coupling,           true,  true,  "",                 "",                 ToggleBackend::ANY, "Phase-read state-flux coupling: -g_c*grad(s) plus +g_c*curl(s*v)"},
     {"damping",            &TermToggles::damping,            true,  true,  "",                 "",                 ToggleBackend::ANY, "Phase-write exponential flux decay at rate alpha"},
     {"genesis",            &TermToggles::genesis,            true,  true,  "",                 "",                 ToggleBackend::ANY, "Phase-write manifestation + evaporation (master)"},
+    {"genesis_deterministic", &TermToggles::genesis_deterministic, false, false, "genesis", "", ToggleBackend::CPU | ToggleBackend::JS, "Deterministic genesis family: manifest whenever |J| exceeds K_GENESIS, never evaporate, spin tie-break +1; no per-voxel draws (requires genesis; CPU/WASM only; default OFF => golden-neutral)"},
     {"evaporation",        &TermToggles::evaporation,        false, true,  "",                 "",                 ToggleBackend::ANY, "Phase-write evaporation alone (OR'd with genesis; test isolation)"},
     {"gauss_projection",   &TermToggles::gauss_projection,   true,  true,  "",                 "",                 ToggleBackend::ANY, "Enforce div(J) = s constraint via SOR Poisson"},
     {"forces",             &TermToggles::forces,             true,  true,  "",                 "",                 ToggleBackend::ANY, "Gates EM + gravity + Lorentz forces only; color, Yukawa (strong_force), and exchange forces run independently on their own toggles"},

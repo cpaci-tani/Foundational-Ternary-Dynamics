@@ -145,9 +145,20 @@ export function getScale0OverlayTemplate() {
               title="Toggle the yz mid-plane (x = L/2)">yz</button>
         </div>
       </div>
+      <button class="view-toggle field-toggle" id="toggle-native-transport"
+          title="[REFERENCE ENGINE] Native transport: the exact energy current of the engine's v1 wave step, drawn only on the 18 lattice links it moves energy along (6 face links and 12 face-diagonal links; corner links carry nothing). Nothing is interpolated or integrated, and the brighter half of each link points at the receiving site. The legend states whether the energy balance closes. Where the thermostat, Gauss projection, damping or sources act, energy is exchanged off the links and is shown at sites, never as current. White markers are the engine's manifested matter clusters.">
+        <span class="field-swatch field-swatch-native-transport"></span>Native transport
+      </button>
+      <div id="native-transport-panel" class="native-transport-legend" hidden>
+        <div id="native-transport-legend"></div>
+        <label class="native-transport-threshold">Draw links above
+          <input type="range" id="native-transport-threshold" min="1" max="50" step="1" value="5"
+              title="Links whose |current| is below this percentage of the frame maximum are not drawn. At most the 20,000 strongest are drawn.">
+          % of the frame maximum</label>
+      </div>
       <button class="view-toggle field-toggle" id="toggle-flux-lines"
-          title="Streamlines of the J-field showing flow direction. Color encodes the LOCAL |J| magnitude at each point along the line — same ramp as Flux Volume (blue=weak, red=strong), not the vertex's position along the line.">
-        <span class="field-swatch field-swatch-flux-lines"></span>Flux Lines
+          title="[EFFECTIVE VIEW, not the engine's law] Classical streamlines traced by RK4 through a trilinearly interpolated, max-pooled display reduction of J that keeps one strongest site per block. Measured 2026-09-15: magnitudes inflated up to about five times at the display stride, kinks and line merges that are absent from the full-resolution field, and scribbles at charges where lines cannot stop. Use Native transport for what the engine actually moves.">
+        <span class="field-swatch field-swatch-flux-lines"></span>Streamlines, effective view
       </button>
       <button class="view-toggle field-toggle" id="toggle-div-field"
           title="[SELECTION] Divergence ∇·J. The correction targets a coupled, mean-neutralized source and normally acts only on vacuum sites. This raw divergence is not that solver residual or a derivation of charge conservation. Same buffer as Charge ρ (Topology column), rendered here as points instead of a rubber sheet.">

@@ -9,6 +9,7 @@ export const FIELD_TOGGLE_KEYS = [
     'showPoynting',
     'showDivField',
     'showFluxLines',
+    'showNativeTransport',
     'showForceEM',
     'showForceGravity',
     'showForceStrong',

@@ -144,8 +144,72 @@ export function buildPersistentIndex(positions, vectors, count, N, stride) {
     _persistIndex.cellStart = _cellStart;
     _persistIndex.cellCount = _cellCount;
     _persistIndex.order = _order;
+    _persistIndex.dense = buildDenseGrid(positions, vectors, count, N, stride);
     return _persistIndex;
 }
+
+// Dense regular-grid view of a sampled vector field for trilinear interpolation.
+// Sampler contract (engine/src/visual_field_sample.cpp): one vector per regular
+// output cell at anchors origin + stride*i, reported at the cell centre
+// (anchor + 0.5); each cell carries its block's strongest source site; cells
+// whose strongest site has |rho| < 1e-30 are omitted. A missing cell is a
+// zero-field cell, so the dense view fills it with zeros. The view is rejected
+// (null) only when a sample is off the stride lattice, out of range, or
+// duplicated — nearest lookup then stays in force.
+export function buildDenseGrid(positions, vectors, count, N, stride) {
+    if (!(count > 0) || !(stride > 0) || !(N > 0)) return null;
+    const px = positions[0] % stride, py = positions[1] % stride, pz = positions[2] % stride;
+    const dimX = Math.floor((N - 0.5 - px) / stride) + 1;
+    const dimY = Math.floor((N - 0.5 - py) / stride) + 1;
+    const dimZ = Math.floor((N - 0.5 - pz) / stride) + 1;
+    if (!(dimX >= 1 && dimY >= 1 && dimZ >= 1) || dimX > N || dimY > N || dimZ > N) return null;
+    const total = dimX * dimY * dimZ;
+    if (count > total) return null;
+    const grid = new Float32Array(total * 3);
+    const filled = new Uint8Array(total);
+    for (let i = 0; i < count; i++) {
+        const b = i * 3;
+        const gx = (positions[b] - px) / stride, gy = (positions[b + 1] - py) / stride, gz = (positions[b + 2] - pz) / stride;
+        const ix = Math.round(gx), iy = Math.round(gy), iz = Math.round(gz);
+        if (Math.abs(gx - ix) > 1e-4 || Math.abs(gy - iy) > 1e-4 || Math.abs(gz - iz) > 1e-4) return null;
+        if (ix < 0 || iy < 0 || iz < 0 || ix >= dimX || iy >= dimY || iz >= dimZ) return null;
+        const g = ix + dimX * (iy + dimY * iz);
+        if (filled[g]) return null;
+        filled[g] = 1;
+        grid[g * 3] = vectors[b]; grid[g * 3 + 1] = vectors[b + 1]; grid[g * 3 + 2] = vectors[b + 2];
+    }
+    return { ox: px, oy: py, oz: pz, stride, dimX, dimY, dimZ, grid };
+}
+
+let _i0 = 0, _i1 = 0, _t = 0;   // per-axis scratch for axisCoord
+function axisCoord(u, dim) {
+    // A non-finite coordinate has no field. NaN weights make the whole lookup
+    // NaN, which integrateGridInto's isFinite test turns into a stop; clamping
+    // it (the `!(u > 0)` branch below) would read an edge node's field instead.
+    if (!Number.isFinite(u)) { _i0 = 0; _i1 = 0; _t = NaN; return; }
+    if (dim <= 1 || !(u > 0)) { _i0 = 0; _i1 = 0; _t = 0; return; }
+    if (u >= dim - 1) { _i0 = dim - 1; _i1 = dim - 1; _t = 0; return; }
+    _i0 = Math.floor(u); _i1 = _i0 + 1; _t = u - _i0;
+}
+
+/** Trilinear field lookup on a dense view; writes _fx,_fy,_fz. Allocation-free. */
+export function lookupFieldTrilinearInto(dense, px, py, pz) {
+    const { ox, oy, oz, stride, dimX, dimY, dimZ, grid } = dense;
+    axisCoord((px - ox) / stride, dimX); const x0 = _i0, x1 = _i1, tx = _t;
+    axisCoord((py - oy) / stride, dimY); const y0 = _i0, y1 = _i1, ty = _t;
+    axisCoord((pz - oz) / stride, dimZ); const z0 = _i0, z1 = _i1, tz = _t;
+    let fx = 0, fy = 0, fz = 0;
+    for (let c = 0; c < 8; c++) {
+        const w = ((c & 1) ? tx : 1 - tx) * ((c & 2) ? ty : 1 - ty) * ((c & 4) ? tz : 1 - tz);
+        if (w === 0) continue;
+        const g = (((c & 1) ? x1 : x0) + dimX * (((c & 2) ? y1 : y0) + dimY * ((c & 4) ? z1 : z0))) * 3;
+        fx += w * grid[g]; fy += w * grid[g + 1]; fz += w * grid[g + 2];
+    }
+    _fx = fx; _fy = fy; _fz = fz;
+}
+
+/** Test-only accessor for the last sampled raw field components. */
+export function __scratchField() { return [_fx, _fy, _fz]; }
 
 // Nearest-sample field lookup against the PERSISTENT index, writing the result
 // into module scratch (_fx,_fy,_fz) instead of returning an array. Same 27-cell
@@ -331,8 +395,9 @@ export function rk4Step(fieldFn, x, y, z, h) {
 // its OWN specialized integrator (integrateGridInto / integrateFieldFnInto), so
 // the field-sampling choice costs no per-step branch — `integrateInto` dispatches
 // once per line:
-//   MODE_GRID    — nearest-sample lookup against the persistent index (Scale-0
-//                  hot path; this is the cost the profile flagged);
+//   MODE_GRID    — sampled field from the persistent index: trilinear on its
+//                  dense view, nearest sample when there is none (Scale-0 hot
+//                  path; this is the cost the profile flagged);
 //   MODE_FIELDFN — call the caller-supplied fieldFn, read its [x,y,z] return
 //                  (PE / Scale-1; fieldFn lives in fields.js and still returns a
 //                  fresh array — reading its 3 components is bit-identical to the
@@ -387,13 +452,25 @@ function normFieldFnInto(fieldFn, px, py, pz, dir, minMag) {
     _nz = dir * (vz / m);
 }
 
-// Normalized field at (px,py,pz) for the GRID path. Inlines lookupFieldInto's
-// nearest-sample scan directly (no wrapper frame) and normalizes with dir
-// folded in. `index` is the persistent index; its fields are passed by the
-// caller's locals. Writes (_nx,_ny,_nz). Bit-identical to normFieldFnInto over
-// the same sampled field because the lookup selects the same sample.
+// The ONE field source for the GRID path, writing (_fx,_fy,_fz): trilinear on
+// the dense view when the sample admits one, nearest sample otherwise.
+// integrateGridInto's stop test and step fallback read it too, not only the
+// RK4 stages, so a line stops on the field it follows. That is also the honest
+// stop. Under the sampler contract an omitted cell is a measured zero, and
+// only the dense view represents it. The nearest-sample index answers with the
+// nearest EMITTED sample, carrying a neighbour's vector one to two index cells
+// (4-8 voxels at stride 2) into a zero region. The trilinear field vanishes
+// wherever all eight surrounding nodes are omitted, so a line stops within one
+// step of the first zero node.
+function sampleGridInto(px, py, pz) {
+    if (_gridIndex.dense) lookupFieldTrilinearInto(_gridIndex.dense, px, py, pz);
+    else lookupFieldInto(_gridIndex, px, py, pz);
+}
+
+// Normalized field at (px,py,pz) for the GRID path, with dir folded in.
+// Writes (_nx,_ny,_nz); falls back to the step-local direction below minMag.
 function normGridInto(px, py, pz, dir, minMag) {
-    lookupFieldInto(_gridIndex, px, py, pz);
+    sampleGridInto(px, py, pz);
     const vx = _fx, vy = _fy, vz = _fz;
     const m = Math.sqrt(vx * vx + vy * vy + vz * vz);
     if (!Number.isFinite(m) || m <= 0 || m < minMag) {
@@ -419,15 +496,15 @@ function integrateGridInto(x0, y0, z0, h, maxSteps, minMag, bounds, originCenter
     let x = x0, y = y0, z = z0;
 
     for (let step = 0; step < maxSteps; step++) {
-        // Raw field at current position (magnitude/break test + step fallback).
-        lookupFieldInto(_gridIndex, x, y, z);
+        // Stop test + step fallback on the same field the RK4 stages integrate
+        // (see sampleGridInto for why this is also the honest stop).
+        sampleGridInto(x, y, z);
         const vx = _fx, vy = _fy, vz = _fz;
         const mag = Math.sqrt(vx * vx + vy * vy + vz * vz);
         if (!Number.isFinite(mag) || mag <= 0 || mag < minMag) break;
 
-        // Step-local fallback = dir-signed normalized raw field at (x,y,z).
-        // dir*(vx/mag) ≡ (dir*vx)/mag bit-for-bit, matching the old fbx/fby/fbz
-        // (which for backward came from the pre-negated field, (-vx)/mag).
+        // Step-local fallback = dir-signed normalized field at (x,y,z), which is
+        // therefore exactly k1. dir*(vx/mag) ≡ (dir*vx)/mag bit-for-bit.
         _fbx = dir * (vx / mag);
         _fby = dir * (vy / mag);
         _fbz = dir * (vz / mag);

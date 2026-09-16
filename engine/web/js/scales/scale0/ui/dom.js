@@ -3,6 +3,7 @@ export const FIELD_TOGGLE_BINDINGS = [
     ['toggle-b-field', 'showBField'],
     ['toggle-poynting', 'showPoynting'],
     ['toggle-div-field', 'showDivField'],
+    ['toggle-native-transport', 'showNativeTransport'],
     ['toggle-flux-lines', 'showFluxLines'],
     ['toggle-force-em', 'showForceEM'],
     ['toggle-force-gravity', 'showForceGravity'],

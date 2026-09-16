@@ -83,6 +83,7 @@ import { TopologySheetRenderer } from './viewport/topology-sheet-renderer.js?v=3
 // every flux-volume/streamline method through a thin wrapper. See
 // viewport/REFACTOR_MAP.md.
 import { ViewportFluxRenderer } from './viewport/flux-renderer.js?v=5';
+import { NativeTransportRenderer } from './viewport/native-transport-renderer.js';
 // Particle Points mesh + trails + velocity-vectors + per-particle force arrows
 // extracted as Phase 3d. Viewport composes a ViewportParticleRenderer and
 // forwards every particle-mesh method through a thin wrapper. Atom/bond/
@@ -265,6 +266,9 @@ export class Viewport {
             buildStreamlineMesh: (m, o) => this._fieldRenderer.buildStreamlineMesh(m, o),
             writeStreamlinesIntoMesh: (m, s, c) => this._fieldRenderer.writeStreamlinesIntoMesh(m, s, c),
         });
+
+        // Native transport on lattice links (spec 2026-09-15 native transport overlays).
+        this._nativeTransportRenderer = new NativeTransportRenderer({ scene: this.scene });
 
         // Particle Points mesh + trails + velocity vectors + per-particle
         // force arrows — extracted Phase 3d. Atom/bond/orbital rendering is
@@ -719,6 +723,10 @@ export class Viewport {
         this._fluxRenderer.updateFluxStreamlines(streamlines, maxFluxMag, mags);
     }
     toggleFluxStreamlines(on) { this._fluxRenderer.toggleFluxStreamlines(on); }
+
+    // -- Native transport (lattice links; spec 2026-09-15) --
+    toggleNativeTransport(on) { this._nativeTransportRenderer?.setVisible(on); }
+    updateNativeTransport(frame) { return this._nativeTransportRenderer?.update(frame) ?? null; }
 
     // -- EM Force Volume (Cyan arrows) --
     _buildForceVolume() { this._fieldRenderer._buildForceVolume(); }
@@ -1203,6 +1211,7 @@ export class Viewport {
         // wireframe, axes, post-processing pipeline, highlights).
         // Phase 3b: FluxRenderer owns _fluxVolume + _fluxStreamlines.
         this._fluxRenderer?.dispose();
+        this._nativeTransportRenderer?.dispose();
         // Phase 3d: ParticleRenderer owns particles, velocityVectors,
         // trails, _particleForces.
         this._particleRenderer?.dispose();

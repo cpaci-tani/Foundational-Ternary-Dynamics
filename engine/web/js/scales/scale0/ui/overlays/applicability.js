@@ -176,7 +176,7 @@ export function getScale0OverlayApplicability(scenarioId, engineTerms = null) {
     };
 
     allow(flux,
-        'toggle-flux-volume', 'toggle-flux-slice', 'toggle-flux-lines', 'toggle-div-field',
+        'toggle-flux-volume', 'toggle-flux-slice', 'toggle-native-transport', 'toggle-flux-lines', 'toggle-div-field',
         'toggle-e-field', 'toggle-b-field', 'toggle-poynting', 'toggle-force-weak',
         'toggle-psi-squared', 'toggle-lagrangian-density', 'toggle-entropy-density',
         'toggle-em-energy', 'toggle-charge-density', 'toggle-vorticity',

@@ -68,6 +68,8 @@ struct LagrangianDiag;
 // mirroring the existing forward-declared gpu::GpuEngine PIMPL. Read-only
 // ⇒ golden-neutral.
 class KnotTracker;
+// Observation-only exact link energy current (defined in link_energy_observer.h).
+class LinkEnergyObserver;
 
 class RenderBridge {
     // ARCH-2: Backend implementations need access to GPU sync state and
@@ -207,6 +209,12 @@ public:
     // because KnotTracker is forward-declared here (PIMPL, see above).
     const KnotTracker& knot_tracker() const;
     void reset_knot_tracker();
+    // Observation-only exact link energy current of the wave step (spec
+    // 2026-09-15 native transport overlays). Off by default; reads settled host
+    // state only, so the golden hash is unaffected.
+    void set_link_energy_observation(bool on);
+    bool link_energy_observation() const;
+    const LinkEnergyObserver& link_energy_observer() const;
     double physical_time() const { return physical_time_; }
     double dt() const { return dt_; }
     void set_dt(double dt);
@@ -757,6 +765,8 @@ private:
     // with knot_telemetry.h); constructed in the ctor, dtor emitted in
     // render_bridge.cpp where the type is complete. Recorded at tick-end.
     std::unique_ptr<KnotTracker> knot_tracker_;
+    // Observation-only link energy observer (PIMPL, see link_energy_observer.h).
+    std::unique_ptr<LinkEnergyObserver> link_energy_observer_;
     std::unique_ptr<eft::HistoryEventJournal> history_event_journal_;
     std::unique_ptr<eft::MatchedGaussDynamics> matched_gauss_dynamics_;
     int sor_iterations_ = SOR_ITERATIONS;  // Configurable SOR iterations (default 6)

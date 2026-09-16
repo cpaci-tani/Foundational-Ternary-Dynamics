@@ -519,6 +519,14 @@ target_link_libraries(test_scenario_velocity_wiring ftd_core)
 
 ftd_add_test(test_scenario_behavior tests/test_scenario_behavior.cpp
              CTEST_NAME scenario_behavior TIMEOUT 180)
+ftd_add_test(test_genesis_symmetry tests/test_genesis_symmetry.cpp
+             CTEST_NAME genesis_symmetry TIMEOUT 300)
+ftd_add_test(test_gauss_projection_symmetry tests/test_gauss_projection_symmetry.cpp
+             CTEST_NAME gauss_projection_symmetry TIMEOUT 300)
+ftd_add_test(test_stencil18_dispersion tests/test_stencil18_dispersion.cpp
+             CTEST_NAME stencil18_dispersion TIMEOUT 300)
+ftd_add_test(test_link_energy_observer tests/test_link_energy_observer.cpp
+             CTEST_NAME link_energy_observer TIMEOUT 300)
 ftd_add_test(test_empty_scenario_qualification
              tests/test_empty_scenario_qualification.cpp
              CTEST_NAME empty_scenario_qualification TIMEOUT 300

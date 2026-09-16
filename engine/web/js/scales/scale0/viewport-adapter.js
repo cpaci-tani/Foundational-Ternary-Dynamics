@@ -7,6 +7,7 @@ const NON_FORCE_OVERLAYS = {
     showPoynting: 'togglePoyntingVectors',
     showDivField: 'toggleDivergenceField',
     showFluxLines: 'toggleFluxStreamlines',
+    showNativeTransport: 'toggleNativeTransport',
     showStateField: 'toggleStateField',
     showDualSubstrate: 'toggleDualFluxVolume',
     showChirality: 'toggleChiralityField',
@@ -155,6 +156,7 @@ export function createScale0ViewportAdapter(viewport) {
             viewport.togglePoyntingVectors?.(false);
             viewport.toggleDivergenceField?.(false);
             viewport.toggleFluxStreamlines?.(false);
+            viewport.toggleNativeTransport?.(false);
             viewport.showEMForce?.(false);
             viewport.showGravityForce?.(false);
             viewport.showStrongForce?.(false);
@@ -217,6 +219,9 @@ export function createScale0ViewportAdapter(viewport) {
         },
         applyFluxStreamlines(lines, maxFlux, mags) {
             viewport?.updateFluxStreamlines?.(lines, maxFlux, mags);
+        },
+        applyNativeTransport(frame) {
+            return viewport?.updateNativeTransport?.(frame) ?? null;
         },
         applyForceArrowField(type, data) {
             if (!viewport) return;
