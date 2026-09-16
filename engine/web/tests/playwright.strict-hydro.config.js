@@ -1,7 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-// Isolated local hydro candidate only; never changes the main dashboard test server or
-// the Φ-v2 strict candidate's own config/port (playwright.strict.config.js, port 8092).
+// Separate hydro law only; the main web-lattice tests use port 8094.
 process.env.FTD_STRICT_HYDRO_LAB = '1';
 const hardware = process.env.FTD_HARDWARE_WEBGL === '1';
 

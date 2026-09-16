@@ -1,4 +1,4 @@
-"""Serve local candidate artifacts with platform-independent module MIME types."""
+"""Serve the separate hydro artifacts with platform-independent module MIME types."""
 from __future__ import annotations
 
 import argparse
@@ -18,12 +18,12 @@ class LaboratoryHandler(SimpleHTTPRequestHandler):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--port", type=int, default=8092)
+    parser.add_argument("--port", type=int, default=8093)
     args = parser.parse_args()
     engine = Path(__file__).resolve().parents[1]
     handler = partial(LaboratoryHandler, directory=str(engine))
     with ThreadingHTTPServer(("127.0.0.1", args.port), handler) as server:
-        print(f"Strict candidate: http://127.0.0.1:{args.port}/strict/web/", flush=True)
+        print(f"Hydro laboratory: http://127.0.0.1:{args.port}/strict/web/hydro/", flush=True)
         try:
             server.serve_forever()
         except KeyboardInterrupt:
