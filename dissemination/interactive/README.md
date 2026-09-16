@@ -8,6 +8,16 @@ These self-contained HTML simulations visualize the exact mathematical formulas 
 
 ## Simulations
 
+### Mod-4 Staircase (`mod4_staircase.html`)
+**Model:** nested squares `[0,x]^2` for every `x ≡ 1, 3, 0 (mod 4)`, each class valued in `{+1, 0, −1}`
+
+- Infinite pan/zoom Cartesian canvas; squares are generated lazily for the visible range and drawn largest-first, so each residue class reads as an L-shaped band of side `x`, area `x^2`, far corner on `y = x`
+- Class → value mapping is editable in the legend (default `1 mod 4 → +1`, `3 mod 4 → −1`, `0 mod 4 → 0`); `2 mod 4` can be switched in with its own value
+- Hover (or tap) readout: `x`, residue, value, area, corner, running sum of values up to `x`, and the true Möbius `μ(x)` alongside for comparison
+- `y = x` is drawn as the eigenline (eigenvalue 1, slope 1) of the `x ↔ y` swap; every far corner sits on it
+- Mouse drag-pan, cursor-centred wheel zoom, pinch zoom, keyboard `+`/`−`/arrows/`0`; light and dark themes
+- Exploratory arithmetic picture only; no FTD physics claim is promoted
+
 ### Dyadic Mode Configuration Atlas (`dyadic_mode_configuration_atlas.html`)
 **Model:** ternary mode words `w_k in {-1,0,+1}` over finite dyadic Fourier clocks
 

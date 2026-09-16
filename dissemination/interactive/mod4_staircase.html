@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mod-4 Staircase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --paper:#F4F5F1;
+  --ink:#1D201C;
+  --muted:#6B716A;
+  --grid:#E1E4DD;
+  --grid-strong:#C9CEC5;
+  --axis:#2C302B;
+  --panel:rgba(250,251,248,.88);
+  --panel-edge:#CDD2C9;
+  --control:#FFFFFF;
+  --control-edge:#B9BFB5;
+  --r1:#F02D22;
+  --r3:#10A55A;
+  --r0:#1596DA;
+  --r2:#8A8E88;
+  --focus:#1596DA;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#101311;
+    --ink:#E7EAE4;
+    --muted:#8E958D;
+    --grid:#1B201C;
+    --grid-strong:#2C322D;
+    --axis:#C9CFC6;
+    --panel:rgba(18,21,19,.88);
+    --panel-edge:#2E342F;
+    --control:#181C19;
+    --control-edge:#3A403B;
+    --r1:#FF4A3F;
+    --r3:#22BF6C;
+    --r0:#2EA6EA;
+    --r2:#6F746E;
+    --focus:#2EA6EA;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#101311;
+  --ink:#E7EAE4;
+  --muted:#8E958D;
+  --grid:#1B201C;
+  --grid-strong:#2C322D;
+  --axis:#C9CFC6;
+  --panel:rgba(18,21,19,.88);
+  --panel-edge:#2E342F;
+  --control:#181C19;
+  --control-edge:#3A403B;
+  --r1:#FF4A3F;
+  --r3:#22BF6C;
+  --r0:#2EA6EA;
+  --r2:#6F746E;
+  --focus:#2EA6EA;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:14px;line-height:1.4;overflow:hidden}
+.mono{font-family:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
+
+#stage{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab;background:var(--paper)}
+#stage.dragging{cursor:grabbing}
+#stage:focus-visible{outline:2px solid var(--focus);outline-offset:-3px}
+
+.overlay{position:fixed;z-index:2}
+.panel{background:var(--panel);border:1px solid var(--panel-edge);border-radius:6px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+
+.title{top:16px;left:18px;padding:10px 14px;max-width:min(46ch,calc(100vw - 36px))}
+.title h1{margin:0;font-size:20px;font-weight:600;letter-spacing:-.01em;text-wrap:balance}
+.title p{margin:4px 0 0;font-size:13px;color:var(--muted);max-width:44ch}
+.title p b{color:var(--ink);font-weight:500}
+
+.legend{top:16px;right:16px;width:310px;padding:8px 12px 10px}
+.legend summary{cursor:pointer;list-style:none;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:flex;justify-content:space-between;align-items:center;min-height:22px}
+.legend summary::-webkit-details-marker{display:none}
+.legend summary::after{content:'–';font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px}
+.legend:not([open]) summary::after{content:'+'}
+.legend .body{display:flex;flex-direction:column;gap:4px;padding-top:6px}
+.row{display:grid;grid-template-columns:14px 1fr auto;align-items:center;gap:8px;min-height:28px}
+.row.wide{grid-template-columns:1fr auto auto}
+.row.split{grid-template-columns:auto 1fr;justify-items:end}
+.swatch{width:14px;height:14px;border-radius:3px;border:1px solid rgba(0,0,0,.18)}
+.cls{font-size:13px;display:flex;align-items:center;gap:8px}
+.cls small{color:var(--muted);font-size:12px}
+.sep{border:0;border-top:1px solid var(--panel-edge);margin:4px 0}
+select,button,input{font:inherit;color:var(--ink)}
+select{background:var(--control);border:1px solid var(--control-edge);border-radius:4px;padding:3px 6px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;width:64px}
+select:disabled{opacity:.4}
+button{background:var(--control);border:1px solid var(--control-edge);border-radius:4px;padding:4px 10px;font-size:12px;cursor:pointer}
+button:hover{border-color:var(--ink)}
+input[type=range]{width:120px;accent-color:var(--r0);margin:0}
+input[type=checkbox]{accent-color:var(--r0);width:14px;height:14px;margin:0}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.val{font-size:12px;color:var(--muted);min-width:5ch;text-align:right}
+
+.readout{bottom:16px;left:18px;width:360px;padding:10px 12px}
+.readout .head{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:flex;justify-content:space-between}
+.readout .grid{display:grid;grid-template-columns:auto 1fr;gap:3px 14px;font-size:13px;margin-top:6px;align-items:center}
+.readout .k{color:var(--muted)}
+.readout .v{font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.readout .foot{margin-top:8px;padding-top:6px;border-top:1px solid var(--panel-edge);font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.pill{display:inline-block;padding:0 7px;border-radius:999px;color:#fff;font-size:12px;line-height:18px;font-family:'IBM Plex Mono',ui-monospace,monospace}
+
+.hint{bottom:16px;right:16px;padding:6px 10px;font-size:12px;color:var(--muted);text-align:right;line-height:1.6;pointer-events:none}
+.hint kbd{font-family:'IBM Plex Mono',ui-monospace,monospace;border:1px solid var(--panel-edge);border-radius:3px;padding:0 4px;background:var(--panel)}
+
+@media (max-width:720px){
+  .title{max-width:calc(100vw - 36px)}
+  .title p{display:none}
+  .legend{top:auto;bottom:16px;right:16px;width:min(310px,calc(100vw - 36px));max-height:46vh;overflow:auto}
+  .readout{left:18px;bottom:16px;width:min(360px,calc(100vw - 36px))}
+  .legend[open] ~ .readout{display:none}
+  .hint{display:none}
+}
+</style>
+</head>
+<body>
+<canvas id="stage" role="img" tabindex="0" aria-label="Infinite Cartesian plane of nested squares with corners on the line y equals x, colored by x modulo four"></canvas>
+
+<header class="overlay panel title">
+  <h1>Mod-4 Staircase</h1>
+  <p>The square with corners (0,&thinsp;0) and (<b>x</b>,&thinsp;<b>x</b>) for every x &equiv; 1, 3, 0 (mod 4): side x, area x&sup2;, far corner on <b>y = x</b>. Each class carries a value in {+1, 0, &minus;1}, the way &mu; does. Larger squares drawn first, so each class shows as an L-band.</p>
+</header>
+
+<details class="overlay panel legend" id="legend" open>
+  <summary>Class &rarr; value</summary>
+  <div class="body">
+    <div class="row">
+      <span class="swatch" style="background:var(--r1)"></span>
+      <span class="cls">x &equiv; 1 <small>(mod 4)</small></span>
+      <select data-r="1" aria-label="Value for x congruent to 1 mod 4"><option value="1">+1</option><option value="0">0</option><option value="-1">&minus;1</option></select>
+    </div>
+    <div class="row">
+      <span class="swatch" style="background:var(--r3)"></span>
+      <span class="cls">x &equiv; 3 <small>(mod 4)</small></span>
+      <select data-r="3" aria-label="Value for x congruent to 3 mod 4"><option value="1">+1</option><option value="0">0</option><option value="-1">&minus;1</option></select>
+    </div>
+    <div class="row">
+      <span class="swatch" style="background:var(--r0)"></span>
+      <span class="cls">x &equiv; 0 <small>(mod 4)</small></span>
+      <select data-r="0" aria-label="Value for x congruent to 0 mod 4"><option value="1">+1</option><option value="0">0</option><option value="-1">&minus;1</option></select>
+    </div>
+    <div class="row">
+      <input type="checkbox" id="inc2" aria-label="Include x congruent to 2 mod 4">
+      <label class="cls" for="inc2"><span class="swatch" style="background:var(--r2)"></span>x &equiv; 2 <small>(mod 4), off by default</small></label>
+      <select data-r="2" id="sel2" disabled aria-label="Value for x congruent to 2 mod 4"><option value="1">+1</option><option value="0">0</option><option value="-1">&minus;1</option></select>
+    </div>
+    <hr class="sep">
+    <label class="row wide">
+      <span>Fill opacity</span>
+      <input type="range" id="opacity" min="0.15" max="1" step="0.05" value="1">
+      <span class="val mono" id="opv">1.00</span>
+    </label>
+    <div class="row split">
+      <button id="reset" type="button">Reset view</button>
+      <span class="val mono" id="zoomv"></span>
+    </div>
+  </div>
+</details>
+
+<aside class="overlay panel readout" aria-live="polite">
+  <div class="head"><span>Square under cursor</span><span class="mono" id="stats"></span></div>
+  <div id="readout-body"></div>
+</aside>
+
+<div class="overlay panel hint">
+  drag to pan &middot; wheel or pinch to zoom<br>
+  <kbd>+</kbd> <kbd>&minus;</kbd> zoom &middot; arrows pan &middot; <kbd>0</kbd> reset
+</div>
+
+<script>
+(() => {
+'use strict';
+const canvas = document.getElementById('stage');
+const ctx = canvas.getContext('2d');
+const $ = (id) => document.getElementById(id);
+const MAX_DRAW = 4000;
+
+const state = {
+  val: { 1: 1, 3: -1, 0: 0, 2: 0 },
+  include2: false,
+  opacity: 1,
+  hover: null
+};
+const view = { s: 40, ox: 80, oy: 0 };
+let W = 0, H = 0, dpr = 1, dirty = true;
+
+/* ---------- arithmetic ---------- */
+const ORDER = [1, 3, 4];
+function isMember(x){ return x >= 1 && (x % 4 !== 2 || state.include2); }
+function countLE(X){
+  if (X < 1) return 0;
+  if (state.include2) return X;
+  return 3 * Math.floor(X / 4) + [0, 1, 1, 2][X % 4];
+}
+function memberAt(i){
+  if (state.include2) return i + 1;
+  return 4 * Math.floor(i / 3) + ORDER[i % 3];
+}
+function nextMember(x){ let m = Math.max(1, Math.ceil(x)); while (!isMember(m)) m++; return m; }
+function valueOf(x){ return state.val[x % 4]; }
+function runningSum(x){
+  const cnt = (r) => r === 0 ? Math.floor(x / 4) : (x >= r ? Math.floor((x - r) / 4) + 1 : 0);
+  let s = state.val[1] * cnt(1) + state.val[3] * cnt(3) + state.val[0] * cnt(0);
+  if (state.include2) s += state.val[2] * cnt(2);
+  return s;
+}
+function mobius(n){
+  if (n === 1) return 1;
+  if (n > 1e12) return null;
+  let m = n, k = 0;
+  for (let p = 2; p * p <= m; p++){
+    if (m % p === 0){
+      m /= p;
+      if (m % p === 0) return 0;
+      k++;
+    }
+  }
+  if (m > 1) k++;
+  return k % 2 === 0 ? 1 : -1;
+}
+
+/* ---------- formatting ---------- */
+function fmt(v){
+  if (Math.abs(v) >= 1e15) return v.toExponential(2);
+  if (Number.isInteger(v)) return v.toLocaleString('en-US');
+  return String(+v.toFixed(6));
+}
+function fmtSigned(v){ return v > 0 ? '+' + v : v < 0 ? '−' + (-v) : '0'; }
+function fmtScale(s){
+  return (s >= 100 ? Math.round(s) : +s.toPrecision(3)) + ' px/unit';
+}
+function niceStep(pxPerUnit, minPx){
+  const raw = minPx / pxPerUnit;
+  const p = Math.pow(10, Math.floor(Math.log10(raw)));
+  for (const m of [1, 2, 5, 10]) if (m * p >= raw) return m * p;
+  return 10 * p;
+}
+
+/* ---------- theme tokens ---------- */
+function tokens(){
+  const cs = getComputedStyle(document.documentElement);
+  const t = (n) => cs.getPropertyValue(n).trim();
+  return {
+    paper: t('--paper'), ink: t('--ink'), muted: t('--muted'),
+    grid: t('--grid'), gridStrong: t('--grid-strong'), axis: t('--axis'),
+    c: { 1: t('--r1'), 3: t('--r3'), 0: t('--r0'), 2: t('--r2') }
+  };
+}
+const MONO = '"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+
+/* ---------- view ---------- */
+function resize(){
+  dpr = Math.min(window.devicePixelRatio || 1, 3);
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = Math.round(W * dpr);
+  canvas.height = Math.round(H * dpr);
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  dirty = true;
+}
+function resetView(){
+  const span = 12.6, pad = 72;
+  view.s = Math.max(6, Math.min((W - pad - 40) / span, (H - pad - 40) / span));
+  view.ox = pad;
+  view.oy = H - pad;
+  dirty = true;
+}
+function clampScale(s){ return Math.min(4000, Math.max(2e-4, s)); }
+function zoomAt(px, py, k){
+  const ns = clampScale(view.s * k);
+  k = ns / view.s;
+  view.ox = px + (view.ox - px) * k;
+  view.oy = py + (view.oy - py) * k;
+  view.s = ns;
+  dirty = true;
+  if (state.hover) setHover(px, py);
+}
+function setHover(px, py){
+  state.hover = { x: (px - view.ox) / view.s, y: (view.oy - py) / view.s };
+  dirty = true;
+  updateReadout();
+}
+function hitSquare(wx, wy){
+  if (wx <= 0 || wy <= 0) return null;
+  const m = Math.max(wx, wy);
+  if (m > 1e15) return null;
+  return nextMember(m);
+}
+
+/* ---------- drawing ---------- */
+function gridLines(spacing, color, left, right, bottom, top){
+  const s = view.s, ox = view.ox, oy = view.oy;
+  ctx.strokeStyle = color; ctx.lineWidth = 1; ctx.beginPath();
+  for (let k = Math.ceil(left / spacing); k * spacing <= right; k++){
+    const px = Math.round(ox + k * spacing * s) + .5;
+    ctx.moveTo(px, 0); ctx.lineTo(px, H);
+  }
+  for (let k = Math.ceil(bottom / spacing); k * spacing <= top; k++){
+    const py = Math.round(oy - k * spacing * s) + .5;
+    ctx.moveTo(0, py); ctx.lineTo(W, py);
+  }
+  ctx.stroke();
+}
+function drawGrid(T, step, left, right, bottom, top){
+  const mant = +(step / Math.pow(10, Math.floor(Math.log10(step)))).toFixed(6);
+  const minor = mant === 2 ? step / 2 : step / 5;
+  if (minor * view.s >= 8) gridLines(minor, T.grid, left, right, bottom, top);
+  gridLines(step, T.gridStrong, left, right, bottom, top);
+}
+function drawSquares(T, right, top){
+  const s = view.s, ox = view.ox, oy = view.oy;
+  const xmax = Math.floor(Math.max(right, top));
+  if (xmax < 1 || right <= 0 || top <= 0) return { xmax: 0, n: 0, drawn: 0, stride: 1 };
+  const n = countLE(xmax);
+  const stride = Math.max(1, Math.ceil(n / MAX_DRAW));
+  let drawn = 0;
+  ctx.globalAlpha = state.opacity;
+  for (let i = n - 1; i >= 0; i -= stride){
+    const x = memberAt(i);
+    const L = Math.max(ox, 0), Tp = Math.max(oy - x * s, 0);
+    const R = Math.min(ox + x * s, W), B = Math.min(oy, H);
+    if (R <= L || B <= Tp) continue;
+    ctx.fillStyle = T.c[x % 4];
+    ctx.fillRect(L, Tp, R - L, B - Tp);
+    drawn++;
+  }
+  ctx.globalAlpha = 1;
+  if (s >= 3 && stride === 1){
+    ctx.strokeStyle = T.ink; ctx.globalAlpha = .38; ctx.lineWidth = 1;
+    ctx.beginPath();
+    const x0 = Math.max(ox, -1), y0 = Math.min(oy, H + 1);
+    for (let i = 0; i < n; i++){
+      const x = memberAt(i);
+      const px = ox + x * s, py = oy - x * s;
+      if (px < 0 || py > H) continue;
+      ctx.moveTo(x0, py); ctx.lineTo(px, py); ctx.lineTo(px, y0);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+  if (s >= 9 && stride === 1){
+    for (let i = 0; i < n; i++){
+      const x = memberAt(i);
+      const px = ox + x * s, py = oy - x * s;
+      if (px < -4 || px > W + 4 || py < -4 || py > H + 4) continue;
+      ctx.beginPath(); ctx.arc(px, py, 3.2, 0, Math.PI * 2);
+      ctx.fillStyle = T.c[x % 4]; ctx.fill();
+      ctx.strokeStyle = T.paper; ctx.lineWidth = 1.5; ctx.stroke();
+    }
+  }
+  return { xmax, n, drawn, stride };
+}
+function drawAxes(T, step, left, right, bottom, top){
+  const s = view.s, ox = view.ox, oy = view.oy;
+  ctx.strokeStyle = T.axis; ctx.lineWidth = 1.25; ctx.beginPath();
+  if (oy >= 0 && oy <= H){ ctx.moveTo(0, Math.round(oy) + .5); ctx.lineTo(W, Math.round(oy) + .5); }
+  if (ox >= 0 && ox <= W){ ctx.moveTo(Math.round(ox) + .5, 0); ctx.lineTo(Math.round(ox) + .5, H); }
+  ctx.stroke();
+  ctx.fillStyle = T.muted; ctx.font = '11px ' + MONO;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  const ly = Math.min(Math.max(oy + 6, 4), H - 16);
+  for (let k = Math.ceil(left / step); k * step <= right; k++){
+    const x = k * step; if (x === 0) continue;
+    ctx.fillText(fmt(x), ox + x * s, ly);
+  }
+  ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+  const lx = Math.min(Math.max(ox - 6, 34), W - 4);
+  for (let k = Math.ceil(bottom / step); k * step <= top; k++){
+    const y = k * step; if (y === 0) continue;
+    ctx.fillText(fmt(y), lx, oy - y * s);
+  }
+  if (ox > 0 && ox < W && oy > 0 && oy < H){
+    ctx.textAlign = 'right'; ctx.textBaseline = 'top';
+    ctx.fillText('0', ox - 6, oy + 6);
+  }
+}
+function drawDiagonal(T, left, right, bottom, top){
+  const s = view.s, ox = view.ox, oy = view.oy;
+  const a = Math.min(left, bottom) - 1, b = Math.max(right, top) + 1;
+  ctx.save();
+  ctx.strokeStyle = T.ink; ctx.globalAlpha = .55; ctx.lineWidth = 1.2; ctx.setLineDash([6, 5]);
+  ctx.beginPath(); ctx.moveTo(ox + a * s, oy - a * s); ctx.lineTo(ox + b * s, oy - b * s); ctx.stroke();
+  ctx.restore();
+  const t = Math.min(oy / s, (W - ox) / s);
+  if (t > Math.max(left, bottom)){
+    const px = Math.min(ox + t * s, W), py = Math.max(oy - t * s, 0);
+    let lx = px - 12, ly = py + 10;
+    if (px > W - 350 && ly < 290){
+      ly = 290;
+      lx = ox + (oy - ly) - 12;
+    }
+    if (lx < 420 && ly < 120) return;
+    const label = 'y = x   slope 1   eigenvalue 1';
+    ctx.font = '12px ' + MONO; ctx.textAlign = 'right'; ctx.textBaseline = 'top';
+    ctx.lineJoin = 'round'; ctx.lineWidth = 3; ctx.strokeStyle = T.paper;
+    ctx.strokeText(label, lx, ly);
+    ctx.fillStyle = T.ink; ctx.fillText(label, lx, ly);
+  }
+}
+function drawHover(T){
+  if (!state.hover) return;
+  const x = hitSquare(state.hover.x, state.hover.y);
+  if (!x) return;
+  const s = view.s, ox = view.ox, oy = view.oy;
+  const px = ox + x * s, py = oy - x * s;
+  ctx.save();
+  ctx.strokeStyle = T.c[x % 4]; ctx.lineWidth = 2.5; ctx.lineJoin = 'miter';
+  ctx.beginPath();
+  ctx.moveTo(Math.max(ox, -2), py); ctx.lineTo(px, py); ctx.lineTo(px, Math.min(oy, H + 2));
+  ctx.stroke();
+  if (px > -6 && px < W + 6 && py > -6 && py < H + 6){
+    ctx.beginPath(); ctx.arc(px, py, 4.5, 0, Math.PI * 2);
+    ctx.fillStyle = T.c[x % 4]; ctx.fill();
+    ctx.strokeStyle = T.paper; ctx.lineWidth = 2; ctx.stroke();
+  }
+  ctx.restore();
+}
+function draw(){
+  dirty = false;
+  const T = tokens();
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.fillStyle = T.paper; ctx.fillRect(0, 0, W, H);
+  const s = view.s, ox = view.ox, oy = view.oy;
+  const left = -ox / s, right = (W - ox) / s, top = oy / s, bottom = (oy - H) / s;
+  const step = niceStep(s, 64);
+  drawGrid(T, step, left, right, bottom, top);
+  const info = drawSquares(T, right, top);
+  drawAxes(T, step, left, right, bottom, top);
+  drawDiagonal(T, left, right, bottom, top);
+  drawHover(T);
+  $('stats').textContent = info.n
+    ? (info.n.toLocaleString('en-US') + ' in view, x ≤ ' + fmt(info.xmax) + (info.stride > 1 ? ', every ' + info.stride + 'th drawn' : ''))
+    : 'none in view';
+  $('zoomv').textContent = fmtScale(s);
+}
+
+/* ---------- readout ---------- */
+const IDLE = '<div class="grid">'
+  + '<span class="k">hover</span><span class="v">a square to read it</span>'
+  + '<span class="k">invariants</span><span class="v">x = y · slope 1 · eigenvalue 1</span>'
+  + '<span class="k">unit square</span><span class="v">x = 1 · area 1² = 1</span>'
+  + '</div>'
+  + '<div class="foot"><span>y = x is the eigenline of the x ↔ y swap</span></div>';
+function updateReadout(){
+  const box = $('readout-body');
+  const x = state.hover ? hitSquare(state.hover.x, state.hover.y) : null;
+  if (!x){ box.innerHTML = IDLE; return; }
+  const r = x % 4, v = valueOf(x), mu = mobius(x), sum = runningSum(x);
+  const area = x <= 94906265 ? fmt(x * x) : (x * x).toExponential(4);
+  box.innerHTML = '<div class="grid">'
+    + '<span class="k">x = y</span><span class="v">' + fmt(x) + '</span>'
+    + '<span class="k">class</span><span class="v"><span class="pill" style="background:var(--r' + r + ')">x ≡ ' + r + ' (mod 4)</span></span>'
+    + '<span class="k">value</span><span class="v">' + fmtSigned(v) + '</span>'
+    + '<span class="k">area x²</span><span class="v">' + area + '</span>'
+    + '<span class="k">corner</span><span class="v">(' + fmt(x) + ', ' + fmt(x) + ')</span>'
+    + '<span class="k">running sum</span><span class="v">' + fmtSigned(sum) + '</span>'
+    + '</div>'
+    + '<div class="foot"><span>true Möbius μ(' + fmt(x) + ') = ' + (mu === null ? '—' : fmtSigned(mu)) + '</span>'
+    + '<span>' + (mu !== null && mu === v ? 'agrees' : mu === null ? 'x too large to factor' : 'differs') + '</span></div>';
+}
+
+/* ---------- input ---------- */
+const pointers = new Map();
+let drag = null, pinch = null, moved = false;
+function startDrag(p){ drag = { x: p.x, y: p.y, ox: view.ox, oy: view.oy }; }
+canvas.addEventListener('pointerdown', (e) => {
+  canvas.setPointerCapture(e.pointerId);
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pointers.size === 1){
+    startDrag({ x: e.clientX, y: e.clientY }); moved = false;
+    canvas.classList.add('dragging');
+  } else if (pointers.size === 2){
+    drag = null;
+    const [a, b] = [...pointers.values()];
+    pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), s: view.s, mid: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }, ox: view.ox, oy: view.oy };
+  }
+});
+canvas.addEventListener('pointermove', (e) => {
+  if (pointers.has(e.pointerId)) pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pinch && pointers.size === 2){
+    const [a, b] = [...pointers.values()];
+    const d = Math.hypot(a.x - b.x, a.y - b.y) || 1;
+    const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+    const k = clampScale(pinch.s * d / pinch.d) / pinch.s;
+    view.s = pinch.s * k;
+    view.ox = pinch.mid.x + (pinch.ox - pinch.mid.x) * k + (mid.x - pinch.mid.x);
+    view.oy = pinch.mid.y + (pinch.oy - pinch.mid.y) * k + (mid.y - pinch.mid.y);
+    dirty = true;
+    return;
+  }
+  if (drag){
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
+    view.ox = drag.ox + dx; view.oy = drag.oy + dy;
+    dirty = true;
+  }
+  if (e.pointerType === 'mouse') setHover(e.clientX, e.clientY);
+});
+function endPointer(e){
+  pointers.delete(e.pointerId);
+  if (pointers.size < 2) pinch = null;
+  if (pointers.size === 0){
+    if (drag && !moved && e.pointerType !== 'mouse') setHover(e.clientX, e.clientY);
+    drag = null;
+    canvas.classList.remove('dragging');
+  } else if (pointers.size === 1){
+    const [p] = [...pointers.values()];
+    startDrag(p); moved = true;
+  }
+}
+canvas.addEventListener('pointerup', endPointer);
+canvas.addEventListener('pointercancel', endPointer);
+canvas.addEventListener('pointerleave', (e) => {
+  if (e.pointerType === 'mouse' && !drag){ state.hover = null; dirty = true; updateReadout(); }
+});
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const k = Math.exp(-e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.0016));
+  zoomAt(e.clientX, e.clientY, k);
+}, { passive: false });
+window.addEventListener('keydown', (e) => {
+  const tag = e.target.tagName;
+  if (tag === 'SELECT' || tag === 'INPUT' || tag === 'BUTTON' || tag === 'SUMMARY') return;
+  const step = 60;
+  switch (e.key){
+    case '+': case '=': zoomAt(W / 2, H / 2, 1.25); break;
+    case '-': case '_': zoomAt(W / 2, H / 2, 0.8); break;
+    case '0': resetView(); break;
+    case 'ArrowLeft': view.ox += step; break;
+    case 'ArrowRight': view.ox -= step; break;
+    case 'ArrowUp': view.oy += step; break;
+    case 'ArrowDown': view.oy -= step; break;
+    default: return;
+  }
+  e.preventDefault();
+  dirty = true;
+});
+
+/* ---------- controls ---------- */
+document.querySelectorAll('select[data-r]').forEach((sel) => {
+  sel.value = String(state.val[+sel.dataset.r]);
+  sel.addEventListener('change', () => { state.val[+sel.dataset.r] = +sel.value; dirty = true; updateReadout(); });
+});
+$('inc2').addEventListener('change', (e) => {
+  state.include2 = e.target.checked;
+  $('sel2').disabled = !state.include2;
+  dirty = true; updateReadout();
+});
+$('opacity').addEventListener('input', (e) => {
+  state.opacity = +e.target.value;
+  $('opv').textContent = state.opacity.toFixed(2);
+  dirty = true;
+});
+$('reset').addEventListener('click', () => { resetView(); canvas.focus(); });
+
+/* ---------- lifecycle ---------- */
+window.addEventListener('resize', resize);
+const mq = window.matchMedia('(prefers-color-scheme: dark)');
+if (mq.addEventListener) mq.addEventListener('change', () => { dirty = true; });
+new MutationObserver(() => { dirty = true; }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { dirty = true; });
+if (window.innerWidth < 720) $('legend').removeAttribute('open');
+
+resize();
+resetView();
+updateReadout();
+(function frame(){ if (dirty) draw(); requestAnimationFrame(frame); })();
+})();
+</script>
+</body>
+</html>
