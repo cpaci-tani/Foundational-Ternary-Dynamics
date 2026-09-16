@@ -37,11 +37,13 @@ export function syncRenderableData(ctx, state, viewportAdapter) {
         // Native FTV2 returns a compact regular-grid descriptor instead of an
         // N^3 buffer. Mock/WASM and legacy FTV1 remain plain typed arrays.
         const volumeLength = volume?.data?.length ?? volume?.length ?? 0;
-        if (volumeLength > 0) {
+        if (volumeLength > 0 || activeBridge?.isFiniteRecord) {
             // The flux-volume activation proxy uses the manifested-state sites
             // already fetched for the particle renderer. Reuse this exact
             // frame instead of issuing a second state sampler request.
-            viewportAdapter.applyFluxVolume(volume, latticeSize, particleData);
+            viewportAdapter.applyFluxVolume(activeBridge?.isFiniteRecord
+                ? {data: volume, latticeSize, stride: 1, axisCount: latticeSize, scalarCounts: true}
+                : volume, latticeSize, particleData);
         }
     }
 

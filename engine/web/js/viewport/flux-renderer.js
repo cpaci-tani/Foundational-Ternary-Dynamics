@@ -1,3 +1,4 @@
+import { copyScalarActivation } from './scalar-activation.js';
 /**
  * @file engine/web/js/viewport/flux-renderer.js
  * @purpose Owns flux volume, flux streamlines for the Scale-0 lattice
@@ -37,7 +38,7 @@ import { fluxToColorInto, fluxToColor } from '../fields.js';
 // Flux-volume vertex shader (sqrt depth scaling) — centralized in
 // viewport/shaders.js (D-1).
 import { FLUX_VOL_VERT, PARTICLE_FRAG, PARTICLE_SHADER_UNIFORMS } from './shaders.js';
-import { clampFluxThreshold } from './flux-threshold.js';
+import { clampFluxThreshold, DEFAULT_FLUX_THRESHOLD } from './flux-threshold.js';
 import { computeFluxActivation, createFluxActivationStepper } from './flux-activation.js';
 
 // (MAX_FIELD_GRID was declared here but never referenced — flux volume
@@ -102,7 +103,7 @@ export class ViewportFluxRenderer {
         this._fluxStreamlinesRequested = false;
         this._flowLineOpacity = 0.7;
         this._fluxPointScale = 1.0;
-        this._fluxThreshold = 0.005;
+        this._fluxThreshold = DEFAULT_FLUX_THRESHOLD;
         this._scenarioScale = 1.0;
         this._fluxLatticeSpacing = 1.0;
         this.showFlux = true;      // flux volume ON by default
@@ -577,7 +578,7 @@ export class ViewportFluxRenderer {
         }
 
         const thresholdFraction = clampFluxThreshold(
-            this._fluxThreshold !== undefined ? this._fluxThreshold : 0.005,
+            this._fluxThreshold !== undefined ? this._fluxThreshold : DEFAULT_FLUX_THRESHOLD,
         );
         let sourceN;
         let compactSpacing = 1;
@@ -648,7 +649,7 @@ export class ViewportFluxRenderer {
             writePositions: this._fluxPositionSignature !== positionSignature,
         };
 
-        if (sourceCount > FLUX_ASYNC_SOURCE_COUNT) {
+        if (sourceCount > FLUX_ASYNC_SOURCE_COUNT && !compact?.scalarCounts) {
             this._queueLargeFluxUpdate(frame, particleData);
             return;
         }
@@ -660,7 +661,9 @@ export class ViewportFluxRenderer {
             compactOrigin,
             !!compact,
         );
-        const { instantMax: computedInstantMax } = computeFluxActivation(
+        const { instantMax: computedInstantMax } = compact?.scalarCounts
+            ? copyScalarActivation(density, this._fluxActivation)
+            : computeFluxActivation(
             density,
             sourceN,
             this._fluxStateMask,

@@ -1056,10 +1056,35 @@ const SCALE0_SCENARIO_CATALOG_MAP = new Map(
     SCALE0_SCENARIO_CATALOG.map((scenario) => [scenario.id, scenario]),
 );
 
+// Locally compiled finite-record preparations enter the same scenario menu.
+// They have bounded runtime admission, distinct from the physical-behavioral
+// qualification used by the static effective-engine catalog above.
+const recordScenarios = new Map();
+export function registerScale0RecordScenarios(catalog) {
+    if (catalog.law_id !== 'phi-v2-staged-candidate-1' || catalog.canonical_adoption !== false)
+        throw new Error('Unsupported record scenario catalog');
+    const next = new Map();
+    for (const row of catalog.scenarios) {
+        const id = `record-${row.id}`;
+        if (next.has(id) || SCALE0_SCENARIO_MAP.has(id) || !row.sizes.length || row.law_id !== catalog.law_id)
+            throw new Error('Invalid record scenario registration');
+        next.set(id, Object.freeze({id, preparationId: row.id, title: row.title, scientificTitle: row.title,
+            scale: 'lattice', category: `Finite records · ${row.family}`, backend: 'finite-records',
+            observation: row.observation || 'tokens',
+            sizes: row.sizes, source: row.source, tests: row.tests,
+            intent: 'Execute the registered complete finite preparation on the web lattice.',
+            requiredCapabilities: ['scale0'], evidenceLevel: 'bounded-runtime-parity',
+            epistemicStatus: `[SELECTION] ${catalog.law_id}; exact finite records. Transport and canonical adoption remain open.`,
+            admissionStatus: 'registered-finite-preparation', defaultParams: {},
+        }));
+    }
+    recordScenarios.clear(); for (const [id, row] of next) recordScenarios.set(id, row);
+}
+
 export function getScale0Scenario(id) {
     // Internal callers may still load a catalogued research scenario by exact
     // ID, but only SCALE0_SCENARIOS is offered in the normal menu.
-    const scenario = SCALE0_SCENARIO_MAP.get(id) || SCALE0_SCENARIO_CATALOG_MAP.get(id);
+    const scenario = recordScenarios.get(id) || SCALE0_SCENARIO_MAP.get(id) || SCALE0_SCENARIO_CATALOG_MAP.get(id);
     if (!scenario && id) {
         // C6: surface a typo'd / unregistered id instead of silently loading the
         // default. (Unknown ids legitimately fall back to flux-pulse, but quietly
@@ -1072,7 +1097,7 @@ export function getScale0Scenario(id) {
 export function populateScale0ScenarioSelect(select, selectedId = 'flux-pulse') {
     if (!select) return;
     const groups = new Map();
-    for (const scenario of SCALE0_SCENARIOS) {
+    for (const scenario of [...SCALE0_SCENARIOS, ...recordScenarios.values()]) {
         if (!groups.has(scenario.category)) groups.set(scenario.category, []);
         groups.get(scenario.category).push(scenario);
     }
@@ -1103,6 +1128,7 @@ export function populateScale0ScenarioSelect(select, selectedId = 'flux-pulse') 
         if (select.value !== selectedId && expectedIds.includes(selectedId)) {
             select.value = selectedId;
         }
+        select.dispatchEvent?.(new Event('scenario-options-changed'));
         return;
     }
 
@@ -1120,6 +1146,7 @@ export function populateScale0ScenarioSelect(select, selectedId = 'flux-pulse') 
         }
         select.appendChild(group);
     }
+    select.dispatchEvent?.(new Event('scenario-options-changed'));
 }
 
 export function validateScale0ScenarioRegistry() {

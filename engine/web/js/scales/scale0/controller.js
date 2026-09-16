@@ -6,6 +6,7 @@
  */
 
 import { BaseLifecycleController } from '../../lifecycle.js';
+import { initializeRecordScenarios } from './ui/controls/record-observation.js';
 import { createScale0ViewportAdapter } from './viewport-adapter.js?v=2';
 import {
     getFieldStateSnapshot,
@@ -178,6 +179,7 @@ export function bindUI(ctx) {
 
     if (typeof window !== 'undefined') window.__ftdCtx = ctx;
     appRegistry.register('scale0Ctx', ctx);
+    void initializeRecordScenarios(ctx);
 
     // Browser/WebView form restoration can set an already-selected scenario
     // without emitting `change`. The explicit boot load below bindUI reads the

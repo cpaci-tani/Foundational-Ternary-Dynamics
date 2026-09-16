@@ -17,6 +17,7 @@ export function runScale0PhysicsTicks(ctx, state, tickCount = 1) {
     // tickOnce(), which sends a single-tick command to the worker, which runs the
     // tick and fires postFrame() so diagnostics update on the main thread.
     const fm = state.fluxMock;
+    if (fm?.isFiniteRecord && state.useFluxMock) return fm.advance(tickCount);
     if (fm && fm.isWorker && state.useFluxMock) {
         for (let i = 0; i < tickCount; i++) fm.tickOnce();
         return;
@@ -65,6 +66,7 @@ export function advanceSimulation(ctx, state) {
     if (fm && fm.isWorker && state.useFluxMock) {
         setScale0PlaybackRunning(ctx, ctx.running, state);
         setScale0PlaybackSpeed(ctx, ctx.ticksPerFrame, state);
+        fm.pump?.();
         const dataVersion = fm.dataVersion || 0;
         if (dataVersion !== state._lastWorkerDataVersion) {
             state._lastWorkerDataVersion = dataVersion;

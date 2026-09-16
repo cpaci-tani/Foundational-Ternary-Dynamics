@@ -1,6 +1,8 @@
 import { formatEnergySim, SIM_ENERGY_TO_MEV } from '../../../units.js';
 import { formatSI } from '../../scale-utils.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
+import { getActiveScale0Bridge } from '../state/store.js';
+import { updateRecordReadout } from '../ui/controls/record-observation.js';
 import {
     getScale0TelemetryDemand,
     collectScale0OnDemand,
@@ -74,6 +76,21 @@ function _updateEnergyTooltip(el, {
 }
 
 export function updateDiagnosticsAndPanels(ctx, state) {
+    const recordOwner = getActiveScale0Bridge(ctx, state);
+    if (recordOwner?.isFiniteRecord) {
+        updateRecordReadout(recordOwner);
+        const diag = recordOwner.getDiagnostics();
+        ctx.dom.statusPtime.textContent = recordOwner.observation?.microtick || '—';
+        ctx.dom.statusParticles.textContent = diag ? String(diag.manifested) : '—';
+        ctx.dom.statusEnergy.textContent = '—';
+        ctx.dom.statusEnergy.title = 'No energy identification for the finite-record law';
+        ctx.dom.statusState.textContent = recordOwner.failed ? 'Failed · paused' : !recordOwner.ready ? 'Loading' : ctx.running ? 'Running' : 'Idle';
+        ctx.dom.statusDot.classList.toggle('idle', !ctx.running);
+        const clock = document.getElementById('global-clock-readout');
+        if (clock) clock.textContent = `tick ${recordOwner.observation?.microtick || '—'}`;
+        if (typeof ctx.isPanelVisible === 'function' && ctx.isPanelVisible('inspector')) ctx.inspector?.update();
+        return;
+    }
     // Present cached worker/native telemetry at 30+ Hz on ordinary 60–75 Hz
     // displays. The expensive audit itself remains demand/cadence gated; this
     // only consumes completed samples and removes the visibly stepped 20–24 Hz

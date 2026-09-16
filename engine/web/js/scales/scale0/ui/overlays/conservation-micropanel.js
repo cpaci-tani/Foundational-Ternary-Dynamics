@@ -304,6 +304,7 @@ export function mountConservationMicropanel(host, getBridge, hub = telemetryHub)
         if (!panelIsLive()) return;
         const bridge = getBridge?.();
         if (!bridge) return;
+        if (bridge.isFiniteRecord) { renderWaiting('Record accounting is available in Diagnostics; energy and momentum are not identified.'); return; }
 
         // Reset before sampling on bridge, scenario/reset, or telemetry-source
         // turnover. Native mutation invalidation advances sourceEpoch without

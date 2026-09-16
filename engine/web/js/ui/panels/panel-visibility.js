@@ -27,7 +27,10 @@ export function notifyPanelVisibilityChange(detail = {}) {
     }));
 }
 
-export function isPanelLive(el) {
+// Effective instruments yield their existing host to finite-record observations.
+// The record adapter explicitly opts in; dock/floating visibility rules still apply.
+export function isPanelLive(el, {recordObservation = false} = {}) {
+    if (el?.dataset?.recordObservation === 'true' && !recordObservation) return false;
     if (!el?.isConnected || el.hidden) return false;
     if (document.documentElement.classList.contains('ui-hidden')) return false;
     const app = el.closest('#app');

@@ -1107,6 +1107,11 @@ function buildOverlayJobs(ctx, state, sched, viewportAdapter, latticeSize, param
 }
 
 export function updateFieldOverlays(ctx, state, viewportAdapter) {
+    const recordOwner = getActiveScale0Bridge(ctx, state);
+    if (recordOwner?.isFiniteRecord) {
+        if (state.fieldFlags.showStateField) viewportAdapter.applyStateField(recordOwner.getSamplerOr('state'));
+        return; // This law has no imported E/B/force/metric samplers.
+    }
     state.fieldFrame += 1;
     const latticeSize = getActiveLatticeSize(ctx, state);
     const fieldThrottle = latticeSize > 96 ? 12 : (latticeSize > 48 ? 6 : 3);

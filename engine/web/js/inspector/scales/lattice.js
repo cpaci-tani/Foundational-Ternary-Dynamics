@@ -257,6 +257,21 @@ export function updateLatticeFields(target) {
     target._selectedPos = position;
     const { x, y, z } = position;
 
+    if (target.bridge?.isFiniteRecord) {
+        const record = target.bridge.getRecordAt(x, y, z);
+        for (const field of Object.values(target.fields)) if (field) field.textContent = '—';
+        if (target.fields.pos) target.fields.pos.textContent = `(${x}, ${y}, ${z}) cells`;
+        if (target.fields.state) target.fields.state.textContent = record ? String(record.state) : '—';
+        const grid = document.getElementById('insp-moore-grid');
+        if (grid) {
+            grid.replaceChildren();
+            const report = document.createElement('pre'); report.style.whiteSpace = 'pre-wrap';
+            report.textContent = record ? `Finite records · microtick ${record.tick}\nInteger incidence Q: ${record.incidence}\nField tokens: ${record.fieldTokens}\nRelation tokens: ${record.relationTokens}\n\nNo continuum field, force, spin or energy identification.` : 'Waiting for finite records.';
+            grid.appendChild(report);
+        }
+        return;
+    }
+
     const readCache = refreshInspectionCache(target, x, y, z);
     let voxel = readCache.voxel;
     let force = readCache.force;

@@ -408,7 +408,7 @@ export function commitScale0ScientificMutation(ctx, {
     const generation = Number(loadGeneration);
     const currentGeneration = Number(ctx?._loadGeneration || 0);
     const activeOwner = getActiveScale0Bridge(ctx, state);
-    if ((ctx?.engineMode && ctx.engineMode !== 'lattice')
+    if (activeOwner?.isFiniteRecord || (ctx?.engineMode && ctx.engineMode !== 'lattice')
         || !SCALE0_MUTATION_REASON_SET.has(reason)
         || !SCALE0_MUTATION_SOURCE_SET.has(source)
         || !Number.isInteger(generation)

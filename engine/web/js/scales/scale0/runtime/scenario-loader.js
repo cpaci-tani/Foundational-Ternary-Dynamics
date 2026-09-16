@@ -1,4 +1,6 @@
 import { runScale0PhysicsTicks } from './tick.js';
+import { loadRecordScenario } from './record-scenario-loader.js';
+import { syncRecordControls } from '../ui/controls/record-observation.js';
 import { getPhysicsHarness } from '../../../physics/index.js';
 import { WasmBridgeProxy } from '../../../bridge/wasm-bridge-proxy.js?v=7';
 import { telemetryHub } from '../../../telemetry-hub.js';
@@ -17,6 +19,7 @@ import { getScale0Scenario } from '../scenario-registry.js';
 import { mountGenesisBurstPanel } from '../ui/overlays/genesis-burst-panel.js?v=2';
 import { forEachKnotTracker } from './field-line-knots.js';
 import {
+    DEFAULT_FLUX_THRESHOLD,
     fluxThresholdToSliderPosition,
     formatFluxThreshold,
     sliderPositionToFluxThreshold,
@@ -130,7 +133,6 @@ export const SCALE0_SCENARIO_VISUAL_PROFILES = {
         fluxVolume: true,
         fluxSlice: true,
         fluxPointScale: 2.8,
-        fluxThreshold: 0.0002,
         fluxOpacity: 0.9,
         fieldOverlays: ['toggle-flux-lines', 'toggle-state-field', 'toggle-div-field'],
     },
@@ -142,7 +144,6 @@ export const SCALE0_SCENARIO_VISUAL_PROFILES = {
         fluxVolume: true,
         fluxSlice: true,
         fluxPointScale: 2.5,
-        fluxThreshold: 0.0005,
         fluxOpacity: 0.72,
         fieldOverlays: [
             'toggle-flux-lines',
@@ -172,11 +173,9 @@ export const SCALE0_SCENARIO_VISUAL_PROFILES = {
         fieldOverlays: ['toggle-b-field'],
     },
     's0-field-electric-dipole': {
-        // Softened opposite-source J peaks below the global 0.005 display
-        // cutoff. A scenario-local visibility threshold reveals the imposed
-        // field without changing any engine physics.
+        // Enlarge the softened opposite-source J markers without changing
+        // engine physics. Threshold uses the same near-zero default as all loads.
         fluxVolume: true,
-        fluxThreshold: 0.0001,
         fluxPointScale: 2.6,
         fluxOpacity: 0.85,
         fieldOverlays: ['toggle-flux-lines'],
@@ -185,7 +184,6 @@ export const SCALE0_SCENARIO_VISUAL_PROFILES = {
         // The imposed quantity is a vector potential; B=curl(J) is the honest
         // magnetic-dipole view. Compact large-L samples are also below 0.005.
         fluxVolume: true,
-        fluxThreshold: 0.0001,
         fluxPointScale: 2.6,
         fluxOpacity: 0.85,
         fieldOverlays: ['toggle-b-field', 'toggle-flux-lines'],
@@ -194,7 +192,6 @@ export const SCALE0_SCENARIO_VISUAL_PROFILES = {
         // This is an inert inverse-square J ansatz (not a live horizon or
         // latency solution). Keep those absent overlays off and reveal J.
         fluxVolume: true,
-        fluxThreshold: 0.0001,
         fluxPointScale: 2.6,
         fluxOpacity: 0.85,
         fieldOverlays: ['toggle-flux-lines'],
@@ -203,7 +200,6 @@ export const SCALE0_SCENARIO_VISUAL_PROFILES = {
         // Exact alias of the inert radial ansatz. Do not imply that the absent
         // latency/horizon channels are computed by turning them on by default.
         fluxVolume: true,
-        fluxThreshold: 0.0001,
         fluxPointScale: 2.6,
         fluxOpacity: 0.85,
         fieldOverlays: ['toggle-flux-lines'],
@@ -236,28 +232,24 @@ export const SCALE0_SCENARIO_VISUAL_PROFILES = {
         fluxVolume: true,
         fluxSlice: true,
         fluxPointScale: 2.6,
-        fluxThreshold: 0.001,
         fluxOpacity: 0.85,
     },
     's0-field-rf-lattice-wave': {
         fluxVolume: true,
         fluxSlice: true,
         fluxPointScale: 2.6,
-        fluxThreshold: 0.0005,
         fluxOpacity: 0.85,
     },
     's0-field-light-lattice-wave': {
         fluxVolume: true,
         fluxSlice: true,
         fluxPointScale: 2.6,
-        fluxThreshold: 0.0005,
         fluxOpacity: 0.85,
     },
     's0-field-sound-lattice-wave': {
         fluxVolume: true,
         fluxSlice: true,
         fluxPointScale: 2.6,
-        fluxThreshold: 0.0005,
         fluxOpacity: 0.85,
     },
     's0-field-shear-layer': {
@@ -267,21 +259,18 @@ export const SCALE0_SCENARIO_VISUAL_PROFILES = {
         fluxVolume: true,
         fluxSlice: true,
         fluxPointScale: 2.6,
-        fluxThreshold: 0.0005,
         fluxOpacity: 0.85,
     },
     's0-field-thomson-scattering': {
         fluxVolume: true,
         fluxSlice: true,
         fluxPointScale: 2.4,
-        fluxThreshold: 0.001,
         fluxOpacity: 0.85,
     },
     's0-field-thomson-unlocked-recoil': {
         fluxVolume: true,
         fluxSlice: true,
         fluxPointScale: 2.4,
-        fluxThreshold: 0.001,
         fluxOpacity: 0.85,
     },
     // -- s0-cell-* flux cells ---------------------------------------------
@@ -464,17 +453,6 @@ export function applyScenarioVisualProfile(ctx, state, viewportAdapter, scenario
         ctx.viewport.setFluxSlicePointScale?.(profile.fluxPointScale);
         setInputValue('flux-point-scale', profile.fluxPointScale);
         setDisplayText('flux-point-scale-val', profile.fluxPointScale.toFixed(1));
-    }
-    if (typeof profile.fluxThreshold === 'number') {
-        rememberParameterPreference('fluxThreshold');
-        ctx.viewport.setFluxThreshold(profile.fluxThreshold);
-        ctx.viewport.setFluxSliceThreshold?.(profile.fluxThreshold);
-        setInputValue('flux-threshold', fluxThresholdToSliderPosition(profile.fluxThreshold));
-        setDisplayText('flux-threshold-val', formatFluxThreshold(profile.fluxThreshold));
-        getEl('flux-threshold')?.setAttribute(
-            'aria-valuetext',
-            formatFluxThreshold(profile.fluxThreshold),
-        );
     }
     if (typeof profile.fluxOpacity === 'number') {
         rememberParameterPreference('fluxOpacity');
@@ -730,15 +708,16 @@ export function captureOverlayPreferences(state, ctx = null) {
         fluxPointScale: Number.isFinite(forcedParameters.fluxPointScale)
             ? forcedParameters.fluxPointScale
             : Number(readInputValue('flux-point-scale', 1.0)),
-        fluxThreshold: Number.isFinite(forcedParameters.fluxThreshold)
-            ? forcedParameters.fluxThreshold
-            : sliderPositionToFluxThreshold(readInputValue(
-                'flux-threshold',
-                fluxThresholdToSliderPosition(0.005),
-            )),
+        // Every load/reset begins one slider step above all-voxel inspection.
+        fluxThreshold: DEFAULT_FLUX_THRESHOLD,
         fluxOpacity: Number.isFinite(forcedParameters.fluxOpacity)
             ? forcedParameters.fluxOpacity
             : Number(readInputValue('flux-opacity', 0.70)),
+        fluxShape: Number(readInputValue('flux-shape-select', 0)),
+        fluxScenarioScale: Number(readInputValue('flux-scenario-scale', 1)),
+        fluxLatticeSpacing: Number(readInputValue('flux-lattice-spacing', 1)),
+        fluxOrganic: readButtonActive('toggle-flux-organic'),
+        fluxGlow: readButtonActive('toggle-flux-glow'),
         overlays,
         forceStyle: state?.forceStyle || 'arrows',
         scalarRenderMode: forcedScalarMode || state?.scalarRenderMode || 'default',
@@ -762,8 +741,8 @@ export function restoreOverlayPreferences(prefs, state, viewportAdapter, getForc
     viewportAdapter.setFluxSliceVisible(prefs.fluxSlice);
 
     // Restore the user's renderer tuning before the next scenario applies any
-    // of its local visibility aids. Without this, a 1e-4 dipole threshold and
-    // enlarged point scale leaked into every later scenario.
+    // of its local visibility aids. Point size and opacity retain user choices;
+    // the captured threshold starts every load at the first positive UI step.
     if (Number.isFinite(prefs.fluxPointScale)) {
         viewportAdapter.raw?.setFluxPointScale?.(prefs.fluxPointScale);
         viewportAdapter.raw?.setFluxSlicePointScale?.(prefs.fluxPointScale);
@@ -785,6 +764,20 @@ export function restoreOverlayPreferences(prefs, state, viewportAdapter, getForc
         viewportAdapter.raw?.setFluxSliceOpacity?.(prefs.fluxOpacity);
         setInputValue('flux-opacity', prefs.fluxOpacity);
         setDisplayText('flux-opacity-val', prefs.fluxOpacity.toFixed(2));
+    }
+
+    for (const [key, method, id] of [
+        ['fluxShape', 'setFluxShape', 'flux-shape-select'],
+        ['fluxScenarioScale', 'setScenarioScale', 'flux-scenario-scale'],
+        ['fluxLatticeSpacing', 'setFluxLatticeSpacing', 'flux-lattice-spacing'],
+    ]) {
+        if (Number.isFinite(prefs[key])) { viewportAdapter.raw?.[method]?.(prefs[key]); setInputValue(id, prefs[key]); }
+    }
+    for (const [key, method, id] of [
+        ['fluxOrganic', 'setFluxOrganic', 'toggle-flux-organic'],
+        ['fluxGlow', 'setFluxGlow', 'toggle-flux-glow'],
+    ]) {
+        if (typeof prefs[key] === 'boolean') { viewportAdapter[method]?.(prefs[key]); setButtonActive(id, prefs[key]); }
     }
 
     // Every field overlay — button + store flag + viewport toggle
@@ -953,6 +946,15 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
         scenarioId: scenario.id,
         loadGeneration: loadGen,
     });
+
+    if (scenario.backend === 'finite-records') {
+        setPhysicsToggleCardPending(false);
+        return loadRecordScenario(ctx, state, viewportAdapter, scenario, loadGen, params.latticeSize, {
+            preferences: captureOverlayPreferences(state, ctx),
+            restore: restoreOverlayPreferences,
+        });
+    }
+    syncRecordControls(ctx);
 
     // Preserve the user's current overlay-toggle preferences across the reset.
     // ctx.resetAllVisualState() → resetScale0VisualState() wipes every field
@@ -1381,6 +1383,11 @@ async function performScale0LatticeResize(
 }
 
 export function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) {
+    if (getActiveScale0Bridge(ctx, state)?.isFiniteRecord) {
+        const spec = getScale0Scenario(state.currentScenarioId);
+        if (!spec.sizes.includes(newSize)) throw new RangeError('Size is outside the registered preparation');
+        return loadScale0Scenario(ctx, state, viewportAdapter, spec.id, {latticeSize: newSize});
+    }
     if (!Number.isSafeInteger(newSize) || newSize < 1) {
         return Promise.reject(new RangeError('Scale-0 lattice size must be a positive safe integer'));
     }
@@ -1429,6 +1436,7 @@ export function resetScale0Scenario(ctx, state, viewportAdapter) {
 }
 
 export function exitScale0() {
+    syncRecordControls(null);
     clearFluxMock();
 }
 

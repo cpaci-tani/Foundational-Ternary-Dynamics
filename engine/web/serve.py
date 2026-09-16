@@ -32,7 +32,7 @@ import socket
 import subprocess
 import sys
 from pathlib import Path
-from urllib.parse import unquote, urlsplit
+from urllib.parse import parse_qs, unquote, urlsplit
 
 
 # ── GPU server (ws_server.exe) launcher paths ────────────────────────────────
@@ -50,6 +50,20 @@ STRICT_HYDRO_ARTIFACTS = (
     "build_strict_hydro_wasm/ftd_hydro_wasm.wasm",
     "build_strict_hydro_tables/hydro_collision_abf25cf26072c03b.u32",
 )
+RECORD_ARTIFACTS = (
+    "build_strict_wasm/ftd_strict_wasm.mjs",
+    "build_strict_wasm/ftd_strict_wasm.wasm",
+)
+
+
+def _record_catalog_module():
+    # The endpoint only admits registered finite preparations, never Python
+    # supplied by the request. Tests are inventoried through AST, not executed.
+    scripts = str(Path(_ENGINE_ROOT).parent / "scripts")
+    if scripts not in sys.path:
+        sys.path.insert(0, scripts)
+    from phi_v2_lattice import web_scenarios
+    return web_scenarios
 
 
 def _contained(root, relative):
@@ -73,7 +87,7 @@ def _static_resource(request_path, directory):
         return _contained(Path(_ENGINE_ROOT) / "strict" / "web" / "hydro", relative)
     if route.startswith("/web/"):
         return _contained(_WEB_ROOT, route[len("/web/"):])
-    if route.lstrip("/") in STRICT_HYDRO_ARTIFACTS:
+    if route.lstrip("/") in STRICT_HYDRO_ARTIFACTS + RECORD_ARTIFACTS:
         return _contained(_ENGINE_ROOT, route.lstrip("/"))
     # There is deliberately no mount of engine/ or any build directory.
     if route.startswith(("/build_strict_", "/strict/")):
@@ -156,6 +170,8 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
     # ── GPU server (ws_server.exe) launcher API — loopback dev server only ──
     def do_GET(self):
         route = self.path.split("?", 1)[0]
+        if route in ("/api/lattice/records/catalog", "/api/lattice/records/checkpoint"):
+            return self._record_lattice(route)
         if route == "/api/strict-hydro/status":
             return self._strict_hydro_status()
         if route == "/api/gpu-server/status":
@@ -163,6 +179,39 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
         if route == "/api/gpu-server/download":
             return self._gpu_download()
         return super().do_GET()
+
+    def _record_lattice(self, route):
+        try:
+            available = all(_contained(_ENGINE_ROOT, name).is_file() for name in RECORD_ARTIFACTS)
+            if not available:
+                self.send_error(503, "Build the strict Phi-v2 WASM runtime first")
+                return
+            module = _record_catalog_module()
+            if route.endswith("/catalog"):
+                data = module.catalog()
+                data["available"] = True
+                data["wasm_module_url"] = "/" + RECORD_ARTIFACTS[0]
+                body = json.dumps(data).encode("utf-8")
+                mime, digest = "application/json", None
+            else:
+                query = parse_qs(urlsplit(self.path).query, strict_parsing=True)
+                if set(query) != {"scenario", "size"} or any(len(v) != 1 for v in query.values()):
+                    raise ValueError("one registered scenario and size required")
+                size = query["size"][0]
+                if size not in {"3", "4", "7", "9", "17"}:
+                    raise ValueError("unregistered size")
+                body, digest = module.checkpoint(query["scenario"][0], int(size))
+                mime = "application/octet-stream"
+            self.send_response(200)
+            self.send_header("Content-Type", mime)
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("X-Phi-Law", module.P.LAW_ID)
+            if digest:
+                self.send_header("X-Checkpoint-SHA256", digest)
+            self.end_headers()
+            self.wfile.write(body)
+        except (ValueError, KeyError):
+            self.send_error(400, "Unregistered Phi-v2 preparation")
 
     def _strict_hydro_status(self):
         try:

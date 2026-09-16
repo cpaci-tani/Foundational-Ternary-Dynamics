@@ -760,6 +760,8 @@ export class WasmBridgeProxy {
     /** Monotonic physics-data version; sampler-only readbacks do not advance it. */
     get dataVersion() { return this._ctrl ? Atomics.load(this._ctrl, CTRL.DATA_VERSION) : 0; }
     get ready() { return this._ready; }
+    /** True after the worker acknowledged disposal or was hard-terminated. */
+    get disposed() { return this._terminated; }
     get configurationToken() { return this._pendingConfigurationToken; }
     get lifecycleDebug() {
         return Object.freeze({

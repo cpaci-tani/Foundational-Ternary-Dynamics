@@ -121,6 +121,13 @@ export function getScale0OverlayApplicability(scenarioId, engineTerms = null) {
     const tags = scenario?.tags || [];
     const domainOverride = SCALE0_SCENARIO_DOMAIN_OVERRIDES[scenarioId] || {};
 
+    if (scenario?.backend === 'finite-records') {
+        return {scenarioId, terms: {},
+            domains: {flux: false, state: true, finiteRecords: true, dual: false,
+                gravity: false, emForce: false, strong: false, standardModel: false, properTimeClock: false},
+            applicable: new Set(['toggle-flux-volume', 'toggle-state-field'])};
+    }
+
     if (!scenario || scenarioId === 'empty') {
         return {
             scenarioId,

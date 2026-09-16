@@ -83,6 +83,7 @@ export function getSelectedScenarioId(fallback = 'flux-pulse') {
 
 export function setSelectedScenarioId(id) {
     setInputValue('scenario-select', id);
+    getEl('scenario-select')?.dispatchEvent(new Event('scenario-options-changed'));
 }
 
 export function setForceStyleButtons(style) {
