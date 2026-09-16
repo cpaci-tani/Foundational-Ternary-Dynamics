@@ -9,6 +9,9 @@
  */
 
 export const FLUX_THRESHOLD_MAX = 0.5;
+// First positive slider step. Zero is the explicit all-voxel inspection mode.
+export const FLUX_THRESHOLD_SLIDER_STEP = 0.0001;
+export const DEFAULT_FLUX_THRESHOLD = sliderPositionToFluxThreshold(FLUX_THRESHOLD_SLIDER_STEP);
 
 export function clampFluxThreshold(value) {
     const numeric = Number(value);
@@ -30,6 +33,7 @@ export function fluxThresholdToSliderPosition(threshold) {
 
 export function formatFluxThreshold(value) {
     const threshold = clampFluxThreshold(value);
+    if (threshold > 0 && threshold < 0.000001) return threshold.toExponential(2);
     if (threshold < 0.0001) return threshold.toFixed(6);
     if (threshold < 0.001) return threshold.toFixed(5);
     return threshold.toFixed(3);

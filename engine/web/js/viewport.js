@@ -1,3 +1,4 @@
+import { DEFAULT_FLUX_THRESHOLD } from './viewport/flux-threshold.js';
 /**
  * @file viewport.js
  * @brief Three.js 3D Viewport — renders particles and fields from the simulation bridge.
@@ -1253,7 +1254,7 @@ export class Viewport {
     set _fluxStreamlines(v) { if (this._fluxRenderer) this._fluxRenderer._fluxStreamlines = v; }
     get _fluxPointScale() { return this._fluxRenderer?._fluxPointScale ?? 1.0; }
     set _fluxPointScale(v) { if (this._fluxRenderer) this._fluxRenderer._fluxPointScale = v; }
-    get _fluxThreshold() { return this._fluxRenderer?._fluxThreshold ?? 0.005; }
+    get _fluxThreshold() { return this._fluxRenderer?._fluxThreshold ?? DEFAULT_FLUX_THRESHOLD; }
     set _fluxThreshold(v) { if (this._fluxRenderer) this._fluxRenderer._fluxThreshold = v; }
     get _scenarioScale() { return this._fluxRenderer?._scenarioScale ?? 1.0; }
     set _scenarioScale(v) { if (this._fluxRenderer) this._fluxRenderer._scenarioScale = v; }

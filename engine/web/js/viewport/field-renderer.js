@@ -1,3 +1,4 @@
+import { DEFAULT_FLUX_THRESHOLD } from './flux-threshold.js';
 /**
  * ViewportFieldRenderer — Scale-0 field overlay façade.
  * Families: field-em / field-force / field-topology / field-quantum / field-renderer-core.
@@ -45,7 +46,7 @@ export class ViewportFieldRenderer {
         this._fluxSliceOpacity = 0.7;
         this._fluxSliceShape = 0;
         this._fluxSlicePointScale = 1.0;
-        this._fluxSliceThreshold = 0.005;
+        this._fluxSliceThreshold = DEFAULT_FLUX_THRESHOLD;
         this._fieldVectors = null;
         this._peStreamlines = null;
         this._gravityVectors = null;
