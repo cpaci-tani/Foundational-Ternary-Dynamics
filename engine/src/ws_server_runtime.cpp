@@ -6,6 +6,7 @@
 #include "ws_server_internal.h"
 
 #include "ftd/constants.h"
+#include "ftd/ws_idle_policy.h"
 #include "ftd/ws_json.h"
 
 #include <chrono>
@@ -72,12 +73,20 @@ ClientPollResult wait_for_client_activity(SOCKET client, int timeout_ms) {
         : ClientPollResult::timeout;
 }
 
+// Distinguishes why serve_client returned so the caller can log the right
+// idle-shutdown line and decide whether to keep accepting new clients (a
+// small explicit result instead of a global, per the idle-shutdown design
+// note: the caller must be able to tell a normal disconnect from the
+// silent-client clock firing).
+enum class ClientSessionEnd { normal, idle_silent };
+
 // Each network operation has a monotonic deadline. Waiting services only
 // observation production: flushing here would interleave a second frame into
 // an incomplete response. No input dispatch or physical tick occurs here.
-static void serve_client(SOCKET client, std::unique_ptr<RenderBridge>& rb,
+static ClientSessionEnd serve_client(SOCKET client, std::unique_ptr<RenderBridge>& rb,
                          NativeTelemetryScheduler& telemetry, int& lattice_size,
-                         const ftd::WsIoPolicy& policy) {
+                         const ftd::WsIoPolicy& policy,
+                         const ftd::IdleShutdownPolicy& idle_policy) {
     const auto pump_while_waiting = [&]() {
         try {
             telemetry.pump(*rb);
@@ -98,10 +107,15 @@ static void serve_client(SOCKET client, std::unique_ptr<RenderBridge>& rb,
     // WebSocket handshake
     if (!ftd::ws_handshake(client)) {
         std::cerr << "[ws_server] Handshake failed\n";
-        return;
+        return ClientSessionEnd::normal;
     }
 
     std::cout << "[ws_server] WebSocket handshake complete\n";
+
+    // Silent-client clock: starts at connection and is refreshed on every
+    // received frame below. A fresh local, not something the caller threads
+    // through — each session starts its own clock at zero.
+    auto last_client_activity = std::chrono::steady_clock::now();
 
     // Message loop.  Snapshot publication is intentionally serviced from
     // this same single transport writer: an unsolicited JSON delta cannot
@@ -143,13 +157,31 @@ static void serve_client(SOCKET client, std::unique_ptr<RenderBridge>& rb,
             connected = false;
             break;
         }
-        if (poll == ClientPollResult::timeout) continue;
+        if (poll == ClientPollResult::timeout) {
+            // disconnected_since is irrelevant while a client is attached
+            // (IdleShutdownPolicy ignores it on this branch); pass `now`
+            // itself as a harmless placeholder.
+            const auto now = std::chrono::steady_clock::now();
+            if (idle_policy.should_stop(now, now, /*client_attached=*/true,
+                                        last_client_activity)) {
+                std::cout << "[ws_server] Idle " << idle_policy.timeout.count()
+                          << " min with a client attached but silent — "
+                             "closing session and shutting down.\n";
+                return ClientSessionEnd::idle_silent;
+            }
+            continue;
+        }
 
         // Start one absolute read deadline only after readability. Consume
         // partial input so half-close is observable; the I/O wait hook can
         // service scalar observation completion without writing frames.
         std::vector<uint8_t> payload;
         uint8_t opcode = ftd::ws_read_frame(client, payload);
+        // Any successfully read frame is client activity for the idle
+        // clock, independent of what command (if any) it carries — the
+        // `ping` heartbeat is just the cheapest such frame. 0xFF marks a
+        // read/protocol failure, not a real message, so it is excluded.
+        if (opcode != 0xFF) last_client_activity = std::chrono::steady_clock::now();
 
         switch (opcode) {
         case WS_TEXT: {
@@ -252,6 +284,7 @@ static void serve_client(SOCKET client, std::unique_ptr<RenderBridge>& rb,
     }
     if (ftd::ws_last_io_status() == ftd::WsIoStatus::timeout)
         std::cerr << "[ws_server] Client network operation timed out\n";
+    return ClientSessionEnd::normal;
 }
 
 // ============================================================================
@@ -278,11 +311,27 @@ int run_server(int argc, char* argv[]) {
     std::string bind_addr = "127.0.0.1";
     bool single_client = false;
     ftd::WsIoPolicy client_io_policy;
+    ftd::IdleShutdownPolicy idle_policy;  // default: 30-minute timeout, enabled
 
     std::vector<const char*> positional;
     for (int i = 1; i < argc; ++i) {
         if (std::strcmp(argv[i], "--bind") == 0 && i + 1 < argc) {
             bind_addr = argv[++i];
+        } else if (std::strcmp(argv[i], "--idle-timeout-min") == 0) {
+            if (i + 1 >= argc) {
+                std::cerr << "[ws_server] --idle-timeout-min requires an integer in [0,1440]\n";
+                return 2;
+            }
+            const char* value = argv[++i];
+            int idle_minutes = 0;
+            const auto parsed = std::from_chars(value, value + std::strlen(value), idle_minutes);
+            if (parsed.ec != std::errc{} || parsed.ptr != value + std::strlen(value)
+                || idle_minutes < 0 || idle_minutes > 1440) {
+                std::cerr << "[ws_server] --idle-timeout-min requires an integer in [0,1440]\n";
+                return 2;
+            }
+            // 0 disables auto-stop entirely; 1..1440 is the enabled range.
+            idle_policy.timeout = std::chrono::minutes(idle_minutes);
         } else if (std::strcmp(argv[i], "--client-timeout-ms") == 0) {
             if (i + 1 >= argc) {
                 std::cerr << "[ws_server] --client-timeout-ms requires an integer in [100,60000]\n";
@@ -310,6 +359,13 @@ int run_server(int argc, char* argv[]) {
     if (lattice_size < 4) lattice_size = 4;
     if (lattice_size > 256) lattice_size = 256;
     if (port < 1 || port > 65535) port = 9100;
+
+    if (idle_policy.enabled()) {
+        std::cout << "[ws_server] Idle auto-stop after " << idle_policy.timeout.count()
+                  << " min (no client attached, or a client attached but silent).\n";
+    } else {
+        std::cout << "[ws_server] Idle auto-stop disabled.\n";
+    }
 
     std::cout << "================================================================\n";
     std::cout << "  FTD WebSocket Server\n";
@@ -417,6 +473,9 @@ int run_server(int argc, char* argv[]) {
     // while no client is attached, so a CUDA event failure is converted into
     // a suspended/recoverable scheduler before a reconnect reaches `info`.
     std::cout << "[ws_server] Waiting for client...\n";
+    // Disconnected-clock: set at startup, reset whenever a client session
+    // ends (below). Irrelevant to should_stop while a client is attached.
+    auto disconnected_since = std::chrono::steady_clock::now();
     while (true) {
         const ClientPollResult accept_poll = wait_for_client_activity(
             server_sock, 8);
@@ -425,6 +484,13 @@ int run_server(int argc, char* argv[]) {
             continue;
         }
         if (accept_poll == ClientPollResult::timeout) {
+            const auto now = std::chrono::steady_clock::now();
+            if (idle_policy.should_stop(now, disconnected_since,
+                                        /*client_attached=*/false, now)) {
+                std::cout << "[ws_server] Idle " << idle_policy.timeout.count()
+                          << " min with no client attached — shutting down.\n";
+                break;
+            }
             try {
                 telemetry.pump(*rb);
                 // There is intentionally no observer while disconnected.
@@ -456,8 +522,10 @@ int run_server(int argc, char* argv[]) {
 
         std::cout << "[ws_server] Client connected\n";
 
+        ClientSessionEnd session_end = ClientSessionEnd::normal;
         try {
-            serve_client(client, rb, telemetry, lattice_size, client_io_policy);
+            session_end = serve_client(client, rb, telemetry, lattice_size,
+                                       client_io_policy, idle_policy);
         } catch (const std::exception& ex) {
             // A callback marks genuine backend failures suspended itself.
             // Socket setup/protocol failure alone never poisons the physics.
@@ -468,7 +536,11 @@ int run_server(int argc, char* argv[]) {
 
         closesocket(client);
         telemetry.on_client_disconnected();
+        // Whatever ended the session, no client is attached from this point
+        // until the next accept() succeeds — restart the disconnected clock.
+        disconnected_since = std::chrono::steady_clock::now();
         std::cout << "[ws_server] Client disconnected\n";
+        if (session_end == ClientSessionEnd::idle_silent) break;
         if (single_client) break;
         std::cout << "[ws_server] Waiting for client...\n";
     }

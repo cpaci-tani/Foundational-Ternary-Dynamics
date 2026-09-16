@@ -649,7 +649,7 @@ bool handle_command(const std::string& json, SOCKET client,
         return send_json_response(client, response.str(), request_id);
     };
 
-    if (telemetry.suspended() && cmd != "info") {
+    if (telemetry.suspended() && cmd != "info" && cmd != "ping") {
         // Do not attempt reset/resize/setup_scenario here. A timed-out CUDA
         // observation may still own an event that RenderBridge destruction
         // synchronizes, so in-process source replacement is unsafe.
@@ -657,7 +657,14 @@ bool handle_command(const std::string& json, SOCKET client,
             client, json_native_recovery_required(cmd, telemetry), request_id);
     }
 
-    if (cmd == "tick") {
+    if (cmd == "ping") {
+        // Idle-shutdown heartbeat (2026-09-16 spec section 1). Deliberately
+        // touches neither the engine nor telemetry: the socket layer already
+        // records this as client activity for the idle-shutdown clock the
+        // moment the frame is read, so this handler only needs to answer.
+        return send_json_response(client, "{\"ok\":true}", request_id);
+    }
+    else if (cmd == "tick") {
         rb->tick();
         // The server owns the observation boundary. This only enqueues a
         // non-blocking GPU snapshot; tick_complete is never held behind a

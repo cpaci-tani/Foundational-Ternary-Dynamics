@@ -108,7 +108,7 @@ inline void validate_ws_command(const JsonValue& j) {
     } else if (cmd != "tick" && cmd != "get_particles" && cmd != "get_diagnostics"
                && cmd != "get_dynamical_state_digest" && cmd != "get_energy_audit"
                && cmd != "get_gravity_metric" && cmd != "get_lagrangian"
-               && cmd != "reset" && cmd != "info") {
+               && cmd != "reset" && cmd != "info" && cmd != "ping") {
         throw std::invalid_argument("unknown command: " + cmd);
     }
     for (const auto& field : j.object()) {
