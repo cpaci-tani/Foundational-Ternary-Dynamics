@@ -24,6 +24,7 @@ function fixture(workerEligible = false) {
         getPhysicsHarness:bridge=>bridge, wasmWorkerEligible:()=>workerEligible,
         setCurrentScenarioId:id=>state.currentScenarioId=id, setFluxMock:(b,on)=>{state.fluxMock=b;state.useFluxMock=on;},
         captureOverlayPreferences:()=>({}), syncScale0ToggleUiFromEngine:()=>true,
+        syncRecordControls:()=>{}, // UI dependency; this fixture tests owner installation.
         readAuthoritativeTick:()=>0, DEFAULT_TOGGLES:[],
         ...Object.fromEntries(['setPhysicsToggleCardPending','setSelectedScenarioId','beginScale0AuthoritativeLoad','completeScale0AuthoritativeLoad','failScale0AuthoritativeLoad','applyToggleDefaults','applyAuxiliaryDefaults','applyGravityAbsorbingToggles','markScenarioOverrideRows','syncComboSliders','restoreOverlayPreferences','applyScenarioVisualProfile','applyScale0OverlayApplicability','applyScenarioCameraFocus','recomputeAnyFieldActive','reportScenarioSetupFailure'].map(k=>[k,()=>{}])),
     };

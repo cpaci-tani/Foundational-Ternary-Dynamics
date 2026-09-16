@@ -796,7 +796,7 @@ test('native-only constants stay read-only while native confinement remains writ
     expect(result.confinementLabel).toBe('Confinement');
 });
 
-test('scenario-local visibility tuning restores user volume controls on the next load', async ({ page }) => {
+test('scenario profiles preserve volume tuning while each load resets threshold', async ({ page }) => {
     await page.goto('/js/ws-bridge.js', { waitUntil: 'domcontentloaded' });
     const result = await page.evaluate(async () => {
         const {
@@ -845,6 +845,7 @@ test('scenario-local visibility tuning restores user volume controls on the next
             fieldFlags: { showKnotZones: false },
         };
         const initial = captureOverlayPreferences(state, ctx);
+        restoreOverlayPreferences(initial, state, adapter);
 
         applyScenarioVisualProfile(
             ctx, state, adapter, 's0-field-electric-dipole', initial,
@@ -895,28 +896,28 @@ test('scenario-local visibility tuning restores user volume controls on the next
     });
 
     expect(result.initial.point).toBe(2.2);
-    expect(result.initial.threshold).toBeCloseTo(0.007, 4);
+    expect(result.initial.threshold).toBeCloseTo(2e-8, 12);
     expect(result.initial.opacity).toBe(0.42);
     expect(result.initial.volume).toBe(true);
     expect(result.duringDipole.point).toBe('2.6');
-    expect(result.duringDipole.threshold).toBeCloseTo(0.0001, 5);
+    expect(result.duringDipole.threshold).toBeCloseTo(2e-8, 12);
     expect(result.duringDipole.opacity).toBe('0.85');
     expect(result.restoredPrefs.point).toBe(2.2);
-    expect(result.restoredPrefs.threshold).toBeCloseTo(0.007, 4);
+    expect(result.restoredPrefs.threshold).toBeCloseTo(2e-8, 12);
     expect(result.restoredPrefs.opacity).toBe(0.42);
     expect(result.afterRestore.point).toBe('2.2');
-    expect(result.afterRestore.threshold).toBeCloseTo(0.007, 4);
+    expect(result.afterRestore.threshold).toBeCloseTo(2e-8, 12);
     expect(result.afterRestore.opacity).toBe('0.42');
     expect(result.uniformBActive).toBe(false);
     expect(result.volumeAfterUniformB).toBe(true);
     expect(result.calls).toEqual(expect.arrayContaining([
-        ['threshold', 0.0001],
+        ['threshold', 2e-8],
         ['volume', false],
     ]));
     const restoredThresholdCall = result.calls.find(
-        ([name, value]) => name === 'threshold' && value > 0.001,
+        ([name, value]) => name === 'threshold' && value > 0,
     );
-    expect(restoredThresholdCall?.[1]).toBeCloseTo(0.007, 4);
+    expect(restoredThresholdCall?.[1]).toBeCloseTo(2e-8, 12);
 });
 
 test('compact center seeds receive one large-L camera focus without overriding later manual motion', async ({ page }) => {

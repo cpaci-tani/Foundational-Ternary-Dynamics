@@ -94,8 +94,8 @@ test.describe('Scale 0 Flux Volume controls-card audit gate', () => {
             ariaLabel: 'Relative local activation-energy threshold',
             ariaValueText: result.expectedThresholdText,
         });
-        expect(result.values.thresholdPosition).toBeCloseTo(0.05, 8);
-        expect(result.values.threshold).toBeCloseTo(0.005, 8);
+        expect(result.values.thresholdPosition).toBeCloseTo(0.0001, 10);
+        expect(result.values.threshold).toBeCloseTo(2e-8, 12);
         expect(result.renderer).toEqual({
             volumeShape: result.values.shape,
             sliceShape: result.values.shape,
