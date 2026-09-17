@@ -17,6 +17,7 @@
 // call site; safe to include from any .cu translation unit.
 
 #include "ftd/constants.h"
+#include "ftd/larmor_damping.h"
 #include "ftd/lorentz_period2.h"
 #include "ftd/lorentz_bcc_time.h"
 #include "ftd/sublattice.h"
@@ -49,20 +50,27 @@ int idx3d(int x, int y, int z, int L) {
 // stencil that needs damping share one source of truth for the Larmor
 // modulation formula.
 //
-//   eff_damp = (1 - DAMPING * larmor_mod)  if larmor active at i
-//            = damp                        otherwise
+//   eff_damp = larmor_effective_damping(damp, a)  if larmor active at i
+//            = damp                               otherwise
 //
-// where larmor_mod = clamp(LARMOR_FLOOR + K_LARMOR * a², 0, 1) and a is
-// the magnitude of the local acceleration (provided in `near_accel`).
+// where a is the magnitude of the local acceleration (provided in
+// `near_accel`). The law itself lives in ftd/larmor_damping.h, which BOTH this
+// kernel and the CPU phase_write call, so the two cannot drift:
+//
+//   gain(a) = min(1 + K_LARMOR·a², LARMOR_MAX_GAIN)
+//   eff(a)  = damp ^ gain(a)          (≤ damp, > 0, monotone ↓ in |a|)
+//
+// 2026-09-16: this replaced `1 - DAMPING * min(1, LARMOR_FLOOR + K_LARMOR·a²)`,
+// which was capped such that enabling the toggle could only ever DECREASE
+// dissipation below the undamped baseline — the inverse of radiation reaction.
+// See the header for the full mechanism and the parity note.
 __device__ __forceinline__
 double effective_damping(int i, double damp,
                          bool do_larmor, bool selective_damping,
                          const uint8_t* __restrict__ near_particle,
                          const double*  __restrict__ near_accel) {
     if (do_larmor && selective_damping && near_particle[i]) {
-        const double a2 = near_accel[i] * near_accel[i];
-        const double larmor_mod = fmin(1.0, LARMOR_FLOOR + K_LARMOR * a2);
-        return 1.0 - DAMPING * larmor_mod;
+        return ::ftd::larmor_effective_damping(damp, near_accel[i]);
     }
     return damp;
 }

@@ -18,7 +18,9 @@
 
 namespace {
 
+using ftd::FluxBoundaryMode;
 using ftd::RenderBridge;
+using ftd::StrongEnergyStepDiagnostics;
 using ftd::StrongStressCell;
 using ftd::TermToggles;
 using ftd::Vec3;
@@ -129,6 +131,57 @@ int main() {
     }
     std::printf("    max |T00 CPU-GPU|=%.3g\n", t00_err);
     check("CIC string T00 parity", t00_err <= 1e-12);
+
+    // Non-periodic boundary gate. The projection's pair math
+    // (minimum_image_component / minimum_image_displacement) wraps with the
+    // periodic minimum image unconditionally, so a non-Periodic flux_boundary
+    // would feed it physically wrong separations. CUDA's projection_ok has
+    // always required Periodic; the CPU gate did not, so the two backends
+    // disagreed on the same profile. Both must now refuse it identically.
+    TermToggles dispersal = isolated_pair();
+    dispersal.flux_boundary = FluxBoundaryMode::Dispersal;
+    std::string dispersal_error;
+    const bool dispersal_rejected = !dispersal.validate(&dispersal_error);
+    std::printf("    validate(Dispersal) -> %s",
+                dispersal_error.empty() ? "<accepted>\n" : dispersal_error.c_str());
+    check("validate rejects strong_stress_energy with flux_boundary=Dispersal",
+          dispersal_rejected
+          && dispersal_error.find(
+                 "strong_stress_energy requires flux_boundary=Periodic")
+             != std::string::npos);
+
+    RenderBridge cpu_np(L);
+    cpu_np.force_cpu();
+    cpu_np.toggles.disable_all();
+    cpu_np.toggles = dispersal;
+    cpu_np.voxels() = seed;
+    cpu_np.tick();
+    const StrongEnergyStepDiagnostics cpu_np_diag =
+        cpu_np.strong_energy_step_diagnostics();
+
+    ftd::gpu::GpuEngine gpu_np(L);
+    gpu_np.graph_capture_enabled = false;
+    gpu_np.toggles.disable_all();
+    gpu_np.toggles = dispersal;
+    gpu_np.upload_from_host(seed);
+    gpu_np.tick();
+    StrongEnergyStepDiagnostics gpu_np_diag;
+    gpu_np.download_strong_step_diagnostics(gpu_np_diag);
+
+    std::printf("    projection_failures CPU=%d GPU=%d\n",
+                cpu_np_diag.projection_failures, gpu_np_diag.projection_failures);
+    std::printf("    projection_events   CPU=%d GPU=%d\n",
+                cpu_np_diag.projection_events, gpu_np_diag.projection_events);
+    std::printf("    topology_failures   CPU=%d GPU=%d\n",
+                cpu_np_diag.topology_failures, gpu_np_diag.topology_failures);
+    check("CPU refuses the non-periodic projection",
+          cpu_np_diag.projection_failures == 1
+          && cpu_np_diag.projection_events == 0
+          && cpu_np_diag.topology_failures == 0);
+    check("CPU/GPU agree on the non-periodic projection refusal",
+          cpu_np_diag.projection_failures == gpu_np_diag.projection_failures
+          && cpu_np_diag.projection_events == gpu_np_diag.projection_events
+          && cpu_np_diag.topology_failures == gpu_np_diag.topology_failures);
 
     std::printf("\n%d passed, %d failed\n", passed, failed);
     return failed == 0 ? 0 : 1;

@@ -559,9 +559,25 @@ This resolves the source-core interpretation:
 Current production specification:
 
 ```text
-[SELECTION] The production engine now supports Option B natively via the `exact_dual_gauss` toggle (default: false).
-When enabled, the projection acts exactly as the face-averaged representation of the true dual-cell Gauss theorem, correcting all sites uniformly without arbitrary source-skipping. 
-When disabled, the engine defaults to the legacy skip-source projection to preserve behavior for Phase G/H tests.
+[SELECTION] The production engine exposes an `exact_dual_gauss` toggle (default: false).
+When enabled, it removes the manifested-site skip from the ordinary cell-centred
+centred-difference subtraction: the same J -= grad_6 phi correction is applied at
+every site rather than at void sites only (the whole semantics of the flag is the
+one predicate `if (!exact_dual_gauss && state != 0) continue;` in
+gauss_project_cpu / gauss_correction_kernel).
+When disabled, the engine defaults to the legacy skip-source projection to preserve
+behavior for Phase G/H tests.
+
+[CORRECTION] The toggle name is a misnomer and must not be read as a claim.
+It does NOT implement the dual-cell face operator measured above, and it is not
+"exact": the projection is still the cell-centred, face-averaged approximation,
+and it is bounded and non-idempotent rather than constraint-enforcing. Per the
+HONEST STATUS block in engine/include/ftd/poisson_solvers.h, on even L the
+divergence cokernel is 8-dimensional, so a point charge admits no constraint-
+satisfying flux field at all and the residual floors at an irreducible 7/N
+independent of solver quality; a second application of J -= grad_6 phi moves the
+field a further ~42% of the first application's change. Removing the source skip
+changes which sites are corrected; it does not upgrade the operator.
 ```
 
 Moore-shell Gauss status:

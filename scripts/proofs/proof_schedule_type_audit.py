@@ -157,11 +157,11 @@ check("source labels the clock law an AXIOM, not a derivation", len(ax) == 1,
 # ================================================================ DEFAULTS
 section("D.  WHAT RUNS BY DEFAULT  (term_toggles.h)")
 
-ON = ["wave_propagation", "coupling", "genesis", "gauss_projection", "forces", "movement",
-      "weak_transmutation", "poisson_coulomb", "damping", "dual_substrate"]
+ON = ["wave_propagation", "coupling", "genesis", "gauss_projection", "forces", "gravity",
+      "movement", "weak_transmutation", "poisson_coulomb", "damping", "dual_substrate"]
 OFF = ["latency_field", "de_broglie_clock", "pair_production", "triad_binding", "su2_gauge",
        "su3_gauge", "evaporation", "strong_stress_energy", "matched_gauss_dynamics",
-       "emergent_forces", "langevin", "field_energy_gravity"]
+       "emergent_forces", "langevin", "field_energy_gravity", "geometric_gravity"]
 on_ok = {n: dflt(n) for n in ON}
 off_ok = {n: dflt(n) for n in OFF}
 check("default-ON set", all(v == "true" for v in on_ok.values()), str(on_ok))
@@ -169,8 +169,27 @@ check("default-OFF set", all(v == "false" for v in off_ok.values()), str(off_ok)
 
 lat = lines_matching(bridge, r"if \(toggles\.latency_field\)\s*$")
 lat2 = lines_matching(bridge, r"solve_latency_poisson\(\);")
-check("gravity (latency solve) is gated on latency_field  -> OFF by default", lat and lat2,
-      f"render_bridge.cpp {lat} -> {lat2}")
+check("ELLIPTIC gravity (latency solve) is gated on latency_field  -> OFF by default",
+      lat and lat2, f"render_bridge.cpp {lat} -> {lat2}")
+
+# The latency solve is NOT the only gravity channel.  `toggles.gravity` gates a
+# SECOND, default-ON, purely algebraic density-gradient force in phase_forces.
+# FTD-1027 F2 originally read "the default law has no gravity" because this
+# audit checked only the latency path; both assertions below close that gap.
+grav_dflt = dflt("gravity")
+check("DENSITY-GRADIENT gravity toggle `gravity` is default-ON  (NOT gravity-free)",
+      grav_dflt == "true", f"term_toggles.h: bool gravity = {grav_dflt}")
+
+gbranch = lines_matching(pforce, r"if \(rb\.toggles\.gravity\)")
+gterm = lines_matching(pforce, r"f_grav\s*=\s*grad_rho\s*\*\s*G_N")
+ggeo = lines_matching(pforce, r"if \(rb\.toggles\.geometric_gravity\)")
+gtier2 = lines_matching(pforce, r"rb\.lattice_\.index\(c\.x\+2,\s*c\.y,\s*c\.z\)")
+check("default gravity = ALGEBRAIC local F = G_N*grad(rho) on a tier-2 (r=2) stencil, "
+      "in the non-geometric_gravity branch (r=2 exceeds P4's radius-one ceiling)",
+      gbranch and gterm and ggeo and gtier2 and dflt("geometric_gravity") == "false",
+      f"phase_forces.cpp gate {gbranch} geometric-branch {ggeo} "
+      f"density term {gterm} r=2 offsets {gtier2[:2]}; geometric_gravity="
+      f"{dflt('geometric_gravity')}")
 ptg = lines_matching(bridge, r"if \(toggles\.latency_field \|\| toggles\.de_broglie_clock\)")
 check("proper time is gated on latency_field || de_broglie_clock  -> OFF by default",
       len(ptg) >= 1, f"render_bridge.cpp line {ptg}")

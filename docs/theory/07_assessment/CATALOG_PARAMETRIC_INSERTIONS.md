@@ -6,7 +6,7 @@
 
 > **Epistemic framing.** This catalog exists because the tag `[DERIVED]` is often overapplied. A *derivation* takes FTD axioms and produces both the functional form and the numerical value. A *parametric insertion* borrows the functional form from external physics (QED, ChPT, Fermi theory, Regge phenomenology, seesaw ansatz, etc.) and inserts FTD-supplied integers or couplings into it. Insertions are not wrong — they are how any EFT cross-checks with the existing Standard Model — but they must be tagged honestly. A reviewer should be able to read this catalog and tell in five minutes which claims are independent evidence for FTD and which are cross-checks against known physics.
 
-> **See also:** for the spine-layer + calibration interface (the 7 algebraic-spine theorems, 4 dimensionless physical predictions, 3 calibration declarations, and worked dimensional applications), see `docs/theory/01_reference/SPEC_DIMENSIONAL_MAP.md` (rendered) and `docs/theory/01_reference/dimensional_map.json` (canonical data). The dimensional map exposes the *bridge mechanism* (how dimensionless quantities cross over to physical units via the two theorem-enforced anchors `a_phys ≡ ℓ_P` and `K_B = m_e`); this catalog enumerates the ~129 parametric insertions that consume that bridge.
+> **See also:** for the spine-layer + calibration interface (the 7 algebraic-spine theorems, 4 dimensionless physical predictions, 3 calibration declarations, and worked dimensional applications), see `docs/theory/01_reference/SPEC_DIMENSIONAL_MAP.md` (rendered) and `docs/theory/01_reference/dimensional_map.json` (canonical data). The dimensional map exposes the *bridge mechanism* (how dimensionless quantities cross over to physical units via the two theorem-enforced anchors `a_phys ≡ ℓ_P` and `K_B = m_e`); this catalog enumerates the 138 parametric insertions that consume that bridge (count corrected 2026-09-16 from a stale "~129"; see §2).
 
 ---
 
@@ -42,7 +42,8 @@
 | Cosmological parameters | 4 | 0 | 0 | 4 |
 | Cross-sections | 3 | 3 | 0 | 0 |
 | Structural null-predictions | 4 | 4 | 0 | 0 |
-| **TOTAL** | **162** | **18** | **133** | **11** |
+| Engine force-field constants (§13c) | 5 | 0 | 5 | 0 |
+| **TOTAL** | **167** | **18** | **138** | **11** |
 
 > **Arithmetic reconciled 2026-07-26.** The category rows now sum to the TOTAL
 > row: 18 + 133 + 11 = 162. Two category rows were corrected and the TOTAL
@@ -68,7 +69,26 @@
 > that survive, or is residual PMNS over-count, needs a §7 read before the row
 > is moved — so the arithmetic above may tighten further toward [PARAMETRIC].
 
-**Headline finding.** Of the ~162 quantities FTD reports for the Standard Model, **~21 are genuine derivations** (corrected 2026-07-01, FTD-0348 — the μ/τ lepton-mass-ratio rows were carried at [DERIVED] here after their demotion of record to [STRUCTURALLY MOTIVATED PARAMETRIC] elsewhere; two rows moved columns), **~131 are parametric insertions** (standard formulas with FTD-supplied inputs), and **~10 are imposed or selected** (no formal derivation). This is consistent with the "~50 parametric insertions" claim in `AUDIT_EPISTEMIC_AUDIT.md` when mass/decay/CKM sub-tables are not expanded, and with ~150 when they are.
+> **Rows added 2026-09-16 — TOTAL 162 → 167.** The new
+> `Engine force-field constants (§13c)` row books five `engine/include/ftd/constants.h`
+> values (`SIGMA_STRING`, `H_BOND_EPSILON`, `K_ANGLE`, `V_TORSION`, `K_IMPROPER`)
+> that were absent from this catalog entirely while the header carried them as
+> `[DERIVED]`. All five are `[PARAMETRIC]` by this catalog's own definition —
+> imported force laws (lattice-QCD linear confinement, Lennard-Jones 10-12, the
+> classical bonded terms) with FTD constants supplying the coefficient — so the
+> [PARAMETRIC] column moves 133 → 138 and the TOTAL 162 → 167. Nothing is
+> promoted; the [DERIVED]/[THEOREM] count stays **18** and [IMPOSED]/[SELECTION]
+> stays **11**. The category rows still sum to the TOTAL: 18 + 138 + 11 = 167.
+>
+> ⚠ **Still open, not fixed here:** §10b (atomic dynamics, 8 rows) and §13b
+> (gravitational coupling, 2 rows) contribute no category row to this table, so
+> the TOTAL remains an undercount of the document's own rows. Fixing that needs a
+> decision about whether EMPIRICAL/ABSENT entries belong in the denominator, which
+> is a separate audit.
+
+**Headline finding.** Of the 167 quantities FTD reports for the Standard Model (and its engine force laws), **18 are genuine derivations**, **138 are parametric insertions** (standard formulas with FTD-supplied inputs), and **11 are imposed or selected** (no formal derivation). This is consistent with the "~50 parametric insertions" claim in `AUDIT_EPISTEMIC_AUDIT.md` when mass/decay/CKM sub-tables are not expanded, and with ~150 when they are.
+
+> *Paragraph corrected 2026-09-16.* It previously read "~21 genuine derivations / ~131 parametric / ~10 imposed" — one of the two stale spellings the 2026-07-26 reconciliation note above explicitly identified ("Derived-grade count is therefore **18**, not the ~21/~23 previously quoted in two places") but never rewrote. It is now the table's own numbers.
 
 **What this means for the EFT program.** Phases 1–4 of `SPEC_EFT_RECOVERY_PROGRAM.md` aim to move 5–15 items from the right two columns to the left column by measuring (not fitting) them on the lattice. See §11 for the upgrade-candidates shortlist.
 
@@ -266,6 +286,22 @@ The mass *ratios* (§7.1) are [DERIVED]; the *absolute scale* is set by the sees
 
 ---
 
+## 13c · Engine Force-Field Constants — all [PARAMETRIC] (section added 2026-09-16 — these five `engine/include/ftd/constants.h` values were **absent from this catalog entirely** while the header carried them as `[DERIVED]`; the header comments were retagged to `[PARAMETRIC]` the same day)
+
+Each row below is a textbook force law whose *functional form* is imported wholesale (strong-coupling lattice QCD, Lennard-Jones, or the classical molecular-mechanics bonded terms), with an FTD integer/constant dressing supplying the coefficient. That is the catalog's own definition of a parametric insertion, so none of them may be cited as engine-side derivations.
+
+| Quantity | Value | Formula (imported) | FTD inputs | Tag | Source |
+|---|---|---|---|---|---|
+| `SIGMA_STRING` (Scale-1 linear string tension) | 0.261121 | σ = ALPHA_S · K_B²; the scaling σ ~ α_s·Λ² and the linear potential V(r) = σ·r are strong-coupling lattice-QCD imports | ALPHA_S, K_B | **[PARAMETRIC]** (header said `[DERIVED from ALPHA_S and K_B]` until 2026-09-16). Both inputs are themselves non-derived: the C++ `ALPHA_S` is the **[IMPOSED]** Planck-scale prefactor **= 1.0**, *not* the 7/59 running coupling (naming hazard flagged at `constants.h:265`), and `K_B = 0.511` is the **[IMPOSED]** m_e calibration anchor. With ALPHA_S = 1 the constant is numerically nothing but K_B² — the square of a calibration. ⚠ **Three different σ under one name:** this 0.261, the §13 Creutz σ = −ln(I₁(β)/I₀(β)) at β = x₋, and LEDGER FTD-0025's σ = 0.209. Do not cross-cite them. | `engine/include/ftd/constants.h:299`; consumed by `color_regime_force_mag` under `TermToggles::confinement` |
+| `H_BOND_EPSILON` (hydrogen-bond well depth) | 1.986×10⁻⁷ | LJ 10-12 well: V = ε[5(σ/r)¹² − 6(σ/r)¹⁰]·cosⁿθ — molecular-mechanics form imported entire | K_B, α³ | **[PARAMETRIC]** (header said `[DERIVED from α perturbation theory]`). The α³ dressing is an ansatz chosen to make H-bonds ~10× weaker than covalent; no perturbation-theory chain from the postulates is given anywhere. | `constants.h:558` |
+| `K_ANGLE` (VSEPR angle-strain stiffness) | 3.729×10⁻³ | Harmonic bend V = ½·K_ANGLE·(θ − θ_eq)² — classical force-field form imported | α, K_B | **[PARAMETRIC]** (header said `[DERIVED from α × K_B]`). Product of a coupling and a calibration; the harmonic form is not substrate-derived. | `constants.h:563` |
+| `V_TORSION` (dihedral barrier) | 2.721×10⁻⁵ | Periodic torsion V = ½·V_TORSION·[1 + cos(nφ − γ)] — classical force-field form imported | α², K_B | **[PARAMETRIC]** (header said `[DERIVED from α² × K_B]`). The multiplicity n and phase γ are separate imported inputs. | `constants.h:567` |
+| `K_IMPROPER` (planarity stiffness) | 7.458×10⁻³ | Harmonic improper V = ½·K_IMPROPER·ω² — classical force-field form imported | α, K_B, and a bare factor 2 | **[PARAMETRIC]** (header said `[DERIVED from α × K_B]`). The factor 2 relative to `K_ANGLE` has no stated substrate origin. | `constants.h:571` |
+
+These five refine the single `Inter-atomic forces (ionic/vdW/covalent)` row of §10b, which already carried `[PARAMETRIC]`; §10b names the family, this section names and counts the constants. Unlike §10b and §13b, this section **is** counted in the §2 summary table.
+
+---
+
 ## 14 · Cosmological Parameters — [SELECTION]
 
 | Quantity | Value | Argument | Tag | Source |
@@ -344,6 +380,7 @@ The EFT program (Phases 1–4) can plausibly move these entries from [PARAMETRIC
 
 **This catalog must be updated whenever:**
 - A new [PARAMETRIC] entry is added to `proof_complete_sm.py` → add a row.
+- A constant in `engine/include/ftd/constants.h` (or `scripts/constants.py`) is introduced or retagged as [PARAMETRIC] → add or move a row. Added 2026-09-16: the five §13c constants sat at `[DERIVED]` in the C++ header with no catalog row at all, because this list named only the Python proof script as a trigger.
 - An EFT-program phase completes → move affected rows left, update `DERIV_*.md` citation.
 - A reviewer challenges a tag → audit in issue tracker, adjust here if warranted.
 

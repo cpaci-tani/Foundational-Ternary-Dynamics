@@ -123,6 +123,12 @@ void phase_forces_main_loop(RenderBridge& rb) {
     // The self-field wake at r=1 creates an asymmetric density gradient
     // that causes spurious self-acceleration. At r=2 the self-field
     // influence is negligible and only external gradients contribute.
+    //
+    // LOCALITY NOTE: r=2 exceeds the v3 constitution's P4 radius-one Moore
+    // causal ceiling (FTD-1023), and `gravity` is default-ON, so this is a
+    // default-profile exception — currently UNPRICED: not booked to the
+    // LEDGER nor to SPEC_IMPORT_LEDGER.md. Found in the 2026-09-16 physics
+    // semantic audit; tracked in 07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md.
     if (rb.toggles.gravity) {
       auto c = rb.lattice_.coord(i);
       if (rb.toggles.geometric_gravity) {

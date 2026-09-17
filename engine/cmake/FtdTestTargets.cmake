@@ -50,10 +50,12 @@ set_property(GLOBAL APPEND PROPERTY FTD_CONDITIONAL_TEST_SOURCES
     tests/test_gpu_stream_binding.cpp
     tests/test_gpu_strong_stress_parity.cpp
     tests/test_gpu_symmetric_movement_parity.cpp
+    tests/test_gpu_triad_parity.cpp
     tests/test_gpu_verlet_parity.cpp
     tests/test_gpu_visual_field_sample.cpp
     tests/test_gpu_visual_snapshot.cpp
     tests/test_ui_observer_neutrality_gpu.cpp
+    tests/test_weak_transmutation_parity.cpp
     tests/test_wilson_dirac_cuda_parity.cpp
 )
 
@@ -397,6 +399,14 @@ ftd_add_test(test_visual_field_sample tests/test_visual_field_sample.cpp
 ftd_add_test(test_symmetric_movement tests/test_symmetric_movement.cpp
              CTEST_NAME symmetric_movement TIMEOUT 60 LABELS unit)
 
+# Locks the fact that the symmetric_movement_order AXIS permutation is
+# mathematically inert (disjoint per-axis (rem, d) state), so nobody "fixes"
+# it into an order-sensitive variant. See ftd/movement_order.h.
+ftd_add_test(test_movement_axis_order_invariance
+             tests/test_movement_axis_order_invariance.cpp
+             CTEST_NAME movement_axis_order_invariance TIMEOUT 60
+             LABELS unit movement regression)
+
 # Wave 4b.6: test_lorentz_force + test_lorentz_invariance + test_magnetic +
 # test_magnetic_lagrangian merged into test_lorentz (self-ref target)
 ftd_add_test(test_lorentz tests/test_lorentz.cpp CTEST_NAME lorentz TIMEOUT 600)
@@ -544,6 +554,12 @@ if(FTD_ENABLE_CUDA)
 endif()
 ftd_add_test(test_scenario_meta tests/test_scenario_meta.cpp
              CTEST_NAME scenario_meta)
+ftd_add_test(test_scenario_seed_defaults tests/test_scenario_seed_defaults.cpp
+             CTEST_NAME scenario_seed_defaults TIMEOUT 300 LABELS scenario seeding)
+set_tests_properties(scenario_seed_defaults PROPERTIES ENVIRONMENT "FTD_FORCE_CPU=1")
+ftd_add_test(test_scenario_seed_effects tests/test_scenario_seed_effects.cpp
+             CTEST_NAME scenario_seed_effects TIMEOUT 600 LABELS scenario seeding)
+set_tests_properties(scenario_seed_effects PROPERTIES ENVIRONMENT "FTD_FORCE_CPU=1")
 
 ftd_add_test(test_boundary_scenario_physics tests/test_boundary_scenario_physics.cpp
              CTEST_NAME boundary_scenario_physics TIMEOUT 180)
@@ -551,6 +567,14 @@ ftd_add_test(test_genesis_scenario_physics tests/test_genesis_scenario_physics.c
              CTEST_NAME genesis_scenario_physics TIMEOUT 180)
 ftd_add_test(test_flux_cell_scenario_physics tests/test_flux_cell_scenario_physics.cpp
              CTEST_NAME flux_cell_scenario_physics TIMEOUT 300)
+# Flux-cell toggle regressions (2026-09-16): port aperture accounting surface,
+# and flux_pump work booking under dual_substrate.
+ftd_add_test(test_flux_cell_port_aperture tests/test_flux_cell_port_aperture.cpp
+             CTEST_NAME flux_cell_port_aperture TIMEOUT 120
+             LABELS unit flux_cell regression)
+ftd_add_test(test_flux_cell_pump_dual_work tests/test_flux_cell_pump_dual_work.cpp
+             CTEST_NAME flux_cell_pump_dual_work TIMEOUT 180
+             LABELS unit flux_cell regression)
 ftd_add_test(test_reaction_scenario_physics tests/test_reaction_scenario_physics.cpp
              CTEST_NAME reaction_scenario_physics TIMEOUT 180)
 ftd_add_test(test_identity_lifecycle tests/test_identity_lifecycle.cpp
@@ -813,6 +837,12 @@ target_link_libraries(test_poynting ftd_core)
 
 add_executable(test_larmor tests/test_larmor.cpp)
 target_link_libraries(test_larmor ftd_core)
+
+# Regression gate for the 2026-09-16 Larmor sign-of-physics fix: damping must
+# INCREASE with |a| and exceed the undamped baseline. See ftd/larmor_damping.h.
+ftd_add_test(test_larmor_damping_law tests/test_larmor_damping_law.cpp
+             CTEST_NAME larmor_damping_law TIMEOUT 120
+             LABELS unit damping regression)
 
 # Emergent EM physics tests
 add_executable(test_dipole_radiation tests/test_dipole_radiation.cpp)
@@ -1088,6 +1118,27 @@ if(FTD_ENABLE_CUDA)
                  tests/test_gpu_strong_stress_parity.cpp GPU_HEAVY
                  CTEST_NAME gpu_strong_stress_parity TIMEOUT 300
                  LABELS unit parity color)
+
+    # triad_binding is ToggleBackend::ANY; before 2026-09-16 the GPU kernel
+    # read no locked[] and selected triads by a nearest-neighbour heuristic
+    # instead of the CPU's index-ordered a<b<c search. This pins the two
+    # backends to identical locked-particle sets on an ambiguous cluster.
+    ftd_add_test(test_gpu_triad_parity
+                 tests/test_gpu_triad_parity.cpp GPU_HEAVY
+                 CTEST_NAME gpu_triad_parity TIMEOUT 300
+                 LABELS unit parity triad regression)
+
+    # CHARACTERIZATION, not a contract. weak_transmutation is ToggleBackend::ANY
+    # and ON by default, but the CPU rule is sequential-in-place (a firing site's
+    # flux_L/flux_R swap is visible to a later face neighbour's stress) while the
+    # CUDA decide/apply split is snapshot — a divergence kernels_aux.cu discloses
+    # in its own header. GPC-17, the only prior guard, injects one particle and
+    # cannot reach it. This measures the divergence on adjacent same-tick-eligible
+    # pairs and pins its exact scope; it does NOT assert the two agree.
+    ftd_add_test(test_weak_transmutation_parity
+                 tests/test_weak_transmutation_parity.cpp GPU_HEAVY
+                 CTEST_NAME weak_transmutation_parity TIMEOUT 300
+                 LABELS unit parity weak characterization)
 
     ftd_add_test(test_gpu_matched_gauss_parity
                  tests/test_gpu_matched_gauss_parity.cpp GPU_HEAVY

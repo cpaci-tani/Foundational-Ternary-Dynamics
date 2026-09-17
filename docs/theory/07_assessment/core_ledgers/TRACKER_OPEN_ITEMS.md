@@ -4352,6 +4352,56 @@ instantaneous momentum capacity.
 [`AUDIT_DYNAMICAL_FLUX_DRESSING.md`](../common_action_mechanics_reciprocity/AUDIT_DYNAMICAL_FLUX_DRESSING.md),
 and [`AUDIT_RECIPROCAL_MOVING_SOURCE.md`](../common_action_mechanics_reciprocity/AUDIT_RECIPROCAL_MOVING_SOURCE.md).
 
+### 1.13 Default-ON gravity uses a tier-2 (r=2) stencil — **[OPEN — UNPRICED P4 EXCEPTION]**
+
+**Location:** `engine/src/render_bridge_phases/phase_forces.cpp` (the
+`rb.toggles.gravity` block and its `LOCALITY NOTE` comment);
+`engine/include/ftd/term_toggles.h` line 56 (`bool gravity = true`).
+
+**Finding (2026-09-16 physics semantic audit).** The default engine profile
+ships `gravity = true`, and that channel computes `F = G_N·∇ρ` from a
+**tier-2 (`r = 2`) central difference** of the density — reading sites at
+`c ± 2ê`, deliberately, to escape the self-field wake that contaminates the
+`r = 1` face-neighbour gradient. Radius 2 exceeds the v3 constitution's **P4
+radius-one Moore causal ceiling** ([FTD-1023](../../01_reference/SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md)).
+Because the toggle is ON by default, this is not a toggle-extended excursion
+that a profile opts into: it is an exception in the **canonical** run. The
+same `r = 2` stencil is used by the default-OFF `geometric_gravity` branch
+(FTD-1016), so any resolution must cover both.
+
+**Why it is open.** The exception is **unpriced**: it is booked neither as a
+line in [`SPEC_IMPORT_LEDGER.md`](../../01_reference/SPEC_IMPORT_LEDGER.md)
+(no adopted-bit / selected-type / calibration entry names it) nor as a
+declared constitutional exception to P4. Nothing here argues the physics is
+wrong — an `r = 2` gradient is a defensible numerical choice against
+self-field contamination — only that the ontology's own causal ceiling is
+being exceeded by the default law with no ledger entry saying so and no
+falsifier attached. Per the Number-One Goal's drive face, a booked exception
+is acceptable; a silent one is the F10 failure mode.
+
+**Resolution paths (either suffices).**
+1. **Re-derive at `r = 1`** — remove the self-field contribution analytically
+   (or by subtracting the site's own wake) so the gradient closes inside the
+   Moore ball, and retire the exception.
+2. **Book a deliberate, priced exception** — a named line in
+   `SPEC_IMPORT_LEDGER.md` (an `r = 2` kinematic-support adoption) with its
+   own falsifier, plus an explicit clause in the v3 constitution, so P4 reads
+   "radius one, with one declared gravity-channel exception" rather than being
+   quietly contradicted by the shipped default.
+
+Until one of these lands, the honest statement is: **the canonical profile's
+gravity term is not P4-compliant, and that is not yet paid for.**
+
+**Cross-references.** The source comment at
+`phase_forces.cpp` (`LOCALITY NOTE`, added in the same audit) carries the
+same statement at the point of use. LEDGER [`FTD-1027`](LEDGER.md) **F2** and
+**F4** were corrected in this pass — they previously asserted that the
+default law has "no gravity", which was false precisely because this channel
+runs; the census verifier
+`scripts/proofs/proof_schedule_type_audit.py` now asserts the default-ON
+state and the `r = 2` stencil directly (23/23). FTD-1028's repetition of the
+same claim was corrected with it.
+
 ---
 
 ## §2 Theory — derivations (`docs/theory/03_derivations/`)

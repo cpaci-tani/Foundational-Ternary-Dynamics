@@ -22,7 +22,13 @@ namespace ontic {
 // ============================================================================
 // Layer 6: Mass Scale
 // ============================================================================
-// Manifestation threshold = electron mass (in simulation energy units):
+// Mass anchor = electron mass (in simulation energy units).
+//   K_B is NOT the manifestation threshold: since FTD-0388 the
+//   manifestation/kinetics scale is K_MANIFEST := W_SC = 0.50546... (defined
+//   ~20 lines below), which is -1.084% from K_B = 0.511.  The old
+//   "Manifestation threshold = electron mass" wording asserted the exact role
+//   conflation FTD-0130 flagged and FTD-0388 split apart (mass anchor vs
+//   kinetics scale); K_B carries the MASS-ANCHOR role only.
 //   m_e = m_P · √(2π) · (N_base²/N_c) · α¹¹
 //       = m_P · √(2π) · (16/3) · α¹¹
 //       ≈ 0.51002 MeV  (−0.19% from experimental 0.51099895 MeV, CODATA 2022)
@@ -34,6 +40,15 @@ namespace ontic {
 //
 // In simulation units where m_P = 1, this is ~4.18e-23.
 // We use K_B = 0.511 MeV as the practical simulation value.
+//
+// [IMPOSED — CALIBRATION].  K_B is one of exactly two theorem-enforced SI
+// calibration declarations (FTD-0096; the other is the length/time anchor
+// a_phys ≡ ℓ_P with t_phys ≡ ℓ_P/(√3·c)).  Its numerical value is an INPUT
+// that fixes the lattice→MeV mass scale, not a derived output: the [SMC]
+// ladder above predicts the dimensionless ratio m_e/m_P, while the MeV
+// figure 0.511 is set by the electron-primary calibration
+// (SPEC_DIMENSIONAL_MAP.md / dimensional_map.json).  Every dimensional
+// prediction downstream of K_B is calibration-conditional.
 inline constexpr double K_B = 0.511;
 
 // FTD-0402 causal-normalization contract.  K_B remains the imposed numerical

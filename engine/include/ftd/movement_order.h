@@ -47,6 +47,15 @@ FTD_RNG_HD void extract_remainder_hops(
         return;
     }
     int axes[3];
+    // NOTE (2026-09-16): this permutation is mathematically INERT — each
+    // hop_axis call reads and writes a disjoint (rem, d) pair, so all 6 axis
+    // orders yield bit-identical dx/dy/dz. Verified and pinned by
+    // tests/test_movement_axis_order_invariance.cpp. It is kept because the
+    // toggle's contract is "coordinate-independent update traversal & axis
+    // ordering" and the ordering half is redundant given how hop extraction is
+    // structured, not broken; the effective half of the toggle is the
+    // Fisher-Yates SITE shuffle (movement_shuffle_j below). Do not "fix" this
+    // into an order-sensitive form — that would be new, untested physics.
     movement_axis_perm(seed, site, tick, axes);
     for (int k = 0; k < 3; ++k) {
         if (axes[k] == 0) hop_axis(rx, dx);

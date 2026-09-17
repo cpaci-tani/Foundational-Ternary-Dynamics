@@ -186,7 +186,12 @@ print()
 # Compare to actual G_N_lattice under K_B = m_e calibration:
 voxel = ell_P
 mass_anchor = m_e
-tick = sqrt(3) * ell_P / c
+# One tick t_phys = ell_P / (sqrt(3) * c) = t_P / sqrt(3)  [CALIBRATION].
+# Corrected 2026-07-08 (DERIV_DIMENSIONAL_GATE.md): the pre-2026-07-08 form
+# t_phys = sqrt(3)*ell_P/c was wrong by a factor of 3 (hence 9 in tick**2).
+# Canonical mirrors: scripts/constants.py FTD_TICK_S (= Planck time / sqrt(3)),
+# engine/web/js/constants.js.
+tick = ell_P / (sqrt(3) * c)
 G_N_lattice_me = G_N_phys * mass_anchor * tick**2 / voxel**3
 print(f"  Actual G_N_lattice (K_B = m_e)         = {nstr(G_N_lattice_me, 6)}")
 print(f"  Ratio claimed / actual                 = {nstr(G_claim / G_N_lattice_me, 6)}")
@@ -241,9 +246,9 @@ explicit; the postulates are flagged.
 ═══════════════════════════════════════════════════════════════════════
 The framework-integer claim G_N = 1/(b_3 + N_c)^2 = 1/100 is FALSIFIED
 as an identification with physical G_N:
-  - Off by 10^20 vs G_N_lattice under K_B = m_e
-  - Off by factor ~300 vs G_N_lattice under K_B = m_P
-  - Off by ~10^43 vs alpha_G(e,e)
+  - Off by 10^{int(round(float(log10(G_claim / G_N_lattice_me))))} vs G_N_lattice under K_B = m_e
+  - Off by factor ~{nstr(G_N_lattice_mP / G_claim, 3)} vs G_N_lattice under K_B = m_P
+  - Off by ~10^{int(round(float(log10(G_claim / alpha_G_e))))} vs alpha_G(e,e)
 The 1/100 numerical coincidence does NOT correspond to the substrate-
 derived gravitational coupling under any natural calibration.
 ═══════════════════════════════════════════════════════════════════════

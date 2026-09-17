@@ -250,13 +250,20 @@ double kinetic_at_lambda(const std::vector<StrongParticle>& particles,
     return out;
 }
 
+// The pair potential and its force path (minimum_image_component /
+// minimum_image_displacement) apply periodic minimum-image wrapping
+// unconditionally, so any non-Periodic flux_boundary would silently feed the
+// projection physically wrong pair separations. The CUDA gate
+// (gpu_engine.cu, projection_ok) already requires Periodic; this keeps the CPU
+// gate identical rather than letting the two backends disagree.
 bool projection_configuration_valid(const TermToggles& t) {
     return t.strong_stress_energy && t.color_forces && t.forces && t.movement
         && !t.damping && !t.genesis && !t.evaporation && !t.pair_production
         && !t.poisson_coulomb && !t.emergent_forces && !t.gravity
         && !t.latency_field && !t.lorentz_force && !t.strong_force
         && !t.exchange_force && !t.weak_transmutation && !t.triad_binding
-        && !t.absorbing_boundary && !t.reflective_boundary;
+        && !t.absorbing_boundary && !t.reflective_boundary
+        && t.flux_boundary == FluxBoundaryMode::Periodic;
 }
 
 void surface_failure(StrongEnergyStepDiagnostics& d,

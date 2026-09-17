@@ -224,6 +224,11 @@ __global__ void phase_forces_kernel(
     }
 
     // --- Gravity: density gradient, or FTD-1016 geometric F = M C² ℒ ∇ℒ ---
+    // LOCALITY NOTE (mirrors CPU phase_forces.cpp): the r=2 stencil below
+    // exceeds the v3 constitution's P4 radius-one Moore causal ceiling
+    // (FTD-1023) on a default-ON channel. Currently an UNPRICED exception —
+    // not booked to the LEDGER nor SPEC_IMPORT_LEDGER.md; found in the
+    // 2026-09-16 physics semantic audit, tracked in TRACKER_OPEN_ITEMS.md.
     if (gravity) {
         int x2p = idx3d_d(x+2,y,z,L), x2m = idx3d_d(x-2,y,z,L);
         int y2p = idx3d_d(x,y+2,z,L), y2m = idx3d_d(x,y-2,z,L);
@@ -1188,92 +1193,150 @@ __global__ void exchange_force_kernel(
 }
 
 // ============================================================================
-// TRIAD BINDING DETECTION [CLAUDE.md §8.1]
+// TRIAD BINDING DETECTION — exact single-thread port of triad_binding_cpu
 // ============================================================================
-// For each particle, find 2 nearest same-sign neighbors. If all pairwise
-// distances within 20% AND all < TRIAD_RADIUS → set locked=true.
+//
+// WHY A SERIAL KERNEL (2026-09-16 rewrite).
+//
+// The kernel this replaces was a per-particle parallel heuristic: each thread
+// scanned for its own two NEAREST same-sign neighbours, tested that triangle,
+// and atomically proposed a lock for the three voxels. That is a structurally
+// different selection rule from the CPU's, and it had three concrete
+// divergences from transmutation_phases.cpp triad_binding_cpu:
+//
+//   (1) No locked[] input at all. An already-locked voxel — locked by an
+//       earlier triad, by cluster binding, or by a test/scenario seeding a
+//       bound structure — could be pulled into a new proposed triad. The CPU
+//       excludes locked voxels at ALL THREE (a,b,c) loop levels.
+//   (2) "My two nearest neighbours" vs the CPU's EXHAUSTIVE index-ordered
+//       a<b<c search that takes the FIRST valid triple per (a,b) pair. With
+//       more than two close same-sign neighbours the two rules select
+//       different, non-corresponding particle sets: the CPU's answer depends
+//       on ascending lattice index, the heuristic's on distance ranking.
+//   (3) Minimum-image (periodic_delta_d) distances vs the CPU's RAW
+//       coordinate differences. The CPU's coord_dist() subtracts
+//       Lattice::coord() components with no wrap, so a triangle that closes
+//       only across a periodic face is invisible to the CPU and was visible
+//       to the GPU.
+//
+// triad_binding is declared ToggleBackend::ANY (term_toggles.h TOGGLE_SPECS),
+// i.e. it carries a cross-backend equivalence contract, so the fix is to make
+// the GPU reproduce the CPU rule exactly rather than to document a divergence.
+//
+// The CPU rule is irreducibly sequential: locked[] is mutated IN PLACE during
+// the scan and every subsequent (a,b,c) test reads the updated flags, so
+// whether a triple is admitted depends on which triples were admitted before
+// it in index order. There is no order-free reformulation; a parallel
+// propose-then-commit scheme can only reproduce it by speculating and then
+// re-validating in the same serial order, i.e. by doing the serial pass
+// anyway. This file already establishes the alternative and uses it wherever
+// CPU-order semantics must survive onto the device:
+// phase_movement_commit_crossings_kernel and cluster_inertia_kernel are both
+// `if (blockIdx.x != 0 || threadIdx.x != 0) return;` single-thread kernels
+// that walk all N = L^3 lattice sites in a fixed order every tick. Against
+// that already-accepted serial envelope, this kernel's walk over the
+// M <= MAX_PARTICLES manifested particles is the same pattern at smaller
+// scale for every configuration where M^2 < N.
+//
+// Cost, stated honestly: the port is the CPU's own O(M^2) pair scan plus an
+// O(M) inner scan per admitted pair, executed by one thread. At the
+// MAX_PARTICLES = 8192 capacity ceiling that is ~3.4e7 pair iterations in a
+// single thread (order 0.1-1 s per tick) — but triad_binding is OFF by
+// default and is a small-cluster binding diagnostic, and the CPU path it must
+// match is itself O(M^2) and equally unusable at that ceiling. If a
+// dense-lattice use case ever appears, the exact upgrade is a parallel
+// geometric pre-pass (per particle, the ascending list of same-state partners
+// within TRIAD_RADIUS — a locked-independent, purely geometric set, bounded
+// at 122 entries because at most 123 integer lattice points lie within
+// Euclidean distance 3.0 of a site and particles occupy distinct sites)
+// followed by this same serial commit walking those lists instead of the full
+// index range. That is exactly equivalent because the CPU's b-loop and c-loop
+// merely skip, in ascending order, every index failing the state/radius test.
+//
+// Numerics: every distance is sqrt() of an exactly-representable integer, and
+// IEEE-754 double sqrt/fmin/fmax/division are correctly rounded on both
+// backends, so the geometry tests agree bit-for-bit — the parity is exact,
+// not tolerance-based (test_gpu_triad_parity asserts identical locked sets).
+//
+// Scope of the guarantee: exact CPU equivalence holds while the manifested
+// count is within MAX_PARTICLES. Above capacity, plist_idx holds only the
+// first MAX_PARTICLES manifested sites in ascending order and d_particle_
+// overflow is raised (finalize_particle_list_kernel's contract); the CPU has
+// no such cap, so an over-capacity lattice is outside the parity claim.
 
 __global__ void triad_detection_kernel(
     const int* __restrict__ plist_idx,
     const int* __restrict__ num_particles_ptr,
     const int  max_particles,
     const int8_t* __restrict__ state,
-    int32_t* __restrict__ proposed_lock,
+    uint8_t* __restrict__ locked,
     int L
 ) {
+    if (blockIdx.x != 0 || threadIdx.x != 0) return;
+
     const int raw = *num_particles_ptr;
-    const int num_particles = raw < max_particles ? raw : max_particles;
-    int pi = blockIdx.x * blockDim.x + threadIdx.x;
-    if (pi >= num_particles) return;
+    const int M = raw < max_particles ? raw : max_particles;
 
-    int i = plist_idx[pi];
-    int8_t si = state[i];
-    int ix, iy, iz;
-    decode_xyz_d(i, L, ix, iy, iz);
+    // plist_idx is the CUB-compacted ascending list of every manifested
+    // lattice index (launch_build_particle_list pass 2), which is element for
+    // element the same candidate set and the same order as the CPU's
+    // RenderBridge::ordered_active_indices() — engine_state.h builds that by
+    // std::sort-ing the active (state != 0) index set ascending, and
+    // mark_manifested_particles_kernel flags exactly state[i] != 0.
+    for (int a = 0; a < M; ++a) {
+        const int ia = plist_idx[a];
+        // CPU checks va.locked ONCE, at the top of the a-iteration, and never
+        // re-checks it inside the b/c loops. An `a` locked by a triple found
+        // during its OWN a-iteration therefore stays eligible as the anchor
+        // of further triples in that same iteration. Reproduced verbatim.
+        if (locked[ia]) continue;
+        const int8_t sa = state[ia];
+        int ax, ay, az;
+        decode_xyz_d(ia, L, ax, ay, az);
 
-    const double TRIAD_RADIUS = ftd::TRIAD_RADIUS;
+        for (int b = a + 1; b < M; ++b) {
+            const int ib = plist_idx[b];
+            if (locked[ib] || state[ib] != sa) continue;
+            int bx, by, bz;
+            decode_xyz_d(ib, L, bx, by, bz);
+            // RAW coordinate delta, NOT periodic_delta_d — matches the CPU's
+            // coord_dist() lambda, which subtracts Lattice::coord()
+            // components with no minimum-image wrap.
+            const double abx = (double)(ax - bx);
+            const double aby = (double)(ay - by);
+            const double abz = (double)(az - bz);
+            const double rAB = sqrt(abx * abx + aby * aby + abz * abz);
+            if (rAB > ftd::TRIAD_RADIUS) continue;
 
-    // Find 2 nearest same-sign neighbors
-    double best1_r2 = 1e30, best2_r2 = 1e30;
-    int best1_j = -1, best2_j = -1;
-    int best1_dx = 0, best1_dy = 0, best1_dz = 0;
-    int best2_dx = 0, best2_dy = 0, best2_dz = 0;
+            for (int c = b + 1; c < M; ++c) {
+                const int ic = plist_idx[c];
+                if (locked[ic] || state[ic] != sa) continue;
+                int cx, cy, cz;
+                decode_xyz_d(ic, L, cx, cy, cz);
+                const double acx = (double)(ax - cx);
+                const double acy = (double)(ay - cy);
+                const double acz = (double)(az - cz);
+                const double rAC = sqrt(acx * acx + acy * acy + acz * acz);
+                const double bcx = (double)(bx - cx);
+                const double bcy = (double)(by - cy);
+                const double bcz = (double)(bz - cz);
+                const double rBC = sqrt(bcx * bcx + bcy * bcy + bcz * bcz);
+                if (rAC > ftd::TRIAD_RADIUS || rBC > ftd::TRIAD_RADIUS) continue;
 
-    for (int pj = 0; pj < num_particles; ++pj) {
-        if (pj == pi) continue;
-        int j = plist_idx[pj];
-        if (state[j] != si) continue;
+                const double rmin = fmin(rAB, fmin(rAC, rBC));
+                const double rmax = fmax(rAB, fmax(rAC, rBC));
+                if (rmax < 1e-9) continue;
+                if (rmin / rmax < ftd::TRIAD_RATIO_THRESHOLD) continue;
 
-        int jx, jy, jz;
-        decode_xyz_d(j, L, jx, jy, jz);
-        int dx, dy, dz;
-        periodic_delta_d(ix, iy, iz, jx, jy, jz, L, dx, dy, dz);
-        double r2 = (double)(dx*dx + dy*dy + dz*dz);
-
-        if (r2 < best1_r2) {
-            best2_r2 = best1_r2; best2_j = best1_j;
-            best2_dx = best1_dx; best2_dy = best1_dy; best2_dz = best1_dz;
-            best1_r2 = r2; best1_j = j;
-            best1_dx = dx; best1_dy = dy; best1_dz = dz;
-        } else if (r2 < best2_r2) {
-            best2_r2 = r2; best2_j = j;
-            best2_dx = dx; best2_dy = dy; best2_dz = dz;
+                locked[ia] = 1;
+                locked[ib] = 1;
+                locked[ic] = 1;
+                // CPU's `break` leaves the c-loop only: first valid c wins for
+                // this (a,b) pair, and the b-loop continues.
+                break;
+            }
         }
     }
-
-    if (best1_j < 0 || best2_j < 0) return;
-
-    double r_a = sqrt(best1_r2);
-    double r_b = sqrt(best2_r2);
-
-    // Distance between the two neighbors
-    int dx_ab = best2_dx - best1_dx;
-    int dy_ab = best2_dy - best1_dy;
-    int dz_ab = best2_dz - best1_dz;
-    double r_c = sqrt((double)(dx_ab*dx_ab + dy_ab*dy_ab + dz_ab*dz_ab));
-
-    // Check: all within TRIAD_RADIUS
-    if (r_a > TRIAD_RADIUS || r_b > TRIAD_RADIUS || r_c > TRIAD_RADIUS) return;
-
-    // Check: near-equilateral (pairwise distances within 20% of each other)
-    double r_max = fmax(r_a, fmax(r_b, r_c));
-    double r_min = fmin(r_a, fmin(r_b, r_c));
-    if (r_max <= 0.0) return;
-    double ratio = r_min / r_max;
-    if (ratio < ftd::TRIAD_RATIO_THRESHOLD) return;
-
-    // Multiple proposals may share a voxel. Accumulate their exact union
-    // atomically, then let the voxel's sole commit thread write the byte.
-    atomicExch(proposed_lock + i, 1);
-    atomicExch(proposed_lock + best1_j, 1);
-    atomicExch(proposed_lock + best2_j, 1);
-}
-
-__global__ void commit_triad_locks_kernel(
-    const int32_t* __restrict__ proposed_lock,
-    uint8_t* __restrict__ locked, int N) {
-    const int i = blockIdx.x * blockDim.x + threadIdx.x;
-    if (i < N && proposed_lock[i]) locked[i] = 1;
 }
 
 // ---------- Launcher Functions ----------
@@ -2097,17 +2160,20 @@ void launch_exchange_force(GpuBuffers& bufs, double dt) {
 
 void launch_triad_detection(GpuBuffers& bufs) {
     const cudaStream_t stream = bufs.stream;
-    // Movement and cluster-inertia have finished on this stream. Their rank
-    // scratch is dead until reinitialized by the next movement phase.
-    CUDA_CHECK(cudaMemsetAsync(bufs.d_movement_rank, 0,
-                              bufs.N * sizeof(int32_t), stream));
-    triad_detection_kernel<<<PARTICLE_FORCE_GRID, PARTICLE_FORCE_BLOCK, 0, stream>>>(
+    // Single-thread ordered commit (see the block comment on
+    // triad_detection_kernel). The kernel writes d_locked in place, exactly as
+    // the CPU mutates Voxel::locked mid-scan, so there is no proposal buffer
+    // and no separate commit pass any more — the previous implementation
+    // borrowed d_movement_rank as an int32 proposal array and had to memset
+    // N ints per tick to use it; both are gone.
+    //
+    // Launch topology is the constant <<<1,1>>> and the particle count stays
+    // device-resident, so this remains CUDA-graph-capture eligible (the
+    // constraint that shaped the fixed-capacity launches above).
+    triad_detection_kernel<<<1, 1, 0, stream>>>(
         bufs.d_plist_idx, bufs.d_num_particles, GpuBuffers::MAX_PARTICLES,
-        bufs.d_state, bufs.d_movement_rank, bufs.L
+        bufs.d_state, bufs.d_locked, bufs.L
     );
-    CUDA_CHECK(cudaGetLastError());
-    commit_triad_locks_kernel<<<(bufs.N + 255) / 256, 256, 0, stream>>>(
-        bufs.d_movement_rank, bufs.d_locked, bufs.N);
     CUDA_CHECK(cudaGetLastError());
 }
 

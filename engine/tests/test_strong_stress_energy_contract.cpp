@@ -269,6 +269,21 @@ int main() {
                      triad.strong_energy_step_diagnostics().projection_events == 1
                   && triad.strong_energy_step_diagnostics().projected_particles == 3);
 
+    // FIXTURE MOVED 2026-09-16, same assertion. This case used to reach the
+    // topology-loss branch by letting a particle escape through a
+    // flux_boundary=Dispersal face. That configuration is no longer inside
+    // the projection's validity domain: the pair potential and its force path
+    // (minimum_image_component / minimum_image_displacement) wrap with the
+    // periodic minimum image unconditionally, so a non-Periodic boundary feeds
+    // the projection physically wrong separations. CUDA's projection_ok
+    // (gpu_engine.cu) has always refused it; the CPU gate now refuses it too,
+    // which is what SE-34b below pins. Reaching the topology branch through a
+    // configuration the projection was never valid in is therefore no longer
+    // available, and the branch is exercised here by the cohort change that
+    // remains reachable INSIDE the valid domain: opposite-sign contact
+    // annihilation. phase_movement zeroes state, colour and particle_id on
+    // both voxels, gather_particles drops both, and same_topology() fails in
+    // complete_strong_energy_step — the same branch, the same diagnostic.
     RenderBridge topology(L);
     topology.force_cpu();
     topology.toggles.disable_all();
@@ -276,20 +291,34 @@ int main() {
     topology.toggles.movement = true;
     topology.toggles.color_forces = true;
     topology.toggles.strong_stress_energy = true;
-    // This fixture tests loss through a domain face. Periodic transport
-    // preserves the cohort and cannot trigger the topology-loss branch.
-    topology.toggles.flux_boundary = ftd::FluxBoundaryMode::Dispersal;
-    // Begin inside the domain: the Dispersal shell is already void when the
-    // strong snapshot is taken. This hop must reach the face during movement.
-    topology.inject_particle(1, Y, Z, +1, {}, +1, 1);
-    topology.inject_particle(16, Y, Z, +1, {}, -1, 2);
-    auto& escaping = topology.voxel_at(1, Y, Z);
-    escaping.remainder.x = -0.8;
-    escaping.velocity.x = -0.55;
+    // flux_boundary stays Periodic (the default) — inside the domain.
+    topology.inject_particle(15, Y, Z, +1, {}, +1, 1);
+    topology.inject_particle(16, Y, Z, -1, {}, -1, 2);
+    auto& incoming = topology.voxel_at(15, Y, Z);
+    incoming.remainder.x = 0.8;
+    incoming.velocity.x = 0.55;
     topology.tick();
     ftd::test::check("SE-34 topology change is surfaced",
                      topology.strong_energy_step_diagnostics().topology_failures == 1
                   && topology.strong_energy_step_diagnostics().projection_events == 0);
+    // The fixture must actually lose the cohort, not merely fail to project:
+    // if the hop did not annihilate, topology_failures above would be 0.
+    ftd::test::check("SE-34 topology fixture annihilated the pair",
+                     topology.voxel_at(15, Y, Z).state == 0
+                  && topology.voxel_at(16, Y, Z).state == 0);
+
+    // SE-34b: the boundary gate itself. A non-Periodic flux_boundary is a
+    // configuration refusal (projection_failures), NOT a topology loss, and
+    // NOT a silently-projected step. This is the CPU half of the parity the
+    // GPU already enforced.
+    RenderBridge nonperiodic(L);
+    configure_pair(nonperiodic, true);
+    nonperiodic.toggles.flux_boundary = ftd::FluxBoundaryMode::Dispersal;
+    nonperiodic.tick();
+    ftd::test::check("SE-34b non-periodic flux boundary is refused, not projected",
+                     nonperiodic.strong_energy_step_diagnostics().projection_failures == 1
+                  && nonperiodic.strong_energy_step_diagnostics().projection_events == 0
+                  && nonperiodic.strong_energy_step_diagnostics().topology_failures == 0);
 
     RenderBridge infeasible(L);
     configure_pair(infeasible, true);

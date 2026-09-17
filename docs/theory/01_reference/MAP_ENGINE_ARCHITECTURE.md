@@ -363,7 +363,7 @@ source of truth for dependency strings and defaults:
 | **`pair_production`** | `false` | None | None | `ANY` | Genesis: Spontaneously splits high-flux void into correlated opposite-charge particle pairs conserving charge. |
 | **`exchange_force`** | `false` | `poisson_coulomb`| None | `ANY` | Phase-forces: Pauli exclusion repulsion between same-spin fermions (no CPU implementation; GPU only). |
 | **`latency_field`** | `false` | `gravity` | None | `ANY` | Solves Poisson for latency field $\nabla^2 L = 4\pi G_N \rho$, implementing relativistic time dilation. |
-| **`exact_dual_gauss`** | `false` | None | None | `ANY` | Gauss-project: High-precision exact dual-cell face-flux projection. |
+| **`exact_dual_gauss`** | `false` | None | None | `ANY` | Gauss-project: removes the manifested-site skip, so the ordinary centred-difference subtraction $J \mathrel{-}= \nabla_6 \phi$ is applied at every site instead of void sites only. Neither "exact" nor dual-cell: the correction stays bounded and non-idempotent, and on even $L$ the constraint residual floors at an irreducible $7/N$ (see the HONEST STATUS block in `poisson_solvers.h`). |
 | **`emergent_forces`** | `false` | None | `poisson_coulomb` | `ANY` | EFT mode: Computes forces from direct flux gradients instead of solving long-range Poisson potentials. |
 | **`langevin`** | `false` | None | `larmor_radiation` | `ANY` | Stochastic thermalization: OU process on wave velocity (CPU only at runtime). |
 | **`symplectic_leapfrog`**| `false`| `wave_propagation`| None | `ANY` | Scale 0: Symplectic wave integration for high-stability wave propagation. |

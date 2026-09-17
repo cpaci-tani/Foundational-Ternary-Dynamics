@@ -1,33 +1,52 @@
 /**
  * Test: Larmor Radiation (Acceleration-Dependent Damping)
  *
- * When the larmor_radiation toggle is ON, damping at manifested sites is
- * modulated by the particle's acceleration:
+ * When the larmor_radiation toggle is ON, damping at near-particle sites is
+ * modulated by the particle's acceleration (ftd/larmor_damping.h):
  *
- *   larmor_mod = min(1, LARMOR_FLOOR + K_LARMOR * |a|²)
- *   eff_damping = 1 - DAMPING * larmor_mod
+ *   gain(a)     = min(1 + K_LARMOR * |a|², LARMOR_MAX_GAIN)
+ *   eff_damping = damping_factor ^ gain(a)
  *
- * Static charges (a=0) → damping = DAMPING * LARMOR_FLOOR ≈ 0.01 × α
- * Accelerating charges → damping up to full DAMPING = α
+ * Static charges (a=0) → exactly the baseline damping (the toggle is a no-op)
+ * Accelerating charges → strictly MORE damping than the baseline, growing
+ *                        monotonically with |a|
  *
  * This implements the classical Larmor formula: P ∝ a² — accelerating
- * charges radiate energy proportional to their acceleration squared.
+ * charges radiate energy proportional to their acceleration squared, so they
+ * must lose energy FASTER than a static charge, not slower.
+ *
+ * AMENDED 2026-09-16. Until this date the engine computed
+ *     larmor_mod  = min(1, LARMOR_FLOOR + K_LARMOR * |a|²)
+ *     eff_damping = 1 - DAMPING * larmor_mod
+ * — the baseline loss multiplied by a factor CAPPED AT 1 — so enabling the
+ * toggle could only ever REDUCE dissipation below the undamped baseline (1% of
+ * baseline at a=0, parity at a≈0.171, never above). LAM-1 asserted exactly that
+ * inverted behaviour ("static charge decays SLOWER with Larmor ON", damping
+ * rate == LARMOR_FLOOR); it is rewritten below to assert the corrected physics.
+ * LAM-3 measured the a² scaling of the old `larmor_mod` and now measures the a²
+ * scaling of the gain excess. The law's own properties (monotonicity,
+ * boundedness, baseline-exactness at a=0) are gated by
+ * tests/test_larmor_damping_law.cpp.
  *
  * Tests:
- *   LAM-1: Static charge decays slower with Larmor ON vs uniform damping
+ *   LAM-1: Static charge (a=0) with Larmor ON == the baseline run exactly
  *   LAM-2: Accelerating charge (Coulomb pair) loses energy faster
- *   LAM-3: Larmor modulation proportional to a² (fit exponent near 2.0)
+ *   LAM-3: Larmor gain excess proportional to a²
  *   LAM-4: Toggle OFF = exact match to baseline (no behavior change)
  *   LAM-5: Selective damping + Larmor interaction (void=no damp, particle=Larmor)
  *   LAM-6: Dipole radiation spatial profile (equatorial > axial by sin²θ)
  *
- * Constants (from constants.h):
- *   K_LARMOR = 4/(3*K_B) ≈ 2.61
- *   LARMOR_FLOOR = 0.01
+ * Constants (from constants.h / larmor_damping.h):
+ *   K_LARMOR = 4*N_EFF/(3*K_B) ≈ 33.9
+ *   LARMOR_FLOOR = 0.01   (retained for provenance; no longer in the law —
+ *                          gain ≥ 1 makes "dissipation is never off" hold by
+ *                          construction)
+ *   LARMOR_MAX_GAIN = 256
  *
  * Theory references:
  *   - CLAUDE.md §6.3 (EM-like behavior)
  *   - constants.h: K_LARMOR, LARMOR_FLOOR
+ *   - ftd/larmor_damping.h: the law itself, shared CPU/CUDA
  */
 
 #include <cmath>
@@ -35,6 +54,7 @@
 #include <iomanip>
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
+#include "ftd/larmor_damping.h"
 
 static int g_failures = 0;
 
@@ -49,19 +69,24 @@ static void check(const char* name, bool condition) {
 
 int main() {
     std::cout << "================================================================\n";
-    std::cout << "  TEST: Larmor Radiation — 5 Checks\n";
+    std::cout << "  TEST: Larmor Radiation — 7 Checks\n";
     std::cout << "================================================================\n";
 
     // ================================================================
-    // LAM-1: Static charge — Larmor reduces damping at near-particle sites
+    // LAM-1: Static charge — Larmor is a no-op at zero acceleration
     // ================================================================
-    std::cout << "\n-- LAM-1: Static Charge Reduced Damping --\n";
+    std::cout << "\n-- LAM-1: Static Charge == Baseline --\n";
     {
         // Two-part test:
-        // (a) Total energy: Larmor retains more than uniform (small effect
-        //     because only 7 of 4096 sites are near-particle on 16³ grid)
-        // (b) Larmor formula verification: at a=0, effective damping should be
-        //     DAMPING * LARMOR_FLOOR = α × 0.01, which is 100x weaker
+        // (a) Total energy: with the particle locked and forces off, every
+        //     near-particle site has a = 0, so the Larmor run must match the
+        //     uniform-damping run EXACTLY.
+        // (b) Formula verification: at a=0 the gain is 1, so the effective
+        //     damping factor is bit-exactly the baseline factor.
+        //
+        // Before 2026-09-16 this check asserted the opposite (Larmor retains
+        // MORE energy, damping rate == LARMOR_FLOOR = 1% of baseline) because
+        // the capped formula turned the toggle into a dissipation reducer.
 
         // Part (a): Total energy comparison
         double E_larmor = 0.0, E_uniform = 0.0;
@@ -90,30 +115,23 @@ int main() {
             else E_uniform = Ef / E0;
         }
 
-        double ratio = (E_uniform > 1e-15) ? E_larmor / E_uniform : 0;
-
         std::cout << "    Larmor: " << E_larmor * 100 << "% energy remaining\n";
         std::cout << "    Uniform: " << E_uniform * 100 << "% remaining\n";
-        std::cout << "    Ratio (Larmor/Uniform): " << ratio << "\n";
+        std::cout << "    Difference: " << std::abs(E_larmor - E_uniform) << "\n";
 
-        // Part (b): Direct formula verification
-        // At a=0: larmor_mod = LARMOR_FLOOR = 0.01
-        // eff_damping = 1 - α × 0.01 ≈ 0.999927
-        // vs uniform: eff_damping = 1 - α ≈ 0.99271
-        // Ratio of damping strengths: 0.01
-        double larmor_damp = ftd::DAMPING * ftd::LARMOR_FLOOR;
-        double uniform_damp = ftd::DAMPING;
-        double damp_ratio = larmor_damp / uniform_damp;
-        std::cout << "    Larmor damping rate: " << larmor_damp << "\n";
-        std::cout << "    Uniform damping rate: " << uniform_damp << "\n";
-        std::cout << "    Rate ratio: " << damp_ratio << " (expected: "
-                  << ftd::LARMOR_FLOOR << ")\n";
+        // Part (b): Direct formula verification at a = 0.
+        // gain(0) = 1  ⇒  eff_damping = baseline^1 = baseline, bit-exactly.
+        const double baseline = 1.0 - ftd::DAMPING;
+        const double eff0 = ftd::larmor_effective_damping(baseline, 0.0);
+        std::cout << "    Baseline survival factor:   " << std::setprecision(17)
+                  << baseline << "\n";
+        std::cout << "    Larmor factor at a = 0:     " << eff0 << "\n"
+                  << std::setprecision(6);
 
-        // Larmor retains more total energy (effect is small: ~3% because only
-        // 7 near-particle sites out of 4096 are affected) AND the formula gives
-        // 100x weaker damping for static charges.
-        check("LAM-1: Static charge — Larmor retains more energy AND rate = FLOOR",
-              ratio > 1.005 && std::abs(damp_ratio - ftd::LARMOR_FLOOR) < 1e-10);
+        // At zero acceleration there is no radiation reaction, so the toggle
+        // changes nothing — in the formula and in the run.
+        check("LAM-1: Static charge — Larmor at a=0 is exactly the baseline",
+              E_larmor == E_uniform && eff0 == baseline);
     }
 
     // ================================================================
@@ -165,33 +183,29 @@ int main() {
     // ================================================================
     std::cout << "\n-- LAM-3: Power ∝ a² Verification --\n";
     {
-        // The Larmor formula: larmor_mod = min(1, LARMOR_FLOOR + K_LARMOR * a²)
-        // For small a: larmor_mod ≈ LARMOR_FLOOR + K_LARMOR * a²
-        // We verify the formula directly with known acceleration values.
+        // The Larmor law: gain(a) = min(1 + K_LARMOR * a², LARMOR_MAX_GAIN).
+        // The excess over the baseline gain of 1 is K_LARMOR * a², so doubling
+        // a must quadruple it. We verify the law directly with known
+        // acceleration values, well below the clamp knee at
+        // a = sqrt((LARMOR_MAX_GAIN - 1)/K_LARMOR) ≈ 2.74.
         //
-        // Updated 2026-05-03: previous test used a=0.1, 0.2. With current
-        // K_LARMOR = 33.9, K_LARMOR * 0.04 = 1.36 — that exceeds 1.0 so
-        // `min(1, ...)` clamps and the a² scaling test no longer measures
-        // the underlying formula. Use smaller a values where the linear
-        // (unclamped) regime applies cleanly.
+        // Updated 2026-09-16: previously measured the old capped `larmor_mod`;
+        // the shape of the a² law is unchanged, only where it enters.
 
         double a1 = 0.05;
         double a2 = 0.10;
 
-        double mod1 = std::min(1.0, ftd::LARMOR_FLOOR + ftd::K_LARMOR * a1 * a1);
-        double mod2 = std::min(1.0, ftd::LARMOR_FLOOR + ftd::K_LARMOR * a2 * a2);
-
-        // After subtracting floor: (mod2 - floor) / (mod1 - floor) should be ~4.0
-        double active1 = mod1 - ftd::LARMOR_FLOOR;
-        double active2 = mod2 - ftd::LARMOR_FLOOR;
+        double active1 = ftd::larmor_damping_gain(a1) - 1.0;
+        double active2 = ftd::larmor_damping_gain(a2) - 1.0;
         double ratio = (active1 > 0) ? active2 / active1 : 0;
 
-        std::cout << "    mod(a=0.1) = " << mod1 << ", mod(a=0.2) = " << mod2 << "\n";
-        std::cout << "    Active ratio: " << ratio << " (expected 4.0 for a² scaling)\n";
+        std::cout << "    gain(a=0.05) = " << ftd::larmor_damping_gain(a1)
+                  << ", gain(a=0.10) = " << ftd::larmor_damping_gain(a2) << "\n";
+        std::cout << "    Excess ratio: " << ratio << " (expected 4.0 for a² scaling)\n";
         std::cout << "    K_LARMOR = " << ftd::K_LARMOR
-                  << ", LARMOR_FLOOR = " << ftd::LARMOR_FLOOR << "\n";
+                  << ", LARMOR_MAX_GAIN = " << ftd::LARMOR_MAX_GAIN << "\n";
 
-        check("LAM-3: Larmor modulation scales as a² (ratio = 4.0 ± 0.01)",
+        check("LAM-3: Larmor gain excess scales as a² (ratio = 4.0 ± 0.01)",
               std::abs(ratio - 4.0) < 0.01);
     }
 
@@ -293,71 +307,113 @@ int main() {
         //
         // Grid: 32³, pair at (16,16,14) and (16,16,18) — z-axis dipole
         // Measure at R=10: equatorial (26,16,16) vs axial (16,16,6)
+        //
+        // ⚠ REWRITTEN 2026-09-16 — THIS CHECK NEVER MEASURED LARMOR, AND ITS
+        // OLD THRESHOLD WAS AN ARTIFACT OF THE DAMPING BUG. Measured A/B on
+        // this exact scenario:
+        //     old (capped) law, larmor ON : eq/ax = 6.089   → passed > 1.5
+        //     corrected law,    larmor ON : eq/ax = 1.364   → would fail > 1.5
+        //     corrected law,    larmor OFF: eq/ax = 1.364   → identical
+        // The peak acceleration here is |a| = 3.83e-5, so the radiation-reaction
+        // gain is 1 + K_LARMOR·a² = 1 + 5e-8 — a null effect, exactly as it
+        // should be. The old law's 6.089 came from the fact that it applied only
+        // LARMOR_FLOOR = 1% of the baseline damping at near-particle sites, i.e.
+        // it effectively switched damping OFF around the dipole; the "dipole
+        // pattern" it scored was the pattern of an undamped source, not a Larmor
+        // effect. No value of K_LARMOR could produce 6.089 under a law that
+        // damps at least as hard as the baseline.
+        //
+        // The check now (a) asserts the part that is physically true and
+        // measurable — equatorial exceeds axial — and (b) asserts the null
+        // result explicitly: at these accelerations Larmor ON must be
+        // indistinguishable from Larmor OFF. A future scenario with genuinely
+        // large |a| is what would give this check Larmor content; that is an
+        // open item, not something to recover by loosening a threshold.
 
-        ftd::RenderBridge rb(32);
-        rb.toggles.disable_all();
-        rb.toggles.wave_propagation = true;
-        rb.toggles.coupling = true;
-        rb.toggles.damping = true;
-        rb.toggles.gauss_projection = true;
-        rb.toggles.forces = true;
-        rb.toggles.poisson_coulomb = true;
-        rb.toggles.selective_damping = true;
-        rb.toggles.larmor_radiation = true;
+        auto dipole_anisotropy = [](bool larmor, double& eq_out, double& ax_out) {
+            ftd::RenderBridge rb(32);
+            rb.toggles.disable_all();
+            rb.toggles.wave_propagation = true;
+            rb.toggles.coupling = true;
+            rb.toggles.damping = true;
+            rb.toggles.gauss_projection = true;
+            rb.toggles.forces = true;
+            rb.toggles.poisson_coulomb = true;
+            rb.toggles.selective_damping = true;
+            rb.toggles.larmor_radiation = larmor;
 
-        // Create a z-aligned dipole: +1 at z=14, -1 at z=18
-        int mid = 16;
-        rb.inject_particle(mid, mid, mid - 2, +1, {0, 0, ftd::K_B});
-        rb.inject_particle(mid, mid, mid + 2, -1, {0, 0, -ftd::K_B});
+            // Create a z-aligned dipole: +1 at z=14, -1 at z=18
+            int mid = 16;
+            rb.inject_particle(mid, mid, mid - 2, +1, {0, 0, ftd::K_B});
+            rb.inject_particle(mid, mid, mid + 2, -1, {0, 0, -ftd::K_B});
 
-        // Lock both so they oscillate in place (bound dipole)
-        rb.voxels()[rb.lattice().index(mid, mid, mid - 2)].locked = true;
-        rb.voxels()[rb.lattice().index(mid, mid, mid + 2)].locked = true;
+            // Lock both so they oscillate in place (bound dipole)
+            rb.voxels()[rb.lattice().index(mid, mid, mid - 2)].locked = true;
+            rb.voxels()[rb.lattice().index(mid, mid, mid + 2)].locked = true;
 
-        // Let fields build and radiation pattern establish
-        rb.run(500);
+            // Let fields build and radiation pattern establish
+            rb.run(500);
 
-        // Measure flux energy density at radius R=10 from center
-        int R = 10;
+            // Measure flux energy density at radius R=10 from center
+            int R = 10;
 
-        // Equatorial samples: in xy-plane at z=mid (θ=π/2)
-        double eq_energy = 0.0;
-        int eq_count = 0;
-        int eq_offsets[][2] = {{R, 0}, {-R, 0}, {0, R}, {0, -R}};
-        for (auto& off : eq_offsets) {
-            int x = mid + off[0], y = mid + off[1], z = mid;
-            if (x >= 0 && x < 32 && y >= 0 && y < 32) {
-                double rho = rb.voxels()[rb.lattice().index(x, y, z)].density();
-                eq_energy += rho * rho;
-                eq_count++;
+            // Equatorial samples: in xy-plane at z=mid (θ=π/2)
+            double eq_energy = 0.0;
+            int eq_count = 0;
+            int eq_offsets[][2] = {{R, 0}, {-R, 0}, {0, R}, {0, -R}};
+            for (auto& off : eq_offsets) {
+                int x = mid + off[0], y = mid + off[1], z = mid;
+                if (x >= 0 && x < 32 && y >= 0 && y < 32) {
+                    double rho = rb.voxels()[rb.lattice().index(x, y, z)].density();
+                    eq_energy += rho * rho;
+                    eq_count++;
+                }
             }
-        }
-        eq_energy /= eq_count;
+            eq_out = eq_energy / eq_count;
 
-        // Axial samples: along z-axis (θ=0,π)
-        double ax_energy = 0.0;
-        int ax_count = 0;
-        int ax_offsets[] = {R, -R};
-        for (int dz : ax_offsets) {
-            int x = mid, y = mid, z = mid + dz;
-            if (z >= 0 && z < 32) {
-                double rho = rb.voxels()[rb.lattice().index(x, y, z)].density();
-                ax_energy += rho * rho;
-                ax_count++;
+            // Axial samples: along z-axis (θ=0,π)
+            double ax_energy = 0.0;
+            int ax_count = 0;
+            int ax_offsets[] = {R, -R};
+            for (int dz : ax_offsets) {
+                int x = mid, y = mid, z = mid + dz;
+                if (z >= 0 && z < 32) {
+                    double rho = rb.voxels()[rb.lattice().index(x, y, z)].density();
+                    ax_energy += rho * rho;
+                    ax_count++;
+                }
             }
-        }
-        ax_energy /= ax_count;
+            ax_out = ax_energy / ax_count;
+        };
 
-        double aniso_ratio = (ax_energy > 1e-30) ? eq_energy / ax_energy : 0;
+        double eq_on = 0, ax_on = 0, eq_off = 0, ax_off = 0;
+        dipole_anisotropy(true, eq_on, ax_on);
+        dipole_anisotropy(false, eq_off, ax_off);
 
-        std::cout << "    Equatorial |J|² (avg): " << std::scientific << eq_energy << "\n";
-        std::cout << "    Axial |J|² (avg):      " << std::scientific << ax_energy << "\n";
-        std::cout << "    Anisotropy ratio (eq/ax): " << std::fixed
-                  << std::setprecision(3) << aniso_ratio << "\n";
-        std::cout << "    (Classical dipole predicts ratio → ∞; we require > 1.5)\n";
+        double aniso_on = (ax_on > 1e-30) ? eq_on / ax_on : 0;
+        double aniso_off = (ax_off > 1e-30) ? eq_off / ax_off : 0;
 
-        check("LAM-6: Equatorial radiation > axial (dipole pattern)",
-              eq_energy > 1e-30 && aniso_ratio > 1.5);
+        std::cout << "    Equatorial |J|² (avg): " << std::scientific << eq_on << "\n";
+        std::cout << "    Axial |J|² (avg):      " << std::scientific << ax_on << "\n";
+        std::cout << "    Anisotropy ratio (eq/ax), Larmor ON:  " << std::fixed
+                  << std::setprecision(4) << aniso_on << "\n";
+        std::cout << "    Anisotropy ratio (eq/ax), Larmor OFF: "
+                  << aniso_off << "\n";
+        const double aniso_rel = std::abs(aniso_on - aniso_off)
+                               / std::max(1e-30, aniso_off);
+        std::cout << "    ON/OFF relative difference: " << std::scientific
+                  << aniso_rel << std::fixed << "\n";
+        std::cout << "    (Classical dipole predicts ratio → ∞; the lattice"
+                     " near field gives ~1.36 at R=10)\n";
+
+        check("LAM-6a: Equatorial radiation > axial (dipole pattern)",
+              eq_on > 1e-30 && aniso_on > 1.0);
+        // Gain excess here is K_LARMOR·a² ≈ 5e-8, so the ON/OFF split must stay
+        // in the noise. The old capped law produced 6.089 vs 1.364 — a 4.5x
+        // split — so a 0.1% bound is an ample, non-vacuous discriminator.
+        check("LAM-6b: at |a| ~ 4e-5 the radiation-reaction gain is ~1, so "
+              "Larmor ON is indistinguishable from OFF",
+              aniso_rel < 1e-3);
     }
 
     // ================================================================
@@ -365,7 +421,7 @@ int main() {
     // ================================================================
     std::cout << "\n================================================================\n";
     if (g_failures == 0)
-        std::cout << "  All 6 Larmor radiation tests PASSED.\n";
+        std::cout << "  All 7 Larmor radiation checks PASSED.\n";
     else
         std::cout << "  " << g_failures << " test(s) FAILED.\n";
     std::cout << "================================================================\n";

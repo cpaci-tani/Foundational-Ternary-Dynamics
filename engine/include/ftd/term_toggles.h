@@ -1,6 +1,6 @@
 #pragma once
 // Runtime toggles for the logic-first engine.
-// 46 boolean toggles plus typed non-bool configuration fields.
+// 47 boolean toggles plus typed non-bool configuration fields.
 //
 // Phase 6 (2026-04-27): redesign as a TABLE-DRIVEN registry. Adding a new
 // boolean toggle now requires its storage field plus one TOGGLE_SPECS[] row,
@@ -65,11 +65,26 @@ struct TermToggles {
     bool weak_transmutation = true; // tick: chirality/stress polarity flip (+1 ↔ -1)
     bool strong_force = false;      // phase_forces: Yukawa short-range nuclear force
     bool triad_binding = false;     // tick: detect 3-particle triads, set locked=true
-    bool pair_production = false;   // genesis: correlated +1/-1 pairs from high-flux void
+    bool pair_production = false;   // pair_production: correlated +1/-1 pairs from high-flux void
+                                    // (its own tick slot with its own scan, gate, and RNG stream —
+                                    // NOT part of phase_write's genesis; see spec row below)
     bool exchange_force = false;    // phase_forces: Pauli exclusion repulsion (same-spin)
-    bool latency_field = false;     // Poisson-based latency field ∇²L = 4πGρ (gravity potential)
-    bool exact_dual_gauss = false;  // gauss_project: exact dual-cell face-flux projection
-    bool matched_gauss_dynamics = false; // [SELECTED ENGINE EXTENSION, FTD-0428] CPU-only oriented-face Maxwell/Gauss evolution; isolated from legacy flux writers and reactions
+    bool latency_field = false;     // latency_solve: SOR-solve ∇²φ = 4πG·(ρ − mean ρ) on the
+                                    // mean-subtracted mass (+ optional field-energy) source, then
+                                    // mean-subtract φ itself and store
+                                    // voxel.latency = sqrt(clamp(−φ, 0, LATENCY_HORIZON_CLAMP)).
+                                    // The stored field is the square root of the clamped WELL
+                                    // DEPTH −φ, NOT φ and NOT a solution of ∇²L = 4πGρ: both
+                                    // mean subtractions are forced by the periodic solve, and the
+                                    // clamp pins every under-dense site to exactly zero.
+                                    // See src/poisson_solvers.cpp (latency solve, P6 2026-07-26).
+    bool exact_dual_gauss = false;  // gauss_project: drop the manifested-site skip, so the centred-
+                                    // difference correction J -= ∇₆φ is applied at EVERY site
+                                    // instead of only at state==0 sites. Neither "exact" nor
+                                    // "dual-cell": the correction stays the same bounded,
+                                    // non-idempotent gradient subtraction and never exactly
+                                    // enforces div(J)=s (poisson_solvers.h HONEST STATUS).
+    bool matched_gauss_dynamics = false; // [SELECTED ENGINE EXTENSION, FTD-0428] oriented-face Maxwell/Gauss evolution, native CUDA + CPU; isolated from legacy flux writers and reactions
     bool emergent_forces = false;   // EFT mode: force from flux gradient (no Poisson), alpha = G_C²
     bool langevin = false;          // Stochastic thermalization: OU process on wave_vel with (gamma, T)
     bool symplectic_leapfrog = false; // Scale 0: Symplectic Leapfrog wave propagation
@@ -80,23 +95,25 @@ struct TermToggles {
                                     // half-kick (wave_vel += ½·dt·ΔJ'). Targets the FTD-0337
                                     // bare-wave leapfrog amplitude growth (the corrected FTD-0308
                                     // mechanism): a synchronized, symplectic wave update whose dt<1
-                                    // is honored (see set_dt). CPU path only; conflicts with
-                                    // symplectic_leapfrog (both own the wave update). Default OFF ⇒
-                                    // dead branch ⇒ golden hash 0xb604d81a3d79366e untouched.
+                                    // is honored (see set_dt). Native CUDA + CPU (gpu_engine.cu runs
+                                    // the same split; pinned by test_gpu_verlet_parity); conflicts
+                                    // with symplectic_leapfrog (both own the wave update).
+                                    // Default OFF ⇒ dead branch ⇒ golden hash untouched (the live
+                                    // pin is GOLDEN_HASH in tests/test_render_bridge_golden.cpp).
     bool lorentz_period2_floquet = false; // [SELECTED PROTOTYPE, FTD-0408] P4-preserving
                                     // free-wave kick sequence +3/13, -1/13 on
                                     // even/odd ticks. Its exact two-tick pole
                                     // cancels the q^4 preferred-frame term and
                                     // is stable over the complete 18-point band.
-                                    // CPU-only; requires the unit-step default
-                                    // kick-drift integrator. Default OFF.
+                                    // Native CUDA + CPU; requires the unit-step
+                                    // default kick-drift integrator. Default OFF.
     bool lorentz_bcc_time_floquet = false; // [SELECTED IR PROTOTYPE, FTD-0411]
                                     // SC+FCC spatial propagation with a stable
                                     // two-tick localization of the selected
                                     // BCC temporal kernel. Kicks are
                                     // (1+sqrt(2))/7, (1-sqrt(2))/7; c^2=1/7.
                                     // Matches through q^4, not exact at q^6.
-                                    // CPU-only, unit-step, default OFF.
+                                    // Native CUDA + CPU, unit-step, default OFF.
     bool su2_gauge = false;         // tick Rule 7b: per-tick SU(2) link staple relaxation ([IMPOSED] Wilson-action import; links are write-only — no substrate feedback, see test_gauge_links G1)
     bool su3_gauge = false;         // tick Rule 7b: per-tick SU(3) link staple relaxation ([IMPOSED] Wilson-action import; links are write-only — no substrate feedback, see test_gauge_links G1)
     bool symmetric_movement_order = false; // CPU/CUDA phase_movement: coordinate-independent update traversal & axis ordering
@@ -105,8 +122,8 @@ struct TermToggles {
     bool field_energy_gravity = false; // [IMPOSED] latency Poisson also sources from field-energy density ½(|J|²+|wave_vel|²), not only particle rest mass, so flux-only configs (gravity waves) carry a real potential. Requires latency_field.
     bool cluster_inertia = false;   // [IMPOSED] phase_forces: rigid-body integrate LOCKED clusters at inertial mass N·M_INERTIAL. Additive; needs a force channel.
     bool geometric_gravity = false; // [FTD-1016 SELECTED] phase_forces: replace F=G_N∇|J| with F=M_INERTIAL C² ℒ ∇ℒ from voxel.latency. Native CUDA + CPU; default OFF ⇒ golden-neutral.
-    bool de_broglie_clock = false;  // [IMPOSED] phase_read: Klein-Gordon term −ω₀²·J with the frequency calibration tied explicitly to K_B (FTD-0271), not to a unified mass role. Native flux is massless (A0). GPU-ported 2026-06-20.
-    bool db_clock_coulomb = false;  // [IMPOSED diagnostic] FTD-0281: pre-solve the live Coulomb Poisson field and apply omega_eff^2 = omega0^2 + 2*omega0*V to the clocked flux field at every site, with V=-phi_coulomb in the engine force convention. CPU + GPU (CUDA gpu_phase_read pre-solves d_phi_coulomb via FFT, then the kernel applies the all-site KG term); default OFF => golden-neutral.
+    bool de_broglie_clock = false;  // [IMPOSED] phase_read: Klein-Gordon term −ω₀²·J at manifested voxels (FTD-0271). Giving native (massless, A0) flux a clock at all is the [IMPOSED] step; the K_B→ω₀ scale is [SELECTION] and is NOT wired to any formula in code — ω₀ is the free runtime field `omega0` (default 1.0), and constants.h OMEGA0_COMPTON = K_B has no production consumer. GPU-ported 2026-06-20.
+    bool db_clock_coulomb = false;  // [IMPOSED diagnostic] FTD-0281 (a WORKING id shared with campaign_atomic_spectroscopy.cpp / test_db_clock_coulomb.cpp / the db_clock_coulomb prereg — it has no LEDGER row of its own; the booked row of record for this arc is FTD-0308, titled "FTD-0281 Leg-2", which names this toggle as the hook it runs through): pre-solve the live Coulomb Poisson field and apply omega_eff^2 = omega0^2 + 2*omega0*V to the clocked flux field at every site, with V=-phi_coulomb in the engine force convention. CPU + GPU (CUDA gpu_phase_read pre-solves d_phi_coulomb via FFT, then the kernel applies the all-site KG term); default OFF => golden-neutral.
     bool knot_tracking = false;     // [OBSERVATION-ONLY] tick-end: record per-knot telemetry from settled state. Reads voxels()/lattice()/current_tick() only ⇒ golden-neutral by construction.
 
     // [SELECTION] Linear colour string at r >= COLOR_TRANSITION_RADIUS.
@@ -120,7 +137,7 @@ struct TermToggles {
     // first validate() failure instead of printing to stderr and continuing.
     bool strict_validation = false;
 
-    // EW phase-transition background sweep: sinusoidal uniform +x flux drive
+    // [IMPOSED] EW phase-transition background sweep: sinusoidal uniform +x flux drive
     // D(t)=(sin(tick*0.01)+1)/2*0.05, runs each tick before phase_read so the
     // driven field sees the wave propagation update in the same cycle.
     bool ew_background_sweep = false;
@@ -179,8 +196,15 @@ struct TermToggles {
 
     // FTD-0271 (2026-06-11): de Broglie internal-clock frequency ω₀ [rad/tick],
     // used only when de_broglie_clock == true. The KG mass term is −ω₀²·J.
-    // ω₀∝K_B is [IMPOSED] (native flux is massless); K_B→ω₀ scale is
-    // [SELECTION] (no ℏ in the substrate). Stability bound: ω₀·dt < 2.
+    // Clocking massless native flux at all is [IMPOSED]; the K_B→ω₀ scale is
+    // [SELECTION] (no ℏ in the substrate) and is NOT wired to a formula
+    // anywhere in the engine — this default of 1.0 is ≈2×K_B, and
+    // constants.h OMEGA0_COMPTON = K_B is referenced only by
+    // tests/test_causal_normalization.cpp, never by a production path.
+    // ENFORCED stability bound (validate(), default kick-drift integrator):
+    // 0 < ω₀ ≤ 1.49, from ω₀² < 4 − 16·C_WAVE²/3. The symplectic_leapfrog and
+    // verlet_wave_integrator paths select a different KDK map whose regime is
+    // unaudited here and are exempted from that check.
     double omega0 = 1.0;
 
     // FTD-0276 (2026-06-12): runtime kinetic-drain knob. Fraction of wave_vel
@@ -247,9 +271,9 @@ inline constexpr ToggleSpec TOGGLE_SPECS[] = {
     {"strong_force",       &TermToggles::strong_force,       false, true,  "",                 "",                 ToggleBackend::ANY, "Yukawa short-range nuclear force"},
     {"triad_binding",      &TermToggles::triad_binding,      false, true,  "color_forces",     "",                 ToggleBackend::ANY, "Detect same-sign 3-particle triads (locked=true); color_forces dependency is a gating policy choice, not a colour-singlet condition — the geometric rule never reads Voxel::color"},
     {"pair_production",    &TermToggles::pair_production,    false, true,  "",                 "",                 ToggleBackend::ANY, "Correlated +1/-1 pair manifestation (independent code path; F11.A-5 audit removed artificial 'requires genesis' — pair_production_cpu / GPU pair-production kernel are SEPARATE phases from phase_write::genesis and operate on their own state==0 + jmag>K_GENESIS check)"},
-    {"exchange_force",     &TermToggles::exchange_force,     false, true,  "poisson_coulomb",  "",                 ToggleBackend::ANY, "Pauli exclusion repulsion (same-spin)"},
-    {"latency_field",      &TermToggles::latency_field,      false, true,  "gravity",          "",                 ToggleBackend::ANY, "Poisson-based latency field (gravity proxy)"},
-    {"exact_dual_gauss",   &TermToggles::exact_dual_gauss,   false, false, "",                 "",                 ToggleBackend::ANY, "Exact dual-cell face-flux Gauss projection"},
+    {"exchange_force",     &TermToggles::exchange_force,     false, true,  "poisson_coulomb",  "",                 ToggleBackend::ANY, "Pauli exclusion repulsion (same-spin); the poisson_coulomb dependency is a gating policy choice, not a code condition — exchange_pair_force_mag() is computed from spins and separations alone and never reads phi_coulomb (same class as the pair_production requires-genesis entry removed by the F11.A-5 audit)"},
+    {"latency_field",      &TermToggles::latency_field,      false, true,  "gravity",          "",                 ToggleBackend::ANY, "Latency field: SOR Poisson solve on the mean-subtracted source, stored as sqrt(clamp(-phi,0,LATENCY_HORIZON_CLAMP)) (gravity proxy); the gravity dependency is a gating policy choice, not a code condition — render_bridge.cpp gates the latency solve on toggles.latency_field alone and it never reads the F=G_N*grad(rho) gravity term (same class as the pair_production requires-genesis entry removed by the F11.A-5 audit)"},
+    {"exact_dual_gauss",   &TermToggles::exact_dual_gauss,   false, false, "",                 "",                 ToggleBackend::ANY, "Gauss correction applied at manifested sites too: drops the state!=0 skip so J -= grad_6(phi) runs at every site. Neither exact nor dual-cell — the correction remains the same bounded, non-idempotent centred-difference subtraction (poisson_solvers.h HONEST STATUS)"},
     {"matched_gauss_dynamics", &TermToggles::matched_gauss_dynamics, false, false, "",          "",                 ToggleBackend::ANY, "[FTD-0428 SELECTED ENGINE EXTENSION] Projection-free oriented-face Maxwell/Gauss evolution with event-routed conservative current; isolated native CUDA + CPU"},
     {"emergent_forces",    &TermToggles::emergent_forces,    false, false, "",                 "poisson_coulomb",  ToggleBackend::ANY, "EFT mode: force from flux gradient (no Poisson)"},
     {"langevin",           &TermToggles::langevin,           false, false, "",                 "larmor_radiation", ToggleBackend::ANY, "Stochastic OU thermostat (native CUDA + CPU; SplitMix64 per-voxel noise, default OFF => golden-neutral)"},
@@ -264,13 +288,13 @@ inline constexpr ToggleSpec TOGGLE_SPECS[] = {
     {"reflective_boundary", &TermToggles::reflective_boundary, false, true, "movement",         "",                 ToggleBackend::ANY, "Legacy movement-only mirror override; use flux_boundary=Reflective for unified field and particle behavior"},
     {"field_energy_gravity", &TermToggles::field_energy_gravity, false, true, "latency_field",    "",                 ToggleBackend::ANY, "[IMPOSED] Latency Poisson also sources from field-energy density ½(|J|²+|wave_vel|²) so flux configs gravitate"},
     {"cluster_inertia",    &TermToggles::cluster_inertia,    false, false, "",                 "",                 ToggleBackend::ANY, "[IMPOSED] Rigid-body cluster inertia: locked clusters integrate a_COM = F_cluster/(N*M_INERTIAL); requires a force channel"},
-    {"geometric_gravity",  &TermToggles::geometric_gravity,  false, true,  "gravity,forces",   "",                 ToggleBackend::ANY, "[FTD-1016 SELECTED ENGINE EXTENSION] Replace F=G_N∇|J| with F=M_INERTIAL C² ℒ ∇ℒ from voxel.latency; native CUDA + CPU; default OFF => golden-neutral. HAZARD (audit 2026-09-02): the force is proportional to voxel.latency, which only latency_field writes. With latency_field never having run, every site has latency=0 and this term is SILENTLY ZERO — a profile that asks for gravity gets none, with no error. This is deliberately NOT a requires_ dependency: solving the field and then switching latency_field off to freeze the well is a legitimate workflow (see tests/test_frozen_well_characteristic_deflection.cpp). The validator sees toggles, not state, so it cannot distinguish a frozen well from an unpopulated one. Callers must ensure latency was populated at least once."},
+    {"geometric_gravity",  &TermToggles::geometric_gravity,  false, true,  "gravity,forces",   "",                 ToggleBackend::ANY, "[FTD-1016 SELECTED ENGINE EXTENSION] Replace F=G_N∇|J| with F=M_INERTIAL C² ℒ ∇ℒ from voxel.latency; native CUDA + CPU; default OFF => golden-neutral. HAZARD (audit 2026-09-02): the force is proportional to voxel.latency, which the dynamics writes only through latency_field (the constructors schwarzschild() and gravitational_wave() in src/constructors/constructors_exotic.cpp also stamp voxel.latency analytically, and a scenario built from either is a legitimate populated source). With neither latency_field nor such a constructor having run, every site has latency=0 and this term is SILENTLY ZERO — a profile that asks for gravity gets none, with no error. This is deliberately NOT a requires_ dependency: solving the field and then switching latency_field off to freeze the well is a legitimate workflow (see tests/test_frozen_well_characteristic_deflection.cpp). The validator sees toggles, not state, so it cannot distinguish a frozen well from an unpopulated one. Callers must ensure latency was populated at least once."},
     {"de_broglie_clock",   &TermToggles::de_broglie_clock,   false, false, "",                 "",                 ToggleBackend::ANY, "[IMPOSED] de Broglie internal clock: Klein-Gordon mass term -omega0^2*J at manifested voxels (FTD-0271). GPU-ported 2026-06-20: the CUDA phase_read kernel applies the same -omega0^2*J KG term, gated by the toggle (default OFF => golden-neutral). Independent of wave_propagation: with the wave term the full KG dispersion omega^2=c^2 k^2 + omega0^2 acts; alone, each manifested voxel is the k=0 rest-frame clock oscillating at omega0."},
     {"db_clock_coulomb",   &TermToggles::db_clock_coulomb,   false, false, "wave_propagation,de_broglie_clock,poisson_coulomb", "forces", ToggleBackend::ANY, "[IMPOSED diagnostic] FTD-0281 live Coulomb clock: pre-read phi_C solve plus all-site KG potential omega_eff^2=omega0^2+2*omega0*V, V=-phi_C. GPU-ported 2026-06-20 (CUDA gpu_phase_read pre-solves d_phi_coulomb via FFT then applies the same all-site KG term). forces must stay off to avoid a second same-tick Coulomb solve."},
-    {"confinement",        &TermToggles::confinement,        false, false, "color_forces",     "",                 ToggleBackend::ANY, "[SELECTION] Linear colour string F=SIGMA_STRING·cf at r>=8; not FTD-0025. Native CUDA + CPU; default OFF"},
+    {"confinement",        &TermToggles::confinement,        false, false, "color_forces",     "",                 ToggleBackend::ANY, "[SELECTION] Linear colour string F=SIGMA_STRING·cf at r>=8; not FTD-0025. Native CUDA + CPU; default OFF. HAZARD (audit 2026-09-16): this flag is read only by color_regime_force_mag(), which both backends call in the discrete-coordinate branch alone (phase_forces.cpp; kernels_forces.cu). With strong_stress_energy also on, the continuous remainder-based branch takes over (F = cf * strong_radial_profile(r)) and NEVER consults this flag — a profile that asks for the linear string silently gets the strong_stress_energy profile instead, with no error. Same silent-no-op class as the geometric_gravity HAZARD above; deliberately not a conflicts entry, since the two are legitimately co-enabled when the discrete branch is the one in use"},
     {"knot_tracking",      &TermToggles::knot_tracking,      false, false, "",                 "",                 ToggleBackend::ANY, "[OBSERVATION-ONLY] Record per-knot telemetry at end of tick (golden-neutral)"},
     {"strict_validation",  &TermToggles::strict_validation,  false, false, "",                 "",                 ToggleBackend::ANY, "Throw on validate() failure (vs. stderr warn)"},
-    {"ew_background_sweep",&TermToggles::ew_background_sweep,false, false, "",                 "",                 ToggleBackend::ANY, "Sinusoidal uniform +x flux drive for EW phase-transition hysteresis (D=(sin(tick*0.01)+1)/2*0.05 per tick before phase_read)"},
+    {"ew_background_sweep",&TermToggles::ew_background_sweep,false, false, "",                 "",                 ToggleBackend::ANY, "[IMPOSED] Sinusoidal uniform +x flux drive for EW phase-transition hysteresis (D=(sin(tick*0.01)+1)/2*0.05 per tick before phase_read)"},
     {"flux_pump",          &TermToggles::flux_pump,          false, false, "",                 "dual_substrate",   ToggleBackend::ANY, "[IMPOSED] Time-gated flux source (flux-cell pump): configured torus profile added before phase_read for N ticks, then hard-off; injected work booked exactly from the kick-drift Hamiltonian. Hybrid on CUDA during pump ticks; default OFF => golden-neutral"},
     {"flux_cell_port",     &TermToggles::flux_cell_port,     false, false, "",                 "",                 ToggleBackend::ANY, "[IMPOSED] Scheduled membrane aperture (flux-cell port): shell sites in the hole expire at open_tick; Poynting flux through the opened sites integrated each tick. Hybrid on CUDA while open; default OFF => golden-neutral"},
 };
@@ -386,10 +410,27 @@ inline bool TermToggles::validate(std::string* err) const {
         msg += "bcc_stencil != FULL requires wave_propagation=true (sublattice projection requires the wave path)\n";
     // Census correction (EXPLR_DUAL_SUBSTRATE_STAGGERED_ENCODING §5.3,
     // AUDIT_EFFECTIVE_TOGGLES_2026-07): triad detection reads states,
-    // positions, and locked flags only — no J_L/J_R — on both backends
-    // (transmutation_phases.cpp triad_binding_cpu; kernels_forces.cu GPU
-    // triad detection). The requirement is retained as declared; only the
-    // old "(operates on J_L/J_R)" rationale was drift.
+    // positions, and locked flags only — no J_L/J_R. The requirement is
+    // retained as declared; only the old "(operates on J_L/J_R)" rationale
+    // was drift.
+    //
+    // ⚠ The "locked flags ... on both backends" half of that census line was
+    // FALSE from the census until 2026-09-16: kernels_forces.cu's
+    // triad_detection_kernel took no locked[] buffer at all and could pull an
+    // already-locked voxel into a new triad, and it selected triads by a
+    // per-particle "two nearest same-sign neighbours" heuristic over
+    // minimum-image distances rather than the CPU's index-ordered a<b<c
+    // search over raw coordinate distances. It is now an exact single-thread
+    // port of transmutation_phases.cpp triad_binding_cpu: same candidate set
+    // and ascending order (plist_idx is the CUB-compacted ascending
+    // manifested-index list = ordered_active_indices()), same locked
+    // exclusion at all three loop levels, same raw-coordinate geometry test,
+    // same first-valid-c-wins break, same in-place lock mutation. The
+    // equivalence is bit-exact (integer-argument sqrt, IEEE comparisons) and
+    // is pinned by test_gpu_triad_parity; it is scoped to manifested counts
+    // within GpuBuffers::MAX_PARTICLES, above which d_particle_overflow
+    // fires and the GPU candidate list is truncated while the CPU's is not.
+    // ToggleBackend::ANY below is the contract that fix discharges.
     if (triad_binding && !dual_substrate)
         msg += "triad_binding requires dual_substrate (requirement of record; triad detection itself is geometric — states + distances, no flux-field read)\n";
     if (db_clock_coulomb && dual_substrate)
@@ -453,6 +494,8 @@ inline bool TermToggles::validate(std::string* err) const {
     if (strong_stress_energy && movement) {
         if (!forces)
             msg += "strong_stress_energy with movement requires forces=true\n";
+        if (flux_boundary != FluxBoundaryMode::Periodic)
+            msg += "strong_stress_energy requires flux_boundary=Periodic\n";
         if (damping || genesis || evaporation || pair_production
             || poisson_coulomb || emergent_forces || gravity || latency_field
             || lorentz_force || strong_force || exchange_force

@@ -392,7 +392,14 @@ MEV_PER_GEV = 1000
 # LAYER 6: MASS THRESHOLDS AND RATIOS
 # =============================================================================
 
-K_B = 0.511           # MeV — electron mass / manifestation threshold
+# K_B [IMPOSED - CALIBRATION]: electron-mass anchor only. NOT the
+# manifestation threshold -- since FTD-0388 that kinetics role belongs to
+# K_MANIFEST := W_SC = 0.50546... (three lines below), -1.084% from K_B.
+# The old "/ manifestation threshold" wording re-asserted the exact role
+# conflation FTD-0130 flagged and FTD-0388 split (mass anchor vs kinetics).
+# One of two theorem-enforced SI calibrations (FTD-0096) -- an input, not an
+# output; every dimensional prediction downstream of it is conditional.
+K_B = 0.511           # MeV — electron mass anchor [IMPOSED - CALIBRATION]
 M_REST = K_B          # rest/inertial/gravitational mass quantum (= K_B); unified-mass Phase 0 (FTD-0130)
 K_MANIFEST = 0.5054620197173260  # := W_SC, unit-charge Gauss self-energy [SELECTION - ADOPTED, FTD-0388]; kinetics role only (was = K_B pre-2026-07-17; FTD-0130 role split)
 K_GENESIS = K_MANIFEST * N_c # 1.5163860591... = 3*W_SC — genesis threshold (fill all N_c color channels; kinetics; FTD-0388)

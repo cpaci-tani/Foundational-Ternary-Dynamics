@@ -292,7 +292,7 @@ inline double alpha_s_lattice(double r_voxels) {
   return std::min(as, ALPHA_S);
 }
 
-// Strong force string tension [DERIVED from ALPHA_S and K_B]
+// Strong force string tension [PARAMETRIC from ALPHA_S and K_B]
 // V(r) = SIGMA_STRING * r (linear confinement potential)
 // F = -dV/dr = -SIGMA_STRING (constant force at long range)
 // Motivated by lattice QCD: sigma ~ alpha_s * K_B^2
@@ -375,8 +375,11 @@ inline constexpr double K_LARMOR = 4.0 * N_EFF / (3.0 * K_B); // ≈ 33.9
 // Ensures thermodynamic dissipation is never completely off.
 inline constexpr double LARMOR_FLOOR = 0.01;
 
-// Triad binding detection (CPU port of GPU triad_detection_kernel)
-// Three same-sign particles within TRIAD_RADIUS with near-equilateral geometry.
+// Triad binding detection. Three same-sign particles within TRIAD_RADIUS with
+// near-equilateral geometry. Rule of record is transmutation_phases.cpp
+// triad_binding_cpu; kernels_forces.cu triad_detection_kernel is an exact
+// single-thread port of it (2026-09-16 — it was an independent
+// nearest-neighbour heuristic before that, and disagreed).
 inline constexpr double TRIAD_RADIUS = 3.0;          // max pairwise distance
 inline constexpr double TRIAD_RATIO_THRESHOLD = 0.8; // min(r)/max(r) threshold
 
@@ -549,21 +552,21 @@ inline constexpr double GAUGE_RELAX_BETA = 1.0;
 // Scale 2 Phase 3 Constants — Inter-atomic forces
 // ============================================================================
 
-// H-bond parameters [DERIVED from α perturbation theory]
+// H-bond parameters [PARAMETRIC from α perturbation theory]
 // H-bonds are ~10× weaker than covalent, ~comparable to vdW for small atoms.
 // LJ 10-12 form: V = eps * [5*(sig/r)^12 - 6*(sig/r)^10] * cos^n(theta)
 inline constexpr double H_BOND_EPSILON = K_B * ALPHA * ALPHA * ALPHA; // ~1.98e-7
 inline constexpr double H_BOND_COS_POWER = 2.0; // angular dependence exponent
 
-// Angle strain (VSEPR) [DERIVED from α × K_B]
+// Angle strain (VSEPR) [PARAMETRIC from α × K_B]
 // V = K_ANGLE * (theta - theta_eq)^2 / 2
 inline constexpr double K_ANGLE = ALPHA * K_B; // ~3.72e-3
 
-// Torsional (Dihedral) Strain [DERIVED from α² × K_B]
+// Torsional (Dihedral) Strain [PARAMETRIC from α² × K_B]
 // V = V_TORSION / 2 * [1 + cos(n*phi - gamma)]
 inline constexpr double V_TORSION = ALPHA * ALPHA * K_B; // ~2.71e-5
 
-// Improper Torsion (Planarity) [DERIVED from α × K_B]
+// Improper Torsion (Planarity) [PARAMETRIC from α × K_B]
 // V = K_IMPROPER * (omega)^2 / 2
 inline constexpr double K_IMPROPER = ALPHA * K_B * 2.0;
 

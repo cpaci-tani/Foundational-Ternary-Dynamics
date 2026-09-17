@@ -387,7 +387,26 @@ void test_clean_voxel_reads_do_not_repoll_identity_counters() {
 int main() {
     std::printf("GPU identity/lifecycle parity regression\n");
     {
-        bool union_preserved = true;
+        // Four same-sign particles, every pair at r=sqrt(2): an overlapping
+        // cluster where more than one triple is geometrically valid.
+        //
+        // Expectation UPDATED 2026-09-16 with the triad GPU rewrite. This case
+        // used to assert that ALL FOUR manifested voxels end up locked, which
+        // was the old GPU kernel's own answer (each particle independently
+        // proposed a triangle from its two nearest neighbours, so the union
+        // covered everything) and was never the CPU's. The rule of record,
+        // transmutation_phases.cpp triad_binding_cpu, walks the manifested
+        // sites in ASCENDING lattice index and takes the first valid triple
+        // per (a,b) pair: at L=9 the indices are (4,4,4)=364, (4,5,5)=374,
+        // (5,4,5)=446, (5,5,4)=454, so a=364 admits b=374, c=446 and locks
+        // those three; 454 is then never an anchor with a higher-index partner
+        // left, and stays UNLOCKED. The GPU is now an exact port of that, so
+        // the expected count is 3 triad locks plus the hand-locked (0,0,0).
+        //
+        // What this case still guards is what it was written for: the result
+        // is stable across repeats (no nondeterministic proposal ordering) and
+        // a pre-existing lock on a non-manifested voxel is never cleared.
+        bool locks_stable = true;
         for (int repeat = 0; repeat < 16; ++repeat) {
             RenderBridge bridge(9);
             bridge.toggles.disable_all();
@@ -400,12 +419,16 @@ int main() {
             const auto& voxels = static_cast<const RenderBridge&>(bridge).voxels();
             int locked_count = 0;
             for (const auto& voxel : voxels) locked_count += voxel.locked;
-            union_preserved &= locked_count == 5 && voxels[0].locked;
-            for (const auto& voxel : voxels)
-                if (voxel.state != 0) union_preserved &= voxel.locked;
+            locks_stable &= locked_count == 4 && voxels[0].locked;
+            const int i364 = 4 * 81 + 4 * 9 + 4;   // (4,4,4)
+            const int i374 = 4 * 81 + 5 * 9 + 5;   // (4,5,5)
+            const int i446 = 5 * 81 + 4 * 9 + 5;   // (5,4,5)
+            const int i454 = 5 * 81 + 5 * 9 + 4;   // (5,5,4)
+            locks_stable &= voxels[i364].locked && voxels[i374].locked
+                         && voxels[i446].locked && !voxels[i454].locked;
         }
-        check("overlapping GPU triad proposals retain exact lock union on repeat",
-              union_preserved);
+        check("overlapping triad cluster locks the CPU-ordered triple, stably",
+              locks_stable);
     }
     {
         RenderBridge bridge(1);

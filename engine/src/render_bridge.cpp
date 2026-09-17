@@ -1401,14 +1401,44 @@ void RenderBridge::apply_flux_cell_port() {
   flux_cell_port_open_ = true;
 }
 
+// TWO SEPARATE CHANNELS are accumulated here, and they are different physical
+// quantities — neither is a sub-case of the other (flux_cell.h §PORT):
+//
+//   flux_cell_port_work_out_     Σ S^H·n̂ dt,  S^H = c² Σ_a E_a ∇J_a
+//       The exact energy current of the component-wise vector wave equation
+//       the kick-drift map integrates, so ΔH_wave(inside) + W_out ≈ 0 closes.
+//       This is the channel the port ledger test gates.
+//   flux_cell_port_poynting_out_ Σ S·n̂ dt,   S = c²(E×B)
+//       The EM-like observer-level integral. It differs from S^H by the
+//       curl-type term c²(E·∇)J and does NOT close the wave-Hamiltonian
+//       ledger; it is reported for comparison only.
+//
+// Both are exposed separately (flux_cell_port_work_out() /
+// flux_cell_port_poynting_out(), and cell_port_work_out / cell_port_poynting_out
+// in the audit), so a reader can never confuse the ledger-closing current with
+// the EM-like one.
+//
+// SITE SET: the integral runs over flux_cell_port_surface_ (the ONE-LAYER
+// aperture cross-section: the slab |d·n̂ − surface_offset| ≤ ½ intersected with
+// the hole ball), NOT over flux_cell_port_sites_ (the expired wall sites, which
+// form a plug as thick as the membrane). Integrating the plug would count each
+// streamline once per layer it crosses, and would also MISS the parts of the
+// aperture that were already void before the port opened — precisely the parts
+// most of the flux leaves through. Every surface site lies inside the hole ball
+// and is void once the port is open (any wall site in the ball expired at the
+// same moment), so the surface is exactly the opened aperture and nothing else;
+// flux elsewhere in the same lattice plane is outside the ball and is never
+// counted. Pinned by tests/test_flux_cell_port_aperture.cpp.
 void RenderBridge::accumulate_flux_cell_port_work() {
   if (!flux_cell_port_open_ || flux_cell_port_surface_.empty()) return;
   Vec3 n(flux_cell_port_spec_.nx, flux_cell_port_spec_.ny, flux_cell_port_spec_.nz);
   const double nm = n.mag();
   if (nm <= 0.0) return;
   n = n * (1.0 / nm);
+  // Channel 1: wave-Hamiltonian energy current (ledger-closing).
   flux_cell_port_work_out_ +=
       flux_cell_site_hamiltonian_flux(*this, flux_cell_port_surface_, n) * dt_;
+  // Channel 2: EM-like Poynting current (observer-level comparison only).
   flux_cell_port_poynting_out_ +=
       flux_cell_site_poynting_flux(*this, flux_cell_port_surface_, n) * dt_;
 }

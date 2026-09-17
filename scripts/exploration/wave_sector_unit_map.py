@@ -4,9 +4,16 @@
 Computes (does not assert from memory) the lattice -> physical conversions for
 the flux-wave sector under the canonical calibration:
 
-  a_phys  = l_P            (length anchor, [CALIBRATION], dimensional_map.json)
-  t_phys  = sqrt(3)*l_P/c  (one tick, [CALIBRATION], = 9.34e-44 s)
-  c_lat   = 1/sqrt(3)      (lattice speed of light, [DERIVED] CFL)
+  a_phys  = l_P              (length anchor, [CALIBRATION], dimensional_map.json)
+  t_phys  = l_P/(sqrt(3)*c)  (one tick, [CALIBRATION], = 3.1067e-44 s = t_P/sqrt(3))
+  c_lat   = 1/sqrt(3)        (lattice speed of light, [SELECTION] — FTD-0407)
+
+The t_phys formula was corrected 2026-07-08 (DERIV_DIMENSIONAL_GATE.md): the
+old form sqrt(3)*l_P/c, and its derived 9.34e-44 s, were high by a factor of 3.
+c_lat = 1/sqrt(3) is NOT the CFL limit of the production stencil (FTD-0407,
+scripts/constants.py C_SPEED): the normalised 18-point stencil has max symbol
+16/3 and permits c <= sqrt(3)/2 ~ 0.866. 1/sqrt(3) is the unnormalised 6-point
+CFL limit — conservative, selected, and inherited by t_phys.
 
 Per-axis leapfrog dispersion: omega(k) = 2*c_lat*|sin(k/2)|  [rad/tick],
 zone-edge (Nyquist) wavelength = 2 voxels.
@@ -21,8 +28,8 @@ l_P = 1.616255e-35      # Planck length [m]
 c   = 299792458.0       # speed of light [m/s] (exact)
 t_P = l_P / c           # Planck time [s]
 
-C_SPEED = 1.0 / math.sqrt(3.0)         # lattice c, voxel/tick [DERIVED]
-t_phys  = math.sqrt(3.0) * l_P / c     # one tick [s], canonical calibration
+C_SPEED = 1.0 / math.sqrt(3.0)         # lattice c, voxel/tick [SELECTION] (FTD-0407)
+t_phys  = l_P / (math.sqrt(3.0) * c)   # one tick [s], canonical calibration
 
 # Zone-edge (per-axis) lattice angular frequency: omega_max = 2*c_lat  [rad/tick]
 omega_max_lat = 2.0 * C_SPEED
@@ -39,7 +46,7 @@ def k_over_kzone(f_hz):
     lam = c / f_hz
     return lambda_min / lam   # = (2 l_P)/lambda
 
-print(f"t_phys (sqrt3*l_P/c)      = {t_phys:.4e} s   (canonical 9.34e-44)")
+print(f"t_phys (l_P/(sqrt3*c))    = {t_phys:.4e} s   (canonical 3.1067e-44)")
 print(f"t_P (Planck time)         = {t_P:.4e} s")
 print(f"omega_max (lattice)       = {omega_max_lat:.6f} rad/tick  (= 2/sqrt3)")
 print(f"omega_max (physical)      = {omega_max_phys:.4e} rad/s")

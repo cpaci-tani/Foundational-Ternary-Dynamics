@@ -34,6 +34,7 @@
 #include "ftd/sublattice.h"
 #include "ftd/field_operators.h"
 #include "ftd/bridge_rng.h"
+#include "ftd/larmor_damping.h"
 #include "ftd/proper_time_rate.h"
 #include "ftd/voxel_rng.h"
 #include "ftd/parallel.h"
@@ -227,11 +228,15 @@ void phase_write_main_loop(RenderBridge& rb) {
       // Damping on both substrates independently
       if (do_damping && should_damp) {
         double eff_damping = damping_factor;
-        // Larmor radiation: modulate damping at ALL near-particle sites
+        // Larmor radiation-reaction at ALL near-particle sites: an
+        // accelerating charge radiates, so it must dissipate MORE than the
+        // undamped baseline as |a| grows. The law, its monotonicity and
+        // boundedness properties, and why the previous capped form inverted
+        // the physics all live in ftd/larmor_damping.h (one source of truth
+        // shared with the CUDA mirror in kernels_stencil_common.cuh).
         if (do_larmor && selective && rb.near_particle_[i]) {
-          double a2 = rb.near_accel_[i] * rb.near_accel_[i];
-          double larmor_mod = std::min(1.0, LARMOR_FLOOR + K_LARMOR * a2);
-          eff_damping = 1.0 - DAMPING * larmor_mod;
+          eff_damping = larmor_effective_damping(damping_factor,
+                                                 rb.near_accel_[i]);
         }
         v.flux_L *= eff_damping;
         v.flux_R *= eff_damping;
@@ -279,10 +284,11 @@ void phase_write_main_loop(RenderBridge& rb) {
         v.wave_vel.z = one_minus_gamma * v.wave_vel.z + sigma * nz;
       } else if (do_damping && should_damp) {
         double eff_damping = damping_factor;
+        // Same radiation-reaction law as the dual branch above — see
+        // ftd/larmor_damping.h.
         if (do_larmor && selective && rb.near_particle_[i]) {
-          double a2 = rb.near_accel_[i] * rb.near_accel_[i];
-          double larmor_mod = std::min(1.0, LARMOR_FLOOR + K_LARMOR * a2);
-          eff_damping = 1.0 - DAMPING * larmor_mod;
+          eff_damping = larmor_effective_damping(damping_factor,
+                                                 rb.near_accel_[i]);
         }
         v.flux *= eff_damping;
         v.wave_vel *= eff_damping;
