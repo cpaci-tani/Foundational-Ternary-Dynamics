@@ -201,8 +201,16 @@ export function attachBackToFrontOrdering(points, options = {}) {
         }
 
         if (!depthArray || depthArray.length < count) {
-            depthArray = new Uint32Array(Math.max(count, depthArray ? depthArray.length * 2 : 1024));
-            depthIndex = wrapIndex(depthArray);
+            const len = Math.max(count, depthArray ? depthArray.length * 2 : 1024);
+            depthIndex = wrapIndex(new Uint32Array(len));
+            // wrapIndex (typically `a => new THREE.Uint32BufferAttribute(a, 1)`)
+            // is NOT guaranteed to keep `a` as its live backing store — three.js
+            // may copy it. Sorting into `depthArray` only reaches the GPU if
+            // `depthArray` IS the buffer the wrapped attribute actually uploads,
+            // so read it back from the wrapper rather than assume identity.
+            depthArray = (depthIndex && typeof depthIndex === 'object' && depthIndex.array)
+                ? depthIndex.array
+                : depthIndex;
         }
         sortBackToFront(attr.array, count, d, depthArray);
         if (depthIndex && typeof depthIndex === 'object') depthIndex.needsUpdate = true;

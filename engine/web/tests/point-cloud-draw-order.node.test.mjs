@@ -122,6 +122,57 @@ test('attachBackToFrontOrdering installs an onBeforeRender hook that re-indexes 
     assert.equal(indexSets, 2, 'the no-op never re-indexes');
 });
 
+test('attachBackToFrontOrdering depth mode writes into the buffer that is actually uploaded, even when wrapIndex copies the array', () => {
+    // Regression for a bug where three.js's Uint32BufferAttribute does not
+    // keep the input array as its live backing store (it may copy), so
+    // sorting into the ORIGINAL array never reached the GPU-uploaded one:
+    // the uploaded index stayed all-zero forever and only vertex 0 ever drew.
+    const count = 50, positions = new Float32Array(count * 3);
+    let seed = 42;
+    const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
+    for (let i = 0; i < count * 3; i++) positions[i] = rnd() * 100 - 50;
+    const geometry = {
+        index: null,
+        drawRange: { start: 0, count },
+        attributes: { position: { array: positions, count } },
+        getAttribute(name) { return this.attributes[name]; },
+        setIndex(arr) { this.index = arr; },
+        setDrawRange(start, c) { this.drawRange = { start, count: c }; },
+    };
+    const points = { geometry, material: { blending: 1 }, onBeforeRender: null };
+    const camera = { getWorldDirection(v) { return v.set(0.3, -0.2, 0.9).normalize().negate(); } };
+    // Mimics THREE.Uint32BufferAttribute: does NOT keep the input array as its
+    // live backing store — copies into its own array, exactly like the
+    // three.js build this regressed against.
+    const wrapIndex = (order) => ({ array: new Uint32Array(order), needsUpdate: false });
+    attachBackToFrontOrdering(points, { mode: 'depth', wrapIndex });
+
+    points.onBeforeRender(null, null, camera);
+    assert.ok(geometry.index, 'indexed');
+    // The backing buffer may be over-allocated for growth headroom (like the
+    // production code's Math.max(count, ...*2) sizing) — only the first
+    // `count` entries are ever read, per geometry.setDrawRange(0, count).
+    const uploaded = geometry.index.array.slice(0, count);
+    assert.equal(new Set(uploaded).size, count,
+        'uploaded index must be a permutation of 0..count-1, not all zeros');
+    assert.deepEqual([...uploaded].sort((a, b) => a - b), [...Array(count).keys()]);
+
+    // A second frame (no growth) must keep updating the SAME uploaded buffer.
+    const firstUploadRef = geometry.index.array;
+    points.onBeforeRender(null, null, camera);
+    assert.equal(geometry.index.array, firstUploadRef, 'stable buffer reused across frames');
+    assert.equal(new Set(geometry.index.array.slice(0, count)).size, count);
+
+    // Growth to a much larger count must still end up correctly indexed.
+    const count2 = 3000, positions2 = new Float32Array(count2 * 3);
+    for (let i = 0; i < count2 * 3; i++) positions2[i] = rnd() * 100 - 50;
+    geometry.attributes.position = { array: positions2, count: count2 };
+    geometry.drawRange = { start: 0, count: count2 };
+    points.onBeforeRender(null, null, camera);
+    const grown = geometry.index.array.slice(0, count2);
+    assert.equal(new Set(grown).size, count2, 'after growth, still a real permutation, not all zeros');
+});
+
 test('the hook survives three.js Camera.getWorldDirection, which chains set().normalize().negate()', () => {
     // three.js Object3D.getWorldDirection returns target.set(e8,e9,e10).normalize();
     // Camera overrides it to .negate() that result. A target vector missing
