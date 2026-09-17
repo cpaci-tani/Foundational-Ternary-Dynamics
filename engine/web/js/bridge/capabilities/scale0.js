@@ -73,6 +73,9 @@ export function createScale0Capabilities(bridge) {
         setFluxBoundaryMode: (mode) => bridge.setFluxBoundaryMode?.(mode),
         setFluxPeriodicAxis: (axis) => bridge.setFluxPeriodicAxis?.(axis),
         setupScenario: (name) => bridge.setupScenario(name),
+        get seedRecipeVersion() { return typeof bridge.describeScenarioSeed === 'function'
+            ? (bridge.seedRecipeVersion ?? (bridge._module?.describeScenarioSeed ? 2 : 0)) : 0; },
+        describeScenarioSeed: (name, size, overrides) => bridge.describeScenarioSeed?.(name, size, overrides),
         setToggle: (key, value) => bridge.setToggle?.(key, value),
         // Phase 2 gravity panel: engine Poisson-derived [IMPOSED]
         // voxel.latency mapping, distinct from the |J|² proxy. Both bridges

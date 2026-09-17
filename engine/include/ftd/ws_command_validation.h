@@ -62,6 +62,17 @@ inline void validate_ws_command(const JsonValue& j) {
         if (cmd == "inject_particle") vector({"fx", "fy", "fz"});
     } else if (cmd == "resize" || cmd == "preflight_resize") {
         integer("size", imin, imax); // Existing resource policy clamps [4,256].
+    } else if (cmd == "seed_describe" || cmd == "seed_prepare" || cmd == "seed_commit") {
+        str("name"); integer("size", 4, 256);
+        add({"overrides", "expectedSourceEpoch"});
+        const auto& inputs = j.at("overrides").object();
+        if (inputs.size() > 2048) throw std::invalid_argument("too many seed inputs");
+        for (const auto& item : inputs) {
+            if (item.first.empty() || item.first.size() > 160) throw std::invalid_argument("invalid seed property key");
+            item.second.number();
+        }
+        if (cmd == "seed_commit") j.integer("expectedSourceEpoch", 0, kJsonSafeInteger);
+        else if (j.has("expectedSourceEpoch")) j.integer("expectedSourceEpoch", 0, kJsonSafeInteger);
     } else if (cmd == "setup_scenario" || cmd == "resize_scenario" || cmd == "apply_profile") {
         if (cmd == "resize_scenario") integer("size", imin, imax);
         add({"name", "applyProfile", "fluxBoundaryMode", "fluxPeriodicAxis"});

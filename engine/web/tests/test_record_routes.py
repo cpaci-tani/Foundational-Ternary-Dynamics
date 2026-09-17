@@ -31,6 +31,30 @@ def test_catalog_and_checkpoint_have_explicit_law_and_digest(record_server):
     assert status == 200 and body.startswith(b'FTDSC01\0')
     assert headers['x-checkpoint-sha256'] == sha256(body).hexdigest()
     assert headers['x-phi-law'] == catalog['law_id']
+    assert len(catalog['seeding']['channels']) == 384
+    assert {r['id'] for r in catalog['seeding']['channels']} == set(range(384))
+
+
+def test_custom_seed_endpoint_validates_and_returns_complete_checkpoint(record_server):
+    _, request = record_server
+    recipe = dict(version=1, scenarioId='record-relation', size=3, blank=False, randomSeed=0, components=[])
+    status, headers, data = request('/api/lattice/records/seed', 'POST', json.dumps(recipe), {'Content-Type': 'application/json'})
+    assert status == 200 and data == request('/api/lattice/records/checkpoint?scenario=relation&size=3')[2]
+    assert headers['x-checkpoint-sha256'] == sha256(data).hexdigest()
+    assert len(headers['x-recipe-sha256']) == 64
+    recipe['components'] = [{'code': 'not a component'}]
+    assert request('/api/lattice/records/seed', 'POST', json.dumps(recipe), {'Content-Type': 'application/json'})[0] == 400
+
+
+def test_custom_seed_endpoint_rejects_unavailable_and_invalid_inputs(record_server):
+    engine, request = record_server
+    route = '/api/lattice/records/seed'
+    assert request(route, 'POST', '{}', {'Content-Type': 'text/plain'})[0] == 415
+    assert request(route, 'POST', '{}', {'Content-Type': 'application/json', 'Origin': 'https://unrelated.example'})[0] == 403
+    assert request(route, 'POST', 'x' * 262145, {'Content-Type': 'application/json'})[0] == 413
+    assert request(route, 'POST', 'broken', {'Content-Type': 'application/json'})[0] == 400
+    (engine / serve.RECORD_ARTIFACTS[1]).unlink()
+    assert request(route, 'POST', '{}', {'Content-Type': 'application/json'})[0] == 503
 
 
 @pytest.mark.parametrize('query', ['scenario=bad&size=3', 'scenario=relation&size=17',

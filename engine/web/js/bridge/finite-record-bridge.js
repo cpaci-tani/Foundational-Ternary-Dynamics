@@ -59,13 +59,20 @@ export class FiniteRecordBridge {
         return this.enqueue(async () => {
             this.scenario = spec; this.abort = new AbortController();
             const query = new URLSearchParams({scenario: spec.preparationId, size: String(this.latticeSize)});
-            const response = await fetch(`/api/lattice/records/checkpoint?${query}`, {signal: this.abort.signal, cache: 'no-store'});
-            if (!response.ok || response.headers.get('X-Phi-Law') !== FINITE_RECORD_LAW) throw new Error('Preparation/law rejected');
+            const response = spec.seedRecipe
+                ? await fetch('/api/lattice/records/seed', {method: 'POST',
+                    headers: {'Content-Type': 'application/json'}, body: JSON.stringify(spec.seedRecipe),
+                    signal: this.abort.signal, cache: 'no-store'})
+                : await fetch(`/api/lattice/records/checkpoint?${query}`, {signal: this.abort.signal, cache: 'no-store'});
+            if (!response.ok) throw new Error(spec.seedRecipe
+                ? (await response.json()).error || 'Preparation rejected' : 'Preparation rejected');
+            if (response.headers.get('X-Phi-Law') !== FINITE_RECORD_LAW) throw new Error('Preparation/law rejected');
             const checkpoint = new Uint8Array(await response.arrayBuffer());
             const sha = await digest(checkpoint);
             if (sha !== response.headers.get('X-Checkpoint-SHA256')) throw new Error('Checkpoint digest mismatch');
             if (this.disposed) return;
             this.checkpointSHA256 = sha;
+            this.recipeSHA256 = response.headers.get('X-Recipe-SHA256');
             this.worker = new Worker(new URL('../strict/strict-worker.js', import.meta.url), {type: 'module'});
             this.worker.onmessage = ({data}) => {
                 if (this.disposed) return;
@@ -126,6 +133,7 @@ export class FiniteRecordBridge {
         return {law_id: FINITE_RECORD_LAW, backend: 'compiled_wasm_worker', scenario: this.scenario?.id,
             ownerId: this.ownerId, generation: this.generation, microtick: this.observation?.microtick,
             checkpoint_sha256: this.checkpointSHA256, quantity: this.quantity,
+            custom_preparation: !!this.scenario?.seedRecipe, recipe_sha256: this.recipeSHA256 || null,
             canonical_adoption: false, transport_recovery: false};
     }
     getDynamicalStateDigest() {

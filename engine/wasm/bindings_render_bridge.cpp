@@ -333,6 +333,41 @@ static int get_flux_periodic_axis(ftd::RenderBridge& rb) {
 }
 
 // ── Scenario setup ───────────────────────────────────────────────────
+static ftd::seed::Context seed_context(const std::string& name, const val& values) {
+    if (values.isNull() || values.isUndefined() || values.typeOf().as<std::string>() != "object"
+        || val::global("Array").call<bool>("isArray", values))
+        throw std::invalid_argument("Seed overrides must be an object");
+    const val keys = val::global("Object").call<val>("keys", values);
+    const unsigned int count = keys["length"].as<unsigned int>();
+    if (count > 2048) throw std::invalid_argument("Too many seed overrides");
+    ftd::seed::Overrides overrides;
+    for (unsigned int i = 0; i < count; ++i) {
+        const std::string key = keys[i].as<std::string>();
+        if (values[key].typeOf().as<std::string>() != "number")
+            throw std::invalid_argument("Seed override must be numeric: " + key);
+        overrides.emplace(key, values[key].as<double>());
+    }
+    return ftd::seed::Context(name, std::move(overrides));
+}
+
+// Caller owns this detached bridge and adopts it only after successful return.
+static std::string setup_scenario_seed(ftd::RenderBridge& candidate, const std::string& name, const val& values) {
+    try {
+        auto context = seed_context(name, values);
+        if (!ftd::dispatch_scenario_seed(candidate, context))
+            throw std::invalid_argument("Unknown scenario: " + name);
+        return ftd::seed::describe_json(context);
+    } catch (const std::exception& error) {
+        return "{\"error\":" + ftd::seed::quote(error.what()) + "}";
+    }
+}
+
+static std::string describe_scenario_seed(int size, const std::string& name, const val& values) {
+    if (size < 3 || size > 128) return "{\"error\":\"Seed description size must be between 3 and 128 cells\"}";
+    ftd::RenderBridge candidate(size);
+    return setup_scenario_seed(candidate, name, values);
+}
+
 // NOTE: Primary scenario dispatch path is ftd::dispatch_scenario(rb, name)
 // (src/scenarios.cpp + include/ftd/scenarios.h) which owns every flux-*,
 // light-*, quantum-*, s0-seed-*, s0-field-* scenario in the UI registry.
@@ -603,6 +638,8 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
 
     // Scenarios
     function("setupScenario",      &setup_scenario);
+    function("setupScenarioSeed", &setup_scenario_seed);
+    function("describeScenarioSeed", &describe_scenario_seed);
 
     // Threaded build: A/B the parallel_for pool size (no-op on serial builds).
     function("ftdSetPoolThreads",  &ftd::set_pool_threads);

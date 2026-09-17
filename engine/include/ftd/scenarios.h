@@ -38,6 +38,7 @@
 #include <string>
 #include <string_view>
 #include <vector>
+#include "ftd/scenario_seed.h"
 
 namespace ftd {
 
@@ -62,6 +63,9 @@ class RenderBridge;
 //     SCALE0_SCENARIO_RESEARCH_TERMS (toggles.js).
 //   • See engine/web/js/scales/scale0/runtime/scenario-loader.js.
 bool dispatch_scenario(RenderBridge& rb, const std::string& name);
+// Constructs on a caller-owned candidate. The caller installs it only after
+// success; failed validation must never be attempted on the live owner.
+bool dispatch_scenario_seed(RenderBridge& rb, seed::Context& context);
 
 // Canonical native application registry. dispatch_scenario rejects names not
 // present here even when they share a recognized prefix, preventing the old

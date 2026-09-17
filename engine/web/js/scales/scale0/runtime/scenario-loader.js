@@ -1,6 +1,7 @@
 import { runScale0PhysicsTicks } from './tick.js';
 import { loadRecordScenario } from './record-scenario-loader.js';
 import { syncRecordControls } from '../ui/controls/record-observation.js';
+import { RECORD_SEED_SIZES } from '../../../seeding/recipe.js';
 import { getPhysicsHarness } from '../../../physics/index.js';
 import { WasmBridgeProxy } from '../../../bridge/wasm-bridge-proxy.js?v=7';
 import { telemetryHub } from '../../../telemetry-hub.js';
@@ -40,6 +41,7 @@ import {
     beginScale0AuthoritativeLoad,
     completeScale0AuthoritativeLoad,
     failScale0AuthoritativeLoad,
+    recordScale0ScientificMutation,
 } from '../state/store.js';
 import {
     FIELD_TOGGLE_BINDINGS,
@@ -545,7 +547,7 @@ function applyGravityAbsorbingToggles(scenarioId, mainScale0, mockScale0) {
     }
 }
 
-function applyAuxiliaryDefaults(ctx, viewportAdapter, scenarioId, { resetSpeed = true } = {}) {
+function applyAuxiliaryDefaults(ctx, viewportAdapter, scenarioId, { resetSpeed = true, preparedSeed = null } = {}) {
     // Scenario loads snap the transport to 1× (slider=50). Lattice resize
     // keeps the user's current speed — only boundary / flux-volume defaults
     // need re-applying there.
@@ -556,10 +558,11 @@ function applyAuxiliaryDefaults(ctx, viewportAdapter, scenarioId, { resetSpeed =
     // also register SCALE0_SCENARIO_BOUNDARY[id] = { mode: 0 }, or this step
     // (after scenario.load) sponges the seed.
     const bnd = SCALE0_SCENARIO_BOUNDARY[scenarioId] || {};
-    const mode = bnd.mode ?? (bnd.reflective === true ? 1 : 2);
+    const mode = preparedSeed?.getEngineTruthFluxBoundaryMode?.() ?? preparedSeed?.getFluxBoundaryMode?.()
+        ?? bnd.mode ?? (bnd.reflective === true ? 1 : 2);
     // Boundary coverage is always the complete cube. The axis is orientation
     // metadata only; scenarios default to Z as forward/aft.
-    const periodicAxis = bnd.periodicAxis ?? 2;
+    const periodicAxis = preparedSeed?.getEngineTruthFluxPeriodicAxis?.() ?? bnd.periodicAxis ?? 2;
     ctx.applyBoundaryShape(bnd.shape ?? 'cube');
     ctx.applyFluxBoundaryMode(mode);
     ctx.applyFluxPeriodicAxis(periodicAxis);
@@ -917,7 +920,13 @@ export async function fallbackToInThreadEngine(ctx, state, viewportAdapter, scen
 
 export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, params = {}, opts = {}) {
     const { resetSpeed = true, resetTickAccumulator = false, loadGeneration = null } = opts;
-    const scenario = getScale0Scenario(scenarioId);
+    const parentScenario = getScale0Scenario(scenarioId);
+    const customFinite = parentScenario.backend === 'finite-records' && params.seedRecipe
+        && (!params.preparedRecordOwner || !!params.preparedRecordOwner.scenario?.seedRecipe);
+    const scenario = params.seedRecipe && (parentScenario.backend !== 'finite-records' || customFinite)
+        ? {...parentScenario, seedRecipe: params.seedRecipe,
+        ...(parentScenario.backend === 'finite-records' ? {sizes: [...RECORD_SEED_SIZES]} : {})} : parentScenario;
+    if (!params.seedRecipe) ctx._appliedSeedRecipe = null;
     const previousScenarioId = getScale0State().currentScenarioId;
     telemetryHub.resetScale(0);
 
@@ -952,6 +961,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
         return loadRecordScenario(ctx, state, viewportAdapter, scenario, loadGen, params.latticeSize, {
             preferences: captureOverlayPreferences(state, ctx),
             restore: restoreOverlayPreferences,
+            preparedOwner: params.preparedRecordOwner,
         });
     }
     syncRecordControls(ctx);
@@ -962,12 +972,24 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // chosen overlays every time they pick a new scenario.
     const overlayPrefs = captureOverlayPreferences(state, ctx);
 
-    const latticeSize = ctx.bridge.latticeSize || 33;
+    const preparedSeed = params.preparedNativeOwner || null;
+    const latticeSize = preparedSeed?.latticeSize || ctx.bridge.latticeSize || 33;
     // Local names: wasmWorker is the off-thread WASM Scale-0 owner. State still
     // uses the legacy fluxMock / useFluxMock fields (historical MockBridge slot).
-    let useWasmWorker = false;
-    let wasmWorker = null;
-    if (wasmWorkerEligible(scenario.id, ctx.bridge) && !ctx._wasmWorkerDisabled) {
+    let useWasmWorker = !!preparedSeed && preparedSeed !== ctx.bridge;
+    let wasmWorker = useWasmWorker ? preparedSeed : null;
+    preparedSeed?.setPreparedOwnerCallbacks?.({
+        onRuntimeFailure: message => {
+            if (getActiveScale0Bridge(ctx) !== preparedSeed) return;
+            ctx.scale0Validity?.runtimeFailure(message); ctx.pauseSimulation?.();
+            reportScenarioSetupFailure(`Engine paused; current state retained. ${message}`);
+        },
+        onEngineToggles: () => {
+            if (getActiveScale0Bridge(ctx) === preparedSeed)
+                syncScale0ToggleUiFromEngine(ctx, viewportAdapter, scenario.id);
+        },
+    });
+    if (!preparedSeed && wasmWorkerEligible(scenario.id, ctx.bridge) && !ctx._wasmWorkerDisabled) {
         // Off-thread WASM engine: host the real C++ physics in a Web Worker.
         // If the worker fails to initialise (e.g. importScripts NetworkError on the
         // -pthread MT glue), onInitFailure fires once: we disable the worker path for
@@ -1065,7 +1087,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // This prevents setup_scenario from rebuilding the engine after the loader
     // already sent its toggles (which used to discard them), and avoids dozens
     // of transient TermToggles validation warnings per selection.
-    const nativeScenarioTransaction = !!ctx.bridge?.isNativeGPU
+    const nativeScenarioTransaction = !preparedSeed && !!ctx.bridge?.isNativeGPU
         && typeof ctx.bridge.beginScenarioConfiguration === 'function'
         && typeof ctx.bridge.commitScenarioConfiguration === 'function';
     if (nativeScenarioTransaction) ctx.bridge.beginScenarioConfiguration(scenario.id, loadGen);
@@ -1076,7 +1098,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     const mainScale0 = ctx.bridge.capabilities.scale0;
     const workerScale0 = wasmWorker?.capabilities?.scale0 ?? null;
     const activeScale0 = useWasmWorker ? workerScale0 : mainScale0;
-    applyToggleDefaults(mainScale0, workerScale0, activeScale0, scenario.id);
+    if (!preparedSeed) applyToggleDefaults(mainScale0, workerScale0, activeScale0, scenario.id);
 
     setFluxMock(wasmWorker, useWasmWorker);
     ctx.useFluxMock = useWasmWorker;
@@ -1095,7 +1117,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
 
     // Load immediately on selection (paused or running). Worker path posts
     // create asynchronously; in-thread returns bool for unknown ids.
-    const setupOk = scenario.load(harness);
+    const setupOk = preparedSeed ? true : scenario.load(harness);
     if (setupOk === false) {
         failScale0AuthoritativeLoad({
             scenarioId: scenario.id,
@@ -1124,7 +1146,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // worker's 'ready' reply can replay it. By running here, the setFluxBoundary
     // command lands in _pendingCommands after the clear and is replayed correctly.
     // If scenario load is deferred, we still apply defaults now to ready the UI.
-    applyAuxiliaryDefaults(ctx, viewportAdapter, scenario.id, { resetSpeed });
+    applyAuxiliaryDefaults(ctx, viewportAdapter, scenario.id, { resetSpeed, preparedSeed });
 
     // Gravity/wave family (SCALE0_ABSORBING_SCENARIOS): set LAST, after
     // scenario.load (which resets the engine toggles under the dual-bridge
@@ -1138,7 +1160,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     //     [IMPOSED] field-energy density (field_energy_gravity) for the FLUX
     //     scenarios, OR imposed manifested gravity charge M_GRAVITATIONAL·|state| for the
     //     MASS-gravity scenarios (SCALE0_MASS_GRAVITY_SCENARIOS, e.g. massive-body).
-    applyGravityAbsorbingToggles(
+    if (!preparedSeed) applyGravityAbsorbingToggles(
         scenario.id,
         ctx.bridge.capabilities.scale0,
         wasmWorker?.capabilities?.scale0 ?? null,
@@ -1156,7 +1178,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // Prefer engine truth. The in-thread bridge answers synchronously here; the
     // worker path cannot yet, so it falls back to the JS model for this frame and
     // worker callbacks correct both card and mask as authoritative readbacks arrive.
-    const canSynchronouslyAcknowledge = !useWasmWorker && !activeBridge?.isNativeGPU;
+    const canSynchronouslyAcknowledge = !!preparedSeed || (!useWasmWorker && !activeBridge?.isNativeGPU);
     if (!canSynchronouslyAcknowledge
         || !syncScale0ToggleUiFromEngine(ctx, viewportAdapter, scenario.id)) {
         applyScale0OverlayApplicability(scenario.id, viewportAdapter);
@@ -1203,7 +1225,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     const primeOnLoad = (typeof window !== 'undefined' && typeof window.__ftdPrimeTickOnLoad === 'boolean')
         ? window.__ftdPrimeTickOnLoad
         : state.primeTickOnLoad;
-    if (primeOnLoad) {
+    if (primeOnLoad && !params.seedRecipe) {
         try {
             if (activeBridge?.isNativeGPU
                 && typeof activeBridge.queueScenarioPrimeTick === 'function') {
@@ -1229,6 +1251,10 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
             loadGeneration: loadGen,
             tick: readAuthoritativeTick(activeBridge),
             source: 'in-thread-engine-readback',
+        });
+        if (params.seedRecipe && params.customSeed) recordScale0ScientificMutation({
+            reason: 'custom-seed', source: 'panel.seeding', tick: readAuthoritativeTick(activeBridge),
+            loadGeneration: loadGen, dispatchStatus: 'dispatched',
         });
     }
     return setupOk !== false;

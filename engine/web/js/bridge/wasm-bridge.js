@@ -922,6 +922,31 @@ export class WasmBridge {
         return false;
     }
 
+    describeScenarioSeed(name, size = this.latticeSize, overrides = {}) {
+        if (!this._module?.describeScenarioSeed) throw new Error('This WASM artifact does not expose scenario seed descriptors. Rebuild the engine.');
+        const result = JSON.parse(this._module.describeScenarioSeed(size, name, overrides));
+        if (result.error) throw new Error(result.error);
+        return result;
+    }
+
+    /** A detached candidate: callers adopt only after all validation succeeds. */
+    prepareScenarioSeed(name, size = this.latticeSize, overrides = {}) {
+        if (!this._module?.setupScenarioSeed) throw new Error('This WASM artifact does not support editable scenario seeds.');
+        const prepared = new WasmBridge();
+        prepared._module = this._module; prepared.latticeSize = size;
+        prepared.isWasm64 = this.isWasm64; prepared.artifactIdentity = this.artifactIdentity;
+        prepared.artifactIdentityState = this.artifactIdentityState;
+        prepared.artifactIdentityReady = Promise.resolve(this.artifactIdentity);
+        try {
+            prepared._bridge = new this._module.RenderBridge(size);
+            const result = JSON.parse(this._module.setupScenarioSeed(prepared._bridge, name, overrides));
+            if (result.error) throw new Error(result.error);
+            prepared.seedDescription = result; prepared.ready = true;
+            prepared._markScale0StateChanged();
+            return prepared;
+        } catch (error) { prepared.dispose(); throw error; }
+    }
+
     // After a C++ setupScenario, clamp any TermToggles `requires` dependent that
     // is ON while its prerequisite is OFF. reset() rebuilds the RenderBridge at
     // C++ defaults (selective_damping=true, damping=true) and some scenario

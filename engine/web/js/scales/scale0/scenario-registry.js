@@ -1060,6 +1060,9 @@ const SCALE0_SCENARIO_CATALOG_MAP = new Map(
 // They have bounded runtime admission, distinct from the physical-behavioral
 // qualification used by the static effective-engine catalog above.
 const recordScenarios = new Map();
+export function getScale0SeedingScenarios() {
+    return [...SCALE0_SCENARIOS, ...recordScenarios.values()];
+}
 export function registerScale0RecordScenarios(catalog) {
     if (catalog.law_id !== 'phi-v2-staged-candidate-1' || catalog.canonical_adoption !== false)
         throw new Error('Unsupported record scenario catalog');

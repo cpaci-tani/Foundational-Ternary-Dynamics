@@ -279,6 +279,14 @@ export class WasmBridgeProxy {
             : { token: this._pendingConfigurationToken, ...this._defaultCallbacks };
     }
 
+    /** Adopt an already acknowledged detached seed without rebuilding it. */
+    setPreparedOwnerCallbacks(callbacks) {
+        this._configurationCallbacks = {...this._callbacksForCurrentConfiguration(), ...callbacks,
+            token: this._pendingConfigurationToken};
+        this._defaultCallbacks = {...this._defaultCallbacks, ...callbacks};
+        if (callbacks.onEngineToggles) this._onEngineToggles = callbacks.onEngineToggles;
+    }
+
     _clearConfigurationTimers() {
         if (this._readyTimer) {
             try { clearTimeout(this._readyTimer); } catch { /* ignore */ }
@@ -596,6 +604,7 @@ export class WasmBridgeProxy {
         if (SCENARIO_SCOPED_MESSAGE_TYPES.has(m.type)
             && Number(m.configurationToken) !== this._pendingConfigurationToken) return;
         if (m.type === 'ready') {
+            this.seedDescription = m.seedDescription || null;
             this._constants = (m.constants && typeof m.constants === 'object') ? Object.freeze({ ...m.constants }) : null;
             if (!m.artifactIdentity
                 || m.artifactIdentity.variant?.id !== 'wasm32-threads') {
@@ -1253,7 +1262,9 @@ export class WasmBridgeProxy {
      * (not when C++ finished). Setup failure is reported via onSetupFailure
      * once the worker replies (ready.setupOk === false or error).
      */
-    setupScenario(name) {
+    setupScenarioSeed(name, overrides) { return this.setupScenario(name, null, overrides); }
+
+    setupScenario(name, _harness = null, seedOverrides = null) {
         if (!this.canReconfigure()) return false;
         if (!this._configurationPrepared) {
             // Backward-compatible direct use: callers predating the loader's
@@ -1277,6 +1288,7 @@ export class WasmBridgeProxy {
             toggleNames: SCALE0_ENGINE_TOGGLE_NAMES,
             pool: workerPoolSize(),
             configurationToken,
+            seedOverrides,
         };
         this._pendingCreateMessage = createMessage;
         if (!this._createScheduled) {

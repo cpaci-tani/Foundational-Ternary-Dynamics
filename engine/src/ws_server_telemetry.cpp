@@ -410,6 +410,7 @@ std::string json_info(ftd::RenderBridge& rb,
     ss << ",\"gpu\":"        << (gpu_active ? "true" : "false");
     ss << ",\"backend\":\"" << (gpu_active ? "cuda" : "cpu") << "\"";
     ss << ",\"version\":\"" << ftd::ENGINE_VERSION << "\"";
+    ss << ",\"seedRecipeVersion\":2";
     ss << ",\"maxLatticeSize\":" << kMaxLatticeSize;
     ss << ",\"availableHostBytes\":" << current_budget.host_available;
     ss << ",\"availableGpuBytes\":" << current_budget.gpu_available;

@@ -1,0 +1,16 @@
+.seed-recipe-summary { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.seed-recipe-section { border: 1px solid var(--border-light); border-radius: 6px; padding: 10px; min-width: 0; overflow-wrap: anywhere; }
+.seed-recipe-section > summary { cursor: pointer; font-weight: 600; padding: 3px 0 8px; }
+.seed-recipe-section > .seed-hint { margin: 4px 0 8px; }
+.seed-recipe-card { padding: 8px 0; border-top: 1px solid var(--border-light); min-width: 0; }
+.seed-recipe-card:first-of-type { border-top: 0; padding-top: 0; }
+.seed-recipe-card-title { margin: 0 0 6px; font-size: 12px; font-weight: 600; overflow-wrap: anywhere; }
+.seed-recipe-card--muted { opacity: 0.6; }
+.seed-recipe-card--muted .seed-recipe-card-title::after { content: ' — disabled'; font-weight: normal; color: var(--text-secondary); }
+.seed-recipe-rows { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 4px 10px; margin: 0; min-width: 0; }
+.seed-recipe-rows dt { font-size: 11px; color: var(--text-secondary); overflow-wrap: anywhere; }
+.seed-recipe-rows dd { margin: 0; font-size: 12px; overflow-wrap: anywhere; word-break: break-word; }
+@media (max-width: 420px) {
+    .seed-recipe-rows { grid-template-columns: 1fr; gap: 2px 0; }
+    .seed-recipe-rows dd { margin-bottom: 4px; }
+}

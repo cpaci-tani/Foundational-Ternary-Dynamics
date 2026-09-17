@@ -123,7 +123,7 @@ export function updateRecordReadout(owner) {
     const el = document.getElementById('record-readout'); if (!el) return;
     const diag = owner.getDiagnostics();
     el.textContent = owner.failed ? 'Runtime failed; paused. Reset to reload.' : !owner.ready ? 'Loading complete records…' :
-        `Microtick ${diag.tick} · ${['Admission', 'Collision / relations', 'Streaming', 'Manifestation'][diag.phase]}\nField tokens ${diag.fieldTokens} · relation tokens ${diag.relationTokens}\nInteger Q sum ${diag.incidence}`;
+        `${owner.scenario?.seedRecipe ? 'Custom preparation\n' : ''}Microtick ${diag.tick} · ${['Admission', 'Collision / relations', 'Streaming', 'Manifestation'][diag.phase]}\nField tokens ${diag.fieldTokens} · relation tokens ${diag.relationTokens}\nInteger Q sum ${diag.incidence}`;
     document.getElementById('record-provenance').textContent = JSON.stringify(owner.getProvenance(), null, 2);
     document.getElementById('record-quantity').value = owner.quantity;
 }

@@ -1,6 +1,6 @@
 # Universal Scenario Seeding Panel
 
-**Status:** proposed implementation plan; no panel or runtime changes made by this document.
+**Status:** implemented constructor/property and runtime coverage is recorded in section 14. Sections 1–12 remain the acceptance contract; section 13 preserves the first increment's historical boundary.
 
 **Inventory date:** 2026-09-15.
 
@@ -246,3 +246,203 @@ These effective-scale recipes must not be described as recovered states of the s
 ## 12. Definition of done
 
 From any in-scope scenario, the user can inspect and edit every legitimate seeding input, add compatible components, preview the exact discretized preparation, install it into the real active engine, reset it reproducibly and save its recipe. Every category base exposes its complete property union by default. There are no unbound sliders, hidden meaningful constructor knobs, silent substitutions, stale sidepanels, or reused evidence claims for edited preparations.
+
+## 13. First implementation increment — 2026-09-15
+
+The main Scale-0 dashboard now has a **Seeding** dock panel using the existing
+scenario registry, loader, scene, active-owner slot, inspector and volume controls.
+The searchable preparation picker uses the existing collapsible category control.
+The property list has search, expand/collapse and repeatable component editors.
+
+This is a partial implementation of the plan, with explicit coverage in
+`engine/config/web_seeding_coverage.json`. Regenerate with
+`python scripts/verification/generate_web_seeding_coverage.py`; `--check` rejects
+catalog drift. Every current scenario has a capability disposition; this does
+not constitute a complete constructor-input audit.
+
+| Capability | Implemented boundary |
+|---|---|
+| 143 native presets | Inspect and load existing constructors; editable native constructor parameters remain pending |
+| 629 record preparations | Preserve the original registered preparation, or begin with a blank periodic domain; apply ordered record overrides |
+| Initial-record editors | All 384 Boolean field channels; all nine SC/FCC relation orientations, two slots, four phases and both polarities; stored ternary manifestation; collision layers 0–2 |
+| Spatial support | One site, in-bounds box, sphere clipped at domain edges, entire domain; lattice sizes 3, 4, 7, 9, 17 |
+| Random preparation | Explicit uint32 seed; PCG64 field-selection stream derived from SHA-256 of seed and component ID; no reroll during viewing |
+| Category base | All four initial-record editors visible and inactive by default, available from every finite preparation; native category unions remain pending |
+| Preview | Compile and load a detached, paused WASM owner; show actual counts and checkpoint digest without changing the live owner; viewport draft overlays remain pending |
+| Apply and reset | Adopt the prepared owner through the normal loader; reset replays the applied custom recipe; seed-and-run resumes after acknowledgment |
+| Import/export | Strict version-1 recipe JSON, 256 KiB maximum, at most 64 components; a recipe is not a resumable checkpoint or cross-version artifact receipt |
+| Evidence | Custom seeds suspend the parent's run qualification and carry separate recipe/checkpoint hashes; immutable prior evidence and recovery status are unchanged |
+
+Components set or clear exact selected records in list order. Repeated field
+occupancy is Boolean, never additive. Region coordinates follow the finite
+codec's `((x*L)+y)*L+z` order; rendering retains the existing passive coordinate
+transposition. Seeds start at microtick zero with cleared staged pending
+controls. Midcycle controls are not exposed as independent seed inputs.
+
+The local preparation API rejects unsupported parents, illegal alphabets,
+out-of-bounds boxes, unknown properties, nonfinite values and incompatible
+sizes before a new owner is installed. Static hosting without the local API
+offers native presets only. Native GPU connections cannot prepare record seeds.
+
+Focused verification lives in `test_web_seeding.py`, `test_record_routes.py`,
+`seeding-recipe.node.test.mjs`, and `seeding-panel.spec.js` with
+`playwright.seeding.config.js`. It covers all 656 registered checkpoint variants,
+exact record labels, geometry, repeatable streams, malformed recipes, preview,
+apply/reset, import/export, failure/cancellation, mixed preparations, native
+restoration and panel lifecycle. Existing `record-lattice.spec.js` remains the
+sidepanel/volume regression suite.
+
+Verification for this increment: **714 focused Python tests, 36 Node tests,
+and 11 Chromium browser tests passed**. The four seeding browser tests inspect
+all 772 forms and four finite category bases; the seven existing record tests
+include every sidepanel, volume controls across families, and all twenty mixed
+preparations through their four-phase cycles. All 656 registered checkpoint
+variants remain byte-identical. Dark/light screenshots and Playwright traces
+are local outputs under `engine/web/test-results/`; they certify UI/runtime
+behavior only, not physical recovery. `git diff --check` and coverage
+regeneration checks also passed.
+
+The next increments remain the native constructor inventory and parameter API,
+native category unions, the remaining geometric/composite builders, in-viewport
+draft previews and richer export receipts. The universal completion gate in
+sections 10 and 12 remains unmet; the first increment does not change physical
+qualification or transport claims.
+
+## 14. Scenario-derived controls — 2026-09-16
+
+The main Scale-0 **Seeding** panel now resolves typed preparation inputs for
+all **772 registered scenarios in 22 categories**. The inventory is generated,
+not a second hand-maintained menu. There are **143 native constructors**, **429
+native default schemas** at L=17,32,33, and **656 finite preparation/size
+schemas**. The current manifest binds **8,628 native scenario/property pairs**
+and **44,547 resolved property instances** across sizes to implementation and
+effect-test references. Counts describe software coverage, not physical results.
+
+### Contracts and authoring
+
+- `include/ftd/scenario_seed.h` owns typed native inputs, bounds, legal states,
+  recommendations and descriptions. Seven C++ constructor groups consume the
+  same inputs during description, preview and installation. ID-only dispatch
+  remains the exact-default wrapper.
+- `scripts/phi_v2_lattice/web_seed_presets.py` independently decomposes the
+  registered finite preparations into nine editable record kinds. Frozen
+  builders, checkpoints, retained evidence and the tick law are unchanged.
+- Generated catalogs in `web/js/seeding/generated/` carry compiled defaults.
+  JavaScript supplies presentation and explicit edits; it does not implement
+  a second native constructor or approximate missing finite defaults.
+- Native category bases list every constructor in that category, inactive by
+  default. Finite category bases list all nine compatible record kinds, also
+  inactive. Native ingredients execute in order; each enabled constructor can
+  replace profile/source configuration, and global protocol overrides run last.
+  This composition is not generally additive. Finite writes replace addressed
+  channels/slots in order; distinct channel, phase, polarity and slot labels
+  remain exact.
+- Fixed alphabets, tick-law constants and numerical discretization conventions
+  stay outside the seed editor. A descriptor's advisory starting range is
+  explicitly exploratory unless its constructor documents another basis.
+
+### Editor and recipe behavior
+
+Every emitted editable descriptor has a numeric editor, legal bounds, a reset
+action, modified state, explanation and recommendation. Continuous properties
+have a slider plus precise entry. Integer and discrete properties have steppers;
+enumerations traverse admitted values only. Hover, keyboard focus and a help
+button expose the same explanation; Escape dismisses help. Values outside the
+recommendation but inside legal bounds are retained and represented by an
+expanded slider. Coupled-invalid drafts retain their editors for correction.
+
+Dependent native defaults are recomputed by the constructor until explicitly
+overridden. Reset deletes the override. Finite recipes record explicit edits by
+stable component ID, so geometry follows exact size-specific defaults until
+overridden and ingredient reordering does not change the override identity.
+
+The readable recipe has overview, ordered ingredients, randomness, protocol,
+resolved owner results and provenance sections. Finite receipts include exact
+discretized geometry support and site overlaps before stochastic selection;
+these are distinguished from realized token populations and shared record
+addresses. It uses labels, units and enum
+names, supports copyable text, and exports a `SeedRecipeV2` envelope with schema
+identity, domain, ordered recipe, resolved properties, protocol and available
+receipt. Version-1 import expands the original preset before appending the old
+ordered overrides. Original overlay IDs are preserved to retain their streams.
+The readable envelope may be up to 2 MiB; its contained compiled recipe remains
+limited to 256 KiB. This permits the largest category's resolved metadata to
+round-trip without increasing the preparation service's input budget.
+
+### Verified backend boundary
+
+| Path | Preparation behavior and boundary |
+|---|---|
+| Direct WASM | Detached C++ candidate; typed validation before adoption; paused tick-zero install. Browser interactive limit remains L=33. |
+| Worker WASM | Same C++ constructor in a detached worker; acknowledgment before adoption; paused install. Existing browser limit remains L=97. |
+| Native WebSocket | Requires advertised `seedRecipeVersion: 2`; `seed_describe` and `seed_prepare` are detached. `seed_commit` validates the source epoch and uses existing transactional replacement. |
+| Finite custom recipes | Local `serve.py` preparation API plus the existing compiled finite-record WASM owner. Sizes 3,4,7,9,17; named presets retain their own supported subset. No native-GPU finite recipe path is advertised. |
+| Static hosting | Native forms and WASM editing remain available. Local finite preparation services are not fabricated; unavailable capabilities fail visibly. |
+
+Preview never installs or ticks the active owner. Seed installs paused;
+Seed & Run resumes after acknowledgment. Reset replays the last applied recipe.
+The normal loader refreshes the inspector, volume, slices and applicable panels,
+with the existing first-positive flux threshold. It does not rerun a preset or
+erase explicit protocol edits after adopting a prepared owner. Cancellation and
+generation checks discard pending browser candidates. A native commit already
+executing on the server is an atomic transaction, not an interruptible operation;
+late UI acknowledgments cannot replace a newer selection. Rebuild and restart
+an older native server to obtain the advertised v2 capability. The existing
+Windows server executable was in use and was not stopped or replaced; native
+protocol verification used a newly built, isolated WSL server on CPU. GPU
+execution of edited recipes is not certified by that protocol check.
+
+### Evidence and reproducible gates
+
+`config/scenario_seed_defaults.txt` contains the **pre-edit** native receipts,
+including state fields, profiles, sources, schedules and RNG state. The capture
+command refuses to overwrite it. Both legacy and typed empty-override dispatch
+match all **429 receipts**. The effect gate changes actual state/profile receipts
+for **8,628 bindings at L=17**; it does not count metadata changes as effects.
+Dependency fixtures compare against paired controls. Finite tests compare all
+**656 checkpoints byte-for-byte**, inspect exact channel/slot/phase/polarity
+records, and compare migrated ordered overlays against the v1 path.
+
+Current focused verification: **3,472 Python tests**, **69 Node tests**, the two
+native seeding gates, five existing native scenario/command regressions, real
+WSL WebSocket preview/commit/replay checks, and rebuilt wasm32/wasm64/threaded
+artifacts. **All nine seeding browser tests passed**, including all 772 forms
+and 22 bases, native direct/worker edits, dependent resets, scheduled reservoirs,
+mixed preparations, preview isolation, cancellation, import/export, keyboard
+help, narrow layouts and dark/light themes. Three affected browser tests passed
+again after the final readable-recipe and geometric-support changes.
+
+The **seven existing record-panel browser regressions also passed**, covering
+owner routing, passive reads, every preparation family and all twenty mixed
+preparations through their four-phase cycles. One picker test first timed out
+during application startup because Chromium received `ERR_CONNECTION_REFUSED`
+for `/js/app-wire/status.js`; its isolated retry passed without a code or test
+relaxation. The failed trace is retained locally under
+`docs/internal/seeding-20260916/record-picker-startup-failure.zip`. This is
+**16 distinct passing browser cases**, with that startup failure disclosed,
+not a claim that the original combined run was failure-free.
+
+All four generation `--check` commands and `git diff --check` passed. The
+implementation remains local on `main`; no remote push was performed. The
+existing user guide and architecture document were updated locally, consistent
+with this checkout's policy that non-theory Markdown stays local.
+
+Regenerate/check with `generate_native_seed_presets.py`,
+`generate_finite_seed_presets.py`, `generate_finite_seed_effects.py` and
+`generate_web_seeding_coverage.py` under `scripts/verification/`. Each supports
+`--check`. The native exporter requires the current built default-test binary.
+Run native tests through the repository's pinned-toolset build convention and
+parallel CTest; run `playwright.seeding.config.js` and
+`playwright.record-lattice.config.js` sequentially.
+
+Genuine Claude Code Sonnet workers performed constructor-family implementation,
+finite-builder/editor/summary work and independent reviews. The final two
+completeness passes reached the account's session quota; integration and
+verification continued locally. The manifest proves registered descriptor and
+effect coverage, not by itself the absence of every meaningful hidden literal.
+The source audit and the universal acceptance contract remain necessary when
+adding constructors or extending currently fixed topology/constituent templates.
+Compiled receipts expose only measurements actually returned by their owner
+and geometry resolved by the preparation compiler; unmeasured record-address
+collisions and native support counts are not invented. No UI or binding
+test extends transport, recovery, or physical-identification claims.

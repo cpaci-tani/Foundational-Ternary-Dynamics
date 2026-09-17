@@ -392,6 +392,7 @@ public:
     void set_flux_pump(const FluxCellTorusSpec& spec, int ticks, int period = 1);
     void clear_flux_pump();
     bool flux_pump_configured() const { return flux_pump_configured_; }
+    const FluxCellTorusSpec& flux_pump_spec() const { return flux_pump_spec_; }
     int flux_pump_ticks_total() const { return flux_pump_ticks_; }
     int flux_pump_period() const { return flux_pump_period_; }
     int flux_pump_ticks_applied() const { return flux_pump_applied_; }

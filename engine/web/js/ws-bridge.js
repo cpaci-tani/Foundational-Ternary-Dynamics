@@ -98,6 +98,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
 
         this.isWasm = false;
         this.isNativeGPU = true;
+        this.isNativeWebSocket = true;
         this.ready = false;
         this.latticeSize = 32;
 
@@ -348,6 +349,7 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
                         this._nativeInstanceId = this._nativeBinaryVersion === 3 ? info.nativeInstanceId : null;
                         this.latticeSize = info.latticeSize || this.latticeSize;
                         this.isNativeGPU = info.gpu || false;
+                        this.seedRecipeVersion = Number(info.seedRecipeVersion || 0);
                         this._observeTelemetrySourceEpoch(info?.telemetrySourceEpoch);
                         debugLog(`[ws-bridge] Engine: L=${this.latticeSize}, GPU=${this.isNativeGPU}`);
                         if (this._queuedScenarioProfile) this._scheduleScenarioDispatch(0);
@@ -2742,6 +2744,41 @@ export class WebSocketBridge extends WebSocketScaleFallbackFacade {
             );
         }
         return response;
+    }
+
+    async describeScenarioSeed(name, size = this.latticeSize, overrides = {}) {
+        if (this.seedRecipeVersion !== 2) throw new Error('Restart with a native server supporting seed recipes v2.');
+        const response = this._requireSuccessfulResponse(await this._sendJSON({
+            cmd: 'seed_describe', name, size, overrides,
+        }, LONG_OPERATION_TIMEOUT_MS), 'seed description');
+        return response.description;
+    }
+
+    async prepareScenarioSeed(recipe, signal, overrides = recipe.overrides || {}) {
+        if (this.seedRecipeVersion !== 2) throw new Error('This native server does not advertise seed recipes v2.');
+        const command = {name: recipe.scenarioId, size: recipe.size, overrides: structuredClone(overrides)};
+        if (signal?.aborted) throw new Error('Preparation cancelled');
+        const response = this._requireSuccessfulResponse(await this._sendJSON({cmd: 'seed_prepare', ...command},
+            LONG_OPERATION_TIMEOUT_MS), 'seed preview');
+        if (signal?.aborted) throw new Error('Preparation cancelled');
+        let disposed = false, committed = false;
+        return {
+            isNativeSeedPreview: true, latticeSize: recipe.size, ready: true,
+            seedDescription: response.description,
+            dispose() { disposed = true; },
+            commit: async (commitSignal = signal) => {
+                if (disposed || committed || commitSignal?.aborted) throw new Error('Seed preview is no longer current');
+                if (response.nativeInstanceId !== this._nativeInstanceId) throw new Error('Native server changed after preview');
+                const result = this._requireSuccessfulResponse(await this._sendOperationWithRetry({
+                    cmd: 'seed_commit', ...command, expectedSourceEpoch: response.sourceEpoch,
+                }, LONG_OPERATION_TIMEOUT_MS, 'seed_commit'), 'seed commit');
+                committed = true;
+                this._acceptScenarioResponse(result, {name: recipe.scenarioId, toggles: {},
+                    fluxBoundaryMode: result.fluxBoundaryMode, fluxPeriodicAxis: result.fluxPeriodicAxis});
+                this.seedDescription = response.description;
+                return this;
+            },
+        };
     }
 
     async resize(size) {

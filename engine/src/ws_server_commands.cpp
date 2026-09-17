@@ -437,7 +437,8 @@ bool replace_bridge_transactionally(
     const char* operation,
     const std::optional<std::string>& scenario = std::nullopt,
     std::uint64_t request_id = 0,
-    const ftd::JsonValue* profile_json = nullptr) {
+    const ftd::JsonValue* profile_json = nullptr,
+    const ftd::seed::Overrides* seed_values = nullptr) {
     // RenderBridge assignment destroys the old CUDA backend. Do not reach
     // candidate construction or that destructive assignment while the native
     // snapshot scheduler owns a live fence: GpuBuffers teardown can
@@ -494,7 +495,9 @@ bool replace_bridge_transactionally(
 
     try {
         auto candidate = make_interactive_bridge(budget.size);
-        if (scenario && !ftd::dispatch_scenario(*candidate, *scenario)) {
+        ftd::seed::Context seed_context(scenario.value_or("empty"), seed_values ? *seed_values : ftd::seed::Overrides{});
+        if (scenario && !(seed_values ? ftd::dispatch_scenario_seed(*candidate, seed_context)
+                                     : ftd::dispatch_scenario(*candidate, *scenario))) {
             const std::string message = "failed to dispatch scenario: " + *scenario;
             std::cerr << "[ws_server] " << message << "\n";
             return send_json_response(client, json_error(message, operation), request_id);
@@ -585,6 +588,38 @@ bool handle_command(const std::string& json, SOCKET client,
             throw std::invalid_argument("binary version 3 requires _requestId");
     } catch (const std::invalid_argument& ex) {
         return send_json_response(client, json_error(ex.what(), cmd), request_id);
+    }
+    if (cmd == "seed_describe" || cmd == "seed_prepare" || cmd == "seed_commit") {
+        try {
+            if (telemetry.suspended()) throw std::invalid_argument("Native telemetry is suspended; seed preparation is unavailable");
+            ftd::seed::Overrides values;
+            for (const auto& item : record.at("overrides").object()) values.emplace(item.first, item.second.number());
+            const std::string name = record.string("name");
+            const int size = static_cast<int>(record.integer("size", 4, 256));
+            if (cmd == "seed_commit") {
+                if (static_cast<std::uint64_t>(record.integer("expectedSourceEpoch", 0, ftd::kJsonSafeInteger)) != telemetry.source_epoch())
+                    throw std::invalid_argument("Seed preview belongs to a superseded lattice source");
+                return replace_bridge_transactionally(client, rb, telemetry, lattice_size, size,
+                    "seed_commit", name, request_id, nullptr, &values);
+            }
+            const auto budget = resource_budget(size);
+            if (!budget.accepted()) throw std::invalid_argument(budget_error(budget));
+            // Description and preview never replace or tick the current owner.
+            // Commit recompiles the deterministic recipe behind the existing
+            // telemetry fences, with a source-generation precondition.
+            auto candidate = make_interactive_bridge(size);
+            ftd::seed::Context context(name, std::move(values));
+            if (!ftd::dispatch_scenario_seed(*candidate, context)) throw std::invalid_argument("Unknown seed scenario");
+            std::string error;
+            if (!validate_profile_for_bridge(*candidate, candidate->toggles, error)) throw std::invalid_argument(error);
+            std::string response = "{\"type\":\"" + cmd + "\",\"ok\":true,\"description\":"
+                + ftd::seed::describe_json(context) + ",\"latticeSize\":" + std::to_string(size)
+                + ",\"sourceEpoch\":" + ftd::json_exact_uint64(telemetry.source_epoch())
+                + ",\"nativeInstanceId\":\"" + ftd::native_instance_id() + "\"}";
+            return send_json_response(client, std::move(response), request_id);
+        } catch (const std::exception& ex) {
+            return send_json_response(client, json_error(ex.what(), cmd), request_id);
+        }
     }
     // Normalize safely decoded coordinates before injection implementations
     // add stencil offsets. This preserves periodic wrapping without signed

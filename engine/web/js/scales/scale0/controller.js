@@ -73,6 +73,7 @@ import {
     SCALE0_LATTICE_SIZE_ACK_EVENT,
 } from './ui/overlays/scale-context-panel.js?v=3';
 import { PlayBarComponent } from '../../ui/components/play-bar/component.js';
+import { initSeedingPanel, disposeSeedingPanel } from '../../seeding/panel.js';
 
 const state = getScale0State();
 
@@ -135,6 +136,7 @@ function renderFrame(ctx) {
 }
 
 export function bindUI(ctx) {
+    initSeedingPanel(ctx, {load: (id, params) => loadScenario(ctx, id, params)});
     // Scenario-loader owns worker/in-thread acknowledgement timing; expose one
     // controller callback so every accepted size reaches the same UI sync path.
     ctx.syncScale0AuthoritativeLatticeSize = (size) => (
@@ -413,6 +415,7 @@ class Scale0LifecycleController extends BaseLifecycleController {
     }
 
     mount(ctx) {
+        initSeedingPanel(ctx, {load: (id, params) => loadScenario(ctx, id, params)});
         if (typeof window !== 'undefined') {
             this.bindEvent(window, 'pagehide', () => {
                 try { exitScale0(); } catch { /* defensive: never block teardown */ }
@@ -453,6 +456,7 @@ class Scale0LifecycleController extends BaseLifecycleController {
     }
 
     destroy(ctx) {
+        disposeSeedingPanel();
         _playBar?.cancelPendingSteps();
         try { disposeFieldOverlayRuntime(state); } catch (e) { /* ignore */ }
         super.destroy(ctx);
@@ -547,15 +551,24 @@ export function step(ctx, tickCount = 1) {
 
 export function reset(ctx) {
     _playBar?.cancelPendingSteps();
+    if (ctx._appliedSeedRecipe && ctx.reseedScale0Recipe) {
+        void ctx.reseedScale0Recipe(ctx._appliedSeedRecipe).catch(error => window.showToast?.(error.message, 'error'));
+        return;
+    }
     resetScale0Scenario(ctx, state, viewportAdapter(ctx));
 }
 
 export async function resize(ctx, newSize) {
     _playBar?.cancelPendingSteps();
     try {
+        if (ctx._appliedSeedRecipe && ctx.reseedScale0Recipe) {
+            await ctx.reseedScale0Recipe({...ctx._appliedSeedRecipe, size: Number(newSize)});
+            return;
+        }
         await resizeScale0Lattice(ctx, state, viewportAdapter(ctx), newSize);
     } catch (e) {
         console.error('[Scale0] Controller resize failed:', e);
+        if (ctx._appliedSeedRecipe) ctx.syncScale0AuthoritativeLatticeSize?.(getActiveScale0Bridge(ctx, state)?.latticeSize);
     }
 }
 

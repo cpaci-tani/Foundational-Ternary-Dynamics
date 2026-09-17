@@ -101,6 +101,7 @@ export const FLOW_LINE_SETTING_LIMITS = Object.freeze({
 const FLOW_LINE_PREF_KEY = 'ftd.scale0.flowLines';
 
 export const SCALE0_MUTATION_REASONS = Object.freeze({
+    CUSTOM_SEED: 'custom-seed',
     INJECT_PARTICLE: 'inject-particle',
     INJECT_WAVEPACKET: 'inject-wavepacket',
     INJECT_FLUX: 'inject-flux',
@@ -115,6 +116,7 @@ export const SCALE0_MUTATION_REASONS = Object.freeze({
 });
 
 export const SCALE0_MUTATION_SOURCES = Object.freeze({
+    SEEDING: 'panel.seeding',
     SUBSTRATE_CONTROLS: 'controls.substrate',
     PHYSICS_TOGGLES: 'controls.physics-toggles',
     TOOLBAR_BOUNDARY: 'toolbar.boundary',

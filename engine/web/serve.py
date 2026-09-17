@@ -210,6 +210,11 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
                 data = module.catalog()
                 data["available"] = True
                 data["wasm_module_url"] = "/" + RECORD_ARTIFACTS[0]
+                data["seeding"] = {"version": 2, "sizes": [3, 4, 7, 9, 17],
+                    "channels": [{"id": c, "phase": module.C.phase(c),
+                                  "polarity": module.C.polarity(c),
+                                  "flag": module.C.STATES[c % module.C.N_STATES][0]}
+                                 for c in range(module.C.N_CHANNELS)]}
                 body = json.dumps(data).encode("utf-8")
                 mime, digest = "application/json", None
             else:
@@ -245,9 +250,46 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
         route = self.path.split("?", 1)[0]
         if CONTROLS.handle(self, route):
             return
+        if route == "/api/lattice/records/seed":
+            return self._record_seed()
+        if route == "/api/lattice/records/seed-description":
+            return self._record_seed(describe=True)
         if route == "/api/gpu-server/start":
             return self._gpu_start()
         return self.send_error(404, "Not found")
+
+    def _record_seed(self, describe=False):
+        if not self._client_is_local():
+            return self._send_json({"error": "Local preparation service required"}, 403)
+        if not all(_contained(_ENGINE_ROOT, name).is_file() for name in RECORD_ARTIFACTS):
+            return self._send_json({"error": "Local finite-state artifacts unavailable"}, 503)
+        origin = self.headers.get("Origin")
+        if origin and origin != "http://" + self.headers.get("Host", ""):
+            return self._send_json({"error": "Same-origin preparation request required"}, 403)
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+            if not 0 < length <= 262144:
+                return self._send_json({"error": "Recipe must be between 1 byte and 256 KiB"}, 413)
+            if self.headers.get_content_type() != "application/json":
+                return self._send_json({"error": "JSON recipe required"}, 415)
+            module = _record_catalog_module()
+            from phi_v2_lattice import web_seeding
+            recipe = json.loads(self.rfile.read(length))
+            if describe:
+                from phi_v2_lattice.web_seed_presets import describe_recipe, prepare_v2
+                prepare_v2(recipe)  # validate before allocating descriptor masks
+                return self._send_json(describe_recipe(recipe))
+            body, digest, recipe_digest = web_seeding.checkpoint(recipe)
+            self.send_response(200)
+            self.send_header("Content-Type", "application/octet-stream")
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("X-Phi-Law", module.P.LAW_ID)
+            self.send_header("X-Checkpoint-SHA256", digest)
+            self.send_header("X-Recipe-SHA256", recipe_digest)
+            self.end_headers()
+            self.wfile.write(body)
+        except (ValueError, KeyError, TypeError) as error:
+            return self._send_json({"error": str(error)}, 400)
 
     def _client_is_local(self):
         return bool(self.client_address) and self.client_address[0] in ("127.0.0.1", "::1")
@@ -325,6 +367,12 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
                 self.wfile.write(chunk)
 
 
+class DashboardHTTPServer(http.server.ThreadingHTTPServer):
+    # Chromium imports hundreds of dashboard modules at startup. The default
+    # five-connection backlog can refuse a module during that initial burst.
+    request_queue_size = 128
+
+
 def main():
     global ALLOW_CACHE, QUIET
     raw = sys.argv[1:]
@@ -345,7 +393,7 @@ def main():
     port = int(args[0]) if args else 8080
     web_root = os.path.dirname(os.path.abspath(__file__))
     os.chdir(web_root)
-    server = http.server.ThreadingHTTPServer((host, port), NoCacheHandler)
+    server = DashboardHTTPServer((host, port), NoCacheHandler)
     server.allow_reuse_address = True
     mode = "cache" if ALLOW_CACHE else "no-cache"
     quiet = ", quiet" if QUIET else ""

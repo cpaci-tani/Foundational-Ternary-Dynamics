@@ -113,7 +113,7 @@ test('collapsible searchable picker retains the existing scenario command', asyn
     await page.click('#scenario-picker > summary');
     for (const theme of ['dark', 'light']) {
         await page.evaluate(theme => document.documentElement.dataset.theme = theme, theme);
-        const colors = await page.locator('.scenario-picker-menu').evaluate(el => {
+        const colors = await page.locator('#scenario-picker .scenario-picker-menu').evaluate(el => {
             const rgb = s => s.match(/[\d.]+/g).slice(0,3).map(Number).map(v => {v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;});
             const luminance = s => {const c=rgb(s);return c[0]*.2126+c[1]*.7152+c[2]*.0722;};
             const background=luminance(getComputedStyle(el).backgroundColor);
@@ -123,19 +123,19 @@ test('collapsible searchable picker retains the existing scenario command', asyn
         expect(colors.contrast).toBeGreaterThan(4.5);expect(colors.height).toBeLessThanOrEqual(481);
         await page.screenshot({path:info.outputPath(`scenario-picker-${theme}.png`)});
     }
-    const groups = page.locator('.scenario-picker-group');
+    const groups = page.locator('#scenario-picker .scenario-picker-group');
     expect(await groups.count()).toBeGreaterThan(3);
-    expect(await page.locator('.scenario-picker-group[open]').count()).toBe(0);
+    expect(await page.locator('#scenario-picker .scenario-picker-group[open]').count()).toBe(0);
     await groups.first().locator('summary').click();
     await expect(groups.first()).toHaveAttribute('open','');
     await groups.first().locator('summary').click();
     await expect(groups.first()).not.toHaveAttribute('open','');
     await page.locator('#scenario-picker input').fill('record-no-such-name');
-    await expect(page.locator('.scenario-picker-empty')).toBeVisible();
+    await expect(page.locator('#scenario-picker .scenario-picker-empty')).toBeVisible();
     await page.locator('#scenario-picker input').fill('witness');
-    await expect(page.locator('[data-scenario="record-witness"]')).toBeVisible();
+    await expect(page.locator('#scenario-picker [data-scenario="record-witness"]')).toBeVisible();
     expect((await read(page)).microtick).toBe(tick);
-    await page.click('[data-scenario="record-witness"]'); await ready(page,'record-witness');
+    await page.click('#scenario-picker [data-scenario="record-witness"]'); await ready(page,'record-witness');
     await expect(page.locator('#scenario-picker')).not.toHaveAttribute('open','');
     await expect(page.locator('#scenario-picker > summary')).toContainText(/witness/i);
 });

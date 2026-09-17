@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <iostream>
+#include <memory>
 #include <random>
 
 namespace ftd {
@@ -44,6 +45,7 @@ namespace {
 constexpr std::uint_fast32_t SCN_RNG_SEED = 0xC0DEFACE;
 thread_local std::mt19937 g_rng{SCN_RNG_SEED};
 thread_local std::uniform_real_distribution<double> g_uniform01{0.0, 1.0};
+thread_local bool g_seed_selected = false;
 
 }  // namespace
 
@@ -52,11 +54,21 @@ namespace detail {
 // External-linkage bridges declared in engine/src/scenarios/_helpers.h.
 // Defined here so every stochastic scenario (wherever split) shares the
 // same RNG state without exposing g_rng / g_uniform01 publicly.
-double urand() { return g_uniform01(g_rng); }
+double urand() {
+    if (seed::active && !g_seed_selected) {
+        const auto value = seed::uint32("random.seed", SCN_RNG_SEED, "Preparation random seed",
+            "Selects the mt19937 constructor stream. The same seed and native artifact reproduce the same draws; changing it resamples stochastic ingredients.");
+        g_rng.seed(value);
+        g_uniform01.reset();
+        g_seed_selected = true;
+    }
+    return g_uniform01(g_rng);
+}
 
 void reset_scenario_rng() {
     g_rng.seed(SCN_RNG_SEED);
     g_uniform01.reset();
+    g_seed_selected = false;
 }
 
 }  // namespace detail
@@ -267,6 +279,79 @@ bool dispatch_scenario(RenderBridge& rb, const std::string& name) {
     if (setup_s0_field_scenario(rb, name)) return accept_profile(true);
     if (setup_cell_scenario(rb, name))     return accept_profile(true);
     return false;
+}
+
+bool dispatch_scenario_seed(RenderBridge& rb, seed::Context& context) {
+    seed::Scope scope(context);
+    const bool composite = context.overrides.count("recipe.blank") != 0;
+    if (composite) {
+        if (!seed::boolean("recipe.blank", true, "Empty category base", "Construct ordered ingredients on an empty lattice."))
+            throw std::invalid_argument("Composite recipes must start empty");
+        configure_static_seed_terms(rb);
+        const int count = seed::integer("recipe.componentCount", 0, 0, 64, "Ingredient count", "Number of ordered constructor ingredients.");
+        const auto& ids = scale0_scenario_ids();
+        seed::Options names;
+        for (std::size_t i = 0; i < ids.size(); ++i) names.emplace_back(double(i), std::string(ids[i]));
+        for (int i = 0; i < count; ++i) {
+            const auto prefix = "ingredient." + std::to_string(i) + ".";
+            const int index = seed::choice(prefix + "scenario", 0, names, "Constructor", "Selects the constructor for this ordered ingredient.");
+            const bool enabled = seed::boolean(prefix + "enabled", false, "Ingredient enabled", "Includes this constructor's writes in the ordered preparation.");
+            seed::Overrides child_values;
+            for (const auto& entry : context.overrides) {
+                if (entry.first.compare(0, prefix.size(), prefix) == 0
+                    && entry.first != prefix + "scenario" && entry.first != prefix + "enabled") {
+                    const auto key = entry.first.substr(prefix.size());
+                    if (key.compare(0, 7, "recipe.") == 0 || key.compare(0, 11, "ingredient.") == 0)
+                        throw std::invalid_argument("Nested composite ingredients are unsupported");
+                    child_values.emplace(key, entry.second);
+                }
+            }
+            seed::Context child(std::string(ids.at(index)), std::move(child_values));
+            // Inactive ingredients are still described and validated, but their
+            // fields, scheduled sources and profiles never reach the candidate.
+            std::unique_ptr<RenderBridge> inactive;
+            if (!enabled) { inactive = std::make_unique<RenderBridge>(rb.lattice().size()); inactive->force_cpu(); }
+            if (!dispatch_scenario_seed(enabled ? rb : *inactive, child)) return false;
+            for (auto property : child.properties) {
+                property.key = prefix + property.key;
+                property.group = "Ingredient " + std::to_string(i + 1) + " / " + property.group;
+                context.properties.push_back(std::move(property));
+            }
+        }
+    } else if (!dispatch_scenario(rb, context.scenario)) return false;
+    // Profiles are resolved after construction exactly once. Boolean choices
+    // remain imposed run settings; none are described as seed-derived laws.
+    for (const auto& spec : TOGGLE_SPECS) {
+        if (!(spec.backends & ToggleBackend::JS)) continue;
+        const std::string key = std::string("protocol.") + spec.name;
+        std::string label(spec.name); std::replace(label.begin(), label.end(), '_', ' ');
+        label.front() = static_cast<char>(std::toupper(label.front()));
+        rb.toggles.*spec.field = seed::boolean(key, rb.toggles.*spec.field, label,
+            std::string(spec.description) + ". On includes this term; Off excludes it. Requires: "
+            + (std::string(spec.requires_).empty() ? "none" : spec.requires_) + ". Conflicts: "
+            + (std::string(spec.conflicts).empty() ? "none" : spec.conflicts) + ". Checked before installation.");
+    }
+    rb.toggles.flux_boundary = static_cast<FluxBoundaryMode>(seed::choice("protocol.boundary",
+        static_cast<int>(rb.toggles.flux_boundary), {{0, "Periodic"}, {1, "Reflective"}, {2, "Dispersal"}},
+        "Computational boundary", "Selects the existing six-face boundary treatment used after seeding."));
+    rb.toggles.bcc_stencil = static_cast<BccStencilMode>(seed::choice("protocol.stencil", int(rb.toggles.bcc_stencil),
+        {{0,"Full"},{1,"SC faces"},{2,"FCC edges"},{3,"BCC corners"}}, "Prepared stencil profile",
+        "Selects an existing engine stencil profile. This is an imposed protocol; partial stencils require wave propagation and the single substrate."));
+    rb.toggles.langevin_site_filter = static_cast<SiteClass>(seed::choice("protocol.bathSites", int(rb.toggles.langevin_site_filter),
+        {{0,"SC sites"},{1,"BCC sites"},{2,"FCC sites"},{3,"All sites"}}, "Bath site selection",
+        "Selects the parity classes receiving noise kicks. A restricted class requires the Langevin term to be enabled."));
+    {
+        rb.toggles.langevin_T = seed::real("protocol.bathVariance", rb.toggles.langevin_T, 0, 100,
+            "Langevin bath parameter", "Increasing this imposed bath parameter increases the variance of later noise kicks.", "lattice units", .001);
+        rb.toggles.langevin_gamma = seed::real("protocol.bathDamping", rb.toggles.langevin_gamma, 0, 10,
+            "Langevin damping rate", "Increasing this rate strengthens relaxation toward the imposed bath.", "per tick", .001);
+        rb.toggles.langevin_seed = seed::uint32("protocol.bathSeed", rb.toggles.langevin_seed,
+            "Bath random seed", "Selects the runtime bath stream, separately from the preparation generator.");
+    }
+    context.validate_consumed();
+    std::string error;
+    if (!rb.toggles.validate(&error)) throw std::invalid_argument(error);
+    return true;
 }
 
 }  // namespace ftd

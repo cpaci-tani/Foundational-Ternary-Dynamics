@@ -690,17 +690,25 @@ inline void dp_place(RenderBridge& rb, int cx, int cy, int cz,
     if (lock) LOCK(rb, cx, cy, cz);
 }
 
+// cutoff_sigmas / floor are fixed numerical-safety thresholds (they gate
+// whether a near-zero contribution is worth writing at all), the same class
+// as the r^2>18 Gaussian support cutoffs and the 1e-12/1e-20 write floors
+// used throughout this header -- not a physical parameter, so they are not
+// scenario-seed bindings. They are still function parameters (not literals)
+// so a caller with an actual physical reason to widen/narrow the dressing
+// footprint can do so without duplicating this loop.
 inline void dp_dress(RenderBridge& rb, int cx, int cy, int cz,
-                     int st, double sig, double amp) {
+                     int st, double sig, double amp,
+                     double cutoff_sigmas = 3.0, double floor = 0.001) {
     int sn = (st > 0) ? 1 : -1;
-    int eR = CEL(3.0 * sig);
+    int eR = CEL(cutoff_sigmas * sig);
     for (int dz2 = -eR; dz2 <= eR; dz2++) for (int dy2 = -eR; dy2 <= eR; dy2++) for (int dx2 = -eR; dx2 <= eR; dx2++) {
         if (dx2 == 0 && dy2 == 0 && dz2 == 0) continue;
         double r22 = dx2*dx2 + dy2*dy2 + dz2*dz2;
         double rr = std::sqrt(r22);
-        if (rr > 3.0 * sig) continue;
+        if (rr > cutoff_sigmas * sig) continue;
         double gg = amp * std::exp(-r22 / (2.0 * sig * sig));
-        if (gg < 0.001) continue;
+        if (gg < floor) continue;
         IF(rb, cx+dx2, cy+dy2, cz+dz2, sn*gg*dx2/rr, sn*gg*dy2/rr, sn*gg*dz2/rr);
     }
 }
@@ -715,12 +723,15 @@ inline void dp(RenderBridge& rb, int cx, int cy, int cz,
 // dressing pass places at exactly the same voxels the placement pass used.
 struct TriPositions { int x[3]; int y[3]; };
 
+// angle_offset rotates the whole triad about its own center; 0.0 (the
+// default) reproduces the original fixed 120-degree-spaced layout bit-exactly
+// (adding 0.0 to the per-vertex angle is a no-op in IEEE arithmetic).
 inline TriPositions tri_place(RenderBridge& rb, int cx, int cy, int cz,
                               const int charges[3], const int colors[3],
-                              int rad, bool lock) {
+                              int rad, bool lock, double angle_offset = 0.0) {
     TriPositions p;
     for (int k = 0; k < 3; k++) {
-        double ang = (2.0 * PI * k) / 3.0;
+        double ang = angle_offset + (2.0 * PI * k) / 3.0;
         p.x[k] = RND(cx + rad * std::cos(ang));
         p.y[k] = RND(cy + rad * std::sin(ang));
         dp_place(rb, p.x[k], p.y[k], cz, charges[k], (k % 2 == 0) ? 1 : -1,
@@ -729,17 +740,24 @@ inline TriPositions tri_place(RenderBridge& rb, int cx, int cy, int cz,
     return p;
 }
 
+// sigma/amp default to the original hardcoded (2, 0.511*0.5): K_B is exactly
+// 0.511 (engine/include/ftd/ontic/particle_masses.h), so K_B*0.5 reproduces
+// the legacy literal bit-for-bit while giving callers an explicit, callable
+// K_B-derived amplitude instead of a bare re-typed constant.
 inline void tri_dress(RenderBridge& rb, const TriPositions& p, int cz,
-                      const int charges[3]) {
+                      const int charges[3], double sigma = 2.0,
+                      double amp = K_B * 0.5) {
     for (int k = 0; k < 3; k++) {
-        dp_dress(rb, p.x[k], p.y[k], cz, charges[k], 2, 0.511 * 0.5);
+        dp_dress(rb, p.x[k], p.y[k], cz, charges[k], sigma, amp);
     }
 }
 
 inline void tri(RenderBridge& rb, int cx, int cy, int cz,
-                const int charges[3], const int colors[3], int rad, bool lock) {
-    const TriPositions p = tri_place(rb, cx, cy, cz, charges, colors, rad, lock);
-    tri_dress(rb, p, cz, charges);
+                const int charges[3], const int colors[3], int rad, bool lock,
+                double angle_offset = 0.0, double dress_sigma = 2.0,
+                double dress_amp = K_B * 0.5) {
+    const TriPositions p = tri_place(rb, cx, cy, cz, charges, colors, rad, lock, angle_offset);
+    tri_dress(rb, p, cz, charges, dress_sigma, dress_amp);
 }
 // π lives in ftd:: via `using ontic::PI;` in ftd/constants.h — every
 // scenario .cpp already includes constants.h, so call sites use `PI`

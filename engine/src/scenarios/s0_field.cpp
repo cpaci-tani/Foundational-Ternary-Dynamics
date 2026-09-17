@@ -1,10 +1,29 @@
 // ==========================================================================
 //  engine/src/scenarios/s0_field.cpp
 //
-//  Group: s0-field-* (9 scenarios)
+//  Group: s0-field-* (16 scenarios)
 //  Canonical seed implementation; the former JS mirror is archived.
 //
 //  Split out of engine/src/scenarios.cpp (ticket S1).
+//
+//  Universal scenario seeding (2026-09-16): every meaningful hardcoded
+//  construction literal below is now bound through ftd::seed::{real,
+//  integer,choice} (declared in ftd/scenario_seed.h). With no
+//  ftd::seed::Context installed, record() returns each default_value
+//  unchanged and never touches the RNG, so the legacy no-context dispatch
+//  path is byte-identical to the pre-seeding source. Grouping convention:
+//    source.*      — absolute placement coordinates of a marker/source
+//    geometry.*     — widths, fractions, cutoffs, radii, separations
+//    packet.*       — field amplitudes, multipliers of a fixed-law
+//                     constant, mode numbers, carrier phases
+//    field.*        — imposed uniform background field magnitudes
+//    constituentN.* — per-lane initial data for a scenario with more than
+//                     one independently placed source (sound-collision)
+//  Fixed-law constants (K_B, ALPHA, C_SPEED, PI) and the FTD-0298/0299
+//  boundary-declared SOUND_PROXY_SPEED divisor are left hardcoded per
+//  FTD-0371/SCOPE_CONSUMPTION_PROGRAM discipline: exposing an amplitude
+//  multiplier or width is not a physics claim, but making a fixed constant
+//  or a boundary-declared ratio itself editable would be.
 // ==========================================================================
 
 #include "ftd/scenarios.h"
@@ -31,7 +50,13 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         // Initial Condition: mode n=4, z polarization, +x propagation.
         // Expected Behaviour: J_z=A sin(kx-omega*t) at the exact lattice pole.
         configure_free_wave_terms(rb, false);
-        inject_plane_harmonic_x(rb, 4, K_B * 2.0, +1);
+        const int modeN = seed::integer("packet.modeNumber", 4, 1, std::max(N, 64),
+            "Harmonic mode number", "Integer wavenumber index n of the seeded plane harmonic along x (k = 2*pi*n/N).");
+        const double ampMult = seed::real("packet.amplitudeMultiplier", 2.0, 0.0, 40.0,
+            "Amplitude multiplier", "Multiplier on K_B giving the peak J_z/W_z amplitude of the seeded harmonic.");
+        const int dir = seed::choice("packet.direction", 1, {{1.0, "+x"}, {-1.0, "-x"}},
+            "Propagation direction", "Sign of the seeded harmonic's travel direction along x.");
+        inject_plane_harmonic_x(rb, modeN, K_B * ampMult, dir);
     }
     else if (name == "s0-field-standing-wave") {
         // Scenario ID: s0-field-standing-wave
@@ -40,7 +65,11 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         // Initial Condition: mode n=4, z polarization, exact pre-kick phase.
         // Expected Behaviour: J_z=A sin(kx) cos(omega*t), with fixed nodes.
         configure_free_wave_terms(rb, false);
-        inject_standing_harmonic_x(rb, 4, K_B * 2.0);
+        const int modeN = seed::integer("packet.modeNumber", 4, 1, std::max(N, 64),
+            "Harmonic mode number", "Integer wavenumber index n of the seeded standing harmonic along x (k = 2*pi*n/N).");
+        const double ampMult = seed::real("packet.amplitudeMultiplier", 2.0, 0.0, 40.0,
+            "Amplitude multiplier", "Multiplier on K_B giving the peak J_z amplitude of the seeded harmonic.");
+        inject_standing_harmonic_x(rb, modeN, K_B * ampMult);
     }
     else if (name == "s0-field-uniform-e") {
         configure_static_seed_terms(rb);
@@ -54,9 +83,14 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         // genesis=false (audit-2 2026-04-28): static uniform E shouldn't
         // fill the lattice with manifested particles. Mirrors JS.
         rb.toggles.genesis = false;
-        const double eMag = 0.1;
+        const double eMag = seed::real("field.magnitude", 0.1, 0.0, 20.0,
+            "Field magnitude", "Magnitude of the uniform background wave-velocity (W_axis = -this) imposed at every site.");
+        const int eAxis = seed::choice("field.axis", 0, {{0.0, "x"}, {1.0, "y"}, {2.0, "z"}},
+            "Field axis", "Cartesian axis carrying the uniform background wave-velocity.");
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
-            IW(rb, x, y, z, -eMag, 0, 0);
+            double wv[3] = {0, 0, 0};
+            wv[eAxis] = -eMag;
+            IW(rb, x, y, z, wv[0], wv[1], wv[2]);
         }
     }
     else if (name == "s0-field-uniform-b") {
@@ -66,12 +100,20 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         // Initial Condition Parameters: None.
         // Expected Behaviour: Rotational flux field pattern representing a uniform magnetic field.
         // Discrepancy: None.
-        const double bMag = 0.05;
+        const double bMag = seed::real("field.magnitude", 0.05, 0.0, 20.0,
+            "Field magnitude", "Magnitude of the imposed uniform curl-vector-potential field B_axis.");
+        const int bAxis = seed::choice("field.axis", 2, {{0.0, "x"}, {1.0, "y"}, {2.0, "z"}},
+            "Field axis", "Cartesian axis the uniform curl-vector-potential field points along.");
         const double half = (N - 1) / 2.0;
+        const int a = bAxis, b = (bAxis + 1) % 3, c = (bAxis + 2) % 3;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
-            double rx = x - half, ry = y - half;
-            double jx = -bMag * ry / 2, jy = bMag * rx / 2;
-            if (std::fabs(jx) > 1e-12 || std::fabs(jy) > 1e-12) IF(rb, x, y, z, jx, jy, 0);
+            const double p[3] = {double(x) - half, double(y) - half, double(z) - half};
+            double comp[3] = {0, 0, 0};
+            comp[b] = -bMag * p[c] / 2;
+            comp[c] =  bMag * p[b] / 2;
+            (void)a;
+            if (std::fabs(comp[0]) > 1e-12 || std::fabs(comp[1]) > 1e-12 || std::fabs(comp[2]) > 1e-12)
+                IF(rb, x, y, z, comp[0], comp[1], comp[2]);
         }
     }
     else if (name == "s0-field-photon-pulse") {
@@ -83,10 +125,24 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         // its width grows by 1.646, failing the preregistered speed/coherence
         // gates. The initial field remains exactly transverse and unmanifested.
         configure_free_wave_terms(rb);
-        const int sigma = std::max(3, N / 8);
-        inject_transverse_packet_x(rb, mc, mc, mc, sigma, std::max(6.0, N / 4.0),
-                                   K_B * 2.0, +1,
-                                   2.0 * PI / (4.0 * sigma));
+        const double sigmaX = seed::real("packet.sigmaX", double(std::max(3, N / 8)), 1.0, std::max(N * 0.5, 64.0),
+            "Packet width (x)", "Gaussian width (lattice sites) of the packet along its direction of travel.");
+        const double sigmaT = seed::real("packet.sigmaT", std::max(6.0, N / 4.0), 1.0, std::max(N * 0.5, 64.0),
+            "Packet width (transverse)", "Gaussian width (lattice sites) of the packet transverse to its direction of travel.");
+        const double ampMult = seed::real("packet.amplitudeMultiplier", 2.0, 0.0, 40.0,
+            "Amplitude multiplier", "Multiplier on K_B giving the peak amplitude of the seeded curl-potential packet.");
+        const int dir = seed::choice("packet.direction", 1, {{1.0, "+x"}, {-1.0, "-x"}},
+            "Propagation direction", "Sign of the packet's seeded travel direction along x.");
+        const double carrierK = seed::real("packet.carrierK", 2.0 * PI / (4.0 * sigmaX), 0.0, PI,
+            "Carrier wavenumber", "Spatial wavenumber of the cosine carrier riding inside the packet envelope; defaults to a value coupled to the packet width above.");
+        const int px = seed::integer("source.x", mc, 0, N - 1,
+            "Packet center x", "Lattice x-coordinate of the packet center.");
+        const int py = seed::integer("source.y", mc, 0, N - 1,
+            "Packet center y", "Lattice y-coordinate of the packet center.");
+        const int pz = seed::integer("source.z", mc, 0, N - 1,
+            "Packet center z", "Lattice z-coordinate of the packet center.");
+        const double seed_wave_0_phase = seed::real("wave0.phase", 0.0, -PI, PI, "Wave 1 carrier phase", "Sets wave 1 carrier phase of wave ingredient 1; increasing it changes the prepared profile before the first tick.", "radians");
+        inject_transverse_packet_x(rb, px, py, pz, sigmaX, sigmaT, K_B * ampMult, dir, carrierK, seed_wave_0_phase);
     }
     else if (name == "s0-field-thomson-scattering") {
         // Scenario ID: s0-field-thomson-scattering
@@ -95,11 +151,19 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         // the Thomson-scattering interpretation is closed for this profile.
         configure_locked_coupled_field_terms(rb);
 
-        IP(rb, mc, mc, mc, -1);
-        rb.voxels()[rb.lattice().index(mc, mc, mc)].locked = true;
+        const int sx = seed::integer("source.x", mc, 0, N - 1,
+            "Source x", "Lattice x-coordinate of the locked marker.");
+        const int sy = seed::integer("source.y", mc, 0, N - 1,
+            "Source y", "Lattice y-coordinate of the locked marker.");
+        const int sz = seed::integer("source.z", mc, 0, N - 1,
+            "Source z", "Lattice z-coordinate of the locked marker.");
+        IP(rb, sx, sy, sz, -1);
+        rb.voxels()[rb.lattice().index(sx, sy, sz)].locked = true;
 
-        const int mode_n = 4;
-        const double amp = 0.05;
+        const int mode_n = seed::integer("packet.modeNumber", 4, 1, std::max(N, 64),
+            "Wave mode number", "Integer wavenumber index n of the incident transverse plane wave (k = 2*pi*n/N).");
+        const double amp = seed::real("packet.amplitude", 0.05, 0.0, 20.0,
+            "Wave amplitude", "Peak amplitude of the incident transverse J_y/W_y plane wave.");
         const double k = 2.0 * PI * static_cast<double>(mode_n) / static_cast<double>(N);
         const double omega = lattice_harmonic_omega(k);
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
@@ -122,11 +186,19 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         // the response depends on the selected emergent-forces extension.
         configure_emergent_recoil_terms(rb);
 
-        IP(rb, mc, mc, mc, -1);
-        rb.voxels()[rb.lattice().index(mc, mc, mc)].locked = false;
+        const int sx = seed::integer("source.x", mc, 0, N - 1,
+            "Source x", "Lattice x-coordinate of the mobile marker.");
+        const int sy = seed::integer("source.y", mc, 0, N - 1,
+            "Source y", "Lattice y-coordinate of the mobile marker.");
+        const int sz = seed::integer("source.z", mc, 0, N - 1,
+            "Source z", "Lattice z-coordinate of the mobile marker.");
+        IP(rb, sx, sy, sz, -1);
+        rb.voxels()[rb.lattice().index(sx, sy, sz)].locked = false;
 
-        const int mode_n = 4;
-        const double amp = 0.05;
+        const int mode_n = seed::integer("packet.modeNumber", 4, 1, std::max(N, 64),
+            "Wave mode number", "Integer wavenumber index n of the incident transverse plane wave (k = 2*pi*n/N).");
+        const double amp = seed::real("packet.amplitude", 0.05, 0.0, 20.0,
+            "Wave amplitude", "Peak amplitude of the incident transverse J_y/W_y plane wave.");
         const double k = 2.0 * PI * static_cast<double>(mode_n) / static_cast<double>(N);
         const double omega = 2.0 * std::asin(C_SPEED * std::fabs(std::sin(k * 0.5)));
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
@@ -143,30 +215,51 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         // This is only the production wave map. The diffusion comparison in
         // the legacy demo is a counterfactual and is not an engine scenario.
         configure_free_wave_terms(rb, false);
-        IF(rb, mc, mc, mc, 0.0, 0.0, 1.0);
-        IW(rb, mc, mc, mc, 0.0, 0.0, 1.0);
+        const int sx = seed::integer("source.x", mc, 0, N - 1,
+            "Source x", "Lattice x-coordinate of the point impulse.");
+        const int sy = seed::integer("source.y", mc, 0, N - 1,
+            "Source y", "Lattice y-coordinate of the point impulse.");
+        const int sz = seed::integer("source.z", mc, 0, N - 1,
+            "Source z", "Lattice z-coordinate of the point impulse.");
+        const double amp = seed::real("packet.amplitude", 1.0, 0.0, 40.0,
+            "Impulse amplitude", "Magnitude of the single-tick J_z and W_z impulse seeded at the source site.");
+        IF(rb, sx, sy, sz, 0.0, 0.0, amp);
+        IW(rb, sx, sy, sz, 0.0, 0.0, amp);
     }
     else if (name == "s0-field-electric-dipole") {
         // Scenario ID: s0-field-electric-dipole
         // Physical Purpose: Imposed softened opposite-source Coulomb-shaped
         // flux profile. This is imported initial data, not emergent EM.
         configure_static_seed_terms(rb);
-        const int sep  = std::max(2, N / 8);
+        const int sep = seed::integer("geometry.separation", std::max(2, N / 8), 2, std::max(N, 64),
+            "Charge separation", "Distance (lattice sites) between the two opposite-polarity source markers.");
+        const double ampMult = seed::real("packet.chargeAmplitudeMultiplier", 1.0, 0.0, 40.0,
+            "Charge amplitude multiplier", "Multiplier on the fixed ALPHA/(4*pi) Coulomb-shaped prefactor.");
+        const int axis = seed::choice("geometry.axis", 0, {{0.0, "x"}, {1.0, "y"}, {2.0, "z"}},
+            "Separation axis", "Cartesian axis along which the two opposite-polarity source markers are separated.");
+        const int cx = seed::integer("source.x", mc, 0, N - 1,
+            "Pair center x", "Lattice x-coordinate about which the two source markers are symmetrically offset.");
+        const int cy = seed::integer("source.y", mc, 0, N - 1,
+            "Pair center y", "Lattice y-coordinate about which the two source markers are symmetrically offset.");
+        const int cz = seed::integer("source.z", mc, 0, N - 1,
+            "Pair center z", "Lattice z-coordinate about which the two source markers are symmetrically offset.");
         const int half = sep / 2;
-        const int px = mc + half, nx = mc - half;
-        IP(rb, px, mc, mc, +1);
-        IP(rb, nx, mc, mc, -1);
-        const double alpha_amp = ALPHA / (4.0 * PI);
+        int posPos[3] = {cx, cy, cz}, negPos[3] = {cx, cy, cz};
+        posPos[axis] += half; negPos[axis] -= half;
+        IP(rb, posPos[0], posPos[1], posPos[2], +1);
+        IP(rb, negPos[0], negPos[1], negPos[2], -1);
+        const double alpha_amp = (ALPHA / (4.0 * PI)) * ampMult;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
             double jx = 0, jy = 0, jz = 0;
-            double dx1 = x - px, dy1 = y - mc, dz1 = z - mc;
-            double r2_1 = dx1*dx1 + dy1*dy1 + dz1*dz1 + 1.0;
+            const int p[3] = {x, y, z};
+            double d1[3], d2[3];
+            for (int i = 0; i < 3; i++) { d1[i] = p[i] - posPos[i]; d2[i] = p[i] - negPos[i]; }
+            double r2_1 = d1[0]*d1[0] + d1[1]*d1[1] + d1[2]*d1[2] + 1.0;
             double f1 = alpha_amp / std::pow(r2_1, 1.5);
-            jx += f1 * dx1; jy += f1 * dy1; jz += f1 * dz1;
-            double dx2 = x - nx, dy2 = y - mc, dz2 = z - mc;
-            double r2_2 = dx2*dx2 + dy2*dy2 + dz2*dz2 + 1.0;
+            jx += f1 * d1[0]; jy += f1 * d1[1]; jz += f1 * d1[2];
+            double r2_2 = d2[0]*d2[0] + d2[1]*d2[1] + d2[2]*d2[2] + 1.0;
             double f2 = -alpha_amp / std::pow(r2_2, 1.5);
-            jx += f2 * dx2; jy += f2 * dy2; jz += f2 * dz2;
+            jx += f2 * d2[0]; jy += f2 * d2[1]; jz += f2 * d2[2];
             double mag = std::sqrt(jx*jx + jy*jy + jz*jz);
             if (mag > 1e-6) IF(rb, x, y, z, jx, jy, jz);
         }
@@ -177,14 +270,24 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         // A = mu x r / (r^2 + a^2)^(3/2), with mu parallel to +z.
         // It is not a native derivation of magnetism or a material current loop.
         configure_static_seed_terms(rb);
+        const double momentMult = seed::real("packet.momentMultiplier", 1.0, 0.0, 40.0,
+            "Moment multiplier", "Multiplier on the fixed K_B/(4*pi) dipole-moment prefactor.");
+        const int momentAxis = seed::choice("geometry.momentAxis", 2, {{0.0, "x"}, {1.0, "y"}, {2.0, "z"}},
+            "Moment axis", "Cartesian axis the imposed dipole moment mu points along.");
         const double half = (N - 1) / 2.0;
-        const double mu_amp = K_B / (4.0 * PI);
+        const double cx = seed::real("source.x", half, 0, N-1, "Dipole center x", "Moves the imposed dipole profile along x.");
+        const double cy = seed::real("source.y", half, 0, N-1, "Dipole center y", "Moves the imposed dipole profile along y.");
+        const double cz = seed::real("source.z", half, 0, N-1, "Dipole center z", "Moves the imposed dipole profile along z.");
+        const double mu_amp = (K_B / (4.0 * PI)) * momentMult;
+        const int b = (momentAxis + 1) % 3, c = (momentAxis + 2) % 3;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
-            const double rx = x - half, ry = y - half, rz = z - half;
-            const double denom = std::pow(rx*rx + ry*ry + rz*rz + 1.0, 1.5);
-            const double ax = -mu_amp * ry / denom;
-            const double ay =  mu_amp * rx / denom;
-            if (std::hypot(ax, ay) > 1e-8) IF(rb, x, y, z, ax, ay, 0.0);
+            const double p[3] = {double(x) - cx, double(y) - cy, double(z) - cz};
+            const double denom = std::pow(p[0]*p[0] + p[1]*p[1] + p[2]*p[2] + 1.0, 1.5);
+            double comp[3] = {0, 0, 0};
+            comp[b] = -mu_amp * p[c] / denom;
+            comp[c] =  mu_amp * p[b] / denom;
+            if (std::sqrt(comp[0]*comp[0] + comp[1]*comp[1] + comp[2]*comp[2]) > 1e-8)
+                IF(rb, x, y, z, comp[0], comp[1], comp[2]);
         }
     }
     else if (name == "s0-field-vortex-line") {
@@ -192,10 +295,14 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         // Physical Purpose: Imposed azimuthal 1/r vector profile about the
         // z-axis. No electromagnetic, fluid, or quantized-vortex identity.
         configure_static_seed_terms(rb);
-        const double gamma = K_B * 4.0;
+        const double circMult = seed::real("packet.circulationMultiplier", 4.0, 0.0, 80.0,
+            "Circulation multiplier", "Multiplier on K_B giving the imposed azimuthal circulation strength.");
+        const double gamma = K_B * circMult;
         const double half = (N - 1) / 2.0;
+        const double cx = seed::real("source.x", half, 0, N-1, "Vortex center x", "Moves the axis of the z-invariant vortex along x.");
+        const double cy = seed::real("source.y", half, 0, N-1, "Vortex center y", "Moves the axis of the z-invariant vortex along y.");
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
-            double rx = x - half, ry = y - half;
+            double rx = x - cx, ry = y - cy;
             double r = std::sqrt(rx * rx + ry * ry);
             if (r < 1.0) r = 1.0;
             double mag = gamma / (2.0 * PI * r);
@@ -224,11 +331,21 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         // lives in the strict laboratory (engine/strict/web/hydro/).
         configure_free_wave_terms(rb, false);
         {
-            const double A = 0.030, delta = 2.5, sigma_z = std::max(2.0, N / 6.0);
-            const double y1 = 0.25 * N, y2 = 0.75 * N;
+            const double A = seed::real("packet.amplitude", 0.030, 0.0, 20.0,
+                "Layer amplitude", "Peak magnitude A of the sheared J_x flux layer.");
+            const double delta = seed::real("geometry.edgeWidth", 2.5, 0.25, std::max(N * 0.5, 64.0),
+                "Edge width", "Width (lattice sites) delta of each tanh edge of the double shear layer.");
+            const double sigma_z = seed::real("geometry.sigmaZ", std::max(2.0, N / 6.0), 0.5, std::max(N * 0.5, 64.0),
+                "z-envelope width", "Gaussian width (lattice sites) of the layer's envelope along z.");
+            const double edgeFracLow = seed::real("geometry.edgeFractionLow", 0.25, 0.0, 1.0,
+                "Low edge fraction", "Fraction of N giving the y-position of the first (rising) layer edge.");
+            const double edgeFracHigh = seed::real("geometry.edgeFractionHigh", 0.75, 0.0, 1.0,
+                "High edge fraction", "Fraction of N giving the y-position of the second (falling) layer edge.");
+            const double centerZ = seed::real("source.z", mc, 0, N-1, "Layer envelope center z", "Moves the Gaussian envelope of the shear layer along z.");
+            const double y1 = edgeFracLow * N, y2 = edgeFracHigh * N;
             for (int z = 0; z < N; z++)
             for (int y = 0; y < N; y++) {
-                const double dz = z - mc, gz = std::exp(-(dz * dz) / (2.0 * sigma_z * sigma_z));
+                const double dz = z - centerZ, gz = std::exp(-(dz * dz) / (2.0 * sigma_z * sigma_z));
                 const double f = std::tanh((y - y1) / delta) - std::tanh((y - y2) / delta) - 1.0;
                 const double jx = A * f * gz;
                 if (std::fabs(jx) < 1e-12) continue;
@@ -247,20 +364,31 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         // amp=0.034, phase=0, y-component, waveSpeed=C_SPEED.
         configure_free_wave_terms(rb, false);
         {
-            const double sigmaFrac = 0.12, amp_w = 0.034, ph0 = 0.0;
+            const double centerY = seed::real("source.y", mc, 0, N-1, "Wave envelope center y", "Moves the transverse Gaussian envelope along y.");
+            const double centerZ = seed::real("source.z", mc, 0, N-1, "Wave envelope center z", "Moves the transverse Gaussian envelope along z.");
+            const double sigmaFrac = seed::real("geometry.sigmaFraction", 0.12, 0.01, 1.0,
+                "Envelope width fraction", "Fraction of N giving the Gaussian transverse envelope width.");
+            const double amp_w = seed::real("packet.amplitude", 0.034, 0.0, 20.0,
+                "Wave amplitude", "Peak amplitude of the seeded transverse J_y/W_y harmonic.");
+            const double ph0 = seed::real("packet.phase", 0.0, -2.0 * PI, 2.0 * PI,
+                "Carrier phase", "Phase offset (radians) of the seeded harmonic's spatial carrier.");
+            const int rawModeN = seed::integer("packet.modeNumber", 1, 1, std::max(N, 64),
+                "Harmonic mode number", "Integer wavenumber index n before the N/2-1 lattice-Nyquist clamp.");
+            const double cutSigmas = seed::real("geometry.cutoffSigmas", 2.4, 0.5, 20.0,
+                "Envelope cutoff", "Half-width of the transverse dressing box, in units of the envelope width above.");
             const double sigma  = std::max(1.15, N * sigmaFrac);
-            const int    modeN  = std::max(1, std::min(N / 2 - 1, 1));
+            const int    modeN  = std::max(1, std::min(N / 2 - 1, rawModeN));
             const double k      = 2.0 * PI * modeN / N;
             const double omega  = 2.0 * std::asin(C_SPEED * std::abs(std::sin(k / 2.0)));
-            const double cut    = sigma * 2.4, cut2 = cut * cut;
-            const int zlo = std::max(0,   (int)std::floor(mc - cut));
-            const int zhi = std::min(N-1, (int)std::ceil (mc + cut));
-            const int ylo = std::max(0,   (int)std::floor(mc - cut));
-            const int yhi = std::min(N-1, (int)std::ceil (mc + cut));
+            const double cut    = sigma * cutSigmas, cut2 = cut * cut;
+            const int zlo = std::max(0,   (int)std::floor(centerZ - cut));
+            const int zhi = std::min(N-1, (int)std::ceil (centerZ + cut));
+            const int ylo = std::max(0,   (int)std::floor(centerY - cut));
+            const int yhi = std::min(N-1, (int)std::ceil (centerY + cut));
             for (int z = zlo; z <= zhi; z++)
             for (int y = ylo; y <= yhi; y++)
             for (int x = 0;   x < N;    x++) {
-                const double dy = y - mc, dz = z - mc;
+                const double dy = y - centerY, dz = z - centerZ;
                 const double r2 = dy*dy + dz*dz;
                 if (r2 > cut2) continue;
                 const double g  = std::exp(-r2 / (2.0 * sigma * sigma));
@@ -284,20 +412,31 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         // amp=0.032, phase=PI*0.15, y-component, waveSpeed=C_SPEED.
         configure_free_wave_terms(rb, false);
         {
-            const double sigmaFrac = 0.10, amp_w = 0.032, ph0 = PI * 0.15;
+            const double centerY = seed::real("source.y", mc, 0, N-1, "Wave envelope center y", "Moves the transverse Gaussian envelope along y.");
+            const double centerZ = seed::real("source.z", mc, 0, N-1, "Wave envelope center z", "Moves the transverse Gaussian envelope along z.");
+            const double sigmaFrac = seed::real("geometry.sigmaFraction", 0.10, 0.01, 1.0,
+                "Envelope width fraction", "Fraction of N giving the Gaussian transverse envelope width.");
+            const double amp_w = seed::real("packet.amplitude", 0.032, 0.0, 20.0,
+                "Wave amplitude", "Peak amplitude of the seeded transverse J_y/W_y harmonic.");
+            const double ph0 = seed::real("packet.phase", PI * 0.15, -2.0 * PI, 2.0 * PI,
+                "Carrier phase", "Phase offset (radians) of the seeded harmonic's spatial carrier.");
+            const int rawModeN = seed::integer("packet.modeNumber", 6, 1, std::max(N, 64),
+                "Harmonic mode number", "Integer wavenumber index n before the N/2-1 lattice-Nyquist clamp.");
+            const double cutSigmas = seed::real("geometry.cutoffSigmas", 2.4, 0.5, 20.0,
+                "Envelope cutoff", "Half-width of the transverse dressing box, in units of the envelope width above.");
             const double sigma  = std::max(1.15, N * sigmaFrac);
-            const int    modeN  = std::max(1, std::min(N / 2 - 1, 6));
+            const int    modeN  = std::max(1, std::min(N / 2 - 1, rawModeN));
             const double k      = 2.0 * PI * modeN / N;
             const double omega  = 2.0 * std::asin(C_SPEED * std::abs(std::sin(k / 2.0)));
-            const double cut    = sigma * 2.4, cut2 = cut * cut;
-            const int zlo = std::max(0,   (int)std::floor(mc - cut));
-            const int zhi = std::min(N-1, (int)std::ceil (mc + cut));
-            const int ylo = std::max(0,   (int)std::floor(mc - cut));
-            const int yhi = std::min(N-1, (int)std::ceil (mc + cut));
+            const double cut    = sigma * cutSigmas, cut2 = cut * cut;
+            const int zlo = std::max(0,   (int)std::floor(centerZ - cut));
+            const int zhi = std::min(N-1, (int)std::ceil (centerZ + cut));
+            const int ylo = std::max(0,   (int)std::floor(centerY - cut));
+            const int yhi = std::min(N-1, (int)std::ceil (centerY + cut));
             for (int z = zlo; z <= zhi; z++)
             for (int y = ylo; y <= yhi; y++)
             for (int x = 0;   x < N;    x++) {
-                const double dy = y - mc, dz = z - mc;
+                const double dy = y - centerY, dz = z - centerZ;
                 const double r2 = dy*dy + dz*dz;
                 if (r2 > cut2) continue;
                 const double g  = std::exp(-r2 / (2.0 * sigma * sigma));
@@ -324,22 +463,34 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
             // SOUND_PROXY_SPEED: c/8 is a pedagogical PROXY, not a real acoustic
             // eigenmode. FTD has no sound — the single flux sector re-propagates
             // this wave at c = 1/sqrt(3) (declared [BOUNDARY], FTD-0298/0299); the
-            // slow appearance is an initial-condition/visual artifact only.
-            const double SOUND_PROXY_SPEED = C_SPEED / 8.0;
-            const double sigmaFrac = 0.11, amp_w = 0.030, ph0 = PI * 0.10;
+            // slow appearance is an initial-condition/visual artifact only. The /8
+            // coefficient is imposed initial momentum; it is editable without changing the wave law.
+            const double SOUND_PROXY_SPEED = seed::real("packet.seedSpeed", C_SPEED / 8.0, 0, C_SPEED, "Initial wave-momentum speed", "Sets the initial W-to-J relation only. The tick law still propagates at its native speed; this does not create an acoustic medium.", "cells per tick", .001);
+            const double centerY = seed::real("source.y", mc, 0, N-1, "Wave envelope center y", "Moves the transverse Gaussian envelope along y.");
+            const double centerZ = seed::real("source.z", mc, 0, N-1, "Wave envelope center z", "Moves the transverse Gaussian envelope along z.");
+            const double sigmaFrac = seed::real("geometry.sigmaFraction", 0.11, 0.01, 1.0,
+                "Envelope width fraction", "Fraction of N giving the Gaussian transverse envelope width.");
+            const double amp_w = seed::real("packet.amplitude", 0.030, 0.0, 20.0,
+                "Wave amplitude", "Peak amplitude of the seeded longitudinal J_x/W_x harmonic.");
+            const double ph0 = seed::real("packet.phase", PI * 0.10, -2.0 * PI, 2.0 * PI,
+                "Carrier phase", "Phase offset (radians) of the seeded harmonic's spatial carrier.");
+            const int rawModeN = seed::integer("packet.modeNumber", 4, 1, std::max(N, 64),
+                "Harmonic mode number", "Integer wavenumber index n before the N/2-1 lattice-Nyquist clamp.");
+            const double cutSigmas = seed::real("geometry.cutoffSigmas", 2.4, 0.5, 20.0,
+                "Envelope cutoff", "Half-width of the transverse dressing box, in units of the envelope width above.");
             const double sigma  = std::max(1.15, N * sigmaFrac);
-            const int    modeN  = std::max(1, std::min(N / 2 - 1, 4));
+            const int    modeN  = std::max(1, std::min(N / 2 - 1, rawModeN));
             const double k      = 2.0 * PI * modeN / N;
             const double seedOmega = 2.0 * SOUND_PROXY_SPEED * std::abs(std::sin(k / 2.0));
-            const double cut    = sigma * 2.4, cut2 = cut * cut;
-            const int zlo = std::max(0,   (int)std::floor(mc - cut));
-            const int zhi = std::min(N-1, (int)std::ceil (mc + cut));
-            const int ylo = std::max(0,   (int)std::floor(mc - cut));
-            const int yhi = std::min(N-1, (int)std::ceil (mc + cut));
+            const double cut    = sigma * cutSigmas, cut2 = cut * cut;
+            const int zlo = std::max(0,   (int)std::floor(centerZ - cut));
+            const int zhi = std::min(N-1, (int)std::ceil (centerZ + cut));
+            const int ylo = std::max(0,   (int)std::floor(centerY - cut));
+            const int yhi = std::min(N-1, (int)std::ceil (centerY + cut));
             for (int z = zlo; z <= zhi; z++)
             for (int y = ylo; y <= yhi; y++)
             for (int x = 0;   x < N;    x++) {
-                const double dy = y - mc, dz = z - mc;
+                const double dy = y - centerY, dz = z - centerZ;
                 const double r2 = dy*dy + dz*dz;
                 if (r2 > cut2) continue;
                 const double g  = std::exp(-r2 / (2.0 * sigma * sigma));
@@ -368,27 +519,47 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
             // SOUND_PROXY_SPEED: c/8 is a pedagogical PROXY, not a real acoustic
             // eigenmode. FTD has no sound — the single flux sector re-propagates
             // this wave at c = 1/sqrt(3) (declared [BOUNDARY], FTD-0298/0299); the
-            // slow appearance is an initial-condition/visual artifact only.
-            const double SOUND_PROXY_SPEED = C_SPEED / 8.0;
-            const double pulseFrac = 0.15, sigmaFrac = 0.11, amp_w = 0.030;
+            // slow appearance is an initial-condition/visual artifact only. The /8
+            // coefficient is imposed initial momentum; it is editable without changing the wave law.
+            const double SOUND_PROXY_SPEED = seed::real("packet.seedSpeed", C_SPEED / 8.0, 0, C_SPEED, "Initial wave-momentum speed", "Sets the initial W-to-J relation only. The tick law still propagates at its native speed; this does not create an acoustic medium.", "cells per tick", .001);
+            const double pulseFrac = seed::real("geometry.pulseFraction", 0.15, 0.01, 1.0,
+                "Pulse width fraction", "Fraction of N giving each longitudinal pulse's width along x.");
+            const double centerY = seed::real("source.y", mc, 0, N-1, "Wave envelope center y", "Moves the transverse Gaussian envelope along y.");
+            const double centerZ = seed::real("source.z", mc, 0, N-1, "Wave envelope center z", "Moves the transverse Gaussian envelope along z.");
+            const double sigmaFrac = seed::real("geometry.sigmaFraction", 0.11, 0.01, 1.0,
+                "Envelope width fraction", "Fraction of N giving the Gaussian transverse envelope width.");
+            const double amp_w = seed::real("packet.amplitude", 0.030, 0.0, 20.0,
+                "Wave amplitude", "Peak amplitude of each seeded longitudinal J_x/W_x pulse.");
+            const int rawModeN = seed::integer("packet.modeNumber", 4, 1, std::max(N, 64),
+                "Harmonic mode number", "Integer wavenumber index n before the N/2-1 lattice-Nyquist clamp.");
+            const double cutSigmas = seed::real("geometry.cutoffSigmas", 2.4, 0.5, 20.0,
+                "Envelope cutoff", "Half-width of the transverse dressing box, in units of the envelope width above.");
+            const double lane0OffsetFrac = seed::real("constituent0.offsetFraction", -0.25, -1.0, 1.0,
+                "Lane-0 center offset", "Fraction of N offsetting the first pulse's center x from the lattice midpoint.");
+            const int lane0Dir = seed::choice("constituent0.direction", 1, {{1.0, "+x"}, {-1.0, "-x"}},
+                "Lane-0 direction", "Sign of the first pulse's seeded travel direction.");
+            const double lane1OffsetFrac = seed::real("constituent1.offsetFraction", 0.25, -1.0, 1.0,
+                "Lane-1 center offset", "Fraction of N offsetting the second pulse's center x from the lattice midpoint.");
+            const int lane1Dir = seed::choice("constituent1.direction", -1, {{1.0, "+x"}, {-1.0, "-x"}},
+                "Lane-1 direction", "Sign of the second pulse's seeded travel direction.");
             const double sigma      = std::max(1.15, N * sigmaFrac);
             const double pulseSigma = std::max(1.5, N * pulseFrac * 0.5);
-            const int    modeN  = std::max(1, std::min(N / 2 - 1, 4));
+            const int    modeN  = std::max(1, std::min(N / 2 - 1, rawModeN));
             const double k      = 2.0 * PI * modeN / N;
             const double seedOmega = 2.0 * SOUND_PROXY_SPEED * std::abs(std::sin(k / 2.0));
-            const double cut    = sigma * 2.4, cut2 = cut * cut;
+            const double cut    = sigma * cutSigmas, cut2 = cut * cut;
             struct Lane { double offsetFrac; double speedMult; };
-            const Lane lanes[2] = {{-0.25, +1.0}, {+0.25, -1.0}};
+            const Lane lanes[2] = {{lane0OffsetFrac, double(lane0Dir)}, {lane1OffsetFrac, double(lane1Dir)}};
             for (const auto& lane : lanes) {
                 const double centerX = midF + lane.offsetFrac * N;
-                const int zlo = std::max(0,   (int)std::floor(mc - cut));
-                const int zhi = std::min(N-1, (int)std::ceil (mc + cut));
-                const int ylo = std::max(0,   (int)std::floor(mc - cut));
-                const int yhi = std::min(N-1, (int)std::ceil (mc + cut));
+                const int zlo = std::max(0,   (int)std::floor(centerZ - cut));
+                const int zhi = std::min(N-1, (int)std::ceil (centerZ + cut));
+                const int ylo = std::max(0,   (int)std::floor(centerY - cut));
+                const int yhi = std::min(N-1, (int)std::ceil (centerY + cut));
                 for (int z = zlo; z <= zhi; z++)
                 for (int y = ylo; y <= yhi; y++)
                 for (int x = 0;   x < N;    x++) {
-                    const double dy = y - mc, dz = z - mc;
+                    const double dy = y - centerY, dz = z - centerZ;
                     const double r2 = dy*dy + dz*dz;
                     if (r2 > cut2) continue;
                     const double dx  = x - centerX;

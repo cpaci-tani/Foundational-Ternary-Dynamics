@@ -42,10 +42,10 @@ def local_server(tmp_path, monkeypatch):
     thread = threading.Thread(target=server.serve_forever, kwargs={"poll_interval": 0.01}, daemon=True)
     thread.start()
 
-    def request(path, method="GET"):
+    def request(path, method="GET", body=None, headers=None):
         connection = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=2)
         try:
-            connection.request(method, path)
+            connection.request(method, path, body=body, headers=headers or {})
             response = connection.getresponse()
             return response.status, {key.lower(): value for key, value in response.getheaders()}, response.read()
         finally:

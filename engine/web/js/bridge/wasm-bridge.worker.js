@@ -430,7 +430,25 @@ function readEngineToggles() {
   return out;
 }
 
-function buildBridge(n, scen, configurationToken = 0) {
+function buildBridge(n, scen, configurationToken = 0, seedOverrides = null) {
+  let candidate = null;
+  let seedDescription = null;
+  try {
+    candidate = new mod.RenderBridge(n | 0);
+    for (const k in toggles) mod.setToggle(candidate, k, toggles[k]);
+    if (seedOverrides !== null) {
+      if (!mod.setupScenarioSeed) throw new Error('This worker artifact does not support editable scenario seeds.');
+      seedDescription = JSON.parse(mod.setupScenarioSeed(candidate, scen, seedOverrides));
+      if (seedDescription.error) throw new Error(seedDescription.error);
+    } else if (mod.setupScenario(candidate, scen) === false) {
+      throw new Error('Unknown or unhandled scenario: ' + scen);
+    }
+  } catch (error) {
+    candidate?.delete();
+    self.postMessage({type: 'error', where: 'setupScenario',
+      msg: String(error?.message || error), configurationToken});
+    return;
+  }
   activeConfigurationToken = Number(configurationToken) || 0;
   tickAcc = 0;
   lastInspect = null;
@@ -439,38 +457,9 @@ function buildBridge(n, scen, configurationToken = 0) {
   gravityMetricAggVersion = null;
   if (bridge) { try { bridge.delete(); } catch (e) { /* ignore */ } bridge = null; }
   N = n | 0;
-  bridge = new mod.RenderBridge(N);
+  bridge = candidate;
   renderBridgeGeneration++;
-  const toggleErrors = [];
-  for (const k in toggles) {
-    try { mod.setToggle(bridge, k, toggles[k]); }
-    catch (e) { toggleErrors.push(k + ': ' + (e && e.message || e)); }
-  }
-  if (toggleErrors.length) {
-    self.postMessage({
-      type: 'error', where: 'setToggle', msg: toggleErrors.slice(0, 5).join('; '),
-      configurationToken: activeConfigurationToken,
-    });
-  }
-  let setupOk = true;
-  let setupError = null;
-  try {
-    const result = mod.setupScenario(bridge, scen);
-    // Older WASM builds return undefined; only an explicit false is failure.
-    if (result === false) {
-      setupOk = false;
-      setupError = 'Unknown or unhandled scenario: ' + scen;
-      // Surface via ready.setupOk — avoid a duplicate onSetupFailure from a
-      // parallel type:'error' message for the same failure.
-    }
-  } catch (e) {
-    setupOk = false;
-    setupError = String(e && e.message || e);
-    self.postMessage({
-      type: 'error', where: 'setupScenario', msg: setupError,
-      configurationToken: activeConfigurationToken,
-    });
-  }
+  const setupOk = true, setupError = null;
   enforceToggleInvariants();
   engineTogglesDirty = true;   // the C++ body just replaced the whole profile
   lastAudit = null; auditFrameCounter = 0;   // force a fresh audit for the new N/profile
@@ -494,7 +483,7 @@ function buildBridge(n, scen, configurationToken = 0) {
   const doubled = publishFlux(vol);
   self.postMessage({
     type: 'ready', N, ctrl: ctrlSab, heap: vol.buffer, fluxPtr: vol.byteOffset, fluxLen: vol.length,
-    setupOk, setupError, artifactIdentity, configurationToken,
+    setupOk, setupError, artifactIdentity, configurationToken, seedDescription,
     workerRuntimeId, moduleInitCount, renderBridgeGeneration,
     constants: (() => { try { const c = mod.getConstants(); const o = {}; for (const k in c) if (typeof c[k] !== 'object') o[k] = c[k]; return o; } catch (e) { return null; } })(),
     ...(doubled ? { fluxSab: fluxPubSab, doubleBuffered: true,
@@ -787,7 +776,7 @@ self.onmessage = (e) => {
         pendingCreate = msg;
         if (mod) {
           pendingCreate = null;
-          buildBridge(msg.N, msg.scenarioId || scenarioId, msg.configurationToken);
+          buildBridge(msg.N, msg.scenarioId || scenarioId, msg.configurationToken, msg.seedOverrides ?? null);
           if (!timer) loop();
         } else if (!initInFlight) {
           initInFlight = true;
@@ -795,14 +784,14 @@ self.onmessage = (e) => {
             initInFlight = false;
             const m = pendingCreate;
             pendingCreate = null;
-            if (m) buildBridge(m.N, m.scenarioId || scenarioId, m.configurationToken);
+            if (m) buildBridge(m.N, m.scenarioId || scenarioId, m.configurationToken, m.seedOverrides ?? null);
             if (!timer) loop();
           });
         }
         break;
       case 'resize':
         if (mod && Number(msg.configurationToken) >= activeConfigurationToken) {
-          buildBridge(msg.N, msg.scenarioId || scenarioId, msg.configurationToken);
+          buildBridge(msg.N, msg.scenarioId || scenarioId, msg.configurationToken, msg.seedOverrides ?? null);
         }
         break;
       case 'command': {
