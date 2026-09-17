@@ -45,8 +45,10 @@
 | Engine force-field constants (§13c) | 5 | 0 | 5 | 0 |
 | **TOTAL** | **167** | **18** | **138** | **11** |
 
-> **Arithmetic reconciled 2026-07-26.** The category rows now sum to the TOTAL
-> row: 18 + 133 + 11 = 162. Two category rows were corrected and the TOTAL
+> **Arithmetic reconciled 2026-07-26** (18 + 133 + 11 = 162 at that date;
+> re-counted 2026-09-16 to 18 + 138 + 11 = 167 when §13c added five
+> [PARAMETRIC] engine force-field constants). The category rows sum to the
+> TOTAL row. Two category rows were corrected on 2026-07-26 and the TOTAL
 > recomputed from them:
 >
 > - `Foundational constants` was `7 | 7 | 0 | 0`, counting α — the framework's
@@ -292,7 +294,7 @@ Each row below is a textbook force law whose *functional form* is imported whole
 
 | Quantity | Value | Formula (imported) | FTD inputs | Tag | Source |
 |---|---|---|---|---|---|
-| `SIGMA_STRING` (Scale-1 linear string tension) | 0.261121 | σ = ALPHA_S · K_B²; the scaling σ ~ α_s·Λ² and the linear potential V(r) = σ·r are strong-coupling lattice-QCD imports | ALPHA_S, K_B | **[PARAMETRIC]** (header said `[DERIVED from ALPHA_S and K_B]` until 2026-09-16). Both inputs are themselves non-derived: the C++ `ALPHA_S` is the **[IMPOSED]** Planck-scale prefactor **= 1.0**, *not* the 7/59 running coupling (naming hazard flagged at `constants.h:265`), and `K_B = 0.511` is the **[IMPOSED]** m_e calibration anchor. With ALPHA_S = 1 the constant is numerically nothing but K_B² — the square of a calibration. ⚠ **Three different σ under one name:** this 0.261, the §13 Creutz σ = −ln(I₁(β)/I₀(β)) at β = x₋, and LEDGER FTD-0025's σ = 0.209. Do not cross-cite them. | `engine/include/ftd/constants.h:299`; consumed by `color_regime_force_mag` under `TermToggles::confinement` |
+| `SIGMA_STRING` (Scale-1 linear string tension) | 0.261121 | σ = ALPHA_S · K_B²; the scaling σ ~ α_s·Λ² and the linear potential V(r) = σ·r are strong-coupling lattice-QCD imports | ALPHA_S, K_B | **[PARAMETRIC]** (header said `[DERIVED from ALPHA_S and K_B]` until 2026-09-16). Both inputs are themselves non-derived: the C++ `ALPHA_S` is the **[IMPOSED]** Planck-scale prefactor **= 1.0**, *not* the 7/59 running coupling (naming hazard flagged at `constants.h:266-272`), and `K_B = 0.511` is the **[IMPOSED]** m_e calibration anchor. With ALPHA_S = 1 the constant is numerically nothing but K_B² — the square of a calibration. ⚠ **Three different σ under one name:** this 0.261, the §13 Creutz σ = −ln(I₁(β)/I₀(β)) at β = x₋, and LEDGER FTD-0025's σ = 0.209. Do not cross-cite them. | `engine/include/ftd/constants.h:299`; consumed by `color_regime_force_mag` under `TermToggles::confinement` |
 | `H_BOND_EPSILON` (hydrogen-bond well depth) | 1.986×10⁻⁷ | LJ 10-12 well: V = ε[5(σ/r)¹² − 6(σ/r)¹⁰]·cosⁿθ — molecular-mechanics form imported entire | K_B, α³ | **[PARAMETRIC]** (header said `[DERIVED from α perturbation theory]`). The α³ dressing is an ansatz chosen to make H-bonds ~10× weaker than covalent; no perturbation-theory chain from the postulates is given anywhere. | `constants.h:558` |
 | `K_ANGLE` (VSEPR angle-strain stiffness) | 3.729×10⁻³ | Harmonic bend V = ½·K_ANGLE·(θ − θ_eq)² — classical force-field form imported | α, K_B | **[PARAMETRIC]** (header said `[DERIVED from α × K_B]`). Product of a coupling and a calibration; the harmonic form is not substrate-derived. | `constants.h:563` |
 | `V_TORSION` (dihedral barrier) | 2.721×10⁻⁵ | Periodic torsion V = ½·V_TORSION·[1 + cos(nφ − γ)] — classical force-field form imported | α², K_B | **[PARAMETRIC]** (header said `[DERIVED from α² × K_B]`). The multiplicity n and phase γ are separate imported inputs. | `constants.h:567` |

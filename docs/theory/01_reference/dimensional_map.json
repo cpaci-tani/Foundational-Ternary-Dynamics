@@ -369,7 +369,7 @@
       "label": "K_B = m_e (mass-unit anchor)",
       "is_dimensionless": false,
       "calibration_required": true,
-      "ftd_formula": "DECLARED: lattice manifestation threshold K_B = 0.511 in lattice units corresponds to m_e in physical units. Mass-unit ≡ m_e/K_B = 1 MeV/c².",
+      "ftd_formula": "DECLARED: the lattice mass-unit anchor K_B = 0.511 corresponds to m_e in physical units (K_B is the m_e calibration anchor, not the engine's manifestation threshold — that is the separate K_MANIFEST := W_SC = 0.50546; FTD-0130 flagged the conflation, FTD-0388 split it). Mass-unit ≡ m_e/K_B = 1 MeV/c².",
       "ftd_value": 0.51099895069,
       "ftd_value_units": "MeV/c²",
       "depends_on": [],

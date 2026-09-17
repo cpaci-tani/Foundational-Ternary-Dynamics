@@ -4359,8 +4359,10 @@ and [`AUDIT_RECIPROCAL_MOVING_SOURCE.md`](../common_action_mechanics_reciprocity
 `engine/include/ftd/term_toggles.h` line 56 (`bool gravity = true`).
 
 **Finding (2026-09-16 physics semantic audit).** The default engine profile
-ships `gravity = true`, and that channel computes `F = G_N·∇ρ` from a
-**tier-2 (`r = 2`) central difference** of the density — reading sites at
+ships `gravity = true`, and that channel computes `F = G_N·∇|J|` (`ρ ≡ |J|`,
+the same-tick, post-Gauss flux magnitude — so the operand is itself long-range
+and instantaneous through the Gauss solve, even though the operator is local)
+from a **tier-2 (`r = 2`) central difference** of `|J|` — reading sites at
 `c ± 2ê`, deliberately, to escape the self-field wake that contaminates the
 `r = 1` face-neighbour gradient. Radius 2 exceeds the v3 constitution's **P4
 radius-one Moore causal ceiling** ([FTD-1023](../../01_reference/SPEC_FTD_FRAMEWORK_V3_STRICT_DISCRETE_COMMON_ACTION.md)).
@@ -4373,8 +4375,9 @@ same `r = 2` stencil is used by the default-OFF `geometric_gravity` branch
 line in [`SPEC_IMPORT_LEDGER.md`](../../01_reference/SPEC_IMPORT_LEDGER.md)
 (no adopted-bit / selected-type / calibration entry names it) nor as a
 declared constitutional exception to P4. Nothing here argues the physics is
-wrong — an `r = 2` gradient is a defensible numerical choice against
-self-field contamination — only that the ontology's own causal ceiling is
+wrong — the source comment gives self-field contamination at `r = 1` as the
+reason for `r = 2`, a numerical choice asserted there but not separately
+measured — only that the ontology's own causal ceiling is
 being exceeded by the default law with no ledger entry saying so and no
 falsifier attached. Per the Number-One Goal's drive face, a booked exception
 is acceptable; a silent one is the F10 failure mode.

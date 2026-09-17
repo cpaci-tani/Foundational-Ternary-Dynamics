@@ -18,9 +18,27 @@
  * step) and `a` is the local acceleration magnitude carried in `near_accel`.
  *
  * Equivalently the dissipation RATE carries the a² term,
- *   Γ(a) = Γ₀·gain(a),  Γ₀ = −ln(damping_factor),  eff = exp(−Γ(a)),
- * which is the textbook radiation-reaction statement: an accelerating charge
- * loses energy at a rate that grows with a², on TOP of the baseline loss.
+ *   Γ(a) = Γ₀·gain(a),  Γ₀ = −ln(damping_factor),  eff = exp(−Γ(a)).
+ * The a² dependence matches Larmor (P ∝ a²); the coupling is NOT textbook:
+ * textbook radiation reaction is an additive rate term P/E independent of the
+ * baseline drag, whereas here it multiplies Γ₀, so with damping off the
+ * radiative channel vanishes. This is an [IMPOSED] modelling form, and
+ * K_LARMOR (constants.h) is an imposed dimensionless scale tuned against a
+ * coupling-injection rate, not derived from Larmor's constant.
+ *
+ * ── Practical regime (2026-09-17 audit) ────────────────────────────────────
+ *
+ * With K_LARMOR ≈ 33.9 and accel_mag the unit-mass EM+grav+Lorentz force,
+ * every acceleration the engine actually produces is small: Poisson-mode
+ * Coulomb at the r ≥ 1 clamp gives |a| ≲ 6e-4 (K·a² ≲ 1e-5); the largest
+ * value found anywhere in the tree is 7e-4 (Thomson recoil analysis). A gain
+ * excess of 1e-3 needs |a| ≈ 5e-3, roughly 10× the Coulomb contact value. So
+ * in the shipped profiles this law is correct in sign and shape but INERT:
+ * larmor_radiation ON is numerically indistinguishable from OFF (LAM-6b pins
+ * that at |a| ≈ 4e-5). Only test_larmor_damping_law.cpp's synthetic
+ * accel_mag = 0.4 exercises gain > 1. Making the toggle bite at realized
+ * accelerations is a K_LARMOR rescaling — an owner physics decision, not a
+ * correctness fix — and is deliberately not made here.
  *
  * Properties the regression test (tests/test_larmor_damping_law.cpp) pins:
  *   1. eff(0) == damping_factor exactly — switching the toggle on changes

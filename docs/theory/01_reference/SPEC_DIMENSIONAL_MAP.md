@@ -155,7 +155,7 @@ Two SI-dimensional calibrations are theorem-enforced as the irreducible minimum 
 |---|---|---|---|---|---|
 | `a_phys_planck` | a_phys = ℓ_P (default electron-primary map) | DEFAULT electron-primary: 1 voxel ↔ ℓ_P^FTD = (ℏ/(m_e c))·Kα¹¹, K = √(2π)·16/3; legacy Planck-primary declares 1 voxel ≡ CODATA ℓ_P | 1.613146263e-35 m | CALIBRATION | [FTD-0030](../07_assessment/core_ledgers/LEDGER.md#ftd-0030), [FTD-0041](../07_assessment/core_ledgers/LEDGER.md#ftd-0041), [FTD-0059](../07_assessment/core_ledgers/LEDGER.md#ftd-0059) |
 | `t_phys_lattice_tick` | t_phys (one tick in seconds) | t_phys = ℓ_P / (√3 · c) = t_P/√3 (from selected c_lat = 1/√3 + a_phys ≡ ℓ_P + c_phys = 2.998 × 10⁸ m/s: physical c = c_lat·a_phys/t_phys) | 3.106650632e-44 s | CALIBRATION | [FTD-0041](../07_assessment/core_ledgers/LEDGER.md#ftd-0041) |
-| `mass_unit_anchor` | K_B = m_e (mass-unit anchor) | DECLARED: lattice manifestation threshold K_B = 0.511 in lattice units corresponds to m_e in physical units. Mass-unit ≡ m_e/K_B = 1 MeV/c². | 0.5109989507 MeV/c² | IMPOSED | [FTD-0041](../07_assessment/core_ledgers/LEDGER.md#ftd-0041), [FTD-0096](../07_assessment/core_ledgers/LEDGER.md#ftd-0096) |
+| `mass_unit_anchor` | K_B = m_e (mass-unit anchor) | DECLARED: the lattice mass-unit anchor K_B = 0.511 corresponds to m_e in physical units (K_B is the m_e calibration anchor, not the engine's manifestation threshold — that is the separate K_MANIFEST := W_SC = 0.50546; FTD-0130 flagged the conflation, FTD-0388 split it). Mass-unit ≡ m_e/K_B = 1 MeV/c². | 0.5109989507 MeV/c² | IMPOSED | [FTD-0041](../07_assessment/core_ledgers/LEDGER.md#ftd-0041), [FTD-0096](../07_assessment/core_ledgers/LEDGER.md#ftd-0096) |
 
 ### a_phys = ℓ_P (default electron-primary map) (`a_phys_planck`)
 
@@ -181,7 +181,7 @@ Two SI-dimensional calibrations are theorem-enforced as the irreducible minimum 
 
 ### K_B = m_e (mass-unit anchor) (`mass_unit_anchor`)
 
-- **Formula:** DECLARED: lattice manifestation threshold K_B = 0.511 in lattice units corresponds to m_e in physical units. Mass-unit ≡ m_e/K_B = 1 MeV/c².
+- **Formula:** DECLARED: the lattice mass-unit anchor K_B = 0.511 corresponds to m_e in physical units (K_B is the m_e calibration anchor, not the engine's manifestation threshold — that is the separate K_MANIFEST := W_SC = 0.50546; FTD-0130 flagged the conflation, FTD-0388 split it). Mass-unit ≡ m_e/K_B = 1 MeV/c².
 - **Value:** 0.5109989507 MeV/c²
 - **Tag:** `IMPOSED`
 - **LEDGER:** [FTD-0041](../07_assessment/core_ledgers/LEDGER.md#ftd-0041), [FTD-0096](../07_assessment/core_ledgers/LEDGER.md#ftd-0096)
