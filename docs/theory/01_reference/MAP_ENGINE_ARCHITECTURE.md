@@ -125,7 +125,7 @@ GPU acceleration is built as a complete parallel port of `RenderBridge`. All lat
 * **`kernels_stencil_single.cu` & `kernels_stencil_dual.cu`**: GPU-side wave propagation. Launches highly parallel 18-point stencil loops over the 3D grid.
 * **`kernels_poisson.cu`**: Ultra-fast Poisson solver executing spectral 3D Fast Fourier Transforms (cuFFT) to resolve Gauss projections and Coulomb potentials on device.
 * **`kernels_forces.cu`**: Launches threads per manifested particle to integrate forces (Poisson Coulomb, magnetic curl, tier-2 gravity) and update positions on device.
-* **`kernels_aux.cu`**: Langevin noise generators and Larmor radiation reducers.
+* **`kernels_aux.cu`**: auxiliary kernels — EW background drive, absorbing/reflective boundaries, weak transmutation, pair production. (Larmor radiation-reaction damping is not here: it is applied inside the single-/dual-substrate stencil kernels through `effective_damping` in `kernels_stencil_common.cuh`, which calls the shared `ftd/larmor_damping.h` law; the Langevin OU update lives in `kernels_stencil_single.cu`.)
 * **`kernels_gauge.cu` & `kernels_eft.cu`**: Parallel non-Abelian link updates and dual continuity auditors.
 * **`atom_engine_gpu.cu` & `particle_engine_gpu.cu`**: Device-side pair-force kernels (coulomb + vdW) compiled to accelerate continuous space engines.
 * **`wilson_dirac_gpu.cu`**: Highly parallel Wilson-Dirac spectral solver.
@@ -354,7 +354,7 @@ source of truth for dependency strings and defaults:
 | **`movement`** | `true` | None | None | `ANY` | Phase-movement: Verlet continuous integration and fractional sub-lattice remainder tracking. |
 | **`lorentz_force`** | `true` | `forces` | None | `ANY` | Phase-forces: Rotational magnetic Lorentz force $F = \alpha s (v \times B)$ where $B = \nabla \times J$. |
 | **`selective_damping`** | `true` | `damping` | None | `ANY` | Phase-write: Damps only near manifested particles, keeping vacuum propagation lossless (vacuum EM is lossless). |
-| **`larmor_radiation`** | `false` | `damping` | `langevin` | `ANY` | Phase-write: Applies radiation reaction damping stochastically proportional to particle acceleration-squared. |
+| **`larmor_radiation`** | `false` | `damping`, `selective_damping` | `langevin` | `ANY` | Phase-write: deterministic radiation-reaction damping at near-particle sites, `eff = damping_factor^gain` with `gain = min(1 + K_LARMOR·a², 256)` (`ftd/larmor_damping.h`, corrected 2026-09-16 — the earlier form could only reduce dissipation). Correct in sign and a² shape but numerically inert at every acceleration the engine realizes (`K_LARMOR·a² ≲ 2×10⁻⁵`); the `K_LARMOR` scale is an open owner decision (`TRACKER_OPEN_ITEMS.md` §1.14). |
 | **`dual_substrate`** | `true` | None | None | `ANY` | Implements chiral splitting $J = J_L + J_R$ to represent matter/antimatter asymmetric substrates. |
 | **`color_forces`** | `false` | None | None | `ANY` | Phase-forces: Activates SU(3)-inspired color coupling between quarks based on color charges. |
 | **`weak_transmutation`**| `true` | `dual_substrate`| None | `ANY` | Tick: Triggers flavor-changing weak transmutes stochastically when field stress exceeds the weak energy barrier. |

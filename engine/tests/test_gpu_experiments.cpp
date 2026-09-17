@@ -1269,7 +1269,8 @@ static void test_bremsstrahlung() {
         gpu.run(RUN_TICKS);
         auto c1 = gpu.energy_audit();
 
-        // For static particles, damping should be near LARMOR_FLOOR
+        // For static particles (a = 0) the corrected law (ftd/larmor_damping.h,
+        // since b7ea1023) gives exactly the baseline damping: gain = 1.
         double field_ratio = (c0.field_energy > 1e-20) ? c1.field_energy / c0.field_energy : 1.0;
         static_damping_rate = 1.0 - field_ratio;
         std::printf("  Static: field_e ratio=%.4f (damping=%.4f)\n", field_ratio, static_damping_rate);
@@ -1278,17 +1279,22 @@ static void test_bremsstrahlung() {
 
     // --- Checks ---
     // BREM-1: Larmor modulation is active in the code (verified by
-    // constant checks BREM-5/6).  At single-particle scale with
-    // acceleration ~ 5e-6, the Larmor correction to damping is
-    // K_LARMOR * a^2 ~ 2.6 * 3e-11 ~ 8e-11 per tick — well below
-    // the base ALPHA damping of 0.007.  The ON/OFF difference is real
-    // but below measurement threshold at this lattice scale.
+    // constant checks BREM-5/6).  The law is ftd/larmor_damping.h
+    // (since b7ea1023, 2026-09-16): gain = min(1 + K_LARMOR*a^2, 256),
+    // eff = damping_factor^gain.  At single-particle scale with
+    // acceleration ~ 5e-6 the gain excess is K_LARMOR * a^2 ~ 33.9 * 2.5e-11
+    // ~ 8e-10, i.e. an extra per-tick loss of ~6e-12 against the base ALPHA
+    // damping of 0.0073.  The ON/OFF difference is real but below
+    // measurement threshold at this lattice scale -- and at EVERY
+    // acceleration the engine realizes (|a| <~ 7e-4 => K*a^2 <~ 2e-5);
+    // test_larmor.cpp LAM-6b pins ON == OFF to 0.1%.
     //
     // FTD DEVIATION: Larmor radiation (P ~ a^2) is [IMPOSED] physics
-    // adopted from SM.  The coefficient K_LARMOR = 4/(3*K_B) is chosen
-    // so the correct P emerges, but at single-lattice-unit scale the
-    // effect is ~10^-11 relative to base damping.  Measurable Larmor
-    // effects require sustained high-acceleration dynamics.
+    // adopted from SM.  The coefficient K_LARMOR = 4*N_EFF/(3*K_B) ~= 33.9
+    // is an imposed dimensionless scale (no bridge from a power to a
+    // dimensionless exponent); whether to rescale it or change the form
+    // is an open owner decision (TRACKER_OPEN_ITEMS.md section 1.14).
+    // Measurable Larmor effects need |a| >~ 5e-3 (gain excess >= 1e-3).
     double ke_diff = std::abs(ke_larmor_on - ke_larmor_off);
     double p_diff  = std::abs(poynting_larmor_on - poynting_larmor_off);
     std::printf("  BREM-1: KE diff=%.4e, Poynting diff=%.4e, accel=%.4e\n",
@@ -1310,9 +1316,10 @@ static void test_bremsstrahlung() {
           "BREM-3: Acceleration magnitude > 0 at accelerating particle");
 
     // BREM-4: Static particles have damping (selective_damping applies near particles)
-    // With Larmor ON + selective_damping, static particles get LARMOR_FLOOR
-    // modulation. Over 2000 ticks, significant damping is expected but field
-    // should not vanish completely.
+    // With Larmor ON + selective_damping, static particles (a = 0) take exactly
+    // the baseline damping (gain = 1; LARMOR_FLOOR no longer enters the law and
+    // is retained only for the BREM-6 constant pin). Over 2000 ticks,
+    // significant damping is expected but field should not vanish completely.
     CHECK(static_damping_rate < 1.0,
           "BREM-4: Static particles have bounded damping (field not fully destroyed)");
 
