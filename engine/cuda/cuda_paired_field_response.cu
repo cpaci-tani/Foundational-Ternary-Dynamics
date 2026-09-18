@@ -1,5 +1,7 @@
 #include "ftd/eft/cuda_paired_field_response.h"
 
+#include "cuda_curl_index_helpers.cuh"
+
 #include <cuda_runtime.h>
 
 #include <algorithm>
@@ -57,52 +59,14 @@ DeviceTriplet view(const CudaMatchedFieldDeviceView& field) {
   return {field.x,field.y,field.z};
 }
 
-__device__ int wrap_coordinate(int value,int L) {
-  value%=L;
-  return value<0?value+L:value;
-}
-
-__device__ std::size_t index_at(int x,int y,int z,int L) {
-  return (static_cast<std::size_t>(wrap_coordinate(x,L))*L
-      +wrap_coordinate(y,L))*L+wrap_coordinate(z,L);
-}
-
-__device__ double component(DeviceTriplet field,int axis,
-                            int x,int y,int z,int L) {
-  const auto index=index_at(x,y,z,L);
-  return axis==0?field.x[index]:(axis==1?field.y[index]:field.z[index]);
-}
-
-__device__ double curl_component(DeviceTriplet edge,int axis,
-                                 int x,int y,int z,int L) {
-  const auto f=[&](int c,int xx,int yy,int zz) {
-    return component(edge,c,xx,yy,zz,L);
-  };
-  if(axis==0)
-    return f(2,x,y,z)-f(2,x,y-1,z)-f(1,x,y,z)+f(1,x,y,z-1);
-  if(axis==1)
-    return f(0,x,y,z)-f(0,x,y,z-1)-f(2,x,y,z)+f(2,x-1,y,z);
-  return f(1,x,y,z)-f(1,x-1,y,z)-f(0,x,y,z)+f(0,x,y-1,z);
-}
-
-__device__ double curl_adjoint_component(DeviceTriplet face,int axis,
-                                         int x,int y,int z,int L) {
-  const auto f=[&](int c,int xx,int yy,int zz) {
-    return component(face,c,xx,yy,zz,L);
-  };
-  if(axis==0)
-    return f(2,x,y+1,z)-f(2,x,y,z)-f(1,x,y,z+1)+f(1,x,y,z);
-  if(axis==1)
-    return f(0,x,y,z+1)-f(0,x,y,z)-f(2,x+1,y,z)+f(2,x,y,z);
-  return f(1,x+1,y,z)-f(1,x,y,z)-f(0,x,y+1,z)+f(0,x,y,z);
-}
-
-__device__ double integer_magnetic_component(
-    DeviceTriplet electric,DeviceTriplet magnetic,int axis,
-    int x,int y,int z,int L,double half_step_scale) {
-  return component(magnetic,axis,x,y,z,L)
-      +half_step_scale*curl_adjoint_component(electric,axis,x,y,z,L);
-}
+// Periodic index + staggered-lattice curl helpers are shared with the other
+// EFT observer TUs; see engine/cuda/cuda_curl_index_helpers.cuh. The former
+// local `integer_magnetic_component` is the header's `integer_edge_component`
+// (same body, same argument order).
+using device_field::component;
+using device_field::curl_adjoint_component;
+using device_field::curl_component;
+using device_field::integer_edge_component;
 
 __device__ double periodic_delta(double coordinate,double center,int L) {
   double result=coordinate-center;
@@ -191,17 +155,17 @@ __global__ void paired_region_kernel(
       const double longitudinal=region_longitudinal(
           cx,cy,cz,lx,ly,lz,px,py,pz,L);
       const double ma=family==0?component(moving_e,axis,x,y,z,L)
-          :integer_magnetic_component(moving_e,moving_b,axis,x,y,z,L,
-                                      half_step_scale);
+          :integer_edge_component(moving_e,moving_b,axis,x,y,z,L,
+                                  half_step_scale);
       const double ra=family==0?component(rest_e,axis,x,y,z,L)
-          :integer_magnetic_component(rest_e,rest_b,axis,x,y,z,L,
-                                      half_step_scale);
+          :integer_edge_component(rest_e,rest_b,axis,x,y,z,L,
+                                  half_step_scale);
       const double mb=family==0?component(moving_bound_e,axis,x,y,z,L)
-          :integer_magnetic_component(moving_bound_e,moving_bound_b,
-                                      axis,x,y,z,L,half_step_scale);
+          :integer_edge_component(moving_bound_e,moving_bound_b,
+                                  axis,x,y,z,L,half_step_scale);
       const double rb=family==0?component(rest_bound_e,axis,x,y,z,L)
-          :integer_magnetic_component(rest_bound_e,rest_bound_b,
-                                      axis,x,y,z,L,half_step_scale);
+          :integer_edge_component(rest_bound_e,rest_bound_b,
+                                  axis,x,y,z,L,half_step_scale);
       const double channel_values[4]={ma,ra,ma-mb,ra-rb};
       for(int channel=0;channel<2;++channel) {
         const double moving=channel_values[2*channel];

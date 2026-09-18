@@ -1,37 +1,17 @@
 #include "ftd/eft/matched_regional_energy_transport.h"
 
+#include "ftd/eft/matched_field_helpers.h"
+
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <vector>
 
 namespace ftd::eft {
+
+using namespace matched_field_helpers;
+
 namespace {
-
-bool finite(const std::vector<double>& values) {
-  return std::all_of(values.begin(), values.end(),
-      [](double value) { return std::isfinite(value); });
-}
-
-bool finite(const MatchedFaceFlux& field) {
-  return finite(field.x) && finite(field.y) && finite(field.z);
-}
-
-bool finite(const MatchedEdgeField& field) {
-  return finite(field.x) && finite(field.y) && finite(field.z);
-}
-
-bool valid_size(const MatchedFaceFlux& field, int L) {
-  const auto count = static_cast<std::size_t>(L) * L * L;
-  return field.L == L && field.x.size() == count
-      && field.y.size() == count && field.z.size() == count;
-}
-
-bool valid_size(const MatchedEdgeField& field, int L) {
-  const auto count = static_cast<std::size_t>(L) * L * L;
-  return field.L == L && field.x.size() == count
-      && field.y.size() == count && field.z.size() == count;
-}
 
 double periodic_distance(double coordinate, double origin, int L) {
   double delta = coordinate - origin;
@@ -49,46 +29,6 @@ bool inside(const Vec3& position,
                    periodic_distance(position.y, center.y, L),
                    periodic_distance(position.z, center.z, L)})
       <= radius;
-}
-
-long double dot(const std::vector<double>& lhs,
-                const std::vector<double>& rhs) {
-  long double result = 0.0L;
-  for (std::size_t i = 0; i < lhs.size(); ++i)
-    result += static_cast<long double>(lhs[i]) * rhs[i];
-  return result;
-}
-
-long double dot(const MatchedFaceFlux& lhs,
-                const MatchedFaceFlux& rhs) {
-  return dot(lhs.x, rhs.x) + dot(lhs.y, rhs.y) + dot(lhs.z, rhs.z);
-}
-
-long double dot(const MatchedEdgeField& lhs,
-                const MatchedEdgeField& rhs) {
-  return dot(lhs.x, rhs.x) + dot(lhs.y, rhs.y) + dot(lhs.z, rhs.z);
-}
-
-double max_difference(const std::vector<double>& lhs,
-                      const std::vector<double>& rhs) {
-  double result = 0.0;
-  for (std::size_t i = 0; i < lhs.size(); ++i)
-    result = std::max(result, std::abs(lhs[i] - rhs[i]));
-  return result;
-}
-
-double max_difference(const MatchedFaceFlux& lhs,
-                      const MatchedFaceFlux& rhs) {
-  return std::max({max_difference(lhs.x, rhs.x),
-                   max_difference(lhs.y, rhs.y),
-                   max_difference(lhs.z, rhs.z)});
-}
-
-double max_difference(const MatchedEdgeField& lhs,
-                      const MatchedEdgeField& rhs) {
-  return std::max({max_difference(lhs.x, rhs.x),
-                   max_difference(lhs.y, rhs.y),
-                   max_difference(lhs.z, rhs.z)});
 }
 
 MatchedFaceFlux masked(const MatchedFaceFlux& field,

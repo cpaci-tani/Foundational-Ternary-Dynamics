@@ -1,6 +1,7 @@
 #include "ftd/eft/implicit_atomic_endpoint_solve.h"
 
 #include "ftd/constants.h"
+#include "ftd/eft/compatibility_analysis_helpers.h"
 #include "ftd/eft/matched_face_energy_transaction.h"
 #include "ftd/eft/spacetime_worldline_coupling.h"
 
@@ -12,42 +13,12 @@
 namespace ftd::eft {
 namespace {
 
-Vec3 position(const ContactCarrierRecord& carrier) {
-  return {carrier.anchor.x+carrier.remainder.x,
-          carrier.anchor.y+carrier.remainder.y,
-          carrier.anchor.z+carrier.remainder.z};
-}
-
-void add(MatchedFaceFlux& target, const MatchedFaceFlux& value) {
-  for (std::size_t i = 0; i < target.x.size(); ++i) {
-    target.x[i] += value.x[i];
-    target.y[i] += value.y[i];
-    target.z[i] += value.z[i];
-  }
-}
-
-void add_scaled(MatchedFaceFlux& target,
-                const MatchedFaceFlux& value, double amount) {
-  for (std::size_t i = 0; i < target.x.size(); ++i) {
-    target.x[i] += amount*value.x[i];
-    target.y[i] += amount*value.y[i];
-    target.z[i] += amount*value.z[i];
-  }
-}
-
-void scale(MatchedFaceFlux& target, double amount) {
-  for (std::size_t i = 0; i < target.x.size(); ++i) {
-    target.x[i] *= amount;
-    target.y[i] *= amount;
-    target.z[i] *= amount;
-  }
-}
-
-double momentum_from_speed(double speed) {
-  const double h = E_REST/std::sqrt(
-      1.0-speed*speed/(C_SPEED*C_SPEED));
-  return h*speed/(C_SPEED*C_SPEED);
-}
+using detail::add;
+using detail::add_scaled;
+using detail::decompose;
+using detail::momentum_from_speed;
+using detail::position;
+using detail::scale;
 
 std::array<double, 6> flatten(
     const std::array<Vec3, 2>& values) {
@@ -144,14 +115,9 @@ ImplicitAtomicInitialFixture make_implicit_atomic_initial_fixture(
     result.free_end_position[i] = result.start_position[i]+unit*speed;
     result.charge[i] = source.polarity;
     result.prescribed_kinetic_start[i] = unit*p0;
-    Coord end_anchor{
-        static_cast<int>(std::floor(result.free_end_position[i].x)),
-        static_cast<int>(std::floor(result.free_end_position[i].y)),
-        static_cast<int>(std::floor(result.free_end_position[i].z))};
-    const Vec3 end_remainder{
-        result.free_end_position[i].x-end_anchor.x,
-        result.free_end_position[i].y-end_anchor.y,
-        result.free_end_position[i].z-end_anchor.z};
+    Coord end_anchor{};
+    Vec3 end_remainder{};
+    decompose(result.free_end_position[i], end_anchor, end_remainder);
     const auto current = make_spacetime_worldline_current(
         L, source.anchor, source.remainder, end_anchor, end_remainder,
         source.polarity, result.temporal_scale);

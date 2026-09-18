@@ -1,26 +1,17 @@
 // Registered observations of accepted CUDA evolution. No kernel/law changes.
+#include "campaign_scaffolding.h"
 #include "staged_cuda.h"
 #include "frozen_tables.h"
-#include <openssl/sha.h>
 #include <filesystem>
 #include <fstream>
-#include <iomanip>
 #include <iostream>
 #include <iterator>
-#include <sstream>
 #include <stdexcept>
 
 namespace {
 using namespace ftd::strict;
-std::string digest(const std::vector<std::uint8_t>& bytes) {
-    unsigned char hash[SHA256_DIGEST_LENGTH];
-    SHA256(bytes.data(),bytes.size(),hash);
-    std::ostringstream out;out<<std::hex<<std::setfill('0');
-    for(auto byte:hash)out<<std::setw(2)<<unsigned(byte);
-    return out.str();
-}
 void observe(std::ostream& out,const State& st) {
-    out<<"{\"microtick\":\""<<st.microtick<<"\",\"sha256\":\""<<digest(encode(st))
+    out<<"{\"microtick\":\""<<st.microtick<<"\",\"sha256\":\""<<campaign::digest(encode(st))
        <<"\",\"L\":"<<st.L<<",\"work\":"<<work_units(st)<<",\"field\":[";
     bool first=true;
     for(std::size_t x=0;x<st.s.size();++x)for(unsigned c=0;c<384;++c)if(st.bank[x*384+c]) {
@@ -48,24 +39,18 @@ void observe(std::ostream& out,const State& st) {
 int main(int argc,char** argv) {
     try {
         if(argc!=4)throw std::runtime_error("usage: carrier_campaign MANIFEST_TSV TRACE_JSONL TICKS");
-        std::string count=argv[3];
-        if(count.empty()||count.find_first_not_of("0123456789")!=std::string::npos)
-            throw std::runtime_error("invalid tick count");
-        auto ticks=std::stoull(count);
+        auto ticks=campaign::parse_decimal_count(argv[3],"invalid tick count");
         if(ticks!=64)throw std::runtime_error("registered carrier horizon is exactly64 physical ticks");
         std::ifstream manifest(argv[1]);if(!manifest)throw std::runtime_error("cannot open manifest");
-        std::filesystem::path target(argv[2]),partial=target.string()+".part";
-        if(std::filesystem::exists(target))throw std::runtime_error("refuse to overwrite completed campaign trace");
-        std::ofstream output(partial);if(!output)throw std::runtime_error("cannot open trace");
+        const std::filesystem::path target(argv[2]);
+        campaign::refuse_existing_trace(target,"refuse to overwrite completed campaign trace");
+        auto output=campaign::open_partial_trace(target,"cannot open trace");
         std::cerr<<gpu::device_json()<<'\n';
         unsigned cases=0;std::string line;
         while(std::getline(manifest,line)) {
-            if(!line.empty()&&line.back()=='\r')line.pop_back();
-            auto separator=line.find('\t');
-            if(separator==std::string::npos)throw std::runtime_error("manifest must contain caseID<TAB>binary path");
-            const auto id=line.substr(0,separator),path=line.substr(separator+1);
-            if(id.empty()||id.find_first_not_of("abcdefghijklmnopqrstuvwxyz0123456789_")!=std::string::npos)
-                throw std::runtime_error("invalid registered caseID");
+            campaign::strip_carriage_return(line);
+            const auto [id,path]=campaign::split_manifest_row(line,"manifest must contain caseID<TAB>binary path");
+            campaign::validate_case_id(id);
             std::ifstream input(path,std::ios::binary);if(!input)throw std::runtime_error("cannot read preparation");
             std::vector<std::uint8_t> bytes((std::istreambuf_iterator<char>(input)),{});
             auto state=decode(bytes);
@@ -78,15 +63,11 @@ int main(int argc,char** argv) {
             }
             output<<"],\"events\":"<<events_json(events)<<"}\n";
             if(!output)throw std::runtime_error("trace write failed");
-            auto final_path=std::filesystem::path(path);final_path.replace_extension(".final.bin");
-            std::ofstream final(final_path,std::ios::binary);auto final_bytes=encode(state);
-            final.write(reinterpret_cast<const char*>(final_bytes.data()),std::streamsize(final_bytes.size()));
-            if(!final)throw std::runtime_error("endpoint snapshot write failed");
+            campaign::write_endpoint_snapshot(path,state);
             if(++cases%50==0)std::cerr<<"completed_cases="<<cases<<'\n';
         }
         if(cases!=600)throw std::runtime_error("registered matrix must contain exactly600 cases");
-        output.close();if(!output)throw std::runtime_error("trace close failed");
-        std::filesystem::rename(partial,target);
+        campaign::publish_trace(output,target);
         std::cerr<<"completed_cases="<<cases<<" microticks="<<cases*ticks<<'\n';
         return 0;
     } catch(const std::exception& e) {std::cerr<<"carrier campaign failed: "<<e.what()<<'\n';return 1;}

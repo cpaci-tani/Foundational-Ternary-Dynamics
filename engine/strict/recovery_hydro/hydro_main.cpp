@@ -1,6 +1,6 @@
 // Registered stroboscopic observation of the accepted CUDA evolution. No kernel or law changes.
+#include "campaign_scaffolding.h"
 #include "staged_cuda.h"
-#include <openssl/sha.h>
 #include <cmath>
 #include <cstdint>
 #include <filesystem>
@@ -17,21 +17,13 @@ namespace {
 using namespace ftd::strict;
 constexpr unsigned MODES = 7, CHANNELS = 192, PERIOD = 48;
 
-std::string digest(const std::vector<std::uint8_t>& bytes) {
-    unsigned char hash[SHA256_DIGEST_LENGTH];
-    SHA256(bytes.data(), bytes.size(), hash);
-    std::ostringstream out; out << std::hex << std::setfill('0');
-    for (auto byte : hash) out << std::setw(2) << unsigned(byte);
-    return out.str();
-}
-
 struct Case { std::string id, path; unsigned L; long mx, my, mz; unsigned offset; };
 
 std::vector<std::vector<long>> read_weights(const std::string& path) {
     std::ifstream in(path); if (!in) throw std::runtime_error("cannot open weights");
     std::vector<std::vector<long>> weights; std::string line;
     while (std::getline(in, line)) {
-        if (!line.empty() && line.back() == '\r') line.pop_back();
+        campaign::strip_carriage_return(line);
         if (line.empty()) continue;
         std::vector<long> row; std::istringstream fields(line); long v;
         while (fields >> v) row.push_back(v);
@@ -60,7 +52,7 @@ void observe(std::ostream& out, const State& st, const Case& c, const std::vecto
         const double cs = std::cos(theta), sn = std::sin(theta);
         for (unsigned a = 0; a < MODES; ++a) { re[a] += site[a] * cs; im[a] += site[a] * sn; }
     }
-    out << "\"microtick\":\"" << st.microtick << "\",\"sha256\":\"" << digest(encode(st))
+    out << "\"microtick\":\"" << st.microtick << "\",\"sha256\":\"" << campaign::digest(encode(st))
         << "\",\"population\":" << population << ",\"moments\":[";
     out << std::setprecision(17);
     for (unsigned a = 0; a < MODES; ++a) out << (a ? "," : "") << '[' << re[a] << ',' << im[a] << ']';
@@ -72,8 +64,7 @@ Case parse(const std::string& line) {
     if (!std::getline(fields, c.id, '\t') || !std::getline(fields, c.path, '\t') || !std::getline(fields, L, '\t')
         || !std::getline(fields, mx, '\t') || !std::getline(fields, my, '\t') || !std::getline(fields, mz, '\t')
         || !std::getline(fields, off, '\t')) throw std::runtime_error("manifest line needs 7 tab-separated fields");
-    if (c.id.empty() || c.id.find_first_not_of("abcdefghijklmnopqrstuvwxyz0123456789_") != std::string::npos)
-        throw std::runtime_error("invalid registered caseID");
+    campaign::validate_case_id(c.id);
     c.L = unsigned(std::stoul(L)); c.mx = std::stol(mx); c.my = std::stol(my); c.mz = std::stol(mz);
     c.offset = unsigned(std::stoul(off));
     if (c.offset != 0 && c.offset != 192) throw std::runtime_error("polarity offset must be 0 or 192");
@@ -84,19 +75,16 @@ Case parse(const std::string& line) {
 int main(int argc, char** argv) {
     try {
         if (argc != 5) throw std::runtime_error("usage: hydro_campaign MANIFEST_TSV TRACE_JSONL WEIGHTS_TSV STROBOSCOPES");
-        std::string count = argv[4];
-        if (count.empty() || count.find_first_not_of("0123456789") != std::string::npos)
-            throw std::runtime_error("invalid stroboscope count");
-        const auto stroboscopes = std::stoull(count);
+        const auto stroboscopes = campaign::parse_decimal_count(argv[4], "invalid stroboscope count");
         const auto weights = read_weights(argv[3]);
         std::ifstream manifest(argv[1]); if (!manifest) throw std::runtime_error("cannot open manifest");
-        std::filesystem::path target(argv[2]), partial = target.string() + ".part";
-        if (std::filesystem::exists(target)) throw std::runtime_error("refuse to overwrite completed campaign trace");
-        std::ofstream output(partial); if (!output) throw std::runtime_error("cannot open trace");
+        const std::filesystem::path target(argv[2]);
+        campaign::refuse_existing_trace(target, "refuse to overwrite completed campaign trace");
+        auto output = campaign::open_partial_trace(target, "cannot open trace");
         std::cerr << gpu::device_json() << '\n';
         unsigned cases = 0; std::string line;
         while (std::getline(manifest, line)) {
-            if (!line.empty() && line.back() == '\r') line.pop_back();
+            campaign::strip_carriage_return(line);
             if (line.empty()) continue;
             const Case c = parse(line);
             std::ifstream input(c.path, std::ios::binary); if (!input) throw std::runtime_error("cannot read preparation");
@@ -117,15 +105,11 @@ int main(int argc, char** argv) {
             }
             output << "]}\n";
             if (!output) throw std::runtime_error("trace write failed");
-            auto final_path = std::filesystem::path(c.path); final_path.replace_extension(".final.bin");
-            std::ofstream final(final_path, std::ios::binary); auto final_bytes = encode(state);
-            final.write(reinterpret_cast<const char*>(final_bytes.data()), std::streamsize(final_bytes.size()));
-            if (!final) throw std::runtime_error("endpoint snapshot write failed");
+            campaign::write_endpoint_snapshot(c.path, state);
             std::cerr << "completed_cases=" << ++cases << '\n';
         }
         if (!cases) throw std::runtime_error("empty manifest");
-        output.close(); if (!output) throw std::runtime_error("trace close failed");
-        std::filesystem::rename(partial, target);
+        campaign::publish_trace(output, target);
         std::cerr << "completed_cases=" << cases << " microticks=" << cases * stroboscopes * PERIOD << '\n';
         return 0;
     } catch (const std::exception& e) { std::cerr << "hydro campaign failed: " << e.what() << '\n'; return 1; }

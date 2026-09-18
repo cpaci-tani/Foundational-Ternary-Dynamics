@@ -1,5 +1,7 @@
 #include "ftd/eft/cuda_quadratic_coat_orbit_gather.h"
 
+#include "cuda_curl_index_helpers.cuh"
+
 #include <cuda_runtime.h>
 
 #include <algorithm>
@@ -112,14 +114,11 @@ __device__ double b2(double u) {
   return 0.0;
 }
 
-__device__ int wrap(int value,int L) {
-  value%=L;
-  return value<0?value+L:value;
-}
-
-__device__ std::size_t index(int x,int y,int z,int L) {
-  return (static_cast<std::size_t>(wrap(x,L))*L+wrap(y,L))*L+wrap(z,L);
-}
+// Periodic index helpers are shared with the other EFT observer TUs; see
+// engine/cuda/cuda_curl_index_helpers.cuh. The former local `index` is the
+// header's `lattice_index` (same body); the former local `wrap` was only ever
+// called from it.
+using device_field::lattice_index;
 
 __device__ double field_coefficient(
     CudaMatchedFieldDeviceView field,int axis,std::size_t item) {
@@ -142,7 +141,7 @@ __device__ double face_component_at(
         const double wz=axis==2?b1(position.z-z-0.5):b2(position.z-z);
         if(wz==0.0) continue;
         result+=wx*wy*wz*field_coefficient(
-            field,axis,index(x,y,z,field.L));
+            field,axis,lattice_index(x,y,z,field.L));
       }
     }
   }
@@ -165,7 +164,7 @@ __device__ double edge_component_at(
         const double wz=axis==2?b2(position.z-z):b1(position.z-z-0.5);
         if(wz==0.0) continue;
         result+=wx*wy*wz*field_coefficient(
-            field,axis,index(x,y,z,field.L));
+            field,axis,lattice_index(x,y,z,field.L));
       }
     }
   }
@@ -199,7 +198,7 @@ __device__ double sparse_component_at(
         const double wz=axis==2?b1(position.z-z-0.5):b2(position.z-z);
         if(wz==0.0) continue;
         result+=wx*wy*wz*sparse_coefficient(
-            entries,entry_count,axis,index(x,y,z,L));
+            entries,entry_count,axis,lattice_index(x,y,z,L));
       }
     }
   }

@@ -1,18 +1,11 @@
 #include "ftd/eft/catalytic_phase_reference.h"
 
+#include "ftd/eft/canonical_pair_ops.h"
+
 #include <cmath>
 
 namespace ftd::eft {
 namespace {
-
-bool finite_pair(const CanonicalCarrierPair& pair) {
-  return std::isfinite(pair.q) && std::isfinite(pair.p);
-}
-
-double pair_action(const CanonicalCarrierPair& pair) {
-  const double radius = std::hypot(pair.q, pair.p);
-  return 0.5 * radius * radius;
-}
 
 struct PhaseFrame {
   bool valid = false;
@@ -71,10 +64,7 @@ PhaseReferenceRotationResult rotate_catalytic_phase_reference(
     return result;
   }
   result.action_before = pair_action(reference);
-  const double cosine = std::cos(phase_advance);
-  const double sine = std::sin(phase_advance);
-  result.after.q = cosine * reference.q + sine * reference.p;
-  result.after.p = -sine * reference.q + cosine * reference.p;
+  result.after = rotate_pair(reference, phase_advance);
   if (!finite_pair(result.after)) {
     result.status = CatalyticPhaseReferenceStatus::NonFiniteOutput;
     return result;

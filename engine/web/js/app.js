@@ -36,7 +36,6 @@ import { K_B } from './constants.js';
 // ALPHA, G_STAR, VARPI, X_PLUS, X_MINUS, TICK_PHASES, K_B,
 // K_GENESIS, C_SPEED, ONTIC_LAYERS, ONTIC_TOTAL_CONSTANTS
 // now imported directly by ui/app-ontic.js.
-import { AggregateDetector, EmergenceMonitor } from './aggregation-bridge.js?v=2';
 import { createOnticPanel } from './ui/app-ontic.js';
 import { BackgroundManager } from './backgrounds.js';
 import { AppShell } from './ui/shell/app-shell.js?v=32';
@@ -408,8 +407,6 @@ function _resetAllVisualState() {
 
 // Phase 1-3 state
 let observatory = null;
-let aggregateDetector = null;
-let emergenceMonitor = null;
 let _physicsZ = 1; // current Z for physics tab
 // Ontic panel provider (Wave 2 ticket 7) — bound to live-state getters so
 // it reads bridge/engineMode/observatory/etc. via deps at call time.
@@ -678,14 +675,12 @@ async function init() {
     interactionHierarchyPanel?.setInspector?.(inspector);
 
     // Build ontic-panel provider with live-state getters (Wave 2 ticket 7).
-    // observatory/aggregateDetector/emergenceMonitor are created below; the
-    // getters tolerate nulls so populateConstants() can run first.
+    // observatory is created below; the getters tolerate nulls so
+    // populateConstants() can run first.
     onticPanel = createOnticPanel({
         getBridge:            () => bridge,
         getEngineMode:        () => engineMode,
         getObservatory:       () => observatory,
-        getAggregateDetector: () => aggregateDetector,
-        getEmergenceMonitor:  () => emergenceMonitor,
         getPhysicsZ:          () => _physicsZ,
         setPhysicsZ:          (z) => { _physicsZ = z; },
     });
@@ -698,8 +693,6 @@ async function init() {
 
     _loadProgress(60, 'Initializing observatory...');
     observatory = new OnticObservatory();
-    aggregateDetector = new AggregateDetector();
-    emergenceMonitor = new EmergenceMonitor(500);
     onticPanel.initOnticPhysicsHierarchy();
 
     _loadProgress(70, 'Wiring controls...');

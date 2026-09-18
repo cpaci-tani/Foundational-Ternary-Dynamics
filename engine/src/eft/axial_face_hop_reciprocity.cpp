@@ -1,11 +1,16 @@
 #include "ftd/eft/axial_face_hop_reciprocity.h"
 
+#include "ftd/eft/matched_face_flux_ops.h"
+
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <limits>
 
 namespace ftd::eft {
+
+using namespace matched_face_flux_ops;  // add_scaled, dot, max_difference
+
 namespace {
 
 double component(const Vec3& value, int axis) {
@@ -146,28 +151,6 @@ MatchedFaceFlux as_face_flux(const FaceCurrentSegment& current) {
   return result;
 }
 
-void add_scaled(MatchedFaceFlux& target,
-                const MatchedFaceFlux& value,
-                double scale) {
-  for (std::size_t i = 0; i < target.x.size(); ++i) {
-    target.x[i] += scale * value.x[i];
-    target.y[i] += scale * value.y[i];
-    target.z[i] += scale * value.z[i];
-  }
-}
-
-long double dot(const MatchedFaceFlux& lhs,
-                const MatchedFaceFlux& rhs) {
-  if (lhs.L != rhs.L || lhs.x.size() != rhs.x.size()) return NAN;
-  long double result = 0.0L;
-  for (std::size_t i = 0; i < lhs.x.size(); ++i) {
-    result += static_cast<long double>(lhs.x[i]) * rhs.x[i]
-        + static_cast<long double>(lhs.y[i]) * rhs.y[i]
-        + static_cast<long double>(lhs.z[i]) * rhs.z[i];
-  }
-  return result;
-}
-
 double energy_change(const MatchedFaceFlux& before,
                      const MatchedFaceFlux& after) {
   if (before.L != after.L || before.x.size() != after.x.size()) return NAN;
@@ -181,19 +164,6 @@ double energy_change(const MatchedFaceFlux& before,
                       - static_cast<long double>(before.z[i]) * before.z[i]);
   }
   return static_cast<double>(result);
-}
-
-double max_difference(const MatchedFaceFlux& lhs,
-                      const MatchedFaceFlux& rhs) {
-  if (lhs.L != rhs.L || lhs.x.size() != rhs.x.size()) return INFINITY;
-  double residual = 0.0;
-  for (std::size_t i = 0; i < lhs.x.size(); ++i) {
-    residual = std::max({residual,
-        std::abs(lhs.x[i] - rhs.x[i]),
-        std::abs(lhs.y[i] - rhs.y[i]),
-        std::abs(lhs.z[i] - rhs.z[i])});
-  }
-  return residual;
 }
 
 double max_difference(const std::vector<double>& lhs,

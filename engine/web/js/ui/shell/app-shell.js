@@ -15,7 +15,6 @@ import { KeyboardHelpComponent } from '../components/keyboard-help/component.js'
 import { ensurePanelResources } from '../components/panel-resources/component.js?v=12';
 import { annotatePanelElements, getPanelLabel, getPanelRegistry, validatePanelRegistry } from '../scale-registry/panel-registry.js?v=5';
 import { createScaleUiRegistry } from '../scale-registry/register-scale-ui.js?v=4';
-import { registerLegacyToolbarUi } from './register-legacy-toolbar-ui.js';
 import { registerScale0ToolbarUI } from '../../scales/scale0/ui/register-scale0-ui.js?v=4';
 import { registerScale1ToolbarUI } from '../../scales/scale1/ui/register-scale1-ui.js?v=9';
 import { registerScale2ToolbarUI } from '../../scales/scale2/ui/register-scale2-ui.js';
@@ -60,7 +59,6 @@ export class AppShell {
         registerScale3ToolbarUI(this.scaleUiRegistry.toolbar);
         registerScale4ToolbarUI(this.scaleUiRegistry.toolbar);
         registerScale5ToolbarUI(this.scaleUiRegistry.toolbar);
-        registerLegacyToolbarUi(this.scaleUiRegistry.toolbar);
         ensurePanelResources(this.getRegion('panels'));
         annotatePanelElements(this.getRegion('panels'), this.scaleUiRegistry.panels);
         const validation = validatePanelRegistry(this.getRegion('panels'), this.scaleUiRegistry.panels);

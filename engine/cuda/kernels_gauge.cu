@@ -71,6 +71,47 @@ struct GpuSU2 {
             b = GpuComplex(0.0, 0.0);
         }
     }
+
+    // --- Element-wise primitives used by relax_links_kernel ------------------
+    // These are the ONLY parts of the relaxation sweep that differ between
+    // SU(2) and SU(3); everything else (staple geometry, accumulation order,
+    // the local-minimization step) is shared by the template.
+
+    // Loads link `s` in direction `dir` out of the three src buffers. The
+    // direction branch is kept *outside* the element reads, exactly as in the
+    // pre-consolidation kernel, so nvcc materializes the loads — and contracts
+    // the downstream staple products — identically.
+    static __device__ __forceinline__ GpuSU2 fetch(
+        const SU2Link* src_x, const SU2Link* src_y, const SU2Link* src_z, int s, int dir)
+    {
+        GpuSU2 res;
+        if (dir == 0) {
+            res.a = GpuComplex(src_x[s].a.real(), src_x[s].a.imag());
+            res.b = GpuComplex(src_x[s].b.real(), src_x[s].b.imag());
+        } else if (dir == 1) {
+            res.a = GpuComplex(src_y[s].a.real(), src_y[s].a.imag());
+            res.b = GpuComplex(src_y[s].b.real(), src_y[s].b.imag());
+        } else {
+            res.a = GpuComplex(src_z[s].a.real(), src_z[s].a.imag());
+            res.b = GpuComplex(src_z[s].b.real(), src_z[s].b.imag());
+        }
+        return res;
+    }
+
+    __device__ __forceinline__ void to_host(SU2Link& h) const {
+        h.a = std::complex<double>(a.re, a.im);
+        h.b = std::complex<double>(b.re, b.im);
+    }
+
+    // In place: *this = u_old + d * scale, element by element. Written as an
+    // in-place assignment (rather than returning by value) so the emitted
+    // expression tree — and therefore nvcc's FMA-contraction choices — match
+    // the pre-consolidation kernel bit-for-bit.
+    __device__ __forceinline__ void assign_scaled_add(const GpuSU2& u_old, const GpuSU2& d,
+                                                      const GpuComplex& scale) {
+        a = u_old.a + d.a * scale;
+        b = u_old.b + d.b * scale;
+    }
 };
 
 // Device-side SU(3) Link matrix
@@ -154,6 +195,47 @@ struct GpuSU3 {
         m[2][1] = (m[0][2] * m[1][0] - m[0][0] * m[1][2]).conj();
         m[2][2] = (m[0][0] * m[1][1] - m[0][1] * m[1][0]).conj();
     }
+
+    // --- Element-wise primitives used by relax_links_kernel (see GpuSU2) -----
+
+    // Loads link `s` in direction `dir` (see GpuSU2::fetch). The direction
+    // branch is kept *inside* the element loop, exactly as in the
+    // pre-consolidation kernel.
+    static __device__ __forceinline__ GpuSU3 fetch(
+        const SU3Link* src_x, const SU3Link* src_y, const SU3Link* src_z, int s, int dir)
+    {
+        GpuSU3 res;
+        for (int r = 0; r < 3; ++r) {
+            for (int c = 0; c < 3; ++c) {
+                if (dir == 0) {
+                    res.m[r][c] = GpuComplex(src_x[s].m[r][c].real(), src_x[s].m[r][c].imag());
+                } else if (dir == 1) {
+                    res.m[r][c] = GpuComplex(src_y[s].m[r][c].real(), src_y[s].m[r][c].imag());
+                } else {
+                    res.m[r][c] = GpuComplex(src_z[s].m[r][c].real(), src_z[s].m[r][c].imag());
+                }
+            }
+        }
+        return res;
+    }
+
+    __device__ __forceinline__ void to_host(SU3Link& h) const {
+        for (int r = 0; r < 3; ++r) {
+            for (int c = 0; c < 3; ++c) {
+                h.m[r][c] = std::complex<double>(m[r][c].re, m[r][c].im);
+            }
+        }
+    }
+
+    // In place: *this = u_old + d * scale, element by element (see GpuSU2).
+    __device__ __forceinline__ void assign_scaled_add(const GpuSU3& u_old, const GpuSU3& d,
+                                                      const GpuComplex& scale) {
+        for (int r = 0; r < 3; ++r) {
+            for (int c = 0; c < 3; ++c) {
+                m[r][c] = u_old.m[r][c] + d.m[r][c] * scale;
+            }
+        }
+    }
 };
 
 // Coordinate helpers
@@ -166,15 +248,23 @@ __device__ __forceinline__ int idx(int x, int y, int z, int L) {
 }
 
 // -----------------------------------------------------------------------------
-// SU(2) Relaxation Kernel — Jacobi double-buffered (revision 0.9 option a):
-// every staple read comes from src_*, every write goes to dst_*, so threads
-// never observe half-updated neighbor links. Matches the CPU sweep semantics
-// in relax_su2_links_cpu (transmutation_phases.cpp). The caller swaps the
-// src/dst pointers after each launch.
+// Relaxation Kernel, shared by SU(2) and SU(3) — Jacobi double-buffered
+// (revision 0.9 option a): every staple read comes from src_*, every write goes
+// to dst_*, so threads never observe half-updated neighbor links. Matches the
+// CPU sweep semantics in relax_su2_links_cpu (transmutation_phases.cpp). The
+// caller swaps the src/dst pointers after each launch.
+//
+// One implementation serves both gauge groups. The staple geometry, the
+// accumulation order and the local-minimization step are group-independent; the
+// only group-dependent operations are element-wise, and are delegated to the
+// GpuMat type: from_host / to_host (host<->device element load and store),
+// scaled_add (U + dU * scale), conj, and normalize — the last being a 4-vector
+// rescale for SU(2) and a Gram-Schmidt projection for SU(3).
 // -----------------------------------------------------------------------------
-__global__ void relax_su2_links_kernel(
-    const SU2Link* src_x, const SU2Link* src_y, const SU2Link* src_z,
-    SU2Link* dst_x, SU2Link* dst_y, SU2Link* dst_z,
+template <typename GpuMat, typename HostLink>
+__global__ void relax_links_kernel(
+    const HostLink* src_x, const HostLink* src_y, const HostLink* src_z,
+    HostLink* dst_x, HostLink* dst_y, HostLink* dst_z,
     int L, double dt, double beta)
 {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
@@ -185,9 +275,14 @@ __global__ void relax_su2_links_kernel(
 
     int site = idx(x, y, z, L);
 
+    // Fetch links (from the pre-sweep src buffers — never dst)
+    auto fetch_link = [&](int s, int dir) {
+        return GpuMat::fetch(src_x, src_y, src_z, s, dir);
+    };
+
     // Compute staples for each direction
     for (int mu = 0; mu < 3; ++mu) {
-        GpuSU2 staple;
+        GpuMat staple;
         bool first_staple = true;
 
         for (int nu = 0; nu < 3; ++nu) {
@@ -195,8 +290,6 @@ __global__ void relax_su2_links_kernel(
 
             // Positive plaquette contribution:
             // U_nu(x + mu) * U_mu^\dagger(x + nu) * U_nu^\dagger(x)
-            GpuSU2 u_nu_xpmu, u_mu_xpnu, u_nu_x;
-
             int site_xpmu = 0;
             int site_xpnu = 0;
             if (mu == 0) site_xpmu = idx(x + 1, y, z, L);
@@ -207,27 +300,11 @@ __global__ void relax_su2_links_kernel(
             else if (nu == 1) site_xpnu = idx(x, y + 1, z, L);
             else site_xpnu = idx(x, y, z + 1, L);
 
-            // Fetch links (from the pre-sweep src buffers — never dst)
-            auto fetch_link = [&](int s, int dir) {
-                GpuSU2 res;
-                if (dir == 0) {
-                    res.a = GpuComplex(src_x[s].a.real(), src_x[s].a.imag());
-                    res.b = GpuComplex(src_x[s].b.real(), src_x[s].b.imag());
-                } else if (dir == 1) {
-                    res.a = GpuComplex(src_y[s].a.real(), src_y[s].a.imag());
-                    res.b = GpuComplex(src_y[s].b.real(), src_y[s].b.imag());
-                } else {
-                    res.a = GpuComplex(src_z[s].a.real(), src_z[s].a.imag());
-                    res.b = GpuComplex(src_z[s].b.real(), src_z[s].b.imag());
-                }
-                return res;
-            };
+            GpuMat u_nu_xpmu = fetch_link(site_xpmu, nu);
+            GpuMat u_mu_xpnu = fetch_link(site_xpnu, mu);
+            GpuMat u_nu_x = fetch_link(site, nu);
 
-            u_nu_xpmu = fetch_link(site_xpmu, nu);
-            u_mu_xpnu = fetch_link(site_xpnu, mu);
-            u_nu_x = fetch_link(site, nu);
-
-            GpuSU2 term1 = u_nu_xpmu * u_mu_xpnu.conj() * u_nu_x.conj();
+            GpuMat term1 = u_nu_xpmu * u_mu_xpnu.conj() * u_nu_x.conj();
 
             // Negative plaquette contribution:
             // U_nu^\dagger(x + mu - nu) * U_mu^\dagger(x - nu) * U_nu(x - nu)
@@ -250,146 +327,11 @@ __global__ void relax_su2_links_kernel(
                 else site_xpmu_mnu = idx(x, y, z, L);
             }
 
-            GpuSU2 u_nu_xpmu_mnu = fetch_link(site_xpmu_mnu, nu);
-            GpuSU2 u_mu_xmnu = fetch_link(site_xmnust, mu);
-            GpuSU2 u_nu_xmnu = fetch_link(site_xmnust, nu);
+            GpuMat u_nu_xpmu_mnu = fetch_link(site_xpmu_mnu, nu);
+            GpuMat u_mu_xmnu = fetch_link(site_xmnust, mu);
+            GpuMat u_nu_xmnu = fetch_link(site_xmnust, nu);
 
-            GpuSU2 term2 = u_nu_xpmu_mnu.conj() * u_mu_xmnu.conj() * u_nu_xmnu;
-
-            if (first_staple) {
-                staple = term1 + term2;
-                first_staple = false;
-            } else {
-                staple = staple + term1 + term2;
-            }
-        }
-
-        // Local minimization update: U_new = Proj[ U_old + dt * beta * staple^\dagger ]
-        auto fetch_link = [&](int s, int dir) {
-            GpuSU2 res;
-            if (dir == 0) {
-                res.a = GpuComplex(src_x[s].a.real(), src_x[s].a.imag());
-                res.b = GpuComplex(src_x[s].b.real(), src_x[s].b.imag());
-            } else if (dir == 1) {
-                res.a = GpuComplex(src_y[s].a.real(), src_y[s].a.imag());
-                res.b = GpuComplex(src_y[s].b.real(), src_y[s].b.imag());
-            } else {
-                res.a = GpuComplex(src_z[s].a.real(), src_z[s].a.imag());
-                res.b = GpuComplex(src_z[s].b.real(), src_z[s].b.imag());
-            }
-            return res;
-        };
-
-        GpuSU2 u_old = fetch_link(site, mu);
-        GpuSU2 staple_adj = staple.conj();
-        GpuComplex scale(dt * beta, 0.0);
-
-        GpuSU2 u_new;
-        u_new.a = u_old.a + staple_adj.a * scale;
-        u_new.b = u_old.b + staple_adj.b * scale;
-        u_new.normalize();
-
-        // Write back (to the dst buffers — Jacobi, never in place)
-        if (mu == 0) {
-            dst_x[site].a = std::complex<double>(u_new.a.re, u_new.a.im);
-            dst_x[site].b = std::complex<double>(u_new.b.re, u_new.b.im);
-        } else if (mu == 1) {
-            dst_y[site].a = std::complex<double>(u_new.a.re, u_new.a.im);
-            dst_y[site].b = std::complex<double>(u_new.b.re, u_new.b.im);
-        } else {
-            dst_z[site].a = std::complex<double>(u_new.a.re, u_new.a.im);
-            dst_z[site].b = std::complex<double>(u_new.b.re, u_new.b.im);
-        }
-    }
-}
-
-// -----------------------------------------------------------------------------
-// SU(3) Relaxation Kernel — Jacobi double-buffered (see SU(2) note above).
-// -----------------------------------------------------------------------------
-__global__ void relax_su3_links_kernel(
-    const SU3Link* src_x, const SU3Link* src_y, const SU3Link* src_z,
-    SU3Link* dst_x, SU3Link* dst_y, SU3Link* dst_z,
-    int L, double dt, double beta)
-{
-    int x = blockIdx.x * blockDim.x + threadIdx.x;
-    int y = blockIdx.y * blockDim.y + threadIdx.y;
-    int z = blockIdx.z * blockDim.z + threadIdx.z;
-
-    if (x >= L || y >= L || z >= L) return;
-
-    int site = idx(x, y, z, L);
-
-    // Compute staples for each direction
-    for (int mu = 0; mu < 3; ++mu) {
-        GpuSU3 staple;
-        bool first_staple = true;
-
-        for (int nu = 0; nu < 3; ++nu) {
-            if (mu == nu) continue;
-
-            // Positive plaquette contribution:
-            // U_nu(x + mu) * U_mu^\dagger(x + nu) * U_nu^\dagger(x)
-            GpuSU3 u_nu_xpmu, u_mu_xpnu, u_nu_x;
-
-            int site_xpmu = 0;
-            int site_xpnu = 0;
-            if (mu == 0) site_xpmu = idx(x + 1, y, z, L);
-            else if (mu == 1) site_xpmu = idx(x, y + 1, z, L);
-            else site_xpmu = idx(x, y, z + 1, L);
-
-            if (nu == 0) site_xpnu = idx(x + 1, y, z, L);
-            else if (nu == 1) site_xpnu = idx(x, y + 1, z, L);
-            else site_xpnu = idx(x, y, z + 1, L);
-
-            // Fetch links (from the pre-sweep src buffers — never dst)
-            auto fetch_link = [&](int s, int dir) {
-                GpuSU3 res;
-                for (int r = 0; r < 3; ++r) {
-                    for (int c = 0; c < 3; ++c) {
-                        if (dir == 0) {
-                            res.m[r][c] = GpuComplex(src_x[s].m[r][c].real(), src_x[s].m[r][c].imag());
-                        } else if (dir == 1) {
-                            res.m[r][c] = GpuComplex(src_y[s].m[r][c].real(), src_y[s].m[r][c].imag());
-                        } else {
-                            res.m[r][c] = GpuComplex(src_z[s].m[r][c].real(), src_z[s].m[r][c].imag());
-                        }
-                    }
-                }
-                return res;
-            };
-
-            u_nu_xpmu = fetch_link(site_xpmu, nu);
-            u_mu_xpnu = fetch_link(site_xpnu, mu);
-            u_nu_x = fetch_link(site, nu);
-
-            GpuSU3 term1 = u_nu_xpmu * u_mu_xpnu.conj() * u_nu_x.conj();
-
-            // Negative plaquette contribution:
-            // U_nu^\dagger(x + mu - nu) * U_mu^\dagger(x - nu) * U_nu(x - nu)
-            int site_xmnust = 0;
-            int site_xpmu_mnu = 0;
-            if (nu == 0) {
-                site_xmnust = idx(x - 1, y, z, L);
-                if (mu == 0) site_xpmu_mnu = idx(x, y, z, L);
-                else if (mu == 1) site_xpmu_mnu = idx(x - 1, y + 1, z, L);
-                else site_xpmu_mnu = idx(x - 1, y, z + 1, L);
-            } else if (nu == 1) {
-                site_xmnust = idx(x, y - 1, z, L);
-                if (mu == 0) site_xpmu_mnu = idx(x + 1, y - 1, z, L);
-                else if (mu == 1) site_xpmu_mnu = idx(x, y, z, L);
-                else site_xpmu_mnu = idx(x, y - 1, z + 1, L);
-            } else {
-                site_xmnust = idx(x, y, z - 1, L);
-                if (mu == 0) site_xpmu_mnu = idx(x + 1, y, z - 1, L);
-                else if (mu == 1) site_xpmu_mnu = idx(x, y + 1, z - 1, L);
-                else site_xpmu_mnu = idx(x, y, z, L);
-            }
-
-            GpuSU3 u_nu_xpmu_mnu = fetch_link(site_xpmu_mnu, nu);
-            GpuSU3 u_mu_xmnu = fetch_link(site_xmnust, mu);
-            GpuSU3 u_nu_xmnu = fetch_link(site_xmnust, nu);
-
-            GpuSU3 term2 = u_nu_xpmu_mnu.conj() * u_mu_xmnu.conj() * u_nu_xmnu;
+            GpuMat term2 = u_nu_xpmu_mnu.conj() * u_mu_xmnu.conj() * u_nu_xmnu;
 
             if (first_staple) {
                 staple = term1 + term2;
@@ -400,46 +342,17 @@ __global__ void relax_su3_links_kernel(
         }
 
         // Local minimization update: U_new = Proj[ U_old + dt * beta * staple^\dagger ]
-        auto fetch_link = [&](int s, int dir) {
-            GpuSU3 res;
-            for (int r = 0; r < 3; ++r) {
-                for (int c = 0; c < 3; ++c) {
-                    if (dir == 0) {
-                        res.m[r][c] = GpuComplex(src_x[s].m[r][c].real(), src_x[s].m[r][c].imag());
-                    } else if (dir == 1) {
-                        res.m[r][c] = GpuComplex(src_y[s].m[r][c].real(), src_y[s].m[r][c].imag());
-                    } else {
-                        res.m[r][c] = GpuComplex(src_z[s].m[r][c].real(), src_z[s].m[r][c].imag());
-                    }
-                }
-            }
-            return res;
-        };
-
-        GpuSU3 u_old = fetch_link(site, mu);
-        GpuSU3 staple_adj = staple.conj();
+        GpuMat u_old = fetch_link(site, mu);
+        GpuMat staple_adj = staple.conj();
         GpuComplex scale(dt * beta, 0.0);
 
-        GpuSU3 u_new;
-        for (int r = 0; r < 3; ++r) {
-            for (int c = 0; c < 3; ++c) {
-                u_new.m[r][c] = u_old.m[r][c] + staple_adj.m[r][c] * scale;
-            }
-        }
+        GpuMat u_new;
+        u_new.assign_scaled_add(u_old, staple_adj, scale);
         u_new.normalize();
 
         // Write back (to the dst buffers — Jacobi, never in place)
-        for (int r = 0; r < 3; ++r) {
-            for (int c = 0; c < 3; ++c) {
-                if (mu == 0) {
-                    dst_x[site].m[r][c] = std::complex<double>(u_new.m[r][c].re, u_new.m[r][c].im);
-                } else if (mu == 1) {
-                    dst_y[site].m[r][c] = std::complex<double>(u_new.m[r][c].re, u_new.m[r][c].im);
-                } else {
-                    dst_z[site].m[r][c] = std::complex<double>(u_new.m[r][c].re, u_new.m[r][c].im);
-                }
-            }
-        }
+        HostLink* dst = (mu == 0) ? dst_x : ((mu == 1) ? dst_y : dst_z);
+        u_new.to_host(dst[site]);
     }
 }
 
@@ -459,7 +372,7 @@ extern "C" void launch_relax_su2_links(
 {
     dim3 threads(4, 4, 4);
     dim3 blocks((L + 3) / 4, (L + 3) / 4, (L + 3) / 4);
-    relax_su2_links_kernel<<<blocks, threads, 0, stream>>>(
+    relax_links_kernel<GpuSU2, SU2Link><<<blocks, threads, 0, stream>>>(
         src_x, src_y, src_z, dst_x, dst_y, dst_z, L, dt, beta);
     CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
 }
@@ -471,7 +384,7 @@ extern "C" void launch_relax_su3_links(
 {
     dim3 threads(4, 4, 4);
     dim3 blocks((L + 3) / 4, (L + 3) / 4, (L + 3) / 4);
-    relax_su3_links_kernel<<<blocks, threads, 0, stream>>>(
+    relax_links_kernel<GpuSU3, SU3Link><<<blocks, threads, 0, stream>>>(
         src_x, src_y, src_z, dst_x, dst_y, dst_z, L, dt, beta);
     CUDA_CHECK(cudaGetLastError());  // revision C2: launch-config errors must not propagate silently
 }

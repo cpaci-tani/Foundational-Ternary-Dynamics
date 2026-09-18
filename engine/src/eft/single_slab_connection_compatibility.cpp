@@ -1,6 +1,7 @@
 #include "ftd/eft/single_slab_connection_compatibility.h"
 
 #include "ftd/constants.h"
+#include "ftd/eft/compatibility_analysis_helpers.h"
 #include "ftd/eft/matched_face_energy_transaction.h"
 #include "ftd/eft/ternary_collision_vertex.h"
 
@@ -13,11 +14,10 @@
 namespace ftd::eft {
 namespace {
 
-Vec3 position(const ContactCarrierRecord& carrier) {
-  return {carrier.anchor.x+carrier.remainder.x,
-          carrier.anchor.y+carrier.remainder.y,
-          carrier.anchor.z+carrier.remainder.z};
-}
+using detail::add_scaled;
+using detail::inherited_residual;
+using detail::position;
+using detail::scale;
 
 MatchedFaceFlux current_field(const PiecewiseCurrentSignature& history) {
   MatchedFaceFlux result(history.L);
@@ -41,50 +41,6 @@ PiecewiseCurrentSignature history(
         {start, start+unit*displacement}});
   }
   return make_piecewise_current_signature(L, lines);
-}
-
-void add_scaled(MatchedFaceFlux& target,
-                const MatchedFaceFlux& value, double scale) {
-  for (std::size_t i = 0; i < target.x.size(); ++i) {
-    target.x[i] += scale*value.x[i];
-    target.y[i] += scale*value.y[i];
-    target.z[i] += scale*value.z[i];
-  }
-}
-
-void scale(MatchedFaceFlux& target, double amount) {
-  for (std::size_t i = 0; i < target.x.size(); ++i) {
-    target.x[i] *= amount;
-    target.y[i] *= amount;
-    target.z[i] *= amount;
-  }
-}
-
-void scale(MatchedEdgeField& target, double amount) {
-  for (std::size_t i = 0; i < target.x.size(); ++i) {
-    target.x[i] *= amount;
-    target.y[i] *= amount;
-    target.z[i] *= amount;
-  }
-}
-
-void add_scaled(MatchedEdgeField& target,
-                const MatchedEdgeField& value, double amount) {
-  for (std::size_t i = 0; i < target.x.size(); ++i) {
-    target.x[i] += amount*value.x[i];
-    target.y[i] += amount*value.y[i];
-    target.z[i] += amount*value.z[i];
-  }
-}
-
-double inherited_residual(
-    const SymmetricDiagonalCoupledEndpointResult& value) {
-  return std::max({value.root_residual, value.continuity_residual,
-      value.gauss_before_residual, value.gauss_after_residual,
-      value.staggered_embedding_residual, value.field_work_residual,
-      value.matter_work_residual, value.total_energy_residual,
-      value.displacement_residual, value.causal_excess,
-      value.inverse_residual});
 }
 
 }  // namespace

@@ -275,6 +275,18 @@ canvas {
     --chart-ae-momentum: var(--chart-entropy);
     --chart-ae-drift:    var(--chart-gauss);
 
+    /* Scale 2/3 atom-engine force-channel colors. Single source for the
+       Scale 2 overlay field swatches and the atom/molecule legend swatches;
+       mirrors the 3D force-arrow colors in js/viewport/molecular-renderer.js.
+       Theme-invariant by design — no theme overrides these. */
+    --ae-force-ionic:  #ff4444;
+    --ae-force-vdw:    #44ff44;
+    --ae-force-bond:   #ff8844;
+    --ae-force-hbond:  #38bdf8;
+    --ae-force-angle:  #facc15;
+    --ae-force-dipole: #e879f9;
+    --ae-force-net:    #ffffff;
+
     /* Legend palette (lagrangian term colors) — dark defaults */
     --legend-field-kinetic:  #66bb6a;
     --legend-field-gradient: #26a69a;

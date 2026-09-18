@@ -171,6 +171,65 @@ __device__ __forceinline__ void divergence_and_curl(
                   - (b.d_flux_x[yp] - b.d_flux_x[ym]));
 }
 
+// ──────────────────────────────────────────────────────────────────────────
+// Shared per-site sample, accumulators, and slot emitters
+// ──────────────────────────────────────────────────────────────────────────
+// The four legacy split kernels and the fused telemetry kernel perform the
+// same per-site arithmetic; only the traversal they share and the slot base
+// they write to differ.  accumulate_*() and emit_*() below are the single
+// definition of that arithmetic, so a kernel only decides which sections run.
+// Each accumulate_*() documents the SiteSample members it reads, which lets a
+// caller populate exactly the fields it needs and keep its own load set.
+
+struct SiteSample {
+    int index;
+    int x, y, z;
+    int state;
+    double fx, fy, fz;
+    double wx, wy, wz;
+    double vx, vy, vz;
+    double flux2, wave2, speed2;
+    double latency;
+};
+
+/// Site identity: linear index, lattice coordinates, manifestation state.
+__device__ __forceinline__ SiteSample site_at(const DiagnosticView& b, int i) {
+    SiteSample s{};
+    s.index = i;
+    coordinates(i, b.L, s.x, s.y, s.z);
+    s.state = static_cast<int>(b.d_state[i]);
+    return s;
+}
+
+__device__ __forceinline__ void load_flux(const DiagnosticView& b,
+                                          SiteSample& s) {
+    s.fx = b.d_flux_x[s.index];
+    s.fy = b.d_flux_y[s.index];
+    s.fz = b.d_flux_z[s.index];
+    s.flux2 = s.fx * s.fx + s.fy * s.fy + s.fz * s.fz;
+}
+
+__device__ __forceinline__ void load_wave(const DiagnosticView& b,
+                                          SiteSample& s) {
+    s.wx = b.d_wave_vel_x[s.index];
+    s.wy = b.d_wave_vel_y[s.index];
+    s.wz = b.d_wave_vel_z[s.index];
+    s.wave2 = s.wx * s.wx + s.wy * s.wy + s.wz * s.wz;
+}
+
+__device__ __forceinline__ void load_velocity(const DiagnosticView& b,
+                                              SiteSample& s) {
+    s.vx = b.d_velocity_x[s.index];
+    s.vy = b.d_velocity_y[s.index];
+    s.vz = b.d_velocity_z[s.index];
+    s.speed2 = s.vx * s.vx + s.vy * s.vy + s.vz * s.vz;
+}
+
+__device__ __forceinline__ void load_latency(const DiagnosticView& b,
+                                             SiteSample& s) {
+    s.latency = b.d_latency[s.index];
+}
+
 enum DiagnosticSlot : int {
     D_TOTAL_FLUX, D_BI_ABS, D_MAX_BANDWIDTH, D_MAX_BUDGET,
     D_MANIFESTED, D_POSITIVE, D_NEGATIVE, D_SPIN_UP, D_SPIN_DOWN,
@@ -183,83 +242,94 @@ enum DiagnosticSlot : int {
     D_COUNT
 };
 
+struct DiagnosticAccum {
+    double total_flux, bi_abs, max_bandwidth, max_budget;
+    double manifested, positive, negative, spin_up, spin_down;
+    double color0, color1, color2, color3;
+    double rho2_sum, rho2_log_sum;
+    double coord_x, coord_y, coord_z;
+    double vel_x, vel_y, vel_z;
+    double rxv_x, rxv_y, rxv_z;
+};
+
+/// Reads s.{index, x, y, z, state, flux2, speed2, latency, vx, vy, vz}.
+__device__ __forceinline__ void accumulate_diagnostics(DiagnosticAccum& a,
+                                                       const DiagnosticView& b,
+                                                       const SiteSample& s) {
+    a.total_flux += sqrt(s.flux2);
+    a.bi_abs += fabs(born_infeld_core(s.latency, s.speed2));
+    a.max_bandwidth = fmax(a.max_bandwidth,
+                           bandwidth_fraction(s.latency, s.speed2));
+    a.max_budget = fmax(a.max_budget, causal_budget(s.latency, s.speed2));
+    a.rho2_sum += s.flux2;
+    if (s.flux2 > EPSILON_FLUX_SQ) a.rho2_log_sum += s.flux2 * log(s.flux2);
+
+    if (s.state == 0) return;
+    a.manifested += 1.0;
+    a.positive += s.state > 0 ? 1.0 : 0.0;
+    a.negative += s.state < 0 ? 1.0 : 0.0;
+    const int spin = static_cast<int>(b.d_spin[s.index]);
+    a.spin_up += spin > 0 ? 1.0 : 0.0;
+    a.spin_down += spin < 0 ? 1.0 : 0.0;
+    const int color = static_cast<int>(b.d_color[s.index]);
+    a.color0 += color == 0 ? 1.0 : 0.0;
+    a.color1 += color == 1 ? 1.0 : 0.0;
+    a.color2 += color == 2 ? 1.0 : 0.0;
+    a.color3 += color == 3 ? 1.0 : 0.0;
+    a.coord_x += s.x; a.coord_y += s.y; a.coord_z += s.z;
+    a.vel_x += s.vx; a.vel_y += s.vy; a.vel_z += s.vz;
+    a.rxv_x += static_cast<double>(s.y) * s.vz - static_cast<double>(s.z) * s.vy;
+    a.rxv_y += static_cast<double>(s.z) * s.vx - static_cast<double>(s.x) * s.vz;
+    a.rxv_z += static_cast<double>(s.x) * s.vy - static_cast<double>(s.y) * s.vx;
+}
+
+/// Warp-collective: every thread of the block must reach this call.
+__device__ __forceinline__ void emit_diagnostics(const DiagnosticAccum& a,
+                                                 const DiagnosticView& b,
+                                                 bool movement, int begin,
+                                                 double* out, int base) {
+    reduce_sum_to(out, base + D_TOTAL_FLUX, a.total_flux);
+    reduce_sum_to(out, base + D_BI_ABS, a.bi_abs);
+    reduce_max_to(out, base + D_MAX_BANDWIDTH, a.max_bandwidth);
+    reduce_max_to(out, base + D_MAX_BUDGET, a.max_budget);
+    reduce_sum_to(out, base + D_MANIFESTED, a.manifested);
+    reduce_sum_to(out, base + D_POSITIVE, a.positive);
+    reduce_sum_to(out, base + D_NEGATIVE, a.negative);
+    reduce_sum_to(out, base + D_SPIN_UP, a.spin_up);
+    reduce_sum_to(out, base + D_SPIN_DOWN, a.spin_down);
+    reduce_sum_to(out, base + D_COLOR_0, a.color0);
+    reduce_sum_to(out, base + D_COLOR_1, a.color1);
+    reduce_sum_to(out, base + D_COLOR_2, a.color2);
+    reduce_sum_to(out, base + D_COLOR_3, a.color3);
+    reduce_sum_to(out, base + D_RHO2_SUM, a.rho2_sum);
+    reduce_sum_to(out, base + D_RHO2_LOG_SUM, a.rho2_log_sum);
+    reduce_sum_to(out, base + D_COORD_X, a.coord_x);
+    reduce_sum_to(out, base + D_COORD_Y, a.coord_y);
+    reduce_sum_to(out, base + D_COORD_Z, a.coord_z);
+    reduce_sum_to(out, base + D_VEL_X, a.vel_x);
+    reduce_sum_to(out, base + D_VEL_Y, a.vel_y);
+    reduce_sum_to(out, base + D_VEL_Z, a.vel_z);
+    reduce_sum_to(out, base + D_RXV_X, a.rxv_x);
+    reduce_sum_to(out, base + D_RXV_Y, a.rxv_y);
+    reduce_sum_to(out, base + D_RXV_Z, a.rxv_z);
+    const double causal = (movement && begin == 0)
+        ? static_cast<double>(*b.d_causal_projection_events) : 0.0;
+    reduce_sum_to(out, base + D_CAUSAL_PROJECTIONS, causal);
+}
+
 __global__ void compact_diagnostics_kernel(DiagnosticView b, bool movement,
                                             double* out) {
-    double total_flux = 0.0, bi_abs = 0.0;
-    double max_bandwidth = 0.0, max_budget = 0.0;
-    double manifested = 0.0, positive = 0.0, negative = 0.0;
-    double spin_up = 0.0, spin_down = 0.0;
-    double color0 = 0.0, color1 = 0.0, color2 = 0.0, color3 = 0.0;
-    double rho2_sum = 0.0, rho2_log_sum = 0.0;
-    double coord_x = 0.0, coord_y = 0.0, coord_z = 0.0;
-    double vel_x = 0.0, vel_y = 0.0, vel_z = 0.0;
-    double rxv_x = 0.0, rxv_y = 0.0, rxv_z = 0.0;
-
+    DiagnosticAccum acc{};
     const int begin = blockIdx.x * blockDim.x + threadIdx.x;
     const int stride = blockDim.x * gridDim.x;
     for (int i = begin; i < b.N; i += stride) {
-        const double fx = b.d_flux_x[i], fy = b.d_flux_y[i], fz = b.d_flux_z[i];
-        const double vx = b.d_velocity_x[i], vy = b.d_velocity_y[i], vz = b.d_velocity_z[i];
-        const double flux2 = fx * fx + fy * fy + fz * fz;
-        const double speed2 = vx * vx + vy * vy + vz * vz;
-        const double latency = b.d_latency[i];
-        total_flux += sqrt(flux2);
-        bi_abs += fabs(born_infeld_core(latency, speed2));
-        max_bandwidth = fmax(max_bandwidth, bandwidth_fraction(latency, speed2));
-        max_budget = fmax(max_budget, causal_budget(latency, speed2));
-        rho2_sum += flux2;
-        if (flux2 > EPSILON_FLUX_SQ) rho2_log_sum += flux2 * log(flux2);
-
-        const int state = static_cast<int>(b.d_state[i]);
-        if (state == 0) continue;
-        manifested += 1.0;
-        positive += state > 0 ? 1.0 : 0.0;
-        negative += state < 0 ? 1.0 : 0.0;
-        const int spin = static_cast<int>(b.d_spin[i]);
-        spin_up += spin > 0 ? 1.0 : 0.0;
-        spin_down += spin < 0 ? 1.0 : 0.0;
-        const int color = static_cast<int>(b.d_color[i]);
-        color0 += color == 0 ? 1.0 : 0.0;
-        color1 += color == 1 ? 1.0 : 0.0;
-        color2 += color == 2 ? 1.0 : 0.0;
-        color3 += color == 3 ? 1.0 : 0.0;
-
-        int x, y, z;
-        coordinates(i, b.L, x, y, z);
-        coord_x += x; coord_y += y; coord_z += z;
-        vel_x += vx; vel_y += vy; vel_z += vz;
-        rxv_x += static_cast<double>(y) * vz - static_cast<double>(z) * vy;
-        rxv_y += static_cast<double>(z) * vx - static_cast<double>(x) * vz;
-        rxv_z += static_cast<double>(x) * vy - static_cast<double>(y) * vx;
+        SiteSample s = site_at(b, i);
+        load_flux(b, s);
+        load_velocity(b, s);
+        load_latency(b, s);
+        accumulate_diagnostics(acc, b, s);
     }
-
-    reduce_sum_to(out, D_TOTAL_FLUX, total_flux);
-    reduce_sum_to(out, D_BI_ABS, bi_abs);
-    reduce_max_to(out, D_MAX_BANDWIDTH, max_bandwidth);
-    reduce_max_to(out, D_MAX_BUDGET, max_budget);
-    reduce_sum_to(out, D_MANIFESTED, manifested);
-    reduce_sum_to(out, D_POSITIVE, positive);
-    reduce_sum_to(out, D_NEGATIVE, negative);
-    reduce_sum_to(out, D_SPIN_UP, spin_up);
-    reduce_sum_to(out, D_SPIN_DOWN, spin_down);
-    reduce_sum_to(out, D_COLOR_0, color0);
-    reduce_sum_to(out, D_COLOR_1, color1);
-    reduce_sum_to(out, D_COLOR_2, color2);
-    reduce_sum_to(out, D_COLOR_3, color3);
-    reduce_sum_to(out, D_RHO2_SUM, rho2_sum);
-    reduce_sum_to(out, D_RHO2_LOG_SUM, rho2_log_sum);
-    reduce_sum_to(out, D_COORD_X, coord_x);
-    reduce_sum_to(out, D_COORD_Y, coord_y);
-    reduce_sum_to(out, D_COORD_Z, coord_z);
-    reduce_sum_to(out, D_VEL_X, vel_x);
-    reduce_sum_to(out, D_VEL_Y, vel_y);
-    reduce_sum_to(out, D_VEL_Z, vel_z);
-    reduce_sum_to(out, D_RXV_X, rxv_x);
-    reduce_sum_to(out, D_RXV_Y, rxv_y);
-    reduce_sum_to(out, D_RXV_Z, rxv_z);
-    const double causal = (movement && begin == 0)
-        ? static_cast<double>(*b.d_causal_projection_events) : 0.0;
-    reduce_sum_to(out, D_CAUSAL_PROJECTIONS, causal);
+    emit_diagnostics(acc, b, movement, begin, out, /*base=*/0);
 }
 
 __global__ void charge_sum_kernel(const int8_t* state, int N,
@@ -290,144 +360,179 @@ enum EnergySlot : int {
     E_COUNT
 };
 
+struct EnergyAccum {
+    double field, wave, particle_ke, particle_rest;
+    double momentum_x, momentum_y, momentum_z;
+    double manifested, charge;
+    double left, right, wave_left, wave_right;
+    double chirality, strong, weak;
+    double electric, magnetic;
+    double poynting_x, poynting_y, poynting_z;
+    double gauss_sum, gauss_max, coulomb_pe;
+};
+
+/// Reads s.{index, state, flux2, wave2, speed2, wx, wy, wz, vx, vy, vz} plus
+/// the site's divergence and curl (bx, by, bz), which the caller supplies.
+__device__ __forceinline__ void accumulate_energy(
+    EnergyAccum& a, const DiagnosticView& b, const SiteSample& s,
+    double div, double bx, double by, double bz,
+    double mean_charge, double charge_coupling,
+    bool dual_substrate, bool strong_field) {
+    constexpr double C2 = C_SPEED * C_SPEED;
+    const int i = s.index;
+
+    a.field += quadratic_field_energy_density(s.flux2);
+    a.wave += quadratic_field_energy_density(s.wave2);
+    a.electric += quadratic_field_energy_density(s.wave2);
+    a.magnetic += C2 * quadratic_field_energy_density(bx * bx + by * by + bz * bz);
+    // E = -wave_vel; S = c^2 E x B.
+    a.poynting_x += C2 * ((-s.wy) * bz - (-s.wz) * by);
+    a.poynting_y += C2 * ((-s.wz) * bx - (-s.wx) * bz);
+    a.poynting_z += C2 * ((-s.wx) * by - (-s.wy) * bx);
+
+    if (s.state == 0) {
+        const double err = div + charge_coupling * mean_charge;
+        a.gauss_sum += err * err;
+        a.gauss_max = fmax(a.gauss_max, fabs(err));
+    } else {
+        const double gamma0 = flat_gamma(s.speed2);
+        a.particle_ke += flat_particle_kinetic_energy(s.speed2);
+        a.particle_rest += E_REST;
+        a.momentum_x += s.vx * (gamma0 * M_INERTIAL);
+        a.momentum_y += s.vy * (gamma0 * M_INERTIAL);
+        a.momentum_z += s.vz * (gamma0 * M_INERTIAL);
+        a.manifested += 1.0;
+        a.charge += s.state;
+        a.coulomb_pe += 0.5 * ALPHA * static_cast<double>(s.state)
+                      * b.d_phi_coulomb[i];
+    }
+
+    if (dual_substrate) {
+        const double flx = b.d_flux_L_x[i], fly = b.d_flux_L_y[i], flz = b.d_flux_L_z[i];
+        const double frx = b.d_flux_R_x[i], fry = b.d_flux_R_y[i], frz = b.d_flux_R_z[i];
+        const double wlx = b.d_wave_vel_L_x[i], wly = b.d_wave_vel_L_y[i], wlz = b.d_wave_vel_L_z[i];
+        const double wrx = b.d_wave_vel_R_x[i], wry = b.d_wave_vel_R_y[i], wrz = b.d_wave_vel_R_z[i];
+        a.left += 0.5 * (flx * flx + fly * fly + flz * flz);
+        a.right += 0.5 * (frx * frx + fry * fry + frz * frz);
+        a.wave_left += 0.5 * (wlx * wlx + wly * wly + wlz * wlz);
+        a.wave_right += 0.5 * (wrx * wrx + wry * wry + wrz * wrz);
+
+        if (s.speed2 > 1e-12) {
+            const double inv_speed = 1.0 / sqrt(s.speed2);
+            const double ldot = (flx * s.vx + fly * s.vy + flz * s.vz) * inv_speed;
+            const double rdot = (frx * s.vx + fry * s.vy + frz * s.vz) * inv_speed;
+            a.chirality += (flx * flx + fly * fly + flz * flz - ldot * ldot)
+                         - (frx * frx + fry * fry + frz * frz - rdot * rdot);
+        } else {
+            a.chirality += (flx * flx + fly * fly) - (frx * frx + fry * fry);
+        }
+    }
+
+    if (strong_field) {
+        const double sx = b.d_flux_strong_x[i], sy = b.d_flux_strong_y[i], sz = b.d_flux_strong_z[i];
+        a.strong += 0.5 * (sx * sx + sy * sy + sz * sz);
+    }
+    const double ux = b.d_flux_weak_x[i], uy = b.d_flux_weak_y[i], uz = b.d_flux_weak_z[i];
+    a.weak += 0.5 * (ux * ux + uy * uy + uz * uz);
+}
+
+/// Warp-collective: every thread of the block must reach this call.
+__device__ __forceinline__ void emit_energy(const EnergyAccum& a, double* out,
+                                            int base) {
+    reduce_sum_to(out, base + E_FIELD, a.field);
+    reduce_sum_to(out, base + E_WAVE, a.wave);
+    reduce_sum_to(out, base + E_PARTICLE_KE, a.particle_ke);
+    reduce_sum_to(out, base + E_PARTICLE_REST, a.particle_rest);
+    reduce_sum_to(out, base + E_MOMENTUM_X, a.momentum_x);
+    reduce_sum_to(out, base + E_MOMENTUM_Y, a.momentum_y);
+    reduce_sum_to(out, base + E_MOMENTUM_Z, a.momentum_z);
+    reduce_sum_to(out, base + E_MANIFESTED, a.manifested);
+    reduce_sum_to(out, base + E_CHARGE, a.charge);
+    reduce_sum_to(out, base + E_LEFT, a.left);
+    reduce_sum_to(out, base + E_RIGHT, a.right);
+    reduce_sum_to(out, base + E_WAVE_LEFT, a.wave_left);
+    reduce_sum_to(out, base + E_WAVE_RIGHT, a.wave_right);
+    reduce_sum_to(out, base + E_CHIRALITY, a.chirality);
+    reduce_sum_to(out, base + E_STRONG, a.strong);
+    reduce_sum_to(out, base + E_WEAK, a.weak);
+    reduce_sum_to(out, base + E_ELECTRIC, a.electric);
+    reduce_sum_to(out, base + E_MAGNETIC, a.magnetic);
+    reduce_sum_to(out, base + E_POYNTING_X, a.poynting_x);
+    reduce_sum_to(out, base + E_POYNTING_Y, a.poynting_y);
+    reduce_sum_to(out, base + E_POYNTING_Z, a.poynting_z);
+    reduce_sum_to(out, base + E_GAUSS_SUM, a.gauss_sum);
+    reduce_max_to(out, base + E_GAUSS_MAX, a.gauss_max);
+    reduce_sum_to(out, base + E_COULOMB_PE, a.coulomb_pe);
+}
+
 __global__ void compact_energy_kernel(DiagnosticView b,
                                       bool dual_substrate,
                                       bool strong_field,
                                       double charge_coupling,
                                       const long long* charge_sum,
                                       double* out) {
-    double field = 0.0, wave = 0.0, particle_ke = 0.0, particle_rest = 0.0;
-    double momentum_x = 0.0, momentum_y = 0.0, momentum_z = 0.0;
-    double manifested = 0.0, charge = 0.0;
-    double left = 0.0, right = 0.0, wave_left = 0.0, wave_right = 0.0;
-    double chirality = 0.0, strong = 0.0, weak = 0.0;
-    double electric = 0.0, magnetic = 0.0;
-    double poynting_x = 0.0, poynting_y = 0.0, poynting_z = 0.0;
-    double gauss_sum = 0.0, gauss_max = 0.0, coulomb_pe = 0.0;
+    EnergyAccum acc{};
     const double mean_charge = static_cast<double>(*charge_sum)
                              / static_cast<double>(b.N);
-    constexpr double C2 = C_SPEED * C_SPEED;
 
     const int begin = blockIdx.x * blockDim.x + threadIdx.x;
     const int stride = blockDim.x * gridDim.x;
     for (int i = begin; i < b.N; i += stride) {
-        const double fx = b.d_flux_x[i], fy = b.d_flux_y[i], fz = b.d_flux_z[i];
-        const double wx = b.d_wave_vel_x[i], wy = b.d_wave_vel_y[i], wz = b.d_wave_vel_z[i];
-        const double flux2 = fx * fx + fy * fy + fz * fz;
-        const double wave2 = wx * wx + wy * wy + wz * wz;
-        field += quadratic_field_energy_density(flux2);
-        wave += quadratic_field_energy_density(wave2);
-        electric += quadratic_field_energy_density(wave2);
-
-        int x, y, z;
-        coordinates(i, b.L, x, y, z);
+        SiteSample s = site_at(b, i);
+        load_flux(b, s);
+        load_wave(b, s);
+        load_velocity(b, s);
         double div, bx, by, bz;
-        divergence_and_curl(b, x, y, z, div, bx, by, bz);
-        magnetic += C2 * quadratic_field_energy_density(bx * bx + by * by + bz * bz);
-        // E = -wave_vel; S = c^2 E x B.
-        poynting_x += C2 * ((-wy) * bz - (-wz) * by);
-        poynting_y += C2 * ((-wz) * bx - (-wx) * bz);
-        poynting_z += C2 * ((-wx) * by - (-wy) * bx);
-
-        const int state = static_cast<int>(b.d_state[i]);
-        if (state == 0) {
-            const double err = div + charge_coupling * mean_charge;
-            gauss_sum += err * err;
-            gauss_max = fmax(gauss_max, fabs(err));
-        } else {
-            const double vx = b.d_velocity_x[i], vy = b.d_velocity_y[i], vz = b.d_velocity_z[i];
-            const double speed2 = vx * vx + vy * vy + vz * vz;
-            const double gamma0 = flat_gamma(speed2);
-            particle_ke += flat_particle_kinetic_energy(speed2);
-            particle_rest += E_REST;
-            momentum_x += vx * (gamma0 * M_INERTIAL);
-            momentum_y += vy * (gamma0 * M_INERTIAL);
-            momentum_z += vz * (gamma0 * M_INERTIAL);
-            manifested += 1.0;
-            charge += state;
-            coulomb_pe += 0.5 * ALPHA * static_cast<double>(state)
-                        * b.d_phi_coulomb[i];
-        }
-
-        if (dual_substrate) {
-            const double flx = b.d_flux_L_x[i], fly = b.d_flux_L_y[i], flz = b.d_flux_L_z[i];
-            const double frx = b.d_flux_R_x[i], fry = b.d_flux_R_y[i], frz = b.d_flux_R_z[i];
-            const double wlx = b.d_wave_vel_L_x[i], wly = b.d_wave_vel_L_y[i], wlz = b.d_wave_vel_L_z[i];
-            const double wrx = b.d_wave_vel_R_x[i], wry = b.d_wave_vel_R_y[i], wrz = b.d_wave_vel_R_z[i];
-            left += 0.5 * (flx * flx + fly * fly + flz * flz);
-            right += 0.5 * (frx * frx + fry * fry + frz * frz);
-            wave_left += 0.5 * (wlx * wlx + wly * wly + wlz * wlz);
-            wave_right += 0.5 * (wrx * wrx + wry * wry + wrz * wrz);
-
-            const double vx = b.d_velocity_x[i], vy = b.d_velocity_y[i], vz = b.d_velocity_z[i];
-            const double speed2 = vx * vx + vy * vy + vz * vz;
-            if (speed2 > 1e-12) {
-                const double inv_speed = 1.0 / sqrt(speed2);
-                const double ldot = (flx * vx + fly * vy + flz * vz) * inv_speed;
-                const double rdot = (frx * vx + fry * vy + frz * vz) * inv_speed;
-                chirality += (flx * flx + fly * fly + flz * flz - ldot * ldot)
-                           - (frx * frx + fry * fry + frz * frz - rdot * rdot);
-            } else {
-                chirality += (flx * flx + fly * fly) - (frx * frx + fry * fry);
-            }
-        }
-
-        if (strong_field) {
-            const double sx = b.d_flux_strong_x[i], sy = b.d_flux_strong_y[i], sz = b.d_flux_strong_z[i];
-            strong += 0.5 * (sx * sx + sy * sy + sz * sz);
-        }
-        const double ux = b.d_flux_weak_x[i], uy = b.d_flux_weak_y[i], uz = b.d_flux_weak_z[i];
-        weak += 0.5 * (ux * ux + uy * uy + uz * uz);
+        divergence_and_curl(b, s.x, s.y, s.z, div, bx, by, bz);
+        accumulate_energy(acc, b, s, div, bx, by, bz, mean_charge,
+                          charge_coupling, dual_substrate, strong_field);
     }
-
-    reduce_sum_to(out, E_FIELD, field);
-    reduce_sum_to(out, E_WAVE, wave);
-    reduce_sum_to(out, E_PARTICLE_KE, particle_ke);
-    reduce_sum_to(out, E_PARTICLE_REST, particle_rest);
-    reduce_sum_to(out, E_MOMENTUM_X, momentum_x);
-    reduce_sum_to(out, E_MOMENTUM_Y, momentum_y);
-    reduce_sum_to(out, E_MOMENTUM_Z, momentum_z);
-    reduce_sum_to(out, E_MANIFESTED, manifested);
-    reduce_sum_to(out, E_CHARGE, charge);
-    reduce_sum_to(out, E_LEFT, left);
-    reduce_sum_to(out, E_RIGHT, right);
-    reduce_sum_to(out, E_WAVE_LEFT, wave_left);
-    reduce_sum_to(out, E_WAVE_RIGHT, wave_right);
-    reduce_sum_to(out, E_CHIRALITY, chirality);
-    reduce_sum_to(out, E_STRONG, strong);
-    reduce_sum_to(out, E_WEAK, weak);
-    reduce_sum_to(out, E_ELECTRIC, electric);
-    reduce_sum_to(out, E_MAGNETIC, magnetic);
-    reduce_sum_to(out, E_POYNTING_X, poynting_x);
-    reduce_sum_to(out, E_POYNTING_Y, poynting_y);
-    reduce_sum_to(out, E_POYNTING_Z, poynting_z);
-    reduce_sum_to(out, E_GAUSS_SUM, gauss_sum);
-    reduce_max_to(out, E_GAUSS_MAX, gauss_max);
-    reduce_sum_to(out, E_COULOMB_PE, coulomb_pe);
+    emit_energy(acc, out, /*base=*/0);
 }
 
 enum GravitySlot : int {
     G_LATENCY_MAX, G_LATENCY_SUM, G_GAMMA_MAX, G_VOXEL_COUNT, G_SLOT_COUNT
 };
 
+struct GravityAccum {
+    double latency_max, latency_sum, gamma_max, voxel_count;
+};
+
+/// Reads s.{latency, speed2}.  The caller applies its own latency guard: the
+/// legacy kernel skips `latency <= 0.0` while the telemetry kernel admits
+/// `latency > 0.0`, and the two spellings disagree on a NaN latency.  That
+/// divergence predates this consolidation, so each call site keeps its own
+/// predicate verbatim rather than having one silently adopt the other's.
+__device__ __forceinline__ void accumulate_gravity(GravityAccum& a,
+                                                   const SiteSample& s) {
+    a.latency_max = fmax(a.latency_max, s.latency);
+    a.latency_sum += s.latency;
+    a.gamma_max = fmax(a.gamma_max, transport_gamma(s.latency, s.speed2));
+    a.voxel_count += 1.0;
+}
+
+/// Warp-collective: every thread of the block must reach this call.
+__device__ __forceinline__ void emit_gravity(const GravityAccum& a, double* out,
+                                             int base) {
+    reduce_max_to(out, base + G_LATENCY_MAX, a.latency_max);
+    reduce_sum_to(out, base + G_LATENCY_SUM, a.latency_sum);
+    reduce_max_to(out, base + G_GAMMA_MAX, a.gamma_max);
+    reduce_sum_to(out, base + G_VOXEL_COUNT, a.voxel_count);
+}
+
 __global__ void compact_gravity_kernel(DiagnosticView b, double* out) {
-    double latency_max = 0.0, latency_sum = 0.0, gamma_max = 0.0, count = 0.0;
+    GravityAccum acc{};
     const int begin = blockIdx.x * blockDim.x + threadIdx.x;
     const int stride = blockDim.x * gridDim.x;
     for (int i = begin; i < b.N; i += stride) {
-        const double latency = b.d_latency[i];
-        if (latency <= 0.0) continue;
-        const double vx = b.d_velocity_x[i], vy = b.d_velocity_y[i], vz = b.d_velocity_z[i];
-        latency_max = fmax(latency_max, latency);
-        latency_sum += latency;
-        gamma_max = fmax(gamma_max,
-                         transport_gamma(latency, vx * vx + vy * vy + vz * vz));
-        count += 1.0;
+        SiteSample s{};
+        s.index = i;
+        load_latency(b, s);
+        if (s.latency <= 0.0) continue;
+        load_velocity(b, s);
+        accumulate_gravity(acc, s);
     }
-    reduce_max_to(out, G_LATENCY_MAX, latency_max);
-    reduce_sum_to(out, G_LATENCY_SUM, latency_sum);
-    reduce_max_to(out, G_GAMMA_MAX, gamma_max);
-    reduce_sum_to(out, G_VOXEL_COUNT, count);
+    emit_gravity(acc, out, /*base=*/0);
 }
 
 enum VoxelSlot : int {
@@ -509,92 +614,114 @@ __device__ __forceinline__ double flux_difference_sq(const DiagnosticView b,
     return dx * dx + dy * dy + dz * dz;
 }
 
-__global__ void compact_lagrangian_kernel(DiagnosticView b, double* out) {
-    double fk_sum = 0.0, fg_sum = 0.0, bi_sum = 0.0, coupling_sum = 0.0;
-    double velocity_coupling_sum = 0.0, gauss_sum = 0.0, dissipation_sum = 0.0;
-    double total = 0.0, hamiltonian = 0.0, violation_sum = 0.0, violation_max = 0.0;
-    double total_flux = 0.0, total_wave = 0.0, manifested = 0.0, locked = 0.0;
+struct LagrangianAccum {
+    double fk_sum, fg_sum, bi_sum, coupling_sum, velocity_coupling_sum;
+    double gauss_sum, dissipation_sum, total, hamiltonian;
+    double violation_sum, violation_max;
+    double total_flux, total_wave, manifested, locked;
+};
+
+/// Reads s.{index, x, y, z, state, flux2, wave2, speed2, latency, fx, fy, fz,
+/// vx, vy, vz} plus the site's divergence, which the caller supplies.
+__device__ __forceinline__ void accumulate_lagrangian(LagrangianAccum& a,
+                                                      const DiagnosticView& b,
+                                                      const SiteSample& s,
+                                                      double div) {
     constexpr double C2 = C_SPEED * C_SPEED;
     constexpr double LAMBDA_G_DIAGNOSTIC = 100.0;
+    const int i = s.index;
+    const int x = s.x, y = s.y, z = s.z;
 
+    double grad_sq = 0.0;
+    grad_sq += (1.0 / 3.0) * flux_difference_sq(b, i, index_3d(x + 1, y, z, b.L));
+    grad_sq += (1.0 / 3.0) * flux_difference_sq(b, i, index_3d(x - 1, y, z, b.L));
+    grad_sq += (1.0 / 3.0) * flux_difference_sq(b, i, index_3d(x, y + 1, z, b.L));
+    grad_sq += (1.0 / 3.0) * flux_difference_sq(b, i, index_3d(x, y - 1, z, b.L));
+    grad_sq += (1.0 / 3.0) * flux_difference_sq(b, i, index_3d(x, y, z + 1, b.L));
+    grad_sq += (1.0 / 3.0) * flux_difference_sq(b, i, index_3d(x, y, z - 1, b.L));
+    for (int sx = -1; sx <= 1; sx += 2)
+    for (int sy = -1; sy <= 1; sy += 2) {
+        grad_sq += (1.0 / 6.0) * flux_difference_sq(b, i, index_3d(x + sx, y + sy, z, b.L));
+        grad_sq += (1.0 / 6.0) * flux_difference_sq(b, i, index_3d(x + sx, y, z + sy, b.L));
+        grad_sq += (1.0 / 6.0) * flux_difference_sq(b, i, index_3d(x, y + sx, z + sy, b.L));
+    }
+
+    const double rho = static_cast<double>(s.state);
+    const double fk = 0.5 * s.wave2;
+    const double fg = -0.25 * C2 * grad_sq;
+    const double bi = born_infeld_core(s.latency, s.speed2);
+    const double coupling = G_C * rho * div;
+    const double velocity_coupling =
+        -G_C * rho * (s.vx * s.fx + s.vy * s.fy + s.vz * s.fz);
+    const double violation = div - rho;
+    const double gauss = -LAMBDA_G_DIAGNOSTIC * violation * violation;
+    const double dissipation = 0.5 * DAMPING * s.wave2;
+
+    a.fk_sum += fk; a.fg_sum += fg; a.bi_sum += bi;
+    a.coupling_sum += coupling;
+    a.velocity_coupling_sum += velocity_coupling;
+    a.gauss_sum += gauss;
+    a.dissipation_sum += dissipation;
+    a.total += fk + fg + bi + coupling + velocity_coupling + gauss;
+    a.hamiltonian += born_infeld_hamiltonian(s.latency, s.speed2)
+                   - coupling - velocity_coupling - gauss;
+    a.violation_sum += violation * violation;
+    a.violation_max = fmax(a.violation_max, fabs(violation));
+    a.total_flux += sqrt(s.flux2);
+    a.total_wave += 0.5 * s.wave2;
+    if (s.state != 0) {
+        a.manifested += 1.0;
+        a.locked += b.d_locked[i] ? 1.0 : 0.0;
+    }
+}
+
+/// Warp-collective: every thread of the block must reach this call.
+__device__ __forceinline__ void emit_lagrangian(const LagrangianAccum& a,
+                                                double* out, int base) {
+    reduce_sum_to(out, base + L_FIELD_KINETIC, a.fk_sum);
+    reduce_sum_to(out, base + L_FIELD_GRADIENT, a.fg_sum);
+    reduce_sum_to(out, base + L_BORN_INFELD, a.bi_sum);
+    reduce_sum_to(out, base + L_COUPLING, a.coupling_sum);
+    reduce_sum_to(out, base + L_VELOCITY_COUPLING, a.velocity_coupling_sum);
+    reduce_sum_to(out, base + L_GAUSS, a.gauss_sum);
+    reduce_sum_to(out, base + L_DISSIPATION, a.dissipation_sum);
+    reduce_sum_to(out, base + L_TOTAL, a.total);
+    reduce_sum_to(out, base + L_HAMILTONIAN, a.hamiltonian);
+    reduce_sum_to(out, base + L_GAUSS_VIOLATION, a.violation_sum);
+    reduce_max_to(out, base + L_GAUSS_MAX, a.violation_max);
+    reduce_sum_to(out, base + L_TOTAL_FLUX, a.total_flux);
+    reduce_sum_to(out, base + L_TOTAL_WAVE, a.total_wave);
+    reduce_sum_to(out, base + L_MANIFESTED, a.manifested);
+    reduce_sum_to(out, base + L_LOCKED, a.locked);
+}
+
+__global__ void compact_lagrangian_kernel(DiagnosticView b, double* out) {
+    LagrangianAccum acc{};
     const int begin = blockIdx.x * blockDim.x + threadIdx.x;
     const int stride = blockDim.x * gridDim.x;
     for (int i = begin; i < b.N; i += stride) {
-        int x, y, z;
-        coordinates(i, b.L, x, y, z);
+        SiteSample s = site_at(b, i);
+        load_flux(b, s);
+        load_wave(b, s);
+        load_velocity(b, s);
+        load_latency(b, s);
         double div, unused_x, unused_y, unused_z;
-        divergence_and_curl(b, x, y, z, div, unused_x, unused_y, unused_z);
-
-        double grad_sq = 0.0;
-        grad_sq += (1.0 / 3.0) * flux_difference_sq(b, i, index_3d(x + 1, y, z, b.L));
-        grad_sq += (1.0 / 3.0) * flux_difference_sq(b, i, index_3d(x - 1, y, z, b.L));
-        grad_sq += (1.0 / 3.0) * flux_difference_sq(b, i, index_3d(x, y + 1, z, b.L));
-        grad_sq += (1.0 / 3.0) * flux_difference_sq(b, i, index_3d(x, y - 1, z, b.L));
-        grad_sq += (1.0 / 3.0) * flux_difference_sq(b, i, index_3d(x, y, z + 1, b.L));
-        grad_sq += (1.0 / 3.0) * flux_difference_sq(b, i, index_3d(x, y, z - 1, b.L));
-        for (int sx = -1; sx <= 1; sx += 2)
-        for (int sy = -1; sy <= 1; sy += 2) {
-            grad_sq += (1.0 / 6.0) * flux_difference_sq(b, i, index_3d(x + sx, y + sy, z, b.L));
-            grad_sq += (1.0 / 6.0) * flux_difference_sq(b, i, index_3d(x + sx, y, z + sy, b.L));
-            grad_sq += (1.0 / 6.0) * flux_difference_sq(b, i, index_3d(x, y + sx, z + sy, b.L));
-        }
-
-        const double fx = b.d_flux_x[i], fy = b.d_flux_y[i], fz = b.d_flux_z[i];
-        const double wx = b.d_wave_vel_x[i], wy = b.d_wave_vel_y[i], wz = b.d_wave_vel_z[i];
-        const double vx = b.d_velocity_x[i], vy = b.d_velocity_y[i], vz = b.d_velocity_z[i];
-        const double speed2 = vx * vx + vy * vy + vz * vz;
-        const double wave2 = wx * wx + wy * wy + wz * wz;
-        const double rho = static_cast<double>(b.d_state[i]);
-        const double fk = 0.5 * wave2;
-        const double fg = -0.25 * C2 * grad_sq;
-        const double bi = born_infeld_core(b.d_latency[i], speed2);
-        const double coupling = G_C * rho * div;
-        const double velocity_coupling = -G_C * rho * (vx * fx + vy * fy + vz * fz);
-        const double violation = div - rho;
-        const double gauss = -LAMBDA_G_DIAGNOSTIC * violation * violation;
-        const double dissipation = 0.5 * DAMPING * wave2;
-
-        fk_sum += fk; fg_sum += fg; bi_sum += bi; coupling_sum += coupling;
-        velocity_coupling_sum += velocity_coupling; gauss_sum += gauss;
-        dissipation_sum += dissipation;
-        total += fk + fg + bi + coupling + velocity_coupling + gauss;
-        hamiltonian += born_infeld_hamiltonian(b.d_latency[i], speed2)
-                     - coupling - velocity_coupling - gauss;
-        violation_sum += violation * violation;
-        violation_max = fmax(violation_max, fabs(violation));
-        total_flux += sqrt(fx * fx + fy * fy + fz * fz);
-        total_wave += 0.5 * wave2;
-        if (b.d_state[i] != 0) {
-            manifested += 1.0;
-            locked += b.d_locked[i] ? 1.0 : 0.0;
-        }
+        divergence_and_curl(b, s.x, s.y, s.z, div, unused_x, unused_y, unused_z);
+        accumulate_lagrangian(acc, b, s, div);
     }
-
-    reduce_sum_to(out, L_FIELD_KINETIC, fk_sum);
-    reduce_sum_to(out, L_FIELD_GRADIENT, fg_sum);
-    reduce_sum_to(out, L_BORN_INFELD, bi_sum);
-    reduce_sum_to(out, L_COUPLING, coupling_sum);
-    reduce_sum_to(out, L_VELOCITY_COUPLING, velocity_coupling_sum);
-    reduce_sum_to(out, L_GAUSS, gauss_sum);
-    reduce_sum_to(out, L_DISSIPATION, dissipation_sum);
-    reduce_sum_to(out, L_TOTAL, total);
-    reduce_sum_to(out, L_HAMILTONIAN, hamiltonian);
-    reduce_sum_to(out, L_GAUSS_VIOLATION, violation_sum);
-    reduce_max_to(out, L_GAUSS_MAX, violation_max);
-    reduce_sum_to(out, L_TOTAL_FLUX, total_flux);
-    reduce_sum_to(out, L_TOTAL_WAVE, total_wave);
-    reduce_sum_to(out, L_MANIFESTED, manifested);
-    reduce_sum_to(out, L_LOCKED, locked);
+    emit_lagrangian(acc, out, /*base=*/0);
 }
 
 // ──────────────────────────────────────────────────────────────────────────
 // Coherent telemetry snapshot reduction
 // ──────────────────────────────────────────────────────────────────────────
-// Legacy compact getters intentionally keep their own kernels below for API
+// Legacy compact getters intentionally keep their own kernels above for API
 // compatibility. Native interactive telemetry uses this fused pass instead:
 // diagnostics + audit + gravity share every field load and traverse N sites
 // once. The optional Lagrangian section remains conditional because its
 // 18-point stencil is materially more expensive than the dashboard summary.
+// Both entry points run the same accumulate_*()/emit_*() helpers, so the two
+// paths cannot drift; only the slot base differs.
 
 enum TelemetrySlot : int {
     T_DIAGNOSTIC_BASE = 0,
@@ -612,276 +739,48 @@ __global__ void compact_telemetry_kernel(
     bool want_gravity, bool want_lagrangian, bool dual_substrate,
     bool strong_field, bool movement, double charge_coupling,
     const long long* charge_sum, double* out) {
-    // Diagnostics accumulators.
-    double d_total_flux = 0.0, d_bi_abs = 0.0;
-    double d_max_bandwidth = 0.0, d_max_budget = 0.0;
-    double d_manifested = 0.0, d_positive = 0.0, d_negative = 0.0;
-    double d_spin_up = 0.0, d_spin_down = 0.0;
-    double d_color0 = 0.0, d_color1 = 0.0, d_color2 = 0.0, d_color3 = 0.0;
-    double d_rho2_sum = 0.0, d_rho2_log_sum = 0.0;
-    double d_coord_x = 0.0, d_coord_y = 0.0, d_coord_z = 0.0;
-    double d_vel_x = 0.0, d_vel_y = 0.0, d_vel_z = 0.0;
-    double d_rxv_x = 0.0, d_rxv_y = 0.0, d_rxv_z = 0.0;
-
-    // Energy-audit accumulators.
-    double e_field = 0.0, e_wave = 0.0, e_particle_ke = 0.0;
-    double e_particle_rest = 0.0;
-    double e_momentum_x = 0.0, e_momentum_y = 0.0, e_momentum_z = 0.0;
-    double e_manifested = 0.0, e_charge = 0.0;
-    double e_left = 0.0, e_right = 0.0, e_wave_left = 0.0, e_wave_right = 0.0;
-    double e_chirality = 0.0, e_strong = 0.0, e_weak = 0.0;
-    double e_electric = 0.0, e_magnetic = 0.0;
-    double e_poynting_x = 0.0, e_poynting_y = 0.0, e_poynting_z = 0.0;
-    double e_gauss_sum = 0.0, e_gauss_max = 0.0, e_coulomb_pe = 0.0;
-
-    // Gravity accumulators.
-    double g_latency_max = 0.0, g_latency_sum = 0.0;
-    double g_gamma_max = 0.0, g_voxel_count = 0.0;
-
-    // Lagrangian accumulators.
-    double l_fk_sum = 0.0, l_fg_sum = 0.0, l_bi_sum = 0.0;
-    double l_coupling_sum = 0.0, l_velocity_coupling_sum = 0.0;
-    double l_gauss_sum = 0.0, l_dissipation_sum = 0.0;
-    double l_total = 0.0, l_hamiltonian = 0.0;
-    double l_violation_sum = 0.0, l_violation_max = 0.0;
-    double l_total_flux = 0.0, l_total_wave = 0.0;
-    double l_manifested = 0.0, l_locked = 0.0;
+    DiagnosticAccum diagnostics{};
+    EnergyAccum energy{};
+    GravityAccum gravity{};
+    LagrangianAccum lagrangian{};
 
     const double mean_charge = want_audit
         ? static_cast<double>(*charge_sum) / static_cast<double>(b.N) : 0.0;
-    constexpr double C2 = C_SPEED * C_SPEED;
-    constexpr double LAMBDA_G_DIAGNOSTIC = 100.0;
 
     const int begin = blockIdx.x * blockDim.x + threadIdx.x;
     const int stride = blockDim.x * gridDim.x;
     for (int i = begin; i < b.N; i += stride) {
-        const double fx = b.d_flux_x[i], fy = b.d_flux_y[i], fz = b.d_flux_z[i];
-        const double wx = b.d_wave_vel_x[i], wy = b.d_wave_vel_y[i], wz = b.d_wave_vel_z[i];
-        const double vx = b.d_velocity_x[i], vy = b.d_velocity_y[i], vz = b.d_velocity_z[i];
-        const double flux2 = fx * fx + fy * fy + fz * fz;
-        const double wave2 = wx * wx + wy * wy + wz * wz;
-        const double speed2 = vx * vx + vy * vy + vz * vz;
-        const double latency = b.d_latency[i];
-        const int state = static_cast<int>(b.d_state[i]);
-
-        int x, y, z;
-        coordinates(i, b.L, x, y, z);
+        SiteSample s = site_at(b, i);
+        load_flux(b, s);
+        load_wave(b, s);
+        load_velocity(b, s);
+        load_latency(b, s);
 
         double div = 0.0, curl_x = 0.0, curl_y = 0.0, curl_z = 0.0;
         if (want_audit || want_lagrangian) {
-            divergence_and_curl(b, x, y, z, div, curl_x, curl_y, curl_z);
+            divergence_and_curl(b, s.x, s.y, s.z, div, curl_x, curl_y, curl_z);
         }
 
-        if (want_diagnostics) {
-            d_total_flux += sqrt(flux2);
-            d_bi_abs += fabs(born_infeld_core(latency, speed2));
-            d_max_bandwidth = fmax(d_max_bandwidth,
-                                   bandwidth_fraction(latency, speed2));
-            d_max_budget = fmax(d_max_budget, causal_budget(latency, speed2));
-            d_rho2_sum += flux2;
-            if (flux2 > EPSILON_FLUX_SQ) d_rho2_log_sum += flux2 * log(flux2);
-
-            if (state != 0) {
-                d_manifested += 1.0;
-                d_positive += state > 0 ? 1.0 : 0.0;
-                d_negative += state < 0 ? 1.0 : 0.0;
-                const int spin = static_cast<int>(b.d_spin[i]);
-                d_spin_up += spin > 0 ? 1.0 : 0.0;
-                d_spin_down += spin < 0 ? 1.0 : 0.0;
-                const int color = static_cast<int>(b.d_color[i]);
-                d_color0 += color == 0 ? 1.0 : 0.0;
-                d_color1 += color == 1 ? 1.0 : 0.0;
-                d_color2 += color == 2 ? 1.0 : 0.0;
-                d_color3 += color == 3 ? 1.0 : 0.0;
-                d_coord_x += x; d_coord_y += y; d_coord_z += z;
-                d_vel_x += vx; d_vel_y += vy; d_vel_z += vz;
-                d_rxv_x += static_cast<double>(y) * vz - static_cast<double>(z) * vy;
-                d_rxv_y += static_cast<double>(z) * vx - static_cast<double>(x) * vz;
-                d_rxv_z += static_cast<double>(x) * vy - static_cast<double>(y) * vx;
-            }
-        }
-
+        if (want_diagnostics) accumulate_diagnostics(diagnostics, b, s);
         if (want_audit) {
-            e_field += quadratic_field_energy_density(flux2);
-            e_wave += quadratic_field_energy_density(wave2);
-            e_electric += quadratic_field_energy_density(wave2);
-            e_magnetic += C2 * quadratic_field_energy_density(
-                curl_x * curl_x + curl_y * curl_y + curl_z * curl_z);
-            // E = -wave_vel; S = c^2 E x B.
-            e_poynting_x += C2 * ((-wy) * curl_z - (-wz) * curl_y);
-            e_poynting_y += C2 * ((-wz) * curl_x - (-wx) * curl_z);
-            e_poynting_z += C2 * ((-wx) * curl_y - (-wy) * curl_x);
-
-            if (state == 0) {
-                const double err = div + charge_coupling * mean_charge;
-                e_gauss_sum += err * err;
-                e_gauss_max = fmax(e_gauss_max, fabs(err));
-            } else {
-                const double gamma0 = flat_gamma(speed2);
-                e_particle_ke += flat_particle_kinetic_energy(speed2);
-                e_particle_rest += E_REST;
-                e_momentum_x += vx * (gamma0 * M_INERTIAL);
-                e_momentum_y += vy * (gamma0 * M_INERTIAL);
-                e_momentum_z += vz * (gamma0 * M_INERTIAL);
-                e_manifested += 1.0;
-                e_charge += state;
-                e_coulomb_pe += 0.5 * ALPHA * static_cast<double>(state)
-                              * b.d_phi_coulomb[i];
-            }
-
-            if (dual_substrate) {
-                const double flx = b.d_flux_L_x[i], fly = b.d_flux_L_y[i], flz = b.d_flux_L_z[i];
-                const double frx = b.d_flux_R_x[i], fry = b.d_flux_R_y[i], frz = b.d_flux_R_z[i];
-                const double wlx = b.d_wave_vel_L_x[i], wly = b.d_wave_vel_L_y[i], wlz = b.d_wave_vel_L_z[i];
-                const double wrx = b.d_wave_vel_R_x[i], wry = b.d_wave_vel_R_y[i], wrz = b.d_wave_vel_R_z[i];
-                e_left += 0.5 * (flx * flx + fly * fly + flz * flz);
-                e_right += 0.5 * (frx * frx + fry * fry + frz * frz);
-                e_wave_left += 0.5 * (wlx * wlx + wly * wly + wlz * wlz);
-                e_wave_right += 0.5 * (wrx * wrx + wry * wry + wrz * wrz);
-                if (speed2 > 1e-12) {
-                    const double inv_speed = 1.0 / sqrt(speed2);
-                    const double ldot = (flx * vx + fly * vy + flz * vz) * inv_speed;
-                    const double rdot = (frx * vx + fry * vy + frz * vz) * inv_speed;
-                    e_chirality += (flx * flx + fly * fly + flz * flz - ldot * ldot)
-                                 - (frx * frx + fry * fry + frz * frz - rdot * rdot);
-                } else {
-                    e_chirality += (flx * flx + fly * fly) - (frx * frx + fry * fry);
-                }
-            }
-            if (strong_field) {
-                const double sx = b.d_flux_strong_x[i], sy = b.d_flux_strong_y[i], sz = b.d_flux_strong_z[i];
-                e_strong += 0.5 * (sx * sx + sy * sy + sz * sz);
-            }
-            const double ux = b.d_flux_weak_x[i], uy = b.d_flux_weak_y[i], uz = b.d_flux_weak_z[i];
-            e_weak += 0.5 * (ux * ux + uy * uy + uz * uz);
+            accumulate_energy(energy, b, s, div, curl_x, curl_y, curl_z,
+                              mean_charge, charge_coupling, dual_substrate,
+                              strong_field);
         }
-
-        if (want_gravity && latency > 0.0) {
-            g_latency_max = fmax(g_latency_max, latency);
-            g_latency_sum += latency;
-            g_gamma_max = fmax(g_gamma_max, transport_gamma(latency, speed2));
-            g_voxel_count += 1.0;
-        }
-
-        if (want_lagrangian) {
-            double grad_sq = 0.0;
-            grad_sq += (1.0 / 3.0) * flux_difference_sq(b, i, index_3d(x + 1, y, z, b.L));
-            grad_sq += (1.0 / 3.0) * flux_difference_sq(b, i, index_3d(x - 1, y, z, b.L));
-            grad_sq += (1.0 / 3.0) * flux_difference_sq(b, i, index_3d(x, y + 1, z, b.L));
-            grad_sq += (1.0 / 3.0) * flux_difference_sq(b, i, index_3d(x, y - 1, z, b.L));
-            grad_sq += (1.0 / 3.0) * flux_difference_sq(b, i, index_3d(x, y, z + 1, b.L));
-            grad_sq += (1.0 / 3.0) * flux_difference_sq(b, i, index_3d(x, y, z - 1, b.L));
-            for (int sx = -1; sx <= 1; sx += 2)
-            for (int sy = -1; sy <= 1; sy += 2) {
-                grad_sq += (1.0 / 6.0) * flux_difference_sq(b, i, index_3d(x + sx, y + sy, z, b.L));
-                grad_sq += (1.0 / 6.0) * flux_difference_sq(b, i, index_3d(x + sx, y, z + sy, b.L));
-                grad_sq += (1.0 / 6.0) * flux_difference_sq(b, i, index_3d(x, y + sx, z + sy, b.L));
-            }
-            const double rho = static_cast<double>(state);
-            const double fk = 0.5 * wave2;
-            const double fg = -0.25 * C2 * grad_sq;
-            const double bi = born_infeld_core(latency, speed2);
-            const double coupling = G_C * rho * div;
-            const double velocity_coupling = -G_C * rho * (vx * fx + vy * fy + vz * fz);
-            const double violation = div - rho;
-            const double gauss = -LAMBDA_G_DIAGNOSTIC * violation * violation;
-            const double dissipation = 0.5 * DAMPING * wave2;
-            l_fk_sum += fk; l_fg_sum += fg; l_bi_sum += bi;
-            l_coupling_sum += coupling;
-            l_velocity_coupling_sum += velocity_coupling;
-            l_gauss_sum += gauss; l_dissipation_sum += dissipation;
-            l_total += fk + fg + bi + coupling + velocity_coupling + gauss;
-            l_hamiltonian += born_infeld_hamiltonian(latency, speed2)
-                          - coupling - velocity_coupling - gauss;
-            l_violation_sum += violation * violation;
-            l_violation_max = fmax(l_violation_max, fabs(violation));
-            l_total_flux += sqrt(flux2);
-            l_total_wave += 0.5 * wave2;
-            if (state != 0) {
-                l_manifested += 1.0;
-                l_locked += b.d_locked[i] ? 1.0 : 0.0;
-            }
-        }
+        if (want_gravity && s.latency > 0.0) accumulate_gravity(gravity, s);
+        if (want_lagrangian) accumulate_lagrangian(lagrangian, b, s, div);
     }
 
+    // The want_* flags are launch-uniform, so every thread of a warp reaches
+    // the same emit_*() calls -- a precondition of the warp-collective
+    // reductions inside them.
     if (want_diagnostics) {
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_TOTAL_FLUX, d_total_flux);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_BI_ABS, d_bi_abs);
-        reduce_max_to(out, T_DIAGNOSTIC_BASE + D_MAX_BANDWIDTH, d_max_bandwidth);
-        reduce_max_to(out, T_DIAGNOSTIC_BASE + D_MAX_BUDGET, d_max_budget);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_MANIFESTED, d_manifested);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_POSITIVE, d_positive);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_NEGATIVE, d_negative);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_SPIN_UP, d_spin_up);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_SPIN_DOWN, d_spin_down);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_COLOR_0, d_color0);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_COLOR_1, d_color1);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_COLOR_2, d_color2);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_COLOR_3, d_color3);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_RHO2_SUM, d_rho2_sum);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_RHO2_LOG_SUM, d_rho2_log_sum);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_COORD_X, d_coord_x);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_COORD_Y, d_coord_y);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_COORD_Z, d_coord_z);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_VEL_X, d_vel_x);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_VEL_Y, d_vel_y);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_VEL_Z, d_vel_z);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_RXV_X, d_rxv_x);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_RXV_Y, d_rxv_y);
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_RXV_Z, d_rxv_z);
-        const double causal = (movement && begin == 0)
-            ? static_cast<double>(*b.d_causal_projection_events) : 0.0;
-        reduce_sum_to(out, T_DIAGNOSTIC_BASE + D_CAUSAL_PROJECTIONS, causal);
+        emit_diagnostics(diagnostics, b, movement, begin, out,
+                         T_DIAGNOSTIC_BASE);
     }
-    if (want_audit) {
-        reduce_sum_to(out, T_ENERGY_BASE + E_FIELD, e_field);
-        reduce_sum_to(out, T_ENERGY_BASE + E_WAVE, e_wave);
-        reduce_sum_to(out, T_ENERGY_BASE + E_PARTICLE_KE, e_particle_ke);
-        reduce_sum_to(out, T_ENERGY_BASE + E_PARTICLE_REST, e_particle_rest);
-        reduce_sum_to(out, T_ENERGY_BASE + E_MOMENTUM_X, e_momentum_x);
-        reduce_sum_to(out, T_ENERGY_BASE + E_MOMENTUM_Y, e_momentum_y);
-        reduce_sum_to(out, T_ENERGY_BASE + E_MOMENTUM_Z, e_momentum_z);
-        reduce_sum_to(out, T_ENERGY_BASE + E_MANIFESTED, e_manifested);
-        reduce_sum_to(out, T_ENERGY_BASE + E_CHARGE, e_charge);
-        reduce_sum_to(out, T_ENERGY_BASE + E_LEFT, e_left);
-        reduce_sum_to(out, T_ENERGY_BASE + E_RIGHT, e_right);
-        reduce_sum_to(out, T_ENERGY_BASE + E_WAVE_LEFT, e_wave_left);
-        reduce_sum_to(out, T_ENERGY_BASE + E_WAVE_RIGHT, e_wave_right);
-        reduce_sum_to(out, T_ENERGY_BASE + E_CHIRALITY, e_chirality);
-        reduce_sum_to(out, T_ENERGY_BASE + E_STRONG, e_strong);
-        reduce_sum_to(out, T_ENERGY_BASE + E_WEAK, e_weak);
-        reduce_sum_to(out, T_ENERGY_BASE + E_ELECTRIC, e_electric);
-        reduce_sum_to(out, T_ENERGY_BASE + E_MAGNETIC, e_magnetic);
-        reduce_sum_to(out, T_ENERGY_BASE + E_POYNTING_X, e_poynting_x);
-        reduce_sum_to(out, T_ENERGY_BASE + E_POYNTING_Y, e_poynting_y);
-        reduce_sum_to(out, T_ENERGY_BASE + E_POYNTING_Z, e_poynting_z);
-        reduce_sum_to(out, T_ENERGY_BASE + E_GAUSS_SUM, e_gauss_sum);
-        reduce_max_to(out, T_ENERGY_BASE + E_GAUSS_MAX, e_gauss_max);
-        reduce_sum_to(out, T_ENERGY_BASE + E_COULOMB_PE, e_coulomb_pe);
-    }
-    if (want_gravity) {
-        reduce_max_to(out, T_GRAVITY_BASE + G_LATENCY_MAX, g_latency_max);
-        reduce_sum_to(out, T_GRAVITY_BASE + G_LATENCY_SUM, g_latency_sum);
-        reduce_max_to(out, T_GRAVITY_BASE + G_GAMMA_MAX, g_gamma_max);
-        reduce_sum_to(out, T_GRAVITY_BASE + G_VOXEL_COUNT, g_voxel_count);
-    }
-    if (want_lagrangian) {
-        reduce_sum_to(out, T_LAGRANGIAN_BASE + L_FIELD_KINETIC, l_fk_sum);
-        reduce_sum_to(out, T_LAGRANGIAN_BASE + L_FIELD_GRADIENT, l_fg_sum);
-        reduce_sum_to(out, T_LAGRANGIAN_BASE + L_BORN_INFELD, l_bi_sum);
-        reduce_sum_to(out, T_LAGRANGIAN_BASE + L_COUPLING, l_coupling_sum);
-        reduce_sum_to(out, T_LAGRANGIAN_BASE + L_VELOCITY_COUPLING, l_velocity_coupling_sum);
-        reduce_sum_to(out, T_LAGRANGIAN_BASE + L_GAUSS, l_gauss_sum);
-        reduce_sum_to(out, T_LAGRANGIAN_BASE + L_DISSIPATION, l_dissipation_sum);
-        reduce_sum_to(out, T_LAGRANGIAN_BASE + L_TOTAL, l_total);
-        reduce_sum_to(out, T_LAGRANGIAN_BASE + L_HAMILTONIAN, l_hamiltonian);
-        reduce_sum_to(out, T_LAGRANGIAN_BASE + L_GAUSS_VIOLATION, l_violation_sum);
-        reduce_max_to(out, T_LAGRANGIAN_BASE + L_GAUSS_MAX, l_violation_max);
-        reduce_sum_to(out, T_LAGRANGIAN_BASE + L_TOTAL_FLUX, l_total_flux);
-        reduce_sum_to(out, T_LAGRANGIAN_BASE + L_TOTAL_WAVE, l_total_wave);
-        reduce_sum_to(out, T_LAGRANGIAN_BASE + L_MANIFESTED, l_manifested);
-        reduce_sum_to(out, T_LAGRANGIAN_BASE + L_LOCKED, l_locked);
-    }
+    if (want_audit) emit_energy(energy, out, T_ENERGY_BASE);
+    if (want_gravity) emit_gravity(gravity, out, T_GRAVITY_BASE);
+    if (want_lagrangian) emit_lagrangian(lagrangian, out, T_LAGRANGIAN_BASE);
 }
 
 int reduction_grid(int N) {
@@ -906,6 +805,119 @@ void clear_result(GpuBuffers& b) {
                           static_cast<std::size_t>(Count) * sizeof(double)));
 }
 
+// ──────────────────────────────────────────────────────────────────────────
+// Host-side slot decoding
+// ──────────────────────────────────────────────────────────────────────────
+// The legacy per-group getters and the fused telemetry snapshot read the same
+// slot layout out of different buffers; `base` is the group's offset, zero for
+// the legacy kernels whose scratch holds one group at a time.
+
+void decode_diagnostics(const double* h, int base, int tick, Diagnostics& d) {
+    d = Diagnostics{};
+    d.tick = tick;
+    d.total_flux = h[base + D_TOTAL_FLUX];
+    d.total_energy = h[base + D_BI_ABS];
+    d.max_bandwidth = h[base + D_MAX_BANDWIDTH];
+    d.max_causal_budget = h[base + D_MAX_BUDGET];
+    d.manifested_count = static_cast<int>(llround(h[base + D_MANIFESTED]));
+    d.positive_count = static_cast<int>(llround(h[base + D_POSITIVE]));
+    d.negative_count = static_cast<int>(llround(h[base + D_NEGATIVE]));
+    d.spin_up_count = static_cast<int>(llround(h[base + D_SPIN_UP]));
+    d.spin_down_count = static_cast<int>(llround(h[base + D_SPIN_DOWN]));
+    d.color_count[0] = static_cast<int>(llround(h[base + D_COLOR_0]));
+    d.color_count[1] = static_cast<int>(llround(h[base + D_COLOR_1]));
+    d.color_count[2] = static_cast<int>(llround(h[base + D_COLOR_2]));
+    d.color_count[3] = static_cast<int>(llround(h[base + D_COLOR_3]));
+    const double rho2 = h[base + D_RHO2_SUM];
+    if (rho2 >= EPSILON_FLUX_SQ)
+        d.total_entropy = log(rho2) - h[base + D_RHO2_LOG_SUM] / rho2;
+    d.causal_projection_events =
+        static_cast<long long>(llround(h[base + D_CAUSAL_PROJECTIONS]));
+
+    if (d.manifested_count > 0) {
+        const double inv_n = 1.0 / static_cast<double>(d.manifested_count);
+        const double cx = h[base + D_COORD_X] * inv_n;
+        const double cy = h[base + D_COORD_Y] * inv_n;
+        const double cz = h[base + D_COORD_Z] * inv_n;
+        d.total_angular_momentum.x = h[base + D_RXV_X]
+            - (cy * h[base + D_VEL_Z] - cz * h[base + D_VEL_Y]);
+        d.total_angular_momentum.y = h[base + D_RXV_Y]
+            - (cz * h[base + D_VEL_X] - cx * h[base + D_VEL_Z]);
+        d.total_angular_momentum.z = h[base + D_RXV_Z]
+            - (cx * h[base + D_VEL_Y] - cy * h[base + D_VEL_X]);
+    }
+}
+
+void decode_energy_audit(const double* h, int base, EnergyAudit& a) {
+    a = EnergyAudit{};
+    a.field_energy = h[base + E_FIELD];
+    a.wave_energy = h[base + E_WAVE];
+    a.field_energy_density_sum = h[base + E_FIELD];
+    a.wave_energy_density_sum = h[base + E_WAVE];
+    a.particle_ke = h[base + E_PARTICLE_KE];
+    a.particle_rest_energy = h[base + E_PARTICLE_REST];
+    a.particle_momentum = {h[base + E_MOMENTUM_X], h[base + E_MOMENTUM_Y],
+                           h[base + E_MOMENTUM_Z]};
+    a.manifested_count = static_cast<int>(llround(h[base + E_MANIFESTED]));
+    a.charge_total = static_cast<int>(llround(h[base + E_CHARGE]));
+    a.E_L_total = h[base + E_LEFT];
+    a.E_R_total = h[base + E_RIGHT];
+    a.wv_L_total = h[base + E_WAVE_LEFT];
+    a.wv_R_total = h[base + E_WAVE_RIGHT];
+    a.chirality_total = h[base + E_CHIRALITY];
+    a.strong_energy = h[base + E_STRONG];
+    a.weak_energy = h[base + E_WEAK];
+    a.E_field_energy = h[base + E_ELECTRIC];
+    a.B_field_energy = h[base + E_MAGNETIC];
+    a.total_poynting = {h[base + E_POYNTING_X], h[base + E_POYNTING_Y],
+                        h[base + E_POYNTING_Z]};
+    a.gauss_violation = h[base + E_GAUSS_SUM];
+    a.max_gauss_error = h[base + E_GAUSS_MAX];
+    a.coulomb_pe = h[base + E_COULOMB_PE];
+    a.particle_energy = a.particle_rest_energy + a.particle_ke;
+    a.dynamic_energy = a.field_energy + a.wave_energy + a.particle_ke;
+    a.total_energy = a.field_energy + a.wave_energy + a.particle_energy;
+}
+
+void decode_gravity_metric(const double* h, int base, bool requested,
+                           GravityMetricAgg& a) {
+    a = GravityMetricAgg{};
+    a.latency_max = h[base + G_LATENCY_MAX];
+    a.voxel_count = static_cast<int>(llround(h[base + G_VOXEL_COUNT]));
+    a.gamma_max = a.voxel_count > 0 ? h[base + G_GAMMA_MAX] : 1.0;
+    if (a.voxel_count > 0) {
+        a.latency_mean = h[base + G_LATENCY_SUM]
+                       / static_cast<double>(a.voxel_count);
+        a.f_min = 1.0 - a.latency_max * a.latency_max;
+        a.dilation_max_pct = (1.0 - sqrt(fmax(0.0, a.f_min))) * 100.0;
+    }
+    a.requested = requested;
+    a.active = a.requested && a.voxel_count > 0;
+}
+
+/// `Lagrangian` is LagrangianDiag for the legacy getter and the POD
+/// TelemetryLagrangian for the snapshot; both carry the same slot fields.
+template <class Lagrangian>
+void decode_lagrangian(const double* h, int base, Lagrangian& d) {
+    d = Lagrangian{};
+    d.field_kinetic_sum = h[base + L_FIELD_KINETIC];
+    d.field_gradient_sum = h[base + L_FIELD_GRADIENT];
+    d.born_infeld_sum = h[base + L_BORN_INFELD];
+    d.coupling_sum = h[base + L_COUPLING];
+    d.velocity_coupling_sum = h[base + L_VELOCITY_COUPLING];
+    d.gauss_sum = h[base + L_GAUSS];
+    d.dissipation_sum = h[base + L_DISSIPATION];
+    d.total_lagrangian = h[base + L_TOTAL];
+    d.total_hamiltonian = h[base + L_HAMILTONIAN];
+    d.total_action = d.total_lagrangian;
+    d.gauss_violation = h[base + L_GAUSS_VIOLATION];
+    d.max_gauss_error = h[base + L_GAUSS_MAX];
+    d.total_flux_mag = h[base + L_TOTAL_FLUX];
+    d.total_wave_energy = h[base + L_TOTAL_WAVE];
+    d.manifested_count = static_cast<int>(llround(h[base + L_MANIFESTED]));
+    d.locked_count = static_cast<int>(llround(h[base + L_LOCKED]));
+}
+
 }  // namespace
 
 void launch_compact_diagnostics(GpuBuffers& b, int tick, bool movement,
@@ -915,36 +927,7 @@ void launch_compact_diagnostics(GpuBuffers& b, int tick, bool movement,
         diagnostic_view(b), movement, b.d_compact_diagnostics);
     CUDA_CHECK(cudaGetLastError());
     const auto h = download_result<D_COUNT>(b);
-
-    d = Diagnostics{};
-    d.tick = tick;
-    d.total_flux = h[D_TOTAL_FLUX];
-    d.total_energy = h[D_BI_ABS];
-    d.max_bandwidth = h[D_MAX_BANDWIDTH];
-    d.max_causal_budget = h[D_MAX_BUDGET];
-    d.manifested_count = static_cast<int>(llround(h[D_MANIFESTED]));
-    d.positive_count = static_cast<int>(llround(h[D_POSITIVE]));
-    d.negative_count = static_cast<int>(llround(h[D_NEGATIVE]));
-    d.spin_up_count = static_cast<int>(llround(h[D_SPIN_UP]));
-    d.spin_down_count = static_cast<int>(llround(h[D_SPIN_DOWN]));
-    d.color_count[0] = static_cast<int>(llround(h[D_COLOR_0]));
-    d.color_count[1] = static_cast<int>(llround(h[D_COLOR_1]));
-    d.color_count[2] = static_cast<int>(llround(h[D_COLOR_2]));
-    d.color_count[3] = static_cast<int>(llround(h[D_COLOR_3]));
-    const double rho2 = h[D_RHO2_SUM];
-    if (rho2 >= EPSILON_FLUX_SQ)
-        d.total_entropy = log(rho2) - h[D_RHO2_LOG_SUM] / rho2;
-    d.causal_projection_events = static_cast<long long>(llround(h[D_CAUSAL_PROJECTIONS]));
-
-    if (d.manifested_count > 0) {
-        const double inv_n = 1.0 / static_cast<double>(d.manifested_count);
-        const double cx = h[D_COORD_X] * inv_n;
-        const double cy = h[D_COORD_Y] * inv_n;
-        const double cz = h[D_COORD_Z] * inv_n;
-        d.total_angular_momentum.x = h[D_RXV_X] - (cy * h[D_VEL_Z] - cz * h[D_VEL_Y]);
-        d.total_angular_momentum.y = h[D_RXV_Y] - (cz * h[D_VEL_X] - cx * h[D_VEL_Z]);
-        d.total_angular_momentum.z = h[D_RXV_Z] - (cx * h[D_VEL_Y] - cy * h[D_VEL_X]);
-    }
+    decode_diagnostics(h.data(), /*base=*/0, tick, d);
 }
 
 void launch_compact_energy_audit(GpuBuffers& b, const TermToggles& toggles,
@@ -961,33 +944,7 @@ void launch_compact_energy_audit(GpuBuffers& b, const TermToggles& toggles,
         b.d_compact_diagnostics);
     CUDA_CHECK(cudaGetLastError());
     const auto h = download_result<E_COUNT>(b);
-
-    a = EnergyAudit{};
-    a.field_energy = h[E_FIELD];
-    a.wave_energy = h[E_WAVE];
-    a.field_energy_density_sum = h[E_FIELD];
-    a.wave_energy_density_sum = h[E_WAVE];
-    a.particle_ke = h[E_PARTICLE_KE];
-    a.particle_rest_energy = h[E_PARTICLE_REST];
-    a.particle_momentum = {h[E_MOMENTUM_X], h[E_MOMENTUM_Y], h[E_MOMENTUM_Z]};
-    a.manifested_count = static_cast<int>(llround(h[E_MANIFESTED]));
-    a.charge_total = static_cast<int>(llround(h[E_CHARGE]));
-    a.E_L_total = h[E_LEFT];
-    a.E_R_total = h[E_RIGHT];
-    a.wv_L_total = h[E_WAVE_LEFT];
-    a.wv_R_total = h[E_WAVE_RIGHT];
-    a.chirality_total = h[E_CHIRALITY];
-    a.strong_energy = h[E_STRONG];
-    a.weak_energy = h[E_WEAK];
-    a.E_field_energy = h[E_ELECTRIC];
-    a.B_field_energy = h[E_MAGNETIC];
-    a.total_poynting = {h[E_POYNTING_X], h[E_POYNTING_Y], h[E_POYNTING_Z]};
-    a.gauss_violation = h[E_GAUSS_SUM];
-    a.max_gauss_error = h[E_GAUSS_MAX];
-    a.coulomb_pe = h[E_COULOMB_PE];
-    a.particle_energy = a.particle_rest_energy + a.particle_ke;
-    a.dynamic_energy = a.field_energy + a.wave_energy + a.particle_ke;
-    a.total_energy = a.field_energy + a.wave_energy + a.particle_energy;
+    decode_energy_audit(h.data(), /*base=*/0, a);
 }
 
 void launch_compact_gravity_metric(GpuBuffers& b, const TermToggles& toggles,
@@ -997,18 +954,9 @@ void launch_compact_gravity_metric(GpuBuffers& b, const TermToggles& toggles,
         diagnostic_view(b), b.d_compact_diagnostics);
     CUDA_CHECK(cudaGetLastError());
     const auto h = download_result<G_SLOT_COUNT>(b);
-
-    a = GravityMetricAgg{};
-    a.latency_max = h[G_LATENCY_MAX];
-    a.voxel_count = static_cast<int>(llround(h[G_VOXEL_COUNT]));
-    a.gamma_max = a.voxel_count > 0 ? h[G_GAMMA_MAX] : 1.0;
-    if (a.voxel_count > 0) {
-        a.latency_mean = h[G_LATENCY_SUM] / static_cast<double>(a.voxel_count);
-        a.f_min = 1.0 - a.latency_max * a.latency_max;
-        a.dilation_max_pct = (1.0 - sqrt(fmax(0.0, a.f_min))) * 100.0;
-    }
-    a.requested = toggles.latency_field || toggles.field_energy_gravity;
-    a.active = a.requested && a.voxel_count > 0;
+    decode_gravity_metric(h.data(), /*base=*/0,
+                          toggles.latency_field || toggles.field_energy_gravity,
+                          a);
 }
 
 void launch_compact_voxel(GpuBuffers& b, int index, VoxelInspection& out) {
@@ -1061,24 +1009,7 @@ void launch_compact_lagrangian(GpuBuffers& b, LagrangianDiag& d) {
         diagnostic_view(b), b.d_compact_diagnostics);
     CUDA_CHECK(cudaGetLastError());
     const auto h = download_result<L_COUNT>(b);
-
-    d = LagrangianDiag{};
-    d.field_kinetic_sum = h[L_FIELD_KINETIC];
-    d.field_gradient_sum = h[L_FIELD_GRADIENT];
-    d.born_infeld_sum = h[L_BORN_INFELD];
-    d.coupling_sum = h[L_COUPLING];
-    d.velocity_coupling_sum = h[L_VELOCITY_COUPLING];
-    d.gauss_sum = h[L_GAUSS];
-    d.dissipation_sum = h[L_DISSIPATION];
-    d.total_lagrangian = h[L_TOTAL];
-    d.total_hamiltonian = h[L_HAMILTONIAN];
-    d.total_action = d.total_lagrangian;
-    d.gauss_violation = h[L_GAUSS_VIOLATION];
-    d.max_gauss_error = h[L_GAUSS_MAX];
-    d.total_flux_mag = h[L_TOTAL_FLUX];
-    d.total_wave_energy = h[L_TOTAL_WAVE];
-    d.manifested_count = static_cast<int>(llround(h[L_MANIFESTED]));
-    d.locked_count = static_cast<int>(llround(h[L_LOCKED]));
+    decode_lagrangian(h.data(), /*base=*/0, d);
 }
 
 void launch_telemetry_snapshot(GpuBuffers& b, std::uint32_t groups,
@@ -1136,111 +1067,20 @@ void decode_telemetry_snapshot(const GpuBuffers& b,
                                   request.lattice_size};
 
     if (request.groups & TELEMETRY_DIAGNOSTICS) {
-        const int o = T_DIAGNOSTIC_BASE;
-        auto& d = out.diagnostics;
-        d.tick = tick;
-        d.total_flux = h[o + D_TOTAL_FLUX];
-        d.total_energy = h[o + D_BI_ABS];
-        d.max_bandwidth = h[o + D_MAX_BANDWIDTH];
-        d.max_causal_budget = h[o + D_MAX_BUDGET];
-        d.manifested_count = static_cast<int>(llround(h[o + D_MANIFESTED]));
-        d.positive_count = static_cast<int>(llround(h[o + D_POSITIVE]));
-        d.negative_count = static_cast<int>(llround(h[o + D_NEGATIVE]));
-        d.spin_up_count = static_cast<int>(llround(h[o + D_SPIN_UP]));
-        d.spin_down_count = static_cast<int>(llround(h[o + D_SPIN_DOWN]));
-        d.color_count[0] = static_cast<int>(llround(h[o + D_COLOR_0]));
-        d.color_count[1] = static_cast<int>(llround(h[o + D_COLOR_1]));
-        d.color_count[2] = static_cast<int>(llround(h[o + D_COLOR_2]));
-        d.color_count[3] = static_cast<int>(llround(h[o + D_COLOR_3]));
-        const double rho2 = h[o + D_RHO2_SUM];
-        if (rho2 >= EPSILON_FLUX_SQ)
-            d.total_entropy = log(rho2) - h[o + D_RHO2_LOG_SUM] / rho2;
-        d.causal_projection_events = static_cast<long long>(
-            llround(h[o + D_CAUSAL_PROJECTIONS]));
-        if (d.manifested_count > 0) {
-            const double inv_n = 1.0 / static_cast<double>(d.manifested_count);
-            const double cx = h[o + D_COORD_X] * inv_n;
-            const double cy = h[o + D_COORD_Y] * inv_n;
-            const double cz = h[o + D_COORD_Z] * inv_n;
-            d.total_angular_momentum.x = h[o + D_RXV_X]
-                - (cy * h[o + D_VEL_Z] - cz * h[o + D_VEL_Y]);
-            d.total_angular_momentum.y = h[o + D_RXV_Y]
-                - (cz * h[o + D_VEL_X] - cx * h[o + D_VEL_Z]);
-            d.total_angular_momentum.z = h[o + D_RXV_Z]
-                - (cx * h[o + D_VEL_Y] - cy * h[o + D_VEL_X]);
-        }
+        decode_diagnostics(h, T_DIAGNOSTIC_BASE, tick, out.diagnostics);
         out.diagnostics_meta = meta;
     }
-
     if (request.groups & TELEMETRY_AUDIT) {
-        const int o = T_ENERGY_BASE;
-        auto& a = out.audit;
-        a.field_energy = h[o + E_FIELD];
-        a.wave_energy = h[o + E_WAVE];
-        a.field_energy_density_sum = h[o + E_FIELD];
-        a.wave_energy_density_sum = h[o + E_WAVE];
-        a.particle_ke = h[o + E_PARTICLE_KE];
-        a.particle_rest_energy = h[o + E_PARTICLE_REST];
-        a.particle_momentum = {h[o + E_MOMENTUM_X], h[o + E_MOMENTUM_Y],
-                               h[o + E_MOMENTUM_Z]};
-        a.manifested_count = static_cast<int>(llround(h[o + E_MANIFESTED]));
-        a.charge_total = static_cast<int>(llround(h[o + E_CHARGE]));
-        a.E_L_total = h[o + E_LEFT];
-        a.E_R_total = h[o + E_RIGHT];
-        a.wv_L_total = h[o + E_WAVE_LEFT];
-        a.wv_R_total = h[o + E_WAVE_RIGHT];
-        a.chirality_total = h[o + E_CHIRALITY];
-        a.strong_energy = h[o + E_STRONG];
-        a.weak_energy = h[o + E_WEAK];
-        a.E_field_energy = h[o + E_ELECTRIC];
-        a.B_field_energy = h[o + E_MAGNETIC];
-        a.total_poynting = {h[o + E_POYNTING_X], h[o + E_POYNTING_Y],
-                            h[o + E_POYNTING_Z]};
-        a.gauss_violation = h[o + E_GAUSS_SUM];
-        a.max_gauss_error = h[o + E_GAUSS_MAX];
-        a.coulomb_pe = h[o + E_COULOMB_PE];
-        a.particle_energy = a.particle_rest_energy + a.particle_ke;
-        a.dynamic_energy = a.field_energy + a.wave_energy + a.particle_ke;
-        a.total_energy = a.field_energy + a.wave_energy + a.particle_energy;
+        decode_energy_audit(h, T_ENERGY_BASE, out.audit);
         out.audit_meta = meta;
     }
-
     if (request.groups & TELEMETRY_GRAVITY) {
-        const int o = T_GRAVITY_BASE;
-        auto& a = out.gravity;
-        a.latency_max = h[o + G_LATENCY_MAX];
-        a.voxel_count = static_cast<int>(llround(h[o + G_VOXEL_COUNT]));
-        a.gamma_max = a.voxel_count > 0 ? h[o + G_GAMMA_MAX] : 1.0;
-        if (a.voxel_count > 0) {
-            a.latency_mean = h[o + G_LATENCY_SUM]
-                           / static_cast<double>(a.voxel_count);
-            a.f_min = 1.0 - a.latency_max * a.latency_max;
-            a.dilation_max_pct = (1.0 - sqrt(fmax(0.0, a.f_min))) * 100.0;
-        }
-        a.requested = gravity_requested;
-        a.active = a.requested && a.voxel_count > 0;
+        decode_gravity_metric(h, T_GRAVITY_BASE, gravity_requested,
+                              out.gravity);
         out.gravity_meta = meta;
     }
-
     if (request.groups & TELEMETRY_LAGRANGIAN) {
-        const int o = T_LAGRANGIAN_BASE;
-        auto& d = out.lagrangian;
-        d.field_kinetic_sum = h[o + L_FIELD_KINETIC];
-        d.field_gradient_sum = h[o + L_FIELD_GRADIENT];
-        d.born_infeld_sum = h[o + L_BORN_INFELD];
-        d.coupling_sum = h[o + L_COUPLING];
-        d.velocity_coupling_sum = h[o + L_VELOCITY_COUPLING];
-        d.gauss_sum = h[o + L_GAUSS];
-        d.dissipation_sum = h[o + L_DISSIPATION];
-        d.total_lagrangian = h[o + L_TOTAL];
-        d.total_hamiltonian = h[o + L_HAMILTONIAN];
-        d.total_action = d.total_lagrangian;
-        d.gauss_violation = h[o + L_GAUSS_VIOLATION];
-        d.max_gauss_error = h[o + L_GAUSS_MAX];
-        d.total_flux_mag = h[o + L_TOTAL_FLUX];
-        d.total_wave_energy = h[o + L_TOTAL_WAVE];
-        d.manifested_count = static_cast<int>(llround(h[o + L_MANIFESTED]));
-        d.locked_count = static_cast<int>(llround(h[o + L_LOCKED]));
+        decode_lagrangian(h, T_LAGRANGIAN_BASE, out.lagrangian);
         out.lagrangian_meta = meta;
     }
 }

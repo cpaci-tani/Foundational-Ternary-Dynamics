@@ -1,5 +1,7 @@
 #include "ftd/eft/cuda_state_only_support_ladder.h"
 
+#include "cuda_curl_index_helpers.cuh"
+
 #include <cuda_runtime.h>
 
 #include <algorithm>
@@ -339,36 +341,11 @@ __device__ double maximum_component(DeviceVec3 value) {
 __device__ double sample_energy(DeviceVec3 electric,DeviceVec3 magnetic) {
   return 0.5*(mag2(electric)+mag2(magnetic));
 }
-__device__ int wrap_coordinate(int value,int L) {
-  value%=L;
-  return value<0?value+L:value;
-}
-__device__ std::size_t lattice_index(int x,int y,int z,int L) {
-  return (static_cast<std::size_t>(wrap_coordinate(x,L))*L
-      +wrap_coordinate(y,L))*L+wrap_coordinate(z,L);
-}
-__device__ double component(
-    const DeviceTriplet field,int axis,int x,int y,int z,int L) {
-  const auto index=lattice_index(x,y,z,L);
-  return axis==0?field.x[index]:(axis==1?field.y[index]:field.z[index]);
-}
-__device__ double curl_adjoint_component(
-    const DeviceTriplet field,int axis,int x,int y,int z,int L) {
-  const auto f=[&](int c,int xx,int yy,int zz) {
-    return component(field,c,xx,yy,zz,L);
-  };
-  if(axis==0)
-    return f(2,x,y+1,z)-f(2,x,y,z)-f(1,x,y,z+1)+f(1,x,y,z);
-  if(axis==1)
-    return f(0,x,y,z+1)-f(0,x,y,z)-f(2,x+1,y,z)+f(2,x,y,z);
-  return f(1,x+1,y,z)-f(1,x,y,z)-f(0,x,y+1,z)+f(0,x,y,z);
-}
-__device__ double integer_edge_component(
-    const DeviceTriplet electric,const DeviceTriplet magnetic,
-    int axis,int x,int y,int z,int L,double half_step_scale) {
-  return component(magnetic,axis,x,y,z,L)
-      +half_step_scale*curl_adjoint_component(electric,axis,x,y,z,L);
-}
+// Periodic index + staggered-lattice curl helpers are shared with the other
+// EFT observer TUs; see engine/cuda/cuda_curl_index_helpers.cuh.
+using device_field::component;
+using device_field::curl_adjoint_component;
+using device_field::integer_edge_component;
 __device__ DeviceVec3 centered_face(
     const DeviceTriplet field,int x,int y,int z,int L) {
   return {

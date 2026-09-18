@@ -1,4 +1,6 @@
 /** Approximate display arithmetic on exact integers. No time evolution or closure. */
+import { leastSquares } from './least-squares.js';
+
 const pairs = [[0, 0], [1, 1], [2, 2], [0, 1], [0, 2], [1, 2]];
 const integer = value => {
     if (typeof value !== 'string' || !/^(0|-?[1-9][0-9]*)$/.test(value)) throw new Error('Expected an exact decimal integer');
@@ -67,13 +69,8 @@ export function fitMode(history, kSquared, eligible) {
         || samples.some((s, i) => !Number.isFinite(s.cycle) || !(s.amplitude > 0) || !Number.isFinite(s.amplitude)
             || (i && s.cycle <= samples[i - 1].cycle))) return { available: false, reason: 'Zero, missing or unordered amplitude samples.' };
     const n = samples.length, times = samples.map(v => v.cycle - samples[0].cycle);
-    const mx = times.reduce((s, v) => s + v, 0) / n;
-    const logs = samples.map(s => Math.log(s.amplitude)), my = logs.reduce((s, v) => s + v, 0) / n;
-    const xx = times.reduce((s, v) => s + (v - mx) ** 2, 0);
+    const { sxx: xx, slope, residual, syy: yy } = leastSquares(times, samples.map(s => Math.log(s.amplitude)));
     if (!(xx > 0) || !Number.isFinite(xx)) return { available: false, reason: 'Regression time precision is unresolved.' };
-    const slope = times.reduce((s, v, i) => s + (v - mx) * (logs[i] - my), 0) / xx;
-    const residual = times.reduce((s, v, i) => s + (logs[i] - my - slope * (v - mx)) ** 2, 0);
-    const yy = logs.reduce((s, v) => s + (v - my) ** 2, 0);
     if (![slope, -slope / kSquared, residual, yy, yy > 0 ? 1 - residual / yy : 0].every(Number.isFinite)) {
         return { available: false, reason: 'Regression exceeds finite display arithmetic.' };
     }

@@ -1,5 +1,4 @@
 import { createToolbarRegistry } from './toolbar-registry.js';
-import { createOverlayRegistry } from './overlay-registry.js';
 import { getPanelRegistry } from './panel-registry.js?v=5';
 
 /**
@@ -9,6 +8,5 @@ export function createScaleUiRegistry() {
     return {
         panels: getPanelRegistry(),
         toolbar: createToolbarRegistry(),
-        overlays: createOverlayRegistry(),
     };
 }

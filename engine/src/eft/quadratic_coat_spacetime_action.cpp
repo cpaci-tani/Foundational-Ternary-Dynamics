@@ -1,6 +1,7 @@
 #include "ftd/eft/quadratic_coat_spacetime_action.h"
 
 #include "ftd/eft/local_polarity_regularity.h"
+#include "ftd/eft/quadratic_coat_common.h"
 
 #include <algorithm>
 #include <array>
@@ -11,27 +12,10 @@
 namespace ftd::eft {
 namespace {
 
-int wrap(int value, int L) {
-  const int remainder = value % L;
-  return remainder < 0 ? remainder + L : remainder;
-}
-
-std::size_t flat_index(int L, int x, int y, int z) {
-  const auto side = static_cast<std::size_t>(L);
-  const auto wx = static_cast<std::size_t>(wrap(x, L));
-  const auto wy = static_cast<std::size_t>(wrap(y, L));
-  const auto wz = static_cast<std::size_t>(wrap(z, L));
-  return (wx * side + wy) * side + wz;
-}
-
-double component(const Vec3& value, int axis) {
-  return axis == 0 ? value.x : (axis == 1 ? value.y : value.z);
-}
-
-bool finite(const Vec3& value) {
-  return std::isfinite(value.x) && std::isfinite(value.y)
-      && std::isfinite(value.z);
-}
+using quadratic_coat_common::component;
+using quadratic_coat_common::finite;
+using quadratic_coat_common::flat_index;
+using quadratic_coat_common::half_integer_breaks;
 
 bool finite(const std::vector<double>& values) {
   return std::all_of(values.begin(), values.end(),
@@ -59,32 +43,6 @@ double b1(double u) {
 double b2(double u) {
   return evaluate_local_polarity_kernel(
       LocalPolarityKernel::QuadraticBSpline, u);
-}
-
-std::vector<double> half_integer_breaks(const Vec3& start,
-                                        const Vec3& end) {
-  std::vector<double> breaks{0.0, 1.0};
-  for (int axis = 0; axis < 3; ++axis) {
-    const double p0 = component(start, axis);
-    const double delta = component(end, axis) - p0;
-    if (delta == 0.0) continue;
-    const double lower = std::min(p0, p0 + delta);
-    const double upper = std::max(p0, p0 + delta);
-    const int first = static_cast<int>(std::floor(lower)) - 2;
-    const int last = static_cast<int>(std::ceil(upper)) + 2;
-    for (int k = first; k <= last; ++k) {
-      const double plane = static_cast<double>(k) + 0.5;
-      const double t = (plane - p0) / delta;
-      if (t > 0.0 && t < 1.0) breaks.push_back(t);
-    }
-  }
-  std::sort(breaks.begin(), breaks.end());
-  breaks.erase(std::unique(breaks.begin(), breaks.end(),
-      [](double a, double b) {
-        return std::abs(a - b)
-            <= 32.0 * std::numeric_limits<double>::epsilon();
-      }), breaks.end());
-  return breaks;
 }
 
 double distance_to_interval(double value, double lower, double upper) {

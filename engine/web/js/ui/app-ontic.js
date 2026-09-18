@@ -13,8 +13,6 @@
  *     getBridge():            Bridge,              // simulation bridge (mock or wasm)
  *     getEngineMode():        'cosmic' | 'particles' | 'atoms' | 'molecules' | 'lattice' | ...
  *     getObservatory():       OnticObservatory | null,
- *     getAggregateDetector(): AggregateDetector | null,
- *     getEmergenceMonitor():  EmergenceMonitor | null,
  *     getPhysicsZ():          number,
  *     setPhysicsZ(z):         void,
  *   }

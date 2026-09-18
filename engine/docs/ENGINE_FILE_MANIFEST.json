@@ -3,33 +3,33 @@
   "generated_by": "engine/tools/build_file_manifest.py",
   "note": "Mechanical per-file catalog. Conceptual docs: engine/ARCHITECTURE.md, CALLSTACKS.md, SCENARIO_ARCHITECTURE.md, SPEC_ENGINE.md, engine/docs/ENGINE_CODE_MAP.md.",
   "totals": {
-    "files": 2929,
-    "loc": 797020
+    "files": 2913,
+    "loc": 793929
   },
   "subsystems": {
     "tests": {
       "files": 837,
-      "loc": 253026
+      "loc": 253038
     },
     "other": {
       "files": 846,
-      "loc": 178573
+      "loc": 178518
     },
     "web/js-toplevel": {
-      "files": 68,
-      "loc": 81045
+      "files": 67,
+      "loc": 80535
     },
     "src/core": {
       "files": 199,
-      "loc": 70242
+      "loc": 69412
     },
     "web/tests": {
       "files": 237,
       "loc": 52191
     },
     "include": {
-      "files": 307,
-      "loc": 39931
+      "files": 306,
+      "loc": 39886
     },
     "web/scale0": {
       "files": 86,
@@ -37,11 +37,11 @@
     },
     "cuda": {
       "files": 30,
-      "loc": 18743
+      "loc": 18436
     },
     "web/ui": {
-      "files": 94,
-      "loc": 13994
+      "files": 91,
+      "loc": 13817
     },
     "web/bridge": {
       "files": 32,
@@ -87,10 +87,6 @@
       "files": 8,
       "loc": 1726
     },
-    "vendor": {
-      "files": 15,
-      "loc": 1595
-    },
     "web/inspector": {
       "files": 9,
       "loc": 1468
@@ -108,8 +104,8 @@
       "loc": 959
     },
     "web/scale3": {
-      "files": 10,
-      "loc": 911
+      "files": 9,
+      "loc": 903
     },
     "src/atom": {
       "files": 3,
@@ -119,13 +115,17 @@
       "files": 7,
       "loc": 781
     },
-    "web/telemetry": {
-      "files": 5,
-      "loc": 368
+    "vendor": {
+      "files": 7,
+      "loc": 477
     },
     "web/core": {
       "files": 6,
       "loc": 348
+    },
+    "web/telemetry": {
+      "files": 3,
+      "loc": 315
     },
     "web/scales-shared": {
       "files": 1,
@@ -137,87 +137,6 @@
     }
   },
   "files": [
-    {
-      "path": "engine/VISUAL_GUIDE_files/libs/bootstrap/bootstrap.min.js",
-      "lang": "js",
-      "loc": 7,
-      "subsystem": "vendor",
-      "primary": false,
-      "purpose": "",
-      "symbols": []
-    },
-    {
-      "path": "engine/VISUAL_GUIDE_files/libs/clipboard/clipboard.min.js",
-      "lang": "js",
-      "loc": 7,
-      "subsystem": "vendor",
-      "primary": false,
-      "purpose": "",
-      "symbols": []
-    },
-    {
-      "path": "engine/VISUAL_GUIDE_files/libs/quarto-html/anchor.min.js",
-      "lang": "js",
-      "loc": 9,
-      "subsystem": "vendor",
-      "primary": false,
-      "purpose": "",
-      "symbols": []
-    },
-    {
-      "path": "engine/VISUAL_GUIDE_files/libs/quarto-html/axe/axe-check.js",
-      "lang": "js",
-      "loc": 145,
-      "subsystem": "vendor",
-      "primary": false,
-      "purpose": "",
-      "symbols": [
-        "QuartoAxeReporter",
-        "QuartoAxeJsonReporter",
-        "QuartoAxeConsoleReporter",
-        "QuartoAxeDocumentReporter",
-        "QuartoAxeChecker",
-        "init()"
-      ]
-    },
-    {
-      "path": "engine/VISUAL_GUIDE_files/libs/quarto-html/popper.min.js",
-      "lang": "js",
-      "loc": 6,
-      "subsystem": "vendor",
-      "primary": false,
-      "purpose": "",
-      "symbols": []
-    },
-    {
-      "path": "engine/VISUAL_GUIDE_files/libs/quarto-html/quarto.js",
-      "lang": "js",
-      "loc": 847,
-      "subsystem": "vendor",
-      "primary": false,
-      "purpose": "",
-      "symbols": []
-    },
-    {
-      "path": "engine/VISUAL_GUIDE_files/libs/quarto-html/tabsets/tabsets.js",
-      "lang": "js",
-      "loc": 95,
-      "subsystem": "vendor",
-      "primary": false,
-      "purpose": "grouped tabsets",
-      "symbols": [
-        "init()"
-      ]
-    },
-    {
-      "path": "engine/VISUAL_GUIDE_files/libs/quarto-html/tippy.umd.min.js",
-      "lang": "js",
-      "loc": 2,
-      "subsystem": "vendor",
-      "primary": false,
-      "purpose": "",
-      "symbols": []
-    },
     {
       "path": "engine/cuda/atom_engine_gpu.cu",
       "lang": "cuda",
@@ -309,7 +228,7 @@
     {
       "path": "engine/cuda/cuda_paired_field_response.cu",
       "lang": "cuda",
-      "loc": 564,
+      "loc": 528,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "",
@@ -321,7 +240,7 @@
     {
       "path": "engine/cuda/cuda_quadratic_coat_orbit_gather.cu",
       "lang": "cuda",
-      "loc": 468,
+      "loc": 467,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "",
@@ -335,7 +254,7 @@
     {
       "path": "engine/cuda/cuda_state_only_support_ladder.cu",
       "lang": "cuda",
-      "loc": 1360,
+      "loc": 1337,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "",
@@ -360,12 +279,17 @@
     {
       "path": "engine/cuda/diagnostic_reductions.cu",
       "lang": "cuda",
-      "loc": 1250,
+      "loc": 1090,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "@file diagnostic_reductions.cu @brief Fixed-size CUDA reductions for native interactive diagnostics.",
       "symbols": [
-        "DiagnosticView"
+        "DiagnosticView",
+        "SiteSample",
+        "DiagnosticAccum",
+        "EnergyAccum",
+        "GravityAccum",
+        "LagrangianAccum"
       ]
     },
     {
@@ -433,7 +357,7 @@
     {
       "path": "engine/cuda/kernels_gauge.cu",
       "lang": "cuda",
-      "loc": 480,
+      "loc": 393,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "@file kernels_gauge.cu @brief GPU kernels for Scale 0 Gauge Field non-Abelian plaquette relaxation.",
@@ -1896,17 +1820,6 @@
         "GenesisMapResult",
         "BernoulliDilationResult",
         "GenesisReservoirDilationResult"
-      ]
-    },
-    {
-      "path": "engine/include/ftd/eft/gpu_discrete_universe.h",
-      "lang": "c-header",
-      "loc": 45,
-      "subsystem": "include",
-      "primary": true,
-      "purpose": "@file ftd/eft/gpu_discrete_universe.h @brief Standalone, hyper-optimized GPU Discrete Universe simulation engine prototype.",
-      "symbols": [
-        "GpuDiscreteUniverse"
       ]
     },
     {
@@ -5779,7 +5692,7 @@
     {
       "path": "engine/src/eft/axial_face_hop_reciprocity.cpp",
       "lang": "cpp",
-      "loc": 513,
+      "loc": 483,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -5860,7 +5773,7 @@
     {
       "path": "engine/src/eft/catalytic_phase_reference.cpp",
       "lang": "cpp",
-      "loc": 207,
+      "loc": 197,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -5871,7 +5784,7 @@
     {
       "path": "engine/src/eft/centered_fiber_knot_transaction.cpp",
       "lang": "cpp",
-      "loc": 349,
+      "loc": 319,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -5898,7 +5811,7 @@
     {
       "path": "engine/src/eft/clock_gated_hamiltonian_exchange.cpp",
       "lang": "cpp",
-      "loc": 222,
+      "loc": 204,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -6361,7 +6274,7 @@
     {
       "path": "engine/src/eft/genesis_cubic_canonical_form.cpp",
       "lang": "cpp",
-      "loc": 421,
+      "loc": 335,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -6370,7 +6283,7 @@
     {
       "path": "engine/src/eft/genesis_environment_feedback.cpp",
       "lang": "cpp",
-      "loc": 297,
+      "loc": 183,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -6379,7 +6292,7 @@
     {
       "path": "engine/src/eft/genesis_minimal_bath.cpp",
       "lang": "cpp",
-      "loc": 274,
+      "loc": 207,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -6457,7 +6370,7 @@
     {
       "path": "engine/src/eft/implicit_atomic_endpoint_solve.cpp",
       "lang": "cpp",
-      "loc": 283,
+      "loc": 249,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -6466,7 +6379,7 @@
     {
       "path": "engine/src/eft/implicit_atomic_face_action.cpp",
       "lang": "cpp",
-      "loc": 826,
+      "loc": 771,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -6523,7 +6436,7 @@
     {
       "path": "engine/src/eft/matched_contact_energy_obstruction.cpp",
       "lang": "cpp",
-      "loc": 275,
+      "loc": 249,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -6552,7 +6465,7 @@
     {
       "path": "engine/src/eft/matched_midpoint_poynting.cpp",
       "lang": "cpp",
-      "loc": 224,
+      "loc": 164,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -6561,7 +6474,7 @@
     {
       "path": "engine/src/eft/matched_regional_energy_transport.cpp",
       "lang": "cpp",
-      "loc": 306,
+      "loc": 246,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -6888,7 +6801,7 @@
     {
       "path": "engine/src/eft/quadratic_coat_composite_peierls.cpp",
       "lang": "cpp",
-      "loc": 507,
+      "loc": 498,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -6915,7 +6828,7 @@
     {
       "path": "engine/src/eft/quadratic_coat_face_current.cpp",
       "lang": "cpp",
-      "loc": 523,
+      "loc": 481,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -6924,7 +6837,7 @@
     {
       "path": "engine/src/eft/quadratic_coat_matter_work.cpp",
       "lang": "cpp",
-      "loc": 406,
+      "loc": 376,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -6948,7 +6861,7 @@
     {
       "path": "engine/src/eft/quadratic_coat_orbit_gather.cpp",
       "lang": "cpp",
-      "loc": 587,
+      "loc": 558,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -6957,7 +6870,7 @@
     {
       "path": "engine/src/eft/quadratic_coat_spacetime_action.cpp",
       "lang": "cpp",
-      "loc": 404,
+      "loc": 362,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -7064,7 +6977,7 @@
     {
       "path": "engine/src/eft/single_slab_connection_compatibility.cpp",
       "lang": "cpp",
-      "loc": 180,
+      "loc": 136,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -7105,7 +7018,7 @@
     {
       "path": "engine/src/eft/staggered_current_split_compatibility.cpp",
       "lang": "cpp",
-      "loc": 231,
+      "loc": 187,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -7891,7 +7804,7 @@
     {
       "path": "engine/strict/recovery/recovery_carrier_main.cpp",
       "lang": "cpp",
-      "loc": 93,
+      "loc": 74,
       "subsystem": "other",
       "primary": true,
       "purpose": "Registered observations of accepted CUDA evolution.",
@@ -7900,7 +7813,7 @@
     {
       "path": "engine/strict/recovery_hydro/hydro_main.cpp",
       "lang": "cpp",
-      "loc": 132,
+      "loc": 116,
       "subsystem": "other",
       "primary": true,
       "purpose": "Registered stroboscopic observation of the accepted CUDA evolution.",
@@ -7911,7 +7824,7 @@
     {
       "path": "engine/strict/recovery_mixed/mixed_main.cpp",
       "lang": "cpp",
-      "loc": 87,
+      "loc": 75,
       "subsystem": "other",
       "primary": true,
       "purpose": "Finite intervention instrument.",
@@ -8040,7 +7953,7 @@
     {
       "path": "engine/strict/web/hydro/fluid-analysis.js",
       "lang": "js",
-      "loc": 83,
+      "loc": 80,
       "subsystem": "other",
       "primary": true,
       "purpose": "Approximate display arithmetic on exact integers.",
@@ -8105,7 +8018,7 @@
     {
       "path": "engine/strict/web/hydro/hydro-validity.js",
       "lang": "js",
-      "loc": 53,
+      "loc": 48,
       "subsystem": "other",
       "primary": true,
       "purpose": "Passive checks of already-published observations; no state evolution or grid scan.",
@@ -13465,7 +13378,7 @@
     {
       "path": "engine/tests/test_gpu_experiments.cpp",
       "lang": "cpp",
-      "loc": 1734,
+      "loc": 1741,
       "subsystem": "tests",
       "primary": false,
       "purpose": "GPU Particle Physics Experiment Suite Simulations of real scientific experiments on the FTD GPU engine, using ALL available telemetry (EnergyAudit, sync_to_host, phi_coulomb) with quantitative pred...",
@@ -15656,10 +15569,10 @@
     {
       "path": "engine/tests/test_radiative_decay_scale1.cpp",
       "lang": "cpp",
-      "loc": 179,
+      "loc": 184,
       "subsystem": "tests",
       "primary": false,
-      "purpose": "Radiative Decay at Scale 1: Orbit Shrinkage from Larmor Radiation FTD note: radiation reaction is [IMPOSED] physics \u2014 the Larmor formula P = (2\u03b1/3) q\u00b2a\u00b2/(mc\u00b3) is adopted from SM, with the coefficie...",
+      "purpose": "Radiative Decay at Scale 1: Orbit Shrinkage from Larmor Radiation FTD note: radiation reaction is [IMPOSED] physics \u2014 the Larmor formula P = (2\u03b1/3) q\u00b2a\u00b2/(mc\u00b3) is adopted from SM.",
       "symbols": [
         "TrajectoryPoint"
       ]
@@ -24490,23 +24403,6 @@
       "symbols": []
     },
     {
-      "path": "engine/web/js/aggregation-bridge.js",
-      "lang": "js",
-      "loc": 373,
-      "subsystem": "web/js-toplevel",
-      "primary": true,
-      "purpose": "Aggregation Bridge Module \u2014 Appendix A of the FTD project (2026).",
-      "symbols": [
-        "AggregateDetector",
-        "ScaleBridgeVisualizer",
-        "EmergenceMonitor",
-        "renderAggregationTower()",
-        "renderScaleBridge()",
-        "renderEmergenceMonitor()",
-        "AGGREGATION_LEVELS"
-      ]
-    },
-    {
       "path": "engine/web/js/app-wire/bridge-boot.js",
       "lang": "js",
       "loc": 107,
@@ -24544,7 +24440,7 @@
     {
       "path": "engine/web/js/app.js",
       "lang": "js",
-      "loc": 2200,
+      "loc": 2193,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "@file app.js @brief FTD Web Dashboard \u2014 Main Application Controller [EXTENDED] Initializes all subsystems, manages the frame loop, and wires up UI controls to the simulation bridge.",
@@ -25208,10 +25104,10 @@
     {
       "path": "engine/web/js/charts.js",
       "lang": "js",
-      "loc": 189,
+      "loc": 59,
       "subsystem": "web/js-toplevel",
       "primary": true,
-      "purpose": "Canvas 2D Time-Series Charts \u2014 ring-buffered, auto-scaling.",
+      "purpose": "Legacy Scale-0 time-series chart handles \u2014 ring-buffer holders.",
       "symbols": [
         "FluxEnergyChart",
         "ParticleChart"
@@ -27719,15 +27615,6 @@
       ]
     },
     {
-      "path": "engine/web/js/scales/scale3/ui/overlays/template.js",
-      "lang": "js",
-      "loc": 8,
-      "subsystem": "web/scale3",
-      "primary": true,
-      "purpose": "Scale 3 overlay \u2014 re-exported from Scale 2 (shared scale-ae panel).",
-      "symbols": []
-    },
-    {
       "path": "engine/web/js/scales/scale3/ui/register-scale3-ui.js",
       "lang": "js",
       "loc": 11,
@@ -28199,15 +28086,6 @@
       ]
     },
     {
-      "path": "engine/web/js/telemetry/index.js",
-      "lang": "js",
-      "loc": 19,
-      "subsystem": "web/telemetry",
-      "primary": true,
-      "purpose": "Telemetry module barrel \u2014 hub (single write path) + demand gating + registries.",
-      "symbols": []
-    },
-    {
       "path": "engine/web/js/telemetry/registry/scale0-grid-channels.js",
       "lang": "js",
       "loc": 44,
@@ -28216,17 +28094,6 @@
       "purpose": "Scale-0 telemetry grid channel registry.",
       "symbols": [
         "SCALE0_GRID_CHANNELS"
-      ]
-    },
-    {
-      "path": "engine/web/js/telemetry/registry/scale0-transaction-channels.js",
-      "lang": "js",
-      "loc": 34,
-      "subsystem": "web/telemetry",
-      "primary": true,
-      "purpose": "Scale-0 transaction-tracker telemetry channel registry.",
-      "symbols": [
-        "SCALE0_TRANSACTION_CHANNELS"
       ]
     },
     {
@@ -28248,7 +28115,7 @@
     {
       "path": "engine/web/js/ui/app-ontic.js",
       "lang": "js",
-      "loc": 233,
+      "loc": 231,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Ontic Observatory / Physics / Hierarchy panel glue.",
@@ -28300,17 +28167,6 @@
       "purpose": "Sparkline \u2014 micro uPlot for table Trend cells and chart-chip previews.",
       "symbols": [
         "Sparkline"
-      ]
-    },
-    {
-      "path": "engine/web/js/ui/charts/stacked-area.js",
-      "lang": "js",
-      "loc": 146,
-      "subsystem": "web/ui",
-      "primary": true,
-      "purpose": "Stacked-area renderer for uPlot.",
-      "symbols": [
-        "StackedAreaChart"
       ]
     },
     {
@@ -29173,17 +29029,6 @@
       ]
     },
     {
-      "path": "engine/web/js/ui/scale-registry/overlay-registry.js",
-      "lang": "js",
-      "loc": 12,
-      "subsystem": "web/ui",
-      "primary": true,
-      "purpose": "Placeholder registry seam for viewport overlays.",
-      "symbols": [
-        "createOverlayRegistry()"
-      ]
-    },
-    {
       "path": "engine/web/js/ui/scale-registry/panel-registry.js",
       "lang": "js",
       "loc": 83,
@@ -29203,7 +29048,7 @@
     {
       "path": "engine/web/js/ui/scale-registry/register-scale-ui.js",
       "lang": "js",
-      "loc": 14,
+      "loc": 12,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Shared shell UI registry bundle.",
@@ -29225,7 +29070,7 @@
     {
       "path": "engine/web/js/ui/shell/app-shell.js",
       "lang": "js",
-      "loc": 221,
+      "loc": 219,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Shell facade around the current dashboard DOM.",
@@ -29310,17 +29155,6 @@
         "getDefaultMount()",
         "getSideMountMinWidth()",
         "resolveEffectiveMount()"
-      ]
-    },
-    {
-      "path": "engine/web/js/ui/shell/register-legacy-toolbar-ui.js",
-      "lang": "js",
-      "loc": 13,
-      "subsystem": "web/ui",
-      "primary": true,
-      "purpose": "",
-      "symbols": [
-        "registerLegacyToolbarUi()"
       ]
     },
     {

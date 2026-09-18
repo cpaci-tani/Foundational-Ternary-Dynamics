@@ -1,6 +1,7 @@
 #include "ftd/eft/quadratic_coat_face_current.h"
 
 #include "ftd/eft/local_polarity_regularity.h"
+#include "ftd/eft/quadratic_coat_common.h"
 
 #include <algorithm>
 #include <array>
@@ -11,34 +12,17 @@
 namespace ftd::eft {
 namespace {
 
-int wrap(int value, int L) {
-  const int remainder = value % L;
-  return remainder < 0 ? remainder+L : remainder;
-}
-
-std::size_t flat_index(int L, int x, int y, int z) {
-  const std::size_t wx = static_cast<std::size_t>(wrap(x, L));
-  const std::size_t wy = static_cast<std::size_t>(wrap(y, L));
-  const std::size_t wz = static_cast<std::size_t>(wrap(z, L));
-  return (wx*static_cast<std::size_t>(L)+wy)*static_cast<std::size_t>(L)+wz;
-}
-
-double component(const Vec3& value, int axis) {
-  if (axis == 0) return value.x;
-  if (axis == 1) return value.y;
-  return value.z;
-}
+using quadratic_coat_common::component;
+using quadratic_coat_common::finite;
+using quadratic_coat_common::flat_index;
+using quadratic_coat_common::half_integer_breaks;
+using quadratic_coat_common::wrap;
 
 Coord with_component(Coord value, int axis, int coordinate) {
   if (axis == 0) value.x = coordinate;
   if (axis == 1) value.y = coordinate;
   if (axis == 2) value.z = coordinate;
   return value;
-}
-
-bool finite(const Vec3& value) {
-  return std::isfinite(value.x) && std::isfinite(value.y)
-      && std::isfinite(value.z);
 }
 
 double nearest_periodic_image(double start, double end, int L) {
@@ -58,32 +42,6 @@ double b1(double u) {
 double b2(double u) {
   return evaluate_local_polarity_kernel(
       LocalPolarityKernel::QuadraticBSpline, u);
-}
-
-std::vector<double> half_integer_breaks(const Vec3& start,
-                                        const Vec3& end) {
-  std::vector<double> breaks{0.0, 1.0};
-  for (int axis = 0; axis < 3; ++axis) {
-    const double p0 = component(start, axis);
-    const double delta = component(end, axis)-p0;
-    if (delta == 0.0) continue;
-    const double lower = std::min(p0, p0+delta);
-    const double upper = std::max(p0, p0+delta);
-    const int first = static_cast<int>(std::floor(lower))-2;
-    const int last = static_cast<int>(std::ceil(upper))+2;
-    for (int k = first; k <= last; ++k) {
-      const double plane = static_cast<double>(k)+0.5;
-      const double t = (plane-p0)/delta;
-      if (t > 0.0 && t < 1.0) breaks.push_back(t);
-    }
-  }
-  std::sort(breaks.begin(), breaks.end());
-  breaks.erase(std::unique(breaks.begin(), breaks.end(),
-      [](double a, double b) {
-        return std::abs(a-b) <= 32.0
-            *std::numeric_limits<double>::epsilon();
-      }), breaks.end());
-  return breaks;
 }
 
 double axis_basis_integral(int axis,

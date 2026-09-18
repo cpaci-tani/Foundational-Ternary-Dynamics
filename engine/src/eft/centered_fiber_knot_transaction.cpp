@@ -1,10 +1,15 @@
 #include "ftd/eft/centered_fiber_knot_transaction.h"
 
+#include "ftd/eft/matched_face_flux_ops.h"
+
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
 
 namespace ftd::eft {
+
+using namespace matched_face_flux_ops;  // add_scaled, dot, max_difference
+
 namespace {
 
 double component(const Vec3& value, int axis) {
@@ -61,41 +66,6 @@ MatchedFaceFlux as_face_flux(const FaceCurrentSegment& current) {
   result.x = current.current_x;
   result.y = current.current_y;
   result.z = current.current_z;
-  return result;
-}
-
-void add_scaled(MatchedFaceFlux& target,
-                const MatchedFaceFlux& value,
-                double scale) {
-  for (std::size_t i = 0; i < target.x.size(); ++i) {
-    target.x[i] += scale * value.x[i];
-    target.y[i] += scale * value.y[i];
-    target.z[i] += scale * value.z[i];
-  }
-}
-
-double max_difference(const MatchedFaceFlux& lhs,
-                      const MatchedFaceFlux& rhs) {
-  if (lhs.L != rhs.L || lhs.x.size() != rhs.x.size()) return INFINITY;
-  double residual = 0.0;
-  for (std::size_t i = 0; i < lhs.x.size(); ++i) {
-    residual = std::max({residual,
-        std::abs(lhs.x[i] - rhs.x[i]),
-        std::abs(lhs.y[i] - rhs.y[i]),
-        std::abs(lhs.z[i] - rhs.z[i])});
-  }
-  return residual;
-}
-
-long double dot(const MatchedFaceFlux& lhs,
-                const MatchedFaceFlux& rhs) {
-  if (lhs.L != rhs.L || lhs.x.size() != rhs.x.size()) return NAN;
-  long double result = 0.0L;
-  for (std::size_t i = 0; i < lhs.x.size(); ++i) {
-    result += static_cast<long double>(lhs.x[i]) * rhs.x[i]
-        + static_cast<long double>(lhs.y[i]) * rhs.y[i]
-        + static_cast<long double>(lhs.z[i]) * rhs.z[i];
-  }
   return result;
 }
 

@@ -1,20 +1,13 @@
 #include "ftd/eft/clock_gated_hamiltonian_exchange.h"
 
+#include "ftd/eft/canonical_pair_ops.h"
+
 #include <algorithm>
 #include <cmath>
 #include <limits>
 
 namespace ftd::eft {
 namespace {
-
-bool finite_pair(const CanonicalCarrierPair& pair) {
-  return std::isfinite(pair.q) && std::isfinite(pair.p);
-}
-
-double pair_action(const CanonicalCarrierPair& pair) {
-  const double radius = std::hypot(pair.q, pair.p);
-  return 0.5 * radius * radius;
-}
 
 CanonicalCarrierPair add(
     const CanonicalCarrierPair& first,
@@ -33,17 +26,6 @@ CanonicalCarrierPair subtract(
   return {
       scale * (first.q - second.q),
       scale * (first.p - second.p),
-  };
-}
-
-CanonicalCarrierPair rotate(
-    const CanonicalCarrierPair& pair,
-    double phase) {
-  const double cosine = std::cos(phase);
-  const double sine = std::sin(phase);
-  return {
-      cosine * pair.q + sine * pair.p,
-      -sine * pair.q + cosine * pair.p,
   };
 }
 
@@ -168,8 +150,8 @@ ClockGatedHamiltonianResult evolve_clock_gated_hamiltonian_cycle(
   result.maximum_reference_energy_loan = parameters.clock_frequency
       * (state.reference_action - result.minimum_reference_action);
 
-  result.common_after = rotate(result.common_before, result.common_phase);
-  result.relative_after = rotate(
+  result.common_after = rotate_pair(result.common_before, result.common_phase);
+  result.relative_after = rotate_pair(
       result.relative_before,
       result.common_phase + result.relative_extra_phase);
   result.after.matter = add(

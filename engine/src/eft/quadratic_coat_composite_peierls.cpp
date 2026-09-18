@@ -2,6 +2,7 @@
 
 #include "ftd/eft/coupled_matched_face_transaction.h"
 #include "ftd/eft/matched_face_energy_transaction.h"
+#include "ftd/eft/quadratic_coat_common.h"
 
 #include <algorithm>
 #include <array>
@@ -14,20 +15,10 @@
 namespace ftd::eft {
 namespace {
 
+using quadratic_coat_common::component;
+using quadratic_coat_common::flat_index;
+
 constexpr double pi = 3.1415926535897932384626433832795;
-
-int wrap(int value, int L) {
-  const int remainder = value%L;
-  return remainder < 0 ? remainder+L : remainder;
-}
-
-std::size_t index(int L, int x, int y, int z) {
-  return (static_cast<std::size_t>(wrap(x, L))*L+wrap(y, L))*L+wrap(z, L);
-}
-
-double component(const Vec3& value, int axis) {
-  return axis == 0 ? value.x : (axis == 1 ? value.y : value.z);
-}
 
 Vec3 translated_position(const Coord& origin, const Coord& offset,
                          int axis, double fraction) {
@@ -64,11 +55,11 @@ void negative_laplacian(int L, const std::vector<double>& input,
   for (int x = 0; x < L; ++x)
     for (int y = 0; y < L; ++y)
       for (int z = 0; z < L; ++z) {
-        const auto i = index(L, x, y, z);
+        const auto i = flat_index(L, x, y, z);
         output[i] = 6.0*input[i]
-            -input[index(L, x+1, y, z)]-input[index(L, x-1, y, z)]
-            -input[index(L, x, y+1, z)]-input[index(L, x, y-1, z)]
-            -input[index(L, x, y, z+1)]-input[index(L, x, y, z-1)];
+            -input[flat_index(L, x+1, y, z)]-input[flat_index(L, x-1, y, z)]
+            -input[flat_index(L, x, y+1, z)]-input[flat_index(L, x, y-1, z)]
+            -input[flat_index(L, x, y, z+1)]-input[flat_index(L, x, y, z-1)];
       }
 }
 
@@ -99,7 +90,7 @@ Deposit deposit_composite(
         max_component(coat.first_moment_residual));
     for (std::size_t item = 0; item < coat.weight_count; ++item) {
       const auto& entry = coat.weights[item];
-      result.density[index(L, entry.site.x, entry.site.y, entry.site.z)]
+      result.density[flat_index(L, entry.site.x, entry.site.y, entry.site.z)]
           += entry.weight;
     }
   }
@@ -168,9 +159,9 @@ LongitudinalField solve_longitudinal(
     for (int y = 0; y < L; ++y)
       for (int z = 0; z < L; ++z) {
         const int i = result.electric.index(x, y, z);
-        result.electric.x[i] = potential[i]-potential[index(L, x+1, y, z)];
-        result.electric.y[i] = potential[i]-potential[index(L, x, y+1, z)];
-        result.electric.z[i] = potential[i]-potential[index(L, x, y, z+1)];
+        result.electric.x[i] = potential[i]-potential[flat_index(L, x+1, y, z)];
+        result.electric.y[i] = potential[i]-potential[flat_index(L, x, y+1, z)];
+        result.electric.z[i] = potential[i]-potential[flat_index(L, x, y, z+1)];
       }
   result.gauss_residual = max_fractional_gauss_residual(
       result.electric, result.density);
@@ -249,8 +240,8 @@ bool exact_axis_invariant(
     int axis) {
   std::vector<int> source(static_cast<std::size_t>(L)*L*L, 0);
   for (const auto& constituent : constituents)
-    source[index(L, constituent.offset.x, constituent.offset.y,
-                 constituent.offset.z)] += constituent.polarity;
+    source[flat_index(L, constituent.offset.x, constituent.offset.y,
+                      constituent.offset.z)] += constituent.polarity;
   for (int x = 0; x < L; ++x)
     for (int y = 0; y < L; ++y)
       for (int z = 0; z < L; ++z) {
@@ -260,7 +251,7 @@ bool exact_axis_invariant(
         if (axis == 0) --px;
         else if (axis == 1) --py;
         else --pz;
-        if (source[index(L, x, y, z)] != source[index(L, px, py, pz)])
+        if (source[flat_index(L, x, y, z)] != source[flat_index(L, px, py, pz)])
           return false;
       }
   return true;
@@ -295,7 +286,7 @@ double face_divergence(const MatchedFaceFlux& field,
                        int x, int y, int z) {
   const auto at = [&field](const std::vector<double>& values,
                            int sx, int sy, int sz) {
-    return values[index(field.L, sx, sy, sz)];
+    return values[flat_index(field.L, sx, sy, sz)];
   };
   return at(field.x, x, y, z)-at(field.x, x-1, y, z)
       +at(field.y, x, y, z)-at(field.y, x, y-1, z)
@@ -341,7 +332,7 @@ evaluate_quadratic_composite_peierls(
     total_polarity += constituent.polarity;
     constituents_valid = constituents_valid
         && (constituent.polarity == -1 || constituent.polarity == 1);
-    primitive_sites.insert(index(L, origin.x+constituent.offset.x,
+    primitive_sites.insert(flat_index(L, origin.x+constituent.offset.x,
         origin.y+constituent.offset.y, origin.z+constituent.offset.z));
   }
   result.neutral = total_polarity == 0;
@@ -467,7 +458,7 @@ evaluate_quadratic_composite_peierls(
     for (int x = 0; x < L; ++x)
       for (int y = 0; y < L; ++y)
         for (int z = 0; z < L; ++z) {
-          const auto i = index(L, x, y, z);
+          const auto i = flat_index(L, x, y, z);
           work.continuity_residual = std::max(
               work.continuity_residual,
               std::abs(aggregate_after[i]-aggregate_before[i]

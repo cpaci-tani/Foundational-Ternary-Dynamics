@@ -71,13 +71,15 @@
 .ae-legend-swatch-orb-d    { background: #ffb333; }
 .ae-legend-swatch-orb-f    { background: #d94db3; }
 
-.ae-legend-swatch-force-ionic { background: #ff4444; }
-.ae-legend-swatch-force-vdw   { background: #44ff44; }
-.ae-legend-swatch-force-bond  { background: #ff8844; }
-.ae-legend-swatch-force-hbond { background: #38bdf8; }
-.ae-legend-swatch-force-angle { background: #facc15; }
-.ae-legend-swatch-force-dipole { background: #e879f9; }
-.ae-legend-swatch-force-net   { background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.35); }
+/* Force-channel colors are shared with the Scale 2 overlay field swatches —
+   see the --ae-force-* tokens in css/tokens.css. */
+.ae-legend-swatch-force-ionic { background: var(--ae-force-ionic); }
+.ae-legend-swatch-force-vdw   { background: var(--ae-force-vdw); }
+.ae-legend-swatch-force-bond  { background: var(--ae-force-bond); }
+.ae-legend-swatch-force-hbond { background: var(--ae-force-hbond); }
+.ae-legend-swatch-force-angle { background: var(--ae-force-angle); }
+.ae-legend-swatch-force-dipole { background: var(--ae-force-dipole); }
+.ae-legend-swatch-force-net   { background: var(--ae-force-net); border: 1px solid rgba(255, 255, 255, 0.35); }
 .ae-legend-swatch-velocity-ramp { background: linear-gradient(90deg, #39e639, #ffff66, #ff6633, #ffffff); }
 .ae-legend-swatch-dipole      { background: #66ccff; }
 .ae-legend-swatch-hbond       { background: repeating-linear-gradient(90deg, #aaaaff 0 2px, transparent 2px 4px); }

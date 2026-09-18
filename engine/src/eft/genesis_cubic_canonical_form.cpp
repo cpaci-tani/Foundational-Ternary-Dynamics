@@ -1,5 +1,6 @@
 #include "ftd/eft/genesis_cubic_canonical_form.h"
 
+#include "ftd/eft/square_matrix_algebra.h"
 #include "ftd/voxel.h"
 
 #include <algorithm>
@@ -13,77 +14,14 @@ namespace ftd::eft {
 namespace {
 
 template <std::size_t N>
-using Matrix = std::array<std::array<double, N>, N>;
+using Matrix = linalg::Matrix<N>;
 
-template <std::size_t N>
-Matrix<N> multiply(const Matrix<N>& lhs, const Matrix<N>& rhs) {
-  Matrix<N> result{};
-  for (std::size_t i = 0; i < N; ++i) {
-    for (std::size_t j = 0; j < N; ++j) {
-      for (std::size_t k = 0; k < N; ++k) result[i][j] += lhs[i][k] * rhs[k][j];
-    }
-  }
-  return result;
-}
-
-template <std::size_t N>
-Matrix<N> transpose(const Matrix<N>& value) {
-  Matrix<N> result{};
-  for (std::size_t i = 0; i < N; ++i) {
-    for (std::size_t j = 0; j < N; ++j) result[i][j] = value[j][i];
-  }
-  return result;
-}
-
-template <std::size_t N>
-Matrix<N> subtract(const Matrix<N>& lhs, const Matrix<N>& rhs) {
-  Matrix<N> result{};
-  for (std::size_t i = 0; i < N; ++i) {
-    for (std::size_t j = 0; j < N; ++j) result[i][j] = lhs[i][j] - rhs[i][j];
-  }
-  return result;
-}
-
-template <std::size_t N>
-double max_abs(const Matrix<N>& value) {
-  double result = 0.0;
-  for (const auto& row : value) {
-    for (double entry : row) result = std::max(result, std::abs(entry));
-  }
-  return result;
-}
-
-template <std::size_t N>
-int square_rank(Matrix<N> value, double tolerance = 1e-10) {
-  int rank = 0;
-  for (std::size_t column = 0; column < N && rank < static_cast<int>(N);
-       ++column) {
-    int pivot = rank;
-    for (int row = rank + 1; row < static_cast<int>(N); ++row) {
-      if (std::abs(value[static_cast<std::size_t>(row)][column])
-          > std::abs(value[static_cast<std::size_t>(pivot)][column])) {
-        pivot = row;
-      }
-    }
-    if (std::abs(value[static_cast<std::size_t>(pivot)][column]) <= tolerance) continue;
-    std::swap(value[static_cast<std::size_t>(rank)],
-              value[static_cast<std::size_t>(pivot)]);
-    const double divisor = value[static_cast<std::size_t>(rank)][column];
-    for (std::size_t j = column; j < N; ++j) {
-      value[static_cast<std::size_t>(rank)][j] /= divisor;
-    }
-    for (int row = 0; row < static_cast<int>(N); ++row) {
-      if (row == rank) continue;
-      const double factor = value[static_cast<std::size_t>(row)][column];
-      for (std::size_t j = column; j < N; ++j) {
-        value[static_cast<std::size_t>(row)][j]
-            -= factor * value[static_cast<std::size_t>(rank)][j];
-      }
-    }
-    ++rank;
-  }
-  return rank;
-}
+using linalg::determinant;
+using linalg::max_abs;
+using linalg::multiply;
+using linalg::numerical_rank;
+using linalg::subtract;
+using linalg::transpose;
 
 int rectangular_rank(std::vector<std::array<double, 15>> value,
                      double tolerance = 1e-10) {
@@ -124,32 +62,6 @@ int rectangular_rank(std::vector<std::array<double, 15>> value,
     ++rank;
   }
   return rank;
-}
-
-template <std::size_t N>
-double determinant(Matrix<N> value) {
-  double result = 1.0;
-  int sign = 1;
-  for (std::size_t column = 0; column < N; ++column) {
-    std::size_t pivot = column;
-    for (std::size_t row = column + 1; row < N; ++row) {
-      if (std::abs(value[row][column]) > std::abs(value[pivot][column])) pivot = row;
-    }
-    if (std::abs(value[pivot][column]) < 1e-15) return 0.0;
-    if (pivot != column) {
-      std::swap(value[pivot], value[column]);
-      sign = -sign;
-    }
-    const double diagonal = value[column][column];
-    result *= diagonal;
-    for (std::size_t row = column + 1; row < N; ++row) {
-      const double factor = value[row][column] / diagonal;
-      for (std::size_t j = column + 1; j < N; ++j) {
-        value[row][j] -= factor * value[column][j];
-      }
-    }
-  }
-  return static_cast<double>(sign) * result;
 }
 
 int permutation_sign(const std::array<int, 3>& permutation) {
@@ -348,7 +260,8 @@ GenesisCubicCanonicalFormResult analyze_genesis_cubic_canonical_form() {
       const double t = excess / (1.0 + excess);
       for (double drain : drains) {
         const double a = 1.0 - drain;
-        const int cubic_rank = square_rank(defect(omega0, system_map(direction, t, a)));
+        const int cubic_rank =
+            numerical_rank(defect(omega0, system_map(direction, t, a)));
         const int expected_cubic_rank = drain == 0.0 ? 4 : 6;
         production_ranks_ok = production_ranks_ok && cubic_rank == expected_cubic_rank;
         ++result.production_arms;
@@ -356,7 +269,7 @@ GenesisCubicCanonicalFormResult analyze_genesis_cubic_canonical_form() {
         int alternative_rank = 0;
         if (drain == 0.0) {
           const Matrix<6> alternative = zero_drain_alternative(t);
-          alternative_rank = square_rank(
+          alternative_rank = numerical_rank(
               defect(alternative, diagonal_map(t, a)));
           zero_alternatives_ok = zero_alternatives_ok
               && std::abs(determinant(alternative) - 1.0) <= 1e-12
@@ -373,7 +286,7 @@ GenesisCubicCanonicalFormResult analyze_genesis_cubic_canonical_form() {
               std::abs(measured_determinant - expected_determinant));
           minimum_generic_determinant = std::min(
               minimum_generic_determinant, measured_determinant);
-          alternative_rank = square_rank(
+          alternative_rank = numerical_rank(
               defect(alternative, diagonal_map(t, a)));
           generic_alternatives_ok = generic_alternatives_ok
               && measured_determinant > 0.0 && alternative_rank == 4;
@@ -385,7 +298,8 @@ GenesisCubicCanonicalFormResult analyze_genesis_cubic_canonical_form() {
       // At a=t the contracting eigenspace has dimension five. The repeated-
       // eigenspace lemma forces even defect rank >=6, attained by omega0.
       const double a = t;
-      const int measured_rank = square_rank(defect(omega0, diagonal_map(t, a)));
+      const int measured_rank =
+          numerical_rank(defect(omega0, diagonal_map(t, a)));
       const int lemma_lower_bound = 6;
       if (measured_rank == lemma_lower_bound) ++result.degenerate_a_equals_t_arms;
     }

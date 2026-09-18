@@ -1,6 +1,7 @@
 #include "ftd/eft/matched_contact_energy_obstruction.h"
 
 #include "ftd/constants.h"
+#include "ftd/eft/compatibility_analysis_helpers.h"
 #include "ftd/eft/matched_face_energy_transaction.h"
 #include "ftd/eft/ternary_collision_vertex.h"
 
@@ -12,11 +13,10 @@
 namespace ftd::eft {
 namespace {
 
-Vec3 position(const ContactCarrierRecord& carrier) {
-  return {static_cast<double>(carrier.anchor.x) + carrier.remainder.x,
-          static_cast<double>(carrier.anchor.y) + carrier.remainder.y,
-          static_cast<double>(carrier.anchor.z) + carrier.remainder.z};
-}
+using detail::add_scaled;
+using detail::position;
+using detail::scale;
+using detail::vector_residual;
 
 PiecewiseCurrentSignature signature(
     int L, const ContactPairRecord& before,
@@ -31,15 +31,6 @@ PiecewiseCurrentSignature signature(
          position(after.carrier[static_cast<std::size_t>(target)])}});
   }
   return make_piecewise_current_signature(L, worldlines);
-}
-
-double vector_residual(const std::vector<double>& lhs,
-                       const std::vector<double>& rhs) {
-  if (lhs.size() != rhs.size()) return INFINITY;
-  double residual = 0.0;
-  for (std::size_t i = 0; i < lhs.size(); ++i)
-    residual = std::max(residual, std::abs(lhs[i]-rhs[i]));
-  return residual;
 }
 
 double history_residual(const PiecewiseCurrentSignature& lhs,
@@ -60,23 +51,6 @@ MatchedFaceFlux current_field(const PiecewiseCurrentSignature& history) {
   current.y = history.current_y;
   current.z = history.current_z;
   return current;
-}
-
-void add_scaled(MatchedFaceFlux& target,
-                const MatchedFaceFlux& value, double scale_value) {
-  for (std::size_t i = 0; i < target.x.size(); ++i) {
-    target.x[i] += scale_value*value.x[i];
-    target.y[i] += scale_value*value.y[i];
-    target.z[i] += scale_value*value.z[i];
-  }
-}
-
-void scale(MatchedEdgeField& target, double factor) {
-  for (std::size_t i = 0; i < target.x.size(); ++i) {
-    target.x[i] *= factor;
-    target.y[i] *= factor;
-    target.z[i] *= factor;
-  }
 }
 
 double fractional_gauss_residual(const MatchedFaceFlux& field,

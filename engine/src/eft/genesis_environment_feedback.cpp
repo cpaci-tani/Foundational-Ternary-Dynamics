@@ -1,5 +1,6 @@
 #include "ftd/eft/genesis_environment_feedback.h"
 
+#include "ftd/eft/square_matrix_algebra.h"
 #include "ftd/voxel.h"
 
 #include <algorithm>
@@ -11,129 +12,14 @@ namespace ftd::eft {
 
 namespace {
 
-using Matrix6 = std::array<std::array<double, 6>, 6>;
+using Matrix6 = linalg::Matrix<6>;
 
-Matrix6 multiply(const Matrix6& lhs, const Matrix6& rhs) {
-  Matrix6 result{};
-  for (int i = 0; i < 6; ++i) {
-    for (int j = 0; j < 6; ++j) {
-      for (int k = 0; k < 6; ++k) {
-        result[static_cast<std::size_t>(i)][static_cast<std::size_t>(j)]
-            += lhs[static_cast<std::size_t>(i)][static_cast<std::size_t>(k)]
-             * rhs[static_cast<std::size_t>(k)][static_cast<std::size_t>(j)];
-      }
-    }
-  }
-  return result;
-}
-
-Matrix6 transpose(const Matrix6& value) {
-  Matrix6 result{};
-  for (int i = 0; i < 6; ++i) {
-    for (int j = 0; j < 6; ++j) {
-      result[static_cast<std::size_t>(i)][static_cast<std::size_t>(j)]
-          = value[static_cast<std::size_t>(j)][static_cast<std::size_t>(i)];
-    }
-  }
-  return result;
-}
-
-Matrix6 subtract(const Matrix6& lhs, const Matrix6& rhs) {
-  Matrix6 result{};
-  for (int i = 0; i < 6; ++i) {
-    for (int j = 0; j < 6; ++j) {
-      result[static_cast<std::size_t>(i)][static_cast<std::size_t>(j)]
-          = lhs[static_cast<std::size_t>(i)][static_cast<std::size_t>(j)]
-          - rhs[static_cast<std::size_t>(i)][static_cast<std::size_t>(j)];
-    }
-  }
-  return result;
-}
-
-double max_abs(const Matrix6& value) {
-  double result = 0.0;
-  for (const auto& row : value) {
-    for (double entry : row) result = std::max(result, std::abs(entry));
-  }
-  return result;
-}
-
-int numerical_rank(Matrix6 value, double tolerance = 1e-10) {
-  int rank = 0;
-  for (int column = 0; column < 6 && rank < 6; ++column) {
-    int pivot = rank;
-    for (int row = rank + 1; row < 6; ++row) {
-      if (std::abs(value[static_cast<std::size_t>(row)]
-                        [static_cast<std::size_t>(column)])
-          > std::abs(value[static_cast<std::size_t>(pivot)]
-                          [static_cast<std::size_t>(column)])) {
-        pivot = row;
-      }
-    }
-    if (std::abs(value[static_cast<std::size_t>(pivot)]
-                      [static_cast<std::size_t>(column)]) <= tolerance) {
-      continue;
-    }
-    std::swap(value[static_cast<std::size_t>(rank)],
-              value[static_cast<std::size_t>(pivot)]);
-    const double divisor = value[static_cast<std::size_t>(rank)]
-                                [static_cast<std::size_t>(column)];
-    for (int j = column; j < 6; ++j) {
-      value[static_cast<std::size_t>(rank)][static_cast<std::size_t>(j)]
-          /= divisor;
-    }
-    for (int row = 0; row < 6; ++row) {
-      if (row == rank) continue;
-      const double factor = value[static_cast<std::size_t>(row)]
-                                 [static_cast<std::size_t>(column)];
-      for (int j = column; j < 6; ++j) {
-        value[static_cast<std::size_t>(row)][static_cast<std::size_t>(j)]
-            -= factor * value[static_cast<std::size_t>(rank)]
-                           [static_cast<std::size_t>(j)];
-      }
-    }
-    ++rank;
-  }
-  return rank;
-}
-
-double determinant(Matrix6 value) {
-  double result = 1.0;
-  int sign = 1;
-  for (int column = 0; column < 6; ++column) {
-    int pivot = column;
-    for (int row = column + 1; row < 6; ++row) {
-      if (std::abs(value[static_cast<std::size_t>(row)]
-                        [static_cast<std::size_t>(column)])
-          > std::abs(value[static_cast<std::size_t>(pivot)]
-                          [static_cast<std::size_t>(column)])) {
-        pivot = row;
-      }
-    }
-    if (std::abs(value[static_cast<std::size_t>(pivot)]
-                      [static_cast<std::size_t>(column)]) < 1e-15) {
-      return 0.0;
-    }
-    if (pivot != column) {
-      std::swap(value[static_cast<std::size_t>(pivot)],
-                value[static_cast<std::size_t>(column)]);
-      sign = -sign;
-    }
-    const double diagonal = value[static_cast<std::size_t>(column)]
-                                 [static_cast<std::size_t>(column)];
-    result *= diagonal;
-    for (int row = column + 1; row < 6; ++row) {
-      const double factor = value[static_cast<std::size_t>(row)]
-                                 [static_cast<std::size_t>(column)] / diagonal;
-      for (int j = column + 1; j < 6; ++j) {
-        value[static_cast<std::size_t>(row)][static_cast<std::size_t>(j)]
-            -= factor * value[static_cast<std::size_t>(column)]
-                           [static_cast<std::size_t>(j)];
-      }
-    }
-  }
-  return static_cast<double>(sign) * result;
-}
+using linalg::determinant;
+using linalg::max_abs;
+using linalg::multiply;
+using linalg::numerical_rank;
+using linalg::subtract;
+using linalg::transpose;
 
 double dot(const Vec3& lhs, const Vec3& rhs) {
   return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;

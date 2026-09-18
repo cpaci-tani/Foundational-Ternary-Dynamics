@@ -1,4 +1,6 @@
 // Passive checks of already-published observations; no state evolution or grid scan.
+import { leastSquares } from './least-squares.js';
+
 const COVERAGE = 'Checks displayed projection and decay-fit arithmetic only. Full-grid validity and continuum recovery are not certified.';
 
 export function hydroDecayFit(history, kSquared, enabled = true) {
@@ -12,15 +14,8 @@ export function hydroDecayFit(history, kSquared, enabled = true) {
         return { gamma: null, diffusivity: null, issue: 'Decay quotient is undefined: |k|² must be finite and positive.' };
     }
     const ys = windowed.map(Math.log);
-    const n = ys.length;
-    const xbar = (n - 1) / 2;
-    const ybar = ys.reduce((sum, value) => sum + value, 0) / n;
-    let numerator = 0, denominator = 0;
-    for (let i = 0; i < n; i++) {
-        numerator += (i - xbar) * (ys[i] - ybar);
-        denominator += (i - xbar) ** 2;
-    }
-    const gamma = -numerator / denominator;
+    // Uniform unit abscissa: this fit indexes its own window, unlike fitMode's real cycle intervals.
+    const gamma = -leastSquares(ys.map((_, i) => i), ys).slope;
     const diffusivity = gamma / kSquared;
     if (!Number.isFinite(gamma) || !Number.isFinite(diffusivity)) {
         return { gamma: null, diffusivity: null, issue: 'Decay fit or γ/|k|² exceeded finite observation arithmetic.' };

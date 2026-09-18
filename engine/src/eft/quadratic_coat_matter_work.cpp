@@ -1,6 +1,7 @@
 #include "ftd/eft/quadratic_coat_matter_work.h"
 
 #include "ftd/eft/local_polarity_regularity.h"
+#include "ftd/eft/quadratic_coat_common.h"
 
 #include <algorithm>
 #include <array>
@@ -11,19 +12,14 @@
 namespace ftd::eft {
 namespace {
 
-double component(const Vec3& value, int axis) {
-  return axis == 0 ? value.x : (axis == 1 ? value.y : value.z);
-}
+using quadratic_coat_common::component;
+using quadratic_coat_common::finite;
+using quadratic_coat_common::half_integer_breaks;
 
 void set_component(Vec3& value, int axis, double component_value) {
   if (axis == 0) value.x = component_value;
   if (axis == 1) value.y = component_value;
   if (axis == 2) value.z = component_value;
-}
-
-bool finite(const Vec3& value) {
-  return std::isfinite(value.x) && std::isfinite(value.y)
-      && std::isfinite(value.z);
 }
 
 bool finite(const std::vector<double>& values) {
@@ -181,32 +177,6 @@ ScalarSample sample_scalar(const DualGaugePotentialSlab& slab,
     }
   }
   return result;
-}
-
-std::vector<double> half_integer_breaks(const Vec3& start,
-                                        const Vec3& end) {
-  std::vector<double> breaks{0.0, 1.0};
-  for (int axis = 0; axis < 3; ++axis) {
-    const double p0 = component(start, axis);
-    const double delta = component(end, axis) - p0;
-    if (delta == 0.0) continue;
-    const double lower = std::min(p0, p0 + delta);
-    const double upper = std::max(p0, p0 + delta);
-    const int first = static_cast<int>(std::floor(lower)) - 2;
-    const int last = static_cast<int>(std::ceil(upper)) + 2;
-    for (int k = first; k <= last; ++k) {
-      const double plane = k + 0.5;
-      const double t = (plane - p0) / delta;
-      if (t > 0.0 && t < 1.0) breaks.push_back(t);
-    }
-  }
-  std::sort(breaks.begin(), breaks.end());
-  breaks.erase(std::unique(breaks.begin(), breaks.end(),
-      [](double a, double b) {
-        return std::abs(a - b)
-            <= 32.0 * std::numeric_limits<double>::epsilon();
-      }), breaks.end());
-  return breaks;
 }
 
 struct DirectEndpointAction {

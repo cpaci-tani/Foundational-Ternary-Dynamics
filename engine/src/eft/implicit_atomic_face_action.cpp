@@ -1,6 +1,7 @@
 #include "ftd/eft/implicit_atomic_face_action.h"
 
 #include "ftd/constants.h"
+#include "ftd/eft/compatibility_analysis_helpers.h"
 #include "ftd/eft/matched_face_energy_transaction.h"
 #include "ftd/eft/spacetime_worldline_coupling.h"
 
@@ -13,18 +14,12 @@
 namespace ftd::eft {
 namespace {
 
-Vec3 position(const ContactCarrierRecord& carrier) {
-  return {carrier.anchor.x+carrier.remainder.x,
-          carrier.anchor.y+carrier.remainder.y,
-          carrier.anchor.z+carrier.remainder.z};
-}
-
-void decompose(const Vec3& value, Coord& anchor, Vec3& remainder) {
-  anchor = {static_cast<int>(std::floor(value.x)),
-            static_cast<int>(std::floor(value.y)),
-            static_cast<int>(std::floor(value.z))};
-  remainder = {value.x-anchor.x, value.y-anchor.y, value.z-anchor.z};
-}
+using detail::add;
+using detail::add_scaled;
+using detail::decompose;
+using detail::inherited_residual;
+using detail::position;
+using detail::scale;
 
 double component(const Vec3& value, int axis) {
   if (axis == 0) return value.x;
@@ -48,59 +43,9 @@ bool finite(const Vec3& value) {
       && std::isfinite(value.z);
 }
 
-void add(MatchedFaceFlux& target, const MatchedFaceFlux& value) {
-  for (std::size_t i = 0; i < target.x.size(); ++i) {
-    target.x[i] += value.x[i];
-    target.y[i] += value.y[i];
-    target.z[i] += value.z[i];
-  }
-}
-
-void add_scaled(MatchedFaceFlux& target,
-                const MatchedFaceFlux& value, double amount) {
-  for (std::size_t i = 0; i < target.x.size(); ++i) {
-    target.x[i] += amount*value.x[i];
-    target.y[i] += amount*value.y[i];
-    target.z[i] += amount*value.z[i];
-  }
-}
-
-void scale(MatchedFaceFlux& target, double amount) {
-  for (std::size_t i = 0; i < target.x.size(); ++i) {
-    target.x[i] *= amount;
-    target.y[i] *= amount;
-    target.z[i] *= amount;
-  }
-}
-
-double vector_residual(const std::vector<double>& lhs,
-                       const std::vector<double>& rhs) {
-  if (lhs.size() != rhs.size()) return INFINITY;
-  double result = 0.0;
-  for (std::size_t i = 0; i < lhs.size(); ++i)
-    result = std::max(result, std::abs(lhs[i]-rhs[i]));
-  return result;
-}
-
 double energy(double momentum) {
   return std::sqrt(E_REST*E_REST
       +C_SPEED*C_SPEED*momentum*momentum);
-}
-
-double momentum_from_speed(double speed) {
-  const double h = E_REST/std::sqrt(
-      1.0-speed*speed/(C_SPEED*C_SPEED));
-  return h*speed/(C_SPEED*C_SPEED);
-}
-
-double inherited_residual(
-    const SymmetricDiagonalCoupledEndpointResult& value) {
-  return std::max({value.root_residual, value.continuity_residual,
-      value.gauss_before_residual, value.gauss_after_residual,
-      value.staggered_embedding_residual, value.field_work_residual,
-      value.matter_work_residual, value.total_energy_residual,
-      value.displacement_residual, value.causal_excess,
-      value.inverse_residual});
 }
 
 struct AggregateCurrent {
