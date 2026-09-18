@@ -3,141 +3,137 @@
   "generated_by": "engine/tools/build_file_manifest.py",
   "note": "Mechanical per-file catalog. Conceptual docs: engine/ARCHITECTURE.md, CALLSTACKS.md, SCENARIO_ARCHITECTURE.md, SPEC_ENGINE.md, engine/docs/ENGINE_CODE_MAP.md.",
   "totals": {
-    "files": 2692,
-    "loc": 733956
+    "files": 2929,
+    "loc": 797020
   },
   "subsystems": {
     "tests": {
-      "files": 810,
-      "loc": 247129
+      "files": 837,
+      "loc": 253026
     },
     "other": {
-      "files": 806,
-      "loc": 163140
+      "files": 846,
+      "loc": 178573
     },
     "web/js-toplevel": {
-      "files": 51,
-      "loc": 76143
+      "files": 68,
+      "loc": 81045
     },
     "src/core": {
-      "files": 198,
-      "loc": 69302
-    },
-    "include": {
-      "files": 300,
-      "loc": 38954
+      "files": 199,
+      "loc": 70242
     },
     "web/tests": {
-      "files": 145,
-      "loc": 35709
+      "files": 237,
+      "loc": 52191
+    },
+    "include": {
+      "files": 307,
+      "loc": 39931
     },
     "web/scale0": {
-      "files": 68,
-      "loc": 23203
+      "files": 86,
+      "loc": 26746
     },
     "cuda": {
       "files": 30,
-      "loc": 18527
+      "loc": 18743
     },
     "web/ui": {
-      "files": 86,
-      "loc": 12753
-    },
-    "web/viewport": {
-      "files": 22,
-      "loc": 10740
+      "files": 94,
+      "loc": 13994
     },
     "web/bridge": {
-      "files": 26,
-      "loc": 9528
+      "files": 32,
+      "loc": 13686
     },
-    "web/scale1": {
-      "files": 20,
-      "loc": 4488
+    "web/viewport": {
+      "files": 26,
+      "loc": 12102
     },
     "src/scenarios": {
       "files": 8,
-      "loc": 3795
+      "loc": 5330
+    },
+    "web/scale1": {
+      "files": 20,
+      "loc": 4524
     },
     "wasm": {
       "files": 5,
-      "loc": 3584
+      "loc": 3828
     },
     "web/scale2": {
-      "files": 12,
-      "loc": 2074
+      "files": 14,
+      "loc": 3715
     },
     "sim": {
       "files": 16,
       "loc": 1951
     },
-    "src/phases": {
-      "files": 4,
-      "loc": 1791
+    "tools": {
+      "files": 7,
+      "loc": 1879
     },
     "web/config": {
+      "files": 6,
+      "loc": 1812
+    },
+    "src/phases": {
       "files": 4,
-      "loc": 1476
+      "loc": 1800
+    },
+    "web/scale5": {
+      "files": 8,
+      "loc": 1726
     },
     "vendor": {
-      "files": 12,
-      "loc": 1425
+      "files": 15,
+      "loc": 1595
+    },
+    "web/inspector": {
+      "files": 9,
+      "loc": 1468
     },
     "web/atlas": {
       "files": 9,
       "loc": 1386
     },
-    "web/inspector": {
-      "files": 9,
-      "loc": 1329
+    "web/scale4": {
+      "files": 6,
+      "loc": 1045
     },
-    "tools": {
-      "files": 4,
-      "loc": 1199
+    "web/other": {
+      "files": 7,
+      "loc": 959
+    },
+    "web/scale3": {
+      "files": 10,
+      "loc": 911
     },
     "src/atom": {
       "files": 3,
-      "loc": 844
+      "loc": 868
     },
     "web/backgrounds": {
       "files": 7,
       "loc": 781
     },
-    "web/scale4": {
+    "web/telemetry": {
       "files": 5,
-      "loc": 427
-    },
-    "web/other": {
-      "files": 6,
-      "loc": 408
-    },
-    "web/scale5": {
-      "files": 5,
-      "loc": 379
+      "loc": 368
     },
     "web/core": {
       "files": 6,
       "loc": 348
     },
-    "web/scale3": {
-      "files": 6,
-      "loc": 314
-    },
-    "web/telemetry": {
-      "files": 4,
-      "loc": 314
-    },
     "web/scales-shared": {
       "files": 1,
-      "loc": 258
+      "loc": 260
     },
     "web/scale6": {
       "files": 1,
       "loc": 187
-    },
-    "web/scale23": {
-      "files": 3,
-      "loc": 70
     }
   },
   "files": [
@@ -263,7 +259,7 @@
     {
       "path": "engine/cuda/cuda_invariants.cu",
       "lang": "cuda",
-      "loc": 78,
+      "loc": 85,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "cuda_invariants.cu \u2014 Implementation of the CUDA constant-memory invariant pattern declared in cuda_invariants.cuh.",
@@ -386,7 +382,7 @@
     {
       "path": "engine/cuda/gpu_buffers.cu",
       "lang": "cuda",
-      "loc": 1490,
+      "loc": 1545,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "SoA device buffer management for FTD GPU engine.",
@@ -397,7 +393,7 @@
     {
       "path": "engine/cuda/gpu_engine.cu",
       "lang": "cuda",
-      "loc": 2244,
+      "loc": 2250,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "@file gpu_engine.cu @brief GPU-accelerated FTD tick engine.",
@@ -417,7 +413,7 @@
     {
       "path": "engine/cuda/kernels_eft.cu",
       "lang": "cuda",
-      "loc": 381,
+      "loc": 412,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "@file kernels_eft.cu @brief GPU-native EFT calculations: face-flux conversion, blocking, operator evaluation, and parallel reductions.",
@@ -426,7 +422,7 @@
     {
       "path": "engine/cuda/kernels_forces.cu",
       "lang": "cuda",
-      "loc": 2101,
+      "loc": 2182,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "@file kernels_forces.cu @brief GPU kernels for Phase 4 (Forces) and Phase 5 (Movement).",
@@ -450,7 +446,7 @@
     {
       "path": "engine/cuda/kernels_injection.cu",
       "lang": "cuda",
-      "loc": 318,
+      "loc": 324,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "@file kernels_injection.cu @brief Device-resident interactive and scenario injection primitives.",
@@ -486,7 +482,7 @@
     {
       "path": "engine/cuda/kernels_stencil_common.cuh",
       "lang": "cuda-header",
-      "loc": 215,
+      "loc": 223,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "Shared device-side helpers for the stencil kernel TUs.",
@@ -522,7 +518,7 @@
     {
       "path": "engine/cuda/visual_field_sample.cu",
       "lang": "cuda",
-      "loc": 439,
+      "loc": 444,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "",
@@ -533,7 +529,7 @@
     {
       "path": "engine/cuda/wilson_dirac_gpu.cu",
       "lang": "cuda",
-      "loc": 170,
+      "loc": 187,
       "subsystem": "cuda",
       "primary": true,
       "purpose": "Wilson-Dirac GPU kernel (Phase II.2-E).",
@@ -554,7 +550,7 @@
     {
       "path": "engine/include/ftd/atom_engine.h",
       "lang": "c-header",
-      "loc": 523,
+      "loc": 527,
       "subsystem": "include",
       "primary": true,
       "purpose": "AtomEngine: Scale 2 simulation Atoms as composite objects with inter-atomic forces: Ionic: F = -ALPHA * Q_i * Q_j / (4*pi * r\u00b2_soft) * r_hat Van der Waals: Lennard-Jones 12-6 with eps/sigma from on...",
@@ -701,7 +697,7 @@
     {
       "path": "engine/include/ftd/constants.h",
       "lang": "c-header",
-      "loc": 574,
+      "loc": 577,
       "subsystem": "include",
       "primary": true,
       "purpose": "FTD Render-Bridge Constants Engine-facing interface to the ontic constants registry.",
@@ -1547,7 +1543,7 @@
     {
       "path": "engine/include/ftd/eft/dynamical_flux_dressing_observer.h",
       "lang": "c-header",
-      "loc": 192,
+      "loc": 201,
       "subsystem": "include",
       "primary": true,
       "purpose": "@file dynamical_flux_dressing_observer.h @brief Read-only source-centred flux morphology for FTD-0476.",
@@ -2407,7 +2403,7 @@
     {
       "path": "engine/include/ftd/eft/native_energy_contract.h",
       "lang": "c-header",
-      "loc": 73,
+      "loc": 115,
       "subsystem": "include",
       "primary": true,
       "purpose": "@file native_energy_contract.h @brief Observer-only energy decomposition for the exact production wave tick.",
@@ -3337,7 +3333,7 @@
     {
       "path": "engine/include/ftd/eft/wave_morphology_observer.h",
       "lang": "c-header",
-      "loc": 193,
+      "loc": 202,
       "subsystem": "include",
       "primary": true,
       "purpose": "@file ftd/eft/wave_morphology_observer.h @brief Read-only bound/bow/wake morphology observer (FTD-0475).",
@@ -3488,7 +3484,7 @@
     {
       "path": "engine/include/ftd/gpu_engine.h",
       "lang": "c-header",
-      "loc": 555,
+      "loc": 550,
       "subsystem": "include",
       "primary": true,
       "purpose": "GPU-Accelerated FTD Engine Drop-in alternative to RenderBridge that executes the tick cycle on NVIDIA GPU via CUDA.",
@@ -3516,7 +3512,7 @@
     {
       "path": "engine/include/ftd/gpu_term_contract.h",
       "lang": "c-header",
-      "loc": 147,
+      "loc": 148,
       "subsystem": "include",
       "primary": true,
       "purpose": "Live CUDA implementation class for every TOGGLE_SPECS row.",
@@ -3599,6 +3595,15 @@
       ]
     },
     {
+      "path": "engine/include/ftd/larmor_damping.h",
+      "lang": "c-header",
+      "loc": 133,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "Larmor radiation-reaction damping law \u2014 single CPU/CUDA source of truth.",
+      "symbols": []
+    },
+    {
       "path": "engine/include/ftd/lattice.h",
       "lang": "c-header",
       "loc": 206,
@@ -3608,6 +3613,18 @@
       "symbols": [
         "Coord",
         "Lattice"
+      ]
+    },
+    {
+      "path": "engine/include/ftd/link_energy_observer.h",
+      "lang": "c-header",
+      "loc": 87,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "Observation-only exact link energy current of the reference engine's wave step (spec 2026-09-15 native transport overlays, sections 4-5).",
+      "symbols": [
+        "RenderBridge",
+        "LinkEnergyObserver"
       ]
     },
     {
@@ -3642,7 +3659,7 @@
     {
       "path": "engine/include/ftd/movement_order.h",
       "lang": "c-header",
-      "loc": 68,
+      "loc": 77,
       "subsystem": "include",
       "primary": true,
       "purpose": "Coordinate-independent movement helpers shared by CPU phase_movement and the CUDA serial commit kernel.",
@@ -3651,7 +3668,7 @@
     {
       "path": "engine/include/ftd/native_telemetry_scheduler.h",
       "lang": "c-header",
-      "loc": 244,
+      "loc": 249,
       "subsystem": "include",
       "primary": true,
       "purpose": "@file native_telemetry_scheduler.h @brief Tick-boundary publisher for native interactive telemetry.",
@@ -3732,7 +3749,7 @@
     {
       "path": "engine/include/ftd/ontic/particle_masses.h",
       "lang": "c-header",
-      "loc": 144,
+      "loc": 159,
       "subsystem": "include",
       "primary": true,
       "purpose": "ontic/particle_masses.h \u2014 Layers 6, 6b, 6c of the ontic chain.",
@@ -3791,13 +3808,14 @@
     {
       "path": "engine/include/ftd/render_bridge.h",
       "lang": "c-header",
-      "loc": 816,
+      "loc": 829,
       "subsystem": "include",
       "primary": true,
       "purpose": "Render-Bridge Tick Engine Implements the Scale-0 lattice tick dynamics with staged read/write loops and toggle-gated extension phases.",
       "symbols": [
         "LagrangianDiag",
         "KnotTracker",
+        "LinkEnergyObserver",
         "RenderBridge",
         "ColoredSiteCache"
       ]
@@ -3918,7 +3936,7 @@
     {
       "path": "engine/include/ftd/scenario_meta.h",
       "lang": "c-header",
-      "loc": 181,
+      "loc": 182,
       "subsystem": "include",
       "primary": true,
       "purpose": "Scale-0 scenario descriptors for the native shell.",
@@ -3936,9 +3954,22 @@
       "symbols": []
     },
     {
+      "path": "engine/include/ftd/scenario_seed.h",
+      "lang": "c-header",
+      "loc": 194,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "Typed inputs for scenario construction only.",
+      "symbols": [
+        "Property",
+        "Context",
+        "Scope"
+      ]
+    },
+    {
       "path": "engine/include/ftd/scenarios.h",
       "lang": "c-header",
-      "loc": 83,
+      "loc": 87,
       "subsystem": "include",
       "primary": true,
       "purpose": "========================================================================== engine/include/ftd/scenarios.h C++ port of the Scale-0 scenario library that was previously JS-only on the MockBridge (eng...",
@@ -4007,7 +4038,7 @@
     {
       "path": "engine/include/ftd/term_toggles.h",
       "lang": "c-header",
-      "loc": 524,
+      "loc": 571,
       "subsystem": "include",
       "primary": true,
       "purpose": "Runtime toggles for the logic-first engine.",
@@ -4066,12 +4097,13 @@
     {
       "path": "engine/include/ftd/visual_sample_grid.h",
       "lang": "c-header",
-      "loc": 74,
+      "loc": 102,
       "subsystem": "include",
       "primary": true,
       "purpose": "\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Shared sampling grid for the visual field-overlay samplers.",
       "symbols": [
-        "VisualSampleGrid"
+        "VisualSampleGrid",
+        "VisualSampleBlock"
       ]
     },
     {
@@ -4157,13 +4189,59 @@
       "symbols": []
     },
     {
-      "path": "engine/include/ftd/ws_protocol.h",
+      "path": "engine/include/ftd/ws_command_validation.h",
       "lang": "c-header",
-      "loc": 149,
+      "loc": 130,
       "subsystem": "include",
       "primary": true,
-      "purpose": "WebSocket framing protocol (RFC 6455) + minimal string-search JSON helpers.",
+      "purpose": "",
       "symbols": []
+    },
+    {
+      "path": "engine/include/ftd/ws_idle_policy.h",
+      "lang": "c-header",
+      "loc": 53,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "@file ws_idle_policy.h @brief Pure, socket-free idle-shutdown decision for ws_server (2026-09-16 idle auto-stop spec, section 1).",
+      "symbols": [
+        "IdleShutdownPolicy"
+      ]
+    },
+    {
+      "path": "engine/include/ftd/ws_json.h",
+      "lang": "c-header",
+      "loc": 46,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "Bounded native command JSON.",
+      "symbols": [
+        "JsonValue"
+      ]
+    },
+    {
+      "path": "engine/include/ftd/ws_observation.h",
+      "lang": "c-header",
+      "loc": 92,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "Versioned observation transport.",
+      "symbols": [
+        "NativeObservation"
+      ]
+    },
+    {
+      "path": "engine/include/ftd/ws_protocol.h",
+      "lang": "c-header",
+      "loc": 206,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "WebSocket framing protocol (RFC 6455) + bounded typed JSON helpers.",
+      "symbols": [
+        "WsIoPolicy",
+        "WsIoScope",
+        "WsFramePrefix"
+      ]
     },
     {
       "path": "engine/include/ftd/ws_sha1.h",
@@ -5477,7 +5555,7 @@
     {
       "path": "engine/src/atom/atom_forces.cpp",
       "lang": "cpp",
-      "loc": 629,
+      "loc": 653,
       "subsystem": "src/atom",
       "primary": true,
       "purpose": "AtomEngine force computation.",
@@ -5497,7 +5575,7 @@
     {
       "path": "engine/src/atom_engine.cpp",
       "lang": "cpp",
-      "loc": 361,
+      "loc": 507,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "AtomEngine: Scale 2 simulation \u2014 class lifecycle and tick orchestration.",
@@ -7247,7 +7325,7 @@
     {
       "path": "engine/src/injection.cpp",
       "lang": "cpp",
-      "loc": 358,
+      "loc": 366,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "Injection \u2014 implementation.",
@@ -7263,9 +7341,18 @@
       "symbols": []
     },
     {
+      "path": "engine/src/link_energy_observer.cpp",
+      "lang": "cpp",
+      "loc": 199,
+      "subsystem": "src/core",
+      "primary": true,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/src/native_telemetry_scheduler.cpp",
       "lang": "cpp",
-      "loc": 446,
+      "loc": 453,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -7305,16 +7392,16 @@
     {
       "path": "engine/src/render_bridge.cpp",
       "lang": "cpp",
-      "loc": 1500,
+      "loc": 1549,
       "subsystem": "src/core",
       "primary": true,
-      "purpose": "Logic-First FTD Engine (v2.0) Built from axioms: {3D lattice, ternary states, flux field, local causality} Six rules, nothing else: 1.",
+      "purpose": "Scale-0 floating-point reference engine.",
       "symbols": []
     },
     {
       "path": "engine/src/render_bridge_phases/phase_forces.cpp",
       "lang": "cpp",
-      "loc": 411,
+      "loc": 417,
       "subsystem": "src/phases",
       "primary": true,
       "purpose": "@file engine/src/render_bridge_phases/phase_forces.cpp @purpose Implementation of phase_forces decomposition (Phase 4b, 2026-04-27).",
@@ -7341,7 +7428,7 @@
     {
       "path": "engine/src/render_bridge_phases/phase_write.cpp",
       "lang": "cpp",
-      "loc": 611,
+      "loc": 614,
       "subsystem": "src/phases",
       "primary": true,
       "purpose": "@file engine/src/render_bridge_phases/phase_write.cpp @purpose Implementation of phase_write decomposition (Phase 4a, 2026-04-27).",
@@ -7377,7 +7464,7 @@
     {
       "path": "engine/src/scenarios.cpp",
       "lang": "cpp",
-      "loc": 271,
+      "loc": 357,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "========================================================================== engine/src/scenarios.cpp Thin router + shared RNG for the Scale-0 scenario library.",
@@ -7386,7 +7473,7 @@
     {
       "path": "engine/src/scenarios/_helpers.h",
       "lang": "c-header",
-      "loc": 756,
+      "loc": 774,
       "subsystem": "src/scenarios",
       "primary": true,
       "purpose": "========================================================================== engine/src/scenarios/_helpers.h Private (non-installed) helper header shared by the split scenario group files (flux.cpp,...",
@@ -7397,7 +7484,7 @@
     {
       "path": "engine/src/scenarios/cell.cpp",
       "lang": "cpp",
-      "loc": 407,
+      "loc": 554,
       "subsystem": "src/scenarios",
       "primary": true,
       "purpose": "========================================================================== engine/src/scenarios/cell.cpp s0-cell-* scenario group: flux cells (bounded field reservoirs).",
@@ -7406,7 +7493,7 @@
     {
       "path": "engine/src/scenarios/flux.cpp",
       "lang": "cpp",
-      "loc": 526,
+      "loc": 848,
       "subsystem": "src/scenarios",
       "primary": true,
       "purpose": "========================================================================== engine/src/scenarios/flux.cpp Group: flux-* (22 scenarios) Canonical seed implementation; the former JS mirror is archived.",
@@ -7415,16 +7502,18 @@
     {
       "path": "engine/src/scenarios/light.cpp",
       "lang": "cpp",
-      "loc": 116,
+      "loc": 211,
       "subsystem": "src/scenarios",
       "primary": true,
       "purpose": "========================================================================== engine/src/scenarios/light.cpp Group: light-* (4 scenarios) Canonical seed implementation; the former JS mirror is archived.",
-      "symbols": []
+      "symbols": [
+        "WA"
+      ]
     },
     {
       "path": "engine/src/scenarios/quantum.cpp",
       "lang": "cpp",
-      "loc": 229,
+      "loc": 351,
       "subsystem": "src/scenarios",
       "primary": true,
       "purpose": "========================================================================== engine/src/scenarios/quantum.cpp Group: quantum-* (8 scenarios) Canonical seed implementation; the former JS mirror is arc...",
@@ -7433,10 +7522,10 @@
     {
       "path": "engine/src/scenarios/s0_field.cpp",
       "lang": "cpp",
-      "loc": 380,
+      "loc": 584,
       "subsystem": "src/scenarios",
       "primary": true,
-      "purpose": "========================================================================== engine/src/scenarios/s0_field.cpp Group: s0-field-* (9 scenarios) Canonical seed implementation; the former JS mirror is a...",
+      "purpose": "========================================================================== engine/src/scenarios/s0_field.cpp Group: s0-field-* (16 scenarios) Canonical seed implementation; the former JS mirror is...",
       "symbols": [
         "Lane"
       ]
@@ -7444,25 +7533,30 @@
     {
       "path": "engine/src/scenarios/s0_seed.cpp",
       "lang": "cpp",
-      "loc": 998,
+      "loc": 1345,
       "subsystem": "src/scenarios",
       "primary": true,
       "purpose": "========================================================================== engine/src/scenarios/s0_seed.cpp Group: s0-seed-* (50 scenarios) Canonical seed implementation; the former JS mirror is ar...",
-      "symbols": []
+      "symbols": [
+        "SourceCenter"
+      ]
     },
     {
       "path": "engine/src/scenarios/vacuum.cpp",
       "lang": "cpp",
-      "loc": 383,
+      "loc": 663,
       "subsystem": "src/scenarios",
       "primary": true,
       "purpose": "========================================================================== engine/src/scenarios/vacuum.cpp Group: s0-vacuum-* (15 scenarios) Canonical seed implementation; the former JS mirror is a...",
-      "symbols": []
+      "symbols": [
+        "SourceCenter",
+        "AxisPair"
+      ]
     },
     {
       "path": "engine/src/strong_stress_energy.cpp",
       "lang": "cpp",
-      "loc": 434,
+      "loc": 441,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "FTD-0406 owner-authorized strong stress-energy contract.",
@@ -7514,11 +7608,17 @@
     {
       "path": "engine/src/ws_protocol.cpp",
       "lang": "cpp",
-      "loc": 348,
+      "loc": 694,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "WebSocket framing protocol implementation.",
-      "symbols": []
+      "symbols": [
+        "WsIoAccess",
+        "IoContext",
+        "IoOperation",
+        "CallbackGuard",
+        "JsonParser"
+      ]
     },
     {
       "path": "engine/src/ws_server.cpp",
@@ -7532,7 +7632,7 @@
     {
       "path": "engine/src/ws_server_binary.cpp",
       "lang": "cpp",
-      "loc": 272,
+      "loc": 275,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "@file ws_server_binary.cpp @brief Bounded binary visualization payload encoders.",
@@ -7541,7 +7641,7 @@
     {
       "path": "engine/src/ws_server_commands.cpp",
       "lang": "cpp",
-      "loc": 997,
+      "loc": 1125,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "@file ws_server_commands.cpp @brief Resource policy, transactional bridge changes, and command dispatch.",
@@ -7550,7 +7650,7 @@
     {
       "path": "engine/src/ws_server_internal.h",
       "lang": "c-header",
-      "loc": 96,
+      "loc": 97,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "@file ws_server_internal.h @brief Private module boundary for the native WebSocket server.",
@@ -7561,20 +7661,459 @@
     {
       "path": "engine/src/ws_server_runtime.cpp",
       "lang": "cpp",
-      "loc": 507,
+      "loc": 555,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "@file ws_server_runtime.cpp @brief Socket readiness, client session ordering, and server lifecycle.",
-      "symbols": []
+      "symbols": [
+        "FailedCommandIdentity"
+      ]
     },
     {
       "path": "engine/src/ws_server_telemetry.cpp",
       "lang": "cpp",
-      "loc": 679,
+      "loc": 591,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "@file ws_server_telemetry.cpp @brief Telemetry, inspection, and scalar JSON serialization.",
       "symbols": []
+    },
+    {
+      "path": "engine/strict/carrier_observer.cpp",
+      "lang": "cpp",
+      "loc": 360,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/strict/carrier_observer.h",
+      "lang": "c-header",
+      "loc": 93,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Passive exact bookkeeping for the existing, unadopted Q4 candidate.",
+      "symbols": [
+        "Context",
+        "SiteBalance",
+        "EdgeBalance",
+        "Observation",
+        "BoundaryCurrent",
+        "BlockObservation",
+        "AdvectiveMultiplier"
+      ]
+    },
+    {
+      "path": "engine/strict/cli_publication.h",
+      "lang": "c-header",
+      "loc": 128,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "File publication only: no kernel, clock, or wire-format changes.",
+      "symbols": [
+        "StagedOutput"
+      ]
+    },
+    {
+      "path": "engine/strict/cuda_main.cpp",
+      "lang": "cpp",
+      "loc": 34,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/strict/frozen_tables.h",
+      "lang": "c-header",
+      "loc": 2433,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Generated by generate_tables.py; do not edit by hand.",
+      "symbols": []
+    },
+    {
+      "path": "engine/strict/generate_tables.py",
+      "lang": "python",
+      "loc": 62,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Deterministically export the hash-validated finite Python law to C++17.",
+      "symbols": [
+        "render()"
+      ]
+    },
+    {
+      "path": "engine/strict/hydro/campaign_main.cpp",
+      "lang": "cpp",
+      "loc": 152,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "H2-prime registered response campaign instrument for phi-hydro-staged-candidate-1.",
+      "symbols": [
+        "Case"
+      ]
+    },
+    {
+      "path": "engine/strict/hydro/cuda_main.cpp",
+      "lang": "cpp",
+      "loc": 47,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/strict/hydro/hydro_cuda.cu",
+      "lang": "cuda",
+      "loc": 420,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "CUDA kernels for phi-hydro-staged-candidate-1 (research candidate only).",
+      "symbols": [
+        "DeviceBuffer",
+        "Tables",
+        "View"
+      ]
+    },
+    {
+      "path": "engine/strict/hydro/hydro_cuda.h",
+      "lang": "c-header",
+      "loc": 15,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Research candidate only: CUDA port of phi-hydro-staged-candidate-1 (see hydro_runtime.h for the CPU reference this must match bit-for-bit).",
+      "symbols": []
+    },
+    {
+      "path": "engine/strict/hydro/hydro_runtime.cpp",
+      "lang": "cpp",
+      "loc": 412,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "",
+      "symbols": [
+        "StepResult",
+        "Proposal",
+        "Admit"
+      ]
+    },
+    {
+      "path": "engine/strict/hydro/hydro_runtime.h",
+      "lang": "c-header",
+      "loc": 82,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Research candidate only: native C++ port of phi-hydro-staged-candidate-1 (scripts/phi_v2_lattice/hydro/*.py).",
+      "symbols": [
+        "State",
+        "Absorption",
+        "Collision",
+        "RelationEvent",
+        "Events"
+      ]
+    },
+    {
+      "path": "engine/strict/hydro/hydro_sha256.h",
+      "lang": "c-header",
+      "loc": 79,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Self-contained SHA-256 (FIPS 180-4).",
+      "symbols": []
+    },
+    {
+      "path": "engine/strict/hydro/hydro_tables.h",
+      "lang": "c-header",
+      "loc": 18,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Generated by scripts/phi_v2_lattice/hydro/experiments/generate_native_header.py; do not edit.",
+      "symbols": []
+    },
+    {
+      "path": "engine/strict/hydro/main.cpp",
+      "lang": "cpp",
+      "loc": 58,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/strict/hydro/predictive_response_runner.mjs",
+      "lang": "js",
+      "loc": 192,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Fixed, preregistered one-cycle probe of the existing compiled candidate law.",
+      "symbols": []
+    },
+    {
+      "path": "engine/strict/hydro/wasm_bindings_hydro.cpp",
+      "lang": "cpp",
+      "loc": 541,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Isolated Embind adapter of the same finite hydro kernel/codec as the native CLI (mirrors ../wasm_bindings.cpp).",
+      "symbols": [
+        "HydroState"
+      ]
+    },
+    {
+      "path": "engine/strict/hydro/weak_balance_runner.mjs",
+      "lang": "js",
+      "loc": 206,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Bounded complete-state observations of the unchanged compiled hydro law.",
+      "symbols": []
+    },
+    {
+      "path": "engine/strict/main.cpp",
+      "lang": "cpp",
+      "loc": 34,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/strict/native_selftest.cpp",
+      "lang": "cpp",
+      "loc": 21,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/strict/recovery/recovery_carrier_main.cpp",
+      "lang": "cpp",
+      "loc": 93,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Registered observations of accepted CUDA evolution.",
+      "symbols": []
+    },
+    {
+      "path": "engine/strict/recovery_hydro/hydro_main.cpp",
+      "lang": "cpp",
+      "loc": 132,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Registered stroboscopic observation of the accepted CUDA evolution.",
+      "symbols": [
+        "Case"
+      ]
+    },
+    {
+      "path": "engine/strict/recovery_mixed/mixed_main.cpp",
+      "lang": "cpp",
+      "loc": 87,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Finite intervention instrument.",
+      "symbols": []
+    },
+    {
+      "path": "engine/strict/recovery_mixed_scattering/scattering_main.cpp",
+      "lang": "cpp",
+      "loc": 87,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Finite intervention instrument.",
+      "symbols": []
+    },
+    {
+      "path": "engine/strict/serve_lab.py",
+      "lang": "python",
+      "loc": 34,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Serve the separate hydro artifacts with platform-independent module MIME types.",
+      "symbols": [
+        "LaboratoryHandler",
+        "main()"
+      ]
+    },
+    {
+      "path": "engine/strict/staged_cuda.cu",
+      "lang": "cuda",
+      "loc": 276,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Exact research candidate kernels.",
+      "symbols": [
+        "DeviceBuffer",
+        "Tables",
+        "View"
+      ]
+    },
+    {
+      "path": "engine/strict/staged_cuda.h",
+      "lang": "c-header",
+      "loc": 9,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/strict/staged_runtime.cpp",
+      "lang": "cpp",
+      "loc": 271,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/strict/staged_runtime.h",
+      "lang": "c-header",
+      "loc": 49,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Research candidate only: four physical ticks, no production physics adoption.",
+      "symbols": [
+        "State",
+        "Collision",
+        "RelationEvent",
+        "Events",
+        "StepResult"
+      ]
+    },
+    {
+      "path": "engine/strict/thermal/equivariant_table.h",
+      "lang": "c-header",
+      "loc": 7341,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Generated by scripts.phi_v2_lattice.thermal.equivariant; do not edit.",
+      "symbols": []
+    },
+    {
+      "path": "engine/strict/thermal/finite_thermal.cpp",
+      "lang": "cpp",
+      "loc": 376,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "",
+      "symbols": [
+        "KeyedPair"
+      ]
+    },
+    {
+      "path": "engine/strict/thermal/finite_thermal.h",
+      "lang": "c-header",
+      "loc": 78,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "[SELECTION] Finite research candidates only.",
+      "symbols": [
+        "Records",
+        "Scratch",
+        "Totals"
+      ]
+    },
+    {
+      "path": "engine/strict/thermal/native_tests.cpp",
+      "lang": "cpp",
+      "loc": 413,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/strict/wasm_bindings.cpp",
+      "lang": "cpp",
+      "loc": 176,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Isolated Embind adapter of the same finite kernel/codec as the native CLI.",
+      "symbols": [
+        "StrictState"
+      ]
+    },
+    {
+      "path": "engine/strict/web/hydro/fluid-analysis.js",
+      "lang": "js",
+      "loc": 83,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Approximate display arithmetic on exact integers.",
+      "symbols": [
+        "analyzeFluid()",
+        "fitMode()"
+      ]
+    },
+    {
+      "path": "engine/strict/web/hydro/fluid-preparation.js",
+      "lang": "js",
+      "loc": 57,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Preparation only.",
+      "symbols": [
+        "prepareFluid()",
+        "HYDRO_IDENTITY",
+        "PREPARATIONS"
+      ]
+    },
+    {
+      "path": "engine/strict/web/hydro/fluid-renderer.js",
+      "lang": "js",
+      "loc": 67,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Canvas views of a published snapshot.",
+      "symbols": [
+        "sliceBlock()",
+        "renderSlice()",
+        "renderChart()",
+        "fmt",
+        "planeAxes"
+      ]
+    },
+    {
+      "path": "engine/strict/web/hydro/hydro-lab.js",
+      "lang": "js",
+      "loc": 240,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "One compiled worker owns evolution.",
+      "symbols": []
+    },
+    {
+      "path": "engine/strict/web/hydro/hydro-preparation.js",
+      "lang": "js",
+      "loc": 124,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Passive transport validation.",
+      "symbols": [
+        "sha256Hex()",
+        "verifyPinnedArtifact()",
+        "verifyRuntimeArtifact()",
+        "ftdhy01ToCheckpointJson()",
+        "validateHydroPreparation()",
+        "supportsShearDecayFit()"
+      ]
+    },
+    {
+      "path": "engine/strict/web/hydro/hydro-validity.js",
+      "lang": "js",
+      "loc": 53,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Passive checks of already-published observations; no state evolution or grid scan.",
+      "symbols": [
+        "hydroDecayFit()",
+        "hydroObservationValidity()",
+        "hydroFailureValidity()"
+      ]
     },
     {
       "path": "engine/tests/benchmark_alpha_convergence.cpp",
@@ -7753,7 +8292,7 @@
     {
       "path": "engine/tests/benchmark_invariant_matrix_constant_memory.cu",
       "lang": "cuda",
-      "loc": 165,
+      "loc": 180,
       "subsystem": "tests",
       "primary": false,
       "purpose": "benchmark_invariant_matrix_constant_memory.cu Standalone benchmark for the CUDA constant-memory invariant pattern established by ADR-0014.",
@@ -10070,6 +10609,15 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/support/scenario_seed_receipt.h",
+      "lang": "c-header",
+      "loc": 41,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/tests/support/test_telemetry.cpp",
       "lang": "cpp",
       "loc": 312,
@@ -10078,6 +10626,18 @@
       "purpose": "============================================================================ tests/support/test_telemetry.cpp ---------------------------------------------------------------------------- Implementa...",
       "symbols": [
         "State"
+      ]
+    },
+    {
+      "path": "engine/tests/support/ws_loopback_fixture.h",
+      "lang": "c-header",
+      "loc": 79,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": [
+        "Platform",
+        "Pair"
       ]
     },
     {
@@ -10234,7 +10794,7 @@
     {
       "path": "engine/tests/test_atom_engine.cpp",
       "lang": "cpp",
-      "loc": 400,
+      "loc": 444,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Test: AtomEngine (Scale 2) unit tests Checks covering injection, properties, forces, bonding, conservation laws, and integration.",
@@ -10243,7 +10803,7 @@
     {
       "path": "engine/tests/test_atom_engine_forces.cpp",
       "lang": "cpp",
-      "loc": 1014,
+      "loc": 1032,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Test: AtomEngine force variants (consolidated suite) Merges 5 legacy test_ae_*.cpp files into a single ftd::test-instrumented suite using the Phase 2a NDJSON telemetry API: test_ae_angle_strain ->...",
@@ -10252,7 +10812,7 @@
     {
       "path": "engine/tests/test_atom_toggles.cpp",
       "lang": "cpp",
-      "loc": 195,
+      "loc": 198,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Test: AtomToggles \u2014 Per-force toggle control for AtomEngine Verifies that each toggle in AtomToggles enables/disables its force, and that force_diag_ correctly decomposes forces by type.",
@@ -10526,6 +11086,20 @@
       "primary": false,
       "purpose": "Test: RenderBridge tick dynamics Integration tests for vacuum stability, flux injection, propagation, manifestation, and diagnostics.",
       "symbols": []
+    },
+    {
+      "path": "engine/tests/test_c4_transaction_census.cpp",
+      "lang": "cpp",
+      "loc": 264,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "C4 transaction census -- does the engine's transaction structure realise the four-phase oriented cycle +1 -> 0-down -> -1 -> 0-up -> +1 ?",
+      "symbols": [
+        "Row",
+        "NullInterval",
+        "SiteDeath",
+        "ResidueTest"
+      ]
     },
     {
       "path": "engine/tests/test_callstack_audit_fixes.cpp",
@@ -12402,6 +12976,26 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/test_flux_cell_port_aperture.cpp",
+      "lang": "cpp",
+      "loc": 232,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "Test: the flux-cell port integrates the OPENED APERTURE, not the whole slab.",
+      "symbols": [
+        "PortRun"
+      ]
+    },
+    {
+      "path": "engine/tests/test_flux_cell_pump_dual_work.cpp",
+      "lang": "cpp",
+      "loc": 246,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "Test: flux_pump work accounting under dual_substrate.",
+      "symbols": []
+    },
+    {
       "path": "engine/tests/test_flux_cell_scenario_physics.cpp",
       "lang": "cpp",
       "loc": 1037,
@@ -12626,6 +13220,15 @@
       ]
     },
     {
+      "path": "engine/tests/test_gauss_projection_symmetry.cpp",
+      "lang": "cpp",
+      "loc": 61,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "engine/tests/test_gauss_projection_symmetry.cpp Gauss-projection O_h asymmetry versus SOR sweep count (2026-09-14 finding).",
+      "symbols": []
+    },
+    {
       "path": "engine/tests/test_gauss_record_canonical_reduction.cpp",
       "lang": "cpp",
       "loc": 219,
@@ -12725,6 +13328,17 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/test_genesis_symmetry.cpp",
+      "lang": "cpp",
+      "loc": 76,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "engine/tests/test_genesis_symmetry.cpp O_h symmetry of the manifested set for the six-axis seed (2026-09-14 finding).",
+      "symbols": [
+        "Run"
+      ]
+    },
+    {
       "path": "engine/tests/test_geometric_freefall_integrator.cpp",
       "lang": "cpp",
       "loc": 238,
@@ -12775,7 +13389,7 @@
     {
       "path": "engine/tests/test_gpu_compact_diagnostics.cpp",
       "lang": "cpp",
-      "loc": 521,
+      "loc": 556,
       "subsystem": "tests",
       "primary": false,
       "purpose": "",
@@ -12802,7 +13416,7 @@
     {
       "path": "engine/tests/test_gpu_delta_upload.cpp",
       "lang": "cpp",
-      "loc": 269,
+      "loc": 290,
       "subsystem": "tests",
       "primary": false,
       "purpose": "============================================================================ test_gpu_delta_upload.cpp \u2014 C5 (CUDA ticket): host\u2192device delta upload.",
@@ -12822,7 +13436,7 @@
     {
       "path": "engine/tests/test_gpu_eft_parity.cpp",
       "lang": "cpp",
-      "loc": 221,
+      "loc": 259,
       "subsystem": "tests",
       "primary": false,
       "purpose": "@file test_gpu_eft_parity.cpp @brief GPU vs CPU parity tests for the EFT operators and blocking map.",
@@ -12904,7 +13518,7 @@
     {
       "path": "engine/tests/test_gpu_graph_capture.cpp",
       "lang": "cpp",
-      "loc": 308,
+      "loc": 332,
       "subsystem": "tests",
       "primary": false,
       "purpose": "============================================================================ test_gpu_graph_capture.cpp \u2014 graph replay must be BIT-IDENTICAL to direct launch, not merely close.",
@@ -12913,7 +13527,7 @@
     {
       "path": "engine/tests/test_gpu_identity_lifecycle_parity.cpp",
       "lang": "cpp",
-      "loc": 396,
+      "loc": 451,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Focused CPU/CUDA parity for sparse lifecycle transactions and identity allocation.",
@@ -13036,7 +13650,7 @@
     {
       "path": "engine/tests/test_gpu_strong_stress_parity.cpp",
       "lang": "cpp",
-      "loc": 135,
+      "loc": 188,
       "subsystem": "tests",
       "primary": false,
       "purpose": "CPU/CUDA parity for FTD-0406 strong_stress_energy.",
@@ -13061,9 +13675,20 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/test_gpu_triad_parity.cpp",
+      "lang": "cpp",
+      "loc": 318,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "CPU/CUDA parity for TermToggles::triad_binding.",
+      "symbols": [
+        "Site"
+      ]
+    },
+    {
       "path": "engine/tests/test_gpu_verlet_parity.cpp",
       "lang": "cpp",
-      "loc": 158,
+      "loc": 169,
       "subsystem": "tests",
       "primary": false,
       "purpose": "CPU/CUDA parity for the E1 / FTD-0337 velocity-Verlet (KDK) wave integrator.",
@@ -13072,7 +13697,7 @@
     {
       "path": "engine/tests/test_gpu_visual_field_sample.cpp",
       "lang": "cpp",
-      "loc": 223,
+      "loc": 270,
       "subsystem": "tests",
       "primary": false,
       "purpose": "CUDA compact visual-field fidelity contract.",
@@ -13146,6 +13771,19 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/test_history_journal_drain.cpp",
+      "lang": "cpp",
+      "loc": 408,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "History-journal drain: encoding validity + null-orientation reconstruction.",
+      "symbols": [
+        "Row",
+        "NullInterval",
+        "SiteDeath"
+      ]
+    },
+    {
       "path": "engine/tests/test_hop_source_multipole_hierarchy.cpp",
       "lang": "cpp",
       "loc": 67,
@@ -13157,7 +13795,7 @@
     {
       "path": "engine/tests/test_identity_lifecycle.cpp",
       "lang": "cpp",
-      "loc": 222,
+      "loc": 233,
       "subsystem": "tests",
       "primary": false,
       "purpose": "CPU identity/provenance regression gates.",
@@ -13488,10 +14126,19 @@
     {
       "path": "engine/tests/test_larmor.cpp",
       "lang": "cpp",
-      "loc": 374,
+      "loc": 430,
       "subsystem": "tests",
       "primary": false,
-      "purpose": "Test: Larmor Radiation (Acceleration-Dependent Damping) When the larmor_radiation toggle is ON, damping at manifested sites is modulated by the particle's acceleration: larmor_mod = min(1, LARMOR_F...",
+      "purpose": "Test: Larmor Radiation (Acceleration-Dependent Damping) When the larmor_radiation toggle is ON, damping at near-particle sites is modulated by the particle's acceleration (ftd/larmor_damping.h): ga...",
+      "symbols": []
+    },
+    {
+      "path": "engine/tests/test_larmor_damping_law.cpp",
+      "lang": "cpp",
+      "loc": 212,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "Test: Larmor radiation-reaction damping law (regression for the 2026-09-16 sign-of-physics fix).",
       "symbols": []
     },
     {
@@ -13562,6 +14209,18 @@
       "primary": false,
       "purpose": "@file test_link_bilinear_clifford.cpp @brief Program F \u2014 link-bilinear fermion probe.",
       "symbols": []
+    },
+    {
+      "path": "engine/tests/test_link_energy_observer.cpp",
+      "lang": "cpp",
+      "loc": 277,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "engine/tests/test_link_energy_observer.cpp Exact link energy current of the reference engine's wave step (spec 2026-09-15 native transport overlays, section 9 T1, T3, T4, T5).",
+      "symbols": [
+        "Case",
+        "Mode"
+      ]
     },
     {
       "path": "engine/tests/test_live_sourced_newton.cpp",
@@ -13981,6 +14640,17 @@
       ]
     },
     {
+      "path": "engine/tests/test_movement_axis_order_invariance.cpp",
+      "lang": "cpp",
+      "loc": 199,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "Test: the symmetric_movement_order axis permutation is mathematically inert.",
+      "symbols": [
+        "HopResult"
+      ]
+    },
+    {
       "path": "engine/tests/test_moving_dressed_matter_transverse_field_growth.cpp",
       "lang": "cpp",
       "loc": 652,
@@ -14051,6 +14721,19 @@
       "primary": false,
       "purpose": "Native finite-volume blocking map audit.",
       "symbols": []
+    },
+    {
+      "path": "engine/tests/test_native_carrier_current.cpp",
+      "lang": "cpp",
+      "loc": 414,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "Bounded exact observation gate; reuses the frozen native Q4 transition.",
+      "symbols": [
+        "Lift",
+        "Prepared",
+        "Row"
+      ]
     },
     {
       "path": "engine/tests/test_native_charge_gate.cpp",
@@ -14405,6 +15088,15 @@
       ]
     },
     {
+      "path": "engine/tests/test_native_telemetry_scheduler.cpp",
+      "lang": "cpp",
+      "loc": 104,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/tests/test_native_ternary_dipole_phase_wedge_memory.cpp",
       "lang": "cpp",
       "loc": 268,
@@ -14421,6 +15113,17 @@
       "primary": false,
       "purpose": "",
       "symbols": []
+    },
+    {
+      "path": "engine/tests/test_native_wave_observer_scope.cpp",
+      "lang": "cpp",
+      "loc": 198,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "Applicability of the existing reference wave-energy observer.",
+      "symbols": [
+        "ExtraTerm"
+      ]
     },
     {
       "path": "engine/tests/test_ncemc_feasibility.cpp",
@@ -15214,7 +15917,7 @@
     {
       "path": "engine/tests/test_scenario_behavior.cpp",
       "lang": "cpp",
-      "loc": 3308,
+      "loc": 3435,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Behavioral regression tests for the Scale-0 scenarios whose initial data are intended to evolve, rather than merely render a recognizable picture.",
@@ -15237,6 +15940,24 @@
       "subsystem": "tests",
       "primary": false,
       "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/tests/test_scenario_seed_defaults.cpp",
+      "lang": "cpp",
+      "loc": 88,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "Independent pre-refactor receipts for the complete supported initial state.",
+      "symbols": []
+    },
+    {
+      "path": "engine/tests/test_scenario_seed_effects.cpp",
+      "lang": "cpp",
+      "loc": 100,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "Make a legal protocol fixture from the registry rather than silently dropping a requested toggle.",
       "symbols": []
     },
     {
@@ -15498,6 +16219,17 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/test_stencil18_dispersion.cpp",
+      "lang": "cpp",
+      "loc": 63,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "engine/tests/test_stencil18_dispersion.cpp Plane-wave frequencies in axial, face-diagonal and body-diagonal directions versus the leapfrog prediction from the 18-point stencil symbol (2026-09-14).",
+      "symbols": [
+        "Case"
+      ]
+    },
+    {
       "path": "engine/tests/test_stress_energy.cpp",
       "lang": "cpp",
       "loc": 331,
@@ -15520,7 +16252,7 @@
     {
       "path": "engine/tests/test_strong_stress_energy_contract.cpp",
       "lang": "cpp",
-      "loc": 310,
+      "loc": 344,
       "subsystem": "tests",
       "primary": false,
       "purpose": "FTD-0406 frozen owner-authorized strong stress-energy CPU contract.",
@@ -15633,7 +16365,7 @@
     {
       "path": "engine/tests/test_symplectic_wave.cpp",
       "lang": "cpp",
-      "loc": 78,
+      "loc": 95,
       "subsystem": "tests",
       "primary": false,
       "purpose": "@file test_symplectic_wave.cpp @brief Symplectic Leapfrog wave propagation energy conservation test.",
@@ -15763,15 +16495,24 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/test_tick_preflight.cpp",
+      "lang": "cpp",
+      "loc": 365,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "Bounded production-RenderBridge preflight regression.",
+      "symbols": [
+        "TickPreflightTestAccess"
+      ]
+    },
+    {
       "path": "engine/tests/test_toggle_matrix.cpp",
       "lang": "cpp",
-      "loc": 494,
+      "loc": 528,
       "subsystem": "tests",
       "primary": false,
       "purpose": "@file test_toggle_matrix.cpp @brief Pairwise toggle-combination smoke test.",
-      "symbols": [
-        "ToggleSpec"
-      ]
+      "symbols": []
     },
     {
       "path": "engine/tests/test_tracker.cpp",
@@ -15890,7 +16631,7 @@
     {
       "path": "engine/tests/test_visual_field_sample.cpp",
       "lang": "cpp",
-      "loc": 248,
+      "loc": 305,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Compact Scale-0 visual-field readback contract.",
@@ -16002,6 +16743,18 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/test_weak_transmutation_parity.cpp",
+      "lang": "cpp",
+      "loc": 507,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "CHARACTERIZATION TEST \u2014 weak_transmutation CPU vs CUDA neighbour-order semantics.",
+      "symbols": [
+        "Site",
+        "Outcome"
+      ]
+    },
+    {
       "path": "engine/tests/test_wh_clifford_alt_routes.cpp",
       "lang": "cpp",
       "loc": 257,
@@ -16035,7 +16788,7 @@
     {
       "path": "engine/tests/test_wilson_dirac_cuda_parity.cpp",
       "lang": "cpp",
-      "loc": 152,
+      "loc": 173,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Wilson-Dirac CPU/GPU parity (Phase II.2-E milestone).",
@@ -16087,13 +16840,80 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/test_ws_command_validation.cpp",
+      "lang": "cpp",
+      "loc": 153,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": [
+        "SocketPair"
+      ]
+    },
+    {
+      "path": "engine/tests/test_ws_frame_prefix.cpp",
+      "lang": "cpp",
+      "loc": 69,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/tests/test_ws_idle_policy.cpp",
+      "lang": "cpp",
+      "loc": 124,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "============================================================================ test_ws_idle_policy.cpp \u2014 pure decision-table coverage for ftd::IdleShutdownPolicy (idle auto-stop, 2026-09-16 spec).",
+      "symbols": []
+    },
+    {
+      "path": "engine/tests/test_ws_io_deadlines.cpp",
+      "lang": "cpp",
+      "loc": 125,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/tests/test_ws_json_validation.cpp",
+      "lang": "cpp",
+      "loc": 54,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/tests/test_ws_observation_v3.cpp",
+      "lang": "cpp",
+      "loc": 158,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/tests/test_ws_protocol.cpp",
       "lang": "cpp",
-      "loc": 259,
+      "loc": 265,
       "subsystem": "tests",
       "primary": false,
       "purpose": "============================================================================ test_ws_protocol.cpp \u2014 WebSocket remote-control protocol unit tests (revision 1.4).",
       "symbols": []
+    },
+    {
+      "path": "engine/tests/test_ws_telemetry_validation.cpp",
+      "lang": "cpp",
+      "loc": 235,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": [
+        "Valid"
+      ]
     },
     {
       "path": "engine/tests/test_wz_mass.cpp",
@@ -23540,7 +24360,7 @@
     {
       "path": "engine/tools/build_file_manifest.py",
       "lang": "python",
-      "loc": 329,
+      "loc": 333,
       "subsystem": "tools",
       "primary": true,
       "purpose": "Build a machine-readable manifest of every tracked code file in engine/.",
@@ -23568,9 +24388,50 @@
       ]
     },
     {
+      "path": "engine/tools/verify_native_command_boundary.py",
+      "lang": "python",
+      "loc": 142,
+      "subsystem": "tools",
+      "primary": true,
+      "purpose": "Bounded CPU WebSocket integration check using Python's independent JSON parser.",
+      "symbols": [
+        "strict_json()",
+        "exact()",
+        "receive()",
+        "send()",
+        "main()"
+      ]
+    },
+    {
+      "path": "engine/tools/verify_native_observation_v3.py",
+      "lang": "python",
+      "loc": 190,
+      "subsystem": "tools",
+      "primary": true,
+      "purpose": "Independent real-wire checks for native reference observation protocol v3.",
+      "symbols": [
+        "main()"
+      ]
+    },
+    {
+      "path": "engine/tools/verify_native_transport_liveness.py",
+      "lang": "python",
+      "loc": 344,
+      "subsystem": "tools",
+      "primary": true,
+      "purpose": "Bounded, forced-CPU wire oracle for native transport retirement and ordering.",
+      "symbols": [
+        "exact()",
+        "frame()",
+        "receive()",
+        "reply()",
+        "main()"
+      ]
+    },
+    {
       "path": "engine/wasm/bindings_atom.cpp",
       "lang": "cpp",
-      "loc": 345,
+      "loc": 346,
       "subsystem": "wasm",
       "primary": true,
       "purpose": "@file bindings_atom.cpp @brief Embind bindings for AtomEngine (Scale 2).",
@@ -23579,7 +24440,7 @@
     {
       "path": "engine/wasm/bindings_internal.h",
       "lang": "c-header",
-      "loc": 93,
+      "loc": 100,
       "subsystem": "wasm",
       "primary": true,
       "purpose": "@file bindings_internal.h @brief Shared helpers exposed across the split Embind binding TUs.",
@@ -23599,7 +24460,7 @@
     {
       "path": "engine/wasm/bindings_render_bridge.cpp",
       "lang": "cpp",
-      "loc": 481,
+      "loc": 656,
       "subsystem": "wasm",
       "primary": true,
       "purpose": "@file bindings_render_bridge.cpp @brief Embind bindings for RenderBridge (Scale 0 \u2014 voxel lattice engine).",
@@ -23610,7 +24471,7 @@
     {
       "path": "engine/wasm/ftd_wasm.cpp",
       "lang": "cpp",
-      "loc": 1449,
+      "loc": 1510,
       "subsystem": "wasm",
       "primary": true,
       "purpose": "@file ftd_wasm.cpp @brief Emscripten Embind bindings for the FTD engine \u2014 shared helpers.",
@@ -23648,11 +24509,12 @@
     {
       "path": "engine/web/js/app-wire/bridge-boot.js",
       "lang": "js",
-      "loc": 87,
+      "loc": 107,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "app-wire/bridge-boot.js \u2014 boot-time bridge probe (native \u2192 WASM).",
       "symbols": [
+        "applyEngineStatusChip()",
         "bootBridge()"
       ]
     },
@@ -23682,7 +24544,7 @@
     {
       "path": "engine/web/js/app.js",
       "lang": "js",
-      "loc": 2072,
+      "loc": 2200,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "@file app.js @brief FTD Web Dashboard \u2014 Main Application Controller [EXTENDED] Initializes all subsystems, manages the frame loop, and wires up UI controls to the simulation bridge.",
@@ -23795,12 +24657,13 @@
     {
       "path": "engine/web/js/atomic-energy.js",
       "lang": "js",
-      "loc": 204,
+      "loc": 215,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "Atomic Energy Calculator Computes physical atomic energies for all 118 elements: - Nuclear binding energy (Bethe-Weizs\u00e4cker semi-empirical mass formula) - Total rest mass energy (protons + neutrons...",
       "symbols": [
         "nuclearBindingEnergy()",
+        "isotopeEnergy()",
         "atomicEnergy()",
         "allElementEnergies()",
         "periodicTableTotalEnergy()",
@@ -23964,12 +24827,13 @@
     {
       "path": "engine/web/js/bridge/bridge-contract.js",
       "lang": "js",
-      "loc": 240,
+      "loc": 250,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Bridge contract \u2014 the surface every Scale-0 bridge must implement.",
       "symbols": [
         "emptySampleResult()",
+        "validateScale0BoundarySelector()",
         "samplerOr()",
         "particleDataToList()",
         "SCALE0_SAMPLER_METHODS",
@@ -23991,7 +24855,7 @@
     {
       "path": "engine/web/js/bridge/capabilities/scale0.js",
       "lang": "js",
-      "loc": 77,
+      "loc": 88,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "@file engine/web/js/bridge/capabilities/scale0.js @purpose Scale-0 (lattice/substrate) capability factory.",
@@ -24022,20 +24886,32 @@
       ]
     },
     {
+      "path": "engine/web/js/bridge/cosmic-pass-stats.js",
+      "lang": "js",
+      "loc": 143,
+      "subsystem": "web/bridge",
+      "primary": true,
+      "purpose": "cosmic-pass-stats.js \u2014 per-tick / cumulative instrumentation for the Scale-5 cosmic bridge (Pass 0a, bridge-side foundations).",
+      "symbols": [
+        "createCosmicPassStats()"
+      ]
+    },
+    {
       "path": "engine/web/js/bridge/cosmic-physics.js",
       "lang": "js",
-      "loc": 563,
+      "loc": 677,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Cosmic scale-5 force kernel.",
       "symbols": [
-        "computeCosmicForces()"
+        "computeCosmicForces()",
+        "BH_N_THRESHOLD"
       ]
     },
     {
       "path": "engine/web/js/bridge/cosmic-postupdates.js",
       "lang": "js",
-      "loc": 351,
+      "loc": 473,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Cosmic scale-5 post-integration updates.",
@@ -24063,7 +24939,7 @@
     {
       "path": "engine/web/js/bridge/cosmic-scenarios/galaxies.js",
       "lang": "js",
-      "loc": 539,
+      "loc": 556,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Cosmic scale-5 scenarios \u2014 galaxy-family.",
@@ -24079,9 +24955,22 @@
       ]
     },
     {
+      "path": "engine/web/js/bridge/cosmic-scenarios/gas.js",
+      "lang": "js",
+      "loc": 112,
+      "subsystem": "web/bridge",
+      "primary": true,
+      "purpose": "Cosmic scale-5 scenarios \u2014 gas laboratories on Monaghan SPH.",
+      "symbols": [
+        "setupGasCollapse()",
+        "setupGasCloudCollision()",
+        "setupGasRotatingDisk()"
+      ]
+    },
+    {
       "path": "engine/web/js/bridge/cosmic-scenarios/index.js",
       "lang": "js",
-      "loc": 55,
+      "loc": 64,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Cosmic scale-5 scenario dispatcher.",
@@ -24090,9 +24979,58 @@
       ]
     },
     {
+      "path": "engine/web/js/bridge/cosmic-sph.js",
+      "lang": "js",
+      "loc": 316,
+      "subsystem": "web/bridge",
+      "primary": true,
+      "purpose": "Monaghan (1992) SPH gas solver \u2014 Scale 5 cosmic bridge.",
+      "symbols": [
+        "kernelW()",
+        "kernelGradMag()",
+        "isGasType()",
+        "computeSphForces()",
+        "SPH"
+      ]
+    },
+    {
+      "path": "engine/web/js/bridge/finite-record-bridge.js",
+      "lang": "js",
+      "loc": 154,
+      "subsystem": "web/bridge",
+      "primary": true,
+      "purpose": "Compiled finite-state backend behind the existing Scale-0 bridge contract.",
+      "symbols": [
+        "FiniteRecordBridge",
+        "loadRecordCatalog()",
+        "FINITE_RECORD_LAW"
+      ]
+    },
+    {
+      "path": "engine/web/js/bridge/finite-record-frame.js",
+      "lang": "js",
+      "loc": 34,
+      "subsystem": "web/bridge",
+      "primary": true,
+      "purpose": "Passive transposition from x-major finite records to the web lattice ABI.",
+      "symbols": [
+        "recordFrame()",
+        "recordAt()"
+      ]
+    },
+    {
+      "path": "engine/web/js/bridge/flux-publication.classic.js",
+      "lang": "js",
+      "loc": 205,
+      "subsystem": "web/bridge",
+      "primary": true,
+      "purpose": "Shared by the classic physics worker and the module proxy.",
+      "symbols": []
+    },
+    {
       "path": "engine/web/js/bridge/mock-atom-engine.js",
       "lang": "js",
-      "loc": 1261,
+      "loc": 2258,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Scale-2 Atom Engine (AE) \u2014 MockBridge side only.",
@@ -24118,18 +25056,21 @@
     {
       "path": "engine/web/js/bridge/mock-scale4.js",
       "lang": "js",
-      "loc": 288,
+      "loc": 1219,
       "subsystem": "web/bridge",
       "primary": true,
-      "purpose": "PlanetaryMockBridge \u2014 JS-only N-body simulation for Planetary scale (Scale 4).",
+      "purpose": "SolarSystemBridge \u2014 JS-only N-body simulation for Solar System scale (Scale 4).",
       "symbols": [
-        "PlanetaryMockBridge"
+        "PlanetaryMockBridge",
+        "orbitalElementsToState()",
+        "PLANETARY_TIME_STEPS",
+        "DEFAULT_PLANETARY_TIME_STEP"
       ]
     },
     {
       "path": "engine/web/js/bridge/mock-scale5.js",
       "lang": "js",
-      "loc": 450,
+      "loc": 908,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "CosmicMockBridge \u2014 JS-only N-body simulation for cosmic scale (Scale 5).",
@@ -24140,7 +25081,7 @@
     {
       "path": "engine/web/js/bridge/native-particle-engine.js",
       "lang": "js",
-      "loc": 820,
+      "loc": 851,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Scale-1 Particle Engine \u2014 native C++/WASM adapter.",
@@ -24175,7 +25116,7 @@
     {
       "path": "engine/web/js/bridge/sampler-registry.classic.js",
       "lang": "js",
-      "loc": 33,
+      "loc": 37,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Classic-worker sampler + toggle-requires registry.",
@@ -24207,7 +25148,7 @@
     {
       "path": "engine/web/js/bridge/wasm-bridge-proxy.js",
       "lang": "js",
-      "loc": 1304,
+      "loc": 1519,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Main-thread proxy for the Scale-0 WASM physics Web Worker.",
@@ -24219,7 +25160,7 @@
     {
       "path": "engine/web/js/bridge/wasm-bridge.js",
       "lang": "js",
-      "loc": 1266,
+      "loc": 1435,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "@file engine/web/js/bridge/wasm-bridge.js @purpose Thin wrapper around the compiled C++/WASM physics engine (engine/wasm/ftd_wasm.cpp).",
@@ -24230,7 +25171,7 @@
     {
       "path": "engine/web/js/bridge/wasm-bridge.worker.js",
       "lang": "js",
-      "loc": 1031,
+      "loc": 1079,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Scale-0 WASM physics Web Worker.",
@@ -24239,12 +25180,14 @@
     {
       "path": "engine/web/js/bridge/ws-binary-codec.js",
       "lang": "js",
-      "loc": 121,
+      "loc": 169,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "",
       "symbols": [
         "decodeNativeBinaryFrame()",
+        "NATIVE_FRAME_V3_MAGIC",
+        "NATIVE_FRAME_V3_HEADER_BYTES",
         "FLUX_VOLUME_AXIS_SAMPLES",
         "FIELD_SAMPLE_KINDS",
         "FIELD_SAMPLE_KIND_CODES",
@@ -24254,7 +25197,7 @@
     {
       "path": "engine/web/js/bridge/ws-scale-fallback-facade.js",
       "lang": "js",
-      "loc": 123,
+      "loc": 133,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "",
@@ -24277,11 +25220,15 @@
     {
       "path": "engine/web/js/config/exoplanet-seeds.js",
       "lang": "js",
-      "loc": 287,
+      "loc": 153,
       "subsystem": "web/config",
       "primary": true,
-      "purpose": "",
+      "purpose": "Catalog-backed example planetary systems for Scale 4.",
       "symbols": [
+        "EARTH_RADIUS_KM",
+        "EARTH_MASS_SOLAR",
+        "EXOPLANET_PROVENANCE",
+        "EXOPLANET_SYSTEMS",
         "EXOPLANET_SEEDS"
       ]
     },
@@ -24310,19 +25257,58 @@
       ]
     },
     {
+      "path": "engine/web/js/config/solar-system-data.js",
+      "lang": "js",
+      "loc": 147,
+      "subsystem": "web/config",
+      "primary": true,
+      "purpose": "Solar System reference data used by Scale 4.",
+      "symbols": [
+        "KM_PER_AU",
+        "DAYS_PER_YEAR",
+        "SOLAR_SYSTEM_PLANETS",
+        "SOLAR_SYSTEM_MOONS",
+        "SOLAR_SYSTEM_DWARFS",
+        "SUN_REFERENCE",
+        "SOLAR_SYSTEM_PROVENANCE"
+      ]
+    },
+    {
+      "path": "engine/web/js/config/solar-system-physics.js",
+      "lang": "js",
+      "loc": 290,
+      "subsystem": "web/config",
+      "primary": true,
+      "purpose": "Scale 4 effective-physics helpers.",
+      "symbols": [
+        "spinAxis()",
+        "siderealSpinRateRadYr()",
+        "signedSiderealPeriodDays()",
+        "schwarzschild1PNAcceleration()",
+        "j2Acceleration()",
+        "radiationBeta()",
+        "radiationAcceleration()",
+        "equilibriumTideAcceleration()",
+        "atmosphereDragAcceleration()",
+        "bodyDensityKgM3()",
+        "fluidRocheLimitAu()",
+        "hillRadiusAu()"
+      ]
+    },
+    {
       "path": "engine/web/js/config/toggles.js",
       "lang": "js",
-      "loc": 778,
+      "loc": 811,
       "subsystem": "web/config",
       "primary": true,
       "purpose": "Toggle Configuration \u2014 Single source of truth for all scale toggles.",
       "symbols": [
         "getScale0ScenarioToggleProfile()",
         "SCALE0_TOGGLES",
+        "SCALE5_TOGGLES",
         "SCALE0_ADVANCED_TOGGLES",
         "SCALE0_ENABLE_ALL_PHYSICS_KEYS",
         "SCALE0_ENABLE_ALL_PHYSICS_EXCLUDED_KEYS",
-        "SCALE2_TOGGLES",
         "SCALE0_PREPARED_COULOMB_TERMS",
         "SCALE0_SCENARIO_OVERRIDES",
         "SCALE0_SCENARIO_RESEARCH_TERMS",
@@ -24334,7 +25320,7 @@
     {
       "path": "engine/web/js/constants.js",
       "lang": "js",
-      "loc": 608,
+      "loc": 610,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "@file constants.js @brief FTD Constants \u2014 single source of truth for the web dashboard.",
@@ -24426,13 +25412,14 @@
     {
       "path": "engine/web/js/cosmic-renderer.js",
       "lang": "js",
-      "loc": 681,
+      "loc": 1558,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "CosmicRenderer: Scale 5 \u2014 cinematic deep-space rendering Design goals: - Stars: soft glow sprites with diffraction cross, blackbody color, size ~ luminosity - Gas: large volumetric nebula sprites,...",
       "symbols": [
         "CosmicRenderer",
-        "schwarzschildRenderRadius()"
+        "schwarzschildRenderRadius()",
+        "bondiAccretionRadius()"
       ]
     },
     {
@@ -24453,13 +25440,14 @@
     {
       "path": "engine/web/js/cosmic/sprites.js",
       "lang": "js",
-      "loc": 77,
+      "loc": 101,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "cosmic/sprites.js \u2014 procedural canvas-texture factories for CosmicRenderer.",
       "symbols": [
         "makeStarSprite()",
         "makeGasSprite()",
+        "makeRingSprite()",
         "makeHaloSprite()"
       ]
     },
@@ -24496,12 +25484,15 @@
     {
       "path": "engine/web/js/fieldlines.js",
       "lang": "js",
-      "loc": 1101,
+      "loc": 1180,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "\u2500\u2500 fieldlines.js \u2500\u2500 Streamline computation for 3D field visualization \u2500\u2500 RK4 integration through sampled vector fields.",
       "symbols": [
         "buildPersistentIndex()",
+        "buildDenseGrid()",
+        "lookupFieldTrilinearInto()",
+        "__scratchField()",
         "sampleFieldMagInto()",
         "buildFieldIndex()",
         "lookupField()",
@@ -24509,10 +25500,7 @@
         "computeStreamlines()",
         "createStreamlineTaskState()",
         "beginStreamlineTask()",
-        "cancelStreamlineTask()",
-        "advanceStreamlineTask()",
-        "generateEFieldSeeds()",
-        "generateBFieldSeeds()"
+        "cancelStreamlineTask()"
       ]
     },
     {
@@ -24540,7 +25528,7 @@
     {
       "path": "engine/web/js/inspector.js",
       "lang": "js",
-      "loc": 560,
+      "loc": 636,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "Inspector Panel \u2014 click-to-inspect particle properties.",
@@ -24562,7 +25550,7 @@
     {
       "path": "engine/web/js/inspector/chrome.js",
       "lang": "js",
-      "loc": 84,
+      "loc": 88,
       "subsystem": "web/inspector",
       "primary": true,
       "purpose": "",
@@ -24579,7 +25567,7 @@
     {
       "path": "engine/web/js/inspector/dom-bindings.js",
       "lang": "js",
-      "loc": 178,
+      "loc": 199,
       "subsystem": "web/inspector",
       "primary": true,
       "purpose": "",
@@ -24601,7 +25589,7 @@
     {
       "path": "engine/web/js/inspector/scales/atoms.js",
       "lang": "js",
-      "loc": 303,
+      "loc": 336,
       "subsystem": "web/inspector",
       "primary": true,
       "purpose": "",
@@ -24632,11 +25620,12 @@
     {
       "path": "engine/web/js/inspector/scales/lattice.js",
       "lang": "js",
-      "loc": 348,
+      "loc": 404,
       "subsystem": "web/inspector",
       "primary": true,
       "purpose": "",
       "symbols": [
+        "normalizeLatticePosition()",
         "handleLatticeClick()",
         "showLatticeInspector()",
         "hideLatticeInspector()",
@@ -24646,7 +25635,7 @@
     {
       "path": "engine/web/js/inspector/scales/particles.js",
       "lang": "js",
-      "loc": 137,
+      "loc": 140,
       "subsystem": "web/inspector",
       "primary": true,
       "purpose": "",
@@ -24660,7 +25649,7 @@
     {
       "path": "engine/web/js/inspector/scales/planetary.js",
       "lang": "js",
-      "loc": 109,
+      "loc": 131,
       "subsystem": "web/inspector",
       "primary": true,
       "purpose": "",
@@ -24673,15 +25662,60 @@
       ]
     },
     {
+      "path": "engine/web/js/lib/exact-counter.js",
+      "lang": "js",
+      "loc": 77,
+      "subsystem": "vendor",
+      "primary": false,
+      "purpose": "Lossless uint64 transport counters.",
+      "symbols": [
+        "exactCounter()",
+        "compareExactCounters()",
+        "safeCounterNumber()",
+        "normalizeNativeCounters()",
+        "commonSampleProvenance()"
+      ]
+    },
+    {
       "path": "engine/web/js/lib/ftv2.js",
       "lang": "js",
-      "loc": 56,
+      "loc": 59,
       "subsystem": "vendor",
       "primary": false,
       "purpose": "Compact native flux-volume frames (FTV2).",
       "symbols": [
         "parseFtv2Frame()",
         "FTV2_MAGIC"
+      ]
+    },
+    {
+      "path": "engine/web/js/lib/heartbeat.js",
+      "lang": "js",
+      "loc": 26,
+      "subsystem": "vendor",
+      "primary": false,
+      "purpose": "Pure, testable heartbeat-cadence decision shared by ws-bridge.js's native `{cmd:'ping'}` pulse and its `/api/heartbeat` dev-server pulse (spec \u00a75, `docs/superpowers/specs/2026-09-16-idle-shutdown-a...",
+      "symbols": [
+        "shouldHeartbeat()"
+      ]
+    },
+    {
+      "path": "engine/web/js/lib/idle-policy-settings.js",
+      "lang": "js",
+      "loc": 64,
+      "subsystem": "vendor",
+      "primary": false,
+      "purpose": "Pure helpers for the GPU-server card's \"stop servers when idle\" settings.",
+      "symbols": [
+        "clampIdleMinutes()",
+        "readStoredIdleSettings()",
+        "writeStoredIdleSettings()",
+        "IDLE_MINUTES_MIN",
+        "IDLE_MINUTES_MAX",
+        "IDLE_MINUTES_DEFAULT",
+        "IDLE_ENABLED_DEFAULT",
+        "IDLE_ENABLED_STORAGE_KEY",
+        "IDLE_MINUTES_STORAGE_KEY"
       ]
     },
     {
@@ -24733,6 +25767,22 @@
       ]
     },
     {
+      "path": "engine/web/js/link-geometry.js",
+      "lang": "js",
+      "loc": 67,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "engine/web/js/link-geometry.js Lattice-native link geometry for the native transport overlay (spec 2026-09-15 native transport overlays, section 4).",
+      "symbols": [
+        "siteIndex()",
+        "writeLinkHalves()",
+        "selectLinks()",
+        "writeSelectedLinks()",
+        "LINK_DISPLACEMENT",
+        "LINK_COUNT_PER_SITE"
+      ]
+    },
+    {
       "path": "engine/web/js/meta-pedagogy.js",
       "lang": "js",
       "loc": 356,
@@ -24775,15 +25825,16 @@
     {
       "path": "engine/web/js/molecules.js",
       "lang": "js",
-      "loc": 605,
+      "loc": 702,
       "subsystem": "web/js-toplevel",
       "primary": true,
-      "purpose": "Molecular Library \u2014 25 molecules for Scale 2 (AtomEngine).",
+      "purpose": "Molecular Library \u2014 25 reference structures for Scale 3 (Molecule Engine).",
       "symbols": [
         "getCategories()",
         "getAllMolecules()",
         "getMolecule()",
         "getMoleculesByCategory()",
+        "instantiateMolecule()",
         "loadMolecule()",
         "moleculeSummary()"
       ]
@@ -24806,7 +25857,7 @@
     {
       "path": "engine/web/js/orbitals.js",
       "lang": "js",
-      "loc": 325,
+      "loc": 341,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "Electron Orbital Cloud Generator + Nuclear Structure VISUALIZATION ONLY (not a physics derivation \u2014 FTD-0270): generates electron probability clouds by rejection-sampling HYDROGENIC wavefunctions (...",
@@ -24851,15 +25902,16 @@
     {
       "path": "engine/web/js/particle-catalog.js",
       "lang": "js",
-      "loc": 691,
+      "loc": 625,
       "subsystem": "web/js-toplevel",
       "primary": true,
-      "purpose": "Particle Catalog: Standard Model particles with FTD context.",
+      "purpose": "Imported particle reference catalog plus explicitly qualified FTD expressions.",
       "symbols": [
         "getAllParticles()",
         "getById()",
         "getByCategory()",
         "getCategories()",
+        "getCatalogSimulationSupport()",
         "getSimulableParticles()",
         "formatMass()",
         "chargeLabel()"
@@ -24879,7 +25931,7 @@
     {
       "path": "engine/web/js/physics/physics-harness.js",
       "lang": "js",
-      "loc": 597,
+      "loc": 605,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "PhysicsHarness \u2014 single canonical surface for reading and writing Scale-0 lattice physics state.",
@@ -24890,12 +25942,23 @@
       ]
     },
     {
-      "path": "engine/web/js/planetary-renderer.js",
+      "path": "engine/web/js/planetary-physics-overlays.js",
       "lang": "js",
-      "loc": 432,
+      "loc": 420,
       "subsystem": "web/js-toplevel",
       "primary": true,
-      "purpose": "F-7: build one of the two shared shader-program templates.",
+      "purpose": "Live Scale 4 physics overlays.",
+      "symbols": [
+        "PlanetaryPhysicsOverlays"
+      ]
+    },
+    {
+      "path": "engine/web/js/planetary-renderer.js",
+      "lang": "js",
+      "loc": 638,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "",
       "symbols": [
         "PlanetaryRenderer"
       ]
@@ -24903,7 +25966,7 @@
     {
       "path": "engine/web/js/scales/scale-utils.js",
       "lang": "js",
-      "loc": 258,
+      "loc": 260,
       "subsystem": "web/scales-shared",
       "primary": true,
       "purpose": "Scale Utilities -- Shared helpers for scale controllers \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Common formatting, throttling, and DOM-update utilities extracted from a...",
@@ -24924,7 +25987,7 @@
     {
       "path": "engine/web/js/scales/scale0/analysis/gravity-analysis.js",
       "lang": "js",
-      "loc": 241,
+      "loc": 265,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Gravity analysis \u2014 pure, DOM-free scalar telemetry for the Gravity Observatory.",
@@ -24936,13 +25999,14 @@
         "gravityVisualSampleGrid()",
         "gravityProxySamplesFromVolume()",
         "gravitySlice()",
+        "gravitySliceFromSlab()",
         "aggregateMetrics()"
       ]
     },
     {
       "path": "engine/web/js/scales/scale0/analysis/helium-spectrum-protocol.js",
       "lang": "js",
-      "loc": 302,
+      "loc": 305,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Helium lattice-spectrum protocol helpers.",
@@ -24964,7 +26028,7 @@
     {
       "path": "engine/web/js/scales/scale0/analysis/lattice-spectrum.js",
       "lang": "js",
-      "loc": 208,
+      "loc": 224,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Lattice spectrum analysis \u2014 the spatial energy spectrum E(k) of the flux field.",
@@ -24982,7 +26046,7 @@
     {
       "path": "engine/web/js/scales/scale0/analysis/lattice-topology.js",
       "lang": "js",
-      "loc": 111,
+      "loc": 114,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Lattice topology + metric-distribution analysis.",
@@ -24993,6 +26057,40 @@
         "fluxTubeComponents()",
         "chiralityFromAudit()",
         "magnitudeGrid()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/analysis/spectrum-analysis-client.js",
+      "lang": "js",
+      "loc": 134,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Main-thread observation transport.",
+      "symbols": [
+        "SpectrumAnalysisClient",
+        "captureSpectrumObservation()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/analysis/spectrum-analysis-core.js",
+      "lang": "js",
+      "loc": 56,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Observation-only reductions.",
+      "symbols": [
+        "analyzeSpectrumObservation()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/analysis/spectrum-analysis-worker.js",
+      "lang": "js",
+      "loc": 18,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "",
+      "symbols": [
+        "handleSpectrumAnalysisRequest()"
       ]
     },
     {
@@ -25020,7 +26118,7 @@
     {
       "path": "engine/web/js/scales/scale0/analysis/wave-spectrum.js",
       "lang": "js",
-      "loc": 501,
+      "loc": 557,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "",
@@ -25042,7 +26140,7 @@
     {
       "path": "engine/web/js/scales/scale0/controller.js",
       "lang": "js",
-      "loc": 596,
+      "loc": 630,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 (Lattice) Controller Refactored into a package-style module with explicit runtime phases, a viewport adapter, scenario registry, and UI bindings owned by Scale 0.",
@@ -25075,9 +26173,21 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale0/fluid-scenario-contract.js",
+      "lang": "js",
+      "loc": 122,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Prospective fluid recovery contract; not the public scenario catalog.",
+      "symbols": [
+        "assessFluidScenarioEligibility()",
+        "FLUID_SCENARIO_CONTRACT"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale0/runtime/diagnostics.js",
       "lang": "js",
-      "loc": 179,
+      "loc": 197,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Live decomposition tooltip for the status-bar energy readout (whole-box per-tick ledger plus optional audit channels, sim units).",
@@ -25088,7 +26198,7 @@
     {
       "path": "engine/web/js/scales/scale0/runtime/field-line-knots.js",
       "lang": "js",
-      "loc": 803,
+      "loc": 822,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "engine/web/js/scales/scale0/runtime/field-line-knots.js Field-line KNOT detection + quantification + identity tracking \u2014 JS-native.",
@@ -25102,7 +26212,7 @@
     {
       "path": "engine/web/js/scales/scale0/runtime/field-overlays.js",
       "lang": "js",
-      "loc": 1244,
+      "loc": 1350,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Native mass-gravity scenarios expose the actual latency-Poisson solution as FTS2 kind 17.",
@@ -25117,11 +26227,12 @@
     {
       "path": "engine/web/js/scales/scale0/runtime/field-sample-cache.js",
       "lang": "js",
-      "loc": 161,
+      "loc": 184,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 Lazy field-sample cache \u2014 visual overlay layer only.",
       "symbols": [
+        "ownSampleSnapshot()",
         "createFieldSampleCache()",
         "createForceFieldCache()",
         "buildSampleSnapshot()",
@@ -25129,9 +26240,21 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale0/runtime/fluid-observation.js",
+      "lang": "js",
+      "loc": 44,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Read-only field summaries.",
+      "symbols": [
+        "fieldObservationProvenance()",
+        "observeLatticeFields()"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale0/runtime/frame-sync.js",
       "lang": "js",
-      "loc": 63,
+      "loc": 65,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "",
@@ -25191,7 +26314,7 @@
     {
       "path": "engine/web/js/scales/scale0/runtime/overlay-frames.js",
       "lang": "js",
-      "loc": 601,
+      "loc": 672,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 Overlay frame builders \u2014 one pure function per topology overlay.",
@@ -25211,9 +26334,20 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale0/runtime/record-scenario-loader.js",
+      "lang": "js",
+      "loc": 60,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "",
+      "symbols": [
+        "loadRecordScenario()"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale0/runtime/scenario-loader.js",
       "lang": "js",
-      "loc": 1363,
+      "loc": 1469,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Frame a compact or bounded center-seeded structure once when its scenario is loaded.",
@@ -25256,7 +26390,7 @@
     {
       "path": "engine/web/js/scales/scale0/runtime/tick.js",
       "lang": "js",
-      "loc": 69,
+      "loc": 90,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Advance Scale-0 physics by `tickCount` ticks on the active owner only.",
@@ -25266,13 +26400,67 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale0/runtime/transaction-tracker.js",
+      "lang": "js",
+      "loc": 308,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Scale-0 transaction tracker \u2014 reconstructs per-record manifestation lifecycles from the native history-journal drain (WASM `drainHistoryEvents`, see engine/wasm/bindings_render_bridge.cpp and engin...",
+      "symbols": [
+        "TransactionTracker",
+        "isTransactionTrackingSupported()",
+        "historyEventKindName()",
+        "getOrCreateTransactionTracker()",
+        "HISTORY_EVENT_KIND"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/runtime/validity.js",
+      "lang": "js",
+      "loc": 128,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Read-only checks of supplied cached scalars.",
+      "symbols": [
+        "classifyScale0RuntimeFailure()",
+        "classifyScale0Validity()",
+        "createScale0ValidityMonitor()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/scenario-categories.js",
+      "lang": "js",
+      "loc": 123,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Navigation describes the subject of each setup, not its certification.",
+      "symbols": [
+        "getScale0ScenarioCategory()",
+        "compareScale0ScenarioCategories()",
+        "SCALE0_SCENARIO_CATEGORIES"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/scenario-presentation.js",
+      "lang": "js",
+      "loc": 617,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Scientific display names describe the prepared fields, selected rules, and qualified behavior.",
+      "symbols": [
+        "SCALE0_SCENARIO_PRESENTATION"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale0/scenario-registry.js",
       "lang": "js",
-      "loc": 1275,
+      "loc": 1183,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scenario: empty (Empty Lattice) Scientific purpose: Serves as an imposed null control with no initial particles or fields.",
       "symbols": [
+        "getScale0SeedingScenarios()",
+        "registerScale0RecordScenarios()",
         "getScale0Scenario()",
         "populateScale0ScenarioSelect()",
         "validateScale0ScenarioRegistry()",
@@ -25284,7 +26472,7 @@
     {
       "path": "engine/web/js/scales/scale0/scenario-validation.js",
       "lang": "js",
-      "loc": 906,
+      "loc": 913,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Hard admission gate for the normal Scale-0 menu.",
@@ -25295,7 +26483,7 @@
     {
       "path": "engine/web/js/scales/scale0/state/store.js",
       "lang": "js",
-      "loc": 736,
+      "loc": 745,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "localStorage may be blocked (privacy mode) \u2014 fall through to default",
@@ -25317,7 +26505,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/bindings.js",
       "lang": "js",
-      "loc": 466,
+      "loc": 474,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "v=2: Tier 1 quantum overlay bindings added \u2014 see SPEC_S0_QUANTUM_OVERLAYS.md",
@@ -25352,7 +26540,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/controls/flux-volume.js",
       "lang": "js",
-      "loc": 181,
+      "loc": 183,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 Flux Volume Card",
@@ -25365,12 +26553,53 @@
     {
       "path": "engine/web/js/scales/scale0/ui/controls/physics-toggles.js",
       "lang": "js",
-      "loc": 69,
+      "loc": 73,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 Physics Toggles Card",
       "symbols": [
         "createPhysicsTogglesCard()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/ui/controls/record-observation.js",
+      "lang": "js",
+      "loc": 129,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Passive record controls in the existing Scale-0 controls dock.",
+      "symbols": [
+        "getWebRecordCatalog()",
+        "initializeRecordScenarios()",
+        "syncRecordControls()",
+        "updateRecordReadout()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/ui/controls/record-panel-model.js",
+      "lang": "js",
+      "loc": 40,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Passive observations only.",
+      "symbols": [
+        "summarizeRecordObservation()",
+        "recordSlice()",
+        "appendRecordSample()",
+        "RECORD_PANEL_CONTRACTS",
+        "RECORD_PHASES"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/ui/controls/record-panels.js",
+      "lang": "js",
+      "loc": 101,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Extend the existing dock hosts; all preparations use their current owner.",
+      "symbols": [
+        "syncRecordPanels()",
+        "updateRecordPanels()"
       ]
     },
     {
@@ -25400,7 +26629,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/dom.js",
       "lang": "js",
-      "loc": 149,
+      "loc": 157,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "",
@@ -25441,7 +26670,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/applicability.js",
       "lang": "js",
-      "loc": 256,
+      "loc": 288,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scenario-aware availability for Scale-0 visualization overlays.",
@@ -25455,7 +26684,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/conservation-micropanel.js",
       "lang": "js",
-      "loc": 485,
+      "loc": 510,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Conservation-law audit micropanel.",
@@ -25469,7 +26698,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/dispersion-panel.js",
       "lang": "js",
-      "loc": 202,
+      "loc": 196,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Dispersion \u2014 docked Scale-0 side panel (FTD-0298 / FTD-0299).",
@@ -25479,9 +26708,20 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale0/ui/overlays/fluid-panel.js",
+      "lang": "js",
+      "loc": 134,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Passive readout of the active lattice's published field observations.",
+      "symbols": [
+        "initFluidPanel()"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale0/ui/overlays/flux-slice-helpers.js",
       "lang": "js",
-      "loc": 713,
+      "loc": 736,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 \u2014 Flux slice panel pure helpers/constants.",
@@ -25503,7 +26743,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/flux-slice-panel.js",
       "lang": "js",
-      "loc": 1265,
+      "loc": 1296,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 \u2014 Live Multi-Field Flux Slice Panel The flagship |J| row is visible by default; every other field mirrors its 3D visualization toggle until the user explicitly enables that row.",
@@ -25528,7 +26768,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/gravity-panel.js",
       "lang": "js",
-      "loc": 1058,
+      "loc": 1101,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Gravity Observatory \u2014 Scale-0 gravity-field instrument.",
@@ -25542,7 +26782,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/knots-panel.js",
       "lang": "js",
-      "loc": 996,
+      "loc": 1031,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "",
@@ -25552,9 +26792,22 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale0/ui/overlays/native-transport-legend.js",
+      "lang": "js",
+      "loc": 63,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "engine/web/js/scales/scale0/ui/overlays/native-transport-legend.js Honest one-paragraph readout for the native transport overlay (spec 2026-09-15 native transport overlays, section 7).",
+      "symbols": [
+        "describeNativeTransport()",
+        "renderNativeTransportLegend()",
+        "readNativeTransportThreshold()"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale0/ui/overlays/p1-observables-panel.js",
       "lang": "js",
-      "loc": 377,
+      "loc": 389,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/p1-observables-panel.js @purpose Orchestrator for the Scale 0 P1 Observables panel, composing sub-components.",
@@ -25566,14 +26819,16 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/p1-observables/anisotropy.js",
       "lang": "js",
-      "loc": 188,
+      "loc": 239,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/p1-observables/anisotropy.js @purpose Lattice Anisotropy & SO(2) Recovery component.",
       "symbols": [
         "AnisotropyComponent",
         "makeFluxMagnitudeSampler()",
-        "sampleFluxMagnitude()"
+        "sampleFluxMagnitude()",
+        "circularFluxProbeIndices()",
+        "circularFluxDecay()"
       ]
     },
     {
@@ -25590,7 +26845,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/p1-observables/coulomb.js",
       "lang": "js",
-      "loc": 250,
+      "loc": 256,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/p1-observables/coulomb.js @purpose Coulomb V(r) and E-field probe component.",
@@ -25612,10 +26867,10 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/p1-observables/g2.js",
       "lang": "js",
-      "loc": 270,
+      "loc": 216,
       "subsystem": "web/scale0",
       "primary": true,
-      "purpose": "@file engine/web/js/scales/scale0/ui/overlays/p1-observables/g2.js @purpose Lepton g-2 (Schwinger) and live precession component.",
+      "purpose": "@file engine/web/js/scales/scale0/ui/overlays/p1-observables/g2.js @purpose Imported lepton g-2 reference and live scalar state-label display.",
       "symbols": [
         "G2Component"
       ]
@@ -25623,7 +26878,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/p1-observables/gravity.js",
       "lang": "js",
-      "loc": 114,
+      "loc": 119,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/p1-observables/gravity.js @purpose Gravitational time dilation component.",
@@ -25656,7 +26911,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/panel-shell.js",
       "lang": "js",
-      "loc": 302,
+      "loc": 303,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale-0 Visualization panel shell \u2014 accordion + active strip + filter.",
@@ -25669,7 +26924,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/presets.js",
       "lang": "js",
-      "loc": 22,
+      "loc": 23,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 Overlay column groupings.",
@@ -25680,7 +26935,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/scale-context-panel.js",
       "lang": "js",
-      "loc": 357,
+      "loc": 362,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale Context \u2014 docked Scale-0 instrument (FTD-0306).",
@@ -25707,7 +26962,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/spectrum-panel.js",
       "lang": "js",
-      "loc": 550,
+      "loc": 700,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Lattice Spectroscopy \u2014 Scale-0 field-structure instrument.",
@@ -25719,7 +26974,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/standard-model.js",
       "lang": "js",
-      "loc": 201,
+      "loc": 206,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Contextual Standard Model reference overlay for Scale 0.",
@@ -25736,7 +26991,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/template.js",
       "lang": "js",
-      "loc": 377,
+      "loc": 407,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 Viewport Overlay \u2014 Field visualization controls A compact layer inspector: command header, filter, active-layer rail, shared presentation controls, then semantic accordion cards.",
@@ -25747,7 +27002,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/thermo-panel.js",
       "lang": "js",
-      "loc": 395,
+      "loc": 396,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Thermodynamics \u2014 docked Scale-0 side panel (FTD-0274).",
@@ -25759,13 +27014,37 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/time-panel.js",
       "lang": "js",
-      "loc": 590,
+      "loc": 763,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Time Observatory \u2014 Scale-0 time-dilation instrument.",
       "symbols": [
         "mountTimePanel()",
         "initTimePanel()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/ui/overlays/time-readout.js",
+      "lang": "js",
+      "loc": 100,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "",
+      "symbols": [
+        "beginTimeReadout()",
+        "updateTimeReadout()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/ui/overlays/transaction-panel.js",
+      "lang": "js",
+      "loc": 215,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Transaction Tracker panel \u2014 live view of the native history-journal drain (native-charge gate, opt-in, observation-only; see engine/include/ftd/eft/history_event_journal.h and engine/web/js/scales/...",
+      "symbols": [
+        "mountTransactionPanel()",
+        "initTransactionPanel()"
       ]
     },
     {
@@ -25783,7 +27062,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/wave-lab/wave-info.js",
       "lang": "js",
-      "loc": 616,
+      "loc": 634,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/wave-lab/wave-info.js @purpose Live telemetry and controls for standalone RF/light/sound lattice waves.",
@@ -25805,7 +27084,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/toolbar/component.js",
       "lang": "js",
-      "loc": 18,
+      "loc": 20,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "",
@@ -25830,6 +27109,17 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale0/ui/toolbar/scenario-picker.js",
+      "lang": "js",
+      "loc": 85,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Progressive enhancement: the native select remains the scenario command bus.",
+      "symbols": [
+        "enhanceScenarioPicker()"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale0/ui/toolbar/template.js",
       "lang": "js",
       "loc": 48,
@@ -25844,7 +27134,7 @@
     {
       "path": "engine/web/js/scales/scale0/viewport-adapter.js",
       "lang": "js",
-      "loc": 279,
+      "loc": 298,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "",
@@ -25855,7 +27145,7 @@
     {
       "path": "engine/web/js/scales/scale0/viewport-scalar-adapter.js",
       "lang": "js",
-      "loc": 72,
+      "loc": 82,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "",
@@ -25991,7 +27281,7 @@
     {
       "path": "engine/web/js/scales/scale1/scenario-registry.js",
       "lang": "js",
-      "loc": 648,
+      "loc": 684,
       "subsystem": "web/scale1",
       "primary": true,
       "purpose": "Scale-1 scenario execution adapter.",
@@ -26155,7 +27445,7 @@
     {
       "path": "engine/web/js/scales/scale2/controller.js",
       "lang": "js",
-      "loc": 772,
+      "loc": 1025,
       "subsystem": "web/scale2",
       "primary": true,
       "purpose": "Scale 2 (Atoms) Controller \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Owns the Atom Engine (AE) frame loop, force decomposition rendering, element legend building, orbital...",
@@ -26164,6 +27454,8 @@
         "resetScale2()",
         "getAEVisualState()",
         "setAEVisualToggle()",
+        "applyAEScenarioPhysics()",
+        "applyAEVisualPreset()",
         "syncAEParams()",
         "animateAE()",
         "loadAEScenario()",
@@ -26172,9 +27464,43 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale2/experiment-runtime.js",
+      "lang": "js",
+      "loc": 159,
+      "subsystem": "web/scale2",
+      "primary": true,
+      "purpose": "Scale 2 controlled-experiment protocol runner.",
+      "symbols": [
+        "resetAEExperiment()",
+        "startAEExperiment()",
+        "advanceAEExperiment()",
+        "getAEExperimentState()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale2/nuclear-reactions.js",
+      "lang": "js",
+      "loc": 437,
+      "subsystem": "web/scale2",
+      "primary": true,
+      "purpose": "Deterministic-seed Scale 2 nuclear-reaction channels.",
+      "symbols": [
+        "getNuclearReactionChannel()",
+        "isotopeMassSim()",
+        "incidentVelocities()",
+        "relativeCollisionEnergyMeV()",
+        "nuclearReactionProbability()",
+        "evaluateNuclearReaction()",
+        "ATOMIC_MASS_UNIT_MEV",
+        "FREE_NEUTRON_MASS_U",
+        "MEV_TO_JOULE",
+        "NUCLEAR_REACTION_CHANNELS"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale2/scenario-registry.js",
       "lang": "js",
-      "loc": 280,
+      "loc": 770,
       "subsystem": "web/scale2",
       "primary": true,
       "purpose": "Scale 2 \u2014 AE scenario registry (canonical metadata + select population).",
@@ -26183,16 +27509,17 @@
         "populateAEScenarioSelect()",
         "validateAEScenarioRegistry()",
         "AE_DEFAULT_SCENARIO",
+        "AE_PHYSICS_SPECS",
         "AE_CURATED_SCENARIOS"
       ]
     },
     {
       "path": "engine/web/js/scales/scale2/scenarios.js",
       "lang": "js",
-      "loc": 522,
+      "loc": 684,
       "subsystem": "web/scale2",
       "primary": true,
-      "purpose": "Scale 2 \u2014 AE Scenario Loader \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Extracted verbatim from scales/scale2/controller.js (ticket S2-1).",
+      "purpose": "Scale 2 \u2014 AE Scenario Loader \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Extracted from scales/scale2/controller.js (ticket S2-1) and maintained as the deterministic scenar...",
       "symbols": [
         "getAEScenarioPreset()",
         "setupAEScenario()"
@@ -26201,13 +27528,13 @@
     {
       "path": "engine/web/js/scales/scale2/ui-bindings.js",
       "lang": "js",
-      "loc": 77,
+      "loc": 78,
       "subsystem": "web/scale2",
       "primary": true,
       "purpose": "Scale 2 \u2014 AE UI Bindings \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Houses the DOM-coupled helpers that sync AE physics parameters and toggles between the Scale 2 control...",
       "symbols": [
-        "aeSetPhase3()",
         "bindScale2ControlsUI()",
+        "syncAENuclearControlsFromBridge()",
         "AE_DEFAULT_TOGGLES"
       ]
     },
@@ -26225,20 +27552,21 @@
     {
       "path": "engine/web/js/scales/scale2/ui/controls/ae-controls.js",
       "lang": "js",
-      "loc": 113,
+      "loc": 193,
       "subsystem": "web/scale2",
       "primary": true,
       "purpose": "Scale 2 \u2014 Atom Engine control cards (split by concern).",
       "symbols": [
         "createAeForcesCard()",
         "createAeAdvancedCard()",
-        "createAeIntegratorCard()"
+        "createAeIntegratorCard()",
+        "createAeNuclearLaboratoryCard()"
       ]
     },
     {
       "path": "engine/web/js/scales/scale2/ui/controls/component.js",
       "lang": "js",
-      "loc": 33,
+      "loc": 39,
       "subsystem": "web/scale2",
       "primary": true,
       "purpose": "Scale 2 Controls Component Mounts Atom Engine control cards into the controls panel.",
@@ -26249,7 +27577,7 @@
     {
       "path": "engine/web/js/scales/scale2/ui/dom.js",
       "lang": "js",
-      "loc": 28,
+      "loc": 33,
       "subsystem": "web/scale2",
       "primary": true,
       "purpose": "Scale 2 \u2014 DOM helpers (scenario description strip).",
@@ -26260,7 +27588,7 @@
     {
       "path": "engine/web/js/scales/scale2/ui/overlays/template.js",
       "lang": "js",
-      "loc": 135,
+      "loc": 183,
       "subsystem": "web/scale2",
       "primary": true,
       "purpose": "Scale 2/3 Viewport Overlay \u2014 atom/molecule MD + QM structure visualization.",
@@ -26305,47 +27633,12 @@
       ]
     },
     {
-      "path": "engine/web/js/scales/scale23/ui/register-scale23-ui.js",
-      "lang": "js",
-      "loc": 19,
-      "subsystem": "web/scale23",
-      "primary": true,
-      "purpose": "",
-      "symbols": [
-        "registerScale23ToolbarUI()"
-      ]
-    },
-    {
-      "path": "engine/web/js/scales/scale23/ui/toolbar/component.js",
-      "lang": "js",
-      "loc": 15,
-      "subsystem": "web/scale23",
-      "primary": true,
-      "purpose": "",
-      "symbols": [
-        "createScale23VisualToolbarGroup()",
-        "createScale23ForceToolbarGroup()"
-      ]
-    },
-    {
-      "path": "engine/web/js/scales/scale23/ui/toolbar/template.js",
-      "lang": "js",
-      "loc": 36,
-      "subsystem": "web/scale23",
-      "primary": true,
-      "purpose": "",
-      "symbols": [
-        "getScale23VisualToolbarTemplate()",
-        "getScale23ForceToolbarTemplate()"
-      ]
-    },
-    {
       "path": "engine/web/js/scales/scale3/controller.js",
       "lang": "js",
-      "loc": 249,
+      "loc": 92,
       "subsystem": "web/scale3",
       "primary": true,
-      "purpose": "Scale 3 (Molecules) Controller \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Owns molecule scenario loading for Scale 3.",
+      "purpose": "Scale 3 molecule-engine lifecycle and scenario orchestration.",
       "symbols": [
         "Scale3LifecycleController",
         "resetScale3()",
@@ -26353,6 +27646,54 @@
         "bindScale3ControlsUI()",
         "mount()",
         "destroy()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale3/liquid-transport.js",
+      "lang": "js",
+      "loc": 244,
+      "subsystem": "web/scale3",
+      "primary": true,
+      "purpose": "engine/web/js/scales/scale3/liquid-transport.js",
+      "symbols": [
+        "LiquidTransportTracker",
+        "moleculeCentroids()",
+        "velocityProfile()",
+        "erf()",
+        "fitErfWidth()",
+        "firstModeAmplitude()",
+        "firstModeAmplitudeWithOffset()",
+        "meanSquareDisplacement()",
+        "angularVelocitySplit()",
+        "linearRegression()",
+        "logDecayRate()",
+        "imposeLiquidFlow()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale3/scenario-registry.js",
+      "lang": "js",
+      "loc": 342,
+      "subsystem": "web/scale3",
+      "primary": true,
+      "purpose": "Scale 3 \u2014 canonical molecule scenario contracts.",
+      "symbols": [
+        "getScale3ScenarioMeta()",
+        "populateScale3ScenarioSelect()",
+        "validateScale3ScenarioRegistry()",
+        "SCALE3_DEFAULT_SCENARIO",
+        "SCALE3_SCENARIOS"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale3/scenarios.js",
+      "lang": "js",
+      "loc": 152,
+      "subsystem": "web/scale3",
+      "primary": true,
+      "purpose": "Generic construction recipes for Scale 3 scenario contracts.",
+      "symbols": [
+        "setupScale3Scenario()"
       ]
     },
     {
@@ -26364,6 +27705,17 @@
       "purpose": "Scale 3 Controls Component Scale 3 (Molecules) shares the Atom Engine controls card with Scale 2.",
       "symbols": [
         "Scale3ControlsComponent"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale3/ui/dom.js",
+      "lang": "js",
+      "loc": 20,
+      "subsystem": "web/scale3",
+      "primary": true,
+      "purpose": "",
+      "symbols": [
+        "renderScale3ScenarioDescription()"
       ]
     },
     {
@@ -26400,7 +27752,7 @@
     {
       "path": "engine/web/js/scales/scale3/ui/toolbar/template.js",
       "lang": "js",
-      "loc": 17,
+      "loc": 13,
       "subsystem": "web/scale3",
       "primary": true,
       "purpose": "",
@@ -26411,26 +27763,42 @@
     {
       "path": "engine/web/js/scales/scale4/controller.js",
       "lang": "js",
-      "loc": 346,
+      "loc": 791,
       "subsystem": "web/scale4",
       "primary": true,
-      "purpose": "Scale 4 (Planetary) Controller Owns the Scale 4 N-Body physics loop, scenario loading, and UI list mapping.",
+      "purpose": "Scale 4 (Solar System) Controller Owns the Scale 4 N-Body physics loop, scenario loading, and UI list mapping.",
       "symbols": [
         "Scale4LifecycleController",
         "mount()",
         "destroy()",
         "loadScenario()",
         "step()",
+        "getScale4RuntimeAudit()",
         "dispose()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale4/scenario-registry.js",
+      "lang": "js",
+      "loc": 102,
+      "subsystem": "web/scale4",
+      "primary": true,
+      "purpose": "Canonical Scale 4 Solar System scenario registry.",
+      "symbols": [
+        "getScale4Scenario()",
+        "populateScale4ScenarioSelect()",
+        "validateScale4ScenarioRegistry()",
+        "SCALE4_DEFAULT_SCENARIO",
+        "SCALE4_SCENARIOS"
       ]
     },
     {
       "path": "engine/web/js/scales/scale4/ui/overlays/template.js",
       "lang": "js",
-      "loc": 31,
+      "loc": 93,
       "subsystem": "web/scale4",
       "primary": true,
-      "purpose": "Scale 4 Viewport Overlay \u2014 planetary visualization controls",
+      "purpose": "Scale 4 viewport overlay \u2014 Solar System visualization controls.",
       "symbols": [
         "getScale4OverlayTemplate()"
       ]
@@ -26460,7 +27828,7 @@
     {
       "path": "engine/web/js/scales/scale4/ui/toolbar/template.js",
       "lang": "js",
-      "loc": 28,
+      "loc": 37,
       "subsystem": "web/scale4",
       "primary": true,
       "purpose": "",
@@ -26471,7 +27839,7 @@
     {
       "path": "engine/web/js/scales/scale5/controller.js",
       "lang": "js",
-      "loc": 281,
+      "loc": 849,
       "subsystem": "web/scale5",
       "primary": true,
       "purpose": "Scale 5 \u2014 Cosmic Controller Manages the cosmic scale: N-body gravitational simulation with Hubble expansion, dark matter, and cosmological diagnostics.",
@@ -26487,12 +27855,35 @@
       ]
     },
     {
-      "path": "engine/web/js/scales/scale5/ui/overlays/template.js",
+      "path": "engine/web/js/scales/scale5/ui/controls/component.js",
       "lang": "js",
-      "loc": 24,
+      "loc": 311,
       "subsystem": "web/scale5",
       "primary": true,
-      "purpose": "Scale 5 Viewport Overlay \u2014 cosmic simulation context",
+      "purpose": "Scale 5 Controls Component Mounts cosmic control cards into the dedicated Scale-5 controls grid.",
+      "symbols": [
+        "Scale5ControlsComponent"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale5/ui/overlays/component.js",
+      "lang": "js",
+      "loc": 173,
+      "subsystem": "web/scale5",
+      "primary": true,
+      "purpose": "Scale 5 Viewport Overlay Component \u2014 interactive body (Pass B, Ruling P1).",
+      "symbols": [
+        "bindScale5OverlayControls()",
+        "syncScale5Overlays()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale5/ui/overlays/template.js",
+      "lang": "js",
+      "loc": 190,
+      "subsystem": "web/scale5",
+      "primary": true,
+      "purpose": "Scale 5 Viewport Overlay \u2014 cosmic simulation context Pass B (2026-09-10, Ruling P1) adds the first interactive section, \"Gas visualization\": a colour-by selector (none/density/temperature/speed) fo...",
       "symbols": [
         "getScale5OverlayTemplate()"
       ]
@@ -26509,9 +27900,21 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale5/ui/toggle-sync.js",
+      "lang": "js",
+      "loc": 94,
+      "subsystem": "web/scale5",
+      "primary": true,
+      "purpose": "Shared Scale-5 toggle-checkbox binding.",
+      "symbols": [
+        "bindScale5ToggleCheckboxes()",
+        "syncScale5Toggles()"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale5/ui/toolbar/component.js",
       "lang": "js",
-      "loc": 15,
+      "loc": 31,
       "subsystem": "web/scale5",
       "primary": true,
       "purpose": "",
@@ -26523,7 +27926,7 @@
     {
       "path": "engine/web/js/scales/scale5/ui/toolbar/template.js",
       "lang": "js",
-      "loc": 40,
+      "loc": 59,
       "subsystem": "web/scale5",
       "primary": true,
       "purpose": "",
@@ -26547,6 +27950,150 @@
       ]
     },
     {
+      "path": "engine/web/js/seeding/catalog.js",
+      "lang": "js",
+      "loc": 24,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Constructor-generated finite defaults only.",
+      "symbols": [
+        "loadFiniteCatalog()",
+        "resetFiniteCatalogForTests()",
+        "findFiniteSchema()",
+        "findFiniteBaseSchema()",
+        "findComponentTemplates()",
+        "collectionRowBounds()"
+      ]
+    },
+    {
+      "path": "engine/web/js/seeding/component-editor.js",
+      "lang": "js",
+      "loc": 81,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "",
+      "symbols": [
+        "node()",
+        "button()",
+        "section()",
+        "inputField()",
+        "componentEditor()"
+      ]
+    },
+    {
+      "path": "engine/web/js/seeding/generated/native-seed-ids.js",
+      "lang": "js",
+      "loc": 2,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Generated from the compiled native seed registry.",
+      "symbols": [
+        "NATIVE_SEED_IDS"
+      ]
+    },
+    {
+      "path": "engine/web/js/seeding/native-runtime.js",
+      "lang": "js",
+      "loc": 99,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Existing dashboard post-construction policy, before explicit recipe edits.",
+      "symbols": [
+        "nativePresetProtocol()",
+        "nativeOverrides()",
+        "describeNativeRecipe()",
+        "prepareNativeRecipe()"
+      ]
+    },
+    {
+      "path": "engine/web/js/seeding/panel.js",
+      "lang": "js",
+      "loc": 632,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Finite: the full inactive union of all 9 record kinds.",
+      "symbols": [
+        "SeedingPanel",
+        "initSeedingPanel()",
+        "disposeSeedingPanel()"
+      ]
+    },
+    {
+      "path": "engine/web/js/seeding/property-editor.js",
+      "lang": "js",
+      "loc": 107,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Every scientific input has a numeric editor; continuous inputs also have a slider.",
+      "symbols": [
+        "propertyEditor()"
+      ]
+    },
+    {
+      "path": "engine/web/js/seeding/property-schema.js",
+      "lang": "js",
+      "loc": 61,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Shared presentation rules.",
+      "symbols": [
+        "displayValue()",
+        "propertyError()",
+        "advisoryMessage()",
+        "sliderBounds()",
+        "stepChoice()",
+        "propertyTooltip()",
+        "assertPropertyDescriptor()"
+      ]
+    },
+    {
+      "path": "engine/web/js/seeding/recipe-summary.js",
+      "lang": "js",
+      "loc": 316,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Human-readable, complete resolved-recipe summary: a DOM render and a copyable plain-text form built from the same section model.",
+      "symbols": [
+        "renderRecipeSummary()",
+        "recipeText()"
+      ]
+    },
+    {
+      "path": "engine/web/js/seeding/recipe.js",
+      "lang": "js",
+      "loc": 328,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Versioned initial-condition drafts.",
+      "symbols": [
+        "recipesEqual()",
+        "getAtPath()",
+        "setAtPath()",
+        "overrideIdentity()",
+        "markFiniteOverride()",
+        "hasFiniteOverride()",
+        "createRecipe()",
+        "createComponent()",
+        "createBaseRecipe()",
+        "createNativeBaseRecipe()",
+        "isCustomNativeRecipe()",
+        "validateRecipe()"
+      ]
+    },
+    {
+      "path": "engine/web/js/seeding/runtime.js",
+      "lang": "js",
+      "loc": 57,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "True only when the recipe differs structurally from its registered v2 default \u2014 every v2 default already carries enabled components, so `blank || some enabled` (the v1 test) would call almost every...",
+      "symbols": [
+        "isEditedRecordRecipe()",
+        "prepareRecordRecipe()",
+        "waitForSeedLoad()"
+      ]
+    },
+    {
       "path": "engine/web/js/spectroscopy.js",
       "lang": "js",
       "loc": 156,
@@ -26565,9 +28112,68 @@
       ]
     },
     {
+      "path": "engine/web/js/strict/fluid-observables.js",
+      "lang": "js",
+      "loc": 160,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Read-only integer observations of one validated native hydro snapshot.",
+      "symbols": [
+        "createFluidSnapshot()",
+        "summarizeFluidAdvance()",
+        "HYDRO_VELOCITIES"
+      ]
+    },
+    {
+      "path": "engine/web/js/strict/hydro-worker-protocol.js",
+      "lang": "js",
+      "loc": 239,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Isolated hydro-runtime transport (mirrors ./worker-protocol.js for the strict candidate).",
+      "symbols": [
+        "createHydroWorkerProtocol()",
+        "createWasmHydroAdapter()",
+        "loadHydroTable()",
+        "attachHydroWorker()"
+      ]
+    },
+    {
+      "path": "engine/web/js/strict/hydro-worker.js",
+      "lang": "js",
+      "loc": 43,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Dedicated worker entry for the isolated compiled hydro candidate (mirrors ./strict-worker.js).",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/js/strict/strict-worker.js",
+      "lang": "js",
+      "loc": 33,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Dedicated worker entry for the isolated compiled strict candidate.",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/js/strict/worker-protocol.js",
+      "lang": "js",
+      "loc": 160,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Isolated strict-runtime transport.",
+      "symbols": [
+        "copyCheckpoint()",
+        "createStrictWorkerProtocol()",
+        "createWasmStrictAdapter()",
+        "attachStrictWorker()"
+      ]
+    },
+    {
       "path": "engine/web/js/telemetry-hub.js",
       "lang": "js",
-      "loc": 1584,
+      "loc": 1799,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "TelemetryHub \u2014 single source of truth for all FTD simulation telemetry.",
@@ -26582,7 +28188,7 @@
     {
       "path": "engine/web/js/telemetry/demand.js",
       "lang": "js",
-      "loc": 180,
+      "loc": 186,
       "subsystem": "web/telemetry",
       "primary": true,
       "purpose": "Scale-0 telemetry demand gating \u2014 decides which expensive hub collectors run.",
@@ -26595,7 +28201,7 @@
     {
       "path": "engine/web/js/telemetry/index.js",
       "lang": "js",
-      "loc": 18,
+      "loc": 19,
       "subsystem": "web/telemetry",
       "primary": true,
       "purpose": "Telemetry module barrel \u2014 hub (single write path) + demand gating + registries.",
@@ -26604,12 +28210,23 @@
     {
       "path": "engine/web/js/telemetry/registry/scale0-grid-channels.js",
       "lang": "js",
-      "loc": 31,
+      "loc": 44,
       "subsystem": "web/telemetry",
       "primary": true,
       "purpose": "Scale-0 telemetry grid channel registry.",
       "symbols": [
         "SCALE0_GRID_CHANNELS"
+      ]
+    },
+    {
+      "path": "engine/web/js/telemetry/registry/scale0-transaction-channels.js",
+      "lang": "js",
+      "loc": 34,
+      "subsystem": "web/telemetry",
+      "primary": true,
+      "purpose": "Scale-0 transaction-tracker telemetry channel registry.",
+      "symbols": [
+        "SCALE0_TRANSACTION_CHANNELS"
       ]
     },
     {
@@ -26642,7 +28259,7 @@
     {
       "path": "engine/web/js/ui/charts/chart-fullscreen.js",
       "lang": "js",
-      "loc": 97,
+      "loc": 99,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Shared fullscreen portal for chart cards.",
@@ -26712,7 +28329,7 @@
     {
       "path": "engine/web/js/ui/charts/uplot-chart.js",
       "lang": "js",
-      "loc": 277,
+      "loc": 298,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "UPlotChart \u2014 line/area chart primitive.",
@@ -26780,7 +28397,7 @@
     {
       "path": "engine/web/js/ui/components/gpu-server-card.js",
       "lang": "js",
-      "loc": 154,
+      "loc": 388,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "GPU Acceleration splash card (local dev only).",
@@ -26811,7 +28428,7 @@
     {
       "path": "engine/web/js/ui/components/knowledge-base/data.js",
       "lang": "js",
-      "loc": 949,
+      "loc": 978,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -26994,7 +28611,7 @@
     {
       "path": "engine/web/js/ui/components/panel-resources/template.js",
       "lang": "js",
-      "loc": 701,
+      "loc": 822,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -27103,7 +28720,7 @@
     {
       "path": "engine/web/js/ui/components/tooltips/definitions.js",
       "lang": "js",
-      "loc": 438,
+      "loc": 440,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -27114,7 +28731,7 @@
     {
       "path": "engine/web/js/ui/components/topbar/component.js",
       "lang": "js",
-      "loc": 163,
+      "loc": 180,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -27125,7 +28742,7 @@
     {
       "path": "engine/web/js/ui/components/topbar/template.js",
       "lang": "js",
-      "loc": 62,
+      "loc": 65,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -27133,6 +28750,17 @@
         "getTopbarInlineTemplate()",
         "getTopbarActionButtons()",
         "getAssistantSidebarTemplate()"
+      ]
+    },
+    {
+      "path": "engine/web/js/ui/components/validity-status.js",
+      "lang": "js",
+      "loc": 111,
+      "subsystem": "web/ui",
+      "primary": true,
+      "purpose": "A diagnostic readout only: this component never advances or changes physics.",
+      "symbols": [
+        "createValidityIndicator()"
       ]
     },
     {
@@ -27160,7 +28788,7 @@
     {
       "path": "engine/web/js/ui/components/viewport-overlays/component.js",
       "lang": "js",
-      "loc": 203,
+      "loc": 206,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Viewport Overlays Component \u2014 mounts scale-specific and universal overlay controls Orchestrates: - Scale-specific field/visualization toggles - Universal axes/grid controls - Bottom status-bar scen...",
@@ -27230,7 +28858,7 @@
     {
       "path": "engine/web/js/ui/panels/charts-panel/component.js",
       "lang": "js",
-      "loc": 176,
+      "loc": 186,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -27264,10 +28892,43 @@
     {
       "path": "engine/web/js/ui/panels/charts-panel/descriptors/scale2.js",
       "lang": "js",
-      "loc": 66,
+      "loc": 96,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Scale 2/3 (Atom / Molecule Engine) charts panel descriptor.",
+      "symbols": [
+        "charts"
+      ]
+    },
+    {
+      "path": "engine/web/js/ui/panels/charts-panel/descriptors/scale3.js",
+      "lang": "js",
+      "loc": 52,
+      "subsystem": "web/ui",
+      "primary": true,
+      "purpose": "Scale 3 molecule-only chart descriptors.",
+      "symbols": [
+        "charts"
+      ]
+    },
+    {
+      "path": "engine/web/js/ui/panels/charts-panel/descriptors/scale4.js",
+      "lang": "js",
+      "loc": 65,
+      "subsystem": "web/ui",
+      "primary": true,
+      "purpose": "Scale 4 Solar System chart descriptors.",
+      "symbols": [
+        "charts"
+      ]
+    },
+    {
+      "path": "engine/web/js/ui/panels/charts-panel/descriptors/scale5.js",
+      "lang": "js",
+      "loc": 43,
+      "subsystem": "web/ui",
+      "primary": true,
+      "purpose": "Scale 5 Cosmic chart descriptors.",
       "symbols": [
         "charts"
       ]
@@ -27286,7 +28947,7 @@
     {
       "path": "engine/web/js/ui/panels/diagnostics-panel/component.js",
       "lang": "js",
-      "loc": 127,
+      "loc": 163,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "DiagnosticsPanelComponent \u2014 composes scale-specific diagnostics tables from descriptors.",
@@ -27320,10 +28981,43 @@
     {
       "path": "engine/web/js/ui/panels/diagnostics-panel/descriptors/scale2.js",
       "lang": "js",
-      "loc": 98,
+      "loc": 167,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Scale 2/3 diagnostics table descriptor (Atom / Molecule Engine).",
+      "symbols": [
+        "sections"
+      ]
+    },
+    {
+      "path": "engine/web/js/ui/panels/diagnostics-panel/descriptors/scale3.js",
+      "lang": "js",
+      "loc": 77,
+      "subsystem": "web/ui",
+      "primary": true,
+      "purpose": "Scale 3 live molecule diagnostics.",
+      "symbols": [
+        "sections"
+      ]
+    },
+    {
+      "path": "engine/web/js/ui/panels/diagnostics-panel/descriptors/scale4.js",
+      "lang": "js",
+      "loc": 82,
+      "subsystem": "web/ui",
+      "primary": true,
+      "purpose": "Scale 4 Solar System diagnostics.",
+      "symbols": [
+        "sections"
+      ]
+    },
+    {
+      "path": "engine/web/js/ui/panels/diagnostics-panel/descriptors/scale5.js",
+      "lang": "js",
+      "loc": 141,
+      "subsystem": "web/ui",
+      "primary": true,
+      "purpose": "Scale 5 Cosmic diagnostics.",
       "symbols": [
         "sections"
       ]
@@ -27363,7 +29057,7 @@
     {
       "path": "engine/web/js/ui/panels/lagrangian-panel/component.js",
       "lang": "js",
-      "loc": 289,
+      "loc": 293,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Interpret only the qualified Scenario-1 null control.",
@@ -27411,7 +29105,7 @@
     {
       "path": "engine/web/js/ui/panels/panel-visibility.js",
       "lang": "js",
-      "loc": 39,
+      "loc": 48,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Shared panel-visibility predicate \u2014 SPEC_SCALE0_PERF_TELEMETRY_PANELS \u00a76.4.",
@@ -27419,6 +29113,17 @@
         "notifyPanelVisibilityChange()",
         "isPanelLive()",
         "PANEL_VISIBILITY_CHANGE_EVENT"
+      ]
+    },
+    {
+      "path": "engine/web/js/ui/panels/retained-readout.js",
+      "lang": "js",
+      "loc": 59,
+      "subsystem": "web/ui",
+      "primary": true,
+      "purpose": "Read-only instrument markup has one owner.",
+      "symbols": [
+        "updateRetainedReadout()"
       ]
     },
     {
@@ -27458,7 +29163,7 @@
     {
       "path": "engine/web/js/ui/panels/telemetry-grid/component.js",
       "lang": "js",
-      "loc": 558,
+      "loc": 578,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -27481,7 +29186,7 @@
     {
       "path": "engine/web/js/ui/scale-registry/panel-registry.js",
       "lang": "js",
-      "loc": 80,
+      "loc": 83,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Shared shell panel registry.",
@@ -27520,7 +29225,7 @@
     {
       "path": "engine/web/js/ui/shell/app-shell.js",
       "lang": "js",
-      "loc": 223,
+      "loc": 221,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Shell facade around the current dashboard DOM.",
@@ -27632,7 +29337,7 @@
     {
       "path": "engine/web/js/units.js",
       "lang": "js",
-      "loc": 423,
+      "loc": 424,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "FTD Unit Conversion Layer Central module for converting raw simulation values to human-readable strings with proper physical unit labels.",
@@ -27811,7 +29516,7 @@
     {
       "path": "engine/web/js/viewport.js",
       "lang": "js",
-      "loc": 1329,
+      "loc": 1393,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "@file viewport.js @brief Three.js 3D Viewport \u2014 renders particles and fields from the simulation bridge.",
@@ -27883,7 +29588,7 @@
     {
       "path": "engine/web/js/viewport/field-em-renderer.js",
       "lang": "js",
-      "loc": 966,
+      "loc": 986,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "fieldEmMethods \u2014 ViewportFieldRenderer mixin (heatmap / EM / phase / state).",
@@ -27905,7 +29610,7 @@
     {
       "path": "engine/web/js/viewport/field-quantum-renderer.js",
       "lang": "js",
-      "loc": 542,
+      "loc": 626,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "fieldQuantumMethods \u2014 ViewportFieldRenderer mixin (dual / chirality / quantum / entropy).",
@@ -27943,7 +29648,7 @@
     {
       "path": "engine/web/js/viewport/field-renderer.js",
       "lang": "js",
-      "loc": 337,
+      "loc": 344,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "ViewportFieldRenderer \u2014 Scale-0 field overlay fa\u00e7ade.",
@@ -27978,7 +29683,7 @@
     {
       "path": "engine/web/js/viewport/flux-renderer.js",
       "lang": "js",
-      "loc": 859,
+      "loc": 892,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "@file engine/web/js/viewport/flux-renderer.js @purpose Owns flux volume, flux streamlines for the Scale-0 lattice dashboard.",
@@ -27989,7 +29694,7 @@
     {
       "path": "engine/web/js/viewport/flux-threshold.js",
       "lang": "js",
-      "loc": 36,
+      "loc": 40,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "Shared Flux Volume threshold response.",
@@ -27998,7 +29703,9 @@
         "sliderPositionToFluxThreshold()",
         "fluxThresholdToSliderPosition()",
         "formatFluxThreshold()",
-        "FLUX_THRESHOLD_MAX"
+        "FLUX_THRESHOLD_MAX",
+        "FLUX_THRESHOLD_SLIDER_STEP",
+        "DEFAULT_FLUX_THRESHOLD"
       ]
     },
     {
@@ -28016,7 +29723,7 @@
     {
       "path": "engine/web/js/viewport/molecular-renderer.js",
       "lang": "js",
-      "loc": 816,
+      "loc": 1264,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "Molecular renderer \u2014 Scale 2 (atoms) and Scale 3 (molecules).",
@@ -28025,9 +29732,20 @@
       ]
     },
     {
+      "path": "engine/web/js/viewport/native-transport-renderer.js",
+      "lang": "js",
+      "loc": 144,
+      "subsystem": "web/viewport",
+      "primary": true,
+      "purpose": "engine/web/js/viewport/native-transport-renderer.js Native transport of the Scale-0 reference engine, drawn on lattice links (spec 2026-09-15 native transport overlays, section 7).",
+      "symbols": [
+        "NativeTransportRenderer"
+      ]
+    },
+    {
       "path": "engine/web/js/viewport/particle-renderer.js",
       "lang": "js",
-      "loc": 1260,
+      "loc": 1276,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "@file engine/web/js/viewport/particle-renderer.js @purpose Owns particle positions, trails, velocity vectors, per-particle force vectors for the Scale-0 lattice dashboard.",
@@ -28036,9 +29754,46 @@
       ]
     },
     {
+      "path": "engine/web/js/viewport/point-cloud-draw-order.js",
+      "lang": "js",
+      "loc": 233,
+      "subsystem": "web/viewport",
+      "primary": true,
+      "purpose": "@file viewport/point-cloud-draw-order.js @purpose Camera-aware draw order for translucent THREE.Points clouds.",
+      "symbols": [
+        "Vec3",
+        "dominantAxisKey()",
+        "buildAxisOrder()",
+        "sortBackToFront()",
+        "attachBackToFrontOrdering()"
+      ]
+    },
+    {
+      "path": "engine/web/js/viewport/scalar-activation.js",
+      "lang": "js",
+      "loc": 10,
+      "subsystem": "web/viewport",
+      "primary": true,
+      "purpose": "Direct nonnegative scalar observations, without an effective energy proxy.",
+      "symbols": [
+        "copyScalarActivation()"
+      ]
+    },
+    {
+      "path": "engine/web/js/viewport/scalar-volume-renderer.js",
+      "lang": "js",
+      "loc": 281,
+      "subsystem": "web/viewport",
+      "primary": true,
+      "purpose": "Read-only volume presentation of native Scale-0 scalar samples.",
+      "symbols": [
+        "createScalarVolumeRenderer()"
+      ]
+    },
+    {
       "path": "engine/web/js/viewport/scene-core.js",
       "lang": "js",
-      "loc": 1023,
+      "loc": 1019,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "@file engine/web/js/viewport/scene-core.js @purpose Owns scene-level rendering infrastructure for the Scale-0 dashboard: boundary wireframe, axis indicators, post-processing pipeline (bloom), camer...",
@@ -28065,7 +29820,7 @@
     {
       "path": "engine/web/js/viewport/spin-arrow-manager.js",
       "lang": "js",
-      "loc": 233,
+      "loc": 237,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "Spin-Arrow Manager \u2014 Three.js primitive that follows tracked particles and visualizes their spin orientation + precession rate.",
@@ -28076,7 +29831,7 @@
     {
       "path": "engine/web/js/viewport/topology-sheet-renderer.js",
       "lang": "js",
-      "loc": 613,
+      "loc": 631,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "viewport/topology-sheet-renderer.js \u2014 deformable rubber-sheet visualization Extracted from viewport.js as refactoring-analyst ticket RF-1 of the post-modularization cleanup (see engine/web/docs/IND...",
@@ -28087,7 +29842,7 @@
     {
       "path": "engine/web/js/ws-bridge.js",
       "lang": "js",
-      "loc": 2853,
+      "loc": 3228,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "WebSocket Bridge \u2014 connects web dashboard to native GPU engine.",
@@ -28099,7 +29854,7 @@
     {
       "path": "engine/web/js/zoo.js",
       "lang": "js",
-      "loc": 206,
+      "loc": 210,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "Particle Zoo \u2014 interactive table of all SM particles with FTD data.",
@@ -28111,14 +29866,40 @@
     {
       "path": "engine/web/serve.py",
       "lang": "python",
-      "loc": 228,
+      "loc": 413,
       "subsystem": "web/other",
       "primary": true,
       "purpose": "Dev http server for engine/web/ that disables browser caching.",
       "symbols": [
         "NoCacheHandler",
+        "DashboardHTTPServer",
+        "_record_catalog_module()",
+        "_contained()",
+        "_static_resource()",
         "_gpu_running()",
         "main()"
+      ]
+    },
+    {
+      "path": "engine/web/server_controls.py",
+      "lang": "python",
+      "loc": 366,
+      "subsystem": "web/other",
+      "primary": true,
+      "purpose": "Idle auto-stop and \"stop all engine servers\" support for the FTD dev server.",
+      "symbols": [
+        "IdlePolicy",
+        "ServerControls",
+        "client_is_local()",
+        "send_json()",
+        "read_json_body()",
+        "validate_idle_minutes()",
+        "idle_timeout_args()",
+        "parse_idle_timeout_arg()",
+        "idle_policy_banner()",
+        "_run()",
+        "_kill_windows()",
+        "_kill_posix()"
       ]
     },
     {
@@ -28207,6 +29988,29 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/cosmic-sph-reference.mjs",
+      "lang": "js",
+      "loc": 49,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "Transcribed from engine/src/cosmic/cosmic_sph.cpp (kernel 19-47, density 74-104, forces 107-167) plus the energy equation this port adds (not present in the C++ reference).",
+      "symbols": [
+        "W()",
+        "dW()",
+        "referenceStep()",
+        "GAMMA"
+      ]
+    },
+    {
+      "path": "engine/web/tests/cosmic-sph.node.test.mjs",
+      "lang": "js",
+      "loc": 425,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "50-body gas fixture: positions in a 20-unit cube, velocities in [-0.5, 0.5], masses in [1, 3], internal_energy in [0.5, 2].",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/css-maintainability.spec.js",
       "lang": "js",
       "loc": 103,
@@ -28254,7 +30058,7 @@
     {
       "path": "engine/web/tests/field-line-knots-contributions.spec.js",
       "lang": "js",
-      "loc": 157,
+      "loc": 159,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "engine/web/tests/field-line-knots-contributions.spec.js Per-knot scientific contributions: energy / flux / charge integrated over each knot's region, expressed as a share of the scenario total, + h...",
@@ -28288,12 +30092,51 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/fieldlines-trilinear.node.test.mjs",
+      "lang": "js",
+      "loc": 145,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/finite-record-frame.node.test.mjs",
+      "lang": "js",
+      "loc": 61,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/fixtures/gravity-dense-v3-oracle.mjs",
+      "lang": "js",
+      "loc": 61,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "Frozen dense oracle: exact function bodies from the production baseline.",
+      "symbols": [
+        "maxRhoOf()",
+        "gravitySlice()"
+      ]
+    },
+    {
       "path": "engine/web/tests/flux-slice-axes.spec.js",
       "lang": "js",
       "loc": 213,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/flux-slice-plane-provenance.node.test.mjs",
+      "lang": "js",
+      "loc": 46,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -28333,12 +30176,75 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/gpu-idle-controls.node.test.mjs",
+      "lang": "js",
+      "loc": 127,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/helium-spectrum-protocol.spec.js",
       "lang": "js",
       "loc": 94,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/hydro-fluid-analysis.node.test.mjs",
+      "lang": "js",
+      "loc": 71,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/hydro-fluid-observables.node.test.mjs",
+      "lang": "js",
+      "loc": 224,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "Synthetic snapshot/protocol tests only; no microscopic evolution is implemented.",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/hydro-preparation.node.test.mjs",
+      "lang": "js",
+      "loc": 106,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "Small synthetic byte/transport fixtures only; no physics execution or WASM build.",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/hydro-runtime-worker.node.test.mjs",
+      "lang": "js",
+      "loc": 278,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "Protocol-only tests with a deterministic fake adapter.",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/hydro-validity.node.test.mjs",
+      "lang": "js",
+      "loc": 80,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "Small observation-arithmetic fixtures only; no runtime or physics evolution.",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/hydro-wasm-parity-driver.mjs",
+      "lang": "js",
+      "loc": 239,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "Node driver for actual compiled hydro-WASM parity (mirrors the inline NODE_DRIVER in scripts/tests/phi_v2_lattice/test_wasm_parity.py for the strict candidate, but kept as a standalone file per tas...",
       "symbols": []
     },
     {
@@ -28371,10 +30277,28 @@
     {
       "path": "engine/web/tests/lifecycle-harness.spec.js",
       "lang": "js",
-      "loc": 340,
+      "loc": 398,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/link-energy-bridge.node.test.mjs",
+      "lang": "js",
+      "loc": 63,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/link-geometry.node.test.mjs",
+      "lang": "js",
+      "loc": 95,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -28414,6 +30338,51 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/native-observation-v3-integration.mjs",
+      "lang": "js",
+      "loc": 148,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "Real native process + actual production WebSocketBridge.",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/native-observation-v3.node.test.mjs",
+      "lang": "js",
+      "loc": 437,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/native-seeding-protocol.mjs",
+      "lang": "js",
+      "loc": 48,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/native-transport-legend.node.test.mjs",
+      "lang": "js",
+      "loc": 57,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/native-transport-overlay.spec.js",
+      "lang": "js",
+      "loc": 80,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/native-ws-ctest.mjs",
       "lang": "js",
       "loc": 99,
@@ -28425,7 +30394,7 @@
     {
       "path": "engine/web/tests/native-ws-smoke.mjs",
       "lang": "js",
-      "loc": 662,
+      "loc": 669,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -28468,9 +30437,27 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/particle-catalog-physics.node.test.mjs",
+      "lang": "js",
+      "loc": 172,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/particle-inspector-physics.node.test.mjs",
+      "lang": "js",
+      "loc": 36,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/particle-units-contract.spec.js",
       "lang": "js",
-      "loc": 45,
+      "loc": 49,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -28513,12 +30500,75 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/playwright.record-lattice.config.js",
+      "lang": "js",
+      "loc": 8,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/playwright.scale0-fluid.config.js",
+      "lang": "js",
+      "loc": 15,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/playwright.seeding.config.js",
+      "lang": "js",
+      "loc": 8,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/playwright.strict-hydro.config.js",
+      "lang": "js",
+      "loc": 22,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/point-cloud-draw-order.node.test.mjs",
+      "lang": "js",
+      "loc": 198,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/reconcile-claims.spec.js",
       "lang": "js",
       "loc": 321,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/record-lattice.spec.js",
+      "lang": "js",
+      "loc": 264,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/record-panels.node.test.mjs",
+      "lang": "js",
+      "loc": 35,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -28540,6 +30590,33 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scalar-volume-renderer.node.test.mjs",
+      "lang": "js",
+      "loc": 222,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-audit-lifecycle.spec.js",
+      "lang": "js",
+      "loc": 83,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-bounded-flux-reads.node.test.mjs",
+      "lang": "js",
+      "loc": 367,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-charts-lagrangian-lifecycle.spec.js",
       "lang": "js",
       "loc": 71,
@@ -28549,9 +30626,18 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale0-comprehensive-performance.spec.js",
+      "lang": "js",
+      "loc": 294,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-conservation-panel.spec.js",
       "lang": "js",
-      "loc": 444,
+      "loc": 448,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28564,6 +30650,27 @@
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-damping-performance-preparation.js",
+      "lang": "js",
+      "loc": 98,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": [
+        "readDampingPerformanceSnapshot()",
+        "prepareDampingPerformanceProfile()"
+      ]
+    },
+    {
+      "path": "engine/web/tests/scale0-damping-performance-preparation.spec.js",
+      "lang": "js",
+      "loc": 55,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -28603,6 +30710,15 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale0-electric-sampler-oracle.spec.js",
+      "lang": "js",
+      "loc": 94,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-empty-panel-performance.spec.js",
       "lang": "js",
       "loc": 2222,
@@ -28630,6 +30746,33 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale0-fluid-integration.spec.js",
+      "lang": "js",
+      "loc": 167,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-fluid-observation.node.test.mjs",
+      "lang": "js",
+      "loc": 32,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-fluid-scenario-contract.node.test.mjs",
+      "lang": "js",
+      "loc": 87,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-flux-volume-controls-audit.spec.js",
       "lang": "js",
       "loc": 318,
@@ -28648,6 +30791,24 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale0-gravity-slab.node.test.mjs",
+      "lang": "js",
+      "loc": 319,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-gravity-slab.spec.js",
+      "lang": "js",
+      "loc": 133,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-gravity.spec.js",
       "lang": "js",
       "loc": 110,
@@ -28663,6 +30824,33 @@
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-inspector-audit.node.test.mjs",
+      "lang": "js",
+      "loc": 120,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-inspector-owner.node.test.mjs",
+      "lang": "js",
+      "loc": 95,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-inspector-worker-audit.spec.js",
+      "lang": "js",
+      "loc": 68,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -28693,6 +30881,33 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale0-overlay-measurement.node.test.mjs",
+      "lang": "js",
+      "loc": 137,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-overlay-render-analysis.node.test.mjs",
+      "lang": "js",
+      "loc": 246,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-overlay-scientific-contract.node.test.mjs",
+      "lang": "js",
+      "loc": 62,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-p1-fine-structure.spec.js",
       "lang": "js",
       "loc": 80,
@@ -28711,9 +30926,18 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale0-panel-redundant-reads.node.test.mjs",
+      "lang": "js",
+      "loc": 29,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-panel-render.spec.js",
       "lang": "js",
-      "loc": 108,
+      "loc": 121,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28731,7 +30955,7 @@
     {
       "path": "engine/web/tests/scale0-panel-shell-audit.spec.js",
       "lang": "js",
-      "loc": 370,
+      "loc": 494,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28753,6 +30977,15 @@
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-paused-telemetry.node.test.mjs",
+      "lang": "js",
+      "loc": 95,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -28783,6 +31016,15 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale0-proper-time-overlays.spec.js",
+      "lang": "js",
+      "loc": 294,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-reciprocal-moving-source.spec.js",
       "lang": "js",
       "loc": 106,
@@ -28798,6 +31040,24 @@
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-retained-readout.spec.js",
+      "lang": "js",
+      "loc": 333,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-runtime-audit.node.test.mjs",
+      "lang": "js",
+      "loc": 193,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -28848,7 +31108,7 @@
     {
       "path": "engine/web/tests/scale0-scientific-mutation-contract.spec.js",
       "lang": "js",
-      "loc": 438,
+      "loc": 443,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28864,12 +31124,75 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale0-shared-chart-lifecycle.node.test.mjs",
+      "lang": "js",
+      "loc": 188,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-shared-renderer-lifecycle.node.test.mjs",
+      "lang": "js",
+      "loc": 62,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-sidepanel-release-gate.spec.js",
       "lang": "js",
       "loc": 181,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-spectrum-async.node.test.mjs",
+      "lang": "js",
+      "loc": 188,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-spectrum-browser-client.spec.js",
+      "lang": "js",
+      "loc": 47,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-spectrum-lifecycle.node.test.mjs",
+      "lang": "js",
+      "loc": 245,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-spectrum-provenance.node.test.mjs",
+      "lang": "js",
+      "loc": 126,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-spectrum-provenance.spec.js",
+      "lang": "js",
+      "loc": 69,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -28884,7 +31207,7 @@
     {
       "path": "engine/web/tests/scale0-standard-model-overlay.spec.js",
       "lang": "js",
-      "loc": 118,
+      "loc": 127,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28911,7 +31234,7 @@
     {
       "path": "engine/web/tests/scale0-substrate-protocol-v2.spec.js",
       "lang": "js",
-      "loc": 575,
+      "loc": 576,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28945,9 +31268,20 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale0-time-retained-readout.node.test.mjs",
+      "lang": "js",
+      "loc": 238,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": [
+        "Element"
+      ]
+    },
+    {
       "path": "engine/web/tests/scale0-time.spec.js",
       "lang": "js",
-      "loc": 122,
+      "loc": 130,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -28981,6 +31315,15 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale0-transaction-tracker.spec.js",
+      "lang": "js",
+      "loc": 290,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-ui-audit-harness.spec.js",
       "lang": "js",
       "loc": 83,
@@ -28992,7 +31335,7 @@
     {
       "path": "engine/web/tests/scale0-ui-audit-probe.js",
       "lang": "js",
-      "loc": 297,
+      "loc": 319,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -29004,9 +31347,18 @@
       ]
     },
     {
+      "path": "engine/web/tests/scale0-validity.node.test.mjs",
+      "lang": "js",
+      "loc": 131,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-visualization-overlay-audit.spec.js",
       "lang": "js",
-      "loc": 625,
+      "loc": 626,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -29019,6 +31371,42 @@
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-wave-spectrum-metrics.node.test.mjs",
+      "lang": "js",
+      "loc": 349,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-worker-inspection-cache.node.test.mjs",
+      "lang": "js",
+      "loc": 158,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-worker-lagrangian-demand.node.test.mjs",
+      "lang": "js",
+      "loc": 114,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale0-worker-lagrangian-demand.spec.js",
+      "lang": "js",
+      "loc": 94,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -29057,6 +31445,15 @@
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale1-anonymous-injection.node.test.mjs",
+      "lang": "js",
+      "loc": 109,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -29199,7 +31596,34 @@
     {
       "path": "engine/web/tests/scale2-atom-overlays.spec.js",
       "lang": "js",
-      "loc": 234,
+      "loc": 484,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale2-controlled-experiments.spec.js",
+      "lang": "js",
+      "loc": 215,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale2-nuclear-reactions.spec.js",
+      "lang": "js",
+      "loc": 371,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale2-overlay-load-release-gate.spec.js",
+      "lang": "js",
+      "loc": 191,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -29208,7 +31632,25 @@
     {
       "path": "engine/web/tests/scale2-physics.spec.js",
       "lang": "js",
-      "loc": 313,
+      "loc": 423,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale2-scale3-regression.spec.js",
+      "lang": "js",
+      "loc": 62,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale2-scenario-contract.spec.js",
+      "lang": "js",
+      "loc": 160,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -29226,7 +31668,79 @@
     {
       "path": "engine/web/tests/scale2-side-panels.spec.js",
       "lang": "js",
-      "loc": 180,
+      "loc": 188,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale3-liquid-labs.node.test.mjs",
+      "lang": "js",
+      "loc": 311,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "engine/web/tests/scale3-liquid-labs.node.test.mjs Regression coverage for Task 2 of the hydro-scenarios-part-b brief: the four Scale 3 liquid-transport laboratories (scenarios.js recipes, scenario-...",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale3-liquid-transport.node.test.mjs",
+      "lang": "js",
+      "loc": 225,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale3-liquid-transport.spec.js",
+      "lang": "js",
+      "loc": 132,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale3-molecule-engine.spec.js",
+      "lang": "js",
+      "loc": 157,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale3-molecule-release-gate.spec.js",
+      "lang": "js",
+      "loc": 193,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale4-solar-system.spec.js",
+      "lang": "js",
+      "loc": 1290,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale5-gas-labs.spec.js",
+      "lang": "js",
+      "loc": 147,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale5-instrument.spec.js",
+      "lang": "js",
+      "loc": 1016,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -29235,7 +31749,7 @@
     {
       "path": "engine/web/tests/scales.spec.js",
       "lang": "js",
-      "loc": 713,
+      "loc": 714,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -29253,7 +31767,7 @@
     {
       "path": "engine/web/tests/scenario-parity.spec.js",
       "lang": "js",
-      "loc": 690,
+      "loc": 693,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -29280,7 +31794,7 @@
     {
       "path": "engine/web/tests/scientific-scenario-inventory.spec.js",
       "lang": "js",
-      "loc": 167,
+      "loc": 171,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -29293,6 +31807,60 @@
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/seeding-coverage.node.test.mjs",
+      "lang": "js",
+      "loc": 40,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/seeding-panel.spec.js",
+      "lang": "js",
+      "loc": 365,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/seeding-property.node.test.mjs",
+      "lang": "js",
+      "loc": 34,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/seeding-recipe.node.test.mjs",
+      "lang": "js",
+      "loc": 239,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/seeding-summary.node.test.mjs",
+      "lang": "js",
+      "loc": 184,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/seeding-ws.node.test.mjs",
+      "lang": "js",
+      "loc": 50,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -29323,6 +31891,33 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/standard-model-admission.spec.js",
+      "lang": "js",
+      "loc": 48,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/strict-hydro-lab.spec.js",
+      "lang": "js",
+      "loc": 202,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/strict-runtime-worker.node.test.mjs",
+      "lang": "js",
+      "loc": 238,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "Protocol-only tests with a deterministic fake adapter.",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/take_gallery_screenshots.spec.js",
       "lang": "js",
       "loc": 152,
@@ -29339,6 +31934,40 @@
       "primary": false,
       "purpose": "@ts-check",
       "symbols": []
+    },
+    {
+      "path": "engine/web/tests/test_record_routes.py",
+      "lang": "python",
+      "loc": 81,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "Only registered finite states and the two compiled artifacts are public.",
+      "symbols": [
+        "record_server()",
+        "test_catalog_and_checkpoint_have_explicit_law_and_digest()",
+        "test_custom_seed_endpoint_validates_and_returns_complete_checkpoint()",
+        "test_custom_seed_endpoint_rejects_unavailable_and_invalid_inputs()",
+        "test_invalid_or_ambiguous_preparations_rejected()",
+        "test_missing_runtime_fails_closed_and_build_tree_stays_private()",
+        "test_removed_workflows_are_not_routes()"
+      ]
+    },
+    {
+      "path": "engine/web/tests/test_strict_hydro_routes.py",
+      "lang": "python",
+      "loc": 118,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "Small HTTP and path-containment regressions for the local strict-fluid link.",
+      "symbols": [
+        "local_server()",
+        "test_local_status_requires_all_three_runtime_artifacts()",
+        "test_allowlisted_runtime_and_public_dependencies_work()",
+        "test_traversal_and_unlisted_build_resources_not_served()",
+        "test_lab_directory_redirect_retains_usable_relative_urls()",
+        "test_containment_rejects_relative_escape_without_http()",
+        "test_existing_symlink_is_checked_after_resolution()"
+      ]
     },
     {
       "path": "engine/web/tests/theme-contrast.spec.js",
@@ -29374,6 +32003,15 @@
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/validity-status.spec.js",
+      "lang": "js",
+      "loc": 142,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -29424,7 +32062,7 @@
     {
       "path": "engine/web/tests/wasm-scenario-coverage.spec.js",
       "lang": "js",
-      "loc": 163,
+      "loc": 164,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -29433,7 +32071,7 @@
     {
       "path": "engine/web/tests/web-physics-constants-contract.spec.js",
       "lang": "js",
-      "loc": 69,
+      "loc": 71,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -29442,7 +32080,7 @@
     {
       "path": "engine/web/tests/ws-bridge-visual-cache.spec.js",
       "lang": "js",
-      "loc": 2697,
+      "loc": 2702,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",

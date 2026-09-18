@@ -273,8 +273,11 @@ def main() -> None:
         "files": entries,
     }
 
+    # newline="\n": the repo stores both outputs as LF (.gitattributes eol=lf);
+    # default text-mode writes would emit CRLF on Windows and churn every line.
     out_json = repo / "engine" / "docs" / "ENGINE_FILE_MANIFEST.json"
-    out_json.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    out_json.write_text(json.dumps(manifest, indent=2) + "\n",
+                        encoding="utf-8", newline="\n")
 
     # Markdown companion
     md = []
@@ -312,7 +315,8 @@ def main() -> None:
         md.append("")
 
     out_md = repo / "engine" / "docs" / "ENGINE_FILE_MANIFEST.md"
-    out_md.write_text("\n".join(md).rstrip() + "\n", encoding="utf-8")
+    out_md.write_text("\n".join(md).rstrip() + "\n",
+                      encoding="utf-8", newline="\n")
 
     print(f"Wrote {out_json.relative_to(repo)}")
     print(f"Wrote {out_md.relative_to(repo)}")
