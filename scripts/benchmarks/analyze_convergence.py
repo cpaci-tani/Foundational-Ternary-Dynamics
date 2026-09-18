@@ -40,7 +40,7 @@ def generate_report():
         ("B10", "Confinement string tension",        "C",  "Coulomb-like at tested radii (need r>8)"),
         ("B11", "Latency field (GR potential)",      "D",  "Zero signal (needs larger mass/ticks)"),
         ("B12", "Exchange force (Pauli)",            "C-", "No repulsion at r=5 (force too weak)"),
-        ("B13", "Larmor radiation (P ~ a^2)",        "A",  "Accelerated charge loses MORE energy"),
+        ("B13", "Larmor radiation (kinematic wake only)", "N/A", "E_accel < E_static [RE-GRADED 2026-09-17: NOT a Larmor measurement. benchmark_larmor() compares a SINGLE charge given velocity 0.3 against the same charge at rest, with no external field, so the only acceleration present is the self-field's own and the energy difference is the kinematic self-field wake of a moving source -- present with the toggle OFF as well. The comparison never distinguished the two damping laws: the pre-2026-09-16 law was INVERTED (eff = 1 - DAMPING*min(1, LARMOR_FLOOR + K_LARMOR*a^2) could only REDUCE dissipation; b7ea1023 replaced it with gain = min(1 + K_LARMOR*a^2, 256), eff = damping_factor^gain, ftd/larmor_damping.h), and the corrected law is INERT at every acceleration the engine realizes (K_LARMOR ~= 33.9, |a| <= ~7e-4 => K*a^2 <= ~2e-5; test_larmor.cpp LAM-6b pins ON == OFF to 0.1%). The old 'A' graded a sign this benchmark cannot see. A Larmor grade needs a scenario with |a| >~ 5e-3 or an owner ruling on the K_LARMOR scale/form (TRACKER_OPEN_ITEMS.md section 1.14).]"),
         ("B14", "Weak transmutation (parity)",       "B+", "1025 pos vs 550 neg (parity violation!)"),
         ("B15", "Genesis threshold [MEASURED]",       "A+", "0 below K_GENESIS, 891 above [RE-LABELED 2026-08-21: MEASURED engine self-consistency that the coded threshold |J|>K_GENESIS fires (phase_write.cpp:359, condition |J|^2 > K_GENESIS^2). NOT a Higgs mechanism -- no doublet, no VEV, no gauge-boson mass, no lambda|Phi|^4. One below-threshold run (peak 0.5x K_GENESIS) + one above (peak 3x K_GENESIS); 'EXACT' means the engine confirms its own coded threshold (tautological self-consistency), not a physical phase transition. Renamed off 'Higgs' for the same reason B16 was re-graded off QM. Grade is a REGRESSION grade (threshold fires as coded), not a physics grade.]"),
         ("B15b","Dual-substrate front (scan-limited)","N/A","front >= 7 voxels in 30 ticks [RE-GRADED 2026-08-21: scan-saturated, not a measured speed. The probe scans dx = 1 .. L/4-1 over 30 ticks, capping the measurable speed at (L/4-1)/30 = 7/30 = 0.233 at L=32 -- the reported 0.233 IS this scan ceiling. It cannot distinguish from C_WAVE = 1/sqrt(3) ~= 0.577 (gauge_couplings.h:235); at face value 0.233 is ~60% below C_WAVE, so the old 'matches wave speed' was backwards. Dropped the 'Goldstone' framing: a massless mode of a natively-massless free wave equation is built in, not a Goldstone boson of a spontaneously broken continuous symmetry.]"),
@@ -70,7 +70,7 @@ def generate_report():
         ("Weak Force (transmutation, parity)",    "B+", "B14: Parity violation 1025/550, chirality flip works"),
         ("Higgs Mechanism (threshold, Goldstone)", "N/A", "[CORRECTED 2026-08-21: neither constituent demonstrates Higgs physics -- domain grade withdrawn, same class as the B16 Bell re-grade. B15 is a MEASURED regression that the coded threshold |J|>K_GENESIS fires (no doublet/VEV/gauge-boson mass/lambda|Phi|^4); B15b is a scan-saturated wavefront bound (7/30=0.233) that cannot distinguish from C_WAVE and is not a Goldstone mode.]"),
         ("General Relativity (latency, gravity)",  "D",  "B11: Zero signal. Latency Poisson solver needs investigation"),
-        ("Fine Structure (spin-orbit, Larmor)",   "B+", "B13: Larmor A, B18: splitting detected"),
+        ("Fine Structure (spin-orbit, Larmor)",   "B+", "B18: splitting detected [CORRECTED 2026-09-17: B13 REMOVED from the evidence -- it is a moving-vs-static single-charge self-field wake, not a Larmor measurement, and the corrected radiation-reaction law is inert at realized |a|; see the B13 scorecard row. The domain grade now rests on B18 alone]"),
         ("Relativistic Effects",                   "C-", "B19: No slowing at tested velocity"),
         ("Conservation Laws",                      "A+", "B6: charge exact, B5: energy 5.6% drift"),
         ("Particle Spectrum (hydrogen)",           "A+", "B7: 1/n^2 to < 0.001% [CAVEAT 2026-07-01: classical Kepler/virial, calibrated Rydberg scale, no quantum content -- see B7 scorecard row]"),
@@ -113,7 +113,9 @@ def generate_report():
     lines.append("        NOT a quantum-mechanics confirmation (corrected 2026-07-01; a quantum system")
     lines.append("        would exceed 2 toward Tsirelson's bound 2*sqrt(2)=2.83)")
     lines.append("    [x] Born rule on lattice: manifestation favors high |J|^2 sites")
-    lines.append("    [x] Larmor radiation: accelerated charges radiate more (P ~ a^2)")
+    lines.append("    [ ] Larmor radiation: WITHDRAWN 2026-09-17 -- B13 measured the kinematic self-field")
+    lines.append("        wake of a moving single charge, not radiation reaction; the damping law was")
+    lines.append("        inverted until b7ea1023 and the corrected law is inert at every realized |a|")
     lines.append("    [x] Parity violation: weak transmutation creates +/- asymmetry")
     lines.append("    [x] Spin-orbit splitting: detectable energy shift with SO coupling")
     lines.append("    [x] Coulomb convergence: exponent -> -2.0 as L grows (large-L extrapolation)")
@@ -125,6 +127,8 @@ def generate_report():
     lines.append("    [ ] Latency/GR: gravitational potential not measurable yet")
     lines.append("    [ ] Relativistic: gamma correction not detectable at tested speeds")
     lines.append("    [ ] Exchange/Pauli: force too weak at r=5 to measure cleanly")
+    lines.append("    [ ] Larmor: corrected law (ftd/larmor_damping.h) is inert at realized |a| <= ~7e-4;")
+    lines.append("        K_LARMOR scale/form is an open owner decision (TRACKER_OPEN_ITEMS.md 1.14)")
     lines.append("    [ ] Wave speed: 60% dispersion error (lattice artifact, expected)")
     lines.append("    [ ] alpha emergence: alpha is INPUT not OUTPUT (hardcoded in ontic.h)")
     lines.append("    [ ] External data: still no comparison to real experimental data")

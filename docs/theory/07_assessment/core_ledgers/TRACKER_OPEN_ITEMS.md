@@ -4,7 +4,7 @@ Central ledger of every `[OPEN]` claim in FTD — code stubs, theoretical gaps, 
 
 **Canonical path:** `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`.
 
-**Index (read this first to find an item):** [`TRACKER_OPEN_ITEMS_INDEX.md`](TRACKER_OPEN_ITEMS_INDEX.md) — a generated one-line-per-item companion (83 items, ~150 lines vs this file's 3,100+), same pattern as `LEDGER_INDEX.md` for `LEDGER.md`. Navigation aid only; this file remains canonical. Regenerate with `python scripts/theory/build_open_items_index.py`.
+**Index (read this first to find an item):** [`TRACKER_OPEN_ITEMS_INDEX.md`](TRACKER_OPEN_ITEMS_INDEX.md) — a generated one-line-per-item companion (86 items, ~150 lines vs this file's 3,100+), same pattern as `LEDGER_INDEX.md` for `LEDGER.md`. Navigation aid only; this file remains canonical. Regenerate with `python scripts/theory/build_open_items_index.py`.
 
 **FTD-0998/0999 cumulative clock-growth resource law / backpressure boundary
 (2026-08-12):** parent protocol/proof SHA256 `6E0B28E7...4052` /
@@ -4404,6 +4404,91 @@ runs; the census verifier
 `scripts/proofs/proof_schedule_type_audit.py` now asserts the default-ON
 state and the `r = 2` stencil directly (23/23). FTD-1028's repetition of the
 same claim was corrected with it.
+
+---
+
+### 1.14 Larmor radiation-reaction scale (`K_LARMOR`) — **[OPEN — OWNER DECISION; LAW CORRECT IN SIGN, INERT AT REALIZED ACCELERATION]**
+
+**Location:** `engine/include/ftd/larmor_damping.h` (the law, one header
+shared by CPU and CUDA); `engine/include/ftd/constants.h`
+(`K_LARMOR = 4·N_EFF/(3·K_B) ≈ 33.9`, `LARMOR_FLOOR`); consumers
+`engine/src/render_bridge_phases/phase_write.cpp` and
+`engine/cuda/kernels_stencil_common.cuh`; toggle `larmor_radiation`
+(`engine/include/ftd/term_toggles.h` line 61, default OFF).
+
+**Finding (2026-09-16 physics semantic audit; 2026-09-17 follow-up).** Commit
+`b7ea1023` replaced the pre-existing law
+`eff = 1 − DAMPING·min(1, LARMOR_FLOOR + K_LARMOR·a²)`, which could only ever
+*reduce* dissipation below the baseline (an accelerating charge radiated
+*less* than a static one — inverted physics), with
+`gain = min(1 + K_LARMOR·a², 256)`, `eff = damping_factor^gain`, which is
+correct in sign and in its `a²` shape. The same-day audit then established,
+with evidence, that the corrected law is **inert at every acceleration the
+engine realizes**. `accel_mag` is the unit-mass EM + gravity + Lorentz force
+magnitude (`voxel.h`; BH-F3 note in `phase_forces.cpp`). Poisson-mode
+Coulomb at the `r ≥ 1` clamp gives `|a| ≲ 6×10⁻⁴`; the largest value found
+anywhere in the tree is `7.0×10⁻⁴`
+(`10_eft_program/charge_gauss_native_em/ANALYSIS_THOMSON_MOVING_RECOIL_ACCOUNTING_v1.md`,
+`emergent_plus_max_accel`). Hence `K_LARMOR·a² ≲ 1.7×10⁻⁵`, and the per-step
+survival factor moves by `≲ 1.2×10⁻⁷` against a baseline per-step loss of
+`7.3×10⁻³`. A gain excess of `10⁻³` needs `|a| ≈ 5.4×10⁻³`, roughly ten
+times the Coulomb contact value. `larmor_radiation` ON is therefore
+numerically indistinguishable from OFF in every shipped scenario
+(`engine/tests/test_larmor.cpp` LAM-6b pins ON ≡ OFF to 0.1% at
+`|a| ≈ 4×10⁻⁵`); only `test_larmor_damping_law.cpp`'s synthetic
+`accel_mag = 0.4` exercises `gain > 1`. The grades that had read the old law
+as validated — benchmark B13 "A: accelerated charge loses MORE energy"
+(a moving-vs-static single-charge wake, not radiation reaction) and
+`CHECKLIST_PHYSICS.md` §26's "equatorial > axial by 1.5+" (the 6.089
+artifact of the inverted law, which switched damping almost off around the
+dipole) — were retracted on 2026-09-17.
+
+**Why it is open.** Two things are undecided, and neither is a correctness
+fix:
+
+1. **Scale.** `K_LARMOR`'s stated provenance in `constants.h` — "classical
+   Larmor `P = (2α/3)·a²`, normalized by `K_B`", then multiplied by `N_EFF`
+   so that radiation would dominate a coupling-injection rate
+   `g_c ≈ 0.085` — supplies no dimensional bridge from an energy-per-tick
+   power to a dimensionless exponent, so the constant is **[IMPOSED]**
+   (and the "dominates the injection rate" target was unreachable under the
+   old capped law for *any* value of the constant). Making the toggle bite
+   at realized `|a| ~ 10⁻⁴…10⁻³` requires `K·a² = O(1)` there, i.e.
+   `K ≈ 10⁶…10⁸`, a factor of `3×10⁴…3×10⁶` over the present value. No
+   physical argument in the tree licenses that factor.
+2. **Form.** The law multiplies the baseline rate
+   (`Γ(a) = Γ₀·gain(a)`, `Γ₀ = −ln(damping_factor)`), so with `damping` off
+   the radiative channel vanishes; textbook radiation reaction is an
+   *additive* rate `P/E` independent of any baseline drag. The additive
+   textbook form does **not** by itself revive the toggle: at unit charge in
+   lattice-natural units `P = (2/3)·α·a²` is `1.6×10⁻⁹` per tick at
+   `|a| = 5.8×10⁻⁴`, and against a manifested-site energy
+   `|J|² ≈ K_B² = 0.26` that is `P/E ≈ 6×10⁻⁹` per tick, six orders below
+   `Γ₀`. Whichever form is chosen, a scale bridge is still an adoption. An
+   in-tree precedent for the additive form exists at Scale 1:
+   `ParticleEngine`'s `toggles.radiation` applies
+   `F_rad = −(2/3)·α·q²·a²/(m·C_SPEED³)·v̂` (`particle_engine.cpp`,
+   `apply_force_postprocessing`) with no free constant and no use of
+   `K_LARMOR`.
+
+**Options put to the owner (2026-09-17; none chosen, nothing changed).**
+(a) leave the law inert and documented as such — the current state
+(`larmor_damping.h` "Practical regime"); costs nothing and claims nothing.
+(b) rescale `K_LARMOR` by a declared factor so the toggle bites at realized
+`|a|` — an **[IMPOSED]** calibration that must be booked with its falsifier,
+namely a `P ∝ a²` fit across several acceleration magnitudes, which no
+current test performs. (c) change the form to an additive rate term,
+`eff = damping_factor·exp(−κ·a²)` or equivalent, decoupling radiation from
+`damping` — which still needs the scale `κ` from (b). Any change under (b)
+or (c) is golden-neutral only because `larmor_radiation` defaults OFF
+(`term_toggles.h` line 61; `test_render_bridge_golden.cpp` sets it OFF
+explicitly), a fact to be re-verified with the change.
+
+**Cross-references.** LEDGER [`FTD-0120`](LEDGER.md) already records
+physical production Larmor power as `[OPEN]` and is unaffected by this
+item. `engine/tests/TEST_DEVIATION_MAP.md` §9 (BREM-1) and
+`test_gpu_experiments.cpp` BREM-1…6 test the constant's value and that the
+mechanism is wired, not its physics.
 
 ---
 

@@ -2,8 +2,13 @@
  * Radiative Decay at Scale 1: Orbit Shrinkage from Larmor Radiation
  *
  * FTD note: radiation reaction is [IMPOSED] physics — the Larmor
- * formula P = (2α/3) q²a²/(mc³) is adopted from SM, with the
- * coefficient K_LARMOR = 4/(3·K_B) set to match.
+ * formula P = (2α/3) q²a²/(mc³) is adopted from SM. This Scale-1 test
+ * exercises ParticleEngine's own additive radiation-reaction force
+ * (apply_force_postprocessing in particle_engine.cpp: coefficient
+ * (2/3)·ALPHA·q²/(m·C_SPEED³), no free constant). It does NOT use the
+ * lattice-substrate larmor_radiation toggle or K_LARMOR
+ * (4·N_EFF/(3·K_B), ftd/larmor_damping.h), whose scale is a separate
+ * open owner decision (TRACKER_OPEN_ITEMS.md §1.14).
  *
  * RD-1: Orbit radius decreases with radiation ON
  * RD-2: Orbit radius stable with radiation OFF (control)

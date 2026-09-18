@@ -1,16 +1,16 @@
 # Open Items Tracker — Index
 
-Generated companion to `TRACKER_OPEN_ITEMS.md` (85 item headings). **Do not edit by hand** — regenerate with `python scripts/theory/build_open_items_index.py`.
+Generated companion to `TRACKER_OPEN_ITEMS.md` (86 item headings). **Do not edit by hand** — regenerate with `python scripts/theory/build_open_items_index.py`.
 
 This is a *navigation aid*, not a source of truth. `TRACKER_OPEN_ITEMS.md` remains canonical; open/closed status here is read mechanically from each item's own heading text (a `CLOSED`/`RETRACTED`/`not counted as open` marker), not reclassified. Where this index and the tracker's prose disagree, the tracker wins.
 
-**42 open, 43 closed/retired** (of 85 item headings).
+**43 open, 43 closed/retired** (of 86 item headings).
 
 ---
 
 ## §1 Engine code
 
-**10 open / 20 total.**
+**11 open / 21 total.**
 
 | # | Item | Status | Open? |
 |---|---|---|---|
@@ -34,6 +34,7 @@ This is a *navigation aid*, not a source of truth. `TRACKER_OPEN_ITEMS.md` remai
 | 1.11 | [s-field Metropolis for thermal ternary ensembles](TRACKER_OPEN_ITEMS.md#111-s-field-metropolis-for-thermal-ternary-ensembles-ledger-ftd-0052-open-deferred) | LEDGER FTD-0052 — **[OPEN, DEFERRED]** | **OPEN** |
 | 1.12 | [Event-native matter mechanics](TRACKER_OPEN_ITEMS.md#112-event-native-matter-mechanics-ftd-0443-through-ftd-0555-open-blocking-identical-contactovershoot-physics-constructive-native-source-noncongruent-symmetric-axial-fixed-path-reciprocal-frozen-minimal-atomic-mobile-law-closed-negative-smooth-coat-spacetime-action-constructive-field-work-exact-frozen-minimal-quadratic-coat-common-action-closed-negative-constant-force-accelerated-escape-constructive-endpoint-only-spacetime-reconstruction-closed-negative-quadratic-orbit-gather-and-one-step-dg-transaction-constructive-bare-and-rigid-neutral-multi-tick-laws-closed-negative-by-compact-coat-peierls-force-exact-continuous-point-sliding-closed-under-strict-locality-spectral-ir-pinning-index-derived-but-locked-control-failed-native-extendedhopping-carrier-open) | FTD-0443 through FTD-0555 — **[OPEN, BLOCKING; IDENTICAL CONTACT/OVERSHOOT PHYSICS CONSTRUCTIVE, NATIVE SOURCE NONCONGRUENT, SYMMETRIC AXIAL FIXED-PATH RECIPROCAL, FROZEN MINIMAL ATOMIC MOBILE LAW CLOSED NEGATIVE, SMOOTH-COAT SPACETIME ACTION CONSTRUCTIVE, FIELD WORK EXACT, FROZEN MINIMAL QUADRATIC-COAT COMMON ACTION CLOSED NEGATIVE, CONSTANT-FORCE ACCELERATED ESCAPE CONSTRUCTIVE, ENDPOINT-ONLY SPACETIME RECONSTRUCTION CLOSED NEGATIVE, QUADRATIC ORBIT GATHER AND ONE-STEP DG TRANSACTION CONSTRUCTIVE, BARE AND RIGID-NEUTRAL MULTI-TICK LAWS CLOSED NEGATIVE BY COMPACT-COAT PEIERLS FORCE, EXACT CONTINUOUS POINT SLIDING CLOSED UNDER STRICT LOCALITY, SPECTRAL IR PINNING INDEX DERIVED BUT LOCKED CONTROL FAILED; NATIVE EXTENDED/HOPPING CARRIER OPEN]** |  |
 | 1.13 | [Default-ON gravity uses a tier-2 (r=2) stencil](TRACKER_OPEN_ITEMS.md#113-default-on-gravity-uses-a-tier-2-r2-stencil-open-unpriced-p4-exception) | **[OPEN — UNPRICED P4 EXCEPTION]** | **OPEN** |
+| 1.14 | [Larmor radiation-reaction scale (`K_LARMOR`)](TRACKER_OPEN_ITEMS.md#114-larmor-radiation-reaction-scale-k_larmor-open-owner-decision-law-correct-in-sign-inert-at-realized-acceleration) | **[OPEN — OWNER DECISION; LAW CORRECT IN SIGN, INERT AT REALIZED ACCELERATION]** | **OPEN** |
 
 ## §2 Theory — derivations (`docs/theory/03_derivations/`)
 
