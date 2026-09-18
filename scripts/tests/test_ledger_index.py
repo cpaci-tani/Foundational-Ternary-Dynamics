@@ -99,7 +99,9 @@ def test_quick_index_rows_stay_browsable(ledger_text: str) -> None:
     ]
     assert not oversized, (
         f"{len(oversized)} Quick-index rows exceed 4000 chars: {oversized[:5]}.\n"
-        "Run: python scripts/theory/restructure_ledger.py"
+        "Run: python scripts/theory/restructure_ledger.py --only-over 4000\n"
+        "(idempotent since 2026-09-17; --dry-run first to preview; "
+        "see scripts/tests/test_restructure_ledger.py)"
     )
 
 
