@@ -34,6 +34,12 @@ jobs:
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
 
+      # 64 MiB build artifact, never committed; deterministic generator, and the
+      # loader re-verifies the pinned SHA-256 (hydro/channels.py TABLE_HASH).
+      - name: Generate strict hydro collision table
+        working-directory: scripts
+        run: python -m phi_v2_lattice.hydro.experiments.generate_tables
+
       - name: Run tests with coverage
         run: |
           pytest scripts/tests/ --cov=scripts --cov-report=xml --cov-report=term-missing

@@ -6,7 +6,7 @@ The schedule is part of the declared law, indexed by the global ordinal clock.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import lru_cache
 from types import MappingProxyType
 import numpy as np
@@ -134,6 +134,11 @@ def step(state: StagedState, tables=None) -> tuple[StagedState, T.TickEvents]:
     """Advance exactly ONE physical tick; event rows are external observations."""
     validate(state)
     st = state.lattice
+    if type(st.L) is not int:
+        # validate() admits concrete NumPy integer sides. Continue with the identical
+        # plain-int law: under NumPy 1.x promotion, uint64 op int yields float64,
+        # which is not a site index.
+        st = replace(st, L=int(st.L))
     out = StagedState(int(state.microtick) + 1, S.copy(st), state.admitted_sc.copy(),
                       state.gate_sc.copy(), state.gate_fcc.copy())
     dst = out.lattice
