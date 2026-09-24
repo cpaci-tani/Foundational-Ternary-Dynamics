@@ -647,7 +647,7 @@ def main():
      x^2 - 16c^2*x + 16c^3 = 0  (c = lemniscatic constant)
      Read as: psi^2 = 16c^2(psi - c)
      The quadratic maps psi to something LINEAR in psi, offset by c.
-     ReLU selects: x_+ = 137.036 (alpha) or x_- = 3.024 (N_c)
+     ReLU selects: x_+ = 137.036 (alpha) or x_- = 3.024
      This is manifestation: which root manifests depends on the
      interference pattern at the point of threshold crossing.
 

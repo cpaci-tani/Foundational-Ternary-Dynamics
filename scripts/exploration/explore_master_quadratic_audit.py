@@ -13,7 +13,6 @@ Chain:
   6. Master quadratic: x^2 - K*x + K*G* = 0
   7. Roots: x+, x-
   8. Compare x+ to CODATA alpha^-1
-  9. Compare x- to N_c = 3
 
 For each link: what is [THEOREM] and what is [SELECTION]?
 """
@@ -243,25 +242,6 @@ print(f"  but does not prove it. The identification requires a physical")
 print(f"  mechanism connecting elliptic-curve geometry to gauge couplings.")
 
 # ============================================================
-# LINK 9: Compare to N_c [COMPARISON]
-# ============================================================
-print("\n\n--- Link 9: Comparison to N_c = 3 [COMPARISON] ---\n")
-
-print(f"  x- (FTD)  = {mp.nstr(x_minus, 15)}")
-print(f"  N_c (QCD) = 3 (exact integer)")
-print(f"  Difference = {mp.nstr(x_minus - 3, 10)}")
-print(f"  Relative   = {mp.nstr((x_minus - 3)/3 * 100, 6)}%")
-print()
-print(f"  x- is NOT exactly 3. It is 3.024...")
-print(f"  floor(x-) = 3, which IS N_c.")
-print(f"  The identification is x- -> floor(x-) = N_c. [SELECTION]")
-print()
-print(f"  The 0.024 excess has been interpreted as a topological correction")
-print(f"  (N_c = 3 is the integer part; the fractional part encodes sub-leading")
-print(f"  contributions from the confined phase). But this interpretation")
-print(f"  is [CONJECTURE].")
-
-# ============================================================
 # SUMMARY: The Honest Scorecard
 # ============================================================
 print(f"""
@@ -280,7 +260,6 @@ Link | Content                           | Status    | Confidence
   6  | Quadratic: x^2 - Kx + KG* = 0    | [THEOREM] | 100% (given 5)
   7  | Roots: x+ = {mp.nstr(x_plus, 12)}, x- = {mp.nstr(x_minus, 12)} | [THEOREM] | 100%
   8  | x+ = 1/alpha                      | [SELECTION]| ~95% (1.26 ppm)
-  9  | x- -> N_c = 3                     | [SELECTION]| ~80% (floor function)
 
 WHAT IS PROVEN:
   The mathematical chain from Gamma(1/4) to the roots x+, x- is
@@ -289,7 +268,6 @@ WHAT IS PROVEN:
 WHAT IS SELECTED:
   - The self-consistency prescription F(x) = K(1 - G*/x)  (Link 5)
   - The identification x+ = 1/alpha  (Link 8)
-  - The identification floor(x-) = N_c  (Link 9)
 
 WHAT WOULD MAKE IT A FULL THEOREM:
   1. Derive the self-consistency prescription from the lattice action
@@ -297,9 +275,8 @@ WHAT WOULD MAKE IT A FULL THEOREM:
      consistent with degree-2 constraints)
   2. Derive a physical mechanism that forces x+ = 1/alpha
      (show WHY the partition function root IS the EM coupling)
-  3. Show WHY floor(x-) = N_c (derive the integer-rounding mechanism)
 
-CURRENT STATUS: 6/9 links are [THEOREM]. 3/9 are [SELECTION].
+CURRENT STATUS: 6/8 links are [THEOREM]. 2/8 are [SELECTION].
   The [SELECTION] steps are well-motivated and numerically validated,
   but not rigorously proven from the lattice axioms alone.
 """)

@@ -204,16 +204,13 @@ print()
 
 x_plus = (-b_quad + math.sqrt(discriminant)) / 2.0
 x_minus = (-b_quad - math.sqrt(discriminant)) / 2.0
-N_c_derived = int(math.floor(x_minus))
 
 print(f"  x+ = {x_plus:.15f}")
 print(f"  x- = {x_minus:.15f}")
-print(f"  N_c = floor(x-) = {N_c_derived}")
 print()
 
 suite.assert_close("Vieta: x+ + x- = J*G*^2", x_plus + x_minus, -b_quad, MACHINE_EPS, tag="[THEOREM]")
 suite.assert_close("Vieta: x+ * x- = J*G*^3", x_plus * x_minus, c_quad, MACHINE_EPS, tag="[THEOREM]")
-suite.assert_true("N_c = floor(x-) = 3", N_c_derived == 3, tag="[THEOREM]")
 
 print("=" * 78)
 print("  STEP 11: Cubic potential V(x) [THEOREM]")

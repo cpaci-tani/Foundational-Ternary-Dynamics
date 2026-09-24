@@ -721,7 +721,7 @@ def gen_universality_triptych():
     ax_geom.text(0.5, 0.02,
                  r'$x^2 - 16G^{*2}x + 16G^{*3} = 0$' + '\n\n'
                  r'$x_+ = 137.036 = 1/\alpha$' + '\n'
-                 r'$x_- = 3.024 \approx N_c = \mathbf{3}$' + '\n\n'
+                 r'$x_- = 3.024$' + '\n\n'
                  r'Coefficient $16 = \mathbf{4}^2$',
                  transform=ax_geom.transAxes, fontsize=10, ha='center',
                  va='bottom',

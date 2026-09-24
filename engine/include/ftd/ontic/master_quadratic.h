@@ -5,9 +5,9 @@
  * Contents:
  *   Layer 3:  Master Quadratic (COEFFICIENT, X_PLUS, X_MINUS, X_PLUS_PRECISION)
  *   Layer 3b: Dual-Substrate Decomposition (E_SUM, E_PRODUCT, DELTA_SQUARED, ...)
- *   Layer 3c: Charge-Space Duality (E2_COLOR)
+ *   Layer 3c: Reciprocal Polynomial of the master quadratic
  *   Layer 4:  Framework Integers (N_C, N_GEN, N_F, N_BASE, B_3, N_EFF, D_CONSTRAINT,
- *             DELTA_COLOR, alpha-power ladder)
+ *             alpha-power ladder)
  *   Layer 4b: Neutrino Mixing (PMNS angles from framework integers)
  *
  * Depends on: ontic/lemniscate.h (G_STAR).
@@ -57,7 +57,7 @@ inline constexpr int COEFFICIENT = 16;  // |Aut(E)|² where E: y²=x³-x
 // source-lint CTest (source_lint, cmake/FtdSourceLint.cmake) fails the
 // build's test run if a tree-level constant leaks into a force path.
 inline constexpr double X_PLUS  = 137.0361714582;   // tree-level 1/α (master-quadratic root)
-inline constexpr double X_MINUS = 3.0239639163;      // smaller root (artifact; NOT N_c — retired FTD-0014)
+inline constexpr double X_MINUS = 3.0239639163;      // smaller root
 
 // Precision-corrected 1/α (Layer 7 — see below for c₁..c₄ and ε).
 // This is the value that matches CODATA 2022 to < 0.001 ppt.
@@ -143,38 +143,27 @@ inline constexpr double VACUUM_FRACTION = 1.0 - DELTA_SQUARED;   // 4P/S² ≈ 0
 inline constexpr double OMEGA_LAMBDA_CONJ = 2.0 / 3.0;
 
 // ============================================================================
-// Layer 3c: Charge-Space Duality (DERIV_CHARGE_QUARTIC_FROM_GSTAR.md)
+// Layer 3c: Reciprocal Polynomial
 // ============================================================================
-// Substituting e² = 1/x into the master quadratic transforms it into
-// the charge quartic:
-//   16·G*³·e⁴ - 16·G*²·e² + 1 = 0           [THEOREM]
+// Substituting u = 1/x into the master quadratic gives
+//   16·G*³·u² - 16·G*²·u + 1 = 0            [THEOREM]
 //
 // This is the reciprocal polynomial of the master quadratic. Its roots
-// are e²_EM = 1/x₊ = α  and  e²_color = 1/x₋.
+// are 1/x₊ and 1/x₋.
 //
-// Vieta sum:    α + e²_C = 1/G*              (inverse coupling sum)
-// Vieta product: α · e²_C = 1/(16·G*³)      (action-scale product)
-
-inline constexpr double E2_COLOR = 1.0 / X_MINUS_PRECISION;   // e²_C ≈ 0.3307 (Vieta-consistent)
-// Note: e²_EM = ALPHA (defined in Layer 5, uses X_PLUS_PRECISION)
-// Vieta sum:    ALPHA + E2_COLOR = 1/G_STAR    (exact by construction)
-// Vieta product: ALPHA * E2_COLOR = 1/(16·G*³) (exact by construction)
-//
-// Legacy tree-level value available as 1.0/X_MINUS for reference.
+// Vieta sum:     1/x₊ + 1/x₋ = 1/G*         (harmonic identity)
+// Vieta product: 1/(x₊·x₋) = 1/(16·G*³)
 
 // ============================================================================
 // Layer 4: Framework Integers
 // ============================================================================
-// N_c = 3 is the framework's single free integer. It is sourced INDEPENDENTLY
-// from lattice topology (see docs/theory/03_derivations/standard_model/DERIV_NC_FROM_TOPOLOGY.md),
-// NOT from the smaller root x₋. The earlier x₋ ↔ N_c identification is RETIRED
-// (LEDGER row FTD-0014 removed in ca7eb61); x₋ ≈ 3.024 is a mathematical
-// artifact of the quadratic (0.80% from 3), not the origin of N_c.
+// N_c = 3 is the framework's single free integer. It is sourced from lattice
+// topology (see docs/theory/03_derivations/standard_model/DERIV_NC_FROM_TOPOLOGY.md).
 //
 // Given N_c = 3 from topology, the remaining integers follow by the integer
 // reduction theorem below:
 //
-//   N_c    = 3                (number of color charges — from topology, not x₋)
+//   N_c    = 3                (number of color charges, from topology)
 //   N_gen  = N_c = 3           (number of fermion generations)
 //   N_f    = 2·N_gen = 6       (number of quark flavors)
 //   b₃     = (11N_c-2N_f)/3 = 7  (QCD one-loop beta coefficient)
@@ -190,21 +179,6 @@ inline constexpr int N_BASE    = 4;
 inline constexpr int B_3       = 7;
 inline constexpr int N_EFF     = 13;
 inline constexpr int D_CONSTRAINT = 47;
-
-// COLOR EXCESS: fractional deviation of x₋ from N_c [THEOREM — algebraic]
-//   δ_c = x₋ − N_c = 16G*³·α − 3 = 0.023963916339...
-//
-// Forced by Vieta: x₊·x₋ = 16G*³, so x₋ = 16G*³/x₊ = 16G*³·α.
-// If x₋ were exactly 3, G* would need to be 2.93469... (not 2.95868).
-// The excess measures geometric frustration between transcendental G* and integer N_c.
-//
-// Candidate closed forms (none exact):
-//   δ_c ≈ 1/42 = 1/(2·N_c·b₃)     (0.65% error)  [OPEN]
-//   δ_c ≈ π·α                       (4.3% error)   [OPEN]
-//   δ_c ≈ 2·α_s/(3π)               (5.1% error)   [OPEN]
-//
-// Exact: δ_c = 8G*² − 4G*^(3/2)·√(4G*−1) − 3
-inline constexpr double DELTA_COLOR = 0.023963916339021004;
 
 // INTEGER REDUCTION THEOREM (DERIV_PION_MASS_FROM_GSTAR.md):
 // All four integers follow from N_c = 3 alone:

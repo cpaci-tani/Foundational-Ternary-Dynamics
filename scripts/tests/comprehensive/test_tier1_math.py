@@ -185,14 +185,6 @@ class TestMasterQuadratic:
         _, _, x_minus = self._roots_mpmath()
         assert abs(x_minus - 3.024) < 0.001, f"x- = {x_minus}"
 
-    def test_floor_x_minus_equals_3(self):
-        """floor(x-) = 3 (claimed N_c)."""
-        if not HAS_MPMATH:
-            pytest.skip("mpmath required")
-
-        _, _, x_minus = self._roots_mpmath()
-        assert int(mpmath.floor(x_minus)) == 3
-
 
 # =============================================================================
 # Test 1.4: Epsilon Computation

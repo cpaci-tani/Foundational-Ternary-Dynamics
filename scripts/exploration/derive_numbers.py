@@ -44,7 +44,7 @@ x_plus = (16*G_STAR**2 + np.sqrt(disc)) / 2
 x_minus = (16*G_STAR**2 - np.sqrt(disc)) / 2
 
 # Framework integers (derived, not input)
-Nc = int(np.floor(x_minus))         # 3
+Nc = 3
 Nb = 4                               # from |Aut(E_i)| = 4
 b3_derived = int(round((11*Nc - 2*6)/3))  # QCD beta: (11*3 - 12)/3 = 7
 Neff = 13                            # Fibonacci F_7 (needs separate derivation)
@@ -317,7 +317,6 @@ print('  WHAT THE CUBE ACTUALLY DERIVES (without importing standard physics):')
 print()
 print('  From G* + {16} alone:')
 print('    1/alpha = %.6f (0.000%% from CODATA with 4-term formula)' % x_plus)
-print('    N_c = floor(x-) = %d' % Nc)
 print()
 print('  From framework integers {3, 4, 7, 13}:')
 print('    sin^2(theta_W) = 3/13 = %.6f (0.19%% from expt)' % sin2w_derived)

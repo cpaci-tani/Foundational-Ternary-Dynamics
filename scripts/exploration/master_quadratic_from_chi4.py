@@ -38,7 +38,7 @@ print(f"  A = 16 G*^2 (sum)      = {A_mq}")
 print(f"  B = 16 G*^3 (product)  = {B_mq}")
 print(f"  Discriminant            = {disc}")
 print(f"  x_+ (= alpha^-1?)       = {x_plus}")
-print(f"  x_- (= N_c?)            = {x_minus}")
+print(f"  x_-                     = {x_minus}")
 print()
 
 

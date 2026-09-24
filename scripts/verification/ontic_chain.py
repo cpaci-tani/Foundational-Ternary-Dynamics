@@ -462,10 +462,8 @@ class OnticChain:
     # ── Layer 4: Framework Integers ──────────────────────────────────────
 
     def _layer_4(self):
-        x_minus = self._v("X_MINUS")
-
         D_spatial = 3
-        N_c = int(math.floor(x_minus))  # = 3
+        N_c = 3
         N_gen = N_c
         N_f = 2 * N_gen
         N_base = 2 ** ((D_spatial + 1) // 2)  # = 4
@@ -475,7 +473,7 @@ class OnticChain:
 
         for name, symbol, val, formula, deps in [
             ("D_SPATIAL", "D", D_spatial, "3 (axiom: spatial dimensions)", []),
-            ("N_C", "N_c", N_c, "⌊x₋⌋ = 3 (color charges)", ["X_MINUS"]),
+            ("N_C", "N_c", N_c, "3 (color charges)", []),
             ("N_GEN", "N_gen", N_gen, "N_c = 3 (fermion generations)", ["N_C"]),
             ("N_F", "N_f", N_f, "2·N_gen = 6 (quark flavors)", ["N_GEN"]),
             ("N_BASE", "N_base", N_base, "2^((D+1)/2) = 4 (spinor dimension)", ["D_SPATIAL"]),

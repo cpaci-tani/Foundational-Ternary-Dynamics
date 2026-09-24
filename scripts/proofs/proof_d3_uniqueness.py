@@ -338,8 +338,8 @@ for D in range(2, 7):
     if delta > 0:
         xp = (k + math.sqrt(delta)) / 2.0
         xm = (k - math.sqrt(delta)) / 2.0
-        nc = int(math.floor(xm))
-        print(f"    D={D}: G*={g:.4f}, x+={xp:.2f}, x-={xm:.4f}, N_c=floor(x-)={nc}")
+        fl = int(math.floor(xm))
+        print(f"    D={D}: G*={g:.4f}, x+={xp:.2f}, x-={xm:.4f}, floor(x-)={fl}")
     else:
         print(f"    D={D}: G*={g:.4f}, Delta < 0, no real roots")
 
@@ -347,7 +347,7 @@ print()
 
 # The key discriminating features of D=3:
 # 1. W_3 is in the exact range where G*_3 > 1 (viable) but not too large
-# 2. floor(x_-) = 3 = D (self-referential: spatial dimension equals color number)
+# 2. floor(x_-) = 3 = D (self-referential)
 # 3. D = 3 is the unique dimension where the lattice can support
 #    both Coulomb and confined phases (compact U(1) in 3+1D)
 
@@ -363,7 +363,7 @@ suite.assert_true(
 )
 
 # Check which dimensions have floor(x_-) = D
-d_equals_nc = []
+d_equals_floor = []
 for D in range(2, 7):
     if W[D] == float('inf'):
         continue
@@ -373,14 +373,14 @@ for D in range(2, 7):
     if delta > 0:
         xm = (k - math.sqrt(delta)) / 2.0
         if int(math.floor(xm)) == D:
-            d_equals_nc.append(D)
+            d_equals_floor.append(D)
 
-print(f"  Dimensions where floor(x_-) = D: {d_equals_nc}")
+print(f"  Dimensions where floor(x_-) = D: {d_equals_floor}")
 print()
 
 suite.assert_true(
     "D=3 is the unique dimension where floor(x_-) = D",
-    d_equals_nc == [3],
+    d_equals_floor == [3],
     tag="[THEOREM]"
 )
 
@@ -410,7 +410,7 @@ print()
 
 # Note: D=2 and some D>=4 may also have Delta > 0 (depending on W_D values).
 # The STRONGEST uniqueness claim is: D=3 is the only dimension where
-# floor(x_-) = D, providing the self-referential identity N_c = D.
+# floor(x_-) = D.
 # This is a weaker claim than "only D=3 has two positive roots."
 
 if len(viable_dimensions) == 1:

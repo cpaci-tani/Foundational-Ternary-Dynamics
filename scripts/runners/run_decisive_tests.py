@@ -137,10 +137,6 @@ def run_phase1_infrastructure():
     alpha_ppm = ppm_error(ALPHA_INV, Experimental.alpha_inv)
     suite.add(TestResult("Alpha accuracy < 10 ppm", alpha_ppm < 10, alpha_ppm, 10))
 
-    # Test N_c floor
-    n_c_floor = int(np.floor(X_MINUS))
-    suite.add(TestResult("floor(x-) = 3 (N_c)", n_c_floor == 3, n_c_floor, 3))
-
     # Framework integers consistency
     fib_check = (N_eff == 13) and (b_3 + 2*N_c == N_eff)  # Fibonacci constraint
     suite.add(TestResult("Framework integer constraint", fib_check,

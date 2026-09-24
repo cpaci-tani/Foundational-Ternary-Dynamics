@@ -550,10 +550,6 @@ print("  If S_eff had cubic term ~s^3: gap equation could be degree 3")
 print("  If S_eff had quartic term ~s^4: gap equation could be degree 4")
 print("  But S_eff is EXACTLY degree 2 => gap equation is AT MOST degree 2")
 print()
-print("  Combined with the requirement for TWO physical solutions")
-print("  (EM coupling and QCD coupling), degree 2 is both the maximum")
-print("  AND the minimum. The gap equation MUST be quadratic.")
-print()
 
 # The at-most-quadratic constraint is verified by the fact that our
 # explicitly computed S_eff on L=2 is EXACTLY quadratic (zero residual).
@@ -589,7 +585,7 @@ disc = K**2 - 4*K*G_STAR
 xp_check = (K + math.sqrt(disc)) / 2.0
 xm_check = (K - math.sqrt(disc)) / 2.0
 print(f"    x+ = {xp_check:.10f}  (1/alpha = {X_PLUS:.10f})")
-print(f"    x- = {xm_check:.10f}  (N_c = {X_MINUS:.10f})")
+print(f"    x- = {xm_check:.10f}  (X_MINUS = {X_MINUS:.10f})")
 
 suite.assert_close(
     "Gap equation root x+ = 1/alpha = 137.036",
@@ -597,7 +593,7 @@ suite.assert_close(
     tag="[THEOREM]"
 )
 suite.assert_close(
-    "Gap equation root x- = N_c = 3.024",
+    "Gap equation root x- = 3.024",
     xm_check, X_MINUS, MACHINE_EPS,
     tag="[THEOREM]"
 )

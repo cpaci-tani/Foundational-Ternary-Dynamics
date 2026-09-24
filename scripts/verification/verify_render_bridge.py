@@ -119,7 +119,6 @@ def test_derivation_chain():
           f"Product = {x_plus * x_minus:.10f}, 16*G*^3 = {16*c**3:.10f}")
 
     # Sub-test 1i: independently selected/structurally sourced integers.
-    # The historical identification N_c=floor(x_-) is retired.
     N_c = 3
 
     N_gen = N_c

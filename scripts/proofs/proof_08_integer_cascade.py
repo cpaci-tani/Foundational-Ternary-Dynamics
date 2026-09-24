@@ -1,9 +1,9 @@
 """
-Proof 08: Integer Cascade — {3, 4, 7, 13} from x₋ and D=3
-=============================================================
+Proof 08: Integer Cascade: {3, 4, 7, 13} from N_c = 3 and D=3
+=================================================================
 
 CLAIM [THEOREM]: All framework integers {N_c=3, N_base=4, b_3=7, N_eff=13}
-flow deterministically from x₋ = 3.024... and the axiom D = 3.
+flow deterministically from N_c = 3 and the axiom D = 3.
 
 These integers satisfy six interlocking constraints simultaneously —
 a self-consistency structure that is unlikely to be coincidental.
@@ -11,7 +11,7 @@ a self-consistency structure that is unlikely to be coincidental.
 
 import math
 from .common import (ProofSuite, MACHINE_EPS, PPM_1, PERCENT_5,
-                     X_MINUS, D_SPATIAL, N_C, N_GEN, N_F, N_BASE,
+                     D_SPATIAL, N_C, N_GEN, N_F, N_BASE,
                      B_3, N_EFF, D_CONSTRAINT)
 
 
@@ -50,18 +50,14 @@ def lucas(n: int) -> int:
 
 
 def run() -> ProofSuite:
-    s = ProofSuite("Proof 08: Integer Cascade ({3,4,7,13} from x₋)")
+    s = ProofSuite("Proof 08: Integer Cascade ({3,4,7,13} from N_c and D)")
 
-    xm = X_MINUS  # ≈ 3.0239639163
     D = D_SPATIAL  # = 3
 
     # =========================================================================
-    # Step 1: N_c = floor(x₋) = 3
+    # Step 1: N_c = 3
     # =========================================================================
-    Nc = int(math.floor(xm))
-
-    s.assert_true("N_c = floor(x₋) = floor(3.024) = 3", Nc == 3, tag="[THEOREM]")
-    s.assert_true("N_c matches ontic.h", Nc == N_C, tag="[THEOREM]")
+    Nc = N_C
 
     # =========================================================================
     # Step 2: N_gen = N_c = 3 (one generation per color)
@@ -195,44 +191,8 @@ def run() -> ProofSuite:
     s.assert_true("N_c² - 1 = 8 (SU(3) generators)", Nc**2 - 1 == 8, tag="[THEOREM]")
 
     # =========================================================================
-    # Stability test: what if x₋ were different?
+    # Uniqueness of N_c = 3 within the cascade
     # =========================================================================
-    # x₋ = 2.9 → N_c = 2 → N_f = 4 → b_3 = (22-8)/3 = 14/3 (non-integer!)
-    xm_low = 2.9
-    Nc_low = int(math.floor(xm_low))  # = 2
-    Nf_low = 2 * Nc_low  # = 4
-    b3_low_num = 11 * Nc_low - 2 * Nf_low  # = 22 - 8 = 14
-    b3_low_int = b3_low_num % 3 == 0
-
-    s.assert_true(
-        "x₋=2.9 → N_c=2 → b_3=(22-8)/3=14/3 (non-integer! framework breaks)",
-        not b3_low_int,
-        tag="[THEOREM]"
-    )
-
-    # x₋ = 3.1 still works (same floor)
-    xm_high = 3.1
-    Nc_high = int(math.floor(xm_high))  # = 3
-
-    s.assert_true(
-        "x₋=3.1 → N_c=3 (same as x₋=3.024; robust to perturbation)",
-        Nc_high == 3,
-        tag="[THEOREM]"
-    )
-
-    # x₋ = 4.0 → N_c = 4 → N_f = 8 → b_3 = (44-16)/3 = 28/3 (non-integer!)
-    xm_4 = 4.0
-    Nc_4 = int(math.floor(xm_4))  # = 4
-    Nf_4 = 2 * Nc_4  # = 8
-    b3_4_num = 11 * Nc_4 - 2 * Nf_4  # = 44 - 16 = 28
-    b3_4_int = b3_4_num % 3 == 0
-
-    s.assert_true(
-        "x₋=4.0 → N_c=4 → b_3=28/3 (non-integer! only N_c=3 works)",
-        not b3_4_int,
-        tag="[THEOREM]"
-    )
-
     # N_c=3 is the unique value where b_3 is a positive integer,
     # asymptotic freedom holds (b_3 > 0), AND the full integer cascade
     # (Fibonacci-Tribonacci crossover, additive closure, divisor sums) is satisfied:

@@ -309,7 +309,7 @@ print(f"  Coefficient 16 = |Aut(E_i)|^2 = |{{1, -1, i, -i}}|^2 = 4^2")
 print(f"  These are the 4 units of Z[i] — the rotational symmetries.")
 print()
 print(f"  Root x+ = {137.036:.3f} = 1/alpha (fine structure constant)")
-print(f"  Root x- = {3.024:.3f} ~ 3 = N_c (color number)")
+print(f"  Root x- = {3.024:.3f}")
 print()
 
 # The product of roots: x+ * x- = 16*G*^3

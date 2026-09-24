@@ -979,7 +979,7 @@ x_plus = (16 * G_star**2 + mpmath.sqrt(disc)) / 2
 x_minus = (16 * G_star**2 - mpmath.sqrt(disc)) / 2
 
 print(f"    x_+ = {short(x_plus)} (= 1/alpha)")
-print(f"    x_- = {short(x_minus)} (= N_c)")
+print(f"    x_- = {short(x_minus)}")
 
 
 # ============================================================================

@@ -3,53 +3,53 @@
   "generated_by": "engine/tools/build_file_manifest.py",
   "note": "Mechanical per-file catalog. Conceptual docs: engine/ARCHITECTURE.md, CALLSTACKS.md, SCENARIO_ARCHITECTURE.md, SPEC_ENGINE.md, engine/docs/ENGINE_CODE_MAP.md.",
   "totals": {
-    "files": 2913,
-    "loc": 793929
+    "files": 3136,
+    "loc": 847686
   },
   "subsystems": {
     "tests": {
-      "files": 837,
-      "loc": 253038
+      "files": 840,
+      "loc": 253150
     },
     "other": {
-      "files": 846,
-      "loc": 178518
+      "files": 854,
+      "loc": 179240
     },
     "web/js-toplevel": {
-      "files": 67,
-      "loc": 80535
+      "files": 138,
+      "loc": 114624
     },
     "src/core": {
       "files": 199,
-      "loc": 69412
+      "loc": 69570
     },
     "web/tests": {
-      "files": 237,
-      "loc": 52191
+      "files": 341,
+      "loc": 66356
     },
     "include": {
-      "files": 306,
-      "loc": 39886
+      "files": 313,
+      "loc": 40457
     },
     "web/scale0": {
-      "files": 86,
-      "loc": 26746
+      "files": 101,
+      "loc": 27646
     },
     "cuda": {
-      "files": 30,
-      "loc": 18436
+      "files": 32,
+      "loc": 18608
     },
     "web/ui": {
-      "files": 91,
-      "loc": 13817
+      "files": 100,
+      "loc": 14847
     },
     "web/bridge": {
       "files": 32,
-      "loc": 13686
+      "loc": 14443
     },
     "web/viewport": {
       "files": 26,
-      "loc": 12102
+      "loc": 12130
     },
     "src/scenarios": {
       "files": 8,
@@ -57,15 +57,15 @@
     },
     "web/scale1": {
       "files": 20,
-      "loc": 4524
+      "loc": 4533
     },
     "wasm": {
       "files": 5,
-      "loc": 3828
+      "loc": 3867
     },
     "web/scale2": {
       "files": 14,
-      "loc": 3715
+      "loc": 3719
     },
     "sim": {
       "files": 16,
@@ -73,7 +73,7 @@
     },
     "tools": {
       "files": 7,
-      "loc": 1879
+      "loc": 1877
     },
     "web/config": {
       "files": 6,
@@ -84,8 +84,12 @@
       "loc": 1800
     },
     "web/scale5": {
-      "files": 8,
+      "files": 9,
       "loc": 1726
+    },
+    "web/other": {
+      "files": 9,
+      "loc": 1678
     },
     "web/inspector": {
       "files": 9,
@@ -93,19 +97,15 @@
     },
     "web/atlas": {
       "files": 9,
-      "loc": 1386
+      "loc": 1462
     },
     "web/scale4": {
       "files": 6,
-      "loc": 1045
-    },
-    "web/other": {
-      "files": 7,
-      "loc": 959
+      "loc": 1081
     },
     "web/scale3": {
       "files": 9,
-      "loc": 903
+      "loc": 897
     },
     "src/atom": {
       "files": 3,
@@ -117,15 +117,15 @@
     },
     "vendor": {
       "files": 7,
-      "loc": 477
-    },
-    "web/core": {
-      "files": 6,
-      "loc": 348
+      "loc": 497
     },
     "web/telemetry": {
       "files": 3,
-      "loc": 315
+      "loc": 435
+    },
+    "web/core": {
+      "files": 7,
+      "loc": 382
     },
     "web/scales-shared": {
       "files": 1,
@@ -133,10 +133,32 @@
     },
     "web/scale6": {
       "files": 1,
-      "loc": 187
+      "loc": 191
     }
   },
   "files": [
+    {
+      "path": "engine/ai-proxy/src/index.js",
+      "lang": "js",
+      "loc": 120,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Inject fetch only for offline transport tests.",
+      "symbols": [
+        "validateInput()",
+        "normalizeAnswer()",
+        "createHandler()"
+      ]
+    },
+    {
+      "path": "engine/ai-proxy/test/proxy.test.mjs",
+      "lang": "js",
+      "loc": 60,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "",
+      "symbols": []
+    },
     {
       "path": "engine/cuda/atom_engine_gpu.cu",
       "lang": "cuda",
@@ -144,6 +166,15 @@
       "subsystem": "cuda",
       "primary": true,
       "purpose": "GPU AtomEngine backend (Wave 5.3 Phase 1).",
+      "symbols": []
+    },
+    {
+      "path": "engine/cuda/cuda_curl_index_helpers.cuh",
+      "lang": "cuda-header",
+      "loc": 95,
+      "subsystem": "cuda",
+      "primary": true,
+      "purpose": "Shared device-side periodic-index and staggered-lattice curl helpers for the EFT CUDA observer translation units.",
       "symbols": []
     },
     {
@@ -301,6 +332,17 @@
       "purpose": "@file dynamical_state_digest.cu @brief Device-resident canonical Scale-0 state reduction.",
       "symbols": [
         "DigestDeviceView"
+      ]
+    },
+    {
+      "path": "engine/cuda/flux_sectors.cu",
+      "lang": "cuda",
+      "loc": 77,
+      "subsystem": "cuda",
+      "primary": true,
+      "purpose": "",
+      "symbols": [
+        "Accumulator"
       ]
     },
     {
@@ -506,7 +548,7 @@
     {
       "path": "engine/include/ftd/backend.h",
       "lang": "c-header",
-      "loc": 276,
+      "loc": 279,
       "subsystem": "include",
       "primary": true,
       "purpose": "@file backend.h @brief Backend abstraction \u2014 collapses #ifdef FTD_ENABLE_CUDA proliferation.",
@@ -621,7 +663,7 @@
     {
       "path": "engine/include/ftd/constants.h",
       "lang": "c-header",
-      "loc": 577,
+      "loc": 574,
       "subsystem": "include",
       "primary": true,
       "purpose": "FTD Render-Bridge Constants Engine-facing interface to the ontic constants registry.",
@@ -856,6 +898,15 @@
       ]
     },
     {
+      "path": "engine/include/ftd/eft/canonical_pair_ops.h",
+      "lang": "c-header",
+      "loc": 53,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "@file canonical_pair_ops.h @brief Shared elementary operations on ftd::eft::CanonicalCarrierPair.",
+      "symbols": []
+    },
+    {
       "path": "engine/include/ftd/eft/canonical_source_centered_gauss_gate.h",
       "lang": "c-header",
       "loc": 186,
@@ -1016,6 +1067,15 @@
         "CommonRelativeConnectionStep",
         "CommonRelativeConnectionResult"
       ]
+    },
+    {
+      "path": "engine/include/ftd/eft/compatibility_analysis_helpers.h",
+      "lang": "c-header",
+      "loc": 121,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "@file compatibility_analysis_helpers.h @brief Helpers shared by the contact-carrier compatibility, energy- obstruction and implicit-atomic-endpoint analyzers.",
+      "symbols": []
     },
     {
       "path": "engine/include/ftd/eft/component_aware_radial_field_profile.h",
@@ -2093,6 +2153,15 @@
       ]
     },
     {
+      "path": "engine/include/ftd/eft/matched_face_flux_ops.h",
+      "lang": "c-header",
+      "loc": 66,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "@file matched_face_flux_ops.h @brief Shared elementwise operations on the matched face flux container.",
+      "symbols": []
+    },
+    {
       "path": "engine/include/ftd/eft/matched_face_momentum_transaction.h",
       "lang": "c-header",
       "loc": 151,
@@ -2102,6 +2171,15 @@
       "symbols": [
         "MatchedFaceMomentumTransaction"
       ]
+    },
+    {
+      "path": "engine/include/ftd/eft/matched_field_helpers.h",
+      "lang": "c-header",
+      "loc": 91,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "@file matched_field_helpers.h @brief Shared validity/reduction helpers for matched face/edge fields.",
+      "symbols": []
     },
     {
       "path": "engine/include/ftd/eft/matched_gauss_transport.h",
@@ -2705,6 +2783,15 @@
       ]
     },
     {
+      "path": "engine/include/ftd/eft/quadratic_coat_common.h",
+      "lang": "c-header",
+      "loc": 84,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "@file quadratic_coat_common.h @brief Shared periodic-index and worldline-break helpers for the quadratic coupling-coat observers.",
+      "symbols": []
+    },
+    {
       "path": "engine/include/ftd/eft/quadratic_coat_composite_peierls.h",
       "lang": "c-header",
       "loc": 87,
@@ -2995,6 +3082,15 @@
       "symbols": [
         "SplinePoyntingMomentumResult"
       ]
+    },
+    {
+      "path": "engine/include/ftd/eft/square_matrix_algebra.h",
+      "lang": "c-header",
+      "loc": 130,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "@file square_matrix_algebra.h @brief Fixed-size dense square-matrix helpers (multiply, transpose, subtract, max-abs, Gauss-Jordan rank, partial-pivot determinant) shared by the observer-only genesi...",
+      "symbols": []
     },
     {
       "path": "engine/include/ftd/eft/staggered_current_split_compatibility.h",
@@ -3344,6 +3440,18 @@
       ]
     },
     {
+      "path": "engine/include/ftd/flux_sectors.h",
+      "lang": "c-header",
+      "loc": 46,
+      "subsystem": "include",
+      "primary": true,
+      "purpose": "",
+      "symbols": [
+        "FluxSector",
+        "FluxSectors"
+      ]
+    },
+    {
       "path": "engine/include/ftd/gauge_field.h",
       "lang": "c-header",
       "loc": 54,
@@ -3397,7 +3505,7 @@
     {
       "path": "engine/include/ftd/gpu_engine.h",
       "lang": "c-header",
-      "loc": 550,
+      "loc": 551,
       "subsystem": "include",
       "primary": true,
       "purpose": "GPU-Accelerated FTD Engine Drop-in alternative to RenderBridge that executes the tick cycle on NVIDIA GPU via CUDA.",
@@ -3626,7 +3734,7 @@
     {
       "path": "engine/include/ftd/ontic/gauge_couplings.h",
       "lang": "c-header",
-      "loc": 290,
+      "loc": 286,
       "subsystem": "include",
       "primary": true,
       "purpose": "ontic/gauge_couplings.h \u2014 Layers 5, 5b, 7 and simulation parameters.",
@@ -3644,7 +3752,7 @@
     {
       "path": "engine/include/ftd/ontic/master_quadratic.h",
       "lang": "c-header",
-      "loc": 268,
+      "loc": 242,
       "subsystem": "include",
       "primary": true,
       "purpose": "ontic/master_quadratic.h \u2014 Layers 3, 3b, 3c, 4, 4b of the ontic chain.",
@@ -3721,7 +3829,7 @@
     {
       "path": "engine/include/ftd/render_bridge.h",
       "lang": "c-header",
-      "loc": 829,
+      "loc": 830,
       "subsystem": "include",
       "primary": true,
       "purpose": "Render-Bridge Tick Engine Implements the Scale-0 lattice tick dynamics with staged read/write loops and toggle-gated extension phases.",
@@ -4104,7 +4212,7 @@
     {
       "path": "engine/include/ftd/ws_command_validation.h",
       "lang": "c-header",
-      "loc": 130,
+      "loc": 138,
       "subsystem": "include",
       "primary": true,
       "purpose": "",
@@ -4165,6 +4273,50 @@
       "purpose": "Minimal SHA-1 (RFC 3174) Header-only, stdlib-only.",
       "symbols": [
         "SHA1"
+      ]
+    },
+    {
+      "path": "engine/mcp/relay.js",
+      "lang": "js",
+      "loc": 89,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Credentials are process-memory values; never include them in errors.",
+      "symbols": [
+        "RelayClient",
+        "readConfig()",
+        "CALL_TIMEOUT_MS"
+      ]
+    },
+    {
+      "path": "engine/mcp/server.mjs",
+      "lang": "js",
+      "loc": 62,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/mcp/test/server.test.js",
+      "lang": "js",
+      "loc": 199,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/mcp/tools.js",
+      "lang": "js",
+      "loc": 82,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Public MCP schemas.",
+      "symbols": [
+        "validateArguments()",
+        "validateToolArguments()",
+        "TOOLS"
       ]
     },
     {
@@ -5497,7 +5649,7 @@
     {
       "path": "engine/src/backend.cpp",
       "lang": "cpp",
-      "loc": 658,
+      "loc": 665,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "@file backend.cpp @brief Backend implementations \u2014 CpuBackend + GpuBackend.",
@@ -5634,11 +5786,13 @@
     {
       "path": "engine/src/diagnostics_compute.cpp",
       "lang": "cpp",
-      "loc": 263,
+      "loc": 307,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "Diagnostics \u2014 implementation.",
-      "symbols": []
+      "symbols": [
+        "Chunk"
+      ]
     },
     {
       "path": "engine/src/eft/accelerated_coat_spacetime_current.cpp",
@@ -7247,7 +7401,7 @@
     {
       "path": "engine/src/lagrangian.cpp",
       "lang": "cpp",
-      "loc": 178,
+      "loc": 232,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -7274,7 +7428,7 @@
     {
       "path": "engine/src/ontic_audit.cpp",
       "lang": "cpp",
-      "loc": 471,
+      "loc": 451,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "",
@@ -7305,11 +7459,13 @@
     {
       "path": "engine/src/render_bridge.cpp",
       "lang": "cpp",
-      "loc": 1549,
+      "loc": 1590,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "Scale-0 floating-point reference engine.",
-      "symbols": []
+      "symbols": [
+        "Chunk"
+      ]
     },
     {
       "path": "engine/src/render_bridge_phases/phase_forces.cpp",
@@ -7554,7 +7710,7 @@
     {
       "path": "engine/src/ws_server_commands.cpp",
       "lang": "cpp",
-      "loc": 1125,
+      "loc": 1155,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "@file ws_server_commands.cpp @brief Resource policy, transactional bridge changes, and command dispatch.",
@@ -7585,11 +7741,22 @@
     {
       "path": "engine/src/ws_server_telemetry.cpp",
       "lang": "cpp",
-      "loc": 591,
+      "loc": 593,
       "subsystem": "src/core",
       "primary": true,
       "purpose": "@file ws_server_telemetry.cpp @brief Telemetry, inspection, and scalar JSON serialization.",
       "symbols": []
+    },
+    {
+      "path": "engine/strict/campaign_scaffolding.h",
+      "lang": "c-header",
+      "loc": 98,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Shared run scaffolding for the registered recovery campaign runners (recovery/, recovery_hydro/, recovery_mixed/).",
+      "symbols": [
+        "ManifestRow"
+      ]
     },
     {
       "path": "engine/strict/carrier_observer.cpp",
@@ -8026,6 +8193,17 @@
         "hydroDecayFit()",
         "hydroObservationValidity()",
         "hydroFailureValidity()"
+      ]
+    },
+    {
+      "path": "engine/strict/web/hydro/least-squares.js",
+      "lang": "js",
+      "loc": 12,
+      "subsystem": "other",
+      "primary": true,
+      "purpose": "Ordinary least-squares of y on x.",
+      "symbols": [
+        "leastSquares()"
       ]
     },
     {
@@ -9132,7 +9310,7 @@
     {
       "path": "engine/tests/campaign_integer_sweep.cpp",
       "lang": "cpp",
-      "loc": 266,
+      "loc": 255,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Campaign: Integer Uniqueness Sweep THE critical test for scientific credibility.",
@@ -9645,7 +9823,7 @@
     {
       "path": "engine/tests/campaign_novel_predictions.cpp",
       "lang": "cpp",
-      "loc": 248,
+      "loc": 228,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Campaign: Novel Predictions & Falsifiability (Phase 10) Tests the sharpest predictions of FTD that can be falsified by experiment.",
@@ -12337,6 +12515,15 @@
       ]
     },
     {
+      "path": "engine/tests/test_diagnostics_parallel.cpp",
+      "lang": "cpp",
+      "loc": 116,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/tests/test_diagonal_endpoint_action_domain.cpp",
       "lang": "cpp",
       "loc": 235,
@@ -12760,7 +12947,7 @@
     {
       "path": "engine/tests/test_falsifiability.cpp",
       "lang": "cpp",
-      "loc": 288,
+      "loc": 249,
       "subsystem": "tests",
       "primary": false,
       "purpose": "Falsifiability Tests: Negative-Result Validation PURPOSE: Demonstrate that FTD is CONSTRAINED, not arbitrary.",
@@ -12946,6 +13133,15 @@
       "subsystem": "tests",
       "primary": false,
       "purpose": "@file test_flux_propagator.cpp @brief Phase-4g: measure the 2-point flux correlator on the Langevin ensemble and classify as bosonic-vector vs fermionic/anomalous.",
+      "symbols": []
+    },
+    {
+      "path": "engine/tests/test_flux_sectors.cpp",
+      "lang": "cpp",
+      "loc": 66,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -13637,6 +13833,15 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/test_gravity_metric_agg_parallel.cpp",
+      "lang": "cpp",
+      "loc": 82,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/tests/test_hamiltonian_ternary_quarter_turn_actuator.cpp",
       "lang": "cpp",
       "loc": 153,
@@ -14007,6 +14212,15 @@
       "symbols": []
     },
     {
+      "path": "engine/tests/test_lagrangian_global_gradient.cpp",
+      "lang": "cpp",
+      "loc": 166,
+      "subsystem": "tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/tests/test_langevin_equipartition.cpp",
       "lang": "cpp",
       "loc": 183,
@@ -14321,23 +14535,11 @@
     {
       "path": "engine/tests/test_master_quadratic_identities.cpp",
       "lang": "cpp",
-      "loc": 150,
+      "loc": 145,
       "subsystem": "tests",
       "primary": false,
       "purpose": "@file test_master_quadratic_identities.cpp @brief Numerical verification of the bare algebraic content of the master quadratic.",
       "symbols": []
-    },
-    {
-      "path": "engine/tests/test_master_quadratic_uniqueness.cpp",
-      "lang": "cpp",
-      "loc": 266,
-      "subsystem": "tests",
-      "primary": false,
-      "purpose": "@file test_master_quadratic_uniqueness.cpp @brief Program E \u2014 Uniqueness of the master quadratic as minimal polynomial.",
-      "symbols": [
-        "Candidate",
-        "Match"
-      ]
     },
     {
       "path": "engine/tests/test_matched_action_normalization.cpp",
@@ -16755,7 +16957,7 @@
     {
       "path": "engine/tests/test_ws_command_validation.cpp",
       "lang": "cpp",
-      "loc": 153,
+      "loc": 176,
       "subsystem": "tests",
       "primary": false,
       "purpose": "",
@@ -24251,7 +24453,7 @@
     {
       "path": "engine/tools/audit_ontic_phase0.py",
       "lang": "python",
-      "loc": 630,
+      "loc": 628,
       "subsystem": "tools",
       "primary": true,
       "purpose": "Phase 0 Ontic Derivation Chain Audit ===================================== Independent verification of every constant in engine/include/ftd/ontic.h using mpmath high-precision arithmetic.",
@@ -24384,13 +24586,31 @@
     {
       "path": "engine/wasm/ftd_wasm.cpp",
       "lang": "cpp",
-      "loc": 1510,
+      "loc": 1549,
       "subsystem": "wasm",
       "primary": true,
       "purpose": "@file ftd_wasm.cpp @brief Emscripten Embind bindings for the FTD engine \u2014 shared helpers.",
       "symbols": [
         "ParticleRef",
         "PairRef"
+      ]
+    },
+    {
+      "path": "engine/web/ai_service.py",
+      "lang": "python",
+      "loc": 210,
+      "subsystem": "web/other",
+      "primary": true,
+      "purpose": "Loopback AI transport and allowlisted immutable local artifacts.",
+      "symbols": [
+        "_send()",
+        "_local()",
+        "validate_input()",
+        "normalize_answer()",
+        "_upstream()",
+        "_jev()",
+        "_asset()",
+        "handle()"
       ]
     },
     {
@@ -24401,6 +24621,17 @@
       "primary": true,
       "purpose": "! coi-serviceworker v0.1.7 - Guido Zuidhof and contributors, licensed under MIT",
       "symbols": []
+    },
+    {
+      "path": "engine/web/js/app-wire/atom-controls.js",
+      "lang": "js",
+      "loc": 114,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Bind once against live state; dispose before rebinding.",
+      "symbols": [
+        "wireAtomControls()"
+      ]
     },
     {
       "path": "engine/web/js/app-wire/bridge-boot.js",
@@ -24417,12 +24648,45 @@
     {
       "path": "engine/web/js/app-wire/keyboard.js",
       "lang": "js",
-      "loc": 62,
+      "loc": 66,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "app-wire/keyboard.js \u2014 keyboard-shortcut handler for the FTD dashboard.",
       "symbols": [
         "wireKeyboard()"
+      ]
+    },
+    {
+      "path": "engine/web/js/app-wire/particle-controls.js",
+      "lang": "js",
+      "loc": 194,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Bind once against live state; dispose before rebinding.",
+      "symbols": [
+        "wireParticleControls()"
+      ]
+    },
+    {
+      "path": "engine/web/js/app-wire/playback-actions.js",
+      "lang": "js",
+      "loc": 30,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Shared button/keyboard actions; ctx is the live application state owner.",
+      "symbols": [
+        "createPlaybackActions()"
+      ]
+    },
+    {
+      "path": "engine/web/js/app-wire/settings.js",
+      "lang": "js",
+      "loc": 305,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Bind once against live state; dispose before rebinding.",
+      "symbols": [
+        "wireSettings()"
       ]
     },
     {
@@ -24438,13 +24702,359 @@
       ]
     },
     {
+      "path": "engine/web/js/app-wire/toolbar.js",
+      "lang": "js",
+      "loc": 176,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Bind once against live state; dispose before rebinding.",
+      "symbols": [
+        "wireToolbar()"
+      ]
+    },
+    {
+      "path": "engine/web/js/app-wire/viewport-controls.js",
+      "lang": "js",
+      "loc": 206,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Reflect the displayed renderer, rather than a hidden shared scene.",
+      "symbols": [
+        "syncViewControls()",
+        "wireViewportControls()"
+      ]
+    },
+    {
       "path": "engine/web/js/app.js",
       "lang": "js",
-      "loc": 2193,
+      "loc": 1326,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "@file app.js @brief FTD Web Dashboard \u2014 Main Application Controller [EXTENDED] Initializes all subsystems, manages the frame loop, and wires up UI controls to the simulation bridge.",
       "symbols": []
+    },
+    {
+      "path": "engine/web/js/assistant/bootstrap.js",
+      "lang": "js",
+      "loc": 71,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "createAssistant()"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/capability-help.js",
+      "lang": "js",
+      "loc": 53,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "commandExamples()",
+        "assistantHelp()",
+        "unavailableCommand()",
+        "workspaceMismatch()"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/console.js",
+      "lang": "js",
+      "loc": 155,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "AssistantConsole"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/contracts.js",
+      "lang": "js",
+      "loc": 83,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "validateValue()",
+        "validatePlan()",
+        "assertObservation()",
+        "decisionObservation()",
+        "LIMITS"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/decision-context.js",
+      "lang": "js",
+      "loc": 133,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "buildDecisionRequest()",
+        "DECISION_REQUEST_MAX_BYTES"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/experiment-objective.js",
+      "lang": "js",
+      "loc": 110,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "parseExperimentObjective()",
+        "experimentObjectiveProgress()",
+        "validateExperimentObjectiveProposal()"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/experiment-planner.js",
+      "lang": "js",
+      "loc": 222,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "compactExperimentContext()",
+        "compactExperimentObservation()",
+        "proposeExperiment()"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/experiment-state.js",
+      "lang": "js",
+      "loc": 93,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "ExperimentJournal",
+        "hasExperimentEvidence()",
+        "formatExperimentResult()",
+        "experimentSample()",
+        "observationDelay()"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/field-sectors.js",
+      "lang": "js",
+      "loc": 116,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "normalizeNativeFluxSectors()",
+        "reduceFluxSectors()",
+        "FLUX_SECTOR_LIMITS"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/grounding.js",
+      "lang": "js",
+      "loc": 254,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "constrainActions()"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/jev-client.js",
+      "lang": "js",
+      "loc": 35,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "JevClient"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/lattice-control.js",
+      "lang": "js",
+      "loc": 487,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "createLatticeControl()"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/mcp-bridge.js",
+      "lang": "js",
+      "loc": 86,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "McpBridge"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/mcp-control.js",
+      "lang": "js",
+      "loc": 123,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "McpControl"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/model.js",
+      "lang": "js",
+      "loc": 288,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "BrowserModel",
+        "relevantActions()"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/model.worker.js",
+      "lang": "js",
+      "loc": 11,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check Dynamic URL preserves static serving and avoids importing the vendored bundle into checkJs.",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/js/assistant/observer-control.js",
+      "lang": "js",
+      "loc": 275,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "createObserverControl()",
+        "OBSERVER_ACTION_DESCRIPTORS"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/proposal.js",
+      "lang": "js",
+      "loc": 94,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "commandClauses()",
+        "proposalDescriptors()"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/request-router.js",
+      "lang": "js",
+      "loc": 63,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "isExperimentGoal()",
+        "normalizeRequest()"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/scenario-designer.js",
+      "lang": "js",
+      "loc": 128,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "scenarioCandidates()",
+        "chooseScenario()",
+        "explicitScenarioSettings()",
+        "scenarioSettingCandidates()",
+        "designScenario()"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/scenario-limits.js",
+      "lang": "js",
+      "loc": 25,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "validateScenarioProtocol()",
+        "SCENARIO_LIMITS",
+        "SCENARIO_DEFAULTS"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/scenario-panel.js",
+      "lang": "js",
+      "loc": 165,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "ScenarioExperimentPanel"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/scenario-runner.js",
+      "lang": "js",
+      "loc": 263,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "runScenarioExperiment()"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/scenario-template.js",
+      "lang": "js",
+      "loc": 198,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "validateScenarioDraft()",
+        "buildScenarioRecipe()",
+        "buildEmptyScenarioRecipe()"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/search-client.js",
+      "lang": "js",
+      "loc": 58,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "KnowledgeSearch"
+      ]
+    },
+    {
+      "path": "engine/web/js/assistant/search.worker.js",
+      "lang": "js",
+      "loc": 118,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/js/assistant/service.js",
+      "lang": "js",
+      "loc": 251,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "AssistantService"
+      ]
     },
     {
       "path": "engine/web/js/atlas/atlas-chain.js",
@@ -24511,7 +25121,7 @@
     {
       "path": "engine/web/js/atlas/atlas-main.js",
       "lang": "js",
-      "loc": 206,
+      "loc": 217,
       "subsystem": "web/atlas",
       "primary": true,
       "purpose": "FTD Ontology Atlas \u2014 bootstrap.",
@@ -24520,7 +25130,7 @@
     {
       "path": "engine/web/js/atlas/atlas-overlay.js",
       "lang": "js",
-      "loc": 129,
+      "loc": 135,
       "subsystem": "web/atlas",
       "primary": true,
       "purpose": "FTD Ontology Atlas \u2014 animated SVG chain overlay.",
@@ -24531,7 +25141,7 @@
     {
       "path": "engine/web/js/atlas/atlas-scene.js",
       "lang": "js",
-      "loc": 64,
+      "loc": 108,
       "subsystem": "web/atlas",
       "primary": true,
       "purpose": "Three.js scene for the Ontology Atlas: camera, OrbitControls, bloom, and a world\u2192screen projector the SVG overlay uses to anchor 2D chain arrows.",
@@ -24542,7 +25152,7 @@
     {
       "path": "engine/web/js/atlas/atlas-ui.js",
       "lang": "js",
-      "loc": 318,
+      "loc": 333,
       "subsystem": "web/atlas",
       "primary": true,
       "purpose": "FTD Ontology Atlas \u2014 UI: layer panel, detail panel, chain stepper, mode switch.",
@@ -24751,7 +25361,7 @@
     {
       "path": "engine/web/js/bridge/capabilities/scale0.js",
       "lang": "js",
-      "loc": 88,
+      "loc": 116,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "@file engine/web/js/bridge/capabilities/scale0.js @purpose Scale-0 (lattice/substrate) capability factory.",
@@ -24917,7 +25527,7 @@
     {
       "path": "engine/web/js/bridge/flux-publication.classic.js",
       "lang": "js",
-      "loc": 205,
+      "loc": 242,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Shared by the classic physics worker and the module proxy.",
@@ -25003,7 +25613,7 @@
     {
       "path": "engine/web/js/bridge/sampler-cadence.classic.js",
       "lang": "js",
-      "loc": 122,
+      "loc": 227,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Shared classic-worker sampler scheduler.",
@@ -25044,7 +25654,7 @@
     {
       "path": "engine/web/js/bridge/wasm-bridge-proxy.js",
       "lang": "js",
-      "loc": 1519,
+      "loc": 1733,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Main-thread proxy for the Scale-0 WASM physics Web Worker.",
@@ -25056,7 +25666,7 @@
     {
       "path": "engine/web/js/bridge/wasm-bridge.js",
       "lang": "js",
-      "loc": 1435,
+      "loc": 1444,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "@file engine/web/js/bridge/wasm-bridge.js @purpose Thin wrapper around the compiled C++/WASM physics engine (engine/wasm/ftd_wasm.cpp).",
@@ -25067,7 +25677,7 @@
     {
       "path": "engine/web/js/bridge/wasm-bridge.worker.js",
       "lang": "js",
-      "loc": 1079,
+      "loc": 1443,
       "subsystem": "web/bridge",
       "primary": true,
       "purpose": "Scale-0 WASM physics Web Worker.",
@@ -25216,7 +25826,7 @@
     {
       "path": "engine/web/js/constants.js",
       "lang": "js",
-      "loc": 610,
+      "loc": 607,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "@file constants.js @brief FTD Constants \u2014 single source of truth for the web dashboard.",
@@ -25267,6 +25877,17 @@
       "purpose": "@file engine/web/js/core/component.js @purpose Base component class utilizing browser-native template elements and reference binding.",
       "symbols": [
         "BaseComponent"
+      ]
+    },
+    {
+      "path": "engine/web/js/core/dashboard-suspension.js",
+      "lang": "js",
+      "loc": 34,
+      "subsystem": "web/core",
+      "primary": true,
+      "purpose": "Drain already requested work before lending presentation to another world.",
+      "symbols": [
+        "suspendDashboardWork()"
       ]
     },
     {
@@ -25424,7 +26045,7 @@
     {
       "path": "engine/web/js/inspector.js",
       "lang": "js",
-      "loc": 636,
+      "loc": 654,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "Inspector Panel \u2014 click-to-inspect particle properties.",
@@ -25631,7 +26252,7 @@
     {
       "path": "engine/web/js/lib/raf-coordinator.js",
       "lang": "js",
-      "loc": 156,
+      "loc": 176,
       "subsystem": "vendor",
       "primary": false,
       "purpose": "Single rAF coordinator for all dashboard panels.",
@@ -25733,6 +26354,435 @@
         "instantiateMolecule()",
         "loadMolecule()",
         "moleculeSummary()"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/catalog.js",
+      "lang": "js",
+      "loc": 90,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "SHAPES",
+        "ENVIRONMENT_PRESETS",
+        "EXPERIMENTS",
+        "LAYERS",
+        "DEFAULT_BINDINGS",
+        "DEFAULT_SETTINGS"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/environments.js",
+      "lang": "js",
+      "loc": 136,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Instance-owned Observer environments.",
+      "symbols": [
+        "ObserverEnvironment",
+        "seededRandom()",
+        "buildEnvironmentGeometry()",
+        "OBSERVER_ENVIRONMENTS",
+        "MAX_ENVIRONMENT_INSTANCES"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/feedback.js",
+      "lang": "js",
+      "loc": 13,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Bounded presentation settings.",
+      "symbols": [
+        "feedbackConfiguration()"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/force-gun-effort.js",
+      "lang": "js",
+      "loc": 29,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "forceGunEffort()"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/force-gun-physics.js",
+      "lang": "js",
+      "loc": 70,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "forceGunSettings()",
+        "pointInverseMass()",
+        "computeGunForce()",
+        "FORCE_GUN_PRESETS"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/force-gun.js",
+      "lang": "js",
+      "loc": 166,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "ObserverForceGun",
+        "ObserverTetherOverlay"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/fractal-presets.js",
+      "lang": "js",
+      "loc": 23,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "fractalStyle()",
+        "boundedFractalDetail()",
+        "FRACTAL_PRESETS"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/fractal-shaders.js",
+      "lang": "js",
+      "loc": 118,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Bounded, distant-radiance fractals for the Observer shell.",
+      "symbols": [
+        "FRACTAL_GLSL"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/fractal-volumes.js",
+      "lang": "js",
+      "loc": 212,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Bounded ray-marched distant radiance.",
+      "symbols": [
+        "FRACTAL_VOLUME_GLSL"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/frame-geometry.js",
+      "lang": "js",
+      "loc": 76,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "simultaneousBoundsCorners()",
+        "simultaneousBoundsEdges()"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/geometry.js",
+      "lang": "js",
+      "loc": 210,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Rest-frame geometry and threaded bounding-volume hierarchies.",
+      "symbols": [
+        "rotationMatrix()",
+        "buildBVH()",
+        "restMesh()",
+        "subdivideRestMesh()",
+        "hitBounds()",
+        "intersectShape()",
+        "SHAPE_NAMES",
+        "dot",
+        "cross",
+        "normalize",
+        "subtract",
+        "rotate"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/gizmo.js",
+      "lang": "js",
+      "loc": 53,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "ObserverGizmo"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/input.js",
+      "lang": "js",
+      "loc": 169,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "ObserverInput"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/lattice-adapter.js",
+      "lang": "js",
+      "loc": 176,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "LatticeObservationAdapter"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/math.js",
+      "lang": "js",
+      "loc": 103,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "gamma()",
+        "boostEvent()",
+        "transformVelocity()",
+        "aberration()",
+        "dopplerFactor()",
+        "observerRayToWorld()",
+        "cameraBasis()",
+        "constantProperAcceleration()",
+        "integrateFourVelocity()",
+        "retardedTime()",
+        "elasticCollision1D()",
+        "MAX_BETA"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/mirror-frame.js",
+      "lang": "js",
+      "loc": 36,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "reflectPolar()",
+        "reflectAxial()",
+        "reflectEulerXYZ()",
+        "reflectQuaternion()",
+        "reflectAuthorPatch()"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/optics.js",
+      "lang": "js",
+      "loc": 170,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Float64 optical oracle for an adopted Minkowski reference model; c = 1.",
+      "symbols": [
+        "gamma()",
+        "cameraBasis()",
+        "boost()",
+        "observerRay()",
+        "visibleSegments()",
+        "segmentBounds()",
+        "traceObserverRay()",
+        "createPointProjector()",
+        "projectPoint()",
+        "apparentCenter()"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/phenomena-data.js",
+      "lang": "js",
+      "loc": 130,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "phenomenaData()"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/phenomena-instrument.js",
+      "lang": "js",
+      "loc": 139,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "createPhenomenaInstrument()"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/playground.js",
+      "lang": "js",
+      "loc": 219,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "PlaygroundPhysics"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/renderer.js",
+      "lang": "js",
+      "loc": 575,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "First-person Observer ray renderer.",
+      "symbols": [
+        "ObserverRenderer",
+        "MAX_OPTICAL_SEGMENTS",
+        "LAYER_KEYS"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/screen-clipping.js",
+      "lang": "js",
+      "loc": 35,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "clipProjectedSegment()"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/session-worker.js",
+      "lang": "js",
+      "loc": 39,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/js/observer/session.js",
+      "lang": "js",
+      "loc": 637,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "ObserverSession"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/shaders.js",
+      "lang": "js",
+      "loc": 206,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "WebGL2 first-hit ray tracing.",
+      "symbols": [
+        "observerVertexShader",
+        "observerFragmentShader"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/spatial-labels.js",
+      "lang": "js",
+      "loc": 60,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "ObserverSpatialLabels"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/storage.js",
+      "lang": "js",
+      "loc": 364,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "ObserverStorage",
+        "validateObserverDocument()"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/types.js",
+      "lang": "js",
+      "loc": 24,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "OBSERVER_SCHEMA_VERSION",
+        "ENTITY_LIMIT",
+        "HISTORY_WINDOW",
+        "SEGMENT_LIMIT",
+        "MAX_GRAVITY_STRENGTH"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/ui.js",
+      "lang": "js",
+      "loc": 662,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "createObserverUI()"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/wave-phenomena.js",
+      "lang": "js",
+      "loc": 180,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Coordinate-frame analytic wave illustrations, with adopted c = 1.",
+      "symbols": [
+        "waveConfiguration()",
+        "interferenceGridCells()",
+        "sampleInterference()",
+        "sampleStandingWave()",
+        "samplePolarization()",
+        "drawWavePhenomena()",
+        "MAX_WAVE_SEGMENTS",
+        "INTERFERENCE_GRID_CELLS",
+        "MAX_INTERFERENCE_GRID_CELLS",
+        "WAVE_SOURCE_CORE_RADIUS"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/worker-client.js",
+      "lang": "js",
+      "loc": 105,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "ObserverWorkerClient"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/workspace-host.js",
+      "lang": "js",
+      "loc": 160,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "ObserverWorkspaceHost"
+      ]
+    },
+    {
+      "path": "engine/web/js/observer/workspace.js",
+      "lang": "js",
+      "loc": 448,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "ObserverWorkspace"
       ]
     },
     {
@@ -25956,6 +27006,17 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale0/analysis/proper-time-metrics.js",
+      "lang": "js",
+      "loc": 119,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Pure reduction for one coherent proper-time sampler observation.",
+      "symbols": [
+        "reduceProperTimeSamples()"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale0/analysis/spectrum-analysis-client.js",
       "lang": "js",
       "loc": 134,
@@ -26014,7 +27075,7 @@
     {
       "path": "engine/web/js/scales/scale0/analysis/wave-spectrum.js",
       "lang": "js",
-      "loc": 557,
+      "loc": 583,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "",
@@ -26036,7 +27097,7 @@
     {
       "path": "engine/web/js/scales/scale0/controller.js",
       "lang": "js",
-      "loc": 630,
+      "loc": 639,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 (Lattice) Controller Refactored into a package-style module with explicit runtime phases, a viewport adapter, scenario registry, and UI bindings owned by Scale 0.",
@@ -26083,7 +27144,7 @@
     {
       "path": "engine/web/js/scales/scale0/runtime/diagnostics.js",
       "lang": "js",
-      "loc": 197,
+      "loc": 200,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Live decomposition tooltip for the status-bar energy readout (whole-box per-tick ledger plus optional audit channels, sim units).",
@@ -26092,9 +27153,25 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale0/runtime/field-line-knots-worker-state.js",
+      "lang": "js",
+      "loc": 159,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Worker-owned state for field-line knot detection.",
+      "symbols": [
+        "snapshotFieldLineKnotTracker()",
+        "prepareFieldLineKnotCandidate()",
+        "commitFieldLineKnotCandidate()",
+        "discardFieldLineKnotCandidate()",
+        "discardAllFieldLineKnotCandidates()",
+        "resetFieldLineKnotWorkerState()"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale0/runtime/field-line-knots.js",
       "lang": "js",
-      "loc": 822,
+      "loc": 898,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "engine/web/js/scales/scale0/runtime/field-line-knots.js Field-line KNOT detection + quantification + identity tracking \u2014 JS-native.",
@@ -26108,16 +27185,15 @@
     {
       "path": "engine/web/js/scales/scale0/runtime/field-overlays.js",
       "lang": "js",
-      "loc": 1350,
+      "loc": 287,
       "subsystem": "web/scale0",
       "primary": true,
-      "purpose": "Native mass-gravity scenarios expose the actual latency-Poisson solution as FTS2 kind 17.",
+      "purpose": "Budgeted overlay sweeps.",
       "symbols": [
         "scale0FieldKindOverrides()",
-        "buildForceOverlayData()",
-        "buildDerivedSubstrateData()",
         "disposeFieldOverlayRuntime()",
-        "updateFieldOverlays()"
+        "updateFieldOverlays()",
+        "OVERLAY_FRAME_BUDGET"
       ]
     },
     {
@@ -26208,6 +27284,35 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale0/runtime/overlay-derived-data.js",
+      "lang": "js",
+      "loc": 161,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Scalar/derived overlay computation and its matching adapter routes.",
+      "symbols": [
+        "buildDerivedSubstrateData()",
+        "applyDerivedJob()",
+        "SCALAR_JOBS"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/runtime/overlay-force-data.js",
+      "lang": "js",
+      "loc": 183,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Force sampling, derived proxy buffers, and force-style application.",
+      "symbols": [
+        "buildForceOverlayData()",
+        "forceItemFlowPlan()",
+        "applyForceFieldsJob()",
+        "findForceItem()",
+        "forceTypeEnabled()",
+        "FLOW_TYPES"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale0/runtime/overlay-frames.js",
       "lang": "js",
       "loc": 672,
@@ -26230,6 +27335,50 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale0/runtime/overlay-jobs.js",
+      "lang": "js",
+      "loc": 669,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Pooled overlay job planning and dispatch, independent of frame-loop scheduling.",
+      "symbols": [
+        "ensureOverlaySched()",
+        "syncNativeTransportObservation()",
+        "runJob()",
+        "buildOverlayJobs()",
+        "COST_STREAMLINE",
+        "fluidPanelLive"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/runtime/overlay-streamline-seeds.js",
+      "lang": "js",
+      "loc": 69,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Stable seed ownership shared by field and force streamline jobs.",
+      "symbols": [
+        "cachedSeeds()",
+        "eFieldLineSeeds()",
+        "bFieldLineSeeds()",
+        "fluxLineSeeds()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/runtime/overlay-worker-client.js",
+      "lang": "js",
+      "loc": 100,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "The scheduler owns one worker client; cancellation invalidates every pending slot.",
+      "symbols": [
+        "cancelStreamlineJobs()",
+        "submitStreamlineJob()",
+        "commitKnotRecord()",
+        "discardKnotRecord()"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale0/runtime/record-scenario-loader.js",
       "lang": "js",
       "loc": 60,
@@ -26243,14 +27392,12 @@
     {
       "path": "engine/web/js/scales/scale0/runtime/scenario-loader.js",
       "lang": "js",
-      "loc": 1469,
+      "loc": 1119,
       "subsystem": "web/scale0",
       "primary": true,
-      "purpose": "Frame a compact or bounded center-seeded structure once when its scenario is loaded.",
+      "purpose": "Repaint the physics-toggles card and overlay applicability from ENGINE state.",
       "symbols": [
         "syncComboSliders()",
-        "applyScenarioVisualProfile()",
-        "applyScenarioCameraFocus()",
         "syncScale0ToggleUiFromEngine()",
         "captureOverlayPreferences()",
         "restoreOverlayPreferences()",
@@ -26259,7 +27406,23 @@
         "fallbackToInThreadEngine()",
         "loadScale0Scenario()",
         "resizeScale0Lattice()",
-        "stepScale0()"
+        "stepScale0()",
+        "resetScale0Scenario()",
+        "exitScale0()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/runtime/scenario-visual-profile.js",
+      "lang": "js",
+      "loc": 361,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Scenario-owned presentation profiles, isolated from backend transactions.",
+      "symbols": [
+        "setDisplayText()",
+        "applyScenarioVisualProfile()",
+        "applyScenarioCameraFocus()",
+        "SCALE0_SCENARIO_VISUAL_PROFILES"
       ]
     },
     {
@@ -26277,11 +27440,14 @@
     {
       "path": "engine/web/js/scales/scale0/runtime/streamline-worker.js",
       "lang": "js",
-      "loc": 70,
+      "loc": 137,
       "subsystem": "web/scale0",
       "primary": true,
-      "purpose": "",
-      "symbols": []
+      "purpose": "Execute the complete worker request protocol.",
+      "symbols": [
+        "executeStreamlineWorkerMessage()",
+        "workerTransferList()"
+      ]
     },
     {
       "path": "engine/web/js/scales/scale0/runtime/tick.js",
@@ -26379,7 +27545,7 @@
     {
       "path": "engine/web/js/scales/scale0/state/store.js",
       "lang": "js",
-      "loc": 745,
+      "loc": 746,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "localStorage may be blocked (privacy mode) \u2014 fall through to default",
@@ -26414,7 +27580,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/controls/component.js",
       "lang": "js",
-      "loc": 51,
+      "loc": 52,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 Controls Component Mounts all Scale 0 control cards into the controls panel",
@@ -26431,6 +27597,17 @@
       "purpose": "Shared Flux / electric / magnetic streamline presentation controls.",
       "symbols": [
         "createFlowLinesCard()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/ui/controls/flux-volume-binder.js",
+      "lang": "js",
+      "loc": 105,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Scale-0 flux-volume card listener owner.",
+      "symbols": [
+        "wireFluxVolumeCard()"
       ]
     },
     {
@@ -26460,12 +27637,13 @@
     {
       "path": "engine/web/js/scales/scale0/ui/controls/record-observation.js",
       "lang": "js",
-      "loc": 129,
+      "loc": 149,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Passive record controls in the existing Scale-0 controls dock.",
       "symbols": [
         "getWebRecordCatalog()",
+        "getRecordCatalogStatus()",
         "initializeRecordScenarios()",
         "syncRecordControls()",
         "updateRecordReadout()"
@@ -26489,13 +27667,25 @@
     {
       "path": "engine/web/js/scales/scale0/ui/controls/record-panels.js",
       "lang": "js",
-      "loc": 101,
+      "loc": 96,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Extend the existing dock hosts; all preparations use their current owner.",
       "symbols": [
         "syncRecordPanels()",
         "updateRecordPanels()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/ui/controls/substrate-card-binder.js",
+      "lang": "js",
+      "loc": 55,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Bind the small Scale-0 substrate cards that share the live scientific mutation gateway.",
+      "symbols": [
+        "wireReadOnlyParameterCard()",
+        "wireFieldActionCard()"
       ]
     },
     {
@@ -26512,7 +27702,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/controls/wire.js",
       "lang": "js",
-      "loc": 1010,
+      "loc": 892,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 Controls Panel Wiring Binds event listeners for every control card mounted by Scale0ControlsComponent: - Physics toggles card (all visible standard and research toggles) - Substrate control...",
@@ -26594,7 +27784,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/dispersion-panel.js",
       "lang": "js",
-      "loc": 196,
+      "loc": 173,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Dispersion \u2014 docked Scale-0 side panel (FTD-0298 / FTD-0299).",
@@ -26639,7 +27829,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/flux-slice-panel.js",
       "lang": "js",
-      "loc": 1296,
+      "loc": 1193,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Scale 0 \u2014 Live Multi-Field Flux Slice Panel The flagship |J| row is visible by default; every other field mirrors its 3D visualization toggle until the user explicitly enables that row.",
@@ -26650,21 +27840,58 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale0/ui/overlays/flux-slice-sample-source.js",
+      "lang": "js",
+      "loc": 88,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Acquisition owner for Flux Slice sampler demands and source frames.",
+      "symbols": [
+        "buildFluxSliceSampleCache()"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale0/ui/overlays/genesis-burst-panel.js",
       "lang": "js",
-      "loc": 305,
+      "loc": 369,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Selected genesis response N(A) \u2014 interactive fire panel (FTD-0269 provenance).",
       "symbols": [
         "GenesisBurstPanelComponent",
-        "mountGenesisBurstPanel()"
+        "mountGenesisBurstPanel()",
+        "computeGenesisPlotLayout()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/ui/overlays/gravity-chart-view.js",
+      "lang": "js",
+      "loc": 189,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Retained Gravity-panel chart rendering driven by exact observation ticks.",
+      "symbols": [
+        "gravitySparklineGeometry()",
+        "histogramPath()",
+        "histogramAriaLabel()",
+        "renderDelta()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/ui/overlays/gravity-observation.js",
+      "lang": "js",
+      "loc": 64,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Validate and interpret one completed Gravity instrument observation.",
+      "symbols": [
+        "readGravityObservation()"
       ]
     },
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/gravity-panel.js",
       "lang": "js",
-      "loc": 1101,
+      "loc": 1123,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Gravity Observatory \u2014 Scale-0 gravity-field instrument.",
@@ -26676,9 +27903,38 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale0/ui/overlays/gravity-slice-view.js",
+      "lang": "js",
+      "loc": 19,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Pure gravity-slice preparation shared by slab and dense acquisition paths.",
+      "symbols": [
+        "prepareGravitySlabSlice()",
+        "prepareGravityVolumeSlice()"
+      ]
+    },
+    {
+      "path": "engine/web/js/scales/scale0/ui/overlays/knots-chart-view.js",
+      "lang": "js",
+      "loc": 187,
+      "subsystem": "web/scale0",
+      "primary": true,
+      "purpose": "Canvas and text presentation for the field-line knot instrument.",
+      "symbols": [
+        "fmtNum()",
+        "cells()",
+        "drawContribChart()",
+        "drawEnergyLines()",
+        "drawKnotBars()",
+        "mergeContrib()",
+        "bindCanvasTip()"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale0/ui/overlays/knots-panel.js",
       "lang": "js",
-      "loc": 1031,
+      "loc": 779,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "",
@@ -26703,7 +27959,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/p1-observables-panel.js",
       "lang": "js",
-      "loc": 389,
+      "loc": 354,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/p1-observables-panel.js @purpose Orchestrator for the Scale 0 P1 Observables panel, composing sub-components.",
@@ -26715,7 +27971,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/p1-observables/anisotropy.js",
       "lang": "js",
-      "loc": 239,
+      "loc": 269,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/p1-observables/anisotropy.js @purpose Lattice Anisotropy & SO(2) Recovery component.",
@@ -26724,7 +27980,8 @@
         "makeFluxMagnitudeSampler()",
         "sampleFluxMagnitude()",
         "circularFluxProbeIndices()",
-        "circularFluxDecay()"
+        "circularFluxDecay()",
+        "circularFluxDecayFromZSlice()"
       ]
     },
     {
@@ -26741,18 +27998,19 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/p1-observables/coulomb.js",
       "lang": "js",
-      "loc": 256,
+      "loc": 269,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/p1-observables/coulomb.js @purpose Coulomb V(r) and E-field probe component.",
       "symbols": [
-        "CoulombComponent"
+        "CoulombComponent",
+        "interactiveProbeStride()"
       ]
     },
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/p1-observables/fine-structure.js",
       "lang": "js",
-      "loc": 165,
+      "loc": 172,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/p1-observables/fine-structure.js @purpose Fine-structure constant instrument panel for flux-recoil scenarios.",
@@ -26774,12 +28032,13 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/p1-observables/gravity.js",
       "lang": "js",
-      "loc": 119,
+      "loc": 163,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/p1-observables/gravity.js @purpose Gravitational time dilation component.",
       "symbols": [
-        "GravityComponent"
+        "GravityComponent",
+        "p1GravitySampleStride()"
       ]
     },
     {
@@ -26796,7 +28055,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/p1-observables/thomson.js",
       "lang": "js",
-      "loc": 183,
+      "loc": 186,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/p1-observables/thomson.js @purpose Live readout for the locked-source null and native recoil probes.",
@@ -26858,7 +28117,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/spectrum-panel.js",
       "lang": "js",
-      "loc": 700,
+      "loc": 679,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Lattice Spectroscopy \u2014 Scale-0 field-structure instrument.",
@@ -26898,7 +28157,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/thermo-panel.js",
       "lang": "js",
-      "loc": 396,
+      "loc": 394,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Thermodynamics \u2014 docked Scale-0 side panel (FTD-0274).",
@@ -26910,7 +28169,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/time-panel.js",
       "lang": "js",
-      "loc": 763,
+      "loc": 732,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Time Observatory \u2014 Scale-0 time-dilation instrument.",
@@ -26934,7 +28193,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/transaction-panel.js",
       "lang": "js",
-      "loc": 215,
+      "loc": 223,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Transaction Tracker panel \u2014 live view of the native history-journal drain (native-charge gate, opt-in, observation-only; see engine/include/ftd/eft/history_event_journal.h and engine/web/js/scales/...",
@@ -26946,7 +28205,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/wave-lab-panel.js",
       "lang": "js",
-      "loc": 84,
+      "loc": 83,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/wave-lab-panel.js @purpose Side-panel host for standalone RF/light/sound wave instruments.",
@@ -26958,7 +28217,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/overlays/wave-lab/wave-info.js",
       "lang": "js",
-      "loc": 634,
+      "loc": 645,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "@file engine/web/js/scales/scale0/ui/overlays/wave-lab/wave-info.js @purpose Live telemetry and controls for standalone RF/light/sound lattice waves.",
@@ -26969,7 +28228,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/register-scale0-ui.js",
       "lang": "js",
-      "loc": 19,
+      "loc": 14,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "",
@@ -26980,7 +28239,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/toolbar/component.js",
       "lang": "js",
-      "loc": 20,
+      "loc": 15,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "",
@@ -27007,7 +28266,7 @@
     {
       "path": "engine/web/js/scales/scale0/ui/toolbar/scenario-picker.js",
       "lang": "js",
-      "loc": 85,
+      "loc": 66,
       "subsystem": "web/scale0",
       "primary": true,
       "purpose": "Progressive enhancement: the native select remains the scenario command bus.",
@@ -27253,7 +28512,7 @@
     {
       "path": "engine/web/js/scales/scale1/ui/controls/component.js",
       "lang": "js",
-      "loc": 41,
+      "loc": 42,
       "subsystem": "web/scale1",
       "primary": true,
       "purpose": "Scale 1 Controls Component Mounts the Scale 1 (Particle Engine) control card into the controls panel.",
@@ -27294,7 +28553,7 @@
     {
       "path": "engine/web/js/scales/scale1/ui/particle-log/component.js",
       "lang": "js",
-      "loc": 344,
+      "loc": 358,
       "subsystem": "web/scale1",
       "primary": true,
       "purpose": "",
@@ -27308,7 +28567,7 @@
     {
       "path": "engine/web/js/scales/scale1/ui/register-scale1-ui.js",
       "lang": "js",
-      "loc": 11,
+      "loc": 10,
       "subsystem": "web/scale1",
       "primary": true,
       "purpose": "",
@@ -27319,7 +28578,7 @@
     {
       "path": "engine/web/js/scales/scale1/ui/toolbar/component.js",
       "lang": "js",
-      "loc": 39,
+      "loc": 34,
       "subsystem": "web/scale1",
       "primary": true,
       "purpose": "",
@@ -27341,7 +28600,7 @@
     {
       "path": "engine/web/js/scales/scale2/controller.js",
       "lang": "js",
-      "loc": 1025,
+      "loc": 1026,
       "subsystem": "web/scale2",
       "primary": true,
       "purpose": "Scale 2 (Atoms) Controller \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Owns the Atom Engine (AE) frame loop, force decomposition rendering, element legend building, orbital...",
@@ -27437,12 +28696,13 @@
     {
       "path": "engine/web/js/scales/scale2/ui/binding-energy-chart.js",
       "lang": "js",
-      "loc": 76,
+      "loc": 84,
       "subsystem": "web/scale2",
       "primary": true,
       "purpose": "Nuclear binding-energy-per-nucleon curve \u2014 the classic B/A vs mass-number plot, peaking at Fe-56.",
       "symbols": [
-        "drawBindingEnergyCurve()"
+        "drawBindingEnergyCurve()",
+        "mountBindingEnergyCurve()"
       ]
     },
     {
@@ -27462,7 +28722,7 @@
     {
       "path": "engine/web/js/scales/scale2/ui/controls/component.js",
       "lang": "js",
-      "loc": 39,
+      "loc": 40,
       "subsystem": "web/scale2",
       "primary": true,
       "purpose": "Scale 2 Controls Component Mounts Atom Engine control cards into the controls panel.",
@@ -27498,7 +28758,7 @@
     {
       "path": "engine/web/js/scales/scale2/ui/register-scale2-ui.js",
       "lang": "js",
-      "loc": 11,
+      "loc": 10,
       "subsystem": "web/scale2",
       "primary": true,
       "purpose": "",
@@ -27509,7 +28769,7 @@
     {
       "path": "engine/web/js/scales/scale2/ui/toolbar/component.js",
       "lang": "js",
-      "loc": 14,
+      "loc": 9,
       "subsystem": "web/scale2",
       "primary": true,
       "purpose": "",
@@ -27617,7 +28877,7 @@
     {
       "path": "engine/web/js/scales/scale3/ui/register-scale3-ui.js",
       "lang": "js",
-      "loc": 11,
+      "loc": 10,
       "subsystem": "web/scale3",
       "primary": true,
       "purpose": "",
@@ -27628,7 +28888,7 @@
     {
       "path": "engine/web/js/scales/scale3/ui/toolbar/component.js",
       "lang": "js",
-      "loc": 11,
+      "loc": 6,
       "subsystem": "web/scale3",
       "primary": true,
       "purpose": "",
@@ -27650,7 +28910,7 @@
     {
       "path": "engine/web/js/scales/scale4/controller.js",
       "lang": "js",
-      "loc": 791,
+      "loc": 833,
       "subsystem": "web/scale4",
       "primary": true,
       "purpose": "Scale 4 (Solar System) Controller Owns the Scale 4 N-Body physics loop, scenario loading, and UI list mapping.",
@@ -27660,6 +28920,10 @@
         "destroy()",
         "loadScenario()",
         "step()",
+        "setAxesVisible()",
+        "setGridVisible()",
+        "getViewControlCapabilities()",
+        "getViewControlState()",
         "getScale4RuntimeAudit()",
         "dispose()"
       ]
@@ -27693,7 +28957,7 @@
     {
       "path": "engine/web/js/scales/scale4/ui/register-scale4-ui.js",
       "lang": "js",
-      "loc": 11,
+      "loc": 10,
       "subsystem": "web/scale4",
       "primary": true,
       "purpose": "",
@@ -27704,7 +28968,7 @@
     {
       "path": "engine/web/js/scales/scale4/ui/toolbar/component.js",
       "lang": "js",
-      "loc": 11,
+      "loc": 6,
       "subsystem": "web/scale4",
       "primary": true,
       "purpose": "",
@@ -27726,7 +28990,7 @@
     {
       "path": "engine/web/js/scales/scale5/controller.js",
       "lang": "js",
-      "loc": 849,
+      "loc": 794,
       "subsystem": "web/scale5",
       "primary": true,
       "purpose": "Scale 5 \u2014 Cosmic Controller Manages the cosmic scale: N-body gravitational simulation with Hubble expansion, dark matter, and cosmological diagnostics.",
@@ -27738,6 +29002,9 @@
         "loadCosmicScenario()",
         "step()",
         "setCameraPreset()",
+        "setGridVisible()",
+        "getViewControlCapabilities()",
+        "getViewControlState()",
         "resetScale5()"
       ]
     },
@@ -27753,15 +29020,28 @@
       ]
     },
     {
+      "path": "engine/web/js/scales/scale5/ui/gas-profile-canvas.js",
+      "lang": "js",
+      "loc": 50,
+      "subsystem": "web/scale5",
+      "primary": true,
+      "purpose": "Draw one DPR-aware gas-lab profile row in logical CSS pixels.",
+      "symbols": [
+        "drawGasProfileBars()"
+      ]
+    },
+    {
       "path": "engine/web/js/scales/scale5/ui/overlays/component.js",
       "lang": "js",
-      "loc": 173,
+      "loc": 188,
       "subsystem": "web/scale5",
       "primary": true,
       "purpose": "Scale 5 Viewport Overlay Component \u2014 interactive body (Pass B, Ruling P1).",
       "symbols": [
         "bindScale5OverlayControls()",
-        "syncScale5Overlays()"
+        "syncScale5Overlays()",
+        "setScale5ComovingGrid()",
+        "getScale5ComovingGrid()"
       ]
     },
     {
@@ -27778,7 +29058,7 @@
     {
       "path": "engine/web/js/scales/scale5/ui/register-scale5-ui.js",
       "lang": "js",
-      "loc": 19,
+      "loc": 14,
       "subsystem": "web/scale5",
       "primary": true,
       "purpose": "",
@@ -27801,7 +29081,7 @@
     {
       "path": "engine/web/js/scales/scale5/ui/toolbar/component.js",
       "lang": "js",
-      "loc": 31,
+      "loc": 26,
       "subsystem": "web/scale5",
       "primary": true,
       "purpose": "",
@@ -27825,7 +29105,7 @@
     {
       "path": "engine/web/js/scales/scale6/controller.js",
       "lang": "js",
-      "loc": 187,
+      "loc": 191,
       "subsystem": "web/scale6",
       "primary": true,
       "purpose": "Scale 6 (Meta / Existential Unit) Controller \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Reconnects the previously-orphaned MetaUnit module (the 27-site Moore neighborhood...",
@@ -27833,7 +29113,9 @@
         "Scale6LifecycleController",
         "mount()",
         "destroy()",
-        "loadScenario()"
+        "loadScenario()",
+        "getViewControlCapabilities()",
+        "getViewControlState()"
       ]
     },
     {
@@ -27895,7 +29177,7 @@
     {
       "path": "engine/web/js/seeding/panel.js",
       "lang": "js",
-      "loc": 632,
+      "loc": 612,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "Finite: the full inactive union of all 9 record kinds.",
@@ -27948,7 +29230,7 @@
     {
       "path": "engine/web/js/seeding/recipe.js",
       "lang": "js",
-      "loc": 328,
+      "loc": 332,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "Versioned initial-condition drafts.",
@@ -27978,6 +29260,18 @@
         "isEditedRecordRecipe()",
         "prepareRecordRecipe()",
         "waitForSeedLoad()"
+      ]
+    },
+    {
+      "path": "engine/web/js/seeding/service.js",
+      "lang": "js",
+      "loc": 73,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "Shared, headless seed installation.",
+      "symbols": [
+        "prepareSeed()",
+        "applySeed()"
       ]
     },
     {
@@ -28060,7 +29354,7 @@
     {
       "path": "engine/web/js/telemetry-hub.js",
       "lang": "js",
-      "loc": 1799,
+      "loc": 1947,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "TelemetryHub \u2014 single source of truth for all FTD simulation telemetry.",
@@ -28075,7 +29369,7 @@
     {
       "path": "engine/web/js/telemetry/demand.js",
       "lang": "js",
-      "loc": 186,
+      "loc": 309,
       "subsystem": "web/telemetry",
       "primary": true,
       "purpose": "Scale-0 telemetry demand gating \u2014 decides which expensive hub collectors run.",
@@ -28088,7 +29382,7 @@
     {
       "path": "engine/web/js/telemetry/registry/scale0-grid-channels.js",
       "lang": "js",
-      "loc": 44,
+      "loc": 41,
       "subsystem": "web/telemetry",
       "primary": true,
       "purpose": "Scale-0 telemetry grid channel registry.",
@@ -28137,7 +29431,7 @@
     {
       "path": "engine/web/js/ui/charts/chart-hover-tooltip.js",
       "lang": "js",
-      "loc": 90,
+      "loc": 95,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -28148,9 +29442,22 @@
       ]
     },
     {
+      "path": "engine/web/js/ui/charts/history-index.js",
+      "lang": "js",
+      "loc": 144,
+      "subsystem": "web/ui",
+      "primary": true,
+      "purpose": "Shared, read-only index of canonical telemetry histories.",
+      "symbols": [
+        "HistoryIndex",
+        "getHistoryStats()",
+        "projectHistoryIndices()"
+      ]
+    },
+    {
       "path": "engine/web/js/ui/charts/history-window.js",
       "lang": "js",
-      "loc": 186,
+      "loc": 190,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Shared tick-history viewport control for temporal side-panel charts.",
@@ -28161,7 +29468,7 @@
     {
       "path": "engine/web/js/ui/charts/sparkline.js",
       "lang": "js",
-      "loc": 106,
+      "loc": 126,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Sparkline \u2014 micro uPlot for table Trend cells and chart-chip previews.",
@@ -28172,7 +29479,7 @@
     {
       "path": "engine/web/js/ui/charts/theme.js",
       "lang": "js",
-      "loc": 64,
+      "loc": 80,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Chart theme reader \u2014 converts CSS custom properties into a uPlot-shaped theme object.",
@@ -28185,7 +29492,7 @@
     {
       "path": "engine/web/js/ui/charts/uplot-chart.js",
       "lang": "js",
-      "loc": 298,
+      "loc": 317,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "UPlotChart \u2014 line/area chart primitive.",
@@ -28205,7 +29512,7 @@
     {
       "path": "engine/web/js/ui/components/faq/component.js",
       "lang": "js",
-      "loc": 28,
+      "loc": 29,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "FAQ \u2014 thin factory around SidebarLibraryComponent.",
@@ -28240,7 +29547,7 @@
     {
       "path": "engine/web/js/ui/components/floating-window/component.js",
       "lang": "js",
-      "loc": 272,
+      "loc": 321,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "FloatingWindow \u2014 high-performance draggable/resizable glassmorphic panel wrapper.",
@@ -28262,10 +29569,10 @@
     {
       "path": "engine/web/js/ui/components/keyboard-help/component.js",
       "lang": "js",
-      "loc": 138,
+      "loc": 84,
       "subsystem": "web/ui",
       "primary": true,
-      "purpose": "Keyboard Help Overlay \u2014 press `?` to toggle a modal listing every keyboard shortcut the dashboard supports.",
+      "purpose": "Keyboard Help Overlay \u2014 renders the shared dashboard shortcut contract.",
       "symbols": [
         "KeyboardHelpComponent"
       ]
@@ -28273,7 +29580,7 @@
     {
       "path": "engine/web/js/ui/components/knowledge-base/component.js",
       "lang": "js",
-      "loc": 32,
+      "loc": 33,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Knowledge Base \u2014 thin factory around SidebarLibraryComponent.",
@@ -28520,7 +29827,7 @@
     {
       "path": "engine/web/js/ui/components/settings-modal/component.js",
       "lang": "js",
-      "loc": 24,
+      "loc": 23,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Settings Modal Component Mounts the settings modal into a container.",
@@ -28543,7 +29850,7 @@
     {
       "path": "engine/web/js/ui/components/sidebar-library/component.js",
       "lang": "js",
-      "loc": 239,
+      "loc": 257,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "SidebarLibraryComponent \u2014 reusable library-style sidebar.",
@@ -28565,7 +29872,7 @@
     {
       "path": "engine/web/js/ui/components/tooltips/component.js",
       "lang": "js",
-      "loc": 194,
+      "loc": 215,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -28587,7 +29894,7 @@
     {
       "path": "engine/web/js/ui/components/topbar/component.js",
       "lang": "js",
-      "loc": 180,
+      "loc": 136,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
@@ -28596,16 +29903,26 @@
       ]
     },
     {
+      "path": "engine/web/js/ui/components/topbar/simulation-menu.js",
+      "lang": "js",
+      "loc": 110,
+      "subsystem": "web/ui",
+      "primary": true,
+      "purpose": "@ts-check",
+      "symbols": [
+        "wireSimulationMenu()"
+      ]
+    },
+    {
       "path": "engine/web/js/ui/components/topbar/template.js",
       "lang": "js",
-      "loc": 65,
+      "loc": 29,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "",
       "symbols": [
         "getTopbarInlineTemplate()",
-        "getTopbarActionButtons()",
-        "getAssistantSidebarTemplate()"
+        "getTopbarActionButtons()"
       ]
     },
     {
@@ -28644,7 +29961,7 @@
     {
       "path": "engine/web/js/ui/components/viewport-overlays/component.js",
       "lang": "js",
-      "loc": 206,
+      "loc": 232,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Viewport Overlays Component \u2014 mounts scale-specific and universal overlay controls Orchestrates: - Scale-specific field/visualization toggles - Universal axes/grid controls - Bottom status-bar scen...",
@@ -28701,7 +30018,7 @@
     {
       "path": "engine/web/js/ui/panels/charts-panel/chart-card.js",
       "lang": "js",
-      "loc": 114,
+      "loc": 134,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "ChartCard \u2014 wraps a chart descriptor entry in a .chart-card DOM node and owns the UPlotChart lifecycle.",
@@ -28803,7 +30120,7 @@
     {
       "path": "engine/web/js/ui/panels/diagnostics-panel/component.js",
       "lang": "js",
-      "loc": 163,
+      "loc": 170,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "DiagnosticsPanelComponent \u2014 composes scale-specific diagnostics tables from descriptors.",
@@ -28892,28 +30209,29 @@
     {
       "path": "engine/web/js/ui/panels/diagnostics-panel/table.js",
       "lang": "js",
-      "loc": 467,
+      "loc": 533,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "DiagnosticsTable \u2014 renders one section's table + owns per-row cells, reset-scoped running stats, and per-row Sparkline instances.",
       "symbols": [
         "DiagnosticsTable",
-        "RunningStats"
+        "RunningStats",
+        "formatStatValue()"
       ]
     },
     {
       "path": "engine/web/js/ui/panels/index.js",
       "lang": "js",
-      "loc": 11,
+      "loc": 12,
       "subsystem": "web/ui",
       "primary": true,
-      "purpose": "",
+      "purpose": "The page import map owns module versions so every consumer shares one instance.",
       "symbols": []
     },
     {
       "path": "engine/web/js/ui/panels/lagrangian-panel/component.js",
       "lang": "js",
-      "loc": 293,
+      "loc": 307,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Interpret only the qualified Scenario-1 null control.",
@@ -28926,14 +30244,13 @@
     {
       "path": "engine/web/js/ui/panels/lagrangian-panel/descriptors/scale0.js",
       "lang": "js",
-      "loc": 38,
+      "loc": 27,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Scale 0 Lagrangian panel descriptor.",
       "symbols": [
         "terms",
-        "actionRows",
-        "constantRows"
+        "actionRows"
       ]
     },
     {
@@ -29019,12 +30336,14 @@
     {
       "path": "engine/web/js/ui/panels/telemetry-grid/component.js",
       "lang": "js",
-      "loc": 578,
+      "loc": 637,
       "subsystem": "web/ui",
       "primary": true,
-      "purpose": "",
+      "purpose": "User-facing explanation for an unavailable canonical proper-time group.",
       "symbols": [
         "TelemetryGridPanelComponent",
+        "properTimeAvailabilityText()",
+        "telemetryValueState()",
         "initTelemetryGridPanel()"
       ]
     },
@@ -29070,7 +30389,7 @@
     {
       "path": "engine/web/js/ui/shell/app-shell.js",
       "lang": "js",
-      "loc": 219,
+      "loc": 274,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "Shell facade around the current dashboard DOM.",
@@ -29131,7 +30450,7 @@
     {
       "path": "engine/web/js/ui/shell/panel-dock-controller.js",
       "lang": "js",
-      "loc": 666,
+      "loc": 701,
       "subsystem": "web/ui",
       "primary": true,
       "purpose": "synthetic event",
@@ -29169,6 +30488,93 @@
       ]
     },
     {
+      "path": "engine/web/js/ui/shortcuts.js",
+      "lang": "js",
+      "loc": 56,
+      "subsystem": "web/ui",
+      "primary": true,
+      "purpose": "Shared keyboard metadata and editable-target guard.",
+      "symbols": [
+        "registerWorkspaceShortcuts()",
+        "getWorkspaceShortcuts()",
+        "setShortcutWorkspace()",
+        "isEditableTarget()",
+        "isShortcutBlockedTarget()",
+        "DASHBOARD_SHORTCUTS"
+      ]
+    },
+    {
+      "path": "engine/web/js/ui/utils/canvas-surface.js",
+      "lang": "js",
+      "loc": 129,
+      "subsystem": "web/ui",
+      "primary": true,
+      "purpose": "DPR-aware canvas ownership for fixed and responsive panel charts.",
+      "symbols": [
+        "CanvasSurface",
+        "measureCanvasSurface()",
+        "resizeCanvasSurface()",
+        "createCanvasSurface()"
+      ]
+    },
+    {
+      "path": "engine/web/js/ui/utils/dom-text.js",
+      "lang": "js",
+      "loc": 11,
+      "subsystem": "web/ui",
+      "primary": true,
+      "purpose": "Update a scalar readout without replacing its retained text node.",
+      "symbols": [
+        "setTextIfChanged()"
+      ]
+    },
+    {
+      "path": "engine/web/js/ui/utils/instrument-panel.js",
+      "lang": "js",
+      "loc": 126,
+      "subsystem": "web/ui",
+      "primary": true,
+      "purpose": "Add the common, lifecycle-owned collapse chrome to an instrument panel.",
+      "symbols": [
+        "attachInstrumentPanelCollapse()",
+        "mountInstrumentPanel()"
+      ]
+    },
+    {
+      "path": "engine/web/js/ui/utils/lifetime-scope.js",
+      "lang": "js",
+      "loc": 59,
+      "subsystem": "web/ui",
+      "primary": true,
+      "purpose": "One reversible owner for a component's listeners and scheduled work.",
+      "symbols": [
+        "LifetimeScope"
+      ]
+    },
+    {
+      "path": "engine/web/js/ui/utils/scale-toolbar.js",
+      "lang": "js",
+      "loc": 21,
+      "subsystem": "web/ui",
+      "primary": true,
+      "purpose": "",
+      "symbols": [
+        "htmlToElement()",
+        "registerScaleToolbarFactories()"
+      ]
+    },
+    {
+      "path": "engine/web/js/ui/utils/scenario-applicability-binding.js",
+      "lang": "js",
+      "loc": 83,
+      "subsystem": "web/ui",
+      "primary": true,
+      "purpose": "Owns the repeated Scale-0 scenario-selector and bounded reconciliation lifecycle.",
+      "symbols": [
+        "ScenarioApplicabilityBinding"
+      ]
+    },
+    {
       "path": "engine/web/js/units.js",
       "lang": "js",
       "loc": 424,
@@ -29188,6 +30594,52 @@
         "formatEntropy()",
         "formatDivergence()",
         "formatField_E()"
+      ]
+    },
+    {
+      "path": "engine/web/js/vendor/minisearch/7.2.0/index.js",
+      "lang": "js",
+      "loc": 2005,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ignore",
+      "symbols": [
+        "TreeIterator",
+        "SearchableMap",
+        "MiniSearch"
+      ]
+    },
+    {
+      "path": "engine/web/js/vendor/rapier/runtime/rapier.mjs",
+      "lang": "js",
+      "loc": 2,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "",
+      "symbols": [
+        "A"
+      ]
+    },
+    {
+      "path": "engine/web/js/vendor/rapier/runtime/rapier_wasm3d.js",
+      "lang": "js",
+      "loc": 6814,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "@ts-self-types=\"./rapier_wasm3d.d.ts\"",
+      "symbols": [
+        "RawBroadPhase",
+        "RawCCDSolver",
+        "RawCharacterCollision",
+        "RawColliderSet",
+        "RawColliderShapeCastHit",
+        "RawContactForceEvent",
+        "RawContactManifold",
+        "RawContactPair",
+        "RawConvexMeshData",
+        "RawDebugRenderPipeline",
+        "RawDeserializedWorld",
+        "RawDynamicRayCastVehicleController"
       ]
     },
     {
@@ -29348,9 +30800,31 @@
       "symbols": []
     },
     {
+      "path": "engine/web/js/vendor/web-llm/0.2.85/index.js",
+      "lang": "js",
+      "loc": 15006,
+      "subsystem": "web/js-toplevel",
+      "primary": true,
+      "purpose": "",
+      "symbols": [
+        "ModelNotFoundError",
+        "ConfigValueError",
+        "MinValueError",
+        "RangeError",
+        "NonNegativeError",
+        "InvalidNumberStringError",
+        "DependencyError",
+        "WebGPUNotAvailableError",
+        "WebGPUNotFoundError",
+        "ModelNotLoadedError",
+        "WorkerEngineModelNotLoadedError",
+        "MessageOrderError"
+      ]
+    },
+    {
       "path": "engine/web/js/viewport.js",
       "lang": "js",
-      "loc": 1393,
+      "loc": 1402,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "@file viewport.js @brief Three.js 3D Viewport \u2014 renders particles and fields from the simulation bridge.",
@@ -29517,7 +30991,7 @@
     {
       "path": "engine/web/js/viewport/flux-renderer.js",
       "lang": "js",
-      "loc": 892,
+      "loc": 902,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "@file engine/web/js/viewport/flux-renderer.js @purpose Owns flux volume, flux streamlines for the Scale-0 lattice dashboard.",
@@ -29627,7 +31101,7 @@
     {
       "path": "engine/web/js/viewport/scene-core.js",
       "lang": "js",
-      "loc": 1019,
+      "loc": 1028,
       "subsystem": "web/viewport",
       "primary": true,
       "purpose": "@file engine/web/js/viewport/scene-core.js @purpose Owns scene-level rendering infrastructure for the Scale-0 dashboard: boundary wireframe, axis indicators, post-processing pipeline (bloom), camer...",
@@ -29676,7 +31150,7 @@
     {
       "path": "engine/web/js/ws-bridge.js",
       "lang": "js",
-      "loc": 3228,
+      "loc": 3317,
       "subsystem": "web/js-toplevel",
       "primary": true,
       "purpose": "WebSocket Bridge \u2014 connects web dashboard to native GPU engine.",
@@ -29698,9 +31172,31 @@
       ]
     },
     {
+      "path": "engine/web/mcp_relay.py",
+      "lang": "python",
+      "loc": 483,
+      "subsystem": "web/other",
+      "primary": true,
+      "purpose": "Bounded, process-local mailbox for one explicitly paired browser session.",
+      "symbols": [
+        "RelayError",
+        "Request",
+        "Session",
+        "Relay",
+        "_error()",
+        "_json_bytes()",
+        "_keys()",
+        "_identifier()",
+        "_same_origin_loopback()",
+        "_read()",
+        "_send()",
+        "handle()"
+      ]
+    },
+    {
       "path": "engine/web/serve.py",
       "lang": "python",
-      "loc": 413,
+      "loc": 438,
       "subsystem": "web/other",
       "primary": true,
       "purpose": "Dev http server for engine/web/ that disables browser caching.",
@@ -29737,25 +31233,47 @@
       ]
     },
     {
+      "path": "engine/web/tests/_gravity-cadence.js",
+      "lang": "js",
+      "loc": 126,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "Runs inside page.evaluate against real worker-WASM Gravity observations.",
+      "symbols": [
+        "measureGravityCadence()"
+      ]
+    },
+    {
       "path": "engine/web/tests/_helpers.js",
       "lang": "js",
-      "loc": 256,
+      "loc": 316,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
       "symbols": [
         "gotoAndReady()",
+        "gotoDashboard()",
+        "waitForBridge()",
+        "waitForShell()",
+        "bootDashboard()",
+        "openDockPanel()",
+        "runScaleScenario()",
         "switchMode()",
+        "openObserverWorkspace()",
         "selectScale0Scenario()",
         "attachConsoleWatcher()",
-        "attachNetworkWatcher()",
-        "isNoise()",
-        "realErrors()",
-        "rafSize()",
-        "getRendererMemory()",
-        "getCameraState()",
-        "fullModeSweep()",
-        "KNOWN_NOISE"
+        "attachNetworkWatcher()"
+      ]
+    },
+    {
+      "path": "engine/web/tests/_lagrangian-cadence.js",
+      "lang": "js",
+      "loc": 55,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "Runs inside page.evaluate against real WASM observations and real uPlot draws.",
+      "symbols": [
+        "measureLagrangianCadence()"
       ]
     },
     {
@@ -29765,6 +31283,296 @@
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-console.spec.js",
+      "lang": "js",
+      "loc": 127,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-corpus.spec.js",
+      "lang": "js",
+      "loc": 225,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-decision-context.node.test.mjs",
+      "lang": "js",
+      "loc": 194,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-experiment-model.spec.js",
+      "lang": "js",
+      "loc": 44,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-experiment-objective.node.test.mjs",
+      "lang": "js",
+      "loc": 86,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-experiment-planner.node.test.mjs",
+      "lang": "js",
+      "loc": 178,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-experiment.node.test.mjs",
+      "lang": "js",
+      "loc": 99,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-explanation.node.test.mjs",
+      "lang": "js",
+      "loc": 22,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-field-sectors.node.test.mjs",
+      "lang": "js",
+      "loc": 240,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-grounding.node.test.mjs",
+      "lang": "js",
+      "loc": 186,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-knowledge-build.node.test.mjs",
+      "lang": "js",
+      "loc": 30,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-lattice-ack.node.test.mjs",
+      "lang": "js",
+      "loc": 55,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-lattice-control.node.test.mjs",
+      "lang": "js",
+      "loc": 229,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-lattice.spec.js",
+      "lang": "js",
+      "loc": 107,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-live-jev.spec.js",
+      "lang": "js",
+      "loc": 208,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "Only metadata is observed.",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-mcp-lifecycle.node.test.mjs",
+      "lang": "js",
+      "loc": 126,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-mcp.node.test.mjs",
+      "lang": "js",
+      "loc": 101,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-mcp.spec.js",
+      "lang": "js",
+      "loc": 140,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-model-lifecycle.node.test.mjs",
+      "lang": "js",
+      "loc": 90,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-model.spec.js",
+      "lang": "js",
+      "loc": 51,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-performance.spec.js",
+      "lang": "js",
+      "loc": 148,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-proposal.node.test.mjs",
+      "lang": "js",
+      "loc": 91,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-request-router.node.test.mjs",
+      "lang": "js",
+      "loc": 120,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-scenario-designer.node.test.mjs",
+      "lang": "js",
+      "loc": 73,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-scenario-runner.node.test.mjs",
+      "lang": "js",
+      "loc": 368,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-scenario-template.node.test.mjs",
+      "lang": "js",
+      "loc": 151,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-scenario.spec.js",
+      "lang": "js",
+      "loc": 143,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-search-client.node.test.mjs",
+      "lang": "js",
+      "loc": 35,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": [
+        "FakeWorker"
+      ]
+    },
+    {
+      "path": "engine/web/tests/assistant-search.node.test.mjs",
+      "lang": "js",
+      "loc": 86,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-search.spec.js",
+      "lang": "js",
+      "loc": 143,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-seed-service.node.test.mjs",
+      "lang": "js",
+      "loc": 59,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/assistant-service.node.test.mjs",
+      "lang": "js",
+      "loc": 290,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -29813,12 +31621,30 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/chart-history-index.node.test.mjs",
+      "lang": "js",
+      "loc": 71,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/color-ramps.spec.js",
       "lang": "js",
       "loc": 166,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/core-ui-lifecycle.spec.js",
+      "lang": "js",
+      "loc": 128,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -29851,6 +31677,24 @@
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/dashboard-control-wiring.spec.js",
+      "lang": "js",
+      "loc": 283,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "Read the runtime which the public mode controls currently address.",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/dashboard-layout-contracts.spec.js",
+      "lang": "js",
+      "loc": 63,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -29923,6 +31767,24 @@
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "engine/web/tests/field-line-knots-seeds.spec.js Coverage seeds: particle-anchored + importance-sampled field peaks, voxel-deduped.",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/field-line-knots-worker-state.node.test.mjs",
+      "lang": "js",
+      "loc": 168,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/field-line-knots-worker.spec.js",
+      "lang": "js",
+      "loc": 60,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -30019,6 +31881,51 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/gravity-chart-view.node.test.mjs",
+      "lang": "js",
+      "loc": 47,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/gravity-coherent-observation.spec.js",
+      "lang": "js",
+      "loc": 375,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/gravity-live-cadence.spec.js",
+      "lang": "js",
+      "loc": 149,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/gravity-native-sampler-parity.spec.js",
+      "lang": "js",
+      "loc": 244,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/gravity-observation.node.test.mjs",
+      "lang": "js",
+      "loc": 73,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/helium-spectrum-protocol.spec.js",
       "lang": "js",
       "loc": 94,
@@ -30100,6 +32007,24 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/lagrangian-live-cadence.spec.js",
+      "lang": "js",
+      "loc": 43,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/lagrangian-panel-history.spec.js",
+      "lang": "js",
+      "loc": 124,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/latency-clamp-contract.spec.js",
       "lang": "js",
       "loc": 39,
@@ -30115,6 +32040,15 @@
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/lifetime-scope.test.mjs",
+      "lang": "js",
+      "loc": 43,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -30183,7 +32117,7 @@
     {
       "path": "engine/web/tests/native-observation-v3.node.test.mjs",
       "lang": "js",
-      "loc": 437,
+      "loc": 462,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -30235,12 +32169,318 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/observer-assistant-control.node.test.mjs",
+      "lang": "js",
+      "loc": 219,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-authoring.spec.js",
+      "lang": "js",
+      "loc": 88,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-complex-fractals.spec.js",
+      "lang": "js",
+      "loc": 214,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "global window, document, structuredClone, Buffer",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-force-gun-controller.node.test.mjs",
+      "lang": "js",
+      "loc": 88,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "global structuredClone",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-force-gun-effort.node.test.mjs",
+      "lang": "js",
+      "loc": 32,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-force-gun-physics.node.test.mjs",
+      "lang": "js",
+      "loc": 266,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-force-gun.spec.js",
+      "lang": "js",
+      "loc": 222,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "global window, document, Event",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-frame-geometry.node.test.mjs",
+      "lang": "js",
+      "loc": 58,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-immersion.spec.js",
+      "lang": "js",
+      "loc": 273,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-interaction.spec.js",
+      "lang": "js",
+      "loc": 130,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "global window, document",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-lattice-adapter.node.test.mjs",
+      "lang": "js",
+      "loc": 148,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-lifecycle.spec.js",
+      "lang": "js",
+      "loc": 356,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-math.node.test.mjs",
+      "lang": "js",
+      "loc": 57,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-mirror-author.node.test.mjs",
+      "lang": "js",
+      "loc": 39,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-mirrored-authoring.spec.js",
+      "lang": "js",
+      "loc": 58,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "global window",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-optics.node.test.mjs",
+      "lang": "js",
+      "loc": 190,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-performance.spec.js",
+      "lang": "js",
+      "loc": 104,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-phenomena-data.node.test.mjs",
+      "lang": "js",
+      "loc": 131,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-phenomena.spec.js",
+      "lang": "js",
+      "loc": 235,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "global window, document, structuredClone, Buffer",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-plane-gravity.node.test.mjs",
+      "lang": "js",
+      "loc": 199,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-plane-gravity.spec.js",
+      "lang": "js",
+      "loc": 112,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "global window",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-projector.node.test.mjs",
+      "lang": "js",
+      "loc": 49,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-proxy-suspension.node.test.mjs",
+      "lang": "js",
+      "loc": 67,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-renderer.spec.js",
+      "lang": "js",
+      "loc": 58,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-runtime.node.test.mjs",
+      "lang": "js",
+      "loc": 384,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "The real browser worker module runs with a small transport-only Node adapter.",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-screen-clipping.node.test.mjs",
+      "lang": "js",
+      "loc": 44,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-storage.node.test.mjs",
+      "lang": "js",
+      "loc": 233,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "global structuredClone, TextEncoder, DOMException",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-suspension.node.test.mjs",
+      "lang": "js",
+      "loc": 98,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-suspension.spec.js",
+      "lang": "js",
+      "loc": 161,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "global window, document, requestAnimationFrame, Event",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-wave-phenomena.node.test.mjs",
+      "lang": "js",
+      "loc": 155,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-workspace.spec.js",
+      "lang": "js",
+      "loc": 253,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/observer-zoom.spec.js",
+      "lang": "js",
+      "loc": 77,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/overlay-module-contracts.node.test.mjs",
+      "lang": "js",
+      "loc": 75,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/overlay-scheduler.spec.js",
       "lang": "js",
       "loc": 761,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/overlay-worker-client.node.test.mjs",
+      "lang": "js",
+      "loc": 124,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -30264,7 +32504,7 @@
     {
       "path": "engine/web/tests/panels-redesign.spec.js",
       "lang": "js",
-      "loc": 256,
+      "loc": 246,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -30316,9 +32556,18 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/playwright.assistant.config.js",
+      "lang": "js",
+      "loc": 8,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/playwright.config.js",
       "lang": "js",
-      "loc": 58,
+      "loc": 60,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -30327,10 +32576,19 @@
     {
       "path": "engine/web/tests/playwright.manual.config.js",
       "lang": "js",
-      "loc": 8,
+      "loc": 9,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/playwright.mcp.config.js",
+      "lang": "js",
+      "loc": 8,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -30379,6 +32637,24 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/proper-time-grid-only.spec.js",
+      "lang": "js",
+      "loc": 78,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/proper-time-telemetry-collector.node.test.mjs",
+      "lang": "js",
+      "loc": 146,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/reconcile-claims.spec.js",
       "lang": "js",
       "loc": 321,
@@ -30408,7 +32684,7 @@
     {
       "path": "engine/web/tests/responsive-overflow.spec.js",
       "lang": "js",
-      "loc": 377,
+      "loc": 379,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -30433,6 +32709,63 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale-js-canvas-surface-remediation.node.test.mjs",
+      "lang": "js",
+      "loc": 154,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale-js-instrument-collapse.spec.js",
+      "lang": "js",
+      "loc": 101,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale-js-instrument-panel-collapse.node.test.mjs",
+      "lang": "js",
+      "loc": 94,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": [
+        "FakeClassList",
+        "FakeElement"
+      ]
+    },
+    {
+      "path": "engine/web/tests/scale-js-scenario-applicability-remediation.node.test.mjs",
+      "lang": "js",
+      "loc": 104,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale-js-toolbar-view-controls-remediation.node.test.mjs",
+      "lang": "js",
+      "loc": 50,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/scale-panel-performance-contracts.node.test.mjs",
+      "lang": "js",
+      "loc": 141,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-audit-lifecycle.spec.js",
       "lang": "js",
       "loc": 83,
@@ -30444,7 +32777,7 @@
     {
       "path": "engine/web/tests/scale0-bounded-flux-reads.node.test.mjs",
       "lang": "js",
-      "loc": 367,
+      "loc": 375,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -30471,7 +32804,7 @@
     {
       "path": "engine/web/tests/scale0-conservation-panel.spec.js",
       "lang": "js",
-      "loc": 448,
+      "loc": 467,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -30510,7 +32843,7 @@
     {
       "path": "engine/web/tests/scale0-diagnostics-integration-audit.spec.js",
       "lang": "js",
-      "loc": 224,
+      "loc": 227,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -30555,7 +32888,7 @@
     {
       "path": "engine/web/tests/scale0-empty-panel-performance.spec.js",
       "lang": "js",
-      "loc": 2222,
+      "loc": 2223,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -30582,7 +32915,7 @@
     {
       "path": "engine/web/tests/scale0-fluid-integration.spec.js",
       "lang": "js",
-      "loc": 167,
+      "loc": 168,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -30616,9 +32949,18 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/scale0-gravity-observation.worker.node.test.mjs",
+      "lang": "js",
+      "loc": 82,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/scale0-gravity-overlay-audit.spec.js",
       "lang": "js",
-      "loc": 923,
+      "loc": 929,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -30627,7 +32969,7 @@
     {
       "path": "engine/web/tests/scale0-gravity-slab.node.test.mjs",
       "lang": "js",
-      "loc": 319,
+      "loc": 402,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -30636,7 +32978,7 @@
     {
       "path": "engine/web/tests/scale0-gravity-slab.spec.js",
       "lang": "js",
-      "loc": 133,
+      "loc": 194,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -30717,7 +33059,7 @@
     {
       "path": "engine/web/tests/scale0-overlay-measurement.node.test.mjs",
       "lang": "js",
-      "loc": 137,
+      "loc": 138,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -30726,7 +33068,7 @@
     {
       "path": "engine/web/tests/scale0-overlay-render-analysis.node.test.mjs",
       "lang": "js",
-      "loc": 246,
+      "loc": 248,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -30789,7 +33131,7 @@
     {
       "path": "engine/web/tests/scale0-panel-shell-audit.spec.js",
       "lang": "js",
-      "loc": 494,
+      "loc": 498,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -30816,7 +33158,7 @@
     {
       "path": "engine/web/tests/scale0-paused-telemetry.node.test.mjs",
       "lang": "js",
-      "loc": 95,
+      "loc": 139,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -30843,7 +33185,7 @@
     {
       "path": "engine/web/tests/scale0-playback-controls-audit.spec.js",
       "lang": "js",
-      "loc": 274,
+      "loc": 275,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -30852,7 +33194,7 @@
     {
       "path": "engine/web/tests/scale0-proper-time-overlays.spec.js",
       "lang": "js",
-      "loc": 294,
+      "loc": 173,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -30960,7 +33302,7 @@
     {
       "path": "engine/web/tests/scale0-shared-chart-lifecycle.node.test.mjs",
       "lang": "js",
-      "loc": 188,
+      "loc": 189,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -31005,7 +33347,7 @@
     {
       "path": "engine/web/tests/scale0-spectrum-lifecycle.node.test.mjs",
       "lang": "js",
-      "loc": 245,
+      "loc": 257,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -31086,7 +33428,7 @@
     {
       "path": "engine/web/tests/scale0-telemetry-availability-contract.spec.js",
       "lang": "js",
-      "loc": 619,
+      "loc": 626,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -31095,7 +33437,7 @@
     {
       "path": "engine/web/tests/scale0-telemetry-gating.spec.js",
       "lang": "js",
-      "loc": 126,
+      "loc": 122,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -31104,7 +33446,7 @@
     {
       "path": "engine/web/tests/scale0-time-retained-readout.node.test.mjs",
       "lang": "js",
-      "loc": 238,
+      "loc": 262,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -31228,7 +33570,7 @@
     {
       "path": "engine/web/tests/scale0-worker-lagrangian-demand.node.test.mjs",
       "lang": "js",
-      "loc": 114,
+      "loc": 447,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -31237,7 +33579,7 @@
     {
       "path": "engine/web/tests/scale0-worker-lagrangian-demand.spec.js",
       "lang": "js",
-      "loc": 94,
+      "loc": 164,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -31394,7 +33736,7 @@
     {
       "path": "engine/web/tests/scale1-side-panels.spec.js",
       "lang": "js",
-      "loc": 586,
+      "loc": 555,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -31502,7 +33844,7 @@
     {
       "path": "engine/web/tests/scale2-side-panels.spec.js",
       "lang": "js",
-      "loc": 188,
+      "loc": 157,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -31583,7 +33925,7 @@
     {
       "path": "engine/web/tests/scales.spec.js",
       "lang": "js",
-      "loc": 714,
+      "loc": 716,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -31619,7 +33961,7 @@
     {
       "path": "engine/web/tests/scene-panel.spec.js",
       "lang": "js",
-      "loc": 192,
+      "loc": 185,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -31673,7 +34015,7 @@
     {
       "path": "engine/web/tests/seeding-recipe.node.test.mjs",
       "lang": "js",
-      "loc": 239,
+      "loc": 279,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -31716,9 +34058,27 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/sidepanel-source-consistency.spec.js",
+      "lang": "js",
+      "loc": 106,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/simulation-menu.spec.js",
+      "lang": "js",
+      "loc": 59,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "global window",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/sitewide-font-floor.spec.js",
       "lang": "js",
-      "loc": 148,
+      "loc": 117,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -31754,7 +34114,34 @@
     {
       "path": "engine/web/tests/take_gallery_screenshots.spec.js",
       "lang": "js",
-      "loc": 152,
+      "loc": 136,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/telemetry-acquisition-cache.node.test.mjs",
+      "lang": "js",
+      "loc": 105,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/telemetry-grid-proper-time.node.test.mjs",
+      "lang": "js",
+      "loc": 55,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/telemetry-grid-proper-time.spec.js",
+      "lang": "js",
+      "loc": 111,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -31768,6 +34155,62 @@
       "primary": false,
       "purpose": "@ts-check",
       "symbols": []
+    },
+    {
+      "path": "engine/web/tests/test_ai_service.py",
+      "lang": "python",
+      "loc": 144,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "AI routes keep keys private, constrain upstream requests and guard local assets.",
+      "symbols": [
+        "test_status_and_proxy_are_loopback_same_origin_and_do_not_return_key()",
+        "test_rejects_bad_input_before_upstream()",
+        "test_assets_reject_unknown_paths_changed_bytes_and_serve_immutable()",
+        "test_malformed_upstream_fails_closed()",
+        "test_model_lock_paths_remain_pinned_webllm_resolve_urls()",
+        "test_public_extractor_uses_git_revision_not_current_local_docs()",
+        "test_local_source_pages_are_inert_line_addressed_manifest_assets()",
+        "test_local_source_page_uses_extracted_notebook_lines_and_build_manifest()"
+      ]
+    },
+    {
+      "path": "engine/web/tests/test_assistant_pdf_knowledge.py",
+      "lang": "python",
+      "loc": 99,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "Real PDF fixtures exercise text extraction, duplicate preference and explicit gaps.",
+      "symbols": [
+        "pdf_bytes()",
+        "test_pdf_text_has_correct_page_ranges_and_inert_local_line_citations()",
+        "test_pdf_manifest_covers_source_duplicates_text_and_every_extraction_gap()",
+        "test_authored_source_preference_is_scoped_and_requires_indexed_source()",
+        "test_oversize_pdf_is_reported_without_reading_source_bytes()",
+        "test_pdf_page_limit_is_explicit()"
+      ]
+    },
+    {
+      "path": "engine/web/tests/test_mcp_relay.py",
+      "lang": "python",
+      "loc": 466,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "Real loopback routes and deterministic mailbox lifecycle/security checks.",
+      "symbols": [
+        "Clock",
+        "mailbox()",
+        "start_call()",
+        "poll()",
+        "reply()",
+        "post()",
+        "test_browser_registration_rejects_foreign_host_origin_and_fetch_site()",
+        "test_browser_and_client_credentials_are_separate_and_session_scoped()",
+        "test_idempotent_delivery_waits_for_one_reply_and_conflicting_payload_never_requeues()",
+        "test_cancellation_purges_undelivered_and_marks_inflight_unknown_without_retry()",
+        "test_poll_receives_cancellation_while_browser_command_is_still_inflight()",
+        "test_cancellation_overtaking_call_prevents_late_dispatch_and_binds_id()"
+      ]
     },
     {
       "path": "engine/web/tests/test_record_routes.py",
@@ -31789,13 +34232,14 @@
     {
       "path": "engine/web/tests/test_strict_hydro_routes.py",
       "lang": "python",
-      "loc": 118,
+      "loc": 143,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "Small HTTP and path-containment regressions for the local strict-fluid link.",
       "symbols": [
         "local_server()",
         "test_local_status_requires_all_three_runtime_artifacts()",
+        "test_module_requests_reuse_connection_and_rejected_post_closes_it()",
         "test_allowlisted_runtime_and_public_dependencies_work()",
         "test_traversal_and_unlisted_build_resources_not_served()",
         "test_lab_directory_redirect_retains_usable_relative_urls()",
@@ -31806,16 +34250,25 @@
     {
       "path": "engine/web/tests/theme-contrast.spec.js",
       "lang": "js",
-      "loc": 165,
+      "loc": 181,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
       "symbols": []
     },
     {
+      "path": "engine/web/tests/thermo-telemetry-demand.node.test.mjs",
+      "lang": "js",
+      "loc": 20,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
+      "symbols": []
+    },
+    {
       "path": "engine/web/tests/tick-history-controls.spec.js",
       "lang": "js",
-      "loc": 104,
+      "loc": 118,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "",
@@ -31867,9 +34320,21 @@
       "symbols": []
     },
     {
+      "path": "engine/web/tests/visual-assertions.js",
+      "lang": "js",
+      "loc": 55,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "Runs in the browser; excludes closed disclosures and non-rendered ancestors.",
+      "symbols": [
+        "collectRenderedTypography()",
+        "assertControlsReachable()"
+      ]
+    },
+    {
       "path": "engine/web/tests/wasm-artifact-identity.spec.js",
       "lang": "js",
-      "loc": 154,
+      "loc": 164,
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
@@ -31882,6 +34347,15 @@
       "subsystem": "web/tests",
       "primary": false,
       "purpose": "@ts-check",
+      "symbols": []
+    },
+    {
+      "path": "engine/web/tests/wasm-flux-volume-layout.spec.js",
+      "lang": "js",
+      "loc": 58,
+      "subsystem": "web/tests",
+      "primary": false,
+      "purpose": "",
       "symbols": []
     },
     {
@@ -31923,10 +34397,10 @@
     {
       "path": "engine/web/wasm-threads-proof.worker.js",
       "lang": "js",
-      "loc": 37,
+      "loc": 38,
       "subsystem": "web/other",
       "primary": true,
-      "purpose": "Phase-1 off-thread proof: host ftd_core_mt in a worker at pool=1 (pure serial, no thread spawns).",
+      "purpose": "Off-main-thread proof: host the serial core in one dedicated Web Worker.",
       "symbols": []
     },
     {

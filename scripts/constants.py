@@ -79,7 +79,7 @@ b_3 = 7          # QCD beta function coefficient = (11*N_c - 2*N_f)/3 = (33-12)/
 N_eff = 13       # Effective degrees of freedom (Fibonacci F_7)
 
 # Derived integers
-N_gen = 3        # Number of generations = floor(x_-)
+N_gen = 3        # Number of generations
 
 # =============================================================================
 # MATHEMATICAL CONSTANTS
@@ -577,11 +577,7 @@ def print_framework_summary():
     print()
     print("MASTER QUADRATIC ROOTS:")
     print(f"  x_+ (tree level)  = {X_PLUS:.10f}")
-    # The x_- ~ N_c identification is RETIRED (Cleanup Taxonomy v1.4 sec.5;
-    # FTD-0014 removed from the LEDGER in ca7eb61; OT-5.2 struck). x_- is a
-    # mathematical artifact of the quadratic. N_c = 3 comes from independent
-    # structural sources (Moore Layer Theorem, DERIV_NC_FROM_TOPOLOGY).
-    print(f"  x_- (artifact; NOT N_c, FTD-0014 retired) = {X_MINUS:.10f}")
+    print(f"  x_- (tree level)  = {X_MINUS:.10f}")
     print()
     print("4-TERM PRECISION FORMULA:")
     print("  1/alpha = x_+ - c1|eps| + c2|eps|^2 - c3|eps|^3 - c4|eps|^4")

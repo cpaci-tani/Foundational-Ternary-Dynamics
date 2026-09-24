@@ -16,7 +16,7 @@ What this proves:
   [THEOREM]  FTD Lagrangian satisfies U(1) LGT axioms (structural)
   [THEOREM]  Wilson loops at x₊ show perimeter law (Coulomb phase)
   [THEOREM]  Wilson loops at x₋ show area law (confined phase)
-  [THEOREM]  Phase asymmetry: x₊ >> G* >> x₋ - G* (EM weak, QCD strong)
+  [THEOREM]  Phase asymmetry: x₊ >> G* >> x₋ - G*
   [THEOREM]  α = 1/x₊ follows from Coulomb phase identification
   [SELECTION] J identified as gauge field (minimal continuous extension)
 
@@ -136,7 +136,7 @@ def verify_phase_structure():
     Verify the two-phase structure of the gap equation roots.
 
     x₊ = 137.036 → weak coupling (Coulomb phase, EM)
-    x₋ = 3.024   → strong coupling (confined phase, QCD)
+    x₋ = 3.024   → strong coupling (confined phase)
 
     Key checks:
     1. Both roots > 0 (physical couplings)
@@ -320,7 +320,7 @@ def main():
 
     # Test 2e: Extreme asymmetry
     suite.assert_true(
-        "Phase asymmetry > 1000 (EM weak, QCD strong)",
+        "Phase asymmetry > 1000",
         phase['asymmetry'] > 1000,
         tag="[THEOREM]"
     )

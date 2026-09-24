@@ -291,7 +291,7 @@ def test_riemann_zero():
 
 
 def test_master_quadratic_roots():
-    """Test: Master quadratic produces 1/alpha and N_c"""
+    """Test: Master quadratic produces 1/alpha"""
     print("\n" + "="*70)
     print("TEST 9: Master Quadratic Roots")
     print("="*70)
@@ -317,12 +317,8 @@ def test_master_quadratic_roots():
     print(f"  x_+ vs 1/alpha = {inv_alpha:.10f}")
     error_alpha_ppm = abs(x_plus - inv_alpha) / inv_alpha * 1e6
     print(f"  Error: {error_alpha_ppm:.2f} ppm")
-    print()
-    print(f"  x_- vs N_c = 3")
-    error_nc_pct = abs(x_minus - 3) / 3 * 100
-    print(f"  Error: {error_nc_pct:.2f}%")
 
-    passed = error_alpha_ppm < 2 and error_nc_pct < 1
+    passed = error_alpha_ppm < 2
     print(f"\nStatus: {'PASS' if passed else 'FAIL'}")
     return passed
 

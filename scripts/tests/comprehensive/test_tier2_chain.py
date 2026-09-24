@@ -50,7 +50,6 @@ class TestDependencyGraph:
             "x_minus": ["master_quadratic"],
             # Level 3: Physical identification
             "alpha_inv": ["x_plus"],  # IDENTIFICATION
-            "N_c_from_x_minus": ["x_minus"],  # IDENTIFICATION → circularity check!
             # Level 4: Precision formula
             "epsilon": ["b_3", "N_eff"],
             "c1": ["N_c", "D"],
@@ -99,26 +98,6 @@ class TestDependencyGraph:
             for c in cycles:
                 print(f"\n  CYCLE FOUND: {' -> '.join(c)}")
         assert len(cycles) == 0, f"Found {len(cycles)} cycles in dependency graph"
-
-    def test_nc_circularity_flagged(self):
-        """N_c=3 is both an INPUT and an OUTPUT (from floor(x_minus)).
-
-        This is not a cycle in the graph (they're separate nodes)
-        but IS a philosophical circularity that must be acknowledged.
-        """
-        # N_c is used to construct the quadratic
-        # x_minus from the quadratic gives floor(x_minus) = 3 = N_c
-        # This is consistency, not derivation
-        from scipy.special import gamma
-
-        g_quarter = gamma(0.25)
-        g_star = np.sqrt(2) * g_quarter**2 / (2 * np.pi)
-        disc = (16 * g_star**2) ** 2 - 4 * 16 * g_star**3
-        x_minus = (16 * g_star**2 - np.sqrt(disc)) / 2
-        assert int(np.floor(x_minus)) == N_c, f"floor(x_minus) = {int(np.floor(x_minus))} != N_c = {N_c}"
-        # This test PASSES but the circularity is noted:
-        print("\n  NOTE: N_c=3 is both input (integer choice) and output (floor(x_minus))")
-        print("  This is CONSISTENCY, not an independent derivation.")
 
 
 # =============================================================================

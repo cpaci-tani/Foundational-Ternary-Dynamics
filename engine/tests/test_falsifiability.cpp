@@ -10,7 +10,7 @@
  * it transforms "we chose parameters that work" into "only these
  * parameters CAN work."
  *
- * 12 checks:
+ * 11 checks:
  *   F1:  Wrong coefficient (k=15) gives wrong alpha
  *   F2:  Wrong coefficient (k=17) gives wrong alpha
  *   F3:  Wrong G* (3.0 instead of 2.9587) gives wrong alpha
@@ -21,8 +21,7 @@
  *   F8:  N_eff=12 gives wrong strong coupling (not within 2% of exp)
  *   F9:  Wrong integers break precision formula (> 100 ppm)
  *   F10: Master quadratic discriminant requires G* > 1/4 for real roots
- *   F11: 3 generations requires x- in [3, 4) — wrong G* breaks this
- *   F12: Correct parameters DO produce correct physics (control)
+ *   F11: Correct parameters DO produce correct physics (control)
  */
 
 #define _USE_MATH_DEFINES
@@ -50,15 +49,6 @@ double compute_alpha_inv(double k, double gstar) {
     double sqrt_disc = std::sqrt(disc);
     double x_plus = (k * gstar * gstar + sqrt_disc) / 2.0;
     return x_plus;
-}
-
-// Compute x- (color root) from master quadratic
-double compute_x_minus(double k, double gstar) {
-    double disc = k * gstar * gstar * gstar * (k * gstar - 4.0);
-    if (disc < 0) return -1.0;
-    double sqrt_disc = std::sqrt(disc);
-    double x_minus = (k * gstar * gstar - sqrt_disc) / 2.0;
-    return x_minus;
 }
 
 // Compute Weinberg angle from N_c and N_eff: sin^2(theta_W) = N_c / N_eff
@@ -213,30 +203,7 @@ int main() {
     }
 
     // ================================================================
-    // Part 7: 3 generations requires x- in [3, 4)
-    // ================================================================
-    std::cout << "\n--- Generation Count Constraint ---\n";
-
-    {
-        // G*=3.5 → x- should be far enough from [3,4) to give wrong gen count
-        double xm_g35 = compute_x_minus(ftd::COEFFICIENT, 3.5);
-        int ngen_g35 = (xm_g35 > 0) ? static_cast<int>(std::floor(xm_g35)) : -1;
-        std::cout << "  G*=3.5: x- = " << std::setprecision(4) << xm_g35
-                  << ", N_gen = " << ngen_g35 << "\n";
-
-        // G*=2.0 → should give different gen count
-        double xm_g20 = compute_x_minus(ftd::COEFFICIENT, 2.0);
-        int ngen_g20 = (xm_g20 > 0) ? static_cast<int>(std::floor(xm_g20)) : -1;
-        std::cout << "  G*=2.0: x- = " << std::setprecision(4) << xm_g20
-                  << ", N_gen = " << ngen_g20 << "\n";
-
-        // At least one of these must give wrong gen count
-        bool either_wrong = (ngen_g35 != 3) || (ngen_g20 != 3);
-        check("F11: Sufficiently wrong G* breaks generation count", either_wrong);
-    }
-
-    // ================================================================
-    // Part 8: Control — correct parameters DO work
+    // Part 7: Control — correct parameters DO work
     // ================================================================
     std::cout << "\n--- Control: Correct Parameters ---\n";
 
@@ -253,24 +220,18 @@ int main() {
         double as_correct = compute_alpha_s(ftd::B_3, ftd::N_EFF);
         double err_as = std::abs(as_correct - exp_alpha_s) / exp_alpha_s;
 
-        // Generation count from x-
-        double xm = compute_x_minus(ftd::COEFFICIENT, ftd::G_STAR);
-        int ngen = static_cast<int>(std::floor(xm));
-
         std::cout << "  Correct 1/alpha = " << std::setprecision(8) << alpha_inv_correct
                   << " (error: " << err_correct * 100 << "%)\n";
         std::cout << "  Correct sin^2(theta_W) = " << std::setprecision(5) << sw_correct
                   << " (error: " << err_sw * 100 << "%)\n";
         std::cout << "  Correct alpha_s = " << std::setprecision(5) << as_correct
                   << " (error: " << err_as * 100 << "%)\n";
-        std::cout << "  Correct N_gen = " << ngen << "\n";
 
         bool all_correct = (err_correct < 0.001) &&   // < 0.1% for alpha
                            (err_sw < 0.003) &&          // < 0.3% for Weinberg
-                           (err_as < 0.01) &&            // < 1% for alpha_s
-                           (ngen == 3);                   // exactly 3 generations
+                           (err_as < 0.01);              // < 1% for alpha_s
 
-        check("F12: Correct {16, G*, 3, 4, 7, 13} gives correct physics", all_correct);
+        check("F11: Correct {16, G*, 3, 4, 7, 13} gives correct physics", all_correct);
     }
 
     // ================================================================

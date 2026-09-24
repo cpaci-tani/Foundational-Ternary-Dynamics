@@ -138,29 +138,10 @@ int ontic_audit() {
 
     // --- Layer 4: Framework Integers ---
     std::cout << "\n--- Layer 4: Framework Integers ---\n";
-    std::cout << "    floor(x_-) = " << static_cast<int>(std::floor(xm))
-              << " (historical N_c identification retired)\n";
     check("b_3 = (11*N_c - 2*N_f)/3 = 7", (11*N_C - 2*N_F)/3 == B_3);
     check("N_eff = b_3 + 2*N_c = 13", B_3 + 2*N_C == N_EFF);
     check("N_eff = Fibonacci F_7", N_EFF == 13);
     check("D = N_c*N_base^2 - 1 = 47", N_C * N_BASE * N_BASE - 1 == D_CONSTRAINT);
-
-    // --- Layer 4c: Legacy smaller-root offset ---
-    std::cout << "\n--- Layer 4c: Legacy smaller-root offset ---\n";
-    double delta_c = xm - 3.0;
-    std::cout << "    delta_c = x- - 3       = " << std::setprecision(18) << delta_c << "\n";
-    check_close("legacy DELTA_COLOR alias matches x_- - 3", DELTA_COLOR, delta_c, 1e-12);
-
-    // Exact identity: delta = 8G*^2 - 4G*^(3/2)*sqrt(4G*-1) - 3
-    double delta_exact = 8.0*c*c - 4.0*std::pow(c, 1.5)*std::sqrt(4.0*c - 1.0) - 3.0;
-    check_close("delta_c exact formula (8G*^2-4G*^{3/2}sqrt(4G*-1)-3)", delta_c, delta_exact, 1e-12);
-
-    // Vieta form: delta = 16G*^3*alpha - 3
-    double delta_vieta = 16.0*c*c*c * (1.0/xp) - 3.0;
-    check_close("delta_c Vieta form (16G*^3*alpha - 3)", delta_c, delta_vieta, 1e-12);
-
-    // No near-miss candidate scan: project policy permits only preregistered
-    // identities with a structural derivation.
 
     // --- Layer 4b: Neutrino Mixing ---
     std::cout << "\n--- Layer 4b: Neutrino Mixing ---\n";
@@ -403,21 +384,20 @@ int ontic_audit() {
               << LADDER_NEUTRINO << ", " << LADDER_GRAVITY
               << "} gaps = {4,3,3,6} sum = " << total_walk << "\n";
 
-    // --- Layer 3c: Charge Quartic Identities ---
-    std::cout << "\n--- Layer 3c: Charge Quartic Identities ---\n";
-    double e2_em = ALPHA;
-    double e2_c  = E2_COLOR;
-    std::cout << "    e^2_EM  = " << e2_em << "\n";
-    std::cout << "    e^2_C   = " << e2_c << "\n";
+    // --- Layer 3c: Reciprocal Polynomial Identities ---
+    std::cout << "\n--- Layer 3c: Reciprocal Polynomial Identities ---\n";
+    double inv_xp = ALPHA;                       // 1/x+ (precision root)
+    double inv_xm = 1.0 / X_MINUS_PRECISION;     // 1/x- (precision root)
+    std::cout << "    1/x+    = " << inv_xp << "\n";
+    std::cout << "    1/x-    = " << inv_xm << "\n";
     // Note: the precision roots X_{+,-}_PRECISION differ from the exact tree-level roots
     // by ~3.8 ppm (loop corrections). The PRODUCT identity holds by construction
     // (X_MINUS_PRECISION = 16G*³/X_PLUS_PRECISION), but the SUM identity
-    // (α + e²_C = 1/G*) deviates by ~3.8 ppm. Tolerance relaxed accordingly.
-    check_close("e^2_EM + e^2_C = 1/G*",        e2_em + e2_c,        1.0 / G_STAR, 1e-5);
-    check_close("e^2_EM * e^2_C = 1/(16*G*^3)",  e2_em * e2_c,        1.0 / (16.0 * GSTAR_ACTION), 1e-10);
-    check_close("sqrt(e^2_EM*e^2_C) = 1/(4G*^{3/2})", std::sqrt(e2_em * e2_c), 1.0 / (4.0 * G_STAR * SQRT_GSTAR), 1e-10);
+    // (1/x+ + 1/x- = 1/G*) deviates by ~3.8 ppm. Tolerance relaxed accordingly.
+    check_close("1/x+ + 1/x- = 1/G*",           inv_xp + inv_xm,     1.0 / G_STAR, 1e-5);
+    check_close("(1/x+) * (1/x-) = 1/(16*G*^3)", inv_xp * inv_xm,     1.0 / (16.0 * GSTAR_ACTION), 1e-10);
+    check_close("sqrt((1/x+)*(1/x-)) = 1/(4G*^{3/2})", std::sqrt(inv_xp * inv_xm), 1.0 / (4.0 * G_STAR * SQRT_GSTAR), 1e-10);
     check_close("x+/x- = (1+delta)/(1-delta)",       X_PLUS / X_MINUS,    (1.0 + DELTA_APPROX) / (1.0 - DELTA_APPROX), 0.1);
-    check_close("E2_COLOR = 1/x_-", E2_COLOR, 1.0 / X_MINUS_PRECISION, 1e-15);
 
     // --- Integer Reduction Theorem ---
     std::cout << "\n--- Integer Reduction Theorem ---\n";

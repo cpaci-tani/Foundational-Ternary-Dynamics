@@ -42,7 +42,7 @@ def run_verification():
     
     print("\n[ROOTS] Master Quadratic Roots:")
     print(f"  x_+ (Tree-level 1/alpha) = {x_plus:.8f}")
-    print(f"  x_- (Color charge sector) = {x_minus:.8f} (Expected close to N_c = 3)")
+    print(f"  x_-                      = {x_minus:.8f}")
     
     # 3. Fine Structure Constant Reciprocal with Anomaly Corrected (4-Term)
     b_3 = 7

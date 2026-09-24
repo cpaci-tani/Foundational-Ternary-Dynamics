@@ -5,14 +5,11 @@ Traces each integer {3, 4, 7, 13} to its physical role through the lattice
 gauge theory, not through matching known physics.
 
 Strategy:
-  1. N_c = 3: from floor(x_-) AND from D=3 self-referential identity
-  2. N_base = 4: spinor dimension from 2^((D+1)/2) for D=3
-  3. b_3 = 7: QCD one-loop beta coefficient from (11*N_c - 2*N_f)/3
-  4. N_eff = 13: effective DOF = b_3 + 2*N_c
+  1. N_base = 4: spinor dimension from 2^((D+1)/2) for D=3
+  2. b_3 = 7: QCD one-loop beta coefficient from (11*N_c - 2*N_f)/3
+  3. N_eff = 13: effective DOF = b_3 + 2*N_c
 
 What this proves:
-  [THEOREM]  N_c = 3 from master quadratic (floor(x_-) = 3)
-  [THEOREM]  N_c = D from self-referential identity (D=3 uniqueness)
   [THEOREM]  N_base = 4 from spinor dimension formula
   [THEOREM]  b_3 = 7 from QCD one-loop beta with N_f = 2*N_gen = 2*N_c
   [THEOREM]  N_eff = 13 from b_3 + 2*N_c
@@ -22,9 +19,7 @@ What this proves:
   [SELECTION] N_base interpretation as spinor dimension
 
 Depends on:
-  - proof_d3_uniqueness.py (D=3 self-referential identity)
   - proof_integer_uniqueness.py (exhaustive uniqueness)
-  - proof_gap_equation_from_partition_function.py (gap equation)
 """
 
 import sys
@@ -49,34 +44,7 @@ from common import (
 
 
 # =========================================================================
-# Section 1: N_c = 3 — Color number from gap equation
-# =========================================================================
-
-def derive_n_c():
-    """
-    N_c = floor(x_-) where x_- is the smaller root of the master quadratic.
-
-    Chain:
-      x^2 - 16G*^2 x + 16G*^3 = 0
-      x_- = (16G*^2 - sqrt(256G*^4 - 64G*^3)) / 2
-      x_- = 3.0244...
-      floor(x_-) = 3 = N_c
-
-    Additionally, D=3 is the unique dimension where floor(x_-) = D.
-    So N_c = D = 3 is a self-referential identity.
-    """
-    x_minus = X_MINUS
-    n_c = int(math.floor(x_minus))
-    return {
-        'x_minus': x_minus,
-        'n_c': n_c,
-        'n_c_equals_d': n_c == D_SPATIAL,
-        'fractional_part': x_minus - n_c,
-    }
-
-
-# =========================================================================
-# Section 2: N_base = 4 — Spinor dimension
+# Section 1: N_base = 4 — Spinor dimension
 # =========================================================================
 
 def derive_n_base():
@@ -100,7 +68,7 @@ def derive_n_base():
 
 
 # =========================================================================
-# Section 3: b_3 = 7 — QCD beta function coefficient
+# Section 2: b_3 = 7 — QCD beta function coefficient
 # =========================================================================
 
 def derive_b3():
@@ -158,7 +126,7 @@ def derive_b3():
 
 
 # =========================================================================
-# Section 4: N_eff = 13 — Effective degrees of freedom
+# Section 3: N_eff = 13 — Effective degrees of freedom
 # =========================================================================
 
 def derive_n_eff():
@@ -216,26 +184,24 @@ def derive_n_eff():
 
 
 # =========================================================================
-# Section 5: Self-referential closure
+# Section 4: Self-referential closure
 # =========================================================================
 
 def verify_self_referential_closure():
     """
     The framework integers form a self-referential system:
 
-    N_c = 3  (from gap equation, equals D)
+    N_c = 3
     N_base = 4  (from spinor dimension, 2^((D+1)/2))
     b_3 = 7  (from QCD beta, = N_base + N_c)
     N_eff = 13  (from b_3 + 2*N_c)
 
     Self-referential identities:
-    1. N_c = D (dimension selects itself)
-    2. b_3 = N_base + N_c (additive closure)
-    3. Crossover index = b_3 (self-referential: index 7 = b_3)
-    4. N_eff = Fibonacci(b_3) = Tribonacci(b_3)
+    1. b_3 = N_base + N_c (additive closure)
+    2. Crossover index = b_3 (self-referential: index 7 = b_3)
+    3. N_eff = Fibonacci(b_3) = Tribonacci(b_3)
     """
     identities = {
-        'n_c_equals_d': N_C == D_SPATIAL,
         'additive_closure': B_3 == N_BASE + N_C,
         'n_eff_from_formula': N_EFF == B_3 + 2 * N_C,
         'sin2_w_rational': abs(SIN2_WEINBERG - 3.0/13.0) < MACHINE_EPS,
@@ -267,32 +233,9 @@ def main():
     suite = ProofSuite("Integer Physical Identification")
 
     # ------------------------------------------------------------------
-    # Test 1: N_c = 3 from gap equation
+    # Test 1: N_base = 4 from spinor dimension
     # ------------------------------------------------------------------
-    print("\n--- Section 1: N_c = 3 from Gap Equation ---")
-    nc_result = derive_n_c()
-    print(f"  x_- = {nc_result['x_minus']:.6f}")
-    print(f"  floor(x_-) = {nc_result['n_c']}")
-    print(f"  N_c = D = {D_SPATIAL}: {nc_result['n_c_equals_d']}")
-    print(f"  Fractional part: {nc_result['fractional_part']:.6f}")
-
-    suite.assert_equal(
-        "N_c = floor(x_-) = 3",
-        float(nc_result['n_c']),
-        3.0,
-        tag="[THEOREM]"
-    )
-
-    suite.assert_true(
-        "Self-referential: N_c = D = 3",
-        nc_result['n_c_equals_d'],
-        tag="[THEOREM]"
-    )
-
-    # ------------------------------------------------------------------
-    # Test 2: N_base = 4 from spinor dimension
-    # ------------------------------------------------------------------
-    print("\n--- Section 2: N_base = 4 from Spinor Dimension ---")
+    print("\n--- Section 1: N_base = 4 from Spinor Dimension ---")
     nb_result = derive_n_base()
     print(f"  D = {nb_result['d']}")
     print(f"  {nb_result['formula']}")
@@ -305,9 +248,9 @@ def main():
     )
 
     # ------------------------------------------------------------------
-    # Test 3: b_3 = 7 from QCD beta function
+    # Test 2: b_3 = 7 from QCD beta function
     # ------------------------------------------------------------------
-    print("\n--- Section 3: b_3 = 7 from QCD Beta Function ---")
+    print("\n--- Section 2: b_3 = 7 from QCD Beta Function ---")
     b3_result = derive_b3()
     print(f"  N_c = {b3_result['n_c']}, N_gen = {b3_result['n_gen']}, N_f = {b3_result['n_f']}")
     print(f"  b_3 = (11*{b3_result['n_c']} - 2*{b3_result['n_f']})/3 = {b3_result['b3']}")
@@ -336,9 +279,9 @@ def main():
     )
 
     # ------------------------------------------------------------------
-    # Test 4: N_eff = 13 from b_3 + 2*N_c
+    # Test 3: N_eff = 13 from b_3 + 2*N_c
     # ------------------------------------------------------------------
-    print("\n--- Section 4: N_eff = 13 from Effective DOF ---")
+    print("\n--- Section 3: N_eff = 13 from Effective DOF ---")
     neff_result = derive_n_eff()
     print(f"  N_eff = b_3 + 2*N_c = {B_3} + {2*N_C} = {neff_result['n_eff']}")
     print(f"  sin^2(theta_W) = N_c/N_eff = {N_C}/{neff_result['n_eff']} = {neff_result['sin2_w']:.6f}")
@@ -375,9 +318,9 @@ def main():
     )
 
     # ------------------------------------------------------------------
-    # Test 5: Self-referential closure
+    # Test 4: Self-referential closure
     # ------------------------------------------------------------------
-    print("\n--- Section 5: Self-Referential Closure ---")
+    print("\n--- Section 4: Self-Referential Closure ---")
     closure = verify_self_referential_closure()
 
     print(f"  Integers: {closure['integers']}")
@@ -398,13 +341,11 @@ def main():
     )
 
     # ------------------------------------------------------------------
-    # Test 6: Physical identification chain
+    # Test 5: Physical identification chain
     # ------------------------------------------------------------------
-    print("\n--- Section 6: Physical Identification Chain ---")
+    print("\n--- Section 5: Physical Identification Chain ---")
 
     chain = [
-        ("N_c = 3", "floor(x_-) of master quadratic", "[THEOREM]"),
-        ("N_c = D", "D=3 self-referential identity", "[THEOREM]"),
         ("N_gen = N_c = 3", "Three generations = three colors", "[SELECTION]"),
         ("N_f = 2*N_gen = 6", "Quark doublets per generation", "[THEOREM]"),
         ("N_base = 4", "Spinor dim = 2^((D+1)/2)", "[THEOREM]"),
@@ -428,9 +369,9 @@ def main():
     )
 
     # ------------------------------------------------------------------
-    # Test 7: Comparison with experiment
+    # Test 6: Comparison with experiment
     # ------------------------------------------------------------------
-    print("\n--- Section 7: Experimental Comparison ---")
+    print("\n--- Section 6: Experimental Comparison ---")
 
     print(f"  sin^2(theta_W): FTD = {SIN2_WEINBERG:.4f}, CODATA = {CODATA_SIN2_W:.5f}")
     print(f"  Deviation: {abs(SIN2_WEINBERG - CODATA_SIN2_W)/CODATA_SIN2_W*100:.2f}%")
@@ -456,7 +397,7 @@ def main():
     if suite.all_pass:
         print(f"\nAll {suite.total} tests passed.")
         print("\nPhysical identification of {3, 4, 7, 13}:")
-        print("  N_c  = 3  : Color number from gap equation [THEOREM]")
+        print("  N_c  = 3  : Color number [THEOREM]")
         print("  N_base = 4: Spinor dimension from D=3 [THEOREM]")
         print("  b_3  = 7  : QCD beta coefficient [THEOREM given N_gen=N_c SELECTION]")
         print("  N_eff = 13: Effective DOF [THEOREM]")

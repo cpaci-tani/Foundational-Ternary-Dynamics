@@ -50,11 +50,8 @@ export const X_BORN = 2.0 * G_STAR;
 export const COEFFICIENT = 16;                         // N_BASE^2 = 2^(D+1)
 export const X_PLUS            = 137.0361714582;      // tree-level root
 export const X_PLUS_PRECISION  = 137.035999177;       // 4-term corrected (CODATA)
-// X_MINUS: smaller root of the master quadratic. The historical
-// identification X_MINUS ↔ N_c was RETIRED per FTD/FQCR Cleanup Taxonomy
-// v1.4 §5 (commit ca7eb61); N_c = 3 is sourced from DERIV_NC_FROM_TOPOLOGY,
-// not from this root. Preserved for completeness of the root pair
-// {X_PLUS, X_MINUS}.
+// X_MINUS: smaller root of the master quadratic, kept for completeness of
+// the root pair {X_PLUS, X_MINUS}.
 export const X_MINUS = 3.0239639163;
 
 // ── Layer 4: Framework Integers ─────────────────────────────────────

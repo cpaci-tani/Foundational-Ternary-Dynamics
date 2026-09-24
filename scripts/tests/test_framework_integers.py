@@ -119,14 +119,10 @@ class TestFrameworkIntegers(unittest.TestCase):
     def test_generation_count(self):
         """
         Verify N_gen = 3 (number of fermion generations).
-
-        In FTD: N_gen = floor(x_-) where x_- ~ 3.024 is the smaller
-        root of the master quadratic.
         """
-        # This is derived from the quadratic, but the integer part = N_c
         N_gen = N_c
         self.assertEqual(N_gen, 3)
-        print(f"\n  N_gen = floor(x_-) = floor(3.024) = {N_gen} [PASS]")
+        print(f"\n  N_gen = N_c = {N_gen} [PASS]")
 
 
 class TestIntegerRelationships(unittest.TestCase):

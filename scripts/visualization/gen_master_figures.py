@@ -123,7 +123,7 @@ def plot_pt_transition(ax, show_title=True):
     ax.plot(k_vals[r_mask], real_r1[r_mask], color=NAVY, lw=2,
             label=r'$x_+ \to 1/\alpha$ (Physics)')
     ax.plot(k_vals[r_mask], real_r2[r_mask], color=CYAN, lw=2, linestyle='--',
-            label=r'$x_- \to N_c$ (Internal)')
+            label=r'$x_-$')
 
     # Threshold line
     ax.axvline(x=K_CRIT, color='k', linestyle=':', lw=1.5,

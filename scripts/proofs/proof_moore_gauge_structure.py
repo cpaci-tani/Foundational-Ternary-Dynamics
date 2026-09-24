@@ -570,7 +570,7 @@ chain = [
     ("[THEOREM]", "J in R^3: J^2 = J_x^2 + J_y^2 + J_z^2 (orthogonal)"),
     ("[THEOREM]", "SC excites 1 J-comp -> U(1), FCC excites 2 -> SU(2), BCC excites 3 -> SU(3)"),
     ("[THEOREM]", "G* from BCC Watson integral (only sublattice seeing full J^2)"),
-    ("[THEOREM]", "Master quadratic -> x+ = 137.036 (alpha), x- -> N_C = 3"),
+    ("[THEOREM]", "Master quadratic -> x+ = 137.036 (alpha)"),
     ("[THEOREM]", "Baryon = 3 quarks saturating 3 orthogonal J-components -> J^2 = K_B^2"),
     ("[THEOREM]", "Meson = 2 quarks -> J^2 = 2K_B^2/3 < K_B^2 -> unstable"),
     ("[THEOREM]", "N_EFF = 13 = max sub-threshold neighbor count (13/26 < K_B)"),

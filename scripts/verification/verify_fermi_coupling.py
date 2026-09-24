@@ -46,7 +46,7 @@ alpha = 1.0 / x_plus
 
 print(f"\n[Step 2] Master quadratic: x² - 16G*²x + 16G*³ = 0")
 print(f"  x₊ = {x_plus:.10f}   (= 1/α)")
-print(f"  x₋ = {x_minus:.10f}  (→ N_c = 3)")
+print(f"  x₋ = {x_minus:.10f}")
 print(f"  α  = {alpha:.10e}")
 
 # ──────────────────────────────────────────────────────

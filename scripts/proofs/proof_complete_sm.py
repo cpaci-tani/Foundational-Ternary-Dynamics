@@ -80,10 +80,10 @@ print(f"  Vieta sum   = {vieta_sum} = 16*G*^2 = {COEFF * G_STAR**2}")
 print(f"  Vieta prod  = {vieta_prod} = 16*G*^3 = {COEFF * G_STAR**3}")
 
 # ============================================================================
-# SECTION 2: FRAMEWORK INTEGERS from floor(x-)
+# SECTION 2: FRAMEWORK INTEGERS
 # ============================================================================
 
-N_C = int(mp_floor(X_MINUS))       # = 3 (color charges)
+N_C = 3                             # = 3 (color charges)
 N_BASE = N_C * (N_C - 1) - 2       # = 4 (spinor dimension)
 B_3 = N_C**2 - 2                    # = 7 (QCD beta coefficient)
 N_EFF = B_3 + 2 * N_C              # = 13 (effective DoF)
@@ -309,9 +309,7 @@ LAMBDA_QCD_2LOOP = LAMBDA_QCD_1LOOP * mp_exp(mpf('0.85'))  # empirical 2-loop/1-
 # 0.2857 had replaced it here, printing 37% off its own 0.209
 # comparator under [THEOREM]. Tag reconciled to the constitution
 # (SPEC_FTD_FRAMEWORK_V1 Sec "QCD"): the coupling insertion is a
-# [SELECTION], not a derivation; and per FTD-0210 x_- has no physical
-# correspondent, so any physical reading of "confinement at x_-" is
-# itself unreconciled.
+# [SELECTION], not a derivation.
 from mpmath import besseli as mp_besseli
 SIGMA_CONF = -mp_log(mp_besseli(1, X_MINUS) / mp_besseli(0, X_MINUS))
 

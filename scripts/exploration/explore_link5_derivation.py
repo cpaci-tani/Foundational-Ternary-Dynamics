@@ -526,7 +526,7 @@ print()
 # Verify numerically: is the budget equation EXACT?
 print("Numerical verification of the budget equation x/K + G*/x = 1:")
 print()
-for label, xval in [("x+ = 1/alpha", x_plus), ("x- ~ N_c", x_minus)]:
+for label, xval in [("x+ = 1/alpha", x_plus), ("x-", x_minus)]:
     budget = xval/K_L2 + G_STAR/xval
     print(f"  {label:>15}: x/K + G*/x = {budget:.15f} (deviation from 1: {abs(budget-1):.2e})")
 

@@ -397,16 +397,9 @@ def run() -> ProofSuite:
     # =====================================================================
     # These are yes/no predictions — discrete, not continuous.
 
-    # I1: Exactly 3 generations
-    s.assert_true(
-        "I1: N_gen = floor(x₋) = 3 exactly (no 4th generation)",
-        int(math.floor(X_MINUS)) == 3,
-        tag="[CONJECTURE]"
-    )
-
     # I2: Exactly 3 colors
     s.assert_true(
-        "I2: N_c = floor(x₋) = 3 exactly",
+        "I2: N_c = 3 exactly",
         N_C == 3,
         tag="[CONJECTURE]"
     )

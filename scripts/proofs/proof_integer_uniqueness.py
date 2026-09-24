@@ -182,42 +182,12 @@ suite.assert_true(
 
 
 # ============================================================================
-# SECTION 3: Adding the Master Quadratic Constraint
+# SECTION 3: Adding N_gen = N_c Constraint
 # ============================================================================
 
 print()
 print("=" * 78)
-print("  SECTION 3: Master Quadratic Constraint [THEOREM]")
-print("=" * 78)
-print()
-print(f"  From the master quadratic: x_- = {X_MINUS:.6f}")
-print(f"  => N_c = floor(x_-) = {int(math.floor(X_MINUS))}")
-print()
-
-# Filter solutions to those with N_c = floor(x_-)
-N_c_from_quadratic = int(math.floor(X_MINUS))
-quadratic_solutions = [s for s in physics_solutions if s['N_c'] == N_c_from_quadratic]
-
-print(f"  Solutions with N_c = {N_c_from_quadratic} (from master quadratic):")
-for sol in quadratic_solutions:
-    print(f"    {{N_c={sol['N_c']}, N_base={sol['N_base']}, b_3={sol['b_3']}, "
-          f"N_eff={sol['N_eff']}}}  (N_gen={sol['N_gen']}, sin^2={sol['sin2']:.4f})")
-print()
-
-suite.assert_true(
-    "Master quadratic gives N_c = 3",
-    N_c_from_quadratic == 3,
-    tag="[THEOREM]"
-)
-
-
-# ============================================================================
-# SECTION 4: Adding N_gen = N_c Constraint
-# ============================================================================
-
-print()
-print("=" * 78)
-print("  SECTION 4: N_gen = N_c Constraint [SELECTION]")
+print("  SECTION 3: N_gen = N_c Constraint [SELECTION]")
 print("=" * 78)
 print()
 print("  The identification N_gen = N_c (three generations from three colors)")
@@ -225,7 +195,7 @@ print("  is a [SELECTION] -- argued from the cuboctahedral geometry but not")
 print("  uniquely derived from the lattice axioms.")
 print()
 
-gen_solutions = [s for s in quadratic_solutions if s['N_gen'] == s['N_c']]
+gen_solutions = [s for s in physics_solutions if s['N_c'] == 3 and s['N_gen'] == s['N_c']]
 print(f"  Solutions with N_c = 3 AND N_gen = N_c:")
 for sol in gen_solutions:
     print(f"    {{N_c={sol['N_c']}, N_base={sol['N_base']}, b_3={sol['b_3']}, "
@@ -243,12 +213,12 @@ suite.assert_true(
 
 
 # ============================================================================
-# SECTION 5: Sequence Constraints Check
+# SECTION 4: Sequence Constraints Check
 # ============================================================================
 
 print()
 print("=" * 78)
-print("  SECTION 5: Sequence Constraints [SELECTION]")
+print("  SECTION 4: Sequence Constraints [SELECTION]")
 print("=" * 78)
 print()
 
@@ -285,12 +255,12 @@ suite.assert_true(
 
 
 # ============================================================================
-# SECTION 6: Full Exhaustive Search (no physics, pure combinatorics)
+# SECTION 5: Full Exhaustive Search (no physics, pure combinatorics)
 # ============================================================================
 
 print()
 print("=" * 78)
-print("  SECTION 6: Exhaustive Search (pure combinatorics) [THEOREM]")
+print("  SECTION 5: Exhaustive Search (pure combinatorics) [THEOREM]")
 print("=" * 78)
 print()
 print("  Search ALL integer quadruples (N_c, N_base, b_3, N_eff) with:")
@@ -364,12 +334,12 @@ suite.assert_true(
 
 
 # ============================================================================
-# SECTION 7: Relaxed Search (P1+P2+P3+P5 only, no sequences)
+# SECTION 6: Relaxed Search (P1+P2+P3+P5 only, no sequences)
 # ============================================================================
 
 print()
 print("=" * 78)
-print("  SECTION 7: Solutions Without Sequence Constraints [THEOREM]")
+print("  SECTION 6: Solutions Without Sequence Constraints [THEOREM]")
 print("=" * 78)
 print()
 print("  How many quadruples satisfy ONLY the physics constraints?")
@@ -420,27 +390,26 @@ print()
 
 
 # ============================================================================
-# SECTION 8: Honest Accounting
+# SECTION 7: Honest Accounting
 # ============================================================================
 
 print()
 print("=" * 78)
-print("  SECTION 8: Honest Accounting")
+print("  SECTION 7: Honest Accounting")
 print("=" * 78)
 print()
 print("  [THEOREM] -- What is proven:")
-print("    1. N_c = 3 from the master quadratic floor(x_-) = 3")
-print("    2. Given N_c=3 and N_gen=N_c, the system P1-P5 has a UNIQUE solution")
-print("    3. {3,4,7,13} satisfies all sequence constraints S1-S4")
-print("    4. {3,4,7,13} is the UNIQUE solution to P2+P5+S1+S2+S3 (exhaustive search)")
-print("    5. F_7 = T_7 = 13 is the only non-trivial Fib-Trib crossover for n <= 30")
+print("    1. Given N_c=3 and N_gen=N_c, the system P1-P5 has a UNIQUE solution")
+print("    2. {3,4,7,13} satisfies all sequence constraints S1-S4")
+print("    3. {3,4,7,13} is the UNIQUE solution to P2+P5+S1+S2+S3 (exhaustive search)")
+print("    4. F_7 = T_7 = 13 is the only non-trivial Fib-Trib crossover for n <= 30")
 print()
 print("  [SELECTION] -- What remains a choice:")
 print("    * N_gen = N_c (three generations from three colors)")
 print("    * The sequence constraints S1-S4 (why these sequences?)")
 print("    * The additive closure P5 (why b_3 = N_base + N_c?)")
 print()
-print("  RESULT: Given the master quadratic AND N_gen = N_c,")
+print("  RESULT: Given N_c = 3 AND N_gen = N_c,")
 print("  the framework integers {3, 4, 7, 13} are uniquely determined.")
 print("  The sequence constraints provide independent verification")
 print("  but are not required for uniqueness.")

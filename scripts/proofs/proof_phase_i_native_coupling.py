@@ -31,9 +31,9 @@ What this is NOT:
     `G_C := sqrt(1/x_+)` is hardcoded; this script verifies the
     self-consistency of that choice as the operational coupling that
     propagates through the wave-propagation channel.
-  - NOT a closure of FTD-0013 / FTD-0014 from [STRONGLY MOTIVATED
-    CONJECTURE]; those are the empirical-identification claims, separate
-    from this script's content.
+  - NOT a closure of FTD-0013 from [STRONGLY MOTIVATED CONJECTURE];
+    that is the empirical-identification claim, separate from this
+    script's content.
 
 What this IS:
   - A derived value `g_FTD^2 = 1/x_+` from the master quadratic
@@ -325,8 +325,8 @@ def main():
         print("  - The 1.26 ppm match to alpha_CODATA was already known (FTD-0001).")
         print("  - MC-T4.3 (axioms -> alpha derivation chain) is unchanged; Phase J")
         print("    ultralocality structural decoupling stands.")
-        print("  - FTD-0013 / FTD-0014 (physical identifications x_+ = 1/alpha, x_- = N_c)")
-        print("    remain [STRONGLY MOTIVATED CONJECTURE].")
+        print("  - FTD-0013 (physical identification x_+ = 1/alpha)")
+        print("    remains [STRONGLY MOTIVATED CONJECTURE].")
         print()
         sys.exit(0)
     else:

@@ -79,7 +79,7 @@ int main() {
     check_close("Vieta: x_+ * x_- = 16*G*^3", x_plus * x_minus, 16.0 * c * c * c, 1e-10);
 
     // Derived integers
-    check("N_C = floor(x_-) = 3", ftd::N_C == 3);
+    check("N_C = 3", ftd::N_C == 3);
     check("B_3 = 7", ftd::B_3 == 7);
     check("N_EFF = 13", ftd::N_EFF == 13);
     check("D_CONSTRAINT = 47", ftd::D_CONSTRAINT == 47);

@@ -16,18 +16,17 @@
  *     For each N_eff in [b_3 + N_c .. b_3 + 4*N_c]:
  *       1. Compute master quadratic with k = N_base^2
  *       2. Check if x+ matches 1/alpha to < 0.1%
- *       3. Check if floor(x-) = N_c (self-consistency)
- *       4. Check if sin^2(theta_W) = N_c/N_eff matches to < 1%
- *       5. Check if alpha_s = b_3/(b_3 + 4*N_eff) matches to < 2%
- *       6. Check if precision formula gives < 10 ppm
+ *       3. Check if sin^2(theta_W) = N_c/N_eff matches to < 1%
+ *       4. Check if alpha_s = b_3/(b_3 + 4*N_eff) matches to < 2%
+ *       5. Check if precision formula gives < 10 ppm
  *
- * A combination must pass ALL 5 criteria to be "viable."
+ * A combination must pass ALL 4 criteria to be "viable."
  *
  * 7 checks:
  *   IS1: Total combinations tested > 100
- *   IS2: Exactly ONE combination passes all 5 criteria
+ *   IS2: Exactly ONE combination passes all 4 criteria
  *   IS3: That combination is {3, 4, 7, 13}
- *   IS4: No other combination passes even 4 of 5 criteria
+ *   IS4: No other combination passes even 3 of 4 criteria
  *   IS5: FTD integers are self-consistent (b_3 = (11*3-12)/3 = 7)
  *   IS6: N_eff = b_3 + 2*N_c = 13 (Fibonacci F_7)
  *   IS7: Master quadratic coefficient = N_base^2 = 16
@@ -55,12 +54,11 @@ void check(const char* name, bool condition) {
 
 struct IntegerCombo {
     int nc, nbase, b3, neff;
-    int criteria_passed;  // out of 5
+    int criteria_passed;  // out of 4
     double alpha_inv_err;
     double weinberg_err;
     double alpha_s_err;
     double precision_ppm;
-    bool gen_match;
 };
 
 int main() {
@@ -74,8 +72,8 @@ int main() {
     double gstar = ftd::G_STAR;
 
     std::vector<IntegerCombo> all_combos;
-    std::vector<IntegerCombo> viable;       // pass all 5
-    std::vector<IntegerCombo> near_viable;  // pass 4 of 5
+    std::vector<IntegerCombo> viable;       // pass all 4
+    std::vector<IntegerCombo> near_viable;  // pass 3 of 4
     int total_tested = 0;
 
     // Sweep over N_c in [2..6], N_base in [2..8]
@@ -108,7 +106,6 @@ int main() {
                 double disc = k * gstar * gstar * gstar * (k * gstar - 4.0);
                 if (disc < 0) {
                     combo.alpha_inv_err = 999.0;
-                    combo.gen_match = false;
                     combo.weinberg_err = 999.0;
                     combo.alpha_s_err = 999.0;
                     combo.precision_ppm = 1e9;
@@ -117,26 +114,21 @@ int main() {
                 }
                 double sqrt_disc = std::sqrt(disc);
                 double xp = (k * gstar * gstar + sqrt_disc) / 2.0;
-                double xm = (k * gstar * gstar - sqrt_disc) / 2.0;
 
                 combo.alpha_inv_err = std::abs(xp - codata_alpha_inv) / codata_alpha_inv;
                 if (combo.alpha_inv_err < 0.001) combo.criteria_passed++;
 
-                // Criterion 2: Self-consistency: floor(x-) = N_c
-                combo.gen_match = (static_cast<int>(std::floor(xm)) == nc);
-                if (combo.gen_match) combo.criteria_passed++;
-
-                // Criterion 3: Weinberg angle sin^2(theta_W) = N_c/N_eff within 1%
+                // Criterion 2: Weinberg angle sin^2(theta_W) = N_c/N_eff within 1%
                 double sw = static_cast<double>(nc) / neff;
                 combo.weinberg_err = std::abs(sw - exp_sin2_w) / exp_sin2_w;
                 if (combo.weinberg_err < 0.01) combo.criteria_passed++;
 
-                // Criterion 4: Strong coupling within 2%
+                // Criterion 3: Strong coupling within 2%
                 double as = static_cast<double>(b3) / (b3 + 4 * neff);
                 combo.alpha_s_err = std::abs(as - exp_alpha_s) / exp_alpha_s;
                 if (combo.alpha_s_err < 0.02) combo.criteria_passed++;
 
-                // Criterion 5: Precision formula within 10 ppm
+                // Criterion 4: Precision formula within 10 ppm
                 int d = nc * nbase * nbase - 1;
                 if (d > 0 && (b3 + nbase) > 0) {
                     double c1 = static_cast<double>(nc * nc) / d;
@@ -159,9 +151,9 @@ int main() {
 
                 all_combos.push_back(combo);
 
-                if (combo.criteria_passed == 5) {
+                if (combo.criteria_passed == 4) {
                     viable.push_back(combo);
-                } else if (combo.criteria_passed == 4) {
+                } else if (combo.criteria_passed == 3) {
                     near_viable.push_back(combo);
                 }
             }
@@ -173,33 +165,31 @@ int main() {
     // ================================================================
     std::cout << "\n--- Sweep Summary ---\n";
     std::cout << "  Total combinations tested: " << total_tested << "\n";
-    std::cout << "  Viable (5/5 criteria):     " << viable.size() << "\n";
-    std::cout << "  Near-viable (4/5):         " << near_viable.size() << "\n";
+    std::cout << "  Viable (4/4 criteria):     " << viable.size() << "\n";
+    std::cout << "  Near-viable (3/4):         " << near_viable.size() << "\n";
 
     if (!viable.empty()) {
-        std::cout << "\n--- Viable Combinations (5/5) ---\n";
+        std::cout << "\n--- Viable Combinations (4/4) ---\n";
         for (auto& c : viable) {
             std::cout << "  {N_c=" << c.nc << ", N_base=" << c.nbase
                       << ", b_3=" << c.b3 << ", N_eff=" << c.neff << "}"
                       << "  alpha_err=" << std::setprecision(4) << c.alpha_inv_err * 100 << "%"
                       << "  weinberg_err=" << c.weinberg_err * 100 << "%"
                       << "  alpha_s_err=" << c.alpha_s_err * 100 << "%"
-                      << "  precision=" << std::setprecision(2) << c.precision_ppm << " ppm"
-                      << "  gen_match=" << (c.gen_match ? "YES" : "NO") << "\n";
+                      << "  precision=" << std::setprecision(2) << c.precision_ppm << " ppm" << "\n";
         }
     }
 
     if (!near_viable.empty()) {
-        std::cout << "\n--- Near-Viable (4/5) ---\n";
+        std::cout << "\n--- Near-Viable (3/4) ---\n";
         for (auto& c : near_viable) {
             std::cout << "  {N_c=" << c.nc << ", N_base=" << c.nbase
                       << ", b_3=" << c.b3 << ", N_eff=" << c.neff << "}"
-                      << "  criteria=" << c.criteria_passed << "/5"
+                      << "  criteria=" << c.criteria_passed << "/4"
                       << "  alpha_err=" << std::setprecision(4) << c.alpha_inv_err * 100 << "%"
                       << "  weinberg=" << c.weinberg_err * 100 << "%"
                       << "  alpha_s=" << c.alpha_s_err * 100 << "%"
-                      << "  precision=" << std::setprecision(2) << c.precision_ppm << " ppm"
-                      << "  gen=" << (c.gen_match ? "Y" : "N") << "\n";
+                      << "  precision=" << std::setprecision(2) << c.precision_ppm << " ppm" << "\n";
         }
     }
 
@@ -212,7 +202,7 @@ int main() {
     check("IS1: Total combinations tested > 100", total_tested > 100);
 
     // IS2: Exactly one viable combination
-    check("IS2: Exactly ONE combination passes all 5 criteria",
+    check("IS2: Exactly ONE combination passes all 4 criteria",
           viable.size() == 1);
 
     // IS3: That combination is {3, 4, 7, 13}
@@ -223,9 +213,9 @@ int main() {
     }
     check("IS3: Unique viable set is {3, 4, 7, 13}", is_ftd);
 
-    // IS4: No other combination passes 4/5
+    // IS4: No other combination passes 3/4
     // (relaxed: allow a few near-misses but they should be rare)
-    check("IS4: Near-viable (4/5) count <= 5 (framework is tightly constrained)",
+    check("IS4: Near-viable (3/4) count <= 5 (framework is tightly constrained)",
           near_viable.size() <= 5);
 
     // IS5: Self-consistency of b_3
@@ -251,15 +241,14 @@ int main() {
               << " (" << failures << " failures)\n";
     std::cout << "  SIGNIFICANCE: Out of " << total_tested << " integer combinations,\n";
     if (viable.size() == 1 && is_ftd) {
-        std::cout << "  ONLY {3, 4, 7, 13} simultaneously satisfies all 5 criteria:\n";
+        std::cout << "  ONLY {3, 4, 7, 13} simultaneously satisfies all 4 criteria:\n";
     } else {
-        std::cout << "  " << viable.size() << " combinations satisfy all 5 criteria.\n";
+        std::cout << "  " << viable.size() << " combinations satisfy all 4 criteria.\n";
     }
     std::cout << "    1. 1/alpha matches CODATA to < 0.1%\n";
-    std::cout << "    2. floor(x-) = N_c (generation self-consistency)\n";
-    std::cout << "    3. sin^2(theta_W) matches experiment to < 1%\n";
-    std::cout << "    4. alpha_s(M_Z) matches experiment to < 2%\n";
-    std::cout << "    5. Precision formula matches CODATA to < 10 ppm\n";
+    std::cout << "    2. sin^2(theta_W) matches experiment to < 1%\n";
+    std::cout << "    3. alpha_s(M_Z) matches experiment to < 2%\n";
+    std::cout << "    4. Precision formula matches CODATA to < 10 ppm\n";
     std::cout << "  The framework integers are NOT arbitrary.\n";
     std::cout << "================================================================\n";
     return failures;

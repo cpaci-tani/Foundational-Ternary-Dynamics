@@ -405,12 +405,12 @@ print()
 # where sigma is the string tension and r_0 is the equilibrium distance.
 
 # From our earlier results:
-alpha_s = 1.0 / 3.024  # strong coupling from x-
+alpha_s = 1.0 / 3.024  # strong coupling
 sigma = 0.209           # string tension
 r_0 = np.sqrt(alpha_s / sigma)  # equilibrium distance
 
 print(f"  Lattice parameters:")
-print(f"    alpha_s = 1/x- = {alpha_s:.4f}")
+print(f"    alpha_s = {alpha_s:.4f}")
 print(f"    sigma = {sigma:.4f}")
 print(f"    r_0 = sqrt(alpha_s/sigma) = {r_0:.4f}")
 print()
@@ -453,7 +453,7 @@ The spin-orbit coupling comes from the velocity coupling term
 
 The intruder condition (l >= l_crit) is determined by the ratio of
 the spin-orbit splitting to the HO level spacing, both of which are
-lattice constants (alpha_s = 1/x-, sigma = 0.209).
+lattice constants (alpha_s, sigma = 0.209).
 
 l_crit = {l_crit:.2f}, predicting intruders for l >= {int(np.ceil(l_crit))}.
 Experiment: intruders start at l = 3.

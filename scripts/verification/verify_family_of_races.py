@@ -6,7 +6,7 @@ Verifies:
   2. Duplication laws (q=6 through q=3, q=8 through q=4, q=10 through q=5)
   3. Reflection pairing: R * (1/R) = pi/sin(pi/q) via Gamma product
   4. CM curve specialization: q=3 (j=0) and q=4 (j=1728)
-  5. Physical selection: only q=4 gives alpha and N_c=3
+  5. Physical selection: only q=4 gives alpha
   6. Asymptotic: R(1/q) ~ q - 1 - gamma_Euler/pi
 """
 
@@ -100,7 +100,6 @@ H4 = 2 * u4p * u4m / (u4p + u4m)
 
 print(f"  q=4 (square, j=1728, |Aut|=4):")
 check(f"  x+ = {xp4:.6f} (alpha^-1 = 137.036)", abs(xp4 - 137.036) < 0.001)
-check(f"  floor(x-) = {int(xm4)} = N_c = 3", int(xm4) == 3)
 check(f"  H = {H4:.10f} = [Q(i):Q] = 2", abs(H4 - 2.0) < 1e-10)
 print()
 
@@ -117,7 +116,6 @@ H3 = 2 * u3p * u3m / (u3p + u3m)
 
 print(f"  q=3 (hexagonal, j=0, |Aut|=6):")
 check(f"  x+ = {xp3:.6f} (NOT alpha^-1)", abs(xp3 - 137.036) > 1.0)
-check(f"  floor(x-) = {int(xm3)} (NOT 3)", int(xm3) == 2)
 check(f"  H = {H3:.10f} = [Q(omega):Q] = 2", abs(H3 - 2.0) < 1e-10)
 print()
 
@@ -128,8 +126,6 @@ dev4 = abs(xp4 - codata) / codata * 1e6
 dev3 = abs(xp3 - codata) / codata * 1e6
 check(f"q=4 deviation: {dev4:.2f} ppm (< 2 ppm)", dev4 < 2.0)
 check(f"q=3 deviation: {dev3:.0f} ppm (>> 2 ppm)", dev3 > 1000)
-check(f"q=4 gives floor(x-)=3=N_c", int(xm4) == 3)
-check(f"q=3 gives floor(x-)=2 (wrong)", int(xm3) != 3)
 print()
 
 # === 6. Asymptotic ===

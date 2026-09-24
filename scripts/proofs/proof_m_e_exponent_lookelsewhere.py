@@ -16,10 +16,8 @@ proof_m_e_exponent_n11.py (2026-05-02) established:
 
 That script never asks what the OTHER 11 orderings give, or whether S1+S2
 are doing independent work versus being reverse-engineered to hit the
-already-known target. This script answers exactly that, the same way
-FTD-0097 look-elsewhere-scanned the master quadratic before trusting its
-uniqueness. No new postulate is introduced; this only audits the existing
-promotion attempt.
+already-known target. This script answers exactly that. No new postulate
+is introduced; this only audits the existing promotion attempt.
 
 Epistemic status: [PRE-REGISTERED-STYLE AUDIT]. Purely deterministic
 combinatorics (12 permutations, exhaustively enumerable) plus one

@@ -19,7 +19,7 @@ with k = |Aut(E_d)|^2. For most CM curves |Aut| = 2, so k = 4. For d = −3
 (j = 0) we have |Aut| = 6 (extra automorphism by ω), so k = 36. For
 d = −4 (j = 1728) we have |Aut| = 4, so k = 16.
 
-Ask: how close does x+ get to 137.036 = 1/α and x− to 3 = N_c for each
+Ask: how close does x+ get to 137.036 = 1/α for each
 curve? If only d = −4 hits, the selection of y^2 = x^3 − x is forced.
 If others also hit, the claim needs revision.
 
@@ -34,7 +34,6 @@ from mpmath import mp, mpf, sqrt, gamma, quad, pi as mp_pi, exp, log, mpc
 mp.dps = 40
 
 ALPHA_INV = mpf("137.035999177")
-N_C        = mpf(3)
 
 
 def real_period(a: mpf, b: mpf) -> mpf:
@@ -160,16 +159,12 @@ def scan_one(label: str, disc: int, j: int, a: mpf, b: mpf, nAut: int) -> None:
         return
     xp, xm = roots
     err_p = rel_err(xp, ALPHA_INV)
-    err_m = rel_err(xm, N_C) if xm > 0 else float("inf")
     print(f"    x+           = {float(xp):.6f}   (target 1/alpha = 137.036, rel err {err_p:.3e})")
-    print(f"    x-           = {float(xm):.6f}   (target N_c = 3,         rel err {err_m:.3e})")
     verdict = []
     if err_p < 1e-5:
         verdict.append("x+ within 10 ppm of 1/alpha")
     if err_p < 1e-3:
         verdict.append("x+ within 1000 ppm of 1/alpha")
-    if err_m < 1e-2:
-        verdict.append("x- within 1% of 3")
     if verdict:
         print(f"    ** {' + '.join(verdict)} **")
 
@@ -179,9 +174,9 @@ def main() -> None:
     print("  PHASE I ITEM 2 — alternative CM curve scan")
     print("  Master quadratic shape: x^2 - k G^2 x + k G^3 = 0,  k = |Aut(E)|^2")
     print("  G = 2 Omega / sqrt(pi)  (canonical for d=-4; analog for others)")
-    print("  Claim under audit: only d=-4 (y^2=x^3-x) should hit 1/alpha + N_c.")
+    print("  Claim under audit: only d=-4 (y^2=x^3-x) should hit 1/alpha.")
     print("=" * 78)
-    print(f"\n  Reference: 1/alpha = {float(ALPHA_INV)}, N_c = 3")
+    print(f"\n  Reference: 1/alpha = {float(ALPHA_INV)}")
 
     for disc, label, j, a, b, nAut in CM_CURVES:
         scan_one(label, disc, j, mpf(a), mpf(b), nAut)
@@ -190,13 +185,13 @@ def main() -> None:
     print("  INTERPRETATION")
     print("=" * 78)
     print("""
-  If only d = -4 hits both x+ near 137.036 AND x- near 3, then the
+  If only d = -4 hits x+ near 137.036, then the
   FTD argument 'y^2 = x^3 - x is forced as THE CM curve whose master
   quadratic lands on physical constants' is VERIFIED. This strengthens
   the [STRONGLY MOTIVATED CONJECTURE] toward [SELECTION from a natural
   uniqueness argument].
 
-  If other CM curves also hit both, the argument collapses: the master
+  If other CM curves also hit, the argument collapses: the master
   quadratic's success is generic to CM curves and its specificity to
   FTD's physical identification is weaker than claimed.
 """)

@@ -50,7 +50,7 @@ int main() {
     // COEFFICIENT = N_BASE^2 = 16
     check("COEFFICIENT = N_BASE^2", ftd::ontic::N_BASE * ftd::ontic::N_BASE == ftd::ontic::COEFFICIENT);
 
-    // 2. The integer cascade: x_- → N_c → N_gen → N_f → b_3 → N_eff → D
+    // 2. The integer cascade: N_c → N_gen → N_f → b_3 → N_eff → D
     check("N_gen = N_c", ftd::ontic::N_GEN == ftd::ontic::N_C);
     check("N_f = 2*N_gen", ftd::ontic::N_F == 2 * ftd::ontic::N_GEN);
     int b3 = (11 * ftd::ontic::N_C - 2 * ftd::ontic::N_F) / 3;

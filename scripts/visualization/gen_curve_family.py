@@ -397,7 +397,7 @@ def gen_quadratic_phase():
                    xy=(k_phys, xp_phys), xytext=(k_phys + 2, xp_phys - 10),
                    fontsize=9, color=NAVY, fontweight='bold',
                    arrowprops=dict(arrowstyle='->', color=NAVY, lw=1.0))
-    ax_re.annotate(f'$x_- = {xm_phys:.2f}$\n$(N_c)$',
+    ax_re.annotate(f'$x_- = {xm_phys:.2f}$',
                    xy=(k_phys, xm_phys), xytext=(k_phys + 2, xm_phys + 8),
                    fontsize=9, color=RED, fontweight='bold',
                    arrowprops=dict(arrowstyle='->', color=RED, lw=1.0))
