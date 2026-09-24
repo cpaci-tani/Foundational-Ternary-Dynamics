@@ -8,7 +8,7 @@
 
 > [!NOTE]
 > **Definitive Resolution (2026-04-28):**
-> This open question is formally **CLOSED THEOREM-NEGATIVE** by [`THEOREM_MU_NO_GO_FTD0096.md`](file:///c:/Users/cpaci/Desktop/ftd/docs/theory/10_eft_program/THEOREM_MU_NO_GO_FTD0096.md).
+> This open question is formally **CLOSED THEOREM-NEGATIVE** by [`THEOREM_MU_NO_GO_FTD0096.md`](../../derivations/sm_constants_mass_flavour/THEOREM_MU_NO_GO_FTD0096.md).
 > The mass no-go theorem proves that because the threshold parameters in the update rules are dimensionless real numbers, no mass-dimensional quantity can be derived from the Axiom-Zero ring.
 > Consequently, the FTD mass unit $\mu$ is an external calibration, and the $L_2$ identity is terminally `[PARAMETRIC]`.
 

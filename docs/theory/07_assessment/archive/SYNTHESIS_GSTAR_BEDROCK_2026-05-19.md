@@ -128,12 +128,12 @@ That is a feature, not a bug. It is what it looks like for a research program to
 
 ---
 
-**Files referenced in this synthesis (all absolute paths):**
+**Files referenced in this synthesis (repository-relative from `<repo>`):**
 
-- `C:\Users\cpaci\Desktop\ftd\docs\papers\PAPER_GSTAR_INTRODUCTION.tex` — §17 character unification + §17.7 zero-point bedrock
-- `C:\Users\cpaci\Desktop\ftd\docs\theory\02_foundations\FOUND_TERNARY_STATE_FROM_I.md` — FTD-0128 grounding (algebraic chain $i^2 \to \{-1,0,+1\}$)
-- `C:\Users\cpaci\Desktop\ftd\docs\theory\02_foundations\FOUND_THE_COMPLETE_ALGEBRA_OF_i.md` — Perpendicularity Theorem; Born rule as $\C \to \R$ projection (§3.3, §5.5)
-- `C:\Users\cpaci\Desktop\ftd\docs\theory\01_reference\TRACKER_ONTIC_TRUTH.md` (referenced via CLAUDE.md) — canonical bedrock tracker
-- `C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\LEDGER.md` — FTD-0122 (BCC complex structure $V_{\mathrm{complex}} \cong \Z[i]^2$), FTD-0127 (parity-twist), FTD-0128 (state-field grounding)
+- `<repo>\docs\papers\PAPER_GSTAR_INTRODUCTION.tex` — §17 character unification + §17.7 zero-point bedrock
+- `<repo>\docs\theory\02_foundations\FOUND_TERNARY_STATE_FROM_I.md` — FTD-0128 grounding (algebraic chain $i^2 \to \{-1,0,+1\}$)
+- `<repo>\docs\theory\02_foundations\FOUND_THE_COMPLETE_ALGEBRA_OF_i.md` — Perpendicularity Theorem; Born rule as $\C \to \R$ projection (§3.3, §5.5)
+- `<repo>\docs\theory\01_reference\TRACKER_ONTIC_TRUTH.md` (referenced via CLAUDE.md) — canonical bedrock tracker
+- `<repo>\docs\theory\07_assessment\LEDGER.md` — FTD-0122 (BCC complex structure $V_{\mathrm{complex}} \cong \Z[i]^2$), FTD-0127 (parity-twist), FTD-0128 (state-field grounding)
 
 The four claims marked "structure says this" (Hodge bidegree for the dichotomy, Deligne's period conjecture as L1–L4 consistency, $\mathrm{Sym}^{2,3}$ as the home of $(2,3)$, $\Z[i]$-substrate realism as the project's committed ontology) are claims the bedrock already entails; turning them into formal statements is mechanical. The two claims marked "I sense this" (Moore Layer as $\chi_{-3}$ side; reference frame projection / Born rule / $\chi_{-4}$ as a single arrow at different scopes) are the speculative ones — worth investigating, worth being wrong about.

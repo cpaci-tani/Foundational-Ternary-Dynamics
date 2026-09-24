@@ -15,7 +15,7 @@ This program closes that gap. Success means: FTD can stand as a Wilsonian effect
 
 The program has six phases (Phase 0–5) over ~13 weeks. Phase 0 pre-registers the expectations. Phases 1–4 run the experiments. Phase 5 writes the manuscript.
 
-Full plan: `C:\Users\cpaci\.claude\plans\vivid-marinating-pudding.md` (local). Program catalog of current parametric insertions: `../07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md`.
+Full plan: `<local-agent-plan>\vivid-marinating-pudding.md` (local). Program catalog of current parametric insertions: `../07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md`.
 
 ---
 

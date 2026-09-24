@@ -17,7 +17,8 @@ Question: does i * G* connect to primes in a concrete way?
 import numpy as np
 from scipy.special import gamma
 import sys
-sys.path.insert(0, r'C:\Users\cpaci\Desktop\ftd\scripts')
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from constants import G_STAR, ALPHA, GAMMA_QUARTER, GAMMA_HALF
 
 print("=" * 72)

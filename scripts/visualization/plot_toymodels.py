@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-out_dir = r"C:\Users\cpaci\Desktop\ftd\docs\theory\media"
+out_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "docs", "theory", "media"))
 os.makedirs(out_dir, exist_ok=True)
 
 plt.style.use('dark_background')

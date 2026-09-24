@@ -3,7 +3,7 @@
 # reduced-rank inversion to SUCCEED at T >= 0.10 even with evapFlux
 # zero-variance, and we push higher T to see if evaporation activates.
 set -e
-cd /mnt/c/Users/cpaci/Desktop/ftd
+cd "$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")"
 
 mkdir -p engine/results/s_eff_nonlinear_2026-04-29/Tsweep_v2
 

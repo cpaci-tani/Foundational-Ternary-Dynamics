@@ -199,13 +199,13 @@ sha256sum docs/theory/10_eft_program/PREREG_OPERATOR_MIXING_L_SCAN_v1.md
 
 # 2. Build engine in WSL2 (must be at backend-anchor commit or equivalent)
 wsl.exe -d Ubuntu-22.04 -- bash -c \
-    "cd /mnt/c/Users/cpaci/Desktop/ftd && cmake --build engine/build_wsl --config Release -j 8"
+    "cd /path/to/ftd && cmake --build engine/build_wsl --config Release -j 8"
 
 # 3. Run six configs
 for L in 64 96 128; do
     burn=$([ $L -eq 64 ] && echo 200 || ([ $L -eq 96 ] && echo 250 || echo 300))
     wsl.exe -d Ubuntu-22.04 -- bash -c \
-        "cd /mnt/c/Users/cpaci/Desktop/ftd && \
+        "cd /path/to/ftd && \
          ./engine/build_wsl/campaign_operator_mixing \
             --L=$L --b4 --inj-mult=1.0 --seeds=5 --samples=40 --burn=$burn"
 done

@@ -15,7 +15,7 @@
 # Resolves the continuum-limit (L → ∞) question: does the L-dependent
 # flow stabilize at the L=64 trend or continue drifting?
 set -e
-cd /mnt/c/Users/cpaci/Desktop/ftd
+cd "$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")"
 
 OUT=engine/results/s_eff_nonlinear_2026-04-29/L128_prod_T0.100_LARGE
 echo "=== L=128 LARGE production ==="

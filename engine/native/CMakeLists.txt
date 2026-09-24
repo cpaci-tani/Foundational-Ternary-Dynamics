@@ -252,7 +252,7 @@ if(WIN32)
         FTD_RML_SHELL_PATH="${CMAKE_CURRENT_SOURCE_DIR}/ui/rml/shell.rml"
         FTD_RML_FONT_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/Inter-Regular.ttf"
         FTD_RMLUI_HLSL_PATH="${CMAKE_CURRENT_SOURCE_DIR}/shaders/rmlui.hlsl"
-        FTD_RML_PNG_OUT="C:/Users/cpaci/AppData/Local/Temp/claude/C--Users-cpaci-Desktop-ftd-engine/3ccfaca6-eaf5-4dbc-bd71-f3eded0ce5c6/scratchpad/rml_smoke.png")
+        FTD_RML_PNG_OUT="${CMAKE_CURRENT_BINARY_DIR}/rml_smoke.png")
     if(MSVC)
         target_compile_definitions(native_test_ui_rml_smoke PRIVATE _CRT_SECURE_NO_WARNINGS)
     endif()
@@ -292,7 +292,7 @@ if(WIN32)
         FTD_RML_SHELL_PATH="${CMAKE_CURRENT_SOURCE_DIR}/ui/rml/shell.rml"
         FTD_RML_FONT_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/Inter-Regular.ttf"
         FTD_RMLUI_HLSL_PATH="${CMAKE_CURRENT_SOURCE_DIR}/shaders/rmlui.hlsl"
-        FTD_APP_PNG_OUT="C:/Users/cpaci/AppData/Local/Temp/claude/C--Users-cpaci-Desktop-ftd-engine/3ccfaca6-eaf5-4dbc-bd71-f3eded0ce5c6/scratchpad/live_app.png")
+        FTD_APP_PNG_OUT="${CMAKE_CURRENT_BINARY_DIR}/live_app.png")
     if(MSVC)
         target_compile_definitions(native_app PRIVATE _CRT_SECURE_NO_WARNINGS)
     endif()

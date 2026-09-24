@@ -41,7 +41,7 @@ plt.grid(True, alpha=0.3)
 
 # Save to artifacts dir
 import os
-artifact_dir = r"C:\Users\cpaci\.gemini\antigravity\brain\520f9887-149c-4d9b-bba7-d534bf7b3d1d"
+artifact_dir = os.environ.get("FTD_ARTIFACT_DIR", os.path.join(os.path.dirname(__file__), "output"))
 os.makedirs(artifact_dir, exist_ok=True)
 output_path = os.path.join(artifact_dir, "gamma_shape_g_star.png")
 plt.savefig(output_path, dpi=300, bbox_inches='tight')

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Phase 3: temperature sweep at A=50 to test regime-4 wake-up scaling
 set -e
-cd /mnt/c/Users/cpaci/Desktop/ftd
+cd "$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")"
 mkdir -p engine/results/regime4_phase3
 rm -rf engine/results/regime4_phase3/T*
 for T in 0.005 0.010 0.020 0.040; do

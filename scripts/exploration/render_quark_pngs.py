@@ -12,8 +12,9 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D  # noqa
 import numpy as np
 
-JSON = Path(r"C:/Users/cpaci/Desktop/ftd/quark_viz_data.json")
-OUTDIR = Path(r"C:/Users/cpaci/Desktop/ftd/dissemination/interactive/quark_pngs")
+ROOT = Path(__file__).resolve().parents[2]
+JSON = ROOT / "quark_viz_data.json"
+OUTDIR = ROOT / "dissemination/interactive/quark_pngs"
 OUTDIR.mkdir(exist_ok=True, parents=True)
 
 COLOR_MAP = {

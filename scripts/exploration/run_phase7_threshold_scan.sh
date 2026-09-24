@@ -11,7 +11,7 @@
 # A=30, A=50, A=80 data this gives an 8-point scan across the candidate
 # threshold/window region.
 set -e
-cd /mnt/c/Users/cpaci/Desktop/ftd
+cd "$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")"
 mkdir -p engine/results/regime4_phase7
 
 for A in 40 45 55 60 65 70; do

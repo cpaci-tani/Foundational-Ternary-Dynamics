@@ -18,7 +18,8 @@ import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.optimize import brentq
 import sys
-sys.path.insert(0, r'C:\Users\cpaci\Desktop\ftd\scripts')
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from constants import G_STAR, ALPHA, G_N
 
 print("=" * 72)

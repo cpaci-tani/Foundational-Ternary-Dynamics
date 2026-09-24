@@ -1,6 +1,6 @@
 #!/bin/bash
 # FTD-0107 G1 follow-up: L=64 emergent-spectrum rerun
-cd /mnt/c/Users/cpaci/Desktop/ftd
+cd "$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")"
 mkdir -p engine/results/emergent_spectrum_2026-04-27_L64
 LOG=engine/results/emergent_spectrum_2026-04-27_L64/production_log.txt
 echo "[$(date)] FTD-0107 G1 L=64 starting (pre-reg tag: preregister-emergent-spectrum-g1)" > "$LOG"

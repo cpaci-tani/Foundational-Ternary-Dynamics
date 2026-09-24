@@ -10,7 +10,7 @@ checking -A_s = -4/pi^2, and Im = pi*A_s = 4/pi from the log(y-1)=log(1-y)+i*pi
 branch). Rigorous Arb balls => certified digits.
 
 Run: wsl.exe -d Ubuntu-22.04 -- bash -lc \
-  "cd /mnt/c/Users/cpaci/Desktop/ftd && sage -python scripts/exploration/bcc_sunset_connection_sage.py [bits]"
+  "sage -python scripts/exploration/bcc_sunset_connection_sage.py [bits]"
 """
 import json
 import sys

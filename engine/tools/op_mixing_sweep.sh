@@ -1,6 +1,6 @@
 #!/bin/bash
 # F2 sweep — try to break the s² zero-variance degeneracy
-cd /mnt/c/Users/cpaci/Desktop/ftd
+cd "$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")"
 
 CONFIGS=(
     "--burn=10 --samples=20 --seeds=2"

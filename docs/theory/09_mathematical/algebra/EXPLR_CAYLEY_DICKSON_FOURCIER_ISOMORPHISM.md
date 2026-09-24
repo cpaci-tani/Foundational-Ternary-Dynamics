@@ -362,10 +362,10 @@ The torus knot type of FTD vortices IS the Cayley-Dickson level of the condensat
 
 ## Computational Verification
 
-Full verification script: [investigate_cayley_dickson_fourcier.py](file:///C:/Users/cpaci/Desktop/pbr_pedagogy/dissemination/Foundational-Ternary-Dynamics/scripts/investigation/investigate_cayley_dickson_fourcier.py)
+Full verification script: `investigate_cayley_dickson_fourcier.py` (external local artifact; not in this repository).
 
 9-panel verification figure:
 
-![The Cayley-Dickson Fourcier Isomorphism — 9-panel computational verification](C:/Users/cpaci/Desktop/pbr_pedagogy/dissemination/Foundational-Ternary-Dynamics/media/images/fourier-curve-art/cayley_dickson_fourcier_isomorphism.png)
+The nine-panel computational verification image is an external local artifact and is not in this repository.
 
 *Status: Computationally verified — all 10 predictions confirmed*

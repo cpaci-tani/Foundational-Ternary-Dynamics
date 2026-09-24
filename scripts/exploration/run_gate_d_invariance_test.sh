@@ -14,7 +14,7 @@
 # (N_samples=500) for fast runs. Each takes ~5 min wall on RTX 5090
 # at L=32.
 set -e
-cd /mnt/c/Users/cpaci/Desktop/ftd
+cd "$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")"
 
 mkdir -p engine/results/s_eff_nonlinear_2026-04-29/GateD_T_perturbation
 

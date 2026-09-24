@@ -2,11 +2,12 @@ import numpy as np
 import pandas as pd
 import argparse
 import os
+from pathlib import Path
 
 def main():
     parser = argparse.ArgumentParser(description="Convert Koopman CSV to NPZ for estimator.")
-    parser.add_argument("--input", type=str, default=r"c:\Users\cpaci\Desktop\ftd\engine\tests\traj_koopman_A14.csv")
-    parser.add_argument("--output", type=str, default=r"c:\Users\cpaci\Desktop\ftd\engine\tests\trajectory_A14.npz")
+    parser.add_argument("--input", type=str, default=str(Path(__file__).resolve().parents[2] / "engine/tests/traj_koopman_A14.csv"))
+    parser.add_argument("--output", type=str, default=str(Path(__file__).resolve().parents[2] / "engine/tests/trajectory_A14.npz"))
     args = parser.parse_args()
 
     print(f"Reading {args.input}...")

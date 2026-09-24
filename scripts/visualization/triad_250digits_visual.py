@@ -4,6 +4,7 @@ Every digit rendered. Merge directions shown. The identity verified at every pos
 """
 
 import sys, io
+from pathlib import Path
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 
 from mpmath import mp, mpf, gamma, sqrt, nstr
@@ -227,8 +228,8 @@ ax.text(0.5, y - 0.035,
         color='#aaa', fontfamily='serif', fontstyle='italic')
 
 # ── Save ─────────────────────────────────────────────────────────
-out_png = 'C:/Users/cpaci/Desktop/ftd/docs/papers/triad_250digits.png'
-out_pdf = 'C:/Users/cpaci/Desktop/ftd/docs/papers/triad_250digits.pdf'
+out_png = str(Path(__file__).resolve().parents[2] / 'docs/papers/triad_250digits.png')
+out_pdf = str(Path(__file__).resolve().parents[2] / 'docs/papers/triad_250digits.pdf')
 plt.savefig(out_png, dpi=200, bbox_inches='tight', facecolor='white')
 plt.savefig(out_pdf, bbox_inches='tight', facecolor='white')
 print(f"Saved: {out_png}")

@@ -17,7 +17,7 @@ independent confirmation that the closed-form values are correct.
 CANONICAL RUN (WSL2 + RTX 5090):
 
     wsl.exe -d Ubuntu-22.04 -- bash -c \\
-        "cd /mnt/c/Users/cpaci/Desktop/ftd && \\
+        "cd <repo-root> && \\
          python3 scripts/exploration/gstar_W_montecarlo_gpu.py"
 ================================================================================
 """

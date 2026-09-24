@@ -56,7 +56,7 @@ output = {}
 for h in hosts:
     output[h] = fetch_system(h)
 
-out_file = 'c:/Users/cpaci/Desktop/ftd/engine/web/js/config/exoplanet-seeds.js'
+out_file = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'engine', 'web', 'js', 'config', 'exoplanet-seeds.js'))
 os.makedirs(os.path.dirname(out_file), exist_ok=True)
 with open(out_file, 'w') as f:
     f.write('export const EXOPLANET_SEEDS = ' + json.dumps(output, indent=2) + ';\n')

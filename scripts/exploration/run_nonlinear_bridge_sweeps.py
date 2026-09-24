@@ -9,9 +9,16 @@ import sys
 import re
 import json
 import csv
+import shlex
+from pathlib import Path
 import numpy as np
 
 CONSTANTS_H_PATH = "engine/include/ftd/constants.h"
+def wsl_root():
+    return subprocess.run(
+        ["wsl", "-d", "Ubuntu-22.04", "--", "wslpath", "-a", str(Path(__file__).resolve().parents[2])],
+        check=True, capture_output=True, text=True,
+    ).stdout.strip()
 
 def replace_in_file(target_str, replacement_str):
     with open(CONSTANTS_H_PATH, 'r', encoding='utf-8') as f:
@@ -24,7 +31,7 @@ def replace_in_file(target_str, replacement_str):
 
 def compile_engine():
     print("  [Compile] Rebuilding campaign_s_eff_nonlinear under WSL2/CUDA...")
-    cmd = 'wsl -d Ubuntu-22.04 -- bash -c "cd /mnt/c/Users/cpaci/Desktop/ftd && cmake --build engine/build_wsl --config Release --target campaign_s_eff_nonlinear -j 8"'
+    cmd = f'wsl -d Ubuntu-22.04 -- bash -c "cd {shlex.quote(wsl_root())} && cmake --build engine/build_wsl --config Release --target campaign_s_eff_nonlinear -j 8"'
     res = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     if res.returncode != 0:
         print(f"  [Compile] ERROR: WSL2 compile failed!\n{res.stderr}")
@@ -35,7 +42,7 @@ def run_campaign(L, seeds, samples, burn, amp, T_langevin, out_dir):
     print(f"  [Run] L={L}, Seeds={seeds}, Samples={samples}, Amp={amp}, T={T_langevin}...")
     cmd = (
         f'wsl -d Ubuntu-22.04 -- bash -c "'
-        f'cd /mnt/c/Users/cpaci/Desktop/ftd && '
+        f'cd {shlex.quote(wsl_root())} && '
         f'./engine/build_wsl/campaign_s_eff_nonlinear '
         f'--scenario=genesis-rich '
         f'--L={L} '

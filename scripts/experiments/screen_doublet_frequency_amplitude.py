@@ -4,8 +4,9 @@ A quartic clock has Omega ~ A, so cycle count must scale with amplitude.
 A harmonic mode has Omega independent of A.
 """
 import pandas as pd, numpy as np, re, os
+from pathlib import Path
 
-BASE = r"C:\Users\cpaci\Desktop\ftd\engine\results\ftd_0659"
+BASE = str(Path(__file__).resolve().parents[2] / "engine/results/ftd_0659")
 a = pd.read_csv(os.path.join(BASE, "ftd_0659_native_excited_matter_clock_arms_v1.csv"))
 t = pd.read_csv(os.path.join(BASE, "ftd_0659_native_excited_matter_clock_ticks_v1.csv"))
 

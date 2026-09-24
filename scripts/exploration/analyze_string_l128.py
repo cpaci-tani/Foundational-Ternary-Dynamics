@@ -16,9 +16,10 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-L128_JSON = Path(r"C:/Users/cpaci/Desktop/ftd/string_l128.json")
-LOWER_JSON = Path(r"C:/Users/cpaci/Desktop/ftd/string_verify.json")
-OUTDIR = Path(r"C:/Users/cpaci/Desktop/ftd/dissemination/interactive/quark_pngs")
+ROOT = Path(__file__).resolve().parents[2]
+L128_JSON = ROOT / "string_l128.json"
+LOWER_JSON = ROOT / "string_verify.json"
+OUTDIR = ROOT / "dissemination/interactive/quark_pngs"
 
 FTD_INTEGERS = {1, 2, 3, 4, 7, 13, 27}
 FTD_LABELS = {1: "1", 2: "mult(E_g)=2", 3: "N_c=mult(T_1u)=3",

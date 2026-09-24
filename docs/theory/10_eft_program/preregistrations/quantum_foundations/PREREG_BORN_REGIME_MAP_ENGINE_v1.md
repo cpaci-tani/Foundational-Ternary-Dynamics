@@ -87,7 +87,7 @@ qualifier and is the owner's booking decision.
 ## 5. Execution
 
 ```
-wsl.exe -d Ubuntu-22.04 -- bash -c "cd /mnt/c/Users/cpaci/Desktop/ftd && engine/build_wsl/campaign_born_regime_map"
+wsl.exe -d Ubuntu-22.04 -- bash -c "cd /path/to/ftd && engine/build_wsl/campaign_born_regime_map"
 ```
 
 Outcome letter reported verbatim; LEDGER row minted only by the owner.

@@ -310,7 +310,7 @@ The failure mode is asymmetric and expensive: an import discovered *after* a pur
 ## §2a — Quantum non-commutativity: "the substrate observable algebra is commutative (classical fields s, J, v) ⇒ abelian ⇒ type I ⇒ trivial modular flow ⇒ no quantum core" (AUDIT_BOUNDARY_MAP.md §2a, rows FTD-0225/0226/0228/0251)
 
 - **Movement class:** `PURCHASABLE_AXIOM`
-- **Registered status:** VERBATIM tags from C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\core_ledgers\LEDGER.md:
+- **Registered status:** VERBATIM tags from `docs/theory/07_assessment/core_ledgers/LEDGER.md`:
 
 - FTD-0225 (:391, full record :3061) — **[CLOSED NEGATIVE]** — "the FTD substrate observable algebra is commutative (classical fields s, J, v) → abelian → type I → trivial Tomita–Takesaki modular flow for *any* faithful state → no canonical (type III₁) objective modular time … Unifies with FTD-0208 — the *same* commutativity wall, from the operator-algebra side. **No spine claim moved.**"
 - FTD-0226 (:392, full record :3071) — **[CLOSED NEGATIVE]** — "the FTD manifestation map (genesis projection + Gauss back-reaction) is a deterministic function of the *commuting* flux, so its event lattice is **distributive (Boolean)** → a joint distribution exists → classical coarse-graining, *not* the non-distributive (quantum) non-commutativity."
@@ -543,7 +543,7 @@ A fermionic sector as a 6th-postulate-class axiom is **already a chartered candi
 ## NO NATIVE REST MASS / PARTICLEHOOD / DERIVED BODY SIZE — and specifically the collective-coordinate reduction (FTD-0110-NL / FTD-0250) the AUDIT_BOUNDARY_MAP calls "the cleanest remaining `[OPEN]`→`[THEOREM]` mass/gravity conversion"
 
 - **Movement class:** `ENGINE_BLOCKED`
-- **Registered status:** VERBATIM tags from `C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\core_ledgers\LEDGER.md`:
+- **Registered status:** VERBATIM tags from `<repo>\docs\theory\07_assessment\core_ledgers\LEDGER.md`:
 
 - **FTD-0096** (L2165) — "**[CLOSED THEOREM-NEGATIVE]** (2026-04-28). Was [OPEN] (2026-04-26)." — the deepest leg: no substrate mass scale.
 - **FTD-0110** (L2355) — "**[DERIVED]** at linear level (DERIV_K_FROM_OH_A1G_MULTIPLICITY.md) + Bridge-I global O_h-equivariance only (DERIV_FTD0110_NONLINEAR_BRIDGE.md §§2.1–2.7); **[STRONGLY MOTIVATED CONJECTURE]** for nonlinear-pipeline k=1/4 coefficient origin, multi-scale extension, and SM-particle cluster-mass identification". Empirical leg since 2026-06-10 re-tagged "**[STACK-PINNED — historical record of the pre-correction engine]**"; the clustermass identification's evidential basis "correspondingly re-opened pending re-characterization of the current-stack N(A) law **[OPEN]**"; FTD-0269 verdict "**BOUNDARY**".
@@ -611,7 +611,7 @@ Three steps, verbatim from ANALYSIS_GNC_QIJ_v1.md §4:
 ## §2d — "No native quantum dynamics: the dispersion ceiling" (AUDIT_BOUNDARY_MAP.md §2d; rows FTD-0270, FTD-0333, plus FTD-0271 de Broglie / GUIDANCE-ABSENT)
 
 - **Movement class:** `PURCHASABLE_AXIOM`
-- **Registered status:** VERBATIM tags from C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\core_ledgers\LEDGER.md.
+- **Registered status:** VERBATIM tags from <repo>\docs\theory\07_assessment\core_ledgers\LEDGER.md.
 
 FTD-0270 (LEDGER.md:435, full record :3481-3485) — "Lattice quantization & the atomic-dispersion boundary: the substrate quantizes but with the WRONG dispersion for atomic spectra": `[MEASURED — BOUNDARY] + [OPEN] + [SELECTION] + [PARAMETRIC] + [SMC] + [FOUNDATIONAL OBSTRUCTION]`. Record: "NEW 2026-06-11". Internal verdict string: "QUANTIZATION EXISTS, WRONG DISPERSION".
 
@@ -685,7 +685,7 @@ WHAT I VERIFIED DIRECTLY AND INDEPENDENTLY:
 MAP VINTAGE: AUDIT_BOUNDARY_MAP.md body was "last revised 2026-07-01 (FTD-0346)" (:47); §R is the 2026-08-06 refresh and is explicitly **NOT YET BOOKED** (:42-45). §5's catalog carries its own staleness warning (:647-653): "⚠ **NOT YET EXTENDED (2026-08-06).** This catalog still ends at the 2026-07-01 revision" — so the "Wave sectors / no sound" row I am assessing sits in a table the map itself flags as un-extended.
 - **Premise check:** Verdict per leg. Overall: **(A) STALE (leg 1 as written; leg 2 as worded), conclusion survives on a narrower unstated reading, and the framework-wide phrasing is over-scoped. (B) CANNOT_DETERMINE — the load-bearing step was never a theorem, and its key term is contradicted at the implementation level in a way no registered row adjudicates.**
 
-(A1) LEG 1 — **STALE AS WRITTEN.** ANALYSIS_LATTICE_WAVE_SECTORS_v1.md:124 says voxel.h "carries `state`, `flux`, `wave_vel`, and `velocity`". Current source (C:\Users\cpaci\Desktop\ftd\engine\include\ftd\voxel.h) carries substantially more: `Vec3 remainder;` at **voxel.h:116** documented "// Sub-lattice position remainder"; `Vec3 velocity;` at :113; `flux_L`/`flux_R` at :83-84; `wave_vel_L`/`wave_vel_R` at :85-86; `flux_strong`/`wave_vel_strong` at :177-178; `flux_weak`/`wave_vel_weak` at :182-183; `latency` :121; `tau` :125; `phase` :132. **This is the identical failure mode §R.8 found in §2c** — a May/June enumeration of `voxel.h` that no longer matches the file. Critically, `remainder` IS a continuous per-site sub-lattice *displacement* variable, so the sentence "There is no `u(x)` to obey an acoustic wave equation" is not literally true of current source.
+(A1) LEG 1 — **STALE AS WRITTEN.** ANALYSIS_LATTICE_WAVE_SECTORS_v1.md:124 says voxel.h "carries `state`, `flux`, `wave_vel`, and `velocity`". Current source (<repo>\engine\include\ftd\voxel.h) carries substantially more: `Vec3 remainder;` at **voxel.h:116** documented "// Sub-lattice position remainder"; `Vec3 velocity;` at :113; `flux_L`/`flux_R` at :83-84; `wave_vel_L`/`wave_vel_R` at :85-86; `flux_strong`/`wave_vel_strong` at :177-178; `flux_weak`/`wave_vel_weak` at :182-183; `latency` :121; `tau` :125; `phase` :132. **This is the identical failure mode §R.8 found in §2c** — a May/June enumeration of `voxel.h` that no longer matches the file. Critically, `remainder` IS a continuous per-site sub-lattice *displacement* variable, so the sentence "There is no `u(x)` to obey an acoustic wave equation" is not literally true of current source.
  — BUT the conclusion survives on a narrower reading the document does not state. I verified `remainder`'s semantics: SPEC_ENGINE.md:18 "| Kinematics | `velocity`, `remainder` | Sub-lattice motion registers for **manifested sites** |"; :661 "| `remainder` | Vec3 | Sub-lattice position remainder |"; render_bridge.cpp:659-661 "Particles move on the lattice via remainder accumulation: remainder += velocity; when |remainder| >= 1 on any axis → integer lattice jump". So it is a *manifested-particle transport register*, not a field on all sites, and I found **no elastic modulus and no restoring coupling between neighbouring site displacements anywhere in engine/**. The true statement is "no elastic/restoring coupling between site displacement variables", not "no displacement DO
 - **What would move it:** Five concrete decidable actions, cheapest first. None requires constructing anything.
 
@@ -714,7 +714,7 @@ B3 — **blocked**. D5/D6/D7 unbooked; DRAFT_FCW_REPRICING_D7_v1.md (2026-08-05)
 ## GRAVITY — SPIN-2 POSITED NOT DERIVED (AUDIT_BOUNDARY_MAP.md §3, Frontier 4): whether the FTD substrate carries an emergent massless spin-2 (helicity-±2) mode, and the standing of the graviton-provenance / spin-2-boundary-theorem cluster plus the P6C-G purchase candidate.
 
 - **Movement class:** `RE_AUDITABLE`
-- **Registered status:** VERBATIM from C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\core_ledgers\LEDGER.md.
+- **Registered status:** VERBATIM from <repo>\docs\theory\07_assessment\core_ledgers\LEDGER.md.
 
 FTD-0131 (:349 summary; :2641 full record) — tag column: "[DERIVED] + [STRONGLY MOTIVATED CONJECTURE] + [THEOREM] + [THEOREM] + [DERIVED] + [`AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md`] + [AXIOM]". Record head (:2645): "**[DERIVED]** with one flagged coordinate-level axiom (clock hypothesis used in SPEC §4.3); load-bearing epistemic floor inherits FTD-0015's [STRONGLY MOTIVATED CONJECTURE] tag". On the falsified integer: "**The "1/100" identification is structurally inconsistent with substrate-derived gravity under any natural reading.**"
 
@@ -757,7 +757,7 @@ COULD NOT VERIFY. (1) Anything requiring git — the constraint forbids it. So I
 ## Cosmology imported wholesale — AUDIT_BOUNDARY_MAP.md §3.5 (Λ source/value, Ω_Λ, dark matter, and the rest of the sector), rows FTD-0331 / FTD-0332 / FTD-0334 / FTD-0338 / FTD-0300, with FTD-0364 as the operative (and map-absent) follow-up.
 
 - **Movement class:** `ENGINE_BLOCKED`
-- **Registered status:** VERBATIM tags from C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\core_ledgers\LEDGER.md.
+- **Registered status:** VERBATIM tags from <repo>\docs\theory\07_assessment\core_ledgers\LEDGER.md.
 
 FTD-0331 (LEDGER.md:476, summary row) — "[SELECTION] + [OPEN] + [BOUNDARY] + [DERIVED] + [DERIVED-from-FC-3] + [SELECTION] + [OPEN] + [OPEN] + [BOUNDARY] + [THEOREM] + [SMC] + [FOUNDATIONAL OBSTRUCTION]". Full-record heading (LEDGER.md:3865) — "**[SELECTION] (form/ceiling) + [OPEN] (source) + [BOUNDARY] (value)** (2026-06-26 …)".
 
@@ -978,5 +978,4 @@ MB-4: ~1 desk-day, and most of it is the propagation edit, not analysis — the 
 
 WHAT I COULD NOT VERIFY, EXPLICITLY:
 
-1. My MB-3 numbers are MY OWN measurement, not a registered instrument. I wrote two read-only Python probes into my scratchpad (C:\Users\cpaci\AppData\Local\Temp\claude\...\scratchpad\artifact_probe.py and row_probe.py) that regex LEDGER.md for repo-relative paths of the form scripts|tools|engine|docs|src|tests/…{py,cpp,h,json,csv,md,ps1,sh}. Known misses: runners cited by BARE FILENAME with no path (FTD-0791 cites `verify_look_elsewhere_baserate.py`, FTD-0796 cites `verify_fc1_trap.py` — both DO exist, at scripts/experiments/, but a path regex would have scored them absent if the row had not also carried a path elsewhere); C++/CUDA ctest target names, which are not paths at all; and any artifact cited only in a linked ANALYSIS_*.md rather than in the LEDGER. Treat 18.4% / 19.2% / 9.2% / 2.2% as order-of-magnitude, not as findings. They establish feasibility of the MB-3 deliverable and
-
+1. My MB-3 numbers are MY OWN measurement, not a registered instrument. I wrote two read-only Python probes into my scratchpad (<local-temp>\claude\...\scratchpad\artifact_probe.py and row_probe.py) that regex LEDGER.md for repo-relative paths of the form scripts|tools|engine|docs|src|tests/…{py,cpp,h,json,csv,md,ps1,sh}. Known misses: runners cited by BARE FILENAME with no path (FTD-0791 cites `verify_look_elsewhere_baserate.py`, FTD-0796 cites `verify_fc1_trap.py` — both DO exist, at scripts/experiments/, but a path regex would have scored them absent if the row had not also carried a path elsewhere); C++/CUDA ctest target names, which are not paths at all; and any artifact cited only in a linked ANALYSIS_*.md rather than in the LEDGER. Treat 18.4% / 19.2% / 9.2% / 2.2% as order-of-magnitude, not as findings. They establish feasibility of the MB-3 deliverable and

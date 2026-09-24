@@ -1,6 +1,6 @@
 #!/bin/bash
 # Per-IC manifested-count + cluster-count summary
-cd /mnt/c/Users/cpaci/Desktop/ftd
+cd "$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")"
 ROOT=engine/results/emergent_spectrum_2026-04-27
 for ic in ic1_inject ic2_thermal ic3_collision ic4_paircreate ic5_baryogenesis; do
     echo "=== $ic ==="

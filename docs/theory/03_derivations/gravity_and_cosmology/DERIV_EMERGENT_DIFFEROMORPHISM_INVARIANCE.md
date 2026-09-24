@@ -81,7 +81,7 @@ This proves that all quadrupole anisotropies vanish identically by point-group r
 
 ### 3.1 Numerical Verification
 
-The vanishing of quadrupole anisotropies and the exact scaling rate of the hexadecapole component are numerically verified to machine precision in the proof script [`proof_emergent_diffeomorphism.py`](file:///c:/Users/cpaci/Desktop/ftd/scripts/proofs/proof_emergent_diffeomorphism.py).
+The vanishing of quadrupole anisotropies and the exact scaling rate of the hexadecapole component are numerically verified to machine precision in the proof script [`proof_emergent_diffeomorphism.py`](../../../../scripts/proofs/proof_emergent_diffeomorphism.py).
 
 By defining the 48 signed permutation matrices of $O_h$ and evaluating the 18-point Moore stenciled potential $V(\mathbf{r})$ on spherical shells of radius $L$, the script computes the group-symmetrized spherical harmonic projection coefficients $c_{l,m}$:
 1.  **Quadrupole and Octupole Protection:** For $l \in \{1, 2, 3\}$, the coefficients $c_{l,m}$ vanish identically:

@@ -1,6 +1,6 @@
 """
 GPU Priority 2: non-perturbative HMC on BCC lattice (per
-C:\\Users\\cpaci\\Downloads\\priority2_hmc_setup.md).
+the local priority-2 HMC setup document).
 
 Field: eta(x) = phi(x) - x_+   (shifted; avoids unbounded-below phi^3 danger)
 Action:

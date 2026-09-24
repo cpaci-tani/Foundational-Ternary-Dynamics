@@ -3,7 +3,7 @@
 **Status:** `[CLOSED -- RESOLVED]` (BETA_v2_CONFIRMED)  
 **Epistemic Tag:** `[EMERGENT]`  
 **Authoritative Ledger Row:** FTD-0263 (Sub-knee onset profile constraint)  
-**Verification Script:** [`scripts/exploration/explore_beta_onset.py`](file:///C:/Users/cpaci/Desktop/ftd/scripts/exploration/explore_beta_onset.py)  
+**Verification Script:** [`scripts/exploration/explore_beta_onset.py`](../../../../../scripts/exploration/explore_beta_onset.py)
 
 ---
 

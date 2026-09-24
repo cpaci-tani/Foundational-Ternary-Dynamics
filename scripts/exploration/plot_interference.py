@@ -72,7 +72,7 @@ def plot_flux_trajectories(A=14, L=16, ticks=15):
     import os
     # Save to the artifacts directory so the AI can embed it
     # We use a hardcoded path based on the conversation ID, or just relative to cwd
-    artifact_path = r"C:\Users\cpaci\.gemini\antigravity\brain\284848ef-2c38-4b75-ace8-33b9a87081e1\interference_plot.png"
+    artifact_path = os.path.join(os.environ.get("FTD_ARTIFACT_DIR", os.path.dirname(__file__)), "interference_plot.png")
     plt.savefig(artifact_path, dpi=300, bbox_inches='tight')
     print(f"Plot saved to {artifact_path}")
 

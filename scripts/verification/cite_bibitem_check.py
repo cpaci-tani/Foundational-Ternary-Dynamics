@@ -1,7 +1,8 @@
 """Cross-check every \\cite{} against \\bibitem{} in the G* paper."""
 import re
+from pathlib import Path
 
-with open(r'C:\Users\cpaci\Desktop\ftd\docs\papers\PAPER_GSTAR_INTRODUCTION.tex') as f:
+with open(Path(__file__).resolve().parents[2] / 'docs/papers/PAPER_GSTAR_INTRODUCTION.tex') as f:
     text = f.read()
 
 # bibitem keys

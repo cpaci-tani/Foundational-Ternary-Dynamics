@@ -22,7 +22,8 @@ Question 4: Is there a maximum mass for a given lattice region
 """
 import numpy as np
 import sys
-sys.path.insert(0, r'C:\Users\cpaci\Desktop\ftd\scripts')
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from constants import G_STAR, ALPHA, G_N, N_c, b_3
 
 print("=" * 70)

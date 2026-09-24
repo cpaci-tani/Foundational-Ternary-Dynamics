@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 
 INPUT = Path("quark_viz_data.json")
-OUTPUT = Path(r"C:/Users/cpaci/Desktop/ftd/dissemination/interactive/phase_b3_quarks.html")
+OUTPUT = Path(__file__).resolve().parents[2] / "dissemination/interactive/phase_b3_quarks.html"
 
 def main():
     with INPUT.open() as f:

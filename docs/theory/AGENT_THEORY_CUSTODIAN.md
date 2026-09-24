@@ -7,7 +7,7 @@
 Personal Cursor skill (not in this repo):
 
 ```
-C:\Users\cpaci\.cursor\skills\ftd-theory-custodian\
+<local-agent-skill>\ftd-theory-custodian\
 ```
 
 Invoke by name when working on `docs/theory/`, claim status, epistemic tags, navigation, conflation audits, or recent theory changes.

@@ -134,7 +134,7 @@ def update(frame):
 print("Rendering 3D animation (this will take ~1-2 minutes)...")
 ani = FuncAnimation(fig, update, frames=frames, blit=False)
 
-artifact_dir = r"C:\Users\cpaci\.gemini\antigravity\brain\520f9887-149c-4d9b-bba7-d534bf7b3d1d"
+artifact_dir = os.environ.get("FTD_ARTIFACT_DIR", os.path.join(os.path.dirname(__file__), "output"))
 os.makedirs(artifact_dir, exist_ok=True)
 output_file = os.path.join(artifact_dir, "lorentz_3d_evolution_grow.gif")
 

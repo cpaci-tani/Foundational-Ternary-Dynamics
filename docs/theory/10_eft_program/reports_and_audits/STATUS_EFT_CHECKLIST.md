@@ -304,4 +304,4 @@ Per `INDEX_FTD_NATIVE_EFT.md` §16:
 - **R5** (8–12 weeks): inter-scale formalisation Scales 0→1, 1→2, 2→3, 3→4 — moves the inter-scale story from operational-only to formalised.
 - **R6** (3–4 weeks): synthesis manuscript `PAPER_FTD_NATIVE_EFT.tex`. Updates Paper C; new LEDGER entries (FTD-0140+); refresh `TRACKER_ONTIC_TRUTH.md`.
 
-Total wall-clock: ~3–6 months for a small focused team. See `C:\Users\cpaci\.claude\plans\we-fixed-a-lot-composed-reef.md` for the approved roadmap.
+Total wall-clock: ~3–6 months for a small focused team. See `<local-agent-plan>\we-fixed-a-lot-composed-reef.md` for the approved roadmap.

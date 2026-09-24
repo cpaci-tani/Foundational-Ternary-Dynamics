@@ -29,7 +29,7 @@ operator reconstructed from exact data.
 ENVIRONMENT (WSL2 Ubuntu-22.04): Sage 9.5 + ore_algebra 0.5, numpy PINNED 1.24.4.
 Run:
   wsl.exe -d Ubuntu-22.04 -- bash -lc \
-    "cd /mnt/c/Users/cpaci/Desktop/ftd && sage -python scripts/proofs/explr_lgf_classify_sage.py"
+    "sage -python scripts/proofs/explr_lgf_classify_sage.py"
 Optional args: one or more operator-json paths (default: the 2D square + 3D SC
 controls). Example: ... explr_lgf_classify_sage.py scripts/proofs/_sc3d_operator.json
 """

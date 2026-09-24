@@ -1,7 +1,7 @@
 """
 GPU computation plan — Priority 1: BCC tadpole continuum-limit scaling.
 
-Per `C:\\Users\\cpaci\\Downloads\\gpu_computation_plan.md`:
+Per the local GPU computation plan:
 
     T_latt^(N) = (1/(N^3 a^3)) sum_{k in BZ modes} 1/(khat^2_BCC(k) + m^2)
 

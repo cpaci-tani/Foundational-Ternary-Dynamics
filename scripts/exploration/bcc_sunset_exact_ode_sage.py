@@ -4,7 +4,7 @@ operator of the two-loop BCC sunset F(y)=sum c_N y^N from the exact c_N
 (not just mod p). Saves the operator for the Arb connection step (-> B).
 
 Run: wsl.exe -d Ubuntu-22.04 -- bash -lc \
-  "cd /mnt/c/Users/cpaci/Desktop/ftd && sage -python scripts/exploration/bcc_sunset_exact_ode_sage.py"
+  "sage -python scripts/exploration/bcc_sunset_exact_ode_sage.py"
 """
 import json
 import sys

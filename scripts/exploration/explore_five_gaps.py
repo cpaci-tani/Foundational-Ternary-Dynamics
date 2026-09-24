@@ -9,7 +9,8 @@ Gap 5: Reference frame context = Euler-Lagrange equation
 """
 import numpy as np
 import sys
-sys.path.insert(0, r'C:\Users\cpaci\Desktop\ftd\scripts')
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from constants import G_STAR, ALPHA, G_N
 
 print("=" * 72)

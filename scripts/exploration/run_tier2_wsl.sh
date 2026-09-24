@@ -2,10 +2,10 @@
 # Tier-2 Plan B sweep on WSL2/GPU.
 # L in {32, 64}, densities {0, 1e-3, 1e-2}, M=16.
 # Run from Windows as:
-#   wsl.exe -d Ubuntu-22.04 -- bash /mnt/c/Users/cpaci/Desktop/ftd/scripts/exploration/run_tier2_wsl.sh
+#   bash scripts/exploration/run_tier2_wsl.sh
 
 set -u
-cd /mnt/c/Users/cpaci/Desktop/ftd
+cd "$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")"
 
 OUT=scripts/exploration/outputs/manifestation_flow_tier2.json
 LOG=scripts/exploration/outputs/manifestation_flow_tier2.log

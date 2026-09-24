@@ -12,7 +12,7 @@ import re
 import os
 from pathlib import Path
 
-OUTDIR = Path(r"C:/Users/cpaci/AppData/Local/Temp/claude/C--Users-cpaci-Desktop-ftd-engine/0e8da311-3a0a-4cbc-8baf-b24658340879/tasks")
+OUTDIR = Path(os.environ.get("FTD_RESONANCE_OUTPUT_DIR", Path(__file__).resolve().parents[2] / "engine/results/resonance_maps"))
 
 L_FILES = {
     32: "b8h2wmyi8.output",

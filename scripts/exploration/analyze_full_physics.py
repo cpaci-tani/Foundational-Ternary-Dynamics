@@ -17,9 +17,10 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-FULL = Path(r"C:/Users/cpaci/Desktop/ftd/full_physics.json")
-TRIAD = Path(r"C:/Users/cpaci/Desktop/ftd/string_verify.json")
-OUTDIR = Path(r"C:/Users/cpaci/Desktop/ftd/dissemination/interactive/quark_pngs")
+ROOT = Path(__file__).resolve().parents[2]
+FULL = ROOT / "full_physics.json"
+TRIAD = ROOT / "string_verify.json"
+OUTDIR = ROOT / "dissemination/interactive/quark_pngs"
 
 COLOR_HEX = {"x": "#e53935", "y": "#43a047", "z": "#1e88e5"}
 COLOR_BY_AXIS = {"x": "R", "y": "G", "z": "B"}

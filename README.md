@@ -4,7 +4,7 @@
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.cppreference.com/w/cpp/17)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Engine v2.18.0](https://img.shields.io/badge/engine-v2.18.0-orange.svg)](engine/SPEC_ENGINE.md)
+[![Engine v2.18.0](https://img.shields.io/badge/engine-v2.18.0-orange.svg)](REPOSITORY_MAP.md#ownership)
 
 **Foundational Ternary Dynamics (FTD)** is a philosophy-of-mathematics project with a rigorous algebraic core and deliberately-bounded physics connections. It asks one question, as honestly as it can be asked:
 
@@ -12,7 +12,7 @@
 
 FTD is **not** an attempt to replace the Standard Model or general relativity. It is ordered **Ontology > Logic > Math > Physics**: the substrate fixes a small set of commitments, mathematics is built forward from them, and physics enters as a *constraint*, not the sole arbiter. The discipline that makes the project worth reading is that it labels every claim by exactly how far it has actually been carried — theorem, derivation, selection, conjecture, parametric insertion, imposed input, open problem, or closed-negative route — and refuses to let rhetoric promote one into another.
 
-The repository combines a theory corpus, verification and proof scripts, a C++/CUDA simulation engine, and a browser dashboard. For the latest working state, start with [`docs/WHERE_WE_LEFT_OFF.md`](docs/WHERE_WE_LEFT_OFF.md).
+The repository combines a theory corpus, verification and proof scripts, a C++/CUDA simulation engine, and a browser dashboard. Use the [repository map](REPOSITORY_MAP.md) to find the relevant area; for the latest working state, start with [`docs/WHERE_WE_LEFT_OFF.md`](docs/WHERE_WE_LEFT_OFF.md).
 
 ## The organizing principle: context before content
 

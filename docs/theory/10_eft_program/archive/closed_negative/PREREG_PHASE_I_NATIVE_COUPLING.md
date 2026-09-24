@@ -125,13 +125,13 @@ Implementation complete; awaiting WSL2 / GPU run for verification. Python predic
 
 ```bash
 # WSL2 build + run (canonical per CLAUDE.md WSL2/GPU discipline):
-wsl.exe -d Ubuntu-22.04 -- bash -c "cd /mnt/c/Users/cpaci/Desktop/ftd && \
+wsl.exe -d Ubuntu-22.04 -- bash -c "cd /path/to/ftd && \
     cmake -S engine -B engine/build_wsl -DCMAKE_BUILD_TYPE=Release && \
     cmake --build engine/build_wsl --target ftd_phase_i_native_coupling -j 8 && \
     engine/build_wsl/benchmark_phase_i_native_coupling 200"
 
 # Or via CTest:
-wsl.exe -d Ubuntu-22.04 -- bash -c "cd /mnt/c/Users/cpaci/Desktop/ftd/engine/build_wsl && \
+wsl.exe -d Ubuntu-22.04 -- bash -c "cd /path/to/ftd/engine/build_wsl && \
     ctest -R benchmark_phase_i_native_coupling --output-on-failure"
 ```
 

@@ -98,7 +98,7 @@ def update(frame):
 print("Rendering animation (this may take a minute)...")
 ani = FuncAnimation(fig, update, frames=frames, blit=True)
 
-artifact_dir = r"C:\Users\cpaci\.gemini\antigravity\brain\520f9887-149c-4d9b-bba7-d534bf7b3d1d"
+artifact_dir = os.environ.get("FTD_ARTIFACT_DIR", os.path.join(os.path.dirname(__file__), "output"))
 os.makedirs(artifact_dir, exist_ok=True)
 output_file = os.path.join(artifact_dir, "hyperbola_evolution.gif")
 

@@ -12,7 +12,7 @@ EXECUTION ENVIRONMENT — IMPORTANT
 Canonical run (WSL2 + gmpy backend, fastest CPU path):
 
     wsl.exe -d Ubuntu-22.04 -- bash -c \\
-        "cd /mnt/c/Users/cpaci/Desktop/ftd && \\
+        "cd <repo-root> && \\
          python3 scripts/exploration/gstar_open_questions.py"
 
 Windows-native fallback (slightly slower; ~5% due to mpmath's python backend):

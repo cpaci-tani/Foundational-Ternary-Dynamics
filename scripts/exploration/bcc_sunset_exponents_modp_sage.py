@@ -6,7 +6,7 @@ Exponents come out mod p; rational_reconstruct maps small rationals (expect a
 (1/2)Z lattice) back.  The exponent multiset at y=1 feeds the self-duality test.
 
 Run: wsl.exe -d Ubuntu-22.04 -- bash -lc \
-  "cd /mnt/c/Users/cpaci/Desktop/ftd && sage -python scripts/exploration/bcc_sunset_exponents_modp_sage.py [modp_file]"
+  "sage -python scripts/exploration/bcc_sunset_exponents_modp_sage.py [modp_file]"
 """
 import sys
 from sage.all import GF, PolynomialRing, QQ            # noqa: E402

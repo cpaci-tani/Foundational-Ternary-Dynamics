@@ -1,2 +1,2 @@
-  docs\theory\07_assessment\core_ledgers\LEDGER.md: [i](Sym²^c ∩ Z[i]-trivial) -> C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\core_ledgers\Sym²^c ∩ Z[i]-trivial
-  docs\theory\07_assessment\core_ledgers\LEDGER.md: [i](Sym²^c ∩ Z[i]-trivial) -> C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\core_ledgers\Sym²^c ∩ Z[i]-trivial
+  docs\theory\07_assessment\core_ledgers\LEDGER.md: [i](Sym²^c ∩ Z[i]-trivial) -> docs\theory\07_assessment\core_ledgers\Sym²^c ∩ Z[i]-trivial
+  docs\theory\07_assessment\core_ledgers\LEDGER.md: [i](Sym²^c ∩ Z[i]-trivial) -> docs\theory\07_assessment\core_ledgers\Sym²^c ∩ Z[i]-trivial

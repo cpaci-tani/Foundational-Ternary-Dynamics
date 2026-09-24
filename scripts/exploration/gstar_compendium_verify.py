@@ -13,7 +13,7 @@ If both agree to 40+ digits, the identity is marked VERIFIED.
 
 Canonical run (WSL2 + gmpy backend):
     wsl.exe -d Ubuntu-22.04 -- bash -c \\
-        "cd /mnt/c/Users/cpaci/Desktop/ftd && \\
+        "cd <repo-root> && \\
          python3 scripts/exploration/gstar_compendium_verify.py"
 """
 

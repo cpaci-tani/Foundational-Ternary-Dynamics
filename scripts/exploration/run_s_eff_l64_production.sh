@@ -8,7 +8,7 @@
 #   - Reaction-sector M_ab entries closer to convergence
 #   - More entries pass Gate A < 30% stderr
 set -e
-cd /mnt/c/Users/cpaci/Desktop/ftd
+cd "$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")"
 
 OUT=engine/results/s_eff_nonlinear_2026-04-29/L64_prod_T0.100
 echo "=== L=64 production at T_langevin=0.100, pair-rich, 10 seeds x 200 samples ==="

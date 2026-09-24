@@ -7,7 +7,7 @@ period object) from the exact sequence -- reconstruct-from-exact-data, as
 FTD-0372; no PSLQ, no closed-form fishing.  Feeds the y->1 singularity analysis.
 
 Run: wsl.exe -d Ubuntu-22.04 -- bash -lc \
-  "cd /mnt/c/Users/cpaci/Desktop/ftd && sage -python scripts/exploration/bcc_sunset_guess_sage.py"
+  "sage -python scripts/exploration/bcc_sunset_guess_sage.py"
 """
 import sys
 from sage.all import QQ, PolynomialRing, binomial   # noqa: E402

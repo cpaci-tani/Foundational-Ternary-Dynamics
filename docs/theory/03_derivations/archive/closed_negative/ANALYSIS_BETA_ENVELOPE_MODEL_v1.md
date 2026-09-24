@@ -3,7 +3,7 @@
 **Status:** `[CLOSED -- RESOLVED]` (BETA-PARTIAL)
 **Epistemic Tag:** `[EMERGENT]`
 **Authoritative Ledger Row:** FTD-0263 (Sub-knee onset profile constraint)
-**Verification Script:** [`scripts/exploration/derive_beta_envelope_prediction.py`](file:///C:/Users/cpaci/Desktop/ftd/scripts/exploration/derive_beta_envelope_prediction.py)
+**Verification Script:** [`scripts/exploration/derive_beta_envelope_prediction.py`](../../../../../scripts/exploration/derive_beta_envelope_prediction.py)
 
 ---
 

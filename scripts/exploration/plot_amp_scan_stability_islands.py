@@ -10,7 +10,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-ROOT = Path(r"C:/Users/cpaci/Desktop/ftd")
+ROOT = Path(__file__).resolve().parents[2]
 JSON = ROOT / "full_amp_scan.json"
 OUT = ROOT / "dissemination" / "interactive" / "full_physics_amp_scan.png"
 

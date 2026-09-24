@@ -16,7 +16,7 @@ import sys
 from pathlib import Path
 
 INPUT = Path("phase_b3_viz_data.json")
-OUTPUT = Path(r"C:/Users/cpaci/Desktop/ftd/dissemination/interactive/phase_b3_cluster_dynamics.html")
+OUTPUT = Path(__file__).resolve().parents[2] / "dissemination/interactive/phase_b3_cluster_dynamics.html"
 
 def main():
     if not INPUT.exists():

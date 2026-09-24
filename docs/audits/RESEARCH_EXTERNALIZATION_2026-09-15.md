@@ -2,7 +2,7 @@
 
 **Disposition:** owner-requested removal from the current FTD working tree; preserved externally. No epistemic claim is promoted or reclassified by this move.
 
-**Local archive:** `C:/Users/cpaci/Desktop/ftd-external-research/2026-09-15-checkpoint/`.
+**Local archive:** an owner-managed archive outside this repository, identified by `2026-09-15-checkpoint`.
 **Archive ID:** `2026-09-15-checkpoint`.
 **Pre-cleanup commit:** `87eb1cd11c7da9ff78cd4a27852cecceccef8c77`.
 

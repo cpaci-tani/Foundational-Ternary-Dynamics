@@ -2,7 +2,7 @@
 # Phase 4: T sweep at multiple amplitudes (map T*(A) phase boundary)
 # Phase 5: A=118 L=80 regime-3 thickening test
 set -e
-cd /mnt/c/Users/cpaci/Desktop/ftd
+cd "$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")"
 mkdir -p engine/results/regime4_phase4 engine/results/regime4_phase5
 
 echo "=========================================="

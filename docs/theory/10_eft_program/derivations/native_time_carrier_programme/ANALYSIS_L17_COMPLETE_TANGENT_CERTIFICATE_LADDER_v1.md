@@ -19,7 +19,7 @@ certificate cannot be promoted.
 All successor executables were built in the isolated worktree
 
 ```text
-C:\Users\cpaci\AppData\Local\Temp\ftd-0774-clean-run-20260810
+<local-temp>\ftd-0774-clean-run-20260810
 ```
 
 at production source commit

@@ -24,7 +24,7 @@ ENVIRONMENT (WSL2 Ubuntu-22.04):
     9.5's compiled Cython modules -- `sage --pip install 'numpy==1.24.4'`)
 Run:
   wsl.exe -d Ubuntu-22.04 -- bash -lc \
-    "cd /mnt/c/Users/cpaci/Desktop/ftd && sage -python scripts/proofs/factor_stencil18_sage.py"
+    "sage -python scripts/proofs/factor_stencil18_sage.py"
 """
 
 import json

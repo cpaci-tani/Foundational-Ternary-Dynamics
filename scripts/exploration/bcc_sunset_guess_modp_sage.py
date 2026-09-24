@@ -9,7 +9,7 @@ the leading-coefficient factorization mod p (singular structure of the ODE for
 F(y): the roots include y=1, y=-1 (parity) and any others).
 
 Run: wsl.exe -d Ubuntu-22.04 -- bash -lc \
-  "cd /mnt/c/Users/cpaci/Desktop/ftd && sage -python scripts/exploration/bcc_sunset_guess_modp_sage.py [modp_file] [HOLD]"
+  "sage -python scripts/exploration/bcc_sunset_guess_modp_sage.py [modp_file] [HOLD]"
 """
 import sys
 from sage.all import GF, PolynomialRing   # noqa: E402

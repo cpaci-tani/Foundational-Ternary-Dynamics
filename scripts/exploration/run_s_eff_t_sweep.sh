@@ -4,7 +4,7 @@
 #
 # Output: engine/results/s_eff_nonlinear_2026-04-29/Tsweep/T<T>_<scenario>/
 set -e
-cd /mnt/c/Users/cpaci/Desktop/ftd
+cd "$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")"
 
 mkdir -p engine/results/s_eff_nonlinear_2026-04-29/Tsweep
 

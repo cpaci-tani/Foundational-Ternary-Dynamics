@@ -1,7 +1,8 @@
 import os
 import re
+from pathlib import Path
 
-base_dir = r"c:\Users\cpaci\Desktop\ftd"
+base_dir = str(Path(__file__).resolve().parents[2])
 meta_index_path = os.path.join(base_dir, "docs", "theory", "META_INDEX.md")
 native_index_path = os.path.join(base_dir, "docs", "theory", "10_eft_program", "INDEX_FTD_NATIVE_EFT.md")
 

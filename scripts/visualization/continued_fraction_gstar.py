@@ -6,6 +6,7 @@ Or something in between? The CF expansion reveals the answer.
 """
 
 import sys, io
+from pathlib import Path
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 
 from mpmath import mp, mpf, gamma, sqrt, pi as mp_pi, phi as mp_phi, e as mp_e, floor, nstr, log
@@ -341,8 +342,8 @@ for i, (name, verdict, color, cf_str, note) in enumerate(verdict_text):
              transform=ax6.transAxes, fontstyle='italic')
 
 # ── Save ─────────────────────────────────────────────────────────
-out_png = 'C:/Users/cpaci/Desktop/ftd/docs/papers/cf_analysis.png'
-out_pdf = 'C:/Users/cpaci/Desktop/ftd/docs/papers/cf_analysis.pdf'
+out_png = str(Path(__file__).resolve().parents[2] / 'docs/papers/cf_analysis.png')
+out_pdf = str(Path(__file__).resolve().parents[2] / 'docs/papers/cf_analysis.pdf')
 plt.savefig(out_png, dpi=200, bbox_inches='tight', facecolor='white')
 plt.savefig(out_pdf, bbox_inches='tight', facecolor='white')
 print(f"\nSaved: {out_png}")

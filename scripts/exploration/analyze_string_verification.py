@@ -15,8 +15,9 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-JSON = Path(r"C:/Users/cpaci/Desktop/ftd/string_verify.json")
-OUTDIR = Path(r"C:/Users/cpaci/Desktop/ftd/dissemination/interactive/quark_pngs")
+ROOT = Path(__file__).resolve().parents[2]
+JSON = ROOT / "string_verify.json"
+OUTDIR = ROOT / "dissemination/interactive/quark_pngs"
 
 COLOR_BY_AXIS = {"x": "R", "y": "G", "z": "B"}
 COLOR_HEX = {"R": "#e53935", "G": "#43a047", "B": "#1e88e5"}

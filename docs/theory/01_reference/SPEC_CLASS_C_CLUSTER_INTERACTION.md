@@ -144,4 +144,4 @@ By executing this build plan, FTD-0222 establishes a fully discrete, operational
 *   Methodological framework: [`docs/theory/01_reference/SPEC_DISCRETE_NATIVE_DERIVATION.md`](SPEC_DISCRETE_NATIVE_DERIVATION.md)
 *   Phase G Coulomb proof: `engine/tests/test_gauss.cpp`
 *   Calibration mapping spec: [`docs/theory/01_reference/SPEC_DIMENSIONAL_MAP.md`](SPEC_DIMENSIONAL_MAP.md)
-*   Cluster tracker implementation: [`engine/include/ftd/cluster_tracker.h`](file:///c:/Users/cpaci/Desktop/ftd/engine/include/ftd/cluster_tracker.h)
+*   Cluster tracker implementation: [`engine/include/ftd/cluster_tracker.h`](../../../engine/include/ftd/cluster_tracker.h)

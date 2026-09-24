@@ -4,7 +4,7 @@
 **Status:** **BOUNDARY-HARDENED / PROGRAM STOPPED ON CURRENT ENGINE** (FTD-0399)
 **Replaces:** `DERIV_QUARK_MASSES_FROM_LATTICE.md` (retracted), `DERIV_NEUTRINO_MASS_ABSOLUTE.md` (retracted), `EXPLR_MASS_SCALE_GENERATION.md` (retracted)  
 **Ledger Row:** FTD-0221 (Supersedes FTD-0219 and FTD-0014)  
-**Authoritative Specification:** [`docs/SPEC_FTD.md`](file:///c:/Users/cpaci/Desktop/ftd/docs/SPEC_FTD.md)
+**Authoritative Specification:** [`docs/SPEC_FTD.md`](../../../docs/SPEC_FTD.md)
 
 ---
 

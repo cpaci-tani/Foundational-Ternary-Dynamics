@@ -8,7 +8,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-JSON = Path(r"C:/Users/cpaci/Desktop/ftd/toggle_bisection.json")
+JSON = Path(__file__).resolve().parents[2] / "toggle_bisection.json"
 
 def diff(baseline, target):
     """Difference: how does target differ from baseline?"""

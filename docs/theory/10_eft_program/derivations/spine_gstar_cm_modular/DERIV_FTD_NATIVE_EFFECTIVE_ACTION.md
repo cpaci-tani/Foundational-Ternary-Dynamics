@@ -14,7 +14,7 @@ $$ \exp(-S_{\text{eff}}[J_c, s_c]) = \sum_{H : B_b H = H'} \exp(-S[J, s]) $$
 
 where $S[J, s]$ is the microscopic action of the FTD ground state. 
 
-Using the results of the $S_{\text{eff}}$ measurement campaigns ([FTD-0112](file:///C:/Users/cpaci/Desktop/ftd/docs/theory/07_assessment/core_ledgers/LEDGER.md#L864-L875)) at scales $L \in \{24, 32, 48, 64, 128\}$, we map the structure of $S_{\text{eff}}$. We prove that the diagonal blocking scaling factors of the active operators are governed by exact algebraic identities (Theorems 1–3), show that the action decomposes into three mutually decoupled sectors (Spatial, Density, and Reaction-Flux) at $5\sigma$ bootstrap significance, and present the explicit polynomial effective action with its measured Wilsonian coefficients.
+Using the results of the $S_{\text{eff}}$ measurement campaigns ([FTD-0112](../../../../../docs/theory/07_assessment/core_ledgers/LEDGER.md#L864-L875)) at scales $L \in \{24, 32, 48, 64, 128\}$, we map the structure of $S_{\text{eff}}$. We prove that the diagonal blocking scaling factors of the active operators are governed by exact algebraic identities (Theorems 1–3), show that the action decomposes into three mutually decoupled sectors (Spatial, Density, and Reaction-Flux) at $5\sigma$ bootstrap significance, and present the explicit polynomial effective action with its measured Wilsonian coefficients.
 
 ---
 

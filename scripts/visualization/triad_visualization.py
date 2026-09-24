@@ -9,6 +9,7 @@ Requirements: pip install numpy matplotlib scipy
 """
 
 import sys
+from pathlib import Path
 import io
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 
@@ -309,11 +310,11 @@ for i, (a, b, c, col) in enumerate(race_text):
                      family='monospace', color='#555', transform=ax_race.transAxes)
 
 # ── Save ──
-output_path = 'C:/Users/cpaci/Desktop/ftd/docs/papers/triad_visualization.png'
+output_path = str(Path(__file__).resolve().parents[2] / 'docs/papers/triad_visualization.png')
 plt.savefig(output_path, dpi=200, bbox_inches='tight', facecolor='white')
 print(f"Saved: {output_path}")
 
-output_pdf = 'C:/Users/cpaci/Desktop/ftd/docs/papers/triad_visualization.pdf'
+output_pdf = str(Path(__file__).resolve().parents[2] / 'docs/papers/triad_visualization.pdf')
 plt.savefig(output_pdf, bbox_inches='tight', facecolor='white')
 print(f"Saved: {output_pdf}")
 

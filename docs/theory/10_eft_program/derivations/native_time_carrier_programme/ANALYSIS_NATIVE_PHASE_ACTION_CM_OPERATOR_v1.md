@@ -405,12 +405,12 @@ python scripts/proofs/explr_stencil18_selfduality_derived.py
   W_18 is NOT self-dual [THEOREM, exact]
 
 wsl.exe -d Ubuntu-22.04 -- bash -lc
-  "cd /mnt/c/Users/cpaci/Desktop/ftd &&
+  "cd /path/to/ftd &&
    sage scripts/proofs/proof_cm_realization_operator.sage"
   PASS 36/36
 
 wsl.exe -d Ubuntu-22.04 -- bash -lc
-  "cd /mnt/c/Users/cpaci/Desktop/ftd &&
+  "cd /path/to/ftd &&
    sage -python scripts/proofs/proof_moore26_operator.sage"
   exact factorization PASS;
   verdict MOORE26_NON_SELF_DUAL_CLOSED_FOR_CM_REALIZATION

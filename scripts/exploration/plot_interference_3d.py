@@ -4,6 +4,7 @@ plot_interference_3d.py -- Generate a 3D visualization of the 27-block
 genesis pattern at A=14, highlighting the missing FCC edges.
 """
 
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -96,7 +97,7 @@ def plot_3d_cluster(A=14, L=16, ticks=15):
     # Set view angle to see the corners and edges clearly
     ax.view_init(elev=20, azim=45)
     
-    artifact_path = r"C:\Users\cpaci\.gemini\antigravity\brain\284848ef-2c38-4b75-ace8-33b9a87081e1\interference_3d.png"
+    artifact_path = os.path.join(os.environ.get("FTD_ARTIFACT_DIR", os.path.dirname(__file__)), "interference_3d.png")
     plt.savefig(artifact_path, dpi=300, bbox_inches='tight')
     print(f"3D Plot saved to {artifact_path}")
 
