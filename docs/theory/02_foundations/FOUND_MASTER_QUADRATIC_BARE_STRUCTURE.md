@@ -117,6 +117,8 @@ $$ N_c = x_- = G^* + \frac{1}{16} + \frac{1}{256 G^*} + \frac{2}{4096 G^{*2}} + 
 
 **Leading-order statement:** $1/\alpha \approx 16 G^{*2}$ and $N_c \approx G^*$. The integer "3" for color count is $G^*$ rounded up plus a small lattice correction.
 
+**Status (retired label):** the expansions above are exact algebra for the roots $x_+$ and $x_-$ [THEOREM]. The labels $1/\alpha$ and $N_c$ are the historical SP4 paired reading. The label $N_c = x_-$ is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`), so the sentence about the integer "3" is historical and states no live physics. $N_c = 3$ in FTD is independently sourced (see `DERIV_NC_FROM_TOPOLOGY.md`). The label $1/\alpha = x_+$ is FTD-0013, [STRONGLY MOTIVATED CONJECTURE].
+
 ## 5. The single deepest identity (under SP4 — historical paired form)
 
 The bare algebraic identity is $1/x_+ + 1/x_- = 1/G^*$ (Vieta). Under the historical physical identification $x_+ = 1/\alpha$, $x_- = N_c$ (selection principle SP4, in its pre-v1.4 form), the master quadratic's content compresses to:
@@ -125,9 +127,15 @@ $$ \boxed{\ \alpha + \frac{1}{N_c} = \frac{1}{G^*}\ }\quad\text{(historical slog
 
 **Status:** the paired identification `x_-  N_c` is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The live single-root identification is `x_+  1/α` (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]); the smaller root $x_- \approx 3.024$ is a mathematical artifact of $P(x)$ with no physics identification. The algebraic identity $1/x_+ + 1/x_- = 1/G^*$ stands; the physics-notation slogan above is preserved here only for historical reference. `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`.
 
-**This is the entire physical content of the master quadratic in one line.**
+~~**This is the entire physical content of the master quadratic in one line.**~~ *(Historical claim; retired with the paired identification above.)*
 
-### 5.1 What it says
+> **Historical (retired reading), §5.1 to §5.3.** These subsections use the retired paired notation $x_+ = 1/\alpha$, $x_- = N_c$. Read $\alpha$ as $1/x_+$ and $N_c$ as $x_- \approx 3.024$, not the integer 3. With that reading, every formula below is exact Vieta algebra [THEOREM]. The physical readings are not live:
+> - $N_c = x_-$ is **RETIRED** (FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`).
+> - The "within 0.4%" match in §5.1 is not independent evidence. $x_-$ comes from the same polynomial as $x_+$, so $1/G^* - 1/x_- = 1/x_+$ holds by Vieta V3. It is a substitution identity, not a prediction.
+> - With the independently sourced integer $N_c = 3$, $1/G^* - 1/3 \approx 0.004656$. That is about 64% of $\alpha \approx 0.007297$ (CODATA 2022), so the relation fails.
+> - §5.2's statement that EM and QCD are "complementary shares" of $1/G^*$ depends on the retired identification. It states no live physics.
+
+### 5.1 What it says (historical reading, retired)
 
 The fine-structure constant $\alpha$ is the gap between $1/G^*$ and $1/N_c$:
 
@@ -139,13 +147,13 @@ $$ \alpha \approx \frac{0.065}{8.94} \approx 0.00727 $$
 
 Matching experimental $\alpha = 0.00730$ to within 0.4%. (Under SP4 strict, $N_c = x_-$ exactly, and the identity is exact to machine precision.)
 
-### 5.2 What it says physically
+### 5.2 What it says physically (historical reading, retired)
 
 **The EM coupling $\alpha$ is the arithmetic residue between inverse color count and the lemniscatic constant's reciprocal.** EM and QCD are not independent — they are the two complementary shares of the lattice's intrinsic $1/G^*$.
 
 If $G^*$ is the "total arithmetic scale" of the Gaussian-integer lattice and $1/N_c$ is QCD's share, then $\alpha$ is EM's share. Their sum is the whole.
 
-### 5.3 The companion identity
+### 5.3 The companion identity (historical notation; algebra exact for $1/x_+$, $1/x_-$)
 
 From V2:
 $$ \alpha \cdot N_c = \frac{1}{16 G^{*3}} $$
@@ -171,6 +179,8 @@ This is the reciprocal-form master quadratic. Its roots are $(\alpha, 1/N_c)$ ra
 
 There are two natural quadratics encoding the same physical content:
 
+> **Note (retired labels).** The root labels $\{1/\alpha, N_c\}$ and $\{1/N_c, \alpha\}$ below use the retired paired reading (see the §5 status). The algebra is exact for the roots $\{x_+, x_-\}$ and $\{1/x_-, 1/x_+\}$ [THEOREM]. Only the label $N_c = x_-$ is retired; $1/\alpha = x_+$ remains FTD-0013, [STRONGLY MOTIVATED CONJECTURE].
+
 **Primary master quadratic** (large-number form):
 $$ x^2 - 16 G^{*2} x + 16 G^{*3} = 0 \quad \Rightarrow \quad \{x_+, x_-\} = \{1/\alpha, N_c\} $$
 
@@ -189,7 +199,7 @@ Specifically, if $x$ is a root, then $16 G^{*3}/x$ is also a root (by Vieta prod
 
 The polynomial contains no physics. Specifically, it does not determine:
 
-- **Which root is α and which is $N_c$**: that's SP4 (based on numerical proximity 137.036 ≈ 1/137.036).
+- **Which root is α and which is $N_c$**: that's SP4 (based on numerical proximity 137.036 ≈ 1/137.036). The $N_c$ half of this pairing is retired; SP4 now identifies only $x_+ = 1/\alpha$.
 - **Whether these are the "right" physical constants at all**: that's the identification step.
 - **Why the polynomial should exist at all**: that's the motivation chain (FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md).
 - **Any specific tick-dynamics, lattice stencil, or simulation rule**: those are Axiom Zero postulates, independent of the master quadratic.
@@ -208,7 +218,7 @@ The polynomial is a **pure algebraic relation** between three objects: two roots
 | Normalized | $w^2 - w + \epsilon = 0$, $\epsilon = 1/(16G^*)$ | Small-parameter perturbation of $(w=1, w=0)$ |
 | Means | AM : GM : HM = $8 G^{*2} : 4 G^{*3/2} : 2 G^*$ | Geometric progression with ratio $2\sqrt{G^*}$ |
 | Reflection | $x \leftrightarrow 16 G^{*3}/x$ | Roots are images of each other under reciprocation-and-scale |
-| **SP4 reading** | $\mathbf{\alpha + 1/N_c = 1/G^*}$ | The entire physical content on one line |
+| ~~**SP4 reading**~~ | ~~$\alpha + 1/N_c = 1/G^*$~~ | ~~The entire physical content on one line~~ **RETIRED** paired reading, kept as history (see §5 status). The live physics identification is $x_+ = 1/\alpha$ only (FTD-0013). |
 
 ## 9. Epistemic tags
 
@@ -223,13 +233,15 @@ The polynomial is a **pure algebraic relation** between three objects: two roots
 | ~~$x_- = N_c$ identification~~ | **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` |
 | $\alpha + 1/N_c = 1/G^*$ as a physical statement | [THEOREM given historical SP4 paired form; retired post-v1.4]; live algebraic statement is $1/x_+ + 1/x_- = 1/G^*$ |
 
-**All of §1–6 is exact algebra.** No physics is invoked. The physics enters only at §5 (SP4 reading).
+**All of §1–6 is exact algebra.** No physics is invoked. The physics enters only at §5 (SP4 reading), and the paired form of that reading is retired.
 
 ## 10. What this decomposition accomplishes
 
 **Surface form:** the master quadratic can be read as a specific polynomial with numerical roots 137.036 and 3.024.
 
-**Bare structure:** the polynomial is the algebraic encoding of a single relation
+> **Status (retired reading).** The next paragraph states the **retired** paired reading $x_- = N_c$ (FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`). It is kept for provenance only. The live content is algebraic: the polynomial is the Vieta encoding of $1/x_+ + 1/x_- = 1/G^*$ together with $(1/x_+)(1/x_-) = 1/(16G^{*3})$ [THEOREM]. The one live physics identification is $x_+ = 1/\alpha$ (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]). The root $x_- \approx 3.024$ has no physics identification, and $N_c = 3$ is independently sourced (`DERIV_NC_FROM_TOPOLOGY.md`).
+
+**Bare structure (historical paired reading, retired):** the polynomial is the algebraic encoding of a single relation
 
 $$ \alpha + \frac{1}{N_c} = \frac{1}{G^*} $$
 
@@ -239,4 +251,4 @@ which says EM coupling + inverse color count = inverse lemniscatic ratio. Everyt
 
 ---
 
-*Breaks the master quadratic into its bare algebraic parts, identifies $\alpha + 1/N_c = 1/G^*$ as the single deepest statement, verifies all identities to machine precision via `test_master_quadratic_identities`, and preserves the distinction between pure algebra (exact) and physical identification (SP4).*
+*Breaks the master quadratic into its bare algebraic parts, identifies the harmonic identity $1/x_+ + 1/x_- = 1/G^*$ as the single deepest statement (its retired paired slogan $\alpha + 1/N_c = 1/G^*$ is kept as history), verifies all identities to machine precision via `test_master_quadratic_identities`, and preserves the distinction between pure algebra (exact) and physical identification (SP4).*
