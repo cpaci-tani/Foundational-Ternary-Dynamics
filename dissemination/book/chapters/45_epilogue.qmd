@@ -12,8 +12,6 @@ Here are the numbers one more time:
 
 **137.036** — the inverse fine structure constant, governing every electromagnetic interaction from atomic spectra to chemical bonds.
 
-**3.024 ≈ 3** — the color charge number, determining the structure of the strong force.
-
 **{3, 4, 7, 13}** — the framework integers, arising from ternary states, tetrahedral geometry, completion, and Fibonacci self-reference.
 
 **1728 = 12³ = 4 × 432** — the j-invariant of the lemniscatic curve, connecting ancient sacred numbers to modern mathematics.

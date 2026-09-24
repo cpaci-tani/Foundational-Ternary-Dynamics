@@ -10,25 +10,19 @@
 ## §0 Epistemic Status
 
 N_c = 3 is **[SELECTION]**, not an **over-determination [THEOREM]**. There is no claim that
-"four logically independent routes converge on N_c = 3," for two reasons:
-
-1. **The routes are not logically independent.** Routes 1–3 are the spatial dimension D = 3
-   counted in three ways (orthogonal axes / cuboctahedral face-diagonal planes / Wilson-loop
-   winding sectors). Counting one fact several ways does **not** multiply the evidence, so a
-   "negligible probability of chance convergence" argument does not hold. The honest reading,
-   matching `DERIV_LATTICE_SU3_GAUGE.md` (SU3-2, Theorem 1.1), is **[SELECTION]**: given D = 3
-   and the identification color = spatial flux axis, the gauge group is SU(D) = SU(3), hence
-   N_c = 3; the geometric and topological observations corroborate this.
-2. **There is no live arithmetic Route 4.** A former "Route 4" derived N_c via
-   `floor(x_-) = floor(3.024) = 3`. The `x_-  N_c` identification is **RETIRED** (LEDGER
-   FTD-0014, removed in commit `ca7eb61`, per FTD/FQCR Cleanup Taxonomy v1.4 §5). `x_- ≈ 3.024`
-   is a mathematical artifact of the master quadratic with no live physics identification.
-   Route 4 and its associated claim NCT-7 are **deleted** (see the note where Route 4 stood).
+logically independent routes converge on N_c = 3, because **the routes are not logically
+independent.** Routes 1–3 are the spatial dimension D = 3
+counted in three ways (orthogonal axes / cuboctahedral face-diagonal planes / Wilson-loop
+winding sectors). Counting one fact several ways does **not** multiply the evidence, so a
+"negligible probability of chance convergence" argument does not hold. The honest reading,
+matching `DERIV_LATTICE_SU3_GAUGE.md` (SU3-2, Theorem 1.1), is **[SELECTION]**: given D = 3
+and the identification color = spatial flux axis, the gauge group is SU(D) = SU(3), hence
+N_c = 3; the geometric and topological observations corroborate this.
 
 What is genuinely correct and retained: the geometric content of each route (D = 3 orthogonal
-axes; cuboctahedron with 3 face-diagonal planes; π_1(SU(N)/Z_N) = Z_N standard topology; the
-exact algebra giving x_- = 3.024). The *epistemic framing* is **[SELECTION]** — one D = 3 fact
-seen through several lenses, not four independent **[THEOREM]** derivations.
+axes; cuboctahedron with 3 face-diagonal planes; π_1(SU(N)/Z_N) = Z_N standard topology). The
+*epistemic framing* is **[SELECTION]** — one D = 3 fact
+seen through several lenses, not three independent **[THEOREM]** derivations.
 
 ---
 
@@ -44,8 +38,7 @@ fact D = 3**, not independent proofs:
 3. **Gauge topology:** Wilson-loop topological charges in the confined phase fall in N_c equivalence classes; counting on the FTD lattice gives 3. *Corroboration — same 3 axes as winding sectors.*
 
 Routes 1–3 are **not** logically independent; they are the same D = 3 structure viewed through
-several lenses. (A former arithmetic "Route 4" — `floor(x_-) = 3` — is **deleted**: the
-`x_-  N_c` identification is RETIRED; see §0 and the Route 4 note.) The honest tag is therefore
+several lenses. The honest tag is therefore
 **[SELECTION]**, not an over-determination [THEOREM]. **A further [SELECTION] step is "is *this 3*
 the same 3 that QCD measures?"** — conditional on
 compact lattice gauge theory recovering continuum QCD, a standard (but nontrivial) result of
@@ -58,8 +51,7 @@ Wilson's program (Wilson 1974; Creutz 1983).
 > **Framing:** the routes below are not logically independent. Route 1 is the
 > load-bearing [SELECTION] (D = 3 ⟹ SU(3)); Routes 2 and 3 re-count the *same* three spatial
 > axes geometrically and topologically. The geometric content of each is correct; they make no
-> claim of mutual independence. A former arithmetic Route 4 (`floor(x_-) = 3`) is
-> deleted — see the Route 4 note.
+> claim of mutual independence.
 
 ### Route 1: Spatial Axes (Geometric) — [SELECTION], the load-bearing route
 
@@ -107,9 +99,7 @@ The selection — that the geometric C_3 is identified with the SU(3) center, no
 > ... forces the count ... to equal the number of independent axes, D = 3") to the *same* 3 axes
 > as Route 1. The standard topology π_1(SU(N)/Z_N) = Z_N is correct and remains [THEOREM] as
 > standard mathematics; but as a route to *N_c in FTD* it re-expresses D = 3, so it is
-> corroboration, not a logically independent derivation. (Note: this route mentions
-> β = x_- = 3.024 only as the confined-phase coupling value; it does **not** use the retired
-> `x_-  N_c` identification — the color count here comes from axis-counting, not from `floor(x_-)`.)
+> corroboration, not a logically independent derivation.
 
 In compact lattice gauge theory at the confined-phase coupling β = x_- = 3.024, Wilson loops obey the area law σ(x_-) = −ln(I_1(x_-)/I_0(x_-)) ≈ 0.209 > 0 (DERIV_CONFINEMENT_FROM_GAP_EQUATION.md, Theorem 2.1). For a non-Abelian gauge group G, the topological charge of a Wilson loop is classified by
 
@@ -130,19 +120,6 @@ This is the lattice realization of π_1(SU(3)/Z_3) = Z_3: three axes, three clas
 
 The construction is honest only insofar as compact lattice gauge theory of the BCC sublattice recovers SU(3) gauge-theory observables for arbitrarily fine spacing a, with the standard error rate O(a^2). That the BCC sublattice is the *correct* lattice realization of SU(3) is the content of DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md (BMS-4) and is [THEOREM] for the counting, [SELECTION] for the named gauge group.
 
-### Route 4: REMOVED — the master-quadratic `floor(x_-)` route is RETIRED
-
-A former "floor(x_-) = floor(3.024) = 3" route is intentionally removed: the x_-  N_c
-identification is RETIRED (FTD-0014, commit `ca7eb61`); x_- ≈ 3.024 is a mathematical artifact
-of the master quadratic and N_c = 3 is sourced independently here (Route 1, D = 3).
-
-> The arithmetic that x_- = 8 G*² − 4 G*^(3/2) √(4G* − 1) = 3.023964... is exact algebra and is
-> preserved (as a property of the master quadratic) in `MATH_MASTER_QUADRATIC.md` and the
-> algebraic-spine documents. What is deleted is only the *physics identification* of that root
-> with the color number, and the [THEOREM] claim built on it (former NCT-7). The retired status
-> is canonical: see LEDGER FTD-0014 (removed), `DERIV_LATTICE_SU3_GAUGE.md` §1.4, and the
-> FTD/FQCR Cleanup Taxonomy v1.4 §5.
-
 ---
 
 ## Part II: One Fact, Several Lenses
@@ -151,8 +128,7 @@ of the master quadratic and N_c = 3 is sourced independently here (Route 1, D = 
 > independent. Routes 1–3 all reduce to the single spatial fact
 > D = 3 (orthogonal axes; the same axes taken 2-at-a-time as face-diagonal planes; the same axes
 > as Wilson-loop winding sectors). Counting one fact three ways does not multiply the evidence,
-> so there is no over-determination and no licence to upgrade above [SELECTION]. The former
-> fourth route (`floor(x_-)`) is deleted as a RETIRED identification (§0, Route 4 note).
+> so there is no over-determination and no licence to upgrade above [SELECTION].
 
 The routes are three views of the same D = 3 structure:
 
@@ -161,7 +137,6 @@ The routes are three views of the same D = 3 structure:
 | 1 | BCC orthogonal axes | Geometry / linear algebra | D = 3 | load-bearing [SELECTION] |
 | 2 | Cuboctahedron C_3 ⊂ O_h | Finite group theory | \|Z_3\| = 3 | no — re-counts the 3 axes |
 | 3 | π_1(SU(3)/Z_3) wrapping | Algebraic topology of Lie groups | 3 | no — same 3 axes as winding sectors |
-| ~~4~~ | ~~Roots of x² − Kx + KG* = 0~~ | ~~Number theory~~ | ~~floor(3.024) = 3~~ | **DELETED — RETIRED identification (FTD-0014)** |
 
 Because Routes 2–3 re-express Route 1, the honest reading is that N_c = 3 is **the value selected
 by D = 3** under the identification color = spatial flux axis, with geometric and topological
@@ -194,9 +169,6 @@ do not have that structure.)
 
 - It does **not** upgrade N_c = 3 to [THEOREM] — the routes are not independent, so there is no
   over-determination.
-- It does **not** use the master-quadratic root. The former `floor(x_-)` route is deleted; the
-  `x_-  N_c` identification is RETIRED (FTD-0014, commit `ca7eb61`). The exact value
-  x_- = 3.024 remains a property of the master quadratic with no live physics reading.
 
 ---
 
@@ -220,7 +192,7 @@ There are thus *two* [SELECTION] steps: (a) "is the lattice integer 3?" — [SEL
 
 ## Claims Table
 
-> **Note:** NCT-7 and NCT-8 are deleted/withdrawn and NCT-9 is [SELECTION], as recorded below. The
+> **Note:** NCT-8 is withdrawn and NCT-9 is [SELECTION], as recorded below. The
 > geometric sub-facts (NCT-1, -2, -4, -5, -6) remain correct in their home documents; the
 > *N_c-level* claim is [SELECTION], not [THEOREM].
 
@@ -231,8 +203,7 @@ There are thus *two* [SELECTION] steps: (a) "is the lattice integer 3?" — [SEL
 | NCT-3 | C_3 ⊂ O_h is identified with Z_3 = Z(SU(3)) | [SELECTION] |
 | NCT-4 | π_1(SU(N)/Z_N) = Z_N gives N topological classes | [THEOREM] (standard mathematics) |
 | NCT-5 | BCC sublattice supports Wilson loops with 3 winding classes | [THEOREM] given BMS-4 (geometric sub-fact) |
-| NCT-6 | x_- = 3.024 is exact algebraic consequence of D = 3 + W_3 + k_phys = 16 | [THEOREM] (pure algebra; no physics identification of the root) |
-| ~~NCT-7~~ | ~~floor(x_-) = 3 is forced by integer quantization of color~~ | **RETIRED / DELETED** — relies on the retired x_-  N_c identification (FTD-0014, commit `ca7eb61`) |
+| NCT-6 | x_- = 3.024 is exact algebraic consequence of D = 3 + W_3 + k_phys = 16 | [THEOREM] (pure algebra) |
 | ~~NCT-8~~ | ~~Four independent routes return the same integer 3 (over-determination)~~ | **WITHDRAWN** — Routes 1–3 are not independent; they re-count the same D = 3 fact |
 | NCT-9 | N_c = 3 in the FTD lattice (from D = 3, color = spatial flux axis) | **[SELECTION]** (corrected from [THEOREM]; corroborated by NCT-1/-2/-4/-5, not independently proven) |
 | NCT-10 | This integer is identically QCD's color number | [SELECTION] (Wilson, fine-spacing recovery) |
@@ -247,12 +218,11 @@ There are thus *two* [SELECTION] steps: (a) "is the lattice integer 3?" — [SEL
 - [DERIV_MOORE_GAUGE_STRUCTURE.md](DERIV_MOORE_GAUGE_STRUCTURE.md) — Gauge group from sublattice
 - [DERIV_CONFINEMENT_FROM_GAP_EQUATION.md](../foundational_mechanics/DERIV_CONFINEMENT_FROM_GAP_EQUATION.md) — Confined phase Wilson loops
 - [ARCH_SPEC_FTD_COMPLETE_CHAIN.md](../../01_reference/archive/ARCH_SPEC_FTD_COMPLETE_CHAIN.md) — §2.2 (the [SELECTION] statement of N_c = 3; archived — superseded by `SPEC_FTD_COMPLETE_FRAMEWORK.md`; this document corroborates it and does **not** upgrade it to [THEOREM])
-- [DERIV_LATTICE_SU3_GAUGE.md](DERIV_LATTICE_SU3_GAUGE.md) — §1.4 + Theorem 1.1 + SU3-2: the canonical [SELECTION] statement N_c = 3 from D = 3, and the canonical retirement of the x_-  N_c identification (FTD-0014)
+- [DERIV_LATTICE_SU3_GAUGE.md](DERIV_LATTICE_SU3_GAUGE.md) — §1.4 + Theorem 1.1 + SU3-2: the canonical [SELECTION] statement N_c = 3 from D = 3
 
 ## Computation
 
 - `scripts/proofs/proof_d3_uniqueness.py` — Route 1 numerical confirmation (Watson integral)
-- ~~`scripts/proofs/proof_integer_identification.py`~~ — was Route 4 (master quadratic root and integer floor); route **DELETED** (RETIRED x_-  N_c identification, FTD-0014). The script, if it still computes x_-, computes a pure-algebra property of the polynomial, not a source of N_c.
 - `scripts/proofs/proof_confinement_wilson.py` — Route 3 (Wilson loop area law at x_-) — corroboration only
 - `scripts/proofs/proof_moore_gauge_structure.py` — Route 2 (cuboctahedron and gauge groups) — corroboration only
 
@@ -267,14 +237,13 @@ document. What this document does is collect them around the value N_c = 3.
 **No over-determination.** The document does **not** demonstrate "four
 logically independent paths converge on the same integer," and licenses no upgrade from [SELECTION]
 to [THEOREM]. The paths are not independent — Routes 1–3 all re-count
-the single spatial fact D = 3, and the former fourth path (`floor(x_-)`) relied on the RETIRED
-x_-  N_c identification (FTD-0014, commit `ca7eb61`). Counting one fact several ways does not
+the single spatial fact D = 3. Counting one fact several ways does not
 multiply the evidence, so there is no over-determination and no licence to upgrade. The N_c-level
 claim is **[SELECTION]** (from D = 3 under color = spatial flux axis), corroborated by the
 geometric/topological sub-facts.
 
 **What this does NOT do:** (i) upgrade N_c = 3 above [SELECTION] — the routes are not
-independent; (ii) source N_c from the master quadratic — that route is deleted; (iii) prove that
+independent; (ii) prove that
 compact SU(3) lattice gauge theory recovers continuum QCD (Wilson's program; Yang–Mills mass gap
 is the Clay problem). The QCD identification inherits whatever uncertainty attaches to that
 program — no more, no less.

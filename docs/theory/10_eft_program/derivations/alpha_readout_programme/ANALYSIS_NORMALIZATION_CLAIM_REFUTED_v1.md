@@ -4,7 +4,7 @@
 `[EXACT — 16 G*^2 = 32 pi W_BCC]` +
 `[OBSERVATION — THE TRUE STATEMENT IS ABOUT PERIODS, AND IS STANDARD]`
 **Verdict:** `NORMALIZATION_THESIS_VACUOUS_AND_FALSIFIED_PERIODS_IS_THE_RIGHT_FRAME`
-**Parents:** Theorem A / Theorem B (sidebranch §§30.1–30.3), `FTD-0785`, `FTD-0791`
+**Parents:** Theorem A / Theorem B (sidebranch §§30.1–30.3), `FTD-0785`
 **Production impact:** none
 
 ## 1. What was claimed, and why it is recorded despite never being registered

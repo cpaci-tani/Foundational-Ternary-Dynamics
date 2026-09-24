@@ -77,7 +77,7 @@ We do **not** claim that $\alpha$ = 1/137.036 is the unique physically possible 
 | # | Prediction | Value | Uncertainty | Depends On | Measures |
 |---|------------|-------|-------------|------------|----------|
 | P1 | $1/\alpha$ from quadratic | 137.036 | **1.26 ppm** tree-level (0.21 ppt ε-fit is post-hoc, beyond CODATA precision) | S1, S2, S3 | Precision QED + atom physics |
-| P2 | No 4th generation | $N_{\text{gen}} = 3$ | Discrete | S3, C2 | Collider searches |
+| P2 | No 4th generation | $N_{\text{gen}} = 3$ | Discrete | S3 | Collider searches |
 | P3 | sLoop Bell parameter | $S \approx 2.71$ | ±0.02 | A4, Hilbert structure | Loophole-free Bell tests |
 
 **What would falsify the framework:**

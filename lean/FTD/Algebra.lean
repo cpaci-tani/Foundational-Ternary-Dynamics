@@ -63,7 +63,7 @@ theorem unification_is_field_degree : CM_field_degree = 2 := rfl
 -- The reciprocal budget:
 -- 1/u+ + 1/u- = (u+ + u-)/(u+ * u-) = S/S = 1.
 -- Equivalently: 1/x+ + 1/x- = 1/G* (since x = u*G*).
--- G* is the "parallel combination" of the two coupling scales.
+-- G* is the "parallel combination" of the two roots.
 
 -- The charge quartic isomorphism:
 -- The change of variables e^2 = 1/x transforms:

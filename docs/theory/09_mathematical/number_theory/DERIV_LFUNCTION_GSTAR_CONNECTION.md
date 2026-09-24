@@ -150,7 +150,7 @@ Using $16 = |E(\mathbb{Q})_{\text{tors}}|^2$ and $G^* = 8L(E,1)/\sqrt{\pi}$:
 
 $$x^2 - |E(\mathbb{Q})_{\text{tors}}|^2 \cdot G^{*2} \cdot x + |E(\mathbb{Q})_{\text{tors}}|^2 \cdot G^{*3} = 0$$
 
-The torsion group squared multiplies both the linear and constant coefficients. The degree of the polynomial (2) matches the degree of the CM field $[\mathbb{Q}(i):\mathbb{Q}] = 2$. The number of roots (2) equals the number of gauge sectors ($\alpha$ and $N_c$).
+The torsion group squared multiplies both the linear and constant coefficients. The degree of the polynomial (2) matches the degree of the CM field $[\mathbb{Q}(i):\mathbb{Q}] = 2$.
 
 ### 3.3 The Gap Equation Form [THEOREM]
 

@@ -254,7 +254,6 @@ The roots are:
 | Root | Value | Identification | Accuracy | Status |
 |------|-------|------------------------|----------|--------|
 | x_+ | 137.036 | 1/alpha (fine structure) | 1.26 ppm | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) |
-| x_- | 3.024 | mathematical artifact of `P(x)`; no physics identification | n/a | **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` independently sourced (`DERIV_NC_FROM_TOPOLOGY.md`, Moore Layer Theorem) |
 
 **Note:** The 13-step chain starting from "i exists" is canonical — see [FOUND_BLIND_DERIVATION_CHAIN.md](FOUND_BLIND_DERIVATION_CHAIN.md). The coefficient 16 is [THEOREM] via dual derivation (|Aut(E_i)|^2 = |O_h|/3 = 16, see DERIV_DUAL_DERIVATION_OF_16.md). The one-loop lattice correction closes 99.2% of the gap (9.6 ppb).
 
@@ -272,13 +271,13 @@ The roots are:
 | 7 | Coefficient 16 | the z_BCC x 2 = 8 x 2 = 16 route is [SELECTION] (a re-spelling of 2^4; FOUND_DIMENSIONAL_COUNTING.md Section 5.4); the load-bearing theorem is the group-order fact |Aut(E)|^2 = 16, which stays [THEOREM] |
 | 8 | Master quadratic follows algebraically | [THEOREM given 6 and 7] |
 | 9 | Roots x_+ = 137.036, x_- = 3.024 | [THEOREM given 8] |
-| 10 | Physical identification x_+ = 1/alpha | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013); the historical x_- -> N_c identification is **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` independently sourced (`DERIV_NC_FROM_TOPOLOGY.md`, Moore Layer Theorem) |
+| 10 | Physical identification x_+ = 1/alpha | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) |
 
 **Steps 0-5 are rock solid.** Steps 6-7 are the contested territory. Steps 8-9 are algebra. Step 10 is an identification, not a derivation.
 
 **The discriminant trichotomy** [THEOREM]: The generalized master quadratic $x^2 - kG^{*2}x + kG^{*3} = 0$ has discriminant $\Delta = kG^{*3}(kG^* - 4)$. One quadratic, three regimes:
 
-- $\Delta > 0$ ($k = 16$, physical): **real roots** — bosonic sector (the larger root $x_+$ identified with $1/\alpha$, [STRONGLY MOTIVATED CONJECTURE]; the smaller root $x_- \approx 3.024$ is a mathematical artifact of $P(x)$, with the historical `x_-  N_c` identification **RETIRED** per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`)
+- $\Delta > 0$ ($k = 16$, physical): **real roots** — bosonic sector (the larger root $x_+$ identified with $1/\alpha$, [STRONGLY MOTIVATED CONJECTURE])
 - $\Delta = 0$ ($k = 4/G^*$, critical): **degenerate root** — the Born rule / measurement boundary
 - $\Delta < 0$ ($k < 4/G^*$): **complex roots** — the Dirac equation emerges; complex roots $x = a \pm bi$ yield $e^{ibt}$ oscillations, which IS the fermion wavefunction. The fermion sector is not imported from external physics — it is derived from the complex regime of the same master quadratic that produces $\alpha$.
 
@@ -321,7 +320,7 @@ However, the objection misidentifies the claim. FTD does not say "our theory is 
 2. This root numerically agrees with 1/α to 1.26 ppm.
 3. No free parameters were adjusted to achieve this agreement.
 
-The strength of the claim is not "fixed point of a dynamical gap equation" — that framing has been retracted (see §4.2 and `DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`). The strength is the **combination** of: a polynomial algebraically determined by the cubic-graph invariants {G\*, 16}, with zero adjustable coefficients (both `G*` and `16` are finite-combinatorial); the dual numerical match to two unrelated physical constants (1/α and N_c); and structural uniqueness across class-number-1 CM curves. Newtonian gravity is self-consistent but has G as a free parameter; FTD's polynomial has none, and uniquely matches both targets among comparable algebraic objects.
+The strength of the claim is not "fixed point of a dynamical gap equation" — that framing has been retracted (see §4.2 and `DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`). The strength is the **combination** of: a polynomial algebraically determined by the cubic-graph invariants {G\*, 16}, with zero adjustable coefficients (both `G*` and `16` are finite-combinatorial); the numerical match of x₊ to 1/α; and structural uniqueness across class-number-1 CM curves. Newtonian gravity is self-consistent but has G as a free parameter; FTD's polynomial has none.
 
 **Epistemic status of this response:** [SELECTION]. The argument is sound but not conclusive. The numerical agreement could be coincidental. The decisive test is the partition function computation (see Section 4.2). Until that computation is complete, the agreement between x_+ and 1/alpha is a striking observation, not a proof.
 
@@ -354,7 +353,7 @@ The polynomial is **not** the L → ∞ limit of any finite-L self-consistency e
 - An explicit L=2 partition-function calculation (`DERIV_PARTITION_FUNCTION_L2.md`) shows the action is ultralocal at finite L and carries no master-quadratic signature.
 - The undefined-boundary ontology (`AUDIT_INFINITY_REFRAME.md`) does not admit "L → ∞" as a load-bearing step.
 
-What the polynomial is: an algebraic object that the lattice produces from local invariants. What it predicts: x₊ matches 1/α to 1.26 ppm and x₋ matches N_c to 0.8%. The physical identification x₊  1/α, x₋  N_c rests on (i) the dual match across two unrelated physical constants from one polynomial, and (ii) the structural uniqueness of E among class-number-1 CM curves in giving this match (Option 3 scan). Both are evidential. Neither is a dynamical derivation. The identification is [STRONGLY MOTIVATED CONJECTURE].
+What the polynomial is: an algebraic object that the lattice produces from local invariants. What it predicts: x₊ matches 1/α to 1.26 ppm. The physical identification x₊ = 1/α rests on (i) that match, and (ii) the structural uniqueness of E among class-number-1 CM curves in giving a larger root that matches 1/α (Option 3 scan). Both are evidential. Neither is a dynamical derivation. The identification is [STRONGLY MOTIVATED CONJECTURE].
 
 The z_BCC × 2 = 8 × 2 = 16 reading (FOUND_DIMENSIONAL_COUNTING.md Section 5.4: n_DOF = BCC coordination number times non-void ternary states) is [SELECTION], not [THEOREM] — its "non-void states = 2" step is unproven and 8 × 2 is a re-spelling of 2⁴ on a highly composite target, so it is not an independent derivation. The load-bearing theorem for the coefficient 16 is the group-order fact |Aut(E)|^2 = 16 from the CM curve's automorphism group, which stays [THEOREM]. The finite-torus DOF discrepancy (14 vs 16 in Coulomb gauge) remains a separate technical issue documented in DERIV_WATSON_GSTAR_IDENTITY.md Section 4.2.
 
@@ -510,7 +509,7 @@ This claim is:
 
 ### The one sentence summary
 
-A voxel has a state and a position; from these, and nothing else, the local geometry of the cubic graph (with no defined boundary) determines the lemniscatic constant G\* and the integer 16, hence the master quadratic algebraically; its larger root x₊ = 137.036 matches 1/α to 1.26 ppm and is identified with 1/α as a [STRONGLY MOTIVATED CONJECTURE] — anchored on the dual root match (x₋ ≈ N_c) and on CM-curve structural uniqueness — not on a thermodynamic-limit derivation, which has been retracted.
+A voxel has a state and a position; from these, and nothing else, the local geometry of the cubic graph (with no defined boundary) determines the lemniscatic constant G\* and the integer 16, hence the master quadratic algebraically; its larger root x₊ = 137.036 matches 1/α to 1.26 ppm and is identified with 1/α as a [STRONGLY MOTIVATED CONJECTURE] anchored on CM-curve structural uniqueness, not on a thermodynamic-limit derivation, which has been retracted.
 
 ---
 
@@ -601,16 +600,16 @@ Two places in the chain are [SELECTION] — structurally motivated but not uniqu
 | **S1** | Master quadratic has form $x^2 - 16G^{*2} x + 16G^{*3} = 0$ | Chain gives coefficient $16$ and constant $G^*$ | **NARROWED to minimum-degree selection** via two-route unification (FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md) — coefficients are L-value [THEOREM]s, only remaining selection is "polynomial is minimum-degree FTD-meaningful object" |
 | **S2** | Ladder walk addends $\{4, 3, 3, 6\}$ in that specific order | Each addend is forced ($N_{\rm base} = 4$, $N_c = 3$, $N_f = 6$); the ordering is motivated by the physical reading electron-at-n-11 but not yet proven from first principles | Program A (O_h subgroup chain) is the closure path |
 
-**S1 has been substantially narrowed** by the L-value identification (DERIV_MASTER_QUADRATIC_CM_LVALUES.md) combined with the self-consistency derivation (DERIV_MASTER_QUADRATIC_FROM_Z.md). See FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md for the unified story: the master quadratic is derivable by two independent routes (physics + arithmetic) that converge to 100-digit precision, leaving only "minimum-degree polynomial" as residual selection. **Program E** (uniqueness-of-minimal-polynomial proof) would close S1 fully.
+**S1 has been substantially narrowed** by the L-value identification (DERIV_MASTER_QUADRATIC_CM_LVALUES.md) combined with the self-consistency derivation (DERIV_MASTER_QUADRATIC_FROM_Z.md). See FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md for the unified story: the master quadratic is derivable by two independent routes (physics + arithmetic) that converge to 100-digit precision, leaving only "minimum-degree polynomial" as residual selection.
 
-These two selections are the ONLY gaps between "$i$ exists" and the full FTD prediction set. Programs A + E would reduce the chain to zero selections.
+These two selections are the ONLY gaps between "$i$ exists" and the full FTD prediction set.
 
 #### 7.2.3 Master outputs (forced by steps A–I + S1, S2)
 
 | Output | Derivation | Status |
 |---|---|---|
 | $1/\alpha = x_+ = 137.036...$ | Larger root of master quadratic | [THEOREM given S1] |
-| $N_c = x_- = 3.024$ | Smaller root | [THEOREM given S1] |
+| $x_- = 3.024$ | Smaller root | [THEOREM given S1] |
 | $m_\mu/m_e = 3 B_3(B_3 + N_c) - N_c = 207$ | Integer formula in framework constants | [IMPOSED] (0.11% match to experiment, parametric insertion) |
 | $m_\tau/m_e = 3477$ | Extended integer formula | [IMPOSED] (0.006% match, parametric insertion) |
 | $m_e = m_P \sqrt{2\pi} (16/3) \alpha^{11}$ | $m_P$ = UV scale, prefactor from $G^*$ chain, exponent from ladder | [SELECTION given S2] (0.19%) |
@@ -652,11 +651,6 @@ For each published FTD observable, trace back to the axiom:
   ← 16 = |Aut(E_i)|²
   ← E_i has CM by ℤ[i]
   ← ℤ[i] is ring of integers in ℚ(i)
-  ← i exists ✓
-
-N_c = 3
-  ← x₋ root of master quadratic
-  ← [same chain as α]
   ← i exists ✓
 
 D = 3
@@ -783,7 +777,7 @@ Level 5: G* = Γ(1/4)/Γ(3/4), ϖ = Γ(1/4)²/(2√(2π))   [THEOREM]
 Level 6: 16 = 2^D(D-1)! → D = 3                     [THEOREM]
 Level 7: Z[i]³ → Moore-26 = 6+12+8 decomposition    [THEOREM]
 Level 8: Master quadratic x² − 16G*²x + 16G*³ = 0    [SELECTION S1]
-Level 9: x₊  1/α                                    [SMC physical identification (FTD-0013); algebraic roots theorem-level. x₋  N_c RETIRED v1.4 §5; LEDGER FTD-0014 removed in commit ca7eb61. N_c=3 independently sourced.]
+Level 9: x₊  1/α                                    [SMC physical identification (FTD-0013); algebraic roots theorem-level.]
 Level 10: Ladder walk {4,3,3,6} sums to 16          [THEOREM]
 Level 11: Walk ordering → particle scales           [SELECTION S2]
 Level 12: Lepton masses, m_H, m_p/m_e, etc.         [THEOREM from 11]

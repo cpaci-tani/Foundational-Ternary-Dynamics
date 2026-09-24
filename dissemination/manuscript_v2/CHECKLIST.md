@@ -30,7 +30,6 @@
 
 ## Book II: Physical Content (Phase 3)
 
-- [D] Ch 9 The Roots: alpha and N_c — DRAFTED April 12
 - [D] Ch 10 The Framework Integers — DRAFTED April 12
 - [D] Ch 11 The Precision Formula — DRAFTED April 12
 - [D] Ch 12 The Mass Spectrum — DRAFTED April 12

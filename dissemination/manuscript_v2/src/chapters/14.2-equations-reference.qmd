@@ -283,7 +283,7 @@ $$
 x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0
 $$
 
-Roots: $\alpha = 1/137.036$ (larger), $N_c = 3.024$ (smaller)
+Roots: $x_+ = 137.036$ (larger), $x_- = 3.024$ (smaller)
 
 ### Fine Structure Constant
 
@@ -388,11 +388,6 @@ $$
 ### Golden Ratio
 $$
 \phi = \frac{1 + \sqrt{N_{base}+1}}{2} = \frac{1+\sqrt{5}}{2} = 1.618...
-$$
-
-### Number of Generations
-$$
-N_{gen} = \lfloor N_c \rfloor = \lfloor 3.024 \rfloor = 3
 $$
 
 ### Cosmological Constant (numerical coincidence, [SELECTION])

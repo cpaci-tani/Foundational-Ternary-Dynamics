@@ -15,7 +15,7 @@
 
 ## Abstract
 
-We present a systematic atlas of every constant in the FTD ontic derivation chain, organized by layer. Beyond cataloging values and formulas, we identify nine structural observations that emerge from studying the chain as a whole. The most significant is the **G* = 3 fixed point analysis**: the wave equation on a D=3 lattice achieves perfect self-consistency at G* = 3 (giving alpha = 1/141), but the actual lemniscatic value G* = 2.9587 deviates by 1.38%, and this deviation IS the fine structure constant. We also identify the **volumetric wave** interpretation (flux waves are 3D ripples, not 2D oscillations), the **integer cascade** (all Standard Model integers flow from a single irrational root), and several near-integer relationships suggesting deeper structure.
+We present a systematic atlas of every constant in the FTD ontic derivation chain, organized by layer. Beyond cataloging values and formulas, we identify eight structural observations that emerge from studying the chain as a whole. The most significant is the **G* = 3 fixed point analysis**: the wave equation on a D=3 lattice achieves perfect self-consistency at G* = 3 (giving alpha = 1/141), but the actual lemniscatic value G* = 2.9587 deviates by 1.38%, and this deviation IS the fine structure constant. We also identify the **volumetric wave** interpretation (flux waves are 3D ripples, not 2D oscillations) and several near-integer relationships suggesting deeper structure.
 
 ---
 
@@ -105,7 +105,7 @@ Three domains:
 | Constant | Value | Definition | Role |
 |----------|-------|------------|------|
 | x+ | 137.036... | Large root | 1/alpha |
-| x- | 3.024... | Small root | N_c effective |
+| x- | 3.024... | Small root | --- |
 
 **Vieta relations:**
 - Sum: x+ + x- = 16*G*^2 = 140.060 (total energy)
@@ -113,7 +113,7 @@ Three domains:
 - Ratio: P/S = G* (time per DoF)
 
 **Harmonic mean identity [THEOREM]:**
-G* = HM(x+, x-) / 2 = (x+ * x-) / (x+ + x-) = (1/alpha * N_c) / (1/alpha + N_c)
+G* = HM(x+, x-) / 2 = (x+ * x-) / (x+ + x-)
 
 ### Layer 3b: Dual-Substrate Decomposition
 
@@ -132,15 +132,13 @@ G* = HM(x+, x-) / 2 = (x+ * x-) / (x+ + x-) = (1/alpha * N_c) / (1/alpha + N_c)
 
 | Integer | Value | Formula | Physical Role |
 |---------|-------|---------|---------------|
-| N_c | 3 | floor(x-) | Color charges |
+| N_c | 3 | --- | Color charges |
 | N_gen | 3 | = N_c | Fermion generations |
 | N_f | 6 | 2*N_gen | Quark flavors |
 | N_base | 4 | 2^((D+1)/2) | Spinor dimension |
 | b_3 | 7 | (11*N_c - 2*N_f)/3 | QCD beta coefficient |
 | N_eff | 13 | b_3 + 2*N_c | Effective DoF (= Fibonacci F_7) |
 | D | 47 | N_c * N_base^2 - 1 | Constraint dimension |
-
-**The integer cascade:** ALL integers flow from floor(x-) = 3. A single irrational root x- = 3.024 generates the entire Standard Model particle content.
 
 ### Layer 5: Coupling Constants
 
@@ -202,7 +200,7 @@ If G* were exactly 3:
 - c^2 = 1/D = 1/3 = 1/G* (exact closure!)
 - 16*G*^2 = 144 = 12^2 (perfect square)
 - x+ = 140.935, so 1/alpha = 141
-- x- = 3.065, so floor(x-) = 3 (N_c unchanged)
+- x- = 3.065
 
 ### What Changes at G* = 3
 
@@ -228,11 +226,11 @@ At alpha = 1/141 (G*=3), atoms are 2.8% larger and 5.8% more weakly bound. This 
 
 G* = 2*varpi/sqrt(pi) where varpi = Gamma(1/4)^2/(2*sqrt(2*pi)).
 
-The value G* = 2.9587 comes from the **lemniscate geometry** (the figure-8 curve, the simplest self-intersecting closed curve). The value 3 comes from **discrete counting** (N_c = 3 color charges, D = 3 spatial dimensions).
+The value G* = 2.9587 comes from the **lemniscate geometry** (the figure-8 curve, the simplest self-intersecting closed curve). The value 3 comes from **discrete counting** (D = 3 spatial dimensions).
 
 The **tension** between:
 - **Analytic geometry** (varpi = 2.62206..., transcendental)
-- **Discrete counting** (N_c = 3, exact integer)
+- **Discrete counting** (D = 3, exact integer)
 
 IS the fine structure constant.
 
@@ -276,7 +274,7 @@ The energy density G*^2 falls as 1/r^2 in 3D because the surface area of a spher
 
 ---
 
-## Part IV: Nine Structural Observations
+## Part IV: Eight Structural Observations
 
 ### Observation 1: Every Power of G* Has Physical Identity
 
@@ -293,13 +291,7 @@ The powers of a single transcendental number encode the complete dimensional str
 
 G* sits at the center of the scale hierarchy, connecting quantum coupling to classical gravity to reference frame context.
 
-### Observation 3: The Integer Cascade
-
-x- = 3.024 -> N_c=3 -> N_f=6 -> b_3=7 -> N_eff=13 -> D=47
-
-Every integer in the Standard Model flows from a SINGLE irrational root. The floor function (x- -> N_c) is the bridge between continuous mathematics and discrete physics.
-
-### Observation 4: P/S = G* Connects Physics to Reference frame context
+### Observation 3: P/S = G* Connects Physics to Reference frame context
 
 Physics: P/S = (16*G*^3)/(16*G*^2) = G*
 Reference frame context: cos^2(theta_C) = G*/8
@@ -308,7 +300,7 @@ Therefore: cos^2(theta_C) = P/(8*S) = (total action)/(8 * total energy)
 
 The observable fraction of reference frame context equals the action-to-energy ratio divided by 8.
 
-### Observation 5: Near-Integer Relationships
+### Observation 4: Near-Integer Relationships
 
 | Quantity | Value | Nearest Integer | Deviation |
 |----------|-------|----------------|-----------|
@@ -319,25 +311,25 @@ The observable fraction of reference frame context equals the action-to-energy r
 | x+ | 137.036 | 137 | +0.026% |
 | x++x- | 140.060 | 140 | +0.043% |
 
-The physics roots (x+, x-, their sum) are remarkably close to integers. The lemniscatic constants (G*, G*^2) are close but not as close. This gradient of "integerlikeness" may have structural significance.
+The roots (x+, x-, their sum) are remarkably close to integers. The lemniscatic constants (G*, G*^2) are close but not as close. This gradient of "integerlikeness" may have structural significance.
 
-### Observation 6: c^2 ~ 1/G*
+### Observation 5: c^2 ~ 1/G*
 
 The speed of light c^2 = 1/D = 1/3, while 1/G* = 0.338. These differ by 1.40%, the SAME percentage as G*'s deviation from 3. At the G*=3 fixed point, c^2 = 1/G* exactly.
 
-### Observation 7: Reference frame context Threshold Ordering
+### Observation 6: Reference frame context Threshold Ordering
 
 K_B < K_GENESIS < K_C: {0.511, 1.533, 3.599}
 
 Creating matter (K_B) requires less energy than creating structured matter (K_GENESIS = 3*K_B), which requires less than reference frame context (K_C = sqrt(G*^3/2)). But K_C < 2*K_GENESIS: reference frame context needs less than creating two particles.
 
-### Observation 8: The e^pi Near-Identity
+### Observation 7: The e^pi Near-Identity
 
 e^pi = pi + 20 - 0.000900 where 20 = N_eff + b_3.
 
 The transcendental e^pi is almost exactly pi shifted by the sum of framework integers. The tiny residual epsilon = -0.000900 is what the Layer 7 precision formula corrects to achieve sub-ppt accuracy for alpha.
 
-### Observation 9: The Nome as Complex Annihilation
+### Observation 8: The Nome as Complex Annihilation
 
 q = (-1)^i = e^{i^2 * pi} = e^{-pi}
 
@@ -349,15 +341,14 @@ The modular selector (which picks the lemniscatic curve from all possible ellipt
 
 | ID | Claim | Status | Evidence |
 |----|-------|--------|----------|
-| OCA-1 | All SM integers flow from single irrational root x- = 3.024 | [THEOREM] | Integer cascade: floor(3.024)=3 -> all integers |
-| OCA-2 | G*=3 is wave equation fixed point with alpha=1/141 | [THEOREM] | c^2=1/D=1/3=1/G* at G*=3 |
-| OCA-3 | The 1.38% deviation of G* from 3 generates alpha | [SELECTION] | Numerical: G*=2.959 -> 1/alpha=137.036 |
-| OCA-4 | c^2 = 1/G* at the fixed point only | [THEOREM] | 1/3 = 1/3 at G*=3; 0.333 != 0.338 at actual G* |
-| OCA-5 | Flux waves are inherently 3D volumetric | [THEOREM] | Wave equation on 3D lattice; J in R^3 |
-| OCA-6 | Interference fringes are 2D cross-sections of 3D nodal surfaces | [THEOREM] | Geometry of overlapping spherical shells |
-| OCA-7 | cos^2(theta_C) = P/(8*S) | [THEOREM] | Algebraic: G*/8 = (16G*^3)/(8*16*G*^2) |
-| OCA-8 | e^pi ~ pi + (N_eff + b_3) to 0.04% | [THEOREM] | Numerical identity |
-| OCA-9 | K_B < K_GENESIS < K_C (threshold ordering) | [THEOREM] | 0.511 < 1.533 < 3.599 |
+| OCA-1 | G*=3 is wave equation fixed point with alpha=1/141 | [THEOREM] | c^2=1/D=1/3=1/G* at G*=3 |
+| OCA-2 | The 1.38% deviation of G* from 3 generates alpha | [SELECTION] | Numerical: G*=2.959 -> 1/alpha=137.036 |
+| OCA-3 | c^2 = 1/G* at the fixed point only | [THEOREM] | 1/3 = 1/3 at G*=3; 0.333 != 0.338 at actual G* |
+| OCA-4 | Flux waves are inherently 3D volumetric | [THEOREM] | Wave equation on 3D lattice; J in R^3 |
+| OCA-5 | Interference fringes are 2D cross-sections of 3D nodal surfaces | [THEOREM] | Geometry of overlapping spherical shells |
+| OCA-6 | cos^2(theta_C) = P/(8*S) | [THEOREM] | Algebraic: G*/8 = (16G*^3)/(8*16*G*^2) |
+| OCA-7 | e^pi ~ pi + (N_eff + b_3) to 0.04% | [THEOREM] | Numerical identity |
+| OCA-8 | K_B < K_GENESIS < K_C (threshold ordering) | [THEOREM] | 0.511 < 1.533 < 3.599 |
 
 ---
 

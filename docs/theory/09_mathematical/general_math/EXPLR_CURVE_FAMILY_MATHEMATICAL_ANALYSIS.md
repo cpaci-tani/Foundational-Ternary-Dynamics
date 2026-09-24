@@ -399,7 +399,7 @@ has discriminant Delta = k*G*^3*(k*G* - 4).
 
 ```
 x_+ = 137.036...  (matches 1/alpha to 1.26 ppm)
-x_- = 3.024...    (matches N_c to 0.8%)
+x_- = 3.024...
 ```
 
 ### Reference frame context Roots (k = 1/2) [THEOREM]
@@ -550,7 +550,7 @@ Is level 7 (137 lobes) the natural termination point, or does the hierarchy cont
 
 ### Test — **[CLOSED RECLASSIFIED]** (FTD-0242)
 
-Under the dynamic-alpha pivot (FTD-0242), the hierarchy is truncated at level 7 (137 lobes) because the master quadratic roots $x_+ \approx 137.036$ and $x_- \approx 3.024$ are selected as the physical couplings/readouts on the substrate. A higher-level lobe would have no physical readout matching the dynamic-alpha parameters. Thus, searching for level 8 is retired.
+Under the dynamic-alpha pivot (FTD-0242), the hierarchy is truncated at level 7 (137 lobes) because the master quadratic root $x_+ \approx 137.036$ is selected as the physical coupling readout on the substrate. A higher-level lobe would have no physical readout matching the dynamic-alpha parameters. Thus, searching for level 8 is retired.
 
 ## 5.2 Fractal Dimension of the Limit
 
@@ -641,7 +641,6 @@ are needed to generate all FTD structure.
 | Claim | Evidence | Status |
 |-------|----------|--------|
 | x_+ = 1/alpha exactly | 1.26 ppm | Selection principle needed |
-| x_- = N_c = 3 exactly | 0.8% | Selection principle needed |
 | Hierarchy closes at 137 | No level 8 found | Unproven |
 | Fractal self-similarity | Visual ghosts | Dimension not computed |
 | Frequencies from first principles | Match Feigenbaum | Not derived |

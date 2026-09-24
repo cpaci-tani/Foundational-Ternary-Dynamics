@@ -9,20 +9,19 @@
 
 Does the engine's stable cluster spectrum exhibit chi_{-4} structure —
 specifically, do stable cluster sizes preferentially align with
-|Z[i]^×| = 4, multiples of 4, or master quadratic root values?
+|Z[i]^×| = 4 or multiples of 4?
 
 This is **Vector 1** of the post-opus next-steps menu: connecting the
 recent G* math opus (Papers A-E, 48pp) to FTD's engine empirics by
 testing whether the algebraic chi_{-4} structure has empirical
 expression in lattice dynamics.
 
-## Three pre-registered predictions
+## Two pre-registered predictions
 
 | P# | Prediction | Test |
 |----|-----------|------|
 | P1 | Stable cluster sizes preferentially have N mod 4 ∈ {0, 1, 3} (chi_{-4} support) | Compare observed fraction to null 3/4 |
-| P2 | x_- ≈ 3.024 (master quadratic small root, ≈ N_c) appears as a stable cluster size | Count N=3 stable amplitudes |
-| P3 | |Z[i]^×|² = 16 appears as stable plateau or near-stable | Count stable sizes near 16 |
+| P2 | |Z[i]^×|² = 16 appears as stable plateau or near-stable | Count stable sizes near 16 |
 
 ## Methodology
 
@@ -76,26 +75,7 @@ The signal is in the predicted direction (chi_{-4}-favored residues
 are over-represented) but n=10 is too small to distinguish from random.
 A campaign sweeping ≥ 50 amplitudes would give a definitive answer.
 
-### P2 (x_- = N_c as cluster size)
-
-The master quadratic small root x_- ≈ 3.024 ≈ N_c. Predicted: N=3 stable cluster.
-
-Observed:
-- N=1 stable: 3 amplitudes (A=3.0, 3.5, 4.0)
-- N=3 stable: **0 amplitudes**
-- N=4 stable: 3 amplitudes (A=4.5, 5.0, 5.5)
-
-**Verdict: NEGATIVE for direct identification.** N=3 does not appear
-as a stable cluster size; the engine jumps from N=1 to N=4 as the
-amplitude increases. The bridge from x_- to N_c does *not* manifest
-mechanically as cluster-size equality.
-
-This is consistent with the FTD framework's `[STRONGLY MOTIVATED CONJECTURE]`
-tagging of the (x_+, x_-) → (α⁻¹, N_c) bridge: the identification is
-through the polynomial form of the master quadratic, not through the
-literal numerical values of cluster sizes.
-
-### P3 (|Z[i]^×|² = 16 as plateau)
+### P2 (|Z[i]^×|² = 16 as plateau)
 
 Predicted: 16 = |Z[i]^×|² appears as stable plateau.
 
@@ -114,28 +94,12 @@ algebraic structure at the lattice level**: N_base = 4 = |Z[i]^×| is
 a dynamically preferred stable cluster size. Higher multiples (12, 24,
 40) also appear, with small-deviations near them.
 
-However, the master quadratic roots themselves (x_+ ≈ 137, x_- ≈ 3)
-do *not* appear as cluster sizes. The bridge from algebraic spine to
-physical observables is mediated by:
-- **The integer coefficient 16 = |Aut(E_lemn)|²** (= |Z[i]^×|²),
-  which appears in the polynomial form
-- **The lattice cluster spectrum that hits N_base = 4 and multiples**,
-  reflecting the underlying Z[i]-structure
-- **NOT by literal cluster-size = root-value mapping**
-
-This is consistent with the math opus's own framing in Paper B: the
-math-physics bridge is the choice of polynomial form (exponent pair
-(2,3), uniquely forced per Paper A Theorem 16.5.1), and the roots'
-identification with (α⁻¹, N_c) is a separate `[STRONGLY MOTIVATED
-CONJECTURE]`, not a structural equality of cluster sizes.
-
 ## Verdict by prediction
 
 | P# | Verdict | Significance |
 |----|---------|--------------|
 | P1 | Directionally positive | Not statistically significant at p<0.05 (n=10); would need ≥ 50 amplitudes |
-| P2 | NEGATIVE for direct identification | The N=3 cluster does not appear at L=32 |
-| P3 | PARTIAL | N=16 not exact, but N ∈ [14, 18] band has 3 stable measurements |
+| P2 | PARTIAL | N=16 not exact, but N ∈ [14, 18] band has 3 stable measurements |
 
 ## What this campaign establishes
 
@@ -145,7 +109,6 @@ CONJECTURE]`, not a structural equality of cluster sizes.
 - The Moore-block size 27 = 3³ also appears as a stable cluster size (at A=20)
 
 **Negative findings:**
-- N=3 = N_c (master quadratic root) is NOT a stable cluster size
 - N=16 = |Aut|² is NOT an exact stable size (though the band brackets it)
 
 **Statistical caveat:** n=10 unique sizes is too small for p<0.05

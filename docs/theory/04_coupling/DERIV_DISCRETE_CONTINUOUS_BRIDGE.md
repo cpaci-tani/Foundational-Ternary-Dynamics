@@ -26,7 +26,7 @@ This document synthesizes algebraic identities from six existing documents into 
 
 ## Abstract
 
-The master quadratic x² - 16G*²x + 16G*³ = 0 produces the fine structure constant (x₊ = 137.036) and color charge count (x₋ = 3.024) from a single algebraic equation. Using the decomposition G* = ϖ/√(PF), we rewrite this equation in **PF notation**, revealing that each coefficient factors into a **discrete** component (lattice integers, packing fraction) and a **continuous** component (lemniscate period). We show that the Vieta relations, the discriminant, and the precision formula all admit this factored form. The root ratio x₊/x₋ retains PF dependence — consistent with the PF cancellation rule, since it spans two physics sectors. The theta function identity G* = √(2π) · θ₃(e^{-π})² and the AGM form G* = 2√(ϖ/M) provide independent confirmations that G* is the mathematical object encoding both lattice sums and wave integrals simultaneously.
+The master quadratic x² - 16G*²x + 16G*³ = 0 produces the fine structure constant (x₊ = 137.036) and the root x₋ = 3.024 from a single algebraic equation. Using the decomposition G* = ϖ/√(PF), we rewrite this equation in **PF notation**, revealing that each coefficient factors into a **discrete** component (lattice integers, packing fraction) and a **continuous** component (lemniscate period). We show that the Vieta relations, the discriminant, and the precision formula all admit this factored form. The root ratio x₊/x₋ retains PF dependence. The theta function identity G* = √(2π) · θ₃(e^{-π})² and the AGM form G* = 2√(ϖ/M) provide independent confirmations that G* is the mathematical object encoding both lattice sums and wave integrals simultaneously.
 
 ---
 
@@ -99,7 +99,7 @@ $$x_+ \times x_- = 16G^{*3} = \frac{16\varpi^3}{\text{PF}^{3/2}}$$
 
 **Numerical verification:** x₊ × x₋ = 137.036 × 3.024 = 414.397 = 16 × (2.9587)³ = 16 × 25.900 ✓
 
-### §2.3 The Root Ratio and Cross-Sector PF Behavior [THEOREM + SELECTION]
+### §2.3 The Root Ratio and Its PF Behavior [THEOREM + SELECTION]
 
 **Theorem 2.3.** *The root ratio is:*
 
@@ -109,9 +109,7 @@ $$\frac{x_+}{x_-} = \frac{1 + \sqrt{1 - 1/(4G^*)}}{1 - \sqrt{1 - 1/(4G^*)}} = \f
 
 **Numerical verification:** x₊/x₋ = 137.036/3.024 = 45.315
 
-**Key observation [SELECTION] (historical, partially superseded by v1.4):** PF does **not** cancel from the root ratio. This is consistent with the PF cancellation rule [PF-7], which states that PF cancels in dimensionless observables *within a single physics sector*. Under the historical paired identification, the root ratio x₊/x₋ was read as spanning two sectors — electromagnetic (x₊ = 1/α) and strong (x₋ ≈ N_c). *(The `x_-  N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; the "two-sector" reading depended on it.)* The ratio's PF-non-cancellation remains an algebraic statement about the polynomial's coefficients; the physics-sector interpretation post-v1.4 is single-root (`x_+  1/α`) plus a mathematical artifact (`x_-`).
-
-PF survival in the cross-sector ratio was historically taken to confirm that PF plays a structural role determining how G* distributes content across the two physics sectors — that reading depends on the now-retired paired identification.
+**Key observation [SELECTION]:** PF does **not** cancel from the root ratio.
 
 ---
 
@@ -322,8 +320,8 @@ PF = pi/4 = 0.785                    G* = varpi/sqrt(PF) = 2.959
       |        + (16*varpi^3/PF^{3/2}) = 0 |
       +------------------------------------+
       |                                    |
- x_+ = 137.036 = 1/alpha            x_- = 3.024 (math artifact;
- (EM coupling, FTD-0013 [SMC])      x_-  N_c RETIRED v1.4 §5)
+ x_+ = 137.036 = 1/alpha            x_- = 3.024
+ (EM coupling, FTD-0013 [SMC])
 
       |                                    |
       +-------- PRECISION FORMULA ---------+
@@ -344,13 +342,12 @@ PF = pi/4 = 0.785                    G* = varpi/sqrt(PF) = 2.959
 | PF bridge | ϖ, PF → G* | [THEOREM] (algebraic identity) | PF-1 |
 | Quadratic | G*, 16 → x₊, x₋ | [THEOREM] (algebra) | MQ-7 |
 | EM identification | x₊ → 1/α | [OBSERVED] (1.26 ppm) | MQ-O1 |
-| ~~Color identification | floor(x₋) → N_c = 3~~ | **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` | MQ-O2 (retired) |
 | Bridge gap | e^π - π - 20 → ε | [THEOREM] (arithmetic) | DCB-6 |
 | Precision | x₊, ε, c_i → 1/α | [THEOREM] for the formula inside its ansatz; physical α identification/precision fit remains conjectural/post-hoc | ALPHAP-1 |
 | Theta identity | θ₃(e^{-π}) → G* | [THEOREM] (classical) | TRIT-1 |
 | AGM form | ϖ/M → G* | [THEOREM] (algebraic) | DCB-10 |
 
-The complete bridge path is composed entirely of [THEOREM]-level steps, with two [OBSERVED] identifications at the final step (roots → physical couplings).
+The complete bridge path is composed entirely of [THEOREM]-level steps, with one [OBSERVED] identification at the final step (root → physical coupling).
 
 ---
 
@@ -363,7 +360,7 @@ The complete bridge path is composed entirely of [THEOREM]-level steps, with two
 | **DCB-1** | Master quadratic in PF form: x² - (16ϖ²/PF)x + (16ϖ³/PF^{3/2}) = 0 | [THEOREM] | PF-1, MQ-7 | Algebraic identity — unfalsifiable |
 | **DCB-2** | Vieta sum: x₊ + x₋ = 16ϖ²/PF | [THEOREM] | DCB-1, MQ-12 | Algebraic identity |
 | **DCB-3** | Vieta product: x₊ × x₋ = 16ϖ³/PF^{3/2} | [THEOREM] | DCB-1, MQ-13 | Algebraic identity |
-| **DCB-4** | PF does NOT cancel in x₊/x₋ (cross-sector) | [THEOREM] | DCB-1 | Verify: root ratio changes under PF variation |
+| **DCB-4** | PF does NOT cancel in x₊/x₋ | [THEOREM] | DCB-1 | Verify: root ratio changes under PF variation |
 | **DCB-5** | Discriminant: Δ = 64ϖ³/PF^{3/2} × (4ϖ/√PF - 1) | [THEOREM] | DCB-1 | Algebraic identity |
 | **DCB-6** | ε = 1/q_lem - N_base·PF - (b₃ + N_eff) | [THEOREM] | ALPHAP-6 | Algebraic identity |
 | **DCB-7** | Precision formula = tree level - discrete corrections × bridge gap | [SELECTION] | ALPHAP-1..7 | Interpretation of structure |

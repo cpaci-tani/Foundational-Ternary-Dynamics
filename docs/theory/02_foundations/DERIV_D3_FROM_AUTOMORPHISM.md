@@ -98,7 +98,7 @@ Item 1 records why the formerly cited sign quotient is not equivalent.
 | **Numerical** | Yes (Monte Carlo for $D \geq 4$) | No (exact arithmetic) |
 | **Scope** | Checks $D = 1$ through $6$ | Proves uniqueness for all $D \geq 1$ |
 
-**The Watson approach** derives $D = 3$ from the self-consistency condition that the color number $N_c = \lfloor x_- \rfloor$ equals $D$. This is physically compelling (dimension selects itself) but requires computing $W_D$ in each dimension.
+**The Watson approach** derives $D = 3$ from the self-consistency condition that $\lfloor x_- \rfloor$ equals $D$. This is physically compelling (dimension selects itself) but requires computing $W_D$ in each dimension.
 
 **The automorphism approach** derives $D = 3$ from a purely algebraic equation involving only the automorphism count of $E_i$. It requires no numerical integration and proves uniqueness over all positive integers, not just $D \leq 6$.
 
@@ -114,7 +114,7 @@ The two proofs share no logical dependencies. Their convergence on $D = 3$ is a 
 
 The master quadratic $x^2 - K_D x + K_D G^*_D = 0$ is well-defined in any spatial dimension $D$, with $K_D = 16 G^{*2}_D$ and $G^*_D = \sqrt{2\pi W_D}$ where $W_D$ is the $D$-dimensional Watson integral. We compute $W_D$ for $D = 1$ through $6$ and analyze the gap equation in each case.
 
-**Key finding:** $D = 3$ is the unique dimension where $\lfloor x_- \rfloor = D$ — the floor of the smaller root of the dimension-$D$ master quadratic equals the spatial dimension. *(Historical framing: "the color number $N_c$ derived from the gap equation equals the spatial dimension." The historical identification `x_-  N_c` is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The self-referential identity $\lfloor x_- \rfloor = D$ — as a pure mathematical observation about the master quadratic's roots across dimensions — remains intact; the load-bearing $N_c = D$ reading is retired. `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.)*
+**Key finding:** $D = 3$ is the unique dimension where $\lfloor x_- \rfloor = D$ — the floor of the smaller root of the dimension-$D$ master quadratic equals the spatial dimension.
 
 ### $\S 5.2$. Results by Dimension
 
@@ -131,13 +131,13 @@ $D = 1$ is excluded ($W_1$ diverges). $D = 2$ through $D = 6$ all have positive 
 
 ### $\S 5.3$. The Self-Referential Identity
 
-The condition $\lfloor x_- \rfloor = D$ is a pure-math observation: the floor of the smaller root of the dimension-$D$ master quadratic equals the spatial dimension. *(Historical reading: "the number of color charges derived from the gap equation equals the number of spatial dimensions" — that reading depended on the now-retired `x_-  N_c` identification per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`.)* In $D = 3$:
+The condition $\lfloor x_- \rfloor = D$ is a pure-math observation: the floor of the smaller root of the dimension-$D$ master quadratic equals the spatial dimension. In $D = 3$:
 
 - The lattice is $\mathbb{Z}^3$ (three spatial dimensions)
 - The Watson integral $W_3 = \Gamma(1/4)^4 / (4\pi^3)$ determines $G^*$
 - The gap equation gives $x_- = 3.024$, so $\lfloor x_- \rfloor = 3 = D$
 
-This is a self-consistency loop: $D$ determines $W_D$, which determines $G^*_D$, which determines the gap equation roots, one of which has floor equal to $D$. **Only $D = 3$ closes this loop.** *(The closure is now a pure structural-mathematical claim about the master-quadratic-across-dimensions, not a physics identification.)*
+This is a self-consistency loop: $D$ determines $W_D$, which determines $G^*_D$, which determines the gap equation roots, one of which has floor equal to $D$. **Only $D = 3$ closes this loop.**
 
 ### $\S 5.4$. Why Not Other Dimensions?
 
@@ -153,7 +153,7 @@ The Watson integral $W_D$ decreases with $D$ for $D \geq 3$ (higher-dimensional 
 **[THEOREM]:**
 1. Watson integrals $W_D$ computed for $D = 1\ldots6$ ($D=3$ exact, $D=4\ldots6$ Monte Carlo with 5M samples)
 2. $D = 3$ is the unique dimension where $\lfloor x_- \rfloor = D$ (exhaustive check $D = 1\ldots6$)
-3. The self-referential identity $\lfloor x_- \rfloor = D$ (formerly stated as $N_c = D$ — the `x_-  N_c` identification is **RETIRED** per v1.4 §5) holds only for $D = 3$ as a pure mathematical fact about the master-quadratic-across-dimensions
+3. The self-referential identity $\lfloor x_- \rfloor = D$ holds only for $D = 3$ as a pure mathematical fact about the master-quadratic-across-dimensions
 
 **[SELECTION]:**
 - The coefficient $K = 16 G^{*2}$ is assumed uniform across dimensions. The Faddeev-Popov derivation ($48/3 = 16$ gauge modes) is specific to the octahedral symmetry group of $D = 3$.
@@ -184,7 +184,7 @@ The Watson integral $W_D$ decreases with $D$ for $D \geq 3$ (higher-dimensional 
 **[THEOREM] (Watson-integral approach, $\S 5$):**
 5. Watson integrals $W_D$ computed for $D = 1\ldots6$ ($D=3$ exact, $D=4\ldots6$ Monte Carlo with 5M samples)
 6. $D = 3$ is the unique dimension where $\lfloor x_- \rfloor = D$ (exhaustive check $D = 1\ldots6$)
-7. The self-referential identity $\lfloor x_- \rfloor = D$ holds only for $D = 3$ *(precision fix 2026-07-01, FTD-0355: this line previously said "$N_c = D$" — the $x_- \leftrightarrow N_c$ identification is RETIRED per v1.4 §5, as §5.5 item 3 above already states; the surviving content is the pure-math floor identity)*
+7. The self-referential identity $\lfloor x_- \rfloor = D$ holds only for $D = 3$
 
 **[SELECTION] (Watson-integral approach, $\S 5$):**
 - The coefficient $K = 16 G^{*2}$ is assumed uniform across dimensions; the Faddeev-Popov $48/3 = 16$ derivation is specific to $O_h$.

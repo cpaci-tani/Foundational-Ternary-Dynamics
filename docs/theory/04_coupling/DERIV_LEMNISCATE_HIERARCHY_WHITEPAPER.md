@@ -23,7 +23,7 @@ The fine structure constant α ≈ 1/137.036 remains one of the most mysterious 
 The lemniscatic constant G* = √2 · Γ(1/4)² / (2π) ≈ 2.9587 emerges from elliptic integral theory. We show that G* satisfies a master quadratic equation whose roots are:
 
 - x₊ = 137.036 ≈ 1/α (fine structure constant inverse)
-- x₋ = 3.024 ≈ Nᶜ (number of color charges)
+- x₋ = 3.024
 
 This connection suggests that α is not arbitrary but emerges from the geometry of elliptic curves.
 
@@ -327,7 +327,7 @@ At the center of the 137-lobe curve, all scales converge. The nested ghosts (3 �
 
 | Force | Geometric Signature | Mathematical Form |
 |-------|--------------------|--------------------|
-| Strong | 3-lobe ghost | Nᶜ = x₋ from G* quadratic |
+| Strong | 3-lobe ghost | Nᶜ = 3 |
 | Nuclear | 9-lobe shell | Nᶜ² = 9 = 8 gluons + 1 singlet |
 | EM | 137 lobes | 1/α = x₊ from G* quadratic |
 | Weak | 5 periods | sin²θ_W ≈ 5(2πα) = 0.229 |
@@ -341,7 +341,7 @@ At the center of the 137-lobe curve, all scales converge. The nested ghosts (3 �
 
 ```
 G* → Master Quadratic → x₊ = 137.036 = 1/α
-                      → x₋ = 3.024 = Nᶜ
+                      → x₋ = 3.024
 
 137 lobes → 7 harmonics → beat frequency = 137
                         → wave period = 2π/137 = 2πα

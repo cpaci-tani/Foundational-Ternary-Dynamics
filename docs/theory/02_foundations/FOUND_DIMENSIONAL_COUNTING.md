@@ -166,7 +166,7 @@ For arbitrarily large L, $G^{\text{BCC}}_L(0)$ approaches $G_{\text{BCC}}(0) = G
 
 $$x^2 = 16 G^{*2} \cdot x - 16 G^{*3}$$
 
-which is exactly the master quadratic with roots $x_+ = 137.036$ (identified with $1/\alpha$ at 1.26 ppm, FTD-0013 [STRONGLY MOTIVATED CONJECTURE]) and $x_- = 3.024$ (mathematical artifact of $P(x)$; the historical `x_-  N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`).
+which is exactly the master quadratic with roots $x_+ = 137.036$ (identified with $1/\alpha$ at 1.26 ppm, FTD-0013 [STRONGLY MOTIVATED CONJECTURE]) and $x_- = 3.024$.
 
 **Epistemic status:** [THEOREM] — the identity chain is algebraically exact. The gap equation form is [SELECTION].
 
@@ -237,15 +237,15 @@ $$y_+ + y_- = y_+ \cdot y_- = 16G^*$$
 
 This is remarkable: the sum and product of the rescaled roots are **equal**. Translating back:
 
-$$\frac{1}{\alpha} + N_c = \frac{N_c}{\alpha \cdot G^*}$$
+$$x_+ + x_- = \frac{x_+ \cdot x_-}{G^*}$$
 
 ### 7.4 G* as Harmonic Ratio
 
 The Vieta identity can be rearranged:
 
-$$G^* = \frac{x_+ \cdot x_-}{x_+ + x_-} = \frac{(1/\alpha) \cdot N_c}{1/\alpha + N_c}$$
+$$G^* = \frac{x_+ \cdot x_-}{x_+ + x_-}$$
 
-This is the "parallel resistance" formula. $G^*$ is the **harmonic combination** of $1/\alpha$ and $N_c$ — the two roots of the master quadratic. The bridge constant connecting electromagnetic coupling to color charge is their harmonic ratio.
+This is the "parallel resistance" formula. $G^*$ is the **harmonic combination** of $x_+$ and $x_-$, the two roots of the master quadratic.
 
 ### 7.5 The Ontic Constant Hierarchy
 
@@ -269,7 +269,7 @@ Given any $S \geq 4$, both roots are determined. FTD selects $S = 16G^*$ from la
 
 $$(y_+ - 1)(y_- - 1) = 1 \qquad \Longleftrightarrow \qquad (x_+ - G^*)(x_- - G^*) = G^{*2}$$
 
-The deviations of $1/\alpha$ and $N_c$ from $G^*$ multiply to give exactly $G^{*2}$. On a logarithmic scale, $G^*$ is the **geometric midpoint** between $(x_+ - G^*)$ and $(x_- - G^*)$.
+The deviations of $x_+$ and $x_-$ from $G^*$ multiply to give exactly $G^{*2}$. On a logarithmic scale, $G^*$ is the **geometric midpoint** between $(x_+ - G^*)$ and $(x_- - G^*)$.
 
 **Three classical means of $x_+$ and $x_-$:**
 
@@ -281,7 +281,7 @@ The deviations of $1/\alpha$ and $N_c$ from $G^*$ multiply to give exactly $G^{*
 
 All three means are pure powers of $G^*$ times integers — a consequence of the S = P structure.
 
-### 7.7 EM-QCD Duality via Mobius Involution
+### 7.7 Root Duality via Mobius Involution
 
 The Mobius map $f(y) = y/(y-1)$ that swaps the roots is an **inversion** in the deviation variable. Let $u = y - 1$ (deviation from the pole at $y = 1$, i.e., deviation of $x$ from $G^*$). Then:
 
@@ -289,13 +289,13 @@ $$f(1 + u) = 1 + \frac{1}{u}$$
 
 The map sends $u \to 1/u$. Since $u_+ \cdot u_- = 1$ (epsilon product identity), we have:
 
-$$u_+ = \frac{1/\alpha - G^*}{G^*} = 45.32, \qquad u_- = \frac{N_c - G^*}{G^*} = 0.0221$$
+$$u_+ = \frac{x_+ - G^*}{G^*} = 45.32, \qquad u_- = \frac{x_- - G^*}{G^*} = 0.0221$$
 
-The electromagnetic sector is "large" ($u_+ \gg 1$) exactly as much as the color sector is "small" ($u_- \ll 1$), measured from $G^*$. The logarithmic deviations are perfectly antisymmetric:
+The root $x_+$ is "large" ($u_+ \gg 1$) exactly as much as the root $x_-$ is "small" ($u_- \ll 1$), measured from $G^*$. The logarithmic deviations are perfectly antisymmetric:
 
 $$\log u_+ = -\log u_- = 3.814$$
 
-This is an **EM-QCD duality**: neither sector is more fundamental. $G^*$ is the self-dual bridge constant where the two sectors balance. The self-dual point $x = 2G^*$ (harmonic mean of the roots) is where $\alpha_{\text{dual}} = 1/(2G^*) \approx 0.169$.
+The self-dual point $x = 2G^*$ (harmonic mean of the roots) is where $\alpha_{\text{dual}} = 1/(2G^*) \approx 0.169$.
 
 ### 7.8 Complete Causal Map
 
@@ -314,14 +314,14 @@ D = 3  ────────────────────────�
         └─> n = 8 × 2 = 16                                 │
               └────────────> x² = 16G*²(x − G*)  [SELECTION]
                                ├─> x₊ ≈ 137.036  (SMC reading: 1/α)
-                               ├─> x₋ ≈ 3.024    (SMC reading: Nc)
+                               ├─> x₋ ≈ 3.024
                                ├─> G* = x₊x₋/(x₊ + x₋)
                                ├─> (x₊ − G*)(x₋ − G*) = G*²
                                └─> Cross-ratio = −1
 ```
 
 **Inputs:** $D = 3$, ternary states $\{-1, 0, +1\}$, quadratic form (see Part VIII).
-**Outputs:** $\alpha$, $N_c$, $G^*$ as harmonic ratio, Mobius duality, all classical means.
+**Outputs:** $\alpha$, $x_-$, $G^*$ as harmonic ratio, Mobius duality, all classical means.
 
 **Epistemic status:** [THEOREM] — all identities are algebraically exact.
 
@@ -362,7 +362,7 @@ where the elementary symmetric polynomials are:
 | $e_2$ | $\cos k_1 \cos k_2 + \cos k_1 \cos k_3 + \cos k_2 \cos k_3$ | **FCC** (edges) | 12 |
 | $e_3$ | $\cos k_1 \cos k_2 \cos k_3$ | **BCC** (corners) | 8 |
 
-The BCC sublattice corresponds to $e_3$, the **top** elementary symmetric polynomial of degree $D = 3$. The BCC return Green's function $G_{\text{BCC}}(0)$ is constructed from $e_3$. The master quadratic's small root $N_c \approx 3.024 \approx D$ because $N_c$ reflects the **degree of the characteristic polynomial** of the $D$-dimensional lattice.
+The BCC sublattice corresponds to $e_3$, the **top** elementary symmetric polynomial of degree $D = 3$. The BCC return Green's function $G_{\text{BCC}}(0)$ is constructed from $e_3$.
 
 ### 8.3 Complex Multiplication and the Coefficient 16
 
@@ -389,13 +389,7 @@ i² + 1 = 0
         └─> BCC return Green's fn G_BCC(0) from e₃ → G*
 ```
 
-### 8.4 Binary-Ternary Resonance and N_c = 3
-
-Powers of 2 modulo 3 alternate: $2^k \mod 3 = \{1, 2, 1, 2, \ldots\}$ because $2 \equiv -1 \pmod{3}$. No power of 2 is ever divisible by 3. In a binary frequency system, exact 3-fold symmetry is structurally impossible — it can only emerge as **approximate** resonance from interference between frequencies $\equiv 1 \pmod{3}$ and $\equiv 2 \pmod{3}$.
-
-FTD sits at the intersection of binary ($z_{\text{BCC}} = 2^3$) and ternary ($\{-1, 0, +1\}$, $3^3 - 1 = 26$ Moore neighbors) structure. $N_c = 3$ emerges not as a direct construction but as a resonance — the small root of the master quadratic where binary and ternary structure interfere.
-
-### 8.5 Gaussian Exactness and the At-Most-Quadratic Constraint
+### 8.4 Gaussian Exactness and the At-Most-Quadratic Constraint
 
 The FTD Euclidean action $S_E[s, \mathbf{J}] = \frac{1}{2}\mathbf{J}^T M \mathbf{J} + g_c \mathbf{b}(s)^T \mathbf{J} + c(s)$ is **quadratic** in the flux field $\mathbf{J}$. This structural fact has three rigorous consequences:
 
@@ -460,14 +454,13 @@ The argument that time contributes to effective dimensionality faces two objecti
 | **DC-7** | Self-referential ReLU closure: α → K_B → p ≈ 1 → n_DOF = 16 → α | **[THEOREM]** |
 | **DC-8** | Ontic gap equation: x² = 16G*²(x − G*) is pi-free | **[THEOREM]** |
 | **DC-9** | Dimensionless Vieta: y₊ + y₋ = y₊·y₋ = 16G* | **[THEOREM]** |
-| **DC-10** | G* = x₊·x₋/(x₊ + x₋) (harmonic ratio of 1/α and N_c) | **[THEOREM]** |
+| **DC-10** | G* = x₊·x₋/(x₊ + x₋) (harmonic ratio of the roots) | **[THEOREM]** |
 | **DC-11** | (x₊ − G*)(x₋ − G*) = G*² (shifted-root product) | **[THEOREM]** |
 | **DC-12** | Roots are Mobius harmonic conjugates: cross-ratio = −1 | **[THEOREM]** |
-| **DC-13** | EM-QCD duality: u₊·u₋ = 1, log-symmetric deviations from G* | **[THEOREM]** |
+| **DC-13** | Root duality: u₊·u₋ = 1, log-symmetric deviations from G* | **[THEOREM]** |
 | **DC-14** | SC, FCC, BCC = elementary symmetric polynomials e₁, e₂, e₃ | **[THEOREM]** |
 | **DC-15** | Gap equation quadratic from null cone i² + a² + b² = 0 | **[CONJECTURE]** |
 | **DC-15a** | Exact Gaussian J-integral → S_eff quadratic → gap eq at most quadratic | **[THEOREM]** |
-| **DC-16** | N_c ≈ D from degree of characteristic polynomial of D-dim lattice | **[CONJECTURE]** |
 
 ---
 

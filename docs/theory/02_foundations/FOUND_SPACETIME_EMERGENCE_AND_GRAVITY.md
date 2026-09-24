@@ -413,7 +413,7 @@ $$\cos^2\theta = \frac{1}{1 + \tan^2\theta} = \frac{1}{1 + 8/G^* - 1} = \frac{G^
 
 **Corollary:** $\sin^2\theta = (8 - G^*)/8 = (2N_{\text{base}} - G^*)/(2N_{\text{base}})$.
 
-The spatial fraction of reference frame context is $G^*/(2N_{\text{base}})$. Since $G^*$ determines $\alpha$, $N_c$, and the entire master quadratic:
+The spatial fraction of reference frame context is $G^*/(2N_{\text{base}})$. Since $G^*$ determines $\alpha$ and the entire master quadratic:
 
 > The fraction of reference frame context devoted to spatial awareness is determined by the **same constant** that determines the fine structure constant.
 
@@ -571,9 +571,9 @@ This is not a statement that happens IN time. It IS time. The annihilation of a 
 
 Each tick of the FTD engine processes:
 
-$$E_{\text{tick}} = 16 \cdot G^{*2} = x_+ + x_- = \frac{1}{\alpha} + N_c \tag{13.2}$$
+$$E_{\text{tick}} = 16 \cdot G^{*2} = x_+ + x_- \tag{13.2}$$
 
-(from the Vieta sum). The total energy budget per tick equals the sum of the electromagnetic and color couplings. This is not a coincidence — the coupling constants ARE the energy budget of each tick, partitioned between two sectors.
+(from the Vieta sum).
 
 ### 13.4 The Wheeler-DeWitt Argument [SELECTION]
 
@@ -602,7 +602,7 @@ Three regimes:
 - $kG^* = 4$ ($k = 4/G^*$): $\Delta = 0$ → degenerate → **measurement** (Born rule, ReLU transition)
 - $kG^* < 4$ ($k = 1/2$): $\Delta < 0$ → complex roots → **fermions / reference frame context** (Type III, continuous dynamics)
 
-**Fermion dynamics from complex roots** [THEOREM for structure]: In the complex regime ($\Delta < 0$), the roots $x = a \pm bi$ oscillate in time as $e^{ibt}$. This IS the fermion's wavefunction evolution — the Dirac equation emerges from the same master quadratic that produces $\alpha$ and $N_c$ in its real regime. The tick cycle processes both real (bosonic) and complex (fermionic) dynamics: the real roots govern coupling constants, the complex roots govern spinor oscillation frequencies.
+**Fermion dynamics from complex roots** [THEOREM for structure]: In the complex regime ($\Delta < 0$), the roots $x = a \pm bi$ oscillate in time as $e^{ibt}$. This IS the fermion's wavefunction evolution — the Dirac equation emerges from the same master quadratic that produces $\alpha$ in its real regime. The tick cycle processes both real (bosonic) and complex (fermionic) dynamics: the real roots govern coupling constants, the complex roots govern spinor oscillation frequencies.
 
 The critical point $k_{\text{crit}} = 4/G^*$ IS the ReLU threshold. Below it, the system has continuous (softplus) dynamics. Above it, the system has discrete (ReLU) couplings. The measurement/Born rule sits exactly at the transition — it is the act of crystallizing from continuous to discrete.
 
@@ -689,10 +689,8 @@ $G^*$ is not a constant OF the universe. It is the constant that CONSTITUTES the
 
 - $G^*$ sets the flux amplitude (how much "stuff" is available per DoF)
 - $G^{*2}$ sets the tick rate (how much energy is processed per DoF per tick)
-- The master quadratic partitions this budget between EM ($x_+$) and color ($x_-$)
-- The gap equation ensures this partition is self-consistent
 
-The "context" of an event is not external to the event — it IS the event. The lattice processes $16 \cdot G^{*2}$ of energy per tick (the Vieta sum), and this processing IS the passage of time. The coupling constants $\alpha$ and $N_c$ are not parameters imposed on the dynamics — they are the dynamics' own self-consistent partition of the energy budget.
+The "context" of an event is not external to the event — it IS the event. The lattice processes $16 \cdot G^{*2}$ of energy per tick (the Vieta sum), and this processing IS the passage of time.
 
 ### 14.8 Special Relativity as Context-Sensitivity [THEOREM]
 
@@ -704,7 +702,7 @@ In both cases, **space is flat** ($\mathbb{Z}^3$ is unchanging). What changes is
 
 ### 14.9 The Self-Referential Loop Closes [THEOREM given the framework]
 
-$$\mathbb{Z}^3 \;\xrightarrow{G^{*2} = \text{tick rate}}\; \text{time} \;\xrightarrow{\text{dynamics}}\; \text{coupling constants} \;\xrightarrow{\text{gap equation}}\; \alpha, N_c \;\xrightarrow{\text{govern}}\; \mathbb{Z}^3$$
+$$\mathbb{Z}^3 \;\xrightarrow{G^{*2} = \text{tick rate}}\; \text{time} \;\xrightarrow{\text{dynamics}}\; \text{coupling constants} \;\xrightarrow{\text{gap equation}}\; \alpha \;\xrightarrow{\text{govern}}\; \mathbb{Z}^3$$
 
 The lattice creates time ($G^{*2}$). Time creates dynamics (the tick cycle). Dynamics create coupling constants (the gap equation's fixed points). Coupling constants govern the lattice (through the Lagrangian). The loop is the self-referential closure of FOUND_SELF_REFERENTIAL_CLOSURE.md, realized physically.
 

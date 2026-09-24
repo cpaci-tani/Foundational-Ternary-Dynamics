@@ -303,7 +303,7 @@ The manuscript demonstrates impressive command of Standard Model phenomenology a
 - Anomaly cancellation must be verified
 
 ### For MATH-FOUND Review
-- The master quadratic producing both alpha and N_c requires rigorous derivation
+- The master quadratic producing alpha requires rigorous derivation
 - Lemniscate-Alpha connection to particle physics needs mathematical proof
 - Statistical significance of numerical coincidences should be quantified
 

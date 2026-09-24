@@ -45,9 +45,9 @@ stated 1.26 ppm.
 | 6 | Schneider 1941 gives transcendence of `B(1/2,1/4) = sqrt(pi) G*`, **not** of `G*`; only Chudnovsky does. Residual of a fix already registered as FTD-0318 | Attribution corrected in Theorem 8's dependencies |
 | 7 | §14 reinstates the Chowla–Selberg misattribution that §1 corrects; §13's Theorem 7 row carries the pre-FTD-0350 status; §13's Theorem 3 row says "9 discriminants" where §3 says 63; two artifact paths wrong on disk | All corrected |
 
-## 3. Two findings left OPEN — not remediated
+## 3. A finding left OPEN (not remediated)
 
-**(a) FTD-0314's C2 depends on an open conjecture.** C2 argues that a second
+**FTD-0314's C2 depends on an open conjecture.** C2 argues that a second
 Watson self-energy lands in a different CM field and is "**algebraically
 independent of `Gamma(1/4)`**." Joint algebraic independence of
 `Gamma(1/3)` and `Gamma(1/4)` is **Waldschmidt Conjecture 5.23 — open**.
@@ -72,21 +72,8 @@ Two smaller items in the same document: its verification script prints
 "transcendental over `Q(G*)`" for the surd, which is **false as written** —
 the surd is *algebraic of degree 2* over `Q(G*)` (the document body gets
 this right); and the "~85%" credence attached to the verdict has no
-computation, reference class, or calibration anywhere, unlike FTD-0319 where
-an uncomputed Bayes figure was explicitly killed. It should read
+computation, reference class, or calibration anywhere. It should read
 "[subjective credence, not computed]" or be dropped.
-
-**(b) The FTD-0319 look-elsewhere audit did not complete.** The third
-auditor — assigned the ~2.65-million-polynomial uniqueness scan behind the
-"sole dual-matcher" claim — terminated early on a session limit. Its last
-partial observation, **unverified and recorded as a lead only**: the
-historical in-house criterion may have accepted `x_-` within 1% of *any*
-small integer 1–10, which if true would make the "dual" leg nearly free and
-badly weaken the improbability argument. Independently, auditor 2 noted that
-the second leg's target (`x_- ↔ N_c`) is an identification the program
-itself **retired** in v1.4 §5, so the live content of "dual-match" may
-already be a single-root ppm match. **This is the highest-value unfinished
-audit in the program** and should be rerun.
 
 ## 4. Honest characterization of what survives
 

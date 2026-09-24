@@ -66,11 +66,6 @@ FTD's number-theoretic claims center on the framework integers {N_c=3, N_base=4,
 - Relationship to other transcendental constants unclear
 - No Lindemann-Weierstrass type analysis
 
-### W6: Irrational-to-Integer Mapping Arbitrary [MAJOR]
-- Why floor(x₋) = floor(3.024) = 3?
-- Why not round() or ceiling()?
-- Selection rule for discretization absent
-
 ---
 
 ## Technical Assessment
@@ -114,12 +109,11 @@ FTD's number-theoretic claims center on the framework integers {N_c=3, N_base=4,
 ### Priority 2 (Major)
 4. Justify integer selection criteria independently
 5. Explore transcendental number theory implications
-6. Address why floor() vs round() vs ceiling()
 
 ### Priority 3 (Enhancement)
-7. Connect to modular forms and L-functions
-8. Explore p-adic number theory connections
-9. Investigate Diophantine equation structure
+6. Connect to modular forms and L-functions
+7. Explore p-adic number theory connections
+8. Investigate Diophantine equation structure
 
 ---
 

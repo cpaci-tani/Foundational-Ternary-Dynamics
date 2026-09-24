@@ -11,9 +11,9 @@
 
 ## §1 — Motivation & Scope
 
-FTD-0311's rigidity-coverage map records that exactly **one** identification (x₊=1/α, FTD-0319) has survived an adversarial uniqueness scan; everything tested since (FTD-0097 monomials, FTD-0262 cluster mass, FTD-0310's three load-bearing ratios) came back NULL or non-rigid; and **~125 `[PARAMETRIC]` claims are tagged-but-unscanned**. This is the framework's deepest open methodological question (the gtca **F10** gap: *a tag labels a claim's status but does not answer whether the framework's integer-combination space is dense enough that some low-complexity expression hits each target by chance*).
+FTD-0311's rigidity-coverage map records that the scans run so far (FTD-0097 monomials, FTD-0262 cluster mass, FTD-0310's three load-bearing ratios) came back NULL or non-rigid, and that **~125 `[PARAMETRIC]` claims are tagged-but-unscanned**. This is the framework's deepest open methodological question (the gtca **F10** gap: *a tag labels a claim's status but does not answer whether the framework's integer-combination space is dense enough that some low-complexity expression hits each target by chance*).
 
-This pre-registration extends the FTD-0310 rigidity test to the **directly-testable subset** of the catalog: the simple framework-integer **rational identifications** in `CATALOG_PARAMETRIC_INSERTIONS.md` §7 / §7.1 that still carry the **`[STRUCTURALLY MOTIVATED PARAMETRIC]`** qualifier (i.e. have not yet been rigidity-tested). The catalog itself already notes each has rational competitors within tolerance, so the prior-favoured outcome is **deflationary** (CHANCE_LEVEL / MDL_DOMINATED → demote the "structurally motivated" qualifier). This is a DEBUNKING test in the FTD-0097/0189/0310 tradition, **not** a fishing scan for new matches.
+This pre-registration extends the FTD-0310 rigidity test to the **directly-testable subset** of the catalog: the simple framework-integer **rational identifications** in `CATALOG_PARAMETRIC_INSERTIONS.md` §7 / §7.1 that still carry the **`[STRUCTURALLY MOTIVATED PARAMETRIC]`** qualifier (i.e. have not yet been rigidity-tested). The catalog itself already notes each has rational competitors within tolerance, so the prior-favoured outcome is **deflationary** (CHANCE_LEVEL / MDL_DOMINATED → demote the "structurally motivated" qualifier). This is a DEBUNKING test in the FTD-0097/0310 tradition, **not** a fishing scan for new matches.
 
 **Out of scope (deferred):** the integer-*combination* families (quark masses, ~90 hadron masses, m_p/m_e, CKM Wolfenstein) are NOT simple rationals; their rigidity test is the FTD-0097-style combinatorial look-elsewhere scan, which FTD-0097 already ran at the monomial level and found **over-rich / NULL**. A full combination-space scan is registered as future work (v2), not run here.
 
@@ -48,7 +48,7 @@ RIGID          else (not dominated AND p_value < P_THRESH).
 ## §5 — Pre-registered consequences
 
 - **MDL_DOMINATED or CHANCE_LEVEL** → demote the claim from `[STRUCTURALLY MOTIVATED PARAMETRIC]` to `[PARAMETRIC]` (the "structurally motivated" qualifier is not supported — the integer story is not statistically distinguishable from a simple-rational fit). Mirror in LEDGER + `CATALOG_PARAMETRIC_INSERTIONS.md`. For the already-`[PARAMETRIC]` control (sin²θ₁₃), no tag change — it confirms the method.
-- **RIGID** (not expected) → leave the tag; record as a second scan-rigid identification alongside x₊=1/α and flag for follow-up. **No promotion** beyond the existing tag without a separate audit.
+- **RIGID** (not expected) → leave the tag; record as a RIGID identification and flag for follow-up. **No promotion** beyond the existing tag without a separate audit.
 - Update the FTD-0311 §4 rigidity-coverage map: move the tested claims from bucket (iv) "tagged-but-unscanned" to bucket (iii) "scan-tested".
 
 ## §6 — Pre-registered falsifiers / banned moves
@@ -60,7 +60,7 @@ RIGID          else (not dominated AND p_value < P_THRESH).
 
 ## §7 — Cross-references
 
-FTD-0310 (the load-bearing-ratio rigidity audit, the method source), FTD-0097 (the monomial-catalog look-elsewhere precedent / the deferred combination layer), FTD-0319 (x₊=1/α, the one scan-rigid exemplar), FTD-0311 (the coverage map this updates), FTD-0318 (the spine audit that spawned this).
+FTD-0310 (the load-bearing-ratio rigidity audit, the method source), FTD-0097 (the monomial-catalog look-elsewhere precedent / the deferred combination layer), FTD-0311 (the coverage map this updates), FTD-0318 (the spine audit that spawned this).
 
 ## §8 — Hash-lock procedure
 

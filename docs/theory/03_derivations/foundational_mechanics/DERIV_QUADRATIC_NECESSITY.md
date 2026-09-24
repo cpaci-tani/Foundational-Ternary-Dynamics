@@ -68,7 +68,7 @@ A degree-2 polynomial $ax^2 + bx + c = 0$ has discriminant $\Delta = b^2 - 4ac$.
 
 No lower-degree polynomial has this partitioning capability. $\square$
 
-**Physical interpretation:** The ternary system is discrete ($s \in \{-1, 0, +1\}$); the physical constants it generates ($\alpha, N_c$) are continuous. The quadratic is the minimal algebraic structure that bridges discrete input (integer coefficients from the lattice) to continuous output (irrational roots from the discriminant). The square root in the quadratic formula $x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$ is the irreducible mechanism by which integer arithmetic generates irrational (and potentially complex) numbers.
+**Physical interpretation:** The ternary system is discrete ($s \in \{-1, 0, +1\}$); the physical constants it generates are continuous. The quadratic is the minimal algebraic structure that bridges discrete input (integer coefficients from the lattice) to continuous output (irrational roots from the discriminant). The square root in the quadratic formula $x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$ is the irreducible mechanism by which integer arithmetic generates irrational (and potentially complex) numbers.
 
 ### 1.4 Why Not Degree 3 or Higher? [SELECTION]
 
@@ -109,7 +109,7 @@ The master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ is a degree-2 polynomial w
 
 More precisely: the CM theory of $E$ establishes that the interesting algebraic relations among the periods and invariants of $E$ are governed by the Galois group $\text{Gal}(\mathbb{Q}(i)/\mathbb{Q}) \cong \mathbb{Z}/2\mathbb{Z}$. This group has order 2, and its action on the period lattice produces algebraic relations of degree $\leq 2$ over $\mathbb{Q}$.
 
-**The Galois conjugation:** The two roots $x_+$ and $x_-$ of the master quadratic are related by the action of the non-trivial element of $\text{Gal}(\mathbb{Q}(i)/\mathbb{Q})$: complex conjugation $i \mapsto -i$. This sends the "positive" solution ($x_+ \approx 137$, corresponding to electromagnetic coupling) to the "negative" solution ($x_- \approx 3$, corresponding to color charge).
+**The Galois conjugation:** The two roots $x_+$ and $x_-$ of the master quadratic are related by the action of the non-trivial element of $\text{Gal}(\mathbb{Q}(i)/\mathbb{Q})$: complex conjugation $i \mapsto -i$. This sends the "positive" solution ($x_+ \approx 137$, corresponding to electromagnetic coupling) to the "negative" solution ($x_- \approx 3$).
 
 The Vieta relations encode this:
 
@@ -125,8 +125,6 @@ For $E: y^2 = x^3 - x$ with CM by $\mathbb{Z}[i]$, the CM field is $\mathbb{Q}(i
 
 **Consequence:** The master equation cannot be transcendental (involving exponentials, theta functions, etc.) if it is to express an intrinsic algebraic relation of the CM structure. The CM theory constrains it to be polynomial, and the degree of the CM field constrains it to be degree $\leq 2$.
 
-A degree-1 relation would give a single root, which cannot encode both $\alpha$ and $N_c$. Therefore, degree 2 is both the maximum allowed by CM theory and the minimum required by the physics.
-
 ---
 
 ## Part III: Convergence
@@ -137,7 +135,7 @@ The two proofs arrive at degree 2 by independent routes:
 |---|---|---|
 | **Starting point** | Ternary axiom $0 = (-1) + (+1)$ | CM curve $E: y^2 = x^3 - x$ |
 | **Mechanism** | Self-referential closure doubles degree | CM field $\mathbb{Q}(i)$ has degree 2 |
-| **Why not degree 1** | No discriminant; no real/complex partition | Single root; cannot encode two couplings |
+| **Why not degree 1** | No discriminant; no real/complex partition | Single root |
 | **Why not degree $\geq 3$** | Only one self-reference layer (physics uses $\mathbb{C}$) | CM field degree bounds polynomial degree |
 | **Why not transcendental** | Self-referential closure of polynomials yields polynomials | Schneider-Chudnovsky: CM periods satisfy algebraic relations |
 | **Status** | Steps 1-3: [THEOREM]; Step 4: [SELECTION] | Steps 1-4: [THEOREM] |
@@ -157,18 +155,9 @@ A common objection to frameworks using complex numbers is that $\mathbb{C}$ is b
 3. The quadratic formula introduces $\sqrt{\Delta}$
 4. When $\Delta < 0$, complex numbers emerge necessarily
 
-The imaginary unit $i$ is not postulated. It appears as a consequence of the self-referential structure, through the same mechanism that generates $\alpha$ and $N_c$. This connects to the Perpendicularity Theorem in FOUND_THE_COMPLETE_ALGEBRA_OF_i.md, which shows that $i$ is the unique magnitude-preserving distinguishable operation on $\mathbb{R}^2$.
+The imaginary unit $i$ is not postulated. It appears as a consequence of the self-referential structure, through the same mechanism that generates $\alpha$. This connects to the Perpendicularity Theorem in FOUND_THE_COMPLETE_ALGEBRA_OF_i.md, which shows that $i$ is the unique magnitude-preserving distinguishable operation on $\mathbb{R}^2$.
 
-### 4.2 The Two Roots Are Physically Necessary
-
-A quadratic has exactly two roots. In FTD, these are:
-
-- $x_+ \approx 137.036$ (electromagnetic coupling, $1/\alpha$)
-- $x_- \approx 3.024$ (color charge number, $N_c \approx 3$)
-
-A degree-1 equation would give one constant. A cubic would give three, requiring identification of a third fundamental coupling with no obvious candidate at the level of FTD's axioms. The two-root structure of the quadratic matches the two fundamental couplings that FTD derives.
-
-### 4.3 Connection to the Coefficient 16
+### 4.2 Connection to the Coefficient 16
 
 The degree of the equation (2) and the coefficient (16) are linked through the CM structure:
 

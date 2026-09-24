@@ -184,7 +184,6 @@ The strong-form claim "i exists only within thought" places the user in the anal
 | Math (numerical) | none — $\Gamma$-ratios are classical | none |
 | Math (naming) | $G^*$ adopted under symbol $G^*$ | small, structural |
 | Math (theorem) | $\pi$-free uniqueness, anomaly tower | small, original |
-| Physics-bridge | dual conjecture (one polynomial, two constants) | strong, empirical |
 | Physics-bridge | closed form for $\alpha$ via $G^*$ | strong, conditional |
 | Metaphysics | constants are arithmetic, not dynamical | substantial, interpretive |
 | Cross-register | the full deductive chain ontology → arithmetic → physics | substantial |
@@ -230,8 +229,6 @@ Items I claimed and then walked back after self-audit. Recording them is part of
 4. **Conductor of $\operatorname{Sym}^2 E$.** Not yet computed. Could provide an additional level-4 selection condition.
 
 5. **Rigorous level-4 instance of the Parseval pattern.** Identify the explicit Fourier-like transform on $(1+i)$-tower whose Parseval invariant is the master quadratic content.
-
-6. **The dual-root match $x_-(4) \approx N_c = 3$ at 0.80%.** Empirical; needs rigidity test against random comparable polynomials.
 
 ---
 

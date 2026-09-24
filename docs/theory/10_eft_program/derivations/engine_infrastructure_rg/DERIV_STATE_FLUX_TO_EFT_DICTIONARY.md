@@ -411,7 +411,7 @@ A_phys^QED = Z_A^QED · A_phys^native           (canonical-field rescaling)
 action — **not** by matching to the α target. Under the current ledger,
 `e_phys` and `Z_A^QED` are both [OPEN] matching parameters (Gate 6 + Gate 7),
 and the identification `e_phys² = 1 / x_+` is [STRONGLY MOTIVATED CONJECTURE]
-tagged at FTD-0001–FTD-0014.
+tagged at FTD-0001–FTD-0013.
 
 ### Zero-mode conventions
 

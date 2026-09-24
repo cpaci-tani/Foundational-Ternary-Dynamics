@@ -20,7 +20,7 @@
 
 - **Status:** PARKED.
 - **Why parked:** publication-grade document; reframe edits should be substantive (not mechanical) given the whitepaper's audience.
-- **Pre-conditions before resuming:** establish the calibration narrative (`a_phys ≡ ℓ_P` is declared); verify the whitepaper's claims align with the LEDGER status (FTD-0013 / FTD-0014 / FTD-0030 / etc.).
+- **Pre-conditions before resuming:** establish the calibration narrative (`a_phys ≡ ℓ_P` is declared); verify the whitepaper's claims align with the LEDGER status (FTD-0013 / FTD-0030 / etc.).
 - **Estimated effort:** 4–8 owner hours + 4–8 agent hours.
 
 ### 7 — Notebooks + interactive HTML reframe

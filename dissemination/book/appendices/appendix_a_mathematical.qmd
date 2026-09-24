@@ -43,7 +43,6 @@ $$x_+ \cdot x_- = 16G^{*3} \approx 414.4$$
 
 The framework identifies:
 - x₊ = 1/α (inverse fine structure constant)
-- x₋ ≈ N_c (effective color charge parameter)
 
 ---
 

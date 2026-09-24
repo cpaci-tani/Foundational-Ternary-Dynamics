@@ -60,11 +60,10 @@
 
 **Chowla, S. & Selberg, A. (1949).** *On Epstein's zeta function (I).* Proc. Nat. Acad. Sci. USA 35, 371–374. Extended in (1967), J. Reine Angew. Math. 227, 86–110.
 - **Used in FTD for:** the Chowla–Selberg formula expressing special values of CM L-functions as products of Γ-values at rational arguments. For `Q(i)` (discriminant `d = −4`): the "Γ-product" `∏_a Γ(a/|d|)^{χ_d(a)}` reduces to the canonical `G* = Γ(1/4)/Γ(3/4)` exactly. For higher class numbers `h ≥ 2`: the Γ-product analogue `G*_d` generalizes the construction.
-- **Citation contexts:** Theorem 1 (the analytic origin of G*), Theorem 9 (the field-theoretic positioning), FTD-0123 (the h ≥ 2 numerical scan), FTD-0132 (the theta-nullwert synthesis).
+- **Citation contexts:** Theorem 1 (the analytic origin of G*), Theorem 9 (the field-theoretic positioning), FTD-0132 (the theta-nullwert synthesis).
 
 **Damerell, R. M. (1970, 1971).** *L-functions of elliptic curves with complex multiplication.* Acta Arithmetica 17, 287–301; 19, 311–317.
 - **Used in FTD for:** the modern formulation of CM L-function special values as Γ-products at rational arguments; the per-ideal-class refinement of Chowla–Selberg.
-- **Citation contexts:** referenced in FTD-0123 as the proper analogue at h ≥ 2 (not yet computed in FTD scans).
 
 **Joyce, G. S. (1973).** *On the simple cubic lattice Green function.* Phil. Trans. Roy. Soc. London A 273, 583–610.
 - **Used in FTD for:** closed-form evaluations of the simple-cubic lattice Green's function via complete elliptic integrals at the singular modulus `k_3`; the rank-3 ℚ-module structure of small-r SC Green's function values.

@@ -3,9 +3,8 @@
 **Status:** `[BOOKED — FTD-0804 … FTD-0808]`. Retained for provenance
 rather than deleted: this file records what each row said at drafting
 time, before the wording that entered the LEDGER. The id-collision
-condition it waited on is resolved — `edge-clock-dissemination` tops at
-FTD-0803, the same maximum as `main`, so the merge decision does not move
-these ids.
+condition it waited on is resolved: `edge-clock-dissemination` and `main`
+share the same maximum id, so the merge decision does not move these ids.
 
 | draft row (in order below) | booked as |
 |---|---|

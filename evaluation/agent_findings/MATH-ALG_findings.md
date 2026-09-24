@@ -60,7 +60,6 @@ FTD makes substantial algebraic claims, particularly regarding the master quadra
 
 ### W4: Root Interpretation Arbitrary [MAJOR]
 - Why x₊ = 1/α and not some other physical constant?
-- Why x₋ ≈ N_c and not, say, lepton generations?
 - Selection principle for root assignment missing
 
 ### W5: Elliptic Fibration Claim Unsubstantiated [MAJOR]

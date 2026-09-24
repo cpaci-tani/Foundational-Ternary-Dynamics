@@ -159,11 +159,9 @@ Updating the epistemic chain from "$i$ exists" to the master quadratic:
 
 The narrowed SP2 says: "the master quadratic is the minimum-degree polynomial encoding the L-value content." Closing this fully would require proving that no higher-degree polynomial with different content matches the FTD chain equally well — i.e., that the master quadratic is **unique among candidates** at degree ≤ some bound.
 
-A candidate proof sketch: higher-degree polynomials whose roots include $x_+$ and $x_-$ would necessarily factor as (master quadratic) × (extra factor). The extra factor introduces additional roots that have no FTD interpretation (they're not α, $N_c$, or any known FTD constant). Therefore the master quadratic is the minimal FTD-meaningful polynomial, and any extension is a polynomial multiplied by arithmetic-empty factors.
+A candidate proof sketch: higher-degree polynomials whose roots include $x_+$ and $x_-$ would necessarily factor as (master quadratic) × (extra factor). The extra factor introduces additional roots that have no FTD interpretation (they're not α or any known FTD constant). Therefore the master quadratic is the minimal FTD-meaningful polynomial, and any extension is a polynomial multiplied by arithmetic-empty factors.
 
 Formalizing this argument would promote SP2 to [THEOREM]. It's a straightforward uniqueness-of-minimal-polynomial argument; the content has just not been written up rigorously.
-
-**Program E (new):** Write the uniqueness-of-minimal-polynomial proof for SP2. Closes the master quadratic motivation fully. Estimated effort: a focused session.
 
 ---
 
@@ -176,9 +174,9 @@ Previously: five selection principles SP1–SP5.
 | SP | Content | Old status | New status |
 |---|---|---|---|
 | SP1 | Curve is $E_i$ | [SELECTION] | [SELECTION] (unchanged — still a choice of which CM curve, though motivated by maximal symmetry) |
-| SP2 | Polynomial is degree 2 | [SELECTION] | **[SELECTION NARROWED]** — now just "minimum-degree FTD-meaningful polynomial"; candidate Program E would close it |
+| SP2 | Polynomial is degree 2 | [SELECTION] | **[SELECTION NARROWED]** — now just "minimum-degree FTD-meaningful polynomial"; a uniqueness-of-minimal-polynomial proof would close it |
 | SP3 | Coefficient is $|\mathrm{Aut}|^2 = 16$ | [SELECTION] | **[THEOREM]** — forced by L-value identity (Route B) |
-| SP4 | Physical identification $x_+ = 1/\alpha$ | [SELECTION] | [SELECTION] (unchanged — 1.26 ppm numerical match, but identification not uniquely forced). *(The historical paired identification $x_- = N_c$ is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.)* |
+| SP4 | Physical identification $x_+ = 1/\alpha$ | [SELECTION] | [SELECTION] (unchanged — 1.26 ppm numerical match, but identification not uniquely forced). |
 | SP5 | Framework integer structure | [SELECTION] | [SELECTION] (unchanged — interlocking constraints) |
 
 **Three selections survive (SP1, SP4, SP5), two narrow to near-theorem (SP2, SP3).** The master quadratic itself is now essentially a theorem — both its form and its coefficients are derived by two independent routes, with only the minimum-degree choice requiring additional justification.
@@ -189,7 +187,7 @@ Previously: five selection principles SP1–SP5.
 
 **For the initial-justification chain:**
 - Moves the "master quadratic" step from [SELECTION] to [THEOREM + 1 narrowed SELECTION]
-- Reduces the chain's total selections from 2 to 1 (if SP2 accepted as minimal-polynomial principle) or 0 (if Program E completes)
+- Reduces the chain's total selections from 2 to 1 (if SP2 accepted as minimal-polynomial principle) or 0 (if a uniqueness-of-minimal-polynomial proof completes)
 
 **For the project's epistemic discipline:**
 - Two independent derivations converging on the same polynomial is unusually strong evidence
@@ -211,7 +209,7 @@ Previously: five selection principles SP1–SP5.
 | Convergence of Route A and Route B on same polynomial | [THEOREM] |
 | SP3 (coefficient 16) forced by $|\mathrm{Aut}(E_i)|^2$ | [THEOREM] |
 | SP2 (degree 2) forced by rank-2 CM module + quadratic-in-J action | **[SELECTION narrowed]** |
-| Master quadratic as unique minimum-degree FTD polynomial | [CONJECTURE — to be proven in Program E] |
+| Master quadratic as unique minimum-degree FTD polynomial | [CONJECTURE — to be proven] |
 
 ---
 
@@ -221,8 +219,8 @@ The master quadratic is now sufficiently motivated that treating it as [THEOREM]
 
 For clean publication: state the master quadratic as a theorem derived by two independent routes, with a brief footnote acknowledging the minimality principle that selects degree 2 over higher-degree polynomials containing the master quadratic as a factor. This is a stronger position than any single-route derivation.
 
-Program E (uniqueness-of-minimal-polynomial proof) would close the remaining selection and give a fully unconditional theorem. Next priority after Program A (ladder ordering).
+A uniqueness-of-minimal-polynomial proof would close the remaining selection and give a fully unconditional theorem. Next priority after Program A (ladder ordering).
 
 ---
 
-*Unifies the two master-quadratic derivations (physics + L-value), identifies their convergence as strong evidence for the polynomial, narrows the remaining selection from "free choice" to "minimum-degree minimal polynomial", and proposes Program E to close SP2 fully. Effectively motivates the master quadratic at theorem level.*
+*Unifies the two master-quadratic derivations (physics + L-value), identifies their convergence as strong evidence for the polynomial, narrows the remaining selection from "free choice" to "minimum-degree minimal polynomial", and proposes a uniqueness-of-minimal-polynomial proof to close SP2 fully. Effectively motivates the master quadratic at theorem level.*

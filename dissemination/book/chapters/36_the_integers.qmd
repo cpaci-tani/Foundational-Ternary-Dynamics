@@ -167,7 +167,7 @@ f(x) = x² - 16G*²x + 16G*³ = 0
 
 With roots:
 - x₊ = 1/α ≈ 137.036
-- x₋ = N_c ≈ 3.024
+- x₋ ≈ 3.024
 
 ---
 
@@ -180,7 +180,7 @@ The framework proposes a complete derivation chain:
 3. **Constraints**: Gauss law on 2×2×2 cube → 16 degrees of freedom
 4. **Selection**: CM uniqueness → G* as geometric constant
 5. **Quadratic**: f(x) = x² - 16G*²x + 16G*³
-6. **Roots**: x₊ = 1/α, x₋ ≈ N_c
+6. **Roots**: x₊ = 1/α
 7. **Physics**: Coupling constants → Standard Model + gravity
 
 Each step follows from the previous. There are no arbitrary choices—only the consequences of self-consistency.

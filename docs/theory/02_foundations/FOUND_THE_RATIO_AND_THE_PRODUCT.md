@@ -62,7 +62,7 @@ G\* absorbs every unsolved constant: Catalan's constant, Apery's constant zeta(3
 The master quadratic built from G\* gives:
 
 - x_+ = 137.036 (the fine structure constant)
-- x_- = 3.024 (the color charge number)
+- x_- = 3.024
 - The gauge groups U(1) x SU(2) x SU(3) (from the Moore neighborhood)
 - The Higgs mass, confinement, the Einstein equations
 
@@ -107,7 +107,7 @@ The observer is not a physical system. The observer is the imaginary axis — th
 
 ## 6. i is Everything; Physics is Constraint
 
-If i exists, then Z[i] exists. If Z[i] exists, then E_i exists. If E_i exists, then G\* exists. If G\* exists, then alpha exists, and N_c exists, and the gauge groups exist, and the Einstein equations exist.
+If i exists, then Z[i] exists. If Z[i] exists, then E_i exists. If E_i exists, then G\* exists. If G\* exists, then alpha exists, and the gauge groups exist, and the Einstein equations exist.
 
 The entire structure of physics follows from **i** through a chain of forced mathematical consequences (with two selection principles).
 

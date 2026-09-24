@@ -128,4 +128,4 @@ The sum of the legs closes on the loop length $b_3 = 3 + 4 = 7$, whose Fibonacci
 ## 6. Conclusion & Epistemic Verdict
 
 * **Verdict:** **FOUND**.
-* The master quadratic is a highly consistent **selection model** representing the Fermat boundary constraints, and its roots $x_+ \approx 137.036$ ($1/\alpha$) and $x_- \approx 3.024$ ($N_c$) emerge as the only eigenvalues of the corresponding period lattice. We honestly classify this bridge as an **exploratory number-theoretic selection** rather than a mathematically proven physical derivation.
+* The master quadratic is a highly consistent **selection model** representing the Fermat boundary constraints, and its roots $x_+ \approx 137.036$ ($1/\alpha$) and $x_- \approx 3.024$ emerge as the only eigenvalues of the corresponding period lattice. We honestly classify this bridge as an **exploratory number-theoretic selection** rather than a mathematically proven physical derivation.

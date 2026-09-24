@@ -16,11 +16,9 @@ The four framework integers {N_c = 3, N_base = 4, b_3 = 7, N_eff = 13} are each 
 
 ## The Identification Chain
 
-### N_c = 3: Color Number [SELECTION] — historical master-quadratic route retired
+### N_c = 3: Color Number [SELECTION]
 
-**Origin (revised post-v1.4):** `N_c = 3` is independently sourced via the Moore Layer Theorem and `DERIV_NC_FROM_TOPOLOGY.md` (four independent topology routes). The historical identification `N_c = floor(x_-) = 3` via the master quadratic's smaller root is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The smaller root `x_- ≈ 3.024` is now a mathematical artifact of $P(x)$ only.
-
-**Self-referential identity (historical):** D = 3 is the unique spatial dimension where floor(x_-) = D (proven in DERIV_D3_FROM_AUTOMORPHISM.md). Under the historical paired identification, this read: "the dimension selects itself: the lattice lives in D = 3 dimensions, and the gap equation on that lattice returns N_c = D = 3." Post-v1.4, the mathematical statement floor(x_-) = D survives as a pure-math fact about the master quadratic across dimensions; the N_c = D physical reading depended on the now-retired `x_-  N_c` identification and is no longer load-bearing.
+**Origin:** `N_c = 3` is sourced via the Moore Layer Theorem and `DERIV_NC_FROM_TOPOLOGY.md`.
 
 ### N_base = 4: Spinor Dimension [THEOREM]
 
@@ -83,7 +81,7 @@ No free parameters remain once N_gen = N_c is assumed.
 **[SELECTION]:**
 - N_gen = N_c (three generations equals three colors)
 - N_base interpretation as spinor dimension (standard physics identification)
-- N_c = D as a forcing identity — the arithmetic uniqueness of |Aut(E)|² = 2^D·(D−1)! = 16 is a [THEOREM], but the dimension-forcing (D=3 as the physical spatial dimension) is [SELECTION — declared] (FTD-0355): the RHS target 16 = |O_h|/3 presupposes D=3, a circularity named (bounded search). The historical `N_c = floor(x_-) = 3` route is separately RETIRED (x_-  N_c identification removed, FTD-0014); N_c = 3 stands on topology (`DERIV_NC_FROM_TOPOLOGY.md`), not on N_c = D.
+- N_c = D as a forcing identity — the arithmetic uniqueness of |Aut(E)|² = 2^D·(D−1)! = 16 is a [THEOREM], but the dimension-forcing (D=3 as the physical spatial dimension) is [SELECTION — declared] (FTD-0355): the RHS target 16 = |O_h|/3 presupposes D=3, a circularity named (bounded search). N_c = 3 stands on topology (`DERIV_NC_FROM_TOPOLOGY.md`), not on N_c = D.
 
 ---
 

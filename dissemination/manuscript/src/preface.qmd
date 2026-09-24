@@ -40,12 +40,11 @@ The reader is invited to verify every derivation. The mathematics is transparent
 ::: {.callout-tip}
 ## Foundational Completeness
 
-This book achieves foundational completeness within its assumptions. All seven theoretical gaps have been resolved:
+This book achieves foundational completeness within its assumptions. All six theoretical gaps have been resolved:
 
 | Gap | Resolution | Status |
 |-----|------------|--------|
-| **C1**: Why $x_+$ = $1/\alpha$ | Root matches $1/\alpha$ to 1.26 ppm; CM selection + uniqueness scans | [SMC] (identification not derived) |
-| **C2**: Why x₋ → N_c = 3 | Root matches 3 to 0.80%; $N_c=3$ independently derived | [SMC] (identification not derived) |
+| **C1**: Why $x_+$ = $1/\alpha$ | Root matches $1/\alpha$ to 1.26 ppm; CM selection | [SMC] (identification not derived) |
 | **A1**: Why D = 3 | 6 independent constraints | [T] **DERIVED** |
 | GR coefficient | Discrete Laplacian → $8\pi G$ | [†] **COMPLETE** |
 | Inflation | Starobinsky from sub-threshold flux | [†] **DERIVED** |
@@ -190,10 +189,9 @@ $$x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$$
 
 was discovered through CGMD:
 
-1. **Constraint**: The electromagnetic and strong sectors must unify mathematically
-2. **Exploration**: What algebraic structures naturally connect elliptic constants to physical couplings?
-3. **Discovery**: The lemniscatic constant G* appears in a self-referential quadratic
-4. **Verification**: The roots give $\alpha$ = 1/137.036 (1.26 ppm) and $N_c \approx 3.024$
+1. **Exploration**: What algebraic structures naturally connect elliptic constants to physical couplings?
+2. **Discovery**: The lemniscatic constant G* appears in a self-referential quadratic
+3. **Verification**: The larger root gives $\alpha$ = 1/137.036 (1.26 ppm)
 
 This is neither pure derivation nor pure numerology—it is **guided discovery** followed by rigorous verification.
 

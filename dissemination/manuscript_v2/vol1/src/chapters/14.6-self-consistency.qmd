@@ -133,11 +133,11 @@ where the coefficient 16 = N_base² = 4² emerges from the lattice degrees of fr
 The larger root x₊ = 137.0361... = 1/α, while the integers appear in:
 
 - b₃ = 7: QCD beta function coefficient
-- N_c = 3: Color charge number (from x₋ = 3.024...)
+- N_c = 3: Color charge number
 - N_eff = 13 = F₇: Effective degrees of freedom at QCD scale
 - N_base = 4: Spacetime wave modes (giving coefficient 16 = 4²)
 
-The self-consistency is that b₃ = 11 - 2n_f/3 = 7 requires n_f = 6 (three generations of quarks), which requires N_generations = 3 = ⌊x₋⌋, closing the loop
+The self-consistency is that b₃ = 11 - 2n_f/3 = 7 requires n_f = 6 (three generations of quarks), which requires N_generations = 3, closing the loop
 
 **Uniqueness (scoped)**: Within the stated constraint class, alternative integer choices typically violate one or more of:
 

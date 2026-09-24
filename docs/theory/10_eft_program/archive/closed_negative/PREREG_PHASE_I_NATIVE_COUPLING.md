@@ -2,7 +2,7 @@
 
 **Status:** PRE-REGISTRATION (committed BEFORE any measurement; hash-locked via git tag `preregister-phase-i-native-coupling-v1`).
 **Date:** 2026-05-03
-**Pre-registration discipline:** follows FTD-0097 / FTD-0121 / FTD-0123 / FTD-0124 methodology — methodology committed before execution; no tolerance-tuning post-hoc; outcomes named explicitly with what each means at the LEDGER level.
+**Pre-registration discipline:** follows FTD-0097 / FTD-0121 / FTD-0124 methodology — methodology committed before execution; no tolerance-tuning post-hoc; outcomes named explicitly with what each means at the LEDGER level.
 
 ---
 

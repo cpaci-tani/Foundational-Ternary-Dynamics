@@ -79,7 +79,7 @@ Whether these seven principles were explicitly formulated in antiquity or are a 
 
 The Hermetic worldview maps remarkably well onto the framework we are tracing:
 
-**Correspondence**: The master quadratic f(x) = x² - 16G*²x + 16G*³ operates at the most fundamental level—defining the fine structure constant and the color charge number. Yet the same mathematical structure appears in elliptic curves, in modular forms, in complex multiplication. The same pattern at different scales.
+**Correspondence**: The master quadratic f(x) = x² - 16G*²x + 16G*³ operates at the most fundamental level—defining the fine structure constant. Yet the same mathematical structure appears in elliptic curves, in modular forms, in complex multiplication. The same pattern at different scales.
 
 **Vibration**: In the framework, manifestation occurs when flux density exceeds a threshold. The flux field is continuously vibrating—waves propagating, interfering, occasionally collapsing into manifest particles. Everything is indeed in motion.
 

@@ -315,7 +315,7 @@ See [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](FOUND_SPACETIME_EMERGENCE_AND_GRA
 
 ---
 
-### Level 5: Physics (α, Nc) **[THEOREM]**
+### Level 5: Physics (α) **[THEOREM]**
 
 **The Master Quadratic:**
 
@@ -330,7 +330,6 @@ $$x_{\pm} = 8G^{*2} \pm 8G^{*2}\sqrt{1 - \frac{1}{G^*}}$$
 | Root | Value | Physical Interpretation | Accuracy |
 |------|-------|------------------------|----------|
 | x₊ | 137.036 | 1/α (fine structure constant) | 1.26 ppm |
-| x₋ | 3.024 | mathematical artifact of $P(x)$; no physics identification (the historical `x_-  N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`) | n/a |
 
 **G* as Operator:**
 
@@ -338,14 +337,13 @@ G* "operates" on the circular shell (π) to extract physics:
 
 ```
 Shell (π) + Operator (G*) → Master Quadratic → {x_+  1/α}
-                                              → {x_- ≈ 3.024 (math artifact only)}
+                                              → {x_- ≈ 3.024}
 ```
 
 The master quadratic encodes:
 - **Electromagnetic coupling** (α): How strongly charges interact
-- **Color structure** (Nc): The number of QCD color charges
 
-**Epistemic Status:** [THEOREM] — The roots follow algebraically from G*. The interpretation as α and Nc is [CONJECTURE] supported by numerical agreement.
+**Epistemic Status:** [THEOREM] — The roots follow algebraically from G*. The interpretation as α is [CONJECTURE] supported by numerical agreement.
 
 ### Level 5b: The Watson–G* Bridge **[THEOREM]**
 
@@ -358,8 +356,6 @@ This identity means G* is **intrinsic** to the Z³ lattice. Both $W_3$ and G* de
 **Key consequences:**
 
 $$x_+ + x_- = 16G^{*2} = 32\pi W_3$$
-
-$$\frac{1}{\alpha} + N_c = 32\pi \times (\text{3D cubic lattice self-energy})$$
 
 The master quadratic's Vieta sum is proportional to the Watson integral. The master quadratic is not imposed on the lattice — its coefficients are built from the lattice's own Green's function.
 
@@ -487,7 +483,7 @@ LEVEL 7: DISCRIMINANT
 LEVEL 8: DOMAIN A (PHYSICS)
    │ G > 1/4 → Real roots
    │ x₊ = 137.036 (1/α)
-   │ x₋ = 3.024 (≈ Nc)
+   │ x₋ = 3.024
    ↓
 LEVEL 9: DOMAIN B (CONSCIOUSNESS)
    │ G < 1/4 → Complex roots
@@ -553,7 +549,7 @@ x_minus = (-b - sqrt(disc)) / (2*a)  # 3.02418...
 print(f"G* = {G_STAR:.10f}")
 print(f"ϖ = {VARPI:.10f}")
 print(f"x₊ = {x_plus:.6f} (cf. 1/α = 137.035999)")
-print(f"x₋ = {x_minus:.6f} (cf. Nc = 3)")
+print(f"x₋ = {x_minus:.6f}")
 ```
 
 ---
@@ -570,7 +566,6 @@ print(f"x₋ = {x_minus:.6f} (cf. Nc = 3)")
 | D = log₂(16) + log₂(1/2) = 3 | [THEOREM] | Algebraic fact |
 | k_phys = 16 derived | [THEOREM] | Follows from k_cons, D |
 | x₊ = 1/α | [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0013) | Continuum-QED route is supporting/historical evidence, not a theorem upgrade |
-| ~~x₋ = Nc~~ | **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`) | `N_c = 3` independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and Moore Layer Theorem |
 | Spin-1/2 from lemniscate | [SELECTION] | Topological argument |
 | Reference frame context = twist | [CONJECTURE] | Philosophical interpretation |
 
@@ -593,7 +588,7 @@ The ontological hierarchy establishes a complete chain from pure mathematical st
 3. **The circle** (π) is the shell the void pays to exist
 4. **The lemniscate** (G*) introduces self-reference through its half-twist
 5. **3D space** emerges when the twist "uses up" one dimension: 4 + (-1) = 3
-6. **Physics** (α, Nc) emerges when G* operates on the circular shell
+6. **Physics** (α) emerges when G* operates on the circular shell
 
 The key insight is that **the coefficient k = 16 is derived, not assumed**. It follows necessarily from:
 - The complementation principle: k_cons = 1/2

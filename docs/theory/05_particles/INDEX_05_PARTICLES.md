@@ -8,7 +8,7 @@
 
 1. [REF_PHYSICS_REFERENCE.md](REF_PHYSICS_REFERENCE.md) — integer-encoding survey + SM completeness audit; the orientation doc for the cluster.
 2. [DERIV_COMPLETE_PARTICLE_PHYSICS.md](DERIV_COMPLETE_PARTICLE_PHYSICS.md) — full SM-observable roll-up with the ~35 [THEOREM] / ~50 [PARAMETRIC] / ~50+ [EXTERNAL] breakdown stated up front.
-3. [DERIV_OCTONIONIC_STRUCTURE.md](DERIV_OCTONIONIC_STRUCTURE.md) — why {3, 4, 7, 13} arise from normed division algebras; x₊, x₋ = 70 ± 67 (Heegner) — arithmetic is [NUMERICAL FACT], but the x₋ ↔ N_c physical reading is **RETIRED** (LEDGER FTD-0014).
+3. [DERIV_OCTONIONIC_STRUCTURE.md](DERIV_OCTONIONIC_STRUCTURE.md) — why {3, 4, 7, 13} arise from normed division algebras; x₊, x₋ = 70 ± 67 (Heegner) — arithmetic is [NUMERICAL FACT].
 4. [SPEC_ATOMIC_PROPERTY_LEDGER.md](SPEC_ATOMIC_PROPERTY_LEDGER.md) — FTD translation of standard atomic properties, establishing the contextual scale vector $\mathcal{A}_{\rm atom}$ and the implemented `AtomicClosureContext` API.
 
 ## Masses & Standard Model spectrum
@@ -46,7 +46,7 @@
 
 | File | Tag | Purpose |
 |---|---|---|
-| [DERIV_OCTONIONIC_STRUCTURE.md](DERIV_OCTONIONIC_STRUCTURE.md) | consolidated derivation | Division algebras and Heegner numbers behind {3, 4, 7, 13}; master-quadratic roots as 70 ± 67 — arithmetic [NUMERICAL FACT], x₋ ↔ N_c physical reading **RETIRED** (LEDGER FTD-0014). |
+| [DERIV_OCTONIONIC_STRUCTURE.md](DERIV_OCTONIONIC_STRUCTURE.md) | consolidated derivation | Division algebras and Heegner numbers behind {3, 4, 7, 13}; master-quadratic roots as 70 ± 67 — arithmetic [NUMERICAL FACT]. |
 | [DERIV_MATERIAL_EMERGENCE_FROM_LATTICE.md](DERIV_MATERIAL_EMERGENCE_FROM_LATTICE.md) | — | (See above — listed under engine measurements.) |
 | [REF_PHYSICS_REFERENCE.md](REF_PHYSICS_REFERENCE.md) | [REFERENCE] | Integer-encoding catalog + SM completeness matrix; consolidates the former REF_PHYSICS_ENCODINGS + COMPLETENESS_MATRIX docs. |
 | [REF_SCALE1_DYNAMICS_FTD_FORM.md](REF_SCALE1_DYNAMICS_FTD_FORM.md) | [REFERENCE] | Code-grounded cross-walk of every web-dashboard Scale-1 (Particle Engine) dynamic, each formula re-expressed in FTD constants (α→G_C², m_e→K_B, c→1/√3, mass ratios from {3,4,7,13}). Honest banner: re-expression is notation, not derivation — the laws stay imported (tags unchanged). |

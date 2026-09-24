@@ -128,7 +128,6 @@ In the Fourcier curve, 3 lobes means 3 ontological regions — and this is not a
 
 - **3 color charges** (QCD: R, G, B)
 - **3 generations of fermions**
-- **N_c = 3** (the smaller root of the master quadratic)
 
 The lobe count IS the cardinality of the ontological classification at the octonionic level.
 
@@ -319,19 +318,7 @@ Level 12: OBSERVABLE UNIVERSE Full physics emerges
 
 The Fourcier sits at Level 3.5 because it is the **instrument through which G* generates the domain structure** that becomes the gauge groups of physics.
 
-### 6.2 The Self-Referential Loop
-
-The Fourcier curve exhibits the deepest structural feature of FTD: **self-reference**.
-
-G* determines the Fourcier coefficients (via the Cayley-Dickson isomorphism). The Fourcier lobe count determines N_c = 3. N_c enters the master quadratic. The master quadratic determines G*'s role in physics.
-
-```
-G* → Fourcier coefficients → Lobe count = 3 → N_c = 3 → Master quadratic → G*
-```
-
-The curve ABOUT G* produces the STRUCTURE that REQUIRES G*. This is the sLoop — the self-referential observer loop — made geometric.
-
-### 6.3 The Fourcier as the Geometric sLoop
+### 6.2 The Fourcier as the Geometric sLoop
 
 Combining the two threads:
 

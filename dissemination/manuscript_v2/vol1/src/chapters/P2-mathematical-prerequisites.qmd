@@ -126,7 +126,7 @@ connecting the BCC Green's function to the bridge constant.
 | $c$ | CFL speed | $1/\sqrt{3}$ | Ch. 1 |
 | $\Gs$ | Bridge constant | 2.95868 | Ch. 7 |
 | $\varpi$ | Lemniscate constant | 2.62206 | Ch. 7 |
-| $\alpha$ | Fine structure constant | 1/137.036 | Ch. 9 |
+| $\alpha$ | Fine structure constant | 1/137.036 | Ch. 8 |
 | $N_c$ | Colors | 3 | Ch. 10 |
 | $N_{\text{base}}$ | Base dimension | 4 | Ch. 10 |
 | $b_3$ | QCD beta coefficient | 7 | Ch. 10 |

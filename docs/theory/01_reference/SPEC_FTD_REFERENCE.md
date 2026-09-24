@@ -41,7 +41,7 @@
 | Category | Count | Description |
 |----------|-------|-------------|
 | **Spine Theorems** | 6 | Pure CM algebraic and lattice self-energy identities (G*, Watson, L-values) |
-| **Conjectured Couplings** | ~5 | Dimensionless physical constants identified from roots (α, N_c, spin-1/2) |
+| **Conjectured Couplings** | ~5 | Dimensionless physical constants identified from roots (α, spin-1/2) |
 | **Parametric insertions** | ~129 | FTD values in Fermi theory, HQET, ChPT, and standard QFT formulas |
 | **External physics** | ~50+ | Standard Model mechanisms adopted without derivation |
 
@@ -132,7 +132,7 @@ Four integers encode all physics:
 
 | Integer | Symbol | Value | Origin | Physical Role |
 |---------|--------|-------|--------|---------------|
-| Color charges | N_c | 3 | Master quadratic x₋ | SU(3) structure |
+| Color charges | N_c | 3 | Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md` | SU(3) structure |
 | Base parameter | N_base | 4 | Self-reference (4² = 16) | Lattice geometry |
 | Topological | b_3 | 7 | N_base + N_c | QCD beta function |
 | Effective modes | n_eff | 13 | F_7 (Fibonacci) | Degrees of freedom |
@@ -198,7 +198,6 @@ x₊ = (-b + √D) / 2 = (140.0601 + 134.0122) / 2 = 137.0361714582
 x₋ = (-b - √D) / 2 = (140.0601 - 134.0122) / 2 = 3.0239639163
 ```
 - **x₊ = 137.0361714582** → 1/α (fine structure constant, 1.26 ppm accuracy)
-- **x₋ = 3.0239639163** → mathematical artifact of `P(x)`; no physics identification (the historical `x_-  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`)
 
 ### Why x₊ = 1/α [STRONGLY MOTIVATED CONJECTURE]
 The identification x₊ = 1/α depends on five selection principles (see [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/spine_master_quadratic/AUDIT_HIDDEN_SELECTIONS.md)):
@@ -208,7 +207,7 @@ The identification x₊ = 1/α depends on five selection principles (see [AUDIT_
 4. x₊ is identified with the electromagnetic coupling
 
 ### N_c = 3 — independent topological sources
-The historical `x_- → N_c = 3` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD is now sourced from independent structural routes:
+`N_c = 3` in FTD is sourced from independent structural routes:
 1. Moore Layer Theorem (`docs/theory/08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md`): U(1)×SU(2)×SU(3) polyhedral decomposition forces N_c = 3 via the BCC-sublattice rank.
 2. `DERIV_NC_FROM_TOPOLOGY.md` enumerates four independent topology routes converging on N_c = 3.
 3. ℤ₃ center closure and BCC multiplicative structure provide further independent paths.
@@ -541,8 +540,6 @@ fdc483d0 is RETRACTED — substitution identity [PARAMETRIC]; prefer this prior 
 | ID | Conjecture | Previous | Current | Resolution | Depends On |
 |----|------------|----------|---------|------------|------------|
 | C1 | x₊ = 1/α | Conjecture | **[STRONGLY MOTIVATED CONJECTURE]** | CM selection + quadratic form | SP1, SP2, SP3 |
-
-| ~~C2~~ | ~~x₋ → N_c = 3~~ | — | **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` independently sourced via topology (see `DERIV_NC_FROM_TOPOLOGY.md` and Moore Layer Theorem) | n/a | n/a |
 | A1 | Why D = 3 | Axiom | **[SELECTION]** | Atomic stability + gauge + Fibonacci | Multiple sufficiency arguments |
 
 ### Previously Missing → Now COMPLETE
@@ -601,7 +598,7 @@ KEY CONSTANT:  G* = Γ(1/4)/Γ(3/4) = 2.9586751192  [≡ √2·Γ(1/4)²/(2π)]
 
 MASTER EQN:    x² - 16(G*)²x + 16(G*)³ = 0
 ROOTS:         x₊ = 137.0361714582 = 1/α (1.26 ppm)
-               x₋ = 3.0239639163 → N_c = 3 (0.8%)
+               x₋ = 3.0239639163
 
 COUPLINGS:     α = 1/137.036 (1.26 ppm)
                sin²θ_W = 3/13 = 0.2308 (0.19%)
@@ -749,18 +746,6 @@ The gaps {3, 5, 4} encode {N_c, (N_eff-N_c)/2, N_base}.
 
 The framework integers {3, 4, 7, 13} emerge from division algebras.
 
-### The 70 ± 67 Structure
-
-The master quadratic roots decompose as:
-```
-x₊ = 137 = 70 + 67
-x₋ = 3   = 70 - 67
-```
-
-**67 is a Heegner number** (class number 1).
-
-Heegner numbers: {1, 2, 3, 7, 11, 19, 43, 67, 163}
-
 ### Division Algebra Origin
 
 By Hurwitz's theorem, the only normed division algebras are:
@@ -828,7 +813,6 @@ TRD integers appear across 15+ domains of physics.
 | Encoding | Formula | Value | Observed |
 |----------|---------|-------|----------|
 | Quark colors | N_c | 3 | 3 |
-| Lepton families | ⌊x₋⌋ | 3 | 3 |
 | Generations | N_c | 3 | 3 |
 | W polarizations | N_c | 3 | 3 |
 | Higgs doublet | N_base/2 | 2 | 2 |
@@ -920,7 +904,6 @@ Error: 0.15%
 
 Appearances:
 - First 4 Heegner product: 1 × 2 × 3 × 7 = 42
-- x₋ fractional correction: ~1/42
 - Prime counting: π(42) = 13 = N_eff
 
 ---
@@ -942,7 +925,6 @@ All core mathematical claims have been independently verified using Python/SciPy
 | G* calculation | √2·Γ(1/4)²/(2π) | 2.9586751192 |  VERIFIED |
 | Master quadratic | x² - 16G*²x + 16G*³ = 0 | Roots match |  VERIFIED |
 | Fine structure 1/α | x₊ = 137.0361714582 | 1.26 ppm error |  VERIFIED |
-| Color number | x₋ = 3.0239639163 | 0.80% error |  VERIFIED |
 | Framework integers | {3,4,7,13} constraints | All satisfied |  VERIFIED |
 | Vieta relations | x₊+x₋=16G*², x₊×x₋=16G*³ | Exact |  VERIFIED |
 | Electron mass | m_P·√(2π)·((N_{eff}+N_c)/N_c)·α¹¹ | 0.04% error |  VERIFIED |

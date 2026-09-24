@@ -13,7 +13,7 @@ The framework integers {3, 4, 7, 13} are not parameters: they are **structural n
 
 | Symbol | Value | Physical Role | Mathematical Role |
 |--------|-------|---------------|-------------------|
-| $N_c$ | 3 | Color charges (SU(3)) | Quadratic root floor |
+| $N_c$ | 3 | Color charges (SU(3)) | Moore Layer Theorem |
 | $N_{\text{base}}$ | 4 | Lattice geometry | Tetrahedron vertices |
 | $b_3$ | 7 | QCD beta function | $N_{\text{base}} + N_c$ |
 | $N_{\text{eff}}$ | 13 | Effective modes | Fibonacci $F_7$ |
@@ -78,7 +78,7 @@ This means **$j = 1728$ is now DERIVED** from the integer values, not independen
 
 ::: {.callout-important}
 ## Theorem NTHR-1
-Given $N_{\text{base}} = 4$ and $N_c = 3$ (from the master quadratic), the j-invariant is uniquely determined as $j = (N_{\text{base}} \times N_c)^3 = 1728$.
+Given $N_{\text{base}} = 4$ and $N_c = 3$, the j-invariant is uniquely determined as $j = (N_{\text{base}} \times N_c)^3 = 1728$.
 :::
 
 ### Step 5: Self-Referential Closure

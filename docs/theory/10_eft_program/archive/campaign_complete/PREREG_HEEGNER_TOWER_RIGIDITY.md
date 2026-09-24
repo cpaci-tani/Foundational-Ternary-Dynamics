@@ -3,20 +3,20 @@
 **Document type:** Pre-registration (locks protocol BEFORE measurement)
 **Status:** [PRE-REGISTERED] — locked at this commit prior to scan execution
 **Created:** 2026-05-02
-**Provenance:** Direct extension of FTD-0097 (monomial-level look-elsewhere), FTD-0121 (polynomial-level look-elsewhere within Cayley-Dickson Fourcier family), and FTD-0122 (Lemniscate-Alpha rigidity scan). This scan applies the same methodology to the 9-element Heegner CM-tower with master-quadratic-style construction.
+**Provenance:** Direct extension of FTD-0097 (monomial-level look-elsewhere) and FTD-0122 (Lemniscate-Alpha rigidity scan). This scan applies the same methodology to the 9-element Heegner CM-tower with master-quadratic-style construction.
 **Related:** `EXPLR_CM_RATIO_TOWER.md` (existing tabulation at fixed c=16); `SPEC_ALGEBRAIC_SPINE.md` Theorem 3 (CM uniqueness); `AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md` (FTD-0122 verdict H_mid trending H_fit).
 
 ---
 
 ## 0 · Question
 
-The framework's CM Uniqueness Theorem (SPEC_ALGEBRAIC_SPINE Theorem 3) asserts that among class-number-1 imaginary quadratic fields, **only d = −4 produces a master-quadratic polynomial whose roots simultaneously match dimensionless physical constants**. The existing audit (`EXPLR_CM_RATIO_TOWER.md` §3) checks the **fixed-coefficient (c = 16)** master quadratic for each of the 9 discriminants and confirms that only d = −4 lands on (1/α, N_c) at sub-percent precision.
+The framework's CM Uniqueness Theorem (SPEC_ALGEBRAIC_SPINE Theorem 3) asserts that among class-number-1 imaginary quadratic fields, **only d = −4 gives a larger root that matches 1/α to permille precision**. The existing audit (`EXPLR_CM_RATIO_TOWER.md` §3) checks the **fixed-coefficient (c = 16)** master quadratic for each of the 9 discriminants.
 
-The present scan extends this in three orthogonal ways, mirroring the FTD-0097 / FTD-0121 / FTD-0122 methodology:
+The present scan extends this in three orthogonal ways, mirroring the FTD-0097 / FTD-0122 methodology:
 
 1. **Variable coefficient `c`**: instead of fixing c = 16, sweep `c` over small framework-integer-factorable values. The c = 16 choice is privileged for d = −4 by `|Aut(E_{-4})|² = 16`; other d values have |Aut|² ∈ {4, 36}, so c = 16 is *not* their natural coefficient. A complete rigidity test must allow each d's natural |Aut|² and also test variation around it.
 
-2. **Broader target set**: instead of checking only against (1/α, N_c), test against the same 14-target set used in FTD-0122 plus three SM mass ratios (m_p/m_e, m_μ/m_e, m_τ/m_e) that the framework claims are integer-arithmetic-derived.
+2. **Broader target set**: test against the same 14-target set used in FTD-0122 plus three SM mass ratios (m_p/m_e, m_μ/m_e, m_τ/m_e) that the framework claims are integer-arithmetic-derived.
 
 3. **Framework-integer factorability filter**: rational-multiplier search (q ≤ 200) with F-factorability and FC-factorability criteria, exactly as in FTD-0122.
 

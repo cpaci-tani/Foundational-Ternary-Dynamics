@@ -29,7 +29,6 @@ book:
 
     - part: "Physical Content"
       chapters:
-        - chapters/09-roots-alpha-and-nc.qmd
         - chapters/10-framework-integers.qmd
         - chapters/11-precision-formula.qmd
         - chapters/12-mass-spectrum.qmd

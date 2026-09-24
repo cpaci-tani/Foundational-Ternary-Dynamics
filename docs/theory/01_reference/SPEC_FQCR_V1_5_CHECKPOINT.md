@@ -341,7 +341,6 @@ Status ledger:
 | \((4,6)/(3,2)\) quotient | **CONDITIONAL THEOREM under observer-clock projection** |
 | \(x_+\approx\alpha^{-1}\) | **CENTRAL RECONSTRUCTION / CONJECTURE** |
 | FQCR as full QED derivation | **OPEN** |
-| \(x_-\approx3\Rightarrow N_c\) | **RETIRED / FAILED** |
 
 Clean doctrine:
 
@@ -404,7 +403,7 @@ Status ledger:
 Clean doctrine:
 
 \[
-\boxed{3\text{ comes from }\mathbb Z_3\text{ center closure, not from }x_-.}
+\boxed{3\text{ comes from }\mathbb Z_3\text{ center closure.}}
 \]
 
 ---
@@ -1156,8 +1155,6 @@ Status ledger:
 | Claim | Status |
 |---|---|
 | “FTD derives everything from \(G^*\)” | **REJECTED** |
-| \(x_-\approx N_c\) | **RETIRED** |
-| \(\lfloor x_-\rfloor=3\) | **REJECTED** |
 | finite relabeling alone forces TT masslessness | **FAILED** |
 | gaplessness alone forces \(c_T=c\) | **FAILED** |
 | Born rule is mathematically wrong | **REJECTED** |

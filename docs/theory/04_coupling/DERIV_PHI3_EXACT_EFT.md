@@ -81,7 +81,7 @@ This does not depend on G* or any other parameter. It is fixed by the degree of 
 
 - At x+: V''(x+) = +134.0 > 0. **Stable minimum.** Small oscillations around x+ are perturbative. This is the QED sector: alpha^{-1} = x+ = 137.036... sits at a stable perturbative vacuum.
 
-- At x-: V''(x-) = -134.0 < 0. **Unstable maximum.** The curvature is negative, signaling a tachyonic instability. This is the QCD sector: x- = 3.024... (floor = N_c = 3) sits at an unstable point, consistent with asymptotic freedom and confinement.
+- At x-: V''(x-) = -134.0 < 0. **Unstable maximum.** The curvature is negative, signaling a tachyonic instability.
 
 The mass ratio in units of the coupling:
 
@@ -98,7 +98,6 @@ $$\frac{m^2}{\alpha^{-1}} = \frac{x_+ - x_-}{x_+} = 1 - \frac{x_-}{x_+} = 0.978$
 | Three Wilson coefficients | [THEOREM] | Direct computation |
 | lambda_3 = 1/3 = 1/D | [THEOREM] | Degree of polynomial |
 | x+ = alpha^{-1} | [SELECTION] | Physical identification, 1.26 ppm match |
-| x- = N_c | [SELECTION] | floor(x-) = 3, not derived |
 | Higgs quartic emergent | [SELECTION] | Requires one-loop integration |
 
 ---
@@ -112,6 +111,6 @@ $$\frac{m^2}{\alpha^{-1}} = \frac{x_+ - x_-}{x_+} = 1 - \frac{x_-}{x_+} = 0.978$
 ## Honesty Notes
 
 1. The EFT construction is pure algebra -- no physics input beyond identifying V'(x) = 0 with the master quadratic.
-2. The physical interpretation (x+ as alpha^{-1}, x- as N_c) is a **selection**, not a derivation.
+2. The physical interpretation (x+ as alpha^{-1}) is a **selection**, not a derivation.
 3. The claim that SM vertices are three-point is an observation about the Standard Model Lagrangian, not derived from the cubic potential.
 4. The emergence of the Higgs quartic from phi^3 at one loop requires a separate calculation not presented here.

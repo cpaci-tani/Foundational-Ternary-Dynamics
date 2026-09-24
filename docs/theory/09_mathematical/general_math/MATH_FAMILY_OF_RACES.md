@@ -127,7 +127,7 @@ The values q=3 and q=4 are distinguished by their direct connection to elliptic 
 - R_3 = Gamma(1/3)/Gamma(2/3) = 1.97836...
 - Hypothetical quadratic: x^2 - 36*R_3^2*x + 36*R_3^3 = 0
   - x+ = 138.894 (not 1/alpha)
-  - x- = 2.007, floor(x-) = 2 (not 3)
+  - x- = 2.007
   - Harmonic mean = 2 = [Q(omega):Q]
 
 ### q = 4: The Square Lattice
@@ -138,16 +138,15 @@ The values q=3 and q=4 are distinguished by their direct connection to elliptic 
 - R_4 = Gamma(1/4)/Gamma(3/4) = G* = 2.95868...
 - Master quadratic: x^2 - 16*G*^2*x + 16*G*^3 = 0
   - x+ = 137.036 = 1/alpha (1.26 ppm)
-  - x- = 3.024, floor(x-) = 3 = N_c
+  - x- = 3.024
   - Harmonic mean = 2 = [Q(i):Q]
 
 ### Why q = 4 and Not q = 3?
 
-The hexagonal case fails the physical test on both outputs:
+The hexagonal case fails the physical test:
 1. x+ = 138.89, off from alpha^{-1} by ~1.4% (vs 1.26 ppm for q=4)
-2. floor(x-) = 2, which would give 2 colors (vs 3 for q=4)
 
-Both q=3 and q=4 produce valid quadratics with H = 2. As a model-selection heuristic, q=4 fits the observed coupling constant and color number while q=3 does not. Whether this selection can be derived from an independent physical principle (rather than imposed by comparison with experiment) remains open.
+Both q=3 and q=4 produce valid quadratics with H = 2. As a model-selection heuristic, q=4 fits the observed coupling constant while q=3 does not. Whether this selection can be derived from an independent physical principle (rather than imposed by comparison with experiment) remains open.
 
 **[SELECTION]**: The cubic lattice Z^3 (q=4) rather than the hexagonal lattice A_2 x Z (q=3) is identified with the physical vacuum structure. This identification is supported by the numerical match but not derived from first principles.
 

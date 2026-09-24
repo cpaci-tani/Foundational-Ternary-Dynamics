@@ -208,7 +208,7 @@ The master quadratic from @sec-lemniscate-alpha encodes physics in its coefficie
 
 $$x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$$
 
-This lies **deep inside** the Mandelbrot set, yielding real roots (α and N_c).
+This lies **deep inside** the Mandelbrot set, yielding real roots ($x_+$ and $x_-$).
 
 But what happens when we move to the "consciousness regime" with $k = 0.5$?
 

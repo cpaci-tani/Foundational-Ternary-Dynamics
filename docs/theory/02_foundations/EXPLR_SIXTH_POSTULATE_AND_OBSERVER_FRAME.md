@@ -98,9 +98,8 @@ A consequence (and a discipline note): **α⁻¹ is not "the coupling of both fi
 `(q,p)` is the oscillator frequency `ω(k)` (zero α content); the coupling in `(J,s)` is `g_c = √α`
 (but `[PARAMETRIC]`, FTD-0031 closed-negative). The tempting reading of the budget equation
 `x/16G*² + G*/x = 1` as a "two-channel normalization" with `x₊ = α⁻¹` as the balance point was
-judged **numerology** by the algebraic-spine savant — it is the master quadratic rearranged, the
-"two channels" are an imported `[SELECTION]`, and `x₋`'s closed-negative status (FTD-0210) kills any
-"one root per field" mapping. **Do not pursue α⁻¹-as-inter-field-coupling; it would be a substitution
+judged **numerology** by the algebraic-spine savant — it is the master quadratic rearranged, and the
+"two channels" are an imported `[SELECTION]`. **Do not pursue α⁻¹-as-inter-field-coupling; it would be a substitution
 identity.**
 
 ---

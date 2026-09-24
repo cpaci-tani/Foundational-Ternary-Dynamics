@@ -13,9 +13,8 @@ A newcomer to this cluster should read these in order:
 1. [PROOF_ALPHA_FROM_SELF_DUALITY.md](general_math/PROOF_ALPHA_FROM_SELF_DUALITY.md) — α⁻¹ = 137.036 from one CM elliptic curve; the spine's flagship chain.
 2. [DERIV_LFUNCTION_GSTAR_CONNECTION.md](number_theory/DERIV_LFUNCTION_GSTAR_CONNECTION.md) — G\* = 8·L(E,1)/√π; ties the framework to BSD-level number theory.
 3. [EXPLR_PATHS_TO_ALPHA.md](general_math/EXPLR_PATHS_TO_ALPHA.md) — honest exhaustive survey: no derivation of α exists beyond the [SMC] spine route.
-4. [EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md](general_math/EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md) — the master quadratic is the unique dual-matcher in its polynomial family (target pair `(1/α, N_c)` reflects the pre-v1.4 framing; `x_-  N_c` retired per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61` — but the polynomial-template-uniqueness fact is independent of the target identification).
-5. [MATH_FAMILY_OF_RACES.md](general_math/MATH_FAMILY_OF_RACES.md) — the Γ-ratio family G\* belongs to; structural context for q = 4.
-6. [EXPLR_NUMBER_THEORY.md](general_math/EXPLR_NUMBER_THEORY.md) — where the framework integers {3, 4, 7, 13} come from across pure mathematics.
+4. [MATH_FAMILY_OF_RACES.md](general_math/MATH_FAMILY_OF_RACES.md) — the Γ-ratio family G\* belongs to; structural context for q = 4.
+5. [EXPLR_NUMBER_THEORY.md](general_math/EXPLR_NUMBER_THEORY.md) — where the framework integers {3, 4, 7, 13} come from across pure mathematics.
 
 ---
 
@@ -54,8 +53,6 @@ The number-theoretic core. These establish the identities the framework's centra
 | [THEOREM_LATTICE_COULOMB_ASYMPTOTIC_v1.md](THEOREM_LATTICE_COULOMB_ASYMPTOTIC_v1.md) | [THEOREM] (§2, exact) + [THEOREM — standard] (§3) + [MEASURED] (§4) | Exact ℤ³ lattice-Green's-function identity α_r(r) → 1/(2π), zero free parameters; supersedes spine Theorem 6 (Phase G) as the load-bearing content demoted by FTD-0785. |
 | [PREREG_CATALAN_INDEPENDENCE_v1.md](general_math/PREREG_CATALAN_INDEPENDENCE_v1.md) | [PRE-REGISTRATION] | Locks the frontier-documentation discipline for the G\*-paper's Conjecture 19.2 (Catalan's constant algebraic independence over ℚ̄(G\*,π)); not a proof attempt. |
 | [ROADMAP_IDENTITY_PRIORITIES.md](general_math/ROADMAP_IDENTITY_PRIORITIES.md) | [INFRASTRUCTURE / METHODOLOGY] | Synonymy-graph roadmap over the 100 verified G\*-paper identities; prioritises future verification effort, produces no new theorems. |
-| [ANALYSIS_DAMERELL_IDEAL_CLASS_SCAN_v1.md](number_theory/ANALYSIS_DAMERELL_IDEAL_CLASS_SCAN_v1.md) | [NUMERICAL FACT — exhaustive over stated domain] + [CLOSED NEGATIVE] + [MEASURED] | FTD-0321: full per-ideal-class Damerell scan; d=−4's dual-match privilege confirmed on its registered domain, shown a range artifact beyond it. |
-| [ANALYSIS_GSTAR_VAN_HOVE_SINGULARITY_v1.md](number_theory/ANALYSIS_GSTAR_VAN_HOVE_SINGULARITY_v1.md) | [THEOREM — closed form] + [MEASURED] + [CLOSED NEGATIVE] + [CORRECTION] | FTD-0803 (parent FTD-0321): G\* sits at an SL₂(ℤ)-invariant saddle giving a bounded log-density divergence (4–5×); the "structurally uninformative" consequence is refuted. |
 | [MATH_PERIOD_IMPORT_FRONTIER.md](number_theory/MATH_PERIOD_IMPORT_FRONTIER.md) | [SYNTHESIS] | FTD-0375: restates FTD's import boundary (G\*, δ) in period-theoretic / Grothendieck-period-conjecture vocabulary; introduces no theorem, promotes no tag. |
 | [THEOREM_VALUATION_4GSTAR_MINUS_1.md](number_theory/THEOREM_VALUATION_4GSTAR_MINUS_1.md) | [THEOREM — relative to documented native inventory] (conditional on Chudnovsky 1976) + [SELECTION] + [SYNTHESIS] | FTD-0353: the surd δ=√(G\*(4G\*−1)) lies outside every documented native period hull; realizing it is exactly the FC-W ramification adoption. |
 
@@ -69,7 +66,6 @@ What underpins `x₊ = 1/α` — the conjecture itself plus the scans that estab
 | [CONJ_ALPHA_FROM_CM.md](general_math/CONJ_ALPHA_FROM_CM.md) | [CONJECTURE] | The statement: 1/α = x₊, the larger master-quadratic root from CM arithmetic. |
 | [CONJ_SEVEN_TERM_PRECISION_SERIES.md](general_math/CONJ_SEVEN_TERM_PRECISION_SERIES.md) | [CONJECTURE] | The 7-term series for 1/α; 24-digit agreement, observationally underdetermined. |
 | [EXPLR_PATHS_TO_ALPHA.md](general_math/EXPLR_PATHS_TO_ALPHA.md) | [SURVEY] | Exhaustive survey of α-derivation routes; honest "no new path" verdict. |
-| [EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md](general_math/EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md) | [STRUCTURAL OBSERVATION] | 147k-polynomial scan: the master quadratic is the unique dual-matcher under the historical target pair `(1/α, N_c)`; polynomial-template-uniqueness fact independent of target. |
 | [EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md](number_theory/EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md) | [STRUCTURAL OBSERVATION] | 58-pair scan: (m=2, k=4) is uniquely close to 1/α in the (1+i)-tower family. |
 | [EXPLR_GAUSSIAN_EISENSTEIN_DICHOTOMY.md](number_theory/EXPLR_GAUSSIAN_EISENSTEIN_DICHOTOMY.md) | [THEOREM] (§3.1) + [STRUCTURAL OBSERVATION] + [CLARIFICATION] | **Theorem GE-1** (§3.1): $(2,4)$ is the unique $a^b=b^a$ ($a\neq b$) integer solution, so $16=2^4=4^2$ is the canonical Gaussian coefficient (proof via $(\ln x)/x$ monotonicity). Surrounding: no Eisenstein twin ($3^6\neq6^2$); G\*³'s odd exponent = D=3 over three Z[i] planes (organized by C₃/⟨111⟩), not Z[ω]; reframes the MC-T4.3 trace/determinant odd-term gap. §5.1 = the prime-duality (archimedean vs ramified-prime-2 dressings; local–global). FTD-0237. |
 | [FOUND_AGM_PLACE_BRIDGE_AND_DELTA.md](number_theory/FOUND_AGM_PLACE_BRIDGE_AND_DELTA.md) | [SYNTHESIS] | FTD-0327: unifies FTD-0326 (operator/Galois), the prime-duality §5.1 (arithmetic/local–global), and FTD-0325 (act/forced-magnitude) as one fact. Keystone $G^*=2\sqrt\pi/\mathrm{AGM}(1,\sqrt2)$: the AGM is the substrate's all-√ place-bridge but its steps are forced-magnitude geometric means, so it lands on $G^*$, never on $\delta$ — the witness for why no native op reaches the α-root. Deepens MC-T4.3's explanation; promotes nothing; $\sqrt{4G^*-1}$-place left [OPEN]. |
@@ -91,7 +87,6 @@ Interpretive re-framings of the master quadratic and the recurring integer 4 / 1
 | [EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md](number_theory/EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md) | [SELECTION] / [SYNTHESIS] / [DERIVED] | Consolidated: dimensional, theta-nullwert, and parity-twist readings of G\*. |
 | [EXPLR_ONTIC_CONSTANT_ATLAS.md](number_theory/EXPLR_ONTIC_CONSTANT_ATLAS.md) | [THEOREM] (identities) + [SELECTION] | Atlas of every constant in the ontic derivation chain; G\*=3 fixed-point analysis. |
 | [EXPLR_CURVE_FAMILY_MATHEMATICAL_ANALYSIS.md](general_math/EXPLR_CURVE_FAMILY_MATHEMATICAL_ANALYSIS.md) | theorems vs conjectures distinguished | Rigorous analysis of the FTD curve family converging on {3, 4, 7, 13}. |
-| [EXPLR_COLOR_EXCESS_CLOSED_FORM.md](general_math/EXPLR_COLOR_EXCESS_CLOSED_FORM.md) | [THEOREM] / [CLOSED NEGATIVE] | High-precision PSLQ and algebraic closed-form analysis of the color excess delta_c. |
 
 ## Clifford / bivector algebra & fermion-emergence program
 
@@ -161,4 +156,4 @@ Fourcier curves, the division-algebra tower, von Neumann factors, and other cros
 
 ---
 
-86 active docs in this cluster (+ 3 archived; counts adjusted 2026-09-08 for mind-map removal).
+82 active docs in this cluster (+ 3 archived).

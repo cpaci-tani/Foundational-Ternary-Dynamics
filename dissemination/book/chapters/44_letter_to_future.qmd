@@ -12,7 +12,7 @@ We found a quadratic equation:
 
 $$f(x) = x^2 - 16G^{*2}x + 16G^{*3} = 0$$
 
-whose roots appear to encode the fine structure constant and the number of color charges.
+whose larger root appears to encode the fine structure constant.
 
 We found—or believed we found—that this equation is not arbitrary but necessary. That it arises from the geometry of a discrete substrate, from the constraints of self-consistency, from the requirement that observers exist.
 

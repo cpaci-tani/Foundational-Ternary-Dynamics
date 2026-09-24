@@ -232,7 +232,7 @@ Dividing: $G^* = \frac{x_+ \cdot x_-}{x_+ + x_-}$ (the harmonic-mean-like relati
 
 ### 6.6 The Smaller Root
 
-$x_- = 3.0239\ldots$ satisfies $\lfloor x_- \rfloor = 3$. The deviation $x_- - 3 = 0.024$ is a consequence of the quadratic structure and is **not** a free parameter: for any choice of $x_+$, the Vieta relation $x_- = 16G^{*3}/x_+$ fixes $x_-$ exactly.
+$x_- = 3.0239\ldots$ is **not** a free parameter: the Vieta relation $x_- = 16G^{*3}/x_+$ fixes $x_-$ exactly.
 
 ---
 

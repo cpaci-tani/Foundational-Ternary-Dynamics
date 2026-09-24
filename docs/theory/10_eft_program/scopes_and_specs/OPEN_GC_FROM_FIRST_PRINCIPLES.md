@@ -200,18 +200,18 @@ Accepting Phase I as-is, the honest status of FTD's α derivation is:
 | Master quadratic x² − 16G*²x + 16G*³ = 0 has roots 137.036 and 3.024 | [THEOREM] — pure algebra |
 | Coefficient 16 = \|Aut(E)\|² for E: y² = x³ − x | [THEOREM] |
 | G* = Γ(1/4)/Γ(3/4) is a canonical period | [THEOREM] |
-| Of 9 class-number-1 CM curves, ONLY y² = x³ − x gives master-quadratic-form roots matching both 1/α and N_c | [THEOREM] (Phase I §2, via scan_cm_curves.py) |
+| Of 9 class-number-1 CM curves, ONLY y² = x³ − x gives a larger root that matches 1/α to permille precision | [THEOREM] (Phase I §2, via scan_cm_curves.py) |
 | The master quadratic is the L → ∞ limit of a finite-lattice gap equation | [CONJECTURE / OPEN] (Phase I §1, not verified) |
 | g_c = √(2π α) has a first-principles derivation independent of α itself | [OPEN] (this doc §2) |
-| x_+ = 1/α is a physical identification, not a numerical coincidence | [STRONGLY MOTIVATED CONJECTURE] (dual match + CM curve uniqueness) |
+| x_+ = 1/α is a physical identification, not a numerical coincidence | [STRONGLY MOTIVATED CONJECTURE] (CM curve uniqueness) |
 
 Removing the "gap-equation L → ∞" link (which was supposed to supply
 the first-principles grounding) leaves the master quadratic as:
 
 **An exact algebraic identity whose larger root matches 1/α to 1.26
-ppm and whose smaller root matches N_c to 0.80%, uniquely among the
-class-number-1 CM elliptic curves; the identification of the roots
-with physical constants is [SELECTION], not [DERIVATION].**
+ppm, uniquely among the class-number-1 CM elliptic curves; the
+identification of the larger root with 1/α is [SELECTION], not
+[DERIVATION].**
 
 ## 4 · Concrete next steps (prioritised)
 
@@ -235,8 +235,7 @@ Mechanism A is ruled out without engine reformulation (see §2.1).
 
 **(4) If (1)–(3) all fail:** accept the honest conclusion that FTD's
 α claim is a mathematically-remarkable algebraic coincidence (with CM
-uniqueness and dual match as strong structural evidence) but not a
-derivation. Rewrite the manuscript headline accordingly.
+uniqueness as strong structural evidence) but not a derivation. Rewrite the manuscript headline accordingly.
 
 ---
 

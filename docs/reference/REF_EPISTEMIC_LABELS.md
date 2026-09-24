@@ -185,7 +185,7 @@ From strongest to weakest:
 | Claim | Label | Notes |
 |-------|-------|-------|
 | α = 1/137.036 | [DERIVED] (from G* via CM) | Once CM selection accepted |
-| N_c = 3 | [SELECTION] | From x₋ ≈ 3.024 |
+| N_c = 3 | [SELECTION] | Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md` |
 | m_e formula | [STRONGLY MOTIVATED CONJECTURE] / [SELECTION] | Dimensional identification is [SMC]; prefactor and exponent require selections (FTD-0015, FTD-0390, FTD-0397) |
 | Lepton ratios | [DERIVED] | Pure integer arithmetic |
 | Quark masses | [SELECTION] | Formulas not unique |

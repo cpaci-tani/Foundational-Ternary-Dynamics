@@ -20,7 +20,7 @@
 > ζ-determinant ratio), but does **not** force the *operator assembly* binding `det = 16G*³`
 > to the same readout — the imposed master-quadratic Vieta target (W-CRIT-2). α is therefore
 > a **dynamical** coupling the substrate consumes, not a structurally forced one; `x₊ = 1/α`
-> stays **[STRONGLY MOTIVATED CONJECTURE]** resting on FTD-0189 polynomial-uniqueness.
+> stays **[STRONGLY MOTIVATED CONJECTURE]**. x+ = 1/alpha has no numerical-uniqueness support.
 > See `docs/theory/07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`,
 > `AUDIT_ALPHA_READOUT_DET_IDENTITY_UNDERDETERMINED.md` (W-CRIT-2), and
 > `docs/theory/10_eft_program/preregistrations/alpha_readout_programme/PREREG_READOUT_STRUCTURE_INDEPENDENCE_v1.md`.

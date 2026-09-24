@@ -1,16 +1,16 @@
 # Open Items Tracker — Index
 
-Generated companion to `TRACKER_OPEN_ITEMS.md` (86 item headings). **Do not edit by hand** — regenerate with `python scripts/theory/build_open_items_index.py`.
+Generated companion to `TRACKER_OPEN_ITEMS.md` (84 item headings). **Do not edit by hand** — regenerate with `python scripts/theory/build_open_items_index.py`.
 
 This is a *navigation aid*, not a source of truth. `TRACKER_OPEN_ITEMS.md` remains canonical; open/closed status here is read mechanically from each item's own heading text (a `CLOSED`/`RETRACTED`/`not counted as open` marker), not reclassified. Where this index and the tracker's prose disagree, the tracker wins.
 
-**43 open, 43 closed/retired** (of 86 item headings).
+**42 open, 42 closed/retired** (of 84 item headings).
 
 ---
 
 ## §1 Engine code
 
-**11 open / 21 total.**
+**11 open / 20 total.**
 
 | # | Item | Status | Open? |
 |---|---|---|---|
@@ -18,7 +18,6 @@ This is a *navigation aid*, not a source of truth. `TRACKER_OPEN_ITEMS.md` remai
 | 1.3 | [Dynamical SU(3) colour force](TRACKER_OPEN_ITEMS.md#13-dynamical-su3-colour-force-partial-cpu-v1-selected-contract-domain-extension-open-reclassified-by-ftd-0406) | [PARTIAL — CPU v1 SELECTED CONTRACT; DOMAIN EXTENSION OPEN], reclassified by FTD-0406 | **OPEN** |
 | 1.4 | [Symplectic leapfrog integrator](TRACKER_OPEN_ITEMS.md#14-symplectic-leapfrog-integrator-closed-2026-04-17) | CLOSED 2026-04-17 |  |
 | 1.5 | [Engine α upgrade to precision value](TRACKER_OPEN_ITEMS.md#15-engine-α-upgrade-to-precision-value-closed-2026-04-17) | CLOSED 2026-04-17 |  |
-| 1.6 | [δ_c (colour excess) closed form](TRACKER_OPEN_ITEMS.md#16-δ_c-colour-excess-closed-form-closed-2026-05-27) | CLOSED 2026-05-27 |  |
 | 1.7 | [GPU-path EnergyLedger](TRACKER_OPEN_ITEMS.md#17-gpu-path-energyledger-closed-2026-04-17) | CLOSED 2026-04-17 |  |
 | 1.8 | [Moore-Laplacian anisotropy](TRACKER_OPEN_ITEMS.md#18-moore-laplacian-anisotropy-closed-2026-04-17) | CLOSED 2026-04-17 |  |
 | 1.9 | [Lorentz recovery hard gates](TRACKER_OPEN_ITEMS.md#19-lorentz-recovery-hard-gates-partial-2026-07-22-ftd-04070425) | PARTIAL 2026-07-22 (FTD-0407–0425) | **OPEN** |
@@ -132,13 +131,12 @@ This is a *navigation aid*, not a source of truth. `TRACKER_OPEN_ITEMS.md` remai
 
 ## §10 Dissemination + residual-claim sweeps — queued arcs (not counted open here)
 
-**6 open / 13 total.**
+**5 open / 12 total.**
 
 | # | Item | Status | Open? |
 |---|---|---|---|
 | 10.1 | [Dissemination layer vs canon (the public-facing staleness)](TRACKER_OPEN_ITEMS.md#101-dissemination-layer-vs-canon-the-public-facing-staleness) | — | **OPEN** |
-| 10.2 | [Internal-docs x₋↔N_c residual live-claim sweep](TRACKER_OPEN_ITEMS.md#102-internal-docs-xn_c-residual-live-claim-sweep) | — | **OPEN** |
-| 10.3 | [Bookkeeping notes for the future arc](TRACKER_OPEN_ITEMS.md#103-bookkeeping-notes-for-the-future-arc) | — | **OPEN** |
+| 10.2 | [Bookkeeping notes for the future arc](TRACKER_OPEN_ITEMS.md#102-bookkeeping-notes-for-the-future-arc) | — | **OPEN** |
 | — | [G* & Master Quadratic Mathematical Connections (Theme 1)](TRACKER_OPEN_ITEMS.md#g-master-quadratic-mathematical-connections-theme-1-closed-2026-06-10) | CLOSED 2026-06-10 |  |
 | — | [Epistemic Integrity & Consciousness Gaps](TRACKER_OPEN_ITEMS.md#epistemic-integrity-consciousness-gaps-closed-2026-06-10) | CLOSED 2026-06-10 |  |
 | — | [Option 3 (QM & Observer Foundations) Declination](TRACKER_OPEN_ITEMS.md#option-3-qm-observer-foundations-declination-closed-declined-2026-06-10) | CLOSED DECLINED 2026-06-10 |  |

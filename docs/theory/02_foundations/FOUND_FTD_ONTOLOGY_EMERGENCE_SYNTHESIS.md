@@ -282,7 +282,7 @@ P(x)=x^2-16G^{*2}x+16G^{*3}.
 
 The exact mathematics includes the gamma-function identity for `G*`, the polynomial and its roots, the arithmetic core of the CM result, the Watson/BCC identity, the harmonic invariant of the `(1+i)` tower, and—conditional on Chudnovsky's theorem—the `pi`-free subfield characterization of `Q(G*)`. `[THEOREM or explicitly conditional theorem; see spine]`
 
-The physics reading must remain separate. The larger root numerically matches `1/alpha` at about 1.26 ppm, but the identification `x_+=1/alpha` remains a `[STRONGLY MOTIVATED CONJECTURE]`. Its advertised numerical-uniqueness support was withdrawn: the registered scan sits at its chance base rate, and the engine uses the CODATA coupling rather than the root. The smaller-root/color identification is retired. Pure algebra survives these corrections untouched.
+The physics reading must remain separate. The larger root numerically matches `1/alpha` at about 1.26 ppm, but the identification `x_+=1/alpha` remains a `[STRONGLY MOTIVATED CONJECTURE]`. x+ = 1/alpha has no numerical-uniqueness support. The engine uses the CODATA coupling rather than the root. Pure algebra survives these corrections untouched.
 
 ### 5.4 Finite dynamics, transcendental limits
 
@@ -766,8 +766,7 @@ The arrows mean “candidate construction or recovery,” not “all steps deriv
 | Finite-horizon algebraicity | `[DERIVED — schema-level]` |
 | Continuum as epsilon-recovery/completion | `[SYNTHESIS — required recovery form]`; sector proofs remain mixed/`[OPEN]` |
 | `G*` identities, master polynomial, Watson bridge, harmonic tower, `Q(G*)` result | algebraic-spine row statuses; six theorem-grade numbered results overall |
-| `x_+=1/alpha` | `[STRONGLY MOTIVATED CONJECTURE]`; no surviving uniqueness evidence |
-| `x_-` as color count | retired |
+| `x_+=1/alpha` | `[STRONGLY MOTIVATED CONJECTURE]`; x+ = 1/alpha has no numerical-uniqueness support |
 | Native actual Bell bound `S<=2` | `[THEOREM — FTD-0796]` |
 | V2 Tsirelson/Born reference package | theorem inside adopted potentiality type; physical substrate pushforward `[OPEN]` |
 | Gaussian-history Born mechanism | exact C4 pair count, coprime address orbit, reversible cancellation, physical detector/Gauss-event tape, and controlled dense finite-outcome complex-amplitude limit `[THEOREM, conditional on prepared finite records]`; native block-bank preparation, incomplete windows, exclusive trials, and multipartite pushforward `[OPEN]` |

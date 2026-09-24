@@ -78,9 +78,9 @@ The statement "probability of coincidence is approximately 10^-28" (Chapter 14.9
 **Location:** Chapter 14.9, line 18; throughout constants tables
 
 ### W3: Some Falsification Criteria Are Not Operationally Testable
-The claim that N_c = 3.024 "not exactly 3" could be tested by "ultra-precision QCD measurements" is vague. The required precision "better than current 0.5% on alpha_s" is not connected to any specific experimental program. The claim that discrete spacetime signatures at "(E/E_Planck)^4 ~ 10^-80" are "undetectable with any foreseeable technology" makes that prediction unfalsifiable.
+The claim that discrete spacetime signatures at "(E/E_Planck)^4 ~ 10^-80" are "undetectable with any foreseeable technology" makes that prediction unfalsifiable.
 
-**Location:** Chapter 14.9, lines 296-303, 346-352
+**Location:** Chapter 14.9, lines 346-352
 
 ### W4: Cherry-Picking of "Consistent" Observations
 The 2025 discoveries section (Chapter 15.1) lists seven independent observations as "consistent" with FTD. However:
@@ -207,7 +207,6 @@ The ratio of retrodictions to genuine predictions is approximately 25:5. Most of
 **Effectively Unfalsifiable:**
 1. Planck-scale photon dispersion at 10^-18 level
 2. Lorentz violation at 10^-80 level
-3. N_c = 3.024 vs exactly 3 - No foreseeable measurement
 
 ### Experimental Feasibility
 
@@ -218,7 +217,6 @@ The ratio of retrodictions to genuine predictions is approximately 25:5. Most of
 
 **Medium-Term (2030-2050):**
 - Precision alpha_s measurements at 0.1% level: MARGINALLY FEASIBLE
-- Direct test of N_c = 3.024: NOT FEASIBLE with current methodology
 
 **Long-Term (2050+):**
 - Planck-scale dispersion: INFEASIBLE

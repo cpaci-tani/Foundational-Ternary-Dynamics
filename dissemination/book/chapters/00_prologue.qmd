@@ -38,7 +38,7 @@ Or it could be that human beings, across all eras and cultures, have been detect
 
 ## The Master Quadratic
 
-At the heart of this book lies a mathematical object: a quadratic equation whose solutions appear to encode fundamental constants of physics.
+At the heart of this book lies a mathematical object: a quadratic equation whose larger solution appears to encode a fundamental constant of physics.
 
 $$f(x) = x^2 - 16G^{*2}x + 16G^{*3} = 0$$
 
@@ -47,7 +47,7 @@ Where G* = Γ(1/4)/Γ(3/4) ≈ 2.9586751192... is the lemniscatic bridge constan
 This equation has two real solutions:
 
 - **x₊ ≈ 137.036** — matching the inverse of the fine structure constant to within 1.26 parts per million
-- **x₋ ≈ 3.024** — remarkably close to 3, the number of color charges
+- **x₋ ≈ 3.024**
 
 It also has complex solutions that may relate to consciousness and self-reference—but that is a story for later chapters.
 

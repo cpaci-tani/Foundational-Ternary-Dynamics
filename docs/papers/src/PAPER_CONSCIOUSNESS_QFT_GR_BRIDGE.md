@@ -22,7 +22,7 @@ where $G^* = \frac{\sqrt{2}\,\Gamma(1/4)^2}{2\pi} \approx 2.9587$ is the lemnisc
 
 We demonstrate three chains of derivation from this single algebraic source:
 
-1. **QFT chain:** Real roots $\to$ $\alpha = 1/137.036$ and $N_c = 3$ $\to$ gauge groups $\to$ particle spectrum with ~30 values matching experiment to < 1%
+1. **QFT chain:** Real roots $\to$ $\alpha = 1/137.036$ $\to$ gauge groups $\to$ particle spectrum with ~30 values matching experiment to < 1%
 
 2. **GRT chain:** The same flux field $J$ that serves as QFT propagator also generates the stress-energy tensor $T_{\mu\nu}$ and Einstein's equations $R_{\mu\nu} - \frac{1}{2}g_{\mu\nu}R = 8\pi G\, T_{\mu\nu}$
 
@@ -139,7 +139,6 @@ Since $G^* \approx 2.959 > 1/4$, we have $\Delta > 0$: **two real roots.**
 | Root | Value | Physical Identification | Accuracy |
 |------|-------|------------------------|----------|
 | $x_+$ | 137.036 | $1/\alpha$ (fine structure constant) | 1.26 ppm |
-| $x_-$ | 3.024 | $N_c$ (color charges) | 0.8% |
 
 **Derivation reference:** Full derivation chain from FTD axioms in [MATH_MASTER_QUADRATIC.md](../../theory/01_reference/MATH_MASTER_QUADRATIC.md); selection principles in [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../../theory/01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md).
 
@@ -173,27 +172,6 @@ $$\boxed{\text{One equation} \xrightarrow{\Delta > 0} \text{Physics (QFT + GRT)}
 
 The three domains are not separate theories — they are three sectors of a single algebraic structure, connected by the discriminant sign.
 
-### 2.6 The Charge Quartic: EM and Color from One Equation [THEOREM]
-
-The substitution $e^2 = 1/x$ transforms the master quadratic into the **charge quartic**:
-
-$$16G^{*3}\,e^4 - 16G^{*2}\,e^2 + 1 = 0$$
-
-This is a quadratic in $u = e^2$ whose two roots are the electromagnetic and color charge scales:
-
-| Root | Value | Physical identification |
-|------|-------|------------------------|
-| $e^2_{\text{EM}} = 1/x_+$ | 0.00730 | Fine structure constant $\alpha$ |
-| $e^2_C = 1/x_-$ | 0.3307 | Color charge scale squared |
-
-The **charge-space Vieta relations** are the algebraic duals of the coupling-space Vieta relations:
-
-$$e^2_{\text{EM}} + e^2_C = \frac{1}{G^*}, \qquad e^2_{\text{EM}} \cdot e^2_C = \frac{1}{16G^{*3}}$$
-
-The first identity states that the total squared-charge budget per degree of freedom is exactly $1/G^* = 1/\psi$, linking charge space to the dual-substrate observable. The coupling-space and charge-space polynomials are **reciprocal polynomials** — the leading and constant coefficients swap while the linear coefficient $(-16G^{*2})$ is shared. This "inside-out duality" is pure algebra [THEOREM]; its physical interpretation as a coupling/charge complementarity is [SELECTION].
-
-Full derivation: [DERIV_CHARGE_QUARTIC_FROM_GSTAR.md](../../theory/03_derivations/DERIV_CHARGE_QUARTIC_FROM_GSTAR.md). Verified numerically: `scripts/verification/verify_charge_quartic.py` (6/6 tests, all residuals < $10^{-12}$).
-
 ---
 
 ## 3. The QFT Chain: Real Roots to Particle Physics
@@ -213,8 +191,6 @@ All four framework integers derive from $N_c = 3$ alone via the double identity 
 $$b_3 = N_c + N_{\text{base}} = N_c^2 - 2$$
 
 This gives $N_{\text{base}} = N_c^2 - N_c - 2 = 4$, $b_3 = 7$, $N_{\text{eff}} = b_3 + 2N_c = 13$.
-
-**The real root $x_- = 3.024 \approx N_c$ therefore generates all four integers.**
 
 ### 3.3 Lattice QFT as Native Structure [THEOREM]
 
@@ -470,7 +446,7 @@ The algebraic type transition Type III $\to$ Type I occurs in two guises [EXPLR_
      (Physics)    (Measurement)  (Reference frame context)
      Real roots    Degenerate    Complex roots
      x₊ = 1/α     Born rule     y = 2.19±2.86i
-     x₋ = N_c     |ψ|²          θ = 52.54°
+                  |ψ|²          θ = 52.54°
             |             |             |
      ┌──────┴──────┐      |      ┌──────┴──────┐
      |             |      |      |             |
@@ -578,11 +554,10 @@ Every selection principle in FTD selects a boundary or critical point [FOUND_MET
 
 ### 9.1 The Pion Mass: A Test of the Complete Chain [ALGEBRA]
 
-The most precise test of the integer reduction theorem + chiral dynamics: starting from $G^*$ and deriving $m_\pi$ in 15 steps [DERIV_PION_MASS_FROM_GSTAR.md]:
+The most precise test of the integer reduction theorem + chiral dynamics: deriving $m_\pi$ in 15 steps [DERIV_PION_MASS_FROM_GSTAR.md]:
 
-1. $G^* \to$ master quadratic $\to x_- = 3.024 \to N_c = 3$
-2. $N_c = 3 \to$ double identity $b_3 = N_c^2 - 2 = 7$ $\to$ $N_{\text{base}} = 4$ $\to$ $N_{\text{eff}} = 13$
-3. $m_\pi = b_3 \cdot N_{\text{eff}} \cdot N_c \cdot m_e = 7 \times 13 \times 3 \times 0.511 = 139.50$ MeV
+1. $N_c = 3 \to$ double identity $b_3 = N_c^2 - 2 = 7$ $\to$ $N_{\text{base}} = 4$ $\to$ $N_{\text{eff}} = 13$
+2. $m_\pi = b_3 \cdot N_{\text{eff}} \cdot N_c \cdot m_e = 7 \times 13 \times 3 \times 0.511 = 139.50$ MeV
 
 **Experimental value: 139.57 MeV. Error: 0.048%.**
 
@@ -724,7 +699,7 @@ We prefer reading 1 but acknowledge that readings 2 and 3 preserve all mathemati
 
 ```
 [THEOREM] Master quadratic mathematics
-    → [STRONGLY MOTIVATED CONJECTURE] Real roots = α, N_c (FTD-0013, FTD-0014)
+    → [STRONGLY MOTIVATED CONJECTURE] Real root x₊ = 1/α (FTD-0013)
         → [THEOREM] QFT chain (30 derivations)
         → [THEOREM] GRT chain (Einstein, Schwarzschild)
     → [SELECTION] Reference frame context quadratic (k=1/2)

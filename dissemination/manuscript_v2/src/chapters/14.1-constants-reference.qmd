@@ -285,20 +285,6 @@ Unlike the lepton masses (pure integer arithmetic) and the proton mass (two inde
 
 ## Cosmological Constants
 
-### Number of Generations
-
-$$
-N_{gen} = \lfloor N_c \rfloor = \lfloor 3.024 \rfloor = 3
-$$
-
-| Property | Value |
-|----------|-------|
-| Predicted | 3 |
-| Measured | 3 |
-| Accuracy | **Exact** |
-
-The number of fermion generations equals the integer part of the derived N_c value.
-
 ### Cosmological Constant
 
 $$

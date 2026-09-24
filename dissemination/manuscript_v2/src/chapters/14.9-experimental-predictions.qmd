@@ -63,7 +63,7 @@ This is not numerology. This is not curve-fitting. The tests were designed to fa
    - Algebraic consistency (Pauli, Gell-Mann matrices)
    - Topological necessity ($\pi_1(\text{SO}(3)) = \mathbb{Z}_2$)
    - Information-theoretic uniqueness (Gleason, max entropy)
-   - Physical predictions (N_c = 3.024, photon polarizations)
+   - Physical predictions (photon polarizations)
 
 The tests are not cherry-picked—they are the standard tests any framework claiming these results must pass.
 :::
@@ -79,7 +79,6 @@ Before looking at future tests, here is the complete ledger of quantities FTD de
 | Quantity | FTD Formula | FTD Value | Experimental | Error |
 |----------|-------------|-----------|--------------|-------|
 | Fine structure constant | Master quadratic root (identification [SMC], not derived) | 1/137.036 | 1/137.036 | **1.26 ppm** (tree-level; 0.21 ppt is post-hoc fit) |
-| Color charges | Master quadratic root | 3.024 → 3 | 3 | exact |
 | Weinberg angle | $\sin^2\theta_W = N_c/n_{\text{eff}}$ | 3/13 = 0.2308 | 0.2312 | **0.17%** |
 | Strong coupling | $\alpha_s = b_3/(b_3+4n_{\text{eff}})$ | 7/59 = 0.1186 | 0.1179 | **0.6%** |
 
@@ -280,7 +279,6 @@ $$\theta_{23} = 46.2° \quad (\text{above maximal})$$
 ### 7. No Fourth Generation 🎯✅
 
 **FTD Prediction**: Exactly 3 generations
-$$N_{gen} = \lfloor N_c \rfloor = \lfloor 3.024 \rfloor = 3$$
 
 **Current Status**: No 4th generation found up to ~800 GeV (LHC)
 
@@ -290,20 +288,7 @@ $$N_{gen} = \lfloor N_c \rfloor = \lfloor 3.024 \rfloor = 3$$
 
 ---
 
-### 8. Effective Color Charge 🎯❓
-
-**FTD Prediction**:
-$$N_c = 3.024 \quad (\text{not exactly 3})$$
-
-**Test**: Ultra-precision QCD measurements
-- α_s running at 0.1% precision
-- N_c appears in loop corrections
-
-**Required Precision**: Better than current 0.5% on α_s
-
----
-
-### 9. Weinberg Angle at GUT Scale 🎯❓
+### 8. Weinberg Angle at GUT Scale 🎯❓
 
 **FTD Prediction**:
 $$\sin^2\theta_W(M_{GUT}) = \frac{3}{8} = 0.375$$
@@ -314,7 +299,7 @@ $$\sin^2\theta_W(M_{GUT}) = \frac{3}{8} = 0.375$$
 
 ---
 
-### 10. Gravitational Coupling Ratio 🎯✅
+### 9. Gravitational Coupling Ratio 🎯✅
 
 **FTD Prediction**:
 $$\alpha_G = 5.909 \times 10^{-39}$$
@@ -329,7 +314,7 @@ $$\alpha_G = 5.909 \times 10^{-39}$$
 
 ## Tier 3: Long-Term/Speculative (2050+)
 
-### 11. Planck-Scale Photon Dispersion 🎯❓
+### 10. Planck-Scale Photon Dispersion 🎯❓
 
 **FTD Prediction**: Photon velocity depends on energy
 $$v(E) = c\left[1 - \frac{E^2}{24 E_{Planck}^2}\right]$$
@@ -342,7 +327,7 @@ $$v(E) = c\left[1 - \frac{E^2}{24 E_{Planck}^2}\right]$$
 
 ---
 
-### 12. Discrete Spacetime Signatures 🎯❓
+### 11. Discrete Spacetime Signatures 🎯❓
 
 **FTD Prediction**: Lorentz violation at Planck scale
 - Cubic lattice anisotropy: $\varepsilon \sim (E/E_{\text{Planck}})^4 \sim 10^{-80}$
@@ -353,7 +338,7 @@ $$v(E) = c\left[1 - \frac{E^2}{24 E_{Planck}^2}\right]$$
 
 ---
 
-### 13. Black Hole Echoes 🎯❓
+### 12. Black Hole Echoes 🎯❓
 
 **FTD Prediction**: Ringdown echoes from discrete structure near horizon
 
@@ -363,7 +348,7 @@ $$v(E) = c\left[1 - \frac{E^2}{24 E_{Planck}^2}\right]$$
 
 ---
 
-### 14. Dark Energy — Open Boundary
+### 13. Dark Energy — Open Boundary
 
 **FTD status**: FTD's classical vacuum is identically zero-energy, so the $M_\text{Planck}^4$ cosmological-constant catastrophe **dissolves** — in this sense FTD predicts $\Lambda = 0$ at the classical level. The framework does **not** derive the observed nonzero dark-energy density: that value is an **open boundary**, because FTD has no native cosmic length scale.
 
@@ -386,13 +371,12 @@ is a **numerical coincidence**, not a derived prediction. The equation of state 
 | 5 | Σm_ν | 59 meV | DESI+CMB | 2030 | ⏳ |
 | 6 | θ₂₃ | 46.2° | T2K/NOvA | Now | ✅ |
 | 7 | N_gen | 3 | LHC/FCC | Now | ✅ |
-| 8 | N_c | 3.024 | QCD precision | 2040? | ❓ |
-| 9 | sin²θ_W(GUT) | 3/8 | Extrapolation | N/A | ✅ |
-| 10 | $\alpha_G$ | $5.91 \times 10^{-39}$ | $G_N$ precision | Now | (confirmed) |
-| 11 | $\gamma$ dispersion | ~$10^{-18}$ | GRB timing | 2050? | (unknown) |
-| 12 | Lorentz violation | ~$10^{-80}$ | N/A | Never? | (unknown) |
-| 13 | BH echoes | Yes | ET/CE | 2040 | ❓ |
-| 14 | $\Lambda$ | classical vacuum $= 0$; observed value open | DE surveys | 2030 | [OPEN boundary] |
+| 8 | sin²θ_W(GUT) | 3/8 | Extrapolation | N/A | ✅ |
+| 9 | $\alpha_G$ | $5.91 \times 10^{-39}$ | $G_N$ precision | Now | (confirmed) |
+| 10 | $\gamma$ dispersion | ~$10^{-18}$ | GRB timing | 2050? | (unknown) |
+| 11 | Lorentz violation | ~$10^{-80}$ | N/A | Never? | (unknown) |
+| 12 | BH echoes | Yes | ET/CE | 2040 | ❓ |
+| 13 | $\Lambda$ | classical vacuum $= 0$; observed value open | DE surveys | 2030 | [OPEN boundary] |
 
 ---
 
@@ -433,8 +417,7 @@ If FTD is correct, the following **must** happen:
 | | Proton decay: First sensitivity to $10^{35}$ yr |
 | **2035** | $\Sigma m_\nu$: Precision measurement |
 | | Proton decay: Discovery or strong exclusion |
-| **2040+** | Precision QCD: N_c = 3.024 test |
-| | Next-gen GW: Black hole echoes |
+| **2040+** | Next-gen GW: Black hole echoes |
 
 ## Conclusion
 

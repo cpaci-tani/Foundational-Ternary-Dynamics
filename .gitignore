@@ -190,7 +190,6 @@ scripts/proofs/proof_complete_prolate_weil_chain.py
 # Publication sources stay tracked; generated renders stay local by default
 docs/papers/*.pdf
 !docs/papers/PAPER_GSTAR_INTRODUCTION.pdf
-!docs/papers/PAPER_GSTAR_FTD_BRIDGE.pdf
 docs/papers/src/figures/*.pdf
 docs/papers/src/figures/*.png
 docs/papers/figures/*.pdf
@@ -272,4 +271,3 @@ docs/reference/archive/
 docs/theory/**/*_files/
 docs/theory/**/AUDIT_*.md
 !docs/papers/PAPER_GSTAR_INTRODUCTION.pdf
-!docs/papers/PAPER_GSTAR_FTD_BRIDGE.pdf

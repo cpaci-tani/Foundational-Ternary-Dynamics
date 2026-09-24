@@ -174,7 +174,7 @@ Therefore: **x+/x- = (1 + delta) / (1 - delta)** QED
 
 **Corollary (Elegant Form):**
 
-**delta = (x+ - x-) / (x+ + x-)** = (1/alpha - N_c_eff) / (1/alpha + N_c_eff)
+**delta = (x+ - x-) / (x+ + x-)**
 
 The substrate asymmetry is the **normalized coupling difference**. Verified: delta from definition = 0.956819063350846; (x+ - x-)/(x+ + x-) = 0.956819063350845; difference = 1.11e-16.
 
@@ -193,10 +193,10 @@ The generalized quadratic x^2 - k*c^2*x + k*c^3 = 0 has delta_k = sqrt(1 - 4/(kc
 ### Physical Interpretation
 
 The dual substrate (J_L, J_R) splits the observable J = J_L + J_R with:
-- J_L proportional to (1+delta)/2 ~ 0.978 (the "electromagnetic" substrate)
-- J_R proportional to (1-delta)/2 ~ 0.022 (the "color" substrate)
+- J_L proportional to (1+delta)/2 ~ 0.978
+- J_R proportional to (1-delta)/2 ~ 0.022
 
-Their ratio = x+/x- = 1/alpha / N_c_eff ~ 45.3. The electromagnetic substrate carries 45x more flux than the color substrate, because the EM coupling is 45x the color coupling at this scale.
+Their ratio = x+/x- ~ 45.3.
 
 ---
 

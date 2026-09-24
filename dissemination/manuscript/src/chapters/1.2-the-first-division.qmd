@@ -32,7 +32,6 @@ Two different lemniscate forms—the classical Bernoulli and the Lemniscate-Alph
 
 From G*, the master quadratic produces:
 - x₊ = 137.036 = 1/α (fine structure constant inverse)
-- x₋ = 3.024 → N_c = 3 (color charges)
 
 The void's self-division thus encodes all physics through this single geometric constant.
 

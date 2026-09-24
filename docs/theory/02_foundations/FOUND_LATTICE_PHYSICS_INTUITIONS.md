@@ -70,8 +70,8 @@ Physics phenomena to recover from empirical observation, paired with their latti
 
 | Phenomenon | Empirical observation | Lattice definition | Status |
 |---|---|---|---|
-| Three generations | 3 families of quarks and leptons | 3 = floor(x_-) from master quadratic | Recovered |
-| Three colors | SU(3) color charge, N_c = 3 | Master quadratic root x_- via RG flow + topological quantization | Recovered |
+| Three generations | 3 families of quarks and leptons | C(3,2) = 3 face-diagonal planes of the cuboctahedron (Moore Layer Theorem) | Recovered |
+| Three colors | SU(3) color charge, N_c = 3 | Moore Layer Theorem + `DERIV_NC_FROM_TOPOLOGY.md` | Recovered |
 | SM gauge group | U(1) x SU(2) x SU(3) | Moore neighborhood polyhedral decomposition (octahedron + cuboctahedron + stella octangula) | Recovered |
 | Electron mass | m_e = 0.511 MeV | m_e = M_P * sqrt(2pi) * (16/3) * alpha^11 (0.19%) | Recovered |
 | Proton mass | m_p = 938.3 MeV | m_p/m_e = N_eff/alpha + N_base*N_eff + N_c = 1836.47 (174 ppm) | Recovered |
@@ -264,9 +264,8 @@ The chain from Z[i] to alpha, verified link by link:
 | 6 | Quadratic: x^2 - Kx + KG* = 0 | [THEOREM] | 100% (given 5) |
 | 7 | Roots: x+ = 137.036171, x- = 3.023964 | [THEOREM] | 100% |
 | 8 | x+ = 1/alpha (1.26 ppm, zero free parameters) | [STRONGLY MOTIVATED CONJECTURE] | ~95% |
-| 9 | floor(x-) = N_c = 3 | [STRONGLY MOTIVATED CONJECTURE] as root identification | ~80% |
 
-7/9 links [THEOREM]. The mathematical chain is rigorous. The physical identifications (Links 8-9) are motivated by the 1.26 ppm agreement but not derived from the lattice action.
+7/8 links [THEOREM]. The mathematical chain is rigorous. The physical identification (Link 8) is motivated by the 1.26 ppm agreement but not derived from the lattice action.
 
 The budget equation (Link 5): x/K + G*/x = 1 says the coupling partitions completely between Coulomb (x/K) and confined (G*/x) phases. Verified to 15 digits for both roots. The coefficient c=1 is forced by exhaustion (two phases sum to 1), not chosen.
 
@@ -286,7 +285,6 @@ The master quadratic roots map to this classification:
 | Root | Value | Nearest prime | Prime type | Force |
 |---|---|---|---|---|
 | x+ | 137.036 | 137 | SPLIT: 137 = 4^2 + 11^2 = (4+11i)(4-11i) | EM (U(1), complex) |
-| x- | 3.024 | 3 | INERT: stays prime in Z[i] | Strong (SU(3), real) |
 
 G* encodes the prime distribution via the L-function Euler product:
 - pi = 4 * prod_p 1/(1 - chi_-4(p)/p) where chi_-4 classifies split vs inert

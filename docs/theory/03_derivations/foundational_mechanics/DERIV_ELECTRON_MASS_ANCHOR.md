@@ -4,7 +4,7 @@
 
 > **CORRECTION (adjudicated):** the `[THEOREM]` promotion (commit `fdc483d0`)
 > is **RETRACTED** — the "Dimensional Equipartition" step is a substitution identity, not a
-> forcing chain; it fails the FTD-0097/0189 look-elsewhere bar and the standing
+> forcing chain; it fails the FTD-0097 look-elsewhere bar and the standing
 > zero-promotion discipline. **Honest tag: `[STRONGLY MOTIVATED CONJECTURE]`.**
 > **Genuine motivation:** the exponent $n=11$ is `[SELECTION]`, and $16/3$ is the simplest
 > rational within 0.2% of the empirically-required prefactor at that exponent (1-of-2 within
@@ -51,7 +51,7 @@ phase-space uniformly across $N_c$ spatial dimensions, then divide by $N_c$) is 
 not forced. The choice to count a 16-node "$L_2$ cross + symmetry break" core and then divide
 by $N_c = 3$ is one of many integer recipes that would land on $16/3$; nothing in the substrate
 selects it over alternatives, and it was not checked against a look-elsewhere control. Under the
-project's own epistemic discipline (no substitution identities; FTD-0097/0189 bar), this is a
+project's own epistemic discipline (no substitution identities; FTD-0097 bar), this is a
 motivated re-statement, not a theorem.
 
 ## 4. Conclusion

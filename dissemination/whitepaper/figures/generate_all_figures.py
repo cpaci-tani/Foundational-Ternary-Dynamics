@@ -145,7 +145,7 @@ def create_lemniscate_figure():
             bbox=dict(boxstyle='round', facecolor='lightcoral', alpha=0.9),
             transform=ax2.transAxes)
 
-    ax2.text(0.75, -0.08, r'$x_- = 3.024$' + '\n' + r'$\rightarrow N_c = 3$',
+    ax2.text(0.75, -0.08, r'$x_- = 3.024$',
             fontsize=12, ha='center', fontweight='bold',
             bbox=dict(boxstyle='round', facecolor='lightcoral', alpha=0.9),
             transform=ax2.transAxes)
@@ -245,7 +245,7 @@ def create_integer_closure_figure():
     framework_text = (
         'Framework Integers\n'
         '─────────────────\n'
-        r'$N_c = 3$  (floor of $x_-$)' + '\n'
+        r'$N_c = 3$  (Moore Layer Theorem)' + '\n'
         r'$N_{base} = 4$  (Lucas $L_3$, only perfect square)' + '\n'
         r'$b_3 = 7$  (Tribonacci $T_6$)' + '\n'
         r'$N_{eff} = 13$  (unique $F_7 = T_7$ crossover)'

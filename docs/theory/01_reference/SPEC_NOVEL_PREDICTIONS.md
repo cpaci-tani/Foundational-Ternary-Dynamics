@@ -23,7 +23,7 @@ These are the sharpest claims FTD makes---specific numerical values derived from
 | **FTD value** | $1/\alpha = 137.0361714582\ldots$ |
 | **CODATA 2022** | $1/\alpha = 137.035999177(21)$ |
 | **Discrepancy** | 1.26 ppm |
-| **Epistemic status** | **[STRONGLY MOTIVATED CONJECTURE]** (FTD-0013). The polynomial itself (master quadratic) is [THEOREM] (FTD-0001); the physical identification $x_+ = 1/\alpha$ rests on the algebraic match (1.26 ppm) plus CM-curve uniqueness — not on a dynamical derivation. Polynomial-template-uniqueness (FTD-0319, formerly cited as FTD-0189, adversarial scan: 0 non-G\* dual-matchers across 2.65M degree-2 polynomials over an 18-constant FTD-undesigned basket; rank 1 by ~130×) is **withdrawn as evidence** (revised 2026-08-03/04, FTD-0791/FTD-0802 — the scan sits at its own chance base rate, expected 1.42–1.67 matchers vs. 1 found, and the scan-rigid count is now zero). *(Note: the "dual-prediction structure ($x_- \to N_c$)" framing is **retired** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`.)* The "L → ∞ gap-equation" derivation route is RETRACTED (FTD-0032). |
+| **Epistemic status** | **[STRONGLY MOTIVATED CONJECTURE]** (FTD-0013). The polynomial itself (master quadratic) is [THEOREM] (FTD-0001); the physical identification $x_+ = 1/\alpha$ rests on the algebraic match (1.26 ppm) plus CM-curve uniqueness — not on a dynamical derivation. The "L → ∞ gap-equation" derivation route is RETRACTED (FTD-0032). |
 | **Pre-diction or post-diction?** | **POST-DICTION.** $\alpha$ was measured in 1947. The derivation was constructed after the value was known. |
 
 The tree-level value $x_+ = 137.036\ldots$ emerges from the master quadratic with coefficient 16 (lattice degrees of freedom) and $G^{*2}, G^{*3}$ (lemniscatic constant squared and cubed). The extended 7-term precision formula using $\varepsilon = e^\pi - \pi - 20$ and rational coefficients from $\{N_c, N_{\mathrm{base}}, b_3, N_{\mathrm{eff}}, D, \mathrm{BCC}\}$ agrees with the CODATA 2022 recommended value to 24 digits **as an algebraic identity** (see [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/general_math/CONJ_SEVEN_TERM_PRECISION_SERIES.md)). Status: **[CONJECTURE]**. The rigidity audit shows 6/7 coefficients uniquely forced in the base-integer set at cascade precision, but experimentally the coefficients are underdetermined — CODATA 2022 measures only ~11 digits.
@@ -169,33 +169,7 @@ This is not a novel prediction---it is a verification that the FTD lattice Feynm
 
 These are discrete, qualitative claims about the structure of particle physics. Unlike numerical predictions, they are binary: either true or false.
 
-### 2.1 Exactly Three Generations
-
-**FTD claim:** $N_{\text{gen}} = \lfloor x_- \rfloor = \lfloor 3.024 \rfloor = 3$ exactly. No fourth-generation fermions with standard gauge couplings exist at any energy.
-
-**Formula:** The smaller root of the master quadratic gives $x_- = 3.024$, and the floor function yields the integer 3. This is a structural output of the quadratic, not adjustable.
-
-**Current status:** LHC excludes 4th-generation quarks with $m > 800$ GeV. Precision electroweak fits disfavor $N_{\text{gen}} = 4$.
-
-**Falsification:** Discovery of $t'$, $b'$, $\tau'$, or $\nu_4$ with standard $\text{SU}(2) \times \text{U}(1)$ chiral couplings. Heavy sterile particles or vector-like fermions would NOT falsify this prediction.
-
-**Pre-diction or post-diction?** **POST-DICTION.** LEP measured $N_\nu = 2.984 \pm 0.008$ from $Z$-width in 1989. Three generations were known before FTD.
-
-**Epistemic status:** **[THEOREM]** (follows from quadratic root structure).
-
-### 2.2 Exactly Three Colors
-
-**FTD claim:** $N_c = \lfloor x_- \rfloor = 3$ exactly. QCD has SU(3) gauge symmetry with 3 color charges, no more.
-
-**Current status:** All hadronic physics is consistent with $N_c = 3$.
-
-**Falsification:** Discovery of hadrons requiring $N_c > 3$ color charges, or detection of non-SU(3) color structure.
-
-**Pre-diction or post-diction?** **POST-DICTION.** $N_c = 3$ was established in the 1970s (R-ratio, $\pi^0$ decay).
-
-**Epistemic status:** **[THEOREM]**
-
-### 2.3 Gauge Group is $\text{U}(1) \times \text{SU}(2) \times \text{SU}(3)$
+### 2.1 Gauge Group is $\text{U}(1) \times \text{SU}(2) \times \text{SU}(3)$
 
 **FTD claim:** The gauge group is exactly $\text{U}(1) \times \text{SU}(2) \times \text{SU}(3)$. There is no larger unifying group (no SU(5), SO(10), $E_6$, etc.) that embeds this product at accessible energies.
 
@@ -207,7 +181,7 @@ These are discrete, qualitative claims about the structure of particle physics. 
 
 **Epistemic status:** U(1) **[THEOREM]**, SU(2) **[SELECTION]**, SU(3) **[SELECTION]**.
 
-### 2.4 No Magnetic Monopoles
+### 2.2 No Magnetic Monopoles
 
 **FTD claim, corrected by FTD-0564:** In the regular global-potential sector where $B=\nabla\times J$ with a single-valued nonsingular $J$, the matched lattice identity gives $\nabla\cdot B=0$. This excludes a magnetic source *inside that representation*. It does not prove that magnetic monopoles cannot exist in every extension of the ontology.
 
@@ -221,7 +195,7 @@ The former argument from $\pi_2(\mathrm{U}(1))=0$ was mathematically incorrect: 
 
 **Epistemic status:** **[CONDITIONAL THEOREM — regular global-potential sector]** for $\nabla\cdot(\nabla\times J)=0$; **[OPEN]** for the universal absence of physical magnetic monopoles. FTD-0564.
 
-### 2.5 No Proton Decay
+### 2.3 No Proton Decay
 
 **FTD claim:** The proton is absolutely stable ($\tau_p = \infty$). Baryon number conservation is exact on the discrete lattice---charge conservation in a finite discrete system forbids baryon number violation.
 
@@ -235,7 +209,7 @@ The former argument from $\pi_2(\mathrm{U}(1))=0$ was mathematically incorrect: 
 
 **Epistemic status:** **[THEOREM]** (discrete charge conservation).
 
-### 2.6 Normal Neutrino Mass Hierarchy
+### 2.4 Normal Neutrino Mass Hierarchy
 
 **FTD claim:** Neutrino masses follow the normal hierarchy ($m_1 < m_2 < m_3$), producing $\Delta m^2_{31} > 0$.
 

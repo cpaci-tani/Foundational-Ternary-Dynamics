@@ -33,7 +33,7 @@ Unit of work: one import-ledger line (SPEC_IMPORT_LEDGER.md v1.1, 15 imports + 2
 | 3 | **IMP-K3** K_B = m_e | disentangle the FTD-0130 role-conflation so the anchor is forced | under electron-primary this is the *sole* remaining beyond-universal calibration import |
 | 4 | **IMP-S1** D=3 | forcing proof (→ self-set) or equally-consistent alternate D | Front C item; must be a genuinely new argument class (FTD-0355 circularity named; FTD-0382 is consonance only) |
 | 5 | **IMP-S2** singlet | **S2-a (AM-3 re-scope): the equivariance theorem** — invariant complex structures on the post-Gauss transverse plane = ±J, i.e. the complexification is forced up to one ℤ/2 orientation bit (a SHARPENED terminal, priced in ledger currency); or native S>2 (an FC-1 falsifier, not a win) | the ontic-ψ forcing (S2-b) is [CLOSED DECLINED] under FC-1 and routes to Front B as M-class; LEDGER adjudication = owner sitting D4 before any singlet lock |
-| 6 | **IMP-C2** CM h=1 | h≥2 Damerell scan; or a structural all-h proof | machinery listed in EXPLR_CHOWLA_SELBERG_HIGHER_H.md; self-serve |
+| 6 | **IMP-C2** CM h=1 | a structural all-h proof | machinery listed in EXPLR_CHOWLA_SELBERG_HIGHER_H.md; self-serve |
 | 7 | **IMP-E2** ~131 parametric rows | per-row native derivation or priced no-go | = Front D (the bulk surface) |
 | 8 | **IMP-C3** E1 | external: multi-curve Chudnovsky (floors closed per FTD-0377) | FTD's move is advocacy/circulation, not attack |
 | 9 | **IMP-C4** E\*/E\*\* | external: behind the (e,π) wall (FTD-0378) | hardest external |

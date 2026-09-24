@@ -170,7 +170,7 @@ I_4 = 1.311...
      = 2*sqrt(varpi * M)              (equivalent expression, M = varpi/pi)
   -> Master quadratic with k = 16
   -> x_+ ≈ 137.036...                (SMC reading: 1/alpha)
-  -> x_- ≈ 3.024...                  (SMC reading: N_c)
+  -> x_- ≈ 3.024...
 ```
 
 The complete 13-step chain is given in FOUND_BLIND_DERIVATION_CHAIN.md.
@@ -192,7 +192,7 @@ The derivation chain defines a natural hierarchy of mathematical objects:
 | 4 | varpi = 2*I_4 | **[THEOREM]** | Lemniscatic constant |
 | 5 | G* = Gamma(1/4)/Gamma(3/4) | **[THEOREM]** | Chowla-Selberg applied to E_i |
 | 6 | Master quadratic | **[SELECTION]** | k = 16 from lattice geometry |
-| 7 | alpha, N_c | **[THEOREM]** | Roots of master quadratic |
+| 7 | alpha | **[THEOREM]** | Roots of master quadratic |
 
 Each transition is either a standard mathematical theorem or a clearly marked selection principle. There are no gaps requiring philosophical speculation.
 

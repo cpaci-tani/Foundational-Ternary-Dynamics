@@ -220,9 +220,9 @@ $$x_+ \times x_- = 16G^{*3}$$
 **The Harmonic Center:**
 $$G^* = \frac{x_+ \times x_-}{x_+ + x_-} = \frac{\text{Product}}{\text{Sum}}$$
 
-The lemniscatic constant is the **harmonic center** of the electromagnetic and color couplings:
+The lemniscatic constant is the **harmonic center** of the two roots:
 
-$$G^* = \frac{(1/\alpha) \times N_c}{(1/\alpha) + N_c} = \frac{137.036 \times 3.024}{137.036 + 3.024} = 2.9587$$
+$$G^* = \frac{x_+ \times x_-}{x_+ + x_-} = \frac{137.036 \times 3.024}{137.036 + 3.024} = 2.9587$$
 
 ## The Modular Forms Connection
 
@@ -248,7 +248,7 @@ The master quadratic $x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$ encodes:
 
 | Integer | Encoding |
 |---------|----------|
-| 3 = $N_c$ | First FLT-forbidden exponent → smaller root |
+| 3 = $N_c$ | First FLT-forbidden exponent |
 | 4 = $N_{\text{base}}$ | Second FLT-forbidden exponent → coefficient $4^2 = 16$ |
 | 7 = $b_3$ | Sum $3 + 4$ → encodes both forbidden |
 | 13 = $n_{\text{eff}}$ | $F_7$ → Fibonacci closure |
@@ -269,14 +269,13 @@ The master quadratic $x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$ encodes:
 | Lemniscate period | 2.9587 |
 | Fermat boundary encoding ($1 - t^4$ integral) | 2.9587 |
 | CM selection (j = 1728) | 2.9587 |
-| Harmonic center of $1/\alpha$ and $N_c$ | 2.9587 |
+| Harmonic center of $x_+$ and $x_-$ | 2.9587 |
 
 ### The Roots
 
 | Root | Value | Physical Identification |
 |------|-------|------------------------|
 | $x_+$ | 137.036 | $1/\alpha$ (electromagnetic) |
-| $x_-$ | 3.024 | $N_c$ (color) |
 
 ## Mathematical Rigor Assessment
 
@@ -298,8 +297,7 @@ The master quadratic $x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$ encodes:
 - Powers $c^2$ and $c^3$ encode boundary crossing
 
 **Physical Interpretation [STRONGLY MOTIVATED CONJECTURE]:**
-- $x_+ = 1/\alpha$ — the root *matches* the inverse fine structure constant to 1.26 ppm. CM selection and structural-uniqueness scans make this strongly motivated, but it is not derived from the axioms.
-- $x_- \to N_c = 3$ — the root matches 3 to 0.80%; $N_c = 3$ has independent structural derivations.
+- $x_+ = 1/\alpha$ — the root *matches* the inverse fine structure constant to 1.26 ppm. CM selection makes this strongly motivated, but it is not derived from the axioms. $x_+ = 1/\alpha$ has no numerical-uniqueness support.
 - The "0.21 ppt" figure from the precision formula is **retracted** as a result: it is a post-hoc fit beyond CODATA's experimental precision, not a testable prediction.
 :::
 
@@ -322,7 +320,7 @@ G* = 2.9587
          ↓ [master quadratic]
 x² - 16G*²x + 16G*³ = 0
          ↓ [roots]
-$x_+$ = 137.036 (= $1/\alpha$) and $x_-$ = 3.024 ($\approx N_c$)
+$x_+$ = 137.036 (= $1/\alpha$) and $x_-$ = 3.024
 ```
 
 ::: {.callout-important}
@@ -379,7 +377,7 @@ x_minus = (-b - np.sqrt(disc)) / 2
 
 print(f"G* = {G_star:.6f}")           # 2.9587
 print(f"x₊ = {x_plus:.3f} → 1/α")     # 137.036
-print(f"x₋ = {x_minus:.3f} → N_c")    # 3.024
+print(f"x₋ = {x_minus:.3f}")    # 3.024
 ```
 
 ## Concepts

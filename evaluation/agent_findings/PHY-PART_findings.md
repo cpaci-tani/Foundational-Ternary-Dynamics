@@ -31,7 +31,7 @@ Numerically accurate but epistemically problematic.
 - Lemniscate-Alpha curve with power-of-2 frequencies
 - Arc length L = 23.7994...
 - Master quadratic: x² - 16(G*)²x + 16(G*)³ = 0
-- Roots: x₊ = 137.0361 (1/α), x₋ = 3.024 (N_c)
+- Roots: x₊ = 137.0361 (1/α), x₋ = 3.024
 - **Error: 1.26 ppm** vs CODATA
 
 ### S3: Integer Arithmetic Lepton Masses

@@ -9,7 +9,7 @@
 
 ## 0 · Why this protocol exists
 
-Theorem 8 (`THEOREM_HARMONIC_INVARIANT_TOWER.md`) introduces the (1+i)-tower of master quadratics `M_k(x) = x² − 2^k G*^(k−2) x + 2^k G*^(k−1)`. The level `k = 4` matches `α⁻¹` to 1.26 ppm and `N_c` to 0.80% — verified [STRONGLY MOTIVATED CONJECTURE] under FTD-0001.
+Theorem 8 (`THEOREM_HARMONIC_INVARIANT_TOWER.md`) introduces the (1+i)-tower of master quadratics `M_k(x) = x² − 2^k G*^(k−2) x + 2^k G*^(k−1)`. The level `k = 4` matches `α⁻¹` to 1.26 ppm — verified [STRONGLY MOTIVATED CONJECTURE] under FTD-0001.
 
 A natural follow-up question is: *do other levels of the tower carry physical content?* Specifically:
 
@@ -152,7 +152,7 @@ The post-hoc scan produced 1 verified match (`k=4` `x_+`  `α⁻¹`) and 1 autom
 
 ## 6 · Cross-references
 
-- `THEOREM_HARMONIC_INVARIANT_TOWER.md` §6.5–6.8 (level-3 cyclotomic, structural why-`k=4`, exploratory scan, harmonic-conjugate cover-page reformulation)
+- `THEOREM_HARMONIC_INVARIANT_TOWER.md` §6.5–6.7 (level-3 cyclotomic, structural why-`k=4`, exploratory scan)
 - `SPEC_ALGEBRAIC_SPINE.md` §8 (Theorem 8)
 - `tools/scan_look_elsewhere.py` (FTD-0097 methodology template)
 - `PROTOCOL_LOOK_ELSEWHERE_SCAN.md` (FTD-0097 protocol template)

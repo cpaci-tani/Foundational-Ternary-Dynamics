@@ -10,7 +10,7 @@
 > - The **algebraic spine** — the $G^*$ identity, the master-quadratic polynomial, and its roots — is `[THEOREM]` (pure number theory; stands independent of any physics).
 > - Every **physical identification** — $x_+\!\leftrightarrow\!1/\alpha$, the 4-term $\alpha$ fit, $m_e\!\leftrightarrow\!0.511$ MeV, the proton/neutron mass formulas — is `[STRONGLY MOTIVATED CONJECTURE]`, `[HIGH-PRECISION PARAMETRIC]`, `[COORDINATE COINCIDENCE]`, or `[PARAMETRIC FITTING]`.
 >
-> Per-step grades below are adopted from [`AUDIT_MASS_CHAIN_REDTEAM.md`](../07_assessment/engine_emergence_campaigns/AUDIT_MASS_CHAIN_REDTEAM.md) §3. The mass scale is **calibrated** (mass-unit $\equiv m_e$; $K_B$ anchor), and none of these ratios is produced **dynamically** by the C++ engine (red-team Axis E). See canonical `../07_assessment/core_ledgers/LEDGER.md` (FTD-0013, FTD-0015); note the **retired** $x_-\!\leftrightarrow\!N_c$ identification (FTD-0014, removed in `ca7eb61`); and note $G^* \approx 2.959$ is distinct from the lemniscate constant $\varpi \approx 2.622$ (FTD-0117).
+> Per-step grades below are adopted from [`AUDIT_MASS_CHAIN_REDTEAM.md`](../07_assessment/engine_emergence_campaigns/AUDIT_MASS_CHAIN_REDTEAM.md) §3. The mass scale is **calibrated** (mass-unit $\equiv m_e$; $K_B$ anchor), and none of these ratios is produced **dynamically** by the C++ engine (red-team Axis E). See canonical `../07_assessment/core_ledgers/LEDGER.md` (FTD-0013, FTD-0015); and note $G^* \approx 2.959$ is distinct from the lemniscate constant $\varpi \approx 2.622$ (FTD-0117).
 
 ---
 
@@ -35,7 +35,7 @@ graph TD
     Substrate["Discrete Space-Time (D=3, dt=1)"] --> Gstar["Lemniscatic Bridge Constant G*<br/>G* = Γ(1/4)/Γ(3/4) ≈ 2.9586751<br/>(identity THEOREM; physical role SELECTION)"]
     Gstar --> Master["Master Quadratic Polynomial (THEOREM)<br/>x² - 16(G*)² x + 16(G*)³ = 0"]
     Master --> xplus["Root x₊ (THEOREM)<br/>x₊ ≈ 137.036<br/>(x₊1/α: STRONGLY MOTIVATED CONJECTURE)"]
-    Master --> xminus["Root x₋ (math artifact)<br/>x₋ ≈ 3.024<br/>(x₋N_c: RETIRED, FTD-0014)"]
+    Master --> xminus["Root x₋<br/>x₋ ≈ 3.024"]
     
     xplus --> QED["4-term α fit (HIGH-PRECISION PARAMETRIC)<br/>alpha⁻¹ = 137.035999177"]
     
@@ -86,7 +86,6 @@ $$ x_+, x_- = 8 G^{*2} \left(1 \pm \sqrt{1 - \frac{1}{4 G^*}}\right) \tag{4.2} $
   The *value* is `[THEOREM]`. The numerical coincidence $x_+ \approx 1/\alpha$ (1.26 ppm) is the framework's central **`[STRONGLY MOTIVATED CONJECTURE]`** (FTD-0013); the physical readout map (MC-T4.3) that would turn it into a derivation remains underdetermined.
 - **The smaller root ($x_-$):**
   $$ x_- \approx 3.02396392 \tag{4.4} $$
-  This is a **mathematical artifact** of the quadratic. The earlier identification $x_- \leftrightarrow N_c$ is **RETIRED** (LEDGER FTD-0014, removed in `ca7eb61`); it is 0.80% from $3$ in any case. $N_c = 3$ is sourced independently from topology (`../03_derivations/standard_model/DERIV_NC_FROM_TOPOLOGY.md`), *not* from this root.
 
 ### High-Precision $\alpha^{-1}$ — `[HIGH-PRECISION PARAMETRIC]`
 

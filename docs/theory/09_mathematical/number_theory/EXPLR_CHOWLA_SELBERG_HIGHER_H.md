@@ -17,9 +17,9 @@ d = −4, class number 1).
 
 Theorem 3 (CM curve uniqueness) carries the tag
 `[NUMERICAL FACT, exhaustive over 9-element h = 1 set]` (Tier-I
-MC-T1.2 closure via route b). The structural question — whether
-the dual permille match (1/α, N_c) extends to CM curves with
-h ≥ 2 — requires the higher-h analogue of Chowla–Selberg.
+MC-T1.2 closure via route b). The structural question, whether
+the larger-root match to 1/α extends to CM curves with h ≥ 2,
+requires the higher-h analogue of Chowla–Selberg.
 
 This document records the literature framework for that extension
 and identifies what would be needed to upgrade Theorem 3 from
@@ -71,12 +71,11 @@ $$
 d \in \{-3, -4, -7, -8, -11, -19, -43, -67, -163\},
 $$
 
-only $d = -4$ has the dual-permille match:
-- $x_+ = 137.036$ matches $1/\alpha$ to 1.26 ppm
-- $x_- = 3.024$ matches $N_c$ to 0.80%
+only $d = -4$ gives a larger root that matches $1/\alpha$ to permille
+precision: $x_+ = 137.036$ matches $1/\alpha$ to 1.26 ppm.
 
 **Empirical observation** (Theorem 3 / FTD-0003): no other h = 1
-discriminant produces this dual match.
+discriminant produces this match.
 
 **Structural reason candidates:**
 - d = −4 is uniquely Z[i]-CM: its endomorphism ring Z[i] has
@@ -97,28 +96,6 @@ proof.
 
 ## 3. The h ≥ 2 generalization
 
-> **⚠ ANSWERED 2026-08-04 (FTD-0321) — negatively.** The scan this section
-> called for has been run, per `PREREG_DAMERELL_SCAN_v1.md`. Note first a
-> correction to §3's own framing: the formula displayed below fixes only the
-> **product** over ideal classes, so Γ-products *cannot* supply the per-class
-> period vector this section asks for. The periods were taken from `η` at each
-> class's CM point instead, with Chowla–Selberg retained as an independent gate
-> (passing at h ≥ 2 to `8.1e-50`).
->
-> **Result:** `d = −4` is the unique dual-matcher across all 270 fundamental
-> h ≥ 2 fields with |d| ≤ 907 — and then **fails at |d| = 7,895**, reaching
-> **1,271 fundamental dual-matchers across 696 discriminants** by |d| ≤ 500,000.
-> The criterion has no discriminating power at scale: a random target is matched
-> by ~204 ideal classes with `P(≥1) = 1.0000`. FTD-0803 establishes that `G*` sits
-> at a **saddle** of an SL₂(ℤ)-invariant (the order-2 elliptic point `τ = i`),
-> giving a logarithmic density divergence. ⚠ **CORRECTED 2026-08-05 by independent audit:** the singularity is a **bounded ~4–5× enhancement**, not the cause of the saturation. The scan is swamped at scale because the CM count grows as `D^{3/2}` — a *randomly placed* target already gets `P(≥1) = 1.0000`. And the **registered** `|d| ≤ 907` domain was ~7× *inside* the informative regime (chance matchers ≈ 0.05), so the registered UNIQUE-CONFIRMED result was genuinely informative; only the declared deep extension is saturated.
->
-> The §4 "structural argument for non-match at h ≥ 2" is therefore **moot**:
-> there is no non-match to explain. OT-1.9's Tier-1 *arithmetic*
-> (`|μ_K| = |disc(K)|`) is untouched. See
-> `ANALYSIS_DAMERELL_IDEAL_CLASS_SCAN_v1.md`.
-
-
 For class number h(K) ≥ 2, the curve $E_K$ no longer has a single
 period; it has a period lattice with $h$ inequivalent generators.
 The Chowla–Selberg formula generalizes to:
@@ -137,7 +114,7 @@ L-function evaluations, with the p-adic analogue given by Gross–Koblitz
 (Corrected 2026-07-01: an earlier draft attributed this to a
 "Damerell–Anderson–Schipnitzer formula (1971)" — "Schipnitzer" does not
 exist in the CM-periods literature and appears nowhere in this document's
-own §7 reference list below; the fabricated name is struck and replaced
+own §6 reference list below; the fabricated name is struck and replaced
 with the grounded attribution.)
 
 ### What's different at h ≥ 2
@@ -159,8 +136,7 @@ d \in \{-15, -20, -24, -35, -40, -51, -52, -88, -91, -115, -123, -148, -187, -23
 $$
 
 (Stark–Heegner list). Each gives 2 inequivalent CM curves; for each
-one constructs an analogue master quadratic and tests for dual permille
-match against (1/α, N_c).
+one constructs an analogue master quadratic.
 
 ---
 
@@ -177,62 +153,21 @@ theorem covering all h, the following machinery is required:
    $[\mathfrak{a}] \in \text{Cl}(K)$, compute the analogue
    $G^*_{[\mathfrak{a}]}$ and the resulting $P_{[\mathfrak{a}]}(x)$.
 
-3. **Dual-match scan across all h ≤ N**: numerically test the
-   dual permille match across all h ≤ 5 (say) curves for at
-   least the first $\sim 100$ discriminants.
-
-4. **Structural argument for non-match at h ≥ 2** (or, if any h ≥ 2
-   curve dual-matches, a structural argument for why it doesn't
-   contradict the d = −4 selection — perhaps Z[i] is privileged
-   among CM rings by its unit-group order).
-
 The estimated effort: **W–M (2–6 weeks) for a focused mathematician
 with familiarity with CM theory.** Beyond session scope but well-defined.
 
 ---
 
-## 5. Connection to MC-T2.1 + MC-T2.2 (extended polynomial scan)
-
-The extended polynomial scan (`proof_polynomial_look_elsewhere_extended.py`)
-searched 2.87M polynomials in the EXTENDED Gaussian-integer-tower
-family + Eisenstein-integer-tower family.
-
-**Result**: 0 dual-matchers in Eisenstein family. 1 dual-matcher in
-extended Gaussian family (the master quadratic itself). ⚠ **CORRECTED 2026-08-04 (FTD-0802): the EXT-B cubic arm contributes 4 further dual-matchers that were excluded by a hardcoded literal, never by a test — the true total is 5 distinct matchers, 4 beyond the master quadratic. The scan also failed its base-rate control (`N_null = 0.0014`, Outcome B).** *(Note: "dual-matcher" here refers to the historical target pair `(1/α, N_c)` used by the scan; the `x_-  N_c` identification is **retired** per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61` — but the polynomial-template-uniqueness fact about the master quadratic is **independent of the target identification** and stands.)*
-
-**Interpretation**: this is INDIRECT evidence for the d = −4 structural
-privilege. Eisenstein integers Z[ω] (CM ring of curves with j = 0,
-including y² = x³ − 1) form a different CM ring with |Z[ω]^×| = 6
-(units {±1, ±ω, ±ω²}). The fact that no Eisenstein-family multiplier
-produces the dual permille match is consistent with the conjecture
-that d = −4 is structurally privileged.
-
-If the h ≥ 2 generalization eventually shows that no h ≥ 2 curve
-produces the dual match either, the cumulative argument would be:
-
-> Theorem 3 (extended): Among all CM elliptic curves with CM by an
-> order $O_K$ in any imaginary quadratic field $K$, the unique curve
-> producing the dual permille match (1/α, N_c) via the master quadratic
-> structure is $E: y² = x³ − x$ (CM by Z[i], discriminant d = −4,
-> class number 1).
-
-This would be a major structural result — closing both T1.2 and
-strengthening T2.1+T2.2.
-
----
-
-## 6. Status summary
+## 5. Status summary
 
 | Question | Status | Effort to close |
 |---|---|---|
 | Chowla–Selberg formula at h = 1 | classical [THEOREM] | done (FTD-0002) |
 | Damerell formula at h = 2, 3, ... | classical [THEOREM] | literature, 1-2 days |
-| Numerical scan of master-quadratic analogue at h ≥ 2 | ~~[OPEN]~~ **DONE 2026-08-04, FTD-0321 — and it came back NEGATIVE** | ran in one session |
-| Structural theorem of d = −4 uniqueness across all CM curves | ~~[OPEN]~~ **MOOT — there is nothing to prove: uniqueness is FALSE beyond |d| = 7,894** | n/a |
 
 ---
 
-## 7. References
+## 6. References
 
 - Chowla, S. & Selberg, A. (1949). On Epstein's Zeta Function. *PNAS*.
 - Damerell, R. (1970, 1971). L-functions of elliptic curves with

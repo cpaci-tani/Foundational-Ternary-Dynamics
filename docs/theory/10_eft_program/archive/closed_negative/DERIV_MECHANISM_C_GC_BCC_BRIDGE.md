@@ -3,7 +3,7 @@
 **Tag:** [CONJECTURE]
 **Date:** 2026-04-26
 **LEDGER row:** FTD-0093
-**Dependencies:** FTD-0001 (master quadratic THEOREM), FTD-0013 (x₊ = 1/α SMC), FTD-0014 (x₋ ≈ N_c SMC), FTD-0028 (Moore Layer Theorem), FTD-0029 (BCC multiplicative structure SELECTION), FTD-0050 (Link 8 closure — engine stencil ⊥ BCC), FTD-0051 (Langevin thermostat), FTD-0059 (THEOREM_A_PHYS_NO_GO), FTD-0094 (L2 candidate identity), FTD-0095 (Bridge Functional), FTD-0096 (μ-from-ℓ_P missing arrow)
+**Dependencies:** FTD-0001 (master quadratic THEOREM), FTD-0013 (x₊ = 1/α SMC), FTD-0028 (Moore Layer Theorem), FTD-0029 (BCC multiplicative structure SELECTION), FTD-0050 (Link 8 closure — engine stencil ⊥ BCC), FTD-0051 (Langevin thermostat), FTD-0059 (THEOREM_A_PHYS_NO_GO), FTD-0094 (L2 candidate identity), FTD-0095 (Bridge Functional), FTD-0096 (μ-from-ℓ_P missing arrow)
 **Supersedes:** Mechanism A (Dirac quantization, ruled out), Mechanism B (`DERIV_MECHANISM_B_GC_DERIVATION.md`, CLOSED NEGATIVE 2026-04-25)
 **Status:** Pre-registered structural argument with falsifier in `PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md`. Conditional promotion to [SELECTION] if D6 PASS + circularity self-test (§7) clean.
 

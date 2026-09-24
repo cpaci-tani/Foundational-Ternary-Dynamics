@@ -2,7 +2,7 @@
 
 **Generated:** 2026-08-16 14:52 UTC  
 **Reframe date:** 2026-04-19  
-**Total papers:** 127
+**Total papers:** 125
 
 **Maintenance, 2026-09-15:** Eight owner-excluded papers moved outside FTD; [archive receipt](../../docs/audits/RESEARCH_EXTERNALIZATION_2026-09-15.md). Retained classifications are unchanged.
 
@@ -27,7 +27,6 @@ Tier 1 = bulletproof math theorems. Tier 5 = pre-reframe / closed-negative / PDF
 | PAPER_GAUGE_COUPLINGS_FROM_LATTICE_GEOMETRY | 2 | draft-src | Y | ✓ | ✓ | Gauge Coupling Constants from Lattice Coordination Geometry |
 | PAPER_GSTAR_BRIDGE_CONSTANT | 2 | draft-src | Y | ✓ | ✓ | % The Lemniscatic Bridge Constant $$: [2pt] Seven Derivations and a Quadratic |
 | PAPER_GSTAR_ETA_TOWER | 2 | legacy | Y | ✓ | ✓ | The $$-tower across the class-number-one atlas: a uniform Chowla--Selberg evaluation, boun |
-| PAPER_GSTAR_FTD_BRIDGE | 2 | legacy | Y | ✓ | ✓ | The master quadratic $P_$ as a math--physics bridge: $_-4$, the ternary substrate, and the |
 | PAPER_GSTAR_H1_ATLAS | 2 | legacy | Y | ✓ | ✓ | The class-number-one atlas: nine CM constants and their $$-unifications |
 | PAPER_GSTAR_IDENTITIES | 2 | draft-src | Y | ✓ | ✓ | Fifty-Two Faces of the Lemniscatic Bridge Constant |
 | PAPER_GSTAR_INTRODUCTION | 2 | legacy | Y | ✓ | ✓ | The Kronecker character $_-4$ as the joint source of the lemniscatic identity algebra: a u |
@@ -103,7 +102,6 @@ Tier 1 = bulletproof math theorems. Tier 5 = pre-reframe / closed-negative / PDF
 | PAPER_0B_THREE_CONSTANTS | 4 | draft-src | N | ✓ | ✓ | The Three Geometric Constants: [0.3cm] $$, $$, and $G^*$ |
 | PAPER_0E_ARITHMETIC_GEOMETRIC_EQUIVALENCE | 4 | draft-src | N | ✓ | ✓ | The Arithmetic-Geometric Equivalence: [0.3cm] Why the Cubic Lattice, the Lemniscate, and t |
 | PAPER_1A_WATSON_LATTICE_BRIDGE | 4 | draft-src | N | ✓ | ✓ | The Watson Integral and the Lemniscatic Modulus: [0.3cm] How Cubic Lattice Symmetry Forces |
-| PAPER_3A_PHYSICAL_IDENTIFICATION | 4 | draft-src | N | ✓ | ✓ | From Lattice Geometry to Coupling Constants: [0.3cm] Physical Identification of the Master |
 | PAPER_MISSING_RATIO | 4 | draft-src | N | ✓ | ✓ | The Missing Ratio: [2pt] $(14)/(34)$ as a Fundamental Constant |
 | PAPER_RATIO_AND_PRODUCT | 4 | draft-src | N | ✓ | ✓ | The Ratio and the Product: [2pt] Two Objects from the Euler Reflection Formula at $z=14$ |
 | PAPER_RATIO_AND_THE_ARROW | 4 | draft-src | N | ✓ | ✓ | The Ratio and the Arrow: [2pt] Time Asymmetry in the Euler Reflection Formula |

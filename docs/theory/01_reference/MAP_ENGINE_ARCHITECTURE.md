@@ -62,7 +62,7 @@ engine/
 #### 1.1.1 Core Include Layer (`engine/include/ftd/`)
 * **`ontic.h`**: The umbrella header that re-exports the entire 9-layer Ontic Derivation Chain. Consists of highly modular headers under `include/ftd/ontic/`:
   * `lemniscate.h`: Modular seeds, elliptic geometry ($\varpi$, Gauss $M$, $\pi$), universal operators ($G^*$), and the emergence of imaginary unit $i$ at $k_{crit} = 4/G^*$.
-  * `master_quadratic.h`: The master quadratic equation $x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$ yielding $x_+ \approx 137.036$ as the tree-level reciprocal-alpha root. The smaller root $x_- \approx 3.024$ is retained as a mathematical root; its old identification with $N_c$ is retired in the ledgers. Contains dual-substrate allocations.
+  * `master_quadratic.h`: The master quadratic equation $x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$ yielding $x_+ \approx 137.036$ as the tree-level reciprocal-alpha root. The smaller root $x_- \approx 3.024$ is retained as a mathematical root. Contains dual-substrate allocations.
   * `gauge_couplings.h`: Precision coupling calculations (CODATA 2022 matching via 4-term loop expansions), $G_N = 0.01$ (scaled lattice gravity), and QCD running definitions.
   * `particle_masses.h`: Standard Model mass scale definitions ($K_B = 0.511$ MeV, $K_{genesis} = 3 K_B$) and the Higgs VEV ($V_{Higgs} = 246.09$ GeV, $M_{Higgs} = 124.8$ GeV).
   * `neutrino.h`: Seesaw mechanism equations and PMNS neutrino mixing parameters.
@@ -236,7 +236,7 @@ The mathematical and physical constants of FTD are derived from a 9-layer mathem
    $$x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$$
    Solving this quadratic yields the roots $x_+$ and $x_-$.
    * $x_+$ leads to the fine structure constant: $\alpha = 1/x_+ \approx 1/137.036$
-   * $x_- \approx 3.024$ is the smaller root (a mathematical artifact of the quadratic; its identification with $N_c$ is **RETIRED** — see retired LEDGER row FTD-0014). $N_c = 3$ is independently sourced from lattice topology (see `DERIV_NC_FROM_TOPOLOGY.md`), not derived from $x_-$.
+   * $x_- \approx 3.024$ is the smaller root.
 3. **`ontic/gauge_couplings.h` (Layers 5 to 7):** Derives the running gauge couplings, including electroweak $\alpha_w \approx 0.0338$, strong coupling $\alpha_s = 1.0$, and the perturbative loop coefficients $c_1, c_2, c_3$.
 4. **`ontic/particle_masses.h` (Layers 6 to 6c):** Computes the mass scales relative to the Planck mass $m_P$, defining the electron mass threshold $m_e = m_P \sqrt{2\pi} (16/3) \alpha^{11} \approx 0.511 \text{ MeV}$ (represented by manifestation threshold $K_B$) and the proton mass $m_p \approx 938.272 \text{ MeV}$.
 5. **`ontic/neutrino.h` (Layer 7b):** Implements absolute neutrino mass definitions ($m_{\nu_1}, m_{\nu_2}, m_{\nu_3}$) using topological volume ratios.
@@ -399,7 +399,7 @@ The first-principles cascade implemented in `engine/include/ftd/ontic/` maps dir
 | **BCC Lattice Self-Energy** | $I_1 = G^{*2}/(2\pi) \approx 1.393$ | `I_1_BCC` / `W_3` (`lemniscate.h`) |
 | **Critical Coupling Parameter** | $k_{crit} = 4/G^* \approx 1.352$ | `K_CRIT` (`lemniscate.h`) |
 | **Master Quadratic Root ($x_+$)**| $x_+ \approx 137.036$ (leads to $1/\alpha$) | `X_PLUS` (`master_quadratic.h`) |
-| **Master Quadratic Root ($x_-$)**| $x_- \approx 3.024$ (mathematical root; retired as an $N_c$ source) | `X_MINUS` (`master_quadratic.h`) |
+| **Master Quadratic Root ($x_-$)**| $x_- \approx 3.024$ (mathematical root) | `X_MINUS` (`master_quadratic.h`) |
 | **Precision-Corrected Root** | $x_+ - c_1 |\epsilon| + c_2 |\epsilon|^2 - \dots$ | `X_PLUS_PRECISION` (`master_quadratic.h`) |
 | **Vieta Product Root ($x_-$)** | $x_- = 16 G^{*3} / x_+^{prec}$ | `X_MINUS_PRECISION` (`master_quadratic.h`) |
 | **Chiral Substrate Energies** | $E_{L, R} = S(1 \pm \delta)/2$ | `E_LEFT_APPROX` / `E_RIGHT_APPROX` |

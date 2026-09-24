@@ -14,7 +14,7 @@ The following integers appear throughout FTD derivations. All are derived from t
 ### Primary Framework Integers
 | Integer | Symbol | Derivation | Physical Role |
 |---------|--------|------------|---------------|
-| 3 | N_c | Master quadratic root | Color charges, generations |
+| 3 | N_c | Moore Layer Theorem | Color charges, generations |
 | 4 | N_base | 2² | Base modes, spacetime dimension |
 | 7 | b₃ | QCD beta coefficient | Strong force structure |
 | 13 | N_eff | Fibonacci F₇ | Effective degrees of freedom |
@@ -370,7 +370,7 @@ The following integers appear throughout FTD derivations. All are derived from t
 : The self-referential harmonic curve used to construct a geometric route to the master quadratic. Its arc length reproduces α = 1/137.036 with 1.26 ppm accuracy under the stated construction. Claims of “uniqueness” are to be read as uniqueness within the stated constraint set.
 
 **Lemniscatic Constant (G*)**
-: The lemniscatic constant used in this book, $G^*\approx 2.9587$ (not to be confused with Gauss's classical constant $\varpi\approx 2.622$). Appears in the master quadratic relating the electromagnetic root and the color root. Additional algebraic identities (e.g., in terms of the quadratic roots) are recorded where used.
+: The lemniscatic constant used in this book, $G^*\approx 2.9587$ (not to be confused with Gauss's classical constant $\varpi\approx 2.622$). Appears in the master quadratic. Additional algebraic identities (e.g., in terms of the quadratic roots) are recorded where used.
 
 **Lepton**
 : Fundamental particle (electron, muon, tau, neutrinos). Not made of quarks.
@@ -402,7 +402,7 @@ The following integers appear throughout FTD derivations. All are derived from t
 : State +1 particles. Conventional matter as opposed to antimatter.
 
 **Master Quadratic**
-: The equation x² - 16(G*)²x + 16(G*)³ = 0 whose roots give α (larger) and N_c (smaller). The central derivation mechanism.
+: The equation x² - 16(G*)²x + 16(G*)³ = 0 whose larger root x₊ is identified with 1/α. The central derivation mechanism.
 
 **Mass Spectrometer**
 : Instrument measuring particle mass-to-charge ratio. Used for identifying isotopes and molecules.
@@ -431,7 +431,7 @@ The following integers appear throughout FTD derivations. All are derived from t
 : Framework integer = 4. Number of base harmonic modes. Golden ratio φ = (1+√(N_base+1))/2.
 
 **N_c (Color Charges)**
-: Framework integer ≈ 3.024 (derived as smaller root of master quadratic). floor(N_c) = 3 determines number of generations.
+: Framework integer = 3, the number of color charges (Moore Layer Theorem).
 
 **Nome (q = e^(-π))**
 : The modular nome parameter from lemniscate geometry at j = 1728. The nome q = e^(-π) ≈ 0.0432 appears naturally in elliptic function theory for the lemniscatic curve. Its appearance in the alpha precision formula correction terms (via e^π) connects FTD to classical modular forms and Ramanujan's work on elliptic integrals.
@@ -531,7 +531,7 @@ The following integers appear throughout FTD derivations. All are derived from t
 ## S
 
 **Sixteen (16 = N_base²)**
-: The master quadratic coefficient = 4² = 16. The equation x² - 16(G*)²x + 16(G*)³ = 0 produces α and N_c. The value 16 is **derived** from the complementation principle: in a 2×2×2 minimal lattice, 24 links minus 7 constraints minus 1 normalization = 16 physical degrees of freedom. Also equals k_physics in the Mandelbrot mapping.
+: The master quadratic coefficient = 4² = 16. The equation x² - 16(G*)²x + 16(G*)³ = 0 produces the roots x₊ and x₋. The value 16 is **derived** from the complementation principle: in a 2×2×2 minimal lattice, 24 links minus 7 constraints minus 1 normalization = 16 physical degrees of freedom. Also equals k_physics in the Mandelbrot mapping.
 
 **Seventeen (17 = N_eff + N_base)**
 : Derived integer = 13 + 4 = 17. The multiplier in tau mass: m_τ/m_e = 17 × 207 - 42 = 3477. A prime number.

@@ -101,7 +101,6 @@ The four faces are one because they are one loop. **G* is what the lattice's dyn
 
 - **G* is a self-consistency CENTRE, not a RUNNING coupling.** The renormalization-group reading — master quadratic as an RG-step characteristic polynomial — is **[CLOSED NEGATIVE]** (FTD-0050, `AUDIT_LINK8_CLOSURE.md`): the coefficient `16 G*^2` lives on the BCC Watson integral, orthogonal to the engine's `(SC+FCC)/2` stencil; RG eigenvalues are scaling dimensions (O(1)), not couplings (137, 3). Do not attribute a flow.
 - **The theorem-grade core is small:** the `D^{-1/2}` eigenvalue (§2), the Vieta algebra and three-means (§3), the CFL speed and dilation forms (§1/§4), and the 0.2% budget measurement. The profound-sounding faces (`G*^2`=time-rate, physical-time=`D^{-1/2}`, alpha=deviation-from-3) are [SELECTION] / FC-2-[AXIOM]-class *identifications* on top of that core.
-- **`x_- <-> N_c` is RETIRED.** The old "tick budget = `1/alpha + N_c`" partition leans on the retired identification; only the trace `16 G*^2` and the Coulomb/confined split stand.
 - **The gap equation is a reading**, not a derived thermodynamic-limit self-consistency condition (`DERIV_MASTER_QUADRATIC_GAP_EQUATION.md` Abstract).
 
 ## §7 — Cross-references

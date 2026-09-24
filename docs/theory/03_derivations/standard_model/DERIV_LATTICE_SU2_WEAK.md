@@ -463,7 +463,7 @@ where:
 | Higgs VEV | Measured, unexplained | v = M_P√(2π)α⁸ (derived) |
 | Parity violation | Built into gauge assignments | Divergence sign asymmetry [SELECTION] |
 | G_F | Measured from muon lifetime | Derived: 1/(√2 v²) |
-| N_gen | Empirical (= 3) | = N_c = ⌊x₋⌋ = 3 |
+| N_gen | Empirical (= 3) | = N_c = 3 |
 
 ## 8.4 What Is Less Rigorous [SELECTION]
 

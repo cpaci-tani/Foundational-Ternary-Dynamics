@@ -3,8 +3,8 @@
 **Document type:** Pre-registration (locks protocol BEFORE measurement)
 **Status:** [PRE-REGISTERED] — committed before scan execution
 **Created:** 2026-05-01 evening (post-physics-bridge session)
-**Provenance:** Direct extension of FTD-0097 monomial-level look-elsewhere methodology and the polynomial-level look-elsewhere scan (`EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md`), applied to the Cayley-Dickson 5-harmonic Fourcier family hosting the FTD canonical Lemniscate-Alpha curve.
-**Related:** `DERIV_SPIN_STATISTICS_BRIDGE.md §1.3-1.4` (canonical curve definition); `AUDIT_LOOK_ELSEWHERE_RESULTS.md` (FTD-0097 monomial scan); `EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md` (polynomial-level scan).
+**Provenance:** Direct extension of FTD-0097 monomial-level look-elsewhere methodology, applied to the Cayley-Dickson 5-harmonic Fourcier family hosting the FTD canonical Lemniscate-Alpha curve.
+**Related:** `DERIV_SPIN_STATISTICS_BRIDGE.md §1.3-1.4` (canonical curve definition); `AUDIT_LOOK_ELSEWHERE_RESULTS.md` (FTD-0097 monomial scan).
 
 ---
 

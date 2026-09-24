@@ -11,10 +11,9 @@ This chapter constructs the master quadratic $x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$
 ::: {.callout-note}
 ## Root Identification Status
 
-The identification of the roots with physical quantities is a **[STRONGLY MOTIVATED CONJECTURE]**, not a theorem:
+The identification of the larger root with a physical quantity is a **[STRONGLY MOTIVATED CONJECTURE]**, not a theorem:
 
-- **C1 ($x_+ = 1/\alpha$)**: [STRONGLY MOTIVATED CONJECTURE] - the larger root $x_+ = 137.0361...$ *matches* the inverse fine structure constant to 1.26 ppm. The CM selection of $j = 1728$ and the structural-uniqueness scans ($\sim 4{\times}10^5$:1 against null — a [NUMERICAL FACT] from the scan enumeration, not a rigorous Bayes-factor computation; asymmetric-tolerance-conditioned, inverting to $\sim 32$ dual-matchers under a symmetric 1% gate; corrected 2026-07-01) make the identification strongly motivated, but no derivation chain forces $x_+ = 1/\alpha$ from the axioms.
-- **C2 ($x_- \to N_c = 3$)**: [STRONGLY MOTIVATED CONJECTURE] - the smaller root $x_- = 3.024...$ is near the integer 3 (0.80%); $N_c = 3$ has independent structural derivations (topology, Moore Layer Theorem), so the $x_- \approx N_c$ relation is a motivated match, not a derivation.
+- **C1 ($x_+ = 1/\alpha$)**: [STRONGLY MOTIVATED CONJECTURE] - the larger root $x_+ = 137.0361...$ *matches* the inverse fine structure constant to 1.26 ppm. The CM selection of $j = 1728$ makes the identification strongly motivated, but no derivation chain forces $x_+ = 1/\alpha$ from the axioms. $x_+ = 1/\alpha$ has no numerical-uniqueness support.
 :::
 
 ::: {.callout-note}
@@ -464,14 +463,8 @@ Comparison with experiment (CODATA 2022): $1/\alpha_{\text{exp}} = 137.035999177
 
 **Base accuracy: 1.26 ppm.** (The earlier "0.21 ppt" precision claim is retracted: the $\varepsilon$-expansion is a post-hoc fit beyond CODATA's experimental precision, not a prediction.)
 
-*Status*: CM selection picks out the lemniscatic curve ($j = 1728$), and the structural-uniqueness scans make $x_+ = 1/\alpha$ strongly motivated, but the identification is a **conjecture**, not a theorem — FTD does not derive $\alpha$ from its axioms.
+*Status*: CM selection picks out the lemniscatic curve ($j = 1728$) and makes $x_+ = 1/\alpha$ strongly motivated, but the identification is a **conjecture**, not a theorem — FTD does not derive $\alpha$ from its axioms.
 
-**Identification (C2)**: The smaller root is near the number of color charges:
-$$x_- = 3.0239639163 \;\approx\; N_c = 3$$
-
-*Status*: $\lfloor x_- \rfloor = 3$ matches $N_c$ to 0.80%. $N_c = 3$ has independent structural derivations (topology, Moore Layer Theorem); the $x_- \approx N_c$ relation is a motivated match. [STRONGLY MOTIVATED CONJECTURE]
-
-**Accuracy: 0.8% from integer 3**
 :::
 
 ---
@@ -503,7 +496,6 @@ The algebraic consistency confirms the derivation.
 | 7 | Dyson self-consistency | Physical requirement | [T] |
 | 7 | **Master quadratic form** | **Proven (algebra)** | **[T]** |
 | 8 | $x_+ = 1/\alpha$ | **Matches to 1.26 ppm** (identification not derived) | **[SMC]** |
-| 8 | $x_- \to N_c = 3$ | **Matches to 0.80%** (identification not derived) | **[SMC]** |
 
 ::: {.callout-important}
 ## Main Result
@@ -552,7 +544,7 @@ x_minus = (-b - np.sqrt(D)) / (2*a)
 
 print(f"\nRoots:")
 print(f"  x₊ = {x_plus:.10f}  (cf. 1/α = 137.035999177)")
-print(f"  x₋ = {x_minus:.10f}  (cf. Nc = 3)")
+print(f"  x₋ = {x_minus:.10f}")
 
 # Vieta verification
 print(f"\nVieta verification:")

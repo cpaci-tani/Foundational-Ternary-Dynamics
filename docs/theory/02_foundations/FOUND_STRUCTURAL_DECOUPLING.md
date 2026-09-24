@@ -8,12 +8,12 @@
 
 ## 1 · The question
 
-The master quadratic `x² − 16G*²x + 16G*³ = 0` has two roots, `x_+ ≈ 137.036` and `x_− ≈ 3.024`. The empirical match `x_+ = 1/α` at 1.26 ppm is the **single live physics identification** (FTD-0013). It is tagged [STRONGLY MOTIVATED CONJECTURE]; the underlying polynomial and Γ-product algebra are theorems (FTD-0001, FTD-0002), but the **identification** of the larger root with physical α is empirical, not derived. *(The historical paired identification `x_−  N_c` (the "dual-prediction" framing) is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The smaller root `x_− ≈ 3.024` is now a mathematical artifact of `P(x)` only; `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` and the Moore Layer Theorem.)*
+The master quadratic `x² − 16G*²x + 16G*³ = 0` has two roots, `x_+ ≈ 137.036` and `x_− ≈ 3.024`. The empirical match `x_+ = 1/α` at 1.26 ppm is the **physics identification** (FTD-0013). It is tagged [STRONGLY MOTIVATED CONJECTURE]; the underlying polynomial and Γ-product algebra are theorems (FTD-0001, FTD-0002), but the **identification** of the larger root with physical α is empirical, not derived.
 
 A natural follow-up question: **does the master-quadratic value `α = 1/x_+` play the *dynamical* role of QED's fine-structure constant in FTD's engine?** Concretely: if we measure observables in the engine that, in QED, would scale with α (the static Coulomb potential, the Schwinger anomaly, scattering amplitudes), do those observables carry the master-quadratic value?
 
-If yes, the identification would gain a dynamical-mechanism warrant beyond the structural-uniqueness scan evidence.
-If no, the identification stays formally a polynomial-root coincidence with structural-uniqueness backing — defensible empirical match, but not a derivation.
+If yes, the identification would gain a dynamical-mechanism warrant.
+If no, the identification stays formally a polynomial-root coincidence — defensible empirical match, but not a derivation.
 
 This document originally claimed four independent engine tests. FTD-0412
 invalidated the Wilson-Dirac leg as a physical measurement. The surviving
@@ -115,9 +115,7 @@ The algebraic spine is unaffected. None of the following claims have changed tie
 - **FTD-0001** (master quadratic [THEOREM]) — unchanged
 - **FTD-0002** (G\* identity [THEOREM]) — unchanged
 - **FTD-0013** (x_+ = 1/α at 1.26 ppm [STRONGLY MOTIVATED CONJECTURE]) — unchanged
-- ~~**FTD-0014** (x_− = N_c at 0.80%)~~ — **RETIRED** per v1.4 §5; LEDGER row removed in commit `ca7eb61`. `N_c = 3` independently sourced (`DERIV_NC_FROM_TOPOLOGY.md`).
 - All nine numbered spine results (seven theorem-grade + two honestly-tiered — Theorem 3 at its arithmetic core only; see `SPEC_ALGEBRAIC_SPINE.md` §0 count convention) — unchanged
-- ~~The structural-uniqueness scan from FTD-0121 / Paper A (0 dual-matchers across 2,871,576 polynomials, rank 1 by ~130×) — unchanged.~~ **WITHDRAWN 2026-08-04 (FTD-0802):** the count is **4** non-master dual-matchers, not 0 — the "0 genuinely-new cubic" figure was a hardcoded literal that no code tested — and the scan failed its pre-registered base-rate control (`N_null = 0.0014`, Outcome B), so a zero count would have carried no evidential weight regardless. OT-3.3 retagged `[SELECTION]`. *(The "~4×10⁵:1 Bayes factor" figure is retracted to [NUMERICAL FACT] — not runner-computed, ~19× scan-size; per the spine audit.)*
 - The BCC complex-structure theorem (FTD-0122) — unchanged
 
 What was tested and ruled out is a **specific dynamical interpretation** of the `x_+  1/α` identification: that `α = 1/x_+` plays the role of QED's coupling at the matter-sector vertex via classical gauge fields. The polynomial algebra and the empirical match remain at their established tags.

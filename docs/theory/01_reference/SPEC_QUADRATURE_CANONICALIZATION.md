@@ -1,7 +1,7 @@
 # SPEC - Quadrature Canonicalization
 
 **Tag:** [OPEN PROGRAM]
-**LEDGER:** FTD-0210 [SYNTHESIS] - formalizes the admissibility requirements for deriving the intrinsic $\mathbb{Z}[i]$ field $z(v)$.
+**LEDGER:** [SYNTHESIS] - formalizes the admissibility requirements for deriving the intrinsic $\mathbb{Z}[i]$ field $z(v)$.
 **Companion docs:** `SPEC_CONNECTION_EXTRACTION_RULE.md`
 
 ---
